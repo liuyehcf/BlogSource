@@ -568,9 +568,11 @@ __transfer方法用于hashtable的扩张__
             else if ((fh = f.hash) == MOVED)
                 advance = true; // already processed
             else {
+                //直接用内建的synchronized来进行加锁操作
                 synchronized (f) {
                     if (tabAt(tab, i) == f) {
                         Node<K,V> ln, hn;
+                        //如果bin/bucket中存放的是链表
                         if (fh >= 0) {
                             int runBit = fh & n;
                             Node<K,V> lastRun = f;
@@ -601,6 +603,7 @@ __transfer方法用于hashtable的扩张__
                             setTabAt(tab, i, fwd);
                             advance = true;
                         }
+                        //如果bin/bucket中存放的是红黑树
                         else if (f instanceof TreeBin) {
                             TreeBin<K,V> t = (TreeBin<K,V>)f;
                             TreeNode<K,V> lo = null, loTail = null;
