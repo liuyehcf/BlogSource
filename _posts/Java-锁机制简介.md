@@ -253,4 +253,4 @@ public class CLHLockDemo {
 
 AQS框架是CLH锁的变体，AQS相比于CLH锁，AQS采用了自旋与阻塞相结合的策略，提高整体的性能，既不会出现自旋锁盲目自旋消耗大量CPU的情况，也不会出线程频繁的阻塞和唤醒
 
-具体AQS源码剖析，请移步 [Java concurrent AQS 源码剖析](http://www.cnblogs.com/liuyehcf/p/7050176.html)
+具体AQS源码剖析，请移步 [Java concurrent AQS 源码剖析](https://liuyehcf.github.io/2017/07/02/Java-concurrent-AQS-%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/)
