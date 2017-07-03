@@ -306,14 +306,14 @@ __从Java虚拟机的角度来讲，只存在两种不同的类加载器__
     * 这个类加载器由sun.misc.Launcher$AppClassLoader实现
     * 由于这个类加载器是ClassLoader中的getSystemClassLoader()方法的返回值，所以一般也称它为系统类加载器
 
-![](/images/类加载器.gif)
+![](/images/Java-类加载机制/类加载器.gif)
 
 
 __类加载器之间的层次关系成为类加载器的双亲委派模型(parents Delegation Model)__
 * 双亲委派模型要求除了顶层的启动类加载器外，其余的类加载器都应当有自己的父类加载器
 * 这里类加载器之间的父子关系一般不会以继承(Inheritance)的关系来实现，而都是使用组合(Composition)关系来复用父加载器的代码
  
-![](/images/双亲委派模型.png)
+![](/images/Java-类加载机制/双亲委派模型.png)
 
 
 __双亲委派模型的工作过程__
