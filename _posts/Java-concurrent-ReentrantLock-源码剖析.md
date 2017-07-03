@@ -226,7 +226,7 @@ ReentrantLock的一系列lock以及unlock方法仅仅转调用sync的相应方�
     }
 ```
 
-获取条件对象的方法，关于ConditionObject的内部机制以及源码分析可参考 [Java concurrent ConditionObject 源码剖析](https://liuyehcf.github.io/2017/07/02/Java-concurrent-AQS-ConditionObject-%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/)
+获取条件对象的方法，关于ConditionObject的内部机制以及源码分析可参考 [Java concurrent AQS-ConditionObject 源码剖析](https://liuyehcf.github.io/2017/07/02/Java-concurrent-AQS-ConditionObject-%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/)
 ```Java
     public Condition newCondition() {
         return sync.newCondition();

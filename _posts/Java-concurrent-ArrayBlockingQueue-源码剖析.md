@@ -61,8 +61,8 @@ __ArrayBlockingQueue的分析分为以下几个部分__
 * __items__：用于存放元素的数组，注意到该字段是final修饰的，因此ArrayBlockingQueue是不能扩容的，其容量在初始化时就已经确定    
 * __takeIndex__：队列头元素的下标，指向take/poll/peek/remove方法操作的元素
 * __putIndex__：队列尾元素的下标，指向put/offer/add方法方法操作的元素
-* __lock__：重复锁，[ReentrantLock 源码剖析](https://liuyehcf.github.io/2017/07/02/Java-concurrent-ReentrantLock-%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/)
-* __notEmpty__：条件对象(Condition)，关于ConditionObject源码分析，可以参考[ConditoinObject 源码剖析](https://liuyehcf.github.io/2017/07/02/Java-concurrent-AQS-ConditionObject-%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/)
+* __lock__：重复锁，[Java concurrent ReentrantLock 源码剖析](https://liuyehcf.github.io/2017/07/02/Java-concurrent-ReentrantLock-%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/)
+* __notEmpty__：条件对象(Condition)，关于ConditionObject源码分析，可以参考[Java concurrent AQS-ConditoinObject 源码剖析](https://liuyehcf.github.io/2017/07/02/Java-concurrent-AQS-ConditionObject-%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/)
 * __notFull__：条件对象(Condition)
 * __itrs__：迭代器
 
