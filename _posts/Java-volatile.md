@@ -7,14 +7,14 @@ categories:
 ---
 
 
-# 前言
+# 1 前言
 
 本篇博客将介绍volatile的内存语义以及volatile内存语义的实现
 
 
 <!--more-->
 
-# 基本概念
+# 2 基本概念
 
 __hapens-before__
 
@@ -35,7 +35,7 @@ __Memory Barrier__
 
 * StoreLoad Barriers是一个全能型屏障，他同时具有其他3个屏障的效果。现代处理器大多数支持该屏障。执行该屏障开销会很昂贵，因为当前处理器通常要把写缓冲区中的数据全部刷新到内存中(Buffer Fully Flush)
 
-# volatile 写-读的内存语义
+# 3 volatile 写-读的内存语义
 
 __volatile写的内存语义__
 
@@ -53,7 +53,7 @@ __总结__
 * 当线程读一个volatile变量时，实质上是该线程接收了之前某个线程发出的一个消息(对共享变量做了修改)
 
 
-# volatile内存语义(可见性)
+# 4 volatile内存语义(可见性)
 
 __volatile重排规则表__
 
@@ -82,14 +82,14 @@ __volatile重排规则表__
 
 为了保证能正确实现volatile的内存语义，JMM采取了保守策略：在每个volatile写的后面，或者在每个volatile读的前面插入一个StoreLoad屏障。从整体执行效率的角度考虑，JMM最终选择了在每个volatile写的后面插入一个StoreLoad屏障。因为volatile写-读内存语义的常见使用模式是：一个写线程写volaitle变量，多个读线程读同一个volatile变量。当读线程的数量大大超过写线程时，选择在volatile写之后插入StoreLoad屏障将带来可观的执行效率提升
 
-# volatile内存语义的增强
+# 5 volatile内存语义的增强
 
 在JSR-133之前的旧Java内存模型中，虽然不允许volatile变量之间重排序，但旧的Java内存模型允许volatile变量与普通变量重排序
 
 在旧的内存模型中，volatile的写-读没有锁的释放-获取所具有的内存语义。__为了提供一种比锁更轻量级的线程之间的通信的机制__，JSR-133专家组决定增强volatile的内存语义：严格限制编译器和处理器对volatile变量与普通变量的重排序，__确保volatile的写-读和锁的释放-获取具有相同的内存语义__。从编译器重排序规则和处理器内存屏障插入策略来看，只要volatile变量与普通变量之间的重排序可能会破坏volatile的内存语义，这种重排序就会被编译器重排序规则和处理器内存屏障插入策略禁止
 
 
-# 锁的内存语义(可见性)
+# 6 锁的内存语义(可见性)
 
 锁可以让临界区互斥执行，但锁还有另一个同样重要且常常被忽视的功能：锁的内存语义
 
@@ -115,7 +115,7 @@ __总结__
 * 线程获取一个锁，实质上是该线程接收了之前某个线程发出的(在释放这个锁之前对共享变量所做的修改)一个消息
 
 
-# CAS操作的内存语义(可见性)
+# 7 CAS操作的内存语义(可见性)
 
 ```Java
     public final native boolean compareAndSwapInt(Object o, long offset, int expected, int x);
@@ -144,6 +144,6 @@ intel手册对lock的前缀说明如下
 1. 把写缓冲区中的所有数据刷新到内存中
 * 第2点和第3点具有内存屏障效果，足以同时实现volatile读和volatile写的内存语义
 
-# 参考
+# 8 参考
 
 __Java并发编程的艺术__

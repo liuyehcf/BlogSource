@@ -8,7 +8,7 @@ categories:
 
 
 
-# 前言
+# 1 前言
 
 __本篇博客分析的是JDK 1.8 的ConcurrentHashMap，该版本的ConcurrentHashMap与JDK 1.7有较大的差异__
 
@@ -21,7 +21,7 @@ __ConcurrentHashMap源码分析分为以下几个部分__
 
 <!--more-->
 
-# 常量简介
+# 2 常量简介
 ```Java
     /**
      * The largest possible table capacity.  This value must be
@@ -142,7 +142,7 @@ __常量分为两大类__
     * __RESERVED__：
     * __HASH_BITS__：用于节点hash值的计算
 
-# 字段简介
+# 3 字段简介
 
 ```Java
     /**
@@ -208,40 +208,40 @@ __常量分为两大类__
 * __values__：Value集合
 * __entrySet__：键值对集合
 
-# 内部类简介
+# 4 内部类简介
 
-## Node
+## &emsp;4.1 Node
 
 __Node继承自Map.Entry，是其余节点的父类__
 * Node子类中如果hash值为负数，代表这类节点是特殊节点，特殊节点不持有key-value。例如TreeBin，ForwardingNode，ReservationNode
 * Node子类中如果hash值非负数，代表这类节点是正常节点，持有key-value。例如Node本身以及TreeNode
 
-## TreeNode
+## &emsp;4.2 TreeNode
 
 __TreeNode节点是树节点__
 * 增加了左右孩子字段，父节点字段，颜色字段等
 * 采用的树形结构是：红黑树
 
-## TreeBin
+## &emsp;4.3 TreeBin
 
 __当一个bin/bucket持有一颗树时，该槽位放置的节点是TreeBin__
 * TreeBin节点持有红黑树根节点
 * TreeBin节点持有读写锁，该读写所强制写操作必须等待读操作执行完毕
 * TreeBin内部定义了一些红黑树性质维护的静态方法
 
-## ForwardingNode
+## &emsp;4.4 ForwardingNode
 
 __ForwardingNode节点表明此时正在进行扩容__
 * 同时表明当前槽位中的节点已经转移到新的hashtable中去了
 * 该节点持有nextTable的引用
 
-## ReservationNode
+## &emsp;4.5 ReservationNode
 
 __??__
 
-# Utils方法简介
+# 5 Utils方法简介
 
-## spread
+## &emsp;5.1 spread
 
 __spread用于转换hash值__
 * 由于table的大小是2的幂次，槽位的计算利用的是求余运算，因此那些高位有区别的散列值在低容量时将始终冲突
@@ -270,7 +270,7 @@ __spread用于转换hash值__
     }
 ```
 
-## tableSizeFor
+## &emsp;5.2 tableSizeFor
 
 __tableSizeFor方法用于计算不小于给定数值的最大2的幂次__
 * 该方法等效的逻辑是：找到c-1的最高位，假设为第i位，生成一个从第i位到第0位都是1，其余位全是0的数值，然后返回该数值+1
@@ -292,7 +292,7 @@ __tableSizeFor方法用于计算不小于给定数值的最大2的幂次__
     }
 ```
 
-## access方法
+## &emsp;5.3 access方法
 
 __访问table元素的方法__
 * 其中ASHIFT是指数组元素的大小
@@ -314,9 +314,9 @@ __访问table元素的方法__
     }
 ```
 
-# 重要方法源码分析
+# 6 重要方法源码分析
 
-## put
+## &emsp;6.1 put
 
 __put方法用于向HashMap中插入一个键值对__
 * 键和值都必须不为null(为什么)
@@ -340,7 +340,7 @@ __put方法用于向HashMap中插入一个键值对__
     }
 ```
 
-## putVal
+## &emsp;6.2 putVal
 
 __putVal是真正执行插入操作的方法__
 * 第三个参数为true时代表插入的键值必须不存在，否则不会更新原值，而是返回null
@@ -435,7 +435,7 @@ __putVal是真正执行插入操作的方法__
 ```
 
 
-## initTable
+## &emsp;6.3 initTable
 
 __initTable方法用于初始化hashtable__
 * sizeCtl字段的值代表的就是初始化的hashtable的大小
@@ -473,7 +473,7 @@ __initTable方法用于初始化hashtable__
     }
 ```
 
-## transfer
+## &emsp;6.4 transfer
 
 __transfer方法用于hashtable的扩张__
 * 多个线程将会同时参与扩张过程
@@ -646,7 +646,7 @@ __transfer方法用于hashtable的扩张__
     }
 ```
 
-## addCount
+## &emsp;6.5 addCount
 
 __addCount方法用于更新键值对计数值baseCount__
 
@@ -704,7 +704,7 @@ __addCount方法用于更新键值对计数值baseCount__
     }
 ```
 
-## fullAddCount
+## &emsp;6.6 fullAddCount
 
 __fullAddCount方法用于__
 
@@ -797,7 +797,7 @@ __fullAddCount方法用于__
 ```
 
 
-## sumCount
+## &emsp;6.7 sumCount
 
 __sumCount方法用于__
 
@@ -815,12 +815,12 @@ __sumCount方法用于__
     }
 ```
 
-## 
+## &emsp;6.8 
 
-## 
+## &emsp;6.9 
 
-## 
+## &emsp;6.10 
 
-## 
+## &emsp;6.11 
 
 ##
