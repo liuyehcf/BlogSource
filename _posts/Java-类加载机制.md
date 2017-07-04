@@ -172,17 +172,17 @@ __概念明确__
 
 __基本数据类型的零值__
 
- | 数据类型 | 零值 | 
- |:---|:---|
- | int | 0 | 
- | long | 0L |
- | short | (short)0 | 
- | char | '\u0000' | 
- | byte | (byte)0 | 
- | boolean | false | 
- | float | 0.0f | 
- | double | 0.0d | 
- | reference | null | 
+| 数据类型 | 零值 | 
+|:---|:---|
+| int | 0 | 
+| long | 0L |
+| short | (short)0 | 
+| char | '\u0000' | 
+| byte | (byte)0 | 
+| boolean | false | 
+| float | 0.0f | 
+| double | 0.0d | 
+| reference | null | 
 
 
 ## &emsp;4.4 解析

@@ -83,22 +83,22 @@ Java代码在进行Javac编译的时候，并不像C和C++那样有"连接"这�
 * 这14个表有一个共同特点，就是表开始的第一位是一个u1类型的标志位，代表当前这个常量属于哪种常量类型
 * 这14种常量类型各自均有自己的结构
 
- | 类型 | 标志 | 描述 |
- |:------------- |:--------------|:-------|
- | CONSTANT_Utf8_info | 1 | UTF-8编码的字符串 | 
- | CONSTANT_Integer_info | 3 | 整型字面量 | 
- | CONSTANT_Float_info | 4 | 浮点型字面量 | 
- | CONSTANT_Long_info | 5 | 长整型字面量 | 
- | CONSTANT_Double_info | 6 | 双精度浮点型字面量 | 
- | CONSTANT_Class_info | 7 | 类或接口的符号引用 | 
- | CONSTANT_String_info | 8 | 字符串类型字面量 | 
- | CONSTANT_Fieldref_info | 9 | 字段的符号引用 | 
- | CONSTANT_Methodref_info | 10 | 类中方法的符号引用 | 
- | CONSTANT_InterfaceMethodref_info | 11 | 接口中方法的符号引用 | 
- | CONSTANT_NameAndType_info | 12 | 字段或方法的部分符号引用 | 
- | CONSTANT_MethodHandle_info | 15 | 表示方法句柄 | 
- | CONSTANT_MethodType_info | 16 | 标志方法类型 | 
- | CONSTANT_InvokeDynamic_info | 18 | 表示一个动态方法调用点 | 
+| 类型 | 标志 | 描述 |
+|:------------- |:--------------|:-------|
+| CONSTANT_Utf8_info | 1 | UTF-8编码的字符串 | 
+| CONSTANT_Integer_info | 3 | 整型字面量 | 
+| CONSTANT_Float_info | 4 | 浮点型字面量 | 
+| CONSTANT_Long_info | 5 | 长整型字面量 | 
+| CONSTANT_Double_info | 6 | 双精度浮点型字面量 | 
+| CONSTANT_Class_info | 7 | 类或接口的符号引用 | 
+| CONSTANT_String_info | 8 | 字符串类型字面量 | 
+| CONSTANT_Fieldref_info | 9 | 字段的符号引用 | 
+| CONSTANT_Methodref_info | 10 | 类中方法的符号引用 | 
+| CONSTANT_InterfaceMethodref_info | 11 | 接口中方法的符号引用 | 
+| CONSTANT_NameAndType_info | 12 | 字段或方法的部分符号引用 | 
+| CONSTANT_MethodHandle_info | 15 | 表示方法句柄 | 
+| CONSTANT_MethodType_info | 16 | 标志方法类型 | 
+| CONSTANT_InvokeDynamic_info | 18 | 表示一个动态方法调用点 | 
 
 
 
@@ -112,16 +112,16 @@ Java代码在进行Javac编译的时候，并不像C和C++那样有"连接"这�
 * 这些含义可以组合使用，例如0x0021代表ACC_PUBLIC和ACC_SUPER
 * access_flags共有16个标志位可用，当前只定义了8个，没有使用到的一律为0
 
- | 标志名称 | 标志值 | 含义 | 
- |:------------- |:--------------|:-------|
- | ACC_PUBLIC | 0x0001 | 是否为public类型 | 
- | ACC_FINAL | 0x0010 | 是否被声明为final，只有类可设置 | 
- | ACC_SUPER | 0x0020 | 是否允许使用invokespecial字节码指令的新语意，invokespecial指令的语意在JDK 1.0.2发生过改变，为了区别这条指令使用哪种语意，JDK 1.0.2之后编译出来的类的这个标志都必须为真 | 
- | ACC_INTERFACE | 0x0200 | 标志这是一个接口 | 
- | ACC_ABSTRACT | 0x0400 | 是否为abstract类型，对于接口或者抽象类来说，此标志值为真，其他类型值为假 | 
- | ACC_SYNTHETIC | 0x1000 | 标志这个类并非由用户代码产生的 | 
- | ACC_ANNOTATION | 0x2000 | 标志这是一个注解 | 
- | ACC_ENUM | 0x4000 | 标志这是一个枚举 | 
+| 标志名称 | 标志值 | 含义 | 
+|:------------- |:--------------|:-------|
+| ACC_PUBLIC | 0x0001 | 是否为public类型 | 
+| ACC_FINAL | 0x0010 | 是否被声明为final，只有类可设置 | 
+| ACC_SUPER | 0x0020 | 是否允许使用invokespecial字节码指令的新语意，invokespecial指令的语意在JDK 1.0.2发生过改变，为了区别这条指令使用哪种语意，JDK 1.0.2之后编译出来的类的这个标志都必须为真 | 
+| ACC_INTERFACE | 0x0200 | 标志这是一个接口 | 
+| ACC_ABSTRACT | 0x0400 | 是否为abstract类型，对于接口或者抽象类来说，此标志值为真，其他类型值为假 | 
+| ACC_SYNTHETIC | 0x1000 | 标志这个类并非由用户代码产生的 | 
+| ACC_ANNOTATION | 0x2000 | 标志这是一个注解 | 
+| ACC_ENUM | 0x4000 | 标志这是一个枚举 | 
 
 
 ## &emsp;1.4 类索引、父类索引与接口索引集合
@@ -147,27 +147,27 @@ Java代码在进行Javac编译的时候，并不像C和C++那样有"连接"这�
 
 字段表结构如下
 
- | 类型 | 名称 | 数量 | 
- |:------------- |:--------------|:-------|
- | u2 | access_flags | 1 | 
- | u2 | name_index | 1 | 
- | u2 | descriptor_index | 1 | 
- | u2 | attributes_count | 1 | 
- | attribute_info | attributes | attributes_count | 
+| 类型 | 名称 | 数量 | 
+|:------------- |:--------------|:-------|
+| u2 | access_flags | 1 | 
+| u2 | name_index | 1 | 
+| u2 | descriptor_index | 1 | 
+| u2 | attributes_count | 1 | 
+| attribute_info | attributes | attributes_count | 
 
 * 其中，access_flags项目可以设置的标志位和含义见下表
 
- | 标志名称 | 标志值 | 含义 | 
- |:------------- |:--------------|:-------|
- | ACC_PUBLIC | 0x0001 | 字段是否public | 
- | ACC_PRIVATE | 0x0002 | 字段是否private | 
- | ACC_PROTECTED | 0x0004 | 字段是否protected | 
- | ACC_STATIC | 0x0008 | 字段是否static | 
- | ACC_FINAL | 0x0010 | 字段是否final | 
- | ACC_VOLATILE | 0x0040 | 字段是否volatile | 
- | ACC_TRANSIENT | 0x0080 | 字段是否transient | 
- | ACC_SYNTHETIC | 0x1000 | 字段是否由编译器自动产生 | 
- | ACC_ENUM | 0x4000 | 字段是否enum | 
+| 标志名称 | 标志值 | 含义 | 
+|:------------- |:--------------|:-------|
+| ACC_PUBLIC | 0x0001 | 字段是否public | 
+| ACC_PRIVATE | 0x0002 | 字段是否private | 
+| ACC_PROTECTED | 0x0004 | 字段是否protected | 
+| ACC_STATIC | 0x0008 | 字段是否static | 
+| ACC_FINAL | 0x0010 | 字段是否final | 
+| ACC_VOLATILE | 0x0040 | 字段是否volatile | 
+| ACC_TRANSIENT | 0x0080 | 字段是否transient | 
+| ACC_SYNTHETIC | 0x1000 | 字段是否由编译器自动产生 | 
+| ACC_ENUM | 0x4000 | 字段是否enum | 
 
 * 跟随access_flags标志的是两项索引值：name_index和descriptor_index：它们都是对常量池的引用，分别代表字段的简单名称以及字段的描述符
 * 字段表都包含的固定数据项到descriptor_index为止就结束了，不过在descriptor_index之后跟随者一个属性表集合用于存储一些额外的信息，字段都可以在属性表中描述零至多项额外信息
@@ -200,18 +200,18 @@ __描述符__
 
 描述符标志字符含义表
 
- | 标志字符 | 含义 | 
- |:------------- |:--------------|
- | B | 基本类型byte | 
- | C | 基本类型char | 
- | D | 基本类型double | 
- | F | 基本类型float | 
- | I | 基本类型int | 
- | J | 基本类型long | 
- | S | 基本类型short | 
- | Z | 基本类型boolean | 
- | V | 特殊类型void | 
- | L | 对象类型，例如Ljava/lang/Object | 
+| 标志字符 | 含义 | 
+|:------------- |:--------------|
+| B | 基本类型byte | 
+| C | 基本类型char | 
+| D | 基本类型double | 
+| F | 基本类型float | 
+| I | 基本类型int | 
+| J | 基本类型long | 
+| S | 基本类型short | 
+| Z | 基本类型boolean | 
+| V | 特殊类型void | 
+| L | 对象类型，例如Ljava/lang/Object | 
 
 
 ## &emsp;1.6 方法表集合
@@ -223,30 +223,30 @@ Class文件存储格式中对方法的表述与对字段的描述几乎采用了
 
 方法表结构如下
 
- | 类型 | 名称 | 数量 | 
- |:-----|:-----|:----| 
- | u2 | access_flags | 1 | 
- | u2 | name_index | 1 | 
- | u2 | descriptor_index | 1 | 
- | u2 | attributes_count | 1 | 
- | attribute_info | attributes | attributes_count | 
+| 类型 | 名称 | 数量 | 
+|:-----|:-----|:----| 
+| u2 | access_flags | 1 | 
+| u2 | name_index | 1 | 
+| u2 | descriptor_index | 1 | 
+| u2 | attributes_count | 1 | 
+| attribute_info | attributes | attributes_count | 
 
 * 其中，access_flags项目可以设置的标志位和含义见下表
 
- | 标志名称 | 标志值 | 含义 | 
- |:-----|:-----|:----| 
- | ACC_PUBLIC | 0x0001 | 方法是否为public | 
- | ACC_PRIVATE | 0x0002 | 方法是否为private | 
- | ACC_PROTECTED | 0x0004 | 方法是否为protected | 
- | ACC_STATIC | 0x0008 | 方法是否为static | 
- | ACC_FINAL | 0x0010 | 方法是否为final | 
- | ACC_SYNCHRONIZED | 0x0020 | 方法是否为synchronized | 
- | ACC_BRIDGE | 0x0040 | 方法是否是由编译器产生的桥接方法 | 
- | ACC_VARARGS | 0x0080 | 方法是否接受不定参数 | 
- | ACC_NATIVE | 0x0100 | 方法是否为native | 
- | ACC_ABSTRACT | 0x0400 | 方法是否为abstract | 
- | ACC_STRICTFP | 0x0800 | 方法是否为strictfp | 
- | ACC_SYNTHETIC | 0x1000 | 方法是否是由编译器自动产生的 | 
+| 标志名称 | 标志值 | 含义 | 
+|:-----|:-----|:----| 
+| ACC_PUBLIC | 0x0001 | 方法是否为public | 
+| ACC_PRIVATE | 0x0002 | 方法是否为private | 
+| ACC_PROTECTED | 0x0004 | 方法是否为protected | 
+| ACC_STATIC | 0x0008 | 方法是否为static | 
+| ACC_FINAL | 0x0010 | 方法是否为final | 
+| ACC_SYNCHRONIZED | 0x0020 | 方法是否为synchronized | 
+| ACC_BRIDGE | 0x0040 | 方法是否是由编译器产生的桥接方法 | 
+| ACC_VARARGS | 0x0080 | 方法是否接受不定参数 | 
+| ACC_NATIVE | 0x0100 | 方法是否为native | 
+| ACC_ABSTRACT | 0x0400 | 方法是否为abstract | 
+| ACC_STRICTFP | 0x0800 | 方法是否为strictfp | 
+| ACC_SYNTHETIC | 0x1000 | 方法是否是由编译器自动产生的 | 
 
 * 跟随access_flags标志的是两项索引值：name_index和descriptor_index：它们都是对常量池的引用，分别代表字段的简单名称以及字段和方法的描述符
 * 方法表包含的固定数据项到descriptor_index为止就结束了，不过在descriptor_index之后跟随者一个属性表集合用于存储一些额外的信息。方法里的Java代码，经过编译器编译成字节码指令后，存放在方法属性表集合中一个名为"Code"的属性里面，属性表作为Class文件格式中最具扩展性的一种数据项目
