@@ -9,6 +9,7 @@ categories:
 
 # 1 前言
 ThreadPoolExecutor源码分析分为以下三部分
+
 * 常量简介
 * 字段简介
 * 内部类简介
@@ -46,6 +47,7 @@ ThreadPoolExecutor源码分析分为以下三部分
 private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
 ```
 __该字段起到两个作用__
+
 1. 记录线程池状态(RUNNNG/SHUTDOWN/STOP/TIDYING/TERMINATED)
 1. 记录线程池线程的数量
 
@@ -200,6 +202,7 @@ __与该字段相关的方法__
 __Worker封装了Thread，因此Worker可以理解为一个线程。Worker实现了Runnable，负责从任务队列中获取任务并执行__
 
 __同时Worker还继承了AQS，（[Java concurrent AQS 源码剖析](https://liuyehcf.github.io/2017/07/02/Java-concurrent-AQS-%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/)）也就是说Work对象本身可以作为Lock来使用，但这是为什么呢?__
+
 * 在ThreadPoolExecutor#runWorker方法中，在成功获取到任务后，会将自己锁定，这个锁定状态用于表示当前work处于工作状态(在执行任务)，当一个任务处理完毕之后，又会解除锁定状态
 * 在ThreadPoolExecutor#interruptIdleWorkders方法中会调用Worker#tryLock()方法，该方法就是尝试获取锁，如果获取失败，则表明worker处于工作状态
 * 这就是Worker继承AQS的原因，可以不借助其他锁机制，仅依靠AQS来提供一种线程安全的状态表示机制
@@ -302,6 +305,7 @@ __同时Worker还继承了AQS，（[Java concurrent AQS 源码剖析](https://li
 ## &emsp;5.1 execute
 
 __该方法是Executor接口的方法，用于向线程池提交任务，其主要逻辑如下__
+
 * 如果当前线程池核心线程数量小于corePoolSize，那么添加一个Work来执行这个提交的任务
 * 否则向线程池的任务队列提交这个任务，如果发现线程池现有的线程数量为0，则添加一个Worker
 * 如果所有情况均失败，则用线程池指定的拒绝策略拒绝任务
@@ -375,10 +379,12 @@ __该方法是Executor接口的方法，用于向线程池提交任务，其主�
 ## &emsp;5.2 addWorker
 
 __该方法向线程池添加一个Worker，包含以下两个参数__
+
 * firstTask：执行的任务，可以为null。(当线程池中没有线程并且任务队列尚有任务时会传入null参数)
 * core：用于标记添加的Worker是否为核心线程
 
 __该方法实现的逻辑如下__
+
 * 首先检查线程池的状态，看是否允许添加新的Worker，若不允许，直接返回false
 * 尝试递增线程池计数，如果数量已达上限，直接返回false
 * 新建Worker并将其添加到workers中去
@@ -501,6 +507,7 @@ __该方法实现的逻辑如下__
 ## &emsp;5.3 runWorker
 
 __runWorker被封装成Worker#run方法，该方法的主要逻辑如下__
+
 * 从任务队列中获取任务并执行
 * 如果任务队列为空，则阻塞在获取任务的过程中
 
@@ -663,6 +670,7 @@ __线程exit后的处理方法__
 ### &emsp;&emsp;&emsp;5.3.2 tryTerminate
 
 __将状态转移成TERMINATED__
+
 * 如果状态是SHUTDOWN并且线程池中无线程且队列为空
 * 如果状态是STOP并且线程池中无线程
 
@@ -723,6 +731,7 @@ __可以看到TIDYING状态存在的意义就是提供一个额外的terminated(
 ## &emsp;5.4 getTask
 
 __该方法从任务队列中获取任务__
+
 * 实现阻塞或者超时终止(keepAliveTime)线程的逻辑
 * 以下情况时，该方法返回null，这会导致runWorker方法退出while循环，从而结束线程生命周期
     1. 线程池线程数量已超过上限，因此当前线程可以终止
@@ -802,6 +811,7 @@ __该方法从任务队列中获取任务__
 ## &emsp;5.5 shutdown
 
 __该方法的逻辑如下__
+
 * 将线程池的状态提高到SHUTDOWN(若之前线程池的状态是RUNNING，那么线程池的状态将会升级到SHUTDOWN，此后不再接受新的任务)或者保持不变
 * 中断所有空闲线程，所谓空闲是指阻塞在getTask()方法调用中的Worker 
 
@@ -860,6 +870,7 @@ __将线程池的状态提高到指定状态，或者保持不变__
 ### &emsp;&emsp;&emsp;5.5.2 interruptIdleWorkers
 
 __中断空闲的Worker__
+
 * 如何判断是否空闲：调用Worker#tryLock，若返回true，则说明空闲，否则非空闲
 
 ```Java
@@ -921,6 +932,7 @@ __中断空闲的Worker__
 ## &emsp;5.6 shutdownNow
 
 __该方法的逻辑如下__
+
 * 将线程池的状态提高到STOP(之前的状态是RUNNING或者SHUTDOWN)或者保持不变
 * 中断所有线程
 
@@ -1016,6 +1028,7 @@ __返回所有未执行的任务__
 ## &emsp;5.7 submit
 
 __该方法是ThreadPoolExecutor父类AbstractExecutorService的方法，AbstractExecutorService实现了ExecutorService接口的部分方法__
+
 * 该方法将Runnable封装成一个RunnableFuture，该接口实现了Runnable，然后交给execute方法执行
 * 返回封装好的RunnableFuture，以便调用者使用RunnableFuture执行一些操作，例如cancel等
 

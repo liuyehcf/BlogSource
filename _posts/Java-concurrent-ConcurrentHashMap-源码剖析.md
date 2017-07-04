@@ -13,6 +13,7 @@ categories:
 __本篇博客分析的是JDK 1.8 的ConcurrentHashMap，该版本的ConcurrentHashMap与JDK 1.7有较大的差异__
 
 __ConcurrentHashMap源码分析分为以下几个部分__
+
 * 常量简介
 * 字段简介
 * 内部类简介
@@ -120,6 +121,7 @@ __ConcurrentHashMap源码分析分为以下几个部分__
 ```
 
 __常量分为两大类__
+
 1. __第一大类是配置参数__
 
     * __MAXIMUM_CAPACITY__：32位整型中最高两位作为控制参数，因此hashtable的最大容量是1<<30，必须是2的幂次(至于为什么必须是2的幂次，以及2的幂次能带来的好处，下面的分析会多次提到)
@@ -213,18 +215,21 @@ __常量分为两大类__
 ## &emsp;4.1 Node
 
 __Node继承自Map.Entry，是其余节点的父类__
+
 * Node子类中如果hash值为负数，代表这类节点是特殊节点，特殊节点不持有key-value。例如TreeBin，ForwardingNode，ReservationNode
 * Node子类中如果hash值非负数，代表这类节点是正常节点，持有key-value。例如Node本身以及TreeNode
 
 ## &emsp;4.2 TreeNode
 
 __TreeNode节点是树节点__
+
 * 增加了左右孩子字段，父节点字段，颜色字段等
 * 采用的树形结构是：红黑树
 
 ## &emsp;4.3 TreeBin
 
 __当一个bin/bucket持有一颗树时，该槽位放置的节点是TreeBin__
+
 * TreeBin节点持有红黑树根节点
 * TreeBin节点持有读写锁，该读写所强制写操作必须等待读操作执行完毕
 * TreeBin内部定义了一些红黑树性质维护的静态方法
@@ -232,6 +237,7 @@ __当一个bin/bucket持有一颗树时，该槽位放置的节点是TreeBin__
 ## &emsp;4.4 ForwardingNode
 
 __ForwardingNode节点表明此时正在进行扩容__
+
 * 同时表明当前槽位中的节点已经转移到新的hashtable中去了
 * 该节点持有nextTable的引用
 
@@ -244,6 +250,7 @@ __??__
 ## &emsp;5.1 spread
 
 __spread用于转换hash值__
+
 * 由于table的大小是2的幂次，槽位的计算利用的是求余运算，因此那些高位有区别的散列值在低容量时将始终冲突
     * 举个例子，假设当前table的大小是16，hash值为5，(5+1<<7)，(5+1<<8),...这些元素将始终冲突，因为求余后，这些元素都位于同一个槽位中
 * h ^ (h >>> 16)：h逻辑右移16位与原值异或，得到的结果其高16位与原来相同，低16位由原来的高16位与原来的低16位共同决定。这样做的好处是：即便hashtable的容量较小，hash值的高16位在槽位计算上仍然能起到作用
@@ -273,6 +280,7 @@ __spread用于转换hash值__
 ## &emsp;5.2 tableSizeFor
 
 __tableSizeFor方法用于计算不小于给定数值的最大2的幂次__
+
 * 该方法等效的逻辑是：找到c-1的最高位，假设为第i位，生成一个从第i位到第0位都是1，其余位全是0的数值，然后返回该数值+1
 * 5条位或语句就可以生成一个从第i位到第0位都是1，其余位全是0的数值
 
@@ -295,6 +303,7 @@ __tableSizeFor方法用于计算不小于给定数值的最大2的幂次__
 ## &emsp;5.3 access方法
 
 __访问table元素的方法__
+
 * 其中ASHIFT是指数组元素的大小
 * ABASE指的是数组头元素的偏移量
 * 因此((long)i << ASHIFT) + ABASE指的是数组第i个元素的偏移量
@@ -319,6 +328,7 @@ __访问table元素的方法__
 ## &emsp;6.1 put
 
 __put方法用于向HashMap中插入一个键值对__
+
 * 键和值都必须不为null(为什么)
 
 ```Java
@@ -343,6 +353,7 @@ __put方法用于向HashMap中插入一个键值对__
 ## &emsp;6.2 putVal
 
 __putVal是真正执行插入操作的方法__
+
 * 第三个参数为true时代表插入的键值必须不存在，否则不会更新原值，而是返回null
 * 
 
@@ -438,6 +449,7 @@ __putVal是真正执行插入操作的方法__
 ## &emsp;6.3 initTable
 
 __initTable方法用于初始化hashtable__
+
 * sizeCtl字段的值代表的就是初始化的hashtable的大小
 * 初始化过程仅能通过一个线程来完成
 
@@ -476,6 +488,7 @@ __initTable方法用于初始化hashtable__
 ## &emsp;6.4 transfer
 
 __transfer方法用于hashtable的扩张__
+
 * 多个线程将会同时参与扩张过程
 * 利用transferIndex字段来串行化槽位的分配
 * 表大小始终保持为2的幂次，在表的扩张中起到非常重要的作用。原槽位中的节点仅有两个去向，一个就是原槽位i，另一个就是i+n/2，其中n是新表大小

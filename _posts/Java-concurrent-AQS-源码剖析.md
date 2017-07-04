@@ -11,6 +11,7 @@ categories:
 # 1 引言
 AQS(AbstractQueuedSynchronizer，同步阻塞队列)是concurrent包下锁机制实现的基础框架
 这篇博客主要针对AbstractQueuedSynchronizer的源码进行分析，大致分为三个部分：
+
 * 静态内部类Node的解析
 * 重要常量以及字段的解析
 * 重要方法的源码详解。
@@ -41,10 +42,12 @@ AQS在内部维护了一个同步阻塞队列，__下面简称sync queue__，该
 ```
 
 以下两个均为Node#nextWaiter字段的可取值
+
 * __SHARED__：若Node#nextWaiter为SHARED，那么表明该Node节点处于共享模式
 * __EXCLUSIVE__：若Node#nextWaiter为EXCLUSIVE，那么表明该Node节点处于独占模式
 
 以下五个均为Node#waitStatus字段的可取值
+
 * __CANCELLED__：用于标记一个已被取消的节点，一旦Node#waitStatus的值被设为CANCELLED，那么waitStatus的值便不再被改变
 * __SIGNAL__：__标记一个节点(记为node)处于这样一种状态：当node释放资源(unlock/release)时，node节点必须唤醒其后继节点__
 * __CONDITION__：用于标记一个节点位于条件变量的阻塞队列中(我称这个阻塞队列为Condition list)，本篇暂不介绍Condition相关源码，因此读者可以暂时忽略
@@ -165,6 +168,7 @@ AQS字段仅有三个，源码如下
      */
     private volatile int state;
 ```
+
 * __head__：sync queue队列的头节点，只通过setHead方法进行修改。并且头结点的状态不可能是CANCEL
 * __tail__：sync queue队列的尾节点，仅通过addWaiter方法向尾部增加新节点
 * __state__：资源状态，该状态与Node#waitStatus含义完全不同，注意区分
@@ -173,6 +177,7 @@ AQS字段仅有三个，源码如下
 
 ## &emsp;4.1 acquire
 __acquire方法是独占模式下实现加锁语义的入口方法__
+
 * 该方法内部不响应中断，在成功获取资源后会恢复中断现场，但是不会抛出InterruptedException异常
 * 首先，利用tryAcquire尝试获取资源，如果成功了，则方法直接返回，当前线程直接获取锁状态；如果失败了，当前线程被封装成Node节点并添加到sync queue中，并在一个死循环中尝试获取资源直至成功
 * 通常，AQS子类会将该方法再进行一层封装，例如ReentrantLock#lock()方法就会调用这里的acquire方法来实现加锁的语义
@@ -203,6 +208,7 @@ __acquire方法是独占模式下实现加锁语义的入口方法__
 ### &emsp;&emsp;&emsp;4.1.1 tryAcquire
 
 __tryAcquire方法用于判断是否能够获取资源__
+
 * 本方法仅抛出一个异常，意味着该方法的具体含义交给AQS的子类去完成
 * 注意，该方法的实现不可有任何耗时操作，更不可阻塞线程，仅实现是否可获取资源(换言之，是否可获取锁)的逻辑即可
 
@@ -214,6 +220,7 @@ __tryAcquire方法用于判断是否能够获取资源__
 
 ### &emsp;&emsp;&emsp;4.1.2 addWaiter
 __addWaiter方法将节点添加到到sync queue中__
+
 * 根据指定模式，将当前线程封装成一个Node节点，并且添加到sync queue中
 * 首先尝试直接入队，若失败则交给enq方法处理
 
@@ -249,6 +256,7 @@ __addWaiter方法将节点添加到到sync queue中__
 ### &emsp;&emsp;&emsp;4.1.3 enq
 
 __enq方法确保给定节点成功入队__
+
 * addWaiter方法会首先尝试一次入队。
 * 如果失败了(可能原因是CAS失败或者sync queue尚未初始化)，那么通过enq方法进行入队操作
 * 可以看到enq也是采用了死循环+CAS操作，这是使用CAS的通用模式
@@ -280,10 +288,12 @@ __enq方法确保给定节点成功入队__
     }                
 ```
 __这里抛出一个问题__
+
 * 在初始化sync queue中，将一个new Node()设置为了sync queue的头结点，该节点没有关联任何线程，我称之为"Dummy Node"，这个头结点"Dummy Node"待会可能会被设置为SIGNAL状态，那么它是如何唤醒后继节点的呢？我会在在讲到release时进行解释
 
 ### &emsp;&emsp;&emsp;4.1.4 acquireQueued
 __至此，线程已被封装成节点，并且成功添加到sync queue中去了，接下来，来看最重要的acquireQueued方法__
+
 * 该方法不断地通过死循环+CAS操作的方式获取资源(当且仅当节点是sync queue中第二个节点时才有资格获取资源)
 * 如果节点不是队列中第二个节点或者tryAcquire失败，那么需要阻塞自己，阻塞自己前必须将前继节点标记为SIGNAL状态
 * 该方法会记录中断信号，并且在成功返回后交给上层函数来恢复中断现场
@@ -332,6 +342,7 @@ __至此，线程已被封装成节点，并且成功添加到sync queue中去�
 ### &emsp;&emsp;&emsp;4.1.5 shouldParkAfterFailedAcquire以及parkAndCheckInterrupt
 
 __shouldParkAfterFailedAcquire方法用于判断当前节点是否可以阻塞自己__
+
 * 若前继节点为SIGNAL则返回true，表示该节点可以放心阻塞自己
 * 否则找到有效前继节点，并尝试将其状态改为SIGNAL，并返回false，交给上一层函数继续处理。
 
@@ -385,12 +396,14 @@ __shouldParkAfterFailedAcquire方法用于判断当前节点是否可以阻塞�
 
 
 __关于上面提到的两个问题__
+
 * 如果在当前线程阻塞之前，前继节点就唤醒了当前线程，那么当前线程不就永远阻塞下去了吗？
     * AQS采用的是Unsafe#park以及Unsafe#unpark，这对方法能够很好的处理这类问题，可以先unpark获取一枚许可，然后执行park不会阻塞当前线程，而是消耗这个提前获取的许可，注意，多次unpark仅能获取一枚许可
 * 万一有别的线程更改了前继节点的状态，导致前继节点不唤醒当前线程，那么当前线程不就永远阻塞下去了吗？
     * 一旦一个节点被设为SIGNAL状态，AQS框架保证，任何改变其SIGNAL状态的操作都会唤醒其后继节点，因此，只要节点看到其前继节点为SIGNAL状态，便可放心阻塞自己
 
 __parkAndCheckInterrupt方法用于阻塞当前线程__
+
 * 阻塞当前线程，一旦被唤醒(unpark)或者被中断(interrupt)后返回中断标志位的状态，便于外层方法恢复中断现场
 
 ```Java
@@ -406,6 +419,7 @@ __parkAndCheckInterrupt方法用于阻塞当前线程__
     }
 ```
 __至此，独占模式的acquire调用链分析完毕，总结一下__
+
 * 首先尝试获取锁(tryAcquire)，若成功则直接返回
 * 若失败，将当前线程封装成Node节点加入到sync queue队列中，当该节点位于第二个节点时，会重新尝试获取锁，获取成功则返回，失败或者当前节点不是sync queue第二个节点则将前继节点设置为SIGNAL状态后阻塞自己，直至前继节点唤醒自己或者被中断
 
@@ -413,6 +427,7 @@ __AQS通过死循环以及CAS操作来串行化并发操作，并且通过这种
 
 ## &emsp;4.2 release
 __release方法是独占模式下实现解锁语义的入口方法__
+
 * 只有当头结点的状态不为0时，才会执行唤醒后继节点的动作
 * 对于独占模式中，节点状态只有SIGNAL、0和CANCELL，而CANCELL状态的节点不会成为头结点，因此(h !=0 )在这里只有一种可能，就是SIGNAL状态
 * AQS子类通常将该方法包装成unlock方法，例如ReentrantLock
@@ -442,11 +457,13 @@ __release方法是独占模式下实现解锁语义的入口方法__
 ```
 
 __在此，解释一下enq方法中提到的问题__
+
 * 即那个"Dummy Node"如何唤醒后继：由于"Dummy Node"不关联任何线程，因此真正的唤醒操作实际上是由外部的线程来完成的，这里的外部线程是指从未进入sync queue的线程(即那些执行acquire直接通过tryAcquire返回的线程)，因此，"Dummy Node"节点设置为SIGNAL状态，也能够正常唤醒后继
 
 ### &emsp;&emsp;&emsp;4.2.1 tryRelease
 
 __tryRelease方法用于判断是否能够释放资源__
+
 * 交给AQS子类实现的方法，只需要定义释放资源的逻辑即可
 * 该方法的实现不应该有耗时的操作，更不该阻塞
 
@@ -459,6 +476,7 @@ __tryRelease方法用于判断是否能够释放资源__
 ### &emsp;&emsp;&emsp;4.2.2 unparkSuccessor
 
 __通过unparkSuccessor方法唤醒指定节点的后继节点__
+
 * 通过节点的next字段定位后继，若next字段为null，并不代表一定没有后继，从tail往前找到后继节点
 
 ```Java
@@ -501,6 +519,7 @@ __通过unparkSuccessor方法唤醒指定节点的后继节点__
 ## &emsp;4.3 acquireShared
 
 __acquireShared方法是共享模式下实现加锁语义的入口方法__
+
 * 该方法通过tryAcquireShared尝试获取资源，如果返回值大于等于0，则说明获取成功，直接返回
 * tryAcquireShared返回值小于0，说明获取失败。那么将线程封装成共享模式的节点并添加到sync queue中
 * 该方法不响应中断，在获取资源后会恢复中断现场
@@ -528,6 +547,7 @@ __acquireShared方法是共享模式下实现加锁语义的入口方法__
 ### &emsp;&emsp;&emsp;4.3.1 tryAcquireShared
 
 __tryAcquireShared方法用于判断是否能够获取资源__
+
 * 交给AQS子类实现的方法，只需要定义获取资源的逻辑即可
 * 该方法的实现不应该有耗时的操作，更不该阻塞
 
@@ -540,6 +560,7 @@ __tryAcquireShared方法用于判断是否能够获取资源__
 ### &emsp;&emsp;&emsp;4.3.2 doAcquireShared
 
 __doAcquireShared方法是核心方法__
+
 * doAcquireShared方法将当前线程封装成共享模式的节点，并加入到sync queue中
 * 通过死循环并尝试获取资源。共享模式下，仍然只有sync queue中第二个节点才有资格获取资源。所有节点必须排队依次通过
     * 假设现有资源数量是2，第二个节点需要3，第三个节点需要1。那么第三个节点是无法通过的，它必须等到第二个节点成功获取资源后才能尝试获取资源
@@ -591,6 +612,7 @@ __doAcquireShared方法是核心方法__
 
 ### &emsp;&emsp;&emsp;4.3.3 setHeadAndPropagate
 __setHeadAndPropagate方法主要逻辑__
+
 * 将当前节点设置为头结点，并且当仍有资源可供其他线程获取时，让其他线程继续获取资源，这也就是共享模式的含义
 * 虽然在共享模式下可能有多个线程获取资源，但是有且仅有一个线程能够修改头结点(因为只有sync queue中第二个节点才能获取资源，而其他已经获取资源的线程已经不在队列中了)，因此头结点的修改是线程安全的
 
@@ -661,6 +683,7 @@ __releaseShared方法是共享模式下实现解锁语义的入口方法__
 ### &emsp;&emsp;&emsp;4.4.1 tryReleaseShared
 
 __tryReleaseShared方法用于判断是否能够释放资源__
+
 * 交给AQS子类实现的方法，只需要定义释放资源的逻辑即可
 * 该方法的实现不应该有耗时的操作，更不该阻塞
 
@@ -672,6 +695,7 @@ __tryReleaseShared方法用于判断是否能够释放资源__
 
 ### &emsp;&emsp;&emsp;4.4.2 doReleaseShared
 __doReleaseShared方法是共享模式下共享含义体现的重要方法__
+
 * 该方法配合setHeadAndPropagate方法能够实现release propagate
 * 如果仍有资源可获取，那么sync queue中的节点会陆续获取资源，直至无资源可获取或者队列为空时，传播停止
 
@@ -719,6 +743,7 @@ __doReleaseShared方法是共享模式下共享含义体现的重要方法__
 ```
 
 __几个问题__
+
 * 为什么要将一个节点从SIGNAL先改为0，再从0改为PROPAGATE，而不是直接从SIGNAL改成PROPAGATE？
 * 将一个节点从0改为PROPAGATE有什么意义？似乎没有PROPAGATE，共享状态也能传播下去
 * 仅有头结点能处于PROPAGATE，那么什么时候会被设置成PROPAGATE状态呢
@@ -758,6 +783,7 @@ __相比于acquire，acquireInterruptibly会响应interrupt，并且抛出Interr
 ### &emsp;&emsp;&emsp;4.5.1 doAcquireInterruptibly
 
 __doAcquireInterruptibly方法与acquireQueued的区别如下__
+
 * acquireQueued在发现线程被中断时，并不立即响应，而是等方法返回后重现中断现场
 * doAcquireInterruptibly在发现线程被中断时，立即响应，即抛出InterruptedException异常
 
@@ -827,6 +853,7 @@ __相比于acquireShared，acquireSharedInterruptibly会响应interrupt，并且
 
 
 __doAcquireSharedInterruptibly方法与doAcquireShared的区别如下__
+
 * doAcquireShared在发现线程被中断时，并不立即响应，而是等方法返回后重现中断现场
 * doAcquireSharedInterruptibly在发现线程被中断时，立即响应，即抛出InterruptedException异常
 
@@ -901,6 +928,7 @@ __独占模式下，该方法允许阻塞指定时间，同时能够响应中断
 ### &emsp;&emsp;&emsp;4.7.1 doAcquireNanos
 
 __doAcquireNanos方法与acquireQueued的区别如下__
+
 * acquireQueued会阻塞直至获取资源，且不响应中断，只是在返回后恢复中断现场
 * doAcquireNanos会阻塞直至获取资源或者超时，且可以响应中断，直接抛出InterruptedException异常
 
@@ -986,6 +1014,7 @@ __共享模式下，该方法允许阻塞指定时间，同时能够响应中断
 ### &emsp;&emsp;&emsp;4.8.1 doAcquireSharedNanos
 
 __doAcquireSharedNanos方法与acquireShared的区别如下__
+
 * acquireShared会阻塞直至获取资源，且不响应中断，只是在返回后恢复中断现场
 * doAcquireSharedNanos会阻塞直至获取资源或者超时，且可以响应中断，直接抛出InterruptedException异常
 

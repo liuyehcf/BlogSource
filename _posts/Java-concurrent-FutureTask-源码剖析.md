@@ -10,6 +10,7 @@ categories:
 # 1 前言
 
 __FutureTask源码分析将分为以下几个部分__
+
 1. 继承体系介绍
 1. 常量简介
 1. 字段简介
@@ -118,6 +119,7 @@ __FutureTask仅有以下五个字段__
 ## &emsp;6.1 WaitNode
 
 __WaitNode将Thread对象封装成一个链表的节点__
+
 * 那些阻塞在get()方法调用中的线程将会在此链表中排队等候
 * 当任务完成或者异常结束时，FutureTask会依次唤醒阻塞在get()方法中的线程
 
@@ -139,6 +141,7 @@ __WaitNode将Thread对象封装成一个链表的节点__
 ## &emsp;7.1 构造方法
 
 __FutureTask含有两个构造方法__
+
 * 一个构造方法接受一个Callable对象
 * 另一个构造方法接受一个Runnable对象，和一个Result。
 
@@ -200,6 +203,7 @@ __该静态方法负责将Runnable对象适配成一个Callable对象__
 ```
 
 __其中适配器RunnableAdapter如下__
+
 * 该类仅仅是将一个Runnable对象适配成一个Callable对象，并无他用
 * 注意到result通过构造方法进行赋值，然后在call方法中直接返回，与Runnable无任何关系
 
@@ -228,6 +232,7 @@ __其中适配器RunnableAdapter如下__
 ## &emsp;7.2 run
 
 __线程执行的主要方法__
+
 * 首先判断状态，只有NEW状态才能正常执行该方法，否则说明被cancel了。
 * 执行Callable的call方法，正常执行或者异常执行将会触发不同的状态转移方法
 
@@ -275,6 +280,7 @@ __线程执行的主要方法__
 ### &emsp;&emsp;&emsp;7.2.1 setException
 
 __该方法逻辑如下__
+
 * 该方法将FutureTask的状态通过CAS改为COMPLETING
 * 然后将outcome赋值为异常对象
 * 最后唤醒阻塞线程
@@ -302,6 +308,7 @@ __该方法逻辑如下__
 ### &emsp;&emsp;&emsp;7.2.2 set
 
 __该方法逻辑如下__
+
 * 该方法将FutureTask的状态通过CAS改为COMPLETING
 * 然后将outcome赋值Callable#run的返回结果
 * 最后唤醒阻塞线程
@@ -392,6 +399,7 @@ __该方法会唤醒所有阻塞在get方法中的所有WaitNode节点__
 ## &emsp;7.3 get
 
 __get方法有两个重载版本__
+
 * 第一个版本会阻塞线程，直至FutureTask以某种方式结束后被唤醒
 * 第二个版本可以设定最长阻塞时间。阻塞线程，直至FutureTask以某种方式结束后被唤醒，或者超时。
 
@@ -490,6 +498,7 @@ __阻塞get()方法的调用线程__
 ### &emsp;&emsp;&emsp;7.3.2 removeWaiter
 
 __将一个阻塞超时的节点，或者被中断的节点移出链表__
+
 * 这个方法可能存在竞争，但是Doug Lea(作者)并未采用CAS操作串行化链表处理，而是采用另一种方式，一旦发现异常就重新遍历链表
 * 这种方式在链表非常长且存在竞争时会导致效率比较低，但是Doug Lea认为并不需要考虑这种特殊情况
 
@@ -536,6 +545,7 @@ __将一个阻塞超时的节点，或者被中断的节点移出链表__
 ### &emsp;&emsp;&emsp;7.3.3 report
 
 __根据FutureTask的状态，返回相应的结果__
+
 * 若FutureTask的最终状态是NORMAL，说明Callable#call正常执行，返回Callable#call方法返回的结果即可
 * 若FutureTask的最终状态大于等于CANCEL，说明FutureTask被cancel了，抛出CancellationException异常
 * 否则FutureTask的最终状态是EXCEPTIONAL，说明Callable#call执行过程中抛出异常，抛出ExecutionException异常

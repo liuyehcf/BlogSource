@@ -42,6 +42,7 @@ public interface Condition {
 ```
 Condition接口定义了一系列monitor methods，正如AQS作为synchronized的替代者，一个Condition对象作为Object monitor的替代者
 我们不妨先思考一下，实现一个Condition大致上需要哪些结构
+
 * 首先，Condition对象必须提供一个阻塞队列，用于放置那些阻塞与当前Condition对象上的线程
 * 其次，Condition对象还需要提供一个同步队列，用于放置那些收到signal的线程，这些线程将会竞争锁(或者资源)
 
