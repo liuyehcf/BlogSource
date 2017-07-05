@@ -6,7 +6,10 @@ categories:
 - Java concurrent 源码剖析
 ---
 
+__目录__
 
+<!-- toc -->
+<!--more-->
 
 # 1 前言
 
@@ -19,8 +22,6 @@ __ConcurrentHashMap源码分析分为以下几个部分__
 * 内部类简介
 * Utils方法简介
 * 重要方法源码分析
-
-<!--more-->
 
 # 2 常量简介
 ```Java

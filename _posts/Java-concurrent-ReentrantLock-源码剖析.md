@@ -6,10 +6,14 @@ categories:
 - Java concurrent 源码剖析
 ---
 
+__目录__
+
+<!-- toc -->
+<!--more-->
+
 # 1 前言
 本篇博客主要分析ReentrantLock的源码，ReentrantLock的实现基于AbstractQeueudSynchronizer(AQS)，AQS源码剖析请参见：[Java concurrent AQS 源码剖析](https://liuyehcf.github.io/2017/07/02/Java-concurrent-AQS-%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/)
 
-<!--more-->
 
 # 2 内部类Sync
 Sync是ReentrantLock的静态内部类，Sync继承自AQS，重写了tryRelease方法，但是并未重写tryAcquire方法而是提供了一个nonfairTryAcquire，这意味着tryAcquire方法会交给Sync的子类实现。ReentrantLock的lock方法unLock方法均会调用Sync实例的相应acquire以及release方法

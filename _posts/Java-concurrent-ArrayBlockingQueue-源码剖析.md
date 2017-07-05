@@ -6,6 +6,10 @@ categories:
 - Java concurrent 源码剖析
 ---
 
+__目录__
+
+<!-- toc -->
+<!--more-->
 
 # 1 前言
 
@@ -14,7 +18,6 @@ __ArrayBlockingQueue的分析分为以下几个部分__
 * 字段介绍
 * 重要方法源码分析
 
-<!--more-->
 
 # 2 字段介绍
 ```Java

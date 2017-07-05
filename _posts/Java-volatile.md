@@ -6,13 +6,15 @@ categories:
 - Java Memory Model
 ---
 
+__目录__
+
+<!-- toc -->
+<!--more-->
+
 
 # 1 前言
 
 本篇博客将介绍volatile的内存语义以及volatile内存语义的实现
-
-
-<!--more-->
 
 # 2 基本概念
 

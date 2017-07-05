@@ -6,14 +6,14 @@ categories:
 - Java Memory Model
 ---
 
+__目录__
+
+<!-- toc -->
+<!--more-->
 
 # 1 前言
 
 本篇博客主要介绍final的内存语义
-
-
-<!--more-->
-
 
 # 2 final域的重排序规则
 

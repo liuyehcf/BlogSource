@@ -4,12 +4,13 @@ date: 2017-07-05 08:51:57
 tags:
 ---
 
+__目录__
 
+<!-- toc -->
+<!--more-->
 
 # 1 Java基础
 
-
-<!--more-->
 
 ## &emsp;1.1 Arrays.sort实现原理和Collection实现原理 
 ## &emsp;1.2 foreach和while的区别(编译之后) 

@@ -6,7 +6,10 @@ categories:
 - Java concurrent 源码剖析
 ---
 
+__目录__
 
+<!-- toc -->
+<!--more-->
 
 # 1 引言
 AQS(AbstractQueuedSynchronizer，同步阻塞队列)是concurrent包下锁机制实现的基础框架
@@ -17,8 +20,6 @@ AQS(AbstractQueuedSynchronizer，同步阻塞队列)是concurrent包下锁机制
 * 重要方法的源码详解。
 
 所有的分析仅基于个人的理解，若有不正之处，请谅解和批评指正，不胜感激！！！
-
-<!--more-->
 
 # 2 Node解析
 AQS在内部维护了一个同步阻塞队列，__下面简称sync queue__，该队列的元素即静态内部类Node的实例。首先来看Node中涉及的常量定义，源码如下

@@ -6,6 +6,10 @@ categories:
 - Java concurrent 源码剖析
 ---
 
+__目录__
+
+<!-- toc -->
+<!--more-->
 
 # 1 前言
 ThreadPoolExecutor源码分析分为以下三部分
@@ -14,8 +18,6 @@ ThreadPoolExecutor源码分析分为以下三部分
 * 字段简介
 * 内部类简介
 * 重要方法源码分析
-
-<!--more-->
 
 # 2 常量简介
 
