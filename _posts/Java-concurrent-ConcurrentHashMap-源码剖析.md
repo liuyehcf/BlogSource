@@ -446,7 +446,6 @@ __putVal是真正执行插入操作的方法__
     }
 ```
 
-
 ## &emsp;6.3 initTable
 
 __initTable方法用于初始化hashtable__
@@ -809,7 +808,6 @@ __fullAddCount方法用于__
         }
     }
 ```
-
 
 ## &emsp;6.7 sumCount
 

@@ -146,7 +146,6 @@ AQS在内部维护了一个同步阻塞队列，__下面简称sync queue__，该
 * __nextWaiter__：独占模式中就是null，共享模式中就是SHARED。在ConditionObject的Condition list中指向下一个节点
 * __注意：Condition list用nextWaiter来连接单向链表(pre与next是无用的)，sync queue利用pre和next来连接双向链表(nextWaiter仅用于标记独占或者共享模式而已)，不要搞混了！！！__
 
-
 # 3 AQS字段解析
 AQS字段仅有三个，源码如下
 ```Java
@@ -182,7 +181,6 @@ __acquire方法是独占模式下实现加锁语义的入口方法__
 * 该方法内部不响应中断，在成功获取资源后会恢复中断现场，但是不会抛出InterruptedException异常
 * 首先，利用tryAcquire尝试获取资源，如果成功了，则方法直接返回，当前线程直接获取锁状态；如果失败了，当前线程被封装成Node节点并添加到sync queue中，并在一个死循环中尝试获取资源直至成功
 * 通常，AQS子类会将该方法再进行一层封装，例如ReentrantLock#lock()方法就会调用这里的acquire方法来实现加锁的语义
-
 
 ```Java
     /**
@@ -347,7 +345,6 @@ __shouldParkAfterFailedAcquire方法用于判断当前节点是否可以阻塞�
 * 若前继节点为SIGNAL则返回true，表示该节点可以放心阻塞自己
 * 否则找到有效前继节点，并尝试将其状态改为SIGNAL，并返回false，交给上一层函数继续处理。
 
-
 ```Java
     /**
      * Checks and updates status for a node that failed to acquire.
@@ -394,7 +391,6 @@ __shouldParkAfterFailedAcquire方法用于判断当前节点是否可以阻塞�
         return false;
     }
 ```
-
 
 __关于上面提到的两个问题__
 
@@ -751,7 +747,6 @@ __几个问题__
     * 暂时的PROPAGATE：唤醒后继节点后，又进行了一次循环，再次将同一个节点从0设置成PROPAGATE状态，会产生两种结果。第一种结果是后继节点成功获取资源，那么当前标记为PROPAGATE状态的头结点将被移出sync queue；第二种结果是后继节点获取资源失败，重新将当前标记为PROPAGATE状态的头结点设置为SIGNAL状态，至此传播结束
     * 持久的PROPAGATE：当前节点并没有后继节点
 
-
 ## &emsp;4.5 acquireInterruptibly
 
 __相比于acquire，acquireInterruptibly会响应interrupt，并且抛出InterruptedException异常__
@@ -852,12 +847,10 @@ __相比于acquireShared，acquireSharedInterruptibly会响应interrupt，并且
 
 ### &emsp;&emsp;&emsp;4.6.1 doAcquireSharedInterruptibly
 
-
 __doAcquireSharedInterruptibly方法与doAcquireShared的区别如下__
 
 * doAcquireShared在发现线程被中断时，并不立即响应，而是等方法返回后重现中断现场
 * doAcquireSharedInterruptibly在发现线程被中断时，立即响应，即抛出InterruptedException异常
-
 
 __与doAcquireShared方法的差异部分已用注释标记，其余部分的逻辑与doAcquireShared类似，不再赘述__
 

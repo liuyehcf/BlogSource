@@ -16,7 +16,6 @@ Java语言本身提供了基于Object的wait/notify机制，任何Java Object都
 本篇博文针对ConditionObject的源码进行分析，有关AQS的源码分析请参考另一篇博客 [Java concurrent AQS 源码剖析](https://liuyehcf.github.io/2017/07/02/Java-concurrent-AQS-%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/) 
 所有的分析仅基于个人的理解，若有不正之处，请谅解和批评指正，不胜感激！！！
 
-
 # 2 Condition接口
 ```Java
 public interface Condition {
@@ -241,8 +240,6 @@ transferAfterCancelledWait方法在发生中断时，将节点从condition queue
 ```
 可以看出，执行transferAfterCancelledWait方法的线程CAS成功时返回true，中断模式为THROW_IN；失败时返回false，中断模式为REINTERRUPT
 注意，因为interrupt而被已送至sync queue的节点，仍然位于condition queue中(其状态不为CONDITION)，其nextWaiter字段不为空，在await方法中会执行unlinkCancelledWaiters方法，来除去这些异常节点
-
-
 
 ## &emsp;3.3 signal
 signal方法类似于Object#notify方法，将一个节点(线程)从条件变量的阻塞队列(condition queue)中移动到同步队列中(sync queue)，让该节点重新尝试获取资源
@@ -505,7 +502,6 @@ signalAll方法类似于Object的notifyAll方法，该方法唤醒所有阻塞�
             return !timedout;
         }
 ```
-
 
 至此ConditionObject源码大致上分析完毕
 

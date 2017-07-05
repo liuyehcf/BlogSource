@@ -41,7 +41,6 @@ synchronized是重量级锁，重量级锁通过对象内部的监视器(monitor
 
 当退出或者抛出异常时必须要释放锁，synchronized代码块能自动保证这一点
 
-
 # 3 JVM对内建锁机制的优化
 
 ## &emsp;3.1 锁消除
@@ -84,8 +83,6 @@ __释放锁__
 3. 如果CAS操作替换失败，说明有其他线程尝试获取该锁，则需要在释放锁的同时唤醒被挂起的线程
 
 ![](/images/Java-锁机制简介/轻量级锁膨胀流程图.png)
-
-
 
 ## &emsp;3.5 偏向锁
 引入偏向锁主要目的是：为了在无多线程竞争的情况下尽量减少不必要的轻量级锁执行路径(CAS原子指令)。
@@ -131,7 +128,6 @@ __释放锁__：偏向锁的释放采用了一种只有竞争才会释放锁的�
 * 优点：线程竞争不使用自旋，不会消耗CPU
 * 缺点：线程阻塞，响应时间缓慢
 * 场景：追求吞吐量,锁占用时间较长
-
 
 # 4 自旋锁及其相关变体
 
@@ -221,7 +217,6 @@ Ticket Lock优劣势总结
     * 无法响应中断
     * 多个公共线程在共享资源上自旋，开销较大
 
-
 ## &emsp;4.3 CLH锁
 CLH锁(Craig，Landin，and Hagersten locks)在Ticket锁的机制上进行了优化，让每个线程在 __非共享变量上自旋__ ，减少了共享变量的同步开销
 
@@ -234,7 +229,6 @@ class QNode {
 public class CLHLockDemo {
     AtomicReference<QNode> tail = new AtomicReference<QNode>(new QNode());
     ThreadLocal<QNode> currNode;
-
 
     public CLHLockDemo() {
         tail = new AtomicReference<QNode>(new QNode());
@@ -251,7 +245,6 @@ public class CLHLockDemo {
 
         //将当前节点通过CAS操作加到队列尾，返回原先的队列尾，作为它的前继节点
         QNode prev = tail.getAndSet(curr);
-
 
         while (prev.locked) {
             //在前继节点的状态上自旋

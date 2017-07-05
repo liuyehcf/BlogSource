@@ -21,7 +21,6 @@ __FutureTask源码分析将分为以下几个部分__
 1. 内部类简介
 1. 重要方法源码分析
 
-
 # 2 继承体系介绍
 
 # 3 Future接口
@@ -53,7 +52,6 @@ public interface Future<V> {
 ## &emsp;3.1 RunnableFuture
 
 __接口仅仅继承了Runnable接口与Future接口，FutureTask实现了RunnableFuture接口__
-
 
 # 4 常量简介
 
@@ -99,7 +97,6 @@ __FutureTask仅有以下五个字段__
      * NEW -> INTERRUPTING -> INTERRUPTED
      */
     private volatile int state;
-
 
     /** The underlying callable; nulled out after running */
     private Callable<V> callable;
@@ -230,7 +227,6 @@ __其中适配器RunnableAdapter如下__
         }
     }
 ```
-
 
 ## &emsp;7.2 run
 
@@ -398,7 +394,6 @@ __该方法会唤醒所有阻塞在get方法中的所有WaitNode节点__
     }
 ```
 
-
 ## &emsp;7.3 get
 
 __get方法有两个重载版本__
@@ -543,7 +538,6 @@ __将一个阻塞超时的节点，或者被中断的节点移出链表__
         }
     }
 ```
-
 
 ### &emsp;&emsp;&emsp;7.3.3 report
 
