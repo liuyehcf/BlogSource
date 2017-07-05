@@ -43,11 +43,75 @@ categories:
 
 读final域的重排序规则可以确保：在读一个对象的final域之前，一定会先读包含这个fianl域的对象的引用
 
+* 请看下面的例子
+
+```Java
+public class FinalExample {
+    int i;
+    final int j;
+
+    static FinalExample obj;
+
+    public FinalExample() {
+        i = 1;
+        j = 2;
+    }
+
+    public static void writer() {
+        obj = new FinalExample();
+    }
+
+    public static void reader() {
+        FinalExample object = obj;
+        int a = object.i;
+        int b = object.j;
+    }
+}
+```
+
+* 如果线程A执行writer()，线程B执行reader()
+    * 假定线程A的执行顺序是：构造函数开始执行->写普通域i->写final域j->StoreStore屏障->构造函数执行结束->把构造对象的引用赋值给引用变量obj
+    * 线程B的执行时序可能是：读对象的普通域i->读对象引用obj->LoadLoad屏障->读对象的final域j。即普通对象的读操作被重排到了读对象引用obj之前(这里针对的是不遵守间接依赖的处理器，而对于一般处理器，这种重排是不被允许的，请注意)
+
+
 # final域为引用类型
 
+对于引用类型，写final域的重排序规则对编译器和处理器增加了如下约束
 
-# 为什么final引用不能从构造函数中溢出
+* 在构造函数内对一个final引用的对象的成员的写入，与随后在构造函数外把这个被构造对象的引用赋值给一个引用变量，这两个操作之间不能重排序
+* 确保在final引用的初始化在构造函数内完成，因此一旦其他线程拿到了一个非null的final引用，那么这个引用指向的对象一定是初始化完成的
 
+# 为什么final引用不能从构造函数中逸出
+
+写final域的重排序规则可以确保：在引用变量为任意线程可见之前，该引用变量指向的对象的final域已经在构造函数中被正确初始化过了
+
+* 其实，要得到这个效果，还需要一个保证：在构造函数内部，不能让这个被构造对象的引用为其他线程所见，也就是对象引用不能再构造函数中"逸出"
+* 否则，其他线程可能在构造过程中访问到一个尚未初始化完毕的对象的final域
+* 看下面的例子
+
+```Java
+public class FinalReferenceEscapeExample {
+    final int i;
+    static FinalReferenceEscapeExample obj;
+
+    public FinalReferenceEscapeExample() {
+        i = 1;
+        obj = this;
+    }
+
+    public static void writer() {
+        new FinalReferenceEscapeExample();
+    }
+
+    public static void reader() {
+        if (obj != null) {
+            int temp = obj.i;
+        }
+    }
+}
+```
+
+* 假设线程A执行writer()方法，线程B执行reader()方法。在构造方法内部，`i = 1;`和`obj = this;`可能会被重排，也就是说obj被赋值的时候，final域i可能尚未初始化，因此线程B可能读取到了一个非法的数值
 
 # final语义在处理器中的实现
 
