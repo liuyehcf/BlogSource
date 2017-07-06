@@ -3,6 +3,7 @@ title: Java final
 date: 2017-07-05 17:01:05
 tags:
 categories:
+- Java
 - Java Memory Model
 ---
 
