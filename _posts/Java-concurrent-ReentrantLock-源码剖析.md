@@ -110,7 +110,7 @@ Sync是ReentrantLock的静态内部类，Sync继承自AQS，重写了tryRelease�
     }
 ```
 
-## &emsp;2.1 内部类NonfairSync
+## 2.1 内部类NonfairSync
 NonfairSync继承自抽象类Sync，是非公平锁。非公平性是指：当一个线程调用lock方法时，不论sync queue中是否有等待的线程，直接尝试获取锁，如果竞争成功便获取锁。这种方式对于已经入队并等待一段时间的节点来说是不公平的。这是ReentrantLock的默认实现
 ```Java
     /**
@@ -139,7 +139,7 @@ NonfairSync继承自抽象类Sync，是非公平锁。非公平性是指：当�
     }
 ```
 
-## &emsp;2.2 内部类FairSync
+## 2.2 内部类FairSync
 内部类FairSync继承自抽象类Sync，是公平锁。公平是指：当一个线程调用lock方法时，如果sync queue中已有节点正在等待，那么当前线程不直接竞争，而是进入sync queue
 ```Java
     /**

@@ -52,7 +52,7 @@ Condition接口定义了一系列monitor methods，正如AQS作为synchronized�
 __强调一点：AQS的独占模式才支持ConditionObject__
 
 # 3 源码分析
-## &emsp;3.1 字段
+## 3.1 字段
 ```Java
         /** First node of condition queue. */
         private transient Node firstWaiter;
@@ -62,7 +62,7 @@ __强调一点：AQS的独占模式才支持ConditionObject__
 ConditionObject就两个字段，一个是condition queue头结点，另一个则是condition queue尾节点
 ConditionObject利用了AQS中的Node静态内部类用于封装节点。__指的注意的是，对于位于condition queue中的节点而言，这些节点的Node#prev以及Node#next字段是无用的，也就是null，condition queue是利用Node#nextWaiter来连接整个conditoin queue的__
 
-## &emsp;3.2 await
+## 3.2 await
 该方法类似于Object#wait方法，让当前线程在该ConditionObject上阻塞，直至被signal(类似于Object的notify/notifyAll)或者被中断，必须在持有锁的状态下才能调用该方法，否则会引发异常
 ```Java
         /**
@@ -241,7 +241,7 @@ transferAfterCancelledWait方法在发生中断时，将节点从condition queue
 可以看出，执行transferAfterCancelledWait方法的线程CAS成功时返回true，中断模式为THROW_IN；失败时返回false，中断模式为REINTERRUPT
 注意，因为interrupt而被已送至sync queue的节点，仍然位于condition queue中(其状态不为CONDITION)，其nextWaiter字段不为空，在await方法中会执行unlinkCancelledWaiters方法，来除去这些异常节点
 
-## &emsp;3.3 signal
+## 3.3 signal
 signal方法类似于Object#notify方法，将一个节点(线程)从条件变量的阻塞队列(condition queue)中移动到同步队列中(sync queue)，让该节点重新尝试获取资源
 ```Java
         /**
@@ -319,7 +319,7 @@ signal方法类似于Object#notify方法，将一个节点(线程)从条件变�
     }
 ```
 
-## &emsp;3.4 signalAll
+## 3.4 signalAll
 signalAll方法类似于Object的notifyAll方法，该方法唤醒所有阻塞在condition queue中的节点，并将其全部移送至sync queue中
 ```Java
         /**
@@ -359,7 +359,7 @@ signalAll方法类似于Object的notifyAll方法，该方法唤醒所有阻塞�
 
 ```
 
-## &emsp;3.5 其他形式的await
+## 3.5 其他形式的await
 首先是awaitNanos(long nanosTimeout)，该方法等待指定时间，超时后便直接转移到sync queue中。方法返回剩余纳秒数
 ```Java
         /**

@@ -213,21 +213,21 @@ __常量分为两大类__
 
 # 4 内部类简介
 
-## &emsp;4.1 Node
+## 4.1 Node
 
 __Node继承自Map.Entry，是其余节点的父类__
 
 * Node子类中如果hash值为负数，代表这类节点是特殊节点，特殊节点不持有key-value。例如TreeBin，ForwardingNode，ReservationNode
 * Node子类中如果hash值非负数，代表这类节点是正常节点，持有key-value。例如Node本身以及TreeNode
 
-## &emsp;4.2 TreeNode
+## 4.2 TreeNode
 
 __TreeNode节点是树节点__
 
 * 增加了左右孩子字段，父节点字段，颜色字段等
 * 采用的树形结构是：红黑树
 
-## &emsp;4.3 TreeBin
+## 4.3 TreeBin
 
 __当一个bin/bucket持有一颗树时，该槽位放置的节点是TreeBin__
 
@@ -235,20 +235,20 @@ __当一个bin/bucket持有一颗树时，该槽位放置的节点是TreeBin__
 * TreeBin节点持有读写锁，该读写所强制写操作必须等待读操作执行完毕
 * TreeBin内部定义了一些红黑树性质维护的静态方法
 
-## &emsp;4.4 ForwardingNode
+## 4.4 ForwardingNode
 
 __ForwardingNode节点表明此时正在进行扩容__
 
 * 同时表明当前槽位中的节点已经转移到新的hashtable中去了
 * 该节点持有nextTable的引用
 
-## &emsp;4.5 ReservationNode
+## 4.5 ReservationNode
 
 __??__
 
 # 5 Utils方法简介
 
-## &emsp;5.1 spread
+## 5.1 spread
 
 __spread用于转换hash值__
 
@@ -278,7 +278,7 @@ __spread用于转换hash值__
     }
 ```
 
-## &emsp;5.2 tableSizeFor
+## 5.2 tableSizeFor
 
 __tableSizeFor方法用于计算不小于给定数值的最大2的幂次__
 
@@ -301,7 +301,7 @@ __tableSizeFor方法用于计算不小于给定数值的最大2的幂次__
     }
 ```
 
-## &emsp;5.3 access方法
+## 5.3 access方法
 
 __访问table元素的方法__
 
@@ -326,7 +326,7 @@ __访问table元素的方法__
 
 # 6 重要方法源码分析
 
-## &emsp;6.1 put
+## 6.1 put
 
 __put方法用于向HashMap中插入一个键值对__
 
@@ -351,7 +351,7 @@ __put方法用于向HashMap中插入一个键值对__
     }
 ```
 
-## &emsp;6.2 putVal
+## 6.2 putVal
 
 __putVal是真正执行插入操作的方法__
 
@@ -446,7 +446,7 @@ __putVal是真正执行插入操作的方法__
     }
 ```
 
-## &emsp;6.3 initTable
+## 6.3 initTable
 
 __initTable方法用于初始化hashtable__
 
@@ -485,7 +485,7 @@ __initTable方法用于初始化hashtable__
     }
 ```
 
-## &emsp;6.4 transfer
+## 6.4 transfer
 
 __transfer方法用于hashtable的扩张__
 
@@ -659,7 +659,7 @@ __transfer方法用于hashtable的扩张__
     }
 ```
 
-## &emsp;6.5 addCount
+## 6.5 addCount
 
 __addCount方法用于更新键值对计数值baseCount__
 
@@ -717,7 +717,7 @@ __addCount方法用于更新键值对计数值baseCount__
     }
 ```
 
-## &emsp;6.6 fullAddCount
+## 6.6 fullAddCount
 
 __fullAddCount方法用于__
 
@@ -809,7 +809,7 @@ __fullAddCount方法用于__
     }
 ```
 
-## &emsp;6.7 sumCount
+## 6.7 sumCount
 
 __sumCount方法用于__
 
@@ -827,12 +827,12 @@ __sumCount方法用于__
     }
 ```
 
-## &emsp;6.8 
+## 6.8 
 
-## &emsp;6.9 
+## 6.9 
 
-## &emsp;6.10 
+## 6.10 
 
-## &emsp;6.11 
+## 6.11 
 
 ##

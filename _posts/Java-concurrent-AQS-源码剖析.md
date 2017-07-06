@@ -175,7 +175,7 @@ AQS字段仅有三个，源码如下
 
 # 4 重要方法解析
 
-## &emsp;4.1 acquire
+## 4.1 acquire
 __acquire方法是独占模式下实现加锁语义的入口方法__
 
 * 该方法内部不响应中断，在成功获取资源后会恢复中断现场，但是不会抛出InterruptedException异常
@@ -204,7 +204,7 @@ __acquire方法是独占模式下实现加锁语义的入口方法__
     }    
 ```
 
-### &emsp;&emsp;&emsp;4.1.1 tryAcquire
+### 4.1.1 tryAcquire
 
 __tryAcquire方法用于判断是否能够获取资源__
 
@@ -217,7 +217,7 @@ __tryAcquire方法用于判断是否能够获取资源__
     }
 ```
 
-### &emsp;&emsp;&emsp;4.1.2 addWaiter
+### 4.1.2 addWaiter
 __addWaiter方法将节点添加到到sync queue中__
 
 * 根据指定模式，将当前线程封装成一个Node节点，并且添加到sync queue中
@@ -252,7 +252,7 @@ __addWaiter方法将节点添加到到sync queue中__
     }
 ```
 
-### &emsp;&emsp;&emsp;4.1.3 enq
+### 4.1.3 enq
 
 __enq方法确保给定节点成功入队__
 
@@ -290,7 +290,7 @@ __这里抛出一个问题__
 
 * 在初始化sync queue中，将一个new Node()设置为了sync queue的头结点，该节点没有关联任何线程，我称之为"Dummy Node"，这个头结点"Dummy Node"待会可能会被设置为SIGNAL状态，那么它是如何唤醒后继节点的呢？我会在在讲到release时进行解释
 
-### &emsp;&emsp;&emsp;4.1.4 acquireQueued
+### 4.1.4 acquireQueued
 __至此，线程已被封装成节点，并且成功添加到sync queue中去了，接下来，来看最重要的acquireQueued方法__
 
 * 该方法不断地通过死循环+CAS操作的方式获取资源(当且仅当节点是sync queue中第二个节点时才有资格获取资源)
@@ -338,7 +338,7 @@ __至此，线程已被封装成节点，并且成功添加到sync queue中去�
     }
 ```
 
-### &emsp;&emsp;&emsp;4.1.5 shouldParkAfterFailedAcquire以及parkAndCheckInterrupt
+### 4.1.5 shouldParkAfterFailedAcquire以及parkAndCheckInterrupt
 
 __shouldParkAfterFailedAcquire方法用于判断当前节点是否可以阻塞自己__
 
@@ -422,7 +422,7 @@ __至此，独占模式的acquire调用链分析完毕，总结一下__
 
 __AQS通过死循环以及CAS操作来串行化并发操作，并且通过这种适当的自旋加阻塞，来减少频繁的加锁解锁操作__
 
-## &emsp;4.2 release
+## 4.2 release
 __release方法是独占模式下实现解锁语义的入口方法__
 
 * 只有当头结点的状态不为0时，才会执行唤醒后继节点的动作
@@ -457,7 +457,7 @@ __在此，解释一下enq方法中提到的问题__
 
 * 即那个"Dummy Node"如何唤醒后继：由于"Dummy Node"不关联任何线程，因此真正的唤醒操作实际上是由外部的线程来完成的，这里的外部线程是指从未进入sync queue的线程(即那些执行acquire直接通过tryAcquire返回的线程)，因此，"Dummy Node"节点设置为SIGNAL状态，也能够正常唤醒后继
 
-### &emsp;&emsp;&emsp;4.2.1 tryRelease
+### 4.2.1 tryRelease
 
 __tryRelease方法用于判断是否能够释放资源__
 
@@ -470,7 +470,7 @@ __tryRelease方法用于判断是否能够释放资源__
     }
 ```
 
-### &emsp;&emsp;&emsp;4.2.2 unparkSuccessor
+### 4.2.2 unparkSuccessor
 
 __通过unparkSuccessor方法唤醒指定节点的后继节点__
 
@@ -513,7 +513,7 @@ __通过unparkSuccessor方法唤醒指定节点的后继节点__
     }        
 ```
 
-## &emsp;4.3 acquireShared
+## 4.3 acquireShared
 
 __acquireShared方法是共享模式下实现加锁语义的入口方法__
 
@@ -541,7 +541,7 @@ __acquireShared方法是共享模式下实现加锁语义的入口方法__
     }    
 ```
 
-### &emsp;&emsp;&emsp;4.3.1 tryAcquireShared
+### 4.3.1 tryAcquireShared
 
 __tryAcquireShared方法用于判断是否能够获取资源__
 
@@ -554,7 +554,7 @@ __tryAcquireShared方法用于判断是否能够获取资源__
     }
 ```
 
-### &emsp;&emsp;&emsp;4.3.2 doAcquireShared
+### 4.3.2 doAcquireShared
 
 __doAcquireShared方法是核心方法__
 
@@ -607,7 +607,7 @@ __doAcquireShared方法是核心方法__
     }
 ```
 
-### &emsp;&emsp;&emsp;4.3.3 setHeadAndPropagate
+### 4.3.3 setHeadAndPropagate
 __setHeadAndPropagate方法主要逻辑__
 
 * 将当前节点设置为头结点，并且当仍有资源可供其他线程获取时，让其他线程继续获取资源，这也就是共享模式的含义
@@ -653,7 +653,7 @@ __setHeadAndPropagate方法主要逻辑__
 ```
 doReleaseShared方法将放在下一小节中进行分析
 
-## &emsp;4.4 releaseShared
+## 4.4 releaseShared
 
 __releaseShared方法是共享模式下实现解锁语义的入口方法__
 
@@ -677,7 +677,7 @@ __releaseShared方法是共享模式下实现解锁语义的入口方法__
     }
 ```
 
-### &emsp;&emsp;&emsp;4.4.1 tryReleaseShared
+### 4.4.1 tryReleaseShared
 
 __tryReleaseShared方法用于判断是否能够释放资源__
 
@@ -690,7 +690,7 @@ __tryReleaseShared方法用于判断是否能够释放资源__
     }
 ```
 
-### &emsp;&emsp;&emsp;4.4.2 doReleaseShared
+### 4.4.2 doReleaseShared
 __doReleaseShared方法是共享模式下共享含义体现的重要方法__
 
 * 该方法配合setHeadAndPropagate方法能够实现release propagate
@@ -747,7 +747,7 @@ __几个问题__
     * 暂时的PROPAGATE：唤醒后继节点后，又进行了一次循环，再次将同一个节点从0设置成PROPAGATE状态，会产生两种结果。第一种结果是后继节点成功获取资源，那么当前标记为PROPAGATE状态的头结点将被移出sync queue；第二种结果是后继节点获取资源失败，重新将当前标记为PROPAGATE状态的头结点设置为SIGNAL状态，至此传播结束
     * 持久的PROPAGATE：当前节点并没有后继节点
 
-## &emsp;4.5 acquireInterruptibly
+## 4.5 acquireInterruptibly
 
 __相比于acquire，acquireInterruptibly会响应interrupt，并且抛出InterruptedException异常__
 
@@ -776,7 +776,7 @@ __相比于acquire，acquireInterruptibly会响应interrupt，并且抛出Interr
     }
 ```
 
-### &emsp;&emsp;&emsp;4.5.1 doAcquireInterruptibly
+### 4.5.1 doAcquireInterruptibly
 
 __doAcquireInterruptibly方法与acquireQueued的区别如下__
 
@@ -817,7 +817,7 @@ __与acquireQueued方法的差异部分已用注释标记，其余部分的逻�
     }
 ```
 
-## &emsp;4.6 acquireSharedInterruptibly
+## 4.6 acquireSharedInterruptibly
 
 __相比于acquireShared，acquireSharedInterruptibly会响应interrupt，并且抛出InterruptedException异常__
 
@@ -845,7 +845,7 @@ __相比于acquireShared，acquireSharedInterruptibly会响应interrupt，并且
     }
 ```
 
-### &emsp;&emsp;&emsp;4.6.1 doAcquireSharedInterruptibly
+### 4.6.1 doAcquireSharedInterruptibly
 
 __doAcquireSharedInterruptibly方法与doAcquireShared的区别如下__
 
@@ -888,7 +888,7 @@ __与doAcquireShared方法的差异部分已用注释标记，其余部分的逻
     }
 ```
 
-## &emsp;4.7 tryAcquireNanos
+## 4.7 tryAcquireNanos
 
 __独占模式下，该方法允许阻塞指定时间，同时能够响应中断__
 
@@ -919,7 +919,7 @@ __独占模式下，该方法允许阻塞指定时间，同时能够响应中断
     }
 ```
 
-### &emsp;&emsp;&emsp;4.7.1 doAcquireNanos
+### 4.7.1 doAcquireNanos
 
 __doAcquireNanos方法与acquireQueued的区别如下__
 
@@ -974,7 +974,7 @@ __与acquireQueued方法的差异部分已用注释标记，其余部分的逻�
     }
 ```
 
-## &emsp;4.8 tryAcquireSharedNanos
+## 4.8 tryAcquireSharedNanos
 
 __共享模式下，该方法允许阻塞指定时间，同时能够响应中断__
 
@@ -1005,7 +1005,7 @@ __共享模式下，该方法允许阻塞指定时间，同时能够响应中断
     }
 ```
 
-### &emsp;&emsp;&emsp;4.8.1 doAcquireSharedNanos
+### 4.8.1 doAcquireSharedNanos
 
 __doAcquireSharedNanos方法与acquireShared的区别如下__
 

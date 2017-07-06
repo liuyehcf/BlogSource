@@ -49,7 +49,7 @@ public interface Future<V> {
 }
 ```
 
-## &emsp;3.1 RunnableFuture
+## 3.1 RunnableFuture
 
 __接口仅仅继承了Runnable接口与Future接口，FutureTask实现了RunnableFuture接口__
 
@@ -116,7 +116,7 @@ __FutureTask仅有以下五个字段__
 
 # 6 内部类简介
 
-## &emsp;6.1 WaitNode
+## 6.1 WaitNode
 
 __WaitNode将Thread对象封装成一个链表的节点__
 
@@ -138,7 +138,7 @@ __WaitNode将Thread对象封装成一个链表的节点__
 
 # 7 重要方法源码分析
 
-## &emsp;7.1 构造方法
+## 7.1 构造方法
 
 __FutureTask含有两个构造方法__
 
@@ -179,7 +179,7 @@ __FutureTask含有两个构造方法__
     }
 ```
 
-### &emsp;&emsp;&emsp;7.1.1 Executors.callable
+### 7.1.1 Executors.callable
 
 __该静态方法负责将Runnable对象适配成一个Callable对象__
 
@@ -228,7 +228,7 @@ __其中适配器RunnableAdapter如下__
     }
 ```
 
-## &emsp;7.2 run
+## 7.2 run
 
 __线程执行的主要方法__
 
@@ -276,7 +276,7 @@ __线程执行的主要方法__
     }
 ```
 
-### &emsp;&emsp;&emsp;7.2.1 setException
+### 7.2.1 setException
 
 __该方法逻辑如下__
 
@@ -304,7 +304,7 @@ __该方法逻辑如下__
     }
 ```
 
-### &emsp;&emsp;&emsp;7.2.2 set
+### 7.2.2 set
 
 __该方法逻辑如下__
 
@@ -331,7 +331,7 @@ __该方法逻辑如下__
     }
 ```
 
-### &emsp;&emsp;&emsp;7.2.3 finishCompletion
+### 7.2.3 finishCompletion
 
 __该方法会唤醒所有阻塞在get方法中的所有WaitNode节点__
 
@@ -368,7 +368,7 @@ __该方法会唤醒所有阻塞在get方法中的所有WaitNode节点__
     }
 ```
 
-### &emsp;&emsp;&emsp;7.2.4 handlePossibleCancellationInterrupt
+### 7.2.4 handlePossibleCancellationInterrupt
 ```Java
     /**
      * Ensures that any interrupt from a possible cancel(true) is only
@@ -394,7 +394,7 @@ __该方法会唤醒所有阻塞在get方法中的所有WaitNode节点__
     }
 ```
 
-## &emsp;7.3 get
+## 7.3 get
 
 __get方法有两个重载版本__
 
@@ -429,7 +429,7 @@ __get方法有两个重载版本__
     }
 ```
 
-### &emsp;&emsp;&emsp;7.3.1 awaitDone
+### 7.3.1 awaitDone
 
 __阻塞get()方法的调用线程__
 
@@ -493,7 +493,7 @@ __阻塞get()方法的调用线程__
 
 ```
 
-### &emsp;&emsp;&emsp;7.3.2 removeWaiter
+### 7.3.2 removeWaiter
 
 __将一个阻塞超时的节点，或者被中断的节点移出链表__
 
@@ -539,7 +539,7 @@ __将一个阻塞超时的节点，或者被中断的节点移出链表__
     }
 ```
 
-### &emsp;&emsp;&emsp;7.3.3 report
+### 7.3.3 report
 
 __根据FutureTask的状态，返回相应的结果__
 
