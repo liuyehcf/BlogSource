@@ -37,6 +37,10 @@ __Memory Barrier__
 
 * StoreLoad Barriers是一个全能型屏障，他同时具有其他3个屏障的效果。现代处理器大多数支持该屏障。执行该屏障开销会很昂贵，因为当前处理器通常要把写缓冲区中的数据全部刷新到内存中(Buffer Fully Flush)
 
+Memory Barrier的其他参考资料(建议精读)
+* [Why Memory Barriers？](http://www.wowotech.net/kernel_synchronization/Why-Memory-Barriers.html)
+* [CPU流水线的探秘之旅](http://blog.jobbole.com/40844/)
+
 # 3 volatile 写-读的内存语义
 
 __volatile写的内存语义__
