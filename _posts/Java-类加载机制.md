@@ -2,6 +2,7 @@
 title: Java 类加载机制
 date: 2017-07-02 23:00:31
 tags:
+- 摘录
 categories:
 - Java
 - Java Virtual Machine

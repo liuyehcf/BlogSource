@@ -2,6 +2,7 @@
 title: Java happens-before
 date: 2017-07-06 15:58:09
 tags:
+- 摘录
 categories:
 - Java
 - Java Memory Model

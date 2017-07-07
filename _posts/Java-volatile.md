@@ -2,6 +2,7 @@
 title: Java volatile
 date: 2017-07-04 16:02:54
 tags:
+- 摘录
 categories:
 - Java
 - Java Memory Model

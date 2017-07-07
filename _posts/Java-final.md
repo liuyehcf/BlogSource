@@ -2,6 +2,7 @@
 title: Java final
 date: 2017-07-05 17:01:05
 tags:
+- 摘录
 categories:
 - Java
 - Java Memory Model
