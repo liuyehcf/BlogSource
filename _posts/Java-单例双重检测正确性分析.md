@@ -216,8 +216,21 @@ __第1阶段：通过在Class对象上同步(即获取Class对象的初始化锁
 | 时间 | 线程A | 线程B |
 |:--:|:--|:--|
 | t1 | A1：尝试获取Class对象的初始化锁，这里假设线程A获取到了初始化锁 | B1：尝试获取Class对象的初始化锁，由于线程A获取到了锁，线程B将一直等待获取初始化锁 |
-| t2 | A2：线程A看到线程还未被初始化(因为读取到state == noInitialization)，线程设置state = initializing |  |
+| t2 | A2：线程A看到类还未被初始化(因为读取到state == noInitialization)，线程设置state = initializing |  |
 | t3 | A3：线程A释放初始化锁 |  |
+
+__该阶段的时序示意图如下__
+
+```sequence
+participant 线程A
+participant 线程B
+participant 线程C
+线程A-->线程C:阶段1开始
+Note over 线程A,线程B:A1/B1：尝试获取Class对象的初始化锁。\n这里假设线程A获取到了初始化锁；\n线程B将等待获取初始化锁
+Note over 线程A:A2：线程A看到类还未被初始化\n因为读取到state == noInitialization，\n线程设置state = initializing
+Note over 线程A:A3：线程A释放初始化锁
+线程A-->线程C:阶段1结束
+```
 
 ## 5.2 阶段2
 
@@ -229,6 +242,20 @@ __第2阶段：线程A执行类的初始化，同时线程B在初始化锁对应
 | t2 |  | B2：读取到state == initializing |
 | t3 |  | B3：释放初始化锁 |
 | t4 |  | B4：在初始化锁的condition中等待 |
+
+__该阶段的时序示意图如下__
+
+```sequence
+participant 线程A
+participant 线程B
+participant 线程C
+线程A-->线程C:阶段2开始
+Note over 线程A,线程B:A1：执行类的静态初始化\n和初始化类中声明的静态字段\nB1：获取到初始化锁
+Note over 线程B:B2：读取到state = initializing
+Note over 线程B:B3：释放初始化锁
+Note over 线程B:B4：在初始化锁的condition中等待
+线程A-->线程C:阶段2结束
+```
 
 ## 5.3 阶段3
 
@@ -242,6 +269,21 @@ __第3阶段：线程A设置state = initialized，然后唤醒在condition中等
 | t4 | A4：释放初始化锁 | 
 | t5 | A5：线程A的初始化处理过程完成 | 
 
+__该阶段的时序示意图如下__
+
+```sequence
+participant 线程A
+participant 线程B
+participant 线程C
+线程A-->线程C:阶段3开始
+Note over 线程A:A1：获取初始化锁
+Note over 线程A:A2：设置state = initialized
+Note over 线程A:A3：唤醒在condition中等待的所有线程
+Note over 线程A:A4：释放初始化锁
+Note over 线程A:A5：线程A的初始化处理过程完成
+线程A-->线程C:阶段3结束
+```
+
 ## 5.4 阶段4
 
 __第4阶段：线程B结束类的初始化处理__
@@ -252,6 +294,20 @@ __第4阶段：线程B结束类的初始化处理__
 | t2 | B2：读取到state = initialized | 
 | t3 | B3：释放初始化锁 | 
 | t4 | B4：线程B的类初始化处理过程完成 | 
+
+__该阶段的时序示意图如下__
+
+```sequence
+participant 线程A
+participant 线程B
+participant 线程C
+线程A-->线程C:阶段4开始
+Note over 线程B:B1：获取初始化锁
+Note over 线程B:B2：读取到state = initialized
+Note over 线程B:B3：释放初始化锁
+Note over 线程B:B4：线程B的类初始化处理过程完成
+线程A-->线程C:阶段4结束
+```
 
 线程A在第2阶段的A1执行类的初始化，并在第3阶段的A4释放初始化锁；线程B在第4阶段的B1获取同一个初始化锁，并在第4阶段的B4之后才开始访问这个类。根据Java内存模型规范的锁规则，这里将存在如下的happens-before关系
 
@@ -268,15 +324,82 @@ __第5阶段：线程C执行类的初始化的处理__
 | t3 | C3：释放初始化锁 | 
 | t4 | C4：线程C的类初始化处理过程完成 | 
 
+__该阶段的时序示意图如下__
+
+```sequence
+participant 线程A
+participant 线程B
+participant 线程C
+线程A-->线程C:阶段5开始
+Note over 线程C:C1：获取初始化锁
+Note over 线程C:C2：读取到state = initialized
+Note over 线程C:C3：释放初始化锁
+Note over 线程C:C4：线程C的类初始化处理过程完成
+线程A-->线程C:阶段5结束
+```
+
 在第3阶段之后，类已经完成了初始化。因此线程C在第5阶段的类初始化处理过程相对简单一些(前面的线程A和B的类初始化处理过程都经历了两次锁获取-锁释放，而线程C的类初始化处理只需要经理一次锁获取，锁释放)
 
 线程A在第2阶段的A1执行类的初始化，并在第3阶段的A4释放锁；线程C在第5阶段的C1获取同一个锁，并在第5个阶段的C4之后才开始访问这个类。根据Java内存模型规范的锁规则，将存在如下的happens-before关系
 
 * 这个happens-before关系将保证：线程A执行类的初始化时的写入操作，线程C一定能看到
 
-## 5.6 说明
+## 5.6 小节
 
 上述过程中讲到的state和condition是本文虚构出来的，Java语言规范并没有硬性规定一定要用condition和state标记。JVM的具体实现只要实现类似功能即可
+
+
+__整合上述5个阶段的时序图如下__
+
+```sequence
+participant 线程A
+participant 线程B
+participant 线程C
+线程A-->线程C:阶段1开始
+Note over 线程A,线程B:A1/B1：尝试获取Class对象的初始化锁。\n这里假设线程A获取到了初始化锁；\n线程B将等待获取初始化锁
+Note over 线程A:A2：线程A看到类还未被初始化\n因为读取到state == noInitialization，\n线程设置state = initializing
+Note over 线程A:A3：线程A释放初始化锁
+线程A-->线程C:阶段1结束
+participant 线程A
+participant 线程B
+participant 线程C
+线程A-->线程C:阶段2开始
+Note over 线程A,线程B:A1：执行类的静态初始化\n和初始化类中声明的静态字段\nB1：获取到初始化锁
+Note over 线程B:B2：读取到state = initializing
+Note over 线程B:B3：释放初始化锁
+Note over 线程B:B4：在初始化锁的condition中等待
+线程A-->线程C:阶段2结束
+participant 线程A
+participant 线程B
+participant 线程C
+线程A-->线程C:阶段3开始
+Note over 线程A:A1：获取初始化锁
+Note over 线程A:A2：设置state = initialized
+Note over 线程A:A3：唤醒在condition中等待的所有线程
+Note over 线程A:A4：释放初始化锁
+Note over 线程A:A5：线程A的初始化处理过程完成
+线程A-->线程C:阶段3结束
+participant 线程A
+participant 线程B
+participant 线程C
+线程A-->线程C:阶段4开始
+Note over 线程B:B1：获取初始化锁
+Note over 线程B:B2：读取到state = initialized
+Note over 线程B:B3：释放初始化锁
+Note over 线程B:B4：线程B的类初始化处理过程完成
+线程A-->线程C:阶段4结束
+participant 线程A
+participant 线程B
+participant 线程C
+线程A-->线程C:阶段5开始
+Note over 线程C:C1：获取初始化锁
+Note over 线程C:C2：读取到state = initialized
+Note over 线程C:C3：释放初始化锁
+Note over 线程C:C4：线程C的类初始化处理过程完成
+线程A-->线程C:阶段5结束
+```
+
+
 
 # 6 总结
 
