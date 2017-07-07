@@ -22,7 +22,7 @@ __目录__
 __hapens-before__
 
 * happens-before规则不是描述实际操作的先后顺序，它是用来描述可见性的一种规则
-* A happens-before B：并不是说A必须在B之前执行，而是指__如果__动作A先于动作B发生，那么B能够看到动作A的改变，即可见性
+* A happens-before B：动作A发生在动作B之前，且动作A对于动作B来说可见(如果这两个动作之间不存在依赖而且重排序后不会影响执行结果，那么JVM可以对其进行重排序，也就是说真正的执行顺序并不一定，但是保证结果一致)
 
 __Memory Barrier__
 
@@ -37,7 +37,7 @@ __Memory Barrier__
 
 * StoreLoad Barriers是一个全能型屏障，他同时具有其他3个屏障的效果。现代处理器大多数支持该屏障。执行该屏障开销会很昂贵，因为当前处理器通常要把写缓冲区中的数据全部刷新到内存中(Buffer Fully Flush)
 
-Memory Barrier的其他参考资料(建议精读)
+Memory Barrier的其他参考资料
 * [Why Memory Barriers？](http://www.wowotech.net/kernel_synchronization/Why-Memory-Barriers.html)
 * [CPU流水线的探秘之旅](http://blog.jobbole.com/40844/)
 
