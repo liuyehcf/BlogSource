@@ -348,7 +348,6 @@ Note over 线程C:C4：线程C的类初始化处理过程完成
 
 上述过程中讲到的state和condition是本文虚构出来的，Java语言规范并没有硬性规定一定要用condition和state标记。JVM的具体实现只要实现类似功能即可
 
-
 __整合上述5个阶段的时序图如下__
 
 ```sequence
@@ -398,8 +397,6 @@ Note over 线程C:C3：释放初始化锁
 Note over 线程C:C4：线程C的类初始化处理过程完成
 线程A-->线程C:阶段5结束
 ```
-
-
 
 # 6 总结
 
