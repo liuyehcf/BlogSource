@@ -1,6 +1,6 @@
 ---
-title: Java volatile
-date: 2017-07-04 16:02:54
+title: Java volatile的内存语义
+date: 2017-07-08 21:03:00
 tags:
 - 摘录
 categories:

@@ -1,6 +1,6 @@
 ---
-title: Java final
-date: 2017-07-05 17:01:05
+title: Java final域的内存语义
+date: 2017-07-08 21:05:00
 tags:
 - 摘录
 categories:
