@@ -170,7 +170,7 @@ __当读一个volatile变量时，JVM会把该线程对应的本地内存(不仅
 
 * 在读flag变量后，本地内存和B包含的值已经被置为无效。此时，线程B必须从主内存中读取共享变量。线程B的读取操作将导致本地内存B和主内存中的共享变量的值变成一致
 
-## 5.3 总结
+## 5.3 小结
 
 如果我们把volatile写和volatile读两个步骤总和起来看，在读线程B读一个volatile变量之后，写线程A在写这个volatile变量之前所有可见的共享变量的值都将立即变得对线程B可见，下面对volatile写和volatile读的内存语义做个总结
 
@@ -249,59 +249,7 @@ class VolatileExample2 {
 
 在旧的内存模型中，volatile的写-读没有锁的释放-获取所具有的内存语义。__为了提供一种比锁更轻量级的线程之间的通信的机制__，JSR-133专家组决定增强volatile的内存语义：严格限制编译器和处理器对volatile变量与普通变量的重排序，__确保volatile的写-读和锁的释放-获取具有相同的内存语义__。从编译器重排序规则和处理器内存屏障插入策略来看，只要volatile变量与普通变量之间的重排序可能会破坏volatile的内存语义，这种重排序就会被编译器重排序规则和处理器内存屏障插入策略禁止
 
-# 8 锁的内存语义(可见性)
-
-锁可以让临界区互斥执行，但锁还有另一个同样重要且常常被忽视的功能：锁的内存语义
-
-* 释放锁的线程向获取同一个锁的线程发送消息
-
-__锁释放的内存语义__
-
-* 当线程释放锁时，JMM会把该线程对应的本地内存中的共享变量刷新到主内存中
-* 这就是synchronized关键字能保证 __可见性__ 的原因
-
-__锁获取的内存语义__
-
-* 当线程获取锁时，JMM会把该线程对应的本地内存置为无效
-* 这就是synchronized关键字能保证 __可见性__ 的原因
-
-__总结__
-
-* 锁的释放与volatile写有相同的内存语义
-* 锁的获取与volatile读有相同的内存语义
-* 线程释放一个锁，实质上是该线程向接下来将要获取这个锁的某个线程发出(该线程对共享变量所做的修改)一个消息
-* 线程获取一个锁，实质上是该线程接收了之前某个线程发出的(在释放这个锁之前对共享变量所做的修改)一个消息
-
-# 9 CAS操作的内存语义(可见性)
-
-```Java
-    public final native boolean compareAndSwapInt(Object o, long offset, int expected, int x);
-```
-
-其源码如下
-
-```C
-    inline jint Atomic::cmpxchg(jint exchange_value, volatile jint* dest, jint compare_value){
-        //alternative for InterlockedCompareExchange
-        int mp = os::is_MP();
-        __asm{
-            mov edx, dest
-            mov ecx, exchange_value
-            mov eax, compare_value
-            LOCK_IF_MP(mp)//程序会根据当前处理器的类型来决定是否为cmpxchg指令添加lock前缀
-            cmpxchg dword ptr [edx], ecx
-        }
-    }
-```
-
-intel手册对lock的前缀说明如下
-
-1. 确保对内存的读-改-写操作原子执行
-1. 禁止该指令，与之前和之后的读和写指令重排序
-1. 把写缓冲区中的所有数据刷新到内存中
-* 第2点和第3点具有内存屏障效果，足以同时实现volatile读和volatile写的内存语义
-
-# 10 参考
+# 8 参考
 
 __Java并发编程的艺术__
 
