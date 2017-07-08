@@ -192,9 +192,9 @@ __与该字段相关的方法__
     private volatile int maximumPoolSize;
 ```
 
-* __workQueue__：Blocking相关源码分析可以参考[Java concurrent ArrayBlockingQueue 源码剖析](https://liuyehcf.github.io/2017/07/02/Java-concurrent-ArrayBlockingQueue-%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/)
-* __mainLock__：ReentrantLock相关源码分析可以参考[Java concurrent ReentranLock 源码剖析](https://liuyehcf.github.io/2017/07/02/Java-concurrent-ReentrantLock-%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/)
-* __termination__：ConditionObject相关源码分析可以参考[Java concurrent AQS-ConditionObject 源码剖析](https://liuyehcf.github.io/2017/07/02/Java-concurrent-AQS-ConditionObject-%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/)
+* __workQueue__：Blocking相关源码分析可以参考{% post_link Java-concurrent-ArrayBlockingQueue-源码剖析 %}
+* __mainLock__：ReentrantLock相关源码分析可以参考{% post_link Java-concurrent-ReentrantLock-源码剖析 %}
+* __termination__：ConditionObject相关源码分析可以参考{% post_link Java-concurrent-AQS-ConditionObject-源码剖析 %}
 * __corePoolSize__：核心线程数量，所谓核心线是指即便空闲也不会终止的线程(allowCoreThreadTimeOut必须是false)
 * __maximumPoolSize__：最大线程数量，核心线程+非核心线程的总数不能超过这个数值
 * __largestPoolSize__：在线程池的生命周期中，线程池持有线程数量的最大值
@@ -204,7 +204,7 @@ __与该字段相关的方法__
 
 __Worker封装了Thread，因此Worker可以理解为一个线程。Worker实现了Runnable，负责从任务队列中获取任务并执行__
 
-__同时Worker还继承了AQS，（[Java concurrent AQS 源码剖析](https://liuyehcf.github.io/2017/07/02/Java-concurrent-AQS-%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/)）也就是说Work对象本身可以作为Lock来使用，但这是为什么呢?__
+__同时Worker还继承了AQS，（{% post_link Java-concurrent-AQS-源码剖析 %}）也就是说Work对象本身可以作为Lock来使用，但这是为什么呢?__
 
 * 在ThreadPoolExecutor#runWorker方法中，在成功获取到任务后，会将自己锁定，这个锁定状态用于表示当前work处于工作状态(在执行任务)，当一个任务处理完毕之后，又会解除锁定状态
 * 在ThreadPoolExecutor#interruptIdleWorkders方法中会调用Worker#tryLock()方法，该方法就是尝试获取锁，如果获取失败，则表明worker处于工作状态
@@ -1038,4 +1038,4 @@ __该方法是ThreadPoolExecutor父类AbstractExecutorService的方法，Abstrac
     }
 ```
 
-__Future源码分析请参见 [Java concurrent FutureTask 源码剖析](https://liuyehcf.github.io/2017/07/02/Java-concurrent-FutureTask-%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/)__
+__Future源码分析请参见 {% post_link Java-concurrent-FutureTask-源码剖析 %}__
