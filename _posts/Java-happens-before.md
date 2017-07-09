@@ -15,9 +15,11 @@ __目录__
 
 # 1 前言
 
-happens-before是JMM最核心的概念。对应Java程序员来说，理解happens-before是理解JMM的关键
+happens-before是JMM最核心的概念
 
-整个JMM围绕着内存可见性进行设计
+* __对应Java程序员来说，理解happens-before是理解JMM的关键__
+* __JSR-133使用happens-before的概念来阐述操作之间的内存可见性__
+* __在JMM中，如果一个操作执行的结果需要对另一个操作可见，那么这两个操作之间必须要存在happens-before关系(这里提到的两个操作既可以在一个线程之内，也可以是在不同线程之间)__
 
 # 2 JMM的设计
 
