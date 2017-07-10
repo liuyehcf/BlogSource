@@ -14,9 +14,54 @@ __目录__
 
 # 1 Java基础
 
-## 1.1 Arrays.sort实现原理和Collection实现原理 
+## 1.1 Arrays.sort实现原理和Collection.sort实现原理 
+
+Arrays.sort在JDK 1.7之用使用的是timsort，timsort是归并排序的一个变种，相比于普通的归并排序，存在如下3点优化
+
+1. 提高合并效率
+1. 减少合并次数
+1. 在元素数量较少时直接采用插入排序
+
+[TimSort详解](http://blog.jobbole.com/99681/)
+
+Collection.sort在内部会转调用Arrays.sort
+
+1. 调用List#toArray()方法，生成一个数组
+1. 调用Arrays.sort方法进行排序
+1. 将排序好的序列利用迭代器回填到List当中(为什么用迭代器，因为这样效率是最高的，如果List的实现是LinkedList，那么采用下标将会非常慢)
+
 ## 1.2 foreach和while的区别(编译之后) 
+
+foreach只能引用于实现了Iterator接口的类，因此在内部实现时会转化为迭代器的遍历，本质上是一种语法糖
+
+while和for循环在编译之后基本相同，利用字节码`goto`来进行循环跳转
+
 ## 1.3 线程池的种类，区别和使用场景 
+
+所有线程池本质上都是ThreadPoolExecutor，只是配置了不同的初始化参数，核心参数有
+1. __corePoolSize__：核心线程数量，所谓核心线是指即便空闲也不会终止的线程(allowCoreThreadTimeOut必须是false)
+1. __maximumPoolSize__：最大线程数量，核心线程+非核心线程的总数不能超过这个数值
+1. __keepAliveTime__：非核心线程在空闲状态下保持active的最长时间，超过这个时间若仍然空闲，那么该线程便会结束
+
+Executors.newCachedThreadPool()
+
+* __corePoolSize__：0
+* __maximumPoolSize__：MAX
+* __keepAliveTime__：60L
+
+Executors.newSingleThreadExecutor()
+
+* __corePoolSize__：1
+* __maximumPoolSize__：1
+* __keepAliveTime__：0L
+
+Executors.newFixedThreadPool(int nThread)
+
+* __corePoolSize__：nThread
+* __maximumPoolSize__：nThread
+* __keepAliveTime__：0L
+
+
 ## 1.4 分析线程池的实现原理和线程的调度过程 
 ## 1.5 线程池如何调优 
 ## 1.6 线程池的最大线程数目根据什么确定 
@@ -25,14 +70,74 @@ __目录__
 ## 1.9 了解LinkedHashMap的应用吗
 ## 1.10 反射的原理，反射创建类实例的三种方式是什么？ 
 ## 1.11 cloneable接口实现原理，浅拷贝or深拷贝 
+
+实现cloneable接口必须调用父类Object.clone()方法来进行内存的拷贝
+
+如果不加其他的逻辑，实现的就是浅拷贝。即副本中的内存与原象中的内存完全一致，意味着如果存在引用类型，那么副本与原象将引用的是同一个对象
+
+如果要实现深拷贝，那么就需要加上额外的实现逻辑
+
 ## 1.12 Java NIO使用 
-## 1.13 hashtable和hashmap的区别及实现原理，hashmap会问到数组索引，hash碰撞怎么解决 
-## 1.14 arraylist和linkedlist区别及实现原理 
+
+SocketChannel
+* 支持非阻塞模式
+
+ServerSocketChannel
+* 支持非阻塞模式
+
+FileChannel
+* 只有阻塞模式
+
+Selector
+
+这里差一篇博客介绍NIO
+
+## 1.13 Hashtable和HashMap的区别及实现原理，HashMap会问到数组索引，hash碰撞怎么解决 
+
+hashtable给所有的table访问方法加上了synchronized关键字
+
+用链表解决，当链表元素过多时，转换为红黑树
+
+## 1.14 Arraylist和Linkedlist区别及实现原理 
+
+ArrayList内部采用数组来实现
+
+
+LinkedList内部采用链表来实现
+
 ## 1.15 反射中，Class.forName和ClassLoader区别 
-## 1.16 String，Stringbuffer，StringBuilder的区别？ 
+
+Class.forName执行过程
+
+1. 加载
+1. 验证-准备-解析：该过程称为链接
+1. 初始化
+
+ClassLoader#loadClass执行过程
+
+1. 加载
+
+具体详见 {% post_link Java-类加载机制 %}
+
+
+## 1.16 String，StringBuffer，StringBuilder的区别？ 
+
+String 中的char[]数组是final的
+
+StringBuffer是线程安全的，所有char[]数组的access方法被synchronized关键字修饰
+
+StringBuilder非线程安全
+
 ## 1.17 有没有可能2个不相等的对象有相同的hashcode 
+
+完全可能
+
 ## 1.18 简述NIO的最佳实践，比如netty，mina 
+
+
 ## 1.19 TreeMap的实现原理
+
+红黑树
 
 # 2 JVM相关
 
@@ -51,26 +156,80 @@ __目录__
 ## 2.13 OOM错误，stackoverflow错误，permgen space错误 
 ## 2.14 JVM常用参数 
 ## 2.15 tomcat结构，类加载器流程 
-## 2.16 volatile的语义，它修饰的变量一定线程安全吗 
+## 2.16 volatile的语义，它修饰的变量一定线程安全吗
+
+单个volatile读写语句当然是线程安全的
+
+但是符合的volatile读写语句或者类似于volaitle++这样的读改写操作就不是线程安全的
+
+{% post_link Java-volatile的内存语义 %}
+
 ## 2.17 g1和cms区别,吞吐量优先和响应优先的垃圾收集器选择 
-## 2.18 说一说你对环境变量classpath的理解？如果一个类不在classpath下，为什么会抛出ClassNotFoundException异常，如果在不改变这个类路径的前期下，怎样才能正确加载这个类？ 
+
+G1(Gargabe-First)收集器是当今收集器计数发展的最前沿成果之一。G1是一款面向服务端应用的垃圾收集器，HotSpot开发团队赋予它的使命是(在比较长期的)未来可以替换掉JDK 1.5中发布的CMS收集器，与其他GC收集器相比，G1具备如下特点：
+* __并行与并发__：G1能充分利用多CPU，多核环境下的硬件优势，使用多个CPU(或CPU核心)来缩短Stop-The-World停顿的时间(并行)，部分其他收集器原本需要停顿Java线程执行的GC动作，G1收集器仍然可以通过并发的方式让Java程序继续执行
+* __分代收集__：与其他收集器一样，分代的概念在G1中仍然保留，虽然G1可以不需要其他收集器配合就能独立管理整个GC堆，但它能够采用不同的方式去处理新创建的对象和已经存活了一段时间的、熬过多次GC的旧对象以获取更好的收集效果
+* __空间整合__：与CMS的"标记-清理"算法不同，G1从整体来看是基于"标记-清理"算法实现的收集器，从局部(两个Region之间)上来看是基于"复制"算法实现的，这两种算法都意味着G1运作期间不会产生内存空间碎片，收集后能提供规整的可用内存
+* __可预测的停顿__：这是G1相对于CMS的另一大优势，降低停顿时间是G1和CMS共同的关注点，但G1除了追求低停顿外，还能建立可预测的停顿时间模型，能让使用者明确指定在一个长度为M毫秒的时间片段内，消耗在垃圾收集上的时间不得超过N毫秒
+
+
+## 2.18 环境变量classpath
+
+说一说你对环境变量classpath的理解？如果一个类不在classpath下，为什么会抛出ClassNotFoundException异常，如果在不改变这个类路径的前期下，怎样才能正确加载这个类？ 
+
+环境变量classpath是JVM的App ClassLoader类加载器的加载*.class文件的路径
+
+加载类的过程可以交给自定义的类加载器来执行，可以自定义类加载器，可以从任何地方获取一段.class文件的二进制字节流，这便是类的加载过程
+
 ## 2.19 说一下强引用、软引用、弱引用、虚引用以及他们之间和gc的关系
+
+
 
 # 3 JUC/并发相关
 
 ## 3.1 ThreadLocal用过么，原理是什么，用的时候要注意什么 
-## 3.2 Synchronized和Lock的区别 
+
+ThreadLocal的实现需要Thread的配合，Thread内部为ThreadLocal增加了一个字段`threadLocals`，该字段是一个Map<ThreadLocal,T>，也就是说，不同的ThreadLocal对于同一个线程的值将会存放在这个Thread#threadLocals字段中
+
+## 3.2 synchronized和Lock的区别
+
+synchronized是内建的锁机制，依赖于Object Monitor
+
+Lock是ReentrantLock，其实现依赖于AQS，是一种无锁数据结构
+
 ## 3.3 synchronized 的原理，什么是自旋锁，偏向锁，轻量级锁，什么叫可重入锁，什么叫公平锁和非公平锁 
+
+{% post_link Java-synchronized的实现原理与应用 %}
+
 ## 3.4 concurrenthashmap具体实现及其原理，jdk8下的改版 
-## 3.5 用过哪些原子类，他们的参数以及原理是什么 
+
+{% post_link Java-concurrent-ConcurrentHashMap-源码剖析 %}
+
+## 3.5 用过哪些原子类，他们的参数以及原理是什么
+
+AtomicInteger，就是循环CAS来实现的
+
 ## 3.6 cas是什么，他会产生什么问题（ABA问题的解决，如加入修改次数、版本号） 
-## 3.7 如果让你实现一个并发安全的链表，你会怎么做 
+
+
+{% post_link Java-原子操作的实现原理 %}
+
+## 3.7 如果让你实现一个并发安全的链表，你会怎么做
+
+最简单的就是给每个链表访问的方法加上synchronized关键字
+
 ## 3.8 简述ConcurrentLinkedQueue和LinkedBlockingQueue的用处和不同之处 
 ## 3.9 简述AQS的实现原理 
+
+{% post_link Java-concurrent-AQS-源码剖析 %}
+
 ## 3.10 countdowlatch和cyclicbarrier的用法，以及相互之间的差别? 
 ## 3.11 concurrent包中使用过哪些类？分别说说使用在什么场景？为什么要使用？
 ## 3.12 LockSupport工具 
 ## 3.13 Condition接口及其实现原理 
+
+{% post_link Java-concurrent-AQS-ConditionObject-源码剖析 %}
+
 ## 3.14 Fork/Join框架的理解 
 ## 3.15 jdk8的parallelStream的理解 
 ## 3.16 分段锁的原理,锁力度减小的思考
