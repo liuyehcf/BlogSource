@@ -39,6 +39,7 @@ while和for循环在编译之后基本相同，利用字节码`goto`来进行循
 ## 1.3 线程池的种类，区别和使用场景 
 
 所有线程池本质上都是ThreadPoolExecutor，只是配置了不同的初始化参数，核心参数有
+
 1. __corePoolSize__：核心线程数量，所谓核心线是指即便空闲也不会终止的线程(allowCoreThreadTimeOut必须是false)
 1. __maximumPoolSize__：最大线程数量，核心线程+非核心线程的总数不能超过这个数值
 1. __keepAliveTime__：非核心线程在空闲状态下保持active的最长时间，超过这个时间若仍然空闲，那么该线程便会结束
@@ -61,7 +62,6 @@ Executors.newFixedThreadPool(int nThread)
 * __maximumPoolSize__：nThread
 * __keepAliveTime__：0L
 
-
 ## 1.4 分析线程池的实现原理和线程的调度过程 
 ## 1.5 线程池如何调优 
 ## 1.6 线程池的最大线程数目根据什么确定 
@@ -80,12 +80,15 @@ Executors.newFixedThreadPool(int nThread)
 ## 1.12 Java NIO使用 
 
 SocketChannel
+
 * 支持非阻塞模式
 
 ServerSocketChannel
+
 * 支持非阻塞模式
 
 FileChannel
+
 * 只有阻塞模式
 
 Selector
@@ -101,7 +104,6 @@ hashtable给所有的table访问方法加上了synchronized关键字
 ## 1.14 Arraylist和Linkedlist区别及实现原理 
 
 ArrayList内部采用数组来实现
-
 
 LinkedList内部采用链表来实现
 
@@ -119,7 +121,6 @@ ClassLoader#loadClass执行过程
 
 具体详见 {% post_link Java-类加载机制 %}
 
-
 ## 1.16 String，StringBuffer，StringBuilder的区别？ 
 
 String 中的char[]数组是final的
@@ -133,7 +134,6 @@ StringBuilder非线程安全
 完全可能
 
 ## 1.18 简述NIO的最佳实践，比如netty，mina 
-
 
 ## 1.19 TreeMap的实现原理
 
@@ -167,11 +167,11 @@ StringBuilder非线程安全
 ## 2.17 g1和cms区别,吞吐量优先和响应优先的垃圾收集器选择 
 
 G1(Gargabe-First)收集器是当今收集器计数发展的最前沿成果之一。G1是一款面向服务端应用的垃圾收集器，HotSpot开发团队赋予它的使命是(在比较长期的)未来可以替换掉JDK 1.5中发布的CMS收集器，与其他GC收集器相比，G1具备如下特点：
+
 * __并行与并发__：G1能充分利用多CPU，多核环境下的硬件优势，使用多个CPU(或CPU核心)来缩短Stop-The-World停顿的时间(并行)，部分其他收集器原本需要停顿Java线程执行的GC动作，G1收集器仍然可以通过并发的方式让Java程序继续执行
 * __分代收集__：与其他收集器一样，分代的概念在G1中仍然保留，虽然G1可以不需要其他收集器配合就能独立管理整个GC堆，但它能够采用不同的方式去处理新创建的对象和已经存活了一段时间的、熬过多次GC的旧对象以获取更好的收集效果
 * __空间整合__：与CMS的"标记-清理"算法不同，G1从整体来看是基于"标记-清理"算法实现的收集器，从局部(两个Region之间)上来看是基于"复制"算法实现的，这两种算法都意味着G1运作期间不会产生内存空间碎片，收集后能提供规整的可用内存
 * __可预测的停顿__：这是G1相对于CMS的另一大优势，降低停顿时间是G1和CMS共同的关注点，但G1除了追求低停顿外，还能建立可预测的停顿时间模型，能让使用者明确指定在一个长度为M毫秒的时间片段内，消耗在垃圾收集上的时间不得超过N毫秒
-
 
 ## 2.18 环境变量classpath
 
@@ -182,8 +182,6 @@ G1(Gargabe-First)收集器是当今收集器计数发展的最前沿成果之一
 加载类的过程可以交给自定义的类加载器来执行，可以自定义类加载器，可以从任何地方获取一段.class文件的二进制字节流，这便是类的加载过程
 
 ## 2.19 说一下强引用、软引用、弱引用、虚引用以及他们之间和gc的关系
-
-
 
 # 3 JUC/并发相关
 
@@ -210,7 +208,6 @@ Lock是ReentrantLock，其实现依赖于AQS，是一种无锁数据结构
 AtomicInteger，就是循环CAS来实现的
 
 ## 3.6 cas是什么，他会产生什么问题（ABA问题的解决，如加入修改次数、版本号） 
-
 
 {% post_link Java-原子操作的实现原理 %}
 
