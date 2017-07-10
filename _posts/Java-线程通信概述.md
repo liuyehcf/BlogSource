@@ -6,6 +6,7 @@ tags:
 categories:
 - Java
 - Java 并发
+- 线程通信
 ---
 
 __目录__

@@ -6,6 +6,7 @@ tags:
 categories:
 - Java
 - Java Virtual Machine
+- 类加载
 ---
 
 __目录__
