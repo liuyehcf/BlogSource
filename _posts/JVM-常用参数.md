@@ -101,7 +101,57 @@ table th:nth-of-type(3) {
 | `-XX:G1ReservePercent=<percent>` | 数值类型 | 设置作为空闲空间的预留内存百分比(0-50)，以降低目标空间溢出的风险。__默认值是10__。 |
 | `-XX:G1HeapRegionSize=<size>` | 数值类型 | 设置G1 Region的大小(G1收集器用Region来代替新生代老年代，同时仍保留新生代老年代的概念，只不过在G1收集器中，新生代老年代不再物理分离，而是位于不同的Region而已)。可以设置为1MB到32MB之间的数值。__默认值取决于堆的大小__ |
 
-# 5 参考
+# 5 并行收集器相关参数
+
+<style>
+table th:nth-of-type(1) {
+    width: 100px;
+}
+table th:nth-of-type(2) {
+    width: 50px;
+}
+table th:nth-of-type(3) {
+    width: 200px;
+}
+</style>
+
+| 参数名称 | 类型 | 说明 |
+|:--|:--|:--|
+| `-XX:+UseParallelGC` | 布尔类型 | 使用并行清除垃圾收集器（也称为吞吐量收集器）来利用多个处理器来提高应用程序的性能。__该参数默认不设置，并根据机器的配置和JVM的类型自动选择收集器__。 当设置`-XX:+UseParallelGC`参数时，则`-XX：+ UseParallelOldGC`参数将自动设置，除非您明确禁用它 |
+| `-XX:+UseParNewGC` | 布尔类型 | 在新生代中使用并发收集器。__该参数默认不设置__。当设置`-XX:+UseConcMarkSweepGC`参数时，则`-XX:+UseParNewGC`参数将自动设置。 JDK 8中不允许设置`-XX:+UseParNewGC`参数而不设置`-XX:+UseConcMarkSweepGC`参数 |
+| `-XX:ParallelGCThreads=<threads>` | 数值类型 | 上文已经详细说明，此处不再赘述 |
+| `-XX:+UseParallelOldGC` | 布尔类型 | 在老年代(对应Full GC)中启用并发收集器。__该参数默认不设置__。当设置`-XX:+UseParallelGC`参数时，则`-XX:+UseParallelOldGC`参数将自动设置 |
+| `-XX:MaxGCPauseMillis=<time>` | 数值类型 | 上文已经详细说明，此处不再赘述 |
+| `-XX:+UseAdaptiveSizePolicy` | 布尔类型 | 启动自适应的比例(Eden与Survivor的比值)配置。__该参数默认设置__。若要禁用，则必须显式设置`-XX:-UseAdaptiveSizePolicy`参数，并且设置`-XX：SurvivorRatio`参数 |
+| `-XX:GCTimeRatio=<ratil>` | 数值类型 | 设置吞吐量的大小(吞吐量 = 运行用户代码的时间/(运行用户代码的时间 + 垃圾收集时间))。该参数的值应当是一个大于0小于100的整数，若设置为19，则意味着允许的最大GC时间占总时间的`5%=1/(1+19)`。__默认为99，即`1%=1/(1+99)`__ |
+| `-XX:+ScavengeBeforeFullGC` | 布尔类型 | 在Full GC之前先进行一次Minor GC。__此参数默认设置__。Oracle建议不要禁用该参数，because scavenging the young generation before a full GC can reduce the number of objects reachable from the old generation space into the young generation space |
+
+# 6 CMS相关参数
+
+<style>
+table th:nth-of-type(1) {
+    width: 100px;
+}
+table th:nth-of-type(2) {
+    width: 50px;
+}
+table th:nth-of-type(3) {
+    width: 200px;
+}
+</style>
+
+| 参数名称 | 类型 | 说明 |
+|:--|:--|:--|
+| `-XX:+UseConcMarkSweepGC` | 布尔类型 | 在老年代中启用CMS并行收集器。Oracle建议您在吞吐量`-XX：+ UseParallelGC`垃圾收集器无法满足应用程序延迟要求时，使用CMS垃圾收集器。 G1垃圾回收器`-XX：+ UseG1GC`是另一种选择。__此参数默认不设置，并根据机器的配置和JVM的类型自动选择收集器__。启用此选项时，将自动设置`-XX：+ UseParNewGC`参数，并且不应禁用该参数。JDK 8禁止这样设置：`-XX:+UseConcMarkSweepGC`和`-XX:-UseParNewGC`(即不能启用CMS的同时禁用ParNew) |
+| `-XX:+AggressiveHeap` | 布尔类型 | 启动堆优化，根据计算机(RAM和CPU)的配置进行优化，能够提升那些长时间运作的应用的性能。__该参数默认不设置，即堆不会优化__ |
+| `-XX:CMSFullGCsBeforeCompaction=<n>` | 数值类型 | 由于并发收集器不对内存空间进行压缩、整理。所以运行一段时间以后会产生"碎片"，碎片使得运行效率降低。此值设置运行多少次Full GC以后对内存空间进行压缩、整理。__该参数默认为0，即每次Full GC都会进行碎片整理__ |
+| `-XX+UseCMSCompactAtFullCollection` | 布尔类型 | CMS采用`标记-清除`算法，容易产生内存碎片，浪费内存资源。该参数启用内存压缩，清理碎片，可能会影响性能，但是可以消除碎片 |
+| `-XX:+UseCMSInitiatingOccupancyOnly` | 布尔类型 | 允许使用占用值作为启动CMS收集器的唯一标准。 默认情况下，此选项被禁用，并且可以使用其他条件。 |
+| `-XX:CMSInitiatingOccupancyFraction=<percent>` | 数值类型 | 由于CMS存在并发清理过程，即清理时用户线程继续运行，因此可能产生垃圾，所以在触发Full GC时，需要预留空间供用户线程使用。该参数设置触发CAS进行Full GC的内存占用比(0到100)。__默认为-1，任何负值包括默认值，意味着需要设置`-XX:CMSTriggerRatio`来定义初始占用比__ |
+| `-XX:CMSInitiatingPermOccupancyFraction=<percent>` | 数值类型 | 设置永久代触发GC的占用比，此参数在JDK 8中被弃用，且无替代参数 |
+| `-XX:+CMSIncrementalMode` | 布尔类型 | 启用增量式的CMS收集器。该参数在JDK 8中被弃用，且无替代参数 |
+
+# 7 参考
 
 [JMV Options 官方文档1](http://www.oracle.com/technetwork/articles/java/vmoptions-jsp-140102.html)
 
