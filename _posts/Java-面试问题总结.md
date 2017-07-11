@@ -7,9 +7,6 @@ categories:
 - Java
 ---
 
-__目录__
-
-<!-- toc -->
 <!--more-->
 
 # 1 Java基础
