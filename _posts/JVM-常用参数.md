@@ -2,6 +2,10 @@
 title: JVM 常用参数
 date: 2017-07-10 18:55:43
 tags:
+- 摘录
+categories:
+- Java
+- Java Memory Model
 ---
 
 __目录__
