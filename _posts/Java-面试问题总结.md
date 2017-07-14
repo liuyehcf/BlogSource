@@ -60,13 +60,41 @@ Executors.newFixedThreadPool(int nThread)
 * __maximumPoolSize__：nThread
 * __keepAliveTime__：0L
 
-## 1.4 分析线程池的实现原理和线程的调度过程 
-## 1.5 线程池如何调优 
-## 1.6 线程池的最大线程数目根据什么确定 
-## 1.7 动态代理的几种方式 
-## 1.8 HashMap的并发问题 
+## 1.4 分析线程池的实现原理和线程的调度过程
+
+添加一个新的Runnable时
+
+1. 当前线程数量小于最大线程数量时，新开一个线程
+1. 当线程数量大于最大线程时，直接将任务压入任务队列
+
+Work即一个工作的线程，会从BlockingQueue获取任务并执行
+
+## 1.5 线程池如何调优
+
+看具体需求
+
+## 1.6 线程池的最大线程数目根据什么确定
+
+传入的参数
+
+## 1.7 动态代理的几种方式
+
+JDK 动态代理和CGlib
+
+## 1.8 HashMap的并发问题
+
+访问和扩容可能会同时进行
+
 ## 1.9 了解LinkedHashMap的应用吗
+
+实现一个LRU
+
 ## 1.10 反射的原理，反射创建类实例的三种方式是什么？ 
+
+1. `Class clazz = Class.forName(<string>)`
+1. `Class clazz = obj.getClass()`
+1. `Class clazz = <class>.class`
+
 ## 1.11 cloneable接口实现原理，浅拷贝or深拷贝 
 
 实现cloneable接口必须调用父类Object.clone()方法来进行内存的拷贝
@@ -91,7 +119,7 @@ FileChannel
 
 Selector
 
-这里差一篇博客介绍NIO
+{% post_link Java-NIO %}
 
 ## 1.13 Hashtable和HashMap的区别及实现原理，HashMap会问到数组索引，hash碰撞怎么解决 
 
@@ -140,19 +168,136 @@ StringBuilder非线程安全
 # 2 JVM相关
 
 ## 2.1 类的实例化顺序，比如父类静态数据，构造函数，字段，子类静态数据，构造函数，字段，他们的执行顺序 
+
+以一个程序来说明
+
+```Java
+public class Test {
+    public static int init(String s) {
+        System.out.println(s);
+        return 1;
+    }
+
+    public static void main(String[] args){
+        new Derive();
+    }
+}
+
+class Base {
+    private static int si = Test.init("init Base's static field");
+
+    private int i=Test.init("init Base's field");
+
+    static{
+        Test.init("init Base's static Statement");
+    }
+
+    {
+        Test.init("init Base's Statement");
+    }
+
+    public Base(){
+        Test.init("init Base's constructor");
+    }
+}
+
+class Derive extends Base{
+    private static int si = Test.init("init Derive's static field");
+
+    private int i=Test.init("init Derive's field");
+
+    static{
+        Test.init("init Derive's static Statement");
+    }
+
+    {
+        Test.init("init Derive's Statement");
+    }
+
+    public Derive(){
+        Test.init("init Derive's constructor");
+    }
+}
+```
+
+以下是输出
+
+```
+init Base's static field
+init Base's static Statement
+init Derive's static field
+init Derive's static Statement
+init Base's field
+init Base's Statement
+init Base's constructor
+init Derive's field
+init Derive's Statement
+init Derive's constructor
+```
+
 ## 2.2 JVM内存分代 
+
+新生代、老年代、永久代
+
+JDK 8中并无物理上分隔的分代，仅仅保留概念，取而代之的是Region
+
+其中新生代采用的是复制算法，Eden和Survivor分为8：1
+
 ## 2.3 Java 8的内存分代改进 
-## 2.4 JVM垃圾回收机制，何时触发MinorGC等操作 
+
+用Region来替代，仅仅保留新生代和老年代的概念。
+
+G1收集器会维护一个Region的列表，每次回收一个最有受益的Region，这也是G1收集器名字的来源，Garabage first
+
+## 2.4 JVM垃圾回收机制，何时触发MinorGC等操作
+
+直观上的感觉就是当新生代内存被使用完了
+
 ## 2.5 jvm中一次完整的GC流程（从ygc到fgc）是怎样的，重点讲讲对象如何晋升到老年代，几种主要的jvm参数等 
+
+{% post_link JVM-常用参数 %}
+
 ## 2.6 你知道哪几种垃圾收集器，各自的优缺点，重点讲下cms，g1 
-## 2.7 新生代和老生代的内存回收策略 
+
+{% post_link Java-垃圾收集器 %}
+
+## 2.7 新生代和老生代的内存回收策略
+
+新生代：复制算法，因为对象朝生夕死
+
+老年代：标记-清除或者标记整理
+
 ## 2.8 Eden和Survivor的比例分配等 
+
+默认8：1，如果不够用，则由老年代来担保
+
 ## 2.9 深入分析了Classloader，双亲委派机制 
-## 2.10 JVM的编译优化 
+
+{% post_link Java-类加载机制 %}
+
+## 2.10 JVM的编译优化
+
+__参考JMM分类下的博客__
+
+单线程：在保证as-if-serial语义下，可以允许编译器和处理器进行重排
+
+多线程：在保证happens-before语义，可以允许编译器和处理器进行重排
+
+此外注意volaitle、final、锁的内存语义，以及对优化策略的影响
+
 ## 2.11 对Java内存模型的理解，以及其在并发中的应用 
+
+__参考JMM分类下的博客__
+
 ## 2.12 指令重排序，内存栅栏等 
+
+{% post_link Java-内存模型基础 %}
+
 ## 2.13 OOM错误，stackoverflow错误，permgen space错误 
 ## 2.14 JVM常用参数 
+
+{% post_link JVM-常用参数 %}
+
 ## 2.15 tomcat结构，类加载器流程 
 ## 2.16 volatile的语义，它修饰的变量一定线程安全吗
 
@@ -180,6 +325,8 @@ G1(Gargabe-First)收集器是当今收集器计数发展的最前沿成果之一
 加载类的过程可以交给自定义的类加载器来执行，可以自定义类加载器，可以从任何地方获取一段.class文件的二进制字节流，这便是类的加载过程
 
 ## 2.19 说一下强引用、软引用、弱引用、虚引用以及他们之间和gc的关系
+
+{% post_link Java-对象生命周期 %}
 
 # 3 JUC/并发相关
 
