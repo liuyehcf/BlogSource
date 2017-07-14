@@ -298,7 +298,7 @@ AQS框架是CLH锁的变体，AQS相比于CLH锁，AQS采用了自旋与阻塞�
 
 具体AQS源码剖析，请移步 {% post_link Java-concurrent-AQS-源码剖析 %}
 
-参考
+# 6 参考
 
 * [1-偏向锁，轻量级锁，自旋锁，重量级锁的详细介绍](http://www.cnblogs.com/wade-luffy/p/5969418.html)
 * [2-synchronized实现原理](http://www.cnblogs.com/pureEve/p/6421273.html)

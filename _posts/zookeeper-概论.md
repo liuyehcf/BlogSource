@@ -138,8 +138,6 @@ Zookeeper中，服务提供者在启动时，将其提供的服务名称、服�
 
 # 5 参考
 
-__本文摘录自以下博客__
-
 * [为什么要在服务层设计读写分离](http://blog.sina.com.cn/s/blog_6e1bd8350102uwy6.html)
 * [zookeeper是什么](http://www.cnblogs.com/yuyijq/p/3391945.html)
 * [zookeeper在分布式应用中的作用](http://blog.sina.com.cn/s/blog_6e1bd8350102uxv6.html)

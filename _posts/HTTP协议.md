@@ -189,4 +189,4 @@ GET和POST是HTTP请求的两种基本方法，要说它们的区别，接触过
 
 # 5 参考
 
-[HTTP协议详解](http://www.cnblogs.com/TankXiao/archive/2012/02/13/2342672.html#threeconcept)
+* [HTTP协议详解](http://www.cnblogs.com/TankXiao/archive/2012/02/13/2342672.html#threeconcept)

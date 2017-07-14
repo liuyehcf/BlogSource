@@ -108,4 +108,6 @@ finalize()方法是对象逃脱死亡命运的最后一次机会。稍后GC将�
     * 该类对应的java.lang.Class对象没有在任何地方被引用，无法在任何地方通过反射访问该类的方法
     * 虚拟机可以对满足上述3个条件的无用类进行回收，仅仅是可以，并不像对象一样，不使用了就必然会回收。是否对类进行回收，HotSpot虚拟机提供了-Xnoclassgc参数进行控制，还可以使用-verbose:class、-XX:+TraceClassLoading、-XX:TraceClassUnLoading查看类加载和卸载信息，在大量使用反射、动态代理、CGLib等ByteCode框架、动态生成JSP以及OSGi这类频繁自定义ClassLoader的场景都需要虚拟机具备类卸载的功能，以保证永久代不会溢出
 
-__深入理解Java虚拟机__
+# 7 参考
+
+* 深入理解Java虚拟机

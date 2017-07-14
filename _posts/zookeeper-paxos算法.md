@@ -106,7 +106,7 @@ __这个过程在任何时候中断都可以保证正确性__。例如如果一�
 
 # 5 参考 
 
-[wiki-paxos](https://zh.wikipedia.org/zh-cn/Paxos%E7%AE%97%E6%B3%95)
+* [wiki-paxos](https://zh.wikipedia.org/zh-cn/Paxos%E7%AE%97%E6%B3%95)
 
 ---
 
