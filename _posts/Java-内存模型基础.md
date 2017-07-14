@@ -115,6 +115,14 @@ public void processB(){
 
 * StoreLoad Barriers是一个全能型屏障，他同时具有其他3个屏障的效果。现代处理器大多数支持该屏障。执行该屏障开销会很昂贵，因为当前处理器通常要把写缓冲区中的数据全部刷新到内存中(Buffer Fully Flush)
 
+为什么说StoreLoad Barriers是一个全能型屏障，如何得出这个结论
+
+1. 存在一个隐式的顺序关系?：`Load1 < Store1`
+1. 因此`Store1 < Load2 <==> Load1 < Store1 < Load2 < Store2`
+    * 可以得到`Load1 < Load2`，即LoadLoad内存屏障
+    * 可以得到`Store1 < Store2`，即StoreStore内存屏障
+    * 可以得到`Load1 < Store2`，即LoadStore内存屏障
+
 # 6 happens-before简介
 
 从JDK开始，Java使用新的JSR-133内存模型

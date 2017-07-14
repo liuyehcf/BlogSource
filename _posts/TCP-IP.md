@@ -128,3 +128,4 @@ __由于TCP连接时全双工的，因此，每个方向都必须要单独进行
 
 * [TCP/IP协议三次握手与四次握手流程解析](http://www.2cto.com/net/201310/251896.html)
 * [TCP/IP为什么要进行三次握手？](http://blog.csdn.net/zhushuai1221/article/details/51008950)
+* [计算机网络——TCP协议中的三次握手四次挥手以及11种状态转换](http://blog.csdn.net/a987073381/article/details/52206215)
