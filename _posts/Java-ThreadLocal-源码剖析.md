@@ -53,7 +53,7 @@ ThreadLocalMap用于存放<ThreadLocal,T>这样的键值对，ThreadLocal对象�
 
 ThreadLocalMap仅有三个接口方法，即get、set、remove方法，我们以这三个方法为切入点慢慢揭开ThreadLocal的奥秘
 
-# 4 get
+## 3.1 get
 
 get方法用于从当前线程中取出该线程本地的对象，当前线程指的就是调用get方法的线程。如果该变量在当前线程中的副本尚未初始化，那么调用initialValue方法进行初始化
 
@@ -85,7 +85,7 @@ get方法用于从当前线程中取出该线程本地的对象，当前线程�
     }
 ```
 
-## 4.1 getMap
+### 3.1.1 getMap
 
 getMap方法用于获取给定线程对象所关联的Map。可以看出ThreadLocal的实现还需要Thread的配合，Thread对象中含有一个`threadLocals`字段
 
@@ -102,7 +102,7 @@ getMap方法用于获取给定线程对象所关联的Map。可以看出ThreadLo
     }
 ```
 
-## 4.2 setInitialValue
+### 3.1.2 setInitialValue
 
 setInitialValue方法用于初始化线程本地对象或者初始化给定线程关联的map
 
@@ -131,7 +131,7 @@ setInitialValue方法用于初始化线程本地对象或者初始化给定线�
     }
 ```
 
-## 4.3 initialValue
+### 3.1.3 initialValue
 
 该方法用于定义线程本地对象的初始化操作，类似于一个工厂方法，用于生产线程本地的对象
 
@@ -161,7 +161,7 @@ setInitialValue方法用于初始化线程本地对象或者初始化给定线�
     }
 ```
 
-## 4.4 createMap
+### 3.1.4 createMap
 
 就是新建一个Map然后赋值给指定的Thread对象，并且存入一个指定的value，很简单，不多说
 
@@ -178,7 +178,7 @@ setInitialValue方法用于初始化线程本地对象或者初始化给定线�
     }
 ```
 
-# 5 set
+## 3.2 set
 
 set方法就是用于将一个对象存入线程关联的Map中去，以当前线程对象为键值
 
@@ -207,7 +207,7 @@ set方法就是用于将一个对象存入线程关联的Map中去，以当前�
     }
 ```
 
-# 6 remove
+## 3.3 remove
 
 remove方法用于将当前ThreadLocal为键值的键值对从当前线程的map中除去
 
