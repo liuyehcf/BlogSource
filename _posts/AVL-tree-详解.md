@@ -12,11 +12,11 @@ __目录__
 <!-- toc -->
 <!--more-->
 
-# 前言
+# 1 前言
 
 AVL-tree是一种平衡二叉树，搜索的平均复杂度是O(log n)。本篇博客将介绍AVL-tree的两种实现方式，其中第二种方式是参考<STL源码剖析>，较第一种方式更为简单高效，推荐第二种方式
 
-# 定义
+# 2 定义
 
 在计算机科学中，AVL树是最先发明的自平衡二叉查找树。在AVL树中任何节点的两个子树的高度最大差别为一，所以它也被称为高度平衡树。查找、插入和删除在平均和最坏情况下都是O（log n）。增加和删除可能需要通过一次或多次树旋转来重新平衡这个树。
 
@@ -35,18 +35,16 @@ __平衡性质__
 1. 每个节点的左子树与右子树的高度最多不超过1
     * __节点的高度__：从给定节点到其最深叶节点所经过的边的数量
 
+# 3 版本1
 
-# 版本1
-
-## 平衡性破坏分析
+## 3.1 平衡性破坏分析
 
 为了方便描述，定义几个符号
 
 1. 对于一个节点X，调整(这里的调整特指旋转)之前其高度记为H<sub>x</sub>
 1. 仍然对于上述节点X，调整一次后高度记为H<sub>x+</sub>
 
-
-### 可旋性分析
+### 3.1.1 可旋性分析
 
 首先分析左旋，见如下示意图
 
@@ -73,11 +71,9 @@ __问题2：何时左旋后能够达到平衡状态__
     * 旋转后，B节点平衡，H<sub>B</sub>+=H<sub>A</sub>或H<sub>B+</sub>=H<sub>A</sub>-1
     * 旋转后，A节点平衡，H<sub>A</sub>+=H<sub>A</sub>或H<sub>A+</sub>=H<sub>A</sub>+1
 
-
 然后分析右旋，见如下示意图
 
 ![fig2](/images/AVL-tree-详解/2.png)
-
 
 __问题1：何时我们会进行右旋操作__
 
@@ -100,11 +96,9 @@ __问题2：何时右旋后能够达到平衡状态__
     * 旋转后，A节点平衡，且H<sub>A+</sub>=H<sub>B</sub>或H<sub>A+</sub>=H<sub>B</sub>-1
     * 旋转后，B节点平衡，且H<sub>B+</sub>=H<sub>B</sub>或H<sub>B+</sub>=H<sub>B</sub>+1
 
-
 __注意：上述分析仅仅讨论了左旋或者右旋一棵子树时，旋转后该子树是否平衡，但是旋转后该子树的高度是可能变化的，也就是对于该子树的父节点而言，可能又会造成不平衡。因此在AVL性质维护函数中需要充分考虑到这一点__
 
-
-### 平衡性的维护
+### 3.1.2 平衡性的维护
 
 __当平衡性质被破坏需要右旋来维护性质时__
 
@@ -121,9 +115,7 @@ __其实，以上的过程存在一个可以优化的点__：
 
 > __假设对C节点的右旋条件不满足，即H<sub>B</sub> < H<sub>D</sub>__，那么此时需要对A节点进行一次左旋。__但是A节点左旋后可能会导致A子树的高度发生变化(可能A节点的高度比旋转前少1)__。如果A子树的高度少1，那么对于节点C就成为一个平衡节点了，就不需要再进行右旋操作了。但是对于下面将要讲的伪代码中，并没有进行这样的优化。也就意味着不管A子树的高度是否发生变化，C的右旋仍然会执行，这样做并不会破坏平衡性(旋转前后都会处于平衡状态)，只是复杂度增高了
 
-
 __当平衡性质被破坏需要左旋来维护性质时__
-
 
 当A为平衡被破坏的节点，且A的右子树比左子树的高度大2，示意图如下
 
@@ -134,13 +126,11 @@ __当平衡性质被破坏需要左旋来维护性质时__
 * 若不满足H<sub>E</sub> >= H<sub>D</sub>，则需要首先对C进行一次右旋，而右旋又存在前提
 * 一直往下递归，直至满足旋转条件
 
-
 __这里存在一个相同的优化点，不再赘述__
 
+## 3.2 伪代码
 
-## 伪代码
-
-### 基本操作
+### 3.2.1 基本操作
 
 更新指定节点的高度，只有当该节点的左右孩子节点的高度都正确时，才能得到正确的结果
 
@@ -163,7 +153,7 @@ else u.p.right=v
     v.p=u.p
 ```
 
-### 左旋和右旋
+### 3.2.2 左旋和右旋
 
 左旋给定节点，更新旋转后节点的高度，并返回旋转后子树的根节点
 
@@ -209,12 +199,11 @@ AVL-TREE-HEIGHT(T,x)
 return x      //返回旋转后的子树根节点
 ```
 
-###  性质维护
+### 3.2.3  性质维护
 
 根据指定方向旋转给定节点，旋转后该子树满足平衡的性质，并且输入的节点必须满足如下性质
 
 > X节点必定是以X为根节点的子树中__唯一__不满足平衡性的节点。意味着X节点的孩子子树的所有节点均满足平衡性。因此，必须从下往上找到第一个不平衡的节点来调用该方法
-
 
 ```C
 AVL-TREE-HOLD-ROTATE(T,x,orientation)
@@ -246,7 +235,7 @@ while(!stack1.Empty())
 return rotateRoot
 ```
 
-### 插入
+### 3.2.4 插入
 
 插入一个节点
 
@@ -285,7 +274,7 @@ while(y≠T.nil) //沿着y节点向上遍历该条路径
     y=y.p
 ```
 
-### 删除
+### 3.2.5 删除
 
 删除一个节点
 
@@ -311,12 +300,11 @@ elseif z.right==T.nil
 AVL-TREE-FIXUP(T,x)
 ```
 
-# 版本2
+# 4 版本2
 
 与版本1的实现不同，这个版本的分析将会更加简单，实现效率也会更高
 
-
-## 几类不平衡情况
+## 4.1 几类不平衡情况
 
 当插入一个节点后，某节点A为从插入节点往上找到的第一个平衡性被破坏的节点，__可以分为如下四种情况，又可分为两大类__
 
@@ -327,8 +315,7 @@ AVL-TREE-FIXUP(T,x)
     * 插入点位于A的左子节点的右子树--左右
     * 插入点位于A的右子节点的左子树--右左
 
-
-### 第一类不平衡(以左左为例)
+### 4.1.1 第一类不平衡(以左左为例)
 
 为了方便描述，定义几个符号
 
@@ -340,11 +327,11 @@ AVL-TREE-FIXUP(T,x)
 ![fig5](/images/AVL-tree-详解/5.png)
 
 __调整前，各节点的高度如下__
+
 * H<sub>B</sub>=H<sub>C</sub>+2
 * H<sub>A</sub>=H<sub>C</sub>+2(为什么A和B高度相同，因为B的高度已经更新过了，而A仍然是是插入新节点之前的高度，即尚未维护A节点的height字段)
 * H<sub>D</sub>=H<sub>B</sub>-1=H<sub>C</sub>+1
 * H<sub>E</sub>必定小于H<sub>D</sub>(否则在新节点插入到节点D为根节点的子树之前，A节点就是不平衡的)，因此H<sub>E</sub>=H<sub>C</sub>
-
 
 __右旋调整后，各节点的高度如下__
 
@@ -356,7 +343,7 @@ __右旋调整后，各节点的高度如下__
 
 __可以发现，调整前后子树根节点的高度都是HC+2，因此该节点上层的节点的平衡性不会被破坏，于是通过一次右旋，不平衡性即被消除__
 
-### 第二类不平衡(以左右为例)
+### 4.1.2 第二类不平衡(以左右为例)
 
 为了方便描述，定义几个符号
 
@@ -376,8 +363,8 @@ __调整前，各节点的高度如下__
 * H<sub>D</sub>必定小于H<sub>E</sub>，因此H<sub>D</sub>=H<sub>C</sub>
 * H<sub>H</sub>与H<sub>I</sub>至少有一个是H<sub>C</sub>，另一个可以是H<sub>C</sub>或H<sub>C</sub>-1
 
-
 __对B节点进行一次左旋后，各节点高度如下__
+
 * H<sub>D+</sub>=H<sub>D</sub>=H<sub>C</sub>
 * H<sub>H+</sub>=H<sub>H</sub>=H<sub>C</sub> or H<sub>C</sub>-1
 * H<sub>I+</sub>=H<sub>I</sub>=H<sub>C</sub> or H<sub>C</sub>-1
@@ -387,6 +374,7 @@ __对B节点进行一次左旋后，各节点高度如下__
 * 当H<sub>I+</sub>=H<sub>C</sub>-1时，节点E可能是不平衡的，但是没关系，这只是个中间状态，H<sub>E</sub>=H<sub>C</sub>+2
 
 __对A节点进行一次右旋，各节点高度如下__
+
 * H<sub>D++</sub>=H<sub>D+</sub>=H<sub>C</sub>
 * H<sub>H++</sub>=H<sub>H+</sub>= H<sub>C</sub> or H<sub>C</sub>-1
 * H<sub>I++</sub>=H<sub>I+</sub>=H<sub>C</sub> or H<sub>C</sub>-1
@@ -397,9 +385,9 @@ __对A节点进行一次右旋，各节点高度如下__
 
 __可以发现，调整前后子树根节点的高度都是HC+2，因此该节点上层的节点的平衡性不会被破坏，于是通过一次左旋和一次右旋，不平衡性即被消除__
 
-## 伪代码
+## 4.2 伪代码
 
-### 基本操作
+### 4.2.1 基本操作
 
 更新指定节点的高度，只有当该节点的左右孩子节点的高度都正确时，才能得到正确的结果
 
@@ -422,7 +410,7 @@ else u.p.right=v
     v.p=u.p
 ```
 
-### 左旋和右旋
+### 4.2.2 左旋和右旋
 
 左旋给定节点，更新旋转后节点的高度，并返回旋转后子树的根节点
 
@@ -468,7 +456,7 @@ AVL-TREE-HEIGHT(T,x)     //13 14两行顺序不得交换
 return x      //返回旋转后的子树根节点
 ```
 
-### 插入
+### 4.2.3 插入
 
 插入一个节点
 
@@ -517,7 +505,7 @@ if r.h!=originHigh and r!=root
     AVL-TREE--BALANCE-FIX(r.parent)
 ```
 
-### 删除
+### 4.2.4 删除
 
 删除给定关键字
 
@@ -545,9 +533,9 @@ if p!=nil
     AVL-TREE--BALANCE-FIX(p)
 ```
 
-# Java源码
+# 5 Java源码
 
-## 节点定义
+## 5.1 节点定义
 
 ```Java
 public class AVLTreeNode {
@@ -576,7 +564,7 @@ public class AVLTreeNode {
 }
 ```
 
-## 版本1
+## 5.2 版本1
 
 ```Java
 enum RotateOrientation {
@@ -597,7 +585,6 @@ public class AVLTree2 {
         nil.parent = nil;
         root = nil;
     }
-
 
     public void insert(int val) {
         AVLTreeNode x = root;
@@ -707,7 +694,6 @@ public class AVLTree2 {
         return y;
     }
 
-
     /**
      * 右旋
      *
@@ -736,7 +722,6 @@ public class AVLTree2 {
         updateHigh(x);
         return x;
     }
-
 
     private Map<AVLTreeNode, Integer> highMap;
 
@@ -787,7 +772,6 @@ public class AVLTree2 {
         return nil;
     }
 
-
     public void delete(int val) {
         AVLTreeNode z = search(root, val);
         if (z == nil) {
@@ -823,7 +807,6 @@ public class AVLTree2 {
             throw new RuntimeException();
     }
 
-
     private void transplant(AVLTreeNode u, AVLTreeNode v) {
         v.parent = u.parent;
         if (u.parent == nil) {
@@ -835,14 +818,12 @@ public class AVLTree2 {
         }
     }
 
-
     private AVLTreeNode min(AVLTreeNode x) {
         while (x.left != nil) {
             x = x.left;
         }
         return x;
     }
-
 
     public void inOrderTraverse() {
         inOrderTraverse(root);
@@ -872,7 +853,6 @@ public class AVLTree2 {
         }
     }
 }
-
 
 class TestAVLTree2 {
     public static void main(String[] args) {
@@ -930,7 +910,7 @@ class TestAVLTree2 {
 }
 ```
 
-## 版本2
+## 5.3 版本2
 
 ```Java
 public class AVLTree {
@@ -945,7 +925,6 @@ public class AVLTree {
         nil.parent = nil;
         root = nil;
     }
-
 
     public void insert(int val) {
         AVLTreeNode x = root;
@@ -1040,7 +1019,6 @@ public class AVLTree {
         return y;
     }
 
-
     /**
      * 右旋
      *
@@ -1069,7 +1047,6 @@ public class AVLTree {
         updateHigh(x);
         return x;
     }
-
 
     private Map<AVLTreeNode, Integer> highMap;
 
@@ -1119,7 +1096,6 @@ public class AVLTree {
         }
         return nil;
     }
-
 
     public void delete(int val) {
         AVLTreeNode z = search(root,val);
@@ -1172,14 +1148,12 @@ public class AVLTree {
         }
     }
 
-
     private AVLTreeNode min(AVLTreeNode x) {
         while (x.left != nil) {
             x = x.left;
         }
         return x;
     }
-
 
     public void inOrderTraverse() {
         inOrderTraverse(root);
@@ -1209,7 +1183,6 @@ public class AVLTree {
         }
     }
 }
-
 
 class TestAVLTree {
     public static void main(String[] args) {
@@ -1264,6 +1237,3 @@ class TestAVLTree {
     }
 }
 ```
-
-
-
