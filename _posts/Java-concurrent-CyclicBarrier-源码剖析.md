@@ -233,7 +233,7 @@ dowait方法是实现CyclicBarrier语义的主要方法
             // loop until tripped, broken, interrupted, or timed out
             for (;;) {
                 try {
-                    //如果不允许超时，将当前线程直接挂起，阻塞在条件对象trip的condition queue中
+                    //如果不允许超时，将当前线程直接挂起，阻塞在条件对象trip的condition queue(ConditionObject中维护的等待队列)中
                     if (!timed)
                         trip.await();
                     //如果允许超时，阻塞在条件对象trip的condition queue中一段时间
