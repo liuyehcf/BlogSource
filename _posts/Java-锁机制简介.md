@@ -23,6 +23,7 @@ __目录__
 * AQS框架
 
 # 2 Java内建锁机制
+
 ## 2.1 synchronized
 Java中每一个对象都可以作为锁，这是 synchronized实现同步的基础
 

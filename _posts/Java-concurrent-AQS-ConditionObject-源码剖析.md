@@ -55,6 +55,7 @@ Condition接口定义了一系列monitor methods，正如AQS作为synchronized�
 __强调一点：AQS的独占模式才支持ConditionObject__
 
 # 3 源码分析
+
 ## 3.1 字段
 ```Java
         /** First node of condition queue. */
