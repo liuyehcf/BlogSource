@@ -126,7 +126,7 @@ ConditionObject利用了AQS中的Node静态内部类用于封装节点。__指�
             }
             //将当前线程封装成Node节点
             Node node = new Node(Thread.currentThread(), Node.CONDITION);
-            //condition list为空，进行初始化即可
+            //condition queue为空，进行初始化即可
             if (t == null)
                 firstWaiter = node;
             //将当前节点连接到condition queue最后即可

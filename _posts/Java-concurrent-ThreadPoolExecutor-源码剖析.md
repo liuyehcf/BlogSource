@@ -192,8 +192,9 @@ __与该字段相关的方法__
     private volatile int maximumPoolSize;
 ```
 
-* __workQueue__：Blocking相关源码分析可以参考{% post_link Java-concurrent-ArrayBlockingQueue-源码剖析 %}
-* __mainLock__：ReentrantLock相关源码分析可以参考{% post_link Java-concurrent-ReentrantLock-源码剖析 %}
+* __workQueue__：任务队列，Blocking相关源码分析可以参考{% post_link Java-concurrent-ArrayBlockingQueue-源码剖析 %}
+* __mainLock__：重入锁，在访问或者修改workers时，需要该重入锁来保证线程安全。ReentrantLock相关源码分析可以参考{% post_link Java-concurrent-ReentrantLock-源码剖析 %}
+* __workers__：用于存放Worker的集合，采用非线程安全的HashSet，因此该字段的访问和修改必须配合mainLock
 * __termination__：ConditionObject相关源码分析可以参考{% post_link Java-concurrent-AQS-ConditionObject-源码剖析 %}
 * __corePoolSize__：核心线程数量，所谓核心线是指即便空闲也不会终止的线程(allowCoreThreadTimeOut必须是false)
 * __maximumPoolSize__：最大线程数量，核心线程+非核心线程的总数不能超过这个数值
@@ -207,7 +208,7 @@ __Worker封装了Thread，因此Worker可以理解为一个线程。Worker实现
 __同时Worker还继承了AQS，（{% post_link Java-concurrent-AQS-源码剖析 %}）也就是说Work对象本身可以作为Lock来使用，但这是为什么呢?__
 
 * 在ThreadPoolExecutor#runWorker方法中，在成功获取到任务后，会将自己锁定，这个锁定状态用于表示当前work处于工作状态(在执行任务)，当一个任务处理完毕之后，又会解除锁定状态
-* 在ThreadPoolExecutor#interruptIdleWorkders方法中会调用Worker#tryLock()方法，该方法就是尝试获取锁，如果获取失败，则表明worker处于工作状态
+* 在ThreadPoolExecutor#interruptIdleWorkers方法中会调用Worker#tryLock()方法，该方法就是尝试获取锁，如果获取失败，则表明worker处于工作状态
 * 这就是Worker继承AQS的原因，可以不借助其他锁机制，仅依靠AQS来提供一种线程安全的状态表示机制
 
 ```Java

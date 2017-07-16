@@ -54,7 +54,7 @@ AQS在内部维护了一个同步阻塞队列，__下面简称sync queue__，该
 
 * __CANCELLED__：用于标记一个已被取消的节点，一旦Node#waitStatus的值被设为CANCELLED，那么waitStatus的值便不再被改变
 * __SIGNAL__：__标记一个节点(记为node)处于这样一种状态：当node释放资源(unlock/release)时，node节点必须唤醒其后继节点__
-* __CONDITION__：用于标记一个节点位于条件变量的阻塞队列中(我称这个阻塞队列为Condition list)，本篇暂不介绍Condition相关源码，因此读者可以暂时忽略
+* __CONDITION__：用于标记一个节点位于条件变量的阻塞队列中(我称这个阻塞队列为Condition queue)，本篇暂不介绍Condition相关源码，因此读者可以暂时忽略
 * __PROPAGATE__：仅用于标记sync queue头节点，用于确保release操作propagate下去
 
 其次，再看Node中重要字段，源码如下
@@ -142,12 +142,15 @@ AQS在内部维护了一个同步阻塞队列，__下面简称sync queue__，该
         Node nextWaiter;
 ```
 
-* __waitStatus__：节点的状态，可取值有五种，分别是SIGNAL、CANCEL、CONDITION、PROPAGATE、0。其中独占模式仅涉及到SIGNAL、CANCEL、0三种状态，共享模式仅涉及到SIGNAL、CANCEL、PROPAGATE、0四种状态。CONDITION状态不会出现在sync queue中，而是位于条件变量的Condition list中，本篇博客暂不讨论ConditoinObject
+* __waitStatus__：节点的状态，可取值有五种，分别是SIGNAL、CANCEL、CONDITION、PROPAGATE、0。
+    * __独占模式__仅涉及到SIGNAL、CANCEL、0三种状态
+    * __共享模式__仅涉及到SIGNAL、CANCEL、PROPAGATE、0四种状态
+    * CONDITION状态不会出现在sync queue中，而是位于条件变量的Condition queue中，本篇博客暂不讨论ConditoinObject
 * __pre__：前继节点，该字段通过CAS操作进行赋值，__保证可靠__(现在不理解没关系，后面的方法解析会多次提到)
 * __next__：后继节点，该字段的赋值操作是非线程安全的，__即next是不可靠的__(Node#next为null并不代表节点不存在后继)。但是，一旦next不为null，那么next也是可靠的(现在不理解没关系，后面的方法解析会多次提到)
 * __thread__：该节点关联的线程
-* __nextWaiter__：独占模式中就是null，共享模式中就是SHARED。在ConditionObject的Condition list中指向下一个节点
-* __注意：Condition list用nextWaiter来连接单向链表(pre与next是无用的)，sync queue利用pre和next来连接双向链表(nextWaiter仅用于标记独占或者共享模式而已)，不要搞混了！！！__
+* __nextWaiter__：独占模式中就是null，共享模式中就是SHARED。在ConditionObject的Condition queue中指向下一个节点
+* __注意：Condition queue用nextWaiter来连接单向链表(pre与next是无用的)，sync queue利用pre和next来连接双向链表(nextWaiter仅用于标记独占或者共享模式而已)，不要搞混了！！！__
 
 # 3 AQS字段解析
 AQS字段仅有三个，源码如下
@@ -179,7 +182,7 @@ AQS字段仅有三个，源码如下
 # 4 重要方法解析
 
 ## 4.1 acquire
-__acquire方法是独占模式下实现加锁语义的入口方法__
+__acquire方法用于获取指定数量的资源，如果获取不到则当前线程会被阻塞__
 
 * 该方法内部不响应中断，在成功获取资源后会恢复中断现场，但是不会抛出InterruptedException异常
 * 首先，利用tryAcquire尝试获取资源，如果成功了，则方法直接返回，当前线程直接获取锁状态；如果失败了，当前线程被封装成Node节点并添加到sync queue中，并在一个死循环中尝试获取资源直至成功
@@ -221,7 +224,7 @@ __tryAcquire方法用于判断是否能够获取资源__
 ```
 
 ### 4.1.2 addWaiter
-__addWaiter方法将节点添加到到sync queue中__
+__无法获取资源的线程将被封装成Node节点，通过addWaiter方法将指定节点添加到到sync queue中__
 
 * 根据指定模式，将当前线程封装成一个Node节点，并且添加到sync queue中
 * 首先尝试直接入队，若失败则交给enq方法处理
@@ -291,7 +294,7 @@ __enq方法确保给定节点成功入队__
 ```
 __这里抛出一个问题__
 
-* 在初始化sync queue中，将一个new Node()设置为了sync queue的头结点，该节点没有关联任何线程，我称之为"Dummy Node"，这个头结点"Dummy Node"待会可能会被设置为SIGNAL状态，那么它是如何唤醒后继节点的呢？我会在在讲到release时进行解释
+* 在初始化sync queue中，将一个new Node()设置为了sync queue的头结点，该节点没有关联任何线程，我称之为"Dummy Node"，这个头结点"Dummy Node"待会可能会被后继节点设置为SIGNAL状态，那么它是如何唤醒后继节点的呢？我会在在讲到release时进行解释
 
 ### 4.1.4 acquireQueued
 __至此，线程已被封装成节点，并且成功添加到sync queue中去了，接下来，来看最重要的acquireQueued方法__
@@ -742,13 +745,19 @@ __doReleaseShared方法是共享模式下共享含义体现的重要方法__
     }    
 ```
 
-__几个问题__
+__为什么要将头节点从SIGNAL先改为0，再从0改为PROPAGATE，而不是直接从SIGNAL改成PROPAGATE？__
 
-* 为什么要将一个节点从SIGNAL先改为0，再从0改为PROPAGATE，而不是直接从SIGNAL改成PROPAGATE？
-* 将一个节点从0改为PROPAGATE有什么意义？似乎没有PROPAGATE，共享状态也能传播下去
-* 仅有头结点能处于PROPAGATE，那么什么时候会被设置成PROPAGATE状态呢
-    * 暂时的PROPAGATE：唤醒后继节点后，又进行了一次循环，再次将同一个节点从0设置成PROPAGATE状态，会产生两种结果。第一种结果是后继节点成功获取资源，那么当前标记为PROPAGATE状态的头结点将被移出sync queue；第二种结果是后继节点获取资源失败，重新将当前标记为PROPAGATE状态的头结点设置为SIGNAL状态，至此传播结束
-    * 持久的PROPAGATE：当前节点并没有后继节点
+> 注意，当一次循环后头结点没有发生变化时，就会退出循环，因此__不可能__将同一个节点从SIGNAL改为0然后再从0改为PROPAGATE
+
+> 将头结点从从SIGNAL先改为0时，唤醒后继节点，此时会有两种结果。
+> 1. 第一种结果是后继节点无法继续获取资源，导致传播状态结束，头结点重新被设置为SIGNAL，然后退出循环，结束该方法
+> 1. 另一种结果是后继节点成功获取资源，并更新头结点，继续新一轮的循环。
+> 
+> 可以看出，无论是哪种情况，原来的头结点都不会变为PROPAGATE状态
+
+__仅有头结点能处于PROPAGATE，那么什么时候会被设置成PROPAGATE状态呢？__
+
+> 当队列中仅有头结点时，其状态是0，然后被设置成PROPAGATE，表示一种传播状态，即仍有资源可供获取
 
 ## 4.5 acquireInterruptibly
 
