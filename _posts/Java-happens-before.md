@@ -5,6 +5,7 @@ tags:
 - 摘录
 categories:
 - Java
+- Java Virtual Machine
 - Java Memory Model
 ---
 

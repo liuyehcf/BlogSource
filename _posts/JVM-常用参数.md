@@ -5,7 +5,8 @@ tags:
 - 摘录
 categories:
 - Java
-- Java Memory Model
+- Java Virtual Machine
+- JVM参数
 ---
 
 __目录__
