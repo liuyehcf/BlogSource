@@ -4,7 +4,7 @@ date: 2017-07-05 08:51:57
 tags:
 - 原创
 categories:
-- 面试
+- Job
 - Java
 ---
 
@@ -105,21 +105,7 @@ JDK 动态代理和CGlib
 
 ## 1.12 Java NIO使用
 
-SocketChannel
-
-* 支持非阻塞模式
-
-ServerSocketChannel
-
-* 支持非阻塞模式
-
-FileChannel
-
-* 只有阻塞模式
-
-Selector
-
-{% post_link Java-NIO %}
+关于更多的Java NIO API请参考 {% post_link Java-NIO %}
 
 ## 1.13 Hashtable和HashMap的区别及实现原理，HashMap会问到数组索引，hash碰撞怎么解决
 
@@ -145,7 +131,7 @@ ClassLoader#loadClass执行过程
 
 1. 加载
 
-具体详见 {% post_link Java-类加载机制 %}
+关于类加载请参考 {% post_link Java-类加载机制 %}
 
 ## 1.16 String，StringBuffer，StringBuilder的区别？
 
@@ -257,11 +243,11 @@ G1收集器会维护一个Region的列表，每次回收一个最有受益的Reg
 
 ## 2.5 jvm中一次完整的GC流程（从ygc到fgc）是怎样的，重点讲讲对象如何晋升到老年代，几种主要的jvm参数等
 
-{% post_link JVM-常用参数 %}
+JVM参数请参考 {% post_link JVM-常用参数 %}
 
 ## 2.6 你知道哪几种垃圾收集器，各自的优缺点，重点讲下cms，g1
 
-{% post_link Java-垃圾收集器 %}
+关于垃圾收集器请参考 {% post_link Java-垃圾收集器 %}
 
 ## 2.7 新生代和老生代的内存回收策略
 
@@ -275,7 +261,7 @@ G1收集器会维护一个Region的列表，每次回收一个最有受益的Reg
 
 ## 2.9 深入分析了Classloader，双亲委派机制
 
-{% post_link Java-类加载机制 %}
+关于类加载器请参考 {% post_link Java-类加载机制 %}
 
 ## 2.10 JVM的编译优化
 
@@ -293,13 +279,13 @@ __参考JMM分类下的博客__
 
 ## 2.12 指令重排序，内存栅栏等
 
-{% post_link Java-内存模型基础 %}
+关于重排序请参考 {% post_link Java-重排序 %}
 
 ## 2.13 OOM错误，stackoverflow错误，permgen space错误
 
 ## 2.14 JVM常用参数
 
-{% post_link JVM-常用参数 %}
+常用JVM参数请参考 {% post_link JVM-常用参数 %}
 
 ## 2.15 tomcat结构，类加载器流程 
 
@@ -309,7 +295,7 @@ __参考JMM分类下的博客__
 
 但是符合的volatile读写语句或者类似于volaitle++这样的读改写操作就不是线程安全的
 
-{% post_link Java-volatile的内存语义 %}
+关于volatile的内存语义请参考 {% post_link Java-volatile的内存语义 %}
 
 ## 2.17 g1和cms区别,吞吐量优先和响应优先的垃圾收集器选择
 
@@ -330,7 +316,7 @@ G1(Gargabe-First)收集器是当今收集器计数发展的最前沿成果之一
 
 ## 2.19 说一下强引用、软引用、弱引用、虚引用以及他们之间和gc的关系
 
-{% post_link Java-对象生命周期 %}
+请参考 {% post_link Java-对象生命周期 %}
 
 # 3 JUC/并发相关
 
@@ -348,17 +334,17 @@ Lock是ReentrantLock，其实现依赖于AQS，是一种无锁数据结构
 
 {% post_link Java-synchronized的实现原理与应用 %}
 
-## 3.4 concurrenthashmap具体实现及其原理，jdk8下的改版
+## 3.4 ConcurrentHashMap具体实现及其原理，jdk8下的改版
 
-{% post_link Java-concurrent-ConcurrentHashMap-源码剖析 %}
+ConcurrentHashMap源码分析请参考 {% post_link Java-concurrent-ConcurrentHashMap-源码剖析 %}
 
 ## 3.5 用过哪些原子类，他们的参数以及原理是什么
 
 AtomicInteger，就是循环CAS来实现的
 
-## 3.6 cas是什么，他会产生什么问题（ABA问题的解决，如加入修改次数、版本号）
+## 3.6 CAS是什么，他会产生什么问题（ABA问题的解决，如加入修改次数、版本号）
 
-{% post_link Java-原子操作的实现原理 %}
+关于CAS等原子操作请参考 {% post_link Java-原子操作的实现原理 %}
 
 ## 3.7 如果让你实现一个并发安全的链表，你会怎么做
 
@@ -368,7 +354,7 @@ AtomicInteger，就是循环CAS来实现的
 
 ## 3.9 简述AQS的实现原理
 
-{% post_link Java-concurrent-AQS-源码剖析 %}
+AQS源码分析请参考 {% post_link Java-concurrent-AQS-源码剖析 %}
 
 ## 3.10 CountDownLatch和CyclicBarrier的用法，以及相互之间的差别?
 
@@ -396,7 +382,7 @@ LockSupport.unpark
 
 ## 3.13 Condition接口及其实现原理
 
-{% post_link Java-concurrent-AQS-ConditionObject-源码剖析 %}
+ConditionObject源码分析请参考 {% post_link Java-concurrent-AQS-ConditionObject-源码剖析 %}
 
 ## 3.14 Fork/Join框架的理解
 
@@ -423,12 +409,7 @@ FactorBean是一种工厂bean，调用指定的方法来生产对象
 ## 4.5 Spring的事务隔离级别，实现原理
 
 ## 4.6 对Spring的理解，非单例注入的原理？它的生命周期？循环注入的原理，aop的实现原理，说说aop中的几个术语，它们是怎么相互工作的？
-
-切点
-
-增强
-
-切面
+Spring AOP 源码分析请参考 {% post_link Spring-AOP-源码剖析 %}
 
 ## 4.7 Mybatis的底层实现原理
 
@@ -450,7 +431,7 @@ FactorBean是一种工厂bean，调用指定的方法来生产对象
 
 ## 5.4 接口的幂等性的概念
 
-{% post_link 分布式系统接口幂等性 %}
+接口幂等性请参考 {% post_link 分布式系统接口幂等性 %}
 
 ## 5.5 消息中间件如何解决消息丢失问题
 
@@ -460,11 +441,17 @@ FactorBean是一种工厂bean，调用指定的方法来生产对象
 
 ## 5.8 对分布式事务的理解
 
+分布式事务请参考 {% post_link 分布式事务 %}
+
 ## 5.9 如何实现负载均衡，有哪些算法可以实现？
 
 ## 5.10 Zookeeper的用途，选举的原理是什么？
 
 ## 5.11 数据的垂直拆分水平拆分。
+
+垂直拆分，将一张表中的不同类别的数据分别放到不同的表中去
+
+水平拆分，将一张表的不同数据项放到两台机器上
 
 ## 5.12 zookeeper原理和适用场景
 
@@ -486,6 +473,8 @@ FactorBean是一种工厂bean，调用指定的方法来生产对象
 
 ## 6.1 海量url去重类问题（布隆过滤器）
 
+请参考 {% post_link Bloom-Filter %}
+
 ## 6.2 数组和链表数据结构描述，各自的时间复杂度
 
 ## 6.3 二叉树遍历
@@ -496,15 +485,25 @@ __花式遍历，呵呵__
 
 ## 6.5 BTree相关的操作
 
+B树请参考 {% post_link B-tree-详解 %}
+
+B+树请参考 {% post_link BPlus-tree-详解 %}
+
 ## 6.6 在工作中遇到过哪些设计模式，是如何应用的
 
 ## 6.7 hash算法的有哪几种，优缺点，使用场景
 
 ## 6.8 什么是一致性hash
 
+请参考 {% post_link 一致性hash %}
+
 ## 6.9 paxos算法
 
+paxos算法分析请参考 {% post_link zookeeper-paxos算法 %}
+
 ## 6.10 在装饰器模式和代理模式之间，你如何抉择，请结合自身实际情况聊聊
+
+装饰器模式关注于在一个对象上动态的添加方法，然而代理模式关注于控制对对象的访问。换句话说，用代理模式，代理类（proxy class）可以对它的客户隐藏一个对象的具体信息。因此，当使用代理模式的时候，我们常常在一个代理类中创建一个对象的实例。并且，当我们使用装饰器模式的时候，我们通常的做法是将原始对象作为一个参数传给装饰者的构造器。
 
 ## 6.11 代码重构的步骤和原因，如果理解重构到模式？
 
@@ -512,7 +511,13 @@ __花式遍历，呵呵__
 
 ## 7.1 MySQL InnoDB存储的文件结构
 
+具体请参考{% post_link 数据库引擎 %}
+
 ## 7.2 索引树是如何维护的？
+
+B+树，不同的引擎有不同的方式
+
+具体请参考{% post_link 数据库引擎 %}
 
 ## 7.3 数据库自增主键可能的问题
 
@@ -556,11 +561,21 @@ __花式遍历，呵呵__
 
 ## 9.2 TCP/IP协议
 
+TCP三次握手/四次挥手请参考 {% post_link TCP-IP %}
+
 ## 9.3 TCP三次握手和四次挥手的流程，为什么断开连接要4次,如果握手只有两次，会出现什么
 
-## 9.4 TIME_WAIT和CLOSE_WAIT的区别
+## 9.4 `TIME_WAIT`和`CLOSE_WAIT`的区别
+
+`CLOSE_WAIT`：被动关闭方接收到了对方FIN信号，但由于TCP连接是双向的，但是仍有数据要传给对方
+
+`TIME_WAIT`：为了连接成功断开，需要延迟一小段时间
+
+关于其他状态请参考 {% post_link TCP-IP %}
 
 ## 9.5 说说你知道的几种HTTP响应码
+
+具体请参考 {% post_link HTTP协议 %}
 
 ## 9.6 当你用浏览器打开一个链接的时候，计算机做了哪些工作步骤
 
@@ -570,7 +585,11 @@ __花式遍历，呵呵__
 
 ## 9.9 Http请求get和post的区别以及数据包格式
 
+具体请参考 {% post_link HTTP协议 %}
+
 ## 9.10 简述tcp建立连接3次握手，和断开连接4次握手的过程；关闭连接时，出现TIMEWAIT过多是由什么原因引起，是出现在主动断开方还是被动断开方。
+
+请参考 {% post_link TCP-IP %}
 
 # 10 其他
 
