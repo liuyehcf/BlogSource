@@ -239,9 +239,13 @@ G1收集器会维护一个Region的列表，每次回收一个最有受益的Reg
 
 ## 2.4 JVM垃圾回收机制，何时触发MinorGC等操作
 
-直观上的感觉就是当新生代内存被使用完了
+当堆内存使用量超过一个阈值时进行垃圾回收，或者主动调用System.gc触发
+
+`-XX:InitiatingHeapOccupancyPercent` 参数可以设置这个阈值
 
 ## 2.5 jvm中一次完整的GC流程（从ygc到fgc）是怎样的，重点讲讲对象如何晋升到老年代，几种主要的jvm参数等
+
+ygc和fgc是什么意思？
 
 JVM参数请参考 {% post_link JVM-常用参数 %}
 
@@ -447,6 +451,8 @@ Spring AOP 源码分析请参考 {% post_link Spring-AOP-源码剖析 %}
 
 ## 5.10 Zookeeper的用途，选举的原理是什么？
 
+master/slave模式，保证只有一个leader，ZAB协议，paxox算法
+
 ## 5.11 数据的垂直拆分水平拆分。
 
 垂直拆分，将一张表中的不同类别的数据分别放到不同的表中去
@@ -457,11 +463,21 @@ Spring AOP 源码分析请参考 {% post_link Spring-AOP-源码剖析 %}
 
 ## 5.13 zookeeper watch机制
 
+三类watch
+
+exist
+
+data
+
+children
+
 ## 5.14 redis/zk节点宕机如何处理
 
 ## 5.15 分布式集群下如何做到唯一序列号
 
 ## 5.16 如何做一个分布式锁
+
+http://www.cnblogs.com/PurpleDream/p/5559352.html
 
 ## 5.17 用过哪些MQ，怎么用的，和其他mq比较有什么优缺点，MQ的连接是线程安全的吗
 
