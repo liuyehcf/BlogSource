@@ -1,11 +1,11 @@
 ---
-title: zookeeper paxos算法
+title: paxos算法
 date: 2017-07-12 09:32:34
 tags:
 - 摘录
 categories:
 - 分布式
-- zoookeeper
+- 算法
 ---
 
 __目录__

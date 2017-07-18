@@ -429,6 +429,16 @@ Spring AOP 源码分析请参考 {% post_link Spring-AOP-源码剖析 %}
 
 ## 5.1 Dubbo的底层实现原理和机制
 
+https://zhidao.baidu.com/question/1951046178708452068.html
+
+dubbo的负载均衡已经是服务层面的了，和nginx的负载均衡还在http请求层面完全不同。至于二者哪个优秀，当然没办法直接比较。
+涉及到负载均衡就涉及到你的业务，根据业务来选择才是最适合的。
+dubbo具备了server注册，发现、路由、负载均衡的功能，在所有实现了这些功能的服务治理组件中，个人觉得dubbo还是略微笨重了，因为它本身是按照j2EE范畴所制定的中规中矩的服务治理框架。
+dubbo在服务发现这个地方做的更像一个dns（个人感觉），一个消费者需要知道哪里有这么一个服务，dubbo告诉他，然后他自己去调用。
+而nginx在具备了以上功能，还有两个最主要的功能是，1，维持尽可能多的连接。2，把每个连接的具体服务需求pass到真正的worker上。
+但是这两个功能，dubbo做不到第一个。
+所以，结合你自己的业务来选择用什么，nginx和dubbo在使用上说白了就是一个先后的关系而已（当然也是我个人感觉）。
+
 ## 5.2 描述一个服务从发布到被消费的详细过程
 
 ## 5.3 分布式系统怎么做服务治理
@@ -449,7 +459,16 @@ Spring AOP 源码分析请参考 {% post_link Spring-AOP-源码剖析 %}
 
 ## 5.9 如何实现负载均衡，有哪些算法可以实现？
 
+请参考 {% post_link 负载均衡算法 %}
+
 ## 5.10 Zookeeper的用途，选举的原理是什么？
+
+zookeeper是注册中心
+
+http://blog.csdn.net/tycoon1988/article/details/38866395
+
+dubbo和zookeeper的区别和关系
+http://blog.csdn.net/daiqinge/article/details/51282874
 
 master/slave模式，保证只有一个leader，ZAB协议，paxox算法
 
@@ -463,17 +482,15 @@ master/slave模式，保证只有一个leader，ZAB协议，paxox算法
 
 ## 5.13 zookeeper watch机制
 
-三类watch
-
-exist
-
-data
-
-children
+http://blog.csdn.net/z69183787/article/details/53023578
 
 ## 5.14 redis/zk节点宕机如何处理
 
+重新选举leader
+
 ## 5.15 分布式集群下如何做到唯一序列号
+
+http://www.cnblogs.com/haoxinyue/p/5208136.html
 
 ## 5.16 如何做一个分布式锁
 
