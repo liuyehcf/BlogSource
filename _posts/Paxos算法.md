@@ -1,5 +1,5 @@
 ---
-title: paxos算法
+title: Paxos算法
 date: 2017-07-12 09:32:34
 tags:
 - 摘录

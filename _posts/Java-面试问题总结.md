@@ -532,7 +532,7 @@ B+树请参考 {% post_link BPlus-tree-详解 %}
 
 ## 6.9 paxos算法
 
-paxos算法分析请参考 {% post_link zookeeper-paxos算法 %}
+paxos算法分析请参考 {% post_link Paxos算法 %}
 
 ## 6.10 在装饰器模式和代理模式之间，你如何抉择，请结合自身实际情况聊聊
 
