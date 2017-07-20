@@ -13,7 +13,7 @@ __目录__
 <!-- toc -->
 <!--more-->
 
-# 1 Question [4]
+# 1 Question-4
 
 ```Java
 public class Solution {
@@ -40,6 +40,68 @@ public class Solution {
             return helper(nums1, nextPos1 + 1, nums2, pos2, index - stepForward);
         else
             return helper(nums1, pos1, nums2, nextPos2 + 1, index - stepForward);
+    }
+}
+```
+
+# 2 Question-31
+
+二分查找还是需要重点关注一下的，最后返回值的一个判断。另外就是逆序一个子数组，如何取中间，一个很好的办法是判断`left < right`即可，对应本题就是`i < nums.length - 1 - (i - begin)`
+
+```Java
+public class Solution {
+    public void nextPermutation(int[] nums) {
+        int i = nums.length - 1;
+
+        while (i >= 1 && nums[i - 1] >= nums[i]) {
+            i--;
+        }
+
+        if (i == 0) {
+            reverse(nums, 0);
+            return;
+        }
+
+        //需要交换的值
+        int val = nums[i - 1];
+
+        //在有序子数组中找出大于val的最小值的位置
+        int index = smallestLarger(nums, i, val);
+
+        //交换这两个值
+        exchange(nums, i - 1, index);
+
+        //重排序子数组
+        reverse(nums, i);
+    }
+
+    private int smallestLarger(int[] nums, int left, int target) {
+        int right = nums.length - 1;
+
+        while (left <= right) {
+            int mid = left + (right - left >> 1);
+
+            if (nums[mid] > target) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+
+        if (left < nums.length && nums[left] > target) return left;
+        else return left - 1;
+    }
+
+    private void exchange(int[] nums, int i, int j) {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
+    }
+
+    private void reverse(int[] nums, int begin) {
+        for (int i = begin; i < nums.length - 1 - (i - begin); i++) {
+            exchange(nums, i, nums.length - 1 - (i - begin));
+        }
     }
 }
 ```

@@ -26,15 +26,15 @@ __目录__
 
 # 2 名词解释
 
-并行和并发
+__并行和并发__
 
-* 并行(Parallel)：指多条垃圾收集线程并行工作，但此时用户线程仍然处于等待状态
-* 并发(Concurrent)：用户线程与垃圾收集线程同时执行(但不一定是并行的，可能交替执行)，用户程序在继续运行，而垃圾收集程序运行于另一个CPU上
+* __并行(Parallel)__：指多条垃圾收集线程并行工作，但此时用户线程仍然处于等待状态
+* __并发(Concurrent)__：用户线程与垃圾收集线程同时执行(但不一定是并行的，可能交替执行)，用户程序在继续运行，而垃圾收集程序运行于另一个CPU上
 
 GC方式
 
-* 新生代 GC(Minor GC)：指发生在新生代的垃圾收集动作，因为Java对象大多都具备朝生夕灭的特性，所以 Minor GC 非常频繁，一般回收速度也比较快
-* 老年代 GC(Major GC/Full GC)：指发生在老年代的GC，出现了Major GC，经常会伴随至少一次的Minor GC(但非绝对的，在ParallelScavenge收集器的收集策略里就有直接进行Major GC的策略选择过程)。MajorGC的速度一般会比Minor GC慢10倍以上
+* __新生代 GC(Minor GC)__：指发生在新生代的垃圾收集动作，因为Java对象大多都具备朝生夕灭的特性，所以 Minor GC 非常频繁，一般回收速度也比较快
+* __老年代 GC(Major GC/Full GC)__：指发生在老年代的GC，出现了Major GC，经常会伴随至少一次的Minor GC(但非绝对的，在ParallelScavenge收集器的收集策略里就有直接进行Major GC的策略选择过程)。MajorGC的速度一般会比Minor GC慢10倍以上
 
 JVM模式
 
@@ -105,11 +105,11 @@ Parallel Old是Parallel Scavenge收集器的老年代版本，使用多线程和
 
 在JDK 1.5时期，HotSpot推出了一款在强交互应用中几乎可认为有划时代意义的垃圾收集器--CMS(Concurrent Mark Sweep)。这款收集器是HotSpot虚拟机中第一款真正意义上的并发(Concurrent)收集器，第一次实现了让垃圾收集线程与用户线程(基本上)同时工作
 
-* 使用CMS来收集老年代的时候，新生代只能选择ParNew或者Serial收集器中的一个，因为CMS无法与新生代收集器Parallel Scavenge配合工作
+* __使用CMS来收集老年代的时候，新生代只能选择ParNew或者Serial收集器中的一个，因为CMS无法与新生代收集器Parallel Scavenge配合工作__
 
 CMS(Concurrent Mark Sweep)收集器是一种__以获取最短回收停顿时间为目标__的收集器，目前很大一部分的Java应用集中在互联网或者B/S系统的服务端上，这类应用尤其重视服务的响应速度，希望系统停顿时间最短，以给用户带来较好的体验，CMS收集器就非常符合这类应用的需求
 
-从名字"Mark Sweep"上就可以看出，CMS收集器是基于"标记-清除"算法实现的，它的运作过程相对于前面集中收集器来说更复杂一点，过程分为4个步骤
+从名字"Mark Sweep"上就可以看出，__CMS收集器是基于"标记-清除"算法实现的__，它的运作过程相对于前面集中收集器来说更复杂一点，过程分为4个步骤
 
 1. __初始标记(CMS initial mark)__
 1. __并发标记(CMS concurrent mark)__

@@ -13,7 +13,7 @@ __目录__
 <!-- toc -->
 <!--more-->
 
-# 1 Question [23]
+# 1 Question-23
 
 ```Java
 /**
