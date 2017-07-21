@@ -124,11 +124,11 @@ table th:nth-of-type(3) {
 |:--|:--|:--|
 | `-XX:+UseParallelGC` | 布尔类型 | 使用并行清除垃圾收集器（也称为吞吐量收集器）来利用多个处理器来提高应用程序的性能。__该参数默认不设置，并根据机器的配置和JVM的类型自动选择收集器__。 当设置`-XX:+UseParallelGC`参数时，则`-XX：+ UseParallelOldGC`参数将自动设置，除非您明确禁用它 |
 | `-XX:+UseParNewGC` | 布尔类型 | 在新生代中使用并发收集器。__该参数默认不设置__。当设置`-XX:+UseConcMarkSweepGC`参数时，则`-XX:+UseParNewGC`参数将自动设置。 JDK 8中不允许设置`-XX:+UseParNewGC`参数而不设置`-XX:+UseConcMarkSweepGC`参数 |
-| `-XX:ParallelGCThreads=<threads>` | 数值类型 | 上文已经详细说明，此处不再赘述 |
 | `-XX:+UseParallelOldGC` | 布尔类型 | 在老年代(对应Full GC)中启用并发收集器。__该参数默认不设置__。当设置`-XX:+UseParallelGC`参数时，则`-XX:+UseParallelOldGC`参数将自动设置 |
 | `-XX:MaxGCPauseMillis=<time>` | 数值类型 | 上文已经详细说明，此处不再赘述 |
-| `-XX:+UseAdaptiveSizePolicy` | 布尔类型 | 启动自适应的比例(Eden与Survivor的比值)配置。__该参数默认设置__。若要禁用，则必须显式设置`-XX:-UseAdaptiveSizePolicy`参数，并且设置`-XX：SurvivorRatio`参数 |
 | `-XX:GCTimeRatio=<ratil>` | 数值类型 | 设置吞吐量的大小(吞吐量 = 运行用户代码的时间/(运行用户代码的时间 + 垃圾收集时间))。该参数的值应当是一个大于0小于100的整数，若设置为19，则意味着允许的最大GC时间占总时间的`5%=1/(1+19)`。__默认为99，即`1%=1/(1+99)`__ |
+| `-XX:ParallelGCThreads=<threads>` | 数值类型 | 上文已经详细说明，此处不再赘述 |
+| `-XX:+UseAdaptiveSizePolicy` | 布尔类型 | 启动自适应的比例(Eden与Survivor的比值)配置。__该参数默认设置__。若要禁用，则必须显式设置`-XX:-UseAdaptiveSizePolicy`参数，并且设置`-XX：SurvivorRatio`参数 |
 | `-XX:+ScavengeBeforeFullGC` | 布尔类型 | 在Full GC之前先进行一次Minor GC。__此参数默认设置__。Oracle建议不要禁用该参数，because scavenging the young generation before a full GC can reduce the number of objects reachable from the old generation space into the young generation space |
 
 # 6 CMS相关参数

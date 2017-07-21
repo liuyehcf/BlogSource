@@ -57,7 +57,55 @@ public class Solution {
 }
 ```
 
-# 2 Question-188
+# 2 Question-72
+
+递推表达式
+
+* `dp[i][j] = min(dp[i - 1][j - 1], dp[i][j - 1] + 1, dp[i - 1][j] + 1)`
+* `dp[i][j] = min(dp[i - 1][j - 1] + 1, dp[i][j - 1] + 1, dp[i - 1][j] + 1)`
+
+另外注意一下初始化
+
+```Java
+public class Solution {
+    public int minDistance(String word1, String word2) {
+        int[][] dp = new int[word1.length() + 1][word2.length() + 1];
+
+        //需要进行初始化
+        for (int i = 1; i <= word1.length(); i++) {
+            dp[i][0] = i;
+        }
+
+        for (int j = 1; j <= word2.length(); j++) {
+            dp[0][j] = j;
+        }
+
+        for (int i = 1; i <= word1.length(); i++) {
+            for (int j = 1; j <= word2.length(); j++) {
+                char c1 = word1.charAt(i - 1);
+                char c2 = word2.charAt(j - 1);
+                if (c1 == c2) {
+                    dp[i][j] = min(dp[i - 1][j - 1], dp[i][j - 1] + 1, dp[i - 1][j] + 1);
+                } else {
+                    dp[i][j] = min(dp[i - 1][j - 1] + 1, dp[i][j - 1] + 1, dp[i - 1][j] + 1);
+                }
+            }
+        }
+
+        return dp[word1.length()][word2.length()];
+    }
+
+    private int min(int... args) {
+        int res = Integer.MAX_VALUE;
+        for (int i = 0; i < args.length; i++) {
+            res = Math.min(res, args[i]);
+        }
+        return res;
+    }
+}
+```
+
+# 3 Question-188
 
 递推表达式
 
