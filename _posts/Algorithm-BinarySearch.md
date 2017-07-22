@@ -30,6 +30,20 @@ __目录__
 * `nums[left] target nums[right]`
 * `nums[left] nums[right] target`
 
+## 1.3 循环位移的二分查找
+
+共有四题，分别是33、81、153、154
+
+__对于查找给定值__
+
+* 这个给定值可能位于任意一段序列中
+* 通过nums[mid]与nums[right]的大小关系来确定mid位于第一段还是第二段序列中，再根据target的值来进行left和right的更新
+
+__查找最值(最大或最小)__
+
+* 这个最值必定位于某一段序列中，因此必须保证[left,right]，要么包含两段序列，要么位于那段存在最值的序列
+* 对于153和154而言(最小值)，当`nums[mid] < nums[right]`时，只能`right = mid`，而不能`right = mid - 1`。因为如果执行`right = mid - 1`，可能会使得[left,right]只包含第一段序列，这样的话找到的是第一段的最小值，而非整个的最小值
+
 # 2 Question-4
 
 __Median of Two Sorted Arrays__
