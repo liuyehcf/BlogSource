@@ -13,7 +13,66 @@ __目录__
 <!-- toc -->
 <!--more-->
 
-# 1 Question-90
+# 1 Question-17
+
+__Letter Combinations of a Phone Number__
+
+> Given a digit string, return all possible letter combinations that the number could represent.
+
+```Java
+public class Solution {
+
+    String[] mappings = new String[]{
+            "abc",
+            "def",
+            "ghi",
+            "jkl",
+            "mno",
+            "pqrs",
+            "tuv",
+            "wxyz"
+    };
+
+    public List<String> letterCombinations(String digits) {
+        List<String> res = new ArrayList<String>();
+
+        if (digits.length() == 0) return res;
+
+        StringBuilder sb = new StringBuilder();
+
+        helper(digits, 0, res, sb);
+
+        return res;
+    }
+
+    private void helper(String digits, int index, List<String> res, StringBuilder sb) {
+        if (index == digits.length()) {
+            res.add(sb.toString());
+            return;
+        }
+
+        String map = getMap(digits, index);
+
+        for (int i = 0; i < map.length(); i++) {
+            sb.append(map.charAt(i));
+
+            helper(digits, index + 1, res, sb);
+
+            sb.setLength(sb.length() - 1);
+        }
+    }
+
+    private String getMap(String digits, int index) {
+        return mappings[digits.charAt(index) - '2'];
+    }
+}
+```
+
+# 2 Question-90
+
+__Subsets II__
+
+> Given a collection of integers that might contain duplicates, nums, return all possible subsets.
 
 ```Java
 public class Solution {

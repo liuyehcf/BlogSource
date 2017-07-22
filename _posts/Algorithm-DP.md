@@ -13,7 +13,11 @@ __目录__
 <!-- toc -->
 <!--more-->
 
-# 1 Question-11
+# 1 Question-10
+
+__Regular Expression Matching__
+
+> Implement regular expression matching with support for `'.'` and `'*'`.
 
 ```Java
 public class Solution {
@@ -58,6 +62,16 @@ public class Solution {
 ```
 
 # 2 Question-72
+
+__Edit Distance__
+
+> Given two words word1 and word2, find the minimum number of steps required to convert word1 to word2. (each operation is counted as 1 step.)
+
+> You have the following 3 operations permitted on a word:
+
+> 1. Insert a character
+> 1. Delete a character
+> 1. Replace a character
 
 递推表达式
 
@@ -106,6 +120,12 @@ public class Solution {
 ```
 
 # 3 Question-188
+
+__Best Time to Buy and Sell Stock IV__
+
+> Say you have an array for which the ith element is the price of a given stock on day i.
+
+> Design an algorithm to find the maximum profit. You may complete at most k transactions.
 
 递推表达式
 

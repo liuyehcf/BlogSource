@@ -13,38 +13,99 @@ __目录__
 <!-- toc -->
 <!--more-->
 
-# 1 Question-4
+# 1 Question-11
+
+__Container With Most Water__
+
+> Given n non-negative integers a1, a2, ..., an, where each represents a point at coordinate (i, ai). n vertical lines are drawn such that the two endpoints of line i is at (i, ai) and (i, 0). Find two lines, which together with x-axis forms a container, such that the container contains the most water.
 
 ```Java
 public class Solution {
-    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
-        int len = nums1.length + nums2.length;
+    public int maxArea(int[] height) {
+        int left = 0, right = height.length - 1;
 
-        return (helper(nums1, 0, nums2, 0, (len + 1) / 2) + helper(nums1, 0, nums2, 0, (len + 2) / 2)) / 2;
+        int res = area(height, left, right);
+
+        int leftMaxHeight = height[left];
+        int rightMaxHeight = height[right];
+
+        while (left < right) {
+            if (leftMaxHeight < rightMaxHeight) {
+                left++;
+
+                if (height[left] > leftMaxHeight) {
+                    leftMaxHeight = height[left];
+                    res = Math.max(res, area(height, left, right));
+                }
+            } else {
+                right--;
+
+                if (height[right] > rightMaxHeight) {
+                    rightMaxHeight = height[right];
+                    res = Math.max(res, area(height, left, right));
+                }
+            }
+        }
+
+        return res;
     }
 
-    private double helper(int[] nums1, int pos1, int[] nums2, int pos2, int index) {
-        if (pos1 == nums1.length) return nums2[pos2 + index - 1];
-        else if (pos2 == nums2.length) return nums1[pos1 + index - 1];
-        else if (index == 1) return nums1[pos1] < nums2[pos2] ? nums1[pos1] : nums2[pos2];
-
-        int stepForward = index / 2;
-
-        int nextPos1 = pos1 + stepForward - 1;
-        int nextPos2 = pos2 + stepForward - 1;
-
-        int val1 = nextPos1 < nums1.length ? nums1[nextPos1] : Integer.MAX_VALUE;
-        int val2 = nextPos2 < nums2.length ? nums2[nextPos2] : Integer.MAX_VALUE;
-
-        if (val1 < val2)
-            return helper(nums1, nextPos1 + 1, nums2, pos2, index - stepForward);
-        else
-            return helper(nums1, pos1, nums2, nextPos2 + 1, index - stepForward);
+    private int area(int[] height, int left, int right) {
+        return Math.min(height[left], height[right]) * (right - left);
     }
 }
 ```
 
-# 2 Question-31
+# 2 Question-15
+
+__3Sum__
+
+> Given an array S of n integers, are there elements a, b, c in S such that `a + b + c = 0`? Find all unique triplets in the array which gives the sum of zero.
+
+```Java
+public class Solution {
+    public List<List<Integer>> threeSum(int[] nums) {
+        List<List<Integer>> res = new ArrayList<List<Integer>>();
+
+        Arrays.sort(nums);
+
+        for (int i = 0; i < nums.length - 2; i++) {
+            if (i > 0 && nums[i] == nums[i - 1]) continue;
+
+            int left = i + 1, right = nums.length - 1;
+
+            while (left < right) {
+                if (nums[left] + nums[right] == -nums[i]) {
+                    res.add(Arrays.asList(nums[i], nums[left], nums[right]));
+
+                    ++left;
+                    --right;
+
+                    while (left < right && nums[left] == nums[left - 1]) left++;
+
+                    while (left < right && nums[right] == nums[right + 1]) right--;
+                } else if (nums[left] + nums[right] > -nums[i]) {
+                    right--;
+                } else {
+                    left++;
+                }
+            }
+        }
+
+        return res;
+    }
+}
+```
+
+# 3 Question-31
+
+__Next Permutation__
+
+> Implement next permutation, which rearranges numbers into the lexicographically next greater permutation of numbers.
+
+> If such arrangement is not possible, it must rearrange it as the lowest possible order (ie, sorted in ascending order).
+
+> The replacement must be in-place, do not allocate extra memory.
 
 二分查找还是需要重点关注一下的，最后返回值的一个判断。另外就是逆序一个子数组，如何取中间，一个很好的办法是判断`left < right`即可，对应本题就是`i < nums.length - 1 - (i - begin)`
 

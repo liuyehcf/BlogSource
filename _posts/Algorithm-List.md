@@ -13,7 +13,48 @@ __目录__
 <!-- toc -->
 <!--more-->
 
-# 1 Question-23
+# 1 Question-21
+
+__Merge Two Sorted Lists__
+
+> Merge two sorted linked lists and return it as a new list. The new list should be made by splicing together the nodes of the first two lists.
+
+```Java
+public class Solution {
+    public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        ListNode pseudoHead = new ListNode(0);
+
+        ListNode iter = pseudoHead;
+
+        while (l1 != null && l2 != null) {
+            if (l1.val <= l2.val) {
+                iter.next = l1;
+                l1 = l1.next;
+            } else {
+                iter.next = l2;
+                l2 = l2.next;
+            }
+            iter = iter.next;
+        }
+
+        if (l1 != null) {
+            iter.next = l1;
+        }
+
+        if (l2 != null) {
+            iter.next = l2;
+        }
+
+        return pseudoHead.next;
+    }
+}
+```
+
+# 2 Question-23
+
+__Merge k Sorted Lists__
+
+> Merge k sorted linked lists and return it as one sorted list. Analyze and describe its complexity.
 
 ```Java
 /**
