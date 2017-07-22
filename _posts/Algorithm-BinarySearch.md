@@ -67,7 +67,51 @@ public class Solution {
 }
 ```
 
-# 3 Question-34
+# 3 Question-33
+
+__Search in Rotated Sorted Array__
+
+> Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
+
+```Java
+public class Solution {
+    public int search(int[] nums, int target) {
+        int left = 0, right = nums.length - 1;
+
+        while (left <= right) {
+            int mid = left + (right - left >> 1);
+
+            if (nums[mid] == target) return mid;
+                //意味着mid位于左半段上
+            else if (nums[mid] > nums[right]) {
+                //target位于mid左边
+                if (target >= nums[left] && target < nums[mid]) {
+                    right = mid - 1;
+                }
+                //target位于mid右边
+                else {
+                    left = mid + 1;
+                }
+            }
+            //意味着m位于右半段上，或者[left,right]本身就是有序的
+            else {
+                //target位于mid右边
+                if (target > nums[mid] && target <= nums[right]) {
+                    left = mid + 1;
+                }
+                //target位于mid左边
+                else {
+                    right = mid - 1;
+                }
+            }
+        }
+
+        return -1;
+    }
+}
+```
+
+# 4 Question-34
 
 __Search for a Range__
 
@@ -125,7 +169,7 @@ public class Solution {
 }
 ```
 
-# 4 Question-35
+# 5 Question-35
 
 __Search Insert Position__
 
@@ -155,7 +199,7 @@ public class Solution {
 }
 ```
 
-# 5 Question-50
+# 6 Question-50
 
 __`Pow(x, n)`__
 
@@ -172,6 +216,270 @@ public class Solution {
 
         double temp = myPow(x, half);
         return temp * temp * myPow(x, n - half * 2);
+    }
+}
+```
+
+# 7 Question-74
+
+__Search a 2D Matrix__
+
+> Write an efficient algorithm that searches for a value in an m x n matrix. This matrix has the following properties:
+
+> * Integers in each row are sorted from left to right.
+> * The first integer of each row is greater than the last integer of the previous row.
+
+```Java
+public class Solution {
+    public boolean searchMatrix(int[][] matrix, int target) {
+        if (matrix.length == 0 || matrix[0].length == 0) return false;
+
+        int top = 0, bottom = matrix.length - 1;
+
+        if (target < matrix[0][0]) return false;
+
+        while (top <= bottom) {
+            int mid = top + (bottom - top >> 1);
+
+            if (matrix[mid][0] == target) return true;
+            else if (matrix[mid][0] > target) {
+                bottom = mid - 1;
+            } else {
+                top = mid + 1;
+            }
+        }
+
+        int row = top - 1;
+
+        int left = 0, right = matrix[row].length - 1;
+
+        while (left <= right) {
+            int mid = left + (right - left >> 1);
+
+            if (matrix[row][mid] == target) return true;
+            else if (matrix[row][mid] > target) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+        }
+        return false;
+    }
+}
+```
+
+以下这种方法的思路是，先往上升row，然后再减col。不可能出现先递减col再递增row然后找到target的情况，因为递减col说明`target < matrix[row][col]`，那么`matrix[row][col] < matrix[row+1][?]`，因此`target < matrix[row+1][?]`。
+
+```Java
+public class Solution {
+    public boolean searchMatrix(int[][] matrix, int target) {
+        if (matrix.length == 0 || matrix[0].length == 0) return false;
+
+        int m = matrix.length, n = matrix[0].length;
+        if (target < matrix[0][0] || target > matrix[m - 1][n - 1]) return false;
+
+        int row = 0, col = n - 1;
+
+        while (row < m && col >= 0) {
+            if (target == matrix[row][col]) return true;
+            else if (target > matrix[row][col]) {
+                row++;
+            } else {
+                col--;
+            }
+        }
+
+        return false;
+    }
+}
+```
+
+# 8 Question-81
+
+__Search in Rotated Sorted Array II__
+
+> Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
+
+思路：通过`nums[mid]`与`nums[right]`的关系来判断mid位于那一段有序的序列上。如果`nums[mid]>nums[right]`，那么意味着`[left,right]`必然存在两段序列且mid位于左边这段序列上，而`nums[mid]<nums[right]`意味着可能`[left,right]`本身就是有序的，或者存在两端序列且mid位于右边这段
+
+```Java
+public class Solution {
+    public boolean search(int[] nums, int target) {
+        int left = 0, right = nums.length - 1;
+
+        while (left <= right) {
+            int mid = left + (right - left >> 1);
+
+            //若找到了，直接返回
+            if (nums[mid] == target) return true;
+            //mid位于左半段上
+            if (nums[mid] > nums[right]) {
+                //此时target位于mid右边
+                if (target > nums[mid] || target <= nums[right]) {
+                    left = mid + 1;
+                }
+                //此时target位于mid左边
+                else {
+                    right = mid - 1;
+                }
+            }
+            //mid位于右半段上(或者[left,right]本身就是有序的)
+            else if (nums[mid] < nums[right]) {
+                //此时target位于mid右边
+                if (target > nums[mid] && target <= nums[right]) {
+                    left = mid + 1;
+                }
+                //此时target位于mid左边
+                else {
+                    right = mid - 1;
+                }
+            } else {
+                right--;
+            }
+        }
+
+        return false;
+    }
+}
+```
+
+# 9 Question-153
+
+__Find Minimum in Rotated Sorted Array__
+
+> Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
+
+> Find the minimum element.
+
+> You may assume no duplicate exists in the array.
+
+如果一个数组经过了循环位移，那么存在两段单调序列，最小值必然位于第二段单调序列中。二分查找时，必须保证[left,right]包含两个序列，或者位于第二个单调序列中
+
+```Java
+public class Solution {
+    public int findMin(int[] nums) {
+        int left = 0, right = nums.length - 1;
+
+        //不得不采用left<right作为条件
+        while (left < right) {
+            int mid = left + (right - left >> 1);
+
+            //可能会造成[left=mid+1,right]是一个单调区间，但是是右边那个单调区间，没有关系，递归逻辑会向左边移动(即最小值的那一边)
+            if (nums[mid] > nums[right]) {
+                left = mid + 1;
+            } 
+            //若right=mid-1会造成[left,right=mid-1]是一个单调区间，如果是左边的单调区间，则最后会跑到最左边，这样是找不到最小值的，因此，每次迭代后，必须保证[left,right]包含最小值，或者是一个单调区间，但是是右边那个单调区间
+            else {
+                right = mid;
+            }
+        }
+
+        int num1 = Integer.MAX_VALUE, num2 = Integer.MAX_VALUE, num3 = Integer.MAX_VALUE;
+
+        //懒得进行讨论了，反正结果总在这里面
+        if (left > 0) num1 = nums[left - 1];
+        if (left >= 0 && left < nums.length) num2 = nums[left];
+        if (left < nums.length - 1) num3 = nums[left + 1];
+
+        return Math.min(Math.min(num1, num2), num3);
+    }
+}
+```
+
+__变体1：查找最大值__
+
+> 最大值必定位于第一段序列中。二分查找时，必须保证[left,right]包含两个序列，或者位于第一个单调序列中
+
+```Java
+...
+while (left < right) {
+    int mid = left + (right - left >> 1);
+
+    if (nums[mid] > nums[right]) {
+        right = mid - 1;
+    } 
+    else {
+        left = mid;
+    }
+}
+...
+```
+
+__变体2：递增序列改为递减序列，然后查找最小值__
+
+> 最小值必定位于第一段序列中。二分查找时，必须保证[left,right]包含两段序列，或者位于第一个单调序列中
+
+```Java
+...
+while (left < right) {
+    int mid = left + (right - left >> 1);
+
+    if (nums[mid] > nums[left]) {
+        right = mid - 1;
+    } 
+    else {
+        left = mid;
+    }
+}
+...
+```
+
+__变体3：递增序列改为递减序列，然后查找最大值__
+
+> 最大值必定位于第二段序列中。二分查找时，必须保证[left,right]包含两端序列，或者位于第二个单调序列中
+
+```Java
+...
+while (left < right) {
+    int mid = left + (right - left >> 1);
+
+    if (nums[mid] > nums[left]) {
+        left = mid + 1;
+    } 
+    else {
+        right = mid;
+    }
+}
+...
+```
+
+# 10 Question-154
+
+__Find Minimum in Rotated Sorted Array II__
+
+> Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
+
+> Find the minimum element.
+
+> The array may contain duplicates.
+
+这题思路与153一样，只是在nums[mid]与nums[right]相等时特殊处理一下，因为此时并不知道mid位于哪一段
+
+```Java
+public class Solution {
+    public int findMin(int[] nums) {
+        int left = 0, right = nums.length - 1;
+
+        while (left < right) {
+            int mid = left + (right - left >> 1);
+
+            if (nums[mid] > nums[right]) {
+                left = mid + 1;
+            } else if (nums[mid] < nums[right]) {
+                right = mid;
+            } else {
+                right--;
+            }
+        }
+
+        int num1 = Integer.MAX_VALUE, num2 = Integer.MAX_VALUE, num3 = Integer.MAX_VALUE;
+
+        //懒得进行讨论了，反正结果总在这里面
+        if (left > 0) num1 = nums[left - 1];
+        if (left >= 0 && left < nums.length) num2 = nums[left];
+        if (left < nums.length - 1) num3 = nums[left + 1];
+
+        return Math.min(Math.min(num1, num2), num3);
     }
 }
 ```
