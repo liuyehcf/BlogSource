@@ -13,7 +13,7 @@ __目录__
 <!-- toc -->
 <!--more-->
 
-# 1 Question-11
+# 1 Question-11[★★★]
 
 __Container With Most Water__
 
@@ -56,7 +56,7 @@ public class Solution {
 }
 ```
 
-# 2 Question-15
+# 2 Question-15[★★]
 
 __3Sum__
 
@@ -97,7 +97,7 @@ public class Solution {
 }
 ```
 
-# 3 Question-31
+# 3 Question-31[★★★★★]
 
 __Next Permutation__
 
@@ -163,6 +163,36 @@ public class Solution {
         for (int i = begin; i < nums.length - 1 - (i - begin); i++) {
             exchange(nums, i, nums.length - 1 - (i - begin));
         }
+    }
+}
+```
+
+# 4 Question-209[★★★]
+
+__Minimum Size Subarray Sum__
+
+> Given an array of n positive integers and a positive integer s, find the minimal length of a contiguous subarray of which the sum ≥ s. If there isn't one, return 0 instead.
+
+```Java
+public class Solution {
+    public int minSubArrayLen(int s, int[] nums) {
+        int begin = 0, end = 0;
+        int sum = 0;
+        int maxLen = Integer.MAX_VALUE;
+
+        while (end < nums.length) {
+            sum += nums[end];
+
+            while (sum >= s) {
+                maxLen = Math.min(maxLen, end - begin + 1);
+
+                sum -= nums[begin++];
+            }
+
+            end++;
+        }
+
+        return maxLen == Integer.MAX_VALUE ? 0 : maxLen;
     }
 }
 ```

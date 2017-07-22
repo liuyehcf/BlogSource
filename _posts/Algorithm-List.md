@@ -13,7 +13,7 @@ __目录__
 <!-- toc -->
 <!--more-->
 
-# 1 Question-21
+# 1 Question-21[★★]
 
 __Merge Two Sorted Lists__
 
@@ -50,7 +50,7 @@ public class Solution {
 }
 ```
 
-# 2 Question-23
+# 2 Question-23[★★★★★]
 
 __Merge k Sorted Lists__
 

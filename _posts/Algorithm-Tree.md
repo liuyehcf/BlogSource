@@ -13,7 +13,7 @@ __目录__
 <!-- toc -->
 <!--more-->
 
-# 1 Question-124
+# 1 Question-124[★★★★★]
 
 __Binary Tree Maximum Path Sum__
 
@@ -65,3 +65,74 @@ public class Solution {
 ```
 
 maxLength方法计算以给定节点为根节点的子树中，从根到叶节点的路径和最大值。注意与0比较
+
+# 2 Question-222[★★★★★]
+
+__Count Complete Tree Nodes__
+
+> Given a complete binary tree, count the number of nodes.
+
+```Java
+public class Solution {
+    public int countNodes(TreeNode root) {
+        int leftDepth = getLeftDepth(root);
+        int rightDepth = getRightDepth(root);
+
+        if (leftDepth == rightDepth) return (1 << leftDepth) - 1;
+
+        return countNodes(root.left) + countNodes(root.right) + 1;
+    }
+
+    private int getLeftDepth(TreeNode root) {
+        int depth = 0;
+
+        while (root != null) {
+            depth++;
+            root = root.left;
+        }
+
+        return depth;
+    }
+
+    private int getRightDepth(TreeNode root) {
+        int depth = 0;
+
+        while (root != null) {
+            depth++;
+            root = root.right;
+        }
+
+        return depth;
+    }
+
+}
+```
+
+# 3 Question-230[★★]
+
+__Kth Smallest Element in a BST__
+
+> Given a binary search tree, write a function kthSmallest to find the kth smallest element in it.
+
+```Java
+public class Solution {
+    private int cnt = 0;
+    private int res;
+
+    public int kthSmallest(TreeNode root, int k) {
+        cnt = 0;
+        helper(root, k);
+        return res;
+    }
+
+    private void helper(TreeNode root, int k) {
+        if (root == null) return;
+        helper(root.left, k);
+        if (++cnt == k) {
+            res = root.val;
+            return;
+        }
+        helper(root.right, k);
+    }
+}
+```

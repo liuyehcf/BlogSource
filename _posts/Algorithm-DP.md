@@ -13,7 +13,7 @@ __目录__
 <!-- toc -->
 <!--more-->
 
-# 1 Question-10
+# 1 Question-10[★★★★★]
 
 __Regular Expression Matching__
 
@@ -61,7 +61,7 @@ public class Solution {
 }
 ```
 
-# 2 Question-72
+# 2 Question-72[★★★★★]
 
 __Edit Distance__
 
@@ -73,7 +73,7 @@ __Edit Distance__
 > 1. Delete a character
 > 1. Replace a character
 
-递推表达式
+递推表达式(LCS)
 
 * `dp[i][j] = min(dp[i - 1][j - 1], dp[i][j - 1] + 1, dp[i - 1][j] + 1)`
 * `dp[i][j] = min(dp[i - 1][j - 1] + 1, dp[i][j - 1] + 1, dp[i - 1][j] + 1)`
@@ -119,7 +119,52 @@ public class Solution {
 }
 ```
 
-# 3 Question-188
+# 3 Question-174[★★★★★]
+
+__Dungeon Game__
+
+> The demons had captured the princess (P) and imprisoned her in the bottom-right corner of a dungeon. The dungeon consists of M x N rooms laid out in a 2D grid. Our valiant knight (K) was initially positioned in the top-left room and must fight his way through the dungeon to rescue the princess.
+
+> The knight has an initial health point represented by a positive integer. If at any point his health point drops to 0 or below, he dies immediately.
+
+> Some of the rooms are guarded by demons, so the knight loses health (negative integers) upon entering these rooms; other rooms are either empty (0's) or contain magic orbs that increase the knight's health (positive integers).
+
+> In order to reach the princess as quickly as possible, the knight decides to move only rightward or downward in each step.
+
+递推表达式
+
+* `dp[row][col]=Math.max(Math.min(dp[row+1][col],dp[row][col+1])-dungeon[row][col],1);`
+
+```Java
+public class Solution {
+    public int calculateMinimumHP(int[][] dungeon) {
+        int m=dungeon.length;
+        int n=dungeon[0].length;
+        
+        int[][] dp=new int[m][n];
+        
+        dp[m-1][n-1]=Math.max(1-dungeon[m-1][n-1],1);
+        
+        for(int row=m-2;row>=0;row--){
+            dp[row][n-1]=Math.max(1,dp[row+1][n-1]-dungeon[row][n-1]);
+        }
+        
+        for(int col=n-2;col>=0;col--){
+            dp[m-1][col]=Math.max(1,dp[m-1][col+1]-dungeon[m-1][col]);
+        }
+        
+        for(int row=m-2;row>=0;row--){
+            for(int col=n-2;col>=0;col--){
+                dp[row][col]=Math.max(Math.min(dp[row+1][col],dp[row][col+1])-dungeon[row][col],1);
+            }
+        }
+        
+        return dp[0][0];
+    }
+}
+```
+
+# 4 Question-188[★★★★★]
 
 __Best Time to Buy and Sell Stock IV__
 

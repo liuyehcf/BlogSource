@@ -1,5 +1,5 @@
 ---
-title: Algorithm Recall
+title: Algorithm BackTracking
 date: 2017-07-16 21:15:33
 tags:
 - 原创
@@ -13,7 +13,7 @@ __目录__
 <!-- toc -->
 <!--more-->
 
-# 1 Question-17
+# 1 Question-17[★★]
 
 __Letter Combinations of a Phone Number__
 
@@ -68,7 +68,7 @@ public class Solution {
 }
 ```
 
-# 2 Question-90
+# 2 Question-90[★★★★★]
 
 __Subsets II__
 

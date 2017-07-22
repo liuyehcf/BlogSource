@@ -13,7 +13,7 @@ __目录__
 <!-- toc -->
 <!--more-->
 
-# 1 Question-3 
+# 1 Question-3[★★★]
 
 __Longest Substring Without Repeating Characters__
 
@@ -44,7 +44,7 @@ public class Solution {
 }
 ```
 
-# 2 Question-5 
+# 2 Question-5[★★★]
 
 __Longest Palindromic Substring__
 
@@ -79,7 +79,7 @@ public class Solution {
 }
 ```
 
-# 3 Question-20
+# 3 Question-20[★★★★]
 
 __Valid Parentheses__
 
@@ -149,7 +149,7 @@ public class Solution {
 }
 ```
 
-# 4 Question-22
+# 4 Question-22[★★★]
 
 __Generate Parentheses__
 
@@ -192,7 +192,7 @@ public class Solution {
 }
 ```
 
-# 5 Question-32
+# 5 Question-32[★★★★]
 
 __Longest Valid Parentheses__
 

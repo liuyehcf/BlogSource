@@ -44,7 +44,7 @@ __查找最值(最大或最小)__
 * 这个最值必定位于某一段序列中，因此必须保证[left,right]，要么包含两段序列，要么位于那段存在最值的序列
 * 对于153和154而言(最小值)，当`nums[mid] < nums[right]`时，只能`right = mid`，而不能`right = mid - 1`。因为如果执行`right = mid - 1`，可能会使得[left,right]只包含第一段序列，这样的话找到的是第一段的最小值，而非整个的最小值
 
-# 2 Question-4
+# 2 Question-4[★★★★]
 
 __Median of Two Sorted Arrays__
 
@@ -81,7 +81,7 @@ public class Solution {
 }
 ```
 
-# 3 Question-33
+# 3 Question-33[★★★★★]
 
 __Search in Rotated Sorted Array__
 
@@ -125,7 +125,7 @@ public class Solution {
 }
 ```
 
-# 4 Question-34
+# 4 Question-34[★★★]
 
 __Search for a Range__
 
@@ -183,7 +183,7 @@ public class Solution {
 }
 ```
 
-# 5 Question-35
+# 5 Question-35[★★★]
 
 __Search Insert Position__
 
@@ -213,7 +213,7 @@ public class Solution {
 }
 ```
 
-# 6 Question-50
+# 6 Question-50[★★]
 
 __`Pow(x, n)`__
 
@@ -234,7 +234,7 @@ public class Solution {
 }
 ```
 
-# 7 Question-74
+# 7 Question-74[★★★★★]
 
 __Search a 2D Matrix__
 
@@ -308,7 +308,7 @@ public class Solution {
 }
 ```
 
-# 8 Question-81
+# 8 Question-81[★★★★★]
 
 __Search in Rotated Sorted Array II__
 
@@ -357,7 +357,7 @@ public class Solution {
 }
 ```
 
-# 9 Question-153
+# 9 Question-153[★★★★★]
 
 __Find Minimum in Rotated Sorted Array__
 
@@ -457,7 +457,7 @@ while (left < right) {
 ...
 ```
 
-# 10 Question-154
+# 10 Question-154[★★★★★]
 
 __Find Minimum in Rotated Sorted Array II__
 
@@ -494,6 +494,84 @@ public class Solution {
         if (left < nums.length - 1) num3 = nums[left + 1];
 
         return Math.min(Math.min(num1, num2), num3);
+    }
+}
+```
+
+# 11 Question-167[★★]
+
+__Two Sum II - Input array is sorted__
+
+> Given an array of integers that is already sorted in ascending order, find two numbers such that they add up to a specific target number.
+
+> The function twoSum should return indices of the two numbers such that they add up to the target, where index1 must be less than index2. Please note that your returned answers (both index1 and index2) are not zero-based.
+
+> You may assume that each input would have exactly one solution and you may not use the same element twice.
+
+```Java
+public class Solution {
+    public int[] twoSum(int[] nums, int target) {
+        for (int i = 0; i < nums.length - 1; i++) {
+            int j = findTarget(nums, i + 1, target - nums[i]);
+
+            if (j != -1) {
+                return new int[]{i + 1, j + 1};
+            }
+        }
+
+        return null;
+    }
+
+    private int findTarget(int[] nums, int left, int target) {
+        int right = nums.length - 1;
+
+        while (left <= right) {
+            int mid = left + (right - left >> 1);
+            if (nums[mid] == target) return mid;
+            else if (nums[mid] > target) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+        }
+
+        return -1;
+    }
+}
+```
+
+# 12 Question-240[★★★]
+
+__Search a 2D Matrix II__
+
+> Write an efficient algorithm that searches for a value in an m x n matrix. This matrix has the following properties:
+
+> 1. Integers in each row are sorted in ascending from left to right.
+> 1. Integers in each column are sorted in ascending from top to bottom.
+
+```Java
+public class Solution {
+    public boolean searchMatrix(int[][] matrix, int target) {
+        if (matrix.length == 0) return false;
+        int m = matrix.length;
+
+        if (matrix[0].length == 0) return false;
+        int n = matrix[0].length;
+
+        if (target < matrix[0][0] || target > matrix[m - 1][n - 1]) return false;
+
+        int row = 0, col = n - 1;
+
+        while (row < m && col >= 0) {
+            if (matrix[row][col] == target) return true;
+            else if (matrix[row][col] > target) {
+                col--;
+            } else {
+                row++;
+            }
+        }
+
+        return false;
     }
 }
 ```
