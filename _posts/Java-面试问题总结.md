@@ -22,6 +22,8 @@ Arrays.sort在JDK 1.7之用使用的是timsort，timsort是归并排序的一个
 
 [TimSort详解](http://blog.jobbole.com/99681/)
 
+http://blog.csdn.net/yangzhongblog/article/details/8184707
+
 Collection.sort在内部会转调用Arrays.sort
 
 1. 调用List#toArray()方法，生成一个数组
@@ -83,7 +85,11 @@ JDK 动态代理和CGlib
 
 ## 1.8 HashMap的并发问题
 
-访问和扩容可能会同时进行
+http://www.cnblogs.com/kxdblog/p/4323892.html
+
+1. 多线程put操作后，get操作导致死循环。
+1. 多线程put非NULL元素后，get操作得到NULL值。
+1. 多线程put操作，导致元素丢失。
 
 ## 1.9 了解LinkedHashMap的应用吗
 
