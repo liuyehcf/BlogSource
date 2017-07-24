@@ -31,7 +31,7 @@ class UnsafeLazyInitialization{
     private static Instance instance;
 
     public static Instance getInstance(){
-        if(instance==null)//1：线程A执行
+        if(instance==null)// 1：线程A执行
             instance=new Instance();/:2：线程B执行
         return instance;
     }
@@ -66,18 +66,18 @@ class Instance {
 
 }
 
-class DoubleCheckedLocking {//1
-    private static Instance instance;//2
+class DoubleCheckedLocking {// 1
+    private static Instance instance;// 2
 
-    public static Instance getInstance() {//3
-        if (instance == null) {//4：第一次检查
-            synchronized (DoubleCheckedLocking.class) {//5：加锁
-                if (instance == null)//6：第二次检查
-                    instance = new Instance();//7：问题的根源出在这里
-            }//8
-        }//9
-        return instance;//10
-    }//11
+    public static Instance getInstance() {// 3
+        if (instance == null) {// 4：第一次检查
+            synchronized (DoubleCheckedLocking.class) {// 5：加锁
+                if (instance == null)// 6：第二次检查
+                    instance = new Instance();// 7：问题的根源出在这里
+            }// 8
+        }// 9
+        return instance;// 10
+    }// 11
 }
 ```
 
@@ -161,7 +161,7 @@ class SafeDoubleCheckedLocking {
         if (instance == null) {
             synchronized (SafeDoubleCheckedLocking.class) {
                 if (instance == null)
-                    instance = new Instance();//instance为volatile，现在没问题了
+                    instance = new Instance();// instance为volatile，现在没问题了
             }
         }
         return instance;
@@ -187,7 +187,7 @@ class InstanceFactory {
     }
 
     public static Instance getInstance(){
-        return InstanceHolder.instance;//这里将导致InstanceHolder类被初始化
+        return InstanceHolder.instance;// 这里将导致InstanceHolder类被初始化
     }
 }
 ```

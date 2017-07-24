@@ -38,20 +38,20 @@ Sync是ReentrantLock的静态内部类，Sync继承自AQS，重写了tryRelease�
          * Performs non-fair tryLock.  tryAcquire is implemented in
          * subclasses, but both need nonfair try for trylock method.
          */
-        //非公平tryAcquire方法，非公平模式下的tryAcquire实现会直接调用该方法。此外ReentrantLock的tryLock方法也会调用该方法
+        // 非公平tryAcquire方法，非公平模式下的tryAcquire实现会直接调用该方法。此外ReentrantLock的tryLock方法也会调用该方法
         final boolean nonfairTryAcquire(int acquires) {
             final Thread current = Thread.currentThread();
             int c = getState();
-            //当资源为0时，说明没有线程持有锁
+            // 当资源为0时，说明没有线程持有锁
             if (c == 0) {
-                //通过CAS竞争方法，尝试更改资源状态
+                // 通过CAS竞争方法，尝试更改资源状态
                 if (compareAndSetState(0, acquires)) {
-                    //竞争成功的线程获取锁，并绑定当前线程
+                    // 竞争成功的线程获取锁，并绑定当前线程
                     setExclusiveOwnerThread(current);
                     return true;
                 }
             }
-            //当资源不为0时，只有已持有锁的线程才会返回true，这就是可重入的具体含义
+            // 当资源不为0时，只有已持有锁的线程才会返回true，这就是可重入的具体含义
             else if (current == getExclusiveOwnerThread()) {
                 int nextc = c + acquires;
                 if (nextc < 0) // overflow
@@ -64,11 +64,11 @@ Sync是ReentrantLock的静态内部类，Sync继承自AQS，重写了tryRelease�
 
         protected final boolean tryRelease(int releases) {
             int c = getState() - releases;
-            //调用该方法的线程必须持有锁，否则将抛出IllegalMonitorStateException异常
+            // 调用该方法的线程必须持有锁，否则将抛出IllegalMonitorStateException异常
             if (Thread.currentThread() != getExclusiveOwnerThread())
                 throw new IllegalMonitorStateException();
             boolean free = false;
-            //若释放后资源为0，那么解除与当前线程的绑定关系。否则仅仅减少一次重入而已
+            // 若释放后资源为0，那么解除与当前线程的绑定关系。否则仅仅减少一次重入而已
             if (c == 0) {
                 free = true;
                 setExclusiveOwnerThread(null);
@@ -83,7 +83,7 @@ Sync是ReentrantLock的静态内部类，Sync继承自AQS，重写了tryRelease�
             return getExclusiveOwnerThread() == Thread.currentThread();
         }
 
-        //返回一个条件变量
+        // 返回一个条件变量
         final ConditionObject newCondition() {
             return new ConditionObject();
         }
@@ -127,16 +127,16 @@ NonfairSync继承自抽象类Sync，是非公平锁。非公平性是指：当�
          * acquire on failure.
          */
         final void lock() {
-            //如果CAS将资源从0改为1，只需要绑定一下当前线程即可
+            // 如果CAS将资源从0改为1，只需要绑定一下当前线程即可
             if (compareAndSetState(0, 1))
                 setExclusiveOwnerThread(Thread.currentThread());
-            //否则才调用AQS框架的入口方法acquire
+            // 否则才调用AQS框架的入口方法acquire
             else
                 acquire(1);
         }
 
         protected final boolean tryAcquire(int acquires) {
-            //直接调用Sync中的nonfairTryAcquire方法作为tryAcquire的实现
+            // 直接调用Sync中的nonfairTryAcquire方法作为tryAcquire的实现
             return nonfairTryAcquire(acquires);
         }
     }
@@ -163,7 +163,7 @@ NonfairSync继承自抽象类Sync，是非公平锁。非公平性是指：当�
             final Thread current = Thread.currentThread();
             int c = getState();
             if (c == 0) {
-                //当资源状态为0，即当前没有线程持有锁时，首先检查队列中是否有节点存在，如果没有，才尝试获取，否则进入sync queue
+                // 当资源状态为0，即当前没有线程持有锁时，首先检查队列中是否有节点存在，如果没有，才尝试获取，否则进入sync queue
                 if (!hasQueuedPredecessors() &&
                     compareAndSetState(0, acquires)) {
                     setExclusiveOwnerThread(current);
@@ -191,7 +191,7 @@ hasQueuedPredecessors方法如下，这是AQS的方法
         Node t = tail; // Read fields in reverse initialization order
         Node h = head;
         Node s;
-        //检查队列中位于第二位的节点所关联的线程是否是当前线程
+        // 检查队列中位于第二位的节点所关联的线程是否是当前线程
         return h != t &&
             ((s = h.next) == null || s.thread != Thread.currentThread());
     }
@@ -222,7 +222,7 @@ ReentrantLock的一系列lock以及unlock方法仅仅转调用sync的相应方�
         sync.lock();
     }
 
-    //这个方法不需要依赖AQS，仅仅靠自身逻辑即可完成，毕竟获取失败不需要阻塞，仅仅告知是否成功即可
+    // 这个方法不需要依赖AQS，仅仅靠自身逻辑即可完成，毕竟获取失败不需要阻塞，仅仅告知是否成功即可
     public boolean tryLock() {
         return sync.nonfairTryAcquire(1);
     }

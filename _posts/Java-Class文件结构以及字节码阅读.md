@@ -571,13 +571,13 @@ __实际被调用的方法将按照下面的步骤进行(类型C的解析按照�
 ```Java
 class Test {
     public static void main(String[] args){
-        Test test=new Test();   //调用构造方法
+        Test test=new Test();   // 调用构造方法
 
-        test.func();   //调用私有方法
+        test.func();   // 调用私有方法
     }
 
     private void func(){
-        super.toString();    //调用父类方法
+        super.toString();    // 调用父类方法
     }
 }
 ```

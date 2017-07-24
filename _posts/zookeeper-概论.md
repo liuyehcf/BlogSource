@@ -52,7 +52,7 @@ Google的三篇论文影响了很多很多人，也影响了很多很多系统�
 
 ```Java
 public synchronized void sharedMethod(){
-   //对共享数据进行操作
+   // 对共享数据进行操作
 }
 ```
 
@@ -67,7 +67,7 @@ public class SharedSource{
    public void read(){
       rlock.lock();
       try{
-         //读取资源
+         // 读取资源
       }finally{
          rlock.unlock();
       }
@@ -76,7 +76,7 @@ public class SharedSource{
    public void write(){
      wlock.lock();
      try{
-        //写资源
+        // 写资源
      }finally{
         wlock.unlock();
      }

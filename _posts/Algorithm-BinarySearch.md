@@ -96,24 +96,24 @@ public class Solution {
             int mid = left + (right - left >> 1);
 
             if (nums[mid] == target) return mid;
-                //意味着mid位于左半段上
+                // 意味着mid位于左半段上
             else if (nums[mid] > nums[right]) {
-                //target位于mid左边
+                // target位于mid左边
                 if (target >= nums[left] && target < nums[mid]) {
                     right = mid - 1;
                 }
-                //target位于mid右边
+                // target位于mid右边
                 else {
                     left = mid + 1;
                 }
             }
-            //意味着m位于右半段上，或者[left,right]本身就是有序的
+            // 意味着m位于右半段上，或者[left,right]本身就是有序的
             else {
-                //target位于mid右边
+                // target位于mid右边
                 if (target > nums[mid] && target <= nums[right]) {
                     left = mid + 1;
                 }
-                //target位于mid左边
+                // target位于mid左边
                 else {
                     right = mid - 1;
                 }
@@ -324,26 +324,26 @@ public class Solution {
         while (left <= right) {
             int mid = left + (right - left >> 1);
 
-            //若找到了，直接返回
+            // 若找到了，直接返回
             if (nums[mid] == target) return true;
-            //mid位于左半段上
+            // mid位于左半段上
             if (nums[mid] > nums[right]) {
-                //此时target位于mid右边
+                // 此时target位于mid右边
                 if (target > nums[mid] || target <= nums[right]) {
                     left = mid + 1;
                 }
-                //此时target位于mid左边
+                // 此时target位于mid左边
                 else {
                     right = mid - 1;
                 }
             }
-            //mid位于右半段上(或者[left,right]本身就是有序的)
+            // mid位于右半段上(或者[left,right]本身就是有序的)
             else if (nums[mid] < nums[right]) {
-                //此时target位于mid右边
+                // 此时target位于mid右边
                 if (target > nums[mid] && target <= nums[right]) {
                     left = mid + 1;
                 }
-                //此时target位于mid左边
+                // 此时target位于mid左边
                 else {
                     right = mid - 1;
                 }
@@ -374,15 +374,15 @@ public class Solution {
     public int findMin(int[] nums) {
         int left = 0, right = nums.length - 1;
 
-        //不得不采用left<right作为条件
+        // 不得不采用left<right作为条件
         while (left < right) {
             int mid = left + (right - left >> 1);
 
-            //可能会造成[left=mid+1,right]是一个单调区间，但是是右边那个单调区间，没有关系，递归逻辑会向左边移动(即最小值的那一边)
+            // 可能会造成[left=mid+1,right]是一个单调区间，但是是右边那个单调区间，没有关系，递归逻辑会向左边移动(即最小值的那一边)
             if (nums[mid] > nums[right]) {
                 left = mid + 1;
             } 
-            //若right=mid-1会造成[left,right=mid-1]是一个单调区间，如果是左边的单调区间，则最后会跑到最左边，这样是找不到最小值的，因此，每次迭代后，必须保证[left,right]包含最小值，或者是一个单调区间，但是是右边那个单调区间
+            // 若right=mid-1会造成[left,right=mid-1]是一个单调区间，如果是左边的单调区间，则最后会跑到最左边，这样是找不到最小值的，因此，每次迭代后，必须保证[left,right]包含最小值，或者是一个单调区间，但是是右边那个单调区间
             else {
                 right = mid;
             }
@@ -390,7 +390,7 @@ public class Solution {
 
         int num1 = Integer.MAX_VALUE, num2 = Integer.MAX_VALUE, num3 = Integer.MAX_VALUE;
 
-        //懒得进行讨论了，反正结果总在这里面
+        // 懒得进行讨论了，反正结果总在这里面
         if (left > 0) num1 = nums[left - 1];
         if (left >= 0 && left < nums.length) num2 = nums[left];
         if (left < nums.length - 1) num3 = nums[left + 1];
@@ -488,7 +488,7 @@ public class Solution {
 
         int num1 = Integer.MAX_VALUE, num2 = Integer.MAX_VALUE, num3 = Integer.MAX_VALUE;
 
-        //懒得进行讨论了，反正结果总在这里面
+        // 懒得进行讨论了，反正结果总在这里面
         if (left > 0) num1 = nums[left - 1];
         if (left >= 0 && left < nums.length) num2 = nums[left];
         if (left < nums.length - 1) num3 = nums[left + 1];

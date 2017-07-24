@@ -85,7 +85,7 @@ public class Solution {
     public int minDistance(String word1, String word2) {
         int[][] dp = new int[word1.length() + 1][word2.length() + 1];
 
-        //需要进行初始化
+        // 需要进行初始化
         for (int i = 1; i <= word1.length(); i++) {
             dp[i][0] = i;
         }

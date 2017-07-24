@@ -34,7 +34,7 @@ public class Solution {
 
                 int beginIndex = getBeginIndex(stack);
 
-                //注意这里的endIndex是i-1
+                // 注意这里的endIndex是i-1
                 res = Math.max(res, topHeight * (i - 1 - beginIndex + 1));
             }
 
@@ -46,7 +46,7 @@ public class Solution {
 
             int beginIndex = getBeginIndex(stack);
 
-            //注意这里的endIndex是heights.length - 1
+            // 注意这里的endIndex是heights.length - 1
             res = Math.max(res, topHeight * (heights.length - 1 - beginIndex + 1));
         }
 
@@ -56,7 +56,7 @@ public class Solution {
     private boolean canPushToStack(int[] heights, LinkedList<Integer> stack, int val) {
         if (stack.isEmpty()) return true;
 
-        //这里注意，必须严格单调
+        // 这里注意，必须严格单调
         return val > heights[stack.peek()];
     }
 

@@ -24,19 +24,19 @@ __ArrayBlockingQueue的分析分为以下几个部分__
 # 2 字段介绍
 ```Java
     /** The queued items */
-    //数组，用于存放元素，注意到该字段是final修饰的，因此ArrayBlockingQueue是不能扩容的，其容量在初始化时就已经确定    
+    // 数组，用于存放元素，注意到该字段是final修饰的，因此ArrayBlockingQueue是不能扩容的，其容量在初始化时就已经确定    
     final Object[] items;
 
     /** items index for next take, poll, peek or remove */
-    //take/poll/peek/remove方法操作的下标
+    // take/poll/peek/remove方法操作的下标
     int takeIndex;
 
     /** items index for next put, offer, or add */
-    //put/offer/add方法操作的下标
+    // put/offer/add方法操作的下标
     int putIndex;
 
     /** Number of elements in the queue */
-    //队列中的所有元素
+    // 队列中的所有元素
     int count;
 
     /*
@@ -45,15 +45,15 @@ __ArrayBlockingQueue的分析分为以下几个部分__
      */
 
     /** Main lock guarding all access */
-    //重入锁，所有非线程安全字段的访问都需要配合该重入锁
+    // 重入锁，所有非线程安全字段的访问都需要配合该重入锁
     final ReentrantLock lock;
 
     /** Condition for waiting takes */
-    //条件变量，用于阻塞和唤醒线程
+    // 条件变量，用于阻塞和唤醒线程
     private final Condition notEmpty;
 
     /** Condition for waiting puts */
-    //条件变量，用于阻塞和唤醒线程
+    // 条件变量，用于阻塞和唤醒线程
     private final Condition notFull;
 
     /**
@@ -61,7 +61,7 @@ __ArrayBlockingQueue的分析分为以下几个部分__
      * are known not to be any.  Allows queue operations to update
      * iterator state.
      */
-    //迭代器
+    // 迭代器
     transient Itrs itrs = null;
 ```
 
@@ -97,11 +97,11 @@ __该方法向队列中添加一个元素__
         final ReentrantLock lock = this.lock;
         lock.lock();
         try {
-            //队列已满时，直接返回false
+            // 队列已满时，直接返回false
             if (count == items.length)
                 return false;
             else {
-                //enqueue需要配合重入锁lock才能确保线程安全
+                // enqueue需要配合重入锁lock才能确保线程安全
                 enqueue(e);
                 return true;
             }
@@ -123,11 +123,11 @@ __该方法向队列中添加一个元素__
         // assert items[putIndex] == null;
         final Object[] items = this.items;
         items[putIndex] = x;
-        //更新putIndex
+        // 更新putIndex
         if (++putIndex == items.length)
             putIndex = 0;
         count++;
-        //此时队列至少有一个元素，因此通过条件对象notEmpty唤醒那些阻塞在notEmpty上的其中一个线程
+        // 此时队列至少有一个元素，因此通过条件对象notEmpty唤醒那些阻塞在notEmpty上的其中一个线程
         notEmpty.signal();
     }
 ```
@@ -153,18 +153,18 @@ __这个版本的offer允许阻塞当前线程一段时间__
         checkNotNull(e);
         long nanos = unit.toNanos(timeout);
         final ReentrantLock lock = this.lock;
-        //允许中断
+        // 允许中断
         lock.lockInterruptibly();
         try {
-            //当队列已满
+            // 当队列已满
             while (count == items.length) {
-                //已经超时，则直接返回false
+                // 已经超时，则直接返回false
                 if (nanos <= 0)
                     return false;
-                //未超时，则阻塞指定时间，awaitNanos会返回剩余时间
+                // 未超时，则阻塞指定时间，awaitNanos会返回剩余时间
                 nanos = notFull.awaitNanos(nanos);
             }
-            //入队
+            // 入队
             enqueue(e);
             return true;
         } finally {
@@ -190,14 +190,14 @@ __put方法向队列添加一个元素__
     public void put(E e) throws InterruptedException {
         checkNotNull(e);
         final ReentrantLock lock = this.lock;
-        //允许中断
+        // 允许中断
         lock.lockInterruptibly();
         try {
-            //若队列已满，则阻塞当前线程，直至队列非满
+            // 若队列已满，则阻塞当前线程，直至队列非满
             while (count == items.length)
-                //阻塞后，会释放持有的锁。唤醒后又会重新持有锁
+                // 阻塞后，会释放持有的锁。唤醒后又会重新持有锁
                 notFull.await();
-            //入队
+            // 入队
             enqueue(e);
         } finally {
             lock.unlock();
@@ -240,10 +240,10 @@ __poll方法从队列中取出一个元素__
         if (++takeIndex == items.length)
             takeIndex = 0;
         count--;
-        //???
+        // ???
         if (itrs != null)
             itrs.elementDequeued();
-        //此时队列必定非满，通过条件对象notFull唤醒那些阻塞在notFull上的其中一个线程
+        // 此时队列必定非满，通过条件对象notFull唤醒那些阻塞在notFull上的其中一个线程
         notFull.signal();
         return x;
     }
@@ -259,18 +259,18 @@ __这个重载版本的poll方法允许阻塞一段指定的时间__
     public E poll(long timeout, TimeUnit unit) throws InterruptedException {
         long nanos = unit.toNanos(timeout);
         final ReentrantLock lock = this.lock;
-        //允许中断
+        // 允许中断
         lock.lockInterruptibly();
         try {
-            //当队列为空
+            // 当队列为空
             while (count == 0) {
-                //此时已超时，直接返回null
+                // 此时已超时，直接返回null
                 if (nanos <= 0)
                     return null;
-                //此时未超时，则等待一段时间
+                // 此时未超时，则等待一段时间
                 nanos = notEmpty.awaitNanos(nanos);
             }
-            //出队
+            // 出队
             return dequeue();
         } finally {
             lock.unlock();
@@ -287,13 +287,13 @@ __take方法从队列中取出一个元素__
 ```Java
     public E take() throws InterruptedException {
         final ReentrantLock lock = this.lock;
-        //允许中断
+        // 允许中断
         lock.lockInterruptibly();
         try {
-            //若队列为空，则阻塞直至队列非空
+            // 若队列为空，则阻塞直至队列非空
             while (count == 0)
                 notEmpty.await();
-            //头元素出队
+            // 头元素出队
             return dequeue();
         } finally {
             lock.unlock();

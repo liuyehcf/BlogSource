@@ -45,7 +45,7 @@ ThreadLocalMap用于存放<ThreadLocal,T>这样的键值对，ThreadLocal对象�
             }
         }
 
-        //...省略其他
+        // ...省略其他
     }
 ```
 
@@ -67,20 +67,20 @@ get方法用于从当前线程中取出该线程本地的对象，当前线程�
      * @return the current thread's value of this thread-local
      */
     public T get() {
-        //获取当前线程
+        // 获取当前线程
         Thread t = Thread.currentThread();
-        //获取当前线程所关联的一个Map
+        // 获取当前线程所关联的一个Map
         ThreadLocalMap map = getMap(t);
         if (map != null) {
             ThreadLocalMap.Entry e = map.getEntry(this);
-            //找到了已经初始化过的线程本地对象，那么转型后返回即可
+            // 找到了已经初始化过的线程本地对象，那么转型后返回即可
             if (e != null) {
                 @SuppressWarnings("unchecked")
                 T result = (T)e.value;
                 return result;
             }
         }
-        //执行到这里说明map为空或者线程本地对象尚未初始化，那么继续初始化逻辑
+        // 执行到这里说明map为空或者线程本地对象尚未初始化，那么继续初始化逻辑
         return setInitialValue();
     }
 ```
@@ -114,18 +114,18 @@ setInitialValue方法用于初始化线程本地对象或者初始化给定线�
      * @return the initial value
      */
     private T setInitialValue() {
-        //首先调用initialValue来初始化对象
+        // 首先调用initialValue来初始化对象
         T value = initialValue();
-        //获取线程对象
+        // 获取线程对象
         Thread t = Thread.currentThread();
-        //获取线程对象关联的map
+        // 获取线程对象关联的map
         ThreadLocalMap map = getMap(t);
-        //如果map已经初始化了
+        // 如果map已经初始化了
         if (map != null)
-            //那么直接将value存入即可，注意以ThreadLocal对象为键值
+            // 那么直接将value存入即可，注意以ThreadLocal对象为键值
             map.set(this, value);
         else
-            //初始化map并且存入value
+            // 初始化map并且存入value
             createMap(t, value);
         return value;
     }
@@ -193,16 +193,16 @@ set方法就是用于将一个对象存入线程关联的Map中去，以当前�
      *        this thread-local.
      */
     public void set(T value) {
-        //获取当前线程对象
+        // 获取当前线程对象
         Thread t = Thread.currentThread();
-        //获取当前线程对象关联的map
+        // 获取当前线程对象关联的map
         ThreadLocalMap map = getMap(t);
-        //如果map已经初始化过了
+        // 如果map已经初始化过了
         if (map != null)
-            //直接存入值即可
+            // 直接存入值即可
             map.set(this, value);
         else
-            //否则初始化map并且存入值
+            // 否则初始化map并且存入值
             createMap(t, value);
     }
 ```

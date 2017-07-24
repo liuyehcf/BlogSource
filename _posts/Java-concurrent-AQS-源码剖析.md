@@ -202,8 +202,8 @@ __acquire方法用于获取指定数量的资源，如果获取不到则当前�
      *        can represent anything you like.
      */
     public final void acquire(int arg) {
-        //首先执行tryAcquire(arg)尝试获取资源，如果成功则直接返回
-        //如果tryAcquire(arg)获取资源失败，则讲当前线程封装成Node节点加入到sync queue队列中，并通过acquireQueued进行获取资源直至成功(如果尚未有资源可获取，那么acquireQueued会阻塞当前线程)
+        // 首先执行tryAcquire(arg)尝试获取资源，如果成功则直接返回
+        // 如果tryAcquire(arg)获取资源失败，则讲当前线程封装成Node节点加入到sync queue队列中，并通过acquireQueued进行获取资源直至成功(如果尚未有资源可获取，那么acquireQueued会阻塞当前线程)
         if (!tryAcquire(arg) &&
             acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
             selfInterrupt();
@@ -237,22 +237,22 @@ __无法获取资源的线程将被封装成Node节点，通过addWaiter方法�
      * @return the new node
      */
     private Node addWaiter(Node mode) {
-        //生成指定模式的Node节点
+        // 生成指定模式的Node节点
         Node node = new Node(Thread.currentThread(), mode);
         // Try the fast path of enq; backup to full enq on failure
         Node pred = tail;
-        //以下几行进行入队操作，如果失败，交给enq进行入队处理。其实，我认为可以直接调用enq，不知道作者设置如下几行的意图
+        // 以下几行进行入队操作，如果失败，交给enq进行入队处理。其实，我认为可以直接调用enq，不知道作者设置如下几行的意图
         if (pred != null) {
             node.prev = pred;
-            //通过CAS操作串行化并发入队操作，仅有一个线程会成功，由于node节点的prev字段是在CAS操作之前进行的，一旦CAS操作成功，node节点的prev字段就是指向了其前继节点，因此说prev字段是安全的
+            // 通过CAS操作串行化并发入队操作，仅有一个线程会成功，由于node节点的prev字段是在CAS操作之前进行的，一旦CAS操作成功，node节点的prev字段就是指向了其前继节点，因此说prev字段是安全的
             if (compareAndSetTail(pred, node)) {
-                //这里直接通过赋值操作赋值next字段，注意，可能有别的线程会在next字段赋值之前访问到next字段，因此next字段是非可靠的(一个节点的next字段为null并不代表该节点没有后继)
+                // 这里直接通过赋值操作赋值next字段，注意，可能有别的线程会在next字段赋值之前访问到next字段，因此next字段是非可靠的(一个节点的next字段为null并不代表该节点没有后继)
                 pred.next = node;
-                //一旦next字段赋值成功，那么next字段又变为可靠的了
+                // 一旦next字段赋值成功，那么next字段又变为可靠的了
                 return node;
             }
         }
-        //通过enq入队
+        // 通过enq入队
         enq(node);
         return node;
     }
@@ -273,16 +273,16 @@ __enq方法确保给定节点成功入队__
      * @return node's predecessor
      */
     private Node enq(final Node node) {
-        //死循环进行入队操作，CAS操作常规模式
+        // 死循环进行入队操作，CAS操作常规模式
         for (;;) {
             Node t = tail;
-            //此时队列为空，需要初始化
+            // 此时队列为空，需要初始化
             if (t == null) { // Must initialize
-                //此时可能多个线程都在执行该方法，因此只有一个线程才能初始化sync queue，此处添加的节点我称之为Dummy Node，该节点没有关联线程
+                // 此时可能多个线程都在执行该方法，因此只有一个线程才能初始化sync queue，此处添加的节点我称之为Dummy Node，该节点没有关联线程
                 if (compareAndSetHead(new Node()))
                     tail = head;
             } else {
-                //以下四行与addWaiter类似，不再赘述
+                // 以下四行与addWaiter类似，不再赘述
                 node.prev = t;
                 if (compareAndSetTail(t, node)) {
                     t.next = node;
@@ -314,31 +314,31 @@ __至此，线程已被封装成节点，并且成功添加到sync queue中去�
      * @return {@code true} if interrupted while waiting
      */
     final boolean acquireQueued(final Node node, int arg) {
-        //用于记录是否获取成功，我现在还不清楚何时会失败= =
+        // 用于记录是否获取成功，我现在还不清楚何时会失败= =
         boolean failed = true;
         try {
-            //记录是否被中断过，如果被中断过，则需要在acquire方法中恢复中断现场
+            // 记录是否被中断过，如果被中断过，则需要在acquire方法中恢复中断现场
             boolean interrupted = false;
-            //同样的套路，CAS配合死循环
+            // 同样的套路，CAS配合死循环
             for (;;) {
-                //获取node节点的前继节点p
+                // 获取node节点的前继节点p
                 final Node p = node.predecessor();
-                //当p为sync queue头结点时，才有资格尝试获取资源，换言之，当且仅当一个节点是sync queue中第二个节点时，它才有资格获取资源
+                // 当p为sync queue头结点时，才有资格尝试获取资源，换言之，当且仅当一个节点是sync queue中第二个节点时，它才有资格获取资源
                 if (p == head && tryAcquire(arg)) {
-                    //一旦获取成功，以下语句都是线程安全的，所有字段直接赋值即可，不需要CAS或者加锁
+                    // 一旦获取成功，以下语句都是线程安全的，所有字段直接赋值即可，不需要CAS或者加锁
                     setHead(node);
                     p.next = null; // help GC
                     failed = false;
                     return interrupted;
                 }
-                //否则，找到前继节点，并将其设置为SIGNAL状态后阻塞自己
+                // 否则，找到前继节点，并将其设置为SIGNAL状态后阻塞自己
                 if (shouldParkAfterFailedAcquire(p, node) &&
                     parkAndCheckInterrupt())
                     interrupted = true;
             }
         } finally {
             if (failed)
-                //如果失败了
+                // 如果失败了
                 cancelAcquire(node);
         }
     }
@@ -363,20 +363,20 @@ __shouldParkAfterFailedAcquire方法用于判断当前节点是否可以阻塞�
      */
     private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
         int ws = pred.waitStatus;
-        //一旦发现前继节点是SIGNAL状态，就返回true，在acquireQueued方法中会阻塞当前线程
+        // 一旦发现前继节点是SIGNAL状态，就返回true，在acquireQueued方法中会阻塞当前线程
         if (ws == Node.SIGNAL)
             /*
              * This node has already set status asking a release
              * to signal it, so it can safely park.
              */
-            //这里给出两个问题：
-                 //1.如果在当前线程阻塞之前，前继节点就唤醒了当前线程，那么当前线程不就永远阻塞下去了吗？
-                 //2.万一有别的线程更改了前继节点的状态，导致前继节点不唤醒当前线程，那么当前线程不就永远阻塞下去了吗？
+            // 这里给出两个问题：
+                 // 1.如果在当前线程阻塞之前，前继节点就唤醒了当前线程，那么当前线程不就永远阻塞下去了吗？
+                 // 2.万一有别的线程更改了前继节点的状态，导致前继节点不唤醒当前线程，那么当前线程不就永远阻塞下去了吗？
             return true;
 
-        //如果前继节点处于CANCELL状态(仅有CANCELL状态大于0)
+        // 如果前继节点处于CANCELL状态(仅有CANCELL状态大于0)
         if (ws > 0) {
-            //那么跳过那些被CANCELL的节点，先前找到第一个有效节点
+            // 那么跳过那些被CANCELL的节点，先前找到第一个有效节点
             /*
              * Predecessor was cancelled. Skip over predecessors and
              * indicate retry.
@@ -386,7 +386,7 @@ __shouldParkAfterFailedAcquire方法用于判断当前节点是否可以阻塞�
             } while (pred.waitStatus > 0);
             pred.next = node;
         } else {
-        //前继节点状态要么是0，要么是PROPAGATE，将其通过CAS操作设为SIGNAL，不用管是否成功，退回到上层函数acquireQueued进行再次判断
+        // 前继节点状态要么是0，要么是PROPAGATE，将其通过CAS操作设为SIGNAL，不用管是否成功，退回到上层函数acquireQueued进行再次判断
             /*
              * waitStatus must be 0 or PROPAGATE.  Indicate that we
              * need a signal, but don't park yet.  Caller will need to
@@ -417,7 +417,7 @@ __parkAndCheckInterrupt方法用于阻塞当前线程__
      */
     private final boolean parkAndCheckInterrupt() {
         LockSupport.park(this);
-        //返回是否被中断过
+        // 返回是否被中断过
         return Thread.interrupted();
     }
 ```
@@ -447,10 +447,10 @@ __release方法是独占模式下实现解锁语义的入口方法__
      * @return the value returned from {@link #tryRelease}
      */
     public final boolean release(int arg) {
-        //调用tryRelease尝试释放资源
+        // 调用tryRelease尝试释放资源
         if (tryRelease(arg)) {
             Node h = head;
-            //只要头节点不为空且状态不为0，就唤醒后继节点，对于独占模式也就只有SIGNAL状态一种，头结点在任何情况下都不可能为CANCELL状态
+            // 只要头节点不为空且状态不为0，就唤醒后继节点，对于独占模式也就只有SIGNAL状态一种，头结点在任何情况下都不可能为CANCELL状态
             if (h != null && h.waitStatus != 0)
                 unparkSuccessor(h);
             return true;
@@ -495,7 +495,7 @@ __通过unparkSuccessor方法唤醒指定节点的后继节点__
          * fails or if status is changed by waiting thread.
          */
         int ws = node.waitStatus;
-        //若节点状态小于0，将其通过CAS操作改为0，表明本次SIGNAL的任务已经完成，至于CAS是否成功，或者是否再次被其他线程修改，都与本次无关unparkSuccessor无关，只是该节点被赋予了新的任务而已。
+        // 若节点状态小于0，将其通过CAS操作改为0，表明本次SIGNAL的任务已经完成，至于CAS是否成功，或者是否再次被其他线程修改，都与本次无关unparkSuccessor无关，只是该节点被赋予了新的任务而已。
         if (ws < 0)
             compareAndSetWaitStatus(node, ws, 0);
 
@@ -505,7 +505,7 @@ __通过unparkSuccessor方法唤醒指定节点的后继节点__
          * traverse backwards from tail to find the actual
          * non-cancelled successor.
          */
-        //这里通过非可靠的next字段直接获取后继，如果非空，那么说明该字段可靠，如果为空，那么利用可靠的prev字段从tail向前找到当前node节点的后继节点
+        // 这里通过非可靠的next字段直接获取后继，如果非空，那么说明该字段可靠，如果为空，那么利用可靠的prev字段从tail向前找到当前node节点的后继节点
         Node s = node.next;
         if (s == null || s.waitStatus > 0) {
             s = null;
@@ -513,7 +513,7 @@ __通过unparkSuccessor方法唤醒指定节点的后继节点__
                 if (t.waitStatus <= 0)
                     s = t;
         }
-        //唤醒后继节点
+        // 唤醒后继节点
         if (s != null)
             LockSupport.unpark(s.thread);
     }        
@@ -540,8 +540,8 @@ __acquireShared方法是共享模式下实现加锁语义的入口方法__
      *        and can represent anything you like.
      */
     public final void acquireShared(int arg) {
-        //尝试获取锁，如果返回值不小于9，则说明获取成功，直接返回
-        //如果获取失败，则进入doAcquireShared方法，执行后续操作
+        // 尝试获取锁，如果返回值不小于9，则说明获取成功，直接返回
+        // 如果获取失败，则进入doAcquireShared方法，执行后续操作
         if (tryAcquireShared(arg) < 0)
             doAcquireShared(arg);
     }    
@@ -576,22 +576,22 @@ __doAcquireShared方法是核心方法__
      * @param arg the acquire argument
      */
     private void doAcquireShared(int arg) {
-        //首先，将当前线程封装成共享模式的节点，并添加到sync queue中
+        // 首先，将当前线程封装成共享模式的节点，并添加到sync queue中
         final Node node = addWaiter(Node.SHARED);
         boolean failed = true;
         try {
-            //标记获取资源过程中是否被中断，如果被中断了，则需要还原中断现场
+            // 标记获取资源过程中是否被中断，如果被中断了，则需要还原中断现场
             boolean interrupted = false;
-            //老套路，死循环+CAS操作
+            // 老套路，死循环+CAS操作
             for (;;) {
                 final Node p = node.predecessor();
-                //与独占模式类似，共享模式下也仅有第二个节点有资格获取资源
+                // 与独占模式类似，共享模式下也仅有第二个节点有资格获取资源
                 if (p == head) {
                     int r = tryAcquireShared(arg);
-                    //返回值不小于0，则意味着获取资源成功
+                    // 返回值不小于0，则意味着获取资源成功
                     if (r >= 0) {
-                        //以下代码都是线程安全的：虽然共享模式下可以有多个获取资源的线程，但是在队列中仅有第二个节点在成功获取资源的情况下，才能执行以下逻辑
-                        //该方法是共享模式下的重点方法，稍后详细分析
+                        // 以下代码都是线程安全的：虽然共享模式下可以有多个获取资源的线程，但是在队列中仅有第二个节点在成功获取资源的情况下，才能执行以下逻辑
+                        // 该方法是共享模式下的重点方法，稍后详细分析
                         setHeadAndPropagate(node, r);
                         p.next = null; // help GC
                         if (interrupted)
@@ -600,14 +600,14 @@ __doAcquireShared方法是核心方法__
                         return;
                     }
                 }
-                //否则，将前继节点设置为SIGNAL后，阻塞自己
+                // 否则，将前继节点设置为SIGNAL后，阻塞自己
                 if (shouldParkAfterFailedAcquire(p, node) &&
                     parkAndCheckInterrupt())
                     interrupted = true;
             }
         } finally {
             if (failed)
-                //获取失败
+                // 获取失败
                 cancelAcquire(node);
         }
     }
@@ -630,7 +630,7 @@ __setHeadAndPropagate方法主要逻辑__
      */
     private void setHeadAndPropagate(Node node, int propagate) {
         Node h = head; // Record old head for check below
-        //将当前节点设置为头结点
+        // 将当前节点设置为头结点
         setHead(node);
         /*
          * Try to signal next queued node if:
@@ -648,7 +648,7 @@ __setHeadAndPropagate方法主要逻辑__
          * racing acquires/releases, so most need signals now or soon
          * anyway.
          */
-        //这是一堆极其诡异的条件，我暂时分析不清楚，但是感觉大概率是true，也就是，大概率会触发doReleaseShared方法
+        // 这是一堆极其诡异的条件，我暂时分析不清楚，但是感觉大概率是true，也就是，大概率会触发doReleaseShared方法
         if (propagate > 0 || h == null || h.waitStatus < 0 ||
             (h = head) == null || h.waitStatus < 0) {
             Node s = node.next;
@@ -674,7 +674,7 @@ __releaseShared方法是共享模式下实现解锁语义的入口方法__
      * @return the value returned from {@link #tryReleaseShared}
      */
     public final boolean releaseShared(int arg) {
-        //通过tryReleaseShared方法尝试释放资源
+        // 通过tryReleaseShared方法尝试释放资源
         if (tryReleaseShared(arg)) {
             doReleaseShared();
             return true;
@@ -724,21 +724,21 @@ __doReleaseShared方法是共享模式下共享含义体现的重要方法__
             Node h = head;
             if (h != null && h != tail) {
                 int ws = h.waitStatus;
-                //若头结点为SIGNAL状态，则将其通过CAS操作改为0
+                // 若头结点为SIGNAL状态，则将其通过CAS操作改为0
                 if (ws == Node.SIGNAL) {
-                    //如果失败，说明存在竞争，可能有其他线程也在执行该方法，那么由竞争成功的线程执行unparkSuccessor方法即可
+                    // 如果失败，说明存在竞争，可能有其他线程也在执行该方法，那么由竞争成功的线程执行unparkSuccessor方法即可
                     if (!compareAndSetWaitStatus(h, Node.SIGNAL, 0))
                         continue;            // loop to recheck cases
-                    //运行到这，说明当前线程竞争成功，执行unparkSuccessor唤醒头结点的后继节点，即sync queue中第二个节点
+                    // 运行到这，说明当前线程竞争成功，执行unparkSuccessor唤醒头结点的后继节点，即sync queue中第二个节点
                     unparkSuccessor(h);
                 }
-                //如果头结点状态是0，意味着后面没有节点了，这里失败的可能原因是新节点加入，将头结点重新设置为SIGNAL
+                // 如果头结点状态是0，意味着后面没有节点了，这里失败的可能原因是新节点加入，将头结点重新设置为SIGNAL
                 else if (ws == 0 &&
                          !compareAndSetWaitStatus(h, 0, Node.PROPAGATE))
-                    //如果CAS失败了，此时可能有新节点将头结点重新标记为SIGNAL，如果此时不执行continue，将会导致该方法结束，这样便没有达到propagate的目的，因此必须区分CAS结果进行不同处理
+                    // 如果CAS失败了，此时可能有新节点将头结点重新标记为SIGNAL，如果此时不执行continue，将会导致该方法结束，这样便没有达到propagate的目的，因此必须区分CAS结果进行不同处理
                     continue;                // loop on failed CAS
             }
-            //如果头结点没有发生变化，则退出死循环
+            // 如果头结点没有发生变化，则退出死循环
             if (h == head)                   // loop if head changed
                 break;
         }
@@ -780,7 +780,7 @@ __相比于acquire，acquireInterruptibly会响应interrupt，并且抛出Interr
      */
     public final void acquireInterruptibly(int arg)
             throws InterruptedException {
-        //先检查一次是否被中断，如果是，则直接抛出异常
+        // 先检查一次是否被中断，如果是，则直接抛出异常
         if (Thread.interrupted())
             throw new InterruptedException();
         if (!tryAcquire(arg))
@@ -805,7 +805,7 @@ __与acquireQueued方法的差异部分已用注释标记，其余部分的逻�
      */
     private void doAcquireInterruptibly(int arg)
         throws InterruptedException {
-        //将当前线程封装成独占模式下的节点，并入队
+        // 将当前线程封装成独占模式下的节点，并入队
         final Node node = addWaiter(Node.EXCLUSIVE);
         boolean failed = true;
         try {
@@ -819,7 +819,7 @@ __与acquireQueued方法的差异部分已用注释标记，其余部分的逻�
                 }
                 if (shouldParkAfterFailedAcquire(p, node) &&
                     parkAndCheckInterrupt())
-                    //与acquiredQueued的区别在此，这里是直接抛出异常
+                    // 与acquiredQueued的区别在此，这里是直接抛出异常
                     throw new InterruptedException();
             }
         } finally {
@@ -849,7 +849,7 @@ __相比于acquireShared，acquireSharedInterruptibly会响应interrupt，并且
      */
     public final void acquireSharedInterruptibly(int arg)
             throws InterruptedException {
-        //首先检查一下是否被中断，如果是，则直接抛出InterruptedException异常
+        // 首先检查一下是否被中断，如果是，则直接抛出InterruptedException异常
         if (Thread.interrupted())
             throw new InterruptedException();
         if (tryAcquireShared(arg) < 0)
@@ -873,7 +873,7 @@ __与doAcquireShared方法的差异部分已用注释标记，其余部分的逻
      */
     private void doAcquireSharedInterruptibly(int arg)
         throws InterruptedException {
-        //将当前线程封装成共享模式下的节点，并添加到sync queue中
+        // 将当前线程封装成共享模式下的节点，并添加到sync queue中
         final Node node = addWaiter(Node.SHARED);
         boolean failed = true;
         try {
@@ -890,7 +890,7 @@ __与doAcquireShared方法的差异部分已用注释标记，其余部分的逻
                 }
                 if (shouldParkAfterFailedAcquire(p, node) &&
                     parkAndCheckInterrupt())
-                    //与doAcquireShared的区别在此，这里是直接抛出异常
+                    // 与doAcquireShared的区别在此，这里是直接抛出异常
                     throw new InterruptedException();
             }
         } finally {
@@ -950,10 +950,10 @@ __与acquireQueued方法的差异部分已用注释标记，其余部分的逻�
      */
     private boolean doAcquireNanos(int arg, long nanosTimeout)
             throws InterruptedException {
-        //若指定的阻塞时间小于0，则直接返回false
+        // 若指定的阻塞时间小于0，则直接返回false
         if (nanosTimeout <= 0L)
             return false;
-        //设置超时时刻
+        // 设置超时时刻
         final long deadline = System.nanoTime() + nanosTimeout;
         final Node node = addWaiter(Node.EXCLUSIVE);
         boolean failed = true;
@@ -966,16 +966,16 @@ __与acquireQueued方法的差异部分已用注释标记，其余部分的逻�
                     failed = false;
                     return true;
                 }
-                //剩余等待时间
+                // 剩余等待时间
                 nanosTimeout = deadline - System.nanoTime();
-                //如果已超时，则直接返回
+                // 如果已超时，则直接返回
                 if (nanosTimeout <= 0L)
                     return false;
-                //当剩余时间超过阻塞阈值时，阻塞自己一段时间，否则自旋等待
+                // 当剩余时间超过阻塞阈值时，阻塞自己一段时间，否则自旋等待
                 if (shouldParkAfterFailedAcquire(p, node) &&
                     nanosTimeout > spinForTimeoutThreshold)
                     LockSupport.parkNanos(this, nanosTimeout);
-                //若已被中断，则抛出异常响应中断
+                // 若已被中断，则抛出异常响应中断
                 if (Thread.interrupted())
                     throw new InterruptedException();
             }
@@ -1009,7 +1009,7 @@ __共享模式下，该方法允许阻塞指定时间，同时能够响应中断
      */
     public final boolean tryAcquireSharedNanos(int arg, long nanosTimeout)
             throws InterruptedException {
-        //如果已被中断，则直接抛出InterruptedException异常
+        // 如果已被中断，则直接抛出InterruptedException异常
         if (Thread.interrupted())
             throw new InterruptedException();
         return tryAcquireShared(arg) >= 0 ||
@@ -1036,10 +1036,10 @@ __与acquireShared方法的差异部分已用注释标记，其余部分的逻�
      */
     private boolean doAcquireSharedNanos(int arg, long nanosTimeout)
             throws InterruptedException {
-        //若指定的阻塞时间小于0，则直接返回false
+        // 若指定的阻塞时间小于0，则直接返回false
         if (nanosTimeout <= 0L)
             return false;
-        //设定超时时刻
+        // 设定超时时刻
         final long deadline = System.nanoTime() + nanosTimeout;
         final Node node = addWaiter(Node.SHARED);
         boolean failed = true;
@@ -1055,16 +1055,16 @@ __与acquireShared方法的差异部分已用注释标记，其余部分的逻�
                         return true;
                     }
                 }
-                //更新剩余时间
+                // 更新剩余时间
                 nanosTimeout = deadline - System.nanoTime();
-                //若已经超时，则直接返回
+                // 若已经超时，则直接返回
                 if (nanosTimeout <= 0L)
                     return false;
-                //若剩余时间超过阻塞阈值，则阻塞自己指定时间，否则自旋等待
+                // 若剩余时间超过阻塞阈值，则阻塞自己指定时间，否则自旋等待
                 if (shouldParkAfterFailedAcquire(p, node) &&
                     nanosTimeout > spinForTimeoutThreshold)
                     LockSupport.parkNanos(this, nanosTimeout);
-                //如果已被中断，则抛出InterruptedException异常
+                // 如果已被中断，则抛出InterruptedException异常
                 if (Thread.interrupted())
                     throw new InterruptedException();
             }

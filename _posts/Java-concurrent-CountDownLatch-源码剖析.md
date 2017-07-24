@@ -32,7 +32,7 @@ CountDownLatch会阻塞调用await的线程，而concurrent包下最基础的类
     private static final class Sync extends AbstractQueuedSynchronizer {
         private static final long serialVersionUID = 4982264981922014374L;
 
-        //构造方法，设置资源的数量
+        // 构造方法，设置资源的数量
         Sync(int count) {
             setState(count);
         }
@@ -41,13 +41,13 @@ CountDownLatch会阻塞调用await的线程，而concurrent包下最基础的类
             return getState();
         }
 
-        //利用的是AQS框架中的共享模式。返回非负数说明获取成功，返回负数说明获取失败。
-        //该方法的逻辑是，当且仅当资源状态为0时才获取成功
+        // 利用的是AQS框架中的共享模式。返回非负数说明获取成功，返回负数说明获取失败。
+        // 该方法的逻辑是，当且仅当资源状态为0时才获取成功
         protected int tryAcquireShared(int acquires) {
             return (getState() == 0) ? 1 : -1;
         }
 
-        //共享模式下的资源释放方法
+        // 共享模式下的资源释放方法
         protected boolean tryReleaseShared(int releases) {
             // Decrement count; signal when transition to zero
             for (;;) {
@@ -100,7 +100,7 @@ CountDownLatch的构造方法接受一个int型的参数，该数字的含义是
      */
     public CountDownLatch(int count) {
         if (count < 0) throw new IllegalArgumentException("count < 0");
-        //初始化sync，并且设置资源数量为count
+        // 初始化sync，并且设置资源数量为count
         this.sync = new Sync(count);
     }
 ```

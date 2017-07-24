@@ -215,12 +215,12 @@ Ticket Lock是自旋锁的改进，这种锁机制可以类比去银行办理业
 ```Java
 public class TicketLockDemo {
 
-    private AtomicInteger serviceNum = new AtomicInteger();//当前服务号
+    private AtomicInteger serviceNum = new AtomicInteger();// 当前服务号
 
-    private AtomicInteger ticketNum = new AtomicInteger();//排队号
+    private AtomicInteger ticketNum = new AtomicInteger();// 排队号
 
     public int lock() {
-        //排队前拿个号
+        // 排队前拿个号
         int myTicketNum = ticketNum.getAndIncrement();
 
         while (serviceNum.get() != myTicketNum) {
@@ -278,11 +278,11 @@ public class CLHLockDemo {
         QNode curr = this.currNode.get();
         curr.locked = true;
 
-        //将当前节点通过CAS操作加到队列尾，返回原先的队列尾，作为它的前继节点
+        // 将当前节点通过CAS操作加到队列尾，返回原先的队列尾，作为它的前继节点
         QNode prev = tail.getAndSet(curr);
 
         while (prev.locked) {
-            //在前继节点的状态上自旋
+            // 在前继节点的状态上自旋
         }
     }
 

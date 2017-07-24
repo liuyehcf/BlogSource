@@ -123,16 +123,16 @@ public class Solution {
             return;
         }
 
-        //需要交换的值
+        // 需要交换的值
         int val = nums[i - 1];
 
-        //在有序子数组中找出大于val的最小值的位置
+        // 在有序子数组中找出大于val的最小值的位置
         int index = smallestLarger(nums, i, val);
 
-        //交换这两个值
+        // 交换这两个值
         exchange(nums, i - 1, index);
 
-        //重排序子数组
+        // 重排序子数组
         reverse(nums, i);
     }
 

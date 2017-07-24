@@ -65,7 +65,7 @@ B+-tree的操作与B-tree的操作基本类似，注意维护好非叶子节点�
 1. x是非满节点
 
 ```C
-B+-TREE-SPLIT-CHILD(x,i)//x.ci是满节点，x是非满节点
+B+-TREE-SPLIT-CHILD(x,i)// x.ci是满节点，x是非满节点
 y=x.c[i]
 z= ALLOCATE-NODE()
 y.n=z.n=t
@@ -81,8 +81,8 @@ z.leaf=y.leaf
 for j=x.n+1 downto i+2
     x.key[j]=x.key[j-1]
     x.c[j]=x.c[j-1]
-x.key[i+1]=x.key[i]//新增节点的索引值为原索引值
-x.key[i]=y.key[y.n]//原节点的索引值为现有y中最大的值
+x.key[i+1]=x.key[i]// 新增节点的索引值为原索引值
+x.key[i]=y.key[y.n]// 原节点的索引值为现有y中最大的值
 x.c[i+1]=z
 x.n++
 ```
@@ -109,7 +109,7 @@ else
 for j=i+1 to x.n-1
     x.key[j]=x.key[j+1]
     x.c[j]=x.c[j+1]
-x.key[i]=y.key[y.n]//更新索引值
+x.key[i]=y.key[y.n]// 更新索引值
 x.n--
 ```
 
@@ -179,10 +179,10 @@ if x.leaf
     x.key[i]=k
     x.n++
 else
-    while i>=1 and x.key[i]>=k   //这个等于至关重要，虽然B+树节点不会重复，但是由于删除操作的存在，留在树中的索引关键字未必存在于叶节点中，因此这里需要加上等号
+    while i>=1 and x.key[i]>=k   // 这个等于至关重要，虽然B+树节点不会重复，但是由于删除操作的存在，留在树中的索引关键字未必存在于叶节点中，因此这里需要加上等号
         i--
     i++
-    if x.n+1==i   //这里至关重要，插入节点时需要维护索引的正确性，就在这唯一一处进行维护
+    if x.n+1==i   // 这里至关重要，插入节点时需要维护索引的正确性，就在这唯一一处进行维护
         x.key[x.n]=k
         i--
 y=x.c[i]
@@ -218,7 +218,7 @@ if x.leaf
         i++
     x.n--
 else
-    while i<=x.n and x.key[i]<k  //这里必须严格小于，找到第一个满足k<=x.key[i]的i
+    while i<=x.n and x.key[i]<k  // 这里必须严格小于，找到第一个满足k<=x.key[i]的i
         i++
     y=x.c[i]
     if i>1
@@ -371,14 +371,14 @@ public class BPlusTree {
             x.keys[i] = k;
             x.n++;
         } else {
-            //todo 这个等号非常关键，执行过删除操作后，遗留下来的元素可能并不存在于叶节点中
+            // todo 这个等号非常关键，执行过删除操作后，遗留下来的元素可能并不存在于叶节点中
             while (i >= 0 && x.keys[i] >= k) {
                 i--;
             }
             i++;
-            //todo 关键，自上而下寻找插入点时，即维护了索引的正确性
+            // todo 关键，自上而下寻找插入点时，即维护了索引的正确性
             if (i == x.n) {
-                //此时说明新插入的值k比当前节点中所有关键字都要大，因此当前节点的最后一个索引需要改变
+                // 此时说明新插入的值k比当前节点中所有关键字都要大，因此当前节点的最后一个索引需要改变
                 x.keys[x.n - 1] = k;
                 i--;
             }
@@ -636,14 +636,14 @@ class TestBPlusTree {
 
             List<Integer> list = new ArrayList<Integer>(set);
             Collections.shuffle(list, random);
-            //插入N个数据
+            // 插入N个数据
             for (int i : list) {
                 bPlusTree.insert(i);
             }
 
             int M = list.size() / 2;
 
-            //删除M个数据
+            // 删除M个数据
             Collections.shuffle(list, random);
 
             for (int i = 0; i < M; i++) {
@@ -651,7 +651,7 @@ class TestBPlusTree {
                 bPlusTree.delete(list.get(i));
             }
 
-            //再插入M个数据
+            // 再插入M个数据
             for (int i = 0; i < M; i++) {
                 int k = random.nextInt();
                 if (set.add(k)) {
@@ -662,7 +662,7 @@ class TestBPlusTree {
             list.addAll(set);
             Collections.shuffle(list, random);
 
-            //再删除所有元素
+            // 再删除所有元素
             for (int i : list) {
                 bPlusTree.delete(i);
             }
