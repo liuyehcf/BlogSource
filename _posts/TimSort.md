@@ -276,8 +276,7 @@ Timsort算法中用到了几个术语，为了方便阅读JDK源码，在这里�
     }
 ```
 
-
-## pushRun
+## 3.6 pushRun
 
 将一个run入栈，保存的信息有两个，一个是run的起始下标，另一个是run的长度。栈顶元素位于数组的末尾
 
@@ -295,7 +294,7 @@ Timsort算法中用到了几个术语，为了方便阅读JDK源码，在这里�
     }
 ```
 
-## mergeCollapse
+## 3.7 mergeCollapse
 
 mergeCollapse会在__不满足__堆栈不变式的情况下进行合并操作，__堆栈不变式__是指
 
@@ -331,8 +330,7 @@ mergeCollapse会在__不满足__堆栈不变式的情况下进行合并操作，
     }
 ```
 
-
-## mergeAt
+## 3.8 mergeAt
 
 mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2或者倒数第3个run，即i必须为`stackSize-2`或者`stackSize-3`
 
@@ -411,7 +409,7 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
     }
 ```
 
-## gallopLeft
+## 3.9 gallopLeft
 
 首先解释一下参数
 
@@ -454,28 +452,28 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
             int maxOfs = len - hint;
             // 当key>a[base + hint + ofs]
             while (ofs < maxOfs && key.compareTo(a[base + hint + ofs]) > 0) {
-                //更新lastOfs
+                // 更新lastOfs
                 lastOfs = ofs;
-                //更新ofs，更新为原来的两倍再加1
+                // 更新ofs，更新为原来的两倍再加1
                 ofs = (ofs << 1) + 1;
-                //当越界时，直接赋值为maxOfs，然后便可以退出while循环了
+                // 当越界时，直接赋值为maxOfs，然后便可以退出while循环了
                 if (ofs <= 0)   // int overflow
                     ofs = maxOfs;
             }
 
-            //调整ofs
+            // 调整ofs
             if (ofs > maxOfs)
                 ofs = maxOfs;
 
-            //由于ofs与lastOfs为相对hint的偏移量，现在调整为相对base的偏移量
+            // 由于ofs与lastOfs为相对hint的偏移量，现在调整为相对base的偏移量
             // Make offsets relative to base
             lastOfs += hint;
             ofs += hint;
-            //此时满足a[base+lastOfs] < key <= a[base+ofs]
+            // 此时满足a[base+lastOfs] < key <= a[base+ofs]
         } else { // key <= a[base + hint]
             // 此时key <= a[base + hint]，因此向左查找，直至满足a[base+hint-ofs] < key <= a[base+hint-lastOfs]
             // Gallop left until a[base+hint-ofs] < key <= a[base+hint-lastOfs]
-            //最大偏移量，即base+hint-maxOfs>=base
+            // 最大偏移量，即base+hint-maxOfs>=base
             final int maxOfs = hint + 1;
             while (ofs < maxOfs && key.compareTo(a[base + hint - ofs]) <= 0) {
                 lastOfs = ofs;
@@ -484,7 +482,7 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
                     ofs = maxOfs;
             }
 
-            //调整ofs
+            // 调整ofs
             if (ofs > maxOfs)
                 ofs = maxOfs;
 
@@ -493,7 +491,7 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
             int tmp = lastOfs;
             lastOfs = hint - ofs;
             ofs = hint - tmp;
-            //此时满足a[base+lastOfs] < key <= a[base+ofs]
+            // 此时满足a[base+lastOfs] < key <= a[base+ofs]
         }
         assert -1 <= lastOfs && lastOfs < ofs && ofs <= len;
 
@@ -519,7 +517,7 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
 
 为什么不直接用二分法？这样效率更高么？
 
-## gallopRight
+## 3.10 gallopRight
 
 首先解释一下参数
 
@@ -561,7 +559,7 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
                     ofs = maxOfs;
             }
 
-            //调整ofs
+            // 调整ofs
             if (ofs > maxOfs)
                 ofs = maxOfs;
 
@@ -583,11 +581,11 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
                     ofs = maxOfs;
             }
 
-            //调整ofs
+            // 调整ofs
             if (ofs > maxOfs)
                 ofs = maxOfs;
 
-            //由于ofs与lastOfs为相对hint的偏移量，现在调整为相对base的偏移量
+            // 由于ofs与lastOfs为相对hint的偏移量，现在调整为相对base的偏移量
             // Make offsets relative to b
             lastOfs += hint;
             ofs += hint;
@@ -614,7 +612,7 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
     }
 ```
 
-## mergeLo
+## 3.11 mergeLo
 
 合并两个run，必须满足下列条件
 
@@ -744,7 +742,7 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
         if (len1 == 1) {
             assert len2 > 0;
             System.arraycopy(a, cursor2, a, dest, len2);
-            a[dest + len2] = tmp[cursor1]; //  Last elt of run 1 to end of merge
+            a[dest + len2] = tmp[cursor1]; // Last elt of run 1 to end of merge
         } else if (len1 == 0) {
             throw new IllegalArgumentException(
                 "Comparison method violates its general contract!");
@@ -756,7 +754,7 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
     }
 ```
 
-## mergeHi
+## 3.12 mergeHi
 
 ```Java
     /**
@@ -882,7 +880,7 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
     }
 ```
 
-# 流程
+# 4 流程
 
 ```flow
 st=>start: 开始
@@ -912,7 +910,6 @@ cond3(yes)->op6
 op6->en
 ```
 
-# 参考
+# 5 参考
 
 * [读 Java TimSort算法 源码 笔记](http://www.jianshu.com/p/10aa41b780f2)
-
