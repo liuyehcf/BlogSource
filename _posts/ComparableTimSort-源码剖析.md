@@ -124,7 +124,7 @@ ComparableTimSort与TimSort是一样的，TimSort利用的是Comparator来进行
     }
 ```
 
-## 4.2 ComparableTimSort.sort
+## 4.2 sort
 
 `ComparableTimSort.sort()`包含了TimSort的主要逻辑
 
