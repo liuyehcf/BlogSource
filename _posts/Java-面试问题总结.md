@@ -14,15 +14,7 @@ categories:
 
 ## 1.1 Arrays.sort实现原理和Collection.sort实现原理
 
-Arrays.sort在JDK 1.7之用使用的是timsort，timsort是归并排序的一个变种，相比于普通的归并排序，存在如下3点优化
-
-1. 提高合并效率
-1. 减少合并次数
-1. 在元素数量较少时直接采用插入排序
-
-[TimSort详解](http://blog.jobbole.com/99681/)
-
-http://blog.csdn.net/yangzhongblog/article/details/8184707
+Arrays.sort实现原理详见 {% post_link TimSort %}
 
 Collection.sort在内部会转调用Arrays.sort
 

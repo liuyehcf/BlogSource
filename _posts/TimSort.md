@@ -338,6 +338,12 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
 
 > 注意，在以下叙述中，第0个run代表栈底，第stackSize-1个run代表栈顶
 
+合并分为三个部分
+
+1. 找出run2的首元素在run1中的位置，记为index1，满足`run1[index1+1] > run2[first]`
+1. 找出run1的尾元素在run2中的位置，记为index2，满足`run1[last] > run2[index2-1]`
+1. 于是`run1[base] ~ run1[index1]`部分是已排序的，`run2[index2] ~ run2[last]`是已排序的，因此只需要合并`run1[index1+1] ~ run1[last]`以及`run2[first] ~ run2[index2-1]`即可
+
 ```Java
     /**
      * Merges the two runs at stack indices i and i+1.  Run i must be
@@ -523,7 +529,7 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
 1. len：序列范围的长度
 1. hint：开始查找的位置
 
-该方法大致意思就是在一个序列范围中查找某个元素的插入位置
+该方法大致意思就是在一个序列范围中查找某个元素的插入位置，如果存在相等的元素，则返回的是最右边的一个
 
 ```Java
     /**
@@ -610,6 +616,11 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
 
 ## mergeLo
 
+合并两个run，必须满足下列条件
+
+1. `runLen1 <= runLen2`
+1. `run1[first] > run2[first]`
+1. `run1[last] > run2[last]`
 
 ```Java
     /**
@@ -634,21 +645,30 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
 
         // Copy first run into temp array
         Object[] a = this.a; // For performance
+        //根据len1的大小，分配一个2的幂次大小的数组
         Object[] tmp = ensureCapacity(len1);
 
         int cursor1 = tmpBase; // Indexes into tmp array
         int cursor2 = base2;   // Indexes int a
         int dest = base1;      // Indexes int a
+        //将run中的元素拷贝到temp中去
         System.arraycopy(a, base1, tmp, cursor1, len1);
 
         // Move first element of second run and deal with degenerate cases
+        //由于run1[first] > run2[first]，因此第一个元素一定是run2[first]
         a[dest++] = a[cursor2++];
+
+        //处理两个非常规的情况
+        // run2没有元素剩余了，因此将tem中的元素拷贝回来，然后返回
         if (--len2 == 0) {
             System.arraycopy(tmp, cursor1, a, dest, len1);
             return;
         }
+        // run1只有一个元素，且run1[last] > run2[last]，因此run1中的所有元素都比run2中的所有元素要大
         if (len1 == 1) {
+            //先移动run2中的元素
             System.arraycopy(a, cursor2, a, dest, len2);
+            //再移动run1的唯一元素即可
             a[dest + len2] = tmp[cursor1]; // Last elt of run 1 to end of merge
             return;
         }
@@ -663,6 +683,7 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
              * Do the straightforward thing until (if ever) one run starts
              * winning consistently.
              */
+            //合并run1和run2中的元素，直至其中一个run的所有元素移动完毕
             do {
                 assert len1 > 1 && len2 > 0;
                 if (((Comparable) a[cursor2]).compareTo(tmp[cursor1]) < 0) {
@@ -678,7 +699,7 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
                     if (--len1 == 1)
                         break outer;
                 }
-            } while ((count1 | count2) < minGallop);
+            } while ((count1 | count2) < minGallop);//讲道理，这个条件没看懂
 
             /*
              * One run is winning so consistently that galloping may be a
