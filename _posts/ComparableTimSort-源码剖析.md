@@ -1,5 +1,5 @@
 ---
-title: TimSort
+title: ComparableTimSort 源码剖析
 date: 2017-07-24 15:52:16
 tags: 原创
 categories:
@@ -16,19 +16,99 @@ __目录__
 
 Timsort是结合了合并排序（merge sort）和插入排序（insertion sort）而得出的排序算法，它在现实中有很好的效率。Tim Peters在2002年设计了该算法并在Python中使用（TimSort是python中list.sort的默认实现）。该算法找到数据中已经排好序的块-分区，每一个分区叫一个run，然后按规则合并这些run。Pyhton自从2.3版以来一直采用Timsort算法排序，现在Java SE7和Android也采用Timsort算法对数组排序。
 
-JDK 1.8的实现中，Arrays.sort根据数组元素的类型会采用两种不同的排序算法。__对于基本类型(byte,short,int,long,float,double)__，采用的是一种优化过的快速排序（本篇博客不做介绍），虽然快速排序是不稳定的排序，但是对于基本类型而言，稳定与否没有任何区别。__对于类类型（reference）__，采用的是就是本篇博客将要讨论的TimSort，TimSort是一种优化过的归并排序，具有稳定性
+JDK 1.8的实现中，Arrays.sort根据数组元素的类型会采用两种不同的排序算法。__对于基本类型(byte,short,int,long,float,double)__，采用的是一种优化过的快速排序（本篇博客不做介绍），虽然快速排序是不稳定的排序，但是对于基本类型而言，稳定与否没有任何区别。__对于类类型（reference）__，采用的是就是本篇博客将要讨论的TimSort，TimSort是一种优化过的归并排序，具有稳定性。
 
-# 2 术语
+ComparableTimSort与TimSort是一样的，TimSort利用的是Comparator来进行对象的比较，而ComparableTimSort直接利用的是实现了Comparable接口的对象来进行比较操作
 
-Timsort算法中用到了几个术语，为了方便阅读JDK源码，在这里先简单介绍一下
+# 2 常量
 
-1. __run__
+```Java
+    /**
+     * This is the minimum sized sequence that will be merged.  Shorter
+     * sequences will be lengthened by calling binarySort.  If the entire
+     * array is less than this length, no merges will be performed.
+     *
+     * This constant should be a power of two.  It was 64 in Tim Peter's C
+     * implementation, but 32 was empirically determined to work better in
+     * this implementation.  In the unlikely event that you set this constant
+     * to be a number that's not a power of two, you'll need to change the
+     * {@link #minRunLength} computation.
+     *
+     * If you decrease this constant, you must change the stackLen
+     * computation in the TimSort constructor, or you risk an
+     * ArrayOutOfBounds exception.  See listsort.txt for a discussion
+     * of the minimum stack length required as a function of the length
+     * of the array being sorted and the minimum merge sequence length.
+     */
+    private static final int MIN_MERGE = 32;
 
-> run是数组中一段已排序的片段
+    /**
+     * When we get into galloping mode, we stay there until both runs win less
+     * often than MIN_GALLOP consecutive times.
+     */
+    private static final int  MIN_GALLOP = 7;
 
-# 3 JDK 源码剖析
+    /**
+     * Maximum initial size of tmp array, which is used for merging.  The array
+     * can grow to accommodate demand.
+     *
+     * Unlike Tim's original C version, we do not allocate this much storage
+     * when sorting smaller arrays.  This change was required for performance.
+     */
+    private static final int INITIAL_TMP_STORAGE_LENGTH = 256;
+```
 
-## 3.1 Arrays.sort
+* __`MIN_MERGE`__：进行归并算法的最小长度，小于这个长度的序列将会采用二分插入排序算法
+* __`MIN_GALLOP`__：在进行merge操作时，会利用这个数值进行一些优化措施，具体请参考mergeLo
+方法的分析
+
+* __`INITIAL_TMP_STORAGE_LENGTH`__：tem临时数组的初始大小，tem的具体大小会根据情况进行调整
+
+# 3 字段
+
+```Java
+    /**
+     * The array being sorted.
+     */
+    private final Object[] a;
+
+        /**
+     * Temp storage for merges. A workspace array may optionally be
+     * provided in constructor, and if so will be used as long as it
+     * is big enough.
+     */
+    private Object[] tmp;
+    private int tmpBase; // base of tmp array slice
+    private int tmpLen;  // length of tmp array slice
+
+    /**
+     * A stack of pending runs yet to be merged.  Run i starts at
+     * address base[i] and extends for len[i] elements.  It's always
+     * true (so long as the indices are in bounds) that:
+     *
+     *     runBase[i] + runLen[i] == runBase[i + 1]
+     *
+     * so we could cut the storage for this, but it's a minor amount,
+     * and keeping all the info explicit simplifies the code.
+     */
+    private int stackSize = 0;  // Number of pending runs on stack
+    private final int[] runBase;
+    private final int[] runLen;
+```
+
+* __a__：待排序的数组
+* __tmp__：临时数组
+* __tmpBase__：临时数组起始下标
+* __tmpLen__：临时数组长度
+* __stackSize__：栈大小
+* __runBase__：run的起始下标数组
+* __runLen__：run的长度数组
+
+> run是数组中一段已排序的片段。片段的起始地址存在runBase数组中，片段的长度存在runLen中
+
+# 4 方法
+
+## 4.1 Arrays.sort
 
 `Arrays.sort()`是排序的接口方法
 
@@ -44,12 +124,13 @@ Timsort算法中用到了几个术语，为了方便阅读JDK源码，在这里�
     }
 ```
 
-## 3.2 ComparableTimSort.sort
+## 4.2 ComparableTimSort.sort
 
 `ComparableTimSort.sort()`包含了TimSort的主要逻辑
 
 1. 若范围内的元素少于2，那么直接返回，因为一定是有序的
 1. 若范围内的元素少于MIN_MERGE，采用二分插入排序算法
+1. 依次分离出一系列有序片段(run)
 
 ```Java
     /**
@@ -125,7 +206,7 @@ Timsort算法中用到了几个术语，为了方便阅读JDK源码，在这里�
     }
 ```
 
-## 3.3 countRunAndMakeAscending
+## 4.3 countRunAndMakeAscending
 
 ```Java
     /**
@@ -179,7 +260,7 @@ Timsort算法中用到了几个术语，为了方便阅读JDK源码，在这里�
     }
 ```
 
-## 3.4 reverseRange
+## 4.4 reverseRange
 
 反转指定片段，这是一种最简洁的写法了，不用考虑奇数偶数之类的，只要`lo<hi`就交换
 
@@ -201,11 +282,18 @@ Timsort算法中用到了几个术语，为了方便阅读JDK源码，在这里�
     }
 ```
 
-## 3.5 binarySort
+## 4.5 binarySort
 
 二分插入排序，对于一个较小的数组来说，二分插入排序是最优的一种算法。
 
 二分插入排序算法相比于插入排序算法而言进行了一些优化：__对于开头已排序的部分，二分插入排序算法能够充分利用已排序这一点来减少的次数，提升交换的速度(System.arraycopy)__
+
+参数说明
+
+1. a：待排序的数组
+1. lo：序列范围的起始下标
+1. hi：序列范围的末尾下标，包含
+1. start：未排序部分的起始下标
 
 ```Java
 
@@ -235,7 +323,7 @@ Timsort算法中用到了几个术语，为了方便阅读JDK源码，在这里�
         for ( ; start < hi; start++) {
             Comparable pivot = (Comparable) a[start];
 
-            // 因为[lo,start-]范围内的元素是已排序的，那么将一个元素插入到这个范围内可以采用二分法，而不用从后面依次向前比较
+            // 因为[lo,start-1]范围内的元素是已排序的，那么将一个元素插入到这个范围内可以采用二分法，而不用从后面依次向前比较
             // Set left (and right) to the index where a[start] (pivot) belongs
             int left = lo;
             int right = start;
@@ -276,7 +364,7 @@ Timsort算法中用到了几个术语，为了方便阅读JDK源码，在这里�
     }
 ```
 
-## 3.6 pushRun
+## 4.6 pushRun
 
 将一个run入栈，保存的信息有两个，一个是run的起始下标，另一个是run的长度。栈顶元素位于数组的末尾
 
@@ -294,7 +382,7 @@ Timsort算法中用到了几个术语，为了方便阅读JDK源码，在这里�
     }
 ```
 
-## 3.7 mergeCollapse
+## 4.7 mergeCollapse
 
 mergeCollapse会在__不满足__堆栈不变式的情况下进行合并操作，__堆栈不变式__是指
 
@@ -330,7 +418,7 @@ mergeCollapse会在__不满足__堆栈不变式的情况下进行合并操作，
     }
 ```
 
-## 3.8 mergeAt
+## 4.8 mergeAt
 
 mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2或者倒数第3个run，即i必须为`stackSize-2`或者`stackSize-3`
 
@@ -409,7 +497,7 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
     }
 ```
 
-## 3.9 gallopLeft
+## 4.9 gallopLeft
 
 首先解释一下参数
 
@@ -517,7 +605,7 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
 
 为什么不直接用二分法？这样效率更高么？
 
-## 3.10 gallopRight
+## 4.10 gallopRight
 
 首先解释一下参数
 
@@ -612,13 +700,19 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
     }
 ```
 
-## 3.11 mergeLo
+## 4.11 mergeLo
 
 合并两个run，必须满足下列条件
 
 1. `runLen1 <= runLen2`
 1. `run1[first] > run2[first]`
 1. `run1[last] > run2[last]`
+
+由于merge需要利用额外空间，为了最小化这个额外的空间，每次只将较小的一个run复制到这个额外的空间上。
+
+该merge操作的优化点在于：当一个run连续出现多个数值都比另一个run的某个数值要小时，可以进行优化，通过二分法来查找临界位置，并且通过System.arraycopy来进行拷贝。这样说可能比较难理解，举个例子来说明一下
+
+> 假设`run1[i1] < run2[i2]`,`run1[i1+1] < run2[i2]`,`run1[i1+2] < run2[i2]`,...,`run1[i1+k] < run2[i2]`。如果`k > minGallop`，那么此时可以进行一些优化，即假设这种趋势将会延续下去，即还会有连续多个run1的值小于`run2[i2]`。因此我们用二分法来查找`run2[i2]`这个值位于run1中的具体位置，找到位置后，那么run1前面这部分元素将会比`run2[i2]`要小，因此可以用System.arraycopy来进行拷贝
 
 ```Java
     /**
@@ -643,20 +737,20 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
 
         // Copy first run into temp array
         Object[] a = this.a; // For performance
-        //根据len1的大小，分配一个2的幂次大小的数组
+        // 根据len1的大小，分配一个2的幂次大小的数组
         Object[] tmp = ensureCapacity(len1);
 
         int cursor1 = tmpBase; // Indexes into tmp array
         int cursor2 = base2;   // Indexes int a
         int dest = base1;      // Indexes int a
-        //将run中的元素拷贝到temp中去
+        // 将run中的元素拷贝到temp中去
         System.arraycopy(a, base1, tmp, cursor1, len1);
 
         // Move first element of second run and deal with degenerate cases
-        //由于run1[first] > run2[first]，因此第一个元素一定是run2[first]
+        // 由于run1[first] > run2[first]，因此第一个元素一定是run2[first]
         a[dest++] = a[cursor2++];
 
-        //处理两个非常规的情况
+        // 处理两个非常规的情况
         // run2没有元素剩余了，因此将tem中的元素拷贝回来，然后返回
         if (--len2 == 0) {
             System.arraycopy(tmp, cursor1, a, dest, len1);
@@ -664,9 +758,9 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
         }
         // run1只有一个元素，且run1[last] > run2[last]，因此run1中的所有元素都比run2中的所有元素要大
         if (len1 == 1) {
-            //先移动run2中的元素
+            // 先移动run2中的元素
             System.arraycopy(a, cursor2, a, dest, len2);
-            //再移动run1的唯一元素即可
+            // 再移动run1的唯一元素即可
             a[dest + len2] = tmp[cursor1]; // Last elt of run 1 to end of merge
             return;
         }
@@ -674,6 +768,9 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
         int minGallop = this.minGallop;  // Use local variable for performance
     outer:
         while (true) {
+            // 这两个值用于记录一些信息，在同一时刻，必定有一个为0。根据这个值可以进行某些优化
+            // 当count1 > 0，意味着run2中的某个元素会比连续多个run1中的元素要大，即run1 won。
+            // 当count2 > 0，意味着run1中的某个元素会比连续多个run2中的元素要大，即run2 won。
             int count1 = 0; // Number of times in a row that first run won
             int count2 = 0; // Number of times in a row that second run won
 
@@ -681,31 +778,38 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
              * Do the straightforward thing until (if ever) one run starts
              * winning consistently.
              */
-            //合并run1和run2中的元素，直至其中一个run的所有元素移动完毕
+            // 进行合并操作，即比较a[cursor2]与tmp[cursor1]的大小，取较小的一个放到a[dest]中去。当出现连续多个(minGallop个)数值都从某一个run中取得时(全部从run1中取或者全部从run2中取)，那么可以假设这种趋势将会延续下去，因此可以做一些优化
             do {
                 assert len1 > 1 && len2 > 0;
+                
                 if (((Comparable) a[cursor2]).compareTo(tmp[cursor1]) < 0) {
+                    // run2 won
                     a[dest++] = a[cursor2++];
                     count2++;
                     count1 = 0;
                     if (--len2 == 0)
                         break outer;
                 } else {
+                    // run1 won
                     a[dest++] = tmp[cursor1++];
                     count1++;
                     count2 = 0;
                     if (--len1 == 1)
                         break outer;
                 }
-            } while ((count1 | count2) < minGallop);//讲道理，这个条件没看懂
-
+            } while ((count1 | count2) < minGallop);
+            // 这个判断相当于 count1 < minGallop && count2 <minGallop，因为count1和count2总有一个为0
+             
             /*
              * One run is winning so consistently that galloping may be a
              * huge win. So try that, and continue galloping until (if ever)
              * neither run appears to be winning consistently anymore.
              */
+            // 执行到这里的话，某个run中的元素将比另一个run中的连续多个元素都要大，那么这种连续性可能持续的更长。那么我们就按照这个逻辑试一试。直到这种连续性被打破。根据找到的长度，直接连续的copy就可以了，这样可以提高copy的效率。
+            // 可以采用二分查找这种连续性的边界。另外，单个赋值操作要比System.arraycopy操作要慢，使用System.arraycopy也能产生增益
             do {
                 assert len1 > 1 && len2 > 0;
+                // 直接利用gallopRight(二分查找)找到a[cursor2]在run1中的最右边的位置，那么意味着run1中的前count1个元素都要比a[cursor2]小，因此直接用System.arraycopy来拷贝这部分数据
                 count1 = gallopRight((Comparable) a[cursor2], tmp, cursor1, len1, 0);
                 if (count1 != 0) {
                     System.arraycopy(tmp, cursor1, a, dest, count1);
@@ -715,10 +819,13 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
                     if (len1 <= 1)  // len1 == 1 || len1 == 0
                         break outer;
                 }
+
+                // run1前count1个元素都已经移动到dest中去了，现在移动a[cursor2]这个元素
                 a[dest++] = a[cursor2++];
                 if (--len2 == 0)
                     break outer;
 
+                // 直接利用gallopLeft(二分查找)找到tmp[cursor1]在run2中最左边的位置，那么意味着run2中的前count2个元素都要比tmp[cursor1]小，因此直接使用System.arraycopy来拷贝这部分数据
                 count2 = gallopLeft((Comparable) tmp[cursor1], a, cursor2, len2, 0);
                 if (count2 != 0) {
                     System.arraycopy(a, cursor2, a, dest, count2);
@@ -728,11 +835,15 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
                     if (len2 == 0)
                         break outer;
                 }
+
+                // run2前count2个元素都已经移动到dest中去了，现在就是tmp[curosr1]这个元素
                 a[dest++] = tmp[cursor1++];
                 if (--len1 == 1)
                     break outer;
                 minGallop--;
             } while (count1 >= MIN_GALLOP | count2 >= MIN_GALLOP);
+            // 当这种连续多个较大的趋势仍然成立时
+
             if (minGallop < 0)
                 minGallop = 0;
             minGallop += 2;  // Penalize for leaving gallop mode
@@ -754,7 +865,9 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
     }
 ```
 
-## 3.12 mergeHi
+## 4.12 mergeHi
+
+该方法与mergeLo方法对称，不再分析
 
 ```Java
     /**
@@ -880,7 +993,7 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
     }
 ```
 
-# 4 流程
+# 5 流程
 
 ```flow
 st=>start: 开始
@@ -910,6 +1023,6 @@ cond3(yes)->op6
 op6->en
 ```
 
-# 5 参考
+# 6 参考
 
 * [读 Java TimSort算法 源码 笔记](http://www.jianshu.com/p/10aa41b780f2)

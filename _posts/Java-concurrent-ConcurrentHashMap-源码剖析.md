@@ -590,11 +590,13 @@ __transfer方法用于hashtable的扩张__
                         Node<K,V> ln, hn;
                         // 如果bin/bucket中存放的是链表
                         if (fh >= 0) {
+                            // 扩容后，某个槽位i中的节点的去向有两个，第一个就是原槽位i；另一个就是i+originTableSize，因此这里需要区分这两类节点
                             int runBit = fh & n;
                             Node<K,V> lastRun = f;
                             for (Node<K,V> p = f.next; p != null; p = p.next) {
                                 int b = p.hash & n;
                                 if (b != runBit) {
+                                    // 这里需要重新改变一下runBit，目的是为了提高效率，当这个for循环结束时，lastRun之后的节点都是同一类的，只需要移动lastRun即可，不需要一个个节点移动，而对于之前的节点，则需要遍历来确定具体的槽位
                                     runBit = b;
                                     lastRun = p;
                                 }
@@ -607,6 +609,7 @@ __transfer方法用于hashtable的扩张__
                                 hn = lastRun;
                                 ln = null;
                             }
+                            // 遍历lastRun之前的节点
                             for (Node<K,V> p = f; p != lastRun; p = p.next) {
                                 int ph = p.hash; K pk = p.key; V pv = p.val;
                                 if ((ph & n) == 0)
@@ -629,6 +632,7 @@ __transfer方法用于hashtable的扩张__
                                 int h = e.hash;
                                 TreeNode<K,V> p = new TreeNode<K,V>
                                     (h, e.key, e.val, null, null);
+                                // 同样，槽位i中的红黑树的节点也有两个去向，要么是槽位i，要么是槽位i+originTableSize
                                 if ((h & n) == 0) {
                                     if ((p.prev = loTail) == null)
                                         lo = p;
@@ -829,13 +833,3 @@ __sumCount方法用于__
         return sum;
     }
 ```
-
-## 6.8 
-
-## 6.9 
-
-## 6.10 
-
-## 6.11 
-
-##

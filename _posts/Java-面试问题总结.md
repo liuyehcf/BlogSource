@@ -14,9 +14,8 @@ categories:
 
 ## 1.1 Arrays.sort实现原理和Collection.sort实现原理
 
-Arrays.sort实现原理详见 {% post_link TimSort %} 
-以及 {% post_link DualPivotQuickSort %}
-
+Arrays.sort实现原理详见 {% post_link ComparableTimSort-源码剖析 %} 
+以及 {% post_link DualPivotQuickSort-源码剖析 %}
 
 Collection.sort在内部会转调用Arrays.sort
 
@@ -417,11 +416,36 @@ Spring AOP 源码分析请参考 {% post_link Spring-AOP-源码剖析 %}
 
 ## 4.7 Mybatis的底层实现原理
 
+http://www.cnblogs.com/atwanli/articles/4746349.html
+
 ## 4.8 MVC框架原理，他们都是怎么做url路由的
 
 ## 4.9 spring boot特性，优势，适用场景等
 
+Spring Boot 解决的问题，边界，适用场景
+解决的问题：Spring框架创建一个可运行的应用比较麻烦，再加上很多Spring子项目和组件没有完善实践指导，让实际项目上选择使用哪些组件很困难。Spring Boot 的作用在于创建和启动新的基于 Spring 框架的项目。它的目的是帮助开发人员很容易的创建出独立运行和产品级别的基于 Spring 框架的应用。Spring Boot 会选择最适合的 Spring 子项目和第三方开源库进行整合。大部分 Spring Boot 应用只需要非常少的配置就可以快速运行起来。Spring Boot 包含的特性如下：
+
+1. 创建可以独立运行的 Spring 应用。
+1. 直接嵌入 Tomcat 或 Jetty 服务器，不需要部署 WAR 文件。
+1. 提供推荐的基础 POM 文件来简化 Apache Maven 配置。
+1. 尽可能的根据项目依赖来自动配置 Spring 框架。
+1. 提供可以直接在生产环境中使用的功能，如性能指标、应用信息和应用健康检查。
+1. 没有代码生成，也没有 XML 配置文件。
+1. 通过 Spring Boot，创建新的 Spring 应用变得非常容易，而且创建出的 Spring 应用符合通用的最佳实践。只需要简单的几个步骤就可以创建出一个 Web 应用。
+
 ## 4.10 quartz和timer对比
+
+Java.util.Timer
+
+> 在Java中有一个任务处理类java.util.Timer，非常方便于处理由时间触发的事件任务，只需建立一个继承java.util.TimerTask的子类，重载父类的run()方法实现具体的任务，然后调用Timer的public void schedule(TimerTask task, long delay, long period)方法实现任务的调度。
+
+> 但是这种方法只能实现简单的任务调度，不能满足任务调度时间比较复杂的需求。比如希望系统在每周的工作日的8：00时向系统用户给出一个提示，这种方法实现起来就困难了，还有更为复杂的任务调度时间要求。
+
+Quartz
+
+> OpenSymphony 的Quartz提供了一个比较完美的任务调度解决方案。
+> Quartz 是个开源的作业调度框架，为在 Java 应用程序中进行作业调度提供了简单却强大的机制。
+> Quartz中有两个基本概念：作业和触发器。作业是能够调度的可执行任务，触发器提供了对作业的调度。
 
 ## 4.11 spring的controller是单例还是多例，怎么保证并发的安全
 
@@ -448,6 +472,8 @@ dubbo在服务发现这个地方做的更像一个dns（个人感觉），一个
 接口幂等性请参考 {% post_link 分布式系统接口幂等性 %}
 
 ## 5.5 消息中间件如何解决消息丢失问题
+
+会有补偿策略，保证一致性
 
 ## 5.6 Dubbo的服务请求失败怎么处理
 
@@ -526,6 +552,8 @@ http://www.cnblogs.com/PurpleDream/p/5559352.html
 __花式遍历，呵呵__
 
 ## 6.4 快速排序
+
+{% post_link DualPivotQuickSort %}
 
 ## 6.5 BTree相关的操作
 
