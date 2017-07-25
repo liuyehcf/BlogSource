@@ -553,7 +553,7 @@ __花式遍历，呵呵__
 
 ## 6.4 快速排序
 
-{% post_link DualPivotQuickSort %}
+{% post_link DualPivotQuickSort-源码剖析 %}
 
 ## 6.5 BTree相关的操作
 
