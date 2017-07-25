@@ -1,7 +1,7 @@
 ---
 title: TimSort
 date: 2017-07-24 15:52:16
-tags: 摘录
+tags: 原创
 categories:
 - 算法
 - 排序

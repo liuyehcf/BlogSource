@@ -14,7 +14,9 @@ categories:
 
 ## 1.1 Arrays.sort实现原理和Collection.sort实现原理
 
-Arrays.sort实现原理详见 {% post_link TimSort %}
+Arrays.sort实现原理详见 {% post_link TimSort %} 
+以及 {% post_link DualPivotQuickSort %}
+
 
 Collection.sort在内部会转调用Arrays.sort
 
