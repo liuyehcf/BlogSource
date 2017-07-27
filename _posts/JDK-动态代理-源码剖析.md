@@ -305,37 +305,38 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
 ## 3.4 ProxyGenerator.generateProxyClass
 
 ```Java
-    public static byte[] generateProxyClass(final String var0, Class<?>[] var1, int var2) {
-        ProxyGenerator var3 = new ProxyGenerator(var0, var1, var2);
+    /**
+     * Generate a proxy class given a name and a list of proxy interfaces.
+     */
+    public static byte[] generateProxyClass(final String name,
+                                            Class[] interfaces) {
+        ProxyGenerator gen = new ProxyGenerator(name, interfaces);
+        
         // 生成字节码文件的真正方法
-        final byte[] var4 = var3.generateClassFile();
+        final byte[] classFile = gen.generateClassFile();
 
-        // 保存文件，不做过多讨论
-        if(saveGeneratedFiles) {
-            AccessController.doPrivileged(new PrivilegedAction() {
-                public Void run() {
-                    try {
-                        int var1 = var0.lastIndexOf(46);
-                        Path var2;
-                        if(var1 > 0) {
-                            Path var3 = Paths.get(var0.substring(0, var1).replace('.', File.separatorChar), new String[0]);
-                            Files.createDirectories(var3, new FileAttribute[0]);
-                            var2 = var3.resolve(var0.substring(var1 + 1, var0.length()) + ".class");
-                        } else {
-                            var2 = Paths.get(var0 + ".class", new String[0]);
+        // 根据saveGeneratedFiles来确定是否保存.class文件，默认是不保存的
+        if (saveGeneratedFiles) {
+            java.security.AccessController.doPrivileged(
+                    new java.security.PrivilegedAction() {
+                        public Object run() {
+                            try {
+                                FileOutputStream file =
+                                        new FileOutputStream(dotToSlash(name) + ".class");
+                                file.write(classFile);
+                                file.close();
+                                return null;
+                            } catch (IOException e) {
+                                throw new InternalError(
+                                        "I/O exception saving generated file: " + e);
+                            }
                         }
-
-                        Files.write(var2, var4, new OpenOption[0]);
-                        return null;
-                    } catch (IOException var4x) {
-                        throw new InternalError("I/O exception saving generated file: " + var4x);
-                    }
-                }
-            });
+                    });
         }
 
-        return var4;
+        return classFile;
     }
+
 ```
 
 ## 3.5 ProxyGenerator.generateClassFile
@@ -343,127 +344,165 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
 层层调用后，最终generateClassFile才是真正生成代理类字节码文件的方法，注意开头的三个addProxyMethod方法是只将Object的hashcode,equals,toString方法添加到代理方法容器中，代理类除此之外并没有重写其他Object的方法，所以除这三个方法外，代理类调用其他方法的行为与Object调用这些方法的行为一样不通过Invoke
 
 ```Java
+    /**
+     * Generate a class file for the proxy class.  This method drives the
+     * class file generation process.
+     */
     private byte[] generateClassFile() {
+
+	/* ============================================================
+     * Step 1: Assemble ProxyMethod objects for all methods to
+	 * generate proxy dispatching code for.
+	 */
+
+	/*
+     * Record that proxy methods are needed for the hashCode, equals,
+	 * and toString methods of java.lang.Object.  This is done before
+	 * the methods from the proxy interfaces so that the methods from
+	 * java.lang.Object take precedence over duplicate methods in the
+	 * proxy interfaces.
+	 */
         // 这三个方法将Object的hashcode，equals，toString方法添加到代理方法容器中，代理类除此之外并没有重写Object的其他方法
         // 除了这三个方法之外，代理类调用Object的其他方法不通过invoke
-        this.addProxyMethod(hashCodeMethod, Object.class);
-        this.addProxyMethod(equalsMethod, Object.class);
-        this.addProxyMethod(toStringMethod, Object.class);
-        Class[] var1 = this.interfaces;
-        int var2 = var1.length;
+        addProxyMethod(hashCodeMethod, Object.class);
+        addProxyMethod(equalsMethod, Object.class);
+        addProxyMethod(toStringMethod, Object.class);
 
-        int var3;
-        Class var4;// 接口的Class对象
+	/*
+     * Now record all of the methods from the proxy interfaces, giving
+	 * earlier interfaces precedence over later ones with duplicate
+	 * methods.
+	 */
+
         // 获得所有接口中的方法，并将方法添加到代理方法中
-        for(var3 = 0; var3 < var2; ++var3) {
-            var4 = var1[var3];
-            // 获取所有的方法
-            Method[] var5 = var4.getMethods();
-            int var6 = var5.length;
-
-            for(int var7 = 0; var7 < var6; ++var7) {
-                Method var8 = var5[var7];
-                // 添加到方法容器中，显然如果接口存在相同的方法，应该会被过滤掉
-                this.addProxyMethod(var8, var4);
+        for (int i = 0; i < interfaces.length; i++) {
+            Method[] methods = interfaces[i].getMethods();
+            for (int j = 0; j < methods.length; j++) {
+                addProxyMethod(methods[j], interfaces[i]);
             }
         }
 
-        // proxyMethods是一个map，其定义为：private Map<String, List<ProxyGenerator.ProxyMethod>> proxyMethods = new HashMap();
-        Iterator var11 = this.proxyMethods.values().iterator();
-
-        List var12;
-        while(var11.hasNext()) {
-            var12 = (List)var11.next();
-            checkReturnTypes(var12);
+	/*
+	 * For each set of proxy methods with the same signature,
+	 * verify that the methods' return types are compatible.
+	 */
+        for (List<ProxyMethod> sigmethods : proxyMethods.values()) {
+            checkReturnTypes(sigmethods);
         }
 
-        // 接下来就是写代理类文件的步骤了
-        Iterator var15;
+	/* ============================================================
+	 * Step 2: Assemble FieldInfo and MethodInfo structs for all of
+	 * fields and methods in the class we are generating.
+	 */
         try {
-            // 生成代理类的构造函数
-            this.methods.add(this.generateConstructor());
-            var11 = this.proxyMethods.values().iterator();
+            // 添加构造方法
+            methods.add(generateConstructor());
 
-            while(var11.hasNext()) {
-                var12 = (List)var11.next();
-                var15 = var12.iterator();
+            for (List<ProxyMethod> sigmethods : proxyMethods.values()) {
+                for (ProxyMethod pm : sigmethods) {
 
-                while(var15.hasNext()) {
-                    ProxyGenerator.ProxyMethod var16 = (ProxyGenerator.ProxyMethod)var15.next();
-                    this.fields.add(new ProxyGenerator.FieldInfo(var16.methodFieldName, "Ljava/lang/reflect/Method;", 10));
-                    // 生成代理类的代理方法，重要方法
-                    this.methods.add(var16.generateMethod());
+                    // add static field for method's Method object
+                    fields.add(new FieldInfo(pm.methodFieldName,
+                            "Ljava/lang/reflect/Method;",
+                            ACC_PRIVATE | ACC_STATIC));
+
+                    // generate code for proxy method and add it
+                    // 为每个方法生成具有统一结构的方法体，这个方法很重要
+                    methods.add(pm.generateMethod());
                 }
             }
 
-            // 为代理类生成静态代码块
-            this.methods.add(this.generateStaticInitializer());
-        } catch (IOException var10) {
-            throw new InternalError("unexpected I/O Exception", var10);
+            // 添加静态初始化方法
+            methods.add(generateStaticInitializer());
+
+        } catch (IOException e) {
+            throw new InternalError("unexpected I/O Exception");
         }
 
-        // 方法数目不得超过65535
-        if(this.methods.size() > '\uffff') {
+        // 方法个数不得超过65535
+        if (methods.size() > 65535) {
             throw new IllegalArgumentException("method limit exceeded");
-        } 
-        // 字段数目不得超过65535
-        else if(this.fields.size() > '\uffff') {
-            throw new IllegalArgumentException("field limit exceeded");
-        } else {
-            // 下面开始按照Class文件的格式进行字节码文件的生成
-            this.cp.getClass(dotToSlash(this.className));
-            this.cp.getClass("java/lang/reflect/Proxy");
-            var1 = this.interfaces;
-            var2 = var1.length;
-
-            for(var3 = 0; var3 < var2; ++var3) {
-                var4 = var1[var3];
-                this.cp.getClass(dotToSlash(var4.getName()));
-            }
-
-            this.cp.setReadOnly();
-            ByteArrayOutputStream var13 = new ByteArrayOutputStream();
-            DataOutputStream var14 = new DataOutputStream(var13);
-
-            try {
-                var14.writeInt(-889275714);// 魔数
-                var14.writeShort(0);// 次版本号
-                var14.writeShort(49);// 主版本号
-                this.cp.write(var14);
-                var14.writeShort(this.accessFlags);// 访问标志
-                var14.writeShort(this.cp.getClass(dotToSlash(this.className)));// 类索引
-                var14.writeShort(this.cp.getClass("java/lang/reflect/Proxy"));// 父类索引
-                var14.writeShort(this.interfaces.length);// 接口计数值
-                Class[] var17 = this.interfaces;
-                int var18 = var17.length;
-
-                for(int var19 = 0; var19 < var18; ++var19) {
-                    Class var22 = var17[var19];
-                    var14.writeShort(this.cp.getClass(dotToSlash(var22.getName())));
-                }
-
-                var14.writeShort(this.fields.size());// 字段计数值
-                var15 = this.fields.iterator();
-
-                while(var15.hasNext()) {
-                    ProxyGenerator.FieldInfo var20 = (ProxyGenerator.FieldInfo)var15.next();
-                    var20.write(var14);
-                }
-
-                var14.writeShort(this.methods.size());// 方法计数值
-                var15 = this.methods.iterator();
-
-                while(var15.hasNext()) {
-                    ProxyGenerator.MethodInfo var21 = (ProxyGenerator.MethodInfo)var15.next();
-                    var21.write(var14);
-                }
-
-                var14.writeShort(0);
-                return var13.toByteArray();
-            } catch (IOException var9) {
-                throw new InternalError("unexpected I/O Exception", var9);
-            }
         }
+
+        // 字段个数不得超过65535
+        if (fields.size() > 65535) {
+            throw new IllegalArgumentException("field limit exceeded");
+        }
+
+	/* ============================================================
+	 * Step 3: Write the final class file.
+	 */
+
+	/*
+	 * Make sure that constant pool indexes are reserved for the
+	 * following items before starting to write the final class file.
+	 */
+        cp.getClass(dotToSlash(className));
+        cp.getClass(superclassName);
+        for (int i = 0; i < interfaces.length; i++) {
+            cp.getClass(dotToSlash(interfaces[i].getName()));
+        }
+
+	/*
+	 * Disallow new constant pool additions beyond this point, since
+	 * we are about to write the final constant pool table.
+	 */
+        cp.setReadOnly();
+
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        DataOutputStream dout = new DataOutputStream(bout);
+
+        try {
+	    /*
+	     * Write all the items of the "ClassFile" structure.
+	     * See JVMS section 4.1.
+	     */
+            // u4 magic;
+            dout.writeInt(0xCAFEBABE);
+            // u2 minor_version;
+            dout.writeShort(CLASSFILE_MINOR_VERSION);
+            // u2 major_version;
+            dout.writeShort(CLASSFILE_MAJOR_VERSION);
+
+            cp.write(dout);        // (write constant pool)
+
+            // u2 access_flags;
+            dout.writeShort(ACC_PUBLIC | ACC_FINAL | ACC_SUPER);
+            // u2 this_class;
+            dout.writeShort(cp.getClass(dotToSlash(className)));
+            // u2 super_class;
+            dout.writeShort(cp.getClass(superclassName));
+
+            // u2 interfaces_count;
+            dout.writeShort(interfaces.length);
+            // u2 interfaces[interfaces_count];
+            for (int i = 0; i < interfaces.length; i++) {
+                dout.writeShort(cp.getClass(
+                        dotToSlash(interfaces[i].getName())));
+            }
+
+            // u2 fields_count;
+            dout.writeShort(fields.size());
+            // field_info fields[fields_count];
+            for (FieldInfo f : fields) {
+                f.write(dout);
+            }
+
+            // u2 methods_count;
+            dout.writeShort(methods.size());
+            // method_info methods[methods_count];
+            for (MethodInfo m : methods) {
+                m.write(dout);
+            }
+
+            // u2 attributes_count;
+            dout.writeShort(0);    // (no ClassFile attributes for proxy classes)
+
+        } catch (IOException e) {
+            throw new InternalError("unexpected I/O Exception");
+        }
+
+        return bout.toByteArray();
     }
 ```
 
@@ -472,41 +511,55 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
 将指定方法添加到方法容器中。该容器中的所有方法将会被写入到代理对象中
 
 ```Java
-    private void addProxyMethod(Method var1, Class<?> var2) {
-        // 方法名
-        String var3 = var1.getName();
-        // 方法参数类型数组
-        Class[] var4 = var1.getParameterTypes();
-        // 方法返回类型
-        Class var5 = var1.getReturnType();
-        // 方法异常列表
-        Class[] var6 = var1.getExceptionTypes();
-        // 获取方法签名
-        String var7 = var3 + getParameterDescriptors(var4);
-        // 根据方法签名获取proxyMethods的value
-        Object var8 = (List)this.proxyMethods.get(var7);
-        // 如果方法出现了重复，保证子类只有一个方法
-        if(var8 != null) {
-            Iterator var9 = ((List)var8).iterator();
+    /**
+     * Add another method to be proxied, either by creating a new
+     * ProxyMethod object or augmenting an old one for a duplicate
+     * method.
+     * <p>
+     * "fromClass" indicates the proxy interface that the method was
+     * found through, which may be different from (a subinterface of)
+     * the method's "declaring class".  Note that the first Method
+     * object passed for a given name and descriptor identifies the
+     * Method object (and thus the declaring class) that will be
+     * passed to the invocation handler's "invoke" method for a given
+     * set of duplicate methods.
+     */
+    private void addProxyMethod(Method m, Class fromClass) {
+        String name = m.getName();
+        Class[] parameterTypes = m.getParameterTypes();
+        Class returnType = m.getReturnType();
+        Class[] exceptionTypes = m.getExceptionTypes();
 
-            while(var9.hasNext()) {
-                ProxyGenerator.ProxyMethod var10 = (ProxyGenerator.ProxyMethod)var9.next();
-                if(var5 == var10.returnType) {
-                    // 规约异常类型，让重写的方法抛出合适的异常类型。也就是说不同的接口中包含了方法签名相同的方法，但是这些方法的异常参数列表不同，因此这里需要整合出一个恰当的异常列表
-                    ArrayList var11 = new ArrayList();
-                    collectCompatibleTypes(var6, var10.exceptionTypes, var11);
-                    collectCompatibleTypes(var10.exceptionTypes, var6, var11);
-                    var10.exceptionTypes = new Class[var11.size()];
-                    var10.exceptionTypes = (Class[])var11.toArray(var10.exceptionTypes);
+        String sig = name + getParameterDescriptors(parameterTypes);
+        List<ProxyMethod> sigmethods = proxyMethods.get(sig);
+        // 检查方法是否已经存在
+        if (sigmethods != null) {
+            for (ProxyMethod pm : sigmethods) {
+                if (returnType == pm.returnType) {
+		    /*
+		     * Found a match: reduce exception types to the
+		     * greatest set of exceptions that can thrown
+		     * compatibly with the throws clauses of both
+		     * overridden methods.
+		     */
+                    // 方法签名相同的两个方法可能异常列表可能不同，因此需要整合一个最恰当的异常列表
+                    List<Class> legalExceptions = new ArrayList<Class>();
+                    collectCompatibleTypes(
+                            exceptionTypes, pm.exceptionTypes, legalExceptions);
+                    collectCompatibleTypes(
+                            pm.exceptionTypes, exceptionTypes, legalExceptions);
+                    pm.exceptionTypes = new Class[legalExceptions.size()];
+                    pm.exceptionTypes =
+                            legalExceptions.toArray(pm.exceptionTypes);
                     return;
                 }
             }
         } else {
-            var8 = new ArrayList(3);
-            this.proxyMethods.put(var7, var8);
+            sigmethods = new ArrayList<ProxyMethod>(3);
+            proxyMethods.put(sig, sigmethods);
         }
-
-        ((List)var8).add(new ProxyGenerator.ProxyMethod(var3, var4, var5, var6, var2, null));
+        sigmethods.add(new ProxyMethod(name, parameterTypes, returnType,
+                exceptionTypes, fromClass));
     }
 ```
 
@@ -515,89 +568,132 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
 这个方法非常重要，该方法勾勒出代理对象的代理逻辑。该方法的阅读需要对字节码的格式以及方法属性表的格式非常了解，否则将会一头雾水
 
 ```Java
-        private ProxyGenerator.MethodInfo generateMethod() throws IOException {
-            String var1 = ProxyGenerator.getMethodDescriptor(this.parameterTypes, this.returnType);
-            ProxyGenerator.MethodInfo var2 = ProxyGenerator.this.new MethodInfo(this.methodName, var1, 17);
-            int[] var3 = new int[this.parameterTypes.length];
-            int var4 = 1;
+        /**
+         * Return a MethodInfo object for this method, including generating
+         * the code and exception table entry.
+         */
+        private MethodInfo generateMethod() throws IOException {
+            String desc = getMethodDescriptor(parameterTypes, returnType);
+            MethodInfo minfo = new MethodInfo(methodName, desc,
+                    ACC_PUBLIC | ACC_FINAL);
 
-            for(int var5 = 0; var5 < var3.length; ++var5) {
-                var3[var5] = var4;
-                var4 += ProxyGenerator.getWordsPerType(this.parameterTypes[var5]);
+            int[] parameterSlot = new int[parameterTypes.length];
+            int nextSlot = 1;
+            for (int i = 0; i < parameterSlot.length; i++) {
+                parameterSlot[i] = nextSlot;
+                nextSlot += getWordsPerType(parameterTypes[i]);
             }
+            int localSlot0 = nextSlot;
+            short pc, tryBegin = 0, tryEnd;
 
-            byte var7 = 0;
-            DataOutputStream var9 = new DataOutputStream(var2.code);
-            ProxyGenerator.this.code_aload(0, var9);
-            var9.writeByte(180);
-            // 这里获取InvocationHandler的对象
-            var9.writeShort(ProxyGenerator.this.cp.getFieldRef("java/lang/reflect/Proxy", "h", "Ljava/lang/reflect/InvocationHandler;"));
-            ProxyGenerator.this.code_aload(0, var9);
-            var9.writeByte(178);
-            var9.writeShort(ProxyGenerator.this.cp.getFieldRef(ProxyGenerator.dotToSlash(ProxyGenerator.this.className), this.methodFieldName, "Ljava/lang/reflect/Method;"));
-            if(this.parameterTypes.length > 0) {
-                ProxyGenerator.this.code_ipush(this.parameterTypes.length, var9);
-                var9.writeByte(189);
-                var9.writeShort(ProxyGenerator.this.cp.getClass("java/lang/Object"));
+            DataOutputStream out = new DataOutputStream(minfo.code);
 
-                for(int var10 = 0; var10 < this.parameterTypes.length; ++var10) {
-                    var9.writeByte(89);
-                    ProxyGenerator.this.code_ipush(var10, var9);
-                    this.codeWrapArgument(this.parameterTypes[var10], var3[var10], var9);
-                    var9.writeByte(83);
+            code_aload(0, out);
+
+            out.writeByte(opc_getfield);
+            out.writeShort(cp.getFieldRef(
+                    superclassName,
+                    handlerFieldName, "Ljava/lang/reflect/InvocationHandler;"));
+
+            code_aload(0, out);
+
+            out.writeByte(opc_getstatic);
+            out.writeShort(cp.getFieldRef(
+                    dotToSlash(className),
+                    methodFieldName, "Ljava/lang/reflect/Method;"));
+
+            if (parameterTypes.length > 0) {
+
+                code_ipush(parameterTypes.length, out);
+
+                out.writeByte(opc_anewarray);
+                out.writeShort(cp.getClass("java/lang/Object"));
+
+                for (int i = 0; i < parameterTypes.length; i++) {
+
+                    out.writeByte(opc_dup);
+
+                    code_ipush(i, out);
+
+                    codeWrapArgument(parameterTypes[i], parameterSlot[i], out);
+
+                    out.writeByte(opc_aastore);
                 }
             } else {
-                var9.writeByte(1);
+
+                out.writeByte(opc_aconst_null);
             }
 
-            var9.writeByte(185);
-            var9.writeShort(ProxyGenerator.this.cp.getInterfaceMethodRef("java/lang/reflect/InvocationHandler", "invoke", "(Ljava/lang/Object;Ljava/lang/reflect/Method;[Ljava/lang/Object;)Ljava/lang/Object;"));
-            var9.writeByte(4);
-            var9.writeByte(0);
-            if(this.returnType == Void.TYPE) {
-                var9.writeByte(87);
-                var9.writeByte(177);
+            out.writeByte(opc_invokeinterface);
+            out.writeShort(cp.getInterfaceMethodRef(
+                    "java/lang/reflect/InvocationHandler",
+                    "invoke",
+                    "(Ljava/lang/Object;Ljava/lang/reflect/Method;" +
+                            "[Ljava/lang/Object;)Ljava/lang/Object;"));
+            out.writeByte(4);
+            out.writeByte(0);
+
+            if (returnType == void.class) {
+
+                out.writeByte(opc_pop);
+
+                out.writeByte(opc_return);
+
             } else {
-                this.codeUnwrapReturnValue(this.returnType, var9);
+
+                codeUnwrapReturnValue(returnType, out);
             }
 
-            short var6;
-            short var8 = var6 = (short)var2.code.size();
-            List var13 = ProxyGenerator.computeUniqueCatchList(this.exceptionTypes);
-            if(var13.size() > 0) {
-                Iterator var11 = var13.iterator();
+            tryEnd = pc = (short) minfo.code.size();
 
-                while(var11.hasNext()) {
-                    Class var12 = (Class)var11.next();
-                    var2.exceptionTable.add(new ProxyGenerator.ExceptionTableEntry(var7, var8, var6, ProxyGenerator.this.cp.getClass(ProxyGenerator.dotToSlash(var12.getName()))));
+            List<Class> catchList = computeUniqueCatchList(exceptionTypes);
+            if (catchList.size() > 0) {
+
+                for (Class ex : catchList) {
+                    minfo.exceptionTable.add(new ExceptionTableEntry(
+                            tryBegin, tryEnd, pc,
+                            cp.getClass(dotToSlash(ex.getName()))));
                 }
 
-                var9.writeByte(191);
-                var6 = (short)var2.code.size();
-                var2.exceptionTable.add(new ProxyGenerator.ExceptionTableEntry(var7, var8, var6, ProxyGenerator.this.cp.getClass("java/lang/Throwable")));
-                ProxyGenerator.this.code_astore(var4, var9);
-                var9.writeByte(187);
-                var9.writeShort(ProxyGenerator.this.cp.getClass("java/lang/reflect/UndeclaredThrowableException"));
-                var9.writeByte(89);
-                ProxyGenerator.this.code_aload(var4, var9);
-                var9.writeByte(183);
-                var9.writeShort(ProxyGenerator.this.cp.getMethodRef("java/lang/reflect/UndeclaredThrowableException", "<init>", "(Ljava/lang/Throwable;)V"));
-                var9.writeByte(191);
+                out.writeByte(opc_athrow);
+
+                pc = (short) minfo.code.size();
+
+                minfo.exceptionTable.add(new ExceptionTableEntry(
+                        tryBegin, tryEnd, pc, cp.getClass("java/lang/Throwable")));
+
+                code_astore(localSlot0, out);
+
+                out.writeByte(opc_new);
+                out.writeShort(cp.getClass(
+                        "java/lang/reflect/UndeclaredThrowableException"));
+
+                out.writeByte(opc_dup);
+
+                code_aload(localSlot0, out);
+
+                out.writeByte(opc_invokespecial);
+
+                out.writeShort(cp.getMethodRef(
+                        "java/lang/reflect/UndeclaredThrowableException",
+                        "<init>", "(Ljava/lang/Throwable;)V"));
+
+                out.writeByte(opc_athrow);
             }
 
-            if(var2.code.size() > '\uffff') {
+            if (minfo.code.size() > 65535) {
                 throw new IllegalArgumentException("code size limit exceeded");
-            } else {
-                var2.maxStack = 10;
-                var2.maxLocals = (short)(var4 + 1);
-                var2.declaredExceptions = new short[this.exceptionTypes.length];
-
-                for(int var14 = 0; var14 < this.exceptionTypes.length; ++var14) {
-                    var2.declaredExceptions[var14] = ProxyGenerator.this.cp.getClass(ProxyGenerator.dotToSlash(this.exceptionTypes[var14].getName()));
-                }
-
-                return var2;
             }
+
+            minfo.maxStack = 10;
+            minfo.maxLocals = (short) (localSlot0 + 1);
+            minfo.declaredExceptions = new short[exceptionTypes.length];
+            for (int i = 0; i < exceptionTypes.length; i++) {
+                minfo.declaredExceptions[i] = cp.getClass(
+                        dotToSlash(exceptionTypes[i].getName()));
+            }
+
+            return minfo;
         }
 ```
 
