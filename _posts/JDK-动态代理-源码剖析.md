@@ -407,6 +407,7 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
                             ACC_PRIVATE | ACC_STATIC));
 
                     // generate code for proxy method and add it
+
                     // 为每个方法生成具有统一结构的方法体，这个方法很重要
                     methods.add(pm.generateMethod());
                 }
@@ -530,7 +531,10 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
         Class returnType = m.getReturnType();
         Class[] exceptionTypes = m.getExceptionTypes();
 
+        // 获取方法签名
         String sig = name + getParameterDescriptors(parameterTypes);
+
+        // 找到方法签名对应的方法列表
         List<ProxyMethod> sigmethods = proxyMethods.get(sig);
         // 检查方法是否已经存在
         if (sigmethods != null) {
@@ -558,6 +562,8 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
             sigmethods = new ArrayList<ProxyMethod>(3);
             proxyMethods.put(sig, sigmethods);
         }
+
+        // 将该方法添加到容器中去
         sigmethods.add(new ProxyMethod(name, parameterTypes, returnType,
                 exceptionTypes, fromClass));
     }
@@ -565,7 +571,7 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
 
 ## 3.7 ProxyMethod.generateMethod
 
-这个方法非常重要，该方法勾勒出代理对象的代理逻辑。该方法的阅读需要对字节码的格式以及方法属性表的格式非常了解，否则将会一头雾水
+这个方法非常重要，该方法勾勒出代理对象的代理逻辑(对应的是.class文件中的方法属性表部分，即实际存储代码块的区域)。该方法的阅读需要对字节码的格式以及方法属性表的格式非常了解，否则将会一头雾水
 
 ```Java
         /**
@@ -697,7 +703,7 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
         }
 ```
 
-下面这段java代码就是ProxyMethod.generateMethod所写入的方法的样子。可以看出，所有的方法调用都必须通过InvocationHandler对象，因此我们可以将增强逻辑写在InvocationHandler#invoke方法中
+下面这段java代码就是`ProxyMethod.generateMethod`所构造的方法的模板。可以看出，所有的方法调用都必须通过InvocationHandler对象，因此我们可以将增强逻辑写在InvocationHandler#invoke方法中
 
 ```Java
     public final void <methodName> ( <Params> ) throws <Exceptions> {
@@ -897,7 +903,6 @@ public final class MyProxy extends Proxy
 }
 ```
 
-
-# 4 参考
+# 5 参考
 
 * [深度剖析JDK动态代理机制](http://www.cnblogs.com/MOBIN/p/5597215.html)
