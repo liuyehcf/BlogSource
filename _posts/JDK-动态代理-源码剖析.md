@@ -717,9 +717,9 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
     }
 ```
 
-# 例子
+# 4 例子
 
-## 源码
+## 4.1 源码
 
 ```Java
 package org.liuyehcf.jdkproxy;
@@ -743,7 +743,6 @@ public class TestJdkProxy implements Person {
         System.out.println("TestJdkProxy says hello");
     }
 
-
     private static final class MyInvocationHandler implements InvocationHandler {
         public MyInvocationHandler(Object obj) {
             this.obj = obj;
@@ -764,7 +763,6 @@ public class TestJdkProxy implements Person {
     }
 
     public static void main(String[] args) throws Exception {
-
 
         TestJdkProxy target = new TestJdkProxy();
 
@@ -789,7 +787,7 @@ public class TestJdkProxy implements Person {
 }
 ```
 
-## 反编译后的代理类源码
+## 4.2 反编译后的代理类源码
 
 ```
 import java.lang.reflect.InvocationHandler;
