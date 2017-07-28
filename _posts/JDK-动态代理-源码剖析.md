@@ -711,6 +711,193 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
     }
 ```
 
+# 例子
+
+## 源码
+
+```Java
+package org.liuyehcf.jdkproxy;
+
+import sun.misc.ProxyGenerator;
+
+import java.io.FileOutputStream;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+
+/**
+ * Created by HCF on 2017/7/28.
+ */
+interface Person {
+    void sayHello();
+}
+
+public class TestJdkProxy implements Person {
+    public void sayHello() {
+        System.out.println("TestJdkProxy says hello");
+    }
+
+
+    private static final class MyInvocationHandler implements InvocationHandler {
+        public MyInvocationHandler(Object obj) {
+            this.obj = obj;
+        }
+
+        private Object obj;
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            System.out.println("pre-processor");
+
+            Object result = method.invoke(obj, args);
+
+            System.out.println("after-processor");
+
+            return result;
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+
+
+        TestJdkProxy target = new TestJdkProxy();
+
+        MyInvocationHandler invocationHandler = new MyInvocationHandler(target);
+
+        Person p = (Person) Proxy.newProxyInstance(target.getClass().getClassLoader(), new Class<?>[]{Person.class}, invocationHandler);
+
+        p.sayHello();
+
+        byte[] classFile = ProxyGenerator.generateProxyClass("MyProxy", TestJdkProxy.class.getInterfaces());
+
+        FileOutputStream out = null;
+
+        try {
+            out = new FileOutputStream("C:\\Users\\t-chehe\\Desktop\\MyProxy.class");
+            out.write(classFile);
+            out.flush();
+        } catch (Exception e) {
+
+        }
+    }
+}
+```
+
+## 反编译后的代理类源码
+
+```
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.lang.reflect.UndeclaredThrowableException;
+import org.liuyehcf.jdkproxy.Person;
+
+public final class MyProxy extends Proxy
+  implements Person
+{
+  private static Method m1;
+  private static Method m3;
+  private static Method m2;
+  private static Method m0;
+
+  public MyProxy(InvocationHandler paramInvocationHandler)
+    throws 
+  {
+    super(paramInvocationHandler);
+  }
+
+  public final boolean equals(Object paramObject)
+    throws 
+  {
+    try
+    {
+      return ((Boolean)this.h.invoke(this, m1, new Object[] { paramObject })).booleanValue();
+    }
+    catch (Error|RuntimeException localError)
+    {
+      throw localError;
+    }
+    catch (Throwable localThrowable)
+    {
+      throw new UndeclaredThrowableException(localThrowable);
+    }
+  }
+
+  public final void sayHello()
+    throws 
+  {
+    try
+    {
+      this.h.invoke(this, m3, null);
+      return;
+    }
+    catch (Error|RuntimeException localError)
+    {
+      throw localError;
+    }
+    catch (Throwable localThrowable)
+    {
+      throw new UndeclaredThrowableException(localThrowable);
+    }
+  }
+
+  public final String toString()
+    throws 
+  {
+    try
+    {
+      return (String)this.h.invoke(this, m2, null);
+    }
+    catch (Error|RuntimeException localError)
+    {
+      throw localError;
+    }
+    catch (Throwable localThrowable)
+    {
+      throw new UndeclaredThrowableException(localThrowable);
+    }
+  }
+
+  public final int hashCode()
+    throws 
+  {
+    try
+    {
+      return ((Integer)this.h.invoke(this, m0, null)).intValue();
+    }
+    catch (Error|RuntimeException localError)
+    {
+      throw localError;
+    }
+    catch (Throwable localThrowable)
+    {
+      throw new UndeclaredThrowableException(localThrowable);
+    }
+  }
+
+  static
+  {
+    try
+    {
+      m1 = Class.forName("java.lang.Object").getMethod("equals", new Class[] { Class.forName("java.lang.Object") });
+      m3 = Class.forName("org.liuyehcf.jdkproxy.Person").getMethod("sayHello", new Class[0]);
+      m2 = Class.forName("java.lang.Object").getMethod("toString", new Class[0]);
+      m0 = Class.forName("java.lang.Object").getMethod("hashCode", new Class[0]);
+      return;
+    }
+    catch (NoSuchMethodException localNoSuchMethodException)
+    {
+      throw new NoSuchMethodError(localNoSuchMethodException.getMessage());
+    }
+    catch (ClassNotFoundException localClassNotFoundException)
+    {
+      throw new NoClassDefFoundError(localClassNotFoundException.getMessage());
+    }
+  }
+}
+```
+
+
 # 4 参考
 
 * [深度剖析JDK动态代理机制](http://www.cnblogs.com/MOBIN/p/5597215.html)
