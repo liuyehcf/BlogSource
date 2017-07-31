@@ -269,8 +269,7 @@ public class Solution {
 }
 ```
 
-
-# Question-49[★★★★]
+# 6 Question-49[★★★★]
 
 __Group Anagrams__
 

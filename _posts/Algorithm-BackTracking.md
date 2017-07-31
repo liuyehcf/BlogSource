@@ -68,7 +68,7 @@ public class Solution {
 }
 ```
 
-# Question-39[★★★★]
+# 2 Question-39[★★★★]
 
 __Combination Sum__
 
@@ -114,7 +114,7 @@ public class Solution {
 }
 ```
 
-# Question-46[★★★★★]
+# 3 Question-46[★★★★★]
 
 __Permutations__
 
@@ -159,7 +159,7 @@ public class Solution {
 }
 ```
 
-# 2 Question-90[★★★★★]
+# 4 Question-90[★★★★★]
 
 __Subsets II__
 
