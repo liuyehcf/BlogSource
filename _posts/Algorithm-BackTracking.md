@@ -68,6 +68,97 @@ public class Solution {
 }
 ```
 
+# Question-39[★★★★]
+
+__Combination Sum__
+
+> Given a set of candidate numbers (C) (without duplicates) and a target number (T), find all unique combinations in C where the candidate numbers sums to T.
+
+> The same repeated number may be chosen from C unlimited number of times.
+
+```Java
+public class Solution {
+    public List<List<Integer>> combinationSum(int[] candidates, int target) {
+        Arrays.sort(candidates);
+
+        List<List<Integer>> res = new ArrayList<>();
+
+        List<Integer> pre = new ArrayList<>();
+
+        helper(candidates, target, 0, res, pre);
+
+        return res;
+    }
+
+    private void helper(int[] candidates, int target, int index, List<List<Integer>> res, List<Integer> pre) {
+        if (index == candidates.length) {
+            return;
+        }
+
+        if (target == 0) {
+            res.add(new ArrayList<Integer>(pre));
+            return;
+        }
+
+        for (int start = index; start < candidates.length; start++) {
+            if (start > index && candidates[start] == candidates[start - 1]) continue;
+            if (candidates[start] > target) return;
+
+            pre.add(candidates[start]);
+
+            helper(candidates, target - candidates[start], start, res, pre);
+
+            pre.remove(pre.size() - 1);
+        }
+    }
+}
+```
+
+# Question-46[★★★★★]
+
+__Permutations__
+
+> Given a collection of distinct numbers, return all possible permutations.
+
+```Java
+public class Solution {
+    public List<List<Integer>> permute(int[] nums) {
+
+        List<List<Integer>> res = new ArrayList<>();
+
+        if (nums == null || nums.length == 0) return res;
+
+        boolean[] used = new boolean[nums.length];
+
+        List<Integer> pre = new ArrayList<Integer>();
+
+        helper(nums, 0, res, pre, used);
+
+        return res;
+    }
+
+    private void helper(int[] nums, int index, List<List<Integer>> res, List<Integer> pre, boolean[] used) {
+        if (index == nums.length) {
+            res.add(new ArrayList<Integer>(pre));
+            return;
+        }
+
+        for (int i = 0; i < nums.length; i++) {
+            if (used[i]) continue;
+
+            pre.add(nums[i]);
+            used[i] = true;
+
+            helper(nums, index + 1, res, pre, used);
+
+            used[i] = false;
+            pre.remove(pre.size() - 1);
+        }
+
+    }
+}
+```
+
 # 2 Question-90[★★★★★]
 
 __Subsets II__
