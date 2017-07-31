@@ -268,6 +268,3 @@ try-with-resources是一个定义了一个或多个资源的try声明，这个�
 * [Java7的那些新特性](http://blog.csdn.net/chenleixing/article/details/47802653)
 * [Java7的新特性一览表](http://www.oschina.net/news/20119/new-features-of-java-7)
 * [Java8新特性终极指南](http://www.importnew.com/11908.html)
-
-<!-- toc -->
-<!--more-->
