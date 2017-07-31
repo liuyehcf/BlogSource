@@ -10,6 +10,9 @@ categories:
 
 __目录__
 
+<!-- toc -->
+<!--more-->
+
 # 1 JDK 5
 
 ## 1.1 自动装箱与拆箱
@@ -187,31 +190,7 @@ try-with-resources是一个定义了一个或多个资源的try声明，这个�
 
 只要编译器可以从上下文中推断出类型参数，你就可以用一对空着的尖括号<>来代替泛型参数。这对括号私下被称为菱形(diamond)。在Java SE 7之前，你声明泛型对象时要这样`List<String> list = new ArrayList<String>();`。而在Java SE7以后，你可以这样`List<String> list = new ArrayList<>();`
 
-## 3.7 全新的集合声明以及获取集合中的值的方式(？为什么我试了不行？)
-
-JDK1.7以前声明集合的方式
-
-```Java
-        List<String> strs = new ArrayList<String>();
-        Map<String, String> map = new HashMap<String, String>();
-        strs.add("abc");
-        strs.get(index);
-        map.put("key", "全新集合");
-        map.get(key);
-```
-
-JDK1.7以后
-
-```Java
-        List<String> list = [item1, item2, item3];
-        String item1 = list[0];
-        String item2 = list[1];
-        String item3 = list[2];
-        Map<String, String> map = {key:value, key:value}
-        String mapValue = map[key];
-```
-
-## 3.8 新增一些取环境信息的工具方法
+## 3.7 新增一些取环境信息的工具方法
 
 ```Java
         File System.getUserHomeDir() // 当前用户目录
@@ -220,7 +199,7 @@ JDK1.7以后
         File System.getJavaHomeDir() // JRE的安装目录
 ```
 
-## 3.9 安全的加减乘除
+## 3.8 安全的加减乘除
 
 ```Java
     int Math.safeToInt(long value)
@@ -236,6 +215,8 @@ JDK1.7以后
     long Math.safeAdd(long value1, long value2)
     int Math.safeSubtract(int value1, int value2)
 ```
+
+## 3.9 fork/join
 
 # 4 JDK 8
 
@@ -280,6 +261,13 @@ JDK1.7以后
 ### 4.4.2 类依赖分析器：jdeps
 
 ## 4.5 JVM新特性
+
+# 5 参考
+
+* [JDK各个版本的新特性jdk1.5-jdk8](http://www.cnblogs.com/langtianya/p/3757993.html)
+* [Java7的那些新特性](http://blog.csdn.net/chenleixing/article/details/47802653)
+* [Java7的新特性一览表](http://www.oschina.net/news/20119/new-features-of-java-7)
+* [Java8新特性终极指南](http://www.importnew.com/11908.html)
 
 <!-- toc -->
 <!--more-->
