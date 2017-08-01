@@ -323,28 +323,547 @@ doJoin方法执行具体的join逻辑，即合并各个线程执行任务的结�
 ## 4.1 常量
 
 ```Java
-    static final int SMASK        = 0xffff;        // short bits == max index
-    static final int MAX_CAP      = 0x7fff;        // max #workers - 1
-    static final int EVENMASK     = 0xfffe;        // even short bits
-    static final int SQMASK       = 0x007e;        // max 64 (even) slots
-
-    // Masks and units for WorkQueue.scanState and ctl sp subfield
-    static final int SCANNING     = 1;             // false when running tasks
-    static final int INACTIVE     = 1 << 31;       // must be negative
-    static final int SS_SEQ       = 1 << 16;       // version count
-
-    // Mode bits for ForkJoinPool.config and WorkQueue.config
-    static final int MODE_MASK    = 0xffff << 16;  // top half of int
-    static final int LIFO_QUEUE   = 0;
-    static final int FIFO_QUEUE   = 1 << 16;
-    static final int SHARED_QUEUE = 1 << 31;       // must be negative
+    private static final int  RSLOCK     = 1;
+    private static final int  RSIGNAL    = 1 << 1;
+    private static final int  STARTED    = 1 << 2;
+    private static final int  STOP       = 1 << 29;
+    private static final int  TERMINATED = 1 << 30;
+    private static final int  SHUTDOWN   = 1 << 31;
 ```
+
+* __RSLOCK__：
+* __RSIGNAL__：
+* __STARTED__：
+* __STOP__：
+* __TERMINATED__：
+* __SHUTDOWN__：
 
 ## 4.2 字段
 
-## 4.3 重要方法
+```Java
+    volatile long ctl;                   // main pool control
+    volatile int runState;               // lockable status
+    final int config;                    // parallelism, mode
+    int indexSeed;                       // to generate worker index
+    volatile WorkQueue[] workQueues;     // main registry
+    final ForkJoinWorkerThreadFactory factory;
+    final UncaughtExceptionHandler ueh;  // per-worker UEH
+    final String workerNamePrefix;       // to create worker name string
+    volatile AtomicLong stealCounter;    // also used as sync monitor
+```
 
-### 4.3.1 submit
+## 4.3 WorkQueue
+
+WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealing)__以及__任务提交(task submission)__。下面即给出WorkQueue的源码，以及注释。
+
+```Java
+    static final class WorkQueue {
+
+        /**
+         * Capacity of work-stealing queue array upon initialization.
+         * Must be a power of two; at least 4, but should be larger to
+         * reduce or eliminate cacheline sharing among queues.
+         * Currently, it is much larger, as a partial workaround for
+         * the fact that JVMs often place arrays in locations that
+         * share GC bookkeeping (especially cardmarks) such that
+         * per-write accesses encounter serious memory contention.
+         */
+        // 初始Queue的大小，必须是2的幂次，这样设计的用意是什么？？？
+        static final int INITIAL_QUEUE_CAPACITY = 1 << 13;
+
+        /**
+         * Maximum size for queue arrays. Must be a power of two less
+         * than or equal to 1 << (31 - width of array entry) to ensure
+         * lack of wraparound of index calculations, but defined to a
+         * value a bit less than this to help users trap runaway
+         * programs before saturating systems.
+         */
+        // Queue大小的最大值
+        static final int MAXIMUM_QUEUE_CAPACITY = 1 << 26; // 64M
+
+        // Instance fields
+
+        // 
+        volatile int scanState;    // versioned, <0: inactive; odd:scanning
+        
+        // 
+        int stackPred;             // pool stack (ctl) predecessor
+        
+        // 
+        int nsteals;               // number of steals
+        
+        // 
+        int hint;                  // randomization and stealer index hint
+        
+        // 
+        int config;                // pool index and mode
+        
+        // 
+        volatile int qlock;        // 1: locked, < 0: terminate; else 0
+        
+        // 指向下一个poll的元素
+        volatile int base;         // index of next slot for poll
+        
+        // 指向下一个push的元素
+        int top;                   // index of next slot for push
+        
+        // 
+        ForkJoinTask<?>[] array;   // the elements (initially unallocated)
+        
+        // 当前WorkQueue归属的ForkJoinPool
+        final ForkJoinPool pool;   // the containing pool (may be null)
+        
+        // 当前WorkQueue归属的ForkJoinWorkerThread
+        final ForkJoinWorkerThread owner; // owning thread or null if shared
+        
+        // 
+        volatile Thread parker;    // == owner during call to park; else null
+        
+        // 
+        volatile ForkJoinTask<?> currentJoin;  // task being joined in awaitJoin
+        
+        // 
+        volatile ForkJoinTask<?> currentSteal; // mainly used by helpStealer
+
+        // 一个WorkQueue归属于一个ForkJoinPool以及一个ForkJoinWorkerThread
+        WorkQueue(ForkJoinPool pool, ForkJoinWorkerThread owner) {
+            this.pool = pool;
+            this.owner = owner;
+            // Place indices in the center of array (that is not yet allocated)
+            // 将base和top置于中间位置
+            base = top = INITIAL_QUEUE_CAPACITY >>> 1;
+        }
+
+        /**
+         * Returns an exportable index (used by ForkJoinWorkerThread).
+         */
+        final int getPoolIndex() {
+            return (config & 0xffff) >>> 1; // ignore odd/even tag bit
+        }
+
+        /**
+         * Returns the approximate number of tasks in the queue.
+         */
+        final int queueSize() {
+            int n = base - top;       // non-owner callers must read base first
+            return (n >= 0) ? 0 : -n; // ignore transient negative
+        }
+
+        /**
+         * Provides a more accurate estimate of whether this queue has
+         * any tasks than does queueSize, by checking whether a
+         * near-empty queue has at least one unclaimed task.
+         */
+        final boolean isEmpty() {
+            ForkJoinTask<?>[] a; int n, m, s;
+            return ((n = base - (s = top)) >= 0 ||
+                    (n == -1 &&           // possibly one task
+                     ((a = array) == null || (m = a.length - 1) < 0 ||
+                      U.getObject
+                      (a, (long)((m & (s - 1)) << ASHIFT) + ABASE) == null)));
+        }
+
+        /**
+         * Pushes a task. Call only by owner in unshared queues.  (The
+         * shared-queue version is embedded in method externalPush.)
+         *
+         * @param task the task. Caller must ensure non-null.
+         * @throws RejectedExecutionException if array cannot be resized
+         */
+        final void push(ForkJoinTask<?> task) {
+            ForkJoinTask<?>[] a; ForkJoinPool p;
+            int b = base, s = top, n;
+            if ((a = array) != null) {    // ignore if queue removed
+                int m = a.length - 1;     // fenced write for task visibility
+                U.putOrderedObject(a, ((m & s) << ASHIFT) + ABASE, task);
+                U.putOrderedInt(this, QTOP, s + 1);
+                if ((n = s - b) <= 1) {
+                    if ((p = pool) != null)
+                        p.signalWork(p.workQueues, this);
+                }
+                else if (n >= m)
+                    growArray();
+            }
+        }
+
+        /**
+         * Initializes or doubles the capacity of array. Call either
+         * by owner or with lock held -- it is OK for base, but not
+         * top, to move while resizings are in progress.
+         */
+        final ForkJoinTask<?>[] growArray() {
+            ForkJoinTask<?>[] oldA = array;
+            int size = oldA != null ? oldA.length << 1 : INITIAL_QUEUE_CAPACITY;
+            if (size > MAXIMUM_QUEUE_CAPACITY)
+                throw new RejectedExecutionException("Queue capacity exceeded");
+            int oldMask, t, b;
+            ForkJoinTask<?>[] a = array = new ForkJoinTask<?>[size];
+            if (oldA != null && (oldMask = oldA.length - 1) >= 0 &&
+                (t = top) - (b = base) > 0) {
+                int mask = size - 1;
+                do { // emulate poll from old array, push to new array
+                    ForkJoinTask<?> x;
+                    int oldj = ((b & oldMask) << ASHIFT) + ABASE;
+                    int j    = ((b &    mask) << ASHIFT) + ABASE;
+                    x = (ForkJoinTask<?>)U.getObjectVolatile(oldA, oldj);
+                    if (x != null &&
+                        U.compareAndSwapObject(oldA, oldj, x, null))
+                        U.putObjectVolatile(a, j, x);
+                } while (++b != t);
+            }
+            return a;
+        }
+
+        /**
+         * Takes next task, if one exists, in LIFO order.  Call only
+         * by owner in unshared queues.
+         */
+        final ForkJoinTask<?> pop() {
+            ForkJoinTask<?>[] a; ForkJoinTask<?> t; int m;
+            if ((a = array) != null && (m = a.length - 1) >= 0) {
+                for (int s; (s = top - 1) - base >= 0;) {
+                    long j = ((m & s) << ASHIFT) + ABASE;
+                    if ((t = (ForkJoinTask<?>)U.getObject(a, j)) == null)
+                        break;
+                    if (U.compareAndSwapObject(a, j, t, null)) {
+                        U.putOrderedInt(this, QTOP, s);
+                        return t;
+                    }
+                }
+            }
+            return null;
+        }
+
+        /**
+         * Takes a task in FIFO order if b is base of queue and a task
+         * can be claimed without contention. Specialized versions
+         * appear in ForkJoinPool methods scan and helpStealer.
+         */
+        final ForkJoinTask<?> pollAt(int b) {
+            ForkJoinTask<?> t; ForkJoinTask<?>[] a;
+            if ((a = array) != null) {
+                int j = (((a.length - 1) & b) << ASHIFT) + ABASE;
+                if ((t = (ForkJoinTask<?>)U.getObjectVolatile(a, j)) != null &&
+                    base == b && U.compareAndSwapObject(a, j, t, null)) {
+                    base = b + 1;
+                    return t;
+                }
+            }
+            return null;
+        }
+
+        /**
+         * Takes next task, if one exists, in FIFO order.
+         */
+        final ForkJoinTask<?> poll() {
+            ForkJoinTask<?>[] a; int b; ForkJoinTask<?> t;
+            while ((b = base) - top < 0 && (a = array) != null) {
+                int j = (((a.length - 1) & b) << ASHIFT) + ABASE;
+                t = (ForkJoinTask<?>)U.getObjectVolatile(a, j);
+                if (base == b) {
+                    if (t != null) {
+                        if (U.compareAndSwapObject(a, j, t, null)) {
+                            base = b + 1;
+                            return t;
+                        }
+                    }
+                    else if (b + 1 == top) // now empty
+                        break;
+                }
+            }
+            return null;
+        }
+
+        /**
+         * Takes next task, if one exists, in order specified by mode.
+         */
+        final ForkJoinTask<?> nextLocalTask() {
+            return (config & FIFO_QUEUE) == 0 ? pop() : poll();
+        }
+
+        /**
+         * Returns next task, if one exists, in order specified by mode.
+         */
+        final ForkJoinTask<?> peek() {
+            ForkJoinTask<?>[] a = array; int m;
+            if (a == null || (m = a.length - 1) < 0)
+                return null;
+            int i = (config & FIFO_QUEUE) == 0 ? top - 1 : base;
+            int j = ((i & m) << ASHIFT) + ABASE;
+            return (ForkJoinTask<?>)U.getObjectVolatile(a, j);
+        }
+
+        /**
+         * Pops the given task only if it is at the current top.
+         * (A shared version is available only via FJP.tryExternalUnpush)
+        */
+        final boolean tryUnpush(ForkJoinTask<?> t) {
+            ForkJoinTask<?>[] a; int s;
+            if ((a = array) != null && (s = top) != base &&
+                U.compareAndSwapObject
+                (a, (((a.length - 1) & --s) << ASHIFT) + ABASE, t, null)) {
+                U.putOrderedInt(this, QTOP, s);
+                return true;
+            }
+            return false;
+        }
+
+        /**
+         * Removes and cancels all known tasks, ignoring any exceptions.
+         */
+        final void cancelAll() {
+            ForkJoinTask<?> t;
+            if ((t = currentJoin) != null) {
+                currentJoin = null;
+                ForkJoinTask.cancelIgnoringExceptions(t);
+            }
+            if ((t = currentSteal) != null) {
+                currentSteal = null;
+                ForkJoinTask.cancelIgnoringExceptions(t);
+            }
+            while ((t = poll()) != null)
+                ForkJoinTask.cancelIgnoringExceptions(t);
+        }
+
+        // Specialized execution methods
+
+        /**
+         * Polls and runs tasks until empty.
+         */
+        final void pollAndExecAll() {
+            for (ForkJoinTask<?> t; (t = poll()) != null;)
+                t.doExec();
+        }
+
+        /**
+         * Removes and executes all local tasks. If LIFO, invokes
+         * pollAndExecAll. Otherwise implements a specialized pop loop
+         * to exec until empty.
+         */
+        final void execLocalTasks() {
+            int b = base, m, s;
+            ForkJoinTask<?>[] a = array;
+            if (b - (s = top - 1) <= 0 && a != null &&
+                (m = a.length - 1) >= 0) {
+                if ((config & FIFO_QUEUE) == 0) {
+                    for (ForkJoinTask<?> t;;) {
+                        if ((t = (ForkJoinTask<?>)U.getAndSetObject
+                             (a, ((m & s) << ASHIFT) + ABASE, null)) == null)
+                            break;
+                        U.putOrderedInt(this, QTOP, s);
+                        t.doExec();
+                        if (base - (s = top - 1) > 0)
+                            break;
+                    }
+                }
+                else
+                    pollAndExecAll();
+            }
+        }
+
+        /**
+         * Executes the given task and any remaining local tasks.
+         */
+        final void runTask(ForkJoinTask<?> task) {
+            if (task != null) {
+                scanState &= ~SCANNING; // mark as busy
+                (currentSteal = task).doExec();
+                U.putOrderedObject(this, QCURRENTSTEAL, null); // release for GC
+                execLocalTasks();
+                ForkJoinWorkerThread thread = owner;
+                if (++nsteals < 0)      // collect on overflow
+                    transferStealCount(pool);
+                scanState |= SCANNING;
+                if (thread != null)
+                    thread.afterTopLevelExec();
+            }
+        }
+
+        /**
+         * Adds steal count to pool stealCounter if it exists, and resets.
+         */
+        final void transferStealCount(ForkJoinPool p) {
+            AtomicLong sc;
+            if (p != null && (sc = p.stealCounter) != null) {
+                int s = nsteals;
+                nsteals = 0;            // if negative, correct for overflow
+                sc.getAndAdd((long)(s < 0 ? Integer.MAX_VALUE : s));
+            }
+        }
+
+        /**
+         * If present, removes from queue and executes the given task,
+         * or any other cancelled task. Used only by awaitJoin.
+         *
+         * @return true if queue empty and task not known to be done
+         */
+        final boolean tryRemoveAndExec(ForkJoinTask<?> task) {
+            ForkJoinTask<?>[] a; int m, s, b, n;
+            if ((a = array) != null && (m = a.length - 1) >= 0 &&
+                task != null) {
+                while ((n = (s = top) - (b = base)) > 0) {
+                    for (ForkJoinTask<?> t;;) {      // traverse from s to b
+                        long j = ((--s & m) << ASHIFT) + ABASE;
+                        if ((t = (ForkJoinTask<?>)U.getObject(a, j)) == null)
+                            return s + 1 == top;     // shorter than expected
+                        else if (t == task) {
+                            boolean removed = false;
+                            if (s + 1 == top) {      // pop
+                                if (U.compareAndSwapObject(a, j, task, null)) {
+                                    U.putOrderedInt(this, QTOP, s);
+                                    removed = true;
+                                }
+                            }
+                            else if (base == b)      // replace with proxy
+                                removed = U.compareAndSwapObject(
+                                    a, j, task, new EmptyTask());
+                            if (removed)
+                                task.doExec();
+                            break;
+                        }
+                        else if (t.status < 0 && s + 1 == top) {
+                            if (U.compareAndSwapObject(a, j, t, null))
+                                U.putOrderedInt(this, QTOP, s);
+                            break;                  // was cancelled
+                        }
+                        if (--n == 0)
+                            return false;
+                    }
+                    if (task.status < 0)
+                        return false;
+                }
+            }
+            return true;
+        }
+
+        /**
+         * Pops task if in the same CC computation as the given task,
+         * in either shared or owned mode. Used only by helpComplete.
+         */
+        final CountedCompleter<?> popCC(CountedCompleter<?> task, int mode) {
+            int s; ForkJoinTask<?>[] a; Object o;
+            if (base - (s = top) < 0 && (a = array) != null) {
+                long j = (((a.length - 1) & (s - 1)) << ASHIFT) + ABASE;
+                if ((o = U.getObjectVolatile(a, j)) != null &&
+                    (o instanceof CountedCompleter)) {
+                    CountedCompleter<?> t = (CountedCompleter<?>)o;
+                    for (CountedCompleter<?> r = t;;) {
+                        if (r == task) {
+                            if (mode < 0) { // must lock
+                                if (U.compareAndSwapInt(this, QLOCK, 0, 1)) {
+                                    if (top == s && array == a &&
+                                        U.compareAndSwapObject(a, j, t, null)) {
+                                        U.putOrderedInt(this, QTOP, s - 1);
+                                        U.putOrderedInt(this, QLOCK, 0);
+                                        return t;
+                                    }
+                                    U.compareAndSwapInt(this, QLOCK, 1, 0);
+                                }
+                            }
+                            else if (U.compareAndSwapObject(a, j, t, null)) {
+                                U.putOrderedInt(this, QTOP, s - 1);
+                                return t;
+                            }
+                            break;
+                        }
+                        else if ((r = r.completer) == null) // try parent
+                            break;
+                    }
+                }
+            }
+            return null;
+        }
+
+        /**
+         * Steals and runs a task in the same CC computation as the
+         * given task if one exists and can be taken without
+         * contention. Otherwise returns a checksum/control value for
+         * use by method helpComplete.
+         *
+         * @return 1 if successful, 2 if retryable (lost to another
+         * stealer), -1 if non-empty but no matching task found, else
+         * the base index, forced negative.
+         */
+        final int pollAndExecCC(CountedCompleter<?> task) {
+            int b, h; ForkJoinTask<?>[] a; Object o;
+            if ((b = base) - top >= 0 || (a = array) == null)
+                h = b | Integer.MIN_VALUE;  // to sense movement on re-poll
+            else {
+                long j = (((a.length - 1) & b) << ASHIFT) + ABASE;
+                if ((o = U.getObjectVolatile(a, j)) == null)
+                    h = 2;                  // retryable
+                else if (!(o instanceof CountedCompleter))
+                    h = -1;                 // unmatchable
+                else {
+                    CountedCompleter<?> t = (CountedCompleter<?>)o;
+                    for (CountedCompleter<?> r = t;;) {
+                        if (r == task) {
+                            if (base == b &&
+                                U.compareAndSwapObject(a, j, t, null)) {
+                                base = b + 1;
+                                t.doExec();
+                                h = 1;      // success
+                            }
+                            else
+                                h = 2;      // lost CAS
+                            break;
+                        }
+                        else if ((r = r.completer) == null) {
+                            h = -1;         // unmatched
+                            break;
+                        }
+                    }
+                }
+            }
+            return h;
+        }
+
+        /**
+         * Returns true if owned and not known to be blocked.
+         */
+        final boolean isApparentlyUnblocked() {
+            Thread wt; Thread.State s;
+            return (scanState >= 0 &&
+                    (wt = owner) != null &&
+                    (s = wt.getState()) != Thread.State.BLOCKED &&
+                    s != Thread.State.WAITING &&
+                    s != Thread.State.TIMED_WAITING);
+        }
+
+        // Unsafe mechanics. Note that some are (and must be) the same as in FJP
+        private static final sun.misc.Unsafe U;
+        private static final int  ABASE;
+        private static final int  ASHIFT;
+        private static final long QTOP;
+        private static final long QLOCK;
+        private static final long QCURRENTSTEAL;
+        static {
+            try {
+                U = sun.misc.Unsafe.getUnsafe();
+                Class<?> wk = WorkQueue.class;
+                Class<?> ak = ForkJoinTask[].class;
+                QTOP = U.objectFieldOffset
+                    (wk.getDeclaredField("top"));
+                QLOCK = U.objectFieldOffset
+                    (wk.getDeclaredField("qlock"));
+                QCURRENTSTEAL = U.objectFieldOffset
+                    (wk.getDeclaredField("currentSteal"));
+                ABASE = U.arrayBaseOffset(ak);
+                int scale = U.arrayIndexScale(ak);
+                if ((scale & (scale - 1)) != 0)
+                    throw new Error("data type scale not a power of two");
+                ASHIFT = 31 - Integer.numberOfLeadingZeros(scale);
+            } catch (Exception e) {
+                throw new Error(e);
+            }
+        }
+    }
+
+```
+
+## 4.4 重要方法
+
+### 4.4.1 submit
 
 ```Java
     /**
@@ -367,7 +886,7 @@ doJoin方法执行具体的join逻辑，即合并各个线程执行任务的结�
     }
 ```
 
-#### 4.3.1.1 externalPush
+#### 4.4.1.1 externalPush
 
 ```Java
     /**
