@@ -391,6 +391,8 @@ ConditionObject源码分析请参考 {% post_link Java-concurrent-AQS-ConditionO
 
 ## 3.15 jdk8的parallelStream的理解
 
+http://blog.csdn.net/u011001723/article/details/52794455
+
 ## 3.16 分段锁的原理,锁力度减小的思考
 
 # 4 Spring
