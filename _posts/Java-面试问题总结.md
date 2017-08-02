@@ -469,9 +469,15 @@ dubbo在服务发现这个地方做的更像一个dns（个人感觉），一个
 但是这两个功能，dubbo做不到第一个。
 所以，结合你自己的业务来选择用什么，nginx和dubbo在使用上说白了就是一个先后的关系而已（当然也是我个人感觉）。
 
+http://dubbo.io/developer-guide/%E6%A1%86%E6%9E%B6%E8%AE%BE%E8%AE%A1.html
+
+![fig1](/images/Java-面试问题总结/fig1.jpg)
+
 ## 5.2 描述一个服务从发布到被消费的详细过程
 
 ## 5.3 分布式系统怎么做服务治理
+
+http://www.jianshu.com/p/104b27d1e943
 
 ## 5.4 接口的幂等性的概念
 
