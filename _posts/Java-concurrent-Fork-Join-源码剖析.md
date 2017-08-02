@@ -401,10 +401,10 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
         // 
         volatile int qlock;        // 1: locked, < 0: terminate; else 0
         
-        // 指向下一个poll的元素
+        // 指向下一个poll的元素，一般而言，base<top，base可能大于array.length
         volatile int base;         // index of next slot for poll
         
-        // 指向下一个push的元素
+        // 指向下一个push的元素，一般而言，base<top，base可能大于array.length
         int top;                   // index of next slot for push
         
         // 
@@ -444,6 +444,7 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
         /**
          * Returns the approximate number of tasks in the queue.
          */
+        // 返回队列中的元素，即base~top之间的元素个数
         final int queueSize() {
             int n = base - top;       // non-owner callers must read base first
             return (n >= 0) ? 0 : -n; // ignore transient negative
@@ -454,6 +455,9 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
          * any tasks than does queueSize, by checking whether a
          * near-empty queue has at least one unclaimed task.
          */
+        // 该方法提供比queueSize()更准确的估计
+        // 1. 如果base~top没有元素，则直接返回true
+        // 2. 当base~top含有一个元素，且数组a中并不存在元素时返回true
         final boolean isEmpty() {
             ForkJoinTask<?>[] a; int n, m, s;
             return ((n = base - (s = top)) >= 0 ||
@@ -475,7 +479,9 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
             int b = base, s = top, n;
             if ((a = array) != null) {    // ignore if queue removed
                 int m = a.length - 1;     // fenced write for task visibility
+                // 为什么m&s相当于计算下标，m的bit位形如000..111。putOrderedObject插入StoreStore内存屏障，禁止写写重排序
                 U.putOrderedObject(a, ((m & s) << ASHIFT) + ABASE, task);
+                // putOrderedInt插入StoreStore内存屏障，禁止写写重排序
                 U.putOrderedInt(this, QTOP, s + 1);
                 if ((n = s - b) <= 1) {
                     if ((p = pool) != null)
@@ -901,28 +907,74 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
         WorkQueue[] ws; WorkQueue q; int m;
         int r = ThreadLocalRandom.getProbe();
         int rs = runState;
-        // 下面这堆条件的意思是：workQueues不为null且workQueues不为空且随机取出的WorkQueue不为空且随机数不为0且成功锁定
+        // 下面这堆条件的意思是：先进行一些边界条件的判断，然后获取锁状态，即当前线程拿到了独占资源，可以进行一些线程安全的操作
         if ((ws = workQueues) != null && (m = (ws.length - 1)) >= 0 &&
             (q = ws[m & r & SQMASK]) != null && r != 0 && rs > 0 &&
             U.compareAndSwapInt(q, QLOCK, 0, 1)) {
             ForkJoinTask<?>[] a; int am, n, s;
+            // n代表已经占用的数组中的元素的个数。当数组中仍有剩余元素时，那么将指定的task放入queue的尾部，即top指向的地方
             if ((a = q.array) != null &&
                 (am = a.length - 1) > (n = (s = q.top) - q.base)) {
-                // 计算偏移量
+                // 由于top可能大于数组长度，因此通过&运算符来计算下标，这也是为什么数组长度必须是2的幂次的原因，如果数组长度是其他的数值，那么求余运算的开销将会比较大。下面的表达式含义就是计算top指向的位置的内存偏移量，然后利用Unsafe的put方法进行赋值操作
                 int j = ((am & s) << ASHIFT) + ABASE;
+                // putOrderedObject可以插入StoreStore内存屏障禁止写写重排序
                 U.putOrderedObject(a, j, task);
                 U.putOrderedInt(q, QTOP, s + 1);
+                // 这里为什么还需要putIntVolatile？qlock字段本来就是volatile的
                 U.putIntVolatile(q, QLOCK, 0);
+                // 当Task数量很少???
                 if (n <= 1)
                     signalWork(ws, q);
                 return;
             }
+            // 解锁
             U.compareAndSwapInt(q, QLOCK, 1, 0);
         }
         externalSubmit(task);
     }
 ```
 
+#### 4.4.1.2 signalWork
+
+当work数量过少时，signalWork方法用于创建或者激活一些worker。
+
+```Java
+    /**
+     * Tries to create or activate a worker if too few are active.
+     *
+     * @param ws the worker array to use to find signallees
+     * @param q a WorkQueue --if non-null, don't retry if now empty
+     */
+    final void signalWork(WorkQueue[] ws, WorkQueue q) {
+        long c; int sp, i; WorkQueue v; Thread p;
+        while ((c = ctl) < 0L) {                       // too few active
+            if ((sp = (int)c) == 0) {                  // no idle workers
+                if ((c & ADD_WORKER) != 0L)            // too few workers
+                    tryAddWorker(c);
+                break;
+            }
+            if (ws == null)                            // unstarted/terminated
+                break;
+            if (ws.length <= (i = sp & SMASK))         // terminated
+                break;
+            if ((v = ws[i]) == null)                   // terminating
+                break;
+            int vs = (sp + SS_SEQ) & ~INACTIVE;        // next scanState
+            int d = sp - v.scanState;                  // screen CAS
+            long nc = (UC_MASK & (c + AC_UNIT)) | (SP_MASK & v.stackPred);
+            if (d == 0 && U.compareAndSwapLong(this, CTL, c, nc)) {
+                v.scanState = vs;                      // activate v
+                if ((p = v.parker) != null)
+                    U.unpark(p);
+                break;
+            }
+            if (q != null && q.base == q.top)          // no more work
+                break;
+        }
+    }
+```
+
 # 5 参考
 
 * [聊聊并发（八）——Fork/Join框架介绍](http://www.infoq.com/cn/articles/fork-join-introduction)
+* [深入浅出parallelStream](http://blog.csdn.net/u011001723/article/details/52794455)

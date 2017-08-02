@@ -570,3 +570,35 @@ __根据FutureTask的状态，返回相应的结果__
         throw new ExecutionException((Throwable)x);
     }
 ```
+
+## 7.4 cancel
+
+cancel方法用于中断当前task，参数mayInterruptIfRunning用于指示是否允许中断正在运行的task。
+
+```Java
+    public boolean cancel(boolean mayInterruptIfRunning) {
+        // 条件为真时
+            // 1. state != NEW (已经处于一个最终状态了，此时cancel是没用的)
+            // 2. state == NEW 且CAS操作失败(此时可能在多个线程中都执行了该方法)
+        if (!(state == NEW &&
+              UNSAFE.compareAndSwapInt(this, stateOffset, NEW,
+                  mayInterruptIfRunning ? INTERRUPTING : CANCELLED)))
+            return false;
+        try {    // in case call to interrupt throws exception
+            if (mayInterruptIfRunning) {
+                try {
+                    Thread t = runner;
+                    // 发送一个中断信号
+                    if (t != null)
+                        t.interrupt();
+                } finally { // final state
+                    // 修改状态为INTERRUPTED
+                    UNSAFE.putOrderedInt(this, stateOffset, INTERRUPTED);
+                }
+            }
+        } finally {
+            finishCompletion();
+        }
+        return true;
+    }
+```
