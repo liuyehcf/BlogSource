@@ -15,6 +15,7 @@ __目录__
 <!--more-->
 
 # 1 引言
+
 AQS(AbstractQueuedSynchronizer，同步阻塞队列)是concurrent包下锁机制实现的基础框架
 这篇博客主要针对AbstractQueuedSynchronizer的源码进行分析，大致分为三个部分：
 
@@ -25,6 +26,7 @@ AQS(AbstractQueuedSynchronizer，同步阻塞队列)是concurrent包下锁机制
 所有的分析仅基于个人的理解，若有不正之处，请谅解和批评指正，不胜感激！！！
 
 # 2 Node解析
+
 AQS在内部维护了一个同步阻塞队列，__下面简称sync queue__，该队列的元素即静态内部类Node的实例。首先来看Node中涉及的常量定义，源码如下
 ```Java
         /** Marker to indicate a node is waiting in shared mode */
@@ -153,6 +155,7 @@ AQS在内部维护了一个同步阻塞队列，__下面简称sync queue__，该
 * __注意：Condition queue用nextWaiter来连接单向链表(pre与next是无用的)，sync queue利用pre和next来连接双向链表(nextWaiter仅用于标记独占或者共享模式而已)，不要搞混了！！！__
 
 # 3 AQS字段解析
+
 AQS字段仅有三个，源码如下
 ```Java
     /**
@@ -182,6 +185,7 @@ AQS字段仅有三个，源码如下
 # 4 重要方法解析
 
 ## 4.1 acquire
+
 __acquire方法用于获取指定数量的资源，如果获取不到则当前线程会被阻塞__
 
 * 该方法内部不响应中断，在成功获取资源后会恢复中断现场，但是不会抛出InterruptedException异常
@@ -224,6 +228,7 @@ __tryAcquire方法用于判断是否能够获取资源__
 ```
 
 ### 4.1.2 addWaiter
+
 __无法获取资源的线程将被封装成Node节点，通过addWaiter方法将指定节点添加到到sync queue中__
 
 * 根据指定模式，将当前线程封装成一个Node节点，并且添加到sync queue中
@@ -297,6 +302,7 @@ __这里抛出一个问题__
 * 在初始化sync queue中，将一个new Node()设置为了sync queue的头结点，该节点没有关联任何线程，我称之为"Dummy Node"，这个头结点"Dummy Node"待会可能会被后继节点设置为SIGNAL状态，那么它是如何唤醒后继节点的呢？我会在在讲到release时进行解释
 
 ### 4.1.4 acquireQueued
+
 __至此，线程已被封装成节点，并且成功添加到sync queue中去了，接下来，来看最重要的acquireQueued方法__
 
 * 该方法不断地通过死循环+CAS操作的方式获取资源(当且仅当节点是sync queue中第二个节点时才有资格获取资源)
@@ -429,6 +435,7 @@ __至此，独占模式的acquire调用链分析完毕，总结一下__
 __AQS通过死循环以及CAS操作来串行化并发操作，并且通过这种适当的自旋加阻塞，来减少频繁的加锁解锁操作__
 
 ## 4.2 release
+
 __release方法是独占模式下实现解锁语义的入口方法__
 
 * 只有当头结点的状态不为0时，才会执行唤醒后继节点的动作
@@ -614,6 +621,7 @@ __doAcquireShared方法是核心方法__
 ```
 
 ### 4.3.3 setHeadAndPropagate
+
 __setHeadAndPropagate方法主要逻辑__
 
 * 将当前节点设置为头结点，并且当仍有资源可供其他线程获取时，让其他线程继续获取资源，这也就是共享模式的含义
@@ -697,6 +705,7 @@ __tryReleaseShared方法用于判断是否能够释放资源__
 ```
 
 ### 4.4.2 doReleaseShared
+
 __doReleaseShared方法是共享模式下共享含义体现的重要方法__
 
 * 该方法配合setHeadAndPropagate方法能够实现release propagate

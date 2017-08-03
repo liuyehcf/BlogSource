@@ -22,6 +22,7 @@ __ArrayBlockingQueue的分析分为以下几个部分__
 * 重要方法源码分析
 
 # 2 字段介绍
+
 ```Java
     /** The queued items */
     // 数组，用于存放元素，注意到该字段是final修饰的，因此ArrayBlockingQueue是不能扩容的，其容量在初始化时就已经确定    

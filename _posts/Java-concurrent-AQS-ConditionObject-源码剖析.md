@@ -15,11 +15,13 @@ __目录__
 <!--more-->
 
 # 1 前言
+
 Java语言本身提供了基于Object的wait/notify机制，任何Java Object都可以进行加锁/解锁，并且可以作为一个Monitor进行wait/notify操作，AQS框架也提供类机制，通过AQS内部类ConditionObject来实现
 本篇博文针对ConditionObject的源码进行分析，有关AQS的源码分析请参考另一篇博客 {% post_link Java-concurrent-AQS-源码剖析 %}
 所有的分析仅基于个人的理解，若有不正之处，请谅解和批评指正，不胜感激！！！
 
 # 2 Condition接口
+
 ```Java
 public interface Condition {
 
@@ -57,6 +59,7 @@ __强调一点：AQS的独占模式才支持ConditionObject__
 # 3 源码分析
 
 ## 3.1 字段
+
 ```Java
         /** First node of condition queue. */
         private transient Node firstWaiter;
@@ -67,6 +70,7 @@ ConditionObject就两个字段，一个是condition queue头结点，另一个�
 ConditionObject利用了AQS中的Node静态内部类用于封装节点。__指的注意的是，对于位于condition queue中的节点而言，这些节点的Node#prev以及Node#next字段是无用的，也就是null，condition queue是利用Node#nextWaiter来连接整个conditoin queue的__
 
 ## 3.2 await
+
 该方法类似于Object#wait方法，让当前线程在该ConditionObject上阻塞，直至被signal(类似于Object的notify/notifyAll)或者被中断，必须在持有锁的状态下才能调用该方法，否则会引发异常
 ```Java
         /**
@@ -246,6 +250,7 @@ transferAfterCancelledWait方法在发生中断时，将节点从condition queue
 注意，因为interrupt而被已送至sync queue的节点，仍然位于condition queue中(其状态不为CONDITION)，其nextWaiter字段不为空，在await方法中会执行unlinkCancelledWaiters方法，来除去这些异常节点
 
 ## 3.3 signal
+
 signal方法类似于Object#notify方法，将一个节点(线程)从条件变量的阻塞队列(condition queue)中移动到同步队列中(sync queue)，让该节点重新尝试获取资源
 ```Java
         /**
@@ -324,6 +329,7 @@ signal方法类似于Object#notify方法，将一个节点(线程)从条件变�
 ```
 
 ## 3.4 signalAll
+
 signalAll方法类似于Object的notifyAll方法，该方法唤醒所有阻塞在condition queue中的节点，并将其全部移送至sync queue中
 ```Java
         /**
@@ -364,6 +370,7 @@ signalAll方法类似于Object的notifyAll方法，该方法唤醒所有阻塞�
 ```
 
 ## 3.5 其他形式的await
+
 首先是awaitNanos(long nanosTimeout)，该方法等待指定时间，超时后便直接转移到sync queue中。方法返回剩余纳秒数
 ```Java
         /**

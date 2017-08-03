@@ -24,6 +24,7 @@ Class文件格式采用一种类似于C语言结构体的伪结构来存储数�
 * 无论是无符号数还是表，当需要描述同一类型但数量不定的多个数据时，经常会使用一个前置的容量计数器加若干个连续的数据项的形式，这时称这一系列连续的某一类型数据为某一类型的集合
 
 ## 1.1 Class文件内部结构如下表所示
+
 | 类型         | 名称           | 数量  |
 |:------------- |:--------------|:-------|
 | u4 | magic(魔数) | 1 |
@@ -44,6 +45,7 @@ Class文件格式采用一种类似于C语言结构体的伪结构来存储数�
 | attribute_info | attributes(属性) | attributes_count |
 
 ## 1.2 常量池
+
 紧接着主次版本号之后的是常量池入口
 
 * 常量池可以理解为Class文件之中的资源仓库
@@ -58,6 +60,7 @@ Class文件格式采用一种类似于C语言结构体的伪结构来存储数�
 * 常量的数量=常量计数值-1(例如0x0016=22，代表常量池中有21项常量，索引范围1~21)
 
 ### 1.2.1 符号引用
+
 常量池中主要存放两大类常量：字面量(Literal)和 __符号引用(Symbolic References)__
 
 * 字面量比较接近于Java语言层面的常量概念，如文本字符串、声明为final的常量值等
@@ -72,6 +75,7 @@ Java代码在进行Javac编译的时候，并不像C和C++那样有"连接"这�
 * 当虚拟机运行时，需要从常量池获得对应的符号引用，再在类创建时或运行时解析、翻译到具体的内存地址之中
 
 #### 1.2.1.1 那么什么是符号引用呢？
+
 符号引用(Symbolic References)具有如下性质
 
 * 符号引用以一组符号来描述所引用的目标，符号可以是任何形式的字面量，只要使用时无歧义地定位到目标即可
@@ -79,12 +83,14 @@ Java代码在进行Javac编译的时候，并不像C和C++那样有"连接"这�
 * 各种虚拟机实现的内存布局可以各不相同，但是它们能接受的符号引用必须一致，因为符号引用的字面量形式明确定义在Java虚拟机规范的Class文件格式中
 
 #### 1.2.1.2 为什么要使用符号引用呢？
+
 我的理解是：Class文件是一种平台无关的存储格式，字节码(ByteCode)是构成平台无关的基石，Class文件的常量池中存有大量的符号引用，字节码中的方法调用指令就以常量池中指向方法的符号引用作为参数
 
 * 这些符号引用一部分会在类加载阶段或者第一次使用的时候就转化为直接引用，这种转化称为<静态解析>
 * 另外一部分将在每一次运行期间转化为直接引用，这部分称为<动态连接>
 
 ### 1.2.2  常量池中的类型
+
 常量池中每一项都是一个表
 
 * 在JDK 1.7之前共有11中结构各不相同的表结构数据
@@ -110,6 +116,7 @@ Java代码在进行Javac编译的时候，并不像C和C++那样有"连接"这�
 | CONSTANT_InvokeDynamic_info | 18 | 表示一个动态方法调用点 | 
 
 ## 1.3 访问标志
+
 在常量池结束之后，紧接着的两个字节代表访问标志(access_flags)
 
 * 这个标志用于识别一些类或者接口层次的访问信息，包括：
@@ -132,6 +139,7 @@ Java代码在进行Javac编译的时候，并不像C和C++那样有"连接"这�
 | ACC_ENUM | 0x4000 | 标志这是一个枚举 | 
 
 ## 1.4 类索引、父类索引与接口索引集合
+
 类索引(this_class)和父类索引(super_class)都是一个u2类型的数据，而接口索引集合(interfaces)是一组u2类型的数据的集合，Class文件中由这三项数据来确定这个类的继承关系
 
 * 类索引用于确定这个类的全限定名，父类索引用于确定这个类的父类的全限定名
@@ -146,6 +154,7 @@ Java代码在进行Javac编译的时候，并不像C和C++那样有"连接"这�
 * 如果该类没有实现任何接口，计数器为0，后面接的索引表将不再占用任何字节
 
 ## 1.5 字段表集合
+
 字段表(field_info)用于描述接口或者类中声明的变量
 
 字段包含的信息，概括起来就是分为以下三类
@@ -226,6 +235,7 @@ __描述符__
 | L | 对象类型，例如Ljava/lang/Object | 
 
 ## 1.6 方法表集合
+
 Class文件存储格式中对方法的表述与对字段的描述几乎采用了完全一致的方式，方法表的结构如同字段一样，依次包括
 
 * 访问标志(access_flags)，即方法修饰符
@@ -303,6 +313,7 @@ __javap或者用文本形式表示Java字节码时，那些带offset参数的字
  __深入理解Java虚拟机__
 
 ## 3.2 什么是字节码
+
 Java虚拟机就的指令由一个字节长度的、代表着某种特定操作含义的数字(称为操作码，Opcode)以及跟随其后的零个或多个代表此操作所需参数(称为操作数，Operands)而构成
  
 __由于Java虚拟机采用面向操作数栈而不是寄存器的架构，所以大多数指令都不包含操作数，只有一个操作码__
@@ -325,6 +336,7 @@ __Java解释器的伪代码模型__
 ```
 
 ## 3.3 字节码与数据类型
+
 __Java虚拟机的指令集中，大多数的指令都包含了其操作对应的数据类型__
 
 * 例如iload指用于从局部变量表中加载int型的数据到操作数栈中
@@ -534,6 +546,7 @@ __实际被调用的方法将按照下面的步骤进行(假设C是objectref的�
 * 否则，抛出异常，根据不同的情况将会抛出不同的异常，详见[jvms-6.5.invokevirtual](https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5.invokevirtual)
 
 ### 3.10.2 invokeinterface
+
 __invokeinterface字节码用于调用接口方法__
 
 * __该字节码有4个字节操作数__   (indexbyte1, indexbyte2, count, 0)
@@ -550,6 +563,7 @@ __实际被调用的方法将按照下面的步骤进行(假设C是objectref的�
 * 否则，抛出异常，根据不同的情况将会抛出不同的异常，详见[jvms-6.5.invokeinterface](https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5.invokeinterface)
 
 ### 3.10.3 invokespecial
+
 __invokespecial：用于调用一些需要特殊处理的实例方法，包括实力初始化方法、私有方法和父类方法__
 
 * __该字节码有两个字节操作数__，这两个字节操作数共同决定一个常量池偏移量(index=indexbyte1 << 8 + indexbyte2)
@@ -583,18 +597,21 @@ class Test {
 ```
 
 ### 3.10.4 invokestatic
+
 __invokestatic：用于调用类方法(static)__
 
 * __该字节码有两个字节操作数__，这两个字节操作数共同决定一个常量池偏移量(index=indexbyte1 << 8 + indexbyte2)
 * 操作数栈：..., [arg1, [arg2 ...]] →...
 
 ### 3.10.5 invokedynamic
+
 __invokedynamic：用于在运行时动态解析出调用点限定符所引用的方法，并执行该方法，前面4条指令的分派逻辑都固化在Java虚拟机内部，而invokedynamic指令的分派逻辑是由用户设定的引导方法决定的__
 
 * __该字节码有4个字节操作数__   (indexbyte1, indexbyte2, 0, 0)
     * 前两个字节操作数共同决定一个常量池偏移量(index=indexbyte1 << 8 + indexbyte2)
 
 ### 3.10.6 方法返回指令
+
 __方法调用指令与数据类型无关，而方法返回指令是根据返回值的类型区分的，包括ireturn(当返回值是boolean、byte、char、short和int类型时使用)、lreturn、freturn、dreturn和areturn，另外还有一条return指令供声明为void的方法、实例初始化方法以及类和接口的类初始化方法使用__
 
 * ireturn：返回栈顶元素，并且将栈顶元素出栈。__没有操作数__
@@ -604,6 +621,7 @@ __方法调用指令与数据类型无关，而方法返回指令是根据返回
 * areturn：返回栈顶元素，并且将栈顶元素出栈。__没有操作数__
 
 ## 3.11 异常处理指令
+
 在Java程序中显式抛出异常的操作(throw语句)都由athrow指令来实现，除了用throw语句显式抛出异常情况之外，Java虚拟机规范还规定了许多运行时异常会在其他Java虚拟机指令检测到异常状况时抛出
 
 __在Java虚拟机中，处理异常(catch语句)不是由字节码指令来实现的，而是采用异常表来完成的__
@@ -655,6 +673,7 @@ __同步一段指令集序列通常是由Java语言中的synchronized语句块�
 1. putstatic
 
 # 4 阅读javap解析后的字节码文件
+
 本节将对不同的java语法(例如循环、条件控制、方法、构造方法、synchronized关键字等等)进行字节码层面的分析
 
 ## 4.1 循环字节码分析
@@ -1062,6 +1081,7 @@ __可以看出，for each本质上就是通过返回一个迭代器Iterator，�
 ## 4.2 方法调用字节码分析
 
 ### 4.2.1 调用接口方法
+
 ```Java
 1 import java.util.List;
 2 
@@ -1160,6 +1180,7 @@ __着重对invokeInterfaceMethod方法的字节码进行分析__
 * &lt;8: return&gt;：返回
 
 ### 4.2.2 调用静态方法
+
 ```Java
 1 public class Test {
 2     public static void staticMethod(int i) {}
@@ -1256,6 +1277,7 @@ __着重对invokeStaticMethod方法的字节码进行分析__
 __对比invokeinterface字节码指令，invokestatic少了一个表示操作数数量的参数__，因为静态方法不需要调用对象，而非静态方法需要指定调用对象。因此invokeinterface字节码必须确定方法调用所需要的操作数数量，最下面的操作数就是调用对象的引用
 
 ### 4.2.3 调用private方法
+
 ```Java
 1 public class Test {
 2    private void privateMethod(int i) {}
@@ -1342,6 +1364,7 @@ __着重对invokePrivateMethod方法的字节码进行分析__
 ## 4.3 synchronized字节码分析
 
 ### 4.3.1 synchronized修饰的方法
+
 ```Java
 1 public class Test {
 2    public synchronized void synchronizedMethod(int i) {}
@@ -1441,6 +1464,7 @@ __着重对invokeSynchronizedMethod方法的字节码进行分析__
 __很奇怪，在字节码中并没有发现monitorenter与monitorexit，那么这两个字节码何时会插入呢__
 
 ### 4.3.2 synchronized块
+
 __以一个单例模式为例子，其中父类Base，接口Interface1和Interface2是空类以及空接口__
 ```Java
 1  public class Singleton extends Base implements Interface1,Interface2{
