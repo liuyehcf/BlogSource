@@ -115,7 +115,6 @@ CMS(Concurrent Mark Sweep)收集器是一种__以获取最短回收停顿时间�
 1. __并发标记(CMS concurrent mark)__
 1. __重新标记(CMS remark)__
 1. __并发清除(CMS concurrent sweep)__
-
 * 初始标记，重新标记这两个步骤仍然需要"Stop The World"
 * 初始标记仅仅只是标记一下GC Roots能直接关联到的对象，速度很快
 * 并发标记阶段就是进行GC Roots Tracing的过程

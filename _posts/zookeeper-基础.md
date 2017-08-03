@@ -183,7 +183,6 @@ Watch由客户端所连接的ZooKeeper服务器在本地维护，因此watch可�
 Zookeeper的watch实际上要处理两类事件：
 
 1. 连接状态事件(type=None, path=null)：这类事件不需要注册，也不需要我们连续触发，我们只要处理就行了。
-
 1. 节点事件：节点的建立，删除，数据的修改。它是one time trigger，我们需要不停的注册触发，还可能发生事件丢失的情况。
 
 上面2类事件都在Watch中处理，也就是重载的process(Event event)

@@ -128,7 +128,6 @@ __ConcurrentHashMap源码分析分为以下几个部分__
 __常量分为两大类__
 
 1. __第一大类是配置参数__
-
     * __MAXIMUM_CAPACITY__：32位整型中最高两位作为控制参数，因此hashtable的最大容量是1<<30，必须是2的幂次(至于为什么必须是2的幂次，以及2的幂次能带来的好处，下面的分析会多次提到)
     * __DEFAULT_CAPACITY__：hashtable的默认初始容量，当构造函数不指定大小时，以该值为默认的初始hashtable大小
     * __MAX_ARRAY_SIZE__：toArray方法中会用到，大小可以是非2的幂次

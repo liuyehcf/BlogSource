@@ -308,9 +308,9 @@ __javap或者用文本形式表示Java字节码时，那些带offset参数的字
 
 若有异议或疑问，请参考以下3个参考文献
 
- __[Java bytecode instruction listings](https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings)__
- __[Java Virtual Machine Specification](https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5.jsr)__
- __深入理解Java虚拟机__
+ * __[Java bytecode instruction listings](https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings)__
+ * __[Java Virtual Machine Specification](https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5.jsr)__
+ * __深入理解Java虚拟机__
 
 ## 3.2 什么是字节码
 
@@ -1618,7 +1618,6 @@ __着重对getSingleton方法的字节码进行分析__
         * &lt;29: goto          37&gt;：跳转到偏移量为37的字节码指令处，该字节码不改变操作数栈
         * &lt;37: getstatic     #2&gt;：getstatic获取类的静态字段，其中字段由常量池的符号引用表示，并push到操作数栈
         * &lt;40: areturn&gt;：返回操作数顶部元素，方法结束
-
     * __以下为ifnonnull成立时的执行逻辑__
     * &lt;37: getstatic     #2&gt;：getstatic获取类的静态字段，其中字段由常量池的符号引用表示，并push到操作数栈
     * &lt;40: areturn&gt;：返回操作数顶部元素，方法结束

@@ -143,7 +143,6 @@ __Paxos要求满足的前置假设只有一个：消息内容不会被篡改__�
 拒绝策略总是需要有一个依据，之前我们的依据是消息到达的先后，只接受第一个到达的消息，但这导致不满足活性。现在我们需要另一个拒绝策略，也就是需要另一个依据，这个依据至少能够区分两个消息。为此我们引入一个ID来描述这个消息，这样就可以根据ID的大小来作为拒绝或接受的依据；选择ID更大的消息接受和选择ID更小的消息接受是两种完全对称的策略，不妨选择前者。__这个策略不会导致明显的活性问题，ID更大的消息总是能被接受，一个节点可以多次更改v的值__。例如在场景1’中，只要`P1`的消息ID比`P3`发送给自己的消息ID更大，`P3`就会接受`P1`的消息，`令v = a`，从而令`v`的值被决定为`a`。再来考虑最初的场景1，不妨假设P1的消息ID大于P2的消息ID，根据P3收消息的先后可以分为两种情况：
 
 1. `P3`先收到`P1`的消息，记做场景1-2，由于`P1`的消息是`P3`收到的第一个消息，`P3`接受该请求，令`v = a`；同时为了能对之后的收到的消息作出是否接受的判断，`P3`需要记录该消息的ID作为判断的依据。之后`P3`又收到`P2`的消息，该消息的ID小于`P3`记录的ID，即`P1`的消息ID，因此P3拒绝该消息，这样我们的目的就达到。
-
 2. `P3`先收到`P2`的消息，记作场景1-3，同样`P3`接受该消息，令`v = b`，记录该消息的ID。之后`P3`收到`P1`的消息，由于`P1`的消息ID大于`P3`记录的ID，因此`P3`无法拒绝该消息，之前的问题依旧存在。
 
 尽管对于场景1-3，目前的策略依旧无法保证一致性，但是起码我们缩小协议无法保证安全性的场景的范围。先总结下我们目前的策略，并定义一些称谓以方便后面的论述。我们称呼进程`P`发送的尝试修改另一个进程中变量`v`的值的消息称之为提案，记作`Proposal`；提案的ID记作`proposal_id`；如果提案中附带的值被决定为是`v`的值，即大多数接受者接受了这个提案，那么称提案被通过。进程`P`记录的接受的提案ID为`a_proposal_id`。之前我们尚未清晰地定义`a_proposal_id`，实际上我们也就并未清晰地定义我们的拒绝策略，当`P`收到一个提案`Proposal-i`时，可能已经收到过多个提案，`Proposal-i.proposal_id`该和其中哪个提案的`proposal_id`比较，我们并未定义。__我们定义为其中的最大者，这样实际上进程`P`只需维护一个`a_proposal_id`即可__，当收到一个`Proposal`时，更新`a_proposal_id = max(Proposal.proposal_id，a_proposal_id）`。同时在之前的描述中我们应当注意到实际上一个进程存在两个功能：
@@ -156,7 +155,6 @@ __因此可以把一个进程分为两个角色，称负责功能1的角色是�
 1. `P3`能够拒绝掉`P2`的提案
 1. `P3`能够拒绝掉`P1`的提案
 1. 限制`P1`提出的提案，如果`P1`的提案尝试决定的v的值与`P2`的提案一致，那么接受`P1`也不会破坏一致性
-
 * 我的问题：既然`P1`的提案与`P2`的提案的`v`值相同，那`P1`为什么还要提案？这个提案有什么意义？
 
 接着我们分析三个角度的可行性：
@@ -204,7 +202,6 @@ __为了不失一般性，下面我们都以N个进程的场景作为讨论的�
 
 1. 对于情形1，`Ps`先收到`PreProposal-f`，接受它，更新`Ps.a_proposal_id = PreProposal-f.proposal_id > Proposal-j.proposal_id`，同时之前的`a_proposal_id`的更新策略又使得`Ps.a_proposal_id`是递增的，于是导致`Proposal-j`由于`proposal_id < Ps.a_proposal_id`被拒绝，与假设不符合，矛盾。该情况不成立
 1. 对于情况2，`Ps`将把提案`Proposal-j`回复给`PreProposal-f`。由于我们假设了策略`cl`的存在，于是`Pf`在收到所有`Q-f`对`PreProposal-f`的回复后，将令`Proposal-f.v = Proposal-j.v`，`cl`就是干这个的。因此`Proposal-f.v != Proposal-j.v`矛盾。该情况不成立
-
 * 由于当假设`PreProposal-f.proposal_id > Proposal-j.proposal_id`时，情形1，2我们都得出了矛盾，同时两者的`proposal_id`又不相等(最初的假设），所以必然`PreProposal-f.proposal_id < Proposal-j.proposal_id`，即`Propsoal-f.proposal_id < Proposal-j.proposal_id`。
 
 于是我们得到的结论是：如果策略`cl`存在，当提案`Proposal-j`最终会被通过，对于任意一个预提案`PreProposal-i`，`Preproposal-i.id > Proposal-j.proposal-id`，得到的`Q-i`的回复`K-i`中任意的`Proposal-f`，满足`Proposal-f.v != Proposal-j.v`，那么`Proposal-f.proposal_id < Proposal-j.proposal_id`。
@@ -235,10 +232,8 @@ __为了不失一般性，下面我们都以N个进程的场景作为讨论的�
 1. `Proposal-i.v != Proposal-j.v`，即`MaxProposal(K-i).v！= Proposal-j.v`，即`MaxProposal(K)-i != Proposal-j`
 1. `Proposal-j`最终会被通过，代表最终会存在一个多数集合`Q-j`，`Q-j`中每个接受者都接受了`Proposal-j`。
 1. 两个多数集必然存在公共成员，故`Q-j`和`Q-i`必然存在一个公共的进程`Pk`，`Pk`既收到了`PreProposal-i`又收到了`Proposal-j`，且都接受了它们；`Pk`收到消息的先后关系只存在如下两种可能：
-
     * 1.`Pk`先收到了`PreProposal-i`
     * 2.`Pk`先收到了`Proposal-j`
-
 1. 情形1中`Pk`先收到了`PreProposal-i`，那么`Pk`收到`Proposal-j`时，`Pk.a_proposal >= PreProposal-i.proposal_id ＞Proposal-j.proposal_id`，`Pk`会拒绝`Proposal-j`，与(3)矛盾，因此情况1不可能，`Pk`必然是先收到`Proposal-j`。
 1. 情形2中`Pk`收到`PreProposal-i`时，已经接受了`Proposal-j`，因此`Pk`回复P`reProposal-i`的提案中包含了`Proposal-j`，因此`K-i`中必然包含了`Proposal-j`。
 1. 由(1)已知`MaxProposal(K-i) != Proposal-j`，即存在另一个提案`Proposal-m = MaxProposal(K-i)`，而`Proposal-j`属于`K-i`，因此`Proposal-m.proposal_id > Proposal-j.proposal_id`，且`Proposal-m.v ！= Proposal-j.v`。
@@ -275,7 +270,6 @@ __为了不失一般性，下面我们都以N个进程的场景作为讨论的�
 1. `v`达成一致时的值是由某个进程提出的。这是为了防止像这样的作弊方式：无论如何，最终都令每个进程的v为同一个预先设置好的值，例如都令`v = 2`，那么这样的一致也太容易了，也没有任何实际意义。
 1. 一旦`v`就某个值达成了一致，那么`v`不能对另一个值再次达成一致。这个要求称为__安全性__。
 1. 一致总是能够达成，即v总会被决定为某个值。这是因为不想无休止的等待，这个要求也称为__活性__。
-
 * 另外，learners只能获得被批准（chosen）的`v`。
 
 下面总结一下上述推导过程。
