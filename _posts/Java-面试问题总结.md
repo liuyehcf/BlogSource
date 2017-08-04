@@ -14,8 +14,8 @@ categories:
 
 ## 1.1 Arrays.sort实现原理和Collection.sort实现原理
 
-Arrays.sort实现原理详见 {% post_link ComparableTimSort-源码剖析 %} 
-以及 {% post_link DualPivotQuickSort-源码剖析 %}
+Arrays.sort实现原理详见 {% post_link Java-ComparableTimSort-源码剖析 %} 
+以及 {% post_link Java-DualPivotQuickSort-源码剖析 %}
 
 Collection.sort在内部会转调用Arrays.sort
 
@@ -566,7 +566,7 @@ http://www.cnblogs.com/PurpleDream/p/5559352.html
 
 ## 6.4 快速排序
 
-{% post_link DualPivotQuickSort-源码剖析 %}
+{% post_link Java-DualPivotQuickSort-源码剖析 %}
 
 ## 6.5 BTree相关的操作
 
