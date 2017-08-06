@@ -196,3 +196,16 @@ public class Solution {
     }
 }
 ```
+
+<!--
+
+# 5 Question-000[★]
+
+____
+
+> 
+
+```Java
+```
+
+-->

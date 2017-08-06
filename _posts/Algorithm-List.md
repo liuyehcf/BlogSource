@@ -100,3 +100,16 @@ public class Solution {
     }
 }
 ```
+
+<!--
+
+# 3 Question-000[★]
+
+____
+
+> 
+
+```Java
+```
+
+-->

@@ -66,3 +66,16 @@ public class Solution {
     }
 }
 ```
+
+<!--
+
+# 2 Question-000[★]
+
+____
+
+> 
+
+```Java
+```
+
+-->

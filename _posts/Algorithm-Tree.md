@@ -13,7 +13,102 @@ __目录__
 <!-- toc -->
 <!--more-->
 
-# 1 Question-124[★★★★★]
+# 1 Question-105[★★★★★]
+
+__Construct Binary Tree from Preorder and Inorder Traversal__
+
+> Given preorder and inorder traversal of a tree, construct the binary tree.
+
+```Java
+public class Solution {
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        Map<Integer, Integer> posMap = new HashMap<>();
+
+        for (int i = 0; i < inorder.length; i++) {
+            posMap.put(inorder[i], i);
+        }
+
+        return build(preorder, 0, preorder.length - 1,
+                inorder, 0, inorder.length - 1,
+                posMap);
+    }
+
+    private TreeNode build(int[] preorder, int begin1, int end1,
+                           int[] inorder, int begin2, int end2,
+                           Map<Integer, Integer> posMap) {
+        if (begin1 > end1) return null;
+
+        int val = preorder[begin1];
+
+        int posOfVal = posMap.get(val);
+
+        TreeNode root = new TreeNode(val);
+
+        int leftTreeSize = (posOfVal - 1) - begin2 + 1;
+        int rightTreeSize = end2 - (posOfVal + 1) + 1;
+
+        root.left = build(preorder, begin1 + 1, begin1 + 1 + leftTreeSize - 1,
+                inorder, begin2, posOfVal - 1,
+                posMap);
+
+        root.right = build(preorder, begin1 + 1 + leftTreeSize - 1 + 1, end1,
+                inorder, posOfVal + 1, end2,
+                posMap);
+
+        return root;
+
+    }
+}
+```
+
+# 2 Question-106[★★★★★]
+
+__Construct Binary Tree from Inorder and Postorder Traversal__
+
+> Given inorder and postorder traversal of a tree, construct the binary tree.
+
+```Java
+public class Solution {
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+        Map<Integer, Integer> posMap = new HashMap<>();
+
+        for (int i = 0; i < inorder.length; i++) {
+            posMap.put(inorder[i], i);
+        }
+
+        return build(postorder, 0, postorder.length - 1,
+                inorder, 0, inorder.length - 1,
+                posMap);
+    }
+
+    private TreeNode build(int[] postorder, int begin1, int end1,
+                           int[] inorder, int begin2, int end2,
+                           Map<Integer, Integer> posMap) {
+        if (begin1 > end1) return null;
+
+        int val = postorder[end1];
+
+        int posOfVal = posMap.get(val);
+
+        TreeNode root = new TreeNode(val);
+
+        int leftTreeSize = (posOfVal - 1) - begin2 + 1;
+        int rightTreeSize = end2 - (posOfVal + 1) + 1;
+
+        root.left = build(postorder, begin1, begin1 + leftTreeSize - 1,
+                inorder, begin2, posOfVal - 1,
+                posMap);
+
+        root.right = build(postorder, begin1 + leftTreeSize - 1 + 1, end1 - 1,
+                inorder, posOfVal + 1, end2,
+                posMap);
+
+        return root;
+    }
+}
+```
+
+# 3 Question-124[★★★★★]
 
 __Binary Tree Maximum Path Sum__
 
@@ -66,7 +161,7 @@ public class Solution {
 
 maxLength方法计算以给定节点为根节点的子树中，从根到叶节点的路径和最大值。注意与0比较
 
-# 2 Question-222[★★★★★]
+# 4 Question-222[★★★★★]
 
 __Count Complete Tree Nodes__
 
@@ -108,7 +203,7 @@ public class Solution {
 }
 ```
 
-# 3 Question-230[★★]
+# 5 Question-230[★★]
 
 __Kth Smallest Element in a BST__
 
@@ -136,3 +231,43 @@ public class Solution {
     }
 }
 ```
+
+# 6 Question-236[★★★★★]
+
+__Lowest Common Ancestor of a Binary Tree__
+
+> Given a binary tree, find the lowest common ancestor (LCA) of two given nodes in the tree.
+
+> According to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between two nodes v and w as the lowest node in T that has both v and w as descendants (where we allow a node to be a descendant of itself).”
+
+```Java
+public class Solution {
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if (root == null) return root;
+
+        if (root == p || root == q) return root;
+
+        TreeNode left = lowestCommonAncestor(root.left, p, q);
+        TreeNode right = lowestCommonAncestor(root.right, p, q);
+
+        // p和q分别位于root的左右子树中，因此root是ancestor
+        if (left != null && right != null) return root;
+
+        // 否则left或right是ancestor
+        return left == null ? right : left;
+    }
+}
+```
+
+<!--
+
+# 7 Question-000[★]
+
+____
+
+> 
+
+```Java
+```
+
+-->

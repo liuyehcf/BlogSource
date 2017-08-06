@@ -322,3 +322,16 @@ public class Solution {
     }
 }
 ```
+
+<!--
+
+# 7 Question-000[★]
+
+____
+
+> 
+
+```Java
+```
+
+-->
