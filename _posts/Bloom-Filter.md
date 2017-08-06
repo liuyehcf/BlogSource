@@ -1,8 +1,9 @@
 ---
 title: Bloom Filter
 date: 2017-07-17 20:33:03
-tags: 摘录
-categories:
+tags: 
+- 摘录
+categories: 
 - 分布式
 - 算法
 ---

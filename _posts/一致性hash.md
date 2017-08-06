@@ -1,8 +1,9 @@
 ---
 title: 一致性hash
 date: 2017-07-17 21:00:50
-tags: 摘录
-categories:
+tags: 
+- 摘录
+categories: 
 - 分布式
 - 算法
 ---

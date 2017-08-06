@@ -1,9 +1,9 @@
 ---
 title: zookeeper 概论
 date: 2017-07-11 18:09:29
-tags:
+tags: 
 - 摘录
-categories:
+categories: 
 - 分布式
 - zoookeeper
 ---

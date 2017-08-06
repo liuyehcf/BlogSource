@@ -1,8 +1,9 @@
 ---
 title: JDK 动态代理 源码剖析
 date: 2017-07-27 16:24:07
-tags: 原创
-categories:
+tags: 
+- 原创
+categories: 
 - Java
 - 动态代理
 ---

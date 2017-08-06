@@ -1,9 +1,9 @@
 ---
 title: Java happens-before
 date: 2017-07-08 21:06:00
-tags:
+tags: 
 - 摘录
-categories:
+categories: 
 - Java
 - Java Virtual Machine
 - Java Memory Model

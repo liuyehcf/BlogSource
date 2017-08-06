@@ -1,9 +1,9 @@
 ---
 title: Java 线程通信概述
 date: 2017-07-04 23:33:12
-tags:
+tags: 
 - 原创
-categories:
+categories: 
 - Java
 - Java 并发
 - 线程通信

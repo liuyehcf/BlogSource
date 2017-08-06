@@ -1,9 +1,9 @@
 ---
 title: Redis-面试总结
 date: 2017-08-03 14:13:22
-tags:
+tags: 
 - 摘录
-categories:
+categories: 
 - 数据库
 - 非关系型数据库(NoSQL)
 ---

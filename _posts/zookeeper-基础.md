@@ -1,9 +1,9 @@
 ---
 title: zookeeper 基础
 date: 2017-07-11 18:49:23
-tags:
+tags: 
 - 摘录
-categories:
+categories: 
 - 分布式
 - zoookeeper
 ---

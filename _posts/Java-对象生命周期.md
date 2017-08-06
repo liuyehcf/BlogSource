@@ -1,9 +1,9 @@
 ---
 title: Java 对象生命周期
 date: 2017-07-10 13:54:51
-tags:
+tags: 
 - 摘录
-categories:
+categories: 
 - Java
 - Java Virtual Machine
 - 垃圾收集

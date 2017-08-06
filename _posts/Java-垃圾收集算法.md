@@ -1,9 +1,9 @@
 ---
 title: Java 垃圾收集算法
 date: 2017-07-10 14:28:54
-tags:
+tags: 
 - 摘录
-categories:
+categories: 
 - Java
 - Java Virtual Machine
 - 垃圾收集

@@ -1,9 +1,9 @@
 ---
 title: Java 内存模型综述
 date: 2017-07-08 21:08:00
-tags:
+tags: 
 - 摘录
-categories:
+categories: 
 - Java
 - Java Virtual Machine
 - Java Memory Model

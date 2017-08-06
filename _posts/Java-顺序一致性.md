@@ -1,9 +1,9 @@
 ---
 title: Java 顺序一致性
 date: 2017-07-08 21:02:00
-ags:
+tags: 
 - 摘录
-categories:
+categories: 
 - Java
 - Java Virtual Machine
 - Java Memory Model

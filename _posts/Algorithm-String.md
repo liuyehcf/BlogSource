@@ -1,9 +1,9 @@
 ---
 title: Algorithm String
 date: 2017-07-16 21:17:36
-tags:
+tags: 
 - 原创
-categories:
+categories: 
 - Job
 - Leetcode
 ---

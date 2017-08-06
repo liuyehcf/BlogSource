@@ -1,8 +1,9 @@
 ---
 title: Java DualPivotQuickSort 源码剖析
 date: 2017-07-25 11:03:45
-tags: 原创
-categories:
+tags: 
+- 原创
+categories: 
 - Java
 - 容器
 - 排序

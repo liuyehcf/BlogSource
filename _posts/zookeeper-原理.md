@@ -1,9 +1,9 @@
 ---
 title: zookeeper 原理
 date: 2017-07-11 23:38:28
-tags:
+tags: 
 - 摘录
-categories:
+categories: 
 - 分布式
 - zoookeeper
 ---

@@ -1,9 +1,9 @@
 ---
 title: Algorithm List
 date: 2017-07-16 21:14:48
-tags:
+tags: 
 - 原创
-categories:
+categories: 
 - Job
 - Leetcode
 ---

@@ -1,9 +1,9 @@
 ---
 title: Java volatile的内存语义
 date: 2017-07-08 21:03:00
-tags:
+tags: 
 - 摘录
-categories:
+categories: 
 - Java
 - Java Virtual Machine
 - Java Memory Model

@@ -1,9 +1,9 @@
 ---
 title: Algorithm BinarySearch
 date: 2017-07-16 21:15:03
-tags:
+tags: 
 - 原创
-categories:
+categories: 
 - Job
 - Leetcode
 ---

@@ -1,9 +1,9 @@
 ---
 title: JVM 常用参数
 date: 2017-07-10 18:55:43
-tags:
+tags: 
 - 摘录
-categories:
+categories: 
 - Java
 - Java Virtual Machine
 - JVM参数

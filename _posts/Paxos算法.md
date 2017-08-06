@@ -1,9 +1,9 @@
 ---
 title: Paxos算法
 date: 2017-07-12 09:32:34
-tags:
+tags: 
 - 摘录
-categories:
+categories: 
 - 分布式
 - 算法
 ---

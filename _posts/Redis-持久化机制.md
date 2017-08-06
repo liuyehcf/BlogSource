@@ -1,9 +1,9 @@
 ---
 title: Redis-持久化机制
 date: 2017-08-03 14:30:33
-tags:
+tags: 
 - 摘录
-categories:
+categories: 
 - 数据库
 - 非关系型数据库(NoSQL)
 ---

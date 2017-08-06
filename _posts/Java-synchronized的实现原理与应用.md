@@ -1,9 +1,9 @@
 ---
 title: Java synchronized的实现原理与应用
 date: 2017-07-09 19:51:35
-ags:
+tags: 
 - 摘录
-categories:
+categories: 
 - Java
 - Java 并发
 - Java 并发机制的底层实现原理

@@ -1,9 +1,9 @@
 ---
 title: Java volatile的应用
 date: 2017-07-09 19:51:27
-ags:
+tags: 
 - 摘录
-categories:
+categories: 
 - Java
 - Java 并发
 - Java 并发机制的底层实现原理

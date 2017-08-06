@@ -1,9 +1,9 @@
 ---
 title: Java 单例双重检测正确性分析
 date: 2017-07-08 21:07:00
-tags:
+tags: 
 - 摘录
-categories:
+categories: 
 - Java
 - Java Virtual Machine
 - Java Memory Model
