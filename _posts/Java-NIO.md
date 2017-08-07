@@ -10,5 +10,11 @@ categories:
 
 __目录__
 
+# 1 IO模型
+
+## 1.1 select/poll/epoll
+
+http://www.cnblogs.com/Anker/p/3265058.html
+
 <!-- toc -->
 <!--more-->

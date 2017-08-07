@@ -8,14 +8,83 @@ categories:
 - Java
 ---
 
+__目录__
+
+<!-- toc -->
 <!--more-->
 
 # 1 Java基础
 
-## 1.1 Arrays.sort实现原理和Collection.sort实现原理
+## 1.1 面向对象
 
-Arrays.sort实现原理详见 {% post_link Java-ComparableTimSort-源码剖析 %} 
-以及 {% post_link Java-DualPivotQuickSort-源码剖析 %}
+1. 封装
+1. 继承
+1. 多态
+
+静态双分派，动态单分派
+
+## 1.2 Object
+
+### 1.2.1 public方法
+
+1. getClass
+1. hashCode
+1. equals
+1. toString
+1. notify
+1. notifyAll
+1. wait
+
+### 1.2.2 protected方法
+
+1. clone
+1. finalize
+
+### 1.2.3 cloneable接口实现原理，浅拷贝or深拷贝
+
+实现cloneable接口必须调用父类Object.clone()方法来进行内存的拷贝
+
+如果不加其他的逻辑，实现的就是浅拷贝。即副本中的内存与原象中的内存完全一致，意味着如果存在引用类型，那么副本与原象将引用的是同一个对象
+
+如果要实现深拷贝，那么就需要加上额外的实现逻辑
+
+## 1.3 String
+
+### 1.3.1 String/StringBuffer/StringBuilder的区别
+
+1. 只有String中的char[]数组是final的
+1. StringBuffer是线程安全的，所有char[]数组的access方法被synchronized关键字修饰
+1. StringBuilder非线程安全
+
+## 1.4 容器
+
+### 1.4.1 常用接口
+
+1. Collection
+1. List
+1. Set
+1. Map
+1. Queue
+
+### 1.4.2 常用实现
+
+了解以下容器实现类的实现原理
+
+1. ArrayList
+1. LinkedList
+1. HashSet
+1. HashMap
+1. TreeMap
+1. LinkedHashMap
+
+### 1.4.3 Arrays.sort实现原理
+
+针对对象类型和基本类型，Arrays.sort会采用不同的排序算法
+
+1. 对象类型必须保证稳定性，因此采用的是插入排序以及归并排序的优化版本TimSort，具体详见{% post_link Java-ComparableTimSort-源码剖析 %} 
+1. 基本类型的稳定性是不必要的，因此根据数组的长度以及分布规律选择特定的排序算法，包括插入排序，快速排序(3-way-quicksort以及2-pivot-quicksort)，具体详见{% post_link Java-DualPivotQuickSort-源码剖析 %}
+
+### 1.4.4 Collection.sort实现原理
 
 Collection.sort在内部会转调用Arrays.sort
 
@@ -23,13 +92,41 @@ Collection.sort在内部会转调用Arrays.sort
 1. 调用Arrays.sort方法进行排序
 1. 将排序好的序列利用迭代器回填到List当中(为什么用迭代器，因为这样效率是最高的，如果List的实现是LinkedList，那么采用下标将会非常慢)
 
-## 1.2 foreach和while的区别(编译之后)
+### 1.4.5 了解LinkedHashMap的应用吗
+
+实现一个LRU(Least Recently Used)
+
+### 1.4.6 HashMap的并发问题
+
+http://www.cnblogs.com/kxdblog/p/4323892.html
+
+1. 多线程put操作后，get操作导致死循环。(扩容时)
+1. 多线程put非NULL元素后，get操作得到NULL值。(扩容时，插入到了旧表中)
+1. 多线程put操作，导致元素丢失。
+
+### 1.4.7 Hashtable和HashMap的区别及实现原理，HashMap会问到数组索引，hash碰撞怎么解决
+
+hashtable给所有的table访问方法加上了synchronized关键字
+
+用链表解决，当链表元素过多时，转换为红黑树
+
+## 1.5 字节码
+
+{% Java-Class文件结构以及字节码阅读 %}
+
+### 1.5.1 foreach和while在编译之后的区别
 
 foreach只能引用于实现了Iterator接口的类，因此在内部实现时会转化为迭代器的遍历，本质上是一种语法糖
 
 while和for循环在编译之后基本相同，利用字节码`goto`来进行循环跳转
 
-## 1.3 线程池的种类，区别和使用场景
+## 1.6 线程池
+
+{% post_link Java-concurrent-ThreadPoolExecutor-源码剖析 %}
+
+### 1.6.1 线程池的目的
+
+### 1.6.2 线程池的种类，区别和使用场景
 
 所有线程池本质上都是ThreadPoolExecutor，只是配置了不同的初始化参数，核心参数有
 
@@ -55,7 +152,7 @@ Executors.newFixedThreadPool(int nThread)
 * __maximumPoolSize__：nThread
 * __keepAliveTime__：0L
 
-## 1.4 分析线程池的实现原理和线程的调度过程
+### 1.6.3 分析线程池的实现原理和线程的调度过程
 
 添加一个新的Runnable时
 
@@ -64,61 +161,45 @@ Executors.newFixedThreadPool(int nThread)
 
 Work即一个工作的线程，会从BlockingQueue获取任务并执行
 
-## 1.5 线程池如何调优
+### 1.6.4 线程池如何调优
 
-看具体需求
+http://www.cnblogs.com/jianzh5/p/6437315.html
 
-## 1.6 线程池的最大线程数目根据什么确定
+## 1.7 反射
 
-传入的参数
+### 1.7.1 反射的原理
 
-## 1.7 动态代理的几种方式
-
-JDK 动态代理和CGlib
-
-## 1.8 HashMap的并发问题
-
-http://www.cnblogs.com/kxdblog/p/4323892.html
-
-1. 多线程put操作后，get操作导致死循环。
-1. 多线程put非NULL元素后，get操作得到NULL值。
-1. 多线程put操作，导致元素丢失。
-
-## 1.9 了解LinkedHashMap的应用吗
-
-实现一个LRU
-
-## 1.10 反射的原理，反射创建类实例的三种方式是什么？
+### 1.7.2 获取Class对象的方式
 
 1. `Class clazz = Class.forName(<string>)`
 1. `Class clazz = obj.getClass()`
 1. `Class clazz = <class>.class`
 
-## 1.11 cloneable接口实现原理，浅拷贝or深拷贝
+## 1.8 泛型
 
-实现cloneable接口必须调用父类Object.clone()方法来进行内存的拷贝
+### 1.8.1 擦除
 
-如果不加其他的逻辑，实现的就是浅拷贝。即副本中的内存与原象中的内存完全一致，意味着如果存在引用类型，那么副本与原象将引用的是同一个对象
+## 1.9 设计模式
 
-如果要实现深拷贝，那么就需要加上额外的实现逻辑
+### 1.9.1 单例模式
 
-## 1.12 Java NIO使用
+{% 设计模式-单例模式 %}
+
+{% Java-单例双重检测正确性分析 %}
+
+## 1.10 动态代理
+
+### 1.10.1 动态代理的几种方式
+
+JDK 动态代理和CGlib
+
+JDK 动态代理源码详解请参考 {% post_link JDK-动态代理-源码剖析 %}
+
+## 1.11 Java NIO使用
 
 关于更多的Java NIO API请参考 {% post_link Java-NIO %}
 
-## 1.13 Hashtable和HashMap的区别及实现原理，HashMap会问到数组索引，hash碰撞怎么解决
-
-hashtable给所有的table访问方法加上了synchronized关键字
-
-用链表解决，当链表元素过多时，转换为红黑树
-
-## 1.14 Arraylist和Linkedlist区别及实现原理
-
-ArrayList内部采用数组来实现
-
-LinkedList内部采用链表来实现
-
-## 1.15 反射中，Class.forName和ClassLoader区别
+## 1.12 反射中，Class.forName和ClassLoader区别
 
 Class.forName执行过程
 
@@ -132,23 +213,19 @@ ClassLoader#loadClass执行过程
 
 关于类加载请参考 {% post_link Java-类加载机制 %}
 
-## 1.16 String，StringBuffer，StringBuilder的区别？
-
-String 中的char[]数组是final的
-
-StringBuffer是线程安全的，所有char[]数组的access方法被synchronized关键字修饰
-
-StringBuilder非线程安全
-
-## 1.17 有没有可能2个不相等的对象有相同的hashcode
+## 1.13 有没有可能2个不相等的对象有相同的hashcode
 
 完全可能
 
-## 1.18 简述NIO的最佳实践，比如netty，mina
+## 1.14 IO
 
-## 1.19 TreeMap的实现原理
+{% post_link Java-NIO %}
 
-红黑树
+### 1.14.1 简述NIO的最佳实践，比如netty，mina
+
+## 1.15 JDK各个版本的特性
+
+{% post_link JDK-新特性 %}
 
 # 2 JVM相关
 
@@ -276,6 +353,8 @@ __参考JMM分类下的博客__
 
 此外注意volaitle、final、锁的内存语义，以及对优化策略的影响
 
+__数据依赖不重排，控制依赖可重排__
+
 ## 2.11 对Java内存模型的理解，以及其在并发中的应用
 
 __参考JMM分类下的博客__
@@ -313,7 +392,7 @@ G1(Gargabe-First)收集器是当今收集器计数发展的最前沿成果之一
 
 ## 2.18 环境变量classpath
 
-说一说你对环境变量classpath的理解？如果一个类不在classpath下，为什么会抛出ClassNotFoundException异常，如果在不改变这个类路径的前期下，怎样才能正确加载这个类？ 
+说一说你对环境变量classpath的理解？如果一个类不在classpath下，为什么会抛出ClassNotFoundException异常，如果在不改变这个类路径的前期下，怎样才能正确加载这个类？
 
 环境变量classpath是JVM的App ClassLoader类加载器的加载*.class文件的路径
 
@@ -456,9 +535,25 @@ Quartz
 
 ## 4.11 spring的controller是单例还是多例，怎么保证并发的安全
 
-# 5 分布式相关
+单例，无状态的单例本身就是线程安全的，有状态的单例那么就需要用ThreadLocal来保证线程安全了，即每个线程有自己的一份拷贝
 
-## 5.1 Dubbo的底层实现原理和机制
+# 5 其他框架
+
+## 5.1 Mybatis
+
+## 5.2 Netty
+
+## 5.3 OkHttp
+
+## 5.4 MINA
+
+# 6 分布式相关
+
+## 6.1 分布式存储
+
+{% post_link 分布式存储 %}
+
+## 6.2 Dubbo的底层实现原理和机制
 
 https://zhidao.baidu.com/question/1951046178708452068.html
 
@@ -474,21 +569,21 @@ http://dubbo.io/developer-guide/%E6%A1%86%E6%9E%B6%E8%AE%BE%E8%AE%A1.html
 
 ![fig1](/images/Java-面试问题总结/fig1.jpg)
 
-## 5.2 描述一个服务从发布到被消费的详细过程
+## 6.3 描述一个服务从发布到被消费的详细过程
 
-## 5.3 分布式系统怎么做服务治理
+## 6.4 分布式系统怎么做服务治理
 
 http://www.jianshu.com/p/104b27d1e943
 
-## 5.4 接口的幂等性的概念
+## 6.5 接口的幂等性的概念
 
 接口幂等性请参考 {% post_link 分布式系统接口幂等性 %}
 
-## 5.5 消息中间件如何解决消息丢失问题
+## 6.6 消息中间件如何解决消息丢失问题
 
 {% post_link 消息的重复产生和应对 %}
 
-## 5.6 Dubbo的服务请求失败怎么处理
+## 6.7 Dubbo的服务请求失败怎么处理
 
 dubbo启动时默认有重试机制和超时机制。
 超时机制的规则是如果在一定的时间内，provider没有返回，则认为本次调用失败，
@@ -496,22 +591,22 @@ dubbo启动时默认有重试机制和超时机制。
 
 http://www.cnblogs.com/binyue/p/5380322.html
 
-## 5.7 重连机制会不会造成错误
+## 6.8 重连机制会不会造成错误
 
 {% post_link 消息的重复产生和应对 %}
 
-## 5.8 对分布式事务的理解
+## 6.9 对分布式事务的理解
 
 分布式事务请参考 {% post_link 分布式事务 %}
 以及 {% post_link 分布式事务-两阶段三阶段协议 %}
 
-## 5.9 如何实现负载均衡，有哪些算法可以实现？
+## 6.10 如何实现负载均衡，有哪些算法可以实现？
 
 请参考 {% post_link 负载均衡算法 %}
 
-## 5.10 Zookeeper的用途，选举的原理是什么？
+## 6.11 Zookeeper的用途，选举的原理是什么？
 
-zookeeper是注册中心
+zookeeper是注册中心，提供目录和节点服务，watch机制
 
 http://blog.csdn.net/tycoon1988/article/details/38866395
 
@@ -520,109 +615,125 @@ http://blog.csdn.net/daiqinge/article/details/51282874
 
 master/slave模式，保证只有一个leader，ZAB协议，paxox算法
 
-## 5.11 数据的垂直拆分水平拆分。
+## 6.12 数据的垂直拆分水平拆分。
 
 垂直拆分，将一张表中的不同类别的数据分别放到不同的表中去
 
 水平拆分，将一张表的不同数据项放到两台机器上
 
-## 5.12 zookeeper原理和适用场景
+## 6.13 zookeeper原理和适用场景
 
-## 5.13 zookeeper watch机制
+{% post_link zookeeper-应用场景 %}
+
+## 6.14 zookeeper watch机制
 
 http://blog.csdn.net/z69183787/article/details/53023578
 
-## 5.14 redis/zk节点宕机如何处理
+## 6.15 redis/zk节点宕机如何处理
 
 重新选举leader
 
-## 5.15 分布式集群下如何做到唯一序列号
+## 6.16 分布式集群下如何做到唯一序列号
 
 http://www.cnblogs.com/haoxinyue/p/5208136.html
 
-## 5.16 如何做一个分布式锁
+## 6.17 如何做一个分布式锁
 
 http://www.cnblogs.com/PurpleDream/p/5559352.html
 
-## 5.17 用过哪些MQ，怎么用的，和其他mq比较有什么优缺点，MQ的连接是线程安全的吗
+## 6.18 用过哪些MQ，怎么用的，和其他mq比较有什么优缺点，MQ的连接是线程安全的吗
 
-## 5.18 MQ系统的数据如何保证不丢失
+## 6.19 MQ系统的数据如何保证不丢失
 
-## 5.19 列举出你能想到的数据库分库分表策略；分库分表后，如何解决全表查询的问题。
+{% post_link 消息中间件的消息发送一致性 %}
 
-# 6 算法&数据结构&设计模式
+## 6.20 列举出你能想到的数据库分库分表策略；分库分表后，如何解决全表查询的问题。
 
-## 6.1 海量url去重类问题（布隆过滤器）
+# 7 算法&数据结构&设计模式
+
+## 7.1 并查集
+
+## 7.2 单源最短路径
+
+{% post_link 单源最短路径 %}
+
+## 7.3 海量url去重类问题（布隆过滤器）
 
 请参考 {% post_link Bloom-Filter %}
 
-## 6.2 数组和链表数据结构描述，各自的时间复杂度
+## 7.4 海量url中找到出现次数最多的10个url
+
+map-reduce
+
+## 7.5 数组和链表数据结构描述，各自的时间复杂度
 
 太简单
 
-## 6.3 二叉树遍历
+## 7.6 二叉树遍历
 
 {% post_link 树的遍历 %}
 
-## 6.4 快速排序
+## 7.7 快速排序
 
 {% post_link Java-DualPivotQuickSort-源码剖析 %}
 
-## 6.5 BTree相关的操作
+## 7.8 BTree相关的操作
 
 B树请参考 {% post_link B-tree-详解 %}
 
 B+树请参考 {% post_link BPlus-tree-详解 %}
 
-## 6.6 在工作中遇到过哪些设计模式，是如何应用的
+## 7.9 在工作中遇到过哪些设计模式，是如何应用的
 
-## 6.7 hash算法的有哪几种，优缺点，使用场景
+## 7.10 hash算法的有哪几种，优缺点，使用场景
 
 链表法，开放寻址法
 
-## 6.8 什么是一致性hash
+## 7.11 什么是一致性hash
 
 请参考 {% post_link 一致性hash %}
 
-## 6.9 paxos算法
+## 7.12 paxos算法
 
 paxos算法分析请参考 {% post_link Paxos算法 %}
 
-## 6.10 在装饰器模式和代理模式之间，你如何抉择，请结合自身实际情况聊聊
+## 7.13 在装饰器模式和代理模式之间，你如何抉择，请结合自身实际情况聊聊
 
 装饰器模式关注于在一个对象上动态的添加方法，然而代理模式关注于控制对对象的访问。换句话说，用代理模式，代理类（proxy class）可以对它的客户隐藏一个对象的具体信息。因此，当使用代理模式的时候，我们常常在一个代理类中创建一个对象的实例。并且，当我们使用装饰器模式的时候，我们通常的做法是将原始对象作为一个参数传给装饰者的构造器。
 
-## 6.11 代码重构的步骤和原因，如果理解重构到模式？
+## 7.14 代码重构的步骤和原因，如果理解重构到模式？
 
-# 7 数据库
+## 7.15 二叉树的最大搜索子树
 
-## 7.1 MySQL InnoDB存储的文件结构
+# 8 数据库
+
+## 8.1 MySQL InnoDB存储的文件结构
 
 具体请参考{% post_link 数据库引擎 %}
 
-## 7.2 索引树是如何维护的？
+## 8.2 索引树是如何维护的？
 
 B+树，不同的引擎有不同的方式
 
 具体请参考{% post_link 数据库引擎 %}
 
-## 7.3 数据库自增主键可能的问题
+## 8.3 数据库自增主键可能的问题
 
-## 7.4 MySQL的几种优化
+## 8.4 MySQL的几种优化
 
 http://blog.csdn.net/u013474436/article/details/49908683
 
-## 7.5 mysql索引为什么使用B+树
+## 8.5 mysql索引为什么使用B+树
 
 范围查找会比较快捷
 
-## 7.6 数据库锁表的相关处理
+## 8.6 数据库锁表的相关处理
 
-## 7.7 索引失效场景
+## 8.7 索引失效场景
 
 http://blog.csdn.net/zmx729618/article/details/52701370
 
-## 7.8 高并发下如何做到安全的修改同一行数据，乐观锁和悲观锁是什么，INNODB的行级锁有哪2种，解释其含义
+## 8.8 高并发下如何做到安全的修改同一行数据，乐观锁和悲观锁是什么，INNODB的行级锁有哪2种，解释其含义
 
 悲观锁(Pessimistic Lock), 顾名思义，就是很悲观，每次去拿数据的时候都认为别人会修改，所以每次在拿数据的时候都会上锁，这样别人想拿这个数据就会block直到它拿到锁。传统的关系型数据库里边就用到了很多这种锁机制，比如行锁，表锁等，读锁，写锁等，都是在做操作之前先上锁。
 
@@ -638,7 +749,7 @@ http://blog.csdn.net/hongchangfirst/article/details/26004335
 1. 排他锁（X锁）：如果事务T对数据A加上排他锁后，则其他事务不能再对A加任任何类型的封锁。获准排他锁的事务既能读数据，又能修改数据。
 * .共享锁下其它用户可以并发读取，查询数据。但不能修改，增加，删除数据。资源共享
 
-## 7.9 数据库会死锁吗，举一个死锁的例子，mysql怎么解决死锁
+## 8.9 数据库会死锁吗，举一个死锁的例子，mysql怎么解决死锁
 
 虽然进程在运行过程中，可能发生死锁，但死锁的发生也必须具备一定的条件，死锁的发生必须具备以下四个必要条件。
 
@@ -649,43 +760,47 @@ http://blog.csdn.net/hongchangfirst/article/details/26004335
 
 https://baike.baidu.com/item/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%AD%BB%E9%94%81/10015665?fr=aladdin
 
-# 8 Redis&缓存相关
+# 9 Redis&缓存相关
 
-## 8.1 Redis的并发竞争问题如何解决，了解Redis事务的CAS操作吗
+## 9.1 Redis的并发竞争问题如何解决，了解Redis事务的CAS操作吗
 
-## 8.2 缓存机器增删如何对系统影响最小，一致性哈希的实现
+## 9.2 缓存机器增删如何对系统影响最小，一致性哈希的实现
 
 {% post_link 一致性hash %}
 
-## 8.3 Redis持久化的几种方式，优缺点是什么，怎么实现的
+## 9.3 Redis持久化的几种方式，优缺点是什么，怎么实现的
 
 http://www.baidu.com/s?wd=Redis%E6%8C%81%E4%B9%85%E5%8C%96%E7%9A%84%E6%96%B9%E6%B3%95&rsv_spt=1&rsv_iqid=0xf5434a7700002b49&issp=1&f=8&rsv_bp=1&rsv_idx=2&ie=utf-8&rqlang=cn&tn=baiduhome_pg&rsv_enter=0&oq=Redis%25E7%259A%2584%25E5%25B9%25B6%25E5%258F%2591%25E7%25AB%259E%25E4%25BA%2589%25E9%2597%25AE%25E9%25A2%2598%25E5%25A6%2582%25E4%25BD%2595%25E8%25A7%25A3%25E5%2586%25B3&inputT=3331&rsv_t=221fy%2FwM1ef08YAzcyN6orkBkRI%2FpPYtZqETuz%2F0jQISV%2FdE0umrOx8SIqO8sbCJVbVp&rsv_pq=ee991a9a000058fc&rsv_sug3=182&rsv_sug2=0&rsv_sug4=3331
 
-## 8.4 Redis的缓存失效策略
+## 9.4 Redis的缓存失效策略
 
-## 8.5 缓存穿透的解决办法
+## 9.5 缓存穿透的解决办法
 
-## 8.6 redis集群，高可用，原理
+## 9.6 redis集群，高可用，原理
 
-## 8.7 mySQL里有2000w数据，redis中只存20w的数据，如何保证redis中的数据都是热点数据
+## 9.7 mySQL里有2000w数据，redis中只存20w的数据，如何保证redis中的数据都是热点数据
 
-## 8.8 用Redis和任意语言实现一段恶意登录保护的代码，限制1小时内每用户Id最多只能登录5次
+## 9.8 用Redis和任意语言实现一段恶意登录保护的代码，限制1小时内每用户Id最多只能登录5次
 
-## 8.9 redis的数据淘汰策略
+## 9.9 redis的数据淘汰策略
 
-# 9 网络相关
+# 10 网络相关
 
-## 9.1 http1.0和http1.1有什么区别
+## 10.1 http1.0和http1.1有什么区别
 
 http://www.cnblogs.com/shijingxiang/articles/4434643.html
 
-## 9.2 TCP/IP协议
+## 10.2 http和https的区别
+
+SSL(以RSA为加密算法)
+
+## 10.3 TCP/IP协议
 
 TCP三次握手/四次挥手请参考 {% post_link TCP-IP %}
 
-## 9.3 TCP三次握手和四次挥手的流程，为什么断开连接要4次,如果握手只有两次，会出现什么
+## 10.4 TCP三次握手和四次挥手的流程，为什么断开连接要4次,如果握手只有两次，会出现什么
 
-## 9.4 `TIME_WAIT`和`CLOSE_WAIT`的区别
+## 10.5 `TIME_WAIT`和`CLOSE_WAIT`的区别
 
 `CLOSE_WAIT`：被动关闭方接收到了对方FIN信号，但由于TCP连接是双向的，但是仍有数据要传给对方
 
@@ -693,37 +808,53 @@ TCP三次握手/四次挥手请参考 {% post_link TCP-IP %}
 
 关于其他状态请参考 {% post_link TCP-IP %}
 
-## 9.5 说说你知道的几种HTTP响应码
+## 10.6 TIME_WAIT状态的原理
+
+http://blog.csdn.net/najiutan/article/details/15814095
+
+## 10.7 TCP流量控制拥塞控制
+
+## 10.8 介绍你知道的传输层协议
+
+TCP和UDP
+
+## 10.9 说说你知道的几种HTTP响应码
 
 具体请参考 {% post_link HTTP协议 %}
 
-## 9.6 当你用浏览器打开一个链接的时候，计算机做了哪些工作步骤
+## 10.10 当你用浏览器打开一个链接的时候，计算机做了哪些工作步骤
 
 具体请参考 {% post_link HTTP协议 %}
 
-## 9.7 TCP/IP如何保证可靠性，数据包有哪些数据组成
+## 10.11 TCP/IP如何保证可靠性，数据包有哪些数据组成
 
-## 9.8 长连接与短连接
+## 10.12 长连接与短连接
 
 http://www.cnblogs.com/cswuyg/p/3653263.html
 
-## 9.9 Http请求get和post的区别以及数据包格式
+## 10.13 Http请求get和post的区别以及数据包格式
 
 具体请参考 {% post_link HTTP协议 %}
 
-## 9.10 简述tcp建立连接3次握手，和断开连接4次握手的过程；关闭连接时，出现TIMEWAIT过多是由什么原因引起，是出现在主动断开方还是被动断开方。
+## 10.14 简述tcp建立连接3次握手，和断开连接4次握手的过程；关闭连接时，出现TIMEWAIT过多是由什么原因引起，是出现在主动断开方还是被动断开方。
 
 请参考 {% post_link TCP-IP %}
 
-# 10 其他
+# 11 操作系统
 
-## 10.1 maven解决依赖冲突,快照版和发行版的区别
+## 11.1 操作系统内存管理
 
-## 10.2 Linux下IO模型有几种，各自的含义是什么
+http://blog.csdn.net/hguisu/article/details/5713164
 
-## 10.3 实际场景问题，海量登录日志如何排序和处理SQL操作，主要是索引和聚合函数的应用
+# 12 其他
 
-## 10.4 实际场景问题解决，典型的TOP K问题
+## 12.1 maven解决依赖冲突,快照版和发行版的区别
+
+## 12.2 Linux下IO模型有几种，各自的含义是什么
+
+## 12.3 实际场景问题，海量登录日志如何排序和处理SQL操作，主要是索引和聚合函数的应用
+
+## 12.4 实际场景问题解决，典型的TOP K问题
 
 利用最小最大堆
 
@@ -731,23 +862,27 @@ TOP Max K用最小堆
 
 TOP Min K用最大堆
 
-## 10.5 线上bug处理流程
+## 12.5 线上bug处理流程
 
-## 10.6 如何从线上日志发现问题
+## 12.6 如何从线上日志发现问题
 
-## 10.7 linux利用哪些命令，查找哪里出了问题（例如io密集任务，cpu过度）
+## 12.7 linux利用哪些命令，查找哪里出了问题（例如io密集任务，cpu过度）
 
-## 10.8 场景问题，有一个第三方接口，有很多个线程去调用获取数据，现在规定每秒钟最多有10个线程同时调用它，如何做到。
+## 12.8 场景问题，有一个第三方接口，有很多个线程去调用获取数据，现在规定每秒钟最多有10个线程同时调用它，如何做到。
 
-## 10.9 用三个线程按顺序循环打印abc三个字母，比如abcabcabc。
+## 12.9 用三个线程按顺序循环打印abc三个字母，比如abcabcabc。
 
-## 10.10 常见的缓存策略有哪些，你们项目中用到了什么缓存系统，如何设计的
+## 12.10 常见的缓存策略有哪些，你们项目中用到了什么缓存系统，如何设计的
 
-## 10.11 设计一个秒杀系统，30分钟没付款就自动关闭交易（并发会很高）
+## 12.11 设计一个秒杀系统，30分钟没付款就自动关闭交易（并发会很高）
 
-## 10.12 请列出你所了解的性能测试工具
+## 12.12 请列出你所了解的性能测试工具
 
-## 10.13 后台系统怎么防止请求重复提交？
+## 12.13 后台系统怎么防止请求重复提交？
 
-## 10.14 mock测试框架
+## 12.14 mock测试框架
+
+# 13 一些面经
+
+* [【杂文】从实习到校招到工作](http://www.cnblogs.com/leesf456/p/6019583.html)
 
