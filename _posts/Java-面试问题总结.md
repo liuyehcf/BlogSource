@@ -17,30 +17,35 @@ __目录__
 
 ## 1.1 面向对象
 
+### 1.1.1 三大特性
+
 1. 封装
 1. 继承
 1. 多态
 
-静态双分派，动态单分派
+### 1.1.2 重载与多态
+
+1. 静态双分派
+1. 动态单分派
 
 ## 1.2 Object
 
 ### 1.2.1 public方法
 
-1. getClass
-1. hashCode
-1. equals
-1. toString
-1. notify
-1. notifyAll
-1. wait
+1. getClass：获取Class对象的实例
+1. hashCode：获取hash值，HashMap的实现依赖于hashcode。两个对象的hashCode可能是相同的。默认值与内存位置有关
+1. equals：判断对象是否相等
+1. toString：返回一个表示当前对象的String
+1. notify：重量级锁的wait/Notify机制
+1. notifyAll：重量级锁的wait/Notify机制
+1. wait：重量级锁的wait/Notify机制
 
 ### 1.2.2 protected方法
 
-1. clone
-1. finalize
+1. clone：浅拷贝，仅复制内存，如果包含引用类型，那么拷贝前后将会指向同一个对象
+1. finalize：与垃圾收集有关，第一次回收时会调用该方法，但不保证调用，也不保证正确执行。因此别用这个东西，历史遗留问题
 
-### 1.2.3 cloneable接口实现原理，浅拷贝or深拷贝
+### 1.2.3 cloneable接口与浅拷贝/深拷贝
 
 实现cloneable接口必须调用父类Object.clone()方法来进行内存的拷贝
 
@@ -92,7 +97,7 @@ Collection.sort在内部会转调用Arrays.sort
 1. 调用Arrays.sort方法进行排序
 1. 将排序好的序列利用迭代器回填到List当中(为什么用迭代器，因为这样效率是最高的，如果List的实现是LinkedList，那么采用下标将会非常慢)
 
-### 1.4.5 了解LinkedHashMap的应用吗
+### 1.4.5 LinkedHashMap的应用
 
 实现一个LRU(Least Recently Used)
 
@@ -108,11 +113,13 @@ http://www.cnblogs.com/kxdblog/p/4323892.html
 
 hashtable给所有的table访问方法加上了synchronized关键字
 
+### 1.4.8 HashMap如何解决碰撞
+
 用链表解决，当链表元素过多时，转换为红黑树
 
 ## 1.5 字节码
 
-{% Java-Class文件结构以及字节码阅读 %}
+{% post_link Java-Class文件结构以及字节码阅读 %}
 
 ### 1.5.1 foreach和while在编译之后的区别
 
@@ -120,13 +127,51 @@ foreach只能引用于实现了Iterator接口的类，因此在内部实现时�
 
 while和for循环在编译之后基本相同，利用字节码`goto`来进行循环跳转
 
-## 1.6 线程池
+## 1.6 泛型
+
+### 1.6.1 擦除
+
+## 1.7 反射
+
+### 1.7.1 反射的原理
+
+### 1.7.2 Class.forName和ClassLoader#loadClass
+
+Class.forName执行过程
+
+1. 加载
+1. 验证-准备-解析：该过程称为链接
+1. 初始化
+
+ClassLoader#loadClass执行过程
+
+1. 加载
+
+关于类加载请参考 {% post_link Java-类加载机制 %}
+
+### 1.7.3 获取Class对象的方式
+
+1. `Class clazz = Class.forName(<string>)`
+1. `Class clazz = obj.getClass()`
+1. `Class clazz = <class>.class`
+
+## 1.8 IO
+
+### 1.8.1 Java NIO使用
+
+{% post_link Java-NIO %}
+
+## 1.9 动态代理
+
+JDK 动态代理源码详解请参考 {% post_link JDK-动态代理-源码剖析 %}
+
+## 1.10 线程池
 
 {% post_link Java-concurrent-ThreadPoolExecutor-源码剖析 %}
 
-### 1.6.1 线程池的目的
+### 1.10.1 线程池的目的
 
-### 1.6.2 线程池的种类，区别和使用场景
+### 1.10.2 线程池的种类，区别和使用场景
 
 所有线程池本质上都是ThreadPoolExecutor，只是配置了不同的初始化参数，核心参数有
 
@@ -152,7 +197,7 @@ Executors.newFixedThreadPool(int nThread)
 * __maximumPoolSize__：nThread
 * __keepAliveTime__：0L
 
-### 1.6.3 分析线程池的实现原理和线程的调度过程
+### 1.10.3 分析线程池的实现原理和线程的调度过程
 
 添加一个新的Runnable时
 
@@ -161,75 +206,120 @@ Executors.newFixedThreadPool(int nThread)
 
 Work即一个工作的线程，会从BlockingQueue获取任务并执行
 
-### 1.6.4 线程池如何调优
+### 1.10.4 线程池如何调优
 
 http://www.cnblogs.com/jianzh5/p/6437315.html
 
-## 1.7 反射
-
-### 1.7.1 反射的原理
-
-### 1.7.2 获取Class对象的方式
-
-1. `Class clazz = Class.forName(<string>)`
-1. `Class clazz = obj.getClass()`
-1. `Class clazz = <class>.class`
-
-## 1.8 泛型
-
-### 1.8.1 擦除
-
-## 1.9 设计模式
-
-### 1.9.1 单例模式
-
-{% 设计模式-单例模式 %}
-
-{% Java-单例双重检测正确性分析 %}
-
-## 1.10 动态代理
-
-### 1.10.1 动态代理的几种方式
-
-JDK 动态代理和CGlib
-
-JDK 动态代理源码详解请参考 {% post_link JDK-动态代理-源码剖析 %}
-
-## 1.11 Java NIO使用
-
-关于更多的Java NIO API请参考 {% post_link Java-NIO %}
-
-## 1.12 反射中，Class.forName和ClassLoader区别
-
-Class.forName执行过程
-
-1. 加载
-1. 验证-准备-解析：该过程称为链接
-1. 初始化
-
-ClassLoader#loadClass执行过程
-
-1. 加载
-
-关于类加载请参考 {% post_link Java-类加载机制 %}
-
-## 1.13 有没有可能2个不相等的对象有相同的hashcode
-
-完全可能
-
-## 1.14 IO
-
-{% post_link Java-NIO %}
-
-### 1.14.1 简述NIO的最佳实践，比如netty，mina
-
-## 1.15 JDK各个版本的特性
+## 1.11 JDK各个版本的特性
 
 {% post_link JDK-新特性 %}
 
+## 1.12 设计模式
+
+### 1.12.1 单例模式
+
+{% post_link 设计模式-单例模式 %}
+
+{% post_link Java-单例双重检测正确性分析 %}
+
 # 2 JVM相关
 
-## 2.1 类的实例化顺序
+## 2.1 垃圾回收
+
+### 2.1.1 垃圾收集算法
+
+{% post_link Java-垃圾收集算法 %}
+
+### 2.1.2 垃圾收集器
+
+{% post_link Java-垃圾收集器 %}
+
+### 2.1.3 JVM参数
+
+{% post_link JVM-常用参数 %}
+
+### 2.1.4 JVM内存分代
+
+新生代、老年代、永久代
+
+JDK 8中并无物理上分隔的分代，仅仅保留概念，取而代之的是Region
+
+其中新生代采用的是复制算法，Eden和Survivor分为8：1
+
+__Java 8的内存分代改进__
+
+1. 用Region来替代，仅仅保留新生代和老年代的概念。
+1. G1收集器会维护一个Region的列表，每次回收一个最有受益的Region，这也是G1收集器名字的来源，Garabage first
+
+### 2.1.5 何时触发MinorGC等操作
+
+当堆内存使用量超过一个阈值时进行垃圾回收（针对的是CMS，因为是并发的，需要预留空间给用户使用），或者主动调用System.gc触发
+
+`-XX:InitiatingHeapOccupancyPercent` 参数可以设置这个阈值
+
+### 2.1.6 jvm中一次完整的GC流程（从ygc到fgc）是怎样的，重点讲讲对象如何晋升到老年代，几种主要的jvm参数等
+
+ygc和fgc是什么意思？
+
+JVM参数请参考 {% post_link JVM-常用参数 %}
+
+### 2.1.7 新生代和老生代的内存回收策略
+
+新生代：复制算法，因为对象朝生夕死
+
+老年代：标记-清除或者标记整理
+
+### 2.1.8 Eden和Survivor的比例分配等
+
+默认8：1，如果不够用，则由老年代来担保
+
+### 2.1.9 G1和CMS的区别，吞吐量优先和响应优先的垃圾收集器选择
+
+G1(Gargabe-First)收集器是当今收集器计数发展的最前沿成果之一。G1是一款面向服务端应用的垃圾收集器，HotSpot开发团队赋予它的使命是(在比较长期的)未来可以替换掉JDK 1.5中发布的CMS收集器，与其他GC收集器相比，G1具备如下特点：
+
+* __并行与并发__：G1能充分利用多CPU，多核环境下的硬件优势，使用多个CPU(或CPU核心)来缩短Stop-The-World停顿的时间(并行)，部分其他收集器原本需要停顿Java线程执行的GC动作，G1收集器仍然可以通过并发的方式让Java程序继续执行
+* __分代收集__：与其他收集器一样，分代的概念在G1中仍然保留，虽然G1可以不需要其他收集器配合就能独立管理整个GC堆，但它能够采用不同的方式去处理新创建的对象和已经存活了一段时间的、熬过多次GC的旧对象以获取更好的收集效果
+* __空间整合__：与CMS的"标记-清理"算法不同，G1从整体来看是基于"标记-清理"算法实现的收集器，从局部(两个Region之间)上来看是基于"复制"算法实现的，这两种算法都意味着G1运作期间不会产生内存空间碎片，收集后能提供规整的可用内存
+* __可预测的停顿__：这是G1相对于CMS的另一大优势，降低停顿时间是G1和CMS共同的关注点，但G1除了追求低停顿外，还能建立可预测的停顿时间模型，能让使用者明确指定在一个长度为M毫秒的时间片段内，消耗在垃圾收集上的时间不得超过N毫秒
+
+### 2.1.10 强/软/弱/虚引用与GC
+
+{% post_link Java-对象生命周期 %}
+
+### 2.1.11 OutOfMemory
+
+### 2.1.12 StackOverFlow
+
+### 2.1.13 PermGen Space
+
+占用的内存超过了-Xmx设定的值将会引发OOM(Out Of Memory)错误
+
+## 2.2 类加载机制
+
+类加载过程如下
+
+1. 加载：获取.class文件的二进制字节流
+1. 验证：文件格式验证、元数据验证、字节码验证、符号引用验证
+1. 准备：内存清零
+1. 解析：将符号引用替换为直接引用
+1. 初始化：执行静态初始化语句以及静态子句
+* 验证、准备、解析称为链接
+
+详细内容请参考 {% post_link Java-类加载机制 %}
+
+### 2.2.1 双亲委派
+
+详细内容请参考 {% post_link Java-类加载机制 %}
+
+### 2.2.2 三个类加载器
+
+1. Bootstrap ClassLoader
+1. Extension ClassLoader
+1. Application ClassLoader
+
+详细内容请参考 {% post_link Java-类加载机制 %}
+
+### 2.2.3 类的初始化顺序
 
 比如父类静态数据，构造函数，字段，子类静态数据，构造函数，字段，他们的执行顺序
 
@@ -299,98 +389,7 @@ init Derive's Statement
 init Derive's constructor
 ```
 
-## 2.2 JVM内存分代
-
-新生代、老年代、永久代
-
-JDK 8中并无物理上分隔的分代，仅仅保留概念，取而代之的是Region
-
-其中新生代采用的是复制算法，Eden和Survivor分为8：1
-
-## 2.3 Java 8的内存分代改进
-
-用Region来替代，仅仅保留新生代和老年代的概念。
-
-G1收集器会维护一个Region的列表，每次回收一个最有受益的Region，这也是G1收集器名字的来源，Garabage first
-
-## 2.4 JVM垃圾回收机制，何时触发MinorGC等操作
-
-当堆内存使用量超过一个阈值时进行垃圾回收（针对的是CMS，因为是并发的，需要预留空间给用户使用），或者主动调用System.gc触发
-
-`-XX:InitiatingHeapOccupancyPercent` 参数可以设置这个阈值
-
-## 2.5 jvm中一次完整的GC流程（从ygc到fgc）是怎样的，重点讲讲对象如何晋升到老年代，几种主要的jvm参数等
-
-ygc和fgc是什么意思？
-
-JVM参数请参考 {% post_link JVM-常用参数 %}
-
-## 2.6 你知道哪几种垃圾收集器，各自的优缺点，重点讲下cms，g1
-
-关于垃圾收集器请参考 {% post_link Java-垃圾收集器 %}
-
-## 2.7 新生代和老生代的内存回收策略
-
-新生代：复制算法，因为对象朝生夕死
-
-老年代：标记-清除或者标记整理
-
-## 2.8 Eden和Survivor的比例分配等
-
-默认8：1，如果不够用，则由老年代来担保
-
-## 2.9 深入分析了Classloader，双亲委派机制
-
-关于类加载器请参考 {% post_link Java-类加载机制 %}
-
-## 2.10 JVM的编译优化
-
-__参考JMM分类下的博客__
-
-单线程：在保证as-if-serial语义下，可以允许编译器和处理器进行重排
-
-多线程：在保证happens-before语义，可以允许编译器和处理器进行重排
-
-此外注意volaitle、final、锁的内存语义，以及对优化策略的影响
-
-__数据依赖不重排，控制依赖可重排__
-
-## 2.11 对Java内存模型的理解，以及其在并发中的应用
-
-__参考JMM分类下的博客__
-
-## 2.12 指令重排序，内存栅栏等
-
-关于重排序请参考 {% post_link Java-重排序 %}
-
-## 2.13 OOM错误，stackoverflow错误，permgen space错误
-
-占用的内存超过了-Xmx设定的值将会引发OOM(Out Of Memory)错误
-
-## 2.14 JVM常用参数
-
-常用JVM参数请参考 {% post_link JVM-常用参数 %}
-
-## 2.15 tomcat结构，类加载器流程 
-
-## 2.16 volatile的语义，它修饰的变量一定线程安全吗
-
-单个volatile读写语句当然是线程安全的
-
-但是符合的volatile读写语句或者类似于volaitle++这样的读改写操作就不是线程安全的
-
-关于volatile的内存语义请参考 {% post_link Java-volatile的内存语义 %}
-
-## 2.17 g1和cms区别,吞吐量优先和响应优先的垃圾收集器选择
-
-G1(Gargabe-First)收集器是当今收集器计数发展的最前沿成果之一。G1是一款面向服务端应用的垃圾收集器，HotSpot开发团队赋予它的使命是(在比较长期的)未来可以替换掉JDK 1.5中发布的CMS收集器，与其他GC收集器相比，G1具备如下特点：
-
-* __并行与并发__：G1能充分利用多CPU，多核环境下的硬件优势，使用多个CPU(或CPU核心)来缩短Stop-The-World停顿的时间(并行)，部分其他收集器原本需要停顿Java线程执行的GC动作，G1收集器仍然可以通过并发的方式让Java程序继续执行
-* __分代收集__：与其他收集器一样，分代的概念在G1中仍然保留，虽然G1可以不需要其他收集器配合就能独立管理整个GC堆，但它能够采用不同的方式去处理新创建的对象和已经存活了一段时间的、熬过多次GC的旧对象以获取更好的收集效果
-* __空间整合__：与CMS的"标记-清理"算法不同，G1从整体来看是基于"标记-清理"算法实现的收集器，从局部(两个Region之间)上来看是基于"复制"算法实现的，这两种算法都意味着G1运作期间不会产生内存空间碎片，收集后能提供规整的可用内存
-* __可预测的停顿__：这是G1相对于CMS的另一大优势，降低停顿时间是G1和CMS共同的关注点，但G1除了追求低停顿外，还能建立可预测的停顿时间模型，能让使用者明确指定在一个长度为M毫秒的时间片段内，消耗在垃圾收集上的时间不得超过N毫秒
-
-## 2.18 环境变量classpath
+### 2.2.4 环境变量classpath
 
 说一说你对环境变量classpath的理解？如果一个类不在classpath下，为什么会抛出ClassNotFoundException异常，如果在不改变这个类路径的前期下，怎样才能正确加载这个类？
 
@@ -398,9 +397,21 @@ G1(Gargabe-First)收集器是当今收集器计数发展的最前沿成果之一
 
 加载类的过程可以交给自定义的类加载器来执行，可以自定义类加载器，可以从任何地方获取一段.class文件的二进制字节流，这便是类的加载过程
 
-## 2.19 说一下强引用、软引用、弱引用、虚引用以及他们之间和gc的关系
+## 2.3 JMM
 
-请参考 {% post_link Java-对象生命周期 %}
+1. {% post_link Java-内存模型基础 %}
+1. {% post_link Java-重排序 %}
+1. {% post_link Java-顺序一致性 %}
+1. {% post_link Java-volatile的内存语义 %}
+1. {% post_link Java-锁的内存语义 %}
+1. {% post_link Java-final域的内存语义 %}
+1. {% post_link Java-happens-before %}
+1. {% post_link Java-单例双重检测正确性分析 %}
+1. {% post_link Java-内存模型综述 %}
+
+## 2.4 锁机制
+
+{% post_link Java-锁机制简介 %}
 
 # 3 JUC/并发相关
 
@@ -546,6 +557,8 @@ Quartz
 ## 5.3 OkHttp
 
 ## 5.4 MINA
+
+## 5.5 Cglib
 
 # 6 分布式相关
 
@@ -881,6 +894,8 @@ TOP Min K用最大堆
 ## 12.13 后台系统怎么防止请求重复提交？
 
 ## 12.14 mock测试框架
+
+## 12.15 tomcat结构，类加载器流程 
 
 # 13 一些面经
 
