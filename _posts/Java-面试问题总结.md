@@ -147,7 +147,7 @@ ClassLoader#loadClass执行过程
 
 1. 加载
 
-关于类加载请参考 {% post_link Java-类加载机制 %}
+{% post_link Java-类加载机制 %}
 
 ### 1.7.3 获取Class对象的方式
 
@@ -163,7 +163,7 @@ ClassLoader#loadClass执行过程
 
 ## 1.9 动态代理
 
-JDK 动态代理源码详解请参考 {% post_link JDK-动态代理-源码剖析 %}
+{% post_link JDK-动态代理-源码剖析 %}
 
 ## 1.10 线程池
 
@@ -261,7 +261,7 @@ __Java 8的内存分代改进__
 
 ygc和fgc是什么意思？
 
-JVM参数请参考 {% post_link JVM-常用参数 %}
+{% post_link JVM-常用参数 %}
 
 ### 2.1.7 新生代和老生代的内存回收策略
 
@@ -309,11 +309,11 @@ G1(Gargabe-First)收集器是当今收集器计数发展的最前沿成果之一
 1. 初始化：执行静态初始化语句以及静态子句
 * 验证、准备、解析称为链接
 
-详细内容请参考 {% post_link Java-类加载机制 %}
+{% post_link Java-类加载机制 %}
 
 ### 2.2.1 双亲委派
 
-详细内容请参考 {% post_link Java-类加载机制 %}
+{% post_link Java-类加载机制 %}
 
 ### 2.2.2 三个类加载器
 
@@ -321,7 +321,7 @@ G1(Gargabe-First)收集器是当今收集器计数发展的最前沿成果之一
 1. Extension ClassLoader
 1. Application ClassLoader
 
-详细内容请参考 {% post_link Java-类加载机制 %}
+{% post_link Java-类加载机制 %}
 
 ### 2.2.3 类的初始化顺序
 
@@ -475,7 +475,7 @@ Lock是ReentrantLock，其实现依赖于AQS，是一种无锁数据结构
 1. 链表、红黑树
 1. table大小为2的幂次，这样做可以实现一个扩张单调性，类似于一致性hash
 
-ConcurrentHashMap源码分析请参考 {% post_link Java-concurrent-ConcurrentHashMap-源码剖析 %}
+{% post_link Java-concurrent-ConcurrentHashMap-源码剖析 %}
 
 ## 3.5 原子类实现原理
 
@@ -483,7 +483,7 @@ ConcurrentHashMap源码分析请参考 {% post_link Java-concurrent-ConcurrentHa
 
 ## 3.6 CAS
 
-关于CAS等原子操作请参考 {% post_link Java-原子操作的实现原理 %}
+{% post_link Java-原子操作的实现原理 %}
 
 ## 3.7 如果让你实现一个并发安全的链表，你会怎么做
 
@@ -533,7 +533,7 @@ LockSupport.unpark
 
 与Object提供的wait/notify的机制不同，await/signal可以提供多个不同的等待队列
 
-ConditionObject源码分析请参考 {% post_link Java-concurrent-AQS-ConditionObject-源码剖析 %}
+{% post_link Java-concurrent-AQS-ConditionObject-源码剖析 %}
 
 ## 3.13 Fork/Join
 
@@ -573,7 +573,7 @@ FactorBean是一种工厂bean，调用指定的方法来生产对象
 
 ## 4.6 对Spring的理解，非单例注入的原理？它的生命周期？循环注入的原理，aop的实现原理，说说aop中的几个术语，它们是怎么相互工作的？
 
-Spring AOP 源码分析请参考 {% post_link Spring-AOP-源码剖析 %}
+{% post_link Spring-AOP-源码剖析 %}
 
 ## 4.7 Mybatis的底层实现原理
 
@@ -708,7 +708,7 @@ http://www.cnblogs.com/PurpleDream/p/5559352.html
 
 ## 6.7 接口的幂等性的概念
 
-接口幂等性请参考 {% post_link 分布式系统接口幂等性 %}
+{% post_link 分布式系统接口幂等性 %}
 
 ## 6.8 数据库拆分
 
@@ -726,9 +726,12 @@ http://blog.csdn.net/dinglang_2009/article/details/53195835
 
 ## 6.9 负载均衡算法
 
-请参考 {% post_link 负载均衡算法 %}
+{% post_link 负载均衡算法 %}
 
 ## 6.10 分布式集群下的唯一序列号
+
+1. 数据库自增id
+1. uuid(MacAddress+timeStamp)
 
 http://www.cnblogs.com/haoxinyue/p/5208136.html
 
@@ -756,7 +759,7 @@ http://www.jianshu.com/p/104b27d1e943
 
 ## 7.3 海量url去重类问题（布隆过滤器）
 
-请参考 {% post_link Bloom-Filter %}
+{% post_link Bloom-Filter %}
 
 ## 7.4 海量url中找到出现次数最多的10个url
 
@@ -776,9 +779,8 @@ map-reduce
 
 ## 7.8 BTree相关的操作
 
-B树请参考 {% post_link B-tree-详解 %}
-
-B+树请参考 {% post_link BPlus-tree-详解 %}
+1. {% post_link B-tree-详解 %}
+1. {% post_link BPlus-tree-详解 %}
 
 ## 7.9 在工作中遇到过哪些设计模式，是如何应用的
 
@@ -788,11 +790,11 @@ B+树请参考 {% post_link BPlus-tree-详解 %}
 
 ## 7.11 什么是一致性hash
 
-请参考 {% post_link 一致性hash %}
+{% post_link 一致性hash %}
 
 ## 7.12 paxos算法
 
-paxos算法分析请参考 {% post_link Paxos算法 %}
+{% post_link Paxos算法 %}
 
 ## 7.13 在装饰器模式和代理模式之间，你如何抉择，请结合自身实际情况聊聊
 
@@ -806,13 +808,13 @@ paxos算法分析请参考 {% post_link Paxos算法 %}
 
 ## 8.1 MySQL InnoDB存储的文件结构
 
-具体请参考{% post_link 数据库引擎 %}
+{% post_link 数据库引擎 %}
 
 ## 8.2 索引树是如何维护的？
 
 B+树，不同的引擎有不同的方式
 
-具体请参考{% post_link 数据库引擎 %}
+{% post_link 数据库引擎 %}
 
 ## 8.3 数据库自增主键可能的问题
 
@@ -893,7 +895,7 @@ SSL(以RSA为加密算法)
 
 ## 10.3 TCP/IP协议
 
-TCP三次握手/四次挥手请参考 {% post_link TCP-IP %}
+{% post_link TCP-IP %}
 
 ## 10.4 TCP三次握手和四次挥手的流程，为什么断开连接要4次,如果握手只有两次，会出现什么
 
@@ -903,7 +905,7 @@ TCP三次握手/四次挥手请参考 {% post_link TCP-IP %}
 
 `TIME_WAIT`：为了连接成功断开，需要延迟一小段时间
 
-关于其他状态请参考 {% post_link TCP-IP %}
+{% post_link TCP-IP %}
 
 ## 10.6 TIME_WAIT状态的原理
 
@@ -917,11 +919,11 @@ TCP和UDP
 
 ## 10.9 说说你知道的几种HTTP响应码
 
-具体请参考 {% post_link HTTP协议 %}
+{% post_link HTTP协议 %}
 
 ## 10.10 当你用浏览器打开一个链接的时候，计算机做了哪些工作步骤
 
-具体请参考 {% post_link HTTP协议 %}
+{% post_link HTTP协议 %}
 
 ## 10.11 TCP/IP如何保证可靠性，数据包有哪些数据组成
 
@@ -931,11 +933,11 @@ http://www.cnblogs.com/cswuyg/p/3653263.html
 
 ## 10.13 Http请求get和post的区别以及数据包格式
 
-具体请参考 {% post_link HTTP协议 %}
+{% post_link HTTP协议 %}
 
 ## 10.14 简述tcp建立连接3次握手，和断开连接4次握手的过程；关闭连接时，出现TIMEWAIT过多是由什么原因引起，是出现在主动断开方还是被动断开方
 
-请参考 {% post_link TCP-IP %}
+{% post_link TCP-IP %}
 
 # 11 操作系统
 
