@@ -288,11 +288,15 @@ G1(Gargabe-First)收集器是当今收集器计数发展的最前沿成果之一
 
 ### 2.1.11 OutOfMemory
 
+经过GC后，仍然无法为新产生的对象分配内存空间
+
 ### 2.1.12 StackOverFlow
+
+函数调用层次太深，或者栈内存太小
 
 ### 2.1.13 PermGen Space
 
-占用的内存超过了-Xmx设定的值将会引发OOM(Out Of Memory)错误
+反射或者动态代理生成的类型对象过多
 
 ## 2.2 类加载机制
 
@@ -414,32 +418,70 @@ init Derive's constructor
 ## 2.5 锁机制
 
 {% post_link Java-锁机制简介 %}
+{% post_link Java-synchronized的实现原理与应用 %}
 
 # 3 JUC/并发相关
 
-## 3.1 ThreadLocal用过么，原理是什么，用的时候要注意什么
+## 3.1 源码相关
+
+1. {% post_link Java-concurrent-AQS-源码剖析 %}
+1. {% post_link Java-concurrent-AQS-ConditionObject-源码剖析 %}
+1. {% post_link Java-concurrent-ReentrantLock-源码剖析 %}
+1. {% post_link Java-concurrent-ReentrantReadWriteLock-源码剖析 %}
+1. {% post_link Java-concurrent-ArrayBlockingQueue-源码剖析 %}
+1. {% post_link Java-concurrent-ThreadPoolExecutor-源码剖析 %}
+1. {% post_link Java-concurrent-FutureTask-源码剖析 %}
+1. {% post_link Java-concurrent-ConcurrentHashMap-源码剖析 %}
+1. {% post_link Java-concurrent-CountDownLatch-源码剖析 %}
+1. {% post_link Java-concurrent-CyclicBarrier-源码剖析 %}
+1. {% post_link Java-concurrent-Exchanger-源码剖析 %}
+1. {% post_link Java-concurrent-Semaphore-源码剖析 %}
+1. {% post_link Java-concurrent-Fork-Join-源码剖析 %}
+1. {% post_link Java-ThreadLocal-源码剖析 %}
+
+## 3.2 ThreadLocal
+
+原理是什么
 
 ThreadLocal的实现需要Thread的配合，Thread内部为ThreadLocal增加了一个字段`threadLocals`，该字段是一个Map<ThreadLocal,T>，也就是说，不同的ThreadLocal对于同一个线程的值将会存放在这个Thread#threadLocals字段中
 
-## 3.2 synchronized和Lock的区别
+Map以及Map.Entry都是延迟初始化的
+
+## 3.3 锁
+
+{% post_link Java-锁机制简介 %}
+
+### 3.3.1 synchronized
 
 synchronized是内建的锁机制，依赖于Object Monitor
 
-Lock是ReentrantLock，其实现依赖于AQS，是一种无锁数据结构
-
-## 3.3 synchronized 的原理，什么是自旋锁，偏向锁，轻量级锁，什么叫可重入锁，什么叫公平锁和非公平锁
+在JDK 1.6之后对内建锁机制进行了优化，引入的概念有自旋锁，轻量级锁以及偏向锁
 
 {% post_link Java-synchronized的实现原理与应用 %}
 
-## 3.4 ConcurrentHashMap具体实现及其原理，jdk8下的改版
+### 3.3.2 Lock
+
+Lock是ReentrantLock，其实现依赖于AQS，是一种无锁数据结构
+
+公平锁与非公平锁是ReentrantLock的概念
+
+* 公平锁意味着当一个线程尝试获取锁时，首先检查是否有其他线程正在等待这把锁。如果有其他线程，那么当前线程直接进入等待队列。否则才尝试获取锁
+* 非公平锁意味着当一个线程尝试获取锁时，它首先尝试获取一下锁，失败了才会进入队列，这对于已经在队列中等待的线程而言是不公平的，在队列中等待的线程可能会被饿死
+
+## 3.4 ConcurrentHashMap
+
+1. 并发扩容
+1. Node/TreeNode/TreeBin/ForwardingNode
+1. 链表、红黑树
+1. table大小为2的幂次，这样做可以实现一个扩张单调性，类似于一致性hash
 
 ConcurrentHashMap源码分析请参考 {% post_link Java-concurrent-ConcurrentHashMap-源码剖析 %}
 
-## 3.5 用过哪些原子类，他们的参数以及原理是什么
+## 3.5 原子类实现原理
 
-AtomicInteger，就是循环CAS来实现的
+循环+CAS，即自旋
 
-## 3.6 CAS是什么，他会产生什么问题（ABA问题的解决，如加入修改次数、版本号）
+## 3.6 CAS
 
 关于CAS等原子操作请参考 {% post_link Java-原子操作的实现原理 %}
 
@@ -447,13 +489,16 @@ AtomicInteger，就是循环CAS来实现的
 
 最简单的就是给每个链表访问的方法加上synchronized关键字
 
-## 3.8 简述ConcurrentLinkedQueue和LinkedBlockingQueue的用处和不同之处
+## 3.8 ConcurrentLinkedQueue与LinkedBlockingQueue
 
-## 3.9 简述AQS的实现原理
+简而言之
 
-AQS源码分析请参考 {% post_link Java-concurrent-AQS-源码剖析 %}
+1. ConcurrentLinkedQueue是Queue接口的一个安全实现
+1. LinkedBlockingQueue是BlockingQueue的一种实现，被用于生产消费者队列
 
-## 3.10 CountDownLatch和CyclicBarrier的用法，以及相互之间的差别?
+http://www.cnblogs.com/linjiqin/archive/2013/05/30/3108188.html
+
+## 3.9 CountDownLatch和CyclicBarrier的用法，以及相互之间的差别?
 
 CountDownLatch
 
@@ -466,30 +511,47 @@ CyclicBarrier
 
 > 假设构造方法传入的是n，那么当且仅当n个线程调用了CyclicBarrier#await后，这n个线程才会从阻塞中被唤醒
 
-## 3.11 concurrent包中使用过哪些类？分别说说使用在什么场景？为什么要使用？
+## 3.10 Unsafe
 
-__具体参考`Java concurrent 源码剖析`分类__
+Unsafe是JDK实现所依赖的一个非公开的类，用于提供一些内存操作以及CAS操作等等。不具有跨平台性质，不同平台的实现可能有差异。
 
-## 3.12 LockSupport工具
+{% post_link Java-sun-Unsafe-源码剖析 %}
+
+## 3.11 LockSupport
 
 LockSupport.park
 LockSupport.unpark
 
 可以先unpark再park，unpark可以理解为获取一个许可。但是多次调用unpark只有一个许可
 
-## 3.13 Condition接口及其实现原理
+## 3.12 Condition
+
+两个重要方法，提供类似于wait/notify的机制
+
+1. await
+1. signal/signalAll
+
+与Object提供的wait/notify的机制不同，await/signal可以提供多个不同的等待队列
 
 ConditionObject源码分析请参考 {% post_link Java-concurrent-AQS-ConditionObject-源码剖析 %}
 
-## 3.14 Fork/Join框架的理解
+## 3.13 Fork/Join
+
+从宏观上来说就是一个类似于归并的过程，将问题拆分成子问题，最终合并结果
 
 {% post_link Java-concurrent-Fork-Join-源码剖析 %}
 
-## 3.15 jdk8的parallelStream的理解
+### 3.13.1 parallelStream
+
+parallelStream其实就是一个并行执行的流。它通过默认的ForkJoinPool，可能提高你的多线程任务的速度。
+
+JDK 1.8之后，ForkJoinPool内部新添了一个全局的线程池，用于执行那些没有显式创建ForkJoinPool的并行任务。例如parallelStream
 
 http://blog.csdn.net/u011001723/article/details/52794455
 
-## 3.16 分段锁的原理,锁力度减小的思考
+## 3.14 分段锁的原理
+
+分段锁就是细化锁操作，类比于表锁和行锁。JDK 1.7中的ConcurrentHashMap的实现就是使用了分段锁，将整个hashtable分成多个Segment，访问某个元素必须获取该元素对应的Segment的锁，如果两个元素位于两个Segment，那么这两个元素的并发操作是不需要同步的
 
 # 4 Spring
 
@@ -568,7 +630,44 @@ Quartz
 
 {% post_link 分布式存储 %}
 
-## 6.2 Dubbo的底层实现原理和机制
+## 6.2 zookeeper
+
+1. {% post_link zookeeper-概论 %}
+1. {% post_link zookeeper-基础 %}
+1. {% post_link zookeeper-原理 %}
+1. {% post_link zookeeper-应用场景 %}
+1. {% post_link Paxos算法 %}
+
+### 6.2.1 zookeeper适用场景
+
+{% post_link zookeeper-应用场景 %}
+
+### 6.2.2 zookeeper watch机制
+
+http://blog.csdn.net/z69183787/article/details/53023578
+
+### 6.2.3 Zookeeper的用途
+
+zookeeper是注册中心，提供目录和节点服务，watch机制
+
+http://blog.csdn.net/tycoon1988/article/details/38866395
+
+### 6.2.4 zookeeper选举原理
+
+ZAB协议，paxox算法{% post_link Paxos算法 %}
+
+### 6.2.5 redis/zookeeper节点宕机如何处理
+
+重新选举leader
+
+## 6.3 Dubbo
+
+### 6.3.1 Dubbo和zookeeper的联系与区别
+
+dubbo和zookeeper的区别和关系
+http://blog.csdn.net/daiqinge/article/details/51282874
+
+### 6.3.2 Dubbo的底层实现原理和机制
 
 https://zhidao.baidu.com/question/1951046178708452068.html
 
@@ -584,21 +683,7 @@ http://dubbo.io/developer-guide/%E6%A1%86%E6%9E%B6%E8%AE%BE%E8%AE%A1.html
 
 ![fig1](/images/Java-面试问题总结/fig1.jpg)
 
-## 6.3 描述一个服务从发布到被消费的详细过程
-
-## 6.4 分布式系统怎么做服务治理
-
-http://www.jianshu.com/p/104b27d1e943
-
-## 6.5 接口的幂等性的概念
-
-接口幂等性请参考 {% post_link 分布式系统接口幂等性 %}
-
-## 6.6 消息中间件如何解决消息丢失问题
-
-{% post_link 消息的重复产生和应对 %}
-
-## 6.7 Dubbo的服务请求失败怎么处理
+### 6.3.3 Dubbo的服务请求失败怎么处理
 
 dubbo启动时默认有重试机制和超时机制。
 超时机制的规则是如果在一定的时间内，provider没有返回，则认为本次调用失败，
@@ -606,63 +691,60 @@ dubbo启动时默认有重试机制和超时机制。
 
 http://www.cnblogs.com/binyue/p/5380322.html
 
-## 6.8 重连机制会不会造成错误
+## 6.4 消息中间件
 
-{% post_link 消息的重复产生和应对 %}
+1. {% post_link 消息中间件简介 %}
+1. {% post_link 消息中间件的消息发送一致性 %}
+1. {% post_link 消息的重复产生和应对 %}
 
-## 6.9 对分布式事务的理解
+## 6.5 分布式事务
 
-分布式事务请参考 {% post_link 分布式事务 %}
-以及 {% post_link 分布式事务-两阶段三阶段协议 %}
+1. {% post_link 分布式事务 %}
+1. {% post_link 分布式事务-两阶段三阶段协议 %}
 
-## 6.10 如何实现负载均衡，有哪些算法可以实现？
+## 6.6 分布式锁
 
-请参考 {% post_link 负载均衡算法 %}
+http://www.cnblogs.com/PurpleDream/p/5559352.html
 
-## 6.11 Zookeeper的用途，选举的原理是什么？
+## 6.7 接口的幂等性的概念
 
-zookeeper是注册中心，提供目录和节点服务，watch机制
+接口幂等性请参考 {% post_link 分布式系统接口幂等性 %}
 
-http://blog.csdn.net/tycoon1988/article/details/38866395
+## 6.8 数据库拆分
 
-dubbo和zookeeper的区别和关系
-http://blog.csdn.net/daiqinge/article/details/51282874
-
-master/slave模式，保证只有一个leader，ZAB协议，paxox算法
-
-## 6.12 数据的垂直拆分水平拆分。
+### 6.8.1 垂直拆分/水平拆分
 
 垂直拆分，将一张表中的不同类别的数据分别放到不同的表中去
 
 水平拆分，将一张表的不同数据项放到两台机器上
 
-## 6.13 zookeeper原理和适用场景
+### 6.8.2 数据库分库分表策略
 
-{% post_link zookeeper-应用场景 %}
+### 6.8.3 分库分表后的全表查询问题
 
-## 6.14 zookeeper watch机制
+http://blog.csdn.net/dinglang_2009/article/details/53195835
 
-http://blog.csdn.net/z69183787/article/details/53023578
+## 6.9 负载均衡算法
 
-## 6.15 redis/zk节点宕机如何处理
+请参考 {% post_link 负载均衡算法 %}
 
-重新选举leader
-
-## 6.16 分布式集群下如何做到唯一序列号
+## 6.10 分布式集群下的唯一序列号
 
 http://www.cnblogs.com/haoxinyue/p/5208136.html
 
-## 6.17 如何做一个分布式锁
+## 6.11 消息队列(Message Queue)
 
-http://www.cnblogs.com/PurpleDream/p/5559352.html
+1. 用过哪些MQ，怎么用的，和其他mq比较有什么优缺点，MQ的连接是线程安全的吗
 
-## 6.18 用过哪些MQ，怎么用的，和其他mq比较有什么优缺点，MQ的连接是线程安全的吗
-
-## 6.19 MQ系统的数据如何保证不丢失
+### 6.11.1 MQ系统的数据如何保证不丢失
 
 {% post_link 消息中间件的消息发送一致性 %}
 
-## 6.20 列举出你能想到的数据库分库分表策略；分库分表后，如何解决全表查询的问题。
+## 6.12 描述一个服务从发布到被消费的详细过程
+
+## 6.13 分布式系统怎么做服务治理
+
+http://www.jianshu.com/p/104b27d1e943
 
 # 7 算法&数据结构&设计模式
 
@@ -851,7 +933,7 @@ http://www.cnblogs.com/cswuyg/p/3653263.html
 
 具体请参考 {% post_link HTTP协议 %}
 
-## 10.14 简述tcp建立连接3次握手，和断开连接4次握手的过程；关闭连接时，出现TIMEWAIT过多是由什么原因引起，是出现在主动断开方还是被动断开方。
+## 10.14 简述tcp建立连接3次握手，和断开连接4次握手的过程；关闭连接时，出现TIMEWAIT过多是由什么原因引起，是出现在主动断开方还是被动断开方
 
 请参考 {% post_link TCP-IP %}
 
@@ -883,9 +965,9 @@ TOP Min K用最大堆
 
 ## 12.7 linux利用哪些命令，查找哪里出了问题（例如io密集任务，cpu过度）
 
-## 12.8 场景问题，有一个第三方接口，有很多个线程去调用获取数据，现在规定每秒钟最多有10个线程同时调用它，如何做到。
+## 12.8 场景问题，有一个第三方接口，有很多个线程去调用获取数据，现在规定每秒钟最多有10个线程同时调用它，如何做到
 
-## 12.9 用三个线程按顺序循环打印abc三个字母，比如abcabcabc。
+## 12.9 用三个线程按顺序循环打印abc三个字母，比如abcabcabc
 
 ## 12.10 常见的缓存策略有哪些，你们项目中用到了什么缓存系统，如何设计的
 
