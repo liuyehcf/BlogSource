@@ -397,7 +397,9 @@ init Derive's constructor
 
 加载类的过程可以交给自定义的类加载器来执行，可以自定义类加载器，可以从任何地方获取一段.class文件的二进制字节流，这便是类的加载过程
 
-## 2.3 JMM
+## 2.3 class文件结构
+
+## 2.4 JMM
 
 1. {% post_link Java-内存模型基础 %}
 1. {% post_link Java-重排序 %}
@@ -409,7 +411,7 @@ init Derive's constructor
 1. {% post_link Java-单例双重检测正确性分析 %}
 1. {% post_link Java-内存模型综述 %}
 
-## 2.4 锁机制
+## 2.5 锁机制
 
 {% post_link Java-锁机制简介 %}
 
