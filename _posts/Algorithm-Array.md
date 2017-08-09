@@ -254,7 +254,105 @@ public class Solution {
 }
 ```
 
-# 6 Question-134[★★★★★]
+# 6 Question-130[★★★★★]
+
+__Surrounded Regions__
+
+> Given a 2D board containing 'X' and 'O' (the letter O), capture all regions surrounded by 'X'.
+
+> A region is captured by flipping all 'O's into 'X's in that surrounded region.
+
+```Java
+public class Solution {
+    class Node {
+        int row;
+
+        int col;
+
+        Node parent;
+
+        boolean isRegion;
+
+        Node(int row, int col) {
+            this.row = row;
+            this.col = col;
+        }
+
+        Node getRoot() {
+            Node n = this;
+            while (n.parent != null) {
+                n = n.parent;
+            }
+            return n;
+        }
+
+        List<Node> children = new ArrayList<>();
+
+        void addChild(Node child) {
+            child.parent = this;
+            children.add(child);
+        }
+
+        void union(Node root) {
+            for (Node child : root.children) {
+                addChild(child);
+            }
+            root.children.clear();
+            addChild(root);
+            isRegion |= root.isRegion;
+        }
+    }
+
+    public void solve(char[][] board) {
+        int m, n;
+        if ((m = board.length) == 0 || (n = board[0].length) == 0) return;
+
+        Node[][] nodes = new Node[m][n];
+
+        Set<Node> set = new HashSet<>();
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (board[i][j] == 'O') {
+                    Node root1 = null, root2 = null;
+
+                    if (j > 0 && board[i][j - 1] == 'O') root1 = nodes[i][j - 1].getRoot();
+                    if (i > 0 && board[i - 1][j] == 'O') root2 = nodes[i - 1][j].getRoot();
+
+                    if (root1 != null && root2 != null) {
+                        if (root1 != root2) {
+                            root1.union(root2);
+                            set.remove(root2);
+                        }
+                        root1.addChild(nodes[i][j] = new Node(i, j));
+                    } else if (root1 != null) {
+                        root1.addChild(nodes[i][j] = new Node(i, j));
+                    } else if (root2 != null) {
+                        root2.addChild(nodes[i][j] = new Node(i, j));
+                    } else {
+                        set.add(nodes[i][j] = new Node(i, j));
+                    }
+
+                    if (i == 0 || j == 0 || i == m - 1 || j == n - 1) {
+                        nodes[i][j].getRoot().isRegion = true;
+                    }
+                }
+            }
+        }
+
+        for (Node root : set) {
+            if (!root.isRegion) {
+                for (Node child : root.children) {
+                    board[child.row][child.col] = 'X';
+                }
+                board[root.row][root.col] = 'X';
+            }
+        }
+    }
+}
+```
+
+# 7 Question-134[★★★★★]
 
 __Gas Station__
 
@@ -286,7 +384,80 @@ public class Solution {
 }
 ```
 
-# 7 Question-209[★★★]
+# 8 Question-200[★★★★★]
+
+__Number of Islands__
+
+> Given a 2d grid map of '1's (land) and '0's (water), count the number of islands. An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water.
+
+```Java
+public class Solution {
+
+    class Node {
+        Node parent;
+
+        Node() {
+            this.parent = null;
+        }
+
+        Node getRoot() {
+            Node n = this;
+            while (n.parent != null) {
+                n = n.parent;
+            }
+            return n;
+        }
+
+        void addChild(Node child) {
+            child.parent = this;
+        }
+
+        void union(Node root) {
+            addChild(root);
+        }
+    }
+
+    public int numIslands(char[][] grid) {
+        int m, n;
+        if ((m = grid.length) == 0 || (n = grid[0].length) == 0) return 0;
+
+        Set<Node> set = new HashSet<>();
+
+        Node[][] nodes = new Node[m][n];
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == '1') {
+                    Node root1 = null, root2 = null;
+                    if (j > 0 && grid[i][j - 1] == '1') root1 = nodes[i][j - 1].getRoot();
+                    if (i > 0 && grid[i - 1][j] == '1') root2 = nodes[i - 1][j].getRoot();
+
+                    if (root1 != null && root2 != null) {
+                        if (root1 != root2) {
+                            root1.union(root2);
+                            set.remove(root2);
+                        }
+                        root1.addChild(nodes[i][j] = new Node());
+                    } else if (root1 != null) {
+                        nodes[i][j] = new Node();
+                        root1.addChild(nodes[i][j] = new Node());
+                    } else if (root2 != null) {
+                        nodes[i][j] = new Node();
+                        root2.addChild(nodes[i][j] = new Node());
+                    } else {
+                        set.add(nodes[i][j] = new Node());
+                    }
+                }
+            }
+        }
+
+        return set.size();
+
+    }
+}
+```
+
+# 9 Question-209[★★★]
 
 __Minimum Size Subarray Sum__
 
@@ -318,7 +489,7 @@ public class Solution {
 
 <!--
 
-# 8 Question-000[★]
+# 10 Question-000[★]
 
 ____
 
