@@ -822,31 +822,40 @@ init Derive's constructor
 # 11 Redis&缓存相关
 
 1. Redis的并发竞争问题如何解决，了解Redis事务的CAS操作吗
-    > 待补充
+    > {% post_link Redis-面试总结 %}
 
 1. 缓存机器增删如何对系统影响最小，一致性哈希的实现
     > {% post_link 一致性hash %}
 
 1. Redis持久化的几种方式，优缺点是什么，怎么实现的
-    > 待补充
+    > {% post_link Redis-持久化机制 %}
 
 1. Redis的缓存失效策略
-    > 待补充
+    > 1. volatile-lru：从已设置过期时间的数据集（server.db[i].expires）中挑选最近最少使用的数据淘汰
+    > 1. volatile-ttl：从已设置过期时间的数据集（server.db[i].expires）中挑选将要过期的数据淘汰
+    > 1. volatile-random：从已设置过期时间的数据集（server.db[i].expires）中任意选择数据淘汰
+    > 1. allkeys-lru：从数据集（server.db[i].dict）中挑选最近最少使用的数据淘汰
+    > 1. allkeys-random：从数据集（server.db[i].dict）中任意选择数据淘汰
+    > 1. no-enviction（驱逐）：禁止驱逐数据
 
 1. 缓存穿透的解决办法
-    > 待补充
+    > 1. Bloom Filter
+    > 1. 缓存该不存在的键(其值是一个约定好的值)，其过期时间较短，并且应用端能够处理这个缓存值
 
 1. Redis集群，高可用，原理
     > 待补充
 
 1. MySQL里有2000w数据，Redis中只存20w的数据，如何保证Redis中的数据都是热点数据
-    > 待补充
+    > 感觉就是淘汰策略
 
 1. 用Redis和任意语言实现一段恶意登录保护的代码，限制1小时内每用户Id最多只能登录5次
     > 待补充
 
 1. Redis的数据淘汰策略
-    > 待补充
+    > ttl
+    > lru
+    > randum
+    > 缓存失效策略和数据淘汰策略类似，只不过缓存失效有已设置过期时间和所有这两个区别，因此有6种，而数据淘汰策略只有3种
 
 # 12 网络相关
 
@@ -854,20 +863,24 @@ init Derive's constructor
     > TCP、UDP
 
 1. HTTP和HTTPS的区别
-    > 待补充
+    > http://blog.csdn.net/whatday/article/details/38147103
+    > http://www.cnblogs.com/wqhwe/p/5407468.html
     > (中间人攻击、加密)。
     > 那么它是怎么实现加密的？(非对称交换密钥，然后用密钥对称加密消息)
 
-1. TIME_WAIT状态什么情况下会产生，以及它有什么用
-    > 待验证
-    > 它可以保证重发丢失的ACK，还可以防止之后重用这个端口的进程不至于被对端认成前任(假如ACK包丢掉的话)
-    > http://blog.csdn.net/najiutan/article/details/15814095
+1. `TIME_WAIT`状态什么情况下会产生，以及它有什么用
+    > 主动关闭的一方在收到FIN之后会进入`TIME_WAIT`状态
+    > 有两个作用(记A为主动关闭方，B为被动关闭方)
+    > 1. 如果B没有收到A发送的ACK信号，那么B会重新发送FIN。如果A处于Closed状态，那么A在接收到这个重发的FIN后会响应RST而不是ACK。这会导致B将其判断为错误
+    > 1. 避免上次一连接的数据包在新连接的周期内到达，可以认为`TIME_WAIT`之后，所有本次连接的数据包都消逝了，不会再重新出现了。
 
 1. HTTP请求详细过程
     > {% post_link HTTP请求详细过程 %}
 
 1. 一个IP包大概是多大呢，有限制没有？
-    > IP数据包的最大长度是64K字节(65535)，因为在IP包头中用2个字节描述报文长度，2个字节所能表达的最大数字就是65535。  
+    > IP数据包的最大长度是64K字节(65535)，因为在IP包头中用2个字节描述报文长度，2个字节所能表达的最大数字就是65535。
+
+    > ![fig2](/images/Java-面试问题总结/fig2.png)
 
 1. 什么情况下会考虑UDP、什么情况下会考虑TCP
     > TCP一般用于文件传输(FTP、HTTP对数据准确性要求高，速度可以相对慢)，发送或接收邮件(POP、IMAP、SMTP对数据准确性要求高，非紧急应用)，远程登录(TELNET、SSH对数据准确性有一定要求，有连接的概念)等等；
@@ -887,12 +900,7 @@ init Derive's constructor
     > 三次握手、四次挥手详见{% post_link TCP-IP %}
 
 1.  为什么TCP建立连接需要三次握手，关闭连接需要4次挥手
-    > 待补充
-
-1. `TIME_WAIT`和`CLOSE_WAIT`的区别
-    > `CLOSE_WAIT`：被动关闭方接收到了对方FIN信号，但由于TCP连接是双向的，但是仍有数据要传给对方
-    > `TIME_WAIT`：为了连接成功断开，需要延迟一小段时间
-    > {% post_link TCP-IP %}
+    > TCP连接时全双工的，在建立连接时，两个方向可以同时建立，而在关闭连接时，两个方向可以不同时关闭，因此会多一次交互(被动关闭方的`CLOSE_WAIT`)
 
 1. TCP粘包问题
     > http://www.cnblogs.com/qiaoconglovelife/p/5733247.html
@@ -901,9 +909,17 @@ init Derive's constructor
     > 待补充
 
 1. TCP/IP如何保证可靠性，数据包有哪些数据组成
-    > 待补充
+    > TCP比UDP多维护了几个状态
+    > 各层数据包关系
+
+    > ![fig3](/images/Java-面试问题总结/fig3.png)
+
+    > TCP数据包![fig4](/images/Java-面试问题总结/fig4.png)
+
+    > DUP数据包![fig5](/images/Java-面试问题总结/fig5.png)
 
 1. accept是在三次握手的哪个阶段？
+    > accept指的是应用层的accept方法，用于获取一个Socket对象
     > 三次握手后，http://blog.csdn.net/wukui1008/article/details/7691499
 
 1. 假如三次握手后我没有调accept，那么你能感知到我是否调用了accept吗？
@@ -916,7 +932,9 @@ init Derive's constructor
     > 待补充
 
 1. http1.0和http1.1有什么区别
+    > keep-alive
     > http://www.cnblogs.com/shijingxiang/articles/4434643.html
+    > http://www.cnblogs.com/gofighting/p/5421890.html
 
 1. 长连接与短连接
     > http://www.cnblogs.com/cswuyg/p/3653263.html
