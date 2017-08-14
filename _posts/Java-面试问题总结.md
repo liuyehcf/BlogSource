@@ -33,7 +33,7 @@ __目录__
     > 1. notifyAll：重量级锁的wait/Notify机制
     > 1. wait：重量级锁的wait/Notify机制
 
-1.  Object的protected方法
+1. Object的protected方法
     > 1. clone：浅拷贝，仅复制内存，如果包含引用类型，那么拷贝前后将会指向同一个对象
     > 1. finalize：与垃圾收集有关，第一次回收时会调用该方法，但不保证调用，也不保证正确执行。因此别用这个东西，历史遗留问题
 
@@ -580,6 +580,17 @@ init Derive's constructor
     > 运行状态什么时候会切到就绪态(比如时间片用完)
     > 什么时候会切到等待(比如遇到IO)
 
+1. 一串int型整数存放磁盘上的压缩存储方式，包括写入与读取及内存无法一次性读取时的解决办法
+    > 待补充
+
+1. 文件读写使用的系统调用
+    > 待补充
+
+1. 文件读写中涉及的磁盘缓冲区与其手动flush问题
+    > IO越少，效率越高
+
+1. 操作系统内核的划分
+
 # 7 Linux
 
 1. 统计一个文件的行数
@@ -607,7 +618,28 @@ init Derive's constructor
     > 待补充
 
 1. Linux下IO模型有几种，各自的含义是什么
+    > {% post_link Java-NIO %}
+
+1. 异步IO的详细解释
+    > https://www.zhihu.com/question/46499998?sort=created
+
+1. I/O复用的水平触发与边缘触发
+1. Linux零拷贝的了解
+    > http://www.jianshu.com/p/fad3339e3448
+
+1. Direct I/O 和其与异步I/O的区别
     > 待补充
+
+1. Linux内核如何调用Direct I/O
+    > 待补充
+
+1. 常用的Linux命令介绍
+    > 应该从哪几个方面回答
+
+1. 对awk与sed的了解
+    > 待补充
+
+1. 对文件系统的了解
 
 # 8 分布式相关
 
@@ -709,8 +741,13 @@ init Derive's constructor
 
 # 9 算法
 
-1. 贪心的计算思想是什么？
+1. 贪心的计算思想是什么？其弊端是什么？
     > 待补充
+
+1. 动态规划的原理与本质
+    > 问题的拆分+递推表达式
+    > 全局最优解依赖于局部最优解
+    > https://www.zhihu.com/question/23995189
 
 1. LRU的实现
     > hash+双向链表
@@ -740,8 +777,16 @@ init Derive's constructor
 1. 并查集
     > {% post_link 并查集 %}
 
-1. 海量url去重类问题(布隆过滤器)
+1. 海量url去重类问题
     > {% post_link Bloom-Filter %}
+
+1. 海量整数去重问题
+    > bitmap
+    > 布隆过滤器
+
+1. Bloom过滤器处理大规模问题时的持久化，包括内存大小受限、磁盘换入换出问题
+    > Bloom过滤器无法100%准确，优点就是占用的内存非常小
+    > http://blog.csdn.net/xiaxzhou/article/details/75193936
 
 1. 海量url中找到出现次数最多的10个url
     > 待补充
@@ -768,6 +813,83 @@ init Derive's constructor
 1. 二叉树的最大搜索子树
     > 待补充
 
+1. 01背包问题的详细解释，空间复杂度的优化
+    > {% post_link 单源最短路径 %}中的Foly算法中有提到01背包的优化
+
+1. 字典树与其在统计词频上的应用
+    > 待补充
+
+1. 字典树构造及其优化与应用
+    > https://www.zhihu.com/question/30736334
+
+1. 红黑树
+    > {% post_link RB-tree-详解 %}
+
+1. 实现bitmap数据结构，包括数据的存储与插入方式
+    > 待补充
+
+1. 字符串hash成状态位的具体实现方式
+    > 下面给出Java中的实现
+```Java
+        public int hashCode() {
+        // hash就是hash值，最开始是0，延迟初始化
+        int h = hash;
+        if (h == 0 && value.length > 0) {
+            char val[] = value;
+
+            for (int i = 0; i < value.length; i++) {
+                h = 31 * h + val[i];
+            }
+            hash = h;
+        }
+        return h;
+    }
+```
+
+1. 线性时间选择
+1. hash函数如何保证冲突最小
+    > 待补充
+
+1. 银行家算法
+    > http://blog.csdn.net/yaopeng_2005/article/details/6935235
+
+1. 解决哲学家进餐问题
+    > 避免死锁
+    > http://blog.sina.com.cn/s/blog_e33e27b70102w68z.html
+    > 当其中一个哲学家两边的筷子都可用时，才会拿起筷子，否则不会拿起筷子，拿筷子这个动作需要是原子的，比如CAS
+
+1. 环形公路上加油站算法问题
+1. 枚举给定数组中的所有非递减子序列
+    > 回溯，位置i的元素，选择或者不选
+
+1. 图的邻接矩阵和邻接表的表示，邻接表的数据结构
+    > 待补充
+
+1. 算法题1：给定二叉树，假设相连接的两结点间距离为1，求所有结点中距离其他所有结点距离和最小的结点
+    > 待补充
+
+1. 给定数组，快速求出所有数右边第一个比其大的数
+    > 待补充
+
+1. 字符串匹配KMP算法
+    > 待补充
+
+1. 无锁编程解决单生产者多消费者问题和多生产者多消费者问题
+    > 待补充
+
+1. 快速排序的稳定化算法
+    > 待补充
+
+1. 算法题：平面上百万个点，设计数据结构求每个点最近的k个点（范围搜索问题）
+    > http://blog.csdn.net/liuqiyao_01/article/details/8478719
+
+1. DOM树的实现模拟
+1. DFA的过程与正则的区别
+1. 实现一个栈，并且能够快速返回栈中最大元素。怎么优化空间
+    > 两个栈，一个正常。另一个实现如下：当新元素比栈顶大时，压入新元素，否则复制栈顶元素并压入
+
+1. 判断两个链表是否相交
+
 # 10 数据库
 
 1. 数据库触发器是什么
@@ -776,7 +898,7 @@ init Derive's constructor
 1. MySQL InnoDB存储的文件结构
     > 待补充
 
-1.  数据库引擎
+1. 数据库引擎
     > {% post_link 数据库引擎 %}
 
 1. 索引树是如何维护的
@@ -788,6 +910,9 @@ init Derive's constructor
 
 1. MySQL的几种优化
     > http://blog.csdn.net/u013474436/article/details/49908683
+
+1. 数据库索引的作用
+    > 待补充
 
 1. MySQL索引为什么使用B+树
     > 待补充
@@ -818,6 +943,18 @@ init Derive's constructor
     > 1. 不剥夺条件：指进程已获得的资源，在未使用完之前，不能被剥夺，只能在使用完时由自己释放。
     > 1. 环路等待条件：指在发生死锁时，必然存在一个进程——资源的环形链，即进程集合{P0，P1，P2，···，Pn}中的P0正在等待一个P1占用的资源；P1正在等待P2占用的资源，……，Pn正在等待已被P0占用的资源。
     > https://baike.baidu.com/item/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%AD%BB%E9%94%81/10015665?fr=aladdin
+
+1. 数据库中join的类型与区别
+    > left jion
+    > right join
+    > inner join
+    > outer join
+
+1. 数据库事务的ACID
+    > A：Atomicity
+    > C：Consistency
+    > I：Isolation
+    > D：Durability
 
 # 11 Redis&缓存相关
 
@@ -896,10 +1033,13 @@ init Derive's constructor
     > {% post_link Java-NIO %}
     > select描述符个数限制是多少？(1024)，能不能改怎么改等等(不能，想改得编译内核)
 
+1. epoll为什么更快
+    > 待补充
+
 1. 介绍一下TCP三次握手/四次挥手、流量控制、拥塞控制
     > 三次握手、四次挥手详见{% post_link TCP-IP %}
 
-1.  为什么TCP建立连接需要三次握手，关闭连接需要4次挥手
+1. 为什么TCP建立连接需要三次握手，关闭连接需要4次挥手
     > TCP连接时全双工的，在建立连接时，两个方向可以同时建立，而在关闭连接时，两个方向可以不同时关闭，因此会多一次交互(被动关闭方的`CLOSE_WAIT`)
 
 1. TCP粘包问题
@@ -945,6 +1085,14 @@ init Derive's constructor
 1. 关闭连接时，出现TIMEWAIT过多是由什么原因引起，是出现在主动断开方还是被动断开方
     > 待补充
 
+1. 网络层分片的原因与具体实现
+    > 待补充
+
+1. 网页解析的过程与实现方法
+    > 待补充
+
+1. HTTP协议与TCP联系
+
 # 13 其他
 
 1. maven解决依赖冲突，快照版和发行版的区别
@@ -984,6 +1132,15 @@ init Derive's constructor
     > 待补充
 
 1. tomcat结构，类加载器流程
+    > 待补充
+
+1. 对云计算网络的了解
+    > 待补充
+
+1. 对路由协议的了解与介绍
+    > 待补充
+
+1. 数字证书的了解
     > 待补充
 
 # 14 一些面经
