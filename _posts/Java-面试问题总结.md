@@ -522,6 +522,7 @@ init Derive's constructor
     > http://www.cnblogs.com/atwanli/articles/4746349.html
 
 1. MVC框架原理，他们都是怎么做url路由的
+
     > ![fig6](/images/Java-面试问题总结/fig6.png)
 
 1. Spring boot特性、优势、适用场景等
@@ -627,6 +628,7 @@ init Derive's constructor
     > 运行态：进程占用CPU，并在CPU上运行；
     > 就绪态：进程已经具备运行条件，但是CPU还没有分配过来；
     > 阻塞态：进程因等待某件事发生而暂时不能运行；
+
     > ![fig7](/images/Java-面试问题总结/fig7.png)
 
 1. 一串int型整数存放磁盘上的压缩存储方式，包括写入与读取及内存无法一次性读取时的解决办法
@@ -689,13 +691,62 @@ init Derive's constructor
     > 待补充
 
 1. 常用的Linux命令介绍
-    > 应该从哪几个方面回答
+    > 显示目录和文件的命令
+    > 1. ls
+    > 1. dir
+    > 1. du
+    > 修改目录、文件权限、属性和属主的命令
+    > 1. chmod
+    > 1. chown
+    > 1. chgrp
+    > 1. chattr
+    > 1. lsattr
+    > 创建和删除目录的命令
+    > 1. mkdir
+    > 1. rmdir
+    > 1. rm
+    > 创建和删除，重命名，复制文件的命令
+    > 1. touch
+    > 1. vi/vim
+    > 1. rm
+    > 1. mv
+    > 1. cp
+    > 显示文件内容的命令
+    > 1. cat
+    > 1. more
+    > 1. less
+    > 1. head
+    > 1. tail
+    > 1. tail -f
+    > 查找命令
+    > 1. find
+    > 1. whereis
+    > 1. which
+    > 1. locate
+    > 1. grep
+    > 关机和重启计算机的命令
+    > 1. shutdown
+    > 1. poweroff
+    > 压缩和打包命令
+    > 1. tar
+    > 用户操作命令
+    > 1. su
+    > 1. sudo
+    > 改变目录和查看当前目录命令
+    > 1. cd
+    > 1. pwd
 
 1. 对awk与sed的了解
-    > 待补充
+    > awk将一行按分隔符进行拆分，并填入$1/$2...变量中
+    > seq按行进行处理
 
 1. 对文件系统的了解
     > 待补充
+
+1. hard link与symbolic link的区别
+    > 目录的block存放的是文件名与inode的关联记录
+    > hard link：hard link只是在某个目录下新建一条文件名连接到某inode号码的关联记录而已。因此两个文件名会连接到同一个inode号码。ls -l查看的连接数就是多少个文件名连接到这个inode号码的意思
+    > symbolic link：创建一个独立的文件，这个文件会让数据的读取指向它__连接的文件名。注意这里连接到文件名而不是inode号码__
 
 # 8 分布式相关
 
