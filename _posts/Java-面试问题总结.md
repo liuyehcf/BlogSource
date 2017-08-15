@@ -136,7 +136,7 @@ __目录__
     > {% post_link JDK-动态代理-源码剖析 %}
 
 1. 线程池的目的
-    > 待补充
+    > 目的是为了减少程序并发执行所付出的时空开销，使操作系统具有更好的并发性。
 
 1. 线程池的种类，区别和使用场景
     > 所有线程池本质上都是ThreadPoolExecutor，只是配置了不同的初始化参数，核心参数有
@@ -169,10 +169,35 @@ __目录__
     > Work即一个工作的线程，会从BlockingQueue获取任务并执行
 
 1. 线程池如何调优
+    > 可以从以下几个方面考虑
+    > 1. 最大线程数量：与CPU的数量相关
+    > 1. 最小线程数量：一般设定得比较小，防止系统初期创建太多线程，节省系统资源，并且指定一个最小线程数量的负面影响比较小
+    > 1. 任务的频繁程度：如果线程太少，那么等待的时间会很短，如果线程很多，最坏的情况下就是一个任务就开一个线程，那么此时CPU开销将会比较大
     > http://www.cnblogs.com/jianzh5/p/6437315.html
 
 1. JDK各个版本的特性
-    > {% post_link JDK-新特性 %}
+    > JDK 5
+    > 1. 自动装箱与拆箱
+    > 1. 枚举
+    > 1. 静态导入
+    > 1. 可变参数
+    > 1. 泛型
+    > 1. For-Each循环
+    > JDK 6
+    > 不太常用的新特性，不罗列了
+    > JDK 7
+    > 1. 二进制字面值
+    > 1. 数字变量下划线的支持
+    > 1. switch对String支持
+    > 1. try-with-resource
+    > 1. 捕获多种异常
+    > 1. 创建泛型时的类型推断
+    > 1. fork/join
+    > 1. G1
+    > JDK 8
+    > 1. Lambdas表达式与Function接口
+    > 1. parallel
+    > 具体内容请参考{% post_link JDK-新特性 %}
 
 1. 单例模式
     > 1. {% post_link 设计模式-单例模式 %}
@@ -200,11 +225,19 @@ __目录__
     > 1. 用Region来替代，仅仅保留新生代和老年代的概念。
     > 1. G1收集器会维护一个Region的列表，每次回收一个最有受益的Region，这也是G1收集器名字的来源，Garabage first
 
-1. 何时触发MinorGC等操作
-    > 待补充
+1. 何时触发Minor GC/Full GC
+    > Minor GC触发条件
+    > 1. 当Eden区满时，触发MinorGC
+    > Full GC触发条件
+    > 1. 调用System.gc，系统建议执行Full GC，但并非必然执行
+    > 1. 老年代空间不足
+    > 1. 方法区空间不足
+    > 1. 通过Minor GC后进入老年代的平均大小大于老年大的可用内存
+    > 1. 由Eden区和From Space区向To Space区复制时，对象大小大于To Space可用内存，则把该对象转存到老年代，且老年代的可用内存小于该对象大小
 
 1. 对象如何晋升到老年代
-    > 待补充
+    > 经过数次Minor GC后仍然存活的对象进入老年代
+    > -XX:MaxTenuringThreshold
 
 1. 新生代和老生代的内存回收策略
     > 新生代：复制算法，因为对象朝生夕死
@@ -217,7 +250,12 @@ __目录__
     > {% post_link Java-垃圾收集器 %}
 
 1. 吞吐量优先和响应优先的垃圾收集器选择
-    > 待补充
+    > 吞吐量优先
+    > 1. Parallel Scavenge + Parallel Old 收集器
+    > 1. G1
+    > 响应优先
+    > 1. CMS
+    > 1. G1
 
 1. 强/软/弱/虚引用与GC
     > {% post_link Java-对象生命周期 %}
@@ -238,8 +276,8 @@ __目录__
     > 1. 准备：内存清零
     > 1. 解析：将符号引用替换为直接引用
     > 1. 初始化：执行静态初始化语句以及静态子句
-    > * 验证、准备、解析称为链接
-    > {% post_link Java-类加载机制 %}
+    > * 其中__验证、准备、解析__称为链接
+    > 详细内容请参考{% post_link Java-类加载机制 %}
 
 1. 双亲委派
     > {% post_link Java-类加载机制 %}
@@ -248,7 +286,7 @@ __目录__
     > 1. Bootstrap ClassLoader
     > 1. Extension ClassLoader
     > 1. Application ClassLoader
-    > {% post_link Java-类加载机制 %}
+    > 详细内容请参考{% post_link Java-类加载机制 %}
 
 1. 类的初始化顺序
     > 比如父类静态数据，构造函数，字段，子类静态数据，构造函数，字段，他们的执行顺序
@@ -469,18 +507,22 @@ init Derive's constructor
 1. 为什么CGlib方式可以对接口实现代理？
     > 采用字节码技术，直接生成子类
 
-1. RMI与代理模式
+1. RMI(Remote Method Invoke)与代理模式
     > 待补充
 
 1. Spring的事务隔离级别，实现原理
-    > 待补充
+    > __`PROPAGATION_SUPPORTS`__：支持当前事务，如果当前没有事务，就以非事务方式执行。
+    > __`PROPAGATION_MANDATORY`__：支持当前事务，如果当前没有事务，就抛出异常。
+    > __`PROPAGATION_REQUIRES_NEW`__：新建事务，如果当前存在事务，把当前事务挂起。
+    > __`PROPAGATION_NOT_SUPPORTED`__：以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。
+    > __`PROPAGATION_NEVER`__：以非事务方式执行，如果当前存在事务，则抛出异常。
 
 1. Mybatis的底层实现原理
     > 待补充
     > http://www.cnblogs.com/atwanli/articles/4746349.html
 
 1. MVC框架原理，他们都是怎么做url路由的
-    > 待补充
+    > ![fig6](/images/Java-面试问题总结/fig6.png)
 
 1. Spring boot特性、优势、适用场景等
     > Spring Boot 解决的问题，边界，适用场景
@@ -547,9 +589,16 @@ init Derive's constructor
 
 1. cache是什么东西
     > 读写速度，成本，局部性原理
+    > 缓存一致性协议MESI
+    > 1. M：Modified，该行数据被修改，以和该数据在内存中的映像所不同。最新的数据只存在于Cache中
+    > 1. E：Exclusive，该行数据有效，且数据与内存中的数据一致，但数据值只存在于本Cache中。通俗来说，该数据只在Cache中独一份
+    > 1. S：Share，该行数据有效，且该数据与内存中的数据一致。同时，该数据存在与其它多个Cache中
+    > 1. I：Invalid，该数据无效
 
 1. 缓存替换策略有哪些
-    > 待补充
+    > LRU(Least Recently Used)
+    > RANDOM
+    > FIFO
 
 1. 介绍一下线程和进程
     > {% post_link 进程与线程 %}
@@ -566,19 +615,19 @@ init Derive's constructor
     > 1. {% post_link 进程通信-套接字 %}
 
 1. 如果有10个进程两两一对儿要通信，用一个消息队列能不能行
-    > 待补充
+    > 感觉不行？一个进程想要给另一个发送，那么如何保证其他线程不取用呢？
 
 1. 共享内存有啥缺陷
-    > 待补充
+    > 需要同步
 
 1. 多进程和多线程有什么区别
     > (还是很常规的问题，现在我想着如果大家自己做过一个小操作系统，这种东西是不是直接聊出风采；我说得并不好，一深挖就露怯，纸上得来终觉浅。比如会问到进程和线程的适用场景(需要有经验)，进程切换比线程慢的原因(需要懂原理)，切换时需要保存哪些数据，问得很细，光说PCB都不够，比如我说切换打开的文件符和资源什么的比较慢，面试官一针见血地说这些东西本来就在内存中，切换的时候难道需要关闭吗？问到最后只好承认并不清楚了)
 
 1. 进程有哪些运行状态
-    > 待验证
-    > 就绪、运行中、等待、停止？
-    > 运行状态什么时候会切到就绪态(比如时间片用完)
-    > 什么时候会切到等待(比如遇到IO)
+    > 运行态：进程占用CPU，并在CPU上运行；
+    > 就绪态：进程已经具备运行条件，但是CPU还没有分配过来；
+    > 阻塞态：进程因等待某件事发生而暂时不能运行；
+    > ![fig7](/images/Java-面试问题总结/fig7.png)
 
 1. 一串int型整数存放磁盘上的压缩存储方式，包括写入与读取及内存无法一次性读取时的解决办法
     > 待补充
@@ -590,6 +639,7 @@ init Derive's constructor
     > IO越少，效率越高
 
 1. 操作系统内核的划分
+    > 待补充
 
 # 7 Linux
 
@@ -612,10 +662,12 @@ init Derive's constructor
     > 纯C程序怎么写
 
 1. 找出一篇文章中某个单词的出现次
-    > 待补充
+    > `grep -o world a.txt | wc -l`
 
 1. Linux利用哪些命令，查找哪里出了问题(例如io密集任务，cpu过度)
-    > 待补充
+    > iotop
+    > top
+    > ps aux
 
 1. Linux下IO模型有几种，各自的含义是什么
     > {% post_link Java-NIO %}
@@ -624,11 +676,14 @@ init Derive's constructor
     > https://www.zhihu.com/question/46499998?sort=created
 
 1. I/O复用的水平触发与边缘触发
+    > 待补充
+
 1. Linux零拷贝的了解
     > http://www.jianshu.com/p/fad3339e3448
 
 1. Direct I/O 和其与异步I/O的区别
     > 待补充
+    > Direct I/O相对于缓存IO(Buffer I/O)而言，减小了数据拷贝(从用户空间到内核空间)的次数
 
 1. Linux内核如何调用Direct I/O
     > 待补充
@@ -640,6 +695,7 @@ init Derive's constructor
     > 待补充
 
 1. 对文件系统的了解
+    > 待补充
 
 # 8 分布式相关
 
