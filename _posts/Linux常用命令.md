@@ -97,9 +97,9 @@ __任何在BEGIN之后列出的操作（在{}内）将在Unix awk开始扫描输
 
 ```shell
 awk 
-'BEGIN { FS=":";print "统计销售金额";total=0} 
+'BEGIN {FS=":";print "统计销售金额";total=0} 
 {print $3;total=total+$3;} 
-END {printf "销售金额总计：%.2f",total}' sx
+END {print "销售金额总计：",total}' sx
 ```
 
 # 2 参考

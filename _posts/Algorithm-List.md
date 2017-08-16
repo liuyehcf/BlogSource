@@ -101,9 +101,77 @@ public class Solution {
 }
 ```
 
+# 3 Question-148[★★★★★]
+
+__Sort List__
+
+> Sort a linked list in O(n log n) time using constant space complexity.
+
+```Java
+public class Solution {
+    public ListNode sortList(ListNode head) {
+        ListNode pseudoHead = new ListNode(0);
+        pseudoHead.next = head;
+        mergeSort(pseudoHead, null);
+        return pseudoHead.next;
+    }
+
+    private void mergeSort(ListNode pseudoHead, ListNode tail) {
+        // 边界
+        if (pseudoHead.next == tail || pseudoHead.next.next == tail) return;
+
+        // 链表找中点的方式
+        ListNode slow = pseudoHead, fast = pseudoHead;
+        while (fast != tail && fast.next != tail) {
+            fast = fast.next.next;
+            slow = slow.next;
+        }
+
+        mergeSort(pseudoHead, slow.next);
+        mergeSort(slow, tail);
+
+        merge(pseudoHead, slow, tail);
+    }
+
+    private void merge(ListNode pseudoHead, ListNode mid, ListNode tail) {
+        ListNode midTail = mid.next;
+
+        ListNode iter1 = pseudoHead.next;
+        ListNode iter2 = mid.next;
+
+        ListNode iter = pseudoHead;
+
+        while (iter1 != midTail && iter2 != tail) {
+            if (iter1.val <= iter2.val) {
+                iter.next = iter1;
+                iter1 = iter1.next;
+            } else {
+                iter.next = iter2;
+                iter2 = iter2.next;
+            }
+            iter = iter.next;
+        }
+
+        while (iter1 != midTail) {
+            iter.next = iter1;
+            iter1 = iter1.next;
+            iter = iter.next;
+        }
+
+        while (iter2 != tail) {
+            iter.next = iter2;
+            iter2 = iter2.next;
+            iter = iter.next;
+        }
+
+        iter.next = tail;
+    }
+}
+```
+
 <!--
 
-# 3 Question-000[★]
+# 4 Question-000[★]
 
 ____
 

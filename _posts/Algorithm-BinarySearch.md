@@ -17,18 +17,15 @@ __目录__
 
 ## 1.1 左右边界的递归
 
-由于数组是有序的，假设是一个递增的序列
-
-* 如果`nums[mid] > target`，只要找到一个能包括target的子集即可，因此下一次迭代的范围就是`[left,mid-1]`
-* 如果`nums[mid] < target`，只要找到一个能包括target的子集集合，因此下一次迭代的范围就是`[mid+1,right]`
+循环条件是`while(left < right)`，递增必然是`left = mid +1`与`right = mid`，这是定死的，否则对于`left = right -1`时，`left < right`将会永远成立
 
 ## 1.2 返回值的讨论
 
-循环条件是`left <= right`，因此循环结束时`left = right + 1`，只需要讨论以下三种情况即可
+循环条件是`left < right`，因此循环结束时`left == right`，只需要讨论以下三种情况即可
 
-* `target nums[left] nums[right]`
-* `nums[left] target nums[right]`
-* `nums[left] nums[right] target`
+* `target < nums[left]`
+* `target == nums[right]`
+* `nums[left] < target`
 
 ## 1.3 循环位移的二分查找
 
@@ -87,40 +84,68 @@ __Search in Rotated Sorted Array__
 
 > Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
 
+__版本1__
+
 ```Java
 public class Solution {
     public int search(int[] nums, int target) {
+        if (nums == null || nums.length == 0) return -1;
+
         int left = 0, right = nums.length - 1;
 
-        while (left <= right) {
+        while (left < right) {
             int mid = left + (right - left >> 1);
 
             if (nums[mid] == target) return mid;
-                // 意味着mid位于左半段上
-            else if (nums[mid] > nums[right]) {
-                // target位于mid左边
-                if (target >= nums[left] && target < nums[mid]) {
-                    right = mid - 1;
-                }
-                // target位于mid右边
-                else {
+            else if (nums[mid] >= nums[left]) { // 意味着mid位于左半段或者[left,right]就是有序的。这个等号只可能代表mid与left相同，因为数组是unique的
+                if (nums[left] <= target && target < nums[mid]) {
+                    right = mid;
+                } else {
                     left = mid + 1;
                 }
-            }
-            // 意味着m位于右半段上，或者[left,right]本身就是有序的
-            else {
-                // target位于mid右边
-                if (target > nums[mid] && target <= nums[right]) {
+            } else { // 意味着mid位于右半段上
+                if (nums[mid] < target && target <= nums[right]) {
                     left = mid + 1;
-                }
-                // target位于mid左边
-                else {
-                    right = mid - 1;
+                } else {
+                    right = mid;
                 }
             }
         }
 
-        return -1;
+        return nums[left] == target ? left : -1;
+    }
+}
+```
+
+__版本2__
+
+```Java
+public class Solution {
+    public int search(int[] nums, int target) {
+        if (nums == null || nums.length == 0) return -1;
+
+        int left = 0, right = nums.length - 1;
+
+        while (left < right) {
+            int mid = left + (right - left >> 1);
+
+            if (nums[mid] == target) return mid;
+            else if (nums[mid] <= nums[right]) {
+                if (nums[mid] < target && target <= nums[right]) {
+                    left = mid + 1;
+                } else {
+                    right = mid;
+                }
+            } else {
+                if (nums[left] <= target && target < nums[mid]) {
+                    right = mid;
+                } else {
+                    left = mid + 1;
+                }
+            }
+        }
+
+        return nums[left] == target ? left : -1;
     }
 }
 ```
@@ -148,13 +173,13 @@ public class Solution {
 
         if (nums[left] > target || nums[right] < target) return -1;
 
-        while (left <= right) {
+        while (left < right) {
             int mid = left + (right - left >> 1);
 
-            if (nums[mid] >= target) {
-                right = mid - 1;
-            } else {
+            if (nums[mid] < target) {
                 left = mid + 1;
+            } else {
+                right = mid;
             }
         }
 
@@ -168,17 +193,18 @@ public class Solution {
 
         if (nums[left] > target || nums[right] < target) return -1;
 
-        while (left <= right) {
+        while (left < right) {
             int mid = left + (right - left >> 1);
 
             if (nums[mid] <= target) {
                 left = mid + 1;
             } else {
-                right = mid - 1;
+                right = mid;
             }
         }
 
-        return nums[right] == target ? right : -1;
+        return nums[left] == target ? left :
+                left - 1 >= 0 && nums[left - 1] == target ? left - 1 : -1;
     }
 }
 ```
@@ -198,13 +224,13 @@ public class Solution {
 
         int left = 0, right = nums.length - 1;
 
-        while (left <= right) {
+        while (left < right) {
             int mid = left + (right - left >> 1);
             if (nums[mid] == target) return mid;
-            else if (nums[mid] > target) {
-                right = mid - 1;
-            } else {
+            else if (nums[mid] < target) {
                 left = mid + 1;
+            } else {
+                right = mid;
             }
         }
 
@@ -252,32 +278,32 @@ public class Solution {
 
         if (target < matrix[0][0]) return false;
 
-        while (top <= bottom) {
+        while (top < bottom) {
             int mid = top + (bottom - top >> 1);
 
             if (matrix[mid][0] == target) return true;
-            else if (matrix[mid][0] > target) {
-                bottom = mid - 1;
-            } else {
+            else if (matrix[mid][0] < target) {
                 top = mid + 1;
+            } else {
+                bottom = mid;
             }
         }
 
-        int row = top - 1;
+        int row = matrix[top][0] > target ? top - 1 : top;
 
         int left = 0, right = matrix[row].length - 1;
 
-        while (left <= right) {
+        while (left < right) {
             int mid = left + (right - left >> 1);
 
             if (matrix[row][mid] == target) return true;
-            else if (matrix[row][mid] > target) {
-                right = mid - 1;
-            } else {
+            else if (matrix[row][mid] < target) {
                 left = mid + 1;
+            } else {
+                right = mid;
             }
         }
-        return false;
+        return matrix[row][left] == target;
     }
 }
 ```
@@ -316,43 +342,72 @@ __Search in Rotated Sorted Array II__
 
 思路：通过`nums[mid]`与`nums[right]`的关系来判断mid位于那一段有序的序列上。如果`nums[mid]>nums[right]`，那么意味着`[left,right]`必然存在两段序列且mid位于左边这段序列上，而`nums[mid]<nums[right]`意味着可能`[left,right]`本身就是有序的，或者存在两端序列且mid位于右边这段
 
+__版本1__
+
 ```Java
 public class Solution {
     public boolean search(int[] nums, int target) {
+        if (nums == null || nums.length == 0) return false;
+
         int left = 0, right = nums.length - 1;
 
-        while (left <= right) {
+        while (left < right) {
             int mid = left + (right - left >> 1);
 
-            // 若找到了，直接返回
             if (nums[mid] == target) return true;
-            // mid位于左半段上
-            if (nums[mid] > nums[right]) {
-                // 此时target位于mid右边
-                if (target > nums[mid] || target <= nums[right]) {
+            else if (nums[mid] > nums[left]) {
+                if (nums[left] <= target && target < nums[mid]) {
+                    right = mid;
+                } else {
                     left = mid + 1;
                 }
-                // 此时target位于mid左边
-                else {
-                    right = mid - 1;
+            } else if (nums[mid] < nums[left]) {
+                if (nums[mid] < target && target <= nums[right]) {
+                    left = mid + 1;
+                } else {
+                    right = mid;
                 }
+            } else {
+                left++;
             }
-            // mid位于右半段上(或者[left,right]本身就是有序的)
-            else if (nums[mid] < nums[right]) {
-                // 此时target位于mid右边
-                if (target > nums[mid] && target <= nums[right]) {
+        }
+
+        return nums[left] == target;
+    }
+}
+```
+
+__版本2__
+
+```Java
+public class Solution {
+    public boolean search(int[] nums, int target) {
+        if (nums == null || nums.length == 0) return false;
+
+        int left = 0, right = nums.length - 1;
+
+        while (left < right) {
+            int mid = left + (right - left >> 1);
+
+            if (nums[mid] == target) return true;
+            else if (nums[mid] > nums[right]) {
+                if (nums[left] <= target && target < nums[mid]) {
+                    right = mid;
+                } else {
                     left = mid + 1;
                 }
-                // 此时target位于mid左边
-                else {
-                    right = mid - 1;
+            } else if (nums[mid] < nums[right]) {
+                if (nums[mid] < target && target <= nums[right]) {
+                    left = mid + 1;
+                } else {
+                    right = mid;
                 }
             } else {
                 right--;
             }
         }
 
-        return false;
+        return nums[left] == target;
     }
 }
 ```
@@ -525,17 +580,17 @@ public class Solution {
     private int findTarget(int[] nums, int left, int target) {
         int right = nums.length - 1;
 
-        while (left <= right) {
+        while (left < right) {
             int mid = left + (right - left >> 1);
             if (nums[mid] == target) return mid;
-            else if (nums[mid] > target) {
-                right = mid - 1;
-            } else {
+            else if (nums[mid] < target) {
                 left = mid + 1;
+            } else {
+                right = mid;
             }
         }
 
-        return -1;
+        return nums[left] == target ? left : -1;
     }
 }
 ```
