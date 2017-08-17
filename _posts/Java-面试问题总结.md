@@ -487,6 +487,204 @@ init Derive's constructor
 1. 分段锁的原理
     > 分段锁就是细化锁操作，类比于表锁和行锁。JDK 1.7中的ConcurrentHashMap的实现就是使用了分段锁，将整个hashtable分成多个Segment，访问某个元素必须获取该元素对应的Segment的锁，如果两个元素位于两个Segment，那么这两个元素的并发操作是不需要同步的
 
+1. 有一个第三方接口，有很多个线程去调用获取数据，现在规定每秒钟最多有10个线程同时调用它，如何做到
+    > 待补充
+
+1. 用三个线程按顺序循环打印abc三个字母，比如abcabcabc
+    > CAS能实现吗？CAS加循环可以串行化并行操作，但是，不能很好地排序，即控制三个线程交替执行CAS成功。
+    > 公平模式下，并且规定启动顺序时，可以用ReentrantLock
+```Java
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class Solution {
+
+    private static ReentrantLock lock = new ReentrantLock(true);
+
+    private static Condition conditionA = lock.newCondition();
+    private static Condition conditionB = lock.newCondition();
+    private static Condition conditionC = lock.newCondition();
+
+    public static void main(String[] args) {
+        Thread t1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    lock.lock();
+                    while (!Thread.currentThread().isInterrupted()) {
+                        System.out.println("a");
+                        try {
+                            TimeUnit.MILLISECONDS.sleep(500);
+                        } catch (InterruptedException e) {
+                            break;
+                        }
+                        conditionB.signal();
+                        try {
+                            conditionA.await();
+                        } catch (InterruptedException e) {
+                            break;
+                        }
+                    }
+                } finally {
+                    lock.unlock();
+                }
+            }
+        });
+
+        Thread t2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    lock.lock();
+                    while (!Thread.currentThread().isInterrupted()) {
+                        System.out.println("b");
+                        try {
+                            TimeUnit.MILLISECONDS.sleep(500);
+                        } catch (InterruptedException e) {
+                            break;
+                        }
+                        conditionC.signal();
+                        try {
+                            conditionB.await();
+                        } catch (InterruptedException e) {
+                            break;
+                        }
+                    }
+                } finally {
+                    lock.unlock();
+                }
+            }
+        });
+
+        Thread t3 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    lock.lock();
+                    while (!Thread.currentThread().isInterrupted()) {
+                        System.out.println("c");
+                        try {
+                            TimeUnit.MILLISECONDS.sleep(500);
+                        } catch (InterruptedException e) {
+                            break;
+                        }
+                        conditionA.signal();
+                        try {
+                            conditionC.await();
+                        } catch (InterruptedException e) {
+                            break;
+                        }
+                    }
+                } finally {
+                    lock.unlock();
+                }
+            }
+        });
+
+        t1.start();
+        try {
+            TimeUnit.MICROSECONDS.sleep(100);
+        } catch (InterruptedException e) {
+
+        }
+        t2.start();
+        try {
+            TimeUnit.MICROSECONDS.sleep(100);
+        } catch (InterruptedException e) {
+
+        }
+        t3.start();
+
+        try {
+            TimeUnit.SECONDS.sleep(15);
+        } catch (InterruptedException e) {
+
+        }
+
+        t1.interrupt();
+        t2.interrupt();
+        t3.interrupt();
+    }
+}
+```
+    > volatile来实现，其中volatile只是为了保证可见性
+```Java
+import java.util.concurrent.TimeUnit;
+
+public class Solution {
+
+    private static volatile int state = 0;
+
+    public static void main(String[] args) {
+        Thread t1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (!Thread.currentThread().isInterrupted()) {
+                    if (state == 0) {
+                        System.out.println("a");
+                        try {
+                            TimeUnit.MILLISECONDS.sleep(500);
+                        } catch (InterruptedException e) {
+                            break;
+                        }
+                        state = 1;
+                    }
+                }
+            }
+        });
+
+        Thread t2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (!Thread.currentThread().isInterrupted()) {
+                    if (state == 1) {
+                        System.out.println("b");
+                        try {
+                            TimeUnit.MILLISECONDS.sleep(500);
+                        } catch (InterruptedException e) {
+                            break;
+                        }
+                        state = 2;
+                    }
+                }
+            }
+        });
+
+        Thread t3 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (!Thread.currentThread().isInterrupted()) {
+                    if (state == 2) {
+                        System.out.println("c");
+                        try {
+                            TimeUnit.MILLISECONDS.sleep(500);
+                        } catch (InterruptedException e) {
+                            break;
+                        }
+                        state = 0;
+                    }
+                }
+            }
+        });
+
+        t1.start();
+        t2.start();
+        t3.start();
+
+        try {
+            TimeUnit.SECONDS.sleep(15);
+        } catch (InterruptedException e) {
+
+        }
+
+        t1.interrupt();
+        t2.interrupt();
+        t3.interrupt();
+    }
+}
+```
+
 # 4 Spring
 
 1. Spring AOP实现原理
@@ -1005,7 +1203,7 @@ init Derive's constructor
 1. DOM树的实现模拟
     > 待补充
 
-1. NFA、DFA的过程与正则的区别
+1. NFA(Nondeterministic Finite Automaton)、DFA(Deterministic Finite Automaton)的过程与正则的区别
     > http://blog.csdn.net/chinamming/article/details/17166577
     > http://blog.csdn.net/kingoverthecloud/article/details/41621557
 
@@ -1119,6 +1317,11 @@ init Derive's constructor
     > randum
     > 缓存失效策略和数据淘汰策略类似，只不过缓存失效有已设置过期时间和所有这两个区别，因此有6种，而数据淘汰策略只有3种
 
+1. 常见的缓存策略有哪些
+    > LRU
+    > LFU
+    > RANDOM
+
 # 12 网络相关
 
 1. 介绍你知道的传输层协议
@@ -1217,17 +1420,20 @@ init Derive's constructor
     > 待补充
 
 1. HTTP协议与TCP联系
+    > 待补充
 
 # 13 其他
 
-1. maven解决依赖冲突，快照版和发行版的区别
-    > 待补充
+1. maven解决依赖冲突，快照版(SNAPSHOT)和发行版(RELEASE)的区别
+    > SNAPSHOT不是一个特定的版本，而是一系列的版本的集合，HEAD指向最新的快照。客户端通过重新构建就能够拿到最新的快照
+    > RELEASE是一个特定的版本，准确定位
+    > http://www.cnblogs.com/wuchanming/p/5484091.html
 
 1. 实际场景问题，海量登录日志如何排序和处理SQL操作，主要是索引和聚合函数的应用
     > 待补充
 
 1. 实际场景问题解决，典型的TOP K问题
-    > 待补充
+    > 用堆来解决
 
 1. 线上bug处理流程
     > 待补充
@@ -1235,20 +1441,11 @@ init Derive's constructor
 1. 如何从线上日志发现问题
     > 待补充
 
-1. 场景问题，有一个第三方接口，有很多个线程去调用获取数据，现在规定每秒钟最多有10个线程同时调用它，如何做到
-    > 待补充
-
-1. 用三个线程按顺序循环打印abc三个字母，比如abcabcabc
-    > 待补充
-
-1. 常见的缓存策略有哪些，你们项目中用到了什么缓存系统，如何设计的
-    > 待补充
-
 1. 设计一个秒杀系统，30分钟没付款就自动关闭交易(并发会很高)
     > 待补充
 
 1. 请列出你所了解的性能测试工具
-    > 待补充
+    > Visual vm
 
 1. 后台系统怎么防止请求重复提交？
     > 待补充
@@ -1266,7 +1463,9 @@ init Derive's constructor
     > 待补充
 
 1. 数字证书的了解
-    > 待补充
+    > http://kb.cnblogs.com/page/194742/
+    > https保证传输过程的安全性，但是我们怎么判断这个网址是否安全呢？那就要证书了
+    > 第三方权威机构CA
 
 # 14 一些面经
 
