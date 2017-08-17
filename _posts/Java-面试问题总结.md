@@ -870,16 +870,14 @@ init Derive's constructor
     > {% post_link BPlus-tree-详解 %}
 
 1. 大根堆
-    > 待补充
+    > 就是最大堆
 
 1. 单链表排序
     > 归并，fast/slow指针
+    > leetcode 148
 
 1. 除了平衡二叉树这种结构还知道别的支持lgn插入的结构吗？
     > redis里的skip list
-
-1. 给一棵二叉树，找到这棵树中最大的二叉查找子树——即找到这棵树的一棵子树
-    > 待补充
 
 1. 无序数组的最长递增子序列(LCS)
     > 待补充
@@ -912,7 +910,8 @@ init Derive's constructor
     > {% post_link Java-DualPivotQuickSort-源码剖析 %}
 
 1. hash算法的有哪几种，优缺点，使用场景
-    > 链表法，开放寻址法
+    > 链表法，Java中Map的实现都用这个
+    > 开放寻址法，空间利用率不高，对hash函数的性能要求非常高
 
 1. 什么是一致性hash
     > {% post_link 一致性hash %}
@@ -921,7 +920,7 @@ init Derive's constructor
     > {% post_link Paxos算法 %}
 
 1. 二叉树的最大搜索子树
-    > 待补充
+    > DFS就可以貌似
 
 1. 01背包问题的详细解释，空间复杂度的优化
     > {% post_link 单源最短路径 %}中的Foly算法中有提到01背包的优化
@@ -936,7 +935,7 @@ init Derive's constructor
     > {% post_link RB-tree-详解 %}
 
 1. 实现bitmap数据结构，包括数据的存储与插入方式
-    > 待补充
+    > 要确定`数据与bit位的映射关系`
 
 1. 字符串hash成状态位的具体实现方式
     > 下面给出Java中的实现
@@ -960,10 +959,11 @@ init Derive's constructor
     > partition
 
 1. hash函数如何保证冲突最小
-    > 待补充
+    > hash函数本身的性能
+    > 计算hash值的时候，尽量利用数据本身的所有特征
 
 1. 银行家算法
-    > http://blog.csdn.net/yaopeng_2005/article/details/6935235
+    > {% post_link 银行家算法 %}
 
 1. 解决哲学家进餐问题
     > 避免死锁
@@ -979,22 +979,24 @@ init Derive's constructor
     > 回溯，位置i的元素，选择或者不选
 
 1. 图的邻接矩阵和邻接表的表示，邻接表的数据结构
-    > 待补充
+    > 邻接表`List<Node>[] graph`，其中`graph[i]`代表节点i的邻接表
+    > 邻接矩阵`boolean [][] graph`，其中`graph[i][j]`代表节点i与节点j之间是否有边，注意是有向的。无向怎么办？`graph[i][j] == graph[j][i]`
 
 1. 给定二叉树，假设相连接的两结点间距离为1，求所有结点中距离其他所有结点距离和最小的结点
     > 待补充
 
 1. 给定数组，快速求出所有数右边第一个比其大的数
-    > 待补充
+    > 栈
 
 1. 字符串匹配KMP算法
     > 待补充
 
 1. 无锁编程解决单生产者多消费者问题和多生产者多消费者问题
-    > 待补充
+    > 循环+CAS
 
 1. 快速排序的稳定化算法
-    > 待补充
+    > 3-way-quicksort稍微改进一下就是稳定的了
+    > 如果pivot取得是最后一个元素，那么将pivot放置在center part(与pivot相同)的尾部即可
 
 1. 平面上百万个点，设计数据结构求每个点最近的k个点（范围搜索问题）
     > http://blog.csdn.net/liuqiyao_01/article/details/8478719
@@ -1003,8 +1005,9 @@ init Derive's constructor
 1. DOM树的实现模拟
     > 待补充
 
-1. DFA的过程与正则的区别
-    > 待补充
+1. NFA、DFA的过程与正则的区别
+    > http://blog.csdn.net/chinamming/article/details/17166577
+    > http://blog.csdn.net/kingoverthecloud/article/details/41621557
 
 1. 实现一个栈，并且能够快速返回栈中最大元素。怎么优化空间
     > 两个栈，一个正常。另一个实现如下：当新元素比栈顶大时，压入新元素，否则复制栈顶元素并压入
