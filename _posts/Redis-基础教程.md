@@ -267,6 +267,173 @@ __命令：__
 | `ZUNIONSTORE destination numkeys key [key ...]` | 计算给定的一个或多个有序集的并集，并存储在新的key中 |
 | `ZSCAN key cursor [MATCH pattern] [COUNT count]` | 迭代有序集合中的元素（包括元素成员和元素分值） |
 
-# 4 参考
+## 3.8 Redis HyperLogLog
+
+Redis在 2.8.9版本添加了HyperLogLog结构。
+
+__Redis HyperLogLog是用来做基数统计的算法__，HyperLogLog的优点是，在输入元素的数量或者体积非常非常大时，计算基数所需的空间总是固定的、并且是很小的。
+
+在Redis里面，每个HyperLogLog键只需要花费12KB内存，就可以计算接近2^64个不同元素的基数。这和计算基数时，元素越多耗费内存就越多的集合形成鲜明对比。
+
+但是，因为HyperLogLog只会根据输入元素来计算基数，而不会储存输入元素本身，所以HyperLogLog不能像集合那样，返回输入的各个元素。
+
+__什么是基数?__：比如数据集{1, 3, 5, 7, 5, 7, 8}，那么这个数据集的基数集为{1, 3, 5 ,7, 8}，基数(不重复元素)为5。 基数估计就是在误差可接受的范围内，快速计算基数。
+
+__命令：__
+
+| 命令 | 描述 |
+|:--|:--|
+| `PFADD key element [element ...]` | 添加指定元素到HyperLogLog中 |
+| `PFCOUNT key [key ...]` | 返回给定HyperLogLog的基数估算值 |
+| `PFMERGE destkey sourcekey [sourcekey ...]` | 将多个HyperLogLog合并为一个HyperLogLog |
+
+## 3.9 Redis发布订阅
+
+Redis发布订阅(pub/sub)是一种消息通信模式：发送者(pub)发送消息，订阅者(sub)接收消息。
+
+Redis客户端可以订阅任意数量的频道。
+
+下图展示了频道channel1，以及订阅这个频道的三个客户端——client2、client5和client1之间的关系：
+
+![fig1](/images/Redis-基础教程/fig1.png)
+
+当有新消息通过PUBLISH命令发送给频道channel1时，这个消息就会被发送给订阅它的三个客户端：
+
+![fig2](/images/Redis-基础教程/fig2.png)
+
+__命令：__
+
+| 命令 | 描述 |
+|:--|:--|
+| `PSUBSCRIBE pattern [pattern ...]` | 订阅一个或多个符合给定模式的频道 |
+| `PUBSUB subcommand [argument [argument ...]]` | 查看订阅与发布系统状态 |
+| `PUBLISH channel message` | 将信息发送到指定的频道 |
+| `PUNSUBSCRIBE [pattern [pattern ...]]` | 退订所有给定模式的频道 |
+| `SUBSCRIBE channel [channel ...]` | 订阅给定的一个或多个频道的信息 |
+| `UNSUBSCRIBE [channel [channel ...]]` | 指退订给定的频道 |
+
+## 3.10 Redis 事务
+
+Redis事务可以一次执行多个命令，并且带有以下两个重要的保证：
+
+1. __事务是一个单独的隔离操作__：事务中的所有命令都会序列化、按顺序地执行。事务在执行的过程中，不会被其他客户端发送来的命令请求所打断。
+1. __事务是一个原子操作__：事务中的命令要么全部被执行，要么全部都不执行。
+
+__一个事务从开始到执行会经历以下三个阶段__：
+
+1. 开始事务
+1. 命令入队
+1. 执行事务
+
+__命令：__
+
+| 命令 | 描述 |
+|:--|:--|
+| `DISCARD` | 取消事务，放弃执行事务块内的所有命令 |
+| `EXEC` | 执行所有事务块内的命令 |
+| `MULTI` | 标记一个事务块的开始 |
+| `UNWATCH` | 取消WATCH命令对所有key的监视 |
+| `WATCH key [key ...]` | 监视一个(或多个)key，如果在事务执行之前这个(或这些)key被其他命令所改动，那么事务将被打断 |
+
+## 3.11 Redis 连接
+
+Redis连接命令主要是用于连接redis服务。
+
+__命令：__
+
+| 命令 | 描述 |
+|:--|:--|
+| `AUTH password` | 验证密码是否正确 |
+| `ECHO message` | 打印字符串 |
+| `PING` | 查看服务是否运行 |
+| `QUIT` | 关闭当前连接 |
+| `SELECT index` | 切换到指定的数据库 |
+
+* 当服务器设定了密码后，客户端可以在连接时就输入密码(`redis-cli -h host -p port -a password`)，或者登陆后用auth来验证密码(`AUTH password`)
+
+# 4 高级特性
+
+## 4.1 Redis 数据备份与恢复
+
+Redis SAVE命令用于创建当前数据库的备份。
+
+该命令将在__redis安装目录__中创建`dump.rdb`文件。
+
+如果需要恢复数据，只需将备份文件(dump.rdb)移动到redis安装目录并启动服务即可。获取redis目录可以使用CONFIG命令：`CONFIG GET dir`
+
+创建redis备份文件也可以使用命令BGSAVE，该命令在后台执行。
+
+## 4.2 Redis 安全
+
+我们可以通过redis的配置文件设置密码参数，这样客户端连接到redis服务就需要密码验证，这样可以让你的redis服务更安全。
+
+查看密码：`CONFIG get requirepass`。默认情况下requirepass参数是空的，这就意味着你无需通过密码验证就可以连接到redis服务。
+
+你可以通过以下命令来修改该参数：`CONFIG set requirepass "runoob"`
+
+设置密码后，客户端连接redis服务就需要密码验证，否则无法执行命令。
+
+## 4.3 Redis 性能测试
+
+Redis性能测试是通过同时执行多个命令实现的。
+
+__语法：__
+
+* `redis-benchmark [option] [option value]`
+
+__参数：__
+
+| 选项 | 描述 | 默认值 |
+|:--|:--|:--|
+| -h | 指定服务器主机名 | 127.0.0.1 |
+| -p | 指定服务器端口 | 6379 |
+| -s | 指定服务器socket | / |
+| -c | 指定并发连接数 | 50 |
+| -n | 指定请求数 | 10000 |
+| -d | 以字节的形式指定SET/GET值的数据大小 | 2 |
+| -k | 1=keep alive 0=reconnect | 1 |
+| -r | SET/GET/INCR使用随机key，SADD使用随机值 | / |
+| -P | 通过管道传输`<numreq>`请求 | 1 |
+| -q | 强制退出redis。仅显示query/sec值 | / |
+| --csv | 以CSV格式输出 | / |
+| -l | 生成循环，永久执行测试 | / |
+| -t | 仅运行以逗号分隔的测试命令列表 | / |
+| -I | Idle模式。仅打开N个idle连接并等待 | / |
+
+## 4.4 Redis 客户端连接
+
+Redis通过监听一个TCP端口或者Unix socket的方式来接收来自客户端的连接，当一个连接建立后，Redis内部会进行以下一些操作：
+
+1. 首先，客户端socket会被设置为非阻塞模式，因为Redis在网络事件处理上采用的是非阻塞多路复用模型。
+1. 然后为这个socket设置TCP_NODELAY属性，禁用Nagle算法
+1. 然后创建一个可读的文件事件用于监听这个客户端socket的数据发送
+
+__最大连接数__
+
+* 在Redis2.4中，最大连接数是被直接硬编码在代码里面的，而在2.6版本中这个值变成可配置的。
+* maxclients的默认值是10000，你也可以在redis.conf中对这个值进行修改。
+
+在服务启动时设置最大连接数为 100000：`redis-server --maxclients 100000`
+
+__命令：__
+
+| 命令 | 描述 |
+|:--|:--|
+| `CLIENT LIST` | 返回连接到redis服务的客户端列表 |
+| `CLIENT SETNAME` | 设置当前连接的名称 |
+| `CLIENT GETNAME` | 获取通过CLIENT SETNAME命令设置的服务名称 |
+| `CLIENT PAUSE` | 挂起客户端连接，指定挂起的时间以毫秒计 |
+| `CLIENT KILL` | 关闭客户端连接 |	
+
+## 4.5 Redis 管道技术
+
+Redis是一种基于客户端-服务端模型以及请求/响应协议的TCP服务。这意味着通常情况下一个请求会遵循以下步骤：
+
+1. 客户端向服务端发送一个查询请求，并监听Socket返回，通常是以阻塞模式，等待服务端响应。
+1. 服务端处理命令，并将结果返回给客户端。
+
+__Redis管道技术可以在服务端未响应时，客户端可以继续向服务端发送请求，并最终一次性读取所有服务端的响应。__
+
+# 5 参考
 
 * [Redis 教程](http://www.runoob.com/redis/redis-intro.html)
