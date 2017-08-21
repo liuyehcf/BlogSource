@@ -186,8 +186,10 @@ __目录__
     > 1. 可变参数
     > 1. 泛型
     > 1. For-Each循环
+
     > JDK 6
     > 不太常用的新特性，不罗列了
+
     > JDK 7
     > 1. 二进制字面值
     > 1. 数字变量下划线的支持
@@ -197,6 +199,7 @@ __目录__
     > 1. 创建泛型时的类型推断
     > 1. fork/join
     > 1. G1
+
     > JDK 8
     > 1. Lambdas表达式与Function接口
     > 1. parallel
@@ -799,6 +802,7 @@ public class Solution {
 
 1. 缓存替换策略有哪些
     > LRU(Least Recently Used)
+    > LFU(Least Frequently Used)
     > RANDOM
     > FIFO
 
@@ -843,6 +847,8 @@ public class Solution {
 
 1. 操作系统内核的划分
     > 待补充
+
+1. 信号与中断
 
 # 7 Linux
 
