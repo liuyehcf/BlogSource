@@ -967,7 +967,7 @@ public class Solution {
 # 8 分布式相关
 
 1. 说说分布式计算
-    > 待补充
+    > {% post_link 分布式计算 %}
 
 1. 分布式存储
     > {% post_link 分布式存储 %}
