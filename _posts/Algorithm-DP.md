@@ -89,7 +89,84 @@ public class Solution {
 }
 ```
 
-# 3 Question-72[★★★★★]
+# 3 Question-62[★★]
+
+__Unique Paths__
+
+> A robot is located at the top-left corner of a m x n grid (marked 'Start' in the diagram below).
+
+> The robot can only move either down or right at any point in time. The robot is trying to reach the bottom-right corner of the grid (marked 'Finish' in the diagram below).
+
+> How many possible unique paths are there?
+
+```Java
+class Solution {
+    public int uniquePaths(int m, int n) {
+        if (m == 0 || n == 0) return 0;
+        int[][] dp = new int[m + 1][n + 1];
+        dp[1][1] = 1;
+
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                if (i == 1 && j == 1) continue;
+                dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+            }
+        }
+
+        return dp[m][n];
+    }
+}
+```
+
+优化一下空间复杂度
+```Java
+class Solution {
+    public int uniquePaths(int m, int n) {
+        if (m == 0 || n == 0) return 0;
+        int[] dp = new int[n + 1];
+
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                if (i == 1 && j == 1) dp[1] = 1;
+                else dp[j] += dp[j - 1];
+            }
+        }
+
+        return dp[n];
+    }
+}
+```
+
+# 4 Question-70[★★]
+
+__Climbing Stairs__
+
+> You are climbing a stair case. It takes n steps to reach to the top.
+
+> Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
+
+```Java
+class Solution {
+    public int climbStairs(int n) {
+        if (n == 0) return 0;
+        else if (n == 1) return 1;
+        else if (n == 2) return 2;
+
+        int[] dp = new int[n + 1];
+
+        dp[1] = 1;
+        dp[2] = 2;
+
+        for (int i = 3; i <= n; i++) {
+            dp[i] += dp[i - 2] + dp[i - 1];
+        }
+
+        return dp[n];
+    }
+}
+```
+
+# 5 Question-72[★★★★★]
 
 __Edit Distance__
 
@@ -147,7 +224,7 @@ public class Solution {
 }
 ```
 
-# 4 Question-174[★★★★★]
+# 6 Question-174[★★★★★]
 
 __Dungeon Game__
 
@@ -192,7 +269,7 @@ public class Solution {
 }
 ```
 
-# 5 Question-188[★★★★★]
+# 7 Question-188[★★★★★]
 
 __Best Time to Buy and Sell Stock IV__
 
@@ -241,7 +318,7 @@ public class Solution {
 
 <!--
 
-# 6 Question-000[★]
+# 8 Question-000[★]
 
 ____
 

@@ -254,7 +254,79 @@ public class Solution {
 }
 ```
 
-# 6 Question-130[★★★★★]
+# 6 Question-75[★★]
+
+__Sort Colors__
+
+> Given an array with n objects colored red, white or blue, sort them so that objects of the same color are adjacent, with the colors in the order red, white and blue.
+
+> Here, we will use the integers 0, 1, and 2 to represent the color red, white, and blue respectively.
+
+```Java
+class Solution {
+    public void sortColors(int[] nums) {
+        int[] cnt = new int[3];
+        for (int num : nums) {
+            cnt[num]++;
+        }
+
+        int iter = 0;
+
+        for (int i = 0; i <= 2; i++) {
+            while (--cnt[i] >= 0) {
+                nums[iter++] = i;
+            }
+        }
+    }
+}
+```
+
+# 7 Question-76[★★★★★]
+
+__Minimum Window Substring__
+
+> Given a string S and a string T, find the minimum window in S which will contain all the characters in T in complexity O(n).
+
+```Java
+class Solution {
+    public String minWindow(String s, String t) {
+        String res = null;
+
+        int[] cnt = new int[128];
+
+        for (char c : t.toCharArray()) {
+            cnt[c]++;
+        }
+
+        int len = t.length();
+
+        int left = 0, right = 0;
+        int[] tmp = new int[128];
+        int count = 0;
+
+        while (right < s.length()) {
+            char c;
+            if (++tmp[c = s.charAt(right++)] <= cnt[c]) {
+                count++;
+            }
+
+            while (count == len) {
+                if (res == null || right - left < res.length()) {
+                    res = s.substring(left, right);
+                }
+                if (--tmp[c = s.charAt(left++)] < cnt[c]) {
+                    count--;
+                }
+            }
+        }
+
+        return res == null ? "" : res;
+
+    }
+}
+```
+
+# 8 Question-130[★★★★★]
 
 __Surrounded Regions__
 
@@ -352,7 +424,7 @@ public class Solution {
 }
 ```
 
-# 7 Question-134[★★★★★]
+# 9 Question-134[★★★★★]
 
 __Gas Station__
 
@@ -384,7 +456,7 @@ public class Solution {
 }
 ```
 
-# 8 Question-200[★★★★★]
+# 10 Question-200[★★★★★]
 
 __Number of Islands__
 
@@ -457,7 +529,7 @@ public class Solution {
 }
 ```
 
-# 9 Question-209[★★★]
+# 11 Question-209[★★★]
 
 __Minimum Size Subarray Sum__
 
@@ -489,7 +561,7 @@ public class Solution {
 
 <!--
 
-# 10 Question-000[★]
+# 12 Question-000[★]
 
 ____
 
