@@ -891,7 +891,19 @@ public class Solution {
     > https://www.zhihu.com/question/46499998?sort=created
 
 1. I/O复用的水平触发与边缘触发
-    > 待补充
+    > 水平触发
+    > * 对于读操作：只要缓冲内容不为空，LT模式返回读就绪。
+    > * 对于写操作：只要缓冲区还不满，LT模式会返回写就绪。
+
+    > 边缘触发
+    > * 对于读操作
+    >   * 当缓冲区由不可读变为可读的时候，即缓冲区由空变为不空的时候。
+    >   * 当有新数据到达时，即缓冲区中的待读数据变多的时候。
+    >   * 当缓冲区有数据可读，且应用进程对相应的描述符进行EPOLL_CTL_MOD 修改EPOLLIN事件时。
+    > * 对于写操作
+    >   * 当缓冲区由不可写变为可写时。
+    >   * 当有旧数据被发送走，即缓冲区中的内容变少的时候。
+    >   * 当缓冲区有空间可写，且应用进程对相应的描述符进行EPOLL_CTL_MOD 修改EPOLLOUT事件时。
 
 1. Linux零拷贝的了解
     > http://www.jianshu.com/p/fad3339e3448
@@ -911,22 +923,26 @@ public class Solution {
     > 1. ls
     > 1. dir
     > 1. du
+
     > 修改目录、文件权限、属性和属主的命令
     > 1. chmod
     > 1. chown
     > 1. chgrp
     > 1. chattr
     > 1. lsattr
+
     > 创建和删除目录的命令
     > 1. mkdir
     > 1. rmdir
     > 1. rm
+
     > 创建和删除，重命名，复制文件的命令
     > 1. touch
     > 1. vi/vim
     > 1. rm
     > 1. mv
     > 1. cp
+
     > 显示文件内容的命令
     > 1. cat
     > 1. more
@@ -934,20 +950,25 @@ public class Solution {
     > 1. head
     > 1. tail
     > 1. tail -f
+
     > 查找命令
     > 1. find
     > 1. whereis
     > 1. which
     > 1. locate
     > 1. grep
+
     > 关机和重启计算机的命令
     > 1. shutdown
     > 1. poweroff
+
     > 压缩和打包命令
     > 1. tar
+
     > 用户操作命令
     > 1. su
     > 1. sudo
+
     > 改变目录和查看当前目录命令
     > 1. cd
     > 1. pwd
