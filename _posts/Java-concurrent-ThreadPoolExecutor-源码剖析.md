@@ -361,7 +361,7 @@ __该方法是Executor接口的方法，用于向线程池提交任务，其主�
             // addWorker失败(可能由于各种原因，超过线程池线程数量上限，或者线程工厂创建线程失败，等等原因)，继续走下面的逻辑
             c = ctl.get();
         }
-        // 若线程池处于RUNNING状态，并且向任务队列中成功添加任务
+        // 若线程池处于RUNNING状态，并且向任务队列中成功添加任务(注意，这里是offer方法，可能会失败的)
         if (isRunning(c) && workQueue.offer(command)) {
             int recheck = ctl.get();
             // 如果线程池处于非RUNNING状态，那么将command从任务队列中删除
@@ -373,6 +373,7 @@ __该方法是Executor接口的方法，用于向线程池提交任务，其主�
                 // 线程池添加一个Worker
                 addWorker(null, false);
         }
+        // 向队列中添加任务失败，队列已满，此时会开启新的线程
         // 尝试添加一个包含firstTask的Worker，如果失败了，则表明线程池已经处于SHUTDOWN或者已经饱和，因此执行拒绝策略拒绝任务
         else if (!addWorker(command, false))
             reject(command);
