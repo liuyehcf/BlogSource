@@ -67,4 +67,6 @@ No，线程和进程创建的时候都调用`dup_task_struct`来创建task相关
 
 # 6 参考
 
+__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf@163.com)，博主将在第一时间删除__
+
 * [Linux 中的各种栈：进程栈 线程栈 内核栈 中断栈](http://blog.csdn.net/yangkuanqaz85988/article/details/52403726)

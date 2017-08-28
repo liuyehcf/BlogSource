@@ -246,4 +246,6 @@ Zookeeper的watch实际上要处理两类事件：
 
 # 6 参考
 
+__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf@163.com)，博主将在第一时间删除__
+
 * [ZooKeeper学习第一期---Zookeeper简单介绍](http://www.cnblogs.com/wuxl360/p/5817471.html)

@@ -60,3 +60,7 @@ __Session的主要目的就是为了弥补Http的无状态特性__。简单的�
 * 接下来客户端每次向同一个网站发送请求时，请求头都会带上该cookie信息(包含Session id)
 * 然后，服务器通过读取请求头中的Cookie信息，获取名称为JSESSIONID的值，得到此次请求的Session id
 * ps：服务器只会在客户端第一次请求响应的时候，在响应头上添加Set-Cookie："JSESSIONID=XXXXXXX"信息，接下来在同一个会话的第二第三次响应头里，是不会添加Set-Cookie："JSESSIONID=XXXXXXX"信息的，而客户端是会在每次请求头的cookie中带上JSESSIONID信息
+
+# 4 参考
+
+__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf@163.com)，博主将在第一时间删除__

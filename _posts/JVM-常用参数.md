@@ -158,5 +158,7 @@ table th:nth-of-type(3) {
 
 # 7 参考
 
+__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf@163.com)，博主将在第一时间删除__
+
 * [JMV Options 官方文档1](http://www.oracle.com/technetwork/articles/java/vmoptions-jsp-140102.html)
 * [JMV Options 官方文档2](http://docs.oracle.com/javase/8/docs/technotes/tools/windows/java.html#BABDJJFI)

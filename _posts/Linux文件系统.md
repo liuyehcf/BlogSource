@@ -2,7 +2,7 @@
 title: Linux文件系统
 date: 2017-08-15 20:25:40
 tags: 
-- 原创
+- 摘录
 categories: 
 - 操作系统
 - Linux
@@ -177,6 +177,8 @@ __hard link的限制__：
 __基本上symbolic link就是在创建一个独立的文件，这个文件会让数据的读取指向它连接的那个文件名(与hard link不同，这里是连接到文件名)__。这里新建的文件指向的是真实文件所在的目录的block中的文件名，并通过该文件名关联到真实文件的inode，此过程中，从文件名到inode的关联记录没有增加。因此当源文件被删除后，symbolic link的文件会无法打开，因为找不到源文件的文件名。symbolic link与Windows的快捷方式可以划上等号，由于symbolic link所创建的文件为一个独立的新的文件，所以会占用掉inode与block
 
 # 9 参考
+
+__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf@163.com)，博主将在第一时间删除__
 
 * 鸟哥的Linux私房菜
 
