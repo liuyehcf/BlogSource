@@ -92,6 +92,10 @@ __目录__
 1. HashMap可以只存Value么？
     > 不可以，如果某个槽位存在冲突，那么取用哪一个value呢？此时只能通过键值的equals方法来进行比较
 
+1. 链表法解决冲突的缺点
+    > 链表长度过大会降低查询效率
+    > 可以用红黑树来解决，这也是HashMap和ConcurrentHashmap的解决方式
+
 1. Class文件结构
     > {% post_link Java-Class文件结构以及字节码阅读 %}
 
@@ -445,6 +449,7 @@ init Derive's constructor
     > 1. Node/TreeNode/TreeBin/ForwardingNode
     > 1. 链表、红黑树
     > 1. table大小为2的幂次，这样做可以实现一个扩张单调性，类似于一致性hash
+    > 1. hash值的改造
     > {% post_link Java-concurrent-ConcurrentHashMap-源码剖析 %}
 
 1. 原子类实现原理
