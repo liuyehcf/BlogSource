@@ -421,6 +421,11 @@ init Derive's constructor
     > 1. {% post_link Java-concurrent-Fork-Join-源码剖析 %}
     > 1. {% post_link Java-ThreadLocal-源码剖析 %}
 
+1. JUC源码中都用了哪些设计模式
+    > 单例模式
+    > 工厂模式
+    > 策略设计模式
+
 1. ThreadLocal原理是什么
     > ThreadLocal的实现需要Thread的配合，Thread内部为ThreadLocal增加了一个字段`threadLocals`，该字段是一个Map<ThreadLocal,T>，也就是说，不同的ThreadLocal对于同一个线程的值将会存放在这个Thread#threadLocals字段中
     > Map以及Map.Entry都是延迟初始化的
