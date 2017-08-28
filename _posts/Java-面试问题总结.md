@@ -288,6 +288,10 @@ __目录__
 1. 双亲委派
     > {% post_link Java-类加载机制 %}
 
+1. 自定义的类加载器可以违反双亲委派规则吗
+1. 静态内部类的单例一定安全吗
+    > 当类加载器违反双亲委派规则的时候，可能会生成多个实例
+
 1. 三个类加载器
     > 1. Bootstrap ClassLoader
     > 1. Extension ClassLoader
@@ -1326,6 +1330,9 @@ public class Solution {
     > C：Consistency
     > I：Isolation
     > D：Durability
+
+1. 乐观锁
+    > {% post_link 乐观锁 %}
 
 # 11 Redis&缓存相关
 

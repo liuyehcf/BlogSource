@@ -1042,3 +1042,13 @@ __该方法是ThreadPoolExecutor父类AbstractExecutorService的方法，Abstrac
 ```
 
 __Future源码分析请参见 {% post_link Java-concurrent-FutureTask-源码剖析 %}__
+
+### 5.7.1 newTaskFor
+
+newTaskFor方法返回一个RunnableFuture接口的实例
+
+```Java
+    protected <T> RunnableFuture<T> newTaskFor(Runnable runnable, T value) {
+        return new FutureTask<T>(runnable, value);
+    }
+```
