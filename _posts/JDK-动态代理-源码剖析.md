@@ -773,15 +773,16 @@ public class TestJdkProxy implements Person {
 
         p.sayHello();
 
+        // generateProxyClass方法可以指定代理类的类名，例如这里指定类名为"MyProxy"
         byte[] classFile = ProxyGenerator.generateProxyClass("MyProxy", TestJdkProxy.class.getInterfaces());
 
-        FileOutputStream out = null;
+        FileOutputStream out;
 
-        try {
-            out = new FileOutputStream("C:\\Users\\t-chehe\\Desktop\\MyProxy.class");
+        try{
+            out = new FileOutputStream("/Users/HCF/Desktop/MyProxy.class");
             out.write(classFile);
             out.flush();
-        } catch (Exception e) {
+        }catch(Exception e){
 
         }
     }
@@ -804,13 +805,13 @@ import java.lang.reflect.Proxy;
 import java.lang.reflect.UndeclaredThrowableException;
 import org.liuyehcf.jdkproxy.Person;
 
-public final class $Proxy1 extends Proxy implements Person {
+public final class MyProxy extends Proxy implements Person {
     private static Method m1;
     private static Method m3;
     private static Method m2;
     private static Method m0;
 
-    public $Proxy1(InvocationHandler var1) throws  {
+    public MyProxy(InvocationHandler var1) throws  {
         super(var1);
     }
 
@@ -867,7 +868,6 @@ public final class $Proxy1 extends Proxy implements Person {
         }
     }
 }
-
 ```
 
 # 5 参考
