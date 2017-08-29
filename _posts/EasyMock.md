@@ -70,9 +70,9 @@ Disconnected from the target VM, address: '127.0.0.1:59825', transport: 'socket'
 
 接下来我们将分析以下上述例子中所涉及到的源码，解开mock神秘的面纱。
 
-# 3 EasyMock.createMock
+# 3 源码详解
 
-首先来看一下静态方法EasyMock.createMock，该方法返回一个Mock对象(给定接口的实例)
+首先来看一下静态方法`EasyMock.createMock`，该方法返回一个Mock对象(给定接口的实例)
 
 ```Java
     /**
@@ -91,7 +91,7 @@ Disconnected from the target VM, address: '127.0.0.1:59825', transport: 'socket'
     }
 ```
 
-其中createMock是IMocksControl接口的方法，接受指定Class对象，并返回该类型的实例。即产生该接口的一个实例。
+其中`createMock`是`IMocksControl`接口的方法。该方法接受Class对象，并返回Class对象所代表类型的实例。
 
 ```Java
     /**
@@ -108,7 +108,7 @@ Disconnected from the target VM, address: '127.0.0.1:59825', transport: 'socket'
     <T> T createMock(Class<T> toMock);
 ```
 
-了解了createMock接口定义后，我们来看看具体的实现(MocksControl#createMock)
+了解了createMock接口定义后，我们来看看具体的实现(`MocksControl#createMock`)
 
 ```Java
     public <T> T createMock(final Class<T> toMock) {
@@ -125,7 +125,7 @@ Disconnected from the target VM, address: '127.0.0.1:59825', transport: 'socket'
     }
 ```
 
-IProxyFactory接口有两个实现，JavaProxyFactory(JDK动态代理)和ClassProxyFactory(Cglib)。我们以JavaProxyFactory为例进行讲解，动态代理的实现不是本篇博客的重点。下面给出JavaProxyFactory#createProxy方法的源码
+IProxyFactory接口有两个实现，JavaProxyFactory(JDK动态代理)和ClassProxyFactory(Cglib)。我们以JavaProxyFactory为例进行讲解，动态代理的实现不是本篇博客的重点。下面给出`JavaProxyFactory#createProxy`方法的源码
 
 ```Java
     public T createProxy(final Class<T> toMock, final InvocationHandler handler) {
@@ -150,7 +150,7 @@ IProxyFactory接口有两个实现，JavaProxyFactory(JDK动态代理)和ClassPr
         System.out.println(mock.isMale("Robot"));
 ```
 
-生成代理对象的方法分析(IMocksControl#createMock)我们先暂时放在一边，我们现在先来跟踪一下EasyMock.replay方法的执行逻辑。源码如下
+生成代理对象的方法分析(`IMocksControl#createMock`)我们先暂时放在一边，我们现在先来跟踪一下`EasyMock.replay`方法的执行逻辑。源码如下
 
 ```Java
     /**
@@ -168,7 +168,7 @@ IProxyFactory接口有两个实现，JavaProxyFactory(JDK动态代理)和ClassPr
     }
 ```
 
-源码的官方注释中提到，该方法用于切换mock对象的控制模式。再来看下getControl方法
+源码的官方注释中提到，该方法用于切换mock对象的控制模式。再来看下`EasyMock.getControl`方法
 
 ```Java
     private static MocksControl getControl(final Object mock) {
@@ -189,7 +189,7 @@ IProxyFactory接口有两个实现，JavaProxyFactory(JDK动态代理)和ClassPr
             } else {
                 throw new IllegalArgumentException("Not a mock: " + mock.getClass().getName());
             }
-            // 获取ObjectMethodsFilter封装的代理InvocationHandler
+            // 获取ObjectMethodsFilter封装的MockInvocationHandler的实例，并从MockInvocationHandler的实例中获取MocksControl的实例
             return handler.getDelegate().getControl();
         } catch (final ClassCastException e) {
             throw new IllegalArgumentException("Not a mock: " + mock.getClass().getName());
@@ -197,7 +197,7 @@ IProxyFactory接口有两个实现，JavaProxyFactory(JDK动态代理)和ClassPr
     }
 ```
 
-注意到ObjectMethodsFilter是InvocationHandler的实例，而ObjectMethodsFilter内部又封装了一个InvocationHandler的实例(delegate字段)，该实例的类型是MockInvocationHandler。下面给出源码
+注意到ObjectMethodsFilter是InvocationHandler接口的实现，而ObjectMethodsFilter内部(delegate字段)又封装了一个InvocationHandler接口的实现，其类型是MockInvocationHandler。下面给出`MockInvocationHandler`的源码
 
 ```Java
 public final class MockInvocationHandler implements InvocationHandler, Serializable {
@@ -207,6 +207,7 @@ public final class MockInvocationHandler implements InvocationHandler, Serializa
     // 非常重要的字段，直接决定了下面invoke方法的行为
     private final MocksControl control;
 
+    // 注意到构造方法接受了MocksControl作为参数
     public MockInvocationHandler(final MocksControl control) {
         this.control = control;
     }
@@ -234,7 +235,7 @@ public final class MockInvocationHandler implements InvocationHandler, Serializa
 }
 ```
 
-再回到EasyMock.replay方法中，getControl(mock)方法返回后调用replay方法，下面给出源码。
+再回到`EasyMock.replay`方法中，getControl(mock)方法返回后调用`MocksControl#replay`方法，下面给出`MocksControl#replay`的源码。
 
 ```Java
     public void replay() {
@@ -250,6 +251,8 @@ public final class MockInvocationHandler implements InvocationHandler, Serializa
 ```
 
 这就是为什么调用EasyMock.replay前后mock对象的行为会发生变化的原因。可以这样理解，如果state是RecordState时，调用mock的方法将会记录行为；如果state是ReplayState时，调用mock的方法将会从之前记录的行为中进行查找，如果找到了则调用，如果没有则抛出异常。
+
+EasyMock的源码就分析到这里，日后再细究ReplayState与RecordState的源码。
 
 # 4 参考
 

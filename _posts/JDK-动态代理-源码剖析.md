@@ -790,116 +790,84 @@ public class TestJdkProxy implements Person {
 
 ## 4.2 反编译后的代理类源码
 
-```
+直接用IDEA打开class文件就能够自动反编译.class文件了。下面就是反编译后的代理对象的源码
+
+```Java
+// 
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by Fernflower decompiler)
+// 
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.UndeclaredThrowableException;
 import org.liuyehcf.jdkproxy.Person;
 
-public final class MyProxy extends Proxy
-  implements Person
-{
-  private static Method m1;
-  private static Method m3;
-  private static Method m2;
-  private static Method m0;
+public final class $Proxy1 extends Proxy implements Person {
+    private static Method m1;
+    private static Method m3;
+    private static Method m2;
+    private static Method m0;
 
-  public MyProxy(InvocationHandler paramInvocationHandler)
-    throws 
-  {
-    super(paramInvocationHandler);
-  }
+    public $Proxy1(InvocationHandler var1) throws  {
+        super(var1);
+    }
 
-  public final boolean equals(Object paramObject)
-    throws 
-  {
-    try
-    {
-      return ((Boolean)this.h.invoke(this, m1, new Object[] { paramObject })).booleanValue();
+    public final boolean equals(Object var1) throws  {
+        try {
+            return ((Boolean)super.h.invoke(this, m1, new Object[]{var1})).booleanValue();
+        } catch (RuntimeException | Error var3) {
+            throw var3;
+        } catch (Throwable var4) {
+            throw new UndeclaredThrowableException(var4);
+        }
     }
-    catch (Error|RuntimeException localError)
-    {
-      throw localError;
-    }
-    catch (Throwable localThrowable)
-    {
-      throw new UndeclaredThrowableException(localThrowable);
-    }
-  }
 
-  public final void sayHello()
-    throws 
-  {
-    try
-    {
-      this.h.invoke(this, m3, null);
-      return;
+    public final void sayHello() throws  {
+        try {
+            super.h.invoke(this, m3, (Object[])null);
+        } catch (RuntimeException | Error var2) {
+            throw var2;
+        } catch (Throwable var3) {
+            throw new UndeclaredThrowableException(var3);
+        }
     }
-    catch (Error|RuntimeException localError)
-    {
-      throw localError;
-    }
-    catch (Throwable localThrowable)
-    {
-      throw new UndeclaredThrowableException(localThrowable);
-    }
-  }
 
-  public final String toString()
-    throws 
-  {
-    try
-    {
-      return (String)this.h.invoke(this, m2, null);
+    public final String toString() throws  {
+        try {
+            return (String)super.h.invoke(this, m2, (Object[])null);
+        } catch (RuntimeException | Error var2) {
+            throw var2;
+        } catch (Throwable var3) {
+            throw new UndeclaredThrowableException(var3);
+        }
     }
-    catch (Error|RuntimeException localError)
-    {
-      throw localError;
-    }
-    catch (Throwable localThrowable)
-    {
-      throw new UndeclaredThrowableException(localThrowable);
-    }
-  }
 
-  public final int hashCode()
-    throws 
-  {
-    try
-    {
-      return ((Integer)this.h.invoke(this, m0, null)).intValue();
+    public final int hashCode() throws  {
+        try {
+            return ((Integer)super.h.invoke(this, m0, (Object[])null)).intValue();
+        } catch (RuntimeException | Error var2) {
+            throw var2;
+        } catch (Throwable var3) {
+            throw new UndeclaredThrowableException(var3);
+        }
     }
-    catch (Error|RuntimeException localError)
-    {
-      throw localError;
-    }
-    catch (Throwable localThrowable)
-    {
-      throw new UndeclaredThrowableException(localThrowable);
-    }
-  }
 
-  static
-  {
-    try
-    {
-      m1 = Class.forName("java.lang.Object").getMethod("equals", new Class[] { Class.forName("java.lang.Object") });
-      m3 = Class.forName("org.liuyehcf.jdkproxy.Person").getMethod("sayHello", new Class[0]);
-      m2 = Class.forName("java.lang.Object").getMethod("toString", new Class[0]);
-      m0 = Class.forName("java.lang.Object").getMethod("hashCode", new Class[0]);
-      return;
+    static {
+        try {
+            m1 = Class.forName("java.lang.Object").getMethod("equals", new Class[]{Class.forName("java.lang.Object")});
+            m3 = Class.forName("org.liuyehcf.jdkproxy.Person").getMethod("sayHello", new Class[0]);
+            m2 = Class.forName("java.lang.Object").getMethod("toString", new Class[0]);
+            m0 = Class.forName("java.lang.Object").getMethod("hashCode", new Class[0]);
+        } catch (NoSuchMethodException var2) {
+            throw new NoSuchMethodError(var2.getMessage());
+        } catch (ClassNotFoundException var3) {
+            throw new NoClassDefFoundError(var3.getMessage());
+        }
     }
-    catch (NoSuchMethodException localNoSuchMethodException)
-    {
-      throw new NoSuchMethodError(localNoSuchMethodException.getMessage());
-    }
-    catch (ClassNotFoundException localClassNotFoundException)
-    {
-      throw new NoClassDefFoundError(localClassNotFoundException.getMessage());
-    }
-  }
 }
+
 ```
 
 # 5 参考
