@@ -91,7 +91,7 @@ Disconnected from the target VM, address: '127.0.0.1:59825', transport: 'socket'
     }
 ```
 
-其中createMock是IMocksControl接口的方法，接受指定Class对象，并返回该类型的实例
+其中createMock是IMocksControl接口的方法，接受指定Class对象，并返回该类型的实例。即产生该接口的一个实例。
 
 ```Java
     /**
@@ -134,7 +134,7 @@ IProxyFactory接口有两个实现，JavaProxyFactory(JDK动态代理)和ClassPr
     }
 ```
 
-我们再来回顾一下上述例子中的代码，我们发现一个很奇怪的现象。在EasyMock.replay方法前后，调用mock.isMale所产生的行为是不同的。__在这里EasyMock.replay类似于一个开关__，可以改变mock对象的行为。可是这是如何做到的呢？__这就要借助于ObjectMethodsFilter这个InvocationHandler的实现类了。__
+我们再来回顾一下上述例子中的代码，我们发现一个很奇怪的现象。在EasyMock.replay方法前后，调用mock.isMale所产生的行为是不同的。__在这里EasyMock.replay类似于一个开关__，可以改变mock对象的行为。可是这是如何做到的呢？
 
 ```Java
         // 这里调用mock的isMale方法不会抛出异常
@@ -149,6 +149,107 @@ IProxyFactory接口有两个实现，JavaProxyFactory(JDK动态代理)和ClassPr
         System.out.println(mock.isMale("Alice"));
         System.out.println(mock.isMale("Robot"));
 ```
+
+生成代理对象的方法分析(IMocksControl#createMock)我们先暂时放在一边，我们现在先来跟踪一下EasyMock.replay方法的执行逻辑。源码如下
+
+```Java
+    /**
+     * Switches the given mock objects (more exactly: the controls of the mock
+     * objects) to replay mode. For details, see the EasyMock documentation.
+     * 
+     * @param mocks
+     *            the mock objects.
+     */
+    public static void replay(final Object... mocks) {
+        for (final Object mock : mocks) {
+            // 依次对每个mock对象执行下面的逻辑
+            getControl(mock).replay();
+        }
+    }
+```
+
+源码的官方注释中提到，该方法用于切换mock对象的控制模式。再来看下getControl方法
+
+```Java
+    private static MocksControl getControl(final Object mock) {
+        return ClassExtensionHelper.getControl(mock);
+    }
+
+    public static MocksControl getControl(final Object mock) {
+        try {
+            ObjectMethodsFilter handler;
+
+            // mock是由JDK动态代理产生的类型的实例
+            if (Proxy.isProxyClass(mock.getClass())) {
+                handler = (ObjectMethodsFilter) Proxy.getInvocationHandler(mock);
+            }
+            // mock是由Cglib产生的类型的实例
+            else if (Enhancer.isEnhanced(mock.getClass())) {
+                handler = (ObjectMethodsFilter) getInterceptor(mock).getHandler();
+            } else {
+                throw new IllegalArgumentException("Not a mock: " + mock.getClass().getName());
+            }
+            // 获取ObjectMethodsFilter封装的代理InvocationHandler
+            return handler.getDelegate().getControl();
+        } catch (final ClassCastException e) {
+            throw new IllegalArgumentException("Not a mock: " + mock.getClass().getName());
+        }
+    }
+```
+
+注意到ObjectMethodsFilter是InvocationHandler的实例，而ObjectMethodsFilter内部又封装了一个InvocationHandler的实例(delegate字段)，该实例的类型是MockInvocationHandler。下面给出源码
+
+```Java
+public final class MockInvocationHandler implements InvocationHandler, Serializable {
+
+    private static final long serialVersionUID = -7799769066534714634L;
+
+    // 非常重要的字段，直接决定了下面invoke方法的行为
+    private final MocksControl control;
+
+    public MockInvocationHandler(final MocksControl control) {
+        this.control = control;
+    }
+
+    public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+        try {
+            // 如果是记录模式
+            if (control.getState() instanceof RecordState) {
+                LastControl.reportLastControl(control);
+            }
+            return control.getState().invoke(new Invocation(proxy, method, args));
+        } catch (final RuntimeExceptionWrapper e) {
+            throw e.getRuntimeException().fillInStackTrace();
+        } catch (final AssertionErrorWrapper e) {
+            throw e.getAssertionError().fillInStackTrace();
+        } catch (final ThrowableWrapper t) {
+            throw t.getThrowable().fillInStackTrace();
+        }
+        // then let all unwrapped exceptions pass unmodified
+    }
+
+    public MocksControl getControl() {
+        return control;
+    }
+}
+```
+
+再回到EasyMock.replay方法中，getControl(mock)方法返回后调用replay方法，下面给出源码。
+
+```Java
+    public void replay() {
+        try {
+            state.replay();
+            // 替换state，将之前收集到的行为(behavior)作为参数传给ReplayState的构造方法
+            state = new ReplayState(behavior);
+            LastControl.reportLastControl(null);
+        } catch (final RuntimeExceptionWrapper e) {
+            throw (RuntimeException) e.getRuntimeException().fillInStackTrace();
+        }
+    }
+```
+
+这就是为什么调用EasyMock.replay前后mock对象的行为会发生变化的原因。可以这样理解，如果state是RecordState时，调用mock的方法将会记录行为；如果state是ReplayState时，调用mock的方法将会从之前记录的行为中进行查找，如果找到了则调用，如果没有则抛出异常。
 
 # 4 参考
 
