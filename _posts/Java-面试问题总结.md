@@ -345,7 +345,7 @@ __目录__
     > -XX:MaxTenuringThreshold
 
 1. mataspace与permgen的区别
-    > 待补充
+    > https://www.zhihu.com/question/40543936/answer/87172685
 
 1. 新生代和老生代的内存回收策略
     > 新生代：复制算法，因为对象朝生夕死
