@@ -129,7 +129,7 @@ __目录__
 
     > ClassLoader#loadClass执行过程
     > 1. 加载
-    > {% post_link Java-类加载机制 %}
+    > 详细类加载机制请参考{% post_link Java-类加载机制 %}
 
 1. 获取Class对象的方式
     > 1. `Class clazz = Class.forName(<string>)`
@@ -146,41 +146,79 @@ __目录__
     > 目的是为了减少程序并发执行所付出的时空开销，使操作系统具有更好的并发性。
 
 1. 线程池的种类，区别和使用场景
-    > 所有线程池本质上都是ThreadPoolExecutor，只是配置了不同的初始化参数，核心参数有
+    > 所有线程池本质上都是ThreadPoolExecutor，只是配置了不同的初始化参数。首先来看一个线程池构造方法
+```Java
+    public ThreadPoolExecutor(int corePoolSize,
+                              int maximumPoolSize,
+                              long keepAliveTime,
+                              TimeUnit unit,
+                              BlockingQueue<Runnable> workQueue) {
+        this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
+             Executors.defaultThreadFactory(), defaultHandler);
+    }
+```
+    > 从构造方法的参数中可以看出ThreadPoolExecutor的核心参数有
     > 1. __corePoolSize__：核心线程数量，所谓核心线是指即便空闲也不会终止的线程(allowCoreThreadTimeOut必须是false)
     > 1. __maximumPoolSize__：最大线程数量，核心线程+非核心线程的总数不能超过这个数值
     > 1. __keepAliveTime__：非核心线程在空闲状态下保持active的最长时间，超过这个时间若仍然空闲，那么该线程便会结束
+    > 1. __unit__：keepAliveTime的单位
+    > 1. __workQueue__：任务队列，任务队列的不同，直接影响了线程池的行为
 
-    > Executors.newCachedThreadPool()
+    > __Executors.newCachedThreadPool()__
+```Java
+    public static ExecutorService newCachedThreadPool() {
+        return new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+                                      60L, TimeUnit.SECONDS,
+                                      new SynchronousQueue<Runnable>());
+    }
+```
+    > * 注意到，这里用到了SynchronousQueue作为任务队列，这个任务队列相比于LinkedBlockingQueue而言有一个非常大的不同。`LinkedBlockingQueue#offer`方法仅在任务队列达到最大容量时失败；`SynchronousQueue#offer`方法会在没有其他线程阻塞在取用任务时失败，也就是说执行offer方法时，如果没有线程阻塞在take方法上，那么offer失败。
 
-    > * __corePoolSize__：0
-    > * __maximumPoolSize__：MAX
-    > * __keepAliveTime__：60L
+    > __Executors.newSingleThreadExecutor()__
+```Java
+    public static ExecutorService newSingleThreadExecutor() {
+        return new FinalizableDelegatedExecutorService
+            (new ThreadPoolExecutor(1, 1,
+                                    0L, TimeUnit.MILLISECONDS,
+                                    new LinkedBlockingQueue<Runnable>()));
+    }
+```
 
-    > Executors.newSingleThreadExecutor()
-
-    > * __corePoolSize__：1
-    > * __maximumPoolSize__：1
-    > * __keepAliveTime__：0L
-
-    > Executors.newFixedThreadPool(int nThread)
-
-    > * __corePoolSize__：nThread
-    > * __maximumPoolSize__：nThread
-    > * __keepAliveTime__：0L
+    > __Executors.newFixedThreadPool(int nThread)__
+```Java
+    public static ExecutorService newFixedThreadPool(int nThreads) {
+        return new ThreadPoolExecutor(nThreads, nThreads,
+                                      0L, TimeUnit.MILLISECONDS,
+                                      new LinkedBlockingQueue<Runnable>());
+    }
+```
 
 1. 分析线程池的实现原理和线程的调度过程
-    > 添加一个新的Runnable时
-    > 1. 当前线程数量小于最大线程数量时，新开一个线程
-    > 1. 当线程数量大于最大线程时，直接将任务压入任务队列
-    > Work即一个工作的线程，会从BlockingQueue获取任务并执行
+    > __添加一个新的Runnable时__
+    > 1. 当前线程数量小于核心线程数量时，开启新线程执行该任务
+    > 1. 否则，将任务添加到任务队列，若添加任务成功则结束(还有一些细致的操作)
+    > 1. 否则，若当前线程数量小于最大线程数量，则开启新线程执行该任务
+    > 1. 否则，执行拒绝策略拒绝该任务
+
+    > __每个Work(线程)会从任务队列中获取任务__
+    > 1. 如果当前线程数量不大于核心线程数量，那么空闲线程会阻塞直至取到任务
+    > 1. 如果当前线程数量大于核心线程数量，那么空闲线程会阻塞直至取到任务或者超时(keepAliveTime)
 
 1. 线程池如何调优
     > 可以从以下几个方面考虑
     > 1. 最大线程数量：与CPU的数量相关
     > 1. 最小线程数量：一般设定得比较小，防止系统初期创建太多线程，节省系统资源，并且指定一个最小线程数量的负面影响比较小
     > 1. 任务的频繁程度：如果线程太少，那么等待的时间会很短，如果线程很多，最坏的情况下就是一个任务就开一个线程，那么此时CPU开销将会比较大
+    > 考虑阻塞队列的实现，ArrayBlockingQueue，LinkedBlockingQueue，SynchronousQueue等等。
     > http://www.cnblogs.com/jianzh5/p/6437315.html
+
+1. Java中最大线程数量
+    > 决定因素有三个
+    > 1. MaxProcessMemory：操作系统留给__用户空间__的内存总大小
+    > 1. JVMMemory：JVM分配的内存大小(通过-Xms与-Xmx来设定)
+    > 1. ReservedOsMemory：操作系统保留内存大小
+    > 1. ThreadStackSize：线程堆栈的大小(Java线程依赖操作系统原生线程，而线程只有栈是私有的)，可以通过-Xss参数来设定
+    > 公式：`(MaxProcessMemory - JVMMemory - ReservedOsMemory) / (ThreadStackSize) = Number of threads`
 
 1. JDK各个版本的特性
     > JDK 5
@@ -216,6 +254,63 @@ __目录__
 1. 在装饰器模式和代理模式之间，你如何抉择，请结合自身实际情况聊聊
     > 装饰器模式关注于在一个对象上动态的添加方法，然而代理模式关注于控制对对象的访问。换句话说，用代理模式，代理类(proxy class)可以对它的客户隐藏一个对象的具体信息。因此，当使用代理模式的时候，我们常常在一个代理类中创建一个对象的实例。并且，当我们使用装饰器模式的时候，我们通常的做法是将原始对象作为一个参数传给装饰者的构造器。
 
+1. JDK源码中都用了哪些设计模式
+    > __创建型模式__
+    > 1. __工厂方法模式__：就是一个返回具体对象的方法
+    >   * `java.lang.Proxy#newProxyInstance()`
+    >   * `java.lang.Object#toString()`
+    >   * `java.lang.Class#newInstance()`
+    > 1. __抽象工厂模式__：抽象工厂模式提供了一个协议来生成一系列的相关或者独立的对象，而不用指定具体对象的类型。它使得应用程序能够和使用的框架的具体实现进行解耦。这在JDK或者许多框架比如Spring中都随处可见。__它们也很容易识别，一个创建新对象的方法，返回的却是接口或者抽象类的，就是抽象工厂模式了__
+    >   * `java.util.Arrays.asList()`
+    > 1. __单例模式__：用来确保类只有一个实例。Joshua Bloch在Effetive Java中建议到，还有一种方法就是使用枚举
+    >   * `java.lang.Runtime`
+    >   * `sun.misc.Unsafe`
+    > 1. __建造者模式__：定义了一个新的类来构建另一个类的实例，以简化复杂对象的创建。建造模式通常也使用方法链接来实现
+    >   * `java.lang.StringBuilder`
+    > 1. __原型模式__：使得类的实例能够生成自身的拷贝。如果创建一个对象的实例非常复杂且耗时时，就可以使用这种模式，而不重新创建一个新的实例，你可以拷贝一个对象并直接修改它
+    >   * `java.lang.Object#clone()`
+
+    > __结构型模式__
+    > 1. __适配器模式__：用来把一个接口转化成另一个接口
+    >   * `java.io.InputStreamReader(InputStream)`
+    >   * `java.io.OutputStreamWriter(OutputStream)`
+    > 1. __装饰器模式__：动态的给一个对象附加额外的功能，这也是子类的一种替代方式。可以看到，在创建一个类型的时候，同时也传入同一类型的对象
+    >   * Java IO
+    > 1. __代理模式__：代理模式是用一个简单的对象来代替一个复杂的或者创建耗时的对象
+    >   * JDK 动态代理
+    > 1. __外观（门面）模式__：给一组组件，接口，抽象，或者子系统提供一个简单的接口
+    >   * `java.lang.Class`提供了访问类元数据的接口
+    > 1. __桥接模式__：这个模式将抽象和抽象操作的实现进行了解耦，这样使得抽象和实现可以独立地变化
+    >   * JDBC，一个公共的对象持有一个接口，接口可以在不同实现中切换，对于用户而言，只需要持有这个公共对象即可
+    > 1. __组合模式__：使得客户端看来单个对象和对象的组合是同等的。换句话说，某个类型的方法同时也接受自身类型作为参数
+    >   * `java.util.List#addAll(Collection)`
+    > 1. __享元模式__：使用缓存来加速大量小对象的访问时间
+    >   * `Integer.valueOf`
+
+    > __行为型模式__
+    > 1. __策略模式__：使用这个模式来将一组算法封装成一系列对象。通过传递这些对象可以灵活的改变程序的功能
+    >   * `java.util.Comparator#compare()`
+    > 1. __模板方法模式__：让子类可以重写方法的一部分，而不是整个重写，你可以控制子类需要重写那些操作
+    >   * `java.util.Collections#sort()`
+    > 1. __观察者模式__：它使得一个对象可以灵活的将消息发送给感兴趣的对象
+    >   * `java.util.EventListener`
+    > 1. __迭代子模式__：提供一个一致的方法来顺序访问集合中的对象，这个方法与底层的集合的具体实现无关
+    >   * `java.util.Iterator`
+    > 1. __责任链模式__：通过把请求从一个对象传递到链条中下一个对象的方式，直到请求被处理完毕，以实现对象间的解耦
+    >   * `java.util.logging.Logger#log()`
+    > 1. __命令模式__：将操作封装到对象内，以便存储，传递和返回。命令模式的目的就是达到命令的发出者和执行者之间的解耦
+    >   * `java.lang.Runnable`
+    > 1. __备忘录模式__：生成对象状态的一个快照，以便对象可以恢复原始状态而不用暴露自身的内容。Date对象通过自身内部的一个long值来实现备忘录模式
+    >   * `java.util.Date`
+    >   * `java.io.Serializable`
+    > 1. __状态模式__：通过改变对象内部的状态，使得你可以在运行时动态改变一个对象的行为
+    >   * `java.util.Iterator`
+    > 1. __访问者模式__：提供一个方便的可维护的方式来操作一组对象。它使得你在不改变操作的对象前提下，可以修改或者扩展对象的行为
+    > 1. __中介者模式__：通过使用一个中间对象来进行消息分发以及减少类之间的直接依赖
+    >   * Spring
+    > 1. __解释器模式__：这个模式通常定义了一个语言的语法，然后解析相应语法的语句
+    >   * `java.util.Pattern`
+
 # 2 JVM
 
 1. 垃圾收集算法
@@ -248,6 +343,9 @@ __目录__
 1. 对象如何晋升到老年代
     > 经过数次Minor GC后仍然存活的对象进入老年代
     > -XX:MaxTenuringThreshold
+
+1. mataspace与permgen的区别
+    > 待补充
 
 1. 新生代和老生代的内存回收策略
     > 新生代：复制算法，因为对象朝生夕死
@@ -287,12 +385,15 @@ __目录__
     > 1. 解析：将符号引用替换为直接引用
     > 1. 初始化：执行静态初始化语句以及静态子句
     > * 其中__验证、准备、解析__称为链接
+
     > 详细内容请参考{% post_link Java-类加载机制 %}
 
 1. 双亲委派
     > {% post_link Java-类加载机制 %}
 
 1. 自定义的类加载器可以违反双亲委派规则吗
+    > 待补充
+
 1. 静态内部类的单例一定安全吗
     > 当类加载器违反双亲委派规则的时候，可能会生成多个实例
 
@@ -300,6 +401,7 @@ __目录__
     > 1. Bootstrap ClassLoader
     > 1. Extension ClassLoader
     > 1. Application ClassLoader
+
     > 详细内容请参考{% post_link Java-类加载机制 %}
 
 1. 类的初始化顺序
@@ -390,7 +492,8 @@ init Derive's constructor
     > 1. 方法
     > 1. 属性计数值
     > 1. 属性
-    > {% post_link Java-Class文件结构以及字节码阅读 %}
+
+    > 详细请参考{% post_link Java-Class文件结构以及字节码阅读 %}
 
 1. JMM
     > 1. {% post_link Java-内存模型基础 %}
@@ -425,11 +528,6 @@ init Derive's constructor
     > 1. {% post_link Java-concurrent-Fork-Join-源码剖析 %}
     > 1. {% post_link Java-ThreadLocal-源码剖析 %}
 
-1. JUC源码中都用了哪些设计模式
-    > 单例模式
-    > 工厂模式
-    > 策略设计模式
-
 1. ThreadLocal原理是什么
     > ThreadLocal的实现需要Thread的配合，Thread内部为ThreadLocal增加了一个字段`threadLocals`，该字段是一个Map<ThreadLocal,T>，也就是说，不同的ThreadLocal对于同一个线程的值将会存放在这个Thread#threadLocals字段中
     > Map以及Map.Entry都是延迟初始化的
@@ -450,13 +548,13 @@ init Derive's constructor
     > 1. 链表、红黑树
     > 1. table大小为2的幂次，这样做可以实现一个扩张单调性，类似于一致性hash
     > 1. hash值的改造
-    > {% post_link Java-concurrent-ConcurrentHashMap-源码剖析 %}
+    > 详细源码剖析请参考{% post_link Java-concurrent-ConcurrentHashMap-源码剖析 %}
 
 1. 原子类实现原理
     > 循环+CAS，即自旋
 
 1. CAS操作
-    > {% post_link Java-原子操作的实现原理 %}
+    > 详细内容请参考{% post_link Java-原子操作的实现原理 %}
 
 1. 如果让你实现一个并发安全的链表，你会怎么做
     > 参考ConcurrentLinkedQueue的实现
@@ -465,7 +563,8 @@ init Derive's constructor
     > 简而言之
     > 1. ConcurrentLinkedQueue是Queue接口的一个安全实现
     > 1. LinkedBlockingQueue是BlockingQueue的一种实现，被用于生产消费者队列
-    > http://www.cnblogs.com/linjiqin/archive/2013/05/30/3108188.html
+
+    > 详细内容请参考http://www.cnblogs.com/linjiqin/archive/2013/05/30/3108188.html
 
 1. CountDownLatch和CyclicBarrier的用法，以及相互之间的差别?
     > CountDownLatch
@@ -478,23 +577,25 @@ init Derive's constructor
 
 1. Unsafe
     > Unsafe是JDK实现所依赖的一个非公开的类，用于提供一些内存操作以及CAS操作等等。不具有跨平台性质，不同平台的实现可能有差异。
-    > {% post_link Java-sun-Unsafe-源码剖析 %}
+    > Unsafe详细源码请参考{% post_link Java-sun-Unsafe-源码剖析 %}
 
 1. LockSupport
     > 1. LockSupport.park
     > 1. LockSupport.unpark
+
     > 可以先unpark再park，unpark可以理解为获取一个许可。但是多次调用unpark只有一个许可
 
 1. Condition
     > 两个重要方法，提供类似于wait/notify的机制
     > 1. await
     > 1. signal/signalAll
+
     > 与Object提供的wait/notify的机制不同，await/signal可以提供多个不同的等待队列
-    > {% post_link Java-concurrent-AQS-ConditionObject-源码剖析 %}
+    > 有关ConditionObject源码剖析请参考{% post_link Java-concurrent-AQS-ConditionObject-源码剖析 %}
 
 1. Fork/Join
     > 从宏观上来说就是一个类似于归并的过程，将问题拆分成子问题，最终合并结果
-    > {% post_link Java-concurrent-Fork-Join-源码剖析 %}
+    > 关于Fork/Join的源码请参考{% post_link Java-concurrent-Fork-Join-源码剖析 %}
 
 1. parallelStream
     > parallelStream其实就是一个并行执行的流。它通过默认的ForkJoinPool，可能提高你的多线程任务的速度。
@@ -706,7 +807,7 @@ public class Solution {
 
 1. Spring AOP实现原理
     > AOP=增强收集以及适配+拦截器机制+动态代理
-    > {% post_link Spring-AOP-源码剖析 %}
+    > 详细源码分析请参考{% post_link Spring-AOP-源码剖析 %}
     > AOP中的术语
     > 1. 切点：匹配关系
     > 1. 增强：增强逻辑以及方位信息
@@ -728,7 +829,7 @@ public class Solution {
 1. RMI(Remote Method Invoke)与代理模式
     > 待补充
 
-1. Spring的事务隔离级别，实现原理
+1. Spring的事务传播级别，实现原理
     > __`PROPAGATION_SUPPORTS`__：支持当前事务，如果当前没有事务，就以非事务方式执行。
     > __`PROPAGATION_MANDATORY`__：支持当前事务，如果当前没有事务，就抛出异常。
     > __`PROPAGATION_REQUIRES_NEW`__：新建事务，如果当前存在事务，把当前事务挂起。
@@ -868,7 +969,8 @@ public class Solution {
     > 处理时机不同
     > 1. 中断在内核态处理
     > 1. 信号在由内核态返回用户态后进行处理，在进程表的表项中有一个软中断信号域，该域中每一位对应一个信号
-    > {% post_link 进程通信-信号 %}
+
+    > 详细内容请参考{% post_link 进程通信-信号 %}
 
 # 7 Linux
 
@@ -996,8 +1098,8 @@ public class Solution {
 
 1. hard link与symbolic link的区别
     > 目录的block存放的是文件名与inode的关联记录
-    > hard link：hard link只是在某个目录下新建一条文件名连接到某inode号码的关联记录而已。因此两个文件名会连接到同一个inode号码。ls -l查看的连接数就是多少个文件名连接到这个inode号码的意思
-    > symbolic link：创建一个独立的文件，这个文件会让数据的读取指向它__连接的文件名。注意这里连接到文件名而不是inode号码__
+    > __hard link__：hard link只是在某个目录下新建一条文件名连接到某inode号码的关联记录而已。因此两个文件名会连接到同一个inode号码。ls -l查看的连接数就是多少个文件名连接到这个inode号码的意思
+    > __symbolic link__：创建一个独立的文件，这个文件会让数据的读取指向它__连接的文件名。注意这里连接到文件名而不是inode号码__
 
 # 8 分布式相关
 
@@ -1081,6 +1183,7 @@ public class Solution {
 1. 分布式集群下的唯一序列号
     > 1. 数据库自增id
     > 1. uuid(MacAddress+timeStamp)
+
     > http://www.cnblogs.com/haoxinyue/p/5208136.html
 
 1. 消息队列(Message Queue)
@@ -1115,8 +1218,8 @@ public class Solution {
     > {% post_link 单源最短路径 %}
 
 1. BTree
-    > {% post_link B-tree-详解 %}
-    > {% post_link BPlus-tree-详解 %}
+    > 1. {% post_link B-tree-详解 %}
+    > 1. {% post_link BPlus-tree-详解 %}
 
 1. 大根堆
     > 就是最大堆
@@ -1311,14 +1414,14 @@ public class Solution {
     > 1. 某个数据列包含了大量的重复
 
 1. 高并发下如何做到安全的修改同一行数据，乐观锁和悲观锁是什么，INNODB的行级锁有哪2种，解释其含义
-    > 悲观锁(Pessimistic Lock), 顾名思义，就是很悲观，每次去拿数据的时候都认为别人会修改，所以每次在拿数据的时候都会上锁，这样别人想拿这个数据就会block直到它拿到锁。传统的关系型数据库里边就用到了很多这种锁机制，比如行锁，表锁等，读锁，写锁等，都是在做操作之前先上锁。
-    > 乐观锁(Optimistic Lock), 顾名思义，就是很乐观，每次去拿数据的时候都认为别人不会修改，所以不会上锁，但是在更新的时候会判断一下在此期间别人有没有去更新这个数据，可以使用版本号等机制。乐观锁适用于多读的应用类型，这样可以提高吞吐量，像数据库如果提供类似于write_condition机制的其实都是提供的乐观锁。
+    > __悲观锁(Pessimistic Lock)__，顾名思义，就是很悲观，每次去拿数据的时候都认为别人会修改，所以每次在拿数据的时候都会上锁，这样别人想拿这个数据就会block直到它拿到锁。传统的关系型数据库里边就用到了很多这种锁机制，比如行锁，表锁等，读锁，写锁等，都是在做操作之前先上锁。
+    > __乐观锁(Optimistic Lock)__，顾名思义，就是很乐观，每次去拿数据的时候都认为别人不会修改，所以不会上锁，但是在更新的时候会判断一下在此期间别人有没有去更新这个数据，可以使用版本号等机制。乐观锁适用于多读的应用类型，这样可以提高吞吐量，像数据库如果提供类似于write_condition机制的其实都是提供的乐观锁。
     > 两种锁各有优缺点，不可认为一种好于另一种，像乐观锁适用于写比较少的情况下，即冲突真的很少发生的时候，这样可以省去了锁的开销，加大了系统的整个吞吐量。但如果经常产生冲突，上层应用会不断的进行retry，这样反倒是降低了性能，所以这种情况下用悲观锁就比较合适。
     > http://blog.csdn.net/hongchangfirst/article/details/26004335
 
 1. 共享锁、排他锁
-    > 共享锁(S锁)：如果事务T对数据A加上共享锁后，则其他事务只能对A再加共享锁，不能加排他锁。获准共享锁的事务只能读数据，不能修改数据。
-    > 排他锁(X锁)：如果事务T对数据A加上排他锁后，则其他事务不能再对A加任任何类型的封锁。获准排他锁的事务既能读数据，又能修改数据。
+    > __共享锁(S锁)__：如果事务T对数据A加上共享锁后，则其他事务只能对A再加共享锁，不能加排他锁。获准共享锁的事务只能读数据，不能修改数据。
+    > __排他锁(X锁)__：如果事务T对数据A加上排他锁后，则其他事务不能再对A加任任何类型的封锁。获准排他锁的事务既能读数据，又能修改数据。
     > 共享锁下其它用户可以并发读取，查询数据。但不能修改，增加，删除数据。资源共享
 
 1. 数据库会死锁吗，举一个死锁的例子，MySQL怎么解决死锁
@@ -1326,7 +1429,8 @@ public class Solution {
     > 1. 互斥条件：指进程对所分配到的资源进行排它性使用，即在一段时间内某资源只由一个进程占用。如果此时还有其它进程请求资源，则请求者只能等待，直至占有资源的进程用毕释放。
     > 1. 请求和保持条件：指进程已经保持至少一个资源，但又提出了新的资源请求，而该资源已被其它进程占有，此时请求进程阻塞，但又对自己已获得的其它资源保持不放。
     > 1. 不剥夺条件：指进程已获得的资源，在未使用完之前，不能被剥夺，只能在使用完时由自己释放。
-    > 1. 环路等待条件：指在发生死锁时，必然存在一个进程——资源的环形链，即进程集合{P0，P1，P2，···，Pn}中的P0正在等待一个P1占用的资源；P1正在等待P2占用的资源，……，Pn正在等待已被P0占用的资源。
+    > 1. 环路等待条件：指在发生死锁时，必然存在一个进程——资源的环形链，即进程集合{P0，P1，P2，...，Pn}中的P0正在等待一个P1占用的资源；P1正在等待P2占用的资源，...，Pn正在等待已被P0占用的资源。
+
     > https://baike.baidu.com/item/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%AD%BB%E9%94%81/10015665?fr=aladdin
 
 1. 数据库中join的类型与区别
