@@ -207,7 +207,7 @@ __acquire方法用于获取指定数量的资源，如果获取不到则当前�
      */
     public final void acquire(int arg) {
         // 首先执行tryAcquire(arg)尝试获取资源，如果成功则直接返回
-        // 如果tryAcquire(arg)获取资源失败，则讲当前线程封装成Node节点加入到sync queue队列中，并通过acquireQueued进行获取资源直至成功(如果尚未有资源可获取，那么acquireQueued会阻塞当前线程)
+        // 如果tryAcquire(arg)获取资源失败，则将当前线程封装成Node节点加入到sync queue队列中，并通过acquireQueued进行获取资源直至成功(如果尚未有资源可获取，那么acquireQueued会阻塞当前线程)
         if (!tryAcquire(arg) &&
             acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
             selfInterrupt();
