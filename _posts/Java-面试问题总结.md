@@ -1246,8 +1246,8 @@ public class Solution {
 1. 除了平衡二叉树这种结构还知道别的支持lgn插入的结构吗？
     > redis里的skip list
 
-1. 无序数组的最长递增子序列(LCS)
-    > 待补充
+1. 无序数组的最长递增子序列
+    > 回溯
 
 1. 并查集
     > {% post_link 并查集 %}
