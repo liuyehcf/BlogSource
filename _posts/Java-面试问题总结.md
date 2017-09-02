@@ -1422,13 +1422,26 @@ public class Solution {
     > 1. 视图对重构数据库提供了一定程度的逻辑独立性。
     > 1. 能够对机密数据提供安全保护。
     > 1. 适当的使用视图可以更清晰的表达查询。
+    > 
+```
+CREATE VIEW view_name
+AS
+SELECT column1,column2,...columnk
+FROM table_name
+WHERE condition;
 
+CREATE VIEW user_view_1
+AS
+SELECT first_name, last_name
+FROM crm_user
+WHERE sex = 0;
+```
     > 索引：实质上得是单独的，物理的数据库结构，他是表中的一个列或者多个列的值的集合和相应的指向表中物理标识这些值的数据页的逻辑指针清单
 
 1. 数据库自增主键可能的问题
     > http://www.cnblogs.com/zhoujinyi/p/3433823.html
-    > 自增主键会产生表锁，从而引发问题
-    > 自增主键有业务意义，不连续的主键导致主从主键不一致到出现问题。
+    > 自增主键会产生表锁(插入语句完成后释放锁而不是事务结束后释放锁)，大量并发插入时引起阻塞
+    > 自增主键不连续。版本5.1.22之后，插入前会通过语句分析得出插入数量，然后一次性分配足够的id，只有分配的过程是同步的，而分配之后的插入是可以并发执行的
 
 1. MySQL的几种优化
     > http://blog.csdn.net/u013474436/article/details/49908683
@@ -1483,9 +1496,6 @@ public class Solution {
     > right join
     > inner join
     > outer join
-
-1. 数据库视图和索引区别
-    > 待补充
 
 1. 数据库事务的ACID
     > A：Atomicity
