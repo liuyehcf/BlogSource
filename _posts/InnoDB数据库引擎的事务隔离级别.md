@@ -304,7 +304,88 @@ __实现方式__：
 
 由于事务写操作加上独占锁，因此事务写操作时，读操作不能进行，因此，不能读到事务的未提交数据，避免了脏读问题，__但是由于读操作的锁加在读上面，而不是加在事务之上，所以，在同一事务的两次读操作之间可以插入其他事务的写操作，所以可能发生不可重复读的问题__
 
-## 3.3 Repeatable read(可重复读)
+### 3.2.1 验证
+
+可以很负责人的跟大家说，__MySQL中的READ COMMITTED隔离级别不单单是通过加锁实现的，实际上还有REPEATABLE READ隔离级别，其实这两个隔离级别效果的实现还需要一个辅助，这个辅助就是MVCC-多版本并发控制__，但其实它又不是严格意义上的多版本并发控制，是不是很懵，没关系，我们一一剖析。
+
+__测试工具__
+
+1. mysql-5.7.16
+1. bash
+
+__准备工作__
+```
+CREATE TABLE test(
+id int not null auto_increment,
+name varchar(20) not null default "",
+primary key(id)
+)Engine=InnoDB;
+
+INSERT INTO test(name)
+VALUES("张三");
+```
+
+__客户端1__
+执行如下操作
+```
+SET autocommit = 0; # 取消事务的自动提交
+
+SELECT @@session.tx_isolation; # 查看隔离级别
+SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED; # 修改隔离级别
+SELECT @@session.tx_isolation; # 查看隔离级别
+
+UPDATE test SET name = '张八' WHERE id =1;
+```
+
+输出如下
+```
+mysql> UPDATE test SET name = '张八' WHERE id =1;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+```
+
+__客户端2__
+执行如下操作
+```
+SET autocommit = 0; # 取消事务的自动提交
+
+SELECT @@session.tx_isolation; # 查看隔离级别
+SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED; # 修改隔离级别
+SELECT @@session.tx_isolation; # 查看隔离级别
+
+BEGIN;
+SELECT name FROM test WHERE id = 1;
+```
+
+输出如下
+```
+mysql> SELECT name FROM test WHERE id = 1;
++--------+
+| name   |
++--------+
+| 张三   |
++--------+
+1 row in set (0.00 sec)
+```
+
+这里的读事务并没有按照预期那样阻塞，而是读到了写事务(Client1)事务开始前的数据。__因为内部使用了MVCC机制，实现了一致性非阻塞读，大大提高了并发读写效率，写不影响读，且读到的是记录的镜像版本__
+
+## 3.3 MVCC机制剖析
+
+在Mysql中MVCC是在Innodb存储引擎中得到支持的，Innodb为每行记录都实现了三个隐藏字段：
+
+1. 隐藏的ID
+1. 6字节的事务ID（`DB_TRX_ID`）
+1. 7字节的回滚指针（`DB_ROLL_PTR`）
+
+MVCC在MySQL中的实现依赖的是`undo log`与`read view`。
+
+1. undo log：undo log中记录的是数据表记录行的多个版本，也就是事务执行过程中的回滚段，其实就是MVCC中的一行原始数据的多个版本镜像数据。
+1. read view：主要用来判断当前版本数据的可见性。
+
+undo log是为回滚而用，__具体内容就是copy事务前的数据库内容（行）到undo buffer__，在适合的时间把undo buffer中的内容刷新到磁盘。undo buffer与redo buffer一样，也是环形缓冲，但当缓冲满的时候，undo buffer中的内容会也会被刷新到磁盘；与redo log不同的是，磁盘上不存在单独的undo log文件，所有的undo log均存放在主ibd数据文件中（表空间），即使客户端设置了每表一个数据文件也是如此。
+
+## 3.4 Repeatable read(可重复读)
 
 __实现方式__：
 
@@ -313,7 +394,7 @@ __实现方式__：
 
 由于事务读操作在事务结束后才释放共享锁，因此可以避免在同一读事务中读取到不同的数据，另外可以避免第二类丢失更新的问题。
 
-## 3.4 Serializable(串行化)
+## 3.5 Serializable(串行化)
 
 __实现方式__：
 
@@ -356,3 +437,4 @@ __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时
 * [数据库事务隔离级别和锁的实现方式](http://blog.csdn.net/yangtianyu1218/article/details/51543634)
 * [第一类第二类丢失更新](http://blog.csdn.net/lqglqglqg/article/details/48582905)
 * [数据库事务隔离级别-- 脏读、幻读、不可重复读（清晰解释）](http://blog.csdn.net/jiesa/article/details/51317164)
+* [数据库事务特征、数据库隔离级别，以及各级别数据库加锁情况(含实操)--read uncommitted篇](http://www.jianshu.com/p/d75fcdeb07a3)
