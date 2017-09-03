@@ -77,10 +77,223 @@ __第二类丢失更新的本质是：取款事务A一开始查询的1000元是�
 
 __实现方式__：
 
-* 事务读数据时不加锁
-* 事务写数据的时候(写操作时才加锁而不是事务一开始就加锁)加__行级共享锁__，__事务结束释放__
+* 事务读数据时__不加锁__
+* 事务写数据的时候(写操作时才加锁而不是事务一开始就加锁)加__行级独占锁__，__事务结束释放__
 
 行级别的共享锁可以防止两个同时的写操作，但是不会对读产生影响。因此可以避免第一类丢失更新，但是会产生脏读的问题。
+
+### 3.1.1 验证
+
+__测试工具__
+
+1. mysql-5.7.16
+1. bash
+
+__准备工作__
+```
+CREATE TABLE test(
+id int not null auto_increment,
+name varchar(20) not null default "",
+primary key(id)
+)Engine=InnoDB;
+
+INSERT INTO test(name)
+VALUES("张三");
+```
+
+__客户端1__
+执行如下操作
+```
+SET autocommit = 0; # 取消事务的自动提交
+
+SELECT @@session.tx_isolation; # 查看隔离级别
+SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED; # 修改隔离级别
+SELECT @@session.tx_isolation; # 查看隔离级别
+
+BEGIN; # 开启事务
+SELECT name FROM test WHERE id = 1;
+```
+
+输出如下
+```
+mysql> SELECT name FROM test WHERE id = 1;
++--------+
+| name   |
++--------+
+| 张三   |
++--------+
+1 row in set (0.00 sec)
+```
+
+__客户端2__
+执行如下操作
+```
+SET autocommit = 0; # 取消事务的自动提交
+
+SELECT @@session.tx_isolation; # 查看隔离级别
+SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED; # 修改隔离级别
+SELECT @@session.tx_isolation; # 查看隔离级别
+
+UPDATE test SET name = '张八' WHERE id = 1;
+```
+
+输出如下
+```
+mysql> UPDATE test SET name = '张八' WHERE id = 1;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+```
+
+__客户端1__
+执行如下操作
+```
+SELECT name FROM test WHERE id = 1;
+```
+
+输出如下
+```
+mysql> SELECT name FROM test WHERE id = 1;
++--------+
+| name   |
++--------+
+| 张八   |
++--------+
+1 row in set (0.00 sec)
+```
+
+此时我们发现，客户端1读取到了客户端2未提交的数据'张八'
+
+__客户端2__
+执行如下操作
+```
+rollback;
+```
+
+__客户端1__
+执行如下操作
+```
+SELECT name FROM test WHERE id = 1;
+```
+
+输出如下
+```
+mysql> SELECT name FROM test WHERE id = 1;
++--------+
+| name   |
++--------+
+| 张三   |
++--------+
+1 row in set (0.00 sec)
+```
+
+__接下来我们分析一下加锁情况(接着上面操作继续)__
+
+__客户端1__
+执行如下操作
+```
+UPDATE test SET name = '李四' WHERE id =1;
+```
+
+输出如下
+```
+mysql> UPDATE test SET name = '李四' WHERE id =1;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+```
+
+__客户端2__
+执行如下操作
+```
+UPDATE test SET name = '李四' WHERE id =1;
+```
+
+此时我们发现，操作并没有进行，而是被阻塞了
+
+__客户端3__
+执行如下操作
+```
+SELECT * FROM information_schema.INNODB_LOCKS; # 查看锁状态
+SELECT * FROM information_schema.INNODB_LOCKS\G; # 将得到列状的输出
+```
+
+输出如下
+```
+mysql> SELECT * FROM information_schema.INNODB_LOCKS;
++---------------+-------------+-----------+-----------+------------------+------------+------------+-----------+----------+-----------+
+| lock_id       | lock_trx_id | lock_mode | lock_type | lock_table       | lock_index | lock_space | lock_page | lock_rec | lock_data |
++---------------+-------------+-----------+-----------+------------------+------------+------------+-----------+----------+-----------+
+| 14435:148:3:2 | 14435       | X         | RECORD    | `mybatis`.`test` | PRIMARY    |        148 |         3 |        2 | 1         |
+| 14434:148:3:2 | 14434       | X         | RECORD    | `mybatis`.`test` | PRIMARY    |        148 |         3 |        2 | 1         |
++---------------+-------------+-----------+-----------+------------------+------------+------------+-----------+----------+-----------+
+2 rows in set, 1 warning (0.00 sec)
+```
+
+可以看到写操作是有锁的，而且是X锁(排他锁)
+
+__客户端3__
+执行如下操作
+```
+SELECT * FROM information_schema.INNODB_TRX; # 查看事务状态
+SELECT * FROM information_schema.INNODB_TRX\G; # 将得到列状的输出
+```
+
+输出如下
+```
+mysql> mysql> SELECT * FROM information_schema.INNODB_TRX\G; # 查看事务状态
+*************************** 1. row ***************************
+                    trx_id: 14435
+                 trx_state: LOCK WAIT
+               trx_started: 2017-09-03 14:08:41
+     trx_requested_lock_id: 14435:148:3:2
+          trx_wait_started: 2017-09-03 14:13:40
+                trx_weight: 2
+       trx_mysql_thread_id: 17
+                 trx_query: UPDATE test SET name = '李四' WHERE id =1
+       trx_operation_state: starting index read
+         trx_tables_in_use: 1
+         trx_tables_locked: 1
+          trx_lock_structs: 2
+     trx_lock_memory_bytes: 1136
+           trx_rows_locked: 3
+         trx_rows_modified: 0
+   trx_concurrency_tickets: 0
+       trx_isolation_level: READ UNCOMMITTED
+         trx_unique_checks: 1
+    trx_foreign_key_checks: 1
+trx_last_foreign_key_error: NULL
+ trx_adaptive_hash_latched: 0
+ trx_adaptive_hash_timeout: 0
+          trx_is_read_only: 0
+trx_autocommit_non_locking: 0
+*************************** 2. row ***************************
+                    trx_id: 14434
+                 trx_state: RUNNING
+               trx_started: 2017-09-03 14:00:24
+     trx_requested_lock_id: NULL
+          trx_wait_started: NULL
+                trx_weight: 3
+       trx_mysql_thread_id: 16
+                 trx_query: NULL
+       trx_operation_state: NULL
+         trx_tables_in_use: 0
+         trx_tables_locked: 1
+          trx_lock_structs: 2
+     trx_lock_memory_bytes: 1136
+           trx_rows_locked: 1
+         trx_rows_modified: 1
+   trx_concurrency_tickets: 0
+       trx_isolation_level: READ UNCOMMITTED
+         trx_unique_checks: 1
+    trx_foreign_key_checks: 1
+trx_last_foreign_key_error: NULL
+ trx_adaptive_hash_latched: 0
+ trx_adaptive_hash_timeout: 0
+          trx_is_read_only: 0
+trx_autocommit_non_locking: 0
+2 rows in set (0.00 sec)
+```
+
+可以看出，一个事务(Client1)处于RUNNING状态，另一个事务(Client2)处于锁定状态。且独占锁在写操作后并未释放，而是等到事务结束后才释放
 
 ## 3.2 Read committed(读已提交)
 
@@ -116,7 +329,27 @@ __实现方式__：
 | Read committed | 否 | 是 | 是 | 否 | 是 |
 | Read uncommitted | 是 | 是 | 是 | 否 | 是 |
 
-# 5 参考
+# 5 如何查看/修改隔离级别
+
+__修改隔离级别__
+
+```
+SET [SESSION | GLOBAL] TRANSACTION ISOLATION LEVEL {READ UNCOMMITTED | READ COMMITTED | REPEATABLE READ | SERIALIZABLE}
+```
+
+* 默认的行为（不带session和global）是为下一个（未开始）事务设置隔离级别
+* 如果你使用GLOBAL关键字，语句在全局对从那点开始创建的所有新连接（除了不存在的连接）设置默认事务级别。你需要SUPER权限来做这个
+* 使用SESSION关键字为将来在当前连接上执行的事务设置默认事务级别。任何客户端都能自由改变会话隔离级别（甚至在事务的中间），或者为下一个事务设置隔离级别。
+
+__查询隔离级别__
+
+```
+SELECT @@global.tx_isolation;
+SELECT @@session.tx_isolation;
+SELECT @@tx_isolation;
+```
+
+# 6 参考
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf@163.com)，博主将在第一时间删除__
 
