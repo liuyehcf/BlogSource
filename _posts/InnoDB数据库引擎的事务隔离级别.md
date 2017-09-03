@@ -370,9 +370,9 @@ mysql> SELECT name FROM test WHERE id = 1;
 
 这里的读事务并没有按照预期那样阻塞，而是读到了写事务(Client1)事务开始前的数据。__因为内部使用了MVCC机制，实现了一致性非阻塞读，大大提高了并发读写效率，写不影响读，且读到的是记录的镜像版本__
 
-## 3.3 MVCC机制剖析
+### 3.2.2 MVCC机制剖析
 
-在Mysql中MVCC是在Innodb存储引擎中得到支持的，Innodb为每行记录都实现了三个隐藏字段：
+在MySQL中MVCC是在Innodb存储引擎中得到支持的，Innodb为每行记录都实现了三个隐藏字段：
 
 1. 隐藏的ID
 1. 6字节的事务ID（`DB_TRX_ID`）
@@ -385,7 +385,37 @@ MVCC在MySQL中的实现依赖的是`undo log`与`read view`。
 
 undo log是为回滚而用，__具体内容就是copy事务前的数据库内容（行）到undo buffer__，在适合的时间把undo buffer中的内容刷新到磁盘。undo buffer与redo buffer一样，也是环形缓冲，但当缓冲满的时候，undo buffer中的内容会也会被刷新到磁盘；与redo log不同的是，磁盘上不存在单独的undo log文件，所有的undo log均存放在主ibd数据文件中（表空间），即使客户端设置了每表一个数据文件也是如此。
 
-## 3.4 Repeatable read(可重复读)
+__行的更新过程__
+
+1. 初始数据行
+    * ![fig1](/images/InnoDB数据库引擎的事务隔离级别/fig1.jpeg)
+    * F1～F6是某行列的名字，1～6是其对应的数据。后面三个隐含字段分别对应该行的事务号和回滚指针，假如这条数据是刚INSERT的，可以认为ID为1，其他两个字段为空。
+1. 事务1更改该行的各字段的值
+    * ![fig2](/images/InnoDB数据库引擎的事务隔离级别/fig2.jpeg)
+    * 当事务1更改该行的值时，会进行如下操作：
+        * 用排他锁锁定该行
+        * 记录redo log
+        * 把该行修改前的值Copy到undo log，即上图中下面的行
+        * 修改当前行的值，填写事务编号，使回滚指针指向undo log中的修改前的行
+1. 事务2修改该行的值
+    * ![fig3](/images/InnoDB数据库引擎的事务隔离级别/fig3.jpeg)
+    * 与事务1相同，此时undo log，中有有两行记录，并且通过回滚指针连在一起
+
+__read view判断当前版本数据项是否可见__：在innodb中，创建一个新事务的时候，innodb会将当前系统中的活跃事务列表（`trx_sys->trx_list`）创建一个副本（read view），副本中保存的是系统__当前不应该被本事务看到的其他事务id列表__。当用户在这个事务中要读取该行记录的时候，innodb会将该行当前的版本号与该read view进行比较。具体的算法如下:
+
+* 设该行的当前事务id为`trx_id_0`，read view中最早的事务id为`trx_id_1`，最迟的事务id为`trx_id_2`。
+1. 如果`trx_id_0 < trx_id_1`的话，那么表明该行记录所在的事务已经在本次新事务创建之前就提交了，所以该行记录的当前值是可见的。跳到步骤5.
+1. 如果`trx_id_0 > trx_id_2`的话，那么表明该行记录所在的事务在本次新事务创建之后才开启，所以该行记录的当前值不可见.跳到步骤4。
+1. 如果`trx_id_1<=trx_id_0<=trx_id_2`， 那么表明该行记录所在事务在本次新事务创建的时候处于活动状态，从`trx_id_1`到`trx_id_2`进行遍历，如果`trx_id_0`等于他们之中的某个事务id的话，那么不可见。跳到步骤4.
+1. 从该行记录的`DB_ROLL_PTR`指针所指向的回滚段中取出最新的undo-log的版本号，将它赋值该`trx_id_0`，然后跳到步骤1.
+1. 将该可见行的值返回。
+
+__事务隔离级别的影响__
+
+1. `tx_isolation='READ-COMMITTED'`的一致性：只要当前语句执行前已经提交的数据都是可见的。
+1. `tx_isolation='REPEATABLE-READ'`的一致性：只要是当前事务执行前已经提交的数据都是可见的。
+
+## 3.3 Repeatable read(可重复读)
 
 __实现方式__：
 
@@ -394,12 +424,134 @@ __实现方式__：
 
 由于事务读操作在事务结束后才释放共享锁，因此可以避免在同一读事务中读取到不同的数据，另外可以避免第二类丢失更新的问题。
 
-## 3.5 Serializable(串行化)
+### 3.3.1 验证
+
+真实情况是：读不影响写，写不影响读。
+
+1. 读不影响写：事务以排他锁的形式修改原始数据，读时不加锁，因为MySQL在事务隔离级别Read committed 、Repeatable Read下，__InnoDB存储引擎采用非锁定性一致读__--即读取不占用和等待表上的锁。即采用的是MVCC中一致性非锁定读模式。因读时不加锁，所以不会阻塞其他事物在相同记录上加X锁来更改这行记录。
+1. 写不影响读：事务以排他锁的形式修改原始数据，当读取的行正在执行delete或者update 操作，这时读取操作不会因此去等待行上锁的释放。相反地，InnoDB存储引擎会去读取行的一个快照数据。
+
+__测试工具__
+
+1. mysql-5.7.16
+1. bash
+
+__准备工作__
+```
+CREATE TABLE test(
+id int not null auto_increment,
+name varchar(20) not null default "",
+primary key(id)
+)Engine=InnoDB;
+
+INSERT INTO test(name)
+VALUES("张三");
+```
+
+__客户端1__
+执行如下操作
+```
+SET autocommit = 0; # 取消事务的自动提交
+
+SELECT @@session.tx_isolation; # 查看隔离级别
+SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ; # 修改隔离级别
+SELECT @@session.tx_isolation; # 查看隔离级别
+
+UPDATE test SET name = '张八' WHERE id =1;
+```
+
+输出如下
+```
+mysql> UPDATE test SET name = '张八' WHERE id =1;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+```
+
+__客户端2__
+执行如下操作
+```
+SET autocommit = 0; # 取消事务的自动提交
+
+SELECT @@session.tx_isolation; # 查看隔离级别
+SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ; # 修改隔离级别
+SELECT @@session.tx_isolation; # 查看隔离级别
+
+BEGIN;
+SELECT name FROM test WHERE id = 1;
+```
+
+输出如下
+```
+mysql> SELECT name FROM test WHERE id = 1;
++--------+
+| name   |
++--------+
+| 张三   |
++--------+
+1 row in set (0.00 sec)
+```
+
+这里的读事务并没有按照预期那样阻塞，而是读到了写事务(Client1)事务开始前的数据。__因为内部使用了MVCC机制，实现了一致性非阻塞读，大大提高了并发读写效率，写不影响读，且读到的是记录的镜像版本__
+
+## 3.4 Serializable(串行化)
 
 __实现方式__：
 
 * 事务读数据的时候(读操作时才加锁而不是事务一开始就加锁)加__表级共享锁__，__事务结束释放__
 * 事务写数据的时候(写操作时才加锁而不是事务一开始就加锁)加__表级独占锁__，__事务结束释放__
+
+### 3.4.1 验证
+
+__测试工具__
+
+1. mysql-5.7.16
+1. bash
+
+__准备工作__
+```
+CREATE TABLE test(
+id int not null auto_increment,
+name varchar(20) not null default "",
+primary key(id)
+)Engine=InnoDB;
+
+INSERT INTO test(name)
+VALUES("张三");
+```
+
+__客户端1__
+执行如下操作
+```
+SET autocommit = 0; # 取消事务的自动提交
+
+SELECT @@session.tx_isolation; # 查看隔离级别
+SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE; # 修改隔离级别
+SELECT @@session.tx_isolation; # 查看隔离级别
+
+UPDATE test SET name = '张八' WHERE id =1;
+```
+
+输出如下
+```
+mysql> UPDATE test SET name = '张八' WHERE id =1;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+```
+
+__客户端2__
+执行如下操作
+```
+SET autocommit = 0; # 取消事务的自动提交
+
+SELECT @@session.tx_isolation; # 查看隔离级别
+SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE; # 修改隔离级别
+SELECT @@session.tx_isolation; # 查看隔离级别
+
+BEGIN;
+SELECT name FROM test WHERE id = 1;
+```
+
+此时Client2阻塞了，与预期一致
 
 # 4 总结
 
@@ -438,3 +590,5 @@ __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时
 * [第一类第二类丢失更新](http://blog.csdn.net/lqglqglqg/article/details/48582905)
 * [数据库事务隔离级别-- 脏读、幻读、不可重复读（清晰解释）](http://blog.csdn.net/jiesa/article/details/51317164)
 * [数据库事务特征、数据库隔离级别，以及各级别数据库加锁情况(含实操)--read uncommitted篇](http://www.jianshu.com/p/d75fcdeb07a3)
+* [数据库事务特征、数据库隔离级别，各级别数据库加锁情况(含实操)--read committed && MVCC](http://www.jianshu.com/p/fd51cb8dc03b)
+* [数据库事务特征、数据库隔离级别，各级别数据库加锁情况(含实操)--Repeatable Read && MVCC](http://www.jianshu.com/p/814cf518f88d)
