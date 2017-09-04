@@ -545,6 +545,13 @@ init Derive's constructor
     > ThreadLocal的实现需要Thread的配合，Thread内部为ThreadLocal增加了一个字段`threadLocals`，该字段是一个Map<ThreadLocal,T>，也就是说，不同的ThreadLocal对于同一个线程的值将会存放在这个Thread#threadLocals字段中
     > Map以及Map.Entry都是延迟初始化的
 
+1. 并发容器有哪些
+    > 1. ConcurrentHashMap
+    > 1. ConcurrentLinkedDeque
+    > 1. ConcurrentLinkedQueue
+    > 1. ConcurrentSkipListMap
+    > 1. ConcurrentSkipListSet
+
 1. synchronized与其他锁机制
     > 1. {% post_link Java-synchronized的实现原理与应用 %}
     > 1. {% post_link Java-锁机制简介 %}
@@ -1526,6 +1533,8 @@ WHERE sex = 0;
 1. 乐观锁
     > {% post_link 乐观锁 %}
 
+1. 怎么知道SELECT是否用到了索引
+
 # 11 Redis&缓存相关
 
 1. Redis的并发竞争问题如何解决，了解Redis事务的CAS操作吗
@@ -1749,6 +1758,21 @@ WHERE sex = 0;
     > UTF-8：是一套以8位为一个编码单位的可变长编码。会将一个码位编码为1到4个字节
     > UTF-16：每个字符两个字节，即16位
 
+1. Session和Cookie
+    > {% post_link Cookie和Session %}
+
+1. OSI七层协议
+    > 1. 物理层
+    > 1. 链路层
+    > 1. 网络层
+    > 1. 传输层
+    > 1. 会话层
+    > 1. 表示层
+    > 1. 应用层
+
+1. 数字证书
+    > {% post_link HTTPS协议 %}
+
 # 13 其他
 
 1. maven解决依赖冲突，快照版(SNAPSHOT)和发行版(RELEASE)的区别
@@ -1788,11 +1812,6 @@ WHERE sex = 0;
 
 1. 对路由协议的了解与介绍
     > 待补充
-
-1. 数字证书的了解
-    > http://kb.cnblogs.com/page/194742/
-    > https保证传输过程的安全性，但是我们怎么判断这个网址是否安全呢？那就要证书了
-    > 第三方权威机构CA
 
 # 14 一些面经
 
