@@ -1534,6 +1534,7 @@ WHERE sex = 0;
     > {% post_link 乐观锁 %}
 
 1. 怎么知道SELECT是否用到了索引
+    > 利用`EXPLAIN + SQL`进行分析
 
 # 11 Redis&缓存相关
 
@@ -1587,6 +1588,7 @@ WHERE sex = 0;
     > 1. 被篡改
     > 1. 被伪装
     > 1. 被窃听
+
     > 详细内容请参考{% post_link HTTPS协议 %}
 
 1. HTTPS的建立过程
