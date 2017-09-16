@@ -1016,7 +1016,7 @@ public class Solution {
     > 纯C程序怎么写
 
 1. 找出一篇文章中某个单词的出现次
-    > `grep -o world a.txt | wc -l`
+    > `grep -o word a.txt | wc -l`
 
 1. Linux利用哪些命令，查找哪里出了问题(例如io密集任务，cpu过度)
     > iotop
@@ -1222,6 +1222,9 @@ public class Solution {
 
 1. 分布式系统怎么做服务治理
     > http://www.jianshu.com/p/104b27d1e943
+
+1. 用到的rpc框架
+    > 待补充
 
 # 9 算法
 
@@ -1781,6 +1784,15 @@ WHERE sex = 0;
     > SNAPSHOT不是一个特定的版本，而是一系列的版本的集合，HEAD指向最新的快照。客户端通过重新构建就能够拿到最新的快照
     > RELEASE是一个特定的版本，准确定位
     > http://www.cnblogs.com/wuchanming/p/5484091.html
+
+1. maven的scope标签指的是什么，scope中的test指的是什么
+    > 待补充
+
+1. Java web过滤器的生命周期
+    > 待补充
+
+1. 怎样搭建服务器网络
+    > 待补充
 
 1. 实际场景问题，海量登录日志如何排序和处理SQL操作，主要是索引和聚合函数的应用
     > 待补充
