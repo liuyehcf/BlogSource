@@ -319,4 +319,4 @@ __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时
 * [git reset soft,hard,mixed之区别深解](http://www.cnblogs.com/kidsitcn/p/4513297.html)
 * [GIT基本概念和用法总结](http://guibin.iteye.com/blog/1014369)
 * [常用 Git 命令清单](http://www.ruanyifeng.com/blog/2015/12/git-cheat-sheet.html)
-
+* [git rebase简介(基本篇)](http://blog.csdn.net/hudashi/article/details/7664631/)

@@ -900,7 +900,7 @@ public class Solution {
 # 5 其他框架
 
 1. Mybatis
-    > 待补充
+    > #和$的区别(http://blog.csdn.net/kobi521/article/details/16941403)
 
 1. Netty
     > 待补充

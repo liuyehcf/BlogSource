@@ -593,3 +593,4 @@ __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时
 * [数据库事务特征、数据库隔离级别，各级别数据库加锁情况(含实操)--read committed && MVCC](http://www.jianshu.com/p/fd51cb8dc03b)
 * [数据库事务特征、数据库隔离级别，各级别数据库加锁情况(含实操)--Repeatable Read && MVCC](http://www.jianshu.com/p/814cf518f88d)
 * [Mysql加锁过程详解](http://www.cnblogs.com/metoy/p/5545580.html)
+* [Innodb中的事务隔离级别实现原理](http://blog.csdn.net/matt8/article/details/53096405)
