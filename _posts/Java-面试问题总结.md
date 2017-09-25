@@ -1399,6 +1399,21 @@ public class Solution {
 1. 判断两个链表是否相交，并求交点
     > 可以转化为链表是否有环
 
+1. 求最大公约数
+    > 
+```Java
+    int greatestCommonDivisor(int a, int b) {
+        int c;
+        c = a % b;
+        while (c != 0) {
+            a = b;
+            b = c;
+            c = a % b;
+        }
+        return b;
+    }
+```
+
 # 10 数据库
 
 1. 数据库触发器是什么
