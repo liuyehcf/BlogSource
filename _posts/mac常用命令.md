@@ -5,7 +5,7 @@ tags:
 - 摘录
 categories: 
 - 操作系统
-- Linux
+- OS X
 ---
 
 __目录__
