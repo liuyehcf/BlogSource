@@ -99,7 +99,7 @@ public enum Error {
     > 有时间写注释，不如整理代码
 
 1. 用代码来阐述，有时候只需要创建一个描述与注释所言相同的函数即可
-    >
+    > 例如
 ```Java
 // Check to see if the employee is eligible for full benefits
 if ((employee.flags & HOURLY_FALG) &&
