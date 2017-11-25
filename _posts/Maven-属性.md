@@ -15,67 +15,55 @@ __目录__
 
 # 1 内置属性
 
-内置属性由Maven预定义，用户可以直接使用
+主要有两个常用的内置属性
 
 1. `${basedir}`：表示项目根目录，即包含pom.xml文件的目录
 1. `${version}`：表示项目版本
-1. `${project.basedir}`：同${basedir}
-1. `${project.baseUri}`：表示项目文件地址
-1. `${maven.build.timestamp}`：表示项目构件开始时间
-1. `${maven.build.timestamp.format}`：表示属性${maven.build.timestamp}的展示格式，默认值为yyyyMMdd-HHmm，可自定义其格式，其类型可参考java.text.SimpleDateFormat。用法如下：
-    * 
-```xml
-<properties>
-    <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
-</properties>
-```
- 
+
 # 2 POM属性
 
-使用pom属性可以引用到pom.xml文件对应元素的值
+用户可以使用该类属性引用POM文件中对应元素的值。例如`${project.artifactId}`就对应了`<project><artifactId>`元素的值，常用的POM属性包括：
 
-1. `${project.build.directory}`：表示主源码路径
-1. `${project.build.sourceEncoding}`：表示主源码的编码格式
-1. `${project.build.sourceDirectory}`：表示主源码路径
-1. `${project.build.finalName}`：表示输出文件名称
-1. `${project.version}`：表示项目版本，与${version}相同
- 
+1. `${project.build.sourceDirectory}`：项目的主源码目录，默认为src/main/java/
+1. `${project.build.testSourceDirectory}`：项目的测试源码目录，默认为/src/test/java/
+1. `${project.build.directory}`：项目构建输出目录，默认为target/
+1. `${project.outputDirectory}`：项目主代码编译输出目录，默认为target/classes/
+1. `${project.testOutputDirectory}`：项目测试代码编译输出目录，默认为target/test-classes/
+1. `${project.groupId}`：项目的groupId
+1. `${project.artifactId}`：项目的artifactId
+1. `${project.version}`：项目的version，与${version}等价
+1. `${project.build.finalName}`：项目打包输出文件的名称，默认为${project.artifactId}-${project.version}
+
+这些属性都对应了一个POM元素，它们中一些属性的默认值都是在超级POM中定义的
+
 # 3 自定义属性
 
-自定义属性是指：在pom.xml文件的`<properties>`标签下定义的Maven属性
-
+用户可以在POM的<properties>元素下自定义Maven属性，例如
 ```xml
 <project>
+    ...
     <properties>
-        <my.pro>abc</my.pro>
+        <my.prop>hello</my.prop>
     </properties>
 </project>
 ```
 
-在其他地方使用${my.pro}使用该属性值。
- 
-# 4 settings.xml文件属性
+然后在POM中其他地方使用${my.prop}
 
-settings.xml文件属性与pom属性同理，用户使用以settings.开头的属性引用settings.xml文件中的XML元素值
+# 4 Setting属性
 
-1. `${settings.localRepository}`：表示本地仓库的地址
- 
-# 5 Java系统属性(所有的Java系统属性都可以使用Maven属性引用)
+与POM属性同理，用户使用以`settings.`开头的属性引用settings.xml文件中的XML元素的值，例如常用的${settings.localRepository}指向用户本地仓库的地址
 
-使用`mvn help:system`命令可查看所有的Java系统属性。另外，System.getProperties()也可得到所有的Java属性
+# 5 Java系统属性
 
-1. `${user.home}`表示用户目录
-1. 等等
- 
-# 6 环境变量属性(所有的环境变量都可以用以env.开头的Maven属性引用)
+所有Java系统属性都可以使用Maven属性引用，例如${user.home}指向了用户目录。用户可以使用`mvn help:system`查看所有Java系统属性
 
-使用`mvn help:system`命令可查看所有环境变量
+# 6 环境变量属性
 
-1. `${env.JAVA_HOME}`表示JAVA_HOME环境变量的值
-1. 等等
+所有环境变量都可以使用以`env.`开头的Maven属性引用。例如${env.JAVA_HOME}指代了JAVA_HOME环境变量的值。用户可以使用`mvn help:system`查看所有环境变量
 
 # 7 参考
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf@163.com)，博主将在第一时间删除__
 
-* [Maven内置属性及使用](http://blog.csdn.net/wangjunjun2008/article/details/17761355)
+* 《Maven实战》
