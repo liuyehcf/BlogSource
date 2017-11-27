@@ -69,6 +69,7 @@ __依赖范围就是用来控制依赖与这三种classpath（编译classpath、
     * 由于此依赖不是通过Maven仓库解析，且往往与本机系统绑定，可能造成构建的不可移植，因此应该谨慎使用
 1. `import`：导入依赖范围
     * 该依赖范围不会对三种classpath产生实际影响
+    * 该范围的依赖只在`<dependencyManagement>`元素下才有效果，使用该范围的依赖通常指向一个POM，作用是：将目标POM中的`<dependencyManagement>`配置导入并合并到当前POM的`<dependencyManagement>`元素中
 
 | 依赖范围（Scope） | 对于编译classpath有效 | 对于测试classpath有效  | 对于运行classpath有效  | 例子  |
 |:--|:--|:--|:--|:--|
@@ -211,7 +212,7 @@ __远程仓库__还可以进一步细分
 
 默认情况下，无论在Windows上还是Linux上，每个用户在自己的用户目录下都有一个路径为`.m2/repository/的仓库目录`
 
-若要自定义本地仓库地址，可以编辑`~/.m2/settings.xml`，设置`<localRepository>`元素的值即可。注意到，`~/.m2/settings.xml`文件__默认是不存在__的，__用户需要从Maven安装目录复制`$M2_HOME/conf/settings.xml`文件__，然后再进行编辑
+若要自定义本地仓库地址，可以编辑`~/.m2/settings.xml`，设置`<localRepository>`元素的值即可。注意到，`~/.m2/settings.xml`文件__默认是不存在__的，__用户需要从Maven安装目录复制`$MAVEN_HOME/conf/settings.xml`文件__，然后再进行编辑
 
 ## 2.3 远程仓库
 
@@ -221,7 +222,7 @@ __远程仓库__还可以进一步细分
 
 ### 2.3.1 中央仓库
 
-由于最原始的本地仓库是空的，Maven必须知道至少一个可用的远程仓库，才能在执行Maven命令的时候下载到需要的构件，以下是超级POM文件的片段（`$M2_HOME/lib/maven-model-builder-x.x.jar/org/apache/maven/model/pom-4.0.0.xml`）
+由于最原始的本地仓库是空的，Maven必须知道至少一个可用的远程仓库，才能在执行Maven命令的时候下载到需要的构件，以下是超级POM文件的片段（`$MAVEN_HOME/lib/maven-model-builder-x.x.jar`中的`org/apache/maven/model/pom-4.0.0.xml`）
 
 ```xml
   <repositories>
