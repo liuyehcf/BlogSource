@@ -28,17 +28,21 @@ __目录__
 以数据库配置为例，我们在POM文件中，用一个额外的`<profile>`元素将其包裹起来
 
 ```xml
-<profiles>
-    <profile>
-        <id>dev</id>
-        <properties>
-            <db.driver>com.mysql.jdbc.Driver</db.driver>
-            <db.url>jdbc:mysql:// 192.168.1.100:3306/test</db.url>
-            <db.username>user_dev</db.username>
-            <db.password>12345678</db.password>
-        </properties>
-    </profile>
-</profiles>
+<project>
+    ...
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <db.driver>com.mysql.jdbc.Driver</db.driver>
+                <db.url>jdbc:mysql:// 192.168.1.100:3306/test</db.url>
+                <db.username>user_dev</db.username>
+                <db.password>12345678</db.password>
+            </properties>
+        </profile>
+    </profiles>
+    ...
+</project>
 ```
 
 在`<profile>`元素中定义的Maven属性与直接在POM的`<properties>`元素下定义并无二致，只是这里使用了一个id为dev的profile，其目的是将开发环境的配置与其他环境区分开来。
@@ -50,19 +54,27 @@ __目录__
 Maven默认的主资源目录和测试资源目录的定义是在超级POM中。要为资源目录__开启资源过滤__，只要添加`<filtering>`配置即可
 
 ```xml
-<resources>
-    <resource>
-        <filtering>true</filtering>
-        <directory>${project.basedir}/src/main/resources</directory>
-    </resource>
-</resources>
+<project>
+    ...
+    <build>
+        ...
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
+        </resources>
 
-<testResources>
-    <testResource>
-        <filtering>true</filtering>
-        <directory>${project.basedir}/src/test/resources</directory>
-    </testResource>
-</testResources>
+        <testResources>
+            <testResource>
+                <filtering>true</filtering>
+                <directory>${project.basedir}/src/test/resources</directory>
+            </testResource>
+        </testResources>
+        ...
+    </build>
+    ...
+</project>
 ```
 
 此外，主资源目录和测试资源目录都可以超过一个，虽然会破坏Maven的约定，但Maven允许用户声明多个资源目录，并为每个资源目录提供不同的过滤配置
@@ -107,34 +119,42 @@ Maven默认的主资源目录和测试资源目录的定义是在超级POM中。
 用户可以配置当某系统属性存在的时候，自动激活profile
 
 ```xml
-<profiles>
-    <profile>
-        ...
-        <activation>
-            <property>
-                <name>test</name>
-            </property>
-        </activation>
-        ...
-    </profile>
-</profiles>
+<project>
+    ...
+    <profiles>
+        <profile>
+            ...
+            <activation>
+                <property>
+                    <name>test</name>
+                </property>
+            </activation>
+            ...
+        </profile>
+    </profiles>
+    ...
+</project>
 ```
 
 可以进一步配置，当系统属性test存在，且值等于x的时候激活profile
 
 ```xml
-<profiles>
-    <profile>
-        ...
-        <activation>
-            <property>
-                <name>test</name>
-                <value>x</value>
-            </property>
-        </activation>
-        ...
-    </profile>
-</profiles>
+<project>
+    ...
+    <profiles>
+        <profile>
+            ...
+            <activation>
+                <property>
+                    <name>test</name>
+                    <value>x</value>
+                </property>
+            </activation>
+            ...
+        </profile>
+    </profiles>
+    ...
+</project>
 ```
 
 用户可以在命令行中声明系统属性，例如
@@ -146,20 +166,24 @@ Maven默认的主资源目录和测试资源目录的定义是在超级POM中。
 Profile还可以自动根据操作系统环境激活，如果构建在不同的操作系统有差异，用户完全可以将这些差异写进profile，然后配置它们自动基于操作系统环境激活
 
 ```xml
-<profiles>
-    <profile>
-        ...
-        <activation>
-            <os>
-                <name>Windows XP</name>
-                <family>Windows</family>
-                <arch>x86</arch>
-                <version>5.1.2600</version>
-            </os>
-        </activation>
-        ...
-    </profile>
-</profiles>
+<project>
+    ...
+    <profiles>
+        <profile>
+            ...
+            <activation>
+                <os>
+                    <name>Windows XP</name>
+                    <family>Windows</family>
+                    <arch>x86</arch>
+                    <version>5.1.2600</version>
+                </os>
+            </activation>
+            ...
+        </profile>
+    </profiles>
+    ...
+</project>
 ```
 
 ### 3.1.5 文件存在与否激活
@@ -167,18 +191,22 @@ Profile还可以自动根据操作系统环境激活，如果构建在不同的�
 Maven能够根据项目中某个文件存在与否来决定是否激活profile
 
 ```xml
-<profiles>
-    <profile>
-        ...
-        <activation>
-            <file>
-                <missing>x.properties</missing>
-                <exists>y.properties</exists>
-            </file>
-        </activation>
-        ...
-    </profile>
-</profiles>
+<project>
+    ...
+    <profiles>
+        <profile>
+            ...
+            <activation>
+                <file>
+                    <missing>x.properties</missing>
+                    <exists>y.properties</exists>
+                </file>
+            </activation>
+            ...
+        </profile>
+    </profiles>
+    ...
+</project>
 ```
 
 ### 3.1.6 默认激活
@@ -186,15 +214,19 @@ Maven能够根据项目中某个文件存在与否来决定是否激活profile
 用户可以在定义profile的时候指定默认激活
 
 ```xml
-<profiles>
-    <profile>
-        ...
-        <activation>
-            <activeByDefault>true</activeByDefault>
-        </activation>
-        ...
-    </profile>
-</profiles>
+<project>
+    ...
+    <profiles>
+        <profile>
+            ...
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            ...
+        </profile>
+    </profiles>
+    ...
+</project>
 ```
 
 需要注意的是，__如果POM中任何一个profile通过以上其他任意一种方式被激活了，所有的默认激活配置都会失效。__
@@ -220,6 +252,7 @@ __此外，如果多个不同的profile对同一个Maven属性都进行了定义
 1. `全局settings.xml`：Maven安装目录下`conf/settings.xml`中的profile对本机上所有的Maven项目有效
 
 不同类型的profile中可以声明的POM元素也是不同的，pom.xml中的profile能够随着pom.xml一起被提交到代码仓库中、被Maven安装到本地仓库中、被部署到远程Maven仓库中。换言之，可以保证该profile伴随着某个特定的pom.xml一起存在，因此它可以修改或增加很多POM元素，详见如下代码
+
 ```xml
 <project>
     <repositories></repositories>

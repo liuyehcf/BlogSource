@@ -120,19 +120,23 @@ Maven引入的传递性依赖机制，一方面大大简化和方便了依赖声
 可以使用`<exclusions>`元素声明排除依赖，`<exclusions>`元素可以包含一个或多个`<exclusion>`子元素，因此可以排除一个或多个传递性依赖。__值得注意的是__，声明exclusion的时候__只需要__groupId和artifactId，而__不需要__version，这是因为只需要groupId和artifactId就能唯一定位依赖图中的某个依赖（Maven解析后的依赖图中，不存在groupId和artifactId相同但是version不同的依赖）
 
 ```xml
-<dependencies>
-    <dependency>
-        <groupId>org.liuyehcf</groupId>
-        <artifactId>liuyehcf-project-a</artifactId>
-        <version>1.0.0</version>
-        <exclusions>
-            <exclusion>
-                <groupId>org.liuyehcf</groupId>
-                <artifactId>liuyehcf-project-b</artifactId>
-            </exclusion>
-        </exclusions>
-    </dependency>
-</dependencies>
+<project>
+    ...
+    <dependencies>
+        <dependency>
+            <groupId>org.liuyehcf</groupId>
+            <artifactId>liuyehcf-project-a</artifactId>
+            <version>1.0.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.liuyehcf</groupId>
+                    <artifactId>liuyehcf-project-b</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+    ...
+</project>
 ```
 
 ## 1.8 归类依赖
@@ -142,6 +146,8 @@ Maven引入的传递性依赖机制，一方面大大简化和方便了依赖声
 可以使用Maven自定义属性来声明依赖项目的版本，将该依赖项目的多个不同模块的version替换为Maven自定义属性，这样只需要修改自定义属性的值，就能够替换整个项目的多个模块的版本。
 
 ```xml
+<project>
+    ...
     <properties>
         <spring.version>4.1.6.RELEASE</spring.version>
     </properties>
@@ -163,6 +169,8 @@ Maven引入的传递性依赖机制，一方面大大简化和方便了依赖声
             <version>${spring.version}</version>
         </dependency>
     </dependencies>
+    ...
+</project>
 ```
 
 ## 1.9 `maven-dependency-plugin`插件
@@ -225,17 +233,21 @@ __远程仓库__还可以进一步细分
 由于最原始的本地仓库是空的，Maven必须知道至少一个可用的远程仓库，才能在执行Maven命令的时候下载到需要的构件，以下是超级POM文件的片段（`$MAVEN_HOME/lib/maven-model-builder-x.x.jar`中的`org/apache/maven/model/pom-4.0.0.xml`）
 
 ```xml
-  <repositories>
-    <repository>
-      <id>central</id>
-      <name>Central Repository</name>
-      <url>https:// repo.maven.apache.org/maven2</url>
-      <layout>default</layout>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
+<project>
+    ...
+    <repositories>
+        <repository>
+            <id>central</id>
+            <name>Central Repository</name>
+            <url>https:// repo.maven.apache.org/maven2</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    ...
+</project>
 ```
 
 * 这段配置，使用`<id>`元素对中央仓库进行唯一标识
@@ -412,14 +424,18 @@ __当依赖的版本不明晰的时候__，例如RELEASE、LATEST和SNAPSHOT，_
 需要注意的是，__镜像仓库__完全__屏蔽__了__被镜像仓库__，当镜像仓库不稳定或者停止服务的时候，Maven仍将无法访问被镜像仓库，因而将无法下载构件
 
 ```xml
-  <mirrors>
-    <mirror>
-      <id>mirrorId</id>
-      <mirrorOf>repositoryId</mirrorOf>
-      <name>Human Readable Name for this Mirror.</name>
-      <url>http:// my.repository.com/repo/path</url>
-    </mirror>
-  </mirrors>
+<settings>
+    ...
+    <mirrors>
+        <mirror>
+            <id>mirrorId</id>
+            <mirrorOf>repositoryId</mirrorOf>
+            <name>Human Readable Name for this Mirror.</name>
+            <url>http:// my.repository.com/repo/path</url>
+        </mirror>
+    </mirrors>
+    ...
+</settings>
 ```
 
 如果镜像需要认证，则在`settings.xml`中配置一个id与镜像id一致的`<server>`元素即可，与__配置远程仓库的认证__完全一致

@@ -370,6 +370,8 @@ Goal prefix is specified as: 'maven-count-plugin'. Maven currently expects it to
 在另一个项目的pom文件中增加如下内容
 
 ```xml
+<project>
+    ...
     <build>
         <plugins>
 
@@ -399,6 +401,8 @@ Goal prefix is specified as: 'maven-count-plugin'. Maven currently expects it to
             </plugin>
         </plugins>
     </build>
+    ...
+</project>
 ```
 
 执行以下命令

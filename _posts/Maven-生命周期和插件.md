@@ -155,6 +155,8 @@ table th:nth-of-type(3) {
 一个常见的例子是创建项目的源码jar包，内置的插件绑定关系没有涉及这一任务，因此需要用户自行配置。`maven-source-plugin`可以帮助我们完成该任务，它的jar-no-fork目标能够将项目的主代码打包成jar文件，可以将其绑定到default生命周期的verify阶段上
 
 ```xml
+<project>
+    ...
     <build>
         <plugins>
             <plugin>
@@ -173,6 +175,8 @@ table th:nth-of-type(3) {
             </plugin>
         </plugins>
     </build>
+    ...
+</project>
 ```
 
 * 在`<build>`元素下的`<plugins>`子元素中声明插件的使用
@@ -223,6 +227,8 @@ source:test-jar-no-fork
 用户可以在声明插件的时候，对此插件进行一个全局的配置。也就是说，所有基于该插件目标的任务，都会使用这些配置。例如，我们通常会需要配置`maven-compiler-plugin`，告诉它编译Java 1.5版本的源文件，生成与JVM 1.5兼容的字节码文件
 
 ```xml
+<project>
+    ...
     <build>
         <plugins>
             <plugin>
@@ -236,6 +242,8 @@ source:test-jar-no-fork
             </plugin>
         </plugins>
     </build>
+    ...
+</project>
 ```
 
 * 这样一来，不管绑定到compile阶段的`maven-compiler-plugin:compile`任务，还是绑定到test-compiler阶段的`maven-compiler-plugin:testCompiler`任务，都能够使用该配置，基于Java 1.8版本进行编译
@@ -245,6 +253,8 @@ source:test-jar-no-fork
 除了为插件配置全局的参数，用户还可以为某个插件任务配置特定的参数。以`maven-antrun-plugin`为例，它有一个目标run，可以用来在Maven中调用Ant任务。用户将`maven-antrun-plugin:run`绑定到许多生命周期阶段上，再加上不同配置，就可以让Maven在不同的生命周期阶段执行不同的任务（参数不同的同一个目标）
 
 ```xml
+<project>
+    ...
     <build>
         <plugins>
             <plugin>
@@ -281,6 +291,8 @@ source:test-jar-no-fork
             </plugin>
         </plugins>
     </build>
+    ...
+</project>
 ```
 
 * `maven-antrun-plugin:run`首先与validate阶段绑定，从而构成一个id为ant-validate的任务，输出一段文字到命令行
@@ -366,9 +378,11 @@ mvn命令行支持使用插件前缀来简化插件的使用，__插件前缀与
 
 ```xml
 <settings>
+    ...
     <pluginGroups>
         <pluginGroup>com.your.plugins</pluginGroup>
     </pluginGroups>
+    ...
 </settings>
 ```
 

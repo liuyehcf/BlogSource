@@ -40,7 +40,6 @@ __对于聚合项目，其POM文件的`<packaging>`元素必须是pom__，否则
         <module>sample-module1</module>
         <module>sample-module2</module>
     </modules>
-
     ...
 </project>
 ```
@@ -212,31 +211,37 @@ __子POM文件__
 __父POM文件__
 
 ```xml
-<build>
-    <pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>2.1.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </pluginManagement>
-</build>
+<project>
+    ...
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>2.1.1</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>jar-no-fork</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+    ...
+</project>
 ```
 
 __子POM文件__
 
 ```xml
+<project>
+    ...
     <build>
         <plugins>
             <plugin>
@@ -245,6 +250,8 @@ __子POM文件__
             </plugin>
         </plugins>
     </build>
+    ...
+</project>
 ```
 
 # 3 聚合与继承的关系

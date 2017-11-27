@@ -45,6 +45,7 @@ __目录__
     <properties>
         <my.prop>hello</my.prop>
     </properties>
+    ...
 </project>
 ```
 
