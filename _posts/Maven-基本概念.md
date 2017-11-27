@@ -1,6 +1,6 @@
 ---
 title: Maven-基本概念
-date: 2017-11-26 22:32:21
+date: 2017-11-27 06:32:21
 tags: 
 - 摘录
 categories: 
@@ -112,7 +112,323 @@ Maven引入的传递性依赖机制，一方面大大简化和方便了依赖声
 
 在理想情况下，是__不应该__使用可选依赖的，在面向对象设计中，有一个__单一职责性原则__，意味着一个类应该只有一项职责，而不是糅合太多的功能。__而使用可选依赖的原因是某一个项目实现了多个特性__，违背了单一职责性原则。因此应该将这个项目拆分成多个职责单一的项目，这样一来就不需要使用可选依赖了
 
-# 2 参考
+## 1.7 排除依赖
+
+传递性依赖会给项目隐式地引入很多依赖，这极大地简化了项目依赖的管理，但是有些时候这种特性也会带来问题。例如，当前项目有一个第三方依赖，而这个第三方依赖由于某些原因依赖了另外一个类库的SNAPSHOT版本，那么这个SNAPSHOT就会成为当前项目的传递性依赖，而SNAPSHOT的不稳定性会直接影响到当前的项目。__这时候就需要排除掉该SNAPSHOT，并且在当前项目中声明该类库的某个正式发布的版本__
+
+可以使用`<exclusions>`元素声明排除依赖，`<exclusions>`元素可以包含一个或多个`<exclusion>`子元素，因此可以排除一个或多个传递性依赖。__值得注意的是__，声明exclusion的时候__只需要__groupId和artifactId，而__不需要__version，这是因为只需要groupId和artifactId就能唯一定位依赖图中的某个依赖（Maven解析后的依赖图中，不存在groupId和artifactId相同但是version不同的依赖）
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>org.liuyehcf</groupId>
+        <artifactId>liuyehcf-project-a</artifactId>
+        <version>1.0.0</version>
+        <exclusions>
+            <exclusion>
+                <groupId>org.liuyehcf</groupId>
+                <artifactId>liuyehcf-project-b</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+</dependencies>
+```
+
+## 1.8 归类依赖
+
+有很多关于Spring Framework的依赖，它们分别是`org.springframework:spring-core:4.1.6`、`org.springframework:spring-aop:4.1.6`、`org.springframework:spring-web:4.1.6`等等，__它们是来自同一项目的不同模块，因此，所有这些依赖的版本都是相同的，而且可以预见__，如果将来需要升级Spring Framework，这些依赖的版本会一起升级
+
+可以使用Maven自定义属性来声明依赖项目的版本，将该依赖项目的多个不同模块的version替换为Maven自定义属性，这样只需要修改自定义属性的值，就能够替换整个项目的多个模块的版本。
+
+```xml
+    <properties>
+        <spring.version>4.1.6.RELEASE</spring.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+    </dependencies>
+```
+
+## 1.9 `maven-dependency-plugin`插件
+
+1. `$mvn dependency:list`
+1. `$mvn dependency:tree`
+1. `$mvn dependency:analyze`
+
+# 2 仓库
+
+在Maven世界中，任何一个依赖、插件或者项目构建的输出，都可以称为__构件__
+
+在__不使用__Maven的那些项目中，往往能发现命名为lib/的目录，各个项目lib/下的内容存在__大量的重复__
+
+得益于坐标机制，任何Maven项目使用任何一个构件的方式都是完全相同的。在此基础之上，Maven可以在某个位置__统一存储__所有Maven项目共享的构件，这个统一的位置就是__仓库__
+
+实际的Maven项目将不再各自存储其依赖文件，它们只需要声明这些依赖的坐标，在需要的时候，Maven会自动根据坐标找到仓库中的构件，并使用它们
+
+## 2.1 仓库的分类
+
+对于Maven来说，__Maven仓库__只分为两类：__本地仓库__和__远程仓库__
+
+当Maven根据坐标寻找构件的时候
+
+1. __它首先会查看本地仓库__
+    * 如果本地仓库存在此构件，则直接使用
+1. 如果本地仓库不存在此构件，或需要查看是否有更新的构件版本，__Maven就会去远程仓库查找__，发现需要的构件之后，下载到本地仓库再使用
+
+__远程仓库__还可以进一步细分
+
+1. __中央仓库__：Maven核心自带的远程仓库
+1. __私服__：局域网内的私有仓库服务器，用来代理所有外部的远程仓库
+1. __其他公共库__：常见的有Java.net Maven库以及JBoss Maven库
+
+综上，Maven仓库的树形结构图如下：
+
+* Maven仓库
+    * 本地仓库
+    * 远程仓库
+        * 中央仓库
+        * 私服
+        * 其他公共库
+
+## 2.2 本地仓库
+
+一般来说，Maven项目目录下，没有诸如/lib这样用来存放依赖文件的目录。当Maven在执行编译或测试时，如果需要使用依赖文件，它__总是基于坐标使用本地仓库的依赖文件__
+
+默认情况下，无论在Windows上还是Linux上，每个用户在自己的用户目录下都有一个路径为`.m2/repository/的仓库目录`
+
+若要自定义本地仓库地址，可以编辑`~/.m2/settings.xml`，设置`<localRepository>`元素的值即可。注意到，`~/.m2/settings.xml`文件__默认是不存在__的，__用户需要从Maven安装目录复制`$M2_HOME/conf/settings.xml`文件__，然后再进行编辑
+
+## 2.3 远程仓库
+
+安装好Maven后，如果不执行任何Maven命令，本地仓库目录是不存在的。当用户输入第一条Maven命令后，Maven才会创建本地仓库，然后根据配置和需要，__从远程仓库下载构件__至本地仓库
+
+对于Maven来说，每个用户只有一个本地仓库（书房），但可以配置访问很多远程仓库（书店）
+
+### 2.3.1 中央仓库
+
+由于最原始的本地仓库是空的，Maven必须知道至少一个可用的远程仓库，才能在执行Maven命令的时候下载到需要的构件，以下是超级POM文件的片段（`$M2_HOME/lib/maven-model-builder-x.x.jar/org/apache/maven/model/pom-4.0.0.xml`）
+
+```xml
+  <repositories>
+    <repository>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>https:// repo.maven.apache.org/maven2</url>
+      <layout>default</layout>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+```
+
+* 这段配置，使用`<id>`元素对中央仓库进行唯一标识
+
+### 2.3.2 私服
+
+私服是一种特殊的远程仓库，它是架设在局域网内的仓库服务，私服代理广域网上的远程仓库，提供局域网内的Maven用户使用
+
+当Maven需要下载构件的时候，它从私服请求，如果私服上不存在该构件，则从外部的远程仓库下载，缓存在私服之上后，再为Maven的下载请求提供服务
+
+__私服有如下优势__
+
+1. __节省自己的外网带宽__
+    * 大量的对于外部仓库的重复请求会消耗很大的带宽，利用私服代理外部仓库之后，对外的重复构件下载便得以消除，即降低外网带宽的压力
+1. __加速Maven构建__
+    * 不停地连接请求外部仓库是十分耗时的，但是Maven的一些内部机制（如快照更新检查）要求Maven在执行构建的时候不停地检查远程仓库数据库
+    * 因此，当项目配置了很多外部远程仓库时，构建的速度会被大大降低
+    * 使用私服可以很好地解决这一问题，当Maven只需要检查局域网内私服的数据时，构建的速度得到很大程度的提高
+1. __部署第三方构件__
+    * 对于无法从外部仓库获得的构件，例如组织内部生成的私有构件，可以部署到内部仓库，提供内部Maven项目使用
+1. __提高稳定性，增强控制__
+    * Maven构建高度依赖远程仓库，因此，当Internet不稳定时，Maven构建也会变得不稳定，甚至无法构建，使用私服后，即使暂时没有Internet连接，由于私服中已经缓存了大量构件，Maven也仍然可以正常运行
+    * 此外，一些私服软件（如Nexus）还提供了很多额外的功能，如权限管理、RELEASE/SNAPSHOT区分等，管理员可以对仓库进行一些更高级的控制
+1. __降低中央仓库负荷__
+    * 使用私服可以避免很多对中央仓库的重复下载
+
+## 2.4 远程仓库的配置
+
+可以在项目的POM文件中配置仓库，在`<repositories>`元素下，可以使用`<repository>`子元素声明一个或多个远程仓库，其包含的子元素如下
+
+* `<id>`：__任何一个仓库声明的id必须是唯一的__，Maven自带的中央仓库使用的id为central，如果其他仓库声明也使用该id，就会覆盖中央仓库的配置
+* `<name>`：仓库名称，方便人阅读，无其他作用
+* `<url>`：仓库的地址
+* `<releases>`：用于控制Maven对于发布版构件的下载
+    * `<enabled>`：控制是否支持下载
+    * `<updatePolicy>`：配置从远程仓库检查更新的频率，默认daily，可用参数如下
+        * `daily`：默认值，Maven每天检查一次
+        * `never`：从不检查更新
+        * `always`：每次构建都检查更新
+        * `interval:X`：每隔X分钟检查更新
+    * `<checksumPolicy>`：配置Maven检查__检验和文件__的策略
+* `<snapshots>`：用于控制Maven对于发布版构件的下载
+    * `<enabled>`：控制是否支持下载
+    * `<updatePolicy>`：同上
+    * `<checksumPolicy>`：同上
+
+```xml
+<project>
+    ...
+    <repositories>
+        <repository>
+            <id>jboss</id>
+            <name>JBoss Repository</name>
+            <url>http:// repository.jobss.com/maven2/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>ignore</checksumPolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>ignore</checksumPolicy>
+            </snapshots>
+            <layout>default</layout>
+        </repository>
+    </repositories>
+    ...
+</project>
+```
+
+### 2.4.1 远程仓库的认证
+
+大部分远程仓库无须认证就可以访问，__但有时候处于安全方面的考虑，我们需要提供认证信息才能访问一些远程仓库__
+
+配置认证信息和配置仓库信息不同，__仓库信息可以直接配置在POM文件中，但是认证信息必须配置在settings.xml文件中__。这是因为，POM往往是被提交到代码仓库中所有成员访问的，而settings.xml一般只放在本机。因此在settings.xml中配置认证信息更为安全，配置代码片段如下
+
+```xml
+<settings>
+    ...
+    <servers>
+        <server>
+            <id>my-proj</id>
+            <username>repo-user</username>
+            <password>repo-pwd</password>
+        </server>
+    </servers>
+    ...
+</settings>
+```
+
+* 其中，__`<server>`元素的id必须与POM中需要认证的`<repository>`元素的id完全一致__
+
+### 2.4.2 部署至远程仓库
+
+私服的一大作用就是部署第三方构件，包括组织内部生成的构件以及一些无法从外部仓库直接获取的构件。无论是日常开发中生成的构件，还是正式版本发布的构件，都需要部署到仓库中，供其他团队成员使用
+
+Maven除了能对项目进行编译、测试、打包之外，还能将项目生成的构件部署到仓库中。编辑项目的POM文件，配置`<distributionManagement>`元素，代码如下
+
+```xml
+<project>
+    ...
+    <distributionManagement>
+        <repository>
+            <id>proj-releases</id>
+            <name>Proj Release Repository</name>
+            <url>http:// 192.168.1.100/content/repositories/proj-releases</url>
+        </repository>
+
+        <snapshotRepository>
+            <id>proj-snapshots</id>
+            <name>Proj Snapshot Repository</name>
+            <url>http:// 192.168.1.100/content/repositories/proj-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+    ...
+</project>
+```
+
+`<distributionManagement>`元素包含`<repository>`和`<snapshotRepository>`子元素。这两个元素都需要配置id、name和url
+
+* `<id>`：为该远程仓库的唯一标识
+* `<name>`：是为了方便人阅读
+* `<url>`：表示仓库地址
+
+往远程仓库部署构件的时候，往往需要认证，配置方式在上一小节中已经介绍，完全一致
+
+运行命令`$mvn clean deploy`，Maven就会将项目构建输出的构件部署到配置对应的远程仓库，如果项目当前版本是快照版本，则部署到快照版本仓库地址，否则部署到发布版本仓库地址
+
+## 2.5 快照版本
+
+快照版本往往对应了多个实际的版本：在快照版本的发布过程中，__Maven会自动为构件打上时间戳__
+
+* 例如`2.1-SNAPSHOT`的实际版本为`2.1-20091214.221414-13`，表示2009年12月14日22点14分14秒的第13次构建
+
+当构建含有快照版本依赖的项目时，Maven会去仓库检查更新（由仓库配置的`<updatePolicy>`元素控制），用户也可以使用命令行`-U`参数强制让Maven检查更新：`$mvn clean install -U`
+
+__快照版本应该只在组织内部的项目或模块间依赖使用__，因为这时，组织对于这些快照版本的依赖具有完全的理解及控制权
+
+__项目不应该依赖于任何组织外部的快照版本依赖__，由于快照版本的不稳定性，这样的依赖会造成潜在的风险。也就是说，即使项目构建今天是成功的，由于外部的快照版本依赖实际对应的构件随时可能变化，项目的构建就可能由于这些外部的不受控制的因素而失败
+
+## 2.6 从仓库解析依赖的机制
+
+1. 当依赖的范围是system的时候，Maven直接从本地文件系统解析构件
+1. 根据依赖坐标计算仓库路径后，尝试直接从本地仓库寻找构件，如果发现相应构件，则解析成功
+1. 在本地仓库不存在相应构件的情况下，如果依赖的版本是显式的发布版本构件，如`1.2`、`2.1-beta-1`等，则遍历所有的远程仓库，发现后，下载并解析使用
+1. 如果依赖的版本是RELEASE（最新发布版本）或者LATEST（最新版本，可能是快照版本），则基于更新策略读取所有远程仓库的元数据`groupId/artifactId/maven-metadata.xml`，将其与本地仓库的对应元数据合并后，计算出RELEASE或者LATEST真实的值，然后基于这个真实的值检查本地仓库和远程仓库，如步骤2和3
+1. 如果依赖的版本是SNAPSHOT，则基于更新策略读取所有远程仓库的元数据`groupId/artifactId/version/maven-metadata.xml`，将其与本地仓库的对应元数据合并后，得到最新快照版本的值，然后基于该值检查本地仓库，或者从远程仓库下载
+1. 如果最后解析得到的构件版本是时间戳格式的快照，如`1.4.1-20091104.121450-121`，则复制其时间戳格式的文件至非时间戳格式，如SNAPSHOT，并使用该非时间戳格式的构件
+
+__当依赖的版本不明晰的时候__，例如RELEASE、LATEST和SNAPSHOT，__Maven就需要基于更新远程仓库的更新策略来检查更新__
+
+1. `<releases><enable>`和`<snapshots><enable>`：只有仓库开启了对于发布版本/快照版本的支持时，才能访问该仓库的发布版本/快照版本的构件信息
+1. `<releases>`和`<snapshots>`的子元素`<updatePolicy>`：该元素配置了检查更新的频率，每日、从不、每次构建、自定义时间间隔等
+1. 从命令行加入参数`-U`，强制检查更新，使用参数后，Maven就会__忽略__`<updatePolicy>`元素的配置
+
+需要注意的是，在依赖声明中使用LATEST和RELEASE是不推荐的做法，因为Maven随时都可能解析到不同的构件，可能今天LATEST是`1.3.6`，明天就成为`1.4.0-SNAPSHOT`了，__且Maven不会明确告诉用户这样的变化__。这种变化造成构建失败时，发现问题会变得比较困难。RELEASE对应的是最新发布版，还相对可靠，LATEST就非常不可靠了。为此，Maven3不再支持在插件配置中使用LATEST和RELEASE了
+
+## 2.7 镜像
+
+如果仓库X可以提供仓库Y存储的所有内容，那么就可以认为X是Y的一个镜像。换句话说，任何一个可以从仓库Y获取的构件，都可以从它的镜像中获取。由于地理位置因素，镜像往往能够提供比中央仓库更快的服务
+
+可以在`setting.xml`文件中用`<mirror>`元素配置镜像
+
+* `<mirrorOf>`：仓库的id，所有对该仓库的请求都会转至该镜像
+    * `<mirrorOf>*</mirrorOf>`：__匹配所有远程仓库__
+    * `<mirrorOf>external:*</mirrorOf>`：匹配所有远程仓库，使用localhost的除外，使用file://协议的除外。也就是说，__匹配所有不在本机上的远程仓库__
+    * `<mirrorOf>repo1,repo2</mirrorOf>`：匹配仓库repo1和repo2，使用逗号分隔多个远程仓库
+    * `<mirrorOf>*,!repo1</mirrorOf>`：匹配所有远程仓库，repo1除外
+* `<id>`：镜像的id，作为镜像仓库的唯一标识
+* `<name>`：镜像名称，便于人阅读
+* `<url>`：镜像地址
+
+需要注意的是，__镜像仓库__完全__屏蔽__了__被镜像仓库__，当镜像仓库不稳定或者停止服务的时候，Maven仍将无法访问被镜像仓库，因而将无法下载构件
+
+```xml
+  <mirrors>
+    <mirror>
+      <id>mirrorId</id>
+      <mirrorOf>repositoryId</mirrorOf>
+      <name>Human Readable Name for this Mirror.</name>
+      <url>http:// my.repository.com/repo/path</url>
+    </mirror>
+  </mirrors>
+```
+
+如果镜像需要认证，则在`settings.xml`中配置一个id与镜像id一致的`<server>`元素即可，与__配置远程仓库的认证__完全一致
+
+## 2.8 仓库搜索服务
+
+1. [Sonatype Nexus](http://repository.sonatype.org/)
+1. [MVNrepository](http://mvnrepository.com/)
+
+# 3 参考
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf@163.com)，博主将在第一时间删除__
 
