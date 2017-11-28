@@ -5,7 +5,7 @@ tags:
 - 摘录
 categories: 
 - Java
-- 包管理器
+- Maven
 ---
 
 __目录__
