@@ -61,9 +61,7 @@ ComparableTimSort与TimSort是一样的，TimSort利用的是Comparator来进行
 ```
 
 * __`MIN_MERGE`__：进行归并算法的最小长度，小于这个长度的序列将会采用二分插入排序算法
-* __`MIN_GALLOP`__：在进行merge操作时，会利用这个数值进行一些优化措施，具体请参考mergeLo
-方法的分析
-
+* __`MIN_GALLOP`__：在进行merge操作时，会利用这个数值进行一些优化措施，具体请参考mergeLo方法的分析
 * __`INITIAL_TMP_STORAGE_LENGTH`__：tem临时数组的初始大小，tem的具体大小会根据情况进行调整
 
 # 3 字段

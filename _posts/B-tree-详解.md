@@ -27,13 +27,11 @@ __节点的属性__
 __每个节点具有以下性质__
 
 1. x.n：当前存储在节点x中的关键字个数
-1. x.n个关键字本身x.key<sub>1</sub>, x.key<sub>2</sub>, ..., x.key<sub>x.n</sub>，以非降序存放，使得
-x.key<sub>1</sub>≤x.key<sub>2</sub>≤...≤x.key<sub>x.n</sub>
+1. x.n个关键字本身x.key<sub>1</sub>, x.key<sub>2</sub>, ..., x.key<sub>x.n</sub>，以非降序存放，使得x.key<sub>1</sub>≤x.key<sub>2</sub>≤...≤x.key<sub>x.n</sub>
 
 1. x.leaf：一个布尔值，如果x是叶节点，则为TRUE，如果x为内部节点，则为FALSE
 1. 每个内部节点x还包含x.n+1个指向其孩子的指针，x.c<sub>1</sub>, x.c<sub>2</sub>, ..., x.c<sub>x.n+1</sub>，叶节点没有孩子，所以他们的c属性没有定义
-1. 关键字x.key<sub>i</sub>对存储在各子树中的关键字范围加以分割：如果k<sub>i</sub>为任意一个存储在以x.c<sub>i</sub>为根的子树中的关键字，那么
-k<sub>1</sub>≤x.key<sub>1</sub>≤k<sub>2</sub>≤x.key<sub>2</sub>≤…≤x.key<sub>x.n</sub>≤k<sub>x.n+1</sub>
+1. 关键字x.key<sub>i</sub>对存储在各子树中的关键字范围加以分割：如果k<sub>i</sub>为任意一个存储在以x.c<sub>i</sub>为根的子树中的关键字，那么k<sub>1</sub>≤x.key<sub>1</sub>≤k<sub>2</sub>≤x.key<sub>2</sub>≤…≤x.key<sub>x.n</sub>≤k<sub>x.n+1</sub>
 
 1. __每个叶节点都具有相同的深度，即树的高度h__
 1. __每个节点所包含的关键字个数有上界和下界，用一个被称为B数的最小度数(minimum degree)的固定整数t≥2来表示这些界__
