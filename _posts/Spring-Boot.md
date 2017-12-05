@@ -7,7 +7,6 @@ categories:
 - Java
 - Framework
 - Spring
-- Spring Boot
 ---
 
 __目录__
