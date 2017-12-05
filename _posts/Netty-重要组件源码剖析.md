@@ -1,8 +1,8 @@
 ---
-title: Netty源码详解-重要组件介绍
+title: Netty-重要组件源码剖析
 date: 2017-12-05 10:55:31
 tags: 
-- 摘录
+- 原创
 categories: 
 - Java
 - Framework
@@ -14,7 +14,17 @@ __目录__
 <!-- toc -->
 <!--more-->
 
-# 1 Echo Server示例
+# 1 源码Maven坐标
+
+```xml
+<dependency>
+    <groupId>io.netty</groupId>
+    <artifactId>netty-all</artifactId>
+    <version>4.1.17.Final</version>
+</dependency>
+```
+
+# 2 Echo Server示例
 
 __Handler代码清单如下__
 
@@ -116,13 +126,13 @@ public class EchoServer {
 1. `NioServerSocketChannel`
 1. `ChannelInitializer`
 
-# 2 ServerBootstrap
+# 3 ServerBootstrap
 
 由于Netty启动涉及到很多复杂的步骤，因此提供了一个辅助类`ServerBootstrap`来帮助用户启动Netty，由于可配置参数种类繁多，为了保持较好的可伸缩性以及可扩展性，ServerBootstrap采用了建造者模式
 
 ServerBootstrap的继承关系如下
 
-![ServerBootstrap](/images/Netty源码详解-重要组件介绍/ServerBootstrap.png)
+![ServerBootstrap](/images/Netty-重要组件源码剖析/ServerBootstrap.png)
 
 其中ServerBootstrap包含如下字段
 
@@ -137,26 +147,26 @@ ServerBootstrap的继承关系如下
 * parent：用于accept连接的那些组件
 * child：用于客户端连接的那些组件
 
-## 2.1 ServerBootstrapConfig
+## 3.1 ServerBootstrapConfig
 
 ServerBootstrapConfig用于获取ServerBootstrap的各项参数，即使ServerBootstrap的功能趋于单一
 
 ServerBootstrapConfig的继承结构图如下
 
-![ServerBootstrapConfig](/images/Netty源码详解-重要组件介绍/ServerBootstrapConfig.png)
+![ServerBootstrapConfig](/images/Netty-重要组件源码剖析/ServerBootstrapConfig.png)
 
 * `AbstractBootstrapConfig`
     * 用于返回AbstractBootstrap的各项参数
 * `ServerBootstrapConfig`
     * 用于返回ServerBootstrap相比于AbstractBootstrap所额外提供的参数（child相关的参数）
 
-# 3 NioEventLoopGroup
+# 4 NioEventLoopGroup
 
 NioEventLoopGroup管理了一组线程池，而其本身又可以被抽象成一个线程池，对NioEventLoopGroup执行的操作会通过相应策略，从其管理的线程池组中选择一个线程池进行执行
 
 NioEventLoopGroup的继承结构图如下
 
-![NioEventLoopGroup](/images/Netty源码详解-重要组件介绍/NioEventLoopGroup.png)
+![NioEventLoopGroup](/images/Netty-重要组件源码剖析/NioEventLoopGroup.png)
 
 * `EventExecutorGroup`
     * 管理了一组Executor（一个Executor可以理解为一个线程池）
@@ -173,13 +183,13 @@ NioEventLoopGroup的继承结构图如下
 * `MultithreadEventLoopGroup`
     * 为`EventLoopGroup`接口提供的方法提供基础实现
 
-## 3.1 NioEventLoop
+## 4.1 NioEventLoop
 
 NioEventLoop本质上就是一个线程池，被NioEventLoopGroup管理
 
 NioEventLoop的继承结构图如下
 
-![NioEventLoop](/images/Netty源码详解-重要组件介绍/NioEventLoop.png)
+![NioEventLoop](/images/Netty-重要组件源码剖析/NioEventLoop.png)
 
 * `EventExecutor`
     * 增加了几个新的方法，包括`parent`、`inEventLoop`、以及创建Future和Promise的方法
@@ -197,11 +207,11 @@ NioEventLoop的继承结构图如下
     * 综合两条继承链路
     * 为`EventLoopGroup`接口提供的方法提供基础实现
 
-# 4 ChannelInitializer
+# 5 ChannelInitializer
 
 ChannelInitializer的继承结构图如下
 
-![ChannelInitializer](/images/Netty源码详解-重要组件介绍/ChannelInitializer.png)
+![ChannelInitializer](/images/Netty-重要组件源码剖析/ChannelInitializer.png)
 
 * `ChannelHandler`
     * 提供了添加和移除Handler的方法
@@ -212,11 +222,11 @@ ChannelInitializer的继承结构图如下
 * `ChannelInboundHandlerAdapter`
     * 为`ChannelInboundHandler`接口提供的方法提供基础实现，以便让用户自行选择是否覆盖某个hook method
 
-# 5 DefaultChannelPipeline
+# 6 DefaultChannelPipeline
 
 DefaultChannelPipeline继承结构图如下
 
-![DefaultChannelPipeline](/images/Netty源码详解-重要组件介绍/DefaultChannelPipeline.png)
+![DefaultChannelPipeline](/images/Netty-重要组件源码剖析/DefaultChannelPipeline.png)
 
 * `ChannelInboundInvoker`
     * 将接收数据这一个过程抽象出多个生命周期，用于用户自定义处理逻辑
@@ -228,11 +238,11 @@ DefaultChannelPipeline继承结构图如下
 
 那么这些生命周期由谁触发呢？大部分IO的底层操作由`AbstractChannel`完成，因此这些生命周期会在这些底层操作之中显式触发。这些触发的操作大致由`AbstractChannelHandlerContext`、`DefaultChannelPipeline`以及`AbstractChannel`协作完成，在此先不深究细节
 
-# 6 NioServerSocketChannel
+# 7 NioServerSocketChannel
 
 NioServerSocketChannel继承结构图如下
 
-![NioServerSocketChannel](/images/Netty源码详解-重要组件介绍/NioServerSocketChannel.png)
+![NioServerSocketChannel](/images/Netty-重要组件源码剖析/NioServerSocketChannel.png)
 
 * `AttributeMap`
     * 用于存放属性值的Map
@@ -253,3 +263,28 @@ NioServerSocketChannel继承结构图如下
 * `ServerSocketChannel`
     * 定义用于监听连接的ServerChannel
 
+# 8 DefaultChannelPromise
+
+DefaultChannelPromise继承结构图如下
+
+![DefaultChannelPromise](/images/Netty-重要组件源码剖析/DefaultChannelPromise.png)
+
+* `Future`
+    * 该Future继承自JUC中的同名Future接口
+    * 增加了添加和删除监听器的方法，以及sync方法和await方法等
+* `AbstractFuture`
+    * 为JUC中的Future接口的get方法提供基础实现
+* `Promise`
+    * 增加了`setSuccess/setFailure`、`trySuccess/tryFailure`等方法
+* `ChannelFuture`
+    * 增加了返回Channel的方法，以及判断是否为Void型的channel的方法
+* `ChannelPromise`
+    * 结合了`ChannelFuture`以及`Promise`接口
+* `DefaultPromise`
+    * 为`Promise`以及`Future`接口提供了基础实现
+* `DefaultChannelPromise`
+    * 为`ChannelPromise`接口提供默认实现
+
+# 9 SocketUtils
+
+该类封装了一系列底层Java NIO API的基本操作
