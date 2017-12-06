@@ -89,16 +89,17 @@ public class EchoServer {
 }
 ```
 
-# 启动过程概述
+# 3 启动过程概述
 
 启动过程可以概括为以下步骤
+
 1. __配置启动参数__
 1. __创建Channel__
 1. __初始化Channel__
 1. __注册Channel__
 1. __绑定Channel__
 
-# 启动参数配置
+# 4 启动参数配置
 
 1. 根据代码清单中的`(1)`。创建一个boss和一个work，这两个形容词十分形象，boss EventLoopGroup用于监听连接，work EventLoopGroup用于处理数据。NioEventLoopGroup的创建过程在这里先不做分析
 1. 根据代码清单中的`(2)`。创建一个ServerBootstrap，会调用无参构造方法，参数的配置采用建造者模式
@@ -117,6 +118,7 @@ public class EchoServer {
         return this;
     }
 ```
+
     * 接着，我们再看一下位于`AbstractBootstrap`的同名方法`group`，该方法主要作用就是绑定group（即boss）
 ```Java
     public B group(EventLoopGroup group) {
@@ -130,6 +132,7 @@ public class EchoServer {
         return self();
     }
 ```
+
 1. 根据代码清单中的`(4)`。配置生产的Channel类型，这里指定为`NioServerSocketChannel.class`
     * `channel`方法位于`AbstractBootstrap`，该方法用于创建并绑定工厂对象
 ```Java
@@ -140,6 +143,7 @@ public class EchoServer {
         return channelFactory(new ReflectiveChannelFactory<C>(channelClass));
     }
 ```
+
     * 以下是`ReflectiveChannelFactory`的构造方法，很简单，绑定指定的Class对象
 ```Java
     public ReflectiveChannelFactory(Class<? extends T> clazz) {
@@ -149,12 +153,14 @@ public class EchoServer {
         this.clazz = clazz;
     }
 ```
+
     * 接着调用位于`AbstractBootstrap`的`channelFactory`方法，该方法转调用另一个同名方法（接口位置的变更，又得保持兼容，因此导致两层相似的调用）
 ```Java
     public B channelFactory(io.netty.channel.ChannelFactory<? extends C> channelFactory) {
         return channelFactory((ChannelFactory<C>) channelFactory);
     }
 ```
+
     * 最终，调用位于`AbstractBootstrap`的`channelFactory`方法，该方法绑定之前创建好的工厂对象
 ```Java
     public B channelFactory(ChannelFactory<? extends C> channelFactory) {
@@ -170,6 +176,7 @@ public class EchoServer {
         return self();
     }
 ```
+
 1. 根据代码清单中的`(5)`。绑定work的Handler
     * `group`方法位于`ServerBootstrap`，该方法用于绑定child（即work）的Handler
 ```Java
@@ -181,6 +188,7 @@ public class EchoServer {
         return this;
     }
 ```
+
 1. 根据代码清单中的`(6)`。设置boss键值对
     * `option`方法位于`AbstractBootstrap`
 ```Java
@@ -200,6 +208,7 @@ public class EchoServer {
         return self();
     }
 ```
+
 1. 根据代码清单中的`(7)`。设置child键值对
     * `childOption`方法位于`ServerBootstrap`
 ```Java
@@ -220,7 +229,7 @@ public class EchoServer {
     }
 ```
 
-# 创建Channel
+# 5 创建Channel
 
 1. 根据代码清单中的`(8)`。进行后续创建Channel以及绑定操作
     * `bind`方法位于`AbstractBootstrap`，该方法将int类型的端口号封装成InetSocketAddress，并转调用同名方法bind
@@ -229,6 +238,7 @@ public class EchoServer {
         return bind(new InetSocketAddress(inetPort));
     }
 ```
+
     * `bind`方法位于`AbstractBootstrap`。该方法首先做一些校验工作，然后调用doBind方法
 ```Java
     public ChannelFuture bind(SocketAddress localAddress) {
@@ -240,6 +250,7 @@ public class EchoServer {
         return doBind(localAddress);
     }
 ```
+
     * `doBind`方法位于`AbstractBootstrap`。该方法创建Channel并注册，然后调用doBind0进行绑定操作
 ```Java
     private ChannelFuture doBind(final SocketAddress localAddress) {
@@ -282,6 +293,7 @@ public class EchoServer {
         }
     }
 ```
+
 1. 这里我们先关注initAndRegister方法的调用中的Channel创建过程
     * `initAndRegister`方法位于`AbstractBootstrap`，该方法的作用之一是利用工厂对象生成一个Channel，并进行初始化操作
 ```Java
@@ -322,6 +334,7 @@ public class EchoServer {
         return regFuture;
     }
 ```
+
 1. 由于在代码清单中配置了NioServerSocketChannel作为生产的Channel类型，我们接着来看一下工厂生产过程
     * `newChannel`方法位于`ReflectiveChannelFactory`，该方法很简单，利用反射获取无参构造器，然后创建对象
 ```Java
@@ -333,6 +346,7 @@ public class EchoServer {
         }
     }
 ```
+
 1. 接着，我们看一下NioServerSocketChannel的构造方法
     * `NioServerSocketChannel`的构造方法调用了newSocket方法，来创建一个ServerSocketChannel
 ```Java
@@ -340,10 +354,10 @@ public class EchoServer {
         this(newSocket(DEFAULT_SELECTOR_PROVIDER));
     }
 ```
+
     * `newSocket`方法位于`NioServerSocketChannel`，其中DEFAULT_SELECTOR_PROVIDER的定义如下。该方法创建了`java.nio.channels.ServerSocketChannel`对象
 ```Java
     private static final SelectorProvider DEFAULT_SELECTOR_PROVIDER = SelectorProvider.provider();
-
 
     private static ServerSocketChannel newSocket(SelectorProvider provider) {
         try {
@@ -351,7 +365,7 @@ public class EchoServer {
              *  Use the {@link SelectorProvider} to open {@link SocketChannel} and so remove condition in
              *  {@link SelectorProvider#provider()} which is called by each ServerSocketChannel.open() otherwise.
              *
-             *  See <a href="https://github.com/netty/netty/issues/2308">#2308</a>.
+             *  See <a href="https:// github.com/netty/netty/issues/2308">#2308</a>.
              */
             return provider.openServerSocketChannel();
         } catch (IOException e) {
@@ -360,6 +374,7 @@ public class EchoServer {
         }
     }
 ```
+
     * 然后，转调用`NioServerSocketChannel`的另一个构造方法，该方法继续调用父类的构造方法，并且配置Config对象
 ```Java
     public NioServerSocketChannel(ServerSocketChannel channel) {
@@ -367,12 +382,14 @@ public class EchoServer {
         config = new NioServerSocketChannelConfig(this, javaChannel().socket());
     }
 ```
+
     * 继续，调用`AbstractNioMessageChannel`的构造方法，该方法什么也不做，继续调用父类的构造方法
 ```Java
     protected AbstractNioMessageChannel(Channel parent, SelectableChannel ch, int readInterestOp) {
         super(parent, ch, readInterestOp);
     }
 ```
+
     * 继续，调用`AbstractNioChannel`的构造方法。该方法首先调用父类的构造方法，并且设置NIO层面的参数，包括非阻塞模式的设置
 ```Java
     protected AbstractNioChannel(Channel parent, SelectableChannel ch, int readInterestOp) {
@@ -396,6 +413,7 @@ public class EchoServer {
         }
     }
 ```
+
     * 继续，调用`AbstractChannel`的构造方法，设置信道，并且创建底层的Unsafe对象以及ChannelPipeLine对象
 ```Java
     protected AbstractChannel(Channel parent) {
@@ -405,12 +423,14 @@ public class EchoServer {
         pipeline = newChannelPipeline();
     }
 ```
+
     * `newUnsafe`方法位于`AbstractNioMessageChannel`，该方法创建了NioMessageUnsafe对象，该对象负责Nio以及Message层面的IO操作，这里先不深究
 ```Java
     protected AbstractNioUnsafe newUnsafe() {
         return new NioMessageUnsafe();
     }
 ```
+
     * `newChannelPipeline`方法位于`AbstractChannel`，该方法创建了DefaultChannelPipeline对象，作为DefaultChannelPipeline
 ```Java
     protected DefaultChannelPipeline newChannelPipeline() {
@@ -420,7 +440,7 @@ public class EchoServer {
 
 至此，Channel的创建工作完毕
 
-# 初始化Channel
+# 6 初始化Channel
 
 1. 我们回到位于`AbstractBootstrap`的`initAndRegister`方法中来，该方法在创建Channel完毕后，调用了init方法对其进行初始化操作
     * `init`方法位于`ServerBootstrap`，该方法主要就是将之前启动时通过建造者模式配置的参数注入到该Channel中去
@@ -481,7 +501,7 @@ public class EchoServer {
 
 至此，Channel初始化工作完毕
 
-# 注册Channel
+# 7 注册Channel
 
 1. 我们继续回到位于`AbstractBootstrap`的`initAndRegister`方法中来，该方法在创建并初始化Channel完毕后，通过异步的方式进行了注册操作
     * `register`方法位于`MultithreadEventLoopGroup`，该方法调用next()方法获取下一个EventLoop，并通过该EventLoop进行register操作
@@ -490,12 +510,14 @@ public class EchoServer {
         return next().register(channel);
     }
 ```
+
     * `register`方法位于`SingleThreadEventLoop`，该方法创建了一个DefaultChannelPromise对象（绑定了一个Channel以及一个EventExecutor），并继续调用同名方法
 ```Java
     public ChannelFuture register(Channel channel) {
         return register(new DefaultChannelPromise(channel, this));
     }
 ```
+
     * `register`方法位于`SingleThreadEventLoop`，该方法获取Unsafe对象来执行register操作
 ```Java
     public ChannelFuture register(final ChannelPromise promise) {
@@ -504,6 +526,7 @@ public class EchoServer {
         return promise;
     }
 ```
+
     * `register`方法位于`AbstractChannel`的__非静态__内部类`AbstractUnsafe`中，该方法通过异步方式调用register0
 ```Java
         public final void register(EventLoop eventLoop, final ChannelPromise promise) {
@@ -543,6 +566,7 @@ public class EchoServer {
             }
         }
 ```
+
 1. 接着，我们来看一下register0方法
     * `register0`方法位于`AbstractChannel`的__非静态__内部类`AbstractUnsafe`中
     * 首先，执行doRegister方法，进行真正的底层的register操作
@@ -575,8 +599,8 @@ public class EchoServer {
                     } else if (config().isAutoRead()) {
                         // This channel was registered before and autoRead() is set. This means we need to begin read
                         // again so that we process inbound data.
-                        //
-                        // See https://github.com/netty/netty/issues/4805
+                        // 
+                        // See https:// github.com/netty/netty/issues/4805
                         beginRead();
                     }
                 }
@@ -588,6 +612,7 @@ public class EchoServer {
             }
         }
 ```
+
 1. 首先，我们来跟踪一下doRegister的执行过程
     * `doRegister`方法位于`AbstractNioChannel`，该方法将java.nio.channels.ServerSocketChannel注册到指定Selector中。很简单，都是Java NIO的API，没什么好说的
 ```Java
@@ -612,6 +637,7 @@ public class EchoServer {
         }
     }
 ```
+
 1. 接着，我们来跟踪一下invokeHandlerAddedIfNeeded方法的执行过程
     * `invokeHandlerAddedIfNeeded`方法位于`DefaultChannelPipeline`，只有第一次注册的时候才会执行后续操作
 ```Java
@@ -625,6 +651,7 @@ public class EchoServer {
         }
     }
 ```
+
     * `callHandlerAddedForAllHandlers`方法位于`DefaultChannelPipeline`，该方法触发所有task的execute的方法
 ```Java
     private void callHandlerAddedForAllHandlers() {
@@ -650,6 +677,7 @@ public class EchoServer {
         }
     }
 ```
+
     * `execute`方法位于`DefaultChannelPipeline`中的__非静态__内部类`PendingHandlerAddedTask`中，该方法主要作用就是执行callHandlerAdded0方法
 ```Java
         void execute() {
@@ -671,6 +699,7 @@ public class EchoServer {
             }
         }
 ```
+
     * `callHandlerAdded0`方法位于`DefaultChannelPipeline`，__该方法主要作用就是触发绑定的Handler的handlerAdded方法__。handlerAdded方法触发的地方非常少，到目前仅在此一处出现。这也保证了在ChannelInitializer配置的Handler不会被重复添加
 ```Java
     private void callHandlerAdded0(final AbstractChannelHandlerContext ctx) {
@@ -706,11 +735,9 @@ public class EchoServer {
     }
 ```
 
-
 至此，Channel注册工作完毕
 
-# 绑定Channel
-
+# 8 绑定Channel
 
 1. 现在我们回到位于`AbstractBootstrap`的`doBind`方法中，继续调用`doBind0`方法
     * `doBind0`方法位于`AbstractBootstrap`中，该方法主要通过异步方式调用bind方法
@@ -733,6 +760,7 @@ public class EchoServer {
         });
     }
 ```
+
 1. 继续跟踪bind方法的异步调用
     * `bind`方法位于`AbstractChannel`，通过其绑定的pipeline继续调用bind方法
 ```Java
@@ -740,12 +768,14 @@ public class EchoServer {
         return pipeline.bind(localAddress, promise);
     }
 ```
+
     * `bind`方法位于`DefaultChannelPipeline`，该方法通过tail字段继续调用同名方法
 ```Java
     public final ChannelFuture bind(SocketAddress localAddress, ChannelPromise promise) {
         return tail.bind(localAddress, promise);
     }
 ```
+
     * `bind`方法位于`AbstractChannelHandlerContext`，该方法通过同步或异步的方式执行invokeBind方法
 ```Java
     public ChannelFuture bind(final SocketAddress localAddress, final ChannelPromise promise) {
@@ -773,6 +803,7 @@ public class EchoServer {
         return promise;
     }
 ```
+
     * `invokeBind`方法位于`AbstractChannelHandlerContext`，该方法获取绑定的handler，然后执行bind操作
 ```Java
     private void invokeBind(SocketAddress localAddress, ChannelPromise promise) {
@@ -788,6 +819,7 @@ public class EchoServer {
         }
     }
 ```
+
     * `bind`方法位于`DefaultChannelPipeline`的__非静态__内部类`HeadContext`中，该方法通过其关联的Unsafe对象执行底层的bind操作。关于HeadContext以及TailContext暂时不太清楚设计目的。
 ```Java
         public void bind(
@@ -796,6 +828,7 @@ public class EchoServer {
             unsafe.bind(localAddress, promise);
         }
 ```
+
     * `bind`方法位于`AbstractChannel`的__非静态__内部类`AbstractUnsafe`中，该方做了一些额外校验工作后，触发doBind方法
 ```Java
         @Override
@@ -806,7 +839,7 @@ public class EchoServer {
                 return;
             }
 
-            // See: https://github.com/netty/netty/issues/576
+            // See: https:// github.com/netty/netty/issues/576
             if (Boolean.TRUE.equals(config().getOption(ChannelOption.SO_BROADCAST)) &&
                 localAddress instanceof InetSocketAddress &&
                 !((InetSocketAddress) localAddress).getAddress().isAnyLocalAddress() &&
@@ -840,6 +873,7 @@ public class EchoServer {
             safeSetSuccess(promise);
         }
 ```
+
     * `doBind`方法位于`NioServerSocketChannel`，该方法执行Java NIO API的绑定操作
 ```Java
     protected void doBind(SocketAddress localAddress) throws Exception {
@@ -850,7 +884,6 @@ public class EchoServer {
         }
     }
 ```
-
 
 至此，Channel绑定工作完毕
 
