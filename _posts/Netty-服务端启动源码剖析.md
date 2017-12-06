@@ -24,7 +24,7 @@ __目录__
 </dependency>
 ```
 
-# 2 服务端启动示例代码
+# 2 服务端启动代码清单
 
 ```Java
 package org.liuyehcf.protocol.echo;
@@ -375,7 +375,7 @@ public class EchoServer {
     }
 ```
 
-    * 然后，转调用`NioServerSocketChannel`的另一个构造方法，该方法继续调用父类的构造方法，并且配置Config对象
+    * 然后，转调用`NioServerSocketChannel`的另一个构造方法，该方法继续调用父类的构造方法（传入参数SelectionKey.OP_ACCEPT），并且配置Config对象
 ```Java
     public NioServerSocketChannel(ServerSocketChannel channel) {
         super(null, channel, SelectionKey.OP_ACCEPT);

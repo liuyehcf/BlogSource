@@ -1,6 +1,6 @@
 ---
 title: Netty-NioEventLoop源码详解
-date: 2017-12-06 15:15:22
+date: 2017-12-05 11:55:31
 tags: 
 - 原创
 categories: 
@@ -94,6 +94,98 @@ NioEventLoop仅有一个构造方法，该方法接受如下几个参数
 ```Java
     protected AbstractEventExecutor(EventExecutorGroup parent) {
         this.parent = parent;
+    }
+```
+
+## 2.1 openSelector
+
+在NioEventLoop的构造方法中，有一个关键的方法openSelector，该方法负责创建Selector，在创建的过程中会添加在Netty中自定义的并且与Selector相关的组件，包括
+
+*  `SelectedSelectionKeySet`：用于存放已被选择的SelectionKey
+* 为什么要这样做呢？从方法名（processSelectedKeysOptimized与processSelectedKeysPlain）猜测，可能是为了提升性能（SelectedSelectionKeySet底层是数组，而用原生的Set的话，只能用迭代器遍历）
+
+```Java
+    private SelectorTuple openSelector() {
+        final Selector unwrappedSelector;
+        try {
+            unwrappedSelector = provider.openSelector();
+        } catch (IOException e) {
+            throw new ChannelException("failed to open a new selector", e);
+        }
+
+        if (DISABLE_KEYSET_OPTIMIZATION) {
+            return new SelectorTuple(unwrappedSelector);
+        }
+
+        // 自定义的SelectedSelectionKeySet
+        final SelectedSelectionKeySet selectedKeySet = new SelectedSelectionKeySet();
+
+        Object maybeSelectorImplClass = AccessController.doPrivileged(new PrivilegedAction<Object>() {
+            @Override
+            public Object run() {
+                try {
+                    return Class.forName(
+                            "sun.nio.ch.SelectorImpl",
+                            false,
+                            PlatformDependent.getSystemClassLoader());
+                } catch (Throwable cause) {
+                    return cause;
+                }
+            }
+        });
+
+        if (!(maybeSelectorImplClass instanceof Class) ||
+                // ensure the current selector implementation is what we can instrument.
+                !((Class<?>) maybeSelectorImplClass).isAssignableFrom(unwrappedSelector.getClass())) {
+            if (maybeSelectorImplClass instanceof Throwable) {
+                Throwable t = (Throwable) maybeSelectorImplClass;
+                logger.trace("failed to instrument a special java.util.Set into: {}", unwrappedSelector, t);
+            }
+            return new SelectorTuple(unwrappedSelector);
+        }
+
+        final Class<?> selectorImplClass = (Class<?>) maybeSelectorImplClass;
+
+        Object maybeException = AccessController.doPrivileged(new PrivilegedAction<Object>() {
+            @Override
+            public Object run() {
+                try {
+                    // 在这里，通过反射，将selectorImplClass中的指定域替换成自定义的类型
+                    Field selectedKeysField = selectorImplClass.getDeclaredField("selectedKeys");
+                    Field publicSelectedKeysField = selectorImplClass.getDeclaredField("publicSelectedKeys");
+
+                    Throwable cause = ReflectionUtil.trySetAccessible(selectedKeysField);
+                    if (cause != null) {
+                        return cause;
+                    }
+                    cause = ReflectionUtil.trySetAccessible(publicSelectedKeysField);
+                    if (cause != null) {
+                        return cause;
+                    }
+
+                    // 这里进行了替换
+                    selectedKeysField.set(unwrappedSelector, selectedKeySet);
+                    // 这里进行了替换
+                    publicSelectedKeysField.set(unwrappedSelector, selectedKeySet);
+                    return null;
+                } catch (NoSuchFieldException e) {
+                    return e;
+                } catch (IllegalAccessException e) {
+                    return e;
+                }
+            }
+        });
+
+        if (maybeException instanceof Exception) {
+            selectedKeys = null;
+            Exception e = (Exception) maybeException;
+            logger.trace("failed to instrument a special java.util.Set into: {}", unwrappedSelector, e);
+            return new SelectorTuple(unwrappedSelector);
+        }
+        selectedKeys = selectedKeySet;
+        logger.trace("instrumented a special java.util.Set into: {}", unwrappedSelector);
+        return new SelectorTuple(unwrappedSelector,
+                                 new SelectedSelectionKeySetSelector(unwrappedSelector, selectedKeySet));
     }
 ```
 
