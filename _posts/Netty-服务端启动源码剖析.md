@@ -444,9 +444,7 @@ public class EchoServer {
 
 1. 我们回到位于`AbstractBootstrap`的`initAndRegister`方法中来，该方法在创建Channel完毕后，调用了init方法对其进行初始化操作
     * `init`方法位于`ServerBootstrap`，该方法主要就是将之前启动时通过建造者模式配置的参数注入到该Channel中去
-    * 注意到，这里又通过另一个ChannelInitializer将我们之前在代码清单中设置的ChannelInitializer（为了方便起见，称之为childHandlerInitializer，该childHandlerInitializer绑定了用户自定义的handler）注入到NioServerSocketChannel的pipeline当中去
-    * 当该NioServerSocketChannel监听到连接后会创建新的NioSocketChannel，于是又会触发childHandlerInitializer中的方法将其绑定的用户自定义Handler绑定到这个新创建的NioSocketChannel的pipeline当中去
-    * 此外，该方法又通过异步方式添加了ServerBootstrapAcceptor(ChannelInboundHandlerAdapter接口的实现)，该handler用于生成
+    * 此外，该方法又通过异步方式添加了ServerBootstrapAcceptor(ChannelInboundHandlerAdapter接口的实现)，该handler用于将用户配置的childHandler（即代码清单中的ChannelInitializer）注入到新产生的NioSocketChannel（即child Channel）的Pipeline中去。在后续NioSocketChannel的注册操作的过程中，才会触发ChannelInitializer的handlerAdded方法，从而将用户配置的Handler注入到NioSocketChannel的Pipeline中去
 ```Java
     @Override
     void init(Channel channel) throws Exception {
@@ -481,7 +479,7 @@ public class EchoServer {
             @Override
             public void initChannel(final Channel ch) throws Exception {
                 final ChannelPipeline pipeline = ch.pipeline();
-                // 这里进行Handler的注入，这个handler就是我们在代码清单中配置的那个ChannelInitializer，这里又通过另一个ChannelInitializer进行异步注入
+                
                 ChannelHandler handler = config.handler();
                 if (handler != null) {
                     pipeline.addLast(handler);
@@ -570,7 +568,7 @@ public class EchoServer {
 1. 接着，我们来看一下register0方法
     * `register0`方法位于`AbstractChannel`的__非静态__内部类`AbstractUnsafe`中
     * 首先，执行doRegister方法，进行真正的底层的register操作
-    * 然后，执行`pipeline.invokeHandlerAddedIfNeeded();`，触发位于`ServerBootstrap`的`init`方法中的ChannelInitializer，将childHandler（用户配置的ChannelInitializer）注入到NioServerSocketChannel的pipeline当中去。注意哦，注入的不是用户配置的Handler，而是用于封装用户配置的Handler的ChannelInitializer，即代码清单中的(5)
+    * 然后，执行`pipeline.invokeHandlerAddedIfNeeded();`，触发位于`ServerBootstrap`的`init`方法中的ChannelInitializer（封装了handler，注意哦，不是childHandler，在代码清单中我们没有配置过这个handler）
     * 最后，触发其他生命周期，例如`fireChannelRegistered`以及`fireChannelActive`
 ```Java
        private void register0(ChannelPromise promise) {

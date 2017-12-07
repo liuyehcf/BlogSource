@@ -224,7 +224,7 @@ public class EchoServer {
 
 1. 接下来，回到位于`NioEventLoop`中的`run`方法，我们关注一下switch语句，目前来看，要么返回SELECT，要么返回值不小于0（selectNow返回值），为什么会返回CONTINUE（其值-2）？
 1. 如果返回值是SELECT，那么执行select方法
-    * `select`方法位于`NioEventLoop`，该方法的主要逻辑就是执行select，其结果会保存在关联的selectedKeys字段当中（该字段已通过反射替换掉`sun.nio.ch.SelectorImpl`中原有的selectedKeys字段了，详见{% post_link Netty-NioEventLoop源码详解 %}）
+    * `select`方法位于`NioEventLoop`，该方法的主要逻辑就是执行select，其结果会保存在关联的selectedKeys字段当中（该字段已通过反射替换掉`sun.nio.ch.SelectorImpl`中原有的selectedKeys字段了，详见{% post_link Netty-NioEventLoop源码剖析 %}）
     * 会根据不同的逻辑调用阻塞的select或者非阻塞的selectNow，具体细节在此不深究
 ```Java
     private void select(boolean oldWakenUp) throws IOException {
@@ -599,7 +599,7 @@ public class EchoServer {
             @Override
             public void initChannel(final Channel ch) throws Exception {
                 final ChannelPipeline pipeline = ch.pipeline();
-                // 这里进行Handler的注入，这个handler就是我们在代码清单中配置的那个ChannelInitializer，这里又通过另一个ChannelInitializer进行异步注入
+
                 ChannelHandler handler = config.handler();
                 if (handler != null) {
                     pipeline.addLast(handler);
@@ -619,8 +619,8 @@ public class EchoServer {
 ```
 
 1. 接下来，我们分析一下ServerBootstrapAcceptor这个服务端内置的Handler
-    * `ServerBootstrapAcceptor`位于`ServerBootstrap`，是一个__静态__内部类。我们关注channelRead方法，该方法将我们在代码清单中配置的childHandler（即那个ChannelInitializer）添加到child的生命周期中，要注意，此时注入的仅仅是这个ChannelInitializer，而非用户自定义的Handler
-    * 用户自定义的Handler要等到后续的register操作过程中被触发
+    * `ServerBootstrapAcceptor`位于`ServerBootstrap`，是一个__静态__内部类。我们关注channelRead方法，该方法将我们在代码清单中配置的childHandler（即那个ChannelInitializer）添加到child Channel的Pipeline中，要注意，此时注入的仅仅是这个ChannelInitializer，而非用户自定义的Handler
+    * 用户自定义的Handler要等到后续的register操作过程中被注入到child Channel的Pipeline中
 ```Java
     private static class ServerBootstrapAcceptor extends ChannelInboundHandlerAdapter {
 
@@ -656,7 +656,7 @@ public class EchoServer {
         public void channelRead(ChannelHandlerContext ctx, Object msg) {
             final Channel child = (Channel) msg;
 
-            // 这里将我们在代码清单中配置的childHandler（即那个ChannelInitializer）添加到child的生命周期中
+            // 这里将我们在代码清单中配置的childHandler（即那个ChannelInitializer）添加到child的Pipeline中
             child.pipeline().addLast(childHandler);
 
             setChannelOptions(child, childOptions, logger);

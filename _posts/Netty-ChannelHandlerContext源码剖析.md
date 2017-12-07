@@ -73,7 +73,7 @@ __AbstractChannelHandlerContext包含如下重要字段__
 1. `boolean ordered`：关联的executor是否是OrderedEventExecutor
 1. `EventExecutor executor`：关联的EventExecutor，用于执行所有的异步任务
 
-__以`fireChannelRead`分析一下Handler特定方法如何被触发，以及在各个ChannelHandlerContext之间的传递过程__
+__以`fireChannelRead`为例，分析一下Handler特定生命周期如何被触发，以及在同一个生命周期中，调用过程如何在各个ChannelHandlerContext之间的传递__
 
 1. 首先调用findContextInbound()方法，从当前位置开始（当前ChannelHandlerContext位于双向链表中的位置）向后寻找下一个Inbond类型的ChannelHandlerContext
 1. 通过静态方法invokeChannelRead触发ChannelRead方法
@@ -85,6 +85,14 @@ __以`fireChannelRead`分析一下Handler特定方法如何被触发，以及在
         // 沿着双向链表的当前位置向后找到第一个Inbound类型的ChannelHandlerContext
         invokeChannelRead(findContextInbound(), msg);
         return this;
+    }
+
+    private AbstractChannelHandlerContext findContextInbound() {
+        AbstractChannelHandlerContext ctx = this;
+        do {
+            ctx = ctx.next;
+        } while (!ctx.inbound);
+        return ctx;
     }
 
     static void invokeChannelRead(final AbstractChannelHandlerContext next, Object msg) {
