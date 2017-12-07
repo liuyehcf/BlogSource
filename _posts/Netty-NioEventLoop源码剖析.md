@@ -1,5 +1,5 @@
 ---
-title: Netty-NioEventLoop源码详解
+title: Netty-NioEventLoop源码剖析
 date: 2017-12-05 11:55:31
 tags: 
 - 原创
@@ -16,7 +16,7 @@ __目录__
 
 # 1 继承体系
 
-![NioEventLoop](/images/Netty-NioEventLoop源码详解/NioEventLoop.png)
+![NioEventLoop](/images/Netty-NioEventLoop源码剖析/NioEventLoop.png)
 
 # 2 构造方法
 
