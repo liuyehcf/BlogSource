@@ -56,25 +56,25 @@ __HotKey In Windows__：`Ctrl+Shitf+W`
 
 __HotKey Name__：`Move Caret to Previous Word`
 __HotKey In Mac__：`⌥←`、`⌥⇧←`
-__HotKey In Windows__：`Ctrl+向左箭头`
+__HotKey In Windows__：`Ctrl+向左箭头`、`Ctrl+Shift+向左箭头`
 
 ## 3.4 光标移动到后一个单词
 
 __HotKey Name__：`Move Caret to Next Word`
 __HotKey In Mac__：`⌥→`、`⌥⇧→`
-__HotKey In Windows__：`Ctrl+向右箭头`
+__HotKey In Windows__：`Ctrl+向右箭头`、`Ctrl+Shift+向右箭头`
 
 ## 3.5 光标移动到代码块开始处
 
 __HotKey Name__：`Move Caret to Code Block Start`
 __HotKey In Mac__：`⌥⌘[`、`⌥⇧⌘[`
-__HotKey In Windows__：`Ctrl+左方括号`
+__HotKey In Windows__：`Ctrl+左方括号`、`Ctrl+Shift+左方括号`
 
 ## 3.6 光标移动到代码块结束处
 
 __HotKey Name__：`Move Caret to Code Block End`
 __HotKey In Mac__：`⌥⌘]`、`⌥⇧⌘]`
-__HotKey In Windows__：`Ctrl+右方括号`
+__HotKey In Windows__：`Ctrl+右方括号`、`Ctrl+Shift+右方括号`
 
 # 4 导航
 
