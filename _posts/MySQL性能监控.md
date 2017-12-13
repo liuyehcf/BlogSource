@@ -17,9 +17,9 @@ __目录__
 
 ## 1.1 查看所有系统参数
 
-```
-SHOW VARIABLES # 以数据表形式输出
-SHOW VARIABLES\G # 以行形式输出
+```SQL
+SHOW VARIABLES -- 以数据表形式输出
+SHOW VARIABLES\G -- 以行形式输出
 SHOW VARIABLES LIKE '%isolation%';
 ```
 
@@ -27,21 +27,21 @@ SHOW VARIABLES LIKE '%isolation%';
 
 以系统参数`tx_isolation`为例
 
-```
-SELECT @@global.tx_isolation; # 全局
-SELECT @@session.tx_isolation; # 当前会话
-SELECT @@tx_isolation; # 默认当前会话
+```SQL
+SELECT @@global.tx_isolation; -- 全局
+SELECT @@session.tx_isolation; -- 当前会话
+SELECT @@tx_isolation; -- 默认当前会话
 
-SHOW GLOBAL VARIABLES LIKE 'tx_isolation'; # 全局
-SHOW SESSION VARIABLES LIKE 'tx_isolation'; # 当前会话
-SHOW VARIABLES LIKE 'tx_isolation'; # 默认当前会话
+SHOW GLOBAL VARIABLES LIKE 'tx_isolation'; -- 全局
+SHOW SESSION VARIABLES LIKE 'tx_isolation'; -- 当前会话
+SHOW VARIABLES LIKE 'tx_isolation'; -- 默认当前会话
 ```
 
 ## 1.3 修改系统参数的值
 
 以系统参数`profiling_history_size`为例
 
-```
+```SQL
 SET GLOBAL profiling_history_size = 10;
 SET SESSION profiling_history_size = 15;
 SET profiling_history_size = 15;
@@ -52,7 +52,7 @@ SET @@profiling_history_size = 15;
 ```
 
 以系统参数`tx_isolation`为例，这个参数比较特殊，需要用特殊的赋值语句
-```
+```SQL
 SET GLOBAL TRANSACTION ISOLATION LEVEL READ COMMITTED;
 SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
@@ -60,13 +60,13 @@ SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 
 # 2 查看版本号
 
-```
+```SQL
 SELECT VERSION();
 ```
 
 # 3 执行状态分析
 
-```
+```SQL
 SHOW PROCESSLIST;
 ```
 
