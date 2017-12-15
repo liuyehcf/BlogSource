@@ -18,6 +18,8 @@ __目录__
 
 __OuterEntity__：第一级
 
+* 包含泛型参数T
+
 ```Java
 package org.liuyehcf.fastjson.entity;
 
@@ -58,6 +60,9 @@ public class OuterEntity<T> {
 ```
 
 __MiddleEntity__：第二级
+
+* 包含泛型参数T
+
 ```Java
 package org.liuyehcf.fastjson.entity;
 
@@ -128,6 +133,11 @@ public class InnerEntity {
 }
 ```
 
+__测试代码__
+
+* 将Java对象转化为Json字符串
+* 将Json字符串，配合类型信息，转化为Java对象
+
 ```Java
 package org.liuyehcf.fastjson;
 
@@ -142,7 +152,8 @@ import org.liuyehcf.fastjson.entity.OuterEntity;
  */
 public class FastJsonDemo {
     public static void main(String[] args) {
-        OuterEntity<MiddleEntity> outerEntity = new OuterEntity<>();
+        // 创建多级对象
+        OuterEntity<MiddleEntity<InnerEntity>> outerEntity = new OuterEntity<>();
         MiddleEntity<InnerEntity> middleEntity = new MiddleEntity<>();
         InnerEntity innerEntity = new InnerEntity();
 
@@ -157,10 +168,12 @@ public class FastJsonDemo {
         outerEntity.setName("outerEntity");
         outerEntity.setMiddleEntity(middleEntity);
 
+        // 将Java对象转化为Json字符串
         String json = JSON.toJSONString(outerEntity);
 
         System.out.println(json);
 
+        // 将Json字符串，配合类型信息，转化为Java对象
         OuterEntity<MiddleEntity<InnerEntity>> parsedOuterEntity = JSON.parseObject(
                 json,
                 new TypeReference<OuterEntity<MiddleEntity<InnerEntity>>>() {
@@ -173,13 +186,36 @@ public class FastJsonDemo {
 }
 ```
 
-能够解析多级泛型的关键语句在于`new TypeReference<OuterEntity<MiddleEntity<InnerEntity>>>() {}`
+输出如下
+
+```
+{"id":3,"middleEntity":{"id":2,"innerEntity":{"id":1,"name":"InnerEntity"},"name":"middleEntity"},"name":"outerEntity"}
+org.liuyehcf.fastjson.entity.MiddleEntity
+org.liuyehcf.fastjson.entity.InnerEntity
+```
+
+能够解析多级泛型的关键语句是：`new TypeReference<OuterEntity<MiddleEntity<InnerEntity>>>() {}`
 
 # 2 Java如何保留编译期的泛型信息
 
 Java中的泛型的实现方式是擦除。也就是说，所有包含不同泛型参数的类型共享着同一个.class文件，或者Class对象。很显然，这个Class对象或者.class文件中必然不会存有泛型参数的信息（已经被擦除了）
 
-Java采用另外一种方式来存储泛型信息，Class包含如下方法，该方法可以获取直接父类的信息（Type对象），该对象包含了泛型参数等信息
+Java采用另外一种方式来存储泛型信息，对于一个类型C而言，沿着继承链路往上走，其直接父类F到根基类Object，这条链路上的所有泛型信息都是确定的（指定了或者未指定）
+
+* C1的直接父类是`ArrayList<String>`，泛型参数为String
+* C2的直接父类是`ArrayList`，泛型参数未指定，其实也就是Object
+
+```Java
+class C1 extends ArrayList<String> {
+    ...
+}
+
+class C2 extends ArrayList {
+
+}
+```
+
+由于类型的定义在编译期就已经确定了，因此Java能够通过某种机制将继承链路上的类型信息（包括指定了的泛型参数）保存下来。具体来说，Class包含如下方法，该方法可以获取直接父类的信息（Type对象），该对象包含了泛型参数等信息
 
 ```Java
 public Type getGenericSuperclass()
