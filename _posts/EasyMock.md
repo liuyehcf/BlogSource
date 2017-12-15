@@ -2,7 +2,7 @@
 title: EasyMock
 date: 2017-08-28 15:13:17
 tags: 
-- 摘录
+- 原创
 categories: 
 - Java
 - Framework
