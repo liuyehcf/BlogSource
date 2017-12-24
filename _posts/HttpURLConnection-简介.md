@@ -97,7 +97,7 @@ __详细步骤分析__
 1. 创建URL对象，将String类型的URL转为URL类型
 1. 利用URL对象创建URLConnection对象，并转型为HttpURLConnection
 1. 设置方法类型为`POST`，不可省略，因为默认的方法是`GET`
-1. 设置Header，指定Content（RequestBody和ReponseBody?）的格式为JSON
+1. 设置Header，指定Content（RequestBody）的格式为JSON
 1. 打开输入流，以及输出流。输出流用于写入RequestBody，必须写，默认关闭；输入流用于读取返回的响应数据，默认打开，可以不写
 1. 进行连接，也可以不写，`getInputStream()`/`getOutputStream()`等操作会隐式进行连接操作
 1. 通过`getOutputStream()`获取输出流，传入RequestBody

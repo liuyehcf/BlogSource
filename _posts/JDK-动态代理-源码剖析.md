@@ -722,68 +722,92 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
 
 ## 4.1 源码
 
+__Person__：接口
+
+```Java
+package org.liuyehcf.jdkproxy;
+
+public interface Person {
+    void sayHello();
+}
+```
+
+__Chinese__：Person接口的实现类
+
+```Java
+package org.liuyehcf.jdkproxy;
+
+public class Chinese implements Person {
+    public void sayHello() {
+        System.out.println("Chinese says hello");
+    }
+}
+```
+
+__Handler__：增强
+
+```Java
+package org.liuyehcf.jdkproxy;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+
+public class JdkProxyHandler implements InvocationHandler {
+    public JdkProxyHandler(Object obj) {
+        this.obj = obj;
+    }
+
+    private Object obj;
+
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        System.out.println("pre-processor");
+
+        Object result = method.invoke(obj, args);
+
+        System.out.println("after-processor");
+
+        return result;
+    }
+}
+```
+
+__Demo__
+
 ```Java
 package org.liuyehcf.jdkproxy;
 
 import sun.misc.ProxyGenerator;
 
 import java.io.FileOutputStream;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-/**
- * Created by HCF on 2017/7/28.
- */
-interface Person {
-    void sayHello();
-}
-
-public class TestJdkProxy implements Person {
-    public void sayHello() {
-        System.out.println("TestJdkProxy says hello");
-    }
-
-    private static final class MyInvocationHandler implements InvocationHandler {
-        public MyInvocationHandler(Object obj) {
-            this.obj = obj;
-        }
-
-        private Object obj;
-
-        @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            System.out.println("pre-processor");
-
-            Object result = method.invoke(obj, args);
-
-            System.out.println("after-processor");
-
-            return result;
-        }
-    }
+public class JdkProxyDemo {
 
     public static void main(String[] args) throws Exception {
 
-        TestJdkProxy target = new TestJdkProxy();
+        Chinese target = new Chinese();
 
-        MyInvocationHandler invocationHandler = new MyInvocationHandler(target);
+        JdkProxyHandler jdkProxyHandler = new JdkProxyHandler(target);
 
-        Person p = (Person) Proxy.newProxyInstance(target.getClass().getClassLoader(), new Class<?>[]{Person.class}, invocationHandler);
+        Person p = (Person) Proxy.newProxyInstance(target.getClass().getClassLoader(), new Class<?>[]{Person.class}, jdkProxyHandler);
 
         p.sayHello();
 
-        // generateProxyClass方法可以指定代理类的类名，例如这里指定类名为"MyProxy"
-        byte[] classFile = ProxyGenerator.generateProxyClass("MyProxy", TestJdkProxy.class.getInterfaces());
+        saveClassFileOfProxy();
+    }
+
+    private static void saveClassFileOfProxy() {
+        byte[] classFile = ProxyGenerator.generateProxyClass("MyProxy", Chinese.class.getInterfaces());
 
         FileOutputStream out;
 
-        try{
-            out = new FileOutputStream("/Users/HCF/Desktop/MyProxy.class");
+        try {
+            out = new FileOutputStream("proxy/target/MyProxy.class");
             out.write(classFile);
             out.flush();
-        }catch(Exception e){
-
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
