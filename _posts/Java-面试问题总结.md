@@ -1838,4 +1838,6 @@ WHERE sex = 0;
 # 14 一些面经
 
 * [【杂文】从实习到校招到工作](http://www.cnblogs.com/leesf456/p/6019583.html)
-
+* [互联网公司Java后台开发面试经历](http://blog.csdn.net/w329300817/article/details/53156643)
+* [年底啦，java后台面试题整理](http://www.jsondream.com/2016/12/04/java-interview-question.html)
+* [【Java面试】1、基础知识篇](http://www.cnblogs.com/wangzhongqiu/p/6268197.html)
