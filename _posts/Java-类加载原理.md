@@ -1,5 +1,5 @@
 ---
-title: 类加载原理
+title: Java-类加载原理
 date: 2018-01-06 14:56:15
 tags: 
 - 摘录
@@ -7,6 +7,7 @@ categories:
 - Java
 - 容器
 - 类隔离技术
+password: 19930101
 ---
 
 __目录__
