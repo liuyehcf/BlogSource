@@ -20,7 +20,7 @@ __目录__
 通常，在我们需要动态加载一个类的时候，总有三个类加载器可以使用，它们分别是
 
 1. system classloader：系统类加载器（或者称为应用类加载器，application classloader）
-1. current classloader：当前类加载器
+1. current classloader：当前类加载器（__CCL的加载过程是由JVM运行时来控制的，是无法通过Java编程来更改的__）
 1. current thread context classloader：线程上下文类加载器
 
 那么问题来了，我们应该选择哪个类加载器去加载呢，或者说JVM会使用哪个类加载器去加载呢
@@ -31,37 +31,11 @@ current classloader是当前方法所属类的类加载器。通俗来讲，类A
 
 ContextClassLoader是作为Thread的一个成员变量出现的，一个线程在构造的时候，它会从parent线程中继承这个ClassLoader。__使用线程上下文类加载器，可以在执行线程中抛弃双亲委派加载链模式，使用线程上下文里的类加载器加载类__。CurrentClassLoader对用户来说是自动的，隐式的，而ContextClassLoader需要显示的使用，先进行设置然后再进行使用
 
-# 2 Class.forName和ClassLoader.loadClass的实现原理
+## 1.1 Class#forName的类加载过程
 
-## 2.1 ClassLoader在加载类时的概念区分
-
-Class.forName和ClassLoader.loadClass都可以用来进行类型加载，而在Java进行类型加载的时刻，一般会有多个ClassLoader可以使用，并可以使用多种方式进行类型加载。
-
-比如如下代码：
-```Java
-class A {
-    public void m() {
-        A.class.getClassLoader().loadClass(“B”);
-    }
-}
-```
-
-在A.class.getClassLoader().loadClass(“B”);代码执行B的加载过程时，一般会有三个概念上的ClassLoader提供使用。
-
-1. CurrentClassLoader，称之为当前类加载器，简称CCL，在代码中对应的就是类型A的类加载器
-1. SpecificClassLoader，称之为指定类加载器，简称SCL，在代码中对应的是 A.class.getClassLoader()，如果使用任意的ClassLoader进行加载，这个ClassLoader都可以称之为SCL
-1. ThreadContextClassLoader，称之为线程上下文类加载器，简称TCCL，每个线程都会拥有一个ClassLoader引用，而且可以通过Thread.currentThread().setContextClassLoader(ClassLoader classLoader)进行切换
-
-__SCL和TCCL可以理解为在代码中使用ClassLoader的引用进行类加载，而CCL却无法获取到其引用，虽然在代码中CCL == A.class.getClassLoader() == SCL__
-
-__CCL的加载过程是由JVM运行时来控制的，是无法通过Java编程来更改的__
-
-## 2.2 Class.forName与SystemDictionary
-
-Class.forName是根据给定的类型全名从CCL中加载指定的类型
+forName用于加载一个类并且会执行后续操作，包括验证，解析，初始化。并且触发static字段以及static域的执行
 
 ```Java
-    @CallerSensitive
     public static Class<?> forName(String className)
                 throws ClassNotFoundException {
         Class<?> caller = Reflection.getCallerClass();
@@ -69,18 +43,60 @@ Class.forName是根据给定的类型全名从CCL中加载指定的类型
     }
 ```
 
-Reflection.getCallerClass()，获取到调用Class.forName方法的类，隐含意义就是CCL。加载的逻辑在native方法forName0中定义，也就是forName进行的类加载行为已经脱离了Java代码的控制范围，进入到了Java运行时环境把控的阶段。
+这里`Reflection.getCallerClass`是一个native方法，用于获取调用`Class#forName`方法的实例所属的Class对象。其次，forName0也是一个native方法
 
-以下是JDK实现的部分代码（Class.c中对应的实现逻辑）：
+接下来我们会查看openjdk中的相关C++源码，openjdk的起始路径记为`${OPEN_JDK}`，我们将以如下形式来表示源码文件的位置
+
+* `${OPEN_JDK}/path1/path2/path3/source.c`
+
+首先查看forName0对应的native方法，路径如下：
+
+* `${OPEN_JDK}/jdk/src/share/native/java/lang/Class.c`
 
 ```C
 JNIEXPORT jclass JNICALL
 Java_java_lang_Class_forName0(JNIEnv *env, jclass this, jstring classname,
-                              jboolean initialize, jobject loader)
+                              jboolean initialize, jobject loader, jclass caller)
 {
-    // 略
-    cls = JVM_FindClassFromClassLoader(env, clname, initialize,
-                                       loader, JNI_FALSE);
+    char *clname;
+    jclass cls = 0;
+    char buf[128];
+    jsize len;
+    jsize unicode_len;
+
+    if (classname == NULL) {
+        JNU_ThrowNullPointerException(env, 0);
+        return 0;
+    }
+
+    len = (*env)->GetStringUTFLength(env, classname);
+    unicode_len = (*env)->GetStringLength(env, classname);
+    if (len >= (jsize)sizeof(buf)) {
+        clname = malloc(len + 1);
+        if (clname == NULL) {
+            JNU_ThrowOutOfMemoryError(env, NULL);
+            return NULL;
+        }
+    } else {
+        clname = buf;
+    }
+    (*env)->GetStringUTFRegion(env, classname, 0, unicode_len, clname);
+
+    if (VerifyFixClassname(clname) == JNI_TRUE) {
+        /* slashes present in clname, use name b4 translation for exception */
+        (*env)->GetStringUTFRegion(env, classname, 0, unicode_len, clname);
+        JNU_ThrowClassNotFoundException(env, clname);
+        goto done;
+    }
+
+    if (!VerifyClassname(clname, JNI_TRUE)) {  /* expects slashed name */
+        JNU_ThrowClassNotFoundException(env, clname);
+        goto done;
+    }
+
+    // 重点看这里，调用了JVM_FindClassFromCaller方法
+    cls = JVM_FindClassFromCaller(env, clname, initialize, loader, caller);
+
  done:
     if (clname != buf) {
         free(clname);
@@ -89,80 +105,397 @@ Java_java_lang_Class_forName0(JNIEnv *env, jclass this, jstring classname,
 }
 ```
 
-实现细节在JVM_FindClassFromClassLoader中定义，可以看到调用Class.forName会使用JVM_FindClassFromClassLoader这个函数来进行类型加载，我们需要注意的时clname和loader这两个变量，一个是类的全限定名，另一个是ClassLoader，而Class.forName所使用的ClassLoader是CCL。
+我们继续查找JVM_FindClassFromCaller的声明，文件路径如下：
 
-在jvm.cpp中FindClassFromClassLoader的对应实现是：
+* `${OPEN_JDK}/hotspot/src/share/vm/prims/jvm.h`
 
 ```C
-jclass find_class_from_class_loader(JNIEnv* env, Symbol* name, jboolean init, Handle loader, Handle protection_domain, jboolean throwError, TRAPS) {
-  // Security Note:
-  // The Java level wrapper will perform the necessary security check allowing
-  // us to pass the NULL as the initiating class loader.
-  klassOop klass = SystemDictionary::resolve_or_fail(name, loader, protection_domain, throwError != 0, CHECK_NULL);
-  // 略
-}
+/*
+ * Find a class from a given class loader.  Throws ClassNotFoundException.
+ *  name:   name of class
+ *  init:   whether initialization is done
+ *  loader: class loader to look up the class. This may not be the same as the caller's
+ *          class loader.
+ *  caller: initiating class. The initiating class may be null when a security
+ *          manager is not installed.
+ */
+JNIEXPORT jclass JNICALL
+JVM_FindClassFromCaller(JNIEnv *env, const char *name, jboolean init,
+                        jobject loader, jclass caller);
+
 ```
 
-SystemDictionary，系统字典，这个数据结构是保存Java加载类型的数据结构，如下图所示
+只找到了声明，定义包含在dll中无法查看。该方法以类全限定名和ClassLoader的引用来查找指定的Class。如果命中了，那么返回Class对象，并且执行后续验证、解析、初始化的操作，至此Class#forName结束
 
-![fig1](/images/类加载原理/fig1.png)
-
-上图黑色边框中的内容就是SystemDictionary，它是以类的全限定名再加上类加载器作为key，进而确定Class引用。
-
-当在代码中调用Class.forName(String name)或者由运行时Java进行类加载，比如：
+如果没有命中，通过debug可以发现，该方法会继续调用ClassLoader.loadClass(String)方法，此时回传的ClassLoader就是Class#forName中的`ClassLoader.getClassLoader(caller)`获取的类加载器，一般来说就是`AppClassLoader`
 
 ```Java
-public void m() {
-    B b = new B();
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
+        return loadClass(name, false);
+    }
+```
+
+通过debug发现继续调用`sun.misc.Launcher.AppClassLoader.loadClass`方法，该方法
+
+```Java
+        public Class<?> loadClass(String var1, boolean var2) throws ClassNotFoundException {
+            int var3 = var1.lastIndexOf(46);
+            if(var3 != -1) {
+                SecurityManager var4 = System.getSecurityManager();
+                if(var4 != null) {
+                    var4.checkPackageAccess(var1.substring(0, var3));
+                }
+            }
+
+            if(this.ucp.knownToNotExist(var1)) {
+                Class var5 = this.findLoadedClass(var1);
+                if(var5 != null) {
+                    if(var2) {
+                        this.resolveClass(var5);
+                    }
+
+                    return var5;
+                } else {
+                    throw new ClassNotFoundException(var1);
+                }
+            } else {
+                // 会走到这里，继续调用父类的loadClass方法
+                return super.loadClass(var1, var2);
+            }
+        }
+```
+
+AppClassLoader的父类是ClassLoader，其loadClass方法如下
+
+```Java
+    protected Class<?> loadClass(String name, boolean resolve)
+        throws ClassNotFoundException
+    {
+        synchronized (getClassLoadingLock(name)) {
+            // First, check if the class has already been loaded
+            Class<?> c = findLoadedClass(name);
+            if (c == null) {
+                long t0 = System.nanoTime();
+                // 双亲委派逻辑的体现之处
+                try {
+                    if (parent != null) {
+                        c = parent.loadClass(name, false);
+                    } else {
+                        c = findBootstrapClassOrNull(name);
+                    }
+                } catch (ClassNotFoundException e) {
+                    // ClassNotFoundException thrown if class not found
+                    // from the non-null parent class loader
+                }
+
+                if (c == null) {
+                    // If still not found, then invoke findClass in order
+                    // to find the class.
+                    long t1 = System.nanoTime();
+                    c = findClass(name);
+
+                    // this is the defining class loader; record the stats
+                    sun.misc.PerfCounter.getParentDelegationTime().addTime(t1 - t0);
+                    sun.misc.PerfCounter.getFindClassTime().addElapsedTimeFrom(t1);
+                    sun.misc.PerfCounter.getFindClasses().increment();
+                }
+            }
+            if (resolve) {
+                resolveClass(c);
+            }
+            return c;
+        }
+    }
+
+    protected final Class<?> findLoadedClass(String name) {
+        if (!checkName(name))
+            return null;
+        // native方法
+        return findLoadedClass0(name);
+    }
+```
+
+loadClass(String,bool)方法首先调用native方法findLoadedClass0在JVM中查找缓存，findLoadedClass0定义所在的文件路径如下：
+
+* `${OPEN_JDK}/jdk/src/share/native/java/lang/ClassLoader.c`
+
+```C
+JNIEXPORT jclass JNICALL
+Java_java_lang_ClassLoader_findLoadedClass0(JNIEnv *env, jobject loader,
+                                           jstring name)
+{
+    if (name == NULL) {
+        return 0;
+    } else {
+        return JVM_FindLoadedClass(env, loader, name);
+    }
 }
 ```
 
-对类型B的加载，就是运行时Java进行的类加载
+继续定位JVM_FindLoadedClass，该函数的定义同样无法查看，该函数的声明所在文件路径如下：
 
-类型加载时，以ClassLoader和需要加载的类型全限定名作为参数在SystemDictionary中进行查询，如果能够查询到则返回。如果无法找到，则调用loader.loadClass(className)进行加载，这一步将进入到Java代码中
+* `${OPEN_JDK}/hotspot/src/share/vm/prims/jvm.h`
 
-对于loadClass而言，基本等同于loader.defineClass(loader.getResource(file).getBytes())，它做了两件事，第一件，通过资源定位到类文件，第二件，将类文件的字节流数组传递给defineClass进行构造Class实例。而defineClass将再一次派发给运行时Java进行执行
+```C
+/* Find a loaded class cached by the VM */
+JNIEXPORT jclass JNICALL
+JVM_FindLoadedClass(JNIEnv *env, jobject loader, jstring name);
+```
 
-字节流数组经过ClassFileParser进行处理之后，生成了Class实例，在返回Class实例前，Java将name、loader和class的对应关系添加到SystemDictionary中，这样在后续其他类型的加载过程中，就能够快速找到这些类型，避免无谓的defineClass过程
+如果命中了直接返回。如果没有命中，则根据双亲委派模型依次调用双亲类加载器加载。
 
-一个类加载的过程，在运行时Java（JVM）和java代码之间来回切换，有点复杂，我们画一个简单的图来描述主要过程，由于原有的类加载过程中还要处理并发问题，我们将这些内容都去掉，只观察类型加载的主要流程，如下图所示
+如果仍然没有加载到，那么调用findClass方法，findClass在ClassLoader中定义，但是提供了空实现，不同的子类负责实现不同的逻辑，用以达到不同的类加载路径的效果。
 
-![fig2](/images/类加载原理/fig2.png)
+我们继续以AppClassLoader为例进行分析，AppClassLoader的findClass实现如下：
 
-1. 调用Class.forName(className)方法，该方法会调用native的JVM实现，调用前该方法会确定准备好需要加载的类名以及ClassLoader，将其传递给native方法
-1. 进入到JVM实现后，首先会在SystemDictionary中根据类名和ClassLoader组成hash，进行查询，如果能够命中，则返回
-1. 如果加载到则返回
-1. 如果在SystemDictionary中无法命中，将会调用Java代码：ClassLoader.loadClass(类名)，这一步将委派给Java代码，让传递的ClassLoader进行类型加载
-1. 以URLClassLoader为例，ClassLoader确定了类文件的字节流，但是该字节流如何按照规范生成Class对象，这个过程在Java代码中是没有体现的，其实也就是要求调用ClassLoader.defineClass(byte[])进行解析类型，该方法将会再次调用native方法，因为字节流对应Class对象的规范是定义在JVM实现中的
-1. 进入JVM实现，调用SystemDictionary的resolve_stream方法，接受byte[]，使用ClassFileParser进行解析
-1. SystemDictionary::define_instance_class
-1. 如果类型被加载了，将类名、ClassLoader和类型的实例引用添加到SystemDictionary中
-1. 返回
-1. 返回
-1. 从Java实现返回到Java代码的defineClass，返回Class对象
-1. 返回给loadClass(Classname)方法
-1. 返回给Java实现的SystemDictionary，因为在resolve_class中调用的ClassLoader.loadClass。这里会做出一个判断，如果加载Class的ClassLoader并非传递给resolve_class的ClassLoader，那么会将类名、传递给resolve_class的ClassLoader以及类型的实例引用添加到SystemDictionary中
-1. 返回给Class.forName类型实例
+```Java
+    protected Class<?> findClass(final String name)
+        throws ClassNotFoundException
+    {
+        final Class<?> result;
+        try {
+            result = AccessController.doPrivileged(
+                new PrivilegedExceptionAction<Class<?>>() {
+                    public Class<?> run() throws ClassNotFoundException {
+                        String path = name.replace('.', '/').concat(".class");
+                        Resource res = ucp.getResource(path, false);
+                        if (res != null) {
+                            try {
+                                return defineClass(name, res);
+                            } catch (IOException e) {
+                                throw new ClassNotFoundException(name, e);
+                            }
+                        } else {
+                            return null;
+                        }
+                    }
+                }, acc);
+        } catch (java.security.PrivilegedActionException pae) {
+            throw (ClassNotFoundException) pae.getException();
+        }
+        if (result == null) {
+            throw new ClassNotFoundException(name);
+        }
+        return result;
+    }
+```
 
-## 2.3 ClassLoader.loadClass(String className)
+关注核心调用，defineClass（AppClassLoader中的private方法），如下：
 
-我们在分析了Class.forName之后，再看ClassLoader.loadClass()就会变得简单很多，这个ClassLoader就是一个SCL，而ClassLoader.loadClass()只是相当于一个简单的方法调用
+```Java
+    private Class<?> defineClass(String name, Resource res) throws IOException {
+        long t0 = System.nanoTime();
+        int i = name.lastIndexOf('.');
+        URL url = res.getCodeSourceURL();
+        if (i != -1) {
+            String pkgname = name.substring(0, i);
+            // Check if package already loaded.
+            Manifest man = res.getManifest();
+            definePackageInternal(pkgname, man, url);
+        }
+        // Now read the class bytes and define the class
+        java.nio.ByteBuffer bb = res.getByteBuffer();
+        if (bb != null) {
+            // Use (direct) ByteBuffer:
+            CodeSigner[] signers = res.getCodeSigners();
+            CodeSource cs = new CodeSource(url, signers);
+            sun.misc.PerfCounter.getReadClassBytesTime().addElapsedTimeFrom(t0);
 
-根据图2的所示，该过程开始于第4步，没有前3步，该过程简单说就是：调用ClassLoader.loadClass(类名)，加载到类型后，保存<类名，真实加载类的ClassLoader，类型引用>到缓存，这里真实加载类的ClassLoader我们可以叫做defineClassLoader。也就是，调用ClassLoader.loadClass(类名)之后，并不一定会在缓存中生成一条<类名，ClassLoader，类型引用>的记录，但是一定会生成一条<类名，真实加载类的ClassLoader，类型引用>的记录
+            // 核心调用
+            return defineClass(name, bb, cs);
+        } else {
+            byte[] b = res.getBytes();
+            // must read certificates AFTER reading bytes.
+            CodeSigner[] signers = res.getCodeSigners();
+            CodeSource cs = new CodeSource(url, signers);
+            sun.misc.PerfCounter.getReadClassBytesTime().addElapsedTimeFrom(t0);
 
-## 2.4 ClassLoader.findLoadedClass(String className)
+            // 核心调用
+            return defineClass(name, b, 0, b.length, cs);
+        }
+    }
+```
 
-该方法是protected final修饰的方法，也就是ClassLoader的子类可以内部使用，但是无法通过ClassLoader.findLoadedClass直接调用
+其中不同支路的defineClass都会定向为native方法defineClass0、defineClass1、defineClass2。它们负责将class文件代表的字节数组交给VM，然后由VM验证其格式的正确性。Class与ClassLoader实例关系的绑定就是在defineClass的调用过程中确定的
 
-这个方法一直感觉很奇怪，从名称上看就是查询这个ClassLoader加载过的Class，如果加载过了，那么就返回类型实例。但是只看到获取，没有看到添加，又或者说它到底是从哪里获取的
+native方法defineClass0、defineClass1、defineClass2所在的文件路径如下：
 
-答案是从SystemDictionary中获取的，当调用ClassLoader.findLoadedClass(className)时，会到SystemDictionary中以className和ClassLoader为key，进行查询，如果命中，则返回类型实例
+* `${OPEN_JDK}/jdk/src/share/native/java/lang/ClassLoader.c`
 
-## 2.5 Class.getClassLoader()
+```C
+// The existence or signature of this method is not guaranteed since it
+// supports a private method.  This method will be changed in 1.7.
+JNIEXPORT jclass JNICALL
+Java_java_lang_ClassLoader_defineClass0(JNIEnv *env,
+                                        jobject loader,
+                                        jstring name,
+                                        jbyteArray data,
+                                        jint offset,
+                                        jint length,
+                                        jobject pd)
+{
+    // 转调用Java_java_lang_ClassLoader_defineClass1
+    return Java_java_lang_ClassLoader_defineClass1(env, loader, name, data, offset,
+                                                   length, pd, NULL);
+}
 
-从前面的分析中，我们可以得出，被加载的Class，其对应的ClassLoader就是执行`defineClass`的ClassLoader，而未必是执行`loadClass`的ClassLoader
+JNIEXPORT jclass JNICALL
+Java_java_lang_ClassLoader_defineClass1(JNIEnv *env,
+                                        jobject loader,
+                                        jstring name,
+                                        jbyteArray data,
+                                        jint offset,
+                                        jint length,
+                                        jobject pd,
+                                        jstring source)
+{
+    jbyte *body;
+    char *utfName;
+    jclass result = 0;
+    char buf[128];
+    char* utfSource;
+    char sourceBuf[1024];
 
-# 3 参考
+    if (data == NULL) {
+        JNU_ThrowNullPointerException(env, 0);
+        return 0;
+    }
+
+    /* Work around 4153825. malloc crashes on Solaris when passed a
+     * negative size.
+     */
+    if (length < 0) {
+        JNU_ThrowArrayIndexOutOfBoundsException(env, 0);
+        return 0;
+    }
+
+    body = (jbyte *)malloc(length);
+
+    if (body == 0) {
+        JNU_ThrowOutOfMemoryError(env, 0);
+        return 0;
+    }
+
+    (*env)->GetByteArrayRegion(env, data, offset, length, body);
+
+    if ((*env)->ExceptionOccurred(env))
+        goto free_body;
+
+    if (name != NULL) {
+        utfName = getUTF(env, name, buf, sizeof(buf));
+        if (utfName == NULL) {
+            JNU_ThrowOutOfMemoryError(env, NULL);
+            goto free_body;
+        }
+        VerifyFixClassname(utfName);
+    } else {
+        utfName = NULL;
+    }
+
+    if (source != NULL) {
+        utfSource = getUTF(env, source, sourceBuf, sizeof(sourceBuf));
+        if (utfSource == NULL) {
+            JNU_ThrowOutOfMemoryError(env, NULL);
+            goto free_utfName;
+        }
+    } else {
+        utfSource = NULL;
+    }
+
+    // 核心调用
+    result = JVM_DefineClassWithSource(env, utfName, loader, body, length, pd, utfSource);
+
+    if (utfSource && utfSource != sourceBuf)
+        free(utfSource);
+
+ free_utfName:
+    if (utfName && utfName != buf)
+        free(utfName);
+
+ free_body:
+    free(body);
+    return result;
+}
+
+JNIEXPORT jclass JNICALL
+Java_java_lang_ClassLoader_defineClass2(JNIEnv *env,
+                                        jobject loader,
+                                        jstring name,
+                                        jobject data,
+                                        jint offset,
+                                        jint length,
+                                        jobject pd,
+                                        jstring source)
+{
+    jbyte *body;
+    char *utfName;
+    jclass result = 0;
+    char buf[128];
+    char* utfSource;
+    char sourceBuf[1024];
+
+    assert(data != NULL); // caller fails if data is null.
+    assert(length >= 0);  // caller passes ByteBuffer.remaining() for length, so never neg.
+    // caller passes ByteBuffer.position() for offset, and capacity() >= position() + remaining()
+    assert((*env)->GetDirectBufferCapacity(env, data) >= (offset + length));
+
+    body = (*env)->GetDirectBufferAddress(env, data);
+
+    if (body == 0) {
+        JNU_ThrowNullPointerException(env, 0);
+        return 0;
+    }
+
+    body += offset;
+
+    if (name != NULL) {
+        utfName = getUTF(env, name, buf, sizeof(buf));
+        if (utfName == NULL) {
+            JNU_ThrowOutOfMemoryError(env, NULL);
+            return result;
+        }
+        VerifyFixClassname(utfName);
+    } else {
+        utfName = NULL;
+    }
+
+    if (source != NULL) {
+        utfSource = getUTF(env, source, sourceBuf, sizeof(sourceBuf));
+        if (utfSource == NULL) {
+            JNU_ThrowOutOfMemoryError(env, NULL);
+            goto free_utfName;
+        }
+    } else {
+        utfSource = NULL;
+    }
+
+    // 核心调用
+    result = JVM_DefineClassWithSource(env, utfName, loader, body, length, pd, utfSource);
+
+    if (utfSource && utfSource != sourceBuf)
+        free(utfSource);
+
+ free_utfName:
+    if (utfName && utfName != buf)
+        free(utfName);
+
+    return result;
+}
+```
+
+继续定位JVM_DefineClassWithSource，该函数的定义同样无法查看，该函数的声明所在文件路径如下：
+
+* `${OPEN_JDK}/hotspot/src/share/vm/prims/jvm.h`
+
+```C
+/* Define a class with a source (added in JDK1.5) */
+JNIEXPORT jclass JNICALL
+JVM_DefineClassWithSource(JNIEnv *env, const char *name, jobject loader,
+                          const jbyte *buf, jsize len, jobject pd,
+                          const char *source);
+```
+
+# 2 参考
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf@163.com)，博主将在第一时间删除__
 
