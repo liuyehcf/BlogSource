@@ -31,7 +31,7 @@ current classloader是当前方法所属类的类加载器。通俗来讲，类A
 
 ContextClassLoader是作为Thread的一个成员变量出现的，一个线程在构造的时候，它会从parent线程中继承这个ClassLoader。__使用线程上下文类加载器，可以在执行线程中抛弃双亲委派加载链模式，使用线程上下文里的类加载器加载类__。CurrentClassLoader对用户来说是自动的，隐式的，而ContextClassLoader需要显示的使用，先进行设置然后再进行使用
 
-## 1.1 Class#forName的类加载过程
+# 2 Class#forName的类加载过程
 
 forName用于加载一个类并且会执行后续操作，包括验证，解析，初始化。并且触发static字段以及static域的执行
 
@@ -127,7 +127,7 @@ JVM_FindClassFromCaller(JNIEnv *env, const char *name, jboolean init,
 
 只找到了声明，定义包含在dll中无法查看。该方法以类全限定名和ClassLoader的引用来查找指定的Class。如果命中了，那么返回Class对象，并且执行后续验证、解析、初始化的操作，至此Class#forName结束
 
-如果没有命中，通过debug可以发现，该方法会继续调用ClassLoader.loadClass(String)方法，此时回传的ClassLoader就是Class#forName中的`ClassLoader.getClassLoader(caller)`获取的类加载器，一般来说就是`AppClassLoader`
+如果没有命中，通过debug可以发现，该native方法会继续调用Java中的ClassLoader.loadClass(String)方法，ClassLoader的实例就是Class#forName中的`ClassLoader.getClassLoader(caller)`获取的类加载器，一般来说就是`AppClassLoader`
 
 ```Java
     public Class<?> loadClass(String name) throws ClassNotFoundException {
@@ -135,7 +135,7 @@ JVM_FindClassFromCaller(JNIEnv *env, const char *name, jboolean init,
     }
 ```
 
-通过debug发现继续调用`sun.misc.Launcher.AppClassLoader.loadClass`方法，该方法
+通过debug发现继续调用`sun.misc.Launcher.AppClassLoader.loadClass`方法，如下：
 
 ```Java
         public Class<?> loadClass(String var1, boolean var2) throws ClassNotFoundException {
@@ -165,7 +165,7 @@ JVM_FindClassFromCaller(JNIEnv *env, const char *name, jboolean init,
         }
 ```
 
-AppClassLoader的父类是ClassLoader，其loadClass方法如下
+AppClassLoader的父类是ClassLoader，其loadClass方法如下：
 
 ```Java
     protected Class<?> loadClass(String name, boolean resolve)
@@ -242,6 +242,8 @@ JNIEXPORT jclass JNICALL
 JVM_FindLoadedClass(JNIEnv *env, jobject loader, jstring name);
 ```
 
+该方法会以__类加载器实例以及类全限定名作为key__，在缓存中查找Class实例
+
 如果命中了直接返回。如果没有命中，则根据双亲委派模型依次调用双亲类加载器加载。
 
 如果仍然没有加载到，那么调用findClass方法，findClass在ClassLoader中定义，但是提供了空实现，不同的子类负责实现不同的逻辑，用以达到不同的类加载路径的效果。
@@ -261,6 +263,7 @@ JVM_FindLoadedClass(JNIEnv *env, jobject loader, jstring name);
                         Resource res = ucp.getResource(path, false);
                         if (res != null) {
                             try {
+                                // 核心调用
                                 return defineClass(name, res);
                             } catch (IOException e) {
                                 throw new ClassNotFoundException(name, e);
@@ -495,7 +498,9 @@ JVM_DefineClassWithSource(JNIEnv *env, const char *name, jobject loader,
                           const char *source);
 ```
 
-# 2 参考
+该方法根据传入的字节数组来创建一个Class对象，并验证其正确性。__如果创建成功，那么建立一条`<类加载器实例，类全限定名，Class对象实例>`的缓存，也就是说Class对象的命名空间是由传给defineClass0、defineClass1、defineClass2的ClassLoader的实例提供的，因此并不一定是执行loadClass的类加载器实例__
+
+# 3 参考
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf@163.com)，博主将在第一时间删除__
 
