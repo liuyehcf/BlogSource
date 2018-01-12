@@ -1,5 +1,5 @@
 ---
-title: Mac-常用命令
+title: Mac-常用命令与快捷键
 date: 2017-10-11 23:21:45
 tags: 
 - 摘录
@@ -42,28 +42,43 @@ __mysql：__
 * `mysql.server start`
 * `mysql.server stop`
 
-#其他
+# 3 快捷键
 
-## 2.3 清屏
+## 3.1 清屏
 
 `command + k`
 
-## 2.4 显示隐藏文件夹
+## 3.2 显示隐藏文件夹
 
-显示所有隐藏文件以及文件夹
+`⌘ + ⇧ + .`
+
+__也有如下非快捷键的方法__
+
 ```
+// 显示
 defaults write com.apple.finder AppleShowAllFiles -boolean true 
 killall Finder// 重启Finder
-```
 
-关闭显示所有隐藏文件以及文件夹
-```
+// 隐藏
 defaults write com.apple.finder AppleShowAllFiles -boolean false
 killall Finder// 重启Finder
 ```
 
-# 3 参考
+## 3.3 微粒度音量调节
+
+`⌥ + ⇧ + 音量调节按键`
+
+## 3.4 应用图标抖动
+
+在launchpad界面中，`⌃ + ⌥ + ⌘ + B`
+
+## 3.5 emoji
+
+`⌃ ＋ ⌘ ＋ space`
+
+# 4 参考
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf@163.com)，博主将在第一时间删除__
 
 * [Mac 下利用 Launchctl 自启动 mysql](http://squll369.iteye.com/blog/1965185)
+* [Mac 有哪些鲜为人知的使用技巧？](https://www.zhihu.com/question/26379660)
