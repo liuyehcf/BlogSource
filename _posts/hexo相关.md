@@ -82,3 +82,6 @@ __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时
 * [Hexo搭建博客系列：（六）Hexo添加Disqus评论](http://www.jianshu.com/p/d68de067ea74?open_source=weibo_search)
 * [搭建一个支持LaTEX的hexo博客](http://blog.csdn.net/emptyset110/article/details/50123231)
 * [用 Hexo 搭建个人博客-02：进阶试验](http://www.jianshu.com/p/6c1196f12302)
+* [Hexo文章简单加密访问](http://blog.csdn.net/Lancelot_Lewis/article/details/53422901)
+* [Hexo文章简单加密访问
+](https://www.jianshu.com/p/a2330937de6c)

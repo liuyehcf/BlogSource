@@ -1,5 +1,5 @@
 ---
-title: mac常用命令
+title: Mac-常用命令
 date: 2017-10-11 23:21:45
 tags: 
 - 摘录

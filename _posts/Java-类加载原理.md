@@ -5,7 +5,6 @@ tags:
 - 摘录
 categories: 
 - Java
-- 容器
 - 类隔离技术
 password: 19930101
 ---
@@ -23,17 +22,28 @@ __目录__
 1. current classloader：当前类加载器（__CCL的加载过程是由JVM运行时来控制的，是无法通过Java编程来更改的__）
 1. current thread context classloader：线程上下文类加载器
 
-那么问题来了，我们应该选择哪个类加载器去加载呢，或者说JVM会使用哪个类加载器去加载呢
+那么问题来了，我们应该选择哪个类加载器去加载呢，或者说JVM会使用哪个类加载器去加载呢？
 
-首先排除掉的是system classloader（系统类加载器），这个类加载器用于加载`-classpath`路径下的类，并且可以通过静态方法`ClassLoader.getSystemClassLoader()`来获得。实际上，我们很少在代码中明确使用系统类加载器来加载类，因为我们总是可以通过其他类加载器并通过委托到达系统类加载器。如果你编写的程序运行在__最后一个ClassLoader__是AppClassLoader的情况下，那么你的代码就只能工作于命令行中，即通过`-classpath`参数来指定类加载路径，如果程序运行于Web容器中，那么这种方式就行不通了
+首先排除掉的是system classloader（系统类加载器），这个类加载器用于加载`-classpath`路径下的类，并且可以通过静态方法`ClassLoader.getSystemClassLoader()`来获得。实际上，我们很少在代码中明确使用系统类加载器来加载类，因为我们总是可以通过其他类加载器并__通过委托__到达系统类加载器。如果你编写的程序运行在__最后一个ClassLoader__是AppClassLoader的情况下，那么你的代码就只能工作于命令行中，即通过`-classpath`参数来指定类加载路径，如果程序运行于Web容器中，那么这种方式就行不通了
 
-current classloader是当前方法所属类的类加载器。通俗来讲，类A中使用了类B（类B在此前并未加载），那么会使用加载A的加载器来加载B。等效于通过`A.class.getClassLoader().loadClass("B");`来加载。另外还可以通过查询栈信息（`sun.misc.VM.latestUserDefinedLoader()`），获取第一个不为空的classloader
+current classloader是当前方法所属类的类加载器。通俗来讲，类A中使用了类B（类B在此前并未加载），那么会使用加载A的加载器来加载B。等效于通过`A.class.getClassLoader().loadClass("B");`来加载。
+
+在deSerialization中也需要知道类型的信息。在序列化后的内容中，已经包含了当前用户自定义类的类型信息，那么如何在ObjectInputStream调用中，能够拿到客户端的类型呢？通过调用Class.forName？肯定不可以，因为在ObjectInputStream中调用这个，会使用bootstrap来加载，那么它肯定加载不到所需要的类。
+
+答案是通过查询栈信息，通过sun.misc.VM.latestUserDefinedLoader(); 获取从栈上开始计算，第一个不为空（bootstrap classloader是空）的ClassLoader便返回。
+
+可以试想，在ObjectInputStream运作中，通过直接获取当前调用栈中，第一个非空的ClassLoader，这种做法能够非常便捷的定位用户的ClassLoader，也就是用户在进行：
+```Java
+ObjectInputStream ois = new ObjectInputStream(new FileInputStream(“xx.dat”));
+B b = (B) ois.readObject();
+```
+这种调用的时候，依旧能够通过“当前”的ClassLoader正确的加载用户的类。
 
 ContextClassLoader是作为Thread的一个成员变量出现的，一个线程在构造的时候，它会从parent线程中继承这个ClassLoader。__使用线程上下文类加载器，可以在执行线程中抛弃双亲委派加载链模式，使用线程上下文里的类加载器加载类__。CurrentClassLoader对用户来说是自动的，隐式的，而ContextClassLoader需要显示的使用，先进行设置然后再进行使用
 
 # 2 Class#forName的类加载过程
 
-forName用于加载一个类并且会执行后续操作，包括验证，解析，初始化。并且触发static字段以及static域的执行
+forName用于加载一个类并且会执行后续操作，包括验证，解析，初始化。并且触发static字段以及static域的执行。__下面仅分析类加载过程__
 
 ```Java
     public static Class<?> forName(String className)
@@ -45,7 +55,7 @@ forName用于加载一个类并且会执行后续操作，包括验证，解析�
 
 这里`Reflection.getCallerClass`是一个native方法，用于获取调用`Class#forName`方法的实例所属的Class对象。其次，forName0也是一个native方法
 
-接下来我们会查看openjdk中的相关C++源码，openjdk的起始路径记为`${OPEN_JDK}`，我们将以如下形式来表示源码文件的位置
+__接下来我们会查看openjdk中的相关C++源码，openjdk的起始路径记为`${OPEN_JDK}`，我们将以如下形式来表示源码文件的位置__
 
 * `${OPEN_JDK}/path1/path2/path3/source.c`
 
@@ -500,9 +510,41 @@ JVM_DefineClassWithSource(JNIEnv *env, const char *name, jobject loader,
 
 该方法根据传入的字节数组来创建一个Class对象，并验证其正确性。__如果创建成功，那么建立一条`<类加载器实例，类全限定名，Class对象实例>`的缓存，也就是说Class对象的命名空间是由传给defineClass0、defineClass1、defineClass2的ClassLoader的实例提供的，因此并不一定是执行loadClass的类加载器实例__
 
-# 3 参考
+# 3 Class#forName流程分析
+
+我们知道Class#forName与ClassLoader.loadClass()的差异在于Class#forName会在加载类后执行后续的验证解析初始化动作，而ClassLoader.loadClass()仅仅加载类。因此，这里__仅针对__Class#forName于ClassLoader.loadClass()的类加载过程进行分析
+
+```sequence
+participant Java Code
+participant JVM
+Java Code-->Java Code:Class.forName(...)
+Java Code-->JVM:Reflection.getCallerClass()\n用以获取调用类的Class对象
+JVM-->Java Code:return
+Java Code-->JVM:ClassLoader.forName0(...)
+JVM-->JVM:JVM_FindClassFromCaller在缓存中查找Class对象\n以类加载器实例以及全限定名作为key
+JVM-->Java Code:若命中了，则结束加载过程\n若没有命中，调用传入JVM的类加载器实例的loadClass方法
+Java Code-->Java Code:...省略双亲委派的流程跳转...
+Java Code-->Java Code:ClassLoader.loadClass(...)
+Java Code-->Java Code:ClassLoader.findLoadedClass(...)
+Java Code-->JVM:ClassLoader.findLoadedClass0(...)
+JVM-->JVM:JVM_FindLoadedClass在缓存中查找Class对象\n以类加载器实例以及全限定名作为key
+JVM-->Java Code:若命中了，则结束加载过程\n若没有命中，继续回到loadClass方法中
+Java Code-->Java Code:ClassLoader.findClass(...)
+Java Code-->Java Code:ClassLoader.defineClass(...)
+Java Code-->JVM:ClassLoader.defineClass0(...)
+JVM-->JVM:JVM_DefineClassWithSource验证字节码格式的正确性\n记录缓存{"key":"ClassLoader实例+name","value":"Class实例"}
+JVM-->Java Code:return
+Java Code-->Java Code:后续可能会有验证解析初始化操作
+```
+
+# 4 参考
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf@163.com)，博主将在第一时间删除__
 
 * [Find a way out of the ClassLoader maze](https://www.javaworld.com/article/2077344/core-java/find-a-way-out-of-the-classloader-maze.html)
 * [深入理解Java类加载器(2)：线程上下文类加载器](http://blog.csdn.net/zhoudaxia/article/details/35897057)
+* [openjdk source](http://openjdk.java.net/)
+
+ <!--以下这句不加，sequence不能识别，呵呵了-->
+```flow
+```
