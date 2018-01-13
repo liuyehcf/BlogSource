@@ -1,5 +1,5 @@
 ---
-title: Java 对象生命周期
+title: Java-对象生命周期
 date: 2017-07-10 13:54:51
 tags: 
 - 摘录

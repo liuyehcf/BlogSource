@@ -1,5 +1,5 @@
 ---
-title: Java synchronized的实现原理与应用
+title: Java-synchronized的实现原理与应用
 date: 2017-07-09 19:51:35
 tags: 
 - 摘录

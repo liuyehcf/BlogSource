@@ -1,5 +1,5 @@
 ---
-title: Java volatile的内存语义
+title: Java-volatile的内存语义
 date: 2017-07-08 21:03:00
 tags: 
 - 摘录

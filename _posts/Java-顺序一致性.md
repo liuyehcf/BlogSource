@@ -1,5 +1,5 @@
 ---
-title: Java 顺序一致性
+title: Java-顺序一致性
 date: 2017-07-08 21:02:00
 tags: 
 - 摘录

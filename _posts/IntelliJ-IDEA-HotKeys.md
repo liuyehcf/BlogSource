@@ -1,5 +1,5 @@
 ---
-title: IntelliJ IDEA-HotKeys
+title: IntelliJ-IDEA-HotKeys
 date: 2017-12-08 23:13:10
 tags: 
 - 原创

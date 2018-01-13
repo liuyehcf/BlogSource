@@ -1,5 +1,5 @@
 ---
-title: Algorithm DP
+title: Algorithm-DP
 date: 2017-07-16 21:15:39
 tags: 
 - 原创

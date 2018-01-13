@@ -1,5 +1,5 @@
 ---
-title: Algorithm String
+title: Algorithm-String
 date: 2017-07-16 21:17:36
 tags: 
 - 原创

@@ -1,5 +1,5 @@
 ---
-title: IntelliJ IDEA-Settings
+title: IntelliJ-IDEA-Settings
 date: 2018-01-12 21:27:58
 tags: 
 - 原创
@@ -16,7 +16,7 @@ __目录__
 
 1. 打开Preference
 1. 搜索`Identifier under caret`，如下图所示：
-    * ![fig1](/images/IntelliJ IDEA-Settings/fig1.jpg)
+    * ![fig1](/images/IntelliJ-IDEA-Settings/fig1.jpg)
 
 # 2 参考
 

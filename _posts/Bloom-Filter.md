@@ -1,5 +1,5 @@
 ---
-title: Bloom Filter
+title: Bloom-Filter
 date: 2017-07-17 20:33:03
 tags: 
 - 摘录
@@ -52,7 +52,7 @@ Bloom Filter算法如下：
 
 　　对于字符串str，分别计算h(1，str)，h(2，str)...h(k，str)。然后将BitSet的第h(1，str)、h(2，str)...h(k，str)位设为1。
 
-![fig1](/images/BloomFilter/fig1.jpg)
+![fig1](/images/Bloom-Filter/fig1.jpg)
 
 ## 3.2 检查字符串是否存在的过程
 

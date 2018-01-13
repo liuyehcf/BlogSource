@@ -1,5 +1,5 @@
 ---
-title: Java 内存模型基础
+title: Java-内存模型基础
 date: 2017-07-08 21:00:00
 tags: 
 - 摘录

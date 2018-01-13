@@ -1,5 +1,5 @@
 ---
-title: Java 锁的内存语义
+title: Java-锁的内存语义
 date: 2017-07-08 21:04:00
 tags: 
 - 摘录

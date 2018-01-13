@@ -1,5 +1,5 @@
 ---
-title: Algorithm List
+title: Algorithm-List
 date: 2017-07-16 21:14:48
 tags: 
 - 原创

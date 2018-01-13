@@ -1,5 +1,5 @@
 ---
-title: zookeeper 基础
+title: zookeeper-基础
 date: 2017-07-11 18:49:23
 tags: 
 - 摘录

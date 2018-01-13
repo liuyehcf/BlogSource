@@ -1,5 +1,5 @@
 ---
-title: Algorithm Array
+title: Algorithm-Array
 date: 2017-07-16 21:14:35
 tags: 
 - 原创

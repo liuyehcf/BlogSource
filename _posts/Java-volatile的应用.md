@@ -1,5 +1,5 @@
 ---
-title: Java volatile的应用
+title: Java-volatile的应用
 date: 2017-07-09 19:51:27
 tags: 
 - 摘录

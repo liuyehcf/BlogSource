@@ -1,5 +1,5 @@
 ---
-title: Java 垃圾收集算法
+title: Java-垃圾收集算法
 date: 2017-07-10 14:28:54
 tags: 
 - 摘录

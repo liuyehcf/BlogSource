@@ -1,5 +1,5 @@
 ---
-title: Algorithm Queue
+title: Algorithm-Queue
 date: 2017-07-16 21:14:55
 tags: 
 - 原创

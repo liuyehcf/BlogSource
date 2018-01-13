@@ -1,5 +1,5 @@
 ---
-title: Java 面试问题总结
+title: Java-面试问题总结
 date: 2017-07-05 08:51:57
 tags: 
 - 原创
@@ -834,7 +834,7 @@ public class Solution {
 
 1. Spring AOP实现原理
     > AOP=增强收集以及适配+拦截器机制+动态代理
-    > 详细源码分析请参考{% post_link Spring-AOP-源码剖析 %}
+    > 详细源码分析请参考{% post_link Spring-AoP-源码剖析 %}
     > AOP中的术语
     > 1. 切点：匹配关系
     > 1. 增强：增强逻辑以及方位信息
