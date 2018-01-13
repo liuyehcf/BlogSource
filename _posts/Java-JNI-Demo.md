@@ -110,7 +110,9 @@ JNIEXPORT void JNICALL Java_org_liuyehcf_jni_JniDemo_sayHello
 
 ## 2.4 编译生成动态库文件
 
-__利用-I参数指定依赖头文件的位置__
+这一步有两种方式
+
+第一种方式：__利用-I参数指定依赖头文件的位置__
 
 * `g++ -dynamiclib -I <jni.h文件所在的目录> -I <jni_md.h文件所在的目录>  <org_liuyehcf_jni_JniDemo.cpp的路径> -o <动态库的输出目录>/libHello.jnilib`
 * 在我的电脑上，`jni.h`文件所在目录如下：
@@ -118,7 +120,7 @@ __利用-I参数指定依赖头文件的位置__
 * 在我电脑上，`jni_md.h`文件所在目录如下：
     * `/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home/include/darwin`
 
-__修改`org_liuyehcf_jni_JniDemo.h`，并且将`jni.h`以及`jni_md.h`文件拷贝到`org_liuyehcf_jni_JniDemo.h`文件所在的目录中__
+第二种方式：__修改`org_liuyehcf_jni_JniDemo.h`，并且将`jni.h`以及`jni_md.h`文件拷贝到`org_liuyehcf_jni_JniDemo.h`文件所在的目录中__
 
 1. 修改`org_liuyehcf_jni_JniDemo.h`文件，将第一句`#include <jni.h>`改成`#include "jni.h"`
 1. 将`jni.h`以及`jni_md.h`文件拷贝到`org_liuyehcf_jni_JniDemo.h`文件所在的目录中，这两个文件的目录参考上面的说明
@@ -144,8 +146,9 @@ __g++参数解释__
 
 # 3 运行
 
-`java -classpath <org.liuyehcf.jni.JniDemo.class的加载路径> -Djava.library.path=<上面生成的libXXX.jnilib所在目录> org.liuyehcf.jni.JniDemo`
+__执行如下命令__
 
+* `java -classpath <org.liuyehcf.jni.JniDemo.class的加载路径> -Djava.library.path=<上面生成的libXXX.jnilib所在目录> org.liuyehcf.jni.JniDemo`
 * __注意`-Djava.library.path`参数指定的是libXXX.jnilib所在的目录__
 
 如果在IDE中运行，记得添加VM参数`-Djava.library.path=<上面生成的libXXX.jnilib所在目录>`
