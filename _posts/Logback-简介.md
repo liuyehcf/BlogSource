@@ -51,121 +51,33 @@ additivity的取值是一个布尔值，true或者false
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Logback Configuration. -->
 <configuration debug="true">
+
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <target>System.out</target>
-        <encoding>UTF-8</encoding>
-        <filter class="com.alibaba.citrus.logconfig.logback.LevelRangeFilter">
-            <levelMax>INFO</levelMax>
-        </filter>
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <pattern><![CDATA[
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern><![CDATA[
 			 [%d{yyyy-MM-dd HH:mm:ss}]  %-5level %logger{0} - %m%n
             ]]></pattern>
-        </layout>
+            </layout>
+        </encoder>
     </appender>
 
     <appender name="STDERR" class="ch.qos.logback.core.ConsoleAppender">
         <target>System.err</target>
-        <encoding>UTF-8</encoding>
-        <filter class="com.alibaba.citrus.logconfig.logback.LevelRangeFilter">
-            <levelMin>WARN</levelMin>
-        </filter>
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <pattern><![CDATA[
-[%d{yyyy-MM-dd HH:mm:ss} ] - %X{method} %X{requestURIWithQueryString} [ip=%X{remoteAddr}, ref=%X{referrer}, ua=%X{userAgent}, sid=%X{cookie.JSESSIONID}]%n  %-5level %logger{35} - %m%n
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern><![CDATA[
+			 [%d{yyyy-MM-dd HH:mm:ss}]  %-5level %logger{0} - %m%n
             ]]></pattern>
-        </layout>
-    </appender>
-
-    <!-- 生成日志文件 -->
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!--日志文件输出的文件名 -->
-        <file>${app.output}/logs/app.log</file>
-
-        <!-- 固定数量的日志文件，防止将磁盘占满 -->
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>${app.output}/logs/app.%i.log
-            </fileNamePattern>
-            <minIndex>1</minIndex>
-            <maxIndex>10</maxIndex>
-        </rollingPolicy>
-
-        <!--日志文件最大的大小 -->
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>500MB</MaxFileSize>
-        </triggeringPolicy>
-
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
-            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] %-5level %logger{20} -%msg%n</pattern>
+            </layout>
         </encoder>
     </appender>
-
-    <appender name="thirdApiCallAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!--日志文件输出的文件名 -->
-        <file>${app.output}/logs/third_api_call.log</file>
-
-        <!-- 固定数量的日志文件，防止将磁盘占满 -->
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>${app.output}/logs/third_api_call.%i.log
-            </fileNamePattern>
-            <minIndex>1</minIndex>
-            <maxIndex>10</maxIndex>
-        </rollingPolicy>
-
-        <!--日志文件最大的大小 -->
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>500MB</MaxFileSize>
-        </triggeringPolicy>
-
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
-            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] %-5level %logger{20} -%msg%n</pattern>
-        </encoder>
-    </appender>
-
-    <!-- redis日志 -->
-    <appender name="redisAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${app.output}/logs/redis.log</file>
-
-        <!-- 固定数量的日志文件，防止将磁盘占满 -->
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <fileNamePattern>${app.output}/logs/redis.%i.log</fileNamePattern>
-            <minIndex>1</minIndex>
-            <maxIndex>10</maxIndex>
-        </rollingPolicy>
-
-        <!--日志文件最大的大小 -->
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>100MB</MaxFileSize>
-        </triggeringPolicy>
-
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
-            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] %-5level %logger{20} -%msg%n</pattern>
-        </encoder>
-    </appender>
-
-    <logger name="profiler" level="DEBUG" additivity="false">
-        <appender-ref ref="profilerAppender"/>
-        <appender-ref ref="STDOUT"/>
-    </logger>
-
-    <logger name="thirdApiCall" level="DEBUG" additivity="false">
-        <appender-ref ref="thirdApiCallAppender"/>
-        <appender-ref ref="STDOUT"/>
-    </logger>
-    
-    <logger name="redisLogger" level="DEBUG" additivity="false">
-        <appender-ref ref="redisAppender"/>
-        <appender-ref ref="STDOUT"/>
-    </logger>
 
     <root>
-        <level value="${app.logging.level}" />
-        <appender-ref ref="STDOUT" />
-        <appender-ref ref="STDERR" />
-        <appender-ref ref="FILE" />
+        <level value="DEBUG"/>
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="STDERR"/>
     </root>
 </configuration>
 ```
