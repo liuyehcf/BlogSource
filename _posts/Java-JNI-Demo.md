@@ -133,7 +133,7 @@ __g++参数解释__
     * 注意，如果`org_liuyehcf_jni_JniDemo.cpp`就在当前目录下，那么不需要指定`org_liuyehcf_jni_JniDemo.h`的位置，否则需要
 * `-o`：指定生成的动态库文件的名称，在macOS环境下，__动态库的命名格式为`libXXX.jnilib`，相当于linux下的`libXXX.so`__
 
-### 2.4.1 关于`#include <filename>`和`#include "filename"`
+### 2.4.1 关于#include &lt;filename&gt;和#include "filename"
 
 > In practice, the difference is in the location where the preprocessor searches for the included file.
 > 通常，这两者测差异在于预处理器去哪找这个file

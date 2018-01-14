@@ -28,9 +28,7 @@ logback-classic则实现了Slf4j的API，所以当想配合Slf4j使用时，需�
 
 logback-access是为了集成Servlet环境而准备的，可提供HTTP-access的日志接口
 
-# 2 配置文件
-
-## 2.1 `<configuration>`
+# 2 &lt;configuration&gt;
 
 根元素`<configuration>`包含的属性包括：
 
@@ -46,9 +44,9 @@ logback-access是为了集成Servlet环境而准备的，可提供HTTP-access的
 </configuration>
 ```
 
-## 2.2 `<configuration>`各个子元素
+# 3 &lt;configuration&gt;各个子元素
 
-### 2.2.1 `<contextName>`
+## 3.1 &lt;contextName&gt;
 
 `<contextName>`用于设置上下文名称
 
@@ -63,7 +61,7 @@ __示例__
 </configuration>
 ```
 
-### 2.2.2 `<property>`
+## 3.2 &lt;property&gt;
 
 `<property>`用来定义变量值的元素
 
@@ -83,7 +81,7 @@ __示例__
 </configuration>
 ```
 
-### 2.2.3 `<timestamp>`
+## 3.3 &lt;timestamp&gt;
 
 `<timestamp>`元素用于获取时间戳字符串，有两个属性
 
@@ -100,7 +98,7 @@ __示例__
 </configuration>
 ```
 
-### 2.2.4 `<logger>`
+## 3.4 &lt;logger&gt;
 
 用来设置某一个包或者具体的某一个类的日志打印级别、以及指定`<appender>`
 
@@ -113,19 +111,19 @@ __示例__
 
 `<logger>`可以包含零个或多个`<appender-ref>`元素，标识这个appender将会添加到这个logger
 
-### 2.2.5 `<logger>`
+## 3.5 &lt;root&gt;
 
-`<logger>`也是`<logger>`元素，但是它是__根logger__。__只有一个level属性，应为已经被命名为"root"__
+`<root>`也是`<logger>`元素，但是它是__根logger__。__只有一个level属性，应为已经被命名为"root"__
 
 * level：用来设置打印级别，大小写无关：__TRACE, DEBUG, INFO, WARN, ERROR, ALL 和 OFF__，__不能__设置为__INHERITED__或者同义词__NULL__。默认是DEBUG
 
 `<root>`可以包含零个或多个`<appender-ref>`元素，标识这个appender将会添加到这个logger
 
-### 2.2.6 `<appender>`
+## 3.6 &lt;appender&gt;
 
 `<appender>`是`<configuration>`的子元素，是负责写日志的组件。<appender>有两个必要属性name和class。name指定appender名称，class指定appender的全限定名。
 
-#### 2.2.6.1 ConsoleAppender
+### 3.6.1 ConsoleAppender
 
 把日志添加到控制台，有以下子元素：
 
@@ -148,7 +146,7 @@ __示例__
 </configuration>
 ```
 
-#### 2.2.6.2 FileAppender
+### 3.6.2 FileAppender
 
 把日志添加到文件，有以下子元素：
 
@@ -175,7 +173,7 @@ __示例__
 </configuration>
 ```
 
-#### 2.2.6.3 RollingFIleAppender
+### 3.6.3 RollingFIleAppender
 
 滚动记录文件，先将日志记录到指定文件，当符合某个条件时，将日志记录到其他文件。有以下子元素：
 
@@ -186,7 +184,7 @@ __示例__
 * `<triggeringPolicy>`: 告知 RollingFileAppender 何时激活滚动
 * `<prudent>`：当为true时，不支持FixedWindowRollingPolicy。支持TimeBasedRollingPolicy，但是有两个限制，1不支持也不允许文件压缩，2不能设置file属性，必须留空
 
-##### 2.2.6.3.1 `<rollingPolicy>`
+#### 3.6.3.1 &lt;rollingPolicy&gt;
 
 __TimeBasedRollingPolicy__：最常用的滚动策略，它根据时间来制定滚动策略，既负责滚动也负责触发滚动。有以下子节点：
 
@@ -204,7 +202,7 @@ __FixedWindowRollingPolicy__：根据固定窗口算法重命名文件的滚动�
     * 例如，假设最小值和最大值分别为1和2，命名模式为`mylog%i.log`，会产生归档文件`mylog1.log`和`mylog2.log`
     * 还可以指定文件压缩选项，例如，`mylog%i.log.gz`或者`log%i.log.zip`
 
-##### 2.2.6.3.2 `<triggeringPolicy>`
+#### 3.6.3.2 &lt;triggeringPolicy&gt;
 
 __SizeBasedTriggeringPolicy__：查看当前活动文件的大小，如果超过指定大小会告知RollingFileAppender触发当前活动文件滚动。只有一个子元素：
 
@@ -259,7 +257,7 @@ __示例2：__按照固定窗口模式生成日志文件，当文件大于20MB�
 </configuration>
 ```
 
-#### 2.2.6.4 `<encoder>`
+### 3.6.4 &lt;encoder&gt;
 
 `<encoder>`元素负责两件事，一是把日志信息转换成字节数组，二是把字节数组写入到输出流
 
@@ -279,7 +277,7 @@ __格式修饰符，与转换符共同使用__：可选的格式修饰符位于"
 * 接着是可选的最小宽度修饰符，用十进制数表示。如果字符小于最小宽度，则左填充或右填充，默认是左填充（即右对齐），填充符为空格。如果字符大于最小宽度，字符永远不会被截断
 * 最大宽度修饰符，符号是点号"."后面加十进制数。如果字符大于最大宽度，则从前面截断。点符号"."后面加减号"-"在加数字，表示从尾部截断
 
-# 3 示例
+# 4 示例
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -441,7 +439,7 @@ __格式修饰符，与转换符共同使用__：可选的格式修饰符位于"
 </configuration>
 ```
 
-# 4 参考
+# 5 参考
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf@163.com)，博主将在第一时间删除__
 

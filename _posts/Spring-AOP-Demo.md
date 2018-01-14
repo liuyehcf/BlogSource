@@ -53,7 +53,7 @@ __目录__
 
 # 2 注解版本
 
-## 2.1 `applicationContext.xml`配置如下
+## 2.1 applicationContext.xml配置如下
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -139,7 +139,7 @@ Spring会根据配置的匹配规则，__为匹配成功的bean创建代理__，
 
 # 3 XML版本
 
-## 3.1 `applicationContext.xml`配置如下
+## 3.1 applicationContext.xml配置如下
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>

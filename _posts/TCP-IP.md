@@ -139,7 +139,7 @@ __在TCP协议中RST(Reset the connection)表示复位，用来异常的关闭�
 1. 提前关闭
 1. 在一个已关闭的socket上收到数据
 
-# 6 `TIME_WAIT`状态
+# 6 TIME_WAIT状态
 
 `TIME_WAIT`状态存在的理由
 TCP/IP协议就是这样设计的，是不可避免的。主要有两个原因:

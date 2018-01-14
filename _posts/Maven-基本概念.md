@@ -173,7 +173,7 @@ Maven引入的传递性依赖机制，一方面大大简化和方便了依赖声
 </project>
 ```
 
-## 1.9 `maven-dependency-plugin`插件
+## 1.9 maven-dependency-plugin插件
 
 1. `$mvn dependency:list`
 1. `$mvn dependency:tree`

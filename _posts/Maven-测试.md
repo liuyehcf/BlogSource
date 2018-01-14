@@ -13,7 +13,7 @@ __目录__
 <!-- toc -->
 <!--more-->
 
-# 1 `maven-surefire-plugin`插件简介
+# 1 maven-surefire-plugin插件简介
 
 Maven本身并不是一个单元测试框架，Java世界中主流的单元测试框架为Junit和TestNG。__Maven所做的只是在构建执行到特定生命周期阶段的时候，通过插件来执行Junit或者TestNG的测试用例，这一插件就是`maven-surefire-plugin`__
 

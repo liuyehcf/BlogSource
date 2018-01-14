@@ -309,7 +309,7 @@ __基本上所有主要的插件都来自Apache和Codehaus__。由于Maven本身
 
 虽然并非所有插件都提供了完善的文档，但一些核心插件的文档还是非常丰富的。例如`maven-surefire-plugin`，详见[Maven Surefire Plugin](https://maven.apache.org/surefire/maven-surefire-plugin/)
 
-## 5.2 使用`maven-help-plugin`描述插件
+## 5.2 使用maven-help-plugin描述插件
 
 除了访问在线的插件文档之外，还可以借助`maven-help-plugin`来获取插件的详细信息，例如：`mvn help:describe -Dplugin=org.apache.maven.plugins:maven-compiler-plugin:2.1`
 
