@@ -311,7 +311,7 @@ $ git archive
 $ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 ```
 
-# 中文显示为8进制形式的问题
+# 11 中文显示为8进制形式的问题
 
 在Windows中，git bash打印的中文可能表示成`\+三个数字`的形式，即八进制表示
 
@@ -319,7 +319,7 @@ $ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Cre
 
 * `git config –global core.quotepath false`
 
-# 11 参考
+# 12 参考
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf@163.com)，博主将在第一时间删除__
 
