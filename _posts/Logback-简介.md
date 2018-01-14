@@ -14,76 +14,143 @@ __目录__
 <!-- toc -->
 <!--more-->
 
-# 1 配置文件
+# 1 LogBack的结构
 
-根节点是`<configuration>`，可包含0个或多个`<appender>`，0个或多个`<logger>`，最多一个`<root>`
+LogBack被分为3个组件
 
-## 1.1 `<logger>`
+1. logback-core
+1. logback-classic
+1. logback-access
 
-在配置文件中，logger的配置在
-`<logger>`标签中配置，`<logger>`标签只有一个属性是一定要的，那就是name，除了name属性，还有level属性，additivity属性可以配置，不过它们是可选的
+其中logback-core提供了LogBack的核心功能，是另外两个组件的基础
 
-level的取值可以是`TRACE, DEBUG, INFO, WARN, ERROR, ALL, OFF, INHERITED, NULL`，其中INHERITED和NULL的作用是一样的，并不是不打印任何日志，而是强制这个logger必须从其父辈继承一个日志级别
+logback-classic则实现了Slf4j的API，所以当想配合Slf4j使用时，需要将logback-classic加入classpath
 
-additivity的取值是一个布尔值，true或者false
+logback-access是为了集成Servlet环境而准备的，可提供HTTP-access的日志接口
 
-* false：表示只用当前logger的appender-ref。
-* true：表示当前logger的appender-ref和rootLogger的appender-ref都有效
+# 2 配置文件
 
-`<logger>`标签下只有一种元素，那就是`<appender-ref>`，可以有0个或多个，意味着绑定到这个logger上的Appender
+## 2.1 `<configuration>`
 
-## 1.2 `<root>`
+根元素`<configuration>`包含的属性包括：
 
-`<root>`标签和`<logger>`标签的配置类似，只不过`<root>`标签只允许一个属性，那就是level属性，并且它的取值范围只能取`TRACE, DEBUG, INFO, WARN, ERROR, ALL, OFF`。
-`<root>`标签下允许有0个或者多个 `<appender-ref>`
+1. scan：当此属性设置为true时，配置文件如果发生改变，将会被重新加载，默认值为true
+1. scanPeriod：设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒。当scan为true时，此属性生效。默认的时间间隔为1分钟
+1. debug：当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。默认值为false
 
-## 1.3 `<appender>`
-
-`<appender>`标签有两个必须填的属性，分别是name和class，class用来指定具体的实现类。`<appender>`标签下可以包含至多一个`<layout>`，0个或多个`<encoder>`，0个或多个`<filter>`，除了这些标签外，`<appender>`下可以包含一些类似于JavaBean的配置标签。
-
-`<layout>`包含了一个必须填写的属性class，用来指定具体的实现类，不过，如果该实现类的类型是PatternLayout时，那么可以不用填写。`<layout`>也和`<appender>`一样，可以包含类似于JavaBean的配置标签。
-
-`<encoder>`标签包含一个必须填写的属性class，用来指定具体的实现类，如果该类的类型是`PatternLayoutEncoder`，那么class属性可以不填。
-
-## 1.4 示例
+__示例__
 
 ```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Logback Configuration. -->
-<configuration debug="true">
-
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <target>System.out</target>
-        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
-            <layout class="ch.qos.logback.classic.PatternLayout">
-                <pattern><![CDATA[
-			 [%d{yyyy-MM-dd HH:mm:ss}]  %-5level %logger{0} - %m%n
-            ]]></pattern>
-            </layout>
-        </encoder>
-    </appender>
-
-    <appender name="STDERR" class="ch.qos.logback.core.ConsoleAppender">
-        <target>System.err</target>
-        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
-            <layout class="ch.qos.logback.classic.PatternLayout">
-                <pattern><![CDATA[
-			 [%d{yyyy-MM-dd HH:mm:ss}]  %-5level %logger{0} - %m%n
-            ]]></pattern>
-            </layout>
-        </encoder>
-    </appender>
-
-    <root>
-        <level value="DEBUG"/>
-        <appender-ref ref="STDOUT"/>
-        <appender-ref ref="STDERR"/>
-    </root>
+<configuration scan="true" scanPeriod="60 second" debug="false">  
+      <!-- 其他配置省略-->  
 </configuration>
 ```
 
-# 2 参考
+## 2.2 `<configuration>`各个子元素
+
+### 2.2.1 `<contextName>`
+
+`<contextName>`用于设置上下文名称
+
+每个logger都关联到logger上下文，默认上下文名称为"default"。但可以使用`<contextName>`设置成其他名字，用于区分不同应用程序的记录。一旦设置，不能修改
+
+__示例__
+
+```xml
+<configuration scan="true" scanPeriod="60 second" debug="false">  
+      <contextName>myAppName</contextName>  
+      <!-- 其他配置省略-->  
+</configuration>
+```
+
+### 2.2.2 `<property>`
+
+`<property>`用来定义变量值的元素
+
+`<property>`有两个属性，name和value
+
+1. 其中name的值是变量的名称
+1. value的值时变量定义的值
+* 通过`<property>`定义的值会被插入到logger上下文中。定义变量后，可以使`${}`来使用变量。
+
+__示例__
+
+```xml
+<configuration scan="true" scanPeriod="60 second" debug="false">  
+      <property name="APP_Name" value="myAppName" />   
+      <contextName>${APP_Name}</contextName>  
+      <!-- 其他配置省略-->  
+</configuration>
+```
+
+### 2.2.3 `<timestamp>`
+
+`<timestamp>`元素用于获取时间戳字符串，有两个属性
+
+* key:标识此<timestamp>的名字
+* datePattern：设置将当前时间（解析配置文件的时间）转换为字符串的模式，遵循Java.txt.SimpleDateFormat的格式。
+
+### 2.2.4 `<logger>`
+
+用来设置某一个包或者具体的某一个类的日志打印级别、以及指定`<appender>`
+
+`<logger>`仅有一个name属性，一个可选的level和一个可选的additivity属性。
+
+* name：用来指定受此logger约束的某一个包或者具体的某一个类。
+* level：用来设置打印级别，大小写无关：__TRACE, DEBUG, INFO, WARN, ERROR, ALL 和 OFF__，还有一个特殊值__INHERITED__或者同义词__NULL__，代表强制执行上级的级别。
+    * 如果未设置此属性，那么当前logger将会继承上级的级别。
+* additivity：是否向上级logger传递打印信息。默认是true。
+
+`<logger>`可以包含零个或多个`<appender-ref>`元素，标识这个appender将会添加到这个logger
+
+### 2.2.5 `<logger>`
+
+`<logger>`也是`<logger>`元素，但是它是__根logger__。__只有一个level属性，应为已经被命名为"root"__
+
+* level：用来设置打印级别，大小写无关：__TRACE, DEBUG, INFO, WARN, ERROR, ALL 和 OFF__，__不能__设置为__INHERITED__或者同义词__NULL__。默认是DEBUG
+
+`<root>`可以包含零个或多个`<appender-ref>`元素，标识这个appender将会添加到这个logger
+
+### 2.2.6 `<appender>`
+
+`<appender>`是`<configuration>`的子元素，是负责写日志的组件。<appender>有两个必要属性name和class。name指定appender名称，class指定appender的全限定名。
+
+#### 2.2.6.1 ConsoleAppender
+
+把日志添加到控制台，有以下子元素：
+
+* `<encoder>`：对日志进行格式化
+* `<target>`：字符串System.out或者 System.err，默认System.out
+
+__示例__
+
+```xml
+<configuration>  
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">  
+    <encoder>  
+      <pattern>%-4relative [%thread] %-5level %logger{35} - %msg %n</pattern>  
+    </encoder>  
+  </appender>  
+ 
+  <root level="DEBUG">  
+    <appender-ref ref="STDOUT" />  
+  </root>  
+</configuration>
+```
+
+#### 2.2.6.2 FileAppender
+
+把日志添加到文件，有以下子元素：
+
+* `<file>`：被写入的文件名，可以是相对目录，也可以是绝对目录，如果上级目录不存在会自动创建，没有默认值
+* `<append>`：如果是true，日志被追加到文件结尾，如果是false，清空现存文件，默认是true
+* `<encoder>`：对记录事件进行格式化。
+* `<prudent>`：如果是true，日志会被安全的写入文件，即使其他的FileAppender也在向此文件做写入操作，效率低，默认是false
+
+# 3 参考
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf@163.com)，博主将在第一时间删除__
 
+* [从零开始玩转logback](http://www.importnew.com/22290.html)
 * [logback 配置详解](https://www.jianshu.com/p/1ded57f6c4e3)
+
