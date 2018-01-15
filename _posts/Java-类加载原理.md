@@ -6,7 +6,6 @@ tags:
 categories: 
 - Java
 - 类隔离技术
-password: 19930101
 ---
 
 __目录__
@@ -626,6 +625,7 @@ JVM_DefineClassWithSource(JNIEnv *env, const char *name, jobject loader,
 ```
 
 __定义如下__
+
 ```C
 JVM_ENTRY(jclass, JVM_DefineClassWithSource(JNIEnv *env, const char *name, jobject loader, const jbyte *buf, jsize len, jobject pd, const char *source))
   JVMWrapper2("JVM_DefineClassWithSource %s", name);
