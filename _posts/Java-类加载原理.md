@@ -43,6 +43,10 @@ ContextClassLoader是作为Thread的一个成员变量出现的，一个线程�
 
 # 2 Class#forName的类加载过程
 
+__接下来我们会查看openjdk中的相关C++源码（源码下载请参考参考文献），openjdk的起始路径记为`${OPEN_JDK}`，我们将以如下形式来表示源码文件的位置__
+
+* `${OPEN_JDK}/path1/path2/path3/source.c`
+
 forName用于加载一个类并且会执行后续操作，包括验证，解析，初始化。并且触发static字段以及static域的执行。__下面仅分析类加载过程__
 
 ```Java
@@ -54,10 +58,6 @@ forName用于加载一个类并且会执行后续操作，包括验证，解析�
 ```
 
 这里`Reflection.getCallerClass`是一个native方法，用于获取调用`Class#forName`方法的实例所属的Class对象。其次，forName0也是一个native方法
-
-__接下来我们会查看openjdk中的相关C++源码，openjdk的起始路径记为`${OPEN_JDK}`，我们将以如下形式来表示源码文件的位置__
-
-* `${OPEN_JDK}/path1/path2/path3/source.c`
 
 首先查看forName0对应的native方法，路径如下：
 
@@ -115,10 +115,12 @@ Java_java_lang_Class_forName0(JNIEnv *env, jclass this, jstring classname,
 }
 ```
 
-我们继续查找JVM_FindClassFromCaller的声明，文件路径如下：
+我们继续查找JVM_FindClassFromCaller的声明以及定义，文件路径如下：
 
 * `${OPEN_JDK}/hotspot/src/share/vm/prims/jvm.h`
+* `${OPEN_JDK}/hotspot/src/share/vm/prims/jvm.cpp`
 
+__声明如下__
 ```C
 /*
  * Find a class from a given class loader.  Throws ClassNotFoundException.
@@ -132,10 +134,68 @@ Java_java_lang_Class_forName0(JNIEnv *env, jclass this, jstring classname,
 JNIEXPORT jclass JNICALL
 JVM_FindClassFromCaller(JNIEnv *env, const char *name, jboolean init,
                         jobject loader, jclass caller);
-
 ```
 
-只找到了声明，定义包含在dll中无法查看。该方法以类全限定名和ClassLoader的引用来查找指定的Class。如果命中了，那么返回Class对象，并且执行后续验证、解析、初始化的操作，至此Class#forName结束
+__定义如下__
+```C
+JVM_ENTRY(jclass, JVM_FindClassFromCaller(JNIEnv* env, const char* name,
+                                          jboolean init, jobject loader,
+                                          jclass caller))
+  JVMWrapper2("JVM_FindClassFromCaller %s throws ClassNotFoundException", name);
+  // Java libraries should ensure that name is never null...
+  if (name == NULL || (int)strlen(name) > Symbol::max_length()) {
+    // It's impossible to create this class;  the name cannot fit
+    // into the constant pool.
+    THROW_MSG_0(vmSymbols::java_lang_ClassNotFoundException(), name);
+  }
+
+  TempNewSymbol h_name = SymbolTable::new_symbol(name, CHECK_NULL);
+
+  oop loader_oop = JNIHandles::resolve(loader);
+  oop from_class = JNIHandles::resolve(caller);
+  oop protection_domain = NULL;
+  // If loader is null, shouldn't call ClassLoader.checkPackageAccess; otherwise get
+  // NPE. Put it in another way, the bootstrap class loader has all permission and
+  // thus no checkPackageAccess equivalence in the VM class loader.
+  // The caller is also passed as NULL by the java code if there is no security
+  // manager to avoid the performance cost of getting the calling class.
+  if (from_class != NULL && loader_oop != NULL) {
+    protection_domain = java_lang_Class::as_Klass(from_class)->protection_domain();
+  }
+
+  Handle h_loader(THREAD, loader_oop);
+  Handle h_prot(THREAD, protection_domain);
+  // 核心方法调用
+  jclass result = find_class_from_class_loader(env, h_name, init, h_loader,
+                                               h_prot, false, THREAD);
+
+  if (TraceClassResolution && result != NULL) {
+    trace_class_resolution(java_lang_Class::as_Klass(JNIHandles::resolve_non_null(result)));
+  }
+  return result;
+JVM_END
+
+jclass find_class_from_class_loader(JNIEnv* env, Symbol* name, jboolean init,
+                                    Handle loader, Handle protection_domain,
+                                    jboolean throwError, TRAPS) {
+  // Security Note:
+  // The Java level wrapper will perform the necessary security check allowing
+  // us to pass the NULL as the initiating class loader.  The VM is responsible for
+  // the checkPackageAccess relative to the initiating class loader via the
+  // protection_domain. The protection_domain is passed as NULL by the java code
+  // if there is no security manager in 3-arg Class.forName().
+  Klass* klass = SystemDictionary::resolve_or_fail(name, loader, protection_domain, throwError != 0, CHECK_NULL);
+
+  KlassHandle klass_handle(THREAD, klass);
+  // Check if we should initialize the class
+  if (init && klass_handle->oop_is_instance()) {
+    klass_handle->initialize(CHECK_NULL);
+  }
+  return (jclass) JNIHandles::make_local(env, klass_handle->java_mirror());
+}
+```
+
+从声明中可以看出，该方法以类全限定名和ClassLoader的引用来查找指定的Class。如果命中了，那么返回Class对象，并且执行后续验证、解析、初始化的操作，至此Class#forName结束
 
 如果没有命中，通过debug可以发现，该native方法会继续调用Java中的ClassLoader.loadClass(String)方法，ClassLoader的实例就是Class#forName中的`ClassLoader.getClassLoader(caller)`获取的类加载器，一般来说就是`AppClassLoader`
 
@@ -242,14 +302,68 @@ Java_java_lang_ClassLoader_findLoadedClass0(JNIEnv *env, jobject loader,
 }
 ```
 
-继续定位JVM_FindLoadedClass，该函数的定义同样无法查看，该函数的声明所在文件路径如下：
+继续定位JVM_FindLoadedClass，该函数的声明以及定义所在文件路径如下：
 
 * `${OPEN_JDK}/hotspot/src/share/vm/prims/jvm.h`
+`${OPEN_JDK}/hotspot/src/share/vm/prims/jvm.cpp`
+
+__声明如下__
 
 ```C
 /* Find a loaded class cached by the VM */
 JNIEXPORT jclass JNICALL
 JVM_FindLoadedClass(JNIEnv *env, jobject loader, jstring name);
+```
+
+__定义如下__
+
+```C
+JVM_ENTRY(jclass, JVM_FindLoadedClass(JNIEnv *env, jobject loader, jstring name))
+  JVMWrapper("JVM_FindLoadedClass");
+  ResourceMark rm(THREAD);
+
+  Handle h_name (THREAD, JNIHandles::resolve_non_null(name));
+  Handle string = java_lang_String::internalize_classname(h_name, CHECK_NULL);
+
+  const char* str   = java_lang_String::as_utf8_string(string());
+  // Sanity check, don't expect null
+  if (str == NULL) return NULL;
+
+  const int str_len = (int)strlen(str);
+  if (str_len > Symbol::max_length()) {
+    // It's impossible to create this class;  the name cannot fit
+    // into the constant pool.
+    return NULL;
+  }
+  TempNewSymbol klass_name = SymbolTable::new_symbol(str, str_len, CHECK_NULL);
+
+  // Security Note:
+  // The Java level wrapper will perform the necessary security check allowing
+  // us to pass the NULL as the initiating class loader.
+  Handle h_loader(THREAD, JNIHandles::resolve(loader));
+  if (UsePerfData) {
+    is_lock_held_by_thread(h_loader,
+                           ClassLoader::sync_JVMFindLoadedClassLockFreeCounter(),
+                           THREAD);
+  }
+
+  // 核心调用
+  Klass* k = SystemDictionary::find_instance_or_array_klass(klass_name,
+                                                              h_loader,
+                                                              Handle(),
+                                                              CHECK_NULL);
+#if INCLUDE_CDS
+  if (k == NULL) {
+    // If the class is not already loaded, try to see if it's in the shared
+    // archive for the current classloader (h_loader).
+    instanceKlassHandle ik = SystemDictionaryShared::find_or_load_shared_class(
+        klass_name, h_loader, CHECK_NULL);
+    k = ik();
+  }
+#endif
+  return (k == NULL) ? NULL :
+            (jclass) JNIHandles::make_local(env, k->java_mirror());
+JVM_END
 ```
 
 该方法会以__类加载器实例以及类全限定名作为key__，在缓存中查找Class实例
@@ -496,9 +610,12 @@ Java_java_lang_ClassLoader_defineClass2(JNIEnv *env,
 }
 ```
 
-继续定位JVM_DefineClassWithSource，该函数的定义同样无法查看，该函数的声明所在文件路径如下：
+继续定位JVM_DefineClassWithSource，该函数的声明以及定义所在文件路径如下：
 
 * `${OPEN_JDK}/hotspot/src/share/vm/prims/jvm.h`
+* `${OPEN_JDK}/hotspot/src/share/vm/prims/jvm.cpp`
+
+__声明如下__
 
 ```C
 /* Define a class with a source (added in JDK1.5) */
@@ -506,6 +623,71 @@ JNIEXPORT jclass JNICALL
 JVM_DefineClassWithSource(JNIEnv *env, const char *name, jobject loader,
                           const jbyte *buf, jsize len, jobject pd,
                           const char *source);
+```
+
+__定义如下__
+```C
+JVM_ENTRY(jclass, JVM_DefineClassWithSource(JNIEnv *env, const char *name, jobject loader, const jbyte *buf, jsize len, jobject pd, const char *source))
+  JVMWrapper2("JVM_DefineClassWithSource %s", name);
+
+  return jvm_define_class_common(env, name, loader, buf, len, pd, source, true, THREAD);
+JVM_END
+
+// common code for JVM_DefineClass() and JVM_DefineClassWithSource()
+// and JVM_DefineClassWithSourceCond()
+static jclass jvm_define_class_common(JNIEnv *env, const char *name,
+                                      jobject loader, const jbyte *buf,
+                                      jsize len, jobject pd, const char *source,
+                                      jboolean verify, TRAPS) {
+  if (source == NULL)  source = "__JVM_DefineClass__";
+
+  assert(THREAD->is_Java_thread(), "must be a JavaThread");
+  JavaThread* jt = (JavaThread*) THREAD;
+
+  PerfClassTraceTime vmtimer(ClassLoader::perf_define_appclass_time(),
+                             ClassLoader::perf_define_appclass_selftime(),
+                             ClassLoader::perf_define_appclasses(),
+                             jt->get_thread_stat()->perf_recursion_counts_addr(),
+                             jt->get_thread_stat()->perf_timers_addr(),
+                             PerfClassTraceTime::DEFINE_CLASS);
+
+  if (UsePerfData) {
+    ClassLoader::perf_app_classfile_bytes_read()->inc(len);
+  }
+
+  // Since exceptions can be thrown, class initialization can take place
+  // if name is NULL no check for class name in .class stream has to be made.
+  TempNewSymbol class_name = NULL;
+  if (name != NULL) {
+    const int str_len = (int)strlen(name);
+    if (str_len > Symbol::max_length()) {
+      // It's impossible to create this class;  the name cannot fit
+      // into the constant pool.
+      THROW_MSG_0(vmSymbols::java_lang_NoClassDefFoundError(), name);
+    }
+    class_name = SymbolTable::new_symbol(name, str_len, CHECK_NULL);
+  }
+
+  ResourceMark rm(THREAD);
+  ClassFileStream st((u1*) buf, len, (char *)source);
+  Handle class_loader (THREAD, JNIHandles::resolve(loader));
+  if (UsePerfData) {
+    is_lock_held_by_thread(class_loader,
+                           ClassLoader::sync_JVMDefineClassLockFreeCounter(),
+                           THREAD);
+  }
+  Handle protection_domain (THREAD, JNIHandles::resolve(pd));
+  Klass* k = SystemDictionary::resolve_from_stream(class_name, class_loader,
+                                                     protection_domain, &st,
+                                                     verify != 0,
+                                                     CHECK_NULL);
+
+  if (TraceClassResolution && k != NULL) {
+    trace_class_resolution(k);
+  }
+
+  return (jclass) JNIHandles::make_local(env, k->java_mirror());
+}
 ```
 
 该方法根据传入的字节数组来创建一个Class对象，并验证其正确性。__如果创建成功，那么建立一条`<类加载器实例，类全限定名，Class对象实例>`的缓存，也就是说Class对象的命名空间是由传给defineClass0、defineClass1、defineClass2的ClassLoader的实例提供的，因此并不一定是执行loadClass的类加载器实例__
@@ -517,10 +699,10 @@ JVM_DefineClassWithSource(JNIEnv *env, const char *name, jobject loader,
 ```sequence
 participant Java Code
 participant JVM
-Java Code-->Java Code:Class.forName(...)
-Java Code-->JVM:Reflection.getCallerClass()\n用以获取调用类的Class对象
+Java Code-->Java Code:Class@forName(...)
+Java Code-->JVM:Reflection@getCallerClass()\n用以获取调用类的Class对象
 JVM-->Java Code:return
-Java Code-->JVM:ClassLoader.forName0(...)
+Java Code-->JVM:ClassLoader@forName0(...)
 JVM-->JVM:JVM_FindClassFromCaller在缓存中查找Class对象\n以类加载器实例以及全限定名作为key
 JVM-->Java Code:若命中了，则结束加载过程\n若没有命中，调用传入JVM的类加载器实例的loadClass方法
 Java Code-->Java Code:...省略双亲委派的流程跳转...
