@@ -186,7 +186,7 @@ __示例__
 
 #### 3.6.3.1 &lt;rollingPolicy&gt;
 
-__TimeBasedRollingPolicy__：最常用的滚动策略，它根据时间来制定滚动策略，既负责滚动也负责触发滚动。有以下子节点：
+__ch.qos.logback.core.rolling.TimeBasedRollingPolicy__：最常用的滚动策略，它根据时间来制定滚动策略，既负责滚动也负责触发滚动。有以下子节点：
 
 * `<fileNamePattern>`: 必要节点，包含文件名及`%d`转换符
     * `%d`可以包含一个Java.text.SimpleDateFormat指定的时间格式，如：`%d{yyyy-MM}`
@@ -194,19 +194,13 @@ __TimeBasedRollingPolicy__：最常用的滚动策略，它根据时间来制定
     * RollingFileAppender的file子元素可有可无，通过设置file，可以为活动文件和归档文件指定不同位置，当前日志总是记录到file指定的文件（活动文件），活动文件的名字不会改变；如果没设置file，活动文件的名字会根据fileNamePattern的值，每隔一段时间改变一次。"/"或者"\"会被当做目录分隔符。
 * `<maxHistory>`: 可选元素，控制保留的归档文件的最大数量，超出数量就删除旧文件。假设设置每个月滚动，且`<maxHistory>`是6，则只保存最近6个月的文件，删除之前的旧文件。注意，删除旧文件是，那些为了归档而创建的目录也会被删除
 
-__FixedWindowRollingPolicy__：根据固定窗口算法重命名文件的滚动策略。有以下子元素：
+__ch.qos.logback.core.rolling.FixedWindowRollingPolicy__：根据固定窗口算法重命名文件的滚动策略。有以下子元素：
 
 * `<minIndex>`：窗口索引最小值
 * `<maxIndex>`：窗口索引最大值，当用户指定的窗口过大时，会自动将窗口设置为12
 * `<fileNamePattern>`：必须包含`%i`
     * 例如，假设最小值和最大值分别为1和2，命名模式为`mylog%i.log`，会产生归档文件`mylog1.log`和`mylog2.log`
     * 还可以指定文件压缩选项，例如，`mylog%i.log.gz`或者`log%i.log.zip`
-
-#### 3.6.3.2 &lt;triggeringPolicy&gt;
-
-__SizeBasedTriggeringPolicy__：查看当前活动文件的大小，如果超过指定大小会告知RollingFileAppender触发当前活动文件滚动。只有一个子元素：
-
-* `<maxFileSize>`:这是活动文件的大小，默认值是10MB
 
 __示例1：__每天生产一个日志文件，保存30天的日志文件
 
@@ -231,6 +225,39 @@ __示例1：__每天生产一个日志文件，保存30天的日志文件
 ```
 
 __示例2：__按照固定窗口模式生成日志文件，当文件大于20MB时，生成新的日志文件。窗口大小是1到3，当保存了3个归档文件后，将覆盖最早的日志
+
+```xml
+<configuration>   
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">   
+    <file>test.log</file>   
+ 
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">   
+      <fileNamePattern>tests.%i.log.zip</fileNamePattern>   
+      <minIndex>1</minIndex>   
+      <maxIndex>3</maxIndex>   
+    </rollingPolicy>   
+ 
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">   
+      <maxFileSize>5MB</maxFileSize>   
+    </triggeringPolicy>   
+    <encoder>   
+      <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>   
+    </encoder>   
+  </appender>   
+ 
+  <root level="DEBUG">   
+    <appender-ref ref="FILE" />   
+  </root>   
+</configuration>
+```
+
+#### 3.6.3.2 &lt;triggeringPolicy&gt;
+
+__ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy__：查看当前活动文件的大小，如果超过指定大小会告知RollingFileAppender触发当前活动文件滚动。只有一个子元素：
+
+* `<maxFileSize>`:这是活动文件的大小，默认值是10MB
+
+__示例__
 
 ```xml
 <configuration>   
