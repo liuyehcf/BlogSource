@@ -528,6 +528,8 @@ StageNode.stepIn。每个StageNode都绑定了一个target，执行完target的s
 
 ## 4.3 DeployPluginModule.stepIn
 
+这一步会为每个中间件生成一个独享的ModuleClassLoader，来形成加载时隔离的环境，避免中间件的依赖相互污染
+
 ```Java
     public void stepIn(PipelineContext context) throws PandoraException {
         Map<String, Archive> pluginArchives = (Map<String, Archive>) context.get(PipelineContextKey.PLUGIN_ARCHIVES_MAP);
@@ -555,6 +557,90 @@ StageNode.stepIn。每个StageNode都绑定了一个target，执行完target的s
         }
     }
 
+```
+
+### 4.3.1 DeployServiceImpl.deployModule
+
+```Java
+    @Override
+    public Module deployModule(Archive archive, String name) throws PandoraException {
+        if (log.isDebugEnabled()) {
+            try {
+                log.debug("DeployService", "deploy module @" + archive.getUrl());
+            } catch (MalformedURLException e) {
+                throw new PandoraException(e);
+            }
+        }
+
+        // 已经安装，返回module的name
+        if (modules.containsKey(name)) {
+            log.warn("DeployService", "module {} is already deployed", name);
+            return modules.get(name);
+        }
+
+        // 有并发风险重复创建模块，但是实际并不会发生
+        PluginModule pluginModule = moduleFactory.createModule(archive, name);
+        pluginModule.setModuleState(ModuleState.DEPLOYING);
+        modules.putIfAbsent(name, pluginModule);
+
+        log.info("DeployService", "deployed module {}, location: {}", name, archive);
+        if (log.isDebugEnabled()) {
+            log.debug("DeployService", "module info: {}", pluginModule);
+        }
+
+        return pluginModule;
+    }
+```
+
+### 4.3.2 PluginModuleFactory.createModule
+
+```Java
+    public PluginModule createModule(Archive archive, String name) throws PandoraException {
+        // TODO name 可能是jar名，或者是文件夹的名字
+        PluginModule module = new PluginModule();
+        module.setName(name);
+        module.setArchive(archive);
+        module.setDeployTime(new Date());
+        parsePriority(module);
+        parseVersion(module);
+        parseImports(module);
+        parseExports(module);
+        parseInitializer(module);
+        parseService(module);
+        parseLifecycleListeners(module);
+        setupClassLoader(module);
+        return module;
+    }
+```
+
+### 4.3.3 PluginModuleFactory.setupClassLoader
+
+这一步创建了ModuleClassLoader
+
+```Java
+    /**
+     * 构建ModuleClassLoader
+     */
+    void setupClassLoader(PluginModule module) throws PandoraException {
+        String name = module.getName();
+        CreateLoaderParam createLoaderParam = new CreateLoaderParam();
+        createLoaderParam.setModuleName(name);
+        createLoaderParam.setUseBizClassLoader(module.getImportInfo().isUseBizClassLoader());
+        createLoaderParam.setUseSystemClassLoader(module.getImportInfo().isUseSystemClassLoader());
+        createLoaderParam.setImportPackageList(module.getImportInfo().getImportPackageList());
+        
+        URL[] libFiles;
+        try {
+            libFiles = module.getLibFileUrls().toArray(new URL[0]);
+        } catch (IOException e) {
+            throw new PandoraException("get module lib files error!, module:" + module.getName(), e);
+        }
+        if (libFiles != null) {
+            createLoaderParam.setRepository(libFiles);
+        }
+        ClassLoader classLoader = classLoaderService.createModuleClassLoader(createLoaderParam);
+        module.setClassLoader(classLoader);
+    }
 ```
 
 ## 4.4 InitializerCheck.stepIn
@@ -596,6 +682,112 @@ StageNode.stepIn。每个StageNode都绑定了一个target，执行完target的s
                 }
             }
         }
+    }
+```
+
+### 4.5.1 ClassExporter.exportClasses
+
+```Java
+/**
+     * 导出Module的类到缓存中
+     *
+     * @param moduleName 模块名
+     * @return 导出类的总数
+     */
+    public int exportClasses(String moduleName) throws PandoraException {
+        PluginModule module = (PluginModule) deployService.findModule(moduleName);
+        if (module == null || module.getModuleState() != ModuleState.DEPLOYING) {
+            return 0;
+        }
+
+        if (exportIndexEnabled) {
+            int scanFromExportIndex = scanFromExportIndex(module);
+            if (scanFromExportIndex != -1) {
+                return scanFromExportIndex;
+            }
+        }
+
+        int count = 0;
+
+        for (Class<?> clazz : scanJars(module)) {
+            Class<?> existing = sharedClassService.putIfAbsent(moduleName, clazz);
+            if (existing == null) {
+                count++;
+            }
+        }
+
+        for (Class<?> clazz : scanPackages(module)) {
+            Class<?> existing = sharedClassService.putIfAbsent(moduleName, clazz);
+            if (existing == null) {
+                count++;
+            }
+        }
+
+        for (Class<?> clazz : scanClasses(module)) {
+            Class<?> existing = sharedClassService.putIfAbsent(moduleName, clazz);
+            if (existing == null) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+```
+
+### 4.5.2 ClassExporter.scanFromExportIndex
+
+每个中间件需要导出的类都写在一个文件里面，解析这个文件然后用ModuleClassLoader去加载，然后放入ReLaunchURLClassLoader的缓存当中去
+
+```Java
+    /**
+     * 尝试从 conf/export.index 加载导出类，如果没有找到，则返回 -1。index文件由pandora maven plugin生成。
+     *
+     * @param module
+     * @return
+     */
+    private int scanFromExportIndex(PluginModule module) throws PandoraException {
+        String moduleName = module.getName();
+        URL index = module.getArchive().getResource(EXPORT_INDEX);
+        if (index != null) {
+            List<String> classes = new ArrayList<String>();
+            BufferedReader bufferedReader = null;
+            try {
+                bufferedReader = new BufferedReader(new InputStreamReader(index.openStream()));
+                String clazz = null;
+                while ((clazz = bufferedReader.readLine()) != null) {
+                    if (StringUtils.isNotBlank(clazz)) {
+                        classes.add(clazz);
+                    }
+                }
+                log.info("ClassExporter", "module: {} load export classes index from {}, size: {}", moduleName, EXPORT_INDEX, classes.size());
+            } catch (IOException e) {
+                throw new PandoraException(e);
+            } finally {
+                if (bufferedReader != null) {
+                    IOUtils.ensureClose(bufferedReader);
+                }
+            }
+
+            ClassLoader classLoader = module.getClassLoader();
+            ExportInfo exportInfo = module.getExportInfo();
+            int loadedClassCount = 0;
+            for (String clzName : classes) {
+                try {
+                    Class<?> clz = classLoader.loadClass(clzName);
+                    Class<?> existing = sharedClassService.putIfAbsent(moduleName, clz);
+                    if (existing == null) {
+                        loadedClassCount++;
+                    }
+                    if (log.isDebugEnabled()) {
+                        log.debug("ClassExporter", "{} export class: {}", moduleName, clz.getName());
+                    }
+                } catch (Throwable t) {
+                    throwIfNotOptional(exportInfo, clzName, moduleName, t);
+                }
+            }
+            return loadedClassCount;
+        }
+        return -1;
     }
 ```
 
