@@ -111,6 +111,9 @@ $ git branch [branch-name]
 # 新建一个分支，并切换到该分支
 $ git checkout -b [branch]
 
+# 从远程仓库拉取指定分支，并在本地新建一个分支，并切换到该分支
+$ git checkout -b [branch_local] origin/[branch_remote]
+
 # 新建一个分支，指向指定commit
 $ git branch [branch] [commit]
 
