@@ -100,14 +100,24 @@ __示例__
 
 ## 3.4 &lt;logger&gt;
 
-用来设置某一个包或者具体的某一个类的日志打印级别、以及指定`<appender>`
+一个`<logger>`元素对应了一个或者多个`org.slf4j.Logger`实例
+* 如果我们在程序中采用`Logger logger = LoggerFactory.getLogger(A.class);`来获取一个Logger的实例，那么在`<logger>`元素中用name属性来设定__包名__或者__类名__就可以控制该Logger实例的行为
+* 如果我们在程序中采用`Logger logger = LoggerFactory.getLogger("MyLogger");`来获取一个Logger的实例，那么在`<logger>`元素中用name属性设定__同样的名字__("MyLogger")就可以控制该Logger实例的行为
+
+`<logger>`元素用来设置__一个或者多个Logger实例__的日志打印级别、以及指定`<appender>`
 
 `<logger>`仅有一个name属性，一个可选的level和一个可选的additivity属性
 
-* name：用来指定受此logger约束的某一个包或者具体的某一个类
+* name：用来指定受此logger约束的一个或多个Logger实例
+    * 可以是包名
+    * 可以是类名
+    * 可以是自定义的名字
 * level：用来设置打印级别，大小写无关：__TRACE, DEBUG, INFO, WARN, ERROR, ALL 和 OFF__，还有一个特殊值__INHERITED__或者同义词__NULL__，代表强制执行上级的级别
     * 如果未设置此属性，那么当前logger将会继承上级的级别
 * additivity：是否向上级logger传递打印信息。默认是true
+    * 如果配置了两个logger，一个logger的name属性配置的是包名（记为logger1），另一个logger的name属性配置的是类名（记为logger2），那么logger1是logger2的__上级logger__
+    * 其余情况，一个logger的__上级logger__就是root
+
 
 `<logger>`可以包含零个或多个`<appender-ref>`元素，标识这个appender将会添加到这个logger
 
