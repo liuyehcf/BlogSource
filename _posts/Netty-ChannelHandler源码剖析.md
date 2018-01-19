@@ -48,7 +48,7 @@ ChannelHandlerAdapter为ChannelHandler接口提供的方法提供了一个__空�
 
 ChannelInboundHandlerAdapter为ChannelInboundHandler接口提供了基础的实现
 
-可以看到，ChannelInboundHandlerAdapter对于ChannelInboundHandler接口的实现非常简单。仅仅调用ChannelHandlerContext的实例ctx执行相应的方法，即将该操作的执行权传递给后面的ChannelInboundHandler。
+可以看到，ChannelInboundHandlerAdapter对于ChannelInboundHandler接口的实现非常简单。仅仅调用ChannelHandlerContext的实例ctx执行相应的方法，即将该操作的执行权传递给后面的ChannelInboundHandler
 
 因此，我们在自定义ChannelInboundHandler的时候，仅需要继承该ChannelInboundHandlerAdapter类，并且重写我们需要的方法即可，如果需要将操作向后传递，则务必记得加上形如`ctx.fireChannelRegistered();`的语句。对于其他不需要重写的方法，使用ChannelInboundHandlerAdapter提供的默认版本即可，即保证操作的传递性
 

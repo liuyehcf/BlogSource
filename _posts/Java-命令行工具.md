@@ -5,6 +5,8 @@ tags:
 - 摘录
 categories: 
 - Java
+- Java Virtual Machine
+- 命令行工具
 ---
 
 __目录__
@@ -116,7 +118,7 @@ __参数说明：__
 
 jhat是虚拟机堆转储快照分析工具
 
-Sun JDK提供jhat(JVM Heap Analysis Tool)命令与jmap搭配使用，来分析jmap生成的堆转储快照。
+Sun JDK提供jhat(JVM Heap Analysis Tool)命令与jmap搭配使用，来分析jmap生成的堆转储快照
 
 jhat内置了一个微型的HTTP/HTML服务器，生成dump文件的分析结果后，可以在浏览器中查看
 

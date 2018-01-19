@@ -25,18 +25,18 @@ __目录__
 
 首先排除掉的是system classloader（系统类加载器），这个类加载器用于加载`-classpath`路径下的类，并且可以通过静态方法`ClassLoader.getSystemClassLoader()`来获得。实际上，我们很少在代码中明确使用系统类加载器来加载类，因为我们总是可以通过其他类加载器并__通过委托__到达系统类加载器。如果你编写的程序运行在__最后一个ClassLoader__是AppClassLoader的情况下，那么你的代码就只能工作于命令行中，即通过`-classpath`参数来指定类加载路径，如果程序运行于Web容器中，那么这种方式就行不通了
 
-current classloader是当前方法所属类的类加载器。通俗来讲，类A中使用了类B（类B在此前并未加载），那么会使用加载A的加载器来加载B。等效于通过`A.class.getClassLoader().loadClass("B");`来加载。
+current classloader是当前方法所属类的类加载器。通俗来讲，类A中使用了类B（类B在此前并未加载），那么会使用加载A的加载器来加载B。等效于通过`A.class.getClassLoader().loadClass("B");`来加载
 
-在deSerialization中也需要知道类型的信息。在序列化后的内容中，已经包含了当前用户自定义类的类型信息，那么如何在ObjectInputStream调用中，能够拿到客户端的类型呢？通过调用Class.forName？肯定不可以，因为在ObjectInputStream中调用这个，会使用bootstrap来加载，那么它肯定加载不到所需要的类。
+在deSerialization中也需要知道类型的信息。在序列化后的内容中，已经包含了当前用户自定义类的类型信息，那么如何在ObjectInputStream调用中，能够拿到客户端的类型呢？通过调用Class.forName？肯定不可以，因为在ObjectInputStream中调用这个，会使用bootstrap来加载，那么它肯定加载不到所需要的类
 
-答案是通过查询栈信息，通过sun.misc.VM.latestUserDefinedLoader(); 获取从栈上开始计算，第一个不为空（bootstrap classloader是空）的ClassLoader便返回。
+答案是通过查询栈信息，通过sun.misc.VM.latestUserDefinedLoader(); 获取从栈上开始计算，第一个不为空（bootstrap classloader是空）的ClassLoader便返回
 
 可以试想，在ObjectInputStream运作中，通过直接获取当前调用栈中，第一个非空的ClassLoader，这种做法能够非常便捷的定位用户的ClassLoader，也就是用户在进行：
 ```Java
 ObjectInputStream ois = new ObjectInputStream(new FileInputStream(“xx.dat”));
 B b = (B) ois.readObject();
 ```
-这种调用的时候，依旧能够通过“当前”的ClassLoader正确的加载用户的类。
+这种调用的时候，依旧能够通过“当前”的ClassLoader正确的加载用户的类
 
 ContextClassLoader是作为Thread的一个成员变量出现的，一个线程在构造的时候，它会从parent线程中继承这个ClassLoader。__使用线程上下文类加载器，可以在执行线程中抛弃双亲委派加载链模式，使用线程上下文里的类加载器加载类__。CurrentClassLoader对用户来说是自动的，隐式的，而ContextClassLoader需要显示的使用，先进行设置然后再进行使用
 
@@ -367,9 +367,9 @@ JVM_END
 
 该方法会以__类加载器实例以及类全限定名作为key__，在缓存中查找Class实例
 
-如果命中了直接返回。如果没有命中，则根据双亲委派模型依次调用双亲类加载器加载。
+如果命中了直接返回。如果没有命中，则根据双亲委派模型依次调用双亲类加载器加载
 
-如果仍然没有加载到，那么调用findClass方法，findClass在ClassLoader中定义，但是提供了空实现，不同的子类负责实现不同的逻辑，用以达到不同的类加载路径的效果。
+如果仍然没有加载到，那么调用findClass方法，findClass在ClassLoader中定义，但是提供了空实现，不同的子类负责实现不同的逻辑，用以达到不同的类加载路径的效果
 
 我们继续以AppClassLoader为例进行分析，AppClassLoader的findClass实现如下：
 

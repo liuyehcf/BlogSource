@@ -56,13 +56,13 @@ __总结__
 1. __inode__：记录文件的属性，一个文件占用一个inode(大量的小文件可能会造成资源的浪费)，同时记录文件的数据所在的block号码
 1. __block__：实际记录文件的内容，若文件太大时，会占用多个block
 
-碎片整理：需要碎片整理的原因就是文件写入的block太过于离散了，此时文件读取的性能将会变得很差。
+碎片整理：需要碎片整理的原因就是文件写入的block太过于离散了，此时文件读取的性能将会变得很差
 
 # 3 Linux的Ext2文件系统(inode)
 
-文件系统一开始就将inode与block规划好了，除非重新格式化，否则inode与block固定后就不再变动，如果文件系统高达数百GB，将所有inode与block放在一起是很不明智的。
+文件系统一开始就将inode与block规划好了，除非重新格式化，否则inode与block固定后就不再变动，如果文件系统高达数百GB，将所有inode与block放在一起是很不明智的
 
-Ext2文件系统在格式化时基本上是区分为多个组块，每个组块都有独立的inode/block/super block系统。
+Ext2文件系统在格式化时基本上是区分为多个组块，每个组块都有独立的inode/block/super block系统
 
 在整体规划中，文件系统最前面有一个启动扇区，这个启动扇区可以安装引导装载程序，这是个非常重要的设计，因为这样一来，我们就可以把不同的引导装载程序安装到个别的文件系统最前端，而不用覆盖整块硬盘为一个MBR，才能制作出多重引导的环境
 
@@ -103,7 +103,7 @@ __super block用于记录整个文件系统的相关信息，包括__
 1. 一个validbit数值，若此文件系统已经被挂载，则valid bit为0，否则为1
 1. 此外每个block group都可能含有super block，但是文件系统应该只有一个super block，因为这些block group的super block是作为备份，在super block出故障时进行救援的作用
 
-File system Description(文件系统描述说明)用于描述每个block group的开始与结束的block号码，以及说明每个区段分别介于哪一个block号码之间，这部分能用dumpe2fs来查看。
+File system Description(文件系统描述说明)用于描述每个block group的开始与结束的block号码，以及说明每个区段分别介于哪一个block号码之间，这部分能用dumpe2fs来查看
 
 __block bitmap__用于告知哪些block是空的，因此系统可以很快地找到可以使用的空间来处置文件。同理，若删除文件，要将block bitmap中对应的标志标记为未使用
 
@@ -119,9 +119,9 @@ __inode bitmap__与bolck bitmap类似，用于告知inode的使用状况
 * block记录在这个目录下的文件名，与该文件名占用的inode号码数据，即记录`文件名-inode号码对`
 * 如果该目录下的文件数太多，导致一个block无法容纳下所有文件名与inode对照表，此时会基于该目录多一个block来继续记录相关的数据
 
-在Linux下的Ext2新建一个__一般文件时__，Ext2会分配一个inode与相对于该文件大小的block数量给该文件。
+在Linux下的Ext2新建一个__一般文件时__，Ext2会分配一个inode与相对于该文件大小的block数量给该文件
 
-__inode本身并不记录文件名，文件名的记录在目录的block中__，因此新增/删除/重命名文件名与目录的w权限有关。因为文件名存在block中。__因此，要读取某个文件时，就务必会经过目录的inode与block__，然后才能够找到那个待读取文件的inode号码，最终才能读取到正确的文件的block内的数据。
+__inode本身并不记录文件名，文件名的记录在目录的block中__，因此新增/删除/重命名文件名与目录的w权限有关。因为文件名存在block中。__因此，要读取某个文件时，就务必会经过目录的inode与block__，然后才能够找到那个待读取文件的inode号码，最终才能读取到正确的文件的block内的数据
 
 目录树由根目录开始读起，因此系统通过挂载的信息可以找到挂载点的inode号码(通常，一个文件系统最顶层的inode号码会从2开始)，并根据该inode读取根目录的block内的文件名数据，再一层层往下读到正确的文件名
 
@@ -134,7 +134,7 @@ __inode本身并不记录文件名，文件名的记录在目录的block中__，
 1. 根据block bitmap找到没有使用中的block号码，并将实际的数据写入block中，且更新inode的block指向数据
 1. 将刚才写入的inode与block数据同步更新到inode bitmap与block bitmap，并更新super block的内容
 
-一般来说__inode table与data block称为数据存放区域，super block、block bitmap 与inode bitmap等区段就被称为meta data(中间数据)__，因为这些数据经常变动，每次添加，删除编辑，都可能会影响到这三个数据，因此称为中间数据。
+一般来说__inode table与data block称为数据存放区域，super block、block bitmap 与inode bitmap等区段就被称为meta data(中间数据)__，因为这些数据经常变动，每次添加，删除编辑，都可能会影响到这三个数据，因此称为中间数据
 
 当文件写入系统时，发生了中断(停电)，可能会导致metadata的内容与实际数据存放区产生不一致的情况。若此情况发生，系统在重启时会通过super block的valid bit与文件系统的state(clean 与否)等状态来判断是否强制进行数据一致性检查，但是这样的检查是很费时的！
 
@@ -159,13 +159,13 @@ __inode本身并不记录文件名，文件名的记录在目录的block中__，
 1. 日志文件系统：ext3/ReiserFS/Windows'NTFS/IBM'sJFS/SGI'sXFS
 1. 网络文件系统：NFS/SMBFS
 
-2、Linux VFS：Virtual Filesystem Switch(虚拟文件系统)：整个Linux认识的文件系统其实都是VFS在进行管理，我们用户并不需要知道每个分区上头的文件系统是什么，VFS会主动帮我们做好读取操作。
+2、Linux VFS：Virtual Filesystem Switch(虚拟文件系统)：整个Linux认识的文件系统其实都是VFS在进行管理，我们用户并不需要知道每个分区上头的文件系统是什么，VFS会主动帮我们做好读取操作
 
 # 8 连接文件：ln
 
 连接文件有两类，hard link与symbolic link。其中symbolic link类似于Windows的快捷方式功能的文件，可以让你快速连接到目标文件(或目录)；hard link通过文件系统的inode连接来产生新文件名而不是产生新文件
 
-每个文件都会占用一个inode，文件内容由inode的记录来指向。想要读取该文件，必须要经过目录记录的文件名来指向到正确的inode号码才能读取，也就是说，文件名只与目录有关，但是文件内容则与inode有关。
+每个文件都会占用一个inode，文件内容由inode的记录来指向。想要读取该文件，必须要经过目录记录的文件名来指向到正确的inode号码才能读取，也就是说，文件名只与目录有关，但是文件内容则与inode有关
 
 __简单地说，hard link只是在某个目录下新建一条文件名连接到某inode号码的关联记录而已__。由于目录的block存放的就是文件名与inode的关联记录，hard link在某个目录下，也就是该目录的block中新建一条文件名与inode的关联记录，因此，真实文件的inode的关联记录会增加一条。此时两个文件名都会连接到同一个inode号码，由`ls -l`查看的链接数就是指有多少个文件名连接到这个inode号码的意思。__hard link最大的好处是安全__：如果将任意一个文件名删除，那么inode与bolck还是存在的，不论用哪个文件名来编辑，最终的结果都将写入到相同的inode与block中，因此均能进行数据的修改。一般来说，用hard link设置连接文件，磁盘空间与inode数目都不会变，因为hard link只是在目录的block多写入一个关联数据而已(除非写入该数据后导致当前目录的block已满，必须额外分配一个block)
 

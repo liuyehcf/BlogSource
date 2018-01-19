@@ -54,7 +54,7 @@ JMM其实遵循一个基本原则：__只要不改变程序的执行结果(指�
 
 # 3 happens-before 定义
 
-JSR-133使用happens-before的概念来__指定两个操作之间的执行顺序__，由于这两个操作可以在一个线程之内，也可以在不同线程之间。因此JMM，通过happens-before关系向程序员提供跨线程的__内存可见性保证__。
+JSR-133使用happens-before的概念来__指定两个操作之间的执行顺序__，由于这两个操作可以在一个线程之内，也可以在不同线程之间。因此JMM，通过happens-before关系向程序员提供跨线程的__内存可见性保证__
 
 《JSR-133:Java Memory Model and Thread Specification》对happens-before关系的定义如下
 

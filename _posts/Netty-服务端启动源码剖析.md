@@ -818,7 +818,7 @@ public class EchoServer {
     }
 ```
 
-    * `bind`方法位于`DefaultChannelPipeline`的__非静态__内部类`HeadContext`中，该方法通过其关联的Unsafe对象执行底层的bind操作。关于HeadContext以及TailContext暂时不太清楚设计目的。
+    * `bind`方法位于`DefaultChannelPipeline`的__非静态__内部类`HeadContext`中，该方法通过其关联的Unsafe对象执行底层的bind操作。关于HeadContext以及TailContext暂时不太清楚设计目的
 ```Java
         public void bind(
                 ChannelHandlerContext ctx, SocketAddress localAddress, ChannelPromise promise)

@@ -99,7 +99,7 @@ __与该字段相关的方法__
      * ensuring workers set is stable while separately checking
      * permission to interrupt and actually interrupting.
      */
-    // 重入锁，在访问或者修改workers时，需要该重入锁来保证线程安全。
+    // 重入锁，在访问或者修改workers时，需要该重入锁来保证线程安全
     private final ReentrantLock mainLock = new ReentrantLock();
 
     /**
@@ -466,7 +466,7 @@ __该方法实现的逻辑如下__
         try {
             w = new Worker(firstTask);
             final Thread t = w.thread;
-            // 这个条件是为了支持线程创建失败。由于Worker内部的线程是通过ThreadFactory来创建的，不同的工厂可能会有不同的创建逻辑。
+            // 这个条件是为了支持线程创建失败。由于Worker内部的线程是通过ThreadFactory来创建的，不同的工厂可能会有不同的创建逻辑
             if (t != null) {
                 final ReentrantLock mainLock = this.mainLock;
                 mainLock.lock();

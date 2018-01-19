@@ -134,7 +134,7 @@ __常量分为两大类__
     * __DEFAULT_CONCURRENCY_LEVEL__：并发等级，用于兼容之前的版本(暂时不用关心这个常数)
     * __LOAD_FACTOR__：负载因子，计算公式为：factor=元素总个数/bucket数量。实际上代码中并不用这个浮点数来计算，而是用(n-n>>2)来计算n*LOAD_FACTORY，因为位运算比乘法效率更高
     * __TREEIFY_THRESHOLD__：树化的临界值，当一个bin/bucket新增一个元素后，节点数量达到该值时，就要从链表转为红黑树
-    * __UNTREEIFY_THRESHOLD__：逆树化的临界值，当一个bin/bucket删除一个元素后，节点数量到达该值时，就要从红黑树转为链表。
+    * __UNTREEIFY_THRESHOLD__：逆树化的临界值，当一个bin/bucket删除一个元素后，节点数量到达该值时，就要从红黑树转为链表
         * 这两个临界值设置为不同的值，我认为是为了避免当节点数量到达临界值时的多次树化与逆树化操作(增加节点/删除节点交替进行这种特殊情况)
     * __MIN_TREEIFY_CAPACITY__：树化时，hashtable的最小容量。如果一个bin/bucket需要进行树化操作，但是此时hashtable的容量小于该常量，则hashtable应该扩容而不是树化该bin/bucket
     * __MIN_TRANSFER_STRIDE__：进行并发扩容时，每个线程分得的最小bin/bucket数量

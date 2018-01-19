@@ -29,7 +29,7 @@ __SOAP、WSDL和UDDI构成了web Service的三要素__
 
 Simple Object Access Protocol，中文为简单对象访问协议，简称SOAP
 
-SOAP是基于XML在分散或分布式的环境中交换信息的简单的协议。允许服务提供者和服务客户经过防火墙在INTERNET进行通讯交互。
+SOAP是基于XML在分散或分布式的环境中交换信息的简单的协议。允许服务提供者和服务客户经过防火墙在INTERNET进行通讯交互
 
 SOAP的设计是为了在一个松散的、分布的环境中使用XML对等地交换结构化的和类型化的信息提供了一个简单且轻量级的机制
 
@@ -41,7 +41,7 @@ Web Services Description Language，网络服务描述语言，简称WSDL。它�
 
 ## 2.3 UDDI
 
-Universal Description, Discovery and Integration，通用描述、发现与集成服务，简称UDDI。
+Universal Description, Discovery and Integration，通用描述、发现与集成服务，简称UDDI
 
 WSDL用来描述了访问特定的Web Service的一些相关的信息，那么在互联网上，或者是在企业的不同部门之间，如何来发现我们所需要的Web Service呢？而Web Service提供商又如何将自己开发的Web Serivce公布到因特网上呢？这就需要使用到UDDI了
 
@@ -53,7 +53,7 @@ UDDI可以帮助Web服务提供商在互联网上发布Web services的信息。U
 
 1. __Web Service提供者__：可以发布Web Service，并且对使用自身服务的请求进行响应，Web Service的拥有者，它会等待其他的服务或者是应用程序访问自己
 1. __Web Service请求者__：也就是Web Service功能的使用者，它通过服务注册中心也就是Web Service中介者查找到所需要的服务，再利用SOAP消息向Web Service提供者发送请求以获得服务
-1. __Web Service中介者__：也称为服务代理，用来注册已经发布的Web Service提供者，并对其进行分类，同时提供搜索服务，简单来说的话，Web Service中介者的作用就是把一个Web Service请求者和合适的Web Service提供者联系在一起，充当一个管理者的角色，一般是通过UDDI来实现。
+1. __Web Service中介者__：也称为服务代理，用来注册已经发布的Web Service提供者，并对其进行分类，同时提供搜索服务，简单来说的话，Web Service中介者的作用就是把一个Web Service请求者和合适的Web Service提供者联系在一起，充当一个管理者的角色，一般是通过UDDI来实现
 
 同时还涉及到三类动作：发布；查找；绑定
 

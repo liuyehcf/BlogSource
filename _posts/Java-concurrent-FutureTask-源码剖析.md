@@ -146,7 +146,7 @@ __WaitNode将Thread对象封装成一个链表的节点__
 __FutureTask含有两个构造方法__
 
 * 一个构造方法接受一个Callable对象
-* 另一个构造方法接受一个Runnable对象，和一个Result。
+* 另一个构造方法接受一个Runnable对象，和一个Result
 
 ```Java
     /**
@@ -235,7 +235,7 @@ __其中适配器RunnableAdapter如下__
 
 __线程执行的主要方法__
 
-* 首先判断状态，只有NEW状态才能正常执行该方法，否则说明被cancel了。
+* 首先判断状态，只有NEW状态才能正常执行该方法，否则说明被cancel了
 * 执行Callable的call方法，正常执行或者异常执行将会触发不同的状态转移方法
 
 ```Java
@@ -403,7 +403,7 @@ __该方法会唤醒所有阻塞在get方法中的所有WaitNode节点__
 __get方法有两个重载版本__
 
 * 第一个版本会阻塞线程，直至FutureTask以某种方式结束后被唤醒
-* 第二个版本可以设定最长阻塞时间。阻塞线程，直至FutureTask以某种方式结束后被唤醒，或者超时。
+* 第二个版本可以设定最长阻塞时间。阻塞线程，直至FutureTask以某种方式结束后被唤醒，或者超时
 
 ```Java
     /**
@@ -574,7 +574,7 @@ __根据FutureTask的状态，返回相应的结果__
 
 ## 7.4 cancel
 
-cancel方法用于中断当前task，参数mayInterruptIfRunning用于指示是否允许中断正在运行的task。
+cancel方法用于中断当前task，参数mayInterruptIfRunning用于指示是否允许中断正在运行的task
 
 ```Java
     public boolean cancel(boolean mayInterruptIfRunning) {

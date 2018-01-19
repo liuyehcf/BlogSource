@@ -16,15 +16,15 @@ __目录__
 
 # 1 前言
 
-mock测试就是在测试过程中，对于某些不容易构造或者不容易获取的对象，用一个__虚拟的对象(不要被虚拟误导，就是Java对象，虚拟描述的是这个对象的行为)__来创建以便测试的测试方法。
+mock测试就是在测试过程中，对于某些不容易构造或者不容易获取的对象，用一个__虚拟的对象(不要被虚拟误导，就是Java对象，虚拟描述的是这个对象的行为)__来创建以便测试的测试方法
 
-真实对象具有不可确定的行为，产生不可预测的效果，（如：股票行情，天气预报）真实对象很难被创建的真实对象的某些行为很难被触发真实对象实际上还不存在的（和其他开发小组或者和新的硬件打交道）等等。
+真实对象具有不可确定的行为，产生不可预测的效果，（如：股票行情，天气预报）真实对象很难被创建的真实对象的某些行为很难被触发真实对象实际上还不存在的（和其他开发小组或者和新的硬件打交道）等等
 
-使用一个接口来描述这个对象。在产品代码中实现这个接口，在测试代码中实现这个接口，在被测试代码中只是通过接口来引用对象，所以它不知道这个引用的对象是真实对象，还是mock对象。
+使用一个接口来描述这个对象。在产品代码中实现这个接口，在测试代码中实现这个接口，在被测试代码中只是通过接口来引用对象，所以它不知道这个引用的对象是真实对象，还是mock对象
 
 # 2 示例
 
-该示例的目的并不是教你如何去用mock进行测试，而是给出mock对象的创建过程以及它的行为。
+该示例的目的并不是教你如何去用mock进行测试，而是给出mock对象的创建过程以及它的行为
 
 1. 首先创建Mock对象，即代理对象
 1. 设定EasyMock的相应逻辑，即打桩
@@ -65,9 +65,9 @@ Disconnected from the target VM, address: '127.0.0.1:59825', transport: 'socket'
 	at org.liuyehcf.easymock.TestEasyMock.main(TestEasyMock.java:28)
 ```
 
-输出的结果很有意思，在`EasyMock.replay(mock)`语句之前用两个`EasyMock.expect`设定了"Bob"和"Alice"的预期结果，因此结果符合设定；而"Robot"并没有设定，因此抛出异常。
+输出的结果很有意思，在`EasyMock.replay(mock)`语句之前用两个`EasyMock.expect`设定了"Bob"和"Alice"的预期结果，因此结果符合设定；而"Robot"并没有设定，因此抛出异常
 
-接下来我们将分析以下上述例子中所涉及到的源码，解开mock神秘的面纱。
+接下来我们将分析以下上述例子中所涉及到的源码，解开mock神秘的面纱
 
 # 3 源码详解
 
@@ -90,7 +90,7 @@ Disconnected from the target VM, address: '127.0.0.1:59825', transport: 'socket'
     }
 ```
 
-其中`createMock`是`IMocksControl`接口的方法。该方法接受Class对象，并返回Class对象所代表类型的实例。
+其中`createMock`是`IMocksControl`接口的方法。该方法接受Class对象，并返回Class对象所代表类型的实例
 
 ```Java
     /**
@@ -234,7 +234,7 @@ public final class MockInvocationHandler implements InvocationHandler, Serializa
 }
 ```
 
-再回到`EasyMock.replay`方法中，getControl(mock)方法返回后调用`MocksControl#replay`方法，下面给出`MocksControl#replay`的源码。
+再回到`EasyMock.replay`方法中，getControl(mock)方法返回后调用`MocksControl#replay`方法，下面给出`MocksControl#replay`的源码
 
 ```Java
     public void replay() {
@@ -249,9 +249,9 @@ public final class MockInvocationHandler implements InvocationHandler, Serializa
     }
 ```
 
-这就是为什么调用EasyMock.replay前后mock对象的行为会发生变化的原因。可以这样理解，如果state是RecordState时，调用mock的方法将会记录行为；如果state是ReplayState时，调用mock的方法将会从之前记录的行为中进行查找，如果找到了则调用，如果没有则抛出异常。
+这就是为什么调用EasyMock.replay前后mock对象的行为会发生变化的原因。可以这样理解，如果state是RecordState时，调用mock的方法将会记录行为；如果state是ReplayState时，调用mock的方法将会从之前记录的行为中进行查找，如果找到了则调用，如果没有则抛出异常
 
-EasyMock的源码就分析到这里，日后再细究ReplayState与RecordState的源码。
+EasyMock的源码就分析到这里，日后再细究ReplayState与RecordState的源码
 
 # 4 参考
 

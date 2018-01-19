@@ -15,7 +15,7 @@ __目录__
 
 # 1 前言
 
-相比于静态代理，动态代理避免了开发人员编写各个繁锁的静态代理类，只需简单地指定一组接口及目标类对象就能动态的获得代理对象。
+相比于静态代理，动态代理避免了开发人员编写各个繁锁的静态代理类，只需简单地指定一组接口及目标类对象就能动态的获得代理对象
 
 # 2 字段
 
@@ -178,9 +178,9 @@ getProxyClass0方法将根据`类加载器对象`和`接口数组`从缓存中�
 
 ## 3.3 ProxyClassFactory
 
-ProxyClassFactory是位于Proxy中的静态内部类，用于产生代理类的`.class文件`以及Class对象。
+ProxyClassFactory是位于Proxy中的静态内部类，用于产生代理类的`.class文件`以及Class对象
 
-apply方法中主要进行一些校验工作以及确定代理类的全限定名，然后调用`ProxyGenerator.generateProxyClass`来产生字节码文件。
+apply方法中主要进行一些校验工作以及确定代理类的全限定名，然后调用`ProxyGenerator.generateProxyClass`来产生字节码文件
 
 ```Java
     /**

@@ -45,7 +45,7 @@ __目录__
 </project>
 ```
 
-在`<profile>`元素中定义的Maven属性与直接在POM的`<properties>`元素下定义并无二致，只是这里使用了一个id为dev的profile，其目的是将开发环境的配置与其他环境区分开来。
+在`<profile>`元素中定义的Maven属性与直接在POM的`<properties>`元素下定义并无二致，只是这里使用了一个id为dev的profile，其目的是将开发环境的配置与其他环境区分开来
 
 需要注意的是，__Maven属性默认只有在POM中才会被解析__，也就是说`${db.username}`放到POM中会变成user_dev，但是如果放到/src/main/resources/目录下的文件中，构建的时候它将仍然还是`${db.username}`。__因此，需要让Maven解析资源文件中的Maven属性__
 

@@ -308,7 +308,7 @@ public class Solution {
 }
 ```
 
-以下这种方法的思路是，先往上升row，然后再减col。不可能出现先递减col再递增row然后找到target的情况，因为递减col说明`target < matrix[row][col]`，那么`matrix[row][col] < matrix[row+1][?]`，因此`target < matrix[row+1][?]`。
+以下这种方法的思路是，先往上升row，然后再减col。不可能出现先递减col再递增row然后找到target的情况，因为递减col说明`target < matrix[row][col]`，那么`matrix[row][col] < matrix[row+1][?]`，因此`target < matrix[row+1][?]`
 
 ```Java
 public class Solution {

@@ -113,7 +113,7 @@ ReLaunchMainLauncher是Pandora中最核心的类加载器，它连接了原本�
 	}
 ```
 
-重关注一下loadClass方法，这是更改类加载机制的关键之处。
+重关注一下loadClass方法，这是更改类加载机制的关键之处
 
 先来看看类加载器的根基类`ClassLoader`中的loadClass是如何实现的，我们常说的双亲委派模型是在这个方法中得以体现的
 
@@ -740,7 +740,7 @@ StageNode.stepIn。每个StageNode都绑定了一个target，执行完target的s
 
 ```Java
     /**
-     * 尝试从 conf/export.index 加载导出类，如果没有找到，则返回 -1。index文件由pandora maven plugin生成。
+     * 尝试从 conf/export.index 加载导出类，如果没有找到，则返回 -1。index文件由pandora maven plugin生成
      *
      * @param module
      * @return

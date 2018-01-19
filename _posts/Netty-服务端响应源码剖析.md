@@ -708,7 +708,7 @@ public class EchoServer {
 
 __这之后的执行过程与{% post_link Netty-服务端启动源码剖析 %}中的register过程完全一致__
 
-1. 我们接着回到位于`ServerBootstrap`的__静态__内部来`ServerBootstrapAcceptor`的`channelRead`方法中来，继续register方法的分析。
+1. 我们接着回到位于`ServerBootstrap`的__静态__内部来`ServerBootstrapAcceptor`的`channelRead`方法中来，继续register方法的分析
     * `register`方法位于`MultithreadEventLoopGroup`，调用next方法获取EventLoop来执行register方法
 ```Java
     public ChannelFuture register(Channel channel) {

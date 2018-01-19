@@ -21,7 +21,7 @@ AQS(AbstractQueuedSynchronizer，同步阻塞队列)是concurrent包下锁机制
 
 * 静态内部类Node的解析
 * 重要常量以及字段的解析
-* 重要方法的源码详解。
+* 重要方法的源码详解
 
 所有的分析仅基于个人的理解，若有不正之处，请谅解和批评指正，不胜感激！！！
 
@@ -144,7 +144,7 @@ AQS在内部维护了一个同步阻塞队列，__下面简称sync queue__，该
         Node nextWaiter;
 ```
 
-* __waitStatus__：节点的状态，可取值有五种，分别是SIGNAL、CANCEL、CONDITION、PROPAGATE、0。
+* __waitStatus__：节点的状态，可取值有五种，分别是SIGNAL、CANCEL、CONDITION、PROPAGATE、0
     * __独占模式__仅涉及到SIGNAL、CANCEL、0三种状态
     * __共享模式__仅涉及到SIGNAL、CANCEL、PROPAGATE、0四种状态
     * CONDITION状态不会出现在sync queue中，而是位于条件变量的Condition queue中，本篇博客暂不讨论ConditoinObject
@@ -267,7 +267,7 @@ __无法获取资源的线程将被封装成Node节点，通过addWaiter方法�
 
 __enq方法确保给定节点成功入队__
 
-* addWaiter方法会首先尝试一次入队。
+* addWaiter方法会首先尝试一次入队
 * 如果失败了(可能原因是CAS失败或者sync queue尚未初始化)，那么通过enq方法进行入队操作
 * 可以看到enq也是采用了死循环+CAS操作，这是使用CAS的通用模式
 
@@ -355,7 +355,7 @@ __至此，线程已被封装成节点，并且成功添加到sync queue中去�
 __shouldParkAfterFailedAcquire方法用于判断当前节点是否可以阻塞自己__
 
 * 若前继节点为SIGNAL则返回true，表示该节点可以放心阻塞自己
-* 否则找到有效前继节点，并尝试将其状态改为SIGNAL，并返回false，交给上一层函数继续处理。
+* 否则找到有效前继节点，并尝试将其状态改为SIGNAL，并返回false，交给上一层函数继续处理
 
 ```Java
     /**
@@ -502,7 +502,7 @@ __通过unparkSuccessor方法唤醒指定节点的后继节点__
          * fails or if status is changed by waiting thread.
          */
         int ws = node.waitStatus;
-        // 若节点状态小于0，将其通过CAS操作改为0，表明本次SIGNAL的任务已经完成，至于CAS是否成功，或者是否再次被其他线程修改，都与本次无关unparkSuccessor无关，只是该节点被赋予了新的任务而已。
+        // 若节点状态小于0，将其通过CAS操作改为0，表明本次SIGNAL的任务已经完成，至于CAS是否成功，或者是否再次被其他线程修改，都与本次无关unparkSuccessor无关，只是该节点被赋予了新的任务而已
         if (ws < 0)
             compareAndSetWaitStatus(node, ws, 0);
 
@@ -574,7 +574,7 @@ __doAcquireShared方法是核心方法__
 * doAcquireShared方法将当前线程封装成共享模式的节点，并加入到sync queue中
 * 通过死循环并尝试获取资源。共享模式下，仍然只有sync queue中第二个节点才有资格获取资源。所有节点必须排队依次通过
     * 假设现有资源数量是2，第二个节点需要3，第三个节点需要1。那么第三个节点是无法通过的，它必须等到第二个节点成功获取资源后才能尝试获取资源
-* 如果节点不是sync queue中第二个节点或者获取资源失败，那么阻塞自己，阻塞自己前必须将前继节点标记为SIGNAL状态。
+* 如果节点不是sync queue中第二个节点或者获取资源失败，那么阻塞自己，阻塞自己前必须将前继节点标记为SIGNAL状态
 * 该方法不响应中断，而是在返回之前恢复中断现场
 
 ```Java
@@ -758,9 +758,9 @@ __为什么要将头节点从SIGNAL先改为0，再从0改为PROPAGATE，而不�
 
 > 注意，当一次循环后头结点没有发生变化时，就会退出循环，因此__不可能__将同一个节点从SIGNAL改为0然后再从0改为PROPAGATE
 
-> 将头结点从从SIGNAL先改为0时，唤醒后继节点，此时会有两种结果。
+> 将头结点从从SIGNAL先改为0时，唤醒后继节点，此时会有两种结果
 > 1. 第一种结果是后继节点无法继续获取资源，导致传播状态结束，头结点重新被设置为SIGNAL，然后退出循环，结束该方法
-> 1. 另一种结果是后继节点成功获取资源，并更新头结点，继续新一轮的循环。
+> 1. 另一种结果是后继节点成功获取资源，并更新头结点，继续新一轮的循环
 > 
 > 可以看出，无论是哪种情况，原来的头结点都不会变为PROPAGATE状态
 

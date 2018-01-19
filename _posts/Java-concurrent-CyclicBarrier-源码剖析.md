@@ -16,7 +16,7 @@ __目录__
 
 # 1 前言
 
-CyclicBarrier是一个同步辅助类，它允许一组线程互相等待，直到到达某个公共屏障点(common barrier point)。在涉及一组固定大小的线程的程序中，这些线程必须不时地互相等待，此时CyclicBarrier很有用。因为该barrier在释放等待线程后可以重用，所以称它为循环的barrier。
+CyclicBarrier是一个同步辅助类，它允许一组线程互相等待，直到到达某个公共屏障点(common barrier point)。在涉及一组固定大小的线程的程序中，这些线程必须不时地互相等待，此时CyclicBarrier很有用。因为该barrier在释放等待线程后可以重用，所以称它为循环的barrier
 
 # 2 内部类
 
