@@ -5,7 +5,7 @@ tags:
 - 摘录
 categories: 
 - Java
-- 类隔离技术
+- 隔离技术
 ---
 
 __目录__
