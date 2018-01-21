@@ -76,18 +76,17 @@ killall Finder// 重启Finder
 
 `⌃ ＋ ⇧ ＋ 电源键`
 
-## 关闭显示器
+## 3.6 关闭显示器
 
 `⌃ ＋ ⌘ ＋ space`
 
-## Page Up/Down
+## 3.7 Page Up/Down
 
 Home键：`Fn+←`
 End键：`Fn+→`
 Page UP：`Fn+↑`
 Page DOWN：`Fn+↓`
 向前Delete：`Fn+delete`
-
 
 # 4 参考
 

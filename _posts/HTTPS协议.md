@@ -33,9 +33,9 @@ HTTPS很好的解决了HTTP的三个缺点（被监听、被篡改、被伪装�
 
 ```sequence
 client->server: 发送客户端支持的加密协议以及版本，例如SSL，TLS
-server->client: 服务器端从中筛选合适的加密协议
+server->server: 服务器端从中筛选合适的加密协议
 server->client: 服务器端返回证书，证书中有公钥
-client->server: 客户端使用根证书验证证书合法性
+client->client: 客户端使用根证书验证证书合法性
 client->server: 客户端生成对称密钥，通过证书中的公钥加密，发送到服务端
 server->client: 服务器端使用私钥解密，获取对称密钥，使用对称密钥加密数据
 client->server: 客户端解密数据，SSL开始通信

@@ -101,6 +101,7 @@ __示例__
 ## 3.4 &lt;logger&gt;
 
 一个`<logger>`元素对应了一个或者多个`org.slf4j.Logger`实例
+
 * 如果我们在程序中采用`Logger logger = LoggerFactory.getLogger(A.class);`来获取一个Logger的实例，那么在`<logger>`元素中用name属性来设定__包名__或者__类名__就可以控制该Logger实例的行为
 * 如果我们在程序中采用`Logger logger = LoggerFactory.getLogger("MyLogger");`来获取一个Logger的实例，那么在`<logger>`元素中用name属性设定__同样的名字__("MyLogger")就可以控制该Logger实例的行为
 
@@ -117,7 +118,6 @@ __示例__
 * additivity：是否向上级logger传递打印信息。默认是true
     * 如果配置了两个logger，一个logger的name属性配置的是包名（记为logger1），另一个logger的name属性配置的是类名（记为logger2），那么logger1是logger2的__上级logger__
     * 其余情况，一个logger的__上级logger__就是root
-
 
 `<logger>`可以包含零个或多个`<appender-ref>`元素，标识这个appender将会添加到这个logger
 
