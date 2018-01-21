@@ -1,8 +1,17 @@
 ---
 title: Maven-常用插件
 date: 2018-01-19 16:59:56
-tags:
+tags: 
+- 摘录
+categories: 
+- Java
+- Maven
 ---
+
+__目录__
+
+<!-- toc -->
+<!--more-->
 
 # 1 shade
 
