@@ -99,4 +99,4 @@ aof的方式也同时带来了另一个问题。持久化文件会变的越来�
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf@163.com)，博主将在第一时间删除__
 
 * [RDB和AOF持久化对比](http://www.cnblogs.com/rollenholt/p/3874443.html)
-* [Redis 设计与实现 ](http://redisbook.readthedocs.io/en/latest/internal/aof.html)
+* [Redis 设计与实现](http://redisbook.readthedocs.io/en/latest/internal/aof.html)

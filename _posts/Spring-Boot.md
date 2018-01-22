@@ -92,6 +92,7 @@ __pom文件完整内容如下：__
         </dependency>
     </dependencies>
 
+    <!-- 引入依赖 -->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -210,9 +211,9 @@ public class Conf {
 
 # 5 排错
 
-当我采用第二种pom文件时（不继承spring boot的pom文件），启动时会产生如下异常信息
+当我采用第二种pom文件时（__不继承spring boot的pom文件__），启动时会产生如下异常信息
 
-```
+```java
 ...
 Caused by: java.lang.NoSuchMethodError: org.springframework.web.accept.ContentNegotiationManagerFactoryBean.build()Lorg/springframework/web/accept/ContentNegotiationManager;
 ...

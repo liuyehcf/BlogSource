@@ -927,3 +927,90 @@ StageNode.stepIn。每个StageNode都绑定了一个target，执行完target的s
     }
 ```
 
+# 6 小插曲
+
+情景，我想要通过反射拿到ReLaunchURLClassLoader的classCache
+
+于是我写下如下代码：
+
+```java
+package com.alibaba.middleware;
+
+import com.taobao.pandora.boot.PandoraBootstrap;
+import com.taobao.pandora.boot.loader.ReLaunchURLClassLoader;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import java.lang.reflect.Field;
+import java.util.Map;
+
+/**
+ * Pandora Boot应用的入口类
+ *
+ * @author chengxu
+ */
+@SpringBootApplication(scanBasePackages = {"com.alibaba.middleware"})
+public class Application {
+
+    public static void main(String[] args) throws Exception {
+        PandoraBootstrap.run(args);
+
+        // start
+        ReLaunchURLClassLoader reLaunchURLClassLoader = (ReLaunchURLClassLoader)Application.class.getClassLoader();
+        Field classCacheField = reLaunchURLClassLoader.getClass().getSuperclass().getDeclaredField("classCache");
+        classCacheField.setAccessible(true);
+        Map<String, Class<?>> classCache = (Map<String, Class<?>>) classCacheField.get(reLaunchURLClassLoader);
+        System.err.println("success!");
+        // end
+
+        SpringApplication.run(Application.class, args);
+        PandoraBootstrap.markStartupAndWait();
+    }
+}
+```
+
+结果抛出了如下异常
+
+```java
+...
+Caused by: java.lang.ClassCastException: com.taobao.pandora.boot.loader.ReLaunchURLClassLoader cannot be cast to com.taobao.pandora.boot.loader.ReLaunchURLClassLoader
+...
+```
+
+原因是由于`Application.class.getClassLoader();`获取到的ReLaunchURLClassLoader对象，该对象的类加载器是AppClassLoader，__而出现在类型声明以及转型中的ReLaunchURLClassLoader则是由该获取到的ReLaunchURLClassLoader对象加载的（比较绕）__。因此转型是失败的，由此可见，类型转换也会在类加载器提供的命名空间的保护下进行
+
+进行如下修改即可
+```java
+package com.alibaba.middleware;
+
+import com.taobao.pandora.boot.PandoraBootstrap;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import java.lang.reflect.Field;
+import java.util.Map;
+
+/**
+ * Pandora Boot应用的入口类
+ *
+ * @author chengxu
+ */
+@SpringBootApplication(scanBasePackages = {"com.alibaba.middleware"})
+public class Application {
+
+    public static void main(String[] args) throws Exception {
+        PandoraBootstrap.run(args);
+
+        // start
+        ClassLoader reLaunchURLClassLoader = Application.class.getClassLoader();
+        Field classCacheField = reLaunchURLClassLoader.getClass().getSuperclass().getDeclaredField("classCache");
+        classCacheField.setAccessible(true);
+        Map<String, Class<?>> classCache = (Map<String, Class<?>>) classCacheField.get(reLaunchURLClassLoader);
+        System.err.println("success!");
+        // end
+
+        SpringApplication.run(Application.class, args);
+        PandoraBootstrap.markStartupAndWait();
+    }
+}
+```

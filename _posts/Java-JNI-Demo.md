@@ -156,7 +156,7 @@ __执行如下命令__
 # 4 参考
 
 * [Mac OS 环境下编译JNI](http://blog.csdn.net/codigger/article/details/9296037)
-* [ Java中JNI的使用详解第一篇:HelloWorld](http://blog.csdn.net/jiangwei0910410003/article/details/17465085)
+* [Java中JNI的使用详解第一篇:HelloWorld](http://blog.csdn.net/jiangwei0910410003/article/details/17465085)
 * [Jni接口-深入研究参数的传递（一）](https://www.cnblogs.com/lsnproj/archive/2012/01/09/2317519.html)
 * [JNI 入门教程](http://www.runoob.com/w3cnote/jni-getting-started-tutorials.html)
 * [What is the difference between #include &lt;filename&gt; and #include "filename"?
