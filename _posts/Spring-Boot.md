@@ -14,21 +14,32 @@ __目录__
 <!-- toc -->
 <!--more-->
 
-# 1 Hello World
+# 1 环境
 
-下面利用Maven来快速搭建一个Spring Boot的Demo
+1. IDEA
+1. Maven3.3.9
+1. Spring Boot
 
-__添加以下内容到pom文件中__
+# 2 pom文件
+
+## 2.1 继承org.springframework.boot:spring-boot-starter-parent
+
+__pom文件完整内容如下：__
 
 ```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http:// maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!-- 继承自Spring Boot Parent -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.8.RELEASE</version>
+        <version>1.5.9.RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>springboot</artifactId>
+    <artifactId>spring-boot-demo</artifactId>
 
     <dependencies>
         <dependency>
@@ -36,11 +47,44 @@ __添加以下内容到pom文件中__
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
 ```
 
-上述配置，需要继承指定的`spring-boot-starter-parent`，如果pom文件中已经有parent了，那么不能采用这种方式，那么可以添加如下内容到pom文件中
+## 2.2 继承自己项目的父pom文件
+
+如果不想继承自`org.springframework.boot:spring-boot-starter-parent`，那么需要通过`<dependencyManagement>`元素引入依赖
+
+__pom文件完整内容如下：__
 
 ```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http:// maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>JavaLearning</artifactId>
+        <groupId>org.liuyehcf</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>spring-boot-demo</artifactId>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -50,26 +94,55 @@ __添加以下内容到pom文件中__
 
     <dependencyManagement>
         <dependencies>
-            <!-- Override Spring Data release train provided by Spring Boot -->
-            <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-releasetrain</artifactId>
-                <version>Fowler-SR2</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>1.5.8.RELEASE</version>
+                <version>1.5.9.RELEASE</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
 ```
 
-__创建`SampleApplication.java`__
+# 3 Controller
+
+```Java
+package org.liuyehcf.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@Controller
+@RequestMapping("/home")
+public class SampleController {
+
+    @RequestMapping("/hello")
+    @ResponseBody
+    public String hello(){
+        return "Hello world!";
+    }
+}
+```
+
+# 4 Application
 
 ```Java
 package org.liuyehcf;
@@ -88,51 +161,9 @@ public class SampleApplication {
 }
 ```
 
-__创建`SampleController.java`__
-
-```Java
-package org.liuyehcf.controller;
-
-import org.liuyehcf.service.SampleService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-@Controller
-@RequestMapping("/home")
-public class SampleController {
-
-    @Autowired
-    private SampleService sampleService;
-
-    @RequestMapping("/hello")
-    @ResponseBody
-    public String hello(){
-        return sampleService.getHelloWorld();
-    }
-
-}
-```
-
-__创建`SampleService.java`__
-```Java
-package org.liuyehcf.service;
-
-import org.springframework.stereotype.Service;
-
-@Service
-public class SampleService {
-    public String getHelloWorld(){
-        return "Hello world!";
-    }
-}
-
-```
-
 __启动，访问`http://localhost:8080/home/hello`__
 
-# 2 关键注解
+## 4.1 关键注解
 
 `@Configuration`
 
@@ -177,7 +208,19 @@ public class Conf {
 
 * @SpringBootApplication = (默认属性)@Configuration + @EnableAutoConfiguration + @ComponentScan
 
-# 3 参考
+# 5 排错
+
+当我采用第二种pom文件时（不继承spring boot的pom文件），启动时会产生如下异常信息
+
+```
+...
+Caused by: java.lang.NoSuchMethodError: org.springframework.web.accept.ContentNegotiationManagerFactoryBean.build()Lorg/springframework/web/accept/ContentNegotiationManager;
+...
+```
+
+这是由于我在项目的父pom文件中引入了5.X.X版本的Spring依赖，这与`spring-boot-dependencies`引入的Spring依赖会冲突（例如，加载了低版本的class文件，但是运行时用到了较高版本特有的方法，于是会抛出`NoSuchMethodError`），将项目父pom文件中引入的Spring的版本改为4.3.13.RELEASE就行
+
+# 6 参考
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf@163.com)，博主将在第一时间删除__
 
