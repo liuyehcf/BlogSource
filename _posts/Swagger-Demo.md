@@ -85,7 +85,7 @@ __目录__
 
 # 3 Swagger Config Bean
 
-```java
+```Java
 package org.liuyehcf.swagger.config;
 
 import org.springframework.context.annotation.Bean;
@@ -131,7 +131,7 @@ public class SwaggerConfig {
 
 # 4 Controller
 
-```java
+```Java
 package org.liuyehcf.swagger.controller;
 
 import io.swagger.annotations.ApiImplicitParam;
@@ -221,7 +221,7 @@ public class UserController {
 
 Controller中用到的实体类
 
-```java
+```Java
 package org.liuyehcf.swagger.entity;
 
 public class User {
@@ -259,7 +259,7 @@ public class User {
 
 # 5 Application
 
-```java
+```Java
 package org.liuyehcf.swagger;
 
 import org.springframework.boot.SpringApplication;
