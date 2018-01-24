@@ -23,13 +23,13 @@ package org.liuyehcf.error;
 public class NoClassDefFoundErrorDemo {
     public static void main(String[] args) {
         try {
-            Class.forName("org.liuyehcf.error.InitializeThrowError"); //(1)
+            Class.forName("org.liuyehcf.error.InitializeThrowError"); // (1)
         } catch (Throwable e) {
             // 这里捕获到的是java.lang.ExceptionInInitializerError
             e.printStackTrace();
         }
 
-        System.out.println(InitializeThrowError.i); //(2)
+        System.out.println(InitializeThrowError.i); // (2)
 
     }
 }
@@ -62,6 +62,7 @@ class InitializeThrowError {
 __可以看到，异常是由JVM抛出，并且调用了一个Java实现的handler方法来处理该异常，于是我猜测Java字节码的执行是位于JVM当中的__
 
 对于下面的语句，我__猜测__执行过程如下
+
 1. Java字节码的解释执行__位于JVM空间__
 1. 执行语句1，第一次遇到类型A，__隐式触发__类加载过程。这时，用的是当前类加载器（假设是AppClassLoader），于是JVM调用Java代码（`ClassLoader.loadClass(String)`）来执行类加载过程。然后JVM调用Java代码（A的构造方法）创建实例
     * 类加载过程涉及到很多次Java代码与JVM代码交互的过程，可以参考{% post_link Java-类加载原理 %}
