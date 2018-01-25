@@ -62,6 +62,107 @@ __有这样一个参数`autoMappingBehavior`，当它不设置为NONE的时候�
 
 ## 2.2 传递多个参数
 
+### 2.2.1 Map接口
+
+我们可以使用MyBatis提供的__Map接口__作为参数来实现它，这种方法的弊端是：Map需要键值对应，由于业务关联性不强，需要深入到程序中看代码，造成可读性下降
+
+```xml
+<select id="findRoleByAnnotation" parameterType="map" resultMap="roleMap">
+    select id, role_name, note from t_role
+    where role_name like concat('%', #{roleName}, '%')
+    and note like concat('%', #{note}, '%')
+</select>
+```
+
+```Java
+public List<Role> findRoleByMap(Map<String, String> params);
+```
+
+### 2.2.2 @Param注解
+
+我们也可以使用MyBatis提供的参数注解__@Param(org.apache.ibatis.annotations.Param)__来实现想要的功能。但如果参数多于5个，那么@Param注解也会造成可读性的下降
+
+```xml
+<select id="findRoleByAnnotation" resultMap="roleMap">
+    select id, role_name, note from t_role
+    where role_name like concat('%', #{roleName}, '%')
+    and note like concat('%', #{note}, '%')
+</select>
+```
+
+```Java
+public List<Role> findRoleByAnnotation(@Param("roleName") String roleName, @Param("note") String note);
+```
+
+### 2.2.3 JavaBean
+
+此外，我们还可以通过__JavaBean__来传递参数。MyBatis允许组织一个JavaBean，通过简单的setter和getter方法设置参数，就可以提高我们的可读性
+
+```xml
+<select id="findRoleByParams" parameterType="com.learn.params.RoleParam" resultMap="roleMap">
+    select id, role_name, note from t_role
+    where role_name like concat('%', #{roleName}, '%')
+    and note like concat('%', #{note}, '%')
+</select>
+```
+
+```Java
+public List<Role> findRoleByParams(RoleParam params);
+```
+
+### 2.2.4 建议
+
+__当参数少于5个，用@Param注解__
+
+__当参数多于5个，用JavaBean__
+
+# 3 insert元素
+
+Mybatis会在执行插入之后返回一个整数，以表示你进行操作后插入的记录数
+
+| 元素 | 说明 | 备注 |
+|:--|:--|:--|
+| __id__ | 它和__Mapper的命名空间__组合起来是唯一的，提供给MyBatis调用 | 如果命名空间和id组合起来不唯一，MyBatis将抛出异常 |
+| __parameterType__ | 你可以给出类的全命名，也可以给出类的别名，__但使用别名必须是MyBatis内部定义或者自定义的__ | 我们可以选择JavaBean、Map等复杂的参数类型传递给SQL |
+| parameterMap | 即将废弃的元素，不做讨论 | \ |
+| flushCache | 它的作用是在调用SQL后，是否要求MyBatis清空之前查询的本地缓存和二级缓存 | 取值为布尔值，默认false |
+| timeout | 设置超时参数，等超时的时候将抛出异常，单位为秒 | 默认值是数据库厂商提供的JDBC驱动所设置的秒数 |
+| statementType | 告诉MyBatis使用哪个JDBC的Statement工作，取值为STATEMENT（Statement）、PREPARED（PreparedStatement）、CallableStatement | 默认值为PREPARED |
+| __keyProperty__ | __表示以哪个列作为属性的主键__。不能和keyColumn同时使用 | 设置哪个列为主键，__如果你是联合主键可以用逗号将其隔开__ |
+| __useGeneratedKeys__ | __这会令MyBatis使用JDBC的getGeneratedKeys方法来取出由数据库内部生成的主键__。例如，MySQL和SQL Server自动递增字段，Oracle的序列等，但是使用它就必须要给keyProperty或keyColumn赋值 | 取值为布尔值，默认值为false |
+| keyColumn | 指明第几列是主键，不能和keyProperty同时使用，只接受整型参数 | 和keyProperty一样，联合主键可以用逗号隔开 |
+| databaseId | 数据库标识 | 提供多种数据库的支持 |
+
+## 3.1 主键回填和自定义
+
+有时候，在插入一条数据之后，我们往往需要获得这个主键，以便于未来的操作，而MyBatis提供了实现的方法
+
+__我们可以使用keyProperty属性指定哪个是主键字段，同时使用useGeneratedKeys属性告诉MyBatis这个主键是否使用数据库内置策略生成__
+
+有时候，我们需要根据一些特殊的关系设置主键id的值。假设我们取消表`t_role`的id自增规则，改为如下自定义规则
+
+* 如果表`t_role`没有记录，则我们需要设置id=1
+* 否则，我们就取最大id加2
+
+这个时候，__我们可以使用selectKey元素进行处理__
+
+```xml
+<insert id="insertRole" parameterType="role" useGeneratedKeys="true" keyProperty="id">
+    <selectKey keyProperty="id" resultType="int" order="BEFORE">
+        select if(max(id)) is null, 1, max(id) + 2) as newId from t_role
+    </selectKey>
+
+    insert into t_role(id, role_name, note) 
+    values(#{id}, #{roleName}, #{note})
+</insert>
+```
+
+# 4 update元素和delete元素
+
+和insert元素一样，MyBatis执行完update元素和delete元素后会返回一个整数，标出执行后影响的记录条数
+
+# 5 的
+
 自动将所有DO进行映射，这样一来就不用写map了，但随之而来的开销就是`AS`
 ```xml
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
@@ -73,7 +174,7 @@ __有这样一个参数`autoMappingBehavior`，当它不设置为NONE的时候�
 
 `#{}`  `${}`的区别
 
-# 3 参考
+# 6 参考
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf@163.com)，博主将在第一时间删除__
 
