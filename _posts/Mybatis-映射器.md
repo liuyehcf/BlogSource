@@ -67,7 +67,7 @@ __有这样一个参数`autoMappingBehavior`，当它不设置为NONE的时候�
 我们可以使用MyBatis提供的__Map接口__作为参数来实现它，这种方法的弊端是：Map需要键值对应，由于业务关联性不强，需要深入到程序中看代码，造成可读性下降
 
 ```xml
-<select id="findRoleByAnnotation" parameterType="map" resultMap="roleMap">
+<select id="findRoleByaMap" parameterType="map" resultMap="roleMap">
     select id, role_name, note from t_role
     where role_name like concat('%', #{roleName}, '%')
     and note like concat('%', #{note}, '%')
@@ -108,6 +108,31 @@ public List<Role> findRoleByAnnotation(@Param("roleName") String roleName, @Para
 
 ```Java
 public List<Role> findRoleByParams(RoleParam params);
+```
+
+```Java
+package com.learn.params;
+
+public class RoleParam {
+    private String roleName;
+    private String note;
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+}
 ```
 
 ### 2.2.4 建议
