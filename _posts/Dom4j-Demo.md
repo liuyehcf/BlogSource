@@ -56,7 +56,7 @@ public class Dom4jDemo {
         doc.addComment("a simple demo ");
 
         // 注意，xmlns只能在创建Element时才能添加，无法通过addAttribute添加xmlns属性
-        Element beansElement = doc.addElement("beans", "http:// www.springframework.org/schema/beans");  // (1)
+        Element beansElement = doc.addElement("beans", "http:// www.springframework.org/schema/beans");
         beansElement.addAttribute("xmlns:xsi", "http:// www.w3.org/2001/XMLSchema-instance");
         beansElement.addAttribute("xsi:schemaLocation", "http:// www.springframework.org/schema/beans http:// www.springframework.org/schema/beans/spring-beans.xsd");
 
@@ -94,7 +94,7 @@ public class Dom4jDemo {
 
         Map<String, String> map = new HashMap<>();
         map.put("xmlns", "http:// www.springframework.org/schema/beans");
-        saxReader.getDocumentFactory().setXPathNamespaceURIs(map); // (2)
+        saxReader.getDocumentFactory().setXPathNamespaceURIs(map);
 
         Document doc = null;
         try {
@@ -104,7 +104,7 @@ public class Dom4jDemo {
             return;
         }
 
-        List list = doc.selectNodes("/beans/xmlns:bean/xmlns:property"); // (3)
+        List list = doc.selectNodes("/beans/xmlns:bean/xmlns:property");
         System.out.println(list.size());
 
         list = doc.selectNodes("// xmlns:bean/xmlns:property");
@@ -130,7 +130,6 @@ public class Dom4jDemo {
 
     }
 }
-
 ```
 
 __生成的xml文件如下__
@@ -184,6 +183,7 @@ __Attribute__：元素的属性
 1. `"/beans/bean/property/@value"`：从跟节点`<beans>`开始，经过`<bean>`节点，包含属性`value`的所有`<property>`节点
 1. `"/beans/bean/property/@value=liuye"`：从跟节点`<beans>`开始，经过`<bean>`节点，包含属性`value`且值为`liuye`的所有`<property>`节点
 1. `"/beans/*/property/@*=liuye"`：从跟节点`<beans>`开始，经过任意节点（注意`*`与`//`不同，`*`只匹配一个节点，`//`匹配任意零或多层节点），包含任意属性且值为`liuye`的所有`<property>`节点
+* 通配符
     * `*`可以匹配任意节点
     * `@*`可以匹配任意属性
     * `|`表示或运算
