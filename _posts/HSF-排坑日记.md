@@ -29,7 +29,7 @@ __原因：没有连上内网，HSF-Client拉取不到CS以及Diamond的服务�
 
 于是用阿里郎开启了vpn，重新尝试发布服务，成功（在HSF控制台能够找到我发布的服务，并且进行测试）
 
-于是，接着本地启动HSF-Consumer，无法消费服务，错误如下：
+于是，接着本地启动HSF-Consumer，无法消费服务，错误如下：
 
 ```Java
 Caused by: HSFServiceAddressNotFoundException-
@@ -38,7 +38,7 @@ Caused by: HSFServiceAddressNotFoundException-
 
 __解决方法__
 
-1. ifconfig查询本机ip，找到utunX（X是数字）的ipv4的ip地址，我这里是`10.65.149.244`
+1. ifconfig查询本机ip，找到utunX（X是数字）的ipv4的ip地址，我这里是`10.65.149.244`
 1. 增加一条路由规则，命令如下
     * `sudo route change <vpn地址> 127.0.0.1`
     * 以我自己电脑为例，`sudo route change 10.65.149.244 127.0.0.1`
@@ -47,7 +47,7 @@ __再次消费，成功！__
 
 ---
 
-以上是开启vpn时解决服务无法消费的问题。另一个问题是，我自己的电脑明明连着公司内网，但也无法发布和消费服务，总开vpn也不是个办法
+以上是开启vpn时解决服务无法消费的问题。另一个问题是，我自己的电脑明明连着公司内网，但也无法发布和消费服务，总开vpn也不是个办法
 
 __原因：DNS服务器没有设置！__
 

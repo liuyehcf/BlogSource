@@ -209,9 +209,9 @@ public class Conf {
 
 * @SpringBootApplication = (默认属性)@Configuration + @EnableAutoConfiguration + @ComponentScan
 
-# 5 排错
+# 5 排错
 
-当我采用第二种pom文件时（__不继承spring boot的pom文件__），启动时会产生如下异常信息
+当我采用第二种pom文件时（__不继承spring boot的pom文件__），启动时会产生如下异常信息
 
 ```Java
 ...

@@ -32,7 +32,7 @@ __目录__
 
 | 元素 | 说明 | 备注 |
 |:--|:--|:--|
-| __id__ | 它和__Mapper的命名空间__组合起来是唯一的，提供给MyBatis调用 | 如果命名空间和id组合起来不唯一，MyBatis将抛出异常 |
+| __id__ | 它和__Mapper的命名空间__组合起来是唯一的，提供给MyBatis调用 | 如果命名空间和id组合起来不唯一，MyBatis将抛出异常 |
 | __parameterType__ | 你可以给出类的全命名，也可以给出类的别名，__但使用别名必须是MyBatis内部定义或者自定义的__ | 我们可以选择JavaBean、Map等复杂的参数类型传递给SQL |
 | parameterMap | 即将废弃的元素，不做讨论 | \ |
 | __resultType__ | __定义类的全路径，在允许自动匹配的情况下，结果集将通过JavaBean的规范映射；或定义为int、double、float等基本类型；也可以使用别名，但是要符合别名规范，不能喝resultMap同时使用__ | 它是我们常用的参数之一，比如我们统计总条数就可以把它设置为int |
@@ -58,7 +58,7 @@ __有这样一个参数`autoMappingBehavior`，当它不设置为NONE的时候�
 1. `NONE`：取消自动映射
 1. `PARTIAL`：只会自动映射，没有定义嵌套结果集映射的结果集
 1. `FULL`：会自动映射任意复杂的结果集（无论是否嵌套）
-* 默认值为PARTIAL，所以在默认情况下，可以做到当前对象的映射，使用FULL是嵌套映射，在性能上会下降
+* 默认值为PARTIAL，所以在默认情况下，可以做到当前对象的映射，使用FULL是嵌套映射，在性能上会下降
 
 ## 2.2 传递多个参数
 
@@ -147,15 +147,15 @@ Mybatis会在执行插入之后返回一个整数，以表示你进行操作后�
 
 | 元素 | 说明 | 备注 |
 |:--|:--|:--|
-| __id__ | 它和__Mapper的命名空间__组合起来是唯一的，提供给MyBatis调用 | 如果命名空间和id组合起来不唯一，MyBatis将抛出异常 |
+| __id__ | 它和__Mapper的命名空间__组合起来是唯一的，提供给MyBatis调用 | 如果命名空间和id组合起来不唯一，MyBatis将抛出异常 |
 | __parameterType__ | 你可以给出类的全命名，也可以给出类的别名，__但使用别名必须是MyBatis内部定义或者自定义的__ | 我们可以选择JavaBean、Map等复杂的参数类型传递给SQL |
 | parameterMap | 即将废弃的元素，不做讨论 | \ |
 | flushCache | 它的作用是在调用SQL后，是否要求MyBatis清空之前查询的本地缓存和二级缓存 | 取值为布尔值，默认false |
 | timeout | 设置超时参数，等超时的时候将抛出异常，单位为秒 | 默认值是数据库厂商提供的JDBC驱动所设置的秒数 |
 | statementType | 告诉MyBatis使用哪个JDBC的Statement工作，取值为STATEMENT（Statement）、PREPARED（PreparedStatement）、CallableStatement | 默认值为PREPARED |
 | __keyProperty__ | __表示以哪个列作为属性的主键__。不能和keyColumn同时使用 | 设置哪个列为主键，__如果你是联合主键可以用逗号将其隔开__ |
-| __useGeneratedKeys__ | __这会令MyBatis使用JDBC的getGeneratedKeys方法来取出由数据库内部生成的主键__。例如，MySQL和SQL Server自动递增字段，Oracle的序列等，但是使用它就必须要给keyProperty或keyColumn赋值 | 取值为布尔值，默认值为false |
-| keyColumn | 指明第几列是主键，不能和keyProperty同时使用，只接受整型参数 | 和keyProperty一样，联合主键可以用逗号隔开 |
+| __useGeneratedKeys__ | __这会令MyBatis使用JDBC的getGeneratedKeys方法来取出由数据库内部生成的主键__。例如，MySQL和SQL Server自动递增字段，Oracle的序列等，但是使用它就必须要给keyProperty或keyColumn赋值 | 取值为布尔值，默认值为false |
+| keyColumn | 指明第几列是主键，不能和keyProperty同时使用，只接受整型参数 | 和keyProperty一样，联合主键可以用逗号隔开 |
 | databaseId | 数据库标识 | 提供多种数据库的支持 |
 
 ## 3.1 主键回填和自定义
@@ -164,9 +164,9 @@ Mybatis会在执行插入之后返回一个整数，以表示你进行操作后�
 
 __我们可以使用keyProperty属性指定哪个是主键字段，同时使用useGeneratedKeys属性告诉MyBatis这个主键是否使用数据库内置策略生成__
 
-有时候，我们需要根据一些特殊的关系设置主键id的值。假设我们取消表`t_role`的id自增规则，改为如下自定义规则
+有时候，我们需要根据一些特殊的关系设置主键id的值。假设我们取消表`t_role`的id自增规则，改为如下自定义规则
 
-* 如果表`t_role`没有记录，则我们需要设置id=1
+* 如果表`t_role`没有记录，则我们需要设置id=1
 * 否则，我们就取最大id加2
 
 这个时候，__我们可以使用selectKey元素进行处理__

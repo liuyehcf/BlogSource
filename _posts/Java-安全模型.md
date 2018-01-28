@@ -144,7 +144,7 @@ __我的IDEA工程目录如下，其中security是一个子模块，下面的代
 
 * ![fig1](/images/Java-安全模型/fig1)
 
-首先，有一个代码源，我这里提供一个`external.jar`，该jar中只包含一个class文件，其源码如下：
+首先，有一个代码源，我这里提供一个`external.jar`，该jar中只包含一个class文件，其源码如下：
 ```Java
 package org.liuyehcf.security;
 
@@ -199,7 +199,7 @@ grant codeBase "file:security/src/main/resources/external.jar" {
 
 上述配置文件的含义如下：
 
-1. 为`file:security/src/main/resources/external.jar`配置`security/src/main/resources/targetDir/*`中写、读、删除文件的权限
+1. 为`file:security/src/main/resources/external.jar`配置`security/src/main/resources/targetDir/*`中写、读、删除文件的权限
 1. 为`file:security/src/main/resources/external.jar`配置__读用户目录这一系统属性__的权限
 
 然后编写测试类ReflectAccessControllerDemo，如下
@@ -235,7 +235,7 @@ public class ReflectAccessControllerDemo {
             return;
         }
 
-        // 打开安全管理器
+        // 打开安全管理器
         System.setSecurityManager(new SecurityManager());
 
         Method createFileMethod;
@@ -295,7 +295,7 @@ Caused by: java.security.AccessControlException: access denied ("java.util.Prope
 
 解释一下这个Demo的意义：
 
-1. 首先，为代码源`external.jar`中的`FileUtils`配置了一些权限（在指定路径读写文件的权限，以及读取用户主目录的权限）
+1. 首先，为代码源`external.jar`中的`FileUtils`配置了一些权限（在指定路径读写文件的权限，以及读取用户主目录的权限）
 1. 让`ReflectAccessControllerDemo`通过调用`FileUtils`的`createFilePrivilege`方法（该方法会调用AccessController.doPrivileged来绕过权限检查）来获取访问这些资源的特权。__即为调用它的代码授权__，它指的是`FileUtils`，代码指的是`ReflectAccessControllerDemo`
 
 # 4 参考

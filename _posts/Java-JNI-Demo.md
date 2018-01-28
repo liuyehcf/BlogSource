@@ -17,7 +17,7 @@ __目录__
 
 JNI是Java Native Interface的缩写，它提供了若干的API实现了Java和其他语言的通信（主要是C&C++）。从Java1.1开始，JNI标准成为java平台的一部分，它允许Java代码和其他语言写的代码进行交互。JNI一开始是为了本地已编译语言，尤其是C和C++而设计的，但是它并不妨碍你使用其他编程语言，只要调用约定受支持就可以了。使用java与本地已编译的代码交互，通常会丧失平台可移植性。但是，有些情况下这样做是可以接受的，甚至是必须的。例如，使用一些旧的库，与硬件、操作系统进行交互，或者为了提高程序的性能。JNI标准至少要保证本地代码能工作在任何Java 虚拟机环境
 
-# 2 Demo详细步骤
+# 2 Demo详细步骤
 
 以下操作基于macOS，不同的平台下，一些头文件的路径，以及生成动态库的方式不同，请注意区分
 
@@ -40,7 +40,7 @@ public class JniDemo {
 ```
 
 1. 加载本地Library，名字为"Hello"，这是我们后面将会创建的动态链接库文件
-1. 调用native方法
+1. 调用native方法
 
 ## 2.2 利用命令行工具javah创建标准.h文件
 
@@ -61,7 +61,7 @@ __javah用法__
 `<classes>` 是使用其全限定名称指定的
 (例如, java.lang.Object)
 
-__命令如下（任选一种方式）__
+__命令如下（任选一种方式）__
 
 1. `javah -classpath <.java或.class的路径都可以> -d <输出目录> org.liuyehcf.jni.JniDemo`
 1. `javah org.liuyehcf.jni.JniDemo`：默认类加载路径是当前文件夹的路径，输出目录默认当前文件夹
@@ -92,11 +92,11 @@ JNIEXPORT void JNICALL Java_org_liuyehcf_jni_JniDemo_sayHello
 #endif
 ```
 
-比较重要的一点是`#include <jni.h>`这一句，编译器会从环境变量指定的路径中去查找jni.h，因此在编译时需要指定jni.h的路径，后面在生成动态库的时候会详细说明，这里先提一下
+比较重要的一点是`#include <jni.h>`这一句，编译器会从环境变量指定的路径中去查找jni.h，因此在编译时需要指定jni.h的路径，后面在生成动态库的时候会详细说明，这里先提一下
 
 ## 2.3 编写cpp文件
 
-实现很简单，不废话，直接上代码
+实现很简单，不废话，直接上代码
 
 ```C
 #include <iostream>
@@ -110,11 +110,11 @@ JNIEXPORT void JNICALL Java_org_liuyehcf_jni_JniDemo_sayHello
 
 ## 2.4 编译生成动态库文件
 
-这一步有两种方式
+这一步有两种方式
 
-第一种方式：__利用-I参数指定依赖头文件的位置__
+第一种方式：__利用-I参数指定依赖头文件的位置__
 
-* `g++ -dynamiclib -I <jni.h文件所在的目录> -I <jni_md.h文件所在的目录>  <org_liuyehcf_jni_JniDemo.cpp的路径> -o <动态库的输出目录>/libHello.jnilib`
+* `g++ -dynamiclib -I <jni.h文件所在的目录> -I <jni_md.h文件所在的目录>  <org_liuyehcf_jni_JniDemo.cpp的路径> -o <动态库的输出目录>/libHello.jnilib`
 * 在我的电脑上，`jni.h`文件所在目录如下：
     * `/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home/include`
 * 在我电脑上，`jni_md.h`文件所在目录如下：
@@ -124,7 +124,7 @@ JNIEXPORT void JNICALL Java_org_liuyehcf_jni_JniDemo_sayHello
 
 1. 修改`org_liuyehcf_jni_JniDemo.h`文件，将第一句`#include <jni.h>`改成`#include "jni.h"`
 1. 将`jni.h`以及`jni_md.h`文件拷贝到`org_liuyehcf_jni_JniDemo.h`文件所在的目录中，这两个文件的目录参考上面的说明
-* `g++ -dynamiclib <org_liuyehcf_jni_JniDemo.cpp的路径> -o <动态库的输出目录>/libHello.jnilib`
+* `g++ -dynamiclib <org_liuyehcf_jni_JniDemo.cpp的路径> -o <动态库的输出目录>/libHello.jnilib`
 
 __g++参数解释__
 

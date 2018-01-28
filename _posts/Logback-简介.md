@@ -36,7 +36,7 @@ logback-access是为了集成Servlet环境而准备的，可提供HTTP-access的
 1. scanPeriod：设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒。当scan为true时，此属性生效。默认的时间间隔为1分钟
 1. debug：当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。默认值为false
 
-__示例__
+__示例__
 
 ```xml
 <configuration scan="true" scanPeriod="60 second" debug="false">  
@@ -103,13 +103,13 @@ __示例__
 一个`<logger>`元素对应了一个或者多个`org.slf4j.Logger`实例
 
 * 如果我们在程序中采用`Logger logger = LoggerFactory.getLogger(A.class);`来获取一个Logger的实例，那么在`<logger>`元素中用name属性来设定__包名__或者__类名__就可以控制该Logger实例的行为
-* 如果我们在程序中采用`Logger logger = LoggerFactory.getLogger("MyLogger");`来获取一个Logger的实例，那么在`<logger>`元素中用name属性设定__同样的名字__("MyLogger")就可以控制该Logger实例的行为
+* 如果我们在程序中采用`Logger logger = LoggerFactory.getLogger("MyLogger");`来获取一个Logger的实例，那么在`<logger>`元素中用name属性设定__同样的名字__("MyLogger")就可以控制该Logger实例的行为
 
 `<logger>`元素用来设置__一个或者多个Logger实例__的日志打印级别、以及指定`<appender>`
 
 `<logger>`仅有一个name属性，一个可选的level和一个可选的additivity属性
 
-* name：用来指定受此logger约束的一个或多个Logger实例
+* name：用来指定受此logger约束的一个或多个Logger实例
     * 可以是包名
     * 可以是类名
     * 可以是自定义的名字

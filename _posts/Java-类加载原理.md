@@ -114,7 +114,7 @@ Java_java_lang_Class_forName0(JNIEnv *env, jclass this, jstring classname,
 }
 ```
 
-我们继续查找JVM_FindClassFromCaller的声明以及定义，文件路径如下：
+我们继续查找JVM_FindClassFromCaller的声明以及定义，文件路径如下：
 
 * `${OPEN_JDK}/hotspot/src/share/vm/prims/jvm.h`
 * `${OPEN_JDK}/hotspot/src/share/vm/prims/jvm.cpp`
