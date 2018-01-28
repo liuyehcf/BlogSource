@@ -140,7 +140,7 @@ AccessController最重要的方法就是checkPermission()方法，作用是基�
 
 # 3 Demo
 
-__我的IDEA工程目录如下，其中security是一个子模块__
+__我的IDEA工程目录如下，其中security是一个子模块，下面的代码中会涉及到多个路径的配置，这些路径都是基于父模块的相对路径__
 
 * ![fig1](/images/Java-安全模型/fig1)
 
@@ -292,6 +292,11 @@ Caused by: java.security.AccessControlException: access denied ("java.util.Prope
 [ INFO ] - Create File Success!
 
 ```
+
+解释一下这个Demo的意义：
+
+1. 首先，为代码源`external.jar`中的`FileUtils`配置了一些权限（在指定路径读写文件的权限，以及读取用户主目录的权限）
+1. 让`ReflectAccessControllerDemo`通过调用`FileUtils`的`createFilePrivilege`方法（该方法会调用AccessController.doPrivileged来绕过权限检查）来获取访问这些资源的特权。__即为调用它的代码授权__，它指的是`FileUtils`，代码指的是`ReflectAccessControllerDemo`
 
 # 4 参考
 
