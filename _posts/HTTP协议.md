@@ -218,7 +218,7 @@ Web服务器向浏览器发送头信息后，它会发送一个空白行来表�
 
 # 5 参考
 
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf@163.com)，博主将在第一时间删除__
+__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
 
 * [HTTP协议详解](http://www.cnblogs.com/TankXiao/archive/2012/02/13/2342672.html#threeconcept)
 * [前端必备HTTP技能之HTTP请求头响应头中常用字段详解](https://www.jianshu.com/p/6e86903d74f7)

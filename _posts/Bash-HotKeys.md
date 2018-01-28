@@ -82,7 +82,7 @@ __目录__
 
 # 7 参考
 
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf@163.com)，博主将在第一时间删除__
+__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
 
 * [Bash 实用技巧大全](https://www.cnblogs.com/napoleon_liu/articles/1952228.html)
 * [较完整的Bash快捷键，让命令更有效率](http://www.linuxde.net/2011/11/1877.html)

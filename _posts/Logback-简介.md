@@ -478,7 +478,7 @@ __格式修饰符，与转换符共同使用__：可选的格式修饰符位于"
 
 # 5 参考
 
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf@163.com)，博主将在第一时间删除__
+__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
 
 * [从零开始玩转logback](http://www.importnew.com/22290.html)
 * [logback的使用和logback.xml详解](https://www.cnblogs.com/warking/p/5710303.html)

@@ -63,7 +63,7 @@ UDDI可以帮助Web服务提供商在互联网上发布Web services的信息。U
 
 # 3 参考
 
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf@163.com)，博主将在第一时间删除__
+__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
 
 * [web service 和 web server区别](https://zhidao.baidu.com/question/13577128.html)
 * [浅谈 SOAP Webserver 与 Restful Webserver 区别](https://www.cnblogs.com/hyhnet/archive/2016/06/28/5624422.html)

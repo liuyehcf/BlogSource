@@ -584,7 +584,7 @@ SELECT @@tx_isolation;
 
 # 6 参考
 
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf@163.com)，博主将在第一时间删除__
+__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
 
 * [数据库事务隔离级别和锁的实现方式](http://blog.csdn.net/yangtianyu1218/article/details/51543634)
 * [第一类第二类丢失更新](http://blog.csdn.net/lqglqglqg/article/details/48582905)

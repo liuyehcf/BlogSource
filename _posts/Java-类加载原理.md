@@ -721,7 +721,7 @@ Java Code-->Java Code:后续可能会有验证解析初始化操作
 
 # 4 参考
 
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf@163.com)，博主将在第一时间删除__
+__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
 
 * [Find a way out of the ClassLoader maze](https://www.javaworld.com/article/2077344/core-java/find-a-way-out-of-the-classloader-maze.html)
 * [深入理解Java类加载器(2)：线程上下文类加载器](http://blog.csdn.net/zhoudaxia/article/details/35897057)

@@ -90,7 +90,7 @@ Page DOWN：`Fn+↓`
 
 # 4 参考
 
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf@163.com)，博主将在第一时间删除__
+__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
 
 * [Mac 下利用 Launchctl 自启动 mysql](http://squll369.iteye.com/blog/1965185)
 * [Mac 有哪些鲜为人知的使用技巧？](https://www.zhihu.com/question/26379660)
