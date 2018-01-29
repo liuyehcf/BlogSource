@@ -66,6 +66,9 @@ $ git rm [file1] [file2] ...
 # 停止追踪指定文件，但该文件会保留在工作区
 $ git rm --cached [file]
 
+# 停止追踪所有文件，但该文件会保留在工作区
+$ git rm -r --cached .
+
 # 改名文件，并且将这个改名放入暂存区
 $ git mv [file-original] [file-renamed]
 ```
