@@ -154,33 +154,33 @@ import java.security.AccessControlException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
+/**
+ * Created by HCF on 2018/1/10.
+ */
 public class FileUtils {
-    public FileUtils() {
-    }
-
     public static void createFile(String baseDir, String simpleName) {
         File file = new File(baseDir + "/" + simpleName);
-        System.out.println("[ INFO ] - FILE PATH: " + file.getAbsolutePath());
+
+        System.out.println("[ INFO ] - " + "FILE PATH: " + file.getAbsolutePath());
 
         try {
             if (file.exists() && file.isFile()) {
                 file.delete();
             }
-
             if (file.createNewFile()) {
                 System.out.println("[ INFO ] - Create File Success!");
             }
-        } catch (AccessControlException | IOException var4) {
+        } catch (IOException | AccessControlException e) {
             System.err.println("[ ERROR ] - Create File Failure!");
-            var4.printStackTrace();
+            e.printStackTrace();
         }
-
     }
 
-    public static void createFilePrivilege(final String baseDir, final String simpleName) {
+    public static void createFilePrivilege(String baseDir, String simpleName) {
         AccessController.doPrivileged(new PrivilegedAction<Object>() {
+            @Override
             public Object run() {
-                FileUtils.createFile(baseDir, simpleName);
+                createFile(baseDir, simpleName);
                 return null;
             }
         });
