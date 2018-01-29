@@ -48,5 +48,7 @@ __对于web项目（打包方式为war）__，则会过滤所有依赖中包含�
 
 # 3 参考
 
+__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
+
 * [maven-shade-plugin 入门指南](https://www.jianshu.com/p/7a0e20b30401)
 * [maven-将依赖的 jar包一起打包到项目 jar 包中](https://www.jianshu.com/p/0c60f6ef3a4c)
