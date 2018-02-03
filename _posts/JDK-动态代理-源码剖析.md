@@ -5,7 +5,7 @@ tags:
 - 原创
 categories: 
 - Java
-- 动态代理
+- Dynamic proxy
 ---
 
 __目录__
