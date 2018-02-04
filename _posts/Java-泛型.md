@@ -29,9 +29,9 @@ Class是Type接口的实现，是运行时获取类型信息的入口
 
 ParameterizedType接口实现了Type接口，增加了如下方法
 
-1. getActualTypeArguments：用于获取泛型实参列表，例如`A<T,G>`返回的就是`T`和`G`
-1. getRawType：用于获取类型本身，例如`A<T>`返回的就是`A`
-1. getOwnerType：用于获取所有者类型，例如`A.B<T>`返回的就是`A`
+1. getActualTypeArguments：用于获取__泛型实参__列表，例如`AbstractMap.SimpleEntry<String, List>`返回的就是`String`和`List`
+1. getRawType：用于获取类型本身，例如`AbstractMap.SimpleEntry<String, List>`返回的就是`AbstractMap.SimpleEntry`
+1. getOwnerType：用于获取所有者类型，例如`AbstractMap.SimpleEntry<String, List>`返回的就是`AbstractMap`
 
 ```Java
     Type[] getActualTypeArguments();
@@ -55,7 +55,17 @@ public class TypeHolder extends ArrayList<String> {
 1. 如果一个类的__父类是泛型__，那么`Class.getGenericSuperclass`返回的就是`ParameterizedType`
 
 ```Java
-public class TypeHolder extends ArrayList<String> {
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.List;
+
+public class TypeHolder extends HashMap.SimpleEntry<String, List> {
+
+    public TypeHolder(String key, List value) {
+        super(key, value);
+    }
+
     public static void main(String[] args) {
         Class clazz = TypeHolder.class;
 
@@ -64,11 +74,15 @@ public class TypeHolder extends ArrayList<String> {
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
 
-            System.out.println(parameterizedType);
+            System.out.println("ParameterizedType: " + parameterizedType);
 
             for (Type actualTypeArgument : parameterizedType.getActualTypeArguments()) {
-                System.out.println(actualTypeArgument);
+                System.out.println("ActualTypeArgument: " + actualTypeArgument);
             }
+
+            System.out.println("RawType: " + parameterizedType.getRawType());
+
+            System.out.println("OwnerType: " + parameterizedType.getOwnerType());
         }
     }
 }
@@ -77,8 +91,11 @@ public class TypeHolder extends ArrayList<String> {
 输出
 
 ```
-java.util.ArrayList<java.lang.String>
-class java.lang.String
+ParameterizedType: java.util.AbstractMap.java.util.AbstractMap$SimpleEntry<java.lang.String, java.util.List>
+ActualTypeArgument: class java.lang.String
+ActualTypeArgument: interface java.util.List
+RawType: class java.util.AbstractMap$SimpleEntry
+OwnerType: class java.util.AbstractMap
 ```
 
 ## 1.3 TypeVariable接口
