@@ -42,17 +42,25 @@ ParameterizedType接口实现了Type接口，增加了如下方法
 ParameterizedType是如何保留泛型实参的呢？答案就是：我们可以将泛型实参保留在一条继承链路中，举个例子
 
 ```Java
-public class TypeHolder extends ArrayList<String> {
-    
+import java.util.HashMap;
+import java.util.List;
+
+public class TypeHolder extends HashMap.SimpleEntry<String, List> {
+
+    public TypeHolder(String key, List value) {
+        super(key, value);
+    }
 }
 ```
 
-这个`TypeHolder`类继承了`ArrayList<String>`，__这个父类的类型信息（ArrayList以及泛型实参String）是完全可以确定的，Java将它的父类的类型信息封装成`ParameterizedType`，保留在字节码文件中__
+这个`TypeHolder`类继承了`HashMap.SimpleEntry<String, List>`，__这个父类的类型信息（HashMap.SimpleEntry以及泛型实参String、List）在`编译期`就可以完全确定了，Java将它的父类的类型信息封装成`ParameterizedType`，保留在字节码文件中__
 
 那么，我们如何能够获取到这个类型信息呢？我们可以通过`Class.getGenericSuperclass`获取到`ParameterizedType`
 
 1. 如果一个类的__父类不是泛型__，那么`Class.getGenericSuperclass`返回的就是一个Class
 1. 如果一个类的__父类是泛型__，那么`Class.getGenericSuperclass`返回的就是`ParameterizedType`
+
+下面以一个例子来说明：
 
 ```Java
 import java.lang.reflect.ParameterizedType;
@@ -117,7 +125,7 @@ TypeVariable接口实现了Type接口，TypeVariable接口__主要用于封装�
     AnnotatedType[] getAnnotatedBounds();
 ```
 
-下面以一个例子来说明这几个方法
+下面以一个例子来说明：
 
 ```Java
 public class GenericType<T extends ArrayList> {
@@ -166,9 +174,9 @@ T
 为了支持泛型，我们必须解决以下问题
 
 1. 如果我们要初始化这样一个类`DataDTO<UserDTO>`，我们如何保留其泛型实参`UserDTO`，显然，通过DataDTO.class是无法得到的
-1. 对于`setData(T data)`这样一个方法，其中T是泛型形参，我们如何传入一个泛型实参的实例
+1. 对于`setXXX(T data)`这样一个含有泛型形参的方法，其中T是泛型形参，我们如何传入一个泛型实参的实例
 
-上一小节介绍过ParameterizedType可以将泛型实参保留在继承链路中。因此，对于第一个问题，我们通过如下方式来解决：
+__上一小节介绍过ParameterizedType可以将泛型实参保留在继承链路中。因此，对于第一个问题，我们通过如下方式来解决：__
 
 1. TypeReference是一个抽象类，避免实例化本类
 1. TypeReference包含一个type字段，用于保留父类的类型信息
@@ -194,7 +202,7 @@ T
 TypeReference的使用方式如下：
 
 * 注意这个大括号`{}`。这个语句的意思是，__创建一个TypeReference的匿名内部类__
-* 在创建对象时，`(1)`中`getClass()`获取到的是这个匿名内部类，通过getGenericSuperclass方法得到的就是`TypeReference<DataDTO<UserDTO>>`，然后通过`(2)`得到泛型实参`DataDTO<UserDTO>`。__因此类型信息通过继承链路保留了下来，这是一个比较tricky的地方__
+* 在创建对象时，`(1)`中`getClass()`获取到的是这个匿名内部类的Class对象，通过getGenericSuperclass方法得到的就是`TypeReference<DataDTO<UserDTO>>`，然后通过`(2)`得到泛型实参`DataDTO<UserDTO>`。__因此类型信息通过继承链路保留了下来，这是一个比较tricky的地方__
 
 ```Java
     public static void main(String[] args) {
@@ -209,6 +217,8 @@ TypeReference的使用方式如下：
 ```
 DataDTO<UserDTO>
 ```
+
+__对于第二个问题，我们可以建立一个Map<String, Type>，从泛型形参映射到泛型实参，这样每当遇到setXXX(T data)这样含有泛型形参的方法时，我们通过这个Map字典查询到泛型实参__
 
 ## 2.3 代码清单
 
@@ -647,3 +657,172 @@ public class JavaBeanInitializerUtils {
     }
 }
 ```
+
+## 2.4 测试
+
+### 2.4.1 DTO定义
+
+__首先定义几个DTO__
+
+AddressDTO
+
+```Java
+package org.liuyehcf.reflect.dto;
+
+public class AddressDTO {
+    private String country;
+    private String province;
+    private String city;
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+}
+```
+
+GenericDTO
+
+```Java
+package org.liuyehcf.reflect.dto;
+
+public class GenericDTO<Data, Value> {
+    private Data data;
+    private Value value;
+
+    public Data getData() {
+        return data;
+    }
+
+    public void setData(Data data) {
+        this.data = data;
+    }
+
+    public Value getValue() {
+        return value;
+    }
+
+    public void setValue(Value value) {
+        this.value = value;
+    }
+}
+```
+
+UserDTO
+
+```Java
+package org.liuyehcf.reflect.dto;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
+
+public class UserDTO<Data> {
+    private String name;
+    private Integer age;
+    private Map<String, Data> map;
+    private List<Data> list;
+    private Set<Data> set;
+    private Queue<Data> queue;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public Map<String, Data> getMap() {
+        return map;
+    }
+
+    public void setMap(Map<String, Data> map) {
+        this.map = map;
+    }
+
+    public List<Data> getList() {
+        return list;
+    }
+
+    public void setList(List<Data> list) {
+        this.list = list;
+    }
+
+    public Set<Data> getSet() {
+        return set;
+    }
+
+    public void setSet(Set<Data> set) {
+        this.set = set;
+    }
+
+    public Queue<Data> getQueue() {
+        return queue;
+    }
+
+    public void setQueue(Queue<Data> queue) {
+        this.queue = queue;
+    }
+}
+```
+
+### 2.4.2 测试代码
+
+```Java
+package org.liuyehcf.reflect;
+
+import com.alibaba.fastjson.JSON;
+import org.junit.Test;
+import org.liuyehcf.reflect.dto.AddressDTO;
+import org.liuyehcf.reflect.dto.GenericDTO;
+import org.liuyehcf.reflect.dto.UserDTO;
+
+public class TestJavaBeanBuilder {
+    @Test
+    public void testGeneric1() {
+        System.out.println(JSON.toJSONString(JavaBeanInitializerUtils.createJavaBean(
+                new JavaBeanInitializerUtils.TypeReference<UserDTO<GenericDTO<UserDTO<AddressDTO>, AddressDTO>>>() {
+                }
+        )));
+    }
+
+    @Test
+    public void testGeneric2() {
+        System.out.println(JSON.toJSONString(JavaBeanInitializerUtils.createJavaBean(
+                new JavaBeanInitializerUtils.TypeReference<GenericDTO<GenericDTO<UserDTO<AddressDTO>, AddressDTO>, GenericDTO<UserDTO<GenericDTO<UserDTO<AddressDTO>, AddressDTO>>, AddressDTO>>>() {
+                }
+        )));
+    }
+}
+```
+
+输出结果太大了，这里就不放了
