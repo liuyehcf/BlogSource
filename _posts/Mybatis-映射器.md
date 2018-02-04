@@ -186,20 +186,21 @@ __我们可以使用keyProperty属性指定哪个是主键字段，同时使用u
 
 和insert元素一样，MyBatis执行完update元素和delete元素后会返回一个整数，标出执行后影响的记录条数
 
-# 5 的
+# 5 JavaBean自动映射的配置
 
-自动将所有DO进行映射，这样一来就不用写map了，但随之而来的开销就是`AS`
+自动将所有DO进行映射，这样一来就不用写map了，但随之而来的开销就是需要在SQL中写`AS`
+
 ```xml
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="appserverDataSource"/>
-        <property name="typeAliasesPackage" value="com.alibaba.alink.appserver.common.dal.dataobject"/>
-        <property name="mapperLocations" value="classpath*:com/alibaba/alink/appserver/common/dal/sqlmap/*.xml"/>
+        <property name="dataSource" ref="myDatasource"/>
+        <property name="typeAliasesPackage" value="org.liuyehcf.mybatis.dataobject"/>
+        <property name="mapperLocations" value="classpath*:org/liuyehcf/mybatis/sqlmap/*.xml"/>
     </bean>
 ```
 
-`#{}`  `${}`的区别
+# 6 \#\{\}和\$\{\}的区别
 
-# 6 参考
+# 7 参考
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
 

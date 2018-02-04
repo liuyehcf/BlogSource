@@ -240,7 +240,7 @@ public interface Pointcut {
 
 ### 1.3.4 Advisor
 
-Advisor也是Spring AOP新增的接口，称为切面。__该接口关联着一个Advice和一个Pointcut，其中Advice代表着织入的逻辑，Pointcut代表着织入的地点集合__
+Advisor也是Spring AOP新增的接口，称为切面。__该接口关联着一个Advice和一个Pointcut，其中Advice代表着织入的逻辑，Pointcut代表着织入的地点集合__。因此一个Advisor包含了__一个增强逻辑__以及__织入地点的集合__
 
 ### 1.3.5 关联
 
@@ -250,7 +250,11 @@ Advice、Joinpoint、Pointcut、Advisor之间的关系可以用下面这些图�
 * ![fig2](/images/Spring-AOP-源码剖析/fig2.jpg)
 * ![fig3](/images/Spring-AOP-源码剖析/fig3.jpg)
 
-# 2 参考
+# 2 源码剖析
+
+首先来看一下，Spirng AOP是如何使用的，详细的Demo可以参考{% post_link Spring-AOP-Demo %}
+
+# 3 参考
 
 * [Spring AOP: What's the difference between JoinPoint and PointCut?](https://stackoverflow.com/questions/15447397/spring-aop-whats-the-difference-between-joinpoint-and-pointcut)
 * [What is the difference between Advisor and Aspect in AOP?](https://stackoverflow.com/questions/25092302/what-is-the-difference-between-advisor-and-aspect-in-aop)

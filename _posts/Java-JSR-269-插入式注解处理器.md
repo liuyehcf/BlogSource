@@ -2,7 +2,7 @@
 title: Java-JSR-269-插入式注解处理器
 date: 2018-02-02 19:04:57
 tags: 
-- 摘录
+- 原创
 categories: 
 - Java
 - Annotation
@@ -1237,8 +1237,6 @@ address: 中国
 __DONE__
 
 # 5 参考
-
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
 
 * [Lombok简介](https://www.jianshu.com/p/365ea41b3573)
 * [Lombok原理文章总结](http://blog.csdn.net/hotdust/article/details/75042465)
