@@ -117,7 +117,60 @@ livere_uid: #your livere_uid
 
 [Mac 上的 VSCode 编写 Markdown 总是出现隐藏字符？](https://www.zhihu.com/question/61638859)
 
-# 7 参考
+# 7 增加菜单
+
+`hexo new page "explore"`
+
+修改主题配置文件`/themes/next/_config.yml`
+
+```
+menu:
+  home: /
+  categories: /categories/
+  about: /about/
+  explore: /explore/  # 添加这个
+  archives: /archives/
+  tags: /tags/
+```
+
+修改国际化配置文件`/themes/next/languages/en.yml`以及`/themes/next/languages/zh-Hans.yml`
+
+```
+menu:
+  home: Home
+  archives: Archives
+  categories: Categories
+  tags: Tags
+  about: About
+  explore: Explore  # 添加这个
+  search: Search
+  schedule: Schedule
+  sitemap: Sitemap
+  commonweal: Commonweal 404
+```
+
+```
+menu:
+  home: 首页
+  archives: 归档
+  categories: 分类
+  tags: 标签
+  about: 关于
+  explore: 发现  # 添加这个
+  search: 搜索
+  schedule: 日程表
+  sitemap: 站点地图
+  commonweal: 公益404
+```
+
+# 8 hexo相关的项目
+
+| 项目 | 描述 |
+|:--|:--|
+
+| [yilia主题](https://github.com/litten/hexo-theme-yilia) | hexo主题 |
+
+# 9 参考
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
 
@@ -126,3 +179,4 @@ __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时
 * [用 Hexo 搭建个人博客-02：进阶试验](http://www.jianshu.com/p/6c1196f12302)
 * [Hexo文章简单加密访问](http://blog.csdn.net/Lancelot_Lewis/article/details/53422901)
 * [Hexo文章简单加密访问](https://www.jianshu.com/p/a2330937de6c)
+* [hexo的next主题个性化配置教程](https://segmentfault.com/a/1190000009544924)
