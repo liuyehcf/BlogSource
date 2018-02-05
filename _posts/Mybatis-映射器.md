@@ -1,12 +1,12 @@
 ---
-title: Mybatis-映射器
+title: MyBatis-映射器
 date: 2018-01-23 18:52:55
 tags: 
 - 摘录
 categories: 
 - Java
 - Framework
-- Mybatis
+- MyBatis
 ---
 
 __目录__
@@ -143,7 +143,7 @@ __当参数多于5个，用JavaBean__
 
 # 3 insert元素
 
-Mybatis会在执行插入之后返回一个整数，以表示你进行操作后插入的记录数
+MyBatis会在执行插入之后返回一个整数，以表示你进行操作后插入的记录数
 
 | 元素 | 说明 | 备注 |
 |:--|:--|:--|
@@ -186,23 +186,31 @@ __我们可以使用keyProperty属性指定哪个是主键字段，同时使用u
 
 和insert元素一样，MyBatis执行完update元素和delete元素后会返回一个整数，标出执行后影响的记录条数
 
-# 5 JavaBean自动映射的配置
+# 5 sql元素
 
-自动将所有DO进行映射，这样一来就不用写map了，但随之而来的开销就是需要在SQL中写`AS`
+sql元素的意义，在于我们可以__定义一串SQL语句的组成部分，其他的语句可以通过引用来使用它__。例如，有一条SQL需要select几十个字段映射到JavaBean中去，另一条SQL也是这几十个字段映射到JavaBean中去，显然这些字段写两遍不太合适，那么可以用sql元素来完成
 
 ```xml
-    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="myDatasource"/>
-        <property name="typeAliasesPackage" value="org.liuyehcf.mybatis.dataobject"/>
-        <property name="mapperLocations" value="classpath*:org/liuyehcf/mybatis/sqlmap/*.xml"/>
-    </bean>
+<sql id="role_columns">
+    id, role_name, note
+</sql>
+
+<select parameterType="long" id="getRole" resultMap="roleMap">
+    select <include refid="role_columns"/> from t_role where id = #{id}
+</select>
 ```
 
-# 6 \#{}和${}的区别
+# 6 参数
+
+## 6.1 特殊字符串替换和处理（\#和$）
+
+`#{}`写法会将传入的数据都当成一个字符串，会对传入的数据加一个双引号。`#{}`方式一般用于传入字段值，并将该值作为字符串加到执行sql中，__一定程度防止sql注入__
+
+使用`${}`时，MyBatis不会将传入的数据当成一个字符串。`${}`方式一般用于传入数据库对象，例如传入表名，__不能防止sql注入，存在风险__
 
 # 7 参考
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
 
 * 《深入浅出MyBatis技术原理与实战》
-* [Mybatis教程](http://www.mybatis.org/mybatis-3/zh/index.html)
+* [MyBatis教程](http://www.mybatis.org/mybatis-3/zh/index.html)

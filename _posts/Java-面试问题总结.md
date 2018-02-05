@@ -863,7 +863,7 @@ public class Solution {
     > __`PROPAGATION_NOT_SUPPORTED`__：以非事务方式执行操作，如果当前存在事务，就把当前事务挂起
     > __`PROPAGATION_NEVER`__：以非事务方式执行，如果当前存在事务，则抛出异常
 
-1. Mybatis的底层实现原理
+1. MyBatis的底层实现原理
     > 待补充
     > http://www.cnblogs.com/atwanli/articles/4746349.html
 
@@ -899,7 +899,7 @@ public class Solution {
 
 # 5 其他框架
 
-1. Mybatis
+1. MyBatis
     > #和$的区别(http://blog.csdn.net/kobi521/article/details/16941403)
 
 1. Netty
