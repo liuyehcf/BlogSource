@@ -16,7 +16,7 @@ __目录__
 
 # 1 MyBatis的基本构成
 
-我们先了解一下MyBatis的核心组件
+我们先了解一下MyBatis的核心组件（__先不整合Spring，以下内容都是纯MyBatis的概念、使用以及配置方式__）
 
 1. `SqlSessionFactoryBuilder`：构造器，它会根据配置信息或者代码来生成SqlSessionFactory
     * 利用XML(提取到流对象)或者Java编码(Configuration)对象来构建SqlSessionFactory
@@ -103,6 +103,41 @@ __目录__
 ```
 
 两者本质没有区别，一个Configuration对象就对应了一个XML配置文件
+
+## 1.2 创建SqlSession
+
+SqlSession是一个接口类，在MyBatis中SqlSession接口的实现类有两个，分别是
+
+1. DefaultSqlSession
+1. SqlSessionManager
+
+SqlSession接口类似于一个JDBC中的Connection接口对象，我们需要保证每次使用完正常关闭它，所以正确的做法是把关闭SqlSession接口的代码写在finally语句中保证每次都会关闭SqlSession，让连接资源归还给数据库
+
+```Java
+        SqlSession sqlSession = null;
+        try {
+            // 打开SqlSession会话
+            sqlSession = sqlSessionFactory.openSession();
+
+            // ...
+            // 这里执行一些SQL语句
+            // ...
+
+            sqlSession.commit();
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
+        } finally {
+            // 在finally中保证资源被顺利关闭
+            if (sqlSession != null) {
+                sqlSession.close();
+            }
+        }
+```
+
+SqlSession的用途主要有两种
+
+1. 获取映射器，让映射器通过命名空间和方法名称找到对应的SQL，发送给数据库执行后，返回结果
+1. 直接通过命名信息去执行SQL，然后返回结果。这是iBatis版本留下的方式。在SqlSession层我们可以通过update、insert、select、delete等方法，带上SQL的id来操作在XML中配置好的SQL
 
 # 2 XML配置文件
 
@@ -230,9 +265,54 @@ public class Role{
 }
 ```
 
-__如果没有@Alias注解，MyBatis也会装载，默认的规则是：将类名的第一个字母小写，作为MyBatis的别名__
+__如果没有@Alias注解，MyBatis也会装载，默认的规则是：将首字母小写的类名，作为MyBatis的别名__
 
-## 2.2 引入映射器
+## 2.2 environments配置环境
+
+配置环境可以注册多个数据源（dataSource），每一个数据源分为两大部分：
+
+1. 一个是数据源的配置
+1. 另一个是数据库事务的配置
+
+示例如下
+
+```xml
+    <environments default="development">
+        <environment id="development">
+            <!-- 采用JDBC事务管理 -->
+            <transactionManager type="JDBC">
+                <property name="autoCommit" value="false"/>
+            </transactionManager>
+
+            <!-- 配置数据库连接信息 -->
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql:// localhost:3306/mybatis"/>
+                <property name="username" value="root"/>
+                <property name="password" value="learn"/>
+            </dataSource>
+        </environment>
+    </environments>
+```
+
+分析一下上面的配置
+
+1. environments中的default属性：标明在缺省的情况下，我们将启用哪个数据源配置
+1. environment元素是配置一个数据源的开始，属性id是这个数据源的标志，以便在MyBatis上下文中使用它
+1. transactionManager是数据库事务的配置
+    * 其中type有三种配置方式
+        * JDBC：采用JDBC方式管理事务，在独立编码中常常使用
+        * MANAGED：采用容器方式管理事务，在JNDI数据源中常用
+        * 自定义，由使用者自定义数据库事务管理拌饭，适用于特殊应用
+    * property元素则是可以配置数据源的各类属性
+1. dataSource标签，是配置数据源连接的信息
+    * type属性是提供我们队数据库连接方式的配置，MyBatis支持如下几种配置方式
+        * UNPOOLED：非连接池数据库，UnpooledDataSrouce
+        * POOLED：连接池数据库，PooledDataSource
+        * JNDI：JNDI数据源，JNDIDataSrouce
+    * property元素可以定义数据库各类参数
+
+## 2.3 引入映射器的方法
 
 __用文件路径引入映射器__
 
@@ -268,7 +348,121 @@ __用userMapper.xml引入映射器__
 </mappers>
 ```
 
-# 3 JavaBean自动映射的配置
+# 3 MyBatis-Spring
+
+配置MyBatis-Spring分为下面几个部分
+
+1. 配置数据源
+1. 配置SqlSessionFactory
+1. 配置SqlSessionTemplate
+1. 配置Mapper
+1. 事务处理
+
+在Spring中要构建SqlSessionTemplate对象，让它来产生SqlSession，而在MyBatis-Spring项目中SqlSession的使用是通过SqlSessionTemplate来实现的，它实现了SqlSession接口。所以通过SqlSessionTemplate可以得到Mapper
+
+## 3.1 配置SqlSessionFactory
+
+MyBatis-Spring项目提供了`org.mybatis.spring.SqlSessionFactoryBean`来配置SqlSessionFactory，一般而言需要提供两个参数
+
+1. 数据源
+1. MyBatis配置文件路径
+
+__示例：__
+
+```xml
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql:// localhost:3306/mybatis"/>
+        <property name="username" value="root"/>
+        <property name="password" value="learn"/>
+    </bean>
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:sqlMapConfig.xml"/>
+    </bean>
+```
+
+__MyBatis配置文件`sqlMapConfig.xml`如下__
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-// mybatis.org// DTD Config 3.0// EN"
+        "http:// mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <settings>
+        <!-- 这个配置使全局的映射器启用或禁用 -->
+        <setting name="cacheEnabled" value="true"/>
+
+        <!-- 允许JDBC支持生成的键 -->
+        <setting name="useGeneratedKeys" value="true"/>
+
+        <!-- 配置默认的执行器
+            SIMPLE执行器没有什么特别之处
+            REUSE执行器重用预处理语句
+            BATCH执行器重用语句和批量更新
+            -->
+        <setting name="defaultExecutorType" value="REUSE"/>
+
+        <!-- 全局启用或禁用延迟加载。当禁用时，所有关联对象都会即使加载 -->
+        <setting name="lazyLoadingEnabled" value="true"/>
+
+        <!-- 设置超时时间，它决定驱动等待一个数据库响应的时间 -->
+        <setting name="defaultStatementTimeout" value="25000"/>
+    </settings>
+
+    <!-- 定义别名 -->
+    <typeAliases>
+        <typeAlias alias="role" type="com.learn.chapter2.po.Role"/>
+    </typeAliases>
+
+    <!-- 定义映射器 -->
+    <mappers>
+        <mapper resource="com/learn/chapter2/mapper/roleMapper.xml"/>
+    </mappers>
+</configuration>
+```
+
+事实上，我们不需要额外提供MyBatis的配置文件，所有配置项都可以作为SqlSessionFactoryBean的参数进行配置
+
+```xml
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource"/>
+
+        <property name="mapperLocations"/>
+
+        <property name="typeAliases"/>
+        <property name="typeAliasesPackage"/>
+        <property name="typeAliasesSuperType"/>
+
+        <property name="transactionFactory"/>
+
+        <property name="sqlSessionFactoryBuilder"/>
+
+        <property name="objectFactory"/>
+        <property name="objectWrapperFactory"/>
+
+        <property name="typeHandlers"/>
+        <property name="typeHandlersPackage"/>
+
+        <property name="configLocation"/>
+        <property name="configurationProperties"/>
+        <property name="plugins"/>
+        <property name="databaseIdProvider"/>
+        <property name="environment"/>
+        <property name="failFast"/>
+    </bean>
+```
+
+## 3.2 配置SqlSessionTemplate
+
+## 3.3 配置Mapper
+
+## 3.4 配置事务
+
+## 3.5 JavaBean自动映射的配置
 
 自动将所有DO进行映射，这样一来就不用写map了，但随之而来的开销就是需要在SQL中写`AS`
 
