@@ -31,9 +31,9 @@ if元素是最常用的判断语句，相当于Java中的if语句，它常常与
 
 ```xml
 <select id="findRoles" parameterType="string" resultMap="roleResultMap">
-    select role_no, role_name, note from t_role where 1=1
+    SELECT role_no, role_name, note FROM t_role WHERE 1=1
     <if test="roleName != null and roleName != ''">
-        and role_name like concat('%', #{roleName}, '%')
+        AND role_name LIKE CONCAT('%', #{roleName}, '%')
     </if>
 </select>
 ```
@@ -44,17 +44,17 @@ if元素是最常用的判断语句，相当于Java中的if语句，它常常与
 
 ```xml
 <select id="findRoles" parameterType="role" resultMap="roleResultMap">
-    select role_no, role_name, note from t_role
-    where 1=1
+    SELECT role_no, role_name, note FROM t_role
+    WHERE 1=1
     <choose>
         <when test="roleNo != null and roleNo != ''">
-            and role_no = #{roleNo}
+            AND role_no = #{roleNo}
         </when>
         <when test="roleName != null and roleName != ''">
-            and role_name like concat('%', #{roleName}, '%')
+            AND role_name LIKE CONCAT('%', #{roleName}, '%')
         </when>
         <otherwise>
-            and note is not null
+            AND note IS NOT NULL
         </otherwise>
     </choose>
 </select>
@@ -62,16 +62,18 @@ if元素是最常用的判断语句，相当于Java中的if语句，它常常与
 
 # 4 trim、where、set元素
 
+## where元素
+
 前面的例子中加入了"1=1"这样一个条件，如果没有这个条件，得到的SQL语句是有语法错误的（where后面直接跟了一个and）
 
 我们可以使用where元素，如下
 
 ```xml
 <select id="findRoles" parameterType="string" resultMap="roleResultMap">
-    select role_no, role_name, note from t_role
+    SELECT role_no, role_name, note FROM t_role
     <where>
         <if test="roleName != null and roleName != ''">
-            and role_name like concat('%', #{roleName}, '%')
+            AND role_name LIKE CONCAT('%', #{roleName}, '%')
         </if>
     </where>
 </select>
@@ -79,33 +81,45 @@ if元素是最常用的判断语句，相当于Java中的if语句，它常常与
 
 这样一来，当where元素里面的条件成立时，才会加入where这个SQL关键字到组装的SQL里面，否则就不加入
 
-有时候，我们需要去掉一些特殊的SQL语法，比如常见的and、or，使用trim元素可以达到这个效果
+## trim元素
+
+有时候，我们需要去掉一些特殊的SQL语法，比如常见的and、or，使用trim元素可以达到这个效果。trim元素有如下属性
+
+1. prefix：添加前缀
+1. prefixOverrides：去掉第一个指定的字符串
+1. suffixoverride：去掉最后一个指定的字符串
+1. suffix：添加后缀
 
 ```xml
 <select id="findRoles" parameterType="string" resultMap="roleResultMap">
-    select role_no, role_name, note from t_role
+    SELECT role_no, role_name, note FROM t_role
     <trim prefix="where" prefixOverrides="and">
         <if test="roleName != null and roleName != ''">
-            and role_name like concat('%', #{roleName}, '%')
+            AND role_name LIKE CONCAT('%', #{roleName}, '%')
         </if>
     </trim>
 </select>
 ```
 
-在更新数据的时候，我们往往只想更新某几个字段，而其他字段不更新，set元素可以为我们动态地生成SQL语句
+## set元素
+
+在更新数据的时候，我们要根据入参的有效数据（不为null且不为空）的情况来动态地生成update语句，set元素可以帮助我们完成这个需求
+
+1. set元素会为我们添加关键字`SET`
+1. set元素会删除生成语句最后面一个逗号
 
 ```xml
 <update id="updateRole" parameterType="role">
-    update t_role
+    UPDATE t_role
     <set>
         <if test="roleName != null and roleName != ''">
             role_name = #{roleName},
         </if>
         <if test="note != null and note != ''">
-            note = #{note}
+            note = #{note},
         </if>
     </set>
-    where role_no = #{roleNo}
+    WHERE role_no = #{roleNo}
 </update>
 ```
 
@@ -119,7 +133,7 @@ foreach元素是一个循环语句，它的作用是遍历集合。它能够很�
 
 ```xml
 <select id="findUserBySex" resultType="user">
-    select * from t_user where sex in
+    SELECT * FROM t_user WHERE sex IN
     <foreach item="sex" index="index" collection="sexList" open="(" separator="," close=")">
         #{sex}
     </foreach>

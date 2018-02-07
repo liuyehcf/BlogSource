@@ -162,7 +162,7 @@ MyBatis会在执行插入之后返回一个整数，以表示你进行操作后�
 
 有时候，在插入一条数据之后，我们往往需要获得这个主键，以便于未来的操作，而MyBatis提供了实现的方法
 
-__我们可以使用keyProperty属性指定哪个是主键字段，同时使用useGeneratedKeys属性告诉MyBatis这个主键是否使用数据库内置策略生成__
+__我们可以使用keyProperty属性（注意：keyProperty属性填的值是JavaBean中的属性名，而不是表中的列名）指定哪个是主键字段，同时使用useGeneratedKeys属性告诉MyBatis这个主键是否使用数据库内置策略生成__
 
 有时候，我们需要根据一些特殊的关系设置主键id的值。假设我们取消表`t_role`的id自增规则，改为如下自定义规则
 
