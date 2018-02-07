@@ -170,7 +170,22 @@ menu:
 
 | [yilia主题](https://github.com/litten/hexo-theme-yilia) | hexo主题 |
 
-# 9 参考
+# 9 取消侧栏编号
+
+主题配置文件修改如下配置，将number改为false即可
+
+```sh
+toc:
+  enable: true
+
+  # Automatically add list number to toc.
+  number: false 
+
+  # If true, all words will placed on next lines if header width longer then sidebar width.
+  wrap: false
+```
+
+# 10 参考
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
 
