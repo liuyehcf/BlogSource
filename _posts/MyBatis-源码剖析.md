@@ -14,7 +14,7 @@ __目录__
 <!-- toc -->
 <!--more-->
 
-# 前言
+# 1 前言
 
 本文围绕以下几个问题展开对MyBatis源码的研究（不涉及Spring，纯MyBatis）
 
@@ -25,7 +25,7 @@ __目录__
 
 __分析用到的Demo源码详见{% post_link MyBatis-Demo %}__
 
-# SqlSessionFactory生成
+# 2 SqlSessionFactory生成
 
 __分析起点__
 
@@ -89,7 +89,7 @@ DefaultSqlSessionFactory的构造方法如下
 1. 读取MyBatis的配置文件，封装成Configuration对象
 1. 生成SqlSessionFactory接口的实例，该SqlSessionFactory的实例持有这个Configuration对象
 
-## Configuration对象的创建
+## 2.1 Configuration对象的创建
 
 SqlSessionFactoryBuilder.build方法中调用了XMLConfigBuilder.parse方法来创建Configuration对象，主干源码如下：
 
@@ -108,7 +108,7 @@ SqlSessionFactoryBuilder.build方法中调用了XMLConfigBuilder.parse方法来�
 
     private void parseConfiguration(XNode root) {
         try {
-            propertiesElement(root.evalNode("properties")); //issue #117 read properties first
+            propertiesElement(root.evalNode("properties")); // issue #117 read properties first
             typeAliasesElement(root.evalNode("typeAliases"));
             pluginElement(root.evalNode("plugins"));
             objectFactoryElement(root.evalNode("objectFactory"));
@@ -126,7 +126,7 @@ SqlSessionFactoryBuilder.build方法中调用了XMLConfigBuilder.parse方法来�
 
 依据MyBatis配置文件元素的划分，Configuration的初始化分为了若干个步骤，每个步骤对应于一个配置项的解析与初始化
 
-### 读取映射器配置文件
+### 2.1.1 读取映射器配置文件
 
 我们着重看一下Mapper初始化过程，对应于XMLConfigBuilder.mapperElement方法
 
@@ -150,22 +150,28 @@ private void mapperElement(XNode parent) throws Exception {
                         // 获取输入流
                         InputStream inputStream = Resources.getResourceAsStream(resource);
 
-                        // 创建Mapper文件的解析器
+                        // 创建映射器配置文件的解析器
                         XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, resource, configuration.getSqlFragments());
 
-                        // 进行解析
+                        // 进行解析，里面会调用Configuration.addMapper方法添加Mapper
                         mapperParser.parse();
                     } 
                     // 配置了url属性，对应于url配置
                     else if (resource == null && url != null && mapperClass == null) {
                         ErrorContext.instance().resource(url);
+                        // 获取输入流
                         InputStream inputStream = Resources.getUrlAsStream(url);
+
+                        // 创建映射器配置文件的解析器
                         XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, url, configuration.getSqlFragments());
+
+                        // 进行解析，里面会调用Configuration.addMapper方法添加Mapper
                         mapperParser.parse();
                     } 
                     // 配置了class属性，对应于类的配置
                     else if (resource == null && url == null && mapperClass != null) {
                         Class<?> mapperInterface = Resources.classForName(mapperClass);
+                        // 添加Mapper
                         configuration.addMapper(mapperInterface);
                     } else {
                         throw new BuilderException("A mapper element may only specify a url, resource or class, but not more than one.");
@@ -214,6 +220,8 @@ private void mapperElement(XNode parent) throws Exception {
             parameterMapElement(context.evalNodes("/mapper/parameterMap"));
             resultMapElements(context.evalNodes("/mapper/resultMap"));
             sqlElement(context.evalNodes("/mapper/sql"));
+
+            // 每一条SQL语句都作为一个MappedStatement存在于Configuration中
             buildStatementFromContext(context.evalNodes("select|insert|update|delete"));
         } catch (Exception e) {
             throw new BuilderException("Error parsing Mapper XML. Cause: " + e, e);
@@ -233,7 +241,7 @@ private void mapperElement(XNode parent) throws Exception {
                 // 首先，尝试根据命名空间找到对应的Class对象
                 boundType = Resources.classForName(namespace);
             } catch (ClassNotFoundException e) {
-                //ignore, bound type is not required
+                // ignore, bound type is not required
             }
 
             // 根据命名空间成功找到Class对象
@@ -294,14 +302,13 @@ Configuration.addMapper将任务转交给了MapperRegistry的同名方法，Mapp
 
 因此，__如果一个映射器的配置方式是Java接口加上注解__，那么配置Mapper的属性为class，根据XMLConfigBuilder.mapperElement的逻辑，将会直接调用Configuration.addMapper方法，于是同样会走到MapperRegistry.addMapper的逻辑来扫描注解
 
-
 注意一下，__MyBatis`不要求`映射器配置文件的namespace必须对应着一个接口__。如果namespace不是一个接口的话，无法使用Mapper方式来操作SQL，不过还是能通过iBatis的方式进行SQL操作，例如
 
 ```Java
 sqlSession.selectList("some-namespace.update", map);
 ```
 
-# SqlSession生成
+# 3 SqlSession生成
 
 __分析起点__
 
@@ -499,7 +506,7 @@ Executor
 1. Configuration对象，这个可以从SqlSessionFactory中获取
 1. Executor对象，该对象的创建又依赖于数据库事务对象（Transaction）。所有通过SqlSession执行的SQL操作，最终都会由该Executor对象来执行
 
-# 代理生成
+# 4 代理生成
 
 __分析起点__
 
@@ -529,8 +536,8 @@ CrmUserDAO mapper = sqlSession.getMapper(CrmUserDAO.class);
 
 继续跟踪MapperRegistry的同名方法，该方法的逻辑如下
 
-1. 首先从MapperRegistry的缓存中（knownMappers）以Class对象为键，拿到MapperProxyFactory对象
-    * 如果无法获取到，那么意味着namespace没有对应着一个Java接口，因此，无法使用Mapper方式操作SQL，于是直接抛出异常
+1. __首先从MapperRegistry的缓存中（knownMappers）以Class对象为键，拿到MapperProxyFactory对象__
+    * __如果无法获取到，那么意味着namespace没有对应着一个Java接口，因此，无法使用Mapper方式操作SQL__，于是直接抛出异常
 1. 然后用这个获取到的MapperProxyFactory对象来为当前Java接口创建代理对象
 
 在Configuration对象创建的分析中，我们已经分析过了knownMappers的添加流程，关键逻辑在MapperRegistry.addMapper方法中，这里不再赘述
@@ -625,7 +632,6 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
 1. 不代理Object的方法
 1. 所有Mapper的Java接口方法的调用，最终都转化为MapperMethod方法的调用。因此所有SQL核心逻辑的实现，被封装在MapperMethod中
 
-
 接着，我们看一下MapperMethod的构造方法
 
 ```Java
@@ -680,7 +686,7 @@ SqlCommand如下，该类的主要作用就是获取一条SQL语句的名字（�
     }
 ```
 
-MethodSignature如下，该类的主要作用就是封装一个Method（映射器的Java接口的方法）的各类信息，还包含了一个重要的方法convertArgsToSqlCommandParam
+MethodSignature如下，该类的主要作用就是封装一个Method（映射器的Java接口的方法）的各类信息，__还包含了一个重要的方法convertArgsToSqlCommandParam，该方法定义了参数的映射方法（参数的传递方式），也是@Param注解生效的地方__
 
 ```Java
 public static class MethodSignature {
@@ -895,9 +901,11 @@ public Object execute(SqlSession sqlSession, Object[] args) {
     }
 ```
 
-这里我们分析一个
+这里，每种SQL的操作流程如下
 
+1. 首先，通过MethodSignature.convertArgsToSqlCommandParam方法进行参数映射
+1. 然后通过iBatis的接口进行SQL操作
 
-# 参数映射
+# 5 SQL操作的执行
 
-
+由上述分析可知，MyBatis只不过在iBatis的基础之上进行了一层抽象与封装，最终实际的SQL操作的核心逻辑还是落在iBatis中，这部分内容下次再补充！
