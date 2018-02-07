@@ -198,7 +198,7 @@ public class CrmUserDO {
 
 ### 1.3.3 TestTemplate.java
 
-测试模板类
+测试模板类，由于测试方法中每次都需要构造SqlSessionFactory，然后用SqlSessionFactory获取一个SqlSession，利用SqlSession执行相应的SQL操作之后，提交或者回滚，最后关闭SqlSession，这些操作都是可以固化的，因此使用模板方法模式
 
 ```Java
 package org.liuyehcf.mybatis;
@@ -239,7 +239,6 @@ public abstract class TestTemplate {
 
         SqlSession sqlSession = null;
         try {
-            // 打开SqlSession会话
             sqlSession = sqlSessionFactory.openSession();
 
             doExecute(sqlSession);
@@ -252,7 +251,6 @@ public abstract class TestTemplate {
             System.err.println(e.getMessage());
             e.printStackTrace();
         } finally {
-            // 在finally中保证资源被顺利关闭
             if (sqlSession != null) {
                 sqlSession.close();
             }
@@ -265,7 +263,7 @@ public abstract class TestTemplate {
 
 ### 1.3.4 TestWithParam.java
 
-测试没有@Param注解的方法
+测试含有@Param注解的方法
 
 ```Java
 package org.liuyehcf.mybatis;
@@ -370,7 +368,7 @@ public class TestWithParam {
 
 ### 1.3.5 TestWithoutParam.java
 
-测试含有@Param注解的方法
+测试不含有@Param注解的方法
 
 ```Java
 package org.liuyehcf.mybatis;
