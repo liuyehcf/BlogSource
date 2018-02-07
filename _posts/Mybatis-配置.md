@@ -65,8 +65,8 @@ __目录__
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE configuration
-        PUBLIC "-// mybatis.org// DTD Config 3.0// EN"
-        "http:// mybatis.org/dtd/mybatis-3-config.dtd">
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
     <!-- 定义别名 -->
     <typeAliases>
@@ -82,7 +82,7 @@ __目录__
             <!-- 配置数据库连接信息 -->
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql:// localhost:3306/mybatis"/>
+                <property name="url" value="jdbc:mysql://127.0.0.1:3306/mybatis"/>
                 <property name="username" value="root"/>
                 <property name="password" value="learn"/>
             </dataSource>
@@ -146,8 +146,8 @@ MyBatis配置XML文件的层次结构如下
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE configuration
-        PUBLIC "-// mybatis.org// DTD Config 3.0// EN"
-        "http:// mybatis.org/dtd/mybatis-3-config.dtd">
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
     <properties/> <!--属性-->
     <settings/> <!--设置-->
@@ -287,7 +287,7 @@ __如果没有@Alias注解，MyBatis也会装载，默认的规则是：将首�
             <!-- 配置数据库连接信息 -->
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql:// localhost:3306/mybatis"/>
+                <property name="url" value="jdbc:mysql://127.0.0.1:3306/mybatis"/>
                 <property name="username" value="root"/>
                 <property name="password" value="learn"/>
             </dataSource>
@@ -372,7 +372,7 @@ __示例：__
 ```xml
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-        <property name="url" value="jdbc:mysql:// localhost:3306/mybatis"/>
+        <property name="url" value="jdbc:mysql://127.0.0.1:3306/mybatis"/>
         <property name="username" value="root"/>
         <property name="password" value="learn"/>
     </bean>
@@ -388,8 +388,8 @@ __MyBatis配置文件`sqlMapConfig.xml`如下__
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE configuration
-        PUBLIC "-// mybatis.org// DTD Config 3.0// EN"
-        "http:// mybatis.org/dtd/mybatis-3-config.dtd">
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 
     <settings>
@@ -425,7 +425,55 @@ __MyBatis配置文件`sqlMapConfig.xml`如下__
 </configuration>
 ```
 
-事实上，我们不需要额外提供MyBatis的配置文件，所有配置项都可以作为SqlSessionFactoryBean的参数进行配置
+事实上，SqlSessionFactoryBean已经可以通过Spring IOC配置了，因此，我们完全可以通过Spring IOC来代替原来的配置。SqlSessionFactoryBean包含如下字段
+
+```Java
+    private Resource configLocation;
+
+    private Configuration configuration;
+
+    private Resource[] mapperLocations;
+
+    private DataSource dataSource;
+
+    private TransactionFactory transactionFactory;
+
+    private Properties configurationProperties;
+
+    private SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
+
+    private SqlSessionFactory sqlSessionFactory;
+
+    //EnvironmentAware requires spring 3.1
+    private String environment = SqlSessionFactoryBean.class.getSimpleName();
+
+    private boolean failFast;
+
+    private Interceptor[] plugins;
+
+    private TypeHandler<?>[] typeHandlers;
+
+    private String typeHandlersPackage;
+
+    private Class<?>[] typeAliases;
+
+    private String typeAliasesPackage;
+
+    private Class<?> typeAliasesSuperType;
+
+  //issue #19. No default provider.
+    private DatabaseIdProvider databaseIdProvider;
+
+    private Class<? extends VFS> vfs;
+
+  private Cache cache;
+
+  private ObjectFactory objectFactory;
+
+  private ObjectWrapperFactory objectWrapperFactory;
+```
+
+SqlSessionFactoryBean中的这些字段对应的XML配置项如下
 
 ```xml
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
@@ -456,23 +504,61 @@ __MyBatis配置文件`sqlMapConfig.xml`如下__
     </bean>
 ```
 
+大部分情况下，我们无需全部配置，只需要配置其中几项即可
+
 ## 3.2 配置SqlSessionTemplate
 
 ## 3.3 配置Mapper
 
-## 3.4 配置事务
+在大部分场景中，都不建议使用SqlSessionTemplate或者SqlSession，而是推荐采用Mapper接口编程的方式，这样更符合面向对象的编程，也更利于我们理解
 
-## 3.5 JavaBean自动映射的配置
+### MapperFactoryBean
 
-自动将所有DO进行映射，这样一来就不用写map了，但随之而来的开销就是需要在SQL中写`AS`
+在MyBatis中，Mapper只需要一个接口，而不是一个实现类，它是由MyBatis体系通过动态代理的形式生成代理对象去运行的，所以Spring也没有办法为其生成实现类
+
+为了处理这个问题，MyBatis-Spring团队提供了一个MapperFactoryBean类作为中介，我们可以通过它来实现我们想要的Mapper。配置MapperFactoryBean有三个参数
+
+1. mapperInterface：用来定制接口，当我们的接口继承了配置的接口，那么MyBatis就认为它是一个Mapper
+1. sqlSessionFactory：当sqlSessionTemplate属性不被配置的时候，MyBatis-Spring才会去设置它
+1. sqlSessionTemplate：当它被设置的时候，sqlSessionFactory将被作废
 
 ```xml
-    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="myDatasource"/>
-        <property name="typeAliasesPackage" value="org.liuyehcf.mybatis.dataobject"/>
-        <property name="mapperLocations" value="classpath*:org/liuyehcf/mybatis/sqlmap/*.xml"/>
+    <bean id="userDao" class="org.mybatis.spring.mapper.MapperFactoryBean">
+        <property name="mapperInterface" value="com.learn.dao.UserDAO"/>
+
+        <!-- 同时注入sqlSessionTemplate和sqlSessionFactory，则只会启用sqlSessionTemplate -->
+        <property name="sqlSessionTemplate" ref="sqlSessionTemplate"/>
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
     </bean>
 ```
+
+### MapperScannerConfigurer
+
+如果每个DAO都需要单独配置，那么工作量会非常大，MyBatis-Spring团队已经考虑到了这种场景，我们可以通过配置MapperScannerConfigurer来实现自动扫描我们的映射器
+
+MapperScannerConfigurer有如下几个属性
+
+1. basePackage：指定让Spring自动扫描什么包，它会逐层深入扫描
+1. annotationClass：表示如果类被这个注解标识的时候，才进行扫描
+1. sqlSessionFactoryBeanName：指定在Spring中定义sqlSessionFactory的bean名称。如果它被定义，sqlSessionFactory将不起作用
+1. sqlSessionTemplateBeanName：指定在Spring中定义sqlSessionTemplate的bean的名称。如果它被定义，sqlSessionFactoryBeanName将不起作用
+1. makerInterface：指定是实现了什么借口就认为它是Mapper，我们需要提供一个公共的接口去标记。在Spring配置前需要给DAO一个注解，在Spring中往往是使用注解@Repository表示DAO层
+
+```xml
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.learn.dao"/>
+        <property name="sqlSessionTemplateBeanName" value="sqlSessionTemplate"/>
+        <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
+    </bean>
+```
+
+这样，Spring上下文就会自动扫描com.learn.dao从而找到标注了Repository的接口，自动生成Mapper
+
+## 3.4 配置事务
+
+## 总结
+
+配置Mapper，是让MyBatis为这些接口生成动态代理，然后根据实际的方法，通过mapperLocations配置的xml找到对应的SQL模板进行调用
 
 # 4 参考
 
