@@ -818,6 +818,7 @@ public static class MethodSignature {
             final Class<?>[] argTypes = method.getParameterTypes();
             for (int i = 0; i < argTypes.length; i++) {
                 if (!RowBounds.class.isAssignableFrom(argTypes[i]) && !ResultHandler.class.isAssignableFrom(argTypes[i])) {
+                    // 参数默认名为："0"、"1"、"2"...
                     String paramName = String.valueOf(params.size());
                     if (hasNamedParameters) {
                         paramName = getParamNameFromAnnotation(method, i, paramName);
@@ -856,6 +857,14 @@ public static class MethodSignature {
 
     }
 ```
+
+__参数映射规则__
+
+1. 如果只有一个参数，且__没有__@Param注解修饰，那么将参数透传，不将其封装成Map
+1. 如果有多个参数，或者只有一个参数，但是有@Param注解修饰，那么将参数封装成Map
+    * 若参数有@Param修饰，添加以`@Param的值作为key`的参数键值对
+    * 若参数没有@Param修饰，添加以`i作为key`的参数键值对（i是参数的位置，从0开始计算，具体逻辑详见MethodSignature.getParams）
+    * 无论是否有@Param修饰，添加`param1`、`param2`作为key的参数（注意，从1开始计算，具体逻辑详见MethodSignature.convertArgsToSqlCommandParam）
 
 接下来，我们看一下MapperMethod.execute方法
 
@@ -909,3 +918,11 @@ public Object execute(SqlSession sqlSession, Object[] args) {
 # 5 SQL操作的执行
 
 由上述分析可知，MyBatis只不过在iBatis的基础之上进行了一层抽象与封装，最终实际的SQL操作的核心逻辑还是落在iBatis中，这部分内容下次再补充！
+
+## 5.1 todo
+
+1. `_parameter`字符串，出现在`TextSqlNode`以及`DynamicContext`中
+1. DynamicSqlSource
+1. 生成占位符MappedStatement.getBoundSql
+1. 执行真正的SQL在SimpleExecutor.doUpdate中执行
+1. 参数的绑定发生在SimpleExecutor.doUpdate

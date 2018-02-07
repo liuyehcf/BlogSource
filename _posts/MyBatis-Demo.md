@@ -19,9 +19,36 @@ __目录__
 ## 1.1 Demo目录结构
 
 ```
+.
+├── pom.xml
+└── src
+    ├── main
+    │   ├── java
+    │   │   └── org
+    │   │       └── liuyehcf
+    │   │           └── mybatis
+    │   │               ├── CrmUserDAO.java
+    │   │               └── CrmUserDO.java
+    │   └── resources
+    │       ├── mybatis-config.xml
+    │       ├── org
+    │       │   └── liuyehcf
+    │       │       └── mybatis
+    │       │           └── crm-user.xml
+    │       └── testDatabase.sql
+    └── test
+        └── java
+            └── org
+                └── liuyehcf
+                    └── mybatis
+                        ├── TestTemplate.java
+                        ├── TestWithParam.java
+                        └── TestWithoutParam.java
 ```
 
-## 1.2 MyBatis配置文件源码清单
+## 1.2 mybatis-config.xml
+
+MyBatis配置文件
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
@@ -59,20 +86,575 @@ __目录__
 
 ## 1.3 Java源码清单
 
+映射器（Mapper）的接口。__为了搞清参数传递的方式，这里的参数命名比较恶心，接口中的参数名字anyName在映射器配置文件中不会出现__
+
+### 1.3.1 CrmUserDAO.java
+
 ```Java
+package org.liuyehcf.mybatis;
+
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+/**
+ * Created by HCF on 2017/3/31.
+ */
+public interface CrmUserDAO {
+
+    CrmUserDO selectById(Long anyName);
+
+    int insert(CrmUserDO anyName);
+
+    int update(CrmUserDO anyName);
+
+    List<CrmUserDO> selectByFirstName(String anyName);
+
+    List<CrmUserDO> selectByFirstNameAndLastName(String anyName1, String anyName2);
+
+    CrmUserDO selectByIdWithParam(@Param("specificName") Long anyName);
+
+    int insertWithParam(@Param("specificName") CrmUserDO anyName);
+
+    int updateWithParam(@Param("specificName") CrmUserDO anyName);
+
+    List<CrmUserDO> selectByFirstNameWithParam(@Param("specificName") String anyName);
+
+    List<CrmUserDO> selectByFirstNameAndLastNameWithParam(@Param("specificName1") String anyName1, @Param("specificName2") String anyName2);
+
+}
 ```
 
-## 1.4 映射器配置文件源码清单
+### 1.3.2 CrmUserDO.java
+
+DataObject
+
+```Java
+package org.liuyehcf.mybatis;
+
+/**
+ * Created by HCF on 2017/3/31.
+ */
+public class CrmUserDO {
+    private Long id;
+    private String firstName;
+    private String lastName;
+    private Integer age;
+    private Boolean sex;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public Boolean getSex() {
+        return sex;
+    }
+
+    public void setSex(Boolean sex) {
+        this.sex = sex;
+    }
+
+    @Override
+    public String toString() {
+        return '{' +
+                "id:'" + id + '\'' +
+                ", firstName: '" + firstName + '\'' +
+                ", lastName: '" + lastName + '\'' +
+                ", age: '" + age + '\'' +
+                ", sex: '" + sex + '\''
+                + "" +
+                '}';
+    }
+}
+```
+
+### 1.3.3 TestTemplate.java
+
+测试模板类
+
+```Java
+package org.liuyehcf.mybatis;
+
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+public abstract class TestTemplate {
+
+    static final String DEFAULT_FIRST_NAME = "default_first_name";
+    static final String DEFAULT_LAST_NAME = "default_last_name";
+    static final Integer DEFAULT_AGE = 100;
+    static final Boolean DEFAULT_SEX = true;
+
+    static final String MODIFIED_FIRST_NAME = "modified_first_name";
+    static final String MODIFIED_LAST_NAME = "modified_last_name";
+    static final Boolean MODIFIED_SEX = false;
+
+    static final Long ID = 1L;
+
+    public void execute() {
+        String resource = "mybatis-config.xml";
+        InputStream inputStream;
+        try {
+            inputStream = Resources.getResourceAsStream(resource);
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+            e.printStackTrace();
+            return;
+        }
+
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+
+        SqlSession sqlSession = null;
+        try {
+            // 打开SqlSession会话
+            sqlSession = sqlSessionFactory.openSession();
+
+            doExecute(sqlSession);
+
+            sqlSession.commit();
+        } catch (Exception e) {
+            if (sqlSession != null) {
+                sqlSession.rollback();
+            }
+            System.err.println(e.getMessage());
+            e.printStackTrace();
+        } finally {
+            // 在finally中保证资源被顺利关闭
+            if (sqlSession != null) {
+                sqlSession.close();
+            }
+        }
+    }
+
+    protected abstract void doExecute(SqlSession sqlSession) throws Exception;
+}
+```
+
+### 1.3.4 TestWithParam.java
+
+测试没有@Param注解的方法
+
+```Java
+package org.liuyehcf.mybatis;
+
+import org.apache.ibatis.session.SqlSession;
+import org.junit.Test;
+
+import java.util.List;
+
+public class TestWithParam {
+    @Test
+    public void select() {
+        new TestTemplate() {
+            @Override
+            protected void doExecute(SqlSession sqlSession) throws Exception {
+                CrmUserDAO mapper = sqlSession.getMapper(CrmUserDAO.class);
+
+                CrmUserDO crmUserDO = mapper.selectByIdWithParam(ID);
+
+                System.out.println(crmUserDO);
+            }
+        }.execute();
+    }
+
+    @Test
+    public void insert() {
+        new TestTemplate() {
+            @Override
+            protected void doExecute(SqlSession sqlSession) throws Exception {
+                CrmUserDAO mapper = sqlSession.getMapper(CrmUserDAO.class);
+
+                CrmUserDO crmUserDO = new CrmUserDO();
+                crmUserDO.setFirstName(DEFAULT_FIRST_NAME);
+                crmUserDO.setLastName(DEFAULT_LAST_NAME);
+                crmUserDO.setAge(DEFAULT_AGE);
+                crmUserDO.setSex(DEFAULT_SEX);
+
+                System.out.println("before insert: " + crmUserDO);
+                mapper.insertWithParam(crmUserDO);
+                System.out.println("after insert: " + crmUserDO);
+            }
+        }.execute();
+    }
+
+    @Test
+    public void update() {
+        new TestTemplate() {
+            @Override
+            protected void doExecute(SqlSession sqlSession) throws Exception {
+                CrmUserDAO mapper = sqlSession.getMapper(CrmUserDAO.class);
+
+                CrmUserDO crmUserDO = new CrmUserDO();
+
+                crmUserDO.setId(ID);
+                crmUserDO.setLastName(MODIFIED_LAST_NAME);
+                crmUserDO.setFirstName(MODIFIED_FIRST_NAME);
+                crmUserDO.setSex(MODIFIED_SEX);
+
+                mapper.updateWithParam(crmUserDO);
+
+                System.out.println(mapper.selectByIdWithParam(ID));
+            }
+        }.execute();
+    }
+
+    @Test
+    public void selectByFirstName() {
+        new TestTemplate() {
+            @Override
+            protected void doExecute(SqlSession sqlSession) throws Exception {
+                CrmUserDAO mapper = sqlSession.getMapper(CrmUserDAO.class);
+
+                List<CrmUserDO> crmUserDOS = mapper.selectByFirstNameWithParam(MODIFIED_FIRST_NAME);
+
+                System.out.println(crmUserDOS.size());
+            }
+        }.execute();
+    }
+
+    @Test
+    public void selectByFirstNameAndLastName() {
+        new TestTemplate() {
+            @Override
+            protected void doExecute(SqlSession sqlSession) throws Exception {
+                CrmUserDAO mapper = sqlSession.getMapper(CrmUserDAO.class);
+
+                List<CrmUserDO> crmUserDOS;
+
+                crmUserDOS = mapper.selectByFirstNameAndLastNameWithParam(MODIFIED_FIRST_NAME, null);
+                System.out.println(crmUserDOS.size());
+
+                crmUserDOS = mapper.selectByFirstNameAndLastNameWithParam(null, MODIFIED_LAST_NAME);
+                System.out.println(crmUserDOS.size());
+
+                crmUserDOS = mapper.selectByFirstNameAndLastNameWithParam(MODIFIED_FIRST_NAME, MODIFIED_LAST_NAME);
+                System.out.println(crmUserDOS.size());
+            }
+        }.execute();
+    }
+}
+```
+
+### 1.3.5 TestWithoutParam.java
+
+测试含有@Param注解的方法
+
+```Java
+package org.liuyehcf.mybatis;
+
+import org.apache.ibatis.session.SqlSession;
+import org.junit.Test;
+
+import java.util.List;
+
+public class TestWithoutParam {
+
+    @Test
+    public void select() {
+        new TestTemplate() {
+            @Override
+            protected void doExecute(SqlSession sqlSession) throws Exception {
+                CrmUserDAO mapper = sqlSession.getMapper(CrmUserDAO.class);
+
+                CrmUserDO crmUserDO = mapper.selectById(ID);
+
+                System.out.println(crmUserDO);
+            }
+        }.execute();
+    }
+
+    @Test
+    public void insert() {
+        new TestTemplate() {
+            @Override
+            protected void doExecute(SqlSession sqlSession) throws Exception {
+                CrmUserDAO mapper = sqlSession.getMapper(CrmUserDAO.class);
+
+                CrmUserDO crmUserDO = new CrmUserDO();
+                crmUserDO.setFirstName(DEFAULT_FIRST_NAME);
+                crmUserDO.setLastName(DEFAULT_LAST_NAME);
+                crmUserDO.setAge(DEFAULT_AGE);
+                crmUserDO.setSex(DEFAULT_SEX);
+
+                System.out.println("before insert: " + crmUserDO);
+                mapper.insert(crmUserDO);
+                System.out.println("after insert: " + crmUserDO);
+            }
+        }.execute();
+    }
+
+    @Test
+    public void update() {
+        new TestTemplate() {
+            @Override
+            protected void doExecute(SqlSession sqlSession) throws Exception {
+                CrmUserDAO mapper = sqlSession.getMapper(CrmUserDAO.class);
+
+                CrmUserDO crmUserDO = new CrmUserDO();
+
+                crmUserDO.setId(ID);
+                crmUserDO.setLastName(MODIFIED_LAST_NAME);
+                crmUserDO.setFirstName(MODIFIED_FIRST_NAME);
+                crmUserDO.setSex(MODIFIED_SEX);
+
+                mapper.update(crmUserDO);
+
+                System.out.println(mapper.selectById(ID));
+            }
+        }.execute();
+    }
+
+    @Test
+    public void selectByFirstName() {
+        new TestTemplate() {
+            @Override
+            protected void doExecute(SqlSession sqlSession) throws Exception {
+                CrmUserDAO mapper = sqlSession.getMapper(CrmUserDAO.class);
+
+                List<CrmUserDO> crmUserDOS = mapper.selectByFirstName(MODIFIED_FIRST_NAME);
+
+                System.out.println(crmUserDOS.size());
+            }
+        }.execute();
+    }
+
+    @Test
+    public void selectByFirstNameAndLastName() {
+        new TestTemplate() {
+            @Override
+            protected void doExecute(SqlSession sqlSession) throws Exception {
+                CrmUserDAO mapper = sqlSession.getMapper(CrmUserDAO.class);
+
+                List<CrmUserDO> crmUserDOS;
+
+                crmUserDOS = mapper.selectByFirstNameAndLastName(MODIFIED_FIRST_NAME, null);
+                System.out.println(crmUserDOS.size());
+
+                crmUserDOS = mapper.selectByFirstNameAndLastName(null, MODIFIED_LAST_NAME);
+                System.out.println(crmUserDOS.size());
+
+                crmUserDOS = mapper.selectByFirstNameAndLastName(MODIFIED_FIRST_NAME, MODIFIED_LAST_NAME);
+                System.out.println(crmUserDOS.size());
+            }
+        }.execute();
+    }
+}
+```
+
+## 1.4 crm-user.xml
+
+映射器配置文件，以下是我总结的参数映射规则
+
+1. 对于__不含有__@Param注解的方法
+    * 一个参数
+        * 对于非JavaBean参数：`${}`与`#{}`里面可以填任何字符，无所谓；test属性只能填写`_parameter`
+        * 对于JavaBean参数：`${}`与`#{}`以及test属性只能填写JavaBean的属性名（set方法去掉set字符串并小写首字母）
+    * 多个参数：`${}`与`#{}`
+        * 对于JavaBean参数：`${}`与`#{}`以及test属性只能填写JavaBean的属性名（set方法去掉set字符串并小写首字母）
+        * 对于非JavaBean参数：`${}`与`#{}`里面可以填（`0、1、...`，`param1、param2、...`）；test属性中的参数只能用`param1、param2...`来引用
+1. 对于__含有__@Param注解的方法（假设注解配置的值是`myParam`）
+    * 对于JavaBean参数：`${}`与`#{}`以及test属性只能以@Param注解配置的值或者`param1、param2、...`作为前缀，再加上JavaBean属性名。例如，`#{param1.id}`以及`#{myParam.id}`
+    * 对于非JavaBean参数：`${}`与`#{}`以及test属性只能填写@Param注解配置的值或者`param1、param2、...`
+* __产生上述规则的原因，请参考{% post_link MyBatis-源码剖析 %}__
 
 ```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-// mybatis.org// DTD Mapper 3.0// EN" "http:// mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.liuyehcf.mybatis.CrmUserDAO">
+    <sql id="columns">
+        id            AS id,
+        first_name    AS firstName,
+        last_name     AS lastName,
+        age           AS age,
+        sex           AS sex
+    </sql>
+
+    <select id="selectById" resultType="crmUserDO">
+        SELECT
+        <include refid="columns"/>
+        FROM crm_user
+        WHERE id = #{anotherName}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO crm_user(
+        first_name,
+        last_name,
+        age,
+        sex
+        )
+        VALUES(
+        #{firstName},
+        #{lastName},
+        #{age},
+        #{sex}
+        )
+    </insert>
+
+    <update id="update" parameterType="crmUserDO">
+        UPDATE crm_user
+        <set>
+            <if test="firstName != null and firstName != ''">
+                first_name = #{firstName},
+            </if>
+
+            <if test="lastName != null and lastName != ''">
+                last_name = #{lastName},
+            </if>
+            <if test="age != null">
+                age = #{age},
+            </if>
+            <if test="sex != null">
+                sex= #{sex},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectByFirstName" resultType="crmUserDO">
+        SELECT
+        <include refid="columns"/>
+        FROM crm_user
+        <where>
+            <if test="_parameter != null and _parameter !=''">
+                AND first_name = #{anotherName}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectByFirstNameAndLastName" resultType="crmUserDO">
+        SELECT
+        <include refid="columns"/>
+        FROM crm_user
+        <where>
+            <if test="param1 != null and param1 !=''">
+                AND first_name = #{0}
+            </if>
+            <if test="param2 != null and param2 !=''">
+                AND last_name = #{param2}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectByIdWithParam" resultType="crmUserDO">
+        SELECT
+        <include refid="columns"/>
+        FROM crm_user
+        WHERE id = #{specificName}
+    </select>
+
+    <insert id="insertWithParam" useGeneratedKeys="true" keyProperty="specificName.id">
+        INSERT INTO crm_user(
+        first_name,
+        last_name,
+        age,
+        sex
+        )
+        VALUES(
+        #{specificName.firstName},
+        #{specificName.lastName},
+        #{param1.age},
+        #{param1.sex}
+        )
+    </insert>
+
+    <update id="updateWithParam" parameterType="crmUserDO">
+        UPDATE crm_user
+        <set>
+            <if test="specificName.firstName != null and param1.firstName != ''">
+                first_name = #{specificName.firstName},
+            </if>
+
+            <if test="param1.lastName != null and specificName.lastName != ''">
+                last_name = #{specificName.lastName},
+            </if>
+            <if test="specificName.age != null">
+                age = #{specificName.age},
+            </if>
+            <if test="param1.sex != null">
+                sex= #{specificName.sex},
+            </if>
+        </set>
+        WHERE id = #{specificName.id}
+    </update>
+
+    <select id="selectByFirstNameWithParam" resultType="crmUserDO">
+        SELECT
+        <include refid="columns"/>
+        FROM crm_user
+        <where>
+            <if test="param1 != null and specificName !=''">
+                AND first_name = #{specificName}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectByFirstNameAndLastNameWithParam" resultType="crmUserDO">
+        SELECT
+        <include refid="columns"/>
+        FROM crm_user
+        <where>
+            <if test="param1 != null and param1 !=''">
+                AND first_name = #{specificName1}
+            </if>
+            <if test="specificName2 != null and specificName2 !=''">
+                AND last_name = #{param2}
+            </if>
+        </where>
+    </select>
+
+</mapper>
 ```
 
-## 1.5 todo
+## 1.5 testDatabase.sql
 
-1. 对于没有@Param注解标记的参数，且不是JavaBean，那么在test中想要引用该参数，需要用到`_parameter`，就像这样`<if test="_parameter != null and _parameter !=''">`
-    * 该字符串，出现在`TextSqlNode`以及`DynamicContext`中
-    * 对于有@Param注解标记的参数，那么test用该注解指定的名字就能拿到该参数
-1. DynamicSqlSource
-1. 生成占位符  MappedStatement.getBoundSql
-1. 执行真正的SQL在SimpleExecutor.doUpdate中执行
-1. 参数的绑定发生在SimpleExecutor.doUpdate
+建表sql
+
+```sql
+CREATE DATABASE mybatis;
+
+USE mybatis;
+
+CREATE TABLE crm_user(
+id BIGINT NOT NULL AUTO_INCREMENT,
+first_name VARCHAR(20) NOT NULL DEFAULT "",
+last_name VARCHAR(20) NOT NULL DEFAULT "",
+age SMALLINT NOT NULL,
+sex TINYINT NOT NULL,
+key(id)
+);
+```
+
