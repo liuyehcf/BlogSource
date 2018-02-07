@@ -461,16 +461,16 @@ __MyBatis配置文件`sqlMapConfig.xml`如下__
 
     private Class<?> typeAliasesSuperType;
 
-  // issue #19. No default provider.
+    // issue #19. No default provider.
     private DatabaseIdProvider databaseIdProvider;
 
     private Class<? extends VFS> vfs;
 
-  private Cache cache;
+    private Cache cache;
 
-  private ObjectFactory objectFactory;
+    private ObjectFactory objectFactory;
 
-  private ObjectWrapperFactory objectWrapperFactory;
+    private ObjectWrapperFactory objectWrapperFactory;
 ```
 
 SqlSessionFactoryBean中的这些字段对应的XML配置项如下
