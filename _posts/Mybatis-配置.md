@@ -102,7 +102,7 @@ __目录__
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
 ```
 
-两者本质没有区别，一个Configuration对象就对应了一个XML配置文件
+两者本质没有区别，一个Configuration对象就对应了一个MyBatis的XML配置文件
 
 ## 1.2 创建SqlSession
 
@@ -139,7 +139,7 @@ SqlSession的用途主要有两种
 1. 获取映射器，让映射器通过命名空间和方法名称找到对应的SQL，发送给数据库执行后，返回结果
 1. 直接通过命名信息去执行SQL，然后返回结果。这是iBatis版本留下的方式。在SqlSession层我们可以通过update、insert、select、delete等方法，带上SQL的id来操作在XML中配置好的SQL
 
-# 2 XML配置文件
+# 2 MyBatis-XML配置文件
 
 MyBatis配置XML文件的层次结构如下
 

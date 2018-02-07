@@ -21,7 +21,7 @@ __目录__
 ```
 ```
 
-## MyBatis配置文件
+## MyBatis配置文件源码清单
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
@@ -57,12 +57,12 @@ __目录__
 </configuration>
 ```
 
-## Java文件
+## Java源码清单
 
 ```Java
 ```
 
-## 映射器配置文件
+## 映射器配置文件源码清单
 
 ```xml
 ```
