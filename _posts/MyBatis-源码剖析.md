@@ -626,7 +626,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
 1. 所有Mapper的Java接口方法的调用，最终都转化为MapperMethod方法的调用。因此所有SQL核心逻辑的实现，被封装在MapperMethod中
 
 
-首先，我们看一下MapperMethod的是什么
+接着，我们看一下MapperMethod的构造方法
 
 ```Java
     private final SqlCommand command;
@@ -640,7 +640,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
 
 MapperMethod的构造方法初始化了两个字段，其类型为SqlCommand和MethodSignature，这两个类是MapperMethod的静态内部类
 
-SqlCommand如下
+SqlCommand如下，该类的主要作用就是获取一条SQL语句的名字（映射器`namespace.id`）以及SQL的类型（SELECT、INSERT等）
 
 ```Java
     public static class SqlCommand {
@@ -651,6 +651,7 @@ SqlCommand如下
         public SqlCommand(Configuration configuration, Class<?> mapperInterface, Method method) throws BindingException {
             String statementName = mapperInterface.getName() + "." + method.getName();
             MappedStatement ms = null;
+            // 在Configuration对象初始化的过程中，会从映射器配置文件中读取MappedStatement，包含了一条SQL语句的各种属性
             if (configuration.hasStatement(statementName)) {
                 ms = configuration.getMappedStatement(statementName);
             } else if (!mapperInterface.equals(method.getDeclaringClass().getName())) { // issue #35
@@ -679,19 +680,29 @@ SqlCommand如下
     }
 ```
 
-MethodSignature如下
+MethodSignature如下，该类的主要作用就是封装一个Method（映射器的Java接口的方法）的各类信息，还包含了一个重要的方法convertArgsToSqlCommandParam
 
 ```Java
 public static class MethodSignature {
 
+        // 返回值是一个列表
         private final boolean returnsMany;
+
+        // 返回值是一个Map
         private final boolean returnsMap;
+
+        // 返回值为空
         private final boolean returnsVoid;
+
         private final Class<?> returnType;
         private final String mapKey;
         private final Integer resultHandlerIndex;
         private final Integer rowBoundsIndex;
+
+        // 该字段用于存放参数键值对，key为参数在参数列表中的位置，value为参数名（如果有@Param修饰，那就是@Param修饰的名字）
         private final SortedMap<Integer, String> params;
+
+        // 是否含有@Param注解修饰的参数
         private final boolean hasNamedParameters;
 
         public MethodSignature(Configuration configuration, Method method) throws BindingException {
@@ -706,18 +717,23 @@ public static class MethodSignature {
             this.params = Collections.unmodifiableSortedMap(getParams(method, this.hasNamedParameters));
         }
 
+        // 将方法原始参数转化为一个Map<String, String>，key为参数名，value为参数值
         public Object convertArgsToSqlCommandParam(Object[] args) {
             final int paramCount = params.size();
             if (args == null || paramCount == 0) {
                 return null;
-            } else if (!hasNamedParameters && paramCount == 1) {
+            } 
+            // 如果只有一个参数，且没有@Param注解，那么直接返回即可
+            else if (!hasNamedParameters && paramCount == 1) {
                 return args[params.keySet().iterator().next()];
             } else {
+                // 创建一个Map用于封装这些参数，以便在SQL上下文中根据名字获取这些参数
                 final Map<String, Object> param = new MapperMethod.ParamMap<Object>();
                 int i = 0;
                 for (Map.Entry<Integer, String> entry : params.entrySet()) {
                     param.put(entry.getValue(), args[entry.getKey()]);
                     // issue #71, add param names as param1, param2...but ensure backward compatibility
+                    // 这里为每个参数添加param1，param2这样的名字
                     final String genericParamName = "param" + String.valueOf(i + 1);
                     if (!param.containsKey(genericParamName)) {
                         param.put(genericParamName, args[entry.getKey()]);
@@ -790,6 +806,7 @@ public static class MethodSignature {
             return mapKey;
         }
 
+        // 用于初始化params字段
         private SortedMap<Integer, String> getParams(Method method, boolean hasNamedParameters) {
             final SortedMap<Integer, String> params = new TreeMap<Integer, String>();
             final Class<?>[] argTypes = method.getParameterTypes();
@@ -805,6 +822,7 @@ public static class MethodSignature {
             return params;
         }
 
+        // 用于获取注解修饰的参数名
         private String getParamNameFromAnnotation(Method method, int i, String paramName) {
             final Object[] paramAnnos = method.getParameterAnnotations()[i];
             for (Object paramAnno : paramAnnos) {
@@ -815,6 +833,7 @@ public static class MethodSignature {
             return paramName;
         }
 
+        // 是否包含用@Param注解修饰的参数
         private boolean hasNamedParams(Method method) {
             boolean hasNamedParams = false;
             final Object[][] paramAnnos = method.getParameterAnnotations();
