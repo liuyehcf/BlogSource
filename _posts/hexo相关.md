@@ -124,17 +124,11 @@ menu:
 
 | 项目 | 描述 |
 |:--|:--|
-
 | [theme-yilia](https://github.com/litten/hexo-theme-yilia) | hexo主题 |
-
 | [theme-next](https://github.com/theme-next/hexo-theme-next) | hexo主题 |
-
 | [hexo-filter-sequence](https://github.com/bubkoo/hexo-filter-sequence) | hexo插件-序列图 |
-
 | [hexo-filter-flowchart](https://github.com/bubkoo/hexo-filter-flowchart) | hexo插件-流程图 |
-
 | [hexo-toc](https://github.com/bubkoo/hexo-toc) | hexo插件-目录 |
-
 | [hexo-wordcount](https://github.com/willin/hexo-wordcount) | hexo插件-字数统计 |
 
 # 10 取消侧栏编号
