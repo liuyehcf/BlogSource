@@ -51,9 +51,9 @@ __目录__
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
+         xmlns="http:// maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
     
     <groupId>org.liuyehcf</groupId>
     <artifactId>mybatis</artifactId>
