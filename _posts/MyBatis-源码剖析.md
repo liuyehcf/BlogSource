@@ -25,6 +25,16 @@ __目录__
 
 __分析用到的Demo源码详见{% post_link MyBatis-Demo %}__
 
+分析的源码版本为
+
+```xml
+    <dependency>
+        <groupId>org.mybatis</groupId>
+        <artifactId>mybatis</artifactId>
+        <version>3.4.5</version>
+    </dependency>
+```
+
 # 2 SqlSessionFactory生成
 
 __分析起点__
@@ -517,7 +527,7 @@ Executor
 1. Configuration对象，这个可以从SqlSessionFactory中获取
 1. Executor对象，该对象的创建又依赖于数据库事务对象（Transaction）。所有通过SqlSession执行的SQL操作，最终都会由该Executor对象来执行
 
-# 4 代理生成
+# 4 Mapper代理生成
 
 __分析起点__
 

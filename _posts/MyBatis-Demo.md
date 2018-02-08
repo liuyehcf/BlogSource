@@ -524,7 +524,7 @@ public class TestWithoutParam {
         * 对于JavaBean参数：`${}`与`#{}`以及test属性只能填写JavaBean的属性名（set方法去掉set字符串并小写首字母）
     * 多个参数：`${}`与`#{}`
         * 对于JavaBean参数：`${}`与`#{}`以及test属性只能填写JavaBean的属性名（set方法去掉set字符串并小写首字母）
-        * 对于非JavaBean参数：`${}`与`#{}`里面可以填（`0、1、...`，`param1、param2、...`）；test属性中的参数只能用`param1、param2...`来引用
+        * 对于非JavaBean参数：`${}`与`#{}`以及test属性只能填写`arg0、arg1、...`以及`param1、param2、...`
 1. 对于__含有__@Param注解的方法（假设注解配置的值是`myParam`）
     * 对于JavaBean参数：`${}`与`#{}`以及test属性只能以@Param注解配置的值或者`param1、param2、...`作为前缀，再加上JavaBean属性名。例如，`#{param1.id}`以及`#{myParam.id}`
     * 对于非JavaBean参数：`${}`与`#{}`以及test属性只能填写@Param注解配置的值或者`param1、param2、...`
@@ -535,11 +535,11 @@ public class TestWithoutParam {
 <!DOCTYPE mapper PUBLIC "-// mybatis.org// DTD Mapper 3.0// EN" "http:// mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.liuyehcf.mybatis.CrmUserDAO">
     <sql id="columns">
-        id            AS id,
-        first_name    AS firstName,
-        last_name     AS lastName,
-        age           AS age,
-        sex           AS sex
+        id AS id,
+        first_name AS firstName,
+        last_name AS lastName,
+        age AS age,
+        sex AS sex
     </sql>
 
     <select id="selectById" resultType="crmUserDO">
@@ -600,10 +600,10 @@ public class TestWithoutParam {
         <include refid="columns"/>
         FROM crm_user
         <where>
-            <if test="param1 != null and param1 !=''">
-                AND first_name = #{0}
+            <if test="param1 != null and arg0 !=''">
+                AND first_name = #{arg0}
             </if>
-            <if test="param2 != null and param2 !=''">
+            <if test="arg1 != null and param2 !=''">
                 AND last_name = #{param2}
             </if>
         </where>
@@ -642,10 +642,10 @@ public class TestWithoutParam {
                 last_name = #{specificName.lastName},
             </if>
             <if test="specificName.age != null">
-                age = #{specificName.age},
+                age = #{param1.age},
             </if>
             <if test="param1.sex != null">
-                sex= #{specificName.sex},
+                sex= #{param1.sex},
             </if>
         </set>
         WHERE id = #{specificName.id}
