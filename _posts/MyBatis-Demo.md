@@ -30,6 +30,7 @@ __目录__
     │   │               ├── CrmUserDAO.java
     │   │               └── CrmUserDO.java
     │   └── resources
+    │       ├── logback.xml
     │       ├── mybatis-config.xml
     │       ├── org
     │       │   └── liuyehcf
@@ -46,7 +47,49 @@ __目录__
                         └── TestWithoutParam.java
 ```
 
-## 1.2 mybatis-config.xml
+## 1.2 pom文件
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
+         xmlns="http:// maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
+    
+    <groupId>org.liuyehcf</groupId>
+    <artifactId>mybatis</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <modelVersion>4.0.0</modelVersion>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+        </dependency>
+    </dependencies>
+</project>
+```
+
+## 1.3 mybatis-config.xml
 
 MyBatis配置文件
 
@@ -84,11 +127,11 @@ MyBatis配置文件
 </configuration>
 ```
 
-## 1.3 Java源码清单
+## 1.4 Java源码清单
 
-映射器（Mapper）的接口。__为了搞清参数传递的方式，这里的参数命名比较恶心，接口中的参数名字anyName在映射器配置文件中不会出现__
+### 1.4.1 CrmUserDAO.java
 
-### 1.3.1 CrmUserDAO.java
+映射器（Mapper）的Java接口。__为了搞清参数传递的方式，这里的参数命名比较恶心，接口中的参数名字anyName在映射器配置文件中不会出现__
 
 ```Java
 package org.liuyehcf.mybatis;
@@ -125,7 +168,7 @@ public interface CrmUserDAO {
 }
 ```
 
-### 1.3.2 CrmUserDO.java
+### 1.4.2 CrmUserDO.java
 
 DataObject
 
@@ -196,7 +239,7 @@ public class CrmUserDO {
 }
 ```
 
-### 1.3.3 TestTemplate.java
+### 1.4.3 TestTemplate.java
 
 测试模板类，由于测试方法中每次都需要构造SqlSessionFactory，然后用SqlSessionFactory获取一个SqlSession，利用SqlSession执行相应的SQL操作之后，提交或者回滚，最后关闭SqlSession，这些操作都是可以固化的，因此使用模板方法模式
 
@@ -261,7 +304,7 @@ public abstract class TestTemplate {
 }
 ```
 
-### 1.3.4 TestWithParam.java
+### 1.4.4 TestWithParam.java
 
 测试含有@Param注解的方法
 
@@ -366,7 +409,7 @@ public class TestWithParam {
 }
 ```
 
-### 1.3.5 TestWithoutParam.java
+### 1.4.5 TestWithoutParam.java
 
 测试不含有@Param注解的方法
 
@@ -472,7 +515,7 @@ public class TestWithoutParam {
 }
 ```
 
-## 1.4 crm-user.xml
+## 1.5 crm-user.xml
 
 映射器配置文件，以下是我总结的参数映射规则
 
@@ -637,7 +680,35 @@ public class TestWithoutParam {
 </mapper>
 ```
 
-## 1.5 testDatabase.sql
+## 1.6 logback.xml
+
+日志框架用的是slf4j+logback，用于看mybatis内部打印的日志
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Logback Configuration. -->
+<configuration scan="true" scanPeriod="60 second" debug="false">
+
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.out</target>
+
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern><![CDATA[
+			 [%d{yyyy-MM-dd HH:mm:ss}]  %-5level %logger{0} - %m%n
+            ]]></pattern>
+            </layout>
+        </encoder>
+    </appender>
+
+    <root>
+        <level value="DEBUG"/>
+        <appender-ref ref="stdout"/>
+    </root>
+</configuration>
+```
+
+## 1.7 testDatabase.sql
 
 建表sql
 

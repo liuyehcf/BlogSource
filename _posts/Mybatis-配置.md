@@ -556,6 +556,18 @@ MapperScannerConfigurer有如下几个属性
 
 ## 3.4 配置事务
 
+声明式事务配置
+
+```xml
+    <!-- 配置事务管理器 -->
+    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- 使用声明式事务管理方式 -->
+    <tx:annotation-driven transaction-manager="txManager"/>
+```
+
 ## 3.5 总结
 
 配置Mapper，是让MyBatis为这些接口生成动态代理，然后根据实际的方法，通过mapperLocations配置的xml找到对应的SQL模板进行调用
