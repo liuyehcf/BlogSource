@@ -51,9 +51,9 @@ __目录__
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
-         xmlns="http:// maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     
     <groupId>org.liuyehcf</groupId>
     <artifactId>mybatis</artifactId>
@@ -64,26 +64,25 @@ __目录__
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <version>4.12</version>
         </dependency>
 
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
         </dependency>
 
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis</artifactId>
+            <version>3.4.5</version>
         </dependency>
 
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-dbcp</groupId>
-            <artifactId>commons-dbcp</artifactId>
+            <version>6.0.6</version>
         </dependency>
     </dependencies>
 </project>
