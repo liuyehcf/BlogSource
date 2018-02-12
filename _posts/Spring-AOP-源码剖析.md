@@ -177,7 +177,6 @@ Spring对于Advice接口的继承体系进行了扩展，扩展后的继承体�
     |       |
     |       ├── ThrowsAdvice (Spring AOP)
     |       ├── AfterReturningAdvice (Spring AOP)
-  
 ```
 
 几个核心扩展接口的定义如下
@@ -240,7 +239,37 @@ public interface Pointcut {
 
 ### 1.3.4 Advisor
 
-Advisor也是Spring AOP新增的接口，称为切面。__该接口关联着一个Advice和一个Pointcut，其中Advice代表着织入的逻辑，Pointcut代表着织入的地点集合__。因此一个Advisor包含了__一个增强逻辑__以及__织入地点的集合__
+当我们定义好增强接口（Advice）以及切点接口（Pointcut）之后，我们需要有一个对象来持有这两者，这个任务就交由Advisor接口来完成
+
+1. `Advisor`：用于持有一个Advice
+1. `PointcutAdvisor`：在Advisor的基础上，用于持有一个Pointcut
+
+```
+ Advisor 
+    |
+    ├── PointcutAdvisor
+```
+
+Advisor也是Spring AOP新增的接口。__PointcutAdvisor接口关联着一个Advice和一个Pointcut，其中Advice代表着织入的逻辑，Pointcut代表着织入的地点集合__。因此一个Advisor包含了__一个增强逻辑__以及__织入地点的集合__
+
+几个核心扩展接口的定义如下
+
+```Java
+public interface Advisor {
+
+	Advice getAdvice();
+
+	// 判断持有的Advice是否关联着一个具体实例，在Spring框架中，总是返回true
+	boolean isPerInstance();
+}
+```
+
+```Java
+public interface PointcutAdvisor extends Advisor {
+
+	Pointcut getPointcut();
+}
+```
 
 ### 1.3.5 关联
 
@@ -254,7 +283,153 @@ Advice、Joinpoint、Pointcut、Advisor之间的关系可以用下面这些图�
 
 首先来看一下，Spirng AOP是如何使用的，详细的Demo可以参考{% post_link Spring-AOP-Demo %}
 
+分析使用的Spring源码版本为4.3.13.RELEASE
+
+Spring AOP实现的核心原理就是：__拦截器+动态代理__
+
+## 2.1 与IoC的关联
+
+Spring AOP通常与Spring IOC结合使用，通过BeanPostProcessor接口，以低耦合的方式将Spring AOP整合到Spring IOC容器当中
+
+__在BeanPostProcessor的继承体系中，与Spring AOP相关部分如下__
+
+```
+BeanPostProcessor 
+    |
+    ├── InstantiationAwareBeanPostProcessor
+    |       |
+    |       ├── SmartInstantiationAwareBeanPostProcessor
+    |       |       |
+    |       |       ├── AbstractAutoProxyCreator
+    |       |       |       |
+    |       |       |       ├── BeanNameAutoProxyCreator
+    |       |       |       ├── AbstractAdvisorAutoProxyCreator
+    |       |       |       |       |
+    |       |       |       |       ├── DefaultAdvisorAutoProxyCreator
+    |       |       |       |       ├── InfrastructureAdvisorAutoProxyCreator
+    |       |       |       |       ├── AspectJAwareAdvisorAutoProxyCreator
+    |       |       |       |       |       |
+    |       |       |       |       |       ├── AnnotationAwareAspectJAutoProxyCreator
+```
+
+因此，我们从AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsAfterInitialization方法开始AOP源码的分析
+
+```Java
+	@Override
+	public Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName)
+			throws BeansException {
+
+		Object result = existingBean;
+		for (BeanPostProcessor beanProcessor : getBeanPostProcessors()) {
+            // 遍历所有的BeanPostProcessor
+			result = beanProcessor.postProcessAfterInitialization(result, beanName);
+			if (result == null) {
+				return result;
+			}
+		}
+		return result;
+	}
+```
+
+这里BeanPostProcessor的实现类是AnnotationAwareAspectJAutoProxyCreator，其postProcessAfterInitialization方法逻辑定义在AbstractAdvisorAutoProxyCreator之中
+
+```Java
+@Override
+	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+		if (bean != null) {
+			Object cacheKey = getCacheKey(bean.getClass(), beanName);
+			if (!this.earlyProxyReferences.contains(cacheKey)) {
+                // 依据配置，对bean进行增强处理
+				return wrapIfNecessary(bean, beanName, cacheKey);
+			}
+		}
+		return bean;
+	}
+```
+
+wrapIfNecessary方法也定义在AbstractAdvisorAutoProxyCreator之中。该方法用于判断指定Bean是否需要进行增强，为那些需要织入增强逻辑的Bean创建代理
+
+```Java
+    protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
+        // 
+		if (beanName != null && this.targetSourcedBeans.contains(beanName)) {
+			return bean;
+		}
+        // 该Bean不需要增强
+		if (Boolean.FALSE.equals(this.advisedBeans.get(cacheKey))) {
+			return bean;
+		}
+        // 该Bean为基础设施类（例如Advice、Pontcut等等）则不需要增强
+		if (isInfrastructureClass(bean.getClass()) || shouldSkip(bean.getClass(), beanName)) {
+			this.advisedBeans.put(cacheKey, Boolean.FALSE);
+			return bean;
+		}
+
+		// 获取与当前Bean相关的拦截器
+		Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
+
+        // 如果拦截器不是空，那么就为当前Bean创建代理
+		if (specificInterceptors != DO_NOT_PROXY) {
+			this.advisedBeans.put(cacheKey, Boolean.TRUE);
+            // 创建代理类
+			Object proxy = createProxy(
+					bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
+			this.proxyTypes.put(cacheKey, proxy.getClass());
+			return proxy;
+		}
+
+		this.advisedBeans.put(cacheKey, Boolean.FALSE);
+		return bean;
+	}
+
+```
+
+## 2.2 创建代理
+
+我们继续上面的分析，接下来看createProxy方法，该方法位于AbstractAdvisorAutoProxyCreator之中。该方法用于为指定Bean创建代理
+
+```Java
+protected Object createProxy(
+			Class<?> beanClass, String beanName, Object[] specificInterceptors, TargetSource targetSource) {
+
+		if (this.beanFactory instanceof ConfigurableListableBeanFactory) {
+			AutoProxyUtils.exposeTargetClass((ConfigurableListableBeanFactory) this.beanFactory, beanName, beanClass);
+		}
+
+        // 创建一个代理工厂，并为其设置参数
+		ProxyFactory proxyFactory = new ProxyFactory();
+		proxyFactory.copyFrom(this);
+
+		if (!proxyFactory.isProxyTargetClass()) {
+			if (shouldProxyTargetClass(beanClass, beanName)) {
+				proxyFactory.setProxyTargetClass(true);
+			}
+			else {
+				evaluateProxyInterfaces(beanClass, proxyFactory);
+			}
+		}
+
+        // 获取与当前bean相关的所有Advisor
+		Advisor[] advisors = buildAdvisors(beanName, specificInterceptors);
+		proxyFactory.addAdvisors(advisors);
+		proxyFactory.setTargetSource(targetSource);
+		customizeProxyFactory(proxyFactory);
+
+		proxyFactory.setFrozen(this.freezeProxy);
+		if (advisorsPreFiltered()) {
+			proxyFactory.setPreFiltered(true);
+		}
+
+        // 用代理工厂，创建代理
+		return proxyFactory.getProxy(getProxyClassLoader());
+	}
+```
+
+其中，buildAdvisors方法用于获取与当前Bean相关的所有Advisor，前面我们介绍过了，一个Advisor（准确地说是PointcutAdvisor）关联着一个Advice以及一个Pointcut
+
 # 3 参考
 
 * [Spring AOP: What's the difference between JoinPoint and PointCut?](https://stackoverflow.com/questions/15447397/spring-aop-whats-the-difference-between-joinpoint-and-pointcut)
 * [What is the difference between Advisor and Aspect in AOP?](https://stackoverflow.com/questions/25092302/what-is-the-difference-between-advisor-and-aspect-in-aop)
+* [Spring源码分析----AOP概念(Advice,Pointcut,Advisor)和AOP的设计与实现](http://blog.csdn.net/oChangWen/article/details/57428046)
+* 《Spring 技术内幕》

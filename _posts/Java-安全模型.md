@@ -33,56 +33,58 @@ __Permission类本身是抽象的，它的一个实例代表一个具体的权�
 
 __Permission继承属性结构如下（从这里可以得知Java对哪些资源进行了管理）__：
 
-* Permission (java.security)
-    * CryptoPermission (javax.crypto)
-        * CryptoAllPermission (javax.crypto)
-    * BasicPermission (java.security)
-        * SecureCookiePermission (com.sun.deploy.security)
-        * NetworkPermission (jdk.net)
-        * DelegationPermission (javax.security.auth.kerberos)
-        * BridgePermission (sun.corba)
-        * SubjectDelegationPermission (javax.management.remote)
-        * BufferSecretsPermission (com.oracle.nio)
-        * InquireSecContextPermission (com.sun.security.jgss)
-        * PropertyPermission (java.util)
-        * SerializablePermission (java.io)
-        * NetPermission (java.net)
-        * OgnlInvokePermission (org.apache.ibatis.ognl)
-        * DeployXmlPermission (org.apache.catalina.security)
-        * AWTPermission (java.awt)
-        * WebServicePermission (javax.xml.ws)
-        * AudioPermission (javax.sound.sampled)
-        * SSLPermission (com.sun.net.ssl)
-        * ReflectPermission (java.lang.reflect)
-        * SecurityPermission (java.security)
-        * AttachPermission (com.sun.tools.attach)
-        * SSLPermission (javax.net.ssl)
-        * JavaScriptPermission (sun.plugin.liveconnect)
-        * SQLPermission (java.sql)
-        * MBeanTrustPermission (javax.management)
-        * JDIPermission (com.sun.jdi)
-        * MBeanServerPermission (javax.management)
-        * LoggingPermission (java.util.logging)
-        * DynamicAccessPermission (com.sun.corba.se.impl.presentation.rmi)
-        * JAXBPermission (javax.xml.bind)
-        * HibernateValidatorPermission (org.hibernate.validator)
-        * RuntimePermission (java.lang)
-        * SnmpPermission (com.sun.jmx.snmp)
-        * ManagementPermission (java.lang.management)
-        * AuthPermission (javax.security.auth)
-        * LinkPermission (java.nio.file)
-    * UnresolvedPermission (java.security)
-    * PrivateCredentialPermission (javax.security.auth)
-    * SelfPermission in PolicyFile (sun.security.provider)
-    * URLPermission (java.net)
-    * MBeanPermission (javax.management)
-    * AllPermission (java.security)
-    * ExecOptionPermission (com.sun.rmi.rmid)
-    * CardPermission (javax.smartcardio)
-    * FilePermission (java.io)
-    * ServicePermission (javax.security.auth.kerberos)
-    * SocketPermission (java.net)
-    * ExecPermission (com.sun.rmi.rmid)
+```
+Permission (java.security)
+    ├── CryptoPermission (javax.crypto)
+    |       ├── CryptoAllPermission (javax.crypto)
+    ├── BasicPermission (java.security)
+    |       ├── SecureCookiePermission (com.sun.deploy.security)
+    |       ├── NetworkPermission (jdk.net)
+    |       ├── DelegationPermission (javax.security.auth.kerberos)
+    |       ├── BridgePermission (sun.corba)
+    |       ├── SubjectDelegationPermission (javax.management.remote)
+    |       ├── BufferSecretsPermission (com.oracle.nio)
+    |       ├── InquireSecContextPermission (com.sun.security.jgss)
+    |       ├── PropertyPermission (java.util)
+    |       ├── SerializablePermission (java.io)
+    |       ├── NetPermission (java.net)
+    |       ├── OgnlInvokePermission (org.apache.ibatis.ognl)
+    |       ├── DeployXmlPermission (org.apache.catalina.security)
+    |       ├── AWTPermission (java.awt)
+    |       ├── WebServicePermission (javax.xml.ws)
+    |       ├── AudioPermission (javax.sound.sampled)
+    |       ├── SSLPermission (com.sun.net.ssl)
+    |       ├── ReflectPermission (java.lang.reflect)
+    |       ├── SecurityPermission (java.security)
+    |       ├── AttachPermission (com.sun.tools.attach)
+    |       ├── SSLPermission (javax.net.ssl)
+    |       ├── JavaScriptPermission (sun.plugin.liveconnect)
+    |       ├── SQLPermission (java.sql)
+    |       ├── MBeanTrustPermission (javax.management)
+    |       ├── JDIPermission (com.sun.jdi)
+    |       ├── MBeanServerPermission (javax.management)
+    |       ├── LoggingPermission (java.util.logging)
+    |       ├── DynamicAccessPermission (com.sun.corba.se.impl.presentation.rmi)
+    |       ├── JAXBPermission (javax.xml.bind)
+    |       ├── HibernateValidatorPermission (org.hibernate.validator)
+    |       ├── RuntimePermission (java.lang)
+    |       ├── SnmpPermission (com.sun.jmx.snmp)
+    |       ├── ManagementPermission (java.lang.management)
+    |       ├── AuthPermission (javax.security.auth)
+    |       ├── LinkPermission (java.nio.file)
+    ├── UnresolvedPermission (java.security)
+    ├── PrivateCredentialPermission (javax.security.auth)
+    ├── SelfPermission in PolicyFile (sun.security.provider)
+    ├── URLPermission (java.net)
+    ├── MBeanPermission (javax.management)
+    ├── AllPermission (java.security)
+    ├── ExecOptionPermission (com.sun.rmi.rmid)
+    ├── CardPermission (javax.smartcardio)
+    ├── FilePermission (java.io)
+    ├── ServicePermission (javax.security.auth.kerberos)
+    ├── SocketPermission (java.net)
+    ├── ExecPermission (com.sun.rmi.rmid)
+```
 
 ## 1.3 策略（Policy）
 
@@ -142,7 +144,22 @@ AccessController最重要的方法就是checkPermission()方法，作用是基�
 
 __我的IDEA工程目录如下，其中security是一个子模块，下面的代码中会涉及到多个路径的配置，这些路径都是基于父模块的相对路径__
 
-* ![fig1](/images/Java-安全模型/fig1)
+```
+.
+├── pom.xml
+└── src
+    └── main
+        ├── java
+        │   └── org
+        │       └── liuyehcf
+        │           └── security
+        │               └── ReflectAccessControllerDemo.java
+        └── resources
+            ├── external.jar
+            ├── security.policy
+            └── targetDir
+                └── file2.md
+```
 
 首先，有一个代码源，我这里提供一个`external.jar`，该jar中只包含一个class文件，其源码如下：
 ```Java
@@ -188,7 +205,7 @@ public class FileUtils {
 }
 ```
 
-其次，编写policy文件。policy文件的编写可以利用Java命令行工具：`policytool`
+其次，编写policy文件（security.policy）。policy文件的编写可以利用Java命令行工具：`policytool`
 
 ```
 grant codeBase "file:security/src/main/resources/external.jar" {
