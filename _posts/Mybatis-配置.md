@@ -425,7 +425,7 @@ __MyBatis配置文件`sqlMapConfig.xml`如下__
 </configuration>
 ```
 
-事实上，SqlSessionFactoryBean已经可以通过Spring IOC配置了，因此，我们完全可以通过Spring IOC来代替原来的配置。SqlSessionFactoryBean包含如下字段
+事实上，SqlSessionFactoryBean已经可以通过Spring IoC配置了，因此，我们完全可以通过Spring IoC来代替原来的配置。SqlSessionFactoryBean包含如下字段
 
 ```Java
     private Resource configLocation;

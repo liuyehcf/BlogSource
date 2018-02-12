@@ -250,7 +250,7 @@ public interface Pointcut {
     ├── PointcutAdvisor
 ```
 
-Advisor也是Spring AOP新增的接口。__PointcutAdvisor接口关联着一个Advice和一个Pointcut，其中Advice代表着织入的逻辑，Pointcut代表着织入的地点集合__。因此一个Advisor包含了__一个增强逻辑__以及__织入地点的集合__
+Advisor也是Spring AOP新增的接口，可以理解为切面（还有的称为通知器，Advice就是通知）。__PointcutAdvisor接口关联着一个Advice和一个Pointcut，其中Advice代表着织入的逻辑，Pointcut代表着织入的地点集合__。因此一个Advisor包含了__一个增强逻辑__以及__织入地点的集合__
 
 几个核心扩展接口的定义如下
 
@@ -289,7 +289,7 @@ Spring AOP实现的核心原理就是：__拦截器+动态代理__
 
 ## 2.1 与IoC的关联
 
-Spring AOP通常与Spring IOC结合使用，通过BeanPostProcessor接口，以低耦合的方式将Spring AOP整合到Spring IOC容器当中
+Spring AOP通常与Spring IoC结合使用，通过BeanPostProcessor接口，以低耦合的方式将Spring AOP整合到Spring IoC容器当中
 
 __在BeanPostProcessor的继承体系中，与Spring AOP相关部分如下__
 
@@ -321,7 +321,7 @@ BeanPostProcessor
 
 		Object result = existingBean;
 		for (BeanPostProcessor beanProcessor : getBeanPostProcessors()) {
-            // 遍历所有的BeanPostProcessor
+            // 遍历所有的BeanPostProcessor，这里我们只关心与AOP相关的BeanPostProcessor
 			result = beanProcessor.postProcessAfterInitialization(result, beanName);
 			if (result == null) {
 				return result;
@@ -331,7 +331,7 @@ BeanPostProcessor
 	}
 ```
 
-这里BeanPostProcessor的实现类是AnnotationAwareAspectJAutoProxyCreator，其postProcessAfterInitialization方法逻辑定义在AbstractAdvisorAutoProxyCreator之中
+这里BeanPostProcessor的实现类是AnnotationAwareAspectJAutoProxyCreator，其postProcessAfterInitialization方法逻辑定义在AbstractAutoProxyCreator之中
 
 ```Java
 @Override
@@ -339,7 +339,7 @@ BeanPostProcessor
 		if (bean != null) {
 			Object cacheKey = getCacheKey(bean.getClass(), beanName);
 			if (!this.earlyProxyReferences.contains(cacheKey)) {
-                // 依据配置，对bean进行增强处理
+                // 如果有必要的话，对Bean进行包装（即代理）
 				return wrapIfNecessary(bean, beanName, cacheKey);
 			}
 		}
@@ -347,31 +347,27 @@ BeanPostProcessor
 	}
 ```
 
-wrapIfNecessary方法也定义在AbstractAdvisorAutoProxyCreator之中。该方法用于判断指定Bean是否需要进行增强，为那些需要织入增强逻辑的Bean创建代理
+wrapIfNecessary方法也定义在AbstractAutoProxyCreator之中。__该方法用于判断指定Bean是否需要进行增强，为那些需要织入增强逻辑的Bean创建代理__
 
 ```Java
     protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
-        // 
 		if (beanName != null && this.targetSourcedBeans.contains(beanName)) {
 			return bean;
 		}
-        // 该Bean不需要增强
 		if (Boolean.FALSE.equals(this.advisedBeans.get(cacheKey))) {
 			return bean;
 		}
-        // 该Bean为基础设施类（例如Advice、Pontcut等等）则不需要增强
 		if (isInfrastructureClass(bean.getClass()) || shouldSkip(bean.getClass(), beanName)) {
 			this.advisedBeans.put(cacheKey, Boolean.FALSE);
 			return bean;
 		}
 
-		// 获取与当前Bean相关的拦截器
+		// 获取Advice或者Advisor
 		Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
 
-        // 如果拦截器不是空，那么就为当前Bean创建代理
 		if (specificInterceptors != DO_NOT_PROXY) {
 			this.advisedBeans.put(cacheKey, Boolean.TRUE);
-            // 创建代理类
+            // 为当前Bean创建代理对象
 			Object proxy = createProxy(
 					bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
 			this.proxyTypes.put(cacheKey, proxy.getClass());
@@ -384,12 +380,251 @@ wrapIfNecessary方法也定义在AbstractAdvisorAutoProxyCreator之中。该方�
 
 ```
 
-## 2.2 创建代理
+## Advice/Advisor的获取
 
-我们继续上面的分析，接下来看createProxy方法，该方法位于AbstractAdvisorAutoProxyCreator之中。该方法用于为指定Bean创建代理
+在AbstractAutoProxyCreator.wrapIfNecessary方法中调用了getAdvicesAndAdvisorsForBean方法来__获取增强（Advice）或者切面（Advisor）__，该方法是AbstractAutoProxyCreator中的一个抽象方法，具体的实现由子类AbstractAdvisorAutoProxyCreator提供
 
 ```Java
-protected Object createProxy(
+	protected Object[] getAdvicesAndAdvisorsForBean(Class<?> beanClass, String beanName, TargetSource targetSource) {
+		List<Advisor> advisors = findEligibleAdvisors(beanClass, beanName);
+		if (advisors.isEmpty()) {
+			return DO_NOT_PROXY;
+		}
+		return advisors.toArray();
+	}
+```
+
+继续跟踪findEligibleAdvisors方法，该方法同样位于AbstractAdvisorAutoProxyCreator中，__该方法就是为指定Bean收集所有匹配的Advisor__
+
+```Java
+	protected List<Advisor> findEligibleAdvisors(Class<?> beanClass, String beanName) {
+		// 获取所有可用于自动代理的Advisor
+		List<Advisor> candidateAdvisors = findCandidateAdvisors();
+		// 在所有可用于自动代理的Advisor中，筛选出可用于当前Bean的Advisor
+		List<Advisor> eligibleAdvisors = findAdvisorsThatCanApply(candidateAdvisors, beanClass, beanName);
+		extendAdvisors(eligibleAdvisors);
+		if (!eligibleAdvisors.isEmpty()) {
+			eligibleAdvisors = sortAdvisors(eligibleAdvisors);
+		}
+		return eligibleAdvisors;
+	}
+```
+
+其中，findCandidateAdvisors方法用于获取所有的Advisor，该方法定义在AbstractAdvisorAutoProxyCreator中，并且子类
+AnnotationAwareAspectJAutoProxyCreator复写了该方法。Spring AOP支持两种配置方式：XML配置，利用`<aop:config>`标签；注解方式，利用`org.aspectj.lang.annotation`包下的相关注解，例如@Aspect、@Before等等。下面给出AnnotationAwareAspectJAutoProxyCreator中的版本
+
+* 通过父类AbstractAdvisorAutoProxyCreator的同名方法获取由Spring XML配置文件定义的Advisor
+* 获取由`org.aspectj.lang.annotation`包下的相关AOP注解定义的Advisor
+
+```Java
+	@Override
+	protected List<Advisor> findCandidateAdvisors() {
+		// Add all the Spring advisors found according to superclass rules.
+		List<Advisor> advisors = super.findCandidateAdvisors();
+		// Build Advisors for all AspectJ aspects in the bean factory.
+		advisors.addAll(this.aspectJAdvisorsBuilder.buildAspectJAdvisors());
+		return advisors;
+	}
+```
+
+首先，我们来看下AbstractAdvisorAutoProxyCreator的findCandidateAdvisors方法
+
+```Java
+	protected List<Advisor> findCandidateAdvisors() {
+		return this.advisorRetrievalHelper.findAdvisorBeans();
+	}
+```
+
+转交由BeanFactoryAdvisorRetrievalHelper.findAdvisorBeans来实现获取Advisor的逻辑。__该方法的主要逻辑就是从Spring的IoC容器中找出Advisor类型的所有Bean__
+
+```Java
+public List<Advisor> findAdvisorBeans() {
+		// Determine list of advisor bean names, if not cached already.
+		// 获取所有Advisor的Bean的名字
+		String[] advisorNames = null;
+		synchronized (this) {
+			advisorNames = this.cachedAdvisorBeanNames;
+			if (advisorNames == null) {
+				// Do not initialize FactoryBeans here: We need to leave all regular beans
+				// uninitialized to let the auto-proxy creator apply to them!
+				advisorNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
+						this.beanFactory, Advisor.class, true, false);
+				this.cachedAdvisorBeanNames = advisorNames;
+			}
+		}
+		if (advisorNames.length == 0) {
+			return new LinkedList<Advisor>();
+		}
+
+		List<Advisor> advisors = new LinkedList<Advisor>();
+		// 遍历每个Advisor的名字
+		for (String name : advisorNames) {
+			if (isEligibleBean(name)) {
+				if (this.beanFactory.isCurrentlyInCreation(name)) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("Skipping currently created advisor '" + name + "'");
+					}
+				}
+				else {
+					try {
+						// 取出对应的Bean，添加到列表中
+						advisors.add(this.beanFactory.getBean(name, Advisor.class));
+					}
+					catch (BeanCreationException ex) {
+						Throwable rootCause = ex.getMostSpecificCause();
+						if (rootCause instanceof BeanCurrentlyInCreationException) {
+							BeanCreationException bce = (BeanCreationException) rootCause;
+							if (this.beanFactory.isCurrentlyInCreation(bce.getBeanName())) {
+								if (logger.isDebugEnabled()) {
+									logger.debug("Skipping advisor '" + name +
+											"' with dependency on currently created bean: " + ex.getMessage());
+								}
+								// Ignore: indicates a reference back to the bean we're trying to advise.
+								// We want to find advisors other than the currently created bean itself.
+								continue;
+							}
+						}
+						throw ex;
+					}
+				}
+			}
+		}
+		return advisors;
+	}
+```
+
+接着，我们回到AnnotationAwareAspectJAutoProxyCreator的findCandidateAdvisors方法中，看一下buildAspectJAdvisors方法的具体逻辑，该方法定义在BeanFactoryAspectJAdvisorsBuilder之中。__该方法的主要逻辑是：针对每一个用@Aspect注解标记的类，遍历其所有标记了注解（包括@Before、@After等）的方法，将每个方法封装成一个Advice，然后再封装成Advisor__
+
+```Java
+	public List<Advisor> buildAspectJAdvisors() {
+		// 获取所有标记了@Aspect注解的Bean的名字
+		List<String> aspectNames = this.aspectBeanNames;
+
+		// 下面这个if子句用于初始化this.aspectBeanNames
+		if (aspectNames == null) {
+			synchronized (this) {
+				aspectNames = this.aspectBeanNames;
+				if (aspectNames == null) {
+					List<Advisor> advisors = new LinkedList<Advisor>();
+					aspectNames = new LinkedList<String>();
+					// 获取所有Bean的名字
+					String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
+							this.beanFactory, Object.class, true, false);
+					// 遍历这些Bean的名字
+					for (String beanName : beanNames) {
+						if (!isEligibleBean(beanName)) {
+							continue;
+						}
+						// We must be careful not to instantiate beans eagerly as in this case they
+						// would be cached by the Spring container but would not have been weaved.
+						Class<?> beanType = this.beanFactory.getType(beanName);
+						if (beanType == null) {
+							continue;
+						}
+
+						// 这里检验这个类型是否被@Aspect注解标记，或者用Aspect编译器编译过。总是就是检查是否与Aspect相关
+						if (this.advisorFactory.isAspect(beanType)) {
+							aspectNames.add(beanName);
+							AspectMetadata amd = new AspectMetadata(beanType, beanName);
+							if (amd.getAjType().getPerClause().getKind() == PerClauseKind.SINGLETON) {
+								MetadataAwareAspectInstanceFactory factory =
+										new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName);
+								List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);
+								if (this.beanFactory.isSingleton(beanName)) {
+									this.advisorsCache.put(beanName, classAdvisors);
+								}
+								else {
+									this.aspectFactoryCache.put(beanName, factory);
+								}
+								advisors.addAll(classAdvisors);
+							}
+							else {
+								// Per target or per this.
+								if (this.beanFactory.isSingleton(beanName)) {
+									throw new IllegalArgumentException("Bean with name '" + beanName +
+											"' is a singleton, but aspect instantiation model is not singleton");
+								}
+								MetadataAwareAspectInstanceFactory factory =
+										new PrototypeAspectInstanceFactory(this.beanFactory, beanName);
+								this.aspectFactoryCache.put(beanName, factory);
+								advisors.addAll(this.advisorFactory.getAdvisors(factory));
+							}
+						}
+					}
+					this.aspectBeanNames = aspectNames;
+					return advisors;
+				}
+			}
+		}
+
+		// 到这，说明已经初始化过一次了，直接从缓存中拿即可
+		if (aspectNames.isEmpty()) {
+			return Collections.emptyList();
+		}
+		List<Advisor> advisors = new LinkedList<Advisor>();
+		for (String aspectName : aspectNames) {
+			List<Advisor> cachedAdvisors = this.advisorsCache.get(aspectName);
+			if (cachedAdvisors != null) {
+				advisors.addAll(cachedAdvisors);
+			}
+			else {
+				MetadataAwareAspectInstanceFactory factory = this.aspectFactoryCache.get(aspectName);
+				advisors.addAll(this.advisorFactory.getAdvisors(factory));
+			}
+		}
+		return advisors;
+	}
+```
+
+接着，回到AbstractAdvisorAutoProxyCreator的findEligibleAdvisors方法中，继续分析findAdvisorsThatCanApply方法。__该方法用于在给定的Advisor集合中，筛选出匹配指定Bean的Advisor__
+
+```Java
+	protected List<Advisor> findAdvisorsThatCanApply(
+			List<Advisor> candidateAdvisors, Class<?> beanClass, String beanName) {
+
+		ProxyCreationContext.setCurrentProxiedBeanName(beanName);
+		try {
+			return AopUtils.findAdvisorsThatCanApply(candidateAdvisors, beanClass);
+		}
+		finally {
+			ProxyCreationContext.setCurrentProxiedBeanName(null);
+		}
+	}
+```
+
+具体的逻辑由AopUtils的同名方法实现
+
+```Java
+	public static List<Advisor> findAdvisorsThatCanApply(List<Advisor> candidateAdvisors, Class<?> clazz) {
+		if (candidateAdvisors.isEmpty()) {
+			return candidateAdvisors;
+		}
+		List<Advisor> eligibleAdvisors = new LinkedList<Advisor>();
+		for (Advisor candidate : candidateAdvisors) {
+			if (candidate instanceof IntroductionAdvisor && canApply(candidate, clazz)) {
+				eligibleAdvisors.add(candidate);
+			}
+		}
+		boolean hasIntroductions = !eligibleAdvisors.isEmpty();
+		for (Advisor candidate : candidateAdvisors) {
+			if (candidate instanceof IntroductionAdvisor) {
+				// already processed
+				continue;
+			}
+			if (canApply(candidate, clazz, hasIntroductions)) {
+				eligibleAdvisors.add(candidate);
+			}
+		}
+		return eligibleAdvisors;
+	}
+```
+
+## 2.2 创建代理
+
+回到AbstractAutoProxyCreator的wrapIfNecessary方法中继续分析，接下来看createProxy方法，该方法位于AbstractAutoProxyCreator之中。该方法用于为指定Bean创建代理
+
+```Java
+	protected Object createProxy(
 			Class<?> beanClass, String beanName, Object[] specificInterceptors, TargetSource targetSource) {
 
 		if (this.beanFactory instanceof ConfigurableListableBeanFactory) {
@@ -409,7 +644,7 @@ protected Object createProxy(
 			}
 		}
 
-        // 获取与当前bean相关的所有Advisor
+        // 处理由前面获取到的Advisor
 		Advisor[] advisors = buildAdvisors(beanName, specificInterceptors);
 		proxyFactory.addAdvisors(advisors);
 		proxyFactory.setTargetSource(targetSource);
@@ -425,7 +660,75 @@ protected Object createProxy(
 	}
 ```
 
-其中，buildAdvisors方法用于获取与当前Bean相关的所有Advisor，前面我们介绍过了，一个Advisor（准确地说是PointcutAdvisor）关联着一个Advice以及一个Pointcut
+AbstractAutoProxyCreator.buildAdvisors方法用于将Advice封装成Advisor（由于之前获取到的specificInterceptors本身就是Advisor，因此，在我们分析的链路来看，该方法不起什么作用），__例如将MethodBeforeAdvice、AfterReturningAdvice之类的接口转换成标准的方法拦截器接口MethodInterceptor__
+
+```Java
+	protected Advisor[] buildAdvisors(String beanName, Object[] specificInterceptors) {
+		// Handle prototypes correctly...
+		Advisor[] commonInterceptors = resolveInterceptorNames();
+
+		List<Object> allInterceptors = new ArrayList<Object>();
+		if (specificInterceptors != null) {
+			allInterceptors.addAll(Arrays.asList(specificInterceptors));
+			if (commonInterceptors.length > 0) {
+				if (this.applyCommonInterceptorsFirst) {
+					allInterceptors.addAll(0, Arrays.asList(commonInterceptors));
+				}
+				else {
+					allInterceptors.addAll(Arrays.asList(commonInterceptors));
+				}
+			}
+		}
+		if (logger.isDebugEnabled()) {
+			int nrOfCommonInterceptors = commonInterceptors.length;
+			int nrOfSpecificInterceptors = (specificInterceptors != null ? specificInterceptors.length : 0);
+			logger.debug("Creating implicit proxy for bean '" + beanName + "' with " + nrOfCommonInterceptors +
+					" common interceptors and " + nrOfSpecificInterceptors + " specific interceptors");
+		}
+
+		Advisor[] advisors = new Advisor[allInterceptors.size()];
+		for (int i = 0; i < allInterceptors.size(); i++) {
+			// 这里是封装的核心
+			advisors[i] = this.advisorAdapterRegistry.wrap(allInterceptors.get(i));
+		}
+		return advisors;
+	}
+```
+
+我们继续看wrap方法，该方法定义在DefaultAdvisorAdapterRegistry中。该方法用于将Advice类型的对象封装成一个Advisor，__在封装的过程中，会用到一系列适配器（Adapter），例如MethodBeforeAdviceAdapter、ThrowsAdviceAdapter、AfterReturningAdviceAdapter，这些适配器的作用就是将MethodBeforeAdvice、AfterReturningAdvice之类的接口转换成标准的方法拦截器接口MethodInterceptor__
+
+```Java
+	// 可以看到DefaultAdvisorAdapterRegistry默认注册了三个适配器
+	public DefaultAdvisorAdapterRegistry() {
+		registerAdvisorAdapter(new MethodBeforeAdviceAdapter());
+		registerAdvisorAdapter(new AfterReturningAdviceAdapter());
+		registerAdvisorAdapter(new ThrowsAdviceAdapter());
+	}
+
+	public Advisor wrap(Object adviceObject) throws UnknownAdviceTypeException {
+		// 如果本身就是Advisor那么直接返回即可
+		if (adviceObject instanceof Advisor) {
+			return (Advisor) adviceObject;
+		}
+		if (!(adviceObject instanceof Advice)) {
+			throw new UnknownAdviceTypeException(adviceObject);
+		}
+		Advice advice = (Advice) adviceObject;
+		if (advice instanceof MethodInterceptor) {
+			// So well-known it doesn't even need an adapter.
+			return new DefaultPointcutAdvisor(advice);
+		}
+		for (AdvisorAdapter adapter : this.adapters) {
+			// Check that it is supported.
+			// 查看该Advice是否被现有的Adpater支持
+			if (adapter.supportsAdvice(advice)) {
+				// 封装成Advisor
+				return new DefaultPointcutAdvisor(advice);
+			}
+		}
+		throw new UnknownAdviceTypeException(advice);
+	}
+```
 
 # 3 参考
 
