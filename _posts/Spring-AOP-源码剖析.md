@@ -306,9 +306,13 @@ Advice、Joinpoint、Pointcut、Advisor之间的关系可以用下面这些图�
 
 分析使用的Spring源码版本为4.3.13.RELEASE
 
-Spring AOP实现的核心原理就是：__拦截器+动态代理__
+Spring AOP源码分析将分为以下几个部分
 
-## 2.1 与IoC的关联
+1. Spring AOP与Spring IoC容器的集成
+1. Advisor/Advice的生成
+1. Spring动态代理的生成
+
+## 2.1 集成IoC
 
 Spring AOP通常与Spring IoC结合使用，通过BeanPostProcessor接口，以低耦合的方式将Spring AOP整合到Spring IoC容器当中
 
@@ -1113,6 +1117,70 @@ public Object invoke(Object proxy, Method method, Object[] args) throws Throwabl
 	}
 ```
 
+在上述方法中，利用了AdvisorAdapterRegistry.getInterceptors将不同类型的Advice转化成MethodInterceptor。之前介绍过AdvisorAdapterRegistry的唯一实现就是DefaultAdvisorAdapterRegistry，其实例以单例的方式被GlobalAdvisorAdapterRegistry持有。下面来看一下AdvisorAdapterRegistry.getInterceptors方法的源码，该方法的主要逻辑如下
+
+1. 从Advisor中取出Advice
+1. 若Advice的实际类型是MethodInterceptor，直接添加到集合中
+1. 否则，使用相应的适配器（Adapter）将其封装成MethodInterceptor。例如MethodBeforeAdviceAdapter可以将MethodBeforeAdvice封装成MethodInterceptor
+
+```Java
+	public MethodInterceptor[] getInterceptors(Advisor advisor) throws UnknownAdviceTypeException {
+		List<MethodInterceptor> interceptors = new ArrayList<MethodInterceptor>(3);
+		// 取出Advice
+		Advice advice = advisor.getAdvice();
+		if (advice instanceof MethodInterceptor) {
+			interceptors.add((MethodInterceptor) advice);
+		}
+		for (AdvisorAdapter adapter : this.adapters) {
+			if (adapter.supportsAdvice(advice)) {
+				// 进行适配，将advice封装成MethodInterceptor
+				interceptors.add(adapter.getInterceptor(advisor));
+			}
+		}
+		if (interceptors.isEmpty()) {
+			throw new UnknownAdviceTypeException(advisor.getAdvice());
+		}
+		return interceptors.toArray(new MethodInterceptor[interceptors.size()]);
+	}
+```
+
+以MethodBeforeAdviceAdapter为例，我们来看一下，适配过程是怎样的
+
+```Java
+class MethodBeforeAdviceAdapter implements AdvisorAdapter, Serializable {
+
+	@Override
+	public boolean supportsAdvice(Advice advice) {
+		return (advice instanceof MethodBeforeAdvice);
+	}
+
+	@Override
+	public MethodInterceptor getInterceptor(Advisor advisor) {
+		MethodBeforeAdvice advice = (MethodBeforeAdvice) advisor.getAdvice();
+		return new MethodBeforeAdviceInterceptor(advice);
+	}
+}
+
+public class MethodBeforeAdviceInterceptor implements MethodInterceptor, Serializable {
+
+	private MethodBeforeAdvice advice;
+
+	public MethodBeforeAdviceInterceptor(MethodBeforeAdvice advice) {
+		Assert.notNull(advice, "Advice must not be null");
+		this.advice = advice;
+	}
+
+	@Override
+	// 这里将before方法包装在invoke方法之中
+	public Object invoke(MethodInvocation mi) throws Throwable {
+		this.advice.before(mi.getMethod(), mi.getArguments(), mi.getThis() );
+		// 必须调用MethodInvocation.proceed方法，继续推动拦截器链的织入
+		return mi.proceed();
+	}
+}
+
+```
+
 我们接着回到JdkDynamicAopProxy的invoke方法当中，来看一下ReflectiveMethodInvocation这个类。__这个类实现了ProxyMethodInvocation接口，其继承链路的起点是Joinpoint，ReflectiveMethodInvocation就是一个连接点（增强织入点）。且包含了触发目标对象的目标方法所需的所有条件，目标对象的目标方法的触发是交由该对象来完成的，其最核心的方法就是proceed__
 
 ```Java
@@ -1487,8 +1555,6 @@ CglibMethodInvocation继承了ReflectiveMethodInvocation，并针对Cglib进行�
 ```
 
 至此Cglib动态代理分析完毕
-
-## 2.4 工具类AopUtils
 
 # 3 参考
 

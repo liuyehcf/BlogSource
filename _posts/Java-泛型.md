@@ -19,6 +19,16 @@ __目录__
 
 Java泛型新增了一个Type接口，__我们熟知的Class类实现了该接口__。因此Type接口是整个类型体系的顶层
 
+```
+Type 
+|
+├── GenericArrayType
+├── ParameterizedType
+├── TypeVariable
+├── WildcardType
+├── Class
+```
+
 下面介绍一下Type接口的几个重要的实现以及子接口
 
 ## 1.1 Class类
