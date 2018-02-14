@@ -17,19 +17,40 @@ __目录__
 # 1 环境
 
 1. IDEA
-1. Maven3.3.9
+1. Maven 3.5.2
 1. Spring Boot
 
-# 2 pom文件
+# 2 Demo工程目录结构
 
-## 2.1 继承org.springframework.boot:spring-boot-starter-parent
+```
+.
+├── pom.xml
+└── src
+    └── main
+        └── java
+            └── org
+                └── liuyehcf
+                    └── spring
+                        └── boot
+                            ├── SampleApplication.java
+                            ├── controller
+                            │   └── SampleController.java
+                            └── dto
+                                ├── LoginRequestDTO.java
+                                └── LoginResponseDTO.java
 
-__pom文件完整内容如下：__
+```
+
+# 3 pom文件
+
+## 3.1 继承自spring-boot
+
+pom文件可以直接继承自`org.springframework.boot:spring-boot-starter-parent`
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http:// maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
+         xmlns="http:// maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
     <!-- 继承自Spring Boot Parent -->
     <parent>
@@ -37,6 +58,7 @@ __pom文件完整内容如下：__
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>1.5.9.RELEASE</version>
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>spring-boot-demo</artifactId>
@@ -64,16 +86,14 @@ __pom文件完整内容如下：__
 </project>
 ```
 
-## 2.2 继承自己项目的父pom文件
+## 3.2 继承自己项目的父pom文件
 
 如果不想继承自`org.springframework.boot:spring-boot-starter-parent`，那么需要通过`<dependencyManagement>`元素引入依赖
 
-__pom文件完整内容如下：__
-
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http:// maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
+         xmlns="http:// maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>JavaLearning</artifactId>
@@ -121,35 +141,120 @@ __pom文件完整内容如下：__
 </project>
 ```
 
-# 3 Controller
+# 4 Controller
 
 ```Java
-package org.liuyehcf.controller;
+package org.liuyehcf.spring.boot.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.liuyehcf.spring.boot.dto.LoginRequestDTO;
+import org.liuyehcf.spring.boot.dto.LoginResponseDTO;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
+/**
+ * Created by HCF on 2017/11/24.
+ */
 @Controller
-@RequestMapping("/home")
+@RequestMapping("/")
 public class SampleController {
 
-    @RequestMapping("/hello")
+    @RequestMapping(value = "/home", method = RequestMethod.GET)
     @ResponseBody
-    public String hello(){
+    public String home() {
         return "Hello world!";
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @ResponseBody
+    public LoginResponseDTO login(@RequestBody LoginRequestDTO request) {
+        LoginResponseDTO loginResponse = new LoginResponseDTO();
+        loginResponse.setState("OK");
+        loginResponse.setMessage("欢迎登陆" + request.getName());
+        return loginResponse;
+    }
+
+    @RequestMapping(value = "/compute", method = RequestMethod.GET)
+    @ResponseBody
+    public String compute(@RequestParam String value1,
+                          @RequestParam String value2,
+                          @RequestHeader String operator) {
+        switch (operator) {
+            case "+":
+                return Float.toString(
+                        Float.parseFloat(value1)
+                                + Float.parseFloat(value2));
+            case "-":
+                return Float.toString(
+                        Float.parseFloat(value1)
+                                - Float.parseFloat(value2));
+            case "*":
+                return Float.toString(
+                        Float.parseFloat(value1)
+                                * Float.parseFloat(value2));
+            default:
+                return "wrong operation";
+        }
     }
 }
 ```
 
-# 4 Application
+## 4.1 DTO
 
 ```Java
-package org.liuyehcf;
+package org.liuyehcf.spring.boot.dto;
 
-import org.springframework.boot.*;
-import org.springframework.boot.autoconfigure.*;
+/**
+ * Created by Liuye on 2017/12/15.
+ */
+public class LoginRequestDTO {
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+```
+
+```Java
+package org.liuyehcf.spring.boot.dto;
+
+/**
+ * Created by Liuye on 2017/12/15.
+ */
+public class LoginResponseDTO {
+    private String state;
+
+    private String message;
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+}
+```
+
+# 5 Application
+
+```Java
+package org.liuyehcf.spring.boot;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 
 @EnableAutoConfiguration
@@ -162,9 +267,12 @@ public class SampleApplication {
 }
 ```
 
-__启动，访问`http://localhost:8080/home/hello`__
+__测试__
 
-## 4.1 关键注解
+1. `http://localhost:8080/home/`
+1. 其他两个API可以通过post man测试
+
+## 5.1 关键注解
 
 `@Configuration`
 
@@ -209,7 +317,7 @@ public class Conf {
 
 * @SpringBootApplication = (默认属性)@Configuration + @EnableAutoConfiguration + @ComponentScan
 
-# 5 排错
+# 6 排错
 
 当我采用第二种pom文件时（__不继承spring boot的pom文件__），启动时会产生如下异常信息
 
@@ -221,7 +329,7 @@ Caused by: java.lang.NoSuchMethodError: org.springframework.web.accept.ContentNe
 
 这是由于我在项目的父pom文件中引入了5.X.X版本的Spring依赖，这与`spring-boot-dependencies`引入的Spring依赖会冲突（例如，加载了低版本的class文件，但是运行时用到了较高版本特有的方法，于是会抛出`NoSuchMethodError`），将项目父pom文件中引入的Spring的版本改为4.3.13.RELEASE就行
 
-# 6 参考
+# 7 参考
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
 

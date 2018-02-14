@@ -338,7 +338,7 @@ AbstractApplicationContext->AbstractApplicationContext: registerListeners
 AbstractApplicationContext->AbstractApplicationContext: finishBeanFactoryInitialization
 AbstractApplicationContext->AbstractApplicationContext: finishRefresh
 AbstractApplicationContext->AbstractApplicationContext: resetCommonCaches
-AbstractApplicationContext->ClassPathXmlApplicationContext: refresh complete
+AbstractApplicationContext-->ClassPathXmlApplicationContext: refresh complete
 ```
 
 ## 4.1 prepareRefresh
