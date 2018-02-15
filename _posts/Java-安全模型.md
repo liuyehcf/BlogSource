@@ -29,7 +29,7 @@ CodeSource有一个重要的字段
 
 Permission类是AccessController处理的基本实体
 
-__Permission类本身是抽象的，它的一个实例代表一个具体的权限（例如FilePermission的实例就表示了哪个文件的什么权限，读/写等等）__。权限有两个作用，一个是允许Java API完成对某些资源的访问。另一个是可以为自定义权限提供一个范本。权限包含了权限类型、权限名和一组权限操作。具体可以看看BasicPermission类的代码。典型的也可以参看FilePermission的实现。
+__Permission类本身是抽象的，它的一个实例代表一个具体的权限（例如FilePermission的实例就表示了哪个文件的什么权限，读/写等等）__。权限有两个作用，一个是允许Java API完成对某些资源的访问。另一个是可以为自定义权限提供一个范本。权限包含了权限类型、权限名和一组权限操作。具体可以看看BasicPermission类的代码。典型的也可以参看FilePermission的实现
 
 __Permission继承属性结构如下（从这里可以得知Java对哪些资源进行了管理）__：
 
@@ -88,15 +88,15 @@ Permission (java.security)
 
 ## 1.3 策略（Policy）
 
-策略是一组权限的总称，用于确定权限应该用于哪些代码源。话说回来，代码源标识了类的来源，权限声明了具体的限制。那么策略就是将二者联系起来，策略类Policy主要的方法就是getPermissions(CodeSource)和refresh()方法。Policy类在老版本中是abstract的，且这两个方法也是。在jdk1.8中已经不再有abstract方法。这两个方法也都有了默认实现。
+策略是一组权限的总称，用于确定权限应该用于哪些代码源。话说回来，代码源标识了类的来源，权限声明了具体的限制。那么策略就是将二者联系起来，策略类Policy主要的方法就是getPermissions(CodeSource)和refresh()方法。Policy类在老版本中是abstract的，且这两个方法也是。在jdk1.8中已经不再有abstract方法。这两个方法也都有了默认实现
 
-在JVM中，任何情况下只能安装一个策略类的实例。安装策略类可以通过Policy.setPolicy()方法来进行，也可以通过java.security文件里的policy.provider=sun.security.provider.PolicyFile来进行。jdk1.6以后，Policy引入了PolicySpi，后续的扩展基于SPI进行。
+在JVM中，任何情况下只能安装一个策略类的实例。安装策略类可以通过Policy.setPolicy()方法来进行，也可以通过java.security文件里的policy.provider=sun.security.provider.PolicyFile来进行。jdk1.6以后，Policy引入了PolicySpi，后续的扩展基于SPI进行
 
 ## 1.4 保护域（ProtectionDomain）
 
-保护域可以理解为代码源和相应权限的一个组合。表示指派给一个代码源的所有权限。看概念，感觉和策略很像，其实策略要比这个大一点，保护域是一个代码源的一组权限，而策略是所有的代码源对应的所有的权限的关系。
+保护域可以理解为代码源和相应权限的一个组合。表示指派给一个代码源的所有权限。看概念，感觉和策略很像，其实策略要比这个大一点，保护域是一个代码源的一组权限，而策略是所有的代码源对应的所有的权限的关系
 
-JVM中的每一个类都一定属于且仅属于一个保护域，这由ClassLoader在define class的时候决定。但不是每个ClassLoader都有相应的保护域，核心Java API的ClassLoader就没有指定保护域，可以理解为属于系统保护域。
+JVM中的每一个类都一定属于且仅属于一个保护域，这由ClassLoader在define class的时候决定。但不是每个ClassLoader都有相应的保护域，核心Java API的ClassLoader就没有指定保护域，可以理解为属于系统保护域
 
 # 2 AccessController
 

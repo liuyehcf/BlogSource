@@ -112,7 +112,7 @@ ApplicationContext
         |       |       |       |       |       ├── ClassPathXmlApplicationContext
 ```
 
-以ClassPathXmlApplicationContext为例，下面是它的继承结构。
+以ClassPathXmlApplicationContext为例，下面是它的继承结构
 
 ![fig3](/images/Spring-IoC-Demo/fig3.png)
 

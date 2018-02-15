@@ -70,7 +70,7 @@ MyBatis采用建造者模式来创建SqlSessionFactory，SqlSessionFactoryBuilde
     }
 ```
 
-关于XMLConfigBuilder的构建，这里不做分析，这是XML解析相关的内容，其本质就是读取配置文件，然后生成一颗DOM树。
+关于XMLConfigBuilder的构建，这里不做分析，这是XML解析相关的内容，其本质就是读取配置文件，然后生成一颗DOM树
 
 我们接着看一下XMLConfigBuilder.parse方法（该方法将在后面的小节中详细分析），该方法从XML的DOM树节点中取出相应的配置项，初始化Configuration，然后返回Configuration的对象
 
