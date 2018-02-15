@@ -292,9 +292,17 @@ public class BPlusTreeNode {
 }
 ```
 
-## 3.2 B+-tree
+## 3.2 BPlus-tree
 
 ```Java
+package org.liuyehcf.algorithm.datastructure.tree.bplustree;
+
+import java.util.*;
+
+/**
+ * Created by liuye on 2017/5/3 0003.
+ * 该版本的B+树同样不支持重复关键字
+ */
 public class BPlusTree {
     private int t;
 
@@ -560,7 +568,7 @@ public class BPlusTree {
         y.n++;
         z.n--;
 
-        x.keys[i]=y.keys[y.n-1];
+        x.keys[i] = y.keys[y.n - 1];
     }
 
     private void shiftToRight(BPlusTreeNode x, int i) {
@@ -581,7 +589,7 @@ public class BPlusTree {
         y.n++;
         p.n--;
 
-        x.keys[i]=p.keys[p.n-1];
+        x.keys[i] = p.keys[p.n - 1];
     }
 
     public void levelOrderTraverse() {
@@ -613,9 +621,7 @@ public class BPlusTree {
         }
         return list;
     }
-}
 
-class TestBPlusTree {
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
 

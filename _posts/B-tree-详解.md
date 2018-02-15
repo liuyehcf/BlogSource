@@ -327,19 +327,27 @@ public class BTreeNode {
 ## 3.2 B树
 
 ```Java
+package org.liuyehcf.algorithm.datastructure.tree.btree;
+
+import java.util.*;
+
+/**
+ * Created by HCF on 2017/4/5.
+ */
+
 public class BTree {
     private int t;
 
     private BTreeNode root;
 
-    private BTreeNode createNode() {
-        return new BTreeNode(t);
-    }
-
     public BTree(int t) {
         this.t = t;
         this.root = createNode();
         this.root.isLeaf = true;
+    }
+
+    private BTreeNode createNode() {
+        return new BTreeNode(t);
     }
 
     public void insert(int k) {
@@ -652,9 +660,7 @@ public class BTree {
             }
         }
     }
-}
 
-class TestBtree {
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
 
@@ -709,3 +715,7 @@ class TestBtree {
     }
 }
 ```
+
+# 4 参考
+
+* 《算法导论》

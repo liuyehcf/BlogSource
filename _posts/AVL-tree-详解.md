@@ -437,21 +437,21 @@ return y   // 返回旋转后的子树根节点
 右旋给定节点，更新旋转后节点的高度，并返回旋转后子树的根节点
 
 ```C
-AVL-TREE-RIGH-TROTATE(T,y)
+AVL-TREE-RIGHT-ROTATE(T,y)
 x=y.left
 y.left=x.right
 if x.right≠T.nil
-    x.right.p=y   // 1-4行首先令节点b成为y的左孩子(改动两个指向：y.l 以及 b.p)
+    x.right.p=y
 x.p=y.p
 if y.p==T.nil
     root=x
 elseif y==y.p.left
     y.p.left=x
-else y.p.right=x   // 5-10行再令节点x代替y(改动两个指向：x.p 以及 y.p.left or y.p.right or root)
+else y.p.right=x
 x.right=y
-y.p=x        // 11-12最后令y成为x的右孩子(改动两个指向：x.right 以及 y.p)
+y.p=x
 AVL-TREE-HEIGHT(T,y)   
-AVL-TREE-HEIGHT(T,x)     // 13 14两行顺序不得交换
+AVL-TREE-HEIGHT(T,x)
 // 以上两行顺序不得交换
 return x      // 返回旋转后的子树根节点
 ```
@@ -567,18 +567,27 @@ public class AVLTreeNode {
 ## 5.2 版本1
 
 ```Java
-enum RotateOrientation {
-    INVALID,
-    LEFT,
-    RIGHT
-}
+package org.liuyehcf.algorithm.datastructure.tree.avltree;
 
-public class AVLTree2 {
+import java.util.*;
+
+/**
+ * Created by Liuye on 2017/4/27.
+ */
+
+public class AVLTree1 {
+    private enum RotateOrientation {
+        INVALID,
+        LEFT,
+        RIGHT
+    }
+
     private AVLTreeNode root;
 
     private AVLTreeNode nil;
+    private Map<AVLTreeNode, Integer> highMap;
 
-    public AVLTree2() {
+    public AVLTree1() {
         nil = new AVLTreeNode(0);
         nil.left = nil;
         nil.right = nil;
@@ -723,8 +732,6 @@ public class AVLTree2 {
         return x;
     }
 
-    private Map<AVLTreeNode, Integer> highMap;
-
     private boolean check() {
         highMap = new HashMap<AVLTreeNode, Integer>();
         return checkHigh(root) && checkBalance(root);
@@ -852,9 +859,7 @@ public class AVLTree2 {
             inOrderTraverse(root.right);
         }
     }
-}
 
-class TestAVLTree2 {
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
 
@@ -864,7 +869,7 @@ class TestAVLTree2 {
 
         while (--TIMES > 0) {
             System.out.println("剩余测试次数: " + TIMES);
-            AVLTree2 avlTree2 = new AVLTree2();
+            AVLTree1 avlTree2 = new AVLTree1();
 
             int N = 1000;
             int M = N / 2;
@@ -913,12 +918,21 @@ class TestAVLTree2 {
 ## 5.3 版本2
 
 ```Java
-public class AVLTree {
+package org.liuyehcf.algorithm.datastructure.tree.avltree;
+
+import java.util.*;
+
+/**
+ * Created by liuye on 2017/4/24 0024.
+ */
+
+public class AVLTree2 {
     private AVLTreeNode root;
 
     private AVLTreeNode nil;
+    private Map<AVLTreeNode, Integer> highMap;
 
-    public AVLTree() {
+    public AVLTree2() {
         nil = new AVLTreeNode(0);
         nil.left = nil;
         nil.right = nil;
@@ -1048,8 +1062,6 @@ public class AVLTree {
         return x;
     }
 
-    private Map<AVLTreeNode, Integer> highMap;
-
     private boolean check() {
         highMap = new HashMap<AVLTreeNode, Integer>();
         return checkHigh(root) && checkBalance(root);
@@ -1098,7 +1110,7 @@ public class AVLTree {
     }
 
     public void delete(int val) {
-        AVLTreeNode z = search(root,val);
+        AVLTreeNode z = search(root, val);
         if (z == nil) {
             throw new RuntimeException();
         }
@@ -1128,7 +1140,7 @@ public class AVLTree {
             y.left.parent = y;
 
             transplant(z, y);
-            y.h=z.h;// todo 这里高度必须维护
+            y.h = z.h;// todo 这里高度必须维护
             // todo 这里不需要更新p的高度,因为p的子树的高度此时并不知道是否正确,因此更新也没有意义,这也是deleteFixBalance必须遍历到root的原因
         }
         if (p != nil)
@@ -1182,9 +1194,7 @@ public class AVLTree {
             inOrderTraverse(root.right);
         }
     }
-}
 
-class TestAVLTree {
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
 
@@ -1194,7 +1204,7 @@ class TestAVLTree {
 
         while (--TIMES > 0) {
             System.out.println("剩余测试次数: " + TIMES);
-            AVLTree avlTree = new AVLTree();
+            AVLTree2 avlTree = new AVLTree2();
 
             int N = 10000;
             int M = N / 2;
@@ -1214,8 +1224,8 @@ class TestAVLTree {
             Collections.shuffle(list, random);
 
             for (int i = 0; i < M; i++) {
-                int k=list.get(list.size()-1);
-                list.remove(list.size()-1);
+                int k = list.get(list.size() - 1);
+                list.remove(list.size() - 1);
                 avlTree.delete(k);
             }
 

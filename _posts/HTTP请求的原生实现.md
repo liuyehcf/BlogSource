@@ -202,7 +202,7 @@ public class RowJavaNioApiDemo {
             try {
                 SocketChannel socketChannel = SocketChannel.open();
 
-                // 需要启动String Boot模块中的web应用作为服务端
+                // 启动一个本地的Web应用作为服务端
                 socketChannel.connect(new InetSocketAddress("localhost", 8080));
 
                 String requestContent = buildRequest();
