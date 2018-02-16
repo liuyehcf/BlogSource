@@ -2,7 +2,7 @@
 title: Java-Lambda表达式
 date: 2018-02-02 19:10:24
 tags: 
-- 摘录
+- 原创
 categories: 
 - Java
 - Grammar
@@ -84,19 +84,21 @@ BinaryOperator<Long> addExplicit = (Long x, Long y) -> x + y;
 
 ## 2.3 函数式接口
 
-函数式接口必须满足以下条件
+__函数式接口必须满足以下条件__
 
 * 有且仅有一个抽象方法
+* 接口中的静态方法和默认方法，都__不算__是抽象方法
+* 接口默认继承java.lang.Object，所以如果接口显示声明覆盖了Object中方法，那么也__不算__抽象方法
 
-__对于函数式接口，其实例可以通过Lambda表达式、方法引用或者构造器引用创建创建__
+__对于函数式接口，其实例可以通过Lambda表达式、方法引用或者构造器引用创建__
 
-JDK 1.8中新增了@FunctionalInterface注解用于支持函数式编程。事实上，每个用作函数接口的接口都__应该__添加这个注释。__该注释会强制`javac`检查一个接口是否符合函数接口的标准。如果该注释添加给一个枚举类型、类或另一个注释，或者接口包含不止一个抽象方法，javac就会报错。重构代码时，使用它能很容易发现问题__
+JDK 1.8中新增了@FunctionalInterface注解用于标记函数式接口。该注解__不是必须__的，如果一个接口符合“函数式接口”定义，那么加不加该注解都没有影响。加上该注解能够更好地让编译器进行检查。如果编写的不是函数式接口，但是加上了@FunctionInterface，那么编译器会报错。事实上，每个用作函数接口的接口都__应该__添加这个注解。__该注解会强制`javac`检查一个接口是否符合函数接口的标准。如果该注解添加给一个枚举类型、类或另一个注解，或者接口包含不止一个抽象方法，javac就会报错。重构代码时，使用它能很容易发现问题__
 
 # 3 Stream简介
 
 JDK 1.8中，引入了流（Stream）的概念，这个流和以前我们使用的IO中的流并不太相同
 
-所有继承自`Collection`的接口都可以转换为`Stream`
+__所有继承自`Collection`的接口都可以转换为`Stream`__
 
 我们来看一下Stream接口的源码
 
@@ -256,7 +258,6 @@ Stream接口本身并不是函数式接口（废话），但是Stream的许多�
 
 # 4 参考
 
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
-
 * [JDK 8 函数式编程入门](https://www.cnblogs.com/snowInPluto/p/5981400.html)
 * [Lambda expression](https://en.wikipedia.org/wiki/Lambda_expression)
+* [JDK8新特性：函数式接口@FunctionalInterface的使用说明](http://blog.csdn.net/aitangyong/article/details/54137067)
