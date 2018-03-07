@@ -74,13 +74,17 @@ killall Finder// 重启Finder
 
 ## 3.5 emoji
 
-`⌃ ＋ ⇧ ＋ 电源键`
+`⌃ ＋ ⌘ ＋ space`
 
 ## 3.6 关闭显示器
 
-`⌃ ＋ ⌘ ＋ space`
+`⌃ ＋ ⇧ ＋ 电源键`
 
-## 3.7 Page Up/Down
+## 3.7 锁定屏幕
+
+`⌃ ＋ ⌘ ＋ Q`
+
+## 3.8 Page Up/Down
 
 Home键：`Fn+←`
 End键：`Fn+→`
