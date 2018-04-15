@@ -130,6 +130,7 @@ menu:
 | [hexo-filter-flowchart](https://github.com/bubkoo/hexo-filter-flowchart) | hexo插件-流程图 |
 | [hexo-toc](https://github.com/bubkoo/hexo-toc) | hexo插件-目录 |
 | [hexo-wordcount](https://github.com/willin/hexo-wordcount) | hexo插件-字数统计 |
+| [hexo-symbols-count-time](https://github.com/theme-next/hexo-symbols-count-time) | 阅读时间统计 |
 
 # 10 取消侧栏编号
 
