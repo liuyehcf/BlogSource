@@ -1201,7 +1201,7 @@ public class Solution {
     > 水平拆分，将一张表的不同数据项放到两台机器上
 
 1. 数据库分库分表策略
-    > {% post_link 数据库分表策略 %}
+    > {% post_link 数据库-分表策略 %}
 
 1. 分库分表后的全表查询问题
     > http://blog.csdn.net/dinglang_2009/article/details/53195835
@@ -1425,11 +1425,11 @@ public class Solution {
     > http://www.cnblogs.com/benshan/archive/2013/01/08/2851714.html
 
 1. 数据库引擎
-    > {% post_link 数据库引擎 %}
+    > {% post_link 数据库-引擎 %}
 
 1. 索引树是如何维护的
     > B+树，不同的引擎有不同的方式
-    > {% post_link 数据库引擎 %}
+    > {% post_link 数据库-引擎 %}
 
 1. 创建索引时的注意事项
     > 1. 表的主键、外键必须有索引
@@ -1476,7 +1476,7 @@ WHERE sex = 0;
     > 自增主键不连续。版本5.1.22之后，插入前会通过语句分析得出插入数量，然后一次性分配足够的id，只有分配的过程是同步的，而分配之后的插入是可以并发执行的
 
 1. MySQL的几种优化
-    > {% post_link 数据库优化策略 %}
+    > {% post_link 数据库-优化策略 %}
 
 1. 数据库索引的作用
     > 快速查找
