@@ -1539,7 +1539,7 @@ WHERE sex = 0;
     > read committed，高并发
 
 1. MySQL数据库事务的隔离级别
-    > {% post_link InnoDB数据库引擎的事务隔离级别 %}
+    > {% post_link 数据库-事务隔离级别 %}
 
 1. 乐观锁
     > {% post_link 乐观锁 %}
