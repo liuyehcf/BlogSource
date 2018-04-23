@@ -1,5 +1,5 @@
 ---
-title: TensorFlow入门教程.md
+title: TensorFlow基础
 date: 2018-04-21 12:18:27
 tags: 
 - 原创
@@ -18,3 +18,4 @@ __目录__
 
 * [TensorFlow-官网](https://www.tensorflow.org/)
 * [TensorFlow-github](https://github.com/tensorflow/tensorflow)
+* [机器学习-术语表](https://developers.google.com/machine-learning/glossary/#learning_rate)

@@ -69,6 +69,9 @@ $ git rm --cached [file]
 # 停止追踪所有文件，但该文件会保留在工作区
 $ git rm -r --cached .
 
+# 查看git追踪的文件
+$ git ls-files
+
 # 改名文件，并且将这个改名放入暂存区
 $ git mv [file-original] [file-renamed]
 ```
