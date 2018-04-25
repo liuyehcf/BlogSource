@@ -86,6 +86,8 @@ pom文件可以直接继承自`org.springframework.boot:spring-boot-starter-pare
 </project>
 ```
 
+__注意，如果是Web应用的话，`org.springframework.boot:spring-boot-starter-web`是必须的，这个依赖项包含了内嵌的Tomcat容器__
+
 ## 3.2 继承自己项目的父pom文件
 
 如果不想继承自`org.springframework.boot:spring-boot-starter-parent`，那么需要通过`<dependencyManagement>`元素引入依赖

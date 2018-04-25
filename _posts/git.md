@@ -147,6 +147,10 @@ $ git branch -d [branch-name]
 # 删除远程分支
 $ git push origin --delete [branch-name]
 $ git branch -dr [remote/branch]
+
+# 更改分支名字
+$ git branch -m [oldbranch] [newbranch]
+$ git branch -M [oldbranch] [newbranch]
 ```
 
 # 6 标签

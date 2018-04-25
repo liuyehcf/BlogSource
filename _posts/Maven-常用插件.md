@@ -46,6 +46,39 @@ __搜索步骤__
 
 __对于web项目（打包方式为war）__，则会过滤所有依赖中包含占位符的文件
 
+## 2.1 配置文件
+
+示例代码如下：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <group>
+        <property name="datasource.slave.host" defaultValue="127.0.0.1" description="datasource slave host" />
+        <property name="datasource.slave.port" defaultValue="3306" description="datasource slave port" />
+        <property name="datasource.slave.db" defaultValue="read" description="datasource slave db" />
+        <property name="datasource.slave.username" defaultValue="root" description="datasource slave username" />
+        <property name="datasource.slave.password" defaultValue="123456" description=" datasource slave password" />
+        <property name="datasource.slave.maxconn" defaultValue="50" description="datasource slave maxconn" />
+        <property name="datasource.slave.minconn" defaultValue="25" description="datasource slave minconn" />
+    </group>
+    <group>
+        <property name="datasource.master.host" defaultValue="127.0.0.1" description="datasource master host" />
+        <property name="datasource.master.port" defaultValue="3306" description="datasource master port" />
+        <property name="datasource.master.db" defaultValue="read" description="datasource master db" />
+        <property name="datasource.master.username" defaultValue="root" description="datasource master username" />
+        <property name="datasource.master.password" defaultValue="123456" description="datasource master password" />
+        <property name="datasource.master.maxconn" defaultValue="50" description="datasource master maxconn" />
+        <property name="datasource.master.minconn" defaultValue="25" description="datasource master minconn" />
+    </group>
+    <script>
+        <generate template="application.properties.vm" destfile="WEB-INF/classes/application.properties" />
+    </script>
+</config>
+```
+
+其中`<script>`标签中指定需要进行占位符替换的__模板文件__。`group`标签仅仅做了分组，阅读上更清晰，没有其他作用
+
 # 3 参考
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
