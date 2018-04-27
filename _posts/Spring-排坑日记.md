@@ -100,4 +100,51 @@ Caused by: org.springframework.context.ApplicationContextException: Unable to st
 1. 在普通的Java-Web应用中，Spring容器分为父子容器，其中子容器仅包含MVC层的Bean，父容器包含了其他所有的Bean
 1. 出现异常的原因是由于Classpath中包含了`servlet-api`相关class文件，因此Spring boot认为这是一个web application。去掉servlet-api的maven依赖即可
 
-`mvn dependency:tree`查看依赖树，确实发现有servlet-api的依赖项
+`mvn dependency:tree`查看依赖树，确实发现有servlet-api的依赖项。排除掉servlet有关的依赖项即可
+
+__类似的，还有如下异常（也需要排除掉servlet有关的依赖项）__
+
+```Java
+Caused by: org.apache.catalina.LifecycleException: A child container failed during start
+	at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:949)
+	at org.apache.catalina.core.StandardEngine.startInternal(StandardEngine.java:262)
+	at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)
+	... 25 more
+```
+
+# 3 水坑3-SpringBoot+配置文件
+
+情景还原
+
+1. SpringBoot应用
+1. resources/目录下有一个`application.xml`配置文件
+
+出现的异常
+
+```Java
+Caused by: org.xml.sax.SAXParseException: 文档根元素 "beans" 必须匹配 DOCTYPE 根 "null"。
+	at com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.createSAXParseException(ErrorHandlerWrapper.java:203)
+	at com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.error(ErrorHandlerWrapper.java:134)
+	at com.sun.org.apache.xerces.internal.impl.XMLErrorReporter.reportError(XMLErrorReporter.java:396)
+	at com.sun.org.apache.xerces.internal.impl.XMLErrorReporter.reportError(XMLErrorReporter.java:327)
+	at com.sun.org.apache.xerces.internal.impl.XMLErrorReporter.reportError(XMLErrorReporter.java:284)
+	at com.sun.org.apache.xerces.internal.impl.dtd.XMLDTDValidator.rootElementSpecified(XMLDTDValidator.java:1599)
+	at com.sun.org.apache.xerces.internal.impl.dtd.XMLDTDValidator.handleStartElement(XMLDTDValidator.java:1877)
+	at com.sun.org.apache.xerces.internal.impl.dtd.XMLDTDValidator.startElement(XMLDTDValidator.java:742)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanStartElement(XMLDocumentFragmentScannerImpl.java:1359)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl$ContentDriver.scanRootElementHook(XMLDocumentScannerImpl.java:1289)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$FragmentContentDriver.next(XMLDocumentFragmentScannerImpl.java:3132)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl$PrologDriver.next(XMLDocumentScannerImpl.java:852)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(XMLDocumentScannerImpl.java:602)
+	at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanDocument(XMLDocumentFragmentScannerImpl.java:505)
+	at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(XML11Configuration.java:842)
+	at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(XML11Configuration.java:771)
+	at com.sun.org.apache.xerces.internal.parsers.XMLParser.parse(XMLParser.java:141)
+	at com.sun.org.apache.xerces.internal.parsers.DOMParser.parse(DOMParser.java:243)
+	at com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderImpl.parse(DocumentBuilderImpl.java:339)
+	at sun.util.xml.PlatformXmlPropertiesProvider.getLoadingDoc(PlatformXmlPropertiesProvider.java:106)
+	at sun.util.xml.PlatformXmlPropertiesProvider.load(PlatformXmlPropertiesProvider.java:78)
+	... 25 common frames omitted
+```
+
+原因：xml文件名不能是`application.xml`，改个名字就行！我了个大草！

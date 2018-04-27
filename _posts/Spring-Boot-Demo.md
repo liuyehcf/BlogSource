@@ -269,6 +269,10 @@ public class SampleApplication {
 }
 ```
 
+1. `@EnableAutoConfiguration`：能够自动配置spring的上下文，试图猜测和配置你想要的bean类，通常会自动根据你的类路径和你的bean定义自动配置
+1. `@ComponentScan`：会自动扫描指定包下的全部标有@Component的类，并注册成bean，当然包括@Component下的子注解@Service，@Repository，@Controller
+1. `@SpringBootApplication`：@SpringBootApplication = (默认属性)@Configuration + @EnableAutoConfiguration + @ComponentScan
+
 __测试__
 
 1. `http://localhost:8080/home/`
@@ -307,19 +311,153 @@ public class Conf {
 }  
 ```
 
-`@EnableAutoConfiguration`
+# 6 Bean的Java配置
 
-* 能够自动配置spring的上下文，试图猜测和配置你想要的bean类，通常会自动根据你的类路径和你的bean定义自动配置
+从Spring3.0开始，就提供了一种与xml配置文件对称的Java版本的配置
 
-`@ComponentScan`
+__核心注解__
 
-* 会自动扫描指定包下的全部标有@Component的类，并注册成bean，当然包括@Component下的子注解@Service，@Repository，@Controller
+1. @Configuration
+1. @Bean
+1. @Value
 
-`@SpringBootApplication`
+## 6.1 情景1
 
-* @SpringBootApplication = (默认属性)@Configuration + @EnableAutoConfiguration + @ComponentScan
+```xml
+    <bean id="service" class="org.liuyehcf.springboot.Service">
+        <property name="name" value="${my.name}" />
+    </bean>
+```
 
-# 6 排错
+这对这种配置，建议直接在Service类的name属性上标记@Value注解。如下
+
+```Java
+@Component
+public class Service{
+    @Value("${my.name}")
+    private String name;
+
+    @PostConstruct
+    public void init() {
+        ...
+    }
+    ...
+}
+```
+
+属性注入优先于@PostConstruct
+
+## 6.2 情景2
+
+```xml
+    <bean id="service" class="org.liuyehcf.springboot.Service">
+        <constructor-arg name="name" value="${my.name}" />
+        <constructor-arg name="age" value="${my.age}" />
+        <constructor-arg name="robot" ref="${my.robot}" />
+    </bean>
+```
+
+对于这种配置，也可以在构造方法的参数列表中加上@Value注解，以及@Autowired注解。如下
+
+```Java
+@Component
+public class Service{
+    public Service(@Value("${my.name}") String name,
+                   @Value("${my.name}") String name,
+                   @Autowired("${my.robot}") Robot robot){
+        ...
+    }
+
+    ...
+}
+```
+
+__注意，构造方法注入对象，只能用@Autowired而不能用@Resource__
+
+## 6.3 情景3
+
+```xml
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"  destroy-method="close">  
+        <property name="driverClassName" value="${db.driverClass}"></property>  
+        <property name="url" value="${db.url}"></property>  
+        <property name="username" value="${db.username}"></property>  
+        <property name="password" value="${db.password}"></property>    
+    </bean>
+
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="transactionTemplate"
+          class="org.springframework.transaction.support.TransactionTemplate">
+        <property name="transactionManager" ref="transactionManager"/>
+    </bean>
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:dal/mybatis_config.xml"/>
+    </bean>
+
+    <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="org.liuyehcf"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+
+    <tx:annotation-driven transaction-manager="dataSourceTransactionManager"/>
+
+```
+
+对于这种三方类而言，我们没法在源码上增加注解来注入属性或者对象，我们可以通过@Bean注解来配置。如下
+
+```Java
+@Configuration
+@MapperScan(basePackages = "org.liuyehcf", sqlSessionFactoryRef = "sqlSessionFactory")
+@EnableTransactionManagement
+public class DataSourceConfig{
+    // @Bean注解还有initMethod属性
+    @Bean(name = "dataSource", destroyMethod = "close")
+    public DataSource dataSource() {
+        BasicDataSource dataSource = new BasicDataSource();
+        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+        dataSource.setUrl("${db.url}");
+        dataSource.setUsername("${db.username}");
+        dataSource.setPassword("${db.password}");
+        return dataSource;
+    }
+
+    @Bean(name = "transactionManager")
+    public DataSourceTransactionManager transactionManager() {
+        DataSourceTransactionManager manager = new DataSourceTransactionManager();
+        manager.setDataSource(dataSource());
+
+        return manager;
+    }
+
+    @Bean(name = "transactionTemplate")
+    public TransactionTemplate transactionTemplate() {
+        TransactionTemplate template = new TransactionTemplate();
+        template.setTransactionManager(transactionManager());
+        return template;
+    }
+
+    @Bean(name = "sqlSessionFactory")
+    public SqlSessionFactory sqlSessionFactory() throws Exception {
+        SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
+        sqlSessionFactoryBean.setDataSource(dataSource());
+        sqlSessionFactoryBean.setConfigLocation(new ClassPathResource("dal/mybatis_config.xml"));
+        return sqlSessionFactoryBean.getObject();
+    }
+}
+```
+
+Spring会为DataSourceConfig生成代理类（Cglib），不用担心多次调用dataSource()方法会创建多个不同的对象
+
+__注意，MapperScannerConfigurer的等效配置必须用@MapperScan注解，否则，整个配置类就会有问题（原因尚不清楚）__
+
+__此外，`<tx:annotation-driven transaction-manager="dataSourceTransactionManager"/>`的等效配置，不知道是不是@EnableTransactionManagement__
+
+# 7 排错
 
 当我采用第二种pom文件时（__不继承spring boot的pom文件__），启动时会产生如下异常信息
 
@@ -331,7 +469,7 @@ Caused by: java.lang.NoSuchMethodError: org.springframework.web.accept.ContentNe
 
 这是由于我在项目的父pom文件中引入了5.X.X版本的Spring依赖，这与`spring-boot-dependencies`引入的Spring依赖会冲突（例如，加载了低版本的class文件，但是运行时用到了较高版本特有的方法，于是会抛出`NoSuchMethodError`），将项目父pom文件中引入的Spring的版本改为4.3.13.RELEASE就行
 
-# 7 参考
+# 8 参考
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
 

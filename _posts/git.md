@@ -330,7 +330,9 @@ $ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Cre
 
 通过如下命令可以解决该问题
 
-* `git config --global core.quotepath false`
+```shell
+$ git config --global core.quotepath false
+```
 
 # 12 参考
 
