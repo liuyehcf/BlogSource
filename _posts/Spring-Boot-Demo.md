@@ -424,7 +424,7 @@ __注意，MapperScannerConfigurer的等效配置必须用@MapperScan注解，�
 
 __此外，`<tx:annotation-driven transaction-manager="dataSourceTransactionManager"/>`的等效配置，不知道是不是@EnableTransactionManagement__
 
-## 情景4
+## 6.4 情景4
 
 ```xml
     <bean id="tool" class="com.baeldung.factorybean.ToolFactory">
@@ -449,7 +449,7 @@ public class FactoryBeanAppConfig {
 }
 ```
 
-# 属性注入
+# 7 属性注入
 
 Spring的属性注入（形如`${xxx.yyy.zzz}`的占位符）有如下几种方式
 
@@ -466,7 +466,7 @@ Spring的属性注入（形如`${xxx.yyy.zzz}`的占位符）有如下几种方�
     * `<property resource="application.properties"/>`
     * 这种方式不需要Spring配合，完全是logback的一种方式
 
-# 7 排错
+# 8 排错
 
 当我采用第二种pom文件时（__不继承spring boot的pom文件__），启动时会产生如下异常信息
 
@@ -478,7 +478,7 @@ Caused by: java.lang.NoSuchMethodError: org.springframework.web.accept.ContentNe
 
 这是由于我在项目的父pom文件中引入了5.X.X版本的Spring依赖，这与`spring-boot-dependencies`引入的Spring依赖会冲突（例如，加载了低版本的class文件，但是运行时用到了较高版本特有的方法，于是会抛出`NoSuchMethodError`），将项目父pom文件中引入的Spring的版本改为4.3.13.RELEASE就行
 
-# 8 参考
+# 9 参考
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
 
