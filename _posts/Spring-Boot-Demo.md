@@ -278,39 +278,6 @@ __测试__
 1. `http://localhost:8080/home/`
 1. 其他两个API可以通过post man测试
 
-## 5.1 关键注解
-
-`@Configuration`
-
-* 提到@Configuration就要提到他的搭档@Bean。使用这两个注解就可以创建一个简单的spring配置类，可以用来替代相应的xml配置文件
-* 以下两个配置等价
-    * 
-```xml
-<beans>  
-    <bean id = "car" class="com.test.Car">  
-        <property name="wheel" ref = "wheel"></property>  
-    </bean>  
-    <bean id = "wheel" class="com.test.Wheel"></bean>  
-</beans> 
-```
-
-    * 
-```Java
-@Configuration  
-public class Conf {  
-    @Bean  
-    public Car car() {  
-        Car car = new Car();  
-        car.setWheel(wheel());  
-        return car;  
-    }  
-    @Bean   
-    public Wheel wheel() {  
-        return new Wheel();  
-    }  
-}  
-```
-
 # 6 Bean的Java配置
 
 从Spring3.0开始，就提供了一种与xml配置文件对称的Java版本的配置
@@ -456,6 +423,48 @@ Spring会为DataSourceConfig生成代理类（Cglib），不用担心多次调�
 __注意，MapperScannerConfigurer的等效配置必须用@MapperScan注解，否则，整个配置类就会有问题（原因尚不清楚）__
 
 __此外，`<tx:annotation-driven transaction-manager="dataSourceTransactionManager"/>`的等效配置，不知道是不是@EnableTransactionManagement__
+
+## 情景4
+
+```xml
+    <bean id="tool" class="com.baeldung.factorybean.ToolFactory">
+        <property name="factoryId" value="9090"/>
+        <property name="toolId" value="1"/>
+    </bean>
+```
+
+对于FactoryBean，我们仍然可以像配置普通Bean一样配置它。__注意必须返回FactoryBean（不要调用getObject()返回Bean对象）__，如果这个FactoryBean实现了一些Aware接口，那么在生成FactoryBean对象时会进行一些额外操作，然后再调用getObject方法创建Bean
+
+```Java
+@Configuration
+public class FactoryBeanAppConfig {
+  
+    @Bean(name = "tool")
+    public ToolFactory toolFactory() {
+        ToolFactory factory = new ToolFactory();
+        factory.setFactoryId(7070);
+        factory.setToolId(2);
+        return factory;
+    }
+}
+```
+
+# 属性注入
+
+Spring的属性注入（形如`${xxx.yyy.zzz}`的占位符）有如下几种方式
+
+1. @Value注解
+1. xml配置文件中，例如`<property name = "Jack" value = "${jack.name}/>`
+
+注意，像logback配置文件（`logback.xml`）中的属性占位符，Spring默认是不解析的。如果想要使其生效，可以采用如下方式
+
+1. 将`logback.xml`改名为`logback-spring.xml`，就可以利用`springProperty`元素来引入Spring属性值
+    * `<springProperty scope="context" name="fluentHost" source="myapp.fluentd.host"/>`
+    * 其中，`source`的内容就是Spring属性文件中的属性名称
+    * 然后，就可以在logback的配置文件中引用`${fluentHost}`
+1. 利用`property`元素导入Spring属性配置文件
+    * `<property resource="application.properties"/>`
+    * 这种方式不需要Spring配合，完全是logback的一种方式
 
 # 7 排错
 
