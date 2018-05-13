@@ -15,7 +15,7 @@ __目录__
 
 # 1 基本概念
 
-基于Tensorflow的神经网络（Neural Network，NN）
+基于TensorFlow的神经网络（Neural Network，NN）
 
 1. 用__张量__表示数据
 1. 用__计算图__搭建神经网络
@@ -35,7 +35,7 @@ __目录__
 
 ## 1.2 数据类型
 
-Tensorflow的数据类型有
+TensorFlow的数据类型有
 
 1. `tf.int8`
 1. `tf.int16`
@@ -57,10 +57,10 @@ Tensorflow的数据类型有
 
 ![fig1](/images/TensorFlow-搭建神经网络/fig1.png)
 
-我们用tensorflow实现上述计算图
+我们用TensorFlow实现上述计算图
 
 ```py
-import tensorflow as tf
+import TensorFlow as tf
 
 # 定义张量
 x = tf.constant([[1.0, 2.0]])
@@ -135,7 +135,7 @@ $${% endraw %}
 1. {% raw %}$\vec{W^{2}}${% endraw %}是3行1列的参数矩阵
 1. {% raw %}$\vec{Y}${% endraw %}是输出向量
 
-上述例子的前向传播过程的tensorflow描述（__变量初始化__、__计算图节点运算__都要用__会话__实现）
+上述例子的前向传播过程的TensorFlow描述（__变量初始化__、__计算图节点运算__都要用__会话__实现）
 
 * __变量初始化__：在`sess.run`函数中用`tf.global_variables_initializer()`汇总所有待优化变量
 
@@ -170,7 +170,7 @@ __喂一组数据__
 
 ```py
 # coding:utf-8
-import tensorflow as tf
+import TensorFlow as tf
 
 # 定义输入和参数
 x = tf.placeholder(tf.float32, shape=(1, 2))
@@ -192,7 +192,7 @@ __喂多组数据__
 
 ```py
 # coding:utf-8
-import tensorflow as tf
+import TensorFlow as tf
 
 # 定义输入和参数
 x = tf.placeholder(tf.float32, shape=(None, 2))
@@ -225,11 +225,11 @@ with tf.Session() as sess:
 MSE(y\_, y)=\frac{\sum_{i=1}^{n}{(y-y\_)^2}}{n}
 $${% endraw %}
 
-在tensorflow中可以表示为`loss_mse = tf.reduce_mean(tf.square(y_ - y))`
+在TensorFlow中可以表示为`loss_mse = tf.reduce_mean(tf.square(y_ - y))`
 
 ## 5.2 反向传播训练方法
 
-反向传播训练方法是指，__以减小loss值为优化目标__。有梯度下降、momentum优化器、adam优化器等优化方法。这三种优化方法用tensorflow的函数可以表示为
+反向传播训练方法是指，__以减小loss值为优化目标__。有梯度下降、momentum优化器、adam优化器等优化方法。这三种优化方法用TensorFlow的函数可以表示为
 
 1. `train_step=tf.train.GradientDescentOptimizer(learning_rate).minimize(loss)`
 1. `train_step=tf.train.MomentumOptimizer(learning_rate, momentum).minimize(loss)`
@@ -273,7 +273,7 @@ Adam算法和随机梯度下降算法不同。随机梯度下降算法保持单�
 ```py
 # coding:utf-8
 
-import tensorflow as tf
+import TensorFlow as tf
 import numpy as np
 
 BATCH_SIZE = 8
@@ -338,4 +338,4 @@ with tf.Session() as sess:
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
 
-* [人工智能实践：Tensorflow笔记-曹健](https://www.icourse163.org/course/PKU-1002536002)
+* [人工智能实践：TensorFlow笔记-曹健](https://www.icourse163.org/course/PKU-1002536002)

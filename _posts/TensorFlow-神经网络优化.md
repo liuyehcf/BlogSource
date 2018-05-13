@@ -22,9 +22,9 @@ __目录__
 
 __激活函数引入非线性激活因素，提高模型的表达力__，常用的激活函数有
 
-1. __relu__，tensorflow中表示为`tf.nn.relu()`{% raw %}$$f(x)=max(x,0)$${% endraw %}
-1. __sigmoid__，tensorflow中表示为`tf.nn.sigmoid()`{% raw %}$$f(x)=\frac{1}{1+e^{-x}}$${% endraw %}
-1. __tanh__，tensorflow中表示为`tf.nn.tanh()`{% raw %}$$f(x)=\frac{1-e^{-2x}}{1+e^{-2x}}$${% endraw %}
+1. __relu__，TensorFlow中表示为`tf.nn.relu()`{% raw %}$$f(x)=max(x,0)$${% endraw %}
+1. __sigmoid__，TensorFlow中表示为`tf.nn.sigmoid()`{% raw %}$$f(x)=\frac{1}{1+e^{-x}}$${% endraw %}
+1. __tanh__，TensorFlow中表示为`tf.nn.tanh()`{% raw %}$$f(x)=\frac{1-e^{-2x}}{1+e^{-2x}}$${% endraw %}
 
 ## 1.1 神经网络的层数
 
@@ -47,7 +47,7 @@ __激活函数引入非线性激活因素，提高模型的表达力__，常用�
 
 {% raw %}$$MSE(y\_, y)=\frac{\sum_{i=1}^{n}{(y-y\_)^2}}{n}$${% endraw %}
 
-在Tensorflow中表示为
+在TensorFlow中表示为
 ```py
 loss_mse = tf.reduce_mean(tf.square(y_ - y))
 ```
@@ -69,7 +69,7 @@ loss_mse = tf.reduce_mean(tf.square(y_ - y))
 H(y\_, y) = - \sum{y\_} * \log{y}
 $${% endraw %}
 
-在Tensorflow中表示为
+在TensorFlow中表示为
 
 ```py
 ce= -tf.reduce_mean(y_* tf.log(tf.clip_by_value(y, 1e-12, 1.0)))
@@ -79,7 +79,7 @@ __softmax 函数__：将n分类的n个输出(y1,y2...yn)变为满足以下概率
 
 softmax函数表示为{% raw %}$$softmax(y_i)=\frac{e^{y_i}}{\sum_{i=1}^{n}{e^{y_i}}}$${% endraw %}
 
-在Tensorflow中，一般让模型的输出经过`sofemax`函数，以获得输出分类的概率分布，再与标准答案对比，求出交叉熵，得到损失函数，用如下函数实现
+在TensorFlow中，一般让模型的输出经过`sofemax`函数，以获得输出分类的概率分布，再与标准答案对比，求出交叉熵，得到损失函数，用如下函数实现
 
 ```py
 ce = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=y, labels=tf.argmax(y_, 1))
@@ -107,7 +107,7 @@ $${% endraw %}
 * `LEARNING_RATE_DECAY`：学习率衰减率
 * `LEARNING_RATE_STEP`：多少轮更新一次学习率，一般来说是总样本数除以BATCH_SIZE
 
-在Tensorflow中表示为
+在TensorFlow中表示为
 
 ```py
 global_step = tf.Variable(0, trainable=False) # 记录了当前训练轮数，为不可训练型参数
@@ -129,7 +129,7 @@ learning_rate = tf.train.exponential_decay(
 
 __滑动平均值（影子）计算公式__：`影子 = 衰减率 * 影子 + (1 - 衰减率) * 参数`，其中{% raw %}$$衰减率 = min{MOVING\_AVERAGE\_DECAY, \frac{1 + 轮数}{10 + 轮数}}$${% endraw %}
 
-在Tensorflow中表示为
+在TensorFlow中表示为
 
 ```py
 # MOVING_AVERAGE_DECAY表示滑动平均衰减率，一般会赋接近1的值
@@ -159,7 +159,7 @@ __正则化的两种方式__
 1. {% raw %}$L1${% endraw %}正则化{% raw %}$$loss_{L1} = \sum_i{|w_i|}$${% endraw %}
 1. {% raw %}$L2${% endraw %}正则化{% raw %}$$loss_{L1} = \sum_i{|w_i|^2}$${% endraw %}
 
-在Tensorflow中表示为
+在TensorFlow中表示为
 
 ```py
 # L1正则化
@@ -175,5 +175,5 @@ loss = cem + tf.add_n(tf.get_collection('losses'))
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
 
-* [人工智能实践：Tensorflow笔记-曹健](https://www.icourse163.org/course/PKU-1002536002)
+* [人工智能实践：TensorFlow笔记-曹健](https://www.icourse163.org/course/PKU-1002536002)
 
