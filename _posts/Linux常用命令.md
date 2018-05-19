@@ -106,6 +106,11 @@ __BEGIN与END__
 * 在Unix awk中两个特别的表达式，BEGIN和END，这两者都可用于pattern中（参考前面的awk语法），__提供BEGIN和END的作用是给程序赋予初始状态和在程序结束之后执行一些扫尾的工作。__
 * __任何在BEGIN之后列出的操作（在{}内）将在Unix awk开始扫描输入之前执行，而END之后列出的操作将在扫描完全部的输入之后执行。__因此，通常使用BEGIN来显示变量和预置（初始化）变量，使用END来输出最终结果
 
+__print与printf__
+
+* print会打印换行符
+* printf不会打印换行符
+
 __示例：__
 
 * `cat /etc/passwd | awk '{FS=":"} $3<10 {print $1 "\t" $3}'`，__注意`{FS=":"}`是作为一个动作存在的，因此从第二行开始分隔符才变为":"，第一行分隔符仍然是空格__
@@ -116,6 +121,96 @@ awk
 'BEGIN {FS=":";print "统计销售金额";total=0} 
 {print $3;total=total+$3;} 
 END {print "销售金额总计：",total}' sx
+```
+
+### 1.2.1 如何在awk中引用变量
+
+__方式1__
+
+* `BEGIN{}`中无法使用变量
+```sh
+awk '{print a, b}' a=111 b=222 file # 变量必须位于file之前
+or
+<前一个命令的输出> | awk '{ print a, b }' a=111 b=222
+```
+
+__方式2__
+
+* 用`"'"`将变量包裹起来
+
+```sh
+awk 'BEGIN {print "'"$LOGNAME"'" }'
+awk '{print "'"$LOGNAME"'" }' file
+```
+
+### 1.2.2 在awk中写简单的控制流语句
+
+__以下的示例都在BEGIN中，只执行一次，不需要指定文件或者输入流__
+
+__if语句__
+```sh
+awk 'BEGIN{ 
+test=100;
+if(test>90)
+{
+    print "very good";
+}
+else if(test>60)
+{
+    print "good";
+}
+else
+{
+    print "no pass";
+}
+}'
+```
+
+__while语句__
+```sh
+awk 'BEGIN{ 
+test=100;
+total=0;
+while(i<=test)
+{
+    total+=i;
+    i++;
+}
+print total;
+}'
+```
+
+__for语句__
+```sh
+awk 'BEGIN{ 
+for(k in ENVIRON)
+{
+    print k"="ENVIRON[k];
+}
+}'
+
+awk 'BEGIN{ 
+total=0;
+for(i=0;i<=100;i++)
+{
+    total+=i;
+}
+print total;
+}'
+```
+
+__do语句__
+```sh
+awk 'BEGIN{ 
+total=0;
+i=0;
+do
+{
+    total+=i;
+    i++;
+}while(i<=100)
+print total;
+}'
 ```
 
 ## 1.3 grep
@@ -451,3 +546,4 @@ __示例：__
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
 
 * 《鸟哥的Linux私房菜》
+* [linux shell awk 流程控制语句（if,for,while,do)详细介绍](https://www.cnblogs.com/chengmo/archive/2010/10/04/1842073.html)

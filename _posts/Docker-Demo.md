@@ -25,7 +25,7 @@ __创建Dockerfile（核心）__
     * `FROM`可以在一个Dockerfile中出现多次，以便于创建混合images
     * 如果没有指定tag，latest将会被指定为要使用的基础镜像版本
 1. __MAINTAINER：用于指定镜像制作者的信息__
-1. __RUN：将在当前image中执行任意合法命令并提交执行结果__
+1. __RUN：创建镜像时执行的命令（RUN命令产生的作用是会被持久化到创建的镜像中的）__
     * 层级`RUN`指令和生成提交是符合Docker核心理念的做法。它允许像版本控制那样，在任意一个点，对image镜像进行定制化构建
     * `RUN`指令缓存不会在下个命令执行时自动失效。比如`RUN apt-get dist-upgrade -y`的缓存就可能被用于下一个指令
     * `--no-cache`标志可以被用于强制取消缓存使用
@@ -46,8 +46,9 @@ __创建Dockerfile（核心）__
     * 所有的新文件和文件夹都会创建UID和GID。事实上如果`<src>`是一个远程文件URL，那么目标文件的权限将会是600
 1. __VOLUME：创建一个可以从本地主机或其他容器挂载的挂载点，一般用来存放数据库和需要保持的数据等__
 1. __EXPOSE：指定在docker允许时指定的端口进行转发__
-1. __CMD：执行指定命令__
+1. __CMD：启动容器时执行的命令__
     * Dockerfile中只能有一个CMD指令。如果你指定了多个，那么只有最后个CMD指令是生效的
+    * 可以被`docker run $image $other_command`中的`$other_command`覆盖
 1. __ONBUILD：让指令延迟執行__
     * 延迟到下一个使用`FROM`的Dockerfile在建立image时执行，只限延迟一次
 1. __ARG：定义仅在建立image时有效的变量__
@@ -116,7 +117,21 @@ __创建镜像：`docker build -t friendlyhello .`__
 
 __运行应用：`docker run -p 4000:80 friendlyhello`__
 
-# 2 参考
+# 2 docker命令行工具
+
+学会利用`--help`参数
+
+```sh
+docker --help # 查询所有顶层的参数
+docker image --help # 参数image参数的子参数
+```
+
+下面给出几个常用的命令
+
+```sh
+```
+
+# 3 参考
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
 

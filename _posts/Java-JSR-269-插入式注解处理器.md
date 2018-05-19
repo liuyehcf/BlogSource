@@ -387,6 +387,24 @@ public JCMethodInvocation Apply(List<JCExpression> typeargs,
 }
 ```
 
+示例如下
+
+```Java
+// 添加调用语句" data.setXXX(xxx); "
+jcStatements.append(
+        treeMaker.Exec(
+                treeMaker.Apply(
+                        List.nil(),
+                        treeMaker.Select(
+                                treeMaker.Ident(names.fromString(DATA)),
+                                jcMethod.getName()
+                        ),
+                        List.of(treeMaker.Ident(jcVariable.getName()))
+                )
+        )
+);
+```
+
 ### 3.2.10 TreeMaker.Assign
 
 TreeMaker.Assign用于创建`赋值语句`语法树节点（JCAssign），源码如下：
@@ -512,26 +530,84 @@ public class UserDTO {
 
 ```Java
 public class UserDTO {
-    private String name;
+    private String firstName;
+    private String lastName;
+    private Integer age;
+    private String address;
 
-    public void setName(String name) {
-        this.name = name;
+    public UserDTO() {
     }
 
-    public void getName() {
-        return this.name;
+    public static void main(String[] args) {
+        UserDTO.UserDTOBuilder builder = new UserDTO.UserDTOBuilder();
+        UserDTO userDTO = builder.setFirstName("明").setLastName("小").setAge(25).setAddress("中国").build();
+        System.out.println(userDTO);
+    }
+
+    public String getFirstName() {
+        return this.firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return this.lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public Integer getAge() {
+        return this.age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public String getAddress() {
+        return this.address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String toString() {
+        return "firstName: " + this.firstName + "\nlastName: " + this.lastName + "\nage: " + this.age + "\naddress: " + this.address;
     }
 
     public static final class UserDTOBuilder {
         private UserDTO data = new UserDTO();
 
-        public UserDTO.UserDTOBuilder setName(String name) {
-            this.data.setName(name);
+        public UserDTOBuilder() {
+        }
+
+        public UserDTOBuilder setAddress(String address) {
+            this.data.setAddress(address);
+            return this;
+        }
+
+        public UserDTOBuilder setAge(Integer age) {
+            this.data.setAge(age);
+            return this;
+        }
+
+        public UserDTOBuilder setLastName(String lastName) {
+            this.data.setLastName(lastName);
+            return this;
+        }
+
+        public UserDTOBuilder setFirstName(String firstName) {
+            this.data.setFirstName(firstName);
             return this;
         }
 
         public UserDTO build() {
-            return data;
+            return this.data;
         }
     }
 }
@@ -1247,3 +1323,5 @@ __DONE__
 * [Java Code Examples for com.sun.tools.javac.tree.JCTree.JCMethodDecl](https://www.programcreek.com/java-api-examples/index.php?api=com.sun.tools.javac.tree.JCTree.JCMethodDecl)
 * [grepcode](http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b14/com/sun/tools/javac/tree/TreeMaker.java#TreeMaker.Apply%28com.sun.tools.javac.util.List%2Ccom.sun.tools.javac.tree.JCTree.JCExpression%2Ccom.sun.tools.javac.util.List%29)
 * [AlbertoSH/MagicBuilder](https://github.com/AlbertoSH/MagicBuilder/tree/master/magic-builder-compiler/src/main/java/com/github/albertosh)
+* [源码地址](https://github.com/fiji/javac/blob/master/src/main/java/com/sun/tools/javac/tree/TreeMaker.java)
+* [TreeMake Q&A](http://wiki.netbeans.org/JavaHT_TreeMakerQA)

@@ -71,7 +71,7 @@ class VolatileFeatureExample {
 class VolatileFeatureExample {
     long vl = 0L;// 64位的long型普通变量
 
-    public void set(long l) {// 对单个普通变量的写用一个锁同步
+    public synchronized void set(long l) {// 对单个普通变量的写用一个锁同步
         vl = 1;
     }
 
@@ -81,7 +81,7 @@ class VolatileFeatureExample {
         set(temp);// 调用已同步的写方法
     }
 
-    public long get() {// 对单个普通变量的读用同一个锁同步
+    public synchronized long get() {// 对单个普通变量的读用同一个锁同步
         return vl;
     }
 }
