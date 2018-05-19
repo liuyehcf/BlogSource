@@ -44,7 +44,7 @@ __设置步骤__
 1. `vim ~/.vimrc`
 1. 添加如下内容
 
-```bash
+```sh
 set nu 
 colorscheme desert 
 syntax on
@@ -56,7 +56,7 @@ __步骤__
 
 1. `vim ~/.bash_profile`，追加以下内容
     * 
-```bash
+```sh
 export LS_OPTIONS='--color=auto' # 如果没有指定，则自动选择颜色
 export CLICOLOR='Yes' #是否输出颜色
 export LSCOLORS='CxfxcxdxbxegedabagGxGx' #指定颜色

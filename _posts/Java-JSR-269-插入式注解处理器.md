@@ -506,7 +506,14 @@ public class List<A> extends AbstractCollection<A> implements java.util.List<A> 
 }
 ```
 
-# 4 手撸Builder
+## 3.4 tricky
+
+# 4 手撸lombok经典注解
+
+1. @AllArgsConstructor：创建全量参数的构造方法
+1. @NoArgsConstructor：创建无参构造方法
+1. @Data：为所有属性，创建set方法以及get方法
+1. @Builder：创建Builder模式的静态内部类
 
 ## 4.1 目标
 
@@ -514,100 +521,66 @@ public class List<A> extends AbstractCollection<A> implements java.util.List<A> 
 
 ```Java
 public class UserDTO {
-    private String name;
+    private String firstName;
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void getName() {
-        return this.name;
-    }
+    private String lastName;
 }
 ```
 
-我希望在编译期自动创建一个Builder模式的静态内部类，如下
+我希望在编译期插入一些构造方法、set/get方法，以及一个Builder模式的静态内部类，如下
 
 ```Java
-public class UserDTO {
+public class TestUserDTO {
     private String firstName;
     private String lastName;
-    private Integer age;
-    private String address;
 
-    public UserDTO() {
-    }
-
-    public static void main(String[] args) {
-        UserDTO.UserDTOBuilder builder = new UserDTO.UserDTOBuilder();
-        UserDTO userDTO = builder.setFirstName("明").setLastName("小").setAge(25).setAddress("中国").build();
-        System.out.println(userDTO);
-    }
-
-    public String getFirstName() {
-        return this.firstName;
+    public TestUserDTO() {
     }
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
-    public String getLastName() {
-        return this.lastName;
+    public String getFirstName() {
+        return this.firstName;
     }
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
-    public Integer getAge() {
-        return this.age;
+    public String getLastName() {
+        return this.lastName;
     }
 
-    public void setAge(Integer age) {
-        this.age = age;
+    public TestUserDTO(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
-    public String getAddress() {
-        return this.address;
+    public static TestUserDTO.TestUserDTOBuilder builder() {
+        return new TestUserDTO.TestUserDTOBuilder();
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+    public static final class TestUserDTOBuilder {
+        private String firstName;
+        private String lastName;
 
-    public String toString() {
-        return "firstName: " + this.firstName + "\nlastName: " + this.lastName + "\nage: " + this.age + "\naddress: " + this.address;
-    }
-
-    public static final class UserDTOBuilder {
-        private UserDTO data = new UserDTO();
-
-        public UserDTOBuilder() {
+        public TestUserDTOBuilder() {
         }
 
-        public UserDTOBuilder setAddress(String address) {
-            this.data.setAddress(address);
+        public TestUserDTO.TestUserDTOBuilder firstName(String firstName) {
+            this.firstName = firstName;
             return this;
         }
 
-        public UserDTOBuilder setAge(Integer age) {
-            this.data.setAge(age);
+        public TestUserDTO.TestUserDTOBuilder lastName(String lastName) {
+            this.lastName = lastName;
             return this;
         }
 
-        public UserDTOBuilder setLastName(String lastName) {
-            this.data.setLastName(lastName);
-            return this;
-        }
-
-        public UserDTOBuilder setFirstName(String firstName) {
-            this.data.setFirstName(firstName);
-            return this;
-        }
-
-        public UserDTO build() {
-            return this.data;
+        public TestUserDTO build() {
+            return new TestUserDTO(this.firstName, this.lastName);
         }
     }
 }
@@ -615,9 +588,87 @@ public class UserDTO {
 
 ## 4.2 插入式注解处理器源码
 
-__定义Builder注解，源码如下：__
+工程结构
+
+```
+.
+├── annotation.iml
+├── pom.xml
+└── src
+    └── main
+        ├── java
+        │   ├── classes
+        │   └── org
+        │       └── liuyehcf
+        │           └── annotation
+        │               └── source
+        │                   ├── annotation
+        │                   │   ├── AllArgsConstructor.java
+        │                   │   ├── Builder.java
+        │                   │   ├── Data.java
+        │                   │   └── NoArgsConstructor.java
+        │                   └── processor
+        │                       ├── AllArgsConstructorProcessor.java
+        │                       ├── BaseProcessor.java
+        │                       ├── BuilderProcessor.java
+        │                       ├── DataProcessor.java
+        │                       ├── NoArgsConstructorProcessor.java
+        │                       └── ProcessUtil.java
+        └── resources
+            ├── META-INF
+            │   └── services
+            │       └── javax.annotation.processing.Processor
+            ├── UserDTO.java
+            └── compile.sh
+```
+
+### 4.2.1 注解定义源码
+
+__定义4个注解，源码如下：__
 
 * 将`@Retention`指定为`RetentionPolicy.SOURCE`，即该注解仅在源码期间有效
+
+```Java
+package org.liuyehcf.annotation.source.annotation;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.SOURCE)
+public @interface NoArgsConstructor {
+}
+```
+
+```Java
+package org.liuyehcf.annotation.source.annotation;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.SOURCE)
+public @interface AllArgsConstructor {
+}
+```
+
+```Java
+package org.liuyehcf.annotation.source.annotation;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.SOURCE)
+public @interface Data {
+}
+```
 
 ```Java
 package org.liuyehcf.annotation.source;
@@ -630,72 +681,782 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.SOURCE)
 public @interface Builder {
-
 }
 ```
 
-__编写插入式注解处理器BuilderProcessor，源码如下：__
+### 4.2.2 注解处理器源码
+
+__编写插入式注解处理器，要点如下：__
 
 1. 重写`init`方法，获取一些必要的构建对象
 1. 重写`process`方法，实现Builder逻辑，源码已经给出足够的注释，配合上一小节JSR-269 API的介绍，理解起来应该没什么大问题
 1. 用`@SupportedAnnotationTypes`注解指明感兴趣的注解类型
 1. 用`@SupportedSourceVersion`注解指明源码版本
 
+#### 4.2.2.1 BaseProcessor
+
+__注解处理器基类__，抽出了一些公用的字段以及初始化方法
+
 ```Java
-package org.liuyehcf.annotation.source;
+package org.liuyehcf.annotation.source.processor;
 
 import com.sun.tools.javac.api.JavacTrees;
-import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
-import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
-import com.sun.tools.javac.tree.TreeTranslator;
-import com.sun.tools.javac.util.*;
+import com.sun.tools.javac.util.Context;
+import com.sun.tools.javac.util.Names;
 
-import javax.annotation.processing.*;
-import javax.lang.model.SourceVersion;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
-import java.util.Set;
+import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.Messager;
+import javax.annotation.processing.ProcessingEnvironment;
 
-@SupportedAnnotationTypes("org.liuyehcf.annotation.source.Builder")
-@SupportedSourceVersion(SourceVersion.RELEASE_8)
-public class BuilderProcessor extends AbstractProcessor {
-
-    private static final String IDENTIFIER_THIS = "this";
-
-    private static final String IDENTIFIER_DATA = "data";
-
-    private static final String IDENTIFIER_SET = "set";
-
-    private static final String IDENTIFIER_BUILD = "build";
+public abstract class BaseProcessor extends AbstractProcessor {
 
     /**
      * 用于在编译器打印消息的组件
      */
-    private Messager messager;
+    Messager messager;
 
     /**
      * 语法树
      */
-    private JavacTrees trees;
+    JavacTrees trees;
 
     /**
      * 用来构造语法树节点
      */
-    private TreeMaker treeMaker;
+    TreeMaker treeMaker;
 
     /**
-     * 创建标识符的方法
+     * 用于创建标识符的对象
      */
-    private Names names;
+    Names names;
+
+    /**
+     * 获取一些注解处理器执行处理逻辑时需要用到的一些关键对象
+     *
+     * @param processingEnv 处理环境
+     */
+    @Override
+    public final synchronized void init(ProcessingEnvironment processingEnv) {
+        super.init(processingEnv);
+        this.messager = processingEnv.getMessager();
+        this.trees = JavacTrees.instance(processingEnv);
+        Context context = ((JavacProcessingEnvironment) processingEnv).getContext();
+        this.treeMaker = TreeMaker.instance(context);
+        this.names = Names.instance(context);
+    }
+}
+```
+
+#### 4.2.2.2 ProcessUtil
+
+__工具类__
+
+```Java
+package org.liuyehcf.annotation.source.processor;
+
+import com.sun.tools.javac.code.Flags;
+import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.TreeMaker;
+import com.sun.tools.javac.util.List;
+import com.sun.tools.javac.util.ListBuffer;
+
+import javax.lang.model.element.Modifier;
+import java.util.Set;
+
+class ProcessUtil {
+    static final String THIS = "this";
+
+    private static final String SET = "set";
+
+    private static final String GET = "get";
+
+    /**
+     * 创建建造者的静态方法名
+     */
+    static final String BUILDER_STATIC_METHOD_NAME = "builder";
+
+    /**
+     * 建造方法名
+     */
+    static final String BUILD_METHOD_NAME = "build";
+
+    /**
+     * 构造方法名字，比较特殊
+     */
+    static final String CONSTRUCTOR_NAME = "<init>";
+
+    /**
+     * 克隆一个字段的语法树节点，该节点作为方法的参数
+     * 具有位置信息的语法树节点是不能复用的！
+     *
+     * @param treeMaker           语法树节点构造器
+     * @param prototypeJCVariable 字段的语法树节点
+     * @return 方法参数的语法树节点
+     */
+    static JCTree.JCVariableDecl cloneJCVariableAsParam(TreeMaker treeMaker, JCTree.JCVariableDecl prototypeJCVariable) {
+        return treeMaker.VarDef(
+                treeMaker.Modifiers(Flags.PARAMETER), // 访问标志。极其坑爹！！！
+                prototypeJCVariable.name, // 名字
+                prototypeJCVariable.vartype, // 类型
+                null // 初始化语句
+        );
+    }
+
+    /**
+     * 克隆一个字段的语法树节点集合，作为方法的参数列表
+     *
+     * @param treeMaker            语法树节点构造器
+     * @param prototypeJCVariables 字段的语法树节点集合
+     * @return 方法参数的语法树节点集合
+     */
+    static List<JCTree.JCVariableDecl> cloneJCVariablesAsParams(TreeMaker treeMaker, List<JCTree.JCVariableDecl> prototypeJCVariables) {
+        ListBuffer<JCTree.JCVariableDecl> jcVariables = new ListBuffer<>();
+        for (JCTree.JCVariableDecl jcVariable : prototypeJCVariables) {
+            jcVariables.append(cloneJCVariableAsParam(treeMaker, jcVariable));
+        }
+        return jcVariables.toList();
+    }
+
+    /**
+     * 判断是否是合法的字段
+     *
+     * @param jcTree 语法树节点
+     * @return 是否是合法字段
+     */
+    private static boolean isValidField(JCTree jcTree) {
+        if (jcTree.getKind().equals(JCTree.Kind.VARIABLE)) {
+            JCTree.JCVariableDecl jcVariable = (JCTree.JCVariableDecl) jcTree;
+
+            Set<Modifier> flagSets = jcVariable.mods.getFlags();
+            return (!flagSets.contains(Modifier.STATIC)
+                    && !flagSets.contains(Modifier.FINAL));
+        }
+
+        return false;
+    }
+
+    /**
+     * 获取字段的语法树节点的集合
+     *
+     * @param jcClass 类的语法树节点
+     * @return 字段的语法树节点的集合
+     */
+    static List<JCTree.JCVariableDecl> getJCVariables(JCTree.JCClassDecl jcClass) {
+        ListBuffer<JCTree.JCVariableDecl> jcVariables = new ListBuffer<>();
+
+        // 遍历jcClass的所有内部节点，可能是字段，方法等等
+        for (JCTree jcTree : jcClass.defs) {
+            // 找出所有set方法节点，并添加
+            if (isValidField(jcTree)) {
+                // 注意这个com.sun.tools.javac.util.List的用法，不支持链式操作，更改后必须赋值
+                jcVariables.append((JCTree.JCVariableDecl) jcTree);
+            }
+        }
+
+        return jcVariables.toList();
+    }
+
+    /**
+     * 判断是否为set方法
+     *
+     * @param jcTree 语法树节点
+     * @return 判断是否是Set方法
+     */
+    private static boolean isSetJCMethod(JCTree jcTree) {
+        if (jcTree.getKind().equals(JCTree.Kind.METHOD)) {
+            JCTree.JCMethodDecl jcMethod = (JCTree.JCMethodDecl) jcTree;
+            return jcMethod.name.toString().startsWith(SET)
+                    && jcMethod.params.size() == 1
+                    && !jcMethod.mods.getFlags().contains(Modifier.STATIC);
+        }
+        return false;
+    }
+
+    /**
+     * 提取出所有set方法的语法树节点
+     *
+     * @param jcClass 类的语法树节点
+     * @return set方法的语法树节点的集合
+     */
+    static List<JCTree.JCMethodDecl> getSetJCMethods(JCTree.JCClassDecl jcClass) {
+        ListBuffer<JCTree.JCMethodDecl> setJCMethods = new ListBuffer<>();
+
+        // 遍历jcClass的所有内部节点，可能是字段，方法等等
+        for (JCTree jcTree : jcClass.defs) {
+            // 找出所有set方法节点，并添加
+            if (isSetJCMethod(jcTree)) {
+                // 注意这个com.sun.tools.javac.util.List的用法，不支持链式操作，更改后必须赋值
+                setJCMethods.append((JCTree.JCMethodDecl) jcTree);
+            }
+        }
+
+        return setJCMethods.toList();
+    }
+
+    /**
+     * 判断是否存在无参构造方法
+     *
+     * @param jcClass 类的语法树节点
+     * @return 是否存在
+     */
+    static boolean hasNoArgsConstructor(JCTree.JCClassDecl jcClass) {
+        for (JCTree jcTree : jcClass.defs) {
+            if (jcTree.getKind().equals(JCTree.Kind.METHOD)) {
+                JCTree.JCMethodDecl jcMethod = (JCTree.JCMethodDecl) jcTree;
+                if (CONSTRUCTOR_NAME.equals(jcMethod.name.toString())) {
+                    if (jcMethod.params.isEmpty()) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 是否存在全参的构造方法
+     *
+     * @param jcVariables 字段的语法树节点集合
+     * @param jcClass     类的语法树节点
+     * @return 是否存在
+     */
+    static boolean hasAllArgsConstructor(List<JCTree.JCVariableDecl> jcVariables, JCTree.JCClassDecl jcClass) {
+        for (JCTree jcTree : jcClass.defs) {
+            if (jcTree.getKind().equals(JCTree.Kind.METHOD)) {
+                JCTree.JCMethodDecl jcMethod = (JCTree.JCMethodDecl) jcTree;
+                if (CONSTRUCTOR_NAME.equals(jcMethod.name.toString())) {
+                    if (jcVariables.size() == jcMethod.params.size()) {
+                        boolean isEqual = true;
+                        for (int i = 0; i < jcVariables.size(); i++) {
+                            if (!jcVariables.get(i).vartype.type.equals(jcMethod.params.get(i).vartype.type)) {
+                                isEqual = false;
+                                break;
+                            }
+                        }
+                        if (isEqual) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 判断是否存在指定字段的set方法，返回类型不作为判断依据，因为Java中方法重载与返回类型无关
+     *
+     * @param jcVariable 字段的语法树节点
+     * @param jcClass    类的语法树节点
+     * @return 是否存在
+     */
+    static boolean hasSetMethod(JCTree.JCVariableDecl jcVariable, JCTree.JCClassDecl jcClass) {
+        String setMethodName = fromPropertyNameToSetMethodName(jcVariable.name.toString());
+        for (JCTree jcTree : jcClass.defs) {
+            if (jcTree.getKind().equals(JCTree.Kind.METHOD)) {
+                JCTree.JCMethodDecl jcMethod = (JCTree.JCMethodDecl) jcTree;
+                if (setMethodName.equals(jcMethod.name.toString())
+                        && jcMethod.params.size() == 1
+                        && jcMethod.params.get(0).vartype.type.equals(jcVariable.vartype.type)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 判断是否存在指定字段的get方法，返回类型不作为判断依据，因为Java中方法重载与返回类型无关
+     *
+     * @param jcVariable 字段的语法树节点
+     * @param jcClass    类的语法树节点
+     * @return 是否存在
+     */
+    static boolean hasGetMethod(JCTree.JCVariableDecl jcVariable, JCTree.JCClassDecl jcClass) {
+        String getMethodName = fromPropertyNameToGetMethodName(jcVariable.name.toString());
+        for (JCTree jcTree : jcClass.defs) {
+            if (jcTree.getKind().equals(JCTree.Kind.METHOD)) {
+                JCTree.JCMethodDecl jcMethod = (JCTree.JCMethodDecl) jcTree;
+                if (getMethodName.equals(jcMethod.name.toString())
+                        && jcMethod.params.size() == 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 字段名转换为set方法名
+     *
+     * @param propertyName 字段名
+     * @return set方法名
+     */
+    static String fromPropertyNameToSetMethodName(String propertyName) {
+        return SET + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
+    }
+
+    /**
+     * 字段名转换为get方法名
+     *
+     * @param propertyName 字段名
+     * @return get方法名
+     */
+    static String fromPropertyNameToGetMethodName(String propertyName) {
+        return GET + propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
+    }
+}
+```
+
+#### 4.2.2.3 NoArgsConstructorProcessor
+
+```Java
+package org.liuyehcf.annotation.source.processor;
+
+import com.sun.tools.javac.code.Flags;
+import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.TreeTranslator;
+import com.sun.tools.javac.util.List;
+import org.liuyehcf.annotation.source.annotation.NoArgsConstructor;
+
+import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedSourceVersion;
+import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
+import java.util.Set;
+
+import static org.liuyehcf.annotation.source.processor.ProcessUtil.CONSTRUCTOR_NAME;
+import static org.liuyehcf.annotation.source.processor.ProcessUtil.hasNoArgsConstructor;
+
+@SupportedAnnotationTypes("org.liuyehcf.annotation.source.annotation.NoArgsConstructor")
+@SupportedSourceVersion(SourceVersion.RELEASE_8)
+public class NoArgsConstructorProcessor extends BaseProcessor {
+
+    @Override
+    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        // 首先获取被Builder注解标记的元素
+        Set<? extends Element> set = roundEnv.getElementsAnnotatedWith(NoArgsConstructor.class);
+
+        set.forEach(element -> {
+
+            // 获取当前元素的JCTree对象
+            JCTree jcTree = trees.getTree(element);
+
+            // JCTree利用的是访问者模式，将数据与数据的处理进行解耦，TreeTranslator就是访问者，这里我们重写访问类时的逻辑
+            jcTree.accept(new TreeTranslator() {
+                @Override
+                public void visitClassDef(JCTree.JCClassDecl jcClass) {
+                    messager.printMessage(Diagnostic.Kind.NOTE, "@NoArgsConstructor process [" + jcClass.name.toString() + "] begin!");
+
+                    // 添加无参构造方法
+                    if (!hasNoArgsConstructor(jcClass)) {
+                        jcClass.defs = jcClass.defs.append(
+                                createNoArgsConstructor()
+                        );
+                    }
+
+                    messager.printMessage(Diagnostic.Kind.NOTE, "@NoArgsConstructor process [" + jcClass.name.toString() + "] end!");
+                }
+            });
+        });
+
+        return true;
+    }
+
+    /**
+     * 创建无参数构造方法
+     *
+     * @return 无参构造方法语法树节点
+     */
+    private JCTree.JCMethodDecl createNoArgsConstructor() {
+
+        JCTree.JCBlock jcBlock = treeMaker.Block(
+                0 // 访问标志
+                , List.nil() // 所有的语句
+        );
+
+        return treeMaker.MethodDef(
+                treeMaker.Modifiers(Flags.PUBLIC), // 访问标志
+                names.fromString(CONSTRUCTOR_NAME), // 名字
+                null, // 返回类型
+                List.nil(), // 泛型形参列表
+                List.nil(), // 参数列表
+                List.nil(), // 异常列表
+                jcBlock, // 方法体
+                null // 默认方法（可能是interface中的那个default）
+        );
+    }
+}
+```
+
+#### 4.2.2.4 AllArgsConstructorProcessor
+
+```Java
+package org.liuyehcf.annotation.source.processor;
+
+import com.sun.tools.javac.code.Flags;
+import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.TreeTranslator;
+import com.sun.tools.javac.util.List;
+import com.sun.tools.javac.util.ListBuffer;
+import org.liuyehcf.annotation.source.annotation.AllArgsConstructor;
+
+import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedSourceVersion;
+import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
+import java.util.Set;
+
+import static org.liuyehcf.annotation.source.processor.ProcessUtil.*;
+
+@SupportedAnnotationTypes("org.liuyehcf.annotation.source.annotation.AllArgsConstructor")
+@SupportedSourceVersion(SourceVersion.RELEASE_8)
+public class AllArgsConstructorProcessor extends BaseProcessor {
+
+    /**
+     * 字段的语法树节点的集合
+     */
+    private List<JCTree.JCVariableDecl> fieldJCVariables;
+
+    @Override
+    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        // 首先获取被Builder注解标记的元素
+        Set<? extends Element> set = roundEnv.getElementsAnnotatedWith(AllArgsConstructor.class);
+
+        set.forEach(element -> {
+
+            // 获取当前元素的JCTree对象
+            JCTree jcTree = trees.getTree(element);
+
+            // JCTree利用的是访问者模式，将数据与数据的处理进行解耦，TreeTranslator就是访问者，这里我们重写访问类时的逻辑
+            jcTree.accept(new TreeTranslator() {
+                @Override
+                public void visitClassDef(JCTree.JCClassDecl jcClass) {
+                    messager.printMessage(Diagnostic.Kind.NOTE, "process class [" + jcClass.name.toString() + "], start");
+
+                    before(jcClass);
+
+                    // 添加全参构造方法
+                    if (!hasAllArgsConstructor(fieldJCVariables, jcClass)) {
+                        jcClass.defs = jcClass.defs.append(
+                                createAllArgsConstructor()
+                        );
+                    }
+
+                    after();
+
+                    messager.printMessage(Diagnostic.Kind.NOTE, "process class [" + jcClass.name.toString() + "], end");
+                }
+            });
+        });
+
+        return true;
+    }
+
+    /**
+     * 进行一些初始化工作
+     *
+     * @param jcClass 类的语法树节点
+     */
+    private void before(JCTree.JCClassDecl jcClass) {
+        this.fieldJCVariables = getJCVariables(jcClass);
+    }
+
+    /**
+     * 进行一些清理工作
+     */
+    private void after() {
+        this.fieldJCVariables = null;
+    }
+
+    /**
+     * 创建全参数构造方法
+     *
+     * @return 全参构造方法语法树节点
+     */
+    private JCTree.JCMethodDecl createAllArgsConstructor() {
+
+        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+        for (JCTree.JCVariableDecl jcVariable : fieldJCVariables) {
+            // 添加构造方法的赋值语句 " this.xxx = xxx; "
+            jcStatements.append(
+                    treeMaker.Exec(
+                            treeMaker.Assign(
+                                    treeMaker.Select(
+                                            treeMaker.Ident(names.fromString(THIS)),
+                                            names.fromString(jcVariable.name.toString())
+                                    ),
+                                    treeMaker.Ident(names.fromString(jcVariable.name.toString()))
+                            )
+                    )
+            );
+        }
+
+        JCTree.JCBlock jcBlock = treeMaker.Block(
+                0 // 访问标志
+                , jcStatements.toList() // 所有的语句
+        );
+
+        return treeMaker.MethodDef(
+                treeMaker.Modifiers(Flags.PUBLIC), // 访问标志
+                names.fromString(CONSTRUCTOR_NAME), // 名字
+                null, // 返回类型
+                List.nil(), // 泛型形参列表
+                cloneJCVariablesAsParams(treeMaker, fieldJCVariables), // 参数列表
+                List.nil(), // 异常列表
+                jcBlock, // 方法体
+                null // 默认方法（可能是interface中的那个default）
+        );
+    }
+}
+```
+
+#### 4.2.2.5 DataProcessor
+
+```Java
+package org.liuyehcf.annotation.source.processor;
+
+import com.sun.tools.javac.code.Flags;
+import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.TreeTranslator;
+import com.sun.tools.javac.util.List;
+import com.sun.tools.javac.util.ListBuffer;
+import org.liuyehcf.annotation.source.annotation.Data;
+
+import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedSourceVersion;
+import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
+import java.util.Set;
+
+import static org.liuyehcf.annotation.source.processor.ProcessUtil.*;
+
+@SupportedAnnotationTypes("org.liuyehcf.annotation.source.annotation.Data")
+@SupportedSourceVersion(SourceVersion.RELEASE_8)
+public class DataProcessor extends BaseProcessor {
+
+    /**
+     * 类的语法树节点
+     */
+    private JCTree.JCClassDecl jcClass;
+
+    /**
+     * 字段的语法树节点的集合
+     */
+    private List<JCTree.JCVariableDecl> fieldJCVariables;
+
+    @Override
+    public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        // 首先获取被Builder注解标记的元素
+        Set<? extends Element> set = roundEnv.getElementsAnnotatedWith(Data.class);
+
+        set.forEach(element -> {
+
+            // 获取当前元素的JCTree对象
+            JCTree jcTree = trees.getTree(element);
+
+            // JCTree利用的是访问者模式，将数据与数据的处理进行解耦，TreeTranslator就是访问者，这里我们重写访问类时的逻辑
+            jcTree.accept(new TreeTranslator() {
+                @Override
+                public void visitClassDef(JCTree.JCClassDecl jcClass) {
+                    messager.printMessage(Diagnostic.Kind.NOTE, "@Data process [" + jcClass.name.toString() + "] begin!");
+
+                    before(jcClass);
+
+                    // 添加全参构造方法
+                    jcClass.defs = jcClass.defs.appendList(
+                            createDataMethods()
+                    );
+
+                    after();
+
+                    messager.printMessage(Diagnostic.Kind.NOTE, "@Data process [" + jcClass.name.toString() + "] end!");
+                }
+            });
+        });
+
+        return true;
+    }
+
+    /**
+     * 进行一些初始化工作
+     *
+     * @param jcClass 类的语法树节点
+     */
+    private void before(JCTree.JCClassDecl jcClass) {
+        this.jcClass = jcClass;
+        this.fieldJCVariables = getJCVariables(jcClass);
+    }
+
+    /**
+     * 进行一些清理工作
+     */
+    private void after() {
+        this.jcClass = null;
+        this.fieldJCVariables = null;
+    }
+
+    /**
+     * 创建get/set方法
+     *
+     * @return get/set方法的语法树节点集合
+     */
+    private List<JCTree> createDataMethods() {
+        ListBuffer<JCTree> dataMethods = new ListBuffer<>();
+
+        for (JCTree.JCVariableDecl jcVariable : fieldJCVariables) {
+            if (!jcVariable.mods.getFlags().contains(Modifier.FINAL)
+                    && !hasSetMethod(jcVariable, jcClass)) {
+                dataMethods.append(createSetJCMethod(jcVariable));
+            }
+
+            if (!hasGetMethod(jcVariable, jcClass)) {
+                dataMethods.append(createGetJCMethod(jcVariable));
+            }
+        }
+
+        return dataMethods.toList();
+    }
+
+    /**
+     * 根据字段的语法树节点，创建对应的set方法
+     *
+     * @param jcVariable 字段的语法树节点
+     * @return set方法的语法树节点
+     */
+    private JCTree.JCMethodDecl createSetJCMethod(JCTree.JCVariableDecl jcVariable) {
+
+        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+
+        // 添加语句 " this.xxx = xxx; "
+        jcStatements.append(
+                treeMaker.Exec(
+                        treeMaker.Assign(
+                                treeMaker.Select(
+                                        treeMaker.Ident(names.fromString(THIS)),
+                                        jcVariable.name
+                                ),
+                                treeMaker.Ident(jcVariable.name)
+                        )
+                )
+        );
+
+        JCTree.JCBlock jcBlock = treeMaker.Block(
+                0 // 访问标志
+                , jcStatements.toList() // 所有的语句
+        );
+
+        return treeMaker.MethodDef(
+                treeMaker.Modifiers(Flags.PUBLIC), // 访问标志
+                names.fromString(fromPropertyNameToSetMethodName(jcVariable.name.toString())), // 名字
+                null, // 返回类型
+                List.nil(), // 泛型形参列表
+                List.of(cloneJCVariableAsParam(treeMaker, jcVariable)), // 参数列表
+                List.nil(), // 异常列表
+                jcBlock, // 方法体
+                null // 默认方法（可能是interface中的那个default）
+        );
+    }
+
+    /**
+     * 根据字段的语法树节点，创建对应的get方法的语法树节点
+     *
+     * @param jcVariable 字段的语法树节点
+     * @return get方法的语法树节点
+     */
+    private JCTree.JCMethodDecl createGetJCMethod(JCTree.JCVariableDecl jcVariable) {
+        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+
+        // 添加语句 " return this.xxx; "
+        jcStatements.append(
+                treeMaker.Return(
+                        treeMaker.Select(
+                                treeMaker.Ident(names.fromString(THIS)),
+                                jcVariable.name
+                        )
+                )
+        );
+
+        JCTree.JCBlock jcBlock = treeMaker.Block(
+                0 // 访问标志
+                , jcStatements.toList() // 所有的语句
+        );
+
+        return treeMaker.MethodDef(
+                treeMaker.Modifiers(Flags.PUBLIC), // 访问标志
+                names.fromString(fromPropertyNameToGetMethodName(jcVariable.name.toString())), // 名字
+                jcVariable.vartype, // 返回类型
+                List.nil(), // 泛型形参列表
+                List.nil(), // 参数列表
+                List.nil(), // 异常列表
+                jcBlock, // 方法体
+                null // 默认方法（可能是interface中的那个default）
+        );
+    }
+}
+```
+
+#### 4.2.2.6 BuilderProcessor
+
+```Java
+package org.liuyehcf.annotation.source.processor;
+
+import com.sun.tools.javac.code.Flags;
+import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.TreeTranslator;
+import com.sun.tools.javac.util.List;
+import com.sun.tools.javac.util.ListBuffer;
+import com.sun.tools.javac.util.Name;
+import org.liuyehcf.annotation.source.annotation.Builder;
+
+import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedSourceVersion;
+import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
+import java.util.Set;
+
+import static org.liuyehcf.annotation.source.processor.ProcessUtil.*;
+
+@SupportedAnnotationTypes("org.liuyehcf.annotation.source.annotation.Builder")
+@SupportedSourceVersion(SourceVersion.RELEASE_8)
+public class BuilderProcessor extends BaseProcessor {
+
+    /**
+     * 类名
+     */
+    private Name className;
+
+    /**
+     * Builder模式中的类名，例如原始类是User，那么建造者类名就是UserBuilder
+     */
+    private Name builderClassName;
+
+    /**
+     * 字段的语法树节点的集合
+     */
+    private List<JCTree.JCVariableDecl> fieldJCVariables;
 
     /**
      * 插入式注解处理器的处理逻辑
      *
-     * @param annotations
-     * @param roundEnv
-     * @return
+     * @param annotations 注解
+     * @param roundEnv    环境
+     * @return 处理结果
      */
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
@@ -710,16 +1471,24 @@ public class BuilderProcessor extends AbstractProcessor {
             // JCTree利用的是访问者模式，将数据与数据的处理进行解耦，TreeTranslator就是访问者，这里我们重写访问类时的逻辑
             jcTree.accept(new TreeTranslator() {
                 @Override
-                public void visitClassDef(JCTree.JCClassDecl jcClassDecl) {
+                public void visitClassDef(JCTree.JCClassDecl jcClass) {
+                    messager.printMessage(Diagnostic.Kind.NOTE, "@Builder process [" + jcClass.name.toString() + "] begin!");
 
-                    // 为当前jcClassDecl添加JCTree节点
-                    jcClassDecl.defs = jcClassDecl.defs.append(
-                            // 创建了一个静态内部类作为一个Builder
-                            createJCClassDecl(
-                                    jcClassDecl,
-                                    getSetJCMethodDecls(jcClassDecl)
-                            )
+                    before(jcClass);
+
+                    // 添加builder方法
+                    jcClass.defs = jcClass.defs.append(
+                            createStaticBuilderMethod()
                     );
+
+                    // 添加静态内部类
+                    jcClass.defs = jcClass.defs.append(
+                            createJCClass()
+                    );
+
+                    after();
+
+                    messager.printMessage(Diagnostic.Kind.NOTE, "@Builder process [" + jcClass.name.toString() + "] end!");
                 }
             });
         });
@@ -728,143 +1497,141 @@ public class BuilderProcessor extends AbstractProcessor {
     }
 
     /**
-     * 提取出所有set方法
+     * 进行一些初始化工作
      *
-     * @param jcClassDecl
-     * @return
+     * @param jcClass 类的语法树节点
      */
-    private List<JCTree.JCMethodDecl> getSetJCMethodDecls(JCTree.JCClassDecl jcClassDecl) {
-        List<JCTree.JCMethodDecl> setJCMethodDecls = List.nil();
-
-        // 遍历jcClassDecl的所有内部节点，可能是字段，方法等等
-        for (JCTree jTree : jcClassDecl.defs) {
-            // 找出所有set方法节点，并添加
-            if (isSetJCMethodDecl(jTree)) {
-                // 注意这个com.sun.tools.javac.util.List的用法，不支持链式操作，更改后必须赋值
-                setJCMethodDecls = setJCMethodDecls.prepend((JCTree.JCMethodDecl) jTree);
-            }
-        }
-
-        return setJCMethodDecls;
+    private void before(JCTree.JCClassDecl jcClass) {
+        this.className = names.fromString(jcClass.name.toString());
+        this.builderClassName = names.fromString(this.className + "Builder");
+        this.fieldJCVariables = getJCVariables(jcClass);
     }
 
     /**
-     * 判断是否为set方法
-     *
-     * @param jTree
-     * @return
+     * 进行一些清理工作
      */
-    private boolean isSetJCMethodDecl(JCTree jTree) {
-        if (jTree.getKind().equals(JCTree.Kind.METHOD)) {
-            JCTree.JCMethodDecl jcMethodDecl = (JCTree.JCMethodDecl) jTree;
-            if (jcMethodDecl.getName().startsWith(getNameFromString(IDENTIFIER_SET))
-                    && jcMethodDecl.getParameters().size() == 1) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private Name getNameFromString(String name) {
-        return names.fromString(name);
+    private void after() {
+        this.className = null;
+        this.builderClassName = null;
+        this.fieldJCVariables = null;
     }
 
     /**
-     * 创建一个语法树节点，其类型为JCClassDecl。作为Builder模式中的Builder类
+     * 创建静态方法，即builder方法，返回静态内部类的实例
      *
-     * @param jcClassDecl
-     * @param jcMethodDecls
-     * @return
+     * @return builder方法的语法树节点
      */
-    private JCTree.JCClassDecl createJCClassDecl(JCTree.JCClassDecl jcClassDecl, List<JCTree.JCMethodDecl> jcMethodDecls) {
-
-        List<JCTree> jcTrees = List.nil();
-
-        JCTree.JCVariableDecl jcVariableDecl = createDataField(jcClassDecl);
-        jcTrees = jcTrees.append(jcVariableDecl);
-        jcTrees = jcTrees.appendList(createSetJCMethodDecls(jcClassDecl, jcMethodDecls, jcVariableDecl));
-        jcTrees = jcTrees.append(createBuildJCMethodDecl(jcClassDecl));
-
-        return treeMaker.ClassDef(
-                treeMaker.Modifiers(Flags.PUBLIC + Flags.STATIC + Flags.FINAL), // 访问标志
-                getNameFromString(jcClassDecl.getSimpleName().toString() + "Builder"), // 名字
-                List.nil(), // 泛型形参列表
-                null, // 继承
-                List.nil(), // 接口列表
-                jcTrees); // 定义
-    }
-
-    /**
-     * 创建一个语法树节点，其类型为JCVariableDecl。作为Builder模式中被Build的对象
-     *
-     * @param jcClassDecl
-     * @return
-     */
-    private JCTree.JCVariableDecl createDataField(JCTree.JCClassDecl jcClassDecl) {
-        return treeMaker.VarDef(
-                treeMaker.Modifiers(Flags.PRIVATE), // 访问标志
-                getNameFromString(IDENTIFIER_DATA), // 名字
-                treeMaker.Ident(getNameFromString(jcClassDecl.getSimpleName().toString())), // 类型
-                createInitializeJCExpression(jcClassDecl) // 初始化表达式
-        );
-    }
-
-    /**
-     * 创建一个语法树节点，其类型为JCExpression。即" new XXX(); "的语句
-     *
-     * @param jcClassDecl
-     * @return
-     */
-    private JCTree.JCExpression createInitializeJCExpression(JCTree.JCClassDecl jcClassDecl) {
-        return treeMaker.NewClass(
-                null, // 尚不清楚含义
-                List.nil(), // 构造器方法参数
-                treeMaker.Ident(jcClassDecl.getSimpleName()), // 创建的类名
-                List.nil(), // 构造器方法列表
-                null // 尚不清楚含义
-        );
-    }
-
-    /**
-     * 创建一些语法树节点，其类型为JCMethodDecl。作为Builder模式中的setXXX方法
-     *
-     * @param jcClassDecl
-     * @param methodDecls
-     * @param jcVariableDecl
-     * @return
-     */
-    private List<JCTree> createSetJCMethodDecls(JCTree.JCClassDecl jcClassDecl, List<JCTree.JCMethodDecl> methodDecls, JCTree.JCVariableDecl jcVariableDecl) {
-        List<JCTree> setJCMethodDecls = List.nil();
-
-        for (JCTree.JCMethodDecl jcMethodDecl : methodDecls) {
-            setJCMethodDecls = setJCMethodDecls.append(createSetJCMethodDecl(jcClassDecl, jcMethodDecl));
-        }
-
-        return setJCMethodDecls;
-    }
-
-    /**
-     * 创建一个语法树节点，其类型为JCMethodDecl。作为Builder模式中的setXXX方法
-     *
-     * @param jcClassDecl
-     * @param jcMethodDecl
-     * @return
-     */
-    private JCTree.JCMethodDecl createSetJCMethodDecl(JCTree.JCClassDecl jcClassDecl, JCTree.JCMethodDecl jcMethodDecl) {
-        JCTree.JCVariableDecl jcVariableDecl = jcMethodDecl.getParameters().get(0);
+    private JCTree.JCMethodDecl createStaticBuilderMethod() {
 
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
 
-        // 添加调用语句" data.setXXX(xxx); "
+        // 添加Builder模式中的返回语句 " return new XXXBuilder(); "
+        jcStatements.append(
+                treeMaker.Return(
+                        treeMaker.NewClass(
+                                null, // 尚不清楚含义
+                                List.nil(), // 泛型参数列表
+                                treeMaker.Ident(builderClassName), // 创建的类名
+                                List.nil(), // 参数列表
+                                null // 类定义，估计是用于创建匿名内部类
+                        )
+                )
+        );
+
+        JCTree.JCBlock jcBlock = treeMaker.Block(
+                0 // 访问标志
+                , jcStatements.toList() // 所有的语句
+        );
+
+        return treeMaker.MethodDef(
+                treeMaker.Modifiers(Flags.PUBLIC + Flags.STATIC), // 访问标志
+                names.fromString(BUILDER_STATIC_METHOD_NAME), // 名字
+                treeMaker.Ident(builderClassName), // 返回类型
+                List.nil(), // 泛型形参列表
+                List.nil(), // 参数列表
+                List.nil(), // 异常列表
+                jcBlock, // 方法体
+                null // 默认方法（可能是interface中的那个default）
+        );
+    }
+
+    /**
+     * 创建一个类的语法树节点。作为Builder模式中的Builder类
+     *
+     * @return 创建出来的类的语法树节点
+     */
+    private JCTree.JCClassDecl createJCClass() {
+
+        ListBuffer<JCTree> jcTrees = new ListBuffer<>();
+
+        jcTrees.appendList(createVariables());
+        jcTrees.appendList(createSetJCMethods());
+        jcTrees.append(createBuildJCMethod());
+
+        return treeMaker.ClassDef(
+                treeMaker.Modifiers(Flags.PUBLIC + Flags.STATIC + Flags.FINAL), // 访问标志
+                builderClassName, // 名字
+                List.nil(), // 泛型形参列表
+                null, // 继承
+                List.nil(), // 接口列表
+                jcTrees.toList()); // 定义
+    }
+
+    /**
+     * 根据方法集合创建对应的字段的语法树节点集合
+     *
+     * @return 静态内部类的字段的语法树节点集合
+     */
+    private List<JCTree> createVariables() {
+        ListBuffer<JCTree> jcVariables = new ListBuffer<>();
+
+        for (JCTree.JCVariableDecl fieldJCVariable : fieldJCVariables) {
+            jcVariables.append(
+                    treeMaker.VarDef(
+                            treeMaker.Modifiers(Flags.PRIVATE), // 访问标志
+                            names.fromString((fieldJCVariable.name.toString())), // 名字
+                            fieldJCVariable.vartype // 类型
+                            , null // 初始化语句
+                    )
+            );
+        }
+
+        return jcVariables.toList();
+    }
+
+    /**
+     * 创建方法的语法树节点的集合。作为Builder模式中的setXXX方法
+     *
+     * @return 方法节点集合
+     */
+    private List<JCTree> createSetJCMethods() {
+        ListBuffer<JCTree> setJCMethods = new ListBuffer<>();
+
+        for (JCTree.JCVariableDecl fieldJCVariable : fieldJCVariables) {
+            setJCMethods.append(createSetJCMethod(fieldJCVariable));
+        }
+
+        return setJCMethods.toList();
+    }
+
+    /**
+     * 创建一个方法的语法树节点。作为Builder模式中的setXXX方法
+     *
+     * @return 方法节点
+     */
+    private JCTree.JCMethodDecl createSetJCMethod(JCTree.JCVariableDecl jcVariable) {
+
+        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+
+        // 添加语句 " this.xxx = xxx; "
         jcStatements.append(
                 treeMaker.Exec(
-                        treeMaker.Apply(
-                                List.nil(),
+                        treeMaker.Assign(
                                 treeMaker.Select(
-                                        treeMaker.Ident(getNameFromString(IDENTIFIER_DATA)),
-                                        jcMethodDecl.getName()
+                                        treeMaker.Ident(names.fromString(THIS)),
+                                        names.fromString(jcVariable.name.toString())
                                 ),
-                                List.of(treeMaker.Ident(jcVariableDecl.getName()))
+                                treeMaker.Ident(names.fromString(jcVariable.name.toString()))
                         )
                 )
         );
@@ -872,42 +1639,11 @@ public class BuilderProcessor extends AbstractProcessor {
         // 添加Builder模式中的返回语句 " return this; "
         jcStatements.append(
                 treeMaker.Return(
-                        treeMaker.Ident(getNameFromString(IDENTIFIER_THIS)
+                        treeMaker.Ident(names.fromString(THIS)
                         )
                 )
         );
 
-        // 转换成代码块
-        JCTree.JCBlock jcBlock = treeMaker.Block(
-                0 // 访问标志
-                , jcStatements.toList() // 所有的语句
-        );
-
-        return treeMaker.MethodDef(
-                jcMethodDecl.getModifiers(), // 访问标志
-                jcMethodDecl.getName(), // 名字
-                treeMaker.Ident(getNameFromString(jcClassDecl.getSimpleName().toString() + "Builder")), // 返回类型
-                jcMethodDecl.getTypeParameters(), // 泛型形参列表
-                List.of(copyJCVariableDecl(jcVariableDecl)), // 参数列表，这里必须创建一个新的JCVariableDecl，否则注解处理时就会抛异常，原因目前还不清楚
-                jcMethodDecl.getThrows(), // 异常列表
-                jcBlock, // 方法体
-                null // 默认值
-        );
-    }
-
-    private JCTree.JCMethodDecl createBuildJCMethodDecl(JCTree.JCClassDecl jcClassDecl) {
-        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
-
-        // 添加返回语句 " return data; "
-        jcStatements.append(
-                treeMaker.Return(
-                        treeMaker.Ident(
-                                getNameFromString(IDENTIFIER_DATA)
-                        )
-                )
-        );
-
-        // 转换成代码块
         JCTree.JCBlock jcBlock = treeMaker.Block(
                 0 // 访问标志
                 , jcStatements.toList() // 所有的语句
@@ -915,53 +1651,84 @@ public class BuilderProcessor extends AbstractProcessor {
 
         return treeMaker.MethodDef(
                 treeMaker.Modifiers(Flags.PUBLIC), // 访问标志
-                getNameFromString(IDENTIFIER_BUILD), // 名字
-                treeMaker.Ident(jcClassDecl.getSimpleName()), // 返回类型
+                names.fromString(jcVariable.name.toString()), // 名字
+                treeMaker.Ident(builderClassName), // 返回类型
                 List.nil(), // 泛型形参列表
-                List.nil(), // 参数列表，这里必须创建一个新的JCVariableDecl，否则注解处理时就会抛异常，原因目前还不清楚
+                List.of(cloneJCVariableAsParam(treeMaker, jcVariable)), // 参数列表
                 List.nil(), // 异常列表
                 jcBlock, // 方法体
-                null // 默认值
+                null // 默认方法（可能是interface中的那个default）
         );
     }
 
     /**
-     * 克隆一个JCVariableDecl语法树节点
-     * 我觉得TreeMaker.MethodDef()方法需要克隆参数列表的原因是：从JCMethodDecl拿到的JCVariableDecl会与这个JCMethodDecl有关联，因此需要创建一个与该JCMethodDecl无关的语法树节点（JCVariableDecl）
+     * 创建build方法的语法树节点
      *
-     * @param prototypeJCVariableDecl
-     * @return
+     * @return build方法的语法树节点
      */
-    private JCTree.JCVariableDecl copyJCVariableDecl(JCTree.JCVariableDecl prototypeJCVariableDecl) {
-        return treeMaker.VarDef(prototypeJCVariableDecl.sym, prototypeJCVariableDecl.getNameExpression());
-    }
+    private JCTree.JCMethodDecl createBuildJCMethod() {
+        ListBuffer<JCTree.JCExpression> jcVariableExpressions = new ListBuffer<>();
 
-    /**
-     * 获取一些注解处理器执行处理逻辑时需要用到的一些关键对象
-     *
-     * @param processingEnv
-     */
-    @Override
-    public synchronized void init(ProcessingEnvironment processingEnv) {
-        super.init(processingEnv);
-        this.messager = processingEnv.getMessager();
-        this.trees = JavacTrees.instance(processingEnv);
-        Context context = ((JavacProcessingEnvironment) processingEnv).getContext();
-        this.treeMaker = TreeMaker.instance(context);
-        this.names = Names.instance(context);
+        for (JCTree.JCVariableDecl jcVariable : fieldJCVariables) {
+            jcVariableExpressions.append(
+                    treeMaker.Select(
+                            treeMaker.Ident(names.fromString(THIS)),
+                            names.fromString(jcVariable.name.toString())
+                    )
+            );
+        }
+
+        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+
+        // 添加返回语句 " return new XXX(arg1, arg2, ...); "
+        jcStatements.append(
+                treeMaker.Return(
+                        treeMaker.NewClass(
+                                null, // 尚不清楚含义
+                                List.nil(), // 泛型参数列表
+                                treeMaker.Ident(className), // 创建的类名
+                                jcVariableExpressions.toList(), // 参数列表
+                                null // 类定义，估计是用于创建匿名内部类
+                        )
+                )
+        );
+
+        JCTree.JCBlock jcBlock = treeMaker.Block(
+                0 // 访问标志
+                , jcStatements.toList() // 所有的语句
+        );
+
+        return treeMaker.MethodDef(
+                treeMaker.Modifiers(Flags.PUBLIC), // 访问标志
+                names.fromString(BUILD_METHOD_NAME), // 名字
+                treeMaker.Ident(className), // 返回类型
+                List.nil(), // 泛型形参列表
+                List.nil(), // 参数列表
+                List.nil(), // 异常列表
+                jcBlock, // 方法体
+                null // 默认方法（可能是interface中的那个default）
+        );
     }
 }
 ```
 
-__编写测试类，源码如下__
+## 4.3 测试
+
+这个测试类没有放在main/java目录下是因为必须将Processor的编译过程与测试类的编译过程分开
+
+### 4.3.1 UserDTO
 
 ```Java
-package org.liuyehcf.annotation.source;
+import org.liuyehcf.annotation.source.annotation.AllArgsConstructor;
+import org.liuyehcf.annotation.source.annotation.Builder;
+import org.liuyehcf.annotation.source.annotation.Data;
+import org.liuyehcf.annotation.source.annotation.NoArgsConstructor;
 
-import org.liuyehcf.annotation.source.Builder;
-
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 @Builder
-public class TestUserDTO {
+public class UserDTO {
     private String firstName;
 
     private String lastName;
@@ -970,79 +1737,32 @@ public class TestUserDTO {
 
     private String address;
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    @Override
-    public String toString() {
-        return "firstName: " + firstName + "\n" +
-                "lastName: " + lastName + "\n" +
-                "age: " + age + "\n" +
-                "address: " + address;
-    }
-
     public static void main(String[] args) {
-        TestUserDTO.TestUserDTOBuilder builder = new TestUserDTO.TestUserDTOBuilder();
-
-        TestUserDTO userDTO = builder.setFirstName("小")
-                .setLastName("六")
-                .setAge(100)
-                .setAddress("中国")
+        UserDTO userDTO = UserDTO.builder()
+                .firstName("明")
+                .lastName("小")
+                .age(25)
+                .address("火星")
                 .build();
 
         System.out.println(userDTO);
     }
+
+    @Override
+    public String toString() {
+        return "UserDTO{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", age=" + age +
+                ", address='" + address + '\'' +
+                '}';
+    }
 }
 ```
 
-## 4.3 命令行运行
+### 4.3.2 compile.sh
 
-编写完之后，接下来就是运行，首先我们来看一下文件结构
-
-```
-.
-├── src
-│   └── org
-│       ├── liuyehcf
-│       │   └── annotation
-│       │       └── source
-|       |           |── Builder.java
-|       |           |── BuilderProcessor.java
-|       |           |── TestUserDTO.java
-```
-
-要运TestUserDTO之前，我们需要编译Builder以及BuilderProcessor，然后在编译TestUserDTO时指定插入式注解处理器。于是，我们编写如下脚本来执行上述过程
-
-```bash
+```sh
 #!/bin/bash
 
 if [ -d classes ]; then
@@ -1051,39 +1771,64 @@ fi
 
 mkdir classes
 
-TOOLS_PATH="/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home/lib/tools.jar"
+# tools.jar的路径
+TOOLS_PATH="${JAVA_HOME}/lib/tools.jar"
 
 # 编译Builder注解以及注解处理器
-javac -classpath ${TOOLS_PATH} src/org/liuyehcf/annotation/source/Builder.java src/org/liuyehcf/annotation/source/BuilderProcessor.java -d classes/
+javac -cp ${TOOLS_PATH} $(find ../java -name "*.java")  -d classes/
 
-# 编译TestUserDTO.java，通过-process参数指定注解处理器
-javac -classpath classes -d classes -processor org.liuyehcf.annotation.source.BuilderProcessor src/org/liuyehcf/annotation/source/TestUserDTO.java
+# 统计文件 `META-INF/services/javax.annotation.processing.Processor` 的行数
+LINE_NUM=$(cat META-INF/services/javax.annotation.processing.Processor | wc -l)+1
+
+# 将文件 `META-INF/services/javax.annotation.processing.Processor` 中的内容合并成串，以','分隔
+PROCESSORS=$(cat META-INF/services/javax.annotation.processing.Processor | awk '{ { printf $0 } if(NR < '"$LINE_NUM"') { printf "," } }')
+
+# 编译UserDTO.java，通过-process参数指定注解处理器
+javac -cp classes:. -d classes -processor $PROCESSORS UserDTO.java
 
 # 反编译静态内部类
-javap -classpath classes -p org.liuyehcf.annotation.source.TestUserDTO.TestUserDTOBuilder
+javap -cp classes:. -p UserDTO$UserDTOBuilder
 
 # 运行UserDTO
-java -classpath classes org.liuyehcf.annotation.source.TestUserDTO
+java -cp classes:. UserDTO
+
+# 删除目录
+rm -rf classes
 
 ```
 
 运行后输出如下：
 
 ```
-Compiled from "TestUserDTO.java"
-public final class org.liuyehcf.annotation.source.TestUserDTO$TestUserDTOBuilder {
-  private org.liuyehcf.annotation.source.TestUserDTO data;
-  public org.liuyehcf.annotation.source.TestUserDTO$TestUserDTOBuilder();
-  public org.liuyehcf.annotation.source.TestUserDTO$TestUserDTOBuilder setAddress(java.lang.String);
-  public org.liuyehcf.annotation.source.TestUserDTO$TestUserDTOBuilder setAge(java.lang.Integer);
-  public org.liuyehcf.annotation.source.TestUserDTO$TestUserDTOBuilder setLastName(java.lang.String);
-  public org.liuyehcf.annotation.source.TestUserDTO$TestUserDTOBuilder setFirstName(java.lang.String);
-  public org.liuyehcf.annotation.source.TestUserDTO build();
+注: @Data process [UserDTO] begin!
+注: @Data process [UserDTO] end!
+注: @NoArgsConstructor process [UserDTO] begin!
+注: @NoArgsConstructor process [UserDTO] end!
+注: process class [UserDTO], start
+注: process class [UserDTO], end
+注: @Builder process [UserDTO] begin!
+注: @Builder process [UserDTO] end!
+Compiled from "UserDTO.java"
+public class UserDTO {
+  private java.lang.String firstName;
+  private java.lang.String lastName;
+  private java.lang.Integer age;
+  private java.lang.String address;
+  public UserDTO();
+  public static void main(java.lang.String[]);
+  public java.lang.String toString();
+  public void setFirstName(java.lang.String);
+  public java.lang.String getFirstName();
+  public void setLastName(java.lang.String);
+  public java.lang.String getLastName();
+  public void setAge(java.lang.Integer);
+  public java.lang.Integer getAge();
+  public void setAddress(java.lang.String);
+  public java.lang.String getAddress();
+  public UserDTO(java.lang.String, java.lang.String, java.lang.Integer, java.lang.String);
+  public static UserDTO$UserDTOBuilder builder();
 }
-firstName: 小
-lastName: 六
-age: 100
-address: 中国
+UserDTO{firstName='明', lastName='小', age=25, address='火星'}
 ```
 
 ## 4.4 maven运行
@@ -1092,7 +1837,14 @@ address: 中国
 
 如果我们想让上述过程自动发生，可以借助maven来实现
 
-那么如何在调用的时候不用加参数呢，其实我们知道Java在编译的时候会去资源文件夹下读一个META-INF文件夹，这个文件夹下面除了MANIFEST.MF文件之外，还可以添加一个`services`文件夹，我们可以在这个文件夹下创建一个文件，文件名是`javax.annotation.processing.Processor`，文件内容是`org.liuyehcf.annotation.source.BuilderProcessor`
+那么如何在调用的时候不用加参数呢，其实我们知道Java在编译的时候会去资源文件夹下读一个META-INF文件夹，这个文件夹下面除了MANIFEST.MF文件之外，还可以添加一个`services`文件夹，我们可以在这个文件夹下创建一个文件，文件名是`javax.annotation.processing.Processor`，文件内容如下
+
+```
+org.liuyehcf.annotation.source.processor.DataProcessor
+org.liuyehcf.annotation.source.processor.NoArgsConstructorProcessor
+org.liuyehcf.annotation.source.processor.AllArgsConstructorProcessor
+org.liuyehcf.annotation.source.processor.BuilderProcessor
+```
 
 我们知道maven在编译前会先拷贝资源文件夹，然后当他在编译时候发现了资源文件夹下的META-INF/serivces文件夹时，他就会读取里面的文件，并将文件名所代表的接口用文件内容表示的类来实现。__这就相当于做了-processor参数该做的事了__
 
@@ -1177,77 +1929,6 @@ address: 中国
         </plugins>
     </build>
 </project>
-```
-
-此时builder工程的文件结构大致如下：
-
-```
-.
-├── pom.xml
-├── src
-│   └── main
-│       ├── java
-│       │   └── org
-│       │       └── liuyehcf
-│       │           └── annotation
-|       |               └── source
-|       |                   |── Builder.java
-|       |                   |── BuilderProcessor.java
-│       └── resources
-│           └── META-INF
-│               └── services
-│                   └── javax.annotation.processing.Processor
-
-```
-
-执行命令`mvn clean install`，输出如下
-
-```
-[INFO] Scanning for projects...
-[INFO]
-[INFO] ------------------------------------------------------------------------
-[INFO] Building builder 1.0-SNAPSHOT
-[INFO] ------------------------------------------------------------------------
-[INFO]
-[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ builder ---
-[INFO] Deleting /Users/HCF/Desktop/maven/target
-[INFO]
-[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ builder ---
-[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
-[INFO] Copying 0 resource
-[INFO]
-[INFO] --- maven-compiler-plugin:3.6.0:compile (default-compile) @ builder ---
-[INFO] Changes detected - recompiling the module!
-[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
-[INFO] Compiling 2 source files to /Users/HCF/Desktop/maven/target/classes
-[INFO]
-[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ builder ---
-[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
-[INFO] skip non existing resourceDirectory /Users/HCF/Desktop/maven/src/test/resources
-[INFO]
-[INFO] --- maven-compiler-plugin:3.6.0:testCompile (default-testCompile) @ builder ---
-[INFO] No sources to compile
-[INFO]
-[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ builder ---
-[INFO] No tests to run.
-[INFO]
-[INFO] --- maven-resources-plugin:2.6:copy-resources (process-META) @ builder ---
-[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
-[INFO] Copying 1 resource
-[INFO]
-[INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ builder ---
-[INFO] Building jar: /Users/HCF/Desktop/maven/target/builder-1.0-SNAPSHOT.jar
-[INFO]
-[INFO] --- maven-install-plugin:2.4:install (default-install) @ builder ---
-[INFO] Installing /Users/HCF/Desktop/maven/target/builder-1.0-SNAPSHOT.jar to /Users/HCF/.m2/repository/org/liuyehcf/builder/1.0-SNAPSHOT/builder-1.0-SNAPSHOT.jar
-[INFO] Installing /Users/HCF/Desktop/maven/pom.xml to /Users/HCF/.m2/repository/org/liuyehcf/builder/1.0-SNAPSHOT/builder-1.0-SNAPSHOT.pom
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time: 1.572 s
-[INFO] Finished at: 2018-02-03T22:16:44+08:00
-[INFO] Final Memory: 23M/306M
-[INFO] ------------------------------------------------------------------------
 ```
 
 __至此，builder工程构建成功__
