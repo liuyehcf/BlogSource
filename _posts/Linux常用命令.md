@@ -127,20 +127,47 @@ END {print "销售金额总计：",total}' sx
 
 __方式1__
 
-* `BEGIN{}`中无法使用变量
+* 以`'"`和`"'`（即，单引号+双引号+shell变量+双引号+单引号）将shell变量包围起来
+* __这种方式只能引用数值变量__
+
 ```sh
-awk '{print a, b}' a=111 b=222 file # 变量必须位于file之前
-or
-<前一个命令的输出> | awk '{ print a, b }' a=111 b=222
+var=4
+awk 'BEGIN{print '"$var"'}'
 ```
 
 __方式2__
 
-* 用`"'"`将变量包裹起来
+* 以`"'`和`'"`（即，双引号+单引号+shell变量+单引号+双引号）将shell变量包围起来
+* __这种方式可以引用字符串型变量，但是字符串不允许包含空格__
 
 ```sh
-awk 'BEGIN {print "'"$LOGNAME"'" }'
-awk '{print "'"$LOGNAME"'" }' file
+var=4
+awk 'BEGIN{print "'$var'"}'
+var="abc"
+awk 'BEGIN{print "'$var'"}'
+```
+
+__方式3__
+
+* 用`"'"`（即，双引号+单引号+双引号+shell变量+双引号+单引号+双引号）将shell变量包裹起来
+* __这种方式允许引用任意类型的变量__
+
+```sh
+var=4
+awk 'BEGIN{print "'"$var"'"}'
+var="abc"
+awk 'BEGIN{print "'"$var"'"}'
+var="this a test"
+awk 'BEGIN{print "'"$var"'"}'
+```
+
+__方式4__
+
+* 使用`-v`参数，变量不是很多的时候，这种方式也蛮简介清晰的
+
+```sh
+var="this a test"
+awk -v awkVar="$var" 'BEGIN{print awkVar}'
 ```
 
 ### 1.2.2 在awk中写简单的控制流语句
