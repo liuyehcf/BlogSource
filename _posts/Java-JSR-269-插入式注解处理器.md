@@ -258,6 +258,8 @@ public JCMethodDecl MethodDef(MethodSymbol m,
 }
 ```
 
+__其中，返回类型填`null`或者`treeMaker.TypeIdent(TypeTag.VOID)`都代表返回void类型__
+
 ### 3.2.4 TreeMaker.VarDef
 
 TreeMaker.VarDef用于创建`字段/变量定义`语法树节点（JCVariableDecl），源码如下：
@@ -508,6 +510,84 @@ public class List<A> extends AbstractCollection<A> implements java.util.List<A> 
 
 ## 3.4 tricky
 
+### 3.4.1 创建一个构造方法
+
+__注意点：方法的名字就是`<init>`__
+
+```Java
+treeMaker.MethodDef(
+        treeMaker.Modifiers(Flags.PUBLIC), // 访问标志
+        names.fromString("<init>"), // 名字
+        treeMaker.TypeIdent(TypeTag.VOID), // 返回类型
+        List.nil(), // 泛型形参列表
+        List.nil(), // 参数列表
+        List.nil(), // 异常列表
+        jcBlock, // 方法体
+        null // 默认方法（可能是interface中的那个default）
+);
+```
+
+### 3.4.2 创建一个方法的参数
+
+__注意点：访问标志设置成`Flags.PARAMETER`__
+
+```Java
+treeMaker.VarDef(
+        treeMaker.Modifiers(Flags.PARAMETER), // 访问标志。极其坑爹！！！
+        prototypeJCVariable.name, // 名字
+        prototypeJCVariable.vartype, // 类型
+        null // 初始化语句
+);
+```
+
+### 3.4.3 创建一条赋值语句
+
+```Java
+treeMaker.Exec(
+        treeMaker.Assign(
+                treeMaker.Select(
+                        treeMaker.Ident(names.fromString(THIS)),
+                        jcVariable.name
+                ),
+                treeMaker.Ident(jcVariable.name)
+        )
+)
+```
+
+### 3.4.4 创建一条new语句
+
+```Java
+treeMaker.NewClass(
+        null, // 尚不清楚含义
+        List.nil(), // 泛型参数列表
+        treeMaker.Ident(builderClassName), // 创建的类名
+        List.nil(), // 参数列表
+        null // 类定义，估计是用于创建匿名内部类
+)
+```
+
+### 3.4.5 创建一条方法调用语句
+
+```Java
+treeMaker.Exec(
+        treeMaker.Apply(
+                List.nil(),
+                treeMaker.Select(
+                        treeMaker.Ident(getNameFromString(IDENTIFIER_DATA)),
+                        jcMethodDecl.getName()
+                ),
+                List.of(treeMaker.Ident(jcVariableDecl.getName())) // 传入的参数集合
+        )
+)
+````
+
+### 3.4.6 从JCTree.JCVariable中获取类型信息
+
+注意，直接拿`vartype`字段，而不是`type`字段或者`getType()`方法
+
+* `vartype`的类型是`JCTree.JCExpression`
+* `type`的类型是`com.sun.tools.javac.code.Type`，__这是个非标准api，理应不该使用__
+
 # 4 手撸lombok经典注解
 
 1. @AllArgsConstructor：创建全量参数的构造方法
@@ -628,6 +708,8 @@ __定义4个注解，源码如下：__
 
 * 将`@Retention`指定为`RetentionPolicy.SOURCE`，即该注解仅在源码期间有效
 
+#### 4.2.1.1 NoArgsConstructor
+
 ```Java
 package org.liuyehcf.annotation.source.annotation;
 
@@ -641,6 +723,8 @@ import java.lang.annotation.Target;
 public @interface NoArgsConstructor {
 }
 ```
+
+#### 4.2.1.2 AllArgsConstructor
 
 ```Java
 package org.liuyehcf.annotation.source.annotation;
@@ -656,6 +740,8 @@ public @interface AllArgsConstructor {
 }
 ```
 
+#### 4.2.1.3 Data
+
 ```Java
 package org.liuyehcf.annotation.source.annotation;
 
@@ -669,6 +755,8 @@ import java.lang.annotation.Target;
 public @interface Data {
 }
 ```
+
+#### 4.2.1.4 Builder
 
 ```Java
 package org.liuyehcf.annotation.source;
@@ -1016,6 +1104,7 @@ class ProcessUtil {
 package org.liuyehcf.annotation.source.processor;
 
 import com.sun.tools.javac.code.Flags;
+import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeTranslator;
 import com.sun.tools.javac.util.List;
@@ -1083,7 +1172,7 @@ public class NoArgsConstructorProcessor extends BaseProcessor {
         return treeMaker.MethodDef(
                 treeMaker.Modifiers(Flags.PUBLIC), // 访问标志
                 names.fromString(CONSTRUCTOR_NAME), // 名字
-                null, // 返回类型
+                treeMaker.TypeIdent(TypeTag.VOID), // 返回类型
                 List.nil(), // 泛型形参列表
                 List.nil(), // 参数列表
                 List.nil(), // 异常列表
@@ -1100,6 +1189,7 @@ public class NoArgsConstructorProcessor extends BaseProcessor {
 package org.liuyehcf.annotation.source.processor;
 
 import com.sun.tools.javac.code.Flags;
+import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeTranslator;
 import com.sun.tools.javac.util.List;
@@ -1208,7 +1298,7 @@ public class AllArgsConstructorProcessor extends BaseProcessor {
         return treeMaker.MethodDef(
                 treeMaker.Modifiers(Flags.PUBLIC), // 访问标志
                 names.fromString(CONSTRUCTOR_NAME), // 名字
-                null, // 返回类型
+                treeMaker.TypeIdent(TypeTag.VOID), // 返回类型
                 List.nil(), // 泛型形参列表
                 cloneJCVariablesAsParams(treeMaker, fieldJCVariables), // 参数列表
                 List.nil(), // 异常列表
@@ -1225,6 +1315,7 @@ public class AllArgsConstructorProcessor extends BaseProcessor {
 package org.liuyehcf.annotation.source.processor;
 
 import com.sun.tools.javac.code.Flags;
+import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeTranslator;
 import com.sun.tools.javac.util.List;
@@ -1361,7 +1452,7 @@ public class DataProcessor extends BaseProcessor {
         return treeMaker.MethodDef(
                 treeMaker.Modifiers(Flags.PUBLIC), // 访问标志
                 names.fromString(fromPropertyNameToSetMethodName(jcVariable.name.toString())), // 名字
-                null, // 返回类型
+                treeMaker.TypeIdent(TypeTag.VOID), // 返回类型
                 List.nil(), // 泛型形参列表
                 List.of(cloneJCVariableAsParam(treeMaker, jcVariable)), // 参数列表
                 List.nil(), // 异常列表
@@ -1837,14 +1928,7 @@ UserDTO{firstName='明', lastName='小', age=25, address='火星'}
 
 如果我们想让上述过程自动发生，可以借助maven来实现
 
-那么如何在调用的时候不用加参数呢，其实我们知道Java在编译的时候会去资源文件夹下读一个META-INF文件夹，这个文件夹下面除了MANIFEST.MF文件之外，还可以添加一个`services`文件夹，我们可以在这个文件夹下创建一个文件，文件名是`javax.annotation.processing.Processor`，文件内容如下
-
-```
-org.liuyehcf.annotation.source.processor.DataProcessor
-org.liuyehcf.annotation.source.processor.NoArgsConstructorProcessor
-org.liuyehcf.annotation.source.processor.AllArgsConstructorProcessor
-org.liuyehcf.annotation.source.processor.BuilderProcessor
-```
+那么如何在调用的时候不用加参数呢，其实我们知道Java在编译的时候会去资源文件夹下读一个META-INF文件夹，这个文件夹下面除了MANIFEST.MF文件之外，还可以添加一个`services`文件夹，我们可以在这个文件夹下创建一个文件，文件名是`javax.annotation.processing.Processor`，具体内容将在下一小节给出
 
 我们知道maven在编译前会先拷贝资源文件夹，然后当他在编译时候发现了资源文件夹下的META-INF/serivces文件夹时，他就会读取里面的文件，并将文件名所代表的接口用文件内容表示的类来实现。__这就相当于做了-processor参数该做的事了__
 
@@ -1856,19 +1940,27 @@ org.liuyehcf.annotation.source.processor.BuilderProcessor
 1. 配置`<resource>`排除`META-INF/services/javax.annotation.processing.Processor`文件
 1. 配置`<plugin>`，利用`maven-resources-plugin`在pre-package阶段将`META-INF/services/javax.annotation.processing.Processor`文件再拷贝到`target/classes`目录中
 
+### 4.4.1 javax.annotation.processing.Processor
+
+```
+org.liuyehcf.annotation.source.processor.DataProcessor
+org.liuyehcf.annotation.source.processor.NoArgsConstructorProcessor
+org.liuyehcf.annotation.source.processor.AllArgsConstructorProcessor
+org.liuyehcf.annotation.source.processor.BuilderProcessor
+```
+
+### 4.4.2 pom.xml文件
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http:// maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
+         xmlns="http:// maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
-    
-    <modelVersion>4.0.0</modelVersion>
 
+    <modelVersion>4.0.0</modelVersion>
     <groupId>org.liuyehcf</groupId>
-    <artifactId>builder</artifactId>
-    <packaging>jar</packaging>
+    <artifactId>annotation</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>builder</name>
 
     <dependencies>
         <dependency>
@@ -1891,6 +1983,15 @@ org.liuyehcf.annotation.source.processor.BuilderProcessor
         </resources>
 
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -1916,93 +2017,20 @@ org.liuyehcf.annotation.source.processor.BuilderProcessor
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.6.0</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
-</project>
-```
-
-__至此，builder工程构建成功__
-
----
-
-__接下来，创建另一个名为test的maven工程__，编写pom文件如下：
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
-         xmlns="http:// maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
-        
-    <modelVersion>4.0.0</modelVersion>
-
-    <groupId>org.liuyehcf</groupId>
-    <artifactId>test</artifactId>
-    <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
-    <name>test</name>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.liuyehcf</groupId>
-            <artifactId>builder</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
 
 </project>
 ```
-
-此时builder工程的文件结构大致如下：
-
-```
-.
-├── pom.xml
-├── src
-│   └── main
-│       ├── java
-│       │   └── org
-│       │       └── liuyehcf
-│       │           └── annotation
-|       |               └── source
-|       |                   └── TestUserDTO.java
-```
-
-执行命令
-
-1. `mvn clean compile`
-1. `java -classpath target/classes org.liuyehcf.annotation.source.TestUserDTO`
-
-输出如下
-
-```
-firstName: 小
-lastName: 六
-age: 100
-address: 中国
-```
-
-__DONE__
 
 # 5 参考
 
+* [Javac早期(编译期)](https://www.cnblogs.com/wade-luffy/p/6050331.html)
 * [Lombok简介](https://www.jianshu.com/p/365ea41b3573)
 * [Lombok原理文章总结](http://blog.csdn.net/hotdust/article/details/75042465)
 * [Lombok原理分析与功能实现](https://blog.mythsman.com/2017/12/19/1/)
-* [Java:Annotation(注解)--原理到案例](https://www.jianshu.com/p/28edf5352b63)
-* [Javac早期(编译期)](https://www.cnblogs.com/wade-luffy/p/6050331.html)
-* [DocJar: Search Open Source Java API](http://www.docjar.com/index.html)
-* [Java Code Examples for com.sun.tools.javac.tree.JCTree.JCMethodDecl](https://www.programcreek.com/java-api-examples/index.php?api=com.sun.tools.javac.tree.JCTree.JCMethodDecl)
-* [grepcode](http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b14/com/sun/tools/javac/tree/TreeMaker.java#TreeMaker.Apply%28com.sun.tools.javac.util.List%2Ccom.sun.tools.javac.tree.JCTree.JCExpression%2Ccom.sun.tools.javac.util.List%29)
-* [AlbertoSH/MagicBuilder](https://github.com/AlbertoSH/MagicBuilder/tree/master/magic-builder-compiler/src/main/java/com/github/albertosh)
-* [源码地址](https://github.com/fiji/javac/blob/master/src/main/java/com/sun/tools/javac/tree/TreeMaker.java)
+* [Java API Examples](https://www.programcreek.com/java-api-examples/index.php?action=search)
+* [grepcode](http://grepcode.com/search)
+* [soucecode-github](https://github.com/liuyehcf/javac/tree/master/src/main/java/com/sun/tools/javac/tree)
 * [TreeMake Q&A](http://wiki.netbeans.org/JavaHT_TreeMakerQA)
+
