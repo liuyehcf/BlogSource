@@ -18,7 +18,16 @@ __目录__
 1. 搜索`Identifier under caret`，如下图所示：
     * ![fig1](/images/IntelliJ-IDEA-Settings/fig1.jpg)
 
-# 2 参考
+# 2 自动添加序列化字段
+
+* `Preference`
+    * `Editor`
+        * `Inspections`
+            * `右边列表选择Java`
+                * `Serialization issues`
+                    * `Java | Serialization issues | Serializable class without 'serialVersionUID'`
+
+# 3 参考
 
 * [IntelliJ IDEA 设置选中标识符高亮](http://blog.csdn.net/wskinght/article/details/43052407)
 * [IntelliJ IDEA 总结](https://www.zhihu.com/question/20450079)
