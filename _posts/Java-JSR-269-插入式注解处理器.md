@@ -329,7 +329,7 @@ public JCReturn Return(JCExpression expr) {
 
 ### 3.2.7 TreeMaker.Select
 
-TreeMaker.Select用于创建`域访问语句`语法树节点（JCFieldAccess），源码如下：
+TreeMaker.Select用于创建`域访问/方法访问`（这里的方法访问只是取到名字，方法的调用需要用TreeMaker.Apply）语法树节点（JCFieldAccess），源码如下：
 
 1. selected：`.`运算符左边的表达式
 1. selector：`.`运算符右边的名字
@@ -387,24 +387,6 @@ public JCMethodInvocation Apply(List<JCExpression> typeargs,
         tree.pos = pos;
         return tree;
 }
-```
-
-示例如下
-
-```Java
-// 添加调用语句" data.setXXX(xxx); "
-jcStatements.append(
-        treeMaker.Exec(
-                treeMaker.Apply(
-                        List.nil(),
-                        treeMaker.Select(
-                                treeMaker.Ident(names.fromString(DATA)),
-                                jcMethod.getName()
-                        ),
-                        List.of(treeMaker.Ident(jcVariable.getName()))
-                )
-        )
-);
 ```
 
 ### 3.2.10 TreeMaker.Assign
@@ -508,9 +490,25 @@ public class List<A> extends AbstractCollection<A> implements java.util.List<A> 
 }
 ```
 
-## 3.4 tricky
+## 3.4 com.sun.tools.javac.util.ListBuffer
 
-### 3.4.1 创建一个构造方法
+由于com.sun.tools.javac.util.List用起来不是很方便，而ListBuffer的行为与java.util.List的行为类似，并且提供了转换成com.sun.tools.javac.util.List的方法
+
+```Java
+        ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
+
+        // 添加语句 " this.xxx = xxx; "
+        jcStatements.append(...);
+
+        // 添加Builder模式中的返回语句 " return this; "
+        jcStatements.append(...);
+
+        List<JCTree.JCStatement> lst = jcStatements.toList();
+```
+
+## 3.5 tricky
+
+### 3.5.1 创建一个构造方法
 
 __注意点：方法的名字就是`<init>`__
 
@@ -527,7 +525,7 @@ treeMaker.MethodDef(
 );
 ```
 
-### 3.4.2 创建一个方法的参数
+### 3.5.2 创建一个方法的参数
 
 __注意点：访问标志设置成`Flags.PARAMETER`__
 
@@ -540,7 +538,7 @@ treeMaker.VarDef(
 );
 ```
 
-### 3.4.3 创建一条赋值语句
+### 3.5.3 创建一条赋值语句
 
 ```Java
 treeMaker.Exec(
@@ -554,7 +552,7 @@ treeMaker.Exec(
 )
 ```
 
-### 3.4.4 创建一条new语句
+### 3.5.4 创建一条new语句
 
 ```Java
 treeMaker.NewClass(
@@ -566,7 +564,7 @@ treeMaker.NewClass(
 )
 ```
 
-### 3.4.5 创建一条方法调用语句
+### 3.5.5 创建一条方法调用语句
 
 ```Java
 treeMaker.Exec(
@@ -581,7 +579,7 @@ treeMaker.Exec(
 )
 ````
 
-### 3.4.6 从JCTree.JCVariable中获取类型信息
+### 3.5.6 从JCTree.JCVariable中获取类型信息
 
 注意，直接拿`vartype`字段，而不是`type`字段或者`getType()`方法
 
