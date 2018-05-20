@@ -1,5 +1,5 @@
 ---
-title: Linux中的栈
+title: Linux-各种栈
 date: 2017-08-20 19:52:42
 tags: 
 - 摘录

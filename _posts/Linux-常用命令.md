@@ -1,5 +1,5 @@
 ---
-title: Linux常用命令
+title: Linux-常用命令
 date: 2017-08-15 20:17:57
 tags: 
 - 摘录
