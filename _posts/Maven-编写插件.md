@@ -8,9 +8,8 @@ categories:
 - Maven
 ---
 
-__目录__
+__阅读更多__
 
-<!-- toc -->
 <!--more-->
 
 # 1 编写Maven插件的一般步骤

@@ -8,7 +8,6 @@ categories:
 - Linux
 ---
 
-__目录__
+__阅读更多__
 
-<!-- toc -->
 <!--more-->

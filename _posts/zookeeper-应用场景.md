@@ -8,9 +8,8 @@ categories:
 - zoookeeper
 ---
 
-__目录__
+__阅读更多__
 
-<!-- toc -->
 <!--more-->
 
 # 1 数据发布和订阅

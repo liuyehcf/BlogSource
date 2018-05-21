@@ -8,9 +8,8 @@ categories:
 - Grammar
 ---
 
-__目录__
+__阅读更多__
 
-<!-- toc -->
 <!--more-->
 
 # 1 JDK 5

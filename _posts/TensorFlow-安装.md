@@ -8,9 +8,8 @@ categories:
 - Machine Learning
 ---
 
-__目录__
+__阅读更多__
 
-<!-- toc -->
 <!--more-->
 
 # 1 TensorFlow安装

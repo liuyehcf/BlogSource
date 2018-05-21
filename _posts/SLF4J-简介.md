@@ -9,9 +9,8 @@ categories:
 - Log
 ---
 
-__目录__
+__阅读更多__
 
-<!-- toc -->
 <!--more-->
 
 # 1 SLF4J概述

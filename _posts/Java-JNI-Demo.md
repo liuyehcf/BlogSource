@@ -8,9 +8,8 @@ categories:
 - JNI
 ---
 
-__目录__
+__阅读更多__
 
-<!-- toc -->
 <!--more-->
 
 # 1 JNI简介

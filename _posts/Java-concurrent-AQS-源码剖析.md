@@ -9,9 +9,8 @@ categories:
 - Java concurrent 源码剖析
 ---
 
-__目录__
+__阅读更多__
 
-<!-- toc -->
 <!--more-->
 
 # 1 引言

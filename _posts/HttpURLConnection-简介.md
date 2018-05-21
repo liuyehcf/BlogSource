@@ -9,9 +9,8 @@ categories:
 - HTTP
 ---
 
-__目录__
+__阅读更多__
 
-<!-- toc -->
 <!--more-->
 
 # 1 GET方法

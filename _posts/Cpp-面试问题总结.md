@@ -8,9 +8,8 @@ categories:
 - Cpp
 ---
 
-__目录__
+__阅读更多__
 
-<!-- toc -->
 <!--more-->
 
 # 1 Cpp基础

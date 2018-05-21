@@ -8,9 +8,8 @@ categories:
 - Maven
 ---
 
-__目录__
+__阅读更多__
 
-<!-- toc -->
 <!--more-->
 
 # 1 Maven运行Java程序
