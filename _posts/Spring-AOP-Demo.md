@@ -83,6 +83,8 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+
 @Component
 @Aspect
 public class SimpleSpringAdvisor {
@@ -108,15 +110,26 @@ public class SimpleSpringAdvisor {
     }
 
     @Around("pointCut()")
-    public void around(ProceedingJoinPoint pjp) throws Throwable {
+    public void around(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         System.out.println("around start..");
+        Class<?> clazz = null;
+        String methodName = null;
+        Object[] args = null;
+        Object result = null;
         try {
-            pjp.proceed();
+            clazz = proceedingJoinPoint.getSignature().getDeclaringType();
+            methodName = proceedingJoinPoint.getSignature().getName();
+            args = proceedingJoinPoint.getArgs();
+            result = proceedingJoinPoint.proceed(args);
         } catch (Throwable ex) {
             System.out.println("error in around");
             throw ex;
+        } finally {
+            System.out.println("class: " + clazz);
+            System.out.println("methodName: " + methodName);
+            System.out.println("args: " + Arrays.toString(args));
+            System.out.println("result: " + result);
         }
-        System.out.println("around end");
     }
 
     @AfterThrowing(pointcut = "pointCut()", throwing = "error")

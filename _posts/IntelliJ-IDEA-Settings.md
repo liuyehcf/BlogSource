@@ -19,14 +19,29 @@ __阅读更多__
 
 # 2 自动添加序列化字段
 
-* `Preference`
-    * `Editor`
-        * `Inspections`
-            * `右边列表选择Java`
-                * `Serialization issues`
-                    * `Java | Serialization issues | Serializable class without 'serialVersionUID'`
+1. `Preference`
+1. `Editor`
+1. `Inspections`
+1. `右边列表选择Java`
+1. `Serialization issues`
+1. `Java | Serialization issues | Serializable class without 'serialVersionUID'`
 
-# 3 参考
+# 3 创建类时自动创建作者日期信息
+
+1. `Preference`
+1. `Editor`
+1. `File and Code Templates`
+1. `includes`
+1. `File Header`
+
+```Java
+/**
+ * @author xxx
+ * @date ${DATE}
+ */
+```
+
+# 4 参考
 
 * [IntelliJ IDEA 设置选中标识符高亮](http://blog.csdn.net/wskinght/article/details/43052407)
 * [IntelliJ IDEA 总结](https://www.zhihu.com/question/20450079)
