@@ -307,9 +307,9 @@ __javap或者用文本形式表示Java字节码时，那些带offset参数的字
 
 若有异议或疑问，请参考以下3个参考文献
 
- * __[Java bytecode instruction listings](https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings)__
- * __[Java Virtual Machine Specification](https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5.jsr)__
- * __深入理解Java虚拟机__
+* __[Java bytecode instruction listings](https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings)__
+* __[Java Virtual Machine Specification](https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5.jsr)__
+* __深入理解Java虚拟机__
 
 ## 3.2 什么是字节码
 
@@ -437,7 +437,7 @@ __创建数组的指令__
 
 * `newarray`：栈顶元素即数组大小，创建指定类的数组，然后将栈顶元素出栈，并将创建的数组对象的引用push到栈顶。__1个操作数__，这个操作数表示数组元素的类型
 * `anewarray`：栈顶元素即数组大小，创建指定类的数组，然后将栈顶元素出栈，并将创建的数组对象的引用push到栈顶。__2个字节操作数__，这2个字节操作数共同表示常量池偏移量(index=indexbyte1 << 8 + indexbyte2)，用于确定数组元素的类型
-* `multianewarray`：???
+* `multianewarray`：__2个字节操作数 + 1个操作数__，前2个字节操作数共同表示常量池偏移量(index=indexbyte1 << 8 + indexbyte2)，后1个操作数表示维度，即当前字节码会消耗操作数栈的元素的个数。例如`new int[5][4][];`对应的字节码为`multianewarray ? ? 2`，后面的2表示栈顶与栈次顶操作数作为数组创建时的维度
 
 __访问类字段(static字段、或称为类变量)和实例字段(非static字段，或者称为实例变量)的指令__
 
@@ -1628,3 +1628,5 @@ __Exception table该如何解读__
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
 
 * 《深入理解Java虚拟机》
+* [Java bytecode instruction listings](https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings)
+* [Java Virtual Machine Specification](https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5.jsr)
