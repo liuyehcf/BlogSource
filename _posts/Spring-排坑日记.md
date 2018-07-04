@@ -147,3 +147,48 @@ Caused by: org.xml.sax.SAXParseException: 文档根元素 "beans" 必须匹配 D
 ```
 
 原因：xml文件名不能是`application.xml`，改个名字就行！我了个大草！
+
+# 4 水坑4-Duplicate spring bean id
+
+情景还原：
+
+1. SpringBoot应用
+1. 用Junit做集成测试
+
+Application.java与TestApplication.java以及Test.java如下
+
+1. Application.java：应用的启动类
+1. TestApplication.java：测试的启动类
+1. Test.java：测试类
+
+```Java
+@SpringBootApplication(scanBasePackages = {"xxx.yyy.zzz"})
+@ImportResource({"classpath*:application-context.xml"})
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+```
+
+```Java
+@SpringBootApplication(scanBasePackages = {"com.aliyun.nova.scene"})
+@ImportResource({"classpath*:sentinel-tracer.xml","classpath*:application-context.xml"})
+public class TestApplication {
+}
+```
+
+```Java
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest(classes = {TestApplication.class})
+public class Test {
+	@Test
+	...
+}
+```
+
+出现的异常，提示信息是：`Duplicate spring bean id xxx`
+
+原因是配置文件`application-context.xml`被加载了两次，导致bean重复加载了
+
+TestApplication类不应该有`application-context.xml`，否则会加载两次（可能标记了SpringBootApplication注解的类都会被处理，导致了配置文件被加载两次）
