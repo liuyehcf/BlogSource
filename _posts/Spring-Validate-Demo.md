@@ -154,13 +154,13 @@ public class UserDTO {
 
 # 5 Service
 
+下面我们说明一下，如何让validate在`Service Level`生效（如果在`Controller Level`使用validator，那么只需要在参数处标记`@Validated`注解即可。相比于在`Service Level`使用validator要简单许多）
+
 UserService用validator相关注解进行标注，以声明式的方式进行参数校验
 
-1. 用`@Validated`标记接口，否则不会生效
-1. 用`@Validated(Create.class)`标记方法，并指明校验所属的分组
-1. 用`@Valid`标记参数，声明对参数进行校验
-
-此外，如果在Controller Level使用validator，那么只需要在参数处标记`@Validated`注解即可。相比于在Service Level使用validator要简单许多
+1. __必须__，用`@Validated`标记接口（可以指明校验的组别）
+1. __非必须__，用`@Validated`标记方法（可以指明校验的组别），会覆盖类级别的`@Validated`注解
+1. __必须__，用`@Valid`标记参数，声明对参数进行校验
 
 ```Java
 package org.liuyehcf.spring.validate.service;
