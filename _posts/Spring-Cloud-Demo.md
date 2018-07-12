@@ -187,7 +187,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 
 /**
- * @author chenlu
+ * @author hechenfeng
  * @date 2018/7/12
  */
 @EnableEurekaServer
@@ -333,7 +333,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 
 /**
- * @author chenlu
+ * @author hechenfeng
  * @date 2018/7/12
  */
 @EnableEurekaClient
@@ -361,7 +361,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Date;
 
 /**
- * @author chenlu
+ * @author hechenfeng
  * @date 2018/7/12
  */
 @RestController
@@ -513,7 +513,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.Resource;
 
 /**
- * @author chenlu
+ * @author hechenfeng
  * @date 2018/7/12
  */
 @Service
@@ -542,7 +542,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 
 /**
- * @author chenlu
+ * @author hechenfeng
  * @date 2018/7/12
  */
 @RestController
@@ -573,7 +573,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * @author chenlu
+ * @author hechenfeng
  * @date 2018/7/12
  */
 @EnableDiscoveryClient
@@ -735,7 +735,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
- * @author chenlu
+ * @author hechenfeng
  * @date 2018/7/12
  */
 @FeignClient(value = "CalculatorServer")
@@ -759,7 +759,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 
 /**
- * @author chenlu
+ * @author hechenfeng
  * @date 2018/7/12
  */
 @RestController
@@ -789,7 +789,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /**
- * @author chenlu
+ * @author hechenfeng
  * @date 2018/7/12
  */
 @EnableFeignClients
