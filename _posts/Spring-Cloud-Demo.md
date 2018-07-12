@@ -40,6 +40,8 @@ __本Demo工程（`spring-cloud`）包含了如下几个子模块__
 1. `eureka-provider`：服务提供方
 1. `ribbon-consumer`：服务消费方-以ribbon方式
 1. `feign-consumer`：服务消费方-以feign方式
+1. `config-server`：配置服务提供方
+1. `config-client`：配置服务消费方
 
 `spring-cloud` Deom工程的的pom文件如下
 
@@ -380,7 +382,7 @@ public class ProviderController {
 
 ```yml
 server:
-  port: 2100
+  port: 1110
 
 spring:
   application:
@@ -596,7 +598,7 @@ public class RibbonConsumerApplication {
 
 ```yml
 server:
-  port: 3100
+  port: 1120
 
 spring:
   application:
@@ -807,7 +809,7 @@ public class FeignConsumerApplication {
 
 ```yml
 server:
-  port: 3200
+  port: 1130
 
 spring:
   application:
@@ -826,7 +828,364 @@ eureka:
       defaultZone: http:// 127.0.0.1:1100/eureka/
 ```
 
-# 7 参考
+# 7 `config-server`
+
+__`config-server`模块的目录结构如下__
+
+```
+.
+├── pom.xml
+└── src
+    ├── main
+    │   ├── java
+    │   │   └── org
+    │   │       └── liuyehcf
+    │   │           └── spring
+    │   │               └── cloud
+    │   │                   └── config
+    │   │                       └── server
+    │   │                           └── ConfigServerApplication.java
+    │   └── resources
+    │       └── application.yml
+```
+
+仅包含3个文件
+
+1. pom.xml
+1. ConfigServerApplication.java
+1. application.yml
+
+## 7.1 pom.xml
+
+由于配置服务提供方（config-server）既可以直接暴露ip提供服务，也可以通过Eureka来提供服务，这里选择使用Eureka的方式
+
+在`<dependencyManagement>`中引入Spring-Boot和Spring-Cloud相关依赖
+
+在`<dependencies>`中引入`spring-cloud-starter-netflix-eureka-server`以及`spring-cloud-config-server`依赖即可
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http:// maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>spring.cloud</artifactId>
+        <groupId>org.liuyehcf.spring.cloud</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>config-server</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-config-server</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>2.0.3.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Finchley.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>
+```
+
+## 7.2 ConfigServerApplication.java
+
+`@EnableConfigServer`注解表示当前应用作为Config的服务端
+`@EnableEurekaClient`注解表示当前应用将自身地址信息注册到Eureka服务器，供其他应用接入
+
+```Java
+package org.liuyehcf.spring.cloud.config.server;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.config.server.EnableConfigServer;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+
+/**
+ * @author hechenfeng
+ * @date 2018/7/12
+ */
+
+@EnableConfigServer
+@EnableEurekaClient
+@SpringBootApplication
+public class ConfigServerApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(ConfigServerApplication.class, args);
+    }
+}
+```
+
+## 7.3 application.yml
+
+```yml
+server:
+  port: 1140
+
+spring:
+  application:
+    name: ConfigServer
+  cloud:
+    config:
+      server:
+        git:
+          uri: https:// github.com/liuyehcf/spring-cloud-config-demo   # 配置git仓库的地址
+          searchPaths: config-repo                                    # git仓库下的相对地址（多个则用半角逗号分隔）
+          # username: username                                        # 只有private的项目才需配置用户名和密码
+          # password: password                                        # 只有private的项目才需配置用户名和密码
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${server.port}
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 15
+  client:
+    healthcheck:
+      enabled: true
+    serviceUrl:
+      defaultZone: http:// 127.0.0.1:1100/eureka/
+```
+
+应用启动后，可以访问如下地址
+
+* [http://localhost:1140/cloud.config.demo-dev.properties](http://localhost:1140/cloud.config.demo-dev.properties)
+* [http://localhost:1140/cloud.config.demo-dev.yml](http://localhost:1140/cloud.config.demo-dev.yml)
+* [http://localhost:1140/master/cloud.config.demo-dev.properties](http://localhost:1140/master/cloud.config.demo-dev.properties)
+* [http://localhost:1140/master/cloud.config.demo-dev.yml](http://localhost:1140/master/cloud.config.demo-dev.yml)
+* [http://localhost:1140/temp/cloud.config.demo-dev.properties](http://localhost:1140/temp/cloud.config.demo-dev.properties)
+* [http://localhost:1140/temp/cloud.config.demo-dev.yml](http://localhost:1140/temp/cloud.config.demo-dev.yml)
+
+__HTTP URL与Resource的对应关系如下，其中__
+
+1. `{application}`：表示的是文件名，一般来说会以应用名作为配置的文件名，因此占位符的名字叫`application`
+1. `{profile}`：表示profile后缀
+1. `{label}`：表示git的分支
+
+```
+/{application}/{profile}[/{label}]
+/{application}-{profile}.yml
+/{label}/{application}-{profile}.yml
+/{application}-{profile}.properties
+/{label}/{application}-{profile}.properties
+```
+
+# 8 `config-client`
+
+__`config-client`模块的目录结构如下__
+
+```
+.
+├── pom.xml
+└── src
+    ├── main
+    │   ├── java
+    │   │   └── org
+    │   │       └── liuyehcf
+    │   │           └── spring
+    │   │               └── cloud
+    │   │                   └── config
+    │   │                       └── client
+    │   │                           └── ConfigClientApplication.java
+    │   └── resources
+    │       ├── application.yml
+    │       └── bootstrap.yml
+```
+
+仅包含4个文件
+
+1. pom.xml
+1. ConfigClientApplication.java
+1. application.yml
+1. bootstrap.yml
+
+## 8.1 pom.xml
+
+由于配置服务消费方（config-client）可以强关联服务提供方的ip来使用服务，也可以通过Eureka来使用服务，这里选择使用Eureka的方式
+
+在`<dependencyManagement>`中引入Spring-Boot和Spring-Cloud相关依赖
+
+在`<dependencies>`中引入`spring-cloud-starter-netflix-eureka-server`以及`spring-cloud-config-server`依赖即可
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http:// maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>spring.cloud</artifactId>
+        <groupId>org.liuyehcf.spring.cloud</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>config-client</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <!-- 这个依赖虽然没有显式用到，但是会在占位符注入时起作用 -->
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>2.0.3.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Finchley.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>
+```
+
+## 8.2 ConfigClientApplication.java
+
+`@EnableEurekaClient`注解表示当前应用将通过Eureka来发现服务，该注解可以替换为`@EnableDiscoveryClient`注解
+
+```Java
+package org.liuyehcf.spring.cloud.config.client;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * @author hechenfeng
+ * @date 2018/7/12
+ */
+@RestController
+@EnableEurekaClient
+@SpringBootApplication
+@RequestMapping("/demo/config")
+public class ConfigClientApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(ConfigClientApplication.class, args);
+    }
+
+    // 获取配置中心的属性
+    @Value("${host}")
+    private String host;
+
+    // 获取配置中心的属性
+    @Value("${description}")
+    private String description;
+
+    @GetMapping("/getHost")
+    public String getHost() {
+        return this.host;
+    }
+
+    @GetMapping("/getDescription")
+    public String getDescription() {
+        return this.description;
+    }
+}
+
+```
+
+## 8.3 application.yml
+
+应用读取配置中心参数时，会配置配置中心的地址等相关参数，而这部分配置需优先于`application.yml`被应用读取。`Spring Cloud`中的 `bootstrap.yml`是会比`application.yml`先加载的，所以这部分配置要定义在`bootstrap.yml`里面，这就引申出两个需要注意的地方
+
+* `spring.application.name`：它应该配置在`bootstrap.yml`，它的名字应该等于配置中心的配置文件的`{application}`。所以配置中心在给配置文件取名字时，最好让它等于对应的应用服务名
+* 配置中心与注册中心联合使用：若应用通过`serviceId`而非`url`来指定配置中心，则`eureka.client.serviceUrl.defaultZone`也要配置在`bootstrap.yml`，要不启动的时候，应用会找不到注册中心，自然也就找不到配置中心了
+
+```yml
+server:
+  port: 1150
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${server.port}
+    prefer-ip-address: true                       # 设置微服务调用地址为IP优先（缺省为false）
+    lease-renewal-interval-in-seconds: 5          # 心跳时间，即服务续约间隔时间（缺省为30s）
+    lease-expiration-duration-in-seconds: 15      # 发呆时间，即服务续约到期时间（缺省为90s）
+  client:
+    healthcheck:
+      enabled: true                               # 开启健康检查（依赖spring-boot-starter-actuator）
+```
+
+## 8.4 bootstrap.yml
+
+```yml
+spring:
+  application:
+    name: cloud.config.demo         # 指定配置中心配置文件的{application}
+  cloud:
+    config:
+      profile: dev                  # 指定配置中心配置文件的{profile}
+      label: temp                   # 指定配置中心配置文件的{label}
+      discovery:
+        enabled: true               # 使用注册中心里面已注册的配置中心
+        serviceId: ConfigServer     # 指定配置中心注册到注册中心的serviceId
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http:// 127.0.0.1:1100/eureka/
+```
+
+# 9 参考
 
 * [史上最简单的 SpringCloud 教程 | 终章](https://blog.csdn.net/forezp/article/details/70148833)
 * [SpringCloud-Demo](https://jadyer.cn/category/#SpringCloud)

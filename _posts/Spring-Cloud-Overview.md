@@ -58,13 +58,6 @@ Spring Cloud为开发人员提供了快速构建分布式系统中一些常见�
 
 微服务架构中，每个微服务的运行，都会读取不同环境的不同配置信息，而Spring Cloud Config（百度的 Disconf 与之类似）便提供了适用于分布式系统的、集中式的外部化配置支持，它能够统一集中管理所有应用的、所有环境的配置文件，且支持热更新。__其默认采用git仓库存储配置信息，好处是git工具便可轻松管理配置内容__
 
-应用读取配置中心参数时，会配置配置中心的地址等相关参数，而这部分配置需优先于`application.yml`被应用读取。`Spring Cloud`中的 `bootstrap.yml`是会比`application.yml`先加载的，所以这部分配置要定义在`bootstrap.yml`里面，这就引申出两个需要注意的地方
-
-* `spring.application.name`：它应该配置在`bootstrap.yml`，它的名字应该等于配置中心的配置文件的 {application}
-所以配置中心在给配置文件取名字时，最好让它等于对应的应用服务名
-
-* 配置中心与注册中心联合使用：若应用通过`serviceId`而非`url`来指定配置中心，则`eureka.client.serviceUrl.defaultZone`也要配置在`bootstrap.yml`，要不启动的时候，应用会找不到注册中心，自然也就找不到配置中心了
-
 # 6 Spring Cloud Netflix
 
 > This project provides Netflix OSS integrations for Spring Boot apps through autoconfiguration and binding to the Spring Environment and other Spring programming model idioms. With a few simple annotations you can quickly enable and configure the common patterns inside your application and build large distributed systems with battle-tested Netflix components. The patterns provided include __Service Discovery (Eureka), Circuit Breaker (Hystrix), Intelligent Routing (Zuul) and Client Side Load Balancing (Ribbon).__
