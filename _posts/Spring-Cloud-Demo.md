@@ -36,12 +36,12 @@ Eureka本质上是一个非持久化配置中心，用于服务的注册与发�
 
 __本Demo工程（`spring-cloud`）包含了如下几个子模块__
 
-1. `eureka-server`：配置中心
+1. `eureka-server`：服务注册/发现的配置中心
 1. `eureka-provider`：服务提供方
 1. `ribbon-consumer`：服务消费方-以ribbon方式
 1. `feign-consumer`：服务消费方-以feign方式
-1. `config-server`：配置服务提供方
-1. `config-client`：配置服务消费方
+1. `config-server`：应用配置服务方
+1. `config-client`：应用配置消费方
 
 `spring-cloud` Deom工程的的pom文件如下
 
@@ -986,7 +986,7 @@ eureka:
 
 __HTTP URL与Resource的对应关系如下，其中__
 
-1. `{application}`：表示的是文件名，一般来说会以应用名作为配置的文件名，因此占位符的名字叫`application`
+1. `{application}`：表示的是文件名，__一般来说会以应用名作为配置的文件名，因此占位符的名字叫`application`__
 1. `{profile}`：表示profile后缀
 1. `{label}`：表示git的分支
 
@@ -1145,11 +1145,6 @@ public class ConfigClientApplication {
 
 ## 8.3 application.yml
 
-应用读取配置中心参数时，会配置配置中心的地址等相关参数，而这部分配置需优先于`application.yml`被应用读取。`Spring Cloud`中的 `bootstrap.yml`是会比`application.yml`先加载的，所以这部分配置要定义在`bootstrap.yml`里面，这就引申出两个需要注意的地方
-
-* `spring.application.name`：它应该配置在`bootstrap.yml`，它的名字应该等于配置中心的配置文件的`{application}`。所以配置中心在给配置文件取名字时，最好让它等于对应的应用服务名
-* 配置中心与注册中心联合使用：若应用通过`serviceId`而非`url`来指定配置中心，则`eureka.client.serviceUrl.defaultZone`也要配置在`bootstrap.yml`，要不启动的时候，应用会找不到注册中心，自然也就找不到配置中心了
-
 ```yml
 server:
   port: 1150
@@ -1166,6 +1161,11 @@ eureka:
 ```
 
 ## 8.4 bootstrap.yml
+
+应用读取配置中心参数时，会配置配置中心的地址等相关参数，而这部分配置需优先于`application.yml`被应用读取。`Spring Cloud`中的 `bootstrap.yml`是会比`application.yml`先加载的，所以这部分配置要定义在`bootstrap.yml`里面，这就引申出两个需要注意的地方
+
+* `spring.application.name`：它应该配置在`bootstrap.yml`，它的名字应该等于配置中心的配置文件的`{application}`。__所以配置中心在给配置文件取名字时，最好让它等于对应的应用服务名__
+* __配置中心与注册中心联合使用：若应用通过`serviceId`而非`url`来指定配置中心__，则`eureka.client.serviceUrl.defaultZone`也要配置在`bootstrap.yml`，要不启动的时候，应用会找不到注册中心，自然也就找不到配置中心了
 
 ```yml
 spring:
