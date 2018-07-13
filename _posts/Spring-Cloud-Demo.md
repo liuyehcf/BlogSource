@@ -47,9 +47,9 @@ __本Demo工程（`spring-cloud`）包含了如下几个子模块__
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http:// maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <groupId>org.liuyehcf.spring.cloud</groupId>
     <artifactId>spring-cloud-cluster-eureka-based</artifactId>
@@ -90,18 +90,18 @@ __`eureka-server`模块的目录结构如下__
 ```
 .
 ├── pom.xml
-├── src
-│   ├── main
-│   │   ├── java
-│   │   │   └── org
-│   │   │       └── liuyehcf
-│   │   │           └── spring
-│   │   │               └── cloud
-│   │   │                   └── eureka
-│   │   │                       └── server
-│   │   │                           └── EurekaServerApplication.java
-│   │   └── resources
-│   │       └── application.yml
+└── src
+    ├── main
+    │   ├── java
+    │   │   └── org
+    │   │       └── liuyehcf
+    │   │           └── spring
+    │   │               └── cloud
+    │   │                   └── eureka
+    │   │                       └── server
+    │   │                           └── EurekaServerApplication.java
+    │   └── resources
+    │       └── application.yml
 ```
 
 仅包含3个文件
@@ -118,9 +118,9 @@ __`eureka-server`模块的目录结构如下__
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http:// maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>spring-cloud-cluster-eureka-based</artifactId>
         <groupId>org.liuyehcf.spring.cloud</groupId>
@@ -140,12 +140,6 @@ __`eureka-server`模块的目录结构如下__
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -217,13 +211,13 @@ eureka:
     # 设置是否将自己作为客户端注册到注册中心（缺省true）
     # 这里为不需要（查看@EnableEurekaServer注解的源码，会发现它间接用到了@EnableDiscoveryClient）
     register-with-eureka: false
-    # 在未设置defaultZone的情况下，注册中心在本例中的默认地址就是http:// 127.0.0.1:1100/eureka/
-    # 但奇怪的是，启动注册中心时，控制台还是会打印这个地址的节点：http:// localhost:8761/eureka/
+    # 在未设置defaultZone的情况下，注册中心在本例中的默认地址就是http://127.0.0.1:1100/eureka/
+    # 但奇怪的是，启动注册中心时，控制台还是会打印这个地址的节点：http://localhost:8761/eureka/
     # 而实际服务端注册时，要使用1100端口的才能注册成功，8761端口的会注册失败并报告异常
     serviceUrl:
       # 实际测试：若修改尾部的eureka为其它的，比如/myeureka，注册中心启动没问题，但服务端在注册时会失败
       # 报告异常：com.netflix.discovery.shared.transport.TransportException: Cannot execute request on any known server
-      defaultZone: http:// 127.0.0.1:${server.port}/eureka/
+      defaultZone: http://127.0.0.1:${server.port}/eureka/
 ```
 
 # 4 Eureka-Provider
@@ -243,7 +237,7 @@ __`eureka-provider`模块的目录结构如下__
     │   │                   └── eureka
     │   │                       └── provider
     │   │                           ├── EurekaProviderApplication.java
-    │   │                           └── ProviderController.java
+    │   │                           └── ProviderGreetController.java
     │   └── resources
     │       └── application.yml
 
@@ -253,7 +247,7 @@ __`eureka-provider`模块的目录结构如下__
 
 1. pom.xml
 1. EurekaProviderApplication.java
-1. ProviderController.java
+1. ProviderGreetController.java
 1. application.yml
 
 ## 4.1 pom.xml
@@ -264,9 +258,9 @@ __`eureka-provider`模块的目录结构如下__
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http:// maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>spring-cloud-cluster-eureka-based</artifactId>
         <groupId>org.liuyehcf.spring.cloud</groupId>
@@ -286,12 +280,6 @@ __`eureka-provider`模块的目录结构如下__
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -347,10 +335,9 @@ public class EurekaProviderApplication {
         SpringApplication.run(EurekaProviderApplication.class, args);
     }
 }
-
 ```
 
-## 4.3 ProviderController.java
+## 4.3 ProviderGreetController.java
 
 提供了一个简单的http服务，打印名字、时间与当前服务器的端口号
 
@@ -369,7 +356,7 @@ import java.util.Date;
  * @date 2018/7/12
  */
 @RestController
-public class ProviderController {
+public class ProviderGreetController {
     @Value("${server.port}")
     private String port;
 
@@ -388,12 +375,12 @@ server:
 
 spring:
   application:
-    name: CalculatorServer                        # 指定发布的微服务名（以后调用时，只需该名称即可访问该服务）
+    name: GreetService                            # 指定发布的微服务名（以后调用时，只需该名称即可访问该服务）
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http:// 127.0.0.1:1100/eureka/  # 指定服务注册中心的地址
+      defaultZone: http://127.0.0.1:1100/eureka/  # 指定服务注册中心的地址
 ```
 
 # 5 Ribbon-Consumer
@@ -410,7 +397,6 @@ __`ribbon-consumer`模块的目录结构如下__
 ```
 .
 ├── pom.xml
-├── ribbon-consumer.iml
 └── src
     ├── main
     │   ├── java
@@ -420,8 +406,8 @@ __`ribbon-consumer`模块的目录结构如下__
     │   │               └── cloud
     │   │                   └── ribbon
     │   │                       └── consumer
-    │   │                           ├── CalculatorService.java
-    │   │                           ├── ConsumerController.java
+    │   │                           ├── ConsumerGreetController.java
+    │   │                           ├── ConsumerGreetService.java
     │   │                           └── RibbonConsumerApplication.java
     │   └── resources
     │       └── application.yml
@@ -430,8 +416,8 @@ __`ribbon-consumer`模块的目录结构如下__
 仅包含5个文件
 
 1. pom.xml
-1. CalculatorService.java
-1. ConsumerController.java
+1. ConsumerGreetController.java
+1. ConsumerGreetService.java
 1. RibbonConsumerApplication.java
 1. application.yml
 
@@ -443,9 +429,9 @@ __`ribbon-consumer`模块的目录结构如下__
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http:// maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>spring-cloud-cluster-eureka-based</artifactId>
         <groupId>org.liuyehcf.spring.cloud</groupId>
@@ -465,12 +451,6 @@ __`ribbon-consumer`模块的目录结构如下__
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -504,7 +484,7 @@ __`ribbon-consumer`模块的目录结构如下__
 </project>
 ```
 
-## 5.2 CalculatorService.java
+## 5.2 ConsumerGreetService.java
 
 该类实现服务间的调用，在`reqURL`中用服务名（CalculatorServer）代替服务方的ip:port信息，将地址映射交给`Eureka Server`来完成。可以看出来，这种方式比较繁琐，且不太友好，好比用`JDBC Connection`来进行数据库操作
 
@@ -521,18 +501,18 @@ import javax.annotation.Resource;
  * @date 2018/7/12
  */
 @Service
-class CalculatorService {
+class ConsumerGreetService {
     @Resource
     private RestTemplate restTemplate;
 
     String sayHi(String name) {
-        String reqURL = "http:// CalculatorServer/hi?name=" + name;
+        String reqURL = "http://GreetService/hi?name=" + name;
         return restTemplate.getForEntity(reqURL, String.class).getBody();
     }
 }
 ```
 
-## 5.3 ConsumerController.java
+## 5.3 ConsumerGreetController.java
 
 该模块对外提供的http服务，可以看到该服务仅仅对`eureka-provier`模块的http服务做了一层代理
 
@@ -551,13 +531,13 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping("/demo/ribbon")
-public class ConsumerController {
+public class ConsumerGreetController {
     @Resource
-    private CalculatorService calculatorService;
+    private ConsumerGreetService consumerGreetService;
 
     @RequestMapping("/sayHi")
     String sayHi(@RequestParam String name) {
-        return calculatorService.sayHi(name);
+        return consumerGreetService.sayHi(name);
     }
 }
 ```
@@ -616,7 +596,7 @@ eureka:
     healthcheck:
       enabled: true
     serviceUrl:
-      defaultZone: http:// 127.0.0.1:1100/eureka/
+      defaultZone: http://127.0.0.1:1100/eureka/
 ```
 
 # 6 Feign-Consumer
@@ -640,18 +620,19 @@ __`feign-consumer`模块的目录结构如下__
     │   │               └── cloud
     │   │                   └── feign
     │   │                       └── consumer
-    │   │                           ├── CalculatorService.java
-    │   │                           ├── ConsumerController.java
+    │   │                           ├── ConsumerGreetController.java
+    │   │                           ├── ConsumerGreetService.java
     │   │                           └── FeignConsumerApplication.java
     │   └── resources
     │       └── application.yml
+
 ```
 
 仅包含5个文件
 
 1. pom.xml
-1. CalculatorService.java
-1. ConsumerController.java
+1. ConsumerGreetController.java
+1. ConsumerGreetService.java
 1. FeignConsumerApplication.java
 1. application.yml
 
@@ -663,9 +644,9 @@ __`feign-consumer`模块的目录结构如下__
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http:// maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>spring-cloud-cluster-eureka-based</artifactId>
         <groupId>org.liuyehcf.spring.cloud</groupId>
@@ -683,12 +664,6 @@ __`feign-consumer`模块的目录结构如下__
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -722,7 +697,7 @@ __`feign-consumer`模块的目录结构如下__
 </project>
 ```
 
-## 6.2 CalculatorService.java
+## 6.2 ConsumerGreetService.java
 
 在`Feign`方式下，我们仅仅利用注解来标记接口（声明式地编程），就能够确定服务消费方与服务提供方的绑定关系，十分简洁高效
 
@@ -742,14 +717,14 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author hechenfeng
  * @date 2018/7/12
  */
-@FeignClient(value = "CalculatorServer")
-interface CalculatorService {
+@FeignClient(value = "GreetService")
+interface ConsumerGreetService {
     @RequestMapping(value = "/hi", method = RequestMethod.GET)
     String sayHi(@RequestParam("name") String name);
 }
 ```
 
-## 6.3 ConsumerController.java
+## 6.3 ConsumerGreetController.java
 
 该模块对外提供的http服务，可以看到该服务仅仅对eureka-provier模块的http服务做了一层代理
 
@@ -768,13 +743,13 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping("/demo/feign")
-public class ConsumerController {
+public class ConsumerGreetController {
     @Resource
-    private CalculatorService calculatorService;
+    private ConsumerGreetService consumerGreetService;
 
     @RequestMapping("/sayHi")
     String sayHi(@RequestParam String name) {
-        return calculatorService.sayHi(name);
+        return consumerGreetService.sayHi(name);
     }
 }
 ```
@@ -804,7 +779,6 @@ public class FeignConsumerApplication {
         SpringApplication.run(FeignConsumerApplication.class, args);
     }
 }
-
 ```
 
 ## 6.5 application.yml
@@ -827,7 +801,7 @@ eureka:
     healthcheck:
       enabled: true
     serviceUrl:
-      defaultZone: http:// 127.0.0.1:1100/eureka/
+      defaultZone: http://127.0.0.1:1100/eureka/
 ```
 
 # 7 `config-server`
@@ -867,9 +841,9 @@ __`config-server`模块的目录结构如下__
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http:// maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>spring-cloud-cluster-eureka-based</artifactId>
         <groupId>org.liuyehcf.spring.cloud</groupId>
@@ -888,12 +862,6 @@ __`config-server`模块的目录结构如下__
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-config-server</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -959,7 +927,7 @@ spring:
     config:
       server:
         git:
-          uri: https:// github.com/liuyehcf/spring-cloud-config-demo   # 配置git仓库的地址
+          uri: https://github.com/liuyehcf/spring-cloud-config-demo   # 配置git仓库的地址
           searchPaths: config-repo                                    # git仓库下的相对地址（多个则用半角逗号分隔）
           # username: username                                        # 只有private的项目才需配置用户名和密码
           # password: password                                        # 只有private的项目才需配置用户名和密码
@@ -974,7 +942,7 @@ eureka:
     healthcheck:
       enabled: true
     serviceUrl:
-      defaultZone: http:// 127.0.0.1:1100/eureka/
+      defaultZone: http://127.0.0.1:1100/eureka/
 ```
 
 应用启动后，可以访问如下地址
@@ -1039,9 +1007,9 @@ __`config-client`模块的目录结构如下__
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http:// maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>spring-cloud-cluster-eureka-based</artifactId>
         <groupId>org.liuyehcf.spring.cloud</groupId>
@@ -1066,12 +1034,6 @@ __`config-client`模块的目录结构如下__
             <!-- 这个依赖虽然没有显式用到，但是会在占位符注入时起作用 -->
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -1142,7 +1104,6 @@ public class ConfigClientApplication {
         return this.description;
     }
 }
-
 ```
 
 ## 8.3 application.yml
@@ -1184,7 +1145,7 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http:// 127.0.0.1:1100/eureka/
+      defaultZone: http://127.0.0.1:1100/eureka/
 ```
 
 # 9 参考
