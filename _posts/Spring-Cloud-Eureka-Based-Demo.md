@@ -1,5 +1,5 @@
 ---
-title: Spring-Cloud-Demo
+title: Spring-Cloud-Eureka-Based-Demo
 date: 2018-07-11 19:02:57
 tags: 
 - 原创
@@ -15,26 +15,15 @@ __阅读更多__
 
 # 1 Overview
 
-## 1.1 Feature
+{% post_link Spring-Cloud-Overview %}
 
-__Spring-Cloud集成如下功能__
+本篇博客以`Eureka`作为注册中心搭建一个Spirng-Cloud集群（据最新消息，Eureka已于`2018-07-12`闭源）
 
-1. 分布式配置
-1. 服务注册与发现
-1. 路由
-1. 服务间调用
-1. 负载均衡
-1. 分布式锁
-1. master选举
-1. 分布式消息
-
-## 1.2 Eureka
-
-Eureka本质上是一个非持久化配置中心，用于服务的注册与发现。当一个应用A要向外提供服务时，需要向Eureka Server进行注册，上报应用相关的地址信息（例如ip:port）以及服务名称（例如，应用A设定的服务名称为`serviceA`）。当另一个应用B需要使用A提供的服务时，只需要向Eureka Server查询指定服务所对应的地址信息即可
+Spring-Cloud对注册中心这一模块做了抽象，其实现不局限于`Eureka`，还包括`Zookeeper`等。以`Zookeeper`为注册中心的Demo可以参考{% post_link Spring-Cloud-Zookeeper-Based-Demo %}
 
 # 2 Demo概览
 
-__本Demo工程（`spring-cloud`）包含了如下几个子模块__
+__本Demo工程（`spring-cloud-cluster-eureka-based`）包含了如下几个子模块__
 
 1. `eureka-server`：服务注册/发现的配置中心
 1. `eureka-provider`：服务提供方
@@ -43,7 +32,7 @@ __本Demo工程（`spring-cloud`）包含了如下几个子模块__
 1. `config-server`：应用配置服务方
 1. `config-client`：应用配置消费方
 
-`spring-cloud` Deom工程的的pom文件如下
+`spring-cloud-cluster-eureka-based` Deom工程的的pom文件如下
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -104,8 +93,6 @@ __`eureka-server`模块的目录结构如下__
     │       └── application.yml
 ```
 
-仅包含3个文件
-
 1. pom.xml
 1. EurekaServerApplication.java
 1. application.yml
@@ -114,7 +101,9 @@ __`eureka-server`模块的目录结构如下__
 
 在`<dependencyManagement>`中引入Spring-Boot和Spring-Cloud相关依赖
 
-在`<dependencies>`中引入`spring-cloud-starter-netflix-eureka-server`依赖即可
+在`<dependencies>`中引入如下依赖
+
+1. `org.springframework.cloud:spring-cloud-starter-netflix-eureka-server`
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -175,7 +164,7 @@ __`eureka-server`模块的目录结构如下__
 
 ## 3.2 EurekaServerApplication.java
 
-`@EnableEurekaServer`注解表示当前应用作为Eureka的服务端，即配置中心（configServer）
+`@EnableEurekaServer`注解表示当前应用作为Eureka的服务端，即注册中心（RegisterCenter）
 
 ```Java
 package org.liuyehcf.spring.cloud.eureka.server;
@@ -220,6 +209,10 @@ eureka:
       defaultZone: http://127.0.0.1:${server.port}/eureka/
 ```
 
+## 3.4 Test
+
+启动后，访问[http://localhost:1100/](http://localhost:1100/)就可以看到注册中心的控制台页面
+
 # 4 Eureka-Provider
 
 __`eureka-provider`模块的目录结构如下__
@@ -243,8 +236,6 @@ __`eureka-provider`模块的目录结构如下__
 
 ```
 
-仅包含4个文件
-
 1. pom.xml
 1. EurekaProviderApplication.java
 1. ProviderGreetController.java
@@ -254,7 +245,9 @@ __`eureka-provider`模块的目录结构如下__
 
 在`<dependencyManagement>`中引入Spring-Boot和Spring-Cloud相关依赖
 
-在`<dependencies>`中引入`spring-cloud-starter-netflix-eureka-server`依赖即可
+在`<dependencies>`中引入如下依赖
+
+1. `org.springframework.cloud:spring-cloud-starter-netflix-eureka-server`
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -369,6 +362,9 @@ public class ProviderGreetController {
 
 ## 4.4 application.yml
 
+1. `Spring Cloud`默认将`spring.application.name`作为`serviceId`
+1. 必须知道注册中心的地址
+
 ```yml
 server:
   port: 1110
@@ -382,6 +378,10 @@ eureka:
     serviceUrl:
       defaultZone: http://127.0.0.1:1100/eureka/  # 指定服务注册中心的地址
 ```
+
+## 4.5 Test
+
+启动后，访问[http://localhost:1100/](http://localhost:1100/)就可以在注册中心的控制台页面找到当前节点的信息
 
 # 5 Ribbon-Consumer
 
@@ -413,8 +413,6 @@ __`ribbon-consumer`模块的目录结构如下__
     │       └── application.yml
 ```
 
-仅包含5个文件
-
 1. pom.xml
 1. ConsumerGreetController.java
 1. ConsumerGreetService.java
@@ -425,7 +423,9 @@ __`ribbon-consumer`模块的目录结构如下__
 
 在`<dependencyManagement>`中引入Spring-Boot和Spring-Cloud相关依赖
 
-在`<dependencies>`中引入`spring-cloud-starter-netflix-eureka-server`依赖即可
+在`<dependencies>`中引入如下依赖
+
+1. `org.springframework.cloud:spring-cloud-starter-netflix-eureka-server`
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -484,35 +484,7 @@ __`ribbon-consumer`模块的目录结构如下__
 </project>
 ```
 
-## 5.2 ConsumerGreetService.java
-
-该类实现服务间的调用，在`reqURL`中用服务名（CalculatorServer）代替服务方的ip:port信息，将地址映射交给`Eureka Server`来完成。可以看出来，这种方式比较繁琐，且不太友好，好比用`JDBC Connection`来进行数据库操作
-
-```Java
-package org.liuyehcf.spring.cloud.ribbon.consumer;
-
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import javax.annotation.Resource;
-
-/**
- * @author hechenfeng
- * @date 2018/7/12
- */
-@Service
-class ConsumerGreetService {
-    @Resource
-    private RestTemplate restTemplate;
-
-    String sayHi(String name) {
-        String reqURL = "http://GreetService/hi?name=" + name;
-        return restTemplate.getForEntity(reqURL, String.class).getBody();
-    }
-}
-```
-
-## 5.3 ConsumerGreetController.java
+## 5.2 ConsumerGreetController.java
 
 该模块对外提供的http服务，可以看到该服务仅仅对`eureka-provier`模块的http服务做了一层代理
 
@@ -538,6 +510,34 @@ public class ConsumerGreetController {
     @RequestMapping("/sayHi")
     String sayHi(@RequestParam String name) {
         return consumerGreetService.sayHi(name);
+    }
+}
+```
+
+## 5.3 ConsumerGreetService.java
+
+该类实现服务间的调用，在`reqURL`中用服务名（GreetService）代替服务方的ip:port信息，将地址映射交给`Eureka Server`来完成。可以看出来，这种方式比较繁琐，且不太友好，好比用`JDBC Connection`来进行数据库操作
+
+```Java
+package org.liuyehcf.spring.cloud.ribbon.consumer;
+
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import javax.annotation.Resource;
+
+/**
+ * @author hechenfeng
+ * @date 2018/7/12
+ */
+@Service
+class ConsumerGreetService {
+    @Resource
+    private RestTemplate restTemplate;
+
+    String sayHi(String name) {
+        String reqURL = "http://GreetService/hi?name=" + name;
+        return restTemplate.getForEntity(reqURL, String.class).getBody();
     }
 }
 ```
@@ -578,6 +578,9 @@ public class RibbonConsumerApplication {
 
 ## 5.5 application.yml
 
+1. `Spring Cloud`默认将`spring.application.name`作为`serviceId`
+1. 必须知道注册中心的地址
+
 ```yml
 server:
   port: 1120
@@ -599,9 +602,15 @@ eureka:
       defaultZone: http://127.0.0.1:1100/eureka/
 ```
 
+## 5.6 Test
+
+启动后，访问[http://localhost:1100/](http://localhost:1100/)就可以在注册中心的控制台页面找到当前节点的信息
+
+同时，访问[http://localhost:1120/demo/ribbon/sayHi?name=strange](http://localhost:1120/demo/ribbon/sayHi?name=strange)可以看到提示信息
+
 # 6 Feign-Consumer
 
-`Feign`是一个声明式的伪Http客户端，它使得写Http客户端变得更简单。使用`Feign`，只需要创建一个接口并注解。它具有可插拔的注解特性，可使用`Feign` 注解和JAX-RS注解。`Feign`支持可插拔的编码器和解码器。`Feign`默认集成了`Ribbon`，并和Eureka结合，默认实现了负载均衡的效果
+`Feign`是一个声明式的伪Http客户端，它使得写Http客户端变得更简单。使用`Feign`，只需要创建一个接口并注解。它具有可插拔的注解特性，可使用`Feign` 注解和JAX-RS注解。`Feign`支持可插拔的编码器和解码器。`Feign`默认集成了`Ribbon`，并和`Eureka`结合，默认实现了负载均衡的效果
 
 * __`Feign`采用的是基于接口的注解__
 * __`Feign`整合了`Ribbon`__
@@ -628,8 +637,6 @@ __`feign-consumer`模块的目录结构如下__
 
 ```
 
-仅包含5个文件
-
 1. pom.xml
 1. ConsumerGreetController.java
 1. ConsumerGreetService.java
@@ -640,7 +647,10 @@ __`feign-consumer`模块的目录结构如下__
 
 在`<dependencyManagement>`中引入Spring-Boot和Spring-Cloud相关依赖
 
-在`<dependencies>`中引入`spring-cloud-starter-netflix-eureka-server`以及`spring-cloud-starter-openfeign`依赖即可
+在`<dependencies>`中引入如下依赖
+
+1. `org.springframework.cloud:spring-cloud-starter-netflix-eureka-server`
+1. `org.springframework.cloud:spring-cloud-starter-openfeign`
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -697,36 +707,9 @@ __`feign-consumer`模块的目录结构如下__
 </project>
 ```
 
-## 6.2 ConsumerGreetService.java
+## 6.2 ConsumerGreetController.java
 
-在`Feign`方式下，我们仅仅利用注解来标记接口（声明式地编程），就能够确定服务消费方与服务提供方的绑定关系，十分简洁高效
-
-* 其中，`@FeignClient`注解的value属性指的是服务提供方的服务名称
-* `@RequestMapping`注解的value属性表示的是服务提供方的方法路由路径
-* 方法参数以及返回值可以利用http相关注解进行标记，例如`@RequestParam`、`@RequestBody`、`@PathVariable`、`@ResultBody`等
-
-```Java
-package org.liuyehcf.spring.cloud.feign.consumer;
-
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-
-/**
- * @author hechenfeng
- * @date 2018/7/12
- */
-@FeignClient(value = "GreetService")
-interface ConsumerGreetService {
-    @RequestMapping(value = "/hi", method = RequestMethod.GET)
-    String sayHi(@RequestParam("name") String name);
-}
-```
-
-## 6.3 ConsumerGreetController.java
-
-该模块对外提供的http服务，可以看到该服务仅仅对eureka-provier模块的http服务做了一层代理
+该模块对外提供的http服务，可以看到该服务仅仅对`eureka-provier`模块的http服务做了一层代理
 
 ```Java
 package org.liuyehcf.spring.cloud.feign.consumer;
@@ -751,6 +734,33 @@ public class ConsumerGreetController {
     String sayHi(@RequestParam String name) {
         return consumerGreetService.sayHi(name);
     }
+}
+```
+
+## 6.3 ConsumerGreetService.java
+
+在`Feign`方式下，我们仅仅利用注解来标记接口（声明式地编程），就能够确定服务消费方与服务提供方的绑定关系，十分简洁高效
+
+* 其中，`@FeignClient`注解的value属性指的是服务提供方的服务名称
+* `@RequestMapping`注解的value属性表示的是服务提供方的方法路由路径
+* 方法参数以及返回值可以利用http相关注解进行标记，例如`@RequestParam`、`@RequestBody`、`@PathVariable`、`@ResultBody`等
+
+```Java
+package org.liuyehcf.spring.cloud.feign.consumer;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+/**
+ * @author hechenfeng
+ * @date 2018/7/12
+ */
+@FeignClient(value = "GreetService")
+interface ConsumerGreetService {
+    @RequestMapping(value = "/hi", method = RequestMethod.GET)
+    String sayHi(@RequestParam("name") String name);
 }
 ```
 
@@ -783,6 +793,9 @@ public class FeignConsumerApplication {
 
 ## 6.5 application.yml
 
+1. `Spring Cloud`默认将`spring.application.name`作为`serviceId`
+1. 必须知道注册中心的地址
+
 ```yml
 server:
   port: 1130
@@ -804,7 +817,13 @@ eureka:
       defaultZone: http://127.0.0.1:1100/eureka/
 ```
 
-# 7 `config-server`
+## 6.6 Test
+
+启动后，访问[http://localhost:1100/](http://localhost:1100/)就可以在注册中心的控制台页面找到当前节点的信息
+
+同时，访问[http://localhost:1130/demo/feign/sayHi?name=strange](http://localhost:1130/demo/feign/sayHi?name=strange)可以看到提示信息
+
+# 7 Config-Server
 
 __`config-server`模块的目录结构如下__
 
@@ -825,8 +844,6 @@ __`config-server`模块的目录结构如下__
     │       └── application.yml
 ```
 
-仅包含3个文件
-
 1. pom.xml
 1. ConfigServerApplication.java
 1. application.yml
@@ -837,7 +854,10 @@ __`config-server`模块的目录结构如下__
 
 在`<dependencyManagement>`中引入Spring-Boot和Spring-Cloud相关依赖
 
-在`<dependencies>`中引入`spring-cloud-starter-netflix-eureka-server`以及`spring-cloud-config-server`依赖即可
+在`<dependencies>`中引入如下依赖
+
+1. `org.springframework.cloud:spring-cloud-starter-netflix-eureka-server`
+1. `org.springframework.cloud:spring-cloud-config-server`
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -916,6 +936,10 @@ public class ConfigServerApplication {
 
 ## 7.3 application.yml
 
+1. `Spring Cloud`默认将`spring.application.name`作为`serviceId`
+1. 必须知道注册中心的地址
+1. 由于需要从远程git仓库获取配置信息，因此需要配置git仓库的相关元数据
+
 ```yml
 server:
   port: 1140
@@ -945,7 +969,11 @@ eureka:
       defaultZone: http://127.0.0.1:1100/eureka/
 ```
 
-应用启动后，可以访问如下地址
+## 7.4 Test
+
+启动后，访问[http://localhost:1100/](http://localhost:1100/)就可以在注册中心的控制台页面找到当前节点的信息
+
+同时，访问以下URL，可以获取配置信息
 
 * [http://localhost:1140/cloud.config.demo-dev.properties](http://localhost:1140/cloud.config.demo-dev.properties)
 * [http://localhost:1140/cloud.config.demo-dev.yml](http://localhost:1140/cloud.config.demo-dev.yml)
@@ -953,6 +981,7 @@ eureka:
 * [http://localhost:1140/master/cloud.config.demo-dev.yml](http://localhost:1140/master/cloud.config.demo-dev.yml)
 * [http://localhost:1140/temp/cloud.config.demo-dev.properties](http://localhost:1140/temp/cloud.config.demo-dev.properties)
 * [http://localhost:1140/temp/cloud.config.demo-dev.yml](http://localhost:1140/temp/cloud.config.demo-dev.yml)
+* 其中，`master`和`temp`是[git](https://github.com/liuyehcf/spring-cloud-config-demo)仓库的两个分支
 
 __HTTP URL与Resource的对应关系如下，其中__
 
@@ -968,7 +997,7 @@ __HTTP URL与Resource的对应关系如下，其中__
 /{label}/{application}-{profile}.properties
 ```
 
-# 8 `config-client`
+# 8 Config-Client
 
 __`config-client`模块的目录结构如下__
 
@@ -990,8 +1019,6 @@ __`config-client`模块的目录结构如下__
     │       └── bootstrap.yml
 ```
 
-仅包含4个文件
-
 1. pom.xml
 1. ConfigClientApplication.java
 1. application.yml
@@ -1003,7 +1030,10 @@ __`config-client`模块的目录结构如下__
 
 在`<dependencyManagement>`中引入Spring-Boot和Spring-Cloud相关依赖
 
-在`<dependencies>`中引入`spring-cloud-starter-netflix-eureka-server`以及`spring-cloud-config-server`依赖即可
+在`<dependencies>`中引入如下依赖
+
+1. `org.springframework.cloud:spring-cloud-starter-netflix-eureka-server`
+1. `org.springframework.cloud:spring-cloud-starter-config`
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -1147,6 +1177,15 @@ eureka:
     serviceUrl:
       defaultZone: http://127.0.0.1:1100/eureka/
 ```
+
+## 8.5 Test
+
+启动后，访问[http://localhost:1100/](http://localhost:1100/)就可以在注册中心的控制台页面找到当前节点的信息
+
+同时，访问如下URL，可以看到成功从`config-server`获取了配置信息
+
+* [http://localhost:1150/demo/config/getHost](http://localhost:1150/demo/config/getHost)
+* [http://localhost:1150/demo/config/getDescription](http://localhost:1150/demo/config/getDescription)
 
 # 9 参考
 
