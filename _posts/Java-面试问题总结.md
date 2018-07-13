@@ -1138,27 +1138,27 @@ public class Solution {
 1. 分布式存储
     > {% post_link 分布式存储 %}
 
-1. zookeeper
-    > 1. {% post_link zookeeper-概论 %}
-    > 1. {% post_link zookeeper-基础 %}
-    > 1. {% post_link zookeeper-原理 %}
-    > 1. {% post_link zookeeper-应用场景 %}
+1. Zookeeper
+    > 1. {% post_link Zookeeper-概论 %}
+    > 1. {% post_link Zookeeper-基础 %}
+    > 1. {% post_link Zookeeper-原理 %}
+    > 1. {% post_link Zookeeper-应用场景 %}
     > 1. {% post_link Paxos算法 %}
 
-1. zookeeper watch机制
+1. Zookeeper watch机制
     > http://blog.csdn.net/z69183787/article/details/53023578
 
-1. zookeeper的用途
-    > zookeeper是注册中心，提供目录和节点服务，watch机制
+1. Zookeeper的用途
+    > Zookeeper是注册中心，提供目录和节点服务，watch机制
     > http://blog.csdn.net/tycoon1988/article/details/38866395
 
-1. zookeeper选举原理
+1. Zookeeper选举原理
     > ZAB协议，paxox算法{% post_link Paxos算法 %}
 
-1. redis/zookeeper节点宕机如何处理
+1. redis/Zookeeper节点宕机如何处理
     > 利用一致性协议进行一次master的选举
 
-1. Dubbo和zookeeper的联系与区别
+1. Dubbo和Zookeeper的联系与区别
     > http://blog.csdn.net/daiqinge/article/details/51282874
 
 1. Dubbo的底层实现原理和机制

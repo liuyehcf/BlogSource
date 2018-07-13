@@ -52,7 +52,7 @@ __本Demo工程（`spring-cloud`）包含了如下几个子模块__
          xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <groupId>org.liuyehcf.spring.cloud</groupId>
-    <artifactId>spring.cloud</artifactId>
+    <artifactId>spring-cloud-cluster-eureka-based</artifactId>
     <version>1.0-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
 
@@ -63,6 +63,8 @@ __本Demo工程（`spring-cloud`）包含了如下几个子模块__
         <module>eureka-provider</module>
         <module>feign-consumer</module>
         <module>ribbon-consumer</module>
+        <module>config-server</module>
+        <module>config-client</module>
     </modules>
 
     <build>
@@ -120,7 +122,7 @@ __`eureka-server`模块的目录结构如下__
          xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>spring.cloud</artifactId>
+        <artifactId>spring-cloud-cluster-eureka-based</artifactId>
         <groupId>org.liuyehcf.spring.cloud</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
@@ -266,7 +268,7 @@ __`eureka-provider`模块的目录结构如下__
          xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>spring.cloud</artifactId>
+        <artifactId>spring-cloud-cluster-eureka-based</artifactId>
         <groupId>org.liuyehcf.spring.cloud</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
@@ -445,7 +447,7 @@ __`ribbon-consumer`模块的目录结构如下__
          xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>spring.cloud</artifactId>
+        <artifactId>spring-cloud-cluster-eureka-based</artifactId>
         <groupId>org.liuyehcf.spring.cloud</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
@@ -665,7 +667,7 @@ __`feign-consumer`模块的目录结构如下__
          xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>spring.cloud</artifactId>
+        <artifactId>spring-cloud-cluster-eureka-based</artifactId>
         <groupId>org.liuyehcf.spring.cloud</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
@@ -869,7 +871,7 @@ __`config-server`模块的目录结构如下__
          xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>spring.cloud</artifactId>
+        <artifactId>spring-cloud-cluster-eureka-based</artifactId>
         <groupId>org.liuyehcf.spring.cloud</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
@@ -1041,7 +1043,7 @@ __`config-client`模块的目录结构如下__
          xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>spring.cloud</artifactId>
+        <artifactId>spring-cloud-cluster-eureka-based</artifactId>
         <groupId>org.liuyehcf.spring.cloud</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
@@ -1187,5 +1189,6 @@ eureka:
 
 # 9 参考
 
+* [Spring Cloud官方文档](http://cloud.spring.io/spring-cloud-static/Finchley.RELEASE/single/spring-cloud.html)
 * [史上最简单的 SpringCloud 教程 | 终章](https://blog.csdn.net/forezp/article/details/70148833)
 * [SpringCloud-Demo](https://jadyer.cn/category/#SpringCloud)

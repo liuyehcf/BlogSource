@@ -14,7 +14,7 @@ __阅读更多__
 
 # 1 前言
 
-Paxos算法是莱斯利·兰伯特（英语：Leslie Lamport，LaTeX中的“La”）于1990年提出的一种基于消息传递且具有高度容错特性的一致性算法。Paxos算法作为zookeeper中的leader选举算法
+Paxos算法是莱斯利·兰伯特（英语：Leslie Lamport，LaTeX中的“La”）于1990年提出的一种基于消息传递且具有高度容错特性的一致性算法。Paxos算法作为Zookeeper中的leader选举算法
 
 # 2 问题和假设
 
