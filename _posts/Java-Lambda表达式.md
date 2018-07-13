@@ -170,7 +170,7 @@ public interface Stream<T> extends BaseStream<T, Stream<T>> {
 
     Optional<T> findAny();
 
-    // Static factories
+    //Static factories
     public static<T> Builder<T> builder() {
         return new Streams.StreamBuilderImpl<>();
     }
@@ -184,7 +184,7 @@ public interface Stream<T> extends BaseStream<T, Stream<T>> {
     }
 
     @SafeVarargs
-    @SuppressWarnings("varargs") // Creating a stream from an array is safe
+    @SuppressWarnings("varargs") //Creating a stream from an array is safe
     public static<T> Stream<T> of(T... values) {
         return Arrays.stream(values);
     }

@@ -199,7 +199,7 @@ source:test-jar-no-fork
     build, and is suitable for attaching to the build lifecycle.
   Implementation: org.apache.maven.plugin.source.TestSourceJarNoForkMojo
   Language: java
-  Bound to phase: package  // 可以看到，默认绑定到package
+  Bound to phase: package  //可以看到，默认绑定到package
 ...
 ```
 

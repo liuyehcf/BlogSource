@@ -58,18 +58,18 @@ __性质__
 1. 要分裂的节点的父节点必须是非满节点
 
 ```
-B-TREE-SPLIT-CHILD(x,i)// x.ci是满节点，x是非满节点
-z=ALLOCATE-NODE()// z是由y的一半分裂得到
+B-TREE-SPLIT-CHILD(x,i)//x.ci是满节点，x是非满节点
+z=ALLOCATE-NODE()//z是由y的一半分裂得到
 y=x.c[i]
 z.leaf=y.leaf
 z.n=t-1
 for j=1 to t-1
-    z.key[j]=y.key[j+t] // 将y中[t+1…2t-1]总共t-1个关键字复制到节点z中作为[1…t-1]的关键字，其中第t个关键字会提取出来作为x节点的关键字
-if not y.leaf// 如果y不是叶节点，那么y还有t个指针需要复制到z中
+    z.key[j]=y.key[j+t] //将y中[t+1…2t-1]总共t-1个关键字复制到节点z中作为[1…t-1]的关键字，其中第t个关键字会提取出来作为x节点的关键字
+if not y.leaf//如果y不是叶节点，那么y还有t个指针需要复制到z中
     for j=1 to t
         z.c[j]=y.c[j+t]
 y.n=t-1
-for j=x.n+1 downto i+1// 指针y和z必然是相邻的，并且他们所夹的关键字就是原来y中第t个
+for j=x.n+1 downto i+1//指针y和z必然是相邻的，并且他们所夹的关键字就是原来y中第t个
     x.c[j+1]=x.c[j]
 x.c[i+1]=z
 for j=x.n downto i
@@ -93,7 +93,7 @@ B-TREE-MERGE(x,i,y,z)
 y.n=2t-1
 for j=t+1 to 2t-1
     y.key[j]=z.key[j-t]
-y.key[t]=x.key[i] // the key from node x merge to node y as the tth key
+y.key[t]=x.key[i] //the key from node x merge to node y as the tth key
 if not y.leaf
     for j=t+1 to 2t
         y.c[j]=z.c[j-t]
@@ -173,12 +173,12 @@ B树的插入操作从本质上来说是自底向上的
 ```
 B-TREE-INSERT(T,k)
 r=T.root
-if r.n==2t-1 // 需要处理根节点，若满了，则进行一次分裂，这是树增高的唯一方式
-    s=ALLOCATE-NODE()// 分配一个节点作为根节点
+if r.n==2t-1 //需要处理根节点，若满了，则进行一次分裂，这是树增高的唯一方式
+    s=ALLOCATE-NODE()//分配一个节点作为根节点
     T.root=s
-    s.leaf=FLASE// 显然由分裂生成的根必然是内部节点
+    s.leaf=FLASE//显然由分裂生成的根必然是内部节点
     s.n=0
-    s.c[1]=r// 之前的根节点作为新根节点的第一个孩子
+    s.c[1]=r//之前的根节点作为新根节点的第一个孩子
     B-TREE-SPLIT-CHILD(s,1)
     B-TREE-INSERT-NONFULL(s,k)
 else B-TREE-INSERT-NONFULL(r,k)
@@ -191,7 +191,7 @@ else B-TREE-INSERT-NONFULL(r,k)
 ```
 B-TREE-INSERT-NONFULL(x,k)
 i=x.n
-if x.leaf // 如果是叶节点，保证是非满的，找到适当的位置插入即可
+if x.leaf //如果是叶节点，保证是非满的，找到适当的位置插入即可
     while i ≥1 and k<x.key[i]
         x.key[i+1]=x.key[i]
         i=i-1
@@ -200,11 +200,11 @@ if x.leaf // 如果是叶节点，保证是非满的，找到适当的位置插�
     DISK-WRITE(x)
 else while i ≥ 1 and k<x.key[i]
         i=i-1
-    i=i+1// 转到对应的指针坐标
+    i=i+1//转到对应的指针坐标
     DISK-READ(x.c[i])
     if x.c[i.n]==2t-1
         B-TREE-SPLIT-CHILD(x,i)
-        if k>x.key[i]  // 原来在i位置的关键字现在在i+1位置上，i位置上是y.key[t]
+        if k>x.key[i]  //原来在i位置的关键字现在在i+1位置上，i位置上是y.key[t]
             i=i+1
     B-TREE-INSERT-NONFULL(x.c[i],k) 
 ```
@@ -230,7 +230,7 @@ B树的删除操作本质上来说是自底向上的
 根节点需要单独讨论
 
 ```
-B-TREE-DELETE(T,k) // 以下都是delete会用到的函数
+B-TREE-DELETE(T,k) //以下都是delete会用到的函数
 r=T.root
 if r.n==1
     DISK-READ(r.c[1])
@@ -270,30 +270,30 @@ else
     if i ≤ x.n
         DISK-READ(x.c[i+1])
         z=x.c[i+1]
-    if i ≤ x.n and k==x.key[i]       // Cases 2
-        if y.n>t-1    // Cases 2a
+    if i ≤ x.n and k==x.key[i]       //Cases 2
+        if y.n>t-1    //Cases 2a
             k’=B-TREE-MIMIMUM(y)
             B-TREE-DELETE-NOTNONE(y,k’)
             x.key[i]=k’
-        elseif z.n>t-1  // Case 2b
+        elseif z.n>t-1  //Case 2b
             k’=B-TREE-MAXIMUM(z)
             B-TREE-DELETE-NOTNONE(z,k’)
             x.key[i]=k’
-        else B-TREE-MERGE-CHILD(x,i,y,z) // Cases 2c
+        else B-TREE-MERGE-CHILD(x,i,y,z) //Cases 2c
             B-TREE-DELETE-NOTNONE(y,k)
-    else   // Cases3
+    else   //Cases3
         if i>1
             DISK-READ(x.c[i-1])
             p=x.c[i-1]
         if y.n==t-1
-            if i>1 and p.n>t-1  // Cases 3a
+            if i>1 and p.n>t-1  //Cases 3a
                 B-TREE-SHIFT-TO-RIGHT-CHILD(x,i-1,p,y)
             elseif i ≤ x.n and z.n>t-1
                 B-TREE-SHIFT-TO-LEFT-CHILD(x,i,y,z)
-            elseif i>1  // Cases 3b
+            elseif i>1  //Cases 3b
                 B-TREE-MERGE-CHILD(x,i-1,p,y)
                 y=p
-            else B-TREE-MERGE-CHILD(x,i,y,z) // Cases 3c
+            else B-TREE-MERGE-CHILD(x,i,y,z) //Cases 3c
         B-TREE-DELETE-NOTNONE(y,k)
 ```
 
@@ -619,14 +619,14 @@ public class BTree {
             while (x.keys[i] <= k) {
                 i++;
             }
-            // i must less than x.n
+            //i must less than x.n
             return x.keys[i];
         } else {
             while (i < x.n && x.keys[i] <= k) {
                 i++;
             }
             if (k >= maximum(x.children[i])) {
-                // i couldn't equals x.n
+                //i couldn't equals x.n
                 return x.keys[i];
             } else {
                 return successor(x.children[i], k);
@@ -645,14 +645,14 @@ public class BTree {
             while (x.keys[i] >= k) {
                 i--;
             }
-            // i must no less than 0
+            //i must no less than 0
             return x.keys[i];
         } else {
             while (i >= 0 && x.keys[i] >= k) {
                 i--;
             }
             if (k <= minimum(x.children[i + 1])) {
-                // i must large than 0
+                //i must large than 0
                 return x.keys[i];
             } else {
                 return precursor(x.children[i + 1], k);
@@ -681,12 +681,12 @@ public class BTree {
 
             List<Integer> list = new ArrayList<Integer>(set);
             Collections.shuffle(list, random);
-            // 插入N个数据
+            //插入N个数据
             for (int i : list) {
                 bTree.insert(i);
             }
 
-            // 删除M个数据
+            //删除M个数据
             Collections.shuffle(list, random);
 
             for (int i = 0; i < M; i++) {
@@ -694,7 +694,7 @@ public class BTree {
                 bTree.delete(list.get(i));
             }
 
-            // 再插入M个数据
+            //再插入M个数据
             for (int i = 0; i < M; i++) {
                 int k = random.nextInt();
                 set.add(k);
@@ -704,7 +704,7 @@ public class BTree {
             list.addAll(set);
             Collections.shuffle(list, random);
 
-            // 再删除所有元素
+            //再删除所有元素
             for (int i : list) {
                 bTree.delete(i);
             }

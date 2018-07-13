@@ -26,9 +26,9 @@ __阅读更多__
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http:// maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -106,7 +106,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("org.liuyehcf.swagger")) // 包路径
+                .apis(RequestHandlerSelectors.basePackage("org.liuyehcf.swagger")) //包路径
                 .paths(PathSelectors.any())
                 .build();
     }
@@ -115,7 +115,7 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("Spring Boot - Swagger - Demo")
                 .description("THIS IS A SWAGGER DEMO")
-                .termsOfServiceUrl("http:// liuyehcf.github.io") // 这个不知道干嘛的
+                .termsOfServiceUrl("http://liuyehcf.github.io") //这个不知道干嘛的
                 .contact("liuye")
                 .version("1.0.0")
                 .build();

@@ -56,15 +56,15 @@ __阅读更多__
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http:// www.springframework.org/schema/beans"
-       xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance" xmlns:aop="http:// www.springframework.org/schema/aop"
-       xmlns:context="http:// www.springframework.org/schema/context"
-       xsi:schemaLocation="http:// www.springframework.org/schema/beans
-        http:// www.springframework.org/schema/beans/spring-beans.xsd
-        http:// www.springframework.org/schema/context
-        http:// www.springframework.org/schema/context/spring-context.xsd
-        http:// www.springframework.org/schema/aop
-        http:// www.springframework.org/schema/aop/spring-aop.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
     <!-- 配置扫描路径 -->
     <context:component-scan base-package="org.liuyehcf.spring.aop"/>
 
@@ -155,15 +155,15 @@ Spring会根据配置的匹配规则，__为匹配成功的bean创建代理__，
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http:// www.springframework.org/schema/beans"
-       xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance" xmlns:aop="http:// www.springframework.org/schema/aop"
-       xmlns:context="http:// www.springframework.org/schema/context"
-       xsi:schemaLocation="http:// www.springframework.org/schema/beans
-        http:// www.springframework.org/schema/beans/spring-beans.xsd
-        http:// www.springframework.org/schema/context
-        http:// www.springframework.org/schema/context/spring-context.xsd
-        http:// www.springframework.org/schema/aop
-        http:// www.springframework.org/schema/aop/spring-aop.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
     <!-- 配置扫描路径 -->
     <context:component-scan base-package="org.liuyehcf.spring.aop"/>
 

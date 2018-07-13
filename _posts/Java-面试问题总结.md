@@ -1324,7 +1324,7 @@ public class Solution {
     > 下面给出Java中的实现
 ```Java
         public int hashCode() {
-        // hash就是hash值，最开始是0，延迟初始化
+        //hash就是hash值，最开始是0，延迟初始化
         int h = hash;
         if (h == 0 && value.length > 0) {
             char val[] = value;

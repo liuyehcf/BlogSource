@@ -39,22 +39,22 @@ __阅读更多__
 通过代码构建SqlSessionFactory，需要自己构造Configuration对象，Configuration对象包含了一些基本的配置信息
 
 ```Java
-        // 构建数据库连接池
+        //构建数据库连接池
         PooledDataSource dataSource = new PooledDataSource();
         dataSource.setDriver("com.mysql.jdbc.Driver");
         dataSource.setUsername("root");
         dataSource.setPassword("learn");
 
-        // 构建数据库事务方式
+        //构建数据库事务方式
         TransactionFactory transactionFactory = new JdbcTransactionFactory();
 
-        // 创建数据库运行环境
+        //创建数据库运行环境
         Environment environment = new Environment("development", transactionFactory, dataSource);
 
-        // 构建Configuration对象
+        //构建Configuration对象
         Configuration configuration = new Configuration(environment);
-        configuration.getTypeAliasRegistry().registerAlias("role", Role.class); // 注册MyBatis上下文别名
-        configuration.addMapper(RoleMapper.class); // 加入一个映射器
+        configuration.getTypeAliasRegistry().registerAlias("role", Role.class); //注册MyBatis上下文别名
+        configuration.addMapper(RoleMapper.class); //加入一个映射器
 
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
 ```
@@ -64,8 +64,8 @@ __阅读更多__
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE configuration
-        PUBLIC "-// mybatis.org// DTD Config 3.0// EN"
-        "http:// mybatis.org/dtd/mybatis-3-config.dtd">
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
     <!-- 定义别名 -->
     <typeAliases>
@@ -81,7 +81,7 @@ __阅读更多__
             <!-- 配置数据库连接信息 -->
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql:// 127.0.0.1:3306/mybatis"/>
+                <property name="url" value="jdbc:mysql://127.0.0.1:3306/mybatis"/>
                 <property name="username" value="root"/>
                 <property name="password" value="learn"/>
             </dataSource>
@@ -115,18 +115,18 @@ SqlSession接口类似于一个JDBC中的Connection接口对象，我们需要�
 ```Java
         SqlSession sqlSession = null;
         try {
-            // 打开SqlSession会话
+            //打开SqlSession会话
             sqlSession = sqlSessionFactory.openSession();
 
-            // ...
-            // 这里执行一些SQL语句
-            // ...
+            //...
+            //这里执行一些SQL语句
+            //...
 
             sqlSession.commit();
         } catch (Exception ex) {
             System.err.println(ex.getMessage());
         } finally {
-            // 在finally中保证资源被顺利关闭
+            //在finally中保证资源被顺利关闭
             if (sqlSession != null) {
                 sqlSession.close();
             }
@@ -145,8 +145,8 @@ MyBatis配置XML文件的层次结构如下
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE configuration
-        PUBLIC "-// mybatis.org// DTD Config 3.0// EN"
-        "http:// mybatis.org/dtd/mybatis-3-config.dtd">
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
     <properties/> <!--属性-->
     <settings/> <!--设置-->
@@ -260,7 +260,7 @@ __我们可以通过@Alias自定义别名，如下：__
 ```Java
 @Alias("role")
 public class Role{
-    // some code
+    //some code
 }
 ```
 
@@ -286,7 +286,7 @@ __如果没有@Alias注解，MyBatis也会装载，默认的规则是：将首�
             <!-- 配置数据库连接信息 -->
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql:// 127.0.0.1:3306/mybatis"/>
+                <property name="url" value="jdbc:mysql://127.0.0.1:3306/mybatis"/>
                 <property name="username" value="root"/>
                 <property name="password" value="learn"/>
             </dataSource>
@@ -342,8 +342,8 @@ __用userMapper.xml引入映射器__
 
 ```xml
 <mappers>
-    <mapper url="file:// /var/mappers/com/learn/chapter3/mapper/userMapper.xml"/>
-    <mapper url="file:// /var/mappers/com/learn/chapter3/mapper/roleMapper.xml"/>
+    <mapper url="file:///var/mappers/com/learn/chapter3/mapper/userMapper.xml"/>
+    <mapper url="file:///var/mappers/com/learn/chapter3/mapper/roleMapper.xml"/>
 </mappers>
 ```
 
@@ -371,7 +371,7 @@ __示例：__
 ```xml
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-        <property name="url" value="jdbc:mysql:// 127.0.0.1:3306/mybatis"/>
+        <property name="url" value="jdbc:mysql://127.0.0.1:3306/mybatis"/>
         <property name="username" value="root"/>
         <property name="password" value="learn"/>
     </bean>
@@ -387,8 +387,8 @@ __MyBatis配置文件`sqlMapConfig.xml`如下__
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE configuration
-        PUBLIC "-// mybatis.org// DTD Config 3.0// EN"
-        "http:// mybatis.org/dtd/mybatis-3-config.dtd">
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 
     <settings>
@@ -443,7 +443,7 @@ __MyBatis配置文件`sqlMapConfig.xml`如下__
 
     private SqlSessionFactory sqlSessionFactory;
 
-    // EnvironmentAware requires spring 3.1
+    //EnvironmentAware requires spring 3.1
     private String environment = SqlSessionFactoryBean.class.getSimpleName();
 
     private boolean failFast;
@@ -460,7 +460,7 @@ __MyBatis配置文件`sqlMapConfig.xml`如下__
 
     private Class<?> typeAliasesSuperType;
 
-    // issue #19. No default provider.
+    //issue #19. No default provider.
     private DatabaseIdProvider databaseIdProvider;
 
     private Class<? extends VFS> vfs;

@@ -66,11 +66,11 @@ __请求行：由请求方法、URL和HTTP协议版本3个字段组成，它们�
 POST /search HTTP/1.1  
 Accept: image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, application/vnd.ms-excel, application/vnd.ms-powerpoint, 
 application/msword, application/x-silverlight, application/x-shockwave-flash, */*  
-Referer: <a href="http:// www.google.cn/">http:// www.google.cn/</a>  
+Referer: <a href="http://www.google.cn/">http://www.google.cn/</a>  
 Accept-Language: zh-cn  
 Accept-Encoding: gzip, deflate  
 User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; TheWorld)  
-Host: <a href="http:// www.google.cn">www.google.cn</a>  
+Host: <a href="http://www.google.cn">www.google.cn</a>  
 Connection: Keep-Alive  
 Cookie: PREF=ID=80a06da87be9ae3c:U=f7167333e2c3b714:NW=1:TM=1261551909:LM=1261551917:S=ybYcq2wpfefs4V9g; 
 NID=31=ojj8d-IygaEtSxLgaJmqSjVhCspkviJrB6omjamNrSm8lZhKy_yMfO2M4QMRKcH1g0iQv9u-2hfBW7bUFwVh7pGaRUb0RnHcJU37y-
@@ -142,7 +142,7 @@ HTTP/1.1 301 Moved Permanently
 Cache-Control: private, no-store, no-cache, must-revalidate, post-check=0,
 pre-check=0
 Expires: Sat, 01 Jan 2000 00:00:00 GMT
-Location: <a target=_blank href="http:// www.facebook.com/">HTTP:// www.facebook.com/</a>
+Location: <a target=_blank href="http://www.facebook.com/">http://www.facebook.com/</a>
 P3P: CP="DSP LAW"
 Pragma: no-cache
 Set-Cookie: made_write_conn=deleted; expires=Thu, 12-Feb-2009 05:09:50 GMT;

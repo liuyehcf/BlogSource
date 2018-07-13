@@ -249,10 +249,10 @@ public class Solution {
         TreeNode left = lowestCommonAncestor(root.left, p, q);
         TreeNode right = lowestCommonAncestor(root.right, p, q);
 
-        // p和q分别位于root的左右子树中，因此root是ancestor
+        //p和q分别位于root的左右子树中，因此root是ancestor
         if (left != null && right != null) return root;
 
-        // 否则left或right是ancestor
+        //否则left或right是ancestor
         return left == null ? right : left;
     }
 }

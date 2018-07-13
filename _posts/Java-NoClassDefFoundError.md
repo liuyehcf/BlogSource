@@ -22,13 +22,13 @@ package org.liuyehcf.error;
 public class NoClassDefFoundErrorDemo {
     public static void main(String[] args) {
         try {
-            Class.forName("org.liuyehcf.error.InitializeThrowError"); // (1)
+            Class.forName("org.liuyehcf.error.InitializeThrowError"); //(1)
         } catch (Throwable e) {
-            // 这里捕获到的是java.lang.ExceptionInInitializerError
+            //这里捕获到的是java.lang.ExceptionInInitializerError
             e.printStackTrace();
         }
 
-        System.out.println(InitializeThrowError.i); // (2)
+        System.out.println(InitializeThrowError.i); //(2)
 
     }
 }
@@ -69,9 +69,9 @@ __可以看到，异常是由JVM抛出，并且调用了一个Java实现的handl
 1. 执行语句3，JVM调用java代码
 
 ```Java
-    A a1 = new A();// (1)
-    A a2 = new A();// (2)
-    a2.func();// (3)
+    A a1 = new A();//(1)
+    A a2 = new A();//(2)
+    a2.func();//(3)
 ```
 
 # 2 NoClassDefFoundError与ClassNotFoundException

@@ -48,27 +48,27 @@ public class EchoServer {
     }
 
     public void run() throws Exception {
-        EventLoopGroup bossGroup = new NioEventLoopGroup(); // (1)
+        EventLoopGroup bossGroup = new NioEventLoopGroup(); //(1)
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
-            ServerBootstrap b = new ServerBootstrap(); // (2)
-            b.group(bossGroup, workerGroup) // (3)
-                    .channel(NioServerSocketChannel.class) // (4)
-                    .childHandler(new ChannelInitializer<SocketChannel>() { // (5)
+            ServerBootstrap b = new ServerBootstrap(); //(2)
+            b.group(bossGroup, workerGroup) //(3)
+                    .channel(NioServerSocketChannel.class) //(4)
+                    .childHandler(new ChannelInitializer<SocketChannel>() { //(5)
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(new EchoServerHandler());
                         }
                     })
-                    .option(ChannelOption.SO_BACKLOG, 128)          // (6)
-                    .childOption(ChannelOption.SO_KEEPALIVE, true); // (7)
+                    .option(ChannelOption.SO_BACKLOG, 128)          //(6)
+                    .childOption(ChannelOption.SO_KEEPALIVE, true); //(7)
 
-            // Bind and start to accept incoming connections.
-            ChannelFuture f = b.bind(port).sync(); // (8)
+            //Bind and start to accept incoming connections.
+            ChannelFuture f = b.bind(port).sync(); //(8)
 
-            // Wait until the server socket is closed.
-            // In this example, this does not happen, but you can do that to gracefully
-            // shut down your server.
+            //Wait until the server socket is closed.
+            //In this example, this does not happen, but you can do that to gracefully
+            //shut down your server.
             f.channel().closeFuture().sync();
         } finally {
             workerGroup.shutdownGracefully();
@@ -170,7 +170,7 @@ public class EchoServer {
             throw new IllegalStateException("channelFactory set already");
         }
 
-        // 绑定工厂对象
+        //绑定工厂对象
         this.channelFactory = channelFactory;
         return self();
     }
@@ -241,7 +241,7 @@ public class EchoServer {
     * `bind`方法位于`AbstractBootstrap`。该方法首先做一些校验工作，然后调用doBind方法
 ```Java
     public ChannelFuture bind(SocketAddress localAddress) {
-        // 在执行bind之前，首先进行一些校验工作
+        //在执行bind之前，首先进行一些校验工作
         validate();
         if (localAddress == null) {
             throw new NullPointerException("localAddress");
@@ -253,35 +253,35 @@ public class EchoServer {
     * `doBind`方法位于`AbstractBootstrap`。该方法创建Channel并注册，然后调用doBind0进行绑定操作
 ```Java
     private ChannelFuture doBind(final SocketAddress localAddress) {
-        // 初始化Channel，然后进行注册操作。其中注册操作是异步的，返回一个用于获取异步操作结果的ChannelFuture
+        //初始化Channel，然后进行注册操作。其中注册操作是异步的，返回一个用于获取异步操作结果的ChannelFuture
         final ChannelFuture regFuture = initAndRegister();
         final Channel channel = regFuture.channel();
         if (regFuture.cause() != null) {
             return regFuture;
         }
 
-        // 如果此时，register已经完成，那么在当前线程里面执行doBind0操作
+        //如果此时，register已经完成，那么在当前线程里面执行doBind0操作
         if (regFuture.isDone()) {
-            // At this point we know that the registration was complete and successful.
+            //At this point we know that the registration was complete and successful.
             ChannelPromise promise = channel.newPromise();
             doBind0(regFuture, channel, localAddress, promise);
             return promise;
         } 
-        // 此时，register尚未完成，那么设置一个监听器，当register完成时，执行doBind0操作
+        //此时，register尚未完成，那么设置一个监听器，当register完成时，执行doBind0操作
         else {
-            // Registration future is almost always fulfilled already, but just in case it's not.
+            //Registration future is almost always fulfilled already, but just in case it's not.
             final PendingRegistrationPromise promise = new PendingRegistrationPromise(channel);
             regFuture.addListener(new ChannelFutureListener() {
                 @Override
                 public void operationComplete(ChannelFuture future) throws Exception {
                     Throwable cause = future.cause();
                     if (cause != null) {
-                        // Registration on the EventLoop failed so fail the ChannelPromise directly to not cause an
-                        // IllegalStateException once we try to access the EventLoop of the Channel.
+                        //Registration on the EventLoop failed so fail the ChannelPromise directly to not cause an
+                        //IllegalStateException once we try to access the EventLoop of the Channel.
                         promise.setFailure(cause);
                     } else {
-                        // Registration was successful, so set the correct executor to use.
-                        // See https:// github.com/netty/netty/issues/2586
+                        //Registration was successful, so set the correct executor to use.
+                        //See https://github.com/netty/netty/issues/2586
                         promise.registered();
 
                         doBind0(regFuture, channel, localAddress, promise);
@@ -300,18 +300,18 @@ public class EchoServer {
         Channel channel = null;
         try {
             channel = channelFactory.newChannel();
-            // 注册操作
+            //注册操作
             init(channel);
         } catch (Throwable t) {
             if (channel != null) {
-                // channel can be null if newChannel crashed (eg SocketException("too many open files"))
+                //channel can be null if newChannel crashed (eg SocketException("too many open files"))
                 channel.unsafe().closeForcibly();
             }
-            // as the Channel is not registered yet we need to force the usage of the GlobalEventExecutor
+            //as the Channel is not registered yet we need to force the usage of the GlobalEventExecutor
             return new DefaultChannelPromise(channel, GlobalEventExecutor.INSTANCE).setFailure(t);
         }
 
-        // 异步的注册操作
+        //异步的注册操作
         ChannelFuture regFuture = config().group().register(channel);
         if (regFuture.cause() != null) {
             if (channel.isRegistered()) {
@@ -321,14 +321,14 @@ public class EchoServer {
             }
         }
 
-        // If we are here and the promise is not failed, it's one of the following cases:
-        // 1) If we attempted registration from the event loop, the registration has been completed at this point.
-        // i.e. It's safe to attempt bind() or connect() now because the channel has been registered.
-        // 2) If we attempted registration from the other thread, the registration request has been successfully
-        // added to the event loop's task queue for later execution.
-        // i.e. It's safe to attempt bind() or connect() now:
-        // because bind() or connect() will be executed *after* the scheduled registration task is executed
-        // because register(), bind(), and connect() are all bound to the same thread.
+        //If we are here and the promise is not failed, it's one of the following cases:
+        //1) If we attempted registration from the event loop, the registration has been completed at this point.
+        //i.e. It's safe to attempt bind() or connect() now because the channel has been registered.
+        //2) If we attempted registration from the other thread, the registration request has been successfully
+        //added to the event loop's task queue for later execution.
+        //i.e. It's safe to attempt bind() or connect() now:
+        //because bind() or connect() will be executed *after* the scheduled registration task is executed
+        //because register(), bind(), and connect() are all bound to the same thread.
 
         return regFuture;
     }
@@ -364,7 +364,7 @@ public class EchoServer {
              *  Use the {@link SelectorProvider} to open {@link SocketChannel} and so remove condition in
              *  {@link SelectorProvider#provider()} which is called by each ServerSocketChannel.open() otherwise.
              *
-             *  See <a href="https:// github.com/netty/netty/issues/2308">#2308</a>.
+             *  See <a href="https://github.com/netty/netty/issues/2308">#2308</a>.
              */
             return provider.openServerSocketChannel();
         } catch (IOException e) {
@@ -396,7 +396,7 @@ public class EchoServer {
         this.ch = ch;
         this.readInterestOp = readInterestOp;
         try {
-            // 设置为非阻塞模式
+            //设置为非阻塞模式
             ch.configureBlocking(false);
         } catch (IOException e) {
             try {
@@ -572,8 +572,8 @@ public class EchoServer {
 ```Java
        private void register0(ChannelPromise promise) {
             try {
-                // check if the channel is still open as it could be closed in the mean time when the register
-                // call was outside of the eventLoop
+                //check if the channel is still open as it could be closed in the mean time when the register
+                //call was outside of the eventLoop
                 if (!promise.setUncancellable() || !ensureOpen(promise)) {
                     return;
                 }
@@ -582,27 +582,27 @@ public class EchoServer {
                 neverRegistered = false;
                 registered = true;
 
-                // Ensure we call handlerAdded(...) before we actually notify the promise. This is needed as the
-                // user may already fire events through the pipeline in the ChannelFutureListener.
+                //Ensure we call handlerAdded(...) before we actually notify the promise. This is needed as the
+                //user may already fire events through the pipeline in the ChannelFutureListener.
                 pipeline.invokeHandlerAddedIfNeeded();
 
                 safeSetSuccess(promise);
                 pipeline.fireChannelRegistered();
-                // Only fire a channelActive if the channel has never been registered. This prevents firing
-                // multiple channel actives if the channel is deregistered and re-registered.
+                //Only fire a channelActive if the channel has never been registered. This prevents firing
+                //multiple channel actives if the channel is deregistered and re-registered.
                 if (isActive()) {
                     if (firstRegistration) {
                         pipeline.fireChannelActive();
                     } else if (config().isAutoRead()) {
-                        // This channel was registered before and autoRead() is set. This means we need to begin read
-                        // again so that we process inbound data.
-                        // 
-                        // See https:// github.com/netty/netty/issues/4805
+                        //This channel was registered before and autoRead() is set. This means we need to begin read
+                        //again so that we process inbound data.
+                        //
+                        //See https://github.com/netty/netty/issues/4805
                         beginRead();
                     }
                 }
             } catch (Throwable t) {
-                // Close the channel directly to avoid FD leak.
+                //Close the channel directly to avoid FD leak.
                 closeForcibly();
                 closeFuture.setClosed();
                 safeSetFailure(promise, t);
@@ -621,13 +621,13 @@ public class EchoServer {
                 return;
             } catch (CancelledKeyException e) {
                 if (!selected) {
-                    // Force the Selector to select now as the "canceled" SelectionKey may still be
-                    // cached and not removed because no Select.select(..) operation was called yet.
+                    //Force the Selector to select now as the "canceled" SelectionKey may still be
+                    //cached and not removed because no Select.select(..) operation was called yet.
                     eventLoop().selectNow();
                     selected = true;
                 } else {
-                    // We forced a select operation on the selector before but the SelectionKey is still cached
-                    // for whatever reason. JDK bug ?
+                    //We forced a select operation on the selector before but the SelectionKey is still cached
+                    //for whatever reason. JDK bug ?
                     throw e;
                 }
             }
@@ -642,8 +642,8 @@ public class EchoServer {
         assert channel.eventLoop().inEventLoop();
         if (firstRegistration) {
             firstRegistration = false;
-            // We are now registered to the EventLoop. It's time to call the callbacks for the ChannelHandlers,
-            // that were added before the registration was done.
+            //We are now registered to the EventLoop. It's time to call the callbacks for the ChannelHandlers,
+            //that were added before the registration was done.
             callHandlerAddedForAllHandlers();
         }
     }
@@ -656,17 +656,17 @@ public class EchoServer {
         synchronized (this) {
             assert !registered;
 
-            // This Channel itself was registered.
+            //This Channel itself was registered.
             registered = true;
 
             pendingHandlerCallbackHead = this.pendingHandlerCallbackHead;
-            // Null out so it can be GC'ed.
+            //Null out so it can be GC'ed.
             this.pendingHandlerCallbackHead = null;
         }
 
-        // This must happen outside of the synchronized(...) block as otherwise handlerAdded(...) may be called while
-        // holding the lock and so produce a deadlock if handlerAdded(...) will try to add another handler from outside
-        // the EventLoop.
+        //This must happen outside of the synchronized(...) block as otherwise handlerAdded(...) may be called while
+        //holding the lock and so produce a deadlock if handlerAdded(...) will try to add another handler from outside
+        //the EventLoop.
         PendingHandlerCallback task = pendingHandlerCallbackHead;
         while (task != null) {
             task.execute();
@@ -743,8 +743,8 @@ public class EchoServer {
             final ChannelFuture regFuture, final Channel channel,
             final SocketAddress localAddress, final ChannelPromise promise) {
 
-        // This method is invoked before channelRegistered() is triggered.  Give user handlers a chance to set up
-        // the pipeline in its channelRegistered() implementation.
+        //This method is invoked before channelRegistered() is triggered.  Give user handlers a chance to set up
+        //the pipeline in its channelRegistered() implementation.
         channel.eventLoop().execute(new Runnable() {
             @Override
             public void run() {
@@ -780,11 +780,11 @@ public class EchoServer {
             throw new NullPointerException("localAddress");
         }
         if (isNotValidPromise(promise, false)) {
-            // cancelled
+            //cancelled
             return promise;
         }
 
-        // 获取ChannelHandlerContext
+        //获取ChannelHandlerContext
         final AbstractChannelHandlerContext next = findContextOutbound();
         EventExecutor executor = next.executor();
         if (executor.inEventLoop()) {
@@ -804,7 +804,7 @@ public class EchoServer {
     * `invokeBind`方法位于`AbstractChannelHandlerContext`，该方法获取绑定的handler，然后执行bind操作
 ```Java
     private void invokeBind(SocketAddress localAddress, ChannelPromise promise) {
-        // 这个判断条件没看懂
+        //这个判断条件没看懂
         if (invokeHandler()) {
             try {
                 ((ChannelOutboundHandler) handler()).bind(this, localAddress, promise);
@@ -836,13 +836,13 @@ public class EchoServer {
                 return;
             }
 
-            // See: https:// github.com/netty/netty/issues/576
+            //See: https://github.com/netty/netty/issues/576
             if (Boolean.TRUE.equals(config().getOption(ChannelOption.SO_BROADCAST)) &&
                 localAddress instanceof InetSocketAddress &&
                 !((InetSocketAddress) localAddress).getAddress().isAnyLocalAddress() &&
                 !PlatformDependent.isWindows() && !PlatformDependent.maybeSuperUser()) {
-                // Warn a user about the fact that a non-root user can't receive a
-                // broadcast packet on *nix if the socket is bound on non-wildcard address.
+                //Warn a user about the fact that a non-root user can't receive a
+                //broadcast packet on *nix if the socket is bound on non-wildcard address.
                 logger.warn(
                         "A non-root user can't receive a broadcast packet if the socket " +
                         "is not bound to a wildcard address; binding to a non-wildcard " +

@@ -25,14 +25,14 @@ __阅读更多__
 class MonitorExample{
     int a=0;
 
-    public synchronized void writer(){// 1
-        a++;// 2
-    }// 3
+    public synchronized void writer(){//1
+        a++;//2
+    }//3
 
-    public synchronized void reader(){// 4
-        int i=a;// 5
+    public synchronized void reader(){//4
+        int i=a;//5
         ...
-    }// 6
+    }//6
 }
 ```
 
@@ -96,21 +96,21 @@ class ReentrantLockExample {
     ReentrantLock lock = new ReentrantLock();
 
     public void writer() {
-        lock.lock();// 获取锁
+        lock.lock();//获取锁
         try {
             a++;
         } finally {
-            lock.unlock();// 释放锁
+            lock.unlock();//释放锁
         }
     }
 
     public void reader() {
-        lock.lock();// 获取锁
+        lock.lock();//获取锁
         try {
             int i = a;
             ...
         } finally {
-            lock.unlock();// 释放锁
+            lock.unlock();//释放锁
         }
     }
 }
@@ -133,7 +133,7 @@ ReentrantLock分为公平锁和非公平锁
 ```Java
 protected final boolean tryAcquire(int acquires) {
     final Thread current = Thread.currentThread();
-    int c = getState();// 获取锁的开始，首先读volatile变量state
+    int c = getState();//获取锁的开始，首先读volatile变量state
     if (c == 0) {
         if (!hasQueuedPredecessors() &&
             compareAndSetState(0, acquires)) {
@@ -170,7 +170,7 @@ protected final boolean tryRelease(int releases) {
         free = true;
         setExclusiveOwnerThread(null);
     }
-    setState(c);// 释放锁后，写volatile变量state
+    setState(c);//释放锁后，写volatile变量state
     return free;
 }
 ```
@@ -189,7 +189,7 @@ protected final boolean tryRelease(int releases) {
 
 ```Java
 protected final boolean compareAndSetState(int expect, int update) {
-    // See below for intrinsics setup to support this
+    //See below for intrinsics setup to support this
     return unsafe.compareAndSwapInt(this, stateOffset, expect, update);
 }
 ```
@@ -214,13 +214,13 @@ protected final boolean compareAndSetState(int expect, int update) {
 
 ```C
     inline jint Atomic::cmpxchg(jint exchange_value, volatile jint* dest, jint compare_value){
-        // alternative for InterlockedCompareExchange
+        //alternative for InterlockedCompareExchange
         int mp = os::is_MP();
         __asm{
             mov edx, dest
             mov ecx, exchange_value
             mov eax, compare_value
-            LOCK_IF_MP(mp)// 程序会根据当前处理器的类型来决定是否为cmpxchg指令添加lock前缀
+            LOCK_IF_MP(mp)//程序会根据当前处理器的类型来决定是否为cmpxchg指令添加lock前缀
             cmpxchg dword ptr [edx], ecx
         }
     }

@@ -54,10 +54,10 @@ public class Dom4jDemo {
         Document doc = DocumentHelper.createDocument();
         doc.addComment("a simple demo ");
 
-        // 注意，xmlns只能在创建Element时才能添加，无法通过addAttribute添加xmlns属性
-        Element beansElement = doc.addElement("beans", "http:// www.springframework.org/schema/beans");
-        beansElement.addAttribute("xmlns:xsi", "http:// www.w3.org/2001/XMLSchema-instance");
-        beansElement.addAttribute("xsi:schemaLocation", "http:// www.springframework.org/schema/beans http:// www.springframework.org/schema/beans/spring-beans.xsd");
+        //注意，xmlns只能在创建Element时才能添加，无法通过addAttribute添加xmlns属性
+        Element beansElement = doc.addElement("beans", "http://www.springframework.org/schema/beans");
+        beansElement.addAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        beansElement.addAttribute("xsi:schemaLocation", "http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd");
 
         Element beanElement = beansElement.addElement("bean");
         beanElement.addAttribute("id", "sample");
@@ -92,7 +92,7 @@ public class Dom4jDemo {
         SAXReader saxReader = new SAXReader();
 
         Map<String, String> map = new HashMap<>();
-        map.put("xmlns", "http:// www.springframework.org/schema/beans");
+        map.put("xmlns", "http://www.springframework.org/schema/beans");
         saxReader.getDocumentFactory().setXPathNamespaceURIs(map);
 
         Document doc = null;
@@ -106,25 +106,25 @@ public class Dom4jDemo {
         List list = doc.selectNodes("/beans/xmlns:bean/xmlns:property");
         System.out.println(list.size());
 
-        list = doc.selectNodes("// xmlns:bean/xmlns:property");
+        list = doc.selectNodes("//xmlns:bean/xmlns:property");
         System.out.println(list.size());
 
         list = doc.selectNodes("/beans/*/xmlns:property");
         System.out.println(list.size());
 
-        list = doc.selectNodes("// xmlns:property");
+        list = doc.selectNodes("//xmlns:property");
         System.out.println(list.size());
 
-        list = doc.selectNodes("/beans// xmlns:property");
+        list = doc.selectNodes("/beans//xmlns:property");
         System.out.println(list.size());
 
-        list = doc.selectNodes("// xmlns:property/@value=liuye");
+        list = doc.selectNodes("//xmlns:property/@value=liuye");
         System.out.println(list.size());
 
-        list = doc.selectNodes("// xmlns:property/@*=liuye");
+        list = doc.selectNodes("//xmlns:property/@*=liuye");
         System.out.println(list.size());
 
-        list = doc.selectNodes("// xmlns:bean|// xmlns:property");
+        list = doc.selectNodes("//xmlns:bean|//xmlns:property");
         System.out.println(list.size());
 
     }
@@ -137,7 +137,7 @@ __生成的xml文件如下__
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--a simple demo -->
-<beans xmlns="http:// www.springframework.org/schema/beans" xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http:// www.springframework.org/schema/beans http:// www.springframework.org/schema/beans/spring-beans.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
   <bean id="sample" class="org.liuyehcf.dom4j.Person">
     <!--This is comment-->
     <property name="nickName" value="liuye"/>

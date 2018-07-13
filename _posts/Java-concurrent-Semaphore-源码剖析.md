@@ -34,17 +34,17 @@ Sync继承了AbstractQueuedSynchronizer(AQS)，并使用的是AQS中的共享模
     abstract static class Sync extends AbstractQueuedSynchronizer {
         private static final long serialVersionUID = 1192457210091910933L;
 
-        // 设置初始许可数量
+        //设置初始许可数量
         Sync(int permits) {
             setState(permits);
         }
 
-        // 获取现有的许可数量
+        //获取现有的许可数量
         final int getPermits() {
             return getState();
         }
 
-        // 共享模式下，非公平的tryAcquiresShared，所谓非公平是指，获取资源的线程不管阻塞队列中是否有已经处于等待状态的线程，而直接尝试获取资源，获取失败时才进入sync queue(AQS维护的同步阻塞队列)，这对于那些已经在sync queue中等待的线程来说是不公平的
+        //共享模式下，非公平的tryAcquiresShared，所谓非公平是指，获取资源的线程不管阻塞队列中是否有已经处于等待状态的线程，而直接尝试获取资源，获取失败时才进入sync queue(AQS维护的同步阻塞队列)，这对于那些已经在sync queue中等待的线程来说是不公平的
         final int nonfairTryAcquireShared(int acquires) {
             for (;;) {
                 int available = getState();
@@ -55,34 +55,34 @@ Sync继承了AbstractQueuedSynchronizer(AQS)，并使用的是AQS中的共享模
             }
         }
 
-        // 共享模式下的释放许可的方法
+        //共享模式下的释放许可的方法
         protected final boolean tryReleaseShared(int releases) {
             for (;;) {
                 int current = getState();
-                // 释放后的许可数量
+                //释放后的许可数量
                 int next = current + releases;
-                if (next < current) // overflow
+                if (next < current) //overflow
                     throw new Error("Maximum permit count exceeded");
-                // CAS操作成功才返回
+                //CAS操作成功才返回
                 if (compareAndSetState(current, next))
                     return true;
             }
         }
 
-        // 减少许可数量
+        //减少许可数量
         final void reducePermits(int reductions) {
             for (;;) {
                 int current = getState();
                 int next = current - reductions;
-                // 下溢出
-                if (next > current) // underflow
+                //下溢出
+                if (next > current) //underflow
                     throw new Error("Permit count underflow");
                 if (compareAndSetState(current, next))
                     return;
             }
         }
 
-        // 释放所有的许可
+        //释放所有的许可
         final int drainPermits() {
             for (;;) {
                 int current = getState();
@@ -106,7 +106,7 @@ Sync继承了AbstractQueuedSynchronizer(AQS)，并使用的是AQS中的共享模
             super(permits);
         }
 
-        // 转调用Sync的nonfairTryAcquireShared方法即可
+        //转调用Sync的nonfairTryAcquireShared方法即可
         protected int tryAcquireShared(int acquires) {
             return nonfairTryAcquireShared(acquires);
         }
@@ -126,17 +126,17 @@ Sync继承了AbstractQueuedSynchronizer(AQS)，并使用的是AQS中的共享模
             super(permits);
         }
 
-        // 共享模式下，公平的tryAcquireShared方法，公平是指，当执行tryAcquireShared
+        //共享模式下，公平的tryAcquireShared方法，公平是指，当执行tryAcquireShared
         protected int tryAcquireShared(int acquires) {
             for (;;) {
-                // sync queue不为空，且当前线程不是第二个节点时hasQueuedPredecessors()返回true
+                //sync queue不为空，且当前线程不是第二个节点时hasQueuedPredecessors()返回true
                 if (hasQueuedPredecessors())
-                    // 返回-1，那么当前线程将会被AQS添加到sync queue中去
+                    //返回-1，那么当前线程将会被AQS添加到sync queue中去
                     return -1;
                 int available = getState();
-                // 剩余许可的数量
+                //剩余许可的数量
                 int remaining = available - acquires;
-                // 当许可不足时，或者CAS操作成功时返回剩余许可数量
+                //当许可不足时，或者CAS操作成功时返回剩余许可数量
                 if (remaining < 0 ||
                     compareAndSetState(available, remaining))
                     return remaining;

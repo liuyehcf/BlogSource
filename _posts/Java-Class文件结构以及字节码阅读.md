@@ -584,13 +584,13 @@ __实际被调用的方法将按照下面的步骤进行(类型C的解析按照�
 ```Java
 class Test {
     public static void main(String[] args){
-        Test test=new Test();   // 调用构造方法
+        Test test=new Test();   //调用构造方法
 
-        test.func();   // 调用私有方法
+        test.func();   //调用私有方法
     }
 
     private void func(){
-        super.toString();    // 调用父类方法
+        super.toString();    //调用父类方法
     }
 }
 ```
@@ -703,9 +703,9 @@ public class Test
   major version: 49
   flags: ACC_PUBLIC, ACC_SUPER
 Constant pool:
-   #1 = Methodref          #3.#18         // java/lang/Object."<init>":()V
-   #2 = Class              #19            // Test
-   #3 = Class              #20            // java/lang/Object
+   #1 = Methodref          #3.#18         //java/lang/Object."<init>":()V
+   #2 = Class              #19            //Test
+   #3 = Class              #20            //java/lang/Object
    #4 = Utf8               <init>
    #5 = Utf8               ()V
    #6 = Utf8               Code
@@ -720,7 +720,7 @@ Constant pool:
   #15 = Utf8               val
   #16 = Utf8               SourceFile
   #17 = Utf8               Test.java
-  #18 = NameAndType        #4:#5          // "<init>":()V
+  #18 = NameAndType        #4:#5          //"<init>":()V
   #19 = Utf8               Test
   #20 = Utf8               java/lang/Object
 {
@@ -730,7 +730,7 @@ Constant pool:
     Code:
       stack=1, locals=1, args_size=1
          0: aload_0
-         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         1: invokespecial #1                  //Method java/lang/Object."<init>":()V
          4: return
       LineNumberTable:
         line 1: 0
@@ -820,9 +820,9 @@ public class Test
   major version: 49
   flags: ACC_PUBLIC, ACC_SUPER
 Constant pool:
-   #1 = Methodref          #3.#18         // java/lang/Object."<init>":()V
-   #2 = Class              #19            // Test
-   #3 = Class              #20            // java/lang/Object
+   #1 = Methodref          #3.#18         //java/lang/Object."<init>":()V
+   #2 = Class              #19            //Test
+   #3 = Class              #20            //java/lang/Object
    #4 = Utf8               <init>
    #5 = Utf8               ()V
    #6 = Utf8               Code
@@ -837,7 +837,7 @@ Constant pool:
   #15 = Utf8               i
   #16 = Utf8               SourceFile
   #17 = Utf8               Test.java
-  #18 = NameAndType        #4:#5          // "<init>":()V
+  #18 = NameAndType        #4:#5          //"<init>":()V
   #19 = Utf8               Test
   #20 = Utf8               java/lang/Object
 {
@@ -847,7 +847,7 @@ Constant pool:
     Code:
       stack=1, locals=1, args_size=1
          0: aload_0
-         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         1: invokespecial #1                  //Method java/lang/Object."<init>":()V
          4: return
       LineNumberTable:
         line 1: 0
@@ -941,14 +941,14 @@ public class Test
   major version: 49
   flags: ACC_PUBLIC, ACC_SUPER
 Constant pool:
-   #1 = Methodref          #8.#30         // java/lang/Object."<init>":()V
-   #2 = InterfaceMethodref #31.#32        // java/util/List.iterator:()Ljava/util/Iterator;
-   #3 = InterfaceMethodref #33.#34        // java/util/Iterator.hasNext:()Z
-   #4 = InterfaceMethodref #33.#35        // java/util/Iterator.next:()Ljava/lang/Object;
-   #5 = Class              #36            // java/lang/Integer
-   #6 = Methodref          #5.#37         // java/lang/Integer.intValue:()I
-   #7 = Class              #38            // Test
-   #8 = Class              #39            // java/lang/Object
+   #1 = Methodref          #8.#30         //java/lang/Object."<init>":()V
+   #2 = InterfaceMethodref #31.#32        //java/util/List.iterator:()Ljava/util/Iterator;
+   #3 = InterfaceMethodref #33.#34        //java/util/Iterator.hasNext:()Z
+   #4 = InterfaceMethodref #33.#35        //java/util/Iterator.next:()Ljava/lang/Object;
+   #5 = Class              #36            //java/lang/Integer
+   #6 = Methodref          #5.#37         //java/lang/Integer.intValue:()I
+   #7 = Class              #38            //Test
+   #8 = Class              #39            //java/lang/Object
    #9 = Utf8               <init>
   #10 = Utf8               ()V
   #11 = Utf8               Code
@@ -970,14 +970,14 @@ Constant pool:
   #27 = Utf8               (Ljava/util/List<Ljava/lang/Integer;>;)I
   #28 = Utf8               SourceFile
   #29 = Utf8               Test.java
-  #30 = NameAndType        #9:#10         // "<init>":()V
-  #31 = Class              #40            // java/util/List
-  #32 = NameAndType        #41:#42        // iterator:()Ljava/util/Iterator;
-  #33 = Class              #43            // java/util/Iterator
-  #34 = NameAndType        #44:#45        // hasNext:()Z
-  #35 = NameAndType        #46:#47        // next:()Ljava/lang/Object;
+  #30 = NameAndType        #9:#10         //"<init>":()V
+  #31 = Class              #40            //java/util/List
+  #32 = NameAndType        #41:#42        //iterator:()Ljava/util/Iterator;
+  #33 = Class              #43            //java/util/Iterator
+  #34 = NameAndType        #44:#45        //hasNext:()Z
+  #35 = NameAndType        #46:#47        //next:()Ljava/lang/Object;
   #36 = Utf8               java/lang/Integer
-  #37 = NameAndType        #48:#49        // intValue:()I
+  #37 = NameAndType        #48:#49        //intValue:()I
   #38 = Utf8               Test
   #39 = Utf8               java/lang/Object
   #40 = Utf8               java/util/List
@@ -997,7 +997,7 @@ Constant pool:
     Code:
       stack=1, locals=1, args_size=1
          0: aload_0
-         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         1: invokespecial #1                  //Method java/lang/Object."<init>":()V
          4: return
       LineNumberTable:
         line 3: 0
@@ -1013,18 +1013,18 @@ Constant pool:
          0: iconst_0
          1: istore_2
          2: aload_1
-         3: invokeinterface #2,  1            // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+         3: invokeinterface #2,  1            //InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
          8: astore_3
          9: aload_3
-        10: invokeinterface #3,  1            // InterfaceMethod java/util/Iterator.hasNext:()Z
+        10: invokeinterface #3,  1            //InterfaceMethod java/util/Iterator.hasNext:()Z
         15: ifeq          40
         18: aload_3
-        19: invokeinterface #4,  1            // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
-        24: checkcast     #5                  // class java/lang/Integer
+        19: invokeinterface #4,  1            //InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+        24: checkcast     #5                  //class java/lang/Integer
         27: astore        4
         29: iload_2
         30: aload         4
-        32: invokevirtual #6                  // Method java/lang/Integer.intValue:()I
+        32: invokevirtual #6                  //Method java/lang/Integer.intValue:()I
         35: iadd
         36: istore_2
         37: goto          9
@@ -1045,7 +1045,7 @@ Constant pool:
       LocalVariableTypeTable:
         Start  Length  Slot  Name   Signature
             0      42     1  list   Ljava/util/List<Ljava/lang/Integer;>;
-    Signature: #27                          // (Ljava/util/List<Ljava/lang/Integer;>;)I
+    Signature: #27                          //(Ljava/util/List<Ljava/lang/Integer;>;)I
 }
 SourceFile: "Test.java"
 ```
@@ -1102,10 +1102,10 @@ public class Test
   major version: 49
   flags: ACC_PUBLIC, ACC_SUPER
 Constant pool:
-   #1 = Methodref          #4.#22         // java/lang/Object."<init>":()V
-   #2 = InterfaceMethodref #23.#24        // java/util/List.add:(Ljava/lang/Object;)Z
-   #3 = Class              #25            // Test
-   #4 = Class              #26            // java/lang/Object
+   #1 = Methodref          #4.#22         //java/lang/Object."<init>":()V
+   #2 = InterfaceMethodref #23.#24        //java/util/List.add:(Ljava/lang/Object;)Z
+   #3 = Class              #25            //Test
+   #4 = Class              #26            //java/lang/Object
    #5 = Utf8               <init>
    #6 = Utf8               ()V
    #7 = Utf8               Code
@@ -1123,9 +1123,9 @@ Constant pool:
   #19 = Utf8               (Ljava/util/List<Ljava/lang/Object;>;)V
   #20 = Utf8               SourceFile
   #21 = Utf8               Test.java
-  #22 = NameAndType        #5:#6          // "<init>":()V
-  #23 = Class              #27            // java/util/List
-  #24 = NameAndType        #28:#29        // add:(Ljava/lang/Object;)Z
+  #22 = NameAndType        #5:#6          //"<init>":()V
+  #23 = Class              #27            //java/util/List
+  #24 = NameAndType        #28:#29        //add:(Ljava/lang/Object;)Z
   #25 = Utf8               Test
   #26 = Utf8               java/lang/Object
   #27 = Utf8               java/util/List
@@ -1138,7 +1138,7 @@ Constant pool:
     Code:
       stack=1, locals=1, args_size=1
          0: aload_0
-         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         1: invokespecial #1                  //Method java/lang/Object."<init>":()V
          4: return
       LineNumberTable:
         line 3: 0
@@ -1153,7 +1153,7 @@ Constant pool:
       stack=2, locals=2, args_size=2
          0: aload_1
          1: aconst_null
-         2: invokeinterface #2,  2            // InterfaceMethod java/util/List.add:(Ljava/lang/Object;)Z
+         2: invokeinterface #2,  2            //InterfaceMethod java/util/List.add:(Ljava/lang/Object;)Z
          7: pop
          8: return
       LineNumberTable:
@@ -1166,7 +1166,7 @@ Constant pool:
       LocalVariableTypeTable:
         Start  Length  Slot  Name   Signature
             0       9     1  list   Ljava/util/List<Ljava/lang/Object;>;
-    Signature: #19                          // (Ljava/util/List<Ljava/lang/Object;>;)V
+    Signature: #19                          //(Ljava/util/List<Ljava/lang/Object;>;)V
 }
 SourceFile: "Test.java"
 ```
@@ -1200,10 +1200,10 @@ public class Test
   major version: 49
   flags: ACC_PUBLIC, ACC_SUPER
 Constant pool:
-   #1 = Methodref          #4.#19         // java/lang/Object."<init>":()V
-   #2 = Methodref          #3.#20         // Test.staticMethod:(I)V
-   #3 = Class              #21            // Test
-   #4 = Class              #22            // java/lang/Object
+   #1 = Methodref          #4.#19         //java/lang/Object."<init>":()V
+   #2 = Methodref          #3.#20         //Test.staticMethod:(I)V
+   #3 = Class              #21            //Test
+   #4 = Class              #22            //java/lang/Object
    #5 = Utf8               <init>
    #6 = Utf8               ()V
    #7 = Utf8               Code
@@ -1218,8 +1218,8 @@ Constant pool:
   #16 = Utf8               invokeStaticMethod
   #17 = Utf8               SourceFile
   #18 = Utf8               Test.java
-  #19 = NameAndType        #5:#6          // "<init>":()V
-  #20 = NameAndType        #12:#13        // staticMethod:(I)V
+  #19 = NameAndType        #5:#6          //"<init>":()V
+  #20 = NameAndType        #12:#13        //staticMethod:(I)V
   #21 = Utf8               Test
   #22 = Utf8               java/lang/Object
 {
@@ -1229,7 +1229,7 @@ Constant pool:
     Code:
       stack=1, locals=1, args_size=1
          0: aload_0
-         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         1: invokespecial #1                  //Method java/lang/Object."<init>":()V
          4: return
       LineNumberTable:
         line 1: 0
@@ -1255,7 +1255,7 @@ Constant pool:
     Code:
       stack=1, locals=1, args_size=1
          0: iconst_1
-         1: invokestatic  #2                  // Method staticMethod:(I)V
+         1: invokestatic  #2                  //Method staticMethod:(I)V
          4: return
       LineNumberTable:
         line 4: 0
@@ -1297,10 +1297,10 @@ public class Test
   major version: 49
   flags: ACC_PUBLIC, ACC_SUPER
 Constant pool:
-   #1 = Methodref          #4.#19         // java/lang/Object."<init>":()V
-   #2 = Methodref          #3.#20         // Test.privateMethod:(I)V
-   #3 = Class              #21            // Test
-   #4 = Class              #22            // java/lang/Object
+   #1 = Methodref          #4.#19         //java/lang/Object."<init>":()V
+   #2 = Methodref          #3.#20         //Test.privateMethod:(I)V
+   #3 = Class              #21            //Test
+   #4 = Class              #22            //java/lang/Object
    #5 = Utf8               <init>
    #6 = Utf8               ()V
    #7 = Utf8               Code
@@ -1315,8 +1315,8 @@ Constant pool:
   #16 = Utf8               invokePrivateMethod
   #17 = Utf8               SourceFile
   #18 = Utf8               Test.java
-  #19 = NameAndType        #5:#6          // "<init>":()V
-  #20 = NameAndType        #12:#13        // privateMethod:(I)V
+  #19 = NameAndType        #5:#6          //"<init>":()V
+  #20 = NameAndType        #12:#13        //privateMethod:(I)V
   #21 = Utf8               Test
   #22 = Utf8               java/lang/Object
 {
@@ -1326,7 +1326,7 @@ Constant pool:
     Code:
       stack=1, locals=1, args_size=1
          0: aload_0
-         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         1: invokespecial #1                  //Method java/lang/Object."<init>":()V
          4: return
       LineNumberTable:
         line 1: 0
@@ -1341,7 +1341,7 @@ Constant pool:
       stack=2, locals=1, args_size=1
          0: aload_0
          1: iconst_1
-         2: invokespecial #2                  // Method privateMethod:(I)V
+         2: invokespecial #2                  //Method privateMethod:(I)V
          5: return
       LineNumberTable:
         line 4: 0
@@ -1384,10 +1384,10 @@ public class Test
   major version: 49
   flags: ACC_PUBLIC, ACC_SUPER
 Constant pool:
-   #1 = Methodref          #4.#19         // java/lang/Object."<init>":()V
-   #2 = Methodref          #3.#20         // Test.synchronizedMethod:(I)V
-   #3 = Class              #21            // Test
-   #4 = Class              #22            // java/lang/Object
+   #1 = Methodref          #4.#19         //java/lang/Object."<init>":()V
+   #2 = Methodref          #3.#20         //Test.synchronizedMethod:(I)V
+   #3 = Class              #21            //Test
+   #4 = Class              #22            //java/lang/Object
    #5 = Utf8               <init>
    #6 = Utf8               ()V
    #7 = Utf8               Code
@@ -1402,8 +1402,8 @@ Constant pool:
   #16 = Utf8               invokeSynchronizedMethod
   #17 = Utf8               SourceFile
   #18 = Utf8               Test.java
-  #19 = NameAndType        #5:#6          // "<init>":()V
-  #20 = NameAndType        #12:#13        // synchronizedMethod:(I)V
+  #19 = NameAndType        #5:#6          //"<init>":()V
+  #20 = NameAndType        #12:#13        //synchronizedMethod:(I)V
   #21 = Utf8               Test
   #22 = Utf8               java/lang/Object
 {
@@ -1413,7 +1413,7 @@ Constant pool:
     Code:
       stack=1, locals=1, args_size=1
          0: aload_0
-         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         1: invokespecial #1                  //Method java/lang/Object."<init>":()V
          4: return
       LineNumberTable:
         line 1: 0
@@ -1441,7 +1441,7 @@ Constant pool:
       stack=2, locals=1, args_size=1
          0: aload_0
          1: iconst_1
-         2: invokevirtual #2                  // Method synchronizedMethod:(I)V
+         2: invokevirtual #2                  //Method synchronizedMethod:(I)V
          5: return
       LineNumberTable:
         line 4: 0
@@ -1495,13 +1495,13 @@ public class Singleton extends Base implements Interface1,Interface2
   major version: 49
   flags: ACC_PUBLIC, ACC_SUPER
 Constant pool:
-   #1 = Methodref          #5.#20         // Base."<init>":()V
-   #2 = Fieldref           #3.#21         // Singleton.instance:LSingleton;
-   #3 = Class              #22            // Singleton
-   #4 = Methodref          #3.#20         // Singleton."<init>":()V
-   #5 = Class              #23            // Base
-   #6 = Class              #24            // Interface1
-   #7 = Class              #25            // Interface2
+   #1 = Methodref          #5.#20         //Base."<init>":()V
+   #2 = Fieldref           #3.#21         //Singleton.instance:LSingleton;
+   #3 = Class              #22            //Singleton
+   #4 = Methodref          #3.#20         //Singleton."<init>":()V
+   #5 = Class              #23            //Base
+   #6 = Class              #24            //Interface1
+   #7 = Class              #25            //Interface2
    #8 = Utf8               instance
    #9 = Utf8               LSingleton;
   #10 = Utf8               <init>
@@ -1514,8 +1514,8 @@ Constant pool:
   #17 = Utf8               ()LSingleton;
   #18 = Utf8               SourceFile
   #19 = Utf8               Singleton.java
-  #20 = NameAndType        #10:#11        // "<init>":()V
-  #21 = NameAndType        #8:#9          // instance:LSingleton;
+  #20 = NameAndType        #10:#11        //"<init>":()V
+  #21 = NameAndType        #8:#9          //instance:LSingleton;
   #22 = Utf8               Singleton
   #23 = Utf8               Base
   #24 = Utf8               Interface1
@@ -1531,7 +1531,7 @@ Constant pool:
     Code:
       stack=1, locals=1, args_size=1
          0: aload_0
-         1: invokespecial #1                  // Method Base."<init>":()V
+         1: invokespecial #1                  //Method Base."<init>":()V
          4: return
       LineNumberTable:
         line 4: 0
@@ -1544,18 +1544,18 @@ Constant pool:
     flags: ACC_PUBLIC, ACC_STATIC
     Code:
       stack=2, locals=2, args_size=0
-         0: getstatic     #2                  // Field instance:LSingleton;
+         0: getstatic     #2                  //Field instance:LSingleton;
          3: ifnonnull     37
-         6: ldc           #3                  // class Singleton
+         6: ldc           #3                  //class Singleton
          8: dup
          9: astore_0
         10: monitorenter
-        11: getstatic     #2                  // Field instance:LSingleton;
+        11: getstatic     #2                  //Field instance:LSingleton;
         14: ifnonnull     27
-        17: new           #3                  // class Singleton
+        17: new           #3                  //class Singleton
         20: dup
-        21: invokespecial #4                  // Method "<init>":()V
-        24: putstatic     #2                  // Field instance:LSingleton;
+        21: invokespecial #4                  //Method "<init>":()V
+        24: putstatic     #2                  //Field instance:LSingleton;
         27: aload_0
         28: monitorexit
         29: goto          37
@@ -1564,7 +1564,7 @@ Constant pool:
         34: monitorexit
         35: aload_1
         36: athrow
-        37: getstatic     #2                  // Field instance:LSingleton;
+        37: getstatic     #2                  //Field instance:LSingleton;
         40: areturn
       Exception table:
          from    to  target type

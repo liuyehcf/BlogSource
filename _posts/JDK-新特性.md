@@ -177,7 +177,7 @@ try-with-resources是一个定义了一个或多个资源的try声明，这个�
             Connection con = null;
             Statement stmt = con.createStatement();
         } catch (IOException | SQLException e) {
-            // 捕获多个异常，e就是final类型的   
+            //捕获多个异常，e就是final类型的   
             e.printStackTrace();
         }
     }
@@ -192,10 +192,10 @@ try-with-resources是一个定义了一个或多个资源的try声明，这个�
 ## 3.7 新增一些取环境信息的工具方法
 
 ```Java
-        File System.getUserHomeDir() // 当前用户目录
-        File System.getUserDir() // 启动java进程时所在的目录5
-        File System.getJavaIoTempDir() // IO临时文件夹
-        File System.getJavaHomeDir() // JRE的安装目录
+        File System.getUserHomeDir() //当前用户目录
+        File System.getUserDir() //启动java进程时所在的目录5
+        File System.getJavaIoTempDir() //IO临时文件夹
+        File System.getJavaHomeDir() //JRE的安装目录
 ```
 
 ## 3.8 安全的加减乘除

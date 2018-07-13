@@ -100,7 +100,7 @@ public enum Error {
 1. 用代码来阐述，有时候只需要创建一个描述与注释所言相同的函数即可
     > 例如
 ```Java
-// Check to see if the employee is eligible for full benefits
+//Check to see if the employee is eligible for full benefits
 if ((employee.flags & HOURLY_FALG) &&
     (employee.age > 65))
 
@@ -118,9 +118,9 @@ if (employee.isEligibleForFullBenefits())
 ```Java
 if(a == 1){
     while(true){
-        // ...
-    } // while
-}// if
+        //...
+    } //while
+}//if
 ```
     > 当你想要写这类注释时，其实应该做的是缩短函数
 

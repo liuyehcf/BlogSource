@@ -20,16 +20,16 @@ __代码清单如下__
 ```Java
     public static void doGet(String value1, String value2, String operator) {
         try {
-            URL url = new URL("http:// localhost:8080/compute?value1=" + value1 + "&value2=" + value2);// (1)
+            URL url = new URL("http://localhost:8080/compute?value1=" + value1 + "&value2=" + value2);//(1)
 
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();// (2)
-            conn.setRequestMethod("GET");// (3)
-            conn.setRequestProperty("operator", operator);// (4)
-            conn.setDoInput(true);// (5)
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();//(2)
+            conn.setRequestMethod("GET");//(3)
+            conn.setRequestProperty("operator", operator);//(4)
+            conn.setDoInput(true);//(5)
 
-            conn.connect();// (6)
+            conn.connect();//(6)
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));// (7)
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));//(7)
             String line;
             while ((line = reader.readLine()) != null) {
                 System.out.println(line);
@@ -61,22 +61,22 @@ __代码清单如下__
 ```Java
     public static void doPost() {
         try {
-            URL url = new URL("http:// localhost:8080/login");// (1)
+            URL url = new URL("http://localhost:8080/login");//(1)
 
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();// (2)
-            conn.setRequestMethod("POST");// (3)
-            conn.setRequestProperty("Content-Type", "application/json");// (4)
-            conn.setDoInput(true);// (5)
-            conn.setDoOutput(true);// (5)
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();//(2)
+            conn.setRequestMethod("POST");//(3)
+            conn.setRequestProperty("Content-Type", "application/json");//(4)
+            conn.setDoInput(true);//(5)
+            conn.setDoOutput(true);//(5)
 
-            conn.connect();// (6)
+            conn.connect();//(6)
 
             String requestBody = "{\"name\":\"张三\",\"password\":\"123456789\"}";
             PrintWriter out = new PrintWriter(conn.getOutputStream());
-            out.print(requestBody);// (7)
-            out.flush();// (8)
+            out.print(requestBody);//(7)
+            out.flush();//(8)
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));// (9)
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));//(9)
             String line;
             while ((line = reader.readLine()) != null) {
                 System.out.println(line);
@@ -110,7 +110,7 @@ __代码清单__
 public class DefaultParameters {
     public static void main(String[] args) {
         try {
-            URL url = new URL("http:// localhost:8080/home");
+            URL url = new URL("http://localhost:8080/home");
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 

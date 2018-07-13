@@ -567,7 +567,7 @@ public class RibbonConsumerApplication {
         SpringApplication.run(RibbonConsumerApplication.class, args);
     }
 
-    // 开启软均衡负载
+    //开启软均衡负载
     @LoadBalanced
     @Bean
     RestTemplate restTemplate() {
@@ -1086,11 +1086,11 @@ public class ConfigClientApplication {
         SpringApplication.run(ConfigClientApplication.class, args);
     }
 
-    // 获取配置中心的属性
+    //获取配置中心的属性
     @Value("${host}")
     private String host;
 
-    // 获取配置中心的属性
+    //获取配置中心的属性
     @Value("${description}")
     private String description;
 

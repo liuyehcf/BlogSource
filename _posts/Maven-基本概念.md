@@ -238,7 +238,7 @@ __远程仓库__还可以进一步细分
         <repository>
             <id>central</id>
             <name>Central Repository</name>
-            <url>https:// repo.maven.apache.org/maven2</url>
+            <url>https://repo.maven.apache.org/maven2</url>
             <layout>default</layout>
             <snapshots>
                 <enabled>false</enabled>
@@ -300,7 +300,7 @@ __私服有如下优势__
         <repository>
             <id>jboss</id>
             <name>JBoss Repository</name>
-            <url>http:// repository.jobss.com/maven2/</url>
+            <url>http://repository.jobss.com/maven2/</url>
             <releases>
                 <enabled>true</enabled>
                 <updatePolicy>daily</updatePolicy>
@@ -353,13 +353,13 @@ Maven除了能对项目进行编译、测试、打包之外，还能将项目生
         <repository>
             <id>proj-releases</id>
             <name>Proj Release Repository</name>
-            <url>http:// 192.168.1.100/content/repositories/proj-releases</url>
+            <url>http://192.168.1.100/content/repositories/proj-releases</url>
         </repository>
 
         <snapshotRepository>
             <id>proj-snapshots</id>
             <name>Proj Snapshot Repository</name>
-            <url>http:// 192.168.1.100/content/repositories/proj-snapshots</url>
+            <url>http://192.168.1.100/content/repositories/proj-snapshots</url>
         </snapshotRepository>
     </distributionManagement>
     ...
@@ -430,7 +430,7 @@ __当依赖的版本不明晰的时候__，例如RELEASE、LATEST和SNAPSHOT，_
             <id>mirrorId</id>
             <mirrorOf>repositoryId</mirrorOf>
             <name>Human Readable Name for this Mirror.</name>
-            <url>http:// my.repository.com/repo/path</url>
+            <url>http://my.repository.com/repo/path</url>
         </mirror>
     </mirrors>
     ...

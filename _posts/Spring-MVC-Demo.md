@@ -32,8 +32,8 @@ __阅读更多__
 
 ```xml
 <!DOCTYPE web-app PUBLIC
- "-// Sun Microsystems, Inc.// DTD Web Application 2.3// EN"
- "http:// java.sun.com/dtd/web-app_2_3.dtd" >
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
@@ -57,8 +57,8 @@ __阅读更多__
 
 ```xml
 <!DOCTYPE web-app PUBLIC
-        "-// Sun Microsystems, Inc.// DTD Web Application 2.3// EN"
-        "http:// java.sun.com/dtd/web-app_2_3.dtd" >
+        "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+        "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
 <web-app>
     <display-name>Archetype Created Web Application</display-name>
@@ -150,9 +150,9 @@ applicationContext.xml如下：
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http:// www.springframework.org/schema/beans"
-       xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http:// www.springframework.org/schema/beans http:// www.springframework.org/schema/beans/spring-beans.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 </beans>
 ```
@@ -161,10 +161,10 @@ spring-mvc-servlet.xml如下：
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http:// www.springframework.org/schema/beans"
-       xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http:// www.springframework.org/schema/context"
-       xsi:schemaLocation="http:// www.springframework.org/schema/beans http:// www.springframework.org/schema/beans/spring-beans.xsd http:// www.springframework.org/schema/context http:// www.springframework.org/schema/context/spring-context.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:component-scan base-package="org.liuyehcf.springmvc"/>
 </beans>

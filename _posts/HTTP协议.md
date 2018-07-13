@@ -56,7 +56,7 @@ URL(Uniform Resource Locator)是一种特殊类型的URI，URL地址用于描述
 下面是一个例子
 
 ```
-http:// www.mywebsite.com/sj/test/test.aspx?name=sviergn&x=true#stuff
+http://www.mywebsite.com/sj/test/test.aspx?name=sviergn&x=true#stuff
 
 Schema:                 http
 host:                   www.mywebsite.com

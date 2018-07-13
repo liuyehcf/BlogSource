@@ -81,7 +81,7 @@ __以`fireChannelRead`为例，分析一下Handler特定生命周期如何被触
 
 ```Java
     public ChannelHandlerContext fireChannelRead(final Object msg) {
-        // 沿着双向链表的当前位置向后找到第一个Inbound类型的ChannelHandlerContext
+        //沿着双向链表的当前位置向后找到第一个Inbound类型的ChannelHandlerContext
         invokeChannelRead(findContextInbound(), msg);
         return this;
     }
@@ -98,13 +98,13 @@ __以`fireChannelRead`为例，分析一下Handler特定生命周期如何被触
         final Object m = next.pipeline.touch(ObjectUtil.checkNotNull(msg, "msg"), next);
         EventExecutor executor = next.executor();
         if (executor.inEventLoop()) {
-            // 通过ChannelHandlerContext触发ChannelRead方法
+            //通过ChannelHandlerContext触发ChannelRead方法
             next.invokeChannelRead(m);
         } else {
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
-                    // 通过ChannelHandlerContext触发ChannelRead方法
+                    //通过ChannelHandlerContext触发ChannelRead方法
                     next.invokeChannelRead(m);
                 }
             });
@@ -114,7 +114,7 @@ __以`fireChannelRead`为例，分析一下Handler特定生命周期如何被触
     private void invokeChannelRead(Object msg) {
         if (invokeHandler()) {
             try {
-                // 重定向为Handler的channelRead方法
+                //重定向为Handler的channelRead方法
                 ((ChannelInboundHandler) handler()).channelRead(this, msg);
             } catch (Throwable t) {
                 notifyHandlerException(t);

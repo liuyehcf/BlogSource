@@ -116,10 +116,10 @@ public class Solution {
     }
 
     private void mergeSort(ListNode pseudoHead, ListNode tail) {
-        // 边界
+        //边界
         if (pseudoHead.next == tail || pseudoHead.next.next == tail) return;
 
-        // 链表找中点的方式
+        //链表找中点的方式
         ListNode slow = pseudoHead, fast = pseudoHead;
         while (fast != tail && fast.next != tail) {
             fast = fast.next.next;

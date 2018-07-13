@@ -40,37 +40,37 @@ __Javac编译动作的入口是`com.sun.tools.javac.main.JavaCompiler`类__，�
 
 ```Java
 public void compile(List<JavaFileObject> var1, List<String> var2, Iterable<? extends Processor> var3) {
-        // ... 
+        //... 
 
-        this.initProcessAnnotations(var3); // (1)
-        this.delegateCompiler = this.processAnnotations( // (4)
-            this.enterTrees( // (3)
+        this.initProcessAnnotations(var3); //(1)
+        this.delegateCompiler = this.processAnnotations( //(4)
+            this.enterTrees( //(3)
                 this.stopIfError(
                     CompileState.PARSE, 
-                    this.parseFiles(var1)  // (2)
+                    this.parseFiles(var1)  //(2)
                 )
             ), 
             var2
         );
-        this.delegateCompiler.compile2(); // (5)
+        this.delegateCompiler.compile2(); //(5)
         
-        // ... 
+        //... 
 }
 
 private void compile2() {
-    // ...
+    //...
     
-    this.generate( // (9)
-        this.desugar( // (8)
-            this.flow( // (7)
-                this.attribute( // (6)
+    this.generate( //(9)
+        this.desugar( //(8)
+            this.flow( //(7)
+                this.attribute( //(6)
                     (Env)this.todo.remove()
                 )
             )
         )
     );
     
-    // ...
+    //...
 }
 ```
 
@@ -496,10 +496,10 @@ public class List<A> extends AbstractCollection<A> implements java.util.List<A> 
 ```Java
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
 
-        // 添加语句 " this.xxx = xxx; "
+        //添加语句 " this.xxx = xxx; "
         jcStatements.append(...);
 
-        // 添加Builder模式中的返回语句 " return this; "
+        //添加Builder模式中的返回语句 " return this; "
         jcStatements.append(...);
 
         List<JCTree.JCStatement> lst = jcStatements.toList();
@@ -513,14 +513,14 @@ __注意点：方法的名字就是`<init>`__
 
 ```Java
 treeMaker.MethodDef(
-        treeMaker.Modifiers(Flags.PUBLIC), // 访问标志
-        names.fromString("<init>"), // 名字
-        treeMaker.TypeIdent(TypeTag.VOID), // 返回类型
-        List.nil(), // 泛型形参列表
-        List.nil(), // 参数列表
-        List.nil(), // 异常列表
-        jcBlock, // 方法体
-        null // 默认方法（可能是interface中的那个default）
+        treeMaker.Modifiers(Flags.PUBLIC), //访问标志
+        names.fromString("<init>"), //名字
+        treeMaker.TypeIdent(TypeTag.VOID), //返回类型
+        List.nil(), //泛型形参列表
+        List.nil(), //参数列表
+        List.nil(), //异常列表
+        jcBlock, //方法体
+        null //默认方法（可能是interface中的那个default）
 );
 ```
 
@@ -530,10 +530,10 @@ __注意点：访问标志设置成`Flags.PARAMETER`__
 
 ```Java
 treeMaker.VarDef(
-        treeMaker.Modifiers(Flags.PARAMETER), // 访问标志。极其坑爹！！！
-        prototypeJCVariable.name, // 名字
-        prototypeJCVariable.vartype, // 类型
-        null // 初始化语句
+        treeMaker.Modifiers(Flags.PARAMETER), //访问标志。极其坑爹！！！
+        prototypeJCVariable.name, //名字
+        prototypeJCVariable.vartype, //类型
+        null //初始化语句
 );
 ```
 
@@ -555,11 +555,11 @@ treeMaker.Exec(
 
 ```Java
 treeMaker.NewClass(
-        null, // 尚不清楚含义
-        List.nil(), // 泛型参数列表
-        treeMaker.Ident(builderClassName), // 创建的类名
-        List.nil(), // 参数列表
-        null // 类定义，估计是用于创建匿名内部类
+        null, //尚不清楚含义
+        List.nil(), //泛型参数列表
+        treeMaker.Ident(builderClassName), //创建的类名
+        List.nil(), //参数列表
+        null //类定义，估计是用于创建匿名内部类
 )
 ```
 
@@ -573,7 +573,7 @@ treeMaker.Exec(
                         treeMaker.Ident(getNameFromString(IDENTIFIER_DATA)),
                         jcMethodDecl.getName()
                 ),
-                List.of(treeMaker.Ident(jcVariableDecl.getName())) // 传入的参数集合
+                List.of(treeMaker.Ident(jcVariableDecl.getName())) //传入的参数集合
         )
 )
 ````
@@ -882,10 +882,10 @@ class ProcessUtil {
      */
     static JCTree.JCVariableDecl cloneJCVariableAsParam(TreeMaker treeMaker, JCTree.JCVariableDecl prototypeJCVariable) {
         return treeMaker.VarDef(
-                treeMaker.Modifiers(Flags.PARAMETER), // 访问标志。极其坑爹！！！
-                prototypeJCVariable.name, // 名字
-                prototypeJCVariable.vartype, // 类型
-                null // 初始化语句
+                treeMaker.Modifiers(Flags.PARAMETER), //访问标志。极其坑爹！！！
+                prototypeJCVariable.name, //名字
+                prototypeJCVariable.vartype, //类型
+                null //初始化语句
         );
     }
 
@@ -931,11 +931,11 @@ class ProcessUtil {
     static List<JCTree.JCVariableDecl> getJCVariables(JCTree.JCClassDecl jcClass) {
         ListBuffer<JCTree.JCVariableDecl> jcVariables = new ListBuffer<>();
 
-        // 遍历jcClass的所有内部节点，可能是字段，方法等等
+        //遍历jcClass的所有内部节点，可能是字段，方法等等
         for (JCTree jcTree : jcClass.defs) {
-            // 找出所有set方法节点，并添加
+            //找出所有set方法节点，并添加
             if (isValidField(jcTree)) {
-                // 注意这个com.sun.tools.javac.util.List的用法，不支持链式操作，更改后必须赋值
+                //注意这个com.sun.tools.javac.util.List的用法，不支持链式操作，更改后必须赋值
                 jcVariables.append((JCTree.JCVariableDecl) jcTree);
             }
         }
@@ -968,11 +968,11 @@ class ProcessUtil {
     static List<JCTree.JCMethodDecl> getSetJCMethods(JCTree.JCClassDecl jcClass) {
         ListBuffer<JCTree.JCMethodDecl> setJCMethods = new ListBuffer<>();
 
-        // 遍历jcClass的所有内部节点，可能是字段，方法等等
+        //遍历jcClass的所有内部节点，可能是字段，方法等等
         for (JCTree jcTree : jcClass.defs) {
-            // 找出所有set方法节点，并添加
+            //找出所有set方法节点，并添加
             if (isSetJCMethod(jcTree)) {
-                // 注意这个com.sun.tools.javac.util.List的用法，不支持链式操作，更改后必须赋值
+                //注意这个com.sun.tools.javac.util.List的用法，不支持链式操作，更改后必须赋值
                 setJCMethods.append((JCTree.JCMethodDecl) jcTree);
             }
         }
@@ -1125,21 +1125,21 @@ public class NoArgsConstructorProcessor extends BaseProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        // 首先获取被NoArgsConstructor注解标记的元素
+        //首先获取被NoArgsConstructor注解标记的元素
         Set<? extends Element> set = roundEnv.getElementsAnnotatedWith(NoArgsConstructor.class);
 
         set.forEach(element -> {
 
-            // 获取当前元素的JCTree对象
+            //获取当前元素的JCTree对象
             JCTree jcTree = trees.getTree(element);
 
-            // JCTree利用的是访问者模式，将数据与数据的处理进行解耦，TreeTranslator就是访问者，这里我们重写访问类时的逻辑
+            //JCTree利用的是访问者模式，将数据与数据的处理进行解耦，TreeTranslator就是访问者，这里我们重写访问类时的逻辑
             jcTree.accept(new TreeTranslator() {
                 @Override
                 public void visitClassDef(JCTree.JCClassDecl jcClass) {
                     messager.printMessage(Diagnostic.Kind.NOTE, "@NoArgsConstructor process [" + jcClass.name.toString() + "] begin!");
 
-                    // 添加无参构造方法
+                    //添加无参构造方法
                     if (!hasNoArgsConstructor(jcClass)) {
                         jcClass.defs = jcClass.defs.append(
                                 createNoArgsConstructor()
@@ -1162,19 +1162,19 @@ public class NoArgsConstructorProcessor extends BaseProcessor {
     private JCTree.JCMethodDecl createNoArgsConstructor() {
 
         JCTree.JCBlock jcBlock = treeMaker.Block(
-                0 // 访问标志
-                , List.nil() // 所有的语句
+                0 //访问标志
+                , List.nil() //所有的语句
         );
 
         return treeMaker.MethodDef(
-                treeMaker.Modifiers(Flags.PUBLIC), // 访问标志
-                names.fromString(CONSTRUCTOR_NAME), // 名字
-                treeMaker.TypeIdent(TypeTag.VOID), // 返回类型
-                List.nil(), // 泛型形参列表
-                List.nil(), // 参数列表
-                List.nil(), // 异常列表
-                jcBlock, // 方法体
-                null // 默认方法（可能是interface中的那个default）
+                treeMaker.Modifiers(Flags.PUBLIC), //访问标志
+                names.fromString(CONSTRUCTOR_NAME), //名字
+                treeMaker.TypeIdent(TypeTag.VOID), //返回类型
+                List.nil(), //泛型形参列表
+                List.nil(), //参数列表
+                List.nil(), //异常列表
+                jcBlock, //方法体
+                null //默认方法（可能是interface中的那个default）
         );
     }
 }
@@ -1215,15 +1215,15 @@ public class AllArgsConstructorProcessor extends BaseProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        // 首先获取被AllArgsConstructor注解标记的元素
+        //首先获取被AllArgsConstructor注解标记的元素
         Set<? extends Element> set = roundEnv.getElementsAnnotatedWith(AllArgsConstructor.class);
 
         set.forEach(element -> {
 
-            // 获取当前元素的JCTree对象
+            //获取当前元素的JCTree对象
             JCTree jcTree = trees.getTree(element);
 
-            // JCTree利用的是访问者模式，将数据与数据的处理进行解耦，TreeTranslator就是访问者，这里我们重写访问类时的逻辑
+            //JCTree利用的是访问者模式，将数据与数据的处理进行解耦，TreeTranslator就是访问者，这里我们重写访问类时的逻辑
             jcTree.accept(new TreeTranslator() {
                 @Override
                 public void visitClassDef(JCTree.JCClassDecl jcClass) {
@@ -1231,7 +1231,7 @@ public class AllArgsConstructorProcessor extends BaseProcessor {
 
                     before(jcClass);
 
-                    // 添加全参构造方法
+                    //添加全参构造方法
                     if (!hasAllArgsConstructor(fieldJCVariables, jcClass)) {
                         jcClass.defs = jcClass.defs.append(
                                 createAllArgsConstructor()
@@ -1273,7 +1273,7 @@ public class AllArgsConstructorProcessor extends BaseProcessor {
 
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
         for (JCTree.JCVariableDecl jcVariable : fieldJCVariables) {
-            // 添加构造方法的赋值语句 " this.xxx = xxx; "
+            //添加构造方法的赋值语句 " this.xxx = xxx; "
             jcStatements.append(
                     treeMaker.Exec(
                             treeMaker.Assign(
@@ -1288,19 +1288,19 @@ public class AllArgsConstructorProcessor extends BaseProcessor {
         }
 
         JCTree.JCBlock jcBlock = treeMaker.Block(
-                0 // 访问标志
-                , jcStatements.toList() // 所有的语句
+                0 //访问标志
+                , jcStatements.toList() //所有的语句
         );
 
         return treeMaker.MethodDef(
-                treeMaker.Modifiers(Flags.PUBLIC), // 访问标志
-                names.fromString(CONSTRUCTOR_NAME), // 名字
-                treeMaker.TypeIdent(TypeTag.VOID), // 返回类型
-                List.nil(), // 泛型形参列表
-                cloneJCVariablesAsParams(treeMaker, fieldJCVariables), // 参数列表
-                List.nil(), // 异常列表
-                jcBlock, // 方法体
-                null // 默认方法（可能是interface中的那个default）
+                treeMaker.Modifiers(Flags.PUBLIC), //访问标志
+                names.fromString(CONSTRUCTOR_NAME), //名字
+                treeMaker.TypeIdent(TypeTag.VOID), //返回类型
+                List.nil(), //泛型形参列表
+                cloneJCVariablesAsParams(treeMaker, fieldJCVariables), //参数列表
+                List.nil(), //异常列表
+                jcBlock, //方法体
+                null //默认方法（可能是interface中的那个default）
         );
     }
 }
@@ -1347,15 +1347,15 @@ public class DataProcessor extends BaseProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        // 首先获取被Data注解标记的元素
+        //首先获取被Data注解标记的元素
         Set<? extends Element> set = roundEnv.getElementsAnnotatedWith(Data.class);
 
         set.forEach(element -> {
 
-            // 获取当前元素的JCTree对象
+            //获取当前元素的JCTree对象
             JCTree jcTree = trees.getTree(element);
 
-            // JCTree利用的是访问者模式，将数据与数据的处理进行解耦，TreeTranslator就是访问者，这里我们重写访问类时的逻辑
+            //JCTree利用的是访问者模式，将数据与数据的处理进行解耦，TreeTranslator就是访问者，这里我们重写访问类时的逻辑
             jcTree.accept(new TreeTranslator() {
                 @Override
                 public void visitClassDef(JCTree.JCClassDecl jcClass) {
@@ -1363,7 +1363,7 @@ public class DataProcessor extends BaseProcessor {
 
                     before(jcClass);
 
-                    // 添加全参构造方法
+                    //添加全参构造方法
                     jcClass.defs = jcClass.defs.appendList(
                             createDataMethods()
                     );
@@ -1428,7 +1428,7 @@ public class DataProcessor extends BaseProcessor {
 
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
 
-        // 添加语句 " this.xxx = xxx; "
+        //添加语句 " this.xxx = xxx; "
         jcStatements.append(
                 treeMaker.Exec(
                         treeMaker.Assign(
@@ -1442,19 +1442,19 @@ public class DataProcessor extends BaseProcessor {
         );
 
         JCTree.JCBlock jcBlock = treeMaker.Block(
-                0 // 访问标志
-                , jcStatements.toList() // 所有的语句
+                0 //访问标志
+                , jcStatements.toList() //所有的语句
         );
 
         return treeMaker.MethodDef(
-                treeMaker.Modifiers(Flags.PUBLIC), // 访问标志
-                names.fromString(fromPropertyNameToSetMethodName(jcVariable.name.toString())), // 名字
-                treeMaker.TypeIdent(TypeTag.VOID), // 返回类型
-                List.nil(), // 泛型形参列表
-                List.of(cloneJCVariableAsParam(treeMaker, jcVariable)), // 参数列表
-                List.nil(), // 异常列表
-                jcBlock, // 方法体
-                null // 默认方法（可能是interface中的那个default）
+                treeMaker.Modifiers(Flags.PUBLIC), //访问标志
+                names.fromString(fromPropertyNameToSetMethodName(jcVariable.name.toString())), //名字
+                treeMaker.TypeIdent(TypeTag.VOID), //返回类型
+                List.nil(), //泛型形参列表
+                List.of(cloneJCVariableAsParam(treeMaker, jcVariable)), //参数列表
+                List.nil(), //异常列表
+                jcBlock, //方法体
+                null //默认方法（可能是interface中的那个default）
         );
     }
 
@@ -1467,7 +1467,7 @@ public class DataProcessor extends BaseProcessor {
     private JCTree.JCMethodDecl createGetJCMethod(JCTree.JCVariableDecl jcVariable) {
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
 
-        // 添加语句 " return this.xxx; "
+        //添加语句 " return this.xxx; "
         jcStatements.append(
                 treeMaker.Return(
                         treeMaker.Select(
@@ -1478,19 +1478,19 @@ public class DataProcessor extends BaseProcessor {
         );
 
         JCTree.JCBlock jcBlock = treeMaker.Block(
-                0 // 访问标志
-                , jcStatements.toList() // 所有的语句
+                0 //访问标志
+                , jcStatements.toList() //所有的语句
         );
 
         return treeMaker.MethodDef(
-                treeMaker.Modifiers(Flags.PUBLIC), // 访问标志
-                names.fromString(fromPropertyNameToGetMethodName(jcVariable.name.toString())), // 名字
-                jcVariable.vartype, // 返回类型
-                List.nil(), // 泛型形参列表
-                List.nil(), // 参数列表
-                List.nil(), // 异常列表
-                jcBlock, // 方法体
-                null // 默认方法（可能是interface中的那个default）
+                treeMaker.Modifiers(Flags.PUBLIC), //访问标志
+                names.fromString(fromPropertyNameToGetMethodName(jcVariable.name.toString())), //名字
+                jcVariable.vartype, //返回类型
+                List.nil(), //泛型形参列表
+                List.nil(), //参数列表
+                List.nil(), //异常列表
+                jcBlock, //方法体
+                null //默认方法（可能是interface中的那个default）
         );
     }
 }
@@ -1548,15 +1548,15 @@ public class BuilderProcessor extends BaseProcessor {
      */
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        // 首先获取被Builder注解标记的元素
+        //首先获取被Builder注解标记的元素
         Set<? extends Element> set = roundEnv.getElementsAnnotatedWith(Builder.class);
 
         set.forEach(element -> {
 
-            // 获取当前元素的JCTree对象
+            //获取当前元素的JCTree对象
             JCTree jcTree = trees.getTree(element);
 
-            // JCTree利用的是访问者模式，将数据与数据的处理进行解耦，TreeTranslator就是访问者，这里我们重写访问类时的逻辑
+            //JCTree利用的是访问者模式，将数据与数据的处理进行解耦，TreeTranslator就是访问者，这里我们重写访问类时的逻辑
             jcTree.accept(new TreeTranslator() {
                 @Override
                 public void visitClassDef(JCTree.JCClassDecl jcClass) {
@@ -1564,12 +1564,12 @@ public class BuilderProcessor extends BaseProcessor {
 
                     before(jcClass);
 
-                    // 添加builder方法
+                    //添加builder方法
                     jcClass.defs = jcClass.defs.append(
                             createStaticBuilderMethod()
                     );
 
-                    // 添加静态内部类
+                    //添加静态内部类
                     jcClass.defs = jcClass.defs.append(
                             createJCClass()
                     );
@@ -1613,33 +1613,33 @@ public class BuilderProcessor extends BaseProcessor {
 
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
 
-        // 添加Builder模式中的返回语句 " return new XXXBuilder(); "
+        //添加Builder模式中的返回语句 " return new XXXBuilder(); "
         jcStatements.append(
                 treeMaker.Return(
                         treeMaker.NewClass(
-                                null, // 尚不清楚含义
-                                List.nil(), // 泛型参数列表
-                                treeMaker.Ident(builderClassName), // 创建的类名
-                                List.nil(), // 参数列表
-                                null // 类定义，估计是用于创建匿名内部类
+                                null, //尚不清楚含义
+                                List.nil(), //泛型参数列表
+                                treeMaker.Ident(builderClassName), //创建的类名
+                                List.nil(), //参数列表
+                                null //类定义，估计是用于创建匿名内部类
                         )
                 )
         );
 
         JCTree.JCBlock jcBlock = treeMaker.Block(
-                0 // 访问标志
-                , jcStatements.toList() // 所有的语句
+                0 //访问标志
+                , jcStatements.toList() //所有的语句
         );
 
         return treeMaker.MethodDef(
-                treeMaker.Modifiers(Flags.PUBLIC + Flags.STATIC), // 访问标志
-                names.fromString(BUILDER_STATIC_METHOD_NAME), // 名字
-                treeMaker.Ident(builderClassName), // 返回类型
-                List.nil(), // 泛型形参列表
-                List.nil(), // 参数列表
-                List.nil(), // 异常列表
-                jcBlock, // 方法体
-                null // 默认方法（可能是interface中的那个default）
+                treeMaker.Modifiers(Flags.PUBLIC + Flags.STATIC), //访问标志
+                names.fromString(BUILDER_STATIC_METHOD_NAME), //名字
+                treeMaker.Ident(builderClassName), //返回类型
+                List.nil(), //泛型形参列表
+                List.nil(), //参数列表
+                List.nil(), //异常列表
+                jcBlock, //方法体
+                null //默认方法（可能是interface中的那个default）
         );
     }
 
@@ -1657,12 +1657,12 @@ public class BuilderProcessor extends BaseProcessor {
         jcTrees.append(createBuildJCMethod());
 
         return treeMaker.ClassDef(
-                treeMaker.Modifiers(Flags.PUBLIC + Flags.STATIC + Flags.FINAL), // 访问标志
-                builderClassName, // 名字
-                List.nil(), // 泛型形参列表
-                null, // 继承
-                List.nil(), // 接口列表
-                jcTrees.toList()); // 定义
+                treeMaker.Modifiers(Flags.PUBLIC + Flags.STATIC + Flags.FINAL), //访问标志
+                builderClassName, //名字
+                List.nil(), //泛型形参列表
+                null, //继承
+                List.nil(), //接口列表
+                jcTrees.toList()); //定义
     }
 
     /**
@@ -1676,10 +1676,10 @@ public class BuilderProcessor extends BaseProcessor {
         for (JCTree.JCVariableDecl fieldJCVariable : fieldJCVariables) {
             jcVariables.append(
                     treeMaker.VarDef(
-                            treeMaker.Modifiers(Flags.PRIVATE), // 访问标志
-                            names.fromString((fieldJCVariable.name.toString())), // 名字
-                            fieldJCVariable.vartype // 类型
-                            , null // 初始化语句
+                            treeMaker.Modifiers(Flags.PRIVATE), //访问标志
+                            names.fromString((fieldJCVariable.name.toString())), //名字
+                            fieldJCVariable.vartype //类型
+                            , null //初始化语句
                     )
             );
         }
@@ -1711,7 +1711,7 @@ public class BuilderProcessor extends BaseProcessor {
 
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
 
-        // 添加语句 " this.xxx = xxx; "
+        //添加语句 " this.xxx = xxx; "
         jcStatements.append(
                 treeMaker.Exec(
                         treeMaker.Assign(
@@ -1724,7 +1724,7 @@ public class BuilderProcessor extends BaseProcessor {
                 )
         );
 
-        // 添加Builder模式中的返回语句 " return this; "
+        //添加Builder模式中的返回语句 " return this; "
         jcStatements.append(
                 treeMaker.Return(
                         treeMaker.Ident(names.fromString(THIS)
@@ -1733,19 +1733,19 @@ public class BuilderProcessor extends BaseProcessor {
         );
 
         JCTree.JCBlock jcBlock = treeMaker.Block(
-                0 // 访问标志
-                , jcStatements.toList() // 所有的语句
+                0 //访问标志
+                , jcStatements.toList() //所有的语句
         );
 
         return treeMaker.MethodDef(
-                treeMaker.Modifiers(Flags.PUBLIC), // 访问标志
-                names.fromString(jcVariable.name.toString()), // 名字
-                treeMaker.Ident(builderClassName), // 返回类型
-                List.nil(), // 泛型形参列表
-                List.of(cloneJCVariableAsParam(treeMaker, jcVariable)), // 参数列表
-                List.nil(), // 异常列表
-                jcBlock, // 方法体
-                null // 默认方法（可能是interface中的那个default）
+                treeMaker.Modifiers(Flags.PUBLIC), //访问标志
+                names.fromString(jcVariable.name.toString()), //名字
+                treeMaker.Ident(builderClassName), //返回类型
+                List.nil(), //泛型形参列表
+                List.of(cloneJCVariableAsParam(treeMaker, jcVariable)), //参数列表
+                List.nil(), //异常列表
+                jcBlock, //方法体
+                null //默认方法（可能是interface中的那个default）
         );
     }
 
@@ -1768,33 +1768,33 @@ public class BuilderProcessor extends BaseProcessor {
 
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
 
-        // 添加返回语句 " return new XXX(arg1, arg2, ...); "
+        //添加返回语句 " return new XXX(arg1, arg2, ...); "
         jcStatements.append(
                 treeMaker.Return(
                         treeMaker.NewClass(
-                                null, // 尚不清楚含义
-                                List.nil(), // 泛型参数列表
-                                treeMaker.Ident(className), // 创建的类名
-                                jcVariableExpressions.toList(), // 参数列表
-                                null // 类定义，估计是用于创建匿名内部类
+                                null, //尚不清楚含义
+                                List.nil(), //泛型参数列表
+                                treeMaker.Ident(className), //创建的类名
+                                jcVariableExpressions.toList(), //参数列表
+                                null //类定义，估计是用于创建匿名内部类
                         )
                 )
         );
 
         JCTree.JCBlock jcBlock = treeMaker.Block(
-                0 // 访问标志
-                , jcStatements.toList() // 所有的语句
+                0 //访问标志
+                , jcStatements.toList() //所有的语句
         );
 
         return treeMaker.MethodDef(
-                treeMaker.Modifiers(Flags.PUBLIC), // 访问标志
-                names.fromString(BUILD_METHOD_NAME), // 名字
-                treeMaker.Ident(className), // 返回类型
-                List.nil(), // 泛型形参列表
-                List.nil(), // 参数列表
-                List.nil(), // 异常列表
-                jcBlock, // 方法体
-                null // 默认方法（可能是interface中的那个default）
+                treeMaker.Modifiers(Flags.PUBLIC), //访问标志
+                names.fromString(BUILD_METHOD_NAME), //名字
+                treeMaker.Ident(className), //返回类型
+                List.nil(), //泛型形参列表
+                List.nil(), //参数列表
+                List.nil(), //异常列表
+                jcBlock, //方法体
+                null //默认方法（可能是interface中的那个default）
         );
     }
 }
@@ -1954,9 +1954,9 @@ org.liuyehcf.annotation.source.processor.BuilderProcessor
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
-         xmlns="http:// maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.liuyehcf</groupId>

@@ -102,7 +102,7 @@ Java_java_lang_Class_forName0(JNIEnv *env, jclass this, jstring classname,
         goto done;
     }
 
-    // 重点看这里，调用了JVM_FindClassFromCaller方法
+    //重点看这里，调用了JVM_FindClassFromCaller方法
     cls = JVM_FindClassFromCaller(env, clname, initialize, loader, caller);
 
  done:
@@ -140,10 +140,10 @@ JVM_ENTRY(jclass, JVM_FindClassFromCaller(JNIEnv* env, const char* name,
                                           jboolean init, jobject loader,
                                           jclass caller))
   JVMWrapper2("JVM_FindClassFromCaller %s throws ClassNotFoundException", name);
-  // Java libraries should ensure that name is never null...
+  //Java libraries should ensure that name is never null...
   if (name == NULL || (int)strlen(name) > Symbol::max_length()) {
-    // It's impossible to create this class;  the name cannot fit
-    // into the constant pool.
+    //It's impossible to create this class;  the name cannot fit
+    //into the constant pool.
     THROW_MSG_0(vmSymbols::java_lang_ClassNotFoundException(), name);
   }
 
@@ -152,18 +152,18 @@ JVM_ENTRY(jclass, JVM_FindClassFromCaller(JNIEnv* env, const char* name,
   oop loader_oop = JNIHandles::resolve(loader);
   oop from_class = JNIHandles::resolve(caller);
   oop protection_domain = NULL;
-  // If loader is null, shouldn't call ClassLoader.checkPackageAccess; otherwise get
-  // NPE. Put it in another way, the bootstrap class loader has all permission and
-  // thus no checkPackageAccess equivalence in the VM class loader.
-  // The caller is also passed as NULL by the java code if there is no security
-  // manager to avoid the performance cost of getting the calling class.
+  //If loader is null, shouldn't call ClassLoader.checkPackageAccess; otherwise get
+  //NPE. Put it in another way, the bootstrap class loader has all permission and
+  //thus no checkPackageAccess equivalence in the VM class loader.
+  //The caller is also passed as NULL by the java code if there is no security
+  //manager to avoid the performance cost of getting the calling class.
   if (from_class != NULL && loader_oop != NULL) {
     protection_domain = java_lang_Class::as_Klass(from_class)->protection_domain();
   }
 
   Handle h_loader(THREAD, loader_oop);
   Handle h_prot(THREAD, protection_domain);
-  // 核心方法调用
+  //核心方法调用
   jclass result = find_class_from_class_loader(env, h_name, init, h_loader,
                                                h_prot, false, THREAD);
 
@@ -176,16 +176,16 @@ JVM_END
 jclass find_class_from_class_loader(JNIEnv* env, Symbol* name, jboolean init,
                                     Handle loader, Handle protection_domain,
                                     jboolean throwError, TRAPS) {
-  // Security Note:
-  // The Java level wrapper will perform the necessary security check allowing
-  // us to pass the NULL as the initiating class loader.  The VM is responsible for
-  // the checkPackageAccess relative to the initiating class loader via the
-  // protection_domain. The protection_domain is passed as NULL by the java code
-  // if there is no security manager in 3-arg Class.forName().
+  //Security Note:
+  //The Java level wrapper will perform the necessary security check allowing
+  //us to pass the NULL as the initiating class loader.  The VM is responsible for
+  //the checkPackageAccess relative to the initiating class loader via the
+  //protection_domain. The protection_domain is passed as NULL by the java code
+  //if there is no security manager in 3-arg Class.forName().
   Klass* klass = SystemDictionary::resolve_or_fail(name, loader, protection_domain, throwError != 0, CHECK_NULL);
 
   KlassHandle klass_handle(THREAD, klass);
-  // Check if we should initialize the class
+  //Check if we should initialize the class
   if (init && klass_handle->oop_is_instance()) {
     klass_handle->initialize(CHECK_NULL);
   }
@@ -227,7 +227,7 @@ jclass find_class_from_class_loader(JNIEnv* env, Symbol* name, jboolean init,
                     throw new ClassNotFoundException(var1);
                 }
             } else {
-                // 会走到这里，继续调用父类的loadClass方法
+                //会走到这里，继续调用父类的loadClass方法
                 return super.loadClass(var1, var2);
             }
         }
@@ -240,11 +240,11 @@ AppClassLoader的父类是ClassLoader，其loadClass方法如下：
         throws ClassNotFoundException
     {
         synchronized (getClassLoadingLock(name)) {
-            // First, check if the class has already been loaded
+            //First, check if the class has already been loaded
             Class<?> c = findLoadedClass(name);
             if (c == null) {
                 long t0 = System.nanoTime();
-                // 双亲委派逻辑的体现之处
+                //双亲委派逻辑的体现之处
                 try {
                     if (parent != null) {
                         c = parent.loadClass(name, false);
@@ -252,17 +252,17 @@ AppClassLoader的父类是ClassLoader，其loadClass方法如下：
                         c = findBootstrapClassOrNull(name);
                     }
                 } catch (ClassNotFoundException e) {
-                    // ClassNotFoundException thrown if class not found
-                    // from the non-null parent class loader
+                    //ClassNotFoundException thrown if class not found
+                    //from the non-null parent class loader
                 }
 
                 if (c == null) {
-                    // If still not found, then invoke findClass in order
-                    // to find the class.
+                    //If still not found, then invoke findClass in order
+                    //to find the class.
                     long t1 = System.nanoTime();
                     c = findClass(name);
 
-                    // this is the defining class loader; record the stats
+                    //this is the defining class loader; record the stats
                     sun.misc.PerfCounter.getParentDelegationTime().addTime(t1 - t0);
                     sun.misc.PerfCounter.getFindClassTime().addElapsedTimeFrom(t1);
                     sun.misc.PerfCounter.getFindClasses().increment();
@@ -278,7 +278,7 @@ AppClassLoader的父类是ClassLoader，其loadClass方法如下：
     protected final Class<?> findLoadedClass(String name) {
         if (!checkName(name))
             return null;
-        // native方法
+        //native方法
         return findLoadedClass0(name);
     }
 ```
@@ -324,20 +324,20 @@ JVM_ENTRY(jclass, JVM_FindLoadedClass(JNIEnv *env, jobject loader, jstring name)
   Handle string = java_lang_String::internalize_classname(h_name, CHECK_NULL);
 
   const char* str   = java_lang_String::as_utf8_string(string());
-  // Sanity check, don't expect null
+  //Sanity check, don't expect null
   if (str == NULL) return NULL;
 
   const int str_len = (int)strlen(str);
   if (str_len > Symbol::max_length()) {
-    // It's impossible to create this class;  the name cannot fit
-    // into the constant pool.
+    //It's impossible to create this class;  the name cannot fit
+    //into the constant pool.
     return NULL;
   }
   TempNewSymbol klass_name = SymbolTable::new_symbol(str, str_len, CHECK_NULL);
 
-  // Security Note:
-  // The Java level wrapper will perform the necessary security check allowing
-  // us to pass the NULL as the initiating class loader.
+  //Security Note:
+  //The Java level wrapper will perform the necessary security check allowing
+  //us to pass the NULL as the initiating class loader.
   Handle h_loader(THREAD, JNIHandles::resolve(loader));
   if (UsePerfData) {
     is_lock_held_by_thread(h_loader,
@@ -345,15 +345,15 @@ JVM_ENTRY(jclass, JVM_FindLoadedClass(JNIEnv *env, jobject loader, jstring name)
                            THREAD);
   }
 
-  // 核心调用
+  //核心调用
   Klass* k = SystemDictionary::find_instance_or_array_klass(klass_name,
                                                               h_loader,
                                                               Handle(),
                                                               CHECK_NULL);
 #if INCLUDE_CDS
   if (k == NULL) {
-    // If the class is not already loaded, try to see if it's in the shared
-    // archive for the current classloader (h_loader).
+    //If the class is not already loaded, try to see if it's in the shared
+    //archive for the current classloader (h_loader).
     instanceKlassHandle ik = SystemDictionaryShared::find_or_load_shared_class(
         klass_name, h_loader, CHECK_NULL);
     k = ik();
@@ -385,7 +385,7 @@ JVM_END
                         Resource res = ucp.getResource(path, false);
                         if (res != null) {
                             try {
-                                // 核心调用
+                                //核心调用
                                 return defineClass(name, res);
                             } catch (IOException e) {
                                 throw new ClassNotFoundException(name, e);
@@ -414,28 +414,28 @@ JVM_END
         URL url = res.getCodeSourceURL();
         if (i != -1) {
             String pkgname = name.substring(0, i);
-            // Check if package already loaded.
+            //Check if package already loaded.
             Manifest man = res.getManifest();
             definePackageInternal(pkgname, man, url);
         }
-        // Now read the class bytes and define the class
+        //Now read the class bytes and define the class
         java.nio.ByteBuffer bb = res.getByteBuffer();
         if (bb != null) {
-            // Use (direct) ByteBuffer:
+            //Use (direct) ByteBuffer:
             CodeSigner[] signers = res.getCodeSigners();
             CodeSource cs = new CodeSource(url, signers);
             sun.misc.PerfCounter.getReadClassBytesTime().addElapsedTimeFrom(t0);
 
-            // 核心调用
+            //核心调用
             return defineClass(name, bb, cs);
         } else {
             byte[] b = res.getBytes();
-            // must read certificates AFTER reading bytes.
+            //must read certificates AFTER reading bytes.
             CodeSigner[] signers = res.getCodeSigners();
             CodeSource cs = new CodeSource(url, signers);
             sun.misc.PerfCounter.getReadClassBytesTime().addElapsedTimeFrom(t0);
 
-            // 核心调用
+            //核心调用
             return defineClass(name, b, 0, b.length, cs);
         }
     }
@@ -448,8 +448,8 @@ native方法defineClass0、defineClass1、defineClass2所在的文件路径如�
 * `${OPEN_JDK}/jdk/src/share/native/java/lang/ClassLoader.c`
 
 ```C
-// The existence or signature of this method is not guaranteed since it
-// supports a private method.  This method will be changed in 1.7.
+//The existence or signature of this method is not guaranteed since it
+//supports a private method.  This method will be changed in 1.7.
 JNIEXPORT jclass JNICALL
 Java_java_lang_ClassLoader_defineClass0(JNIEnv *env,
                                         jobject loader,
@@ -459,7 +459,7 @@ Java_java_lang_ClassLoader_defineClass0(JNIEnv *env,
                                         jint length,
                                         jobject pd)
 {
-    // 转调用Java_java_lang_ClassLoader_defineClass1
+    //转调用Java_java_lang_ClassLoader_defineClass1
     return Java_java_lang_ClassLoader_defineClass1(env, loader, name, data, offset,
                                                    length, pd, NULL);
 }
@@ -527,7 +527,7 @@ Java_java_lang_ClassLoader_defineClass1(JNIEnv *env,
         utfSource = NULL;
     }
 
-    // 核心调用
+    //核心调用
     result = JVM_DefineClassWithSource(env, utfName, loader, body, length, pd, utfSource);
 
     if (utfSource && utfSource != sourceBuf)
@@ -559,9 +559,9 @@ Java_java_lang_ClassLoader_defineClass2(JNIEnv *env,
     char* utfSource;
     char sourceBuf[1024];
 
-    assert(data != NULL); // caller fails if data is null.
-    assert(length >= 0);  // caller passes ByteBuffer.remaining() for length, so never neg.
-    // caller passes ByteBuffer.position() for offset, and capacity() >= position() + remaining()
+    assert(data != NULL); //caller fails if data is null.
+    assert(length >= 0);  //caller passes ByteBuffer.remaining() for length, so never neg.
+    //caller passes ByteBuffer.position() for offset, and capacity() >= position() + remaining()
     assert((*env)->GetDirectBufferCapacity(env, data) >= (offset + length));
 
     body = (*env)->GetDirectBufferAddress(env, data);
@@ -594,7 +594,7 @@ Java_java_lang_ClassLoader_defineClass2(JNIEnv *env,
         utfSource = NULL;
     }
 
-    // 核心调用
+    //核心调用
     result = JVM_DefineClassWithSource(env, utfName, loader, body, length, pd, utfSource);
 
     if (utfSource && utfSource != sourceBuf)
@@ -632,8 +632,8 @@ JVM_ENTRY(jclass, JVM_DefineClassWithSource(JNIEnv *env, const char *name, jobje
   return jvm_define_class_common(env, name, loader, buf, len, pd, source, true, THREAD);
 JVM_END
 
-// common code for JVM_DefineClass() and JVM_DefineClassWithSource()
-// and JVM_DefineClassWithSourceCond()
+//common code for JVM_DefineClass() and JVM_DefineClassWithSource()
+//and JVM_DefineClassWithSourceCond()
 static jclass jvm_define_class_common(JNIEnv *env, const char *name,
                                       jobject loader, const jbyte *buf,
                                       jsize len, jobject pd, const char *source,
@@ -654,14 +654,14 @@ static jclass jvm_define_class_common(JNIEnv *env, const char *name,
     ClassLoader::perf_app_classfile_bytes_read()->inc(len);
   }
 
-  // Since exceptions can be thrown, class initialization can take place
-  // if name is NULL no check for class name in .class stream has to be made.
+  //Since exceptions can be thrown, class initialization can take place
+  //if name is NULL no check for class name in .class stream has to be made.
   TempNewSymbol class_name = NULL;
   if (name != NULL) {
     const int str_len = (int)strlen(name);
     if (str_len > Symbol::max_length()) {
-      // It's impossible to create this class;  the name cannot fit
-      // into the constant pool.
+      //It's impossible to create this class;  the name cannot fit
+      //into the constant pool.
       THROW_MSG_0(vmSymbols::java_lang_NoClassDefFoundError(), name);
     }
     class_name = SymbolTable::new_symbol(name, str_len, CHECK_NULL);

@@ -144,36 +144,36 @@ __当z的父节点是祖父节点的右孩子时：（叔节点为祖父节点�
 
 ```C
 RB-INSERT-FIXUP(T,z)
-while z.p.color==RED// 由于z.p是红色，于是z.p.p一定存在，因此访问z.p.p的任何属性都是安全的
+while z.p.color==RED//由于z.p是红色，于是z.p.p一定存在，因此访问z.p.p的任何属性都是安全的
     if z.p==z.p.p.left
         y=z.p.p.right
         if y.color==RED
             z.p.color=BLACK
             y.color=BLACK
             z.p.p.color=RED
-            z=z.p.p// 继续循环
+            z=z.p.p//继续循环
         else
             if z==z.p.right
                 z=z.p
                 LEFT-ROTATE(T,z)
             z.p.color=BLACK
             z.p.p.color=RED
-            RIGHT-ROTATE(T,z.p.p)// 循环结束
+            RIGHT-ROTATE(T,z.p.p)//循环结束
     else z.p==z.p.p.right
         y=z.p.p.left
         if y.color==RED
             z.p.color=BLACK
             y.color=BLACK
             z.p.p.color=RED
-            z=z.p.p// 继续循环
+            z=z.p.p//继续循环
         else
             if z==z.p.left
                 z=z.p
                 RIGHT-ROTATE(T,z)
             z.p.color=BLACK
             z.p.p.color=RED
-            LEFT-ROTATE(T,z.p.p) // 循环结束
-T.root.color=BLACK// 针对第一个插入的z，不会进入循环(性质4成立，但性质2破坏，这里纠正)
+            LEFT-ROTATE(T,z.p.p) //循环结束
+T.root.color=BLACK//针对第一个插入的z，不会进入循环(性质4成立，但性质2破坏，这里纠正)
 ```
 
 ## 2.3 节点移植
@@ -187,7 +187,7 @@ if u.p==T.nil
 elseif u==u.p.left
     u.p.left=v
 else u.p.right=v
-v.p=u.p// 与搜索二叉树相比，这里没有判断，即使v是哨兵，也执行此句,对于移动到y位置的节点x(可能是哨兵)，会访问x.p，因此这里需要进行赋值
+v.p=u.p//与搜索二叉树相比，这里没有判断，即使v是哨兵，也执行此句,对于移动到y位置的节点x(可能是哨兵)，会访问x.p，因此这里需要进行赋值
 ```
 
 ## 2.4 删除
@@ -215,8 +215,8 @@ else y=TREE-MINIMUM(z.right)
     y-original-color=y.color
     x=y.right
     if y.p==z
-        x.p=y// 使得x为哨兵节点时也成立
-    else RB-TRANSPLANT(T,y,y.right)// 即使y.right是哨兵，也会指向y的父节点
+        x.p=y//使得x为哨兵节点时也成立
+    else RB-TRANSPLANT(T,y,y.right)//即使y.right是哨兵，也会指向y的父节点
         y.right=z.right
         y.right.p=y
     RB-TRANSPLANT(T,z,y)
@@ -242,7 +242,7 @@ elseif z.right==T.nil
 else y=TREE-MINIMUM(z.right)
     y-original-color=y.color
     x=y.right
-    RB-TRANSPLANT(T,y,y.right)// 即使y.right是哨兵，也会指向y的父节点
+    RB-TRANSPLANT(T,y,y.right)//即使y.right是哨兵，也会指向y的父节点
     y.right=z.right
     y.right.p=y
     RB-TRANSPLANT(T,z,y)
@@ -310,8 +310,8 @@ __当x是其父亲的右孩子时：x为双重黑色__，也可分为四种情�
 
 ```C
 RB-DELETE-FIXUP(T,x)
-while x≠T.root and x.color ==BLACK// 若x是红色的，那么将x改为黑色即可
-    if x==x.p.left// x可以是哨兵，访问x.p是合法的，因为在Delete中已经设置过
+while x≠T.root and x.color ==BLACK//若x是红色的，那么将x改为黑色即可
+    if x==x.p.left//x可以是哨兵，访问x.p是合法的，因为在Delete中已经设置过
         w=x.p.right
         if w.color==RED
             w.color=BLACK
@@ -578,8 +578,8 @@ public class RBTree {
         RBTreeNode z = search(root, val);
         if (z == nil) throw new RuntimeException();
 
-        RBTreeNode y = z;// y代表"被删除"的节点
-        RBTreeNode x = nil;// x代表移动到"被删除"节点的节点
+        RBTreeNode y = z;//y代表"被删除"的节点
+        RBTreeNode x = nil;//x代表移动到"被删除"节点的节点
         Color yOriginColor = y.color;
         if (z.left == nil) {
             x = z.right;
@@ -593,7 +593,7 @@ public class RBTree {
             x = y.right;
             transplant(y, x);
 
-            // TODO 以下6句改为z.val=y.val也是可以的
+            //TODO 以下6句改为z.val=y.val也是可以的
             y.right = z.right;
             y.right.parent = y;
 
@@ -635,7 +635,7 @@ public class RBTree {
                 if (w.left.color == BLACK && w.right.color == BLACK) {
                     w.color = RED;
                     x = x.parent;
-                    // 这里是可能直接退出循环的,此时x若为红色，那么x就是红色带额外的黑色，因此将其改为黑色就行
+                    //这里是可能直接退出循环的,此时x若为红色，那么x就是红色带额外的黑色，因此将其改为黑色就行
                 } else {
                     if (w.left.color == RED) {
                         w.left.color = BLACK;
@@ -661,7 +661,7 @@ public class RBTree {
                 if (w.left.color == BLACK && w.right.color == BLACK) {
                     w.color = RED;
                     x = x.parent;
-                    // 这里是可能直接退出循环的,此时x若为红色，那么x就是红色带额外的黑色，因此将其改为黑色就行
+                    //这里是可能直接退出循环的,此时x若为红色，那么x就是红色带额外的黑色，因此将其改为黑色就行
                 } else {
                     if (w.right.color == RED) {
                         w.right.color = BLACK;
@@ -997,16 +997,16 @@ public class RBTree {
 
             List<Integer> list = new ArrayList<Integer>(set);
             Collections.shuffle(list, random);
-            // 插入N个数据
+            //插入N个数据
             for (int i : list) {
                 rbTree.insert(i);
             }
 
-// rbTree.preOrderTraverse();
-// rbTree.inOrderTraverse();
-// rbTree.postOrderTraverse();
+//rbTree.preOrderTraverse();
+//rbTree.inOrderTraverse();
+//rbTree.postOrderTraverse();
 
-            // 删除M个数据
+            //删除M个数据
             Collections.shuffle(list, random);
 
             for (int i = 0; i < M; i++) {
@@ -1014,7 +1014,7 @@ public class RBTree {
                 rbTree.delete(list.get(i));
             }
 
-            // 再插入M个数据
+            //再插入M个数据
             for (int i = 0; i < M; i++) {
                 int k = random.nextInt();
                 set.add(k);
@@ -1024,7 +1024,7 @@ public class RBTree {
             list.addAll(set);
             Collections.shuffle(list, random);
 
-            // 再删除所有元素
+            //再删除所有元素
             for (int i : list) {
                 rbTree.delete(i);
             }

@@ -54,13 +54,13 @@ __mysql：__
 __也有如下非快捷键的方法__
 
 ```
-// 显示
+//显示
 defaults write com.apple.finder AppleShowAllFiles -boolean true 
-killall Finder// 重启Finder
+killall Finder//重启Finder
 
-// 隐藏
+//隐藏
 defaults write com.apple.finder AppleShowAllFiles -boolean false
-killall Finder// 重启Finder
+killall Finder//重启Finder
 ```
 
 ## 3.3 微粒度音量调节

@@ -194,14 +194,14 @@ public abstract class ChannelInitializer<C extends Channel> extends ChannelInbou
     @Override
     @SuppressWarnings("unchecked")
     public final void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-        // Normally this method will never be called as handlerAdded(...) should call initChannel(...) and remove
-        // the handler.
+        //Normally this method will never be called as handlerAdded(...) should call initChannel(...) and remove
+        //the handler.
         if (initChannel(ctx)) {
-            // we called initChannel(...) so we need to call now pipeline.fireChannelRegistered() to ensure we not
-            // miss an event.
+            //we called initChannel(...) so we need to call now pipeline.fireChannelRegistered() to ensure we not
+            //miss an event.
             ctx.pipeline().fireChannelRegistered();
         } else {
-            // Called initChannel(...) before which is the expected behavior, so just forward the event.
+            //Called initChannel(...) before which is the expected behavior, so just forward the event.
             ctx.fireChannelRegistered();
         }
     }
@@ -212,31 +212,31 @@ public abstract class ChannelInitializer<C extends Channel> extends ChannelInbou
         ctx.close();
     }
 
-    // 通常在Netty的处理流程中，会显式调用该方法，从而激活注入工作
+    //通常在Netty的处理流程中，会显式调用该方法，从而激活注入工作
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
         if (ctx.channel().isRegistered()) {
-            // This should always be true with our current DefaultChannelPipeline implementation.
-            // The good thing about calling initChannel(...) in handlerAdded(...) is that there will be no ordering
-            // surprises if a ChannelInitializer will add another ChannelInitializer. This is as all handlers
-            // will be added in the expected order.
+            //This should always be true with our current DefaultChannelPipeline implementation.
+            //The good thing about calling initChannel(...) in handlerAdded(...) is that there will be no ordering
+            //surprises if a ChannelInitializer will add another ChannelInitializer. This is as all handlers
+            //will be added in the expected order.
             initChannel(ctx);
         }
     }
 
-    // 该方法作为一个模板，在调用结束后，当前Handler会被移除
+    //该方法作为一个模板，在调用结束后，当前Handler会被移除
     @SuppressWarnings("unchecked")
     private boolean initChannel(ChannelHandlerContext ctx) throws Exception {
-        if (initMap.putIfAbsent(ctx, Boolean.TRUE) == null) { // Guard against re-entrance.
+        if (initMap.putIfAbsent(ctx, Boolean.TRUE) == null) { //Guard against re-entrance.
             try {
-                // 触发protected方法，该方法的逻辑由子类定义
+                //触发protected方法，该方法的逻辑由子类定义
                 initChannel((C) ctx.channel());
             } catch (Throwable cause) {
-                // Explicitly call exceptionCaught(...) as we removed the handler before calling initChannel(...).
-                // We do so to prevent multiple calls to initChannel(...).
+                //Explicitly call exceptionCaught(...) as we removed the handler before calling initChannel(...).
+                //We do so to prevent multiple calls to initChannel(...).
                 exceptionCaught(ctx, cause);
             } finally {
-                // 从Pipeline中移除该Context
+                //从Pipeline中移除该Context
                 remove(ctx);
             }
             return true;

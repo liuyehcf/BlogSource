@@ -48,9 +48,9 @@ pom文件可以直接继承自`org.springframework.boot:spring-boot-starter-pare
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
-         xmlns="http:// maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <!-- 继承自Spring Boot Parent -->
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -93,9 +93,9 @@ __注意，如果是Web应用的话，`org.springframework.boot:spring-boot-star
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
-         xmlns="http:// maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>JavaLearning</artifactId>
         <groupId>org.liuyehcf</groupId>
@@ -381,7 +381,7 @@ __注意，构造方法注入对象，只能用@Autowired而不能用@Resource__
 @MapperScan(basePackages = "org.liuyehcf", sqlSessionFactoryRef = "sqlSessionFactory")
 @EnableTransactionManagement
 public class DataSourceConfig{
-    // @Bean注解还有initMethod属性
+    //@Bean注解还有initMethod属性
     @Bean(name = "dataSource", destroyMethod = "close")
     public DataSource dataSource() {
         BasicDataSource dataSource = new BasicDataSource();

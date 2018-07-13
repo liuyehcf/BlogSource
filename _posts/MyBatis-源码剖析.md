@@ -51,10 +51,10 @@ MyBatis采用建造者模式来创建SqlSessionFactory，SqlSessionFactoryBuilde
 
     public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
         try {
-            // 构建配置文件解析器
+            //构建配置文件解析器
             XMLConfigBuilder parser = new XMLConfigBuilder(inputStream, environment, properties);
 
-            // parser.parse()将生成Configuration对象
+            //parser.parse()将生成Configuration对象
             return build(parser.parse());
         } catch (Exception e) {
             throw ExceptionFactory.wrapException("Error building SqlSession.", e);
@@ -63,7 +63,7 @@ MyBatis采用建造者模式来创建SqlSessionFactory，SqlSessionFactoryBuilde
             try {
                 inputStream.close();
             } catch (IOException e) {
-                // Intentionally ignore. Prefer previous error.
+                //Intentionally ignore. Prefer previous error.
             }
         }
     }
@@ -108,16 +108,16 @@ SqlSessionFactoryBuilder.build方法中调用了XMLConfigBuilder.parse方法来�
             throw new BuilderException("Each XMLConfigBuilder can only be used once.");
         }
         parsed = true;
-        // 这里从DOM树中取出相应元素的属性值，初始化configuration
+        //这里从DOM树中取出相应元素的属性值，初始化configuration
         parseConfiguration(parser.evalNode("/configuration"));
 
-        // 返回Configuration的对象
+        //返回Configuration的对象
         return configuration;
     }
 
     private void parseConfiguration(XNode root) {
         try {
-            // issue #117 read properties first
+            //issue #117 read properties first
             propertiesElement(root.evalNode("properties"));
             Properties settings = settingsAsProperties(root.evalNode("settings"));
             loadCustomVfs(settings);
@@ -127,7 +127,7 @@ SqlSessionFactoryBuilder.build方法中调用了XMLConfigBuilder.parse方法来�
             objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
             reflectorFactoryElement(root.evalNode("reflectorFactory"));
             settingsElement(settings);
-            // read it after objectFactory and objectWrapperFactory issue #631
+            //read it after objectFactory and objectWrapperFactory issue #631
             environmentsElement(root.evalNode("environments"));
             databaseIdProviderElement(root.evalNode("databaseIdProvider"));
             typeHandlerElement(root.evalNode("typeHandlers"));
@@ -148,44 +148,44 @@ SqlSessionFactoryBuilder.build方法中调用了XMLConfigBuilder.parse方法来�
     private void mapperElement(XNode parent) throws Exception {
         if (parent != null) {
             for (XNode child : parent.getChildren()) {
-                // 若子元素是package元素，即扫描包名
+                //若子元素是package元素，即扫描包名
                 if ("package".equals(child.getName())) {
                     String mapperPackage = child.getStringAttribute("name");
                     configuration.addMappers(mapperPackage);
                 } 
-                // 若子元素是mapper元素
+                //若子元素是mapper元素
                 else {
                     String resource = child.getStringAttribute("resource");
                     String url = child.getStringAttribute("url");
                     String mapperClass = child.getStringAttribute("class");
-                    // 配置了resource属性，对应于路径配置
+                    //配置了resource属性，对应于路径配置
                     if (resource != null && url == null && mapperClass == null) {
                         ErrorContext.instance().resource(resource);
-                        // 获取输入流
+                        //获取输入流
                         InputStream inputStream = Resources.getResourceAsStream(resource);
 
-                        // 创建映射器配置文件的解析器
+                        //创建映射器配置文件的解析器
                         XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, resource, configuration.getSqlFragments());
 
-                        // 进行解析，里面会调用Configuration.addMapper方法添加Mapper
+                        //进行解析，里面会调用Configuration.addMapper方法添加Mapper
                         mapperParser.parse();
                     } 
-                    // 配置了url属性，对应于url配置
+                    //配置了url属性，对应于url配置
                     else if (resource == null && url != null && mapperClass == null) {
                         ErrorContext.instance().resource(url);
-                        // 获取输入流
+                        //获取输入流
                         InputStream inputStream = Resources.getUrlAsStream(url);
 
-                        // 创建映射器配置文件的解析器
+                        //创建映射器配置文件的解析器
                         XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, url, configuration.getSqlFragments());
 
-                        // 进行解析，里面会调用Configuration.addMapper方法添加Mapper
+                        //进行解析，里面会调用Configuration.addMapper方法添加Mapper
                         mapperParser.parse();
                     } 
-                    // 配置了class属性，对应于类的配置
+                    //配置了class属性，对应于类的配置
                     else if (resource == null && url == null && mapperClass != null) {
                         Class<?> mapperInterface = Resources.classForName(mapperClass);
-                        // 添加Mapper
+                        //添加Mapper
                         configuration.addMapper(mapperInterface);
                     } else {
                         throw new BuilderException("A mapper element may only specify a url, resource or class, but not more than one.");
@@ -203,13 +203,13 @@ SqlSessionFactoryBuilder.build方法中调用了XMLConfigBuilder.parse方法来�
 ```Java
     public void parse() {
         if (!configuration.isResourceLoaded(resource)) {
-            // 解析元素
+            //解析元素
             configurationElement(parser.evalNode("/mapper"));
 
-            // 添加到队列中，标记为已经加载过
+            //添加到队列中，标记为已经加载过
             configuration.addLoadedResource(resource);
 
-            // 将一个Mapper的两个组件进行绑定，这两个组件分别是Java接口和XML配置文件
+            //将一个Mapper的两个组件进行绑定，这两个组件分别是Java接口和XML配置文件
             bindMapperForNamespace();
         }
 
@@ -235,7 +235,7 @@ SqlSessionFactoryBuilder.build方法中调用了XMLConfigBuilder.parse方法来�
             resultMapElements(context.evalNodes("/mapper/resultMap"));
             sqlElement(context.evalNodes("/mapper/sql"));
 
-            // 每一条SQL语句都作为一个MappedStatement存在于Configuration中
+            //每一条SQL语句都作为一个MappedStatement存在于Configuration中
             buildStatementFromContext(context.evalNodes("select|insert|update|delete"));
         } catch (Exception e) {
             throw new BuilderException("Error parsing Mapper XML. Cause: " + e, e);
@@ -247,26 +247,26 @@ SqlSessionFactoryBuilder.build方法中调用了XMLConfigBuilder.parse方法来�
 
 ```Java
     private void bindMapperForNamespace() {
-        // 获取刚才读入的命名空间的配置信息
+        //获取刚才读入的命名空间的配置信息
         String namespace = builderAssistant.getCurrentNamespace();
         if (namespace != null) {
             Class<?> boundType = null;
             try {
-                // 首先，尝试根据命名空间找到对应的Class对象
+                //首先，尝试根据命名空间找到对应的Class对象
                 boundType = Resources.classForName(namespace);
             } catch (ClassNotFoundException e) {
-                // ignore, bound type is not required
+                //ignore, bound type is not required
             }
 
-            // 根据命名空间成功找到Class对象
+            //根据命名空间成功找到Class对象
             if (boundType != null) {
                 if (!configuration.hasMapper(boundType)) {
-                    // Spring may not know the real resource name so we set a flag
-                    // to prevent loading again this resource from the mapper interface
-                    // look at MapperAnnotationBuilder#loadXmlResource
+                    //Spring may not know the real resource name so we set a flag
+                    //to prevent loading again this resource from the mapper interface
+                    //look at MapperAnnotationBuilder#loadXmlResource
                     configuration.addLoadedResource("namespace:" + namespace);
 
-                    // 添加Mapper到Configuration中
+                    //添加Mapper到Configuration中
                     configuration.addMapper(boundType);
                 }
             }
@@ -286,20 +286,20 @@ Configuration.addMapper将任务转交给了MapperRegistry的同名方法，Mapp
 
 ```Java
     public <T> void addMapper(Class<T> type) {
-        // 只有当type是接口时，才会对其进行管理
+        //只有当type是接口时，才会对其进行管理
         if (type.isInterface()) {
             if (hasMapper(type)) {
                 throw new BindingException("Type " + type + " is already known to the MapperRegistry.");
             }
             boolean loadCompleted = false;
             try {
-                // 添加一个<Class<?>, MapperProxyFactory<?>>的键值对，其中MapperProxyFactory是代理工厂类，为Mapper指定接口创建代理类
+                //添加一个<Class<?>, MapperProxyFactory<?>>的键值对，其中MapperProxyFactory是代理工厂类，为Mapper指定接口创建代理类
                 knownMappers.put(type, new MapperProxyFactory<T>(type));
-                // It's important that the type is added before the parser is run
-                // otherwise the binding may automatically be attempted by the
-                // mapper parser. If the type is already known, it won't try.
+                //It's important that the type is added before the parser is run
+                //otherwise the binding may automatically be attempted by the
+                //mapper parser. If the type is already known, it won't try.
                 
-                // 如果该接口配置了相关注解（@Select之类的SQL注解），那么进行扫描解析
+                //如果该接口配置了相关注解（@Select之类的SQL注解），那么进行扫描解析
                 MapperAnnotationBuilder parser = new MapperAnnotationBuilder(config, type);
                 parser.parse();
                 loadCompleted = true;
@@ -350,22 +350,22 @@ sqlSession = sqlSessionFactory.openSession();
     private SqlSession openSessionFromDataSource(ExecutorType execType, TransactionIsolationLevel level, boolean autoCommit) {
         Transaction tx = null;
         try {
-            // 获取环境配置信息
+            //获取环境配置信息
             final Environment environment = configuration.getEnvironment();
 
-            // 获取事务工厂
+            //获取事务工厂
             final TransactionFactory transactionFactory = getTransactionFactoryFromEnvironment(environment);
 
-            // 创建事务对象
+            //创建事务对象
             tx = transactionFactory.newTransaction(environment.getDataSource(), level, autoCommit);
 
-            // 根据配置信息生成执行器
+            //根据配置信息生成执行器
             final Executor executor = configuration.newExecutor(tx, execType);
 
-            // 创建会话
+            //创建会话
             return new DefaultSqlSession(configuration, executor, autoCommit);
         } catch (Exception e) {
-            closeTransaction(tx); // may have fetched a connection so lets call close()
+            closeTransaction(tx); //may have fetched a connection so lets call close()
             throw ExceptionFactory.wrapException("Error opening session.  Cause: " + e, e);
         } finally {
             ErrorContext.instance().reset();
@@ -387,19 +387,19 @@ sqlSession = sqlSessionFactory.openSession();
 
 ```Java
 public class JdbcTransaction implements Transaction {
-    // ...
+    //...
 
-    // jdbc连接
+    //jdbc连接
     protected Connection connection;
 
-    // 数据源
+    //数据源
     protected DataSource dataSource;
 
-    // 事务隔离级别
+    //事务隔离级别
     protected TransactionIsolationLevel level;
-    // MEMO: We are aware of the typo. See #941
+    //MEMO: We are aware of the typo. See #941
 
-    // 是否自动提交
+    //是否自动提交
     protected boolean autoCommmit;
 
     public JdbcTransaction(DataSource ds, TransactionIsolationLevel desiredLevel, boolean desiredAutoCommit) {
@@ -446,7 +446,7 @@ public class JdbcTransaction implements Transaction {
             connection.close();
         }
     }
-    // ...
+    //...
 }
 ```
 
@@ -467,13 +467,13 @@ public class JdbcTransaction implements Transaction {
             executor = new SimpleExecutor(this, transaction);
         }
 
-        // 是否允许缓存
+        //是否允许缓存
         if (cacheEnabled) {
-            // 将执行器封装成可缓存的执行器
+            //将执行器封装成可缓存的执行器
             executor = new CachingExecutor(executor);
         }
 
-        // MyBatis允许我们自定义插件，这里织入插件的逻辑
+        //MyBatis允许我们自定义插件，这里织入插件的逻辑
         executor = (Executor) interceptorChain.pluginAll(executor);
         return executor;
     }
@@ -564,14 +564,14 @@ CrmUserDAO mapper = sqlSession.getMapper(CrmUserDAO.class);
 
 ```Java
     public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
-        // 首先从缓存中，依据Class对象获取到MapperProxyFactory的实例
+        //首先从缓存中，依据Class对象获取到MapperProxyFactory的实例
         final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);
-        // 如果获取不到MapperProxyFactory的实例，那么意味着映射器namespace并未对应着一个Java接口，之前我们分析过，因此无法用Mapper方式来进行SQL操作，这里直接抛异常
+        //如果获取不到MapperProxyFactory的实例，那么意味着映射器namespace并未对应着一个Java接口，之前我们分析过，因此无法用Mapper方式来进行SQL操作，这里直接抛异常
         if (mapperProxyFactory == null) {
             throw new BindingException("Type " + type + " is not known to the MapperRegistry.");
         }
         try {
-            // 通过代理工厂类为当前Java接口创建代理对象，这是核心
+            //通过代理工厂类为当前Java接口创建代理对象，这是核心
             return mapperProxyFactory.newInstance(sqlSession);
         } catch (Exception e) {
             throw new BindingException("Error getting mapper instance. Cause: " + e, e);
@@ -583,13 +583,13 @@ CrmUserDAO mapper = sqlSession.getMapper(CrmUserDAO.class);
 
 ```Java
     public T newInstance(SqlSession sqlSession) {
-        // 这个MapperProxy实现了InvocationHandler，即JDK动态代理的核心接口
+        //这个MapperProxy实现了InvocationHandler，即JDK动态代理的核心接口
         final MapperProxy<T> mapperProxy = new MapperProxy<T>(sqlSession, mapperInterface, methodCache);
         return newInstance(mapperProxy);
     }
 
     protected T newInstance(MapperProxy<T> mapperProxy) {
-        // JDK动态代理的核心API，不多说了
+        //JDK动态代理的核心API，不多说了
         return (T) Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[] { mapperInterface }, mapperProxy);
     }
 ```
@@ -618,13 +618,13 @@ import org.apache.ibatis.session.SqlSession;
 public class MapperProxy<T> implements InvocationHandler, Serializable {
 
     private static final long serialVersionUID = -6424540398559729838L;
-    // 会话
+    //会话
     private final SqlSession sqlSession;
 
-    // Mapper对应的Java接口
+    //Mapper对应的Java接口
     private final Class<T> mapperInterface;
 
-    // 缓存
+    //缓存
     private final Map<Method, MapperMethod> methodCache;
 
     public MapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map<Method, MapperMethod> methodCache) {
@@ -633,11 +633,11 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
         this.methodCache = methodCache;
     }
 
-    // InvocationHandler核心方法，JDK动态代理核心入口
+    //InvocationHandler核心方法，JDK动态代理核心入口
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         try {
-            // 不代理Object的方法
+            //不代理Object的方法
             if (Object.class.equals(method.getDeclaringClass())) {
                 return method.invoke(this, args);
             } else if (isDefaultMethod(method)) {
@@ -646,7 +646,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
         } catch (Throwable t) {
             throw ExceptionUtil.unwrapThrowable(t);
         }
-        // 实现SQL逻辑的核心，可以看到，所有通过Mapper的Java接口方法的操作最终都会转化为MapperMethod方法的调用
+        //实现SQL逻辑的核心，可以看到，所有通过Mapper的Java接口方法的操作最终都会转化为MapperMethod方法的调用
         final MapperMethod mapperMethod = cachedMapperMethod(method);
         return mapperMethod.execute(sqlSession, args);
     }
@@ -747,13 +747,13 @@ SqlCommand如下，该类的主要作用就是获取一条SQL语句的名字（�
         private MappedStatement resolveMappedStatement(Class<?> mapperInterface, String methodName,
                                                        Class<?> declaringClass, Configuration configuration) {
             String statementId = mapperInterface.getName() + "." + methodName;
-            // 在Configuration对象初始化的过程中，会从映射器配置文件中读取MappedStatement，包含了一条SQL语句的各种属性
+            //在Configuration对象初始化的过程中，会从映射器配置文件中读取MappedStatement，包含了一条SQL语句的各种属性
             if (configuration.hasStatement(statementId)) {
                 return configuration.getMappedStatement(statementId);
             } else if (mapperInterface.equals(declaringClass)) {
                 return null;
             }
-            // 尝试沿着结构的继承体系找到定义该方法的接口
+            //尝试沿着结构的继承体系找到定义该方法的接口
             for (Class<?> superInterface : mapperInterface.getInterfaces()) {
                 if (declaringClass.isAssignableFrom(superInterface)) {
                     MappedStatement ms = resolveMappedStatement(superInterface, methodName,
@@ -773,13 +773,13 @@ MethodSignature如下，该类的主要作用就是封装一个Method（映射�
 ```Java
     public static class MethodSignature {
 
-        // 返回值是一个列表
+        //返回值是一个列表
         private final boolean returnsMany;
 
-        // 返回值是一个Map
+        //返回值是一个Map
         private final boolean returnsMap;
 
-        // 返回值为空
+        //返回值为空
         private final boolean returnsVoid;
         private final boolean returnsCursor;
         private final Class<?> returnType;
@@ -787,7 +787,7 @@ MethodSignature如下，该类的主要作用就是封装一个Method（映射�
         private final Integer resultHandlerIndex;
         private final Integer rowBoundsIndex;
 
-        // 参数名字解析器
+        //参数名字解析器
         private final ParamNameResolver paramNameResolver;
 
         public MethodSignature(Configuration configuration, Class<?> mapperInterface, Method method) {
@@ -810,7 +810,7 @@ MethodSignature如下，该类的主要作用就是封装一个Method（映射�
         }
 
         public Object convertArgsToSqlCommandParam(Object[] args) {
-            // 对参数进行解析以及封装
+            //对参数进行解析以及封装
             return paramNameResolver.getNamedParams(args);
         }
 
@@ -887,7 +887,7 @@ paramNameResolver是一个非常重要的字段，其类型是ParamNameResolver�
 ```Java
 public class ParamNameResolver {
 
-    // 通用参数名前缀
+    //通用参数名前缀
     private static final String GENERIC_NAME_PREFIX = "param";
 
     /**
@@ -903,7 +903,7 @@ public class ParamNameResolver {
      * <li>aMethod(int a, RowBounds rb, int b) -&gt; {{0, "0"}, {2, "1"}}</li>
      * </ul>
      */
-    // 该字段用于存放参数键值对，key为参数在参数列表中的位置，value为参数名（如果有@Param修饰，那就是@Param修饰的名字；否则就是"0"、"1"、"2"这样的字符串）
+    //该字段用于存放参数键值对，key为参数在参数列表中的位置，value为参数名（如果有@Param修饰，那就是@Param修饰的名字；否则就是"0"、"1"、"2"这样的字符串）
     private final SortedMap<Integer, String> names;
 
     private boolean hasParamAnnotation;
@@ -913,35 +913,35 @@ public class ParamNameResolver {
         final Annotation[][] paramAnnotations = method.getParameterAnnotations();
         final SortedMap<Integer, String> map = new TreeMap<Integer, String>();
         int paramCount = paramAnnotations.length;
-        // get names from @Param annotations
+        //get names from @Param annotations
         for (int paramIndex = 0; paramIndex < paramCount; paramIndex++) {
             if (isSpecialParameter(paramTypes[paramIndex])) {
-                // skip special parameters
+                //skip special parameters
                 continue;
             }
             String name = null;
 
-            // 查看当前参数是否被@Param注解修饰
+            //查看当前参数是否被@Param注解修饰
             for (Annotation annotation : paramAnnotations[paramIndex]) {
                 if (annotation instanceof Param) {
                     hasParamAnnotation = true;
-                    // 如果当前参数被@Param注解修饰，那么名字为@Param注解设定的名字
+                    //如果当前参数被@Param注解修饰，那么名字为@Param注解设定的名字
                     name = ((Param) annotation).value();
                     break;
                 }
             }
-            // 如果当前参数没有被@Param注解修饰
+            //如果当前参数没有被@Param注解修饰
             if (name == null) {
-                // @Param was not specified.
-                // 这里尝试从Method对象获取参数名字，一般通过反射获取到的参数名字是arg0，arg1，arg2等等
+                //@Param was not specified.
+                //这里尝试从Method对象获取参数名字，一般通过反射获取到的参数名字是arg0，arg1，arg2等等
                 if (config.isUseActualParamName()) {
                     name = getActualParamName(method, paramIndex);
                 }
 
-                // 用"0"，"1"，"2"作为参数的名字
+                //用"0"，"1"，"2"作为参数的名字
                 if (name == null) {
-                    // use the parameter index as the name ("0", "1", ...)
-                    // gcode issue #71
+                    //use the parameter index as the name ("0", "1", ...)
+                    //gcode issue #71
                     name = String.valueOf(map.size());
                 }
             }
@@ -950,7 +950,7 @@ public class ParamNameResolver {
         names = Collections.unmodifiableSortedMap(map);
     }
 
-    // 通过反射获取参数的名字，一般而言，参数名字是arg0，arg1，arg2等等
+    //通过反射获取参数的名字，一般而言，参数名字是arg0，arg1，arg2等等
     private String getActualParamName(Method method, int paramIndex) {
         if (Jdk.parameterExists) {
             return ParamNameUtil.getParamNames(method).get(paramIndex);
@@ -958,7 +958,7 @@ public class ParamNameResolver {
         return null;
     }
 
-    // 是否被占位符标记
+    //是否被占位符标记
     private static boolean isSpecialParameter(Class<?> clazz) {
         return RowBounds.class.isAssignableFrom(clazz) || ResultHandler.class.isAssignableFrom(clazz);
     }
@@ -978,32 +978,32 @@ public class ParamNameResolver {
      * ...).
      * </p>
      */
-    // 进行参数解析以及封装的核心方法
+    //进行参数解析以及封装的核心方法
     public Object getNamedParams(Object[] args) {
         final int paramCount = names.size();
         if (args == null || paramCount == 0) {
             return null;
         } 
-        // 如果参数没有@Param标记，且参数只有1个
+        //如果参数没有@Param标记，且参数只有1个
         else if (!hasParamAnnotation && paramCount == 1) {
-            // 直接透传，不进行封装
+            //直接透传，不进行封装
             return args[names.firstKey()];
         } 
-        // 参数多余一个，或者参数被@Param标记
+        //参数多余一个，或者参数被@Param标记
         else {
-            // 将参数封装成一个Map
+            //将参数封装成一个Map
             final Map<String, Object> param = new MapperMethod.ParamMap<Object>();
             int i = 0;
             for (Map.Entry<Integer, String> entry : names.entrySet()) {
-                // 对于有@Param修饰的参数而言，键值就是@Param注解的值
-                // 对于没有@Param修饰的参数而言，键值一般就是"argi"，其中i是当前参数在参数列表中的位置，i从0计算
-                // 极少情况下，键值是"0"，"1"，"2"...。产生这种键值的原因是没有@Param注解修饰，且通过反射拿不到参数名
+                //对于有@Param修饰的参数而言，键值就是@Param注解的值
+                //对于没有@Param修饰的参数而言，键值一般就是"argi"，其中i是当前参数在参数列表中的位置，i从0计算
+                //极少情况下，键值是"0"，"1"，"2"...。产生这种键值的原因是没有@Param注解修饰，且通过反射拿不到参数名
                 param.put(entry.getValue(), args[entry.getKey()]);
 
-                // add generic param names (param1, param2, ...)
-                // 另外，为每个参数添加param1、param2这样的参数，数字从1开始计算
+                //add generic param names (param1, param2, ...)
+                //另外，为每个参数添加param1、param2这样的参数，数字从1开始计算
                 final String genericParamName = GENERIC_NAME_PREFIX + String.valueOf(i + 1);
-                // ensure not to overwrite parameter named with @Param
+                //ensure not to overwrite parameter named with @Param
                 if (!names.containsValue(genericParamName)) {
                     param.put(genericParamName, args[entry.getKey()]);
                 }
@@ -1030,26 +1030,26 @@ __参数映射规则__
         Object result;
         switch (command.getType()) {
             case INSERT: {
-                // 解析参数，并对参数进行封装
+                //解析参数，并对参数进行封装
                 Object param = method.convertArgsToSqlCommandParam(args);
 
-                // 转调用了sqlSession的insert方法，即iBatis的方式，并对结果进行了包装
+                //转调用了sqlSession的insert方法，即iBatis的方式，并对结果进行了包装
                 result = rowCountResult(sqlSession.insert(command.getName(), param));
                 break;
             }
             case UPDATE: {
-                // 解析参数，并对参数进行封装
+                //解析参数，并对参数进行封装
                 Object param = method.convertArgsToSqlCommandParam(args);
 
-                // 转调用了sqlSession的update方法，即iBatis的方式，并对结果进行了包装
+                //转调用了sqlSession的update方法，即iBatis的方式，并对结果进行了包装
                 result = rowCountResult(sqlSession.update(command.getName(), param));
                 break;
             }
             case DELETE: {
-                // 解析参数，并对参数进行封装
+                //解析参数，并对参数进行封装
                 Object param = method.convertArgsToSqlCommandParam(args);
 
-                // 转调用了sqlSession的delete方法，即iBatis的方式，并对结果进行了包装
+                //转调用了sqlSession的delete方法，即iBatis的方式，并对结果进行了包装
                 result = rowCountResult(sqlSession.delete(command.getName(), param));
                 break;
             }
@@ -1058,13 +1058,13 @@ __参数映射规则__
                     executeWithResultHandler(sqlSession, args);
                     result = null;
                 } else if (method.returnsMany()) {
-                    // 里面仍然转调用了sqlSession的相关方法
+                    //里面仍然转调用了sqlSession的相关方法
                     result = executeForMany(sqlSession, args);
                 } else if (method.returnsMap()) {
-                    // 里面仍然转调用了sqlSession的相关方法
+                    //里面仍然转调用了sqlSession的相关方法
                     result = executeForMap(sqlSession, args);
                 } else if (method.returnsCursor()) {
-                    // 里面仍然转调用了sqlSession的相关方法
+                    //里面仍然转调用了sqlSession的相关方法
                     result = executeForCursor(sqlSession, args);
                 } else {
                     Object param = method.convertArgsToSqlCommandParam(args);

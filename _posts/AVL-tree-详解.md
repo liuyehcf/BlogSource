@@ -135,7 +135,7 @@ __这里存在一个相同的优化点，不再赘述__
 
 ```C
 AVL-TREE-HEIGHT(T,x)
-if x.left.height≥x.right.height   // 左右节点均存在
+if x.left.height≥x.right.height   //左右节点均存在
     x.height=x.left.height+1
 else x.height=x.right.height+1
 ```
@@ -143,7 +143,7 @@ else x.height=x.right.height+1
 将一棵子树替换掉另一棵子树
 
 ```C
-AVL-TREE-TRANSPLANT(T,u,v)   // 该函数与红黑树完全一致(都含有哨兵节点)
+AVL-TREE-TRANSPLANT(T,u,v)   //该函数与红黑树完全一致(都含有哨兵节点)
 if u.p==T.nil
     T.root=v
 elseif u==u.p.left
@@ -172,8 +172,8 @@ y.left=x
 x.p=y
 AVL-TREE-HEIGHT(T,x)
 AVL-TREE-HEIGHT(T,y)
-// 以上两行顺序不得交换
-return y   // 返回旋转后的子树根节点
+//以上两行顺序不得交换
+return y   //返回旋转后的子树根节点
 ```
 
 右旋给定节点，更新旋转后节点的高度，并返回旋转后子树的根节点
@@ -194,8 +194,8 @@ x.right=y
 y.p=x
 AVL-TREE-HEIGHT(T,y)   
 AVL-TREE-HEIGHT(T,x)
-// 以上两行顺序不得交换
-return x      // 返回旋转后的子树根节点
+//以上两行顺序不得交换
+return x      //返回旋转后的子树根节点
 ```
 
 ### 3.2.3  性质维护
@@ -206,30 +206,30 @@ return x      // 返回旋转后的子树根节点
 
 ```C
 AVL-TREE-HOLD-ROTATE(T,x,orientation)
-let stack1,stack2 be two stacks// 不考虑实际用到的大小，直接用树的大小来分配堆栈空间大小
+let stack1,stack2 be two stacks//不考虑实际用到的大小，直接用树的大小来分配堆栈空间大小
 stack1.push(x)
 stack2.push(orientation)
 cur=Nil
-rotateRoot=Nil // 对x尝试旋转后，返回最终旋转后的根节点
+rotateRoot=Nil //对x尝试旋转后，返回最终旋转后的根节点
 curOrientation=INVALID;
 while(!stack1.Empty())
     cur=stack1.top()
     curOrientation=stack2.top()
-    if curOrientation==LEFT // 需要对cur尝试进行左旋
+    if curOrientation==LEFT //需要对cur尝试进行左旋
         if cur.right.right.height≥cur.right.left.height
             stack1.pop()
             stack2.pop()
             rotateRoot=AVL-TREE-LEFT-ROTATE(T,cur)
         else
-            stack1.push(cur.right)// 否则cur右孩子需要尝试进行右旋来调整
+            stack1.push(cur.right)//否则cur右孩子需要尝试进行右旋来调整
             stack2.push(RIGHT);
-    elseif curOrientation ==RIGHT// 需要对cur尝试进行右旋
+    elseif curOrientation ==RIGHT//需要对cur尝试进行右旋
         if cur.left.left.height≥cur.left.right.height
             stack1.pop()
             stack2.pop()
             rotateRoot=AVL-TREE-RIGHT-ROTATE(T,cur)
         else
-            stack1.push(cur.left) // 否则cur左孩子需要尝试进行左旋来调整
+            stack1.push(cur.left) //否则cur左孩子需要尝试进行左旋来调整
             stack2.push(LEFT)
 return rotateRoot
 ```
@@ -242,12 +242,12 @@ return rotateRoot
 AVL-TREE-TREE-INSERT(T,z)
 y=T.nil
 x=T.root
-while x≠T.nil// 循环结束时x指向空，y指向上一个x
+while x≠T.nil//循环结束时x指向空，y指向上一个x
     y=x
     if z.key<x.key
         x=x.left
     else x=x.right
-z.p=y// 将这个叶节点作为z的父节点
+z.p=y//将这个叶节点作为z的父节点
 if y==T.nil
     T.root=z
 elseif z.key<y.key
@@ -262,11 +262,11 @@ AVL-TREE-FIXUP(T,z)
 
 ```C
 AVL-TREE-FIXUP(T,y) 
-if y==T.nil// 为了使删除函数也能调用该函数，因为删除函数传入的参数可能是哨兵
+if y==T.nil//为了使删除函数也能调用该函数，因为删除函数传入的参数可能是哨兵
     y=y.p
-while(y≠T.nil) // 沿着y节点向上遍历该条路径
+while(y≠T.nil) //沿着y节点向上遍历该条路径
     AVL-TREE-HEIGHT(y)
-    if y.left.height==y.right.height+2 // 左子树比右子树高2
+    if y.left.height==y.right.height+2 //左子树比右子树高2
         y= AVL-TREE-HOLD-ROTATE(T,y,2)
     elseif y.right.height=y.left.height+2    
         y= AVL-TREE-HOLD-ROTATE(T,y,1)
@@ -279,16 +279,16 @@ while(y≠T.nil) // 沿着y节点向上遍历该条路径
 
 ```C
 AVL-TREE-DELETE(T,z)
-y=z   // x指向将要移动到y原本位置的节点，或者原本y节点的父节点
+y=z   //x指向将要移动到y原本位置的节点，或者原本y节点的父节点
 if z.left==T.nil
     x=y.right
     AVL-TREE-TRANSPLANT(T,z,z.right)
 elseif z.right==T.nil
     x=y.left      
     AVL-TREE-TRANSPLANT(T,z,z.left)
- else y=AVL-TREE-MINIMUM(z.right) // 找到z的后继，由于z存在左右孩子，故后继为右子树中的最小值
+ else y=AVL-TREE-MINIMUM(z.right) //找到z的后继，由于z存在左右孩子，故后继为右子树中的最小值
     x=y.right
-    if y.p==z// 如果y是z的右孩子，需要将x的parent指向y(使得x为哨兵节点也满足)
+    if y.p==z//如果y是z的右孩子，需要将x的parent指向y(使得x为哨兵节点也满足)
         x.p=y
     else AVL-TREE-TRANSPLANT (T,y,y.right)
         y.right=z.right
@@ -392,7 +392,7 @@ __可以发现，调整前后子树根节点的高度都是HC+2，因此该节�
 
 ```C
 AVL-TREE-HEIGHT(T,x)
-if x.left.height≥x.right.height   // 左右节点均存在
+if x.left.height≥x.right.height   //左右节点均存在
     x.height=x.left.height+1
 else x.height=x.right.height+1
 ```
@@ -400,7 +400,7 @@ else x.height=x.right.height+1
 将一棵子树替换掉另一棵子树
 
 ```C
-AVL-TREE-TRANSPLANT(T,u,v)   // 该函数与红黑树完全一致(都含有哨兵节点)
+AVL-TREE-TRANSPLANT(T,u,v)   //该函数与红黑树完全一致(都含有哨兵节点)
 if u.p==T.nil
     T.root=v
 elseif u==u.p.left
@@ -429,8 +429,8 @@ y.left=x
 x.p=y
 AVL-TREE-HEIGHT(T,x)
 AVL-TREE-HEIGHT(T,y)
-// 以上两行顺序不得交换
-return y   // 返回旋转后的子树根节点
+//以上两行顺序不得交换
+return y   //返回旋转后的子树根节点
 ```
 
 右旋给定节点，更新旋转后节点的高度，并返回旋转后子树的根节点
@@ -451,8 +451,8 @@ x.right=y
 y.p=x
 AVL-TREE-HEIGHT(T,y)   
 AVL-TREE-HEIGHT(T,x)
-// 以上两行顺序不得交换
-return x      // 返回旋转后的子树根节点
+//以上两行顺序不得交换
+return x      //返回旋转后的子树根节点
 ```
 
 ### 4.2.3 插入
@@ -463,12 +463,12 @@ return x      // 返回旋转后的子树根节点
 AVL-TREE-INSERT(T,z)
 y=T.nil
 x=T.root
-while x≠T.nil// 循环结束时x指向空，y指向上一个x
+while x≠T.nil//循环结束时x指向空，y指向上一个x
     y=x
     if z.key<x.key
         x=x.left
     else x=x.right
-z.p=y// 将这个叶节点作为z的父节点
+z.p=y//将这个叶节点作为z的父节点
 if y==T.nil
     T.root=z
 elseif z.key<y.key
@@ -487,19 +487,19 @@ originHigh=z.h
 AVL-TREE-HEIGHT(z)
 r=z
 if z.left.h==z.right.h+2
-    if z.left.left.h>=z.left.right.h   // 第一类，等号在插入过程中不可能取到，删除过程中能取到
+    if z.left.left.h>=z.left.right.h   //第一类，等号在插入过程中不可能取到，删除过程中能取到
         r=AVL-TREE-RIGHT-ROTATE(z)
-    elseif z.left.left.h<z.left.right.h     // 第二类
+    elseif z.left.left.h<z.left.right.h     //第二类
         AVL-TREE-LEFT-ROTATE(z.left)
         r=AVL-TREE-RIGHT-ROTATE(z)
-    // 不可能出现左右子树高度相同的情况，但是DELETE-FIX中可能出现，注意
+    //不可能出现左右子树高度相同的情况，但是DELETE-FIX中可能出现，注意
 elseif z.right.h==z.left.h+2
-    if z.right.right.h>=z.right.left.h   // 第一类，等号在插入过程中不可能取到，删除过程中能取到
+    if z.right.right.h>=z.right.left.h   //第一类，等号在插入过程中不可能取到，删除过程中能取到
         r=AVL-TREE-LEFT-ROTATE(z)
-    elseif z.right.right.h<z.right.left.h      // 第二类
+    elseif z.right.right.h<z.right.left.h      //第二类
         AVL-TREE-RIGHT-ROTATE(z.right)
         r=AVL-TREE-LEFT-ROTATE(z)
-    // 不可能出现左右子树高度相同的情况，但是DELETE-FIX中可能出现，注意
+    //不可能出现左右子树高度相同的情况，但是DELETE-FIX中可能出现，注意
 if r.h!=originHigh and r!=root
     AVL-TREE--BALANCE-FIX(r.parent)
 ```
@@ -510,14 +510,14 @@ if r.h!=originHigh and r!=root
 
 ```C
 AVL-TREE-DELETE(T,z)
-y=z   // x指向将要移动到y原本位置的节点，或者原本y节点的父节点
-p=y.parent   // p为被删除节点的父节点
+y=z   //x指向将要移动到y原本位置的节点，或者原本y节点的父节点
+p=y.parent   //p为被删除节点的父节点
 if z.left==T.nil
     AVL-TREE-TRANSPLANT(T,z,z.right)
 elseif z.right==T.nil
     AVL-TREE-TRANSPLANT(T,z,z.left)
-else y=AVL-TREE-MINIMUM(z.right) // 找到z的后继，由于z存在左右孩子，故后继为右子树中的最小值
-    if y==z.right    // 这个边界判断必须，因为p必须定位到被删除节点的父节点
+else y=AVL-TREE-MINIMUM(z.right) //找到z的后继，由于z存在左右孩子，故后继为右子树中的最小值
+    if y==z.right    //这个边界判断必须，因为p必须定位到被删除节点的父节点
         p=y
     else
         p=y.parent
@@ -696,7 +696,7 @@ public class AVLTree1 {
         y.left = x;
         x.parent = y;
 
-        // 更新高度
+        //更新高度
         updateHigh(x);
         updateHigh(y);
         return y;
@@ -725,7 +725,7 @@ public class AVLTree1 {
         x.right = y;
         y.parent = x;
 
-        // 更新高度
+        //更新高度
         updateHigh(y);
         updateHigh(x);
         return x;
@@ -806,7 +806,7 @@ public class AVLTree1 {
             y.left = z.left;
             y.left.parent = y;
 
-            // todo 这里不需要更新p的高度,因为p的子树的高度此时并不知道是否正确,因此更新也没有意义,这也是deleteFixBalance必须遍历到root的原因
+            //todo 这里不需要更新p的高度,因为p的子树的高度此时并不知道是否正确,因此更新也没有意义,这也是deleteFixBalance必须遍历到root的原因
         }
         fixUp(x);
         if (!check())
@@ -880,12 +880,12 @@ public class AVLTree1 {
 
             List<Integer> list = new ArrayList<Integer>(set);
             Collections.shuffle(list, random);
-            // 插入N个数据
+            //插入N个数据
             for (int i : list) {
                 avlTree2.insert(i);
             }
 
-            // 删除M个数据
+            //删除M个数据
             Collections.shuffle(list, random);
 
             for (int i = 0; i < M; i++) {
@@ -893,7 +893,7 @@ public class AVLTree1 {
                 avlTree2.delete(list.get(i));
             }
 
-            // 再插入M个数据
+            //再插入M个数据
             for (int i = 0; i < M; i++) {
                 int k = random.nextInt();
                 set.add(k);
@@ -903,7 +903,7 @@ public class AVLTree1 {
             list.addAll(set);
             Collections.shuffle(list, random);
 
-            // 再删除所有元素
+            //再删除所有元素
             for (int i : list) {
                 avlTree2.delete(i);
             }
@@ -967,16 +967,16 @@ public class AVLTree2 {
     }
 
     private void balanceFix(AVLTreeNode z) {
-        // 当前节点的初始高度
+        //当前节点的初始高度
         int originHigh = z.h;
 
         updateHigh(z);
 
-        // 经过调整后的子树根节点(调整之前子树根节点为z)
+        //经过调整后的子树根节点(调整之前子树根节点为z)
         AVLTreeNode r = z;
 
         if (z.left.h == z.right.h + 2) {
-            // todo 这里的等号非常重要(插入过程时不可能取等号，删除过程可能取等号)
+            //todo 这里的等号非常重要(插入过程时不可能取等号，删除过程可能取等号)
             if (z.left.left.h >= z.left.right.h) {
                 r = rightRotate(z);
             } else if (z.left.left.h < z.left.right.h) {
@@ -985,7 +985,7 @@ public class AVLTree2 {
             }
 
         } else if (z.right.h == z.left.h + 2) {
-            // todo 这里的等号非常重要(插入过程时不可能取等号，删除过程可能取等号)
+            //todo 这里的等号非常重要(插入过程时不可能取等号，删除过程可能取等号)
             if (z.right.right.h >= z.right.left.h) {
                 r = leftRotate(z);
             } else if (z.right.right.h < z.right.left.h) {
@@ -994,7 +994,7 @@ public class AVLTree2 {
             }
         }
 
-        // 递归其父节点
+        //递归其父节点
         if (r.h != originHigh && r != root)
             balanceFix(r.parent);
     }
@@ -1026,7 +1026,7 @@ public class AVLTree2 {
         y.left = x;
         x.parent = y;
 
-        // 更新高度
+        //更新高度
         updateHigh(x);
         updateHigh(y);
         return y;
@@ -1055,7 +1055,7 @@ public class AVLTree2 {
         x.right = y;
         y.parent = x;
 
-        // 更新高度
+        //更新高度
         updateHigh(y);
         updateHigh(x);
         return x;
@@ -1113,9 +1113,9 @@ public class AVLTree2 {
         if (z == nil) {
             throw new RuntimeException();
         }
-        // y代表真正被删除的节点
+        //y代表真正被删除的节点
         AVLTreeNode y = z;
-        // x为被删除节点的父节点，如果平衡被破坏，从该节点开始
+        //x为被删除节点的父节点，如果平衡被破坏，从该节点开始
         AVLTreeNode p = y.parent;
         if (z.left == nil) {
             transplant(z, z.right);
@@ -1123,7 +1123,7 @@ public class AVLTree2 {
             transplant(z, z.left);
         } else {
             y = min(z.right);
-            // todo 这里的分类讨论非常重要,否则将会定位到错误的父节点
+            //todo 这里的分类讨论非常重要,否则将会定位到错误的父节点
             if (y == z.right) {
                 p = y;
             } else {
@@ -1131,7 +1131,7 @@ public class AVLTree2 {
             }
             transplant(y, y.right);
 
-            // todo 下面六句可以用z.val=y.val来代替,效果一样
+            //todo 下面六句可以用z.val=y.val来代替,效果一样
             y.right = z.right;
             y.right.parent = y;
 
@@ -1139,8 +1139,8 @@ public class AVLTree2 {
             y.left.parent = y;
 
             transplant(z, y);
-            y.h = z.h;// todo 这里高度必须维护
-            // todo 这里不需要更新p的高度,因为p的子树的高度此时并不知道是否正确,因此更新也没有意义,这也是deleteFixBalance必须遍历到root的原因
+            y.h = z.h;//todo 这里高度必须维护
+            //todo 这里不需要更新p的高度,因为p的子树的高度此时并不知道是否正确,因此更新也没有意义,这也是deleteFixBalance必须遍历到root的原因
         }
         if (p != nil)
             balanceFix(p);
@@ -1214,12 +1214,12 @@ public class AVLTree2 {
             }
 
             Collections.shuffle(list, random);
-            // 插入N个数据
+            //插入N个数据
             for (int i : list) {
                 avlTree.insert(i);
             }
 
-            // 删除M个数据
+            //删除M个数据
             Collections.shuffle(list, random);
 
             for (int i = 0; i < M; i++) {
@@ -1228,7 +1228,7 @@ public class AVLTree2 {
                 avlTree.delete(k);
             }
 
-            // 再插入M个数据
+            //再插入M个数据
             for (int i = 0; i < M; i++) {
                 int k = random.nextInt();
                 list.add(k);
@@ -1236,7 +1236,7 @@ public class AVLTree2 {
             }
             Collections.shuffle(list, random);
 
-            // 再删除所有元素
+            //再删除所有元素
             for (int i : list) {
                 avlTree.delete(i);
             }

@@ -77,8 +77,8 @@ ComparableTimSort与TimSort是一样的，TimSort利用的是Comparator来进行
      * is big enough.
      */
     private Object[] tmp;
-    private int tmpBase; // base of tmp array slice
-    private int tmpLen;  // length of tmp array slice
+    private int tmpBase; //base of tmp array slice
+    private int tmpLen;  //length of tmp array slice
 
     /**
      * A stack of pending runs yet to be merged.  Run i starts at
@@ -90,7 +90,7 @@ ComparableTimSort与TimSort是一样的，TimSort利用的是Comparator来进行
      * so we could cut the storage for this, but it's a minor amount,
      * and keeping all the info explicit simplifies the code.
      */
-    private int stackSize = 0;  // Number of pending runs on stack
+    private int stackSize = 0;  //Number of pending runs on stack
     private final int[] runBase;
     private final int[] runLen;
 ```
@@ -113,12 +113,12 @@ ComparableTimSort与TimSort是一样的，TimSort利用的是Comparator来进行
 
 ```Java
     public static void sort(Object[] a) {
-        // 如果需要使用旧版的Merge sort
+        //如果需要使用旧版的Merge sort
         if (LegacyMergeSort.userRequested)
-            // 使用旧版的MergeSort进行排序操作
+            //使用旧版的MergeSort进行排序操作
             legacyMergeSort(a);
         else
-            // 使用TimSort
+            //使用TimSort
             ComparableTimSort.sort(a, 0, a.length, null, 0, 0);
     }
 ```
@@ -150,17 +150,17 @@ ComparableTimSort与TimSort是一样的，TimSort利用的是Comparator来进行
     static void sort(Object[] a, int lo, int hi, Object[] work, int workBase, int workLen) {
         assert a != null && lo >= 0 && lo <= hi && hi <= a.length;
         
-        // 待排序元素数量
+        //待排序元素数量
         int nRemaining  = hi - lo;
         if (nRemaining < 2)
-            return;  // Arrays of size 0 and 1 are always sorted
+            return;  //Arrays of size 0 and 1 are always sorted
 
-        // If array is small, do a "mini-TimSort" with no merges
-        // 如果待排序元素数量小于MIN_MERGE就使用"mini-TimSort"即二分插入排序算法
+        //If array is small, do a "mini-TimSort" with no merges
+        //如果待排序元素数量小于MIN_MERGE就使用"mini-TimSort"即二分插入排序算法
         if (nRemaining < MIN_MERGE) {
-            // 返回包含头元素的最长递增序列的长度
+            //返回包含头元素的最长递增序列的长度
             int initRunLen = countRunAndMakeAscending(a, lo, hi);
-            // 进行二分插入排序算法
+            //进行二分插入排序算法
             binarySort(a, lo, hi, lo + initRunLen);
             return;
         }
@@ -172,33 +172,33 @@ ComparableTimSort与TimSort是一样的，TimSort利用的是Comparator来进行
          */
         ComparableTimSort ts = new ComparableTimSort(a, work, workBase, workLen);
 
-        // 根据元素数量计算出run的最小大小
+        //根据元素数量计算出run的最小大小
         int minRun = minRunLength(nRemaining);
         do {
-            // Identify next run
-            // 计算出下一个run的大小
+            //Identify next run
+            //计算出下一个run的大小
             int runLen = countRunAndMakeAscending(a, lo, hi);
 
-            // If run is short, extend to min(minRun, nRemaining)
-            // 如果run的大小小于minRun，那么将run的大小提升到min(minRun, nRemaining)，并且采用二分插入排序来排序这段run
+            //If run is short, extend to min(minRun, nRemaining)
+            //如果run的大小小于minRun，那么将run的大小提升到min(minRun, nRemaining)，并且采用二分插入排序来排序这段run
             if (runLen < minRun) {
                 int force = nRemaining <= minRun ? nRemaining : minRun;
                 binarySort(a, lo, lo + force, lo + runLen);
                 runLen = force;
             }
 
-            // Push run onto pending-run stack, and maybe merge
-            // 将当前run入栈
+            //Push run onto pending-run stack, and maybe merge
+            //将当前run入栈
             ts.pushRun(lo, runLen);
-            // 
+            //
             ts.mergeCollapse();
 
-            // Advance to find next run
+            //Advance to find next run
             lo += runLen;
             nRemaining -= runLen;
         } while (nRemaining != 0);
 
-        // Merge all remaining runs to complete sort
+        //Merge all remaining runs to complete sort
         assert lo == hi;
         ts.mergeForceCollapse();
         assert ts.stackSize == 1;
@@ -236,25 +236,25 @@ ComparableTimSort与TimSort是一样的，TimSort利用的是Comparator来进行
     private static int countRunAndMakeAscending(Object[] a, int lo, int hi) {
         assert lo < hi;
         int runHi = lo + 1;
-        // 如果当前run中只有一个元素，那么一定是有序的，返回即可。如果从sort方法中调用该方法，那么必然保证runLen>1，因此以下if一定返回false
+        //如果当前run中只有一个元素，那么一定是有序的，返回即可。如果从sort方法中调用该方法，那么必然保证runLen>1，因此以下if一定返回false
         if (runHi == hi)
             return 1;
 
-        // Find end of run, and reverse range if descending
-        // 如果run中第二个元素严格小于第一个元素，即严格递减
-        if (((Comparable) a[runHi++]).compareTo(a[lo]) < 0) { // Descending
-            // 找到严格递减的最长序列
+        //Find end of run, and reverse range if descending
+        //如果run中第二个元素严格小于第一个元素，即严格递减
+        if (((Comparable) a[runHi++]).compareTo(a[lo]) < 0) { //Descending
+            //找到严格递减的最长序列
             while (runHi < hi && ((Comparable) a[runHi]).compareTo(a[runHi - 1]) < 0)
                 runHi++;
-            // 将递减序列进行反转，因为TimSort必须保证稳定性，所以前面才必须是严格递减的，否则如果交换两个相等的元素则会导致稳定性被破坏
+            //将递减序列进行反转，因为TimSort必须保证稳定性，所以前面才必须是严格递减的，否则如果交换两个相等的元素则会导致稳定性被破坏
             reverseRange(a, lo, runHi);
-        } else {                              // Ascending
-            // 找到递增(可以非严格递增)的最长序列
+        } else {                              //Ascending
+            //找到递增(可以非严格递增)的最长序列
             while (runHi < hi && ((Comparable) a[runHi]).compareTo(a[runHi - 1]) >= 0)
                 runHi++;
         }
 
-        // 返回递增序列的长度
+        //返回递增序列的长度
         return runHi - lo;
     }
 ```
@@ -316,14 +316,14 @@ ComparableTimSort与TimSort是一样的，TimSort利用的是Comparator来进行
     @SuppressWarnings({"fallthrough", "rawtypes", "unchecked"})
     private static void binarySort(Object[] a, int lo, int hi, int start) {
         assert lo <= start && start <= hi;
-        // 如果start与lo相同，那么将start递增1，因为第一个元素一定是有序的，因此未排序的部分从第二个元素开始
+        //如果start与lo相同，那么将start递增1，因为第一个元素一定是有序的，因此未排序的部分从第二个元素开始
         if (start == lo)
             start++;
         for ( ; start < hi; start++) {
             Comparable pivot = (Comparable) a[start];
 
-            // 因为[lo,start-1]范围内的元素是已排序的，那么将一个元素插入到这个范围内可以采用二分法，而不用从后面依次向前比较
-            // Set left (and right) to the index where a[start] (pivot) belongs
+            //因为[lo,start-1]范围内的元素是已排序的，那么将一个元素插入到这个范围内可以采用二分法，而不用从后面依次向前比较
+            //Set left (and right) to the index where a[start] (pivot) belongs
             int left = lo;
             int right = start;
             assert left <= right;
@@ -348,10 +348,10 @@ ComparableTimSort与TimSort是一样的，TimSort利用的是Comparator来进行
              * first slot after them -- that's why this sort is stable.
              * Slide elements over to make room for pivot.
              */
-            // n表示需要移动的元素数量
-            int n = start - left;  // The number of elements to move
-            // Switch is just an optimization for arraycopy in default case
-            // 元素的移动分为两类情况，第一类是只需要移动一个或者两个元素，那么直接手动移动即可；第二类是需要移动比较多的元素，那么使用System.arraycopy来进行内存拷贝，提高效率
+            //n表示需要移动的元素数量
+            int n = start - left;  //The number of elements to move
+            //Switch is just an optimization for arraycopy in default case
+            //元素的移动分为两类情况，第一类是只需要移动一个或者两个元素，那么直接手动移动即可；第二类是需要移动比较多的元素，那么使用System.arraycopy来进行内存拷贝，提高效率
             switch (n) {
                 case 2:  a[left + 2] = a[left + 1];
                 case 1:  a[left + 1] = a[left];
@@ -411,7 +411,7 @@ mergeCollapse会在__不满足__堆栈不变式的情况下进行合并操作，
             } else if (runLen[n] <= runLen[n + 1]) {
                 mergeAt(n);
             } else {
-                break; // Invariant is established
+                break; //Invariant is established
             }
         }
     }
@@ -455,9 +455,9 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
          * run now, also slide over the last run (which isn't involved
          * in this merge).  The current run (i+1) goes away in any case.
          */
-        // 更改栈中第i个run的长度为merge后的长度
+        //更改栈中第i个run的长度为merge后的长度
         runLen[i] = len1 + len2;
-        // 如果i是栈中倒数第3个run，那么将栈顶的run移动一下
+        //如果i是栈中倒数第3个run，那么将栈顶的run移动一下
         if (i == stackSize - 3) {
             runBase[i + 1] = runBase[i + 2];
             runLen[i + 1] = runLen[i + 2];
@@ -472,7 +472,7 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
         assert k >= 0;
         base1 += k;
         len1 -= k;
-        // 也就是run1的所有元素均小于run2的起始元素，因此已经有序了
+        //也就是run1的所有元素均小于run2的起始元素，因此已经有序了
         if (len1 == 0)
             return;
 
@@ -483,12 +483,12 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
         len2 = gallopLeft((Comparable<Object>) a[base1 + len1 - 1], a,
                 base2, len2, len2 - 1);
         assert len2 >= 0;
-        // 也就是run2的所有元素均大于run1的最后一个元素，因此已经有序了
+        //也就是run2的所有元素均大于run1的最后一个元素，因此已经有序了
         if (len2 == 0)
             return;
 
-        // 对run1和run2中相交的部分进行merge
-        // Merge remaining runs, using tmp array with min(len1, len2) elements
+        //对run1和run2中相交的部分进行merge
+        //Merge remaining runs, using tmp array with min(len1, len2) elements
         if (len1 <= len2)
             mergeLo(base1, len1, base2, len2);
         else
@@ -530,55 +530,55 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
             int base, int len, int hint) {
         assert len > 0 && hint >= 0 && hint < len;
 
-        int lastOfs = 0;// 较小的偏移量，可取的值为0,1,3,...(ofs+1)/2
-        int ofs = 1;// 较大的偏移量，可取的值为1,3,5...maxOfx
+        int lastOfs = 0;//较小的偏移量，可取的值为0,1,3,...(ofs+1)/2
+        int ofs = 1;//较大的偏移量，可取的值为1,3,5...maxOfx
         if (key.compareTo(a[base + hint]) > 0) {
-            // 此时key > a[base + hint]，因此向右查找，直至满足a[base+hint+lastOfs] < key <= a[base+hint+ofs]
-            // Gallop right until a[base+hint+lastOfs] < key <= a[base+hint+ofs]
-            // maxOfs代表最大偏移量
+            //此时key > a[base + hint]，因此向右查找，直至满足a[base+hint+lastOfs] < key <= a[base+hint+ofs]
+            //Gallop right until a[base+hint+lastOfs] < key <= a[base+hint+ofs]
+            //maxOfs代表最大偏移量
             int maxOfs = len - hint;
-            // 当key>a[base + hint + ofs]
+            //当key>a[base + hint + ofs]
             while (ofs < maxOfs && key.compareTo(a[base + hint + ofs]) > 0) {
-                // 更新lastOfs
+                //更新lastOfs
                 lastOfs = ofs;
-                // 更新ofs，更新为原来的两倍再加1
+                //更新ofs，更新为原来的两倍再加1
                 ofs = (ofs << 1) + 1;
-                // 当越界时，直接赋值为maxOfs，然后便可以退出while循环了
-                if (ofs <= 0)   // int overflow
+                //当越界时，直接赋值为maxOfs，然后便可以退出while循环了
+                if (ofs <= 0)   //int overflow
                     ofs = maxOfs;
             }
 
-            // 调整ofs
+            //调整ofs
             if (ofs > maxOfs)
                 ofs = maxOfs;
 
-            // 由于ofs与lastOfs为相对hint的偏移量，现在调整为相对base的偏移量
-            // Make offsets relative to base
+            //由于ofs与lastOfs为相对hint的偏移量，现在调整为相对base的偏移量
+            //Make offsets relative to base
             lastOfs += hint;
             ofs += hint;
-            // 此时满足a[base+lastOfs] < key <= a[base+ofs]
-        } else { // key <= a[base + hint]
-            // 此时key <= a[base + hint]，因此向左查找，直至满足a[base+hint-ofs] < key <= a[base+hint-lastOfs]
-            // Gallop left until a[base+hint-ofs] < key <= a[base+hint-lastOfs]
-            // 最大偏移量，即base+hint-maxOfs>=base
+            //此时满足a[base+lastOfs] < key <= a[base+ofs]
+        } else { //key <= a[base + hint]
+            //此时key <= a[base + hint]，因此向左查找，直至满足a[base+hint-ofs] < key <= a[base+hint-lastOfs]
+            //Gallop left until a[base+hint-ofs] < key <= a[base+hint-lastOfs]
+            //最大偏移量，即base+hint-maxOfs>=base
             final int maxOfs = hint + 1;
             while (ofs < maxOfs && key.compareTo(a[base + hint - ofs]) <= 0) {
                 lastOfs = ofs;
                 ofs = (ofs << 1) + 1;
-                if (ofs <= 0)   // int overflow
+                if (ofs <= 0)   //int overflow
                     ofs = maxOfs;
             }
 
-            // 调整ofs
+            //调整ofs
             if (ofs > maxOfs)
                 ofs = maxOfs;
 
-            // 由于ofs与lastOfs为相对于hint的负偏移量，现在调整为相对base的偏移量，这里需要调整一下，使得结果与上一种情况统一
-            // Make offsets relative to base
+            //由于ofs与lastOfs为相对于hint的负偏移量，现在调整为相对base的偏移量，这里需要调整一下，使得结果与上一种情况统一
+            //Make offsets relative to base
             int tmp = lastOfs;
             lastOfs = hint - ofs;
             ofs = hint - tmp;
-            // 此时满足a[base+lastOfs] < key <= a[base+ofs]
+            //此时满足a[base+lastOfs] < key <= a[base+ofs]
         }
         assert -1 <= lastOfs && lastOfs < ofs && ofs <= len;
 
@@ -587,17 +587,17 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
          * to the right of lastOfs but no farther right than ofs.  Do a binary
          * search, with invariant a[base + lastOfs - 1] < key <= a[base + ofs].
          */
-        // 现在a[base+lastOfs] < key <= a[base+ofs]，因此用二分法查找
+        //现在a[base+lastOfs] < key <= a[base+ofs]，因此用二分法查找
         lastOfs++;
         while (lastOfs < ofs) {
             int m = lastOfs + ((ofs - lastOfs) >>> 1);
 
             if (key.compareTo(a[base + m]) > 0)
-                lastOfs = m + 1;  // a[base + m] < key
+                lastOfs = m + 1;  //a[base + m] < key
             else
-                ofs = m;          // key <= a[base + m]
+                ofs = m;          //key <= a[base + m]
         }
-        assert lastOfs == ofs;    // so a[base + ofs - 1] < key <= a[base + ofs]
+        assert lastOfs == ofs;    //so a[base + ofs - 1] < key <= a[base + ofs]
         return ofs;
     }
 ```
@@ -633,50 +633,50 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
             int base, int len, int hint) {
         assert len > 0 && hint >= 0 && hint < len;
 
-        int ofs = 1;// 较大的偏移量，可取的值为1,3,5...maxOfx
-        int lastOfs = 0;// 较小的偏移量，可取的值为0,1,3,...(ofs+1)/2
+        int ofs = 1;//较大的偏移量，可取的值为1,3,5...maxOfx
+        int lastOfs = 0;//较小的偏移量，可取的值为0,1,3,...(ofs+1)/2
         if (key.compareTo(a[base + hint]) < 0) {
-            // 此时key < a[base + hint]，因此向左查找，直至满足a[b+hint - ofs] <= key < a[b+hint - lastOfs]
-            // Gallop left until a[b+hint - ofs] <= key < a[b+hint - lastOfs]
+            //此时key < a[base + hint]，因此向左查找，直至满足a[b+hint - ofs] <= key < a[b+hint - lastOfs]
+            //Gallop left until a[b+hint - ofs] <= key < a[b+hint - lastOfs]
             int maxOfs = hint + 1;
             while (ofs < maxOfs && key.compareTo(a[base + hint - ofs]) < 0) {
                 lastOfs = ofs;
                 ofs = (ofs << 1) + 1;
-                if (ofs <= 0)   // int overflow
+                if (ofs <= 0)   //int overflow
                     ofs = maxOfs;
             }
 
-            // 调整ofs
+            //调整ofs
             if (ofs > maxOfs)
                 ofs = maxOfs;
 
-            // 由于ofs与lastOfs为相对于hint的负偏移量，现在调整为相对base的偏移量，这里需要调整一下，使得结果与下一种情况统一
-            // Make offsets relative to b
+            //由于ofs与lastOfs为相对于hint的负偏移量，现在调整为相对base的偏移量，这里需要调整一下，使得结果与下一种情况统一
+            //Make offsets relative to b
             int tmp = lastOfs;
             lastOfs = hint - ofs;
             ofs = hint - tmp;
 
-            // 此时满足a[b + lastOfs] <= key < a[b + ofs]
-        } else { // a[b + hint] <= key
-            // 此时a[b + hint] <= key，因此向右查找，直至满足a[b+hint + lastOfs] <= key < a[b+hint + ofs]
-            // Gallop right until a[b+hint + lastOfs] <= key < a[b+hint + ofs]
+            //此时满足a[b + lastOfs] <= key < a[b + ofs]
+        } else { //a[b + hint] <= key
+            //此时a[b + hint] <= key，因此向右查找，直至满足a[b+hint + lastOfs] <= key < a[b+hint + ofs]
+            //Gallop right until a[b+hint + lastOfs] <= key < a[b+hint + ofs]
             int maxOfs = len - hint;
             while (ofs < maxOfs && key.compareTo(a[base + hint + ofs]) >= 0) {
                 lastOfs = ofs;
                 ofs = (ofs << 1) + 1;
-                if (ofs <= 0)   // int overflow
+                if (ofs <= 0)   //int overflow
                     ofs = maxOfs;
             }
 
-            // 调整ofs
+            //调整ofs
             if (ofs > maxOfs)
                 ofs = maxOfs;
 
-            // 由于ofs与lastOfs为相对hint的偏移量，现在调整为相对base的偏移量
-            // Make offsets relative to b
+            //由于ofs与lastOfs为相对hint的偏移量，现在调整为相对base的偏移量
+            //Make offsets relative to b
             lastOfs += hint;
             ofs += hint;
-            // 此时满足a[b + lastOfs] <= key < a[b + ofs]
+            //此时满足a[b + lastOfs] <= key < a[b + ofs]
         }
         assert -1 <= lastOfs && lastOfs < ofs && ofs <= len;
 
@@ -690,11 +690,11 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
             int m = lastOfs + ((ofs - lastOfs) >>> 1);
 
             if (key.compareTo(a[base + m]) < 0)
-                ofs = m;          // key < a[b + m]
+                ofs = m;          //key < a[b + m]
             else
-                lastOfs = m + 1;  // a[b + m] <= key
+                lastOfs = m + 1;  //a[b + m] <= key
         }
-        assert lastOfs == ofs;    // so a[b + ofs - 1] <= key < a[b + ofs]
+        assert lastOfs == ofs;    //so a[b + ofs - 1] <= key < a[b + ofs]
         return ofs;
     }
 ```
@@ -734,62 +734,62 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
     private void mergeLo(int base1, int len1, int base2, int len2) {
         assert len1 > 0 && len2 > 0 && base1 + len1 == base2;
 
-        // Copy first run into temp array
-        Object[] a = this.a; // For performance
-        // 根据len1的大小，分配一个2的幂次大小的数组
+        //Copy first run into temp array
+        Object[] a = this.a; //For performance
+        //根据len1的大小，分配一个2的幂次大小的数组
         Object[] tmp = ensureCapacity(len1);
 
-        int cursor1 = tmpBase; // Indexes into tmp array
-        int cursor2 = base2;   // Indexes int a
-        int dest = base1;      // Indexes int a
-        // 将run中的元素拷贝到temp中去
+        int cursor1 = tmpBase; //Indexes into tmp array
+        int cursor2 = base2;   //Indexes int a
+        int dest = base1;      //Indexes int a
+        //将run中的元素拷贝到temp中去
         System.arraycopy(a, base1, tmp, cursor1, len1);
 
-        // Move first element of second run and deal with degenerate cases
-        // 由于run1[first] > run2[first]，因此第一个元素一定是run2[first]
+        //Move first element of second run and deal with degenerate cases
+        //由于run1[first] > run2[first]，因此第一个元素一定是run2[first]
         a[dest++] = a[cursor2++];
 
-        // 处理两个非常规的情况
-        // run2没有元素剩余了，因此将tem中的元素拷贝回来，然后返回
+        //处理两个非常规的情况
+        //run2没有元素剩余了，因此将tem中的元素拷贝回来，然后返回
         if (--len2 == 0) {
             System.arraycopy(tmp, cursor1, a, dest, len1);
             return;
         }
-        // run1只有一个元素，且run1[last] > run2[last]，因此run1中的所有元素都比run2中的所有元素要大
+        //run1只有一个元素，且run1[last] > run2[last]，因此run1中的所有元素都比run2中的所有元素要大
         if (len1 == 1) {
-            // 先移动run2中的元素
+            //先移动run2中的元素
             System.arraycopy(a, cursor2, a, dest, len2);
-            // 再移动run1的唯一元素即可
-            a[dest + len2] = tmp[cursor1]; // Last elt of run 1 to end of merge
+            //再移动run1的唯一元素即可
+            a[dest + len2] = tmp[cursor1]; //Last elt of run 1 to end of merge
             return;
         }
 
-        int minGallop = this.minGallop;  // Use local variable for performance
+        int minGallop = this.minGallop;  //Use local variable for performance
     outer:
         while (true) {
-            // 这两个值用于记录一些信息，在同一时刻，必定有一个为0。根据这个值可以进行某些优化
-            // 当count1 > 0，意味着run2中的某个元素会比连续多个run1中的元素要大，即run1 won
-            // 当count2 > 0，意味着run1中的某个元素会比连续多个run2中的元素要大，即run2 won
-            int count1 = 0; // Number of times in a row that first run won
-            int count2 = 0; // Number of times in a row that second run won
+            //这两个值用于记录一些信息，在同一时刻，必定有一个为0。根据这个值可以进行某些优化
+            //当count1 > 0，意味着run2中的某个元素会比连续多个run1中的元素要大，即run1 won
+            //当count2 > 0，意味着run1中的某个元素会比连续多个run2中的元素要大，即run2 won
+            int count1 = 0; //Number of times in a row that first run won
+            int count2 = 0; //Number of times in a row that second run won
 
             /*
              * Do the straightforward thing until (if ever) one run starts
              * winning consistently.
              */
-            // 进行合并操作，即比较a[cursor2]与tmp[cursor1]的大小，取较小的一个放到a[dest]中去。当出现连续多个(minGallop个)数值都从某一个run中取得时(全部从run1中取或者全部从run2中取)，那么可以假设这种趋势将会延续下去，因此可以做一些优化
+            //进行合并操作，即比较a[cursor2]与tmp[cursor1]的大小，取较小的一个放到a[dest]中去。当出现连续多个(minGallop个)数值都从某一个run中取得时(全部从run1中取或者全部从run2中取)，那么可以假设这种趋势将会延续下去，因此可以做一些优化
             do {
                 assert len1 > 1 && len2 > 0;
                 
                 if (((Comparable) a[cursor2]).compareTo(tmp[cursor1]) < 0) {
-                    // run2 won
+                    //run2 won
                     a[dest++] = a[cursor2++];
                     count2++;
                     count1 = 0;
                     if (--len2 == 0)
                         break outer;
                 } else {
-                    // run1 won
+                    //run1 won
                     a[dest++] = tmp[cursor1++];
                     count1++;
                     count2 = 0;
@@ -797,34 +797,34 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
                         break outer;
                 }
             } while ((count1 | count2) < minGallop);
-            // 这个判断相当于 count1 < minGallop && count2 <minGallop，因为count1和count2总有一个为0
+            //这个判断相当于 count1 < minGallop && count2 <minGallop，因为count1和count2总有一个为0
              
             /*
              * One run is winning so consistently that galloping may be a
              * huge win. So try that, and continue galloping until (if ever)
              * neither run appears to be winning consistently anymore.
              */
-            // 执行到这里的话，某个run中的元素将比另一个run中的连续多个元素都要大，那么这种连续性可能持续的更长。那么我们就按照这个逻辑试一试。直到这种连续性被打破。根据找到的长度，直接连续的copy就可以了，这样可以提高copy的效率
-            // 可以采用二分查找这种连续性的边界。另外，单个赋值操作要比System.arraycopy操作要慢，使用System.arraycopy也能产生增益
+            //执行到这里的话，某个run中的元素将比另一个run中的连续多个元素都要大，那么这种连续性可能持续的更长。那么我们就按照这个逻辑试一试。直到这种连续性被打破。根据找到的长度，直接连续的copy就可以了，这样可以提高copy的效率
+            //可以采用二分查找这种连续性的边界。另外，单个赋值操作要比System.arraycopy操作要慢，使用System.arraycopy也能产生增益
             do {
                 assert len1 > 1 && len2 > 0;
-                // 直接利用gallopRight(二分查找)找到a[cursor2]在run1中的最右边的位置，那么意味着run1中的前count1个元素都要比a[cursor2]小，因此直接用System.arraycopy来拷贝这部分数据
+                //直接利用gallopRight(二分查找)找到a[cursor2]在run1中的最右边的位置，那么意味着run1中的前count1个元素都要比a[cursor2]小，因此直接用System.arraycopy来拷贝这部分数据
                 count1 = gallopRight((Comparable) a[cursor2], tmp, cursor1, len1, 0);
                 if (count1 != 0) {
                     System.arraycopy(tmp, cursor1, a, dest, count1);
                     dest += count1;
                     cursor1 += count1;
                     len1 -= count1;
-                    if (len1 <= 1)  // len1 == 1 || len1 == 0
+                    if (len1 <= 1)  //len1 == 1 || len1 == 0
                         break outer;
                 }
 
-                // run1前count1个元素都已经移动到dest中去了，现在移动a[cursor2]这个元素
+                //run1前count1个元素都已经移动到dest中去了，现在移动a[cursor2]这个元素
                 a[dest++] = a[cursor2++];
                 if (--len2 == 0)
                     break outer;
 
-                // 直接利用gallopLeft(二分查找)找到tmp[cursor1]在run2中最左边的位置，那么意味着run2中的前count2个元素都要比tmp[cursor1]小，因此直接使用System.arraycopy来拷贝这部分数据
+                //直接利用gallopLeft(二分查找)找到tmp[cursor1]在run2中最左边的位置，那么意味着run2中的前count2个元素都要比tmp[cursor1]小，因此直接使用System.arraycopy来拷贝这部分数据
                 count2 = gallopLeft((Comparable) tmp[cursor1], a, cursor2, len2, 0);
                 if (count2 != 0) {
                     System.arraycopy(a, cursor2, a, dest, count2);
@@ -835,24 +835,24 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
                         break outer;
                 }
 
-                // run2前count2个元素都已经移动到dest中去了，现在就是tmp[curosr1]这个元素
+                //run2前count2个元素都已经移动到dest中去了，现在就是tmp[curosr1]这个元素
                 a[dest++] = tmp[cursor1++];
                 if (--len1 == 1)
                     break outer;
                 minGallop--;
             } while (count1 >= MIN_GALLOP | count2 >= MIN_GALLOP);
-            // 当这种连续多个较大的趋势仍然成立时
+            //当这种连续多个较大的趋势仍然成立时
 
             if (minGallop < 0)
                 minGallop = 0;
-            minGallop += 2;  // Penalize for leaving gallop mode
-        }  // End of "outer" loop
-        this.minGallop = minGallop < 1 ? 1 : minGallop;  // Write back to field
+            minGallop += 2;  //Penalize for leaving gallop mode
+        }  //End of "outer" loop
+        this.minGallop = minGallop < 1 ? 1 : minGallop;  //Write back to field
 
         if (len1 == 1) {
             assert len2 > 0;
             System.arraycopy(a, cursor2, a, dest, len2);
-            a[dest + len2] = tmp[cursor1]; // Last elt of run 1 to end of merge
+            a[dest + len2] = tmp[cursor1]; //Last elt of run 1 to end of merge
         } else if (len1 == 0) {
             throw new IllegalArgumentException(
                 "Comparison method violates its general contract!");
@@ -884,17 +884,17 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
     private void mergeHi(int base1, int len1, int base2, int len2) {
         assert len1 > 0 && len2 > 0 && base1 + len1 == base2;
 
-        // Copy second run into temp array
-        Object[] a = this.a; // For performance
+        //Copy second run into temp array
+        Object[] a = this.a; //For performance
         Object[] tmp = ensureCapacity(len2);
         int tmpBase = this.tmpBase;
         System.arraycopy(a, base2, tmp, tmpBase, len2);
 
-        int cursor1 = base1 + len1 - 1;  // Indexes into a
-        int cursor2 = tmpBase + len2 - 1; // Indexes into tmp array
-        int dest = base2 + len2 - 1;     // Indexes into a
+        int cursor1 = base1 + len1 - 1;  //Indexes into a
+        int cursor2 = tmpBase + len2 - 1; //Indexes into tmp array
+        int dest = base2 + len2 - 1;     //Indexes into a
 
-        // Move last element of first run and deal with degenerate cases
+        //Move last element of first run and deal with degenerate cases
         a[dest--] = a[cursor1--];
         if (--len1 == 0) {
             System.arraycopy(tmp, tmpBase, a, dest - (len2 - 1), len2);
@@ -908,11 +908,11 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
             return;
         }
 
-        int minGallop = this.minGallop;  // Use local variable for performance
+        int minGallop = this.minGallop;  //Use local variable for performance
     outer:
         while (true) {
-            int count1 = 0; // Number of times in a row that first run won
-            int count2 = 0; // Number of times in a row that second run won
+            int count1 = 0; //Number of times in a row that first run won
+            int count2 = 0; //Number of times in a row that second run won
 
             /*
              * Do the straightforward thing until (if ever) one run
@@ -962,7 +962,7 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
                     len2 -= count2;
                     System.arraycopy(tmp, cursor2 + 1, a, dest + 1, count2);
                     if (len2 <= 1)
-                        break outer; // len2 == 1 || len2 == 0
+                        break outer; //len2 == 1 || len2 == 0
                 }
                 a[dest--] = a[cursor1--];
                 if (--len1 == 0)
@@ -971,16 +971,16 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
             } while (count1 >= MIN_GALLOP | count2 >= MIN_GALLOP);
             if (minGallop < 0)
                 minGallop = 0;
-            minGallop += 2;  // Penalize for leaving gallop mode
-        }  // End of "outer" loop
-        this.minGallop = minGallop < 1 ? 1 : minGallop;  // Write back to field
+            minGallop += 2;  //Penalize for leaving gallop mode
+        }  //End of "outer" loop
+        this.minGallop = minGallop < 1 ? 1 : minGallop;  //Write back to field
 
         if (len2 == 1) {
             assert len1 > 0;
             dest -= len1;
             cursor1 -= len1;
             System.arraycopy(a, cursor1 + 1, a, dest + 1, len1);
-            a[dest] = tmp[cursor2];  // Move first elt of run2 to front of merge
+            a[dest] = tmp[cursor2];  //Move first elt of run2 to front of merge
         } else if (len2 == 0) {
             throw new IllegalArgumentException(
                 "Comparison method violates its general contract!");

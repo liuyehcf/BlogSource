@@ -201,7 +201,7 @@ public class RowJavaNioApiDemo {
             try {
                 SocketChannel socketChannel = SocketChannel.open();
 
-                // 启动一个本地的Web应用作为服务端
+                //启动一个本地的Web应用作为服务端
                 socketChannel.connect(new InetSocketAddress("localhost", 8080));
 
                 String requestContent = buildRequest();
@@ -255,9 +255,9 @@ public class RowJavaNioApiDemo {
         protected String buildRequest() {
             return HttpRequestBuilder.builder()
                     .method("GET")
-                    .url("http:// 127.0.0.1:8080/home")
+                    .url("http://127.0.0.1:8080/home")
                     .addHeader("Host", "8080")
-                    .addHeader("Connection", "close")  // 避免read阻塞
+                    .addHeader("Connection", "close")  //避免read阻塞
                     .build();
         }
     }
@@ -279,9 +279,9 @@ public class RowJavaNioApiDemo {
         protected String buildRequest() {
             return HttpRequestBuilder.builder()
                     .method("GET")
-                    .url("http:// 127.0.0.1:8080/compute?value1=" + value1 + "&value2=" + value2)
+                    .url("http://127.0.0.1:8080/compute?value1=" + value1 + "&value2=" + value2)
                     .addHeader("Host", "8080")
-                    .addHeader("Connection", "close")  // 避免read阻塞
+                    .addHeader("Connection", "close")  //避免read阻塞
                     .addHeader("operator", operator)
                     .build();
         }
@@ -298,11 +298,11 @@ public class RowJavaNioApiDemo {
         protected String buildRequest() {
             return HttpRequestBuilder.builder()
                     .method("POST")
-                    .url("http:// 127.0.0.1:8080/login")
+                    .url("http://127.0.0.1:8080/login")
                     .addHeader("Host", "8080")
-                    .addHeader("Connection", "close")  // 避免read阻塞
+                    .addHeader("Connection", "close")  //避免read阻塞
                     .addHeader("Content-Type", "application/json")
-                    .body("{\"name\":\"" + this.name + "\"}") // JSON格式的请求包体
+                    .body("{\"name\":\"" + this.name + "\"}") //JSON格式的请求包体
                     .build();
         }
     }
@@ -314,7 +314,7 @@ public class RowJavaNioApiDemo {
 ```
 HTTP REQUEST:
 [
-GET http:// 127.0.0.1:8080/home HTTP/1.1
+GET http://127.0.0.1:8080/home HTTP/1.1
 host:8080
 connection:close
 
@@ -333,7 +333,7 @@ Hello world!
 -------------------------------------------
 HTTP REQUEST:
 [
-POST http:// 127.0.0.1:8080/login HTTP/1.1
+POST http://127.0.0.1:8080/login HTTP/1.1
 content-length:17
 host:8080
 connection:close
@@ -358,7 +358,7 @@ Connection: close
 -------------------------------------------
 HTTP REQUEST:
 [
-GET http:// 127.0.0.1:8080/compute?value1=1.2&value2=2.4 HTTP/1.1
+GET http://127.0.0.1:8080/compute?value1=1.2&value2=2.4 HTTP/1.1
 host:8080
 connection:close
 operator:+

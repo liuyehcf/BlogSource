@@ -383,7 +383,7 @@ putInt将值`x`存入对象`o`的指定偏移量`offset`中
         putDouble(o, (long) offset, x);
     }
 
-    // These work on values in the C heap.
+    //These work on values in the C heap.
 
     /**
      * Fetches a value from a given memory address.  If the address is zero, or

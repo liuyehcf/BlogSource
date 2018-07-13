@@ -50,9 +50,9 @@ __阅读更多__
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
-         xmlns="http:// maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http:// maven.apache.org/POM/4.0.0 http:// maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     
     <groupId>org.liuyehcf</groupId>
     <artifactId>mybatis</artifactId>
@@ -94,8 +94,8 @@ MyBatis配置文件
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE configuration
-        PUBLIC "-// mybatis.org// DTD Config 3.0// EN"
-        "http:// mybatis.org/dtd/mybatis-3-config.dtd">
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
     <!-- 定义别名 -->
     <typeAliases>
@@ -111,7 +111,7 @@ MyBatis配置文件
             <!-- 配置数据库连接信息 -->
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql:// 127.0.0.1:3306/mybatis"/>
+                <property name="url" value="jdbc:mysql://127.0.0.1:3306/mybatis"/>
                 <property name="username" value="root"/>
                 <property name="password" value="123456"/>
             </dataSource>
@@ -531,7 +531,7 @@ public class TestWithoutParam {
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-// mybatis.org// DTD Mapper 3.0// EN" "http:// mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.liuyehcf.mybatis.CrmUserDAO">
     <sql id="columns">
         id AS id,

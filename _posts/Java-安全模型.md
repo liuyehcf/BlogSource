@@ -241,7 +241,7 @@ public class ReflectAccessControllerDemo {
     public static void main(String[] args) {
         Class clazz;
         try {
-            // 构造类加载器，加载位于resources路径下的external.jar中的类
+            //构造类加载器，加载位于resources路径下的external.jar中的类
             clazz = new URLClassLoader(
                     new URL[]{
                             new URL("file:" + JAR)
@@ -251,7 +251,7 @@ public class ReflectAccessControllerDemo {
             return;
         }
 
-        // 打开安全管理器
+        //打开安全管理器
         System.setSecurityManager(new SecurityManager());
 
         Method createFileMethod;
@@ -265,14 +265,14 @@ public class ReflectAccessControllerDemo {
         }
 
         try {
-            // 普通方法
+            //普通方法
             createFileMethod.invoke(null, TARGET_DIR, "file1.md");
         } catch (InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
         }
 
         try {
-            // 特权方法
+            //特权方法
             createFilePrivilegeMethod.invoke(null, TARGET_DIR, "file2.md");
         } catch (InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();

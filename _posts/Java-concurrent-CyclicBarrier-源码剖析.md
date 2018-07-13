@@ -175,7 +175,7 @@ await方法阻塞当前线程直至累计有count（构造方法的参数）个�
         try {
             return dowait(false, 0L);
         } catch (TimeoutException toe) {
-            throw new Error(toe); // cannot happen
+            throw new Error(toe); //cannot happen
         }
     }
 ```
@@ -196,71 +196,71 @@ dowait方法是实现CyclicBarrier语义的主要方法
         try {
             final Generation g = generation;
 
-            // 如果是broken状态，则抛出BrokenBarrierException异常。该bool值在breakBarrier方法中被设置为true
+            //如果是broken状态，则抛出BrokenBarrierException异常。该bool值在breakBarrier方法中被设置为true
             if (g.broken)
                 throw new BrokenBarrierException();
 
-            // 如果被中断了则设置broken为true，然后抛出InterruptedException异常
+            //如果被中断了则设置broken为true，然后抛出InterruptedException异常
             if (Thread.interrupted()) {
                 breakBarrier();
                 throw new InterruptedException();
             }
 
-            // 递减count
+            //递减count
             int index = --count;
-            // 如果index为0，说明有足够多的线程调用了await方法，此时应该放行所有线程
-            if (index == 0) {  // tripped
+            //如果index为0，说明有足够多的线程调用了await方法，此时应该放行所有线程
+            if (index == 0) {  //tripped
                 boolean ranAction = false;
                 try {
                     final Runnable command = barrierCommand;
-                    // 执行一些额外的逻辑
+                    //执行一些额外的逻辑
                     if (command != null)
                         command.run();
-                    // 如果在执行run方法中抛出了任何异常，则ranAction为false状态
+                    //如果在执行run方法中抛出了任何异常，则ranAction为false状态
                     ranAction = true;
-                    // 进入下一个生命周期
+                    //进入下一个生命周期
                     nextGeneration();
                     return 0;
                 } finally {
                     if (!ranAction)
-                        // 将Barrier的当前生命周期的状态标记为不可用
+                        //将Barrier的当前生命周期的状态标记为不可用
                         breakBarrier();
                 }
             }
 
-            // 阻塞当前线程直至被中断，打断或者超时
-            // loop until tripped, broken, interrupted, or timed out
+            //阻塞当前线程直至被中断，打断或者超时
+            //loop until tripped, broken, interrupted, or timed out
             for (;;) {
                 try {
-                    // 如果不允许超时，将当前线程直接挂起，阻塞在条件对象trip的condition queue(ConditionObject中维护的等待队列)中
+                    //如果不允许超时，将当前线程直接挂起，阻塞在条件对象trip的condition queue(ConditionObject中维护的等待队列)中
                     if (!timed)
                         trip.await();
-                    // 如果允许超时，阻塞在条件对象trip的condition queue中一段时间
+                    //如果允许超时，阻塞在条件对象trip的condition queue中一段时间
                     else if (nanos > 0L)
                         nanos = trip.awaitNanos(nanos);
                 } catch (InterruptedException ie) {
-                    // 当Barrier处于有效状态
+                    //当Barrier处于有效状态
                     if (g == generation && ! g.broken) {
-                        // 设置为打断状态
+                        //设置为打断状态
                         breakBarrier();
                         throw ie;
                     } else {
-                        // We're about to finish waiting even if we had not
-                        // been interrupted, so this interrupt is deemed to
-                        // "belong" to subsequent execution.
+                        //We're about to finish waiting even if we had not
+                        //been interrupted, so this interrupt is deemed to
+                        //"belong" to subsequent execution.
                         Thread.currentThread().interrupt();
                     }
                 }
 
-                // 如果Barrier被打断，则抛出BrokenBarrierException异常
+                //如果Barrier被打断，则抛出BrokenBarrierException异常
                 if (g.broken)
                     throw new BrokenBarrierException();
 
-                // 意味着调用await时处于上一个生命周期，而此时却进入了下一个生命周期中
+                //意味着调用await时处于上一个生命周期，而此时却进入了下一个生命周期中
                 if (g != generation)
                     return index;
 
-                // 允许超时，并且已经超时
+                //允许超时，并且已经超时
                 if (timed && nanos <= 0L) {
                     breakBarrier();
                     throw new TimeoutException();
@@ -282,13 +282,13 @@ dowait方法是实现CyclicBarrier语义的主要方法
      * Called only while holding lock.
      */
     private void nextGeneration() {
-        // signal completion of last generation
-        // 唤醒所有阻塞在condition queue中的线程，即那些阻塞在await方法上的线程
+        //signal completion of last generation
+        //唤醒所有阻塞在condition queue中的线程，即那些阻塞在await方法上的线程
         trip.signalAll();
-        // set up next generation
-        // 这就是CyclicBarrier可重用的原因
+        //set up next generation
+        //这就是CyclicBarrier可重用的原因
         count = parties;
-        // 重新生成Generation
+        //重新生成Generation
         generation = new Generation();
     }
 ```
@@ -335,8 +335,8 @@ dowait方法是实现CyclicBarrier语义的主要方法
         final ReentrantLock lock = this.lock;
         lock.lock();
         try {
-            breakBarrier();   // break the current generation
-            nextGeneration(); // start a new generation
+            breakBarrier();   //break the current generation
+            nextGeneration(); //start a new generation
         } finally {
             lock.unlock();
         }

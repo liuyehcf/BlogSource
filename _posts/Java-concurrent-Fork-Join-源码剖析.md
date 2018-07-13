@@ -123,12 +123,12 @@ public abstract class RecursiveTask<V> extends ForkJoinTask<V> {
 ## 3.1 常量
 
 ```Java
-    static final int DONE_MASK   = 0xf0000000;  // mask out non-completion bits
-    static final int NORMAL      = 0xf0000000;  // must be negative
-    static final int CANCELLED   = 0xc0000000;  // must be < NORMAL
-    static final int EXCEPTIONAL = 0x80000000;  // must be < CANCELLED
-    static final int SIGNAL      = 0x00010000;  // must be >= 1 << 16
-    static final int SMASK       = 0x0000ffff;  // short bits for tags
+    static final int DONE_MASK   = 0xf0000000;  //mask out non-completion bits
+    static final int NORMAL      = 0xf0000000;  //must be negative
+    static final int CANCELLED   = 0xc0000000;  //must be < NORMAL
+    static final int EXCEPTIONAL = 0x80000000;  //must be < CANCELLED
+    static final int SIGNAL      = 0x00010000;  //must be >= 1 << 16
+    static final int SMASK       = 0x0000ffff;  //short bits for tags
 ```
 
 * __DONE_MASK__：completion的掩码，即高四位为completion bits
@@ -141,7 +141,7 @@ public abstract class RecursiveTask<V> extends ForkJoinTask<V> {
 ## 3.2 字段
 
 ```Java
-    volatile int status; // accessed directly by pool and workers
+    volatile int status; //accessed directly by pool and workers
 ```
 
 * __status__：用于标记任务的状态
@@ -168,12 +168,12 @@ public abstract class RecursiveTask<V> extends ForkJoinTask<V> {
      */
     public final ForkJoinTask<V> fork() {
         Thread t;
-        // 如果当前线程的类型为ForkJoinWorkerThread，意味着当前任务已经在ForkJoinPool中进行处理了
+        //如果当前线程的类型为ForkJoinWorkerThread，意味着当前任务已经在ForkJoinPool中进行处理了
         if ((t = Thread.currentThread()) instanceof ForkJoinWorkerThread)
-            // 将当前任务添加到ForkJoinWorkerThread#workQueue中
+            //将当前任务添加到ForkJoinWorkerThread#workQueue中
             ((ForkJoinWorkerThread)t).workQueue.push(this);
         else
-            // 否则公用一个ForkJoinPool处理任务，common是一个静态字段，类型为ForkJoinPool
+            //否则公用一个ForkJoinPool处理任务，common是一个静态字段，类型为ForkJoinPool
             ForkJoinPool.common.externalPush(this);
         return this;
     }
@@ -215,11 +215,11 @@ doJoin方法执行具体的join逻辑，即合并各个线程执行任务的结�
      */
     private int doJoin() {
         int s; Thread t; ForkJoinWorkerThread wt; ForkJoinPool.WorkQueue w;
-        // 下面这个符合语句显得有的复杂，我们进行一下分解
-        // 1. 当前状态为负数，即高四位为NORMAL或CANCELLED或EXCEPTIONAL，返回当前状态
-        // 2. 当前状态为非负数，当前线程为ForkJoinWorkerThread，且tryUnpush(this)方法返回true且doExec()返回负数时，返回doExec()方法返回的结果
-        // 3. 当前状态为非负数，当前线程为ForkJoinWorkerThread，且tryUnpush(this)方法返回false或doExec()返回非负数时，返回wt.pool.awaitJoin(w, this, 0L)方法执行的结果
-        // 4. 当前状态为非负数，且当前线程为普通线程时，执行externalAwaitDone
+        //下面这个符合语句显得有的复杂，我们进行一下分解
+        //1. 当前状态为负数，即高四位为NORMAL或CANCELLED或EXCEPTIONAL，返回当前状态
+        //2. 当前状态为非负数，当前线程为ForkJoinWorkerThread，且tryUnpush(this)方法返回true且doExec()返回负数时，返回doExec()方法返回的结果
+        //3. 当前状态为非负数，当前线程为ForkJoinWorkerThread，且tryUnpush(this)方法返回false或doExec()返回非负数时，返回wt.pool.awaitJoin(w, this, 0L)方法执行的结果
+        //4. 当前状态为非负数，且当前线程为普通线程时，执行externalAwaitDone
         return (s = status) < 0 ? s :
             ((t = Thread.currentThread()) instanceof ForkJoinWorkerThread) ?
             (w = (wt = (ForkJoinWorkerThread)t).workQueue).
@@ -249,13 +249,13 @@ doJoin方法执行具体的join逻辑，即合并各个线程执行任务的结�
         int s; boolean completed;
         if ((s = status) >= 0) {
             try {
-                // 其中exec方法是一个抽象方法，其实现详见RecursiveAction与RecursiveTask
+                //其中exec方法是一个抽象方法，其实现详见RecursiveAction与RecursiveTask
                 completed = exec();
             } catch (Throwable rex) {
                 return setExceptionalCompletion(rex);
             }
             if (completed)
-                // 设置任务的状态为正常
+                //设置任务的状态为正常
                 s = setCompletion(NORMAL);
         }
         return s;
@@ -270,7 +270,7 @@ doJoin方法执行具体的join逻辑，即合并各个线程执行任务的结�
      * @return status upon completion
      */
     private int externalAwaitDone() {
-        int s = ((this instanceof CountedCompleter) ? // try helping
+        int s = ((this instanceof CountedCompleter) ? //try helping
                  ForkJoinPool.common.externalHelpComplete(
                      (CountedCompleter<?>)this, 0) :
                  ForkJoinPool.common.tryExternalUnpush(this) ? doExec() : 0);
@@ -340,15 +340,15 @@ doJoin方法执行具体的join逻辑，即合并各个线程执行任务的结�
 ## 4.2 字段
 
 ```Java
-    volatile long ctl;                   // main pool control
-    volatile int runState;               // lockable status
-    final int config;                    // parallelism, mode
-    int indexSeed;                       // to generate worker index
-    volatile WorkQueue[] workQueues;     // main registry
+    volatile long ctl;                   //main pool control
+    volatile int runState;               //lockable status
+    final int config;                    //parallelism, mode
+    int indexSeed;                       //to generate worker index
+    volatile WorkQueue[] workQueues;     //main registry
     final ForkJoinWorkerThreadFactory factory;
-    final UncaughtExceptionHandler ueh;  // per-worker UEH
-    final String workerNamePrefix;       // to create worker name string
-    volatile AtomicLong stealCounter;    // also used as sync monitor
+    final UncaughtExceptionHandler ueh;  //per-worker UEH
+    final String workerNamePrefix;       //to create worker name string
+    volatile AtomicLong stealCounter;    //also used as sync monitor
 ```
 
 ## 4.3 WorkQueue
@@ -367,7 +367,7 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
          * share GC bookkeeping (especially cardmarks) such that
          * per-write accesses encounter serious memory contention.
          */
-        // 初始Queue的大小，必须是2的幂次，这样设计的用意是什么？？？
+        //初始Queue的大小，必须是2的幂次，这样设计的用意是什么？？？
         static final int INITIAL_QUEUE_CAPACITY = 1 << 13;
 
         /**
@@ -377,59 +377,59 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
          * value a bit less than this to help users trap runaway
          * programs before saturating systems.
          */
-        // Queue大小的最大值
-        static final int MAXIMUM_QUEUE_CAPACITY = 1 << 26; // 64M
+        //Queue大小的最大值
+        static final int MAXIMUM_QUEUE_CAPACITY = 1 << 26; //64M
 
-        // Instance fields
+        //Instance fields
 
-        // 
-        volatile int scanState;    // versioned, <0: inactive; odd:scanning
+        //
+        volatile int scanState;    //versioned, <0: inactive; odd:scanning
         
-        // 
-        int stackPred;             // pool stack (ctl) predecessor
+        //
+        int stackPred;             //pool stack (ctl) predecessor
         
-        // 
-        int nsteals;               // number of steals
+        //
+        int nsteals;               //number of steals
         
-        // 
-        int hint;                  // randomization and stealer index hint
+        //
+        int hint;                  //randomization and stealer index hint
         
-        // 
-        int config;                // pool index and mode
+        //
+        int config;                //pool index and mode
         
-        // 
-        volatile int qlock;        // 1: locked, < 0: terminate; else 0
+        //
+        volatile int qlock;        //1: locked, < 0: terminate; else 0
         
-        // 指向下一个poll的元素，一般而言，base<top，base可能大于array.length
-        volatile int base;         // index of next slot for poll
+        //指向下一个poll的元素，一般而言，base<top，base可能大于array.length
+        volatile int base;         //index of next slot for poll
         
-        // 指向下一个push的元素，一般而言，base<top，base可能大于array.length
-        int top;                   // index of next slot for push
+        //指向下一个push的元素，一般而言，base<top，base可能大于array.length
+        int top;                   //index of next slot for push
         
-        // 
-        ForkJoinTask<?>[] array;   // the elements (initially unallocated)
+        //
+        ForkJoinTask<?>[] array;   //the elements (initially unallocated)
         
-        // 当前WorkQueue归属的ForkJoinPool
-        final ForkJoinPool pool;   // the containing pool (may be null)
+        //当前WorkQueue归属的ForkJoinPool
+        final ForkJoinPool pool;   //the containing pool (may be null)
         
-        // 当前WorkQueue归属的ForkJoinWorkerThread
-        final ForkJoinWorkerThread owner; // owning thread or null if shared
+        //当前WorkQueue归属的ForkJoinWorkerThread
+        final ForkJoinWorkerThread owner; //owning thread or null if shared
         
-        // 
-        volatile Thread parker;    // == owner during call to park; else null
+        //
+        volatile Thread parker;    //== owner during call to park; else null
         
-        // 
-        volatile ForkJoinTask<?> currentJoin;  // task being joined in awaitJoin
+        //
+        volatile ForkJoinTask<?> currentJoin;  //task being joined in awaitJoin
         
-        // 
-        volatile ForkJoinTask<?> currentSteal; // mainly used by helpStealer
+        //
+        volatile ForkJoinTask<?> currentSteal; //mainly used by helpStealer
 
-        // 一个WorkQueue归属于一个ForkJoinPool以及一个ForkJoinWorkerThread
+        //一个WorkQueue归属于一个ForkJoinPool以及一个ForkJoinWorkerThread
         WorkQueue(ForkJoinPool pool, ForkJoinWorkerThread owner) {
             this.pool = pool;
             this.owner = owner;
-            // Place indices in the center of array (that is not yet allocated)
-            // 将base和top置于中间位置
+            //Place indices in the center of array (that is not yet allocated)
+            //将base和top置于中间位置
             base = top = INITIAL_QUEUE_CAPACITY >>> 1;
         }
 
@@ -437,16 +437,16 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
          * Returns an exportable index (used by ForkJoinWorkerThread).
          */
         final int getPoolIndex() {
-            return (config & 0xffff) >>> 1; // ignore odd/even tag bit
+            return (config & 0xffff) >>> 1; //ignore odd/even tag bit
         }
 
         /**
          * Returns the approximate number of tasks in the queue.
          */
-        // 返回队列中的元素，即base~top之间的元素个数
+        //返回队列中的元素，即base~top之间的元素个数
         final int queueSize() {
-            int n = base - top;       // non-owner callers must read base first
-            return (n >= 0) ? 0 : -n; // ignore transient negative
+            int n = base - top;       //non-owner callers must read base first
+            return (n >= 0) ? 0 : -n; //ignore transient negative
         }
 
         /**
@@ -454,13 +454,13 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
          * any tasks than does queueSize, by checking whether a
          * near-empty queue has at least one unclaimed task.
          */
-        // 该方法提供比queueSize()更准确的估计
-        // 1. 如果base~top没有元素，则直接返回true
-        // 2. 当base~top含有一个元素，且数组a中并不存在元素时返回true
+        //该方法提供比queueSize()更准确的估计
+        //1. 如果base~top没有元素，则直接返回true
+        //2. 当base~top含有一个元素，且数组a中并不存在元素时返回true
         final boolean isEmpty() {
             ForkJoinTask<?>[] a; int n, m, s;
             return ((n = base - (s = top)) >= 0 ||
-                    (n == -1 &&           // possibly one task
+                    (n == -1 &&           //possibly one task
                      ((a = array) == null || (m = a.length - 1) < 0 ||
                       U.getObject
                       (a, (long)((m & (s - 1)) << ASHIFT) + ABASE) == null)));
@@ -476,11 +476,11 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
         final void push(ForkJoinTask<?> task) {
             ForkJoinTask<?>[] a; ForkJoinPool p;
             int b = base, s = top, n;
-            if ((a = array) != null) {    // ignore if queue removed
-                int m = a.length - 1;     // fenced write for task visibility
-                // 为什么m&s相当于计算下标，m的bit位形如000..111。putOrderedObject插入StoreStore内存屏障，禁止写写重排序
+            if ((a = array) != null) {    //ignore if queue removed
+                int m = a.length - 1;     //fenced write for task visibility
+                //为什么m&s相当于计算下标，m的bit位形如000..111。putOrderedObject插入StoreStore内存屏障，禁止写写重排序
                 U.putOrderedObject(a, ((m & s) << ASHIFT) + ABASE, task);
-                // putOrderedInt插入StoreStore内存屏障，禁止写写重排序
+                //putOrderedInt插入StoreStore内存屏障，禁止写写重排序
                 U.putOrderedInt(this, QTOP, s + 1);
                 if ((n = s - b) <= 1) {
                     if ((p = pool) != null)
@@ -506,7 +506,7 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
             if (oldA != null && (oldMask = oldA.length - 1) >= 0 &&
                 (t = top) - (b = base) > 0) {
                 int mask = size - 1;
-                do { // emulate poll from old array, push to new array
+                do { //emulate poll from old array, push to new array
                     ForkJoinTask<?> x;
                     int oldj = ((b & oldMask) << ASHIFT) + ABASE;
                     int j    = ((b &    mask) << ASHIFT) + ABASE;
@@ -572,7 +572,7 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
                             return t;
                         }
                     }
-                    else if (b + 1 == top) // now empty
+                    else if (b + 1 == top) //now empty
                         break;
                 }
             }
@@ -630,7 +630,7 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
                 ForkJoinTask.cancelIgnoringExceptions(t);
         }
 
-        // Specialized execution methods
+        //Specialized execution methods
 
         /**
          * Polls and runs tasks until empty.
@@ -671,12 +671,12 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
          */
         final void runTask(ForkJoinTask<?> task) {
             if (task != null) {
-                scanState &= ~SCANNING; // mark as busy
+                scanState &= ~SCANNING; //mark as busy
                 (currentSteal = task).doExec();
-                U.putOrderedObject(this, QCURRENTSTEAL, null); // release for GC
+                U.putOrderedObject(this, QCURRENTSTEAL, null); //release for GC
                 execLocalTasks();
                 ForkJoinWorkerThread thread = owner;
-                if (++nsteals < 0)      // collect on overflow
+                if (++nsteals < 0)      //collect on overflow
                     transferStealCount(pool);
                 scanState |= SCANNING;
                 if (thread != null)
@@ -691,7 +691,7 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
             AtomicLong sc;
             if (p != null && (sc = p.stealCounter) != null) {
                 int s = nsteals;
-                nsteals = 0;            // if negative, correct for overflow
+                nsteals = 0;            //if negative, correct for overflow
                 sc.getAndAdd((long)(s < 0 ? Integer.MAX_VALUE : s));
             }
         }
@@ -707,19 +707,19 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
             if ((a = array) != null && (m = a.length - 1) >= 0 &&
                 task != null) {
                 while ((n = (s = top) - (b = base)) > 0) {
-                    for (ForkJoinTask<?> t;;) {      // traverse from s to b
+                    for (ForkJoinTask<?> t;;) {      //traverse from s to b
                         long j = ((--s & m) << ASHIFT) + ABASE;
                         if ((t = (ForkJoinTask<?>)U.getObject(a, j)) == null)
-                            return s + 1 == top;     // shorter than expected
+                            return s + 1 == top;     //shorter than expected
                         else if (t == task) {
                             boolean removed = false;
-                            if (s + 1 == top) {      // pop
+                            if (s + 1 == top) {      //pop
                                 if (U.compareAndSwapObject(a, j, task, null)) {
                                     U.putOrderedInt(this, QTOP, s);
                                     removed = true;
                                 }
                             }
-                            else if (base == b)      // replace with proxy
+                            else if (base == b)      //replace with proxy
                                 removed = U.compareAndSwapObject(
                                     a, j, task, new EmptyTask());
                             if (removed)
@@ -729,7 +729,7 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
                         else if (t.status < 0 && s + 1 == top) {
                             if (U.compareAndSwapObject(a, j, t, null))
                                 U.putOrderedInt(this, QTOP, s);
-                            break;                  // was cancelled
+                            break;                  //was cancelled
                         }
                         if (--n == 0)
                             return false;
@@ -754,7 +754,7 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
                     CountedCompleter<?> t = (CountedCompleter<?>)o;
                     for (CountedCompleter<?> r = t;;) {
                         if (r == task) {
-                            if (mode < 0) { // must lock
+                            if (mode < 0) { //must lock
                                 if (U.compareAndSwapInt(this, QLOCK, 0, 1)) {
                                     if (top == s && array == a &&
                                         U.compareAndSwapObject(a, j, t, null)) {
@@ -771,7 +771,7 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
                             }
                             break;
                         }
-                        else if ((r = r.completer) == null) // try parent
+                        else if ((r = r.completer) == null) //try parent
                             break;
                     }
                 }
@@ -792,13 +792,13 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
         final int pollAndExecCC(CountedCompleter<?> task) {
             int b, h; ForkJoinTask<?>[] a; Object o;
             if ((b = base) - top >= 0 || (a = array) == null)
-                h = b | Integer.MIN_VALUE;  // to sense movement on re-poll
+                h = b | Integer.MIN_VALUE;  //to sense movement on re-poll
             else {
                 long j = (((a.length - 1) & b) << ASHIFT) + ABASE;
                 if ((o = U.getObjectVolatile(a, j)) == null)
-                    h = 2;                  // retryable
+                    h = 2;                  //retryable
                 else if (!(o instanceof CountedCompleter))
-                    h = -1;                 // unmatchable
+                    h = -1;                 //unmatchable
                 else {
                     CountedCompleter<?> t = (CountedCompleter<?>)o;
                     for (CountedCompleter<?> r = t;;) {
@@ -807,14 +807,14 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
                                 U.compareAndSwapObject(a, j, t, null)) {
                                 base = b + 1;
                                 t.doExec();
-                                h = 1;      // success
+                                h = 1;      //success
                             }
                             else
-                                h = 2;      // lost CAS
+                                h = 2;      //lost CAS
                             break;
                         }
                         else if ((r = r.completer) == null) {
-                            h = -1;         // unmatched
+                            h = -1;         //unmatched
                             break;
                         }
                     }
@@ -835,7 +835,7 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
                     s != Thread.State.TIMED_WAITING);
         }
 
-        // Unsafe mechanics. Note that some are (and must be) the same as in FJP
+        //Unsafe mechanics. Note that some are (and must be) the same as in FJP
         private static final sun.misc.Unsafe U;
         private static final int  ABASE;
         private static final int  ASHIFT;
@@ -882,10 +882,10 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
      *         scheduled for execution
      */
     public <T> ForkJoinTask<T> submit(ForkJoinTask<T> task) {
-        // NPE检查
+        //NPE检查
         if (task == null)
             throw new NullPointerException();
-        // 执行该task
+        //执行该task
         externalPush(task);
         return task;
     }
@@ -906,27 +906,27 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
         WorkQueue[] ws; WorkQueue q; int m;
         int r = ThreadLocalRandom.getProbe();
         int rs = runState;
-        // 下面这堆条件的意思是：先进行一些边界条件的判断，然后获取锁状态，即当前线程拿到了独占资源，可以进行一些线程安全的操作
+        //下面这堆条件的意思是：先进行一些边界条件的判断，然后获取锁状态，即当前线程拿到了独占资源，可以进行一些线程安全的操作
         if ((ws = workQueues) != null && (m = (ws.length - 1)) >= 0 &&
             (q = ws[m & r & SQMASK]) != null && r != 0 && rs > 0 &&
             U.compareAndSwapInt(q, QLOCK, 0, 1)) {
             ForkJoinTask<?>[] a; int am, n, s;
-            // n代表已经占用的数组中的元素的个数。当数组中仍有剩余元素时，那么将指定的task放入queue的尾部，即top指向的地方
+            //n代表已经占用的数组中的元素的个数。当数组中仍有剩余元素时，那么将指定的task放入queue的尾部，即top指向的地方
             if ((a = q.array) != null &&
                 (am = a.length - 1) > (n = (s = q.top) - q.base)) {
-                // 由于top可能大于数组长度，因此通过&运算符来计算下标，这也是为什么数组长度必须是2的幂次的原因，如果数组长度是其他的数值，那么求余运算的开销将会比较大。下面的表达式含义就是计算top指向的位置的内存偏移量，然后利用Unsafe的put方法进行赋值操作
+                //由于top可能大于数组长度，因此通过&运算符来计算下标，这也是为什么数组长度必须是2的幂次的原因，如果数组长度是其他的数值，那么求余运算的开销将会比较大。下面的表达式含义就是计算top指向的位置的内存偏移量，然后利用Unsafe的put方法进行赋值操作
                 int j = ((am & s) << ASHIFT) + ABASE;
-                // putOrderedObject可以插入StoreStore内存屏障禁止写写重排序
+                //putOrderedObject可以插入StoreStore内存屏障禁止写写重排序
                 U.putOrderedObject(a, j, task);
                 U.putOrderedInt(q, QTOP, s + 1);
-                // 这里为什么还需要putIntVolatile？qlock字段本来就是volatile的
+                //这里为什么还需要putIntVolatile？qlock字段本来就是volatile的
                 U.putIntVolatile(q, QLOCK, 0);
-                // 当Task数量很少???
+                //当Task数量很少???
                 if (n <= 1)
                     signalWork(ws, q);
                 return;
             }
-            // 解锁
+            //解锁
             U.compareAndSwapInt(q, QLOCK, 1, 0);
         }
         externalSubmit(task);
@@ -946,28 +946,28 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
      */
     final void signalWork(WorkQueue[] ws, WorkQueue q) {
         long c; int sp, i; WorkQueue v; Thread p;
-        while ((c = ctl) < 0L) {                       // too few active
-            if ((sp = (int)c) == 0) {                  // no idle workers
-                if ((c & ADD_WORKER) != 0L)            // too few workers
+        while ((c = ctl) < 0L) {                       //too few active
+            if ((sp = (int)c) == 0) {                  //no idle workers
+                if ((c & ADD_WORKER) != 0L)            //too few workers
                     tryAddWorker(c);
                 break;
             }
-            if (ws == null)                            // unstarted/terminated
+            if (ws == null)                            //unstarted/terminated
                 break;
-            if (ws.length <= (i = sp & SMASK))         // terminated
+            if (ws.length <= (i = sp & SMASK))         //terminated
                 break;
-            if ((v = ws[i]) == null)                   // terminating
+            if ((v = ws[i]) == null)                   //terminating
                 break;
-            int vs = (sp + SS_SEQ) & ~INACTIVE;        // next scanState
-            int d = sp - v.scanState;                  // screen CAS
+            int vs = (sp + SS_SEQ) & ~INACTIVE;        //next scanState
+            int d = sp - v.scanState;                  //screen CAS
             long nc = (UC_MASK & (c + AC_UNIT)) | (SP_MASK & v.stackPred);
             if (d == 0 && U.compareAndSwapLong(this, CTL, c, nc)) {
-                v.scanState = vs;                      // activate v
+                v.scanState = vs;                      //activate v
                 if ((p = v.parker) != null)
                     U.unpark(p);
                 break;
             }
-            if (q != null && q.base == q.top)          // no more work
+            if (q != null && q.base == q.top)          //no more work
                 break;
         }
     }

@@ -30,22 +30,22 @@ __FutureTask源码分析将分为以下几个部分__
 ```Java
 public interface Future<V> {
 
-    // 取消任务的执行
-        // 1. 如果任务已经完成，或者已经被取消，或者由于某种原因不能取消，则返回false。具体要看实现类的逻辑
-        // 2. 如果成功取消，且任务尚未开始执行，那么任务将不会执行
-        // 3. 如果成功取消，且任务正在执行，且参数为true，则给当前执行任务的线程发送中断信号
+    //取消任务的执行
+        //1. 如果任务已经完成，或者已经被取消，或者由于某种原因不能取消，则返回false。具体要看实现类的逻辑
+        //2. 如果成功取消，且任务尚未开始执行，那么任务将不会执行
+        //3. 如果成功取消，且任务正在执行，且参数为true，则给当前执行任务的线程发送中断信号
     boolean cancel(boolean mayInterruptIfRunning);
     
-    // 任务是否被取消
+    //任务是否被取消
     boolean isCancelled();
 
-    // 任务是否完成
+    //任务是否完成
     boolean isDone();
 
-    // 获取任务结果，若任务未完成，则阻塞当前调用get的线程，直至任务完成
+    //获取任务结果，若任务未完成，则阻塞当前调用get的线程，直至任务完成
     V get() throws InterruptedException, ExecutionException;
 
-    // 获取任务结果，若任务未完成，则阻塞当前调用get的线程，直至任务完成或者超时
+    //获取任务结果，若任务未完成，则阻塞当前调用get的线程，直至任务完成或者超时
     V get(long timeout, TimeUnit unit)
         throws InterruptedException, ExecutionException, TimeoutException;
 }
@@ -104,15 +104,15 @@ __FutureTask仅有以下五个字段__
     private Callable<V> callable;
 
     /** The result to return or exception to throw from get() */
-    // 用于保存callable正常执行的结果，或者是保存抛出的异常
-    private Object outcome; // non-volatile, protected by state reads/writes
+    //用于保存callable正常执行的结果，或者是保存抛出的异常
+    private Object outcome; //non-volatile, protected by state reads/writes
 
     /** The thread running the callable; CASed during run() */
-    // 该Runnable关联的线程，该字段只有在run方法内才会赋值(执行线程和创建FutureTask的线程并非同一个)
+    //该Runnable关联的线程，该字段只有在run方法内才会赋值(执行线程和创建FutureTask的线程并非同一个)
     private volatile Thread runner;
 
     /** Treiber stack of waiting threads */
-    // 封装了线程的节点
+    //封装了线程的节点
     private volatile WaitNode waiters;
 ```
 
@@ -159,7 +159,7 @@ __FutureTask含有两个构造方法__
         if (callable == null)
             throw new NullPointerException();
         this.callable = callable;
-        this.state = NEW;       // ensure visibility of callable
+        this.state = NEW;       //ensure visibility of callable
     }
 
     /**
@@ -175,9 +175,9 @@ __FutureTask含有两个构造方法__
      * @throws NullPointerException if the runnable is null
      */
     public FutureTask(Runnable runnable, V result) {
-        // 将Runnable适配成Callable
+        //将Runnable适配成Callable
         this.callable = Executors.callable(runnable, result);
-        this.state = NEW;       // ensure visibility of callable
+        this.state = NEW;       //ensure visibility of callable
     }
 ```
 
@@ -222,9 +222,9 @@ __其中适配器RunnableAdapter如下__
             this.result = result;
         }
         public T call() {
-            // 转调用Runnable的run方法
+            //转调用Runnable的run方法
             task.run();
-            // 直接返回构造方法中传入的result
+            //直接返回构造方法中传入的result
             return result;
         }
     }
@@ -239,8 +239,8 @@ __线程执行的主要方法__
 
 ```Java
     public void run() {
-        // 当且仅当state==NEW 并且 CAS执行成功的线程才能继续执行
-        // 为什么需要CAS？FutureTask可能并不一定需要单独开一个线程来执行，总之保证有且仅有一个线程执行这个方法
+        //当且仅当state==NEW 并且 CAS执行成功的线程才能继续执行
+        //为什么需要CAS？FutureTask可能并不一定需要单独开一个线程来执行，总之保证有且仅有一个线程执行这个方法
         if (state != NEW ||
             !UNSAFE.compareAndSwapObject(this, runnerOffset,
                                          null, Thread.currentThread()))
@@ -251,27 +251,27 @@ __线程执行的主要方法__
                 V result;
                 boolean ran;
                 try {
-                    // 调用Callable#call方法，这里才是业务逻辑执行的入口
+                    //调用Callable#call方法，这里才是业务逻辑执行的入口
                     result = c.call();
                     ran = true;
                 } catch (Throwable ex) {
                     result = null;
                     ran = false;
-                    // 异常调用时，设置FutureTask的状态
+                    //异常调用时，设置FutureTask的状态
                     setException(ex);
                 }
                 if (ran)
-                    // 正常调用时，设置FutureTask的状态
+                    //正常调用时，设置FutureTask的状态
                     set(result);
             }
         } finally {
-            // runner must be non-null until state is settled to
-            // prevent concurrent calls to run()
+            //runner must be non-null until state is settled to
+            //prevent concurrent calls to run()
             runner = null;
-            // state must be re-read after nulling runner to prevent
-            // leaked interrupts
+            //state must be re-read after nulling runner to prevent
+            //leaked interrupts
             int s = state;
-            // 确保该方法退出时，FutureTask处于最终状态，即NORMAL/EXCEPTIONAL/CANCELLED/INTERRUPTED状态中的一种
+            //确保该方法退出时，FutureTask处于最终状态，即NORMAL/EXCEPTIONAL/CANCELLED/INTERRUPTED状态中的一种
             if (s >= INTERRUPTING)
                 handlePossibleCancellationInterrupt(s);
         }
@@ -300,7 +300,7 @@ __该方法逻辑如下__
     protected void setException(Throwable t) {
         if (UNSAFE.compareAndSwapInt(this, stateOffset, NEW, COMPLETING)) {
             outcome = t;
-            UNSAFE.putOrderedInt(this, stateOffset, EXCEPTIONAL); // final state
+            UNSAFE.putOrderedInt(this, stateOffset, EXCEPTIONAL); //final state
             finishCompletion();
         }
     }
@@ -327,7 +327,7 @@ __该方法逻辑如下__
     protected void set(V v) {
         if (UNSAFE.compareAndSwapInt(this, stateOffset, NEW, COMPLETING)) {
             outcome = v;
-            UNSAFE.putOrderedInt(this, stateOffset, NORMAL); // final state
+            UNSAFE.putOrderedInt(this, stateOffset, NORMAL); //final state
             finishCompletion();
         }
     }
@@ -343,11 +343,11 @@ __该方法会唤醒所有阻塞在get方法中的所有WaitNode节点__
      * nulls out callable.
      */
     private void finishCompletion() {
-        // assert state > COMPLETING;
+        //assert state > COMPLETING;
         for (WaitNode q; (q = waiters) != null;) {
-            // CAS成功的线程才能唤醒节点，例如执行cancel的线程和执行run的线程可能会发生冲突
+            //CAS成功的线程才能唤醒节点，例如执行cancel的线程和执行run的线程可能会发生冲突
             if (UNSAFE.compareAndSwapObject(this, waitersOffset, q, null)) {
-                // 逐个按顺序唤醒阻塞线程
+                //逐个按顺序唤醒阻塞线程
                 for (;;) {
                     Thread t = q.thread;
                     if (t != null) {
@@ -357,7 +357,7 @@ __该方法会唤醒所有阻塞在get方法中的所有WaitNode节点__
                     WaitNode next = q.next;
                     if (next == null)
                         break;
-                    q.next = null; // unlink to help gc
+                    q.next = null; //unlink to help gc
                     q = next;
                 }
                 break;
@@ -366,7 +366,7 @@ __该方法会唤醒所有阻塞在get方法中的所有WaitNode节点__
 
         done();
 
-        callable = null;        // to reduce footprint
+        callable = null;        //to reduce footprint
     }
 ```
 
@@ -378,22 +378,22 @@ __该方法会唤醒所有阻塞在get方法中的所有WaitNode节点__
      * delivered to a task while in run or runAndReset.
      */
     private void handlePossibleCancellationInterrupt(int s) {
-        // It is possible for our interrupter to stall before getting a
-        // chance to interrupt us.  Let's spin-wait patiently.
-        // 如果处于INTERRUPTING，则说明有一个线程正在执行cancel方法，此处只需等待执行完毕即可
+        //It is possible for our interrupter to stall before getting a
+        //chance to interrupt us.  Let's spin-wait patiently.
+        //如果处于INTERRUPTING，则说明有一个线程正在执行cancel方法，此处只需等待执行完毕即可
         if (s == INTERRUPTING)
             while (state == INTERRUPTING)
-                Thread.yield(); // wait out pending interrupt
+                Thread.yield(); //wait out pending interrupt
 
-        // assert state == INTERRUPTED;
+        //assert state == INTERRUPTED;
 
-        // We want to clear any interrupt we may have received from
-        // cancel(true).  However, it is permissible to use interrupts
-        // as an independent mechanism for a task to communicate with
-        // its caller, and there is no way to clear only the
-        // cancellation interrupt.
-        // 
-        // Thread.interrupted();
+        //We want to clear any interrupt we may have received from
+        //cancel(true).  However, it is permissible to use interrupts
+        //as an independent mechanism for a task to communicate with
+        //its caller, and there is no way to clear only the
+        //cancellation interrupt.
+        //
+        //Thread.interrupted();
     }
 ```
 
@@ -411,7 +411,7 @@ __get方法有两个重载版本__
     public V get() throws InterruptedException, ExecutionException {
         int s = state;
         if (s <= COMPLETING)
-            // 无限阻塞
+            //无限阻塞
             s = awaitDone(false, 0L);
         return report(s);
     }
@@ -424,7 +424,7 @@ __get方法有两个重载版本__
         if (unit == null)
             throw new NullPointerException();
         int s = state;
-        // 条件的意思是，当状态小于等于COMPLETING时阻塞当前线程，如果被唤醒时，状态仍然小于等于COMPLETING，说明是阻塞超时后自动唤醒。于是抛出TimeoutException异常
+        //条件的意思是，当状态小于等于COMPLETING时阻塞当前线程，如果被唤醒时，状态仍然小于等于COMPLETING，说明是阻塞超时后自动唤醒。于是抛出TimeoutException异常
         if (s <= COMPLETING &&
             (s = awaitDone(true, unit.toNanos(timeout))) <= COMPLETING)
             throw new TimeoutException();
@@ -446,49 +446,49 @@ __阻塞get()方法的调用线程__
      */
     private int awaitDone(boolean timed, long nanos)
         throws InterruptedException {
-        // 超时时间
+        //超时时间
         final long deadline = timed ? System.nanoTime() + nanos : 0L;
         WaitNode q = null;
         boolean queued = false;
         for (;;) {
-            // 检查是否已被中断，如果已被中断，那么将当前线程所关联的WaiterNode移出等待链表
+            //检查是否已被中断，如果已被中断，那么将当前线程所关联的WaiterNode移出等待链表
             if (Thread.interrupted()) {
                 removeWaiter(q);
                 throw new InterruptedException();
             }
 
             int s = state;
-            // 当FutureTask已处于最终状态，即run方法已经执行完毕，或者已被cancel
-                // 1. 如果是第一次循环，即该线程关联的节点尚未入队
-                // 2. 如果已经入队了，finishCompletion方法在唤醒阻塞节点时会自动跳过这些thread字段为null的节点
+            //当FutureTask已处于最终状态，即run方法已经执行完毕，或者已被cancel
+                //1. 如果是第一次循环，即该线程关联的节点尚未入队
+                //2. 如果已经入队了，finishCompletion方法在唤醒阻塞节点时会自动跳过这些thread字段为null的节点
             if (s > COMPLETING) {
                 if (q != null)
-                    // 将节点关联的线程置空，removeWaiter方法会将这些thread字段为空的WaiterWaiter移出链表
+                    //将节点关联的线程置空，removeWaiter方法会将这些thread字段为空的WaiterWaiter移出链表
                     q.thread = null;
                 return s;
             }
-            // 当FutureTask处于暂时状态，等待片刻即可
-            else if (s == COMPLETING) // cannot time out yet
+            //当FutureTask处于暂时状态，等待片刻即可
+            else if (s == COMPLETING) //cannot time out yet
                 Thread.yield();
             else if (q == null)
                 q = new WaitNode();
-            // 尚未入队，那么通过CAS串行化入队操作
+            //尚未入队，那么通过CAS串行化入队操作
             else if (!queued)
                 queued = UNSAFE.compareAndSwapObject(this, waitersOffset,
                                                      q.next = waiters, q);
-            // 此时已入队，且允许超时阻塞
+            //此时已入队，且允许超时阻塞
             else if (timed) {
-                // 计算剩余阻塞时间
+                //计算剩余阻塞时间
                 nanos = deadline - System.nanoTime();
-                // 此时已超时，将WaiterNode移出链表后返回
+                //此时已超时，将WaiterNode移出链表后返回
                 if (nanos <= 0L) {
                     removeWaiter(q);
                     return state;
                 }
-                // 阻塞一段时间
+                //阻塞一段时间
                 LockSupport.parkNanos(this, nanos);
             }
-            // 无限阻塞，直至被唤醒
+            //无限阻塞，直至被唤醒
             else
                 LockSupport.park(this);
         }
@@ -518,22 +518,22 @@ __将一个阻塞超时的节点，或者被中断的节点移出链表__
         if (node != null) {
             node.thread = null;
             retry:
-            for (;;) {          // restart on removeWaiter race
+            for (;;) {          //restart on removeWaiter race
                 for (WaitNode pred = null, q = waiters, s; q != null; q = s) {
                     s = q.next;
                     if (q.thread != null)
                         pred = q;
-                    // q.thread==null，且pred!=null，那么需要将q节点从链表中除去
+                    //q.thread==null，且pred!=null，那么需要将q节点从链表中除去
                     else if (pred != null) {
                         pred.next = s;
-                        // 如果发现pred.thread==null，说明被其他线程改过了，重新遍历一遍节点链表
-                        if (pred.thread == null) // check for race
+                        //如果发现pred.thread==null，说明被其他线程改过了，重新遍历一遍节点链表
+                        if (pred.thread == null) //check for race
                             continue retry;
                     }
-                    // q.thread==null 且 pred==null，说明当前q是头节点，且q是无效节点，因此更改链表的头结点
+                    //q.thread==null 且 pred==null，说明当前q是头节点，且q是无效节点，因此更改链表的头结点
                     else if (!UNSAFE.compareAndSwapObject(this, waitersOffset,
                                                           q, s))
-                        // 若CAS失败，说明存在竞争，重新遍历链表
+                        //若CAS失败，说明存在竞争，重新遍历链表
                         continue retry;
                 }
                 break;
@@ -560,13 +560,13 @@ __根据FutureTask的状态，返回相应的结果__
     @SuppressWarnings("unchecked")
     private V report(int s) throws ExecutionException {
         Object x = outcome;
-        // 说明Callable#call正常执行
+        //说明Callable#call正常执行
         if (s == NORMAL)
             return (V)x;
-        // 说明FutureTask被cancel了
+        //说明FutureTask被cancel了
         if (s >= CANCELLED)
             throw new CancellationException();
-        // 说明Callable#call执行过程中抛出异常
+        //说明Callable#call执行过程中抛出异常
         throw new ExecutionException((Throwable)x);
     }
 ```
@@ -577,22 +577,22 @@ cancel方法用于中断当前task，参数mayInterruptIfRunning用于指示是�
 
 ```Java
     public boolean cancel(boolean mayInterruptIfRunning) {
-        // 条件为真时
-            // 1. state != NEW (已经处于一个最终状态了，此时cancel是没用的)
-            // 2. state == NEW 且CAS操作失败(此时可能在多个线程中都执行了该方法)
+        //条件为真时
+            //1. state != NEW (已经处于一个最终状态了，此时cancel是没用的)
+            //2. state == NEW 且CAS操作失败(此时可能在多个线程中都执行了该方法)
         if (!(state == NEW &&
               UNSAFE.compareAndSwapInt(this, stateOffset, NEW,
                   mayInterruptIfRunning ? INTERRUPTING : CANCELLED)))
             return false;
-        try {    // in case call to interrupt throws exception
+        try {    //in case call to interrupt throws exception
             if (mayInterruptIfRunning) {
                 try {
                     Thread t = runner;
-                    // 发送一个中断信号
+                    //发送一个中断信号
                     if (t != null)
                         t.interrupt();
-                } finally { // final state
-                    // 修改状态为INTERRUPTED
+                } finally { //final state
+                    //修改状态为INTERRUPTED
                     UNSAFE.putOrderedInt(this, stateOffset, INTERRUPTED);
                 }
             }

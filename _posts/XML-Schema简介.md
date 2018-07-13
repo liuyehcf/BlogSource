@@ -19,11 +19,11 @@ __阅读更多__
 随便摘取一段Spring配置文件作为示例
 
 ```xml
-<beans xmlns="http:// www.springframework.org/schema/beans"
-xmlns:xsi="http:// www.w3.org/2001/XMLSchema-instance"
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="
-http:// www.springframework.org/schema/beans
-http:// www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 </beans>
 ```
 

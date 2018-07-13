@@ -34,7 +34,7 @@ __阅读更多__
             <id>dev</id>
             <properties>
                 <db.driver>com.mysql.jdbc.Driver</db.driver>
-                <db.url>jdbc:mysql:// 192.168.1.100:3306/test</db.url>
+                <db.url>jdbc:mysql://192.168.1.100:3306/test</db.url>
                 <db.username>user_dev</db.username>
                 <db.password>12345678</db.password>
             </properties>

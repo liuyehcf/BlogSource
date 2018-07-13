@@ -95,12 +95,12 @@ __阅读更多__
                                           InvocationHandler h)
         throws IllegalArgumentException
     {
-        // 如果h为空则抛出异常
+        //如果h为空则抛出异常
         Objects.requireNonNull(h);
 
-        // 拷贝一下接口数组，这里拷贝一下干嘛？
+        //拷贝一下接口数组，这里拷贝一下干嘛？
         final Class<?>[] intfs = interfaces.clone();
-        // 进行一些安全检查，这里不再展开了，与代理实现不太相关
+        //进行一些安全检查，这里不再展开了，与代理实现不太相关
         final SecurityManager sm = System.getSecurityManager();
         if (sm != null) {
             checkProxyAccess(Reflection.getCallerClass(), loader, intfs);
@@ -109,7 +109,7 @@ __阅读更多__
         /*
          * Look up or generate the designated proxy class.
          */
-        // 关键方法，产生代理类的Class对象
+        //关键方法，产生代理类的Class对象
         Class<?> cl = getProxyClass0(loader, intfs);
 
         /*
@@ -120,9 +120,9 @@ __阅读更多__
                 checkNewProxyPermission(Reflection.getCallerClass(), cl);
             }
 
-            // 获取代理类的指定构造方法
-            // 其中private static final Class<?>[] constructorParams ={ InvocationHandler.class };
-            // 说明代理类的构造方法接受InvocationHandler作为其
+            //获取代理类的指定构造方法
+            //其中private static final Class<?>[] constructorParams ={ InvocationHandler.class };
+            //说明代理类的构造方法接受InvocationHandler作为其
             final Constructor<?> cons = cl.getConstructor(constructorParams);
             final InvocationHandler ih = h;
             if (!Modifier.isPublic(cl.getModifiers())) {
@@ -133,7 +133,7 @@ __阅读更多__
                     }
                 });
             }
-            // 创建代理类对象
+            //创建代理类对象
             return cons.newInstance(new Object[]{h});
         } catch (IllegalAccessException|InstantiationException e) {
             throw new InternalError(e.toString(), e);
@@ -161,16 +161,16 @@ getProxyClass0方法将根据`类加载器对象`和`接口数组`从缓存中�
      */
     private static Class<?> getProxyClass0(ClassLoader loader,
                                            Class<?>... interfaces) {
-        // 接口数量不得超过限制，这个限制出自JVM规范
+        //接口数量不得超过限制，这个限制出自JVM规范
         if (interfaces.length > 65535) {
             throw new IllegalArgumentException("interface limit exceeded");
         }
 
-        // If the proxy class defined by the given loader implementing
-        // the given interfaces exists, this will simply return the cached copy;
-        // otherwise, it will create the proxy class via the ProxyClassFactory
+        //If the proxy class defined by the given loader implementing
+        //the given interfaces exists, this will simply return the cached copy;
+        //otherwise, it will create the proxy class via the ProxyClassFactory
 
-        // 核心方法
+        //核心方法
         return proxyClassCache.get(loader, interfaces);
     }
 ```
@@ -189,12 +189,12 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
     private static final class ProxyClassFactory
         implements BiFunction<ClassLoader, Class<?>[], Class<?>>
     {
-        // prefix for all proxy class names
-        // 代理类统一前缀
+        //prefix for all proxy class names
+        //代理类统一前缀
         private static final String proxyClassNamePrefix = "$Proxy";
 
-        // next number to use for generation of unique proxy class names
-        // 代理类计数值，将作为代理类类名的一部分
+        //next number to use for generation of unique proxy class names
+        //代理类计数值，将作为代理类类名的一部分
         private static final AtomicLong nextUniqueNumber = new AtomicLong();
 
         @Override
@@ -206,7 +206,7 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
                  * Verify that the class loader resolves the name of this
                  * interface to the same Class object.
                  */
-                // 由于Class对象由全限定名和类加载器共同决定，因此这里判断一下intf的类加载器是否是给定的loader
+                //由于Class对象由全限定名和类加载器共同决定，因此这里判断一下intf的类加载器是否是给定的loader
                 Class<?> interfaceClass = null;
                 try {
                     interfaceClass = Class.forName(intf.getName(), false, loader);
@@ -220,7 +220,7 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
                  * Verify that the Class object actually represents an
                  * interface.
                  */
-                // 由于JDK 动态代理只能实现接口代理，因此这里校验一下是intf是否为接口
+                //由于JDK 动态代理只能实现接口代理，因此这里校验一下是intf是否为接口
                 if (!interfaceClass.isInterface()) {
                     throw new IllegalArgumentException(
                         interfaceClass.getName() + " is not an interface");
@@ -228,16 +228,16 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
                 /*
                  * Verify that this interface is not a duplicate.
                  */
-                // 校验一下给定的接口列表是否存在重复
+                //校验一下给定的接口列表是否存在重复
                 if (interfaceSet.put(interfaceClass, Boolean.TRUE) != null) {
                     throw new IllegalArgumentException(
                         "repeated interface: " + interfaceClass.getName());
                 }
             }
 
-            // 代理类所在的包
-            String proxyPkg = null;     // package to define proxy class in
-            // 代理类的访问权限
+            //代理类所在的包
+            String proxyPkg = null;     //package to define proxy class in
+            //代理类的访问权限
             int accessFlags = Modifier.PUBLIC | Modifier.FINAL;
 
             /*
@@ -245,7 +245,7 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
              * proxy class will be defined in the same package.  Verify that
              * all non-public proxy interfaces are in the same package.
              */
-            // 验证你传入的接口中是否有非public的接口，只要有一个是非public的，那么这些非public的接口都必须在同一个包中
+            //验证你传入的接口中是否有非public的接口，只要有一个是非public的，那么这些非public的接口都必须在同一个包中
             for (Class<?> intf : interfaces) {
                 int flags = intf.getModifiers();
                 if (!Modifier.isPublic(flags)) {
@@ -253,7 +253,7 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
                     String name = intf.getName();
                     int n = name.lastIndexOf('.');
 
-                    // 获取完整包名
+                    //获取完整包名
                     String pkg = ((n == -1) ? "" : name.substring(0, n + 1));
                     if (proxyPkg == null) {
                         proxyPkg = pkg;
@@ -265,24 +265,24 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
             }
 
             if (proxyPkg == null) {
-                // if no non-public proxy interfaces, use com.sun.proxy package
-                // 如果接口都是public的，那么代理类的包名就是com.sun.proxy
+                //if no non-public proxy interfaces, use com.sun.proxy package
+                //如果接口都是public的，那么代理类的包名就是com.sun.proxy
                 proxyPkg = ReflectUtil.PROXY_PACKAGE + ".";
             }
 
             /*
              * Choose a name for the proxy class to generate.
              */
-            // 当前类名中包含的计数值
+            //当前类名中包含的计数值
             long num = nextUniqueNumber.getAndIncrement();
 
-            // 代理类的完全限定名
+            //代理类的完全限定名
             String proxyName = proxyPkg + proxyClassNamePrefix + num;
 
             /*
              * Generate the specified proxy class.
              */
-            // 生成代理类字节码文件，关建中的关键
+            //生成代理类字节码文件，关建中的关键
             byte[] proxyClassFile = ProxyGenerator.generateProxyClass(
                 proxyName, interfaces, accessFlags);
             try {
@@ -312,10 +312,10 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
                                             Class[] interfaces) {
         ProxyGenerator gen = new ProxyGenerator(name, interfaces);
         
-        // 生成字节码文件的真正方法
+        //生成字节码文件的真正方法
         final byte[] classFile = gen.generateClassFile();
 
-        // 根据saveGeneratedFiles来确定是否保存.class文件，默认是不保存的
+        //根据saveGeneratedFiles来确定是否保存.class文件，默认是不保存的
         if (saveGeneratedFiles) {
             java.security.AccessController.doPrivileged(
                     new java.security.PrivilegedAction() {
@@ -362,8 +362,8 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
 	 * java.lang.Object take precedence over duplicate methods in the
 	 * proxy interfaces.
 	 */
-        // 这三个方法将Object的hashcode，equals，toString方法添加到代理方法容器中，代理类除此之外并没有重写Object的其他方法
-        // 除了这三个方法之外，代理类调用Object的其他方法不通过invoke
+        //这三个方法将Object的hashcode，equals，toString方法添加到代理方法容器中，代理类除此之外并没有重写Object的其他方法
+        //除了这三个方法之外，代理类调用Object的其他方法不通过invoke
         addProxyMethod(hashCodeMethod, Object.class);
         addProxyMethod(equalsMethod, Object.class);
         addProxyMethod(toStringMethod, Object.class);
@@ -374,7 +374,7 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
 	 * methods.
 	 */
 
-        // 获得所有接口中的方法，并将方法添加到代理方法中
+        //获得所有接口中的方法，并将方法添加到代理方法中
         for (int i = 0; i < interfaces.length; i++) {
             Method[] methods = interfaces[i].getMethods();
             for (int j = 0; j < methods.length; j++) {
@@ -395,37 +395,37 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
 	 * fields and methods in the class we are generating.
 	 */
         try {
-            // 添加构造方法
+            //添加构造方法
             methods.add(generateConstructor());
 
             for (List<ProxyMethod> sigmethods : proxyMethods.values()) {
                 for (ProxyMethod pm : sigmethods) {
 
-                    // add static field for method's Method object
+                    //add static field for method's Method object
                     fields.add(new FieldInfo(pm.methodFieldName,
                             "Ljava/lang/reflect/Method;",
                             ACC_PRIVATE | ACC_STATIC));
 
-                    // generate code for proxy method and add it
+                    //generate code for proxy method and add it
 
-                    // 为每个方法生成具有统一结构的方法体，这个方法很重要
+                    //为每个方法生成具有统一结构的方法体，这个方法很重要
                     methods.add(pm.generateMethod());
                 }
             }
 
-            // 添加静态初始化方法
+            //添加静态初始化方法
             methods.add(generateStaticInitializer());
 
         } catch (IOException e) {
             throw new InternalError("unexpected I/O Exception");
         }
 
-        // 方法个数不得超过65535
+        //方法个数不得超过65535
         if (methods.size() > 65535) {
             throw new IllegalArgumentException("method limit exceeded");
         }
 
-        // 字段个数不得超过65535
+        //字段个数不得超过65535
         if (fields.size() > 65535) {
             throw new IllegalArgumentException("field limit exceeded");
         }
@@ -458,46 +458,46 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
 	     * Write all the items of the "ClassFile" structure.
 	     * See JVMS section 4.1.
 	     */
-            // u4 magic;
+            //u4 magic;
             dout.writeInt(0xCAFEBABE);
-            // u2 minor_version;
+            //u2 minor_version;
             dout.writeShort(CLASSFILE_MINOR_VERSION);
-            // u2 major_version;
+            //u2 major_version;
             dout.writeShort(CLASSFILE_MAJOR_VERSION);
 
-            cp.write(dout);        // (write constant pool)
+            cp.write(dout);        //(write constant pool)
 
-            // u2 access_flags;
+            //u2 access_flags;
             dout.writeShort(ACC_PUBLIC | ACC_FINAL | ACC_SUPER);
-            // u2 this_class;
+            //u2 this_class;
             dout.writeShort(cp.getClass(dotToSlash(className)));
-            // u2 super_class;
+            //u2 super_class;
             dout.writeShort(cp.getClass(superclassName));
 
-            // u2 interfaces_count;
+            //u2 interfaces_count;
             dout.writeShort(interfaces.length);
-            // u2 interfaces[interfaces_count];
+            //u2 interfaces[interfaces_count];
             for (int i = 0; i < interfaces.length; i++) {
                 dout.writeShort(cp.getClass(
                         dotToSlash(interfaces[i].getName())));
             }
 
-            // u2 fields_count;
+            //u2 fields_count;
             dout.writeShort(fields.size());
-            // field_info fields[fields_count];
+            //field_info fields[fields_count];
             for (FieldInfo f : fields) {
                 f.write(dout);
             }
 
-            // u2 methods_count;
+            //u2 methods_count;
             dout.writeShort(methods.size());
-            // method_info methods[methods_count];
+            //method_info methods[methods_count];
             for (MethodInfo m : methods) {
                 m.write(dout);
             }
 
-            // u2 attributes_count;
-            dout.writeShort(0);    // (no ClassFile attributes for proxy classes)
+            //u2 attributes_count;
+            dout.writeShort(0);    //(no ClassFile attributes for proxy classes)
 
         } catch (IOException e) {
             throw new InternalError("unexpected I/O Exception");
@@ -531,12 +531,12 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
         Class returnType = m.getReturnType();
         Class[] exceptionTypes = m.getExceptionTypes();
 
-        // 获取方法签名
+        //获取方法签名
         String sig = name + getParameterDescriptors(parameterTypes);
 
-        // 找到方法签名对应的方法列表
+        //找到方法签名对应的方法列表
         List<ProxyMethod> sigmethods = proxyMethods.get(sig);
-        // 检查方法是否已经存在
+        //检查方法是否已经存在
         if (sigmethods != null) {
             for (ProxyMethod pm : sigmethods) {
                 if (returnType == pm.returnType) {
@@ -546,7 +546,7 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
 		     * compatibly with the throws clauses of both
 		     * overridden methods.
 		     */
-                    // 方法签名相同的两个方法可能异常列表可能不同，因此需要整合一个最恰当的异常列表
+                    //方法签名相同的两个方法可能异常列表可能不同，因此需要整合一个最恰当的异常列表
                     List<Class> legalExceptions = new ArrayList<Class>();
                     collectCompatibleTypes(
                             exceptionTypes, pm.exceptionTypes, legalExceptions);
@@ -563,7 +563,7 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
             proxyMethods.put(sig, sigmethods);
         }
 
-        // 将该方法添加到容器中去
+        //将该方法添加到容器中去
         sigmethods.add(new ProxyMethod(name, parameterTypes, returnType,
                 exceptionTypes, fromClass));
     }
@@ -817,10 +817,10 @@ public class JdkProxyDemo {
 直接用IDEA打开class文件就能够自动反编译.class文件了。下面就是反编译后的代理对象的源码
 
 ```Java
-// 
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-// 
+//
+//Source code recreated from a .class file by IntelliJ IDEA
+//(powered by Fernflower decompiler)
+//
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

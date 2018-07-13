@@ -48,27 +48,27 @@ public class EchoServer {
     }
 
     public void run() throws Exception {
-        EventLoopGroup bossGroup = new NioEventLoopGroup(); // (1)
+        EventLoopGroup bossGroup = new NioEventLoopGroup(); //(1)
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
-            ServerBootstrap b = new ServerBootstrap(); // (2)
-            b.group(bossGroup, workerGroup) // (3)
-                    .channel(NioServerSocketChannel.class) // (4)
-                    .childHandler(new ChannelInitializer<SocketChannel>() { // (5)
+            ServerBootstrap b = new ServerBootstrap(); //(2)
+            b.group(bossGroup, workerGroup) //(3)
+                    .channel(NioServerSocketChannel.class) //(4)
+                    .childHandler(new ChannelInitializer<SocketChannel>() { //(5)
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(new EchoServerHandler());
                         }
                     })
-                    .option(ChannelOption.SO_BACKLOG, 128)          // (6)
-                    .childOption(ChannelOption.SO_KEEPALIVE, true); // (7)
+                    .option(ChannelOption.SO_BACKLOG, 128)          //(6)
+                    .childOption(ChannelOption.SO_KEEPALIVE, true); //(7)
 
-            // Bind and start to accept incoming connections.
-            ChannelFuture f = b.bind(port).sync(); // (8)
+            //Bind and start to accept incoming connections.
+            ChannelFuture f = b.bind(port).sync(); //(8)
 
-            // Wait until the server socket is closed.
-            // In this example, this does not happen, but you can do that to gracefully
-            // shut down your server.
+            //Wait until the server socket is closed.
+            //In this example, this does not happen, but you can do that to gracefully
+            //shut down your server.
             f.channel().closeFuture().sync();
         } finally {
             workerGroup.shutdownGracefully();
@@ -115,38 +115,38 @@ public class EchoServer {
                     case SelectStrategy.SELECT:
                         select(wakenUp.getAndSet(false));
 
-                        // 'wakenUp.compareAndSet(false, true)' is always evaluated
-                        // before calling 'selector.wakeup()' to reduce the wake-up
-                        // overhead. (Selector.wakeup() is an expensive operation.)
-                        // 
-                        // However, there is a race condition in this approach.
-                        // The race condition is triggered when 'wakenUp' is set to
-                        // true too early.
-                        // 
-                        // 'wakenUp' is set to true too early if:
-                        // 1) Selector is waken up between 'wakenUp.set(false)' and
-                        // 'selector.select(...)'. (BAD)
-                        // 2) Selector is waken up between 'selector.select(...)' and
-                        // 'if (wakenUp.get()) { ... }'. (OK)
-                        // 
-                        // In the first case, 'wakenUp' is set to true and the
-                        // following 'selector.select(...)' will wake up immediately.
-                        // Until 'wakenUp' is set to false again in the next round,
-                        // 'wakenUp.compareAndSet(false, true)' will fail, and therefore
-                        // any attempt to wake up the Selector will fail, too, causing
-                        // the following 'selector.select(...)' call to block
-                        // unnecessarily.
-                        // 
-                        // To fix this problem, we wake up the selector again if wakenUp
-                        // is true immediately after selector.select(...).
-                        // It is inefficient in that it wakes up the selector for both
-                        // the first case (BAD - wake-up required) and the second case
-                        // (OK - no wake-up required).
+                        //'wakenUp.compareAndSet(false, true)' is always evaluated
+                        //before calling 'selector.wakeup()' to reduce the wake-up
+                        //overhead. (Selector.wakeup() is an expensive operation.)
+                        //
+                        //However, there is a race condition in this approach.
+                        //The race condition is triggered when 'wakenUp' is set to
+                        //true too early.
+                        //
+                        //'wakenUp' is set to true too early if:
+                        //1) Selector is waken up between 'wakenUp.set(false)' and
+                        //'selector.select(...)'. (BAD)
+                        //2) Selector is waken up between 'selector.select(...)' and
+                        //'if (wakenUp.get()) { ... }'. (OK)
+                        //
+                        //In the first case, 'wakenUp' is set to true and the
+                        //following 'selector.select(...)' will wake up immediately.
+                        //Until 'wakenUp' is set to false again in the next round,
+                        //'wakenUp.compareAndSet(false, true)' will fail, and therefore
+                        //any attempt to wake up the Selector will fail, too, causing
+                        //the following 'selector.select(...)' call to block
+                        //unnecessarily.
+                        //
+                        //To fix this problem, we wake up the selector again if wakenUp
+                        //is true immediately after selector.select(...).
+                        //It is inefficient in that it wakes up the selector for both
+                        //the first case (BAD - wake-up required) and the second case
+                        //(OK - no wake-up required).
 
                         if (wakenUp.get()) {
                             selector.wakeup();
                         }
-                        // fall through
+                        //fall through
                     default:
                 }
 
@@ -157,7 +157,7 @@ public class EchoServer {
                     try {
                         processSelectedKeys();
                     } finally {
-                        // Ensure we always run tasks.
+                        //Ensure we always run tasks.
                         runAllTasks();
                     }
                 } else {
@@ -165,7 +165,7 @@ public class EchoServer {
                     try {
                         processSelectedKeys();
                     } finally {
-                        // Ensure we always run tasks.
+                        //Ensure we always run tasks.
                         final long ioTime = System.nanoTime() - ioStartTime;
                         runAllTasks(ioTime * (100 - ioRatio) / ioRatio);
                     }
@@ -173,7 +173,7 @@ public class EchoServer {
             } catch (Throwable t) {
                 handleLoopException(t);
             }
-            // Always handle shutdown even if the loop processing threw an exception.
+            //Always handle shutdown even if the loop processing threw an exception.
             try {
                 if (isShuttingDown()) {
                     closeAll();
@@ -242,10 +242,10 @@ public class EchoServer {
                     break;
                 }
 
-                // If a task was submitted when wakenUp value was true, the task didn't get a chance to call
-                // Selector#wakeup. So we need to check task queue again before executing select operation.
-                // If we don't, the task might be pended until select operation was timed out.
-                // It might be pended until idle timeout if IdleStateHandler existed in pipeline.
+                //If a task was submitted when wakenUp value was true, the task didn't get a chance to call
+                //Selector#wakeup. So we need to check task queue again before executing select operation.
+                //If we don't, the task might be pended until select operation was timed out.
+                //It might be pended until idle timeout if IdleStateHandler existed in pipeline.
                 if (hasTasks() && wakenUp.compareAndSet(false, true)) {
                     selector.selectNow();
                     selectCnt = 1;
@@ -256,18 +256,18 @@ public class EchoServer {
                 selectCnt ++;
 
                 if (selectedKeys != 0 || oldWakenUp || wakenUp.get() || hasTasks() || hasScheduledTasks()) {
-                    // - Selected something,
-                    // - waken up by user, or
-                    // - the task queue has a pending task.
-                    // - a scheduled task is ready for processing
+                    //- Selected something,
+                    //- waken up by user, or
+                    //- the task queue has a pending task.
+                    //- a scheduled task is ready for processing
                     break;
                 }
                 if (Thread.interrupted()) {
-                    // Thread was interrupted so reset selected keys and break so we not run into a busy loop.
-                    // As this is most likely a bug in the handler of the user or it's client library we will
-                    // also log it.
-                    // 
-                    // See https:// github.com/netty/netty/issues/2426
+                    //Thread was interrupted so reset selected keys and break so we not run into a busy loop.
+                    //As this is most likely a bug in the handler of the user or it's client library we will
+                    //also log it.
+                    //
+                    //See https://github.com/netty/netty/issues/2426
                     if (logger.isDebugEnabled()) {
                         logger.debug("Selector.select() returned prematurely because " +
                                 "Thread.currentThread().interrupt() was called. Use " +
@@ -279,12 +279,12 @@ public class EchoServer {
 
                 long time = System.nanoTime();
                 if (time - TimeUnit.MILLISECONDS.toNanos(timeoutMillis) >= currentTimeNanos) {
-                    // timeoutMillis elapsed without anything selected.
+                    //timeoutMillis elapsed without anything selected.
                     selectCnt = 1;
                 } else if (SELECTOR_AUTO_REBUILD_THRESHOLD > 0 &&
                         selectCnt >= SELECTOR_AUTO_REBUILD_THRESHOLD) {
-                    // The selector returned prematurely many times in a row.
-                    // Rebuild the selector to work around the problem.
+                    //The selector returned prematurely many times in a row.
+                    //Rebuild the selector to work around the problem.
                     logger.warn(
                             "Selector.select() returned prematurely {} times in a row; rebuilding Selector {}.",
                             selectCnt, selector);
@@ -292,7 +292,7 @@ public class EchoServer {
                     rebuildSelector();
                     selector = this.selector;
 
-                    // Select again to populate selectedKeys.
+                    //Select again to populate selectedKeys.
                     selector.selectNow();
                     selectCnt = 1;
                     break;
@@ -312,7 +312,7 @@ public class EchoServer {
                 logger.debug(CancelledKeyException.class.getSimpleName() + " raised by a Selector {} - JDK bug?",
                         selector, e);
             }
-            // Harmless exception - log anyway
+            //Harmless exception - log anyway
         }
     }
 ```
@@ -338,8 +338,8 @@ public class EchoServer {
     private void processSelectedKeysOptimized() {
         for (int i = 0; i < selectedKeys.size; ++i) {
             final SelectionKey k = selectedKeys.keys[i];
-            // null out entry in the array to allow to have it GC'ed once the Channel close
-            // See https:// github.com/netty/netty/issues/2363
+            //null out entry in the array to allow to have it GC'ed once the Channel close
+            //See https://github.com/netty/netty/issues/2363
             selectedKeys.keys[i] = null;
 
             final Object a = k.attachment();
@@ -353,8 +353,8 @@ public class EchoServer {
             }
 
             if (needsToSelectAgain) {
-                // null out entries in the array to allow to have it GC'ed once the Channel close
-                // See https:// github.com/netty/netty/issues/2363
+                //null out entries in the array to allow to have it GC'ed once the Channel close
+                //See https://github.com/netty/netty/issues/2363
                 selectedKeys.reset(i + 1);
 
                 selectAgain();
@@ -374,30 +374,30 @@ public class EchoServer {
             try {
                 eventLoop = ch.eventLoop();
             } catch (Throwable ignored) {
-                // If the channel implementation throws an exception because there is no event loop, we ignore this
-                // because we are only trying to determine if ch is registered to this event loop and thus has authority
-                // to close ch.
+                //If the channel implementation throws an exception because there is no event loop, we ignore this
+                //because we are only trying to determine if ch is registered to this event loop and thus has authority
+                //to close ch.
                 return;
             }
-            // Only close ch if ch is still registered to this EventLoop. ch could have deregistered from the event loop
-            // and thus the SelectionKey could be cancelled as part of the deregistration process, but the channel is
-            // still healthy and should not be closed.
-            // See https:// github.com/netty/netty/issues/5125
+            //Only close ch if ch is still registered to this EventLoop. ch could have deregistered from the event loop
+            //and thus the SelectionKey could be cancelled as part of the deregistration process, but the channel is
+            //still healthy and should not be closed.
+            //See https://github.com/netty/netty/issues/5125
             if (eventLoop != this || eventLoop == null) {
                 return;
             }
-            // close the channel if the key is not valid anymore
+            //close the channel if the key is not valid anymore
             unsafe.close(unsafe.voidPromise());
             return;
         }
 
         try {
             int readyOps = k.readyOps();
-            // We first need to call finishConnect() before try to trigger a read(...) or write(...) as otherwise
-            // the NIO JDK channel implementation may throw a NotYetConnectedException.
+            //We first need to call finishConnect() before try to trigger a read(...) or write(...) as otherwise
+            //the NIO JDK channel implementation may throw a NotYetConnectedException.
             if ((readyOps & SelectionKey.OP_CONNECT) != 0) {
-                // remove OP_CONNECT as otherwise Selector.select(..) will always return without blocking
-                // See https:// github.com/netty/netty/issues/924
+                //remove OP_CONNECT as otherwise Selector.select(..) will always return without blocking
+                //See https://github.com/netty/netty/issues/924
                 int ops = k.interestOps();
                 ops &= ~SelectionKey.OP_CONNECT;
                 k.interestOps(ops);
@@ -405,16 +405,16 @@ public class EchoServer {
                 unsafe.finishConnect();
             }
 
-            // Process OP_WRITE first as we may be able to write some queued buffers and so free memory.
+            //Process OP_WRITE first as we may be able to write some queued buffers and so free memory.
             if ((readyOps & SelectionKey.OP_WRITE) != 0) {
-                // Call forceFlush which will also take care of clear the OP_WRITE once there is nothing left to write
+                //Call forceFlush which will also take care of clear the OP_WRITE once there is nothing left to write
                 ch.unsafe().forceFlush();
             }
 
-            // Also check for readOps of 0 to workaround possible JDK bug which may otherwise lead
-            // to a spin loop
+            //Also check for readOps of 0 to workaround possible JDK bug which may otherwise lead
+            //to a spin loop
             if ((readyOps & (SelectionKey.OP_READ | SelectionKey.OP_ACCEPT)) != 0 || readyOps == 0) {
-                // 这里是关键！！！
+                //这里是关键！！！
                 unsafe.read();
             }
         } catch (CancelledKeyException ignored) {
@@ -475,12 +475,12 @@ public class EchoServer {
                     }
                 }
             } finally {
-                // Check if there is a readPending which was not processed yet.
-                // This could be for two reasons:
-                // * The user called Channel.read() or ChannelHandlerContext.read() in channelRead(...) method
-                // * The user called Channel.read() or ChannelHandlerContext.read() in channelReadComplete(...) method
-                // 
-                // See https:// github.com/netty/netty/issues/2254
+                //Check if there is a readPending which was not processed yet.
+                //This could be for two reasons:
+                //* The user called Channel.read() or ChannelHandlerContext.read() in channelRead(...) method
+                //* The user called Channel.read() or ChannelHandlerContext.read() in channelReadComplete(...) method
+                //
+                //See https://github.com/netty/netty/issues/2254
                 if (!readPending && !config.isAutoRead()) {
                     removeReadOp();
                 }
@@ -604,7 +604,7 @@ public class EchoServer {
                     pipeline.addLast(handler);
                 }
 
-                // 这里进行了异步注入，注入了一个服务端内置的ChannelInboundHandler
+                //这里进行了异步注入，注入了一个服务端内置的ChannelInboundHandler
                 ch.eventLoop().execute(new Runnable() {
                     @Override
                     public void run() {
@@ -637,11 +637,11 @@ public class EchoServer {
             this.childOptions = childOptions;
             this.childAttrs = childAttrs;
 
-            // Task which is scheduled to re-enable auto-read.
-            // It's important to create this Runnable before we try to submit it as otherwise the URLClassLoader may
-            // not be able to load the class because of the file limit it already reached.
-            // 
-            // See https:// github.com/netty/netty/issues/1328
+            //Task which is scheduled to re-enable auto-read.
+            //It's important to create this Runnable before we try to submit it as otherwise the URLClassLoader may
+            //not be able to load the class because of the file limit it already reached.
+            //
+            //See https://github.com/netty/netty/issues/1328
             enableAutoReadTask = new Runnable() {
                 @Override
                 public void run() {
@@ -655,7 +655,7 @@ public class EchoServer {
         public void channelRead(ChannelHandlerContext ctx, Object msg) {
             final Channel child = (Channel) msg;
 
-            // 这里将我们在代码清单中配置的childHandler（即那个ChannelInitializer）添加到child的Pipeline中
+            //这里将我们在代码清单中配置的childHandler（即那个ChannelInitializer）添加到child的Pipeline中
             child.pipeline().addLast(childHandler);
 
             setChannelOptions(child, childOptions, logger);
@@ -687,13 +687,13 @@ public class EchoServer {
         public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
             final ChannelConfig config = ctx.channel().config();
             if (config.isAutoRead()) {
-                // stop accept new connections for 1 second to allow the channel to recover
-                // See https:// github.com/netty/netty/issues/1328
+                //stop accept new connections for 1 second to allow the channel to recover
+                //See https://github.com/netty/netty/issues/1328
                 config.setAutoRead(false);
                 ctx.channel().eventLoop().schedule(enableAutoReadTask, 1, TimeUnit.SECONDS);
             }
-            // still let the exceptionCaught event flow through the pipeline to give the user
-            // a chance to do something with it
+            //still let the exceptionCaught event flow through the pipeline to give the user
+            //a chance to do something with it
             ctx.fireExceptionCaught(cause);
         }
     }
@@ -776,8 +776,8 @@ __这之后的执行过程与{% post_link Netty-服务端启动源码剖析 %}�
 ```Java
         private void register0(ChannelPromise promise) {
             try {
-                // check if the channel is still open as it could be closed in the mean time when the register
-                // call was outside of the eventLoop
+                //check if the channel is still open as it could be closed in the mean time when the register
+                //call was outside of the eventLoop
                 if (!promise.setUncancellable() || !ensureOpen(promise)) {
                     return;
                 }
@@ -786,27 +786,27 @@ __这之后的执行过程与{% post_link Netty-服务端启动源码剖析 %}�
                 neverRegistered = false;
                 registered = true;
 
-                // Ensure we call handlerAdded(...) before we actually notify the promise. This is needed as the
-                // user may already fire events through the pipeline in the ChannelFutureListener.
+                //Ensure we call handlerAdded(...) before we actually notify the promise. This is needed as the
+                //user may already fire events through the pipeline in the ChannelFutureListener.
                 pipeline.invokeHandlerAddedIfNeeded();
 
                 safeSetSuccess(promise);
                 pipeline.fireChannelRegistered();
-                // Only fire a channelActive if the channel has never been registered. This prevents firing
-                // multiple channel actives if the channel is deregistered and re-registered.
+                //Only fire a channelActive if the channel has never been registered. This prevents firing
+                //multiple channel actives if the channel is deregistered and re-registered.
                 if (isActive()) {
                     if (firstRegistration) {
                         pipeline.fireChannelActive();
                     } else if (config().isAutoRead()) {
-                        // This channel was registered before and autoRead() is set. This means we need to begin read
-                        // again so that we process inbound data.
-                        // 
-                        // See https:// github.com/netty/netty/issues/4805
+                        //This channel was registered before and autoRead() is set. This means we need to begin read
+                        //again so that we process inbound data.
+                        //
+                        //See https://github.com/netty/netty/issues/4805
                         beginRead();
                     }
                 }
             } catch (Throwable t) {
-                // Close the channel directly to avoid FD leak.
+                //Close the channel directly to avoid FD leak.
                 closeForcibly();
                 closeFuture.setClosed();
                 safeSetFailure(promise, t);
@@ -824,13 +824,13 @@ __这之后的执行过程与{% post_link Netty-服务端启动源码剖析 %}�
                 return;
             } catch (CancelledKeyException e) {
                 if (!selected) {
-                    // Force the Selector to select now as the "canceled" SelectionKey may still be
-                    // cached and not removed because no Select.select(..) operation was called yet.
+                    //Force the Selector to select now as the "canceled" SelectionKey may still be
+                    //cached and not removed because no Select.select(..) operation was called yet.
                     eventLoop().selectNow();
                     selected = true;
                 } else {
-                    // We forced a select operation on the selector before but the SelectionKey is still cached
-                    // for whatever reason. JDK bug ?
+                    //We forced a select operation on the selector before but the SelectionKey is still cached
+                    //for whatever reason. JDK bug ?
                     throw e;
                 }
             }
@@ -845,8 +845,8 @@ __这之后的执行过程与{% post_link Netty-服务端启动源码剖析 %}�
         assert channel.eventLoop().inEventLoop();
         if (firstRegistration) {
             firstRegistration = false;
-            // We are now registered to the EventLoop. It's time to call the callbacks for the ChannelHandlers,
-            // that were added before the registration was done.
+            //We are now registered to the EventLoop. It's time to call the callbacks for the ChannelHandlers,
+            //that were added before the registration was done.
             callHandlerAddedForAllHandlers();
         }
     }
@@ -859,17 +859,17 @@ __这之后的执行过程与{% post_link Netty-服务端启动源码剖析 %}�
         synchronized (this) {
             assert !registered;
 
-            // This Channel itself was registered.
+            //This Channel itself was registered.
             registered = true;
 
             pendingHandlerCallbackHead = this.pendingHandlerCallbackHead;
-            // Null out so it can be GC'ed.
+            //Null out so it can be GC'ed.
             this.pendingHandlerCallbackHead = null;
         }
 
-        // This must happen outside of the synchronized(...) block as otherwise handlerAdded(...) may be called while
-        // holding the lock and so produce a deadlock if handlerAdded(...) will try to add another handler from outside
-        // the EventLoop.
+        //This must happen outside of the synchronized(...) block as otherwise handlerAdded(...) may be called while
+        //holding the lock and so produce a deadlock if handlerAdded(...) will try to add another handler from outside
+        //the EventLoop.
         PendingHandlerCallback task = pendingHandlerCallbackHead;
         while (task != null) {
             task.execute();

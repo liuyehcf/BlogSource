@@ -151,7 +151,7 @@ import org.liuyehcf.fastjson.entity.OuterEntity;
  */
 public class FastJsonDemo {
     public static void main(String[] args) {
-        // 创建多级对象
+        //创建多级对象
         OuterEntity<MiddleEntity<InnerEntity>> outerEntity = new OuterEntity<>();
         MiddleEntity<InnerEntity> middleEntity = new MiddleEntity<>();
         InnerEntity innerEntity = new InnerEntity();
@@ -167,12 +167,12 @@ public class FastJsonDemo {
         outerEntity.setName("outerEntity");
         outerEntity.setMiddleEntity(middleEntity);
 
-        // 将Java对象转化为Json字符串
+        //将Java对象转化为Json字符串
         String json = JSON.toJSONString(outerEntity);
 
         System.out.println(json);
 
-        // 将Json字符串，配合类型信息，转化为Java对象
+        //将Json字符串，配合类型信息，转化为Java对象
         OuterEntity<MiddleEntity<InnerEntity>> parsedOuterEntity = JSON.parseObject(
                 json,
                 new TypeReference<OuterEntity<MiddleEntity<InnerEntity>>>() {
@@ -237,10 +237,10 @@ public abstract class MyTypeReference<T> {
     private final Type type;
 
     public MyTypeReference() {
-        // getClass()方法多态
+        //getClass()方法多态
         Type superClass = getClass().getGenericSuperclass();
 
-        // 强制转型成ParameterizedType，然后获取泛型参数
+        //强制转型成ParameterizedType，然后获取泛型参数
         Type type = ((ParameterizedType) superClass).getActualTypeArguments()[0];
 
         this.type = type;
@@ -267,7 +267,7 @@ public class GenericTypeDemo<T> {
     public static void main(String[] args) {
         System.out.println(
                 new MyTypeReference<List<List<String>>>() {
-                    // override nothing
+                    //override nothing
                 }.getType().getTypeName());
     }
 }

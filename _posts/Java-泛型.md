@@ -195,9 +195,9 @@ __上一小节介绍过ParameterizedType可以将泛型实参保留在继承链�
         private final Type type;
 
         protected TypeReference() {
-            Type superClass = getClass().getGenericSuperclass(); // (1)
+            Type superClass = getClass().getGenericSuperclass(); //(1)
 
-            Type type = ((ParameterizedType) superClass).getActualTypeArguments()[0]; // (2)
+            Type type = ((ParameterizedType) superClass).getActualTypeArguments()[0]; //(2)
 
             this.type = type;
         }
@@ -313,13 +313,13 @@ public class JavaBeanInitializerUtils {
 
             Class clazz = (Class) parameterizedType.getRawType();
 
-            // 通过Class可以拿到泛型形参，但无法拿到泛型实参
+            //通过Class可以拿到泛型形参，但无法拿到泛型实参
             TypeVariable[] typeVariables = clazz.getTypeParameters();
 
-            // 通过ParameterizedType可以拿到泛型实参，通过继承结构保留泛型实参
+            //通过ParameterizedType可以拿到泛型实参，通过继承结构保留泛型实参
             Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
 
-            // 维护泛型形参到泛型实参的映射关系
+            //维护泛型形参到泛型实参的映射关系
             for (int i = 0; i < typeVariables.length; i++) {
                 genericTypes.put(
                         typeVariables[i].getName(),
@@ -336,10 +336,10 @@ public class JavaBeanInitializerUtils {
      */
     private Object doCreateJavaBean() {
         if (type instanceof Class) {
-            // 创建非泛型实例
+            //创建非泛型实例
             return createJavaBeanWithClass((Class) type);
         } else if (type instanceof ParameterizedType) {
-            // 创建泛型实例
+            //创建泛型实例
             return createJavaBeanWithGenericType((ParameterizedType) type);
         } else {
             throw new UnsupportedOperationException("暂不支持此类型的默认初始化，type: " + type);
@@ -358,10 +358,10 @@ public class JavaBeanInitializerUtils {
 
         for (Method setMethod : getSetMethods(clazz)) {
 
-            // 拿到set方法的参数类型
+            //拿到set方法的参数类型
             Type paramType = setMethod.getGenericParameterTypes()[0];
 
-            // 填充默认值
+            //填充默认值
             setDefaultValue(obj, setMethod, paramType);
         }
 
@@ -381,15 +381,15 @@ public class JavaBeanInitializerUtils {
         Object obj = createInstance(clazz);
 
         for (Method setMethod : getSetMethods(clazz)) {
-            // 拿到set方法的参数类型
+            //拿到set方法的参数类型
             Type paramType = setMethod.getGenericParameterTypes()[0];
 
             if (paramType instanceof TypeVariable) {
-                // 如果参数类型是泛型形参，根据映射关系找到泛型形参对应的泛型实参
+                //如果参数类型是泛型形参，根据映射关系找到泛型形参对应的泛型实参
                 Type actualType = genericTypes.get(((TypeVariable) paramType).getName());
                 setDefaultValue(obj, setMethod, actualType);
             } else {
-                // 参数类型是确切的类型，可能是Class，也可能是ParameterizedType
+                //参数类型是确切的类型，可能是Class，也可能是ParameterizedType
                 setDefaultValue(obj, setMethod, paramType);
             }
         }
@@ -443,10 +443,10 @@ public class JavaBeanInitializerUtils {
     private void setDefaultValue(Object obj, Method method, Type paramType) {
         try {
             if (paramType instanceof Class) {
-                // 普通参数
+                //普通参数
                 setDefaultValueOfNormal(obj, method, (Class) paramType);
             } else if (paramType instanceof ParameterizedType) {
-                // 泛型实参
+                //泛型实参
                 setDefaultValueOfGeneric(obj, method, (ParameterizedType) paramType);
             } else {
                 throw new UnsupportedOperationException();
@@ -477,13 +477,13 @@ public class JavaBeanInitializerUtils {
      */
     private void setDefaultValueOfNormal(Object obj, Method method, Class paramClass) throws IllegalAccessException, InvocationTargetException {
         if (DEFAULT_VALUE_OF_BASIC_CLASS.containsKey(paramClass)) {
-            // 填充基本类型
+            //填充基本类型
             method.invoke(obj, DEFAULT_VALUE_OF_BASIC_CLASS.get(paramClass));
         } else if (paramClass.equals(String.class)) {
-            // 填充String类型
+            //填充String类型
             method.invoke(obj, STRING_DEFAULT_PREFIX + getFieldName(method));
         } else {
-            // 填充其他类型
+            //填充其他类型
             method.invoke(obj, createJavaBean(paramClass));
         }
     }
@@ -501,10 +501,10 @@ public class JavaBeanInitializerUtils {
         Class clazz = (Class) paramType.getRawType();
 
         if (instanceOfContainer(clazz)) {
-            // 如果是容器的话，特殊处理一下
+            //如果是容器的话，特殊处理一下
             setDefaultValueForContainer(obj, method, paramType);
         } else {
-            // 其他类型
+            //其他类型
             method.invoke(obj, createJavaBean(paramType));
         }
     }

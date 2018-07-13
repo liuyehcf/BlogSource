@@ -112,9 +112,9 @@ Disconnected from the target VM, address: '127.0.0.1:59825', transport: 'socket'
     public <T> T createMock(final Class<T> toMock) {
         try {
             state.assertRecordState();
-            // 创建一个代理工厂
+            //创建一个代理工厂
             final IProxyFactory<T> proxyFactory = createProxyFactory(toMock);
-            // 利用工厂产生代理类的对象
+            //利用工厂产生代理类的对象
             return proxyFactory.createProxy(toMock, new ObjectMethodsFilter(toMock,
                     new MockInvocationHandler(this), null));
         } catch (final RuntimeExceptionWrapper e) {
@@ -127,7 +127,7 @@ IProxyFactory接口有两个实现，JavaProxyFactory(JDK动态代理)和ClassPr
 
 ```Java
     public T createProxy(final Class<T> toMock, final InvocationHandler handler) {
-        // 就是简单调用了JDK动态代理的接口，没有任何难度
+        //就是简单调用了JDK动态代理的接口，没有任何难度
         return (T) Proxy.newProxyInstance(toMock.getClassLoader(), new Class[] { toMock }, handler);
     }
 ```
@@ -135,14 +135,14 @@ IProxyFactory接口有两个实现，JavaProxyFactory(JDK动态代理)和ClassPr
 我们再来回顾一下上述例子中的代码，我们发现一个很奇怪的现象。在EasyMock.replay方法前后，调用mock.isMale所产生的行为是不同的。__在这里EasyMock.replay类似于一个开关__，可以改变mock对象的行为。可是这是如何做到的呢？
 
 ```Java
-        // 这里调用mock的isMale方法不会抛出异常
+        //这里调用mock的isMale方法不会抛出异常
         EasyMock.expect(mock.isMale("Bob")).andReturn(true);
         EasyMock.expect(mock.isMale("Alice")).andReturn(true);
 
-        // 关键开关语句
+        //关键开关语句
         EasyMock.replay(mock);
 
-        // 这里只能调用上面预定义行为的方法，若没有设定预期值那么将抛出异常
+        //这里只能调用上面预定义行为的方法，若没有设定预期值那么将抛出异常
         System.out.println(mock.isMale("Bob"));
         System.out.println(mock.isMale("Alice"));
         System.out.println(mock.isMale("Robot"));
@@ -160,7 +160,7 @@ IProxyFactory接口有两个实现，JavaProxyFactory(JDK动态代理)和ClassPr
      */
     public static void replay(final Object... mocks) {
         for (final Object mock : mocks) {
-            // 依次对每个mock对象执行下面的逻辑
+            //依次对每个mock对象执行下面的逻辑
             getControl(mock).replay();
         }
     }
@@ -177,17 +177,17 @@ IProxyFactory接口有两个实现，JavaProxyFactory(JDK动态代理)和ClassPr
         try {
             ObjectMethodsFilter handler;
 
-            // mock是由JDK动态代理产生的类型的实例
+            //mock是由JDK动态代理产生的类型的实例
             if (Proxy.isProxyClass(mock.getClass())) {
                 handler = (ObjectMethodsFilter) Proxy.getInvocationHandler(mock);
             }
-            // mock是由Cglib产生的类型的实例
+            //mock是由Cglib产生的类型的实例
             else if (Enhancer.isEnhanced(mock.getClass())) {
                 handler = (ObjectMethodsFilter) getInterceptor(mock).getHandler();
             } else {
                 throw new IllegalArgumentException("Not a mock: " + mock.getClass().getName());
             }
-            // 获取ObjectMethodsFilter封装的MockInvocationHandler的实例，并从MockInvocationHandler的实例中获取MocksControl的实例
+            //获取ObjectMethodsFilter封装的MockInvocationHandler的实例，并从MockInvocationHandler的实例中获取MocksControl的实例
             return handler.getDelegate().getControl();
         } catch (final ClassCastException e) {
             throw new IllegalArgumentException("Not a mock: " + mock.getClass().getName());
@@ -202,17 +202,17 @@ public final class MockInvocationHandler implements InvocationHandler, Serializa
 
     private static final long serialVersionUID = -7799769066534714634L;
 
-    // 非常重要的字段，直接决定了下面invoke方法的行为
+    //非常重要的字段，直接决定了下面invoke方法的行为
     private final MocksControl control;
 
-    // 注意到构造方法接受了MocksControl作为参数
+    //注意到构造方法接受了MocksControl作为参数
     public MockInvocationHandler(final MocksControl control) {
         this.control = control;
     }
 
     public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
         try {
-            // 如果是记录模式
+            //如果是记录模式
             if (control.getState() instanceof RecordState) {
                 LastControl.reportLastControl(control);
             }
@@ -224,7 +224,7 @@ public final class MockInvocationHandler implements InvocationHandler, Serializa
         } catch (final ThrowableWrapper t) {
             throw t.getThrowable().fillInStackTrace();
         }
-        // then let all unwrapped exceptions pass unmodified
+        //then let all unwrapped exceptions pass unmodified
     }
 
     public MocksControl getControl() {
@@ -239,7 +239,7 @@ public final class MockInvocationHandler implements InvocationHandler, Serializa
     public void replay() {
         try {
             state.replay();
-            // 替换state，将之前收集到的行为(behavior)作为参数传给ReplayState的构造方法
+            //替换state，将之前收集到的行为(behavior)作为参数传给ReplayState的构造方法
             state = new ReplayState(behavior);
             LastControl.reportLastControl(null);
         } catch (final RuntimeExceptionWrapper e) {

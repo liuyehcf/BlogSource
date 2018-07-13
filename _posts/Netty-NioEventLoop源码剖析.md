@@ -38,7 +38,7 @@ NioEventLoop仅有一个构造方法，该方法接受如下几个参数
             throw new NullPointerException("selectStrategy");
         }
         provider = selectorProvider;
-        // 产生Selector
+        //产生Selector
         final SelectorTuple selectorTuple = openSelector();
         selector = selectorTuple.selector;
         unwrappedSelector = selectorTuple.unwrappedSelector;
@@ -116,7 +116,7 @@ NioEventLoop仅有一个构造方法，该方法接受如下几个参数
             return new SelectorTuple(unwrappedSelector);
         }
 
-        // 自定义的SelectedSelectionKeySet
+        //自定义的SelectedSelectionKeySet
         final SelectedSelectionKeySet selectedKeySet = new SelectedSelectionKeySet();
 
         Object maybeSelectorImplClass = AccessController.doPrivileged(new PrivilegedAction<Object>() {
@@ -134,7 +134,7 @@ NioEventLoop仅有一个构造方法，该方法接受如下几个参数
         });
 
         if (!(maybeSelectorImplClass instanceof Class) ||
-                // ensure the current selector implementation is what we can instrument.
+                //ensure the current selector implementation is what we can instrument.
                 !((Class<?>) maybeSelectorImplClass).isAssignableFrom(unwrappedSelector.getClass())) {
             if (maybeSelectorImplClass instanceof Throwable) {
                 Throwable t = (Throwable) maybeSelectorImplClass;
@@ -149,7 +149,7 @@ NioEventLoop仅有一个构造方法，该方法接受如下几个参数
             @Override
             public Object run() {
                 try {
-                    // 在这里，通过反射，将selectorImplClass中的指定域替换成自定义的类型
+                    //在这里，通过反射，将selectorImplClass中的指定域替换成自定义的类型
                     Field selectedKeysField = selectorImplClass.getDeclaredField("selectedKeys");
                     Field publicSelectedKeysField = selectorImplClass.getDeclaredField("publicSelectedKeys");
 
@@ -162,9 +162,9 @@ NioEventLoop仅有一个构造方法，该方法接受如下几个参数
                         return cause;
                     }
 
-                    // 这里进行了替换
+                    //这里进行了替换
                     selectedKeysField.set(unwrappedSelector, selectedKeySet);
-                    // 这里进行了替换
+                    //这里进行了替换
                     publicSelectedKeysField.set(unwrappedSelector, selectedKeySet);
                     return null;
                 } catch (NoSuchFieldException e) {
@@ -244,7 +244,7 @@ doStartThread方法调用executor.execute来执行该Runnable，executor一般�
                 boolean success = false;
                 updateLastExecutionTime();
                 try {
-                    // 主要执行这一句
+                    //主要执行这一句
                     SingleThreadEventExecutor.this.run();
                     success = true;
                 } catch (Throwable t) {
@@ -258,7 +258,7 @@ doStartThread方法调用executor.execute来执行该Runnable，executor一般�
                         }
                     }
 
-                    // Check if confirmShutdown() was called at the end of the loop.
+                    //Check if confirmShutdown() was called at the end of the loop.
                     if (success && gracefulShutdownStartTime == 0) {
                         logger.error("Buggy " + EventExecutor.class.getSimpleName() + " implementation; " +
                                 SingleThreadEventExecutor.class.getSimpleName() + ".confirmShutdown() must be called " +
@@ -266,7 +266,7 @@ doStartThread方法调用executor.execute来执行该Runnable，executor一般�
                     }
 
                     try {
-                        // Run all remaining tasks and shutdown hooks.
+                        //Run all remaining tasks and shutdown hooks.
                         for (;;) {
                             if (confirmShutdown()) {
                                 break;
@@ -314,57 +314,57 @@ run方法是NioEventLoop中的核心方法，该方法展示了整个NioEventLoo
     protected void run() {
         for (;;) {
             try {
-                // 计算策略
+                //计算策略
                 switch (selectStrategy.calculateStrategy(selectNowSupplier, hasTasks())) {
                     case SelectStrategy.CONTINUE:
                         continue;
                     case SelectStrategy.SELECT:
                         select(wakenUp.getAndSet(false));
 
-                        // 'wakenUp.compareAndSet(false, true)' is always evaluated
-                        // before calling 'selector.wakeup()' to reduce the wake-up
-                        // overhead. (Selector.wakeup() is an expensive operation.)
-                        // 
-                        // However, there is a race condition in this approach.
-                        // The race condition is triggered when 'wakenUp' is set to
-                        // true too early.
-                        // 
-                        // 'wakenUp' is set to true too early if:
-                        // 1) Selector is waken up between 'wakenUp.set(false)' and
-                        // 'selector.select(...)'. (BAD)
-                        // 2) Selector is waken up between 'selector.select(...)' and
-                        // 'if (wakenUp.get()) { ... }'. (OK)
-                        // 
-                        // In the first case, 'wakenUp' is set to true and the
-                        // following 'selector.select(...)' will wake up immediately.
-                        // Until 'wakenUp' is set to false again in the next round,
-                        // 'wakenUp.compareAndSet(false, true)' will fail, and therefore
-                        // any attempt to wake up the Selector will fail, too, causing
-                        // the following 'selector.select(...)' call to block
-                        // unnecessarily.
-                        // 
-                        // To fix this problem, we wake up the selector again if wakenUp
-                        // is true immediately after selector.select(...).
-                        // It is inefficient in that it wakes up the selector for both
-                        // the first case (BAD - wake-up required) and the second case
-                        // (OK - no wake-up required).
+                        //'wakenUp.compareAndSet(false, true)' is always evaluated
+                        //before calling 'selector.wakeup()' to reduce the wake-up
+                        //overhead. (Selector.wakeup() is an expensive operation.)
+                        //
+                        //However, there is a race condition in this approach.
+                        //The race condition is triggered when 'wakenUp' is set to
+                        //true too early.
+                        //
+                        //'wakenUp' is set to true too early if:
+                        //1) Selector is waken up between 'wakenUp.set(false)' and
+                        //'selector.select(...)'. (BAD)
+                        //2) Selector is waken up between 'selector.select(...)' and
+                        //'if (wakenUp.get()) { ... }'. (OK)
+                        //
+                        //In the first case, 'wakenUp' is set to true and the
+                        //following 'selector.select(...)' will wake up immediately.
+                        //Until 'wakenUp' is set to false again in the next round,
+                        //'wakenUp.compareAndSet(false, true)' will fail, and therefore
+                        //any attempt to wake up the Selector will fail, too, causing
+                        //the following 'selector.select(...)' call to block
+                        //unnecessarily.
+                        //
+                        //To fix this problem, we wake up the selector again if wakenUp
+                        //is true immediately after selector.select(...).
+                        //It is inefficient in that it wakes up the selector for both
+                        //the first case (BAD - wake-up required) and the second case
+                        //(OK - no wake-up required).
 
                         if (wakenUp.get()) {
                             selector.wakeup();
                         }
-                        // fall through
+                        //fall through
                     default:
                 }
 
                 cancelledKeys = 0;
                 needsToSelectAgain = false;
                 final int ioRatio = this.ioRatio;
-                // 反正就是执行processSelectedKeys以及runAllTasks
+                //反正就是执行processSelectedKeys以及runAllTasks
                 if (ioRatio == 100) {
                     try {
                         processSelectedKeys();
                     } finally {
-                        // Ensure we always run tasks.
+                        //Ensure we always run tasks.
                         runAllTasks();
                     }
                 } else {
@@ -372,7 +372,7 @@ run方法是NioEventLoop中的核心方法，该方法展示了整个NioEventLoo
                     try {
                         processSelectedKeys();
                     } finally {
-                        // Ensure we always run tasks.
+                        //Ensure we always run tasks.
                         final long ioTime = System.nanoTime() - ioStartTime;
                         runAllTasks(ioTime * (100 - ioRatio) / ioRatio);
                     }
@@ -380,7 +380,7 @@ run方法是NioEventLoop中的核心方法，该方法展示了整个NioEventLoo
             } catch (Throwable t) {
                 handleLoopException(t);
             }
-            // Always handle shutdown even if the loop processing threw an exception.
+            //Always handle shutdown even if the loop processing threw an exception.
             try {
                 if (isShuttingDown()) {
                     closeAll();
@@ -421,13 +421,13 @@ processSelectedKeys方法根据目前selectedKeys的状态，细化为两个相�
     private void processSelectedKeysOptimized() {
         for (int i = 0; i < selectedKeys.size; ++i) {
             final SelectionKey k = selectedKeys.keys[i];
-            // null out entry in the array to allow to have it GC'ed once the Channel close
-            // See https:// github.com/netty/netty/issues/2363
+            //null out entry in the array to allow to have it GC'ed once the Channel close
+            //See https://github.com/netty/netty/issues/2363
             selectedKeys.keys[i] = null;
 
             final Object a = k.attachment();
 
-            // 如果是AbstractNioChannel，则进一步调用processSelectedKey来处理
+            //如果是AbstractNioChannel，则进一步调用processSelectedKey来处理
             if (a instanceof AbstractNioChannel) {
                 processSelectedKey(k, (AbstractNioChannel) a);
             } else {
@@ -436,10 +436,10 @@ processSelectedKeys方法根据目前selectedKeys的状态，细化为两个相�
                 processSelectedKey(k, task);
             }
 
-            // 如果还需要重新Select一次
+            //如果还需要重新Select一次
             if (needsToSelectAgain) {
-                // null out entries in the array to allow to have it GC'ed once the Channel close
-                // See https:// github.com/netty/netty/issues/2363
+                //null out entries in the array to allow to have it GC'ed once the Channel close
+                //See https://github.com/netty/netty/issues/2363
                 selectedKeys.reset(i + 1);
 
                 selectAgain();
@@ -463,30 +463,30 @@ processSelectedKey方法大致逻辑如下
             try {
                 eventLoop = ch.eventLoop();
             } catch (Throwable ignored) {
-                // If the channel implementation throws an exception because there is no event loop, we ignore this
-                // because we are only trying to determine if ch is registered to this event loop and thus has authority
-                // to close ch.
+                //If the channel implementation throws an exception because there is no event loop, we ignore this
+                //because we are only trying to determine if ch is registered to this event loop and thus has authority
+                //to close ch.
                 return;
             }
-            // Only close ch if ch is still registered to this EventLoop. ch could have deregistered from the event loop
-            // and thus the SelectionKey could be cancelled as part of the deregistration process, but the channel is
-            // still healthy and should not be closed.
-            // See https:// github.com/netty/netty/issues/5125
+            //Only close ch if ch is still registered to this EventLoop. ch could have deregistered from the event loop
+            //and thus the SelectionKey could be cancelled as part of the deregistration process, but the channel is
+            //still healthy and should not be closed.
+            //See https://github.com/netty/netty/issues/5125
             if (eventLoop != this || eventLoop == null) {
                 return;
             }
-            // close the channel if the key is not valid anymore
+            //close the channel if the key is not valid anymore
             unsafe.close(unsafe.voidPromise());
             return;
         }
 
         try {
             int readyOps = k.readyOps();
-            // We first need to call finishConnect() before try to trigger a read(...) or write(...) as otherwise
-            // the NIO JDK channel implementation may throw a NotYetConnectedException.
+            //We first need to call finishConnect() before try to trigger a read(...) or write(...) as otherwise
+            //the NIO JDK channel implementation may throw a NotYetConnectedException.
             if ((readyOps & SelectionKey.OP_CONNECT) != 0) {
-                // remove OP_CONNECT as otherwise Selector.select(..) will always return without blocking
-                // See https:// github.com/netty/netty/issues/924
+                //remove OP_CONNECT as otherwise Selector.select(..) will always return without blocking
+                //See https://github.com/netty/netty/issues/924
                 int ops = k.interestOps();
                 ops &= ~SelectionKey.OP_CONNECT;
                 k.interestOps(ops);
@@ -494,16 +494,16 @@ processSelectedKey方法大致逻辑如下
                 unsafe.finishConnect();
             }
 
-            // Process OP_WRITE first as we may be able to write some queued buffers and so free memory.
+            //Process OP_WRITE first as we may be able to write some queued buffers and so free memory.
             if ((readyOps & SelectionKey.OP_WRITE) != 0) {
-                // Call forceFlush which will also take care of clear the OP_WRITE once there is nothing left to write
+                //Call forceFlush which will also take care of clear the OP_WRITE once there is nothing left to write
                 ch.unsafe().forceFlush();
             }
 
-            // Also check for readOps of 0 to workaround possible JDK bug which may otherwise lead
-            // to a spin loop
+            //Also check for readOps of 0 to workaround possible JDK bug which may otherwise lead
+            //to a spin loop
             if ((readyOps & (SelectionKey.OP_READ | SelectionKey.OP_ACCEPT)) != 0 || readyOps == 0) {
-                // 当一切正常时，调用read方法读取数据
+                //当一切正常时，调用read方法读取数据
                 unsafe.read();
             }
         } catch (CancelledKeyException ignored) {
@@ -518,9 +518,9 @@ processSelectedKey方法大致逻辑如下
 
 ```Java
     private void processSelectedKeysPlain(Set<SelectionKey> selectedKeys) {
-        // check if the set is empty and if so just return to not create garbage by
-        // creating a new Iterator every time even if there is nothing to process.
-        // See https:// github.com/netty/netty/issues/597
+        //check if the set is empty and if so just return to not create garbage by
+        //creating a new Iterator every time even if there is nothing to process.
+        //See https://github.com/netty/netty/issues/597
         if (selectedKeys.isEmpty()) {
             return;
         }
@@ -547,7 +547,7 @@ processSelectedKey方法大致逻辑如下
                 selectAgain();
                 selectedKeys = selector.selectedKeys();
 
-                // Create the iterator again to avoid ConcurrentModificationException
+                //Create the iterator again to avoid ConcurrentModificationException
                 if (selectedKeys.isEmpty()) {
                     break;
                 } else {
@@ -576,7 +576,7 @@ runAllTasks方法位于`SingleThreadEventExecutor`，该方法主要用于执行
             if (runAllTasksFrom(taskQueue)) {
                 ranAtLeastOne = true;
             }
-        } while (!fetchedAll); // keep on processing until we fetched all scheduled tasks.
+        } while (!fetchedAll); //keep on processing until we fetched all scheduled tasks.
 
         if (ranAtLeastOne) {
             lastExecutionTime = ScheduledFutureTask.nanoTime();

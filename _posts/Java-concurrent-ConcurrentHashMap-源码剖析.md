@@ -118,10 +118,10 @@ __ConcurrentHashMap源码分析分为以下几个部分__
     /*
      * Encodings for Node hash fields. See above for explanation.
      */
-    static final int MOVED     = -1; // hash for forwarding nodes
-    static final int TREEBIN   = -2; // hash for roots of trees
-    static final int RESERVED  = -3; // hash for transient reservations
-    static final int HASH_BITS = 0x7fffffff; // usable bits of normal node hash
+    static final int MOVED     = -1; //hash for forwarding nodes
+    static final int TREEBIN   = -2; //hash for roots of trees
+    static final int RESERVED  = -3; //hash for transient reservations
+    static final int HASH_BITS = 0x7fffffff; //usable bits of normal node hash
 ```
 
 __常量分为两大类__
@@ -193,7 +193,7 @@ __常量分为两大类__
      */
     private transient volatile CounterCell[] counterCells;
 
-    // views
+    //views
     private transient KeySetView<K,V> keySet;
     private transient ValuesView<K,V> values;
     private transient EntrySetView<K,V> entrySet;
@@ -364,52 +364,52 @@ __putVal是真正执行插入操作的方法__
     /** Implementation for put and putIfAbsent */
     final V putVal(K key, V value, boolean onlyIfAbsent) {
         if (key == null || value == null) throw new NullPointerException();
-        // 获取经过修饰的hash值
+        //获取经过修饰的hash值
         int hash = spread(key.hashCode());
-        // 槽位计数值
+        //槽位计数值
         int binCount = 0;
-        // 死循环，常规模式
+        //死循环，常规模式
         for (Node<K,V>[] tab = table;;) {
             Node<K,V> f; int n, i, fh;
-            // 当hashtable未初始化时，首先初始化
+            //当hashtable未初始化时，首先初始化
             if (tab == null || (n = tab.length) == 0)
                 tab = initTable();
             else if ((f = tabAt(tab, i = (n - 1) & hash)) == null) {
-                // 当对应的bin/bucket中是空时，通过一个CAS操作插入一个Node节点，这个操作不需要加锁，仅需要CAS即可，保证有且只有一个线程执行成功即可
+                //当对应的bin/bucket中是空时，通过一个CAS操作插入一个Node节点，这个操作不需要加锁，仅需要CAS即可，保证有且只有一个线程执行成功即可
                 if (casTabAt(tab, i, null,
                              new Node<K,V>(hash, key, value, null)))
-                    break;                   // no lock when adding to empty bin
+                    break;                   //no lock when adding to empty bin
             }
-            // 当前槽位中的节点存放的是ForwardingNode，说明此时正在进行扩容，当前线程参与到扩容操作中去
+            //当前槽位中的节点存放的是ForwardingNode，说明此时正在进行扩容，当前线程参与到扩容操作中去
             else if ((fh = f.hash) == MOVED)
                 tab = helpTransfer(tab, f);
-            // 此时槽位中放置的是正常节点
-                // 1. 可能是一个链表
-                // 2. 可能是一个红黑树
+            //此时槽位中放置的是正常节点
+                //1. 可能是一个链表
+                //2. 可能是一个红黑树
             else {
                 V oldVal = null;
-                // 同一时刻，只能有一个线程能访问一个bin/bucket
+                //同一时刻，只能有一个线程能访问一个bin/bucket
                 synchronized (f) {
-                    // double-check，看是否被其他线程修改了
+                    //double-check，看是否被其他线程修改了
                     if (tabAt(tab, i) == f) {
-                        // bin/bucket中的节点构成一个链表
+                        //bin/bucket中的节点构成一个链表
                         if (fh >= 0) {
-                            // 该变量用于统计bin中节点的数据
+                            //该变量用于统计bin中节点的数据
                             binCount = 1;
                             for (Node<K,V> e = f;; ++binCount) {
                                 K ek;
-                                // 找到了键值相同的节点
+                                //找到了键值相同的节点
                                 if (e.hash == hash &&
                                     ((ek = e.key) == key ||
                                      (ek != null && key.equals(ek)))) {
                                     oldVal = e.val;
-                                    // 当允许重复时，更新原值，否则不更新
+                                    //当允许重复时，更新原值，否则不更新
                                     if (!onlyIfAbsent)
                                         e.val = value;
                                     break;
                                 }
                                 Node<K,V> pred = e;
-                                // 更新迭代的节点。当e处于链表尾部时，说明插入的键值对不存在，因此追加到链表的尾部即可
+                                //更新迭代的节点。当e处于链表尾部时，说明插入的键值对不存在，因此追加到链表的尾部即可
                                 if ((e = e.next) == null) {
                                     pred.next = new Node<K,V>(hash, key,
                                                               value, null);
@@ -417,12 +417,12 @@ __putVal是真正执行插入操作的方法__
                                 }
                             }
                         }
-                        // bin/bucket中的节点构成一个红黑树
+                        //bin/bucket中的节点构成一个红黑树
                         else if (f instanceof TreeBin) {
                             Node<K,V> p;
-                            // 直接赋值为2，大于0小于TREEIFY_THRESHOLD的整数均可
+                            //直接赋值为2，大于0小于TREEIFY_THRESHOLD的整数均可
                             binCount = 2;
-                            // 将节点插入到红黑树中
+                            //将节点插入到红黑树中
                             if ((p = ((TreeBin<K,V>)f).putTreeVal(hash, key,
                                                            value)) != null) {
                                 oldVal = p.val;
@@ -432,9 +432,9 @@ __putVal是真正执行插入操作的方法__
                         }
                     }
                 }
-                // 
+                //
                 if (binCount != 0) {
-                    // bin/bucket中放置的是链表，并且元素数量到达树化的临界值，将链表转为红黑树
+                    //bin/bucket中放置的是链表，并且元素数量到达树化的临界值，将链表转为红黑树
                     if (binCount >= TREEIFY_THRESHOLD)
                         treeifyBin(tab, i);
                     if (oldVal != null)
@@ -462,19 +462,19 @@ __initTable方法用于初始化hashtable__
     private final Node<K,V>[] initTable() {
         Node<K,V>[] tab; int sc;
         while ((tab = table) == null || tab.length == 0) {
-            // 此时，说明正有其他线程在初始化，为了确保仅有一个线程能够进行初始化操作，当前线程只需要让出CPU时间进行等待即可
+            //此时，说明正有其他线程在初始化，为了确保仅有一个线程能够进行初始化操作，当前线程只需要让出CPU时间进行等待即可
             if ((sc = sizeCtl) < 0)
-                Thread.yield(); // lost initialization race; just spin
-            // 利用CAS操作将sizeCtl改为-1，若失败，说明有其他线程枪战成功，当前线程只需要等待即可
+                Thread.yield(); //lost initialization race; just spin
+            //利用CAS操作将sizeCtl改为-1，若失败，说明有其他线程枪战成功，当前线程只需要等待即可
             else if (U.compareAndSwapInt(this, SIZECTL, sc, -1)) {
                 try {
-                    // 这里为什么需要double-check?
+                    //这里为什么需要double-check?
                     if ((tab = table) == null || tab.length == 0) {
                         int n = (sc > 0) ? sc : DEFAULT_CAPACITY;
                         @SuppressWarnings("unchecked")
                         Node<K,V>[] nt = (Node<K,V>[])new Node<?,?>[n];
                         table = tab = nt;
-                        // 这里将sc设定为0.75*n，当hashtable中元素个数达到该数值时，说明hashtable需要进行扩容操作了
+                        //这里将sc设定为0.75*n，当hashtable中元素个数达到该数值时，说明hashtable需要进行扩容操作了
                         sc = n - (n >>> 2);
                     }
                 } finally {
@@ -502,100 +502,100 @@ __transfer方法用于hashtable的扩张__
      */
     private final void transfer(Node<K,V>[] tab, Node<K,V>[] nextTab) {
         int n = tab.length, stride;
-        // 条件为真时，每个线程分片数量设置为MIN_TRANSFER_STRIDE
-            // 1. 当含有一个CPU时，且n<MIN_TRANSFER_STRIDE
-            // 2. 当含有多个CPU时，且n/8/NCPU<MIN_TRANSFER_STRIDE
+        //条件为真时，每个线程分片数量设置为MIN_TRANSFER_STRIDE
+            //1. 当含有一个CPU时，且n<MIN_TRANSFER_STRIDE
+            //2. 当含有多个CPU时，且n/8/NCPU<MIN_TRANSFER_STRIDE
         if ((stride = (NCPU > 1) ? (n >>> 3) / NCPU : n) < MIN_TRANSFER_STRIDE)
-            stride = MIN_TRANSFER_STRIDE; // subdivide range
-        // 当新表为空时，进行新表的初始化。这里没有加锁也没有CAS，如何保证只有一个线程执行了初始化操作???
-        if (nextTab == null) {            // initiating
+            stride = MIN_TRANSFER_STRIDE; //subdivide range
+        //当新表为空时，进行新表的初始化。这里没有加锁也没有CAS，如何保证只有一个线程执行了初始化操作???
+        if (nextTab == null) {            //initiating
             try {
                 @SuppressWarnings("unchecked")
                 Node<K,V>[] nt = (Node<K,V>[])new Node<?,?>[n << 1];
                 nextTab = nt;
-            } catch (Throwable ex) {      // try to cope with OOME
+            } catch (Throwable ex) {      //try to cope with OOME
                 sizeCtl = Integer.MAX_VALUE;
                 return;
             }
             nextTable = nextTab;
-            // 初始化分片索引
+            //初始化分片索引
             transferIndex = n;
         }
         int nextn = nextTab.length;
-        // 创建一个ForwardingNode节点用于标记已经transfer的bin/bucket
+        //创建一个ForwardingNode节点用于标记已经transfer的bin/bucket
         ForwardingNode<K,V> fwd = new ForwardingNode<K,V>(nextTab);
         boolean advance = true;
-        boolean finishing = false; // to ensure sweep before committing nextTab
-        // bound是当前线程所分得的分片的下边界，当前线程处理的分片区域为[bound,bound+stride)，即i∈[bound，nextIndex-1]
+        boolean finishing = false; //to ensure sweep before committing nextTab
+        //bound是当前线程所分得的分片的下边界，当前线程处理的分片区域为[bound,bound+stride)，即i∈[bound，nextIndex-1]
         for (int i = 0, bound = 0;;) {
             Node<K,V> f; int fh;
-            // 下面的循环递减i或者进行分片操作
+            //下面的循环递减i或者进行分片操作
             while (advance) {
                 int nextIndex, nextBound;
-                // 进行循环变量的递减操作
-                    // --i >= bound表示，当前领取的分片尚未处理完毕
-                    // finishing代表当前线程是最后一个线程
+                //进行循环变量的递减操作
+                    //--i >= bound表示，当前领取的分片尚未处理完毕
+                    //finishing代表当前线程是最后一个线程
                 if (--i >= bound || finishing)
                     advance = false;
-                // 没有分片可以领取了
+                //没有分片可以领取了
                 else if ((nextIndex = transferIndex) <= 0) {
                     i = -1;
                     advance = false;
                 }
-                // 重新尝试领取一个分片任务，通过CAS操作串行化分片领取操作
+                //重新尝试领取一个分片任务，通过CAS操作串行化分片领取操作
                 else if (U.compareAndSwapInt
                          (this, TRANSFERINDEX, nextIndex,
                           nextBound = (nextIndex > stride ?
                                        nextIndex - stride : 0))) {
-                    // 分片区间是[bound,nextIndex-1]
+                    //分片区间是[bound,nextIndex-1]
                     bound = nextBound;
                     i = nextIndex - 1;
                     advance = false;
                 }
             }
-            // 当前线程已经完成当前领取分片的节点转移任务
-                // 1. i < 0：当(nextIndex = transferIndex) <= 0时主动设置为-1，或者领取的就是[0,stride)的分片区间，并且该区间所有节点均已转移完成
-                // 2. i >= n：不懂
-                // 3. i + n >= nextn：不懂
+            //当前线程已经完成当前领取分片的节点转移任务
+                //1. i < 0：当(nextIndex = transferIndex) <= 0时主动设置为-1，或者领取的就是[0,stride)的分片区间，并且该区间所有节点均已转移完成
+                //2. i >= n：不懂
+                //3. i + n >= nextn：不懂
             if (i < 0 || i >= n || i + n >= nextn) {
                 int sc;
-                // 当前线程是执行transfer操作的最后一个线程，该线程负责收尾工作
+                //当前线程是执行transfer操作的最后一个线程，该线程负责收尾工作
                 if (finishing) {
                     nextTable = null;
                     table = nextTab;
                     sizeCtl = (n << 1) - (n >>> 1);
                     return;
                 }
-                // 当前线程不是执行transfer操作的最后一个线程，将sizeCtl-1，根据注释的说明，sizeCtl=-(1+numThread)，因此这里将线程的计数值递增(为什么是递增，不是应该递减么，这与注释的描述有点不一致)
-                // 其实线程数量的统计并不重要，重要的是必须保证只有一个线程来执行收尾工作，sc+1也好，sc-1也好，与(resizeStamp(n) << RESIZE_STAMP_SHIFT)+2的差值的绝对值就是线程数量
+                //当前线程不是执行transfer操作的最后一个线程，将sizeCtl-1，根据注释的说明，sizeCtl=-(1+numThread)，因此这里将线程的计数值递增(为什么是递增，不是应该递减么，这与注释的描述有点不一致)
+                //其实线程数量的统计并不重要，重要的是必须保证只有一个线程来执行收尾工作，sc+1也好，sc-1也好，与(resizeStamp(n) << RESIZE_STAMP_SHIFT)+2的差值的绝对值就是线程数量
                 if (U.compareAndSwapInt(this, SIZECTL, sc = sizeCtl, sc - 1)) {
-                    // addCount方法中，在第一个线程执行transfer方法时会将sizeCtl赋值为(resizeStamp(n) << RESIZE_STAMP_SHIFT)+2，因此这里用一个相同的值来判断是否还有其他线程存在
+                    //addCount方法中，在第一个线程执行transfer方法时会将sizeCtl赋值为(resizeStamp(n) << RESIZE_STAMP_SHIFT)+2，因此这里用一个相同的值来判断是否还有其他线程存在
                     if ((sc - 2) != resizeStamp(n) << RESIZE_STAMP_SHIFT)
                         return;
                     finishing = advance = true;
-                    i = n; // recheck before commit
+                    i = n; //recheck before commit
                 }
             }
-            // i指向的bin/bucket中没有节点，只需要将该节点赋值为fwd，即ForwardingNode节点即可，标记该bin/bucket已经转移到新表中了。这样其他线程在访问到原hashtable时，就可以进行判断
+            //i指向的bin/bucket中没有节点，只需要将该节点赋值为fwd，即ForwardingNode节点即可，标记该bin/bucket已经转移到新表中了。这样其他线程在访问到原hashtable时，就可以进行判断
             else if ((f = tabAt(tab, i)) == null)
                 advance = casTabAt(tab, i, null, fwd);
-            // i指向的bin/bucket中的节点已经是ForwardingNode节点了，因此已经处理完毕了
+            //i指向的bin/bucket中的节点已经是ForwardingNode节点了，因此已经处理完毕了
             else if ((fh = f.hash) == MOVED)
-                advance = true; // already processed
+                advance = true; //already processed
             else {
-                // 直接用内建的synchronized来进行加锁操作
+                //直接用内建的synchronized来进行加锁操作
                 synchronized (f) {
                     if (tabAt(tab, i) == f) {
                         Node<K,V> ln, hn;
-                        // 如果bin/bucket中存放的是链表
+                        //如果bin/bucket中存放的是链表
                         if (fh >= 0) {
-                            // 扩容后，某个槽位i中的节点的去向有两个，第一个就是原槽位i；另一个就是i+originTableSize，因此这里需要区分这两类节点
+                            //扩容后，某个槽位i中的节点的去向有两个，第一个就是原槽位i；另一个就是i+originTableSize，因此这里需要区分这两类节点
                             int runBit = fh & n;
                             Node<K,V> lastRun = f;
                             for (Node<K,V> p = f.next; p != null; p = p.next) {
                                 int b = p.hash & n;
                                 if (b != runBit) {
-                                    // 这里需要重新改变一下runBit，目的是为了提高效率，当这个for循环结束时，lastRun之后的节点都是同一类的，只需要移动lastRun即可，不需要一个个节点移动，而对于之前的节点，则需要遍历来确定具体的槽位
+                                    //这里需要重新改变一下runBit，目的是为了提高效率，当这个for循环结束时，lastRun之后的节点都是同一类的，只需要移动lastRun即可，不需要一个个节点移动，而对于之前的节点，则需要遍历来确定具体的槽位
                                     runBit = b;
                                     lastRun = p;
                                 }
@@ -608,7 +608,7 @@ __transfer方法用于hashtable的扩张__
                                 hn = lastRun;
                                 ln = null;
                             }
-                            // 遍历lastRun之前的节点
+                            //遍历lastRun之前的节点
                             for (Node<K,V> p = f; p != lastRun; p = p.next) {
                                 int ph = p.hash; K pk = p.key; V pv = p.val;
                                 if ((ph & n) == 0)
@@ -621,7 +621,7 @@ __transfer方法用于hashtable的扩张__
                             setTabAt(tab, i, fwd);
                             advance = true;
                         }
-                        // 如果bin/bucket中存放的是红黑树
+                        //如果bin/bucket中存放的是红黑树
                         else if (f instanceof TreeBin) {
                             TreeBin<K,V> t = (TreeBin<K,V>)f;
                             TreeNode<K,V> lo = null, loTail = null;
@@ -631,7 +631,7 @@ __transfer方法用于hashtable的扩张__
                                 int h = e.hash;
                                 TreeNode<K,V> p = new TreeNode<K,V>
                                     (h, e.key, e.val, null, null);
-                                // 同样，槽位i中的红黑树的节点也有两个去向，要么是槽位i，要么是槽位i+originTableSize
+                                //同样，槽位i中的红黑树的节点也有两个去向，要么是槽位i，要么是槽位i+originTableSize
                                 if ((h & n) == 0) {
                                     if ((p.prev = loTail) == null)
                                         lo = p;
@@ -682,14 +682,14 @@ __addCount方法用于更新键值对计数值baseCount__
      */
     private final void addCount(long x, int check) {
         CounterCell[] as; long b, s;
-        // 条件成立时
-            // 1. counterCells != null 说明有冲突，baseCount的数值的更新需要结合counterCells
-            // 2. baseCount CAS更新失败
+        //条件成立时
+            //1. counterCells != null 说明有冲突，baseCount的数值的更新需要结合counterCells
+            //2. baseCount CAS更新失败
         if ((as = counterCells) != null ||
             !U.compareAndSwapLong(this, BASECOUNT, b = baseCount, s = b + x)) {
             CounterCell a; long v; int m;
             boolean uncontended = true;
-            // 此时已经出现冲突，但是counterCells尚未初始化，那么调用fullAddCount进行初始化操作
+            //此时已经出现冲突，但是counterCells尚未初始化，那么调用fullAddCount进行初始化操作
             if (as == null || (m = as.length - 1) < 0 ||
                 (a = as[ThreadLocalRandom.getProbe() & m]) == null ||
                 !(uncontended =
@@ -728,27 +728,27 @@ __addCount方法用于更新键值对计数值baseCount__
 __fullAddCount方法用于__
 
 ```Java
-    // See LongAdder version for explanation
+    //See LongAdder version for explanation
     private final void fullAddCount(long x, boolean wasUncontended) {
         int h;
-        // h可以认为是获取的一个随机数
+        //h可以认为是获取的一个随机数
         if ((h = ThreadLocalRandom.getProbe()) == 0) {
-            ThreadLocalRandom.localInit();      // force initialization
+            ThreadLocalRandom.localInit();      //force initialization
             h = ThreadLocalRandom.getProbe();
             wasUncontended = true;
         }
-        boolean collide = false;                // True if last slot nonempty
+        boolean collide = false;                //True if last slot nonempty
         for (;;) {
             CounterCell[] as; CounterCell a; int n; long v;
-            // 如果counterCells已经初始化
+            //如果counterCells已经初始化
             if ((as = counterCells) != null && (n = as.length) > 0) {
                 if ((a = as[(n - 1) & h]) == null) {
-                    if (cellsBusy == 0) {            // Try to attach new Cell
-                        CounterCell r = new CounterCell(x); // Optimistic create
+                    if (cellsBusy == 0) {            //Try to attach new Cell
+                        CounterCell r = new CounterCell(x); //Optimistic create
                         if (cellsBusy == 0 &&
                             U.compareAndSwapInt(this, CELLSBUSY, 0, 1)) {
                             boolean created = false;
-                            try {               // Recheck under lock
+                            try {               //Recheck under lock
                                 CounterCell[] rs; int m, j;
                                 if ((rs = counterCells) != null &&
                                     (m = rs.length) > 0 &&
@@ -761,23 +761,23 @@ __fullAddCount方法用于__
                             }
                             if (created)
                                 break;
-                            continue;           // Slot is now non-empty
+                            continue;           //Slot is now non-empty
                         }
                     }
                     collide = false;
                 }
-                else if (!wasUncontended)       // CAS already known to fail
-                    wasUncontended = true;      // Continue after rehash
+                else if (!wasUncontended)       //CAS already known to fail
+                    wasUncontended = true;      //Continue after rehash
                 else if (U.compareAndSwapLong(a, CELLVALUE, v = a.value, v + x))
                     break;
                 else if (counterCells != as || n >= NCPU)
-                    collide = false;            // At max size or stale
+                    collide = false;            //At max size or stale
                 else if (!collide)
                     collide = true;
                 else if (cellsBusy == 0 &&
                          U.compareAndSwapInt(this, CELLSBUSY, 0, 1)) {
                     try {
-                        if (counterCells == as) {// Expand table unless stale
+                        if (counterCells == as) {//Expand table unless stale
                             CounterCell[] rs = new CounterCell[n << 1];
                             for (int i = 0; i < n; ++i)
                                 rs[i] = as[i];
@@ -787,16 +787,16 @@ __fullAddCount方法用于__
                         cellsBusy = 0;
                     }
                     collide = false;
-                    continue;                   // Retry with expanded table
+                    continue;                   //Retry with expanded table
                 }
                 h = ThreadLocalRandom.advanceProbe(h);
             }
-            // counterCells尚未初始化
+            //counterCells尚未初始化
             else if (cellsBusy == 0 && counterCells == as &&
                      U.compareAndSwapInt(this, CELLSBUSY, 0, 1)) {
                 boolean init = false;
-                try {                           // Initialize table
-                    // 初始化counterCells
+                try {                           //Initialize table
+                    //初始化counterCells
                     if (counterCells == as) {
                         CounterCell[] rs = new CounterCell[2];
                         rs[h & 1] = new CounterCell(x);
@@ -810,7 +810,7 @@ __fullAddCount方法用于__
                     break;
             }
             else if (U.compareAndSwapLong(this, BASECOUNT, v = baseCount, v + x))
-                break;                          // Fall back on using base
+                break;                          //Fall back on using base
         }
     }
 ```
