@@ -156,3 +156,4 @@ __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时
 * [Hexo文章简单加密访问](https://www.jianshu.com/p/a2330937de6c)
 * [hexo的next主题个性化配置教程](https://segmentfault.com/a/1190000009544924)
 * [icon库](https://fontawesome.com/icons?d=gallery)
+* [Leancloud访客统计插件重大安全漏洞修复指南](https://leaferx.online/2018/02/11/lc-security/)
