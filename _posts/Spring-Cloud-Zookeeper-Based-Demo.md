@@ -263,13 +263,98 @@ spring:
 
 ## 4.5 Test
 
-启动后，可以在zookeeper中查询到节点信息
+启动后，执行`bin/zkCli.sh`运行Zookeeper客户端交互程序
 
 ```sh
-bin/zkCli.sh # 进入zookeeper交互界面
+# 查询`/services`路径下的服务，即注册到zookeeper的应用
+[zk: localhost:2181(CONNECTED) 34] ls /services
+[ZookeeperProvider]
 
-ls /services # 查询`/services`路径下的服务，即注册到zookeeper的应用
+# 查看ZookeeperProvider服务的信息
+[zk: localhost:2181(CONNECTED) 36] get /services/ZookeeperProvider
+
+cZxid = 0x19
+ctime = Sat Jul 14 14:58:20 CST 2018
+mZxid = 0x19
+mtime = Sat Jul 14 14:58:20 CST 2018
+pZxid = 0x1e
+cversion = 3
+dataVersion = 0
+aclVersion = 0
+ephemeralOwner = 0x0
+dataLength = 0
+numChildren = 1
+
+# 我们发现，上述节点信息中，并没有任何节点数据
+# 奇怪的是，`numnumChildren`是1，说明有子节点
+# 继续查看ZookeeperProvider的子节点
+[zk: localhost:2181(CONNECTED) 37] ls /services/ZookeeperProvider
+[b3735b44-3e69-4a1c-9de9-c7c813767bb6]
+
+# 继续查看子节点的节点信息
+[zk: localhost:2181(CONNECTED) 38] get /services/ZookeeperProvider/b3735b44-3e69-4a1c-9de9-c7c813767bb6
+{"name":"ZookeeperProvider","id":"b3735b44-3e69-4a1c-9de9-c7c813767bb6","address":"192.168.31.104","port":1110,"sslPort":null,"payload":{"@class":"org.springframework.cloud.zookeeper.discovery.ZookeeperInstance","id":"application-1","name":"ZookeeperProvider","metadata":{}},"registrationTimeUTC":1531551844868,"serviceType":"DYNAMIC","uriSpec":{"parts":[{"value":"scheme","variable":true},{"value":"://","variable":false},{"value":"address","variable":true},{"value":":","variable":false},{"value":"port","variable":true}]}}
+cZxid = 0x1e
+ctime = Sat Jul 14 15:04:05 CST 2018
+mZxid = 0x1e
+mtime = Sat Jul 14 15:04:05 CST 2018
+pZxid = 0x1e
+cversion = 0
+dataVersion = 0
+aclVersion = 0
+ephemeralOwner = 0x1000013a8d70003
+dataLength = 525
+numChildren = 0
 ```
+
+上述`/services/ZookeeperProvider/b3735b44-3e69-4a1c-9de9-c7c813767bb6`节点的节点内容如下（后面那串字符串是随机生成的临时id，你电脑上极大概率是不同的）
+
+```JSON
+{
+    "name": "ZookeeperProvider", 
+    "id": "b3735b44-3e69-4a1c-9de9-c7c813767bb6", 
+    "address": "192.168.31.104", 
+    "port": 1110, 
+    "sslPort": null, 
+    "payload": {
+        "@class": "org.springframework.cloud.zookeeper.discovery.ZookeeperInstance", 
+        "id": "application-1", 
+        "name": "ZookeeperProvider", 
+        "metadata": { }
+    }, 
+    "registrationTimeUTC": 1531551844868, 
+    "serviceType": "DYNAMIC", 
+    "uriSpec": {
+        "parts": [
+            {
+                "value": "scheme", 
+                "variable": true
+            }, 
+            {
+                "value": "://", 
+                "variable": false
+            }, 
+            {
+                "value": "address", 
+                "variable": true
+            }, 
+            {
+                "value": ":", 
+                "variable": false
+            }, 
+            {
+                "value": "port", 
+                "variable": true
+            }
+        ]
+    }
+}
+```
+
+于是，我们可以得出结论：
+
+1. __Spring-Cloud-Zookeeper在注册服务时，会根据服务名创建一个节点（一个服务对应一个节点），其路径为`/services/<service name>`__
+1. __一个服务可能会有多个实例存在，每个实例对应着一个子节点，子节点的名称是一个类似uuid的字符串，且子节点保存着对应实例的注册信息，包括ip，port等一系列元数据__
 
 # 5 Ribbon-Consumer
 
@@ -496,12 +581,12 @@ spring:
 
 ## 5.6 Test
 
-启动后，可以在zookeeper中查询到节点信息
+启动后，执行`bin/zkCli.sh`运行Zookeeper客户端交互程序
 
 ```sh
-bin/zkCli.sh # 进入zookeeper交互界面
-
-ls /services # 查询`/services`路径下的服务，即注册到zookeeper的应用
+# 查询`/services`路径下的服务，即注册到zookeeper的应用
+[zk: localhost:2181(CONNECTED) 39] ls /services
+[ZookeeperProvider, RibbonConsumer]
 ```
 
 同时，访问[http://localhost:1120/demo/ribbon/sayHi?name=strange](http://localhost:1120/demo/ribbon/sayHi?name=strange)可以看到提示信息
@@ -733,12 +818,12 @@ spring:
 
 ## 6.6 Test
 
-启动后，可以在zookeeper中查询到节点信息
+启动后，执行`bin/zkCli.sh`运行Zookeeper客户端交互程序
 
 ```sh
-bin/zkCli.sh # 进入zookeeper交互界面
-
-ls /services # 查询`/services`路径下的服务，即注册到zookeeper的应用
+# 查询`/services`路径下的服务，即注册到zookeeper的应用
+[zk: localhost:2181(CONNECTED) 40] ls /services
+[ZookeeperProvider, FeignConsumer, RibbonConsumer]
 ```
 
 同时，访问[http://localhost:1130/demo/feign/sayHi?name=strange](http://localhost:1130/demo/feign/sayHi?name=strange)可以看到提示信息
@@ -906,12 +991,12 @@ spring:
 
 ## 7.4 Test
 
-启动后，可以在zookeeper中查询到节点信息
+启动后，执行`bin/zkCli.sh`运行Zookeeper客户端交互程序
 
 ```sh
-bin/zkCli.sh # 进入zookeeper交互界面
-
-ls /services # 查询`/services`路径下的服务，即注册到zookeeper的应用
+# 查询`/services`路径下的服务，即注册到zookeeper的应用
+[zk: localhost:2181(CONNECTED) 42] ls /services
+[ZookeeperProvider, FeignConsumer, ConfigServer, RibbonConsumer]
 ```
 
 同时，访问以下URL，可以获取配置信息
@@ -1126,7 +1211,6 @@ spring:
     config:
       profile: dev                  # 指定配置中心配置文件的{profile}
       label: master                 # 指定配置中心配置文件的{label}
-      uri: http://localhost:1140
       discovery:
         enabled: true               # 使用注册中心里面已注册的配置中心
         serviceId: ConfigServer     # 指定配置中心注册到注册中心的serviceId
@@ -1137,12 +1221,14 @@ spring:
 
 ## 8.5 Test
 
-启动后，可以在zookeeper中查询到节点信息
+启动后，执行`bin/zkCli.sh`运行Zookeeper客户端交互程序
 
 ```sh
-bin/zkCli.sh # 进入zookeeper交互界面
+# 查询`/services`路径下的服务，即注册到zookeeper的应用
+[zk: localhost:2181(CONNECTED) 103] ls /services
+[ZookeeperProvider, FeignConsumer, ConfigServer, RibbonConsumer]
 
-ls /services # 查询`/services`路径下的服务，即注册到zookeeper的应用
+# 并没有发现名为`cloud.config.demo`的服务，很奇怪
 ```
 
 同时，访问如下URL，可以看到成功从`config-server`获取了配置信息
