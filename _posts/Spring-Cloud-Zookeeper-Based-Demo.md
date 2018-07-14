@@ -1201,6 +1201,7 @@ server:
 
 * `spring.application.name`：它应该配置在`bootstrap.yml`，它的名字应该等于配置中心的配置文件的`{application}`。__所以配置中心在给配置文件取名字时，最好让它等于对应的应用服务名__
 * __配置中心与注册中心联合使用：若应用通过`serviceId`而非`url`来指定配置中心__，则`spring.cloud.zookeeper.connect-string`也要配置在`bootstrap.yml`，要不启动的时候，应用会找不到注册中心，自然也就找不到配置中心了
+* __此外还必须配置`spring.cloud.zookeeper.discovery.register`属性。按照Spring-Cloud的官方文档，该属性默认是true，但是配置了`spring.cloud.config`相关配置项后，必须手动将`spring.cloud.zookeeper.discovery.register`属性设置为true，否则将不会注册到Zookeeper中__
 
 ```yml
 spring:
@@ -1216,6 +1217,8 @@ spring:
         serviceId: ConfigServer     # 指定配置中心注册到注册中心的serviceId
 
     zookeeper:
+      discovery:
+        register: true              # 当前应用注册到Zookeeper中，其默认值为true，但是由于配置了`spring.cloud.config`的相关属性，还需要手动设置为true
       connect-string: localhost:2181
 ```
 
@@ -1225,10 +1228,8 @@ spring:
 
 ```sh
 # 查询`/services`路径下的服务，即注册到zookeeper的应用
-[zk: localhost:2181(CONNECTED) 103] ls /services
-[ZookeeperProvider, FeignConsumer, ConfigServer, RibbonConsumer]
-
-# 并没有发现名为`cloud.config.demo`的服务，很奇怪
+[zk: localhost:2181(CONNECTED) 126] ls /services
+[ZookeeperProvider, cloud.config.demo, FeignConsumer, ConfigServer, RibbonConsumer]
 ```
 
 同时，访问如下URL，可以看到成功从`config-server`获取了配置信息
