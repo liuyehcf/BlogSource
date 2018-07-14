@@ -46,15 +46,15 @@ Zookeeper客户端提供如下命令（可用`help`查看）
 1. __`rmr`__：移除指定的znode并递归其所有子节点
 1. __`delete`__：移除指定的znode节点（该节点不能有孩子节点）
 1. __`stat`__：获取节点的状态信息
-1. __`setquota`__
-1. __`delquota`__
+1. __`listquota`__：查询节点的配额
+1. __`setquota`__：设置节点的配额
+1. __`delquota`__：删除节点的配额
 1. __`getAcl`__：获取ACL权限
 1. __`setAcl`__：设置ACL权限
 1. __`history`__：列出命令历史
 1. __`redo`__：重新执行指定命令
 1. __`printwatches`__：开启/关闭在输出流打印watch触发的信息
-1. __`sync`__
-1. __`listquota`__
+1. __`sync`__：同步
 1. __`addauth`__：添加授权用户信息
 1. __`quit`__：关闭当前Zookeeper会话（连接），并退出客户端程序
 1. __`close`__：仅关闭当前Zookeeper会话（连接）
@@ -80,14 +80,16 @@ znode包含如下状态
 
 __Zookeeper使用ACL来控制访问znode__。ACL的实现和UNIX的实现非常相似：它采用权限位来控制那些操作被允许，那些操作被禁止。但是和标准的UNIX权限不同的是，znode没有限制用户（user，即文件的所有者），组（group）和其他（world）。Zookeepr是没有所有者的概念的
 
-__每个znode的ACL是独立的，且子节点不会继承父节点的ACL__。例如：znode /app对于ip为172.16.16.1只有只读权限，而/app/status是world可读，那么任何人都可以获取/app/status;所以在Zookeeper中权限是没有继承和传递关系的，每个znode的权限都是独立存在的
+__每个znode的ACL是独立的，且子节点不会继承父节点的ACL__。例如：znode `/app`对于ip为172.16.16.1只有只读权限，而`/app/status`是world可读，那么任何人都可以获取`/app/status`;所以在Zookeeper中权限是没有继承和传递关系的，每个znode的权限都是独立存在的
+
+__ACL权限是针对当前会话（连接）起作用的__。例如，在当前会话中执行`addauth digest user1:password1`以及`setAcl /app auth:user1:password1:crwda`。那么此时开启另一个会话后，对`/app`节点是没有访问权限的，通过执行`addauth digest user1:password1`可以获取到`/app`节点的相关权限。__因此`addauth digest <username>:<password>`命令，就是给当前会话增加了某个角色，从而能够获取到该角色的权限__
 
 __Zookeeper支持可插拔的权限认证方案，分为三个维度__：
 
 1. __`scheme`__：表示使用何种方式来进行访问控制
-1. __`id`__：表示在指定scheme下的用户
+1. __`id`__：表示在指定scheme下的__表达式__（该表达式可能包含`:`）
 1. __`permission`__：表示有什么权限
-* 通常表示为`scheme:id:permissions`
+* 通常表示为`<scheme>:<id>:<permissions>`
 
 __Zookeeper支持如下几种permission__
 
@@ -100,9 +102,22 @@ __Zookeeper支持如下几种permission__
 __Zookeeper支持如下几种scheme__
 
 1. __world__：只有一个id，即`anyone`
-1. __auth__：不需要任何id，只要是通过auth的user都有权限。__当使用addauth命令添加多个认证用户后（作用域是当前会话，关闭会话后，添加的认证用户即被清除了），使用auth策略来设置acl，那么所有认证过的用户都被会加入到acl中__
-1. __digest__：使用用户名/密码的方式验证，采用`username:BASE64(SHA1(password))`的字符串作为ACL的ID
+    * __`ACL Exp`__：`world:anyone:<permissions>`
+1. __auth__：可以指定id或不用id，只要是通过auth的user都有权限。__当使用addauth命令添加多个认证用户后（作用域是当前会话，关闭会话后，添加的认证用户即被清除了），使用auth策略来设置acl，那么所有认证过的用户都被会加入到acl中__
+    * __`ACL Exp`__：`auth::<permissions>`
+    * __`ACL Exp`__：`auth:<username>:<password>:<permissions>`
+1. __digest__：使用用户名/密码的方式验证，采用`<username>:BASE64(SHA1(<username>:<password>))`的字符串作为ACL的`id`
+    * __`ACL Exp`__：`digest:<username>:<encriedUserPassowrd>:<permissions>`
+    * 其中，`<encriedUserPassowrd>=BASE64(SHA1(<username>:<password>))`，__换言之，你得自己做加密操作__
+    * __`echo -n <username>:<password> | openssl dgst -binary -sha1 | openssl base64`可以实现加密功能__
 1. __ip__：使用客户端的IP地址作为ACL的ID，设置的时候可以设置一个IP段，比如ip:192.168.1.0/16, 表示匹配前16个bit的IP段
+    * __`ACL Exp`__：`ip:192.168.0.1:<permissions>`
+    * __`ACL Exp`__：`ip:192.168.0.0/16:<permissions>`
+
+__设定ACL权限后，忘记密码怎么办__
+
+1. 如果这个节点是`/`的子节点，由于我们有`/`目录的权限，所以我们还是可以通过`delete`来删除这个节点的
+1. 如果这个节点不是`/`的子节点，且父节点也没有权限，那么只能通过__设置配置文件`skipACL=yes`然后重启服务__，这样就能跳过acl控制
 
 # 7 Watch
 
@@ -455,31 +470,89 @@ WATCHER::
 WatchedEvent state:SyncConnected type:NodeDataChanged path:/FirstNode
 ```
 
-# 16 setquota
+# 16 listquota
 
-__描述__：
+__描述__：查询节点的配额，其中`-1`表示不限制
+
+__语法__
+
+* `listquota path`
+
+__参数解释__
+
+* `path`：必填参数，节点路径
+
+__示例__
+
+```sh
+# 查询节点配额
+[zk: localhost:2181(CONNECTED) 26] listquota /app
+absolute path is /zookeeper/quota/app/zookeeper_limits
+Output quota for /app count=-1,bytes=10000
+Output stat for /app count=1,bytes=4
+
+# 该结果表明，节点数量不限，大小限制为10000byte
+# 当前节点数量为1，大小为4
+```
+
+# 17 setquota
+
+__描述__：设置节点的配额（__一旦节点配额被设定，便不能重写，只能删掉再设置__）
 
 __语法__
 
 * `setquota -n|-b val path`
 
+__选项解释__
+
+* `-n`：设置节点个数（包括当前节点以及所有子节点，包括层层嵌套的子节点）
+* `-b`：设置节点的数据大小（包括当前节点以及所有子节点，包括层层嵌套的子节点）
+* __只能选择其中之一进行设置__
+
 __参数解释__
+
+* `val`：必填参数，设置的值
+* `path`：必填参数，节点路径
 
 __示例__
 
-# 17 delquota
+```sh
+# 为节点 /app 设置配额，节点数量为100
+[zk: localhost:2181(CONNECTED) 23] setquota -n 100 /app
+Comment: the parts are option -n val 100 path /app
 
-__描述__：
+# 为节点 /app 设置配额，节点大小为10000bytes
+[zk: localhost:2181(CONNECTED) 25] setquota -b 10000 /app
+Comment: the parts are option -b val 10000 path /app
+```
+
+# 18 delquota
+
+__描述__：删除节点的配额
 
 __语法__
 
 * `delquota [-n|-b] path`
 
+__选项解释__
+
+* `-n`：删除节点数量限制，置为`-1`
+* `-b`：删除节点大小限制，置为`-1`
+* 不填选项代表删除配额设置，此时用`listquota`查询配额会报错
+
 __参数解释__
+
+* `path`：必填参数，节点路径
 
 __示例__
 
-# 18 getAcl
+```sh
+[zk: localhost:2181(CONNECTED) 38] delquota -b /app
+[zk: localhost:2181(CONNECTED) 39] delquota -n /app
+[zk: localhost:2181(CONNECTED) 40] delquota /app
+```
+
+# 19 getAcl
 
 __描述__：获取ACL权限
 
@@ -500,7 +573,7 @@ __示例__
 : cdrwa
 ```
 
-# 19 setAcl
+# 20 setAcl
 
 __描述__：设置ACL权限
 
@@ -516,7 +589,7 @@ __参数解释__
 __示例__
 
 ```sh
-# 设置节点ACL权限
+# 设置节点ACL权限(world schema)
 [zk: localhost:2181(CONNECTED) 8] setAcl /FirstNode world:anyone:cr
 cZxid = 0xea
 ctime = Sat Jul 14 18:51:25 CST 2018
@@ -530,7 +603,7 @@ ephemeralOwner = 0x0
 dataLength = 1
 numChildren = 0
 
-# 添加授权用户，然后设置节点的ACL权限
+# 添加授权用户，然后设置节点的ACL权限(auth schema)
 # 必须要先addauth，否则在当前会话中，如果没有授权用户，那么使用auth作为acl将会失败
 [zk: localhost:2181(CONNECTED) 27] addauth digest user1:passowrd1
 [zk: localhost:2181(CONNECTED) 28] setAcl /ThirdNode auth::crwda
@@ -545,9 +618,54 @@ aclVersion = 1
 ephemeralOwner = 0x0
 dataLength = 6
 numChildren = 0
+
+# 添加授权用户，然后设置节点的ACL权限(auth schema)
+# 必须要先addauth，否则在当前会话中，如果没有授权用户，那么使用auth作为acl将会失败
+[zk: localhost:2181(CONNECTED) 9] addauth digest user2:password2
+[zk: localhost:2181(CONNECTED) 10] setAcl /ThirdNode auth:user2:password:crwda
+cZxid = 0x29
+ctime = Sat Jul 14 22:34:23 CST 2018
+mZxid = 0x29
+mtime = Sat Jul 14 22:34:23 CST 2018
+pZxid = 0x29
+cversion = 0
+dataVersion = 0
+aclVersion = 3
+ephemeralOwner = 0x0
+dataLength = 4
+numChildren = 0
+
+# 设置acl权限(digest schema)
+# 其中<password>部分利用`echo -n user1:password1 | openssl dgst -binary -sha1 | openssl base64`命令计算得到
+[zk: localhost:2181(CONNECTED) 1] setAcl /ThirdNode digest:user1:XDkd2dsEuhc9ImU3q8pa8UOdtpI=:crwda
+cZxid = 0x29
+ctime = Sat Jul 14 22:34:23 CST 2018
+mZxid = 0x29
+mtime = Sat Jul 14 22:34:23 CST 2018
+pZxid = 0x29
+cversion = 0
+dataVersion = 0
+aclVersion = 1
+ephemeralOwner = 0x0
+dataLength = 4
+numChildren = 0
+
+# 设置acl权限(ip schema)
+[zk: localhost:2181(CONNECTED) 11] setAcl /ThirdNode ip:192.168.1.1:crwda
+cZxid = 0x29
+ctime = Sat Jul 14 22:34:23 CST 2018
+mZxid = 0x29
+mtime = Sat Jul 14 22:34:23 CST 2018
+pZxid = 0x29
+cversion = 0
+dataVersion = 0
+aclVersion = 4
+ephemeralOwner = 0x0
+dataLength = 4
+numChildren = 0
 ```
 
-# 20 history
+# 21 history
 
 __描述__：列出命令历史
 
@@ -573,7 +691,7 @@ __示例__
 59 - history
 ```
 
-# 21 redo
+# 22 redo
 
 __描述__：重新执行指定命令
 
@@ -603,7 +721,7 @@ __示例__
 62 - history
 ```
 
-# 22 printwatches
+# 23 printwatches
 
 __描述__：开启/关闭在输出流打印watch触发的信息
 
@@ -626,9 +744,9 @@ __示例__
 [zk: localhost:2181(CONNECTED) 71] printwatches off
 ```
 
-# 23 sync
+# 24 sync
 
-__描述__：
+__描述__：同步
 
 __语法__
 
@@ -636,19 +754,15 @@ __语法__
 
 __参数解释__
 
-__示例__
-
-# 24 listquota
-
-__描述__：
-
-__语法__
-
-* `listquota path`
-
-__参数解释__
+* `path`：必填参数，节点路径
 
 __示例__
+
+```sh
+# 强制同步 /app 的数据
+[zk: localhost:2181(CONNECTED) 45] sync /app
+[zk: localhost:2181(CONNECTED) 46] Sync returned 0
+```
 
 # 25 addauth
 
@@ -742,3 +856,4 @@ WatchedEvent state:SyncConnected type:None path:null
 * [Zookeeper ACL权限控制](https://blog.csdn.net/qianshangding0708/article/details/50114671)
 * [ZooKeeper commands](http://www.corejavaguru.com/bigdata/zookeeper/cli)
 * [Zookeeper03 - Zookeeper之ACL](https://blog.csdn.net/cdu09/article/details/51637451)
+* [Zookeeper权限管理之坑](https://www.jianshu.com/p/147ca2533aff)

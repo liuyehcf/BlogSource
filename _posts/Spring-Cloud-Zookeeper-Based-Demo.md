@@ -76,7 +76,7 @@ __本Demo工程（`spring-cloud-cluster-zookeeper-based`）包含了如下几个
 
 首先，需要在本机安装zookeeper，然后启动zookeeper作为本Demo的注册中心
 
-具体步骤，请移步{% post_link Zookeeper-Demo %}，由于篇幅原因，这里不再赘述
+具体步骤，请移步{% post_link Zookeeper-Overview %}，由于篇幅原因，这里不再赘述
 
 zookeeper启动地址为__`http://localhost:2181`__
 
