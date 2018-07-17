@@ -258,7 +258,13 @@ case 值 in
 esac
 ```
 
-# 5 参考
+# 5 方法
+
+## 5.1 read
+
+读取用户输入
+
+# 6 参考
 
 * [shell教程](http://www.runoob.com/linux/linux-shell.html)
 * [Shell脚本8种字符串截取方法总结](https://www.jb51.net/article/56563.htm)
