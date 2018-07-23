@@ -27,9 +27,61 @@ count=10
 seq 0 $(($count-1))
 ```
 
-# 2 字符串
+# 2 判断式
 
-## 2.1 拼接字符串
+__关于某个文件名的“文件类型”判断，如`test -e filename`__
+
+* __`-e`：该文件名是否存在__
+* __`-f`：该文件名是否存在且为文件__
+* __`-d`：该文件名是否存在且为目录__
+* `-b`：该文件名是否存在且为一个block device设备
+* `-c`：该文件名是否存在且为一个character device设备
+* `-S`：该文件名是否存在且为一个Socket文件
+* `-p`：该文件名是否存在且为以FIFO(pipe)文件
+* `-L`：该文件名是否存在且为一个链接文件
+
+__关于文件的权限检测，如`test -r filename`__
+
+* __`-r`：检测该文件名是否存在且具有"可读"的权限__
+* __`-w`：检测该文件名是否存在且具有"可写"的权限__
+* __`-x`：检测该文件名是否存在且具有"可执行"的权限__
+* `-u`：检测该文件名是否存在且具有"SUID"的属性
+* `-g`：检测该文件名是否存在且具有"GUID"的属性
+* `-k`：检测该文件名是否存在且具有"Sticky bit(SBIT)"的属性
+* `-s`：检测该文件名是否存在且为"非空白文件"
+
+__两个文件之间的比较，如`test file1 -nt file2`__
+
+* `-nt`：(newer than) 判断file1是否比file2新
+* `-ot`：(older than) 判断file1是否比file2旧
+* `-ef`：判断file1与file2是否为同一文件，可用在判断hard link的判断上，主要意义在于判断两个文件是否均指向同一个inode
+
+__数值比较，如`test n1 -eq n2`__
+
+* __`-eq`：两数值相等(equal)__
+* __`-ne`：两数值不等(not equal)__
+* __`-gt`：n1大于n1(greater than)__
+* __`-lt`：n1小于n2(less than)__
+* __`-ge`：n1大于等于n2(greater than or equal)__
+* __`-le`：n1小于n2(less than or equal)__
+
+__字符串比较，例如`test n1 == n2`__
+
+* __`-z` string`：判定字符串是否为空，空返回true__
+* __`-n`：判断字符串是否为空，非空返回true__
+* __`=`或`==`：判断str1是否等于str2，好像有问题，使用中括号正确__
+* __`!=`：判断str1是否等于str2，好像有问题，使用中括号正确__
+* __字符串变量的引用方式：`"${var_name}"`__
+
+__逻辑与/或/非__
+
+* __`-a`：两个条件同时成立，返回true，如test -r file1 -a -x file2__
+* __`-o`：任一条件成立，返回true，如test -r file1 -o -x file2__
+* __`!`：反向状态__
+
+# 3 字符串
+
+## 3.1 拼接字符串
 
 ```sh
 your_name="qinjx"
@@ -37,14 +89,14 @@ greeting="hello, "${your_name}" \!"
 echo ${greeting}
 ```
 
-## 2.2 获取字符串长度
+## 3.2 获取字符串长度
 
 ```sh
 text="abcdefg"
 echo "字符串长度为 ${#text}"
 ```
 
-## 2.3 提取子字符串
+## 3.3 提取子字符串
 
 下面以字符串`http://www.aaa.com/123.htm`为例，介绍几种不同的截取方式
 
@@ -122,7 +174,7 @@ var='http://www.aaa.com/123.htm'
 echo ${var:0-7}
 ```
 
-# 3 数组
+# 4 数组
 
 Shell 数组用括号来表示，元素用`空格`符号分割开，语法格式如下：
 
@@ -157,9 +209,9 @@ do
 done
 ```
 
-# 4 控制流
+# 5 控制流
 
-## 4.1 if
+## 5.1 if
 
 ```sh
 if condition
@@ -171,7 +223,7 @@ then
 fi
 ```
 
-## 4.2 if else
+## 5.2 if else
 
 ```sh
 if condition
@@ -185,7 +237,7 @@ else
 fi
 ```
 
-## 4.3 if else-if else
+## 5.3 if else-if else
 
 ```sh
 if condition1
@@ -199,7 +251,7 @@ else
 fi
 ```
 
-## 4.4 for
+## 5.4 for
 
 ```sh
 for var in item1 item2 ... itemN
@@ -221,7 +273,7 @@ do
 done
 ```
 
-## 4.5 while
+## 5.5 while
 
 ```sh
 while condition
@@ -230,7 +282,7 @@ do
 done
 ```
 
-## 4.6 until
+## 5.6 until
 
 ```sh
 until condition
@@ -239,7 +291,7 @@ do
 done
 ```
 
-## 4.7 case
+## 5.7 case
 
 ```sh
 case 值 in
@@ -258,13 +310,13 @@ case 值 in
 esac
 ```
 
-# 5 方法
+# 6 方法
 
-## 5.1 read
+## 6.1 read
 
 读取用户输入
 
-# 6 参考
+# 7 参考
 
 * [shell教程](http://www.runoob.com/linux/linux-shell.html)
 * [Shell脚本8种字符串截取方法总结](https://www.jb51.net/article/56563.htm)

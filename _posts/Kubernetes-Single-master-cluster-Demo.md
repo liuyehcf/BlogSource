@@ -1,5 +1,5 @@
 ---
-title: Kubernetes-Single-master-cluster-Demo
+title: Kubernetes-Single-Master-Cluster-Demo
 date: 2018-07-17 21:01:40
 tags: 
 - 原创
@@ -29,17 +29,23 @@ __tips__
 
 __首先，需要关闭Swap，否则kubelet可能会不正常工作__
 
-1. `swapon -s`：查看swap的设备
-1. `swapoff <file-path>`：关闭对应的设备
-1. `swapoff -a`：关闭所有swap设备
+```sh
+swapon -s # 查看swap的设备
+swapoff <file-path> # 关闭对应的设备
+swapoff -a # 关闭所有swap设备
+```
 
 ## 2.2 关闭防火墙
 
 省点事，真的，别费劲了
 
-`systemctl stop firewalld`
+```sh
+systemctl stop firewalld
+```
 
 ## 2.3 修改hostname
+
+__所有node的hostname必须不一样，这个很关键！因为k8s是通过hostname来路由的__
 
 ```sh
 hostnamectl set-hostname <name>
@@ -47,29 +53,37 @@ hostnamectl set-hostname <name>
 
 ## 2.4 检查mac地址以及UUID
 
-执行`ifconfig -a`，发现没有该命令！！！（我下载的镜像是Minimal，并且是最小安装）
+__执行`ifconfig -a`，发现没有该命令！！！（我下载的镜像是Minimal，并且是最小安装）__
 
-于是，执行`yum install ifconfig`，发现没有网络！！！我靠！！！估计是网卡没有开启，下面启用网卡
+__于是，执行`yum install ifconfig`，发现没有网络！！！我靠！！！估计是网卡没有开启，下面启用网卡__
 
-1. `cd /etc/sysconfig/network-scripts`
-1. `vi ifcfg-enp0s3`，将`ONBOOT`设置为yes
-1. `systemctl restart network`：重启网卡
-* 开启成功（试试看能不能ping通`www.baidu.com`，不行就重启下）
+```sh
+cd /etc/sysconfig/network-scripts
+vi ifcfg-enp0s3 # 将`ONBOOT`设置为yes。（如果有多个网卡配置文件，同样方式设置）
+systemctl restart network # 重启网卡
+```
 
-然后，安装`ifconfig`
+__然后，安装`ifconfig`__
 
-1. `yum search ifconfig`，找到软件包名为`net-tools.x86_64`
-1. `yum install -y net-tools.x86_64`
-* 安装完毕
+```sh
+yum search ifconfig # 找到软件包名为`net-tools.x86_64`
+yum install -y net-tools.x86_64
+```
 
-查看mac地址，两个命令2选1
+__查看mac地址__
 
-1. `ifconfig -a`
-1. `ip link`
+```sh
+ifconfig -a
+ip link
+```
 
-查看主板uuid
+__查看主板uuid__
 
-1. `cat /sys/class/dmi/id/product_uuid`
+```sh
+cat /sys/class/dmi/id/product_uuid
+```
+
+__建议：通过主机ssh连接到虚拟机。由于虚拟机bash界面不能拷贝命令，而且不能翻看标准输出的内容，用起来非常蛋疼__
 
 ## 2.5 检查网络适配器
 
@@ -91,6 +105,7 @@ systemctl enable docker && systemctl start docker
 kubelet/kubectl的版本必须与kubeadm一致，否则可能会导致某些异常以及bug
 
 ```sh
+# 设置配置文件
 cat <<EOF > /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
@@ -100,12 +115,16 @@ gpgcheck=1
 repo_gpgcheck=1
 gpgkey=http://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg http://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
 EOF
+
+# 关闭SELinux
 setenforce 0
+
+# 安装k8s
 yum install -y kubelet kubeadm kubectl
 systemctl enable kubelet && systemctl start kubelet
 ```
 
-* `setenforce 0`：SELinux转换为宽容模式，否则可能会有权限问题
+* __`setenforce 0`：SELinux转换为宽容模式，否则可能会有权限问题（例如，Start kube-proxy就会有问题）__
 
 __这里用的是阿里云的镜像，官方文档提供的是谷歌镜像（海外，需要翻墙），下面的配置流程都以墙内（使用的都是阿里云镜像）为主__
 
@@ -123,15 +142,13 @@ Environment="KUBELET_ALIYUN_ARGS=--pod-infra-container-image=registry.cn-hangzho
 $KUBELET_ALIYUN_ARGS
 ```
 
-__安装完kubeadm/kubelet/kubectl之后，现在就需要启动master节点__
-
-在任意路径下（以`~`为例），创建文件`kubeadm.yaml`（文件名随便），这个文件就是启动master时，指定用到的配置文件，其内容如下
+__安装完kubeadm/kubelet/kubectl之后，现在就需要启动master节点。在任意路径下（以`~`为例），创建文件`kubeadm.yaml`（文件名随便），这个文件就是启动master时，指定用到的配置文件，其内容如下__
 
 ```sh
 apiVersion: kubeadm.k8s.io/v1alpha2
 kind: MasterConfiguration
 api:
-  advertiseAddress: "192.168.56.102" # 只需要修改这里，改成host-only网卡对应的ip
+  advertiseAddress: "192.168.56.108" # 只需要修改这里，改成host-only网卡对应的ip
   bindPort: 6443
 kubernetesVersion: "v1.11.0"
 imageRepository: "registry.cn-hangzhou.aliyuncs.com/google_containers"
@@ -161,52 +178,13 @@ Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
 You can now join any number of machines by running the following on each node
 as root:
 
-  kubeadm join 192.168.56.104:6443 --token po5vmh.454rfy82r7dt40or --discovery-token-ca-cert-hash sha256:e92758ae43ed48c49ea5568d2a7cac85ed04b30b9534495f17eea0f8034b7b61
+  kubeadm join 192.168.56.108:6443 --token 3yokh0.16u9wvjk1x50nde2 --discovery-token-ca-cert-hash sha256:c36ac2694b043a660624e9d86a56999fcd23bf13b3994af6560aac713eacc54d
 ```
 
-__然后，查看节点的状态（发现错误）__
-```sh
-kubectl get nodes
+* __注意，我们需要保留下上面的join命令，即`kubeadm join ...`这个命令__
+* __node节点需要通过这个命令来join master节点__
 
-# 出现如下错误信息
-The connection to the server localhost:8080 was refused - did you specify the right host or port?
-```
-
-[上述错误解决方案如下](https://github.com/kubernetes/kubernetes/issues/44665)
-
-```sh
-sudo cp /etc/kubernetes/admin.conf $HOME/
-sudo chown $(id -u):$(id -g) $HOME/admin.conf
-export KUBECONFIG=$HOME/admin.conf
-```
-
-__继续，查看节点的状态（发现错误）__
-
-```sh
-kubectl get nodes
-
-# 得到如下输出
-NAME                    STATUS     ROLES     AGE       VERSION
-localhost.localdomain   NotReady   master    5m        v1.11.1
-```
-
-__此时，发现master节点的状态是NotReady，然后查看节点的详细信息__
-
-```sh
-kubectl describe nodes
-
-# 看到如下信息
-Conditions:
-  Type             Status  LastHeartbeatTime                 LastTransitionTime                Reason                       Message
-  ----             ------  -----------------                 ------------------                ------                       -------
-  OutOfDisk        False   Thu, 19 Jul 2018 16:41:30 +0800   Thu, 19 Jul 2018 16:35:33 +0800   KubeletHasSufficientDisk     kubelet has sufficient disk space available
-  MemoryPressure   False   Thu, 19 Jul 2018 16:41:30 +0800   Thu, 19 Jul 2018 16:35:33 +0800   KubeletHasSufficientMemory   kubelet has sufficient memory available
-  DiskPressure     False   Thu, 19 Jul 2018 16:41:30 +0800   Thu, 19 Jul 2018 16:35:33 +0800   KubeletHasNoDiskPressure     kubelet has no disk pressure
-  PIDPressure      False   Thu, 19 Jul 2018 16:41:30 +0800   Thu, 19 Jul 2018 16:35:33 +0800   KubeletHasSufficientPID      kubelet has sufficient PID available
-  Ready            False   Thu, 19 Jul 2018 16:41:30 +0800   Thu, 19 Jul 2018 16:35:33 +0800   KubeletNotReady              runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:docker: network plugin is not ready: cni config uninitialized
-```
-
-__上述信息表示，network尚未安装，[官方文档](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/)给出了解决方法，这里我们选择安装flannel__
+__根据上述提示，安装network pod。[安装命令参考](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/)。这里，我们选择flannel__
 
 ```sh
 # 为了让kubectl命令行起作用，必须配置如下环境变量
@@ -216,72 +194,55 @@ export KUBECONFIG=/etc/kubernetes/admin.conf
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.10.0/Documentation/kube-flannel.yml
 ```
 
-__查看flannel安装进度__
+__待flannel安装成功后（大约需要5-10分钟），查看节点概要信息。至此，master启动成功__
 
 ```sh
-kubectl describe nodes
-
-# 得到如下输出
-Non-terminated Pods:         (8 in total)
-  Namespace                  Name                                             CPU Requests  CPU Limits  Memory Requests  Memory Limits
-  ---------                  ----                                             ------------  ----------  ---------------  -------------
-  kube-system                coredns-777d78ff6f-skdvk                         100m (10%)    0 (0%)      70Mi (7%)        170Mi (19%)
-  kube-system                coredns-777d78ff6f-vhwsr                         100m (10%)    0 (0%)      70Mi (7%)        170Mi (19%)
-  kube-system                etcd-localhost.localdomain                       0 (0%)        0 (0%)      0 (0%)           0 (0%)
-  kube-system                kube-apiserver-localhost.localdomain             250m (25%)    0 (0%)      0 (0%)           0 (0%)
-  kube-system                kube-controller-manager-localhost.localdomain    200m (20%)    0 (0%)      0 (0%)           0 (0%)
-  kube-system                kube-flannel-ds-sqg5h                            100m (10%)    100m (10%)  50Mi (5%)        50Mi (5%)
-  kube-system                kube-proxy-zxq8q                                 0 (0%)        0 (0%)      0 (0%)           0 (0%)
-  kube-system                kube-scheduler-localhost.localdomain             100m (10%)    0 (0%)      0 (0%)           0 (0%)
-
-# 发现flannel对应的Name是`kube-flannel-ds-sqg5h`，Namespace是`kube-system`
-# 查询flannel对应的pod状态
-kubectl describe pod -n kube-system kube-flannel-ds-sqg5h
-
-# 得到如下输出（大约5分钟会安装完，耐心点咯）
-Events:
-  Type    Reason   Age   From                 Message
-  ----    ------   ----  ----                 -------
-  Normal  Pulling  4m    kubelet, k8s-master  pulling image "quay.io/coreos/flannel:v0.10.0-amd64"
-  Normal  Pulled   12s   kubelet, k8s-master  Successfully pulled image "quay.io/coreos/flannel:v0.10.0-amd64"
-  Normal  Created  12s   kubelet, k8s-master  Created container
-  Normal  Started  12s   kubelet, k8s-master  Started container
-  Normal  Pulled   11s   kubelet, k8s-master  Container image "quay.io/coreos/flannel:v0.10.0-amd64" already present on machine
-  Normal  Created  11s   kubelet, k8s-master  Created container
-  Normal  Started  11s   kubelet, k8s-master  Started container
-```
-
-__待flannel安装成功后，再查看节点状态。至此，master启动成功__
-
-```sh
+# 查看节点概要信息
 kubectl get nodes
 
-# 输出信息如下
-NAME                    STATUS    ROLES     AGE       VERSION
-localhost.localdomain   Ready     master    7m        v1.11.1
+# 得到如下输出
+NAME         STATUS    ROLES     AGE       VERSION
+k8s-master   Ready     master    26m       v1.11.1
+```
+
+## 3.1 Restart
+
+__如果我们将master这台机器重启的话，k8s服务不会自动起来，需要进行如下操作__
+
+```sh
+# 关闭swap
+swapoff -a
+
+# 关闭防火墙
+systemctl stop firewalld
+
+# 关闭SELinux
+setenforce 0
+
+# 重启kubelet
+systemctl start kubelet
+
+# 配置环境变量
+export KUBECONFIG=/etc/kubernetes/admin.conf
 ```
 
 # 4 Start Node
 
-__另外启动两台虚拟机，执行[Install Kubeadm](#InstallKubeadm)小节的所有操作__
+__另外启动两台虚拟机，执行 [Install Kubeadm](#InstallKubeadm) 小节的所有操作__
 
-__现在需要将新启动的虚拟机，加入刚才启动的master。首先，我们还是回到master机器上，创建指令__
+__现在需要将新启动的虚拟机，加入刚才启动的master__
 
-```sh
-kubeadm token create --print-join-command
+* 还记得master节点初始化k8s输出的`kubeadm join`命令吗，这个指令就用于node节点
+* 如果忘记了，我们还可以通过在master节点上执行`kubeadm token create --print-join-command`来创建`kubeadm join`命令
 
-# 输出如下
-kubeadm join 192.168.56.104:6443 --token 7rwct3.1jarvf2ls7vajmww --discovery-token-ca-cert-hash sha256:f8e9480f1f6babb8465e16bd5e04460aecde9594a572bea10635bceb617a4301
-```
-
-__回到node节点对应的虚拟机，执行上述命令__
+__回到node节点对应的虚拟机，执行上述`kubeadm join`命令__
 
 ```sh
-kubeadm join 192.168.56.104:6443 --token 7rwct3.1jarvf2ls7vajmww --discovery-token-ca-cert-hash sha256:f8e9480f1f6babb8465e16bd5e04460aecde9594a572bea10635bceb617a4301
-
+kubeadm join 192.168.56.108:6443 --token 3yokh0.16u9wvjk1x50nde2 --discovery-token-ca-cert-hash sha256:c36ac2694b043a660624e9d86a56999fcd23bf13b3994af6560aac713eacc54d
 # 得到如下输出
+
 [preflight] running pre-flight checks
-  [WARNING RequiredIPVSKernelModulesAvailable]: the IPVS proxier will not be used, because the following required kernel modules are not loaded: [ip_vs ip_vs_rr ip_vs_wrr ip_vs_sh] or no builtin kernel ipvs support: map[nf_conntrack_ipv4:{} ip_vs:{} ip_vs_rr:{} ip_vs_wrr:{} ip_vs_sh:{}]
+  [WARNING RequiredIPVSKernelModulesAvailable]: the IPVS proxier will not be used, because the following required kernel modules are not loaded: [ip_vs ip_vs_rr ip_vs_wrr ip_vs_sh] or no builtin kernel ipvs support: map[ip_vs_rr:{} ip_vs_wrr:{} ip_vs_sh:{} nf_conntrack_ipv4:{} ip_vs:{}]
 you can solve this problem with following methods:
  1. Run 'modprobe -- ' to load missing kernel modules;
 2. Provide the missing builtin kernel ipvs support
@@ -303,33 +264,7 @@ __继续执行join指令，加入master节点__
 kubeadm reset
 
 # join
-kubeadm join 192.168.56.104:6443 --token 7rwct3.1jarvf2ls7vajmww --discovery-token-ca-cert-hash sha256:f8e9480f1f6babb8465e16bd5e04460aecde9594a572bea10635bceb617a4301
-
-# 得到如下输出
-  [WARNING Hostname]: hostname "k8s-node1" could not be reached
-  [WARNING Hostname]: hostname "k8s-node1" lookup k8s-node1 on 10.65.0.201:53: server misbehaving
-[discovery] Trying to connect to API Server "192.168.56.104:6443"
-[discovery] Created cluster-info discovery client, requesting info from "https://192.168.56.104:6443"
-[discovery] Requesting info from "https://192.168.56.104:6443" again to validate TLS against the pinned public key
-[discovery] Failed to request cluster info, will try again: [Get https://192.168.56.104:6443/api/v1/namespaces/kube-public/configmaps/cluster-info: x509: certificate has expired or is not yet valid]
-```
-
-__[上述错误解决方案如下](https://github.com/kubernetes/kubernetes/issues/42791)__
-
-```sh
-# 在mster节点安装ntp，并启动
-yum install -y ntp
-systemctl start ntpd
-```
-
-__再次执行join指令，加入master节点__
-
-```sh
-# 先重置
-kubeadm reset
-
-# join master
-kubeadm join 192.168.56.104:6443 --token 7rwct3.1jarvf2ls7vajmww --discovery-token-ca-cert-hash sha256:f8e9480f1f6babb8465e16bd5e04460aecde9594a572bea10635bceb617a4301
+kubeadm join 192.168.56.108:6443 --token 3yokh0.16u9wvjk1x50nde2 --discovery-token-ca-cert-hash sha256:c36ac2694b043a660624e9d86a56999fcd23bf13b3994af6560aac713eacc54d
 
 # 得到如下输出
 This node has joined the cluster:
@@ -340,7 +275,7 @@ This node has joined the cluster:
 Run 'kubectl get nodes' on the master to see this node join the cluster.
 ```
 
-__至此k8s-node1加入完毕，另一台node节点重复上述操作__
+__至此一台node节点加入master节点完毕（大约需要5分钟的时间，才能在master上看到ready状态），另一台node节点重复上述操作__
 
 __全部完成后，回到master节点，执行如下指令__
 
@@ -349,12 +284,51 @@ kubectl get nodes
 
 # 得到如下输出
 NAME         STATUS    ROLES     AGE       VERSION
-k8s-master   Ready     master    21m       v1.11.1
-k8s-node1    Ready     <none>    8m        v1.11.1
-k8s-node2    Ready     <none>    3m        v1.11.1
+k8s-master   Ready     master    27m       v1.11.1
+k8s-node-1   Ready     <none>    2m        v1.11.1
+k8s-node-2   Ready     <none>    11m       v1.11.1
 ```
 
-# 5 参考
+# 5 Command
 
-* [Kubernetes官方文档](https://kubernetes.io/docs/setup/)
+## 5.1 kubectl
 
+```sh
+# 查看node概要信息
+kubectl get nodes
+kubectl get node <node-name>
+
+# 查看node详细信息
+kubectl describe nodes
+kubectl describe node <node-name>
+
+# 查看namespace空间
+kubectl get namespace
+
+# 查看pod概要信息
+kubectl get pod -n <namespace>
+kubectl get pod -n <namespace> <pod-name>
+kubectl get pod --all-namespaces
+
+# 查看pod详细信息
+kubectl describe pod -n <namespace>
+kubectl describe pod -n <namespace> <pod-name>
+```
+
+# 6 Helm
+
+安装Helm
+
+```sh
+curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > get_helm.sh
+chmod 700 get_helm.sh
+./get_helm.sh
+```
+
+# 7 参考
+
+* [Kubernetes-Creating a single master cluster with kubeadm](https://kubernetes.io/docs/setup/)
+* [Kubernetes-Installing kubeadm](https://kubernetes.io/docs/setup/independent/install-kubeadm/)
+* [issue#localhost:8080](https://github.com/kubernetes/kubernetes/issues/44665)
+* [issue#x509: certificate has expired or is not yet valid](https://github.com/kubernetes/kubernetes/issues/42791)
+* [Installing Helm](https://docs.helm.sh/using_helm/#installing-helm)
