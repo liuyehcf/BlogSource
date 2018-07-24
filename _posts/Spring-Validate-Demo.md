@@ -300,7 +300,9 @@ public class Application {
 }
 ```
 
-# 8 总结
+# 8 Validate With Junit
+
+# 9 总结
 
 在实际项目当中，我们会把接口以及DTO单独作为一个模块进行维护，此时我们可以用validate注解来告诉接口调用方，哪些参数是必须的，哪些不是必须的，同时也省下了重复的参数校验工作。我们可以在接口模块中引入如下依赖（`scope`为`provided`，避免造成依赖污染，尽量保持接口模块依赖关系的简洁性）
 
@@ -321,3 +323,7 @@ public class Application {
         <scope>provided</scope>
     </dependency>
 ```
+
+# 10 参考
+
+* [Bean Validation Unit Testing](http://farenda.com/java/bean-validation-unit-testing/)

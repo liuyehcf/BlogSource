@@ -313,11 +313,182 @@ kubectl get pod --all-namespaces
 # 查看pod详细信息
 kubectl describe pod -n <namespace>
 kubectl describe pod -n <namespace> <pod-name>
+
+# 查看service概要信息
+kubectl get svc <service-name>
+
+# 查看service详细信息
+kubectl describe svc <service-name>
 ```
 
-# 6 Helm
+# 6 部署应用
 
-安装Helm
+## 6.1 制作镜像
+
+这里以一个简单的`Spring-Boot`应用为例，制作一个镜像。__具体示例代码详见{% post_link Spring-Boot-Demo %}__
+
+__首先，将`Spring-Boot`应用打包成一个fat-jar__，例如`spring-boot-1.0-SNAPSHOT.jar`
+
+* 你可以随便搞一个简单的Web应用
+
+__然后，创建Dockerfile，内容如下__
+
+```sh
+FROM openjdk:8
+
+# Set the working directory to /app
+WORKDIR /web
+
+# Copy the current directory contents into the container at /app
+ADD . /web/lib
+
+# Make port 8080 available to the world outside this container
+EXPOSE 8080
+
+# Run app.py when the container launches
+CMD ["java", "-jar", "lib/spring-boot-1.0-SNAPSHOT.jar"]
+```
+
+__将上述`Dockerfile`与`spring-boot-1.0-SNAPSHOT.jar`放入同一个目录下，此时目录结构如下__
+
+```
+.
+├── Dockerfile
+└── spring-boot-1.0-SNAPSHOT.jar
+```
+
+__接着，我们开始制作镜像__
+
+```sh
+# -t参数指定tag
+# docker build -h 查看详细用法
+docker build -t hello-world:v1 .
+```
+
+__本地测试一下，能否运行起来（经验证，没问题）__
+
+```sh
+# docker run -help 查看详细用法
+docker run hello-world:v1
+```
+
+## 6.2 上传镜像到镜像仓库
+
+__这里以`阿里云-容器镜像服务`为例，将刚才制作的镜像上传到镜像仓库。详细操作请参考[阿里云-容器镜像服务](https://www.aliyun.com/product/acr?spm=5176.10695662.1996646101.searchclickresult.3cab795dkMnIFM)__
+
+创建完成后，镜像仓库`url`如下（你创建的镜像仓库肯定与我的不同）
+
+```
+registry.cn-hangzhou.aliyuncs.com/liuyehcf_default/liuye_repo 
+```
+
+__在`阿里云-容器镜像服务`控制台，点击刚才创建的镜像-管理，按照文档说明上传镜像，大致分为两步（以我的镜像仓库`url`为例）__
+
+```sh
+# 登录
+sudo docker login --username=<your user name> registry.cn-hangzhou.aliyuncs.com
+
+# 打刚才制作的镜像打上tag
+# 详细用法请参考 docker tag -h
+docker tag hello-world:v1 registry.cn-hangzhou.aliyuncs.com/liuyehcf_default/liuye_repo:v1 
+
+# push镜像
+sudo docker push registry.cn-hangzhou.aliyuncs.com/liuyehcf_default/liuye_repo:v1
+```
+
+## 6.3 部署应用
+
+__首先，编写应用所在pod的yml文件，hello-world.yml文件如下__
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "hello-world"
+spec:
+  restartPolicy: Always
+  containers:
+  - name: "hello-world"
+    image: "registry.cn-hangzhou.aliyuncs.com/liuyehcf_default/liuye_repo:v1"
+    imagePullPolicy: IfNotPresent
+    command: ["java", "-jar", "lib/spring-boot-1.0-SNAPSHOT.jar"]
+    ports:
+    - containerPort: 8080
+```
+
+__在master节点上，启动该pod__
+
+```sh
+kubectl create -f hello-world.yml
+```
+
+__查看pod运行状态，可以看到pod部署成功__
+
+```sh
+kubectl get pod
+
+# 以下是输出信息
+NAME          READY     STATUS    RESTARTS   AGE
+hello-world   1/1       Running   0          4m
+```
+
+__由于我们这个Web应用服务在8080端口，但是上面的`hello-world.yml`文件中配置的是容器端口，我们仍然不能在外界访问这个服务。我们还需要增加一个`hello-world-service`，`hello-world-service.yml`文件内容如下__
+
+```yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-world-service
+spec:
+  ports:
+    - port: 4000
+      targetPort: 8080
+      nodePort: 30001
+  selector:
+    mylabel: label_hello_world
+  type: NodePort
+```
+
+__给pod打上label__
+
+```sh
+# 打上label，与hello-world-service.yml中的spec.selector中的label一致
+kubectl label pod hello-world mylabel=label_hello_world
+```
+
+__启动service__
+
+```sh
+kubectl create -f hello-world-service.yml
+```
+
+__查看端口号（nodePort）__
+
+```sh
+kubectl describe svc hello-world-service
+
+# 输出信息如下
+Name:                     hello-world-service
+Namespace:                default
+Labels:                   <none>
+Annotations:              <none>
+Selector:                 mylabel=label_hello_world
+Type:                     NodePort
+IP:                       10.108.106.70
+Port:                     <unset>  4000/TCP   # 看这里
+TargetPort:               8080/TCP            # 看这里
+NodePort:                 <unset>  30001/TCP  # 看这里
+Endpoints:                10.244.1.94:8080
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:                   <none>
+```
+
+__访问`http://<node_ip>:30001/home`，成功！__
+
+# 7 Helm
+
+__安装Helm__
 
 ```sh
 curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > get_helm.sh
@@ -325,10 +496,11 @@ chmod 700 get_helm.sh
 ./get_helm.sh
 ```
 
-# 7 参考
+# 8 参考
 
 * [Kubernetes-Creating a single master cluster with kubeadm](https://kubernetes.io/docs/setup/)
 * [Kubernetes-Installing kubeadm](https://kubernetes.io/docs/setup/independent/install-kubeadm/)
 * [issue#localhost:8080](https://github.com/kubernetes/kubernetes/issues/44665)
 * [issue#x509: certificate has expired or is not yet valid](https://github.com/kubernetes/kubernetes/issues/42791)
 * [Installing Helm](https://docs.helm.sh/using_helm/#installing-helm)
+* [kubernetes创建资源yaml文件例子--pod](https://blog.csdn.net/liyingke112/article/details/76155428)
