@@ -343,3 +343,4 @@ __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时
 * [常用 Git 命令清单](http://www.ruanyifeng.com/blog/2015/12/git-cheat-sheet.html)
 * [git rebase简介(基本篇)](http://blog.csdn.net/hudashi/article/details/7664631/)
 * [git bash中 中文显示为数字](http://blog.csdn.net/zhujiangtaotaise/article/details/74424157)
+* [git 合并历史提交](https://www.cnblogs.com/woshimrf/p/git-rebase.html)

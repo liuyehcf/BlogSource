@@ -498,7 +498,23 @@ Caused by: java.lang.NoSuchMethodError: org.springframework.web.accept.ContentNe
 
 SpringBoot推崇约定大于配置，通常情况下，我们只需要配置少数几个参数，应用就可以正常启动。但是，知道SpringBoot究竟提供了多少默认的配置也是很有用的，给一个[传送门](https://docs.spring.io/spring-boot/docs/2.0.3.RELEASE/reference/htmlsingle/)。在页面上搜索`server.port=8080`，就能定位到配置项说明的地方
 
-# 10 参考
+# 10 Auto-Configuration
+
+`Spring`集成了非常多的优秀项目，我们在使用这些项目时，仅仅只需要引入相关的依赖即可（对于`Spring-Boot`集成的项目，通常有`spring-boot-starter`后缀），例如`Flowable`
+
+```xml
+        <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-spring-boot-starter</artifactId>
+            <version>6.3.0</version>
+        </dependency>
+```
+
+我们无需做任何配置，`Spring`就会为我们自动初始化这些项目。那么`Spring`如何实现这种`code-free`的`Auto-Configuration`呢？
+
+__答案就是基于约定，`Spring`会默认加载`classpath:META-INF/spring.factories`这个配置文件（加载的代码在`org.springframework.core.io.support.SpringFactoriesLoader`类中）__
+
+# 11 参考
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
 

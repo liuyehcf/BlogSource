@@ -142,7 +142,7 @@ Environment="KUBELET_ALIYUN_ARGS=--pod-infra-container-image=registry.cn-hangzho
 $KUBELET_ALIYUN_ARGS
 ```
 
-__安装完kubeadm/kubelet/kubectl之后，现在就需要启动master节点。在任意路径下（以`~`为例），创建文件`kubeadm.yaml`（文件名随便），这个文件就是启动master时，指定用到的配置文件，其内容如下__
+__安装完kubeadm/kubelet/kubectl之后，现在就需要启动master节点。在任意路径下（以`~`为例），创建文件`kubeadm.yml`（文件名随便），这个文件就是启动master时，指定用到的配置文件，其内容如下__
 
 ```sh
 apiVersion: kubeadm.k8s.io/v1alpha2
@@ -159,7 +159,7 @@ networking:
 __接下来初始化master节点__
 
 ```sh
-kubeadm init --config kubeadm.yaml
+kubeadm init --config kubeadm.yml
 
 # 出现如下信息，提示启动成功
 ...
@@ -228,7 +228,7 @@ export KUBECONFIG=/etc/kubernetes/admin.conf
 
 # 4 Start Node
 
-__另外启动两台虚拟机，执行 [Install Kubeadm](#InstallKubeadm) 小节的所有操作__
+__另外启动两台虚拟机，执行 [Install Kubeadm](#install-kubeadm) 小节的所有操作__
 
 __现在需要将新启动的虚拟机，加入刚才启动的master__
 
@@ -289,41 +289,9 @@ k8s-node-1   Ready     <none>    2m        v1.11.1
 k8s-node-2   Ready     <none>    11m       v1.11.1
 ```
 
-# 5 Command
+# 5 部署应用
 
-## 5.1 kubectl
-
-```sh
-# 查看node概要信息
-kubectl get nodes
-kubectl get node <node-name>
-
-# 查看node详细信息
-kubectl describe nodes
-kubectl describe node <node-name>
-
-# 查看namespace空间
-kubectl get namespace
-
-# 查看pod概要信息
-kubectl get pod -n <namespace>
-kubectl get pod -n <namespace> <pod-name>
-kubectl get pod --all-namespaces
-
-# 查看pod详细信息
-kubectl describe pod -n <namespace>
-kubectl describe pod -n <namespace> <pod-name>
-
-# 查看service概要信息
-kubectl get svc <service-name>
-
-# 查看service详细信息
-kubectl describe svc <service-name>
-```
-
-# 6 部署应用
-
-## 6.1 制作镜像
+## 5.1 制作镜像
 
 这里以一个简单的`Spring-Boot`应用为例，制作一个镜像。__具体示例代码详见{% post_link Spring-Boot-Demo %}__
 
@@ -333,19 +301,23 @@ __首先，将`Spring-Boot`应用打包成一个fat-jar__，例如`spring-boot-1
 
 __然后，创建Dockerfile，内容如下__
 
-```sh
-FROM openjdk:8
+```docker
+# 设置基础镜像
+FROM centos:7.5.1804
 
-# Set the working directory to /app
+# 设置工作目录
 WORKDIR /web
 
-# Copy the current directory contents into the container at /app
+# 将当前目录下的内容添加到docker容器中的/web/lib路径中
 ADD . /web/lib
 
-# Make port 8080 available to the world outside this container
+# 执行命令，安装java依赖
+RUN yum install -y java
+
+# 暴露8080端口
 EXPOSE 8080
 
-# Run app.py when the container launches
+# docker run执行的命令
 CMD ["java", "-jar", "lib/spring-boot-1.0-SNAPSHOT.jar"]
 ```
 
@@ -372,7 +344,7 @@ __本地测试一下，能否运行起来（经验证，没问题）__
 docker run hello-world:v1
 ```
 
-## 6.2 上传镜像到镜像仓库
+## 5.2 上传镜像到镜像仓库
 
 __这里以`阿里云-容器镜像服务`为例，将刚才制作的镜像上传到镜像仓库。详细操作请参考[阿里云-容器镜像服务](https://www.aliyun.com/product/acr?spm=5176.10695662.1996646101.searchclickresult.3cab795dkMnIFM)__
 
@@ -396,7 +368,7 @@ docker tag hello-world:v1 registry.cn-hangzhou.aliyuncs.com/liuyehcf_default/liu
 sudo docker push registry.cn-hangzhou.aliyuncs.com/liuyehcf_default/liuye_repo:v1
 ```
 
-## 6.3 部署应用
+## 5.3 部署应用
 
 __首先，编写应用所在pod的yml文件，hello-world.yml文件如下__
 
@@ -486,7 +458,7 @@ Events:                   <none>
 
 __访问`http://<node_ip>:30001/home`，成功！__
 
-# 7 Helm
+# 6 Helm
 
 __安装Helm__
 
@@ -494,6 +466,38 @@ __安装Helm__
 curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > get_helm.sh
 chmod 700 get_helm.sh
 ./get_helm.sh
+```
+
+# 7 Command
+
+## 7.1 kubectl
+
+```sh
+# 查看node概要信息
+kubectl get nodes
+kubectl get node <node-name>
+
+# 查看node详细信息
+kubectl describe nodes
+kubectl describe node <node-name>
+
+# 查看namespace空间
+kubectl get namespace
+
+# 查看pod概要信息
+kubectl get pod -n <namespace>
+kubectl get pod -n <namespace> <pod-name>
+kubectl get pod --all-namespaces
+
+# 查看pod详细信息
+kubectl describe pod -n <namespace>
+kubectl describe pod -n <namespace> <pod-name>
+
+# 查看service概要信息
+kubectl get svc <service-name>
+
+# 查看service详细信息
+kubectl describe svc <service-name>
 ```
 
 # 8 参考
@@ -504,3 +508,4 @@ chmod 700 get_helm.sh
 * [issue#x509: certificate has expired or is not yet valid](https://github.com/kubernetes/kubernetes/issues/42791)
 * [Installing Helm](https://docs.helm.sh/using_helm/#installing-helm)
 * [kubernetes创建资源yaml文件例子--pod](https://blog.csdn.net/liyingke112/article/details/76155428)
+* [十分钟带你理解Kubernetes核心概念](http://www.dockone.io/article/932)

@@ -482,4 +482,4 @@ __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时
 * [从零开始玩转logback](http://www.importnew.com/22290.html)
 * [logback的使用和logback.xml详解](https://www.cnblogs.com/warking/p/5710303.html)
 * [logback 配置详解](https://www.jianshu.com/p/1ded57f6c4e3)
-
+* [在logback中使用spring的属性值](https://stackoverflow.com/questions/36743386/accessing-the-application-properties-in-logback-xml)
