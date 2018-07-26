@@ -45,7 +45,11 @@ __阅读更多__
 
 `alt + enter` -> `add to custom tags`
 
-# 5 参考
+# 5 控制台日志颜色
+
+安装插件`grop console`
+
+# 6 参考
 
 * [IntelliJ IDEA 设置选中标识符高亮](http://blog.csdn.net/wskinght/article/details/43052407)
 * [IntelliJ IDEA 总结](https://www.zhihu.com/question/20450079)
