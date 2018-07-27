@@ -17,12 +17,14 @@ __阅读更多__
 
 __概念__
 
-1. `Process`
-1. `Event`
-1. `Flow`
-1. `Gateway`
-1. `Task`
-1. `Process Variable`
+1. `Process`：文中称为`流程`、`执行流`
+    * `instance`：文中称为`实例`
+1. `Event`：文中称为`事件`
+1. `Flow`：文中称为`连线`
+1. `Gateway`：文中称为`网关`
+1. `Task`：文中称为`任务`
+1. `Variable`：变量
+1. `Expression`：表达式，通常指`UEL`
 
 # 2 Event
 
@@ -348,7 +350,7 @@ __XML representation__
 
 ## 2.4 Boundary Events
 
-`boundary event`捕获附加到`activity`的事件（`boundary event`一定是`catching event`）。这意味着当`activity`正在运行时，事件正在侦听某种类型的`trigger`。当事件被捕获时，`activity`被中断并且遵循事件的顺序流程
+`boundary event`捕获附加到`activity`的事件（`boundary event`一定是`catching event`）。这意味着当`activity`正在运行时，事件正在侦听某种类型的`trigger`。当事件被捕获时，`activity`被中断并且遵循事件的执行流
 
 ```xml
 <boundaryEvent id="myBoundaryEvent" attachedToRef="theActivity">
@@ -360,7 +362,7 @@ __XML representation__
 
 __Description__
 
-> `timer boundary event`充当秒表和闹钟。当执行到达附加`timer boundary event`的`activity`时，启动计时器。当计时器触发时（例如，在指定的间隔之后），`activity`被中断并且遵循`timer boundary event`之外的顺序流
+> `timer boundary event`充当秒表和闹钟。当执行到达附加`timer boundary event`的`activity`时，启动计时器。当计时器触发时（例如，在指定的间隔之后），`activity`被中断并且遵循`timer boundary event`之外的执行流
 
 __XML representation__
 
@@ -562,25 +564,155 @@ __XML representation__
 
 # 3 Sequence Flow
 
-`sequence flow`用于表示两个`process`元素的连接关系
+`sequence flow`用于表示两个`process`元素的连接关系（路由关系，带有方向）。当`process`执行到某个节点时，所有通过`sequence flow`连接出去的路径都会被同时执行，也就是并发的两条/多条执行链路
 
 ```xml
 <sequenceFlow id="flow1" sourceRef="theStart" targetRef="theTask" />
 ```
 
+__参考__
+
+* [Sequence Flow](https://www.flowable.org/docs/userguide/index.html#bpmnSequenceFlow)
+
 ## 3.1 Conditional sequence flow
+
+__Description__
+
+> 顾名思义，`conditional sequence flow`允许附带一个条件。条件为真时，继续执行当前路径的后续流程，否则终止当前路径
+
+__XML representation__
+
+```xml
+<!-- conditionExpression仅支持 UEL -->
+<!-- 且表达式的值必须是bool值，否则会抛出异常 -->
+<sequenceFlow id="flow" sourceRef="theStart" targetRef="theTask">
+  <conditionExpression xsi:type="tFormalExpression">
+    <![CDATA[${order.price > 100 && order.price < 250}]]>
+  </conditionExpression>
+</sequenceFlow>
+```
 
 ## 3.2 Default sequence flow
 
+__Description__
+
+> `default sequence flow`当且仅当当前节点的其他`sequence flow`没有被触发时才会生效，起到一个默认路由的作用
+
+__XML representation__
+
+```xml
+<!-- The following XML snippet shows an example of an exclusive gateway that has as default sequence flow, flow 2. Only when conditionA and conditionB both evaluate to false, will it be chosen as the outgoing sequence flow for the gateway. -->
+<exclusiveGateway id="exclusiveGw" name="Exclusive Gateway" default="flow2" />
+
+<sequenceFlow id="flow1" sourceRef="exclusiveGw" targetRef="task1">
+    <conditionExpression xsi:type="tFormalExpression">${conditionA}</conditionExpression>
+</sequenceFlow>
+
+<sequenceFlow id="flow2" sourceRef="exclusiveGw" targetRef="task2"/>
+
+<sequenceFlow id="flow3" sourceRef="exclusiveGw" targetRef="task3">
+    <conditionExpression xsi:type="tFormalExpression">${conditionB}</conditionExpression>
+</sequenceFlow>
+```
+
 # 4 Gateway
 
-`gateway`用于控制`process`的执行流。`gateway`能够使用或者消耗`token`
+`gateway`用于控制`process`的执行流。抽象地来说，`gateway`能够使用或者消耗`token`
+
+__参考__
+
+* [Gateway](https://www.flowable.org/docs/userguide/index.html#bpmnGateways)
 
 ## 4.1 Exclusive Gateway
 
+__Description__
+
+> `exclusive gateway`又被称为`XOR gateway`，通常用于描述`decision`。当流程执行到`exclusive gateway`时，所有的`sequence flow`会按照定义的顺序进行条件判断（针对`conditional sequence flow`，`sequence flow`也可以看成一个条件永远为真的`conditional sequence flow`）。第一个为真的`conditional sequence flow`将会被选中并继续执行后续流程，其余`sequence flow`被忽略。全都为假时，将会抛出异常
+
+__XML representation__
+
+```xml
+<exclusiveGateway id="exclusiveGw" name="Exclusive Gateway" />
+
+<sequenceFlow id="flow2" sourceRef="exclusiveGw" targetRef="theTask1">
+  <conditionExpression xsi:type="tFormalExpression">${input == 1}</conditionExpression>
+</sequenceFlow>
+
+<sequenceFlow id="flow3" sourceRef="exclusiveGw" targetRef="theTask2">
+  <conditionExpression xsi:type="tFormalExpression">${input == 2}</conditionExpression>
+</sequenceFlow>
+
+<sequenceFlow id="flow4" sourceRef="exclusiveGw" targetRef="theTask3">
+  <conditionExpression xsi:type="tFormalExpression">${input == 3}</conditionExpression>
+</sequenceFlow>
+```
+
 ## 4.2 Parallel Gateway
 
+__Description__
+
+> `parallel gateway`通常用于描述并发执行流，最直接最方便的引入并发特性的元素就是`parallel gateway`。`parallel gateway`可以起到`fork`的作用（从一条路径到多条路径），以及`join`的作用（从多条执行路径到一条执行路径），这取决于`parallel gateway`放置的位置
+> 要注意的是，与`parallel gateway`相连的`sequence flow`若是`conditional sequence flow`，则条件的校验将会被直接忽略
+
+__XML representation__
+
+```xml
+<startEvent id="theStart" />
+<sequenceFlow id="flow1" sourceRef="theStart" targetRef="fork" />
+
+<parallelGateway id="fork" />
+<sequenceFlow sourceRef="fork" targetRef="receivePayment" />
+<sequenceFlow sourceRef="fork" targetRef="shipOrder" />
+
+<userTask id="receivePayment" name="Receive Payment" />
+<sequenceFlow sourceRef="receivePayment" targetRef="join" />
+
+<userTask id="shipOrder" name="Ship Order" />
+<sequenceFlow sourceRef="shipOrder" targetRef="join" />
+
+<parallelGateway id="join" />
+<sequenceFlow sourceRef="join" targetRef="archiveOrder" />
+
+<userTask id="archiveOrder" name="Archive Order" />
+<sequenceFlow sourceRef="archiveOrder" targetRef="theEnd" />
+
+<endEvent id="theEnd" />
+```
+
 ## 4.3 Inclusive Gateway
+
+__Description__
+
+> `inclusive gateway`可以看成是`exclusive gateway`以及`parallel gateway`的结合体。与`exclusive gateway`类似，`inclusive gateway`会执行`conditional sequence flow`上的条件；与`parallel gateway`类似，`inclusive gateway`同样允许`fork`以及`join`
+
+__XML representation__
+
+```xml
+<startEvent id="theStart" />
+<sequenceFlow id="flow1" sourceRef="theStart" targetRef="fork" />
+
+<inclusiveGateway id="fork" />
+<sequenceFlow sourceRef="fork" targetRef="receivePayment" >
+  <conditionExpression xsi:type="tFormalExpression">${paymentReceived == false}</conditionExpression>
+</sequenceFlow>
+<sequenceFlow sourceRef="fork" targetRef="shipOrder" >
+  <conditionExpression xsi:type="tFormalExpression">${shipOrder == true}</conditionExpression>
+</sequenceFlow>
+
+<userTask id="receivePayment" name="Receive Payment" />
+<sequenceFlow sourceRef="receivePayment" targetRef="join" />
+
+<userTask id="shipOrder" name="Ship Order" />
+<sequenceFlow sourceRef="shipOrder" targetRef="join" />
+
+<inclusiveGateway id="join" />
+<sequenceFlow sourceRef="join" targetRef="archiveOrder" />
+
+<userTask id="archiveOrder" name="Archive Order" />
+<sequenceFlow sourceRef="archiveOrder" targetRef="theEnd" />
+
+<endEvent id="theEnd" />
+```
 
 # 5 Task
 
@@ -974,9 +1106,38 @@ __参考__
 
 在`Flowable`中，与`process`相关的这些数据被称为`variables`，这些数据存储在数据库中，这些变量可以在表达式中，或者`Java Service Task`中被使用
 
-# 7 Table
+详细内容请参考[Variables](https://www.flowable.org/docs/userguide/index.html#apiVariables)
 
-## 7.1 Database table names explained
+# 7 Expression
+
+`Expression`通常指`UEL Expression`，`UEL`的全称是Unified Expression Language
+
+详细内容请参考[Expression](https://www.flowable.org/docs/userguide/index.html#apiExpressions)
+
+## 7.1 Value Expression
+
+```sh
+${myVar}
+${myBean.myProperty}
+```
+
+## 7.2 Method Expression
+
+```sh
+${printer.print()}
+${myBean.addNewOrder('orderName')}
+${myBean.doSomething(myVar, execution)}
+```
+
+## 7.3 default Object
+
+1. `execution`：DelegateExecution的对象
+1. `task`：DelegateTask的对象
+1. `authenticatedUserId`：当前已通过身份验证的用户的id
+
+# 8 Table
+
+## 8.1 Database table names explained
 
 __所有`Flowable`的表名前缀都是`ACT_`__
 
@@ -992,7 +1153,7 @@ __参考__
 * [Database table names explained](https://www.flowable.org/docs/userguide/index.html#database.tables.explained)
 * [activiti工作流表说明](https://blog.csdn.net/u011627980/article/details/51646920)
 
-# 8 参考
+# 9 参考
 
 * [Flowalbe Doc](https://www.flowable.org/docs/userguide/index.html)
 * [BPMN icon](https://wenku.baidu.com/view/92b1bc06cc17552707220854.html)

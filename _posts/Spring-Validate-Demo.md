@@ -313,11 +313,6 @@ public class Application {
         <scope>provided</scope>
     </dependency>
     <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-        <scope>provided</scope>
-    </dependency>
-    <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-context</artifactId>
         <scope>provided</scope>

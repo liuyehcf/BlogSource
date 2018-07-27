@@ -174,12 +174,40 @@ var='http://www.aaa.com/123.htm'
 echo ${var:0-7}
 ```
 
+## 3.4 按行读取
+
+__方式1__
+
+```sh
+while read line
+do
+　　echo $line
+done < 文件名
+```
+
+__方式2__
+
+* __注意，在这种方式下，在while循环内的变量的赋值会丢失，因为管道相当于开启另一个进程__
+
+```sh
+STDOUT | while read line
+do
+　　echo $line
+done
+```
+
 # 4 数组
 
 Shell 数组用括号来表示，元素用`空格`符号分割开，语法格式如下：
 
 ```sh
 array_name=(value1 ... valuen)
+
+# 或者直接这样定义，注意，不需要${}
+array_name[1]=value1
+array_name[2]=value2
+...
+array_name[n]=valuen
 ```
 
 __数组属性__
