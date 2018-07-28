@@ -296,17 +296,19 @@ echo ${var:0-7}
 __方式1__
 
 ```sh
+# 文件名不包含空格的话，可以不要引号
+# 文件名若包含空格，且不用引号，则会报错：ambiguous redirect
 while read line
 do
 　　echo $line
-done < "test.txt" # 文件名不包含空格的话，可以不要引号。否则会报错：ambiguous redirect
+done < "test.txt"
 
-# 或者
+# 或者利用 进程替换
 
 while read line
 do
 　　echo $line
-done < "$(cmd)" # $(cmd)结果不包含的空格的话，可以不要引号。否则会报错：ambiguous redirect
+done < <(cmd) 
 ```
 
 __方式2__
