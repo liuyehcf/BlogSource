@@ -125,11 +125,6 @@ docker --help # 查询所有顶层的参数
 docker image --help # 参数image参数的子参数
 ```
 
-下面给出几个常用的命令
-
-```sh
-```
-
 # 3 参考
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
@@ -139,3 +134,5 @@ __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时
 * [Docker 原理篇](https://www.jianshu.com/p/7a58ad7fade4)
 * [深入分析Docker镜像原理](https://www.csdn.net/article/2015-08-21/2825511)
 * [Docker之Dockerfile语法详解](https://www.jianshu.com/p/690844302df5)
+* [docker容器与虚拟机有什么区别？](https://www.zhihu.com/question/48174633)
+* [docker与虚拟机性能比较](https://blog.csdn.net/cbl709/article/details/43955687)
