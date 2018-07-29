@@ -158,5 +158,8 @@ __执行如下命令__
 * [Java中JNI的使用详解第一篇:HelloWorld](http://blog.csdn.net/jiangwei0910410003/article/details/17465085)
 * [Jni接口-深入研究参数的传递（一）](https://www.cnblogs.com/lsnproj/archive/2012/01/09/2317519.html)
 * [JNI 入门教程](http://www.runoob.com/w3cnote/jni-getting-started-tutorials.html)
-* [What is the difference between #include &lt;filename&gt; and #include "filename"?
-](https://stackoverflow.com/questions/21593/what-is-the-difference-between-include-filename-and-include-filename)
+* [What is the difference between #include &lt;filename&gt; and #include "filename"?](https://stackoverflow.com/questions/21593/what-is-the-difference-between-include-filename-and-include-filename)
+* [HotSpot VM源码中有什么奇妙的姿势来查找到宏定义吗？](https://www.zhihu.com/question/57203005)
+* [新手该如何读openjdk源码？](https://www.zhihu.com/question/30535464)
+* [OpenJDK源码阅读导航](http://rednaxelafx.iteye.com/blog/1549577)
+* [Hotspot的源码应该怎样阅读？](http://hllvm.group.iteye.com/group/topic/26998#193368)

@@ -195,5 +195,4 @@ __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时
 * [SpringCloud系列第07节之服务网关Zuul](https://jadyer.cn/2017/04/15/springcloud-zuul/)
 * [SpringCloud系列第08节之配置中心Config](https://jadyer.cn/2017/04/17/springcloud-config/)
 * [SpringCloud系列第09节之消息总线Bus](https://jadyer.cn/2017/04/19/springcloud-bus/)
-* [SpringCloud服务注册中心比较:Consul vs Zookeeper vs Etcd vs Eureka
-](https://blog.csdn.net/qq_24084925/article/details/78869474)
+* [SpringCloud服务注册中心比较:Consul vs Zookeeper vs Etcd vs Eureka](https://blog.csdn.net/qq_24084925/article/details/78869474)
