@@ -148,9 +148,9 @@ toc:
 
 # 11 修改行内代码样式
 
-在`themes/next/source/css/_custom/custom.styl`中增加如下代码
+修改方式：在`themes/next/source/css/_custom/custom.styl`中增加如下代码
 
-```
+```css
 // Custom styles.
 code {
     color: #C33258;
@@ -159,7 +159,31 @@ code {
 }
 ```
 
-# 12 参考
+# 12 修改内链接样式
+
+内链接即如下的语法
+
+```
+{% post_link <文章名> %}
+```
+
+修改方式：在`themes\next\source\css\_common\components\post\post.styl`中增加如下代码
+
+```css
+// 文章内链接文本样式
+.post-body p a{
+  color: #0593d3;
+  border-bottom: none;
+  border-bottom: 1px solid #0593d3;
+  &:hover {
+    color: #fc6423;
+    border-bottom: none;
+    border-bottom: 1px solid #fc6423;
+  }
+}
+```
+
+# 13 参考
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
 
