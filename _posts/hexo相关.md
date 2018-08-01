@@ -159,18 +159,19 @@ code {
 }
 ```
 
-# 12 修改内链接样式
+# 12 修改链接样式
 
-内链接即如下的语法
+链接即如下的语法
 
 ```
 {% post_link <文章名> %}
+[description](url)
 ```
 
 修改方式：在`themes\next\source\css\_common\components\post\post.styl`中增加如下代码
 
 ```css
-// 文章内链接文本样式
+// 文章链接文本样式
 .post-body p a{
   color: #0593d3;
   border-bottom: none;
