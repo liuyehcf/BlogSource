@@ -137,6 +137,12 @@ $ git branch --set-upstream [branch] [remote-branch]
 # 合并指定分支到当前分支
 $ git merge [branch]
 
+# rebase指定分支到当前分支
+$ git rebase [branch]
+
+# rebase当前分支的HEAD到指定的提交
+$ git rebase -i [commit]
+
 # 选择一个commit，合并进当前分支
 $ git cherry-pick [commit]
 

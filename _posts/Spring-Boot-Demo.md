@@ -498,6 +498,8 @@ Caused by: java.lang.NoSuchMethodError: org.springframework.web.accept.ContentNe
 
 SpringBoot推崇约定大于配置，通常情况下，我们只需要配置少数几个参数，应用就可以正常启动。但是，知道SpringBoot究竟提供了多少默认的配置也是很有用的，给一个[传送门](https://docs.spring.io/spring-boot/docs/2.0.3.RELEASE/reference/htmlsingle/)。在页面上搜索`server.port=8080`，就能定位到配置项说明的地方
 
+SpringBoot默认加载的属性文件，其路径为`classpath:application.properties`或者`classpath:application.yml`。若要修改这个路径，必须用`@PropertySource`注解来标注（而不是用`@ImportResource`注解哦）
+
 # 10 Auto-Configuration
 
 `Spring`集成了非常多的优秀项目，我们在使用这些项目时，仅仅只需要引入相关的依赖即可（对于`Spring-Boot`集成的项目，通常有`spring-boot-starter`后缀），例如`Flowable`

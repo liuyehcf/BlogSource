@@ -18,23 +18,31 @@ __阅读更多__
 ```
 .
 ├── pom.xml
-├── src
-│   ├── main
-│   │   ├── java
-│   │   │   └── org
-│   │   │       └── liuyehcf
-│   │   │           └── spring
-│   │   │               └── validate
-│   │   │                   ├── Application.java
-│   │   │                   ├── MainController.java
-│   │   │                   ├── dto
-│   │   │                   │   └── UserDTO.java
-│   │   │                   ├── group
-│   │   │                   │   ├── Create.java
-│   │   │                   │   └── Update.java
-│   │   │                   └── service
-│   │   │                       ├── UserService.java
-│   │   │                       └── UserServiceImpl.java
+└── src
+    ├── main
+    │   ├── java
+    │   │   └── org
+    │   │       └── liuyehcf
+    │   │           └── spring
+    │   │               └── validate
+    │   │                   ├── Application.java
+    │   │                   ├── MainController.java
+    │   │                   ├── dto
+    │   │                   │   └── UserDTO.java
+    │   │                   ├── group
+    │   │                   │   ├── Create.java
+    │   │                   │   └── Update.java
+    │   │                   └── service
+    │   │                       ├── UserService.java
+    │   │                       └── UserServiceImpl.java
+    │   └── resources
+    └── test
+        └── java
+            └── org
+                └── liuyehcf
+                    └── spring
+                        └── validate
+                            └── TestValidate.java
 ```
 
 # 2 pom文件
@@ -66,6 +74,13 @@ __阅读更多__
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
@@ -301,6 +316,58 @@ public class Application {
 ```
 
 # 8 Validate With Junit
+
+```Java
+package org.liuyehcf.spring.validate;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.liuyehcf.spring.validate.dto.UserDTO;
+import org.liuyehcf.spring.validate.group.Create;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+
+/**
+ * @author hechenfeng
+ * @date 2018/7/10
+ */
+public class TestValidate {
+    private static ValidatorFactory validatorFactory;
+    private static Validator validator;
+
+    @BeforeClass
+    public static void createValidator() {
+        validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
+    }
+
+    @AfterClass
+    public static void close() {
+        validatorFactory.close();
+    }
+
+    @Test
+    public void testGroupCreate() {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setName("小明");
+        userDTO.setAge(0);
+
+        Set<ConstraintViolation<UserDTO>> validates = validator.validate(userDTO, Create.class);
+
+        assertEquals(validates.size(), 1);
+        ConstraintViolation<UserDTO> violation = validates.iterator().next();
+
+        assertEquals(violation.getPropertyPath().toString(), "age");
+    }
+}
+```
 
 # 9 总结
 

@@ -1049,10 +1049,57 @@ __Description__
 
 > `execution listener`允许您在流程执行期间发生某些事件时执行外部Java代码或计算表达式。可以捕获的事件是：
 > 1. 启动或停止`process`
+> 1. 进行转移，即`sequence flow`
 > 1. 启动或停止`activity`
 > 1. 启动或停止`gateway`
 > 1. 启动或停止`intermediate event`
 > 1. 结束`start event`或启动`end event`
+
+__示例__
+
+```xml
+<process id="executionListenersProcess">
+
+    <!-- 第一个Listener -->
+    <!-- 在process的启动时触发Listener -->
+    <extensionElements>
+        <flowable:executionListener
+            class="org.flowable.examples.bpmn.executionlistener.ExampleExecutionListenerOne"
+            event="start" />
+    </extensionElements>
+
+    <startEvent id="theStart" />
+    <sequenceFlow sourceRef="theStart" targetRef="firstTask" />
+
+    <userTask id="firstTask" />
+
+    <!-- 第二个Listener -->
+    <!-- 在进行转移时触发Listener -->
+    <sequenceFlow sourceRef="firstTask" targetRef="secondTask">
+        <extensionElements>
+            <flowable:executionListener
+                class="org.flowable.examples.bpmn.executionListener.ExampleExecutionListenerTwo" />
+        </extensionElements>
+    </sequenceFlow>
+
+    <!-- 第一个Listener -->
+    <!-- 在userTask结束时触发Listener -->
+    <userTask id="secondTask" >
+        <extensionElements>
+            <flowable:executionListener
+                expression="${myPojo.myMethod(execution.event)}"
+                event="end" />
+        </extensionElements>
+    </userTask>
+    <sequenceFlow sourceRef="secondTask" targetRef="thirdTask" />
+
+    <userTask id="thirdTask" />
+    <sequenceFlow sourceRef="thirdTask" targetRef="theEnd" />
+
+    <endEvent id="theEnd" />
+
+</process>
+```
 
 __需要实现的接口：`org.flowable.engine.delegate.ExecutionListener`__
 

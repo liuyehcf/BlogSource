@@ -146,7 +146,20 @@ toc:
   wrap: false
 ```
 
-# 11 参考
+# 11 修改行内代码样式
+
+在`themes/next/source/css/_custom/custom.styl`中增加如下代码
+
+```
+// Custom styles.
+code {
+    color: #C33258;
+    background: #F9F2F4;
+    margin: 2px;
+}
+```
+
+# 12 参考
 
 __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
 
@@ -157,3 +170,4 @@ __本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时
 * [hexo的next主题个性化配置教程](https://segmentfault.com/a/1190000009544924)
 * [icon库](https://fontawesome.com/icons?d=gallery)
 * [Leancloud访客统计插件重大安全漏洞修复指南](https://leaferx.online/2018/02/11/lc-security/)
+* [hexo的next主题个性化教程:打造炫酷网站](http://shenzekun.cn/hexo%E7%9A%84next%E4%B8%BB%E9%A2%98%E4%B8%AA%E6%80%A7%E5%8C%96%E9%85%8D%E7%BD%AE%E6%95%99%E7%A8%8B.html)
