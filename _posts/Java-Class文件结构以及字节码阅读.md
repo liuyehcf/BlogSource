@@ -131,7 +131,7 @@ Java代码在进行Javac编译的时候，并不像C和C++那样有"连接"这�
 | `ACC_PUBLIC` | 0x0001 | 是否为public类型 | 
 | `ACC_FINAL` | 0x0010 | 是否被声明为final，只有类可设置 | 
 | `ACC_SUPER` | 0x0020 | 是否允许使用invokespecial字节码指令的新语意，invokespecial指令的语意在JDK 1.0.2发生过改变，为了区别这条指令使用哪种语意，JDK 1.0.2之后编译出来的类的这个标志都必须为真 | 
-| `ACC_INTERFAC`E | 0x0200 | 标志这是一个接口 | 
+| `ACC_INTERFACE` | 0x0200 | 标志这是一个接口 | 
 | `ACC_ABSTRACT` | 0x0400 | 是否为abstract类型，对于接口或者抽象类来说，此标志值为真，其他类型值为假 | 
 | `ACC_SYNTHETIC` | 0x1000 | 标志这个类并非由用户代码产生的 | 
 | `ACC_ANNOTATION` | 0x2000 | 标志这是一个注解 | 
