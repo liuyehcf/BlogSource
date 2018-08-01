@@ -606,5 +606,5 @@ echo ${count} # 永远是0
 * [shell的命令替换和命令组合](https://www.cnblogs.com/f-ck-need-u/archive/2017/08/20/7401591.html)
 * [shell脚本--数值计算](https://www.cnblogs.com/-beyond/p/8232496.html)
 * [Linux—shell中$(())、$()、\`\`与${}的区别](https://www.cnblogs.com/chengd/p/7803664.html)
-* [shell中各种括号的作用()、(())、[]、[[]]、{}](https://www.cnblogs.com/fengkui/p/6122702.html)
+* [shell中各种括号的作用()、(())、\[\]、\[\[\]\]、{}](https://www.cnblogs.com/fengkui/p/6122702.html)
 * [shell特殊符号用法大全](https://www.cnblogs.com/guochaoxxl/p/6871619.html)
