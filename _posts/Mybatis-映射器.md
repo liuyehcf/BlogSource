@@ -216,7 +216,5 @@ sql元素的意义，在于我们可以__定义一串SQL语句的组成部分，
 
 # 7 参考
 
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
-
 * 《深入浅出MyBatis技术原理与实战》
 * [MyBatis教程](http://www.mybatis.org/mybatis-3/zh/index.html)

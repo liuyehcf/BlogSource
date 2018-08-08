@@ -30,6 +30,4 @@ Servlet需要由Web容器来管理，那么采取这种机制有什么好处呢�
 
 # 3 参考
 
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
-
 * [Web开发中 Web 容器的作用（如tomcat）](https://www.jianshu.com/p/99f34a91aefe)

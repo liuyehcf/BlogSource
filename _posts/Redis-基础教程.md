@@ -422,7 +422,7 @@ __命令：__
 | `CLIENT SETNAME` | 设置当前连接的名称 |
 | `CLIENT GETNAME` | 获取通过CLIENT SETNAME命令设置的服务名称 |
 | `CLIENT PAUSE` | 挂起客户端连接，指定挂起的时间以毫秒计 |
-| `CLIENT KILL` | 关闭客户端连接 |	
+| `CLIENT KILL` | 关闭客户端连接 |
 
 ## 4.5 Redis 管道技术
 
@@ -461,7 +461,5 @@ __分区类型：__Redis有两种类型分区。假设有4个Redis实例R0，R1�
 * __一致性hash分区__：哈希分区有一个不足之处，就是增加或者删除机器时节点的分布就被完全打乱了，不满足单调性。而对于一致性hash，增加节点后，原来的数据要么存放在之前的节点上，要么存放在新的节点上
 
 # 5 参考
-
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
 
 * [Redis 教程](http://www.runoob.com/redis/redis-intro.html)

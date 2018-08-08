@@ -76,7 +76,7 @@ public interface Interceptor extends Advice {
 
 ```Java
 public interface MethodInterceptor extends Interceptor {
-	
+
 	Object invoke(MethodInvocation invocation) throws Throwable;
 
 }
@@ -167,7 +167,7 @@ Spring对于Advice接口的继承体系进行了扩展，扩展后的继承体�
     ├── Interceptor (AOP Alliance)
     |       |
     |       ├── MethodInterceptor (AOP Alliance)
-	|		|		|	
+	|		|		|
 	|		|		├── IntroductionInterceptor (Spring AOP)
     |       ├── ConstructorInterceptor (AOP Alliance)
     |

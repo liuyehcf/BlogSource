@@ -185,8 +185,6 @@ Spring Cloud为开发人员提供了快速构建分布式系统中一些常见�
 
 # 20 参考
 
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
-
 * [Spring Cloud官方文档](http://cloud.spring.io/spring-cloud-static/Finchley.RELEASE/single/spring-cloud.html)
 * [SpringCloud系列第02节之注册中心Eureka](https://jadyer.cn/2017/01/16/springcloud-eureka/)
 * [SpringCloud系列第04节之注册中心Eureka高可用](https://jadyer.cn/2017/01/18/springcloud-eureka-high-availability/)

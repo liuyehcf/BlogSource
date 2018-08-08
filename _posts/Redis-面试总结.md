@@ -187,6 +187,4 @@ ttl和random比较容易理解，实现也会比较简单。主要是lru最近�
 
 # 10 参考
 
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
-
 * [面试中常见的redis问题有哪些？](http://blog.sina.com.cn/s/blog_c8bffac20102wq04.html)

@@ -77,8 +77,6 @@ __各大互联网公司，百度、淘宝、支付宝、知乎都使用HTTPS协�
 
 # 6 参考
 
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
-
 * [HTTPS 建立连接过程](HTTP://blog.csdn.net/wangjun5159/article/details/51510594)
 * [SSL与TLS的区别以及介绍](http://kb.cnblogs.com/page/197396/)
 * [详解HTTPS是如何确保安全性的？](http://www.jianshu.com/p/544c0a2d47f4)

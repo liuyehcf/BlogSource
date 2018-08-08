@@ -172,8 +172,6 @@ __TCP通过下列方式来提供可靠性__
 
 # 8 参考
 
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
-
 * [TCP/IP协议三次握手与四次握手流程解析](http://www.2cto.com/net/201310/251896.html)
 * [TCP/IP为什么要进行三次握手？](http://blog.csdn.net/zhushuai1221/article/details/51008950)
 * [计算机网络——TCP协议中的三次握手四次挥手以及11种状态转换](http://blog.csdn.net/a987073381/article/details/52206215)

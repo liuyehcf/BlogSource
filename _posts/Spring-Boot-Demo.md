@@ -518,8 +518,6 @@ __答案就是基于约定，`Spring`会默认加载`classpath:META-INF/spring.f
 
 # 11 参考
 
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
-
 * [Spring-Boot官方文档](https://docs.spring.io/spring-boot/docs/2.0.3.RELEASE/reference/htmlsingle/)
 * [sing-boot-maven-without-a-parent](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#using-boot-maven-without-a-parent)
 * [@SpringBootApplication的使用](http://blog.csdn.net/u013473691/article/details/52353923)

@@ -153,7 +153,5 @@ test属性用于条件判断语句中，它在MyBatis中广泛使用。它的作
 
 # 7 参考
 
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
-
 * 《深入浅出MyBatis技术原理与实战》
 * [MyBatis教程](http://www.mybatis.org/mybatis-3/zh/index.html)

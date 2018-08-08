@@ -127,8 +127,6 @@ docker image --help # 参数image参数的子参数
 
 # 3 参考
 
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
-
 * [docker](https://www.docker.com/)
 * [Docker 教程](http://www.runoob.com/docker/docker-tutorial.html)
 * [Docker 原理篇](https://www.jianshu.com/p/7a58ad7fade4)

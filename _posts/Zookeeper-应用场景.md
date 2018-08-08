@@ -105,7 +105,5 @@ __Master选举则是Zookeeper中最为经典的应用场景了。__
 
 # 8 参考
 
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
-
 * [ZooKeeper典型应用场景一览](http://www.cnblogs.com/tommyli/p/3766189.html)
 * [Zookeeper应用场景](http://www.cnblogs.com/leesf456/p/6036548.html)

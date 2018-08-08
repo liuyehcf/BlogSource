@@ -165,8 +165,6 @@ AQS框架是CLH锁的变体，AQS相比于CLH锁，AQS采用了自旋与阻塞�
 
 # 5 参考
 
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
-
 * [1-偏向锁，轻量级锁，自旋锁，重量级锁的详细介绍](http://www.cnblogs.com/wade-luffy/p/5969418.html)
 * [2-synchronized实现原理](http://www.cnblogs.com/pureEve/p/6421273.html)
 * [3-几种锁算法的实现](https://segmentfault.com/a/1190000002881664)

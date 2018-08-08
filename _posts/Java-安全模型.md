@@ -316,8 +316,6 @@ Caused by: java.security.AccessControlException: access denied ("java.util.Prope
 
 # 4 参考
 
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
-
 * [Fusion Middleware Security Guide](https://docs.oracle.com/cd/E12839_01/core.1111/e10043/introjps.htm#JISEC3817)
 * [Java安全——安全管理器、访问控制器和类装载器](https://yq.aliyun.com/articles/57223?&utm_source=qq)
 * [Java 授权内幕](https://www.ibm.com/developerworks/cn/java/j-javaauth/)

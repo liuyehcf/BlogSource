@@ -229,8 +229,6 @@ set encoding=utf-8
 
 # 4 参考
 
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
-
 * [Linux 中的各种栈：进程栈 线程栈 内核栈 中断栈](http://blog.csdn.net/yangkuanqaz85988/article/details/52403726)
 * 《鸟哥的Linux私房菜》
 * [Mac 的 Vim 中 delete 键失效的原因和解决方案](https://blog.csdn.net/jiang314/article/details/51941479)

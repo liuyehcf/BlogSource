@@ -59,7 +59,5 @@ xmlns其实是XML Namespace的缩写
 
 # 2 参考
 
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
-
 * [XML Schema 简介](http://www.w3school.com.cn/schema/schema_intro.asp)
 * [请教xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ](http://bbs.csdn.net/topics/360012676)

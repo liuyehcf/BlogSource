@@ -335,6 +335,4 @@ with tf.Session() as sess:
 
 # 6 参考
 
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
-
 * [人工智能实践：TensorFlow笔记-曹健](https://www.icourse163.org/course/PKU-1002536002)

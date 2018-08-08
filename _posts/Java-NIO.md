@@ -151,7 +151,5 @@ __epoll__：
 
 # 3 参考
 
-__本篇博客摘录、整理自以下博文。若存在版权侵犯，请及时联系博主(邮箱：liuyehcf#163.com，#替换成@)，博主将在第一时间删除__
-
 * [select/poll/epoll](http://www.cnblogs.com/Anker/p/3265058.html)
 
