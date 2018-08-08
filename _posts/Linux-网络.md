@@ -103,3 +103,132 @@ __阅读更多__
 * [Oracle VM VirtualBox: Networking options and how-to manage them](https://blogs.oracle.com/scoter/networking-in-virtualbox-v2)
 * [Chapter 6. Virtual networking](https://www.virtualbox.org/manual/ch06.html#network_bridged)
 * [VMware虚拟机三种网络模式详解](https://www.linuxidc.com/Linux/2016-09/135521.htm)
+
+# 2 Netfilter
+
+Linux中最常用的基本防火墙软件称为`iptables`。`iptables`防火墙通过与Linux内核的网络堆栈中的数据包过滤`hook`进行交互来工作。这些内核`hook`称为`netfilter`框架
+
+进入网络系统（`incoming`或`outgoing`）的每个数据包将在它通过网络堆栈时触发这些`hook`，允许注册这些`hook`的程序与关键点的流量进行交互。与`iptables`相关联的内核模块在这些`hook`处注册，以确保流量符合防火墙的设定
+
+## 2.1 Netfilter Hooks
+
+`netfilter`一共包含5个`hook`。当数据包通过网络堆栈时，注册到这些`hook`的内核模块将被触发执行。数据包是否触发`hook`，取决于数据包是`incoming`还是`outgoing`，数据包的目标，以及数据包是否在之前的点已被丢弃或拒绝
+
+1. __`NF_IP_PRE_ROUTING`__：该`hook`会在任意`incoming`数据包进入网络堆栈时触发。并且，会在做出路由决定前处理完毕
+1. __`NF_IP_LOCAL_IN`__：该`hook`会在某个`incoming`数据包被路由到`local system`时触发
+1. __`NF_IP_FORWARD`__：该`hook`会在某个`incoming`数据包被`forwarded`到其他主机时触发
+1. __`NF_IP_LOCAL_OUT`__：该`hook`会在任意`outgoing`数据包进入网络堆栈时触发
+1. __`NF_IP_POST_ROUTING`__：该`hook`会在任意`outgoing`或`forwarded`数据包发生路由之后，传输之前触发
+
+在`hook`处注册的内核模块必须提供优先级编号，来确定触发`hook`时调用内核模块的顺序。每个模块将按照优先级顺序依次被调用，并在处理后将处理结果返回`netfilter`，以便让`netfilter`决定对数据包进行何种操作
+
+## 2.2 IPTables Tables and Chains
+
+`iptables`防火墙使用`table`来组织其`rule`。这些`table`根据决策类型进行分类。例如，如果`rule`处理网络地址转换，它将被放入`nat table`中。如果该`rule`用于决定是否允许数据包继续到其目的地，则可能会将其添加到`filter table`中
+
+在每个`iptables table`中，`rule`进一步被拆分到不同的`chain`中。__其中，`table`代表了决策类型；`chain`表示由哪个`hook`来触发，即决定`rule`何时进行校验__
+
+| `Chain` | `hoook` |
+|:--|:--|
+| `PREROUTING` | `NF_IP_PRE_ROUTING` |
+| `INPUT` | `NF_IP_LOCAL_IN` |
+| `FORWARD` | `NF_IP_FORWARD` |
+| `OUTPUT` | `NF_IP_LOCAL_OUT` |
+| `POSTROUTING` | `NF_IP_POST_ROUTING` |
+
+`chain`允许管理员控制数据包的传递路径中的评估`rule`。由于每个`table`都有多个`chain`，因此一个`table`的作用点可能会有多个（关联到了多个`hook`）。由于某些类型的决策仅在网络堆栈中的某些点有意义，因此`talbe`不会在每个内核`hook`中进行注册
+
+只有五个`netfilter`内核`hook`，因此，每个`hook`注册了多个来自不同`table`的`chian`。例如，三个`table`具有`PREROUTING chain`。当这些`chain`在相关的`NF_IP_PRE_ROUTING hook`处注册时，它们指定一个优先级，该优先级指示每个`table`的`PREROUTING chain`被调用的顺序。在进入下一个`PREROUTING`链之前，将按顺序评估最高优先级`PREROUTING chain`中的每个`rule`
+
+## 2.3 Which Tables are Available?
+
+### 2.3.1 The Filter Table
+
+`filter table`是`iptables`中最常使用的，`filter table`用于决定放行数据包，还是拒绝数据包通过
+
+### 2.3.2 The NAT Table
+
+`net table`通常进行网络地址转换（`NAT`）。当数据包进入网络堆栈，`net table`中的`rule`将会决定是否以及怎样修改数据包的`源地址`以及`目的地址`
+
+### 2.3.3 The Mangle Table
+
+`mangle table`用于修改`IP header`，例如修改数据包的`TTL(Time to Live)`属性值
+
+### 2.3.4 The Raw Table
+
+`iptables`防火墙是有状态的，这意味着，对于一个数据包的规则校验可以关联到前面若干个数据包。构建在`netfilter`框架之上的`connection tracking`功能允许`iptables`将数据包视为正在进行的`connection`或`session`的一部分，而不是作为离散的，无关的数据包
+
+`connection tracking`的处理逻辑会在数据包到达网络接口时被执行。`raw table`的目的就是绕过`connection tracking`的功能
+
+### 2.3.5 The Security Table
+
+`security table`主要用于为数据包设置`SELinux`的安全上下文
+
+## 2.4 Which Chains are Implemented in Each Table?
+
+下标从左到右是五个`chain`；从上到下是若干个`table`，上面的`table`其优先级要比下面的`table`高。同时，`nat table`被拆分成两个表，一个是`SNAT table`（修改`source address`），另一个是`DNAT table`（修改`destination address`）
+
+| Tables↓/Chains→ | PREROUTING | INPUT | FORWARD | OUTPUT | POSTROUTING |
+|:--|:--:|:--:|:--:|:--:|:--:|
+| `(routing decision)` | | | | ✓ | |
+| `raw` | ✓ | | | ✓ | |
+| `(connection tracking enabled)` | ✓ | | | ✓ | |
+| `mangle` | ✓ | ✓ | ✓ | ✓ |✓ |
+| `nat (DNAT)` | ✓ | | | ✓ | |
+| `(routing decision)` | ✓ | | | ✓ | |
+| `filter`| | ✓ | ✓ | ✓ | |
+| `security`| | ✓ | ✓ | ✓ | |
+| `nat (SNAT)` | | ✓ | | | ✓ |
+
+__Chain Traversal Order__
+
+1. __Incoming packets destined for the local system__：`PREROUTING -> INPUT`
+1. __Incoming packets destined to another host__：`PREROUTING -> FORWARD -> POSTROUTING`
+1. __Locally generated packets__：`OUTPUT -> POSTROUTING`
+
+举个例子，一个`incoming`数据包，其目的地是`local systeml`，那么`PREROUTING chain`会被首先触发，按照优先级顺序，依次是`raw table`、`mangle table`、`nat table`的逻辑会被执行。然后`INPUT chain`会被触发，按照优先级顺序，依次是`mangle table`、`filter table`、`security table`以及`nat table`
+
+## 2.5 IPTables Rules
+
+__一个`rule`由一个`table`以及一个`chain`唯一确定__。每个`rule`都有一个`matching component`以及一个`action component`
+
+__`matching component`用于指定数据包必须满足的条件，以便执行相关的操作__。匹配系统非常灵活，可以通过系统上的`iptables`进行配置，允许进行如下粒度的配置
+
+1. __协议类型__
+1. __目的地或源地址__
+1. __目的地或源端口__
+1. __目的地或源网络__
+1. __输入或输出接口__
+1. __报头或连接状态以及其他标准__
+* 上述规则可以自由组合，用来创建相当复杂的规则集以区分不同的流量
+
+__`action component`用于在满足规则匹配条件时，输出一个`target`__：`target`通常分为以下两类
+
+1. __`Terminating targets`__：执行一个动作，该动作终止`chain`中的执行逻辑并将控制返回到`netfilter`的`hook`中。根据提供的返回值，`hook`可能会丢弃数据包或允许数据包继续进行下一个处理阶段
+1. __`Non-terminating targets`__：执行一个动作，并继续`chain`中的执行逻辑。尽管每个`chain`最终必须传回`Terminating targets`，但是可以预先执行任意数量的`Non-terminating targets`
+
+## 2.6 Jumping to User-Defined Chains
+
+这里需要提到一个特殊的`Non-terminating targets`，即`jump target`。`jump target`可以跳转到其他`chain`中执行额外的处理逻辑。在上面讨论到的`built-in chains`已经预先注册到了`netfilter hook`中，而`User-Defined Chains`是不允许注册到`hook`中的。尽管如此，`iptables`仍然允许用户自定义`chain`，其原理就是用到了`jump target`
+
+## 2.7 IPTables and Connection Tracking
+
+在讨论`raw table`时，我们介绍了在`netfilter`框架之上实现的`connection tracking`。`connection tracking`允许`iptables`在当前连接的上下文中查看数据包。`connection tracking`为`iptables`提供执行“有状态”操作所需的功能
+
+数据包进入网络堆栈后很快就会应用`connection tracking`。__`raw table chains`和一些基本的健全性检查是在将`数据包`与`连接`相关联之前对数据包执行的唯一逻辑__
+
+系统根据一组现有连接检查每个数据包，将更新数据包所属连接的状态，或增加一个新的连接。__在`raw table chains`中标记有`NOTRACK target`的数据包将绕过`connection tracking`处理流程__
+
+在`connection tracking`中，一个数据包可能被标记为如下几种状态
+
+1. __`NEW`__：当前数据包不属于任何一个现有的`connection`，且是一个合法的`first package`，那么将会创建一个新的`connection`
+1. __`ESTABLISHED`__：当收到一个`response`时，`connection`会从`NEW`状态变为`ESTABLISHED`状态。对于`TCP`，这意味着这是一个`SYN/ACK`数据包；对于`UDP`，这意味着这是一个`ICMP`数据包
+1. __`RELATED`__：当前数据包不属于任何一个现有的`connection`，但是关联到某个`connection`。这通常是一个`helper connection`，例如`FTP data transmission connection`或者是`ICMP`对其他协议的`连接尝试`的响应
+1. __`INVALID`__：当前数据包不属于任何一个现有的`connection`，也不是一个合法的`first package`
+1. __`UNTRACKED`__：通过`raw table`的配置，绕过`connection tracking`的处理流程
+1. __`SNAT`__：`source address`被`NAT`修改时设置的虚拟状态，被记录在`connection tracking`中，以便在`reply package`（我回复别人）中更改`source address`
+1. __`DNAT`__：`destination address`被`NAT`修改时设置的虚拟状态，被记录在`connection tracking`中，以便在路由`reply package`（别人回复我）时知道更改`destination address`
+
+## 2.8 参考
+
+* [A Deep Dive into Iptables and Netfilter Architecture](https://www.digitalocean.com/community/tutorials/a-deep-dive-into-iptables-and-netfilter-architecture)

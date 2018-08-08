@@ -377,6 +377,8 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "hello-world"
+  labels:
+    mylabel: label_hello_world
 spec:
   restartPolicy: Always
   containers:
@@ -421,13 +423,6 @@ spec:
   type: NodePort
 ```
 
-__给pod打上label__
-
-```sh
-# 打上label，与hello-world-service.yml中的spec.selector中的label一致
-kubectl label pod hello-world mylabel=label_hello_world
-```
-
 __启动service__
 
 ```sh
@@ -447,10 +442,10 @@ Annotations:              <none>
 Selector:                 mylabel=label_hello_world
 Type:                     NodePort
 IP:                       10.108.106.70
-Port:                     <unset>  4000/TCP   # 看这里
-TargetPort:               8080/TCP            # 看这里
-NodePort:                 <unset>  30001/TCP  # 看这里
-Endpoints:                10.244.1.94:8080
+Port:                     <unset>  4000/TCP   # service port
+TargetPort:               8080/TCP            # target port
+NodePort:                 <unset>  30001/TCP  # node port
+Endpoints:                10.244.1.94:8080    # pod Ip:port
 Session Affinity:         None
 External Traffic Policy:  Cluster
 Events:                   <none>
@@ -487,6 +482,7 @@ kubectl get namespace
 # 查看pod概要信息
 kubectl get pod -n <namespace>
 kubectl get pod -n <namespace> <pod-name>
+kubectl get pod -n <namespace> <pod-name> -o wide
 kubectl get pod --all-namespaces
 
 # 查看pod详细信息
@@ -498,6 +494,13 @@ kubectl get svc <service-name>
 
 # 查看service详细信息
 kubectl describe svc <service-name>
+
+# 查看object
+kubectl get -f <filename|url> -o yaml
+kubectl get pod -n <namespace> <pod-name> -o yaml
+
+# 打label
+kubectl label pod -n <namespace> <pod-name> <label_name>=<label_value>
 ```
 
 # 8 参考
