@@ -58,10 +58,9 @@ Demo工程的依赖配置
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <groupId>org.liuyehcf</groupId>
+    <artifactId>spring-tx</artifactId>
     <version>1.0-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
-
-    <artifactId>spring-tx</artifactId>
 
     <properties>
         <spring.version>5.0.8.RELEASE</spring.version>
@@ -121,7 +120,20 @@ Demo工程的依赖配置
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                    <compilerId>groovy-eclipse-compiler</compilerId>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-eclipse-compiler</artifactId>
+                        <version>2.9.2-01</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy-eclipse-batch</artifactId>
+                        <version>2.4.3-01</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -129,7 +141,7 @@ Demo工程的依赖配置
                 <version>${spring.boot.version}</version>
                 <configuration>
                     <fork>true</fork>
-                    <mainClass>org.liuyehcf.spring.boot.SampleApplication</mainClass>
+                    <mainClass>org.liuyehcf.spring.tx.Application</mainClass>
                 </configuration>
                 <executions>
                     <execution>

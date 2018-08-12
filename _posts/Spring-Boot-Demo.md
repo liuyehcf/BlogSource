@@ -60,7 +60,7 @@ pom文件可以直接继承自`org.springframework.boot:spring-boot-starter-pare
 
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>spring-boot-demo</artifactId>
+    <artifactId>spring-boot</artifactId>
 
     <dependencies>
         <dependency>
@@ -80,7 +80,6 @@ pom文件可以直接继承自`org.springframework.boot:spring-boot-starter-pare
                     <target>1.8</target>
                 </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -104,7 +103,7 @@ pom文件可以直接继承自`org.springframework.boot:spring-boot-starter-pare
 
 __注意，如果是Web应用的话，`org.springframework.boot:spring-boot-starter-web`是必须的，这个依赖项包含了内嵌的Tomcat容器__
 
-## 3.2 继承自己项目的父pom文件
+## 3.2 不继承自spring-boot
 
 如果不想继承自`org.springframework.boot:spring-boot-starter-parent`，那么需要通过`<dependencyManagement>`元素引入依赖
 
@@ -113,15 +112,10 @@ __注意，如果是Web应用的话，`org.springframework.boot:spring-boot-star
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>JavaLearning</artifactId>
-        <groupId>org.liuyehcf</groupId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
-
+    <groupId>org.liuyehcf</groupId>
+    <artifactId>spring-boot</artifactId>
+    <version>1.0-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
-
-    <artifactId>spring-boot-demo</artifactId>
 
     <dependencies>
         <dependency>
@@ -130,7 +124,6 @@ __注意，如果是Web应用的话，`org.springframework.boot:spring-boot-star
         </dependency>
     </dependencies>
 
-    <!-- 引入依赖 -->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -153,6 +146,22 @@ __注意，如果是Web应用的话，`org.springframework.boot:spring-boot-star
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>1.5.9.RELEASE</version>
+                <configuration>
+                    <fork>true</fork>
+                    <mainClass>org.liuyehcf.spring.boot.SampleApplication</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
