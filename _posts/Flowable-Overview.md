@@ -1123,6 +1123,13 @@ __XML representation__
 </userTask>
 ```
 
+__event的类型（触发的时刻）__
+
+* __`create`__：当Task被创建后，且所有属性设置完毕后
+* __`assignment`__：当Task被分配给某人时。当执行流程到达`UserTask`时，`assignment event`会优先于`create event`触发
+* __`complete`__：当Task被完成后，且被删除前
+* __`delete`__：当Task即将被删除时
+
 __需要实现的接口：`org.flowable.engine.delegate.TaskListener`__
 
 __参考__
@@ -1199,6 +1206,22 @@ __参考__
 
 * [Database table names explained](https://www.flowable.org/docs/userguide/index.html#database.tables.explained)
 * [activiti工作流表说明](https://blog.csdn.net/u011627980/article/details/51646920)
+
+## 8.2 Creating the database tables
+
+`flowable`的建表语句都在`org.flowable:flowable-engine`中的`org/flowable/db/create`路径下
+
+```
+flowable.{db}.{create|drop}.{type}.sql
+```
+
+* `{db}`：代表数据库类型
+* `{create|drop}`：创建还是销毁
+* `{type}`：类型，就两种`history`或`engine`
+
+__参考__
+
+* [Creating the database tables](https://www.flowable.org/docs/userguide/index.html#creatingDatabaseTable)
 
 # 9 参考
 

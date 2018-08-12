@@ -15,9 +15,9 @@ __阅读更多__
 
 # 1 环境
 
-1. IDEA
-1. Maven 3.5.2
-1. Spring Boot
+1. `IDEA`
+1. `Maven 3.5.2`
+1. `Spring Boot`
 
 # 2 Demo工程目录结构
 

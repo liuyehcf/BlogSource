@@ -87,6 +87,7 @@ import java.util.Arrays;
 
 @Component
 @Aspect
+@Order(1)
 public class SimpleSpringAdvisor {
     @Pointcut("execution(* org.liuyehcf.spring.aop.HelloService.*(..))")
     public void pointCut() {
@@ -141,9 +142,10 @@ public class SimpleSpringAdvisor {
 
 其中
 
-* `@Aspect`：配置切面，注意Spring默认不支持该注解，因此需要在配置文件中增加`<aop:aspectj-autoproxy/>`使得该注解能够生效
-* `@Pointcut`：配置切点
-* `@After`、`@Before`、`@AfterReturning`、`@Around`：配置增强
+* __`@Aspect`__：配置切面，注意Spring默认不支持该注解，因此需要在配置文件中增加`<aop:aspectj-autoproxy/>`使得该注解能够生效
+* __`@Pointcut`__：配置切点
+* __`@After`、`@Before`、`@AfterReturning`、`@Around`__：配置增强
+* __`@Order`__：指定切面的优先级，数值越大，越远离切点（优先执行）。可以这么理解，若干个切面将切点层层包围，数值大的切面处于更外侧，因此当触发调用时会优先执行
 
 ## 2.3 被增强的Bean
 

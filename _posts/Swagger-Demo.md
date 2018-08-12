@@ -15,12 +15,32 @@ __阅读更多__
 
 # 1 环境
 
-1. IDEA
-1. Maven3.3.9
-1. Spring Boot
-1. Swagger
+1. `IDEA`
+1. `Maven3.3.9`
+1. `Spring Boot`
+1. `Swagger`
 
-# 2 pom文件
+# 2 Demo工程目录结构
+
+```
+.
+├── pom.xml
+├── src
+│   └── main
+│       └── java
+│           └── org
+│               └── liuyehcf
+│                   └── swagger
+│                       ├── UserApplication.java
+│                       ├── config
+│                       │   └── SwaggerConfig.java
+│                       ├── controller
+│                       │   └── UserController.java
+│                       └── entity
+│                           └── User.java
+```
+
+# 3 pom文件
 
 引入Spring-boot以及Swagger的依赖即可，完整内容如下
 
@@ -82,7 +102,7 @@ __阅读更多__
 </project>
 ```
 
-# 3 Swagger Config Bean
+# 4 Swagger Config Bean
 
 ```Java
 package org.liuyehcf.swagger.config;
@@ -128,7 +148,7 @@ public class SwaggerConfig {
 1. @EnableSwagger2：启用Swagger2
 * 注意替换`.apis(RequestHandlerSelectors.basePackage("org.liuyehcf.swagger"))`这句中的包路径
 
-# 4 Controller
+# 5 Controller
 
 ```Java
 package org.liuyehcf.swagger.controller;
@@ -216,7 +236,7 @@ public class UserController {
 * @ApiImplicitParam最好指明`paramType`与`dataType`属性。`paramType`可以是`path`、`query`、`body`
 * @ApiParam没有`paramType`与`dataType`属性，因为该注解可以从参数（参数类型及其Spring MVC注解）中获取这些信息
 
-## 4.1 User
+## 5.1 User
 
 Controller中用到的实体类
 
@@ -256,7 +276,7 @@ public class User {
 }
 ```
 
-# 5 Application
+# 6 Application
 
 ```Java
 package org.liuyehcf.swagger;
@@ -277,7 +297,7 @@ public class UserApplication {
 
 成功启动后，即可访问`http://localhost:8080/swagger-ui.html`
 
-# 6 参考
+# 7 参考
 
 * [Spring Boot中使用Swagger2构建强大的RESTful API文档](https://www.jianshu.com/p/8033ef83a8ed)
 * [Spring4集成Swagger：真的只需要四步，五分钟速成](http://blog.csdn.net/blackmambaprogrammer/article/details/72354007)
