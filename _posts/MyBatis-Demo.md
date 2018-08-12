@@ -693,7 +693,7 @@ public class TestWithoutParam {
         <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
             <layout class="ch.qos.logback.classic.PatternLayout">
                 <pattern><![CDATA[
-			 [%d{yyyy-MM-dd HH:mm:ss}]  %-5level %logger{0} - %m%n
+             [%d{yyyy-MM-dd HH:mm:ss}]  %-5level %logger{0} - %m%n
             ]]></pattern>
             </layout>
         </encoder>

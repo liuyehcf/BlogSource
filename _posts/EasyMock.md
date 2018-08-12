@@ -57,11 +57,11 @@ true
 true
 java.lang.AssertionError: 
   Unexpected method call Human.isMale("Robot"):
-	at org.easymock.internal.MockInvocationHandler.invoke(MockInvocationHandler.java:44)
-	at org.easymock.internal.ObjectMethodsFilter.invoke(ObjectMethodsFilter.java:85)
+    at org.easymock.internal.MockInvocationHandler.invoke(MockInvocationHandler.java:44)
+    at org.easymock.internal.ObjectMethodsFilter.invoke(ObjectMethodsFilter.java:85)
 Disconnected from the target VM, address: '127.0.0.1:59825', transport: 'socket'
-	at org.liuyehcf.easymock.$Proxy0.isMale(Unknown Source)
-	at org.liuyehcf.easymock.TestEasyMock.main(TestEasyMock.java:28)
+    at org.liuyehcf.easymock.$Proxy0.isMale(Unknown Source)
+    at org.liuyehcf.easymock.TestEasyMock.main(TestEasyMock.java:28)
 ```
 
 输出的结果很有意思，在`EasyMock.replay(mock)`语句之前用两个`EasyMock.expect`设定了"Bob"和"Alice"的预期结果，因此结果符合设定；而"Robot"并没有设定，因此抛出异常

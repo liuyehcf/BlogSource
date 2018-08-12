@@ -350,29 +350,29 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
      */
     private byte[] generateClassFile() {
 
-	/* ============================================================
+    /* ============================================================
      * Step 1: Assemble ProxyMethod objects for all methods to
-	 * generate proxy dispatching code for.
-	 */
+     * generate proxy dispatching code for.
+     */
 
-	/*
+    /*
      * Record that proxy methods are needed for the hashCode, equals,
-	 * and toString methods of java.lang.Object.  This is done before
-	 * the methods from the proxy interfaces so that the methods from
-	 * java.lang.Object take precedence over duplicate methods in the
-	 * proxy interfaces.
-	 */
+     * and toString methods of java.lang.Object.  This is done before
+     * the methods from the proxy interfaces so that the methods from
+     * java.lang.Object take precedence over duplicate methods in the
+     * proxy interfaces.
+     */
         //这三个方法将Object的hashcode，equals，toString方法添加到代理方法容器中，代理类除此之外并没有重写Object的其他方法
         //除了这三个方法之外，代理类调用Object的其他方法不通过invoke
         addProxyMethod(hashCodeMethod, Object.class);
         addProxyMethod(equalsMethod, Object.class);
         addProxyMethod(toStringMethod, Object.class);
 
-	/*
+    /*
      * Now record all of the methods from the proxy interfaces, giving
-	 * earlier interfaces precedence over later ones with duplicate
-	 * methods.
-	 */
+     * earlier interfaces precedence over later ones with duplicate
+     * methods.
+     */
 
         //获得所有接口中的方法，并将方法添加到代理方法中
         for (int i = 0; i < interfaces.length; i++) {
@@ -382,18 +382,18 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
             }
         }
 
-	/*
-	 * For each set of proxy methods with the same signature,
-	 * verify that the methods' return types are compatible.
-	 */
+    /*
+     * For each set of proxy methods with the same signature,
+     * verify that the methods' return types are compatible.
+     */
         for (List<ProxyMethod> sigmethods : proxyMethods.values()) {
             checkReturnTypes(sigmethods);
         }
 
-	/* ============================================================
-	 * Step 2: Assemble FieldInfo and MethodInfo structs for all of
-	 * fields and methods in the class we are generating.
-	 */
+    /* ============================================================
+     * Step 2: Assemble FieldInfo and MethodInfo structs for all of
+     * fields and methods in the class we are generating.
+     */
         try {
             //添加构造方法
             methods.add(generateConstructor());
@@ -430,34 +430,34 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
             throw new IllegalArgumentException("field limit exceeded");
         }
 
-	/* ============================================================
-	 * Step 3: Write the final class file.
-	 */
+    /* ============================================================
+     * Step 3: Write the final class file.
+     */
 
-	/*
-	 * Make sure that constant pool indexes are reserved for the
-	 * following items before starting to write the final class file.
-	 */
+    /*
+     * Make sure that constant pool indexes are reserved for the
+     * following items before starting to write the final class file.
+     */
         cp.getClass(dotToSlash(className));
         cp.getClass(superclassName);
         for (int i = 0; i < interfaces.length; i++) {
             cp.getClass(dotToSlash(interfaces[i].getName()));
         }
 
-	/*
-	 * Disallow new constant pool additions beyond this point, since
-	 * we are about to write the final constant pool table.
-	 */
+    /*
+     * Disallow new constant pool additions beyond this point, since
+     * we are about to write the final constant pool table.
+     */
         cp.setReadOnly();
 
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         DataOutputStream dout = new DataOutputStream(bout);
 
         try {
-	    /*
-	     * Write all the items of the "ClassFile" structure.
-	     * See JVMS section 4.1.
-	     */
+        /*
+         * Write all the items of the "ClassFile" structure.
+         * See JVMS section 4.1.
+         */
             //u4 magic;
             dout.writeInt(0xCAFEBABE);
             //u2 minor_version;
@@ -540,12 +540,12 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
         if (sigmethods != null) {
             for (ProxyMethod pm : sigmethods) {
                 if (returnType == pm.returnType) {
-		    /*
-		     * Found a match: reduce exception types to the
-		     * greatest set of exceptions that can thrown
-		     * compatibly with the throws clauses of both
-		     * overridden methods.
-		     */
+            /*
+             * Found a match: reduce exception types to the
+             * greatest set of exceptions that can thrown
+             * compatibly with the throws clauses of both
+             * overridden methods.
+             */
                     //方法签名相同的两个方法可能异常列表可能不同，因此需要整合一个最恰当的异常列表
                     List<Class> legalExceptions = new ArrayList<Class>();
                     collectCompatibleTypes(
