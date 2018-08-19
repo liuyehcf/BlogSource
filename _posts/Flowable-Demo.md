@@ -585,7 +585,6 @@ public class CreateSqlUtils {
 
         outputStream.write("\n\n\n".getBytes());
         inputStream.close();
-
     }
 
     public static void main(String[] args) {
