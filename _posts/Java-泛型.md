@@ -300,10 +300,10 @@ public class JavaBeanInitializerUtils {
      */
     private Map<String, Type> genericTypes;
 
-    private JavaBeanInitializerUtils(Type type) {
+    private JavaBeanInitializerUtils(Type type, Map<String, Type> superClassGenericTypes) {
         this.type = type;
         genericTypes = new HashMap<>();
-        init();
+        init(superClassGenericTypes);
     }
 
     /**
@@ -314,17 +314,21 @@ public class JavaBeanInitializerUtils {
         if (typeReference == null) {
             throw new NullPointerException();
         }
-        return (T) createJavaBean(typeReference.getType());
+        return (T) createJavaBean(typeReference.getType(), null, null);
     }
 
     /**
      * 初始化JavaBean
      */
-    private static Object createJavaBean(Type type) {
+    private static Object createJavaBean(Type type, Map<String, Type> superClassGenericTypes, Type superType) {
         if (type == null) {
             throw new NullPointerException();
         }
-        return new JavaBeanInitializerUtils(type)
+        // 如果一个DTO嵌套了自己，避免死循环
+        if (type.equals(superType)) {
+            return null;
+        }
+        return new JavaBeanInitializerUtils(type, superClassGenericTypes)
                 .doCreateJavaBean();
     }
 
@@ -332,7 +336,7 @@ public class JavaBeanInitializerUtils {
      * 对于泛型类型，初始化泛型参数描述与实际泛型参数的映射关系
      * 例如List有一个泛型参数T，如果传入的是List<String>类型，那么建立 "T"->java.lang.String 的映射
      */
-    private void init() {
+    private void init(Map<String, Type> superClassGenericTypes) {
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
 
@@ -343,15 +347,30 @@ public class JavaBeanInitializerUtils {
 
             // 通过ParameterizedType可以拿到泛型实参，通过继承结构保留泛型实参
             Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+            for (int i = 0; i < actualTypeArguments.length; i++) {
+                Type actualTypeArgument = actualTypeArguments[i];
+                if (actualTypeArgument instanceof TypeVariable) {
+                    if (superClassGenericTypes == null
+                            || (actualTypeArgument = superClassGenericTypes.get(getNameOfTypeVariable(actualTypeArgument))) == null) {
+                        throw new RuntimeException();
+                    }
+                    actualTypeArguments[i] = actualTypeArgument;
+                }
+            }
 
             // 维护泛型形参到泛型实参的映射关系
             for (int i = 0; i < typeVariables.length; i++) {
                 genericTypes.put(
-                        typeVariables[i].getName(),
+                        // 这里需要拼接一下，使得泛型形参有一个命名空间的保护，否则泛型形参可能会出现覆盖的情况
+                        getNameOfTypeVariable(typeVariables[i]),
                         actualTypeArguments[i]
                 );
             }
         }
+    }
+
+    private String getNameOfTypeVariable(Type typeVariable) {
+        return ((TypeVariable) typeVariable).getName();
     }
 
     /**
@@ -409,7 +428,7 @@ public class JavaBeanInitializerUtils {
 
             if (paramType instanceof TypeVariable) {
                 // 如果参数类型是泛型形参，根据映射关系找到泛型形参对应的泛型实参
-                Type actualType = genericTypes.get(((TypeVariable) paramType).getName());
+                Type actualType = genericTypes.get(getNameOfTypeVariable(paramType));
                 setDefaultValue(obj, setMethod, actualType);
             } else {
                 // 参数类型是确切的类型，可能是Class，也可能是ParameterizedType
@@ -488,7 +507,7 @@ public class JavaBeanInitializerUtils {
             method.invoke(obj, STRING_DEFAULT_VALUE + getFieldName(method));
         } else {
             // 填充其他类型
-            method.invoke(obj, createJavaBean(paramClass));
+            method.invoke(obj, createJavaBean(paramClass, genericTypes, type));
         }
     }
 
@@ -503,7 +522,7 @@ public class JavaBeanInitializerUtils {
             setDefaultValueForContainer(obj, method, paramType);
         } else {
             // 其他类型
-            method.invoke(obj, createJavaBean(paramType));
+            method.invoke(obj, createJavaBean(paramType, genericTypes, type));
         }
     }
 
@@ -575,9 +594,9 @@ public class JavaBeanInitializerUtils {
 
     private Object createJavaBeanWithTypeVariable(Type type) {
         if (type instanceof TypeVariable) {
-            return createJavaBean(genericTypes.get(((TypeVariable) type).getName()));
+            return createJavaBean(genericTypes.get(getNameOfTypeVariable(type)), genericTypes, this.type);
         } else {
-            return createJavaBean(type);
+            return createJavaBean(type, genericTypes, this.type);
         }
     }
 
