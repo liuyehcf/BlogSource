@@ -339,7 +339,20 @@ $ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Cre
 $ git config --global core.quotepath false
 ```
 
-# 12 参考
+# 12 .gitignore
+
+```sh
+# 忽略特定后缀的文件
+*.log
+
+# 忽略指定目录
+**/target/*
+
+# 反向忽略
+!**/target/special.txt
+```
+
+# 13 参考
 
 * [git教程](https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/)
 * [git reset soft,hard,mixed之区别深解](http://www.cnblogs.com/kidsitcn/p/4513297.html)
