@@ -855,7 +855,7 @@ __Implementation__
 
 __Field Injection__
 
-1. 通常，会通过setter方法来为`delegated class`注入属性值
+1. 通常，会通过setter方法来为`delegated class`注入属性值（超级无敌神坑：若写的是private的字段，而没有提供public的set方法，有时候注入会失败）
 1. __字段类型必须是`org.flowable.engine.delegate.Expression`__
 
 __Using a Flowable service from within a JavaDelegate__
@@ -1209,7 +1209,7 @@ __参考__
 
 ## 8.2 Creating the database tables
 
-`flowable`的建表语句都在`org.flowable:flowable-engine`中的`org/flowable/db/create`路径下
+`flowable`的建表语句都在`org.flowable:xxx`中的`org/flowable/db/create`路径下
 
 ```
 flowable.{db}.{create|drop}.{type}.sql
@@ -1218,6 +1218,21 @@ flowable.{db}.{create|drop}.{type}.sql
 * `{db}`：代表数据库类型
 * `{create|drop}`：创建还是销毁
 * `{type}`：类型，就两种`history`或`engine`
+
+__sql文件路径（按如下顺序依次执行，表之间是有依赖关系的，切记按顺序执行）__
+
+1. `org.flowable:flowable-engine-common:xxx`中的`org/flowable/common/db/create/flowable.mysql.create.common.sql`
+1. `org.flowable:flowable-idm-engine:xxx`中的`org/flowable/idm/db/create/flowable.mysql.create.identity.sql`
+1. `org.flowable:flowable-identitylink-service:xxx`中的`org/flowable/identitylink/service/db/create/flowable.mysql.create.identitylink.sql`
+1. `org.flowable:flowable-identitylink-service:xxx`中的`org/flowable/identitylink/service/db/create/flowable.mysql.create.identitylink.history.sql`
+1. `org.flowable:flowable-variable-service:xxx`中的`org/flowable/variable/service/db/create/flowable.mysql.create.variable.sql`
+1. `org.flowable:flowable-variable-service:xxx`中的`org/flowable/variable/service/db/create/flowable.mysql.create.variable.history.sql`
+1. `org.flowable:flowable-job-service:xxx`中的`org/flowable/job/service/db/create/flowable.mysql.create.job.sql`
+1. `org.flowable:flowable-task-service:xxx`中的`org/flowable/task/service/db/create/flowable.mysql.create.task.sql`
+1. `org.flowable:flowable-task-service:xxx`中的`org/flowable/task/service/db/create/flowable.mysql.create.task.history.sql`
+1. `org.flowable:flowable-engine:xxx`中的`org/flowable/db/create/flowable.mysql.create.engine.sql`
+1. `org.flowable:flowable-engine:xxx`中的`org/flowable/db/create/flowable.mysql.create.history.sql`
+* 共计34张表
 
 __参考__
 
