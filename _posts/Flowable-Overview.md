@@ -1111,7 +1111,7 @@ __参考__
 
 __Description__
 
-> `task listener`用于在发生某个与任务相关的事件时执行自定义Java逻辑或表达式。`task listener`只能作为`user task`的子元素添加到流程定义中。请注意，这也必须作为`BPMN 2.0 `的`extensionElements`子元素或`flowable namespace`，因为`task listener`是`Flowable`特定的构造
+> `task listener`用于在发生某个与任务相关的事件时执行自定义Java逻辑或表达式。__`task listener`只能作为`user task`的子元素添加到流程定义中__。请注意，这也必须作为`BPMN 2.0 `的`extensionElements`子元素或`flowable namespace`，因为`task listener`是`Flowable`特定的构造
 
 __XML representation__
 

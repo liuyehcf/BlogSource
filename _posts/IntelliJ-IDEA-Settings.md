@@ -49,7 +49,18 @@ __阅读更多__
 
 安装插件`grop console`
 
-# 6 参考
+# 6 高亮选中的变量
+
+1. `Preference`
+1. `Editor`
+1. `Color Scheme`
+1. `General`
+1. 右侧`Code`
+    * `Identifier under caret`
+    * `Identifier under caret (write)`
+
+# 7 参考
 
 * [IntelliJ IDEA 设置选中标识符高亮](http://blog.csdn.net/wskinght/article/details/43052407)
 * [IntelliJ IDEA 总结](https://www.zhihu.com/question/20450079)
+* [idea 双击选中一个变量，及高亮显示相同的变量](https://blog.csdn.net/lxzpp/article/details/81081162)

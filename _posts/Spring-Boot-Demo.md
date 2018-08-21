@@ -491,17 +491,57 @@ Spring的属性注入（形如`${xxx.yyy.zzz}`的占位符）有如下几种方�
     * `<property resource="application.properties"/>`
     * 这种方式不需要Spring配合，完全是logback的一种方式
 
-# 8 排错
+# 8 Test
 
-当我采用第二种pom文件时（__不继承spring boot的pom文件__），启动时会产生如下异常信息
+当我们在项目中需要做集成测试的时候，我们可以选择`h2 database`来代替`mysql`数据库，但通常数据源的配置仍然包含在指定的包扫描路径下。__那么如何让Spring加载`h2 database`的数据源配置，而不是加载`mysql`的数据源配置呢？__
+
+__我们可以用`@ContextHierarchy`注解来实现这个目标__，`@ContextHierarchy`注解指定了父子容器，自容器中的`Bean`会覆盖父容器中的`Bean`，通过这种方式来实现上述目标
+
+__配置示例__
 
 ```Java
-...
-Caused by: java.lang.NoSuchMethodError: org.springframework.web.accept.ContentNegotiationManagerFactoryBean.build()Lorg/springframework/web/accept/ContentNegotiationManager;
-...
-```
+@Slf4j
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest(classes = {TestApplication.class})
+@ContextHierarchy({
+        @ContextConfiguration(classes = {EmbeddedDatabaseConfig.class})
+})
+public class BaseConfig {
+}
 
-这是由于我在项目的父pom文件中引入了5.X.X版本的Spring依赖，这与`spring-boot-dependencies`引入的Spring依赖会冲突（例如，加载了低版本的class文件，但是运行时用到了较高版本特有的方法，于是会抛出`NoSuchMethodError`），将项目父pom文件中引入的Spring的版本改为4.3.13.RELEASE就行
+@Configuration
+@MapperScan("xxx.yyy.zzz")
+public class EmbeddedDatabaseConfig {
+
+    @Bean
+    public DataSource dataSource() {
+        return new EmbeddedDatabaseBuilder()
+                .setType(EmbeddedDatabaseType.H2)
+                .addScript("db/create_db.sql")
+                .build();
+    }
+
+    @Bean
+    public DataSourceTransactionManager transactionManager() {
+        return new DataSourceTransactionManager(dataSource());
+    }
+
+    @Bean
+    public SqlSessionFactory sqlSessionFactory() throws Exception {
+        SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
+        sqlSessionFactoryBean.setDataSource(dataSource());
+        return sqlSessionFactoryBean.getObject();
+    }
+
+}
+
+@SpringBootApplication(scanBasePackages = "xxx.yyy.zzz")
+public class TestApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(TestApplication.class, args);
+    }
+}
+```
 
 # 9 配置项
 
@@ -525,7 +565,19 @@ SpringBoot默认加载的属性文件，其路径为`classpath:application.prope
 
 __答案就是基于约定，`Spring`会默认加载`classpath:META-INF/spring.factories`这个配置文件（加载的代码在`org.springframework.core.io.support.SpringFactoriesLoader`类中）__
 
-# 11 参考
+# 11 排错
+
+当我采用第二种pom文件时（__不继承spring boot的pom文件__），启动时会产生如下异常信息
+
+```Java
+...
+Caused by: java.lang.NoSuchMethodError: org.springframework.web.accept.ContentNegotiationManagerFactoryBean.build()Lorg/springframework/web/accept/ContentNegotiationManager;
+...
+```
+
+这是由于我在项目的父pom文件中引入了5.X.X版本的Spring依赖，这与`spring-boot-dependencies`引入的Spring依赖会冲突（例如，加载了低版本的class文件，但是运行时用到了较高版本特有的方法，于是会抛出`NoSuchMethodError`），将项目父pom文件中引入的Spring的版本改为4.3.13.RELEASE就行
+
+# 12 参考
 
 * [Spring-Boot官方文档](https://docs.spring.io/spring-boot/docs/2.0.3.RELEASE/reference/htmlsingle/)
 * [sing-boot-maven-without-a-parent](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#using-boot-maven-without-a-parent)

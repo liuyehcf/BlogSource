@@ -1033,3 +1033,7 @@ __情景还原__：
 上述`setField`成功调用，说明`field2`字段设置成功了。__重点来了，这里的`object`(`setField`方法的第二个参数)，也就是目标对象，并不是`DemoServiceTask`的实例，而是一个`Cglib`的代理类，这个代理类同样包含了一个`field2`字段，因此`setField`仅仅设置了`Cglib`的代理类的`field2`字段而已。当执行到目标方法，也就是`DemoServiceTask`类的`execute`方法中时，我们取的是`DemoServiceTask`的`field2`字段，也就是说，`DemoServiceTask`根本无法取到那个设置到`Cglib`的代理类中去的`field2`字段__
 
 __其实，这并不是什么`Security`造成的问题，而是AOP使用时的细节问题__
+
+## 8.2 Test
+
+__在测试方法中不要加`@Transactional`注解，由于工作流的执行是由工作流引擎完成的，并不是在当前测试方法中完成的，因此在别的线程无法拿到`Test方法所在线程`的`尚未提交的数据`__

@@ -228,3 +228,7 @@ public class SimpleBeforeMethodAdvisor implements MethodBeforeAdvice {
 }
 ```
 
+# 4 注意事项
+
+1. 一般情况下，`Spring Bean`配置了AOP才能被正常拦截到，如果一个对象并不是由Spring管理的，那么AOP配置是无效的
+1. `A.method1`方法内部调用了`A.method2`方法，而`A.method1`方法没有配置AOP，而`A.method2`配置了AOP，那么此时AOP无效。__原因：在当前调用堆栈第一次进入`某类`的`第一个public且非static方法`之前，`Spring`会判断该方法是否配置了`AOP`，如果有，织入增强逻辑，如果没有，则不织入__
