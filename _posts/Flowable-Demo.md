@@ -26,29 +26,40 @@ __阅读更多__
 .
 ├── pom.xml
 └── src
-    └── main
+    ├── main
+    │   ├── java
+    │   │   └── org
+    │   │       └── liuyehcf
+    │   │           └── flowable
+    │   │               ├── Application.java
+    │   │               ├── config
+    │   │               │   ├── DataSourceConfig.java
+    │   │               │   └── ElementAspect.java
+    │   │               ├── element
+    │   │               │   ├── DemoListener.java
+    │   │               │   └── DemoServiceTask.java
+    │   │               ├── service
+    │   │               │   └── DemoService.java
+    │   │               ├── utils
+    │   │               │   └── CreateSqlUtils.java
+    │   │               └── web
+    │   │                   └── DemoController.java
+    │   └── resources
+    │       ├── application.properties
+    │       ├── logback.xml
+    │       └── process
+    │           └── sample.bpmn20.xml
+    └── test
         ├── java
         │   └── org
         │       └── liuyehcf
-        │           └── flowalbe
-        │               ├── Application.java
-        │               ├── config
-        │               │   ├── DataSourceConfig.java
-        │               │   └── ElementAspect.java
-        │               ├── element
-        │               │   ├── DemoListener.java
-        │               │   └── DemoServiceTask.java
-        │               ├── service
-        │               │   └── DemoService.java
-        │               ├── utils
-        │               │   └── CreateSqlUtils.java
-        │               └── web
-        │                   └── DemoController.java
+        │           └── flowable
+        │               └── test
+        │                   ├── DemoTest.java
+        │                   ├── EmbeddedDatabaseConfig.java
+        │                   └── TestApplication.java
         └── resources
-            ├── application.properties
-            ├── logback.xml
-            └── process
-                └── sample.bpmn20.xml
+            └── logback-test.xml
 ```
 
 # 3 pom文件
@@ -57,7 +68,8 @@ __主要依赖项如下__
 
 1. `flowable`
 1. `spring-boot`
-1. `mybatis`
+1. `jdbc`
+1. `h2`
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -71,12 +83,14 @@ __主要依赖项如下__
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
+        <!-- flowable -->
         <dependency>
             <groupId>org.flowable</groupId>
             <artifactId>flowable-spring-boot-starter</artifactId>
             <version>6.3.0</version>
         </dependency>
 
+        <!-- jdbc -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -93,6 +107,7 @@ __主要依赖项如下__
             <version>1.3.2</version>
         </dependency>
 
+        <!-- spring boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -106,6 +121,7 @@ __主要依赖项如下__
             <artifactId>spring-core</artifactId>
         </dependency>
 
+        <!-- utility -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -115,6 +131,32 @@ __主要依赖项如下__
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>1.2.48</version>
+        </dependency>
+
+        <!-- logback -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+
+        <!-- test -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.197</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -150,7 +192,7 @@ __主要依赖项如下__
 ## 4.1 Application
 
 ```Java
-package org.liuyehcf.flowalbe;
+package org.liuyehcf.flowable;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -161,7 +203,7 @@ import org.springframework.context.annotation.ComponentScan;
  * @date 2018/7/25
  */
 @SpringBootApplication
-@ComponentScan(basePackages = "org.liuyehcf.flowalbe")
+@ComponentScan(basePackages = "org.liuyehcf.flowable")
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class);
@@ -172,7 +214,7 @@ public class Application {
 ## 4.2 DataSourceConfig
 
 ```Java
-package org.liuyehcf.flowalbe.config;
+package org.liuyehcf.flowable.config;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -231,7 +273,7 @@ public class DataSourceConfig {
 ## 4.3 ElementAspect
 
 ```Java
-package org.liuyehcf.flowalbe.config;
+package org.liuyehcf.flowable.config;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -245,7 +287,7 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class ElementAspect {
-    @Around("execution(* org.liuyehcf.flowalbe.element.*.*(..))")
+    @Around("execution(* org.liuyehcf.flowable.element.*.*(..))")
     public Object taskAround(ProceedingJoinPoint proceedingJoinPoint) {
 
         Object[] args = proceedingJoinPoint.getArgs();
@@ -263,7 +305,7 @@ public class ElementAspect {
 ## 4.4 DemoListener
 
 ```Java
-package org.liuyehcf.flowalbe.element;
+package org.liuyehcf.flowable.element;
 
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
@@ -328,7 +370,7 @@ public class DemoListener implements TaskListener, ExecutionListener {
 ## 4.5 DemoServiceTask
 
 ```Java
-package org.liuyehcf.flowalbe.element;
+package org.liuyehcf.flowable.element;
 
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.common.api.delegate.Expression;
@@ -374,7 +416,7 @@ public class DemoServiceTask implements JavaDelegate {
 ## 4.6 DemoService
 
 ```Java
-package org.liuyehcf.flowalbe.service;
+package org.liuyehcf.flowable.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.flowable.engine.RepositoryService;
@@ -471,7 +513,7 @@ public class DemoService {
 ## 4.7 CreateSqlUtils
 
 ```Java
-package org.liuyehcf.flowalbe.utils;
+package org.liuyehcf.flowable.utils;
 
 import org.apache.commons.io.IOUtils;
 
@@ -597,9 +639,9 @@ public class CreateSqlUtils {
 ## 4.8 DemoController
 
 ```Java
-package org.liuyehcf.flowalbe.web;
+package org.liuyehcf.flowable.web;
 
-import org.liuyehcf.flowalbe.service.DemoService;
+import org.liuyehcf.flowable.service.DemoService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -787,9 +829,152 @@ __日志如下__
 508793 [http-nio-7001-exec-2] INFO  o.l.flowalbe.element.DemoListener - ExecutionListener is trigger. elementId=endEvent1 
 ```
 
-# 7 那些年我们一起踩过的坑
+# 7 Test
 
-## 7.1 ServiceTask Field Injection
+## 7.1 DemoTest
+
+__`@ContextHierarchy`将创建子容器，`EmbeddedDatabaseConfig`将会在子容器中加载，会覆盖父容器的同名Bean，通过这种方式来替换数据源的配置__
+
+```Java
+package org.liuyehcf.flowable.test;
+
+import lombok.extern.slf4j.Slf4j;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.liuyehcf.flowable.service.DemoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ContextHierarchy;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.concurrent.TimeUnit;
+
+@Slf4j
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest(classes = {TestApplication.class})
+@ContextHierarchy({
+        @ContextConfiguration(classes = {EmbeddedDatabaseConfig.class})
+})
+public class DemoTest {
+
+    @Autowired
+    private DemoService demoService;
+
+    @Test
+    public void test() {
+        String processDefinition = demoService.deployProcess();
+        log.info("deployProcess succeeded. processDefinition={}", processDefinition);
+
+        String processInstanceId = demoService.startProcess(processDefinition);
+        log.info("startProcess succeeded. processInstanceId={}", processInstanceId);
+
+        sleep(1);
+        String message;
+
+        message = demoService.completeUserTaskByAssignee("tom");
+        log.info("completeUserTaskByAssignee. message={}", message);
+
+        sleep(1);
+
+        message = demoService.completeUserTaskByCandidateUser("bob");
+        log.info("completeUserTaskByCandidateUser. message={}", message);
+
+        sleep(1);
+
+        message = demoService.completeUserTaskByCandidateUser("lucy");
+        log.info("completeUserTaskByCandidateUser. message={}", message);
+    }
+
+    private static void sleep(int second) {
+        try {
+            TimeUnit.SECONDS.sleep(second);
+        } catch (InterruptedException e) {
+            // ignore
+        }
+    }
+}
+```
+
+## 7.2 EmbeddedDatabaseConfig
+
+配置了`H2 database`，即内存数据库来进行测试
+
+```Java
+package org.liuyehcf.flowable.test;
+
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionFactoryBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+
+import javax.sql.DataSource;
+
+@Configuration
+public class EmbeddedDatabaseConfig {
+
+    @Bean
+    public DataSource dataSource() {
+        return new EmbeddedDatabaseBuilder()
+                .setType(EmbeddedDatabaseType.H2)
+                .build();
+    }
+
+    @Bean
+    public DataSourceTransactionManager transactionManager() {
+        return new DataSourceTransactionManager(dataSource());
+    }
+
+    @Bean
+    public SqlSessionFactory sqlSessionFactory() throws Exception {
+        SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
+        sqlSessionFactoryBean.setDataSource(dataSource());
+        return sqlSessionFactoryBean.getObject();
+    }
+
+}
+```
+
+## 7.3 TestApplication
+
+```Java
+package org.liuyehcf.flowable.test;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication(scanBasePackages = "org.liuyehcf.flowable")
+public class TestApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(TestApplication.class, args);
+    }
+}
+```
+
+## 7.4 logback-test.xml
+
+__Test中的`logback`的配置文件必须为`logback-test.xml`才能生效__
+
+```xml
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%-4relative [%thread] %-5level %logger{35} - %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>
+```
+
+# 8 那些年我们一起踩过的坑
+
+## 8.1 ServiceTask Field Injection
 
 从上面的日志中，我们可以看到`DemoServiceTask`的`field2`注入失败，而`field1`与`field2`的唯一区别在于`field1`有`public`的`setter`方法
 

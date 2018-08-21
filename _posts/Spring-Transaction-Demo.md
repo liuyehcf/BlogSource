@@ -734,7 +734,7 @@ flush privileges;
 
 1. 何时注入事务上下文
 
-```java
+```Java
 org.springframework.transaction.interceptor.TransactionInterceptor.invokeWithinTransaction
 * createTransactionIfNecessary
 * prepareTransactionInfo
@@ -745,7 +745,7 @@ org.springframework.transaction.interceptor.TransactionAspectSupport#transaction
 
 @Transactional默认会在执行完测试方法后回滚
 
-```java
+```Java
 org.springframework.test.context.junit4.statements.RunAfterTestMethodCallbacks
 org.springframework.test.context.junit4.statements.RunAfterTestClassCallbacks
 org.springframework.test.context.transaction.TransactionalTestExecutionListener
