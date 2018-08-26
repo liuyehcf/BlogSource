@@ -724,3 +724,21 @@ __继续追踪，`SpringBootContextLoader.loadContext`方法__
         return application.run();
     }
 ```
+
+## 2.3 关键对象的层级结构
+
+```
+SpringJUnit4ClassRunner
+        |
+        └── testContextManager (TestContextManager)
+                |
+                └── testContext (TestContext)
+                        |
+                        ├── attributes (Map<String, Object>)
+                        ├── cacheAwareContextLoaderDelegate (CacheAwareContextLoaderDelegate)
+                        ├── mergedContextConfiguration (MergedContextConfiguration)
+                        ├── testClass (Class<?>)
+                        ├── testInstance (Object)
+                        ├── testMethod (Method)
+                        └── testException (Throwable)
+```
