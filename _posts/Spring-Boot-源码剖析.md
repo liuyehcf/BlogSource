@@ -95,6 +95,39 @@ public ConfigurableApplicationContext run(String... args) {
     }
 ```
 
+## 1.1 prepareContext
+
+```java
+    private void prepareContext(ConfigurableApplicationContext context,
+            ConfigurableEnvironment environment, SpringApplicationRunListeners listeners,
+            ApplicationArguments applicationArguments, Banner printedBanner) {
+        context.setEnvironment(environment);
+        postProcessApplicationContext(context);
+        // 调用初始化器的initialize方法
+        applyInitializers(context);
+        listeners.contextPrepared(context);
+        if (this.logStartupInfo) {
+            logStartupInfo(context.getParent() == null);
+            logStartupProfileInfo(context);
+        }
+
+        // Add boot specific singleton beans
+        context.getBeanFactory().registerSingleton("springApplicationArguments",
+                applicationArguments);
+        if (printedBanner != null) {
+            context.getBeanFactory().registerSingleton("springBootBanner", printedBanner);
+        }
+
+        // Load the sources
+        Set<Object> sources = getAllSources();
+        Assert.notEmpty(sources, "Sources must not be empty");
+        load(context, sources.toArray(new Object[0]));
+        listeners.contextLoaded(context);
+    }
+```
+
+## 1.2 refreshContext
+
 # 2 Test
 
 ## 2.1 SpringJUnit4ClassRunner的初始化过程
