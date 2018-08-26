@@ -94,6 +94,7 @@ __创建`TestContext`，根据是否包含`@ContextHierarchy`，`@ContextConfigu
 
 ```java
     public TestContext buildTestContext() {
+        // 创建Context
         TestContext context = super.buildTestContext();
         verifyConfiguration(context.getTestClass());
         WebEnvironment webEnvironment = getWebEnvironment(context.getTestClass());
@@ -246,6 +247,7 @@ __注册Test监听器，找到`TestExecutionListener`的所有实现类，一共
                         clazz.getName()));
             }
             usingDefaults = true;
+            // 获取默认的监听器
             classesList.addAll(getDefaultTestExecutionListenerClasses());
         }
         else {
@@ -317,6 +319,7 @@ __注册Test监听器，找到`TestExecutionListener`的所有实现类，一共
     }
 
     protected List<String> getDefaultTestExecutionListenerClassNames() {
+        // 找出所有TestExecutionListener的实现类作为默认的监听器
         List<String> classNames =
                 SpringFactoriesLoader.loadFactoryNames(TestExecutionListener.class, getClass().getClassLoader());
         if (logger.isInfoEnabled()) {
@@ -337,6 +340,7 @@ __分析起点，`SpringJUnit4ClassRunner.run`__
             notifier.fireTestIgnored(getDescription());
             return;
         }
+        // 继续追踪
         super.run(notifier);
     }
 ```
@@ -349,6 +353,7 @@ __继续追踪，`ParentRunner.run`__
                 getDescription());
         try {
             Statement statement = classBlock(notifier);
+            // 继续追踪
             statement.evaluate();
         } catch (AssumptionViolatedException e) {
             testNotifier.addFailedAssumption(e);
@@ -366,6 +371,7 @@ __继续追踪，`RunAfterTestClassCallbacks.evaluate`__
     public void evaluate() throws Throwable {
         List<Throwable> errors = new ArrayList<>();
         try {
+            // 继续追踪
             this.next.evaluate();
         }
         catch (Throwable ex) {
@@ -389,7 +395,9 @@ __继续追踪，`RunBeforeTestClassCallbacks.evaluate`__
 
 ```java
     public void evaluate() throws Throwable {
+        // 触发监听器的beforeTestClass方法
         this.testContextManager.beforeTestClass();
+        // 继续追踪
         this.next.evaluate();
     }
 
@@ -419,6 +427,7 @@ __继续追踪，`ParentRunner.childrenInvoker`中的匿名内部类的`evaluate
         return new Statement() {
             @Override
             public void evaluate() {
+                // 继续追踪
                 runChildren(notifier);
             }
         };
@@ -452,6 +461,7 @@ __继续追踪，`SpringJUnit4ClassRunner.runChild`方法__
         else {
             Statement statement;
             try {
+                // 继续追踪
                 statement = methodBlock(frameworkMethod);
             }
             catch (Throwable ex) {
@@ -467,7 +477,7 @@ __继续追踪，`SpringJUnit4ClassRunner.runChild`方法__
             testInstance = new ReflectiveCallable() {
                 @Override
                 protected Object runReflectiveCall() throws Throwable {
-                    // 创建测试
+                    // 继续追踪
                     return createTest();
                 }
             }.run();
@@ -502,6 +512,7 @@ __继续追踪，`SpringJUnit4ClassRunner.createTest`方法__
 ```java
     protected Object createTest() throws Exception {
         Object testInstance = super.createTest();
+        // 继续追踪
         getTestContextManager().prepareTestInstance(testInstance);
         return testInstance;
     } 
@@ -518,6 +529,7 @@ __继续追踪，`TestContextManager.prepareTestInstance`方法__
 
         for (TestExecutionListener testExecutionListener : getTestExecutionListeners()) {
             try {
+                // 继续追踪
                 testExecutionListener.prepareTestInstance(getTestContext());
             }
             catch (Throwable ex) {
@@ -545,6 +557,7 @@ __继续追踪，`ServletTestExecutionListener.prepareTestInstance`方法__
             return;
         }
 
+        // 继续追踪
         ApplicationContext context = testContext.getApplicationContext();
 
         if (context instanceof WebApplicationContext) {
@@ -581,10 +594,11 @@ __继续追踪，`ServletTestExecutionListener.prepareTestInstance`方法__
     }
 ```
 
-__继续追踪，`ApplicationContext.getApplicationContext`方法__
+__继续追踪，`DefaultTestContext.getApplicationContext`方法__
 
 ```java
     public ApplicationContext getApplicationContext() {
+        // 继续追踪
         ApplicationContext context = this.cacheAwareContextLoaderDelegate.loadContext(this.mergedContextConfiguration);
         if (context instanceof ConfigurableApplicationContext) {
             @SuppressWarnings("resource")
@@ -608,6 +622,7 @@ __继续追踪，`DefaultCacheAwareContextLoaderDelegate.loadContext`方法__
             ApplicationContext context = this.contextCache.get(mergedContextConfiguration);
             if (context == null) {
                 try {
+                    // 继续追踪
                     context = loadContextInternal(mergedContextConfiguration);
                     if (logger.isDebugEnabled()) {
                         logger.debug(String.format("Storing ApplicationContext in cache under key [%s]",
@@ -643,6 +658,7 @@ __继续追踪，`DefaultCacheAwareContextLoaderDelegate.loadContext`方法__
 
         if (contextLoader instanceof SmartContextLoader) {
             SmartContextLoader smartContextLoader = (SmartContextLoader) contextLoader;
+            // 继续追踪
             applicationContext = smartContextLoader.loadContext(mergedContextConfiguration);
         }
         else {
