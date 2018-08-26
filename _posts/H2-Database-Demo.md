@@ -16,4 +16,5 @@ __阅读更多__
 # 1 TODO
 
 1. create table后面不要跟`ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='xxx表'`，会有预发错误
-
+1. `SET mode MySQL;`
+1. 索引名必须全局唯一

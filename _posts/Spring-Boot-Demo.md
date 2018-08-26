@@ -493,25 +493,30 @@ Spring的属性注入（形如`${xxx.yyy.zzz}`的占位符）有如下几种方�
 
 # 8 Test
 
+## 8.1 @ComponentScan.excludeFilters
+
 当我们在项目中需要做集成测试的时候，我们可以选择`h2 database`来代替`mysql`数据库，但通常数据源的配置仍然包含在指定的包扫描路径下。__那么如何让Spring加载`h2 database`的数据源配置，而不是加载`mysql`的数据源配置呢？__
 
-__我们可以用`@ContextHierarchy`注解来实现这个目标__，`@ContextHierarchy`注解指定了父子容器，自容器中的`Bean`会覆盖父容器中的`Bean`，通过这种方式来实现上述目标
+__我们可以用`@ComponentScan`注解的`excludeFilters`属性来实现这个目标__，`@ComponentScan`注解可以指定排除某个或某些`Bean`。可选的匹配类型有如下几种
 
-__配置示例__
+1. `FilterType.ANNOTATION`：排除指定注解标记的Bean，注解的类用`classes`属性指定
+1. `FilterType.ASSIGNABLE_TYPE`：排除指定类，用`classes`属性指定
+1. `FilterType.ASPECTJ`：排除匹配指定模式的类，用`pattern`属性指定`ASPECTJ`格式的通配符
+1. `FilterType.REGEX`：排除匹配指定模式的类，用`pattern`属性指定正则表达式
+1. `FilterType.CUSTOM`：即用户自定义的`org.springframework.core.type.filter.TypeFilter`
+
+__配置示例：排除项目中的数据源配置__
 
 ```Java
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {TestApplication.class})
-@ContextHierarchy({
-        @ContextConfiguration(classes = {EmbeddedDatabaseConfig.class})
-})
 public class BaseConfig {
 }
 
 @Configuration
-@MapperScan("xxx.yyy.zzz")
-public class EmbeddedDatabaseConfig {
+@MapperScan(basePackages = {"xxx.yyy.zzz"})
+public class TestEmbeddedDatabaseConfig {
 
     @Bean
     public DataSource dataSource() {
@@ -528,20 +533,49 @@ public class EmbeddedDatabaseConfig {
 
     @Bean
     public SqlSessionFactory sqlSessionFactory() throws Exception {
-        SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
-        sqlSessionFactoryBean.setDataSource(dataSource());
-        return sqlSessionFactoryBean.getObject();
+        SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
+        sessionFactory.setDataSource(dataSource());
+        sessionFactory.setTypeAliasesPackage("xxx.yyy.zzz");
+        return sessionFactory.getObject();
     }
 
+    @Bean
+    public SqlSessionTemplate sqlSessionTemplate() throws Exception {
+        return new SqlSessionTemplate(sqlSessionFactory());
+    }
 }
 
-@SpringBootApplication(scanBasePackages = "xxx.yyy.zzz")
+@SpringBootApplication
+@ComponentScan(basePackages = {"xxx.yyy.aaa", "xxx.yyy.bbb"},
+        excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {DataSourceConfig.class, Application.class})})
+@PropertySource("classpath:application-test.properties")
 public class TestApplication {
+
     public static void main(String[] args) {
-        SpringApplication.run(TestApplication.class, args);
+        SpringApplication.run(Application.class, args);
     }
 }
 ```
+
+__注意，在上面的`@ComponentScan`注解中，排除了两个类，一个是`DataSourceConfig`，即数据源配置；另一个是`Application`。这么做是有必要的，如果仅排除了`DataSourceConfig`（仅对当前`@ComponentScan`有效），`Application`仍然会被扫描到，而`Application`是应用的启动类，也会配置`@ComponentScan`注解，仍然会扫描到`DataSourceConfig`__
+
+```
+# 不配置excludeFilters属性
+TestApplication
+    ├── Application
+    |       ├── DataSourceConfig
+    ├── DataSourceConfig
+
+# 配置了excludeFilters属性，但只排除了DataSourceConfig
+TestApplication
+    ├── Application
+    |       ├── DataSourceConfig
+
+# 配置了excludeFilters属性，同时排除了DataSourceConfig以及Application
+TestApplication
+```
+
+## 8.2 @ContextHierarchy
 
 # 9 配置项
 
@@ -583,3 +617,4 @@ Caused by: java.lang.NoSuchMethodError: org.springframework.web.accept.ContentNe
 * [sing-boot-maven-without-a-parent](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#using-boot-maven-without-a-parent)
 * [@SpringBootApplication的使用](http://blog.csdn.net/u013473691/article/details/52353923)
 * [SpringBoot非官方教程 | 终章：文章汇总](https://blog.csdn.net/forezp/article/details/70341818)
+* [Exclude subpackages from Spring autowiring?](https://stackoverflow.com/questions/10725192/exclude-subpackages-from-spring-autowiring)
