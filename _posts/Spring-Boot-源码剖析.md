@@ -15,6 +15,86 @@ __阅读更多__
 
 # 1 Normal
 
+__分析起点是`SpringApplication.run`方法__
+
+```java
+public ConfigurableApplicationContext run(String... args) {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+        ConfigurableApplicationContext context = null;
+        Collection<SpringBootExceptionReporter> exceptionReporters = new ArrayList<>();
+        
+        // 设置环境变量 java.awt.headless
+        configureHeadlessProperty();
+
+        // 创建监听器
+        SpringApplicationRunListeners listeners = getRunListeners(args);
+
+        // 调用监听器的 starting 方法
+        listeners.starting();
+
+        try {
+            // 封装入参
+            ApplicationArguments applicationArguments = new DefaultApplicationArguments(
+                    args);
+
+            // 封装environment
+            ConfigurableEnvironment environment = prepareEnvironment(listeners,
+                    applicationArguments);
+
+            // 设置环境变量 spring.beaninfo.ignore
+            configureIgnoreBeanInfo(environment);
+
+            // 打印banner
+            Banner printedBanner = printBanner(environment);
+
+            // 根据 webApplicationType 创建 ConfigurableApplicationContext 的实例
+            context = createApplicationContext();
+
+            // 获取exceptionReporters
+            exceptionReporters = getSpringFactoriesInstances(
+                    SpringBootExceptionReporter.class,
+                    new Class[] { ConfigurableApplicationContext.class }, context);
+
+            // 一些预备工作，重点分析
+            prepareContext(context, environment, listeners, applicationArguments,
+                    printedBanner);
+            
+            // 经典的Spring refresh方法，重点分析
+            refreshContext(context);
+
+            // 一些收尾工作，重点分析
+            afterRefresh(context, applicationArguments);
+
+            stopWatch.stop();
+            if (this.logStartupInfo) {
+                new StartupInfoLogger(this.mainApplicationClass)
+                        .logStarted(getApplicationLog(), stopWatch);
+            }
+
+            // 调用监听器的 started 方法
+            listeners.started(context);
+
+            // 调用runner
+            callRunners(context, applicationArguments);
+        }
+        catch (Throwable ex) {
+            handleRunFailure(context, ex, exceptionReporters, listeners);
+            throw new IllegalStateException(ex);
+        }
+
+        try {
+            // 调用监听器的 running 方法
+            listeners.running(context);
+        }
+        catch (Throwable ex) {
+            handleRunFailure(context, ex, exceptionReporters, null);
+            throw new IllegalStateException(ex);
+        }
+        return context;
+    }
+```
+
 # 2 Test
 
 ## 2.1 SpringJUnit4ClassRunner的初始化过程
@@ -520,6 +600,7 @@ __继续追踪，`SpringJUnit4ClassRunner.createTest`方法__
 __继续追踪，`TestContextManager.prepareTestInstance`方法__
 
 1. 触发监听器的`TestExecutionListener.prepareTestInstance`方法
+
 ```java
     public void prepareTestInstance(Object testInstance) throws Exception {
         if (logger.isTraceEnabled()) {
@@ -674,6 +755,7 @@ __继续追踪，`DefaultCacheAwareContextLoaderDelegate.loadContext`方法__
 __继续追踪，`SpringBootContextLoader.loadContext`方法__
 
 1. 这里启动了`SpringBoot`
+
 ```java
     public ApplicationContext loadContext(MergedContextConfiguration config)
             throws Exception {
@@ -687,6 +769,7 @@ __继续追踪，`SpringBootContextLoader.loadContext`方法__
                         + "For default configuration detection to work you need "
                         + "Spring 4.0.3 or better (found " + SpringVersion.getVersion()
                         + ").");
+        // 创建SpringApplication的实例
         SpringApplication application = getSpringApplication();
         application.setMainApplicationClass(config.getTestClass());
         application.addPrimarySources(Arrays.asList(configClasses));
@@ -695,6 +778,8 @@ __继续追踪，`SpringBootContextLoader.loadContext`方法__
         if (!ObjectUtils.isEmpty(config.getActiveProfiles())) {
             setActiveProfiles(environment, config.getActiveProfiles());
         }
+
+        // 设置资源加载器
         ResourceLoader resourceLoader = (application.getResourceLoader() != null)
                 ? application.getResourceLoader()
                 : new DefaultResourceLoader(getClass().getClassLoader());
@@ -702,12 +787,19 @@ __继续追踪，`SpringBootContextLoader.loadContext`方法__
                 resourceLoader, config.getPropertySourceLocations());
         TestPropertySourceUtils.addInlinedPropertiesToEnvironment(environment,
                 getInlinedProperties(config));
+
+        // 设置Environment对象
         application.setEnvironment(environment);
+
+        // 创建初始化器，每个初始化器都包含了config
         List<ApplicationContextInitializer<?>> initializers = getInitializers(config,
                 application);
+
+        // 设置WebApplicationType
         if (config instanceof WebMergedContextConfiguration) {
             application.setWebApplicationType(WebApplicationType.SERVLET);
             if (!isEmbeddedWebEnvironment(config)) {
+                // 这里会将config中的resourceBasePath封装到initializers中去
                 new WebConfigurer().configure(config, application, initializers);
             }
         }
@@ -720,8 +812,28 @@ __继续追踪，`SpringBootContextLoader.loadContext`方法__
         else {
             application.setWebApplicationType(WebApplicationType.NONE);
         }
+
+        // 设置初始化器
         application.setInitializers(initializers);
         return application.run();
+    }
+
+    protected List<ApplicationContextInitializer<?>> getInitializers(
+            MergedContextConfiguration config, SpringApplication application) {
+        List<ApplicationContextInitializer<?>> initializers = new ArrayList<>();
+        for (ContextCustomizer contextCustomizer : config.getContextCustomizers()) {
+            initializers.add(new ContextCustomizerAdapter(contextCustomizer, config));
+        }
+        initializers.addAll(application.getInitializers());
+        for (Class<? extends ApplicationContextInitializer<?>> initializerClass : config
+                .getContextInitializerClasses()) {
+            initializers.add(BeanUtils.instantiateClass(initializerClass));
+        }
+        if (config.getParent() != null) {
+            initializers.add(new ParentContextApplicationContextInitializer(
+                    config.getParentApplicationContext()));
+        }
+        return initializers;
     }
 ```
 
