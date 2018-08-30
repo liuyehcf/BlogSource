@@ -41,7 +41,8 @@ __阅读更多__
     │   │               ├── service
     │   │               │   └── DemoService.java
     │   │               ├── utils
-    │   │               │   └── CreateSqlUtils.java
+    │   │               │   ├── CreateSqlUtils.java
+    │   │               │   └── UpgradeSqlUtils.java
     │   │               └── web
     │   │                   └── DemoController.java
     │   └── resources
@@ -86,7 +87,7 @@ __主要依赖项如下__
         <!-- flowable -->
         <dependency>
             <groupId>org.flowable</groupId>
-            <artifactId>flowable-spring-boot-starter</artifactId>
+            <artifactId>flowable-spring-boot-starter-basic</artifactId>
             <version>6.3.0</version>
         </dependency>
 
@@ -131,6 +132,11 @@ __主要依赖项如下__
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>1.2.48</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.6</version>
         </dependency>
 
         <!-- logback -->
@@ -550,7 +556,7 @@ public class CreateSqlUtils {
     public static void createSqlFile(String targetPath) {
         File targetSqlFile;
         try {
-            targetSqlFile = getSqlFile(targetPath);
+            targetSqlFile = getSqlFile(targetPath, FILE_NAME);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -567,7 +573,7 @@ public class CreateSqlUtils {
         }
     }
 
-    private static File getSqlFile(String targetPath) throws IOException {
+    static File getSqlFile(String targetPath, String fileName) throws IOException {
         if (targetPath == null) {
             throw new NullPointerException();
         }
@@ -578,7 +584,7 @@ public class CreateSqlUtils {
             throw new FileNotFoundException(targetPath + " is not exists");
         }
 
-        File sqlFile = new File(targetDir.getAbsolutePath() + File.separator + FILE_NAME);
+        File sqlFile = new File(targetDir.getAbsolutePath() + File.separator + fileName);
 
         if (sqlFile.exists() && !sqlFile.delete()) {
             throw new IOException("failed to delete file " + sqlFile.getAbsolutePath());
@@ -605,12 +611,19 @@ public class CreateSqlUtils {
         outputStream.write("\n\n\n".getBytes());
     }
 
-    private static void appendCreateTableSql(OutputStream outputStream, String fileClassPath) throws IOException {
+    static void appendCreateTableSql(OutputStream outputStream, String fileClassPath) throws IOException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
         String simpleFilePath = fileClassPath.substring(fileClassPath.lastIndexOf(File.separator) + 1).trim();
 
         InputStream inputStream = classLoader.getResourceAsStream(fileClassPath);
+
+        if (inputStream == null) {
+            System.err.println(fileClassPath);
+            return;
+        }
+
+        System.out.println(fileClassPath);
 
         outputStream.write(("/**************************************************************/\n" +
                 "/*    [START]\n" +
@@ -630,13 +643,146 @@ public class CreateSqlUtils {
     }
 
     public static void main(String[] args) {
-        createSqlFile("/Users/hechenfeng/Desktop");
+        createSqlFile("/Users/hechenfeng/Desktop/flowable");
     }
 
 }
 ```
 
-## 4.8 DemoController
+## 4.8 UpgradeSqlUtils
+
+```java
+package org.liuyehcf.flowable.utils;
+
+import org.apache.commons.io.IOUtils;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.liuyehcf.flowable.utils.CreateSqlUtils.appendCreateTableSql;
+import static org.liuyehcf.flowable.utils.CreateSqlUtils.getSqlFile;
+
+/**
+ * @author chenlu
+ * @date 2018/8/30
+ */
+public class UpgradeSqlUtils {
+
+    private static final String OLD_VERSION = "oldVersion";
+    private static final String NEW_VERSION = "newVersion";
+
+    private static final List<String> SQL_PATH_LIST = Arrays.asList(
+            "org/flowable/common/db/upgrade/flowable.all.upgradestep.${oldVersion}.to.${newVersion}.common.sql",
+
+            "org/flowable/idm/db/upgrade/flowable.all.upgradestep.${oldVersion}.to.${newVersion}.identity.sql",
+            "org/flowable/identitylink/service/db/upgrade/flowable.all.upgradestep.${oldVersion}.to.${newVersion}.identitylink.sql",
+
+            "org/flowable/variable/service/db/upgrade/flowable.all.upgradestep.${oldVersion}.to.${newVersion}.variable.sql",
+
+            "org/flowable/job/service/db/upgrade/flowable.all.upgradestep.${oldVersion}.to.${newVersion}.job.sql",
+
+            "org/flowable/task/service/db/upgrade/flowable.all.upgradestep.${oldVersion}.to.${newVersion}.task.sql",
+
+            "org/flowable/db/upgrade/flowable.all.upgradestep.${oldVersion}.to.${newVersion}.engine.sql",
+
+            "org/flowable/idm/db/upgrade/flowable.mysql.upgradestep.${oldVersion}.to.${newVersion}.identity.sql",
+            "org/flowable/identitylink/service/db/upgrade/flowable.mysql.upgradestep.${oldVersion}.to.${newVersion}.identitylink.sql",
+            "org/flowable/identitylink/service/db/upgrade/flowable.mysql.upgradestep.${oldVersion}.to.${newVersion}.identitylink.history.sql",
+
+            "org/flowable/variable/service/db/upgrade/flowable.mysql.upgradestep.${oldVersion}.to.${newVersion}.variable.sql",
+            "org/flowable/variable/service/db/upgrade/flowable.mysql.upgradestep.${oldVersion}.to.${newVersion}.variable.history.sql",
+
+            "org/flowable/job/service/db/upgrade/flowable.mysql.upgradestep.${oldVersion}.to.${newVersion}.job.sql",
+
+            "org/flowable/task/service/db/upgrade/flowable.mysql.upgradestep.${oldVersion}.to.${newVersion}.task.sql",
+            "org/flowable/task/service/db/upgrade/flowable.mysql.upgradestep.${oldVersion}.to.${newVersion}.task.history.sql",
+
+            "org/flowable/db/upgrade/flowable.mysql.upgradestep.${oldVersion}.to.${newVersion}.engine.sql",
+            "org/flowable/db/upgrade/flowable.mysql.upgradestep.${oldVersion}.to.${newVersion}.history.sql"
+    );
+
+    private static final String FILE_NAME = "update_${oldVersion}_to_${newVersion}.sql";
+
+    private static String createSqlFile(String targetPath, String oldVersion, String newVersion) {
+        File targetSqlFile;
+        try {
+            targetSqlFile = getSqlFile(targetPath, resolvePlaceHolder(FILE_NAME, oldVersion, newVersion));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        try (BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(targetSqlFile))) {
+
+            for (String sqlPath : SQL_PATH_LIST) {
+
+                appendCreateTableSql(outputStream, resolvePlaceHolder(sqlPath, oldVersion, newVersion));
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return targetSqlFile.getAbsolutePath();
+    }
+
+    private static String resolvePlaceHolder(String sqlPath, String oldVersion, String newVersion) {
+        String actualSqlPath = sqlPath.replace("${" + OLD_VERSION + "}", oldVersion);
+        actualSqlPath = actualSqlPath.replace("${" + NEW_VERSION + "}", newVersion);
+        return actualSqlPath;
+    }
+
+    public static void main(String[] args) throws Exception {
+        String targetDir = "/Users/hechenfeng/Desktop/flowable";
+
+        List<String> updateVersions = Arrays.asList("6120", "6200", "6210", "6300", "6301");
+        List<String> filePaths = new ArrayList<>();
+
+        int updateTimes = updateVersions.size() - 1;
+
+        /*
+         * 每次更新生成更新sql文件
+         */
+        for (int i = 0; i < updateTimes; i++) {
+            String oldVersion = updateVersions.get(i);
+            String newVersion = updateVersions.get(i + 1);
+
+            System.out.println("\n\nfrom " + oldVersion + " to " + newVersion);
+
+            String sqlFile = createSqlFile(targetDir, oldVersion, newVersion);
+            filePaths.add(sqlFile);
+        }
+
+        /*
+         * 生成 merge 文件名
+         */
+        StringBuilder sb = new StringBuilder();
+        sb.append(targetDir)
+                .append('/')
+                .append("update");
+
+        for (String updateVersion : updateVersions) {
+            sb.append('_')
+                    .append(updateVersion);
+        }
+        sb.append(".sql");
+
+        /*
+         * merge 每次更新的sql，生成一个sql
+         */
+        OutputStream out = new FileOutputStream(sb.toString());
+        for (int i = 0; i < updateTimes; i++) {
+            FileInputStream in = new FileInputStream(filePaths.get(i));
+            IOUtils.copy(in, out);
+            in.close();
+        }
+        out.close();
+    }
+
+}
+```
+
+## 4.9 DemoController
 
 ```Java
 package org.liuyehcf.flowable.web;
@@ -844,8 +990,6 @@ import org.junit.runner.RunWith;
 import org.liuyehcf.flowable.service.DemoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.concurrent.TimeUnit;
@@ -853,9 +997,6 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {TestApplication.class})
-@ContextHierarchy({
-        @ContextConfiguration(classes = {EmbeddedDatabaseConfig.class})
-})
 public class DemoTest {
 
     @Autowired
@@ -943,10 +1084,21 @@ public class EmbeddedDatabaseConfig {
 ```Java
 package org.liuyehcf.flowable.test;
 
+import org.liuyehcf.flowable.Application;
+import org.liuyehcf.flowable.config.DataSourceConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 
-@SpringBootApplication(scanBasePackages = "org.liuyehcf.flowable")
+@SpringBootApplication
+@ComponentScan(
+        basePackages = "org.liuyehcf.flowable",
+        excludeFilters = @ComponentScan.Filter(
+                type = FilterType.ASSIGNABLE_TYPE,
+                classes = {Application.class, DataSourceConfig.class}
+        )
+)
 public class TestApplication {
     public static void main(String[] args) {
         SpringApplication.run(TestApplication.class, args);
@@ -1037,3 +1189,64 @@ __其实，这并不是什么`Security`造成的问题，而是AOP使用时的�
 ## 8.2 Test
 
 __在测试方法中不要加`@Transactional`注解，由于工作流的执行是由工作流引擎完成的，并不是在当前测试方法中完成的，因此在别的线程无法拿到`Test方法所在线程`的`尚未提交的数据`__
+
+## 8.3 xml文件名
+
+`async-service.xml`失败
+`async-service.bpmn20.xml`成功
+
+## 8.4 Table "ACT_RU_JOB" not found
+
+__情景还原：配置了两个异步的`ServiceTask`，执行部署、启动的流程__
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:flowable="http://flowable.org/bpmn"
+             typeLanguage="http://www.w3.org/2001/XMLSchema"
+             expressionLanguage="http://www.w3.org/1999/XPath"
+             targetNamespace="http://www.flowable.org/processdef">
+
+    <process id="processId" name="testQueryCandidateInfoListener" isExecutable="true">
+        <documentation>Example</documentation>
+
+        <startEvent id="startEvent"/>
+
+        <serviceTask id="serviceTask1" name="serviceTask1" flowable:delegateExpression="${printTimeService}"
+                     flowable:async="true"/>
+
+        <serviceTask id="serviceTask2" name="serviceTask1" flowable:delegateExpression="${printTimeService}"
+                     flowable:async="true">
+            <extensionElements>
+                <flowable:field name="seconds" stringValue="10"/>
+            </extensionElements>
+        </serviceTask>
+
+        <userTask id="userTask" name="userTask" flowable:assignee="assignee"/>
+
+        <endEvent id="endEvent"/>
+
+        <sequenceFlow id="flow1" sourceRef="startEvent" targetRef="serviceTask1"/>
+        <sequenceFlow id="flow2" sourceRef="serviceTask1" targetRef="serviceTask2"/>
+        <sequenceFlow id="flow3" sourceRef="serviceTask2" targetRef="userTask"/>
+        <sequenceFlow id="flow4" sourceRef="userTask" targetRef="endEvent"/>
+    </process>
+</definitions>
+```
+
+__单元测试运行过程中，出现了如下的错误__
+
+```
+### The error may exist in org/flowable/job/service/db/mapping/entity/Job.xml
+### The error may involve org.flowable.job.service.impl.persistence.entity.JobEntityImpl.selectJob
+### The error occurred while executing a query
+### SQL: select * from ACT_RU_JOB where ID_ = ?
+### Cause: org.h2.jdbc.JdbcSQLException: Table "ACT_RU_JOB" not found; SQL statement:
+```
+
+__原因分析：由于`ServiceTask`配置的是异步方式，因此Test执行线程结束后，整个进程就被终止了，因此导致的这个问题。解决方法：Test最后sleep一段时间即可__
