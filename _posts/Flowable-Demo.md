@@ -1192,8 +1192,14 @@ __在测试方法中不要加`@Transactional`注解，由于工作流的执行�
 
 ## 8.3 xml文件名
 
-`async-service.xml`失败
-`async-service.bpmn20.xml`成功
+```java
+RepositoryService repositoryService = processEngine.getRepositoryService();
+Deployment deployment = repositoryService.createDeployment()
+  .addClasspathResource("async-service.xml")
+  .deploy();
+```
+
+文件名为`async-service.xml`时部署失败，改成`async-service.bpmn20.xml`后部署成功
 
 ## 8.4 Table "ACT_RU_JOB" not found
 
