@@ -481,6 +481,7 @@ __格式修饰符，与转换符共同使用__：可选的格式修饰符位于"
 
 # 6 参考
 
+* [logback-layout](https://logback.qos.ch/manual/layouts.html)
 * [从零开始玩转logback](http://www.importnew.com/22290.html)
 * [logback的使用和logback.xml详解](https://www.cnblogs.com/warking/p/5710303.html)
 * [logback 配置详解](https://www.jianshu.com/p/1ded57f6c4e3)

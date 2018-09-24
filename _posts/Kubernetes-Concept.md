@@ -253,7 +253,24 @@ __原理__：Kubernetes提供了一个准入控制器（`PodPreset`）。在创�
 
 * [Services](https://kubernetes.io/docs/concepts/services-networking/service/)
 
-# 6 参考
+# 6 Sequence
+
+```sequence
+participant Master
+participant NodeA
+participant FlannelNetwork
+participant NodeB
+
+NodeA->Master: ServiceName
+Master-->NodeA: ClasterIP
+NodeA->NodeA: Who can provide services?
+NodeA->NodeA: Flannel module record the ClasterIp, and transalate it to flannelIp
+NodeA->NodeB: request with flannelIp
+NodeB->NodeB: resolve flannelIp to ClasterIp
+NodeB-->NodeA: response
+```
+
+# 7 参考
 
 * [英文文档1](https://kubernetes.io/docs/concepts/)
 * [中文文档1](http://docs.kubernetes.org.cn/)

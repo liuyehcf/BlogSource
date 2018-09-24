@@ -23,6 +23,7 @@ __概念__
 1. `Flow`：文中称为`连线`
 1. `Gateway`：文中称为`网关`
 1. `Task`：文中称为`任务`
+1. `Activity`：流程中的一个实体都可以成为`Activity`，包括`Event`、`Gateway`、`Task`等等
 1. `Variable`：变量
 1. `Expression`：表达式，通常指`UEL`
 
@@ -352,6 +353,8 @@ __XML representation__
 
 `boundary event`捕获附加到`activity`的事件（`boundary event`一定是`catching event`）。这意味着当`activity`正在运行时，事件正在侦听某种类型的`trigger`。当事件被捕获时，`activity`被中断并且遵循事件的执行流
 
+文档中说，`boundary event`不可以有多个`output sequence`，但实际上是可以的，自行验证一下
+
 ```xml
 <boundaryEvent id="myBoundaryEvent" attachedToRef="theActivity">
       <XXXEventDefinition/>
@@ -564,7 +567,7 @@ __XML representation__
 
 # 3 Sequence Flow
 
-`sequence flow`用于表示两个`process`元素的连接关系（路由关系，带有方向）。当`process`执行到某个节点时，所有通过`sequence flow`连接出去的路径都会被同时执行，也就是并发的两条/多条执行链路
+`sequence flow`用于表示两个`process`元素的连接关系（路由关系，带有方向）。__当`process`执行到某个节点时，`所有`通过`sequence flow`连接出去的路径都会被同时执行，也就是并发的两条/多条执行链路。这是`BPMN 2.0`的默认行为（相当于默认有一个`parallel gateway`）__
 
 ```xml
 <sequenceFlow id="flow1" sourceRef="theStart" targetRef="theTask" />
