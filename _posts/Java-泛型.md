@@ -5,7 +5,7 @@ tags:
 - 原创
 categories: 
 - Java
-- 泛型
+- Generic
 ---
 
 __阅读更多__

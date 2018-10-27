@@ -6,7 +6,7 @@ tags:
 categories: 
 - Java
 - Java Virtual Machine
-- 垃圾收集
+- Garbage Collection
 ---
 
 __阅读更多__

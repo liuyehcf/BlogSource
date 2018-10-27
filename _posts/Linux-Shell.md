@@ -4,7 +4,7 @@ date: 2018-05-20 18:48:20
 tags: 
 - 原创
 categories: 
-- 操作系统
+- Operating System
 - Linux
 ---
 

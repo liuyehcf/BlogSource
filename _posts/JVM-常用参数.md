@@ -6,7 +6,7 @@ tags:
 categories: 
 - Java
 - Java Virtual Machine
-- JVM参数
+- JVM Options
 ---
 
 __阅读更多__

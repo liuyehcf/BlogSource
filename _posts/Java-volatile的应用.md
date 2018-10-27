@@ -5,8 +5,8 @@ tags:
 - 摘录
 categories: 
 - Java
-- Java 并发
-- Java 并发机制的底层实现原理
+- Java Concurrent
+- Concurrency Principle
 ---
 
 __阅读更多__

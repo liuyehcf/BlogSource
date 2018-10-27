@@ -5,7 +5,7 @@ tags:
 - 原创
 categories: 
 - Java
-- 隔离技术
+- Isolation Technology
 ---
 
 __阅读更多__

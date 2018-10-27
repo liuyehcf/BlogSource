@@ -6,7 +6,7 @@ tags:
 categories: 
 - Java
 - Java Virtual Machine
-- 命令行工具
+- Command Line Tool
 ---
 
 __阅读更多__

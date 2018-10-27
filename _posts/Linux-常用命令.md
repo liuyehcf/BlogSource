@@ -4,7 +4,7 @@ date: 2017-08-15 20:17:57
 tags: 
 - 摘录
 categories: 
-- 操作系统
+- Operating System
 - Linux
 ---
 
@@ -662,9 +662,67 @@ __示例：__
 * `route add -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
 * `route del -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
 
-# 8 账号管理
+## 7.3 tcpdump
 
-## 8.1 chsh
+sudo tcpdump -i lo0 port 22 -w output7.cap
+
+# 8 远程连接
+
+## 8.1 ssh
+
+__格式：__
+
+* `ssh [-f] [-o options] [-p port] [account@]host [command]`
+
+__参数说明：__
+
+* `-f`：需要配合后面的[command]，不登录远程主机直接发送一个命令过去而已
+* `-o`：后接`options`
+    * `ConnectTimeout=<seconds>`：等待连接的秒数，减少等待的事件
+    * `StrictHostKeyChecking=[yes|no|ask]`：默认是ask，若要让public key主动加入known_hosts，则可以设置为no即可
+* `-p`：后接端口号，如果sshd服务启动在非标准的端口，需要使用此项目
+
+__示例：__
+
+* `ssh 127.0.0.1`：由于SSH后面没有加上账号，因此默认采用当前的账号来登录远程服务器
+* `ssh student@127.0.0.1`：账号为该IP的主机上的账号，而非本地账号哦
+* `ssh student@127.0.0.1 find / &> ~/find1.log`
+* `ssh -f student@127.0.0.1 find / &> ~/find1.log`：会立即注销127.0.0.1，find在远程服务器运行
+
+### 8.1.1 免密登录
+
+__Client端步骤__
+
+1. `ssh-keygen [-t rsa|dsa]`
+1. `scp ~/.ssh/id_rsa.pub [account@]host:~`
+
+__Server端步骤__
+
+1. `mkdir ~/.ssh; chmod 700 .ssh`，若不存在`~/.ssh`文件夹，则创建
+1. `cat id_rsa.pub >> .ssh/authorized_keys`
+1. `chmod 644 .ssh/authorized_keys`
+
+## 8.2 scp
+
+__格式：__
+
+* `scp [-pr] [-l 速率] local_file [account@]host:dir`
+* `scp [-pr] [-l 速率] [account@]host:file local_dir`
+
+__参数说明：__
+
+* `-p`：保留源文件的权限信息
+* `-r`：复制来源为目录时，可以复制整个目录(含子目录)
+* `-l`：可以限制传输速率，单位Kbits/s
+
+__示例：__
+
+* `scp /etc/hosts* student@127.0.0.1:~`
+* `scp /tmp/Ubuntu.txt root@192.168.136.130:~/Desktop`
+
+# 9 账号管理
+
+## 9.1 chsh
 
 __格式：__
 
@@ -675,9 +733,9 @@ __参数说明：__
 * `-l`：列出目前系统上可用的shell，其实就是`/etc/shells`的内容
 * `-s`：设置修改自己的shell
 
-# 9 权限管理
+# 10 权限管理
 
-## 9.1 sudo
+## 10.1 sudo
 
 __配置文件：__
 
@@ -699,7 +757,7 @@ __示例：__
 
 -->
 
-# 10 参考
+# 11 参考
 
 * 《鸟哥的Linux私房菜》
 * [linux shell awk 流程控制语句（if,for,while,do)详细介绍](https://www.cnblogs.com/chengmo/archive/2010/10/04/1842073.html)

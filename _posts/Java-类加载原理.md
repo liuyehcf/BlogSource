@@ -5,7 +5,7 @@ tags:
 - 摘录
 categories: 
 - Java
-- 隔离技术
+- Isolation Technology
 ---
 
 __阅读更多__

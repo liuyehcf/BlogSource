@@ -4,7 +4,7 @@ date: 2017-07-11 18:49:23
 tags: 
 - 摘录
 categories: 
-- 分布式
+- Distributed
 - Zookeeper
 ---
 

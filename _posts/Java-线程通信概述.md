@@ -5,8 +5,8 @@ tags:
 - 原创
 categories: 
 - Java
-- Java 并发
-- 线程通信
+- Java Concurrent
+- Thread Communication
 ---
 
 __阅读更多__

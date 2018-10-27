@@ -5,8 +5,7 @@ tags:
 - 原创
 categories: 
 - Python
-- 基础
-- 语法
+- Grammar
 ---
 
 __阅读更多__

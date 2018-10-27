@@ -5,8 +5,8 @@ tags:
 - 原创
 categories: 
 - Java
-- Java 并发
-- Java 锁机制
+- Java Concurrent
+- Lock
 ---
 
 __阅读更多__

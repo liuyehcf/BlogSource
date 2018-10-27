@@ -1,12 +1,12 @@
 ---
-title: Byte-Buddy-Demo
-date: 2018-07-12 09:04:31
+title: Netty-Demo
+date: 2018-10-21 12:06:23
 tags: 
 - 原创
 categories: 
 - Java
 - Framework
-- Buddy
+- Netty
 ---
 
 __阅读更多__

@@ -26,8 +26,8 @@ __阅读更多__
 1. `${project.build.sourceDirectory}`：项目的主源码目录，默认为src/main/java/
 1. `${project.build.testSourceDirectory}`：项目的测试源码目录，默认为/src/test/java/
 1. `${project.build.directory}`：项目构建输出目录，默认为target/
-1. `${project.outputDirectory}`：项目主代码编译输出目录，默认为target/classes/
-1. `${project.testOutputDirectory}`：项目测试代码编译输出目录，默认为target/test-classes/
+1. `${project.build.outputDirectory}`：项目主代码编译输出目录，默认为target/classes/
+1. `${project.build.testOutputDirectory}`：项目测试代码编译输出目录，默认为target/test-classes/
 1. `${project.groupId}`：项目的groupId
 1. `${project.artifactId}`：项目的artifactId
 1. `${project.version}`：项目的version，与${version}等价

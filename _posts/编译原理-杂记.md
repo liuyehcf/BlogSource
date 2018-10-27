@@ -5,7 +5,7 @@ mathjax: true
 tags: 
 - 原创
 categories: 
-- 编译
+- Compile Principle
 ---
 
 __阅读更多__

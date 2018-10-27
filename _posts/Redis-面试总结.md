@@ -4,8 +4,8 @@ date: 2017-08-03 14:13:22
 tags: 
 - 摘录
 categories: 
-- 数据库
-- 非关系型数据库(NoSQL)
+- Data Base
+- NoSQL
 ---
 
 __阅读更多__

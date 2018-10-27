@@ -4,8 +4,8 @@ date: 2017-07-12 09:32:34
 tags: 
 - 摘录
 categories: 
-- 分布式
-- 算法
+- Distributed
+- Algorithm
 ---
 
 __阅读更多__

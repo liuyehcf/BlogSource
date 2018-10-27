@@ -4,7 +4,7 @@ date: 2017-10-11 23:21:45
 tags: 
 - 摘录
 categories: 
-- 操作系统
+- Operating System
 - OS X
 ---
 

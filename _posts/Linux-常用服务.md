@@ -4,7 +4,7 @@ date: 2018-07-20 14:55:26
 tags: 
 - 摘录
 categories: 
-- 操作系统
+- Operating System
 - Linux
 ---
 

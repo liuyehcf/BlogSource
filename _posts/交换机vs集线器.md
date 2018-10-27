@@ -4,7 +4,7 @@ date: 2017-12-30 19:57:49
 tags: 
 - 摘录
 categories: 
-- 计算机概念
+- Computer Concept
 ---
 
 __阅读更多__

@@ -4,8 +4,8 @@ date: 2017-08-16 15:12:30
 tags: 
 - 摘录
 categories: 
-- 数据结构
-- 树
+- Data Structure
+- Tree
 ---
 
 __阅读更多__
