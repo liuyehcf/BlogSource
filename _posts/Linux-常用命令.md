@@ -584,6 +584,35 @@ __参数说明：__
 * `-p`：同时列出每个进程的PID
 * `-u`：同时列出每个进程所属账号名称
 
+## 6.11 lsof
+
+__格式：__
+
+* `lsof [-aU] [-u 用户名] [+d] [-i address]`
+
+__参数说明：__
+
+* `-a`：多项数据需要“同时成立”才显示结果
+* `-U`：仅列出Unix like系统的socket文件类型
+* `-u`：后面接username，列出该用户相关进程所打开的文件
+* `+d`：后面接目录，及找出某个目录下面已经被打开的文件
+* `-i`：后面接网络地址，格式如下
+    * `[46][protocol][@hostname|hostaddr][:service|port]`
+    * `46`：ipv4/ipv6
+    * `protocol`：tcp/udp
+    * `hostname`：主机名
+    * `hostaddr`：主机ip
+    * `service`：服务
+    * `port`端口号
+
+__示例：__
+
+* `lsof -i 6tcp@localhost:22`
+* `lsof -i 4tcp@127.0.0.1:22`
+* `lsof -i tcp@127.0.0.1:22`
+* `lsof -i tcp@localhost`
+* `lsof -i tcp:22`
+
 # 7 网络管理
 
 ## 7.1 netstat
@@ -664,11 +693,26 @@ __示例：__
 
 ## 7.3 tcpdump
 
-sudo tcpdump -i lo0 port 22 -w output7.cap
+__格式：__
 
-## 7.4 lsof
+* `tcpdump [-AennqX] [-i 接口] [port 端口号] [-w 存储文件名] [-c 次数] [-r 文件] [所要摘取数据包的格式]`
 
-lsof -i tcp:port
+__参数说明：__
+
+* `-A`：数据包的内容以ASCII显示，通常用来抓取WWW的网页数据包数据
+* `-e`：使用数据链路层(OSI第二层)的MAC数据包数据来显示
+* `-nn`：直接以IP以及port number显示，而非主机名与服务名称
+* `-q`：仅列出较为简短的数据包信息，每一行的内容比较精简
+* `-X`：可以列出十六进制(hex)以及ASCII的数据包内容，对于监听数据包很有用
+* `-i`：后面接要监听的网络接口，例如eth0等
+* `port`：后接要监听的端口号，例如22等
+* `-w`：将监听得到的数据包存储下来
+* `-r`：从后面接的文件将数据包数据读出来
+* `-c`：监听数据包数，没有这个参数则会一直监听，直到[ctrl]+C
+
+__示例：__
+
+* `tcpdump -i lo0 port 22 -w output7.cap`
 
 # 8 远程连接
 
