@@ -666,6 +666,10 @@ __示例：__
 
 sudo tcpdump -i lo0 port 22 -w output7.cap
 
+## 7.4 lsof
+
+lsof -i tcp:port
+
 # 8 远程连接
 
 ## 8.1 ssh

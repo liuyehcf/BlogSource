@@ -125,7 +125,18 @@ docker --help # 查询所有顶层的参数
 docker image --help # 参数image参数的子参数
 ```
 
-# 3 参考
+# 3 Tips
+
+1. 启动并保持容器运行
+    * 可以执行一个不会终止的程序
+    * 启动的同时，开启一个bash：`docker run -it 9a88e0029e3b /bin/bash`
+1. 在主机与Docker容器之间拷贝文件
+    * `docker cp [OPTIONS] CONTAINER:SRC_PATH DEST_PATH|-`
+    * `docker cp [OPTIONS] SRC_PATH|- CONTAINER:DEST_PATH`
+1. 打开`D-Bus connection`
+    * `docker run -d -e "container=docker" --privileged=true [ID] /usr/sbin/init`
+
+# 4 参考
 
 * [docker](https://www.docker.com/)
 * [Docker 教程](http://www.runoob.com/docker/docker-tutorial.html)

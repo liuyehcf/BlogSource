@@ -14,30 +14,81 @@ __阅读更多__
 
 # 1 shade
 
+以下配置，可以将工程打包成`fat-jar`
+
+`java -jar xxx.jar arg1 arg2 ...`可以执行该`fat-jar`
+
 ```xml
 <build>
-    <plugins>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-shade-plugin</artifactId>
-            <version>2.4.3</version>
-            <configuration>
-                <!-- put your configurations here -->
-            </configuration>
-            <executions>
-                <execution>
-                    <phase>package</phase>
-                    <goals>
-                        <goal>shade</goal>
-                    </goals>
-                </execution>
-            </executions>
-        </plugin>
-    </plugins>
-</build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <manifestEntries>
+                                        <Main-Class>xxx.yyy.zzz</Main-Class>
+                                        <X-Compile-Source-JDK>1.8</X-Compile-Source-JDK>
+                                        <X-Compile-Target-JDK>1.8</X-Compile-Target-JDK>
+                                    </manifestEntries>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 ```
 
-# 2 autoconfig
+# 2 assembly
+
+以下配置，可以将工程打包成`fat-jar`
+
+`java -jar xxx.jar arg1 arg2 ...`可以执行该`fat-jar`
+
+```xml
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <!--设置启动的类-->
+                    <archive>
+                        <manifest>
+                            <mainClass>xxx.yyy.zzz</mainClass>
+                        </manifest>
+                    </archive>
+
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+```
+
+# 3 autoconfig
 
 ```xml
 <plugin>
@@ -68,7 +119,7 @@ __搜索步骤__
 
 __对于web项目（打包方式为war）__，则会过滤所有依赖中包含占位符的文件
 
-## 2.1 配置文件
+## 3.1 配置文件
 
 示例代码如下：
 
@@ -101,7 +152,7 @@ __对于web项目（打包方式为war）__，则会过滤所有依赖中包含�
 
 其中`<script>`标签中指定需要进行占位符替换的__模板文件__。`group`标签仅仅做了分组，阅读上更清晰，没有其他作用
 
-# 3 参考
+# 4 参考
 
 * [maven-shade-plugin 入门指南](https://www.jianshu.com/p/7a0e20b30401)
 * [maven-将依赖的 jar包一起打包到项目 jar 包中](https://www.jianshu.com/p/0c60f6ef3a4c)
