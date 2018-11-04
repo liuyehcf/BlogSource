@@ -651,7 +651,7 @@ public class CreateSqlUtils {
 
 ## 4.8 UpgradeSqlUtils
 
-```java
+```Java
 package org.liuyehcf.flowable.utils;
 
 import org.apache.commons.io.IOUtils;
@@ -1192,7 +1192,7 @@ __在测试方法中不要加`@Transactional`注解，由于工作流的执行�
 
 ## 8.3 xml文件名
 
-```java
+```Java
 RepositoryService repositoryService = processEngine.getRepositoryService();
 Deployment deployment = repositoryService.createDeployment()
   .addClasspathResource("async-service.xml")

@@ -512,7 +512,7 @@ UNIQUE KEY(name)
 
 集成测试配置的基类，避免重复配置。集成测试类继承该基类即可
 
-```java
+```Java
 package org.liuyehcf.spring.tx.test;
 
 import org.junit.runner.RunWith;
@@ -534,7 +534,7 @@ public class BaseConfig {
 
 集成测试数据源配置，这里选择的是`h2-database`
 
-```java
+```Java
 package org.liuyehcf.spring.tx.test;
 
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -588,7 +588,7 @@ public class TestDalConfig {
 
 为什么需要额外排除`Application`？如果只排除`DalConfig`的话，`Application`仍然在`TestApplication`配置的扫描路径下，且`excludeFilters`属性只对`TestApplication`有效，对`Application`无效，因此`Application`还是能够扫描到`DalConfig`
 
-```java
+```Java
 package org.liuyehcf.spring.tx.test;
 
 import org.liuyehcf.spring.tx.Application;
@@ -613,7 +613,7 @@ public class TestApplication {
 
 普通测试类，继承`BaseConfig`来获取集成测试的相关配置
 
-```java
+```Java
 package org.liuyehcf.spring.tx.test;
 
 import org.junit.Test;

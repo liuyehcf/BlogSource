@@ -17,7 +17,7 @@ __阅读更多__
 
 ## 1.1 Server
 
-```java
+```Java
 package org.liuyehcf.netty.ws;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -131,7 +131,7 @@ public class Server {
 
 ## 1.2 Client
 
-```java
+```Java
 package org.liuyehcf.netty.ws;
 
 import io.netty.bootstrap.Bootstrap;
@@ -259,7 +259,7 @@ public class Client {
 
 ## 1.3 WebSocketClientHandler
 
-```java
+```Java
 package org.liuyehcf.netty.ws;
 
 import io.netty.channel.*;

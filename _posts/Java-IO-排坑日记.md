@@ -21,7 +21,7 @@ __阅读更多__
 1. 一个扫描线程`scanThread`，循环检查`pipedInputStream`是否有数据到达（调用InputStream的非阻塞方法available），若发现有数据，则开启异步流程读取数据
 1. 一个线程模拟网络数据到达`networkDataThread`，从控制台输入任意输入并按回车后，将会从pipedOutputStream写入数据
 
-```java
+```Java
 package org.liuyehcf.io.pipe;
 
 import java.io.IOException;

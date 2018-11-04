@@ -64,10 +64,6 @@ public class HttpRequestBuilder {
     private String version;
     private String body;
 
-    public static HttpRequestBuilder builder() {
-        return new HttpRequestBuilder();
-    }
-
     /**
      * 构造方法，填充默认值
      */
@@ -77,6 +73,10 @@ public class HttpRequestBuilder {
         url = null;
         version = "HTTP/1.1";
         body = null;
+    }
+
+    public static HttpRequestBuilder builder() {
+        return new HttpRequestBuilder();
     }
 
     public HttpRequestBuilder method(String method) {
@@ -158,12 +158,12 @@ public class HttpRequestBuilder {
 
 用于本地测试的服务端代码详见{% post_link Spring-Boot-Demo %}，这里不再赘述
 
-## 3.3 Test
+## 3.3 JavaNioClient
 
 下面写了一个测试上述三个API的测试用例，由于Java Socket相关的操作可以固化，因此利用模板方法模式，提供了一个模板类RawHttpRequestTemplate，三个API的测试用例分别对应于HomeHttpRequest、ComputeHttpRequest、LoginHttpRequest
 
 ```Java
-package org.liuyehcf.http.raw.nioapi;
+package org.liuyehcf.http.raw.nio;
 
 import org.liuyehcf.http.raw.HttpRequestBuilder;
 
@@ -177,7 +177,7 @@ import java.util.List;
 /**
  * Created by HCF on 2017/12/16.
  */
-public class RowJavaNioApiDemo {
+public class JavaNioClient {
 
     private static byte[] toByteArray(List<Byte> bytes) {
         byte[] byteArray = new byte[bytes.size()];
@@ -197,11 +197,11 @@ public class RowJavaNioApiDemo {
     }
 
     private static abstract class RawHttpRequestTemplate {
-        final public void doRequest() {
+        final void doRequest() {
             try {
                 SocketChannel socketChannel = SocketChannel.open();
 
-                //启动一个本地的Web应用作为服务端
+                // 需要启动String Boot模块中的web应用作为服务端
                 socketChannel.connect(new InetSocketAddress("localhost", 8080));
 
                 String requestContent = buildRequest();
@@ -257,7 +257,7 @@ public class RowJavaNioApiDemo {
                     .method("GET")
                     .url("http://127.0.0.1:8080/home")
                     .addHeader("Host", "8080")
-                    .addHeader("Connection", "close")  //避免read阻塞
+                    .addHeader("Connection", "close")  // 避免read阻塞
                     .build();
         }
     }
@@ -269,7 +269,7 @@ public class RowJavaNioApiDemo {
 
         private String operator;
 
-        public ComputeHttpRequest(String value1, String value2, String operator) {
+        private ComputeHttpRequest(String value1, String value2, String operator) {
             this.value1 = value1;
             this.value2 = value2;
             this.operator = operator;
@@ -281,7 +281,7 @@ public class RowJavaNioApiDemo {
                     .method("GET")
                     .url("http://127.0.0.1:8080/compute?value1=" + value1 + "&value2=" + value2)
                     .addHeader("Host", "8080")
-                    .addHeader("Connection", "close")  //避免read阻塞
+                    .addHeader("Connection", "close")  // 避免read阻塞
                     .addHeader("operator", operator)
                     .build();
         }
@@ -290,7 +290,7 @@ public class RowJavaNioApiDemo {
     private static final class LoginHttpRequest extends RawHttpRequestTemplate {
         private String name;
 
-        public LoginHttpRequest(String name) {
+        private LoginHttpRequest(String name) {
             this.name = name;
         }
 
@@ -300,9 +300,9 @@ public class RowJavaNioApiDemo {
                     .method("POST")
                     .url("http://127.0.0.1:8080/login")
                     .addHeader("Host", "8080")
-                    .addHeader("Connection", "close")  //避免read阻塞
+                    .addHeader("Connection", "close")  // 避免read阻塞
                     .addHeader("Content-Type", "application/json")
-                    .body("{\"name\":\"" + this.name + "\"}") //JSON格式的请求包体
+                    .body("{\"name\":\"" + this.name + "\"}") // JSON格式的请求包体
                     .build();
         }
     }
@@ -377,6 +377,164 @@ Connection: close
 ]
 -------------------------------------------
 
+```
+
+## 3.4 NettyHttpClient
+
+利用Netty提供的HTTP工具`HttpClientCodec`来实现Http客户端
+
+```Java
+package org.liuyehcf.http.raw.netty;
+
+import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.http.*;
+import io.netty.util.CharsetUtil;
+import io.netty.util.ReferenceCountUtil;
+
+import java.net.URI;
+
+public class NettyHttpClient {
+    public static void main(String[] args) {
+        NioEventLoopGroup workerGroup = new NioEventLoopGroup();
+
+        try {
+            Bootstrap bootstrap = new Bootstrap();
+            bootstrap.group(workerGroup)
+                    .channel(NioSocketChannel.class)
+                    .handler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        protected void initChannel(SocketChannel socketChannel) {
+                            socketChannel.pipeline().addLast(new HttpClientCodec());
+                            socketChannel.pipeline().addLast(new ClientHandler());
+                        }
+                    });
+
+            // 需要启动String Boot模块中的web应用作为服务端
+            ChannelFuture channelFuture = bootstrap.connect("localhost", 8080).sync();
+
+            Channel channel = channelFuture.channel();
+
+            URI uri = new URI("http://127.0.0.1:8080/home");
+            DefaultFullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, uri.toASCIIString());
+
+            // 构建http请求
+            request.headers().set(HttpHeaderNames.HOST, 8080);
+            request.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
+            request.headers().set(HttpHeaderNames.CONTENT_LENGTH, request.content().readableBytes());
+
+            channel.writeAndFlush(request);
+
+            channelFuture.channel().closeFuture().sync();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            workerGroup.shutdownGracefully();
+        }
+    }
+
+    private static final class ClientHandler extends ChannelInboundHandlerAdapter {
+        @Override
+        public void channelRead(ChannelHandlerContext ctx, Object msg) {
+            try {
+                if (msg instanceof HttpResponse) {
+                    HttpResponse response = (HttpResponse) msg;
+                    System.out.println("CONTENT_TYPE:" + response.headers().get(HttpHeaderNames.CONTENT_TYPE));
+                } else if (msg instanceof HttpContent) {
+                    HttpContent content = (HttpContent) msg;
+                    ByteBuf buf = content.content();
+                    System.out.println(buf.toString(CharsetUtil.UTF_8));
+                }
+            } finally {
+                ReferenceCountUtil.release(msg);
+            }
+        }
+    }
+}
+```
+
+## 3.5 NettyRawClient
+
+纯字节方式的Http客户端
+
+```Java
+package org.liuyehcf.http.raw.netty;
+
+import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.ReferenceCountUtil;
+import org.liuyehcf.http.raw.HttpRequestBuilder;
+
+import java.nio.charset.Charset;
+
+public class NettyRawClient {
+    public static void main(String[] args) {
+        NioEventLoopGroup workerGroup = new NioEventLoopGroup();
+
+        try {
+            Bootstrap bootstrap = new Bootstrap();
+            bootstrap.group(workerGroup)
+                    .channel(NioSocketChannel.class)
+                    .handler(new ChannelInitializer<SocketChannel>() {
+                        @Override
+                        protected void initChannel(SocketChannel socketChannel) {
+                            socketChannel.pipeline().addLast(new ClientHandler());
+                        }
+                    });
+
+            // 需要启动String Boot模块中的web应用作为服务端
+            ChannelFuture channelFuture = bootstrap.connect("localhost", 8080).sync();
+
+            Channel channel = channelFuture.channel();
+
+            String requestContent = buildRequest();
+
+            System.out.print("\n\n>>>>>>>>>>>>>>>>HTTP REQUEST<<<<<<<<<<<<<<<<\n\n");
+            System.out.println(requestContent);
+
+            channel.writeAndFlush(Unpooled.wrappedBuffer(requestContent.getBytes()));
+
+            channelFuture.channel().closeFuture().sync();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            workerGroup.shutdownGracefully();
+        }
+    }
+
+    private static String buildRequest() {
+        return HttpRequestBuilder.builder()
+                .method("GET")
+                .url("http://127.0.0.1:8080/home")
+                .addHeader("Host", "8080")
+                .addHeader("Connection", "close")
+                .build();
+    }
+
+    private static final class ClientHandler extends ChannelInboundHandlerAdapter {
+        @Override
+        public void channelRead(ChannelHandlerContext ctx, Object msg) {
+            ByteBuf byteBuf = (ByteBuf) msg;
+            try {
+                int readableBytes = byteBuf.readableBytes();
+                byte[] bytes = new byte[readableBytes];
+                byteBuf.readBytes(bytes);
+                System.out.println(new String(bytes, Charset.defaultCharset()));
+            } finally {
+                ReferenceCountUtil.release(msg);
+            }
+        }
+    }
+}
 ```
 
 # 4 参考
