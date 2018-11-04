@@ -30,21 +30,20 @@ function sortByDate() {
     SORTED_UNIQUE_TIME_ORDER_ARRAY="";
     while read LINE
     do
-        if [ -n ${SORTED_UNIQUE_TIME_ORDER_ARRAY} ]
+        if [ -n "${SORTED_UNIQUE_TIME_ORDER_ARRAY}" ]
         then
             SORTED_UNIQUE_TIME_ORDER_ARRAY=${SORTED_UNIQUE_TIME_ORDER_ARRAY}" "${LINE};
         else
             SORTED_UNIQUE_TIME_ORDER_ARRAY=${LINE};
         fi
     # 此处语法为：进程替换
-    done < <(echo ${TIME_ORDER_ARRAY} | sort -u) 
+    done < <(echo -e ${TIME_ORDER_ARRAY} | sort -nu) 
 
     i=0;
     for TIME_ORDER in ${SORTED_UNIQUE_TIME_ORDER_ARRAY[*]}
     do
         for FILE_PATH in ${FILE_MAP["${TIME_ORDER}"]}
         do
-            echo ${FILE_MAP["${TIME_ORDER}"]};
             FILE_PATH_ARRAY[${i}]=${FILE_PATH};
             ((i++))
         done
