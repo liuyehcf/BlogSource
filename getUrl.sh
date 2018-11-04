@@ -1,46 +1,53 @@
 #! /bin/bash
 
-function insertSort(){
-    ARRAY=( $(echo $1) );
-
-    LENGTH=$(( ${#ARRAY[*]} ))
-    for (( i=1; i<LENGTH; i++ ))
-    do
-        PIVOT=${ARRAY[${i}]};
-        j=$((i-1));
-        while [ ${j} -ge 0 ] && [ ${ARRAY[${j}]} -gt ${PIVOT} ]
-        do
-            ARRAY[$((j+1))]=${ARRAY[${j}]};
-            ((j--));
-        done
-        ARRAY[${j}+1]=${PIVOT};
-    done
-
-    echo "${ARRAY[*]}"
-}
-
 function sortByDate() {
     FILE_PATH_ARRAY=( $(echo $1) );
-    i=0;
-    declare -A FILE_MAP
+    declare -A FILE_MAP;
+    TIME_ORDER_ARRAY="";
     for FILE_PATH in ${FILE_PATH_ARRAY[*]}
     do
         TEMP_FILE_PATH=${FILE_PATH#*/public/}
         YEAR_MON_DAY=( $(echo ${TEMP_FILE_PATH} | awk 'BEGIN{FS="/"} {print $1 " " $2 " " $3}') );
         TIME_ORDER=$(( 10#${YEAR_MON_DAY[0]} * 10000 + 10#${YEAR_MON_DAY[1]} * 100 + 10#${YEAR_MON_DAY[2]} ));
-        TIME_ORDER_ARRAY[${i}]=${TIME_ORDER};
-        FILE_MAP["${TIME_ORDER}"]=${FILE_PATH};
-        ((i++));
+        
+        if [ -n "${TIME_ORDER_ARRAY}" ]
+        then
+            TIME_ORDER_ARRAY=${TIME_ORDER_ARRAY}"\n"${TIME_ORDER};
+        else
+            TIME_ORDER_ARRAY=${TIME_ORDER};
+        fi
+
+        if [ -n "${FILE_MAP["${TIME_ORDER}"]}" ]
+        then
+            FILE_MAP["${TIME_ORDER}"]=${FILE_MAP["${TIME_ORDER}"]}" "${FILE_PATH};
+        else
+            FILE_MAP["${TIME_ORDER}"]=${FILE_PATH};
+        fi
+
     done
 
     # 排序
-    TIME_ORDER_ARRAY=( $(insertSort "${TIME_ORDER_ARRAY[*]}") )
+    SORTED_UNIQUE_TIME_ORDER_ARRAY="";
+    while read LINE
+    do
+        if [ -n ${SORTED_UNIQUE_TIME_ORDER_ARRAY} ]
+        then
+            SORTED_UNIQUE_TIME_ORDER_ARRAY=${SORTED_UNIQUE_TIME_ORDER_ARRAY}" "${LINE};
+        else
+            SORTED_UNIQUE_TIME_ORDER_ARRAY=${LINE};
+        fi
+    # 此处语法为：进程替换
+    done < <(echo ${TIME_ORDER_ARRAY} | sort -u) 
 
     i=0;
-    for TIME_ORDER in ${TIME_ORDER_ARRAY[*]}
+    for TIME_ORDER in ${SORTED_UNIQUE_TIME_ORDER_ARRAY[*]}
     do
-        FILE_PATH_ARRAY[${i}]=${FILE_MAP["${TIME_ORDER}"]};
-        ((i++))
+        for FILE_PATH in ${FILE_MAP["${TIME_ORDER}"]}
+        do
+            echo ${FILE_MAP["${TIME_ORDER}"]};
+            FILE_PATH_ARRAY[${i}]=${FILE_PATH};
+            ((i++))
+        done
     done
 
     echo "${FILE_PATH_ARRAY[*]}"
