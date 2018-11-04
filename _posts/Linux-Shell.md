@@ -79,6 +79,8 @@ echo $((a+b*c))
 echo $(($a+$b*$c))
 
 # 进制转换
+a=06;b=09;c=02;
+echo $(( 10#$a + 10#$b + 10#$c ))
 echo $((16#ff))
 echo $((8#77))
 ```
@@ -242,9 +244,18 @@ __逻辑与/或/非__
 * __`-o`：任一条件成立，返回true，如test -r file1 -o -x file2__
 * __`!`：反向状态__
 
-# 5 字符串
+# 5 判断符号`[]`
 
-## 5.1 拼接字符串
+__判断符号`[]`与判断式`test`用法基本一致，有以下几条注意事项__
+
+1. 如果要在bash的语法当中使用括号作为shell的判断式时，__必须要注意在中括号的两端需要有空格符来分隔__
+1. __逻辑与逻辑或，用的是`&&`和`||`，且需要将条件分开写，如下__
+    * `[ condition1 ] && [ condition2 ]`
+    * `[ condition1 ] || [ condition2 ]`
+
+# 6 String
+
+## 6.1 拼接字符串
 
 ```sh
 your_name="qinjx"
@@ -252,14 +263,14 @@ greeting="hello, "${your_name}" \!"
 echo ${greeting}
 ```
 
-## 5.2 获取字符串长度
+## 6.2 获取字符串长度
 
 ```sh
 text="abcdefg"
 echo "字符串长度为 ${#text}"
 ```
 
-## 5.3 提取子字符串
+## 6.3 提取子字符串
 
 下面以字符串`http://www.aaa.com/123.htm`为例，介绍几种不同的截取方式
 
@@ -337,7 +348,7 @@ var='http://www.aaa.com/123.htm'
 echo ${var:0-7}
 ```
 
-## 5.4 按行读取
+## 6.4 按行读取
 
 __方式1__
 
@@ -368,7 +379,7 @@ do
 done
 ```
 
-# 6 数组
+# 7 Array
 
 Shell 数组用括号来表示，元素用`空格`符号分割开，语法格式如下：
 
@@ -414,9 +425,71 @@ do
 done
 ```
 
-# 7 控制流
+__注意__
 
-## 7.1 if
+1. 数组下标从0开始
+
+# 8 Map
+
+Shell map用括号来表示，元素用`空格`符号分割开，语法格式如下：
+
+```sh
+declare -A map_name=([key1]=value1 ... [keyn]=valuen)
+
+# 或者直接这样定义，注意，不需要${}
+declare -A map_name
+map_name[key1]=value1
+map_name[key2]=value2
+...
+map_name[keyn]=valuen
+```
+
+__属性__
+
+* `@`或`*`可以获取map中的所有value
+```
+${map[@]}
+${map[*]}
+```
+
+* 获取map长度的方法与获取字符串长度的方法相同，即利用`#`
+```
+${#map[@]}
+${#map[*]}
+```
+
+* `!`可以获取map中关键字集合
+```
+${!map[@]}
+${!map[*]}
+```
+
+__示例__
+
+```sh
+declare -A map
+map['a']=1
+map['b']=2
+map['c']=3
+
+echo ${map[@]}
+echo ${map[*]}
+
+echo ${#map[@]}
+echo ${#map[*]}
+
+echo ${!map[@]}
+echo ${!map[*]}
+
+for key in ${!map[*]}
+do
+    echo "value=${map[${key}]}"
+done
+```
+
+# 9 控制流
+
+## 9.1 if
 
 ```sh
 if condition
@@ -428,7 +501,7 @@ then
 fi
 ```
 
-## 7.2 if else
+## 9.2 if else
 
 ```sh
 if condition
@@ -442,7 +515,7 @@ else
 fi
 ```
 
-## 7.3 if else-if else
+## 9.3 if else-if else
 
 ```sh
 if condition1
@@ -456,7 +529,7 @@ else
 fi
 ```
 
-## 7.4 for
+## 9.4 for
 
 ```sh
 for var in item1 item2 ... itemN
@@ -478,7 +551,7 @@ do
 done
 ```
 
-## 7.5 while
+## 9.5 while
 
 ```sh
 while condition
@@ -487,7 +560,7 @@ do
 done
 ```
 
-## 7.6 until
+## 9.6 until
 
 ```sh
 until condition
@@ -496,7 +569,7 @@ do
 done
 ```
 
-## 7.7 case
+## 9.7 case
 
 ```sh
 case 值 in
@@ -515,7 +588,44 @@ case 值 in
 esac
 ```
 
-# 8 重定向
+# 10 函数
+
+## 10.1 参数传递
+
+__传递数组__
+
+1. 用`""`将数组转化成字符串
+
+```sh
+function func() {
+    # 这里将传入的字符串解析成数组
+    param=( $(echo $1) )
+    echo "param=${param[*]}"
+}
+
+array=('a', 'b', 'c', 'd', 'e')
+
+# 这里用""将数组转为字符串
+func "${array[*]}"
+```
+
+## 10.2 返回值
+
+__返回数组__
+
+```sh
+function func() {
+    # 这里将传入的字符串解析成数组
+    array=('a' 'b' 'c' 'd' 'e')
+    echo "${array[*]}"
+}
+
+# 这里用""将数组转为字符串
+array=( $(func) )
+echo ${array[*]}
+```
+
+# 11 重定向
 
 | 命令 | 说明 |
 |:--|:--|
@@ -530,7 +640,7 @@ esac
 
 __需要注意的是文件描述符 0 通常是标准输入（STDIN），1 是标准输出（STDOUT），2 是标准错误输出（STDERR）__
 
-## 8.1 Here Document
+## 11.1 Here Document
 
 Here Document 是 Shell 中的一种特殊的重定向方式，用来将输入重定向到一个交互式 Shell 脚本或程序
 
@@ -553,7 +663,7 @@ EOF
 3          # 输出结果为 3 行
 ```
 
-# 9 管道
+# 12 管道
 
 __管道命令使用的是`|`这个界定符号，这个管道命令`|`仅能处理有前面一个命令传来的`正确信息`，也就是`standard output`的信息，对于standard error并没有直接处理的能力__
 
@@ -561,7 +671,7 @@ __每个管道后面接的`第一个数据必须是命令`，而且这个命令�
 
 __管道是作为子进程的方式来运行的。因此在管道中进行一些变量赋值操作，在管道结束后会丢失__
 
-# 10 进程替换
+# 13 进程替换
 
 __进程替换(Process Substitution)的作用有点类似管道，但在实现方式上有所区别，管道是作为子进程的方式来运行的，而进程替换会在/dev/fd/下面产生类似/dev/fd/63,/dev/fd/62这类临时文件，用来传递数据。用法如下：__
 
@@ -593,13 +703,13 @@ done
 echo ${count} # 永远是0
 ```
 
-# 11 方法
+# 14 方法
 
-## 11.1 read
+## 14.1 read
 
 读取用户输入
 
-# 12 参考
+# 15 参考
 
 * [shell教程](http://www.runoob.com/linux/linux-shell.html)
 * [Shell脚本8种字符串截取方法总结](https://www.jb51.net/article/56563.htm)

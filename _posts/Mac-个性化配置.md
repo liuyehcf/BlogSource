@@ -138,7 +138,29 @@ __设置`⌥+←`、`⌥+→`以单词为单位移动光标__
 
 # 4 zsh
 
-# 5 参考
+# 5 更换home-brew镜像源
+
+```
+cd "$(brew --repo)" && git remote set-url origin https://git.coding.net/homebrew/homebrew.git
+cd $home && brew update
+```
+
+# 6 升级bash
+
+```sh
+brew install bash
+sudo mv /bin/bash  /bin/bash.origin
+sudo ln -s /usr/local/bin/bash /bin/bash
+```
+
+__注意，`sudo mv /bin/bash  /bin/bash.origin`可能因为权限的问题，无法成功执行，这时，我们需要关闭Mac的SIP机制，具体步骤如下__
+
+1. 重启，然后按住`Command+R`
+1. 出现界面之后，上面菜单栏->实用工具->终端
+1. 在Terminal中输入`csrutil disable`关闭SIP(csrutil enable打开SIP)
+1. 重启
+
+# 7 参考
 
 * [mac下vim的16种配色方案（代码高亮）展示，及配置](http://blog.csdn.net/myhelperisme/article/details/49700715)
 * [mac终端(Terminal)字体颜色更改教程 [ls、vim操作颜色] [复制链接]](https://bbs.feng.com/forum.php?mod=viewthread&tid=10508780)
