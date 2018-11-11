@@ -661,9 +661,65 @@ __示例：__
 * `lsof -i tcp@localhost`
 * `lsof -i tcp:22`
 
-# 7 网络管理
+## 6.12 tsar
 
-## 7.1 netstat
+__格式：__
+
+* `tsar [-l]`
+
+__参数说明：__
+
+* `-l`：查看实时数据
+
+__示例：__
+
+* `tsar -l`
+
+# 7 内存管理
+
+## 7.1 free
+
+__格式：__
+
+* `free [-b|-k|-m|-g] [-t]`
+
+__参数说明：__
+
+* `-b`：bytes
+* `-m`：MB
+* `-k`：KB
+* `-g`：GB
+
+__显示参数介绍__：
+
+* `Men`：物理内存
+* `Swap`：虚拟内存
+* `total`：总量
+* `user`：使用量
+* `free`：剩余可用量
+* `shared`与`buffers/cached`：被使用的量当中用来作为缓冲以及快取的量
+* `buffers`：缓冲记忆
+* `cached`：缓存
+* __一般来说系统会很有效地将所有内存用光，目的是为了让系统的访问性能加速，这一点与Windows很不同，因此对于Linux系统来说，内存越大越好__
+
+__示例：__
+
+* `free -m`
+
+## 7.2 swap
+
+__制作swap__
+
+```sh
+dd if=/dev/zero of=/tmp/swap bs=1M count=128
+mkswap /tmp/swap
+swapon /tmp/swap
+free
+```
+
+# 8 网络管理
+
+## 8.1 netstat
 
 __格式：__
 
@@ -701,7 +757,7 @@ __显示参数说明：__
 
 netstat的功能就是查看网络的连接状态，而网络连接状态中，又以__"我目前开了多少port在等待客户端的连接"__以及__"目前我的网络连接状态中，有多少连接已建立或产生问题"__最常见
 
-## 7.2 route
+## 8.2 route
 
 __格式：__
 
@@ -739,7 +795,7 @@ __示例：__
 * `route add -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
 * `route del -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
 
-## 7.3 tcpdump
+## 8.3 tcpdump
 
 __格式：__
 
@@ -762,9 +818,9 @@ __示例：__
 
 * `tcpdump -i lo0 port 22 -w output7.cap`
 
-# 8 远程连接
+# 9 远程连接
 
-## 8.1 ssh
+## 9.1 ssh
 
 __格式：__
 
@@ -785,7 +841,7 @@ __示例：__
 * `ssh student@127.0.0.1 find / &> ~/find1.log`
 * `ssh -f student@127.0.0.1 find / &> ~/find1.log`：会立即注销127.0.0.1，find在远程服务器运行
 
-### 8.1.1 免密登录
+### 9.1.1 免密登录
 
 __Client端步骤__
 
@@ -798,7 +854,7 @@ __Server端步骤__
 1. `cat id_rsa.pub >> .ssh/authorized_keys`
 1. `chmod 644 .ssh/authorized_keys`
 
-## 8.2 scp
+## 9.2 scp
 
 __格式：__
 
@@ -816,9 +872,9 @@ __示例：__
 * `scp /etc/hosts* student@127.0.0.1:~`
 * `scp /tmp/Ubuntu.txt root@192.168.136.130:~/Desktop`
 
-# 9 账号管理
+# 10 账号管理
 
-## 9.1 chsh
+## 10.1 chsh
 
 __格式：__
 
@@ -829,9 +885,9 @@ __参数说明：__
 * `-l`：列出目前系统上可用的shell，其实就是`/etc/shells`的内容
 * `-s`：设置修改自己的shell
 
-# 10 权限管理
+# 11 权限管理
 
-## 10.1 sudo
+## 11.1 sudo
 
 __配置文件：__
 
@@ -853,7 +909,7 @@ __示例：__
 
 -->
 
-# 11 参考
+# 12 参考
 
 * 《鸟哥的Linux私房菜》
 * [linux shell awk 流程控制语句（if,for,while,do)详细介绍](https://www.cnblogs.com/chengmo/archive/2010/10/04/1842073.html)

@@ -21,7 +21,6 @@ __阅读更多__
 package org.liuyehcf.netty.ws;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -29,12 +28,12 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.codec.http.websocketx.*;
+import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 
-import java.nio.charset.Charset;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -56,8 +55,8 @@ public class Server {
                             ChannelPipeline pipeline = socketChannel.pipeline();
                             pipeline.addLast(new IdleStateHandler(0, 0, 60, TimeUnit.SECONDS));
                             pipeline.addLast(new HttpServerCodec());
-                            pipeline.addLast(new ChunkedWriteHandler());
                             pipeline.addLast(new HttpObjectAggregator(65535));
+                            pipeline.addLast(new ChunkedWriteHandler());
                             pipeline.addLast(new WebSocketServerCompressionHandler());
                             pipeline.addLast(new WebSocketServerProtocolHandler("/", null, true));
                             pipeline.addLast(new ServerHandler());
@@ -80,50 +79,12 @@ public class Server {
         }
     }
 
-    private static final class ServerHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
+    private static final class ServerHandler extends AbstractWebSocketHandler {
         @Override
-        protected final void channelRead0(ChannelHandlerContext ctx, WebSocketFrame msg) {
-            final String content;
-            if (msg instanceof BinaryWebSocketFrame) {
-                BinaryWebSocketFrame binaryWebSocketFrame = (BinaryWebSocketFrame) msg;
-                ByteBuf byteBuf = binaryWebSocketFrame.content();
-                byte[] bytes = new byte[byteBuf.readableBytes()];
-                byteBuf.getBytes(0, bytes);
-                content = new String(bytes, Charset.defaultCharset());
-            } else if (msg instanceof TextWebSocketFrame) {
-                content = ((TextWebSocketFrame) msg).text();
-            } else if (msg instanceof PongWebSocketFrame) {
-                content = "Pong";
-            } else if (msg instanceof ContinuationWebSocketFrame) {
-                content = "Continue";
-            } else if (msg instanceof PingWebSocketFrame) {
-                content = "Ping";
-            } else if (msg instanceof CloseWebSocketFrame) {
-                content = "Close";
-                ctx.close();
-            } else {
-                throw new RuntimeException();
-            }
-
+        void doChannelRead0(ChannelHandlerContext ctx, String content) {
             System.out.println("server receive message: " + content);
 
             ctx.channel().writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer("Hi, I'm Server".getBytes())));
-        }
-
-        @Override
-        public final void channelActive(ChannelHandlerContext ctx) {
-            System.out.println("channelActive");
-        }
-
-        @Override
-        public final void channelInactive(ChannelHandlerContext ctx) {
-            System.out.println("channelInactive");
-        }
-
-        @Override
-        public final void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-            ctx.channel().close();
-            cause.printStackTrace();
         }
     }
 }
@@ -135,8 +96,6 @@ public class Server {
 package org.liuyehcf.netty.ws;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -145,7 +104,10 @@ import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.websocketx.*;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.WebSocketClientHandshaker;
+import io.netty.handler.codec.http.websocketx.WebSocketClientHandshakerFactory;
+import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketClientCompressionHandler;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
@@ -153,7 +115,6 @@ import io.netty.handler.stream.ChunkedWriteHandler;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -177,8 +138,8 @@ public class Client {
                     protected void initChannel(SocketChannel socketChannel) {
                         ChannelPipeline pipeline = socketChannel.pipeline();
                         pipeline.addLast(new HttpClientCodec());
-                        pipeline.addLast(new ChunkedWriteHandler());
                         pipeline.addLast(new HttpObjectAggregator(65535));
+                        pipeline.addLast(new ChunkedWriteHandler());
                         pipeline.addLast(WebSocketClientCompressionHandler.INSTANCE);
                         pipeline.addLast(webSocketClientHandler);
                         pipeline.addLast(new ClientHandler());
@@ -210,48 +171,10 @@ public class Client {
         }
     }
 
-    private static final class ClientHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
+    private static final class ClientHandler extends AbstractWebSocketHandler {
         @Override
-        protected final void channelRead0(ChannelHandlerContext ctx, WebSocketFrame msg) {
-            final String content;
-            if (msg instanceof BinaryWebSocketFrame) {
-                BinaryWebSocketFrame binaryWebSocketFrame = (BinaryWebSocketFrame) msg;
-                ByteBuf byteBuf = binaryWebSocketFrame.content();
-                byte[] bytes = new byte[byteBuf.readableBytes()];
-                byteBuf.getBytes(0, bytes);
-                content = new String(bytes, Charset.defaultCharset());
-            } else if (msg instanceof TextWebSocketFrame) {
-                content = ((TextWebSocketFrame) msg).text();
-            } else if (msg instanceof PongWebSocketFrame) {
-                content = "Pong";
-            } else if (msg instanceof ContinuationWebSocketFrame) {
-                content = "Continue";
-            } else if (msg instanceof PingWebSocketFrame) {
-                content = "Ping";
-            } else if (msg instanceof CloseWebSocketFrame) {
-                content = "Close";
-                ctx.close();
-            } else {
-                throw new RuntimeException();
-            }
-
+        void doChannelRead0(ChannelHandlerContext ctx, String content) {
             System.out.println("client receive message: " + content);
-        }
-
-        @Override
-        public final void channelActive(ChannelHandlerContext ctx) {
-            System.out.println("channelActive");
-        }
-
-        @Override
-        public final void channelInactive(ChannelHandlerContext ctx) {
-            System.out.println("channelInactive");
-        }
-
-        @Override
-        public final void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-            ctx.channel().close();
-            cause.printStackTrace();
         }
     }
 }
@@ -327,7 +250,100 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 }
 ```
 
-# 2 参考
+## 1.4 AbstractWebSocketHandler
+
+```Java
+package org.liuyehcf.netty.ws;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.websocketx.*;
+
+import java.nio.charset.Charset;
+
+/**
+ * @author hechenfeng
+ * @date 2018/11/3
+ */
+public abstract class AbstractWebSocketHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
+    @Override
+    protected final void channelRead0(ChannelHandlerContext ctx, WebSocketFrame msg) {
+        final String content;
+        if (msg instanceof BinaryWebSocketFrame) {
+            BinaryWebSocketFrame binaryWebSocketFrame = (BinaryWebSocketFrame) msg;
+            ByteBuf byteBuf = binaryWebSocketFrame.content();
+            byte[] bytes = new byte[byteBuf.readableBytes()];
+            byteBuf.getBytes(0, bytes);
+            content = new String(bytes, Charset.defaultCharset());
+        } else if (msg instanceof TextWebSocketFrame) {
+            content = ((TextWebSocketFrame) msg).text();
+        } else if (msg instanceof PongWebSocketFrame) {
+            content = "Pong";
+        } else if (msg instanceof ContinuationWebSocketFrame) {
+            content = "Continue";
+        } else if (msg instanceof PingWebSocketFrame) {
+            content = "Ping";
+        } else if (msg instanceof CloseWebSocketFrame) {
+            content = "Close";
+            ctx.close();
+        } else {
+            throw new RuntimeException();
+        }
+
+        doChannelRead0(ctx, content);
+    }
+
+    @Override
+    public final void channelActive(ChannelHandlerContext ctx) {
+        System.out.println("channelActive");
+    }
+
+    @Override
+    public final void channelInactive(ChannelHandlerContext ctx) {
+        System.out.println("channelInactive");
+    }
+
+    @Override
+    public final void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        ctx.channel().close();
+        cause.printStackTrace();
+    }
+
+    abstract void doChannelRead0(ChannelHandlerContext ctx, String content);
+}
+```
+
+# 2 问题
+
+```java
+018-11-10 17:23:34 [nioEventLoopGroup-25-3] ERROR error - channel actively disconnect. handler=CounterpartClientWebSocketHandler; channel=[id: 0xbe8ef4e7, L:/10.101.108.253:36380 - R:/10.101.108.253:29092]; errorMsg=unsupported message type: BinaryWebSocketFrame (expected: ByteBuf, FileRegion)
+java.lang.UnsupportedOperationException: unsupported message type: BinaryWebSocketFrame (expected: ByteBuf, FileRegion)
+    at io.netty.channel.nio.AbstractNioByteChannel.filterOutboundMessage(AbstractNioByteChannel.java:266)
+    at io.netty.channel.AbstractChannel$AbstractUnsafe.write(AbstractChannel.java:799)
+    at io.netty.channel.DefaultChannelPipeline$HeadContext.write(DefaultChannelPipeline.java:1299)
+    at io.netty.channel.AbstractChannelHandlerContext.invokeWrite0(AbstractChannelHandlerContext.java:738)
+    at io.netty.channel.AbstractChannelHandlerContext.invokeWrite(AbstractChannelHandlerContext.java:730)
+    at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:816)
+    at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:723)
+    at io.netty.handler.timeout.IdleStateHandler.write(IdleStateHandler.java:302)
+    at io.netty.channel.AbstractChannelHandlerContext.invokeWrite0(AbstractChannelHandlerContext.java:738)
+    at io.netty.channel.AbstractChannelHandlerContext.invokeWrite(AbstractChannelHandlerContext.java:730)
+    at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:816)
+    at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:723)
+    at io.netty.handler.stream.ChunkedWriteHandler.doFlush(ChunkedWriteHandler.java:304)
+    at io.netty.handler.stream.ChunkedWriteHandler.flush(ChunkedWriteHandler.java:137)
+    at io.netty.channel.AbstractChannelHandlerContext.invokeFlush0(AbstractChannelHandlerContext.java:776)
+    at io.netty.channel.AbstractChannelHandlerContext.invokeFlush(AbstractChannelHandlerContext.java:768)
+    at io.netty.channel.AbstractChannelHandlerContext.flush(AbstractChannelHandlerContext.java:749)
+    at io.netty.channel.ChannelOutboundHandlerAdapter.flush(ChannelOutboundHandlerAdapter.java:115)
+    at io.netty.channel.AbstractChannelHandlerContext.invokeFlush0(AbstractChannelHandlerContext.java:776)
+    at io.netty.channel.AbstractChannelHandlerContext.invokeFlush(AbstractChannelHandlerContext.java:768)
+    at io.netty.channel.AbstractChannelHandlerContext.access$1500(AbstractChannelHandlerContext.java:38)
+    at io.netty.channel.AbstractChannelHandlerContext$WriteAndFlushTask.write(AbstractChannelHandlerContext.java:1137)
+```
+
+# 3 参考
 
 * [Java SSL 证书细节](https://www.jianshu.com/p/5fcc6a219c8b)
 * [JDK自带工具keytool生成ssl证书](https://www.cnblogs.com/zhangzb/p/5200418.html)

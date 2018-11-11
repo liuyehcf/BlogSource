@@ -135,10 +135,13 @@ docker image --help # 参数image参数的子参数
     * `docker cp [OPTIONS] SRC_PATH|- CONTAINER:DEST_PATH`
 1. 打开`D-Bus connection`
     * `docker run -d -e "container=docker" --privileged=true [ID] /usr/sbin/init`
+1. 在指定容器中执行命令
+    * `docker exec -ti my_container /bin/bash -c "echo a && echo b"`
 
 # 4 参考
 
-* [docker](https://www.docker.com/)
+* [Docker](https://www.docker.com/)
+* [Docker Command](https://docs.docker.com/engine/reference/commandline/docker/)
 * [Docker 教程](http://www.runoob.com/docker/docker-tutorial.html)
 * [Docker 原理篇](https://www.jianshu.com/p/7a58ad7fade4)
 * [深入分析Docker镜像原理](https://www.csdn.net/article/2015-08-21/2825511)
