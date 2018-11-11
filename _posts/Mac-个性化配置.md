@@ -140,9 +140,31 @@ __设置`⌥+←`、`⌥+→`以单词为单位移动光标__
 
 # 5 更换home-brew镜像源
 
-```
-cd "$(brew --repo)" && git remote set-url origin https://git.coding.net/homebrew/homebrew.git
-cd $home && brew update
+```sh
+# step 1: 替换brew.git
+$ cd "$(brew --repo)"
+# 中国科大:
+$ git remote set-url origin https://mirrors.ustc.edu.cn/brew.git
+# 清华大学:
+$ git remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git
+
+# step 2: 替换homebrew-core.git
+$ cd "$(brew --repo)/Library/Taps/homebrew/homebrew-core"
+# 中国科大:
+$ git remote set-url origin https://mirrors.ustc.edu.cn/homebrew-core.git
+# 清华大学:
+$ git remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git
+
+# step 3: 替换homebrew-bottles
+# 中国科大:
+$ echo 'export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles' >> ~/.bash_profile
+$ source ~/.bash_profile
+# 清华大学:
+$ echo 'export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles' >> ~/.bash_profile
+$ source ~/.bash_profile
+
+# step 4: 应用生效
+$ brew update
 ```
 
 # 6 升级bash
@@ -167,3 +189,4 @@ __注意，`sudo mv /bin/bash  /bin/bash.origin`可能因为权限的问题，�
 * [iterm2有什么酷功能？](https://www.zhihu.com/question/27447370)
 * [如何在OS X iTerm2中愉快地使用“⌥ ←”及“⌥→ ”快捷键跳过单词？](http://blog.csdn.net/yaokai_assultmaster/article/details/73409826)
 * [iTerm 2 && Oh My Zsh【DIY教程——亲身体验过程】](https://www.jianshu.com/p/7de00c73a2bb)
+* [更换Homebrew的更新源](https://blog.csdn.net/u010275932/article/details/76080833)
