@@ -21,6 +21,7 @@ __阅读更多__
 package org.liuyehcf.netty.ws;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -28,12 +29,12 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import io.netty.handler.codec.http.websocketx.*;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 
+import java.nio.charset.Charset;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -41,47 +42,63 @@ import java.util.concurrent.TimeUnit;
  * @date 2018/11/3
  */
 public class Server {
-    public static void main(String[] args) {
-        EventLoopGroup boss = new NioEventLoopGroup();
-        EventLoopGroup worker = new NioEventLoopGroup();
+    public static void main(String[] args) throws Exception {
+        final EventLoopGroup boss = new NioEventLoopGroup();
+        final EventLoopGroup worker = new NioEventLoopGroup();
 
-        try {
-            ServerBootstrap bootstrap = new ServerBootstrap();
-            bootstrap.group(boss, worker)
-                    .channel(NioServerSocketChannel.class)
-                    .childHandler(new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        protected void initChannel(SocketChannel socketChannel) {
-                            ChannelPipeline pipeline = socketChannel.pipeline();
-                            pipeline.addLast(new IdleStateHandler(0, 0, 60, TimeUnit.SECONDS));
-                            pipeline.addLast(new HttpServerCodec());
-                            pipeline.addLast(new HttpObjectAggregator(65535));
-                            pipeline.addLast(new ChunkedWriteHandler());
-                            pipeline.addLast(new WebSocketServerCompressionHandler());
-                            pipeline.addLast(new WebSocketServerProtocolHandler("/", null, true));
-                            pipeline.addLast(new ServerHandler());
-                        }
-                    })
-                    .option(ChannelOption.SO_BACKLOG, 128)
-                    .childOption(ChannelOption.SO_KEEPALIVE, true)
-                    .childOption(ChannelOption.TCP_NODELAY, true)
-                    .childOption(ChannelOption.SO_REUSEADDR, true);
+        final ServerBootstrap bootstrap = new ServerBootstrap();
+        bootstrap.group(boss, worker)
+                .channel(NioServerSocketChannel.class)
+                .childHandler(new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    protected void initChannel(SocketChannel socketChannel) {
+                        ChannelPipeline pipeline = socketChannel.pipeline();
+                        pipeline.addLast(new IdleStateHandler(0, 0, 60, TimeUnit.SECONDS));
+                        pipeline.addLast(new HttpServerCodec());
+                        pipeline.addLast(new HttpObjectAggregator(65535));
+                        pipeline.addLast(new ChunkedWriteHandler());
+                        pipeline.addLast(new WebSocketServerCompressionHandler());
+                        pipeline.addLast(new WebSocketServerProtocolHandler("/", null, true));
+                        pipeline.addLast(new ServerHandler());
+                    }
+                })
+                .option(ChannelOption.SO_BACKLOG, 1024)
+                .childOption(ChannelOption.SO_KEEPALIVE, true)
+                .childOption(ChannelOption.TCP_NODELAY, true)
+                .childOption(ChannelOption.SO_REUSEADDR, true);
 
-            ChannelFuture future = bootstrap.bind(8866).sync();
-            System.out.println("server start ...... ");
+        final ChannelFuture future = bootstrap.bind(8866).sync();
+        System.out.println("server start ...... ");
 
-            future.channel().closeFuture().sync();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            boss.shutdownGracefully();
-            worker.shutdownGracefully();
-        }
+        future.channel().closeFuture().sync();
     }
 
-    private static final class ServerHandler extends AbstractWebSocketHandler {
+    private static final class ServerHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
         @Override
-        void doChannelRead0(ChannelHandlerContext ctx, String content) {
+        @SuppressWarnings("all")
+        protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame msg) {
+            final String content;
+            if (msg instanceof BinaryWebSocketFrame) {
+                BinaryWebSocketFrame binaryWebSocketFrame = (BinaryWebSocketFrame) msg;
+                ByteBuf byteBuf = binaryWebSocketFrame.content();
+                byte[] bytes = new byte[byteBuf.readableBytes()];
+                byteBuf.getBytes(0, bytes);
+                content = new String(bytes, Charset.defaultCharset());
+            } else if (msg instanceof TextWebSocketFrame) {
+                content = ((TextWebSocketFrame) msg).text();
+            } else if (msg instanceof PongWebSocketFrame) {
+                content = "Pong";
+            } else if (msg instanceof ContinuationWebSocketFrame) {
+                content = "Continue";
+            } else if (msg instanceof PingWebSocketFrame) {
+                content = "Ping";
+            } else if (msg instanceof CloseWebSocketFrame) {
+                content = "Close";
+                ctx.close();
+            } else {
+                throw new RuntimeException();
+            }
+
             System.out.println("server receive message: " + content);
 
             ctx.channel().writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer("Hi, I'm Server".getBytes())));
@@ -96,25 +113,21 @@ public class Server {
 package org.liuyehcf.netty.ws;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpClientCodec;
-import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.WebSocketClientHandshaker;
-import io.netty.handler.codec.http.websocketx.WebSocketClientHandshakerFactory;
-import io.netty.handler.codec.http.websocketx.WebSocketVersion;
+import io.netty.handler.codec.http.websocketx.*;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketClientCompressionHandler;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -122,17 +135,16 @@ import java.util.concurrent.TimeUnit;
  * @date 2018/11/3
  */
 public class Client {
-    public static void main(String[] args) {
-        URI webSocketURI = getUri();
-        HttpHeaders httpHeaders = new DefaultHttpHeaders();
-        WebSocketClientHandshaker handShaker = WebSocketClientHandshakerFactory.newHandshaker(webSocketURI, WebSocketVersion.V13, null, true, httpHeaders);
+    public static void main(String[] args) throws Exception {
+        final URI webSocketURI = getUri();
 
-        WebSocketClientHandler webSocketClientHandler = new WebSocketClientHandler(handShaker);
+        final WebSocketClientHandler webSocketClientHandler = new WebSocketClientHandler(
+                WebSocketClientHandshakerFactory.newHandshaker(
+                        webSocketURI, WebSocketVersion.V13, null, true, new DefaultHttpHeaders()));
 
-        EventLoopGroup group = new NioEventLoopGroup();
-        Bootstrap boot = new Bootstrap();
+        final EventLoopGroup group = new NioEventLoopGroup();
+        final Bootstrap boot = new Bootstrap();
         boot.group(group)
-                .handler(new LoggingHandler(LogLevel.INFO))
                 .channel(NioSocketChannel.class)
                 .handler(new ChannelInitializer<SocketChannel>() {
                     protected void initChannel(SocketChannel socketChannel) {
@@ -147,20 +159,15 @@ public class Client {
                 })
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .option(ChannelOption.TCP_NODELAY, true)
-                .option(ChannelOption.SO_BACKLOG, 1024 * 1024 * 10);
+                .option(ChannelOption.SO_BACKLOG, 1024);
 
-        try {
-            final Channel channel = boot.connect(webSocketURI.getHost(), webSocketURI.getPort()).sync().channel();
-            handShaker.handshake(channel);
-            webSocketClientHandler.handshakeFuture().sync();
+        final Channel channel = boot.connect(webSocketURI.getHost(), webSocketURI.getPort()).sync().channel();
+        webSocketClientHandler.handshakeFuture().sync();
 
-            channel.writeAndFlush(new TextWebSocketFrame("Hello, I'm client"));
+        channel.writeAndFlush(new TextWebSocketFrame("Hello, I'm client"));
 
-            TimeUnit.SECONDS.sleep(2);
-            System.exit(0);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        TimeUnit.SECONDS.sleep(1);
+        System.exit(0);
     }
 
     private static URI getUri() {
@@ -171,9 +178,32 @@ public class Client {
         }
     }
 
-    private static final class ClientHandler extends AbstractWebSocketHandler {
+    private static final class ClientHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
         @Override
-        void doChannelRead0(ChannelHandlerContext ctx, String content) {
+        @SuppressWarnings("all")
+        protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame msg) throws Exception {
+            final String content;
+            if (msg instanceof BinaryWebSocketFrame) {
+                BinaryWebSocketFrame binaryWebSocketFrame = (BinaryWebSocketFrame) msg;
+                ByteBuf byteBuf = binaryWebSocketFrame.content();
+                byte[] bytes = new byte[byteBuf.readableBytes()];
+                byteBuf.getBytes(0, bytes);
+                content = new String(bytes, Charset.defaultCharset());
+            } else if (msg instanceof TextWebSocketFrame) {
+                content = ((TextWebSocketFrame) msg).text();
+            } else if (msg instanceof PongWebSocketFrame) {
+                content = "Pong";
+            } else if (msg instanceof ContinuationWebSocketFrame) {
+                content = "Continue";
+            } else if (msg instanceof PingWebSocketFrame) {
+                content = "Ping";
+            } else if (msg instanceof CloseWebSocketFrame) {
+                content = "Close";
+                ctx.close();
+            } else {
+                throw new RuntimeException();
+            }
+
             System.out.println("client receive message: " + content);
         }
     }
@@ -195,11 +225,23 @@ import io.netty.util.CharsetUtil;
  * @date 2018/11/3
  */
 public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> {
+
+    /**
+     * netty build-in web socket hand shaker
+     */
     private final WebSocketClientHandshaker handShaker;
+
+    /**
+     * future on where hand shaker is completed
+     */
     private ChannelPromise handshakeFuture;
 
-    WebSocketClientHandler(WebSocketClientHandshaker handShaker) {
+    public WebSocketClientHandler(WebSocketClientHandshaker handShaker) {
         this.handShaker = handShaker;
+    }
+
+    public ChannelFuture handshakeFuture() {
+        return this.handshakeFuture;
     }
 
     @Override
@@ -207,10 +249,15 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
         this.handshakeFuture = ctx.newPromise();
     }
 
-    ChannelFuture handshakeFuture() {
-        return this.handshakeFuture;
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        // execution timing must after all the handlers are added
+        // other wise exception may occurred (ChannelPipeline does not contain a HttpRequestEncoder or HttpClientCodec)
+        handShaker.handshake(ctx.channel());
+        super.channelActive(ctx);
     }
 
+    @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) {
         final Channel channel = ctx.channel();
         final FullHttpResponse response;
@@ -250,100 +297,266 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 }
 ```
 
-## 1.4 AbstractWebSocketHandler
+# 2 问题
 
+## 2.1 unsupported message type: TextWebSocketFrame
+
+### 2.1.1 复现问题
+
+__对Client进行如下改造__：
+
+1. 将`handshake`挪到`connect`之后执行（原本在`WebSocketClientHandler.channelActive`方法中执行）
+1. 循环connect，直到出现异常（问题出现的概率较小，因此用死循环循环）
 ```Java
 package org.liuyehcf.netty.ws;
 
+import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.http.DefaultHttpHeaders;
+import io.netty.handler.codec.http.HttpClientCodec;
+import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.websocketx.*;
+import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketClientCompressionHandler;
+import io.netty.handler.stream.ChunkedWriteHandler;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 
 /**
  * @author hechenfeng
  * @date 2018/11/3
  */
-public abstract class AbstractWebSocketHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
-    @Override
-    protected final void channelRead0(ChannelHandlerContext ctx, WebSocketFrame msg) {
-        final String content;
-        if (msg instanceof BinaryWebSocketFrame) {
-            BinaryWebSocketFrame binaryWebSocketFrame = (BinaryWebSocketFrame) msg;
-            ByteBuf byteBuf = binaryWebSocketFrame.content();
-            byte[] bytes = new byte[byteBuf.readableBytes()];
-            byteBuf.getBytes(0, bytes);
-            content = new String(bytes, Charset.defaultCharset());
-        } else if (msg instanceof TextWebSocketFrame) {
-            content = ((TextWebSocketFrame) msg).text();
-        } else if (msg instanceof PongWebSocketFrame) {
-            content = "Pong";
-        } else if (msg instanceof ContinuationWebSocketFrame) {
-            content = "Continue";
-        } else if (msg instanceof PingWebSocketFrame) {
-            content = "Ping";
-        } else if (msg instanceof CloseWebSocketFrame) {
-            content = "Close";
-            ctx.close();
-        } else {
-            throw new RuntimeException();
+public class Client {
+    public static void main(String[] args) throws Exception {
+        final URI webSocketURI = getUri();
+        final EventLoopGroup group = new NioEventLoopGroup();
+        while (true) {
+
+            final WebSocketClientHandshaker handShaker = WebSocketClientHandshakerFactory.newHandshaker(
+                    webSocketURI, WebSocketVersion.V13, null, true, new DefaultHttpHeaders());
+            final WebSocketClientHandler webSocketClientHandler = new WebSocketClientHandler(handShaker);
+
+            final Bootstrap boot = new Bootstrap();
+            boot.group(group)
+                    .channel(NioSocketChannel.class)
+                    .handler(new ChannelInitializer<SocketChannel>() {
+                        protected void initChannel(SocketChannel socketChannel) {
+                            ChannelPipeline pipeline = socketChannel.pipeline();
+                            pipeline.addLast(new HttpClientCodec());
+                            pipeline.addLast(new HttpObjectAggregator(65535));
+                            pipeline.addLast(new ChunkedWriteHandler());
+                            pipeline.addLast(WebSocketClientCompressionHandler.INSTANCE);
+                            pipeline.addLast(webSocketClientHandler);
+                            pipeline.addLast(new ClientHandler());
+                        }
+                    })
+                    .option(ChannelOption.SO_KEEPALIVE, true)
+                    .option(ChannelOption.TCP_NODELAY, true)
+                    .option(ChannelOption.SO_BACKLOG, 1024);
+
+            final Channel channel = boot.connect(webSocketURI.getHost(), webSocketURI.getPort()).sync().channel();
+            handShaker.handshake(channel);
+            webSocketClientHandler.handshakeFuture().sync();
+
+            channel.writeAndFlush(new TextWebSocketFrame("Hello, I'm client"))
+                    .addListener((ChannelFuture future) -> {
+                        if (!future.isSuccess() && future.cause() != null) {
+                            future.cause().printStackTrace();
+                            System.exit(1);
+                        } else {
+                            System.out.println("normal case");
+                        }
+                    })
+                    .addListener(ChannelFutureListener.CLOSE);
+
         }
-
-        doChannelRead0(ctx, content);
     }
 
-    @Override
-    public final void channelActive(ChannelHandlerContext ctx) {
-        System.out.println("channelActive");
+    private static URI getUri() {
+        try {
+            return new URI("ws://localhost:8866");
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    @Override
-    public final void channelInactive(ChannelHandlerContext ctx) {
-        System.out.println("channelInactive");
-    }
+    private static final class ClientHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
+        @Override
+        @SuppressWarnings("all")
+        protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame msg) throws Exception {
+            final String content;
+            if (msg instanceof BinaryWebSocketFrame) {
+                BinaryWebSocketFrame binaryWebSocketFrame = (BinaryWebSocketFrame) msg;
+                ByteBuf byteBuf = binaryWebSocketFrame.content();
+                byte[] bytes = new byte[byteBuf.readableBytes()];
+                byteBuf.getBytes(0, bytes);
+                content = new String(bytes, Charset.defaultCharset());
+            } else if (msg instanceof TextWebSocketFrame) {
+                content = ((TextWebSocketFrame) msg).text();
+            } else if (msg instanceof PongWebSocketFrame) {
+                content = "Pong";
+            } else if (msg instanceof ContinuationWebSocketFrame) {
+                content = "Continue";
+            } else if (msg instanceof PingWebSocketFrame) {
+                content = "Ping";
+            } else if (msg instanceof CloseWebSocketFrame) {
+                content = "Close";
+                ctx.close();
+            } else {
+                throw new RuntimeException();
+            }
 
-    @Override
-    public final void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        ctx.channel().close();
-        cause.printStackTrace();
+            System.out.println("client receive message: " + content);
+        }
     }
-
-    abstract void doChannelRead0(ChannelHandlerContext ctx, String content);
 }
 ```
 
-# 2 问题
+__对WebSocketClientHandler进行如下改造__：
 
-```java
-018-11-10 17:23:34 [nioEventLoopGroup-25-3] ERROR error - channel actively disconnect. handler=CounterpartClientWebSocketHandler; channel=[id: 0xbe8ef4e7, L:/10.101.108.253:36380 - R:/10.101.108.253:29092]; errorMsg=unsupported message type: BinaryWebSocketFrame (expected: ByteBuf, FileRegion)
-java.lang.UnsupportedOperationException: unsupported message type: BinaryWebSocketFrame (expected: ByteBuf, FileRegion)
-    at io.netty.channel.nio.AbstractNioByteChannel.filterOutboundMessage(AbstractNioByteChannel.java:266)
-    at io.netty.channel.AbstractChannel$AbstractUnsafe.write(AbstractChannel.java:799)
-    at io.netty.channel.DefaultChannelPipeline$HeadContext.write(DefaultChannelPipeline.java:1299)
-    at io.netty.channel.AbstractChannelHandlerContext.invokeWrite0(AbstractChannelHandlerContext.java:738)
-    at io.netty.channel.AbstractChannelHandlerContext.invokeWrite(AbstractChannelHandlerContext.java:730)
-    at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:816)
-    at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:723)
-    at io.netty.handler.timeout.IdleStateHandler.write(IdleStateHandler.java:302)
-    at io.netty.channel.AbstractChannelHandlerContext.invokeWrite0(AbstractChannelHandlerContext.java:738)
-    at io.netty.channel.AbstractChannelHandlerContext.invokeWrite(AbstractChannelHandlerContext.java:730)
-    at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:816)
-    at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:723)
-    at io.netty.handler.stream.ChunkedWriteHandler.doFlush(ChunkedWriteHandler.java:304)
-    at io.netty.handler.stream.ChunkedWriteHandler.flush(ChunkedWriteHandler.java:137)
-    at io.netty.channel.AbstractChannelHandlerContext.invokeFlush0(AbstractChannelHandlerContext.java:776)
-    at io.netty.channel.AbstractChannelHandlerContext.invokeFlush(AbstractChannelHandlerContext.java:768)
-    at io.netty.channel.AbstractChannelHandlerContext.flush(AbstractChannelHandlerContext.java:749)
-    at io.netty.channel.ChannelOutboundHandlerAdapter.flush(ChannelOutboundHandlerAdapter.java:115)
-    at io.netty.channel.AbstractChannelHandlerContext.invokeFlush0(AbstractChannelHandlerContext.java:776)
-    at io.netty.channel.AbstractChannelHandlerContext.invokeFlush(AbstractChannelHandlerContext.java:768)
-    at io.netty.channel.AbstractChannelHandlerContext.access$1500(AbstractChannelHandlerContext.java:38)
-    at io.netty.channel.AbstractChannelHandlerContext$WriteAndFlushTask.write(AbstractChannelHandlerContext.java:1137)
+1. 注释掉`handShaker.handshake(ctx.channel());`一句
+
+```Java
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        // execution timing must after all the handlers are added
+        // other wise exception may occurred (ChannelPipeline does not contain a HttpRequestEncoder or HttpClientCodec)
+//        handShaker.handshake(ctx.channel());
+        super.channelActive(ctx);
+    }
 ```
+
+__运行后得到如下异常__
+
+```Java
+java.lang.UnsupportedOperationException: unsupported message type: TextWebSocketFrame (expected: ByteBuf, FileRegion)
+	at io.netty.channel.nio.AbstractNioByteChannel.filterOutboundMessage(AbstractNioByteChannel.java:283)
+	at io.netty.channel.AbstractChannel$AbstractUnsafe.write(AbstractChannel.java:877)
+	at io.netty.channel.DefaultChannelPipeline$HeadContext.write(DefaultChannelPipeline.java:1391)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeWrite0(AbstractChannelHandlerContext.java:738)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeWrite(AbstractChannelHandlerContext.java:730)
+	at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:816)
+	at io.netty.channel.AbstractChannelHandlerContext.write(AbstractChannelHandlerContext.java:723)
+	at io.netty.handler.stream.ChunkedWriteHandler.doFlush(ChunkedWriteHandler.java:305)
+	at io.netty.handler.stream.ChunkedWriteHandler.flush(ChunkedWriteHandler.java:135)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeFlush0(AbstractChannelHandlerContext.java:776)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeFlush(AbstractChannelHandlerContext.java:768)
+	at io.netty.channel.AbstractChannelHandlerContext.flush(AbstractChannelHandlerContext.java:749)
+	at io.netty.channel.ChannelOutboundHandlerAdapter.flush(ChannelOutboundHandlerAdapter.java:115)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeFlush0(AbstractChannelHandlerContext.java:776)
+	at io.netty.channel.AbstractChannelHandlerContext.invokeFlush(AbstractChannelHandlerContext.java:768)
+	at io.netty.channel.AbstractChannelHandlerContext.access$1500(AbstractChannelHandlerContext.java:38)
+	at io.netty.channel.AbstractChannelHandlerContext$WriteAndFlushTask.write(AbstractChannelHandlerContext.java:1152)
+	at io.netty.channel.AbstractChannelHandlerContext$AbstractWriteTask.run(AbstractChannelHandlerContext.java:1075)
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:163)
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:404)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:466)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:897)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.lang.Thread.run(Thread.java:748)
+```
+
+### 2.1.2 问题分析
+
+我们分别在写回调中的正常case以及异常case处打上断点，看一看正常情况下以及异常情况下`ChannelPipeline`的差异
+
+```Java
+channel.writeAndFlush(new TextWebSocketFrame("Hello, I'm client"))
+    .addListener((ChannelFuture future) -> {
+        if (!future.isSuccess() && future.cause() != null) {
+            // 这里打个断点，异常情况
+            future.cause().printStackTrace();
+            System.exit(1);
+        } else {
+            // 这里打个断点，正常情况
+            System.out.println("normal case");
+        }
+    })
+    .addListener(ChannelFutureListener.CLOSE);
+```
+
+__正常的时候，其handler如下__
+
+1. WebSocket13FrameDecoder
+1. WebSocket13FrameEncoder
+1. ChunkedWriteHandler
+1. PerMessageDeflateEncoder
+1. PerMessageDeflateDecoder
+1. WebSocketClientHandler
+1. ClientHandler
+
+__异常的时候，其handler如下__
+
+1. WebSocket13FrameDecoder
+1. ChunkedWriteHandler
+1. PerMessageDeflateEncoder
+1. PerMessageDeflateDecoder
+1. WebSocketClientHandler
+1. ClientHandler
+
+对比正常/异常情况下的handler，我们可以发现，异常情况下，缺少了`WebSocket13FrameEncoder`
+
+`WebSocket13FrameEncoder`在`handshake`过程中被添加到`ChannelPipeline`中去，`handshake`方法如下
+
+```Java
+    public final ChannelFuture handshake(Channel channel, final ChannelPromise promise) {
+        FullHttpRequest request =  newHandshakeRequest();
+
+        HttpResponseDecoder decoder = channel.pipeline().get(HttpResponseDecoder.class);
+        if (decoder == null) {
+            HttpClientCodec codec = channel.pipeline().get(HttpClientCodec.class);
+            if (codec == null) {
+               promise.setFailure(new IllegalStateException("ChannelPipeline does not contain " +
+                       "a HttpResponseDecoder or HttpClientCodec"));
+               return promise;
+            }
+        }
+
+        channel.writeAndFlush(request).addListener(new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture future) {
+                if (future.isSuccess()) {
+                    ChannelPipeline p = future.channel().pipeline();
+                    ChannelHandlerContext ctx = p.context(HttpRequestEncoder.class);
+                    if (ctx == null) {
+                        ctx = p.context(HttpClientCodec.class);
+                    }
+
+                    // 实际情况是这里抛出了异常，导致下一句没有执行
+                    if (ctx == null) {
+                        promise.setFailure(new IllegalStateException("ChannelPipeline does not contain " +
+                                "a HttpRequestEncoder or HttpClientCodec"));
+                        return;
+                    }
+                    p.addAfter(ctx.name(), "ws-encoder", newWebSocketEncoder());
+
+                    promise.setSuccess();
+                } else {
+                    promise.setFailure(future.cause());
+                }
+            }
+        });
+        return promise;
+    }
+```
+
+为什么在外部执行`handshake`会导致这个问题，目前还不清楚
+
+## 2.2 webSocket连接占用内存过高
+
+表面原因是由于增加了以下两个Handler，这两个handler会用到`JdkZlibDecoder`，而`JdkZlibDecoder`在处理过程中会分配大量内存
+
+* WebSocketClientCompressionHandler.INSTANCE
+* WebSocketServerCompressionHandler
 
 # 3 参考
 
 * [Java SSL 证书细节](https://www.jianshu.com/p/5fcc6a219c8b)
 * [JDK自带工具keytool生成ssl证书](https://www.cnblogs.com/zhangzb/p/5200418.html)
+* [netty-example](https://github.com/spmallette/netty-example/blob/master/src/test/java/com/genoprime/netty/example/WebSocketClientHandler.java)
+* [单机千万并发连接实战](https://zhuanlan.zhihu.com/p/21378825)
