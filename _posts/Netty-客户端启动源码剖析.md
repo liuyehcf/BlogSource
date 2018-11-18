@@ -234,7 +234,7 @@ channel注册的详细过程，其详细过程参见{% post_link Netty-服务端
 
 1. 首先，执行doRegister方法，进行真正的底层的register操作
 1. 然后，执行`pipeline.invokeHandlerAddedIfNeeded();`
-1. __将connect对应的ChannelFuture设置为成功，即代码清单中`(7)`的阻塞至此结束__
+1. __将initAndRegister对应的ChannelFuture设置为成功__
 1. 最后，触发其他生命周期，例如`fireChannelRegistered`以及`fireChannelActive`
 
 ```Java
@@ -254,7 +254,7 @@ channel注册的详细过程，其详细过程参见{% post_link Netty-服务端
                 // user may already fire events through the pipeline in the ChannelFutureListener.
                 pipeline.invokeHandlerAddedIfNeeded();
 
-                // 将channelFuture标记为成功
+                // initAndRegister对应的ChannelFuture设置为成功
                 safeSetSuccess(promise);
                 pipeline.fireChannelRegistered();
                 // Only fire a channelActive if the channel has never been registered. This prevents firing

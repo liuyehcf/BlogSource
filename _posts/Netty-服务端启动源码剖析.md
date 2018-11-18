@@ -568,7 +568,7 @@ public class EchoServer {
     * `register0`方法位于`AbstractChannel`的__非静态__内部类`AbstractUnsafe`中
     * 首先，执行doRegister方法，进行真正的底层的register操作
     * 然后，执行`pipeline.invokeHandlerAddedIfNeeded();`，触发位于`ServerBootstrap`的`init`方法中的ChannelInitializer（封装了handler，注意哦，不是childHandler，在代码清单中我们没有配置过这个handler）
-    * __将bind对应的ChannelFuture设置为成功，即代码清单中`(8)`的阻塞至此结束__
+    * __将initAndRegister对应的ChannelFuture设置为成功__
     * 最后，触发其他生命周期，例如`fireChannelRegistered`以及`fireChannelActive`
 ```Java
        private void register0(ChannelPromise promise) {
@@ -587,7 +587,7 @@ public class EchoServer {
                 //user may already fire events through the pipeline in the ChannelFutureListener.
                 pipeline.invokeHandlerAddedIfNeeded();
 
-                // bind对应的ChannelFuture设置为成功
+                // initAndRegister对应的ChannelFuture设置为成功
                 safeSetSuccess(promise);
                 pipeline.fireChannelRegistered();
                 //Only fire a channelActive if the channel has never been registered. This prevents firing
