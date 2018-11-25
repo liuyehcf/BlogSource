@@ -577,6 +577,10 @@ TestApplication
 
 ## 8.2 @ContextHierarchy
 
+## 8.3 Spring集成测试&Mockito
+
+__`@MockBean`__：生成一个mock对象，并且添加到Spring的上下文中，将替换掉原有的`bean`，被注入到其他依赖该`bean`的`bean`当中
+
 # 9 配置项
 
 SpringBoot推崇约定大于配置，通常情况下，我们只需要配置少数几个参数，应用就可以正常启动。但是，知道SpringBoot究竟提供了多少默认的配置也是很有用的，给一个[传送门](https://docs.spring.io/spring-boot/docs/2.0.3.RELEASE/reference/htmlsingle/)。在页面上搜索`server.port=8080`，就能定位到配置项说明的地方
@@ -618,3 +622,4 @@ Caused by: java.lang.NoSuchMethodError: org.springframework.web.accept.ContentNe
 * [@SpringBootApplication的使用](http://blog.csdn.net/u013473691/article/details/52353923)
 * [SpringBoot非官方教程 | 终章：文章汇总](https://blog.csdn.net/forezp/article/details/70341818)
 * [Exclude subpackages from Spring autowiring?](https://stackoverflow.com/questions/10725192/exclude-subpackages-from-spring-autowiring)
+* [Spring Boot - Unit Testing and Mocking with Mockito and JUnit](http://www.springboottutorial.com/spring-boot-unit-testing-and-mocking-with-mockito-and-junit)

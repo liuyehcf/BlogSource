@@ -84,7 +84,7 @@ __示例__
 
 `<timestamp>`元素用于获取时间戳字符串，有两个属性
 
-* key:标识此<timestamp>的名字
+* key:标识此`<timestamp>`的名字
 * datePattern：设置将当前时间（解析配置文件的时间）转换为字符串的模式，遵循Java.txt.SimpleDateFormat的格式
 
 __示例__

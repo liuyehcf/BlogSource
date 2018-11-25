@@ -129,7 +129,7 @@ public class EchoClient {
 
     * `doResolveAndConnect`方法位于`Bootstrap`。该方法创建Channel并注册，然后调用doResolveAndConnect0进行连接操作
 ```Java
-private ChannelFuture doResolveAndConnect(final SocketAddress remoteAddress, final SocketAddress localAddress) {
+    private ChannelFuture doResolveAndConnect(final SocketAddress remoteAddress, final SocketAddress localAddress) {
         final ChannelFuture regFuture = initAndRegister();
         final Channel channel = regFuture.channel();
 
@@ -285,7 +285,7 @@ channel注册的详细过程，其详细过程参见{% post_link Netty-服务端
 
 * `doResolveAndConnect0`方法位于`Bootstrap`
 ```Java
-private ChannelFuture doResolveAndConnect0(final Channel channel, SocketAddress remoteAddress,
+    private ChannelFuture doResolveAndConnect0(final Channel channel, SocketAddress remoteAddress,
                                                final SocketAddress localAddress, final ChannelPromise promise) {
         try {
             final EventLoop eventLoop = channel.eventLoop();
@@ -423,9 +423,9 @@ private ChannelFuture doResolveAndConnect0(final Channel channel, SocketAddress 
         }
 ```
 
-* `connect`方法位于`AbstractNioChannel`
+* `connect`方法位于`AbstractNioChannel`。在完成doConnect方法之后，fulfillConnectPromise方法将connect对应的ChannelPromise设置为成功
 ```Java
-public final void connect(
+        public final void connect(
                 final SocketAddress remoteAddress, final SocketAddress localAddress, final ChannelPromise promise) {
             if (!promise.setUncancellable() || !ensureOpen(promise)) {
                 return;
@@ -439,6 +439,7 @@ public final void connect(
 
                 boolean wasActive = isActive();
                 if (doConnect(remoteAddress, localAddress)) {
+                    // 连接完成后，将promise设置为已完成（boot.connect对应的ChannelFuture）
                     fulfillConnectPromise(promise, wasActive);
                 } else {
                     connectPromise = promise;

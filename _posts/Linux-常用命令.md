@@ -595,7 +595,59 @@ __`ps aux`打印参数说明：__
 * `COMMAND`：该进程的实际命令
 * 一般来说ps aux会按照PID的顺序来排序显示
 
-## 6.9 top
+## 6.9 nohup
+
+__`nohup`会忽略所有挂断（SIGHUP）信号__。比如通过`ssh`登录到远程服务器上，然后启动一个程序，当`ssh`登出时，这个程序就会随即终止。如果用`nohup`方式启动，那么当`ssh`登出时，这个程序仍然会继续运行
+
+__格式：__
+
+* `nohup command [args] [&]`
+
+__参数说明：__
+
+* `command`：要执行的命令
+* `args`：命令所需的参数
+* `&`：在后台执行
+
+__示例：__
+
+* `nohup java -jar xxx.jar &`
+
+## 6.10 screen
+
+__如果想在关闭`ssh`连接后继续运行启动的程序，可以使用`nohup`。如果要求下次`ssh`登录时，还能查看到上一次`ssh`登录时运行的程序的状态，那么就需要使用`screen`__
+
+__格式：__
+
+* `screen`
+* `screen cmd [ args ]`
+* `screen [–ls] [-r pid]`
+
+__参数说明：__
+
+* `cmd`：执行的命令
+* `args`：执行的命令所需要的参数
+* `-ls`：列出所有`screen`会话的详情
+* `-r`：后接`pid`，进入指定进程号的`screen`会话
+
+__示例：__
+
+* `screen`
+* `screen -ls`
+* `screen -r 123`
+
+__会话管理__
+
+1. `Ctrl a + w`：显示所有窗口列表
+1. `Ctrl a + Ctrl a`：切换到之前显示的窗口
+1. `Ctrl a + c`：创建一个新的运行shell的窗口并切换到该窗口
+1. `Ctrl a + n`：切换到下一个窗口
+1. `Ctrl a + p`：切换到前一个窗口(与`Ctrl a + n`相对)
+1. `Ctrl a + 0-9`：切换到窗口0..9
+1. `Ctrl a + d`：暂时断开screen会话
+1. `Ctrl a + k`：杀掉当前窗口
+
+## 6.11 top
 
 __打印参数说明：__
 
@@ -619,7 +671,7 @@ __打印参数说明：__
     * COMMAND
 * __top默认使用CPU使用率作为排序的终点__
 
-## 6.10 pstree
+## 6.12 pstree
 
 __格式：__
 
@@ -632,7 +684,7 @@ __参数说明：__
 * `-p`：同时列出每个进程的PID
 * `-u`：同时列出每个进程所属账号名称
 
-## 6.11 lsof
+## 6.13 lsof
 
 __格式：__
 
@@ -661,7 +713,7 @@ __示例：__
 * `lsof -i tcp@localhost`
 * `lsof -i tcp:22`
 
-## 6.12 tsar
+## 6.14 tsar
 
 __格式：__
 
@@ -913,3 +965,4 @@ __示例：__
 
 * 《鸟哥的Linux私房菜》
 * [linux shell awk 流程控制语句（if,for,while,do)详细介绍](https://www.cnblogs.com/chengmo/archive/2010/10/04/1842073.html)
+* [解决Linux关闭终端(关闭SSH等)后运行的程序自动停止](https://blog.csdn.net/gatieme/article/details/52777721)

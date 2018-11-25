@@ -232,3 +232,23 @@ public class SimpleBeforeMethodAdvisor implements MethodBeforeAdvice {
 
 1. 一般情况下，`Spring Bean`配置了AOP才能被正常拦截到，如果一个对象并不是由Spring管理的，那么AOP配置是无效的
 1. `A.method1`方法内部调用了`A.method2`方法，而`A.method1`方法没有配置AOP，而`A.method2`配置了AOP，那么此时AOP无效。__原因：在当前调用堆栈第一次进入`某类`的`第一个public且非static方法`之前，`Spring`会判断该方法是否配置了`AOP`，如果有，织入增强逻辑，如果没有，则不织入__
+
+# 5 PCD（pointcut designators）
+
+__Spring-AOP支持多种切点表达式__
+
+1. __`execution`__： For matching method execution join points. This is the primary pointcut designator to use when working with Spring AOP.
+1. __`within`__：Limits matching to join points within certain types (the execution of a method declared within a matching type when using Spring AOP).
+1. __`this`__：Limits matching to join points (the execution of methods when using Spring AOP) where the bean reference (Spring AOP proxy) is an instance of the given type.
+1. __`target`__：Limits matching to join points (the execution of methods when using Spring AOP) where the target object (application object being proxied) is an instance of the given type.
+1. __`args`__：Limits matching to join points (the execution of methods when using Spring AOP) where the arguments are instances of the given types.
+1. __`bean`__：This PCD lets you limit the matching of join points to a particular named Spring bean or to a set of named Spring beans (when using wildcards).
+1. __`@target`__：Limits matching to join points (the execution of methods when using Spring AOP) where the class of the executing object has an annotation of the given type.
+1. __`@args`__：Limits matching to join points (the execution of methods when using Spring AOP) where the runtime type of the actual arguments passed have annotations of the given types.
+1. __`@within`__：Limits matching to join points within types that have the given annotation (the execution of methods declared in types with the given annotation when using Spring AOP).
+1. __`@annotation`__： Limits matching to join points where the subject of the join point (the method being executed in Spring AOP) has the given annotation.
+
+# 6 参考
+
+* [Introduction to Pointcut Expressions in Spring](https://www.baeldung.com/spring-aop-pointcut-tutorial)
+* [Declaring an Aspect](https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#aop)

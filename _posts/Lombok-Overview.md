@@ -446,6 +446,8 @@ public class BaseCarDTO {
 }
 ```
 
+__注意，字段在被`@Builder.Default`修饰后，生成class文件中是没有初始值的，这是个大坑！__
+
 ## 3.4 @EqualsAndHashCode
 
 `@EqualsAndHashCode`注解用于创建Object的`hashCode`方法以及`equals`方法，同样地，如果一个DTO包含父类，那么最平凡的`@EqualsAndHashCode`注解不会考虑父类包含的字段。__因此如果子类的`hashCode`方法以及`equals`方法需要考虑父类的字段，那么需要将`@EqualsAndHashCode`注解的`callSuper`属性设置为true，这样就会调用父类的同名方法__
