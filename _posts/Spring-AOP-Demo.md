@@ -237,7 +237,7 @@ public class SimpleBeforeMethodAdvisor implements MethodBeforeAdvice {
 
 __Spring-AOP支持多种切点表达式__
 
-1. __`execution`__： For matching method execution join points. This is the primary pointcut designator to use when working with Spring AOP.
+1. __`execution`__：For matching method execution join points. This is the primary pointcut designator to use when working with Spring AOP.
 1. __`within`__：Limits matching to join points within certain types (the execution of a method declared within a matching type when using Spring AOP).
 1. __`this`__：Limits matching to join points (the execution of methods when using Spring AOP) where the bean reference (Spring AOP proxy) is an instance of the given type.
 1. __`target`__：Limits matching to join points (the execution of methods when using Spring AOP) where the target object (application object being proxied) is an instance of the given type.
@@ -246,7 +246,7 @@ __Spring-AOP支持多种切点表达式__
 1. __`@target`__：Limits matching to join points (the execution of methods when using Spring AOP) where the class of the executing object has an annotation of the given type.
 1. __`@args`__：Limits matching to join points (the execution of methods when using Spring AOP) where the runtime type of the actual arguments passed have annotations of the given types.
 1. __`@within`__：Limits matching to join points within types that have the given annotation (the execution of methods declared in types with the given annotation when using Spring AOP).
-1. __`@annotation`__： Limits matching to join points where the subject of the join point (the method being executed in Spring AOP) has the given annotation.
+1. __`@annotation`__：Limits matching to join points where the subject of the join point (the method being executed in Spring AOP) has the given annotation.
 
 # 6 参考
 
