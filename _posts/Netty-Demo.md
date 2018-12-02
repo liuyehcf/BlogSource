@@ -569,4 +569,3 @@ pipeline.addLast(sslCtx.newHandler(pipeline.channel().alloc(), uri.getHost(), ur
 * [JDK自带工具keytool生成ssl证书](https://www.cnblogs.com/zhangzb/p/5200418.html)
 * [netty-example](https://github.com/spmallette/netty-example/blob/master/src/test/java/com/genoprime/netty/example/WebSocketClientHandler.java)
 * [单机千万并发连接实战](https://zhuanlan.zhihu.com/p/21378825)
-* [java SSL](https://blog.csdn.net/everyok/article/details/82882156)
