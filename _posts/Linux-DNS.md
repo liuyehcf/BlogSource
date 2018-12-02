@@ -562,7 +562,6 @@ linux.centos.liuye.  IN CNAME  www.centos.liuye.
 ftp.centos.liuye.  IN CNAME  www.centos.liuye.
 
 Linux2.centos.liuye.  IN  A  192.168.200.101
-
 ```
 
 __务必注意完整主机名(FQDN)之后的点__
@@ -828,7 +827,6 @@ view "wan" {
 		file "named.centos.liuye.inter";
 	};
 };
-
 ```
 
 # 6 DNS服务器的高级设定
