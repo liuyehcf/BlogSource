@@ -727,6 +727,26 @@ __示例：__
 
 * `tsar -l`
 
+## 6.15 watch
+
+__格式：__
+
+* `watch [option] [cmd]`
+
+__参数说明：__
+
+* `-n`：watch缺省该参数时，每2秒运行一下程序，可以用`-n`或`-interval`来指定间隔的时间
+* `-d`：`watch`会高亮显示变化的区域。`-d=cumulative`选项会把变动过的地方(不管最近的那次有没有变动)都高亮显示出来
+* `-t`：关闭watch命令在顶部的时间间隔命令，当前时间的输出
+
+__示例：__
+
+* `watch -n 1 -d netstat -ant`：每隔一秒高亮显示网络链接数的变化情况
+* `watch -n 1 -d 'pstree | grep http'`：每隔一秒高亮显示http链接数的变化情况
+* `watch 'netstat -an | grep :21 | grep <ip> | wc -l'`：实时查看模拟攻击客户机建立起来的连接数
+* `watch -d 'ls -l | grep scf'`：监测当前目录中 scf' 的文件的变化
+* `watch -n 10 'cat /proc/loadavg'`：10秒一次输出系统的平均负载
+
 # 7 内存管理
 
 ## 7.1 free
@@ -847,7 +867,39 @@ __示例：__
 * `route add -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
 * `route del -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
 
-## 8.3 tcpdump
+## 8.3 ss
+
+`ss`是`Socket Statistics`的缩写。顾名思义，`ss`命令可以用来获取`socket`统计信息，它可以显示和`netstat`类似的内容。`ss`的优势在于它能够显示更多更详细的有关TCP和连接状态的信息，而且比`netstat`更快速更高效。
+
+当服务器的socket连接数量变得非常大时，无论是使用`netstat`命令还是直接`cat /proc/net/tcp`，执行速度都会很慢。
+
+`ss`快的秘诀在于，它利用到了TCP协议栈中`tcp_diag`。`tcp_diag`是一个用于分析统计的模块，可以获得Linux内核中第一手的信息，这就确保了`ss`的快捷高效
+
+__格式：__
+
+* `ss [-talspnr]`
+
+__参数说明：__
+
+* `-t`：列出tcp-socket
+* `-a`：列出所有socket
+* `-l`：列出所有监听的socket
+* `-s`：仅显示摘要信息
+* `-p`：显示用了该socket的进程
+* `-n`：不解析服务名称
+* `-r`：解析服务名称
+* `-m`：显示内存占用情况
+* `-h`：查看帮助文档
+
+__示例：__
+
+* `ss -t -a`：显示所有tcp-socket
+* `ss -u –a`：显示所有udp-socket
+* `ss -lp | grep 22`：找出打开套接字/端口应用程序
+* `ss -o state established`：显示所有状态为established的socket
+* `ss -o state FIN-WAIT-1 dst 192.168.25.100/24`：显示出处于`FIN-WAIT-1`状态的，目标网络为`192.168.25.100/24`所有socket
+
+## 8.4 tcpdump
 
 __格式：__
 
@@ -966,3 +1018,4 @@ __示例：__
 * 《鸟哥的Linux私房菜》
 * [linux shell awk 流程控制语句（if,for,while,do)详细介绍](https://www.cnblogs.com/chengmo/archive/2010/10/04/1842073.html)
 * [解决Linux关闭终端(关闭SSH等)后运行的程序自动停止](https://blog.csdn.net/gatieme/article/details/52777721)
+* [Linux ss命令详解](https://www.cnblogs.com/ftl1012/p/ss.html)
