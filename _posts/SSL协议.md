@@ -12,9 +12,9 @@ __阅读更多__
 
 <!--more-->
 
-# 1 Java&SSL
+# 1 keytool
 
-## 1.1 keytool
+## 1.1 cmd
 
 `keytool command [command options]`
 
@@ -57,7 +57,161 @@ __阅读更多__
 * `-v`：详细输出
 * `-protected`：通过受保护的机制的口令
 
-## 1.2 服务端
+## 1.2 Java-Api
+
+```Java
+package org.liuyehcf.ssl;
+
+import sun.security.tools.keytool.CertAndKeyGen;
+import sun.security.x509.X500Name;
+
+import javax.crypto.KeyGenerator;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.security.Key;
+import java.security.KeyStore;
+import java.security.cert.X509Certificate;
+
+/**
+ * @author hechenfeng
+ * @date 2018/12/7
+ */
+public class KeyTool {
+
+    private static final String KEY_STORE_PATH = "/tmp/keyStore.ks";
+    private static final String KEY_STORE_PASSWORD = "123456";
+    private static final String KEY_STORE_TYPE = "PKCS12";
+
+    private static final String KEY_PASSWORD = "654321";
+
+    private static final String ALIAS_SECRET = "key_secret";
+    private static final String ALIAS_PRIVATE = "key_private";
+    private static final String ALIAS_CERT = "key_cert";
+
+    public static void main(String[] args) {
+        createKeyStore();
+        createSecretEntry();
+        createPrivateEntryAndCert();
+        storeCert();
+        loadPrivateEntry();
+        getCert();
+        loadCert();
+    }
+
+    private static void createKeyStore() {
+        try {
+            KeyStore keyStore = KeyStore.getInstance(KEY_STORE_TYPE);
+            keyStore.load(null, null);
+
+            keyStore.store(new FileOutputStream(KEY_STORE_PATH), KEY_STORE_PASSWORD.toCharArray());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private static void createSecretEntry() {
+        try {
+            KeyStore keyStore = KeyStore.getInstance(KEY_STORE_TYPE);
+            keyStore.load(new FileInputStream(KEY_STORE_PATH), KEY_STORE_PASSWORD.toCharArray());
+
+            KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+            keyGen.init(128);
+            Key key = keyGen.generateKey();
+            keyStore.setKeyEntry(ALIAS_SECRET, key, KEY_PASSWORD.toCharArray(), null);
+
+            keyStore.store(new FileOutputStream(KEY_STORE_PATH), KEY_STORE_PASSWORD.toCharArray());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private static void createPrivateEntryAndCert() {
+        try {
+            KeyStore keyStore = KeyStore.getInstance(KEY_STORE_TYPE);
+            keyStore.load(new FileInputStream(KEY_STORE_PATH), KEY_STORE_PASSWORD.toCharArray());
+
+            CertAndKeyGen gen = new CertAndKeyGen("RSA", "SHA1WithRSA");
+            gen.generate(1024);
+
+            Key key = gen.getPrivateKey();
+            X509Certificate cert = gen.getSelfCertificate(new X500Name("CN=ROOT"), (long) 365 * 24 * 3600);
+
+            X509Certificate[] chain = new X509Certificate[1];
+            chain[0] = cert;
+
+            keyStore.setKeyEntry(ALIAS_PRIVATE, key, KEY_PASSWORD.toCharArray(), chain);
+
+            keyStore.store(new FileOutputStream(KEY_STORE_PATH), KEY_STORE_PASSWORD.toCharArray());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private static void storeCert() {
+        try {
+            KeyStore keyStore = KeyStore.getInstance(KEY_STORE_TYPE);
+            keyStore.load(new FileInputStream(KEY_STORE_PATH), KEY_STORE_PASSWORD.toCharArray());
+
+            CertAndKeyGen gen = new CertAndKeyGen("RSA", "SHA1WithRSA");
+            gen.generate(1024);
+
+            X509Certificate cert = gen.getSelfCertificate(new X500Name("CN=ROOT"), (long) 365 * 24 * 3600);
+
+            keyStore.setCertificateEntry(ALIAS_CERT, cert);
+
+            keyStore.store(new FileOutputStream(KEY_STORE_PATH), KEY_STORE_PASSWORD.toCharArray());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private static void loadPrivateEntry() {
+        try {
+            KeyStore keyStore = KeyStore.getInstance(KEY_STORE_TYPE);
+            keyStore.load(new FileInputStream(KEY_STORE_PATH), KEY_STORE_PASSWORD.toCharArray());
+
+            Key pvtKey = keyStore.getKey(ALIAS_PRIVATE, KEY_PASSWORD.toCharArray());
+            System.out.println(pvtKey.toString());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private static void loadCert() {
+        try {
+            KeyStore keyStore = KeyStore.getInstance(KEY_STORE_TYPE);
+            keyStore.load(new FileInputStream(KEY_STORE_PATH), KEY_STORE_PASSWORD.toCharArray());
+
+            Key pvtKey = keyStore.getKey(ALIAS_PRIVATE, KEY_PASSWORD.toCharArray());
+            System.out.println(pvtKey.toString());
+
+            java.security.cert.Certificate[] chain = keyStore.getCertificateChain(ALIAS_PRIVATE);
+            for (java.security.cert.Certificate cert : chain) {
+                System.out.println(cert.toString());
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private static void getCert() {
+        try {
+            KeyStore keyStore = KeyStore.getInstance(KEY_STORE_TYPE);
+            keyStore.load(new FileInputStream(KEY_STORE_PATH), KEY_STORE_PASSWORD.toCharArray());
+
+            java.security.cert.Certificate cert = keyStore.getCertificate(ALIAS_PRIVATE);
+
+            System.out.println(cert);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+}
+```
+
+# 2 JKS
+
+## 2.1 服务端
 
 Java环境下，数字证书是用`keytool`生成的，这些证书被存储在`store`中，就是证书仓库。我们来调用keytool命令为服务端生成数字证书和保存它使用的证书仓库：
 
@@ -67,10 +221,10 @@ __生成数字证书和证书仓库__
 * 证书仓库路径：`~/liuyehcf_server_ks`
 
 ```sh
-keytool -genkey -v -alias liuyehcf_server_key -keyalg RSA -keystore ~/liuyehcf_server_ks -dname "CN=localhost,OU=cn,O=cn,L=cn,ST=cn,C=cn" -storepass 123456 -keypass 123456
+keytool -genkey -v -alias liuyehcf_server_key -keyalg RSA -keystore ~/liuyehcf_server_ks -dname "CN=localhost,OU=cn,O=cn,L=cn,ST=cn,C=cn" -storepass 123456 -keypass 234567
 
 # 以下为输出内容
-正在为以下对象生成 2,048 位RSA密钥对和自签名证书 (SHA256withRSA) (有效期为 90 天):
+在为以下对象生成 2,048 位RSA密钥对和自签名证书 (SHA256withRSA) (有效期为 90 天):
 	 CN=localhost, OU=cn, O=cn, L=cn, ST=cn, C=cn
 [正在存储/Users/HCF/liuyehcf_server_ks]
 
@@ -78,7 +232,7 @@ Warning:
 JKS 密钥库使用专用格式。建议使用 "keytool -importkeystore -srckeystore /Users/HCF/liuyehcf_server_ks -destkeystore /Users/HCF/liuyehcf_server_ks -deststoretype pkcs12" 迁移到行业标准格式 PKCS12。
 ```
 
-## 1.3 客户端
+## 2.2 客户端
 
 有了服务端，我们原来的客户端就不能使用了，必须要走SSL协议。由于服务端的证书是我们自己生成的，没有任何受信任机构的签名，所以客户端是无法验证服务端证书的有效性的，通信必然会失败。所以我们需要为客户端创建一个保存所有信任证书的仓库，然后把服务端证书导进这个仓库。这样，当客户端连接服务端时，会发现服务端的证书在自己的信任列表中，就可以正常通信了。
 
@@ -90,7 +244,7 @@ __生成数字证书和证书仓库__
 * 证书仓库路径：`~/liuyehcf_client_ks`
 
 ```sh
-keytool -genkey -v -alias liuyehcf_client_key -keyalg RSA -keystore ~/liuyehcf_client_ks -dname "CN=localhost,OU=cn,O=cn,L=cn,ST=cn,C=cn" -storepass 123456 -keypass 123456
+keytool -genkey -v -alias liuyehcf_client_key -keyalg RSA -keystore ~/liuyehcf_client_ks -dname "CN=localhost,OU=cn,O=cn,L=cn,ST=cn,C=cn" -storepass 345678 -keypass 456789
 
 # 以下为输出内容
 正在为以下对象生成 2,048 位RSA密钥对和自签名证书 (SHA256withRSA) (有效期为 90 天):
@@ -120,15 +274,15 @@ __然后是把导出的证书导入到客户端证书仓库__
 keytool -import -trustcacerts -alias liuyehcf_server_key -file ~/server_key.cer -keystore ~/liuyehcf_client_ks
 
 # 以下为输出内容
-入密钥库口令:
+输入密钥库口令:
 所有者: CN=localhost, OU=cn, O=cn, L=cn, ST=cn, C=cn
 发布者: CN=localhost, OU=cn, O=cn, L=cn, ST=cn, C=cn
-序列号: 17e9c12
-有效期为 Sun Dec 02 19:50:14 CST 2018 至 Sat Mar 02 19:50:14 CST 2019
+序列号: bd78a56
+有效期为 Fri Dec 07 21:59:02 CST 2018 至 Thu Mar 07 21:59:02 CST 2019
 证书指纹:
-	 MD5:  0C:FB:7C:19:27:66:65:CC:61:DF:AE:77:20:E0:06:B4
-	 SHA1: 1F:B7:E9:C6:C7:63:A7:DD:1A:D0:13:47:DC:21:4E:6D:EE:25:44:CF
-	 SHA256: 3B:0F:74:58:2F:D3:30:3B:73:2F:10:C5:1D:46:E4:31:E0:3D:A3:2C:BD:C7:F1:D1:92:56:FD:60:E5:3A:F9:A2
+	 MD5:  75:9E:FF:BB:D7:A2:70:59:CB:17:DB:4F:5E:0F:BD:67
+	 SHA1: AC:89:15:A2:A2:4B:90:6E:A3:FD:24:38:27:DF:F6:32:BA:1C:7B:89
+	 SHA256: 10:FF:A0:C6:B5:B4:CC:DF:6E:9E:61:27:3B:F1:59:01:49:55:E8:75:33:EE:0B:13:55:56:6C:38:16:08:19:F8
 签名算法名称: SHA256withRSA
 主体公共密钥算法: 2048 位 RSA 密钥
 版本: 3
@@ -138,8 +292,8 @@ keytool -import -trustcacerts -alias liuyehcf_server_key -file ~/server_key.cer 
 #1: ObjectId: 2.5.29.14 Criticality=false
 SubjectKeyIdentifier [
 KeyIdentifier [
-0000: 89 02 0F 51 D6 DE 82 4D   EC F7 E6 12 3F 91 02 C4  ...Q...M....?...
-0010: 3C 17 FB 66                                        <..f
+0000: 29 B6 53 D0 FB A0 DD A6   4A C7 A1 D7 51 C5 E2 07  ).S.....J...Q...
+0010: 6D D6 2A 4D                                        m.*M
 ]
 ]
 
@@ -150,7 +304,7 @@ Warning:
 JKS 密钥库使用专用格式。建议使用 "keytool -importkeystore -srckeystore /Users/HCF/liuyehcf_client_ks -destkeystore /Users/HCF/liuyehcf_client_ks -deststoretype pkcs12" 迁移到行业标准格式 PKCS12。
 ```
 
-## 1.4 SSLServer
+## 2.3 SSLServer
 
 ```Java
 package org.liuyehcf.ssl;
@@ -166,8 +320,9 @@ import java.security.KeyStore;
 
 public class SSLServer extends Thread {
 
-    private static final String SERVER_KEY_STORE = "/Users/HCF/liuyehcf_server_ks";
-    private static final String SERVER_KEY_STORE_PASSWORD = "123456";
+    private static final String KEY_STORE_PATH = System.getProperty("user.home") + File.separator + "liuyehcf_server_ks";
+    private static final String KEY_STORE_PASSWORD = "123456";
+    private static final String PRIVATE_PASSWORD = "234567";
 
     private Socket socket;
 
@@ -190,13 +345,14 @@ public class SSLServer extends Thread {
     }
 
     public static void main(String[] args) throws Exception {
-        System.setProperty("javax.net.ssl.trustStore", SERVER_KEY_STORE);
-        SSLContext context = SSLContext.getInstance("TLS");
+        System.setProperty("javax.net.ssl.trustStore", KEY_STORE_PATH);
 
         KeyStore ks = KeyStore.getInstance("jceks");
-        ks.load(new FileInputStream(SERVER_KEY_STORE), null);
+        ks.load(new FileInputStream(KEY_STORE_PATH), KEY_STORE_PASSWORD.toCharArray());
         KeyManagerFactory kf = KeyManagerFactory.getInstance("SunX509");
-        kf.init(ks, SERVER_KEY_STORE_PASSWORD.toCharArray());
+        kf.init(ks, PRIVATE_PASSWORD.toCharArray());
+
+        SSLContext context = SSLContext.getInstance("TLS");
         context.init(kf.getKeyManagers(), null, null);
         ServerSocketFactory factory = context.getServerSocketFactory();
         ServerSocket socket = factory.createServerSocket(8443);
@@ -209,7 +365,7 @@ public class SSLServer extends Thread {
 }
 ```
 
-## 1.5 SSLClient
+## 2.4 SSLClient
 
 ```Java
 package org.liuyehcf.ssl;
@@ -218,20 +374,18 @@ import javax.net.SocketFactory;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.security.KeyStore;
 
 public class SSLClient {
-    private static final String CLIENT_KEY_STORE = "/Users/HCF/liuyehcf_client_ks";
-    private static final String CLIENT_KEY_STORE_PASSWORD = "123456";
+    private static final String KEY_STORE_PATH = System.getProperty("user.home") + File.separator + "liuyehcf_client_ks";
+    private static final String KEY_STORE_PASSWORD = "345678";
+    private static final String KEY_PASSWORD = "456789";
 
     public static void main(String[] args) throws Exception {
         // Set the key store to use for validating the server cert.
-        System.setProperty("javax.net.ssl.trustStore", CLIENT_KEY_STORE);
+        System.setProperty("javax.net.ssl.trustStore", KEY_STORE_PATH);
         System.setProperty("javax.net.debug", "ssl,handshake");
         SSLClient client = new SSLClient();
         Socket s = client.clientWithoutCert();
@@ -250,21 +404,21 @@ public class SSLClient {
     }
 
     private Socket clientWithCert() throws Exception {
-        SSLContext context = SSLContext.getInstance("TLS");
         KeyStore ks = KeyStore.getInstance("jceks");
 
-        ks.load(new FileInputStream(CLIENT_KEY_STORE), null);
+        ks.load(new FileInputStream(KEY_STORE_PATH), KEY_STORE_PASSWORD.toCharArray());
         KeyManagerFactory kf = KeyManagerFactory.getInstance("SunX509");
-        kf.init(ks, CLIENT_KEY_STORE_PASSWORD.toCharArray());
-        context.init(kf.getKeyManagers(), null, null);
+        kf.init(ks, KEY_PASSWORD.toCharArray());
 
+        SSLContext context = SSLContext.getInstance("TLS");
+        context.init(kf.getKeyManagers(), null, null);
         SocketFactory factory = context.getSocketFactory();
         return factory.createSocket("localhost", 8443);
     }
 }
 ```
 
-## 1.6 双向认证
+## 2.5 双向认证
 
 上述示例中，仅仅客户端对服务端做了单向认证，如果要进行双向认证，需要将客户端的证书添加到服务端的keyStore中
 
@@ -287,15 +441,15 @@ __然后是把导出的证书导入到服务端证书仓库__
 keytool -import -trustcacerts -alias liuyehcf_client_key -file ~/client_key.cer -keystore ~/liuyehcf_server_ks
 
 # 以下为输出内容
-入密钥库口令:
+输入密钥库口令:
 所有者: CN=localhost, OU=cn, O=cn, L=cn, ST=cn, C=cn
 发布者: CN=localhost, OU=cn, O=cn, L=cn, ST=cn, C=cn
-序列号: 1d127483
-有效期为 Sun Dec 02 19:50:37 CST 2018 至 Sat Mar 02 19:50:37 CST 2019
+序列号: 54f5ef02
+有效期为 Fri Dec 07 21:59:51 CST 2018 至 Thu Mar 07 21:59:51 CST 2019
 证书指纹:
-	 MD5:  65:BF:31:22:C2:FE:06:72:B9:49:53:E8:98:33:6F:30
-	 SHA1: 2B:74:99:F4:44:22:31:28:06:27:55:01:0F:FE:8A:54:E8:3F:EF:1A
-	 SHA256: FD:6A:9E:DB:3C:2A:22:10:A2:C0:69:89:A4:81:A9:13:6B:86:1D:4B:CC:7C:DA:97:5B:B0:32:37:7E:A4:3A:2A
+	 MD5:  F2:E4:16:62:DE:1C:D1:DC:F3:E3:95:35:6E:5E:5C:3E
+	 SHA1: B1:7F:B5:38:AD:73:C8:D4:AF:C9:FB:F2:C4:9D:A5:8A:37:3C:E3:6D
+	 SHA256: 54:E8:31:2F:CF:B0:10:3B:B1:85:96:A9:0B:92:54:08:30:8E:49:BB:F5:EF:47:6F:B8:47:68:28:AA:CF:81:B5
 签名算法名称: SHA256withRSA
 主体公共密钥算法: 2048 位 RSA 密钥
 版本: 3
@@ -305,8 +459,8 @@ keytool -import -trustcacerts -alias liuyehcf_client_key -file ~/client_key.cer 
 #1: ObjectId: 2.5.29.14 Criticality=false
 SubjectKeyIdentifier [
 KeyIdentifier [
-0000: 02 9C 65 8D D8 65 55 2A   22 0A 1E C8 62 50 6B FE  ..e..eU*"...bPk.
-0010: 87 79 1F 67                                        .y.g
+0000: B5 BF 75 DD B6 07 5A 4A   BC 7D AF F0 46 76 FE E3  ..u...ZJ....Fv..
+0010: 2B AC 01 B8                                        +...
 ]
 ]
 
@@ -337,7 +491,13 @@ Socket s = client.clientWithoutCert();
 Socket s = client.clientWithCert();
 ```
 
-# 2 参考
+# 3 PKCS12
+
+# 4 参考
 
 * [Java SSL](https://blog.csdn.net/everyok/article/details/82882156)
 * [SSL介绍与Java实例](http://www.cnblogs.com/crazyacking/p/5648520.html)
+* [Java不同类型密钥库之PKCS12和JCEKS](https://www.csdn.net/article/2015-01-06/2823434)
+* [PKCS12 证书的生成及验证](https://blog.csdn.net/kmyhy/article/details/6431609)
+* [Java Code Examples for javax.net.ssl.SSLContext](https://www.programcreek.com/java-api-examples/?api=javax.net.ssl.SSLContext)
+* [java PKCS12双向认证](https://blog.csdn.net/bolg_hero/article/details/71170606)
