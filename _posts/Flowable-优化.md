@@ -20,50 +20,55 @@ Flowable中很多操作会使用id来查询这些数据，但是数据表却没�
 ## 1.1 act_ru_identitylink
 
 ```sql
-select *
-from act_ru_identitylink
-where proc_inst_id_ = 'f69a1b42-bf55-11e8-86a7-00163e0e390f'
+SELECT *
+FROM act_ru_identitylink
+WHERE proc_inst_id_ = 'f69a1b42-bf55-11e8-86a7-00163e0e390f'
 ```
 
 ```sql
-delete from act_ru_identitylink
-where task_id_ = '20720152-be30-11e8-a50e-00163e045396'
+DELETE FROM act_ru_identitylink
+WHERE task_id_ = '20720152-be30-11e8-a50e-00163e045396'
 ```
 
 ## 1.2 act_ru_execution
 
 ```sql
-select *
-from act_ru_execution
-where parent_id_ = '1fc7b7f6-be30-11e8-a50e-00163e045396'
+SELECT *
+FROM act_ru_execution
+WHERE parent_id_ = '1fc7b7f6-be30-11e8-a50e-00163e045396'
 
-select *
-from act_ru_execution
-where super_exec_ = '41198800-be30-11e8-a50e-00163e045396'
+SELECT *
+FROM act_ru_execution
+WHERE super_exec_ = '41198800-be30-11e8-a50e-00163e045396'
+
+SELECT *
+FROM ACT_RU_EXECUTION
+WHERE PROC_INST_ID_ = 'f11e4b5e-fa1d-11e8-9ab2-00163e1afb6d'
+AND PARENT_ID_ IS NOT NULL
 ```
 
 ## 1.3 act_ru_task
 
 ```sql
-select t.*
-from act_ru_task t
-where t.proc_inst_id_ = '3f47fd17-be30-11e8-a50e-00163e045396'
+SELECT t.*
+FROM act_ru_task t
+WHERE t.proc_inst_id_ = '3f47fd17-be30-11e8-a50e-00163e045396'
 ```
 
 ## 1.4 act_ru_deadletter_job
 
 ```sql
-select *
-from act_ru_deadletter_job j
-where j.execution_id_ = '1fc7b7f6-be30-11e8-a50e-00163e045396'
+SELECT *
+FROM act_ru_deadletter_job j
+WHERE j.execution_id_ = '1fc7b7f6-be30-11e8-a50e-00163e045396'
 ```
 
 ## 1.5 act_ge_bytearray
 
 ```sql
-select * from act_ge_bytearray
-where deployment_id_ = 'f8575101-bf54-11e8-86a7-00163e0e390f'
-order by name_ asc
+SELECT * FROM act_ge_bytearray
+WHERE deployment_id_ = 'f8575101-bf54-11e8-86a7-00163e0e390f'
+ORDER BY name_ ASC
 ```
 
 ## 1.6 建议索引
@@ -80,4 +85,6 @@ CREATE INDEX IDX_OPTIMIZATION_PROC_INST_ID ON ACT_RU_TASK(PROC_INST_ID_);
 CREATE INDEX IDX_OPTIMIZATION_EXECUTION_ID ON ACT_RU_DEADLETTER_JOB(EXECUTION_ID_);
 
 CREATE INDEX IDX_OPTIMIZATION_DEPLOYMENT_ID ON ACT_GE_BYTEARRAY(DEPLOYMENT_ID_);
+
+CREATE INDEX IDX_OPTIMIZATION_PROC_INST_ID ON ACT_RU_EXECUTION(PROC_INST_ID_);
 ```

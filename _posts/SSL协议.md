@@ -493,6 +493,89 @@ Socket s = client.clientWithCert();
 
 # 3 PKCS12
 
+## 3.1 服务端
+
+Java环境下，数字证书是用`keytool`生成的，这些证书被存储在`store`中，就是证书仓库。我们来调用keytool命令为服务端生成数字证书和保存它使用的证书仓库：
+
+__生成数字证书和证书仓库__
+
+* 证书名称：`liuyehcf_server_key`
+* 证书仓库路径：`~/liuyehcf_server_ks`
+
+```sh
+# 注意，在指定-storetype PKCS12时，-keypass参数是无效的
+keytool -genkey -v -alias liuyehcf_server_key -keyalg RSA -keystore ~/liuyehcf_server_ks -storetype PKCS12 -dname "CN=localhost,OU=cn,O=cn,L=cn,ST=cn,C=cn" -storepass 123456
+
+# 以下为输出内容
+正在为以下对象生成 2,048 位RSA密钥对和自签名证书 (SHA256withRSA) (有效期为 90 天):
+	 CN=localhost, OU=cn, O=cn, L=cn, ST=cn, C=cn
+[正在存储/Users/HCF/liuyehcf_server_ks]
+```
+
+## 3.2 客户端
+
+有了服务端，我们原来的客户端就不能使用了，必须要走SSL协议。由于服务端的证书是我们自己生成的，没有任何受信任机构的签名，所以客户端是无法验证服务端证书的有效性的，通信必然会失败。所以我们需要为客户端创建一个保存所有信任证书的仓库，然后把服务端证书导进这个仓库。这样，当客户端连接服务端时，会发现服务端的证书在自己的信任列表中，就可以正常通信了。
+
+因此现在我们要做的是生成一个客户端的证书仓库，__因为keytool不能仅生成一个空白仓库，所以和服务端一样，我们还是生成一个证书加一个仓库（客户端证书加仓库）__
+
+__生成数字证书和证书仓库__
+
+* 证书名称：`liuyehcf_client_key`
+* 证书仓库路径：`~/liuyehcf_client_ks`
+
+```sh
+# 注意，在指定-storetype PKCS12时，-keypass参数是无效的
+keytool -genkey -v -alias liuyehcf_client_key -keyalg RSA -keystore ~/liuyehcf_client_ks -storetype PKCS12 -dname "CN=localhost,OU=cn,O=cn,L=cn,ST=cn,C=cn" -storepass 345678
+
+# 以下为输出内容
+正在为以下对象生成 2,048 位RSA密钥对和自签名证书 (SHA256withRSA) (有效期为 90 天):
+	 CN=localhost, OU=cn, O=cn, L=cn, ST=cn, C=cn
+[正在存储/Users/HCF/liuyehcf_client_ks]
+```
+
+__接下来，我们要把服务端的证书导出来，并导入到客户端的仓库。第一步是导出服务端的证书__
+
+```sh
+keytool -export -alias liuyehcf_server_key -keystore ~/liuyehcf_server_ks -file ~/server_key.cer
+
+# 以下为输出内容
+输入密钥库口令:
+存储在文件 </Users/HCF/server_key.cer> 中的证书
+```
+
+__然后是把导出的证书导入到客户端证书仓库__
+
+```sh
+keytool -import -trustcacerts -alias liuyehcf_server_key -file ~/server_key.cer -keystore ~/liuyehcf_client_ks
+
+# 以下为输出内容
+输入密钥库口令:
+所有者: CN=localhost, OU=cn, O=cn, L=cn, ST=cn, C=cn
+发布者: CN=localhost, OU=cn, O=cn, L=cn, ST=cn, C=cn
+序列号: 3f428b5f
+有效期为 Fri Dec 07 22:09:42 CST 2018 至 Thu Mar 07 22:09:42 CST 2019
+证书指纹:
+	 MD5:  49:55:0E:90:8C:29:87:09:41:AA:D0:D0:8D:BE:51:9D
+	 SHA1: 96:12:9E:FF:AD:D8:CD:32:72:D0:01:50:01:83:06:FF:09:E2:A4:B6
+	 SHA256: 79:B9:DF:FD:45:98:53:8F:90:66:9B:31:4C:A1:8F:84:AF:E3:8A:CC:89:D7:F6:BC:BE:BB:52:50:D9:77:15:5E
+签名算法名称: SHA256withRSA
+主体公共密钥算法: 2048 位 RSA 密钥
+版本: 3
+
+扩展:
+
+#1: ObjectId: 2.5.29.14 Criticality=false
+SubjectKeyIdentifier [
+KeyIdentifier [
+0000: 4F FC 25 2B 3C DA CB 66   ED 54 E5 90 F8 31 B6 58  O.%+<..f.T...1.X
+0010: A5 D5 22 A6                                        ..".
+]
+]
+
+是否信任此证书? [否]:  y
+证书已添加到密钥库中
+```
+
 # 4 参考
 
 * [Java SSL](https://blog.csdn.net/everyok/article/details/82882156)
