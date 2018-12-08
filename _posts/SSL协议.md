@@ -313,21 +313,55 @@ import javax.net.ServerSocketFactory;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.TrustManagerFactory;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.KeyStore;
 
+/**
+ * @author hechenfeng
+ * @date 2018/12/7
+ */
 public class SSLServer extends Thread {
 
     private static final String KEY_STORE_PATH = System.getProperty("user.home") + File.separator + "liuyehcf_server_ks";
+    private static final String STORE_TYPE = "JKS";
+    private static final String PROTOCOL = "TLS";
     private static final String KEY_STORE_PASSWORD = "123456";
-    private static final String PRIVATE_PASSWORD = "234567";
+    private static final String KEY_PASSWORD = "234567";
 
     private Socket socket;
 
     private SSLServer(Socket socket) {
         this.socket = socket;
+    }
+
+    public static void main(String[] args) throws Exception {
+        // keyStore
+        KeyStore keyStore = KeyStore.getInstance(STORE_TYPE);
+        keyStore.load(new FileInputStream(KEY_STORE_PATH), KEY_STORE_PASSWORD.toCharArray());
+
+        // keyManagerFactory
+        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        keyManagerFactory.init(keyStore, KEY_PASSWORD.toCharArray());
+
+        // trustManagerFactory
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trustManagerFactory.init(keyStore);
+
+        // sslContext
+        SSLContext sslContext = SSLContext.getInstance(PROTOCOL);
+        sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
+
+        // serverSocketFactory
+        ServerSocketFactory factory = sslContext.getServerSocketFactory();
+        ServerSocket socket = factory.createServerSocket(8443);
+        ((SSLServerSocket) socket).setNeedClientAuth(false);
+
+        while (!Thread.currentThread().isInterrupted()) {
+            new SSLServer(socket.accept()).start();
+        }
     }
 
     public void run() {
@@ -343,25 +377,6 @@ public class SSLServer extends Thread {
             e.printStackTrace();
         }
     }
-
-    public static void main(String[] args) throws Exception {
-        System.setProperty("javax.net.ssl.trustStore", KEY_STORE_PATH);
-
-        KeyStore ks = KeyStore.getInstance("jceks");
-        ks.load(new FileInputStream(KEY_STORE_PATH), KEY_STORE_PASSWORD.toCharArray());
-        KeyManagerFactory kf = KeyManagerFactory.getInstance("SunX509");
-        kf.init(ks, PRIVATE_PASSWORD.toCharArray());
-
-        SSLContext context = SSLContext.getInstance("TLS");
-        context.init(kf.getKeyManagers(), null, null);
-        ServerSocketFactory factory = context.getServerSocketFactory();
-        ServerSocket socket = factory.createServerSocket(8443);
-        ((SSLServerSocket) socket).setNeedClientAuth(false);
-
-        while (!Thread.currentThread().isInterrupted()) {
-            new SSLServer(socket.accept()).start();
-        }
-    }
 }
 ```
 
@@ -370,25 +385,32 @@ public class SSLServer extends Thread {
 ```Java
 package org.liuyehcf.ssl;
 
-import javax.net.SocketFactory;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
 import java.io.*;
 import java.net.Socket;
 import java.security.KeyStore;
 
+/**
+ * @author hechenfeng
+ * @date 2018/12/7
+ */
 public class SSLClient {
+
     private static final String KEY_STORE_PATH = System.getProperty("user.home") + File.separator + "liuyehcf_client_ks";
+    private static final String STORE_TYPE = "JKS";
+    private static final String PROTOCOL = "TLS";
     private static final String KEY_STORE_PASSWORD = "345678";
     private static final String KEY_PASSWORD = "456789";
 
     public static void main(String[] args) throws Exception {
         // Set the key store to use for validating the server cert.
-        System.setProperty("javax.net.ssl.trustStore", KEY_STORE_PATH);
         System.setProperty("javax.net.debug", "ssl,handshake");
+
         SSLClient client = new SSLClient();
-        Socket s = client.clientWithoutCert();
+        Socket s = client.createSslSocket();
 
         PrintWriter writer = new PrintWriter(s.getOutputStream());
         BufferedReader reader = new BufferedReader(new InputStreamReader(s.getInputStream()));
@@ -398,21 +420,26 @@ public class SSLClient {
         s.close();
     }
 
-    private Socket clientWithoutCert() throws Exception {
-        SocketFactory sf = SSLSocketFactory.getDefault();
-        return sf.createSocket("localhost", 8443);
-    }
+    private Socket createSslSocket() throws Exception {
+        // keyStore
+        KeyStore keyStore = KeyStore.getInstance(STORE_TYPE);
+        keyStore.load(new FileInputStream(KEY_STORE_PATH), KEY_STORE_PASSWORD.toCharArray());
 
-    private Socket clientWithCert() throws Exception {
-        KeyStore ks = KeyStore.getInstance("jceks");
+        // keyManagerFactory
+        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        keyManagerFactory.init(keyStore, KEY_PASSWORD.toCharArray());
 
-        ks.load(new FileInputStream(KEY_STORE_PATH), KEY_STORE_PASSWORD.toCharArray());
-        KeyManagerFactory kf = KeyManagerFactory.getInstance("SunX509");
-        kf.init(ks, KEY_PASSWORD.toCharArray());
+        // trustManagerFactory
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trustManagerFactory.init(keyStore);
 
-        SSLContext context = SSLContext.getInstance("TLS");
-        context.init(kf.getKeyManagers(), null, null);
-        SocketFactory factory = context.getSocketFactory();
+        // sslContext
+        SSLContext sslContext = SSLContext.getInstance(PROTOCOL);
+        sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
+
+        // socketFactory
+        SSLSocketFactory factory = sslContext.getSocketFactory();
+
         return factory.createSocket("localhost", 8443);
     }
 }
@@ -479,16 +506,6 @@ __改造服务端的代码__
 // 改为
 
 ((SSLServerSocket) socket).setNeedClientAuth(true);
-```
-
-__改造客户端的代码__
-
-```Java
-Socket s = client.clientWithoutCert();
-
-// 改为
-
-Socket s = client.clientWithCert();
 ```
 
 # 3 PKCS12
@@ -576,6 +593,204 @@ KeyIdentifier [
 证书已添加到密钥库中
 ```
 
+## 3.3 SSLServer
+
+```Java
+package org.liuyehcf.ssl;
+
+import javax.net.ServerSocketFactory;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.TrustManagerFactory;
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.security.KeyStore;
+
+/**
+ * @author hechenfeng
+ * @date 2018/12/7
+ */
+public class SSLServer extends Thread {
+
+    private static final String KEY_STORE_PATH = System.getProperty("user.home") + File.separator + "liuyehcf_server_ks";
+    private static final String STORE_TYPE = "PKCS12";
+    private static final String PROTOCOL = "TLS";
+    private static final String KEY_STORE_PASSWORD = "123456";
+    private static final String KEY_PASSWORD = KEY_STORE_PASSWORD;
+
+    private Socket socket;
+
+    private SSLServer(Socket socket) {
+        this.socket = socket;
+    }
+
+    public static void main(String[] args) throws Exception {
+        // keyStore
+        KeyStore keyStore = KeyStore.getInstance(STORE_TYPE);
+        keyStore.load(new FileInputStream(KEY_STORE_PATH), KEY_STORE_PASSWORD.toCharArray());
+
+        // keyManagerFactory
+        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        keyManagerFactory.init(keyStore, KEY_PASSWORD.toCharArray());
+
+        // trustManagerFactory
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trustManagerFactory.init(keyStore);
+
+        // sslContext
+        SSLContext sslContext = SSLContext.getInstance(PROTOCOL);
+        sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
+
+        // serverSocketFactory
+        ServerSocketFactory factory = sslContext.getServerSocketFactory();
+        ServerSocket socket = factory.createServerSocket(8443);
+        ((SSLServerSocket) socket).setNeedClientAuth(false);
+
+        while (!Thread.currentThread().isInterrupted()) {
+            new SSLServer(socket.accept()).start();
+        }
+    }
+
+    public void run() {
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter writer = new PrintWriter(socket.getOutputStream());
+
+            String data = reader.readLine();
+            writer.println(data);
+            writer.close();
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+## 3.4 SSLClient
+
+```Java
+package org.liuyehcf.ssl;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
+import java.io.*;
+import java.net.Socket;
+import java.security.KeyStore;
+
+/**
+ * @author hechenfeng
+ * @date 2018/12/7
+ */
+public class SSLClient {
+
+    private static final String KEY_STORE_PATH = System.getProperty("user.home") + File.separator + "liuyehcf_client_ks";
+    private static final String STORE_TYPE = "PKCS12";
+    private static final String PROTOCOL = "TLS";
+    private static final String KEY_STORE_PASSWORD = "345678";
+    private static final String KEY_PASSWORD = KEY_STORE_PASSWORD;
+
+    public static void main(String[] args) throws Exception {
+        // Set the key store to use for validating the server cert.
+        System.setProperty("javax.net.debug", "ssl,handshake");
+
+        SSLClient client = new SSLClient();
+        Socket s = client.createSslSocket();
+
+        PrintWriter writer = new PrintWriter(s.getOutputStream());
+        BufferedReader reader = new BufferedReader(new InputStreamReader(s.getInputStream()));
+        writer.println("hello");
+        writer.flush();
+        System.out.println(reader.readLine());
+        s.close();
+    }
+
+    private Socket createSslSocket() throws Exception {
+        // keyStore
+        KeyStore keyStore = KeyStore.getInstance(STORE_TYPE);
+        keyStore.load(new FileInputStream(KEY_STORE_PATH), KEY_STORE_PASSWORD.toCharArray());
+
+        // keyManagerFactory
+        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        keyManagerFactory.init(keyStore, KEY_PASSWORD.toCharArray());
+
+        // trustManagerFactory
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trustManagerFactory.init(keyStore);
+
+        // sslContext
+        SSLContext sslContext = SSLContext.getInstance(PROTOCOL);
+        sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
+
+        // socketFactory
+        SSLSocketFactory factory = sslContext.getSocketFactory();
+
+        return factory.createSocket("localhost", 8443);
+    }
+}
+```
+
+## 3.5 双向认证
+
+上述示例中，仅仅客户端对服务端做了单向认证，如果要进行双向认证，需要将客户端的证书添加到服务端的keyStore中
+
+__接下来，我们要把客户端的证书导出来，并导入到服务端的仓库。第一步是导出客户端的证书__
+
+```sh
+keytool -export -alias liuyehcf_client_key -keystore ~/liuyehcf_client_ks -file ~/client_key.cer
+
+# 以下为输出内容
+输入密钥库口令:
+存储在文件 </Users/HCF/client_key.cer> 中的证书
+```
+
+__然后是把导出的证书导入到服务端证书仓库__
+
+```sh
+keytool -import -trustcacerts -alias liuyehcf_client_key -file ~/client_key.cer -keystore ~/liuyehcf_server_ks
+
+# 以下为输出内容
+输入密钥库口令:
+所有者: CN=localhost, OU=cn, O=cn, L=cn, ST=cn, C=cn
+发布者: CN=localhost, OU=cn, O=cn, L=cn, ST=cn, C=cn
+序列号: 7e402030
+有效期为 Sat Dec 08 09:45:48 CST 2018 至 Fri Mar 08 09:45:48 CST 2019
+证书指纹:
+	 MD5:  5C:54:D1:FC:B5:3C:D4:F7:F4:44:0B:9D:43:83:05:06
+	 SHA1: 1D:A6:E8:E7:83:3B:CC:A9:CC:BF:0D:93:20:77:9F:25:9F:FC:CE:EB
+	 SHA256: B5:92:A3:C8:82:6F:D6:1E:FB:53:DF:D7:89:17:75:B3:F5:00:24:9E:9D:23:5B:FD:B8:D5:0F:5F:EB:3D:E5:22
+签名算法名称: SHA256withRSA
+主体公共密钥算法: 2048 位 RSA 密钥
+版本: 3
+
+扩展:
+
+#1: ObjectId: 2.5.29.14 Criticality=false
+SubjectKeyIdentifier [
+KeyIdentifier [
+0000: 9E 34 C8 DB A2 C5 77 6E   14 67 97 6E 77 F6 81 5F  .4....wn.g.nw.._
+0010: 72 F1 3B DD                                        r.;.
+]
+]
+
+是否信任此证书? [否]:  y
+证书已添加到密钥库中
+```
+
+__改造服务端的代码__
+
+```Java
+((SSLServerSocket) socket).setNeedClientAuth(false);
+
+// 改为
+
+((SSLServerSocket) socket).setNeedClientAuth(true);
+```
+
 # 4 参考
 
 * [Java SSL](https://blog.csdn.net/everyok/article/details/82882156)
@@ -584,3 +799,4 @@ KeyIdentifier [
 * [PKCS12 证书的生成及验证](https://blog.csdn.net/kmyhy/article/details/6431609)
 * [Java Code Examples for javax.net.ssl.SSLContext](https://www.programcreek.com/java-api-examples/?api=javax.net.ssl.SSLContext)
 * [java PKCS12双向认证](https://blog.csdn.net/bolg_hero/article/details/71170606)
+* [Okhttp3配置Https访问(使用PKCS12)证书](https://www.aliyun.com/jiaocheng/1738033.html?spm=5176.100033.2.5.490a4571JCeVLU)
