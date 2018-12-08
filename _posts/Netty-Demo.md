@@ -15,6 +15,8 @@ __阅读更多__
 
 # 1 WebSocket
 
+下面给的示例中，涉及到SSL，其`keySotre`与`cert`的生成请参考{% post_link SSL协议 %}
+
 ## 1.1 Server
 
 ```Java
@@ -31,10 +33,19 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.*;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.TrustManagerFactory;
+import java.io.File;
+import java.io.FileInputStream;
 import java.nio.charset.Charset;
+import java.security.KeyStore;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -42,6 +53,17 @@ import java.util.concurrent.TimeUnit;
  * @date 2018/11/3
  */
 public class Server {
+
+    private static final String HOST = "localhost";
+    private static final int PORT = 8866;
+    private static final boolean OPEN_SSL = true;
+
+    private static final String KEY_STORE_PATH = System.getProperty("user.home") + File.separator + "liuyehcf_server_ks";
+    private static final String STORE_TYPE = "PKCS12";
+    private static final String PROTOCOL = "TLS";
+    private static final String KEY_STORE_PASSWORD = "123456";
+    private static final String KEY_PASSWORD = KEY_STORE_PASSWORD;
+
     public static void main(String[] args) throws Exception {
         final EventLoopGroup boss = new NioEventLoopGroup();
         final EventLoopGroup worker = new NioEventLoopGroup();
@@ -51,9 +73,13 @@ public class Server {
                 .channel(NioServerSocketChannel.class)
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
-                    protected void initChannel(SocketChannel socketChannel) {
+                    protected void initChannel(SocketChannel socketChannel) throws Exception {
                         ChannelPipeline pipeline = socketChannel.pipeline();
                         pipeline.addLast(new IdleStateHandler(0, 0, 60, TimeUnit.SECONDS));
+                        if (OPEN_SSL) {
+                            pipeline.addLast(createSslHandlerUsingRawApi());
+//                            pipeline.addLast(createSslHandlerUsingNetty(pipeline));
+                        }
                         pipeline.addLast(new HttpServerCodec());
                         pipeline.addLast(new HttpObjectAggregator(65535));
                         pipeline.addLast(new ChunkedWriteHandler());
@@ -67,10 +93,45 @@ public class Server {
                 .childOption(ChannelOption.TCP_NODELAY, true)
                 .childOption(ChannelOption.SO_REUSEADDR, true);
 
-        final ChannelFuture future = bootstrap.bind(8866).sync();
+        final ChannelFuture future = bootstrap.bind(PORT).sync();
         System.out.println("server start ...... ");
 
         future.channel().closeFuture().sync();
+    }
+
+    private static ChannelHandler createSslHandlerUsingRawApi() throws Exception {
+        // keyStore
+        KeyStore keyStore = KeyStore.getInstance(STORE_TYPE);
+        keyStore.load(new FileInputStream(KEY_STORE_PATH), KEY_STORE_PASSWORD.toCharArray());
+
+        // keyManagerFactory
+        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        keyManagerFactory.init(keyStore, KEY_PASSWORD.toCharArray());
+
+        // trustManagerFactory
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trustManagerFactory.init(keyStore);
+
+        // sslContext
+        SSLContext sslContext = SSLContext.getInstance(PROTOCOL);
+        sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
+
+        SSLEngine sslEngine = sslContext.createSSLEngine();
+        sslEngine.setUseClientMode(false);
+        return new SslHandler(sslEngine);
+    }
+
+    private static ChannelHandler createSslHandlerUsingNetty(ChannelPipeline pipeline) throws Exception {
+        // keyStore
+        KeyStore keyStore = KeyStore.getInstance(STORE_TYPE);
+        keyStore.load(new FileInputStream(KEY_STORE_PATH), KEY_STORE_PASSWORD.toCharArray());
+
+        // keyManagerFactory
+        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        keyManagerFactory.init(keyStore, KEY_PASSWORD.toCharArray());
+
+        return SslContextBuilder.forServer(keyManagerFactory).build()
+                .newHandler(pipeline.channel().alloc(), HOST, PORT);
     }
 
     private static final class ServerHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
@@ -123,11 +184,20 @@ import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.websocketx.*;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketClientCompressionHandler;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.TrustManagerFactory;
+import java.io.File;
+import java.io.FileInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.security.KeyStore;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -135,6 +205,17 @@ import java.util.concurrent.TimeUnit;
  * @date 2018/11/3
  */
 public class Client {
+
+    private static final String HOST = "localhost";
+    private static final int PORT = 8866;
+    private static final boolean OPEN_SSL = true;
+
+    private static final String KEY_STORE_PATH = System.getProperty("user.home") + File.separator + "liuyehcf_client_ks";
+    private static final String STORE_TYPE = "PKCS12";
+    private static final String PROTOCOL = "TLS";
+    private static final String KEY_STORE_PASSWORD = "345678";
+    private static final String KEY_PASSWORD = KEY_STORE_PASSWORD;
+
     public static void main(String[] args) throws Exception {
         final URI webSocketURI = getUri();
 
@@ -147,8 +228,13 @@ public class Client {
         boot.group(group)
                 .channel(NioSocketChannel.class)
                 .handler(new ChannelInitializer<SocketChannel>() {
-                    protected void initChannel(SocketChannel socketChannel) {
+                    @Override
+                    protected void initChannel(SocketChannel socketChannel) throws Exception {
                         ChannelPipeline pipeline = socketChannel.pipeline();
+                        if (OPEN_SSL) {
+                            pipeline.addLast(createSslHandlerUsingRawApi());
+//                            pipeline.addLast(createSslHandlerUsingNetty(pipeline));
+                        }
                         pipeline.addLast(new HttpClientCodec());
                         pipeline.addLast(new HttpObjectAggregator(65535));
                         pipeline.addLast(new ChunkedWriteHandler());
@@ -172,10 +258,49 @@ public class Client {
 
     private static URI getUri() {
         try {
-            return new URI("ws://localhost:8866");
+            return new URI(String.format("%s://%s:%d", OPEN_SSL ? "wss" : "ws", HOST, PORT));
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static ChannelHandler createSslHandlerUsingRawApi() throws Exception {
+        // keyStore
+        KeyStore keyStore = KeyStore.getInstance(STORE_TYPE);
+        keyStore.load(new FileInputStream(KEY_STORE_PATH), KEY_STORE_PASSWORD.toCharArray());
+
+        // keyManagerFactory
+        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        keyManagerFactory.init(keyStore, KEY_PASSWORD.toCharArray());
+
+        // trustManagerFactory
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trustManagerFactory.init(keyStore);
+
+        // sslContext
+        SSLContext sslContext = SSLContext.getInstance(PROTOCOL);
+        sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
+
+        SSLEngine sslEngine = sslContext.createSSLEngine();
+        sslEngine.setUseClientMode(true);
+        return new SslHandler(sslEngine);
+    }
+
+    private static ChannelHandler createSslHandlerUsingNetty(ChannelPipeline pipeline) throws Exception {
+        // keyStore
+        KeyStore keyStore = KeyStore.getInstance(STORE_TYPE);
+        keyStore.load(new FileInputStream(KEY_STORE_PATH), KEY_STORE_PASSWORD.toCharArray());
+
+        // keyManagerFactory
+        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        keyManagerFactory.init(keyStore, KEY_PASSWORD.toCharArray());
+
+        // trustManagerFactory
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trustManagerFactory.init(keyStore);
+
+        return SslContextBuilder.forClient().trustManager(trustManagerFactory).build()
+                .newHandler(pipeline.channel().alloc(), HOST, PORT);
     }
 
     private static final class ClientHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
@@ -554,16 +679,7 @@ __异常的时候，其handler如下__
 * WebSocketClientCompressionHandler.INSTANCE
 * WebSocketServerCompressionHandler
 
-# 3 todo
-
-服务端&客户端 ssl/tsl
-
-```Java
-final SslContext sslCtx = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build();
-pipeline.addLast(sslCtx.newHandler(pipeline.channel().alloc(), uri.getHost(), uri.getPort()));
-```
-
-# 4 参考
+# 3 参考
 
 * [Java SSL 证书细节](https://www.jianshu.com/p/5fcc6a219c8b)
 * [JDK自带工具keytool生成ssl证书](https://www.cnblogs.com/zhangzb/p/5200418.html)
