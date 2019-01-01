@@ -248,7 +248,12 @@ __Spring-AOP支持多种切点表达式__
 1. __`@within`__：Limits matching to join points within types that have the given annotation (the execution of methods declared in types with the given annotation when using Spring AOP).
 1. __`@annotation`__：Limits matching to join points where the subject of the join point (the method being executed in Spring AOP) has the given annotation.
 
-# 6 参考
+# 6 todo
+
+1. Cglib NPE问题
+
+# 7 参考
 
 * [Introduction to Pointcut Expressions in Spring](https://www.baeldung.com/spring-aop-pointcut-tutorial)
 * [Declaring an Aspect](https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#aop)
+* [final方法引起Cglib-NPE问题](https://www.cnblogs.com/luguo3000/p/3951144.html)
