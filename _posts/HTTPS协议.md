@@ -30,7 +30,7 @@ HTTPS很好的解决了HTTP的三个缺点（被监听、被篡改、被伪装�
 
 # 3 HTTPS连接过程
 
-```sequence
+```plantuml
 client->server: 发送客户端支持的加密协议以及版本，例如SSL，TLS
 server->server: 服务器端从中筛选合适的加密协议
 server->client: 服务器端返回证书，证书中有公钥

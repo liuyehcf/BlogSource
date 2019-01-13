@@ -135,7 +135,7 @@ class VolatileExample {
 1. 根据volatile规则：2 happens-before 3
 1. 根据happens-before的传递性规则，1 happens-before 4
 
-```sequence
+```plantuml
 Note over 线程A:1：线程A修改共享变量
 Note over 线程A:2：线程A写volatile变量
 Note over 线程B:3：线程B读同一个volatile变量

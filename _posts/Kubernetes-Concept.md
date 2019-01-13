@@ -255,7 +255,7 @@ __原理__：Kubernetes提供了一个准入控制器（`PodPreset`）。在创�
 
 # 6 Sequence
 
-```sequence
+```plantuml
 participant Master
 participant NodeA
 participant FlannelNetwork

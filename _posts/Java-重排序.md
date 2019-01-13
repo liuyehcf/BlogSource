@@ -46,7 +46,7 @@ if (flag)//1
 
 * 可能的执行时序如下
 
-```sequence
+```plantuml
 Note over 线程B:temp = a * a;
 Note over 线程B:if (flag)
 Note over 线程B:int i = temp;
@@ -155,7 +155,7 @@ class ReorderExample {
 
 当操作1和操作2重排序时，可能产生如下的执行时序
 
-```sequence
+```plantuml
 Note over 线程A:flag = true;
 Note over 线程B:if (flag)
 Note over 线程B:int i = a * a;
@@ -167,7 +167,7 @@ Note over 线程A:a = 1;
 
 当操作3和操作4重排序时(借助这个重排序，顺便说明控制依赖性)，可能产生如下的执行时序
 
-```sequence
+```plantuml
 Note over 线程B:temp = a * a;
 Note over 线程A:a = 1;
 Note over 线程A:flag = true;

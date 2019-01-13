@@ -307,7 +307,7 @@ ApplicationContext
 
 我们以ClassPathXmlApplicationContext为起点，进行分析。先给出整个初始化流程的时序图
 
-```sequence
+```plantuml
 participant ClassPathXmlApplicationContext
 participant AbstractXmlApplicationContext
 participant AbstractRefreshableConfigApplicationContext

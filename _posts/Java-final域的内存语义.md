@@ -64,7 +64,7 @@ public class FinalExample {
 
 假设线程B读对象引用与读对象成员之间没有重排序，那么下图就是一种可能的执行顺序
 
-```sequence
+```plantuml
 Note over 线程A:构造函数开始执行
 Note over 线程A:写final域：\nj = 2
 Note over 线程A:StoreStore屏障
@@ -100,7 +100,7 @@ reader()方法包含3个操作
 
 * __注意__，编译器是不允许这种重排的，但是某些处理器允许
 
-```sequence
+```plantuml
 Note over 线程A:构造函数开始执行
 Note over 线程B:读对象的普通域i
 Note over 线程A:写普通域：\ni = 1
@@ -153,7 +153,7 @@ public class FinalReferenceExample {
 
 假设首先线程A执行writerOne()方法，执行完后线程B执行writerTwo()方法，执行完后线程C执行reader()方法，下图是一种可能的执行时序
 
-```sequence
+```plantuml
 participant 线程A
 participant 线程B
 participant 线程C
@@ -206,7 +206,7 @@ public class FinalReferenceEscapeExample {
 
 假设一个线程A执行writer()方法，另一个线程B执行reader()方法，下图是一种可能的执行时序
 
-```sequence
+```plantuml
 Note over 线程A:构造函数开始执行
 Note over 线程A:obj = this;\n2：被构造对象的引用在此"逸出"
 Note over 线程B:if(obj != null)\n3：读取不为null的对象引用a

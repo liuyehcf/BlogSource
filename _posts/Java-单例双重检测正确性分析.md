@@ -105,7 +105,7 @@ __双重检查锁定看起来似乎很完美，但这是一个错误的优化！
 
 为了更好地理解intra-thread semantics，请看如下示意图
 
-```sequence
+```plantuml
 Note over 线程A:1：分配对象的内存空间
 Note over 线程A:3：设置instance指向内存空间
 Note over 线程A:2：初始化对象
@@ -114,7 +114,7 @@ Note over 线程A:4：初次访问对象
 
 * 虽然2和3重排序了，但是只要保证2排在4前面执行，单线程内的执行结果就不会被改变
 
-```sequence
+```plantuml
 Note over 线程A:1：分配对象的内存空间
 Note over 线程A:3：设置instance指向内存空间
 Note over 线程B:判断instance是否为null
@@ -221,7 +221,7 @@ __第1阶段：通过在Class对象上同步(即获取Class对象的初始化锁
 
 __该阶段的时序示意图如下__
 
-```sequence
+```plantuml
 participant 线程A
 participant 线程B
 participant 线程C
@@ -245,7 +245,7 @@ __第2阶段：线程A执行类的初始化，同时线程B在初始化锁对应
 
 __该阶段的时序示意图如下__
 
-```sequence
+```plantuml
 participant 线程A
 participant 线程B
 participant 线程C
@@ -271,7 +271,7 @@ __第3阶段：线程A设置state = initialized，然后唤醒在condition中等
 
 __该阶段的时序示意图如下__
 
-```sequence
+```plantuml
 participant 线程A
 participant 线程B
 participant 线程C
@@ -297,7 +297,7 @@ __第4阶段：线程B结束类的初始化处理__
 
 __该阶段的时序示意图如下__
 
-```sequence
+```plantuml
 participant 线程A
 participant 线程B
 participant 线程C
@@ -326,7 +326,7 @@ __第5阶段：线程C执行类的初始化的处理__
 
 __该阶段的时序示意图如下__
 
-```sequence
+```plantuml
 participant 线程A
 participant 线程B
 participant 线程C
@@ -350,7 +350,7 @@ Note over 线程C:C4：线程C的类初始化处理过程完成
 
 __整合上述5个阶段的时序图如下__
 
-```sequence
+```plantuml
 participant 线程A
 participant 线程B
 participant 线程C

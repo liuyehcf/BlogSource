@@ -41,7 +41,7 @@ class MonitorExample{
     * 根据监视器规则，3 happens-before 4
     * 根据happens-before的传递性，2 happens-before 5
 
-```sequence
+```plantuml
 Note over 线程A:1：线程A获取锁
 Note over 线程A:2：线程A执行临界区中的代码
 Note over 线程A:3：线程A释放锁

@@ -695,7 +695,7 @@ static jclass jvm_define_class_common(JNIEnv *env, const char *name,
 
 我们知道Class#forName与ClassLoader.loadClass()的差异在于Class#forName会在加载类后执行后续的验证解析初始化动作，而ClassLoader.loadClass()仅仅加载类。因此，这里__仅针对__Class#forName于ClassLoader.loadClass()的类加载过程进行分析
 
-```sequence
+```plantuml
 participant Java Code
 participant JVM
 Java Code-->Java Code:Class@forName(...)
