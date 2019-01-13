@@ -126,6 +126,7 @@ menu:
 | [theme-yilia](https://github.com/litten/hexo-theme-yilia) | hexo主题 |
 | [theme-next](https://github.com/theme-next/hexo-theme-next) | hexo主题 |
 | [hexo-filter-sequence](https://github.com/bubkoo/hexo-filter-sequence) | hexo插件-序列图 |
+| [hexo-filter-plantuml](https://github.com/wafer-li/hexo-filter-plantuml) | hexo插件-高级时序图 |
 | [hexo-filter-flowchart](https://github.com/bubkoo/hexo-filter-flowchart) | hexo插件-流程图 |
 | [hexo-toc](https://github.com/bubkoo/hexo-toc) | hexo插件-目录 |
 | [hexo-wordcount](https://github.com/willin/hexo-wordcount) | hexo插件-字数统计 |
@@ -194,3 +195,5 @@ code {
 * [icon库](https://fontawesome.com/icons?d=gallery)
 * [Leancloud访客统计插件重大安全漏洞修复指南](https://leaferx.online/2018/02/11/lc-security/)
 * [hexo的next主题个性化教程:打造炫酷网站](http://shenzekun.cn/hexo%E7%9A%84next%E4%B8%BB%E9%A2%98%E4%B8%AA%E6%80%A7%E5%8C%96%E9%85%8D%E7%BD%AE%E6%95%99%E7%A8%8B.html)
+* [hexo-filter-plantuml](https://github.com/wafer-li/hexo-filter-plantuml)
+* [时序图](http://plantuml.com/sequence-diagram)
