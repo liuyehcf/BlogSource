@@ -87,3 +87,9 @@ ____
 ```
 
 -->
+
+# 4 查询在一个表，但是不在另一个表中的数据
+
+```sql
+SELECT A.ID FROM A LEFT JOIN B ON A.ID WHERE B.ID IS NULL
+```

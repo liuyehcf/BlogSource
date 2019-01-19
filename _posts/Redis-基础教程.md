@@ -463,3 +463,4 @@ __分区类型：__Redis有两种类型分区。假设有4个Redis实例R0，R1�
 # 5 参考
 
 * [Redis 教程](http://www.runoob.com/redis/redis-intro.html)
+* [键空间通知（keyspace notification）](http://redisdoc.com/topic/notification.html)

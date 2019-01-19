@@ -285,9 +285,14 @@ public class JschSshDemo extends BaseDemo {
         field.set(null, TimeUnit.SECONDS.toMillis(config.getIdleIntervalFrontend()));
 ```
 
-# 4 参考
+# 4 修复显示异常的问题
+
+```sh
+stty cols 190 && stty rows 21 && export TERM=xterm-256color && bash
+```
+
+# 5 参考
 
 * [mina-sshd](https://github.com/apache/mina-sshd)
 * [jnativehook](https://github.com/kwhat/jnativehook)
 * [Java 反射修改 final 属性值](https://blog.csdn.net/tabactivity/article/details/50726353)
-
