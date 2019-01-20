@@ -155,9 +155,9 @@ Akka会透明地处理错误，由于`Strategy`是如何构建`Actor System`的�
 
 __重启的步骤__
 
-1. 暂停当前`Actor`以及所有的`Subordinate Actor`，暂停意味着停止处理消息
-1. 触发旧实例的`preRestart`钩子方法，该方法默认会发送终结信号给所有的`Subordinate Actor`，并触发`postStop`钩子方法
-1. 在`preRestart`钩子方法中等待所有`要求被终结`的`Subordinate Actor`终结完毕
+1. 暂停当前`Actor`、递归暂停所有的`Subordinate Actor`，暂停意味着停止处理消息
+1. 触发旧实例的`preRestart`钩子方法，该方法默认会发送`terminatation request`给所有的`Subordinate Actor`（可以被覆盖，也就是说具体会给哪些`Subordinate Actor`发送`terminatation request`是可以定制的），并触发`postStop`钩子方法
+1. 在`preRestart`钩子方法中等待所有`要求被终结`的`Subordinate Actor`终结完毕（正如第二条所说，具体会给哪些`Subordinate Actor`发送`terminatation request`是可以定制的，因此这里用的是`要求被终结`的`Subordinate Actor`）
 1. 创建新的`Actor`实例，即触发工厂方法创建实例
 1. 触发新实例的`postRestart`钩子方法
 1. 对第三步中的所有`未终结`的`Subordinate Actor`发送重启信号，重启的步骤重复步骤2-5
@@ -169,7 +169,7 @@ __重启的步骤__
 
 `Lifecycle Monitoring`是通过发送终结消息（Terminated message）来实现的，该消息默认的处理行为就是抛出`DeathPactException`异常。`ActorContext.watch(targetActorRef)`方法开始监控，`ActorContext.unwatch(targetActorRef)`方法结束监控
 
-值得一提的是，`Lifecycle Monitoring`中一个重要的属性就是：即便某个`Actor A`早已终结，后来`Actor B`监控了`Actor A`，`Actor B`仍然会收到终结信号
+值得一提的是，`Lifecycle Monitoring`中一个重要的属性就是：即便某个`Actor A`早已终结，后来`Actor B`监控了`Actor A`，`Actor B`仍然会收到`Terminated message`
 
 ### 1.4.4 BackoffSupervisor pattern
 
@@ -221,6 +221,18 @@ system.actorOf(supervisorProps, "echoSupervisor");
 
 通常来说，在`OneForOneStrategy`模式下，终结一个`Subordinate Actor`不会影响到其他`Subordinate Actor`。但是，如果`Terminated message`没有被`Supersivor Actor`处理，那么`Supersivor Actor`就会抛出`DeathPactException`，并重启，于是默认的`preRestart`方法会终结所有`Subordinate Actor`
 
-## 1.5 参考
+## 1.5 Actor References, Paths and Addresses
+
+### 1.5.1 什么是Actor Reference
+
+### 1.5.2 什么是Actor Path
+
+### 1.5.3 如何获取Actor References
+
+### 1.5.4 Actor Reference与Path的等价性
+
+### 1.5.5 重用Actor Path
+
+## 1.6 参考
 
 * [General Concepts](https://doc.akka.io/docs/akka/current/general/index.html)
