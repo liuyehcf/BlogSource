@@ -82,6 +82,3 @@ __各大互联网公司，百度、淘宝、支付宝、知乎都使用HTTPS协�
 * [详解HTTPS是如何确保安全性的？](http://www.jianshu.com/p/544c0a2d47f4)
 * [数字证书原理](https://www.cnblogs.com/JeffreySun/archive/2010/06/24/1627247.html)
 
- <!--以下这句不加，sequence不能识别，呵呵了-->
-```flow
-```
