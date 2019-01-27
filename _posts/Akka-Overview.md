@@ -420,13 +420,13 @@ __`leader`__：在`cluster`中扮演者领导者的__单个`node`__。管理者`
 
 `leader`的作用是将节点加入或移除集群，将刚加入集群的节点标记为`up`状态，或者将已存在的节点标记为`removed`状态。同时，`leader`也拥有一定的特权，根据`Failure Detector`的结果，它可以将一个处于`unreachable`的节点标记为`down`状态
 
-#### Seed Nodes
+#### 2.1.2.4 Seed Nodes
 
 `Seed Nodes`是为新加入集群的节点所配置的接触点。当一个节点需要加入集群时，它会向所有`Seed Node`发送消息，并向最先回复的`Seed Node`发送`Join Command`消息
 
 `Seed Node`的配置不会影响集群的运行时，它们只与加入集群的新节点相关，`Seed Node`帮助新节点找到发送`Join Command`消息的节点。新节点可以将该消息发送给集群中的任意节点，而不仅仅是`Seed Node`。换言之，集群中的任意节点都可以是`Seed Node`
 
-#### 2.1.2.4 Membership Lifecycle
+#### 2.1.2.5 Membership Lifecycle
 
 一个节点从`joining`状态开始生命周期，当集群中的所有节点都观测到该节点加入后，`leader`就会将该节点标记为`up`
 
@@ -467,7 +467,7 @@ __leader actions__
 
 ## 2.2 Cluster Usage
 
-### When and where to use Akka Cluster
+### 2.2.1 When and where to use Akka Cluster
 
 微服务架构有着诸多的优点，微服务的独立性允许多个更小、更专业的团队能够频繁地提供新功能，能够快速响应业务需求
 
@@ -477,7 +477,7 @@ __在微服务架构中，我们必须考虑`服务间`以及`服务内`这两�
 
 但是，对于一个微服务的不同节点之间的通信（一个微服务通常是一个集群，部署在多台机器上）对于耦合性的要求就很低，因为它们的代码是相同的，且是同时部署的
 
-### Joining to Seed Nodes
+### 2.2.2 Joining to Seed Nodes
 
 我们可以手动配置`Seed Node`或自动配置`Seed Node`。在完成连接过程之后，`Seed Node`与其他节点并无差别。此外，集群中的任意节点都可以作为`Seed Node`（即便配置文件中的`Seed Node`列表不包含该节点，只要该节点正常加入集群后，该节点就可以作为`Seed Node`）
 
@@ -500,7 +500,6 @@ akka.cluster.seed-nodes = [
 
 当`Seed Node`的数量超过1时，且集群正常启动后，停止第一个`Seed Node`是没有关系的，如果这个`Seed Node`再次加入，那么它首先会尝试连接其他的`Seed Node`。注意，如果我们将所有的`Seed Node`全部停止，然后重启所有的`Seed Node`，那么就会创建一个全新的集群，而不是重新加入之前的集群，于是之前的集群变成了一个孤岛（这也是为什么需要特殊处理第一个`Seed Node`的原因）
 
-
 借助[Cluster Bootstrap](https://developer.lightbend.com/docs/akka-management/current/bootstrap/index.html)，我们无需手动配置`Seed Node`，便可以自动化地创建`Seed Node`
 
 此外，我们还可以通过编程的方式，指定`Seed Node`
@@ -511,7 +510,7 @@ List<Address> list = new LinkedList<>(); //replace this with your method to dyna
 cluster.joinSeedNodes(list);
 ```
 
-### Downing
+### 2.2.3 Downing
 
 当一个节点被`Failure Detector`认为是`unreachable`时，`Leader`便无法正常工作（因为此时集群处于非收敛状态），例如，无法将一个新加入集群的节点标记为`up`状态。该`unreachable`节点必须重新变得`reachable`或者被标记为`down`状态后，集群才会进入收敛状态，`Leader`才能进行正常工作。节点可以以手动或者自动的方式被标记为`down`状态。默认以手动方式，利用`JMX`或`HTTP`。此外，还可以以编程的方式将节点标记为`down`，即`Cluster.get(system).down(address)`
 
@@ -519,7 +518,7 @@ cluster.joinSeedNodes(list);
 
 此外，`Akka`还提供了一种自动将`unreachable`节点标记为`down`的机制，这意味着`Leader`会自动将超过配置时间的`unreachable`节点标记为`down`。__`Akka`强烈建议`不要使用该特性`__：该`auto-down`特性不应该在生产环境使用，因为当出现网络抖动时（或者长时间的Full GC，或者其他原因），集群的两部分变得相互不可见，于是会将对方移除集群，随后形成了两个完全独立的集群
 
-### Leaving
+### 2.2.4 Leaving
 
 节点离开集群的方式有两种
 
@@ -531,7 +530,7 @@ final Cluster cluster = Cluster.get(system);
 cluster.leave(cluster.selfAddress());
 ```
 
-### WeaklyUp Members
+### 2.2.5 WeaklyUp Members
 
 当集群中的某节点变得`unreachable`后，集群无法收敛，`Leader`无法正常工作，在这种情况下，我们仍然想让新节点加入到集群中来
 
@@ -539,7 +538,7 @@ cluster.leave(cluster.selfAddress());
 
 我们可以订阅`MemberWeaklyUp`事件来感知这一状态，但是由于这一事件是发生在集群非收敛状态下的，即节点并不一定能够感知到这个状态（网络问题或其他原因），因此不要基于这个状态来作出某些决策
 
-### Subscribe to Cluster Events
+### 2.2.6 Subscribe to Cluster Events
 
 我们可以通过`Cluster.get(system).subscribe`来订阅某些消息
 
