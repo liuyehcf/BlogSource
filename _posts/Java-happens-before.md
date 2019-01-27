@@ -69,7 +69,18 @@ JSR-133使用happens-before的概念来__指定两个操作之间的执行顺序
 * as-if-serial语义保证单线程内程序的执行结果不被改变，happens-before关系保证正确同步的多线程程序的结果不被改变
 * as-if-serial语义给编写单线程程序的程序员创造了一个幻境：单线程程序是按照程序的顺序来执行的。happens-before关系给编写正确同步的多线程程序的程序员创造了一个幻境：正确同步的多线程程序是按happens-before指定的顺序来执行的
 
-# 4 参考
+# 4 happens-before规则
+
+1. `程序次序规则(Program Order Rule)`：在一个线程内，按照程序代码顺序，书写在前面的操作先行发生于书写在后面的操作，准确的说，应该是控制流顺序而不是程序代码顺序
+1. `管程锁定规则(Monitor Lock Rule)`：一个unlock操作线性发生于后面对同一个锁的lock操作
+1. `volatile变量规则(Volatile Variable Rule)`：对一个volatile变量的写操作先行发生于后面这个变量的读操作，后面指时间上的先后顺序
+1. `线程启动规则(Thread Start Rule)`：Thread对象的start()方法先行发生于此线程的每一个动作
+1. `线程终止规则(Thread Termination Rule)`：线程中所有操作都先行发生于对此线程的终止检测，我们可以通过Thread.join()方法结束，Thread.isAlive()的返回值等手段检测到线程已经终止执行
+1. `线程中断规则(Thread Interruption Rule)`：对线程interrupt()方法调用先行发生于被中断线程的代码检测到中断事件的发生，可以通过Thread.interrupted()方法检测到是否有中断发生
+1. `对象终结规则(Finalizer Rule)`：一个对象的初始化完成(构造函数执行结束)先行发生于它的finalize()方法的开始
+1. `传递性(Transitivity)`：如果操作A先行发生于操作B，操作B先行发生于操作C，那就可以得出操作A先行发生于操作C的结论
+
+# 5 参考
 
 * 《Java并发编程的艺术》
 
