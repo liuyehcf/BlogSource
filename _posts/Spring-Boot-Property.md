@@ -37,7 +37,49 @@ __阅读更多__
 1. `@PropertySource`注解
 1. 默认属性（`SpringApplication.setDefaultProperties`）
 
-# 2 参考
+# 2 Spring-Boot启动时加载Property的位置
+
+`SpringApplication.run`方法
+
+```Java
+    public ConfigurableApplicationContext run(String... args) {
+    StopWatch stopWatch = new StopWatch();
+    stopWatch.start();
+    ConfigurableApplicationContext context = null;
+    FailureAnalyzers analyzers = null;
+    configureHeadlessProperty();
+    SpringApplicationRunListeners listeners = getRunListeners(args);
+    listeners.starting();
+    try {
+      ApplicationArguments applicationArguments = new DefaultApplicationArguments(
+          args);
+
+            // 这里加载了属性值
+      ConfigurableEnvironment environment = prepareEnvironment(listeners,
+          applicationArguments);
+      Banner printedBanner = printBanner(environment);
+      context = createApplicationContext();
+      analyzers = new FailureAnalyzers(context);
+      prepareContext(context, environment, listeners, applicationArguments,
+          printedBanner);
+      refreshContext(context);
+      afterRefresh(context, applicationArguments);
+      listeners.finished(context, null);
+      stopWatch.stop();
+      if (this.logStartupInfo) {
+        new StartupInfoLogger(this.mainApplicationClass)
+            .logStarted(getApplicationLog(), stopWatch);
+      }
+      return context;
+    }
+    catch (Throwable ex) {
+      handleRunFailure(context, listeners, analyzers, ex);
+      throw new IllegalStateException(ex);
+    }
+  }
+```
+
+# 3 参考
 
 [Spring Boot Externalized Configuration](https://docs.spring.io/spring-boot/docs/2.1.1.RELEASE/reference/htmlsingle/#boot-features-external-config)
 

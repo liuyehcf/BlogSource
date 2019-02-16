@@ -11,29 +11,31 @@ __阅读更多__
 
 <!--more-->
 
-# 1 Kubernetes Components
+# 1 Overview
+
+## 1.1 Kubernetes Components
 
 [Kubernetes Components](https://kubernetes.io/docs/concepts/overview/components/)
 
-## 1.1 Master Components
+### 1.1.1 Master Components
 
 `Master Component`构成了集群的控制面板。`Master Component`是整个集群的决策者，检测并响应集群消息
 
 `Master Component`可以运行在集群中的任意一台机器上，不要在`Master`机器上运行`User Container`
 
-### 1.1.1 kube-apiserver
+#### 1.1.1.1 kube-apiserver
 
 `kube-apiserver`是整个控制面板的最前端，将`Master Component`通过`Kubernetes API`露出，它被设计成易于水平扩展
 
-### 1.1.2 etcd
+#### 1.1.1.2 etcd
 
 `etcd`是高一致性、高可用的`key-value`存储，用于存储`Kubernetes`所有的集群数据
 
-### 1.1.3 kube-shceduler
+#### 1.1.1.3 kube-shceduler
 
 `kube-shceduler`会观测新创建且尚未被分配的`Pod`，并为其选择一个`Node`来运行
 
-### 1.1.4 kube-controller-manager
+#### 1.1.1.4 kube-controller-manager
 
 `kube-controller-manager`用于在`Master`上运行`Controller`。逻辑上讲，每个`Controller`都是一个独立的进程，但是为了减小实现复杂度，这些被编译进了一个二进制中，运行在同一个进程中
 
@@ -44,13 +46,13 @@ __阅读更多__
 1. `Endpoints Controller`: 
 1. `Service Account & Token Controller`: 为新`Namespace`创建默认的账号以及API访问的`token`
 
-### 1.1.5 cloud-controller-manager
+#### 1.1.1.5 cloud-controller-manager
 
-## 1.2 Node
+### 1.1.2 Node
 
 `Node component`运行在每个`Node`之上，保持`Pod`的运行，并提供`Kubernetes`运行环境
 
-### 1.2.1 kubelet
+#### 1.1.2.1 kubelet
 
 `kubelet`是运行在集群的每个`Node`上的代理。它确保`Container`在`Pod`中正常运行
 
@@ -58,11 +60,11 @@ __阅读更多__
 
 `kubelet`不会管理不由`Kubernetes`创建的`Container`
 
-### 1.2.2 kube-proxy
+#### 1.1.2.2 kube-proxy
 
 `kube-proxy`通过维护网络规则并转发网络数据包，来支持`Kubernetes Service`的抽象机制
 
-### 1.2.3 Container Runtime
+#### 1.1.2.3 Container Runtime
 
 `Kubernetes`支持多种运行时
 
@@ -70,15 +72,15 @@ __阅读更多__
 1. `rkt`
 1. `runc`
 
-## 1.3 Addons
+### 1.1.3 Addons
 
 ???
 
-## 1.4 参考
+### 1.1.4 参考
 
 * [Kubernetes Components](https://kubernetes.io/docs/concepts/overview/components/)
 
-# 2 Kubernetes Object
+## 1.2 Kubernetes Object
 
 `Kubernetes Object`作为持久化的实体，存在于`Kubernetes`系统中，`Kubernetes`用这些实体来表示集群的状态，具体来说
 
@@ -106,11 +108,11 @@ __注意，一个`.yaml`文件中，必须包含如下字段__
   * `UID`
   * `namespace`
 
-## 2.1 Name
+### 1.2.1 Name
 
 所有的`Kubernetes Object`都用一个`Name`和一个`UID`精确确定
 
-### 2.1.1 Nmaes
+#### 1.2.1.1 Nmaes
 
 `Names`是一种用户提供的字符串，表示了一个资源的路径，例如`/api/v1/pods/some-name`
 
@@ -118,15 +120,15 @@ __注意，一个`.yaml`文件中，必须包含如下字段__
 
 通常，`Name`最大不超过253个字符，只允许包含小写的字母以及`-`和`.`，具体的类型可能还有更加严格的限制
 
-### 2.1.2 UIDs
+#### 1.2.1.2 UIDs
 
 `UID`是`Kubernetes`系统创建的用于唯一标志`Kubernetes Object`的字符串。每个`Kubernetes Object`在整个生命周期中都会有一个唯一的`UID`，将`Kubernetes Object`先删除再重新创建，会得到一个新的`UID`
 
-## 2.2 Namespaces
+### 1.2.2 Namespaces
 
 `Kubernetes`支持同一个物理集群支持多个虚拟集群，这些虚拟集群被称为`Namespaces`。如果一个`Kubernetes`集群仅有数十个用户，那么我们完全不必考虑使用`Namespaces`
 
-### 2.2.1 When to use Multiple Namespaces
+#### 1.2.2.1 When to use Multiple Namespaces
 
 `Namespaces`用于为使用同一集群的多个不同的小组、项目提供一定程度的隔离
 
@@ -134,7 +136,7 @@ __注意，一个`.yaml`文件中，必须包含如下字段__
 
 如果仅仅为了隔离资源，例如同一个软件的不同版本，可以使用`Label`而不需要使用`Namespaces`
 
-### 2.2.2 Working with Namespaces
+#### 1.2.2.2 Working with Namespaces
 
 可以通过如下命令查看系统中的`Namespaces`
 
@@ -158,11 +160,11 @@ kubectl config set-context $(kubectl config current-context) --namespace=<insert
 kubectl config view | grep namespace:
 ```
 
-### 2.2.3 Namespaces and DNS（未完成）
+#### 1.2.2.3 Namespaces and DNS（未完成）
 
 当我们创建一个`Service`，它会创建一个相关的`DNS entry`，其格式为`<service-name>.<namespace-name>.svc.cluster.local`
 
-### 2.2.4 Not All Objects are in a Namespace
+#### 1.2.2.4 Not All Objects are in a Namespace
 
 大部分`Kubernetes`资源位于一个`Namespace`中。某些底层次的资源，例如`Node`以及`PersistentVolume`不属于任何`Namespace`
 
@@ -176,17 +178,17 @@ $ kubectl api-resources --namespaced=true
 $ kubectl api-resources --namespaced=false
 ```
 
-## 2.3 Labels and Selectors
+### 1.2.3 Labels and Selectors
 
 `Labels`是一些依附在`Kubernetes Object`上的键值对。`Lebels`用于为一些对用户有特殊意义的`Kubernetes Object`打标，这些标在`Kubernetes`内核中并无其他含义。`Label`用于组织和选择`Kubernetes Object`。我们可以再任何时刻为`Kubernetes Object`打上`Label`。对于一个`Kubernetes Object`来说，`key`必须是唯一的
 
-### 2.3.1 Motivation
+#### 1.2.3.1 Motivation
 
 `Lebal`允许用户以一种松耦合的方式将组织结构与`Kubernetes Object`关联起来，用户不必自己存储这些映射关系
 
 服务部署以及一些批处理流水线通常是一个多维度的实体，通常需要交叉式的管理，这会破坏层次结构的严格封装，通常这些封装是由基础设施而非用户完成的
 
-### 2.3.2 Label selectors
+#### 1.2.3.2 Label selectors
 
 与`Name`与`UID`不同，`Label`并不需要保证唯一性。而且，在通常情况下，我们期望多个`Kubernetes Object`共享同一个`Label`
 
@@ -235,7 +237,7 @@ selector:
 * `matchExpressions`是一系列的`selector requirement`
 * __所有的条件会以逻辑与的方式组合（包括`matchLabels`和`matchExpressions`）__
 
-### 2.3.3 API
+#### 1.2.3.3 API
 
 ```sh
 kubectl get pods -l environment=production,tier=frontend
@@ -247,11 +249,11 @@ kubectl get pods -l 'environment in (production, qa)'
 kubectl get pods -l 'environment,environment notin (frontend)'
 ```
 
-## 2.4 Annotations
+### 1.2.4 Annotations
 
 我们可以通过`Label`以及`Annotation`为`Kubernetes Object`添加一些元数据。`Label`通常被用于`Kubernetes Object`的匹配，而`Annotation`通常用于为`Kubernetes Object`添加一些配置，这些配置可以包含一些`Label`不允许的字符
 
-## 2.5 Field Selectors
+### 1.2.5 Field Selectors
 
 `Field Selector`允许我们基于`Kubernetes Object`的字段匹配来过滤`Kubernetes Object`，支持的匹配操作包括：`=`、`==`、`!=`，其中`=`与`==`都表示相等型比较
 
@@ -260,20 +262,20 @@ kubectl get pods --field-selector status.phase=Running
 kubectl get statefulsets,services --field-selector metadata.namespace!=default
 ```
 
-## 2.6 Recommended Labels
+### 1.2.6 Recommended Labels
 
-## 2.7 参考
+### 1.2.7 参考
 
 * [Understanding Kubernetes Objects](https://kubernetes.io/docs/concepts/overview/working-with-objects/kubernetes-objects/)
 * [Imperative Management of Kubernetes Objects Using Configuration Files](https://kubernetes.io/docs/concepts/overview/object-management-kubectl/imperative-config/)
 
-# 3 Architecture
+# 2 Architecture
 
-## 3.1 Node
+## 2.1 Node
 
 `Node`是`Kubernetes`中的一个工作者。`Node`可能是一个虚拟机或者物理机。每个`Node`被`Master Component`管理，包含了一些运行`Pod`所必须的服务，包括`Container runtime`、`kubelet`、`kube-proxy`
 
-### 3.1.1 Node Status
+### 2.1.1 Node Status
 
 `Node`的状态包括以下几部分
 
@@ -282,7 +284,7 @@ kubectl get statefulsets,services --field-selector metadata.namespace!=default
 1. `Capacity`
 1. `Info`
 
-#### 3.1.1.1 Addresses
+#### 2.1.1.1 Addresses
 
 `Address`包含的字段与服务提供方或者裸机配置有关
 
@@ -290,7 +292,7 @@ kubectl get statefulsets,services --field-selector metadata.namespace!=default
 1. `ExternalIP`: 公网IP
 1. `InternalIP`: 集群内的IP
 
-#### 3.1.1.2 Condition
+#### 2.1.1.2 Condition
 
 `conditions`字段描述了`Node`的状态，包括
 
@@ -301,21 +303,21 @@ kubectl get statefulsets,services --field-selector metadata.namespace!=default
 1. `DiskPressure`: 存在磁盘压力时，为`True`；否则`False`
 1. `NetworkUnavailable`: 网络异常时，为`True`；否则`False`
 
-#### 3.1.1.3 Capacity
+#### 2.1.1.3 Capacity
 
 描述了可用资源的数量，包括CPU、内存、最大可运行的`Pod`数量
 
-#### 3.1.1.4 Info
+#### 2.1.1.4 Info
 
 描述了节点的通用信息，包括内核版本，`Kubernetes`版本，`Docker`版本，`OS`名称等等
 
-### 3.1.2 Management
+### 2.1.2 Management
 
 与`Pod`与`Service`不同，`Pod`与`Service`是由`Kubernetes`负责创建的，而`Node`是由云服务商或者使用者提供的。当`Kubernetes`创建了一个`Node`仅仅意味着创建了一个`Kubernetes Object`来描述这个`Node`
 
 目前，存在三个与`Node`交互的组件，他们分别是：`Node Controller`、`kubelet`、`kubectl`
 
-#### 3.1.2.1 Node Controller
+#### 2.1.2.1 Node Controller
 
 `Node Controller`是`Kubernetes master component`，用于管理`Node`的生命周期
 
@@ -331,55 +333,55 @@ kubectl get statefulsets,services --field-selector metadata.namespace!=default
 
 将`Node`分布于不同的可用区的原因是，当一个可用区变得完全不可用时，那这些`Pod`可以迁移到其他的可用区中
 
-### 3.1.3 Node capacity
+### 2.1.3 Node capacity
 
 `Node`容量是`Node Object`的一部分。通常`Node`在向`Master`注册时，需要上报容量信息。如果我们是手动创建和管理`Node`，那么就需要手动设置容量信息
 
 `Kubernetes Scheduler`会保证`Node`上的资源一定大于所有`Pod`占用的资源。注意到，它仅仅会计算通过`kubelet`创建的`Container`所占用的资源数量，而不会计算由`Container runtime`或者手动创建的`Containter`所占用的资源数量
 
-## 3.2 Master-Node communication
+## 2.2 Master-Node communication
 
-### 3.2.1 Cluster to Master
+### 2.2.1 Cluster to Master
 
-`Node`与`Master`之间的通信全部依靠`Api server`，除此之外，其他`Master component`不会提供远程服务。在一个典型的部署场景中，`Api server`会在`443`端口上监听
+`Node`与`Master`之间的通信全部依靠`Api Server`，除此之外，其他`Master component`不会提供远程服务。在一个典型的部署场景中，`Api Server`会在`443`端口上监听
 
-应该为`Node`配置公共根证书，以便它们可以安全地连接到`Api server`
+应该为`Node`配置公共根证书，以便它们可以安全地连接到`Api Server`
 
-`Pod`可以借助`Service Account`来与`Api server`进行安全通信，`Kubernetes`会在`Pod`实例化的时候，将根证书以及令牌注入到`Pod`中去
+`Pod`可以借助`Service Account`来与`Api Server`进行安全通信，`Kubernetes`会在`Pod`实例化的时候，将根证书以及令牌注入到`Pod`中去
 
-`Kubernetes`会为每个`Server`分配一个虚拟IP，`kube-proxy`会将其重定向为`Api server`的具体IP
+`Kubernetes`会为每个`Server`分配一个虚拟IP，`kube-proxy`会将其重定向为`Api Server`的具体IP
 
-因此，`Node`与`Api server`之间的通信可以在可靠/不可靠的网络下进行
+因此，`Node`与`Api Server`之间的通信可以在可靠/不可靠的网络下进行
 
-### 3.2.2 Master to Cluster
+### 2.2.2 Master to Cluster
 
-`Master(Api server)`与`Node`的通信的方式有两种：其一，`Api server`通过与每个`Node`上的`kubelet`来完成通信；其二，`Api server`通过`Proxy`来完成与`Node`、`Pod`、`Server`的通信
+`Master(Api server)`与`Node`的通信的方式有两种：其一，`Api Server`通过与每个`Node`上的`kubelet`来完成通信；其二，`Api Server`通过`Proxy`来完成与`Node`、`Pod`、`Server`的通信
 
-#### 3.2.2.1 Api server to kubelet
+#### 2.2.2.1 Api server to kubelet
 
-`Api server`与`kubelet`之间的通信主要用于以下几个用途
+`Api Server`与`kubelet`之间的通信主要用于以下几个用途
 
 1. 获取`Pod`的日志
 1. 与运行时的`Pod`进行交互
 1. 为`kubelet`提供端口转发服务（`port-forwarding functionality`）
 
-默认情况下，`Api server`不会校验`kubelet`的服务端证书，因此有可能受到中间人攻击（`man-in-the-middle`），因此在不可信的网络中或者公网上是不安全的。我们可以通过`--kubelet-certificate-authority`来为`Api server`提供一个根证书，用来校验`kubelet`的证书合法性
+默认情况下，`Api Server`不会校验`kubelet`的服务端证书，因此有可能受到中间人攻击（`man-in-the-middle`），因此在不可信的网络中或者公网上是不安全的。我们可以通过`--kubelet-certificate-authority`来为`Api Server`提供一个根证书，用来校验`kubelet`的证书合法性
 
-#### 3.2.2.2 Api server to nodes, pods, and services
+#### 2.2.2.2 Api server to nodes, pods, and services
 
-`Api server`与`Node`、`Pod`、`Service`之间的通信默认用的是HTTP协议，显然这是不安全的。我们可以为`Node`、`Pod`、`Service`的`API URL`指定`https`前缀，来使用HTTPS协议。但是，`Api server`仍然不会校验证书的合法性，也不会为客户端提供任何凭证，因此在不可信的网络中或者公网上是不安全的
+`Api Server`与`Node`、`Pod`、`Service`之间的通信默认用的是HTTP协议，显然这是不安全的。我们可以为`Node`、`Pod`、`Service`的`API URL`指定`https`前缀，来使用HTTPS协议。但是，`Api Server`仍然不会校验证书的合法性，也不会为客户端提供任何凭证，因此在不可信的网络中或者公网上是不安全的
 
-## 3.3 Concepts Underlying the Cloud Controller Manager
+## 2.3 Concepts Underlying the Cloud Controller Manager
 
 最初提出`Cloud Controller Manager(CCM)`概念是为了能够让云服务商与`Kubernetes`可以相互独立地发展
 
 `CCM`是的设计理念是插件化的，这样云服务商就可以以插件的方式与`Kubernetes`进行集成
 
-### 3.3.1 Design
+### 2.3.1 Design
 
 如果没有`CCM`，`Kubernetes`的架构如下：
 
-![fig1](/images/Kubernetes-Concept/fig1.png)
+![ccm_1](/images/Kubernetes-Concept/ccm_1.png)
 
 在上面的架构图中，`Kubernetes`与`Cloud Provider`通过几个不同的组件进行集成
 
@@ -389,9 +391,9 @@ kubectl get statefulsets,services --field-selector metadata.namespace!=default
 
 在引入`CCM`后，整个`Kubernetes`的架构变为：
 
-![fig2](/images/Kubernetes-Concept/fig2.png)
+![ccm_2](/images/Kubernetes-Concept/ccm_2.png)
 
-### 3.3.2 Components of the CCM
+### 2.3.2 Components of the CCM
 
 `CCM`打破了`KCM`的一些功能，并且作为一个独立的进程运行。具体来说，`CCM`打破了`KCM`那些依赖于云的`Controller`
 
@@ -409,9 +411,9 @@ kubectl get statefulsets,services --field-selector metadata.namespace!=default
 1. `Service Controller`
 1. `PersistentVolumeLabels Controller`
 
-### 3.3.3 Functions of the CCM
+### 2.3.3 Functions of the CCM
 
-#### 3.3.3.1 Kubernetes Controller Manager
+#### 2.3.3.1 Kubernetes Controller Manager
 
 `CCM`中大部分的功能都是从`KCM`中继承过来的，包括如下`Controller`
 
@@ -420,7 +422,7 @@ kubectl get statefulsets,services --field-selector metadata.namespace!=default
 1. `Service Controller`
 1. `PersistentVolumeLabels Controller`
 
-##### 3.3.3.1.1 Node Controller
+##### 2.3.3.1.1 Node Controller
 
 `Node Controller`负责初始化`Node`，它会从`Cloud Provier`中获取有关`Node`的一些信息，具体包括
 
@@ -429,41 +431,84 @@ kubectl get statefulsets,services --field-selector metadata.namespace!=default
 1. 获取`Node`的`hostname`和`address`
 1. 当`Node`失联时，询问`Cloud Provider`该`Node`是否已被其删除，如果已被删除，那么删除该`Node`对应的`Kubernetes Node Object`
 
-##### 3.3.3.1.2 Route Controller
+##### 2.3.3.1.2 Route Controller
 
 `Route Controller`负责配置路由信息，以便位于不同`Node`节点上的`Container`能够进行相互通信，目前只与`Google Compute Engine Cluster`兼容
 
-##### 3.3.3.1.3 Service Controller
+##### 2.3.3.1.3 Service Controller
 
 `Service Controller`负责监听`Service`的创建、更新、删除对应的事件，确保负载均衡可以时时感知服务的状态
 
-##### 3.3.3.1.4 PersistentVolumeLabels Controller
+##### 2.3.3.1.4 PersistentVolumeLabels Controller
 
 `PersistentVolumeLabels Controller`在`AWS EBS/GCE PD Volume`创建时，为其打上标签。这些标签对于`Pod`的调度至关重要，因为这些`Volume`只在特定的区域，因此被调度的`Pod`也必须位于这些区域才行
 
 `PersistentVolumeLabels Controller`仅用于`CCM`中
 
-#### 3.3.3.2 Kubelet
+#### 2.3.3.2 Kubelet
 
-#### 3.3.3.3 Kubernetes API server
+`Node controller`包含了`kubelet`中依赖于云的功能。在引入`CCM`之前，`kubelet`在初始化`Node`时，还需要负责初始化`IP`地址、区域标签以及实例类型等信息。引入`CCM`后，这些初始化操作将从`kubelet`中被移除，完全由`CCM`负责初始化
 
-### 3.3.4 Plugin mechanism
+在新模式下，`kubelet`可以单纯地创建一个`Node`，而不用关心与云相关的一些依赖信息。在`CCM`完成初始化之前，该`Node`是无法被调度的
 
-### 3.3.5 Authorization
+#### 2.3.3.3 Kubernetes API server
 
-### 3.3.6 Vendor Implementations
+同样地，`PersistentVolumeLabels`也将`Api Server`中与云相关的部分迁移到`CCM`中
 
-### 3.3.7 Cluster Administration
+### 2.3.4 Plugin mechanism
 
-## 3.4 参考
+`CCM`定义了一系列的接口（`Go`接口），交由云服务商自行提供实现
+
+### 2.3.5 Authorization
+
+#### 2.3.5.1 Node Controller
+
+`Node Controller`只与`Node Object`进行交互，可以进行如下操作
+
+1. `Get`
+1. `List`
+1. `Create`
+1. `Update`
+1. `Patch`
+1. `Watch`
+1. `Delete`
+
+#### 2.3.5.2 Route Controller
+
+`Route Controller`监听`Node Object`的创建以及配置路由规则，可以进行如下操作
+
+1. `Get`
+
+#### 2.3.5.3 Service Controller
+
+`Service Controller`监听`Service Object`的创建、更新、删除，以及配置`endpoint`，可以进行如下操作
+
+1. `List`
+1. `Get`
+1. `Watch`
+1. `Patch`
+1. `Update`
+
+#### 2.3.5.4 PersistentVolumeLabels Controller
+
+`PersistentVolumeLabels Controller`监听`PersistentVolume (PV)`的创建，可以进行如下操作
+
+1. `Get`
+1. `List`
+1. `Watch`
+1. `Update`
+
+## 2.4 参考
 
 * [Nodes](https://kubernetes.io/docs/concepts/architecture/nodes/)
 
-# 4 Pods
+# 3 Workloads
 
-## 4.1 Pod Overview
+## 3.1 Pods
 
-### 4.1.1 Understanding Pods
+### 3.1.1 Pod Overview
+
+#### 3.1.1.1 Understanding Pods
 
 `Pod`是Kubernetes中，用户能够创建或部署的最小单元，一个`Pod`代表了一个进程（可能是高耦合的一组进程）。`Pod`封装了以下资源
 
@@ -484,7 +529,7 @@ kubectl get statefulsets,services --field-selector metadata.namespace!=default
 1. `networking`: 每个`Pod`被分配了一个唯一的`IP`地址，每个`Container`共享网络的`Namespace`，包括`IP`地址以及端口号。位于同一个`Pod`中的`Container`可以通过`localhost`来进行通信。位于不同`Pod`中的`Container`需要借助`host`以及`port`来通信
 1. `storage`: `Pod`可以分享一些存储卷。位于同一个`Pod`中的所有`Container`共享这些卷
 
-### 4.1.2 Working with Pods
+#### 3.1.1.2 Working with Pods
 
 在`Kubernetes`中，我们很少直接创建独立的`Pod`，__因为`Pod`被设计成一种相对短暂的、一次性的实体__。当`Pod`被创建后（被用户直接创建，或者被`Controller`创建），它就会被调度到某个节点上开始运行。`Pod`会一直在`Node`上运行，直至被终结、`Pod Object`被删除、`Node`宕机
 
@@ -492,7 +537,7 @@ kubectl get statefulsets,services --field-selector metadata.namespace!=default
 
 `Controller`可以为我们创建和管理多个`Pod`，水平扩容、提供自我修复能力。例如，当一个`Node`宕机后，`Controller`会自动地在另一个`Node`上重新启动一个新的`Pod`
 
-### 4.1.3 Pod Templates
+#### 3.1.1.3 Pod Templates
 
 __`Pod Template`是`Pod`的一份声明（如下），可以被其他`Kubernetes Object`（包括`Replication Controllers`、`Job`等）引用__
 
@@ -512,9 +557,9 @@ spec:
 
 `Pod Template`更像一个饼干模具，而不是指定所有副本的当前期望状态。当一个饼干制作完成后，它与饼干模具毫无关系。`Pod Template`杜绝了量子纠缠，更新或者替换`Pod Template`对于已经生产的`Pod`不会产生任何影响
 
-## 4.2 Pods
+### 3.1.2 Pods
 
-### 4.2.1 What is a Pod?
+#### 3.1.2.1 What is a Pod?
 
 `Pod`包含一个或者一组`Container`，一些共享的存储/网络组件，以及运行应用的方式。`Pod`中的共享上下文包括：`Linux namespaces`，`cgroups`，以及其他可能的隔离因素
 
@@ -524,7 +569,7 @@ spec:
 
 `Pod`被设计成一种短暂的、一次性的实体。`Pod`在创建时会被赋予一个唯一的`UID`，并且被调度到某个`Node`上一直运行直至被销毁。如果一个`Node`宕机了，那些被调度到该`Node`上的`Pod`会被删除。一个特定的`Pod`（`UID`层面）不会被重新调度到新的`Node`上，相反，它会被一个新的`Pod`替代，这个新`Pod`可以复用之前的名字，但是会被分配一个新的`UID`，因此那么些共享的卷也会重新创建（旧数据无法保留）
 
-### 4.2.2 Motivation for pods
+#### 3.1.2.2 Motivation for pods
 
 通常一个服务由多个功能单元构成，各模块相互协作，而`Pod`就是这种多协作过程的模型。`Pod`通过提供一个高阶抽象来简化应用的部署、管理。`Pod`是部署，水平扩展和复制的最小单元
 
@@ -532,7 +577,7 @@ spec:
 
 `Pod`的`hostname`被设置为`Pod`的名字
 
-### 4.2.3 Durability of pods (or lack thereof)
+#### 3.1.2.3 Durability of pods (or lack thereof)
 
 `Pod`并不是一个高可用的实体。`Pod`不会从调度失败、节点宕机或其他错误中恢复
 
@@ -547,7 +592,7 @@ spec:
 1. 解耦`Kubelet-level`的功能与`cluster-level`的功能
 1. 高可用性
 
-### 4.2.4 Termination of Pods
+#### 3.1.2.4 Termination of Pods
 
 由于`Pod`代表了集群中一组运行的进程，因此允许`Pod`优雅地终结是很有必要的。用户需要发出删除指令，需要了解终结时间，需要确保`Pod`真的被终结了。当用户发出删除`Pod`的请求时，系统会记录一个宽限期（发出删除请求到被强制清除的时间间隔），然后向`Pod`中的所有`Container`发出`TERM signal`，如果超过宽限期，`Pod`还未终结，那么会向`Pod`中的所有`Container`发出`KILL signal`，当`Pod`终结后，它会被`API server`删除
 
@@ -562,11 +607,11 @@ spec:
 1. `Pod`被移除服务节点列表。因此，那些终止过程十分缓慢的`Pod`，在此时也不会继续提供服务
 1. `Kubelet`通过`API server`将宽限期设置为`0`来结束删除过程。之后该`Pod`就对用户彻底不可见了，即彻底被删除了
 
-`Kubernetes`允许强制删除`Pod`，强制删除意味着将该`Pod`从集群状态以及`etcd`中立即删除。当强制删除执行时，`Api server`不会等待`kubelet`确认删除`Pod`，而是直接将该`Pod`删除，这样一来，一个新的复用了原来名字的`Pod`就可以被立即创建。而那个被删除的`Pod`仍然会给定一个比较小的宽限期来进行上述删除操作。__尽量不要使用这种方式__
+`Kubernetes`允许强制删除`Pod`，强制删除意味着将该`Pod`从集群状态以及`etcd`中立即删除。当强制删除执行时，`Api Server`不会等待`kubelet`确认删除`Pod`，而是直接将该`Pod`删除，这样一来，一个新的复用了原来名字的`Pod`就可以被立即创建。而那个被删除的`Pod`仍然会给定一个比较小的宽限期来进行上述删除操作。__尽量不要使用这种方式__
 
-## 4.3 Pod Lifecycle
+### 3.1.3 Pod Lifecycle
 
-### 4.3.1 Pod phase
+#### 3.1.3.1 Pod phase
 
 `Pod`的`status`字段是一个`PodStatus`对象，该对象包含一个`phase`字段
 
@@ -584,7 +629,7 @@ spec:
 kubectl get pod -n <namespace> <pod-name> -o yaml
 ```
 
-### 4.3.2 Pod conditions
+#### 3.1.3.2 Pod conditions
 
 `Pod`的`status`字段是一个`PodStatus`对象，该对象包含一个`conditions`字段，该字段对应的值是一个`PodConditions`对象的数组
 
@@ -602,7 +647,7 @@ kubectl get pod -n <namespace> <pod-name> -o yaml
   * `Unschedulable`：调度失败，可能原因是资源不足
   * `ContainersReady`：`Pod`中的所有`Container`已经就绪
 
-### 4.3.3 Container probes
+#### 3.1.3.3 Container probes
 
 `probe`是`kubelet`对`Container`定期进行的诊断。为了实现诊断，`kubelet`通过调用一个`handler`来完成，该`handler`由容器实现，以下是三种`handler`的类型
 
@@ -629,7 +674,7 @@ __我们如何决定该使用`livenessProbe`还是`readinessProbe`__
 * 如果我们的`Container`需要读取大量数据，配置文件或者需要在启动时做数据迁移，那么需要`readinessProbe`
 * 如果我们仅仅想要避免流量打到被删除的`Pod`上来，我们无需使用`readinessProbe`。在删除过程中，`Pod`会自动将自己标记为`unready`状态，无论`readinessProbe`是否存在
 
-### 4.3.4 Pod readiness gate
+#### 3.1.3.4 Pod readiness gate
 
 为了织入一些回调逻辑或者信号到`PodStatsu`中来增强`Pod readiness`的可扩展性，`Kubernetes`在`1.11`版本之后引入了一个性特性，称为`Pod ready++`，我们可以在`PodSpec`中使用`ReadinessGate`来增加一些额外的用于判断`Pod readiness`的条件。如果`Kubernetes`在`status.conditions`中没有找到对应于`ReadinessGate`中声明的条件类型，那么检测结果默认是`Flase`
 
@@ -655,11 +700,11 @@ status:
 ...
 ```
 
-### 4.3.5 Restart policy
+#### 3.1.3.5 Restart policy
 
 `PodSpec`有一个`restartPolicy`字段，其可选值为`Always`、`OnFailure`、`Never`。默认值为`Always`。`restartPolicy`对`Pod`中的所有`Container`都会生效。`restartPolicy`仅针对在同一个`Node`中重启`Container`。多次启动之间的时间间隔以指数方式增长（10s、20s、40s...），最多不超过5分钟。在成功重启后10分钟后，时间间隔会恢复默认值
 
-### 4.3.6 Pod lifetime
+#### 3.1.3.6 Pod lifetime
 
 通常情况下，`Pod`一旦创建就会永远存在，直至被某人或`Controller`销毁。唯一例外就是，当`Pod`的`status.phase`字段为`Succeeded`或`Failed`且超过一段时间后（该时间由`terminated-pod-gc-threshold`设定），该`Pod`会被自动销毁
 
@@ -673,9 +718,9 @@ status:
 
 当某个`Node`宕机或者失联后，`Kubernetes`会将位于这些`Node`上的`Pod`全部标记为`Failed`
 
-## 4.4 Init Containers
+### 3.1.4 Init Containers
 
-### 4.4.1 Understanding Init Containers
+#### 3.1.4.1 Understanding Init Containers
 
 一个`Pod`中可以运行一个或多个`Container`，同时，一个`Pod`中也可以运行一个或多个`Init Container`（`Init Container`会优先于`Container`运行）
 
@@ -690,13 +735,13 @@ status:
 
 `Init Container`支持所有普通`Container`的字段，唯独不支持`readiness probe`，因为`Init Container`在`ready`之前已经结束了
 
-### 4.4.2 Detailed behavior
+#### 3.1.4.2 Detailed behavior
 
 在`Pod`的启动过程中，在网络以及磁盘初始化后，`Init Container`以配置的顺序启动。`Init Container`会一个接一个地启动，且只有前一个启动成功后，后一个才会启动。如果`Init Container`启动失败，会根据`restartPolicy`来决定是否重新启动。特别地，如果`Pod`的`restartPolicy`被设置为`Always`，那么对于`Init Container`而言，就为`OnFailure`
 
 如果`Pod`重启（可能仅仅指重新启动container？并不是销毁`Pod`后再创建一个新的`Pod`），那么所有的`Init Container`都会重新执行
 
-## 4.5 Pod Preset
+### 3.1.5 Pod Preset
 
 `Pod Preset`用于在`Pod`创建时注入一些运行时的依赖项，我们可以使用`Label Selector`来指定需要注入的`Pod`
 
@@ -711,9 +756,9 @@ __原理__：Kubernetes提供了一个准入控制器（`PodPreset`）。在创�
 
 一个`Pod Preset`可以应用于多个`Pod`，同样，一个`Pod`也可以关联多个`Pod Preset`
 
-## 4.6 Disruptions
+### 3.1.6 Disruptions
 
-### 4.6.1 Voluntary and Involuntary Disruptions
+#### 3.1.6.1 Voluntary and Involuntary Disruptions
 
 `Pod`会一直存在，直到某人或者`Controller`摧毁它，或者碰到一个无法避免的硬件或者系统问题。我们将这些异常称为`involutary disruption`，包括
 
@@ -731,7 +776,7 @@ __原理__：Kubernetes提供了一个准入控制器（`PodPreset`）。在创�
 1. 将`Node`从集群中移出，对其进行维护或升级
 1. 将`Node`从集群中移出，进行缩容
 
-### 4.6.2 Dealing with Disruptions
+#### 3.1.6.2 Dealing with Disruptions
 
 下列方法可以减轻`involuntary disruption`造成的影响
 
@@ -739,7 +784,7 @@ __原理__：Kubernetes提供了一个准入控制器（`PodPreset`）。在创�
 1. 复制应用，以获得高可用性
 1. 将应用副本分别部署到不同的区域的节点上，以获得更高的可用性
 
-### 4.6.3 How Disruption Budgets Work
+#### 3.1.6.3 How Disruption Budgets Work
 
 应用`Owner`可以为每个应用创建一个`PodDisruptionBudget(PDB)`对象。`PDB`限制了应用同时缩容的最大数量，即保证应用在任何时候都有一定数量的`Pod`在运行
 
@@ -747,7 +792,7 @@ __原理__：Kubernetes提供了一个准入控制器（`PodPreset`）。在创�
 
 `PDB`无法阻止`involuntary disruptions`。`Pod`由于灰度升级造成的`voluntary disruption`可以被`PDB`管控。但是`Controller`灰度升级不会被`PDB`管控
 
-## 4.7 参考
+### 3.1.7 参考
 
 * [Pod Overview](https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/)
 * [Pods](https://kubernetes.io/docs/concepts/workloads/pods/pod/)
@@ -756,23 +801,23 @@ __原理__：Kubernetes提供了一个准入控制器（`PodPreset`）。在创�
 * [Pod Preset](https://kubernetes.io/docs/concepts/workloads/pods/podpreset/)
 * [Disruptions](https://kubernetes.io/docs/concepts/workloads/pods/disruptions/)
 
-# 5 Controller
+## 3.2 Controller
 
-## 5.1 ReplicaSet
+### 3.2.1 ReplicaSet
 
 `ReplicaSet`是新一代的`Replication Controller`，`ReplicaSet`与`Replication Controller`之间的唯一区别就是`select`的方式不同。`ReplicaSet`支持`set-based selector`，而`Replication Controller`仅支持`equality-based selector`
 
-### 5.1.1 How to use a ReplicaSet
+#### 3.2.1.1 How to use a ReplicaSet
 
 大部分支持`Replication Controller`的`kubectl`命令都支持`ReplicaSet`，其中一个例外就是`rolling-update`命令。如果我们想要进行灰度升级，更推荐使用`Deploymenet`
 
 尽管`ReplicaSet`可以独立使用，但到目前为止，它主要的用途就是为`Deployment`提供一种机制---编排`Pod`创建、删除、更新
 
-### 5.1.2 When to use a ReplicaSet
+#### 3.2.1.2 When to use a ReplicaSet
 
 `ReplicaSet`保证了在任何时候，都运行着指定数量的`Pod`副本。然而，`Deployment`是一个更高阶的概念，它管理着`ReplicaSet`、提供声明式的`Pod`升级方式，以及一些其他的特性。因此，推荐使用`Deployment`而不是直接使用`ReplicaSet`，除非我们要使用自定义的升级策略或者根本不需要升级
 
-### 5.1.3 Writing a ReplicaSet Spec
+#### 3.2.1.3 Writing a ReplicaSet manifest
 
 __示例__
 
@@ -824,27 +869,668 @@ spec:
 1. `.metadata.labels`: `ReplicaSet`还允许拥有自己的`Label`，通常来说，`.spec.template.metadata.labels`与`.metadata.labels`是一致的。同样，它们也可以不一致，__但要注意的是，`.metadata.labels`与`.spec.selector`无关__
 1. `.spec.replicas`: 该字段指定了`Pod`副本的数量，默认为1
 
-## 5.2 ReplicationController
+#### 3.2.1.4 Working with ReplicaSets
 
-### 5.2.1 How a ReplicationController Works
+##### 3.2.1.4.1 Deleting a ReplicaSet and its Pods
 
-### 5.2.2 Writing a ReplicationController Spec
+如果我们要删除`ReplicaSet`以及所有相关的`Pod`，我们只需要使用`kubectl delete`来删除`ReplicaSet`。`Garbage Controller`默认会自动删除所有相关的`Pod`
 
-## 5.3 Deployments
+##### 3.2.1.4.2 Deleting just a ReplicaSet
 
-## 5.4 DaemonSet
+如果我们仅仅要删除`ReplicaSet`，那么需要在`kubectl delete`命令加上`--cascade=false`参数
 
-## 5.5 Garbage Collection
+一旦`ReplicaSet`被删除后，我们就可以创建一个新的`ReplicaSet`，如果新的`ReplicaSet`名字与原来的相同，那么它将会接管之前由原来的`ReplicaSet`创建的`Pod`。尽管如此，它不会要求已存在的`Pod`来满足新的`Pod Template`。如果要更新`Pod`使其匹配新的`Spec`，那么需要使用`Rolling Update`
 
-## 5.6 TTL Controller for Finished Resources
+##### 3.2.1.4.3 Isolating Pods from a ReplicaSet
 
-## 5.7 Jobs - Run to Completion
+我们可以通过改变`Pod`的`Label`来将其与`ReplicaSet`分离（通常用于分离那些用于`Debug`、`Data recovery`的`Pod`），通过这种方式移除`Pod`后，新的`Pod`随之会被创建出来
 
-## 5.8 CronJob
+##### 3.2.1.4.4 Scaling a ReplicaSet
 
-# 6 Network
+我们可以简单的修改`ReplicaSet`的`.spec.replicas`字段来进行扩容或缩容。`ReplicaSet Controller`会保证`Pod`的数量与`ReplicaSet`保持一致
 
-## 6.1 Overview
+##### 3.2.1.4.5 ReplicaSet as a Horizontal Pod Autoscaler Target
+
+`ReplicaSet`也可以是`Horizontal Pod Autoscalers（HPA）`的目标。也就是说，`HPA`可以自动缩放`ReplicaSet`
+
+```yml
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: frontend-scaler
+spec:
+  scaleTargetRef:
+    kind: ReplicaSet
+    name: frontend
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 50
+```
+
+#### 3.2.1.5 Alternatives to ReplicaSet
+
+##### 3.2.1.5.1 Deployment(recommended)
+
+`Deployment`是一个`Kubernetes Object`，它可以包含`ReplicaSet`，并且可以更新`ReplicaSet`以及相关的`Pod`。尽管`ReplicaSet`可以独立使用，但是通常`ReplicaSet`都作为`Deployment`的一种机制来组织`Pod`的创建、删除和更新。当我们使用`Deployment`时，`ReplicaSet`的创建完全由`Deployment`来管控
+
+##### 3.2.1.5.2 Bare Pods
+
+与直接创建`Pod`不同，`ReplicaSet`会在`Pod`删除或者不可用时创建新的`Pod`来替换原有的`Pod`，例如`Node`宕机，或者进行破坏性的维护，例如内核升级。即便我们的应用只需要一个`Pod`，也应该使用`ReplicaSet`而不是直接管理`Pod`
+
+##### 3.2.1.5.3 Job
+
+对于预期会终止的`Pod`而言，推荐使用`Job`而不是`ReplicaSet`
+
+##### 3.2.1.5.4 DaemonSet
+
+`DaemonSet`可以提供机器级别的功能，例如机器监控，机器日志等。这些`Pod`有着与机器强相关的生命周期，且优先于其他普通`Pod`运行。当机器重启或者关机时，可以安全地终止这些`Pod`
+
+##### 3.2.1.5.5 ReplicationController
+
+`ReplicaSet`可以看做是新一代的`ReplicationController`，他们有着相同的使命，且行为相同。此外，`ReplicationController`不支持`set-based Selector`
+
+### 3.2.2 ReplicationController
+
+`ReplicationController`确保：在任何时候，应用都运行着一定数量的副本
+
+#### 3.2.2.1 How a ReplicationController Works
+
+如果`Pod`过多，`ReplicationController`会停止多余的`Pod`。如果`Pod`过少，`ReplicationController`会启动更多的`Pod`。与人工创建的`Pod`不同，如果`Pod`终结了，或者被删除了，那么`ReplicationController`重新启动一个新的`Pod`来代替它
+
+在`Kubernetes`中，我们用缩写`rc`或`rcs`来表示`ReplicationController`
+
+#### 3.2.2.2 Writing a ReplicationController Spec
+
+```yml
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: nginx
+spec:
+  replicas: 3
+  selector:
+    app: nginx
+  template:
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+```
+
+与其他`Kubernetes Config`类似，`ReplicationController`包含`apiVersion`、`kind`、`metadata`以及`spec`这四个字段
+
+1. `.spec.template`: 该字段是`.spec`字段的唯一要求的字段。该字段描述的是一个`Pod Template`，它拥有与`Pod`几乎完全一样的`schema`（没有`apiVersion`与`kind`）。除此之外，必须制定`Label`以及`Restart Policy`（默认是`Always`）
+1. `.metadata.labels`: 通常该字段的值与`.spec.template.metadata.labels`一致。如果`.metadata.labels`未设置，那么其值默认与`.spec.template.metadata.labels`相同。尽管如此，这两个字段的值可以不同，但是`.metadata.labels`不影响`ReplicationController`的行为
+1. `.spec.selector`: 该字段定义了一个`Label Selector`，`ReplicationController`会管理所有与该`Label Selector`匹配的`Pod`（无论该`Pod`是否由`ReplicationController`创建，__因此要特别注意重叠问题__），这就允许在`Pod`运行时替换`ReplicationController`。如果指定了该字段，那么`.spec.template.metadata.labels`与`.spec.selector`的值必须相同，否则会被`Api Server`拒绝，若`.spec.selector`未指定，那么默认与`.spec.template.metadata.labels`相同
+1. `.spec.replicas`: 指定同时运行的副本数量，默认为1
+
+#### 3.2.2.3 Working with ReplicationControllers
+
+##### 3.2.2.3.1 Deleting a ReplicationController and its Pods
+
+若要删除一个`ReplicationController`以及相关联的`Pod`，那么使用`kubectl delete`命令，`kubectl`会负责删除所有相关的`Pod`
+
+##### 3.2.2.3.2 Deleting just a ReplicationController
+
+若仅仅要删除`ReplicationController`，那么在使用`kubectl delete`命令时，需要加上`--cascade=false`选项。当`ReplicationController`被删除后，我们便可以创建一个新的`ReplicationController`，若新旧`ReplicationController`的`.spec.selector`也相同的话，那么新的`ReplicationController`会接管先前的`Pod`，且不会产生影响（即便`Pod Template`不同）。若要更新`Pod`使其匹配新的`Pod Template`，那么需要使用`Rolling Update`
+
+##### 3.2.2.3.3 Isolating pods from a ReplicationController
+
+我们可以通过改变`Pod`的`Label`来将其与`ReplicationController`分离，这种方式通常用于分离那些用于`Debug`或`Data Recovery`的`Pod`，移除后，`ReplicationController`会重新补足`Pod`
+
+#### 3.2.2.4 Common usage patterns
+
+##### 3.2.2.4.1 Rescheduling
+
+`ReplicationController`会保证运行一定数量的副本
+
+##### 3.2.2.4.2 Scaling
+
+我们可以通过修改`replicas`字段来进行扩容和缩容
+
+##### 3.2.2.4.3 Rolling updates
+
+`ReplicationController`旨在通过逐个替换`Pod`来对`Service`进行滚动更新
+
+建议的方法是创建一个具有1个副本的新`ReplicationController`，逐个扩展新的（+1）和旧的（-1）`ReplicationController`，然后在旧的`ReplicationController`达到0个副本后删除它
+
+`ReplicationController`需要考虑到应用的准备情况，且保证在任意时刻都运行着一定数量的副本。因此这两个`ReplicationController`创建的`Pod`的`Label`需要有区分度，例如`image tage`的差异
+
+我们可以通过`kubectl rolling-update`命令来进行滚动更新
+
+##### 3.2.2.4.4 Multiple release tracks
+
+在进行滚动升级时，可能同时运行着多个不同的版本，且通常会持续一段时间，我们要对这多个不同版本进行追踪，追踪将依据`Label`来进行区分
+
+举例来说，最初一个`Service`中的所有`Pod`（10个），其`Label`都是`tier in (frontend), environment in (prod)`。此时，我们需要引入一个新的版本`canary`。我们可以创建一个`ReplicationController`，将其副本数量设定为9，且`Label`为`tier=frontend, environment=prod, track=stable`；另一个`ReplicationController`，将其副本数量设定为1，`Label`为`tier=frontend, environment=prod, track=canary`。于是该`Service`包含了`canary`以及`non-canary`两部分
+
+##### 3.2.2.4.5 Using ReplicationControllers with Services
+
+同一个`Service`可以有多个不同的`ReplicationController`，这样一来，流量可以根据版本进行分流
+
+`ReplicationController`不会自我终结，但是它的生命周期与`Service`不同。一个`Service`包含了由不同`ReplicationController`创建的`Pod`，且在一个`Service`的生命中期中可能会有很多`ReplicationController`被创建和销毁，这些对于`Client`来说是不感知的
+
+#### 3.2.2.5 Writing programs for Replication
+
+由`ReplicationController`创建的`Pod`是可替换的，且在语义上是等价的，尽管随着时间的推移，它们会产生一些差异性。显然，这种特性非常适用于无状态的微服务架构。但是`ReplicationController`同样可以保持有状态服务架构的高可用性，例如`master-elected`、`shared`、`worker-pool`架构的应用。这些应用需要使用动态的分配机制，而不是静态的一次性的配置。这些动态分配的动作应该由另一个控制器来完成（该控制器是应用的一部分）而不是由`ReplicationController`来完成
+
+#### 3.2.2.6 Responsibilities of the ReplicationController
+
+`ReplicationController`仅确保`Pod`保持额定的数量。在未来，可能会在`Replacement Policy`上增加更多的控制，同时引入可供外部用户使用的事件，用来处理更为复杂的`Replacement`
+
+`ReplicationController`的责任仅限于此，`ReplicationController`自身并不会引入`Readiness Probe`或`Liveness Probe`。它通过外部缩放控制器来修改`replicas`字段，而不是提供自动缩放的机制。`ReplicationController`不会引入`Scheduling Policy`
+
+#### 3.2.2.7 API Object
+
+`ReplicationController`是一个顶层的`Kubernetes Rest API`
+
+#### 3.2.2.8 Alternatives to ReplicationController
+
+##### 3.2.2.8.1 ReplicaSet
+
+`ReplicaSet`可以看做是下一代的`ReplicationController`。`ReplicaSet`支持`set-based Label Selector`。`ReplicaSet`作为`Deployment`的一种机制来组织`Pod`的创建、删除和更新。我们强烈推荐使用`Deployement`而不是直接使用`ReplicaSet`
+
+##### 3.2.2.8.2 Deployment(Recommended)
+
+`Deployment`是一种高阶的`API Object`，用于以一种非常简单的方式更新`ReplicaSet`以及`Pod`。`Deployment`具有`Rolling Update`的能力，且它是声明式的，服务级别的，且拥有额外的功能
+
+##### 3.2.2.8.3 Bare Pods
+
+与直接创建`Pod`不同，`ReplicationController`会在`Pod`删除或者不可用时创建新的`Pod`来替换原有的`Pod`，例如`Node`宕机，或者进行破坏性的维护，例如内核升级。即便我们的应用只需要一个`Pod`，也应该使用`ReplicationController`而不是直接管理`Pod`
+
+##### 3.2.2.8.4 Job
+
+对于预期会终止的`Pod`而言，推荐使用`Job`而不是`ReplicationController`
+
+##### 3.2.2.8.5 DaemonSet
+
+`DaemonSet`可以提供机器级别的功能，例如机器监控，机器日志等。这些`Pod`有着与机器强相关的生命周期，且优先于其他普通`Pod`运行。当机器重启或者关机时，可以安全地终止这些`Pod`
+
+### 3.2.3 Deployments
+
+`Deployment`提供了一种声明式的更新`Pod`或`ReplicaSet`的方式
+
+#### 3.2.3.1 Creating a Deployment
+
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.7.9
+        ports:
+        - containerPort: 80
+```
+
+* 通过`.metadata.name`字段来指定`Deployment`的名字
+* 通过`.spec.replicas`字段来指定副本数量
+* 通过`.sepc.selector`字段来指定匹配何种标签的`Pod`
+* 通过`.spec.template`字段来描述一个`Pod Template`
+
+```sh
+# create deployment
+kubectl create -f <filepath or url>
+
+# get deployment
+kubectl get deployments
+
+# get replicaSet
+kubectl get rs
+
+# get pods
+kubectl get pods --show-labels
+```
+
+#### 3.2.3.2 Updating a Deployment
+
+`Deployment`会保证同时只有一小部分的`Pod`处于升级的过程中（可能会暂时无法提供服务），最多25%
+
+`Deployment`会保证同时只有一小部分的`Pod`处于创建过程中，最多25%
+
+`Deployment`不建议更新`Label Selector`，这意味着，我们最初就需要定义好`Label Selector`。但`Deployment`仍允许我们更新`Label Selector`
+
+* 增加`Label Selector`，那么`Deployment`要求`Pod Template`的`Label`必须匹配`Label Selector`。这个操作是非重叠的，意味着所有旧有的`ReplicaSet`以及`Pod`将会被孤立，新的`ReplicaSet`以及`Pod`会被创建出来
+* 修改`Label Selector`，会导致增加`Label Selector`相同的结果
+* 删除`Label Selector`中的`key`，不需要修改`Pod Template`的`Label`。现有的`ReplicaSet`不会被孤立，新的`ReplicaSet`不会被创建
+
+#### 3.2.3.3 Rolling Back a Deployment
+
+有时候，我们会想要进行回滚，比如新版本不够稳定，或者出现了很严重的错误。`Deployment`允许我们回滚到任意一次版本
+
+注意到，只有在`Deployment rollout`触发时，才会创建`revision`，这意味着，当且仅当`Pod Template`发生变化时（例如修改`Label`或者镜像），才会创建`revision`。其他的更新，例如进行缩容或者扩容，不会创建`revision`。这意味着回滚到一个早期的版本，回滚的仅仅是`Pod Template`
+
+```sh
+# check the revisions of this deployment
+kubectl rollout history deployment.v1.apps/nginx-deployment
+
+# see details of specific revision
+kubectl rollout history deployment.v1.apps/nginx-deployment --revision=2
+
+# undo the current rollout
+kubectl rollout undo deployment.v1.apps/nginx-deployment
+
+# rollback to previous revision
+kubectl rollout undo deployment.v1.apps/nginx-deployment --to-revision=2
+```
+
+#### 3.2.3.4 Scaling a Deployment
+
+```sh
+# scale a deployment
+kubectl scale deployment.v1.apps/nginx-deployment --replicas=10
+
+# autoscale
+kubectl autoscale deployment.v1.apps/nginx-deployment --min=10 --max=15 --cpu-percent=80
+```
+
+#### 3.2.3.5 Pausing and Resuming a Deployment
+
+我们可以暂停一个`Deployment`，然后进行一些更新操作，再还原该`Deployment`
+
+```sh
+# pause deployment
+kubectl rollout pause deployment.v1.apps/nginx-deployment
+
+# update image
+kubectl set image deployment.v1.apps/nginx-deployment nginx=nginx:1.9.1
+
+# update resource
+kubectl set resources deployment.v1.apps/nginx-deployment -c=nginx --limits=cpu=200m,memory=512Mi
+
+# resume deployment
+kubectl rollout resume deployment.v1.apps/nginx-deployment
+```
+
+#### 3.2.3.6 Deployment Status
+
+`Deployment`在生命周期中会经历多个不同的状态
+
+1. `progressing`
+1. `complete`
+1. `failed`
+
+__progressing__
+
+1. 正在创建`ReplicaSet`
+1. 正在扩容
+1. 正在缩容
+
+__complete__
+
+1. 所有副本都更新到期望的版本了
+1. 所有副本都可用了
+1. 没有正在运行的旧版本的副本
+
+__failed__
+
+1. 配额不足
+1. `Readiness Probe`失败了
+1. 拉取镜像失败
+1. 权限不足
+1. 应用配置有问题
+
+#### 3.2.3.7 Clean up Policy
+
+我们可以通过设置`.spec.revisionHistoryLimit`来控制`Deployment`保留多少个历史版本，默认是10，超过该数值的`ReplicaSet`会被回收
+
+#### 3.2.3.8 Writing a Deployment Spec
+
+与其他`Kubernetes Config`类似，`Deploymenet`必须包含`apiVersion`、`kind`、`metadata`、`spec`四个字段
+
+__Pod Template__
+
+* `.spec.template`: `.spec`的唯一必须的字段，它描述了一个`Pod Template`，`Pod Tempalte`的schema与`Pod`几乎完全一致（不需要`apiVersion`和`kind`）
+* `Pod Template`必须指定`Label`以及`Restart Policy`，其中`.spec.template.spec.restartPolicy`只允许设置成`Always`，默认就是`Always`
+
+__Replicas__
+
+* `.spec.replicas`: 指定副本数量，默认1
+
+__Selector__
+
+* `.spec.selector`: 定义了一个`Label Selector`
+* `.spec.selector`与`.spec.template.metadata.labels`必须匹配，否则会被拒绝
+
+__Strategy__
+
+* `.spec.strategy`: 定义了新老`Pod`更替的策略，可选项有`Recreate`、`RollingUpdate`，默认是`RollingUpdate`
+* `Recreate`在更新时，旧的`Pod`全部被终结后，新的`Pod`才会创建
+* `RollingUpdate`: 灰度更新，仅允许一小部分的`Pod`进行更替，始终保持服务的可用状态
+
+#### 3.2.3.9 Alternative to Deployments
+
+使用`kubectl rolling update`来滚动升级`Pod`和`ReplicationController`与`Deployment`是类似的。但是`Deployment`是更推荐的方式，因为它是声明式的，服务级别的，未来可能会有新的功能
+
+### 3.2.4 StatefulSets
+
+与`Deployment`相同，`StagefulSet`管理基于相同容器规范的`Pod`。与`Deployment`不同，`StagefulSet`为每个`Pod`都生成一个唯一且不可变的标志符，这些标志符全局唯一
+
+#### 3.2.4.1 Using StatefulSets
+
+`StagefulSet`有如下特点
+
+1. 稳定，唯一的网络标志
+1. 稳定的持久化存储
+1. 有序且优雅的部署以及扩缩容
+1. 有序自动的滚动更新
+
+#### 3.2.4.2 Limitations
+
+#### 3.2.4.3 Components
+
+#### 3.2.4.4 Pod Selector
+
+#### 3.2.4.5 Pod Indentity
+
+#### 3.2.4.6 Deployment and Scaling Guarantees
+
+#### 3.2.4.7 Update Strategies
+
+### 3.2.5 DaemonSet
+
+### 3.2.6 Garbage Collection
+
+### 3.2.7 TTL Controller for Finished Resources
+
+### 3.2.8 Jobs - Run to Completion
+
+### 3.2.9 CronJob
+
+# 4 Services, Load Balancing and Networking
+
+## 4.1 Services
+
+`Pod`是无法再生的。`ReplicaSet`可以动态地创建或删除`Pod`，每个`Pod`都会分配一个`IP`，显然随着`Pod`的新老更替，这些`IP`是不固定的。这就导致了一个问题，如果一个`Pod`提供了某种服务给其他位于同一集群中的`Pod`，那么这些`Pod`如何找到服务提供方呢
+
+`Service`的引入解决了这个问题，__`Service`是一组`Pod`以及他们访问方式的抽象__。`Service`通过`Label Selector`来匹配对应的`Pod`。`Service`解耦了`Consumer`和`Provider`（从这个角度来说，`Service`与RPC框架解决了类似的问题）
+
+### 4.1.1 Defining a service
+
+与`Pod`类似，`Service`也是一个`Rest Object`，可以通过`Api Server`来创建实例，例如
+
+```yml
+kind: Service
+apiVersion: v1
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: MyApp
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 9376
+```
+
+通过上面这份配置，会创建一个名为`my-service`，该`Service`会将`80`端口的流量路由到任意包含标签`app=MyApp`的`Pod`的`9376`端口
+
+每个`Service`都会被分配一个`Cluster IP`，`Service Proxy`会用到这个`Cluster IP`，`Service`的`Label Selector`匹配会持续进行，其结果过会同步到同名的`Endpoint`，__`Endpoint`维护了`Service`与`Pod`的映射关系__
+
+`Service`可以将一个入口端口映射成任意`targetPort`，`targetPort`默认与`port`相同，此外`targetPort`还可以是一个字符串，指代端口的名称，不同的`Pod`包含的端口名与端口的映射关系可以不同，这提供了非常多的灵活性
+
+`Service`支持`TCP`、`UDP`、`SCTP`协议，默认是`TCP`协议
+
+#### 4.1.1.1 Services without selectors
+
+`Service`通常抽象了访问`Pod`的方式，但是它也可以抽象其他后端实体的访问方式，例如
+
+1. 在生产环境以及测试环境中使用的`database`是不同的
+1. 我们想将`Service`暴露给另一个`Namespace`或者另一个集群
+1. 应用的多分实例中，一部分部署在`Kubernetes`集群中，另一部分部署在`Kubernetes`集群外
+
+在以上这些情况中，我们可以定义一个没有`Label Selector`的`Service`，如下
+
+```yml
+kind: Service
+apiVersion: v1
+metadata:
+  name: my-service
+spec:
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 9376
+```
+
+由于这个`Service`没有配置`Label Selector`，因此不会有`Endpoint`对象生成。但是，我们可以手动配置`Endpoint`，如下
+
+```yml
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: my-service
+subsets:
+  - addresses:
+      - ip: 1.2.3.4
+    ports:
+      - port: 9376
+```
+
+在无`Label Selector`的场景下，`Service`的工作方式还是一样的。流量会被路由到`Endpoint`中
+
+`ExternalName Service`是无`Label Selector`的，且使用的是`DNS`
+
+### 4.1.2 Virtual IPs and service proxies
+
+每个`Node`都运行着`kube-proxy`这个组件。`kube-proxy`为除了`ExternalName`类型之外的`Service`提供了一种虚拟IP
+
+#### 4.1.2.1 Proxy-mode: userspace
+
+1. __该模式最主要的特征是：流量重定向工作是由`kube-proxy`完成的，也就是在用户空间完成的__
+1. `kube-proxy`会监听`Service`的创建和删除，当发现新的`Service`创建出来后，`kube-proxy`会在`localhost`网络开启一个随机端口（记为`loPort`）进行监听，同时向`iptable`写入路由规则（`Cluster IP:Port`->`localhost:loPort`），即将流向`Service`的流量转发到本地监听的端口上来
+1. `kube-proxy`会监听`Endpoint`的变更，并将`Service`及其对应的`Pod`列表保存起来
+
+![proxy-mode-userspace](/images/Kubernetes-Concept/proxy-mode-userspace.svg)
+
+在`Pod`中访问`Service`的时序图如下
+
+```plantuml
+participant Pod
+participant localDNS
+participant iptable
+participant kube_proxy
+participant remotePod
+
+Pod->localDNS: 查询serviceName对应的Cluster IP
+localDNS-->Pod: return
+Pod->iptable: traffic to Cluster IP
+iptable->iptable: 查找路由表
+iptable->kube_proxy: traffic to kube_proxy
+kube_proxy->kube_proxy: 查询代理端口号和Service的映射关系，以及Service和Endpoint的映射关系
+kube_proxy->remotePod: traffic to remotePod
+```
+
+#### 4.1.2.2 Proxy-mode: iptables
+
+1. __该模式最主要的特征是：流量重定向的工作是由`iptable`完成的，也就是在内核空间完成的__
+1. `kube-proxy`会监听`Service`、`Endpoint`的变化，并且更新`iptable`的路由表
+1. 更高效、安全，但是灵活性较差（当某个`Pod`没有应答时，不会尝试其他`Pod`）
+
+![proxy-mode-iptables](/images/Kubernetes-Concept/proxy-mode-iptables.svg)
+
+在`Pod`中访问`Service`的时序图如下
+
+```plantuml
+participant Pod
+participant localDNS
+participant iptable
+participant remotePod
+
+Pod->localDNS: 查询serviceName对应的Cluster IP
+localDNS-->Pod: return
+Pod->iptable: traffic to Cluster IP
+iptable->iptable: 查找路由表
+iptable->remotePod: traffic to remotePod
+```
+
+#### 4.1.2.3 Proxy-mode: ipvs
+
+与`iptable`模式类似，`ipvs`也是利用`netfilter`的`hook function`来实现的，但是`ipvs`利用的是哈希表，且工作在内核空间，因此效率非常高，同时`ipvs`还支持多种负载均衡算法
+
+1. `rr`: round-rogin
+1. `lc`: least connection
+1. `dh`: destination hashing
+1. `sh`: source hashing
+1. `sed`: shortest expected delay
+1. `nq`: never queue
+
+![proxy-mode-ipvs](/images/Kubernetes-Concept/proxy-mode-ipvs.svg)
+
+在以上任何一种模式中，来自`Cluster IP:Port`的流量都会被重定向到其中一个后端`Pod`中，且用户不感知这些过程
+
+### 4.1.3 Multi-Port Services
+
+很多`Service`需要暴露多个端口。`Kubernetes`支持一个`Service`暴露多个端口，在这种方式下，我们必须为每个端口定义一个端口名（端口名只允许包含数字、小写字母以及`-`，且必须以数字或小写字母开头和记为）
+
+```yml
+kind: Service
+apiVersion: v1
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: MyApp
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 9376
+  - name: https
+    protocol: TCP
+    port: 443
+    targetPort: 9377
+```
+
+### 4.1.4 Choosing your own IP address
+
+我们可以通过`.spec.clusterIP`字段为`Service`分配静态的`Cluster IP`。该`IP`必须是一个合法的`Cluster IP`，否则会被`Api Server`拒绝（返回`422`错误码）
+
+### 4.1.5 Discovering services
+
+`Kubernetes`提供了两种服务发现的方式
+
+1. `Environment Variables`
+1. `DNS`
+
+#### 4.1.5.1 Environment Variables
+
+`kubelet`会为每个`Service`设置一系列的环境变量，格式为`<SERVICE_NAME>_<VARIABLE_NAME>`，服务名和变量名都会被转成大写+下划线的方式
+
+这种方式会引入顺序的问题，如果`Pod`想要访问一个`Service`，那么这个`Service`必须优先于`Pod`创建
+
+#### 4.1.5.2 DNS
+
+`DNS Server`会监听`Service`的创建，并为其创建`DNS Record`，如此一来，`Pod`就可以通过服务名来访问服务了
+
+举个例子，如果我们有一个`Service`，起名字为`my-service`，其对应的`Namesapce`为`my-ns`，那么`DNS Server`会为这个`Service`创建一个`my-service.my-ns`的记录。所有在`my-ns`下的`Pod`可以通过服务名来访问，即`my-service`；对于在其他`Namespace`下的`Pod`必须通过`my-service.my-ns`来访问
+
+### 4.1.6 Headless services
+
+有时候，我们不需要负载均衡，也不需要`Service IP`，我们可以通过`.spec.clusterIP = None`来进行配置。这种方式允许开发者与`Kubernetes`的服务发现机制解耦，允许开发者使用其他的服务发现机制
+
+在这种模式下，`Service`不会被分配`Cluster IP`，`kube-proxy`也不会处理这些`Service`
+
+如果该模式的`Service`包含`Selector`，`Endpoint Controller`会创建`Endpoint`来记录这个`Service`，并且会修改`DNS`记录（`ServiceName`->`Backend Pod IP`）
+
+如果该模式的`Service`不包含`Selector`，那么`Endpoint Controller`不会为`Service`创建任何`Endponit`
+
+### 4.1.7 Publishing services - service types
+
+有时候，我们的服务需要对外暴露（不仅仅对其他`Pod`提供服务，而是对整个Internet提供服务），`Kubernetes`允许我们为`Service`指定`ServiceType`，默认的类型是`ClusterIP`，所有的可选类型如下
+
+1. `ClusterIP`: 通过`Cluster IP`暴露该`Service`，意味着只有在集群内才能访问这个`Service`。这是默认的类型
+1. `NodePort`: 通过`NodePort`暴露该`Service`，即在每个部署了`Pod`的`Node`上都分配一个静态的端口。在该类型下，会自动为`Service`创建`Cluster IP`用于路由，我们也可以从外部通过`<NodeIP>:<NodePort>`来访问这个`Service`。这种模式要求使用方精确知道应用部署在哪些`Node`上，以及这些`Node`的IP
+1. `LoadBalancer`: 通过`Load Balancer`对外暴露该`Service`。在该类型下，会自动为`Service`创建`Cluster IP`以及`NodePort`用于路由
+1. `ExternalName`: 通过`CNAME`暴露该服务，将服务映射到`externalName`字段对应的域名中，完全由`DNS`负责路由
+
+#### 4.1.7.1 Type NodePort
+
+对于这种模式的`Service`，每个部署了`Pod`的`Node`都会代理该相同的`Port`，该端口号对应于`Service`的`.spec.ports[*].nodePort`配置项
+
+我们可以通过`--nodeport-addresses`选项来指定一个或一组`IP`的范围（多个的话，以`,`分隔），该选项的默认是是空`[]`，意味着最大的`IP`范围
+
+我们可以通过`nodePort`来指定暴露的`Port`，因此我们需要注意端口冲突的问题，且必须属于合法的`NodePort`范围
+
+这种方式给予了开发者更多的自由度，允许配置自己的负载均衡服务，允许在精简版的`Kubernetes`环境中使用`Service`，允许我们直接暴露`Node`的`IP`来使用`Service`
+
+__服务可以通过`<NodeIP>:spec.ports[*].nodePort`或者`.spec.clusterIP:spec.ports[*].port`两种方式进行访问__
+
+#### 4.1.7.2 Type LoadBalancer
+
+对于提供负载均衡服务的云环境，我们可以将`Service`指定为`LoadBalancer`类型，`Kubernetes`会为`Service`创建`LoadBalancer`，事实上，`LoadBalancer`的创建过程与`Service`的创建过程是异步的。当`LoadBalancer`发布后，会更新`Service`的`.status.loadBalancer`字段
+
+```yml
+kind: Service
+apiVersion: v1
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: MyApp
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 9376
+  clusterIP: 10.0.171.239
+  loadBalancerIP: 78.11.24.19
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+    - ip: 146.148.47.155
+```
+
+`LoadBalancer`接收到来自外部的流量后，会直接路由到提供服务的`Pod`，具体方式依赖于云服务提供商的实现。一些云服务提供商允许指定`loadBalancerIP`，在这种情况下会以配置的`IP`来创建`LoadBalancer`，若`loadBalancerIP`未配置，则会分配一个随机的IP。如果云服务商不提供这个功能，那么这个字段将会被忽略
+
+### 4.1.8 The gory details of virtual IPs
+
+本小结将介绍`Service`的一些细节问题
+
+#### 4.1.8.1 Avoiding collisions
+
+#### 4.1.8.2 IPs and VIPs
+
+### 4.1.9 API Object
+
+### 4.1.10 SCTP support
+
+### 4.1.11 Question
+
+`Service`解决了集群内部`Pod`之间相互访问的问题，但是如果某个应用是提供给外部用户使用的，那从这个角度来说，是否`Service`是没用的，还得关心`Pod`具体部署到了哪个`Node`上面，才能架设负载均衡
+
+## 4.2 DNS for Services and Pods
+
+## 4.3 Connecting Applications with Services
+
+## 4.4 Ingress
+
+## 4.5 Network Policies
+
+## 4.6 Adding entries to Pod /etc/hosts with HostAliases
+
+# 5 Network
+
+## 5.1 Overview
 
 首先，我们来明确一下，Kubernetes面临的网络问题
 
@@ -853,7 +1539,7 @@ spec:
 1. __Pod-to-Service communications__：通过`services`来解决
 1. __External-to-Service communications__：通过`services`来解决
 
-## 6.2 Docker Model
+## 5.2 Docker Model
 
 我们先来回顾一下Docker的网络模型，这对于理解Kubernetes的网络模型是很有必要的。__在默认情况下，`Docker`利用`host-private networking`，`Docker`创建了一个虚拟网桥（virtual bridge），默认为`docker0`__。对于`Docker`创建的每个`Container`都会有一个连接到网桥的虚拟以太网卡（virtual Ethernet device）`veth`，从`Container`内部来看，`veth`就被映射成了`eth0`网卡
 
@@ -861,7 +1547,7 @@ spec:
 
 为了让`Container`可以跨`node`进行交互，必须为它们分配一个宿主物理机的`ip`。这样一来，我们就需要付出额外的精力维护`ip`以及`port`
 
-## 6.3 Kubernetes model
+## 5.3 Kubernetes model
 
 `Kubernetes`要求网络模型必须满足如下条件
 
@@ -873,7 +1559,7 @@ spec:
 
 到目前为止，都在讨论`Container`，但事实上，`Kubernetes`在`Pod`范围上使用`ip`地址，因此，在一个`Pod`内的所有`Container`共享网络命名空间（network namespaces），当然包括ip地址。这意味着，在一个`Pod`内的`Container`可以通过`localhost`与其他`Container`进行通信。__这称为“IP-per-pod”模式，在这种模式下，一个`Pod`需要有一个`pod contaner`来管理网络命名空间，其他`app container`利用`Docker`的`--net=container:<id>`参数来加入这个网络命名空间即可__
 
-## 6.4 Kubernetes networking model implements
+## 5.4 Kubernetes networking model implements
 
 __Kubernetes的网络模型有很多种实现方式，包括但不仅限如下几种__
 
@@ -897,17 +1583,16 @@ __Kubernetes的网络模型有很多种实现方式，包括但不仅限如下�
 1. Romana
 1. Weave Net from Weaveworks
 
-## 6.5 参考
+## 5.5 参考
 
 * [Cluster Networking](https://kubernetes.io/docs/concepts/cluster-administration/networking/)
 
-# 7 Service
+# 6 Question
 
-## 7.1 参考
+1. `Pod IP`在Namespace下唯一，既然可以通过`Namespace`+`Pod IP`准确定位一个`Pod`，为什么还需要`flannel`
+1. `flannel`保证了在同一个集群中的`Pod`的ip不重复
 
-* [Services](https://kubernetes.io/docs/concepts/services-networking/service/)
-
-# 8 Sequence
+# 7 Sequence
 
 ```plantuml
 participant Master
@@ -924,10 +1609,14 @@ NodeB->NodeB: resolve flannelIp to ClasterIp
 NodeB-->NodeA: response
 ```
 
-# 9 参考
+# 8 参考
 
 * [英文文档1](https://kubernetes.io/docs/concepts/)
 * [中文文档1](http://docs.kubernetes.org.cn/)
 * [中文文档2](https://www.kubernetes.org.cn/kubernetes%E8%AE%BE%E8%AE%A1%E6%9E%B6%E6%9E%84)
 * [Borg、Omega 和 Kubernetes：谷歌十几年来从这三个容器管理系统中得到的经验教训](https://segmentfault.com/a/1190000004667502)
 * [Kubernetes核心概念总结](http://www.cnblogs.com/zhenyuyaodidiao/p/6500720.html)
+* [Kubernetes之Service](https://blog.csdn.net/dkfajsldfsdfsd/article/details/81200411)
+* [Kubernetes学习4--容器之间通讯方式及Flannel工作原理](https://blog.csdn.net/weixin_29115985/article/details/78963125)
+* [Flannel网络原理](https://www.jianshu.com/p/165a256fb1da)
+* [解决Flannel跨主机互联网络问题【Docker】](https://www.jianshu.com/p/be48159fa795)

@@ -479,7 +479,35 @@ __格式修饰符，与转换符共同使用__：可选的格式修饰符位于"
 </configuration>
 ```
 
-# 6 参考
+# 6 Spring集成
+
+```xml
+<configuration>
+    <!-- 引入外部属性文件 -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <!-- 依据profile选择性配置 -->
+    <springProfile name="local, ci">
+        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+           ...
+        </appender>
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="!local, !ci">
+        <appender name="ROLLINGFILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            ...
+        </appender>
+        <root level="INFO">
+            <appender-ref ref="ROLLINGFILE"/>
+        </root>
+    </springProfile>
+</configuration>
+```
+
+# 7 参考
 
 * [logback-layout](https://logback.qos.ch/manual/layouts.html)
 * [从零开始玩转logback](http://www.importnew.com/22290.html)
