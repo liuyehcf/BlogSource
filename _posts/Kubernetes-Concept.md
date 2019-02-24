@@ -1459,13 +1459,13 @@ spec:
 有时候，我们的服务需要对外暴露（不仅仅对其他`Pod`提供服务，而是对整个Internet提供服务），`Kubernetes`允许我们为`Service`指定`ServiceType`，默认的类型是`ClusterIP`，所有的可选类型如下
 
 1. `ClusterIP`: 通过`Cluster IP`暴露该`Service`，意味着只有在集群内才能访问这个`Service`。这是默认的类型
-1. `NodePort`: 通过`NodePort`暴露该`Service`，即在每个部署了`Pod`的`Node`上都分配一个静态的端口。在该类型下，会自动为`Service`创建`Cluster IP`用于路由，我们也可以从外部通过`<NodeIP>:<NodePort>`来访问这个`Service`。这种模式要求使用方精确知道应用部署在哪些`Node`上，以及这些`Node`的IP
+1. `NodePort`: 通过`NodePort`暴露该`Service`，即在集群中所有`Node`上都分配一个静态的端口。在该类型下，会自动为`Service`创建`Cluster IP`用于路由，我们也可以从外部通过`<NodeIP>:<NodePort>`来访问这个`Service`
 1. `LoadBalancer`: 通过`Load Balancer`对外暴露该`Service`。在该类型下，会自动为`Service`创建`Cluster IP`以及`NodePort`用于路由
 1. `ExternalName`: 通过`CNAME`暴露该服务，将服务映射到`externalName`字段对应的域名中，完全由`DNS`负责路由
 
 #### 4.1.7.1 Type NodePort
 
-对于这种模式的`Service`，每个部署了`Pod`的`Node`都会代理该相同的`Port`，该端口号对应于`Service`的`.spec.ports[*].nodePort`配置项
+对于这种模式的`Service`，集群中所有的`Node`都会代理该相同的`Port`，该端口号对应于`Service`的`.spec.ports[*].nodePort`配置项
 
 我们可以通过`--nodeport-addresses`选项来指定一个或一组`IP`的范围（多个的话，以`,`分隔），该选项的默认是是空`[]`，意味着最大的`IP`范围
 
@@ -1508,19 +1508,557 @@ status:
 
 #### 4.1.8.1 Avoiding collisions
 
+`Kubernetes`的哲学之一就是尽量避免用户因为自身以外的因素，导致应用无法正常工作。对于端口而言，用户自己选择端口号，将会有一定概率导致冲突，因此，`Kubernetes`为用户自动分配端口号
+
+`Kubernetes`确保每个`Service`分配到的`IP`在集群中是唯一的。具体做法是，`Kubernetes`会在`etcd`中维护一个全局的分配映射表
+
 #### 4.1.8.2 IPs and VIPs
 
-### 4.1.9 API Object
+`Pod IP`通常可以定位到一个确定的`Pod`，但是`Service`的`Cluster IP(Virtual IP, VIP)`通常映射为一组`Pod`，因此，`Kubernetes`利用`iptables`将`Cluster IP`进行重定向。因此，所有导入`VIP`的流量都会自动路由到一个或一组`Endpoint`中去。`Service`的环境变量和DNS实际上是根据服务的`VIP`和端口填充的
 
-### 4.1.10 SCTP support
-
-### 4.1.11 Question
-
-`Service`解决了集群内部`Pod`之间相互访问的问题，但是如果某个应用是提供给外部用户使用的，那从这个角度来说，是否`Service`是没用的，还得关心`Pod`具体部署到了哪个`Node`上面，才能架设负载均衡
+`Kubernetes`支持三种不同的模式，分别是`userspace`、`iptables`、`ipvs`，这三者之间有微小的差异
 
 ## 4.2 DNS for Services and Pods
 
+### 4.2.1 Introduction
+
+每个`Service`都会分配一个`DNS Name`。通常情况下，一个`Pod`的`DNS`搜索范围包括`Pod`所在的`Namespace`以及集群的默认`domain`。举例来说，`Namspace bar`中包含`Service foo`，一个运行在`Namspace bar`中的`Pod`可以通过`foo`来搜索这个`Service`，一个运行在`Namspace quux`中的`Pod`可以通过`foo.bar`来搜索这个`Service`
+
+### 4.2.2 Services
+
+#### 4.2.2.1 A Records
+
+1. `Pod`会被分配一个`A Record`，其格式为`<pod-ip-address>.<my-namespace>.pod.cluster.local`
+1. 例如一个`Pod`，其`IP`为`1.2.3.4`，其`Namespace`为`default`，且`DNS Name`为`cluster.locals`，那么对应的`A Record`为`1-2-3-4.default.pod.cluster.local`
+
+### 4.2.3 Pods
+
+#### 4.2.3.1 Pod's hostname and subdomain fields
+
+1. 当一个`Pod`创建时，它的`hostname`就是`metadata.name`的值
+1. `Pod`还可以指定`spec.hostname`，若`spec.hostname`与`metadata.name`同时存在时，以`spec.hostname`为准
+1. `Pod`还可以指定`spec.subdomain`。例如，若一个`Pod`，其`spec.hostname`为`foo`，`spec.subdomain`为`bar`，`Namespace`为`my-namespace`，则对应的`FQDN`为`foo.bar.my-namespace.pod.cluster.local`
+
+```yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: default-subdomain
+spec:
+  selector:
+    name: busybox
+  clusterIP: None
+  ports:
+  - name: foo # Actually, no port is needed.
+    port: 1234
+    targetPort: 1234
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox1
+  labels:
+    name: busybox
+spec:
+  hostname: busybox-1
+  subdomain: default-subdomain
+  containers:
+  - image: busybox
+    command:
+      - sleep
+      - "3600"
+    name: busybox
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox2
+  labels:
+    name: busybox
+spec:
+  hostname: busybox-2
+  subdomain: default-subdomain
+  containers:
+  - image: busybox
+    command:
+      - sleep
+      - "3600"
+    name: busybox
+```
+
+#### 4.2.3.2 Pod's DNS Policy
+
+可以基于每个`Pod`设置`DNS Policy`。目前，`Kubernetes`支持以下几种`DNS Policy`
+
+1. `Default`: 从`Node`中继承`DNS`配置
+1. `ClusterFirst`: 任何不匹配集群域名后缀的`DNS Query`都会转发到从`Node`中继承而来的上游`DNS`服务器
+1. `ClusterFirstWithHostNet`: 若`Pod`以`hostNetwork`模式运行，那么`DNS`必须设置为`ClusterFirstWithHostNet`
+1. `None`: 忽略`Kubernetes`的`DNS Policy`，同时依赖`spec.dnsConfig`提供更细粒度的配置
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+  namespace: default
+spec:
+  containers:
+  - image: busybox
+    command:
+      - sleep
+      - "3600"
+    imagePullPolicy: IfNotPresent
+    name: busybox
+  restartPolicy: Always
+  hostNetwork: true
+  dnsPolicy: ClusterFirstWithHostNet
+```
+
+#### 4.2.3.3 Pod's DNS Config
+
+`Kubernetes`在`v1.9`版本后允许用户进行更细粒度的`DNS`配置，需要通过`--feature-gates=CustomPodDNS=true`选项来开启该功能。开启功能后，我们就可以将`spec.dnsPolicy`字段设置为`None`，并且新增一个字段`dnsConfig`，来进行更细粒度的配置
+
+`dnsConfig`支持以下几项配置
+
+1. `nameservers`: `DNS`服务器列表，最多可以设置3个，最少包含一个
+1. `searches`: `DNS Search Domain`列表，最多支持6个
+1. `options`: 一些键值对的列表，每个键值对必须包含`Key`，但是`Value`可以没有
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: default
+  name: dns-example
+spec:
+  containers:
+    - name: test
+      image: nginx
+  dnsPolicy: "None"
+  dnsConfig:
+    nameservers:
+      - 1.2.3.4
+    searches:
+      - ns1.svc.cluster.local
+      - my.dns.search.suffix
+    options:
+      - name: ndots
+        value: "2"
+      - name: edns0
+```
+
 ## 4.3 Connecting Applications with Services
+
+在讨论`Kubernetes`的网络通信之前，我们先对比一下`Docker`的常规网络通信方式
+
+默认情况下，`Docker`使用的是`host-private`网络，因此，只有处于同一个机器上的不同`Container`之间才可以通信。因此要想跨`Node`进行通信，那么必须为`Container`所在的机器分配`IP`用以代理该`Container`，这样一来就必须处理`IP`以及`Port`冲突的问题
+
+在不同的开发者之间进行`Port`的统一分配是一件非常困难的事情，并且会增加扩容/缩容的复杂度。`Kubernetes`首先假设`Pod`可以与其他`Pod`进行通信，且无视他们所属的`Node`，`Kubernetes`会为每个`Pod`分配一个`cluster-private-IP`，且我们无需处理这些映射关系。这意味着，位于同一个`Node`上的`Pod`自然可以通过`localhost`进行通信，位于不同`Node`上的`Pod`无需使用`NAT`也可以进行通信，下面将详细介绍`Kubernetes`的实现方式
+
+### 4.3.1 Exposing pods to the cluster
+
+下面，我们用一个`Nginx Pod`作为例子，进行介绍
+
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-nginx
+spec:
+  selector:
+    matchLabels:
+      run: my-nginx
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        run: my-nginx
+    spec:
+      containers:
+      - name: my-nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+```
+
+下面创建一个`Deployment Object`
+
+```sh
+# 创建 Deployment
+$ kubectl create -f ./run-my-nginx.yaml
+
+deployment.apps/my-nginx created
+
+# 查看 Pod
+$ kubectl get pods -l run=my-nginx -o wide
+
+NAME                        READY     STATUS    RESTARTS   AGE       IP           NODE
+my-nginx-59497d7745-9z9f7   1/1       Running   0          3m        10.244.1.8   k8s-node-1
+my-nginx-59497d7745-kww92   1/1       Running   0          3m        10.244.2.5   k8s-node-2
+
+# 查看 Pod ip
+$ kubectl get pods -l run=my-nginx -o yaml | grep podIP
+
+    podIP: 10.244.1.8
+    podIP: 10.244.2.5
+```
+
+注意到，这些`Pod`并没有用附属`Node`的`80`端口，也没有配置任何`NAT`规则来路由流量，这意味着，我们可以在同一个`Node`上部署多个`Pod`，并且利用`IP`来访问这些`Pod`
+
+登录`Pod`的命令如下
+
+```sh
+$ kubectl exec -it <pod-name> -n <namespace> -- bash
+```
+
+### 4.3.2 Create a Service
+
+理论上，我们可以直接使用这些`Pod`的`IP`来与之通信，但是一旦`Node`挂了之后，又会被`Deployment`部署到其他健康的`Node`中，并分配一个新的`Pod IP`，因此，会带来非常大的复杂度
+
+`Serivce`抽象了一组功能相同的`Pod`。每个`Service`在创建之初就会被分配一个独有的`IP`，称为`Cluster IP`，该`IP`在`Service`的生命周期中保持不变，进入`Service`的流量会通过负载均衡后，路由到其中一个`Pod`上
+
+接着上面的例子，我们可以通过`kubectl expose`来创建一个`Service`
+
+```sh
+# 创建service
+$ kubectl expose deployment/my-nginx
+service/my-nginx exposed
+
+# 查看service
+$ kubectl get svc my-nginx
+
+NAME       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+my-nginx   ClusterIP   10.96.104.176   <none>        80/TCP    3m
+
+# 查看service的状态
+$ kubectl describe svc my-nginx
+
+Name:              my-nginx
+Namespace:         default
+Labels:            run=my-nginx
+Annotations:       <none>
+Selector:          run=my-nginx
+Type:              ClusterIP
+IP:                10.96.104.176
+Port:              <unset>  80/TCP
+TargetPort:        80/TCP
+Endpoints:         10.244.1.8:80,10.244.2.5:80
+Session Affinity:  None
+Events:            <none>
+[root@k8s-master ~]# kubectl describe svc my-nginx
+Name:              my-nginx
+Namespace:         default
+Labels:            run=my-nginx
+Annotations:       <none>
+Selector:          run=my-nginx
+Type:              ClusterIP
+IP:                10.96.104.176
+Port:              <unset>  80/TCP
+TargetPort:        80/TCP
+Endpoints:         10.244.1.8:80,10.244.2.5:80
+Session Affinity:  None
+Events:            <none>
+
+# 查看endpoint
+$ kubectl get ep my-nginx
+
+NAME       ENDPOINTS                     AGE
+my-nginx   10.244.1.8:80,10.244.2.5:80   11m
+```
+
+`kubectl expose`等价于`kubectl create -f <如下配置文件>`
+
+```yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-nginx
+  labels:
+    run: my-nginx
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+  selector:
+    run: my-nginx
+```
+
+根据上面的定义，该`Serivce`会代理所有匹配`run: my-nginx`的`Pod`。其中`port`是`Serivce`的流量入口端口；`targetPort`是`Pod`的流量入口端口，默认与`port`相同
+
+这些`Pod`通过`Endpoint`露出，`Service`会持续筛选匹配`Selector`的`Pod`，并将结果输送到与`Pod`同名的`Endpoint`对象中。当一个`Pod`挂了之后，它会自动从`Endpoint`中被移除，新的`Pod`随即会被创建，并添加到`Endpoint`中
+
+### 4.3.3 Accessing the Service
+
+`Kubernetes`提供了两种服务发现的方式：`Environment Variables`以及`DNS`
+
+#### 4.3.3.1 Environment Variables
+
+当`Pod`运行在`Node`之后，`kubectl`会为每个`Service`设置一些环境变量。这种方式会引入顺序问题
+
+首先，我们查看一下现有`Pod`的环境变量
+
+```sh
+$ kubectl exec <pod name> -- printenv | grep SERVICE
+
+KUBERNETES_SERVICE_PORT_HTTPS=443
+KUBERNETES_SERVICE_PORT=443
+KUBERNETES_SERVICE_HOST=10.96.0.1
+```
+
+可以看到，这里没有我们创建的`Service`的相关信息，这是因为我们在创建`Service`之前，首先创建了`Pod`。另一个弊端是，`Scheduler`可能会将上述两个`Pod`部署到同一个`Node`中，这会导致整个`Service`不可用，我们可以通过杀死这两个`Pod`并等待`Deployment`重新创建两个新的`Pod`来修复这个问题
+
+```sh
+# 杀死现有的Pod，并创建新的Pod
+$ kubectl scale deployment my-nginx --replicas=0; kubectl scale deployment my-nginx --replicas=2;
+
+deployment.extensions/my-nginx scaled
+deployment.extensions/my-nginx scaled
+
+# 查看Pod
+$ kubectl get pods -l run=my-nginx -o wide
+
+NAME                        READY     STATUS    RESTARTS   AGE       IP           NODE
+my-nginx-59497d7745-jb8zm   1/1       Running   0          1m        10.244.1.9   k8s-node-1
+my-nginx-59497d7745-nrxj7   1/1       Running   0          1m        10.244.2.6   k8s-node-2
+
+# 查看环境变量
+$ kubectl exec <pod name> -- printenv | grep SERVICE
+
+KUBERNETES_SERVICE_HOST=10.96.0.1
+KUBERNETES_SERVICE_PORT_HTTPS=443
+MY_NGINX_SERVICE_HOST=10.96.104.176
+MY_NGINX_SERVICE_PORT=80
+KUBERNETES_SERVICE_PORT=443
+```
+
+#### 4.3.3.2 DNS
+
+`Kubernetes`提供了一个`DNS cluster addon Service`，它会为每个`Service`分配一个`DNS Name`，我们可以通过如下命令查看
+
+```sh
+$ kubectl get services kube-dns --namespace=kube-system
+
+NAME       TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)         AGE
+kube-dns   ClusterIP   10.96.0.10   <none>        53/UDP,53/TCP   212d
+```
+
+在集群中的任何`Pod`都可以用标准的方式来访问`Service`，我们运行另一个`curl`应用来进行测试
+
+```sh
+# 以交互的方式运行一个`container`
+$ kubectl run curl --image=radial/busyboxplus:curl -i --tty
+
+$ nslookup my-nginx
+
+Server:    10.96.0.10
+Address 1: 10.96.0.10 kube-dns.kube-system.svc.cluster.local
+
+Name:      my-nginx
+Address 1: 10.96.104.176 my-nginx.default.svc.cluster.local
+```
+
+### 4.3.4 Securing the Service
+
+对于需要对外露出的`Service`，我们可以为其添加`TLS/SSL`
+
+```sh
+#create a public private key pair
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /tmp/nginx.key -out /tmp/nginx.crt -subj "/CN=my-nginx/O=my-nginx"
+#convert the keys to base64 encoding
+cat /tmp/nginx.crt | base64
+cat /tmp/nginx.key | base64
+```
+
+下面创建一个`Secret`，配置如下
+
+```yml
+apiVersion: "v1"
+kind: "Secret"
+metadata:
+  name: "nginxsecret"
+  namespace: "default"
+data:
+  nginx.crt: "<cat /tmp/nginx.crt | base64 的输出>"
+  nginx.key: "<cat /tmp/nginx.key | base64 的输出>"
+```
+
+```sh
+$ kubectl create -f nginxsecrets.yaml
+
+secret/nginxsecret created
+
+$ kubectl get secrets
+
+NAME                  TYPE                                  DATA      AGE
+default-token-m7tnl   kubernetes.io/service-account-token   3         212d
+nginxsecret           Opaque                                2         14s
+```
+
+现在需要替换掉之前的`nginx`服务，配置如下
+
+```yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-nginx
+  labels:
+    run: my-nginx
+spec:
+  type: NodePort
+  ports:
+  - port: 8080
+    targetPort: 80
+    protocol: TCP
+    name: http
+  - port: 443
+    protocol: TCP
+    name: https
+  selector:
+    run: my-nginx
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-nginx
+spec:
+  selector:
+    matchLabels:
+      run: my-nginx
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: my-nginx
+    spec:
+      volumes:
+      - name: secret-volume
+        secret:
+          secretName: nginxsecret
+      containers:
+      - name: nginxhttps
+        image: bprashanth/nginxhttps:1.0
+        ports:
+        - containerPort: 443
+        - containerPort: 80
+        volumeMounts:
+        - mountPath: /etc/nginx/ssl
+          name: secret-volume
+```
+
+上述的配置清单包括
+
+1. `Deployment`以及`Service`
+1. `nginx`暴露了`80`以及`443`端口，`Service`露出了这两个端口，分别是`8080`以及`443`端口
+1. `Container`通过挂载到`/etc/nginx/ssl`上的卷来获取`secret key`
+
+利用上述配置，替换原先的`nginx`
+```sh
+$ kubectl delete deployments,svc my-nginx; kubectl create -f ./nginx-secure-app.yaml
+
+deployment.extensions "my-nginx" deleted
+service "my-nginx" deleted
+service/my-nginx created
+deployment.apps/my-nginx created
+```
+
+于是我们就能通过`Service`来访问`Nginx Server`了
+
+```sh
+# 查询Server的Cluster Ip
+$ kubectl get svc -o wide
+
+NAME                  TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                        AGE       SELECTOR
+kubernetes            ClusterIP   10.96.0.1        <none>        443/TCP                        212d      <none>
+my-nginx              NodePort    10.102.252.181   <none>        8080:31530/TCP,443:32730/TCP   24m       run=my-nginx
+
+# 通过Cluster IP访问nginx
+$ curl -k https://10.102.252.181
+
+...
+<title>Welcome to nginx!</title>
+...
+
+$ curl -k http://10.102.252.181:8080
+
+<title>Welcome to nginx!</title>
+```
+
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: curl-deployment
+spec:
+  selector:
+    matchLabels:
+      app: curlpod
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: curlpod
+    spec:
+      volumes:
+      - name: secret-volume
+        secret:
+          secretName: nginxsecret
+      containers:
+      - name: curlpod
+        command:
+        - sh
+        - -c
+        - while true; do sleep 1; done
+        image: radial/busyboxplus:curl
+        volumeMounts:
+        - mountPath: /etc/nginx/ssl
+          name: secret-volume
+```
+
+```sh
+# 创建另一个curl pod
+$ kubectl create -f ./curlpod.yaml
+
+deployment.apps/curl-deployment created
+
+# 获取pod名称
+$ kubectl get pods -l app=curlpod
+
+NAME                              READY     STATUS    RESTARTS   AGE
+curl-deployment-d74d885b7-tc7z8   1/1       Running   0          25s
+
+# 用指定的pod执行curl命令访问ngix服务
+$ kubectl exec curl-deployment-d74d885b7-tc7z8 -- curl https://my-nginx --cacert /etc/nginx/ssl/nginx.crt 
+
+...
+<title>Welcome to nginx!</title>
+...
+
+```
+
+### 4.3.5 Exposing the Service
+
+如果我们的应用想要对外露出，`Kubernetes`提供了两种方式，即`NodePort`以及`LoadBalancer`，上面的例子中，使用的是`NodePort`方式，因此如果`Node`本身就有`Public IP`，那么就可以对外提供服务了
+
+```sh
+$ kubectl get svc my-nginx -o yaml | grep nodePort -C 5
+
+spec:
+  clusterIP: 10.102.252.181
+  externalTrafficPolicy: Cluster
+  ports:
+  - name: http
+    nodePort: 31530
+    port: 8080
+    protocol: TCP
+    targetPort: 80
+  - name: https
+    nodePort: 32730
+    port: 443
+    protocol: TCP
+    targetPort: 443
+  selector:
+    run: my-nginx
+```
 
 ## 4.4 Ingress
 

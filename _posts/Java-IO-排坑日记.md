@@ -202,3 +202,62 @@ public class ReadEndDeadIssue {
 启动后，在控制台输入任意字符，1s之后，再输入任意字符，即可复现该问题。
 
 解决方案：让每一个`PipedInputStream`执行IO操作的线程是同一个
+
+# 3 ZipOutputStream打包相同文件后得到的字节数组不同
+
+因为你压缩文件，实际上是根据原文件，copy出一个新文件然后把这个文件压缩进zip文件中。那么，这个新文件，实际上是有`最后修改时间`的，这个属性肯定是不同的。文件属性的不同，导致你把整个zip文件拉入`MD5`算法计算其散列值的时候，肯定会算出不同的散列值。
+
+```Java
+try {
+            BufferedInputStream bis = new BufferedInputStream(
+                    new FileInputStream(file));
+            ZipEntry entry = new ZipEntry(basedir + file.getName());
+            entry.setTime(file.lastModified());//时间设置为源文件的最后修改时间，避免每次MD5不同
+            out.putNextEntry(entry);
+            int count;
+            byte data[] = new byte[BUFFER];
+           // System.out.println("===================压缩流字节====================");
+            while ((count = bis.read(data, 0, BUFFER)) != -1) {
+                //System.out.println("data "+data.length +":"+ ArrayUtils.toString(data));
+                out.write(data, 0, count);
+            }
+            bis.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+```
+
+__此外，在内存中将一个`byte array`打包成一个`zipped byte array`时，需要调用`ZipOutputStream.finish()`方法，否则得到的是一个不完整的zip文件__
+
+```Java
+public static byte[] packageFiles(ZipEntity... entities) {
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream(); ZipOutputStream zos = new ZipOutputStream(bos)) {
+
+            for (ZipEntity entity : entities) {
+                ZipEntry zipEntry = new ZipEntry(entity.getFileName());
+                // 将zip包中文件的修改时间改为1970年1月1日，避免修改时间不同而导致整个zip字节序列的差异
+                zipEntry.setLastModifiedTime(FileTime.fromMillis(0));
+                zos.putNextEntry(zipEntry);
+                zos.write(entity.getBytes());
+                zos.flush();
+                zos.closeEntry();
+            }
+
+            // 追加文件尾（当内层OutputStream为ByteArrayOutputStream，这一句是必须的，否则将输出的字节重新写入文件后，得到的是一个不完整的zip文件）
+            zos.finish();
+
+            return bos.toByteArray();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static final class ZipEntity {
+        private String fileName;
+
+        private byte[] bytes;
+    }
+```
