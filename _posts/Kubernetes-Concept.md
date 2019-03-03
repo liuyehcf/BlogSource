@@ -2035,11 +2035,12 @@ $ kubectl exec curl-deployment-d74d885b7-tc7z8 -- curl https://my-nginx --cacert
 
 ```
 
-### 4.3.5 Exposing the Service
+### 4.3.5 Exposing the Service（未完成）
 
 如果我们的应用想要对外露出，`Kubernetes`提供了两种方式，即`NodePort`以及`LoadBalancer`，上面的例子中，使用的是`NodePort`方式，因此如果`Node`本身就有`Public IP`，那么就可以对外提供服务了
 
 ```sh
+# 查看nodePort
 $ kubectl get svc my-nginx -o yaml | grep nodePort -C 5
 
 spec:
@@ -2058,11 +2059,256 @@ spec:
     targetPort: 443
   selector:
     run: my-nginx
+
+# 查看externalIP
+$ kubectl get nodes -o yaml | grep ExternalIP -C 1
 ```
 
-## 4.4 Ingress
+## 4.4 Ingress（未完成）
+
+`Ingress`用于管理`Service`的访问方式（通常是`HTTP`）
+
+`Ingress`可以提供`Load Balancing`、`SSL Termination`以及`Virtual Host`等服务
+
+### 4.4.1 Terminology
+
+涉及到的相关术语
+
+1. `Node`: `Kubernetes`集群中的虚拟机或者物理机
+1. `Cluster`: 由一组`Node`组成，通常它们由`Kubernetes`进行管理
+1. `Edge Router`: 用于执行防火墙策略的路由器，通常形态是云服务商提供的网关或者是一个硬件
+1. `Cluster Network`: 用于进群内通信的网络基础设施
+1. `Service`: 定义了一组满足特定`Label Selector`的`Pod`，`Serivce`含有一个仅在集群内有效的`Virtual IP`
+
+### 4.4.2 What is Ingress?
+
+`Ingress`定义从`Internet`到`Service`的路由规则，因此`Ingress`可以控制外来访问流量
+
+`Ingress`通常包含`LoadBalancer`、`Edge Router`以及一些其他用于处理流量的组件
+
+`Ingress`不露出任何协议以及端口，要想暴露`Service`而不是`HTTP/HTTPS`的话，应该使用`Service.Type`（设置成`NodePort`或者`LoadBalancer`方式）
+
+### 4.4.3 Ingress controllers
+
+为了使得`Ingress`能够正常工作，必须要在集群运行一个`Ingress Controller`，该`Ingress Controller`与其他`Controller`不同，它不属于`kube-controller-manager`的一部分，且不会自动启动
+
+### 4.4.4 The Ingress Resource
+
+```yml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: test-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /testpath
+        backend:
+          serviceName: test
+          servicePort: 80
+```
+
+与其他`Kubernetes Object`相同，`Ingress`需要`apiVersion`、`kind`、`metadata`三个字段
+
+每个`HTTP Rule`都包含了如下的信息
+
+1. `host`: 匹配指定的`host`
+1. `path`: 匹配指定的`path`，每个`path`都包含了一个后端的`serviceName`以及`servicePort`
+1. `backend`: 任何匹配`host`以及`path`的请求，都会被路由到`backend`对应的`Service`中
+
+如果一个`Ingress`没有配置任何的`rule`，那么所有流量都会被路由到一个`default backend`；如果流量不匹配任何的`host`以及`path`，那么该流量也会被路由到`default backend`
+
+`default backend`可以在`Ingress Controller`中进行配置
+
+### 4.4.5 Types of Ingress
+
+#### 4.4.5.1 Single Service Ingress
+
+#### 4.4.5.2 Simple fanout
+
+#### 4.4.5.3 Name based virtual hosting
+
+#### 4.4.5.4 TLS
+
+#### 4.4.5.5 Loadbalancing
+
+### 4.4.6 Updating an Ingress
+
+### 4.4.7 Failing across availability zones
 
 ## 4.5 Network Policies
+
+`Network Policy`定义了`Pod`之间或者`Pod`与其他`Endpoint`之间的通信方式
+
+### 4.5.1 Isolated and Non-isolated Pods
+
+默认情况下，`Pod`都是`non-isolated`，意味着，它可以接收来自任何源的流量
+
+当`Pod`匹配某个`NetworkPolicy`后，它就变成`isolated`的了，于是，它会拒绝所有不满足`NetworkPolicy`规则的流量
+
+### 4.5.2 The NetworkPolicy Resource
+
+```yml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: test-network-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      role: db
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - ipBlock:
+        cidr: 172.17.0.0/16
+        except:
+        - 172.17.1.0/24
+    - namespaceSelector:
+        matchLabels:
+          project: myproject
+    - podSelector:
+        matchLabels:
+          role: frontend
+    ports:
+    - protocol: TCP
+      port: 6379
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 10.0.0.0/24
+    ports:
+    - protocol: TCP
+      port: 5978
+```
+
+1. 与其他`Kubernetes Object`相同，`NetworkPolicy`需要`apiVersion`、`Kind`、`metadata`三个字段
+1. `spec`: 描述`NetworkPolicy`的最主要的字段
+1. `spec.podSelector`: 用于匹配`Pod`的`Selector`。一个空的`podSelector`会选择当前`Namespace`下的所有`Pod`
+1. `spec.policyTypes`: 可以是`Ingress`、`Egress`或者两者。默认情况下，会包含`Ingress`，且如果包含任何`Egress`规则，那么也会包含`Egress`
+    * > `ingress`: 每个`NetworkPolicy`都包含了一个`ingress rule`列表，每项规则包含`from`以及`ports`两项。其类型可以是`ipBlock`、`namespaceSelector`或者`podSelector`
+    * > `egress`: 每个`NetworkPolicy`都包含另一个`egress rule`列表，每项规则包含`to`以及`ports`两项
+
+### 4.5.3 Behavior of to and from selectors
+
+`igress`的`from`部分与`egress`的`to`部分可以包含如下四种类型
+
+1. `podSelector`: 在`NetworkPolicy`所在的`Namespace`下选择特定的`Pod`
+1. `namespaceSelector`: 选择特定的`Namespace`下的所有`Pod`
+1. `podSelector`和`namespaceSelector`: 选择特定`Namespace`下的特定`Pod`
+1. `ipBlock`: 选择特定的`IP CIDR`范围，且必须是`cluster-external IP`
+
+__区分以下两种配置的区别__
+
+```yml
+...
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          user: alice
+      podSelector:
+        matchLabels:
+          role: client
+  ...
+```
+
+这种配置包含一个规则: `podSelector`和`namespaceSelector`
+
+```yml
+...
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          user: alice
+    - podSelector:
+        matchLabels:
+          role: client
+  ...
+```
+
+这种配置包含两种规则: `podSelector`或`namespaceSelector`
+
+### 4.5.4 Default policies
+
+默认情况下，不存在任何`Policy`，但是我们可以修改默认的行为
+
+#### 4.5.4.1 Default deny all ingress traffic
+
+```yml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+```
+
+#### 4.5.4.2 Default allow all ingress traffic
+
+```yml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-all
+spec:
+  podSelector: {}
+  ingress:
+  - {}
+  policyTypes:
+  - Ingress
+```
+
+#### 4.5.4.3 Default deny all egress traffic
+
+```yml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+```
+
+#### 4.5.4.4 Default allow all egress traffic
+
+```yml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-all
+spec:
+  podSelector: {}
+  egress:
+  - {}
+  policyTypes:
+  - Egress
+```
+
+#### 4.5.4.5 Default deny all ingress and all egress traffic
+
+```yml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+```
 
 ## 4.6 Adding entries to Pod /etc/hosts with HostAliases
 
@@ -2130,31 +2376,19 @@ __Kubernetes的网络模型有很多种实现方式，包括但不仅限如下�
 1. `Pod IP`在Namespace下唯一，既然可以通过`Namespace`+`Pod IP`准确定位一个`Pod`，为什么还需要`flannel`
 1. `flannel`保证了在同一个集群中的`Pod`的ip不重复
 
-# 7 Sequence
-
-```plantuml
-participant Master
-participant NodeA
-participant FlannelNetwork
-participant NodeB
-
-NodeA->Master: ServiceName
-Master-->NodeA: ClasterIP
-NodeA->NodeA: Who can provide services?
-NodeA->NodeA: Flannel module record the ClasterIp, and transalate it to flannelIp
-NodeA->NodeB: request with flannelIp
-NodeB->NodeB: resolve flannelIp to ClasterIp
-NodeB-->NodeA: response
-```
-
-# 8 参考
+# 7 参考
 
 * [英文文档1](https://kubernetes.io/docs/concepts/)
 * [中文文档1](http://docs.kubernetes.org.cn/)
 * [中文文档2](https://www.kubernetes.org.cn/kubernetes%E8%AE%BE%E8%AE%A1%E6%9E%B6%E6%9E%84)
+* [nginx ingress doc](https://kubernetes.github.io/ingress-nginx/deploy/#prerequisite-generic-deployment-command)
+* [metallb doc](https://metallb.universe.tf/installation/)
 * [Borg、Omega 和 Kubernetes：谷歌十几年来从这三个容器管理系统中得到的经验教训](https://segmentfault.com/a/1190000004667502)
 * [Kubernetes核心概念总结](http://www.cnblogs.com/zhenyuyaodidiao/p/6500720.html)
 * [Kubernetes之Service](https://blog.csdn.net/dkfajsldfsdfsd/article/details/81200411)
 * [Kubernetes学习4--容器之间通讯方式及Flannel工作原理](https://blog.csdn.net/weixin_29115985/article/details/78963125)
 * [Flannel网络原理](https://www.jianshu.com/p/165a256fb1da)
 * [解决Flannel跨主机互联网络问题【Docker】](https://www.jianshu.com/p/be48159fa795)
+* [Kubernetes Nginx Ingress 教程](https://mritd.me/2017/03/04/how-to-use-nginx-ingress/)
+* [使用kubeadm安装Kubernetes 1.12](https://www.kubernetes.org.cn/4619.html)
+* [forbidden: User "system:serviceaccount:kube-system:default" cannot get namespaces in the namespace "default](https://github.com/fnproject/fn-helm/issues/21)

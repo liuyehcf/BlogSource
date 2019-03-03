@@ -455,17 +455,86 @@ __访问`http://<node_ip>:30001/home`，成功！__
 
 # 6 Helm
 
-__安装Helm__
+__步骤__
 
-```sh
-curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get > get_helm.sh
-chmod 700 get_helm.sh
-./get_helm.sh
+1. 下载，二进制包，传送门[helm release](https://github.com/helm/helm/releases)
+1. 解压缩，`tar -zxvf <file>`
+1. `mv linux-amd64/helm /usr/local/bin/helm`
+1. `helm init`
+
+## 6.1 参考
+
+* [github helm](https://github.com/helm/helm/blob/master/docs/install.md)
+* [helm doc](https://helm.sh/docs/using_helm/#quickstart-guide)
+
+# 7 Ingress
+
+__helm安装（未成功）__
+
+1. `helm install stable/nginx-ingress --name my-nginx`
+
+__非helm安装__
+
+1. 安装`nginx-ingress-controller`
+    * `kubectl apply -f mandatory.yaml`
+    * [mandatory.yaml下载链接](https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/mandatory.yaml)
+1. 安装`MetalLB`
+    * `kubectl apply -f metallb.yaml`
+    * [metallb.yaml下载链接](https://raw.githubusercontent.com/google/metallb/v0.7.3/manifests/metallb.yaml)
+1. 部署`nginx service`
+    * `kubectl apply -f service-nodeport.yaml`
+    * [service-nodeport.yaml下载链接](https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/provider/baremetal/service-nodeport.yaml)
+1. 修改`service-nodeport.yaml`中的`ingress-nginx`的`Type`，改为`LoadBalancer`
+    * `kubectl edit svc ingress-nginx -n ingress-nginx`
+1. 添加`configmap`
+    * `kubectl apply -f metallb-system.yml`
+1. 添加`ingress`
+    * `kubectl apply -f test-ingress.yml`
+1. 修改`hello-world-service`的`Type`，改为`LoadBalancer`
+    * `kubectl edit svc hello-world-service`
+
+`metallb-system.yml`如下
+
+```yml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: metallb-system
+  name: config
+data:
+  config: |
+    address-pools:
+    - name: default
+      protocol: layer2
+      addresses:
+      - 192.168.56.101-192.168.56.103
 ```
 
-# 7 Command
+`test-ingress.yml`如下
 
-## 7.1 kubectl
+```yml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: test-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /home
+        backend:
+          serviceName: hello-world-service
+          servicePort: 4000
+```
+
+## 7.1 参考
+
+* [nginx ingress doc](https://kubernetes.github.io/ingress-nginx/deploy/#prerequisite-generic-deployment-command)
+* [metallb doc](https://metallb.universe.tf/installation/)
+
+# 8 Command
+
+## 8.1 kubectl
 
 ```sh
 # 查看node概要信息
@@ -503,12 +572,11 @@ kubectl get pod -n <namespace> <pod-name> -o yaml
 kubectl label pod -n <namespace> <pod-name> <label_name>=<label_value>
 ```
 
-# 8 参考
+# 9 参考
 
 * [Kubernetes-Creating a single master cluster with kubeadm](https://kubernetes.io/docs/setup/)
 * [Kubernetes-Installing kubeadm](https://kubernetes.io/docs/setup/independent/install-kubeadm/)
 * [issue#localhost:8080](https://github.com/kubernetes/kubernetes/issues/44665)
 * [issue#x509: certificate has expired or is not yet valid](https://github.com/kubernetes/kubernetes/issues/42791)
-* [Installing Helm](https://docs.helm.sh/using_helm/#installing-helm)
 * [kubernetes创建资源yaml文件例子--pod](https://blog.csdn.net/liyingke112/article/details/76155428)
 * [十分钟带你理解Kubernetes核心概念](http://www.dockone.io/article/932)
