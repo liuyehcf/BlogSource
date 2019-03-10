@@ -2127,9 +2127,76 @@ spec:
 
 #### 4.4.5.1 Single Service Ingress
 
+```yml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: test-ingress
+spec:
+  backend:
+    serviceName: testsvc
+    servicePort: 80
+```
+
 #### 4.4.5.2 Simple fanout
 
+```
+foo.bar.com -> 178.91.123.132 -> / foo    service1:4200
+                                 / bar    service2:8080
+```
+
+```yml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: simple-fanout-example
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: foo.bar.com
+    http:
+      paths:
+      - path: /foo
+        backend:
+          serviceName: service1
+          servicePort: 4200
+      - path: /bar
+        backend:
+          serviceName: service2
+          servicePort: 8080
+```
+
 #### 4.4.5.3 Name based virtual hosting
+
+该类型常用于将多个服务通过同一个IP暴露出去，且对外的域名是不同的
+
+```
+foo.bar.com --|                 |-> foo.bar.com s1:80
+              | 178.91.123.132  |
+bar.foo.com --|                 |-> bar.foo.com s2:80
+```
+
+```yml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: name-virtual-host-ingress
+spec:
+  rules:
+  - host: foo.bar.com
+    http:
+      paths:
+      - backend:
+          serviceName: service1
+          servicePort: 80
+  - host: bar.foo.com
+    http:
+      paths:
+      - backend:
+          serviceName: service2
+          servicePort: 80
+```
 
 #### 4.4.5.4 TLS
 
