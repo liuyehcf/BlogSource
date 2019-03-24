@@ -74,7 +74,11 @@ __阅读更多__
 1. `org.springframework.boot.SpringApplicationRunListener`
 1. `org.springframework.boot.diagnostics.FailureAnalysisReporter`
 
-# 3 参考
+# 3 todo
+
+ConfigurationProperties 属性必须有get/set方法
+
+# 4 参考
 
 * [Spring Boot 制作一个自己的 Starter](https://blog.csdn.net/wo18237095579/article/details/81197245)
 * [Spring-boot实例学习之 自定义starter](https://blog.csdn.net/Revivedsun/article/details/77151899)

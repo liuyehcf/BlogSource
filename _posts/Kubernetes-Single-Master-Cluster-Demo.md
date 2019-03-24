@@ -527,6 +527,21 @@ spec:
           servicePort: 4000
 ```
 
+查看ingress
+
+```sh
+kubectl get ingress test-ingress
+
+test-ingress   *         192.168.56.101   80        19d
+```
+
+[https://192.168.56.101/home](https://192.168.56.101/home)
+
+__Ingress Controller的作用__
+
+1. 读取`Ingress`，并写入到nginx的配置文件中
+1. 监听集群中`Service`的变化，及时更新backend
+
 ## 7.1 参考
 
 * [nginx ingress doc](https://kubernetes.github.io/ingress-nginx/deploy/#prerequisite-generic-deployment-command)

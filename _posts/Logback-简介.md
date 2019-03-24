@@ -507,7 +507,11 @@ __格式修饰符，与转换符共同使用__：可选的格式修饰符位于"
 </configuration>
 ```
 
-# 7 参考
+# 7 Spring-Boot默认的配置
+
+参考`org.springframework.boot.logging.logback.DefaultLogbackConfiguration`
+
+# 8 参考
 
 * [logback-layout](https://logback.qos.ch/manual/layouts.html)
 * [从零开始玩转logback](http://www.importnew.com/22290.html)

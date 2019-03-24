@@ -141,7 +141,7 @@ __注意，一个`.yaml`文件中，必须包含如下字段__
 可以通过如下命令查看系统中的`Namespaces`
 
 ```sh
-kubectl get namespaces
+$ kubectl get namespaces
 ```
 
 `Kubernetes`默认包含三个`Namespaces`
@@ -155,9 +155,9 @@ kubectl get namespaces
 我们可以为`kubectl`设定`Namespace`上下文，后续所有的命令都默认指定该`Namespace`
 
 ```sh
-kubectl config set-context $(kubectl config current-context) --namespace=<insert-namespace-name-here>
+$ kubectl config set-context $(kubectl config current-context) --namespace=<insert-namespace-name-here>
 # Validate it
-kubectl config view | grep namespace:
+$ kubectl config view | grep namespace:
 ```
 
 #### 1.2.2.3 Namespaces and DNS（未完成）
@@ -240,13 +240,13 @@ selector:
 #### 1.2.3.3 API
 
 ```sh
-kubectl get pods -l environment=production,tier=frontend
+$ kubectl get pods -l environment=production,tier=frontend
 
-kubectl get pods -l 'environment in (production),tier in (frontend)'
+$ kubectl get pods -l 'environment in (production),tier in (frontend)'
 
-kubectl get pods -l 'environment in (production, qa)'
+$ kubectl get pods -l 'environment in (production, qa)'
 
-kubectl get pods -l 'environment,environment notin (frontend)'
+$ kubectl get pods -l 'environment,environment notin (frontend)'
 ```
 
 ### 1.2.4 Annotations
@@ -258,8 +258,8 @@ kubectl get pods -l 'environment,environment notin (frontend)'
 `Field Selector`允许我们基于`Kubernetes Object`的字段匹配来过滤`Kubernetes Object`，支持的匹配操作包括：`=`、`==`、`!=`，其中`=`与`==`都表示相等型比较
 
 ```sh
-kubectl get pods --field-selector status.phase=Running
-kubectl get statefulsets,services --field-selector metadata.namespace!=default
+$ kubectl get pods --field-selector status.phase=Running
+$ kubectl get statefulsets,services --field-selector metadata.namespace!=default
 ```
 
 ### 1.2.6 Recommended Labels
@@ -626,7 +626,7 @@ spec:
 可以通过如下命令查看`phase`
 
 ```sh
-kubectl get pod -n <namespace> <pod-name> -o yaml
+$ kubectl get pod -n <namespace> <pod-name> -o yaml
 ```
 
 #### 3.1.3.2 Pod conditions
@@ -1089,16 +1089,16 @@ spec:
 
 ```sh
 # create deployment
-kubectl create -f <filepath or url>
+$ kubectl create -f <filepath or url>
 
 # get deployment
-kubectl get deployments
+$ kubectl get deployments
 
 # get replicaSet
-kubectl get rs
+$ kubectl get rs
 
 # get pods
-kubectl get pods --show-labels
+$ kubectl get pods --show-labels
 ```
 
 #### 3.2.3.2 Updating a Deployment
@@ -1121,26 +1121,26 @@ kubectl get pods --show-labels
 
 ```sh
 # check the revisions of this deployment
-kubectl rollout history deployment.v1.apps/nginx-deployment
+$ kubectl rollout history deployment.v1.apps/nginx-deployment
 
 # see details of specific revision
-kubectl rollout history deployment.v1.apps/nginx-deployment --revision=2
+$ kubectl rollout history deployment.v1.apps/nginx-deployment --revision=2
 
 # undo the current rollout
-kubectl rollout undo deployment.v1.apps/nginx-deployment
+$ kubectl rollout undo deployment.v1.apps/nginx-deployment
 
 # rollback to previous revision
-kubectl rollout undo deployment.v1.apps/nginx-deployment --to-revision=2
+$ kubectl rollout undo deployment.v1.apps/nginx-deployment --to-revision=2
 ```
 
 #### 3.2.3.4 Scaling a Deployment
 
 ```sh
 # scale a deployment
-kubectl scale deployment.v1.apps/nginx-deployment --replicas=10
+$ kubectl scale deployment.v1.apps/nginx-deployment --replicas=10
 
 # autoscale
-kubectl autoscale deployment.v1.apps/nginx-deployment --min=10 --max=15 --cpu-percent=80
+$ kubectl autoscale deployment.v1.apps/nginx-deployment --min=10 --max=15 --cpu-percent=80
 ```
 
 #### 3.2.3.5 Pausing and Resuming a Deployment
@@ -1149,16 +1149,16 @@ kubectl autoscale deployment.v1.apps/nginx-deployment --min=10 --max=15 --cpu-pe
 
 ```sh
 # pause deployment
-kubectl rollout pause deployment.v1.apps/nginx-deployment
+$ kubectl rollout pause deployment.v1.apps/nginx-deployment
 
 # update image
-kubectl set image deployment.v1.apps/nginx-deployment nginx=nginx:1.9.1
+$ kubectl set image deployment.v1.apps/nginx-deployment nginx=nginx:1.9.1
 
 # update resource
-kubectl set resources deployment.v1.apps/nginx-deployment -c=nginx --limits=cpu=200m,memory=512Mi
+$ kubectl set resources deployment.v1.apps/nginx-deployment -c=nginx --limits=cpu=200m,memory=512Mi
 
 # resume deployment
-kubectl rollout resume deployment.v1.apps/nginx-deployment
+$ kubectl rollout resume deployment.v1.apps/nginx-deployment
 ```
 
 #### 3.2.3.6 Deployment Status
@@ -1863,10 +1863,10 @@ Address 1: 10.96.104.176 my-nginx.default.svc.cluster.local
 
 ```sh
 #create a public private key pair
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /tmp/nginx.key -out /tmp/nginx.crt -subj "/CN=my-nginx/O=my-nginx"
+$ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /tmp/nginx.key -out /tmp/nginx.crt -subj "/CN=my-nginx/O=my-nginx"
 #convert the keys to base64 encoding
-cat /tmp/nginx.crt | base64
-cat /tmp/nginx.key | base64
+$ cat /tmp/nginx.crt | base64
+$ cat /tmp/nginx.key | base64
 ```
 
 下面创建一个`Secret`，配置如下
@@ -2064,7 +2064,7 @@ spec:
 $ kubectl get nodes -o yaml | grep ExternalIP -C 1
 ```
 
-## 4.4 Ingress（未完成）
+## 4.4 Ingress
 
 `Ingress`用于管理`Service`的访问方式（通常是`HTTP`）
 
@@ -2127,6 +2127,8 @@ spec:
 
 #### 4.4.5.1 Single Service Ingress
 
+一个`Ingress`只对应了一个后端的`Service`
+
 ```yml
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -2139,6 +2141,8 @@ spec:
 ```
 
 #### 4.4.5.2 Simple fanout
+
+一个`Ingress`对应着多个`Service`
 
 ```
 foo.bar.com -> 178.91.123.132 -> / foo    service1:4200
@@ -2169,7 +2173,7 @@ spec:
 
 #### 4.4.5.3 Name based virtual hosting
 
-该类型常用于将多个服务通过同一个IP暴露出去，且对外的域名是不同的
+该类型常用于将多个`Service`通过同一个IP暴露出去，且对外的域名是不同的
 
 ```
 foo.bar.com --|                 |-> foo.bar.com s1:80
@@ -2200,23 +2204,81 @@ spec:
 
 #### 4.4.5.4 TLS
 
+我们可以在`Ingress`之上增加`TSL/SSL`协议
+
+```yml
+apiVersion: v1
+data:
+  tls.crt: base64 encoded cert
+  tls.key: base64 encoded key
+kind: Secret
+metadata:
+  name: testsecret-tls
+  namespace: default
+type: kubernetes.io/tls
+```
+
+```yml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: tls-example-ingress
+spec:
+  tls:
+  - hosts:
+    - sslexample.foo.com
+    secretName: testsecret-tls
+  rules:
+    - host: sslexample.foo.com
+      http:
+        paths:
+        - path: /
+          backend:
+            serviceName: service1
+            servicePort: 80
+```
+
 #### 4.4.5.5 Loadbalancing
+
+一个`Ingress Controller`通常支持一些负载均衡的设置，包括负载均衡算法、权重策略等，目前尚不支持一些负载均衡的高级配置
 
 ### 4.4.6 Updating an Ingress
 
-### 4.4.7 Failing across availability zones
+```sh
+$ kubectl edit ingress test
+```
 
-## 4.5 Network Policies
+## 4.5 Ingress Controller
+
+为了使得`Ingress`能够生效，我们必须运行一个`Ingress Controller`。与其他`Controller`不同，`Ingress Controller`不会默认启动
+
+### 4.5.1 Additional controllers
+
+`Ingress Controller`有许多不同的实现
+
+1. `Ambassador`
+1. `AppsCode Inc`
+1. `Contour`
+1. `Citrix`
+1. `F5 Networks`
+1. `Gloo`
+1. `HAProxy`
+1. `Istio`
+1. `Kong`
+1. `NGINX, Inc`
+1. `Traefik`
+
+## 4.6 Network Policies
 
 `Network Policy`定义了`Pod`之间或者`Pod`与其他`Endpoint`之间的通信方式
 
-### 4.5.1 Isolated and Non-isolated Pods
+### 4.6.1 Isolated and Non-isolated Pods
 
 默认情况下，`Pod`都是`non-isolated`，意味着，它可以接收来自任何源的流量
 
 当`Pod`匹配某个`NetworkPolicy`后，它就变成`isolated`的了，于是，它会拒绝所有不满足`NetworkPolicy`规则的流量
 
-### 4.5.2 The NetworkPolicy Resource
+### 4.6.2 The NetworkPolicy Resource
 
 ```yml
 apiVersion: networking.k8s.io/v1
@@ -2262,7 +2324,7 @@ spec:
     * > `ingress`: 每个`NetworkPolicy`都包含了一个`ingress rule`列表，每项规则包含`from`以及`ports`两项。其类型可以是`ipBlock`、`namespaceSelector`或者`podSelector`
     * > `egress`: 每个`NetworkPolicy`都包含另一个`egress rule`列表，每项规则包含`to`以及`ports`两项
 
-### 4.5.3 Behavior of to and from selectors
+### 4.6.3 Behavior of to and from selectors
 
 `igress`的`from`部分与`egress`的`to`部分可以包含如下四种类型
 
@@ -2303,11 +2365,11 @@ __区分以下两种配置的区别__
 
 这种配置包含两种规则: `podSelector`或`namespaceSelector`
 
-### 4.5.4 Default policies
+### 4.6.4 Default policies
 
 默认情况下，不存在任何`Policy`，但是我们可以修改默认的行为
 
-#### 4.5.4.1 Default deny all ingress traffic
+#### 4.6.4.1 Default deny all ingress traffic
 
 ```yml
 apiVersion: networking.k8s.io/v1
@@ -2320,7 +2382,7 @@ spec:
   - Ingress
 ```
 
-#### 4.5.4.2 Default allow all ingress traffic
+#### 4.6.4.2 Default allow all ingress traffic
 
 ```yml
 apiVersion: networking.k8s.io/v1
@@ -2335,7 +2397,7 @@ spec:
   - Ingress
 ```
 
-#### 4.5.4.3 Default deny all egress traffic
+#### 4.6.4.3 Default deny all egress traffic
 
 ```yml
 apiVersion: networking.k8s.io/v1
@@ -2348,7 +2410,7 @@ spec:
   - Egress
 ```
 
-#### 4.5.4.4 Default allow all egress traffic
+#### 4.6.4.4 Default allow all egress traffic
 
 ```yml
 apiVersion: networking.k8s.io/v1
@@ -2363,7 +2425,7 @@ spec:
   - Egress
 ```
 
-#### 4.5.4.5 Default deny all ingress and all egress traffic
+#### 4.6.4.5 Default deny all ingress and all egress traffic
 
 ```yml
 apiVersion: networking.k8s.io/v1
@@ -2377,11 +2439,161 @@ spec:
   - Egress
 ```
 
-## 4.6 Adding entries to Pod /etc/hosts with HostAliases
+## 4.7 Adding entries to Pod /etc/hosts with HostAliases
 
-# 5 Network
+当没有DNS的时候，我们可以通过配置`/etc/hosts`来提供一种`Pod-Level`的域名解决方案
 
-## 5.1 Overview
+### 4.7.1 Default Hosts File Content
+
+```sh
+$ kubectl run nginx --image nginx --generator=run-pod/v1
+
+pod/nginx created
+
+# 查看Pod ip
+$ kubectl get pods --output=wide
+
+NAME          READY     STATUS    RESTARTS   AGE       IP            NODE
+nginx         1/1       Running   0          8m        10.244.2.49   k8s-node-2
+
+# 查看nginx的/etc/hosts文件的默认内容
+$ kubectl exec nginx -- cat /etc/hosts
+
+# Kubernetes-managed hosts file.
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::0	ip6-localnet
+fe00::0	ip6-mcastprefix
+fe00::1	ip6-allnodes
+fe00::2	ip6-allrouters
+10.244.2.49	nginx
+```
+
+### 4.7.2 Adding Additional Entries with HostAliases
+
+通过为`Pod`配置`.spec.hostAliases`属性，可以增加额外的域名解析规则，如下
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hostaliases-pod
+spec:
+  restartPolicy: Never
+  hostAliases:
+  - ip: "127.0.0.1"
+    hostnames:
+    - "foo.local"
+    - "bar.local"
+  - ip: "10.1.2.3"
+    hostnames:
+    - "foo.remote"
+    - "bar.remote"
+  containers:
+  - name: cat-hosts
+    image: busybox
+    command:
+    - cat
+    args:
+    - "/etc/hosts"
+```
+
+```sh
+$ kubectl apply -f hostaliases-pod.yaml
+
+pod/hostaliases-pod created
+
+# 查看Pod IP
+$ kubectl get pod -o=wide
+
+NAME              READY     STATUS      RESTARTS   AGE       IP            NODE
+hello-world       1/1       Running     16         225d      10.244.1.49   k8s-node-1
+hostaliases-pod   0/1       Completed   0          1m        10.244.2.50   k8s-node-2
+
+$ kubectl logs hostaliases-pod
+
+# Kubernetes-managed hosts file.
+127.0.0.1	localhost
+::1	localhost ip6-localhost ip6-loopback
+fe00::0	ip6-localnet
+fe00::0	ip6-mcastprefix
+fe00::1	ip6-allnodes
+fe00::2	ip6-allrouters
+10.244.2.50	hostaliases-pod
+# Entries added by HostAliases.
+127.0.0.1	foo.local
+127.0.0.1	bar.local
+10.1.2.3	foo.remote
+10.1.2.3	bar.remote
+```
+
+### 4.7.3 Why Does Kubelet Manage the Hosts File?
+
+`kubelet`为每个`Container`管理`host`文件，是为了避免`Docker`在启动容器后修改该文件
+
+由于文件托管的性质，只要在`Container`重新启动或者`Pod`重新被调度的情况下，`kubelet`都会重新载入`host`文件，任何用户编写的内容都将被覆盖，因此，不建议修改文件的内容
+
+# 5 Storage
+
+## 5.1 Volumes
+
+`Container`中的磁盘文件是短暂的，这会带来一些问题。首先，当一个`Container`崩溃之后，`kubelet`会重启该`Container`，但是这些磁盘文件会丢失。其次，在一个`Pod`中运行的不同`Container`之间可能需要共享一些文件。因此`Kubernetes`利用`Volume`来解决上述问题
+
+### 5.1.1 Backgroud
+
+`Docker`也有`Volume`的相关概念，但是其能力相比于`Kubernetes`较弱。在`Docker`中，一个`Volume`就是磁盘中或者其他`Container`中的一个目录，`Volume`的生命周期不受管控。`Docker`现在还提供了`Volume Driver`，但是其功能还是非常薄弱
+
+`Kubernetes`中的`Volume`有明确的生命周期，`Volume`的生命周期比`Pod`中任何`Container`的生命周期更长，因此数据能够在`Container`重启时保留。当然，如果一个`Pod`停止了，那么`Volume`也会相应停止。此外，`Kubernetes`提供了多种类型的`Volume`，且`Pod`可以同时使用任意类型，任意数量的`Volume`
+
+本质上而言，`Volume`就是一个包含数据的可被`Container`访问的目录，至于该目录是如何形成的，支持它的介质以及存储的内容是由具体的类型决定的
+
+我们可以通过配置`.spec.volumes`字段来指定`Volume`的类型以及相应的参数，通过`.spec.containers.volumeMounts`来指定具体的挂载目录
+
+在`Container`中的应用可以看到由`Docker Image`以及`Volume`组成的文件系统视图。`Docker Image`位于文件系统的顶层，所有的`Volume`必须挂载到`Image`中。`Volume`不能挂载到其他`Volume`中或者与其他`Volume`存在`hard link`。在`Pod`中的每个`Container`必须独立地指定每个`Volume`的挂载目录
+
+### 5.1.2 Types of Volumes
+
+1. awsElasticBlockStore
+1. azureDisk
+1. azureFile
+1. cephfs
+1. configMap
+1. csi
+1. downwardAPI
+1. emptyDir
+1. fc (fibre channel)
+1. flexVolume
+1. flocker
+1. gcePersistentDisk
+1. gitRepo (deprecated)
+1. glusterfs
+1. hostPath
+1. iscsi
+1. local
+1. nfs
+1. persistentVolumeClaim
+1. projected
+1. portworxVolume
+1. quobyte
+1. rbd
+1. scaleIO
+1. secret
+1. storageos
+1. vsphereVolume
+
+## 5.2 Persistent Volumes
+
+## 5.3 Storage Classes
+
+## 5.4 Volume Snapshot Classes
+
+## 5.5 Dynamic Volume Provisioning
+
+## 5.6 Node-specific Volume Limits
+
+# 6 Network
+
+## 6.1 Overview
 
 首先，我们来明确一下，Kubernetes面临的网络问题
 
@@ -2390,7 +2602,7 @@ spec:
 1. __Pod-to-Service communications__：通过`services`来解决
 1. __External-to-Service communications__：通过`services`来解决
 
-## 5.2 Docker Model
+## 6.2 Docker Model
 
 我们先来回顾一下Docker的网络模型，这对于理解Kubernetes的网络模型是很有必要的。__在默认情况下，`Docker`利用`host-private networking`，`Docker`创建了一个虚拟网桥（virtual bridge），默认为`docker0`__。对于`Docker`创建的每个`Container`都会有一个连接到网桥的虚拟以太网卡（virtual Ethernet device）`veth`，从`Container`内部来看，`veth`就被映射成了`eth0`网卡
 
@@ -2398,7 +2610,7 @@ spec:
 
 为了让`Container`可以跨`node`进行交互，必须为它们分配一个宿主物理机的`ip`。这样一来，我们就需要付出额外的精力维护`ip`以及`port`
 
-## 5.3 Kubernetes model
+## 6.3 Kubernetes model
 
 `Kubernetes`要求网络模型必须满足如下条件
 
@@ -2410,7 +2622,7 @@ spec:
 
 到目前为止，都在讨论`Container`，但事实上，`Kubernetes`在`Pod`范围上使用`ip`地址，因此，在一个`Pod`内的所有`Container`共享网络命名空间（network namespaces），当然包括ip地址。这意味着，在一个`Pod`内的`Container`可以通过`localhost`与其他`Container`进行通信。__这称为“IP-per-pod”模式，在这种模式下，一个`Pod`需要有一个`pod contaner`来管理网络命名空间，其他`app container`利用`Docker`的`--net=container:<id>`参数来加入这个网络命名空间即可__
 
-## 5.4 Kubernetes networking model implements
+## 6.4 Kubernetes networking model implements
 
 __Kubernetes的网络模型有很多种实现方式，包括但不仅限如下几种__
 
@@ -2434,16 +2646,16 @@ __Kubernetes的网络模型有很多种实现方式，包括但不仅限如下�
 1. Romana
 1. Weave Net from Weaveworks
 
-## 5.5 参考
+## 6.5 参考
 
 * [Cluster Networking](https://kubernetes.io/docs/concepts/cluster-administration/networking/)
 
-# 6 Question
+# 7 Question
 
 1. `Pod IP`在Namespace下唯一，既然可以通过`Namespace`+`Pod IP`准确定位一个`Pod`，为什么还需要`flannel`
 1. `flannel`保证了在同一个集群中的`Pod`的ip不重复
 
-# 7 参考
+# 8 参考
 
 * [英文文档1](https://kubernetes.io/docs/concepts/)
 * [中文文档1](http://docs.kubernetes.org.cn/)

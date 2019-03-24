@@ -71,9 +71,34 @@ public class StatFilter extends FilterEventAdapter implements StatFilterMBean {
 }
 ```
 
+示例
+
+```Java
+    @Bean
+    public StatFilter statFilter() {
+        StatFilter statFilter = new StatFilter();
+        statFilter.setLogSlowSql(true);
+        statFilter.setSlowSqlMillis(50);
+        statFilter.setMergeSql(true);
+        return statFilter;
+    }
+
+    @Bean
+    public DataSource dataSource() {
+        DruidDataSource dataSource = new DruidDataSource();
+        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+        dataSource.setUrl("jdbc:mysql://localhost:3306/test");
+        dataSource.setUsername("liuye");
+        dataSource.setPassword("123456");
+        dataSource.setMaxActive(50);
+        dataSource.setMaxWait(3000);
+        dataSource.setProxyFilters(Collections.singletonList(statFilter()));
+        return dataSource;
+    }
+```
+
 # 3 参考
 
 * [druid-github-配置_LogFilter](https://github.com/alibaba/druid/wiki/%E9%85%8D%E7%BD%AE_LogFilter)
 * [Druid中使用log4j2进行日志输出(2018)](https://blog.csdn.net/q343509740/article/details/80577091)
 * [druid日志logback.xml配置只记录sql和时间](https://blog.csdn.net/yan061322/article/details/64130891)
-
