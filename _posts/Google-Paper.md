@@ -81,3 +81,40 @@ Google搜索引擎的数据结构经过大量的优化，已达到存储海量�
 网页爬虫也是一个挑战极大的任务，它不仅涵盖性能、实现性的问题，而且可能包含社会问题
 
 一个主要的性能压力来自DNS搜索，因此每个爬虫程序都有一个本地的DNS缓存
+
+# 2 Cloud Programming Simplified: A Berkeley View on Serverless Computing
+
+对于一个低层级的抽象，比如`AWS-EC2`、`Alibaba-ECS`等，用户通常还需要如下配置
+
+1. 多副本部署，避免单机故障
+1. 多机房部署，容灾
+1. 负载均衡+消息路由
+1. 自动的缩容与扩容
+1. 健康检查
+1. 调试或者监控所需的日志
+1. 系统升级
+1. 迁移
+
+简单来说，`serverless computing=FaaS + BaaS`，换言之，必须在无用户提供任何物质的情况下，自动扩容缩容，且按量收费
+
+`Serverless Computing`与`Serverful Computing`的区别
+
+1. 解耦运算与存储，运算与存储得以分离，并且能够独立计价。通常，存储由独立的云服务提供，而计算通常是无状态的
+1. 执行代码而不管理资源分配。用户不是请求资源，而是提供一段代码，云自动提供资源来执行该代码
+1. 基于使用的资源而非分配的资源来进行收费
+
+`Serverless`的概念早在90年代已经提出，现代的`Serverless`与90年代的`Serverless`存在以下几点差异
+
+1. 更好的扩容/缩容能力
+1. 存储隔离
+1. 更好的灵活性
+1. 服务生态
+
+为了加速`VM-like isolation`环境的创建，AWS引入`warm pool`以及`active pool`，最近许多提案都旨在降低租户隔离的系统开销，手段包括
+
+1. containers
+1. unikernels
+1. library OSes
+1. language VMs
+
+`Kubernetes`是服务于`Serverful Computing`的。`Hosted Kubernetes`是一种类似于`Serverless Computing`的模式，它们之间的区别是：计费方式的差异，`Hosted Kubernetes`基于分配资源来进行收费，而`Serverful Computing`基于实际使用的资源来进行收费

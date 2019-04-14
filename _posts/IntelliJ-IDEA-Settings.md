@@ -59,8 +59,13 @@ __阅读更多__
     * `Identifier under caret`
     * `Identifier under caret (write)`
 
-# 7 参考
+# 7 Debug 'Debugger' missing
+
+`restore layout`
+
+# 8 参考
 
 * [IntelliJ IDEA 设置选中标识符高亮](http://blog.csdn.net/wskinght/article/details/43052407)
 * [IntelliJ IDEA 总结](https://www.zhihu.com/question/20450079)
 * [idea 双击选中一个变量，及高亮显示相同的变量](https://blog.csdn.net/lxzpp/article/details/81081162)
+* [Missing Debug window](https://stackoverflow.com/questions/46829125/intellij-idea-2017-missing-debug-window)

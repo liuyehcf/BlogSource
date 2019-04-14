@@ -34,16 +34,24 @@ __阅读更多__
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <manifestEntries>
-                                        <Main-Class>xxx.yyy.zzz</Main-Class>
-                                        <X-Compile-Source-JDK>1.8</X-Compile-Source-JDK>
-                                        <X-Compile-Target-JDK>1.8</X-Compile-Target-JDK>
-                                    </manifestEntries>
+                                    <mainClass>xxx.yyy.zzz</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                </configuration>
             </plugin>
         </plugins>
     </build>
