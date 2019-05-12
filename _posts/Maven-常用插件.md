@@ -96,7 +96,29 @@ __阅读更多__
     </build>
 ```
 
-# 3 autoconfig
+# 3 spring-boot-maven-plugin
+
+所有依赖以`嵌套的方式`打包到`Fatjar`内部
+
+```xml
+<plugin>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-maven-plugin</artifactId>
+    <version>2.1.4.RELEASE</version>
+    <configuration>
+        <mainClass>xxx.yyy.zzz</mainClass>
+    </configuration>
+    <executions>
+        <execution>
+            <goals>
+                <goal>repackage</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
+
+# 4 autoconfig
 
 ```xml
 <plugin>
@@ -127,7 +149,7 @@ __搜索步骤__
 
 __对于web项目（打包方式为war）__，则会过滤所有依赖中包含占位符的文件
 
-## 3.1 配置文件
+## 4.1 配置文件
 
 示例代码如下：
 
@@ -160,7 +182,9 @@ __对于web项目（打包方式为war）__，则会过滤所有依赖中包含�
 
 其中`<script>`标签中指定需要进行占位符替换的__模板文件__。`group`标签仅仅做了分组，阅读上更清晰，没有其他作用
 
-# 4 参考
+# 5 参考
 
 * [maven-shade-plugin 入门指南](https://www.jianshu.com/p/7a0e20b30401)
 * [maven-将依赖的 jar包一起打包到项目 jar 包中](https://www.jianshu.com/p/0c60f6ef3a4c)
+* [Java 打包 FatJar 方法小结](https://www.jianshu.com/p/a7bd1f89f29f)
+* [Spring Boot Maven Plugin](https://docs.spring.io/spring-boot/docs/current/maven-plugin/)
