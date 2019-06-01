@@ -622,6 +622,7 @@ __格式：__
 * `screen`
 * `screen cmd [ args ]`
 * `screen [–ls] [-r pid]`
+* `screen -X -S <pid> kill`
 
 __参数说明：__
 
