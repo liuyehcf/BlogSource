@@ -24,7 +24,39 @@ __阅读更多__
 | `PFX(Predecessor of PKCS#12)` | `.pfx/.P12` | 二进制格式 | 同时包含证书和私钥，一般有密码保护</br>证书和私钥存在一个PFX文件中</br>一般用于Windows上的IIS服务器 |
 | `JPS(Java Key Storage)` | `.jks` | 二进制格式 | 同时包含证书和私钥，一般有密码保护</br>Java的专属格式，可以用keytool进行格式转换</br>一般用于Tomcat服务器 |
 
-## 1.2 证书转换
+## 1.2 X.509
+
+X.509是公钥证书的标准格式，通常一个证书包含如下信息
+
+* `Certificate`
+    * `Version Number`: 版本号
+    * `Serial Number`: 序列号
+    * `Signature Algorithm`: 签名算法
+    * __`Issuer Name`__: 证书颁发机构名字，即CA
+    * `Validity period`: 证书有效期
+        * `Not Before`: 有效起始时间
+        * `Not After`: 有效的终止时间
+    * __`Subject name`__: 证书持有者名字
+    * `Subject Public Key Info`: 证书公钥信息
+        * `Public Key Algorithm`: 公钥算法
+        * `Subject Public Key`: 公钥
+    * `Issuer Unique Identifier (optional)`
+    * `Subject Unique Identifier (optional)`
+    * `Extensions (optional)`
+* `Certificate Signature Algorithm`: 证书签名算法
+* `Certificate Signature`: 证书签名
+
+`Issuer Name`/`Subject name`（又称为`DN`，`Distinguished Name`）的格式如下
+
+1. `C`: Country
+1. `ST`: 
+1. `L`: Locality
+1. `O`: Organization
+1. `CN`: Common Name
+
+__若`Issuer Name`与`Subject name`相同，则表示自签名，根证书都是自签名的__
+
+## 1.3 证书转换
 
 __将`crt`证书转为`pkcs12`格式的证书__
 
@@ -48,7 +80,7 @@ keytool -importkeystore -srckeystore <pkcs12 file> -destkeystore <jks file> -src
 # 2. <jks file> 指待创建的jks证书的路径
 ```
 
-## 1.3 将根证书导入JKS
+## 1.4 将根证书导入JKS
 
 我们如何使用Java连接到颁发了合法证书的服务端？当然，不校验服务端的合法性是可以的，但是此时客户端会存在安全风险
 
@@ -64,17 +96,17 @@ keytool -import -alias <friendly name> -file <root cert file> -keystore <key sto
 
 于是，我们的Java客户端使用上述导入了根证书的JKS就能连接到服务端。因为该服务端的根证书位于信任池中，因此也会信任该服务端的站点证书。具体使用JKS的实例代码参见下方的Demo
 
-## 1.4 根证书和中间证书以及证书链
+## 1.5 根证书和中间证书以及证书链
 
 大多数人都知道SSL(TLS)，但是对其工作原理知之甚少，更不用说中间证书`Intermediate Certificate`、根证书`Root Certificate`以及证书链`Certificate Chain`了
 
-### 1.4.1 根证书
+### 1.5.1 根证书
 
 根证书，又称为信任链的起点，是信任体系（SSL/TLS）的核心基础。每个浏览器或者设备都包含一个根仓库（`root store`），`root store`包含了一组预置的根证书，根证书价值是非常高的，任何由它的私钥签发的证书都会被浏览器信任
 
 根证书属于证书颁发机构，它是校验以及颁发SSL证书的机构
 
-## 1.5 证书链
+### 1.5.2 证书链
 
 在进一步探讨证书之前，我们需要引入一个概念，叫做证书链。我们先从一个问题入手：浏览器如何判断一个证书是否合法？当你访问一个站点时，浏览器会快速地校验这个证书的合法性
 
@@ -82,7 +114,7 @@ keytool -import -alias <friendly name> -file <root cert file> -keystore <key sto
 
 当浏览器校验这个站点证书时，发现这个证书由根证书签名（准确地说，用根证书的私钥签名），且浏览器信任这个根证书，因此浏览器信任由这个根证书签名的站点证书。在这个例子中，站点证书直链根证书
 
-## 1.6 中间证书
+### 1.5.3 中间证书
 
 通常情况下，证书颁发机构不会用根证书来为站点证书签名，因为这非常危险，如果发生了误发证书或者其他错误而不得不撤回根证书，那么所有由该根证书签名的证书都会立即失效
 
@@ -92,7 +124,39 @@ keytool -import -alias <friendly name> -file <root cert file> -keystore <key sto
 
 ![fig1](/images/SSL协议/fig1.jpg)
 
-## 1.7 数字签名
+__要获得中间证书，一般有两种方式__
+
+1. 由客户端自动下载中间证书
+2. 由服务器推送中间证书
+
+#### 1.5.3.1 客户端自动下载中间证书
+
+__一张标准的证书，都会包含自己的颁发者名称，以及颁发者机构访问信息：Authority Info Access，其中就会有颁发者CA证书的下载地址__，可以通过`openssl x509 -in <cert> -noout -text`查看证书信息。通过这个CA证书下载地址，我们就能够获得CA证书，__但有些平台不支持这种方式，例如Android，在这种平台上，仅通过站点证书就无法建立安全连接__
+
+除了操作系统支持外，还有一个很重要的因素，就是客户端可以正常访问公网。如果客户端本身在一个封闭的网络环境内，无法访问公网下载中间证书，就会造成失败，无法建立可信连接
+
+此外，有些CA的中间证书下载地址因为种种原因被“墙”掉了，也会造成我们无法获得中间证书，进而无法建立可信链接
+
+虽然自动下载中间证书的机制如此不靠谱，但在有些应用中，这却是唯一有效的机制，譬如邮件签名证书，由于我们发送邮件时，无法携带颁发邮件证书的中间证书，往往只能依靠客户端自己去下载中间证书，一旦这个中间证书的URL无法访问（被“墙”掉）就会造成验证失败
+
+#### 1.5.3.2 服务器推送中间证书
+
+__服务器推送中间证书，就是将中间证书，预先部署在服务器上，服务器在发送证书的同时，将中间证书一起发给客户端__
+
+如果我们在服务器上不主动推送中间证书，可能会造成下列问题：
+
+1. Android手机无法自动下载中间证书，造成验证出错，提示证书不可信，无法建立可信连接
+1. Java客户端无法自动下载中间证书，验证出错，可信连接失败
+1. 内网电脑，在禁止公网的情况下，无法自动下载中间证书，验证出错，可信连接失败
+1. 虽然我们不部署中间证书，在大多数情况，我们依然可以建立可信的HTTPS连接，但为了避免以上这些情况，我们必须在服务器上部署中间证书
+
+所以，为了确保我们在各种环境下都能建立可信的HTTPS连接，我们应该尽量做到以下几点：
+
+1. 必须在服务器上部署正确的中间证书，以确保各类浏览器都能获得完整的证书链，完成验证
+1. 选择可靠的SSL服务商，有些小的CA机构，因为各种原因，造成他们的中间证书下载URL被禁止访问，即使我们在服务器上部署了中间证书，但也可能存在某种不可测的风险，这是我们应该尽力避免的
+1. 中间证书往往定期会更新，所以在证书续费或者重新签发后，需要检查是否更换过中间证书
+
+### 1.5.4 数字签名
 
 数字签名是一种数字形式的公证。当根证书为中间证书签名时，本质上是将信任度传递到了中间证书，由于签名用的是根证书的私钥，因此中间证书也同时获得了信任
 
@@ -105,19 +169,19 @@ __证书包含以下内容__
 1. 证书持有者的公钥
 1. 证书签名用到的hash算法
 
-## 1.8 `Root CA`与`Intermediate CA`
+### 1.5.5 `Root CA`与`Intermediate CA`
 
 到这里就比较清晰明了了，`Root CA`是拥有一个或多个根证书的证书颁发机构，`Intermediate CA`/`Sub CA`是拥有中间证书的证书颁发机构，中间证书需要连接到上层的证书（可能是中间证书或者根证书），这个就叫做交叉验签，或多级验签
 
 一般来说，不会用根证书来为站点证书做签名，而是通过中间证书来增加安全层级，这有助于减少以及分解由误签或者其他错误造成的危害，因为我们只需要撤销中间证书而不需要撤销根证书，因此只会让部分证书失效而不会使全部证书失效
 
-## 1.9 `Chained Root`与`Single Root`
+### 1.5.6 `Chained Root`与`Single Root`
 
 `Root CA`用`Single Root`来直接颁发证书，使得部署证书和安装证书变得更加简单。`Sub CA`用`Chained Root`来颁发证书。它是一个中间证书，因为`Sub CA`没有自己的受信任的根，所以必须链接到一个具有根证书的`Third-party CA`
 
 下面是两者的差异
 
-1. `Chained Root`安装起来更麻烦，__因为持有站点证书的应用必须加载中间证书__，这就是为什么在制作证书时，需要将站点证书和中间证书一并打入证书中
+1. `Chained Root`安装起来更麻烦，__因为持有站点证书的应用最好能够同时提供中间证书（以免中间证书无法正常下载，导致验证失败）__，这就是为什么在制作证书时，需要将站点证书和中间证书一并打入证书中
 1. `Chained Root`受它们所链接的`Third-party CA`支配，它们无法控制根证书，如果`Root CA`停业，那么`Chained Root`也会失效
 1. 根证书和中间证书都会过期，虽然时间较长，但是中间证书的失效时间必须早于根证书，这增加了复杂度
 
@@ -883,3 +947,4 @@ __改造服务端的代码__
 * [Convert the certificate and private key to PKCS 12](https://www.wowza.com/docs/how-to-import-an-existing-ssl-certificate-and-private-key)
 * [SSL 证书格式普及，PEM、CER、JKS、PKCS12](https://blog.freessl.cn/ssl-cert-format-introduce/)
 * [The Difference Between Root Certificates and Intermediate Certificates](https://www.thesslstore.com/blog/root-certificates-intermediate/)
+* [中间证书的使用（组图）](https://www.58ssl.com/ssl_wenti/4156.html)
