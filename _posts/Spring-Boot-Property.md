@@ -98,7 +98,13 @@ __阅读更多__
 1. `CloudFoundryVcapEnvironmentPostProcessor`
 1. `ConfigFileApplicationListener`: 负责`application.properties`配置文件的解析和加载工作
 
-# 3 参考
+# 3 @ConfigurationProperties
+
+__限制__
+
+1. 注入的字段，必须包含set方法
+
+# 4 参考
 
 [Spring Boot Externalized Configuration](https://docs.spring.io/spring-boot/docs/2.1.1.RELEASE/reference/htmlsingle/#boot-features-external-config)
 
