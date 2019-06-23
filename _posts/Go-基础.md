@@ -48,7 +48,11 @@ func main() {
 }
 ```
 
-# 2 IDE-Goland
+# 2 Tips
+
+## 2.1 值类型与引用类型
+
+# 3 IDE-Goland
 
 __工程结构__
 
@@ -56,6 +60,38 @@ __工程结构__
 1. pkg
 1. src
 
-# 3 参考
+# 4 todo
+
+1. 切片与数组
+   * `[]byte`是数组还是切片
+1. string 与 []byte的转换
+
+```go
+[]byte(string)
+string(bytes)
+```
+
+1.  字符串拼接
+
+```go
+fmt.Sprintf("%s %s",s,"123123")
+```
+
+1. 各类型与字符串转换
+
+```go
+fmt.Sprintf("%d", i)
+fmt.Sprintf("%x", i)
+```
+
+1. 切片是引用传递，数组是值传递
+
+交叉编译
+
+`env GOOS=linux GOARCH=amd64 go build -o <target_binary> <src.go> `
+
+# 5 参考
 
 * [go中包的概念、导入与可见性](https://studygolang.com/articles/7165)
+* [Go语言入门教程，Golang入门教程（非常详细）](http://c.biancheng.net/golang/)
+* [Go log 日志](https://www.jianshu.com/p/d634316a9487)
