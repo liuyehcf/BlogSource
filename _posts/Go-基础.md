@@ -52,6 +52,41 @@ func main() {
 
 ## 2.1 值类型与引用类型
 
+1. `int`、`float`、`bool`、`array`、`struct`是值类型
+1. `slice`、`map`、`func`、`method`、`chan`、`interface`、`string`是引用类型
+
+## 2.2 数组与切片
+
+1. 数组是固定大小的 `[<n>]Type`
+1. 引用是可变的（可理解为动态数组）`[]Type`
+
+## 2.3 类型转换
+
+`Type(v)`
+
+## 2.4 字符串拼接
+
+`fmt.Sprintf`
+
+## 2.5 各种类型转为字符串
+
+`fmt.Sprintf`
+
+## 2.6 交叉编译
+
+```sh
+# 查看环境变量
+go env
+
+# 编译指定cpuArch的二进制
+env GOOS=linux GOARCH=amd64 go build -o <target_binary> <src.go> 
+```
+
+## 2.7 类似try...catch
+
+1. `panic`：抛出异常
+1. `defer`&`recover`：捕获异常
+
 # 3 IDE-Goland
 
 __工程结构__
@@ -60,37 +95,7 @@ __工程结构__
 1. pkg
 1. src
 
-# 4 todo
-
-1. 切片与数组
-   * `[]byte`是数组还是切片
-1. string 与 []byte的转换
-
-```go
-[]byte(string)
-string(bytes)
-```
-
-1.  字符串拼接
-
-```go
-fmt.Sprintf("%s %s",s,"123123")
-```
-
-1. 各类型与字符串转换
-
-```go
-fmt.Sprintf("%d", i)
-fmt.Sprintf("%x", i)
-```
-
-1. 切片是引用传递，数组是值传递
-
-交叉编译
-
-`env GOOS=linux GOARCH=amd64 go build -o <target_binary> <src.go> `
-
-# 5 参考
+# 4 参考
 
 * [go中包的概念、导入与可见性](https://studygolang.com/articles/7165)
 * [Go语言入门教程，Golang入门教程（非常详细）](http://c.biancheng.net/golang/)

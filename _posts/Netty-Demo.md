@@ -17,13 +17,89 @@ __阅读更多__
 
 下面给的示例中，涉及到SSL，其`keySotre`与`cert`的生成请参考{% post_link SSL协议 %}
 
-## 1.1 Server
+## 1.1 AbstractWebSocketHandler
+
+```Java
+package org.liuyehcf.netty.ws;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.websocketx.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class AbstractWebSocketHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
+
+    private final List<byte[]> fragmentCache = new ArrayList<>();
+
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame webSocketFrame) {
+        byte[] curFragmentBytes;
+        if (webSocketFrame instanceof TextWebSocketFrame) {
+            TextWebSocketFrame textWebSocketFrame = (TextWebSocketFrame) webSocketFrame;
+            curFragmentBytes = textWebSocketFrame.text().getBytes();
+        } else if (webSocketFrame instanceof BinaryWebSocketFrame) {
+            BinaryWebSocketFrame binaryWebSocketFrame = (BinaryWebSocketFrame) webSocketFrame;
+            ByteBuf content = binaryWebSocketFrame.content();
+            curFragmentBytes = new byte[content.readableBytes()];
+            content.getBytes(0, curFragmentBytes);
+        } else if (webSocketFrame instanceof ContinuationWebSocketFrame) {
+            ContinuationWebSocketFrame continuationWebSocketFrame = (ContinuationWebSocketFrame) webSocketFrame;
+            ByteBuf content = continuationWebSocketFrame.content();
+            curFragmentBytes = new byte[content.readableBytes()];
+            content.getBytes(0, curFragmentBytes);
+        } else if (webSocketFrame instanceof PingWebSocketFrame) {
+            return;
+        } else if (webSocketFrame instanceof PongWebSocketFrame) {
+            return;
+        } else if (webSocketFrame instanceof CloseWebSocketFrame) {
+            ctx.channel().close();
+            return;
+        } else {
+            throw new UnsupportedOperationException("unsupported WebSocketFrame's type. type='" + webSocketFrame.getClass() + "'");
+        }
+
+        byte[] frameBytes;
+
+        if (webSocketFrame.isFinalFragment() && fragmentCache.isEmpty()) {
+            frameBytes = curFragmentBytes;
+        } else if (webSocketFrame.isFinalFragment()) {
+            int allLength = 0;
+            for (byte[] bytes : fragmentCache) {
+                allLength += bytes.length;
+            }
+            allLength += curFragmentBytes.length;
+
+            frameBytes = new byte[allLength];
+            int startPos = 0;
+            for (byte[] fragmentBytes : fragmentCache) {
+                System.arraycopy(fragmentBytes, 0, frameBytes, startPos, fragmentBytes.length);
+                startPos += fragmentBytes.length;
+            }
+
+            System.arraycopy(curFragmentBytes, 0, frameBytes, startPos, curFragmentBytes.length);
+
+            fragmentCache.clear();
+        } else {
+            fragmentCache.add(curFragmentBytes);
+            return;
+        }
+
+        doChannelRead0(ctx, frameBytes);
+    }
+
+    protected abstract void doChannelRead0(ChannelHandlerContext ctx, byte[] bytes);
+}
+```
+
+## 1.2 Server
 
 ```Java
 package org.liuyehcf.netty.ws;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -31,7 +107,8 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.codec.http.websocketx.*;
+import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslHandler;
@@ -134,33 +211,11 @@ public class Server {
                 .newHandler(pipeline.channel().alloc(), HOST, PORT);
     }
 
-    private static final class ServerHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
-        @Override
-        @SuppressWarnings("all")
-        protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame msg) {
-            final String content;
-            if (msg instanceof BinaryWebSocketFrame) {
-                BinaryWebSocketFrame binaryWebSocketFrame = (BinaryWebSocketFrame) msg;
-                ByteBuf byteBuf = binaryWebSocketFrame.content();
-                byte[] bytes = new byte[byteBuf.readableBytes()];
-                byteBuf.getBytes(0, bytes);
-                content = new String(bytes, Charset.defaultCharset());
-            } else if (msg instanceof TextWebSocketFrame) {
-                content = ((TextWebSocketFrame) msg).text();
-            } else if (msg instanceof PongWebSocketFrame) {
-                content = "Pong";
-            } else if (msg instanceof ContinuationWebSocketFrame) {
-                content = "Continue";
-            } else if (msg instanceof PingWebSocketFrame) {
-                content = "Ping";
-            } else if (msg instanceof CloseWebSocketFrame) {
-                content = "Close";
-                ctx.close();
-            } else {
-                throw new RuntimeException();
-            }
+    private static final class ServerHandler extends AbstractWebSocketHandler {
 
-            System.out.println("server receive message: " + content);
+        @Override
+        protected void doChannelRead0(ChannelHandlerContext ctx, byte[] bytes) {
+            System.out.println("server receive message: " + new String(bytes, Charset.defaultCharset()));
 
             ctx.channel().writeAndFlush(new BinaryWebSocketFrame(Unpooled.wrappedBuffer("Hi, I'm Server".getBytes())));
         }
@@ -168,13 +223,12 @@ public class Server {
 }
 ```
 
-## 1.2 Client
+## 1.3 Client
 
 ```Java
 package org.liuyehcf.netty.ws;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -182,7 +236,9 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.websocketx.*;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.WebSocketClientHandshakerFactory;
+import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketClientCompressionHandler;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslHandler;
@@ -303,39 +359,17 @@ public class Client {
                 .newHandler(pipeline.channel().alloc(), HOST, PORT);
     }
 
-    private static final class ClientHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
-        @Override
-        @SuppressWarnings("all")
-        protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame msg) throws Exception {
-            final String content;
-            if (msg instanceof BinaryWebSocketFrame) {
-                BinaryWebSocketFrame binaryWebSocketFrame = (BinaryWebSocketFrame) msg;
-                ByteBuf byteBuf = binaryWebSocketFrame.content();
-                byte[] bytes = new byte[byteBuf.readableBytes()];
-                byteBuf.getBytes(0, bytes);
-                content = new String(bytes, Charset.defaultCharset());
-            } else if (msg instanceof TextWebSocketFrame) {
-                content = ((TextWebSocketFrame) msg).text();
-            } else if (msg instanceof PongWebSocketFrame) {
-                content = "Pong";
-            } else if (msg instanceof ContinuationWebSocketFrame) {
-                content = "Continue";
-            } else if (msg instanceof PingWebSocketFrame) {
-                content = "Ping";
-            } else if (msg instanceof CloseWebSocketFrame) {
-                content = "Close";
-                ctx.close();
-            } else {
-                throw new RuntimeException();
-            }
+    private static final class ClientHandler extends AbstractWebSocketHandler {
 
-            System.out.println("client receive message: " + content);
+        @Override
+        protected void doChannelRead0(ChannelHandlerContext ctx, byte[] bytes) {
+            System.out.println("client receive message: " + new String(bytes, Charset.defaultCharset()));
         }
     }
 }
 ```
 
-## 1.3 WebSocketClientHandler
+## 1.4 WebSocketClientHandler
 
 ```Java
 package org.liuyehcf.netty.ws;
@@ -678,6 +712,74 @@ __异常的时候，其handler如下__
 
 * WebSocketClientCompressionHandler.INSTANCE
 * WebSocketServerCompressionHandler
+
+## 2.3 OutOfDirectMemoryError
+
+在项目中，我需要将获取到的`FullHttpRequest`转成对应的字节数组，用到了Netty提供的`EmbeddedChannel`来进行转换，最开始代码如下
+
+```Java
+@Override
+protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) {
+    EmbeddedChannel ch = new EmbeddedChannel(new HttpRequestEncoder());
+    ByteBuf byteBuf = null;
+    try {
+        ch.writeOutbound(msg.retain());
+        byteBuf = ch.readOutbound();
+
+        byte[] bytes = new byte[byteBuf.readableBytes()];
+        byteBuf.readBytes(bytes);
+    } finally {
+        ch.close();
+    }
+}
+```
+
+在测试环境压测一端时间后发现了如下的异常
+
+```
+[2019-06-25 09:52:15]11.158.132.167
+content: io.netty.util.internal.OutOfDirectMemoryError: failed to allocate 16777216 byte(s) of direct memory (used: 1056964615, max: 1073741824)
+content: at io.netty.util.internal.PlatformDependent.incrementMemoryCounter(PlatformDependent.java:656)
+content: at io.netty.util.internal.PlatformDependent.allocateDirectNoCleaner(PlatformDependent.java:610)
+content: at io.netty.buffer.PoolArena$DirectArena.allocateDirect(PoolArena.java:764)
+content: at io.netty.buffer.PoolArena$DirectArena.newChunk(PoolArena.java:740)
+content: at io.netty.buffer.PoolArena.allocateNormal(PoolArena.java:244)
+content: at io.netty.buffer.PoolArena.allocate(PoolArena.java:226)
+content: at io.netty.buffer.PoolArena.allocate(PoolArena.java:146)
+content: at io.netty.buffer.PooledByteBufAllocator.newDirectBuffer(PooledByteBufAllocator.java:324)
+content: at io.netty.buffer.AbstractByteBufAllocator.directBuffer(AbstractByteBufAllocator.java:185)
+content: at io.netty.buffer.AbstractByteBufAllocator.directBuffer(AbstractByteBufAllocator.java:176)
+content: at io.netty.buffer.AbstractByteBufAllocator.ioBuffer(AbstractByteBufAllocator.java:137)
+content: at io.netty.channel.DefaultMaxMessagesRecvByteBufAllocator$MaxMessageHandle.allocate(DefaultMaxMessagesRecvByteBufAllocator.java:114)
+content: at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:147)
+content: at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:648)
+content: at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:583)
+content: at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:500)
+content: at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:462)
+content: at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:897)
+content: at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+content: at java.lang.Thread.run(Thread.java:766)
+```
+
+__原因，没有释放`ch.readOutbound()`返回的`ByteBuf`，调整代码如下：__
+
+```Java
+@Override
+protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) {
+    EmbeddedChannel ch = new EmbeddedChannel(new HttpRequestEncoder());
+    ByteBuf byteBuf = null;
+    try {
+        ch.writeOutbound(msg.retain());
+        byteBuf = ch.readOutbound();
+
+        byte[] bytes = new byte[byteBuf.readableBytes()];
+        byteBuf.readBytes(bytes);
+    } finally {
+        ReferenceCountUtil.release(byteBuf); // 释放
+        ch.close();
+    }
+}
+```
 
 # 3 参考
 
