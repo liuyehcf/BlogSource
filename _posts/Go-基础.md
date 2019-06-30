@@ -87,6 +87,26 @@ env GOOS=linux GOARCH=amd64 go build -o <target_binary> <src.go>
 1. `panic`：抛出异常
 1. `defer`&`recover`：捕获异常
 
+## 2.8 bindata-打包资源文件
+
+`go build`只能编译go文件，但是项目中如果存在资源文件，比如`css`，`html`等文件，是无法被`go build`打包进二进制文件的
+
+`go-bindata`提供了打包资源文件的方式，原理很简单：就是将这些资源文件序列化成`[]byte`，包含在自动创建的`go`文件中
+
+[go-bindata-github](https://github.com/elazarl/go-bindata-assetfs)
+
+```sh
+# 安装go-bindata
+go get github.com/jteeuwen/go-bindata/...
+go get github.com/elazarl/go-bindata-assetfs/...
+
+# 生成包含指定资源文件的go文件
+go-bindata -pkg <package> -o <go file path> <resource path1> <resource path2> ...
+# <package> : 生成go文件的包
+# <go file path> : 生成的go文件路径
+# <resource path1> : 具体要打包的资源路径
+```
+
 # 3 IDE-Goland
 
 __工程结构__
