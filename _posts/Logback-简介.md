@@ -511,7 +511,170 @@ __格式修饰符，与转换符共同使用__：可选的格式修饰符位于"
 
 参考`org.springframework.boot.logging.logback.DefaultLogbackConfiguration`
 
-# 8 参考
+# 8 排坑
+
+## 8.1 关于AsyncAppender
+
+AsyncAppender会异步打印日志，从而避免磁盘IO阻塞当前线程的业务逻辑，其异步的实现方式也是常规的`ThreadPool`+`BlockingQueue`，那么当线程池与队列都被打满时，其行为是如何的？
+
+直接上源码，起点是`ch.qos.logback.classic.Logger`，所有的日志方法都会收敛到`filterAndLog_0_Or3Plus`、`filterAndLog_1`、`filterAndLog_2`这三个方法上
+
+```Java
+    private void filterAndLog_1(final String localFQCN, final Marker marker, final Level level, final String msg, final Object param, final Throwable t) {
+
+        final FilterReply decision = loggerContext.getTurboFilterChainDecision_1(marker, this, level, msg, param, t);
+
+        if (decision == FilterReply.NEUTRAL) {
+            if (effectiveLevelInt > level.levelInt) {
+                return;
+            }
+        } else if (decision == FilterReply.DENY) {
+            return;
+        }
+
+        buildLoggingEventAndAppend(localFQCN, marker, level, msg, new Object[] { param }, t);
+    }
+
+    private void filterAndLog_2(final String localFQCN, final Marker marker, final Level level, final String msg, final Object param1, final Object param2,
+                    final Throwable t) {
+
+        final FilterReply decision = loggerContext.getTurboFilterChainDecision_2(marker, this, level, msg, param1, param2, t);
+
+        if (decision == FilterReply.NEUTRAL) {
+            if (effectiveLevelInt > level.levelInt) {
+                return;
+            }
+        } else if (decision == FilterReply.DENY) {
+            return;
+        }
+
+        buildLoggingEventAndAppend(localFQCN, marker, level, msg, new Object[] { param1, param2 }, t);
+    }
+
+    private void buildLoggingEventAndAppend(final String localFQCN, final Marker marker, final Level level, final String msg, final Object[] params,
+                    final Throwable t) {
+        LoggingEvent le = new LoggingEvent(localFQCN, this, level, msg, t, params);
+        le.setMarker(marker);
+        callAppenders(le);
+    }
+
+    public void callAppenders(ILoggingEvent event) {
+        int writes = 0;
+        for (Logger l = this; l != null; l = l.parent) {
+            writes += l.appendLoopOnAppenders(event);
+            if (!l.additive) {
+                break;
+            }
+        }
+        // No appenders in hierarchy
+        if (writes == 0) {
+            loggerContext.noAppenderDefinedWarning(this);
+        }
+    }
+
+    private int appendLoopOnAppenders(ILoggingEvent event) {
+        if (aai != null) {
+            return aai.appendLoopOnAppenders(event);
+        } else {
+            return 0;
+        }
+    }
+```
+
+继续跟踪`AppenderAttachableImpl`的`appendLoopOnAppenders`方法
+
+```Java
+    public int appendLoopOnAppenders(E e) {
+        int size = 0;
+        final Appender<E>[] appenderArray = appenderList.asTypedArray();
+        final int len = appenderArray.length;
+        for (int i = 0; i < len; i++) {
+            appenderArray[i].doAppend(e);
+            size++;
+        }
+        return size;
+    }
+```
+
+如果`Appender`是`AsyncAppender`，那么继续跟踪`UnsynchronizedAppenderBase`的`doAppend`方法
+
+```Java
+    public void doAppend(E eventObject) {
+        // WARNING: The guard check MUST be the first statement in the
+        // doAppend() method.
+
+        // prevent re-entry.
+        if (Boolean.TRUE.equals(guard.get())) {
+            return;
+        }
+
+        try {
+            guard.set(Boolean.TRUE);
+
+            if (!this.started) {
+                if (statusRepeatCount++ < ALLOWED_REPEATS) {
+                    addStatus(new WarnStatus("Attempted to append to non started appender [" + name + "].", this));
+                }
+                return;
+            }
+
+            if (getFilterChainDecision(eventObject) == FilterReply.DENY) {
+                return;
+            }
+
+            // ok, we now invoke derived class' implementation of append
+            this.append(eventObject);
+
+        } catch (Exception e) {
+            if (exceptionCount++ < ALLOWED_REPEATS) {
+                addError("Appender [" + name + "] failed to append.", e);
+            }
+        } finally {
+            guard.set(Boolean.FALSE);
+        }
+    }
+```
+
+继续跟踪`AsyncAppenderBase`的`append`方法，重点来了，注意第一个if语句
+
+* 条件1：如果当前队列的容量的剩余值小于`discardingThreshold`，该值默认为队列容量的1/5
+* 条件2：如果当前日志事件可以丢弃，对于`AsyncAppender`来说，INFO以下的日志是可以丢弃的
+
+```Java
+    protected void append(E eventObject) {
+        if (isQueueBelowDiscardingThreshold() && isDiscardable(eventObject)) {
+            return;
+        }
+        preprocess(eventObject);
+        put(eventObject);
+    }
+
+    private boolean isQueueBelowDiscardingThreshold() {
+        return (blockingQueue.remainingCapacity() < discardingThreshold);
+    }
+
+    public void start() {
+        // 省略无关代码...
+
+        if (discardingThreshold == UNDEFINED)
+            discardingThreshold = queueSize / 5;
+        
+        // 省略无关代码...
+    }
+```
+
+`AsyncAppender`的`isDiscardable`方法
+
+```Java
+    protected boolean isDiscardable(ILoggingEvent event) {
+        Level level = event.getLevel();
+        return level.toInt() <= Level.INFO_INT;
+    }
+```
+
+__总结：根据上面的分析可以发现，如果打日志的并发度非常高，且打的是warn或error日志，仍然会阻塞当前线程__
+
+# 9 参考
 
 * [logback-layout](https://logback.qos.ch/manual/layouts.html)
 * [从零开始玩转logback](http://www.importnew.com/22290.html)

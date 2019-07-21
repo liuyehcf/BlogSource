@@ -93,3 +93,11 @@ ____
 ```sql
 SELECT A.ID FROM A LEFT JOIN B ON A.ID WHERE B.ID IS NULL
 ```
+
+# 5 查询某个数据库中所有表的行数
+
+```sql
+SELECT table_name, table_rows
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_SCHEMA = '<your database name>';
+```

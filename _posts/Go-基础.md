@@ -107,6 +107,12 @@ go-bindata -pkg <package> -o <go file path> <resource path1> <resource path2> ..
 # <resource path1> : 具体要打包的资源路径
 ```
 
+## 2.9 log-framework
+
+[lumberjack](https://github.com/natefinch/lumberjack)
+
+[Golang 获取用户 home 目录路径](https://studygolang.com/articles/2772)
+
 # 3 IDE-Goland
 
 __工程结构__

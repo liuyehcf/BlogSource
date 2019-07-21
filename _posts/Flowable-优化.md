@@ -80,93 +80,95 @@ CREATE INDEX IDX_OPTIMIZATION_TASK_ID ON ACT_RU_IDENTITYLINK(TASK_ID_);
 CREATE INDEX IDX_OPTIMIZATION_PARENT_ID ON ACT_RU_EXECUTION(PARENT_ID_);
 CREATE INDEX IDX_OPTIMIZATION_SUPER_EXEC ON ACT_RU_EXECUTION(SUPER_EXEC_);
 CREATE INDEX IDX_OPTIMIZATION_PROC_INST_ID ON ACT_RU_EXECUTION(PROC_INST_ID_);
+CREATE INDEX IDX_OPTIMIZATION_PROC_DEF_ID ON ACT_RU_EXECUTION(PROC_DEF_ID_);
+CREATE INDEX IDX_OPTIMIZATION_SUSPENSION_STATE ON ACT_RU_EXECUTION(SUSPENSION_STATE_);
 
 CREATE INDEX IDX_OPTIMIZATION_PROC_INST_ID ON ACT_RU_TASK(PROC_INST_ID_);
 
+CREATE INDEX IDX_OPTIMIZATION_PROC_INST_ID ON ACT_RU_DEADLETTER_JOB(PROCESS_INSTANCE_ID_);
 CREATE INDEX IDX_OPTIMIZATION_EXECUTION_ID ON ACT_RU_DEADLETTER_JOB(EXECUTION_ID_);
 
 CREATE INDEX IDX_OPTIMIZATION_DEPLOYMENT_ID ON ACT_GE_BYTEARRAY(DEPLOYMENT_ID_);
 
-CREATE INDEX IDX_OPTIMIZATION_PROC_INST_ID ON ACT_RU_EXECUTION(PROC_INST_ID_);
+CREATE INDEX IDX_OPTIMIZATION_KEY ON ACT_RE_PROCDEF(KEY_);
 
-CREATE INDEX IDX_OPTIMIZATION_PROC_DEF_ID ON ACT_RU_EXECUTION(PROC_DEF_ID_);
+CREATE INDEX IDX_OPTIMIZATION_PARENT_TASK_ID ON ACT_HI_TASKINST(PARENT_TASK_ID_);
+
+CREATE INDEX IDX_OPTIMIZATION_SUPER_PROC_INST_ID ON ACT_HI_PROCINST(SUPER_PROCESS_INSTANCE_ID_);
+
+CREATE INDEX IDX_OPTIMIZATION_KEY ON ACT_RU_VARIABLE(PROC_INST_ID_);
+
+CREATE INDEX IDX_OPTIMIZATION_PROC_INST_ID ON ACT_RU_TIMER_JOB(PROCESS_INSTANCE_ID_);
+
+CREATE INDEX IDX_OPTIMIZATION_PROC_INST_ID ON ACT_RU_SUSPENDED_JOB(PROCESS_INSTANCE_ID_);
 ```
 
 # 2 清理历史数据
 
 ```sql
+SELECT table_name, table_rows
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_SCHEMA = '<your database name>' ORDER BY table_rows DESC
 
-delete from act_hi_actinst
-where START_TIME_ < '2019-02-01 00:00:00.000'
+DELETE FROM ACT_RU_EXECUTION 
+WHERE PROC_INST_ID_ = '<proc_inst_id>'
 
-delete from act_hi_detail
-where TIME_ < '2019-02-01 00:00:00.000'
+DELETE FROM ACT_RU_TASK
+WHERE PROC_INST_ID_ = '<proc_inst_id>'
 
-delete from act_hi_identitylink
-where CREATE_TIME_ < '2019-02-01 00:00:00.000'
+DELETE FROM ACT_RU_VARIABLE 
+WHERE PROC_INST_ID_ = '<proc_inst_id>'
 
-delete from act_hi_procinst
-where START_TIME_ < '2019-02-01 00:00:00.000'
+DELETE FROM ACT_RU_IDENTITYLINK
+WHERE PROC_INST_ID_ = '<proc_inst_id>'
 
-delete from act_hi_taskinst
-where START_TIME_ < '2019-02-01 00:00:00.000'
+DELETE FROM ACT_RU_TIMER_JOB
+WHERE PROCESS_INSTANCE_ID_ = '<proc_inst_id>'
 
-delete from act_hi_varinst
-where CREATE_TIME_ < '2019-02-01 00:00:00.000'
+DELETE FROM ACT_RU_DEADLETTER_JOB 
+WHERE PROCESS_INSTANCE_ID_ = '<proc_inst_id>'
 
-delete from act_re_deployment
-where DEPLOY_TIME_ < '2019-02-01 00:00:00.000'
+DELETE FROM ACT_RU_SUSPENDED_JOB
+WHERE PROCESS_INSTANCE_ID_ = '<proc_inst_id>'
 
-delete from act_re_procdef 
-where DEPLOYMENT_ID_ NOT IN(SELECT ID_ FROM act_re_deployment)
+DELETE FROM ACT_HI_PROCINST 
+WHERE PROC_INST_ID_ = '<proc_inst_id>'
 
-delete from act_ru_deadletter_job
-where EXECUTION_ID_ NOT IN (SELECT ID_ FROM act_ru_execution)
+DELETE FROM ACT_HI_ACTINST 
+WHERE PROC_INST_ID_ = '<proc_inst_id>'
 
-delete from act_ru_execution
-where START_TIME_ < '2019-02-01 00:00:00.000'
+DELETE FROM ACT_HI_TASKINST 
+WHERE PROC_INST_ID_ = '<proc_inst_id>'
 
-delete from act_ru_identitylink
-WHERE PROC_INST_ID_ NOT IN(SELECT  PROC_INST_ID_ FROM ACT_HI_PROCINST)
+DELETE FROM ACT_HI_VARINST 
+WHERE PROC_INST_ID_ = '<proc_inst_id>'
 
-delete from act_ru_task
-where CREATE_TIME_ < '2019-02-01 00:00:00.000'
+DELETE FROM ACT_HI_IDENTITYLINK 
+WHERE PROC_INST_ID_ = '<proc_inst_id>'
 
-delete from act_ru_variable
-where EXECUTION_ID_ NOT IN (SELECT ID_ FROM act_ru_execution)
+DELETE FROM ACT_HI_DETAIL 
+WHERE PROC_INST_ID_ = '<proc_inst_id>'
 
-select count(*) from act_evt_log    0
-select count(*) from act_ge_bytearray    10732
-select count(*) from act_ge_property     10
-select count(*) from act_hi_actinst    62717
-select count(*) from act_hi_attachment    0
-select count(*) from act_hi_comment      0
-select count(*) from act_hi_detail     78866
-select count(*) from act_hi_identitylink    59566
-select count(*) from act_hi_procinst  29560
-select count(*) from act_hi_taskinst   27529
-select count(*) from act_hi_varinst     76198
-select count(*) from act_id_bytearray     0
-select count(*) from act_id_group     0
-select count(*) from act_id_info     0
-select count(*) from act_id_membership    0
-select count(*) from act_id_priv     0
-select count(*) from act_id_priv_mapping    0
-select count(*) from act_id_property     1
-select count(*) from act_id_token    0
-select count(*) from act_id_user    2
-select count(*) from act_procdef_info     0
-select count(*) from act_re_deployment  6022
-select count(*) from act_re_model    0
-select count(*) from act_re_procdef    6305
-select count(*) from act_ru_deadletter_job   2602
-select count(*) from act_ru_event_subscr  0
-select count(*) from act_ru_execution  56686
-select count(*) from act_ru_history_job     0
-select count(*) from act_ru_identitylink  30831
-select count(*) from act_ru_job    0
-select count(*) from act_ru_suspended_job    64
-select count(*) from act_ru_task    25673
-select count(*) from act_ru_timer_job    0
-select count(*) from act_ru_variable   69611 
+-- find all BYTEARRAY_ID_
+
+SELECT BYTEARRAY_ID_
+FROM ACT_RU_VARIABLE
+WHERE PROC_INST_ID_ = '<proc_inst_id>'
+AND BYTEARRAY_ID_ IS NOT NULL
+
+SELECT BYTEARRAY_ID_
+FROM ACT_HI_VARINST
+WHERE PROC_INST_ID_ = '<proc_inst_id>'
+AND BYTEARRAY_ID_ IS NOT NULL
+
+SELECT BYTEARRAY_ID_
+FROM ACT_HI_DETAIL
+WHERE PROC_INST_ID_ = '<proc_inst_id>'
+AND BYTEARRAY_ID_ IS NOT NULL
+
+DELETE FROM ACT_GE_BYTEARRAY
+WHERE ID_ IN (
+    '<id1>',
+    '<id2>'
+)
 ```
