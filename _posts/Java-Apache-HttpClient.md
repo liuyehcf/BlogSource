@@ -15,6 +15,11 @@ __阅读更多__
 # 1 Maven依赖
 
 ```xml
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.5</version>
+        </dependency>
 ```
 
 # 2 重试机制

@@ -923,9 +923,31 @@ __参数说明：__
 * `-r`：从后面接的文件将数据包数据读出来
 * `-c`：监听数据包数，没有这个参数则会一直监听，直到[ctrl]+C
 
+__显示格式说明__
+
+* `src > dst: flags data-seqno ack window urgent options`
+* `src`: 源ip/port（或域名）
+* `dst`: 宿ip/port（或域名）
+* `flags`: TCP标志位的组合
+    * `S`: `SYNC`
+    * `F`: `FIN`
+    * `P`: `PUSH`
+    * `R`: `RST`
+    * `U`: `URG`
+    * `W`: `ECN CWR`
+    * `E`: `ECN-Echo`
+    * `.`: `ACK`
+    * `none`: 无任何标志位
+* `data-seqno`: 数据包的序号，可能是一个或多个（`1:4`）
+* `ack`: 表示期望收到的下一个数据包的序号
+* `window`: 接收缓存的大小
+* `urgent`: 表示当前数据包是否包含紧急数据
+* `option`: 用`<>`包围的部分
+
 __示例：__
 
 * `tcpdump -i lo0 port 22 -w output7.cap`
+* `tcpdump -i eth0 host www.baidu.com`
 
 # 9 远程连接
 

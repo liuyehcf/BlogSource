@@ -14,7 +14,7 @@ __阅读更多__
 
 # 1 证书
 
-## 1.1 证书种类
+## 1.1 证书格式
 
 | 格式名称 | 格式后缀 | 文件格式 | 描述 |
 |:--|:--|:--|:--|:--|
@@ -24,7 +24,7 @@ __阅读更多__
 | `PFX(Predecessor of PKCS#12)` | `.pfx/.P12` | 二进制格式 | 同时包含证书和私钥，一般有密码保护</br>证书和私钥存在一个PFX文件中</br>一般用于Windows上的IIS服务器 |
 | `JPS(Java Key Storage)` | `.jks` | 二进制格式 | 同时包含证书和私钥，一般有密码保护</br>Java的专属格式，可以用keytool进行格式转换</br>一般用于Tomcat服务器 |
 
-## 1.2 X.509
+### 1.1.1 X.509
 
 X.509是公钥证书的标准格式，通常一个证书包含如下信息
 
@@ -56,57 +56,28 @@ X.509是公钥证书的标准格式，通常一个证书包含如下信息
 
 __若`Issuer Name`与`Subject name`相同，则表示自签名，根证书都是自签名的__
 
-## 1.3 证书转换
+## 1.2 证书类型
 
-__将`crt`证书转为`pkcs12`格式的证书__
+| 证书类型 | 类型解释 |
+|:--|:--|
+| 单域名证书 | 证书匹配一个`单域名` |
+| 单SAN证书 | 证书匹配多个后缀不同的`单域名` |
+| 泛域名证书 | 证书匹配单个`泛域名`</br>（例如，`*.test.com`可以匹配`www.test.com`和`ftp.test.com`） |
+| 泛SAN证书 | 证书匹配多个后缀不同的`泛域名` |
 
-```sh
-openssl pkcs12 -export -in <cert> -inkey <private key> -name <friendly name> -out <pkcs12 file>
+`SAN`: `Subject Alternative Name`
 
-# 执行过程中，会创建pkcs12证书的密码
-# 1. <cert> 指证书文件路径
-# 2. <private key> 指私钥文件路径
-# 3. <friendly name> 指该证书的别名
-# 4. <pkcs12 file> 指待创建的pkcs12证书的路径
-```
-
-__将`pkcs12`格式的证书转为`jks`格式的证书__
-
-```sh
-keytool -importkeystore -srckeystore <pkcs12 file> -destkeystore <jks file> -srcstoretype PKCS12 -deststoretype JKS
-
-# 执行过程中，会创建jks证书的密码，以及源pkcs12证书的密码
-# 1. <pkcs12 file> 指源pkcs12证书的路径
-# 2. <jks file> 指待创建的jks证书的路径
-```
-
-## 1.4 将根证书导入JKS
-
-我们如何使用Java连接到颁发了合法证书的服务端？当然，不校验服务端的合法性是可以的，但是此时客户端会存在安全风险
-
-如果Java客户端需要校验服务端的合法性，那么我们需要将站点证书对应的__根证书__导入本地的JKS中
-
-```sh
-keytool -import -alias <friendly name> -file <root cert file> -keystore <key store path>
-
-# 1. <friendly name> 指证书别名
-# 2. <root cert file> 指待导入的根证书的别名
-# 3. <key store path> 指本地的jks路径
-```
-
-于是，我们的Java客户端使用上述导入了根证书的JKS就能连接到服务端。因为该服务端的根证书位于信任池中，因此也会信任该服务端的站点证书。具体使用JKS的实例代码参见下方的Demo
-
-## 1.5 根证书和中间证书以及证书链
+## 1.3 根证书和中间证书以及证书链
 
 大多数人都知道SSL(TLS)，但是对其工作原理知之甚少，更不用说中间证书`Intermediate Certificate`、根证书`Root Certificate`以及证书链`Certificate Chain`了
 
-### 1.5.1 根证书
+### 1.3.1 根证书
 
 根证书，又称为信任链的起点，是信任体系（SSL/TLS）的核心基础。每个浏览器或者设备都包含一个根仓库（`root store`），`root store`包含了一组预置的根证书，根证书价值是非常高的，任何由它的私钥签发的证书都会被浏览器信任
 
 根证书属于证书颁发机构，它是校验以及颁发SSL证书的机构
 
-### 1.5.2 证书链
+### 1.3.2 证书链
 
 在进一步探讨证书之前，我们需要引入一个概念，叫做证书链。我们先从一个问题入手：浏览器如何判断一个证书是否合法？当你访问一个站点时，浏览器会快速地校验这个证书的合法性
 
@@ -114,7 +85,7 @@ keytool -import -alias <friendly name> -file <root cert file> -keystore <key sto
 
 当浏览器校验这个站点证书时，发现这个证书由根证书签名（准确地说，用根证书的私钥签名），且浏览器信任这个根证书，因此浏览器信任由这个根证书签名的站点证书。在这个例子中，站点证书直链根证书
 
-### 1.5.3 中间证书
+### 1.3.3 中间证书
 
 通常情况下，证书颁发机构不会用根证书来为站点证书签名，因为这非常危险，如果发生了误发证书或者其他错误而不得不撤回根证书，那么所有由该根证书签名的证书都会立即失效
 
@@ -129,7 +100,7 @@ __要获得中间证书，一般有两种方式__
 1. 由客户端自动下载中间证书
 2. 由服务器推送中间证书
 
-#### 1.5.3.1 客户端自动下载中间证书
+#### 1.3.3.1 客户端自动下载中间证书
 
 __一张标准的证书，都会包含自己的颁发者名称，以及颁发者机构访问信息：Authority Info Access，其中就会有颁发者CA证书的下载地址__，可以通过`openssl x509 -in <cert> -noout -text`查看证书信息。通过这个CA证书下载地址，我们就能够获得CA证书，__但有些平台不支持这种方式，例如Android，在这种平台上，仅通过站点证书就无法建立安全连接__
 
@@ -139,7 +110,7 @@ __一张标准的证书，都会包含自己的颁发者名称，以及颁发者
 
 虽然自动下载中间证书的机制如此不靠谱，但在有些应用中，这却是唯一有效的机制，譬如邮件签名证书，由于我们发送邮件时，无法携带颁发邮件证书的中间证书，往往只能依靠客户端自己去下载中间证书，一旦这个中间证书的URL无法访问（被“墙”掉）就会造成验证失败
 
-#### 1.5.3.2 服务器推送中间证书
+#### 1.3.3.2 服务器推送中间证书
 
 __服务器推送中间证书，就是将中间证书，预先部署在服务器上，服务器在发送证书的同时，将中间证书一起发给客户端__
 
@@ -156,7 +127,7 @@ __服务器推送中间证书，就是将中间证书，预先部署在服务器
 1. 选择可靠的SSL服务商，有些小的CA机构，因为各种原因，造成他们的中间证书下载URL被禁止访问，即使我们在服务器上部署了中间证书，但也可能存在某种不可测的风险，这是我们应该尽力避免的
 1. 中间证书往往定期会更新，所以在证书续费或者重新签发后，需要检查是否更换过中间证书
 
-### 1.5.4 数字签名
+### 1.3.4 数字签名
 
 数字签名是一种数字形式的公证。当根证书为中间证书签名时，本质上是将信任度传递到了中间证书，由于签名用的是根证书的私钥，因此中间证书也同时获得了信任
 
@@ -169,13 +140,13 @@ __证书包含以下内容__
 1. 证书持有者的公钥
 1. 证书签名用到的hash算法
 
-### 1.5.5 `Root CA`与`Intermediate CA`
+### 1.3.5 `Root CA`与`Intermediate CA`
 
 到这里就比较清晰明了了，`Root CA`是拥有一个或多个根证书的证书颁发机构，`Intermediate CA`/`Sub CA`是拥有中间证书的证书颁发机构，中间证书需要连接到上层的证书（可能是中间证书或者根证书），这个就叫做交叉验签，或多级验签
 
 一般来说，不会用根证书来为站点证书做签名，而是通过中间证书来增加安全层级，这有助于减少以及分解由误签或者其他错误造成的危害，因为我们只需要撤销中间证书而不需要撤销根证书，因此只会让部分证书失效而不会使全部证书失效
 
-### 1.5.6 `Chained Root`与`Single Root`
+### 1.3.6 `Chained Root`与`Single Root`
 
 `Root CA`用`Single Root`来直接颁发证书，使得部署证书和安装证书变得更加简单。`Sub CA`用`Chained Root`来颁发证书。它是一个中间证书，因为`Sub CA`没有自己的受信任的根，所以必须链接到一个具有根证书的`Third-party CA`
 
@@ -185,9 +156,125 @@ __证书包含以下内容__
 1. `Chained Root`受它们所链接的`Third-party CA`支配，它们无法控制根证书，如果`Root CA`停业，那么`Chained Root`也会失效
 1. 根证书和中间证书都会过期，虽然时间较长，但是中间证书的失效时间必须早于根证书，这增加了复杂度
 
-# 2 keytool
+# 2 openssl
 
-## 2.1 cmd
+## 2.1 openssl req
+
+req指令既可以直接生成一个新的自签名证书，也可以根据现有的证书请求和其相应私钥生成自签名根证书
+
+* 如果是根据现有证书请求生成自签名根证书，那么一定要-key选项指定相应的私钥指令才能执行成功
+
+req指令也可以生成密钥对，但在使用req同时生成密钥对是对密钥对保存和格式有限制（只能是PEM编码，DES3-CBC模式加密）。如果需要更灵活的处理，可以使用genrsa或者gendsa先生成密钥然后使用-key选项指定
+
+__参数选项__
+
+* __`-new`: 指定执行生成新的证书请求，此时会忽略`-in`指定的内容__
+* __`-x509`: 根据现有的证书请求生成自签名根证书（要求使用-key指定证书请求里面的公钥相应的私钥，以便对自签名根证书进行签名）__
+* __`-key`: 指定输入的密钥，如果不指定此选项会根据`-newkey`选项的参数生成密钥对__
+* __`-newkey`: 指定生成一个新的密钥对，只有在没有`-key`选项的时候才生效，参数形式为`rsa:numbits`或者`dsa:file`__
+* __`-subj`: 直接从指令行指定证书请求的主体名称，格式为/分割的键值对字符串，如果没有此选项，那么会弹出交互提示__
+* __`-days`: 设定了生成的自签名根证书的有效期，单位为天；该选项只有在使用了`-x509`选项生成自签名证书的时候才生效，默认为30天__
+* __`-config`: 指定req指令在生成证书请求的时候使用的OpenSSL配置文件，一般默认为`/etc/pki/tls/openssl.cnf`__
+* __`-extensions`: 选项指定了生成自签名根证书的时候使用的扩展字段，其参数为OpenSSL配置文件中的某个字段名__
+* __`-reqexts`: 选项指定了生成证书请求是使用的扩展字段，该字段参数也是配置文件中的某个字段名__
+* `-text`: 让指令输出证书请求或者自签名根证书内容的明文解析，默认情况下，它将输出所有可能输出的内容，如果使用了reqopt选项，则输出内容取决于reqopt选项
+* `-reqopt`: 指定text选项输出的内容可以为多个，每个之间使用`,`分隔
+* `set_serial`: 指定生成的自签名根证书的序列号，默认情况下生成的自签名根证书序列号是0；该选项也只有在生成自签名根证书的时候有效
+* `-keyout`: 置顶新生成的私钥的输出（仅在使用了`-newKey`或`-new`选项导致生成新密钥对的时候才有效，如果使用了`-key`则此选项被忽略）
+* `-keyform`: 指定输入密钥的编码格式（比如PEM，DER，PKCS#12，Netscape，IIS SGC，Engine等）
+* __`-in`: 指定输入证书请求文件，如果使用了`-new`或者`-newkey`选项，此选项被忽略__
+* `-inform`: 指定输入证书请求文件的编码格式（比如PEM，DER）
+* __`-out`: 指定输出证书请求文件或自签名证书文件__
+* `-noout`: 使用此选项后，指令将不会输出编码的证书请求或者自签名根证书到-out选项指定的文件中，一般用来测试指令或者查看证书请求的信息
+* `-outform`: 指定输出证书请求文件或自签名证书的编码格式（比如PEM，DER）
+* `-pubkey`: 使用此选项的话，指令将输出PEM编码的公钥到`-out`指定的文件中，默认情况下只输出私钥到`-keyout`指定的文件，并不输出公钥
+* `-passin`: 指定读取`-key`选项指定的私钥所需要的解密口令，如果没有指定，私钥又有密钥的话，会弹出交互提示
+* `-passout`: 指定`-keyout`选项输出私钥时使用的加密口令
+* `-nodes`: 表示不对私钥进行加密，如果指定此选项，则忽略-passout指定的口令；如果没有此选项，却指定了-passout则会有交互提示
+* `-digest`: 指定生成证书请求或者自签名根证书是使用的信息摘要算法，一般在生成数字签名的时候使用
+* `-verify`: 使用此选项对证书请求中的数字签名进行验证操作，并给出失败或者成功的提示信息，其验证的过程是从证书请求里面提取公钥，然后使用该公钥对证书请求的数字签名进行验证
+* 如果没有`-key`选项也没有`-newkey`选项，则会根据`openssl.cnf`中`req`字段的`default_bits`选项的参数，生成一个RSA密钥
+* 如果没有使用`-nodes`选项，并且生成了新的私钥，私钥会被输出到`-keyout`指定的文件中时将被以DES3的CBC模式加密
+
+__示例__
+
+```sh
+# 生成一个新的证书请求，使用新的`rsa2048`位密钥
+# 输出证书请求到request.pem
+# 输出密钥到private.pem，密钥口令为12345678
+
+openssl req -new \
+    -newkey rsa:2048 -keyout private.pem -passout pass:12345678 \
+    -subj "/C=CN/ST=ZJ/L=HZ/O=LiuYe/OU=Study/CN=www.liuyehcf.test" \
+    -out request.pem
+
+# 对证书请求签名进行验证
+openssl req -in request.pem -verify -noout
+
+# -----分割线-----
+
+# 生成一个自签名的根证书
+openssl req \
+    -newkey rsa:2048 -keyout private.pem -passout pass:12345678 \
+    -subj "/C=CN/ST=ZJ/L=HZ/O=LiuYe/OU=Study/CN=selfca" \
+    -x509 \
+    -out selfsign.crt
+```
+
+## 2.2 openssl ca
+
+ca指令模拟一个完整的CA服务器，它包括签发用户证书，吊销证书，产生CRL及更新证书库等管理操作
+
+__参数选项__
+
+* __`-config`: 指定要使用的配置文件，如果没有此选项，则会先查找OPENSSL_CONF或者SSLEAY_CONF定义的文件名，如果这两个环境变量都没有定义，就使用OpenSSL安装的默认路径，一般是`/usr/local/openssl/openssl.cnf`，具体看安装配置__
+* `-startdate`: 设置证书的生效时间 格式为`YYMMDDHHMMSSZ`指定年月日时分秒，如果没有则使用主配置文件中的default_startdate
+* `-enddate`: 格式跟`-startdate`一样
+* __`-days`: 设置证书的有效天数，生效时间到到期时间之间的天数，如果使用了`-enddate`，此选项被忽略__
+* `-name`: 指定配置文件中CA选项的名称
+* `-notext`: 不输出明文信息到证书文件
+* __`-subj`: 直接从指令行指定证书请求的主体名称，格式为/分割的键值对字符串，如果没有此选项，那么会弹出交互提示__
+* __`-cert`: 参数是一个可以包含路径的文件名，该文件是一个PEM编码的X.509证书文件__
+* __`-keyfile`: 参数是一个包含路径的文件名，文件格式可以为PEM，DER，PKCS#12，Netscape，IIS SGC，Engine，但需要通过`-keyform`指定到底是哪种格式__
+* `-policy`: 指定CA的匹配策略
+* __`-extensions` 指定`x509 v3`扩展字段的字段名，如果没有这个选项，就由`-extfile`选项指定__
+* `-extfile`: 指定`x509 v3`扩展的配置文件，如果没有`-extensions`字段，则由CA主配置文件中的`x509_extensions`选项指定
+* __`-in`: 指定一个可以包含路径的证书请求文件名，应该是PEM变得PKCS#10格式的证书请求__
+* `-infiles`: 指定一系列包含PEM编码证书请求的文件，包含多个，只能作为指令的最后一个选项，其后的参数都被认为是证书请求文件
+* __`-out`: 选项指定了输出签发好的证书或者新生成的CRL的文件，如果没有使用`-notext`选项，那么证书的明文信息也会输出到`-out`选项指定的文件中__
+* `-outdir`: 选项指定了新生成的证书的输出目录，默认输出到`newecerts`目录，并使用`.pem`作为后缀，都是PEM编码。
+
+## 2.3 证书转换
+
+__将站点私钥与站点证书，转存为`pkcs12`格式的证书__
+
+```sh
+openssl pkcs12 -export -in <cert> -inkey <private key> -name <friendly name> -out <pkcs12 file>
+
+# 执行过程中，会创建pkcs12证书的密码
+# 1. <cert> 指证书文件路径
+# 2. <private key> 指私钥文件路径
+# 3. <friendly name> 指该证书的别名
+# 4. <pkcs12 file> 指待创建的pkcs12证书的路径
+```
+
+__将站点私钥与站点证书、中间证书、CA证书，转存为`pkcs12`格式的证书__
+
+```sh
+openssl pkcs12 -export -in <server cert> -inkey <server private key>  -certfile <intermediate cert> -CAfile <ca cert> -name <friendly name> -out <pkcs12 file>
+
+# 执行过程中，会创建pkcs12证书的密码
+# 1. <server cert> 指站点证书
+# 2. <server private key> 指站点证书的私钥
+# 3. <intermediate cert> 中间证书
+# 4. <ca cert> 根证书
+# 5. <friendly name> 指该证书的别名
+# 6. <pkcs12 file> 指待创建的pkcs12证书的路径
+```
+
+# 3 keytool
+
+## 3.1 cmd
 
 `keytool command [command options]`
 
@@ -230,7 +317,51 @@ __证书包含以下内容__
 * `-v`：详细输出
 * `-protected`：通过受保护的机制的口令
 
-## 2.2 Java-Api
+### 3.1.1 查看证书信息
+
+```sh
+keytool -printcert -file <cert file>
+```
+
+### 3.1.2 将根证书导入JKS
+
+我们如何使用Java连接到颁发了合法证书的服务端？当然，不校验服务端的合法性是可以的，但是此时客户端会存在安全风险
+
+如果Java客户端需要校验服务端的合法性，那么我们需要将站点证书对应的__根证书__导入本地的JKS中
+
+```sh
+keytool -import -alias <friendly name> -file <root cert file> -keystore <key store path>
+
+# 1. <friendly name> 指证书别名
+# 2. <root cert file> 指待导入的根证书的别名
+# 3. <key store path> 指本地的jks路径
+```
+
+于是，我们的Java客户端使用上述导入了根证书的JKS就能连接到服务端。因为该服务端的根证书位于信任池中，因此也会信任该服务端的站点证书。具体使用JKS的实例代码参见下方的Demo
+
+### 3.1.3 将服务端证书导入JKS
+
+__将`pkcs12`格式的证书导入JKS，并转为`jks`格式__
+
+```sh
+keytool -importkeystore -srckeystore <pkcs12 file> -destkeystore <jks file> -srcstoretype PKCS12 -deststoretype JKS
+
+# 执行过程中，会创建jks证书的密码，以及源pkcs12证书的密码
+# 1. <pkcs12 file> 指源pkcs12证书的路径
+# 2. <jks file> 指待创建的jks证书的路径
+```
+
+__将`pkcs12`格式的证书直接导入JKS，保持其`pkcs12`格式__
+
+```sh
+keytool -importkeystore -srckeystore <pkcs12 file> -destkeystore <jks file> -srcstoretype PKCS12 -deststoretype PKCS12
+
+# 执行过程中，会创建jks证书的密码，以及源pkcs12证书的密码
+# 1. <pkcs12 file> 指源pkcs12证书的路径
+# 2. <jks file> 指待创建的jks证书的路径
+```
+
+## 3.2 Java-Api
 
 ```Java
 package org.liuyehcf.ssl;
@@ -348,9 +479,9 @@ public class KeyStoreExample {
 }
 ```
 
-# 3 JKS
+# 4 JKS
 
-## 3.1 服务端
+## 4.1 服务端
 
 Java环境下，数字证书是用`keytool`生成的，这些证书被存储在`store`中，就是证书仓库。我们来调用keytool命令为服务端生成数字证书和保存它使用的证书仓库：
 
@@ -371,9 +502,9 @@ Warning:
 JKS 密钥库使用专用格式。建议使用 "keytool -importkeystore -srckeystore /Users/HCF/liuyehcf_server_ks -destkeystore /Users/HCF/liuyehcf_server_ks -deststoretype pkcs12" 迁移到行业标准格式 PKCS12。
 ```
 
-## 3.2 客户端
+## 4.2 客户端
 
-有了服务端，我们原来的客户端就不能使用了，必须要走SSL协议。由于服务端的证书是我们自己生成的，没有任何受信任机构的签名，所以客户端是无法验证服务端证书的有效性的，通信必然会失败。所以我们需要为客户端创建一个保存所有信任证书的仓库，然后把服务端证书导进这个仓库。这样，当客户端连接服务端时，会发现服务端的证书在自己的信任列表中，就可以正常通信了。
+有了服务端，我们原来的客户端就不能使用了，必须要走SSL协议。由于服务端的证书是我们自己生成的，没有任何受信任机构的签名，所以客户端是无法验证服务端证书的有效性的，通信必然会失败。所以我们需要为客户端创建一个保存所有信任证书的仓库，然后把服务端证书导进这个仓库。这样，当客户端连接服务端时，会发现服务端的证书在自己的信任列表中，就可以正常通信了
 
 因此现在我们要做的是生成一个客户端的证书仓库，__因为keytool不能仅生成一个空白仓库，所以和服务端一样，我们还是生成一个证书加一个仓库（客户端证书加仓库）__
 
@@ -443,7 +574,7 @@ Warning:
 JKS 密钥库使用专用格式。建议使用 "keytool -importkeystore -srckeystore /Users/HCF/liuyehcf_client_ks -destkeystore /Users/HCF/liuyehcf_client_ks -deststoretype pkcs12" 迁移到行业标准格式 PKCS12。
 ```
 
-## 3.3 SSLServer
+## 4.3 SSLServer
 
 ```Java
 package org.liuyehcf.ssl;
@@ -519,7 +650,7 @@ public class SSLServer extends Thread {
 }
 ```
 
-## 3.4 SSLClient
+## 4.4 SSLClient
 
 ```Java
 package org.liuyehcf.ssl;
@@ -584,7 +715,7 @@ public class SSLClient {
 }
 ```
 
-## 3.5 双向认证
+## 4.5 双向认证
 
 上述示例中，仅仅客户端对服务端做了单向认证，如果要进行双向认证，需要将客户端的证书添加到服务端的keyStore中
 
@@ -647,9 +778,9 @@ __改造服务端的代码__
 ((SSLServerSocket) socket).setNeedClientAuth(true);
 ```
 
-# 4 PKCS12
+# 5 PKCS12
 
-## 4.1 服务端
+## 5.1 服务端
 
 Java环境下，数字证书是用`keytool`生成的，这些证书被存储在`store`中，就是证书仓库。我们来调用keytool命令为服务端生成数字证书和保存它使用的证书仓库：
 
@@ -668,9 +799,9 @@ keytool -genkey -v -alias liuyehcf_server_key -keyalg RSA -keystore ~/liuyehcf_s
 [正在存储/Users/HCF/liuyehcf_server_ks]
 ```
 
-## 4.2 客户端
+## 5.2 客户端
 
-有了服务端，我们原来的客户端就不能使用了，必须要走SSL协议。由于服务端的证书是我们自己生成的，没有任何受信任机构的签名，所以客户端是无法验证服务端证书的有效性的，通信必然会失败。所以我们需要为客户端创建一个保存所有信任证书的仓库，然后把服务端证书导进这个仓库。这样，当客户端连接服务端时，会发现服务端的证书在自己的信任列表中，就可以正常通信了。
+有了服务端，我们原来的客户端就不能使用了，必须要走SSL协议。由于服务端的证书是我们自己生成的，没有任何受信任机构的签名，所以客户端是无法验证服务端证书的有效性的，通信必然会失败。所以我们需要为客户端创建一个保存所有信任证书的仓库，然后把服务端证书导进这个仓库。这样，当客户端连接服务端时，会发现服务端的证书在自己的信任列表中，就可以正常通信了
 
 因此现在我们要做的是生成一个客户端的证书仓库，__因为keytool不能仅生成一个空白仓库，所以和服务端一样，我们还是生成一个证书加一个仓库（客户端证书加仓库）__
 
@@ -732,7 +863,7 @@ KeyIdentifier [
 证书已添加到密钥库中
 ```
 
-## 4.3 SSLServer
+## 5.3 SSLServer
 
 ```Java
 package org.liuyehcf.ssl;
@@ -808,7 +939,7 @@ public class SSLServer extends Thread {
 }
 ```
 
-## 4.4 SSLClient
+## 5.4 SSLClient
 
 ```Java
 package org.liuyehcf.ssl;
@@ -873,7 +1004,7 @@ public class SSLClient {
 }
 ```
 
-## 4.5 双向认证
+## 5.5 双向认证
 
 上述示例中，仅仅客户端对服务端做了单向认证，如果要进行双向认证，需要将客户端的证书添加到服务端的keyStore中
 
@@ -930,11 +1061,303 @@ __改造服务端的代码__
 ((SSLServerSocket) socket).setNeedClientAuth(true);
 ```
 
-# 5 在Netty中使用SSL
+# 6 最佳实践
+
+## 6.1 证书生成及签名
+
+### 6.1.1 创建自签名的单域名证书
+
+__第一步：创建自签名ca__
+
+```sh
+# 创建ca私钥
+openssl genrsa -out ca.key 2048
+
+# 创建ca自签名证书
+openssl req -new \
+    -sha256 \
+    -key ca.key \
+    -x509 \
+    -days 365 \
+    -subj "/C=CN/ST=ZJ/L=HZ/O=LiuYe/OU=Study/CN=selfca" \
+    -out ca.crt
+```
+
+__第二步：创建服务端私钥__
+
+```sh
+# 创建服务端私钥
+openssl genrsa -out server.key 2048
+
+# 查看私钥
+file server.key
+cat server.key
+openssl rsa -in server.key -noout -text
+```
+
+__第三步：根据私钥生成证书签名请求__
+
+```sh
+# 创建证书签名请求
+openssl req -new \
+     -sha256 \
+     -key server.key \
+     -subj "/C=CN/ST=ZJ/L=HZ/O=LiuYe/OU=Study/CN=www.liuyehcf.test" \
+     -out server.csr
+
+# 上面这几个字段的含义
+# C  => Country
+# ST => State
+# L  => City
+# O  => Organization
+# OU => Organization Unit
+# CN => Common Name (证书所请求的域名)
+# emailAddress => main administrative point of contact for the certificate
+
+# 查看证书签名请求
+file server.csr
+cat server.csr
+openssl req -noout -text -in server.csr
+```
+
+__第四步：用自签名ca进行证书签名__
+
+```sh
+# 使用CA的私钥和证书对用户证书签名，下面有两种方式，效果一样
+# 1. 使用 openssl ca 进行签名
+# 2. 使用 openssl x509 进行签名
+
+# 方式1: openssl ca
+# 创建一些必要的文件，否则签名时会有问题
+mkdir -p /etc/pki/CA/newcerts
+touch /etc/pki/CA/index.txt
+echo "01" > /etc/pki/CA/serial
+openssl ca -in server.csr \
+    -md sha256 \
+    -days 3650 \
+    -keyfile ca.key \
+    -cert ca.crt \
+    -config <(cat /etc/pki/tls/openssl.cnf) \
+    -out server.crt
+
+# 方式2: openssl x509
+openssl x509 -req \
+    -in server.csr \
+    -sha256 \
+    -days 3650 \
+    -CAkey ca.key \
+    -CA ca.crt \
+    -CAcreateserial \
+    -out server.crt 
+
+# 查看证书
+file server.crt
+cat server.crt
+openssl x509 -in server.crt -noout -text
+```
+
+__验证__
+
+启动Http服务（参考`[Java验证]`小节），并配置host
+
+* `127.0.0.1 www.liuyehcf.test`
+
+浏览器访问
+
+* [https://www.liuyehcf.test:8866/](https://www.liuyehcf.test:8866/)
+
+此时浏览器会提示该证书非法。将`ca.crt`添加到系统根证书中后，可正常访问
+
+### 6.1.2 创建自签名的SAN证书
+
+__第一步：创建自签名ca__
+
+```sh
+# 创建ca私钥
+openssl genrsa -out ca.key 2048
+
+# 创建ca自签名证书
+openssl req -new \
+    -sha256 \
+    -key ca.key \
+    -x509 \
+    -days 365 \
+    -subj "/C=CN/ST=ZJ/L=HZ/O=LiuYe/OU=Study/CN=selfca" \
+    -out ca.crt
+```
+
+__第二步：创建服务端私钥__
+
+```sh
+# 创建服务端私钥
+openssl genrsa -out server.key 2048
+```
+
+__第三步：根据私钥生成证书签名请求__
+
+```sh
+# 创建证书签名请求
+openssl req -new \
+    -sha256 \
+    -key server.key \
+    -subj "/C=CN/ST=ZJ/L=HZ/O=LiuYe/OU=Study/CN=liuyeSAN" \
+    -reqexts SAN \
+    -config <(cat /etc/pki/tls/openssl.cnf \
+        <(printf "[SAN]\nsubjectAltName=DNS:*.test1.liuyehcf.test,DNS:*.test2.liuyehcf.test,DNS:www.liuyehcf.test")) \
+    -out server.csr
+```
+
+__第四步：用自签名ca进行证书签名__
+
+```sh
+# 创建一些必要的文件，否则签名时会有问题
+mkdir -p /etc/pki/CA/newcerts
+touch /etc/pki/CA/index.txt
+echo "01" > /etc/pki/CA/serial
+
+# 用ca进行签名
+openssl ca -in server.csr \
+    -md sha256 \
+    -keyfile ca.key \
+    -cert ca.crt \
+    -extensions SAN \
+    -config <(cat /etc/pki/tls/openssl.cnf \
+        <(printf "[SAN]\nsubjectAltName=DNS:*.test1.liuyehcf.test,DNS:*.test2.liuyehcf.test,DNS:www.liuyehcf.test")) \
+    -out server.crt
+```
+
+__验证__
+
+启动Http服务（参考`[Java验证]`小节），并配置三个host
+
+* `127.0.0.1 www.liuyehcf.test`
+* `127.0.0.1 www.test1.liuyehcf.test`
+* `127.0.0.1 www.test2.liuyehcf.test`）
+
+浏览器访问如下地址
+
+* [https://www.liuyehcf.test:8866/](https://www.liuyehcf.test:8866/)
+* [https://www.test1.liuyehcf.test:8866/](https://www.test1.liuyehcf.test:8866/)
+* [https://www.test2.liuyehcf.test:8866/](https://www.test2.liuyehcf.test:8866/)
+
+此时浏览器会提示该证书非法。将`ca.crt`添加到系统根证书中后，可正常访问
+
+__问题__
+
+1. __在用`openssl ca`进行签名时，要确保`.csr`文件包含的CN必须是唯一的，否则在签名时会出现`TXT_DB error number 2`的问题__
+
+### 6.1.3 Java验证
+
+__将证书导入JavaKeyStore__
+
+```sh
+# 转成pkcs12格式的证书，会要求创建密码，我创建的是 123456
+openssl pkcs12 -export -in server.crt -inkey server.key -name liuyehcf -out server.p12
+
+# 将pkcs12格式的证书导入keystore，会要求输入keystore的密码，以及pkcs12的密码，我填的都是 123456
+keytool -importkeystore -srckeystore server.p12 -destkeystore liuyehcf_server_ks -srcstoretype PKCS12 -deststoretype PKCS12
+```
+
+__Java验证代码__
+
+```Java
+package org.liuyehcf.netty.https;
+
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.http.*;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.stream.ChunkedWriteHandler;
+import io.netty.handler.timeout.IdleStateHandler;
+
+import javax.net.ssl.KeyManagerFactory;
+import java.io.File;
+import java.io.FileInputStream;
+import java.nio.charset.Charset;
+import java.security.KeyStore;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * @author hechenfeng
+ * @date 2019/7/29
+ */
+public class Server {
+    private static final String HOST = "localhost";
+    private static final int PORT = 8866;
+
+    private static final String KEY_STORE_PATH = System.getProperty("user.home") + File.separator + "liuyehcf_server_ks";
+    private static final String STORE_TYPE = "PKCS12";
+    private static final String KEY_STORE_PASSWORD = "123456";
+    private static final String KEY_PASSWORD = KEY_STORE_PASSWORD;
+
+    public static void main(String[] args) throws Exception {
+        final EventLoopGroup boss = new NioEventLoopGroup();
+        final EventLoopGroup worker = new NioEventLoopGroup();
+
+        final ServerBootstrap bootstrap = new ServerBootstrap();
+        bootstrap.group(boss, worker)
+                .channel(NioServerSocketChannel.class)
+                .childHandler(new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    protected void initChannel(SocketChannel socketChannel) throws Exception {
+                        ChannelPipeline pipeline = socketChannel.pipeline();
+                        pipeline.addLast(new IdleStateHandler(0, 0, 60, TimeUnit.SECONDS));
+                        pipeline.addLast(createSslHandlerUsingNetty(pipeline));
+                        pipeline.addLast(new HttpServerCodec());
+                        pipeline.addLast(new HttpObjectAggregator(65535));
+                        pipeline.addLast(new ChunkedWriteHandler());
+                        pipeline.addLast(new ServerHandler());
+                    }
+                })
+                .option(ChannelOption.SO_BACKLOG, 1024)
+                .childOption(ChannelOption.SO_KEEPALIVE, true)
+                .childOption(ChannelOption.TCP_NODELAY, true)
+                .childOption(ChannelOption.SO_REUSEADDR, true);
+
+        final ChannelFuture future = bootstrap.bind(PORT).sync();
+        System.out.println("server start ...... ");
+
+        future.channel().closeFuture().sync();
+    }
+
+    private static ChannelHandler createSslHandlerUsingNetty(ChannelPipeline pipeline) throws Exception {
+        // keyStore
+        KeyStore keyStore = KeyStore.getInstance(STORE_TYPE);
+        keyStore.load(new FileInputStream(KEY_STORE_PATH), KEY_STORE_PASSWORD.toCharArray());
+
+        // keyManagerFactory
+        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        keyManagerFactory.init(keyStore, KEY_PASSWORD.toCharArray());
+
+        return SslContextBuilder.forServer(keyManagerFactory).build()
+                .newHandler(pipeline.channel().alloc(), HOST, PORT);
+    }
+
+    private static final class ServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+
+        @Override
+        protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) {
+            FullHttpResponse response = new DefaultFullHttpResponse(
+                    HttpVersion.HTTP_1_1,
+                    HttpResponseStatus.BAD_REQUEST,
+                    Unpooled.copiedBuffer("hello world", Charset.defaultCharset()));
+            response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain;charset=UTF-8");
+
+            ctx.channel().writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+        }
+    }
+}
+```
+
+# 7 在Netty中使用SSL
 
 详见{% post_link Netty-Demo %}
 
-# 6 参考
+# 8 参考
 
 * [Java SSL](https://blog.csdn.net/everyok/article/details/82882156)
 * [SSL介绍与Java实例](http://www.cnblogs.com/crazyacking/p/5648520.html)
@@ -948,3 +1371,10 @@ __改造服务端的代码__
 * [SSL 证书格式普及，PEM、CER、JKS、PKCS12](https://blog.freessl.cn/ssl-cert-format-introduce/)
 * [The Difference Between Root Certificates and Intermediate Certificates](https://www.thesslstore.com/blog/root-certificates-intermediate/)
 * [中间证书的使用（组图）](https://www.58ssl.com/ssl_wenti/4156.html)
+* [使用 OpenSSL 制作一个包含 SAN（Subject Alternative Name）的证书](http://liaoph.com/openssl-san/)
+* [如何使用openssl生成证书及签名](https://www.jianshu.com/p/7d940d7a07d9)
+* [keytool使用大全：p12(PKCS12)和jks互相转换等](https://blog.csdn.net/NewTWG/article/details/85330895)
+* [HTTPS SAN自签名证书](https://www.jianshu.com/p/24ed15c973ec)
+* [OpenSSL创建带SAN扩展的证书并进行CA自签](https://blog.csdn.net/dotalee/article/details/78041691)
+* [使用OpenSSL生成多域名自签名证书进行HTTPS开发调试](https://zhuanlan.zhihu.com/p/26646377)
+* [使用 openssl 生成证书](https://www.cnblogs.com/littleatp/p/5878763.html)
