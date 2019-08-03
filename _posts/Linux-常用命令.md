@@ -949,6 +949,14 @@ __示例：__
 * `tcpdump -i lo0 port 22 -w output7.cap`
 * `tcpdump -i eth0 host www.baidu.com`
 
+### 8.4.1 tips
+
+如何查看具体的协议，例如ssh协议
+
+利用wireshark
+
+1. 任意选中一个`length`不为`0`的数据包，右键选择解码（`decode as`），右边`Current`一栏，选择对应的协议即可
+
 # 9 远程连接
 
 ## 9.1 ssh
