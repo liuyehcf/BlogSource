@@ -648,7 +648,22 @@ __会话管理__
 1. `Ctrl a + d`：暂时断开screen会话
 1. `Ctrl a + k`：杀掉当前窗口
 
-## 6.11 top
+## 6.11 pstree
+
+__格式：__
+
+* `pstree [-A|U] [-up]`
+
+__参数说明：__
+
+* `-A`：各进程树之间的连接以ASCII字符来连接(连接符号是ASCII字符)
+* `-U`：各进程树之间的连接以utf8码的字符来连接，在某些终端接口下可能会有错误(连接符号是utf8字符，比较圆滑好看)
+* `-p`：同时列出每个进程的PID
+* `-u`：同时列出每个进程所属账号名称
+
+# 7 运维相关
+
+## 7.1 top
 
 __打印参数说明：__
 
@@ -670,129 +685,9 @@ __打印参数说明：__
     * %MEN：内存使用率
     * TIME+：CPU使用时间累加
     * COMMAND
-* __top默认使用CPU使用率作为排序的终点__
+* __top默认使用CPU使用率作为排序的终点，键入`h`显示帮助菜单__
 
-## 6.12 pstree
-
-__格式：__
-
-* `pstree [-A|U] [-up]`
-
-__参数说明：__
-
-* `-A`：各进程树之间的连接以ASCII字符来连接(连接符号是ASCII字符)
-* `-U`：各进程树之间的连接以utf8码的字符来连接，在某些终端接口下可能会有错误(连接符号是utf8字符，比较圆滑好看)
-* `-p`：同时列出每个进程的PID
-* `-u`：同时列出每个进程所属账号名称
-
-## 6.13 lsof
-
-__格式：__
-
-* `lsof [-aU] [-u 用户名] [+d] [-i address]`
-
-__参数说明：__
-
-* `-a`：多项数据需要“同时成立”才显示结果
-* `-U`：仅列出Unix like系统的socket文件类型
-* `-u`：后面接username，列出该用户相关进程所打开的文件
-* `+d`：后面接目录，及找出某个目录下面已经被打开的文件
-* `-i`：后面接网络地址，格式如下
-    * `[46][protocol][@hostname|hostaddr][:service|port]`
-    * `46`：ipv4/ipv6
-    * `protocol`：tcp/udp
-    * `hostname`：主机名
-    * `hostaddr`：主机ip
-    * `service`：服务
-    * `port`端口号
-
-__示例：__
-
-* `lsof -i 6tcp@localhost:22`
-* `lsof -i 4tcp@127.0.0.1:22`
-* `lsof -i tcp@127.0.0.1:22`
-* `lsof -i tcp@localhost`
-* `lsof -i tcp:22`
-
-## 6.14 tsar
-
-__格式：__
-
-* `tsar [-l]`
-
-__参数说明：__
-
-* `-l`：查看实时数据
-
-__示例：__
-
-* `tsar -l`
-
-## 6.15 watch
-
-__格式：__
-
-* `watch [option] [cmd]`
-
-__参数说明：__
-
-* `-n`：watch缺省该参数时，每2秒运行一下程序，可以用`-n`或`-interval`来指定间隔的时间
-* `-d`：`watch`会高亮显示变化的区域。`-d=cumulative`选项会把变动过的地方(不管最近的那次有没有变动)都高亮显示出来
-* `-t`：关闭watch命令在顶部的时间间隔命令，当前时间的输出
-
-__示例：__
-
-* `watch -n 1 -d netstat -ant`：每隔一秒高亮显示网络链接数的变化情况
-* `watch -n 1 -d 'pstree | grep http'`：每隔一秒高亮显示http链接数的变化情况
-* `watch 'netstat -an | grep :21 | grep <ip> | wc -l'`：实时查看模拟攻击客户机建立起来的连接数
-* `watch -d 'ls -l | grep scf'`：监测当前目录中 scf' 的文件的变化
-* `watch -n 10 'cat /proc/loadavg'`：10秒一次输出系统的平均负载
-
-# 7 内存管理
-
-## 7.1 free
-
-__格式：__
-
-* `free [-b|-k|-m|-g] [-t]`
-
-__参数说明：__
-
-* `-b`：bytes
-* `-m`：MB
-* `-k`：KB
-* `-g`：GB
-
-__显示参数介绍__：
-
-* `Men`：物理内存
-* `Swap`：虚拟内存
-* `total`：总量
-* `user`：使用量
-* `free`：剩余可用量
-* `shared`与`buffers/cached`：被使用的量当中用来作为缓冲以及快取的量
-* `buffers`：缓冲记忆
-* `cached`：缓存
-* __一般来说系统会很有效地将所有内存用光，目的是为了让系统的访问性能加速，这一点与Windows很不同，因此对于Linux系统来说，内存越大越好__
-
-__示例：__
-
-* `free -m`
-
-## 7.2 swap
-
-__制作swap__
-
-```sh
-dd if=/dev/zero of=/tmp/swap bs=1M count=128
-mkswap /tmp/swap
-swapon /tmp/swap
-free
-```
-
-# 8 网络管理
-
-## 8.1 netstat
+## 7.2 netstat
 
 __格式：__
 
@@ -834,45 +729,36 @@ __示例__
 
 1. __`netstat -n | awk '/^tcp/ {++y[$NF]} END {for(w in y) print w, y[w]}'`__
 
-## 8.2 route
+## 7.3 lsof
 
 __格式：__
 
-* `route [-nee]`
-* `route add [-net|-host] [网络或主机] netmask [mask] [gw|dev]`
-* `route del [-net|-host] [网络或主机] netmask [mask] [gw|dev]`
+* `lsof [-aU] [-u 用户名] [+d] [-i address]`
 
 __参数说明：__
 
-* `-n`：不要使用通信协议或主机名，直接使用IP或port number，即在默认情况下，route会解析出该IP的主机名，若解析不到则会有延迟，因此一般加上这个参数
-* `-ee`：显示更详细的信息
-* `-net`：表示后面接的路由为一个网络
-* `-host`：表示后面接的为连接到单个主机的路由
-* `netmask`：与网络有关，可设置netmask决定网络的大小
-* `gw`：gateway的缩写，后接IP数值
-* `dev`：如果只是要制定由哪块网卡连接出去，则使用这个设置，后接网卡名，例如eth0等
-
-__打印参数说明：__
-
-* __Destination、Genmask__：这两个参数就分别是network与netmask
-* __Gateway__：该网络通过哪个Gateway连接出去，若显示`0.0.0.0(default)`表示该路由直接由本级传送，也就是通过局域网的MAC直接传送，如果显示IP的话，表示该路由需要经过路由器(网关)的帮忙才能发送出去
-* __Flags__：
-    * `U(route is up)`：该路由是启动的
-    * `H(target is a host)`：目标是一台主机而非网络
-    * `G(use gateway)`：需要通过外部的主机来传递数据包
-    * `R(reinstate route for dynamic routing)`：使用动态路由时，恢复路由信息的标志
-    * `D(Dynamically installed by daemon or redirect)`：动态路由
-    * `M(modified from routing daemon or redirect)`：路由已经被修改了
-    * `!(reject route)`：这个路由将不会被接受
-* __Iface__：该路由传递数据包的接口
+* `-a`：多项数据需要“同时成立”才显示结果
+* `-U`：仅列出Unix like系统的socket文件类型
+* `-u`：后面接username，列出该用户相关进程所打开的文件
+* `+d`：后面接目录，及找出某个目录下面已经被打开的文件
+* `-i`：后面接网络地址，格式如下
+    * `[46][protocol][@hostname|hostaddr][:service|port]`
+    * `46`：ipv4/ipv6
+    * `protocol`：tcp/udp
+    * `hostname`：主机名
+    * `hostaddr`：主机ip
+    * `service`：服务
+    * `port`端口号
 
 __示例：__
 
-* `route -n`
-* `route add -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
-* `route del -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
+* `lsof -i 6tcp@localhost:22`
+* `lsof -i 4tcp@127.0.0.1:22`
+* `lsof -i tcp@127.0.0.1:22`
+* `lsof -i tcp@localhost`
+* `lsof -i tcp:22`
 
-## 8.3 ss
+## 7.4 ss
 
 `ss`是`Socket Statistics`的缩写。顾名思义，`ss`命令可以用来获取`socket`统计信息，它可以显示和`netstat`类似的内容。`ss`的优势在于它能够显示更多更详细的有关TCP和连接状态的信息，而且比`netstat`更快速更高效。
 
@@ -904,7 +790,7 @@ __示例：__
 * `ss -o state established`：显示所有状态为established的socket
 * `ss -o state FIN-WAIT-1 dst 192.168.25.100/24`：显示出处于`FIN-WAIT-1`状态的，目标网络为`192.168.25.100/24`所有socket
 
-## 8.4 tcpdump
+## 7.5 tcpdump
 
 __格式：__
 
@@ -949,7 +835,7 @@ __示例：__
 * `tcpdump -i lo0 port 22 -w output7.cap`
 * `tcpdump -i eth0 host www.baidu.com`
 
-### 8.4.1 tips
+### 7.5.1 tips
 
 如何查看具体的协议，例如ssh协议
 
@@ -957,9 +843,142 @@ __示例：__
 
 1. 任意选中一个`length`不为`0`的数据包，右键选择解码（`decode as`），右边`Current`一栏，选择对应的协议即可
 
-# 9 远程连接
+## 7.6 iostat
 
-## 9.1 ssh
+__格式：__
+
+* `iostat [ -c | -d ] [ -k | -m ] [ -t ] [ -x ] [ interval [ count ] ]`
+
+__参数说明：__
+
+* `-c`：与`-d`互斥，只显示cpu相关的信息
+* `-d`：与`-c`互斥，只显示磁盘相关的信息
+* `-k`：以`kB`的方式显示io速率（默认是`Blk`，即文件系统中的`block`）
+* `-m`：以`MB`的方式显示io速率（默认是`Blk`，即文件系统中的`block`）
+* `-t`：打印日期信息
+* `-x`：打印扩展信息
+* `interval`: 打印间隔
+* `count`: 打印几次，不填一直打印
+
+__示例：__
+
+* `iostat -d -t -x 1`
+
+## 7.7 free
+
+__格式：__
+
+* `free [-b|-k|-m|-g] [-t]`
+
+__参数说明：__
+
+* `-b`：bytes
+* `-m`：MB
+* `-k`：KB
+* `-g`：GB
+
+__显示参数介绍__：
+
+* `Men`：物理内存
+* `Swap`：虚拟内存
+* `total`：总量
+* `user`：使用量
+* `free`：剩余可用量
+* `shared`与`buffers/cached`：被使用的量当中用来作为缓冲以及快取的量
+* `buffers`：缓冲记忆
+* `cached`：缓存
+* __一般来说系统会很有效地将所有内存用光，目的是为了让系统的访问性能加速，这一点与Windows很不同，因此对于Linux系统来说，内存越大越好__
+
+__示例：__
+
+* `free -m`
+
+## 7.8 swap
+
+__制作swap__
+
+```sh
+dd if=/dev/zero of=/tmp/swap bs=1M count=128
+mkswap /tmp/swap
+swapon /tmp/swap
+free
+```
+
+## 7.9 route
+
+__格式：__
+
+* `route [-nee]`
+* `route add [-net|-host] [网络或主机] netmask [mask] [gw|dev]`
+* `route del [-net|-host] [网络或主机] netmask [mask] [gw|dev]`
+
+__参数说明：__
+
+* `-n`：不要使用通信协议或主机名，直接使用IP或port number，即在默认情况下，route会解析出该IP的主机名，若解析不到则会有延迟，因此一般加上这个参数
+* `-ee`：显示更详细的信息
+* `-net`：表示后面接的路由为一个网络
+* `-host`：表示后面接的为连接到单个主机的路由
+* `netmask`：与网络有关，可设置netmask决定网络的大小
+* `gw`：gateway的缩写，后接IP数值
+* `dev`：如果只是要制定由哪块网卡连接出去，则使用这个设置，后接网卡名，例如eth0等
+
+__打印参数说明：__
+
+* __Destination、Genmask__：这两个参数就分别是network与netmask
+* __Gateway__：该网络通过哪个Gateway连接出去，若显示`0.0.0.0(default)`表示该路由直接由本级传送，也就是通过局域网的MAC直接传送，如果显示IP的话，表示该路由需要经过路由器(网关)的帮忙才能发送出去
+* __Flags__：
+    * `U(route is up)`：该路由是启动的
+    * `H(target is a host)`：目标是一台主机而非网络
+    * `G(use gateway)`：需要通过外部的主机来传递数据包
+    * `R(reinstate route for dynamic routing)`：使用动态路由时，恢复路由信息的标志
+    * `D(Dynamically installed by daemon or redirect)`：动态路由
+    * `M(modified from routing daemon or redirect)`：路由已经被修改了
+    * `!(reject route)`：这个路由将不会被接受
+* __Iface__：该路由传递数据包的接口
+
+__示例：__
+
+* `route -n`
+* `route add -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
+* `route del -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
+
+## 7.10 tsar
+
+__格式：__
+
+* `tsar [-l]`
+
+__参数说明：__
+
+* `-l`：查看实时数据
+
+__示例：__
+
+* `tsar -l`
+
+## 7.11 watch
+
+__格式：__
+
+* `watch [option] [cmd]`
+
+__参数说明：__
+
+* `-n`：watch缺省该参数时，每2秒运行一下程序，可以用`-n`或`-interval`来指定间隔的时间
+* `-d`：`watch`会高亮显示变化的区域。`-d=cumulative`选项会把变动过的地方(不管最近的那次有没有变动)都高亮显示出来
+* `-t`：关闭watch命令在顶部的时间间隔命令，当前时间的输出
+
+__示例：__
+
+* `watch -n 1 -d netstat -ant`：每隔一秒高亮显示网络链接数的变化情况
+* `watch -n 1 -d 'pstree | grep http'`：每隔一秒高亮显示http链接数的变化情况
+* `watch 'netstat -an | grep :21 | grep <ip> | wc -l'`：实时查看模拟攻击客户机建立起来的连接数
+* `watch -d 'ls -l | grep scf'`：监测当前目录中 scf' 的文件的变化
+* `watch -n 10 'cat /proc/loadavg'`：10秒一次输出系统的平均负载
+
+# 8 远程连接
+
+## 8.1 ssh
 
 __格式：__
 
@@ -980,7 +999,7 @@ __示例：__
 * `ssh student@127.0.0.1 find / &> ~/find1.log`
 * `ssh -f student@127.0.0.1 find / &> ~/find1.log`：会立即注销127.0.0.1，find在远程服务器运行
 
-### 9.1.1 免密登录
+### 8.1.1 免密登录
 
 __Client端步骤__
 
@@ -993,16 +1012,17 @@ __Server端步骤__
 1. `cat id_rsa.pub >> .ssh/authorized_keys`
 1. `chmod 644 .ssh/authorized_keys`
 
-## 9.2 scp
+## 8.2 scp
 
 __格式：__
 
-* `scp [-pr] [-l 速率] local_file [account@]host:dir`
-* `scp [-pr] [-l 速率] [account@]host:file local_dir`
+* `scp [-pPr] [-l 速率] local_file [account@]host:dir`
+* `scp [-pPr] [-l 速率] [account@]host:file local_dir`
 
 __参数说明：__
 
 * `-p`：保留源文件的权限信息
+* `-P`：指定端口号
 * `-r`：复制来源为目录时，可以复制整个目录(含子目录)
 * `-l`：可以限制传输速率，单位Kbits/s
 
@@ -1010,10 +1030,11 @@ __示例：__
 
 * `scp /etc/hosts* student@127.0.0.1:~`
 * `scp /tmp/Ubuntu.txt root@192.168.136.130:~/Desktop`
+* `scp -P 16666 root@192.168.136.130:/tmp/test.log ~/Desktop`：指定主机`192.168.136.130`的端口号为16666
 
-# 10 账号管理
+# 9 账号管理
 
-## 10.1 chsh
+## 9.1 chsh
 
 __格式：__
 
@@ -1024,9 +1045,9 @@ __参数说明：__
 * `-l`：列出目前系统上可用的shell，其实就是`/etc/shells`的内容
 * `-s`：设置修改自己的shell
 
-# 11 权限管理
+# 10 权限管理
 
-## 11.1 sudo
+## 10.1 sudo
 
 __配置文件：__
 
@@ -1048,7 +1069,7 @@ __示例：__
 
 -->
 
-# 12 参考
+# 11 参考
 
 * 《鸟哥的Linux私房菜》
 * [linux shell awk 流程控制语句（if,for,while,do)详细介绍](https://www.cnblogs.com/chengmo/archive/2010/10/04/1842073.html)

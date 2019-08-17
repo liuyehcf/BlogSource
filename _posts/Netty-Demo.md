@@ -456,11 +456,65 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 }
 ```
 
-# 2 问题
+# 2 Converter
 
-## 2.1 unsupported message type: TextWebSocketFrame
+有时候，在项目中可能会有这样的需求，我们接收一个`Message`，然后需要将其转换成字节流再进行处理。例如，我们在接收到`FullHttpRequest`后，想要将其转成字节流然后再进行处理。netty中的`EmbeddedChannel`可以完成这样的功能，示例代码如下
 
-### 2.1.1 复现问题
+```Java
+package org.liuyehcf.netty;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufHolder;
+import io.netty.channel.embedded.EmbeddedChannel;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpRequestEncoder;
+import io.netty.handler.codec.http.HttpResponseEncoder;
+import io.netty.util.ReferenceCountUtil;
+
+/**
+ * @author hechenfeng
+ * @date 2019/7/23
+ */
+public abstract class HttpConverter {
+
+    public static byte[] convertRequest2Bytes(FullHttpRequest msg, boolean needRetain) {
+        EmbeddedChannel ch = new EmbeddedChannel(new HttpRequestEncoder());
+        return convert2Bytes(ch, msg, needRetain);
+    }
+
+    public static byte[] convertResponse2Bytes(FullHttpResponse msg, boolean needRetain) {
+        EmbeddedChannel ch = new EmbeddedChannel(new HttpResponseEncoder());
+        return convert2Bytes(ch, msg, needRetain);
+    }
+
+    private static byte[] convert2Bytes(EmbeddedChannel ch, ByteBufHolder msg, boolean needRetain) {
+        ByteBuf byteBuf = null;
+        try {
+            if (needRetain) {
+                ch.writeOutbound(msg.retain());
+            } else {
+                ch.writeOutbound(msg);
+            }
+            byteBuf = ch.readOutbound();
+
+            byte[] bytes = new byte[byteBuf.readableBytes()];
+            byteBuf.readBytes(bytes);
+
+            return bytes;
+        } finally {
+            ReferenceCountUtil.release(byteBuf);
+            ch.close();
+        }
+    }
+}
+```
+
+# 3 问题
+
+## 3.1 unsupported message type: TextWebSocketFrame
+
+### 3.1.1 复现问题
 
 __对Client进行如下改造__：
 
@@ -620,7 +674,7 @@ java.lang.UnsupportedOperationException: unsupported message type: TextWebSocket
     at java.lang.Thread.run(Thread.java:748)
 ```
 
-### 2.1.2 问题分析
+### 3.1.2 问题分析
 
 我们分别在写回调中的正常case以及异常case处打上断点，看一看正常情况下以及异常情况下`ChannelPipeline`的差异
 
@@ -706,14 +760,14 @@ __异常的时候，其handler如下__
 
 为什么在外部执行`handshake`会导致这个问题，目前还不清楚
 
-## 2.2 webSocket连接占用内存过高
+## 3.2 webSocket连接占用内存过高
 
 表面原因是由于增加了以下两个Handler，这两个handler会用到`JdkZlibDecoder`，而`JdkZlibDecoder`在处理过程中会分配大量内存
 
 * WebSocketClientCompressionHandler.INSTANCE
 * WebSocketServerCompressionHandler
 
-## 2.3 OutOfDirectMemoryError
+## 3.3 OutOfDirectMemoryError
 
 在项目中，我需要将获取到的`FullHttpRequest`转成对应的字节数组，用到了Netty提供的`EmbeddedChannel`来进行转换，最开始代码如下
 
@@ -781,7 +835,7 @@ protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) {
 }
 ```
 
-# 3 参考
+# 4 参考
 
 * [Java SSL 证书细节](https://www.jianshu.com/p/5fcc6a219c8b)
 * [JDK自带工具keytool生成ssl证书](https://www.cnblogs.com/zhangzb/p/5200418.html)
