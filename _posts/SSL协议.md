@@ -272,6 +272,15 @@ openssl pkcs12 -export -in <server cert> -inkey <server private key>  -certfile 
 # 6. <pkcs12 file> 指待创建的pkcs12证书的路径
 ```
 
+## 2.4 从私钥导出公钥
+
+```sh
+openssl rsa -in <private key> -pubout -out <public key>
+
+# 1. <private key> 私钥的路径
+# 2. <public key> 公钥的路径
+```
+
 # 3 keytool
 
 ## 3.1 cmd
