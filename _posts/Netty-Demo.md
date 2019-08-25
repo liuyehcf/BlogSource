@@ -753,13 +753,14 @@ public class HttpDelegateResponse {
 
 # 3 Converter
 
-有时候，在项目中可能会有这样的需求，我们接收一个`Message`，然后需要将其转换成字节流再进行处理。例如，我们在接收到`FullHttpRequest`后，想要将其转成字节流然后再进行处理。netty中的`EmbeddedChannel`可以完成这样的功能，示例代码如下
+有时候，在项目中可能会有这样的需求，我们接收一个`Message`，然后需要将其转换成字节流再进行处理。例如，我们在接收到`FullHttpRequest`后，想要将其转成字节流然后再进行处理。netty中的`EmbeddedChannel`可以完成这样的功能，示例代码如下（__注意，当http的body比较大的时候，有可能需要读取多次，因此下面的代码用while循环读取，直到读取完所有的数据__）
 
 ```Java
 package org.liuyehcf.netty;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufHolder;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -768,7 +769,7 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.util.ReferenceCountUtil;
 
 /**
- * @author hechenfeng
+ * @author chenfeng.hcf
  * @date 2019/7/23
  */
 public abstract class HttpConverter {
@@ -784,21 +785,29 @@ public abstract class HttpConverter {
     }
 
     private static byte[] convert2Bytes(EmbeddedChannel ch, ByteBufHolder msg, boolean needRetain) {
-        ByteBuf byteBuf = null;
+        ByteBuf byteBuf;
+        ByteBuf cache = Unpooled.buffer();
         try {
             if (needRetain) {
                 ch.writeOutbound(msg.retain());
             } else {
                 ch.writeOutbound(msg);
             }
-            byteBuf = ch.readOutbound();
 
-            byte[] bytes = new byte[byteBuf.readableBytes()];
-            byteBuf.readBytes(bytes);
+            while ((byteBuf = ch.readOutbound()) != null) {
+                try {
+                    cache.writeBytes(byteBuf);
+                } finally {
+                    ReferenceCountUtil.release(byteBuf);
+                }
+            }
 
-            return bytes;
+            byte[] totalBytes = new byte[cache.readableBytes()];
+            cache.readBytes(totalBytes);
+
+            return totalBytes;
         } finally {
-            ReferenceCountUtil.release(byteBuf);
+            ReferenceCountUtil.release(cache);
             ch.close();
         }
     }
