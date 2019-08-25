@@ -229,6 +229,10 @@ __`action component`用于在满足规则匹配条件时，输出一个`target`_
 1. __`SNAT`__：`source address`被`NAT`修改时设置的虚拟状态，被记录在`connection tracking`中，以便在`reply package`（我回复别人）中更改`source address`
 1. __`DNAT`__：`destination address`被`NAT`修改时设置的虚拟状态，被记录在`connection tracking`中，以便在路由`reply package`（别人回复我）时知道更改`destination address`
 
-## 2.8 参考
+## 2.8 iptable命令使用
+
+参见{% post_link Linux-常用命令 %}
+
+## 2.9 参考
 
 * [A Deep Dive into Iptables and Netfilter Architecture](https://www.digitalocean.com/community/tutorials/a-deep-dive-into-iptables-and-netfilter-architecture)

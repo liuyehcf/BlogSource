@@ -686,6 +686,10 @@ __打印参数说明：__
     * TIME+：CPU使用时间累加
     * COMMAND
 * __top默认使用CPU使用率作为排序的终点，键入`h`显示帮助菜单__
+* __排序顺序__
+    * `P`：按CPU使用量排序，默认从大到小，`R`更改为从小到大
+    * `M`：按内存使用量排序，默认从大到小，`R`更改为从小到大
+    * `T`：按使用时间排序，默认从大到小，`R`更改为从小到大
 
 ## 7.2 netstat
 
@@ -707,7 +711,20 @@ __参数说明：__
     * `-p`：列出PID与Program的文件名
     * `-c`：可以设置几秒种后自动更新一次，例如-c 5为每5s更新一次网络状态的显示
 
-__显示参数说明：__
+__与路由有关的显示参数说明__
+
+* `Destination`：Network的意思
+* `Gateway`：该接口的Gateway的IP，若为0.0.0.0，表示不需要额外的IP
+* `Genmask`：就是Netmask，与Destination组合成为一台主机或网络
+* `Flags`：共有多个标志来表示该网络或主机代表的意义
+    * `U`：代表该路由可用
+    * `G`：代表该网络需要经由Gateway来帮忙传递
+    * `H`：代表该行路由为一台主机，而非一整个网络
+    * `D`：代表该路由是由重定向报文创建的
+    * `M`：代表该路由已被重定向报文修改
+    * `Iface`：就是Interface(接口)的意思
+
+__与网络接口有关的显示参数说明：__
 
 * `Proto`：该连接的数据包协议，主要为TCP/UDP等数据包
 * `Recv-Q`：非用户程序连接所复制而来的总byte数
@@ -843,7 +860,179 @@ __示例：__
 
 1. 任意选中一个`length`不为`0`的数据包，右键选择解码（`decode as`），右边`Current`一栏，选择对应的协议即可
 
-## 7.6 iostat
+## 7.6 iptables
+
+### 7.6.1 规则的查看
+
+__格式：__
+
+* `iptables [-t tables] [-L] [-nv]`
+
+__参数说明：__
+
+* `-t`：后面接table，例如nat或filter，若省略此项目，则使用默认的filter
+* `-L`：列出目前的table的规则
+* `-n`：不进行IP与HOSTNAME的反查，显示信息的速度回快很多
+* `-v`：列出更多的信息，包括通过该规则的数据包总数，相关的网络接
+
+__输出信息介绍__
+
+* 每一个Chain就是每个链，Chain所在的括号里面的是默认的策略(即没有规则匹配时采取的操作(target))
+* `target`：代表进行的操作
+    * `ACCEPT`是放行
+    * `REJECT`是拒绝
+    * `DROP`是丢弃
+    * __还可以是一个自定义的Chain__
+* `port`：代表使用的数据包协议，主要有TCP、UDP、ICMP3中数据包
+* `opt`：额外的选项说明
+* `source`：代表此规则是针对哪个来源IP进行限制
+* `destination`：代表此规则是针对哪个目标IP进行限制
+
+__示例：__
+
+* `iptables -nL`
+* `iptables -t nat -nL`
+
+---
+
+由于`iptables`的上述命令的查看只是做格式化的查阅，要详细解释每个规则可能会与原规则有出入，因此，建议使用`iptables-save`这个命令来查看防火墙规则
+
+__格式：__
+
+* `iptables-save [-t table]`
+
+__参数说明：__
+
+* `-t`：可以针对某些表格来输出，例如仅针对NAT或Filter等
+
+__输出信息介绍__
+
+* 星号开头的指的是表格，这里为Filter
+* 冒号开头的指的是链，3条内建的链，后面跟策略
+
+### 7.6.2 规则的清除
+
+__格式：__
+
+* `iptables [-t tables] [-FXZ] [chain]`
+
+__参数说明：__
+
+* `-F [chain]`：清除指定chain或者所有chian中的所有的已制定的规则
+* `-X [chain]`：清除指定`user-defined chain`或所有`user-defined chain`
+* `-Z [chain]`：将指定chain或所有的chain的计数与流量统计都归零
+
+### 7.6.3 定义默认策略
+
+当数据包不在我们设置的规则之内时，该数据包的通过与否都以Policy的设置为准
+
+__格式：__
+
+* `iptables [-t nat] -P [INPUT,OUTPUT,FORWARD] [ACCEPT,DROP]`
+
+__参数说明：__
+
+* `-P`：定义策略(Policy)
+    * `ACCEPT`：该数据包可接受
+    * `DROP`：该数据包直接丢弃，不会让Client知道为何被丢弃
+
+__示例：__
+
+* `iptables -P INPUT DROP`
+* `iptables -P OUTPUT ACCEPT`
+* `iptables -P FORWARD ACCEPT`
+
+### 7.6.4 数据包的基础对比：IP、网络及接口设备
+
+__格式：__
+
+* `iptables [-AI 链名] [-io 网络接口] [-p 协议] [-s 来源IP/网络] [-d 目标IP/网络] -j [ACCEPT|DROP|REJECT|LOG]`
+
+__参数说明：__
+
+* `-AI 链名`：针对某条链进行规则的"插入"或"累加"
+    * `-A`：新增加一条规则，该规则增加在原规则后面，例如原来有4条规则，使用-A就可以加上第五条规则
+    * `-I`：插入一条规则，如果没有指定此规则的顺序，默认插入变成第一条规则
+    * `链`：有INPUT、OUTPUT、FORWARD等，此链名称又与-io有关
+* `-io 网络接口`：设置数据包进出的接口规范
+    * `-i`：数据包所进入的那个网络接口，例如eth0，lo等，需要与INPUT链配合
+    * `-o`：数据包所传出的网络接口，需要与OUTPUT配合
+* `-p 协议`：设置此规则适用于哪种数据包格式
+    * 主要的数据包格式有：tcp、udp、icmp以及all
+* `-s 来源IP/网络`：设置此规则之数据包的来源地，可指定单纯的IP或网络
+    * `IP`：例如`192.168.0.100`
+    * `网络`：例如`192.168.0.0/24`、`192.168.0.0/255.255.255.0`均可
+    * __若规范为"不许"时，加上`!`即可，例如`! -s 192.168.100.0/24`__
+* `-d 目标 IP/网络`：同-s，只不过这里是目标的
+* `-j`：后面接操作
+    * `ACCEPT`
+    * `DROP`
+    * `REJECT`
+    * `LOG`
+* __重要的原则：没有指定的项目，就表示该项目完全接受__
+    * 例如`-s`和`-d`不指定，就表示来源或去向的任意IP/网络都接受
+
+__示例：__
+
+* `iptables -A INPUT -i lo -j ACCEPT`：不论数据包来自何处或去向哪里，只要是lo这个接口，就予以接受，这就是所谓的信任设备
+* `iptables -A INPUT -i eth1 -j ACCEPT`：添加接口为eth1的网卡为信任设备
+* `iptables -A INPUT -s 192.168.2.200 -j LOG`：该网段的数据包，其相关信息就会被写入到内核日志文件中，即`/var/log/messages`，然后，该数据包会继续进行后续的规则比对(这一点与其他规则不同)
+
+### 7.6.5 TCP、UDP的规则：针对端口设置
+
+TCP与UDP比较特殊的就是端口(port)，在TCP方面则另外有所谓的连接数据包状态，包括最常见的SYN主动连接的数据包格式
+
+__格式：__
+
+* `iptables [-AI 链] [-io 网络接口] [-p tcp|udp] [-s 来源IP/网络] [--sport 端口范围] [-d 目标IP/网络] [--dport 端口范围] --syn -j [ACCEPT|DROP|REJECT]`
+
+__参数说明：__
+
+* `--sport 端口范围`：限制来源的端口号码，端口号码可以是连续的，例如1024:65535
+* `--dport 端口范围`：限制目标的端口号码
+* `--syn`：主动连接的意思
+* __与之前的命令相比，就是多了`--sport`以及`--dport`这两个选项，因此想要使用`--dport`或`--sport`必须加上`-p tcp`或`-p udp`才行__
+
+__示例：__
+
+* `iptables -A INPUT -i eth0 -p tcp --dport 21 -j DROP`：想要进入本机port 21的数据包都阻挡掉
+* `iptables -A INPUT -i eth0 -p tcp --sport 1:1023 --dport 1:1023 --syn -j DROP`：来自任何来源port 1:1023的主动连接到本机端的1:1023连接丢弃
+
+### 7.6.6 iptables外挂模块：mac与state
+
+在Kernel 2.2以前使用ipchains管理防火墙时，`ipchains`没有数据包状态模块，因此我们必须针对数据包的进、出方向进行控制。`iptables`可以帮我们免除这个困扰，它可以通过一个状态模块来分析这个想要进入的数据包是否为刚刚发出去的响应
+
+__格式：__
+
+* `iptables -A INPUT [-m state] [--state 状态]`
+
+__参数说明：__
+
+* `-m`：一些iptables的外挂模块
+    * `state`：状态模块
+    * `mac`：网卡硬件地址(hardware address)
+* `--state`：一些数据包的状态
+    * `INVALID`：无效的数据包
+    * `ESTABLISHED`：已经连接成功的连接状态
+    * `NEW`：想要新建立连接的数据包状态
+    * `RELATED`：表示这个数据包与主机发送出去的数据包有关
+
+__示例：__
+
+* `iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT`
+* `iptables -A INPUT -m mac --mac-source aa:bb:cc:dd:ee:ff -j ACCEPT`
+
+### 7.6.7 ICMP数据包规则的比对：针对是否响应ping来设计
+
+__格式：__
+
+* `iptables -A INPUT [-p icmp] [--icmp-type 类型] -j ACCEPT`
+
+__参数说明：__
+
+* `--icmp-type`：后面必须要接ICMP的数据包类型，也可以使用代号
+
+## 7.7 iostat
 
 __格式：__
 
@@ -864,7 +1053,7 @@ __示例：__
 
 * `iostat -d -t -x 1`
 
-## 7.7 free
+## 7.8 free
 
 __格式：__
 
@@ -893,7 +1082,7 @@ __示例：__
 
 * `free -m`
 
-## 7.8 swap
+## 7.9 swap
 
 __制作swap__
 
@@ -904,7 +1093,7 @@ swapon /tmp/swap
 free
 ```
 
-## 7.9 route
+## 7.10 route
 
 __格式：__
 
@@ -942,7 +1131,7 @@ __示例：__
 * `route add -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
 * `route del -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
 
-## 7.10 tsar
+## 7.11 tsar
 
 __格式：__
 
@@ -956,7 +1145,7 @@ __示例：__
 
 * `tsar -l`
 
-## 7.11 watch
+## 7.12 watch
 
 __格式：__
 

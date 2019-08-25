@@ -130,40 +130,18 @@ __这里用的是阿里云的镜像，官方文档提供的是谷歌镜像（海
 
 # 3 Start Master
 
-__修改kubernetes配置文件__
-
-```sh
-vim /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-
-# 增加如下一行
-Environment="KUBELET_ALIYUN_ARGS=--pod-infra-container-image=registry.cn-hangzhou.aliyuncs.com/google_containers/pause-amd64:3.0"
-
-# 在ExecStart后追加以下内容
-$KUBELET_ALIYUN_ARGS
-```
-
-__安装完kubeadm/kubelet/kubectl之后，现在就需要启动master节点。在任意路径下（以`~`为例），创建文件`kubeadm.yml`（文件名随便），这个文件就是启动master时，指定用到的配置文件，其内容如下__
-
-```sh
-apiVersion: kubeadm.k8s.io/v1alpha2
-kind: MasterConfiguration
-api:
-  advertiseAddress: "192.168.56.108" # 只需要修改这里，改成host-only网卡对应的ip
-  bindPort: 6443
-kubernetesVersion: "v1.11.0"
-imageRepository: "registry.cn-hangzhou.aliyuncs.com/google_containers"
-networking:
-  podSubnet: 10.244.0.0/16
-```
-
 __接下来初始化master节点__
 
 ```sh
-kubeadm init --config kubeadm.yml
+kubeadm init --pod-network-cidr=10.244.0.0/16 --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers --apiserver-advertise-address=192.168.56.105
+
+# 其中
+# --pod-network-cidr参数指定pod网络（这里用10.244.0.0/16是为了与下面的flannel覆盖网络的默认参数一致）
+# --apiserver-advertise-address参数指定master的ip
 
 # 出现如下信息，提示启动成功
 ...
-Your Kubernetes master has initialized successfully!
+Your Kubernetes control-plane has initialized successfully!
 
 To start using your cluster, you need to run the following as a regular user:
 
@@ -175,23 +153,23 @@ You should now deploy a pod network to the cluster.
 Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
   https://kubernetes.io/docs/concepts/cluster-administration/addons/
 
-You can now join any number of machines by running the following on each node
-as root:
+Then you can join any number of worker nodes by running the following on each as root:
 
-  kubeadm join 192.168.56.108:6443 --token 3yokh0.16u9wvjk1x50nde2 --discovery-token-ca-cert-hash sha256:c36ac2694b043a660624e9d86a56999fcd23bf13b3994af6560aac713eacc54d
+kubeadm join 192.168.56.105:6443 --token xlys6c.70evo8lwk7ta4hbo \
+    --discovery-token-ca-cert-hash sha256:0fac04a6a3a18aaf7d9c3e154bdf1813119b9840f43e8c1649cbdfe5d50d1f2c
 ```
 
 * __注意，我们需要保留下上面的join命令，即`kubeadm join ...`这个命令__
 * __node节点需要通过这个命令来join master节点__
 
-__根据上述提示，安装network pod。[安装命令参考](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/)。这里，我们选择flannel__
+__根据上述提示，安装network pod。[安装命令参考，一定要看这个，不同版本url是不同的](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/)。这里，我们选择flannel（安装过程需要翻墙，否则拉取镜像会失败！！）__
 
 ```sh
-# 为了让kubectl命令行起作用，必须配置如下环境变量
+# 在master上，为了让kubectl命令行起作用，必须配置如下环境变量
 export KUBECONFIG=/etc/kubernetes/admin.conf
 
-# 安装flannel
-kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.10.0/Documentation/kube-flannel.yml
+# 安装flannel（这里只是参考，详见上面的安装命令参考）
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/62e44c867a2846fefb68bd5f178daf4da3095ccb/Documentation/kube-flannel.yml
 ```
 
 __待flannel安装成功后（大约需要5-10分钟），查看节点概要信息。至此，master启动成功__
@@ -205,7 +183,23 @@ NAME         STATUS    ROLES     AGE       VERSION
 k8s-master   Ready     master    26m       v1.11.1
 ```
 
-## 3.1 Restart
+## 3.1 重新生成kubeadm join所需的token
+
+```sh
+# 以下命令在master节点执行
+
+# 1 创建token
+kubeadm token create
+
+# 2 计算hash
+openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed  's/^ .* //'
+
+# 在node节点执行join命令
+
+kubeadm join <master ip>:6443 --token <token> --discovery-token-ca-cert-hash sha256:<hash>
+```
+
+## 3.2 Restart
 
 __如果我们将master这台机器重启的话，k8s服务不会自动起来，需要进行如下操作__
 
@@ -235,7 +229,7 @@ __现在需要将新启动的虚拟机，加入刚才启动的master__
 * 还记得master节点初始化k8s输出的`kubeadm join`命令吗，这个指令就用于node节点
 * 如果忘记了，我们还可以通过在master节点上执行`kubeadm token create --print-join-command`来创建`kubeadm join`命令
 
-__回到node节点对应的虚拟机，执行上述`kubeadm join`命令__
+__回到node节点对应的虚拟机，执行上述`kubeadm join`命令（该过程需要翻墙，因为会安装flannel，需要拉取镜像）__
 
 ```sh
 kubeadm join 192.168.56.108:6443 --token 3yokh0.16u9wvjk1x50nde2 --discovery-token-ca-cert-hash sha256:c36ac2694b043a660624e9d86a56999fcd23bf13b3994af6560aac713eacc54d

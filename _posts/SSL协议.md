@@ -281,6 +281,14 @@ openssl rsa -in <private key> -pubout -out <public key>
 # 2. <public key> 公钥的路径
 ```
 
+## 2.5 查看证书信息
+
+```sh
+openssl x509 -in <cert file> -noout -text
+
+# 1. <cert file> 证书的路径
+```
+
 # 3 keytool
 
 ## 3.1 cmd

@@ -456,7 +456,302 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 }
 ```
 
-# 2 Converter
+# 2 Http
+
+HttpRequest转换
+
+```Java
+import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.handler.codec.http.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.EntityBuilder;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.ContentType;
+import org.apache.http.message.BasicNameValuePair;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @author chenfeng.hcf
+ * @date 2019/6/19
+ */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class HttpDelegateRequest implements Payload {
+
+    private static final String ACCEPT_CONTENT_TYPE = "Accept";
+    private static final String REQUEST_CONTENT_TYPE = "Content-Type";
+    private static final String CONTENT_LENGTH = "Content-Length";
+
+    private String method;
+    private String requestContentType;
+    private String acceptContentType;
+
+    private String path;
+    private Map<String, String> headers = Maps.newHashMap();
+    private Map<String, String> queryParams = Maps.newHashMap();
+    private Map<String, String> formParams = Maps.newHashMap();
+    private byte[] body;
+
+    public static HttpDelegateRequest parse(byte[] bytes) {
+        return JSON.parseObject(new String(bytes, Charset.defaultCharset()), HttpDelegateRequest.class);
+    }
+
+    public HttpRequestBase toApacheRequest(String schema, String host, int port) {
+        RequestBuilder builder = RequestBuilder.create(this.method);
+
+        // HTTP + HOST + PATH + Query Parameter
+        try {
+            URIBuilder uriBuilder = new URIBuilder();
+            uriBuilder.setScheme(schema);
+            uriBuilder.setHost(host);
+            uriBuilder.setPort(port);
+            uriBuilder.setPath(path);
+            if (MapUtils.isNotEmpty(this.queryParams)) {
+                for (Map.Entry<String, String> entry : this.queryParams.entrySet()) {
+                    uriBuilder.addParameter(entry.getKey(), entry.getValue());
+                }
+            }
+            builder.setUri(uriBuilder.build());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("build http request uri failed", e);
+        }
+
+        EntityBuilder bodyBuilder = EntityBuilder.create();
+        bodyBuilder.setContentType(ContentType.parse(requestContentType));
+        if (MapUtils.isNotEmpty(this.formParams)) {
+            // 如果formParams不为空
+            // 将Form中的内容以urlQueryParams的格式存放在body中(k1=v1&k2=v2&k3=v3)
+            List<NameValuePair> paramList = Lists.newArrayList();
+            for (Map.Entry<String, String> entry : this.formParams.entrySet()) {
+                paramList.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+            }
+            bodyBuilder.setParameters(paramList);
+            builder.setEntity(bodyBuilder.build());
+        } else if (ArrayUtils.isNotEmpty(this.body)) {
+            bodyBuilder.setBinary(this.body);
+            builder.setEntity(bodyBuilder.build());
+        }
+
+        for (Map.Entry<String, String> entry : this.headers.entrySet()) {
+            builder.addHeader(entry.getKey(), entry.getValue());
+        }
+
+        return (HttpRequestBase) builder.build();
+    }
+
+    public FullHttpRequest toNettyRequest() {
+        URI uri;
+        // PATH + Query Parameter
+        try {
+            URIBuilder uriBuilder = new URIBuilder();
+            uriBuilder.setPath(path);
+            if (MapUtils.isNotEmpty(this.queryParams)) {
+                for (Map.Entry<String, String> entry : this.queryParams.entrySet()) {
+                    uriBuilder.addParameter(entry.getKey(), entry.getValue());
+                }
+            }
+
+            uri = uriBuilder.build();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("build http request uri failed", e);
+        }
+
+        EntityBuilder bodyBuilder = EntityBuilder.create();
+        bodyBuilder.setContentType(ContentType.parse(requestContentType));
+        if (MapUtils.isNotEmpty(this.formParams)) {
+            // 如果formParams不为空
+            // 将Form中的内容以urlQueryParams的格式存放在body中(k1=v1&k2=v2&k3=v3)
+            List<NameValuePair> paramList = Lists.newArrayList();
+            for (Map.Entry<String, String> entry : this.formParams.entrySet()) {
+                paramList.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+            }
+            bodyBuilder.setParameters(paramList);
+        } else if (ArrayUtils.isNotEmpty(this.body)) {
+            bodyBuilder.setBinary(this.body);
+        }
+
+        byte[] bodyBytes = bodyBuilder.getBinary();
+        ByteBuf bodyByteBuf;
+
+        if (ArrayUtils.isNotEmpty(bodyBytes)) {
+            bodyByteBuf = Unpooled.wrappedBuffer(bodyBytes);
+        } else {
+            bodyByteBuf = Unpooled.buffer(0);
+        }
+
+        DefaultHttpHeaders headers = new DefaultHttpHeaders();
+
+        if (StringUtils.isNotBlank(requestContentType)) {
+            headers.add(REQUEST_CONTENT_TYPE, requestContentType);
+        }
+        if (StringUtils.isNotBlank(acceptContentType)) {
+            headers.add(ACCEPT_CONTENT_TYPE, acceptContentType);
+        }
+
+        for (Map.Entry<String, String> entry : this.headers.entrySet()) {
+            headers.add(entry.getKey(), entry.getValue());
+        }
+
+        if (ArrayUtils.isNotEmpty(bodyBytes)) {
+            headers.add(CONTENT_LENGTH, bodyBytes.length);
+        } else {
+            headers.add(CONTENT_LENGTH, 0);
+        }
+
+        return new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.valueOf(method), uri.toASCIIString(),
+                bodyByteBuf, headers, new DefaultHttpHeaders(true));
+    }
+
+    @Override
+    public String toAbstractInfo() {
+        Map<String, String> map = Maps.newHashMap();
+        map.put("method", method);
+        map.put("path", path);
+
+        return JSON.toJSONString(map);
+    }
+}
+```
+
+HttpReponse转换
+
+```Java
+import com.google.common.collect.Maps;
+import io.netty.buffer.ByteBuf;
+import io.netty.handler.codec.http.FullHttpResponse;
+import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
+
+import java.io.IOException;
+import java.util.Map;
+
+/**
+ * @author chenfeng.hcf
+ * @date 2019/6/19
+ */
+@Data
+public class HttpDelegateResponse {
+
+    private static final String CONTENT_TYPE = "Content-Type";
+
+    private int statusCode;
+    private String contentType;
+    private String message;
+    private Map<String, String> headers = Maps.newHashMap();
+    private byte[] body;
+
+    public static HttpDelegateResponse fromApacheResponse(HttpResponse httpResponse) {
+        try {
+            HttpDelegateResponse result = new HttpDelegateResponse();
+
+            // status code
+            if (httpResponse.getStatusLine() != null) {
+                result.setStatusCode(httpResponse.getStatusLine().getStatusCode());
+            }
+
+            if (httpResponse.getEntity() != null) {
+                // content type
+                Header contentType = httpResponse.getEntity().getContentType();
+                if (contentType != null) {
+                    result.setContentType(contentType.getValue());
+                }
+
+                // body
+                result.setBody(EntityUtils.toByteArray(httpResponse.getEntity()));
+            } else {
+                if (httpResponse.getAllHeaders() != null) {
+                    for (Header header : httpResponse.getAllHeaders()) {
+                        if (StringUtils.equalsIgnoreCase(CONTENT_TYPE, header.getName())) {
+                            result.setContentType(header.getValue());
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // headers
+            result.setHeaders(Maps.newHashMap());
+            for (Header header : httpResponse.getAllHeaders()) {
+                result.getHeaders().put(header.getName(), header.getValue());
+            }
+
+            // message
+            if (httpResponse.getStatusLine() != null) {
+                result.setMessage(httpResponse.getStatusLine().getReasonPhrase());
+            }
+
+            return result;
+        } catch (IOException e) {
+            throw new RuntimeException("convert http response failed", e);
+        }
+    }
+
+    public static HttpDelegateResponse fromNettyResponse(FullHttpResponse fullHttpResponse) {
+        HttpDelegateResponse result = new HttpDelegateResponse();
+
+        // status code
+        if (fullHttpResponse.status() != null) {
+            result.setStatusCode(fullHttpResponse.status().code());
+        }
+
+        // body
+        ByteBuf content = fullHttpResponse.content();
+        if (content != null) {
+            byte[] bytes = new byte[content.readableBytes()];
+            content.readBytes(bytes);
+            result.setBody(bytes);
+        }
+
+        // content type
+        if (fullHttpResponse.headers() != null) {
+            for (Map.Entry<String, String> header : fullHttpResponse.headers()) {
+                if (StringUtils.equalsIgnoreCase(CONTENT_TYPE, header.getKey())) {
+                    result.setContentType(header.getValue());
+                    break;
+                }
+            }
+        }
+
+        // headers
+        result.setHeaders(Maps.newHashMap());
+        for (Map.Entry<String, String> header : fullHttpResponse.headers()) {
+            result.getHeaders().put(header.getKey(), header.getValue());
+        }
+
+        // message
+        if (fullHttpResponse.status() != null) {
+            result.setMessage(fullHttpResponse.status().reasonPhrase());
+        }
+
+        return result;
+    }
+}
+```
+
+# 3 Converter
 
 有时候，在项目中可能会有这样的需求，我们接收一个`Message`，然后需要将其转换成字节流再进行处理。例如，我们在接收到`FullHttpRequest`后，想要将其转成字节流然后再进行处理。netty中的`EmbeddedChannel`可以完成这样的功能，示例代码如下
 
@@ -510,11 +805,11 @@ public abstract class HttpConverter {
 }
 ```
 
-# 3 问题
+# 4 问题
 
-## 3.1 unsupported message type: TextWebSocketFrame
+## 4.1 unsupported message type: TextWebSocketFrame
 
-### 3.1.1 复现问题
+### 4.1.1 复现问题
 
 __对Client进行如下改造__：
 
@@ -674,7 +969,7 @@ java.lang.UnsupportedOperationException: unsupported message type: TextWebSocket
     at java.lang.Thread.run(Thread.java:748)
 ```
 
-### 3.1.2 问题分析
+### 4.1.2 问题分析
 
 我们分别在写回调中的正常case以及异常case处打上断点，看一看正常情况下以及异常情况下`ChannelPipeline`的差异
 
@@ -760,14 +1055,14 @@ __异常的时候，其handler如下__
 
 为什么在外部执行`handshake`会导致这个问题，目前还不清楚
 
-## 3.2 webSocket连接占用内存过高
+## 4.2 webSocket连接占用内存过高
 
 表面原因是由于增加了以下两个Handler，这两个handler会用到`JdkZlibDecoder`，而`JdkZlibDecoder`在处理过程中会分配大量内存
 
 * WebSocketClientCompressionHandler.INSTANCE
 * WebSocketServerCompressionHandler
 
-## 3.3 OutOfDirectMemoryError
+## 4.3 OutOfDirectMemoryError
 
 在项目中，我需要将获取到的`FullHttpRequest`转成对应的字节数组，用到了Netty提供的`EmbeddedChannel`来进行转换，最开始代码如下
 
@@ -835,7 +1130,7 @@ protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) {
 }
 ```
 
-# 4 参考
+# 5 参考
 
 * [Java SSL 证书细节](https://www.jianshu.com/p/5fcc6a219c8b)
 * [JDK自带工具keytool生成ssl证书](https://www.cnblogs.com/zhangzb/p/5200418.html)
