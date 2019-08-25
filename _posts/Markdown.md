@@ -11,9 +11,16 @@ __阅读更多__
 
 <!--more-->
 
-# 1 plantuml
+# 1 标题跳转
 
-## 1.1 示例
+__语法__
+
+* `[跳转](#标题名)`
+* 其中，如果标题名中间有空格，那么将空格替换为`-`
+
+# 2 plantuml
+
+## 2.1 示例
 
 __源码：__
 
@@ -109,7 +116,7 @@ A --> User: Done
 deactivate A
 ```
 
-## 1.2 查看所有可用的参数
+## 2.2 查看所有可用的参数
 
 __源码：__
 
@@ -123,7 +130,7 @@ __示例：__
 help skinparams
 ```
 
-## 1.3 参考
+## 2.3 参考
 
 * [Ashley's PlantUML Doc](https://plantuml-documentation.readthedocs.io/en/latest/formatting/all-skin-params.html)
 * [Skinparam](http://plantuml.com/zh/skinparam)
