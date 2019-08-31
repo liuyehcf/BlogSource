@@ -426,6 +426,7 @@ __注意，在执行过程中，可能会遇到如下问题__
 
 # 10 参考
 
+* [sonatype仓库-查看已deploy的项目的进度](https://oss.sonatype.org/index.html#welcome)
 * [如何将自己的开源项目发布到Maven中央仓库中](https://www.jdon.com/idea/publish-to-center-maven.html)
 * [将你自己的项目发布到maven中央仓库](https://www.jianshu.com/p/8c3d7fb09bce)
 * [发布项目到Maven中央仓库的最佳实践](https://www.jianshu.com/p/5f6135e1925f)
