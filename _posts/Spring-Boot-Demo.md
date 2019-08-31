@@ -491,9 +491,33 @@ Spring的属性注入（形如`${xxx.yyy.zzz}`的占位符）有如下几种方�
     * `<property resource="application.properties"/>`
     * 这种方式不需要Spring配合，完全是logback的一种方式
 
-# 8 Test
+# 8 Https
 
-## 8.1 @ComponentScan.excludeFilters
+在`application.properties`中配置如下配置项即可
+
+```
+#https端口号.
+server.port: 443
+#证书的路径.
+server.ssl.key-store: classpath:liuyehcf_server_ks
+#证书密码，请修改为您自己证书的密码.
+server.ssl.key-store-password: 123456
+server.ssl.key-password: 123456
+#秘钥库类型
+server.ssl.keyStoreType: PKCS12
+#证书别名
+server.ssl.keyAlias: liuyehcf_server_key
+```
+
+其中，`KeyStore`的生成命令如下
+
+```sh
+keytool -genkey -v -alias liuyehcf_server_key -keyalg RSA -keystore ~/liuyehcf_server_ks -storetype PKCS12 -dname "CN=localhost,OU=cn,O=cn,L=cn,ST=cn,C=cn" -storepass 123456
+```
+
+# 9 Test
+
+## 9.1 @ComponentScan.excludeFilters
 
 当我们在项目中需要做集成测试的时候，我们可以选择`h2 database`来代替`mysql`数据库，但通常数据源的配置仍然包含在指定的包扫描路径下。__那么如何让Spring加载`h2 database`的数据源配置，而不是加载`mysql`的数据源配置呢？__
 
@@ -575,19 +599,19 @@ TestApplication
 TestApplication
 ```
 
-## 8.2 @ContextHierarchy
+## 9.2 @ContextHierarchy
 
-## 8.3 Spring集成测试&Mockito
+## 9.3 Spring集成测试&Mockito
 
 __`@MockBean`__：生成一个mock对象，并且添加到Spring的上下文中，将替换掉原有的`bean`，被注入到其他依赖该`bean`的`bean`当中
 
-# 9 配置项
+# 10 配置项
 
 SpringBoot推崇约定大于配置，通常情况下，我们只需要配置少数几个参数，应用就可以正常启动。但是，知道SpringBoot究竟提供了多少默认的配置也是很有用的，给一个[传送门](https://docs.spring.io/spring-boot/docs/2.0.3.RELEASE/reference/htmlsingle/)。在页面上搜索`server.port=8080`，就能定位到配置项说明的地方
 
 SpringBoot默认加载的属性文件，其路径为`classpath:application.properties`或者`classpath:application.yml`。若要修改这个路径，必须用`@PropertySource`注解来标注（而不是用`@ImportResource`注解哦）
 
-# 10 Auto-Configuration
+# 11 Auto-Configuration
 
 `Spring`集成了非常多的优秀项目，我们在使用这些项目时，仅仅只需要引入相关的依赖即可（对于`Spring-Boot`集成的项目，通常有`spring-boot-starter`后缀），例如`Flowable`
 
@@ -603,7 +627,7 @@ SpringBoot默认加载的属性文件，其路径为`classpath:application.prope
 
 __答案就是基于约定，`Spring`会默认加载`classpath:META-INF/spring.factories`这个配置文件（加载的代码在`org.springframework.core.io.support.SpringFactoriesLoader`类中）__
 
-# 11 排错
+# 12 排错
 
 当我采用第二种pom文件时（__不继承spring boot的pom文件__），启动时会产生如下异常信息
 
@@ -615,7 +639,7 @@ Caused by: java.lang.NoSuchMethodError: org.springframework.web.accept.ContentNe
 
 这是由于我在项目的父pom文件中引入了5.X.X版本的Spring依赖，这与`spring-boot-dependencies`引入的Spring依赖会冲突（例如，加载了低版本的class文件，但是运行时用到了较高版本特有的方法，于是会抛出`NoSuchMethodError`），将项目父pom文件中引入的Spring的版本改为4.3.13.RELEASE就行
 
-# 12 参考
+# 13 参考
 
 * [Spring-Boot官方文档](https://docs.spring.io/spring-boot/docs/2.0.3.RELEASE/reference/htmlsingle/)
 * [sing-boot-maven-without-a-parent](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#using-boot-maven-without-a-parent)

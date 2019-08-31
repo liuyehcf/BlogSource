@@ -753,6 +753,8 @@ public class HttpDelegateResponse {
 
 # 3 Converter
 
+## 3.1 Http Converter
+
 有时候，在项目中可能会有这样的需求，我们接收一个`Message`，然后需要将其转换成字节流再进行处理。例如，我们在接收到`FullHttpRequest`后，想要将其转成字节流然后再进行处理。netty中的`EmbeddedChannel`可以完成这样的功能，示例代码如下（__注意，当http的body比较大的时候，有可能需要读取多次，因此下面的代码用while循环读取，直到读取完所有的数据__）
 
 ```Java
@@ -810,6 +812,355 @@ public abstract class HttpConverter {
             ReferenceCountUtil.release(cache);
             ch.close();
         }
+    }
+}
+```
+
+## 3.2 SSL Converter
+
+### 3.2.1 AbstractSslConverter
+
+```Java
+package org.liuyehcf.netty.ssl;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.embedded.EmbeddedChannel;
+import io.netty.util.ReferenceCountUtil;
+
+public abstract class AbstractSslConverter {
+
+    protected final EmbeddedChannel channel;
+
+    protected AbstractSslConverter(EmbeddedChannel channel) {
+        this.channel = channel;
+    }
+
+    public void writeOutbound(byte[] bytes, InboundConsumer inboundConsumer, OutboundConsumer outboundConsumer) {
+        channel.writeOutbound(Unpooled.wrappedBuffer(bytes));
+        channel.flushOutbound();
+
+        if (inboundConsumer != null) {
+            byte[] inboundData = readInbound();
+            if (inboundData != null) {
+                inboundConsumer.consumeInbound(inboundData);
+            }
+        }
+
+        if (outboundConsumer != null) {
+            byte[] outboundData = readOutbound();
+            if (outboundData != null) {
+                outboundConsumer.consumeOutbound(outboundData);
+            }
+        }
+    }
+
+    public void writeInbound(byte[] bytes, InboundConsumer inboundConsumer, OutboundConsumer outboundConsumer) {
+        channel.writeInbound(Unpooled.wrappedBuffer(bytes));
+        channel.flushInbound();
+
+        if (inboundConsumer != null) {
+            byte[] inboundData = readInbound();
+            if (inboundData != null) {
+                inboundConsumer.consumeInbound(inboundData);
+            }
+        }
+
+        if (outboundConsumer != null) {
+            byte[] outboundData = readOutbound();
+            if (outboundData != null) {
+                outboundConsumer.consumeOutbound(outboundData);
+            }
+        }
+    }
+
+    public byte[] readInbound() {
+        ByteBuf byteBuf;
+        ByteBuf cache = Unpooled.buffer();
+        try {
+            while ((byteBuf = channel.readInbound()) != null) {
+                try {
+                    cache.writeBytes(byteBuf);
+                } finally {
+                    ReferenceCountUtil.release(byteBuf);
+                }
+            }
+
+            int readableBytes = cache.readableBytes();
+            if (readableBytes == 0) {
+                return null;
+            }
+
+            byte[] totalBytes = new byte[readableBytes];
+            cache.readBytes(totalBytes);
+
+            return totalBytes;
+        } finally {
+            ReferenceCountUtil.release(cache);
+        }
+    }
+
+    public byte[] readOutbound() {
+        ByteBuf byteBuf;
+        ByteBuf cache = Unpooled.buffer();
+        try {
+            while ((byteBuf = channel.readOutbound()) != null) {
+                try {
+                    cache.writeBytes(byteBuf);
+                } finally {
+                    ReferenceCountUtil.release(byteBuf);
+                }
+            }
+
+            int readableBytes = cache.readableBytes();
+            if (readableBytes == 0) {
+                return null;
+            }
+
+            byte[] totalBytes = new byte[readableBytes];
+            cache.readBytes(totalBytes);
+
+            return totalBytes;
+        } finally {
+            ReferenceCountUtil.release(cache);
+        }
+    }
+
+    public void close() {
+        channel.close();
+    }
+
+    @FunctionalInterface
+    public interface InboundConsumer {
+
+        /**
+         * consume bytes
+         *
+         * @param bytes data
+         */
+        void consumeInbound(byte[] bytes);
+    }
+
+    @FunctionalInterface
+    public interface OutboundConsumer {
+
+        /**
+         * consume bytes
+         *
+         * @param bytes data
+         */
+        void consumeOutbound(byte[] bytes);
+    }
+}
+```
+
+### 3.2.2 SslClientConverter
+
+```Java
+package org.liuyehcf.netty.ssl;
+
+import io.netty.channel.embedded.EmbeddedChannel;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+
+import javax.net.ssl.SSLException;
+
+/**
+ * @author hechenfeng
+ * @date 2019/8/29
+ */
+public class SslClientConverter extends AbstractSslConverter {
+
+    private static final SslContext SSL_CONTEXT;
+
+    static {
+        try {
+            SSL_CONTEXT = SslContextBuilder.forClient()
+                    .trustManager(InsecureTrustManagerFactory.INSTANCE)
+                    .build();
+        } catch (SSLException e) {
+            throw new Error();
+        }
+    }
+
+    private SslClientConverter(EmbeddedChannel channel) {
+        super(channel);
+    }
+
+    public static SslClientConverter create() {
+        EmbeddedChannel channel = new EmbeddedChannel();
+        channel.pipeline().addLast(SSL_CONTEXT.newHandler(channel.alloc()));
+        return new SslClientConverter(channel);
+    }
+}
+```
+
+### 3.2.3 SslServerConverter
+
+其中`KeyStore`的创建指令如下
+
+```sh
+keytool -genkey -v -alias liuyehcf_server_key -keyalg RSA -keystore ~/liuyehcf_server_ks -storetype PKCS12 -dname "CN=localhost,OU=cn,O=cn,L=cn,ST=cn,C=cn" -storepass 123456
+```
+
+```Java
+package org.liuyehcf.netty.ssl;
+
+import io.netty.channel.embedded.EmbeddedChannel;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+
+import javax.net.ssl.KeyManagerFactory;
+import java.io.InputStream;
+import java.security.KeyStore;
+
+/**
+ * @author hechenfeng
+ * @date 2019/8/29
+ */
+public class SslServerConverter extends AbstractSslConverter {
+
+    private static final SslContext SSL_CONTEXT;
+
+    private static final String STORE_TYPE = "PKCS12";
+    private static final String KEY_STORE_PASSWORD = "123456";
+    private static final String KEY_PASSWORD = KEY_STORE_PASSWORD;
+
+    private static final KeyManagerFactory KEY_MANAGER_FACTORY;
+
+    static {
+        try {
+            KEY_MANAGER_FACTORY = initKeyManagerFactory();
+
+            SSL_CONTEXT = SslContextBuilder.forServer(KEY_MANAGER_FACTORY).build();
+        } catch (Exception e) {
+            throw new Error();
+        }
+    }
+
+    private SslServerConverter(EmbeddedChannel channel) {
+        super(channel);
+    }
+
+    private static KeyManagerFactory initKeyManagerFactory() throws Exception {
+        InputStream keyStoreStream = ClassLoader.getSystemClassLoader().getResourceAsStream("liuyehcf_server_ks");
+
+        // keyStore
+        KeyStore keyStore = KeyStore.getInstance(STORE_TYPE);
+        keyStore.load(keyStoreStream, KEY_STORE_PASSWORD.toCharArray());
+
+        // keyManagerFactory
+        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        keyManagerFactory.init(keyStore, KEY_PASSWORD.toCharArray());
+
+        return keyManagerFactory;
+    }
+
+    public static SslServerConverter create() {
+        EmbeddedChannel channel = new EmbeddedChannel();
+        channel.pipeline().addLast(SSL_CONTEXT.newHandler(channel.alloc()));
+        return new SslServerConverter(channel);
+    }
+}
+```
+
+### 3.2.4 SslNonSocketDemo
+
+```Java
+package org.liuyehcf.netty.ssl;
+
+import java.util.concurrent.*;
+
+/**
+ * @author hechenfeng
+ * @date 2019/8/29
+ */
+@SuppressWarnings("all")
+public class SslNonSocketDemo {
+
+    private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(3);
+
+    public static void main(String[] args) throws Exception {
+        BlockingQueue<byte[]> clientToServerPipe = new ArrayBlockingQueue<>(1024);
+        BlockingQueue<byte[]> serverToClientPipe = new ArrayBlockingQueue<>(1024);
+        BlockingQueue<byte[]> serverReceiveSignal = new SynchronousQueue<>();
+
+        SslClientConverter client = SslClientConverter.create();
+        SslServerConverter server = SslServerConverter.create();
+
+        byte[] greetFromClientToServer = "Hello, I'm client!".getBytes();
+        byte[] greetFromServerToClient = "Hello, I'm server!".getBytes();
+
+        AbstractSslConverter.InboundConsumer clientInboundConsumer = (inboundBytes) -> {
+            System.out.println("receive message from server: " + new String(inboundBytes));
+        };
+        AbstractSslConverter.OutboundConsumer clientOutboundConsumer = (outboundBytes) -> {
+            try {
+                clientToServerPipe.put(outboundBytes);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        };
+
+        client.writeOutbound(greetFromClientToServer, clientInboundConsumer, clientOutboundConsumer);
+
+        // 模拟IO事件，client端接受来自服务端的数据
+        EXECUTOR.execute(() -> {
+            try {
+                while (!Thread.currentThread().isInterrupted()) {
+                    byte[] bytes = serverToClientPipe.take();
+
+                    client.writeInbound(bytes, clientInboundConsumer, clientOutboundConsumer);
+                }
+            } catch (InterruptedException e) {
+                System.out.println("client pipe loop finished");
+            }
+        });
+
+        AbstractSslConverter.InboundConsumer serverInboundConsumer = (inboundBytes) -> {
+            System.out.println("receive message from client: " + new String(inboundBytes));
+            try {
+                serverReceiveSignal.put(greetFromServerToClient);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        };
+        AbstractSslConverter.OutboundConsumer serverOutboundConsumer = (outboundBytes) -> {
+            try {
+                serverToClientPipe.put(outboundBytes);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        };
+
+        // 模拟IO事件，server端接受来自client端的数据
+        EXECUTOR.execute(() -> {
+            try {
+                while (!Thread.currentThread().isInterrupted()) {
+                    byte[] bytes = clientToServerPipe.take();
+
+                    server.writeInbound(bytes, serverInboundConsumer, serverOutboundConsumer);
+                }
+            } catch (InterruptedException e) {
+                System.out.println("server pipe loop finished");
+            }
+        });
+
+        // 当server端接收到client的消息后，回复客户端
+        EXECUTOR.execute(() -> {
+            try {
+                byte[] bytes = serverReceiveSignal.take();
+                server.writeOutbound(bytes, serverInboundConsumer, serverOutboundConsumer);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
+        TimeUnit.SECONDS.sleep(1);
+
+        System.out.println("finished");
+        EXECUTOR.shutdownNow();
     }
 }
 ```
