@@ -98,7 +98,7 @@ class BaseDemo {
                     final byte[] actualBytes = new byte[readNum];
                     System.arraycopy(buffer, 0, actualBytes, 0, readNum);
 
-                    println(new String(actualBytes, Charset.defaultCharset()));
+                    writeAndFlush(actualBytes);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -157,9 +157,9 @@ class BaseDemo {
         });
     }
 
-    private void println(Object obj) {
+    private void writeAndFlush(byte[] bytes) throws IOException {
         synchronized (System.out) {
-            System.out.println(obj);
+            System.out.write(bytes);
             System.out.flush();
         }
     }
@@ -209,6 +209,10 @@ public class MinaSshDemo extends BaseDemo {
         channel.setIn(new NoCloseInputStream(sshClientInputStream));
         channel.setOut(new NoCloseOutputStream(sshClientOutputStream));
         channel.setErr(new NoCloseOutputStream(sshClientOutputStream));
+
+        // 解决颜色显示以及中文乱码的问题
+        channel.setPtyType("xterm-256color");
+        channel.setEnv("LANG", "zh_CN.UTF-8");
         channel.open();
 
         beginRead();

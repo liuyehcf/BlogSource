@@ -851,6 +851,7 @@ __示例：__
 
 * `tcpdump -i lo0 port 22 -w output7.cap`
 * `tcpdump -i eth0 host www.baidu.com`
+* `tcpdump -i any -w output1.cap`
 
 ### 7.5.1 tips
 

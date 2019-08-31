@@ -236,3 +236,18 @@ __`action component`用于在满足规则匹配条件时，输出一个`target`_
 ## 2.9 参考
 
 * [A Deep Dive into Iptables and Netfilter Architecture](https://www.digitalocean.com/community/tutorials/a-deep-dive-into-iptables-and-netfilter-architecture)
+
+# 3 tcpdump
+
+tcpdump是通过libpcap来抓取报文的，libpcap在不同平台有不同的实现，下面仅以Linux平台来作说明。
+
+首先Linux平台在用户态获取报文的Mac地址等链路层信息并不是什么特殊的事情，通过AF_PACK套接字就可以实现，而tcpdump或libpcap也正是用这种方式抓取报文的(可以strace tcpdump的系统调用来验证)。关于AF_PACK的细节，可查看man 7 packet。
+
+其次，上面已经提到tcpdumap使用的是AF_PACK套接字，不是Netfilter。使用Netfilter至少有2点不合理的地方：
+
+1. 数据包进入Netfilter时其实已经在协议栈做过一些处理了，数据包可能已经发生一些改变了。比较明显的一个例子，进入Netfilter前需要重组分片，所以Netfilter中无法抓取到原始的报文分片。而在发送方向，报文离开Netfilter时也未完全结束协议栈的处理，所以抓取到的报文也会有不完整的可能。
+1. 在Netfilter抓取的报文，向用户态递送时也会较为复杂。Netfilter的代码处在中断上下文和进程上下文两种运行环境，无法使用传统系统调用，简单的做法就是使用Netlink。而这还不如直接用AF_PACKET抓取报文来得简单（对内核和用户态程序都是如此）。
+
+## 3.1 参考
+
+* [tcpdump 抓包的原理？](https://www.zhihu.com/question/41710052)
