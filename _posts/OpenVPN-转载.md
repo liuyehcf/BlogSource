@@ -230,8 +230,10 @@ OpenVPN 的新钩子设计
 * [Using Linux Raw Sockets](http://squidarth.com/networking/systems/rc/2018/05/28/using-raw-sockets.html)
 * [原始套接字(SOCK_RAW)概述](https://cailin.iteye.com/blog/1985169)
 * [vpn工作原理和搭建方法](https://yuerblog.cc/2017/01/03/how-vpn-works-and-how-to-setup-pptp/)
+* [CentOS 7 安装tunctl](https://blog.csdn.net/lopng/article/details/72821438)
+* [Linux 网络工具详解之 ip tuntap 和 tunctl 创建 tap/tun 设备](https://www.cnblogs.com/bakari/p/10449664.html)
 * [tun/tap运行机制](http://vinllen.com/tun-tap/)
 * [虚拟网卡 TUN/TAP 驱动程序设计原理](https://www.ibm.com/developerworks/cn/linux/l-tuntap/index.html)
 * [TUN/TAP设备浅析(一) -- 原理浅析](https://www.jianshu.com/p/09f9375b7fa7)
 * [git-n2n](https://github.com/ntop/n2n/blob/dev/doc/HACKING)
-
+* [How to know if a network interface is tap, tun, bridge or physical?](https://unix.stackexchange.com/questions/40560/how-to-know-if-a-network-interface-is-tap-tun-bridge-or-physical)

@@ -589,3 +589,4 @@ kubectl label pod -n <namespace> <pod-name> <label_name>=<label_value>
 * [issue#x509: certificate has expired or is not yet valid](https://github.com/kubernetes/kubernetes/issues/42791)
 * [kubernetes创建资源yaml文件例子--pod](https://blog.csdn.net/liyingke112/article/details/76155428)
 * [十分钟带你理解Kubernetes核心概念](http://www.dockone.io/article/932)
+* [Kubernetes集群中flannel因网卡名启动失败问题](https://blog.csdn.net/ygqygq2/article/details/81698193)

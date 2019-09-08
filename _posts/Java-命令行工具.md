@@ -113,6 +113,13 @@ __参数说明：__
 * `-permstat`：以ClassLoader为统计口径显示永久代内存状态
 * `-F`：当虚拟机进程对-dump选项没有响应时，可使用这个选项强制生成dump快照
 
+__示例__
+
+* `jmap -dump:format=b,file=<dump_文件名> <java进程号>`：dump进程所有对象的堆栈
+* `jmap -dump:live,format=b,file=<dump_文件名> <java进程号>`：dump进程中存活对象的堆栈，会触发full gc
+* `jmap -histo <pid> | sort -k 2 -g -r | less`：统计堆栈中对象的内存信息，按照对象实例个数降序打印
+* `jmap -histo <pid> | sort -k 3 -g -r | less`：统计堆栈中对象的内存信息，按照对象占用内存大小降序打印
+
 # 5 jhat
 
 jhat是虚拟机堆转储快照分析工具
