@@ -1054,7 +1054,69 @@ __示例：__
 
 * `iostat -d -t -x 1`
 
-## 7.8 free
+## 7.8 socat
+
+__格式：__
+
+* `socat [options] <address> <address>`
+* 其中这2个`address`就是关键了，`address`类似于一个文件描述符，Socat所做的工作就是在2个`address`指定的描述符间建立一个 `pipe`用于发送和接收数据
+
+__参数说明：__
+
+* `address`：可以是如下几种形式之一
+    * `-`：表示标准输入输出
+    * `/var/log/syslog`：也可以是任意路径，如果是相对路径要使用`./`，打开一个文件作为数据流。
+    * `TCP:127.0.0.1:1080`：建立一个TCP连接作为数据流，TCP也可以替换为UDP
+    * `TCP-LISTEN:12345`：建立TCP监听端口，TCP也可以替换为UDP
+    * `EXEC:/bin/bash`：执行一个程序作为数据流。
+
+__示例：__
+
+* `socat - /var/www/html/flag.php`：通过Socat读取文件，绝对路径
+* `socat - ./flag.php`：通过Socat读取文件，相对路径
+* `echo "This is Test" | socat - /tmp/hello.html`：写入文件
+* `socat TCP-LISTEN:80,fork TCP:www.baidu.com:80`：将本地端口转到远端
+* `socat TCP-LISTEN:12345 EXEC:/bin/bash`：在本地开启shell代理
+
+## 7.9 dhclient
+
+__格式：__
+
+* `dhclient [-dqr]`
+
+__参数说明：__
+
+* `-d`：总是以前台方式运行程序
+* `-q`：安静模式，不打印任何错误的提示信息
+* `-r`：释放ip地址
+
+__示例：__
+
+* `dhclient`：获取ip
+* `dhclient -r`：释放ip
+
+## 7.10 tc
+
+流量的处理由三种对象控制，它们是：`qdisc`（排队规则）、`class`（类别）和`filter`（过滤器）。
+
+__格式：__
+
+* `tc qdisc [ add | change | replace | link ] dev DEV [ parent qdisc-id | root ] [ handle qdisc-id ] qdisc [ qdisc specific parameters ]`
+* `tc class [ add | change | replace ] dev DEV parent qdisc-id [ classid class-id ] qdisc [ qdisc specific parameters ]`
+* `tc filter [ add | change | replace ] dev DEV [ parent qdisc-id | root ] protocol protocol prio priority filtertype [ filtertype specific parameters ] flowid flow-id`
+* `tc [-s | -d ] qdisc show [ dev DEV ]`
+* `tc [-s | -d ] class show dev DEV`
+* `tc filter show dev DEV`
+
+__参数说明：__
+
+__示例：__
+
+* `tc qdisc add dev em1 root netem delay 300ms`：设置网络延迟300ms
+* `tc qdisc add dev em1 root netem loss 8% 20%`：设置8%~20%的丢包率 
+* `tc qdisc del dev em1 root `：删除指定设置
+
+## 7.11 free
 
 __格式：__
 
@@ -1083,7 +1145,7 @@ __示例：__
 
 * `free -m`
 
-## 7.9 swap
+## 7.12 swap
 
 __制作swap__
 
@@ -1094,7 +1156,7 @@ swapon /tmp/swap
 free
 ```
 
-## 7.10 route
+## 7.13 route
 
 __格式：__
 
@@ -1132,7 +1194,7 @@ __示例：__
 * `route add -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
 * `route del -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
 
-## 7.11 tsar
+## 7.14 tsar
 
 __格式：__
 
@@ -1146,7 +1208,7 @@ __示例：__
 
 * `tsar -l`
 
-## 7.12 watch
+## 7.15 watch
 
 __格式：__
 
@@ -1265,3 +1327,5 @@ __示例：__
 * [linux shell awk 流程控制语句（if,for,while,do)详细介绍](https://www.cnblogs.com/chengmo/archive/2010/10/04/1842073.html)
 * [解决Linux关闭终端(关闭SSH等)后运行的程序自动停止](https://blog.csdn.net/gatieme/article/details/52777721)
 * [Linux ss命令详解](https://www.cnblogs.com/ftl1012/p/ss.html)
+* [Socat 入门教程](https://www.hi-linux.com/posts/61543.html)
+* [Linux 流量控制工具 TC 详解](https://blog.csdn.net/wuruixn/article/details/8210760)

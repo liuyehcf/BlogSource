@@ -2660,6 +2660,7 @@ __Kubernetes的网络模型有很多种实现方式，包括但不仅限如下�
 * [英文文档1](https://kubernetes.io/docs/concepts/)
 * [中文文档1](http://docs.kubernetes.org.cn/)
 * [中文文档2](https://www.kubernetes.org.cn/kubernetes%E8%AE%BE%E8%AE%A1%E6%9E%B6%E6%9E%84)
+* [k8s-阿里云公开课](https://edu.aliyun.com/course/1651?spm=5176.10731542.0.0.785020be217oeD)
 * [nginx ingress doc](https://kubernetes.github.io/ingress-nginx/deploy/#prerequisite-generic-deployment-command)
 * [metallb doc](https://metallb.universe.tf/installation/)
 * [Borg、Omega 和 Kubernetes：谷歌十几年来从这三个容器管理系统中得到的经验教训](https://segmentfault.com/a/1190000004667502)
