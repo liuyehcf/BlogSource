@@ -567,6 +567,10 @@ kubectl get pod --all-namespaces
 kubectl describe pod -n <namespace>
 kubectl describe pod -n <namespace> <pod-name>
 
+# 删除pod
+kubectl delete pod <pod-name> -n <namespace>
+kubectl delete pod <pod-name> --force --grace-period=0 -n <namespace>
+
 # 查看service概要信息
 kubectl get svc <service-name>
 
