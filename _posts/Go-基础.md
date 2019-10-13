@@ -64,15 +64,32 @@ func main() {
 
 `Type(v)`
 
-## 2.4 字符串拼接
+## 2.4 类型识别
+
+```go
+   if value, ok := obj.(T); ok {
+		
+   } 
+   
+   switch t := obj.(type) {
+	case T1:
+      //xxx
+   case *T2:
+      //xxx
+   default:
+      //xxx
+	}
+```
+
+## 2.5 字符串拼接
 
 `fmt.Sprintf`
 
-## 2.5 各种类型转为字符串
+## 2.6 各种类型转为字符串
 
 `fmt.Sprintf`
 
-## 2.6 交叉编译
+## 2.7 交叉编译
 
 ```sh
 # 查看环境变量
@@ -82,12 +99,12 @@ go env
 env GOOS=linux GOARCH=amd64 go build -o <target_binary> <src.go> 
 ```
 
-## 2.7 类似try...catch
+## 2.8 类似try...catch
 
 1. `panic`：抛出异常
 1. `defer`&`recover`：捕获异常
 
-## 2.8 bindata-打包资源文件
+## 2.9 bindata-打包资源文件
 
 `go build`只能编译go文件，但是项目中如果存在资源文件，比如`css`，`html`等文件，是无法被`go build`打包进二进制文件的
 
@@ -107,13 +124,13 @@ go-bindata -pkg <package> -o <go file path> <resource path1> <resource path2> ..
 # <resource path1> : 具体要打包的资源路径
 ```
 
-## 2.9 log-framework
+## 2.10 log-framework
 
 [lumberjack](https://github.com/natefinch/lumberjack)
 
 [Golang 获取用户 home 目录路径](https://studygolang.com/articles/2772)
 
-## 2.10 go module
+## 2.11 go module
 
 要求go版本大于`1.12`
 
