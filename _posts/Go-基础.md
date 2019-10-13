@@ -134,12 +134,12 @@ go-bindata -pkg <package> -o <go file path> <resource path1> <resource path2> ..
 
 要求go版本大于`1.12`
 
-# 3 [FAQ](https://golang.org/doc/faq)
+## 2.12 [FAQ](https://golang.org/doc/faq)
 
 1. [new和make的区别](https://golang.org/doc/faq#new_and_make)
 1. [方法参数引用和非引用](https://golang.org/doc/faq#methods_on_values_or_pointers)
 
-# 4 IDE-Goland
+## 2.13 IDE-Goland
 
 __工程结构__
 
@@ -147,7 +147,17 @@ __工程结构__
 1. pkg
 1. src
 
-# 5 参考
+# 3 Common-Libs
+
+## 3.1 mysql
+
+[使用go语言操作mysql数据库](https://studygolang.com/articles/3022)
+
+## 3.2 template
+
+[gotemplate](https://golang.org/pkg/text/template/）
+
+# 4 参考
 
 * [Frequently Asked Questions](https://golang.org/doc/faq)
 * [go中包的概念、导入与可见性](https://studygolang.com/articles/7165)

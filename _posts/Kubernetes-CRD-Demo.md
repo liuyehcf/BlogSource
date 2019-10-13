@@ -437,13 +437,12 @@ kubectl create -f example-myconfig.yaml
 
 # 2 operator-framework
 
-# 3 步骤
+TBD
 
-1. 创建module，module名称：`github.com/liuyehcf/demo-controller`
-    * > `go mod init github.com/liuyehcf/demo-controller`
-
-# 4 参考
+# 3 参考
 
 * [sample-controller](https://github.com/kubernetes/sample-controller)
 * [operator](https://github.com/operator-framework/operator-sdk)
+* [client-go-example](https://github.com/kubernetes/client-go/tree/master/examples)
+* [使用client-go包访问Kubernetes CRD](https://segmentfault.com/a/1190000020437031)
 

@@ -1,11 +1,11 @@
 ---
-title: Paxos算法
+title: Paxos协议
 date: 2017-07-12 09:32:34
 tags: 
 - 摘录
 categories: 
 - Distributed
-- Algorithm
+- Protocol
 ---
 
 __阅读更多__

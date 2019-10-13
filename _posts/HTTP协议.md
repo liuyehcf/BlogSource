@@ -219,3 +219,4 @@ Web服务器向浏览器发送头信息后，它会发送一个空白行来表�
 
 * [HTTP协议详解](http://www.cnblogs.com/TankXiao/archive/2012/02/13/2342672.html#threeconcept)
 * [前端必备HTTP技能之HTTP请求头响应头中常用字段详解](https://www.jianshu.com/p/6e86903d74f7)
+* [Http协议中Cookie详细介绍](https://www.cnblogs.com/yanganok/p/5322411.html)
