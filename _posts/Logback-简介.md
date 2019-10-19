@@ -313,11 +313,29 @@ __格式修饰符，与转换符共同使用__：可选的格式修饰符位于"
 * 接着是可选的最小宽度修饰符，用十进制数表示。如果字符小于最小宽度，则左填充或右填充，默认是左填充（即右对齐），填充符为空格。如果字符大于最小宽度，字符永远不会被截断
 * 最大宽度修饰符，符号是点号"."后面加十进制数。如果字符大于最大宽度，则从前面截断。点符号"."后面加减号"-"在加数字，表示从尾部截断
 
-# 4 Test
+# 4 Tips
+
+## 4.1 [颜色](http://logback.qos.ch/manual/layouts.html#coloring)
+
+```xml
+<configuration debug="true">
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <withJansi>true</withJansi>
+    <encoder>
+      <pattern>[%thread] %highlight(%-5level) %cyan(%logger{15}) - %msg %n</pattern>
+    </encoder>
+  </appender>
+  <root level="DEBUG">
+    <appender-ref ref="STDOUT" />
+  </root>
+</configuration>
+```
+
+# 5 Test
 
 在`test/resources`目录下添加`logback-test.xml`文件即可生效
 
-# 5 示例
+# 6 示例
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -479,7 +497,7 @@ __格式修饰符，与转换符共同使用__：可选的格式修饰符位于"
 </configuration>
 ```
 
-# 6 Spring集成
+# 7 Spring集成
 
 ```xml
 <configuration>
@@ -507,13 +525,13 @@ __格式修饰符，与转换符共同使用__：可选的格式修饰符位于"
 </configuration>
 ```
 
-# 7 Spring-Boot默认的配置
+# 8 Spring-Boot默认的配置
 
 参考`org.springframework.boot.logging.logback.DefaultLogbackConfiguration`
 
-# 8 排坑
+# 9 排坑
 
-## 8.1 关于AsyncAppender
+## 9.1 关于AsyncAppender
 
 AsyncAppender会异步打印日志，从而避免磁盘IO阻塞当前线程的业务逻辑，其异步的实现方式也是常规的`ThreadPool`+`BlockingQueue`，那么当线程池与队列都被打满时，其行为是如何的？
 
@@ -674,9 +692,9 @@ AsyncAppender会异步打印日志，从而避免磁盘IO阻塞当前线程的�
 
 __总结：根据上面的分析可以发现，如果打日志的并发度非常高，且打的是warn或error日志，仍然会阻塞当前线程__
 
-# 9 参考
+# 10 参考
 
-* [logback-layout](https://logback.qos.ch/manual/layouts.html)
+* [官方文档（很详细）](http://logback.qos.ch/manual/)
 * [从零开始玩转logback](http://www.importnew.com/22290.html)
 * [logback的使用和logback.xml详解](https://www.cnblogs.com/warking/p/5710303.html)
 * [logback 配置详解](https://www.jianshu.com/p/1ded57f6c4e3)

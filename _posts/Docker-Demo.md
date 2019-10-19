@@ -125,7 +125,48 @@ docker --help # 查询所有顶层的参数
 docker image --help # 参数image参数的子参数
 ```
 
-# 3 Tips
+# 3 Alpine
+
+Alpine Linux是一个轻型Linux发行版，它不同于通常的Linux发行版，Alpine采用了musl libc 和 BusyBox以减少系统的体积和运行时的资源消耗。Alpine Linux提供了自己的包管理工具：apk
+
+构建一个带有bash的docker镜像
+
+```docker
+FROM alpine:3.10.2
+
+MAINTAINER Rethink 
+#更新Alpine的软件源为国内（清华大学）的站点，因为从默认官源拉取实在太慢了。。。
+RUN echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.4/main/" > /etc/apk/repositories
+
+RUN apk update \
+        && apk upgrade \
+        && apk add --no-cache bash \
+        bash-doc \
+        bash-completion \
+        && rm -rf /var/cache/apk/* \
+        && /bin/bash
+```
+
+# 4 Jib
+
+```xml
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>1.6.1</version>
+                <configuration>
+                    <from>
+                        <!-- 不带这个基础镜像的话，构建出来的镜像是不包含bash的 -->
+                        <image>openjdk:8u222-jdk</image> 
+                    </from>
+                    <to>
+                        <image>my-app:v1</image>
+                    </to>
+                </configuration>
+            </plugin>
+```
+
+# 5 Tips
 
 1. 启动并保持容器运行
     * 可以执行一个不会终止的程序：`docker run -dit xxx:v1`
@@ -139,8 +180,10 @@ docker image --help # 参数image参数的子参数
 1. 在指定容器中执行命令
     * `docker exec -ti my_container /bin/bash -c "echo a && echo b"`
 
-# 4 参考
+# 6 参考
 
+* [Docker Hub](https://hub.docker.com/)
+* [Docker历史版本下载](https://docs.docker.com/docker-for-mac/release-notes/#docker-community-edition-17120-ce-mac49-2018-01-19)
 * [Docker](https://www.docker.com/)
 * [Docker Command](https://docs.docker.com/engine/reference/commandline/docker/)
 * [Docker 教程](http://www.runoob.com/docker/docker-tutorial.html)
@@ -152,3 +195,4 @@ docker image --help # 参数image参数的子参数
 * [RunC 简介](http://www.cnblogs.com/sparkdev/p/9032209.html)
 * [Containerd 简介](http://www.cnblogs.com/sparkdev/p/9063042.html)
 * [从 docker 到 runC](https://www.cnblogs.com/sparkdev/p/9129334.html)
+* [jib](https://github.com/GoogleContainerTools/jib)

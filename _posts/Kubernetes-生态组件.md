@@ -17,6 +17,14 @@ __阅读更多__
 
 # 3 Helm
 
+```sh
+# 创建一个char模板，其中charName是对应的名称
+helm create <charName>
+
+# 渲染，模板，可以查看渲染后的输出格式
+helm template <charName>
+```
+
 ## 3.1 参考
 
 * [Helm 从入门到实践](https://www.jianshu.com/p/4bd853a8068b)

@@ -609,6 +609,8 @@ __`@MockBean`__：生成一个mock对象，并且添加到Spring的上下文中�
 
 SpringBoot推崇约定大于配置，通常情况下，我们只需要配置少数几个参数，应用就可以正常启动。但是，知道SpringBoot究竟提供了多少默认的配置也是很有用的，给一个[传送门](https://docs.spring.io/spring-boot/docs/2.0.3.RELEASE/reference/htmlsingle/)。在页面上搜索`server.port=8080`，就能定位到配置项说明的地方
 
+此外，spring不同组件的配置项可以参考`spring-configuration-metadata.json`，该文件位于`org.springframework.boot:spring-boot-autoconfigure`模块当中
+
 SpringBoot默认加载的属性文件，其路径为`classpath:application.properties`或者`classpath:application.yml`。若要修改这个路径，必须用`@PropertySource`注解来标注（而不是用`@ImportResource`注解哦）
 
 # 11 Auto-Configuration
