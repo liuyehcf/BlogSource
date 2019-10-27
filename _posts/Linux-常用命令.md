@@ -1250,17 +1250,6 @@ __示例：__
 * `watch -d 'ls -l | grep scf'`：监测当前目录中 scf' 的文件的变化
 * `watch -n 10 'cat /proc/loadavg'`：10秒一次输出系统的平均负载
 
-## 7.16 火焰图
-
-```
-sudo perf record -F 90 -a -g -- sleep 300
-perf-map-agent/bin/create-java-perf-map.sh 48554
-sudo perf script > out.perf
-FlameGraph-1.0/stackcollapse-perf.pl out.perf > out.folded
-FlameGraph-1.0/flamegraph.pl out.folded > perf_188_new_engine.svg
-sudo ./ossutil cp perf_188_new_engine.svg oss://mydumplog
-```
-
 # 8 远程连接
 
 ## 8.1 ssh
