@@ -183,6 +183,9 @@ RUN apk update \
     * 容器启动的`CMD`包含`/usr/sbin/init`即可
 1. 在指定容器中执行命令
     * `docker exec -ti my_container /bin/bash -c "echo a && echo b"`
+1. 查看docker container对应的pid
+    * `docker inspect <container-id> | grep Pid`
+    * `docker inspect --format '{{.State.Pid}}' <container_name_or_Id>`
 
 # 6 参考
 

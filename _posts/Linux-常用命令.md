@@ -1055,7 +1055,24 @@ __参数说明：__
 
 * `--icmp-type`：后面必须要接ICMP的数据包类型，也可以使用代号
 
-## 7.7 iostat
+## 7.7 nsenter
+
+nsenter用于在某个网络命名空间下执行某个命令。例如某些docker容器是没有curl命令的，但是又想在docker容器的环境下执行，这个时候就可以在宿主机上使用nsenter
+
+__格式：__
+
+* `nsenter -t <pid> -n <cmd>`
+
+__参数说明：__
+
+* `-t`：后接进程id
+* `-n`：后接需要执行的命令
+
+__示例：__
+
+* `nsenter -t 123 -n curl baidu.com`
+
+## 7.8 iostat
 
 __格式：__
 
@@ -1076,7 +1093,7 @@ __示例：__
 
 * `iostat -d -t -x 1`
 
-## 7.8 socat
+## 7.9 socat
 
 __格式：__
 
@@ -1100,7 +1117,7 @@ __示例：__
 * `socat TCP-LISTEN:80,fork TCP:www.baidu.com:80`：将本地端口转到远端
 * `socat TCP-LISTEN:12345 EXEC:/bin/bash`：在本地开启shell代理
 
-## 7.9 dhclient
+## 7.10 dhclient
 
 __格式：__
 
@@ -1117,7 +1134,7 @@ __示例：__
 * `dhclient`：获取ip
 * `dhclient -r`：释放ip
 
-## 7.10 tc
+## 7.11 tc
 
 流量的处理由三种对象控制，它们是：`qdisc`（排队规则）、`class`（类别）和`filter`（过滤器）。
 
@@ -1138,7 +1155,7 @@ __示例：__
 * `tc qdisc add dev em1 root netem loss 8% 20%`：设置8%~20%的丢包率 
 * `tc qdisc del dev em1 root `：删除指定设置
 
-## 7.11 free
+## 7.12 free
 
 __格式：__
 
@@ -1167,7 +1184,7 @@ __示例：__
 
 * `free -m`
 
-## 7.12 swap
+## 7.13 swap
 
 __制作swap__
 
@@ -1178,7 +1195,7 @@ swapon /tmp/swap
 free
 ```
 
-## 7.13 route
+## 7.14 route
 
 __格式：__
 
@@ -1216,7 +1233,7 @@ __示例：__
 * `route add -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
 * `route del -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
 
-## 7.14 tsar
+## 7.15 tsar
 
 __格式：__
 
@@ -1230,7 +1247,7 @@ __示例：__
 
 * `tsar -l`
 
-## 7.15 watch
+## 7.16 watch
 
 __格式：__
 
