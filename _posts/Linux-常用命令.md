@@ -236,7 +236,7 @@ awk
 END {print "销售金额总计：",total}' sx
 ```
 
-### 2.3.1 如何在awk中引用变量
+### 2.3.1 在awk中引用变量
 
 __方式1__
 
@@ -351,6 +351,12 @@ do
 }while(i<=100)
 print total;
 }'
+```
+
+### 2.3.3 在awk中使用正则表达式
+
+```sh
+echo "123" |awk '{if($0 ~ /^[0-9]+$/) print $0;}'
 ```
 
 ## 2.4 grep
@@ -831,7 +837,7 @@ __参数说明：__
 
 * `-A`：数据包的内容以ASCII显示，通常用来抓取WWW的网页数据包数据
 * `-e`：使用数据链路层(OSI第二层)的MAC数据包数据来显示
-* `-nn`：直接以IP以及port number显示，而非主机名与服务名称
+* `-n`：直接以IP以及port number显示，而非主机名与服务名称
 * `-q`：仅列出较为简短的数据包信息，每一行的内容比较精简
 * `-X`：可以列出十六进制(hex)以及ASCII的数据包内容，对于监听数据包很有用
 * `-i`：后面接要监听的网络接口，例如eth0等
@@ -839,6 +845,7 @@ __参数说明：__
 * `-w`：将监听得到的数据包存储下来
 * `-r`：从后面接的文件将数据包数据读出来
 * `-c`：监听数据包数，没有这个参数则会一直监听，直到[ctrl]+C
+* 此外，还可以用`and`拼接多个条件
 
 __显示格式说明__
 
@@ -866,6 +873,7 @@ __示例：__
 * `tcpdump -i lo0 port 22 -w output7.cap`
 * `tcpdump -i eth0 host www.baidu.com`
 * `tcpdump -i any -w output1.cap`
+* `tcpdump -n -i any -e icmp and host www.baidu.com`
 
 ### 7.5.1 tips
 
@@ -1241,6 +1249,17 @@ __示例：__
 * `watch 'netstat -an | grep :21 | grep <ip> | wc -l'`：实时查看模拟攻击客户机建立起来的连接数
 * `watch -d 'ls -l | grep scf'`：监测当前目录中 scf' 的文件的变化
 * `watch -n 10 'cat /proc/loadavg'`：10秒一次输出系统的平均负载
+
+## 7.16 火焰图
+
+```
+sudo perf record -F 90 -a -g -- sleep 300
+perf-map-agent/bin/create-java-perf-map.sh 48554
+sudo perf script > out.perf
+FlameGraph-1.0/stackcollapse-perf.pl out.perf > out.folded
+FlameGraph-1.0/flamegraph.pl out.folded > perf_188_new_engine.svg
+sudo ./ossutil cp perf_188_new_engine.svg oss://mydumplog
+```
 
 # 8 远程连接
 

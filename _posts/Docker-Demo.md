@@ -162,6 +162,10 @@ RUN apk update \
                     <to>
                         <image>my-app:v1</image>
                     </to>
+                    <container>
+                        <!-- 不加这个参数的话，构建出来的镜像时49年前的 -->
+                        <useCurrentTimestamp>true</useCurrentTimestamp>
+                    </container>
                 </configuration>
             </plugin>
 ```
