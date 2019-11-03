@@ -185,6 +185,10 @@ RUN apk update \
     * `docker exec -ti my_container /bin/bash -c "echo a && echo b"`
 1. 查看docker container对应的pid
     * `docker inspect <container-id> | grep Pid`
+1. 删除某个tag
+    * `docker rmi <repository>:<tag>`，不要用镜像id
+1. 列出所有的镜像id
+    * `docker images -q`
 
 # 6 参考
 

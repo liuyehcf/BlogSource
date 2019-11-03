@@ -139,6 +139,7 @@ __第三部分：一般模式切换到命令行模式的可用按钮说明__
 * `:! [command]`：暂时离开vi到命令模式下执行command的显示结果，例如:! ls /home
 * `:set nu`：显示行号
 * `:set nonu`：取消行号
+* `:set paste`：直接复制，不格式化
 
 # 2 vim的功能
 
@@ -235,3 +236,4 @@ set encoding=utf-8
 * 《鸟哥的Linux私房菜》
 * [Mac 的 Vim 中 delete 键失效的原因和解决方案](https://blog.csdn.net/jiang314/article/details/51941479)
 * [解决linux下vim中文乱码的方法](https://blog.csdn.net/zhangjiarui130/article/details/69226109)
+* [vim-set命令使用](https://www.jianshu.com/p/97d34b62d40d)

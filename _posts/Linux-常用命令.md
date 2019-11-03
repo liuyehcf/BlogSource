@@ -1368,3 +1368,4 @@ __示例：__
 * [Linux ss命令详解](https://www.cnblogs.com/ftl1012/p/ss.html)
 * [Socat 入门教程](https://www.hi-linux.com/posts/61543.html)
 * [Linux 流量控制工具 TC 详解](https://blog.csdn.net/wuruixn/article/details/8210760)
+* [docker networking namespace not visible in ip netns list](https://stackoverflow.com/questions/31265993/docker-networking-namespace-not-visible-in-ip-netns-list)
