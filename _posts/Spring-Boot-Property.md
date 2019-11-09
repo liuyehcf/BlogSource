@@ -104,6 +104,16 @@ __限制__
 
 1. 注入的字段，必须包含set方法
 
+__生成`spring-configuration-metadata.json`文件，让IDEA可以解析到该自定义的配置项：增加如下依赖项，该processor会根据@ConfigurationProperties注解的内容，在编译时创建`META-INF/spring-configuration-metadata.json`文件__
+
+```xml
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+```
+
 # 4 参考
 
 [Spring Boot Externalized Configuration](https://docs.spring.io/spring-boot/docs/2.1.1.RELEASE/reference/htmlsingle/#boot-features-external-config)

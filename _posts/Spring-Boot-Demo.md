@@ -605,6 +605,13 @@ TestApplication
 
 __`@MockBean`__：生成一个mock对象，并且添加到Spring的上下文中，将替换掉原有的`bean`，被注入到其他依赖该`bean`的`bean`当中
 
+## 9.4 在测试类中定义Controller
+
+__将注解`SpringBootTest`的属性值`webEnvironment`设置为`SpringBootTest.WebEnvironment.DEFINED_PORT`，例如：__
+
+* `@SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)`
+* 否则，会忽视`server.port`属性值，使用一个随机端口来提供http服务
+
 # 10 配置项
 
 SpringBoot推崇约定大于配置，通常情况下，我们只需要配置少数几个参数，应用就可以正常启动。但是，知道SpringBoot究竟提供了多少默认的配置也是很有用的，给一个[传送门](https://docs.spring.io/spring-boot/docs/2.0.3.RELEASE/reference/htmlsingle/)。在页面上搜索`server.port=8080`，就能定位到配置项说明的地方
