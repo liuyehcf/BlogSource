@@ -189,6 +189,9 @@ RUN apk update \
     * `docker rmi <repository>:<tag>`，不要用镜像id
 1. 列出所有的镜像id
     * `docker images -q`
+1. 将镜像打包成文件，从文件中导入镜像
+    * `docker save -o alpine.tar alpine:3.10.2`
+    * `docker load < alpine.tar`
 
 # 6 参考
 
