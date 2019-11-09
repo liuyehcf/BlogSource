@@ -424,6 +424,8 @@ __注意，在执行过程中，可能会遇到如下问题__
 * 原因是 gpg 在当前终端无法弹出密码输入页面。
 * 解决办法很简单：`export GPG_TTY=$(tty)`，然后再执行`mvn clean deploy`，就能弹出一个密码输入界面了
 
+__[sonatype-查看进度](https://oss.sonatype.org/index.html#stagingRepositories)__
+
 # 10 参考
 
 * [sonatype仓库-查看已deploy的项目的进度](https://oss.sonatype.org/index.html#welcome)

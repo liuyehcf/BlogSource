@@ -527,7 +527,12 @@ __格式修饰符，与转换符共同使用__：可选的格式修饰符位于"
 
 # 8 Spring-Boot默认的配置
 
-参考`org.springframework.boot.logging.logback.DefaultLogbackConfiguration`
+__参考`org.springframework.boot.logging.logback.DefaultLogbackConfiguration`__
+
+__相关配置项参考`spring-configuration-metadata.json`__
+
+* `logging.pattern.console`：默认的console pattern配置
+* `logging.config`：用于指定spring加载的logback配置文件
 
 # 9 排坑
 
