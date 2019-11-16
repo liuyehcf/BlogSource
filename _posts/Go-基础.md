@@ -205,7 +205,7 @@ go module对版本号的约定
 # 不使用代理，默认会使用 proxy.golang.org
 export GOPROXY=direct
 
-# 这样配置后，就可以从gitlab中下载tom以及jerry这两个组织中的所有代码了
+# 这样配置后，就可以从gitlab中下载tom以及jerry这两个组织中的所有代码了，否则会出现 410 Gone 这样的错误信息
 export GOPRIVATE=gitlab.com/tom/*, gitlab.com/jerry/*
 ```
 
