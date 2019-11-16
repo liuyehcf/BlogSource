@@ -135,19 +135,69 @@ go-bindata -pkg <package> -o <go file path> <resource path1> <resource path2> ..
 1. [new和make的区别](https://golang.org/doc/faq#new_and_make)
 1. [方法参数引用和非引用](https://golang.org/doc/faq#methods_on_values_or_pointers)
 
-## 2.12 IDE-Goland
-
-__工程结构__
-
-1. bin
-1. pkg
-1. src
-
 # 3 包管理工具
 
 ## 3.1 go module
 
-要求go版本大于`1.12`
+### 3.1.1 如何开启
+
+1. go版本大于`1.12`
+1. 满足下面两个条件中的任意一个
+   1. 在`GOPATH/src`目录之外，且目录中（当前目录或父目录）存在`go.mod`
+   1. 设置环境变量`GO111MODULE=on`
+
+### 3.1.2 如何使用
+
+```sh
+# 初始化go module项目，执行完毕之后，会在当前路径下生成go.mod文件
+go mod init github.com/aaa/bbb
+
+# 更新依赖
+go get github.com/aaa/bbb@master
+
+# 显示依赖
+go list -m all
+
+# 显示依赖及可升级的版本
+go list -u -m all
+
+# 引入不存在的依赖/删除多余的依赖
+go mod tidy
+
+# 将外部依赖包缓存到vendor/目录中
+go mod vendor
+
+# 使用vendor/目录下的包进行编译
+go build -mod=vendor
+```
+
+### 3.1.3 版本管理
+
+go module支持在报名后增加`/v2`，`/v3`这样的后缀和对应的三位版本号标签（`git tag`），解决兼容性问题，__包的版本号格式为：`v{major}.{minor}.{patch}`__
+
+go module对版本号的约定
+
+1. `v0`、`v1`版本不存在兼容性问题
+1. `v2`开始，不同的`major`代表和前一个版本不兼容
+1. 如果一个go程序导入（直接依赖或间接依赖）同一个包的多个兼容版本，默认会使用版本号较高的那个
+   * 如果同时依赖了`v0.1.2`和`v1.0.1`，那么会使用`v1.0.1`
+   * 如果同时依赖了`v2.0.1`和`v2.0.2`，那么会使用`v2.0.2`
+1. 如果一个go程序导入（直接依赖或间接依赖）同一个包的多个不兼容版本，则使用各自版本的包
+   * 如果同时依赖了`v1.1.0`和`v2.1.0`，那么会同时存在
+
+### 3.1.4 从gitlab上下载依赖包
+
+需要设置环境变量`GOPROXY`以及`GOPRIVATE`
+
+```sh
+# 不使用代理，默认会使用 proxy.golang.org
+export GOPROXY=direct
+
+# 这样配置后，就可以从gitlab中下载tom以及jerry这两个组织中的所有代码了
+export GOPRIVATE=gitlab.com/tom/*, gitlab.com/jerry/*
+```
+
+__[unable to install go module (private nested repository)](https://gitlab.com/gitlab-org/gitlab-foss/issues/65681)__
 
 ## 3.2 go dep
 
