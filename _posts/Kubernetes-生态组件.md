@@ -32,3 +32,9 @@ helm template <charName>
 * [Heml中文文档](https://whmzsu.github.io/helm-doc-zh-cn/chart_template_guide/control_structures-zh_cn.html)
 * [Helm教程](https://www.cnblogs.com/lyc94620/p/10945430.html)
 * [Error: no available release name found](https://www.jianshu.com/p/5eb3ee63a250)
+
+# 4 istio
+
+## 4.1 参考
+
+* [理解 Istio Service Mesh 中 Envoy 代理 Sidecar 注入及流量劫持](https://jimmysong.io/posts/envoy-sidecar-injection-in-istio-service-mesh-deep-dive/?from=groupmessage&isappinstalled=0)

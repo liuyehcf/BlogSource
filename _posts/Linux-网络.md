@@ -140,6 +140,8 @@ Linux中最常用的基本防火墙软件称为`iptables`。`iptables`防火墙�
 
 只有五个`netfilter`内核`hook`，因此，每个`hook`注册了多个来自不同`table`的`chian`。例如，三个`table`具有`PREROUTING chain`。当这些`chain`在相关的`NF_IP_PRE_ROUTING hook`处注册时，它们指定一个优先级，该优先级指示每个`table`的`PREROUTING chain`被调用的顺序。在进入下一个`PREROUTING`链之前，将按顺序评估最高优先级`PREROUTING chain`中的每个`rule`
 
+![fig6](/images/Linux-网络/fig6.jpg)
+
 ## 2.3 Which Tables are Available?
 
 ### 2.3.1 The Filter Table
