@@ -137,16 +137,28 @@ go-bindata -pkg <package> -o <go file path> <resource path1> <resource path2> ..
 
 # 3 包管理工具
 
-## 3.1 go module
+## 3.1 go get
 
-### 3.1.1 如何开启
+1. 要求工程必须在`GOPATH`中
+
+### 3.1.1 从gitlab上下载依赖包
+
+需要开启交互，默认是禁止的（在下载过程中需要进行auth，输入用户名和密码）
+
+```sh
+export GIT_TERMINAL_PROMPT=1
+```
+
+## 3.2 go module
+
+### 3.2.1 如何开启
 
 1. go版本大于`1.12`
 1. 满足下面两个条件中的任意一个
    1. 在`GOPATH/src`目录之外，且目录中（当前目录或父目录）存在`go.mod`
    1. 设置环境变量`GO111MODULE=on`
 
-### 3.1.2 如何使用
+### 3.2.2 如何使用
 
 ```sh
 # 初始化go module项目，执行完毕之后，会在当前路径下生成go.mod文件
@@ -171,7 +183,7 @@ go mod vendor
 go build -mod=vendor
 ```
 
-### 3.1.3 版本管理
+### 3.2.3 版本管理
 
 go module支持在报名后增加`/v2`，`/v3`这样的后缀和对应的三位版本号标签（`git tag`），解决兼容性问题，__包的版本号格式为：`v{major}.{minor}.{patch}`__
 
@@ -185,7 +197,7 @@ go module对版本号的约定
 1. 如果一个go程序导入（直接依赖或间接依赖）同一个包的多个不兼容版本，则使用各自版本的包
    * 如果同时依赖了`v1.1.0`和`v2.1.0`，那么会同时存在
 
-### 3.1.4 从gitlab上下载依赖包
+### 3.2.4 从gitlab上下载依赖包
 
 需要设置环境变量`GOPROXY`以及`GOPRIVATE`
 
@@ -199,11 +211,42 @@ export GOPRIVATE=gitlab.com/tom/*, gitlab.com/jerry/*
 
 __[unable to install go module (private nested repository)](https://gitlab.com/gitlab-org/gitlab-foss/issues/65681)__
 
-## 3.2 go dep
+### 3.2.5 IDE-GoLand
 
-## 3.3 todo 
+__新建go module项目__
 
-export GIT_TERMINAL_PROMPT=1
+1. 在新建时，可以直接选择go module项目（`Go Modules (vgo)`）
+1. 创建完毕之后，会自动在项目根目录创建go.mod文件
+
+__将非go module项目改造成go module项目__
+
+1. 在工程根目录执行`go mod init xxx/xxx`创建`go.mod`文件
+1. `Preferences`->`GO`->`Go Modules (vgo)`->勾上`Enable Go Modules (vgo) integration`
+
+## 3.3 go dep
+
+### 3.3.1 安装
+
+```sh
+# 在工程中执行下面的命令安装dep
+go get -u github.com/golang/dep/cmd/dep
+
+# 查看是否安装成功
+dep help
+```
+
+### 3.3.2 使用
+
+```sh
+# 初始化，会创建两个文件Gopkg.lock、Gopkg.toml，以及目录vendor
+dep init
+
+# 添加依赖项到当前工程中
+dep ensure -add github.com/pkg/errors
+
+# 安装依赖项到vendor目录汇总
+dep ensure
+```
 
 # 4 Common-Libs
 
