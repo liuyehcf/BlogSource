@@ -827,7 +827,16 @@ __示例：__
 * `ss -o state established`：显示所有状态为established的socket
 * `ss -o state FIN-WAIT-1 dst 192.168.25.100/24`：显示出处于`FIN-WAIT-1`状态的，目标网络为`192.168.25.100/24`所有socket
 
-## 7.5 tcpdump
+## 7.5 ip
+
+__todo__
+
+1. `ip a`
+1. `ip r`
+
+https://www.jellythink.com/archives/469
+
+## 7.6 tcpdump
 
 __格式：__
 
@@ -875,7 +884,7 @@ __示例：__
 * `tcpdump -i any -w output1.cap`
 * `tcpdump -n -i any -e icmp and host www.baidu.com`
 
-### 7.5.1 tips
+### 7.6.1 tips
 
 如何查看具体的协议，例如ssh协议
 
@@ -883,9 +892,9 @@ __示例：__
 
 1. 任意选中一个`length`不为`0`的数据包，右键选择解码（`decode as`），右边`Current`一栏，选择对应的协议即可
 
-## 7.6 iptables
+## 7.7 iptables
 
-### 7.6.1 规则的查看
+### 7.7.1 规则的查看
 
 __格式：__
 
@@ -933,7 +942,7 @@ __输出信息介绍__
 * 星号开头的指的是表格，这里为Filter
 * 冒号开头的指的是链，3条内建的链，后面跟策略
 
-### 7.6.2 规则的清除
+### 7.7.2 规则的清除
 
 __格式：__
 
@@ -945,7 +954,7 @@ __参数说明：__
 * `-X [chain]`：清除指定`user-defined chain`或所有`user-defined chain`
 * `-Z [chain]`：将指定chain或所有的chain的计数与流量统计都归零
 
-### 7.6.3 定义默认策略
+### 7.7.3 定义默认策略
 
 当数据包不在我们设置的规则之内时，该数据包的通过与否都以Policy的设置为准
 
@@ -965,7 +974,7 @@ __示例：__
 * `iptables -P OUTPUT ACCEPT`
 * `iptables -P FORWARD ACCEPT`
 
-### 7.6.4 数据包的基础对比：IP、网络及接口设备
+### 7.7.4 数据包的基础对比：IP、网络及接口设备
 
 __格式：__
 
@@ -1001,7 +1010,7 @@ __示例：__
 * `iptables -A INPUT -i eth1 -j ACCEPT`：添加接口为eth1的网卡为信任设备
 * `iptables -A INPUT -s 192.168.2.200 -j LOG`：该网段的数据包，其相关信息就会被写入到内核日志文件中，即`/var/log/messages`，然后，该数据包会继续进行后续的规则比对(这一点与其他规则不同)
 
-### 7.6.5 TCP、UDP的规则：针对端口设置
+### 7.7.5 TCP、UDP的规则：针对端口设置
 
 TCP与UDP比较特殊的就是端口(port)，在TCP方面则另外有所谓的连接数据包状态，包括最常见的SYN主动连接的数据包格式
 
@@ -1021,7 +1030,7 @@ __示例：__
 * `iptables -A INPUT -i eth0 -p tcp --dport 21 -j DROP`：想要进入本机port 21的数据包都阻挡掉
 * `iptables -A INPUT -i eth0 -p tcp --sport 1:1023 --dport 1:1023 --syn -j DROP`：来自任何来源port 1:1023的主动连接到本机端的1:1023连接丢弃
 
-### 7.6.6 iptables外挂模块：mac与state
+### 7.7.6 iptables外挂模块：mac与state
 
 在Kernel 2.2以前使用ipchains管理防火墙时，`ipchains`没有数据包状态模块，因此我们必须针对数据包的进、出方向进行控制。`iptables`可以帮我们免除这个困扰，它可以通过一个状态模块来分析这个想要进入的数据包是否为刚刚发出去的响应
 
@@ -1045,7 +1054,7 @@ __示例：__
 * `iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT`
 * `iptables -A INPUT -m mac --mac-source aa:bb:cc:dd:ee:ff -j ACCEPT`
 
-### 7.6.7 ICMP数据包规则的比对：针对是否响应ping来设计
+### 7.7.7 ICMP数据包规则的比对：针对是否响应ping来设计
 
 __格式：__
 
@@ -1055,7 +1064,7 @@ __参数说明：__
 
 * `--icmp-type`：后面必须要接ICMP的数据包类型，也可以使用代号
 
-## 7.7 nsenter
+## 7.8 nsenter
 
 nsenter用于在某个网络命名空间下执行某个命令。例如某些docker容器是没有curl命令的，但是又想在docker容器的环境下执行，这个时候就可以在宿主机上使用nsenter
 
@@ -1072,7 +1081,7 @@ __示例：__
 
 * `nsenter -t 123 -n curl baidu.com`
 
-## 7.8 iostat
+## 7.9 iostat
 
 __格式：__
 
@@ -1093,7 +1102,7 @@ __示例：__
 
 * `iostat -d -t -x 1`
 
-## 7.9 socat
+## 7.10 socat
 
 __格式：__
 
@@ -1117,7 +1126,7 @@ __示例：__
 * `socat TCP-LISTEN:80,fork TCP:www.baidu.com:80`：将本地端口转到远端
 * `socat TCP-LISTEN:12345 EXEC:/bin/bash`：在本地开启shell代理
 
-## 7.10 dhclient
+## 7.11 dhclient
 
 __格式：__
 
@@ -1134,7 +1143,7 @@ __示例：__
 * `dhclient`：获取ip
 * `dhclient -r`：释放ip
 
-## 7.11 tc
+## 7.12 tc
 
 流量的处理由三种对象控制，它们是：`qdisc`（排队规则）、`class`（类别）和`filter`（过滤器）。
 
@@ -1155,7 +1164,7 @@ __示例：__
 * `tc qdisc add dev em1 root netem loss 8% 20%`：设置8%~20%的丢包率 
 * `tc qdisc del dev em1 root `：删除指定设置
 
-## 7.12 free
+## 7.13 free
 
 __格式：__
 
@@ -1184,7 +1193,7 @@ __示例：__
 
 * `free -m`
 
-## 7.13 swap
+## 7.14 swap
 
 __制作swap__
 
@@ -1195,7 +1204,7 @@ swapon /tmp/swap
 free
 ```
 
-## 7.14 route
+## 7.15 route
 
 __格式：__
 
@@ -1233,7 +1242,7 @@ __示例：__
 * `route add -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
 * `route del -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
 
-## 7.15 tsar
+## 7.16 tsar
 
 __格式：__
 
@@ -1247,7 +1256,7 @@ __示例：__
 
 * `tsar -l`
 
-## 7.16 watch
+## 7.17 watch
 
 __格式：__
 

@@ -16,6 +16,8 @@ __阅读更多__
 
 该部分转载自[DOCKER基础技术：LINUX NAMESPACE（上）](https://coolshell.cn/articles/17010.html)、[DOCKER基础技术：LINUX NAMESPACE（下）](https://coolshell.cn/articles/17029.html)
 
+## 1.1 UTS
+
 __UTS(UNIX Time-sharing System) Namespace：用于隔离hostname与domain__
 
 ```c
@@ -56,6 +58,8 @@ int main()
 }
 ```
 
+## 1.2 IPC
+
 __IPC(Inter-Process Communication) Namespace：用于隔离进程间的通信方式，例如共享内存、信号量、消息队列等__
 
 ```c
@@ -95,6 +99,8 @@ int main()
     return 0;
 }
 ```
+
+## 1.3 PID
 
 __PID Namespace：用于隔离进程的PID__
 
@@ -137,6 +143,8 @@ int main()
     return 0;
 }
 ```
+
+## 1.4 Mount
 
 __Mount Namespace：用于隔离文件系统__
 
@@ -204,6 +212,8 @@ static struct dentry *proc_mount(struct file_system_type *fs_type, int flags, co
     return mount_ns(fs_type, flags, data, ns, ns->user_ns, proc_fill_super);
 }
 ```
+
+## 1.5 User
 
 __User Namespace：用于隔离user以及group__
 
@@ -334,15 +344,519 @@ cat /proc/sys/user/max_user_namespaces
 cat /proc/sys/user/max_net_namespaces
 ```
 
+## 1.6 Network
+
 __Network Namespace：用于隔离网络__
 
-# 2 cgroup
+```sh
+#----------------------------------------
+# 首先，我们先增加一个网桥lxcbr0，模仿docker0
+#----------------------------------------
 
-## 2.1 参考
+# 若没有brctl命令，执行 yum install -y bridge-utils 进行安装
+brctl addbr lxcbr0
+brctl stp lxcbr0 off
+ifconfig lxcbr0 192.168.10.1/24 up #为网桥设置IP地址
+
+#----------------------------------------
+# 接下来，我们要创建一个network namespace - ns1
+#----------------------------------------
+
+# 增加一个namesapce 命令为 ns1 （使用ip netns add命令）
+ip netns add ns1 
+
+# 激活namespace中的loopback，即127.0.0.1（使用ip netns exec ns1来操作ns1中的命令）
+ip netns exec ns1 ip link set dev lo up 
+
+#----------------------------------------
+# 然后，我们需要增加一对虚拟网卡
+#----------------------------------------
+
+# 增加一个pair虚拟网卡，注意其中的veth类型，其中一个网卡要安进容器中
+ip link add veth-ns1 type veth peer name lxcbr0.1
+
+# 启动主机中的虚拟网卡设备veth-ns1以及lxcbr0.1
+ip link set veth-ns1 up
+ip link set lxcbr0.1 up
+
+# 把 veth-ns1 安到namespace ns1中，这样容器中就会有一个新的网卡了
+ip link set veth-ns1 netns ns1
+
+# 把容器里的 veth-ns1改名为 eth0 （容器外会冲突，容器内就不会了）
+ip netns exec ns1 ip link set dev veth-ns1 name eth0 
+
+# 为容器中的网卡分配一个IP地址，并激活它
+ip netns exec ns1 ifconfig eth0 192.168.10.11/24 up
+
+# 上面我们把veth-ns1这个网卡安到了容器中，然后我们要把lxcbr0.1添加上网桥上
+brctl addif lxcbr0 lxcbr0.1
+
+# 为容器增加一个路由规则，让容器可以访问外面的网络
+ip netns exec ns1 ip route add default via 192.168.10.1
+
+# 在/etc/netns下创建network namespce名称为ns1的目录，
+# 然后为这个namespace设置resolv.conf，这样，容器内就可以访问域名了
+mkdir -p /etc/netns/ns1
+echo "nameserver 8.8.8.8" > /etc/netns/ns1/resolv.conf
+```
+
+## 1.7 unshare
+
+```sh
+unshare --mount-proc --pid --fork /bin/bash
+```
+
+# 2 docker原理
+
+该部分转载自[Container Creation Using Namespaces and Bash](https://dev.to/nicolasmesa/)
+
+## 2.1 术语解释
+
+__Container__：容器是一组技术的集合，包括`namespace`、`cgroup`，在本小结，我们关注的重点是`namespace`
+
+__Namespace__：包含六种namespace，包括`PID`、`User`、`Net`、`Mnt`、`Uts`、`Ipc`
+
+__Btrfs__：Btrfs是一种采用`Copy On Write`模式的高效、易用的文件系统
+
+## 2.2 准备工作
+
+1. 我们需要安装docker（安装docker即可）
+    * 需要使用docker导出某个镜像
+    * 使用docker自带的网桥
+1. 我们需要一个btrfs文件系统，挂载于/btrfs，下面会介绍如何创建（需要安装btrfs命令）
+
+## 2.3 详细步骤
+
+### 2.3.1 创建disk image
+
+```sh
+# 用dd命令创建一个2GB的空image（就是个文件）
+#   if：输入文件/设备，这里指定的是 /dev/zero ，因此输入的是一连串的0
+#   of：输出文件/设备，这里指定的是 disk.img
+#   bs：block的大小
+#   count：block的数量，4194304 = (2 * 1024 * 1024 * 1024 / 512)
+[root@liuyehcf ~]$ dd if=/dev/zero of=disk.img bs=512 count=4194304
+#-------------------------output-------------------------
+记录了4194304+0 的读入
+记录了4194304+0 的写出
+2147483648字节(2.1 GB)已复制，14.8679 秒，144 MB/秒
+#-------------------------output-------------------------
+```
+
+### 2.3.2 格式化disk image
+
+```sh
+# 利用 mkfs.btrfs 命令，将一个文件格式化成 btrfs 文件系统
+[root@liuyehcf ~]$ mkfs.btrfs disk.img
+#-------------------------output-------------------------
+btrfs-progs v4.9.1
+See http://btrfs.wiki.kernel.org for more information.
+
+Label:              (null)
+UUID:               02290d5d-7492-4b19-ab80-48ed5c58cb90
+Node size:          16384
+Sector size:        4096
+Filesystem size:    2.00GiB
+Block group profiles:
+  Data:             single            8.00MiB
+  Metadata:         DUP             102.38MiB
+  System:           DUP               8.00MiB
+SSD detected:       no
+Incompat features:  extref, skinny-metadata
+Number of devices:  1
+Devices:
+   ID        SIZE  PATH
+    1     2.00GiB  disk.img
+#-------------------------output-------------------------
+```
+
+### 2.3.3 挂载disk image
+
+```sh
+# 将disk.img对应的文件系统挂载到/btrfs目录下
+[root@liuyehcf ~]$ mkdir /btrfs
+[root@liuyehcf ~]$ mount -t btrfs disk.img /btrfs
+```
+
+### 2.3.4 让挂载不可见
+
+```sh
+# 让接下来的步骤中容器执行的挂载操作对于外界不可见
+#   --make-rprivate：会递归得让所有子目录中的挂载点对外界不可见
+[root@liuyehcf ~]$ mount --make-rprivate /
+```
+
+### 2.3.5 创建容器镜像
+
+```sh
+# 进入文件系统
+[root@liuyehcf ~]$ cd /btrfs
+
+# 在 images 目录创建一个 subvolume
+[root@liuyehcf btrfs]$ mkdir images containers
+[root@liuyehcf btrfs]$ btrfs subvol create images/alpine
+#-------------------------output-------------------------
+Create subvolume 'images/alpine'
+#-------------------------output-------------------------
+
+# docker run 启动一个容器
+#   -d：退到容器之外，并打印container id
+#   alpine:3.10.2：镜像
+#   true：容器执行的命令
+[root@liuyehcf btrfs]$ CID=$(docker run -d alpine:3.10.2 true)
+[root@liuyehcf btrfs]$ echo $CID
+#-------------------------output-------------------------
+f9d2df08221a67653fe6af9f99dbb2367a6736aecbba8c5403bf3dbb68310f2a
+#-------------------------output-------------------------
+
+# 将容器对应的镜像导出到 images/alpine/ 目录中
+[root@liuyehcf btrfs]$ docker export $CID | tar -C images/alpine/ -xf-
+[root@liuyehcf btrfs]$ ls images/alpine/
+#-------------------------output-------------------------
+bin  dev  etc  home  lib  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+#-------------------------output-------------------------
+
+# 以 images/alpine/ 为源，制作快照 containers/tupperware
+[root@liuyehcf btrfs]$ btrfs subvol snapshot images/alpine/ containers/tupperware
+#-------------------------output-------------------------
+Create a snapshot of 'images/alpine/' in 'containers/tupperware'
+#-------------------------output-------------------------
+
+# 在快照中创建一个文件
+[root@liuyehcf btrfs]$ touch containers/tupperware/NICK_WAS_HERE
+
+# 在快照路径中ls，发现存在文件 NICK_WAS_HERE
+[root@liuyehcf btrfs]$ ls containers/tupperware/
+#-------------------------output-------------------------
+bin  dev  etc  home  lib  media  mnt  NICK_WAS_HERE  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+#-------------------------output-------------------------
+
+# 在源路径中ls，发现不存在文件 NICK_WAS_HERE
+[root@liuyehcf btrfs]$ ls images/alpine/
+#-------------------------output-------------------------
+bin  dev  etc  home  lib  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+#-------------------------output-------------------------
+```
+
+### 2.3.6 使用chroot测试
+
+```sh
+# 将 containers/tupperware/  作为 /root，并执行/root/bin/sh（这里root就是指change之后的root）
+[root@liuyehcf btrfs]$ chroot containers/tupperware/ /bin/sh
+
+# 配置环境变量，否则找不到命令
+/ $ export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin
+
+/ $ ls
+#-------------------------output-------------------------
+NICK_WAS_HERE  dev            home           media          opt            root           sbin           sys            usr
+bin            etc            lib            mnt            proc           run            srv            tmp            var
+#-------------------------output-------------------------
+
+exit
+```
+
+### 2.3.7 使用命名空间
+
+```sh
+# 以6种隔离维度执行bash命令
+[root@liuyehcf btrfs]$ unshare --mount --uts --ipc --net --pid --fork /bin/bash
+
+# 更换hostname
+[root@liuyehcf btrfs]$ hostname tupperware
+
+# 使得hostname生效，注意这个命令不会生成一个新的bash，与直接执行bash有区别
+[root@liuyehcf btrfs]$ exec bash
+
+# 查看进程，发现进程号并不是1开始
+[root@tupperware btrfs]$ ps
+#-------------------------output-------------------------
+  PID TTY          TIME CMD
+ 1583 pts/0    00:00:00 bash
+ 2204 pts/0    00:00:00 unshare
+ 2205 pts/0    00:00:00 bash
+ 2281 pts/0    00:00:00 ps
+#-------------------------output-------------------------
+```
+
+### 2.3.8 挂载proc
+
+```sh
+# 挂载proc
+[root@tupperware btrfs]$ mount -t proc nodev /proc
+
+# 再次查看进程，发现进程号从1开始
+[root@tupperware btrfs]$ ps
+#-------------------------output-------------------------
+  PID TTY          TIME CMD
+    1 pts/0    00:00:00 bash
+   25 pts/0    00:00:00 ps
+#-------------------------output-------------------------
+
+# 暂且先取消挂载
+[root@tupperware btrfs]$ umount /proc
+```
+
+### 2.3.9 交换根文件系统(pivot root)
+
+```sh
+# 接下来，利用 mount 命令以及 pivot_root 命令把 /btrfs/containers/tupperware 作为文件系统的根目录
+# 创建目录oldroot，之后会将当前的根文件系统挂载到 oldroot 上
+[root@tupperware btrfs]$ mkdir /btrfs/containers/tupperware/oldroot
+# mount --bind 将目录挂载到目录上
+[root@tupperware btrfs]$ mount --bind /btrfs/containers/tupperware /btrfs
+
+# 进入到 /btrfs 目录中，看下是否已将容器挂载到该目录下
+[root@tupperware btrfs]$ cd /btrfs/
+[root@tupperware btrfs]$ ls
+#-------------------------output-------------------------
+bin  dev  etc  home  lib  media  mnt  NICK_WAS_HERE  oldroot  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+#-------------------------output-------------------------
+
+# 利用 pivot_root 交换两个文件系统的挂载点
+# 执行完毕之后，旧的文件系统（宿主机的根文件系统）的挂载点就是oldroot，新的文件系统（容器）的挂载点是/
+[root@tupperware btrfs]$ pivot_root . oldroot
+
+# 由于根文件系统已经切换了，需要重新配下环境变量，否则找不到命令
+[root@tupperware btrfs]$ export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin
+
+[root@tupperware btrfs]$ cd /
+
+# 查看当前的根目录，其实就是容器
+[root@tupperware /]$ ls
+#-------------------------output-------------------------
+NICK_WAS_HERE  dev            home           media          oldroot        proc           run            srv            tmp            var
+bin            etc            lib            mnt            opt            root           sbin           sys            usr
+#-------------------------output-------------------------
+
+# 查看原始的根目录，之前的根文件系统挂载到了 oldroot
+[root@tupperware /]$ ls oldroot/
+#-------------------------output-------------------------
+bin       boot      btrfs     dev       disk.img  etc       home      lib       lib64     media     mnt       opt       proc      root      run       sbin      srv       sys       tmp       usr       var
+#-------------------------output-------------------------
+```
+
+### 2.3.10 整理挂载点
+
+```sh
+
+# 必须先挂载proc，因为mount命令依赖proc
+[root@tupperware /]$ mount -t proc nodev /proc
+
+# 查看当前挂载点，可以发现存在非常多的挂载点，这些挂载点不应该对容器可见
+[root@tupperware /]$ mount | head
+#-------------------------output-------------------------
+/dev/mapper/centos-root on /oldroot type xfs (rw,seclabel,relatime,attr2,inode64,noquota)
+devtmpfs on /oldroot/dev type devtmpfs (rw,seclabel,nosuid,size=929308k,nr_inodes=232327,mode=755)
+tmpfs on /oldroot/dev/shm type tmpfs (rw,seclabel,nosuid,nodev)
+devpts on /oldroot/dev/pts type devpts (rw,seclabel,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000)
+hugetlbfs on /oldroot/dev/hugepages type hugetlbfs (rw,seclabel,relatime)
+mqueue on /oldroot/dev/mqueue type mqueue (rw,seclabel,relatime)
+proc on /oldroot/proc type proc (rw,nosuid,nodev,noexec,relatime)
+systemd-1 on /oldroot/proc/sys/fs/binfmt_misc type autofs (rw,relatime,fd=34,pgrp=0,timeout=0,minproto=5,maxproto=5,direct,pipe_ino=8897)
+sysfs on /oldroot/sys type sysfs (rw,seclabel,nosuid,nodev,noexec,relatime)
+#-------------------------output-------------------------
+
+[root@tupperware /]$ umount -a
+#-------------------------output-------------------------
+umount: can't unmount /oldroot/btrfs: Resource busy
+umount: can't unmount /oldroot: Resource busy
+#-------------------------output-------------------------
+
+# 继续挂载proc，因为mount依赖proc
+[root@tupperware /]$ mount -t proc nodev /proc
+
+# 在上一步 umount -a 中，由于/oldroot未被卸载掉，因此这里仍然可以看到
+[root@tupperware /]$ mount
+#-------------------------output-------------------------
+/dev/mapper/centos-root on /oldroot type xfs (rw,seclabel,relatime,attr2,inode64,noquota)
+/dev/loop0 on /oldroot/btrfs type btrfs (ro,seclabel,relatime,space_cache,subvolid=5,subvol=/)
+/dev/loop0 on / type btrfs (ro,seclabel,relatime,space_cache,subvolid=258,subvol=/containers/tupperware)
+proc on /proc type proc (rw,relatime)
+#-------------------------output-------------------------
+
+# 卸载 /oldroot
+#   -l：like将文件系统从挂载点detach出来，当它不繁忙时，再进行剩余清理工作
+[root@tupperware /]$ umount -l /oldroot
+
+# 至此，挂载点整理完毕
+[root@tupperware /]$ mount
+#-------------------------output-------------------------
+rootfs on / type rootfs (rw)
+/dev/loop0 on / type btrfs (ro,seclabel,relatime,space_cache,subvolid=258,subvol=/containers/tupperware)
+proc on /proc type proc (rw,relatime)
+#-------------------------output-------------------------
+```
+
+### 2.3.11 网络命名空间
+
+__以下命令，在容器终端执行（unshare创建的容器终端）__
+
+```sh
+[root@tupperware /]$ ping 8.8.8.8
+#-------------------------output-------------------------
+PING 8.8.8.8 (8.8.8.8): 56 data bytes
+ping: sendto: Network unreachable
+#-------------------------output-------------------------
+
+[root@tupperware /]$ ifconfig -a
+#-------------------------output-------------------------
+lo        Link encap:Local Loopback
+          LOOPBACK  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+#-------------------------output-------------------------
+```
+
+__以下命令，在另一个终端执行（非上述unshare创建的容器终端）__
+
+```sh
+
+[root@liuyehcf ~]$ CPID=$(pidof unshare)
+[root@liuyehcf ~]$ echo $CPID
+#-------------------------output-------------------------
+2204
+#-------------------------output-------------------------
+
+# 创建一对网卡设备，名字分别为 h2204 以及 c2204
+[root@liuyehcf ~]$ ip link add name h$CPID type veth peer name c$CPID
+
+# 将网卡 c2204 放入容器网络的命名空间中，网络命名空间就是容器的pid，即2204
+[root@liuyehcf ~]$ ip link set c$CPID netns $CPID
+```
+
+__以下命令，在容器终端执行（unshare创建的容器终端）__
+
+```sh
+[root@tupperware /]$ ifconfig -a
+#-------------------------output-------------------------
+c2204     Link encap:Ethernet  HWaddr 32:35:C2:08:CF:D6
+          BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+lo        Link encap:Local Loopback
+          LOOPBACK  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+#-------------------------output-------------------------
+```
+
+__以下命令，在另一个终端执行（非上述unshare创建的容器终端）__
+
+```sh
+# 利用 ip link set 将网卡 c2204 关联到网桥 docker0
+[root@liuyehcf ~]$ ip link set h$CPID master docker0 up
+[root@liuyehcf ~]$ ifconfig docker0
+#-------------------------output-------------------------
+docker0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
+        inet 172.17.0.1  netmask 255.255.0.0  broadcast 0.0.0.0
+        inet6 fe80::42:e3ff:feda:6184  prefixlen 64  scopeid 0x20<link>
+        ether 02:42:e3:da:61:84  txqueuelen 0  (Ethernet)
+        RX packets 2  bytes 152 (152.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 3  bytes 258 (258.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+#-------------------------output-------------------------
+```
+
+__以下命令，在容器终端执行（unshare创建的容器终端）__
+
+```sh
+# 开启loopback网卡
+[root@tupperware /]$ ip link set lo up
+
+# 将网卡 c2204 重命名为eth0，并将其打开
+[root@tupperware /]$ ip link set c2204 name eth0 up
+
+# 给网卡eth0分配ip，要注意，该ip必须与网桥 docker0 位于同一网段
+[root@tupperware /]$ ip addr add 172.17.42.3/16 dev eth0
+
+# 将网桥 docker0 设为默认路由
+[root@tupperware /]$ ip route add default via 172.17.0.1
+
+# 查看网卡设备
+[root@tupperware /]$ ifconfig
+#-------------------------output-------------------------
+eth0      Link encap:Ethernet  HWaddr 32:35:C2:08:CF:D6
+          inet addr:172.17.42.3  Bcast:0.0.0.0  Mask:255.255.0.0
+          inet6 addr: fe80::3035:c2ff:fe08:cfd6/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:8 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:8 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:648 (648.0 B)  TX bytes:648 (648.0 B)
+
+lo        Link encap:Local Loopback
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+#-------------------------output-------------------------
+
+[root@tupperware /]$ ping -c 3 8.8.8.8
+#-------------------------output-------------------------
+PING 8.8.8.8 (8.8.8.8): 56 data bytes
+64 bytes from 8.8.8.8: seq=0 ttl=49 time=30.481 ms
+64 bytes from 8.8.8.8: seq=1 ttl=49 time=31.170 ms
+64 bytes from 8.8.8.8: seq=2 ttl=49 time=30.111 ms
+
+--- 8.8.8.8 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max = 30.111/30.587/31.170 ms
+#-------------------------output-------------------------
+```
+
+## 2.4 清理
+
+```sh
+# 退出容器终端
+[root@tupperware /]$ exit
+#-------------------------output-------------------------
+exit
+#-------------------------output-------------------------
+
+[root@liuyehcf btrfs]$ cd /
+[root@liuyehcf /]$ umount /btrfs
+[root@liuyehcf /]$ rm -f disk.img
+[root@liuyehcf /]$ rmdir /btrfs/
+```
+
+# 3 cgroup
+
+__2种cgroup驱动__
+
+1. `system cgroup driver`
+1. `cgroupfs cgroup driver`
+
+__容器中常用的cgroup__
+
+1. `cpu cpuset cpuacct`
+1. `memory`
+1. `device`：控制可以在容器中看到的设备
+1. `freezer`：在停止容器的时候使用，冻结容器内所有进程，防止进程逃逸到宿主机？？？
+1. `blkio`：限制容器用到的磁盘的iops、vps速率限制
+1. `pid`：容器可以用到的最大进程数量
+
+__查看当前系统可用的cgroup__
+
+* `mount -t cgroup`
+
+## 3.1 参考
 
 * [DOCKER基础技术：LINUX NAMESPACE（上）](https://coolshell.cn/articles/17010.html)
 * [DOCKER基础技术：LINUX NAMESPACE（下）](https://coolshell.cn/articles/17029.html)
 * [DOCKER基础技术：LINUX CGROUP](https://coolshell.cn/articles/17049.html)
+* [Container Creation Using Namespaces and Bash](https://dev.to/nicolasmesa/container-creation-using-namespaces-and-bash-6g)
 * [clone-manpage](http://man7.org/linux/man-pages/man2/clone.2.html)
 * [Linux资源管理之cgroups简介](https://tech.meituan.com/2015/03/31/cgroups.html)
 * [Docker 背后的内核知识——cgroups 资源限制](https://www.infoq.cn/article/docker-kernel-knowledge-cgroups-resource-isolation/)
