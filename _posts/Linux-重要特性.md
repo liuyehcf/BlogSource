@@ -348,56 +348,261 @@ cat /proc/sys/user/max_net_namespaces
 
 __Network Namespace：用于隔离网络__
 
+### 1.6.1 无网桥
+
+__编写一个脚本，内容如下，这里我取名为`netns_without_bridge.sh`__
+
 ```sh
-#----------------------------------------
-# 首先，我们先增加一个网桥lxcbr0，模仿docker0
-#----------------------------------------
+#!/bin/bash
 
-# 若没有brctl命令，执行 yum install -y bridge-utils 进行安装
-brctl addbr lxcbr0
-brctl stp lxcbr0 off
-ifconfig lxcbr0 192.168.10.1/24 up #为网桥设置IP地址
+export namespace=liuye
 
-#----------------------------------------
-# 接下来，我们要创建一个network namespace - ns1
-#----------------------------------------
+export ifname_outside_ns=veth1
+export ifname_inside_ns=veth2
+export ifname_external=enp0s3
 
-# 增加一个namesapce 命令为 ns1 （使用ip netns add命令）
-ip netns add ns1 
+export ip_outside_ns=192.168.45.2
+export ip_inside_ns=192.168.45.3
 
-# 激活namespace中的loopback，即127.0.0.1（使用ip netns exec ns1来操作ns1中的命令）
-ip netns exec ns1 ip link set dev lo up 
+export ip_net=192.168.45.0
+export ip_netmask=255.255.255.0
 
-#----------------------------------------
-# 然后，我们需要增加一对虚拟网卡
-#----------------------------------------
+function setup(){
+	echo "1/10: 创建名为 '${namespace}' 的网络命名空间"
+	ip netns add ${namespace}
 
-# 增加一个pair虚拟网卡，注意其中的veth类型，其中一个网卡要安进容器中
-ip link add veth-ns1 type veth peer name lxcbr0.1
+	echo "2/10: 创建一对 'veth' 类型的网卡设备，一个网卡为 '${ifname_outside_ns}'，另一个网卡为 '${ifname_inside_ns}'"
+	ip link add ${ifname_outside_ns} type veth peer name ${ifname_inside_ns}
 
-# 启动主机中的虚拟网卡设备veth-ns1以及lxcbr0.1
-ip link set veth-ns1 up
-ip link set lxcbr0.1 up
+	echo "3/10: 配置网卡 '${ifname_outside_ns}' 的IP地址 '${ip_outside_ns}'"
+	ifconfig ${ifname_outside_ns} ${ip_outside_ns} netmask ${ip_netmask} up
 
-# 把 veth-ns1 安到namespace ns1中，这样容器中就会有一个新的网卡了
-ip link set veth-ns1 netns ns1
+    echo "4/10: 将网卡 '${ifname_inside_ns}' 加入网络命名空间 '${namespace}' 中"
+	ip link set ${ifname_inside_ns} netns ${namespace}
 
-# 把容器里的 veth-ns1改名为 eth0 （容器外会冲突，容器内就不会了）
-ip netns exec ns1 ip link set dev veth-ns1 name eth0 
+	echo "5/10: 将在网络命名空间 '${namespace}' 中的网卡 '${ifname_inside_ns}' 的IP地址设置为 '${ip_inside_ns}'，它需要和网卡 '${ifname_outside_ns}' 的IP地址在同一个网段上"
+	ip netns exec ${namespace} ifconfig ${ifname_inside_ns} ${ip_inside_ns} netmask ${ip_netmask} up
 
-# 为容器中的网卡分配一个IP地址，并激活它
-ip netns exec ns1 ifconfig eth0 192.168.10.11/24 up
+	echo "6/10: 将网络命名空间 '${namespace}' 中的默认路由设置为网卡 '${ifname_outside_ns}' 的IP地址 '${ip_outside_ns}'"
+	ip netns exec ${namespace} route add default gw ${ip_outside_ns}
 
-# 上面我们把veth-ns1这个网卡安到了容器中，然后我们要把lxcbr0.1添加上网桥上
-brctl addif lxcbr0 lxcbr0.1
+	echo "7/10: 配置SNAT，将从网络命名空间 '${namespace}' 中发出的网络包的源IP地址替换为网卡 '${ifname_external}' 的IP地址"
+	iptables -t nat -A POSTROUTING -s ${ip_net}/${ip_netmask} -o ${ifname_external} -j MASQUERADE
 
-# 为容器增加一个路由规则，让容器可以访问外面的网络
-ip netns exec ns1 ip route add default via 192.168.10.1
+	echo "8/10: 在默认的 'FORWARD' 规则为 'DROP' 时，显式地允许网卡 '${ifname_outside_ns}' 和网卡 '${ifname_external}' 之间的进行数据包转发"
+	iptables -t filter -A FORWARD -i ${ifname_external} -o ${ifname_outside_ns} -j ACCEPT
+	iptables -t filter -A FORWARD -i ${ifname_outside_ns} -o ${ifname_external} -j ACCEPT
 
-# 在/etc/netns下创建network namespce名称为ns1的目录，
-# 然后为这个namespace设置resolv.conf，这样，容器内就可以访问域名了
-mkdir -p /etc/netns/ns1
-echo "nameserver 8.8.8.8" > /etc/netns/ns1/resolv.conf
+    echo "9/10: 开启内核转发功能"
+	echo 1 > /proc/sys/net/ipv4/ip_forward
+
+    echo "10/10: 为网络命名空间 '${namespace}' 配置DNS服务，用于域名解析"
+	mkdir -p /etc/netns/${namespace}
+	echo "nameserver 8.8.8.8" > /etc/netns/${namespace}/resolv.conf
+}
+
+function cleanup(){
+	echo "1/4: 删除 'FORWARD' 规则"
+	iptables -t filter -D FORWARD -i ${ifname_external} -o ${ifname_outside_ns} -j ACCEPT
+        iptables -t filter -D FORWARD -i ${ifname_outside_ns} -o ${ifname_external} -j ACCEPT
+
+	echo "2/4: 删除 'NAT'"
+	iptables -t nat -D POSTROUTING -s ${ip_net}/${ip_netmask} -o ${ifname_external} -j MASQUERADE
+
+	echo "3/4: 删除网卡设备 '${ifname_outside_ns}' 以及 '${ifname_inside_ns}'"
+	ip link delete ${ifname_outside_ns}
+	
+	echo "4/4: 删除网络命名空间 '${namespace}'"
+	ip netns delete ${namespace}
+    rm -rf /etc/netns/${namespace}
+}
+
+export -f setup
+export -f cleanup
+```
+
+__下面进行测试__
+
+```sh
+# 执行脚本，将函数以及环境变量导出
+[root@liuyehcf ~]$ source netns_without_bridge.sh
+
+# 配置
+[root@liuyehcf ~]$ setup
+#-------------------------output-------------------------
+1/10: 创建名为 'liuye' 的网络命名空间
+2/10: 创建一对 'veth' 类型的网卡设备，一个网卡为 'veth1'，另一个网卡为 'veth2'
+3/10: 配置网卡 'veth1' 的IP地址 '192.168.45.2'
+4/10: 将网卡 'veth2' 加入网络命名空间 'liuye' 中
+5/10: 将在网络命名空间 'liuye' 中的网卡 'veth2' 的IP地址设置为 '192.168.45.3'，它需要和网卡 'veth1' 的IP地址在同一个网段上
+6/10: 将网络命名空间 'liuye' 中的默认路由设置为网卡 'veth1' 的IP地址 '192.168.45.2'
+7/10: 配置SNAT，将从网络命名空间 'liuye' 中发出的网络包的源IP地址替换为网卡 'enp0s3' 的IP地址
+8/10: 在默认的 'FORWARD' 规则为 'DROP' 时，显式地允许网卡 'veth1' 和网卡 'enp0s3' 之间的进行数据包转发
+9/10: 开启内核转发功能
+10/10: 为网络命名空间 'liuye' 配置DNS服务，用于域名解析
+#-------------------------output-------------------------
+
+# 测试网络连通性
+[root@liuyehcf ~]$ ip netns exec liuye ping -c 3 www.aliyun.com
+#-------------------------output-------------------------
+PING xjp-adns.aliyun.com.gds.alibabadns.com (47.88.251.163) 56(84) bytes of data.
+64 bytes from 47.88.251.163 (47.88.251.163): icmp_seq=1 ttl=32 time=74.8 ms
+64 bytes from 47.88.251.163 (47.88.251.163): icmp_seq=2 ttl=32 time=73.1 ms
+64 bytes from 47.88.251.163 (47.88.251.163): icmp_seq=3 ttl=32 time=73.4 ms
+
+--- xjp-adns.aliyun.com.gds.alibabadns.com ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2095ms
+rtt min/avg/max/mdev = 73.125/73.818/74.841/0.802 ms
+#-------------------------output-------------------------
+
+# 清理
+[root@liuyehcf ~]$ cleanup
+#-------------------------output-------------------------
+1/4: 删除 'FORWARD' 规则
+2/4: 删除 'NAT'
+3/4: 删除网卡设备 'veth1' 以及 'veth2'
+4/4: 删除网络命名空间 'liuye'
+#-------------------------output-------------------------
+```
+
+### 1.6.2 有网桥
+
+__编写一个脚本，内容如下，这里我取名为`netns_with_bridge.sh`__
+
+```sh
+#!/bin/bash
+
+export namespace=liuye
+
+export ifname_outside_ns=veth1
+export ifname_inside_ns=veth2
+export ifname_external=enp0s3
+
+export ip_outside_ns=192.168.45.2
+export ip_inside_ns=192.168.45.3
+
+export ip_net=192.168.45.0
+export ip_netmask=255.255.255.0
+
+export bridge_name=demobridge
+
+function setup(){
+	echo "1/13: 创建网桥 '${bridge_name}'"
+	brctl addbr ${bridge_name}
+	brctl stp ${bridge_name} off
+
+	echo "2/13: 配置网桥 '${bridge_name}' 的IP '${ip_outside_ns}'"
+	ifconfig ${bridge_name} ${ip_outside_ns} netmask ${ip_netmask} up
+
+	echo "3/13: 创建名为 '${namespace}' 的网络命名空间"
+	ip netns add ${namespace}
+
+	echo "4/13: 创建一对 'veth' 类型的网卡设备，一个网卡为 '${ifname_outside_ns}'，另一个网卡为 '${ifname_inside_ns}'"
+	ip link add ${ifname_outside_ns} type veth peer name ${ifname_inside_ns}
+
+	echo "5/13: 开启网卡 '${ifname_outside_ns}'"
+	ip link set ${ifname_outside_ns} up
+
+	echo "6/13: 将网卡 '${ifname_outside_ns}' 绑定到网桥 '${bridge_name}' 上"
+        brctl addif ${bridge_name} ${ifname_outside_ns}
+	
+	echo "7/13: 将网卡 '${ifname_inside_ns}' 加入网络命名空间 '${namespace}' 中"
+	ip link set ${ifname_inside_ns} netns ${namespace}
+
+	echo "8/13: 将在网络命名空间 '${namespace}' 中的网卡 '${ifname_inside_ns}' 的IP地址设置为 '${ip_inside_ns}'，它需要和网卡 '${ifname_outside_ns}' 的IP地址在同一个网段上"
+	ip netns exec ${namespace} ifconfig ${ifname_inside_ns} ${ip_inside_ns} netmask ${ip_netmask} up
+
+	echo "9/13: 将网络命名空间 '${namespace}' 中的默认路由设置为网卡 '${ifname_outside_ns}' 的IP地址 '${ip_outside_ns}'"
+	ip netns exec ${namespace} route add default gw ${ip_outside_ns}
+
+	echo "10/13: 配置SNAT，将从网络命名空间 '${namespace}' 中发出的网络包的源IP地址替换为网卡 '${ifname_external}' 的IP地址"
+	iptables -t nat -A POSTROUTING -s ${ip_net}/${ip_netmask} -o ${ifname_external} -j MASQUERADE
+
+	echo "11/13: 在默认的 'FORWARD' 规则为 'DROP' 时，显式地允许网桥 '${bridge_name}' 和网卡 '${ifname_external}' 之间的进行数据包转发"
+	iptables -t filter -A FORWARD -i ${ifname_external} -o ${bridge_name} -j ACCEPT
+	iptables -t filter -A FORWARD -i ${bridge_name} -o ${ifname_external} -j ACCEPT
+	
+	echo "12/13: 开启内核转发功能"
+	echo 1 > /proc/sys/net/ipv4/ip_forward
+
+	echo "13/13: 为网络命名空间 '${namespace}' 配置DNS服务，用于域名解析"
+	mkdir -p /etc/netns/${namespace}
+	echo "nameserver 8.8.8.8" > /etc/netns/${namespace}/resolv.conf
+}
+
+function cleanup(){
+	echo "1/6: 删除 'FORWARD' 规则"
+	iptables -t filter -D FORWARD -i ${ifname_external} -o ${bridge_name} -j ACCEPT
+        iptables -t filter -D FORWARD -i ${bridge_name} -o ${ifname_external} -j ACCEPT
+
+	echo "2/6: 删除 'NAT'"
+	iptables -t nat -D POSTROUTING -s ${ip_net}/${ip_netmask} -o ${ifname_external} -j MASQUERADE
+
+	echo "3/6: 删除网卡设备 '${ifname_outside_ns}' 以及 '${ifname_inside_ns}'"
+	ip link delete ${ifname_outside_ns}
+	
+	echo "4/6: 删除网络命名空间 '${namespace}'"
+	ip netns delete ${namespace}
+	rm -rf /etc/netns/${namespace}
+
+	echo "5/6: 关闭网桥 '${bridge_name}'"
+	ifconfig ${bridge_name} down
+
+	echo "6/6: 删除网桥 '${bridge_name}'"
+	brctl delbr ${bridge_name}
+}
+
+export -f setup
+export -f cleanup
+```
+
+__下面进行测试__
+
+```sh
+# 执行脚本，将函数以及环境变量导出
+[root@liuyehcf ~]$ source netns_with_bridge.sh
+
+# 配置
+[root@liuyehcf ~]$ setup
+#-------------------------output-------------------------
+1/13: 创建网桥 'demobridge'
+2/13: 配置网桥 'demobridge' 的IP '192.168.45.2'
+3/13: 创建名为 'liuye' 的网络命名空间
+4/13: 创建一对 'veth' 类型的网卡设备，一个网卡为 'veth1'，另一个网卡为 'veth2'
+5/13: 开启网卡 'veth1'
+6/13: 将网卡 'veth1' 绑定到网桥 'demobridge' 上
+7/13: 将网卡 'veth2' 加入网络命名空间 'liuye' 中
+8/13: 将在网络命名空间 'liuye' 中的网卡 'veth2' 的IP地址设置为 '192.168.45.3'，它需要和网卡 'veth1' 的IP地址在同一个网段上
+9/13: 将网络命名空间 'liuye' 中的默认路由设置为网卡 'veth1' 的IP地址 '192.168.45.2'
+10/13: 配置SNAT，将从网络命名空间 'liuye' 中发出的网络包的源IP地址替换为网卡 'enp0s3' 的IP地址
+11/13: 在默认的 'FORWARD' 规则为 'DROP' 时，显式地允许网桥 'demobridge' 和网卡 'enp0s3' 之间的进行数据包转发
+12/13: 开启内核转发功能
+13/13: 为网络命名空间 'liuye' 配置DNS服务，用于域名解析
+#-------------------------output-------------------------
+
+# 测试网络连通性
+[root@liuyehcf ~]$ ip netns exec liuye ping -c 3 www.aliyun.com
+#-------------------------output-------------------------
+PING xjp-adns.aliyun.com.gds.alibabadns.com (47.88.251.173) 56(84) bytes of data.
+64 bytes from 47.88.251.173 (47.88.251.173): icmp_seq=1 ttl=32 time=74.8 ms
+64 bytes from 47.88.251.173 (47.88.251.173): icmp_seq=2 ttl=32 time=73.1 ms
+64 bytes from 47.88.251.173 (47.88.251.173): icmp_seq=3 ttl=32 time=74.3 ms
+
+--- xjp-adns.aliyun.com.gds.alibabadns.com ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2025ms
+rtt min/avg/max/mdev = 73.192/74.111/74.808/0.747 ms
+#-------------------------output-------------------------
+
+# 清理
+[root@liuyehcf ~]$ cleanup
+#-------------------------output-------------------------
+1/6: 删除 'FORWARD' 规则
+2/6: 删除 'NAT'
+3/6: 删除网卡设备 'veth1' 以及 'veth2'
+4/6: 删除网络命名空间 'liuye'
+5/6: 关闭网桥 'demobridge'
+6/6: 删除网桥 'demobridge'
+#-------------------------output-------------------------
 ```
 
 ## 1.7 unshare
@@ -857,6 +1062,7 @@ __查看当前系统可用的cgroup__
 * [DOCKER基础技术：LINUX NAMESPACE（下）](https://coolshell.cn/articles/17029.html)
 * [DOCKER基础技术：LINUX CGROUP](https://coolshell.cn/articles/17049.html)
 * [Container Creation Using Namespaces and Bash](https://dev.to/nicolasmesa/container-creation-using-namespaces-and-bash-6g)
+* [Netruon 理解（12）：使用 Linux bridge 将 Linux network namespace 连接外网](https://www.bbsmax.com/A/VGzl4XYzbq/)
 * [clone-manpage](http://man7.org/linux/man-pages/man2/clone.2.html)
 * [Linux资源管理之cgroups简介](https://tech.meituan.com/2015/03/31/cgroups.html)
 * [Docker 背后的内核知识——cgroups 资源限制](https://www.infoq.cn/article/docker-kernel-knowledge-cgroups-resource-isolation/)
