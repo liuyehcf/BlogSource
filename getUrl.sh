@@ -1,8 +1,13 @@
 #! /bin/bash
 
 function sortByDate() {
+    # 将入参转换成数组，默认以空格作为分隔符
     FILE_PATH_ARRAY=( $(echo $1) );
+
+    # timeOrder -> file array的映射，具有相同timeOrder的文件被汇聚在了一起
     declare -A FILE_MAP;
+
+    # timeOrder 数组
     TIME_ORDER_ARRAY="";
     for FILE_PATH in ${FILE_PATH_ARRAY[*]}
     do
@@ -26,7 +31,7 @@ function sortByDate() {
 
     done
 
-    # 排序
+    # 排序，将乱序的 TIME_ORDER_ARRAY 转换成 有序的 SORTED_UNIQUE_TIME_ORDER_ARRAY
     SORTED_UNIQUE_TIME_ORDER_ARRAY="";
     while read LINE
     do
@@ -39,6 +44,7 @@ function sortByDate() {
     # 此处语法为：进程替换
     done < <(echo -e ${TIME_ORDER_ARRAY} | sort -nu) 
 
+    # 遍历SORTED_UNIQUE_TIME_ORDER_ARRAY 中的 timeOrder，从FILE_MAP中取出对应于 timeOrder 的文件列表
     i=0;
     for TIME_ORDER in ${SORTED_UNIQUE_TIME_ORDER_ARRAY[*]}
     do
