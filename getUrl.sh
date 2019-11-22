@@ -67,7 +67,7 @@ fi
 BLOG_URL_PREFIX=https://liuyehcf.github.io/;
 
 # 年份
-YEARS=(2017 2018);
+YEARS=(2017 2018 2019);
 
 # 查找所有index.html文件，一个文件对应一篇博文
 
