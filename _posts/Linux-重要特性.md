@@ -389,7 +389,7 @@ function setup(){
 	echo "7/10: 配置SNAT，将从网络命名空间 '${namespace}' 中发出的网络包的源IP地址替换为网卡 '${ifname_external}' 的IP地址"
 	iptables -t nat -A POSTROUTING -s ${ip_net}/${ip_netmask} -o ${ifname_external} -j MASQUERADE
 
-	echo "8/10: 在默认的 'FORWARD' 规则为 'DROP' 时，显式地允许网卡 '${ifname_outside_ns}' 和网卡 '${ifname_external}' 之间的进行数据包转发"
+	echo "8/10: 在默认的 'FORWARD' 策略为 'DROP' 时，显式地允许网卡 '${ifname_outside_ns}' 和网卡 '${ifname_external}' 之间的进行数据包转发"
 	iptables -t filter -A FORWARD -i ${ifname_external} -o ${ifname_outside_ns} -j ACCEPT
 	iptables -t filter -A FORWARD -i ${ifname_outside_ns} -o ${ifname_external} -j ACCEPT
 
@@ -437,7 +437,7 @@ __下面进行测试__
 5/10: 将在网络命名空间 'liuye' 中的网卡 'veth2' 的IP地址设置为 '192.168.45.3'，它需要和网卡 'veth1' 的IP地址在同一个网段上
 6/10: 将网络命名空间 'liuye' 中的默认路由设置为网卡 'veth1' 的IP地址 '192.168.45.2'
 7/10: 配置SNAT，将从网络命名空间 'liuye' 中发出的网络包的源IP地址替换为网卡 'enp0s3' 的IP地址
-8/10: 在默认的 'FORWARD' 规则为 'DROP' 时，显式地允许网卡 'veth1' 和网卡 'enp0s3' 之间的进行数据包转发
+8/10: 在默认的 'FORWARD' 策略为 'DROP' 时，显式地允许网卡 'veth1' 和网卡 'enp0s3' 之间的进行数据包转发
 9/10: 开启内核转发功能
 10/10: 为网络命名空间 'liuye' 配置DNS服务，用于域名解析
 #-------------------------output-------------------------
@@ -518,7 +518,7 @@ function setup(){
 	echo "10/13: 配置SNAT，将从网络命名空间 '${namespace}' 中发出的网络包的源IP地址替换为网卡 '${ifname_external}' 的IP地址"
 	iptables -t nat -A POSTROUTING -s ${ip_net}/${ip_netmask} -o ${ifname_external} -j MASQUERADE
 
-	echo "11/13: 在默认的 'FORWARD' 规则为 'DROP' 时，显式地允许网桥 '${bridge_name}' 和网卡 '${ifname_external}' 之间的进行数据包转发"
+	echo "11/13: 在默认的 'FORWARD' 策略为 'DROP' 时，显式地允许网桥 '${bridge_name}' 和网卡 '${ifname_external}' 之间的进行数据包转发"
 	iptables -t filter -A FORWARD -i ${ifname_external} -o ${bridge_name} -j ACCEPT
 	iptables -t filter -A FORWARD -i ${bridge_name} -o ${ifname_external} -j ACCEPT
 	
@@ -575,7 +575,7 @@ __下面进行测试__
 8/13: 将在网络命名空间 'liuye' 中的网卡 'veth2' 的IP地址设置为 '192.168.45.3'，它需要和网卡 'veth1' 的IP地址在同一个网段上
 9/13: 将网络命名空间 'liuye' 中的默认路由设置为网卡 'veth1' 的IP地址 '192.168.45.2'
 10/13: 配置SNAT，将从网络命名空间 'liuye' 中发出的网络包的源IP地址替换为网卡 'enp0s3' 的IP地址
-11/13: 在默认的 'FORWARD' 规则为 'DROP' 时，显式地允许网桥 'demobridge' 和网卡 'enp0s3' 之间的进行数据包转发
+11/13: 在默认的 'FORWARD' 策略为 'DROP' 时，显式地允许网桥 'demobridge' 和网卡 'enp0s3' 之间的进行数据包转发
 12/13: 开启内核转发功能
 13/13: 为网络命名空间 'liuye' 配置DNS服务，用于域名解析
 #-------------------------output-------------------------
@@ -603,12 +603,6 @@ rtt min/avg/max/mdev = 73.192/74.111/74.808/0.747 ms
 5/6: 关闭网桥 'demobridge'
 6/6: 删除网桥 'demobridge'
 #-------------------------output-------------------------
-```
-
-## 1.7 unshare
-
-```sh
-unshare --mount-proc --pid --fork /bin/bash
 ```
 
 # 2 docker原理
