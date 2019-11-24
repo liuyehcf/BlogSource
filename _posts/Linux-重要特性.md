@@ -1209,7 +1209,7 @@ FILE *fp = NULL;
 
 int main() {
     // 打开日志文件
-    fp = fopen("/root/default.log", "w");
+    fp = fopen("/root/default.log", "a+");
     if (fp < 0) {
         exit(1);
     }
@@ -1262,7 +1262,7 @@ Documentation=https://liuyehcf.github.io/2019/10/13/Linux-%E9%87%8D%E8%A6%81%E7%
 Type=simple
 ExecStart=/root/demo-service
 ExecReload=/bin/kill -s HUP $MAINPID
-ExecStop=/bin/kill -s QUIT $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
 Restart=always
 RestartSec=3
 PrivateTmp=true
@@ -1305,6 +1305,10 @@ __测试__
 
 # 停止服务
 [root@localhost ~]$ systemctl stop demo-service.service
+#-------------------------output-------------------------
+捕获信号 1, 重新加载配置文件
+捕获信号 15, 退出进程
+#-------------------------output-------------------------
 ```
 
 ## 3.6 参考
