@@ -601,7 +601,27 @@ __`ps aux`打印参数说明：__
 * `COMMAND`：该进程的实际命令
 * 一般来说ps aux会按照PID的顺序来排序显示
 
-## 6.9 nohup
+## 6.9 pgrep
+
+__格式：__
+
+* `pgrep [-lon] <pattern>`
+
+__参数说明：__
+
+* `-l`：列出pid以及进程名
+* `-o`：列出oldest的进程
+* `-n`：列出newest的进程
+
+__示例：__
+
+* `pgrep sshd`
+* `pgrep -l sshd`
+* `pgrep -lo sshd`
+* `pgrep -ln sshd`
+* `pgrep -l ssh*`
+
+## 6.10 nohup
 
 __`nohup`会忽略所有挂断（SIGHUP）信号__。比如通过`ssh`登录到远程服务器上，然后启动一个程序，当`ssh`登出时，这个程序就会随即终止。如果用`nohup`方式启动，那么当`ssh`登出时，这个程序仍然会继续运行
 
@@ -619,7 +639,7 @@ __示例：__
 
 * `nohup java -jar xxx.jar &`
 
-## 6.10 screen
+## 6.11 screen
 
 __如果想在关闭`ssh`连接后继续运行启动的程序，可以使用`nohup`。如果要求下次`ssh`登录时，还能查看到上一次`ssh`登录时运行的程序的状态，那么就需要使用`screen`__
 
@@ -654,7 +674,7 @@ __会话管理__
 1. `Ctrl a + d`：暂时断开screen会话
 1. `Ctrl a + k`：杀掉当前窗口
 
-## 6.11 pstree
+## 6.12 pstree
 
 __格式：__
 

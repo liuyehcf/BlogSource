@@ -1067,8 +1067,251 @@ __查看当前系统可用的cgroup__
 
 # 3 Systemd
 
-## 3.1 参考
+本小结转载自[Systemd 入门教程：命令篇](http://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-commands.html)
 
+## 3.1 概述
+
+历史上，Linux的启动一直采用`init`进程，这种方法有两个缺点
+
+1. 一是启动时间长。`init`进程是串行启动，只有前一个进程启动完，才会启动下一个进程
+1. 二是启动脚本复杂。`init`进程只是执行启动脚本，不管其他事情。脚本需要自己处理各种情况，这往往使得脚本变得很长
+
+__`Systemd`就是为了解决这些问题而诞生的。它的设计目标是，为系统的启动和管理提供一套完整的解决方案__
+
+## 3.2 Unit
+
+`Systemd`可以管理所有系统资源。不同的资源统称为`Unit`（单位），`Unit`一共分成12种
+
+1. __`Service unit`：系统服务__
+1. `Target unit`：多个 Unit 构成的一个组
+    * 启动计算机的时候，需要启动大量的`Unit`。如果每一次启动，都要一一写明本次启动需要哪些`Unit`，显然非常不方便。`Systemd`的解决方案就是`Target`
+    * 简单说，`Target`就是一个`Unit`组，包含许多相关的`Unit`。启动某个`Target`的时候，`Systemd`就会启动里面所有的 `Unit`。从这个意义上说，`Target`这个概念类似于“状态点”，启动某个`Target`就好比启动到某种状态
+    * 传统的`init`启动模式里面，有`RunLevel`的概念，跟`Target`的作用很类似。不同的是，`RunLevel`是互斥的，不可能多个 `RunLevel`同时启动，但是多个`Target`可以同时启动。
+1. `Device Unit`：硬件设备
+1. `Mount Unit`：文件系统的挂载点
+1. `Automount Unit`：自动挂载点
+1. `Path Unit`：文件或路径
+1. `Scope Unit`：不是由 Systemd 启动的外部进程
+1. `Slice Unit`：进程组
+1. `Snapshot Unit`：Systemd 快照，可以切回某个快照
+1. `Socket Unit`：进程间通信的 socket
+1. `Swap Unit`：swap 文件
+1. `Timer Unit`：定时器
+
+每一个`Unit`都有一个配置文件，告诉`Systemd`怎么启动这个`Unit`。__`Systemd`默认从目录`/etc/systemd/system/`读取配置文件。但是，里面存放的大部分文件都是符号链接，指向目录`/usr/lib/systemd/system/`，真正的配置文件存放在那个目录__。`systemctl enable`命令用于在上面两个目录之间，建立符号链接关系。与之对应的，`systemctl disable`命令用于在两个目录之间，撤销符号链接关系，相当于撤销开机启动。配置文件的后缀名，就是该`Unit`的种类。如果省略，__`Systemd`默认后缀名为`.service`__
+
+```sh
+systemctl enable demo-service.service
+# 等同于
+ln -s '/usr/lib/systemd/system/demo-service.service' '/etc/systemd/system/multi-user.target.wants/demo-service.service'
+```
+
+`systemctl list-unit-files`这个命令会输出一个列表，这个列表显示每个配置文件的状态，一共有四种
+
+1. `enabled`：已建立启动链接
+1. `disabled`：没建立启动链接
+1. `static`：该配置文件没有`[Install]`部分（无法执行），只能作为其他配置文件的依赖
+1. `masked`：该配置文件被禁止建立启动链接
+* __注意，从配置文件的状态无法看出，该`Unit`是否正在运行。若要查看`Unit`的运行状态，需要使用`systemctl status`命令__
+
+## 3.3 文件格式
+
+__`systemctl cat`可以查看配置文件的内容，例如`systemctl cat sshd.service`__
+
+一般来说，一个`Unit`的格式如下
+
+```
+[Unit]
+...
+
+[Service]
+...
+
+[Install]
+...
+```
+
+__`[Unit]`区块通常是配置文件的第一个区块，用来定义`Unit`的元数据，以及配置与其他`Unit`的关系。它的主要字段如下__
+
+* `Description`：简短描述
+* `Documentation`：文档地址
+* `Requires`：当前`Unit`依赖的其他`Unit`，如果它们没有运行，当前`Unit`会启动失败
+* `Wants`：与当前`Unit`配合的其他`Unit`，如果它们没有运行，当前`Unit`不会启动失败
+* `BindsTo`：与`Requires`类似，它指定的`Unit`如果退出，会导致当前`Unit`停止运行
+* `Before`：如果该字段指定的`Unit`也要启动，那么必须在当前`Unit`之后启动
+* `After`：如果该字段指定的`Unit`也要启动，那么必须在当前`Unit`之前启动
+* `Conflicts`：这里指定的`Unit`不能与当前`Unit`同时运行
+* `Condition...`：当前`Unit`运行必须满足的条件，否则不会运行
+* `Assert...`：当前`Unit`运行必须满足的条件，否则会报启动失败
+
+__`[Service]`区块用来`Service`的配置，只有`Service`类型的`Unit`才有这个区块。它的主要字段如下__
+
+* `Type`：定义启动时的进程行为。它有以下几种值。
+    * `simple`：默认值，执行`ExecStart`指定的命令，启动主进程
+    * `forking`：以`fork`方式从父进程创建子进程，创建后父进程会立即退出
+    * `oneshot`：一次性进程，`Systemd`会等当前服务退出，再继续往下执行
+    * `dbus`：当前服务通过`D-Bus`启动
+    * `notify`：当前服务启动完毕，会通知`Systemd`，再继续往下执行
+    * `idle`：若有其他任务执行完毕，当前服务才会运行
+* `ExecStart`：启动当前服务的命令
+* `ExecStartPre`：启动当前服务之前执行的命令
+* `ExecStartPost`：启动当前服务之后执行的命令
+* `ExecReload`：重启当前服务时执行的命令
+* `ExecStop`：停止当前服务时执行的命令
+* `ExecStopPost`：停止当其服务之后执行的命令
+* `RestartSec`：自动重启当前服务间隔的秒数
+* `Restart`：定义何种情况`Systemd`会自动重启当前服务，可能的值包括
+    * `always`：总是重启
+    * `on-success`
+    * `on-failure`
+    * `on-abnormal`
+    * `on-abort`
+    * `on-watchdog`
+* `TimeoutSec`：定义`Systemd`停止当前服务之前等待的秒数
+* `Environment`：指定环境变量
+
+完整的配置项清单参考[systemd.unit — Unit configuration](https://www.freedesktop.org/software/systemd/man/systemd.unit.html)
+
+## 3.4 命令行工具
+
+__systemctl命令行工具__
+
+* `systemctl start xxx.service`：启动xxx服务
+* `systemctl stop xxx.service`：停止xxx服务
+* `systemctl enable xxx.service`：允许xxx服务开机自启动
+* `systemctl disable xxx.service`：进制xxx服务开机自启动
+* `systemctl status xxx.service`：查看xxx服务的状态
+* `systemctl restart xxx.service`：重新启动xxx服务
+* `systemctl reload xxx.service`：让xxx服务重新加载配置文件（如果有的话）
+* `systemctl list-units --type=service`：列出所有的服务
+* `systemctl daemon-reload`：重新加载`systemd`的配置文件，当我们修改了`/usr/lib/systemd/system/`目录下的文件时，我们需要使用这个命令来使修改生效
+
+__journalctl命令行工具__
+
+* `journalctl -u xxx.service`：查看xxx服务的日志
+
+## 3.5 demo
+
+__下面写了一个非常简单的程序（文件名为`demo-service.c`）：接受并处理`1`、`2`、`15`三种信号__
+
+1. `SIGHUP(1)`：打印日志，模拟加载配置文件
+1. `SIGINT(2)`：打印日志，以错误码1结束进程
+1. `SIGTERM(15)`：打印日志，以错误码0结束进程
+
+```c
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <signal.h>
+
+void sigHandler(int);
+FILE *fp = NULL;
+
+int main() {
+    // 打开日志文件
+    fp = fopen("/root/default.log", "w");
+    if (fp < 0) {
+        exit(1);
+    }
+
+    // kill -l 查看每个signal的含义
+    signal(1, sigHandler);
+    signal(2, sigHandler);
+    signal(15, sigHandler);
+
+    // dead loop
+    while (1) {
+        sleep(1);
+    }
+}
+
+void sigHandler(int signum) {
+    fprintf(fp, "捕获信号 %d, ", signum);
+    fflush(fp);
+
+    switch (signum) {
+        case 1:
+            fprintf(fp, "重新加载配置文件\n");
+            fflush(fp);
+            break;
+        case 2:
+            fprintf(fp, "中断进程\n");
+            fflush(fp);
+            exit(1);
+        case 15:
+            fprintf(fp, "退出进程\n");
+            fflush(fp);
+            exit(0);
+        default:
+            fprintf(fp, "忽略该信号\n");
+            fflush(fp);
+    }
+}
+```
+
+__接下来将它注册到systemd中__
+
+文件路径：`/usr/lib/systemd/system/demo-service.service`
+
+```
+[Unit]
+Description=Systemd Demo Service
+Documentation=https://liuyehcf.github.io/2019/10/13/Linux-%E9%87%8D%E8%A6%81%E7%89%B9%E6%80%A7/
+
+[Service]
+Type=simple
+ExecStart=/root/demo-service
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s QUIT $MAINPID
+Restart=always
+RestartSec=3
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+```
+
+__测试__
+
+```sh
+# 编译
+[root@localhost ~]$ gcc -o demo-service demo-service.c
+
+# 启动demo-service
+[root@localhost ~]$ systemctl start demo-service.service
+
+# 查看demo-service的运行状态
+[root@localhost ~]$ systemctl status demo-service.service
+#-------------------------output-------------------------
+● demo-service.service - Systemd Demo Service
+   Loaded: loaded (/usr/lib/systemd/system/demo-service.service; enabled; vendor preset: disabled)
+   Active: active (running) since 日 2019-11-24 03:21:52 EST; 46s ago
+     Docs: https://liuyehcf.github.io/2019/10/13/Linux-%E9%87%8D%E8%A6%81%E7%89%B9%E6%80%A7/
+  Process: 3368 ExecStop=/bin/kill -s QUIT $MAINPID (code=exited, status=0/SUCCESS)
+ Main PID: 3392 (demo-service)
+   CGroup: /system.slice/demo-service.service
+           └─3392 /root/demo-service
+
+11月 24 03:21:52 localhost.localdomain systemd[1]: Started Systemd Demo Service.
+#-------------------------output-------------------------
+
+# 重新加载配置文件（发送 SIGHUP 信号）
+[root@localhost ~]$ systemctl reload demo-service.service
+# 查看日志文件
+[root@localhost ~]$ cat /root/default.log
+#-------------------------output-------------------------
+捕获信号 1, 重新加载配置文件
+#-------------------------output-------------------------
+
+# 停止服务
+[root@localhost ~]$ systemctl stop demo-service.service
+```
+
+## 3.6 参考
+
+* [Systemd 入门教程：命令篇](http://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-commands.html)
+* [Systemd 入门教程：实战篇](http://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-part-two.html)
 * [最简明扼要的 Systemd 教程，只需十分钟](https://blog.csdn.net/weixin_37766296/article/details/80192633)
 * [systemd添加自定义系统服务设置自定义开机启动](https://www.cnblogs.com/wjb10000/p/5566801.html)
 * [systemd创建自定义服务(Ubuntu)](https://www.cnblogs.com/wintersoft/p/9937839.html)
+* [Use systemd to Start a Linux Service at Boot](https://www.linode.com/docs/quick-answers/linux/start-service-at-boot/)
