@@ -14,7 +14,7 @@ __阅读更多__
 
 # 1 namespace
 
-该部分转载自[DOCKER基础技术：LINUX NAMESPACE（上）](https://coolshell.cn/articles/17010.html)、[DOCKER基础技术：LINUX NAMESPACE（下）](https://coolshell.cn/articles/17029.html)
+该部分转载自[DOCKER基础技术：LINUX NAMESPACE（上）](https://coolshell.cn/articles/17010.html)、[DOCKER基础技术：LINUX NAMESPACE（下）](https://coolshell.cn/articles/17029.html)、[Container Creation Using Namespaces and Bash](https://dev.to/nicolasmesa/container-creation-using-namespaces-and-bash-6g)
 
 ## 1.1 UTS
 
@@ -605,11 +605,11 @@ rtt min/avg/max/mdev = 73.192/74.111/74.808/0.747 ms
 #-------------------------output-------------------------
 ```
 
-# 2 docker原理
+## 1.7 实现简易容器
 
 该部分转载自[Container Creation Using Namespaces and Bash](https://dev.to/nicolasmesa/)
 
-## 2.1 术语解释
+### 1.7.1 术语解释
 
 __Container__：容器是一组技术的集合，包括`namespace`、`cgroup`，在本小结，我们关注的重点是`namespace`
 
@@ -617,16 +617,16 @@ __Namespace__：包含六种namespace，包括`PID`、`User`、`Net`、`Mnt`、`
 
 __Btrfs__：Btrfs是一种采用`Copy On Write`模式的高效、易用的文件系统
 
-## 2.2 准备工作
+### 1.7.2 准备工作
 
 1. 我们需要安装docker（安装docker即可）
     * 需要使用docker导出某个镜像
     * 使用docker自带的网桥
 1. 我们需要一个btrfs文件系统，挂载于/btrfs，下面会介绍如何创建（需要安装btrfs命令）
 
-## 2.3 详细步骤
+### 1.7.3 详细步骤
 
-### 2.3.1 创建disk image
+#### 1.7.3.1 创建disk image
 
 ```sh
 # 用dd命令创建一个2GB的空image（就是个文件）
@@ -642,7 +642,7 @@ __Btrfs__：Btrfs是一种采用`Copy On Write`模式的高效、易用的文件
 #-------------------------output-------------------------
 ```
 
-### 2.3.2 格式化disk image
+#### 1.7.3.2 格式化disk image
 
 ```sh
 # 利用 mkfs.btrfs 命令，将一个文件格式化成 btrfs 文件系统
@@ -669,7 +669,7 @@ Devices:
 #-------------------------output-------------------------
 ```
 
-### 2.3.3 挂载disk image
+#### 1.7.3.3 挂载disk image
 
 ```sh
 # 将disk.img对应的文件系统挂载到/btrfs目录下
@@ -677,7 +677,7 @@ Devices:
 [root@liuyehcf ~]$ mount -t btrfs disk.img /btrfs
 ```
 
-### 2.3.4 让挂载不可见
+#### 1.7.3.4 让挂载不可见
 
 ```sh
 # 让接下来的步骤中容器执行的挂载操作对于外界不可见
@@ -685,7 +685,7 @@ Devices:
 [root@liuyehcf ~]$ mount --make-rprivate /
 ```
 
-### 2.3.5 创建容器镜像
+#### 1.7.3.5 创建容器镜像
 
 ```sh
 # 进入文件系统
@@ -737,7 +737,7 @@ bin  dev  etc  home  lib  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp 
 #-------------------------output-------------------------
 ```
 
-### 2.3.6 使用chroot测试
+#### 1.7.3.6 使用chroot测试
 
 ```sh
 # 将 containers/tupperware/  作为 /root，并执行/root/bin/sh（这里root就是指change之后的root）
@@ -755,7 +755,7 @@ bin            etc            lib            mnt            proc           run  
 exit
 ```
 
-### 2.3.7 使用命名空间
+#### 1.7.3.7 使用命名空间
 
 ```sh
 # 以6种隔离维度执行bash命令
@@ -778,7 +778,7 @@ exit
 #-------------------------output-------------------------
 ```
 
-### 2.3.8 挂载proc
+#### 1.7.3.8 挂载proc
 
 ```sh
 # 挂载proc
@@ -796,7 +796,7 @@ exit
 [root@tupperware btrfs]$ umount /proc
 ```
 
-### 2.3.9 交换根文件系统(pivot root)
+#### 1.7.3.9 交换根文件系统(pivot root)
 
 ```sh
 # 接下来，利用 mount 命令以及 pivot_root 命令把 /btrfs/containers/tupperware 作为文件系统的根目录
@@ -835,7 +835,7 @@ bin       boot      btrfs     dev       disk.img  etc       home      lib       
 #-------------------------output-------------------------
 ```
 
-### 2.3.10 整理挂载点
+#### 1.7.3.10 整理挂载点
 
 ```sh
 
@@ -887,7 +887,7 @@ proc on /proc type proc (rw,relatime)
 #-------------------------output-------------------------
 ```
 
-### 2.3.11 网络命名空间
+#### 1.7.3.11 网络命名空间
 
 __以下命令，在容器终端执行（unshare创建的容器终端）__
 
@@ -1015,7 +1015,7 @@ round-trip min/avg/max = 30.111/30.587/31.170 ms
 #-------------------------output-------------------------
 ```
 
-## 2.4 清理
+### 1.7.4 清理
 
 ```sh
 # 退出容器终端
@@ -1030,7 +1030,14 @@ exit
 [root@liuyehcf /]$ rmdir /btrfs/
 ```
 
-# 3 cgroup
+## 1.8 参考
+
+* [DOCKER基础技术：LINUX NAMESPACE（上）](https://coolshell.cn/articles/17010.html)
+* [DOCKER基础技术：LINUX NAMESPACE（下）](https://coolshell.cn/articles/17029.html)
+* [Container Creation Using Namespaces and Bash](https://dev.to/nicolasmesa/container-creation-using-namespaces-and-bash-6g)
+* [Netruon 理解（12）：使用 Linux bridge 将 Linux network namespace 连接外网](https://www.bbsmax.com/A/VGzl4XYzbq/)
+
+# 2 cgroup
 
 __2种cgroup驱动__
 
@@ -1050,14 +1057,18 @@ __查看当前系统可用的cgroup__
 
 * `mount -t cgroup`
 
-## 3.1 参考
+## 2.1 参考
 
-* [DOCKER基础技术：LINUX NAMESPACE（上）](https://coolshell.cn/articles/17010.html)
-* [DOCKER基础技术：LINUX NAMESPACE（下）](https://coolshell.cn/articles/17029.html)
 * [DOCKER基础技术：LINUX CGROUP](https://coolshell.cn/articles/17049.html)
-* [Container Creation Using Namespaces and Bash](https://dev.to/nicolasmesa/container-creation-using-namespaces-and-bash-6g)
-* [Netruon 理解（12）：使用 Linux bridge 将 Linux network namespace 连接外网](https://www.bbsmax.com/A/VGzl4XYzbq/)
+* [资​​​源​​​管​​​理​​​指​​​南​​​-RedHat](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/6/html-single/resource_management_guide/index#ch-Subsystems_and_Tunable_Parameters)
 * [clone-manpage](http://man7.org/linux/man-pages/man2/clone.2.html)
 * [Linux资源管理之cgroups简介](https://tech.meituan.com/2015/03/31/cgroups.html)
 * [Docker 背后的内核知识——cgroups 资源限制](https://www.infoq.cn/article/docker-kernel-knowledge-cgroups-resource-isolation/)
-* [资​​​源​​​管​​​理​​​指​​​南​​​-RedHat](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/6/html-single/resource_management_guide/index#ch-Subsystems_and_Tunable_Parameters)
+
+# 3 Systemd
+
+## 3.1 参考
+
+* [最简明扼要的 Systemd 教程，只需十分钟](https://blog.csdn.net/weixin_37766296/article/details/80192633)
+* [systemd添加自定义系统服务设置自定义开机启动](https://www.cnblogs.com/wjb10000/p/5566801.html)
+* [systemd创建自定义服务(Ubuntu)](https://www.cnblogs.com/wintersoft/p/9937839.html)
