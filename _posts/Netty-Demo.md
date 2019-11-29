@@ -456,6 +456,10 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 }
 ```
 
+## 1.5 重点
+
+websocket在握手完毕之后，是会剔除http相关的handler的，具体的细节请参考`WebSocketClientHandshaker.finishHandshake`方法
+
 # 2 Http
 
 HttpRequest转换

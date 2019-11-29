@@ -538,6 +538,7 @@ __Ingress Controller的作用__
 
 ## 7.1 参考
 
+* [kubernetes/ingress-nginx](https://github.com/kubernetes/ingress-nginx)
 * [nginx ingress doc](https://kubernetes.github.io/ingress-nginx/deploy/#prerequisite-generic-deployment-command)
 * [metallb doc](https://metallb.universe.tf/installation/)
 

@@ -91,7 +91,34 @@ Page UP：`Fn+↑`
 Page DOWN：`Fn+↓`
 向前Delete：`Fn+delete`
 
-# 4 参考
+# 4 刻录iso文件
+
+```sh
+# 先列出所有设备
+diskutil list
+
+# 找到u盘对应的设备，比如这里是 /dev/disk6，卸载它
+diskutil unmountDisk /dev/disk6
+
+# 烧制ISO文件到u盘
+sudo dd if=<iso文件路径> of=/dev/disk6 bs=1m
+
+# 弹出磁盘
+diskutil eject /dev/disk6
+```
+
+# 5 打开/禁止产生.DS_Store文件
+
+```sh
+# 禁止
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool TRUE
+
+# 打开
+defaults delete com.apple.desktopservices DSDontWriteNetworkStores
+```
+
+# 6 参考
 
 * [Mac 下利用 Launchctl 自启动 mysql](http://squll369.iteye.com/blog/1965185)
 * [Mac 有哪些鲜为人知的使用技巧？](https://www.zhihu.com/question/26379660)
+* [Mac下刻录ISO到U盘](https://www.jianshu.com/p/62e52ca56440)
