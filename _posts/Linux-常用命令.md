@@ -849,12 +849,170 @@ __示例：__
 
 ## 7.5 ip
 
-__todo__
+### 7.5.1 ip addr
 
-1. `ip a`
-1. `ip r`
+简写为`ip a`
 
-https://www.jellythink.com/archives/469
+### 7.5.2 ip link
+
+简写为`ip l`
+
+### 7.5.3 ip route
+
+简写为`ip r`
+
+#### 7.5.3.1 route table
+
+__linux最多可以支持255张路由表，每张路由表有一个`table id`和`table name`。其中有4张表是linux系统内置的__
+
+* __`table id = 0`：系统保留__
+* __`table id = 255`：本地路由表，表名为`local`__。像本地接口地址，广播地址，以及NAT地址都放在这个表。该路由表由系统自动维护，管理员不能直接修改
+    * `ip r show table local`
+* __`table id = 254`：主路由表，表名为`main`__。如果没有指明路由所属的表，所有的路由都默认都放在这个表里。一般来说，旧的路由工具（如`route`）所添加的路由都会加到这个表。`main`表中路由记录都是普通的路由记录。而且，使用`ip route`配置路由时，如果不明确指定要操作的路由表，默认情况下也是对主路由表进行操作
+    * `ip r show table main`
+* __`table id = 253`：称为默认路由表，表名为`default`__。一般来说默认的路由都放在这张表
+    * `ip r show table default`
+
+__此外__
+
+* 系统管理员可以根据需要自己添加路由表，并向路由表中添加路由记录
+* 可以通过`/etc/iproute2/rt_tables`文件查看`table id`和`table name`的映射关系。
+* 如果管理员新增了一张路由表，需要在`/etc/iproute2/rt_tables`文件中为新路由表添加`table id`和`table name`的映射
+
+#### 7.5.3.2 route type
+
+__`unicast`__：单播路由是路由表中最常见的路由。这是到目标网络地址的典型路由，它描述了到目标的路径。即使是复杂的路由（如下一跳路由）也被视为单播路由。如果在命令行上未指定路由类型，则假定该路由为单播路由
+
+```sh
+ip route add unicast 192.168.0.0/24 via 192.168.100.5
+ip route add default via 193.7.255.1
+ip route add unicast default via 206.59.29.193
+ip route add 10.40.0.0/16 via 10.72.75.254
+```
+
+__`broadcast`__：此路由类型用于支持广播地址概念的链路层设备（例如以太网卡）。此路由类型仅在本地路由表中使用，通常由内核处理
+
+```sh
+ip route add table local broadcast 10.10.20.255 dev eth0 proto kernel scope link src 10.10.20.67
+ip route add table local broadcast 192.168.43.31 dev eth4 proto kernel scope link src 192.168.43.14
+```
+
+__`local`__：当IP地址添加到接口时，内核会将条目添加到本地路由表中。这意味着IP是本地托管的IP
+
+```sh
+ip route add table local local 10.10.20.64 dev eth0 proto kernel scope host src 10.10.20.67
+ip route add table local local 192.168.43.12 dev eth4 proto kernel scope host src 192.168.43.14
+```
+
+__`nat`__：当用户尝试配置无状态NAT时，内核会将此路由条目添加到本地路由表中
+
+```sh
+ip route add nat 193.7.255.184 via 172.16.82.184
+ip route add nat 10.40.0.0/16 via 172.40.0.0
+```
+
+__`unreachable`__：当对路由决策的请求返回的路由类型不可达的目的地时，将生成ICMP unreachable并返回到源地址
+
+```sh
+ip route add unreachable 172.16.82.184
+ip route add unreachable 192.168.14.0/26
+ip route add unreachable 209.10.26.51
+```
+
+__`prohibit`__：当路由选择请求返回具有禁止路由类型的目的地时，内核会生成禁止返回源地址的ICMP
+
+```sh
+ip route add prohibit 10.21.82.157
+ip route add prohibit 172.28.113.0/28
+ip route add prohibit 209.10.26.51
+```
+
+__`blackhole`__：匹配路由类型为黑洞的路由的报文将被丢弃。没有发送ICMP，也没有转发数据包
+
+```sh
+ip route add blackhole default
+ip route add blackhole 202.143.170.0/24
+ip route add blackhole 64.65.64.0/18
+```
+
+__`throw`__：引发路由类型是一种便捷的路由类型，它会导致路由表中的路由查找失败，从而将路由选择过程返回到RPDB。当有其他路由表时，这很有用。请注意，如果路由表中没有默认路由，则存在隐式抛出，因此尽管合法，但是示例中第一个命令创建的路由是多余的
+
+```sh
+ip route add throw default
+ip route add throw 10.79.0.0/16
+ip route add throw 172.16.0.0/12
+```
+
+#### 7.5.3.3 route scope
+
+__`global`__：全局有效
+
+__`site`__：仅在当前站点有效（IPV6）
+
+__`link`__：仅在当前设备有效
+
+__`host`__：仅在当前主机有效
+
+#### 7.5.3.4 route proto
+
+__`proto`：表示路由的添加时机。可由数字或字符串表示，数字与字符串的对应关系详见`/etc/iproute2/rt_protos`__
+
+1. __`redirect`__：表示该路由是因为发生`ICMP`重定向而添加的
+1. __`kernel`__：该路由是内核在安装期间安装的自动配置
+1. __`boot`__：该路由是在启动过程中安装的。如果路由守护程序启动，它将会清除这些路由规则
+1. __`static`__：该路由由管理员安装，以覆盖动态路由
+
+#### 7.5.3.5 route src
+
+这被视为对内核的提示（用于回答：如果我要将数据包发往host X，我该用本机的哪个IP作为Source IP），该提示是关于要为该接口上的`传出`数据包上的源地址选择哪个IP地址
+
+#### 7.5.3.6 参数解释
+
+__`ip r show table local`参数解释（示例如下）__
+
+1. 第一个字段指明该路由是用于`广播地址`、`IP地址`还是`IP范围`，例如
+    * `local 192.168.99.35`表示`IP地址`
+    * `broadcast 127.255.255.255`表示`广播地址`
+    * `local 127.0.0.0/8 dev`表示`IP范围`
+1. 第二个字段指明该路由通过哪个设备到达目标地址，例如
+    * `dev eth0 proto kernel`
+    * `dev lo proto kernel`
+1. 第三个字段指明该路由的作用范围，例如
+    * `scope host`
+    * `scope link`
+1. 第四个字段指明传出数据包的源IP地址
+    * `src 127.0.0.1`
+
+```sh
+[root@tristan]$ ip route show table local
+local 192.168.99.35 dev eth0  proto kernel  scope host  src 192.168.99.35 
+broadcast 127.255.255.255 dev lo  proto kernel  scope link  src 127.0.0.1 
+broadcast 192.168.99.255 dev eth0  proto kernel  scope link  src 192.168.99.35 
+broadcast 127.0.0.0 dev lo  proto kernel  scope link  src 127.0.0.1 
+local 127.0.0.1 dev lo  proto kernel  scope host  src 127.0.0.1 
+local 127.0.0.0/8 dev lo  proto kernel  scope host  src 127.0.0.1
+```
+
+### 7.5.4 ip rule
+
+基于策略的路由比传统路由在功能上更强大，使用更灵活，它使网络管理员不仅能够根据目的地址而且能够根据报文大小、应用或IP源地址等属性来选择转发路径。简单地来说，linux系统有多张路由表，而路由策略会根据一些条件，将路由请求转向不同的路由表。例如源地址在某些范围走路由表A，另外的数据包走路由表，类似这样的规则是有路由策略rule来控制
+
+在linux系统中，一条路由策略`rule`主要包含三个信息，即`rule`的优先级，条件，路由表。其中rule的优先级数字越小表示优先级越高，然后是满足什么条件下由指定的路由表来进行路由。__在linux系统启动时，内核会为路由策略数据库配置三条缺省的规则，即`rule 0`，`rule 32766`，`rule 32767`（数字是rule的优先级），具体含义如下__：
+
+1. __`rule 0`__：匹配任何条件的数据包，查询路由表`local（table id = 255）`。`rule 0`非常特殊，不能被删除或者覆盖。
+1. __`rule 32766`__：匹配任何条件的数据包，查询路由表`main（table id = 254）`。系统管理员可以删除或者使用另外的策略覆盖这条策略
+1. __`rule 32767`__：匹配任何条件的数据包，查询路由表`default（table id = 253）`。对于前面的缺省策略没有匹配到的数据包，系统使用这个策略进行处理。这个规则也可以删除
+* 在linux系统中是按照rule的优先级顺序依次匹配。假设系统中只有优先级为`0`，`32766`及`32767`这三条规则。那么系统首先会根据规则`0`在本地路由表里寻找路由，如果目的地址是本网络，或是广播地址的话，在这里就可以找到匹配的路由；如果没有找到路由，就会匹配下一个不空的规则，在这里只有`32766`规则，那么将会在主路由表里寻找路由；如果没有找到匹配的路由，就会依据`32767`规则，即寻找默认路由表；如果失败，路由将失败
+
+__示例__
+
+```sh
+# 增加一条规则，规则匹配的对象是所有的数据包，动作是选用路由表1的路由，这条规则的优先级是32800
+$ ip rule add [from 0/0] table 1 pref 32800
+
+# 增加一条规则，规则匹配的对象是IP为192.168.3.112, tos等于0x10的包，使用路由表2，这条规则的优先级是1500，动作是丢弃。
+$ ip rule add from 192.168.3.112/32 [tos 0x10] table 2 pref 1500 prohibit
+```
 
 ## 7.6 tcpdump
 
@@ -1398,3 +1556,9 @@ __示例：__
 * [Socat 入门教程](https://www.hi-linux.com/posts/61543.html)
 * [Linux 流量控制工具 TC 详解](https://blog.csdn.net/wuruixn/article/details/8210760)
 * [docker networking namespace not visible in ip netns list](https://stackoverflow.com/questions/31265993/docker-networking-namespace-not-visible-in-ip-netns-list)
+* [Linux ip命令详解](https://www.jellythink.com/archives/469)
+* [linux中路由策略rule和路由表table](https://blog.csdn.net/wangjianno2/article/details/72853735)
+* [ip address scope parameter](https://serverfault.com/questions/63014/ip-address-scope-parameter)
+* [Displaying a routing table with ip route show](http://linux-ip.net/html/tools-ip-route.html)
+* [What does “proto kernel” means in Unix Routing Table?](https://stackoverflow.com/questions/10259266/what-does-proto-kernel-means-in-unix-routing-table)
+* [Routing Tables](http://linux-ip.net/html/routing-tables.html)

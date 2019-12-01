@@ -121,3 +121,6 @@ syscall
 * [Let's code a TCP/IP stack, 1: Ethernet & ARP](https://www.saminiir.com/lets-code-tcp-ip-stack-1-ethernet-arp/#sources)
 * [lab11/go-tuntap](https://github.com/lab11/go-tuntap)
 * [songgao/water](https://github.com/songgao/water)
+* [How do I set an ip address for TUN interface on OSX (without destination address)?](https://stackoverflow.com/questions/17510101/how-do-i-set-an-ip-address-for-tun-interface-on-osx-without-destination-address)
+* [Linux虚拟网络设备之tun/tap](https://segmentfault.com/a/1190000009249039?utm_source=tag-newest)
+* [Linux 网络工具详解之 ip tuntap 和 tunctl 创建 tap/tun 设备](https://www.cnblogs.com/bakari/p/10449664.html)
