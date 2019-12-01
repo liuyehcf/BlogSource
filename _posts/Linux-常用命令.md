@@ -1076,10 +1076,11 @@ __示例：__
 
 __格式：__
 
-* `iptables [-t tables] [-L] [-nv]`
+* `iptables [-S] [-t tables] [-L] [-nv]`
 
 __参数说明：__
 
+* `-S`：输出指定table的规则，若没有指定table，则输出所有的规则，类似`iptables-save`
 * `-t`：后面接table，例如nat或filter，若省略此项目，则使用默认的filter
 * `-L`：列出目前的table的规则
 * `-n`：不进行IP与HOSTNAME的反查，显示信息的速度回快很多
@@ -1556,6 +1557,7 @@ __示例：__
 * [Socat 入门教程](https://www.hi-linux.com/posts/61543.html)
 * [Linux 流量控制工具 TC 详解](https://blog.csdn.net/wuruixn/article/details/8210760)
 * [docker networking namespace not visible in ip netns list](https://stackoverflow.com/questions/31265993/docker-networking-namespace-not-visible-in-ip-netns-list)
+* [Guide to IP Layer Network Administration with Linux](http://linux-ip.net/html/)
 * [Linux ip命令详解](https://www.jellythink.com/archives/469)
 * [linux中路由策略rule和路由表table](https://blog.csdn.net/wangjianno2/article/details/72853735)
 * [ip address scope parameter](https://serverfault.com/questions/63014/ip-address-scope-parameter)

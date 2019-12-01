@@ -377,7 +377,7 @@ function setup(){
 	echo "3/10: 配置网卡 '${ifname_outside_ns}' 的IP地址 '${ip_outside_ns}'"
 	ifconfig ${ifname_outside_ns} ${ip_outside_ns} netmask ${ip_netmask} up
 
-    echo "4/10: 将网卡 '${ifname_inside_ns}' 加入网络命名空间 '${namespace}' 中"
+	echo "4/10: 将网卡 '${ifname_inside_ns}' 加入网络命名空间 '${namespace}' 中"
 	ip link set ${ifname_inside_ns} netns ${namespace}
 
 	echo "5/10: 将在网络命名空间 '${namespace}' 中的网卡 '${ifname_inside_ns}' 的IP地址设置为 '${ip_inside_ns}'，它需要和网卡 '${ifname_outside_ns}' 的IP地址在同一个网段上"
@@ -393,10 +393,10 @@ function setup(){
 	iptables -t filter -A FORWARD -i ${ifname_external} -o ${ifname_outside_ns} -j ACCEPT
 	iptables -t filter -A FORWARD -i ${ifname_outside_ns} -o ${ifname_external} -j ACCEPT
 
-    echo "9/10: 开启内核转发功能"
+	echo "9/10: 开启内核转发功能"
 	echo 1 > /proc/sys/net/ipv4/ip_forward
 
-    echo "10/10: 为网络命名空间 '${namespace}' 配置DNS服务，用于域名解析"
+	echo "10/10: 为网络命名空间 '${namespace}' 配置DNS服务，用于域名解析"
 	mkdir -p /etc/netns/${namespace}
 	echo "nameserver 8.8.8.8" > /etc/netns/${namespace}/resolv.conf
 }
@@ -404,7 +404,7 @@ function setup(){
 function cleanup(){
 	echo "1/4: 删除 'FORWARD' 规则"
 	iptables -t filter -D FORWARD -i ${ifname_external} -o ${ifname_outside_ns} -j ACCEPT
-        iptables -t filter -D FORWARD -i ${ifname_outside_ns} -o ${ifname_external} -j ACCEPT
+	iptables -t filter -D FORWARD -i ${ifname_outside_ns} -o ${ifname_external} -j ACCEPT
 
 	echo "2/4: 删除 'NAT'"
 	iptables -t nat -D POSTROUTING -s ${ip_net}/${ip_netmask} -o ${ifname_external} -j MASQUERADE
@@ -414,7 +414,7 @@ function cleanup(){
 	
 	echo "4/4: 删除网络命名空间 '${namespace}'"
 	ip netns delete ${namespace}
-    rm -rf /etc/netns/${namespace}
+	rm -rf /etc/netns/${namespace}
 }
 
 export -f setup
@@ -504,7 +504,7 @@ function setup(){
 	ip link set ${ifname_outside_ns} up
 
 	echo "6/13: 将网卡 '${ifname_outside_ns}' 绑定到网桥 '${bridge_name}' 上"
-        brctl addif ${bridge_name} ${ifname_outside_ns}
+	brctl addif ${bridge_name} ${ifname_outside_ns}
 	
 	echo "7/13: 将网卡 '${ifname_inside_ns}' 加入网络命名空间 '${namespace}' 中"
 	ip link set ${ifname_inside_ns} netns ${namespace}
@@ -533,7 +533,7 @@ function setup(){
 function cleanup(){
 	echo "1/6: 删除 'FORWARD' 规则"
 	iptables -t filter -D FORWARD -i ${ifname_external} -o ${bridge_name} -j ACCEPT
-        iptables -t filter -D FORWARD -i ${bridge_name} -o ${ifname_external} -j ACCEPT
+	iptables -t filter -D FORWARD -i ${bridge_name} -o ${ifname_external} -j ACCEPT
 
 	echo "2/6: 删除 'NAT'"
 	iptables -t nat -D POSTROUTING -s ${ip_net}/${ip_netmask} -o ${ifname_external} -j MASQUERADE

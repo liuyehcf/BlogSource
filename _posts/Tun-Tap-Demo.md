@@ -109,7 +109,7 @@ int main() {
 
 # 2 todo
 
-syscall
+当主机添加一张网卡时，默认会在local路由表中添加一条路由，在主机上ping这张网卡的ip，是直接走的lo
 
 # 3 参考 
 
