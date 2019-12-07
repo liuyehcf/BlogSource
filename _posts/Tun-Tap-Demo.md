@@ -124,3 +124,6 @@ int main() {
 * [How do I set an ip address for TUN interface on OSX (without destination address)?](https://stackoverflow.com/questions/17510101/how-do-i-set-an-ip-address-for-tun-interface-on-osx-without-destination-address)
 * [Linux虚拟网络设备之tun/tap](https://segmentfault.com/a/1190000009249039?utm_source=tag-newest)
 * [Linux 网络工具详解之 ip tuntap 和 tunctl 创建 tap/tun 设备](https://www.cnblogs.com/bakari/p/10449664.html)
+* [Raw Socket 接收和发送数据包](https://github.com/xgfone/snippet/blob/master/snippet/docs/linux/program/raw-socket.md)
+* [A Guide to Using Raw Sockets](https://opensourceforu.com/2015/03/a-guide-to-using-raw-sockets/)
+* [Go中原始套接字的深度实践](https://www.cnblogs.com/mushroom/p/9097409.html)

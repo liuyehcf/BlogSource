@@ -258,7 +258,19 @@ dep ensure
 
 [gotemplate](https://golang.org/pkg/text/template/）
 
-# 5 参考
+# 5 GoLand
+
+## 5.1 build tags
+
+例如，我在Mac上安装了GoLand，但是我想要调用linux环境下的syscall，但是在GoLand默认解析的是Mac版本的源码（`syscall_darwin_amd64.go`）
+
+可以通过配置`build tags`，将OS配置成linux，配置方式：
+
+* `Preferences`
+   * `Go`
+      * `Vendoring & Build Tags`，然后将`OS`改成`linux`即可
+
+# 6 参考
 
 * [Frequently Asked Questions](https://golang.org/doc/faq)
 * [go中包的概念、导入与可见性](https://studygolang.com/articles/7165)
@@ -266,3 +278,4 @@ dep ensure
 * [Go log 日志](https://www.jianshu.com/p/d634316a9487)
 * [go mod](https://juejin.im/post/5c8e503a6fb9a070d878184a)
 * [go mod常用命令 已经 常见问题](https://blog.csdn.net/zzhongcy/article/details/97243826)
+* [Configuring GoLand for WebAssembly](https://github.com/golang/go/wiki/Configuring-GoLand-for-WebAssembly)
