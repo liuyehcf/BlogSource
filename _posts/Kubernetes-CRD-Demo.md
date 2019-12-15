@@ -445,4 +445,5 @@ TBD
 * [operator](https://github.com/operator-framework/operator-sdk)
 * [client-go-example](https://github.com/kubernetes/client-go/tree/master/examples)
 * [使用client-go包访问Kubernetes CRD](https://segmentfault.com/a/1190000020437031)
-
+* [Kubernetes CRD - 从代码生成到使用](https://www.jianshu.com/p/2884f002f055)
+* [Operator SDK CLI reference](https://docs.openshift.com/container-platform/4.1/applications/operator_sdk/osdk-cli-reference.html)

@@ -299,6 +299,8 @@ __示例__
 
 目前PatternLayoutEncoder是唯一有用的且默认的encoder ，有一个`<pattern>`节点，用来设置日志的输入格式。使用"%"加"转换符"方式，如果要输出"%"，则必须用"\"对"\%"进行转义
 
+[layout官方文档](http://logback.qos.ch/manual/layouts.html)
+
 __示例__
 
 ```xml
@@ -705,3 +707,4 @@ __总结：根据上面的分析可以发现，如果打日志的并发度非常
 * [logback 配置详解](https://www.jianshu.com/p/1ded57f6c4e3)
 * [在logback中使用spring的属性值](https://stackoverflow.com/questions/36743386/accessing-the-application-properties-in-logback-xml)
 * [SLF4J与Logback、Log4j1、Log4j2、JCL、J.U.L是如何关联使用的](https://blog.csdn.net/yangzl2008/article/details/81503579)
+* [layout官方文档](http://logback.qos.ch/manual/layouts.html)
