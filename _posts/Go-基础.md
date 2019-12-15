@@ -279,3 +279,4 @@ dep ensure
 * [go mod](https://juejin.im/post/5c8e503a6fb9a070d878184a)
 * [go mod常用命令 已经 常见问题](https://blog.csdn.net/zzhongcy/article/details/97243826)
 * [Configuring GoLand for WebAssembly](https://github.com/golang/go/wiki/Configuring-GoLand-for-WebAssembly)
+* [Go语言的%d,%p,%v等占位符的使用](https://www.jianshu.com/p/66aaf908045e)
