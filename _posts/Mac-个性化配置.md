@@ -138,6 +138,10 @@ __设置`⌥+←`、`⌥+→`以单词为单位移动光标__
     * Action: `Send Escape Sequence`
     * Esc+: `f`
 
+__设置滚动行数__
+
+* `Preferences`->`Profiles`->`Terminal`
+
 # 4 zsh
 
 # 5 更换home-brew镜像源

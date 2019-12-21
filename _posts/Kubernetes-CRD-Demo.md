@@ -443,6 +443,7 @@ TBD
 
 * [sample-controller](https://github.com/kubernetes/sample-controller)
 * [operator](https://github.com/operator-framework/operator-sdk)
+* [Operator SDK User Guide](https://github.com/operator-framework/operator-sdk/blob/master/doc/user-guide.md)
 * [client-go-example](https://github.com/kubernetes/client-go/tree/master/examples)
 * [使用client-go包访问Kubernetes CRD](https://segmentfault.com/a/1190000020437031)
 * [Kubernetes CRD - 从代码生成到使用](https://www.jianshu.com/p/2884f002f055)
