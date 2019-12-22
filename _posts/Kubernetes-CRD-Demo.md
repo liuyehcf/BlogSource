@@ -437,7 +437,17 @@ kubectl create -f example-myconfig.yaml
 
 # 2 operator-framework
 
-TBD
+[安装operator-sdk](https://github.com/operator-framework/operator-sdk/blob/master/doc/user/install-operator-sdk.md)
+
+1. 创建operator工程：`operator-sdk new operator-demo --repo=github.com/liuyehcf/operator-demo`
+1. 创建api：`operator-sdk add api --api-version=liuyehcf.crd.person/v1 --kind=Person`
+	* `--api-version`：指定api版本
+	* `--kind`：资源名称，这里叫做`Person`
+1. 修改`pkg/apis/liuyehcf/v1/person_types.go`
+1. 生成对应的deepcopy等相关方法：`operator-sdk generate k8s`
+1. 创建controller：`operator-sdk add controller --api-version=liuyehcf.crd.person/v1 --kind=Person`
+
+## 2.1 operator-demo
 
 # 3 参考
 
