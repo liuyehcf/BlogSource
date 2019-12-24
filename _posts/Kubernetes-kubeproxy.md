@@ -186,7 +186,7 @@ port no	mac addr		is local?	ageing timer
 
 可以看到，目前网桥`cni0`上只有一张网卡，该网卡类型是`veth`，veth是一对网卡，其中一张网卡在默认的网络命名空间中，另外一张网卡在pod的网络命名空间中。`brctl showmacs cni0`输出的三条数据中，其`port`都是2，代表这些对应着同一个网卡，即`veth`网卡，`is local`字段为`true`表示位于默认网络命名空间中，`is local`字段为`false`表示位于另一个网络命名空间中，接下来找到该docker的命名空间，然后进入该命名空间查看一下网卡的mac地址是否为`ca:97:47:ed:dd:01`，同时看一下该网卡的ip是否为`10.244.1.5`
 
-* 注意，有时候该命令`brctl showmacs cni0`只会输出`is local`字段为`true`的信息，重新访问一下该`pod`，然后再重新执行`brctl showmacs cni0`命令，就能看到`is local`字段为`false`的数据了
+* 注意，`brctl showmacs cni0`的输出中，`is local`为`false`的这条数据，`ageing timer`不是`0.00`，大约在300s后，这条数据将会消息。可以通过重新访问该`veth`网卡来激活（`ping`一下对应的`pod ip`）
 
 ```sh
 # 其中 e464807dae4f 是容器id
