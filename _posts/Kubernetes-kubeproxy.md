@@ -78,15 +78,15 @@ deployment.apps/hello-world-deployment created
 ```sh
 [root@k8s-master ~]$ kubectl get pods -o wide
 #-------------------------output-------------------------
-NAME                                     READY   STATUS    RESTARTS   AGE    IP            NODE         NOMINATED NODE   READINESS GATES
-hello-world-deployment-7db4ffd7b-pg5ht   1/1     Running   0          100s   10.244.3.81   k8s-node-2   <none>           <none>
+NAME                                     READY   STATUS    RESTARTS   AGE   IP           NODE      NOMINATED NODE   READINESS GATES
+hello-world-deployment-cbdf4db7b-j6fpq   1/1     Running   0          56s   10.244.1.5   k8s-n-1   <none>           <none>
 #-------------------------output-------------------------
 ```
 
-发现，应用部署在`k8s-n-2`上，查看`k8s-n-1`节点上的`iptables`规则，用`30001`作为条件过滤
+发现，应用部署在`k8s-n-1`上，查看`k8s-n-1`节点上的`iptables`规则，用`30001`作为条件过滤
 
 ```sh
-[root@k8s-node-2 ~]$ iptables-save | grep '30001'
+[root@k8s-n-1 ~]$ iptables-save | grep '30001'
 #-------------------------output-------------------------
 -A KUBE-NODEPORTS -p tcp -m comment --comment "default/hello-world-service:" -m tcp --dport 30001 -j KUBE-MARK-MASQ
 -A KUBE-NODEPORTS -p tcp -m comment --comment "default/hello-world-service:" -m tcp --dport 30001 -j KUBE-SVC-5MRENC7Q6ZQR6GKR
@@ -96,7 +96,7 @@ hello-world-deployment-7db4ffd7b-pg5ht   1/1     Running   0          100s   10.
 我们找到了名为`KUBE-NODEPORTS`的`Chain`的两条规则，继续用`KUBE-NODEPORTS`寻找上游`Chain`
 
 ```sh
-[root@k8s-node-2 ~]$ iptables-save | grep 'KUBE-NODEPORTS'
+[root@k8s-n-1 ~]$ iptables-save | grep 'KUBE-NODEPORTS'
 #-------------------------output-------------------------
 :KUBE-NODEPORTS - [0:0]
 -A KUBE-NODEPORTS -p tcp -m comment --comment "default/hello-world-service:" -m tcp --dport 30001 -j KUBE-MARK-MASQ
@@ -108,28 +108,26 @@ hello-world-deployment-7db4ffd7b-pg5ht   1/1     Running   0          100s   10.
 我们找到了名为`KUBE-SERVICES`的`Chain`的一条规则，继续用`KUBE-SERVICES`寻找上游`Chain`
 
 ```sh
-[root@k8s-node-2 ~]$ iptables-save | grep 'KUBE-SERVICES'
+[root@k8s-n-1 ~]$ iptables-save | grep 'KUBE-SERVICES'
 #-------------------------output-------------------------
-:KUBE-SERVICES - [0:0]
--A PREROUTING -m comment --comment "kubernetes service portals" -j KUBE-SERVICES
--A OUTPUT -m comment --comment "kubernetes service portals" -j KUBE-SERVICES
--A KUBE-SERVICES ! -s 10.244.0.0/16 -d 10.96.0.10/32 -p udp -m comment --comment "kube-system/kube-dns:dns cluster IP" -m udp --dport 53 -j KUBE-MARK-MASQ
--A KUBE-SERVICES -d 10.96.0.10/32 -p udp -m comment --comment "kube-system/kube-dns:dns cluster IP" -m udp --dport 53 -j KUBE-SVC-TCOU7JCQXEZGVUNU
--A KUBE-SERVICES ! -s 10.244.0.0/16 -d 10.96.0.10/32 -p tcp -m comment --comment "kube-system/kube-dns:dns-tcp cluster IP" -m tcp --dport 53 -j KUBE-MARK-MASQ
--A KUBE-SERVICES -d 10.96.0.10/32 -p tcp -m comment --comment "kube-system/kube-dns:dns-tcp cluster IP" -m tcp --dport 53 -j KUBE-SVC-ERIFXISQEP7F7OF4
--A KUBE-SERVICES ! -s 10.244.0.0/16 -d 10.108.160.127/32 -p tcp -m comment --comment "kube-system/tiller-deploy:tiller cluster IP" -m tcp --dport 44134 -j KUBE-MARK-MASQ
--A KUBE-SERVICES -d 10.108.160.127/32 -p tcp -m comment --comment "kube-system/tiller-deploy:tiller cluster IP" -m tcp --dport 44134 -j KUBE-SVC-K7J76NXP7AUZVFGS
--A KUBE-SERVICES ! -s 10.244.0.0/16 -d 10.106.183.112/32 -p tcp -m comment --comment "default/hello-world-service: cluster IP" -m tcp --dport 4000 -j KUBE-MARK-MASQ
--A KUBE-SERVICES -d 10.106.183.112/32 -p tcp -m comment --comment "default/hello-world-service: cluster IP" -m tcp --dport 4000 -j KUBE-SVC-5MRENC7Q6ZQR6GKR
--A KUBE-SERVICES ! -s 10.244.0.0/16 -d 10.96.0.1/32 -p tcp -m comment --comment "default/kubernetes:https cluster IP" -m tcp --dport 443 -j KUBE-MARK-MASQ
--A KUBE-SERVICES -d 10.96.0.1/32 -p tcp -m comment --comment "default/kubernetes:https cluster IP" -m tcp --dport 443 -j KUBE-SVC-NPX46M4PTMTKRN6Y
--A KUBE-SERVICES ! -s 10.244.0.0/16 -d 10.96.0.10/32 -p tcp -m comment --comment "kube-system/kube-dns:metrics cluster IP" -m tcp --dport 9153 -j KUBE-MARK-MASQ
--A KUBE-SERVICES -d 10.96.0.10/32 -p tcp -m comment --comment "kube-system/kube-dns:metrics cluster IP" -m tcp --dport 9153 -j KUBE-SVC-JD5MR3NA4I4DYORP
--A KUBE-SERVICES -m comment --comment "kubernetes service nodeports; NOTE: this must be the last rule in this chain" -m addrtype --dst-type LOCAL -j KUBE-NODEPORTS
 :KUBE-SERVICES - [0:0]
 -A INPUT -m conntrack --ctstate NEW -m comment --comment "kubernetes service portals" -j KUBE-SERVICES
 -A FORWARD -m conntrack --ctstate NEW -m comment --comment "kubernetes service portals" -j KUBE-SERVICES
 -A OUTPUT -m conntrack --ctstate NEW -m comment --comment "kubernetes service portals" -j KUBE-SERVICES
+:KUBE-SERVICES - [0:0]
+-A PREROUTING -m comment --comment "kubernetes service portals" -j KUBE-SERVICES
+-A OUTPUT -m comment --comment "kubernetes service portals" -j KUBE-SERVICES
+-A KUBE-SERVICES ! -s 10.244.0.0/16 -d 10.96.103.220/32 -p tcp -m comment --comment "default/hello-world-service: cluster IP" -m tcp --dport 4000 -j KUBE-MARK-MASQ
+-A KUBE-SERVICES -d 10.96.103.220/32 -p tcp -m comment --comment "default/hello-world-service: cluster IP" -m tcp --dport 4000 -j KUBE-SVC-5MRENC7Q6ZQR6GKR
+-A KUBE-SERVICES ! -s 10.244.0.0/16 -d 10.96.0.1/32 -p tcp -m comment --comment "default/kubernetes:https cluster IP" -m tcp --dport 443 -j KUBE-MARK-MASQ
+-A KUBE-SERVICES -d 10.96.0.1/32 -p tcp -m comment --comment "default/kubernetes:https cluster IP" -m tcp --dport 443 -j KUBE-SVC-NPX46M4PTMTKRN6Y
+-A KUBE-SERVICES ! -s 10.244.0.0/16 -d 10.96.0.10/32 -p udp -m comment --comment "kube-system/kube-dns:dns cluster IP" -m udp --dport 53 -j KUBE-MARK-MASQ
+-A KUBE-SERVICES -d 10.96.0.10/32 -p udp -m comment --comment "kube-system/kube-dns:dns cluster IP" -m udp --dport 53 -j KUBE-SVC-TCOU7JCQXEZGVUNU
+-A KUBE-SERVICES ! -s 10.244.0.0/16 -d 10.96.0.10/32 -p tcp -m comment --comment "kube-system/kube-dns:dns-tcp cluster IP" -m tcp --dport 53 -j KUBE-MARK-MASQ
+-A KUBE-SERVICES -d 10.96.0.10/32 -p tcp -m comment --comment "kube-system/kube-dns:dns-tcp cluster IP" -m tcp --dport 53 -j KUBE-SVC-ERIFXISQEP7F7OF4
+-A KUBE-SERVICES ! -s 10.244.0.0/16 -d 10.96.0.10/32 -p tcp -m comment --comment "kube-system/kube-dns:metrics cluster IP" -m tcp --dport 9153 -j KUBE-MARK-MASQ
+-A KUBE-SERVICES -d 10.96.0.10/32 -p tcp -m comment --comment "kube-system/kube-dns:metrics cluster IP" -m tcp --dport 9153 -j KUBE-SVC-JD5MR3NA4I4DYORP
+-A KUBE-SERVICES -m comment --comment "kubernetes service nodeports; NOTE: this must be the last rule in this chain" -m addrtype --dst-type LOCAL -j KUBE-NODEPORTS
 #-------------------------output-------------------------
 ```
 
@@ -138,43 +136,88 @@ hello-world-deployment-7db4ffd7b-pg5ht   1/1     Running   0          100s   10.
 接着我们回到`Chain KUBE-NODEPORTS`的规则，继续往下游分析，查看`Chain KUBE-SVC-5MRENC7Q6ZQR6GKR`
 
 ```sh
-[root@k8s-node-2 ~]$ iptables-save | grep 'KUBE-SVC-5MRENC7Q6ZQR6GKR'
+[root@k8s-n-1 ~]$ iptables-save | grep 'KUBE-SVC-5MRENC7Q6ZQR6GKR'
 #-------------------------output-------------------------
 :KUBE-SVC-5MRENC7Q6ZQR6GKR - [0:0]
 -A KUBE-NODEPORTS -p tcp -m comment --comment "default/hello-world-service:" -m tcp --dport 30001 -j KUBE-SVC-5MRENC7Q6ZQR6GKR
--A KUBE-SERVICES -d 10.106.183.112/32 -p tcp -m comment --comment "default/hello-world-service: cluster IP" -m tcp --dport 4000 -j KUBE-SVC-5MRENC7Q6ZQR6GKR
--A KUBE-SVC-5MRENC7Q6ZQR6GKR -j KUBE-SEP-JNUJINTC6VOLRDUD
+-A KUBE-SERVICES -d 10.96.103.220/32 -p tcp -m comment --comment "default/hello-world-service: cluster IP" -m tcp --dport 4000 -j KUBE-SVC-5MRENC7Q6ZQR6GKR
+-A KUBE-SVC-5MRENC7Q6ZQR6GKR -j KUBE-SEP-2KIVNDBOTOCNVG2U
 #-------------------------output-------------------------
 ```
 
-找到了一条规则，该规则指向了另一个`Chain KUBE-SEP-JNUJINTC6VOLRDUD`，继续往下查看
+找到了一条规则，该规则指向了另一个`Chain KUBE-SEP-2KIVNDBOTOCNVG2U`，继续往下查看
 
 ```sh
-[root@k8s-node-2 ~]$ iptables-save | grep 'KUBE-SEP-JNUJINTC6VOLRDUD'
+[root@k8s-n-1 ~]$ iptables-save | grep 'KUBE-SEP-2KIVNDBOTOCNVG2U'
 #-------------------------output-------------------------
-:KUBE-SEP-JNUJINTC6VOLRDUD - [0:0]
--A KUBE-SEP-JNUJINTC6VOLRDUD -s 10.244.3.81/32 -j KUBE-MARK-MASQ
--A KUBE-SEP-JNUJINTC6VOLRDUD -p tcp -m tcp -j DNAT --to-destination 10.244.3.81:8080
--A KUBE-SVC-5MRENC7Q6ZQR6GKR -j KUBE-SEP-JNUJINTC6VOLRDUD
+:KUBE-SEP-2KIVNDBOTOCNVG2U - [0:0]
+-A KUBE-SEP-2KIVNDBOTOCNVG2U -s 10.244.1.5/32 -j KUBE-MARK-MASQ
+-A KUBE-SEP-2KIVNDBOTOCNVG2U -p tcp -m tcp -j DNAT --to-destination 10.244.1.5:8080
+-A KUBE-SVC-5MRENC7Q6ZQR6GKR -j KUBE-SEP-2KIVNDBOTOCNVG2U
 #-------------------------output-------------------------
 ```
 
-找到了一条DNAT规则，该规则将数据包的目的ip以及端口改写为`10.244.3.81`以及`8080`，然后继续查找路由表
+找到了一条DNAT规则，该规则将数据包的目的ip以及端口改写为`10.244.1.5`以及`8080`，然后继续查找路由表
 
 ```sh
-[root@k8s-node-2 netns]$ ip r | grep '10.244.3.0/24'
+[root@k8s-n-1 ~]$ ip r | grep '10.244.1.0/24'
 #-------------------------output-------------------------
-10.244.3.0/24 dev cni0 proto kernel scope link src 10.244.3.1
+10.244.1.0/24 dev cni0 proto kernel scope link src 10.244.1.1
 #-------------------------output-------------------------
 ```
 
-我们发现，路由表指向的是`cni0`，每个pod都对应了一个`veth pair`，一端连接在网桥上，另一端在容器的网络命名空间中
-
-接着，我们看下在`k8s-n-1`节点上，路由规则是怎样的
+我们发现，路由表指向的是`cni0`，每个pod都对应了一个`veth pair`，一端连接在网桥上，另一端在容器的网络命名空间中，我们可以通过`brctl`来查看网桥`cni0`的相关信息
 
 ```sh
-[root@k8s-node-1 ~]$ ip r | grep '10.244.3.0/24'
-10.244.3.0/24 via 10.244.3.0 dev flannel.1 onlink
+[root@k8s-n-1 ~]$ brctl show cni0
+#-------------------------output-------------------------
+bridge name	bridge id		STP enabled	interfaces
+cni0		8000.2a11eb4c8527	no		veth8469bbce
+#-------------------------output-------------------------
+
+[root@k8s-n-1 ~]$ brctl showmacs cni0
+#-------------------------output-------------------------
+port no	mac addr		is local?	ageing timer
+  2	a6:92:e2:fd:6c:9c	yes		   0.00
+  2	a6:92:e2:fd:6c:9c	yes		   0.00
+  2	ca:97:47:ed:dd:01	no		   3.75
+#-------------------------output-------------------------
+```
+
+可以看到，目前网桥`cni0`上只有一张网卡，该网卡类型是`veth`，veth是一对网卡，其中一张网卡在默认的网络命名空间中，另外一张网卡在pod的网络命名空间中。`brctl showmacs cni0`输出的三条数据中，其`port`都是2，代表这些对应着同一个网卡，即`veth`网卡，`is local`字段为`true`表示位于默认网络命名空间中，`is local`字段为`false`表示位于另一个网络命名空间中，接下来找到该docker的命名空间，然后进入该命名空间查看一下网卡的mac地址是否为`ca:97:47:ed:dd:01`，同时看一下该网卡的ip是否为`10.244.1.5`
+
+```sh
+# 其中 e464807dae4f 是容器id
+[root@k8s-n-1 ~]$ pid=$(docker inspect -f '{{.State.Pid}}' e464807dae4f)
+[root@k8s-n-1 ~]$ nsenter -t ${pid} -n ifconfig
+#-------------------------output-------------------------
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1450
+        inet 10.244.1.5  netmask 255.255.255.0  broadcast 0.0.0.0
+        inet6 fe80::c897:47ff:feed:dd01  prefixlen 64  scopeid 0x20<link>
+        ether ca:97:47:ed:dd:01  txqueuelen 0  (Ethernet)
+        RX packets 64  bytes 6286 (6.1 KiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 49  bytes 5643 (5.5 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+#-------------------------output-------------------------
+```
+
+接着，我们看下在`k8s-n-2`节点上，路由规则是怎样的
+
+```sh
+[root@k8s-n-2 ~]$ ip r | grep '10.244.1.0/24'
+#-------------------------output-------------------------
+10.244.1.0/24 via 10.244.1.0 dev flannel.1 onlink
+#-------------------------output-------------------------
 ```
 
 可以看到，在`k8s-n-1`节点上，直接路由到了`flannel.1`这样网卡，然后通过`flannel`的网络（主机网络或覆盖网络）到达`k8s-n-1`上
