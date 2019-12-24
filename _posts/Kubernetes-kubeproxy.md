@@ -73,7 +73,7 @@ deployment.apps/hello-world-deployment created
 #-------------------------output-------------------------
 ```
 
-查找一下该pod部署在哪个node上
+查找一下该`pod`部署在哪个`node`上
 
 ```sh
 [root@k8s-master ~]$ kubectl get pods -o wide
@@ -186,6 +186,8 @@ port no	mac addr		is local?	ageing timer
 
 可以看到，目前网桥`cni0`上只有一张网卡，该网卡类型是`veth`，veth是一对网卡，其中一张网卡在默认的网络命名空间中，另外一张网卡在pod的网络命名空间中。`brctl showmacs cni0`输出的三条数据中，其`port`都是2，代表这些对应着同一个网卡，即`veth`网卡，`is local`字段为`true`表示位于默认网络命名空间中，`is local`字段为`false`表示位于另一个网络命名空间中，接下来找到该docker的命名空间，然后进入该命名空间查看一下网卡的mac地址是否为`ca:97:47:ed:dd:01`，同时看一下该网卡的ip是否为`10.244.1.5`
 
+* 注意，有时候该命令`brctl showmacs cni0`只会输出`is local`字段为`true`的信息，重新访问一下该`pod`，然后再重新执行`brctl showmacs cni0`命令，就能看到`is local`字段为`false`的数据了
+
 ```sh
 # 其中 e464807dae4f 是容器id
 [root@k8s-n-1 ~]$ pid=$(docker inspect -f '{{.State.Pid}}' e464807dae4f)
@@ -222,15 +224,141 @@ lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
 
 可以看到，在`k8s-n-1`节点上，直接路由到了`flannel.1`这样网卡，然后通过`flannel`的网络（主机网络或覆盖网络）到达`k8s-n-1`上
 
-# 2 todo
+# 2 多副本
 
-1. 每个node上的pod，其子网都相同
-1. 同个node之间的应用相互调用，最终会走到cni网桥
-1. 不同node之间的应用相互调用，最终会走到flannel
-1. cni0是个网桥（二层交换机）
-1. 同一个网段走二层转发，不同网段走三层转发
+__deployment（hello-world-deployment.yml）__
 
-# 3 参考
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world-deployment
+  labels:
+    mylabel: label_hello_world_deployment
+spec:
+  replicas: 3 # 这里改成3副本
+  selector:
+    matchLabels:
+      mylabel: label_hello_world
+  template:
+    metadata:
+      labels:
+        mylabel: label_hello_world
+    spec:
+      containers:
+      - name: hello-world
+        image: registry.cn-hangzhou.aliyuncs.com/liuyehcf_default/liuye_repo:v1
+        imagePullPolicy: IfNotPresent
+        command: ["java", "-jar", "lib/spring-boot-1.0-SNAPSHOT.jar"]
+        ports:
+        - containerPort: 8080
+```
+
+__service（hello-world-service.yml）__
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-world-service
+spec:
+  ports:
+    - protocol: TCP
+      port: 4000
+      targetPort: 8080
+      nodePort: 30001
+  selector:
+    mylabel: label_hello_world
+  type: NodePort
+```
+
+创建`deployment`以及`service`
+
+```sh
+[root@k8s-master ~]$ kubectl apply -f hello-world-service.yml
+#-------------------------output-------------------------
+service/hello-world-service created
+#-------------------------output-------------------------
+
+[root@k8s-master ~]$ kubectl apply -f hello-world-deployment.yml
+#-------------------------output-------------------------
+deployment.apps/hello-world-deployment created
+#-------------------------output-------------------------
+```
+
+查看一下`pod`的部署情况
+
+```sh
+[root@k8s-master ~]$ kubectl get pods -o wide
+#-------------------------output-------------------------
+NAME                                     READY   STATUS    RESTARTS   AGE     IP           NODE      NOMINATED NODE   READINESS GATES
+hello-world-deployment-cbdf4db7b-5qflq   1/1     Running   0          5m      10.244.2.2   k8s-n-2   <none>           <none>
+hello-world-deployment-cbdf4db7b-j6fpq   1/1     Running   1          5h35m   10.244.1.6   k8s-n-1   <none>           <none>
+hello-world-deployment-cbdf4db7b-qc624   1/1     Running   0          5m      10.244.1.7   k8s-n-1   <none>           <none>
+#-------------------------output-------------------------
+```
+
+我们以`k8s-n-1`为例，首先以`NodePort`为关键字进行搜索
+
+```sh
+[root@k8s-n-1 ~]$ iptables-save | grep 30001
+#-------------------------output-------------------------
+-A KUBE-NODEPORTS -p tcp -m comment --comment "default/hello-world-service:" -m tcp --dport 30001 -j KUBE-MARK-MASQ
+-A KUBE-NODEPORTS -p tcp -m comment --comment "default/hello-world-service:" -m tcp --dport 30001 -j KUBE-SVC-5MRENC7Q6ZQR6GKR
+#-------------------------output-------------------------
+```
+
+上游`Chain`与单副本完全一致，不再赘述，继续沿着下游`Chain`进行分析，搜索`KUBE-SVC-5MRENC7Q6ZQR6GKR`关键词
+
+```sh
+[root@k8s-n-1 ~]$ iptables-save | grep KUBE-SVC-5MRENC7Q6ZQR6GKR
+#-------------------------output-------------------------
+:KUBE-SVC-5MRENC7Q6ZQR6GKR - [0:0]
+-A KUBE-NODEPORTS -p tcp -m comment --comment "default/hello-world-service:" -m tcp --dport 30001 -j KUBE-SVC-5MRENC7Q6ZQR6GKR
+-A KUBE-SERVICES -d 10.96.103.220/32 -p tcp -m comment --comment "default/hello-world-service: cluster IP" -m tcp --dport 4000 -j KUBE-SVC-5MRENC7Q6ZQR6GKR
+-A KUBE-SVC-5MRENC7Q6ZQR6GKR -m statistic --mode random --probability 0.33333333349 -j KUBE-SEP-NQUZNNDG4S4UQTZI
+-A KUBE-SVC-5MRENC7Q6ZQR6GKR -m statistic --mode random --probability 0.50000000000 -j KUBE-SEP-XYEBSHB6XMTA6LVQ
+-A KUBE-SVC-5MRENC7Q6ZQR6GKR -j KUBE-SEP-AFBU56PEPWZ4VPIJ
+#-------------------------output-------------------------
+```
+
+这里，我们就能发现单副本与多副本之间的差异了，在单副本的例子中，只有一条规则，而多副本的例子中，有多条规则（规则数量与副本数保持一致），并且使用了`statistic`模块，引入了随机因子，用于实现负载均衡的功能（`iptables -m statistic -h`查看该模块的参数），然后，分别查看三个下游`Chain`
+
+```sh
+[root@k8s-n-1 ~]$ iptables-save | grep KUBE-SEP-NQUZNNDG4S4UQTZI
+#-------------------------output-------------------------
+:KUBE-SEP-NQUZNNDG4S4UQTZI - [0:0]
+-A KUBE-SEP-NQUZNNDG4S4UQTZI -s 10.244.1.6/32 -j KUBE-MARK-MASQ
+-A KUBE-SEP-NQUZNNDG4S4UQTZI -p tcp -m tcp -j DNAT --to-destination 10.244.1.6:8080
+-A KUBE-SVC-5MRENC7Q6ZQR6GKR -m statistic --mode random --probability 0.33333333349 -j KUBE-SEP-NQUZNNDG4S4UQTZI
+#-------------------------output-------------------------
+
+[root@k8s-n-1 ~]$ iptables-save | grep KUBE-SEP-XYEBSHB6XMTA6LVQ
+#-------------------------output-------------------------
+:KUBE-SEP-XYEBSHB6XMTA6LVQ - [0:0]
+-A KUBE-SEP-XYEBSHB6XMTA6LVQ -s 10.244.1.7/32 -j KUBE-MARK-MASQ
+-A KUBE-SEP-XYEBSHB6XMTA6LVQ -p tcp -m tcp -j DNAT --to-destination 10.244.1.7:8080
+-A KUBE-SVC-5MRENC7Q6ZQR6GKR -m statistic --mode random --probability 0.50000000000 -j KUBE-SEP-XYEBSHB6XMTA6LVQ
+#-------------------------output-------------------------
+
+[root@k8s-n-1 ~]$ iptables-save | grep KUBE-SEP-AFBU56PEPWZ4VPIJ
+#-------------------------output-------------------------
+:KUBE-SEP-AFBU56PEPWZ4VPIJ - [0:0]
+-A KUBE-SEP-AFBU56PEPWZ4VPIJ -s 10.244.2.2/32 -j KUBE-MARK-MASQ
+-A KUBE-SEP-AFBU56PEPWZ4VPIJ -p tcp -m tcp -j DNAT --to-destination 10.244.2.2:8080
+-A KUBE-SVC-5MRENC7Q6ZQR6GKR -j KUBE-SEP-AFBU56PEPWZ4VPIJ
+#-------------------------output-------------------------
+```
+
+这里，可以看到，三个`Chain`，每个`Chain`分别配置了一个DNAT，指向某一个`pod`。后续的链路，如果在`pod`在本机，则走`cni0`网桥，否则就走`flannel`
+
+# 3 总结
+
+1. 每个`node`上的`pod`，其子网都相同
+1. 同个`node`之间`pod`相互访问，最终会走到`cni`网桥，该网桥等价于一个二层交换机，接着一对`veth`网卡，其中一段在默认的网络命名空间，另一端在`pod`的网络命名空间
+1. 不同`node`之间的`pod`相互访问，最终会走到`flannel`
+
+# 4 参考
 
 * [kubernetes入门之kube-proxy实现原理](https://xuxinkun.github.io/2016/07/22/kubernetes-proxy/)
 * [kubernetes 简介：service 和 kube-proxy 原理](https://cizixs.com/2017/03/30/kubernetes-introduction-service-and-kube-proxy/)
