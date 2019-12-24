@@ -253,3 +253,6 @@ tcpdump是通过libpcap来抓取报文的，libpcap在不同平台有不同的�
 ## 3.1 参考
 
 * [tcpdump 抓包的原理？](https://www.zhihu.com/question/41710052)
+* [NAT技术基本原理与应用](https://www.cnblogs.com/dongzhuangdian/p/5105844.html)
+* [Linux-虚拟网络设备-veth pair](https://blog.csdn.net/sld880311/article/details/77650937)
+* [Linux虚拟网络设备之bridge(桥)](https://segmentfault.com/a/1190000009491002?utm_source=tag-newest)

@@ -463,6 +463,8 @@ __步骤__
 
 # 7 Ingress
 
+todo ingress nginx
+
 __helm安装（未成功）__
 
 1. `helm install stable/nginx-ingress --name my-nginx`

@@ -1014,6 +1014,33 @@ $ ip rule add [from 0/0] table 1 pref 32800
 $ ip rule add from 192.168.3.112/32 [tos 0x10] table 2 pref 1500 prohibit
 ```
 
+### 7.5.5 ip netns
+
+```sh
+Usage: ip netns list
+       ip netns add NAME
+       ip netns set NAME NETNSID
+       ip [-all] netns delete [NAME]
+       ip netns identify [PID]
+       ip netns pids NAME
+       ip [-all] netns exec [NAME] cmd ...
+       ip netns monitor
+       ip netns list-id
+```
+
+__示例__
+
+* `ip netns list`：列出网络命名空间（只会从`/var/run/netns`下读取）
+* `ip netns exec test-ns ifconfig`：在网络命名空间`test-ns`中执行`ifconfig`
+
+__与nsenter的区别__：由于`ip netns`只从`/var/run/netns`下读取网络命名空间，而`nsenter`默认会读取`/proc/${pid}/ns/net`。但是`docker`默认不会在`/var/run/netns`目录下创建命名空间，因此如果要使用`ip netns`进入到容器的命名空间，还需要做个软连接
+
+```sh
+pid=$(docker inspect -f '{{.State.Pid}}' ${container_id})
+mkdir -p /var/run/netns/
+ln -sfT /proc/$pid/ns/net /var/run/netns/$container_id
+```
+
 ## 7.6 tcpdump
 
 __格式：__
@@ -1090,9 +1117,10 @@ __输出信息介绍__
 
 * 每一个Chain就是每个链，Chain所在的括号里面的是默认的策略(即没有规则匹配时采取的操作(target))
 * `target`：代表进行的操作
-    * `ACCEPT`是放行
-    * `REJECT`是拒绝
-    * `DROP`是丢弃
+    * __`ACCEPT`__：表示放行
+    * __`DROP`__：表示丢弃
+    * __`QUEUE`__：将数据包传递到用户空间
+    * __`RETURN`__：表示停止遍历当前链，并在上一个链中的下一个规则处恢复（假设在`Chain A`中调用了`Chain B`，`Chain B RETURN`后，继续`Chain A`的下一个规则）
     * __还可以是一个自定义的Chain__
 * `port`：代表使用的数据包协议，主要有TCP、UDP、ICMP3中数据包
 * `opt`：额外的选项说明
@@ -1103,8 +1131,6 @@ __示例：__
 
 * `iptables -nL`
 * `iptables -t nat -nL`
-
----
 
 由于`iptables`的上述命令的查看只是做格式化的查阅，要详细解释每个规则可能会与原规则有出入，因此，建议使用`iptables-save`这个命令来查看防火墙规则
 
@@ -1178,8 +1204,9 @@ __参数说明：__
 * `-j`：后面接操作
     * `ACCEPT`
     * `DROP`
-    * `REJECT`
-    * `LOG`
+    * `QUEUE`
+    * `RETURN`
+    * __其他Chain__
 * __重要的原则：没有指定的项目，就表示该项目完全接受__
     * 例如`-s`和`-d`不指定，就表示来源或去向的任意IP/网络都接受
 
@@ -1209,31 +1236,28 @@ __示例：__
 * `iptables -A INPUT -i eth0 -p tcp --dport 21 -j DROP`：想要进入本机port 21的数据包都阻挡掉
 * `iptables -A INPUT -i eth0 -p tcp --sport 1:1023 --dport 1:1023 --syn -j DROP`：来自任何来源port 1:1023的主动连接到本机端的1:1023连接丢弃
 
-### 7.7.6 iptables外挂模块：mac与state
+### 7.7.6 iptables匹配扩展
 
-在Kernel 2.2以前使用ipchains管理防火墙时，`ipchains`没有数据包状态模块，因此我们必须针对数据包的进、出方向进行控制。`iptables`可以帮我们免除这个困扰，它可以通过一个状态模块来分析这个想要进入的数据包是否为刚刚发出去的响应
+`iptables`可以使用扩展的数据包匹配模块。当指定`-p`或`--protocol`时，或者使用`-m`或`--match`选项，后跟匹配的模块名称；之后，取决于特定的模块，可以使用各种其他命令行选项。可以在一行中指定多个扩展匹配模块，并且可以在指定模块后使用`-h`或`--help`选项来接收特定于该模块的帮助文档（`iptables -m comment -h`，输出信息的最下方有`comment`模块的参数说明）
 
-__格式：__
+__常用模块__，详细内容请参考[Match Extensions](https://linux.die.net/man/8/iptables)
 
-* `iptables -A INPUT [-m state] [--state 状态]`
+1. `comment`：增加注释
+1. `conntrack`：与连接跟踪结合使用时，此模块允许访问比“状态”匹配更多的连接跟踪信息。（仅当iptables在支持该功能的内核下编译时，此模块才存在）
+1. `tcp`
+1. `udp`
 
-__参数说明：__
+### 7.7.7 iptables目标扩展
 
-* `-m`：一些iptables的外挂模块
-    * `state`：状态模块
-    * `mac`：网卡硬件地址(hardware address)
-* `--state`：一些数据包的状态
-    * `INVALID`：无效的数据包
-    * `ESTABLISHED`：已经连接成功的连接状态
-    * `NEW`：想要新建立连接的数据包状态
-    * `RELATED`：表示这个数据包与主机发送出去的数据包有关
+iptables可以使用扩展目标模块，并且可以在指定目标后使用`-h`或`--help`选项来接收特定于该目标的帮助文档（`iptables -j DNAT -h`）
 
-__示例：__
+__常用__
 
-* `iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT`
-* `iptables -A INPUT -m mac --mac-source aa:bb:cc:dd:ee:ff -j ACCEPT`
+1. `DNAT`
+1. `SNAT`
+1. `REJECT`
 
-### 7.7.7 ICMP数据包规则的比对：针对是否响应ping来设计
+### 7.7.8 ICMP数据包规则的比对：针对是否响应ping来设计
 
 __格式：__
 
