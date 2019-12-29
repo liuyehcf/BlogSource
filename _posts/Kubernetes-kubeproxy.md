@@ -63,53 +63,53 @@ spec:
 
 ```sh
 [root@k8s-master ~]$ kubectl apply -f hello-world-service.yml
-#-------------------------output-------------------------
+#-------------------------↓↓↓↓↓↓-------------------------
 service/hello-world-service created
-#-------------------------output-------------------------
+#-------------------------↑↑↑↑↑↑-------------------------
 
 [root@k8s-master ~]$ kubectl apply -f hello-world-deployment.yml
-#-------------------------output-------------------------
+#-------------------------↓↓↓↓↓↓-------------------------
 deployment.apps/hello-world-deployment created
-#-------------------------output-------------------------
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 查找一下该`pod`部署在哪个`node`上
 
 ```sh
 [root@k8s-master ~]$ kubectl get pods -o wide
-#-------------------------output-------------------------
+#-------------------------↓↓↓↓↓↓-------------------------
 NAME                                     READY   STATUS    RESTARTS   AGE   IP           NODE      NOMINATED NODE   READINESS GATES
 hello-world-deployment-cbdf4db7b-j6fpq   1/1     Running   0          56s   10.244.1.5   k8s-n-1   <none>           <none>
-#-------------------------output-------------------------
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 发现，应用部署在`k8s-n-1`上，查看`k8s-n-1`节点上的`iptables`规则，用`30001`作为条件过滤
 
 ```sh
 [root@k8s-n-1 ~]$ iptables-save | grep '30001'
-#-------------------------output-------------------------
+#-------------------------↓↓↓↓↓↓-------------------------
 -A KUBE-NODEPORTS -p tcp -m comment --comment "default/hello-world-service:" -m tcp --dport 30001 -j KUBE-MARK-MASQ
 -A KUBE-NODEPORTS -p tcp -m comment --comment "default/hello-world-service:" -m tcp --dport 30001 -j KUBE-SVC-5MRENC7Q6ZQR6GKR
-#-------------------------output-------------------------
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 我们找到了名为`KUBE-NODEPORTS`的`Chain`的两条规则，继续用`KUBE-NODEPORTS`寻找上游`Chain`
 
 ```sh
 [root@k8s-n-1 ~]$ iptables-save | grep 'KUBE-NODEPORTS'
-#-------------------------output-------------------------
+#-------------------------↓↓↓↓↓↓-------------------------
 :KUBE-NODEPORTS - [0:0]
 -A KUBE-NODEPORTS -p tcp -m comment --comment "default/hello-world-service:" -m tcp --dport 30001 -j KUBE-MARK-MASQ
 -A KUBE-NODEPORTS -p tcp -m comment --comment "default/hello-world-service:" -m tcp --dport 30001 -j KUBE-SVC-5MRENC7Q6ZQR6GKR
 -A KUBE-SERVICES -m comment --comment "kubernetes service nodeports; NOTE: this must be the last rule in this chain" -m addrtype --dst-type LOCAL -j KUBE-NODEPORTS
-#-------------------------output-------------------------
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 我们找到了名为`KUBE-SERVICES`的`Chain`的一条规则，继续用`KUBE-SERVICES`寻找上游`Chain`
 
 ```sh
 [root@k8s-n-1 ~]$ iptables-save | grep 'KUBE-SERVICES'
-#-------------------------output-------------------------
+#-------------------------↓↓↓↓↓↓-------------------------
 :KUBE-SERVICES - [0:0]
 -A INPUT -m conntrack --ctstate NEW -m comment --comment "kubernetes service portals" -j KUBE-SERVICES
 -A FORWARD -m conntrack --ctstate NEW -m comment --comment "kubernetes service portals" -j KUBE-SERVICES
@@ -128,7 +128,7 @@ hello-world-deployment-cbdf4db7b-j6fpq   1/1     Running   0          56s   10.2
 -A KUBE-SERVICES ! -s 10.244.0.0/16 -d 10.96.0.10/32 -p tcp -m comment --comment "kube-system/kube-dns:metrics cluster IP" -m tcp --dport 9153 -j KUBE-MARK-MASQ
 -A KUBE-SERVICES -d 10.96.0.10/32 -p tcp -m comment --comment "kube-system/kube-dns:metrics cluster IP" -m tcp --dport 9153 -j KUBE-SVC-JD5MR3NA4I4DYORP
 -A KUBE-SERVICES -m comment --comment "kubernetes service nodeports; NOTE: this must be the last rule in this chain" -m addrtype --dst-type LOCAL -j KUBE-NODEPORTS
-#-------------------------output-------------------------
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 我们发现，`PREROUTING`、`INPUT`、`FORWARD`、`OUTPUT`为`KUBE-SERVICES`的上游`Chain`
@@ -137,51 +137,51 @@ hello-world-deployment-cbdf4db7b-j6fpq   1/1     Running   0          56s   10.2
 
 ```sh
 [root@k8s-n-1 ~]$ iptables-save | grep 'KUBE-SVC-5MRENC7Q6ZQR6GKR'
-#-------------------------output-------------------------
+#-------------------------↓↓↓↓↓↓-------------------------
 :KUBE-SVC-5MRENC7Q6ZQR6GKR - [0:0]
 -A KUBE-NODEPORTS -p tcp -m comment --comment "default/hello-world-service:" -m tcp --dport 30001 -j KUBE-SVC-5MRENC7Q6ZQR6GKR
 -A KUBE-SERVICES -d 10.96.103.220/32 -p tcp -m comment --comment "default/hello-world-service: cluster IP" -m tcp --dport 4000 -j KUBE-SVC-5MRENC7Q6ZQR6GKR
 -A KUBE-SVC-5MRENC7Q6ZQR6GKR -j KUBE-SEP-2KIVNDBOTOCNVG2U
-#-------------------------output-------------------------
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 找到了一条规则，该规则指向了另一个`Chain KUBE-SEP-2KIVNDBOTOCNVG2U`，继续往下查看
 
 ```sh
 [root@k8s-n-1 ~]$ iptables-save | grep 'KUBE-SEP-2KIVNDBOTOCNVG2U'
-#-------------------------output-------------------------
+#-------------------------↓↓↓↓↓↓-------------------------
 :KUBE-SEP-2KIVNDBOTOCNVG2U - [0:0]
 -A KUBE-SEP-2KIVNDBOTOCNVG2U -s 10.244.1.5/32 -j KUBE-MARK-MASQ
 -A KUBE-SEP-2KIVNDBOTOCNVG2U -p tcp -m tcp -j DNAT --to-destination 10.244.1.5:8080
 -A KUBE-SVC-5MRENC7Q6ZQR6GKR -j KUBE-SEP-2KIVNDBOTOCNVG2U
-#-------------------------output-------------------------
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 找到了一条DNAT规则，该规则将数据包的目的ip以及端口改写为`10.244.1.5`以及`8080`，然后继续查找路由表
 
 ```sh
 [root@k8s-n-1 ~]$ ip r | grep '10.244.1.0/24'
-#-------------------------output-------------------------
+#-------------------------↓↓↓↓↓↓-------------------------
 10.244.1.0/24 dev cni0 proto kernel scope link src 10.244.1.1
-#-------------------------output-------------------------
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 我们发现，路由表指向的是`cni0`，每个pod都对应了一个`veth pair`，一端连接在网桥上，另一端在容器的网络命名空间中，我们可以通过`brctl`来查看网桥`cni0`的相关信息
 
 ```sh
 [root@k8s-n-1 ~]$ brctl show cni0
-#-------------------------output-------------------------
+#-------------------------↓↓↓↓↓↓-------------------------
 bridge name	bridge id		STP enabled	interfaces
 cni0		8000.2a11eb4c8527	no		veth8469bbce
-#-------------------------output-------------------------
+#-------------------------↑↑↑↑↑↑-------------------------
 
 [root@k8s-n-1 ~]$ brctl showmacs cni0
-#-------------------------output-------------------------
+#-------------------------↓↓↓↓↓↓-------------------------
 port no	mac addr		is local?	ageing timer
   2	a6:92:e2:fd:6c:9c	yes		   0.00
   2	a6:92:e2:fd:6c:9c	yes		   0.00
   2	ca:97:47:ed:dd:01	no		   3.75
-#-------------------------output-------------------------
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 可以看到，目前网桥`cni0`上只有一张网卡，该网卡类型是`veth`，veth是一对网卡，其中一张网卡在默认的网络命名空间中，另外一张网卡在pod的网络命名空间中。`brctl showmacs cni0`输出的三条数据中，其`port`都是2，代表这些对应着同一个网卡，即`veth`网卡，`is local`字段为`true`表示位于默认网络命名空间中，`is local`字段为`false`表示位于另一个网络命名空间中，接下来找到该docker的命名空间，然后进入该命名空间查看一下网卡的mac地址是否为`ca:97:47:ed:dd:01`，同时看一下该网卡的ip是否为`10.244.1.5`
@@ -192,7 +192,7 @@ port no	mac addr		is local?	ageing timer
 # 其中 e464807dae4f 是容器id
 [root@k8s-n-1 ~]$ pid=$(docker inspect -f '{{.State.Pid}}' e464807dae4f)
 [root@k8s-n-1 ~]$ nsenter -t ${pid} -n ifconfig
-#-------------------------output-------------------------
+#-------------------------↓↓↓↓↓↓-------------------------
 eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1450
         inet 10.244.1.5  netmask 255.255.255.0  broadcast 0.0.0.0
         inet6 fe80::c897:47ff:feed:dd01  prefixlen 64  scopeid 0x20<link>
@@ -210,16 +210,16 @@ lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
         RX errors 0  dropped 0  overruns 0  frame 0
         TX packets 0  bytes 0 (0.0 B)
         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-#-------------------------output-------------------------
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 接着，我们看下在`k8s-n-2`节点上，路由规则是怎样的
 
 ```sh
 [root@k8s-n-2 ~]$ ip r | grep '10.244.1.0/24'
-#-------------------------output-------------------------
+#-------------------------↓↓↓↓↓↓-------------------------
 10.244.1.0/24 via 10.244.1.0 dev flannel.1 onlink
-#-------------------------output-------------------------
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 可以看到，在`k8s-n-1`节点上，直接路由到了`flannel.1`这样网卡，然后通过`flannel`的网络（主机网络或覆盖网络）到达`k8s-n-1`上
@@ -276,78 +276,78 @@ spec:
 
 ```sh
 [root@k8s-master ~]$ kubectl apply -f hello-world-service.yml
-#-------------------------output-------------------------
+#-------------------------↓↓↓↓↓↓-------------------------
 service/hello-world-service created
-#-------------------------output-------------------------
+#-------------------------↑↑↑↑↑↑-------------------------
 
 [root@k8s-master ~]$ kubectl apply -f hello-world-deployment.yml
-#-------------------------output-------------------------
+#-------------------------↓↓↓↓↓↓-------------------------
 deployment.apps/hello-world-deployment created
-#-------------------------output-------------------------
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 查看一下`pod`的部署情况
 
 ```sh
 [root@k8s-master ~]$ kubectl get pods -o wide
-#-------------------------output-------------------------
+#-------------------------↓↓↓↓↓↓-------------------------
 NAME                                     READY   STATUS    RESTARTS   AGE     IP           NODE      NOMINATED NODE   READINESS GATES
 hello-world-deployment-cbdf4db7b-5qflq   1/1     Running   0          5m      10.244.2.2   k8s-n-2   <none>           <none>
 hello-world-deployment-cbdf4db7b-j6fpq   1/1     Running   1          5h35m   10.244.1.6   k8s-n-1   <none>           <none>
 hello-world-deployment-cbdf4db7b-qc624   1/1     Running   0          5m      10.244.1.7   k8s-n-1   <none>           <none>
-#-------------------------output-------------------------
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 我们以`k8s-n-1`为例，首先以`NodePort`为关键字进行搜索
 
 ```sh
 [root@k8s-n-1 ~]$ iptables-save | grep 30001
-#-------------------------output-------------------------
+#-------------------------↓↓↓↓↓↓-------------------------
 -A KUBE-NODEPORTS -p tcp -m comment --comment "default/hello-world-service:" -m tcp --dport 30001 -j KUBE-MARK-MASQ
 -A KUBE-NODEPORTS -p tcp -m comment --comment "default/hello-world-service:" -m tcp --dport 30001 -j KUBE-SVC-5MRENC7Q6ZQR6GKR
-#-------------------------output-------------------------
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 上游`Chain`与单副本完全一致，不再赘述，继续沿着下游`Chain`进行分析，搜索`KUBE-SVC-5MRENC7Q6ZQR6GKR`关键词
 
 ```sh
 [root@k8s-n-1 ~]$ iptables-save | grep KUBE-SVC-5MRENC7Q6ZQR6GKR
-#-------------------------output-------------------------
+#-------------------------↓↓↓↓↓↓-------------------------
 :KUBE-SVC-5MRENC7Q6ZQR6GKR - [0:0]
 -A KUBE-NODEPORTS -p tcp -m comment --comment "default/hello-world-service:" -m tcp --dport 30001 -j KUBE-SVC-5MRENC7Q6ZQR6GKR
 -A KUBE-SERVICES -d 10.96.103.220/32 -p tcp -m comment --comment "default/hello-world-service: cluster IP" -m tcp --dport 4000 -j KUBE-SVC-5MRENC7Q6ZQR6GKR
 -A KUBE-SVC-5MRENC7Q6ZQR6GKR -m statistic --mode random --probability 0.33333333349 -j KUBE-SEP-NQUZNNDG4S4UQTZI
 -A KUBE-SVC-5MRENC7Q6ZQR6GKR -m statistic --mode random --probability 0.50000000000 -j KUBE-SEP-XYEBSHB6XMTA6LVQ
 -A KUBE-SVC-5MRENC7Q6ZQR6GKR -j KUBE-SEP-AFBU56PEPWZ4VPIJ
-#-------------------------output-------------------------
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 这里，我们就能发现单副本与多副本之间的差异了，在单副本的例子中，只有一条规则，而多副本的例子中，有多条规则（规则数量与副本数保持一致），并且使用了`statistic`模块，引入了随机因子，用于实现负载均衡的功能（`iptables -m statistic -h`查看该模块的参数），然后，分别查看三个下游`Chain`
 
 ```sh
 [root@k8s-n-1 ~]$ iptables-save | grep KUBE-SEP-NQUZNNDG4S4UQTZI
-#-------------------------output-------------------------
+#-------------------------↓↓↓↓↓↓-------------------------
 :KUBE-SEP-NQUZNNDG4S4UQTZI - [0:0]
 -A KUBE-SEP-NQUZNNDG4S4UQTZI -s 10.244.1.6/32 -j KUBE-MARK-MASQ
 -A KUBE-SEP-NQUZNNDG4S4UQTZI -p tcp -m tcp -j DNAT --to-destination 10.244.1.6:8080
 -A KUBE-SVC-5MRENC7Q6ZQR6GKR -m statistic --mode random --probability 0.33333333349 -j KUBE-SEP-NQUZNNDG4S4UQTZI
-#-------------------------output-------------------------
+#-------------------------↑↑↑↑↑↑-------------------------
 
 [root@k8s-n-1 ~]$ iptables-save | grep KUBE-SEP-XYEBSHB6XMTA6LVQ
-#-------------------------output-------------------------
+#-------------------------↓↓↓↓↓↓-------------------------
 :KUBE-SEP-XYEBSHB6XMTA6LVQ - [0:0]
 -A KUBE-SEP-XYEBSHB6XMTA6LVQ -s 10.244.1.7/32 -j KUBE-MARK-MASQ
 -A KUBE-SEP-XYEBSHB6XMTA6LVQ -p tcp -m tcp -j DNAT --to-destination 10.244.1.7:8080
 -A KUBE-SVC-5MRENC7Q6ZQR6GKR -m statistic --mode random --probability 0.50000000000 -j KUBE-SEP-XYEBSHB6XMTA6LVQ
-#-------------------------output-------------------------
+#-------------------------↑↑↑↑↑↑-------------------------
 
 [root@k8s-n-1 ~]$ iptables-save | grep KUBE-SEP-AFBU56PEPWZ4VPIJ
-#-------------------------output-------------------------
+#-------------------------↓↓↓↓↓↓-------------------------
 :KUBE-SEP-AFBU56PEPWZ4VPIJ - [0:0]
 -A KUBE-SEP-AFBU56PEPWZ4VPIJ -s 10.244.2.2/32 -j KUBE-MARK-MASQ
 -A KUBE-SEP-AFBU56PEPWZ4VPIJ -p tcp -m tcp -j DNAT --to-destination 10.244.2.2:8080
 -A KUBE-SVC-5MRENC7Q6ZQR6GKR -j KUBE-SEP-AFBU56PEPWZ4VPIJ
-#-------------------------output-------------------------
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 这里，可以看到，三个`Chain`，每个`Chain`分别配置了一个DNAT，指向某一个`pod`。后续的链路，如果在`pod`在本机，则走`cni0`网桥，否则就走`flannel`

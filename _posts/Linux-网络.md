@@ -256,3 +256,4 @@ tcpdump是通过libpcap来抓取报文的，libpcap在不同平台有不同的�
 * [NAT技术基本原理与应用](https://www.cnblogs.com/dongzhuangdian/p/5105844.html)
 * [Linux-虚拟网络设备-veth pair](https://blog.csdn.net/sld880311/article/details/77650937)
 * [Linux虚拟网络设备之bridge(桥)](https://segmentfault.com/a/1190000009491002?utm_source=tag-newest)
+* [VLAN是二层技术还是三层技术？](https://www.zhihu.com/question/52278720/answer/140914508)
