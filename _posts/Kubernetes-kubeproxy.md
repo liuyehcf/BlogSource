@@ -358,9 +358,18 @@ hello-world-deployment-cbdf4db7b-qc624   1/1     Running   0          5m      10
 1. 同个`node`之间`pod`相互访问，最终会走到`cni`网桥，该网桥等价于一个二层交换机，接着一对`veth`网卡，其中一段在默认的网络命名空间，另一端在`pod`的网络命名空间
 1. 不同`node`之间的`pod`相互访问，最终会走到`flannel`
 
-# 4 参考
+# 4 todo
+
+1. 网桥、二层交换机、三层交换机、路由器
+
+https://www.globalknowledge.com/us-en/resources/resource-library/articles/what-s-the-difference-between-hubs-switches-bridges/
+
+They(switch) use the multi-port ability of the hub with the filtering of a bridge, allowing only the destination to see the unicast traffic
+
+# 5 参考
 
 * [kubernetes入门之kube-proxy实现原理](https://xuxinkun.github.io/2016/07/22/kubernetes-proxy/)
 * [kubernetes 简介：service 和 kube-proxy 原理](https://cizixs.com/2017/03/30/kubernetes-introduction-service-and-kube-proxy/)
 * [kube-proxy工作原理](https://cloud.tencent.com/developer/article/1097449)
 * [如何找到VEth设备的对端接口VEth peer](https://juejin.im/post/5caccf256fb9a06851504647)
+* [技术干货|深入理解flannel](https://zhuanlan.zhihu.com/p/34749675)

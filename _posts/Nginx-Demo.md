@@ -12,7 +12,18 @@ __阅读更多__
 
 <!--more-->
 
-# 1 配置示例
+# 1 匹配规则
+
+优先级从上到下
+
+1. `location =`：精确匹配
+1. `location <absolute path>`：完整路径
+1. `location ^~ <path>`：以某个字符串开头，非正则
+1. `location ~|~* <regex>`：正则匹配，`~`表示大小写敏感，`~*`表示大小写不敏感
+1. `location <relative path>`：相对路径
+1. `location /`：通用匹配
+
+# 2 配置示例
 
 ```nginx
 #user  nobody;
@@ -136,7 +147,7 @@ http {
     include servers/*;
 ```
 
-# 2 DockerFile
+# 3 DockerFile
 
 ```
 FROM centos:7.5.1804
@@ -172,7 +183,14 @@ RUN mkdir -p /var/temp/nginx/client
 RUN cp /usr/local/nginx/sbin/nginx /usr/local/bin
 ```
 
-# 3 参考
+# 4 文件路径
+
+## 4.1 Mac
+
+配置文件：`/usr/local/etc/nginx/nginx.conf`
+日志：`/usr/local/var/log/nginx`
+
+# 5 参考
 
 * [下载地址](http://nginx.org/download/)
 * [匹配规则示例](https://www.cnblogs.com/qinyujie/p/8979464.html)
