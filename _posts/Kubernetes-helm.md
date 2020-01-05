@@ -17,5 +17,4 @@ __阅读更多__
 
 # 2 参考
 
-[helm doc](https://helm.sh/docs/)
-
+* [helm doc](https://helm.sh/docs/)
