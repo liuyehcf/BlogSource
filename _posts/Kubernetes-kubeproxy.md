@@ -366,6 +366,8 @@ https://www.globalknowledge.com/us-en/resources/resource-library/articles/what-s
 
 They(switch) use the multi-port ability of the hub with the filtering of a bridge, allowing only the destination to see the unicast traffic
 
+1. 在容器里面，访问某个服务的时候，dns的解析过程分析
+
 # 5 参考
 
 * [kubernetes入门之kube-proxy实现原理](https://xuxinkun.github.io/2016/07/22/kubernetes-proxy/)

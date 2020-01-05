@@ -1033,7 +1033,7 @@ __示例__
 * `ip netns list`：列出网络命名空间（只会从`/var/run/netns`下读取）
 * `ip netns exec test-ns ifconfig`：在网络命名空间`test-ns`中执行`ifconfig`
 
-__与nsenter的区别__：由于`ip netns`只从`/var/run/netns`下读取网络命名空间，而`nsenter`默认会读取`/proc/${pid}/ns/net`。但是`docker`默认不会在`/var/run/netns`目录下创建命名空间，因此如果要使用`ip netns`进入到容器的命名空间，还需要做个软连接
+__与nsenter的区别__：由于`ip netns`只从`/var/run/netns`下读取网络命名空间，而`nsenter`默认会读取`/proc/${pid}/ns/net`。但是`docker`会隐藏容器的网络命名空间，即默认不会在`/var/run/netns`目录下创建命名空间，因此如果要使用`ip netns`进入到容器的命名空间，还需要做个软连接
 
 ```sh
 pid=$(docker inspect -f '{{.State.Pid}}' ${container_id})
