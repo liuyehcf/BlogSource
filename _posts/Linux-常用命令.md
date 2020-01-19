@@ -1479,6 +1479,16 @@ __示例：__
 * `watch -d 'ls -l | grep scf'`：监测当前目录中 scf' 的文件的变化
 * `watch -n 10 'cat /proc/loadavg'`：10秒一次输出系统的平均负载
 
+## 7.18 dstat
+
+## 7.19 nethogs
+
+## 7.20 iptraf
+
+## 7.21 ifstat
+
+## 7.22 iftop
+
 # 8 远程连接
 
 ## 8.1 ssh

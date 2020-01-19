@@ -68,8 +68,12 @@ net.ipv4.tcp_fin_timeout = 30
 
 然后执行`/sbin/sysctl -p`让参数生效。
 
+## 2.5 keep alive
+
 # 3 参考
 
 * [CHANGING NETWORK KERNEL SETTINGS](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/5/html/tuning_and_optimizing_red_hat_enterprise_linux_for_oracle_9i_and_10g_databases/sect-oracle_9i_and_10g_tuning_guide-adjusting_network_settings-changing_network_kernel_settings)
 * [突破netty单机最大连接数](https://www.jianshu.com/p/490e2981545c)
 * [TCP/IP详解--TCP连接中TIME_WAIT状态过多](https://blog.csdn.net/yusiguyuan/article/details/21445883)
+* [http的keep-alive和tcp的keepalive区别](https://www.cnblogs.com/yixianyixian/p/8401679.html)
+* [Notes on TCP keepalive in Go](https://thenotexpert.com/golang-tcp-keepalive/)

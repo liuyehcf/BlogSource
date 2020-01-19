@@ -1,5 +1,5 @@
 ---
-title: Docker-Demo
+title: Docker-基础
 date: 2018-01-19 13:18:39
 tags: 
 - 摘录
@@ -52,6 +52,9 @@ __创建Dockerfile（核心）__
     * 延迟到下一个使用`FROM`的Dockerfile在建立image时执行，只限延迟一次
 1. __ARG：定义仅在建立image时有效的变量__
 1. __ENTRYPOINT：指定Docker image运行成instance(也就是 Docker container)时，要执行的命令或者文件__
+    * 默认的`ENTRYPOINT`是`/bin/sh -c`，但是没有默认的`CMD`
+    * 当执行`docker run -i -t ubuntu bash`，默认的`ENTRYPOINT`就是`/bin/sh -c`，且`CMD`就是`bash`
+    * __`CMD`本质上就是`ENTRYPOINT`的参数__
 
 ```sh
 # Use an official Python runtime as a parent image
@@ -135,7 +138,7 @@ Alpine Linux是一个轻型Linux发行版，它不同于通常的Linux发行版�
 FROM alpine:3.10.2
 
 MAINTAINER Rethink 
-#更新Alpine的软件源为国内（清华大学）的站点，因为从默认官源拉取实在太慢了。。。
+# 更新Alpine的软件源为国内（清华大学）的站点，因为从默认官源拉取实在太慢了。。。
 RUN echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.4/main/" > /etc/apk/repositories
 
 RUN apk update \
@@ -145,6 +148,9 @@ RUN apk update \
         bash-completion \
         && rm -rf /var/cache/apk/* \
         && /bin/bash
+
+# 解决时区的问题（对于alpine镜像，仅仅设置环境变量TZ=Asia/Shanghai是不够的）
+RUN apk add -U tzdata
 ```
 
 # 4 Jib
@@ -161,6 +167,10 @@ RUN apk update \
                     </from>
                     <to>
                         <image>my-app:v1</image>
+                        <auth>
+                            <username>xxx</username>
+                            <password>xxx</password>
+                        </auth>
                     </to>
                     <container>
                         <!-- 不加这个参数的话，构建出来的镜像时49年前的 -->
@@ -169,6 +179,8 @@ RUN apk update \
                 </configuration>
             </plugin>
 ```
+
+## 4.1 修改系统变量
 
 # 5 Tips
 
@@ -192,6 +204,11 @@ RUN apk update \
 1. 将镜像打包成文件，从文件中导入镜像
     * `docker save -o alpine.tar alpine:3.10.2`
     * `docker load < alpine.tar`
+1. 设置时区
+    * `docker run -e TZ=Asia/Shanghai ...`
+1. 设置内核参数（需要使用特权模式）
+    * 编写DockerFile的时候，把修改的内核参数写到CMD中（不能在制作DockerFile的时候通过RUN进行修改，因为这些内核文件是只读的）
+    * 启动的时候指定特权模式：`docker run --privileged`
 
 # 6 参考
 
@@ -209,3 +226,5 @@ RUN apk update \
 * [Containerd 简介](http://www.cnblogs.com/sparkdev/p/9063042.html)
 * [从 docker 到 runC](https://www.cnblogs.com/sparkdev/p/9129334.html)
 * [jib](https://github.com/GoogleContainerTools/jib)
+* [探讨Docker容器中修改系统变量的方法](https://tonybai.com/2014/10/14/discussion-on-the-approach-to-modify-system-variables-in-docker/)
+* [What is the difference between CMD and ENTRYPOINT in a Dockerfile?](https://stackoverflow.com/questions/21553353/what-is-the-difference-between-cmd-and-entrypoint-in-a-dockerfile)

@@ -11,7 +11,9 @@ __阅读更多__
 
 <!--more-->
 
-# 1 单副本
+# 1 示例讲解
+
+## 1.1 单副本
 
 __deployment（hello-world-deployment.yml）__
 
@@ -224,7 +226,7 @@ lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
 
 可以看到，在`k8s-n-1`节点上，直接路由到了`flannel.1`这样网卡，然后通过`flannel`的网络（主机网络或覆盖网络）到达`k8s-n-1`上
 
-# 2 多副本
+## 1.2 多副本
 
 __deployment（hello-world-deployment.yml）__
 
@@ -352,23 +354,34 @@ hello-world-deployment-cbdf4db7b-qc624   1/1     Running   0          5m      10
 
 这里，可以看到，三个`Chain`，每个`Chain`分别配置了一个DNAT，指向某一个`pod`。后续的链路，如果在`pod`在本机，则走`cni0`网桥，否则就走`flannel`
 
-# 3 总结
+## 1.3 总结
 
 1. 每个`node`上的`pod`，其子网都相同
 1. 同个`node`之间`pod`相互访问，最终会走到`cni`网桥，该网桥等价于一个二层交换机，接着一对`veth`网卡，其中一段在默认的网络命名空间，另一端在`pod`的网络命名空间
 1. 不同`node`之间的`pod`相互访问，最终会走到`flannel`
 
-# 4 todo
+# 2 HostNetwork
 
-1. 网桥、二层交换机、三层交换机、路由器
+使用主机网络后，`PodIP`就是主机`IP`，`ContainerPort`就是主机`Port`
 
-https://www.globalknowledge.com/us-en/resources/resource-library/articles/what-s-the-difference-between-hubs-switches-bridges/
+如果一个设置了主机网络的`Pod`，想要通过`serviceName:servicePort`来访问其他服务的时候，需要将`dnsPolicy`配置成`ClusterFirstWithHostNet`
 
-They(switch) use the multi-port ability of the hub with the filtering of a bridge, allowing only the destination to see the unicast traffic
+此外，如果配置了一个`Service`，以`NodePort`方式将设置了主机网络的`Pod`对外露出，可能会导致这样的问题：假设主机A上部署了一个主机网络的`Pod`，并且以`NodePort`对外露出，`NodePort=30001`，此时访问主机B的30001端口，请求有可能无法触达A，原因如下：
 
-1. 在容器里面，访问某个服务的时候，dns的解析过程分析
+* `kube-proxy`设置的`iptables`规则可能会与用户设置的`iptables`规则冲突，因此`k8s`事先约定了一个NodePort范围，`30000-32767`，且在初始化集群时，需要指定一个网段用于分配`PodIP`，在这样的限制条件下，`kube-proxy`设置的`iptables`规则才能与用户原有的`iptables`规则互不影响
+* 当服务以`NodePort`形式露出时，且`Pod`为容器网络时，`kube-proxy`会配置如下两条规则
+    * 一条`DNAT`规则，改写目的端口为`NodePort`的IP数据包头，将其改为`PodIP`
+    * 一条`FORWARD`规则，对应的网段就是`PodIP`的网段
+* 当服务以`NodePort`形式露出，且`Pod`为主机网络时，只设置了一条`DNAT`规则，而一般来说，`FORWARD`的默认策略是`DROP`。因此
+    * 当`Pod`的IP就是当前主机的IP时，直接走`INPUT`，进入本地网络协议栈，可以正常访问服务
+    * 当`Pod`的IP是其他主机的IP时，经过`FORWARD`，由于没有配置对应的规则，流量被直接`DROP`，无法正常访问服务
+* 解决方式：`iptables -P FORWARD ACCEPT`，将默认的`FORWARD`策略改为`ACCEPT`
 
-# 5 参考
+# 3 CoreDNS
+
+todo
+
+# 4 参考
 
 * [kubernetes入门之kube-proxy实现原理](https://xuxinkun.github.io/2016/07/22/kubernetes-proxy/)
 * [kubernetes 简介：service 和 kube-proxy 原理](https://cizixs.com/2017/03/30/kubernetes-introduction-service-and-kube-proxy/)

@@ -104,9 +104,9 @@ __注意，一个`.yaml`文件中，必须包含如下字段__
 1. `apiVersion`：指定`Kubernetes API`的版本
 1. `kind`：指定待创建`object`的类型
 1. `metadata`：`object`的元数据，包括
-  * `name`
-  * `UID`
-  * `namespace`
+    * `name`
+    * `UID`
+    * `namespace`
 
 ### 1.2.1 Name
 
@@ -641,11 +641,11 @@ $ kubectl get pod -n <namespace> <pod-name> -o yaml
 1. __`reason`__：状态变更的原因，一个较为精确的描述
 1. __`status`__：`True`、`False`、`Unknown`中的一个
 1. __`type`__：以下几种可能值中的一个
-  * `PodScheduled`：`Pod`已被调度到一个`node`上
-  * `Ready`：`Pod`已经能够提供服务，应该被添加到`load balancing pool`中去 
-  * `Initialized`：所有的`Init Container`已经执行完毕
-  * `Unschedulable`：调度失败，可能原因是资源不足
-  * `ContainersReady`：`Pod`中的所有`Container`已经就绪
+    * `PodScheduled`：`Pod`已被调度到一个`node`上
+    * `Ready`：`Pod`已经能够提供服务，应该被添加到`load balancing pool`中去 
+    * `Initialized`：所有的`Init Container`已经执行完毕
+    * `Unschedulable`：调度失败，可能原因是资源不足
+    * `ContainersReady`：`Pod`中的所有`Container`已经就绪
 
 #### 3.1.3.3 Container probes
 

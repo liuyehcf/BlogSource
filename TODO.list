@@ -1,0 +1,37 @@
+1. Linux-常用命令
+    * 网络相关指令
+1. Kubernetes-proxy
+    * dns工作过程
+1. Kubernetes-Single-Master-Cluster
+    * nginx ingress
+1. go tcp
+    * TCPCon setKeepAlive/setKeepAlivePeriod
+    * https://thenotexpert.com/golang-tcp-keepalive/
+1. helm
+1. SSL
+    * 什么是SNI
+
+1. k8s java demo
+
+* [Understanding how dnat works in iptables](https://superuser.com/questions/662325/understanding-how-dnat-works-in-iptables)
+* [How Network Address Translation Works](https://computer.howstuffworks.com/nat.htm)
+
+DNAT如何工作
+* NAT是TCP层面的还是IP层面的配置
+* [Destination network address translation (DNAT)](https://www.mad-hacking.net/documentation/linux/security/iptables/nat.xml)
+* SNAT：内网ip 192.168.0.1，nat网关ip 100.100.100.1，Internet某个服务的Ip 111.111.111.1
+    * 192.168.0.1 -> 111.111.111.1
+    * snat 100.100.100.1 -> 111.111.111.1
+    * 111.111.111.1 -> 100.100.100.1
+    * dnat 111.111.111.1 -> 192.168.0.1
+    * 这一步，nat网关为啥知道要把destIp从 100.100.100.1 换成 192.168.0.1？如果有两台机器A(192.168.0.1)和B(192.168.0.2)都配置了相同的SNAT规则的话，它如何知道这个IP数据包应该发给A还是B
+    * 如果在做变换的时候还知道tcp的报文数据，比如端口号，就可以知道这件事情了
+* DNAT：外网ip 100.100.100.1，NAT网关IP 111.111.111.1，内网ip 192.168.0.1
+    * 100.100.100.1 -> 111.111.111.1
+    * dnat 100.100.100.1 -> 192.168.0.1
+    * response 192.168.0.1 -> 100.100.100.1
+    * snat 111.111.111.1 -> 100.100.100.1
+
+
+1. 启动容器时，如何指定各种类型的namesapce
+    * [Sharing Network Namespaces in Docker](https://blog.mikesir87.io/2019/03/sharing-network-namespaces-in-docker/)

@@ -15,23 +15,14 @@ __阅读更多__
 
 # 2 [Rancher](https://github.com/rancher/rancher)
 
-# 3 Helm
+# 3 [Kafka](https://github.com/helm/charts/tree/master/incubator/kafka)
 
-```sh
-# 创建一个char模板，其中charName是对应的名称
-helm create <charName>
-
-# 渲染，模板，可以查看渲染后的输出格式
-helm template <charName>
-```
+Kafka的服务露出有点问题，如果简单地把`Service`从`ClusterIP`修改为`NodePort`。那么在集群外是可以通过`NodeIp:NodePort`连接到kafka的，但是随即`kafka`会从`zookeeper`查找一个`broker`的IP（这个IP是`PodIP`）返回给集群外的Client，然后Client重新连接这个`IP`，显然在集群外的机器上是无法触达`PodIp`的，因为没有`iptables`规则
 
 ## 3.1 参考
 
-* [Helm 从入门到实践](https://www.jianshu.com/p/4bd853a8068b)
-* [Helm模板文件chart编写语法详解](https://blog.51cto.com/qujunorz/2421328)
-* [Heml中文文档](https://whmzsu.github.io/helm-doc-zh-cn/chart_template_guide/control_structures-zh_cn.html)
-* [Helm教程](https://www.cnblogs.com/lyc94620/p/10945430.html)
-* [Error: no available release name found](https://www.jianshu.com/p/5eb3ee63a250)
+* [External communication with Apache Kafka deployed in Kubernetes cluster](https://argus-sec.com/external-communication-with-apache-kafka-deployed-in-kubernetes-cluster/)
+* [基于Kubernetes在AWS上部署Kafka时遇到的一些问题](https://www.bbsmax.com/A/gAJGn9ZzZR/)
 
 # 4 istio
 

@@ -1374,7 +1374,13 @@ public class Server {
 
 详见{% post_link Netty-Demo %}
 
-# 8 参考
+# 8 查看证书信息
+
+可以通过网站`https://myssl.com/`来查看证书信息
+
+比如查看aliyun的证书信息，可以访问`https://myssl.com/www.aliyun.com`
+
+# 9 参考
 
 * [Java SSL](https://blog.csdn.net/everyok/article/details/82882156)
 * [SSL介绍与Java实例](http://www.cnblogs.com/crazyacking/p/5648520.html)
