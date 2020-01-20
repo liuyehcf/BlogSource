@@ -231,13 +231,118 @@ __`action component`用于在满足规则匹配条件时，输出一个`target`_
 1. __`SNAT`__：`source address`被`NAT`修改时设置的虚拟状态，被记录在`connection tracking`中，以便在`reply package`（我回复别人）中更改`source address`
 1. __`DNAT`__：`destination address`被`NAT`修改时设置的虚拟状态，被记录在`connection tracking`中，以便在路由`reply package`（别人回复我）时知道更改`destination address`
 
-## 2.8 iptable命令使用
+## 2.8 NAT原理
+
+以一个示例来进行解释，条件如下：
+
+1. `Machine A`在私网环境下，其`IP`是`192.168.1.2`
+1. `NAT Gateway A`有两张网卡
+    * 一张网卡的`IP`为`192.168.1.1`，与`Machine A`在同一个网段，且为`Machine A`的默认路由地址
+    * 一张网卡的`IP`为`100.100.100.1`，为公网`IP`
+1. `Machine B`在私网环境下，其IP是`192.168.2.2`
+1. `NAT Gateway B`有两张网卡
+    * 一张网卡的`IP`为`192.168.2.1`，与`Machine B`在同一个网段，且为`Machine B`的默认路由地址
+    * 一张网卡的`IP`为`200.200.200.1`，为公网`IP`
+
+__Request from Machine A to Machine B__
+
+1. `Request`从`Machine A`发出，经过默认路由到达`NAT Gateway A`
+1. `NAT Gateway A`发现配置了`SNAT规则`，于是将`srcIP`从`192.168.1.2`改为`100.100.100.1`
+1. `Request`从`NAT Gateway A`经过公网流转到`NAT Gateway B`
+1. `NAT Gateway B`发现配置了`DNAT`规则，于是将`dstIP`从`200.200.200.1`改为`192.168.2.2`
+1. `Request`最终流转至`Machine B`
+* 对于`Machine B`来说，它认为`Request`就是`NAT Gateway A`发过来的，而完全感知不到`Machine A`
+* 同理，对于`Machine A`来说，它认为`Request`最终发给了`NAT Gateway B`，而完全感知不到`Machine B`
+
+```
+                +--------------------------+                                               +--------------------------+
+                |  src ip  : 192.168.1.2   |                                               |  src ip  : 100.100.100.1 |
+   Machine A    |  src port: 56303         |                                               |  src port: 56303         |    Machine B
+  192.168.1.2   +--------------------------+                                               +--------------------------+   192.168.2.2
+                |  dst ip  : 200.200.200.1 |                                               |  dst ip  : 192.168.2.2   |
+                |  dst port: 443           |                                               |  dst port: 443           |
+                +------------+-------------+                                               +------------+-------------+
+                             |                                                                          ^
+                             |                                                                          |
+                             | route                                                                    | route
+                             |                                                                          |
+                             v                                                                          |
+                +------------+-------------+                                               +------------+-------------+
+                |  osrc ip : 192.168.1.2   |                                               |  src ip  : 100.100.100.1 |
+NAT Gateway A   |  msrc ip : 100.100.100.1 |                   internet                    |  src port: 56303         |   NAT Gateway B
+ 192.168.1.1    |  src port: 56303         | +-------------------------------------------> +--------------------------+    192.168.2.1
+100.100.100.1   +--------------------------+                                               |  odst ip : 200.200.200.1 |   200.200.200.1
+                |  dst ip  : 200.200.200.1 |                                               |  mdst ip : 192.168.2.2   |
+                |  dst port: 443           |                                               |  dst port: 443           |
+                +--------------------------+                                               +--------------------------+
+```
+
+__Response from Machine B to Machine A__
+
+1. `Response`从`Machine B`发出，经过默认路由到达`NAT Gateway B`
+1. `NAT Gateway B`发现配置了`DNAT`规则，于是将`srcIP`从`192.168.2.2`改为`200.200.200.1`
+1. `Response`从`NAT Gateway B`经过公网流转到`NAT Gateway A`
+1. `NAT Gateway A`发现配置了`SNAT`规则，于是将`dstIP`从`100.100.100.1`改为`192.168.1.2`
+1. `Response`最终流转至`Machine A`
+
+```
+                +--------------------------+                                               +--------------------------+
+                |  src ip  : 200.200.200.1 |                                               |  src ip  : 192.168.2.2   |
+   Machine A    |  src port: 443           |                                               |  src port: 443           |    Machine B
+  192.168.1.2   +--------------------------+                                               +--------------------------+   192.168.2.2
+                |  dst ip  : 192.168.1.2   |                                               |  dst ip  : 100.100.100.1 |
+                |  dst port: 56303         |                                               |  dst port: 56303         |
+                +------------+-------------+                                               +-----------+--------------+
+                             ^                                                                         |
+                             |                                                                         |
+                             | route                                                                   |  route
+                             |                                                                         |
+                             |                                                                         v
+                +------------+-------------+                                               +-----------+--------------+
+                |  src ip  : 200.200.200.1 |                                               |  osrc ip : 192.168.2.2   |
+NAT Gateway A   |  src port: 443           |                   internet                    |  msrc ip : 200.200.200.1 |   NAT Gateway B
+ 192.168.1.1    +--------------------------+ <-------------------------------------------+ |  src port: 443           |    192.168.2.1
+100.100.100.1   |  odst ip : 100.100.100.1 |                                               +--------------------------+   200.200.200.1
+                |  mdst ip ： 192.168.1.2   |                                               |  dst ip  : 100.100.100.1 |
+                |  dst port: 56303         |                                               |  dst port: 56303         |
+                +--------------------------+                                               +--------------------------+
+```
+
+__细心的朋友可能会发现，`NAT Gateway A`只配置了`SNAT`，而`NAT Gateway B`只配置了`DNAT`，但是在`Response`的链路中，`NAT Gateway A`做了`DNAT`的工作，而`NAT Gateway B`做了`SNAT`的工作__
+
+* 当`Request`到达`NAT Gateway A`时，`NAT Gateway A`会在`NAT`表中添加一行，然后再改写`srcIP`（SNAT）
+
+| originalIP | originalPort | changedIP | changedPort |
+|:--|:--|:--|:--|
+| 192.168.1.2 | 56303 | 100.100.100.1 | 56303 |
+
+* 当`Request`到达`NAT Gateway B`时，`NAT Gateway B`会在`NAT`表中添加一行，然后再改写`dstIP`（DNAT）
+
+| originalIP | originalPort | changedIP | changedPort |
+|:--|:--|:--|:--|
+| 200.200.200.1 | 443 | 192.168.2.2 | 443 |
+
+* 当`Response`到达`NAT Gateway B`时，会查找`srcIP`与`changedIP`相同且`srcPort`与`changedPort`相同的表项，并将`srcIP`和`srcPort`替换成`originalIP`和`originalPort`（SNAT）
+* 当`Response`到达`NAT Gateway A`时，会查找`dstIP`与`changedIP`相同且`dstPort`与`changedPort`相同的表项，并将`dstIP`和`dstPort`替换成`originalIP`和`originalPort`（DNAT）
+
+__如此一来，有了IP+端口，一台网关就可以为多台机器配置SNAT；同理，也可以为多台机器配置DNAT__
+
+__但是，如果两台私网的机器A和B（均在网关上配置了SNAT规则），同时ping某个外网IP的话，NAT又是如何工作的呢？（ICMP协议没有port，而只根据IP是没法区分这两台私网机器的）方法就是：创造端口__
+
+* 当A发送ICMP报文的时候，网关会根据`Type+Code`生成源端口号，根据`Identifier`生成目的端口号
+
+| originalIP | originalPort | changedIP | changedPort |
+|:--|:--|:--|:--|
+| 192.168.0.2 | (Type+Code) | 200.10.2.1 | (Identifier) |
+
+## 2.9 iptable命令使用
 
 参见{% post_link Linux-常用命令 %}
 
-## 2.9 参考
+## 2.10 参考
 
 * [A Deep Dive into Iptables and Netfilter Architecture](https://www.digitalocean.com/community/tutorials/a-deep-dive-into-iptables-and-netfilter-architecture)
+* [ICMP报文如何通过NAT来地址转换](https://blog.csdn.net/sinat_33822516/article/details/81088724)
 
 # 3 tcpdump
 
