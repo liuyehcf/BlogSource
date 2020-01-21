@@ -1,5 +1,5 @@
 ---
-title: Kubernetes-kubeproxy
+title: Kubernetes-网络
 date: 2019-12-23 14:43:11
 tags: 
 - 原创
@@ -11,7 +11,7 @@ __阅读更多__
 
 <!--more-->
 
-# 1 示例讲解
+# 1 NodePort网络链路-示例讲解
 
 ## 1.1 单副本
 
@@ -360,7 +360,260 @@ hello-world-deployment-cbdf4db7b-qc624   1/1     Running   0          5m      10
 1. 同个`node`之间`pod`相互访问，最终会走到`cni`网桥，该网桥等价于一个二层交换机，接着一对`veth`网卡，其中一段在默认的网络命名空间，另一端在`pod`的网络命名空间
 1. 不同`node`之间的`pod`相互访问，最终会走到`flannel`
 
-# 2 HostNetwork
+# 2 NDS
+
+`coreDNS`是每个`Kubernetes`集群都会安装的系统组件，用于`Service`的解析，将服务名称解析成`ClusterIP`
+
+一般来说，`coredns`以`deployment`运行在集群中（也可能是`daemonset`）
+
+```sh
+[root@k8s-master ~]$ kubectl get deployment -n kube-system
+#-------------------------↓↓↓↓↓↓-------------------------
+NAME            READY   UP-TO-DATE   AVAILABLE   AGE
+coredns         2/2     2            2           149d
+#-------------------------↑↑↑↑↑↑-------------------------
+```
+
+__下面，我们用一个pod来验证一下`dnsutils.yaml`，yaml文件内容如下，`dnsutils`这个镜像中包含了`dig`、`nslookup`等命令，换成其他任何包含这个两个命令的镜像都行__
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dnsutils
+  namespace: default
+spec:
+  containers:
+  - name: dnsutils
+    image: gcr.io/kubernetes-e2e-test-images/dnsutils:1.3
+    command:
+      - sleep
+      - "3600"
+    imagePullPolicy: IfNotPresent
+```
+
+```sh
+# 创建pod
+[root@k8s-master ~]$ kubectl apply -f dnsutils.yaml
+#-------------------------↓↓↓↓↓↓-------------------------
+pod/dnsutils created
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 查看一下pod是否启动成功
+[root@k8s-master ~]$ kubectl get pods
+#-------------------------↓↓↓↓↓↓-------------------------
+NAME                                      READY   STATUS    RESTARTS   AGE
+dnsutils                                  1/1     Running   0          33s
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 看下default以及kube-system命名空间下各有什么service
+[root@k8s-master ~]$ kubectl get svc
+#-------------------------↓↓↓↓↓↓-------------------------
+NAME                  TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+kubernetes            ClusterIP   10.96.0.1        <none>        443/TCP          28d
+#-------------------------↑↑↑↑↑↑-------------------------
+[root@k8s-master ~]$ kubectl get svc -n kube-system
+#-------------------------↓↓↓↓↓↓-------------------------
+NAME            TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                  AGE
+kube-dns        ClusterIP   10.96.0.10       <none>        53/UDP,53/TCP,9153/TCP   149d
+tiller-deploy   ClusterIP   10.108.160.127   <none>        44134/TCP                118d
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 查看/etc/resolv.conf，我们发现，指定的nameserver就是coredns的ClusterIP
+[root@k8s-master ~]$ kubectl exec -it dnsutils -- cat /etc/resolv.conf
+#-------------------------↓↓↓↓↓↓-------------------------
+nameserver 10.96.0.10
+search default.svc.cluster.local svc.cluster.local cluster.local hz.ali.com
+options ndots:5
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 用nslookup查找位于相同命名空间下的服务 kubernetes
+[root@k8s-master ~]$ kubectl exec -it dnsutils -- nslookup kubernetes
+#-------------------------↓↓↓↓↓↓-------------------------
+Server:		10.96.0.10
+Address:	10.96.0.10#53
+
+Name:	kubernetes.default.svc.cluster.local
+Address: 10.96.0.1
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 用nslookup查找位于不同命名空间下的服务 tiller-deploy
+[root@k8s-master ~]$ kubectl exec -it dnsutils -- nslookup tiller-deploy.kube-system
+#-------------------------↓↓↓↓↓↓-------------------------
+Server:		10.96.0.10
+Address:	10.96.0.10#53
+
+Non-authoritative answer:
+Name:	tiller-deploy.kube-system.svc.cluster.local
+Address: 10.108.160.127
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 清理资源
+[root@k8s-master ~]$ kubectl delete -f dnsutils.yaml
+#-------------------------↓↓↓↓↓↓-------------------------
+pod "dnsutils" deleted
+#-------------------------↑↑↑↑↑↑-------------------------
+```
+
+__接下来，将修改`dnsutils.yaml`，设置成`hostnetwork`，同时不指定`dnsPolicy`__
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dnsutils
+  namespace: default
+spec:
+  hostNetwork: true
+  containers:
+  - name: dnsutils
+    image: gcr.io/kubernetes-e2e-test-images/dnsutils:1.3
+    command:
+      - sleep
+      - "3600"
+    imagePullPolicy: IfNotPresent
+```
+
+```sh
+# 创建pod
+[root@k8s-master ~]$ kubectl apply -f dnsutils.yaml
+#-------------------------↓↓↓↓↓↓-------------------------
+pod/dnsutils created
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 查看一下pod是否启动成功
+[root@k8s-master ~]$ kubectl get pods
+#-------------------------↓↓↓↓↓↓-------------------------
+NAME                                      READY   STATUS    RESTARTS   AGE
+dnsutils                                  1/1     Running   0          29s
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 看下default以及kube-system命名空间下各有什么service
+[root@k8s-master ~]$ kubectl get svc
+#-------------------------↓↓↓↓↓↓-------------------------
+NAME                  TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+kubernetes            ClusterIP   10.96.0.1        <none>        443/TCP          28d
+#-------------------------↑↑↑↑↑↑-------------------------
+[root@k8s-master ~]$ kubectl get svc -n kube-system
+#-------------------------↓↓↓↓↓↓-------------------------
+NAME            TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                  AGE
+kube-dns        ClusterIP   10.96.0.10       <none>        53/UDP,53/TCP,9153/TCP   149d
+tiller-deploy   ClusterIP   10.108.160.127   <none>        44134/TCP                118d
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 查看/etc/resolv.conf，我们发现，这个配置就是主机的配置
+[root@k8s-master ~]$ kubectl exec -it dnsutils -- cat /etc/resolv.conf
+#-------------------------↓↓↓↓↓↓-------------------------
+nameserver 30.14.129.245
+nameserver 30.14.128.82
+nameserver 10.65.0.201
+search hz.ali.com
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 用nslookup查找位于相同命名空间下的服务 kubernetes，查找不到
+[root@k8s-master ~]$ kubectl exec -it dnsutils -- nslookup kubernetes
+#-------------------------↓↓↓↓↓↓-------------------------
+;; Got SERVFAIL reply from 30.14.129.245, trying next server
+;; Got SERVFAIL reply from 30.14.128.82, trying next server
+Server:		10.65.0.201
+Address:	10.65.0.201#53
+
+** server cant find kubernetes: SERVFAIL
+
+command terminated with exit code 1
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 清理资源
+[root@k8s-master ~]$ kubectl delete -f dnsutils.yaml
+#-------------------------↓↓↓↓↓↓-------------------------
+pod "dnsutils" deleted
+#-------------------------↑↑↑↑↑↑-------------------------
+```
+
+__我们继续修改`dnsutils.yaml`，设置成`hostnetwork`，同时将`dnsPolicy`设置为`ClusterFirstWithHostNet`__
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dnsutils
+  namespace: default
+spec:
+  hostNetwork: true
+  dnsPolicy: ClusterFirstWithHostNet
+  containers:
+  - name: dnsutils
+    image: gcr.io/kubernetes-e2e-test-images/dnsutils:1.3
+    command:
+      - sleep
+      - "3600"
+    imagePullPolicy: IfNotPresent
+```
+
+```sh
+# 创建pod
+[root@k8s-master ~]$ kubectl apply -f dnsutils.yaml
+#-------------------------↓↓↓↓↓↓-------------------------
+pod/dnsutils created
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 查看一下pod是否启动成功
+[root@k8s-master ~]$ kubectl get pods
+#-------------------------↓↓↓↓↓↓-------------------------
+NAME                                      READY   STATUS    RESTARTS   AGE
+dnsutils                                  1/1     Running   0          42
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 看下default以及kube-system命名空间下各有什么service
+[root@k8s-master ~]$ kubectl get svc
+#-------------------------↓↓↓↓↓↓-------------------------
+NAME                  TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+kubernetes            ClusterIP   10.96.0.1        <none>        443/TCP          28d
+#-------------------------↑↑↑↑↑↑-------------------------
+[root@k8s-master ~]$ kubectl get svc -n kube-system
+#-------------------------↓↓↓↓↓↓-------------------------
+NAME            TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                  AGE
+kube-dns        ClusterIP   10.96.0.10       <none>        53/UDP,53/TCP,9153/TCP   149d
+tiller-deploy   ClusterIP   10.108.160.127   <none>        44134/TCP                118d
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 查看/etc/resolv.conf，我们发现，指定的nameserver就是coredns的ClusterIP
+[root@k8s-master ~]$ kubectl exec -it dnsutils -- cat /etc/resolv.conf
+#-------------------------↓↓↓↓↓↓-------------------------
+nameserver 10.96.0.10
+search default.svc.cluster.local svc.cluster.local cluster.local hz.ali.com
+options ndots:5
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 用nslookup查找位于相同命名空间下的服务 kubernetes
+[root@k8s-master ~]$ kubectl exec -it dnsutils -- nslookup kubernetes
+#-------------------------↓↓↓↓↓↓-------------------------
+Server:		10.96.0.10
+Address:	10.96.0.10#53
+
+Name:	kubernetes.default.svc.cluster.local
+Address: 10.96.0.1
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 用nslookup查找位于不同命名空间下的服务 tiller-deploy
+[root@k8s-master ~]$ kubectl exec -it dnsutils -- nslookup tiller-deploy.kube-system
+#-------------------------↓↓↓↓↓↓-------------------------
+Server:		10.96.0.10
+Address:	10.96.0.10#53
+
+Non-authoritative answer:
+Name:	tiller-deploy.kube-system.svc.cluster.local
+Address: 10.108.160.127
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 清理资源
+[root@k8s-master ~]$ kubectl delete -f dnsutils.yaml
+#-------------------------↓↓↓↓↓↓-------------------------
+pod "dnsutils" deleted
+#-------------------------↑↑↑↑↑↑-------------------------
+```
+
+# 3 HostNetwork
 
 使用主机网络后，`PodIP`就是主机`IP`，`ContainerPort`就是主机`Port`
 
@@ -377,10 +630,6 @@ hello-world-deployment-cbdf4db7b-qc624   1/1     Running   0          5m      10
     * 当`Pod`的IP是其他主机的IP时，经过`FORWARD`，由于没有配置对应的规则，流量被直接`DROP`，无法正常访问服务
 * 解决方式：`iptables -P FORWARD ACCEPT`，将默认的`FORWARD`策略改为`ACCEPT`
 
-# 3 CoreDNS
-
-todo
-
 # 4 参考
 
 * [kubernetes入门之kube-proxy实现原理](https://xuxinkun.github.io/2016/07/22/kubernetes-proxy/)
@@ -388,3 +637,4 @@ todo
 * [kube-proxy工作原理](https://cloud.tencent.com/developer/article/1097449)
 * [如何找到VEth设备的对端接口VEth peer](https://juejin.im/post/5caccf256fb9a06851504647)
 * [技术干货|深入理解flannel](https://zhuanlan.zhihu.com/p/34749675)
+* [Debugging DNS Resolution](https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/)

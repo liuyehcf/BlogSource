@@ -311,29 +311,36 @@ NAT Gateway A   |  src port: 443           |                   internet         
 __细心的朋友可能会发现，`NAT Gateway A`只配置了`SNAT`，而`NAT Gateway B`只配置了`DNAT`，但是在`Response`的链路中，`NAT Gateway A`做了`DNAT`的工作，而`NAT Gateway B`做了`SNAT`的工作__
 
 * 当`Request`到达`NAT Gateway A`时，`NAT Gateway A`会在`NAT`表中添加一行，然后再改写`srcIP`（SNAT）
+    * 前缀`o`是`original`的缩写
+    * 前缀`m`是`modified`的缩写
 
-| originalIP | originalPort | changedIP | changedPort |
-|:--|:--|:--|:--|
-| 192.168.1.2 | 56303 | 100.100.100.1 | 56303 |
+| osrcIP | osrcPort | msrcIP | msrcPort | protocol |
+|:--|:--|:--|:--|:--|
+| 192.168.1.2 | 56303 | 100.100.100.1 | 56303 | xxx |
 
 * 当`Request`到达`NAT Gateway B`时，`NAT Gateway B`会在`NAT`表中添加一行，然后再改写`dstIP`（DNAT）
 
-| originalIP | originalPort | changedIP | changedPort |
-|:--|:--|:--|:--|
-| 200.200.200.1 | 443 | 192.168.2.2 | 443 |
+| odstIP | odstPort | mdstIP | mdstPort | protocol |
+|:--|:--|:--|:--|:--|
+| 200.200.200.1 | 443 | 192.168.2.2 | 443 | xxx |
 
-* 当`Response`到达`NAT Gateway B`时，会查找`srcIP`与`changedIP`相同且`srcPort`与`changedPort`相同的表项，并将`srcIP`和`srcPort`替换成`originalIP`和`originalPort`（SNAT）
-* 当`Response`到达`NAT Gateway A`时，会查找`dstIP`与`changedIP`相同且`dstPort`与`changedPort`相同的表项，并将`dstIP`和`dstPort`替换成`originalIP`和`originalPort`（DNAT）
+* 当`Response`到达`NAT Gateway B`时，会查找`srcIP`与`mdstIP`相同且`srcPort`与`mdstPort`相同的表项，并将`srcIP`和`srcPort`替换成`odstIP`和`odstPort`（SNAT）
+* 当`Response`到达`NAT Gateway A`时，会查找`dstIP`与`msrcIP`相同且`dstPort`与`msrcPort`相同的表项，并将`dstIP`和`dstPort`替换成`osrcIP`和`osrcPort`（DNAT）
 
 __如此一来，有了IP+端口，一台网关就可以为多台机器配置SNAT；同理，也可以为多台机器配置DNAT__
 
-__但是，如果两台私网的机器A和B（均在网关上配置了SNAT规则），同时ping某个外网IP的话，NAT又是如何工作的呢？（ICMP协议没有port，而只根据IP是没法区分这两台私网机器的）方法就是：创造端口__
+__但是，如果两台私网的机器A和B（均在网关上配置了SNAT规则），同时ping某个外网IP的话，NAT又是如何工作的呢？（ICMP协议没有port，而只根据IP是没法区分这两台私网机器的）方法就是：创造端口（下面这种做法是我猜的，与实际情况未必一致，但是思路是相似的）__
 
-* 当A发送ICMP报文的时候，网关会根据`Type+Code`生成源端口号，根据`Identifier`生成目的端口号
+* 假设A的IP为`192.168.1.2`，`NAT Gateway`的IP是`100.100.100.1`，ping的公网IP是`200.200.200.1`
+* 当`ICMP Request`报文到达`NAT Gateway`的时候，根据`identifier`生成源端口号，修改`srcIP`，以及`identifier`并增加如下记录（SNAT）
+    * 其中，`mapFunc`表示从`identifier`转换为端口号的算法
 
-| originalIP | originalPort | changedIP | changedPort |
-|:--|:--|:--|:--|
-| 192.168.0.2 | (Type+Code) | 200.10.2.1 | (Identifier) |
+| osrcIP | osrcPort | msrcIP | msrcPort | protocol |
+|:--|:--|:--|:--|:--|
+| 192.168.0.2 | mapFunc(oIdentifier) | 200.10.2.1 | mapFunc(mIdentifier) | ICMP |
+
+* 当`ICMP Response`报文到达`NAT Gateway`的时候，会查找`dstIP`与`msrcIP`相同且`dstPort`（通过`mapFunc`计算`ICMP Response`中的`identifier`）与`msrcPort`相同的表项，并将`dstIP`替换成`osrcIP`，`identifier`替换成`mapFuncInv(osrcPort)`（DNAT）
+    * 其中，`mapFuncInv`表示从端口号转换为`identifier`的算法
 
 ## 2.9 iptable命令使用
 
@@ -343,6 +350,9 @@ __但是，如果两台私网的机器A和B（均在网关上配置了SNAT规则
 
 * [A Deep Dive into Iptables and Netfilter Architecture](https://www.digitalocean.com/community/tutorials/a-deep-dive-into-iptables-and-netfilter-architecture)
 * [ICMP报文如何通过NAT来地址转换](https://blog.csdn.net/sinat_33822516/article/details/81088724)
+* [Understanding how dnat works in iptables](https://superuser.com/questions/662325/understanding-how-dnat-works-in-iptables)
+* [How Network Address Translation Works](https://computer.howstuffworks.com/nat.htm)
+* [Traditional IP Network Address Translator (Traditional NAT) - 4.1](https://tools.ietf.org/html/rfc3022)
 
 # 3 tcpdump
 

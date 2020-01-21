@@ -649,6 +649,7 @@ __格式：__
 * `screen cmd [ args ]`
 * `screen [–ls] [-r pid]`
 * `screen -X -S <pid> kill`
+* `screen -d -m cmd [ args ]`
 
 __参数说明：__
 
@@ -656,6 +657,7 @@ __参数说明：__
 * `args`：执行的命令所需要的参数
 * `-ls`：列出所有`screen`会话的详情
 * `-r`：后接`pid`，进入指定进程号的`screen`会话
+* `-d`：退出当前运行的session
 
 __示例：__
 
@@ -1598,3 +1600,4 @@ __示例：__
 * [Displaying a routing table with ip route show](http://linux-ip.net/html/tools-ip-route.html)
 * [What does “proto kernel” means in Unix Routing Table?](https://stackoverflow.com/questions/10259266/what-does-proto-kernel-means-in-unix-routing-table)
 * [Routing Tables](http://linux-ip.net/html/routing-tables.html)
+* [How to execute a command in screen and detach?](https://superuser.com/questions/454907/how-to-execute-a-command-in-screen-and-detach)
