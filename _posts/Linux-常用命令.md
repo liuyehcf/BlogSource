@@ -1483,11 +1483,23 @@ __示例：__
 
 ## 7.18 dstat
 
+__格式：__
+
+* `dstat [options]`
+
+__示例：__
+
+* `dstat -h`：参数说明
+* `dstat 5 10`：5秒刷新一次，刷新10次
+* `dstat -cdgilmnprstTy`
+
 ## 7.19 nethogs
 
 ## 7.20 iptraf
 
 ## 7.21 ifstat
+
+该命令用于查看网卡的流量状况，包括成功接收/发送，以及错误接收/发送的数据包，看到的东西基本上和`ifconfig`类似
 
 ## 7.22 iftop
 
