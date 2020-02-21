@@ -34,6 +34,59 @@ __阅读更多__
     }
 ```
 
-# 2 参考
+# 2 内存泄漏
+
+最近在实现一个自定义协议的时候用到了`ByteToMessageCodec`这个抽象类，该类由个`encode`方法需要实现，该方法的定义如下
+
+```Java
+package com.github.liuyehcf.framework.io.athena.protocol.handler;
+
+import com.github.liuyehcf.framework.io.athena.protocol.AthenaFrame;
+import com.github.liuyehcf.framework.io.athena.protocol.ProtocolConstant;
+import com.github.liuyehcf.framework.io.athena.util.ByteUtils;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.ByteToMessageCodec;
+
+import java.util.List;
+
+/**
+ * @author hechenfeng
+ * @date 2020/2/6
+ */
+public class AthenaFrameHandler extends ByteToMessageCodec<AthenaFrame> {
+
+    @Override
+    protected void encode(ChannelHandlerContext ctx, AthenaFrame msg, ByteBuf out) {
+        out.writeBytes(msg.serialize());
+    }
+
+    @Override
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) {
+        while (in.readableBytes() >= ProtocolConstant.MIN_HEADER_LENGTH) {
+            final int originReaderIndex = in.readerIndex();
+
+            in.setIndex(originReaderIndex + ProtocolConstant.TOTAL_LENGTH_OFFSET, in.writerIndex());
+            int totalLength = ByteUtils.toInt(in.readByte(), in.readByte());
+
+            // reset readable index to read all frame bytes
+            in.setIndex(originReaderIndex, in.writerIndex());
+
+            if (in.readableBytes() < totalLength) {
+                break;
+            }
+
+            // 重点在这里，这里通过ByteBuf.readBytes(int length)方法获取了一个新的ByteBuf
+            out.add(AthenaFrame.deserialize(in.readBytes(totalLength)));
+        }
+    }
+}
+```
+
+问题在于`in.readBytes(totalLength)`，该方法创建了一个新的`ByteBuf`，但是这个`ByteBuf`并没有被释放掉，造成了内存泄漏
+
+__如何筛查堆外内存泄露？可以通过反射查看`PlatformDependent`类中的静态字段`DIRECT_MEMORY_COUNTER`__
+
+# 3 参考
 
 * [Direct Buffer](https://zhuanlan.zhihu.com/p/27625923)
