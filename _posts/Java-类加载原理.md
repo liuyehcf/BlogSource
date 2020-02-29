@@ -696,26 +696,46 @@ static jclass jvm_define_class_common(JNIEnv *env, const char *name,
 我们知道Class#forName与ClassLoader.loadClass()的差异在于Class#forName会在加载类后执行后续的验证解析初始化动作，而ClassLoader.loadClass()仅仅加载类。因此，这里__仅针对__Class#forName于ClassLoader.loadClass()的类加载过程进行分析
 
 ```plantuml
-participant Java Code
+skinparam backgroundColor #EEEBDC
+skinparam handwritten true
+
+skinparam sequence {
+	ArrowColor DeepSkyBlue
+	ActorBorderColor DeepSkyBlue
+	LifeLineBorderColor blue
+	LifeLineBackgroundColor #A9DCDF
+	
+	ParticipantBorderColor DeepSkyBlue
+	ParticipantBackgroundColor DodgerBlue
+	ParticipantFontName Impact
+	ParticipantFontSize 17
+	ParticipantFontColor #A9DCDF
+	
+	ActorBackgroundColor aqua
+	ActorFontColor DeepSkyBlue
+	ActorFontSize 17
+	ActorFontName Aapex
+}
+participant "Java Code" as JC
 participant JVM
-Java Code-->Java Code:Class@forName(...)
-Java Code-->JVM:Reflection@getCallerClass()\n用以获取调用类的Class对象
-JVM-->Java Code:return
-Java Code-->JVM:ClassLoader@forName0(...)
+JC-->JC:Class@forName(...)
+JC-->JVM:Reflection@getCallerClass()\n用以获取调用类的Class对象
+JVM-->JC:return
+JC-->JVM:ClassLoader@forName0(...)
 JVM-->JVM:JVM_FindClassFromCaller在缓存中查找Class对象\n以类加载器实例以及全限定名作为key
-JVM-->Java Code:若命中了，则结束加载过程\n若没有命中，调用传入JVM的类加载器实例的loadClass方法
-Java Code-->Java Code:...省略双亲委派的流程跳转...
-Java Code-->Java Code:ClassLoader.loadClass(...)
-Java Code-->Java Code:ClassLoader.findLoadedClass(...)
-Java Code-->JVM:ClassLoader.findLoadedClass0(...)
+JVM-->JC:若命中了，则结束加载过程\n若没有命中，调用传入JVM的类加载器实例的loadClass方法
+JC-->JC:...省略双亲委派的流程跳转...
+JC-->JC:ClassLoader.loadClass(...)
+JC-->JC:ClassLoader.findLoadedClass(...)
+JC-->JVM:ClassLoader.findLoadedClass0(...)
 JVM-->JVM:JVM_FindLoadedClass在缓存中查找Class对象\n以类加载器实例以及全限定名作为key
-JVM-->Java Code:若命中了，则结束加载过程\n若没有命中，继续回到loadClass方法中
-Java Code-->Java Code:ClassLoader.findClass(...)
-Java Code-->Java Code:ClassLoader.defineClass(...)
-Java Code-->JVM:ClassLoader.defineClass0(...)
+JVM-->JC:若命中了，则结束加载过程\n若没有命中，继续回到loadClass方法中
+JC-->JC:ClassLoader.findClass(...)
+JC-->JC:ClassLoader.defineClass(...)
+JC-->JVM:ClassLoader.defineClass0(...)
 JVM-->JVM:JVM_DefineClassWithSource验证字节码格式的正确性\n记录缓存{"key":"ClassLoader实例+name","value":"Class实例"}
-JVM-->Java Code:return
-Java Code-->Java Code:后续可能会有验证解析初始化操作
+JVM-->JC:return
+JC-->JC:后续可能会有验证解析初始化操作
 ```
 
 # 4 参考

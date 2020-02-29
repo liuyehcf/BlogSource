@@ -125,6 +125,26 @@ JMM不保证未同步程序的执行结果与该程序在顺序一致性模型�
 * 当单个内存操作不具有原子性时，可能会产生意想不到的后果，例如下图
 
 ```plantuml
+skinparam backgroundColor #EEEBDC
+skinparam handwritten true
+
+skinparam sequence {
+	ArrowColor DeepSkyBlue
+	ActorBorderColor DeepSkyBlue
+	LifeLineBorderColor blue
+	LifeLineBackgroundColor #A9DCDF
+	
+	ParticipantBorderColor DeepSkyBlue
+	ParticipantBackgroundColor DodgerBlue
+	ParticipantFontName Impact
+	ParticipantFontSize 17
+	ParticipantFontColor #A9DCDF
+	
+	ActorBackgroundColor aqua
+	ActorFontColor DeepSkyBlue
+	ActorFontSize 17
+	ActorFontName Aapex
+}
 Note over 处理器A:写事务1：写long型变量的高32位
 Note over 处理器B:读事务：读long型变量的高32位
 Note over 处理器A:写事务2：写long型变量的低32位

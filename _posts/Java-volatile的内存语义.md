@@ -136,6 +136,26 @@ class VolatileExample {
 1. 根据happens-before的传递性规则，1 happens-before 4
 
 ```plantuml
+skinparam backgroundColor #EEEBDC
+skinparam handwritten true
+
+skinparam sequence {
+	ArrowColor DeepSkyBlue
+	ActorBorderColor DeepSkyBlue
+	LifeLineBorderColor blue
+	LifeLineBackgroundColor #A9DCDF
+	
+	ParticipantBorderColor DeepSkyBlue
+	ParticipantBackgroundColor DodgerBlue
+	ParticipantFontName Impact
+	ParticipantFontSize 17
+	ParticipantFontColor #A9DCDF
+	
+	ActorBackgroundColor aqua
+	ActorFontColor DeepSkyBlue
+	ActorFontSize 17
+	ActorFontName Aapex
+}
 Note over 线程A:1：线程A修改共享变量
 Note over 线程A:2：线程A写volatile变量
 Note over 线程B:3：线程B读同一个volatile变量

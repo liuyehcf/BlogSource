@@ -308,6 +308,26 @@ ApplicationContext
 我们以ClassPathXmlApplicationContext为起点，进行分析。先给出整个初始化流程的时序图
 
 ```plantuml
+skinparam backgroundColor #EEEBDC
+skinparam handwritten true
+
+skinparam sequence {
+	ArrowColor DeepSkyBlue
+	ActorBorderColor DeepSkyBlue
+	LifeLineBorderColor blue
+	LifeLineBackgroundColor #A9DCDF
+	
+	ParticipantBorderColor DeepSkyBlue
+	ParticipantBackgroundColor DodgerBlue
+	ParticipantFontName Impact
+	ParticipantFontSize 17
+	ParticipantFontColor #A9DCDF
+	
+	ActorBackgroundColor aqua
+	ActorFontColor DeepSkyBlue
+	ActorFontSize 17
+	ActorFontName Aapex
+}
 participant ClassPathXmlApplicationContext
 participant AbstractXmlApplicationContext
 participant AbstractRefreshableConfigApplicationContext

@@ -31,6 +31,26 @@ HTTPS很好的解决了HTTP的三个缺点（被监听、被篡改、被伪装�
 # 3 HTTPS连接过程
 
 ```plantuml
+skinparam backgroundColor #EEEBDC
+skinparam handwritten true
+
+skinparam sequence {
+	ArrowColor DeepSkyBlue
+	ActorBorderColor DeepSkyBlue
+	LifeLineBorderColor blue
+	LifeLineBackgroundColor #A9DCDF
+	
+	ParticipantBorderColor DeepSkyBlue
+	ParticipantBackgroundColor DodgerBlue
+	ParticipantFontName Impact
+	ParticipantFontSize 17
+	ParticipantFontColor #A9DCDF
+	
+	ActorBackgroundColor aqua
+	ActorFontColor DeepSkyBlue
+	ActorFontSize 17
+	ActorFontName Aapex
+}
 client->server: 发送客户端支持的加密协议以及版本，例如SSL，TLS
 server->server: 服务器端从中筛选合适的加密协议
 server->client: 服务器端返回证书，证书中有公钥
