@@ -723,7 +723,7 @@ public class TestWithoutParam {
 
 建表sql
 
-```SQL
+```sql
 CREATE DATABASE mybatis;
 
 USE mybatis;
