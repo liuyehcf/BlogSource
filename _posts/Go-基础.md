@@ -211,6 +211,35 @@ export GOPRIVATE=gitlab.com/tom/*, gitlab.com/jerry/*
 
 __[unable to install go module (private nested repository)](https://gitlab.com/gitlab-org/gitlab-foss/issues/65681)__
 
+在设置完`GOPROXY`以及`GOPRIVATE`之后，有时会出现如下问题
+
+```
+... imports
+        gitlab.com/xxx/yyy: git ls-remote -q https://gitlab.com/xxx/yyy.git in /Users/hechenfeng/.gorepo/pkg/mod/cache/vcs/82c21665246dae55cc8f78cc6ebbe6bed9f6ccc4d86a36f71bfb28f7477c0aee: exit status 128:
+        fatal: could not read Username for 'https://gitlab.com': terminal prompts disabled
+Confirm the import path was entered correctly.
+If this is a private repository, see https://golang.org/doc/faq#git_https for additional information.
+```
+
+我们可以通过设置`export GIT_TERMINAL_PROMPT=1`来开启交互模式，__但是随后执行`go mod tidy`时，auth的交互是有bug的，他会让你输入两次密码（很坑）__。所以我们换另一种方式来解决，执行`git ls-remote -q https://gitlab.com/xxx/yyy.git`，执行过程中会要求你输入`gitlab`的账号和密码
+
+随后，我们继续执行`go mod tidy`，还是报错，但报错信息如下
+
+```sh
+... imports
+        gitlab.com/xxx/yyy: git ls-remote -q https://gitlab.com/xxx.git in /Users/hechenfeng/.gorepo/pkg/mod/cache/vcs/abaeae1021d76630bfb57ffb11ec22f4a1f393859f7c63b7c849108ca94a2157: exit status 128:
+        remote: Not Found
+        fatal: repository 'https://gitlab.com/xxx.git/' not found
+```
+
+这里就有点奇怪了，我的gitlab项目地址其实是`gitlab.com/xxx/yyy.git`，但是错误信息里面确尝试下载的是`gitlab.com/xxx.git`。最后发现，我只是在代码里面引入了`gitlab.com/xxx/yyy`，但并未在`go.mod`文件的`require`中配置`gitlab.com/xxx/yyy`的依赖项，所以`go mod`误认为`gitlab.com/xxx`是仓库地址
+
+所以我们现在在`go.mod`文件中，将依赖加上即可
+
+__此外，如果我们`gitlab`的账号密码更新了，那么`git`仍然会用上一次的密码来进行鉴权，此时需要将该过期的密码从系统的秘钥中删除__
+
+* 如果是Mac的OSX系统，在钥匙串的密码一项中，找到gitlab相关的数据，删掉即可
+
 ### 3.2.5 IDE-GoLand
 
 __新建go module项目__
@@ -280,3 +309,5 @@ dep ensure
 * [go mod常用命令 已经 常见问题](https://blog.csdn.net/zzhongcy/article/details/97243826)
 * [Configuring GoLand for WebAssembly](https://github.com/golang/go/wiki/Configuring-GoLand-for-WebAssembly)
 * [Go语言的%d,%p,%v等占位符的使用](https://www.jianshu.com/p/66aaf908045e)
+* [go-get-results-in-terminal-prompts-disabled-error-for-github-private-repo](https://stackoverflow.com/questions/32232655/go-get-results-in-terminal-prompts-disabled-error-for-github-private-repo)
+* [git报错remote: Repository not found的一种可能](https://www.jianshu.com/p/5eb3a91458de)

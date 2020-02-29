@@ -246,30 +246,76 @@ __参数选项__
 
 ## 2.3 证书转换
 
-__将站点私钥与站点证书，转存为`pkcs12`格式的证书__
+### 2.3.1 crt与pkcs12
+
+__将`crt`格式的站点私钥与站点证书，转存为`pkcs12`格式的证书__
 
 ```sh
-openssl pkcs12 -export -in <cert> -inkey <private key> -name <friendly name> -out <pkcs12 file>
+openssl pkcs12 -export -in <cert> -inkey <private key> -name <aliasName> -out <pkcs12 file>
 
 # 执行过程中，会创建pkcs12证书的密码
 # 1. <cert> 指证书文件路径
 # 2. <private key> 指私钥文件路径
-# 3. <friendly name> 指该证书的别名
-# 4. <pkcs12 file> 指待创建的pkcs12证书的路径
+# 3. <aliasName> 指该证书的别名
+# 4. <pkcs12 file> 指待创建的pkcs12证书
 ```
 
-__将站点私钥与站点证书、中间证书、CA证书，转存为`pkcs12`格式的证书__
+__将`crt`格式的站点私钥与站点证书、中间证书、CA证书，转存为`pkcs12`格式的证书__
 
 ```sh
-openssl pkcs12 -export -in <server cert> -inkey <server private key>  -certfile <intermediate cert> -CAfile <ca cert> -name <friendly name> -out <pkcs12 file>
+openssl pkcs12 -export -in <server cert> -inkey <server private key>  -certfile <intermediate cert> -CAfile <ca cert> -name <aliasName> -out <pkcs12 file>
 
 # 执行过程中，会创建pkcs12证书的密码
 # 1. <server cert> 指站点证书
 # 2. <server private key> 指站点证书的私钥
 # 3. <intermediate cert> 中间证书
 # 4. <ca cert> 根证书
-# 5. <friendly name> 指该证书的别名
-# 6. <pkcs12 file> 指待创建的pkcs12证书的路径
+# 5. <aliasName> 指该证书的别名
+# 6. <pkcs12 file> 指待创建的pkcs12证书
+```
+
+__将`crt`格式的根证书添加到`pkcs12`的信任证书链中__
+
+```sh
+keytool -import -trustcacerts -alias <aliasName> -file <ca cert> -keystore <pkcs12 file>
+
+# <aliasName> 该证书在keystore中的别名，随意取，保证唯一性即可
+# <ca cert> 待导入的根证书
+# <pkcs12 file> pkcs12证书
+```
+
+__从`pkcs12`格式的证书中导出`der`格式的证书__
+
+```sh
+keytool -export -alias <aliasName> -keystore <pkcs12 file> -file <der file>
+
+# <aliasName> 证书在keystore中的别名
+# <pkcs12 file> pkcs12证书
+# <der file> der证书
+```
+
+### 2.3.2 crt与der
+
+__将`der`格式的证书转换为`crt`格式的证书__
+
+* `der`格式的证书，其后缀为`.cer`或`.der`
+
+```sh
+openssl x509 -inform DER -in <der file> -out <crt file>
+
+# <der file> der格式的证书
+# <crt file> crt格式的证书
+```
+
+### 2.3.3 crt与pem
+
+__将`pem`格式的证书转换为`crt`格式的证书__
+
+```sh
+openssl x509 -inform PEM -in <pem file> -out <crt file>
+
+# <pem file> pem格式的证书
+# <crt file> crt格式的证书
 ```
 
 ## 2.4 从私钥导出公钥
@@ -347,9 +393,9 @@ keytool -printcert -file <cert file>
 如果Java客户端需要校验服务端的合法性，那么我们需要将站点证书对应的__根证书__导入本地的JKS中
 
 ```sh
-keytool -import -alias <friendly name> -file <root cert file> -keystore <key store path>
+keytool -import -alias <aliasName> -file <root cert file> -keystore <key store path>
 
-# 1. <friendly name> 指证书别名
+# 1. <aliasName> 指证书别名
 # 2. <root cert file> 指待导入的根证书的别名
 # 3. <key store path> 指本地的jks路径
 ```
@@ -1165,7 +1211,7 @@ openssl x509 -req \
     -CAkey ca.key \
     -CA ca.crt \
     -CAcreateserial \
-    -out server.crt 
+    -out server.crt
 
 # 查看证书
 file server.crt
@@ -1218,21 +1264,21 @@ openssl req -new \
     -sha256 \
     -key server.key \
     -subj "/C=CN/ST=ZJ/L=HZ/O=LiuYe/OU=Study/CN=liuyeSAN" \
-    -reqexts SAN \
-    -config <(cat /etc/pki/tls/openssl.cnf \
-        <(printf "[SAN]\nsubjectAltName=DNS:*.test1.liuyehcf.test,DNS:*.test2.liuyehcf.test,DNS:www.liuyehcf.test")) \
     -out server.csr
 ```
 
 __第四步：用自签名ca进行证书签名__
 
 ```sh
+# 使用CA的私钥和证书对用户证书签名，下面有两种方式，效果一样
+# 1. 使用 openssl ca 进行签名
+# 2. 使用 openssl x509 进行签名
+
+# 方式1: openssl ca
 # 创建一些必要的文件，否则签名时会有问题
 mkdir -p /etc/pki/CA/newcerts
 touch /etc/pki/CA/index.txt
 echo "01" > /etc/pki/CA/serial
-
-# 用ca进行签名
 openssl ca -in server.csr \
     -md sha256 \
     -keyfile ca.key \
@@ -1240,6 +1286,27 @@ openssl ca -in server.csr \
     -extensions SAN \
     -config <(cat /etc/pki/tls/openssl.cnf \
         <(printf "[SAN]\nsubjectAltName=DNS:*.test1.liuyehcf.test,DNS:*.test2.liuyehcf.test,DNS:www.liuyehcf.test")) \
+    -out server.crt
+
+# 方式2: openssl x509
+cat > server_ext << EOF
+basicConstraints=CA:FALSE
+extendedKeyUsage=serverAuth,OCSPSigning
+subjectAltName=@alt_names
+
+[alt_names]
+DNS.1=*.test1.liuyehcf.test
+DNS.2=*.test2.liuyehcf.test
+DNS.3=www.liuyehcf.test
+EOF
+openssl x509 -req \
+    -in server.csr \
+    -sha256 \
+    -days 3650 \
+    -CAkey ca.key \
+    -CA ca.crt \
+    -CAcreateserial \
+    -extfile server_ext \
     -out server.crt
 ```
 
@@ -1249,7 +1316,8 @@ __验证__
 
 * `127.0.0.1 www.liuyehcf.test`
 * `127.0.0.1 www.test1.liuyehcf.test`
-* `127.0.0.1 www.test2.liuyehcf.test`）
+* `127.0.0.1 www.test2.liuyehcf.test`
+* `127.0.0.1 www.liuyehcf.test2`（非证书保护的域名）
 
 浏览器访问如下地址
 
@@ -1257,7 +1325,16 @@ __验证__
 * [https://www.test1.liuyehcf.test:8866/](https://www.test1.liuyehcf.test:8866/)
 * [https://www.test2.liuyehcf.test:8866/](https://www.test2.liuyehcf.test:8866/)
 
-此时浏览器会提示该证书非法。将`ca.crt`添加到系统根证书中后，可正常访问
+此时浏览器会提示该证书非法。将`ca.crt`添加到系统根证书中后，可正常访问，可用`curl`来验证
+
+* `curl https://www.liuyehcf.test:8866/`
+    * `hello world. origin host='www.liuyehcf.test:8866'`
+* `curl https://www.test1.liuyehcf.test:8866/`
+    * `hello world. origin host='www.test1.liuyehcf.test:8866'`
+* `curl https://www.test2.liuyehcf.test:8866/`
+    * `hello world. origin host='www.test2.liuyehcf.test:8866'`
+* `curl https://www.liuyehcf.test2:8866/`
+    * `curl: (51) SSL: no alternative certificate subject name matches target host name 'www.liuyehcf.test2'`
 
 __问题__
 
@@ -1401,3 +1478,4 @@ public class Server {
 * [OpenSSL创建带SAN扩展的证书并进行CA自签](https://blog.csdn.net/dotalee/article/details/78041691)
 * [使用OpenSSL生成多域名自签名证书进行HTTPS开发调试](https://zhuanlan.zhihu.com/p/26646377)
 * [使用 openssl 生成证书](https://www.cnblogs.com/littleatp/p/5878763.html)
+* [Requirements for trusted certificates in iOS 13 and macOS 10.15](https://support.apple.com/en-us/HT210176)

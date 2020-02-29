@@ -188,7 +188,17 @@ __注意，`sudo mv /bin/bash  /bin/bash.origin`可能因为权限的问题，�
 1. 在Terminal中输入`csrutil disable`关闭SIP(csrutil enable打开SIP)
 1. 重启
 
-# 7 参考
+# 7 清理磁盘
+
+最近我的磁盘容量快被系统吃满了，排查了一下，发现这几个路径
+
+1. `/Library/Application Support`
+    * `/Library/Application Support/Symantec/AntiVirus`：`Symantec`这个软件一直在做备份
+1. `/Library/Caches`
+1. `~/Library/Caches`
+    * `~/Library/Caches/IntelliJIdea2018.1`：`IntelliJIdea`的一些缓存数据
+
+# 8 参考
 
 * [mac下vim的16种配色方案（代码高亮）展示，及配置](http://blog.csdn.net/myhelperisme/article/details/49700715)
 * [mac终端(Terminal)字体颜色更改教程 [ls、vim操作颜色] [复制链接]](https://bbs.feng.com/forum.php?mod=viewthread&tid=10508780)
