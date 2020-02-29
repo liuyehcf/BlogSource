@@ -177,7 +177,7 @@ __重启的步骤__
 
 此外，加上一个随机因子，以避免`Actor`都在同一时刻重启
 
-```Java
+```java
 final Props childProps = Props.create(EchoActor.class);
 
 final Props  supervisorProps = BackoffSupervisor.props(
@@ -191,7 +191,7 @@ final Props  supervisorProps = BackoffSupervisor.props(
 system.actorOf(supervisorProps, "echoSupervisor");
 ```
 
-```Java
+```java
 final Props childProps = Props.create(EchoActor.class);
 
 final Props  supervisorProps = BackoffSupervisor.props(
@@ -504,7 +504,7 @@ akka.cluster.seed-nodes = [
 
 此外，我们还可以通过编程的方式，指定`Seed Node`
 
-```Java
+```java
 final Cluster cluster = Cluster.get(system);
 List<Address> list = new LinkedList<>(); //replace this with your method to dynamically get seed nodes
 cluster.joinSeedNodes(list);
@@ -525,7 +525,7 @@ cluster.joinSeedNodes(list);
 1. 直接杀掉JVM进程，该节点会被检测为`unreachable`，于是被自动或手动地标记为`down`
 1. 告诉集群将要离开集群，这种方式更为优雅，可以通过`JMX`或`HTTP`来实现，或者通过编程方式来实现，如下
 
-```Java
+```java
 final Cluster cluster = Cluster.get(system);
 cluster.leave(cluster.selfAddress());
 ```
@@ -542,7 +542,7 @@ cluster.leave(cluster.selfAddress());
 
 我们可以通过`Cluster.get(system).subscribe`来订阅某些消息
 
-```Java
+```java
 cluster.subscribe(getSelf(), MemberEvent.class, UnreachableMember.class);
 ```
 

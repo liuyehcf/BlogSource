@@ -101,7 +101,7 @@ __阅读更多__
 
 ### 2.1.2 GreetService
 
-```Java
+```java
 package org.liuyehcf.spi;
 
 public interface GreetService {
@@ -151,7 +151,7 @@ public interface GreetService {
 
 ### 2.2.2 GreetServiceInChinese
 
-```Java
+```java
 package org.liuyehcf.spi.provider;
 
 import org.liuyehcf.spi.GreetService;
@@ -165,7 +165,7 @@ public class GreetServiceInChinese implements GreetService {
 
 ### 2.2.3 GreetServiceInEnglish
 
-```Java
+```java
 package org.liuyehcf.spi.provider;
 
 import org.liuyehcf.spi.GreetService;
@@ -225,7 +225,7 @@ org.liuyehcf.spi.provider.GreetServiceInChinese
 
 ### 2.3.2 GreetServiceConsumer
 
-```Java
+```java
 package org.liuyehcf.spi.consumer;
 
 import org.liuyehcf.spi.GreetService;

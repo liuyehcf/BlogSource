@@ -51,7 +51,7 @@ ChannelInboundHandlerAdapter为ChannelInboundHandler接口提供了基础的实�
 
 因此，我们在自定义ChannelInboundHandler的时候，仅需要继承该ChannelInboundHandlerAdapter类，并且重写我们需要的方法即可，如果需要将操作向后传递，则务必记得加上形如`ctx.fireChannelRegistered();`的语句。对于其他不需要重写的方法，使用ChannelInboundHandlerAdapter提供的默认版本即可，即保证操作的传递性
 
-```Java
+```java
 public class ChannelInboundHandlerAdapter extends ChannelHandlerAdapter implements ChannelInboundHandler {
 
     @Override
@@ -122,7 +122,7 @@ ChannelOutboundHandlerAdapter为ChannelOutboundHandler接口提供了基础实�
 
 用户在自定义ChannelOutboundHandler的时候，只需要继承该类，并且重写关注的方法即可
 
-```Java
+```java
 public class ChannelOutboundHandlerAdapter extends ChannelHandlerAdapter implements ChannelOutboundHandler {
 
     @Override
@@ -182,7 +182,7 @@ ChannelInitializer是一个非常特殊的ChannelInboundHandlerAdapter，它通�
 1. 如果当前Channel已经完成了注册，则调用initChannel方法
 1. initChannel方法作为一个模板，调用同名的initChannel方法执行子类处理逻辑（通常逻辑就是添加Handler）后，从当前Pipeline中移除该ChannelHandlerContext
 
-```Java
+```java
 public abstract class ChannelInitializer<C extends Channel> extends ChannelInboundHandlerAdapter {
 
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(ChannelInitializer.class);

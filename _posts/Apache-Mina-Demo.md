@@ -52,7 +52,7 @@ __其中__
 
 ## 2.1 BaseDemo
 
-```Java
+```java
 package org.liuyehcf.mina;
 
 import org.jnativehook.GlobalScreen;
@@ -168,7 +168,7 @@ class BaseDemo {
 
 ## 2.2 MinaSshDemo
 
-```Java
+```java
 package org.liuyehcf.mina;
 
 import org.apache.sshd.client.SshClient;
@@ -226,7 +226,7 @@ public class MinaSshDemo extends BaseDemo {
 
 ## 2.3 JschSshDemo
 
-```Java
+```java
 package org.liuyehcf.mina;
 
 import com.jcraft.jsch.ChannelShell;
@@ -276,7 +276,7 @@ public class JschSshDemo extends BaseDemo {
 
 # 3 修改IdleTimeOut
 
-```Java
+```java
         Class<FactoryManager> factoryManagerClass = FactoryManager.class;
 
         Field field = factoryManagerClass.getField("DEFAULT_IDLE_TIMEOUT");

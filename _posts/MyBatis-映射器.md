@@ -80,7 +80,7 @@ __有这样一个参数`autoMappingBehavior`，当它不设置为NONE的时候�
 </select>
 ```
 
-```Java
+```java
 public List<Role> findRoleByMap(Map<String, String> params);
 ```
 
@@ -96,7 +96,7 @@ public List<Role> findRoleByMap(Map<String, String> params);
 </select>
 ```
 
-```Java
+```java
 public List<Role> findRoleByAnnotation(@Param("roleName") String roleName, @Param("note") String note);
 ```
 
@@ -112,11 +112,11 @@ public List<Role> findRoleByAnnotation(@Param("roleName") String roleName, @Para
 </select>
 ```
 
-```Java
+```java
 public List<Role> findRoleByParams(RoleParam params);
 ```
 
-```Java
+```java
 package com.learn.params;
 
 public class RoleParam {

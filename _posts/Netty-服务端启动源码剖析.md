@@ -25,7 +25,7 @@ __阅读更多__
 
 # 2 服务端启动代码清单
 
-```Java
+```java
 package org.liuyehcf.protocol.echo;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -104,7 +104,7 @@ public class EchoServer {
 1. 根据代码清单中的`(2)`。创建一个ServerBootstrap，会调用无参构造方法，参数的配置采用建造者模式
 1. 根据代码清单中的`(3)`。绑定EventLoopGroup
     * `group`方法位于`ServerBootstrap`，该方法首先调用父类的同名方法group，然后绑定child（即work）
-```Java
+```java
     public ServerBootstrap group(EventLoopGroup parentGroup, EventLoopGroup childGroup) {
         super.group(parentGroup);
         if (childGroup == null) {
@@ -119,7 +119,7 @@ public class EchoServer {
 ```
 
     * 接着，我们再看一下位于`AbstractBootstrap`的同名方法`group`，该方法主要作用就是绑定group（即boss）
-```Java
+```java
     public B group(EventLoopGroup group) {
         if (group == null) {
             throw new NullPointerException("group");
@@ -134,7 +134,7 @@ public class EchoServer {
 
 1. 根据代码清单中的`(4)`。配置生产的Channel类型，这里指定为`NioServerSocketChannel.class`
     * `channel`方法位于`AbstractBootstrap`，该方法用于创建并绑定工厂对象
-```Java
+```java
     public B channel(Class<? extends C> channelClass) {
         if (channelClass == null) {
             throw new NullPointerException("channelClass");
@@ -144,7 +144,7 @@ public class EchoServer {
 ```
 
     * 以下是`ReflectiveChannelFactory`的构造方法，很简单，绑定指定的Class对象
-```Java
+```java
     public ReflectiveChannelFactory(Class<? extends T> clazz) {
         if (clazz == null) {
             throw new NullPointerException("clazz");
@@ -154,14 +154,14 @@ public class EchoServer {
 ```
 
     * 接着调用位于`AbstractBootstrap`的`channelFactory`方法，该方法转调用另一个同名方法（接口位置的变更，又得保持兼容，因此导致两层相似的调用）
-```Java
+```java
     public B channelFactory(io.netty.channel.ChannelFactory<? extends C> channelFactory) {
         return channelFactory((ChannelFactory<C>) channelFactory);
     }
 ```
 
     * 最终，调用位于`AbstractBootstrap`的`channelFactory`方法，该方法绑定之前创建好的工厂对象
-```Java
+```java
     public B channelFactory(ChannelFactory<? extends C> channelFactory) {
         if (channelFactory == null) {
             throw new NullPointerException("channelFactory");
@@ -178,7 +178,7 @@ public class EchoServer {
 
 1. 根据代码清单中的`(5)`。绑定work的Handler
     * `group`方法位于`ServerBootstrap`，该方法用于绑定child（即work）的Handler
-```Java
+```java
     public ServerBootstrap childHandler(ChannelHandler childHandler) {
         if (childHandler == null) {
             throw new NullPointerException("childHandler");
@@ -190,7 +190,7 @@ public class EchoServer {
 
 1. 根据代码清单中的`(6)`。设置boss键值对
     * `option`方法位于`AbstractBootstrap`
-```Java
+```java
     public <T> B option(ChannelOption<T> option, T value) {
         if (option == null) {
             throw new NullPointerException("option");
@@ -210,7 +210,7 @@ public class EchoServer {
 
 1. 根据代码清单中的`(7)`。设置child键值对
     * `childOption`方法位于`ServerBootstrap`
-```Java
+```java
     public <T> ServerBootstrap childOption(ChannelOption<T> childOption, T value) {
         if (childOption == null) {
             throw new NullPointerException("childOption");
@@ -232,14 +232,14 @@ public class EchoServer {
 
 1. 根据代码清单中的`(8)`。进行后续创建Channel以及绑定操作
     * `bind`方法位于`AbstractBootstrap`，该方法将int类型的端口号封装成InetSocketAddress，并转调用同名方法bind
-```Java
+```java
     public ChannelFuture bind(int inetPort) {
         return bind(new InetSocketAddress(inetPort));
     }
 ```
 
     * `bind`方法位于`AbstractBootstrap`。该方法首先做一些校验工作，然后调用doBind方法
-```Java
+```java
     public ChannelFuture bind(SocketAddress localAddress) {
         //在执行bind之前，首先进行一些校验工作
         validate();
@@ -251,7 +251,7 @@ public class EchoServer {
 ```
 
     * `doBind`方法位于`AbstractBootstrap`。该方法创建Channel并注册，然后调用doBind0进行绑定操作
-```Java
+```java
     private ChannelFuture doBind(final SocketAddress localAddress) {
         //初始化Channel，然后进行注册操作。其中注册操作是异步的，返回一个用于获取异步操作结果的ChannelFuture
         final ChannelFuture regFuture = initAndRegister();
@@ -295,7 +295,7 @@ public class EchoServer {
 
 1. 这里我们先关注initAndRegister方法的调用中的Channel创建过程
     * `initAndRegister`方法位于`AbstractBootstrap`，该方法的作用之一是利用工厂对象生成一个Channel，并进行初始化操作
-```Java
+```java
     final ChannelFuture initAndRegister() {
         Channel channel = null;
         try {
@@ -336,7 +336,7 @@ public class EchoServer {
 
 1. 由于在代码清单中配置了NioServerSocketChannel作为生产的Channel类型，我们接着来看一下工厂生产过程
     * `newChannel`方法位于`ReflectiveChannelFactory`，该方法很简单，利用反射获取无参构造器，然后创建对象
-```Java
+```java
     public T newChannel() {
         try {
             return clazz.getConstructor().newInstance();
@@ -348,14 +348,14 @@ public class EchoServer {
 
 1. 接着，我们看一下NioServerSocketChannel的构造方法
     * `NioServerSocketChannel`的构造方法调用了newSocket方法，来创建一个ServerSocketChannel
-```Java
+```java
     public NioServerSocketChannel() {
         this(newSocket(DEFAULT_SELECTOR_PROVIDER));
     }
 ```
 
     * `newSocket`方法位于`NioServerSocketChannel`，其中DEFAULT_SELECTOR_PROVIDER的定义如下。该方法创建了`java.nio.channels.ServerSocketChannel`对象
-```Java
+```java
     private static final SelectorProvider DEFAULT_SELECTOR_PROVIDER = SelectorProvider.provider();
 
     private static ServerSocketChannel newSocket(SelectorProvider provider) {
@@ -375,7 +375,7 @@ public class EchoServer {
 ```
 
     * 然后，转调用`NioServerSocketChannel`的另一个构造方法，该方法继续调用父类的构造方法（传入参数SelectionKey.OP_ACCEPT），并且配置Config对象
-```Java
+```java
     public NioServerSocketChannel(ServerSocketChannel channel) {
         super(null, channel, SelectionKey.OP_ACCEPT);
         config = new NioServerSocketChannelConfig(this, javaChannel().socket());
@@ -383,14 +383,14 @@ public class EchoServer {
 ```
 
     * 继续，调用`AbstractNioMessageChannel`的构造方法，该方法什么也不做，继续调用父类的构造方法
-```Java
+```java
     protected AbstractNioMessageChannel(Channel parent, SelectableChannel ch, int readInterestOp) {
         super(parent, ch, readInterestOp);
     }
 ```
 
     * 继续，调用`AbstractNioChannel`的构造方法。该方法首先调用父类的构造方法，并且设置NIO层面的参数，包括非阻塞模式的设置
-```Java
+```java
     protected AbstractNioChannel(Channel parent, SelectableChannel ch, int readInterestOp) {
         super(parent);
         this.ch = ch;
@@ -414,7 +414,7 @@ public class EchoServer {
 ```
 
     * 继续，调用`AbstractChannel`的构造方法，设置信道，并且创建底层的Unsafe对象以及ChannelPipeLine对象
-```Java
+```java
     protected AbstractChannel(Channel parent) {
         this.parent = parent;
         id = newId();
@@ -424,14 +424,14 @@ public class EchoServer {
 ```
 
     * `newUnsafe`方法位于`AbstractNioMessageChannel`，该方法创建了NioMessageUnsafe对象，该对象负责Nio以及Message层面的IO操作，这里先不深究
-```Java
+```java
     protected AbstractNioUnsafe newUnsafe() {
         return new NioMessageUnsafe();
     }
 ```
 
     * `newChannelPipeline`方法位于`AbstractChannel`，该方法创建了DefaultChannelPipeline对象，作为DefaultChannelPipeline
-```Java
+```java
     protected DefaultChannelPipeline newChannelPipeline() {
         return new DefaultChannelPipeline(this);
     }
@@ -444,7 +444,7 @@ public class EchoServer {
 1. 我们回到位于`AbstractBootstrap`的`initAndRegister`方法中来，该方法在创建Channel完毕后，调用了init方法对其进行初始化操作
     * `init`方法位于`ServerBootstrap`，该方法主要就是将之前启动时通过建造者模式配置的参数注入到该Channel中去
     * 此外，该方法又通过异步方式添加了ServerBootstrapAcceptor(ChannelInboundHandlerAdapter接口的实现)，该handler用于将用户配置的childHandler（即代码清单中的ChannelInitializer）注入到新产生的NioSocketChannel（即child Channel）的Pipeline中去。在后续NioSocketChannel的注册操作的过程中，才会触发ChannelInitializer的handlerAdded方法，从而将用户配置的Handler注入到NioSocketChannel的Pipeline中去
-```Java
+```java
     @Override
     void init(Channel channel) throws Exception {
         final Map<ChannelOption<?>, Object> options = options0();
@@ -502,21 +502,21 @@ public class EchoServer {
 
 1. 我们继续回到位于`AbstractBootstrap`的`initAndRegister`方法中来，该方法在创建并初始化Channel完毕后，通过异步的方式进行了注册操作
     * `register`方法位于`MultithreadEventLoopGroup`，该方法调用next()方法获取下一个EventLoop，并通过该EventLoop进行register操作
-```Java
+```java
     public ChannelFuture register(Channel channel) {
         return next().register(channel);
     }
 ```
 
     * `register`方法位于`SingleThreadEventLoop`，该方法创建了一个DefaultChannelPromise对象（绑定了一个Channel以及一个EventExecutor），并继续调用同名方法
-```Java
+```java
     public ChannelFuture register(Channel channel) {
         return register(new DefaultChannelPromise(channel, this));
     }
 ```
 
     * `register`方法位于`SingleThreadEventLoop`，该方法获取Unsafe对象来执行register操作
-```Java
+```java
     public ChannelFuture register(final ChannelPromise promise) {
         ObjectUtil.checkNotNull(promise, "promise");
         promise.channel().unsafe().register(this, promise);
@@ -525,7 +525,7 @@ public class EchoServer {
 ```
 
     * `register`方法位于`AbstractChannel`的__非静态__内部类`AbstractUnsafe`中，该方法通过异步方式调用register0
-```Java
+```java
         public final void register(EventLoop eventLoop, final ChannelPromise promise) {
             if (eventLoop == null) {
                 throw new NullPointerException("eventLoop");
@@ -570,7 +570,7 @@ public class EchoServer {
     * 然后，执行`pipeline.invokeHandlerAddedIfNeeded();`，触发位于`ServerBootstrap`的`init`方法中的ChannelInitializer（封装了handler，注意哦，不是childHandler，在代码清单中我们没有配置过这个handler）
     * __将initAndRegister对应的ChannelFuture设置为成功__
     * 最后，触发其他生命周期，例如`fireChannelRegistered`以及`fireChannelActive`
-```Java
+```java
        private void register0(ChannelPromise promise) {
             try {
                 //check if the channel is still open as it could be closed in the mean time when the register
@@ -614,7 +614,7 @@ public class EchoServer {
 
 1. 首先，我们来跟踪一下doRegister的执行过程
     * `doRegister`方法位于`AbstractNioChannel`，该方法将java.nio.channels.ServerSocketChannel注册到指定Selector中。很简单，都是Java NIO的API，没什么好说的
-```Java
+```java
     protected void doRegister() throws Exception {
         boolean selected = false;
         for (;;) {
@@ -639,7 +639,7 @@ public class EchoServer {
 
 1. 接着，我们来跟踪一下invokeHandlerAddedIfNeeded方法的执行过程
     * `invokeHandlerAddedIfNeeded`方法位于`DefaultChannelPipeline`，只有第一次注册的时候才会执行后续操作
-```Java
+```java
     final void invokeHandlerAddedIfNeeded() {
         assert channel.eventLoop().inEventLoop();
         if (firstRegistration) {
@@ -652,7 +652,7 @@ public class EchoServer {
 ```
 
     * `callHandlerAddedForAllHandlers`方法位于`DefaultChannelPipeline`，该方法触发所有task的execute的方法
-```Java
+```java
     private void callHandlerAddedForAllHandlers() {
         final PendingHandlerCallback pendingHandlerCallbackHead;
         synchronized (this) {
@@ -678,7 +678,7 @@ public class EchoServer {
 ```
 
     * `execute`方法位于`DefaultChannelPipeline`中的__非静态__内部类`PendingHandlerAddedTask`中，该方法主要作用就是执行callHandlerAdded0方法
-```Java
+```java
         void execute() {
             EventExecutor executor = ctx.executor();
             if (executor.inEventLoop()) {
@@ -700,7 +700,7 @@ public class EchoServer {
 ```
 
     * `callHandlerAdded0`方法位于`DefaultChannelPipeline`，__该方法主要作用就是触发绑定的Handler的handlerAdded方法__。handlerAdded方法触发的地方非常少，到目前仅在此一处出现。这也保证了在ChannelInitializer配置的Handler不会被重复添加
-```Java
+```java
     private void callHandlerAdded0(final AbstractChannelHandlerContext ctx) {
         try {
             ctx.handler().handlerAdded(ctx);
@@ -740,7 +740,7 @@ public class EchoServer {
 
 1. 现在我们回到位于`AbstractBootstrap`的`doBind`方法中，继续调用`doBind0`方法
     * `doBind0`方法位于`AbstractBootstrap`中，该方法主要通过异步方式调用bind方法
-```Java
+```java
     private static void doBind0(
             final ChannelFuture regFuture, final Channel channel,
             final SocketAddress localAddress, final ChannelPromise promise) {
@@ -762,21 +762,21 @@ public class EchoServer {
 
 1. 继续跟踪bind方法的异步调用
     * `bind`方法位于`AbstractChannel`，通过其绑定的pipeline继续调用bind方法
-```Java
+```java
     public ChannelFuture bind(SocketAddress localAddress, ChannelPromise promise) {
         return pipeline.bind(localAddress, promise);
     }
 ```
 
     * `bind`方法位于`DefaultChannelPipeline`，该方法通过tail字段继续调用同名方法
-```Java
+```java
     public final ChannelFuture bind(SocketAddress localAddress, ChannelPromise promise) {
         return tail.bind(localAddress, promise);
     }
 ```
 
     * `bind`方法位于`AbstractChannelHandlerContext`，该方法通过同步或异步的方式执行invokeBind方法
-```Java
+```java
     public ChannelFuture bind(final SocketAddress localAddress, final ChannelPromise promise) {
         if (localAddress == null) {
             throw new NullPointerException("localAddress");
@@ -804,7 +804,7 @@ public class EchoServer {
 ```
 
     * `invokeBind`方法位于`AbstractChannelHandlerContext`，该方法获取绑定的handler，然后执行bind操作
-```Java
+```java
     private void invokeBind(SocketAddress localAddress, ChannelPromise promise) {
         //这个判断条件没看懂
         if (invokeHandler()) {
@@ -820,7 +820,7 @@ public class EchoServer {
 ```
 
     * `bind`方法位于`DefaultChannelPipeline`的__非静态__内部类`HeadContext`中，该方法通过其关联的Unsafe对象执行底层的bind操作。关于HeadContext以及TailContext暂时不太清楚设计目的
-```Java
+```java
         public void bind(
                 ChannelHandlerContext ctx, SocketAddress localAddress, ChannelPromise promise)
                 throws Exception {
@@ -829,7 +829,7 @@ public class EchoServer {
 ```
 
     * `bind`方法位于`AbstractChannel`的__非静态__内部类`AbstractUnsafe`中，该方做了一些额外校验工作后，触发doBind方法
-```Java
+```java
         @Override
         public final void bind(final SocketAddress localAddress, final ChannelPromise promise) {
             assertEventLoop();
@@ -874,7 +874,7 @@ public class EchoServer {
 ```
 
     * `doBind`方法位于`NioServerSocketChannel`，该方法执行Java NIO API的绑定操作
-```Java
+```java
     protected void doBind(SocketAddress localAddress) throws Exception {
         if (PlatformDependent.javaVersion() >= 7) {
             javaChannel().bind(localAddress, config.getBacklog());

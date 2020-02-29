@@ -41,7 +41,7 @@ __阅读更多__
 
 `SpringApplication.run`方法
 
-```Java
+```java
     public ConfigurableApplicationContext run(String... args) {
     StopWatch stopWatch = new StopWatch();
     stopWatch.start();

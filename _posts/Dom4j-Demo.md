@@ -23,7 +23,7 @@ __阅读更多__
 
 __代码清单__
 
-```Java
+```java
 package org.liuyehcf.dom4j;
 
 import org.dom4j.Document;

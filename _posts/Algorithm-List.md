@@ -18,7 +18,7 @@ __Merge Two Sorted Lists__
 
 > Merge two sorted linked lists and return it as a new list. The new list should be made by splicing together the nodes of the first two lists.
 
-```Java
+```java
 public class Solution {
     public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
         ListNode pseudoHead = new ListNode(0);
@@ -55,7 +55,7 @@ __Merge k Sorted Lists__
 
 > Merge k sorted linked lists and return it as one sorted list. Analyze and describe its complexity.
 
-```Java
+```java
 /**
  * Definition for singly-linked list.
  * public class ListNode {
@@ -106,7 +106,7 @@ __Sort List__
 
 > Sort a linked list in O(n log n) time using constant space complexity.
 
-```Java
+```java
 public class Solution {
     public ListNode sortList(ListNode head) {
         ListNode pseudoHead = new ListNode(0);
@@ -176,7 +176,7 @@ ____
 
 > 
 
-```Java
+```java
 ```
 
 -->

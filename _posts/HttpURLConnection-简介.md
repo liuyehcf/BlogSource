@@ -17,7 +17,7 @@ __阅读更多__
 
 __代码清单如下__
 
-```Java
+```java
     public static void doGet(String value1, String value2, String operator) {
         try {
             URL url = new URL("http://localhost:8080/compute?value1=" + value1 + "&value2=" + value2);//(1)
@@ -58,7 +58,7 @@ __详细步骤分析__
 
 __代码清单如下__
 
-```Java
+```java
     public static void doPost() {
         try {
             URL url = new URL("http://localhost:8080/login");//(1)
@@ -106,7 +106,7 @@ __详细步骤分析__
 # 3 HttpURLConnection默认参数
 
 __代码清单__
-```Java
+```java
 public class DefaultParameters {
     public static void main(String[] args) {
         try {

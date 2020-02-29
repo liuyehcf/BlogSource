@@ -43,7 +43,7 @@ lombok提供了3个注解，用于创建构造方法，它们分别是
 
 __`@Builder`是我最爱的lombok注解，没有之一__。通常我们在业务代码中，时时刻刻都会用到数据传输对象（DTO），例如，我们调用一个RPC接口，需要传入一个DTO，代码通常是这样的
 
-```Java
+```java
 // 首先构造DTO对象
 XxxDTO xxxDTO = new XxxDTO();
 xxxDTO.setPro1(...);
@@ -59,7 +59,7 @@ rpcService.doSomething(xxxDTO);
 
 借助lombok的`@Builder`注解，我们便可以这样重构上面这段代码
 
-```Java
+```java
 rpcService.doSomething(
     XxxDTO.builder()
         .setPro1(...)
@@ -76,7 +76,7 @@ rpcService.doSomething(
 
 如果是一个简单的DTO，__那么直接在类上方标记`@Builder`注解，同时需要提供一个全参构造方法__，lombok就会在编译期为该类创建一个`建造者模式`的静态内部类
 
-```Java
+```java
 @Builder
 public class BaseCarDTO {
     private Double width;
@@ -122,7 +122,7 @@ public class BaseCarDTO {
 
 将编译后的`.class`文件反编译得到的`.java`文件如下。可以很清楚的看到，多了一个静态内部类，且采用了建造者模式，这也是`@Builder`注解名称的由来
 
-```Java
+```java
 public class BaseCarDTO {
     private Double width;
     private Double length;
@@ -205,7 +205,7 @@ public class BaseCarDTO {
 
 * 我们需要在`@Builder`注解指定`builderMethodName`属性，区分一下两个静态方法
 
-```Java
+```java
 @Builder
 public class BaseCarDTO {
     private Double width;
@@ -268,7 +268,7 @@ public class TrunkDTO extends BaseCarDTO {
 
 我们来看一下`TrunkDTO`编译得到的`.class`文件经过反编译得到的`.java`文件的样子，如下
 
-```Java
+```java
 public class TrunkDTO extends BaseCarDTO {
     private Double volume;
 
@@ -314,7 +314,7 @@ public class TrunkDTO extends BaseCarDTO {
 
 那么，我们如何让`TrunkDTOBuilder`也包含父类的字段呢？答案就是，我们需要将`@Builder`注解标记在构造方法处，构造方法包含多少字段，那么这个静态内部类就包含多少个字段，如下
 
-```Java
+```java
 public class TrunkDTO extends BaseCarDTO {
     private Double volume;
 
@@ -336,7 +336,7 @@ public class TrunkDTO extends BaseCarDTO {
 
 上述`TrunkDTO`编译得到的`.class`文件经过反编译得到的`.java`文件如下
 
-```Java
+```java
 public class TrunkDTO extends BaseCarDTO {
     private Double volume;
 
@@ -401,7 +401,7 @@ public class TrunkDTO extends BaseCarDTO {
 
 仅靠`@Builder`注解，那么生成的静态内部类是不会处理初始值的，如果我们要让静态内部类处理初始值，那么就需要在相关的字段上标记`@Builder.Default`注解
 
-```Java
+```java
 @Builder
 public class BaseCarDTO {
     @Builder.Default
@@ -452,7 +452,7 @@ __注意，字段在被`@Builder.Default`修饰后，生成class文件中是没�
 
 `@EqualsAndHashCode`注解用于创建Object的`hashCode`方法以及`equals`方法，同样地，如果一个DTO包含父类，那么最平凡的`@EqualsAndHashCode`注解不会考虑父类包含的字段。__因此如果子类的`hashCode`方法以及`equals`方法需要考虑父类的字段，那么需要将`@EqualsAndHashCode`注解的`callSuper`属性设置为true，这样就会调用父类的同名方法__
 
-```Java
+```java
 public class BaseCarDTO {
 
     private Double width = 5.0;
@@ -502,7 +502,7 @@ public class TrunkDTO extends BaseCarDTO {
 
 上述`TrunkDTO`编译得到的`.class`文件经过反编译得到的`.java`文件如下
 
-```Java
+```java
 public class TrunkDTO extends BaseCarDTO {
     private Double volume;
 
@@ -577,6 +577,6 @@ public class TrunkDTO extends BaseCarDTO {
 
 `@Slf4j(topic = "error")`等效于下面这段代码
 
-```Java
+```java
   private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger("error");
 ```

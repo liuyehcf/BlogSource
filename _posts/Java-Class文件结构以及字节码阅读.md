@@ -581,7 +581,7 @@ __实际被调用的方法将按照下面的步骤进行(类型C的解析按照�
 * 否则，如果C是一个接口，并且Object中包含与调用方法的名字和描述符完全一致的方法，则调用这个实例方法即可
 * 否则，抛出异常，根据不同的情况将会抛出不同的异常，详见[jvms-6.5.invokespecial](https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5.invokespecial)
 
-```Java
+```java
 class Test {
     public static void main(String[] args){
         Test test=new Test();   //调用构造方法
@@ -682,7 +682,7 @@ __同步一段指令集序列通常是由Java语言中的synchronized语句块�
 ### 4.1.1 for循环
 
 以一个简单的加法程序进行分析
-```Java
+```java
 1 public class Test{
 2     public int testFor(){
 3         int val=0;
@@ -797,7 +797,7 @@ __注意点__：注意到local variable 0被保留了，这个是用于存放thi
 ### 4.1.2 while循环
 
 仍然以一个同样的加法程序进行分析
-```Java
+```java
 1  public class Test {
 2      public int testWhile() {
 3          int val = 0;
@@ -916,7 +916,7 @@ __可以看出，while循环的字节码与for循环的字节码没什么区别_
 
 fo each需要用到实现了Iterable接口的容器
 
-```Java
+```java
 1  import java.util.List;
 2  
 3  public class Test {
@@ -1081,7 +1081,7 @@ __可以看出，for each本质上就是通过返回一个迭代器Iterator，�
 
 ### 4.2.1 调用接口方法
 
-```Java
+```java
 1 import java.util.List;
 2 
 3 public class Test {
@@ -1180,7 +1180,7 @@ __着重对invokeInterfaceMethod方法的字节码进行分析__
 
 ### 4.2.2 调用静态方法
 
-```Java
+```java
 1 public class Test {
 2     public static void staticMethod(int i) {}
 3     public void invokeStaticMethod() {
@@ -1277,7 +1277,7 @@ __对比invokeinterface字节码指令，invokestatic少了一个表示操作数
 
 ### 4.2.3 调用private方法
 
-```Java
+```java
 1 public class Test {
 2    private void privateMethod(int i) {}
 3    public void invokePrivateMethod() {
@@ -1364,7 +1364,7 @@ __着重对invokePrivateMethod方法的字节码进行分析__
 
 ### 4.3.1 synchronized修饰的方法
 
-```Java
+```java
 1 public class Test {
 2    public synchronized void synchronizedMethod(int i) {}
 3     public void invokeSynchronizedMethod() {
@@ -1465,7 +1465,7 @@ __很奇怪，在字节码中并没有发现monitorenter与monitorexit，那么�
 ### 4.3.2 synchronized块
 
 __以一个单例模式为例子，其中父类Base，接口Interface1和Interface2是空类以及空接口__
-```Java
+```java
 1  public class Singleton extends Base implements Interface1,Interface2{
 2      private static volatile Singleton instance;
 3 

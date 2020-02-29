@@ -144,7 +144,7 @@ MyBatis配置文件
 
 映射器（Mapper）的Java接口。__为了搞清参数传递的方式，这里的参数命名比较恶心，接口中的参数名字anyName在映射器配置文件中不会出现__
 
-```Java
+```java
 package org.liuyehcf.mybatis;
 
 import org.apache.ibatis.annotations.Param;
@@ -183,7 +183,7 @@ public interface CrmUserDAO {
 
 DataObject
 
-```Java
+```java
 package org.liuyehcf.mybatis;
 
 /**
@@ -254,7 +254,7 @@ public class CrmUserDO {
 
 测试模板类，由于测试方法中每次都需要构造SqlSessionFactory，然后用SqlSessionFactory获取一个SqlSession，利用SqlSession执行相应的SQL操作之后，提交或者回滚，最后关闭SqlSession，这些操作都是可以固化的，因此使用模板方法模式
 
-```Java
+```java
 package org.liuyehcf.mybatis;
 
 import org.apache.ibatis.io.Resources;
@@ -319,7 +319,7 @@ public abstract class TestTemplate {
 
 测试含有@Param注解的方法
 
-```Java
+```java
 package org.liuyehcf.mybatis;
 
 import org.apache.ibatis.session.SqlSession;
@@ -424,7 +424,7 @@ public class TestWithParam {
 
 测试不含有@Param注解的方法
 
-```Java
+```java
 package org.liuyehcf.mybatis;
 
 import org.apache.ibatis.session.SqlSession;

@@ -25,7 +25,7 @@ __阅读更多__
 
 # 2 客户端启动代码清单
 
-```Java
+```java
 package org.liuyehcf.netty.echo;
 
 import io.netty.bootstrap.Bootstrap;
@@ -109,14 +109,14 @@ public class EchoClient {
 
 1. 根据代码清单中的`(7)`。进行后续创建Channel以及连接操作
     * `connect`方法位于`Bootstrap`，将host以及port封装成SocketAddress，并转调同名方法connect
-```Java
+```java
     public ChannelFuture connect(String inetHost, int inetPort) {
         return connect(InetSocketAddress.createUnresolved(inetHost, inetPort));
     }
 ```
 
     * `connect`方法位于`Bootstrap`。该方法首先做一些校验工作，然后调用doResolveAndConnect方法
-```Java
+```java
     public ChannelFuture connect(SocketAddress remoteAddress) {
         if (remoteAddress == null) {
             throw new NullPointerException("remoteAddress");
@@ -128,7 +128,7 @@ public class EchoClient {
 ```
 
     * `doResolveAndConnect`方法位于`Bootstrap`。该方法创建Channel并注册，然后调用doResolveAndConnect0进行连接操作
-```Java
+```java
     private ChannelFuture doResolveAndConnect(final SocketAddress remoteAddress, final SocketAddress localAddress) {
         final ChannelFuture regFuture = initAndRegister();
         final Channel channel = regFuture.channel();
@@ -165,7 +165,7 @@ public class EchoClient {
 ```
 
     * `initAndRegister`方法位于`AbstractBootstrap`，用于创建并注册Channel，其详细过程参见{% post_link Netty-服务端启动源码剖析 %}，这里不再赘述
-```Java
+```java
     final ChannelFuture initAndRegister() {
         Channel channel = null;
         try {
@@ -207,7 +207,7 @@ public class EchoClient {
 我们回到位于`AbstractBootstrap`的`initAndRegister`方法中来，该方法在创建Channel完毕后，调用了init方法对其进行初始化操作
 
 1. `init`方法位于`Bootstrap`，该方法主要就是将之前启动时通过建造者模式配置的参数注入到该Channel中去
-```Java
+```java
     void init(Channel channel) throws Exception {
         ChannelPipeline p = channel.pipeline();
         p.addLast(config.handler());
@@ -237,7 +237,7 @@ channel注册的详细过程，其详细过程参见{% post_link Netty-服务端
 1. __将initAndRegister对应的ChannelFuture设置为成功__
 1. 最后，触发其他生命周期，例如`fireChannelRegistered`以及`fireChannelActive`
 
-```Java
+```java
         private void register0(ChannelPromise promise) {
             try {
                 // check if the channel is still open as it could be closed in the mean time when the register
@@ -284,7 +284,7 @@ channel注册的详细过程，其详细过程参见{% post_link Netty-服务端
 现在我们回到位于`Bootstrap`的`doResolveAndConnect`方法中，继续跟踪doResolveAndConnect0方法
 
 * `doResolveAndConnect0`方法位于`Bootstrap`
-```Java
+```java
     private ChannelFuture doResolveAndConnect0(final Channel channel, SocketAddress remoteAddress,
                                                final SocketAddress localAddress, final ChannelPromise promise) {
         try {
@@ -333,7 +333,7 @@ channel注册的详细过程，其详细过程参见{% post_link Netty-服务端
 ```
 
 * `doConnect`位于`Bootstrap`
-```Java
+```java
     private static void doConnect(
             final SocketAddress remoteAddress, final SocketAddress localAddress, final ChannelPromise connectPromise) {
 
@@ -355,21 +355,21 @@ channel注册的详细过程，其详细过程参见{% post_link Netty-服务端
 ```
 
 * `connect`方法位于`AbstractChannel`
-```Java
+```java
     public ChannelFuture connect(SocketAddress remoteAddress, ChannelPromise promise) {
         return pipeline.connect(remoteAddress, promise);
     }
 ```
 
 * `connect`方法位于`DefaultChannelPipeline`
-```Java
+```java
     public final ChannelFuture connect(SocketAddress remoteAddress, ChannelPromise promise) {
         return tail.connect(remoteAddress, promise);
     }
 ```
 
 * `connect`方法位于`AbstractChannelHandlerContext`，该方法继续转调同名`connect`方法，以及`invokeConnect`方法
-```Java
+```java
     public ChannelFuture connect(SocketAddress remoteAddress, ChannelPromise promise) {
         return connect(remoteAddress, null, promise);
     }
@@ -414,7 +414,7 @@ channel注册的详细过程，其详细过程参见{% post_link Netty-服务端
 ```
 
 * `connect`方法位于`DefaultChannelPipeline#HeadContext`
-```Java
+```java
         public void connect(
                 ChannelHandlerContext ctx,
                 SocketAddress remoteAddress, SocketAddress localAddress,
@@ -424,7 +424,7 @@ channel注册的详细过程，其详细过程参见{% post_link Netty-服务端
 ```
 
 * `connect`方法位于`AbstractNioChannel`。在完成doConnect方法之后，fulfillConnectPromise方法将connect对应的ChannelPromise设置为成功
-```Java
+```java
         public final void connect(
                 final SocketAddress remoteAddress, final SocketAddress localAddress, final ChannelPromise promise) {
             if (!promise.setUncancellable() || !ensureOpen(promise)) {
@@ -482,7 +482,7 @@ channel注册的详细过程，其详细过程参见{% post_link Netty-服务端
 ```
 
 * `doConnect`方法位于`NioSocketChannel`
-```Java
+```java
     protected boolean doConnect(SocketAddress remoteAddress, SocketAddress localAddress) throws Exception {
         if (localAddress != null) {
             doBind0(localAddress);
@@ -505,7 +505,7 @@ channel注册的详细过程，其详细过程参见{% post_link Netty-服务端
 ```
 
 * `connect`方法位于`SocketUtils`，执行底层`java.nio`的连接操作
-```Java
+```java
     public static boolean connect(final SocketChannel socketChannel, final SocketAddress remoteAddress)
             throws IOException {
         try {

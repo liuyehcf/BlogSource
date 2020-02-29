@@ -17,7 +17,7 @@ __阅读更多__
 
 可以使用`PathMatchingResourcePatternResolver`
 
-```Java
+```java
 PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 
 org.springframework.core.io.Resource[] resources = resolver.getResources("classpath*:liuye/**.json");

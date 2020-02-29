@@ -26,7 +26,7 @@ __阅读更多__
 
 __我们将通过以下程序中两个线程的交互来说明这两个规则__
 
-```Java
+```java
 public class FinalExample {
     int i;//普通变量
     final int j;//final变量
@@ -124,7 +124,7 @@ Note over 线程B:读对象的final域j
 * 在构造函数内对一个final引用的对象的成员的写入，与随后在构造函数外把这个被构造对象的引用赋值给一个引用变量，这两个操作之间不能重排序
 * 确保在final引用的初始化在构造函数内完成，因此一旦其他线程拿到了一个非null的final引用，那么这个引用一定是在构造函数内被正确赋值的(至于是否正确初始化，则不一定，这取决于final引用的赋值语句)
 
-```Java
+```java
 public class FinalReferenceExample {
     final int[] intArray;//final是引用类型
 
@@ -182,7 +182,7 @@ Note over 线程B:4：写final引用对象的成员域
 * 否则，其他线程可能在构造过程中访问到一个尚未初始化完毕的对象的final域
 * 看下面的例子
 
-```Java
+```java
 public class FinalReferenceEscapeExample {
     final int i;
     static FinalReferenceEscapeExample obj;

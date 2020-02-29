@@ -31,7 +31,7 @@ current classloader是当前方法所属类的类加载器。通俗来讲，类A
 答案是通过查询栈信息，通过sun.misc.VM.latestUserDefinedLoader(); 获取从栈上开始计算，第一个不为空（bootstrap classloader是空）的ClassLoader便返回
 
 可以试想，在ObjectInputStream运作中，通过直接获取当前调用栈中，第一个非空的ClassLoader，这种做法能够非常便捷的定位用户的ClassLoader，也就是用户在进行：
-```Java
+```java
 ObjectInputStream ois = new ObjectInputStream(new FileInputStream(“xx.dat”));
 B b = (B) ois.readObject();
 ```
@@ -47,7 +47,7 @@ __接下来我们会查看openjdk中的相关C++源码（源码下载请参考�
 
 forName用于加载一个类并且会执行后续操作，包括验证，解析，初始化。并且触发static字段以及static域的执行。__下面仅分析类加载过程__
 
-```Java
+```java
     public static Class<?> forName(String className)
                 throws ClassNotFoundException {
         Class<?> caller = Reflection.getCallerClass();
@@ -197,7 +197,7 @@ jclass find_class_from_class_loader(JNIEnv* env, Symbol* name, jboolean init,
 
 如果没有命中，通过debug可以发现，该native方法会继续调用Java中的ClassLoader.loadClass(String)方法，ClassLoader的实例就是Class#forName中的`ClassLoader.getClassLoader(caller)`获取的类加载器，一般来说就是`AppClassLoader`
 
-```Java
+```java
     public Class<?> loadClass(String name) throws ClassNotFoundException {
         return loadClass(name, false);
     }
@@ -205,7 +205,7 @@ jclass find_class_from_class_loader(JNIEnv* env, Symbol* name, jboolean init,
 
 通过debug发现继续调用`sun.misc.Launcher.AppClassLoader.loadClass`方法，如下：
 
-```Java
+```java
         public Class<?> loadClass(String var1, boolean var2) throws ClassNotFoundException {
             int var3 = var1.lastIndexOf(46);
             if(var3 != -1) {
@@ -235,7 +235,7 @@ jclass find_class_from_class_loader(JNIEnv* env, Symbol* name, jboolean init,
 
 AppClassLoader的父类是ClassLoader，其loadClass方法如下：
 
-```Java
+```java
     protected Class<?> loadClass(String name, boolean resolve)
         throws ClassNotFoundException
     {
@@ -372,7 +372,7 @@ JVM_END
 
 我们继续以AppClassLoader为例进行分析，AppClassLoader的findClass实现如下：
 
-```Java
+```java
     protected Class<?> findClass(final String name)
         throws ClassNotFoundException
     {
@@ -407,7 +407,7 @@ JVM_END
 
 关注核心调用，defineClass（AppClassLoader中的private方法），如下：
 
-```Java
+```java
     private Class<?> defineClass(String name, Resource res) throws IOException {
         long t0 = System.nanoTime();
         int i = name.lastIndexOf('.');

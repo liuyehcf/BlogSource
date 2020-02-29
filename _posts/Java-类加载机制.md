@@ -73,7 +73,7 @@ __接口的加载过程与类加载过程稍微有些不同__
     * 当一个接口在初始化时，并不要求其父接口全部都完成了初始化，只有在真正使用到父接口的时候(如引用接口中定义的常量)才会初始化
 
 __神奇的例子__
-```Java
+```java
 class ConstClass{
     static{System.out.println("ConstClass.init!");}
     public static final String HELLOWORLD="Hello world";

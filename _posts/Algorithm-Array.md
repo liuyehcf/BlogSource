@@ -18,7 +18,7 @@ __Container With Most Water__
 
 > Given n non-negative integers a1, a2, ..., an, where each represents a point at coordinate (i, ai). n vertical lines are drawn such that the two endpoints of line i is at (i, ai) and (i, 0). Find two lines, which together with x-axis forms a container, such that the container contains the most water.
 
-```Java
+```java
 public class Solution {
     public int maxArea(int[] height) {
         int left = 0, right = height.length - 1;
@@ -61,7 +61,7 @@ __3Sum__
 
 > Given an array S of n integers, are there elements a, b, c in S such that `a + b + c = 0`? Find all unique triplets in the array which gives the sum of zero.
 
-```Java
+```java
 public class Solution {
     public List<List<Integer>> threeSum(int[] nums) {
         List<List<Integer>> res = new ArrayList<List<Integer>>();
@@ -108,7 +108,7 @@ __Next Permutation__
 
 二分查找还是需要重点关注一下的，最后返回值的一个判断。另外就是逆序一个子数组，如何取中间，一个很好的办法是判断`left < right`即可，对应本题就是`i < nums.length - 1 - (i - begin)`
 
-```Java
+```java
 public class Solution {
     public void nextPermutation(int[] nums) {
         int i = nums.length - 1;
@@ -172,7 +172,7 @@ __Trapping Rain Water__
 
 > Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it is able to trap after raining.
 
-```Java
+```java
 public class Solution {
     public int trap(int[] height) {
         if (height == null || height.length == 0) return 0;
@@ -208,7 +208,7 @@ __Merge Intervals__
 
 > Given a collection of intervals, merge all overlapping intervals.
 
-```Java
+```java
 /**
  * Definition for an interval.
  * public class Interval {
@@ -261,7 +261,7 @@ __Sort Colors__
 
 > Here, we will use the integers 0, 1, and 2 to represent the color red, white, and blue respectively.
 
-```Java
+```java
 class Solution {
     public void sortColors(int[] nums) {
         int[] cnt = new int[3];
@@ -286,7 +286,7 @@ __Minimum Window Substring__
 
 > Given a string S and a string T, find the minimum window in S which will contain all the characters in T in complexity O(n).
 
-```Java
+```java
 class Solution {
     public String minWindow(String s, String t) {
         String res = null;
@@ -333,7 +333,7 @@ __Surrounded Regions__
 
 > A region is captured by flipping all 'O's into 'X's in that surrounded region.
 
-```Java
+```java
 public class Solution {
     class Node {
         int row;
@@ -433,7 +433,7 @@ __Gas Station__
 
 > Return the starting gas station's index if you can travel around the circuit once, otherwise return -1.
 
-```Java
+```java
 public class Solution {
     public int canCompleteCircuit(int[] gas, int[] cost) {
         int remain = 0;
@@ -461,7 +461,7 @@ __Number of Islands__
 
 > Given a 2d grid map of '1's (land) and '0's (water), count the number of islands. An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water.
 
-```Java
+```java
 public class Solution {
 
     class Node {
@@ -534,7 +534,7 @@ __Minimum Size Subarray Sum__
 
 > Given an array of n positive integers and a positive integer s, find the minimal length of a contiguous subarray of which the sum ≥ s. If there isn't one, return 0 instead.
 
-```Java
+```java
 public class Solution {
     public int minSubArrayLen(int s, int[] nums) {
         int begin = 0, end = 0;
@@ -566,7 +566,7 @@ ____
 
 > 
 
-```Java
+```java
 ```
 
 -->

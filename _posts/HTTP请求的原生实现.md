@@ -41,7 +41,7 @@ __本篇博客旨在使用原生的Java IO API来实现一个简单的HttpClient
 1. `version`：HTTP协议版本
 1. `body`：请求包体
 
-```Java
+```java
 package org.liuyehcf.http.raw;
 
 import java.util.HashMap;
@@ -162,7 +162,7 @@ public class HttpRequestBuilder {
 
 下面写了一个测试上述三个API的测试用例，由于Java Socket相关的操作可以固化，因此利用模板方法模式，提供了一个模板类RawHttpRequestTemplate，三个API的测试用例分别对应于HomeHttpRequest、ComputeHttpRequest、LoginHttpRequest
 
-```Java
+```java
 package org.liuyehcf.http.raw.nio;
 
 import org.liuyehcf.http.raw.HttpRequestBuilder;
@@ -383,7 +383,7 @@ Connection: close
 
 利用Netty提供的HTTP工具`HttpClientCodec`来实现Http客户端
 
-```Java
+```java
 package org.liuyehcf.http.raw.netty;
 
 import io.netty.bootstrap.Bootstrap;
@@ -461,7 +461,7 @@ public class NettyHttpClient {
 
 纯字节方式的Http客户端
 
-```Java
+```java
 package org.liuyehcf.http.raw.netty;
 
 import io.netty.bootstrap.Bootstrap;

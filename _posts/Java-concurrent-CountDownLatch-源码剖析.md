@@ -23,7 +23,7 @@ CountDownLatch会阻塞调用await的线程，而concurrent包下最基础的类
 
 * Sync内部类使用的是AQS中的共享模式
 
-```Java
+```java
     /**
      * Synchronization control For CountDownLatch.
      * Uses AQS state to represent count.
@@ -79,7 +79,7 @@ __注意到，资源状态只减不增，因此CountDownLatch是无法重用的�
 
 CountDownLatch仅有一个字段，即上面的内部类Sync的实例。阻塞操作是通过这个实例来完成的
 
-```Java
+```java
 private final Sync sync;
 ```
 
@@ -89,7 +89,7 @@ private final Sync sync;
 
 CountDownLatch的构造方法接受一个int型的参数，该数字的含义是：当count个线程调用过countDown后，那个调用await的线程才会从阻塞中被唤醒。即释放锁需要的资源数量
 
-```Java
+```java
     /**
      * Constructs a {@code CountDownLatch} initialized with the given count.
      *
@@ -108,7 +108,7 @@ CountDownLatch的构造方法接受一个int型的参数，该数字的含义是
 
 countDown该方法用于释放资源，且每次调用只释放1个资源
 
-```Java
+```java
     /**
      * Decrements the count of the latch, releasing all waiting threads if
      * the count reaches zero.
@@ -128,7 +128,7 @@ countDown该方法用于释放资源，且每次调用只释放1个资源
 
 该方法会尝试利用sync获取资源，当获取不到资源时便会阻塞。当有count个线程调用countDown后，调用await的线程会从阻塞状态中被唤醒
 
-```Java
+```java
     /**
      * Causes the current thread to wait until the latch has counted down to
      * zero, unless the thread is {@linkplain Thread#interrupt interrupted}.

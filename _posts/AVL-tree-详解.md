@@ -536,7 +536,7 @@ if p!=nil
 
 ## 5.1 节点定义
 
-```Java
+```java
 public class AVLTreeNode {
     /**
      * 该节点的高度(从该节点到叶节点的最多边数)
@@ -565,7 +565,7 @@ public class AVLTreeNode {
 
 ## 5.2 版本1
 
-```Java
+```java
 package org.liuyehcf.algorithm.datastructure.tree.avltree;
 
 import java.util.*;
@@ -916,7 +916,7 @@ public class AVLTree1 {
 
 ## 5.3 版本2
 
-```Java
+```java
 package org.liuyehcf.algorithm.datastructure.tree.avltree;
 
 import java.util.*;

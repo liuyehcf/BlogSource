@@ -208,7 +208,7 @@ Demo工程的依赖配置
 
 不多说，SpringBoot应用的启动方式
 
-```Java
+```java
 package org.liuyehcf.spring.tx;
 
 import org.springframework.boot.SpringApplication;
@@ -241,7 +241,7 @@ __综上，一个数据层的完整配置包括如下几项__
 1. __事务管理器__
 1. __会话工厂__
 
-```Java
+```java
 package org.liuyehcf.spring.tx;
 
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -305,7 +305,7 @@ public class DalConfig {
 
 一个非常普通的`Controller`，包含一个健康检查接口以及一个业务接口（插入一个User）
 
-```Java
+```java
 package org.liuyehcf.spring.tx;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -380,7 +380,7 @@ interface UserDAO {
 
 ## 4.5 UserDO
 
-```Java
+```java
 package org.liuyehcf.spring.tx;
 
 /**
@@ -431,7 +431,7 @@ public class UserDO {
 
 这里通过一个参数`ex`来控制是否抛出异常，便于校验`@Transactional`是否进行了回滚
 
-```Java
+```java
 package org.liuyehcf.spring.tx;
 
 import org.springframework.stereotype.Service;
@@ -512,7 +512,7 @@ UNIQUE KEY(name)
 
 集成测试配置的基类，避免重复配置。集成测试类继承该基类即可
 
-```Java
+```java
 package org.liuyehcf.spring.tx.test;
 
 import org.junit.runner.RunWith;
@@ -534,7 +534,7 @@ public class BaseConfig {
 
 集成测试数据源配置，这里选择的是`h2-database`
 
-```Java
+```java
 package org.liuyehcf.spring.tx.test;
 
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -588,7 +588,7 @@ public class TestDalConfig {
 
 为什么需要额外排除`Application`？如果只排除`DalConfig`的话，`Application`仍然在`TestApplication`配置的扫描路径下，且`excludeFilters`属性只对`TestApplication`有效，对`Application`无效，因此`Application`还是能够扫描到`DalConfig`
 
-```Java
+```java
 package org.liuyehcf.spring.tx.test;
 
 import org.liuyehcf.spring.tx.Application;
@@ -613,7 +613,7 @@ public class TestApplication {
 
 普通测试类，继承`BaseConfig`来获取集成测试的相关配置
 
-```Java
+```java
 package org.liuyehcf.spring.tx.test;
 
 import org.junit.Test;
@@ -660,7 +660,7 @@ __`Spring-tx`利用了`Spring-aop`，在目标方法上织入了一系列事务�
 
 __分析的起点是`TransactionInterceptor.invoke`，该类是事务对应的增强类，或者说拦截器（Spring AOP的本质就是一系列的拦截器）__
 
-```Java
+```java
     @Override
     @Nullable
     public Object invoke(MethodInvocation invocation) throws Throwable {
@@ -680,7 +680,7 @@ __沿着调用链往下走，下面是`TransactionAspectSupport.invokeWithinTran
 1. __`completeTransactionAfterThrowing`方法__：拦截到异常时，根据异常类型选择是否进行回滚操作
 1. __`commitTransactionAfterReturning`方法__：未拦截到异常时，提交本次事务
 
-```Java
+```java
     @Nullable
     protected Object invokeWithinTransaction(Method method, @Nullable Class<?> targetClass,
             final InvocationCallback invocation) throws Throwable {
@@ -779,7 +779,7 @@ __沿着调用链往下走，下面是`TransactionAspectSupport.invokeWithinTran
 1. __`getTransaction`__：获取`TransactionStatus`对象（该对象包含了当前事务的一些状态信息，包括`是否是新事务`、`是否为rollback-only模式`、`是否有savepoint`），基本Spring事务的核心概念都在这个方法中有所体现，包括事务的传播方式等等
 1. __`prepareTransactionInfo`__：创建一个`TransactionInfo`对象（该对象持有了一系列事务相关的对象，包括`PlatformTransactionManager`、`TransactionAttribute`、`TransactionStatus`等对象）
 
-```Java
+```java
     protected TransactionInfo createTransactionIfNecessary(@Nullable PlatformTransactionManager tm,
             @Nullable TransactionAttribute txAttr, final String joinpointIdentification) {
 
@@ -817,7 +817,7 @@ __沿着调用链往下走，下面是`TransactionAspectSupport.invokeWithinTran
 __继续跟踪`TransactionAspectSupport.completeTransactionAfterThrowing`方法。首先会根据异常类型以及事务配置的属性值来判断，本次是否进行回滚操作。主要的判断逻辑在`txInfo.transactionAttribute.rollbackOn`方法中，本Demo对应的`TransactionAttribute`接口的实现类是
 `RuleBasedTransactionAttribute`__
 
-```Java
+```java
     protected void completeTransactionAfterThrowing(@Nullable TransactionInfo txInfo, Throwable ex) {
         if (txInfo != null && txInfo.getTransactionStatus() != null) {
             if (logger.isTraceEnabled()) {
@@ -860,7 +860,7 @@ __继续跟踪`TransactionAspectSupport.completeTransactionAfterThrowing`方法�
 
 __我们接着来看一下`RuleBasedTransactionAttribute.rollbackOn`方法__
 
-```Java
+```java
     public boolean rollbackOn(Throwable ex) {
         if (logger.isTraceEnabled()) {
             logger.trace("Applying rules to determine whether transaction should rollback on " + ex);
@@ -896,7 +896,7 @@ __我们接着来看一下`RuleBasedTransactionAttribute.rollbackOn`方法__
 
 __`RuleBasedTransactionAttribute`的父类`DefaultTransactionAttribute`的`rollbackOn`方法如下，可以看到，默认的回滚异常类型就是`RuntimeException`以及`Error`__
 
-```Java
+```java
     public boolean rollbackOn(Throwable ex) {
         return (ex instanceof RuntimeException || ex instanceof Error);
     }
@@ -928,7 +928,7 @@ flush privileges;
 
 1. 何时注入事务上下文
 
-```Java
+```java
 org.springframework.transaction.interceptor.TransactionInterceptor.invokeWithinTransaction
 * createTransactionIfNecessary
 * prepareTransactionInfo
@@ -939,7 +939,7 @@ org.springframework.transaction.interceptor.TransactionAspectSupport#transaction
 
 @Transactional默认会在执行完测试方法后回滚
 
-```Java
+```java
 org.springframework.test.context.junit4.statements.RunAfterTestMethodCallbacks
 org.springframework.test.context.junit4.statements.RunAfterTestClassCallbacks
 org.springframework.test.context.transaction.TransactionalTestExecutionListener

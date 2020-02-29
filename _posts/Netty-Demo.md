@@ -19,7 +19,7 @@ __阅读更多__
 
 ## 1.1 AbstractWebSocketHandler
 
-```Java
+```java
 package org.liuyehcf.netty.ws;
 
 import io.netty.buffer.ByteBuf;
@@ -96,7 +96,7 @@ public abstract class AbstractWebSocketHandler extends SimpleChannelInboundHandl
 
 ## 1.2 Server
 
-```Java
+```java
 package org.liuyehcf.netty.ws;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -225,7 +225,7 @@ public class Server {
 
 ## 1.3 Client
 
-```Java
+```java
 package org.liuyehcf.netty.ws;
 
 import io.netty.bootstrap.Bootstrap;
@@ -371,7 +371,7 @@ public class Client {
 
 ## 1.4 WebSocketClientHandler
 
-```Java
+```java
 package org.liuyehcf.netty.ws;
 
 import io.netty.channel.*;
@@ -464,7 +464,7 @@ websocket在握手完毕之后，是会剔除http相关的handler的，具体的
 
 HttpRequest转换
 
-```Java
+```java
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -639,7 +639,7 @@ public class HttpDelegateRequest implements Payload {
 
 HttpReponse转换
 
-```Java
+```java
 import com.google.common.collect.Maps;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -761,7 +761,7 @@ public class HttpDelegateResponse {
 
 有时候，在项目中可能会有这样的需求，我们接收一个`Message`，然后需要将其转换成字节流再进行处理。例如，我们在接收到`FullHttpRequest`后，想要将其转成字节流然后再进行处理。netty中的`EmbeddedChannel`可以完成这样的功能，示例代码如下（__注意，当http的body比较大的时候，有可能需要读取多次，因此下面的代码用while循环读取，直到读取完所有的数据__）
 
-```Java
+```java
 package org.liuyehcf.netty;
 
 import io.netty.buffer.ByteBuf;
@@ -824,7 +824,7 @@ public abstract class HttpConverter {
 
 ### 3.2.1 AbstractSslConverter
 
-```Java
+```java
 package org.liuyehcf.netty.ssl;
 
 import io.netty.buffer.ByteBuf;
@@ -960,7 +960,7 @@ public abstract class AbstractSslConverter {
 
 ### 3.2.2 SslClientConverter
 
-```Java
+```java
 package org.liuyehcf.netty.ssl;
 
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -1008,7 +1008,7 @@ public class SslClientConverter extends AbstractSslConverter {
 keytool -genkey -v -alias liuyehcf_server_key -keyalg RSA -keystore ~/liuyehcf_server_ks -storetype PKCS12 -dname "CN=localhost,OU=cn,O=cn,L=cn,ST=cn,C=cn" -storepass 123456
 ```
 
-```Java
+```java
 package org.liuyehcf.netty.ssl;
 
 import io.netty.channel.embedded.EmbeddedChannel;
@@ -1071,7 +1071,7 @@ public class SslServerConverter extends AbstractSslConverter {
 
 ### 3.2.4 SslNonSocketDemo
 
-```Java
+```java
 package org.liuyehcf.netty.ssl;
 
 import java.util.concurrent.*;
@@ -1179,7 +1179,7 @@ __对Client进行如下改造__：
 
 1. 将`handshake`挪到`connect`之后执行（原本在`WebSocketClientHandler.channelActive`方法中执行）
 1. 循环connect，直到出现异常（问题出现的概率较小，因此用死循环循环）
-```Java
+```java
 package org.liuyehcf.netty.ws;
 
 import io.netty.bootstrap.Bootstrap;
@@ -1293,7 +1293,7 @@ __对WebSocketClientHandler进行如下改造__：
 
 1. 注释掉`handShaker.handshake(ctx.channel());`一句
 
-```Java
+```java
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         // execution timing must after all the handlers are added
@@ -1305,7 +1305,7 @@ __对WebSocketClientHandler进行如下改造__：
 
 __运行后得到如下异常__
 
-```Java
+```java
 java.lang.UnsupportedOperationException: unsupported message type: TextWebSocketFrame (expected: ByteBuf, FileRegion)
     at io.netty.channel.nio.AbstractNioByteChannel.filterOutboundMessage(AbstractNioByteChannel.java:283)
     at io.netty.channel.AbstractChannel$AbstractUnsafe.write(AbstractChannel.java:877)
@@ -1337,7 +1337,7 @@ java.lang.UnsupportedOperationException: unsupported message type: TextWebSocket
 
 我们分别在写回调中的正常case以及异常case处打上断点，看一看正常情况下以及异常情况下`ChannelPipeline`的差异
 
-```Java
+```java
 channel.writeAndFlush(new TextWebSocketFrame("Hello, I'm client"))
     .addListener((ChannelFuture future) -> {
         if (!future.isSuccess() && future.cause() != null) {
@@ -1375,7 +1375,7 @@ __异常的时候，其handler如下__
 
 `WebSocket13FrameEncoder`在`handshake`过程中被添加到`ChannelPipeline`中去，`handshake`方法如下
 
-```Java
+```java
     public final ChannelFuture handshake(Channel channel, final ChannelPromise promise) {
         FullHttpRequest request =  newHandshakeRequest();
 
@@ -1430,7 +1430,7 @@ __异常的时候，其handler如下__
 
 在项目中，我需要将获取到的`FullHttpRequest`转成对应的字节数组，用到了Netty提供的`EmbeddedChannel`来进行转换，最开始代码如下
 
-```Java
+```java
 @Override
 protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) {
     EmbeddedChannel ch = new EmbeddedChannel(new HttpRequestEncoder());
@@ -1476,7 +1476,7 @@ content: at java.lang.Thread.run(Thread.java:766)
 
 __原因，没有释放`ch.readOutbound()`返回的`ByteBuf`，调整代码如下：__
 
-```Java
+```java
 @Override
 protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) {
     EmbeddedChannel ch = new EmbeddedChannel(new HttpRequestEncoder());

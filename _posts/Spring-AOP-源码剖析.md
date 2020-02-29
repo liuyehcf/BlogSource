@@ -62,19 +62,19 @@ Advice接口的继承体系如下：
 
 各个接口详细定义如下
 
-```Java
+```java
 public interface Advice {
 
 }
 ```
 
-```Java
+```java
 public interface Interceptor extends Advice {
 
 }
 ```
 
-```Java
+```java
 public interface MethodInterceptor extends Interceptor {
 
     Object invoke(MethodInvocation invocation) throws Throwable;
@@ -82,7 +82,7 @@ public interface MethodInterceptor extends Interceptor {
 }
 ```
 
-```Java
+```java
 public interface ConstructorInterceptor extends Interceptor  {
 
     Object construct(ConstructorInvocation invocation) throws Throwable;
@@ -109,7 +109,7 @@ Joinpoint接口的继承体系如下：
 
 各个接口详细定义如下
 
-```Java
+```java
 public interface Joinpoint {
 
     Object proceed() throws Throwable;
@@ -121,7 +121,7 @@ public interface Joinpoint {
 }
 ```
 
-```Java
+```java
 public interface Invocation extends Joinpoint {
 
     Object[] getArguments();
@@ -129,7 +129,7 @@ public interface Invocation extends Joinpoint {
 }
 ```
 
-```Java
+```java
 public interface MethodInvocation extends Invocation {
 
     Method getMethod();
@@ -138,7 +138,7 @@ public interface MethodInvocation extends Invocation {
 
 ```
 
-```Java
+```java
 public interface ConstructorInvocation extends Invocation {
 
     Constructor<?> getConstructor();
@@ -183,13 +183,13 @@ Spring对于Advice接口的继承体系进行了扩展，扩展后的继承体�
 
 几个核心扩展接口的定义如下
 
-```Java
+```java
 public interface BeforeAdvice extends Advice {
 
 }
 ```
 
-```Java
+```java
 public interface MethodBeforeAdvice extends BeforeAdvice {
 
     void before(Method method, Object[] args, Object target) throws Throwable;
@@ -197,19 +197,19 @@ public interface MethodBeforeAdvice extends BeforeAdvice {
 }
 ```
 
-```Java
+```java
 public interface AfterAdvice extends Advice {
 
 }
 ```
 
-```Java
+```java
 public interface ThrowsAdvice extends AfterAdvice {
 
 }
 ```
 
-```Java
+```java
 public interface AfterReturningAdvice extends AfterAdvice {
 
     void afterReturning(Object returnValue, Method method, Object[] args, Object target) throws Throwable;
@@ -243,7 +243,7 @@ Pointcut是Spring AOP新增的接口，__该接口定义了Joinpoint的匹配规
 
 接口定义如下
 
-```Java
+```java
 public interface Pointcut {
 
     ClassFilter getClassFilter();
@@ -274,7 +274,7 @@ Advisor也是Spring AOP新增的接口，可以理解为切面（还有的称为
 
 几个核心扩展接口的定义如下
 
-```Java
+```java
 public interface Advisor {
 
     Advice getAdvice();
@@ -284,7 +284,7 @@ public interface Advisor {
 }
 ```
 
-```Java
+```java
 public interface PointcutAdvisor extends Advisor {
 
     Pointcut getPointcut();
@@ -338,7 +338,7 @@ BeanPostProcessor
 
 因此，我们从AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsAfterInitialization方法开始AOP源码的分析
 
-```Java
+```java
     @Override
     public Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName)
             throws BeansException {
@@ -357,7 +357,7 @@ BeanPostProcessor
 
 这里BeanPostProcessor的实现类是AnnotationAwareAspectJAutoProxyCreator，其postProcessAfterInitialization方法逻辑定义在AbstractAutoProxyCreator之中
 
-```Java
+```java
 @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         if (bean != null) {
@@ -377,7 +377,7 @@ wrapIfNecessary方法也定义在AbstractAutoProxyCreator之中。该方法主�
 1. 获取Advice或者Advisor集合
 1. 创建代理类
 
-```Java
+```java
     protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
         if (beanName != null && this.targetSourcedBeans.contains(beanName)) {
             return bean;
@@ -412,7 +412,7 @@ wrapIfNecessary方法也定义在AbstractAutoProxyCreator之中。该方法主�
 
 在AbstractAutoProxyCreator.wrapIfNecessary方法中调用了getAdvicesAndAdvisorsForBean方法来__获取增强（Advice）或者切面（Advisor）__，该方法是AbstractAutoProxyCreator中的一个抽象方法，具体的实现由子类AbstractAdvisorAutoProxyCreator提供
 
-```Java
+```java
     protected Object[] getAdvicesAndAdvisorsForBean(Class<?> beanClass, String beanName, TargetSource targetSource) {
         List<Advisor> advisors = findEligibleAdvisors(beanClass, beanName);
         if (advisors.isEmpty()) {
@@ -428,7 +428,7 @@ wrapIfNecessary方法也定义在AbstractAutoProxyCreator之中。该方法主�
 1. 在所有Advisor中筛选出匹配当前Bean的Advisor
 1. 添加一些扩展的Advisor，这些Advisor通常是由Spring AOP内部提供，与业务无关
 
-```Java
+```java
     protected List<Advisor> findEligibleAdvisors(Class<?> beanClass, String beanName) {
         //获取所有可用于自动代理的Advisor
         List<Advisor> candidateAdvisors = findCandidateAdvisors();
@@ -517,7 +517,7 @@ AnnotationAwareAspectJAutoProxyCreator复写了该方法。Spring AOP支持两�
 * 通过父类AbstractAdvisorAutoProxyCreator的同名方法获取由Spring XML配置文件定义的Advisor
 * 获取由`org.aspectj.lang.annotation`包下的相关AOP注解定义的Advisor
 
-```Java
+```java
     @Override
     protected List<Advisor> findCandidateAdvisors() {
         //Add all the Spring advisors found according to superclass rules.
@@ -530,7 +530,7 @@ AnnotationAwareAspectJAutoProxyCreator复写了该方法。Spring AOP支持两�
 
 首先，我们来看下父类AbstractAdvisorAutoProxyCreator.findCandidateAdvisors方法
 
-```Java
+```java
     protected List<Advisor> findCandidateAdvisors() {
         return this.advisorRetrievalHelper.findAdvisorBeans();
     }
@@ -538,7 +538,7 @@ AnnotationAwareAspectJAutoProxyCreator复写了该方法。Spring AOP支持两�
 
 AbstractAdvisorAutoProxyCreator.findCandidateAdvisors方法方法继续转调用BeanFactoryAdvisorRetrievalHelper.findAdvisorBeans，__该方法的主要逻辑就是从Spring的IoC容器中找出Advisor类型的所有Bean__
 
-```Java
+```java
 public List<Advisor> findAdvisorBeans() {
         //Determine list of advisor bean names, if not cached already.
         //获取所有Advisor的Bean的名字
@@ -596,7 +596,7 @@ public List<Advisor> findAdvisorBeans() {
 
 接着，我们回到AnnotationAwareAspectJAutoProxyCreator.findCandidateAdvisors方法中，看一下buildAspectJAdvisors方法的具体逻辑，该方法定义在BeanFactoryAspectJAdvisorsBuilder之中。__该方法的主要逻辑是：针对每一个用@Aspect注解标记的类，遍历其所有标记了注解（包括@Before、@After等）的方法，将每个方法封装成一个Advice，然后再封装成Advisor__
 
-```Java
+```java
     public List<Advisor> buildAspectJAdvisors() {
         //获取所有标记了@Aspect注解的Bean的名字
         List<String> aspectNames = this.aspectBeanNames;
@@ -679,7 +679,7 @@ public List<Advisor> findAdvisorBeans() {
 
 接着，回到AbstractAdvisorAutoProxyCreator.findEligibleAdvisors方法中，继续分析findAdvisorsThatCanApply方法。__该方法用于在给定的Advisor集合中，筛选出匹配指定Bean的Advisor__
 
-```Java
+```java
     protected List<Advisor> findAdvisorsThatCanApply(
             List<Advisor> candidateAdvisors, Class<?> beanClass, String beanName) {
 
@@ -698,7 +698,7 @@ public List<Advisor> findAdvisorBeans() {
 1. 首先处理IntroductionAdvisor类型的Advisor
 1. 然后处理PointcutAdvisor类型的Advisor
 
-```Java
+```java
     public static List<Advisor> findAdvisorsThatCanApply(List<Advisor> candidateAdvisors, Class<?> clazz) {
         if (candidateAdvisors.isEmpty()) {
             return candidateAdvisors;
@@ -732,7 +732,7 @@ public List<Advisor> findAdvisorBeans() {
 1. 如果Advisor实现了IntroductionAdvisor接口，那么简单用类过滤器进行判断即可
 1. 如果Advisor实现了PointcutAdvisor接口，由于这是方法级别的切面，处理逻辑相对复杂：需要提取出目标类实现的所有实现的接口，并将这些接口的所有方法与Pointcut进行匹配，至少有一个匹配成功就返回true
 
-```Java
+```java
     public static boolean canApply(Advisor advisor, Class<?> targetClass) {
         return canApply(advisor, targetClass, false);
     }
@@ -800,7 +800,7 @@ public List<Advisor> findAdvisorBeans() {
 1. 处理给定的拦截器，必要时进行封装（将Advice封装成Advisor）
 1. 生成代理对象
 
-```Java
+```java
     protected Object createProxy(
             Class<?> beanClass, String beanName, Object[] specificInterceptors, TargetSource targetSource) {
 
@@ -839,7 +839,7 @@ public List<Advisor> findAdvisorBeans() {
 
 AbstractAutoProxyCreator.buildAdvisors方法用于将Advice封装成Advisor，__例如将MethodBeforeAdvice、AfterReturningAdvice之类的接口转换成标准的方法拦截器接口MethodInterceptor__
 
-```Java
+```java
     protected Advisor[] buildAdvisors(String beanName, Object[] specificInterceptors) {
         //Handle prototypes correctly...
         Advisor[] commonInterceptors = resolveInterceptorNames();
@@ -874,7 +874,7 @@ AbstractAutoProxyCreator.buildAdvisors方法用于将Advice封装成Advisor，__
 
 我们继续看wrap方法，该方法定义在DefaultAdvisorAdapterRegistry（该类是AdvisorAdapterRegistry接口的唯一实现）中。该方法用于将Advice类型的对象封装成一个Advisor，__在封装的过程中，会用到一系列适配器（Adapter），例如MethodBeforeAdviceAdapter、ThrowsAdviceAdapter、AfterReturningAdviceAdapter，这些适配器的作用就是将MethodBeforeAdvice、AfterReturningAdvice之类的接口转换成标准的方法拦截器接口MethodInterceptor__（我们之前分析的AbstractAdvisorAutoProxyCreator.getAdvicesAndAdvisorsForBean方法获取到的本身就是Advisor，因此，这些Advisor在wrap方法的处理逻辑中直接就返回了）
 
-```Java
+```java
     //可以看到DefaultAdvisorAdapterRegistry默认注册了三个适配器
     public DefaultAdvisorAdapterRegistry() {
         registerAdvisorAdapter(new MethodBeforeAdviceAdapter());
@@ -930,7 +930,7 @@ ProxyConfig
 1. 通过createAopProxy方法创建AopProxy的实例
 1. 然后调用AopProxy.getProxy方法获取代理对象
 
-```Java
+```java
     public Object getProxy(ClassLoader classLoader) {
         return createAopProxy().getProxy(classLoader);
     }
@@ -938,7 +938,7 @@ ProxyConfig
 
 首先，我们来看一下createAopProxy的具体逻辑，该方法位于ProxyCreatorSupport中。该类持有了一个AopProxyFactory接口的实例，AopProxyFactory接口很简单，只有一个默认实现DefaultAopProxyFactory
 
-```Java
+```java
     private AopProxyFactory aopProxyFactory;
 
     protected final synchronized AopProxy createAopProxy() {
@@ -955,7 +955,7 @@ ProxyConfig
 
 DefaultAopProxyFactory.createAopProxy方法具体逻辑如下
 
-```Java
+```java
     public AopProxy createAopProxy(AdvisedSupport config) throws AopConfigException {
         if (config.isOptimize() || config.isProxyTargetClass() || hasNoUserSuppliedProxyInterfaces(config)) {
             Class<?> targetClass = config.getTargetClass();
@@ -987,7 +987,7 @@ JdkDynamicAopProxy利用JDK动态代理创建代理类
 1. 通过AopProxyUtils辅助类获取代理接口集合，这些信息保存在了AdvisedSupport类中
 1. 在接口集合中查找是否包含了equal、hashCode方法，如果不包含这两个方法，那么代理类默认不拦截这两个方法
 
-```Java
+```java
     public Object getProxy() {
         return getProxy(ClassUtils.getDefaultClassLoader());
     }
@@ -1010,7 +1010,7 @@ JdkDynamicAopProxy利用JDK动态代理创建代理类
 1. 获取拦截器链
 1. 创建织入点（ReflectiveMethodInvocation），并触发织入动作（process方法）
 
-```Java
+```java
 public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         //织入点
         MethodInvocation invocation;
@@ -1112,7 +1112,7 @@ public Object invoke(Object proxy, Method method, Object[] args) throws Throwabl
 
 接下来，看一下AdvisedSupport.getInterceptorsAndDynamicInterceptionAdvice方法。__该方法的逻辑很简单，将每个方法的拦截器链保存在缓存中，若不命中，则调用AdvisorChainFactory.getInterceptorsAndDynamicInterceptionAdvice方法来初始化__
 
-```Java
+```java
     public List<Object> getInterceptorsAndDynamicInterceptionAdvice(Method method, Class<?> targetClass) {
         MethodCacheKey cacheKey = new MethodCacheKey(method);
         List<Object> cached = this.methodCache.get(cacheKey);
@@ -1127,7 +1127,7 @@ public Object invoke(Object proxy, Method method, Object[] args) throws Throwabl
 
 该方法利用AdvisorChainFactory接口的实例来创建拦截器链。AdvisorChainFactory接口的继承体系也很简单，只有一个默认实现DefaultAdvisorChainFactory
 
-```Java
+```java
     public List<Object> getInterceptorsAndDynamicInterceptionAdvice(
             Advised config, Method method, Class<?> targetClass) {
 
@@ -1191,7 +1191,7 @@ public Object invoke(Object proxy, Method method, Object[] args) throws Throwabl
 1. 若Advice的实际类型是MethodInterceptor，直接添加到集合中
 1. 否则，使用相应的适配器（Adapter）将其封装成MethodInterceptor。例如MethodBeforeAdviceAdapter可以将MethodBeforeAdvice封装成MethodInterceptor
 
-```Java
+```java
     public MethodInterceptor[] getInterceptors(Advisor advisor) throws UnknownAdviceTypeException {
         List<MethodInterceptor> interceptors = new ArrayList<MethodInterceptor>(3);
         //取出Advice
@@ -1214,7 +1214,7 @@ public Object invoke(Object proxy, Method method, Object[] args) throws Throwabl
 
 以MethodBeforeAdviceAdapter为例，我们来看一下，适配过程是怎样的
 
-```Java
+```java
 class MethodBeforeAdviceAdapter implements AdvisorAdapter, Serializable {
 
     @Override
@@ -1251,7 +1251,7 @@ public class MethodBeforeAdviceInterceptor implements MethodInterceptor, Seriali
 
 我们接着回到JdkDynamicAopProxy的invoke方法当中，来看一下ReflectiveMethodInvocation这个类。__这个类实现了ProxyMethodInvocation接口，其继承链路的起点是Joinpoint，ReflectiveMethodInvocation就是一个连接点（增强织入点）。且包含了触发目标对象的目标方法所需的所有条件，目标对象的目标方法的触发是交由该对象来完成的，其最核心的方法就是proceed__
 
-```Java
+```java
     protected final Object proxy;
 
     protected final Object target;
@@ -1305,7 +1305,7 @@ public class MethodBeforeAdviceInterceptor implements MethodInterceptor, Seriali
 
 辅助方法AopUtils.invokeJoinpointUsingReflection如下，该方法逻辑很简单，就是利用反射触发目标方法
 
-```Java
+```java
 public static Object invokeJoinpointUsingReflection(Object target, Method method, Object[] args)
             throws Throwable {
 
@@ -1343,7 +1343,7 @@ ObjenesisCglibAopProxy利用Cglib动态代理创建代理类，且ObjenesisCglib
 1. 获取Callback
 1. 创建代理对象
 
-```Java
+```java
     public Object getProxy() {
         return getProxy(null);
     }
@@ -1424,7 +1424,7 @@ ObjenesisCglibAopProxy利用Cglib动态代理创建代理类，且ObjenesisCglib
 1. 创建DynamicAdvisedInterceptor的实例，增强织入的核心入口（Joinpoint）
 1. 创建Callback集合
 
-```Java
+```java
     private Callback[] getCallbacks(Class<?> rootClass) throws Exception {
         //Parameters used for optimization choices...
         boolean exposeProxy = this.advised.isExposeProxy();
@@ -1500,7 +1500,7 @@ DynamicAdvisedInterceptor是CglibAopProxy中的静态内部类，它继承了org
 1. 获取拦截器调用链（与JDK方式一致）
 1. 通过CglibMethodInvocation（Joinpont的实现）来织入拦截器调用链
 
-```Java
+```java
         public Object intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
             Object oldProxy = null;
             boolean setProxyContext = false;
@@ -1555,7 +1555,7 @@ DynamicAdvisedInterceptor是CglibAopProxy中的静态内部类，它继承了org
 
 CglibMethodInvocation继承了ReflectiveMethodInvocation，并针对Cglib进行了改造。proceed方法沿用ReflectiveMethodInvocation中的实现，上面已经分析过，这里不再赘述
 
-```Java
+```java
     private static class CglibMethodInvocation extends ReflectiveMethodInvocation {
 
         private final MethodProxy methodProxy;
@@ -1586,7 +1586,7 @@ CglibMethodInvocation继承了ReflectiveMethodInvocation，并针对Cglib进行�
 
 接着，回到CglibAopProxy.getProxy方法中，再看createProxyClassAndInstance方法，ObjenesisCglibAopProxy重写了该方法
 
-```Java
+```java
     protected Object createProxyClassAndInstance(Enhancer enhancer, Callback[] callbacks) {
         //创建代理类
         Class<?> proxyClass = enhancer.createClass();

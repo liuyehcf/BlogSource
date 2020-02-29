@@ -160,7 +160,7 @@ __阅读更多__
 
 1. 线程池的种类，区别和使用场景
     > 所有线程池本质上都是ThreadPoolExecutor，只是配置了不同的初始化参数。首先来看一个线程池构造方法
-```Java
+```java
     public ThreadPoolExecutor(int corePoolSize,
                               int maximumPoolSize,
                               long keepAliveTime,
@@ -178,7 +178,7 @@ __阅读更多__
     > 1. __workQueue__：任务队列，任务队列的不同，直接影响了线程池的行为
 
     > __Executors.newCachedThreadPool()__
-```Java
+```java
     public static ExecutorService newCachedThreadPool() {
         return new ThreadPoolExecutor(0, Integer.MAX_VALUE,
                                       60L, TimeUnit.SECONDS,
@@ -188,7 +188,7 @@ __阅读更多__
     > * 注意到，这里用到了SynchronousQueue作为任务队列，这个任务队列相比于LinkedBlockingQueue而言有一个非常大的不同。`LinkedBlockingQueue#offer`方法仅在任务队列达到最大容量时失败；`SynchronousQueue#offer`方法会在没有其他线程阻塞在取用任务时失败，也就是说执行offer方法时，如果没有线程阻塞在take方法上，那么offer失败
 
     > __Executors.newSingleThreadExecutor()__
-```Java
+```java
     public static ExecutorService newSingleThreadExecutor() {
         return new FinalizableDelegatedExecutorService
             (new ThreadPoolExecutor(1, 1,
@@ -198,7 +198,7 @@ __阅读更多__
 ```
 
     > __Executors.newFixedThreadPool(int nThread)__
-```Java
+```java
     public static ExecutorService newFixedThreadPool(int nThreads) {
         return new ThreadPoolExecutor(nThreads, nThreads,
                                       0L, TimeUnit.MILLISECONDS,
@@ -426,7 +426,7 @@ __阅读更多__
 1. 类的初始化顺序
     > 比如父类静态数据，构造函数，字段，子类静态数据，构造函数，字段，他们的执行顺序
     > 以一个程序来说明
-```Java
+```java
 public class Test {
     public static int init(String s) {
         System.out.println(s);
@@ -637,7 +637,7 @@ init Derive's constructor
 1. 用三个线程按顺序循环打印abc三个字母，比如abcabcabc
     > CAS能实现吗？CAS加循环可以串行化并行操作，但是，不能很好地排序，即控制三个线程交替执行CAS成功
     > 公平模式下，并且规定启动顺序时，可以用ReentrantLock
-```Java
+```java
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -753,7 +753,7 @@ public class Solution {
 }
 ```
     > volatile来实现，其中volatile只是为了保证可见性
-```Java
+```java
 import java.util.concurrent.TimeUnit;
 
 public class Solution {
@@ -1322,7 +1322,7 @@ public class Solution {
 
 1. 字符串hash成状态位的具体实现方式
     > 下面给出Java中的实现
-```Java
+```java
         public int hashCode() {
         //hash就是hash值，最开始是0，延迟初始化
         int h = hash;
@@ -1400,7 +1400,7 @@ public class Solution {
 
 1. 求最大公约数
     > 
-```Java
+```java
     int greatestCommonDivisor(int a, int b) {
         int c;
         c = a % b;

@@ -118,7 +118,7 @@ __阅读更多__
 
 以下两个接口仅作为validator的分组（例如，作为`@NotBlank`的`groups`属性值），别无它用
 
-```Java
+```java
 package org.liuyehcf.spring.validate.group;
 /**
  * @date 2018/7/10
@@ -128,7 +128,7 @@ public interface Create {
 
 ```
 
-```Java
+```java
 package org.liuyehcf.spring.validate.group;
 
 /**
@@ -142,7 +142,7 @@ public interface Update {
 
 DTO中用validator相关的注解对字段进行标注，并用`groups`属性进行分组
 
-```Java
+```java
 package org.liuyehcf.spring.validate.dto;
 
 import org.hibernate.validator.constraints.NotBlank;
@@ -199,7 +199,7 @@ UserService用validator相关注解进行标注，以声明式的方式进行参
 1. __非必须__，用`@Validated`标记方法（可以指明校验的组别），会覆盖类级别的`@Validated`注解
 1. __必须__，用`@Valid`标记参数，声明对参数进行校验
 
-```Java
+```java
 package org.liuyehcf.spring.validate.service;
 
 import org.liuyehcf.spring.validate.group.Create;
@@ -223,7 +223,7 @@ public interface UserService {
 
 ```
 
-```Java
+```java
 package org.liuyehcf.spring.validate.service;
 
 import org.liuyehcf.spring.validate.dto.UserDTO;
@@ -253,7 +253,7 @@ public class UserServiceImpl implements UserService {
 
 我们可以先捕获ConstraintViolationException异常，然后取出所有异常信息，拼接成提示信息然后返回
 
-```Java
+```java
 package org.liuyehcf.spring.validate;
 
 import org.liuyehcf.spring.validate.dto.UserDTO;
@@ -318,7 +318,7 @@ public class MainController {
 
 # 7 Application
 
-```Java
+```java
 package org.liuyehcf.spring.validate;
 
 import org.springframework.boot.SpringApplication;
@@ -339,7 +339,7 @@ public class Application {
 
 # 8 Validate With Junit
 
-```Java
+```java
 package org.liuyehcf.spring.validate;
 
 import org.junit.AfterClass;

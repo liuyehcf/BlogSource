@@ -194,7 +194,7 @@ __`zookeeper-provider`模块的目录结构如下__
 
 提供了一个简单的http服务，打印名字、时间与当前服务器的端口号
 
-```Java
+```java
 package org.liuyehcf.spring.cloud.zookeeper.provider;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -224,7 +224,7 @@ public class ProviderGreetController {
 
 与SpringBoot应用完全一致的Application类，无需其他注解
 
-```Java
+```java
 package org.liuyehcf.spring.cloud.zookeeper.provider;
 
 import org.springframework.boot.SpringApplication;
@@ -472,7 +472,7 @@ __`ribbon-consumer`模块的目录结构如下__
 
 该模块对外提供的http服务，可以看到该服务仅仅对`zookeeper-provider`模块的http服务做了一层代理
 
-```Java
+```java
 package org.liuyehcf.spring.cloud.ribbon.consumer;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -503,7 +503,7 @@ public class ConsumerGreetController {
 
 该类实现服务间的调用，在`reqURL`中用服务名（ZookeeperProvider）代替服务方的ip:port信息，将地址映射交给`Zookeeper`来完成。可以看出来，这种方式比较繁琐，且不太友好，好比用`JDBC Connection`来进行数据库操作
 
-```Java
+```java
 package org.liuyehcf.spring.cloud.ribbon.consumer;
 
 import org.springframework.stereotype.Service;
@@ -531,7 +531,7 @@ public class ConsumerGreetService {
 
 `@EnableDiscoveryClient`注解表示当前应用作为消费方
 
-```Java
+```java
 package org.liuyehcf.spring.cloud.ribbon.consumer;
 
 import org.springframework.boot.SpringApplication;
@@ -718,7 +718,7 @@ __`feign-consumer`模块的目录结构如下__
 
 该模块对外提供的http服务，可以看到该服务仅仅对`zookeeper-provier`模块的http服务做了一层代理
 
-```Java
+```java
 package org.liuyehcf.spring.cloud.feign.consumer;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -752,7 +752,7 @@ public class ConsumerGreetController {
 * `@RequestMapping`注解的value属性表示的是服务提供方的方法路由路径
 * 方法参数以及返回值可以利用http相关注解进行标记，例如`@RequestParam`、`@RequestBody`、`@PathVariable`、`@ResultBody`等
 
-```Java
+```java
 package org.liuyehcf.spring.cloud.feign.consumer;
 
 import org.springframework.cloud.openfeign.FeignClient;
@@ -776,7 +776,7 @@ public interface ConsumerGreetService {
 `@EnableFeignClients`注解表明以`Feign`方式进行服务消费
 `@EnableDiscoveryClient`注解表示当前应用作为消费方
 
-```Java
+```java
 package org.liuyehcf.spring.cloud.feign.consumer;
 
 import org.springframework.boot.SpringApplication;
@@ -941,7 +941,7 @@ __`config-server`模块的目录结构如下__
 `@EnableConfigServer`注解表示当前应用作为Config的服务端
 `@EnableDiscoveryClient`注解表示当前应用作为消费方
 
-```Java
+```java
 package org.liuyehcf.spring.cloud.config.server;
 
 import org.springframework.boot.SpringApplication;
@@ -1144,7 +1144,7 @@ __`config-client`模块的目录结构如下__
 
 `@EnableDiscoveryClient`注解表示当前应用作为消费方
 
-```Java
+```java
 package org.liuyehcf.spring.cloud.config.client;
 
 import org.springframework.beans.factory.annotation.Value;

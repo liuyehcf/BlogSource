@@ -18,7 +18,7 @@ __Regular Expression Matching__
 
 > Implement regular expression matching with support for `'.'` and `'*'`.
 
-```Java
+```java
 public class Solution {
     public boolean isMatch(String s, String p) {
         boolean[][] dp = new boolean[s.length() + 1][p.length() + 1];
@@ -69,7 +69,7 @@ __Maximum Subarray__
 > For example, given the array `[-2,1,-3,4,-1,2,1,-5,4]`,
 > the contiguous subarray `[4,-1,2,1]` has the largest `sum = 6`.
 
-```Java
+```java
 public class Solution {
     public int maxSubArray(int[] nums) {
         if(nums==null||nums.length==0) return 0;
@@ -98,7 +98,7 @@ __Unique Paths__
 
 > How many possible unique paths are there?
 
-```Java
+```java
 class Solution {
     public int uniquePaths(int m, int n) {
         if (m == 0 || n == 0) return 0;
@@ -118,7 +118,7 @@ class Solution {
 ```
 
 优化一下空间复杂度
-```Java
+```java
 class Solution {
     public int uniquePaths(int m, int n) {
         if (m == 0 || n == 0) return 0;
@@ -144,7 +144,7 @@ __Climbing Stairs__
 
 > Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
 
-```Java
+```java
 class Solution {
     public int climbStairs(int n) {
         if (n == 0) return 0;
@@ -184,7 +184,7 @@ __Edit Distance__
 
 另外注意一下初始化
 
-```Java
+```java
 public class Solution {
     public int minDistance(String word1, String word2) {
         int[][] dp = new int[word1.length() + 1][word2.length() + 1];
@@ -239,7 +239,7 @@ __Dungeon Game__
 
 * `dp[row][col]=Math.max(Math.min(dp[row+1][col],dp[row][col+1])-dungeon[row][col],1);`
 
-```Java
+```java
 public class Solution {
     public int calculateMinimumHP(int[][] dungeon) {
         int m=dungeon.length;
@@ -281,7 +281,7 @@ __Best Time to Buy and Sell Stock IV__
 1. `buys[i] = Math.max(buys[i], sells[i - 1] - prices[day])`
 1. `sells[i] = Math.max(sells[i], buys[i] + prices[day])`
 
-```Java
+```java
 public class Solution {
     public int maxProfit(int k, int[] prices) {
         if (k > prices.length) {
@@ -323,7 +323,7 @@ ____
 
 > 
 
-```Java
+```java
 ```
 
 -->

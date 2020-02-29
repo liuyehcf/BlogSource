@@ -19,7 +19,7 @@ __OuterEntity__：第一级
 
 * 包含泛型参数T
 
-```Java
+```java
 package org.liuyehcf.fastjson.entity;
 
 /**
@@ -62,7 +62,7 @@ __MiddleEntity__：第二级
 
 * 包含泛型参数T
 
-```Java
+```java
 package org.liuyehcf.fastjson.entity;
 
 /**
@@ -103,7 +103,7 @@ public class MiddleEntity<T> {
 
 __InnerEntity__：第三级
 
-```Java
+```java
 package org.liuyehcf.fastjson.entity;
 
 /**
@@ -137,7 +137,7 @@ __测试代码__
 * 将Java对象转化为Json字符串
 * 将Json字符串，配合类型信息，转化为Java对象
 
-```Java
+```java
 package org.liuyehcf.fastjson;
 
 import com.alibaba.fastjson.JSON;
@@ -204,7 +204,7 @@ Java采用另外一种方式来存储泛型信息，对于一个类型C而言，
 * C1的直接父类是`ArrayList<String>`，泛型参数为String
 * C2的直接父类是`ArrayList`，泛型参数未指定，其实也就是Object
 
-```Java
+```java
 class C1 extends ArrayList<String> {
     ...
 }
@@ -216,7 +216,7 @@ class C2 extends ArrayList {
 
 由于类型的定义在编译期就已经确定了，因此Java能够通过某种机制将继承链路上的类型信息（包括指定了的泛型参数）保存下来。具体来说，Class包含如下方法，该方法可以获取直接父类的信息（Type对象），该对象包含了泛型参数等信息
 
-```Java
+```java
 public Type getGenericSuperclass()
 ```
 
@@ -224,7 +224,7 @@ public Type getGenericSuperclass()
 
 泛型类型MyTypeReference，将其设置为抽象类，避免实例化。在构造方法中初始化type字段，即泛型参数。其中getClass()方法具有多态性质
 
-```Java
+```java
 package org.liuyehcf.fastjson;
 
 import java.lang.reflect.ParameterizedType;
@@ -254,7 +254,7 @@ public abstract class MyTypeReference<T> {
 
 测试代码。注意大括号，即创建子类，但是不重写任何方法。输出为`java.util.List<java.util.List<java.lang.String>>`
 
-```Java
+```java
 package org.liuyehcf.fastjson;
 
 import java.util.List;

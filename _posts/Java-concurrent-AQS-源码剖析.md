@@ -27,7 +27,7 @@ AQS(AbstractQueuedSynchronizer，同步阻塞队列)是concurrent包下锁机制
 # 2 Node解析
 
 AQS在内部维护了一个同步阻塞队列，__下面简称sync queue__，该队列的元素即静态内部类Node的实例。首先来看Node中涉及的常量定义，源码如下
-```Java
+```java
         /** Marker to indicate a node is waiting in shared mode */
         static final Node SHARED = new Node();
         /** Marker to indicate a node is waiting in exclusive mode */
@@ -59,7 +59,7 @@ AQS在内部维护了一个同步阻塞队列，__下面简称sync queue__，该
 * __PROPAGATE__：仅用于标记sync queue头节点，用于确保release操作propagate下去
 
 其次，再看Node中重要字段，源码如下
-```Java
+```java
         /**
          * Status field, taking on only the values:
          *   SIGNAL:     The successor of this node is (or will soon be)
@@ -156,7 +156,7 @@ AQS在内部维护了一个同步阻塞队列，__下面简称sync queue__，该
 # 3 AQS字段解析
 
 AQS字段仅有三个，源码如下
-```Java
+```java
     /**
      * Head of the wait queue, lazily initialized.  Except for
      * initialization, it is modified only via method setHead.  Note:
@@ -191,7 +191,7 @@ __acquire方法用于获取指定数量的资源，如果获取不到则当前�
 * 首先，利用tryAcquire尝试获取资源，如果成功了，则方法直接返回，当前线程直接获取锁状态；如果失败了，当前线程被封装成Node节点并添加到sync queue中，并在一个死循环中尝试获取资源直至成功
 * 通常，AQS子类会将该方法再进行一层封装，例如ReentrantLock#lock()方法就会调用这里的acquire方法来实现加锁的语义
 
-```Java
+```java
     /**
      * Acquires in exclusive mode, ignoring interrupts.  Implemented
      * by invoking at least once {@link #tryAcquire},
@@ -220,7 +220,7 @@ __tryAcquire方法用于判断是否能够获取资源__
 * 本方法仅抛出一个异常，意味着该方法的具体含义交给AQS的子类去完成
 * 注意，该方法的实现不可有任何耗时操作，更不可阻塞线程，仅实现是否可获取资源(换言之，是否可获取锁)的逻辑即可
 
-```Java
+```java
     protected boolean tryAcquire(int arg) {
         throw new UnsupportedOperationException();
     }
@@ -233,7 +233,7 @@ __无法获取资源的线程将被封装成Node节点，通过addWaiter方法�
 * 根据指定模式，将当前线程封装成一个Node节点，并且添加到sync queue中
 * 首先尝试直接入队，若失败则交给enq方法处理
 
-```Java
+```java
     /**
      * Creates and enqueues node for current thread and given mode.
      *
@@ -270,7 +270,7 @@ __enq方法确保给定节点成功入队__
 * 如果失败了(可能原因是CAS失败或者sync queue尚未初始化)，那么通过enq方法进行入队操作
 * 可以看到enq也是采用了死循环+CAS操作，这是使用CAS的通用模式
 
-```Java
+```java
     /**
      * Inserts node into queue, initializing if necessary. See picture above.
      * @param node the node to insert
@@ -309,7 +309,7 @@ __至此，线程已被封装成节点，并且成功添加到sync queue中去�
 * 该方法会记录中断信号，并且在成功返回后交给上层函数来恢复中断现场
 * 只有成果获取资源后才能够返回，这也就是阻塞语义的实现
 
-```Java
+```java
     /**
      * Acquires in exclusive uninterruptible mode for thread already in
      * queue. Used by condition wait methods as well as acquire.
@@ -356,7 +356,7 @@ __shouldParkAfterFailedAcquire方法用于判断当前节点是否可以阻塞�
 * 若前继节点为SIGNAL则返回true，表示该节点可以放心阻塞自己
 * 否则找到有效前继节点，并尝试将其状态改为SIGNAL，并返回false，交给上一层函数继续处理
 
-```Java
+```java
     /**
      * Checks and updates status for a node that failed to acquire.
      * Returns true if thread should block. This is the main signal
@@ -414,7 +414,7 @@ __parkAndCheckInterrupt方法用于阻塞当前线程__
 
 * 阻塞当前线程，一旦被唤醒(unpark)或者被中断(interrupt)后返回中断标志位的状态，便于外层方法恢复中断现场
 
-```Java
+```java
     /**
      * Convenience method to park and then check if interrupted
      *
@@ -441,7 +441,7 @@ __release方法是独占模式下实现解锁语义的入口方法__
 * 对于独占模式中，节点状态只有SIGNAL、0和CANCELL，而CANCELL状态的节点不会成为头结点，因此(h !=0 )在这里只有一种可能，就是SIGNAL状态
 * AQS子类通常将该方法包装成unlock方法，例如ReentrantLock
 
-```Java
+```java
     /**
      * Releases in exclusive mode.  Implemented by unblocking one or
      * more threads if {@link #tryRelease} returns true.
@@ -476,7 +476,7 @@ __tryRelease方法用于判断是否能够释放资源__
 * 交给AQS子类实现的方法，只需要定义释放资源的逻辑即可
 * 该方法的实现不应该有耗时的操作，更不该阻塞
 
-```Java
+```java
     protected boolean tryRelease(int arg) {
         throw new UnsupportedOperationException();
     }
@@ -488,7 +488,7 @@ __通过unparkSuccessor方法唤醒指定节点的后继节点__
 
 * 通过节点的next字段定位后继，若next字段为null，并不代表一定没有后继，从tail往前找到后继节点
 
-```Java
+```java
     /**
      * Wakes up node's successor, if one exists.
      *
@@ -533,7 +533,7 @@ __acquireShared方法是共享模式下实现加锁语义的入口方法__
 * tryAcquireShared返回值小于0，说明获取失败。那么将线程封装成共享模式的节点并添加到sync queue中
 * 该方法不响应中断，在获取资源后会恢复中断现场
 
-```Java
+```java
     /**
      * Acquires in shared mode, ignoring interrupts.  Implemented by
      * first invoking at least once {@link #tryAcquireShared},
@@ -560,7 +560,7 @@ __tryAcquireShared方法用于判断是否能够获取资源__
 * 交给AQS子类实现的方法，只需要定义获取资源的逻辑即可
 * 该方法的实现不应该有耗时的操作，更不该阻塞
 
-```Java
+```java
     protected int tryAcquireShared(int arg) {
         throw new UnsupportedOperationException();
     }
@@ -576,7 +576,7 @@ __doAcquireShared方法是核心方法__
 * 如果节点不是sync queue中第二个节点或者获取资源失败，那么阻塞自己，阻塞自己前必须将前继节点标记为SIGNAL状态
 * 该方法不响应中断，而是在返回之前恢复中断现场
 
-```Java
+```java
     /**
      * Acquires in shared uninterruptible mode.
      * @param arg the acquire argument
@@ -626,7 +626,7 @@ __setHeadAndPropagate方法主要逻辑__
 * 将当前节点设置为头结点，并且当仍有资源可供其他线程获取时，让其他线程继续获取资源，这也就是共享模式的含义
 * 虽然在共享模式下可能有多个线程获取资源，但是有且仅有一个线程能够修改头结点(因为只有sync queue中第二个节点才能获取资源，而其他已经获取资源的线程已经不在队列中了)，因此头结点的修改是线程安全的
 
-```Java
+```java
     /**
      * Sets head of queue, and checks if successor may be waiting
      * in shared mode, if so propagating if either propagate > 0 or
@@ -670,7 +670,7 @@ doReleaseShared方法将放在下一小节中进行分析
 
 __releaseShared方法是共享模式下实现解锁语义的入口方法__
 
-```Java
+```java
     /**
      * Releases in shared mode.  Implemented by unblocking one or more
      * threads if {@link #tryReleaseShared} returns true.
@@ -697,7 +697,7 @@ __tryReleaseShared方法用于判断是否能够释放资源__
 * 交给AQS子类实现的方法，只需要定义释放资源的逻辑即可
 * 该方法的实现不应该有耗时的操作，更不该阻塞
 
-```Java
+```java
     protected boolean tryReleaseShared(int arg) {
         throw new UnsupportedOperationException();
     }
@@ -710,7 +710,7 @@ __doReleaseShared方法是共享模式下共享含义体现的重要方法__
 * 该方法配合setHeadAndPropagate方法能够实现release propagate
 * 如果仍有资源可获取，那么sync queue中的节点会陆续获取资源，直至无资源可获取或者队列为空时，传播停止
 
-```Java
+```java
     /**
      * Release action for shared mode -- signals successor and ensures
      * propagation. (Note: For exclusive mode, release just amounts
@@ -771,7 +771,7 @@ __仅有头结点能处于PROPAGATE，那么什么时候会被设置成PROPAGATE
 
 __相比于acquire，acquireInterruptibly会响应interrupt，并且抛出InterruptedException异常__
 
-```Java
+```java
     /**
      * Acquires in exclusive mode, aborting if interrupted.
      * Implemented by first checking interrupt status, then invoking
@@ -805,7 +805,7 @@ __doAcquireInterruptibly方法与acquireQueued的区别如下__
 
 __与acquireQueued方法的差异部分已用注释标记，其余部分的逻辑与acquireQueued类似，不再赘述__
 
-```Java
+```java
 
     /**
      * Acquires in exclusive interruptible mode.
@@ -841,7 +841,7 @@ __与acquireQueued方法的差异部分已用注释标记，其余部分的逻�
 
 __相比于acquireShared，acquireSharedInterruptibly会响应interrupt，并且抛出InterruptedException异常__
 
-```Java
+```java
     /**
      * Acquires in shared mode, aborting if interrupted.  Implemented
      * by first checking interrupt status, then invoking at least once
@@ -874,7 +874,7 @@ __doAcquireSharedInterruptibly方法与doAcquireShared的区别如下__
 
 __与doAcquireShared方法的差异部分已用注释标记，其余部分的逻辑与doAcquireShared类似，不再赘述__
 
-```Java
+```java
     /**
      * Acquires in shared interruptible mode.
      * @param arg the acquire argument
@@ -912,7 +912,7 @@ __与doAcquireShared方法的差异部分已用注释标记，其余部分的逻
 
 __独占模式下，该方法允许阻塞指定时间，同时能够响应中断__
 
-```Java
+```java
     /**
      * Attempts to acquire in exclusive mode, aborting if interrupted,
      * and failing if the given timeout elapses.  Implemented by first
@@ -948,7 +948,7 @@ __doAcquireNanos方法与acquireQueued的区别如下__
 
 __与acquireQueued方法的差异部分已用注释标记，其余部分的逻辑与acquireQueued类似，不再赘述__
 
-```Java
+```java
     /**
      * Acquires in exclusive timed mode.
      *
@@ -998,7 +998,7 @@ __与acquireQueued方法的差异部分已用注释标记，其余部分的逻�
 
 __共享模式下，该方法允许阻塞指定时间，同时能够响应中断__
 
-```Java
+```java
     /**
      * Attempts to acquire in shared mode, aborting if interrupted, and
      * failing if the given timeout elapses.  Implemented by first
@@ -1034,7 +1034,7 @@ __doAcquireSharedNanos方法与acquireShared的区别如下__
 
 __与acquireShared方法的差异部分已用注释标记，其余部分的逻辑与acquireShared类似，不再赘述__
 
-```Java
+```java
     /**
      * Acquires in shared timed mode.
      *

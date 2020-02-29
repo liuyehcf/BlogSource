@@ -307,7 +307,7 @@ else
 
 ## 3.1 节点
 
-```Java
+```java
 public class BTreeNode {
     int n;
     int[] keys;
@@ -325,7 +325,7 @@ public class BTreeNode {
 
 ## 3.2 B树
 
-```Java
+```java
 package org.liuyehcf.algorithm.datastructure.tree.btree;
 
 import java.util.*;

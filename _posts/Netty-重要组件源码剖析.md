@@ -27,7 +27,7 @@ __阅读更多__
 
 __Handler代码清单如下__
 
-```Java
+```java
 package org.liuyehcf.protocol.echo;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -55,7 +55,7 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter { //(1)
 
 __Server代码清单如下__
 
-```Java
+```java
 package org.liuyehcf.protocol.echo;
 
 import io.netty.bootstrap.ServerBootstrap;

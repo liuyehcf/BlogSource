@@ -23,7 +23,7 @@ ComparableTimSort与TimSort是一样的，TimSort利用的是Comparator来进行
 
 # 2 常量
 
-```Java
+```java
     /**
      * This is the minimum sized sequence that will be merged.  Shorter
      * sequences will be lengthened by calling binarySort.  If the entire
@@ -65,7 +65,7 @@ ComparableTimSort与TimSort是一样的，TimSort利用的是Comparator来进行
 
 # 3 字段
 
-```Java
+```java
     /**
      * The array being sorted.
      */
@@ -111,7 +111,7 @@ ComparableTimSort与TimSort是一样的，TimSort利用的是Comparator来进行
 
 `Arrays.sort()`是排序的接口方法
 
-```Java
+```java
     public static void sort(Object[] a) {
         //如果需要使用旧版的Merge sort
         if (LegacyMergeSort.userRequested)
@@ -131,7 +131,7 @@ ComparableTimSort与TimSort是一样的，TimSort利用的是Comparator来进行
 1. 若范围内的元素少于MIN_MERGE，采用二分插入排序算法
 1. 依次分离出一系列有序片段(run)
 
-```Java
+```java
     /**
      * Sorts the given range, using the given workspace array slice
      * for temp storage when possible. This method is designed to be
@@ -207,7 +207,7 @@ ComparableTimSort与TimSort是一样的，TimSort利用的是Comparator来进行
 
 ## 4.3 countRunAndMakeAscending
 
-```Java
+```java
     /**
      * Returns the length of the run beginning at the specified position in
      * the specified array and reverses the run if it is descending (ensuring
@@ -263,7 +263,7 @@ ComparableTimSort与TimSort是一样的，TimSort利用的是Comparator来进行
 
 反转指定片段，这是一种最简洁的写法了，不用考虑奇数偶数之类的，只要`lo<hi`就交换
 
-```Java
+```java
     /**
      * Reverse the specified range of the specified array.
      *
@@ -294,7 +294,7 @@ ComparableTimSort与TimSort是一样的，TimSort利用的是Comparator来进行
 1. hi：序列范围的末尾下标，包含
 1. start：未排序部分的起始下标
 
-```Java
+```java
 
     /**
      * Sorts the specified portion of the specified array using a binary
@@ -367,7 +367,7 @@ ComparableTimSort与TimSort是一样的，TimSort利用的是Comparator来进行
 
 将一个run入栈，保存的信息有两个，一个是run的起始下标，另一个是run的长度。栈顶元素位于数组的末尾
 
-```Java
+```java
     /**
      * Pushes the specified run onto the pending-run stack.
      *
@@ -388,7 +388,7 @@ mergeCollapse会在__不满足__堆栈不变式的情况下进行合并操作，
 1. `runLen[i - 3] > runLen[i - 2] + runLen[i - 1]`
 1. `runLen[i - 2] > runLen[i - 1]`
 
-```Java
+```java
     /**
      * Examines the stack of runs waiting to be merged and merges adjacent runs
      * until the stack invariants are reestablished:
@@ -429,7 +429,7 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
 1. 找出run1的尾元素在run2中的位置，记为index2，满足`run1[last] > run2[index2-1]`
 1. 于是`run1[base] ~ run1[index1]`部分是已排序的，`run2[index2] ~ run2[last]`是已排序的，因此只需要合并`run1[index1+1] ~ run1[last]`以及`run2[first] ~ run2[index2-1]`即可
 
-```Java
+```java
     /**
      * Merges the two runs at stack indices i and i+1.  Run i must be
      * the penultimate or antepenultimate run on the stack.  In other words,
@@ -508,7 +508,7 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
 
 该方法大致意思就是在一个序列范围中查找某个元素的插入位置，如果存在相等的元素，则返回的是最左边的一个
 
-```Java
+```java
     /**
      * Locates the position at which to insert the specified key into the
      * specified sorted range; if the range contains an element equal to key,
@@ -616,7 +616,7 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
 
 该方法大致意思就是在一个序列范围中查找某个元素的插入位置，如果存在相等的元素，则返回的是最右边的一个
 
-```Java
+```java
     /**
      * Like gallopLeft, except that if the range contains an element equal to
      * key, gallopRight returns the index after the rightmost equal element.
@@ -713,7 +713,7 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
 
 > 假设`run1[i1] < run2[i2]`,`run1[i1+1] < run2[i2]`,`run1[i1+2] < run2[i2]`,...,`run1[i1+k] < run2[i2]`。如果`k > minGallop`，那么此时可以进行一些优化，即假设这种趋势将会延续下去，即还会有连续多个run1的值小于`run2[i2]`。因此我们用二分法来查找`run2[i2]`这个值位于run1中的具体位置，找到位置后，那么run1前面这部分元素将会比`run2[i2]`要小，因此可以用System.arraycopy来进行拷贝
 
-```Java
+```java
     /**
      * Merges two adjacent runs in place, in a stable fashion.  The first
      * element of the first run must be greater than the first element of the
@@ -868,7 +868,7 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
 
 该方法与mergeLo方法对称，不再分析
 
-```Java
+```java
     /**
      * Like mergeLo, except that this method should be called only if
      * len1 >= len2; mergeLo should be called if len1 <= len2.  (Either method

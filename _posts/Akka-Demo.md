@@ -64,7 +64,7 @@ __阅读更多__
 
 ## 1.3 AkkaConfigUtils.java
 
-```Java
+```java
 package org.liuyehcf.akka.common.util;
 
 import java.io.File;
@@ -104,7 +104,7 @@ public abstract class AkkaConfigUtils {
 
 ## 1.4 IPUtils.java
 
-```Java
+```java
 package org.liuyehcf.akka.common.util;
 
 import java.net.Inet4Address;
@@ -205,7 +205,7 @@ public class IPUtils {
 
 ## 2.3 RemoteActor1
 
-```Java
+```java
 package org.liuyehcf.akka.remote;
 
 import akka.actor.AbstractActor;
@@ -245,7 +245,7 @@ public class RemoteActor1 extends AbstractActor {
 
 ## 2.4 RemoteActor2
 
-```Java
+```java
 package org.liuyehcf.akka.remote;
 
 import akka.actor.AbstractActor;
@@ -282,7 +282,7 @@ public class RemoteActor2 extends AbstractActor {
 
 ## 2.5 LocalCreateBoot
 
-```Java
+```java
 package org.liuyehcf.akka.remote;
 
 import akka.actor.ActorRef;
@@ -345,7 +345,7 @@ public class LocalCreateBoot {
 
 ## 2.6 RemoteCreateBoot
 
-```Java
+```java
 package org.liuyehcf.akka.remote;
 
 import akka.actor.*;
@@ -490,7 +490,7 @@ akka {
 
 ## 3.3 SimpleClusterListener
 
-```Java
+```java
 package org.liuyehcf.akka.cluster;
 
 import akka.actor.AbstractActor;
@@ -544,7 +544,7 @@ public class SimpleClusterListener extends AbstractActor {
 
 ## 3.4 ClusterBoot
 
-```Java
+```java
 package org.liuyehcf.akka.cluster;
 
 import akka.actor.ActorSystem;
@@ -626,7 +626,7 @@ public class ClusterBoot {
 
 ## 3.5 cluster-with-static-seed-node.conf
 
-```Java
+```java
 akka {
   actor {
     provider = "cluster"
@@ -654,7 +654,7 @@ akka {
 
 ## 3.6 cluster-with-none-seed-node.conf
 
-```Java
+```java
 akka {
   actor {
     provider = "cluster"

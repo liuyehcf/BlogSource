@@ -20,7 +20,7 @@ CodeSource就是一个简单的类，用来声明从哪里加载类
 
 CodeSource有一个重要的字段
 
-```Java
+```java
     private URL location;
 ```
 
@@ -105,7 +105,7 @@ AccessController最重要的方法就是checkPermission()方法，作用是基�
 
 例如FileInputStream的构造方法就利用SecurityManager来checkRead
 
-```Java
+```java
     public FileInputStream(File file) throws FileNotFoundException {
         String name = (file != null ? file.getPath() : null);
         SecurityManager security = System.getSecurityManager();
@@ -128,7 +128,7 @@ AccessController最重要的方法就是checkPermission()方法，作用是基�
 
 继续查看SecurityManager的checkRead方法
 
-```Java
+```java
     public void checkRead(String file) {
         checkPermission(new FilePermission(file,
             SecurityConstants.FILE_READ_ACTION));
@@ -161,7 +161,7 @@ __我的IDEA工程目录如下，其中security是一个子模块，下面的代
 ```
 
 首先，有一个代码源，我这里提供一个`external.jar`，该jar中只包含一个class文件，其源码如下：
-```Java
+```java
 package org.liuyehcf.security;
 
 import java.io.File;
@@ -220,7 +220,7 @@ grant codeBase "file:security/src/main/resources/external.jar" {
 
 然后编写测试类ReflectAccessControllerDemo，如下
 
-```Java
+```java
 package org.liuyehcf.security;
 
 import java.io.IOException;
@@ -287,7 +287,7 @@ public class ReflectAccessControllerDemo {
 
 运行结果如下：
 
-```Java
+```java
 java.lang.reflect.InvocationTargetException
     at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
     at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)

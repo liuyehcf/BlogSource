@@ -25,7 +25,7 @@ __阅读更多__
 
 # 2 服务端启动代码清单
 
-```Java
+```java
 package org.liuyehcf.protocol.echo;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -105,7 +105,7 @@ public class EchoServer {
 
 1. 整个响应流程的分析始于`NioEventLoop#run`
     * `run`方法位于`NioEventLoop`中，该方法主要任务包含三点：1)执行select获取selectionKey；2)执行与NIO有关的处理流程；3)执行提交到该线程池的任务
-```Java
+```java
     protected void run() {
         for (;;) {
             try {
@@ -190,14 +190,14 @@ public class EchoServer {
 
 1. 首先，我们先来分析一下calculateStrategy方法
     * `calculateStrategy`方法位于`DefaultSelectStrategy`，该方法主要逻辑就是根据当前状态计算执行的策略。如果有task，那么返回selectSupplier.get()；否则返回SelectStrategy.SELECT
-```Java
+```java
     public int calculateStrategy(IntSupplier selectSupplier, boolean hasTasks) throws Exception {
         return hasTasks ? selectSupplier.get() : SelectStrategy.SELECT;
     }
 ```
 
     * `get`方法位于`NioEventLoop`，即返回非阻塞的selectNow的结果
-```Java
+```java
     private final IntSupplier selectNowSupplier = new IntSupplier() {
         @Override
         public int get() throws Exception {
@@ -207,14 +207,14 @@ public class EchoServer {
 ```
 
     * 其次，我们来看一下`hasTasks`方法，该方法位于`SingleThreadEventLoop`，该方法继续调用父类的同名方法。其效果就是只要两个任务队列有一个含有任务，就返回true
-```Java
+```java
     protected boolean hasTasks() {
         return super.hasTasks() || !tailTasks.isEmpty();
     }
 ```
 
     * 父类`SingleThreadEventExecutor`的`hasTasks`方法如下，很简单，队列是否为空
-```Java
+```java
     protected boolean hasTasks() {
         assert inEventLoop();
         return !taskQueue.isEmpty();
@@ -225,7 +225,7 @@ public class EchoServer {
 1. 如果返回值是SELECT，那么执行select方法
     * `select`方法位于`NioEventLoop`，该方法的主要逻辑就是执行select，其结果会保存在关联的selectedKeys字段当中（该字段已通过反射替换掉`sun.nio.ch.SelectorImpl`中原有的selectedKeys字段了，详见{% post_link Netty-NioEventLoop源码剖析 %}）
     * 会根据不同的逻辑调用阻塞的select或者非阻塞的selectNow，具体细节在此不深究
-```Java
+```java
     private void select(boolean oldWakenUp) throws IOException {
         Selector selector = this.selector;
         try {
@@ -323,7 +323,7 @@ public class EchoServer {
 
 1. 如果，上一小结分析的select过程中，产生了新的SelectionKey，那么会在后续的位于`NioEventLoop`中的`run`方法中processSelectedKeys方法的继续处理
     * `processSelectedKeys`方法位于`NioEventLoop`
-```Java
+```java
     private void processSelectedKeys() {
         if (selectedKeys != null) {
             processSelectedKeysOptimized();
@@ -334,7 +334,7 @@ public class EchoServer {
 ```
 
     * 由于我们之前已经分析过，Selector中的selectedKeys字段已经被替换为自定义的类型，因此这里会走processSelectedKeysOptimized这条支路。`processSelectedKeysOptimized`方法位于`NioEventLoop`，该方法从SelectionKey中提取出附属的Channel，然后调用processSelectedKey方法进行处理
-```Java
+```java
     private void processSelectedKeysOptimized() {
         for (int i = 0; i < selectedKeys.size; ++i) {
             final SelectionKey k = selectedKeys.keys[i];
@@ -366,7 +366,7 @@ public class EchoServer {
 
 1. 回到位于`NioEventLoop`的`processSelectedKeysOptimized`方法，继续追踪`processSelectedKey`方法
     * `processSelectedKey`方法位于`NioEventLoop`，该方法从Channel中提取出Unsafe对象执行底层的read操作
-```Java
+```java
     private void processSelectedKey(SelectionKey k, AbstractNioChannel ch) {
         final AbstractNioChannel.NioUnsafe unsafe = ch.unsafe();
         if (!k.isValid()) {
@@ -425,7 +425,7 @@ public class EchoServer {
 
 1. 继续追踪read方法
     * `read`方法位于`AbstractNioMessageChannel`的__非静态__内部类`NioMessageUnsafe`中，该方法的核心是doReadMessages方法
-```Java
+```java
         public void read() {
             assert eventLoop().inEventLoop();
             final ChannelConfig config = config();
@@ -490,7 +490,7 @@ public class EchoServer {
 
 1. 然后，我们来看一下`doReadMessages`方法
     * `doReadMessages`方法位于`NioServerSocketChannel`中，该方法调用SocketUtils.accept方法获取一个java.nio.channels.SocketChannel，然后将其封装成NioSocketChannel中去
-```Java
+```java
     protected int doReadMessages(List<Object> buf) throws Exception {
         SocketChannel ch = SocketUtils.accept(javaChannel());
 
@@ -515,7 +515,7 @@ public class EchoServer {
 
 1. 接下来，我们来跟踪一下NioSocketChannel的创建过程
     * 首先来看一下`NioSocketChannel`的构造方法，该方法继续调用父类构造方法，并且初始化config对象
-```Java
+```java
     public NioSocketChannel(Channel parent, SocketChannel socket) {
         super(parent, socket);
         config = new NioSocketChannelConfig(this, socket.socket());
@@ -523,14 +523,14 @@ public class EchoServer {
 ```
 
     * 接下来是`AbstractNioByteChannel`的构造方法，该构造方法继续调用父类构造方法，并传入参数`SelectionKey.OP_READ`
-```Java
+```java
     protected AbstractNioByteChannel(Channel parent, SelectableChannel ch) {
         super(parent, ch, SelectionKey.OP_READ);
     }
 ```
 
     * 接下来是`AbstractNioChannel`的构造方法，该方法设置NIO层面的相关参数，包括readInterestOp以及是否开启非阻塞模式，并继续调用父类构造方法
-```Java
+```java
     protected AbstractNioChannel(Channel parent, SelectableChannel ch, int readInterestOp) {
         super(parent);
         this.ch = ch;
@@ -553,7 +553,7 @@ public class EchoServer {
 ```
 
     * 接下来是`AbstractChannel`的构造方法，该方法创建Unsafe对象来执行底层的IO操作，并且初始化pipeline
-```Java
+```java
     protected AbstractChannel(Channel parent) {
         this.parent = parent;
         id = newId();
@@ -564,7 +564,7 @@ public class EchoServer {
 
 1. 接下来，回到位于`AbstractNioMessageChannel`的__非静态__内部类`NioMessageUnsafe`的`read`方法中，于是触发了一些生命周期，例如fireChannelRead以及fireChannelReadComplete等
     * 注意到，在服务端启动过程中，在NioServerSocketChannel中绑定了一个`ServerBootstrapAcceptor`，绑定的地方：__位于`ServerBootstrap`的`init`方法__，详见{% post_link Netty-服务端启动源码剖析 %}
-```Java
+```java
     @Override
     void init(Channel channel) throws Exception {
         final Map<ChannelOption<?>, Object> options = options0();
@@ -620,7 +620,7 @@ public class EchoServer {
 1. 接下来，我们分析一下ServerBootstrapAcceptor这个服务端内置的Handler
     * `ServerBootstrapAcceptor`位于`ServerBootstrap`，是一个__静态__内部类。我们关注channelRead方法，该方法将我们在代码清单中配置的childHandler（即那个ChannelInitializer）添加到child Channel的Pipeline中，要注意，此时注入的仅仅是这个ChannelInitializer，而非用户自定义的Handler
     * 用户自定义的Handler要等到后续的register操作过程中被注入到child Channel的Pipeline中
-```Java
+```java
     private static class ServerBootstrapAcceptor extends ChannelInboundHandlerAdapter {
 
         private final EventLoopGroup childGroup;
@@ -709,21 +709,21 @@ __这之后的执行过程与{% post_link Netty-服务端启动源码剖析 %}�
 
 1. 我们接着回到位于`ServerBootstrap`的__静态__内部来`ServerBootstrapAcceptor`的`channelRead`方法中来，继续register方法的分析
     * `register`方法位于`MultithreadEventLoopGroup`，调用next方法获取EventLoop来执行register方法
-```Java
+```java
     public ChannelFuture register(Channel channel) {
         return next().register(channel);
     }
 ```
 
     * `register`方法位于`SingleThreadEventLoop`，该方法创建了一个ChannelPromise，并继续调用同名的register方法
-```Java
+```java
     public ChannelFuture register(Channel channel) {
         return register(new DefaultChannelPromise(channel, this));
     }
 ```
 
     * `register`方法位于`SingleThreadEventLoop`，该方法获取Unsafe对象来执行相应的register操作
-```Java
+```java
     public ChannelFuture register(final ChannelPromise promise) {
         ObjectUtil.checkNotNull(promise, "promise");
         promise.channel().unsafe().register(this, promise);
@@ -732,7 +732,7 @@ __这之后的执行过程与{% post_link Netty-服务端启动源码剖析 %}�
 ```
 
     * `register`方法位于`AbstractChannel`中的__非静态__内部类`AbstractUnsafe`，该方法主要通过异步方式执行了register0方法
-```Java
+```java
         public final void register(EventLoop eventLoop, final ChannelPromise promise) {
             if (eventLoop == null) {
                 throw new NullPointerException("eventLoop");
@@ -773,7 +773,7 @@ __这之后的执行过程与{% post_link Netty-服务端启动源码剖析 %}�
 
 1. 接下来跟踪register0的执行流程
     * `register0`方法位于`AbstractChannel`中的__非静态__内部类`AbstractUnsafe`，该方法主要执行了doRegister方法，并触发了一些生命周期，例如invokeHandlerAddedIfNeeded、fireChannelRegistered、fireChannelActive
-```Java
+```java
         private void register0(ChannelPromise promise) {
             try {
                 //check if the channel is still open as it could be closed in the mean time when the register
@@ -815,7 +815,7 @@ __这之后的执行过程与{% post_link Netty-服务端启动源码剖析 %}�
 ```
 
     * `doRegister`方法位于`AbstractNioChannel`，该方法执行底层的Java NIO API的register操作
-```Java
+```java
     protected void doRegister() throws Exception {
         boolean selected = false;
         for (;;) {
@@ -840,7 +840,7 @@ __这之后的执行过程与{% post_link Netty-服务端启动源码剖析 %}�
 
 1. 接着，我们关注一下invokeHandlerAddedIfNeeded的执行路径
     * `invokeHandlerAddedIfNeeded`方法位于`DefaultChannelPipeline`，该方法只有在第一次注册的时候才会触发callHandlerAddedForAllHandlers
-```Java
+```java
     final void invokeHandlerAddedIfNeeded() {
         assert channel.eventLoop().inEventLoop();
         if (firstRegistration) {
@@ -853,7 +853,7 @@ __这之后的执行过程与{% post_link Netty-服务端启动源码剖析 %}�
 ```
 
     * `callHandlerAddedForAllHandlers`方法位于`DefaultChannelPipeline`，该方法执行了pendingTask的execute方法，该task的实现类是PendingHandlerAddedTask
-```Java
+```java
     private void callHandlerAddedForAllHandlers() {
         final PendingHandlerCallback pendingHandlerCallbackHead;
         synchronized (this) {
@@ -879,7 +879,7 @@ __这之后的执行过程与{% post_link Netty-服务端启动源码剖析 %}�
 ```
 
     * `execute`方法位于`DefaultChannelPipeline`中的__非静态__内部类`PendingHandlerAddedTask`，该方法主要用于触发callHandlerAdded0方法
-```Java
+```java
         void execute() {
             EventExecutor executor = ctx.executor();
             if (executor.inEventLoop()) {
@@ -901,7 +901,7 @@ __这之后的执行过程与{% post_link Netty-服务端启动源码剖析 %}�
 ```
 
     * `callHandlerAdded0`方法位于`DefaultChannelPipeline`，这里显式调用了handler的handlerAdded方法。注意到handler()方法返回的是我们在代码清单中配置的ChannelInitializer，因此调用该ChannelInitializer的handlerAdded方法，会将我们配置的用户的Handler注入到Channel的pipeline中
-```Java
+```java
     private void callHandlerAdded0(final AbstractChannelHandlerContext ctx) {
         try {
             ctx.handler().handlerAdded(ctx);

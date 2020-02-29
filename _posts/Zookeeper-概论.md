@@ -49,7 +49,7 @@ Google的三篇论文影响了很多很多人，也影响了很多很多系统�
 
 说到协调，我首先想到的是北京很多十字路口的交通协管，他们手握着小红旗，指挥车辆和行人是不是可以通行。如果我们把车辆和行人比喻成运行在计算机中的单元(线程)，__那么这个协管是干什么的？很多人都会想到，这不就是锁么？对，在一个并发的环境里，我们为了避免多个运行单元对共享数据同时进行修改，造成数据损坏的情况出现，我们就必须依赖像锁这样的协调机制，让有的线程可以先操作这些资源，然后其他线程等待。__对于进程内的锁来讲，我们使用的各种语言平台都已经给我们准备很多种选择。就拿Java来说，有最普通不过的同步方法或同步块：
 
-```Java
+```java
 public synchronized void sharedMethod(){
    //对共享数据进行操作
 }
@@ -57,7 +57,7 @@ public synchronized void sharedMethod(){
 
 使用了这种方式后，多个线程对sharedMethod进行操作的时候，就会协调好步骤，不会对sharedMethod里的资源进行破坏，产生不一致的情况。这个最简单的协调方法，但有的时候我们可能需要更复杂的协调。比如我们常常为了提高性能，我们使用读写锁。因为大部分时候我们对资源是读取多而修改少，而如果不管三七二十一全部使用排他的写锁，那么性能有可能就会受到影响。还是用java举例：
 
-```Java
+```java
 public class SharedSource{
    private ReadWriteLock rwlock = new ReentrantReadWriteLock();
    private Lock rlock = rwlock.readLock();

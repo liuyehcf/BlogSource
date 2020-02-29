@@ -35,7 +35,7 @@ Java最初被设计为一种安全的受控环境。尽管如此，HotSpot还是
 1. `offset`与`o`是通过`staticFieldOffset`方法与`staticFieldBase`方法获取
 1. `o`的类型是数组，且`offset = B + N * S`，其中`B`通过`arrayBaseOffset`方法获取，即数组的起始偏移量；`S`通过`arrayIndexScale`方法获取，即数组单个元素的偏移量；`N`代表第N个元素
 
-```Java
+```java
     /**
      * Fetches a value from a given Java variable.
      * More specifically, fetches a field or array element within the given
@@ -97,7 +97,7 @@ Java最初被设计为一种安全的受控环境。尽管如此，HotSpot还是
 
 putInt将值`x`存入对象`o`的指定偏移量`offset`中
 
-```Java
+```java
     /**
      * Stores a value into a given Java variable.
      * <p>
@@ -125,7 +125,7 @@ putInt将值`x`存入对象`o`的指定偏移量`offset`中
 
 这里仅列出其他所有基本类型的put/get方法，具体说明请参考putInt和getInt方法
 
-```Java
+```java
     /**
      * Fetches a reference value from a given Java variable.
      *
@@ -470,7 +470,7 @@ putInt将值`x`存入对象`o`的指定偏移量`offset`中
 
 那为什么不直接使用volatile关键字来修饰呢？__因为只想在某些特定的地方拥有volatile读写的内存语义__，这样可以提高效率，如果粗暴地直接加上volatile关键字，那么可能会导致性能的下降。这种优化手段一般我们不需要考虑，这是JDK标准库实现才会使用的手法，毕竟Unsafe是不推荐正常Java代码使用的
 
-```Java
+```java
     /**
      * Fetches a reference value from a given Java variable, with volatile
      * load semantics. Otherwise identical to {@link #getObject(Object, long)}
@@ -571,7 +571,7 @@ putInt将值`x`存入对象`o`的指定偏移量`offset`中
 1. putOrder等效于插入`StoreStore`屏障
 1. getOrder等效于插入`LoadLoad`屏障
 
-```Java
+```java
     /**
      * Version of {@link #putObjectVolatile(Object, long, Object)}
      * that does not guarantee immediate visibility of the store to
@@ -598,7 +598,7 @@ unpark()方法可以唤醒一个线程，如果线程处于非阻塞状态则获
 
 park()方法用于消耗一枚许可，当没有可用许可时便阻塞指定线程。即如果在调用park()方法之前调用过unpark()方法，那么本次park()将不会阻塞该线程
 
-```Java
+```java
     /**
      * Unblock the given thread blocked on <tt>park</tt>, or, if it is
      * not blocked, cause the subsequent call to <tt>park</tt> not to
@@ -631,7 +631,7 @@ park()方法用于消耗一枚许可，当没有可用许可时便阻塞指定�
 
 CAS即compare and swap，比较当前值与期望值，如果相等，那么替换为指定值，如果不相等，什么也不做。该操作是原子操作
 
-```Java
+```java
     /**
      * Atomically update Java variable to <tt>x</tt> if it is currently
      * holding <tt>expected</tt>.
@@ -671,7 +671,7 @@ CAS即compare and swap，比较当前值与期望值，如果相等，那么替�
 
 返回指定静态字段在其所属类型的内存结构中的偏移量。任意一个字段的offset与base都是相同的，任意两个不同的字段都不可能有相同的偏移量(废话)
 
-```Java
+```java
     /**
      * Report the location of a given field in the storage allocation of its
      * class.  Do not expect to perform any sort of arithmetic on this offset;
@@ -698,7 +698,7 @@ CAS即compare and swap，比较当前值与期望值，如果相等，那么替�
 
 返回指定实例字段在其所属类型的内存结构中的偏移量
 
-```Java
+```java
     /**
      * Report the location of a given static field, in conjunction with {@link
      * #staticFieldBase}.
@@ -722,7 +722,7 @@ CAS即compare and swap，比较当前值与期望值，如果相等，那么替�
 
 ## 8.3 staticFieldBase
 
-```Java
+```java
     /**
      * Report the location of a given static field, in conjunction with {@link
      * #staticFieldOffset}.
@@ -741,7 +741,7 @@ CAS即compare and swap，比较当前值与期望值，如果相等，那么替�
 
 返回数组类型中第一个元素的偏移量，因为Java中数组的内存结构中并不仅有元素的内存空间，还有一些额外的信息需要存储，比如Mark word，元数据指针，数组长度等等。因此数组中第一个元素的相对偏移量(相对于数组起始地址)并不是0
 
-```Java
+```java
     /**
      * Report the offset of the first element in the storage allocation of a
      * given array class.  If {@link #arrayIndexScale} returns a non-zero value
@@ -759,7 +759,7 @@ CAS即compare and swap，比较当前值与期望值，如果相等，那么替�
 
 返回数组中每个元素所占的偏移量？
 
-```Java
+```java
     /**
      * Report the scale factor for addressing elements in the storage
      * allocation of a given array class.  However, arrays of "narrow" types
@@ -783,7 +783,7 @@ Unsafe类是如此地不安全，以至于JDK开发者增加了很多特殊限�
 
 不过，我们可以通过反射机制轻松获取Unsafe的一个实例
 
-```Java
+```java
     public static Unsafe getUnsafe(){
         try{
             Field f=Unsafe.class.getDeclaredField("theUnsafe");

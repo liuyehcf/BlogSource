@@ -197,7 +197,7 @@ __主要依赖项如下__
 
 ## 4.1 Application
 
-```Java
+```java
 package org.liuyehcf.flowable;
 
 import org.springframework.boot.SpringApplication;
@@ -219,7 +219,7 @@ public class Application {
 
 ## 4.2 DataSourceConfig
 
-```Java
+```java
 package org.liuyehcf.flowable.config;
 
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -278,7 +278,7 @@ public class DataSourceConfig {
 
 ## 4.3 ElementAspect
 
-```Java
+```java
 package org.liuyehcf.flowable.config;
 
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -310,7 +310,7 @@ public class ElementAspect {
 
 ## 4.4 DemoListener
 
-```Java
+```java
 package org.liuyehcf.flowable.element;
 
 import com.alibaba.fastjson.JSON;
@@ -375,7 +375,7 @@ public class DemoListener implements TaskListener, ExecutionListener {
 
 ## 4.5 DemoServiceTask
 
-```Java
+```java
 package org.liuyehcf.flowable.element;
 
 import lombok.extern.slf4j.Slf4j;
@@ -421,7 +421,7 @@ public class DemoServiceTask implements JavaDelegate {
 
 ## 4.6 DemoService
 
-```Java
+```java
 package org.liuyehcf.flowable.service;
 
 import lombok.extern.slf4j.Slf4j;
@@ -518,7 +518,7 @@ public class DemoService {
 
 ## 4.7 CreateSqlUtils
 
-```Java
+```java
 package org.liuyehcf.flowable.utils;
 
 import org.apache.commons.io.IOUtils;
@@ -651,7 +651,7 @@ public class CreateSqlUtils {
 
 ## 4.8 UpgradeSqlUtils
 
-```Java
+```java
 package org.liuyehcf.flowable.utils;
 
 import org.apache.commons.io.IOUtils;
@@ -784,7 +784,7 @@ public class UpgradeSqlUtils {
 
 ## 4.9 DemoController
 
-```Java
+```java
 package org.liuyehcf.flowable.web;
 
 import org.liuyehcf.flowable.service.DemoService;
@@ -981,7 +981,7 @@ __日志如下__
 
 __`@ContextHierarchy`将创建子容器，`EmbeddedDatabaseConfig`将会在子容器中加载，会覆盖父容器的同名Bean，通过这种方式来替换数据源的配置__
 
-```Java
+```java
 package org.liuyehcf.flowable.test;
 
 import lombok.extern.slf4j.Slf4j;
@@ -1041,7 +1041,7 @@ public class DemoTest {
 
 配置了`H2 database`，即内存数据库来进行测试
 
-```Java
+```java
 package org.liuyehcf.flowable.test;
 
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -1081,7 +1081,7 @@ public class EmbeddedDatabaseConfig {
 
 ## 7.3 TestApplication
 
-```Java
+```java
 package org.liuyehcf.flowable.test;
 
 import org.liuyehcf.flowable.Application;
@@ -1141,7 +1141,7 @@ __情景还原__：
 
 为了验证上面的说法，本机DEBUG，验证的起点是`org.flowable.engine.impl.bpmn.behavior.ServiceTaskDelegateExpressionActivityBehavior`这个类的`execute`方法。最终调用到了`org.flowable.engine.common.impl.util.ReflectUtil`的`invokeSetterOrField`方法中
 
-```Java
+```java
     public static void invokeSetterOrField(Object target, String name, Object value, boolean throwExceptionOnMissingField) {
         Method setterMethod = getSetter(name, target.getClass(), value.getClass());
 
@@ -1192,7 +1192,7 @@ __在测试方法中不要加`@Transactional`注解，由于工作流的执行�
 
 ## 8.3 xml文件名
 
-```Java
+```java
 RepositoryService repositoryService = processEngine.getRepositoryService();
 Deployment deployment = repositoryService.createDeployment()
   .addClasspathResource("async-service.xml")

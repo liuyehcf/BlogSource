@@ -17,7 +17,7 @@ __阅读更多__
 
 通俗来说，`Direct Buffer`就是一块在Java堆外分配的，但是可以在Java程序中访问的内存
 
-```Java
+```java
     public static void main(String[] args) {
         ByteBuffer dorectButeBiffer = ByteBuffer.allocateDirect(1024);
         ByteBuffer heapByteBuffer = ByteBuffer.allocate(1024);
@@ -38,7 +38,7 @@ __阅读更多__
 
 最近在实现一个自定义协议的时候用到了`ByteToMessageCodec`这个抽象类，该类由个`encode`方法需要实现，该方法的定义如下
 
-```Java
+```java
 package com.github.liuyehcf.framework.io.athena.protocol.handler;
 
 import com.github.liuyehcf.framework.io.athena.protocol.AthenaFrame;

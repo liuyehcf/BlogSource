@@ -18,7 +18,7 @@ __阅读更多__
 
 # 2 字段
 
-```Java
+```java
     /** parameter types of a proxy class constructor */
     private static final Class<?>[] constructorParams =
         { InvocationHandler.class };
@@ -43,7 +43,7 @@ __阅读更多__
 * interfaces：代理类需要实现的接口列表
 * h：InvocationHandler的对象
 
-```Java
+```java
     /**
      * Returns an instance of a proxy class for the specified interfaces
      * that dispatches method invocations to the specified invocation
@@ -154,7 +154,7 @@ __阅读更多__
 
 getProxyClass0方法将根据`类加载器对象`和`接口数组`从缓存中获取指定的Class，如果在缓存中不存在，那么将由ProxyClassFactory创建代理类对象，具体参见proxyClassCache的定义
 
-```Java
+```java
     /**
      * Generate a proxy class.  Must call the checkProxyAccess method
      * to perform permission checks before calling this.
@@ -181,7 +181,7 @@ ProxyClassFactory是位于Proxy中的静态内部类，用于产生代理类的`
 
 apply方法中主要进行一些校验工作以及确定代理类的全限定名，然后调用`ProxyGenerator.generateProxyClass`来产生字节码文件
 
-```Java
+```java
     /**
      * A factory function that generates, defines and returns the proxy class given
      * the ClassLoader and array of interfaces.
@@ -304,7 +304,7 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
 
 ## 3.4 ProxyGenerator.generateProxyClass
 
-```Java
+```java
     /**
      * Generate a proxy class given a name and a list of proxy interfaces.
      */
@@ -343,7 +343,7 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
 
 层层调用后，最终generateClassFile才是真正生成代理类字节码文件的方法，注意开头的三个addProxyMethod方法是只将Object的hashcode,equals,toString方法添加到代理方法容器中，代理类除此之外并没有重写其他Object的方法，所以除这三个方法外，代理类调用其他方法的行为与Object调用这些方法的行为一样不通过Invoke
 
-```Java
+```java
     /**
      * Generate a class file for the proxy class.  This method drives the
      * class file generation process.
@@ -511,7 +511,7 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
 
 将指定方法添加到方法容器中。该容器中的所有方法将会被写入到代理对象中
 
-```Java
+```java
     /**
      * Add another method to be proxied, either by creating a new
      * ProxyMethod object or augmenting an old one for a duplicate
@@ -573,7 +573,7 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
 
 这个方法非常重要，该方法勾勒出代理对象的代理逻辑(对应的是.class文件中的方法属性表部分，即实际存储代码块的区域)。该方法的阅读需要对字节码的格式以及方法属性表的格式非常了解，否则将会一头雾水
 
-```Java
+```java
         /**
          * Return a MethodInfo object for this method, including generating
          * the code and exception table entry.
@@ -705,7 +705,7 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
 
 下面这段java代码就是`ProxyMethod.generateMethod`所构造的方法的模板。可以看出，所有的方法调用都必须通过InvocationHandler对象，因此我们可以将增强逻辑写在InvocationHandler#invoke方法中
 
-```Java
+```java
     public final void <methodName> ( <Params> ) throws <Exceptions> {
         try {
             super.h.invoke(this, <Method>, <Params>);
@@ -723,7 +723,7 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
 
 __Person__：接口
 
-```Java
+```java
 package org.liuyehcf.jdkproxy;
 
 public interface Person {
@@ -733,7 +733,7 @@ public interface Person {
 
 __Chinese__：Person接口的实现类
 
-```Java
+```java
 package org.liuyehcf.jdkproxy;
 
 public class Chinese implements Person {
@@ -745,7 +745,7 @@ public class Chinese implements Person {
 
 __Handler__：增强
 
-```Java
+```java
 package org.liuyehcf.jdkproxy;
 
 import java.lang.reflect.InvocationHandler;
@@ -773,7 +773,7 @@ public class JdkProxyHandler implements InvocationHandler {
 
 __Demo__
 
-```Java
+```java
 package org.liuyehcf.jdkproxy;
 
 import sun.misc.ProxyGenerator;
@@ -816,7 +816,7 @@ public class JdkProxyDemo {
 
 直接用IDEA打开class文件就能够自动反编译.class文件了。下面就是反编译后的代理对象的源码
 
-```Java
+```java
 //
 //Source code recreated from a .class file by IntelliJ IDEA
 //(powered by Fernflower decompiler)

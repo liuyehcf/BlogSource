@@ -38,7 +38,7 @@ op3->en
 
 __Javac编译动作的入口是`com.sun.tools.javac.main.JavaCompiler`类__，上述3个过程的代码逻辑集中在这个类的__`compile()`和`compile2()`__方法中，下面给出整个编译过程中最关键的几个步骤
 
-```Java
+```java
 public void compile(List<JavaFileObject> var1, List<String> var2, Iterable<? extends Processor> var3) {
         //... 
 
@@ -112,7 +112,7 @@ __在Javac源代码中，填充符号表的过程由`com.sun.tools.javac.comp.En
 
 JCTree是语法树元素的基类，__包含一个重要的字段`pos`，该字段用于指明当前语法树节点（JCTree）在语法树中的位置__，因此我们不能直接用new关键字来创建语法树节点，即使创建了也没有意义。此外，__结合访问者模式，将数据结构与数据的处理进行解耦__，部分源码如下：
 
-```Java
+```java
 public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
 
     public int pos = -1;
@@ -151,7 +151,7 @@ TreeMaker.Modifiers方法用于创建`访问标志`语法树节点(JCModifiers)�
 1. flags：访问标志
 1. annotations：注解列表
 
-```Java
+```java
 public JCModifiers Modifiers(long flags) {
     return Modifiers(flags, List.< JCAnnotation >nil());
 }
@@ -169,7 +169,7 @@ public JCModifiers Modifiers(long flags,
 
 例如，我们可以这样用
 
-```Java
+```java
     treeMaker.Modifiers(Flags.PUBLIC + Flags.STATIC + Flags.FINAL);
 ```
 
@@ -184,7 +184,7 @@ TreeMaker.ClassDef用于创建`类定义`语法树节点(JCClassDecl)，源码�
 1. implementing：接口列表
 1. defs：类定义的详细语句，包括字段，方法定义等等
 
-```Java
+```java
 public JCClassDecl ClassDef(JCModifiers mods,
     Name name,
     List<JCTypeParameter> typarams,
@@ -218,7 +218,7 @@ TreeMaker.MethodDef用于创建`方法定义`语法树节点（JCMethodDecl）�
 1. m：方法符号
 1. mtype：方法类型。包含多种类型，泛型参数类型、方法参数类型，异常参数类型、返回参数类型
 
-```Java
+```java
 public JCMethodDecl MethodDef(JCModifiers mods,
     Name name,
     JCExpression restype,
@@ -268,7 +268,7 @@ TreeMaker.VarDef用于创建`字段/变量定义`语法树节点（JCVariableDec
 1. init：初始化语句
 1. v：变量符号
 
-```Java
+```java
 public JCVariableDecl VarDef(JCModifiers mods,
     Name name,
     JCExpression vartype,
@@ -294,7 +294,7 @@ public JCVariableDecl VarDef(VarSymbol v,
 
 TreeMaker.Ident用于创建`标识符`语法树节点（JCIdent），源码如下：
 
-```Java
+```java
 public JCIdent Ident(Name name) {
         JCIdent tree = new JCIdent(name, null);
         tree.pos = pos;
@@ -318,7 +318,7 @@ public JCExpression Ident(JCVariableDecl param) {
 
 TreeMaker.Return用于创建`return语句`语法树节点（JCReturn），源码如下：
 
-```Java
+```java
 public JCReturn Return(JCExpression expr) {
         JCReturn tree = new JCReturn(expr);
         tree.pos = pos;
@@ -333,7 +333,7 @@ TreeMaker.Select用于创建`域访问/方法访问`（这里的方法访问只�
 1. selected：`.`运算符左边的表达式
 1. selector：`.`运算符右边的名字
 
-```Java
+```java
 public JCFieldAccess Select(JCExpression selected,
     Name selector) 
 {
@@ -358,7 +358,7 @@ TreeMaker.NewClass用于创建`new语句`语法树节点（JCNewClass），源�
 1. args：参数列表
 1. def：类定义
 
-```Java
+```java
 public JCNewClass NewClass(JCExpression encl,
     List<JCExpression> typeargs,
     JCExpression clazz,
@@ -378,7 +378,7 @@ TreeMaker.Apply用于创建`方法调用`语法树节点（JCMethodInvocation）
 1. fn：调用语句
 1. args：参数列表
 
-```Java
+```java
 public JCMethodInvocation Apply(List<JCExpression> typeargs,
     JCExpression fn,
     List<JCExpression> args) {
@@ -395,7 +395,7 @@ TreeMaker.Assign用于创建`赋值语句`语法树节点（JCAssign），源码
 1. lhs：赋值语句左边表达式
 1. rhs：赋值语句右边表达式
 
-```Java
+```java
 public JCAssign Assign(JCExpression lhs,
     JCExpression rhs) {
         JCAssign tree = new JCAssign(lhs, rhs);
@@ -408,7 +408,7 @@ public JCAssign Assign(JCExpression lhs,
 
 TreeMaker.Exec用于创建`可执行语句`语法树节点（JCExpressionStatement），源码如下：
 
-```Java
+```java
 public JCExpressionStatement Exec(JCExpression expr) {
         JCExpressionStatement tree = new JCExpressionStatement(expr);
         tree.pos = pos;
@@ -425,7 +425,7 @@ TreeMaker.Block用于创建`组合语句`语法树节点（JCBlock），源码�
 1. flags：访问标志
 1. stats：语句列表
 
-```Java
+```java
 public JCBlock Block(long flags,
     List<JCStatement> stats) {
         JCBlock tree = new JCBlock(flags, stats);
@@ -438,7 +438,7 @@ public JCBlock Block(long flags,
 
 上述JSR-269 API中会涉及到一个List，这个List不是java.util.List，它是com.sun.tools.javac.util.List，这个List的操作比较奇特，不支持链式操作。下面给出部分源码，List包含两个字段，head和tail，其中head只是一个节点，而tail是一个List
 
-```Java
+```java
 public class List<A> extends AbstractCollection<A> implements java.util.List<A> {
     public A head;
     public List<A> tail;
@@ -493,7 +493,7 @@ public class List<A> extends AbstractCollection<A> implements java.util.List<A> 
 
 由于com.sun.tools.javac.util.List用起来不是很方便，而ListBuffer的行为与java.util.List的行为类似，并且提供了转换成com.sun.tools.javac.util.List的方法
 
-```Java
+```java
         ListBuffer<JCTree.JCStatement> jcStatements = new ListBuffer<>();
 
         //添加语句 " this.xxx = xxx; "
@@ -511,7 +511,7 @@ public class List<A> extends AbstractCollection<A> implements java.util.List<A> 
 
 __注意点：方法的名字就是`<init>`__
 
-```Java
+```java
 treeMaker.MethodDef(
         treeMaker.Modifiers(Flags.PUBLIC), //访问标志
         names.fromString("<init>"), //名字
@@ -528,7 +528,7 @@ treeMaker.MethodDef(
 
 __注意点：访问标志设置成`Flags.PARAMETER`__
 
-```Java
+```java
 treeMaker.VarDef(
         treeMaker.Modifiers(Flags.PARAMETER), //访问标志。极其坑爹！！！
         prototypeJCVariable.name, //名字
@@ -539,7 +539,7 @@ treeMaker.VarDef(
 
 ### 3.5.3 创建一条赋值语句
 
-```Java
+```java
 treeMaker.Exec(
         treeMaker.Assign(
                 treeMaker.Select(
@@ -553,7 +553,7 @@ treeMaker.Exec(
 
 ### 3.5.4 创建一条new语句
 
-```Java
+```java
 treeMaker.NewClass(
         null, //尚不清楚含义
         List.nil(), //泛型参数列表
@@ -565,7 +565,7 @@ treeMaker.NewClass(
 
 ### 3.5.5 创建一条方法调用语句
 
-```Java
+```java
 treeMaker.Exec(
         treeMaker.Apply(
                 List.nil(),
@@ -596,7 +596,7 @@ treeMaker.Exec(
 
 例如现在有一个DTO
 
-```Java
+```java
 public class UserDTO {
     private String firstName;
 
@@ -606,7 +606,7 @@ public class UserDTO {
 
 我希望在编译期插入一些构造方法、set/get方法，以及一个Builder模式的静态内部类，如下
 
-```Java
+```java
 public class TestUserDTO {
     private String firstName;
     private String lastName;
@@ -707,7 +707,7 @@ __定义4个注解，源码如下：__
 
 #### 4.2.1.1 NoArgsConstructor
 
-```Java
+```java
 package org.liuyehcf.annotation.source.annotation;
 
 import java.lang.annotation.ElementType;
@@ -723,7 +723,7 @@ public @interface NoArgsConstructor {
 
 #### 4.2.1.2 AllArgsConstructor
 
-```Java
+```java
 package org.liuyehcf.annotation.source.annotation;
 
 import java.lang.annotation.ElementType;
@@ -739,7 +739,7 @@ public @interface AllArgsConstructor {
 
 #### 4.2.1.3 Data
 
-```Java
+```java
 package org.liuyehcf.annotation.source.annotation;
 
 import java.lang.annotation.ElementType;
@@ -755,7 +755,7 @@ public @interface Data {
 
 #### 4.2.1.4 Builder
 
-```Java
+```java
 package org.liuyehcf.annotation.source;
 
 import java.lang.annotation.ElementType;
@@ -782,7 +782,7 @@ __编写插入式注解处理器，要点如下：__
 
 __注解处理器基类__，抽出了一些公用的字段以及初始化方法
 
-```Java
+```java
 package org.liuyehcf.annotation.source.processor;
 
 import com.sun.tools.javac.api.JavacTrees;
@@ -838,7 +838,7 @@ public abstract class BaseProcessor extends AbstractProcessor {
 
 __工具类__
 
-```Java
+```java
 package org.liuyehcf.annotation.source.processor;
 
 import com.sun.tools.javac.code.Flags;
@@ -1097,7 +1097,7 @@ class ProcessUtil {
 
 #### 4.2.2.3 NoArgsConstructorProcessor
 
-```Java
+```java
 package org.liuyehcf.annotation.source.processor;
 
 import com.sun.tools.javac.code.Flags;
@@ -1182,7 +1182,7 @@ public class NoArgsConstructorProcessor extends BaseProcessor {
 
 #### 4.2.2.4 AllArgsConstructorProcessor
 
-```Java
+```java
 package org.liuyehcf.annotation.source.processor;
 
 import com.sun.tools.javac.code.Flags;
@@ -1308,7 +1308,7 @@ public class AllArgsConstructorProcessor extends BaseProcessor {
 
 #### 4.2.2.5 DataProcessor
 
-```Java
+```java
 package org.liuyehcf.annotation.source.processor;
 
 import com.sun.tools.javac.code.Flags;
@@ -1498,7 +1498,7 @@ public class DataProcessor extends BaseProcessor {
 
 #### 4.2.2.6 BuilderProcessor
 
-```Java
+```java
 package org.liuyehcf.annotation.source.processor;
 
 import com.sun.tools.javac.code.Flags;
@@ -1806,7 +1806,7 @@ public class BuilderProcessor extends BaseProcessor {
 
 ### 4.3.1 UserDTO
 
-```Java
+```java
 import org.liuyehcf.annotation.source.annotation.AllArgsConstructor;
 import org.liuyehcf.annotation.source.annotation.Builder;
 import org.liuyehcf.annotation.source.annotation.Data;

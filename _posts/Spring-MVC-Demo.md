@@ -174,7 +174,7 @@ spring-mvc-servlet.xml如下：
 
 这里就实现一个返回所有get请求参数的Controller
 
-```Java
+```java
 package org.liuyehcf.springmvc;
 
 import org.springframework.stereotype.Controller;

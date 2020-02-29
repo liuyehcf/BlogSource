@@ -27,7 +27,7 @@ __ConcurrentHashMap源码分析分为以下几个部分__
 
 # 2 常量简介
 
-```Java
+```java
     /**
      * The largest possible table capacity.  This value must be
      * exactly 1<<30 to stay within Java array allocation and indexing
@@ -149,7 +149,7 @@ __常量分为两大类__
 
 # 3 字段简介
 
-```Java
+```java
     /**
      * The array of bins. Lazily initialized upon first insertion.
      * Size is always a power of two. Accessed directly by iterators.
@@ -258,7 +258,7 @@ __spread用于转换hash值__
     * 举个例子，假设当前table的大小是16，hash值为5，(5+1<<7)，(5+1<<8),...这些元素将始终冲突，因为求余后，这些元素都位于同一个槽位中
 * h ^ (h >>> 16)：h逻辑右移16位与原值异或，得到的结果其高16位与原来相同，低16位由原来的高16位与原来的低16位共同决定。这样做的好处是：即便hashtable的容量较小，hash值的高16位在槽位计算上仍然能起到作用
 
-```Java
+```java
     /**
      * Spreads (XORs) higher bits of hash to lower and also forces top
      * bit to 0. Because the table uses power-of-two masking, sets of
@@ -287,7 +287,7 @@ __tableSizeFor方法用于计算不小于给定数值的最大2的幂次__
 * 该方法等效的逻辑是：找到c-1的最高位，假设为第i位，生成一个从第i位到第0位都是1，其余位全是0的数值，然后返回该数值+1
 * 5条位或语句就可以生成一个从第i位到第0位都是1，其余位全是0的数值
 
-```Java
+```java
     /**
      * Returns a power of two table size for the given desired capacity.
      * See Hackers Delight, sec 3.2
@@ -311,7 +311,7 @@ __访问table元素的方法__
 * ABASE指的是数组头元素的偏移量
 * 因此((long)i << ASHIFT) + ABASE指的是数组第i个元素的偏移量
 
-```Java
+```java
     static final <K,V> Node<K,V> tabAt(Node<K,V>[] tab, int i) {
         return (Node<K,V>)U.getObjectVolatile(tab, ((long)i << ASHIFT) + ABASE);
     }
@@ -334,7 +334,7 @@ __put方法用于向HashMap中插入一个键值对__
 
 * 键和值都必须不为null(为什么)
 
-```Java
+```java
     /**
      * Maps the specified key to the specified value in this table.
      * Neither the key nor the value can be null.
@@ -360,7 +360,7 @@ __putVal是真正执行插入操作的方法__
 * 第三个参数为true时代表插入的键值必须不存在，否则不会更新原值，而是返回null
 * 
 
-```Java
+```java
     /** Implementation for put and putIfAbsent */
     final V putVal(K key, V value, boolean onlyIfAbsent) {
         if (key == null || value == null) throw new NullPointerException();
@@ -455,7 +455,7 @@ __initTable方法用于初始化hashtable__
 * sizeCtl字段的值代表的就是初始化的hashtable的大小
 * 初始化过程仅能通过一个线程来完成
 
-```Java
+```java
     /**
      * Initializes table, using the size recorded in sizeCtl.
      */
@@ -495,7 +495,7 @@ __transfer方法用于hashtable的扩张__
 * 利用transferIndex字段来串行化槽位的分配
 * 表大小始终保持为2的幂次，在表的扩张中起到非常重要的作用。原槽位中的节点仅有两个去向，一个就是原槽位i，另一个就是i+n/2，其中n是新表大小
 
-```Java
+```java
     /**
      * Moves and/or copies the nodes in each bin to new table. See
      * above for explanation.
@@ -669,7 +669,7 @@ __transfer方法用于hashtable的扩张__
 
 __addCount方法用于更新键值对计数值baseCount__
 
-```Java
+```java
     /**
      * Adds to count, and if table is too small and not already
      * resizing, initiates transfer. If already resizing, helps
@@ -727,7 +727,7 @@ __addCount方法用于更新键值对计数值baseCount__
 
 __fullAddCount方法用于__
 
-```Java
+```java
     //See LongAdder version for explanation
     private final void fullAddCount(long x, boolean wasUncontended) {
         int h;
@@ -819,7 +819,7 @@ __fullAddCount方法用于__
 
 __sumCount方法用于__
 
-```Java
+```java
     final long sumCount() {
         CounterCell[] as = counterCells; CounterCell a;
         long sum = baseCount;

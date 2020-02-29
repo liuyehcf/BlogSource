@@ -18,7 +18,7 @@ __Letter Combinations of a Phone Number__
 
 > Given a digit string, return all possible letter combinations that the number could represent.
 
-```Java
+```java
 public class Solution {
 
     String[] mappings = new String[]{
@@ -75,7 +75,7 @@ __Combination Sum__
 
 > The same repeated number may be chosen from C unlimited number of times.
 
-```Java
+```java
 public class Solution {
     public List<List<Integer>> combinationSum(int[] candidates, int target) {
         Arrays.sort(candidates);
@@ -119,7 +119,7 @@ __Permutations__
 
 > Given a collection of distinct numbers, return all possible permutations.
 
-```Java
+```java
 public class Solution {
     public List<List<Integer>> permute(int[] nums) {
 
@@ -164,7 +164,7 @@ __Subsets__
 
 > Given a set of distinct integers, nums, return all possible subsets.
 
-```Java
+```java
 class Solution {
     public List<List<Integer>> subsets(int[] nums) {
       List<List<Integer>> res = new ArrayList<List<Integer>>();
@@ -200,7 +200,7 @@ __Word Search__
 
 > The word can be constructed from letters of sequentially adjacent cell, where "adjacent" cells are those horizontally or vertically neighboring. The same letter cell may not be used more than once.
 
-```Java
+```java
 class Solution {
     public boolean exist(char[][] board, String word) {
         int m, n;
@@ -250,7 +250,7 @@ __Subsets II__
 
 > Given a collection of integers that might contain duplicates, nums, return all possible subsets.
 
-```Java
+```java
 public class Solution {
     public List<List<Integer>> subsetsWithDup(int[] nums) {
         List<List<Integer>> res = new ArrayList<List<Integer>>();
@@ -290,7 +290,7 @@ ____
 
 > 
 
-```Java
+```java
 ```
 
 -->

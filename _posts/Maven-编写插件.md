@@ -211,7 +211,7 @@ Maven插件项目的POM有两个特殊的地方
 
 在上一步骤中，使用Archetype生成的插件项目包含了一个名为MyMojo的Java文件，将其删除，创建一个CountMojo，其代码如下
 
-```Java
+```java
 package org.liuyehcf;
 
 import org.apache.maven.plugin.AbstractMojo;

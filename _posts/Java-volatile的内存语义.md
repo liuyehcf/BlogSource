@@ -46,7 +46,7 @@ Memory Barrier的其他参考资料
 
 理解volatile特性的一个好方法是把__对volatile变量的单个读/写，看成是使用同一个锁对这些单个读/写操作做了同步__，下面以一个示例来说明
 
-```Java
+```java
 class VolatileFeatureExample {
     volatile long vl = 0L;//使用volatile声明64位的long型变量
 
@@ -66,7 +66,7 @@ class VolatileFeatureExample {
 
 * 假设有多个线程分别调用上面程序的3个方法，这个程序在语义上和下面程序等价
 
-```Java
+```java
 class VolatileFeatureExample {
     long vl = 0L;//64位的long型普通变量
 
@@ -110,7 +110,7 @@ class VolatileFeatureExample {
 
 请看下面的示例
 
-```Java
+```java
 class VolatileExample {
     int a = 0;
 
@@ -221,7 +221,7 @@ __volatile读的内存语义：当读一个volatile变量时，JVM会把该线�
 
 关于问题2和问题4，以如下示例程序进行讲解
 
-```Java
+```java
 class VolatileExample2 {
     volatile int a = 0;
 

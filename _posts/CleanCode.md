@@ -72,7 +72,7 @@ __阅读更多__
     > 返回错误码会导致更深层次的嵌套结构(if嵌套结构)，而且，当返回错误码时，就是要求调用者立刻处理错误
     > 如果使用异常，就能将错误处理代码从主路径代码中分离出来，得到简化
     > 另外，返回错误码通常暗示着某处有个类或者是枚举，如下
-```Java
+```java
 public enum Error {
     OK,
     INVALID,
@@ -99,7 +99,7 @@ public enum Error {
 
 1. 用代码来阐述，有时候只需要创建一个描述与注释所言相同的函数即可
     > 例如
-```Java
+```java
 //Check to see if the employee is eligible for full benefits
 if ((employee.flags & HOURLY_FALG) &&
     (employee.age > 65))
@@ -115,7 +115,7 @@ if (employee.isEligibleForFullBenefits())
 1. 能用函数变量时就别用注释
 1. 括号后面的注释
     > 形如
-```Java
+```java
 if(a == 1){
     while(true){
         //...

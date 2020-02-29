@@ -170,7 +170,7 @@ __注意，如果是Web应用的话，`org.springframework.boot:spring-boot-star
 
 # 4 Controller
 
-```Java
+```java
 package org.liuyehcf.spring.boot.controller;
 
 import org.liuyehcf.spring.boot.dto.LoginRequestDTO;
@@ -227,7 +227,7 @@ public class SampleController {
 
 ## 4.1 DTO
 
-```Java
+```java
 package org.liuyehcf.spring.boot.dto;
 
 /**
@@ -246,7 +246,7 @@ public class LoginRequestDTO {
 }
 ```
 
-```Java
+```java
 package org.liuyehcf.spring.boot.dto;
 
 /**
@@ -277,7 +277,7 @@ public class LoginResponseDTO {
 
 # 5 Application
 
-```Java
+```java
 package org.liuyehcf.spring.boot;
 
 import org.springframework.boot.SpringApplication;
@@ -323,7 +323,7 @@ __核心注解__
 
 这对这种配置，建议直接在Service类的name属性上标记@Value注解。如下
 
-```Java
+```java
 @Component
 public class Service{
     @Value("${my.name}")
@@ -351,7 +351,7 @@ public class Service{
 
 对于这种配置，也可以在构造方法的参数列表中加上@Value注解，以及@Autowired注解。如下
 
-```Java
+```java
 @Component
 public class Service{
     public Service(@Value("${my.name}") String name,
@@ -402,7 +402,7 @@ __注意，构造方法注入对象，只能用@Autowired而不能用@Resource__
 
 对于这种三方类而言，我们没法在源码上增加注解来注入属性或者对象，我们可以通过@Bean注解来配置。如下
 
-```Java
+```java
 @Configuration
 @MapperScan(basePackages = "org.liuyehcf", sqlSessionFactoryRef = "sqlSessionFactory")
 @EnableTransactionManagement
@@ -460,7 +460,7 @@ __此外，`<tx:annotation-driven transaction-manager="dataSourceTransactionMana
 
 对于FactoryBean，我们仍然可以像配置普通Bean一样配置它。__注意必须返回FactoryBean（不要调用getObject()返回Bean对象）__，如果这个FactoryBean实现了一些Aware接口，那么在生成FactoryBean对象时会进行一些额外操作，然后再调用getObject方法创建Bean
 
-```Java
+```java
 @Configuration
 public class FactoryBeanAppConfig {
   
@@ -531,7 +531,7 @@ __我们可以用`@ComponentScan`注解的`excludeFilters`属性来实现这个�
 
 __配置示例：排除项目中的数据源配置__
 
-```Java
+```java
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {TestApplication.class})
@@ -640,7 +640,7 @@ __答案就是基于约定，`Spring`会默认加载`classpath:META-INF/spring.f
 
 当我采用第二种pom文件时（__不继承spring boot的pom文件__），启动时会产生如下异常信息
 
-```Java
+```java
 ...
 Caused by: java.lang.NoSuchMethodError: org.springframework.web.accept.ContentNegotiationManagerFactoryBean.build()Lorg/springframework/web/accept/ContentNegotiationManager;
 ...

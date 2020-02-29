@@ -38,7 +38,7 @@ __阅读更多__
 
 通过代码构建SqlSessionFactory，需要自己构造Configuration对象，Configuration对象包含了一些基本的配置信息
 
-```Java
+```java
         //构建数据库连接池
         PooledDataSource dataSource = new PooledDataSource();
         dataSource.setDriver("com.mysql.jdbc.Driver");
@@ -95,7 +95,7 @@ __阅读更多__
 </configuration>
 ```
 
-```Java
+```java
         String resource = "mybatis-config.xml";
         InputStream inputStream = Resources.getResourceAsStream(resource);
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
@@ -112,7 +112,7 @@ SqlSession是一个接口类，在MyBatis中SqlSession接口的实现类有两�
 
 SqlSession接口类似于一个JDBC中的Connection接口对象，我们需要保证每次使用完正常关闭它，所以正确的做法是把关闭SqlSession接口的代码写在finally语句中保证每次都会关闭SqlSession，让连接资源归还给数据库
 
-```Java
+```java
         SqlSession sqlSession = null;
         try {
             //打开SqlSession会话
@@ -173,7 +173,7 @@ MyBatis配置XML文件的层次结构如下
 
 ### 2.1.1 系统别名
 
-```Java
+```java
 public TypeAliasRegistry() {
     registerAlias("string", String.class);
 
@@ -257,7 +257,7 @@ public TypeAliasRegistry() {
 
 __我们可以通过@Alias自定义别名，如下：__
 
-```Java
+```java
 @Alias("role")
 public class Role{
     //some code
@@ -426,7 +426,7 @@ __MyBatis配置文件`sqlMapConfig.xml`如下__
 
 事实上，SqlSessionFactoryBean已经可以通过Spring IoC配置了，因此，我们完全可以通过Spring IoC来代替原来的配置。SqlSessionFactoryBean包含如下字段
 
-```Java
+```java
     private Resource configLocation;
 
     private Configuration configuration;

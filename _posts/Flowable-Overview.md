@@ -184,7 +184,7 @@ __XML representation__
 <startEvent id="start" name="my start event" />
 ```
 
-```Java
+```java
 ProcessInstance processInstance = runtimeService.startProcessInstanceByXXX();
 ```
 

@@ -38,13 +38,13 @@ __分析用到的Demo源码详见{% post_link MyBatis-Demo %}__
 
 __分析起点__
 
-```Java
+```java
 SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
 ```
 
 MyBatis采用建造者模式来创建SqlSessionFactory，SqlSessionFactoryBuilder就是一个建造者，我们首先来看一下build方法
 
-```Java
+```java
     public SqlSessionFactory build(InputStream inputStream) {
         return build(inputStream, null, null);
     }
@@ -77,7 +77,7 @@ __至此，配置文件的生命周期已经结束，所有的配置信息都保
 
 接着，我们回到SqlSessionFactoryBuilder的build方法中，继续看同名的build方法，该方法返回一个SqlSessionFactory的对象
 
-```Java
+```java
     public SqlSessionFactory build(Configuration config) {
         return new DefaultSqlSessionFactory(config);
     }
@@ -85,7 +85,7 @@ __至此，配置文件的生命周期已经结束，所有的配置信息都保
 
 DefaultSqlSessionFactory的构造方法如下
 
-```Java
+```java
     private final Configuration configuration;
 
     public DefaultSqlSessionFactory(Configuration configuration) {
@@ -102,7 +102,7 @@ DefaultSqlSessionFactory的构造方法如下
 
 SqlSessionFactoryBuilder.build方法中调用了XMLConfigBuilder.parse方法来创建Configuration对象，主干源码如下：
 
-```Java
+```java
     public Configuration parse() {
         if (parsed) {
             throw new BuilderException("Each XMLConfigBuilder can only be used once.");
@@ -144,7 +144,7 @@ SqlSessionFactoryBuilder.build方法中调用了XMLConfigBuilder.parse方法来�
 
 我们着重看一下Mapper初始化过程，对应于XMLConfigBuilder.mapperElement方法
 
-```Java
+```java
     private void mapperElement(XNode parent) throws Exception {
         if (parent != null) {
             for (XNode child : parent.getChildren()) {
@@ -200,7 +200,7 @@ SqlSessionFactoryBuilder.build方法中调用了XMLConfigBuilder.parse方法来�
 
 接下来，我们看一下XMLMapperBuilder.parse方法
 
-```Java
+```java
     public void parse() {
         if (!configuration.isResourceLoaded(resource)) {
             //解析元素
@@ -221,7 +221,7 @@ SqlSessionFactoryBuilder.build方法中调用了XMLConfigBuilder.parse方法来�
 
 首先，我们来看一下configurationElement方法，该方法用于解析映射器配置文件，读入相应的配置信息
 
-```Java
+```java
     private void configurationElement(XNode context) {
         try {
             String namespace = context.getStringAttribute("namespace");
@@ -245,7 +245,7 @@ SqlSessionFactoryBuilder.build方法中调用了XMLConfigBuilder.parse方法来�
 
 其次，bindMapperForNamespace方法为映射器绑定命名空间（namespace）
 
-```Java
+```java
     private void bindMapperForNamespace() {
         //获取刚才读入的命名空间的配置信息
         String namespace = builderAssistant.getCurrentNamespace();
@@ -276,7 +276,7 @@ SqlSessionFactoryBuilder.build方法中调用了XMLConfigBuilder.parse方法来�
 
 继续看Configuration.addMapper方法
 
-```Java
+```java
     public <T> void addMapper(Class<T> type) {
         mapperRegistry.addMapper(type);
     }
@@ -284,7 +284,7 @@ SqlSessionFactoryBuilder.build方法中调用了XMLConfigBuilder.parse方法来�
 
 Configuration.addMapper将任务转交给了MapperRegistry的同名方法，MapperRegistry这个类就是用于管理Mapper注册信息的。我们继续看MapperRegistry.addMapper方法
 
-```Java
+```java
     public <T> void addMapper(Class<T> type) {
         //只有当type是接口时，才会对其进行管理
         if (type.isInterface()) {
@@ -318,7 +318,7 @@ Configuration.addMapper将任务转交给了MapperRegistry的同名方法，Mapp
 
 注意一下，__MyBatis`不要求`映射器配置文件的namespace必须对应着一个接口__。如果namespace不是一个接口的话，无法使用Mapper方式来操作SQL，不过还是能通过iBatis的方式进行SQL操作，例如
 
-```Java
+```java
 sqlSession.selectList("some-namespace.update", map);
 ```
 
@@ -326,13 +326,13 @@ sqlSession.selectList("some-namespace.update", map);
 
 __分析起点__
 
-```Java
+```java
 sqlSession = sqlSessionFactory.openSession();
 ```
 
 一般而言，SqlSessionFactory的实现类就是DefaultSqlSessionFactory，于是，我们来看一下DefaultSqlSessionFactory的openSession方法
 
-```Java
+```java
     public SqlSession openSession() {
         return openSessionFromDataSource(configuration.getDefaultExecutorType(), null, false);
     }
@@ -346,7 +346,7 @@ sqlSession = sqlSessionFactory.openSession();
 
 我们继续看openSessionFromDataSource方法，该方法也位于DefaultSqlSessionFactory中
 
-```Java
+```java
     private SqlSession openSessionFromDataSource(ExecutorType execType, TransactionIsolationLevel level, boolean autoCommit) {
         Transaction tx = null;
         try {
@@ -377,7 +377,7 @@ sqlSession = sqlSessionFactory.openSession();
 
 这里这个TransactionFactory的实现类是JdbcTransactionFactory
 
-```Java
+```java
     public Transaction newTransaction(DataSource ds, TransactionIsolationLevel level, boolean autoCommit) {
         return new JdbcTransaction(ds, level, autoCommit);
     }
@@ -385,7 +385,7 @@ sqlSession = sqlSessionFactory.openSession();
 
 接着，我们来看一下JdbcTransaction的类结构（这里列出了所有字段，以及一部分方法）
 
-```Java
+```java
 public class JdbcTransaction implements Transaction {
     //...
 
@@ -454,7 +454,7 @@ public class JdbcTransaction implements Transaction {
 
 接着，我们回到DefaultSqlSessionFactory.openSessionFromDataSource方法中，看一下执行器的生成
 
-```Java
+```java
     public Executor newExecutor(Transaction transaction, ExecutorType executorType) {
         executorType = executorType == null ? defaultExecutorType : executorType;
         executorType = executorType == null ? ExecutorType.SIMPLE : executorType;
@@ -492,7 +492,7 @@ Executor
 
 接下来看一下SimpleExecutor的构造方法，以及父类BaseExecutor的构造方法
 
-```Java
+```java
     public SimpleExecutor(Configuration configuration, Transaction transaction) {
         super(configuration, transaction);
     }
@@ -512,7 +512,7 @@ Executor
 
 现在，我们再次回到DefaultSqlSessionFactory.openSessionFromDataSource方法中，看一下SqlSession的创建，这里创建了一个DefaultSqlSession，持有了刚才创建好的Configuration以及Executor对象
 
-```Java
+```java
     public DefaultSqlSession(Configuration configuration, Executor executor, boolean autoCommit) {
         this.configuration = configuration;
         this.executor = executor;
@@ -532,13 +532,13 @@ __分析起点__
 
 首先，我们要明确，__每次__我们通过SqlSession接口的getMapper方法获取Mapper时，MyBatis就会为我们创建一个Mapper的代理对象
 
-```Java
+```java
 CrmUserDAO mapper = sqlSession.getMapper(CrmUserDAO.class);
 ```
 
 以DefaultSqlSession为例，getMapper方法如下
 
-```Java
+```java
     public <T> T getMapper(Class<T> type) {
         return configuration.<T>getMapper(type, this);
     }
@@ -546,7 +546,7 @@ CrmUserDAO mapper = sqlSession.getMapper(CrmUserDAO.class);
 
 继续跟踪Configuration的同名方法
 
-```Java
+```java
     public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
         return mapperRegistry.getMapper(type, sqlSession);
     }
@@ -562,7 +562,7 @@ CrmUserDAO mapper = sqlSession.getMapper(CrmUserDAO.class);
 
 在Configuration对象创建的分析中，我们已经分析过了knownMappers的添加流程，关键逻辑在MapperRegistry.addMapper方法中，这里不再赘述
 
-```Java
+```java
     public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
         //首先从缓存中，依据Class对象获取到MapperProxyFactory的实例
         final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);
@@ -581,7 +581,7 @@ CrmUserDAO mapper = sqlSession.getMapper(CrmUserDAO.class);
 
 接下来，我们看下这个MapperProxyFactory是如何为我们创建代理对象的
 
-```Java
+```java
     public T newInstance(SqlSession sqlSession) {
         //这个MapperProxy实现了InvocationHandler，即JDK动态代理的核心接口
         final MapperProxy<T> mapperProxy = new MapperProxy<T>(sqlSession, mapperInterface, methodCache);
@@ -596,7 +596,7 @@ CrmUserDAO mapper = sqlSession.getMapper(CrmUserDAO.class);
 
 这个MapperProxy实现了InvocationHandler，即JDK动态代理的核心接口，因此这个MapperProxy包含了代理了的核心逻辑，该类源码如下
 
-```Java
+```java
 package org.apache.ibatis.binding;
 
 import java.io.Serializable;
@@ -694,7 +694,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
 
 接着，我们看一下MapperMethod的构造方法
 
-```Java
+```java
     private final SqlCommand command;
     private final MethodSignature method;
 
@@ -708,7 +708,7 @@ MapperMethod的构造方法初始化了两个字段，其类型为SqlCommand和M
 
 SqlCommand如下，该类的主要作用就是获取一条SQL语句的名字（映射器`namespace.id`）以及SQL的类型（SELECT、INSERT等）
 
-```Java
+```java
     public static class SqlCommand {
 
         private final String name;
@@ -770,7 +770,7 @@ SqlCommand如下，该类的主要作用就是获取一条SQL语句的名字（�
 
 MethodSignature如下，该类的主要作用就是封装一个Method（映射器的Java接口的方法）的各类信息，__还包含了一个重要的方法convertArgsToSqlCommandParam，该方法定义了参数的映射方法（参数的传递方式），也是@Param注解生效的地方__
 
-```Java
+```java
     public static class MethodSignature {
 
         //返回值是一个列表
@@ -884,7 +884,7 @@ MethodSignature如下，该类的主要作用就是封装一个Method（映射�
 
 paramNameResolver是一个非常重要的字段，其类型是ParamNameResolver。SQL上下文参数的解析与传递就依赖于这个对象，我们看下这个类是如何实现的
 
-```Java
+```java
 public class ParamNameResolver {
 
     //通用参数名前缀
@@ -1025,7 +1025,7 @@ __参数映射规则__
 
 接下来，我们看一下MapperMethod.execute方法
 
-```Java
+```java
     public Object execute(SqlSession sqlSession, Object[] args) {
         Object result;
         switch (command.getType()) {

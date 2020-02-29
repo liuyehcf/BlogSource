@@ -17,7 +17,7 @@ __阅读更多__
 
 __Slf4jLogFilter的日志级别都是DEBUG的__
 
-```Java
+```java
 @Bean
     public Slf4jLogFilter logFilter() {
         Slf4jLogFilter filter = new Slf4jLogFilter();
@@ -64,7 +64,7 @@ __Slf4jLogFilter的日志级别都是DEBUG的__
 
 StatFilter 与 Slf4jLogFilter 无关，StatFilter有自己的Logger，即
 
-```Java
+```java
 public class StatFilter extends FilterEventAdapter implements StatFilterMBean {
 
     private final static Log          LOG                        = LogFactory.getLog(StatFilter.class);
@@ -73,7 +73,7 @@ public class StatFilter extends FilterEventAdapter implements StatFilterMBean {
 
 示例
 
-```Java
+```java
     @Bean
     public StatFilter statFilter() {
         StatFilter statFilter = new StatFilter();

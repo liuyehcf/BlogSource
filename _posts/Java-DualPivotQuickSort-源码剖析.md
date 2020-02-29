@@ -19,7 +19,7 @@ Java中Arrays.sort排序方法对于基本类型的排序采用的是双轴快�
 
 # 2 常量
 
-```Java
+```java
     /**
      * The maximum number of runs in merge sort.
      */
@@ -77,7 +77,7 @@ Java中Arrays.sort排序方法对于基本类型的排序采用的是双轴快�
 * workBase：
 * workLen
 
-```Java
+```java
     /**
      * Sorts the specified range of the array using the given
      * workspace array slice if possible for merging
@@ -240,7 +240,7 @@ op3->en3
 * right：待排序序列范围的右边界
 * leftmost：指定范围是否在数组最左边
 
-```Java
+```java
     /**
      * Sorts the specified range of the array by Dual-Pivot Quicksort.
      *

@@ -29,7 +29,7 @@ mock测试就是在测试过程中，对于某些不容易构造或者不容易�
 1. 设定EasyMock的相应逻辑，即打桩
 1. 调用mock对象的相应逻辑
 
-```Java
+```java
 interface Human {
     boolean isMale(String name);
 }
@@ -52,7 +52,7 @@ public class TestEasyMock {
 
 以下是输出
 
-```Java
+```java
 true
 true
 java.lang.AssertionError: 
@@ -72,7 +72,7 @@ Disconnected from the target VM, address: '127.0.0.1:59825', transport: 'socket'
 
 首先来看一下静态方法`EasyMock.createMock`，该方法返回一个Mock对象(给定接口的实例)
 
-```Java
+```java
     /**
      * Creates a mock object that implements the given interface, order checking
      * is disabled by default.
@@ -91,7 +91,7 @@ Disconnected from the target VM, address: '127.0.0.1:59825', transport: 'socket'
 
 其中`createMock`是`IMocksControl`接口的方法。该方法接受Class对象，并返回Class对象所代表类型的实例
 
-```Java
+```java
     /**
      * Creates a mock object that implements the given interface.
      * 
@@ -108,7 +108,7 @@ Disconnected from the target VM, address: '127.0.0.1:59825', transport: 'socket'
 
 了解了createMock接口定义后，我们来看看具体的实现(`MocksControl#createMock`)
 
-```Java
+```java
     public <T> T createMock(final Class<T> toMock) {
         try {
             state.assertRecordState();
@@ -125,7 +125,7 @@ Disconnected from the target VM, address: '127.0.0.1:59825', transport: 'socket'
 
 IProxyFactory接口有两个实现，JavaProxyFactory(JDK动态代理)和ClassProxyFactory(Cglib)。我们以JavaProxyFactory为例进行讲解，动态代理的实现不是本篇博客的重点。下面给出`JavaProxyFactory#createProxy`方法的源码
 
-```Java
+```java
     public T createProxy(final Class<T> toMock, final InvocationHandler handler) {
         //就是简单调用了JDK动态代理的接口，没有任何难度
         return (T) Proxy.newProxyInstance(toMock.getClassLoader(), new Class[] { toMock }, handler);
@@ -134,7 +134,7 @@ IProxyFactory接口有两个实现，JavaProxyFactory(JDK动态代理)和ClassPr
 
 我们再来回顾一下上述例子中的代码，我们发现一个很奇怪的现象。在EasyMock.replay方法前后，调用mock.isMale所产生的行为是不同的。__在这里EasyMock.replay类似于一个开关__，可以改变mock对象的行为。可是这是如何做到的呢？
 
-```Java
+```java
         //这里调用mock的isMale方法不会抛出异常
         EasyMock.expect(mock.isMale("Bob")).andReturn(true);
         EasyMock.expect(mock.isMale("Alice")).andReturn(true);
@@ -150,7 +150,7 @@ IProxyFactory接口有两个实现，JavaProxyFactory(JDK动态代理)和ClassPr
 
 生成代理对象的方法分析(`IMocksControl#createMock`)我们先暂时放在一边，我们现在先来跟踪一下`EasyMock.replay`方法的执行逻辑。源码如下
 
-```Java
+```java
     /**
      * Switches the given mock objects (more exactly: the controls of the mock
      * objects) to replay mode. For details, see the EasyMock documentation.
@@ -168,7 +168,7 @@ IProxyFactory接口有两个实现，JavaProxyFactory(JDK动态代理)和ClassPr
 
 源码的官方注释中提到，该方法用于切换mock对象的控制模式。再来看下`EasyMock.getControl`方法
 
-```Java
+```java
     private static MocksControl getControl(final Object mock) {
         return ClassExtensionHelper.getControl(mock);
     }
@@ -197,7 +197,7 @@ IProxyFactory接口有两个实现，JavaProxyFactory(JDK动态代理)和ClassPr
 
 注意到ObjectMethodsFilter是InvocationHandler接口的实现，而ObjectMethodsFilter内部(delegate字段)又封装了一个InvocationHandler接口的实现，其类型是MockInvocationHandler。下面给出`MockInvocationHandler`的源码
 
-```Java
+```java
 public final class MockInvocationHandler implements InvocationHandler, Serializable {
 
     private static final long serialVersionUID = -7799769066534714634L;
@@ -235,7 +235,7 @@ public final class MockInvocationHandler implements InvocationHandler, Serializa
 
 再回到`EasyMock.replay`方法中，getControl(mock)方法返回后调用`MocksControl#replay`方法，下面给出`MocksControl#replay`的源码
 
-```Java
+```java
     public void replay() {
         try {
             state.replay();

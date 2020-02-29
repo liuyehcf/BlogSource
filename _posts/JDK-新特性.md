@@ -138,7 +138,7 @@ JDK1.7可以在数值类型的变量里添加下滑线
 
 例如：
 
-```Java
+```java
         String status = "orderState";
         switch (status) {
             case "ordercancel":
@@ -158,7 +158,7 @@ try-with-resources是一个定义了一个或多个资源的try声明，这个�
 
 可以使用try-with-resources的资源有：任何实现了java.lang.AutoCloseable接口java.io.Closeable接口的对象。例如：
 
-```Java
+```java
     public static String readFirstLineFromFile(String path) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             return br.readLine();
@@ -170,7 +170,7 @@ try-with-resources是一个定义了一个或多个资源的try声明，这个�
 
 ## 3.5 捕获多种异常并用改进后的类型检查来重新抛出异常
 
-```Java
+```java
     public static void first() {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(""));
@@ -191,7 +191,7 @@ try-with-resources是一个定义了一个或多个资源的try声明，这个�
 
 ## 3.7 新增一些取环境信息的工具方法
 
-```Java
+```java
         File System.getUserHomeDir() //当前用户目录
         File System.getUserDir() //启动java进程时所在的目录5
         File System.getJavaIoTempDir() //IO临时文件夹
@@ -200,7 +200,7 @@ try-with-resources是一个定义了一个或多个资源的try声明，这个�
 
 ## 3.8 安全的加减乘除
 
-```Java
+```java
     int Math.safeToInt(long value)
     int Math.safeNegate(int value)
     long Math.safeSubtract(long value1, int value2)

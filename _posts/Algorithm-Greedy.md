@@ -22,7 +22,7 @@ __Jump Game__
 
 > Determine if you are able to reach the last index.
 
-```Java
+```java
 public class Solution {
     public boolean canJump(int[] nums) {
         if (nums == null || nums.length == 0) return false;
@@ -53,7 +53,7 @@ ____
 
 > 
 
-```Java
+```java
 ```
 
 -->

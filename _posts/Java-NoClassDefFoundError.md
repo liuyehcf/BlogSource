@@ -16,7 +16,7 @@ __阅读更多__
 
 一个类的静态域或者静态块在初始化的过程中，如果抛出异常，那么在类加载的时候将会抛出`java.lang.ExceptionInInitializerError`。__如果用try-catch语句捕获该异常__，那么在使用该类的时候就会抛出`java.lang.NoClassDefFoundError`，且提示信息是`Could not initialize class XXX`
 
-```Java
+```java
 package org.liuyehcf.error;
 
 public class NoClassDefFoundErrorDemo {
@@ -48,7 +48,7 @@ class InitializeThrowError {
 
 在执行代码清单中的`(2)`时，发现JVM调用了如下方法，该方法位于`java.lang.Thread`中
 
-```Java
+```java
     /**
      * Dispatch an uncaught exception to the handler. This method is
      * intended to be called only by the JVM.
@@ -68,7 +68,7 @@ __可以看到，异常是由JVM抛出，并且调用了一个Java实现的handl
 1. 执行语句2，再一次遇到类型A，在JVM维护的内部数据结构中，通过类加载器实例（当前类加载器，即AppClassLoader）以及全限定名定位Class实例，发现命中，则不触发加载过程，然后JVM调用Java代码（A的构造方法）创建实例
 1. 执行语句3，JVM调用java代码
 
-```Java
+```java
     A a1 = new A();//(1)
     A a2 = new A();//(2)
     a2.func();//(3)

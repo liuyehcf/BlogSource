@@ -48,7 +48,7 @@ RecursiveAction与RecursiveTask的区别在于：
 1. RecursiveAction执行的任务没有结果
 1. RecursiveTask执行的任务有结果
 
-```Java
+```java
 public abstract class RecursiveAction extends ForkJoinTask<Void> {
     private static final long serialVersionUID = 5232453952276485070L;
 
@@ -84,7 +84,7 @@ public abstract class RecursiveAction extends ForkJoinTask<Void> {
 
 RecursiveTask源码如下，比较简单。其compute方法需要子类来实现，compute方法主要用于定义运算逻辑以及fork和join的逻辑，即定义何时该fork何时该join。for和join方法详见ForkJoinTask的源码分析
 
-```Java
+```java
 public abstract class RecursiveTask<V> extends ForkJoinTask<V> {
     private static final long serialVersionUID = 5232453952276485270L;
 
@@ -122,7 +122,7 @@ public abstract class RecursiveTask<V> extends ForkJoinTask<V> {
 
 ## 3.1 常量
 
-```Java
+```java
     static final int DONE_MASK   = 0xf0000000;  //mask out non-completion bits
     static final int NORMAL      = 0xf0000000;  //must be negative
     static final int CANCELLED   = 0xc0000000;  //must be < NORMAL
@@ -140,7 +140,7 @@ public abstract class RecursiveTask<V> extends ForkJoinTask<V> {
 
 ## 3.2 字段
 
-```Java
+```java
     volatile int status; //accessed directly by pool and workers
 ```
 
@@ -150,7 +150,7 @@ public abstract class RecursiveTask<V> extends ForkJoinTask<V> {
 
 ### 3.3.1 fork
 
-```Java
+```java
     /**
      * Arranges to asynchronously execute this task in the pool the
      * current task is running in, if applicable, or using the {@link
@@ -181,7 +181,7 @@ public abstract class RecursiveTask<V> extends ForkJoinTask<V> {
 
 ### 3.3.2 join
 
-```Java
+```java
     /**
      * Returns the result of the computation when it {@link #isDone is
      * done}.  This method differs from {@link #get()} in that
@@ -205,7 +205,7 @@ public abstract class RecursiveTask<V> extends ForkJoinTask<V> {
 
 doJoin方法执行具体的join逻辑，即合并各个线程执行任务的结果
 
-```Java
+```java
     /**
      * Implementation for join, get, quietlyJoin. Directly handles
      * only cases of already-completed, external wait, and
@@ -237,7 +237,7 @@ doJoin方法执行具体的join逻辑，即合并各个线程执行任务的结�
 
 为什么RecursiveAction与RecursiveTask需要对exec()方法再做一层封装？因为exec()方法是有返回值的，而RecursiveAction与RecursiveTask为了提供不同的语义，需要对外暴露不同的compute方法(其返回类型不同)，因此不能直接暴露exec方法给用户
 
-```Java
+```java
     /**
      * Primary execution method for stolen tasks. Unless done, calls
      * exec and records status if completed, but doesn't wait for
@@ -264,7 +264,7 @@ doJoin方法执行具体的join逻辑，即合并各个线程执行任务的结�
 
 #### 3.3.2.3 externalAwaitDone
 
-```Java
+```java
     /**
      * Blocks a non-worker-thread until completion.
      * @return status upon completion
@@ -300,7 +300,7 @@ doJoin方法执行具体的join逻辑，即合并各个线程执行任务的结�
 
 ### 3.3.3 invoke
 
-```Java
+```java
     /**
      * Commences performing this task, awaits its completion if
      * necessary, and returns its result, or throws an (unchecked)
@@ -321,7 +321,7 @@ doJoin方法执行具体的join逻辑，即合并各个线程执行任务的结�
 
 ## 4.1 常量
 
-```Java
+```java
     private static final int  RSLOCK     = 1;
     private static final int  RSIGNAL    = 1 << 1;
     private static final int  STARTED    = 1 << 2;
@@ -339,7 +339,7 @@ doJoin方法执行具体的join逻辑，即合并各个线程执行任务的结�
 
 ## 4.2 字段
 
-```Java
+```java
     volatile long ctl;                   //main pool control
     volatile int runState;               //lockable status
     final int config;                    //parallelism, mode
@@ -355,7 +355,7 @@ doJoin方法执行具体的join逻辑，即合并各个线程执行任务的结�
 
 WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealing)__以及__任务提交(task submission)__。下面即给出WorkQueue的源码，以及注释
 
-```Java
+```java
     static final class WorkQueue {
 
         /**
@@ -870,7 +870,7 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
 
 ### 4.4.1 submit
 
-```Java
+```java
     /**
      * Submits a ForkJoinTask for execution.
      *
@@ -893,7 +893,7 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
 
 #### 4.4.1.1 externalPush
 
-```Java
+```java
     /**
      * Tries to add the given task to a submission queue at
      * submitter's current queue. Only the (vastly) most common path
@@ -937,7 +937,7 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealin
 
 当work数量过少时，signalWork方法用于创建或者激活一些worker
 
-```Java
+```java
     /**
      * Tries to create or activate a worker if too few are active.
      *

@@ -426,7 +426,7 @@ keytool -importkeystore -srckeystore <pkcs12 file> -destkeystore <jks file> -src
 
 ## 3.2 Java-Api
 
-```Java
+```java
 package org.liuyehcf.ssl;
 
 import sun.security.tools.keytool.CertAndKeyGen;
@@ -639,7 +639,7 @@ JKS 密钥库使用专用格式。建议使用 "keytool -importkeystore -srckeys
 
 ## 4.3 SSLServer
 
-```Java
+```java
 package org.liuyehcf.ssl;
 
 import javax.net.ServerSocketFactory;
@@ -715,7 +715,7 @@ public class SSLServer extends Thread {
 
 ## 4.4 SSLClient
 
-```Java
+```java
 package org.liuyehcf.ssl;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -833,7 +833,7 @@ JKS 密钥库使用专用格式。建议使用 "keytool -importkeystore -srckeys
 
 __改造服务端的代码__
 
-```Java
+```java
 ((SSLServerSocket) socket).setNeedClientAuth(false);
 
 // 改为
@@ -928,7 +928,7 @@ KeyIdentifier [
 
 ## 5.3 SSLServer
 
-```Java
+```java
 package org.liuyehcf.ssl;
 
 import javax.net.ServerSocketFactory;
@@ -1004,7 +1004,7 @@ public class SSLServer extends Thread {
 
 ## 5.4 SSLClient
 
-```Java
+```java
 package org.liuyehcf.ssl;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -1116,7 +1116,7 @@ KeyIdentifier [
 
 __改造服务端的代码__
 
-```Java
+```java
 ((SSLServerSocket) socket).setNeedClientAuth(false);
 
 // 改为
@@ -1354,7 +1354,7 @@ keytool -importkeystore -srckeystore server.p12 -destkeystore liuyehcf_server_ks
 
 __Java验证代码__
 
-```Java
+```java
 package org.liuyehcf.netty.https;
 
 import io.netty.bootstrap.ServerBootstrap;

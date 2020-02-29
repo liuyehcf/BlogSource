@@ -18,7 +18,7 @@ __Longest Substring Without Repeating Characters__
 
 > Given a string, find the length of the longest substring without repeating characters.
 
-```Java
+```java
 public class Solution {
     public int lengthOfLongestSubstring(String s) {
         int[] cnt = new int[128];
@@ -49,7 +49,7 @@ __Longest Palindromic Substring__
 
 > Given a string s, find the longest palindromic substring in s. You may assume that the maximum length of s is 1000.
 
-```Java
+```java
 public class Solution {
     private int left;
 
@@ -90,7 +90,7 @@ __错误的版本__
 
 * 反例：`[(])`
 
-```Java
+```java
 public class Solution {
     public boolean isValid(String s) {
         int[] cnt = new int[3];
@@ -120,7 +120,7 @@ public class Solution {
 
 __正确的版本__
 
-```Java
+```java
 public class Solution {
     public boolean isValid(String s) {
         LinkedList<Character> stack = new LinkedList<Character>();
@@ -154,7 +154,7 @@ __Generate Parentheses__
 
 > Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
 
-```Java
+```java
 public class Solution {
     public List<String> generateParenthesis(int n) {
         List<String> res = new ArrayList<String>();
@@ -201,7 +201,7 @@ __Longest Valid Parentheses__
 
 __超时的版本__
 
-```Java
+```java
 public class Solution {
     public int longestValidParentheses(String s) {
         int[] dp = new int[s.length() + 1];
@@ -237,7 +237,7 @@ public class Solution {
 
 __改进后的版本__
 
-```Java
+```java
 public class Solution {
     public int longestValidParentheses(String s) {
         int[] dp = new int[s.length() + 1];
@@ -276,7 +276,7 @@ __Group Anagrams__
 
 > For example, given: `["eat", "tea", "tan", "ate", "nat", "bat"]`
 
-```Java
+```java
 public class Solution {
     public List<List<String>> groupAnagrams(String[] strs) {
         List<List<String>> res = new ArrayList<>();
@@ -330,7 +330,7 @@ ____
 
 > 
 
-```Java
+```java
 ```
 
 -->

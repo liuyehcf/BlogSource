@@ -48,7 +48,7 @@ __Median of Two Sorted Arrays__
 
 > Find the median of the two sorted arrays. The overall run time complexity should be `O(log (m+n))`.
 
-```Java
+```java
 public class Solution {
     public double findMedianSortedArrays(int[] nums1, int[] nums2) {
         int len = nums1.length + nums2.length;
@@ -85,7 +85,7 @@ __Search in Rotated Sorted Array__
 
 __版本1__
 
-```Java
+```java
 public class Solution {
     public int search(int[] nums, int target) {
         if (nums == null || nums.length == 0) return -1;
@@ -118,7 +118,7 @@ public class Solution {
 
 __版本2__
 
-```Java
+```java
 public class Solution {
     public int search(int[] nums, int target) {
         if (nums == null || nums.length == 0) return -1;
@@ -159,7 +159,7 @@ __Search for a Range__
 
 > If the target is not found in the array, return `[-1, -1]`.
 
-```Java
+```java
 public class Solution {
     public int[] searchRange(int[] nums, int target) {
         return new int[]{leftBoundary(nums, target), rightBoundary(nums, target)};
@@ -214,7 +214,7 @@ __Search Insert Position__
 
 > Given a sorted array and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.
 
-```Java
+```java
 public class Solution {
     public int searchInsert(int[] nums, int target) {
         if (nums.length == 0) return 0;
@@ -244,7 +244,7 @@ __`Pow(x, n)`__
 
 > Implement `pow(x, n)`.
 
-```Java
+```java
 public class Solution {
     public double myPow(double x, int n) {
         if (n == 0) return 1;
@@ -268,7 +268,7 @@ __Search a 2D Matrix__
 > * Integers in each row are sorted from left to right.
 > * The first integer of each row is greater than the last integer of the previous row.
 
-```Java
+```java
 public class Solution {
     public boolean searchMatrix(int[][] matrix, int target) {
         if (matrix.length == 0 || matrix[0].length == 0) return false;
@@ -309,7 +309,7 @@ public class Solution {
 
 以下这种方法的思路是，先往上升row，然后再减col。不可能出现先递减col再递增row然后找到target的情况，因为递减col说明`target < matrix[row][col]`，那么`matrix[row][col] < matrix[row+1][?]`，因此`target < matrix[row+1][?]`
 
-```Java
+```java
 public class Solution {
     public boolean searchMatrix(int[][] matrix, int target) {
         if (matrix.length == 0 || matrix[0].length == 0) return false;
@@ -343,7 +343,7 @@ __Search in Rotated Sorted Array II__
 
 __版本1__
 
-```Java
+```java
 public class Solution {
     public boolean search(int[] nums, int target) {
         if (nums == null || nums.length == 0) return false;
@@ -378,7 +378,7 @@ public class Solution {
 
 __版本2__
 
-```Java
+```java
 public class Solution {
     public boolean search(int[] nums, int target) {
         if (nums == null || nums.length == 0) return false;
@@ -423,7 +423,7 @@ __Find Minimum in Rotated Sorted Array__
 
 如果一个数组经过了循环位移，那么存在两段单调序列，最小值必然位于第二段单调序列中。二分查找时，必须保证[left,right]包含两个序列，或者位于第二个单调序列中
 
-```Java
+```java
 public class Solution {
     public int findMin(int[] nums) {
         int left = 0, right = nums.length - 1;
@@ -458,7 +458,7 @@ __变体1：查找最大值__
 
 > 最大值必定位于第一段序列中。二分查找时，必须保证[left,right]包含两个序列，或者位于第一个单调序列中
 
-```Java
+```java
 ...
 while (left < right) {
     int mid = left + (right - left >> 1);
@@ -477,7 +477,7 @@ __变体2：递增序列改为递减序列，然后查找最小值__
 
 > 最小值必定位于第一段序列中。二分查找时，必须保证[left,right]包含两段序列，或者位于第一个单调序列中
 
-```Java
+```java
 ...
 while (left < right) {
     int mid = left + (right - left >> 1);
@@ -496,7 +496,7 @@ __变体3：递增序列改为递减序列，然后查找最大值__
 
 > 最大值必定位于第二段序列中。二分查找时，必须保证[left,right]包含两端序列，或者位于第二个单调序列中
 
-```Java
+```java
 ...
 while (left < right) {
     int mid = left + (right - left >> 1);
@@ -523,7 +523,7 @@ __Find Minimum in Rotated Sorted Array II__
 
 这题思路与153一样，只是在nums[mid]与nums[right]相等时特殊处理一下，因为此时并不知道mid位于哪一段
 
-```Java
+```java
 public class Solution {
     public int findMin(int[] nums) {
         int left = 0, right = nums.length - 1;
@@ -562,7 +562,7 @@ __Two Sum II - Input array is sorted__
 
 > You may assume that each input would have exactly one solution and you may not use the same element twice.
 
-```Java
+```java
 public class Solution {
     public int[] twoSum(int[] nums, int target) {
         for (int i = 0; i < nums.length - 1; i++) {
@@ -603,7 +603,7 @@ __Search a 2D Matrix II__
 > 1. Integers in each row are sorted in ascending from left to right.
 > 1. Integers in each column are sorted in ascending from top to bottom.
 
-```Java
+```java
 public class Solution {
     public boolean searchMatrix(int[][] matrix, int target) {
         if (matrix.length == 0) return false;
@@ -638,7 +638,7 @@ ____
 
 > 
 
-```Java
+```java
 ```
 
 -->

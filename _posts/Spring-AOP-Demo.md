@@ -75,7 +75,7 @@ __阅读更多__
 
 ## 2.2 AOP配置类
 
-```Java
+```java
 package org.liuyehcf.spring.aop;
 
 import org.aspectj.lang.JoinPoint;
@@ -189,7 +189,7 @@ Spring会根据配置的匹配规则，__为匹配成功的bean创建代理__，
 
 SimpleMethodInterceptor简单地实现了MethodInterceptor接口，注意必须执行`        Object result = methodInvocation.proceed();`这一句
 
-```Java
+```java
 package org.liuyehcf.spring.aop;
 
 import org.aopalliance.intercept.MethodInterceptor;
@@ -209,7 +209,7 @@ public class SimpleMethodInterceptor implements MethodInterceptor {
 
 SimpleBeforeMethodAdvisor实现了MethodBeforeAdvice接口，在Spring启动过程中，SimpleBeforeMethodAdvisor会被封装成MethodInterceptor接口的实现类，本质上还是遵循了MethodInterceptor接口。除此之外，还有MethodAfterAdvice、ThrowAdvice、AfterReturningAdvice
 
-```Java
+```java
 package org.liuyehcf.spring.aop;
 
 import org.springframework.aop.MethodBeforeAdvice;

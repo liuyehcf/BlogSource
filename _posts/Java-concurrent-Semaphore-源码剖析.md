@@ -25,7 +25,7 @@ Sync继承了AbstractQueuedSynchronizer(AQS)，并使用的是AQS中的共享模
 
 > 为什么是共享模式呢？很好理解，因为是许可嘛，假设有多个许可可用，那么肯定同时可能有多个线程来取用这个许可，因此需要的是共享模式
 
-```Java
+```java
     /**
      * Synchronization implementation for semaphore.  Uses AQS state
      * to represent permits. Subclassed into fair and nonfair
@@ -95,7 +95,7 @@ Sync继承了AbstractQueuedSynchronizer(AQS)，并使用的是AQS中的共享模
 
 ## 2.2 内部类NonfairSync
 
-```Java
+```java
     /**
      * NonFair version
      */
@@ -115,7 +115,7 @@ Sync继承了AbstractQueuedSynchronizer(AQS)，并使用的是AQS中的共享模
 
 ## 2.3 内部类
 
-```Java
+```java
     /**
      * Fair version
      */
@@ -149,7 +149,7 @@ Sync继承了AbstractQueuedSynchronizer(AQS)，并使用的是AQS中的共享模
 
 Semaphore仅有一个字段，即上面的内部类Sync的实例。信号量的语义是靠sync来实现的
 
-```Java
+```java
     /** All mechanics via AbstractQueuedSynchronizer subclass */
     private final Sync sync;
 ```
@@ -160,7 +160,7 @@ Semaphore仅有一个字段，即上面的内部类Sync的实例。信号量的�
 
 该构造方法创建指定数量的许可
 
-```Java
+```java
     /**
      * Creates a {@code Semaphore} with the given number of
      * permits and nonfair fairness setting.
@@ -176,7 +176,7 @@ Semaphore仅有一个字段，即上面的内部类Sync的实例。信号量的�
 
 该构造方法创建指定数量的许可，并且指定公平模式还是非公平模式
 
-```Java
+```java
 /**
      * Creates a {@code Semaphore} with the given number of
      * permits and the given fairness setting.
@@ -197,7 +197,7 @@ Semaphore仅有一个字段，即上面的内部类Sync的实例。信号量的�
 
 以可中断的方式获取一个许可，当没有许可时将会阻塞，直到获取许可或者被中断
 
-```Java
+```java
     /**
      * Acquires a permit from this semaphore, blocking until one is
      * available, or the thread is {@linkplain Thread#interrupt interrupted}.
@@ -233,7 +233,7 @@ Semaphore仅有一个字段，即上面的内部类Sync的实例。信号量的�
 
 该方法获取指定数量的许可，本质上与上一个acquire没有区别
 
-```Java
+```java
     /**
      * Acquires the given number of permits from this semaphore,
      * blocking until all are available,
@@ -280,7 +280,7 @@ Semaphore仅有一个字段，即上面的内部类Sync的实例。信号量的�
 
 释放一个许可
 
-```Java
+```java
 
     /**
      * Releases a permit, returning it to the semaphore.
@@ -302,7 +302,7 @@ Semaphore仅有一个字段，即上面的内部类Sync的实例。信号量的�
 
 释放指定数量的许可，与上个方法没有本质上的区别
 
-```Java
+```java
     /**
      * Releases the given number of permits, returning them to the semaphore.
      *

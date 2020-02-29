@@ -38,19 +38,19 @@ Java 中 Lambda 表达式一共有五种基本形式，具体如下：
 
 ①
 
-```Java
+```java
 Runnable noArguments = () -> System.out.println("Hello World");
 ```
 
 ②
 
-```Java
+```java
 ActionListener oneArgument = event -> System.out.println("button clicked");
 ```
 
 ③
 
-```Java
+```java
 Runnable multiStatement = () -> {
     System.out.print("Hello");
     System.out.println(" World");
@@ -59,13 +59,13 @@ Runnable multiStatement = () -> {
 
 ④
 
-```Java
+```java
 BinaryOperator<Long> add = (x, y) -> x + y;
 ```
 
 ⑤
 
-```Java
+```java
 BinaryOperator<Long> addExplicit = (Long x, Long y) -> x + y;
 ```
 
@@ -101,7 +101,7 @@ __所有继承自`Collection`的接口都可以转换为`Stream`__
 
 我们来看一下Stream接口的源码
 
-```Java
+```java
 public interface Stream<T> extends BaseStream<T, Stream<T>> {
 
     Stream<T> filter(Predicate<? super T> predicate);

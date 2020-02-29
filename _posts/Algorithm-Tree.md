@@ -18,7 +18,7 @@ __Construct Binary Tree from Preorder and Inorder Traversal__
 
 > Given preorder and inorder traversal of a tree, construct the binary tree.
 
-```Java
+```java
 public class Solution {
     public TreeNode buildTree(int[] preorder, int[] inorder) {
         Map<Integer, Integer> posMap = new HashMap<>();
@@ -66,7 +66,7 @@ __Construct Binary Tree from Inorder and Postorder Traversal__
 
 > Given inorder and postorder traversal of a tree, construct the binary tree.
 
-```Java
+```java
 public class Solution {
     public TreeNode buildTree(int[] inorder, int[] postorder) {
         Map<Integer, Integer> posMap = new HashMap<>();
@@ -115,7 +115,7 @@ __Binary Tree Maximum Path Sum__
 
 > For this problem, a path is defined as any sequence of nodes from some starting node to any node in the tree along the parent-child connections. The path must contain at least one node and does not need to go through the root.
 
-```Java
+```java
 /**
  * Definition for a binary tree node.
  * public class TreeNode {
@@ -166,7 +166,7 @@ __Count Complete Tree Nodes__
 
 > Given a complete binary tree, count the number of nodes.
 
-```Java
+```java
 public class Solution {
     public int countNodes(TreeNode root) {
         int leftDepth = getLeftDepth(root);
@@ -208,7 +208,7 @@ __Kth Smallest Element in a BST__
 
 > Given a binary search tree, write a function kthSmallest to find the kth smallest element in it.
 
-```Java
+```java
 public class Solution {
     private int cnt = 0;
     private int res;
@@ -239,7 +239,7 @@ __Lowest Common Ancestor of a Binary Tree__
 
 > According to the definition of LCA on Wikipedia: “The lowest common ancestor is defined between two nodes v and w as the lowest node in T that has both v and w as descendants (where we allow a node to be a descendant of itself).”
 
-```Java
+```java
 public class Solution {
     public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
         if (root == null) return root;
@@ -266,7 +266,7 @@ ____
 
 > 
 
-```Java
+```java
 ```
 
 -->

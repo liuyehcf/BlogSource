@@ -22,7 +22,7 @@ __ArrayBlockingQueue的分析分为以下几个部分__
 
 # 2 字段介绍
 
-```Java
+```java
     /** The queued items */
     //数组，用于存放元素，注意到该字段是final修饰的，因此ArrayBlockingQueue是不能扩容的，其容量在初始化时就已经确定    
     final Object[] items;
@@ -82,7 +82,7 @@ __该方法向队列中添加一个元素__
 * 当队列未满时，会成功添加
 * 当队列已满时，添加失败，但不会阻塞调用offer方法的线程
 
-```Java
+```java
     /**
      * Inserts the specified element at the tail of this queue if it is
      * possible to do so immediately without exceeding the queue's capacity,
@@ -113,7 +113,7 @@ __该方法向队列中添加一个元素__
 
 ### 3.1.1 enqueue
 
-```Java
+```java
     /**
      * Inserts element at current put position, advances, and signals.
      * Call only when holding lock.
@@ -138,7 +138,7 @@ __这个版本的offer允许阻塞当前线程一段时间__
 
 * 当队列已满时，会阻塞一段指定的时间。直至成功将元素入队，或者超时
 
-```Java
+```java
     /**
      * Inserts the specified element at the tail of this queue, waiting
      * up to the specified wait time for space to become available if
@@ -179,7 +179,7 @@ __put方法向队列添加一个元素__
 
 * 若队列已满，则阻塞调用put方法的线程，直至队列非满
 
-```Java
+```java
     /**
      * Inserts the specified element at the tail of this queue, waiting
      * for space to become available if the queue is full.
@@ -211,7 +211,7 @@ __poll方法从队列中取出一个元素__
 
 * 如果队列为空，则返回null，并不会阻塞当前线程
 
-```Java
+```java
     public E poll() {
         final ReentrantLock lock = this.lock;
         lock.lock();
@@ -225,7 +225,7 @@ __poll方法从队列中取出一个元素__
 
 ### 3.3.1 dequeue
 
-```Java
+```java
     /**
      * Extracts element at current take position, advances, and signals.
      * Call only when holding lock.
@@ -255,7 +255,7 @@ __这个重载版本的poll方法允许阻塞一段指定的时间__
 
 * 当队列为空，则阻塞一段时间，直至获取元素或者阻塞超时
 
-```Java
+```java
     public E poll(long timeout, TimeUnit unit) throws InterruptedException {
         long nanos = unit.toNanos(timeout);
         final ReentrantLock lock = this.lock;
@@ -284,7 +284,7 @@ __take方法从队列中取出一个元素__
 
 * 如果队列为空，则阻塞当前线程，直至队列不为空
 
-```Java
+```java
     public E take() throws InterruptedException {
         final ReentrantLock lock = this.lock;
         //允许中断

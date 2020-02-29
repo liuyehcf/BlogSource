@@ -24,7 +24,7 @@ __阅读更多__
 
 # 2 重试机制
 
-```Java
+```java
     private static final HttpClient HTTP_CLIENT = HttpClientBuilder.create()
             .setRetryHandler((IOException exception, int executionCount, HttpContext context) -> {
                 if (executionCount > 3) {
@@ -38,7 +38,7 @@ __阅读更多__
 
 # 3 超时设置
 
-```Java
+```java
     HttpRequestBase request = new HttpGet();
 
     RequestConfig config = RequestConfig.custom()

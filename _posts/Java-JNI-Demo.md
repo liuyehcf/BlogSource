@@ -22,7 +22,7 @@ JNI是Java Native Interface的缩写，它提供了若干的API实现了Java和�
 
 ## 2.1 创建Java文件
 
-```Java
+```java
 package org.liuyehcf.jni;
 
 /**

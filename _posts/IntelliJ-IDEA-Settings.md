@@ -34,7 +34,7 @@ __阅读更多__
 1. `includes`
 1. `File Header`
 
-```Java
+```java
 /**
  * @author xxx
  * @date ${DATE}

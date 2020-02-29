@@ -26,7 +26,7 @@ CyclicBarrier是一个同步辅助类，它允许一组线程互相等待，直�
 
 一次Barrier生命周期中Barrier的状态不会影响到下一次生命周期
 
-```Java
+```java
     /**
      * Each use of the barrier is represented as a generation instance.
      * The generation changes whenever the barrier is tripped, or
@@ -45,7 +45,7 @@ CyclicBarrier是一个同步辅助类，它允许一组线程互相等待，直�
 
 # 3 字段
 
-```Java
+```java
     /** The lock for guarding barrier entry */
     private final ReentrantLock lock = new ReentrantLock();
     /** Condition to wait on until tripped */
@@ -76,7 +76,7 @@ CyclicBarrier是一个同步辅助类，它允许一组线程互相等待，直�
 
 ## 4.1 构造方法
 
-```Java
+```java
     /**
      * Creates a new {@code CyclicBarrier} that will trip when the
      * given number of parties (threads) are waiting upon it, and
@@ -91,7 +91,7 @@ CyclicBarrier是一个同步辅助类，它允许一组线程互相等待，直�
     }
 ```
 
-```Java
+```java
     /**
      * Creates a new {@code CyclicBarrier} that will trip when the
      * given number of parties (threads) are waiting upon it, and which
@@ -116,7 +116,7 @@ CyclicBarrier是一个同步辅助类，它允许一组线程互相等待，直�
 
 await方法阻塞当前线程直至累计有count（构造方法的参数）个线程阻塞在了await方法上
 
-```Java
+```java
     /**
      * Waits until all {@linkplain #getParties parties} have invoked
      * {@code await} on this barrier.
@@ -184,7 +184,7 @@ await方法阻塞当前线程直至累计有count（构造方法的参数）个�
 
 dowait方法是实现CyclicBarrier语义的主要方法
 
-```Java
+```java
     /**
      * Main barrier code, covering the various policies.
      */
@@ -276,7 +276,7 @@ dowait方法是实现CyclicBarrier语义的主要方法
 
 该方法使得CyclicBarrier进入下一次生命周期，唤醒阻塞在trip上的线程，并且重置所有状态
 
-```Java
+```java
     /**
      * Updates state on barrier trip and wakes up everyone.
      * Called only while holding lock.
@@ -297,7 +297,7 @@ dowait方法是实现CyclicBarrier语义的主要方法
 
 检查当前Barrier生命周期是否有效
 
-```Java
+```java
     /**
      * Queries if this barrier is in a broken state.
      *
@@ -321,7 +321,7 @@ dowait方法是实现CyclicBarrier语义的主要方法
 
 重置Barrier，使其进入下一个生命周期。对于那些阻塞在上一个生命周期中的线程，会通过nextGeneration方法进行唤醒
 
-```Java
+```java
     /**
      * Resets the barrier to its initial state.  If any parties are
      * currently waiting at the barrier, they will return with a
@@ -347,7 +347,7 @@ dowait方法是实现CyclicBarrier语义的主要方法
 
 检查有多少个线程阻塞在await方法的调用中
 
-```Java
+```java
     /**
      * Returns the number of parties currently waiting at the barrier.
      * This method is primarily useful for debugging and assertions.

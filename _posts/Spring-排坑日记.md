@@ -17,7 +17,7 @@ __阅读更多__
 
 情景还原：我在某个Service中需要实现一段逻辑，需要使用Pair来存放两个对象，于是我自定义了下面这个静态内部类
 
-```Java
+```java
 @Service
 public class MyService{
 
@@ -86,7 +86,7 @@ __DONE__
 
 启动后出现如下异常信息
 
-```Java
+```java
 Caused by: org.springframework.context.ApplicationContextException: Unable to start EmbeddedWebApplicationContext due to missing EmbeddedServletContainerFactorybean.
   at org.springframework.boot.context.embedded.EmbeddedWebApplicationContext.getEmbeddedServletContainerFactory(EmbeddedWebApplicationContext.java:189)
   at org.springframework.boot.context.embedded.EmbeddedWebApplicationContext.createEmbeddedServletContainer(EmbeddedWebApplicationContext.java:162)
@@ -103,7 +103,7 @@ Caused by: org.springframework.context.ApplicationContextException: Unable to st
 
 __类似的，还有如下异常（也需要排除掉servlet有关的依赖项）__
 
-```Java
+```java
 Caused by: org.apache.catalina.LifecycleException: A child container failed during start
     at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:949)
     at org.apache.catalina.core.StandardEngine.startInternal(StandardEngine.java:262)
@@ -120,7 +120,7 @@ Caused by: org.apache.catalina.LifecycleException: A child container failed duri
 
 出现的异常
 
-```Java
+```java
 Caused by: org.xml.sax.SAXParseException: 文档根元素 "beans" 必须匹配 DOCTYPE 根 "null"
     at com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.createSAXParseException(ErrorHandlerWrapper.java:203)
     at com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper.error(ErrorHandlerWrapper.java:134)
@@ -161,7 +161,7 @@ Application.java与TestApplication.java以及Test.java如下
 1. TestApplication.java：测试的启动类
 1. Test.java：测试类
 
-```Java
+```java
 @SpringBootApplication(scanBasePackages = {"xxx.yyy.zzz"})
 @ImportResource({"classpath*:application-context.xml"})
 public class Application {
@@ -171,14 +171,14 @@ public class Application {
 }
 ```
 
-```Java
+```java
 @SpringBootApplication(scanBasePackages = {"com.aliyun.nova.scene"})
 @ImportResource({"classpath*:sentinel-tracer.xml","classpath*:application-context.xml"})
 public class TestApplication {
 }
 ```
 
-```Java
+```java
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {TestApplication.class})
 public class Test {

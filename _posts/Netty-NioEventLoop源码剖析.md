@@ -27,7 +27,7 @@ NioEventLoop仅有一个构造方法，该方法接受如下几个参数
 1. `SelectStrategy strategy`：Select的策略
 1. `RejectedExecutionHandler rejectedExecutionHandler`：拒绝执行任务是的策略
 
-```Java
+```java
     NioEventLoop(NioEventLoopGroup parent, Executor executor, SelectorProvider selectorProvider,
                  SelectStrategy strategy, RejectedExecutionHandler rejectedExecutionHandler) {
         super(parent, executor, false, DEFAULT_MAX_PENDING_TASKS, rejectedExecutionHandler);
@@ -52,7 +52,7 @@ NioEventLoop仅有一个构造方法，该方法接受如下几个参数
 * 初始化同步阻塞队列，用的是LinkedBlockingQueue作为实现
 * 其中tailTasks用于存放__非ScheduledTask__
 
-```Java
+```java
     protected SingleThreadEventLoop(EventLoopGroup parent, Executor executor,
                                     boolean addTaskWakesUp, int maxPendingTasks,
                                     RejectedExecutionHandler rejectedExecutionHandler) {
@@ -67,7 +67,7 @@ NioEventLoop仅有一个构造方法，该方法接受如下几个参数
 * 初始化任务队列，用的是LinkedBlockingQueue作为实现
 * 其中taskQueue用于存放__ScheduledTask__
 
-```Java
+```java
     protected SingleThreadEventExecutor(EventExecutorGroup parent, Executor executor,
                                         boolean addTaskWakesUp, int maxPendingTasks,
                                         RejectedExecutionHandler rejectedHandler) {
@@ -82,7 +82,7 @@ NioEventLoop仅有一个构造方法，该方法接受如下几个参数
 
 继续跟踪AbstractScheduledEventExecutor的构造方法
 
-```Java
+```java
     protected AbstractScheduledEventExecutor(EventExecutorGroup parent) {
         super(parent);
     }
@@ -90,7 +90,7 @@ NioEventLoop仅有一个构造方法，该方法接受如下几个参数
 
 继续跟踪AbstractEventExecutor的构造方法
 
-```Java
+```java
     protected AbstractEventExecutor(EventExecutorGroup parent) {
         this.parent = parent;
     }
@@ -103,7 +103,7 @@ NioEventLoop仅有一个构造方法，该方法接受如下几个参数
 *  `SelectedSelectionKeySet`：用于存放已被选择的SelectionKey
 * 为什么要这样做呢？从方法名（processSelectedKeysOptimized与processSelectedKeysPlain）猜测，可能是为了提升性能（SelectedSelectionKeySet底层是数组，而用原生的Set的话，只能用迭代器遍历）
 
-```Java
+```java
     private SelectorTuple openSelector() {
         final Selector unwrappedSelector;
         try {
@@ -194,7 +194,7 @@ execute方法用于添加Runnable，并执行。本小结将解析任务提交�
 
 execute方法位于SingleThreadEventExecutor中，主要就是将任务添加到队列当中。如果当前线程池的线程尚未启动，则启动它
 
-```Java
+```java
     @Override
     public void execute(Runnable task) {
         if (task == null) {
@@ -219,7 +219,7 @@ execute方法位于SingleThreadEventExecutor中，主要就是将任务添加到
 ```
 
 若当前线程池尚未启动线程，那么执行startThread方法启动新线程，startThread方法继续调用doStartThread方法（如果这两个条件不成立会怎样？）
-```Java
+```java
     private void startThread() {
         if (state == ST_NOT_STARTED) {
             if (STATE_UPDATER.compareAndSet(this, ST_NOT_STARTED, ST_STARTED)) {
@@ -230,7 +230,7 @@ execute方法位于SingleThreadEventExecutor中，主要就是将任务添加到
 ```
 
 doStartThread方法调用executor.execute来执行该Runnable，executor一般来说是ThreadPerTaskExecutor
-```Java
+```java
     private void doStartThread() {
         assert thread == null;
         executor.execute(new Runnable() {
@@ -295,7 +295,7 @@ doStartThread方法调用executor.execute来执行该Runnable，executor一般�
 
 接着调用位于`ThreadPerTaskExecutor`中的`execute`方法，该方法创建一个新的线程，并启动，进而执行command中定义的run方法
 
-```Java
+```java
     public void execute(Runnable command) {
         threadFactory.newThread(command).start();
     }
@@ -310,7 +310,7 @@ run方法是NioEventLoop中的核心方法，该方法展示了整个NioEventLoo
 1. processSelectedKeys
 1. runAllTasks
 
-```Java
+```java
     protected void run() {
         for (;;) {
             try {
@@ -403,7 +403,7 @@ processSelectedKeys方法根据目前selectedKeys的状态，细化为两个相�
 * 若`selectedKeys == null`，则调用selector.selectedKeys()后获取Set<SelectionKey>，然后再调用processSelectedKeysPlain方法进行处理
 * 以上两个方法的差异无非就是一个处理的是SelectionKey数组，另一个处理SelectionKey的Set
 
-```Java
+```java
     private void processSelectedKeys() {
         if (selectedKeys != null) {
             processSelectedKeysOptimized();
@@ -417,7 +417,7 @@ processSelectedKeys方法根据目前selectedKeys的状态，细化为两个相�
 
 当`selectedKeys!=null`时，调用processSelectedKeysOptimized方法进行后续处理
 
-```Java
+```java
     private void processSelectedKeysOptimized() {
         for (int i = 0; i < selectedKeys.size; ++i) {
             final SelectionKey k = selectedKeys.keys[i];
@@ -454,7 +454,7 @@ processSelectedKey方法大致逻辑如下
 * 从Channel中获取NioUnsafe对象，该对象是执行底层IO操作的关键对象
 * 首先进行一系列的判断，若全部正常，则最终会调用read方法进行数据的读取操作，关于read方法目前不再深入分析了
 
-```Java
+```java
     private void processSelectedKey(SelectionKey k, AbstractNioChannel ch) {
 
         final AbstractNioChannel.NioUnsafe unsafe = ch.unsafe();
@@ -516,7 +516,7 @@ processSelectedKey方法大致逻辑如下
 
 当`selectedKeys==null`时，调用processSelectedKeysOptimized方法进行后续处理，该方法与processSelectedKeysOptimized的区别仅仅是前者处理Set，后者处理数组。因此不再赘述
 
-```Java
+```java
     private void processSelectedKeysPlain(Set<SelectionKey> selectedKeys) {
         //check if the set is empty and if so just return to not create garbage by
         //creating a new Iterator every time even if there is nothing to process.
@@ -565,7 +565,7 @@ runAllTasks方法位于`SingleThreadEventExecutor`，该方法主要用于执行
 * 首先获取所有ScheduledTask，并执行
 * 然后执行所有其他任务
 
-```Java
+```java
     protected boolean runAllTasks() {
         assert inEventLoop();
         boolean fetchedAll;
@@ -587,7 +587,7 @@ runAllTasks方法位于`SingleThreadEventExecutor`，该方法主要用于执行
 ```
 
 `runAllTasksFrom`方法位于`SingleThreadEventExecutor`中，其逻辑很简单，从指定的任务队列中获取任务，然后执行
-```Java
+```java
     protected final boolean runAllTasksFrom(Queue<Runnable> taskQueue) {
         Runnable task = pollTaskFrom(taskQueue);
         if (task == null) {
@@ -605,7 +605,7 @@ runAllTasks方法位于`SingleThreadEventExecutor`，该方法主要用于执行
 
 `afterRunningAllTasks`方法位于`SingleThreadEventLoop`中，这里讲tailTasks作为参数，然后执行位于`SingleThreadEventExecutor`的方法`runAllTasksFrom`
 
-```Java
+```java
     protected void afterRunningAllTasks() {
         runAllTasksFrom(tailTasks);
     }

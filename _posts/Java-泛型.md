@@ -42,7 +42,7 @@ ParameterizedType接口实现了Type接口，增加了如下方法
 1. getRawType：用于获取类型本身，例如`AbstractMap.SimpleEntry<String, List>`返回的就是`AbstractMap.SimpleEntry`
 1. getOwnerType：用于获取所有者类型，例如`AbstractMap.SimpleEntry<String, List>`返回的就是`AbstractMap`
 
-```Java
+```java
     Type[] getActualTypeArguments();
     Type getRawType();
     Type getOwnerType();
@@ -50,7 +50,7 @@ ParameterizedType接口实现了Type接口，增加了如下方法
 
 ParameterizedType是如何保留泛型实参的呢？答案就是：我们可以将泛型实参保留在一条继承链路中，举个例子
 
-```Java
+```java
 import java.util.HashMap;
 import java.util.List;
 
@@ -71,7 +71,7 @@ public class TypeHolder extends HashMap.SimpleEntry<String, List> {
 
 下面以一个例子来说明：
 
-```Java
+```java
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -124,7 +124,7 @@ TypeVariable接口实现了Type接口，TypeVariable接口__主要用于封装�
 1. getName：用于获取泛型形参名字。例如List<T>中的T
 1. getAnnotatedBounds：返回一个AnnotatedType对象数组，表示使用类型来表示由此TypeVariable表示的类型参数的上限。数组中对象的顺序对应于类型参数声明中边界的顺序
 
-```Java
+```java
     Type[] getBounds();
 
     D getGenericDeclaration();
@@ -136,7 +136,7 @@ TypeVariable接口实现了Type接口，TypeVariable接口__主要用于封装�
 
 下面以一个例子来说明：
 
-```Java
+```java
 public class GenericType<T extends ArrayList> {
 
     public static void main(String[] args) {
@@ -190,7 +190,7 @@ __上一小节介绍过ParameterizedType可以将泛型实参保留在继承链�
 1. TypeReference是一个抽象类，避免实例化本类
 1. TypeReference包含一个type字段，用于保留父类的类型信息
 
-```Java
+```java
     public abstract class TypeReference<T> {
         private final Type type;
 
@@ -213,7 +213,7 @@ TypeReference的使用方式如下：
 * 注意这个大括号`{}`。这个语句的意思是，__创建一个TypeReference的匿名内部类__
 * 在创建对象时，`(1)`中`getClass()`获取到的是这个匿名内部类的Class对象，通过getGenericSuperclass方法得到的就是`TypeReference<DataDTO<UserDTO>>`，然后通过`(2)`得到泛型实参`DataDTO<UserDTO>`。__因此类型信息通过继承链路保留了下来，这是一个比较tricky的地方__
 
-```Java
+```java
     public static void main(String[] args) {
         TypeReference<DataDTO<UserDTO>> typeReference = new TypeReference<DataDTO<UserDTO>>() {
         };
@@ -233,7 +233,7 @@ __对于第二个问题，我们可以建立一个Map<String, Type>，从泛型�
 
 下面就是JavaBeanInitializerUtils的实现代码，注释写的比较充分，就不再赘述了
 
-```Java
+```java
 package org.liuyehcf.reflect;
 
 import java.lang.reflect.*;
@@ -626,7 +626,7 @@ __首先定义几个DTO__
 
 AddressDTO
 
-```Java
+```java
 package org.liuyehcf.reflect.dto;
 
 public class AddressDTO {
@@ -662,7 +662,7 @@ public class AddressDTO {
 
 GenericDTO
 
-```Java
+```java
 package org.liuyehcf.reflect.dto;
 
 public class GenericDTO<Data, Value> {
@@ -689,7 +689,7 @@ public class GenericDTO<Data, Value> {
 
 UserDTO
 
-```Java
+```java
 package org.liuyehcf.reflect.dto;
 
 import java.util.List;
@@ -757,7 +757,7 @@ public class UserDTO<Data> {
 
 ### 2.4.2 测试代码
 
-```Java
+```java
 package org.liuyehcf.reflect;
 
 import com.alibaba.fastjson.JSON;

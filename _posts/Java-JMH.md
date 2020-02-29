@@ -79,7 +79,7 @@ __阅读更多__
 </project>
 ```
 
-```Java
+```java
 package org.liuyehcf.jmh.serialize;
 
 import org.openjdk.jmh.annotations.*;

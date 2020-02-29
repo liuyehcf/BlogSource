@@ -21,7 +21,7 @@ __阅读更多__
 1. 一个扫描线程`scanThread`，循环检查`PipedInputStream`是否有数据到达（调用InputStream的非阻塞方法available），若发现有数据，则开启异步流程读取数据
 1. 一个线程模拟网络数据到达`networkDataThread`，从控制台输入任意输入并按回车后，将会从pipedOutputStream写入数据
 
-```Java
+```java
 package org.liuyehcf.io.pipe;
 
 import java.io.IOException;
@@ -117,7 +117,7 @@ __当`writeSize>bufferSize`会发现数据打印会有明显卡顿__：由于`Pi
 1. 一个扫描线程`scanThread`，循环检查`PipedInputStream`是否有数据到达（调用InputStream的非阻塞方法available），若发现有数据，则开启异步流程读取数据
 1. 一个线程模拟网络数据到达`networkDataThread`，从控制台输入任意输入并按回车后，将会从pipedOutputStream写入数据
 
-```Java
+```java
 package org.liuyehcf.io.pipe;
 
 import java.io.IOException;
@@ -207,7 +207,7 @@ public class ReadEndDeadIssue {
 
 因为你压缩文件，实际上是根据原文件，copy出一个新文件然后把这个文件压缩进zip文件中。那么，这个新文件，实际上是有`最后修改时间`的，这个属性肯定是不同的。文件属性的不同，导致你把整个zip文件拉入`MD5`算法计算其散列值的时候，肯定会算出不同的散列值。
 
-```Java
+```java
 try {
             BufferedInputStream bis = new BufferedInputStream(
                     new FileInputStream(file));
@@ -229,7 +229,7 @@ try {
 
 __此外，在内存中将一个`byte array`打包成一个`zipped byte array`时，需要调用`ZipOutputStream.finish()`方法，否则得到的是一个不完整的zip文件__
 
-```Java
+```java
 public static byte[] packageFiles(ZipEntity... entities) {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream(); ZipOutputStream zos = new ZipOutputStream(bos)) {
 
@@ -264,7 +264,7 @@ public static byte[] packageFiles(ZipEntity... entities) {
 
 # 4 颜色输出
 
-```Java
+```java
     public static void main(String[] args) {
         System.out.println("\033[30;4m" + "我滴个颜什" + "\033[0m");
         System.out.println("\033[31;4m" + "我滴个颜什" + "\033[0m");
@@ -285,7 +285,7 @@ public static byte[] packageFiles(ZipEntity... entities) {
     }
 ```
 
-```Java
+```java
 public static final String ANSI_RESET = "\u001B[0m";
 public static final String ANSI_BLACK = "\u001B[30m";
 public static final String ANSI_RED = "\u001B[31m";

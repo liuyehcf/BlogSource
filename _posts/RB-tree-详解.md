@@ -360,7 +360,7 @@ x.color=BLACK
 
 ## 3.1 颜色枚举类型
 
-```Java
+```java
 package org.liuyehcf.algorithm.datastructure.tree.rbtree;
 
 /**
@@ -374,7 +374,7 @@ public enum Color {
 
 ## 3.2 节点定义
 
-```Java
+```java
 package org.liuyehcf.algorithm.datastructure.tree.rbtree;
 
 /**
@@ -395,7 +395,7 @@ public class RBTreeNode {
 
 ## 3.3 RB-tree实现
 
-```Java
+```java
 package org.liuyehcf.algorithm.datastructure.tree.rbtree;
 
 import java.util.*;

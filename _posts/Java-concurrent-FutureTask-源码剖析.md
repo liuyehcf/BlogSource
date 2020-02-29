@@ -27,7 +27,7 @@ __FutureTask源码分析将分为以下几个部分__
 
 # 3 Future接口
 
-```Java
+```java
 public interface Future<V> {
 
     //取消任务的执行
@@ -59,7 +59,7 @@ __接口仅仅继承了Runnable接口与Future接口，FutureTask实现了Runnab
 
 __FutureTask定义了7个状态常量来表示FutureTask自身的状态__
 
-```Java
+```java
     private static final int NEW          = 0;
     private static final int COMPLETING   = 1;
     private static final int NORMAL       = 2;
@@ -81,7 +81,7 @@ __FutureTask定义了7个状态常量来表示FutureTask自身的状态__
 
 __FutureTask仅有以下五个字段__
 
-```Java
+```java
     /**
      * The run state of this task, initially NEW.  The run state
      * transitions to a terminal state only in methods set,
@@ -125,7 +125,7 @@ __WaitNode将Thread对象封装成一个链表的节点__
 * 那些阻塞在get()方法调用中的线程将会在此链表中排队等候
 * 当任务完成或者异常结束时，FutureTask会依次唤醒阻塞在get()方法中的线程
 
-```Java
+```java
     /**
      * Simple linked list nodes to record waiting threads in a Treiber
      * stack.  See other classes such as Phaser and SynchronousQueue
@@ -147,7 +147,7 @@ __FutureTask含有两个构造方法__
 * 一个构造方法接受一个Callable对象
 * 另一个构造方法接受一个Runnable对象，和一个Result
 
-```Java
+```java
     /**
      * Creates a {@code FutureTask} that will, upon running, execute the
      * given {@code Callable}.
@@ -185,7 +185,7 @@ __FutureTask含有两个构造方法__
 
 __该静态方法负责将Runnable对象适配成一个Callable对象__
 
-```Java
+```java
     /**
      * Returns a {@link Callable} object that, when
      * called, runs the given task and returns the given result.  This
@@ -209,7 +209,7 @@ __其中适配器RunnableAdapter如下__
 * 该类仅仅是将一个Runnable对象适配成一个Callable对象，并无他用
 * 注意到result通过构造方法进行赋值，然后在call方法中直接返回，与Runnable无任何关系
 
-```Java
+```java
 
     /**
      * A callable that runs given task and returns given result
@@ -237,7 +237,7 @@ __线程执行的主要方法__
 * 首先判断状态，只有NEW状态才能正常执行该方法，否则说明被cancel了
 * 执行Callable的call方法，正常执行或者异常执行将会触发不同的状态转移方法
 
-```Java
+```java
     public void run() {
         //当且仅当state==NEW 并且 CAS执行成功的线程才能继续执行
         //为什么需要CAS？FutureTask可能并不一定需要单独开一个线程来执行，总之保证有且仅有一个线程执行这个方法
@@ -286,7 +286,7 @@ __该方法逻辑如下__
 * 然后将outcome赋值为异常对象
 * 最后唤醒阻塞线程
 
-```Java
+```java
     /**
      * Causes this future to report an {@link ExecutionException}
      * with the given throwable as its cause, unless this future has
@@ -314,7 +314,7 @@ __该方法逻辑如下__
 * 然后将outcome赋值Callable#run的返回结果
 * 最后唤醒阻塞线程
 
-```Java
+```java
     /**
      * Sets the result of this future to the given value unless
      * this future has already been set or has been cancelled.
@@ -337,7 +337,7 @@ __该方法逻辑如下__
 
 __该方法会唤醒所有阻塞在get方法中的所有WaitNode节点__
 
-```Java
+```java
     /**
      * Removes and signals all waiting threads, invokes done(), and
      * nulls out callable.
@@ -372,7 +372,7 @@ __该方法会唤醒所有阻塞在get方法中的所有WaitNode节点__
 
 ### 7.2.4 handlePossibleCancellationInterrupt
 
-```Java
+```java
     /**
      * Ensures that any interrupt from a possible cancel(true) is only
      * delivered to a task while in run or runAndReset.
@@ -404,7 +404,7 @@ __get方法有两个重载版本__
 * 第一个版本会阻塞线程，直至FutureTask以某种方式结束后被唤醒
 * 第二个版本可以设定最长阻塞时间。阻塞线程，直至FutureTask以某种方式结束后被唤醒，或者超时
 
-```Java
+```java
     /**
      * @throws CancellationException {@inheritDoc}
      */
@@ -436,7 +436,7 @@ __get方法有两个重载版本__
 
 __阻塞get()方法的调用线程__
 
-```Java
+```java
     /**
      * Awaits completion or aborts on interrupt or timeout.
      *
@@ -503,7 +503,7 @@ __将一个阻塞超时的节点，或者被中断的节点移出链表__
 * 这个方法可能存在竞争，但是Doug Lea(作者)并未采用CAS操作串行化链表处理，而是采用另一种方式，一旦发现异常就重新遍历链表
 * 这种方式在链表非常长且存在竞争时会导致效率比较低，但是Doug Lea认为并不需要考虑这种特殊情况
 
-```Java
+```java
     /**
      * Tries to unlink a timed-out or interrupted wait node to avoid
      * accumulating garbage.  Internal nodes are simply unspliced
@@ -550,7 +550,7 @@ __根据FutureTask的状态，返回相应的结果__
 * 若FutureTask的最终状态大于等于CANCEL，说明FutureTask被cancel了，抛出CancellationException异常
 * 否则FutureTask的最终状态是EXCEPTIONAL，说明Callable#call执行过程中抛出异常，抛出ExecutionException异常
 
-```Java
+```java
 
     /**
      * Returns result or throws exception for completed task.
@@ -575,7 +575,7 @@ __根据FutureTask的状态，返回相应的结果__
 
 cancel方法用于中断当前task，参数mayInterruptIfRunning用于指示是否允许中断正在运行的task
 
-```Java
+```java
     public boolean cancel(boolean mayInterruptIfRunning) {
         //条件为真时
             //1. state != NEW (已经处于一个最终状态了，此时cancel是没用的)

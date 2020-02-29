@@ -60,7 +60,7 @@ __as-if-serial语义的意思是：不管怎么重排序(编译器和处理器�
 
 为了遵守as-if-serial语义，编译器和处理器不会对存在数据依赖关系的操作做重排序，因为这种重排序会改变执行结果。但是，如果操作之间不存在数据依赖关系，这些操作就可能被编译器和处理器重排。以下面的示例代码进行讲解
 
-```Java
+```java
 double pi = 3.14;//A
 double r = 1.0;//B
 double area = pi * r * r;//C
@@ -68,7 +68,7 @@ double area = pi * r * r;//C
 
 * 利用javap解析字节码，输出片段如下
 
-```Java
+```java
 public void writer();
     descriptor: ()V
     flags: ACC_PUBLIC
@@ -127,7 +127,7 @@ as-if-serial语义把单线程程序保护了起来，遵守as-if-serial语义�
 
 现在来看看，重排序是否会改变多线程程序的执行结果，请看下面的示例程序
 
-```Java
+```java
 class ReorderExample {
     int a = 0;
 

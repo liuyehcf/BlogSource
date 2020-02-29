@@ -24,7 +24,7 @@ ThreadPoolExecutor源码分析分为以下三部分
 
 # 2 常量简介
 
-```Java
+```java
     private static final int COUNT_BITS = Integer.SIZE - 3;
     private static final int CAPACITY   = (1 << COUNT_BITS) - 1;
 
@@ -48,7 +48,7 @@ ThreadPoolExecutor源码分析分为以下三部分
 
 ## 3.1 ctl
 
-```Java
+```java
 private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
 ```
 __该字段起到两个作用__
@@ -58,7 +58,7 @@ __该字段起到两个作用__
 
 __与该字段相关的方法__
 
-```Java
+```java
     //从ctl中提取出runState
     //由于CAPACITY是000111111...111，于是~CAPACITY是111000000...000
     private static int runStateOf(int c)     { return c & ~CAPACITY; }
@@ -70,7 +70,7 @@ __与该字段相关的方法__
 
 ## 3.2 其他字段
 
-```Java
+```java
     /**
      * The queue used for holding tasks and handing off to worker
      * threads.  We do not require that workQueue.poll() returning
@@ -211,7 +211,7 @@ __同时Worker还继承了AQS，（{% post_link Java-concurrent-AQS-源码剖析
 * 在ThreadPoolExecutor#interruptIdleWorkers方法中会调用Worker#tryLock()方法，该方法就是尝试获取锁，如果获取失败，则表明worker处于工作状态
 * 这就是Worker继承AQS的原因，可以不借助其他锁机制，仅依靠AQS来提供一种线程安全的状态表示机制
 
-```Java
+```java
 /**
      * Class Worker mainly maintains interrupt control state for
      * threads running tasks, along with other minor bookkeeping.
@@ -313,7 +313,7 @@ __该方法是Executor接口的方法，用于向线程池提交任务，其主�
 * 否则向线程池的任务队列提交这个任务，如果发现线程池现有的线程数量为0，则添加一个Worker
 * 如果所有情况均失败，则用线程池指定的拒绝策略拒绝任务
 
-```Java
+```java
     /**
      * Executes the given task sometime in the future.  The task
      * may execute in a new thread or in an existing pooled thread.
@@ -392,7 +392,7 @@ __该方法实现的逻辑如下__
 * 尝试递增线程池计数，如果数量已达上限，直接返回false
 * 新建Worker并将其添加到workers中去
 
-```Java
+```java
     /**
      * Checks if a new worker can be added with respect to current
      * pool state and the given bound (either core or maximum). If so,
@@ -513,7 +513,7 @@ __runWorker被封装成Worker#run方法，该方法的主要逻辑如下__
 * 从任务队列中获取任务并执行
 * 如果任务队列为空，则阻塞在获取任务的过程中
 
-```Java
+```java
 /**
      * Main worker run loop.  Repeatedly gets tasks from queue and
      * executes them, while coping with a number of issues:
@@ -618,7 +618,7 @@ __runWorker被封装成Worker#run方法，该方法的主要逻辑如下__
 
 __线程exit后的处理方法__
 
-```Java
+```java
     /**
      * Performs cleanup and bookkeeping for a dying worker. Called
      * only from worker threads. Unless completedAbruptly is set,
@@ -675,7 +675,7 @@ __将状态转移成TERMINATED__
 * 如果状态是SHUTDOWN并且线程池中无线程且队列为空
 * 如果状态是STOP并且线程池中无线程
 
-```Java
+```java
     /**
      * Transitions to TERMINATED state if either (SHUTDOWN and pool
      * and queue empty) or (STOP and pool empty).  If otherwise
@@ -740,7 +740,7 @@ __该方法从任务队列中获取任务__
     1. 线程池处于SHUTDOWN状态，且任务队列为空
     1. 等待一段时间后仍然没有获取到任务，即阻塞时间超过了(keepAliveTime)
 
-```Java
+```java
     /**
      * Performs blocking or timed wait for a task, depending on
      * current configuration settings, or returns null if this worker
@@ -816,7 +816,7 @@ __该方法的逻辑如下__
 * 将线程池的状态提高到SHUTDOWN(若之前线程池的状态是RUNNING，那么线程池的状态将会升级到SHUTDOWN，此后不再接受新的任务)或者保持不变
 * 中断所有空闲线程，所谓空闲是指阻塞在getTask()方法调用中的Worker 
 
-```Java
+```java
     /**
      * Initiates an orderly shutdown in which previously submitted
      * tasks are executed, but no new tasks will be accepted.
@@ -850,7 +850,7 @@ __该方法的逻辑如下__
 
 __将线程池的状态提高到指定状态，或者保持不变__
 
-```Java
+```java
     /**
      * Transitions runState to given target, or leaves it alone if
      * already at least the given target.
@@ -874,7 +874,7 @@ __中断空闲的Worker__
 
 * 如何判断是否空闲：调用Worker#tryLock，若返回true，则说明空闲，否则非空闲
 
-```Java
+```java
     /**
      * Common form of interruptIdleWorkers, to avoid having to
      * remember what the boolean argument means.
@@ -936,7 +936,7 @@ __该方法的逻辑如下__
 * 将线程池的状态提高到STOP(之前的状态是RUNNING或者SHUTDOWN)或者保持不变
 * 中断所有线程
 
-```Java
+```java
     /**
      * Attempts to stop all actively executing tasks, halts the
      * processing of waiting tasks, and returns a list of the tasks
@@ -978,7 +978,7 @@ __该方法的逻辑如下__
 
 __中断所有线程__
 
-```Java
+```java
     /**
      * Interrupts all threads, even if active. Ignores SecurityExceptions
      * (in which case some threads may remain uninterrupted).
@@ -999,7 +999,7 @@ __中断所有线程__
 
 __返回所有未执行的任务__
 
-```Java
+```java
     /**
      * Drains the task queue into a new list, normally using
      * drainTo. But if the queue is a DelayQueue or any other kind of
@@ -1029,7 +1029,7 @@ __该方法是ThreadPoolExecutor父类AbstractExecutorService的方法，Abstrac
 * 该方法将Runnable封装成一个RunnableFuture，该接口实现了Runnable，然后交给execute方法执行
 * 返回封装好的RunnableFuture，以便调用者使用RunnableFuture执行一些操作，例如cancel等
 
-```Java
+```java
     public Future<?> submit(Runnable task) {
         if (task == null) throw new NullPointerException();
         //将Runnable封装成一个RunnableFuture
@@ -1046,7 +1046,7 @@ __Future源码分析请参见 {% post_link Java-concurrent-FutureTask-源码剖�
 
 newTaskFor方法返回一个RunnableFuture接口的实例
 
-```Java
+```java
     protected <T> RunnableFuture<T> newTaskFor(Runnable runnable, T value) {
         return new FutureTask<T>(runnable, value);
     }

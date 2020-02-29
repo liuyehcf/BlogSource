@@ -69,7 +69,7 @@ __在JMM中没有上述保证，未同步程序在JMM中不但整体的执行顺
 
 下面，对前面的ReorderExample用锁来同步，看看正确同步的程序如何具有顺序一致性，示例代码如下
 
-```Java
+```java
 class SynchronizedExample {
     int a = 0;
 

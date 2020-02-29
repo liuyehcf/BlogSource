@@ -544,7 +544,7 @@ AsyncAppender会异步打印日志，从而避免磁盘IO阻塞当前线程的�
 
 直接上源码，起点是`ch.qos.logback.classic.Logger`，所有的日志方法都会收敛到`filterAndLog_0_Or3Plus`、`filterAndLog_1`、`filterAndLog_2`这三个方法上
 
-```Java
+```java
     private void filterAndLog_1(final String localFQCN, final Marker marker, final Level level, final String msg, final Object param, final Throwable t) {
 
         final FilterReply decision = loggerContext.getTurboFilterChainDecision_1(marker, this, level, msg, param, t);
@@ -608,7 +608,7 @@ AsyncAppender会异步打印日志，从而避免磁盘IO阻塞当前线程的�
 
 继续跟踪`AppenderAttachableImpl`的`appendLoopOnAppenders`方法
 
-```Java
+```java
     public int appendLoopOnAppenders(E e) {
         int size = 0;
         final Appender<E>[] appenderArray = appenderList.asTypedArray();
@@ -623,7 +623,7 @@ AsyncAppender会异步打印日志，从而避免磁盘IO阻塞当前线程的�
 
 如果`Appender`是`AsyncAppender`，那么继续跟踪`UnsynchronizedAppenderBase`的`doAppend`方法
 
-```Java
+```java
     public void doAppend(E eventObject) {
         // WARNING: The guard check MUST be the first statement in the
         // doAppend() method.
@@ -665,7 +665,7 @@ AsyncAppender会异步打印日志，从而避免磁盘IO阻塞当前线程的�
 * 条件1：如果当前队列的容量的剩余值小于`discardingThreshold`，该值默认为队列容量的1/5
 * 条件2：如果当前日志事件可以丢弃，对于`AsyncAppender`来说，INFO以下的日志是可以丢弃的
 
-```Java
+```java
     protected void append(E eventObject) {
         if (isQueueBelowDiscardingThreshold() && isDiscardable(eventObject)) {
             return;
@@ -690,7 +690,7 @@ AsyncAppender会异步打印日志，从而避免磁盘IO阻塞当前线程的�
 
 `AsyncAppender`的`isDiscardable`方法
 
-```Java
+```java
     protected boolean isDiscardable(ILoggingEvent event) {
         Level level = event.getLevel();
         return level.toInt() <= Level.INFO_INT;

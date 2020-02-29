@@ -79,7 +79,7 @@ __以`fireChannelRead`为例，分析一下Handler特定生命周期如何被触
 1. 同步或者异步方式触发指定ChannelHandlerContext的channelRead方法
 1. 如果在该Handler的channelRead方法中包含`ctx.channelRead(ctx,msg)`，那么该条执行链路就会沿着双向链表向后传递
 
-```Java
+```java
     public ChannelHandlerContext fireChannelRead(final Object msg) {
         //沿着双向链表的当前位置向后找到第一个Inbound类型的ChannelHandlerContext
         invokeChannelRead(findContextInbound(), msg);

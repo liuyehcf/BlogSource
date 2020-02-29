@@ -243,7 +243,7 @@ B+-TREE-DELETE-NOT-NONE(y,k)
 
 ## 3.1 节点
 
-```Java
+```java
 public class BPlusTreeNode {
     /**
      * 关键字个数
@@ -293,7 +293,7 @@ public class BPlusTreeNode {
 
 ## 3.2 BPlus-tree
 
-```Java
+```java
 package org.liuyehcf.algorithm.datastructure.tree.bplustree;
 
 import java.util.*;

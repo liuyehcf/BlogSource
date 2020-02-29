@@ -21,7 +21,7 @@ __阅读更多__
 
 锁是Java并发编程中最重要的同步机制，锁除了让临界区互斥执行外，还可以让释放锁的线程向获取同一个锁的线程发送消息，下面以一个示例程序进行讲解
 
-```Java
+```java
 class MonitorExample{
     int a=0;
 
@@ -89,7 +89,7 @@ __正是由于JDK 1.5之后volatile的内存语义得到增强，才可能实现
 
 借助ReentrantLock的源代码，来分析锁内存语义的具体实现机制，请看下面代码
 
-```Java
+```java
 class ReentrantLockExample {
     int a = 0;
 
@@ -130,7 +130,7 @@ ReentrantLock分为公平锁和非公平锁
 1. AQS：acquire(int arg)
 1. ReentrantLock：tryAcquire(int acquires)
 
-```Java
+```java
 protected final boolean tryAcquire(int acquires) {
     final Thread current = Thread.currentThread();
     int c = getState();//获取锁的开始，首先读volatile变量state
@@ -160,7 +160,7 @@ protected final boolean tryAcquire(int acquires) {
 1. AQS：release(int arg)
 1. Sync：tryRelease(int release)
 
-```Java
+```java
 protected final boolean tryRelease(int releases) {
     int c = getState() - releases;
     if (Thread.currentThread() != getExclusiveOwnerThread())
@@ -187,7 +187,7 @@ protected final boolean tryRelease(int releases) {
 1. NonfairSync：lock()
 1. AQS：compareAndSetState(int expect,int update)
 
-```Java
+```java
 protected final boolean compareAndSetState(int expect, int update) {
     //See below for intrinsics setup to support this
     return unsafe.compareAndSwapInt(this, stateOffset, expect, update);
@@ -206,7 +206,7 @@ protected final boolean compareAndSetState(int expect, int update) {
 
 下面是sun.misc.Unsafe类的compareAndSwapInt()方法的源码
 
-```Java
+```java
     public final native boolean compareAndSwapInt(Object o, long offset, int expected, int x);
 ```
 

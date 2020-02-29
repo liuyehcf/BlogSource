@@ -21,7 +21,7 @@ __阅读更多__
 
 在Java程序中，有时候可能需要推迟一些高开销的对象初始化操作，并且只有在使用这些对象时才进行初始化。此时，程序员可能会采用延迟初始化。但要正确实现线程安全的延迟初始化需要一些技巧，否则很容易出现问题。比如下面是非线程安全的延迟初始化对象的示例代码
 
-```Java
+```java
 class Instance{
 
 }
@@ -40,7 +40,7 @@ class UnsafeLazyInitialization{
 * 在UnsafeLazyInitialization类中，假设A线程执行代码1的同时，B线程执行代码2。此时，线程可能会看到instance引用的对象还没有完成初始化
 
 对于UnsafeLazyInitialization类，我们可以对getInstance()方法做同步处理来实现线程安全的延迟初始化，示例代码如下、
-```Java
+```java
 class Instance{
 
 }
@@ -60,7 +60,7 @@ class SafeLazyInitialization {
 
 下面是使用双重检查锁定来实现延迟初始化的代码
 
-```Java
+```java
 class Instance {
 
 }
@@ -148,7 +148,7 @@ Note over 线程A:4：初次访问对象
 
 * 这个解决方案需要JDK5或更高版本(因为从JDK5开始使用新的JSR-133内存模型规范，这个规范增强了volatile的语义)
 
-```Java
+```java
 class Instance {
 
 }
@@ -175,7 +175,7 @@ class SafeDoubleCheckedLocking {
 
 JVM在类的初始化阶段(即在Class被加载后，且被线程使用之前)，会执行类的初始化。在执行类的初始化期间，JVM会获取一个锁。这个锁可以同步多个线程对同一个类的初始化。基于这个特性，可以实现另一种线程安全的延迟初始化方案(这个方案被称之为Initialization On Demand Holder idiom)
 
-```Java
+```java
 class Instance {
 
 }

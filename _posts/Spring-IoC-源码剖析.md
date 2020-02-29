@@ -130,7 +130,7 @@ ApplicationContext
 
 那么`spring-context`模块与`spring-beans`模块是如何联系到一起的呢？从ClassPathXmlApplicationContext的继承链路来看，并没有用到__`spring-beans`模块中核心的BeanFactory引擎类`DefaultListableBeanFactory`__。其实，在AbstractApplicationContext的实现中，由于__该类提供了一个抽象方法`getBeanFactory`__，于是__所有的BeanFactory体系相关的接口方法的实现都是通过该方法来获取BeanFactory，并委托给getBeanFactory方法返回的实例来实现的__。而getBeanFactory方法的定义在AbstractRefreshableApplicationContext中，也是该类持有了一个BeanFactory字段`private DefaultListableBeanFactory beanFactory`
 
-```Java
+```java
     //---------------------------------------------------------------------
     //Implementation of BeanFactory interface
     //---------------------------------------------------------------------
@@ -344,7 +344,7 @@ AbstractApplicationContext-->ClassPathXmlApplicationContext: refresh complete
 
 prepareRefresh方法用于__准备IoC容器初始化过程的上下文环境__：包括设置初始化日期、设置状态标志位、进行属性源（PropertySource）的初始化操作
 
-```Java
+```java
     protected void prepareRefresh() {
         this.startupDate = System.currentTimeMillis();
         this.closed.set(false);
@@ -371,7 +371,7 @@ prepareRefresh方法用于__准备IoC容器初始化过程的上下文环境__�
 
 obtainFreshBeanFactory方法用于__创建一个新的BeanFactory__
 
-```Java
+```java
     protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {
         refreshBeanFactory();
         ConfigurableListableBeanFactory beanFactory = getBeanFactory();
@@ -387,7 +387,7 @@ refreshBeanFactory的实现由AbstractRefreshableApplicationContext提供，其�
 1. 如果已存在一个BeanFactory，那么首先销毁这个BeanFactory
 1. 创建一个新的BeanFactory，从XML配置文件加载Bean的定义
 
-```Java
+```java
     protected final void refreshBeanFactory() throws BeansException {
         //销毁原有的BeanFactory
         if (hasBeanFactory()) {
@@ -415,7 +415,7 @@ refreshBeanFactory的实现由AbstractRefreshableApplicationContext提供，其�
 
 prepareBeanFactory方法用于__为BeanFactory配置一些标准上下文属性，包括类加载器、后处理器等等__
 
-```Java
+```java
     protected void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) {
         //Tell the internal bean factory to use the context's class loader etc.
         beanFactory.setBeanClassLoader(getClassLoader());
@@ -466,7 +466,7 @@ prepareBeanFactory方法用于__为BeanFactory配置一些标准上下文属性�
 
 postProcessBeanFactory目前的实现逻辑就是一个空方法（钩子方法），交给子类去扩展。__此时BeanFactory处于一个初始化完毕（各种上下文环境设置完毕，Bean定义加载完毕等等），但是尚未开始生产单例Bean的状态__
 
-```Java
+```java
     protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
     }
 ```
@@ -475,7 +475,7 @@ postProcessBeanFactory目前的实现逻辑就是一个空方法（钩子方法�
 
 invokeBeanFactoryPostProcessors方法用于__触发BeanFactory级别的后处理器（BeanFactoryPostProcessor）__
 
-```Java
+```java
     protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
         PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors());
 
@@ -490,7 +490,7 @@ invokeBeanFactoryPostProcessors方法用于__触发BeanFactory级别的后处理
 
 触发BeanFactory后处理器的逻辑由PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors静态方法代理
 
-```Java
+```java
     public static void invokeBeanFactoryPostProcessors(
             ConfigurableListableBeanFactory beanFactory, List<BeanFactoryPostProcessor> beanFactoryPostProcessors) {
 
@@ -629,7 +629,7 @@ invokeBeanFactoryPostProcessors方法用于__触发BeanFactory级别的后处理
 
 registerBeanPostProcessors方法用于__初始化已注册的Bean级别的后处理器（BeanPostProcessor）__
 
-```Java
+```java
     protected void registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) {
         PostProcessorRegistrationDelegate.registerBeanPostProcessors(beanFactory, this);
     }
@@ -637,7 +637,7 @@ registerBeanPostProcessors方法用于__初始化已注册的Bean级别的后处
 
 触发BeanFactory后处理器的逻辑由PostProcessorRegistrationDelegate.registerBeanPostProcessors静态方法代理
 
-```Java
+```java
     public static void registerBeanPostProcessors(
             ConfigurableListableBeanFactory beanFactory, AbstractApplicationContext applicationContext) {
 
@@ -712,7 +712,7 @@ registerBeanPostProcessors方法用于__初始化已注册的Bean级别的后处
 
 initMessageSource方法用于__初始化消息源（MessageSource）__
 
-```Java
+```java
     protected void initMessageSource() {
         ConfigurableListableBeanFactory beanFactory = getBeanFactory();
         if (beanFactory.containsLocalBean(MESSAGE_SOURCE_BEAN_NAME)) {
@@ -748,7 +748,7 @@ initMessageSource方法用于__初始化消息源（MessageSource）__
 
 initApplicationEventMulticaster方法用于__初始化应用事件传播组件（ApplicationEventMulticaster）__
 
-```Java
+```java
     protected void initApplicationEventMulticaster() {
         ConfigurableListableBeanFactory beanFactory = getBeanFactory();
         if (beanFactory.containsLocalBean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME)) {
@@ -774,7 +774,7 @@ initApplicationEventMulticaster方法用于__初始化应用事件传播组件�
 
 onRefresh方法目前的实现逻辑就是一个空方法（钩子方法），交给子类去扩展。__该方法被设计用于初始化一些特殊的上下文环境，生成一些特殊的Bean，此时BeanFactory尚未初始化单例Bean__
 
-```Java
+```java
     protected void onRefresh() throws BeansException {
         //For subclasses: do nothing by default.
     }
@@ -784,7 +784,7 @@ onRefresh方法目前的实现逻辑就是一个空方法（钩子方法），�
 
 registerListeners方法用于__注册那些实现了ApplicationListener接口的Listener__
 
-```Java
+```java
     protected void registerListeners() {
         //Register statically specified listeners first.
         for (ApplicationListener<?> listener : getApplicationListeners()) {
@@ -813,7 +813,7 @@ registerListeners方法用于__注册那些实现了ApplicationListener接口的
 
 finishBeanFactoryInitialization方法用于__初始化所有单例Bean__
 
-```Java
+```java
     protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory) {
         //Initialize conversion service for this context.
         if (beanFactory.containsBean(CONVERSION_SERVICE_BEAN_NAME) &&
@@ -856,7 +856,7 @@ finishBeanFactoryInitialization方法用于__初始化所有单例Bean__
 
 finishRefresh方法用于触发LifecycleProcessor.onRefresh方法，以及发布上下文初始化事件
 
-```Java
+```java
     protected void finishRefresh() {
         //Initialize lifecycle processor for this context.
         initLifecycleProcessor();
@@ -876,7 +876,7 @@ finishRefresh方法用于触发LifecycleProcessor.onRefresh方法，以及发布
 
 resetCommonCaches方法用于__重置Spring core的核心cache__
 
-```Java
+```java
     protected void resetCommonCaches() {
         ReflectionUtils.clearCache();
         ResolvableType.clearCache();
