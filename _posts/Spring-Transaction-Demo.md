@@ -350,7 +350,7 @@ public class UserController {
 
 该类用`groovy`来编写，需要引入`org.codehaus.groovy:groovy-all`才能编译。使用`groovy`的好处是可以写整段的sql语句，而不需要进行字符串拼接
 
-```Groovy
+```groovy
 package org.liuyehcf.spring.tx
 
 import org.apache.ibatis.annotations.Insert
