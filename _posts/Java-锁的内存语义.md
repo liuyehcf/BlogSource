@@ -212,7 +212,7 @@ protected final boolean compareAndSetState(int expect, int update) {
 
 * 这是一个本地方法调用，其源码片段如下
 
-```C
+```c
     inline jint Atomic::cmpxchg(jint exchange_value, volatile jint* dest, jint compare_value){
         //alternative for InterlockedCompareExchange
         int mp = os::is_MP();

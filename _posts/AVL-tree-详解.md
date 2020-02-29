@@ -133,7 +133,7 @@ __这里存在一个相同的优化点，不再赘述__
 
 更新指定节点的高度，只有当该节点的左右孩子节点的高度都正确时，才能得到正确的结果
 
-```C
+```c
 AVL-TREE-HEIGHT(T,x)
 if x.left.height≥x.right.height   //左右节点均存在
     x.height=x.left.height+1
@@ -142,7 +142,7 @@ else x.height=x.right.height+1
 
 将一棵子树替换掉另一棵子树
 
-```C
+```c
 AVL-TREE-TRANSPLANT(T,u,v)   //该函数与红黑树完全一致(都含有哨兵节点)
 if u.p==T.nil
     T.root=v
@@ -156,7 +156,7 @@ else u.p.right=v
 
 左旋给定节点，更新旋转后节点的高度，并返回旋转后子树的根节点
 
-```C
+```c
 AVL-TREE-LEFT-ROTATE(T,x)
 y=x.right
 x.right=y.left
@@ -178,7 +178,7 @@ return y   //返回旋转后的子树根节点
 
 右旋给定节点，更新旋转后节点的高度，并返回旋转后子树的根节点
 
-```C
+```c
 AVL-TREE-RIGH-TROTATE(T,y)
 x=y.left
 y.left=x.right
@@ -204,7 +204,7 @@ return x      //返回旋转后的子树根节点
 
 > X节点必定是以X为根节点的子树中__唯一__不满足平衡性的节点。意味着X节点的孩子子树的所有节点均满足平衡性。因此，必须从下往上找到第一个不平衡的节点来调用该方法
 
-```C
+```c
 AVL-TREE-HOLD-ROTATE(T,x,orientation)
 let stack1,stack2 be two stacks//不考虑实际用到的大小，直接用树的大小来分配堆栈空间大小
 stack1.push(x)
@@ -238,7 +238,7 @@ return rotateRoot
 
 插入一个节点
 
-```C
+```c
 AVL-TREE-TREE-INSERT(T,z)
 y=T.nil
 x=T.root
@@ -260,7 +260,7 @@ AVL-TREE-FIXUP(T,z)
 
 从指定节点向上遍历查找不平衡的节点，并维护平衡树的性质
 
-```C
+```c
 AVL-TREE-FIXUP(T,y) 
 if y==T.nil//为了使删除函数也能调用该函数，因为删除函数传入的参数可能是哨兵
     y=y.p
@@ -277,7 +277,7 @@ while(y≠T.nil) //沿着y节点向上遍历该条路径
 
 删除一个节点
 
-```C
+```c
 AVL-TREE-DELETE(T,z)
 y=z   //x指向将要移动到y原本位置的节点，或者原本y节点的父节点
 if z.left==T.nil
@@ -390,7 +390,7 @@ __可以发现，调整前后子树根节点的高度都是HC+2，因此该节�
 
 更新指定节点的高度，只有当该节点的左右孩子节点的高度都正确时，才能得到正确的结果
 
-```C
+```c
 AVL-TREE-HEIGHT(T,x)
 if x.left.height≥x.right.height   //左右节点均存在
     x.height=x.left.height+1
@@ -399,7 +399,7 @@ else x.height=x.right.height+1
 
 将一棵子树替换掉另一棵子树
 
-```C
+```c
 AVL-TREE-TRANSPLANT(T,u,v)   //该函数与红黑树完全一致(都含有哨兵节点)
 if u.p==T.nil
     T.root=v
@@ -413,7 +413,7 @@ else u.p.right=v
 
 左旋给定节点，更新旋转后节点的高度，并返回旋转后子树的根节点
 
-```C
+```c
 AVL-TREE-LEFT-ROTATE(T,x)
 y=x.right
 x.right=y.left
@@ -435,7 +435,7 @@ return y   //返回旋转后的子树根节点
 
 右旋给定节点，更新旋转后节点的高度，并返回旋转后子树的根节点
 
-```C
+```c
 AVL-TREE-RIGHT-ROTATE(T,y)
 x=y.left
 y.left=x.right
@@ -459,7 +459,7 @@ return x      //返回旋转后的子树根节点
 
 插入一个节点
 
-```C
+```c
 AVL-TREE-INSERT(T,z)
 y=T.nil
 x=T.root
@@ -481,7 +481,7 @@ AVL-TREE-BALANCE-FIX (T,z)
 
 维护平衡性质，分别讨论第一类第二类的四种不平衡情况
 
-```C
+```c
 AVL-TREE--BALANCE-FIX(T,z)
 originHigh=z.h
 AVL-TREE-HEIGHT(z)
@@ -508,7 +508,7 @@ if r.h!=originHigh and r!=root
 
 删除给定关键字
 
-```C
+```c
 AVL-TREE-DELETE(T,z)
 y=z   //x指向将要移动到y原本位置的节点，或者原本y节点的父节点
 p=y.parent   //p为被删除节点的父节点

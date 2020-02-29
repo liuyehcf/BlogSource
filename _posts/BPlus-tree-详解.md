@@ -63,7 +63,7 @@ B+-tree的操作与B-tree的操作基本类似，注意维护好非叶子节点�
 1. x.c[i]是满节点
 1. x是非满节点
 
-```C
+```c
 B+-TREE-SPLIT-CHILD(x,i)//x.ci是满节点，x是非满节点
 y=x.c[i]
 z= ALLOCATE-NODE()
@@ -93,7 +93,7 @@ x.n++
 1. x.c[i]和x.c[i+1]关键字数量必定为t
 1. x的关键字数量必定大于t
 
-```C
+```c
 B+-TREE-MERGE(x,i)
 y=x.c[i]
 z=x.c[i+1]
@@ -118,7 +118,7 @@ shift方法用于删除操作时，为了保证递归的节点关键字数量大
 
 shift操作会导致左侧节点的索引失效，但仅仅需要改动该父节点即可（即不会触发递归向上的索引值修改），因为父节点需要修改的索引必定不是父节点的最值
 
-```C
+```c
 B+-TREE-SHIFT-TO-LEFT-CHILD(x,i)
 y=x.c[i]
 z=x.c[i+1]
@@ -134,7 +134,7 @@ z.n--
 x.key[i]=y.key[y.n]
 ```
 
-```C
+```c
 B+-TREE-SHIFT-TO-RIGHT-CHILD(x,i)
 p=x.c[i]
 y=x.c[i+1]
@@ -154,7 +154,7 @@ x.key[i]=p.key[p.n]
 
 为了避免额外的父节点指针以及实现复杂度，采用了自顶向下的__预分裂__式的插入操作
 
-```C
+```c
 B+-TREE-INSERT(k)
 if root.n==2t
     newRoot= ALLOCATE-NODE()
@@ -167,7 +167,7 @@ if root.n==2t
 B+TREE-INSERT-NOT-FULL(root,k)
 ```
 
-```C
+```c
 B+TREE-INSERT-NOT-FULL(x,k)
 i=x.n
 if x.leaf
@@ -196,7 +196,7 @@ B+TREE-INSERT-NOT-FULL(x.c[i],k)
 
 为了避免额外的父节点指针以及实现复杂度，采用了自顶向下的__预分裂__式的插入操作
 
-```C
+```c
 B+-TREE-DELETE(k)
 if not root.leaf and root.n==1
     root=root.c[1]
@@ -206,7 +206,7 @@ if root.n==2
 B+-TREE-DELETE-NOT-NONE(root,k)
 ```
 
-```C
+```c
 B+-TREE-DELETE-NOT-NONE(x,k)
 i=1
 if x.leaf

@@ -88,7 +88,7 @@ DISK-WRITE(x)
 1. 合并的两个节点，其关键字数量必须是t-1
 1. 合并节点的父节点含有的关键字数目必须大于t-1
 
-```C
+```c
 B-TREE-MERGE(x,i,y,z)
 y.n=2t-1
 for j=t+1 to 2t-1
@@ -108,7 +108,7 @@ Free(z)
 
 shift方法用于删除操作时，为了保证递归的节点关键字数量大于t-1，要从左边或者右边挪一个节点到当前节点，这两个方法就是执行这个操作，当且仅当左右节点的关键字数量均为t-1时(即没有多余的关键字可以挪给其他节点了)，才执行merge操作
 
-```C
+```c
 B-TREE-SHIFT-TO-LEFT-CHILD(x,i,y,z)
 y.n=y.n+1
 y.key[y.n]=x.key[i]
@@ -129,7 +129,7 @@ DISK-WRITE(z)
 DISK-WRITE(x)
 ```
 
-```C
+```c
 B-TREE-SHIFT-TO-RIGHT-CHILD(x,i,y,z)
 z.n=z.n+1
 j=z.n

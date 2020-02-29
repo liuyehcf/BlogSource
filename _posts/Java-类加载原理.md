@@ -61,7 +61,7 @@ forName用于加载一个类并且会执行后续操作，包括验证，解析�
 
 * `${OPEN_JDK}/jdk/src/share/native/java/lang/Class.c`
 
-```C
+```c
 JNIEXPORT jclass JNICALL
 Java_java_lang_Class_forName0(JNIEnv *env, jclass this, jstring classname,
                               jboolean initialize, jobject loader, jclass caller)
@@ -119,7 +119,7 @@ Java_java_lang_Class_forName0(JNIEnv *env, jclass this, jstring classname,
 * `${OPEN_JDK}/hotspot/src/share/vm/prims/jvm.cpp`
 
 __声明如下__
-```C
+```c
 /*
  * Find a class from a given class loader.  Throws ClassNotFoundException.
  *  name:   name of class
@@ -135,7 +135,7 @@ JVM_FindClassFromCaller(JNIEnv *env, const char *name, jboolean init,
 ```
 
 __定义如下__
-```C
+```c
 JVM_ENTRY(jclass, JVM_FindClassFromCaller(JNIEnv* env, const char* name,
                                           jboolean init, jobject loader,
                                           jclass caller))
@@ -287,7 +287,7 @@ loadClass(String,bool)方法首先调用native方法findLoadedClass0在JVM中查
 
 * `${OPEN_JDK}/jdk/src/share/native/java/lang/ClassLoader.c`
 
-```C
+```c
 JNIEXPORT jclass JNICALL
 Java_java_lang_ClassLoader_findLoadedClass0(JNIEnv *env, jobject loader,
                                            jstring name)
@@ -307,7 +307,7 @@ Java_java_lang_ClassLoader_findLoadedClass0(JNIEnv *env, jobject loader,
 
 __声明如下__
 
-```C
+```c
 /* Find a loaded class cached by the VM */
 JNIEXPORT jclass JNICALL
 JVM_FindLoadedClass(JNIEnv *env, jobject loader, jstring name);
@@ -315,7 +315,7 @@ JVM_FindLoadedClass(JNIEnv *env, jobject loader, jstring name);
 
 __定义如下__
 
-```C
+```c
 JVM_ENTRY(jclass, JVM_FindLoadedClass(JNIEnv *env, jobject loader, jstring name))
   JVMWrapper("JVM_FindLoadedClass");
   ResourceMark rm(THREAD);
@@ -447,7 +447,7 @@ native方法defineClass0、defineClass1、defineClass2所在的文件路径如�
 
 * `${OPEN_JDK}/jdk/src/share/native/java/lang/ClassLoader.c`
 
-```C
+```c
 //The existence or signature of this method is not guaranteed since it
 //supports a private method.  This method will be changed in 1.7.
 JNIEXPORT jclass JNICALL
@@ -615,7 +615,7 @@ Java_java_lang_ClassLoader_defineClass2(JNIEnv *env,
 
 __声明如下__
 
-```C
+```c
 /* Define a class with a source (added in JDK1.5) */
 JNIEXPORT jclass JNICALL
 JVM_DefineClassWithSource(JNIEnv *env, const char *name, jobject loader,
@@ -625,7 +625,7 @@ JVM_DefineClassWithSource(JNIEnv *env, const char *name, jobject loader,
 
 __定义如下__
 
-```C
+```c
 JVM_ENTRY(jclass, JVM_DefineClassWithSource(JNIEnv *env, const char *name, jobject loader, const jbyte *buf, jsize len, jobject pd, const char *source))
   JVMWrapper2("JVM_DefineClassWithSource %s", name);
 
