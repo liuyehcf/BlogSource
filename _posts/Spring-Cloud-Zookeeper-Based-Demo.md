@@ -309,7 +309,7 @@ numChildren = 0
 
 上述`/services/ZookeeperProvider/b3735b44-3e69-4a1c-9de9-c7c813767bb6`节点的节点内容如下（后面那串字符串是随机生成的临时id，你电脑上极大概率是不同的）
 
-```JSON
+```json
 {
     "name": "ZookeeperProvider", 
     "id": "b3735b44-3e69-4a1c-9de9-c7c813767bb6", 
