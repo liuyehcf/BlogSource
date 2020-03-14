@@ -232,8 +232,12 @@ __数值比较，如`test n1 -eq n2`__
 
 __字符串比较，例如`test n1 == n2`__
 
-* __`-z` string`：判定字符串是否为空，空返回true__
+* __`-z`：判定字符串是否为空，空返回true__
+    * __在`[]`中，变量需要加引号，例如`[ -z "${a}}" ]`__
+    * __在`[[]]`中，变量需要加引号，例如`[[ -z ${a}} ]]`__
 * __`-n`：判断字符串是否为空，非空返回true__
+    * __在`[]`中，变量需要加引号，例如`[ -n "${a}}" ]`__
+    * __在`[[]]`中，变量需要加引号，例如`[[ -n ${a}} ]]`__
 * __`=`或`==`：判断str1是否等于str2，好像有问题，使用中括号正确__
 * __`!=`：判断str1是否等于str2，好像有问题，使用中括号正确__
 * __字符串变量的引用方式：`"${var_name}"`，即必须加上双引号`""`__
@@ -293,10 +297,10 @@ fi
 
 ## 5.2 `[[]]`
 
-__判断符号`[]`与判断式`test`用法基本一致，有以下几条注意事项__
+__判断符号`[[]]`与判断式`test`用法基本一致，有以下几条注意事项__
 
 1. 如果要在bash的语法当中使用括号作为shell的判断式时，__必须要注意在中括号的两端需要有空格符来分隔__
-1. __逻辑与逻辑或，用的是`&&`和`||`，用一个`[[]]`或者用两个`[[]]`都可以，但是不能用`-a`和`-o`__
+1. __逻辑与逻辑或，用的是`&&`和`||`，用一个`[]`或者用两个`[[]]`都可以，但使用`[[]]`时不能用`-a`和`-o`__
 
 __示例__
 
@@ -669,6 +673,96 @@ case 值 in
 esac
 ```
 
+### 9.7.1 getopts
+
+__格式：`getopts [option[:]] VARIABLE`__
+
+* `option`：选项，为单个字母
+* `:`：如果某个选项（option）后面出现了冒号（`:`），则表示这个选项后面可以接参数
+* `VARIABLE`：表示将某个选项保存在变量`VARIABLE`中
+
+`getopts`是linux系统中的一个内置变量，一般用在循环中。每当执行循环时，`getopts`都会检查下一个命令选项，如果这些选项出现
+在option中，则表示是合法选项，否则不是合法选项。并将这些合法选项保存在`VARIABLE`这个变量中
+
+`getopts`还包含两个内置变量，及`OPTARG`和`OPTIND`
+
+1. `OPTARG`：选项后面的参数
+1. `OPTIND`：下一个选项的索引（该索引是相对于`$*`的索引，因此如果选项有参数的话，索引是非连续的）
+
+__示例__：`getopts ":a:bc:" opt`（参数部分：`-a 11 -b -c 5`）
+
+* 第一个冒号表示忽略错误
+* 字符后面的冒号表示该选项必须有自己的参数
+* `$OPTARG`存储相应选项的参数，如例中的`11`、`5`两个参数
+* `$OPTIND`总是存储原始`$*`中下一个要处理的选项的索引（注意不是参数，而是选项），此处指的是`a`,`b`,`c`这三个选项（而不是那些数字，当然数字
+也是会占有位置的）的索引
+
+    * `OPTIND`初值为1，遇到`x`（选项不带参数），则`OPTIND += 1`；遇到`x:`（选项带参数），则`OPTARG`=argv[OPTIND+1]，`OPTIND += 2`；
+
+```sh
+echo $*
+while getopts ":a:bc:" opt
+do
+    case $opt in
+        a)
+            echo $OPTARG $OPTIND
+            ;;
+        b)
+            echo "b $OPTIND"
+            ;;
+        c)
+            echo "c $OPTIND"
+            ;;
+        :)
+            echo "$OPTARG must have argument"
+            exit 1
+            ;;
+        ?)
+            echo "error"
+            exit 1
+            ;;
+    esac
+done
+```
+
+```sh
+# case0
+./testGetopts.sh -f
+-f
+error
+
+# case1
+./testGetopts.sh -a
+-a
+a must have argument
+
+# case2
+./testGetopts.sh -a 5
+-a 5
+5 3
+
+# case3
+./testGetopts.sh -a 5 -b
+-a 5 -b
+5 3
+b 4
+
+# case4
+./testGetopts.sh -a 5 -b -c 5
+-a 5 -b -c 5
+5 3
+b 4
+c 6
+
+# case5
+./testGetopts.sh -a 5 -b -c 5 -b
+-a 5 -b -c 5 -b
+5 3
+b 4
+c 6
+b 7
+```
+
 # 10 函数
 
 ## 10.1 参数传递
@@ -799,3 +893,4 @@ echo ${count} # 永远是0
 * [Linux—shell中$(())、$()、\`\`与${}的区别](https://www.cnblogs.com/chengd/p/7803664.html)
 * [shell中各种括号的作用()、(())、\[\]、\[\[\]\]、{}](https://www.cnblogs.com/fengkui/p/6122702.html)
 * [shell特殊符号用法大全](https://www.cnblogs.com/guochaoxxl/p/6871619.html)
+* [shell的getopts命令](https://www.jianshu.com/p/baf6e5b7e70a)

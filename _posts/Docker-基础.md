@@ -209,6 +209,10 @@ RUN apk add -U tzdata
 1. 设置内核参数（需要使用特权模式）
     * 编写DockerFile的时候，把修改的内核参数写到CMD中（不能在制作DockerFile的时候通过RUN进行修改，因为这些内核文件是只读的）
     * 启动的时候指定特权模式：`docker run --privileged`
+1. 在容器中使用docker命令
+    * `--privileged`：使用特权模式
+    * `-v /var/run/docker.sock:/var/run/docker.sock`：将docker socket文件挂载到容器
+    * `-v $(which docker):/bin/docker `：将docker命令挂载到容器
 
 # 6 参考
 
