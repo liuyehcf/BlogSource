@@ -20,6 +20,14 @@ __格式：__
 
 * `cat > [newfile] <<'结束字符'`
 
+__示例__
+
+```sh
+cat > /tmp/test << EOF
+hello world!
+EOF
+```
+
 # 2 字符串处理命令
 
 ## 2.1 echo
@@ -27,6 +35,7 @@ __格式：__
 __格式：__
 
 * `echo [-ne] [字符串/变量]`
+* `''`中的变量不会被解析，`""`中的变量会被解析
 
 __参数说明：__
 
@@ -47,6 +56,28 @@ __示例：__
 
 * `echo ${a}`
 * `echo -e "a\nb"`
+
+__颜色控制，控制选项说明__ 
+
+```sh
+echo -e "\033[30m 黑色字 \033[0m"
+echo -e "\033[31m 红色字 \033[0m"
+echo -e "\033[32m 绿色字 \033[0m"
+echo -e "\033[33m 黄色字 \033[0m"
+echo -e "\033[34m 蓝色字 \033[0m"
+echo -e "\033[35m 紫色字 \033[0m"
+echo -e "\033[36m 天蓝字 \033[0m"
+echo -e "\033[37m 白色字 \033[0m"
+
+echo -e "\033[40;37m 黑底白字 \033[0m"
+echo -e "\033[41;37m 红底白字 \033[0m"
+echo -e "\033[42;37m 绿底白字 \033[0m"
+echo -e "\033[43;37m 黄底白字 \033[0m"
+echo -e "\033[44;37m 蓝底白字 \033[0m"
+echo -e "\033[45;37m 紫底白字 \033[0m"
+echo -e "\033[46;37m 天蓝底白字 \033[0m"
+echo -e "\033[47;30m 白底黑字 \033[0m"
+```
 
 ## 2.2 sed
 
@@ -404,6 +435,76 @@ __示例：__
 
 * `cat /etc/passwd | sort`
 * `cat /etc/passwd | sort -t ':' -k 3`
+
+## 2.6 tr
+
+`tr`指令从标准输入设备读取数据，经过字符串转译后，将结果输出到标准输出设备
+
+__格式：__
+
+* `tr [-cdst] SET1 [SET2]`
+
+__参数说明：__
+
+* `-c, --complement`：反选设定字符。也就是符合`SET1`的部份不做处理，不符合的剩余部份才进行转换
+* `-d, --delete`：删除指令字符
+* `-s, --squeeze-repeats`：缩减连续重复的字符成指定的单个字符
+* `-t, --truncate-set1`：削减`SET1`指定范围，使之与`SET2`设定长度相等
+
+__字符集合的范围__
+
+* `\NNN`：八进制值的字符 NNN (1 to 3 为八进制值的字符)
+* `\\`：反斜杠
+* `\a`：Ctrl-G 铃声
+* `\b`：Ctrl-H 退格符
+* `\f`：Ctrl-L 走行换页
+* `\n`：Ctrl-J 新行
+* `\r`：Ctrl-M 回车
+* `\t`：Ctrl-I tab键
+* `\v`：Ctrl-X 水平制表符
+* `CHAR1-CHAR2`：字符范围从 CHAR1 到 CHAR2 的指定，范围的指定以 ASCII 码的次序为基础，只能由小到大，不能由大到小。
+* `[CHAR*]`：这是 SET2 专用的设定，功能是重复指定的字符到与 SET1 相同长度为止
+* `[CHAR*REPEAT]`：这也是 SET2 专用的设定，功能是重复指定的字符到设定的 REPEAT 次数为止(REPEAT 的数字采 8 进位制计算，以 0 为开始)
+* `[:alnum:]`：所有字母字符与数字
+* `[:alpha:]`：所有字母字符
+* `[:blank:]`：所有水平空格
+* `[:cntrl:]`：所有控制字符
+* `[:digit:]`：所有数字
+* `[:graph:]`：所有可打印的字符(不包含空格符)
+* `[:lower:]`：所有小写字母
+* `[:print:]`：所有可打印的字符(包含空格符)
+* `[:punct:]`：所有标点字符
+* `[:space:]`：所有水平与垂直空格符
+* `[:upper:]`：所有大写字母
+* `[:xdigit:]`：所有 16 进位制的数字
+* `[=CHAR=]`：所有符合指定的字符(等号里的`CHAR`，代表你可自订的字符)
+
+__示例：__
+
+* `echo "abcdefg" | tr "[:lower:]" "[:upper:]"`：将小写替换为大写
+* `echo -e "a\nb\nc" | tr "\n" " "`：将`\n`替换成空格
+* `echo "hello 123 world 456" | tr -d '0-9'`：删除`0-9`
+* `echo -e "aa.,a 1 b#$bb 2 c*/cc 3 \nddd 4" | tr -d -c '0-9 \n'`：删除除了`0-9`、空格、换行符之外的内容
+* `echo "thissss is      a text linnnnnnne." | tr -s ' sn'`：删除多余的空格、`s`和`n`
+* `head /dev/urandom | tr -dc A-Za-z0-9 | head -c 20`：生成随机串
+
+## 2.7 tee
+
+`>`、`>>`等会将数据流传送给文件或设备，因此除非去读取该文件或设备，否则就无法继续利用这个数据流，如果我们想要将这个数据流的处理过程中将某段信息存下来，可以利用`tee`
+
+`tee`会将数据流送与文件与屏幕(screen)，输出到屏幕的就是`stdout`可以让下个命令继续处理(__`>`,`>>`会截断`stdout`，从而无法以`stdin`传递给下一个命令__)
+
+__格式：__
+
+* `tee [-a] file`
+
+__参数说明：__
+
+* `-a`：以累加(append)的方式，将数据加入到file当中
+
+__示例：__
+
+* `command | tee <文件名> | command`
 
 # 3 查找
 
@@ -1619,3 +1720,4 @@ __示例：__
 * [What does “proto kernel” means in Unix Routing Table?](https://stackoverflow.com/questions/10259266/what-does-proto-kernel-means-in-unix-routing-table)
 * [Routing Tables](http://linux-ip.net/html/routing-tables.html)
 * [How to execute a command in screen and detach?](https://superuser.com/questions/454907/how-to-execute-a-command-in-screen-and-detach)
+* [Linux使echo命令输出结果带颜色](https://www.cnblogs.com/yoo2767/p/6016300.html)

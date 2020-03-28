@@ -12,7 +12,15 @@ __阅读更多__
 
 <!--more-->
 
-# 1 命令替换
+# 1 管道
+
+__管道命令使用的是`|`这个界定符号，这个管道命令`|`仅能处理有前面一个命令传来的`正确信息`，也就是`standard output`的信息，对于standard error并没有直接处理的能力__
+
+__每个管道后面接的`第一个数据必须是命令`，而且这个命令必须能够接受`standard input`的数据才行，例如`less，more，head，tail`等都可以接受standard input的管道命令__
+
+__管道是作为子进程的方式来运行的。因此在管道中进行一些变量赋值操作，在管道结束后会丢失__
+
+# 2 命令替换
 
 __`命令替换(command substitution)`可以让`括号里`或`单引号里`的命令提前于整个命令运行，然后将`执行结果`插入在命令替换符号处。由于命令替换的结果经常交给外部命令，不应该让结果有换行的行为，所以默认将所有的换行符替换为了空格(实际上所有的空白符都被压缩成了单个空格)__
 
@@ -30,9 +38,120 @@ echo "$(ls)"
 echo $(ls)
 ```
 
-# 2 数值运算
+# 3 进程替换
 
-## 2.1 `$[]`
+__进程替换(Process Substitution)的作用有点类似管道，但在实现方式上有所区别，管道是作为子进程的方式来运行的，而进程替换会在/dev/fd/下面产生类似/dev/fd/63,/dev/fd/62这类临时文件，用来传递数据。用法如下：__
+
+1. `<(command)`
+1. `>(command)`
+* __注意`<`、`>`与`(`之间不能有空格__
+
+```sh
+cat <(ls)   #把 <(ls) 当一个临时文件，文件内容是ls的结果，cat这个临时文件
+ls > >(cat) #把 >(cat) 当成临时文件，ls的结果重定向到这个文件，最后这个文件被cat
+```
+
+__典型示例，统计文件个数__
+```sh
+# 正确方式
+count=0
+while read line
+do
+    ((count++))
+done < <(ls)
+echo ${count}
+
+# 错误方式
+count=0
+ls | while read line
+do
+    ((count++))
+done
+echo ${count} # 永远是0
+```
+
+__简单读取__
+
+```sh
+#!/bin/bash
+
+#这里默认会换行  
+echo "输入网站名: "  
+#读取从键盘的输入  
+read website  
+echo "你输入的网站名是 $website"  
+exit 0  #退出
+```
+
+__`-p`参数，允许在`read`命令行中直接指定一个提示__
+
+```sh
+#!/bin/bash
+
+read -p "输入网站名:" website
+echo "你输入的网站名是 $website" 
+exit 0
+```
+
+__`-t`参数指定`read`命令等待输入的秒数，当计时满时，`read`命令返回一个非零退出状态__
+
+```sh
+#!/bin/bash
+
+if read -t 5 -p "输入网站名:" website
+then
+    echo "你输入的网站名是 $website"
+else
+    echo "\n抱歉，你输入超时了。"
+fi
+exit 0
+```
+
+__`-n`参数设置`read`命令计数输入的字符。当输入的字符数目达到预定数目时，自动退出，并将输入的数据赋值给变量__
+
+```sh
+#!/bin/bash
+
+read -n1 -p "Do you want to continue [Y/N]?" answer
+case $answer in
+    Y|y)
+      echo "fine ,continue";;
+    N|n)
+      echo "ok,good bye";;
+    *)
+     echo "error choice";;
+esac
+exit 0
+```
+
+__`-s`选项能够使`read`命令中输入的数据不显示在命令终端上（实际上，数据是显示的，只是`read`命令将文本颜色设置成与背景相同的颜色）。输入密码常用这个选项__
+
+```sh
+#!/bin/bash
+
+read  -s  -p "请输入您的密码:" pass
+echo "\n您输入的密码是 $pass"
+exit 0
+```
+
+__按行读取文件__
+
+```sh
+#!/bin/bash
+  
+count=1    # 赋值语句，不加空格
+cat test.txt | while read line      # cat 命令的输出作为read命令的输入,read读到>的值放在line中
+do
+   echo "Line $count:$line"
+   count=$[ $count + 1 ]          # 注意中括号中的空格。
+done
+echo "finish"
+exit 0
+```
+
+# 4 数值运算
+
+## 4.1 `$[]`
 
 __整数扩展，会返回执行后的结果。如果有`,`分隔，那么只返回最后一个表达式执行的结果__
 
@@ -49,7 +168,7 @@ echo $[ $a % $b ]
 echo $[ 1 + 3, 5 + 6 ]
 ```
 
-## 2.2 expr
+## 4.2 expr
 
 __`expr`是一个用于数值计算的命令，运算符号两边必须加空格，不加空格会原样输出，不会计算__
 
@@ -64,7 +183,7 @@ expr $a / $b    #除法取商
 expr $a % $b    #除法取模
 ```
 
-## 2.3 `$(())`
+## 4.3 `$(())`
 
 __`$(())`有如下两个功能__
 
@@ -85,7 +204,7 @@ echo $((16#ff))
 echo $((8#77))
 ```
 
-## 2.4 `(())`
+## 4.4 `(())`
 
 __整数扩展，只计算，不返回值。通常用于重定义变量值，只有赋值语句才能起到重定义变量的作用__
 
@@ -101,7 +220,7 @@ echo $a     # 输出11
 echo $a     # 输出12
 ```
 
-# 3 特殊符号
+# 5 特殊符号
 
 shell中的特殊符号包括如下几种
 
@@ -192,7 +311,7 @@ shell中的特殊符号包括如下几种
 1. __`&`：与号(Run job in background[ampersand])__
     * 如果命令后面跟上一个&符号，这个命令将会在后台运行
 
-# 4 判断式
+# 6 判断式
 
 __关于某个文件名的“文件类型”判断，如`test -e filename`__
 
@@ -248,9 +367,9 @@ __逻辑与/或/非__
 * __`-o`：任一条件成立，返回true，如test -r file1 -o -x file2__
 * __`!`：反向状态__
 
-# 5 判断符号`[]`/`[[]]`
+# 7 判断符号`[]`/`[[]]`
 
-## 5.1 `[]`
+## 7.1 `[]`
 
 __判断符号`[]`与判断式`test`用法基本一致，有以下几条注意事项__
 
@@ -295,7 +414,7 @@ else
 fi
 ```
 
-## 5.2 `[[]]`
+## 7.2 `[[]]`
 
 __判断符号`[[]]`与判断式`test`用法基本一致，有以下几条注意事项__
 
@@ -338,9 +457,9 @@ else
 fi
 ```
 
-# 6 String
+# 8 String
 
-## 6.1 拼接字符串
+## 8.1 拼接字符串
 
 ```sh
 your_name="qinjx"
@@ -348,14 +467,14 @@ greeting="hello, "${your_name}" \!"
 echo ${greeting}
 ```
 
-## 6.2 获取字符串长度
+## 8.2 获取字符串长度
 
 ```sh
 text="abcdefg"
 echo "字符串长度为 ${#text}"
 ```
 
-## 6.3 提取子字符串
+## 8.3 提取子字符串
 
 下面以字符串`http://www.aaa.com/123.htm`为例，介绍几种不同的截取方式
 
@@ -433,7 +552,7 @@ var='http://www.aaa.com/123.htm'
 echo ${var:0-7}
 ```
 
-## 6.4 按行读取
+## 8.4 按行读取
 
 __方式1__
 
@@ -464,7 +583,7 @@ do
 done
 ```
 
-# 7 Array
+# 9 Array
 
 Shell 数组用括号来表示，元素用`空格`符号分割开，语法格式如下：
 
@@ -514,7 +633,7 @@ __注意__
 
 1. 数组下标从0开始
 
-# 8 Map
+# 10 Map
 
 Shell map用括号来表示，元素用`空格`符号分割开，语法格式如下：
 
@@ -572,9 +691,9 @@ do
 done
 ```
 
-# 9 控制流
+# 11 控制流
 
-## 9.1 if
+## 11.1 if
 
 ```sh
 if condition
@@ -586,7 +705,7 @@ then
 fi
 ```
 
-## 9.2 if else
+## 11.2 if else
 
 ```sh
 if condition
@@ -600,7 +719,7 @@ else
 fi
 ```
 
-## 9.3 if else-if else
+## 11.3 if else-if else
 
 ```sh
 if condition1
@@ -614,7 +733,7 @@ else
 fi
 ```
 
-## 9.4 for
+## 11.4 for
 
 ```sh
 for var in item1 item2 ... itemN
@@ -636,7 +755,7 @@ do
 done
 ```
 
-## 9.5 while
+## 11.5 while
 
 ```sh
 while condition
@@ -645,7 +764,7 @@ do
 done
 ```
 
-## 9.6 until
+## 11.6 until
 
 ```sh
 until condition
@@ -654,7 +773,7 @@ do
 done
 ```
 
-## 9.7 case
+## 11.7 case
 
 ```sh
 case 值 in
@@ -673,7 +792,114 @@ case 值 in
 esac
 ```
 
-### 9.7.1 getopts
+# 12 函数
+
+## 12.1 参数传递
+
+__传递数组__
+
+1. 用`""`将数组转化成字符串
+
+```sh
+function func() {
+    # 这里将传入的字符串解析成数组
+    param=( $(echo $1) )
+    echo "param=${param[*]}"
+}
+
+array=('a', 'b', 'c', 'd', 'e')
+
+# 这里用""将数组转为字符串
+func "${array[*]}"
+```
+
+## 12.2 返回值
+
+__返回数组__
+
+```sh
+function func() {
+    # 这里将传入的字符串解析成数组
+    array=('a' 'b' 'c' 'd' 'e')
+    echo "${array[*]}"
+}
+
+# 这里用""将数组转为字符串
+array=( $(func) )
+echo ${array[*]}
+```
+
+# 13 重定向
+
+| 命令 | 说明 |
+|:--|:--|
+| `command > file` | 将输出重定向到`file` |
+| `command < file` | 将输入重定向到`file` |
+| `command >> file` | 将输出以追加的方式重定向到`file` |
+| `n > file` | 将文件描述符为`n`的文件重定向到`file` |
+| `n >> file` | 将文件描述符为`n`的文件以追加的方式重定向到 `file` |
+| `n >& m` | 将输出文件`m`和`n`合并 |
+| `n <& m` | 将输入文件`m`和`n`合并 |
+| `<< tag` | 将开始标记 tag 和结束标记 tag 之间的内容作为输入 |
+
+__需要注意的是文件描述符 0 通常是标准输入（STDIN），1 是标准输出（STDOUT），2 是标准错误输出（STDERR）__
+
+## 13.1 Here Document
+
+Here Document 是 Shell 中的一种特殊的重定向方式，用来将输入重定向到一个交互式 Shell 脚本或程序
+
+它的基本的形式如下
+
+```sh
+command << delimiter
+    document
+delimiter
+```
+
+例如
+
+```sh
+wc -l << EOF
+    欢迎来到
+    菜鸟教程
+    www.runoob.com
+EOF
+3          # 输出结果为 3 行
+```
+
+# 14 捕获信号
+
+`trap`常用来做一些清理工作，比如你在脚本中将一些进程放到后台执行，但如果脚本异常终止（比如用ctrl+c），那么这些后台进程可能得不到及时处理，这个时候就可以用`trap`来捕获信号，从而执行清理动作
+
+__格式__
+
+* `trap "commands" signal-list`
+
+__注意__
+
+* 如果commands中包含变量，那么该变量在执行`trap`语句时就已解析，而非到真正捕获信号的时候才解析
+
+# 15 方法
+
+## 15.1 read
+
+__格式：__
+
+* `read [-ers] [-a aname] [-d delim] [-i text] [-n nchars] [-N nchars] [-p prompt] [-t timeout] [-u fd] [name ...]`
+
+__参数说明：__
+
+`-a`：后跟一个变量，该变量会被认为是个数组，然后给其赋值，__默认是以空格为分割符__
+`-d`：后面跟一个标志符，其实只有其后的第一个字符有用，作为结束的标志
+`-p`：后面跟提示信息，即在输入前打印提示信息
+`-e`：在输入的时候可以使用命令补全功能
+`-n`：后跟一个数字，定义输入文本的长度，很实用
+`-r`：屏蔽`\`，如果没有该选项，则`\`作为一个转义字符，有的话`\`就是个正常的字符了
+`-s`：安静模式，在输入字符时不再屏幕上显示，例如login时输入密码
+`-t`：后面跟秒数，定义输入字符的等待时间
+`-u`：后面跟fd，从文件描述符中读入，该文件描述符可以是exec新开启的
+
+## 15.2 getopts
 
 __格式：`getopts [option[:]] VARIABLE`__
 
@@ -763,134 +989,15 @@ c 6
 b 7
 ```
 
-# 10 函数
-
-## 10.1 参数传递
-
-__传递数组__
-
-1. 用`""`将数组转化成字符串
-
-```sh
-function func() {
-    # 这里将传入的字符串解析成数组
-    param=( $(echo $1) )
-    echo "param=${param[*]}"
-}
-
-array=('a', 'b', 'c', 'd', 'e')
-
-# 这里用""将数组转为字符串
-func "${array[*]}"
-```
-
-## 10.2 返回值
-
-__返回数组__
-
-```sh
-function func() {
-    # 这里将传入的字符串解析成数组
-    array=('a' 'b' 'c' 'd' 'e')
-    echo "${array[*]}"
-}
-
-# 这里用""将数组转为字符串
-array=( $(func) )
-echo ${array[*]}
-```
-
-# 11 重定向
-
-| 命令 | 说明 |
-|:--|:--|
-| `command > file` | 将输出重定向到`file` |
-| `command < file` | 将输入重定向到`file` |
-| `command >> file` | 将输出以追加的方式重定向到`file` |
-| `n > file` | 将文件描述符为`n`的文件重定向到`file` |
-| `n >> file` | 将文件描述符为`n`的文件以追加的方式重定向到 `file` |
-| `n >& m` | 将输出文件`m`和`n`合并 |
-| `n <& m` | 将输入文件`m`和`n`合并 |
-| `<< tag` | 将开始标记 tag 和结束标记 tag 之间的内容作为输入 |
-
-__需要注意的是文件描述符 0 通常是标准输入（STDIN），1 是标准输出（STDOUT），2 是标准错误输出（STDERR）__
-
-## 11.1 Here Document
-
-Here Document 是 Shell 中的一种特殊的重定向方式，用来将输入重定向到一个交互式 Shell 脚本或程序
-
-它的基本的形式如下
-
-```sh
-command << delimiter
-    document
-delimiter
-```
-
-例如
-
-```sh
-wc -l << EOF
-    欢迎来到
-    菜鸟教程
-    www.runoob.com
-EOF
-3          # 输出结果为 3 行
-```
-
-# 12 管道
-
-__管道命令使用的是`|`这个界定符号，这个管道命令`|`仅能处理有前面一个命令传来的`正确信息`，也就是`standard output`的信息，对于standard error并没有直接处理的能力__
-
-__每个管道后面接的`第一个数据必须是命令`，而且这个命令必须能够接受`standard input`的数据才行，例如`less，more，head，tail`等都可以接受standard input的管道命令__
-
-__管道是作为子进程的方式来运行的。因此在管道中进行一些变量赋值操作，在管道结束后会丢失__
-
-# 13 进程替换
-
-__进程替换(Process Substitution)的作用有点类似管道，但在实现方式上有所区别，管道是作为子进程的方式来运行的，而进程替换会在/dev/fd/下面产生类似/dev/fd/63,/dev/fd/62这类临时文件，用来传递数据。用法如下：__
-
-1. `<(command)`
-1. `>(command)`
-* __注意`<`、`>`与`(`之间不能有空格__
-
-```sh
-cat <(ls)   #把 <(ls) 当一个临时文件，文件内容是ls的结果，cat这个临时文件
-ls > >(cat) #把 >(cat) 当成临时文件，ls的结果重定向到这个文件，最后这个文件被cat
-```
-
-__典型示例，统计文件个数__
-```sh
-# 正确方式
-count=0
-while read line
-do
-    ((count++))
-done < <(ls)
-echo ${count}
-
-# 错误方式
-count=0
-ls | while read line
-do
-    ((count++))
-done
-echo ${count} # 永远是0
-```
-
-# 14 方法
-
-## 14.1 read
-
-读取用户输入
-
-# 15 参考
+# 16 参考
 
 * [shell教程](http://www.runoob.com/linux/linux-shell.html)
 * [Shell脚本8种字符串截取方法总结](https://www.jb51.net/article/56563.htm)
 * [shell的命令替换和命令组合](https://www.cnblogs.com/f-ck-need-u/archive/2017/08/20/7401591.html)
 * [shell脚本--数值计算](https://www.cnblogs.com/-beyond/p/8232496.html)
-* [Linux—shell中$(())、$()、\`\`与${}的区别](https://www.cnblogs.com/chengd/p/7803664.html)
-* [shell中各种括号的作用()、(())、\[\]、\[\[\]\]、{}](https://www.cnblogs.com/fengkui/p/6122702.html)
+* [Linux—shell中`$(())`、`$()`与`${}`的区别](https://www.cnblogs.com/chengd/p/7803664.html)
+* [shell中各种括号的作用`()`、`(())`、`[]`、`[[]]`、`{}`](https://www.cnblogs.com/fengkui/p/6122702.html)
 * [shell特殊符号用法大全](https://www.cnblogs.com/guochaoxxl/p/6871619.html)
 * [shell的getopts命令](https://www.jianshu.com/p/baf6e5b7e70a)
+* [如何获取后台进程的PID？](https://www.liangzl.com/get-article-detail-168597.html)
+* [shell——trap捕捉信号（附信号表）](https://www.cnblogs.com/maxgongzuo/p/6372898.html)

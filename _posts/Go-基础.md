@@ -89,7 +89,21 @@ func main() {
 
 `fmt.Sprintf`
 
-## 2.7 交叉编译
+## 2.7 go文件命名规范
+
+__区分平台和cpu架构：`<name>_<platform>_<cpu arch>.go`__
+
+* `file.go`
+* `file_linux.go`
+* `file_linux_amd64.go`
+
+__测试：`<name>_<platform>_<cpu arch>_test.go`__
+
+* `file_test.go`
+* `file_linux_test.go`
+* `file_linux_amd64_test.go`
+
+## 2.8 交叉编译
 
 ```sh
 # 查看环境变量
@@ -99,12 +113,12 @@ go env
 env GOOS=linux GOARCH=amd64 go build -o <target_binary> <src.go> 
 ```
 
-## 2.8 类似try...catch
+## 2.9 类似try...catch
 
 1. `panic`：抛出异常
 1. `defer`&`recover`：捕获异常
 
-## 2.9 bindata-打包资源文件
+## 2.10 bindata-打包资源文件
 
 `go build`只能编译go文件，但是项目中如果存在资源文件，比如`css`，`html`等文件，是无法被`go build`打包进二进制文件的
 
@@ -124,13 +138,17 @@ go-bindata -pkg <package> -o <go file path> <resource path1> <resource path2> ..
 # <resource path1> : 具体要打包的资源路径
 ```
 
-## 2.10 log-framework
+## 2.11 log-framework
 
 [lumberjack](https://github.com/natefinch/lumberjack)
 
 [Golang 获取用户 home 目录路径](https://studygolang.com/articles/2772)
 
-## 2.11 [FAQ](https://golang.org/doc/faq)
+[logback-for-go](https://github.com/liuyehcf/common-gtools)
+
+## 2.12 
+
+## 2.13 [FAQ](https://golang.org/doc/faq)
 
 1. [new和make的区别](https://golang.org/doc/faq#new_and_make)
 1. [方法参数引用和非引用](https://golang.org/doc/faq#methods_on_values_or_pointers)

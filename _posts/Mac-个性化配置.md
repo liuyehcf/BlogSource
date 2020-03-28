@@ -198,7 +198,26 @@ __注意，`sudo mv /bin/bash  /bin/bash.origin`可能因为权限的问题，�
 1. `~/Library/Caches`
     * `~/Library/Caches/IntelliJIdea2018.1`：`IntelliJIdea`的一些缓存数据
 
-# 8 参考
+# 8 卸载itunes
+
+为什么要卸载，升级完mac之后，发现某些应用的`f8`快捷键失效了，一按`f8`就会自动打开itunes
+
+我们是无法通过正常方式卸载itunes的，`sudo rm -rf /System/Applications/Music.app`会提示`Operation not permitted`，即便切到`root`账号也无法执行，这是因为mac对此类行为做了安全防护
+
+我们可以通过`csrutil disable`解除这个限制。但是该命令需要到恢复模式才能用
+
+如何进入恢复模式：重启电脑，按`COMMAND+R`组合键进入恢复模式
+
+进入恢复模式后，在屏幕上方点击`实用工具`->`终端`，然后再执行`csrutil disable`即可
+
+当关闭mac的`System Integrity Protection`功能之后，再次尝试删除`itunues`，发现还是删除不了，这次提示的是`Read-only file system`，无语
+
+后来在[Stop F8 key from launching iTunes?](https://discussions.apple.com/thread/3715785)找到了解决方案
+
+* `System Preferences` -> `Keyboard` -> `Keyboard`
+* 取消`Use all F1,F2,etc. keys as standard function keys`选项的勾选
+
+# 9 参考
 
 * [mac下vim的16种配色方案（代码高亮）展示，及配置](http://blog.csdn.net/myhelperisme/article/details/49700715)
 * [mac终端(Terminal)字体颜色更改教程 [ls、vim操作颜色] [复制链接]](https://bbs.feng.com/forum.php?mod=viewthread&tid=10508780)
