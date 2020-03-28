@@ -650,7 +650,29 @@ __参数说明：__
     * `-15`：以正常的程序方式终止一项工作，与-9是不同的，-15以正常步骤结束一项工作，这是默认值
 * 与bg、fg不同，若要管理工作，kill中的%不可省略，因为kill默认接PID
 
-## 6.8 ps
+## 6.8 pkill
+
+__格式：__
+
+* `pkill [-signal] PID`
+* `pkill [-signal] [-Ptu] [arg]`
+
+__参数说明：__
+
+* `-signal`：同`kill`
+* `-P ppid,...`：匹配指定`parent id`
+* `-s sid,...`：匹配指定`session id`
+* `-t term,...`：匹配指定`terminal`
+* `-u euid,...`：匹配指定`effective user id`
+* `-U uid,...`：匹配指定`real user id`
+* __不指定匹配规则时，默认匹配进程名字__
+
+__示例：__
+
+* `pkill -9 -t pts/0`
+* `pkill -9 -u user1`
+
+## 6.9 ps
 
 __格式：__
 
@@ -708,7 +730,7 @@ __`ps aux`打印参数说明：__
 * `COMMAND`：该进程的实际命令
 * 一般来说ps aux会按照PID的顺序来排序显示
 
-## 6.9 pgrep
+## 6.10 pgrep
 
 __格式：__
 
@@ -728,7 +750,7 @@ __示例：__
 * `pgrep -ln sshd`
 * `pgrep -l ssh*`
 
-## 6.10 nohup
+## 6.11 nohup
 
 __`nohup`会忽略所有挂断（SIGHUP）信号__。比如通过`ssh`登录到远程服务器上，然后启动一个程序，当`ssh`登出时，这个程序就会随即终止。如果用`nohup`方式启动，那么当`ssh`登出时，这个程序仍然会继续运行
 
@@ -746,7 +768,7 @@ __示例：__
 
 * `nohup java -jar xxx.jar &`
 
-## 6.11 screen
+## 6.12 screen
 
 __如果想在关闭`ssh`连接后继续运行启动的程序，可以使用`nohup`。如果要求下次`ssh`登录时，还能查看到上一次`ssh`登录时运行的程序的状态，那么就需要使用`screen`__
 
@@ -783,7 +805,7 @@ __会话管理__
 1. `Ctrl a + d`：暂时断开screen会话
 1. `Ctrl a + k`：杀掉当前窗口
 
-## 6.12 pstree
+## 6.13 pstree
 
 __格式：__
 
