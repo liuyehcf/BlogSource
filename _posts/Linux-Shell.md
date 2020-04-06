@@ -40,10 +40,12 @@ echo $(ls)
 
 # 3 进程替换
 
-__进程替换(Process Substitution)的作用有点类似管道，但在实现方式上有所区别，管道是作为子进程的方式来运行的，而进程替换会在/dev/fd/下面产生类似/dev/fd/63,/dev/fd/62这类临时文件，用来传递数据。用法如下：__
+__进程替换(Process Substitution)的作用有点类似管道，但在实现方式上有所区别，管道是作为子进程的方式来运行的，而进程替换会在`/dev/fd/`下面产生类似`/dev/fd/63`,`/dev/fd/62`这类临时文件，用来传递数据。用法如下：__
 
-1. `<(command)`
-1. `>(command)`
+1. __`<(command)`：用来产生标准输出，借助输入重定向，它的结果可以作为另一个命令的输入__
+    * `cat <(ls)`
+1. __`>(command)`：用来接收标准输入，借助输出重定向，它可以接收另一个命令的输出结果__
+    * `ls > >(cat)`
 * __注意`<`、`>`与`(`之间不能有空格__
 
 ```sh
@@ -52,6 +54,7 @@ ls > >(cat) #把 >(cat) 当成临时文件，ls的结果重定向到这个文件
 ```
 
 __典型示例，统计文件个数__
+
 ```sh
 # 正确方式
 count=0
@@ -879,6 +882,50 @@ __注意__
 
 * 如果commands中包含变量，那么该变量在执行`trap`语句时就已解析，而非到真正捕获信号的时候才解析
 
+__示例1__
+
+```sh
+# do other things
+
+ping www.baidu.com &
+
+ping_pid=$!
+trap "kill -9 ${ping_pid}; exit 0" SIGINT SIGTERM EXIT
+
+sleep 2
+# do other things
+```
+
+__示例2（错误），该示例与示例1的差别就是用sudo执行ping命令__
+
+* 这样是没法杀死`ping`这个后台进程的，因为`ping_pid`变量获取到的并不是`ping`的`pid`，而是`sudo`的`pid`
+
+```sh
+# do other things
+
+sudo ping www.baidu.com &
+
+ping_pid=$!
+trap "kill -9 ${ping_pid}; exit 0" SIGINT SIGTERM EXIT
+
+sleep 2
+# do other things
+```
+
+__实例3（对实例2进行调整）__
+
+```sh
+# do other things
+
+sudo ping www.baidu.com &
+
+ping_pid=$!
+trap "pkill -9 ping; exit 0" SIGINT SIGTERM EXIT
+
+sleep 2
+# do other things
+```
+
 # 15 方法
 
 ## 15.1 read
@@ -1001,3 +1048,4 @@ b 7
 * [shell的getopts命令](https://www.jianshu.com/p/baf6e5b7e70a)
 * [如何获取后台进程的PID？](https://www.liangzl.com/get-article-detail-168597.html)
 * [shell——trap捕捉信号（附信号表）](https://www.cnblogs.com/maxgongzuo/p/6372898.html)
+* [Shell进程替换](http://c.biancheng.net/view/3025.html)

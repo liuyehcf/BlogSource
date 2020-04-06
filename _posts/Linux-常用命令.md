@@ -12,9 +12,31 @@ __阅读更多__
 
 <!--more-->
 
-# 1 查看文件内容
+# 1 uname
 
-## 1.1 cat
+__格式：__
+
+* `find [文件路径] [option] [action]`
+
+__参数说明：__
+
+* `-a, --all`：以如下次序输出所有信息。其中若`-p`和`-i`的探测结果不可知则被省略：
+* `-s, --kernel-name`：输出内核名称
+* `-n, --nodename`：输出网络节点上的主机名
+* `-r, --kernel-release`：输出内核发行号
+* `-v, --kernel-version`：输出内核版本
+* `-m, --machine`：输出主机的硬件架构名称
+* `-p, --processor`：输出处理器类型或"unknown"
+* `-i, --hardware-platform`：输出硬件平台或"unknown"
+* `-o, --operating-system`：输出操作系统名称
+
+__示例：__
+
+* `uname -a`
+* `uname -r`
+* `uname -s`
+
+# 2 cat
 
 __格式：__
 
@@ -28,9 +50,7 @@ hello world!
 EOF
 ```
 
-# 2 字符串处理命令
-
-## 2.1 echo
+# 3 echo
 
 __格式：__
 
@@ -79,7 +99,7 @@ echo -e "\033[46;37m 天蓝底白字 \033[0m"
 echo -e "\033[47;30m 白底黑字 \033[0m"
 ```
 
-## 2.2 sed
+# 4 sed
 
 __格式：__
 
@@ -204,13 +224,13 @@ __注意__：在macOS中，`-i`参数后面要跟一个扩展符，用于备份�
 * `sed -i ".back" "s/a/b/g" example`：备份文件为`example.back`
 * `sed -i "" "s/a/b/g" example`：不备份
 
-## 2.3 awk
+# 5 awk
 
 相比于sed(管道命令)常常作用于一整行的处理，awk(管道命令)则比较倾向于将一行分成数个"字段"来处理，因此awk相当适合处理小型的数据处理
 
 __格式：__
 
-* `awk [-F] '条件类型1{动作1} 条件类型2{动作2}...' [filename]`
+* `awk [-F] '[/regex/] 条件类型1{动作1} 条件类型2{动作2}...' [filename]`
 
 __参数说明：__
 
@@ -220,7 +240,9 @@ __参数说明：__
 
 __awk处理流程：__
 
-1. 读入第一行，并将第一行的数据填入$0,$1,...等变量中
+1. 读入第一行
+    * __如果包含正则匹配部分，如果不匹配则跳过该行；如果匹配（任意子串），那么将第一行的数据填入`$0`,`$1`,...等变量中__
+    * 如果不包含正则匹配部分，那么将第一行的数据填入`$0`,`$1`,...等变量中
 1. 依据条件类型的限制，判断是否需要进行后面的动作
 1. 做完所有的动作与条件类型
 1. 若还有后续的'行'，重复上面的步骤，直到所有数据都读取完为止
@@ -259,6 +281,7 @@ __示例：__
 
 * `cat /etc/passwd | awk '{FS=":"} $3<10 {print $1 "\t" $3}'`：__注意`{FS=":"}`是作为一个动作存在的，因此从第二行开始分隔符才变为":"，第一行分隔符仍然是空格__
 * `cat /etc/passwd | awk 'BEGIN {FS=":"} $3<10 {print $1 "\t" $3}'`：__这样写`{FS=":"}`在处理第一行时也会生效__
+* `echo -e "abcdefg\nhijklmn\nopqrst\nuvwxyz" | awk '/[au]/ {print $0}'`
 * 
 ```shell
 awk 
@@ -267,7 +290,7 @@ awk
 END {print "销售金额总计：",total}' sx
 ```
 
-### 2.3.1 在awk中引用变量
+## 5.1 在awk中引用变量
 
 __方式1__
 
@@ -314,7 +337,7 @@ var="this a test"
 awk -v awkVar="$var" 'BEGIN{print awkVar}'
 ```
 
-### 2.3.2 在awk中写简单的控制流语句
+## 5.2 在awk中写简单的控制流语句
 
 __以下的示例都在BEGIN中，只执行一次，不需要指定文件或者输入流__
 
@@ -384,13 +407,39 @@ print total;
 }'
 ```
 
-### 2.3.3 在awk中使用正则表达式
+## 5.3 在awk中使用正则表达式
 
 ```sh
 echo "123" |awk '{if($0 ~ /^[0-9]+$/) print $0;}'
 ```
 
-## 2.4 grep
+# 6 cut
+
+__格式：__
+
+* `cut -b list [-n] [file ...]`
+* `cut -c list [file ...]`
+* `cut -f list [-s] [-d delim] [file ...]`
+
+__参数说明：__
+
+* `list`：范围
+    * `N`：从第1个开始数的第N个字节、字符或域
+    * `N-`：从第N个开始到所在行结束的所有字符、字节或域
+    * `N-M`：从第N个开始到第M个之间(包括第M个)的所有字符、字节或域
+    * `-M`：从第1个开始到第M个之间(包括第M个)的所有字符、字节或域
+* `-b`：以字节为单位进行分割。这些字节位置将忽略多字节字符边界，除非也指定了`-n`标志
+* `-c`：以字符为单位进行分割
+* `-d`：自定义分隔符，默认为制表符
+* `-f`：与`-d`一起使用，指定显示哪个区域
+* `-n`：取消分割多字节字符。仅和`-b`标志一起使用。如果字符的最后一个字节落在由`-b`标志的`List`参数指示的范围之内，该字符将被写出；否则，该字符将被排除
+
+__示例：__
+
+* `echo "a:b:c:d:e" | cut -d ":" -f3`：输出c
+* `ll | cut -c 1-10`：显示查询结果的 1-10个字符
+
+# 7 grep
 
 grep分析一行信息，若当前有我们所需要的信息，就将该行拿出来
 
@@ -414,7 +463,7 @@ __示例：__
 
 * `grep -r [--color=auto] '查找的字符串' [目录名]`
 
-## 2.5 sort
+# 8 sort
 
 __格式：__
 
@@ -436,7 +485,7 @@ __示例：__
 * `cat /etc/passwd | sort`
 * `cat /etc/passwd | sort -t ':' -k 3`
 
-## 2.6 tr
+# 9 tr
 
 `tr`指令从标准输入设备读取数据，经过字符串转译后，将结果输出到标准输出设备
 
@@ -488,7 +537,7 @@ __示例：__
 * `echo "thissss is      a text linnnnnnne." | tr -s ' sn'`：删除多余的空格、`s`和`n`
 * `head /dev/urandom | tr -dc A-Za-z0-9 | head -c 20`：生成随机串
 
-## 2.7 tee
+# 10 tee
 
 `>`、`>>`等会将数据流传送给文件或设备，因此除非去读取该文件或设备，否则就无法继续利用这个数据流，如果我们想要将这个数据流的处理过程中将某段信息存下来，可以利用`tee`
 
@@ -506,9 +555,7 @@ __示例：__
 
 * `command | tee <文件名> | command`
 
-# 3 查找
-
-## 3.1 find
+# 11 find
 
 __格式：__
 
@@ -524,9 +571,7 @@ __示例：__
 * `find . -name "*.c"`
 * `find . -regex ".*/.*\.c"`
 
-# 4 文件压缩
-
-## 4.1 tar
+# 12 tar
 
 __格式：__
 
@@ -554,9 +599,7 @@ __参数说明：__
 * `-p`：保留备份数据原本权限与属性，常用语备份(-c)重要的配置文件
 * `-P`：保留绝对路径，即允许备份数据中含有根目录存在之意
 
-# 5 文件系统
-
-## 5.1 tree
+# 13 tree
 
 __格式：__
 
@@ -566,9 +609,7 @@ __参数说明：__
 
 * `-N`：显示非ASCII字符，可以显示中文
 
-# 6 进程管理
-
-## 6.1 &
+# 14 &
 
 在命令最后加上`&`代表将命令丢到后台执行
 
@@ -580,15 +621,15 @@ __示例：__
 
 * `tar -zpcv -f /tmp/etc.tar.gz /etc > /tmp/log.txt 2>&1 &`
 
-## 6.2 Ctrl+C
+# 15 Ctrl+C
 
 终止当前进程
 
-## 6.3 Ctrl+Z
+# 16 Ctrl+Z
 
 暂停当前进程
 
-## 6.4 jobs
+# 17 jobs
 
 __格式：__
 
@@ -609,7 +650,7 @@ __示例：__
 * `jobs -lr`
 * `jobs -ls`
 
-## 6.5 fg
+# 18 fg
 
 将后台工作拿到前台来处理
 
@@ -619,7 +660,7 @@ __示例：__
 * `fg +`：取出标记为+的工作
 * `fg -`：取出标记为-的工作`
 
-## 6.6 bg
+# 19 bg
 
 让工作在后台下的状态变为运行中
 
@@ -630,7 +671,7 @@ __示例：__
 * `bg -`：取出标记为-的工作
 * 不能让类似vim的工作变为运行中，即便使用该命令会，该工作又立即变为暂停状态
 
-## 6.7 kill
+# 20 kill
 
 管理后台当中的工作
 
@@ -650,7 +691,7 @@ __参数说明：__
     * `-15`：以正常的程序方式终止一项工作，与-9是不同的，-15以正常步骤结束一项工作，这是默认值
 * 与bg、fg不同，若要管理工作，kill中的%不可省略，因为kill默认接PID
 
-## 6.8 pkill
+# 21 pkill
 
 __格式：__
 
@@ -672,7 +713,7 @@ __示例：__
 * `pkill -9 -t pts/0`
 * `pkill -9 -u user1`
 
-## 6.9 ps
+# 22 ps
 
 __格式：__
 
@@ -730,7 +771,7 @@ __`ps aux`打印参数说明：__
 * `COMMAND`：该进程的实际命令
 * 一般来说ps aux会按照PID的顺序来排序显示
 
-## 6.10 pgrep
+# 23 pgrep
 
 __格式：__
 
@@ -750,7 +791,7 @@ __示例：__
 * `pgrep -ln sshd`
 * `pgrep -l ssh*`
 
-## 6.11 nohup
+# 24 nohup
 
 __`nohup`会忽略所有挂断（SIGHUP）信号__。比如通过`ssh`登录到远程服务器上，然后启动一个程序，当`ssh`登出时，这个程序就会随即终止。如果用`nohup`方式启动，那么当`ssh`登出时，这个程序仍然会继续运行
 
@@ -768,7 +809,7 @@ __示例：__
 
 * `nohup java -jar xxx.jar &`
 
-## 6.12 screen
+# 25 screen
 
 __如果想在关闭`ssh`连接后继续运行启动的程序，可以使用`nohup`。如果要求下次`ssh`登录时，还能查看到上一次`ssh`登录时运行的程序的状态，那么就需要使用`screen`__
 
@@ -805,7 +846,7 @@ __会话管理__
 1. `Ctrl a + d`：暂时断开screen会话
 1. `Ctrl a + k`：杀掉当前窗口
 
-## 6.13 pstree
+# 26 pstree
 
 __格式：__
 
@@ -818,9 +859,9 @@ __参数说明：__
 * `-p`：同时列出每个进程的PID
 * `-u`：同时列出每个进程所属账号名称
 
-# 7 运维相关
+# 27 运维相关
 
-## 7.1 top
+# 28 top
 
 __格式：__
 
@@ -862,7 +903,7 @@ __打印参数说明：__
     * `M`：按内存使用量排序，默认从大到小，`R`更改为从小到大
     * `T`：按使用时间排序，默认从大到小，`R`更改为从小到大
 
-## 7.2 netstat
+# 29 netstat
 
 __格式：__
 
@@ -917,7 +958,7 @@ __示例__
 
 1. __`netstat -n | awk '/^tcp/ {++y[$NF]} END {for(w in y) print w, y[w]}'`__
 
-## 7.3 lsof
+# 30 lsof
 
 __格式：__
 
@@ -946,7 +987,7 @@ __示例：__
 * `lsof -i tcp@localhost`
 * `lsof -i tcp:22`
 
-## 7.4 ss
+# 31 ss
 
 `ss`是`Socket Statistics`的缩写。顾名思义，`ss`命令可以用来获取`socket`统计信息，它可以显示和`netstat`类似的内容。`ss`的优势在于它能够显示更多更详细的有关TCP和连接状态的信息，而且比`netstat`更快速更高效。
 
@@ -978,21 +1019,21 @@ __示例：__
 * `ss -o state established`：显示所有状态为established的socket
 * `ss -o state FIN-WAIT-1 dst 192.168.25.100/24`：显示出处于`FIN-WAIT-1`状态的，目标网络为`192.168.25.100/24`所有socket
 
-## 7.5 ip
+# 32 ip
 
-### 7.5.1 ip addr
+## 32.1 ip addr
 
 简写为`ip a`
 
-### 7.5.2 ip link
+## 32.2 ip link
 
 简写为`ip l`
 
-### 7.5.3 ip route
+## 32.3 ip route
 
 简写为`ip r`
 
-#### 7.5.3.1 route table
+### 32.3.1 route table
 
 __linux最多可以支持255张路由表，每张路由表有一个`table id`和`table name`。其中有4张表是linux系统内置的__
 
@@ -1010,7 +1051,7 @@ __此外__
 * 可以通过`/etc/iproute2/rt_tables`文件查看`table id`和`table name`的映射关系。
 * 如果管理员新增了一张路由表，需要在`/etc/iproute2/rt_tables`文件中为新路由表添加`table id`和`table name`的映射
 
-#### 7.5.3.2 route type
+### 32.3.2 route type
 
 __`unicast`__：单播路由是路由表中最常见的路由。这是到目标网络地址的典型路由，它描述了到目标的路径。即使是复杂的路由（如下一跳路由）也被视为单播路由。如果在命令行上未指定路由类型，则假定该路由为单播路由
 
@@ -1074,7 +1115,7 @@ ip route add throw 10.79.0.0/16
 ip route add throw 172.16.0.0/12
 ```
 
-#### 7.5.3.3 route scope
+### 32.3.3 route scope
 
 __`global`__：全局有效
 
@@ -1084,7 +1125,7 @@ __`link`__：仅在当前设备有效
 
 __`host`__：仅在当前主机有效
 
-#### 7.5.3.4 route proto
+### 32.3.4 route proto
 
 __`proto`：表示路由的添加时机。可由数字或字符串表示，数字与字符串的对应关系详见`/etc/iproute2/rt_protos`__
 
@@ -1093,11 +1134,11 @@ __`proto`：表示路由的添加时机。可由数字或字符串表示，数�
 1. __`boot`__：该路由是在启动过程中安装的。如果路由守护程序启动，它将会清除这些路由规则
 1. __`static`__：该路由由管理员安装，以覆盖动态路由
 
-#### 7.5.3.5 route src
+### 32.3.5 route src
 
 这被视为对内核的提示（用于回答：如果我要将数据包发往host X，我该用本机的哪个IP作为Source IP），该提示是关于要为该接口上的`传出`数据包上的源地址选择哪个IP地址
 
-#### 7.5.3.6 参数解释
+### 32.3.6 参数解释
 
 __`ip r show table local`参数解释（示例如下）__
 
@@ -1124,7 +1165,7 @@ local 127.0.0.1 dev lo  proto kernel  scope host  src 127.0.0.1
 local 127.0.0.0/8 dev lo  proto kernel  scope host  src 127.0.0.1
 ```
 
-### 7.5.4 ip rule
+## 32.4 ip rule
 
 基于策略的路由比传统路由在功能上更强大，使用更灵活，它使网络管理员不仅能够根据目的地址而且能够根据报文大小、应用或IP源地址等属性来选择转发路径。简单地来说，linux系统有多张路由表，而路由策略会根据一些条件，将路由请求转向不同的路由表。例如源地址在某些范围走路由表A，另外的数据包走路由表，类似这样的规则是有路由策略rule来控制
 
@@ -1145,7 +1186,7 @@ $ ip rule add [from 0/0] table 1 pref 32800
 $ ip rule add from 192.168.3.112/32 [tos 0x10] table 2 pref 1500 prohibit
 ```
 
-### 7.5.5 ip netns
+## 32.5 ip netns
 
 ```sh
 Usage: ip netns list
@@ -1172,7 +1213,7 @@ mkdir -p /var/run/netns/
 ln -sfT /proc/$pid/ns/net /var/run/netns/$container_id
 ```
 
-## 7.6 tcpdump
+# 33 tcpdump
 
 __格式：__
 
@@ -1220,7 +1261,7 @@ __示例：__
 * `tcpdump -i any -w output1.cap`
 * `tcpdump -n -i any -e icmp and host www.baidu.com`
 
-### 7.6.1 tips
+## 33.1 tips
 
 如何查看具体的协议，例如ssh协议
 
@@ -1228,9 +1269,9 @@ __示例：__
 
 1. 任意选中一个`length`不为`0`的数据包，右键选择解码（`decode as`），右边`Current`一栏，选择对应的协议即可
 
-## 7.7 iptables
+# 34 iptables
 
-### 7.7.1 规则的查看
+## 34.1 规则的查看
 
 __格式：__
 
@@ -1278,7 +1319,7 @@ __输出信息介绍__
 * 星号开头的指的是表格，这里为Filter
 * 冒号开头的指的是链，3条内建的链，后面跟策略
 
-### 7.7.2 规则的清除
+## 34.2 规则的清除
 
 __格式：__
 
@@ -1290,7 +1331,7 @@ __参数说明：__
 * `-X [chain]`：清除指定`user-defined chain`或所有`user-defined chain`
 * `-Z [chain]`：将指定chain或所有的chain的计数与流量统计都归零
 
-### 7.7.3 定义默认策略
+## 34.3 定义默认策略
 
 当数据包不在我们设置的规则之内时，该数据包的通过与否都以Policy的设置为准
 
@@ -1310,7 +1351,7 @@ __示例：__
 * `iptables -P OUTPUT ACCEPT`
 * `iptables -P FORWARD ACCEPT`
 
-### 7.7.4 数据包的基础对比：IP、网络及接口设备
+## 34.4 数据包的基础对比：IP、网络及接口设备
 
 __格式：__
 
@@ -1347,7 +1388,7 @@ __示例：__
 * `iptables -A INPUT -i eth1 -j ACCEPT`：添加接口为eth1的网卡为信任设备
 * `iptables -A INPUT -s 192.168.2.200 -j LOG`：该网段的数据包，其相关信息就会被写入到内核日志文件中，即`/var/log/messages`，然后，该数据包会继续进行后续的规则比对(这一点与其他规则不同)
 
-### 7.7.5 TCP、UDP的规则：针对端口设置
+## 34.5 TCP、UDP的规则：针对端口设置
 
 TCP与UDP比较特殊的就是端口(port)，在TCP方面则另外有所谓的连接数据包状态，包括最常见的SYN主动连接的数据包格式
 
@@ -1367,7 +1408,7 @@ __示例：__
 * `iptables -A INPUT -i eth0 -p tcp --dport 21 -j DROP`：想要进入本机port 21的数据包都阻挡掉
 * `iptables -A INPUT -i eth0 -p tcp --sport 1:1023 --dport 1:1023 --syn -j DROP`：来自任何来源port 1:1023的主动连接到本机端的1:1023连接丢弃
 
-### 7.7.6 iptables匹配扩展
+## 34.6 iptables匹配扩展
 
 `iptables`可以使用扩展的数据包匹配模块。当指定`-p`或`--protocol`时，或者使用`-m`或`--match`选项，后跟匹配的模块名称；之后，取决于特定的模块，可以使用各种其他命令行选项。可以在一行中指定多个扩展匹配模块，并且可以在指定模块后使用`-h`或`--help`选项来接收特定于该模块的帮助文档（`iptables -m comment -h`，输出信息的最下方有`comment`模块的参数说明）
 
@@ -1378,7 +1419,7 @@ __常用模块__，详细内容请参考[Match Extensions](https://linux.die.net
 1. `tcp`
 1. `udp`
 
-### 7.7.7 iptables目标扩展
+## 34.7 iptables目标扩展
 
 iptables可以使用扩展目标模块，并且可以在指定目标后使用`-h`或`--help`选项来接收特定于该目标的帮助文档（`iptables -j DNAT -h`）
 
@@ -1388,7 +1429,7 @@ __常用__
 1. `SNAT`
 1. `REJECT`
 
-### 7.7.8 ICMP数据包规则的比对：针对是否响应ping来设计
+## 34.8 ICMP数据包规则的比对：针对是否响应ping来设计
 
 __格式：__
 
@@ -1398,7 +1439,7 @@ __参数说明：__
 
 * `--icmp-type`：后面必须要接ICMP的数据包类型，也可以使用代号
 
-## 7.8 nsenter
+# 35 nsenter
 
 nsenter用于在某个网络命名空间下执行某个命令。例如某些docker容器是没有curl命令的，但是又想在docker容器的环境下执行，这个时候就可以在宿主机上使用nsenter
 
@@ -1415,7 +1456,7 @@ __示例：__
 
 * `nsenter -t 123 -n curl baidu.com`
 
-## 7.9 iostat
+# 36 iostat
 
 __格式：__
 
@@ -1436,7 +1477,7 @@ __示例：__
 
 * `iostat -d -t -x 1`
 
-## 7.10 socat
+# 37 socat
 
 __格式：__
 
@@ -1460,7 +1501,7 @@ __示例：__
 * `socat TCP-LISTEN:80,fork TCP:www.baidu.com:80`：将本地端口转到远端
 * `socat TCP-LISTEN:12345 EXEC:/bin/bash`：在本地开启shell代理
 
-## 7.11 dhclient
+# 38 dhclient
 
 __格式：__
 
@@ -1477,7 +1518,7 @@ __示例：__
 * `dhclient`：获取ip
 * `dhclient -r`：释放ip
 
-## 7.12 tc
+# 39 tc
 
 流量的处理由三种对象控制，它们是：`qdisc`（排队规则）、`class`（类别）和`filter`（过滤器）。
 
@@ -1498,7 +1539,7 @@ __示例：__
 * `tc qdisc add dev em1 root netem loss 8% 20%`：设置8%~20%的丢包率 
 * `tc qdisc del dev em1 root `：删除指定设置
 
-## 7.13 free
+# 40 free
 
 __格式：__
 
@@ -1527,7 +1568,7 @@ __示例：__
 
 * `free -m`
 
-## 7.14 swap
+# 41 swap
 
 __制作swap__
 
@@ -1538,7 +1579,7 @@ swapon /tmp/swap
 free
 ```
 
-## 7.15 route
+# 42 route
 
 __格式：__
 
@@ -1576,7 +1617,7 @@ __示例：__
 * `route add -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
 * `route del -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
 
-## 7.16 tsar
+# 43 tsar
 
 __格式：__
 
@@ -1590,7 +1631,7 @@ __示例：__
 
 * `tsar -l`
 
-## 7.17 watch
+# 44 watch
 
 __格式：__
 
@@ -1610,7 +1651,7 @@ __示例：__
 * `watch -d 'ls -l | grep scf'`：监测当前目录中 scf' 的文件的变化
 * `watch -n 10 'cat /proc/loadavg'`：10秒一次输出系统的平均负载
 
-## 7.18 dstat
+# 45 dstat
 
 __格式：__
 
@@ -1622,19 +1663,17 @@ __示例：__
 * `dstat 5 10`：5秒刷新一次，刷新10次
 * `dstat -cdgilmnprstTy`
 
-## 7.19 nethogs
+# 46 nethogs
 
-## 7.20 iptraf
+# 47 iptraf
 
-## 7.21 ifstat
+# 48 ifstat
 
 该命令用于查看网卡的流量状况，包括成功接收/发送，以及错误接收/发送的数据包，看到的东西基本上和`ifconfig`类似
 
-## 7.22 iftop
+# 49 iftop
 
-# 8 远程连接
-
-## 8.1 ssh
+# 50 ssh
 
 __格式：__
 
@@ -1655,7 +1694,7 @@ __示例：__
 * `ssh student@127.0.0.1 find / &> ~/find1.log`
 * `ssh -f student@127.0.0.1 find / &> ~/find1.log`：会立即注销127.0.0.1，find在远程服务器运行
 
-### 8.1.1 免密登录
+## 50.1 免密登录
 
 __Client端步骤__
 
@@ -1668,7 +1707,7 @@ __Server端步骤__
 1. `cat id_rsa.pub >> .ssh/authorized_keys`
 1. `chmod 644 .ssh/authorized_keys`
 
-## 8.2 scp
+# 51 scp
 
 __格式：__
 
@@ -1688,9 +1727,7 @@ __示例：__
 * `scp /tmp/Ubuntu.txt root@192.168.136.130:~/Desktop`
 * `scp -P 16666 root@192.168.136.130:/tmp/test.log ~/Desktop`：指定主机`192.168.136.130`的端口号为16666
 
-# 9 账号管理
-
-## 9.1 chsh
+# 52 chsh
 
 __格式：__
 
@@ -1701,9 +1738,9 @@ __参数说明：__
 * `-l`：列出目前系统上可用的shell，其实就是`/etc/shells`的内容
 * `-s`：设置修改自己的shell
 
-# 10 权限管理
+# 53 sudo
 
-## 10.1 sudo
+__注意，sudo本身是一个进程。比如用`sudo tail -f xxx`，在另一个会话中`ps aux | grep tail`会发现两个进程__
 
 __配置文件：__
 
@@ -1725,10 +1762,11 @@ __示例：__
 
 -->
 
-# 11 参考
+# 54 参考
 
 * 《鸟哥的Linux私房菜》
 * [linux shell awk 流程控制语句（if,for,while,do)详细介绍](https://www.cnblogs.com/chengmo/archive/2010/10/04/1842073.html)
+* [awk 正则表达式、正则运算符详细介绍](https://www.cnblogs.com/chengmo/archive/2010/10/11/1847772.html)
 * [解决Linux关闭终端(关闭SSH等)后运行的程序自动停止](https://blog.csdn.net/gatieme/article/details/52777721)
 * [Linux ss命令详解](https://www.cnblogs.com/ftl1012/p/ss.html)
 * [Socat 入门教程](https://www.hi-linux.com/posts/61543.html)

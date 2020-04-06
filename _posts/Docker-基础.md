@@ -213,6 +213,8 @@ RUN apk add -U tzdata
     * `--privileged`：使用特权模式
     * `-v /var/run/docker.sock:/var/run/docker.sock`：将docker socket文件挂载到容器
     * `-v $(which docker):/bin/docker `：将docker命令挂载到容器
+1. 启动容器时，加入网络命名空间
+    * `docker run [--pid string] [--userns string] [--uts string] [--network string] <other options>`
 
 # 6 参考
 
@@ -232,3 +234,4 @@ RUN apk add -U tzdata
 * [jib](https://github.com/GoogleContainerTools/jib)
 * [探讨Docker容器中修改系统变量的方法](https://tonybai.com/2014/10/14/discussion-on-the-approach-to-modify-system-variables-in-docker/)
 * [What is the difference between CMD and ENTRYPOINT in a Dockerfile?](https://stackoverflow.com/questions/21553353/what-is-the-difference-between-cmd-and-entrypoint-in-a-dockerfile)
+* [Sharing Network Namespaces in Docker](https://blog.mikesir87.io/2019/03/sharing-network-namespaces-in-docker/)

@@ -146,7 +146,32 @@ go-bindata -pkg <package> -o <go file path> <resource path1> <resource path2> ..
 
 [logback-for-go](https://github.com/liuyehcf/common-gtools)
 
-## 2.12 
+## 2.12 同步
+
+### 2.12.1 Cond
+
+go中的Cond类似于Java中的`AbstractQueuedSynchronizer以及ConditionObject`
+
+```go
+package main
+
+import (
+    "sync"
+    "time"
+)
+
+func main() {
+    m := sync.Mutex{}
+    c := sync.NewCond(&m)
+    go func() {
+        time.Sleep(1 * time.Second)
+        c.Broadcast()
+    }()
+    m.Lock()
+    time.Sleep(2 * time.Second)
+    c.Wait()
+}
+```
 
 ## 2.13 [FAQ](https://golang.org/doc/faq)
 
@@ -329,3 +354,4 @@ dep ensure
 * [Go语言的%d,%p,%v等占位符的使用](https://www.jianshu.com/p/66aaf908045e)
 * [go-get-results-in-terminal-prompts-disabled-error-for-github-private-repo](https://stackoverflow.com/questions/32232655/go-get-results-in-terminal-prompts-disabled-error-for-github-private-repo)
 * [git报错remote: Repository not found的一种可能](https://www.jianshu.com/p/5eb3a91458de)
+* [How to correctly use sync.Cond?](https://stackoverflow.com/questions/36857167/how-to-correctly-use-sync-cond)
