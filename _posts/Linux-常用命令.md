@@ -1782,6 +1782,10 @@ __配置文件：__
 
 * `/etc/sudoers`
 
+# 55 sync
+
+`sync`指令会将存于`buffer`中的资料强制写入硬盘中
+
 <!--
 
 __格式：__
@@ -1798,7 +1802,7 @@ __示例：__
 
 -->
 
-# 55 参考
+# 56 参考
 
 * 《鸟哥的Linux私房菜》
 * [linux shell awk 流程控制语句（if,for,while,do)详细介绍](https://www.cnblogs.com/chengmo/archive/2010/10/04/1842073.html)
