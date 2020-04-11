@@ -1018,6 +1018,7 @@ __示例：__
 * `ss -lp | grep 22`：找出打开套接字/端口应用程序
 * `ss -o state established`：显示所有状态为established的socket
 * `ss -o state FIN-WAIT-1 dst 192.168.25.100/24`：显示出处于`FIN-WAIT-1`状态的，目标网络为`192.168.25.100/24`所有socket
+* `ss -nap`
 
 # 32 ip
 
