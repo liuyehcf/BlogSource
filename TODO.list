@@ -9,6 +9,3 @@
     * nginx ingress
 1. helm
 1. k8s java demo
-1. 内存中的 buff/cache
-    * https://www.tecmint.com/clear-ram-memory-cache-buffer-and-swap-space-on-linux/
-    * https://blog.csdn.net/u014520745/article/details/79949874

@@ -1544,7 +1544,7 @@ __示例：__
 
 __格式：__
 
-* `free [-b|-k|-m|-g] [-t]`
+* `free [-b|-k|-m|-g|-h] [-t]`
 
 __参数说明：__
 
@@ -1552,6 +1552,7 @@ __参数说明：__
 * `-m`：MB
 * `-k`：KB
 * `-g`：GB
+* `-h`：单位自适应
 
 __显示参数介绍__：
 
@@ -1569,7 +1570,41 @@ __示例：__
 
 * `free -m`
 
-# 41 swap
+# 41 vmstat
+
+__格式：__
+
+* `vmstat [options] [delay [count]]`
+
+__参数说明：__
+
+* `-a, --active`：显示活跃和非活跃内存
+* `-f, --forks`：从系统启动至今的fork数量，linux下创建进程的系统调用是fork
+    * 信息是从`/proc/stat`中的processes字段里取得的
+* `-m, --slabs`：查看系统的slab信息
+* `-s, --stats`：查看内存使用的详细信息
+* `-d, --disk`：查看磁盘使用的详细信息
+* `-D, --disk-sum`         summarize disk statistics
+* `-p, --partition <dev>`：查看指定分区的详细信息
+* `-S, --unit <char>`：指定输出单位，只支持`k/K`以及`m/M`，默认是`K`
+* `-w, --wide`：输出更详细的信息
+* `-t, --timestamp`：输出时间戳
+* `delay`：采样间隔
+* `count`：采样次数
+
+__示例：__
+
+* `vmstat`
+* `vmstat 2`
+* `vmstat 2 5`
+* `vmstat -s`
+* `vmstat -s -S m`
+* `vmstat -f`
+* `vmstat -d`
+* `vmstat -p /dev/sda1`
+* `vmstat -m`
+
+# 42 swap
 
 __制作swap__
 
@@ -1580,7 +1615,7 @@ swapon /tmp/swap
 free
 ```
 
-# 42 route
+# 43 route
 
 __格式：__
 
@@ -1618,7 +1653,7 @@ __示例：__
 * `route add -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
 * `route del -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
 
-# 43 tsar
+# 44 tsar
 
 __格式：__
 
@@ -1632,7 +1667,7 @@ __示例：__
 
 * `tsar -l`
 
-# 44 watch
+# 45 watch
 
 __格式：__
 
@@ -1652,7 +1687,7 @@ __示例：__
 * `watch -d 'ls -l | grep scf'`：监测当前目录中 scf' 的文件的变化
 * `watch -n 10 'cat /proc/loadavg'`：10秒一次输出系统的平均负载
 
-# 45 dstat
+# 46 dstat
 
 __格式：__
 
@@ -1664,17 +1699,17 @@ __示例：__
 * `dstat 5 10`：5秒刷新一次，刷新10次
 * `dstat -cdgilmnprstTy`
 
-# 46 nethogs
+# 47 nethogs
 
-# 47 iptraf
+# 48 iptraf
 
-# 48 ifstat
+# 49 ifstat
 
 该命令用于查看网卡的流量状况，包括成功接收/发送，以及错误接收/发送的数据包，看到的东西基本上和`ifconfig`类似
 
-# 49 iftop
+# 50 iftop
 
-# 50 ssh
+# 51 ssh
 
 __格式：__
 
@@ -1695,7 +1730,7 @@ __示例：__
 * `ssh student@127.0.0.1 find / &> ~/find1.log`
 * `ssh -f student@127.0.0.1 find / &> ~/find1.log`：会立即注销127.0.0.1，find在远程服务器运行
 
-## 50.1 免密登录
+## 51.1 免密登录
 
 __Client端步骤__
 
@@ -1708,7 +1743,7 @@ __Server端步骤__
 1. `cat id_rsa.pub >> .ssh/authorized_keys`
 1. `chmod 644 .ssh/authorized_keys`
 
-# 51 scp
+# 52 scp
 
 __格式：__
 
@@ -1728,7 +1763,7 @@ __示例：__
 * `scp /tmp/Ubuntu.txt root@192.168.136.130:~/Desktop`
 * `scp -P 16666 root@192.168.136.130:/tmp/test.log ~/Desktop`：指定主机`192.168.136.130`的端口号为16666
 
-# 52 chsh
+# 53 chsh
 
 __格式：__
 
@@ -1739,7 +1774,7 @@ __参数说明：__
 * `-l`：列出目前系统上可用的shell，其实就是`/etc/shells`的内容
 * `-s`：设置修改自己的shell
 
-# 53 sudo
+# 54 sudo
 
 __注意，sudo本身是一个进程。比如用`sudo tail -f xxx`，在另一个会话中`ps aux | grep tail`会发现两个进程__
 
@@ -1763,7 +1798,7 @@ __示例：__
 
 -->
 
-# 54 参考
+# 55 参考
 
 * 《鸟哥的Linux私房菜》
 * [linux shell awk 流程控制语句（if,for,while,do)详细介绍](https://www.cnblogs.com/chengmo/archive/2010/10/04/1842073.html)
