@@ -8,8 +8,6 @@
 1. Kubernetes-Single-Master-Cluster
     * nginx ingress
 1. helm
-1. common-tools
-	* 1. promise 注释问题
 1. k8s java demo
 1. spring
 	* https://stackoverflow.com/questions/37052857/spring-overriding-one-application-property-from-command-line 启动覆盖配置文件中的参数
@@ -17,8 +15,6 @@
 	* how to close embeddedchannel properly and release buffers https://github.com/netty/netty/pull/9851
     * compositeBuffer
         * addCompoent 与 writeBytes 混用，会多处几个 `\u0000` 字符
-    * converter迁移
-	* ssl jks实例代码迁移到common-tools中
     * 如何感知netty channel的状态（我期望在channel处理完所有input以及ouput之后才close通道）
     * readInbound、readOutbound、writeInbound、writeOutbound画图
     * LEAK: ByteBuf.release() was not called before it's garbage-collected. See http://netty.io/wiki/reference-counted-objects.html for more information.
