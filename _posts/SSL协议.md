@@ -401,10 +401,26 @@ openssl x509 -in <cert file> -noout -text
 ### 4.1.1 查看证书信息
 
 ```sh
+# 查看keystore之外的证书的信息
 keytool -printcert -file <cert file>
+
+# 查看keystore之中的证书的信息
+keytool -list -keystore <key store path> -v
+
+# <key store path> 指本地的jks路径
 ```
 
-### 4.1.2 将根证书导入JKS
+### 4.1.2 从JKS中导出证书
+
+```sh
+keytool -export -keystore <key store path> -alias <aliasName> -file <cert file>
+
+# <key store path> 指本地的jks路径
+# <aliasName> 指证书别名
+# <cert file> 指待输出的证书文件
+```
+
+### 4.1.3 将根证书导入JKS
 
 我们如何使用Java连接到颁发了合法证书的服务端？当然，不校验服务端的合法性是可以的，但是此时客户端会存在安全风险
 
@@ -420,7 +436,7 @@ keytool -import -alias <aliasName> -file <root cert file> -keystore <key store p
 
 于是，我们的Java客户端使用上述导入了根证书的JKS就能连接到服务端。因为该服务端的根证书位于信任池中，因此也会信任该服务端的站点证书。具体使用JKS的实例代码参见下方的Demo
 
-### 4.1.3 将服务端证书导入JKS
+### 4.1.4 将服务端证书导入JKS
 
 __将`pkcs12`格式的证书导入JKS，并转为`jks`格式__
 
