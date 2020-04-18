@@ -353,6 +353,7 @@ __但是，如果两台私网的机器A和B（均在网关上配置了SNAT规则
 * [Understanding how dnat works in iptables](https://superuser.com/questions/662325/understanding-how-dnat-works-in-iptables)
 * [How Network Address Translation Works](https://computer.howstuffworks.com/nat.htm)
 * [Traditional IP Network Address Translator (Traditional NAT) - 4.1](https://tools.ietf.org/html/rfc3022)
+* [纯文本作图-asciiflow.com](http://asciiflow.com/)
 
 # 3 tcpdump
 
