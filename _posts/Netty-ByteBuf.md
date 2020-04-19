@@ -13,7 +13,37 @@ __阅读更多__
 
 <!--more-->
 
-# 1 Direct Buffer
+# 1 Netty ByteBuf
+
+## 1.1 CompositeByteBuf
+
+有时，我们想将多个`ByteBuf`拼接成一个`ByteBuf`，但是又不想进行拷贝操作（数据量大时有性能开销），那么`CompositeByteBuf`就是最好的解决方案。`CompositeByteBuf`封装了一组`ByteBuf`，我们可以像操作普通`ByteBuf`一样操作这一组`ByteBuf`，同时又可避免拷贝，极大地提高了效率
+
+__注意，writeXXX不要和addComponent混用__
+
+```java
+    public static void main(String[] args) {
+        CompositeByteBuf compositeByteBuf = Unpooled.compositeBuffer();
+
+        compositeByteBuf.addComponent(true, Unpooled.wrappedBuffer("hello, ".getBytes()));
+        compositeByteBuf.addComponent(true, Unpooled.wrappedBuffer("world".getBytes()));
+
+        System.out.println(new String(ByteBufUtil.getBytes(compositeByteBuf)));
+    }
+```
+
+```java
+    public static void main(String[] args) {
+        CompositeByteBuf compositeByteBuf = Unpooled.compositeBuffer();
+
+        compositeByteBuf.writeBytes("hello, ".getBytes());
+        compositeByteBuf.writeBytes("world".getBytes());
+
+        System.out.println(new String(ByteBufUtil.getBytes(compositeByteBuf)));
+    }
+```
+
+# 2 Java Direct Buffer
 
 通俗来说，`Direct Buffer`就是一块在Java堆外分配的，但是可以在Java程序中访问的内存
 
@@ -34,7 +64,7 @@ __阅读更多__
     }
 ```
 
-# 2 内存泄漏
+# 3 内存泄漏
 
 最近在实现一个自定义协议的时候用到了`ByteToMessageCodec`这个抽象类，该类由个`encode`方法需要实现，该方法的定义如下
 
@@ -87,6 +117,6 @@ public class AthenaFrameHandler extends ByteToMessageCodec<AthenaFrame> {
 
 __如何筛查堆外内存泄露？可以通过反射查看`PlatformDependent`类中的静态字段`DIRECT_MEMORY_COUNTER`__
 
-# 3 参考
+# 4 参考
 
 * [Direct Buffer](https://zhuanlan.zhihu.com/p/27625923)
