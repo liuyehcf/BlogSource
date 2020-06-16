@@ -3,15 +3,23 @@
     * 在脚本中执行后台进程，会被挂到pid=1上去，但是在shell中执行后台进程，只会挂到当前的终端上
     * iowatcher
     * pv vg lv之间的关系
+    * tty劫持
+    * 如何编写TUI程序(https://github.com/marcusolsson/tui-go)
 2. 进程
     * 进程父子进程，杀了父进程会怎么样，杀了子进程会怎么样
     * 进程如何创建，fork exec（机制和策略），机制是原子的操作（linux提供的系统调用）策略是将这些机制进行组合达到最终的目的
+    * 进程、进程组、会话、终端、tty、作业、前台、后台
+        * https://www.cnblogs.com/cangqinglang/p/12110843.html
+        * https://unix.stackexchange.com/questions/4126/what-is-the-exact-difference-between-a-terminal-a-shell-a-tty-and-a-con
     * Environment
 1. Kubernetes-Single-Master-Cluster
     * nginx ingress
+1. 分布式
+    * cap： http://www.ruanyifeng.com/blog/2018/07/cap.html
+    * https://www.zhihu.com/question/54105974?from=profile_question_card
 1. helm
 1. k8s java demo
-1. spring
-	* https://stackoverflow.com/questions/37052857/spring-overriding-one-application-property-from-command-line 启动覆盖配置文件中的参数
-1. Netty EmbeddedChannel
-    * readInbound、readOutbound、writeInbound、writeOutbound画图
+1. 内存碎片
+    * /proc/buddyinfo
+    * mysql oom问题排查 https://cloud.tencent.com/developer/article/1478535
+        * 如何关闭mysql query cache https://www.cnblogs.com/eyesfree/p/7232559.html

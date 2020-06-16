@@ -1481,6 +1481,12 @@ public class Server {
 }
 ```
 
+## 7.2 CentOS安装CA根证书
+
+```sh
+yum install ca-certificates
+```
+
 # 8 在Netty中使用SSL
 
 详见{% post_link Netty-Demo %}
@@ -1514,3 +1520,4 @@ public class Server {
 * [使用 openssl 生成证书](https://www.cnblogs.com/littleatp/p/5878763.html)
 * [Requirements for trusted certificates in iOS 13 and macOS 10.15](https://support.apple.com/en-us/HT210176)
 * [HTTPS之SNI介绍](https://blog.51cto.com/zengestudy/2170245)
+* [centos 添加CA 证书](https://blog.csdn.net/coder9999/article/details/79664282)

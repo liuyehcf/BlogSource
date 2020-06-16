@@ -114,7 +114,19 @@ __生成`spring-configuration-metadata.json`文件，让IDEA可以解析到该�
         </dependency>
 ```
 
-# 4 参考
+# 4 命令行传入属性值
 
-[Spring Boot Externalized Configuration](https://docs.spring.io/spring-boot/docs/2.1.1.RELEASE/reference/htmlsingle/#boot-features-external-config)
+```sh
+# --${key}=${value} 要加到最后
+java -jar your-app.jar --server.port=8081
 
+# -D${key}=${value} 要加到app.jar之前
+java -jar -Dserver.port=8081 your-app.jar
+
+mvn spring-boot:run -Drun.arguments="--server.port=8081"
+```
+
+# 5 参考
+
+* [Spring Boot Externalized Configuration](https://docs.spring.io/spring-boot/docs/2.1.1.RELEASE/reference/htmlsingle/#boot-features-external-config)
+* [Spring: overriding one application.property from command line](https://stackoverflow.com/questions/37052857/spring-overriding-one-application-property-from-command-line)

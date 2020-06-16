@@ -79,8 +79,11 @@ __阅读更多__
 1. `~/.bashrc`：bash个性化设置，non-login shell（当前用户）
 1. `~/.bash_history`：历史命令记录（当前用户）
 1. `~/.bash_logout`：记录了当注销bash后系统再帮我完成什么操作后才离开（当前用户）
+1. `/etc/motd`：登录成功后显示的欢迎界面
+1. `/etc/issue`：本地串口登录前的显示栏
 
 # 7 参考
 
 * [Bash 实用技巧大全](https://www.cnblogs.com/napoleon_liu/articles/1952228.html)
 * [较完整的Bash快捷键，让命令更有效率](http://www.linuxde.net/2011/11/1877.html)
+* [linux 欢迎界面](https://www.cnblogs.com/linquan/p/4998175.html)

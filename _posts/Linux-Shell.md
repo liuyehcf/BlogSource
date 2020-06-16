@@ -519,7 +519,7 @@ echo ${var%%/*}
 
 __从左边第几个字符开始，截取若干个字符__
 
-* 结果是`http:`
+* 其中`var`是变量名，`0`表示从左边第`1`个字符开始，`5`表示截取`5`个字符，结果是`http:`
 
 ```sh
 var='http://www.aaa.com/123.htm'
@@ -528,7 +528,7 @@ echo ${var:0:5}
 
 __从左边第几个字符开始，一直到结束__
 
-* 结果是`www.aaa.com/123.htm`
+* 其中`var`是变量名，`7`表示从左边第`8`个字符开始，结果是`www.aaa.com/123.htm`
 
 ```sh
 var='http://www.aaa.com/123.htm'
@@ -537,8 +537,10 @@ echo ${var:7}
 
 __从右边第几个字符开始，及字符的个数__
 
-* 结果是`123`
-* 注：（左边的第一个字符是用`0`表示，右边的第一个字符用`0-1`表示）
+* 其中`var`是变量名，`0-7`表示从右边第`7`字符开始，`3`表示截取`3`个字符，结果是`123`
+* 注：
+    * `k`表示从左边开始第`k+1`个字符
+    * `0-k`表示从右边开始第`k`个字符
 
 ```sh
 var='http://www.aaa.com/123.htm'
@@ -547,15 +549,52 @@ echo ${var:0-7:3}
 
 __从右边第几个字符开始，一直到结束__
 
-* 结果是`123.htm`
-* 注：（左边的第一个字符是用`0`表示，右边的第一个字符用`0-1`表示）
+* 其中`var`是变量名，`0-7`表示从右边第`7`字符开始，结果是`123.htm`
+* 注：
+    * `k`表示从左边开始第`k+1`个字符
+    * `0-k`表示从右边开始第`k`个字符
 
 ```sh
 var='http://www.aaa.com/123.htm'
 echo ${var:0-7}
 ```
 
-## 8.4 按行读取
+## 8.4 条件默认值
+
+__变量为空时，返回默认值__
+
+```sh
+echo ${FOO:-val2} # 输出val2
+test -z "${FOO}"; echo $? # 输出0
+FOO=val1
+echo ${FOO:-val2} # 输出val1
+```
+
+__变量为空时，将变量设置为默认值，然后返回变量的值__
+
+```sh
+echo ${FOO:=val2} # 输出val2
+test -z "${FOO}"; echo $? # 输出1
+FOO=val1
+echo ${FOO:=val2} # 输出val1
+```
+
+__变量不为空时，返回默认值__
+
+```sh
+FOO=val1
+echo ${FOO:+val2} # 输出val2
+FOO=
+echo ${FOO:+val2} # 输出空白
+```
+
+__当变量为空时，输出错误信息并退出__
+
+```sh
+echo ${FOO:?error} # 输出error
+```
+
+## 8.5 按行读取
 
 __方式1__
 
@@ -1065,3 +1104,4 @@ __注意：如果getopts置于函数内部时，getopts解析的是函数的所�
 * [如何获取后台进程的PID？](https://www.liangzl.com/get-article-detail-168597.html)
 * [shell——trap捕捉信号（附信号表）](https://www.cnblogs.com/maxgongzuo/p/6372898.html)
 * [Shell进程替换](http://c.biancheng.net/view/3025.html)
+* [Bash scripting cheatsheet](https://devhints.io/bash)
