@@ -5,6 +5,7 @@
     * pv vg lv之间的关系
     * tty劫持
     * 如何编写TUI程序(https://github.com/marcusolsson/tui-go)
+    * `du -h -d 1 .`
 2. 进程
     * 进程父子进程，杀了父进程会怎么样，杀了子进程会怎么样
     * 进程如何创建，fork exec（机制和策略），机制是原子的操作（linux提供的系统调用）策略是将这些机制进行组合达到最终的目的

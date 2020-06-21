@@ -60,12 +60,23 @@ __格式：__
 
 * `cat > [newfile] <<'结束字符'`
 
-__示例__
+__示例：注意`EOF`与`'EOF'`的区别__
 
 ```sh
+name="test"
 cat > /tmp/test << EOF
-hello world!
+hello ${name}!
 EOF
+echo "↓↓↓↓↓↓↓↓↓content↓↓↓↓↓↓↓↓↓"
+cat /tmp/test
+echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
+
+cat > /tmp/test << 'EOF'
+hello ${name}!
+EOF
+echo "↓↓↓↓↓↓↓↓↓content↓↓↓↓↓↓↓↓↓"
+cat /tmp/test
+echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
 ```
 
 # 4 echo
@@ -583,11 +594,21 @@ __参数说明：__
 
 * `-name`：后接文件名，支持通配符。__注意匹配的是相对路径__
 * `-regex`：后接正则表达式，__注意匹配的是完整路径__
+* `-regextype`：正则表达式类型
+    * `emacs`：默认类型
+    * `posix-awk`
+    * `posix-basic`
+    * `posix-egrep`
+    * `posix-extended`
 
 __示例：__
 
 * `find . -name "*.c"`
 * `find . -regex ".*/.*\.c"`
+* 查找后缀为cfg以及后缀为conf的文件
+    * `find ./ -name '*.cfg' -o -name '*.conf'`
+    * `find ./ -regex '.*\.cfg\|.*\.conf'`
+    * `find ./ -regextype posix-extended -regex '.*\.(cfg|conf)'`
 
 # 13 tar
 
