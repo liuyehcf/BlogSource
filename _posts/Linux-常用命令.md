@@ -618,6 +618,7 @@ __参数说明：__
 
 * `-name`：后接文件名，支持通配符。__注意匹配的是相对路径__
 * `-regex`：后接正则表达式，__注意匹配的是完整路径__
+* `-maxdepth`：后接查找深度
 * `-regextype`：正则表达式类型
     * `emacs`：默认类型
     * `posix-awk`
@@ -628,6 +629,7 @@ __参数说明：__
 __示例：__
 
 * `find . -name "*.c"`
+* `find . -name "*.c" -maxdepth 1`
 * `find . -regex ".*/.*\.c"`
 * 查找后缀为cfg以及后缀为conf的文件
     * `find ./ -name '*.cfg' -o -name '*.conf'`
