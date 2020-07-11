@@ -165,6 +165,7 @@ __动作说明，格式为`[n1 [,n2]]function`，接的动作必须以两个单�
     * __不加`-r`参数，连`()`都需要转义，因此最好加上`-r`参数__
     * `\0`：表示整个匹配串，`\1`表示group1，以此类推
     * `&`：表示整个匹配串
+* __`r`__：插入另一个文本的所有内容
 
 __示例：__
 
@@ -192,6 +193,7 @@ c
 
 * __`d`__：
 ```sh
+# 删除第2行，到第一个包含字符'c'的行
 echo -e "a\nb\nc" | sed '2,/c/d'
 
 # 输出如下
@@ -248,6 +250,27 @@ echo "/root/document/file.txt" | sed -nr 's/\/root\//\//p'  # 此时'/'需要转
 echo "abc" | sed -nr 's/a|b/A/gp'   # 此时'|'不需要转义，因为分隔符是'/'
 echo "abc" | sed -nr 's|a\|b|A|gp'  # 此时'|'需要转义，因为分隔符是'|'
 ```
+
+* __`r`__
+```sh
+# 准备文件1
+cat > file1.txt << EOF
+<html>
+<body>
+<tag>
+</tag>
+</body>
+</html>
+EOF
+
+# 准备文件2
+cat > file2.txt << EOF
+Hello world!!
+EOF
+
+sed '/<tag>/ r file2.txt' file1.txt
+```
+
 __注意__：在macOS中，`-i`参数后面要跟一个扩展符，用于备份源文件。如果扩展符长度是0，那么不进行备份
 
 * `sed -i ".back" "s/a/b/g" example`：备份文件为`example.back`
@@ -481,6 +504,7 @@ __参数说明：__
 * `-a`：将binary文件以text文件的方式查找数据
 * `-c`：计算找到'查找字符串'的次数
 * `-i`：忽略大小写的不同
+* `-e`：用正则表达式来进行匹配操作
 * `-n`：顺便输出行号
 * `-v`：反向选择，即输出没有'查找字符串'内容的哪一行
 * `-r`：在指定目录中递归查找
@@ -1858,6 +1882,7 @@ __参数说明：__
 __示例：__
 
 * `lsblk -fp`
+* `lsblk -o name,mountpoint,label,size,uuid`
 
 # 58 du
 
@@ -1876,6 +1901,12 @@ __示例：__
 * `du -sh`：当前文件夹的总大小
 * `du -h -d 1`：列出深度为1的所有文件/文件夹大小
 
+# 59 exec
+
+__示例：__
+
+* `exec 1>my.log 2>&1`：将标准输出、以及标准异常重定向到my.log文件中，对后续的所有命令都生效
+
 <!--
 
 __格式：__
@@ -1892,7 +1923,7 @@ __示例：__
 
 -->
 
-# 59 参考
+# 60 参考
 
 * 《鸟哥的Linux私房菜》
 * [linux shell awk 流程控制语句（if,for,while,do)详细介绍](https://www.cnblogs.com/chengmo/archive/2010/10/04/1842073.html)
@@ -1911,3 +1942,5 @@ __示例：__
 * [Routing Tables](http://linux-ip.net/html/routing-tables.html)
 * [How to execute a command in screen and detach?](https://superuser.com/questions/454907/how-to-execute-a-command-in-screen-and-detach)
 * [Linux使echo命令输出结果带颜色](https://www.cnblogs.com/yoo2767/p/6016300.html)
+* [How to insert the content of a file into another file before a pattern (marker)?](https://unix.stackexchange.com/questions/32908/how-to-insert-the-content-of-a-file-into-another-file-before-a-pattern-marker)
+* [Insert contents of a file after specific pattern match](https://stackoverflow.com/questions/16715373/insert-contents-of-a-file-after-specific-pattern-match)

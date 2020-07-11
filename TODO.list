@@ -1,3 +1,13 @@
+1. 操作系统
+    * BIOS
+    * grub
+    * 进程
+        * 进程父子进程，杀了父进程会怎么样，杀了子进程会怎么样
+        * 进程如何创建，fork exec（机制和策略），机制是原子的操作（linux提供的系统调用）策略是将这些机制进行组合达到最终的目的
+        * 进程、进程组、会话、终端、tty、作业、前台、后台
+            * https://www.cnblogs.com/cangqinglang/p/12110843.html
+            * https://unix.stackexchange.com/questions/4126/what-is-the-exact-difference-between-a-terminal-a-shell-a-tty-and-a-con
+        * Environment
 1. Linux-常用命令
     * 网络相关指令
     * 在脚本中执行后台进程，会被挂到pid=1上去，但是在shell中执行后台进程，只会挂到当前的终端上
@@ -5,18 +15,20 @@
     * pv vg lv之间的关系
     * tty劫持
     * 如何编写TUI程序(https://github.com/marcusolsson/tui-go)
-2. 进程
-    * 进程父子进程，杀了父进程会怎么样，杀了子进程会怎么样
-    * 进程如何创建，fork exec（机制和策略），机制是原子的操作（linux提供的系统调用）策略是将这些机制进行组合达到最终的目的
-    * 进程、进程组、会话、终端、tty、作业、前台、后台
-        * https://www.cnblogs.com/cangqinglang/p/12110843.html
-        * https://unix.stackexchange.com/questions/4126/what-is-the-exact-difference-between-a-terminal-a-shell-a-tty-and-a-con
-    * Environment
+    * 如何输出unicode字符串（\uxxx) https://stackoverflow.com/questions/602912/how-do-you-echo-a-4-digit-unicode-character-in-bash
+1. 镜像制作，如何制作大于4G的镜像
+    * UEFI
+        * virtualbox要使用usb设备2.0/3.0的话，需要安装 Oracle VM VirtualBox Extension Pack，https://www.virtualbox.org/wiki/Downloads
+        * install ntfs-3g https://linuxconfig.org/how-to-install-ntfs-3g-on-redhat-8
+    * 下载某个命令的所有依赖的rpm包/缺失的rpm包
+        * rpm -ivh --replacepkgs --upgrade=*.rpm *.rpm 安装，且解决依赖包的冲突问题
 1. Kubernetes-Single-Master-Cluster
     * nginx ingress
 1. 分布式
     * cap： http://www.ruanyifeng.com/blog/2018/07/cap.html
     * https://www.zhihu.com/question/54105974?from=profile_question_card
+1. go mod
+    * 部分包想用vender怎么办？用replace指向本地的依赖
 1. helm
 1. k8s java demo
 1. 内存碎片

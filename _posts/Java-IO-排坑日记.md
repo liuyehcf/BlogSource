@@ -311,3 +311,82 @@ System.out.println(ANSI_GREEN_BACKGROUND + "This text has a green background but
 System.out.println(ANSI_RED + "This text has red text but a default background!" + ANSI_RESET);
 System.out.println(ANSI_GREEN_BACKGROUND + ANSI_RED + "This text has a green background and red text!" + ANSI_RESET);
 ```
+
+# 5 Process死锁问题
+
+下面这段代码会阻塞（如果在你电脑上执行不阻塞的话，可以把循环次数调大）
+
+```sh
+    public static void main(String[] args) throws Exception {
+        ProcessBuilder command = new ProcessBuilder()
+                .command("/bin/sh", "-c", "for ((i=1;i<=10000;i++))\n" +
+                        "do \n" +
+                        "    echo \"some text\"\n" +
+                        "done");
+
+        Process process = command.start();
+        process.waitFor();
+
+        System.out.println(process.exitValue());
+    }
+```
+
+产生这一现象的原因：`start`方法会通过系统调用创建一个子进程用于执行命令行，这个子进程和父进程（java进程）之间通过缓冲区来传递`stdout`、`stderr`、`stdin`，既然有缓冲区，那么必然有一个容量限制，当缓冲区被填满时，那么数据将无法写入，进而造成进程阻塞
+
+1. 父进程（java进程）在`start`后立即调用了`waitFor`，因此并未从缓冲区读取子进程的输入
+1. 子进程一直在执行`echo`，该命令会不断向缓冲区写数据
+1. 当缓冲区被写满的时候，子进程就被阻塞挂起了
+1. 父进程由于等待子进程退出，也被阻塞挂起了，死锁就此产生
+
+__解决方法__
+
+1. 使用`inheritIO`方法，让java进程从缓冲区读取数据
+1. 自己异步从缓冲区读取数据
+
+```java
+    public static void main(String[] args) throws Exception {
+        ProcessBuilder command = new ProcessBuilder()
+                .inheritIO()
+                .command("/bin/sh", "-c", "for ((i=1;i<=10000;i++))\n" +
+                        "do \n" +
+                        "    echo \"some text\"\n" +
+                        "done");
+
+        Process process = command.start();
+        process.waitFor();
+
+        System.out.println(process.exitValue());
+    }
+```
+
+```java
+    public static void main(String[] args) throws Exception {
+        ProcessBuilder command = new ProcessBuilder()
+                .command("/bin/sh", "-c", "for ((i=1;i<=10000;i++))\n" +
+                        "do \n" +
+                        "    echo \"some text\"\n" +
+                        "done");
+
+        Process process = command.start();
+
+        new Thread(() -> {
+            InputStream inputStream = process.getInputStream();
+            try {
+                int read;
+                while ((read = inputStream.read()) != -1) {
+                    System.out.print((char) read);
+                }
+            } catch (Exception e) {
+                // ignore
+            }
+        }).start();
+
+        process.waitFor();
+
+        System.out.println(process.exitValue());
+    }
+```
+
+# 6 参考
+
+* [java 使用Process调用exe程序 及 Process.waitFor() 死锁问题了解和解决](https://www.jianshu.com/p/3d974ce66e51)
