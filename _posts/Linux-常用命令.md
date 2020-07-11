@@ -629,7 +629,7 @@ __参数说明：__
 __示例：__
 
 * `find . -name "*.c"`
-* `find . -name "*.c" -maxdepth 1`
+* `find . -maxdepth 1 -name "*.c"`
 * `find . -regex ".*/.*\.c"`
 * 查找后缀为cfg以及后缀为conf的文件
     * `find ./ -name '*.cfg' -o -name '*.conf'`
