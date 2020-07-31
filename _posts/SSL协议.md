@@ -1497,6 +1497,11 @@ yum install ca-certificates
 
 比如查看aliyun的证书信息，可以访问`https://myssl.com/www.aliyun.com`
 
+此外，可以通过openssl来查看证书过期时间
+```sh
+echo | openssl s_client -servername www.aliyun.com -connect www.aliyun.com:443 2>/dev/null | openssl x509 -noout -dates
+```
+
 # 10 参考
 
 * [Java SSL](https://blog.csdn.net/everyok/article/details/82882156)

@@ -1766,6 +1766,22 @@ __示例：__
 
 # 48 nethogs
 
+nethogs会以进程为单位，列出每个进程占用的网卡以及带宽
+
+__安装__
+
+```sh
+# 安装 yum 源
+yum install -y epel-release
+
+# 安装nethogs
+yum install -y nethogs
+```
+
+__示例：__
+
+* `nethogs`
+
 # 49 iptraf
 
 # 50 ifstat
@@ -1773,6 +1789,22 @@ __示例：__
 该命令用于查看网卡的流量状况，包括成功接收/发送，以及错误接收/发送的数据包，看到的东西基本上和`ifconfig`类似
 
 # 51 iftop
+
+iftop会以连接为单位，列出每个连接的进出流量
+
+__安装__
+
+```sh
+# 安装 yum 源
+yum install -y epel-release
+
+# 安装ifgop
+yum install -y iftop
+```
+
+__示例：__
+
+* `iftop`
 
 # 52 ssh
 
@@ -1909,6 +1941,27 @@ __示例：__
 
 * `exec 1>my.log 2>&1`：将标准输出、以及标准异常重定向到my.log文件中，对后续的所有命令都生效
 
+# 60 wget
+
+__格式：__
+
+* `wget [OPTION]... [URL]...`
+
+__参数说明：__
+
+* `-O`：后接下载文件的文件名
+* `-r`：递归下载（用于下载文件夹）
+* `-nH`：下载文件夹时，不创建host目录
+* `-np`：不访问上层目录
+* `-P`：指定下载的目录
+* `-R`：指定排除的列表
+
+__示例：__
+
+* `wget -O myfile 'https://www.baidu.com'`
+* `wget -r -np -nH -P /root/test -R "index.html*" 'http://192.168.66.1/stuff'`
+* `wget -r -np -nH -P /root/test 'ftp://192.168.66.1/stuff'`
+
 <!--
 
 __格式：__
@@ -1925,7 +1978,7 @@ __示例：__
 
 -->
 
-# 60 参考
+# 61 参考
 
 * 《鸟哥的Linux私房菜》
 * [linux shell awk 流程控制语句（if,for,while,do)详细介绍](https://www.cnblogs.com/chengmo/archive/2010/10/04/1842073.html)

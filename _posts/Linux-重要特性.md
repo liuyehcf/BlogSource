@@ -1320,3 +1320,4 @@ __测试__
 * [systemd创建自定义服务(Ubuntu)](https://www.cnblogs.com/wintersoft/p/9937839.html)
 * [Use systemd to Start a Linux Service at Boot](https://www.linode.com/docs/quick-answers/linux/start-service-at-boot/)
 * [Play With Container Network Interface](https://arthurchiao.github.io/blog/play-with-container-network-if/)
+* [systemd forking vs simple?](https://superuser.com/questions/1274901/systemd-forking-vs-simple)

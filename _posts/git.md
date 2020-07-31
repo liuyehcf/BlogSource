@@ -55,6 +55,9 @@ $ git add [dir]
 # 添加当前目录的所有文件到暂存区
 $ git add .
 
+# 添加已被track的文件到暂存区，即不会提交新文件
+$ git add -u
+
 # 添加每个变化前，都会要求确认
 # 对于同一个文件的多处变化，可以实现分次提交
 $ git add -p
@@ -143,8 +146,8 @@ $ git rebase [branch]
 # rebase当前分支的HEAD到指定的提交
 $ git rebase -i [commit]
 
-# 选择一个commit，合并进当前分支
-$ git cherry-pick [commit]
+# 选择一个commit，合并进当前分支（从左到右时间线递增，也就是commit1.time 早于 commit2.time）
+$ git cherry-pick [commit1] [commit2] ...
 
 # 删除分支
 $ git branch -d [branch-name]
@@ -225,6 +228,9 @@ $ git shortlog -sn
 
 # 显示指定文件是什么人在什么时间修改过
 $ git blame [file]
+
+# 显示暂存区和工作区的差异的概要（文件修改了几行，不会列出具体改动）
+$ git diff --stat
 
 # 显示暂存区和工作区的差异
 $ git diff
