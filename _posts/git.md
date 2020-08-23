@@ -326,7 +326,20 @@ $ git stash
 $ git stash pop
 ```
 
-# 10 插件
+# 10 克隆
+
+```sh
+# https方式下载
+git clone https://github.com/xxx/yyy.git
+
+# ssh方式下载
+git clone git@github.com:xxx/yyy.git
+
+# 不下载历史提交，当整个仓库体积非常大的时候，下载全部会比较耗费存储以及时间
+git clone https://github.com/xxx/yyy.git --depth 1
+```
+
+# 11 插件
 
 [git-extra](https://github.com/tj/git-extras)
 
@@ -335,7 +348,7 @@ $ git stash pop
 git summary --line
 ```
 
-# 11 其他
+# 12 其他
 
 ```shell
 # 生成一个可供发布的压缩包
@@ -344,7 +357,7 @@ $ git archive
 $ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 ```
 
-# 12 中文显示为8进制形式的问题
+# 13 中文显示为8进制形式的问题
 
 在Windows中，git bash打印的中文可能表示成`\+三个数字`的形式，即八进制表示
 
@@ -354,7 +367,7 @@ $ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Cre
 $ git config --global core.quotepath false
 ```
 
-# 13 .gitignore
+# 14 .gitignore
 
 __基础规则__
 
@@ -372,7 +385,7 @@ __基础规则__
 1. `/**`开头，表示匹配内部的一切。例如`abc/**`匹配`abc`目录下的所有文件。__`abc/**`与`abc/`的作用是一样的__
 1. `/**/`表示匹配`0`个或`多`个`目录`。例如`a/**/b`匹配`a/b`、`a/x/b`、`a/x/y/b`
 
-# 14 参考
+# 15 参考
 
 * [git官方文档](https://git-scm.com/docs/gitignore)
 * [git教程](https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/)

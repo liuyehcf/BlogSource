@@ -1762,6 +1762,43 @@ __示例：__
 * `dhclient`：获取ip
 * `dhclient -r`：释放ip
 
+## 5.12 arp
+
+__示例：__
+
+* `arp`：查看arp缓存
+* `arp -n`：查看arp缓存，显示ip不显示域名
+* `arp 192.168.56.1`：查看`192.168.56.1`这个ip的mac地址
+
+## 5.13 [arp-scan](https://github.com/royhills/arp-scan)
+
+__如何安装：__
+
+```sh
+yum install -y git
+git clone https://github.com/royhills/arp-scan.git
+
+cd arp-scan
+
+yum install -y autoconf automake libtool
+autoreconf --install
+
+yum install -y libpcap.x86_64 libpcap-devel.x86_64
+./configure
+
+yum install -y make
+make
+
+make install
+```
+
+__示例：__
+
+* `arp-scan -l`
+* `arp-scan 10.0.2.0/24`
+* `arp-scan -I enp0s8 -l`
+* `arp-scan -I enp0s8 192.168.56.1/24`
+
 # 6 运维监控
 
 ## 6.1 ssh
