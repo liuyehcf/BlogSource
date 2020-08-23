@@ -12,7 +12,9 @@ __阅读更多__
 
 <!--more-->
 
-# 1 uname
+# 1 系统信息
+
+## 1.1 uname
 
 __格式：__
 
@@ -36,50 +38,20 @@ __示例：__
 * `uname -r`
 * `uname -s`
 
-# 2 set
+## 1.2 chsh
 
 __格式：__
 
-* `set [option]`
+* `chsh [-ls]`
 
 __参数说明：__
 
-* `-e`：当任意一个命令的返回值为非0时，立即退出
-* `-x`：将每个命令及其详细参数输出到标准输出中
-* `-o pipefail`：针对管道命令，取从右往左第一个非零返回值作为整个管道命令的返回值
+* `-l`：列出目前系统上可用的shell，其实就是`/etc/shells`的内容
+* `-s`：设置修改自己的shell
 
-__示例：__
+# 2 文件字符管道工具
 
-* `set -e`
-* `set -x`
-* `set -o pipefail`
-
-# 3 cat
-
-__格式：__
-
-* `cat > [newfile] <<'结束字符'`
-
-__示例：注意`EOF`与`'EOF'`的区别__
-
-```sh
-name="test"
-cat > /tmp/test << EOF
-hello ${name}!
-EOF
-echo "↓↓↓↓↓↓↓↓↓content↓↓↓↓↓↓↓↓↓"
-cat /tmp/test
-echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
-
-cat > /tmp/test << 'EOF'
-hello ${name}!
-EOF
-echo "↓↓↓↓↓↓↓↓↓content↓↓↓↓↓↓↓↓↓"
-cat /tmp/test
-echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
-```
-
-# 4 echo
+## 2.1 echo
 
 __格式：__
 
@@ -106,7 +78,7 @@ __示例：__
 * `echo ${a}`
 * `echo -e "a\nb"`
 
-__颜色控制，控制选项说明__ 
+__颜色控制，控制选项说明：__ 
 
 ```sh
 echo -e "\033[30m 黑色字 \033[0m"
@@ -128,7 +100,7 @@ echo -e "\033[46;37m 天蓝底白字 \033[0m"
 echo -e "\033[47;30m 白底黑字 \033[0m"
 ```
 
-# 5 sed
+## 2.2 sed
 
 __格式：__
 
@@ -251,7 +223,7 @@ echo "abc" | sed -nr 's/a|b/A/gp'   # 此时'|'不需要转义，因为分隔符
 echo "abc" | sed -nr 's|a\|b|A|gp'  # 此时'|'需要转义，因为分隔符是'|'
 ```
 
-* __`r`__
+* __`r`：__
 ```sh
 # 准备文件1
 cat > file1.txt << EOF
@@ -276,7 +248,7 @@ __注意__：在macOS中，`-i`参数后面要跟一个扩展符，用于备份�
 * `sed -i ".back" "s/a/b/g" example`：备份文件为`example.back`
 * `sed -i "" "s/a/b/g" example`：不备份
 
-# 6 awk
+## 2.3 awk
 
 相比于sed(管道命令)常常作用于一整行的处理，awk(管道命令)则比较倾向于将一行分成数个"字段"来处理，因此awk相当适合处理小型的数据处理
 
@@ -319,12 +291,12 @@ __动作说明：__
 
 * 所有awk的动作，即在`{}`内的动作，如果有需要多个命令辅助时，可以用分号`;`间隔，或者直接以`Enter`按键来隔开每个命令
 
-__BEGIN与END__
+__BEGIN与END：__
 
 * 在Unix awk中两个特别的表达式，BEGIN和END，这两者都可用于pattern中（参考前面的awk语法），__提供BEGIN和END的作用是给程序赋予初始状态和在程序结束之后执行一些扫尾的工作。__
 * __任何在BEGIN之后列出的操作（在`{}`内）将在Unix awk开始扫描输入之前执行，而END之后列出的操作将在扫描完全部的输入之后执行。__因此，通常使用BEGIN来显示变量和预置（初始化）变量，使用END来输出最终结果
 
-__print与printf__
+__print与printf：__
 
 * print会打印换行符
 * printf不会打印换行符
@@ -342,9 +314,9 @@ awk
 END {print "销售金额总计：",total}' sx
 ```
 
-## 6.1 在awk中引用变量
+### 2.3.1 在awk中引用变量
 
-__方式1__
+__方式1：__
 
 * 以`'"`和`"'`（即，单引号+双引号+shell变量+双引号+单引号）将shell变量包围起来
 * __这种方式只能引用数值变量__
@@ -354,7 +326,7 @@ var=4
 awk 'BEGIN{print '"$var"'}'
 ```
 
-__方式2__
+__方式2：__
 
 * 以`"'`和`'"`（即，双引号+单引号+shell变量+单引号+双引号）将shell变量包围起来
 * __这种方式可以引用字符串型变量，但是字符串不允许包含空格__
@@ -366,7 +338,7 @@ var="abc"
 awk 'BEGIN{print "'$var'"}'
 ```
 
-__方式3__
+__方式3：__
 
 * 用`"'"`（即，双引号+单引号+双引号+shell变量+双引号+单引号+双引号）将shell变量包裹起来
 * __这种方式允许引用任意类型的变量__
@@ -380,7 +352,7 @@ var="this a test"
 awk 'BEGIN{print "'"$var"'"}'
 ```
 
-__方式4__
+__方式4：__
 
 * 使用`-v`参数，变量不是很多的时候，这种方式也蛮简介清晰的
 
@@ -389,11 +361,11 @@ var="this a test"
 awk -v awkVar="$var" 'BEGIN{print awkVar}'
 ```
 
-## 6.2 在awk中写简单的控制流语句
+### 2.3.2 在awk中写简单的控制流语句
 
 __以下的示例都在BEGIN中，只执行一次，不需要指定文件或者输入流__
 
-__if语句__
+__if语句：__
 ```sh
 awk 'BEGIN{ 
 test=100;
@@ -412,7 +384,7 @@ else
 }'
 ```
 
-__while语句__
+__while语句：__
 ```sh
 awk 'BEGIN{ 
 test=100;
@@ -426,7 +398,7 @@ print total;
 }'
 ```
 
-__for语句__
+__for语句：__
 ```sh
 awk 'BEGIN{ 
 for(k in ENVIRON)
@@ -445,7 +417,7 @@ print total;
 }'
 ```
 
-__do语句__
+__do语句：__
 ```sh
 awk 'BEGIN{ 
 total=0;
@@ -459,13 +431,13 @@ print total;
 }'
 ```
 
-## 6.3 在awk中使用正则表达式
+### 2.3.3 在awk中使用正则表达式
 
 ```sh
 echo "123" |awk '{if($0 ~ /^[0-9]+$/) print $0;}'
 ```
 
-# 7 cut
+## 2.4 cut
 
 __格式：__
 
@@ -491,7 +463,7 @@ __示例：__
 * `echo "a:b:c:d:e" | cut -d ":" -f3`：输出c
 * `ll | cut -c 1-10`：显示查询结果的 1-10个字符
 
-# 8 grep
+## 2.5 grep
 
 grep分析一行信息，若当前有我们所需要的信息，就将该行拿出来
 
@@ -516,7 +488,7 @@ __示例：__
 
 * `grep -r [--color=auto] '查找的字符串' [目录名]`
 
-# 9 sort
+## 2.6 sort
 
 __格式：__
 
@@ -538,7 +510,7 @@ __示例：__
 * `cat /etc/passwd | sort`
 * `cat /etc/passwd | sort -t ':' -k 3`
 
-# 10 tr
+## 2.7 tr
 
 `tr`指令从标准输入设备读取数据，经过字符串转译后，将结果输出到标准输出设备
 
@@ -553,7 +525,7 @@ __参数说明：__
 * `-s, --squeeze-repeats`：缩减连续重复的字符成指定的单个字符
 * `-t, --truncate-set1`：削减`SET1`指定范围，使之与`SET2`设定长度相等
 
-__字符集合的范围__
+__字符集合的范围：__
 
 * `\NNN`：八进制值的字符 NNN (1 to 3 为八进制值的字符)
 * `\\`：反斜杠
@@ -590,7 +562,7 @@ __示例：__
 * `echo "thissss is      a text linnnnnnne." | tr -s ' sn'`：删除多余的空格、`s`和`n`
 * `head /dev/urandom | tr -dc A-Za-z0-9 | head -c 20`：生成随机串
 
-# 11 tee
+## 2.8 tee
 
 `>`、`>>`等会将数据流传送给文件或设备，因此除非去读取该文件或设备，否则就无法继续利用这个数据流，如果我们想要将这个数据流的处理过程中将某段信息存下来，可以利用`tee`
 
@@ -608,7 +580,32 @@ __示例：__
 
 * `command | tee <文件名> | command`
 
-# 12 find
+## 2.9 cat
+
+__格式：__
+
+* `cat > [newfile] <<'结束字符'`
+
+__示例：注意`EOF`与`'EOF'`的区别__
+
+```sh
+name="test"
+cat > /tmp/test << EOF
+hello ${name}!
+EOF
+echo "↓↓↓↓↓↓↓↓↓content↓↓↓↓↓↓↓↓↓"
+cat /tmp/test
+echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
+
+cat > /tmp/test << 'EOF'
+hello ${name}!
+EOF
+echo "↓↓↓↓↓↓↓↓↓content↓↓↓↓↓↓↓↓↓"
+cat /tmp/test
+echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
+```
+
+## 2.10 find
 
 __格式：__
 
@@ -636,7 +633,22 @@ __示例：__
     * `find ./ -regex '.*\.cfg\|.*\.conf'`
     * `find ./ -regextype posix-extended -regex '.*\.(cfg|conf)'`
 
-# 13 tar
+## 2.11 cp
+
+__示例：__
+
+* `cp -vrf /a /b`：递归拷贝目录`/a`到目录`/b`中，包含目录`/a`中所有的文件、目录、隐藏文件和隐藏目录
+* `cp -vrf /a/* /b`：递归拷贝目录`/a`下的所有文件、目录，但不包括隐藏文件和隐藏目录
+* `cp -vrf /a/. /b`：递归拷贝目录`/a`中所有的文件、目录、隐藏文件和隐藏目录到目录`/b`中
+
+## 2.12 rm
+
+__示例：__
+
+* `rm -rf /a/*`：递归删除目录`/a`下的所有文件、目录，但不包括隐藏文件和隐藏目录
+* `rm -rf /path/{..?*,.[!.]*,*}`：递归删除目录`/path`下的所有文件、目录、隐藏文件和隐藏目录
+
+## 2.13 tar
 
 __格式：__
 
@@ -664,7 +676,28 @@ __参数说明：__
 * `-p`：保留备份数据原本权限与属性，常用语备份(-c)重要的配置文件
 * `-P`：保留绝对路径，即允许备份数据中含有根目录存在之意
 
-# 14 tree
+## 2.14 wget
+
+__格式：__
+
+* `wget [OPTION]... [URL]...`
+
+__参数说明：__
+
+* `-O`：后接下载文件的文件名
+* `-r`：递归下载（用于下载文件夹）
+* `-nH`：下载文件夹时，不创建host目录
+* `-np`：不访问上层目录
+* `-P`：指定下载的目录
+* `-R`：指定排除的列表
+
+__示例：__
+
+* `wget -O myfile 'https://www.baidu.com'`
+* `wget -r -np -nH -P /root/test -R "index.html*" 'http://192.168.66.1/stuff'`
+* `wget -r -np -nH -P /root/test 'ftp://192.168.66.1/stuff'`
+
+## 2.15 tree
 
 __格式：__
 
@@ -674,7 +707,116 @@ __参数说明：__
 
 * `-N`：显示非ASCII字符，可以显示中文
 
-# 15 &
+# 3 设备管理
+
+## 3.1 free
+
+__格式：__
+
+* `free [-b|-k|-m|-g|-h] [-t]`
+
+__参数说明：__
+
+* `-b`：bytes
+* `-m`：MB
+* `-k`：KB
+* `-g`：GB
+* `-h`：单位自适应
+
+__显示参数介绍__：
+
+* `Men`：物理内存
+* `Swap`：虚拟内存
+* `total`：总量
+* `user`：使用量
+* `free`：剩余可用量
+* `shared`与`buffers/cached`：被使用的量当中用来作为缓冲以及快取的量
+* `buffers`：缓冲记忆
+* `cached`：缓存
+* __一般来说系统会很有效地将所有内存用光，目的是为了让系统的访问性能加速，这一点与Windows很不同，因此对于Linux系统来说，内存越大越好__
+
+__示例：__
+
+* `free -m`
+
+## 3.2 swap
+
+__制作swap：__
+
+```sh
+dd if=/dev/zero of=/tmp/swap bs=1M count=128
+mkswap /tmp/swap
+swapon /tmp/swap
+free
+```
+
+## 3.3 du
+
+__格式：__
+
+* `du`
+
+__参数说明：__
+
+* `-h`：以`K`，`M`，`G`为单位，提高信息的可读性
+* `-s`：仅显示总计
+* `-d <depth>`：指定显示的文件/文件夹的深度
+
+__示例：__
+
+* `du -sh`：当前文件夹的总大小
+* `du -h -d 1`：列出深度为1的所有文件/文件夹大小
+
+## 3.4 lsblk
+
+`lsblk`命令用于列出所有可用块设备的信息
+
+__格式：__
+
+* `lsblk [option]`
+
+__参数说明：__
+
+* `-a, --all`：打印所有设备
+* `-b, --bytes`：以字节为单位而非易读的格式来打印 SIZE
+* `-d, --nodeps`：不打印从属设备(slave)或占位设备(holder)
+* `-D, --discard`：打印时丢弃能力
+* `-e, --exclude <列表>`：根据主设备号排除设备(默认：内存盘)
+* `-I, --include <列表>`：只显示有指定主设备号的设备
+* `-f, --fs`：输出文件系统信息
+* `-h, --help`：使用信息(此信息)
+* `-i, --ascii`：只使用 ascii 字符
+* `-m, --perms`：输出权限信息
+* `-l, --list`：使用列表格式的输出
+* `-n, --noheadings`：不打印标题
+* `-o, --output <列表>`：输出列
+* `-p, --paths`：打印完整设备路径
+* `-P, --pairs`：使用 key=“value” 输出格式
+* `-r, --raw`：使用原生输出格式
+* `-s, --inverse`：反向依赖
+* `-t, --topology`：输出拓扑信息
+* `-S, --scsi`：输出有关 SCSI 设备的信息
+
+__示例：__
+
+* `lsblk -fp`
+* `lsblk -o name,mountpoint,label,size,uuid`
+
+## 3.5 lsusb
+
+`lsusb`命令用于列出所有usb接口的设备
+
+## 3.6 lspci
+
+`lspci`命令用于列出所有pci接口的设备
+
+## 3.7 sync
+
+`sync`指令会将存于`buffer`中的资料强制写入硬盘中
+
+# 4 进程管理
+
+__后台进程（&）：__
 
 在命令最后加上`&`代表将命令丢到后台执行
 
@@ -686,15 +828,11 @@ __示例：__
 
 * `tar -zpcv -f /tmp/etc.tar.gz /etc > /tmp/log.txt 2>&1 &`
 
-# 16 Ctrl+C
+__`Ctrl+C`__：终止当前进程
 
-终止当前进程
+__`Ctrl+Z`__：暂停当前进程
 
-# 17 Ctrl+Z
-
-暂停当前进程
-
-# 18 jobs
+## 4.1 jobs
 
 __格式：__
 
@@ -715,7 +853,7 @@ __示例：__
 * `jobs -lr`
 * `jobs -ls`
 
-# 19 fg
+## 4.2 fg
 
 将后台工作拿到前台来处理
 
@@ -725,7 +863,7 @@ __示例：__
 * `fg +`：取出标记为+的工作
 * `fg -`：取出标记为-的工作`
 
-# 20 bg
+## 4.3 bg
 
 让工作在后台下的状态变为运行中
 
@@ -736,7 +874,7 @@ __示例：__
 * `bg -`：取出标记为-的工作
 * 不能让类似vim的工作变为运行中，即便使用该命令会，该工作又立即变为暂停状态
 
-# 21 kill
+## 4.4 kill
 
 管理后台当中的工作
 
@@ -756,7 +894,7 @@ __参数说明：__
     * `-15`：以正常的程序方式终止一项工作，与-9是不同的，-15以正常步骤结束一项工作，这是默认值
 * 与bg、fg不同，若要管理工作，kill中的%不可省略，因为kill默认接PID
 
-# 22 pkill
+## 4.5 pkill
 
 __格式：__
 
@@ -778,7 +916,7 @@ __示例：__
 * `pkill -9 -t pts/0`
 * `pkill -9 -u user1`
 
-# 23 ps
+## 4.6 ps
 
 __格式：__
 
@@ -799,7 +937,7 @@ __参数说明：__
 * `ps aux`：查阅系统所有运行的程序
 * `ps aux -Z`：-Z参数可以让我们查阅进程的安全上下文
 
-__`ps -l`打印参数说明__
+__`ps -l`打印参数说明：__
 
 * `F`：代表这个进程标志(process flags)
     * 若为4：表示此进程的权限为root
@@ -836,7 +974,7 @@ __`ps aux`打印参数说明：__
 * `COMMAND`：该进程的实际命令
 * 一般来说ps aux会按照PID的顺序来排序显示
 
-# 24 pgrep
+## 4.7 pgrep
 
 __格式：__
 
@@ -856,7 +994,28 @@ __示例：__
 * `pgrep -ln sshd`
 * `pgrep -l ssh*`
 
-# 25 nohup
+## 4.8 pstree
+
+__格式：__
+
+* `pstree [-A|U] [-up]`
+
+__参数说明：__
+
+* `-A`：各进程树之间的连接以ASCII字符来连接(连接符号是ASCII字符)
+* `-U`：各进程树之间的连接以utf8码的字符来连接，在某些终端接口下可能会有错误(连接符号是utf8字符，比较圆滑好看)
+* `-p`：同时列出每个进程的PID
+* `-u`：同时列出每个进程所属账号名称
+
+## 4.9 sudo
+
+__注意，sudo本身是一个进程。比如用`sudo tail -f xxx`，在另一个会话中`ps aux | grep tail`会发现两个进程__
+
+__配置文件：__
+
+* `/etc/sudoers`
+
+## 4.10 nohup
 
 __`nohup`会忽略所有挂断（SIGHUP）信号__。比如通过`ssh`登录到远程服务器上，然后启动一个程序，当`ssh`登出时，这个程序就会随即终止。如果用`nohup`方式启动，那么当`ssh`登出时，这个程序仍然会继续运行
 
@@ -874,7 +1033,7 @@ __示例：__
 
 * `nohup java -jar xxx.jar &`
 
-# 26 screen
+## 4.11 screen
 
 __如果想在关闭`ssh`连接后继续运行启动的程序，可以使用`nohup`。如果要求下次`ssh`登录时，还能查看到上一次`ssh`登录时运行的程序的状态，那么就需要使用`screen`__
 
@@ -900,7 +1059,7 @@ __示例：__
 * `screen -ls`
 * `screen -r 123`
 
-__会话管理__
+__会话管理：__
 
 1. `Ctrl a + w`：显示所有窗口列表
 1. `Ctrl a + Ctrl a`：切换到之前显示的窗口
@@ -911,64 +1070,9 @@ __会话管理__
 1. `Ctrl a + d`：暂时断开screen会话
 1. `Ctrl a + k`：杀掉当前窗口
 
-# 27 pstree
+# 5 网络管理
 
-__格式：__
-
-* `pstree [-A|U] [-up]`
-
-__参数说明：__
-
-* `-A`：各进程树之间的连接以ASCII字符来连接(连接符号是ASCII字符)
-* `-U`：各进程树之间的连接以utf8码的字符来连接，在某些终端接口下可能会有错误(连接符号是utf8字符，比较圆滑好看)
-* `-p`：同时列出每个进程的PID
-* `-u`：同时列出每个进程所属账号名称
-
-# 28 运维相关
-
-# 29 top
-
-__格式：__
-
-* `top [-H] [-p <pid>]`
-
-__参数说明：__
-
-* `-H`：显示线程
-* `-p`：查看指定进程
-
-__示例：__
-
-* `top -p 123`：查看进程号为123的进程
-* `top -Hp 123`：查看进程号为123以及该进程的所有线程
-
-__打印参数说明：__
-
-* __第一行__：
-    * 目前的时间
-    * 开机到目前为止所经过的时间
-    * 已经登录的人数
-    * 系统在1，5，15分钟的平均工作负载
-* __第二行__：显示的是目前进程的总量，与各个状态下进程的数量
-* __第三行__：显示的CPU整体负载，特别注意wa，这个代表的是I/Owait，通常系统变慢都是I/O产生的问题比较大
-* __第四五行__：物理内存与虚拟内存的使用情况，注意swap的使用量越少越好，大量swap被使用说明系统物理内存不足
-* __第六行__：top进程中，输入命令时显示的地方
-* __第七行以及以后__：每个进程的资源使用情况
-    * PID：每个进程的ID
-    * USER：进程所属用户名称
-    * PR：Priority，优先顺序，越小优先级越高
-    * NI：Nice，与Priority有关，越小优先级越高
-    * %CPU：CPU使用率
-    * %MEN：内存使用率
-    * TIME+：CPU使用时间累加
-    * COMMAND
-* __top默认使用CPU使用率作为排序的终点，键入`h`显示帮助菜单__
-* __排序顺序__
-    * `P`：按CPU使用量排序，默认从大到小，`R`更改为从小到大
-    * `M`：按内存使用量排序，默认从大到小，`R`更改为从小到大
-    * `T`：按使用时间排序，默认从大到小，`R`更改为从小到大
-
-# 30 netstat
+## 5.1 netstat
 
 __格式：__
 
@@ -1019,11 +1123,32 @@ __与网络接口有关的显示参数说明：__
 
 netstat的功能就是查看网络的连接状态，而网络连接状态中，又以__"我目前开了多少port在等待客户端的连接"__以及__"目前我的网络连接状态中，有多少连接已建立或产生问题"__最常见
 
-__示例__
+__示例：__
 
 1. __`netstat -n | awk '/^tcp/ {++y[$NF]} END {for(w in y) print w, y[w]}'`__
 
-# 31 lsof
+## 5.2 tc
+
+流量的处理由三种对象控制，它们是：`qdisc`（排队规则）、`class`（类别）和`filter`（过滤器）。
+
+__格式：__
+
+* `tc qdisc [ add | change | replace | link ] dev DEV [ parent qdisc-id | root ] [ handle qdisc-id ] qdisc [ qdisc specific parameters ]`
+* `tc class [ add | change | replace ] dev DEV parent qdisc-id [ classid class-id ] qdisc [ qdisc specific parameters ]`
+* `tc filter [ add | change | replace ] dev DEV [ parent qdisc-id | root ] protocol protocol prio priority filtertype [ filtertype specific parameters ] flowid flow-id`
+* `tc [-s | -d ] qdisc show [ dev DEV ]`
+* `tc [-s | -d ] class show dev DEV`
+* `tc filter show dev DEV`
+
+__参数说明：__
+
+__示例：__
+
+* `tc qdisc add dev em1 root netem delay 300ms`：设置网络延迟300ms
+* `tc qdisc add dev em1 root netem loss 8% 20%`：设置8%~20%的丢包率 
+* `tc qdisc del dev em1 root `：删除指定设置
+
+## 5.3 lsof
 
 __格式：__
 
@@ -1052,7 +1177,7 @@ __示例：__
 * `lsof -i tcp@localhost`
 * `lsof -i tcp:22`
 
-# 32 ss
+## 5.4 ss
 
 `ss`是`Socket Statistics`的缩写。顾名思义，`ss`命令可以用来获取`socket`统计信息，它可以显示和`netstat`类似的内容。`ss`的优势在于它能够显示更多更详细的有关TCP和连接状态的信息，而且比`netstat`更快速更高效。
 
@@ -1085,21 +1210,21 @@ __示例：__
 * `ss -o state FIN-WAIT-1 dst 192.168.25.100/24`：显示出处于`FIN-WAIT-1`状态的，目标网络为`192.168.25.100/24`所有socket
 * `ss -nap`
 
-# 33 ip
+## 5.5 ip
 
-## 33.1 ip addr
+### 5.5.1 ip addr
 
 简写为`ip a`
 
-## 33.2 ip link
+### 5.5.2 ip link
 
 简写为`ip l`
 
-## 33.3 ip route
+### 5.5.3 ip route
 
 简写为`ip r`
 
-### 33.3.1 route table
+#### 5.5.3.1 route table
 
 __linux最多可以支持255张路由表，每张路由表有一个`table id`和`table name`。其中有4张表是linux系统内置的__
 
@@ -1111,13 +1236,13 @@ __linux最多可以支持255张路由表，每张路由表有一个`table id`和
 * __`table id = 253`：称为默认路由表，表名为`default`__。一般来说默认的路由都放在这张表
     * `ip r show table default`
 
-__此外__
+__此外：__
 
 * 系统管理员可以根据需要自己添加路由表，并向路由表中添加路由记录
 * 可以通过`/etc/iproute2/rt_tables`文件查看`table id`和`table name`的映射关系。
 * 如果管理员新增了一张路由表，需要在`/etc/iproute2/rt_tables`文件中为新路由表添加`table id`和`table name`的映射
 
-### 33.3.2 route type
+#### 5.5.3.2 route type
 
 __`unicast`__：单播路由是路由表中最常见的路由。这是到目标网络地址的典型路由，它描述了到目标的路径。即使是复杂的路由（如下一跳路由）也被视为单播路由。如果在命令行上未指定路由类型，则假定该路由为单播路由
 
@@ -1181,7 +1306,7 @@ ip route add throw 10.79.0.0/16
 ip route add throw 172.16.0.0/12
 ```
 
-### 33.3.3 route scope
+#### 5.5.3.3 route scope
 
 __`global`__：全局有效
 
@@ -1191,7 +1316,7 @@ __`link`__：仅在当前设备有效
 
 __`host`__：仅在当前主机有效
 
-### 33.3.4 route proto
+#### 5.5.3.4 route proto
 
 __`proto`：表示路由的添加时机。可由数字或字符串表示，数字与字符串的对应关系详见`/etc/iproute2/rt_protos`__
 
@@ -1200,11 +1325,11 @@ __`proto`：表示路由的添加时机。可由数字或字符串表示，数�
 1. __`boot`__：该路由是在启动过程中安装的。如果路由守护程序启动，它将会清除这些路由规则
 1. __`static`__：该路由由管理员安装，以覆盖动态路由
 
-### 33.3.5 route src
+#### 5.5.3.5 route src
 
 这被视为对内核的提示（用于回答：如果我要将数据包发往host X，我该用本机的哪个IP作为Source IP），该提示是关于要为该接口上的`传出`数据包上的源地址选择哪个IP地址
 
-### 33.3.6 参数解释
+#### 5.5.3.6 参数解释
 
 __`ip r show table local`参数解释（示例如下）__
 
@@ -1231,7 +1356,7 @@ local 127.0.0.1 dev lo  proto kernel  scope host  src 127.0.0.1
 local 127.0.0.0/8 dev lo  proto kernel  scope host  src 127.0.0.1
 ```
 
-## 33.4 ip rule
+### 5.5.4 ip rule
 
 基于策略的路由比传统路由在功能上更强大，使用更灵活，它使网络管理员不仅能够根据目的地址而且能够根据报文大小、应用或IP源地址等属性来选择转发路径。简单地来说，linux系统有多张路由表，而路由策略会根据一些条件，将路由请求转向不同的路由表。例如源地址在某些范围走路由表A，另外的数据包走路由表，类似这样的规则是有路由策略rule来控制
 
@@ -1242,7 +1367,7 @@ local 127.0.0.0/8 dev lo  proto kernel  scope host  src 127.0.0.1
 1. __`rule 32767`__：匹配任何条件的数据包，查询路由表`default（table id = 253）`。对于前面的缺省策略没有匹配到的数据包，系统使用这个策略进行处理。这个规则也可以删除
 * 在linux系统中是按照rule的优先级顺序依次匹配。假设系统中只有优先级为`0`，`32766`及`32767`这三条规则。那么系统首先会根据规则`0`在本地路由表里寻找路由，如果目的地址是本网络，或是广播地址的话，在这里就可以找到匹配的路由；如果没有找到路由，就会匹配下一个不空的规则，在这里只有`32766`规则，那么将会在主路由表里寻找路由；如果没有找到匹配的路由，就会依据`32767`规则，即寻找默认路由表；如果失败，路由将失败
 
-__示例__
+__示例：__
 
 ```sh
 # 增加一条规则，规则匹配的对象是所有的数据包，动作是选用路由表1的路由，这条规则的优先级是32800
@@ -1252,7 +1377,7 @@ $ ip rule add [from 0/0] table 1 pref 32800
 $ ip rule add from 192.168.3.112/32 [tos 0x10] table 2 pref 1500 prohibit
 ```
 
-## 33.5 ip netns
+### 5.5.5 ip netns
 
 ```sh
 Usage: ip netns list
@@ -1266,7 +1391,7 @@ Usage: ip netns list
        ip netns list-id
 ```
 
-__示例__
+__示例：__
 
 * `ip netns list`：列出网络命名空间（只会从`/var/run/netns`下读取）
 * `ip netns exec test-ns ifconfig`：在网络命名空间`test-ns`中执行`ifconfig`
@@ -1279,65 +1404,9 @@ mkdir -p /var/run/netns/
 ln -sfT /proc/$pid/ns/net /var/run/netns/$container_id
 ```
 
-# 34 tcpdump
+## 5.6 iptables
 
-__格式：__
-
-* `tcpdump [-AennqX] [-i 接口] [port 端口号] [-w 存储文件名] [-c 次数] [-r 文件] [所要摘取数据包的格式]`
-
-__参数说明：__
-
-* `-A`：数据包的内容以ASCII显示，通常用来抓取WWW的网页数据包数据
-* `-e`：使用数据链路层(OSI第二层)的MAC数据包数据来显示
-* `-n`：直接以IP以及port number显示，而非主机名与服务名称
-* `-q`：仅列出较为简短的数据包信息，每一行的内容比较精简
-* `-X`：可以列出十六进制(hex)以及ASCII的数据包内容，对于监听数据包很有用
-* `-i`：后面接要监听的网络接口，例如eth0等
-* `port`：后接要监听的端口号，例如22等
-* `-w`：将监听得到的数据包存储下来
-* `-r`：从后面接的文件将数据包数据读出来
-* `-c`：监听数据包数，没有这个参数则会一直监听，直到[ctrl]+C
-* 此外，还可以用`and`拼接多个条件
-
-__显示格式说明__
-
-* `src > dst: flags data-seqno ack window urgent options`
-* `src`: 源ip/port（或域名）
-* `dst`: 宿ip/port（或域名）
-* `flags`: TCP标志位的组合
-    * `S`: `SYNC`
-    * `F`: `FIN`
-    * `P`: `PUSH`
-    * `R`: `RST`
-    * `U`: `URG`
-    * `W`: `ECN CWR`
-    * `E`: `ECN-Echo`
-    * `.`: `ACK`
-    * `none`: 无任何标志位
-* `data-seqno`: 数据包的序号，可能是一个或多个（`1:4`）
-* `ack`: 表示期望收到的下一个数据包的序号
-* `window`: 接收缓存的大小
-* `urgent`: 表示当前数据包是否包含紧急数据
-* `option`: 用`<>`包围的部分
-
-__示例：__
-
-* `tcpdump -i lo0 port 22 -w output7.cap`
-* `tcpdump -i eth0 host www.baidu.com`
-* `tcpdump -i any -w output1.cap`
-* `tcpdump -n -i any -e icmp and host www.baidu.com`
-
-## 34.1 tips
-
-如何查看具体的协议，例如ssh协议
-
-利用wireshark
-
-1. 任意选中一个`length`不为`0`的数据包，右键选择解码（`decode as`），右边`Current`一栏，选择对应的协议即可
-
-# 35 iptables
-
-## 35.1 规则的查看
+### 5.6.1 规则的查看
 
 __格式：__
 
@@ -1351,7 +1420,7 @@ __参数说明：__
 * `-n`：不进行IP与HOSTNAME的反查，显示信息的速度回快很多
 * `-v`：列出更多的信息，包括通过该规则的数据包总数，相关的网络接
 
-__输出信息介绍__
+__输出信息介绍：__
 
 * 每一个Chain就是每个链，Chain所在的括号里面的是默认的策略(即没有规则匹配时采取的操作(target))
 * `target`：代表进行的操作
@@ -1380,12 +1449,12 @@ __参数说明：__
 
 * `-t`：可以针对某些表格来输出，例如仅针对NAT或Filter等
 
-__输出信息介绍__
+__输出信息介绍：__
 
 * 星号开头的指的是表格，这里为Filter
 * 冒号开头的指的是链，3条内建的链，后面跟策略
 
-## 35.2 规则的清除
+### 5.6.2 规则的清除
 
 __格式：__
 
@@ -1397,7 +1466,7 @@ __参数说明：__
 * `-X [chain]`：清除指定`user-defined chain`或所有`user-defined chain`
 * `-Z [chain]`：将指定chain或所有的chain的计数与流量统计都归零
 
-## 35.3 定义默认策略
+### 5.6.3 定义默认策略
 
 当数据包不在我们设置的规则之内时，该数据包的通过与否都以Policy的设置为准
 
@@ -1417,7 +1486,7 @@ __示例：__
 * `iptables -P OUTPUT ACCEPT`
 * `iptables -P FORWARD ACCEPT`
 
-## 35.4 数据包的基础对比：IP、网络及接口设备
+### 5.6.4 数据包的基础对比：IP、网络及接口设备
 
 __格式：__
 
@@ -1454,7 +1523,7 @@ __示例：__
 * `iptables -A INPUT -i eth1 -j ACCEPT`：添加接口为eth1的网卡为信任设备
 * `iptables -A INPUT -s 192.168.2.200 -j LOG`：该网段的数据包，其相关信息就会被写入到内核日志文件中，即`/var/log/messages`，然后，该数据包会继续进行后续的规则比对(这一点与其他规则不同)
 
-## 35.5 TCP、UDP的规则：针对端口设置
+### 5.6.5 TCP、UDP的规则：针对端口设置
 
 TCP与UDP比较特殊的就是端口(port)，在TCP方面则另外有所谓的连接数据包状态，包括最常见的SYN主动连接的数据包格式
 
@@ -1474,7 +1543,7 @@ __示例：__
 * `iptables -A INPUT -i eth0 -p tcp --dport 21 -j DROP`：想要进入本机port 21的数据包都阻挡掉
 * `iptables -A INPUT -i eth0 -p tcp --sport 1:1023 --dport 1:1023 --syn -j DROP`：来自任何来源port 1:1023的主动连接到本机端的1:1023连接丢弃
 
-## 35.6 iptables匹配扩展
+### 5.6.6 iptables匹配扩展
 
 `iptables`可以使用扩展的数据包匹配模块。当指定`-p`或`--protocol`时，或者使用`-m`或`--match`选项，后跟匹配的模块名称；之后，取决于特定的模块，可以使用各种其他命令行选项。可以在一行中指定多个扩展匹配模块，并且可以在指定模块后使用`-h`或`--help`选项来接收特定于该模块的帮助文档（`iptables -m comment -h`，输出信息的最下方有`comment`模块的参数说明）
 
@@ -1485,17 +1554,17 @@ __常用模块__，详细内容请参考[Match Extensions](https://linux.die.net
 1. `tcp`
 1. `udp`
 
-## 35.7 iptables目标扩展
+### 5.6.7 iptables目标扩展
 
 iptables可以使用扩展目标模块，并且可以在指定目标后使用`-h`或`--help`选项来接收特定于该目标的帮助文档（`iptables -j DNAT -h`）
 
-__常用__
+__常用：__
 
 1. `DNAT`
 1. `SNAT`
 1. `REJECT`
 
-## 35.8 ICMP数据包规则的比对：针对是否响应ping来设计
+### 5.6.8 ICMP数据包规则的比对：针对是否响应ping来设计
 
 __格式：__
 
@@ -1505,182 +1574,7 @@ __参数说明：__
 
 * `--icmp-type`：后面必须要接ICMP的数据包类型，也可以使用代号
 
-# 36 nsenter
-
-nsenter用于在某个网络命名空间下执行某个命令。例如某些docker容器是没有curl命令的，但是又想在docker容器的环境下执行，这个时候就可以在宿主机上使用nsenter
-
-__格式：__
-
-* `nsenter -t <pid> -n <cmd>`
-
-__参数说明：__
-
-* `-t`：后接进程id
-* `-n`：后接需要执行的命令
-
-__示例：__
-
-* `nsenter -t 123 -n curl baidu.com`
-
-# 37 iostat
-
-__格式：__
-
-* `iostat [ -c | -d ] [ -k | -m ] [ -t ] [ -x ] [ interval [ count ] ]`
-
-__参数说明：__
-
-* `-c`：与`-d`互斥，只显示cpu相关的信息
-* `-d`：与`-c`互斥，只显示磁盘相关的信息
-* `-k`：以`kB`的方式显示io速率（默认是`Blk`，即文件系统中的`block`）
-* `-m`：以`MB`的方式显示io速率（默认是`Blk`，即文件系统中的`block`）
-* `-t`：打印日期信息
-* `-x`：打印扩展信息
-* `interval`: 打印间隔
-* `count`: 打印几次，不填一直打印
-
-__示例：__
-
-* `iostat -d -t -x 1`
-
-# 38 socat
-
-__格式：__
-
-* `socat [options] <address> <address>`
-* 其中这2个`address`就是关键了，`address`类似于一个文件描述符，Socat所做的工作就是在2个`address`指定的描述符间建立一个 `pipe`用于发送和接收数据
-
-__参数说明：__
-
-* `address`：可以是如下几种形式之一
-    * `-`：表示标准输入输出
-    * `/var/log/syslog`：也可以是任意路径，如果是相对路径要使用`./`，打开一个文件作为数据流。
-    * `TCP:127.0.0.1:1080`：建立一个TCP连接作为数据流，TCP也可以替换为UDP
-    * `TCP-LISTEN:12345`：建立TCP监听端口，TCP也可以替换为UDP
-    * `EXEC:/bin/bash`：执行一个程序作为数据流。
-
-__示例：__
-
-* `socat - /var/www/html/flag.php`：通过Socat读取文件，绝对路径
-* `socat - ./flag.php`：通过Socat读取文件，相对路径
-* `echo "This is Test" | socat - /tmp/hello.html`：写入文件
-* `socat TCP-LISTEN:80,fork TCP:www.baidu.com:80`：将本地端口转到远端
-* `socat TCP-LISTEN:12345 EXEC:/bin/bash`：在本地开启shell代理
-
-# 39 dhclient
-
-__格式：__
-
-* `dhclient [-dqr]`
-
-__参数说明：__
-
-* `-d`：总是以前台方式运行程序
-* `-q`：安静模式，不打印任何错误的提示信息
-* `-r`：释放ip地址
-
-__示例：__
-
-* `dhclient`：获取ip
-* `dhclient -r`：释放ip
-
-# 40 tc
-
-流量的处理由三种对象控制，它们是：`qdisc`（排队规则）、`class`（类别）和`filter`（过滤器）。
-
-__格式：__
-
-* `tc qdisc [ add | change | replace | link ] dev DEV [ parent qdisc-id | root ] [ handle qdisc-id ] qdisc [ qdisc specific parameters ]`
-* `tc class [ add | change | replace ] dev DEV parent qdisc-id [ classid class-id ] qdisc [ qdisc specific parameters ]`
-* `tc filter [ add | change | replace ] dev DEV [ parent qdisc-id | root ] protocol protocol prio priority filtertype [ filtertype specific parameters ] flowid flow-id`
-* `tc [-s | -d ] qdisc show [ dev DEV ]`
-* `tc [-s | -d ] class show dev DEV`
-* `tc filter show dev DEV`
-
-__参数说明：__
-
-__示例：__
-
-* `tc qdisc add dev em1 root netem delay 300ms`：设置网络延迟300ms
-* `tc qdisc add dev em1 root netem loss 8% 20%`：设置8%~20%的丢包率 
-* `tc qdisc del dev em1 root `：删除指定设置
-
-# 41 free
-
-__格式：__
-
-* `free [-b|-k|-m|-g|-h] [-t]`
-
-__参数说明：__
-
-* `-b`：bytes
-* `-m`：MB
-* `-k`：KB
-* `-g`：GB
-* `-h`：单位自适应
-
-__显示参数介绍__：
-
-* `Men`：物理内存
-* `Swap`：虚拟内存
-* `total`：总量
-* `user`：使用量
-* `free`：剩余可用量
-* `shared`与`buffers/cached`：被使用的量当中用来作为缓冲以及快取的量
-* `buffers`：缓冲记忆
-* `cached`：缓存
-* __一般来说系统会很有效地将所有内存用光，目的是为了让系统的访问性能加速，这一点与Windows很不同，因此对于Linux系统来说，内存越大越好__
-
-__示例：__
-
-* `free -m`
-
-# 42 vmstat
-
-__格式：__
-
-* `vmstat [options] [delay [count]]`
-
-__参数说明：__
-
-* `-a, --active`：显示活跃和非活跃内存
-* `-f, --forks`：从系统启动至今的fork数量，linux下创建进程的系统调用是fork
-    * 信息是从`/proc/stat`中的processes字段里取得的
-* `-m, --slabs`：查看系统的slab信息
-* `-s, --stats`：查看内存使用的详细信息
-* `-d, --disk`：查看磁盘使用的详细信息
-* `-D, --disk-sum`         summarize disk statistics
-* `-p, --partition <dev>`：查看指定分区的详细信息
-* `-S, --unit <char>`：指定输出单位，只支持`k/K`以及`m/M`，默认是`K`
-* `-w, --wide`：输出更详细的信息
-* `-t, --timestamp`：输出时间戳
-* `delay`：采样间隔
-* `count`：采样次数
-
-__示例：__
-
-* `vmstat`
-* `vmstat 2`
-* `vmstat 2 5`
-* `vmstat -s`
-* `vmstat -s -S m`
-* `vmstat -f`
-* `vmstat -d`
-* `vmstat -p /dev/sda1`
-* `vmstat -m`
-
-# 43 swap
-
-__制作swap__
-
-```sh
-dd if=/dev/zero of=/tmp/swap bs=1M count=128
-mkswap /tmp/swap
-swapon /tmp/swap
-free
-```
-
-# 44 route
+## 5.7 route
 
 __格式：__
 
@@ -1718,95 +1612,159 @@ __示例：__
 * `route add -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
 * `route del -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
 
-# 45 tsar
+## 5.8 nsenter
+
+nsenter用于在某个网络命名空间下执行某个命令。例如某些docker容器是没有curl命令的，但是又想在docker容器的环境下执行，这个时候就可以在宿主机上使用nsenter
 
 __格式：__
 
-* `tsar [-l]`
+* `nsenter -t <pid> -n <cmd>`
 
 __参数说明：__
 
-* `-l`：查看实时数据
+* `-t`：后接进程id
+* `-n`：后接需要执行的命令
 
 __示例：__
 
-* `tsar -l`
+* `nsenter -t 123 -n curl baidu.com`
 
-# 46 watch
+## 5.9 tcpdump
 
 __格式：__
 
-* `watch [option] [cmd]`
+* `tcpdump [-AennqX] [-i 接口] [port 端口号] [-w 存储文件名] [-c 次数] [-r 文件] [所要摘取数据包的格式]`
 
 __参数说明：__
 
-* `-n`：watch缺省该参数时，每2秒运行一下程序，可以用`-n`或`-interval`来指定间隔的时间
-* `-d`：`watch`会高亮显示变化的区域。`-d=cumulative`选项会把变动过的地方(不管最近的那次有没有变动)都高亮显示出来
-* `-t`：关闭watch命令在顶部的时间间隔命令，当前时间的输出
+* `-A`：数据包的内容以ASCII显示，通常用来抓取WWW的网页数据包数据
+* `-e`：使用数据链路层(OSI第二层)的MAC数据包数据来显示
+* `-n`：直接以IP以及port number显示，而非主机名与服务名称
+* `-q`：仅列出较为简短的数据包信息，每一行的内容比较精简
+* `-X`：可以列出十六进制(hex)以及ASCII的数据包内容，对于监听数据包很有用
+* `-i`：后面接要监听的网络接口，例如eth0等
+* `port`：后接要监听的端口号，例如22等
+* `-w`：将监听得到的数据包存储下来
+* `-r`：从后面接的文件将数据包数据读出来
+* `-c`：监听数据包数，没有这个参数则会一直监听，直到[ctrl]+C
+* `-vv/-vvv`：输出更多的信息，配合`-w`使用时，会显示目前监听的多少数据包
+* 此外，还可以用`and`拼接多个条件
+
+__显示格式说明：__
+
+* `src > dst: flags data-seqno ack window urgent options`
+* `src`: 源ip/port（或域名）
+* `dst`: 宿ip/port（或域名）
+* `flags`: TCP标志位的组合
+    * `S`: `SYNC`
+    * `F`: `FIN`
+    * `P`: `PUSH`
+    * `R`: `RST`
+    * `U`: `URG`
+    * `W`: `ECN CWR`
+    * `E`: `ECN-Echo`
+    * `.`: `ACK`
+    * `none`: 无任何标志位
+* `data-seqno`: 数据包的序号，可能是一个或多个（`1:4`）
+* `ack`: 表示期望收到的下一个数据包的序号
+* `window`: 接收缓存的大小
+* `urgent`: 表示当前数据包是否包含紧急数据
+* `option`: 用`<>`包围的部分
 
 __示例：__
 
-* `watch -n 1 -d netstat -ant`：每隔一秒高亮显示网络链接数的变化情况
-* `watch -n 1 -d 'pstree | grep http'`：每隔一秒高亮显示http链接数的变化情况
-* `watch 'netstat -an | grep :21 | grep <ip> | wc -l'`：实时查看模拟攻击客户机建立起来的连接数
-* `watch -d 'ls -l | grep scf'`：监测当前目录中 scf' 的文件的变化
-* `watch -n 10 'cat /proc/loadavg'`：10秒一次输出系统的平均负载
+* `tcpdump -i lo0 port 22 -w output7.cap`
+* `tcpdump -i eth0 host www.baidu.com`
+* `tcpdump -i any -w output1.cap`
+* `tcpdump -n -i any -e icmp and host www.baidu.com`
 
-# 47 dstat
+### 5.9.1 tips
+
+如何查看具体的协议，例如ssh协议
+
+利用wireshark
+
+1. 任意选中一个`length`不为`0`的数据包，右键选择解码（`decode as`），右边`Current`一栏，选择对应的协议即可
+
+### 5.9.2 如何使用tcpdump抓dockerd的http协议的数据
+
+dockerd使用的是域套接字，对应的套接字文件是`/var/run/docker.sock`，而域套接字是不经过网卡设备的，因此tcpdump无法直接抓取相应的数据
+
+__方式1：改变client的访问方式__
+
+```sh
+# 在终端1执行，监听本机的18080，然后将流量转到docker的域套接字
+# 两个-d参数会输出fatel、error以及notice级别的信息
+socat -d -d TCP-LISTEN:18080,fork,bind=127.0.0.1 UNIX:/var/run/docker.sock
+
+# 在终端2执行tcpdump进行抓包
+tcpdump -i lo -netvv port 18080 -w file1.cap
+
+# 在终端3执行docker命令
+docker -H tcp://localhost:18080 images
+```
+
+__方式2：不改变client的访问方式__
+
+```sh
+# 在终端1执行，mv命令修改原始域套接字的文件名，这个操作不会改变文件的fd，因此，在移动后，dockerd监听的套接字是/var/run/docker.sock.original
+sudo mv /var/run/docker.sock /var/run/docker.sock.original
+sudo socat TCP-LISTEN:18081,reuseaddr,fork UNIX-CONNECT:/var/run/docker.sock.original
+
+# 在终端2执行
+sudo socat UNIX-LISTEN:/var/run/docker.sock,fork TCP-CONNECT:127.0.0.1:18081
+
+# 在终端3执行tcpdump进行抓包
+tcpdump -i lo -vv port 18081 -w file2.cap
+
+# 在终端3执行docker命令
+docker -H tcp://localhost:18081 images
+```
+
+## 5.10 socat
 
 __格式：__
 
-* `dstat [options]`
+* `socat [options] <address> <address>`
+* 其中这2个`address`就是关键了，`address`类似于一个文件描述符，Socat所做的工作就是在2个`address`指定的描述符间建立一个 `pipe`用于发送和接收数据
+
+__参数说明：__
+
+* `address`：可以是如下几种形式之一
+    * `-`：表示标准输入输出
+    * `/var/log/syslog`：也可以是任意路径，如果是相对路径要使用`./`，打开一个文件作为数据流。
+    * `TCP:127.0.0.1:1080`：建立一个TCP连接作为数据流，TCP也可以替换为UDP
+    * `TCP-LISTEN:12345`：建立TCP监听端口，TCP也可以替换为UDP
+    * `EXEC:/bin/bash`：执行一个程序作为数据流。
 
 __示例：__
 
-* `dstat -h`：参数说明
-* `dstat 5 10`：5秒刷新一次，刷新10次
-* `dstat -cdgilmnprstTy`
+* `socat - /var/www/html/flag.php`：通过Socat读取文件，绝对路径
+* `socat - ./flag.php`：通过Socat读取文件，相对路径
+* `echo "This is Test" | socat - /tmp/hello.html`：写入文件
+* `socat TCP-LISTEN:80,fork TCP:www.baidu.com:80`：将本地端口转到远端
+* `socat TCP-LISTEN:12345 EXEC:/bin/bash`：在本地开启shell代理
 
-# 48 nethogs
+## 5.11 dhclient
 
-nethogs会以进程为单位，列出每个进程占用的网卡以及带宽
+__格式：__
 
-__安装__
+* `dhclient [-dqr]`
 
-```sh
-# 安装 yum 源
-yum install -y epel-release
+__参数说明：__
 
-# 安装nethogs
-yum install -y nethogs
-```
-
-__示例：__
-
-* `nethogs`
-
-# 49 iptraf
-
-# 50 ifstat
-
-该命令用于查看网卡的流量状况，包括成功接收/发送，以及错误接收/发送的数据包，看到的东西基本上和`ifconfig`类似
-
-# 51 iftop
-
-iftop会以连接为单位，列出每个连接的进出流量
-
-__安装__
-
-```sh
-# 安装 yum 源
-yum install -y epel-release
-
-# 安装ifgop
-yum install -y iftop
-```
+* `-d`：总是以前台方式运行程序
+* `-q`：安静模式，不打印任何错误的提示信息
+* `-r`：释放ip地址
 
 __示例：__
 
-* `iftop`
+* `dhclient`：获取ip
+* `dhclient -r`：释放ip
 
-# 52 ssh
+# 6 运维监控
+
+## 6.1 ssh
 
 __格式：__
 
@@ -1827,20 +1785,20 @@ __示例：__
 * `ssh student@127.0.0.1 find / &> ~/find1.log`
 * `ssh -f student@127.0.0.1 find / &> ~/find1.log`：会立即注销127.0.0.1，find在远程服务器运行
 
-## 52.1 免密登录
+### 6.1.1 免密登录
 
-__Client端步骤__
+__Client端步骤：__
 
 1. `ssh-keygen [-t rsa|dsa]`
 1. `scp ~/.ssh/id_rsa.pub [account@]host:~`
 
-__Server端步骤__
+__Server端步骤：__
 
 1. `mkdir ~/.ssh; chmod 700 .ssh`，若不存在`~/.ssh`文件夹，则创建
 1. `cat id_rsa.pub >> .ssh/authorized_keys`
 1. `chmod 644 .ssh/authorized_keys`
 
-# 53 scp
+## 6.2 scp
 
 __格式：__
 
@@ -1860,107 +1818,393 @@ __示例：__
 * `scp /tmp/Ubuntu.txt root@192.168.136.130:~/Desktop`
 * `scp -P 16666 root@192.168.136.130:/tmp/test.log ~/Desktop`：指定主机`192.168.136.130`的端口号为16666
 
-# 54 chsh
+## 6.3 watch
 
 __格式：__
 
-* `chsh [-ls]`
+* `watch [option] [cmd]`
 
 __参数说明：__
 
-* `-l`：列出目前系统上可用的shell，其实就是`/etc/shells`的内容
-* `-s`：设置修改自己的shell
-
-# 55 sudo
-
-__注意，sudo本身是一个进程。比如用`sudo tail -f xxx`，在另一个会话中`ps aux | grep tail`会发现两个进程__
-
-__配置文件：__
-
-* `/etc/sudoers`
-
-# 56 sync
-
-`sync`指令会将存于`buffer`中的资料强制写入硬盘中
-
-# 57 lsblk
-
-`lsblk`命令用于列出所有可用块设备的信息
-
-__格式：__
-
-* `lsblk [option]`
-
-__参数说明：__
-
-* `-a, --all`：打印所有设备
-* `-b, --bytes`：以字节为单位而非易读的格式来打印 SIZE
-* `-d, --nodeps`：不打印从属设备(slave)或占位设备(holder)
-* `-D, --discard`：打印时丢弃能力
-* `-e, --exclude <列表>`：根据主设备号排除设备(默认：内存盘)
-* `-I, --include <列表>`：只显示有指定主设备号的设备
-* `-f, --fs`：输出文件系统信息
-* `-h, --help`：使用信息(此信息)
-* `-i, --ascii`：只使用 ascii 字符
-* `-m, --perms`：输出权限信息
-* `-l, --list`：使用列表格式的输出
-* `-n, --noheadings`：不打印标题
-* `-o, --output <列表>`：输出列
-* `-p, --paths`：打印完整设备路径
-* `-P, --pairs`：使用 key=“value” 输出格式
-* `-r, --raw`：使用原生输出格式
-* `-s, --inverse`：反向依赖
-* `-t, --topology`：输出拓扑信息
-* `-S, --scsi`：输出有关 SCSI 设备的信息
+* `-n`：watch缺省该参数时，每2秒运行一下程序，可以用`-n`或`-interval`来指定间隔的时间
+* `-d`：`watch`会高亮显示变化的区域。`-d=cumulative`选项会把变动过的地方(不管最近的那次有没有变动)都高亮显示出来
+* `-t`：关闭watch命令在顶部的时间间隔命令，当前时间的输出
 
 __示例：__
 
-* `lsblk -fp`
-* `lsblk -o name,mountpoint,label,size,uuid`
+* `watch -n 1 -d netstat -ant`：每隔一秒高亮显示网络链接数的变化情况
+* `watch -n 1 -d 'pstree | grep http'`：每隔一秒高亮显示http链接数的变化情况
+* `watch 'netstat -an | grep :21 | grep <ip> | wc -l'`：实时查看模拟攻击客户机建立起来的连接数
+* `watch -d 'ls -l | grep scf'`：监测当前目录中 scf' 的文件的变化
+* `watch -n 10 'cat /proc/loadavg'`：10秒一次输出系统的平均负载
 
-# 58 du
+## 6.4 top
 
 __格式：__
 
-* `du`
+* `top [-H] [-p <pid>]`
 
 __参数说明：__
 
-* `-h`：以`K`，`M`，`G`为单位，提高信息的可读性
-* `-s`：仅显示总计
-* `-d <depth>`：指定显示的文件/文件夹的深度
+* `-H`：显示线程
+* `-p`：查看指定进程
 
 __示例：__
 
-* `du -sh`：当前文件夹的总大小
-* `du -h -d 1`：列出深度为1的所有文件/文件夹大小
+* `top -p 123`：查看进程号为123的进程
+* `top -Hp 123`：查看进程号为123以及该进程的所有线程
 
-# 59 exec
+__打印参数说明：__
+
+* __第一行__：
+    * 目前的时间
+    * 开机到目前为止所经过的时间
+    * 已经登录的人数
+    * 系统在1，5，15分钟的平均工作负载
+* __第二行__：显示的是目前进程的总量，与各个状态下进程的数量
+* __第三行__：显示的CPU整体负载，特别注意wa，这个代表的是I/Owait，通常系统变慢都是I/O产生的问题比较大
+* __第四五行__：物理内存与虚拟内存的使用情况，注意swap的使用量越少越好，大量swap被使用说明系统物理内存不足
+* __第六行__：top进程中，输入命令时显示的地方
+* __第七行以及以后__：每个进程的资源使用情况
+    * PID：每个进程的ID
+    * USER：进程所属用户名称
+    * PR：Priority，优先顺序，越小优先级越高
+    * NI：Nice，与Priority有关，越小优先级越高
+    * %CPU：CPU使用率
+    * %MEN：内存使用率
+    * TIME+：CPU使用时间累加
+    * COMMAND
+* __top默认使用CPU使用率作为排序的终点，键入`h`显示帮助菜单__
+* __排序顺序__
+    * `P`：按CPU使用量排序，默认从大到小，`R`更改为从小到大
+    * `M`：按内存使用量排序，默认从大到小，`R`更改为从小到大
+    * `T`：按使用时间排序，默认从大到小，`R`更改为从小到大
+
+## 6.5 tsar
+
+__格式：__
+
+* `tsar [-l]`
+
+__参数说明：__
+
+* `-l`：查看实时数据
+
+__示例：__
+
+* `tsar -l`
+
+## 6.6 vmstat
+
+__格式：__
+
+* `vmstat [options] [delay [count]]`
+
+__参数说明：__
+
+* `-a, --active`：显示活跃和非活跃内存
+* `-f, --forks`：从系统启动至今的fork数量，linux下创建进程的系统调用是fork
+    * 信息是从`/proc/stat`中的processes字段里取得的
+* `-m, --slabs`：查看系统的slab信息
+* `-s, --stats`：查看内存使用的详细信息
+* `-d, --disk`：查看磁盘使用的详细信息
+* `-D, --disk-sum`         summarize disk statistics
+* `-p, --partition <dev>`：查看指定分区的详细信息
+* `-S, --unit <char>`：指定输出单位，只支持`k/K`以及`m/M`，默认是`K`
+* `-w, --wide`：输出更详细的信息
+* `-t, --timestamp`：输出时间戳
+* `delay`：采样间隔
+* `count`：采样次数
+
+__输出信息介绍：__
+
+* `process`
+    * `r`：运行中的进程数量（`running`或`waiting`状态
+    * `b`：阻塞中的进程数量
+* `memory`
+    * `swpd`：虚拟内存总量
+    * `free`：空闲内存总量
+    * `buff`：被用作buffer的内存总量
+    * `cache`：被用作cache的内存总量
+    * `inact`：无效内存总量（需要加`-a`参数）
+    * `active`：有效内存总量（需要加`-a`参数）
+* `swap`
+    * `si`：每秒从磁盘交换的内存总量
+    * `so`：每秒交换到磁盘的内存总量
+* `io`
+    * `bi`：每秒从块设备接收的block数量
+    * `bo`：每秒写入块设备的block数量
+* `system`
+    * `in`：每秒中断次数，包括时钟中断
+    * `cs`：每秒上下文切换的次数
+* `cpu`
+    * `us`：用户cpu时间
+    * `sy`：系统（内核）cpu时间
+    * `id`：空闲cpu时间
+    * `wa`：等待IO的cpu时间
+    * `st`：从虚拟机窃取的时间
+
+__示例：__
+
+* `vmstat`
+* `vmstat 2`
+* `vmstat 2 5`
+* `vmstat -s`
+* `vmstat -s -S m`
+* `vmstat -f`
+* `vmstat -d`
+* `vmstat -p /dev/sda1`
+* `vmstat -m`
+
+## 6.7 mpstat
+
+`mpstat`（`multiprocessor statistics`）是实时监控工具，报告与cpu的一些统计信息这些信息都存在`/proc/stat`文件中，在多cpu系统里，其不但能查看所有的cpu的平均状况的信息，而且能够有查看特定的cpu信息，`mpstat`最大的特点是可以查看多核心的cpu中每个计算核心的统计数据；而且类似工具`vmstat`只能查看系统的整体cpu情况
+
+__输出信息介绍：__
+
+* __`%usr`__：用户cpu时间百分比
+* `%nice`：改变过优先级的进程的占用cpu时间百分比
+    * `PRI`是比较好理解的，即进程的优先级，或者通俗点说就是程序被cpu执行的先后顺序，此值越小进程的优先级别越高。那`NI`呢？就是我们所要说的`nice`值了，其表示进程可被执行的优先级的修正数值。如前面所说，`PRI`值越小越快被执行，那么加入`nice`值后，将会使得`PRI`变为：`PRI(new) = PRI(old) + nice`
+    * 在linux系统中，`nice`值的范围从`-20`到`+19`（不同系统的值范围是不一样的），正值表示低优先级，负值表示高优先级，值为零则表示不会调整该进程的优先级。具有最高优先级的程序，其`nice`值最低，所以在linux系统中，值`-20`使得一项任务变得非常重要；__与之相反，如果任务的`nice`为`+19`，则表示它是一个高尚的、无私的任务，允许所有其他任务比自己享有宝贵的CPU时间的更大使用份额，这也就是`nice`的名称的来意__
+    * 进程在创建时被赋予不同的优先级值，而如前面所说，`nice`的值是表示进程优先级值可被修正数据值，因此，每个进程都在其计划执行时被赋予一个`nice`值，这样系统就可以根据系统的资源以及具体进程的各类资源消耗情况，主动干预进程的优先级值。在通常情况下，子进程会继承父进程的`nice`值，比如在系统启动的过程中，`init`进程会被赋予`0`，其他所有进程继承了这个`nice`值（因为其他进程都是`init`的子进程）
+    * __对`nice`值一个形象比喻，假设在一个cpu轮转中，有2个runnable的进程`A`和`B`，如果他们的`nice`值都为0，假设内核会给他们每人分配1k个cpu时间片。但是假设进程`A`的`nice`值为0，但是`B`的`nice`值为-10，那么此时cpu可能分别给`A`和`B`分配1k和1.5k的时间片。故可以形象的理解为，`nice`的值影响了内核分配给进程的cpu时间片的多少，时间片越多的进程，其优先级越高，其优先级值（PRI）越低。`%nice`：就是改变过优先级的进程的占用cpu的百分比，如上例中就是`0.5k / 2.5k = 1/5 = 20%`__
+    * 由此可见，进程`nice`值和进程优先级不是一个概念，但是进程`nice`值会影响到进程的优先级变化
+* __`%sys`__：系统（内核）cpu时间百分比，不包括处理硬中断和软中断的时间
+* __`%iowait`__：在系统有未完成的磁盘`I/O`请求期间，一个或多个CPU空闲的时间百分比
+* `%irq`：处理硬中断的cpu时间百分比
+* `%soft`：处理软中断的cpu时间百分比
+* `%steal`：在管理程序为另一个虚拟处理器提供服务时，一个或多个虚拟CPU在非自愿等待中花费的时间百分比
+* `%guest`：一个或多个CPU运行虚拟处理器所花费的时间百分比
+* `%gnice`：一个或多个CPU运行一个`niced guest`所花费的时间百分
+* __`%idle`__：一个或多个CPU空闲且系统没有未完成的磁盘`I/O`请求的时间百分比
+
+__示例：__
+
+* `mpstat 2 5`：打印整体信息，间隔2s，打印5次
+* `mpstat -P ALL 2 5`：已单核为粒度打印信息，间隔2s，打印5次
+
+## 6.8 iostat
+
+__格式：__
+
+* `iostat [ -c | -d ] [ -k | -m ] [ -t ] [ -x ] [ interval [ count ] ]`
+
+__参数说明：__
+
+* `-c`：与`-d`互斥，只显示cpu相关的信息
+* `-d`：与`-c`互斥，只显示磁盘相关的信息
+* `-k`：以`kB`的方式显示io速率（默认是`Blk`，即文件系统中的`block`）
+* `-m`：以`MB`的方式显示io速率（默认是`Blk`，即文件系统中的`block`）
+* `-t`：打印日期信息
+* `-x`：打印扩展信息
+* `interval`: 打印间隔
+* `count`: 打印几次，不填一直打印
+
+__输出信息介绍：__
+
+* `cpu`
+    * `%user`：用户cpu时间百分比
+    * `%nice`：改变过优先级的进程的占用cpu时间百分比
+    * `%system`：系统（内核）cpu时间百分比，不包括处理硬中断和软中断的时间
+    * `%iowait`：在系统有未完成的磁盘I/O请求期间，一个或多个CPU空闲的时间百分比
+    * `%steal`：在管理程序为另一个虚拟处理器提供服务时，一个或多个虚拟CPU在非自愿等待中花费的时间
+    * `%idle`：一个或多个CPU空闲且系统没有未完成的磁盘I/O请求的时间百分比
+* `device`
+    * `tps`：每秒处理的io请求
+    * `Blk_read/s (kB_read/s, MB_read/s)`：每秒读取的数据量，单位可以是Block、kB、MB
+    * `Blk_wrtn/s (kB_wrtn/s, MB_wrtn/s)`：每秒写入的数据量，单位可以是Block、kB、MB
+    * `Blk_read (kB_read, MB_read)`：读取的数据总量，单位可以是Block、kB、MB
+    * `Blk_wrtn (kB_wrtn, MB_wrtn)`：写入的数据总量，单位可以是Block、kB、MB
+
+__示例：__
+
+* `iostat -d -t -x 1`
+
+## 6.9 dstat
+
+__格式：__
+
+* `dstat [options]`
+
+__参数：__
+
+* `-c, --cpu`：cpu统计信息
+    * `system`
+    * `user`
+    * `idle`
+    * `wait`
+    * `hardware interrupt`
+    * `software interrupt`
+* `-d, --disk`：磁盘统计信息
+    * `read`
+    * `write`
+* `-i, --int`：中断统计信息
+* `-l, --load`：cpu负载统计信息
+    * `1 min`
+    * `5 mins`
+    * `15mins`
+* `-m, --mem`：内存统计信息
+    * `used`
+    * `buffers`
+    * `cache`
+    * `free`
+* `-n, --net`：网络统计信息
+    * `receive`
+    * `send`
+* `-p, --proc`：进程统计信息
+    * `runnable`
+    * `uninterruptible`
+    * `new`
+* `-r, --io`：I/O统计信息
+    * `read requests`
+    * `write requests`
+* `-s, --swap`：swap统计信息
+    * `used`
+    * `free`
+* `-t, --time`：时间信息
+* `-y, --sys`：系统统计信息
+    * `interrupts`
+    * `context switches`
+* `--fs, --filesystem`：文件系统统计信息
+    * `open files`
+    * `inodes`
+* `--ipc`：ipc统计信息
+    * `message queue`
+    * `semaphores`
+    * `shared memory`
+* `--lock`：文件锁统计信息
+    * `posix`
+    * `flock`
+    * `read`
+    * `write`
+* `--socket`：socket统计信息
+    * `total`
+    * `tcp`
+    * `udp`
+    * `raw`
+    * `ip-fragments`
+* `--tcp`：tcp统计信息，包括
+    * `listen`
+    * `established`
+    * `syn`
+    * `time_wait`
+    * `close`
+* `--udp`：udp统计信息，包括
+    * `listen`
+    * `active`
+* __`-f, --full`__：显示详情，例如cpu会按每个cpu分别展示，network会按网卡分别展示
+* `--top-cpu`：显示最耗cpu资源的进程
+* `--top-io`：显示最耗io资源的进程
+* `--top-mem`：显示最耗mem资源的进程
+
+__示例：__
+
+* `dstat -h`：参数说明
+* `dstat 5 10`：5秒刷新一次，刷新10次
+* `dstat -cdgilmnprstTy`
+* `dstat -tcndylp --top-cpu`
+    * 等价于`dstat --time --cpu --net --disk --sys --load --proc --top-cpu`
+* `dstat -tcyif`
+
+## 6.10 ifstat
+
+该命令用于查看网卡的流量状况，包括成功接收/发送，以及错误接收/发送的数据包，看到的东西基本上和`ifconfig`类似
+
+## 6.11 nethogs
+
+nethogs会以进程为单位，列出每个进程占用的网卡以及带宽
+
+__安装：__
+
+```sh
+# 安装 yum 源
+yum install -y epel-release
+
+# 安装nethogs
+yum install -y nethogs
+```
+
+__示例：__
+
+* `nethogs`
+
+## 6.12 iptraf
+
+## 6.13 iftop
+
+iftop会以连接为单位，列出每个连接的进出流量
+
+__安装：__
+
+```sh
+# 安装 yum 源
+yum install -y epel-release
+
+# 安装ifgop
+yum install -y iftop
+```
+
+__示例：__
+
+* `iftop`
+
+## 6.14 strace
+
+`strace`是Linux环境下的一款程序调试工具，用来监察一个应用程序所使用的系统调用
+`strace`是一个简单的跟踪系统调用执行的工具。在其最简单的形式中，它可以从开始到结束跟踪二进制的执行，并在进程的生命周期中输出一行具有系统调用名称，每个系统调用的参数和返回值的文本行
+
+在Linux中，进程是不能直接去访问硬件设备的，比如读取磁盘文件、接收网络数据等，但可以将用户态模式切换到内核模式，通过系统调用来访问硬件设备。这时`strace`就可以跟踪到一个进程产生的系统调用，包括参数，返回值，执行消耗的时间、调用次数，成功和失败的次数
+
+__strace能做什么：__
+
+1. 基于特定的系统调用或系统调用组进行过滤
+1. 通过统计特定系统调用的使用次数，所花费的时间，以及成功和错误的数量来分析系统调用的使用
+1. 跟踪发送到进程的信号
+1. 通过pid附加到任何正在运行的进程
+1. 调试性能问题，查看系统调用的频率，找出耗时的程序段
+1. 查看程序读取的是哪些文件从而定位比如配置文件加载错误问题
+1. 查看某个php脚本长时间运行“假死”情况
+1. 当程序出现`Out of memory`时被系统发出的SIGKILL信息所kill
+1. 另外因为strace拿到的是系统调用相关信息，一般也即是IO操作信息，这个对于排查比如cpu占用100%问题是无能为力的。这个时候就可以使用GDB工具了
+
+__参数：__
+
+* `-c`：输出统计报表
+* `-e`：后接系统调用的表达式
+* `-p`：后接进程id，用于跟踪指定进程
+
+__示例：__
+
+1. `strace cat /etc/fstab`：跟踪cat查看文件使用了哪些系统调用（按时间顺序）
+1. `strace -e read cat /etc/fstab`：跟踪cat查看文件时使用的`read`这一系统调用
+1. `strace -c cat /etc/fstab`：统计cat查看文件的系统调用（按调用频率）
+1. `timeout 10 strace -p {PID} -f -c`：统计指定进程的系统调用
+
+# 7 内建
+
+## 7.1 set
+
+__格式：__
+
+* `set [option]`
+
+__参数说明：__
+
+* `-e`：当任意一个命令的返回值为非0时，立即退出
+* `-x`：将每个命令及其详细参数输出到标准输出中
+* `-o pipefail`：针对管道命令，取从右往左第一个非零返回值作为整个管道命令的返回值
+
+__示例：__
+
+* `set -e`
+* `set -x`
+* `set -o pipefail`
+
+## 7.2 exec
 
 __示例：__
 
 * `exec 1>my.log 2>&1`：将标准输出、以及标准异常重定向到my.log文件中，对后续的所有命令都生效
-
-# 60 wget
-
-__格式：__
-
-* `wget [OPTION]... [URL]...`
-
-__参数说明：__
-
-* `-O`：后接下载文件的文件名
-* `-r`：递归下载（用于下载文件夹）
-* `-nH`：下载文件夹时，不创建host目录
-* `-np`：不访问上层目录
-* `-P`：指定下载的目录
-* `-R`：指定排除的列表
-
-__示例：__
-
-* `wget -O myfile 'https://www.baidu.com'`
-* `wget -r -np -nH -P /root/test -R "index.html*" 'http://192.168.66.1/stuff'`
-* `wget -r -np -nH -P /root/test 'ftp://192.168.66.1/stuff'`
 
 <!--
 
@@ -1978,7 +2222,7 @@ __示例：__
 
 -->
 
-# 61 参考
+# 8 参考
 
 * 《鸟哥的Linux私房菜》
 * [linux shell awk 流程控制语句（if,for,while,do)详细介绍](https://www.cnblogs.com/chengmo/archive/2010/10/04/1842073.html)
@@ -1999,3 +2243,6 @@ __示例：__
 * [Linux使echo命令输出结果带颜色](https://www.cnblogs.com/yoo2767/p/6016300.html)
 * [How to insert the content of a file into another file before a pattern (marker)?](https://unix.stackexchange.com/questions/32908/how-to-insert-the-content-of-a-file-into-another-file-before-a-pattern-marker)
 * [Insert contents of a file after specific pattern match](https://stackoverflow.com/questions/16715373/insert-contents-of-a-file-after-specific-pattern-match)
+* [How can I copy a hidden directory recursively and preserving its permissions?](https://unix.stackexchange.com/questions/285644/how-can-i-copy-a-hidden-directory-recursively-and-preserving-its-permissions)
+* [rm -rf all files and all hidden files without . & .. error](https://unix.stackexchange.com/questions/77127/rm-rf-all-files-and-all-hidden-files-without-error)
+* [通过tcpdump对Unix Domain Socket 进行抓包解析](https://plantegg.github.io/2018/01/01/%E9%80%9A%E8%BF%87tcpdump%E5%AF%B9Unix%20Socket%20%E8%BF%9B%E8%A1%8C%E6%8A%93%E5%8C%85%E8%A7%A3%E6%9E%90/)
