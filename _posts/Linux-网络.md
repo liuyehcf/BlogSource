@@ -408,6 +408,47 @@ __集线器，交换机和网桥之间的主要区别在于：集线器工作在
 1. 交换机使用特殊的芯片在硬件中做出决定，从而降低了处理延迟并提高了性能
 1. 交换机正在取代网络内部的路由器，因为它们在以太网网络上转发帧的速度快10倍以上
 
-## 4.4 参考
+## 4.4 配网
+
+### 4.4.1 network
+
+网卡配置文件的位置在`/etc/sysconfig/network-scripts/`，配置文件的名称为`ifcfg-<网卡名>`，例如网卡名为`eno1`时，配置文件名称为`ifcfg-eno1`。示例配置如下
+
+```sh
+TYPE=Ethernet
+PROXY_METHOD=none
+BROWSER_ONLY=no
+BOOTPROTO=static
+DEFROUTE=yes
+IPADDR=10.0.2.20
+NETMASK=255.255.255.0
+GATEWAY=10.0.2.2
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=enp0s3
+UUID=08f8a712-444c-4906-9a94-c9fcf4987d3d
+DEVICE=enp0s3
+ONBOOT=yes
+DNS1=223.5.5.5
+```
+
+* __`BOOTPROTO`__：可选项有`static`或`dhcp`
+* __`DEFROUTE`__：是否生成default路由，注意，一台机器只能有一个网卡可以设置默认路由，否则即便有多个默认路由，第二个默认路由也是无效的
+* __`IPADDR`__：ip地址
+* __`NETMASK`__：子网掩码
+* __`GATEWAY`__：网关ip
+* __`ONBOOT`__：是否开机启动
+* __`DNS1/DNS2/.../DNSx`__：dns配置
+
+### 4.4.2 network-manager
+
+nmtui
+
+## 4.5 参考
 
 * [What’s the Difference Between Hubs, Switches & Bridges?](https://www.globalknowledge.com/us-en/resources/resource-library/articles/what-s-the-difference-between-hubs-switches-bridges/)
+* [集线器、交换机、网桥区别](https://blog.csdn.net/dataiyangu/article/details/82496340)

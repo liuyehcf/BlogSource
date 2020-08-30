@@ -1,30 +1,13 @@
-1. 操作系统
-    * 进程
-        * 进程父子进程，杀了父进程会怎么样，杀了子进程会怎么样
-        * 进程如何创建，fork exec（机制和策略），机制是原子的操作（linux提供的系统调用）策略是将这些机制进行组合达到最终的目的
-        * 进程、进程组、会话、终端、tty、作业、前台、后台
-            * https://www.cnblogs.com/cangqinglang/p/12110843.html
-            * https://unix.stackexchange.com/questions/4126/what-is-the-exact-difference-between-a-terminal-a-shell-a-tty-and-a-con
-        * 在脚本中执行后台进程，会被挂到pid=1上去，但是在shell中执行后台进程，只会挂到当前的终端上
-        * Environment
-        * 在终端中运行后台进程
-            * 如果exit退出终端，那么后台进程将变为孤儿进程（父进程为1）
-            * 如果终端被 kill -1，那么后台进程会退出
-            * nohup应该就是不处理SIGHUP信号
 1. Linux-常用命令
     * blktrace/iowatcher
     * 域套接字
     * 如何编写TUI程序(https://github.com/marcusolsson/tui-go)
     * 如何输出unicode字符串（\uxxx) https://stackoverflow.com/questions/602912/how-do-you-echo-a-4-digit-unicode-character-in-bash
-    * wget 指定下载目录（ftp以及http），删除目录前缀（192.68.66.1/iso这样的东西）
 1. Kubernetes-Single-Master-Cluster
     * nginx ingress
-1. 分布式
-    * cap： http://www.ruanyifeng.com/blog/2018/07/cap.html
-    * https://www.zhihu.com/question/54105974?from=profile_question_card
 1. helm
 1. k8s java demo
-1. 内存碎片
-    * /proc/buddyinfo
-1. vsftpd,httpd 无法下载，没有权限
-1. 外挂ks，有时网络不通
+1. hostnamectl set-hostname xxx失败，报错误信息`Could not set property: Access denied`
+    * 解决方式：setenforce 0，关闭SELinux
+1. 操作系统安装
+    * ubuntu，硬盘的挂载点怎么看 mount | grep sda。结果是`/target`
