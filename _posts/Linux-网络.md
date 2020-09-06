@@ -408,11 +408,16 @@ __集线器，交换机和网桥之间的主要区别在于：集线器工作在
 1. 交换机使用特殊的芯片在硬件中做出决定，从而降低了处理延迟并提高了性能
 1. 交换机正在取代网络内部的路由器，因为它们在以太网网络上转发帧的速度快10倍以上
 
-## 4.4 配网
+## 4.4 参考
 
-### 4.4.1 network
+* [What’s the Difference Between Hubs, Switches & Bridges?](https://www.globalknowledge.com/us-en/resources/resource-library/articles/what-s-the-difference-between-hubs-switches-bridges/)
+* [集线器、交换机、网桥区别](https://blog.csdn.net/dataiyangu/article/details/82496340)
 
-网卡配置文件的位置在`/etc/sysconfig/network-scripts/`，配置文件的名称为`ifcfg-<网卡名>`，例如网卡名为`eno1`时，配置文件名称为`ifcfg-eno1`。示例配置如下
+# 5 配网
+
+## 5.1 配置文件
+
+`CentOS`的网卡配置文件的位置在`/etc/sysconfig/network-scripts/`，配置文件的名称为`ifcfg-<网卡名>`，例如网卡名为`eno1`时，配置文件名称为`ifcfg-eno1`。示例配置如下
 
 ```sh
 TYPE=Ethernet
@@ -444,11 +449,36 @@ DNS1=223.5.5.5
 * __`ONBOOT`__：是否开机启动
 * __`DNS1/DNS2/.../DNSx`__：dns配置
 
-### 4.4.2 network-manager
+## 5.2 network-manager
 
-nmtui
+`NetworkManager`是Linux下管理网络的一个服务，此外还有另一个服务`network`（这个服务已经过时，且与`NetworkManager`存在冲突
 
-## 4.5 参考
+`NetworkManager`服务提供了两个客户端用于网络配置，分别是`nmcli`以及`nmtui`
 
-* [What’s the Difference Between Hubs, Switches & Bridges?](https://www.globalknowledge.com/us-en/resources/resource-library/articles/what-s-the-difference-between-hubs-switches-bridges/)
-* [集线器、交换机、网桥区别](https://blog.csdn.net/dataiyangu/article/details/82496340)
+### 5.2.1 nmcli
+
+```sh
+# 查看所有网络连接
+nmcli con show
+
+# 查看指定网络连接（可以看到所有属性）
+nmcli conn show <id>/<uuid>/<path>
+
+# 查看网络设备
+nmcli device status
+
+# 进入交互的编辑模式
+nmcli conn edit <id>/<uuid>/<path>
+
+# 修改某个配置值
+nmcli conn modify <id>/<uuid>/<path> ipv4.address <ip/netmask>
+```
+
+### 5.2.2 nmtui
+
+带有图形化界面的配网工具
+
+## 5.3 参考
+
+* [Networking Guide](https://docs.fedoraproject.org/en-US/Fedora/25/html/Networking_Guide/index.html)
+* [Connecting to a Network Using nmcli](https://docs.fedoraproject.org/en-US/Fedora/25/html/Networking_Guide/sec-Connecting_to_a_Network_Using_nmcli.html)

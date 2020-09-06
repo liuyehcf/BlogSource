@@ -602,6 +602,8 @@ __格式：__
 
 __示例：注意`EOF`与`'EOF'`的区别__
 
+* `man bash`搜索`Here Documents`查看这两者的区别
+
 ```sh
 name="test"
 cat > /tmp/test << EOF
@@ -2252,6 +2254,8 @@ __示例：__
 * `set -o pipefail`
 
 ## 7.2 exec
+
+`exec`用于进程替换（类似系统调用`exec`），或者标准输入输出的重定向
 
 __示例：__
 
