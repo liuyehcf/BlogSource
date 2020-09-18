@@ -464,6 +464,9 @@ nmcli con show
 # 查看指定网络连接（可以看到所有属性）
 nmcli conn show <id>/<uuid>/<path>
 
+# 查看指定网络连接（可以看到所有属性，且有分隔符区分不同类型的配置项）
+nmcli -p conn show <id>/<uuid>/<path>
+
 # 查看网络设备
 nmcli device status
 
@@ -480,5 +483,6 @@ nmcli conn modify <id>/<uuid>/<path> ipv4.address <ip/netmask>
 
 ## 5.3 参考
 
+* [为 Red Hat Enterprise Linux 7 配置和管理联网](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/7/html/networking_guide/index)
 * [Networking Guide](https://docs.fedoraproject.org/en-US/Fedora/25/html/Networking_Guide/index.html)
 * [Connecting to a Network Using nmcli](https://docs.fedoraproject.org/en-US/Fedora/25/html/Networking_Guide/sec-Connecting_to_a_Network_Using_nmcli.html)
