@@ -455,7 +455,11 @@ DNS1=223.5.5.5
 
 `NetworkManager`服务提供了两个客户端用于网络配置，分别是`nmcli`以及`nmtui`
 
-### 5.2.1 nmcli
+### 5.2.1 设计
+
+在`NetworkManager`的设计中，存在两种概念，一个是网卡设备`device`，另一个是连接`conn`，一个`device`可以对应多个`conn`，但是这个多个`conn`中只有一个是开启状态。如何控制`conn`的启动优先级呢？可以通过设置`connection.autoconnect-priority`
+
+### 5.2.2 nmcli
 
 ```sh
 # 查看所有网络连接
@@ -477,7 +481,13 @@ nmcli conn edit <id>/<uuid>/<path>
 nmcli conn modify <id>/<uuid>/<path> ipv4.address <ip/netmask>
 ```
 
-### 5.2.2 nmtui
+__重要配置项__
+
+1. `ipv4.never-default`：`1`表示永远不设置为默认路由，`0`反之
+    * `nmcli conn modify eno1 ipv4.never-defaul 1`：连接`eno1`永远不设置默认路由
+1. `connection.autoconnect-priority`：当一个网卡设备，包含多个`conn`时，且`connection.autoconnect`的值都是`1`（即默认开启）时，可以通过设置该值来改变`conn`的优先级，优先级高的`conn`将会生效
+
+### 5.2.3 nmtui
 
 带有图形化界面的配网工具
 

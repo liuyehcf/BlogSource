@@ -1694,7 +1694,27 @@ __示例：__
 * `tcpdump -i any -w output1.cap`
 * `tcpdump -n -i any -e icmp and host www.baidu.com`
 
-### 5.9.1 tips
+### 5.9.1 tcpdump条件表达式
+
+该表达式用于决定哪些数据包将被打印。如果不给定条件表达式，网络上所有被捕获的包都会被打印，否则，只有满足条件表达式的数据包被打印
+
+表达式由一个或多个`表达元`组成（表达元, 可理解为组成表达式的基本元素）。一个表达元通常由一个或多个修饰符`qualifiers`后跟一个名字或数字表示的`id`组成（即：`qualifiers id`）。有三种不同类型的修饰符：`type`，`direction`以及`protocol`
+
+__表达元格式：`[protocol] [direction] [type] id`__
+
+* __type__：包括`host`、`net`、`port`、`portrange`。默认值为`host`
+* __direction__：包括`src`、`dst`、`src and dst`、`src or dst`4种可能的方向。默认值为`src or dst`
+* __protocol__：包括`ether`、`fddi`、`tr`、`wlan`、`ip`、`ip6`、`arp`、`rarp`、`decnet`、`tcp`、`upd`等等。默认包含所有协议
+    * __其中`protocol`要与`type`相匹配，比如当`protocol`是`tcp`时，那么`type`就不能是`host`或`net`，而应该是`port`或`portrange`__
+* __逻辑运算__：`条件表达式`可由多个`表达元`通过`逻辑运算`组合而成。逻辑运算包括（`!`或`not`）、（`&&`或`and`）、（`||`或`or`）三种逻辑运算
+
+__示例__
+
+* `tcp src port 123`
+* `tcp src portrange 100-200`
+* `host www.baidu.com and port 443`
+
+### 5.9.2 tips
 
 如何查看具体的协议，例如ssh协议
 
@@ -1702,7 +1722,7 @@ __示例：__
 
 1. 任意选中一个`length`不为`0`的数据包，右键选择解码（`decode as`），右边`Current`一栏，选择对应的协议即可
 
-### 5.9.2 如何使用tcpdump抓dockerd的http协议的数据
+### 5.9.3 如何使用tcpdump抓dockerd的http协议的数据
 
 dockerd使用的是域套接字，对应的套接字文件是`/var/run/docker.sock`，而域套接字是不经过网卡设备的，因此tcpdump无法直接抓取相应的数据
 
@@ -2301,3 +2321,4 @@ __示例：__
 * [How can I copy a hidden directory recursively and preserving its permissions?](https://unix.stackexchange.com/questions/285644/how-can-i-copy-a-hidden-directory-recursively-and-preserving-its-permissions)
 * [rm -rf all files and all hidden files without . & .. error](https://unix.stackexchange.com/questions/77127/rm-rf-all-files-and-all-hidden-files-without-error)
 * [通过tcpdump对Unix Domain Socket 进行抓包解析](https://plantegg.github.io/2018/01/01/%E9%80%9A%E8%BF%87tcpdump%E5%AF%B9Unix%20Socket%20%E8%BF%9B%E8%A1%8C%E6%8A%93%E5%8C%85%E8%A7%A3%E6%9E%90/)
+* [tcpdump 选项及过滤规则](https://www.cnblogs.com/tangxiaosheng/p/4950055.html)

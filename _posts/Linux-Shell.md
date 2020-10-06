@@ -979,9 +979,15 @@ sleep 2
 # do other things
 ```
 
-# 15 方法
+# 15 选项分隔符
 
-## 15.1 read
+选项分隔符为`--`，它有什么用呢？
+
+举个简单的例子，如何创建一个名为`-f`的目录？`mkdir -f`肯定是不行的，因为`-f`会被当做mkdir命令的选项，此时我们就需要选项分隔符来终止`mkdir`对于后续字符串的解析，即`mkdir -- -f`
+
+# 16 函数
+
+## 16.1 read
 
 __格式：__
 
@@ -999,7 +1005,7 @@ __参数说明：__
 `-t`：后面跟秒数，定义输入字符的等待时间
 `-u`：后面跟fd，从文件描述符中读入，该文件描述符可以是exec新开启的
 
-## 15.2 getopts
+## 16.2 getopts
 
 __格式：`getopts [option[:]] VARIABLE`__
 
@@ -1020,27 +1026,27 @@ __示例__：`getopts ":a:bc:" opt`（参数部分：`-a 11 -b -c 5`）
 * 第一个冒号表示忽略错误
 * 字符后面的冒号表示该选项必须有自己的参数
 * `$OPTARG`存储相应选项的参数，如例中的`11`、`5`两个参数
-* `$OPTIND`总是存储原始`$*`中下一个要处理的选项的索引（注意不是参数，而是选项），此处指的是`a`,`b`,`c`这三个选项（而不是那些数字，当然数字
-也是会占有位置的）的索引
-
-    * `OPTIND`初值为1，遇到`x`（选项不带参数），则`OPTIND += 1`；遇到`x:`（选项带参数），则`OPTARG`=argv[OPTIND+1]，`OPTIND += 2`；
+* `$OPTIND`总是存储原始`$*`中下一个要处理的选项的索引（注意不是参数，而是选项），此处指的是`a`,`b`,`c`这三个选项（而不是那些数字，当然数字也是会占有位置的）的索引
+    * __`OPTIND`初值为1，遇到`x`（选项不带参数），则`OPTIND += 1`；遇到`x:`（选项带参数），则`OPTARG`=argv[OPTIND+1]，`OPTIND += 2`__
 
 ```sh
-echo $*
+#!/bin/sh
+
+echo "args: ($@)"
 while getopts ":a:bc:" opt
 do
     case $opt in
         a)
-            echo $OPTARG $OPTIND
+            echo "option '-a', OPTARG: '${OPTARG}', OPTIND: '${OPTIND}'"
             ;;
         b)
-            echo "b $OPTIND"
+            echo "option '-b', OPTIND: '${OPTIND}'"
             ;;
         c)
-            echo "c $OPTIND"
+            echo "option '-c', OPTIND: '${OPTIND}'"
             ;;
         :)
-            echo "$OPTARG must have argument"
+            echo "option '$OPTARG' must have argument"
             exit 1
             ;;
         ?)
@@ -1054,44 +1060,183 @@ done
 ```sh
 # case0
 ./testGetopts.sh -f
--f
+args: (-f)
 error
 
 # case1
 ./testGetopts.sh -a
--a
-a must have argument
+args: (-a)
+option 'a' must have argument
 
 # case2
 ./testGetopts.sh -a 5
--a 5
-5 3
+args: (-a 5)
+option '-a', OPTARG: '5', OPTIND: '3'
 
 # case3
 ./testGetopts.sh -a 5 -b
--a 5 -b
-5 3
-b 4
+args: (-a 5 -b)
+option '-a', OPTARG: '5', OPTIND: '3'
+option '-b', OPTIND: '4'
 
 # case4
 ./testGetopts.sh -a 5 -b -c 5
--a 5 -b -c 5
-5 3
-b 4
-c 6
+args: (-a 5 -b -c 5)
+option '-a', OPTARG: '5', OPTIND: '3'
+option '-b', OPTIND: '4'
+option '-c', OPTIND: '6'
 
 # case5
 ./testGetopts.sh -a 5 -b -c 5 -b
--a 5 -b -c 5 -b
-5 3
-b 4
-c 6
-b 7
+args: (-a 5 -b -c 5 -b)
+option '-a', OPTARG: '5', OPTIND: '3'
+option '-b', OPTIND: '4'
+option '-c', OPTIND: '6'
+option '-b', OPTIND: '7'
 ```
 
 __注意：如果getopts置于函数内部时，getopts解析的是函数的所有入参，可以通过`$@`将脚本的所有参数传递给函数__
 
-# 16 参考
+## 16.3 getopt
+
+__格式：`getopt [options] -- parameters`__
+
+__参数说明：__
+
+* `-o, --options <选项字符串>`：要识别的短选项
+    * 单个字符表示选项。例如`-o "abc"`，`a`、`b`、`c`表示3个选项
+    * 第一个冒号`:`表示忽略错误
+    * 单个字符后接一个冒号`:`，表示该选项后必须跟一个参数，参数紧跟在选项后或者以空格隔开。例如`-o a:bc`，选项`a`必须要有参数，选项`b`、`c`无需参数
+    * 单个字符后接两个冒号`::`，表示该选项后必须跟一个参数，且参数必须紧跟在选项后不能以空格隔开。例如`-o a::bc`
+* `-a, --alternative`：允许长选项以`-`开始，否则默认长选项要求以`--`开头
+* `-l, --longoptions <长选项>`：要识别的长选项
+    * __只有`-l`选项，无`-o`选项时，`-l`选项无效（如果没有短选项，可以加上`-o ''`或者`-o ':'`）__
+    * 以逗号`,`分隔的长字符串表示选项。例如`-l "along,blong"`，`along`、`blong`表示2个选项
+    * __字符串后接一个冒号`:`，表示该选项后必须跟一个参数，参数和选项必须用空格隔开（仅有这一条冒号规则）__
+* `-n, --name <程序名>`：将错误报告给的程序名
+
+__输出：getopt会将参数项进行重组和排序，会分成两组，以`--`符号分隔__
+
+1. __`--`之前是合法的`选项`、`参数`集合__
+1. __`--`之后是多余的`参数`集合，注意，这里不包含非法`选项`__
+
+```sh
+[root@localhost ~]$ getopt -o 'a' -- -a
+ -a --
+
+[root@localhost ~]$ getopt -o 'a' -- -a 1
+ -a -- '1'
+
+[root@localhost ~]$ getopt -o 'a' -- -b
+getopt: invalid option -- 'b'
+ --
+
+# 加上第一个:之后，可以忽略错误的选项
+[root@localhost ~]$ getopt -o ':a' -- -b
+ --
+
+# 选项和参数紧贴
+[root@localhost ~]$ getopt -o ':a:' -- -a1
+ -a '1' --
+
+# 选项和参数以空格分开
+[root@localhost ~]$ getopt -o ':a:' -- -a 1
+ -a '1' --
+
+# 选项和参数紧贴
+[root@localhost ~]$ getopt -o ':a::' -- -a1
+ -a '1' --
+
+# 选项和'参数'分开，其实'1'并没有被识别为参数
+[root@localhost ~]$ getopt -o ':a::' -- -a 1
+ -a '' -- '1'
+```
+
+```sh
+# 当没有-o选项时，-l无效
+[root@localhost ~]$ getopt -l 'along' -- --along
+ --
+
+# 正常case
+[root@localhost ~]$ getopt -o '' -l 'along' -- --along
+ --along --
+
+# 没有指定`-a`选项，且选项以`-`开头时
+[root@localhost ~]$ getopt -o '' -l 'along' -- -along
+getopt: invalid option -- 'a'
+getopt: invalid option -- 'l'
+getopt: invalid option -- 'o'
+getopt: invalid option -- 'n'
+getopt: invalid option -- 'g'
+ --
+
+# 传入错误参数，且未忽略错误
+[root@localhost ~]$ getopt -o '' -l 'along' -- --blong
+getopt: unrecognized option '--blong'
+ --
+
+# 没有指定`-a`选项，且选项以`-`开头，忽略错误
+[root@localhost ~]$ getopt -o ':' -l 'along' -- -along
+ --
+
+# 传入错误参数，忽略错误
+[root@localhost ~]$ getopt -o ':' -l 'along' -- --blong
+ --
+
+# 必须指定参数，且指定参数，以空格分隔
+[root@localhost ~]$ getopt -o '' -al 'along:' -- -along arg1
+ --along 'arg1' --
+
+# 必须指定参数，且未指定参数，未忽略错误
+[root@localhost ~]$ getopt -o '' -al 'along:' -- -along
+getopt: option '--along' requires an argument
+ --
+```
+
+__示例__
+
+```sh
+[root@localhost ~]$ cat > test.sh << 'EOF'
+#!/bin/bash
+ 
+TEMP=`getopt -o ab:c:: --long a-long,b-long:,c-long:: \
+     -n 'example.bash' -- "$@"`
+ 
+if [ $? != 0 ] ; then echo "Terminating..." >&2 ; exit 1 ; fi
+ 
+eval set -- "$TEMP"
+ 
+while true ; do
+        case "$1" in
+                -a|--a-long) echo "Option a" ; shift ;;
+                -b|--b-long) echo "Option b, argument \`$2'" ; shift 2 ;;
+                -c|--c-long)
+                        # c has an optional argument. As we are in quoted mode,
+                        # an empty parameter will be generated if its optional
+                        # argument is not found.
+                        case "$2" in
+                                "") echo "Option c, no argument"; shift 2 ;;
+                                *)  echo "Option c, argument \`$2'" ; shift 2 ;;
+                        esac ;;
+                --) shift ; break ;;
+                *) echo "Internal error!" ; exit 1 ;;
+        esac
+done
+echo "Remaining arguments:"
+for arg do
+   echo '--> '"\`$arg'" ;
+done
+EOF
+
+[root@localhost ~]$ bash test.sh -a -b arg arg1 -c
+Option a
+Option b, argument `arg'
+Option c, no argument
+Remaining arguments:
+--> `arg1'
+```
+
+# 17 参考
 
 * [shell教程](http://www.runoob.com/linux/linux-shell.html)
 * [Shell脚本8种字符串截取方法总结](https://www.jb51.net/article/56563.htm)

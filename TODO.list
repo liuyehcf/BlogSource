@@ -4,6 +4,7 @@
     * 如何编写TUI程序(https://github.com/marcusolsson/tui-go)
     * 如何输出unicode字符串（\uxxx) https://stackoverflow.com/questions/602912/how-do-you-echo-a-4-digit-unicode-character-in-bash
     * dmesg
+    * getopt与getopts
 1. Kubernetes-Single-Master-Cluster
     * nginx ingress
 1. helm
@@ -12,9 +13,10 @@
     * 解决方式：setenforce 0，关闭SELinux
 1. 操作系统安装
     * ubuntu，硬盘的挂载点怎么看 mount | grep sda。结果是`/target`
+    * /boot分区和/boot/efi 的作用和关系
 1. tls: use of closed connection
     * https://community.sophos.com/products/utm-firewall/f/general-discussion/120089/ssl-vpn-users-with-otp-disconnecting-about-the-same-time-each-day
     * https://hpbn.co/transport-layer-security-tls/
 1. kickstart %packages
-    * https://docs.fedoraproject.org/en-US/Fedora/25/html/Installation_Guide/sect-kickstart-packages.html
     * %packages 和 comps 的关系
+1. go 分析工具 https://golang.org/pkg/net/http/pprof/

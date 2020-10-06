@@ -226,6 +226,20 @@ lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
 
 可以看到，在`k8s-n-1`节点上，直接路由到了`flannel.1`这样网卡，然后通过`flannel`的网络（主机网络或覆盖网络）到达`k8s-n-1`上
 
+__iptables规则链__
+
+```mermaid
+graph TD
+A[PREROUTING/INPUT/OUTPUT/FORWARD] -->B[KUBE-SERVICES]
+B -->|nginx, srcIp not in cidr| C1[KUBE-MARK-MASQ]
+B -->|nginx, srcIp in cidr| C2[KUBE-SVC-nginx]
+B -->|tomcat, srcIp not in cidr| C3[KUBE-MARK-MASQ]
+B -->|tomcat, srcIp in cidr| C4[KUBE-SVC-tomcat]
+B -->|last rule in the chain 'KUBE-SERVICES'| C5[KUBE-NODEPORTS]
+C2 --> D1[KUBE-SEP-nginx]
+D1 --> E1[DNAT redirect to nginx pod's ip and port]
+```
+
 ## 1.2 多副本
 
 __deployment（hello-world-deployment.yml）__
@@ -353,6 +367,24 @@ hello-world-deployment-cbdf4db7b-qc624   1/1     Running   0          5m      10
 ```
 
 这里，可以看到，三个`Chain`，每个`Chain`分别配置了一个DNAT，指向某一个`pod`。后续的链路，如果在`pod`在本机，则走`cni0`网桥，否则就走`flannel`
+
+__iptables规则链__
+
+```mermaid
+graph TD
+A[PREROUTING/INPUT/OUTPUT/FORWARD] -->B[KUBE-SERVICES]
+B -->|nginx, srcIp not in cidr| C1[KUBE-MARK-MASQ]
+B -->|nginx, srcIp in cidr| C2[KUBE-SVC-NGINX]
+B -->|tomcat, srcIp not in cidr| C3[KUBE-MARK-MASQ]
+B -->|tomcat, srcIp in cidr| C4[KUBE-SVC-TOMCAT]
+B -->|last rule in the chain 'KUBE-SERVICES'| C5[KUBE-NODEPORTS]
+C2 -->|random| D1[KUBE-SEP-nginx1]
+C2 -->|random| D2[KUBE-SEP-nginx2]
+C2 -->|random| D3[KUBE-SEP-nginx3]
+D1 --> E1[DNAT redirect to nginx pod1's ip and port]
+D2 --> E2[DNAT redirect to nginx pod2's ip and port]
+D3 --> E3[DNAT redirect to nginx pod3's ip and port]
+```
 
 ## 1.3 总结
 
