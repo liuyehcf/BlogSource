@@ -373,6 +373,7 @@ tcpdump是通过libpcap来抓取报文的，libpcap在不同平台有不同的�
 * [Linux-虚拟网络设备-veth pair](https://blog.csdn.net/sld880311/article/details/77650937)
 * [Linux虚拟网络设备之bridge(桥)](https://segmentfault.com/a/1190000009491002?utm_source=tag-newest)
 * [VLAN是二层技术还是三层技术？](https://www.zhihu.com/question/52278720/answer/140914508)
+* [tcpdump官网](https://www.tcpdump.org/)
 
 # 4 网桥/交换机/集线器
 
@@ -474,6 +475,10 @@ nmcli -p conn show <id>/<uuid>/<path>
 # 查看网络设备
 nmcli device status
 
+# 查看网络设备的详细配置
+nmcli device show
+nmcli -p device show
+
 # 进入交互的编辑模式
 nmcli conn edit <id>/<uuid>/<path>
 
@@ -493,6 +498,7 @@ __重要配置项__
 
 ## 5.3 参考
 
+* [NetworkManager官方文档](https://wiki.archlinux.org/index.php/NetworkManager)
 * [为 Red Hat Enterprise Linux 7 配置和管理联网](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/7/html/networking_guide/index)
 * [Networking Guide](https://docs.fedoraproject.org/en-US/Fedora/25/html/Networking_Guide/index.html)
 * [Connecting to a Network Using nmcli](https://docs.fedoraproject.org/en-US/Fedora/25/html/Networking_Guide/sec-Connecting_to_a_Network_Using_nmcli.html)

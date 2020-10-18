@@ -662,7 +662,26 @@ pod "dnsutils" deleted
     * 当`Pod`的IP是其他主机的IP时，经过`FORWARD`，由于没有配置对应的规则，流量被直接`DROP`，无法正常访问服务
 * 解决方式：`iptables -P FORWARD ACCEPT`，将默认的`FORWARD`策略改为`ACCEPT`
 
-# 4 参考
+# 4 问题排查
+
+## 4.1 容器网络不通
+
+现象：在容器中，pingk8s域名失败，ping外网域名失败
+
+kube-proxy包含如下日志：
+
+```
+W1009 12:41:47.192659       6 proxier.go:320] missing br-netfilter module or unset sysctl br-nf-call-iptables; proxy may not work as intended
+```
+
+原因就是没有开启`bridge-nf-call-iptables`，当`bridge-nf-call-iptables`开启时，在二层网桥转发的数据也会被iptables链进制规则限制，而同主机的pod直接的数据转发是直接通过网桥进行转发的，而网桥在二层网络进行数据处理，所以`bridge-nf-call-iptables`没有开启时，pod无法通过clusterIP访问同主机的pod
+
+__如何开启__
+
+1. `echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables`：立即生效，重启后还原为默认配置
+1. `echo 'net.bridge.bridge-nf-call-iptables=1' >> /etc/sysctl.conf && sysctl -p /etc/sysctl.conf`：修改默认配置，重启后也能生效
+
+# 5 参考
 
 * [kubernetes入门之kube-proxy实现原理](https://xuxinkun.github.io/2016/07/22/kubernetes-proxy/)
 * [kubernetes 简介：service 和 kube-proxy 原理](https://cizixs.com/2017/03/30/kubernetes-introduction-service-and-kube-proxy/)
@@ -670,3 +689,4 @@ pod "dnsutils" deleted
 * [如何找到VEth设备的对端接口VEth peer](https://juejin.im/post/5caccf256fb9a06851504647)
 * [技术干货|深入理解flannel](https://zhuanlan.zhihu.com/p/34749675)
 * [Debugging DNS Resolution](https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/)
+* [记一次pod无法通过clusterIP访问同主机其它pod的排障过程](https://yuyicai.com/posts/k8s-pod-can-not-conne-to-pod-with-clusterip/)

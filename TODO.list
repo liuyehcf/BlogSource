@@ -20,3 +20,5 @@
 1. kickstart %packages
     * %packages 和 comps 的关系
 1. go 分析工具 https://golang.org/pkg/net/http/pprof/
+1. nm
+    * https://zhuanlan.zhihu.com/p/43556975

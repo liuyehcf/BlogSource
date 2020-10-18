@@ -1757,7 +1757,32 @@ tcpdump -i lo -vv port 18081 -w file2.cap
 docker -H tcp://localhost:18081 images
 ```
 
-## 5.10 socat
+## 5.10 tcpkill
+
+`tcpkill`用于杀死tcp连接，语法与`tcpdump`基本类似。其工作原理非常简单，首先会监听相关的数据报文，获取了`sequence number`之后，然后发起`Reset`报文。因此，当且仅当连接有报文交互的时候，`tcpkill`才能起作用
+
+__如何安装：__
+
+```sh
+yum install -y epel-release
+yum install -y dsniff
+```
+
+__格式：__
+
+* `tcpkill [-i interface] [-1...9] expression`
+
+__参数说明：__
+
+* `-i`：指定网卡
+* `-1...9`：优先级，优先级越高越容易杀死
+* `expression`：表达元，与tcpdump类似
+
+__示例：__
+
+* `tcpkill -9 -i any host 127.0.0.1 and port 22`
+
+## 5.11 socat
 
 __格式：__
 
@@ -1781,7 +1806,7 @@ __示例：__
 * `socat TCP-LISTEN:80,fork TCP:www.baidu.com:80`：将本地端口转到远端
 * `socat TCP-LISTEN:12345 EXEC:/bin/bash`：在本地开启shell代理
 
-## 5.11 dhclient
+## 5.12 dhclient
 
 __格式：__
 
@@ -1798,7 +1823,7 @@ __示例：__
 * `dhclient`：获取ip
 * `dhclient -r`：释放ip
 
-## 5.12 arp
+## 5.13 arp
 
 __示例：__
 
@@ -1806,7 +1831,7 @@ __示例：__
 * `arp -n`：查看arp缓存，显示ip不显示域名
 * `arp 192.168.56.1`：查看`192.168.56.1`这个ip的mac地址
 
-## 5.13 [arp-scan](https://github.com/royhills/arp-scan)
+## 5.14 [arp-scan](https://github.com/royhills/arp-scan)
 
 __如何安装：__
 
@@ -1952,6 +1977,18 @@ __打印参数说明：__
     * `P`：按CPU使用量排序，默认从大到小，`R`更改为从小到大
     * `M`：按内存使用量排序，默认从大到小，`R`更改为从小到大
     * `T`：按使用时间排序，默认从大到小，`R`更改为从小到大
+* __其他功能按键__
+    * `1`：概览信息中分别展示每个核的使用状态
+    * `2`：概览信息和只展示所有核的平均使用状态
+    * `x`：高亮排序的列
+    * `-R`：反转排序
+    * `n [num]`：只显示前几列，当num=0时，表示无限制
+    * `l`：调整cpu负载信息的展示方式
+    * `t`：调整cpu以及任务详情的展示方式
+    * `m`：调整memory详情的展示方式
+    * `c`：展示完整command
+    * `V`：以树型格式展示command
+    * `H`：展示线程
 
 ## 6.5 tsar
 
