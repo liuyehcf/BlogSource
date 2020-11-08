@@ -497,6 +497,7 @@ __参数说明：__
 * `--color=auto`：将找到的关键字部分加上颜色
 * `-A`：后面可加数字，为after的意思，除了列出该行外，后面的n行也列出来
 * `-B`：后面可加数字，为before的意思，除了列出该行外，前面的n行也列出来
+* `-C`：后面可加数字，除了列出该行外，前后的n行也列出来
 
 __示例：__
 
@@ -1023,7 +1024,41 @@ __参数说明：__
 * `-p`：同时列出每个进程的PID
 * `-u`：同时列出每个进程所属账号名称
 
-## 4.9 sudo
+## 4.9 taskset
+
+查看或者设置进程的cpu亲和性
+
+__格式：__
+
+* `taskset [options] -p pid`
+* `taskset [options] -p [mask|list] pid`
+
+__参数说明：__
+
+* `-c`：以列表格式显示cpu亲和性
+* `-p`：指定进程的pid
+
+__示例：__
+
+* `taskset -p 152694`：查看pid为`152694`的进程的cpu亲和性，显示方式为掩码
+* `taskset -c -p 152694`：查看pid为`152694`的进程的cpu亲和性，显示方式为列表
+* `taskset -p f 152694`：设置pid为`152694`的进程的cpu亲和性，设置方式为掩码
+* `taskset -c -p 0,1,2,3,4,5 152694`：设置pid为`152694`的进程的cpu亲和性，设置方式为列表
+
+__什么是cpu亲和性掩码（16进制）__
+
+* `cpu0 = 1`
+* `cpu1 = cpu0 * 2 = 2`
+* `cpu2 = cpu1 * 2 = 4`
+* `cpu(n) = cpu(n-1) * 2`
+* `mask = cpu0 + cpu1 + ... + cpu(n)`
+* 举几个例子
+    * `0 ==> 1 = 0x1`
+    * `0,1,2,3 ==> 1 + 2 + 4 + 8 = 15 = 0xf`
+    * `0,1,2,3,4,5 ==> 1 + 2 + 4 + 8 + 16 + 32 = 0x3f`
+    * `2,3 ==> 4 + 8 = 12 = 0xc`
+ 
+## 4.10 sudo
 
 __注意，sudo本身是一个进程。比如用`sudo tail -f xxx`，在另一个会话中`ps aux | grep tail`会发现两个进程__
 
@@ -1031,7 +1066,7 @@ __配置文件：__
 
 * `/etc/sudoers`
 
-## 4.10 nohup
+## 4.11 nohup
 
 __`nohup`会忽略所有挂断（SIGHUP）信号__。比如通过`ssh`登录到远程服务器上，然后启动一个程序，当`ssh`登出时，这个程序就会随即终止。如果用`nohup`方式启动，那么当`ssh`登出时，这个程序仍然会继续运行
 
@@ -1049,7 +1084,7 @@ __示例：__
 
 * `nohup java -jar xxx.jar &`
 
-## 4.11 screen
+## 4.12 screen
 
 __如果想在关闭`ssh`连接后继续运行启动的程序，可以使用`nohup`。如果要求下次`ssh`登录时，还能查看到上一次`ssh`登录时运行的程序的状态，那么就需要使用`screen`__
 
@@ -2359,3 +2394,4 @@ __示例：__
 * [rm -rf all files and all hidden files without . & .. error](https://unix.stackexchange.com/questions/77127/rm-rf-all-files-and-all-hidden-files-without-error)
 * [通过tcpdump对Unix Domain Socket 进行抓包解析](https://plantegg.github.io/2018/01/01/%E9%80%9A%E8%BF%87tcpdump%E5%AF%B9Unix%20Socket%20%E8%BF%9B%E8%A1%8C%E6%8A%93%E5%8C%85%E8%A7%A3%E6%9E%90/)
 * [tcpdump 选项及过滤规则](https://www.cnblogs.com/tangxiaosheng/p/4950055.html)
+* [如何知道进程运行在哪个 CPU 内核上？](https://www.jianshu.com/p/48ca58e55077)

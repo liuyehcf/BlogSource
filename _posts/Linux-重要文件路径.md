@@ -57,10 +57,14 @@ __举例__
 * [linux 目录/sys 解析](https://blog.csdn.net/zqixiao_09/article/details/50320799)
 * [What's the “/sys” directory for?](https://askubuntu.com/questions/720471/whats-the-sys-directory-for)
 
-# 2 其他
+# 2 `/proc`目录
 
 1. `/proc/buddyinfo`：内存碎片信息
 1. `/proc/sys/net`：网络相关配置
+1. `/proc/interrupts`：中断映射表
+
+# 3 其他
+
 1. `/dev/disk/by-path`：以磁盘路径为名称的软链接文件
 1. `/dev/disk/by-partuuid`：以分区uuid为名称的软链接文件
 1. `/dev/disk/by-uuid`：以uuid为名称的软链接文件

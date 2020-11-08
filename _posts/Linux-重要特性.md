@@ -1185,6 +1185,8 @@ __systemctl命令行工具__
 * `systemctl reload xxx.service`：让xxx服务重新加载配置文件（如果有的话）
 * `systemctl list-units --type=service`：列出所有的服务
 * `systemctl daemon-reload`：重新加载`systemd`的配置文件，当我们修改了`/usr/lib/systemd/system/`目录下的文件时，我们需要使用这个命令来使修改生效
+* `systemctl show xxx.service`
+* `systemctl show xxx.service --property=ActiveState`：查看服务的某个属性
 
 __journalctl命令行工具__
 
