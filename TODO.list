@@ -2,22 +2,38 @@
     * blktrace/iowatcher
     * 域套接字
     * 如何编写TUI程序(https://github.com/marcusolsson/tui-go)
-    * 如何输出unicode字符串（\uxxx) https://stackoverflow.com/questions/602912/how-do-you-echo-a-4-digit-unicode-character-in-bash
-    * dmesg
     * hping3
-    * mpstat -P ALL 2
+    * tar cvf - /path/to/folder | sha1sum  - 表示标准输入输出
 1. Kubernetes-Single-Master-Cluster
     * nginx ingress
 1. helm
 1. k8s java demo
-1. hostnamectl set-hostname xxx失败，报错误信息`Could not set property: Access denied`
-    * 解决方式：setenforce 0，关闭SELinux
 1. 操作系统安装
     * ubuntu，硬盘的挂载点怎么看 mount | grep sda。结果是`/target`
     * /boot分区和/boot/efi 的作用和关系
-1. kickstart %packages
-    * %packages 和 comps 的关系
+    * cobbler：https://www.cnblogs.com/yanjieli/p/11016825.html
 1. go 分析工具 https://golang.org/pkg/net/http/pprof/
+    * verifying github.com/liuyehcf/common-gtools@v0.1.11/go.mod: github.com/liuyehcf/common-gtools@v0.1.11/go.mod: Get https://sum.golang.org/lookup/github.com/liuyehcf/common-gtools@v0.1.11: dial tcp 216.58.197.113:443: i/o timeout
+        * https://blog.csdn.net/LXDOS/article/details/104749071/
+        * 或者设置 export GOSUMDB="sum.golang.google.cn"
 1. nm
     * https://zhuanlan.zhihu.com/p/43556975
-1. mtu https://www.cnblogs.com/keystone/p/11410659.html
+1. Excalidraw 画图工具
+    * https://github.com/excalidraw/excalidraw
+    * https://learnku.com/articles/47662
+1. 网络
+    * bridge fdb show
+    * cat /proc/sys/net/ipv4/conf/cni0/proxy_arp
+    * firewalld的OUTPUT_direct
+    * iptables打日志（https://blog.csdn.net/magerguo/article/details/81052106）
+        * iptables -I INPUT -p icmp -j LOG --log-prefix "liuye-input: "
+        * iptables -I FORWARD -p icmp -j LOG --log-prefix "liuye-forward: "
+        * iptables -I OUTPUT -p icmp -j LOG --log-prefix "liuye-output: "
+        * iptables -t nat -I PREROUTING -p icmp -j LOG --log-prefix "liuye-prerouting: "
+        * iptables -t nat -I POSTROUTING -p icmp -j LOG --log-prefix "liuye-postrouting: "
+    * net.ipv4.tcp_syncookies = 1 表示开启SYN Cookies。当出现SYN等待队列溢出时，启用cookies来处理，可防范少量SYN攻击，默认为0，表示关闭；
+    * net.ipv4.tcp_tw_reuse = 1 表示开启重用。允许将TIME-WAIT sockets重新用于新的TCP连接，默认为0，表示关闭；
+    * net.ipv4.tcp_tw_recycle = 1 表示开启TCP连接中TIME-WAIT sockets的快速回收，默认为0，表示关闭。
+1. 时区
+    * https://blog.csdn.net/qq_41264674/article/details/83781600
+    * https://blog.csdn.net/fishinhouse/article/details/105536777

@@ -49,6 +49,22 @@ __参数说明：__
 * `-l`：列出目前系统上可用的shell，其实就是`/etc/shells`的内容
 * `-s`：设置修改自己的shell
 
+## 1.3 man
+
+* `man 1`：标准Linux命令
+* `man 2`：系统调用
+* `man 3`：库函数
+* `man 4`：设备说明
+* `man 5`：文件格式
+* `man 6`：游戏娱乐
+* `man 7`：杂项
+* `man 8`：系统管理员命令
+* `man 9`：常规内核文件
+
+## 1.4 demsg
+
+kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及查看信息，可利用`dmesg`来查看。开机信息亦保存在`/var/log`目录中，名称为dmesg的文件里
+
 # 2 文件字符管道工具
 
 ## 2.1 echo
@@ -1504,6 +1520,7 @@ __输出信息介绍：__
 
 * 星号开头的指的是表格，这里为Filter
 * 冒号开头的指的是链，3条内建的链，后面跟策略
+* 链后面跟的是`[Packets:Bytes]`，分别表示通过该链的数据包/字节的数量
 
 ### 5.6.2 规则的清除
 
@@ -1541,24 +1558,25 @@ __示例：__
 
 __格式：__
 
-* `iptables [-AI 链名] [-io 网络接口] [-p 协议] [-s 来源IP/网络] [-d 目标IP/网络] -j [ACCEPT|DROP|REJECT|LOG]`
+* `iptables [-t tables] [-AI chain] [-io ifname] [-p prop] [-s ip/net] [-d ip/net] -j [ACCEPT|DROP|REJECT|LOG]`
 
 __参数说明：__
 
-* `-AI 链名`：针对某条链进行规则的"插入"或"累加"
+* `-t tables`：指定tables，默认的tables是`filter`
+* `-AI chain`：针对某条链进行规则的"插入"或"累加"
     * `-A`：新增加一条规则，该规则增加在原规则后面，例如原来有4条规则，使用-A就可以加上第五条规则
     * `-I`：插入一条规则，如果没有指定此规则的顺序，默认插入变成第一条规则
     * `链`：有INPUT、OUTPUT、FORWARD等，此链名称又与-io有关
-* `-io 网络接口`：设置数据包进出的接口规范
+* `-io ifname`：设置数据包进出的接口规范
     * `-i`：数据包所进入的那个网络接口，例如eth0，lo等，需要与INPUT链配合
     * `-o`：数据包所传出的网络接口，需要与OUTPUT配合
-* `-p 协议`：设置此规则适用于哪种数据包格式
+* `-p prop`：设置此规则适用于哪种数据包格式
     * 主要的数据包格式有：tcp、udp、icmp以及all
-* `-s 来源IP/网络`：设置此规则之数据包的来源地，可指定单纯的IP或网络
-    * `IP`：例如`192.168.0.100`
-    * `网络`：例如`192.168.0.0/24`、`192.168.0.0/255.255.255.0`均可
+* `-s ip/net`：设置此规则之数据包的来源地，可指定单纯的IP或网络
+    * `ip`：例如`192.168.0.100`
+    * `net`：例如`192.168.0.0/24`、`192.168.0.0/255.255.255.0`均可
     * __若规范为"不许"时，加上`!`即可，例如`! -s 192.168.100.0/24`__
-* `-d 目标 IP/网络`：同-s，只不过这里是目标的
+* `-d ip/net`：同-s，只不过这里是目标的
 * `-j`：后面接操作
     * `ACCEPT`
     * `DROP`
@@ -1894,6 +1912,53 @@ __示例：__
 * `arp-scan 10.0.2.0/24`
 * `arp-scan -I enp0s8 -l`
 * `arp-scan -I enp0s8 192.168.56.1/24`
+
+## 5.15 ping
+
+__参数说明：__
+
+* `-c`：后接发包次数
+* `-s`：指定数据大小
+* `-M [do|want|dont]`：设置MTU策略，`do`表示不允许分片；`want`表示当数据包比较大时可以分片；`dont`表示不设置`DF`标志位
+
+__示例：__
+
+* `ping -c 3 www.baidu.com`
+* `ping -s 1460 -M do baidu.com`：发送大小包大小是1460（+28）字节，且禁止分片
+
+## 5.16 arping
+
+__格式：__
+
+* `arping [-fqbDUAV] [-c count] [-w timeout] [-I device] [-s source] destination`
+
+__参数说明：__
+
+* `-c`：指定发包次数
+* `-b`：持续用广播的方式发送request
+* `-w`：指定超时时间
+* `-I`：指定使用哪个以太网设备
+* `-D`：开启地址冲突检测模式
+
+__示例：__
+
+* `arping -c 1 -w 1 -I eth0 -b -D 192.168.1.1`：该命令可以用于检测局域网是否存在IP冲突
+    * 若该命令行返回0：说明不存在冲突；否则存在冲突
+
+__-D参数为啥能够检测ip冲突__
+
+* 环境说明
+    * 机器A，ip为：`192.168.2.2/24`，mac地址为`68:ed:a4:39:92:4b`
+    * 机器B，ip为：`192.168.2.2/24`，mac地址为`68:ed:a4:39:91:e6`
+    * 路由器，ip为：`192.168.2.1/24`，mac地址为`c8:94:bb:af:bd:8c`
+* 在机器A执行`arping -c 1 -w 1 -I eno1 -b 192.168.2.2`，分别在机器A、机器B上抓包，抓包结果如下
+    * ![arping-1](/images/Linux-常用命令/arping-1.png)
+    * ![arping-2](/images/Linux-常用命令/arping-2.png)
+    * arp-reply发送到路由器后，路由器不知道将数据包转发给谁，就直接丢弃了
+* 在机器A执行`arping -c 1 -w 1 -I eno1 -D -b 192.168.2.2`，分别在机器A、机器B上抓包，抓包结果如下
+    * ![arping-3](/images/Linux-常用命令/arping-3.png)
+    * ![arping-3](/images/Linux-常用命令/arping-4.png)
+    * arp-reply直接指定了目标机器的mac地址，因此直接送达机器A
 
 # 6 运维监控
 
@@ -2395,3 +2460,4 @@ __示例：__
 * [通过tcpdump对Unix Domain Socket 进行抓包解析](https://plantegg.github.io/2018/01/01/%E9%80%9A%E8%BF%87tcpdump%E5%AF%B9Unix%20Socket%20%E8%BF%9B%E8%A1%8C%E6%8A%93%E5%8C%85%E8%A7%A3%E6%9E%90/)
 * [tcpdump 选项及过滤规则](https://www.cnblogs.com/tangxiaosheng/p/4950055.html)
 * [如何知道进程运行在哪个 CPU 内核上？](https://www.jianshu.com/p/48ca58e55077)
+* [Don't understand [0:0] iptable syntax](https://serverfault.com/questions/373871/dont-understand-00-iptable-syntax)

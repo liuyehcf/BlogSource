@@ -484,6 +484,10 @@ nmcli conn edit <id>/<uuid>/<path>
 
 # 修改某个配置值
 nmcli conn modify <id>/<uuid>/<path> ipv4.address <ip/netmask>
+
+# 启用/停用conn
+nmcli conn up <id>/<uuid>/<path>
+nmcli conn down <id>/<uuid>/<path>
 ```
 
 __重要配置项__

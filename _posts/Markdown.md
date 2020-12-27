@@ -141,9 +141,15 @@ skinparam sequence {
 }
 
 actor User
+box "foo1"
 participant "First Class" as A
+end box
+box "foo2"
 participant "Second Class" as B
+end box
+box "foo3"
 participant "Last Class" as C
+end box
 
 User -> A: DoWork
 activate A
@@ -188,9 +194,15 @@ skinparam sequence {
 }
 
 actor User
+box "foo1"
 participant "First Class" as A
+end box
+box "foo2"
 participant "Second Class" as B
+end box
+box "foo3"
 participant "Last Class" as C
+end box
 
 User -> A: DoWork
 activate A
@@ -227,6 +239,7 @@ help skinparams
 ## 3.3 参考
 
 * [Ashley's PlantUML Doc](https://plantuml-documentation.readthedocs.io/en/latest/formatting/all-skin-params.html)
+* [PlantUML Doc](https://plantuml.com/zh/sequence-diagram)
 * [Skinparam](http://plantuml.com/zh/skinparam)
 * [纯文本作图-asciiflow.com](http://asciiflow.com/)
 * [Markdown 高级技巧](https://www.runoob.com/markdown/md-advance.html)

@@ -171,6 +171,7 @@ Pass 5: run completed in 10usr/50sys/327real ms.
 
 * [SystemTap Doc](http://sourceware.org/systemtap/documentation.html)
 * [centos 7 systemtap 安装](https://www.jianshu.com/p/25e84f2e5a95)
+* [再聊 TCP backlog](https://juejin.im/post/6844904071367753736)
 
 # 4 内核源码浅析
 
@@ -308,16 +309,15 @@ net/ipv4/ip_input.c
 ### 4.2.3 参考
 
 * [Linux 网络协议栈开发（五）—— 二层桥转发蓝图（上）](https://blog.csdn.net/zqixiao_09/article/details/79057169)
-* [最详细的Linux TCP/IP 协议栈源码分析](https://zhuanlan.zhihu.com/p/265102696?utm_source=wechat_session)
+* [计算机网络基础 — Linux 内核网络协议栈](https://www.cnblogs.com/jmilkfan-fanguiju/p/12789808.html)
 * [TCP／IP协议栈之数据包如何穿越各层协议（绝对干货）](http://www.360doc.com/content/19/0815/00/29234429_855009606.shtml)
+* [Linux内核网络栈源代码分析(专栏)](https://blog.csdn.net/geekcome/article/details/8333011)
+* [linux 内核tcp接收数据的实现](https://blog.csdn.net/scdxmoe/article/details/39314679)
 * [Linux tcp/ip 源码分析 - socket](https://cloud.tencent.com/developer/article/1439063)
 * [linux TCP发送源码学习(1)--tcp_sendmsg](https://blog.csdn.net/scdxmoe/article/details/17764917)
 * [tcp/ip协议栈--tcp数据发送流程](https://blog.csdn.net/pangyemeng/article/details/78104872)
-* [计算机网络基础 — Linux 内核网络协议栈](https://www.cnblogs.com/jmilkfan-fanguiju/p/12789808.html)
-* [Linux内核网络栈源代码分析(专栏)](https://blog.csdn.net/geekcome/article/details/8333011)
+* [最详细的Linux TCP/IP 协议栈源码分析](https://zhuanlan.zhihu.com/p/265102696?utm_source=wechat_session)
 * [kernel-tcp注释](https://github.com/run/kernel-tcp)
-* [linux 内核tcp接收数据的实现](https://blog.csdn.net/scdxmoe/article/details/39314679)
-* [再聊 TCP backlog](https://juejin.im/post/6844904071367753736)
 
 ## 4.3 file
 
