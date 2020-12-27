@@ -664,7 +664,63 @@ pod "dnsutils" deleted
 
 # 4 问题排查
 
-## 4.1 容器网络不通
+## 4.1 排查一般思路
+
+### 4.1.1 步骤1：确认系统网络参数是否配置正确
+
+__以下两个配置项，需要设置成1，否则iptables规则无法应用于二层转发（同主机的pod之间的网络通信走的是二层转发）__
+
+1. net.bridge.bridge-nf-call-ip6tables
+1. net.bridge.bridge-nf-call-iptables
+
+__以下三个配置项，需要设置成1，否则流量从网卡`cni0`出来之后，无法forward到主机的外网网卡上，意味着，容器里面是无法访问公网的，具体表现就是在容器网络的容器中无法ping通外网ip__
+
+1. net.ipv4.ip_forward
+1. net.ipv4.conf.all.forwarding
+1. net.ipv6.conf.all.forwarding
+
+__如何修改配置__
+
+```sh
+# 临时修改
+echo 1 > /proc/sys/net/bridge/bridge-nf-call-ip6tables
+echo 1 > /proc/sys/net/bridge/bridge-nf-call-iptables
+echo 1 > /proc/sys/net/ipv4/ip_forward
+echo 1 > /proc/sys/net/ipv4/conf/all/forwarding
+echo 1 > /proc/sys/net/ipv6/conf/all/forwarding
+
+# 永久修改
+cat >> /etc/sysctl.conf << 'EOF'
+net.bridge.bridge-nf-call-ip6tables=1
+net.bridge.bridge-nf-call-iptables=1
+net.ipv4.ip_forward=1
+net.ipv4.conf.all.forwarding=1
+net.ipv6.conf.all.forwarding=1
+EOF
+sysctl -p /etc/sysctl.conf
+```
+
+### 4.1.2 步骤2：检查防火墙是否已关闭
+
+systemctl status firewalld
+
+### 4.1.3 步骤3：校验iptables中的DNAT规则的目的ip是否可访问
+
+一般来说，DNAT的目的ip的流转方式有3类
+
+1. 如果`目的ip`是当前主机的某个`podIp`，那么流量会转发到`cni0`，一般来说，这种情况都是没啥问题的
+1. 如果`目的ip`是另一台主机的某个`podIp`，那么流量会转发到`flannel.1`，然后通过`overlay`转发到`podIp`所在的主机上
+    * 可能的网络限制：由于overlay是通过udp转发的，需要检查下主机是否有针对udp的过滤配置
+1. 如果`目的ip`是某个`机器的ip`，那么直接走外网网卡或者`lo`
+    * 机器的ip如果变化了，那么iptables中记录的DNAT目的ip可能还是一个旧的主机ip，因此这个时候需要重启下pod，更新下iptables规则
+
+### 4.1.4 步骤4：检查容器中/etc/resolv.conf配置是否有效
+
+1. 对于`coredns`来说，容器内的`/etc/resolv.conf`文件是在容器创建的时候，从宿主机上拷贝的。如果主机恰好用的dhcp的方式获取ip，那么获取的dns地址很有可能是dhcp的地址，这个地址是可能会失效的
+1. 对于普通的容器网络的容器来说，容器内的`/etc/resolv.conf`配置的是coredns的clusterIp，因此不需要改动
+1. 对于主机网络，且dnsPolicy为`ClusterFirst`的容器来说，容器内的`/etc/resolv.conf`文件是在容器创建的时候，从宿主机上拷贝的。如果主机恰好用的dhcp的方式获取ip，那么获取的dns地址很有可能是dhcp的地址，这个地址是可能会失效的
+
+## 4.2 容器网络不通
 
 现象：在容器中，pingk8s域名失败，ping外网域名失败
 

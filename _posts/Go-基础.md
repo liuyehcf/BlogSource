@@ -244,7 +244,20 @@ go module对版本号的约定
 
 用replace指向本地的依赖
 
-### 3.2.5 从gitlab上下载依赖包
+### 3.2.5 从github上下载依赖包
+
+go module默认会从`sum.golang.org`对依赖包进行一个校验，但是在墙内环境，`sum.golang.org`是无法访问的，通常会报如下的一个错误
+
+```
+verifying github.com/xxx/yyy/go.mod: github.com/xxxyyy@v0.1.11/go.mod: Get https://sum.golang.org/lookup/github.com/xxx/yyy@v0.1.11: dial tcp 216.58.197.113:443: i/o timeout
+```
+
+此时，我们有两种选择
+
+1. 关闭校验：`go env -w GOSUMDB=off`
+1. 修改校验地址：`go env -w GOSUMDB="sum.golang.google.cn"`
+
+### 3.2.6 从gitlab上下载依赖包
 
 需要设置环境变量`GOPROXY`以及`GOPRIVATE`
 
@@ -287,7 +300,7 @@ __此外，如果我们`gitlab`的账号密码更新了，那么`git`仍然会�
 
 * 如果是Mac的OSX系统，在钥匙串的密码一项中，找到gitlab相关的数据，删掉即可
 
-### 3.2.6 IDE-GoLand
+### 3.2.7 IDE-GoLand
 
 __新建go module项目__
 
@@ -359,3 +372,4 @@ dep ensure
 * [go-get-results-in-terminal-prompts-disabled-error-for-github-private-repo](https://stackoverflow.com/questions/32232655/go-get-results-in-terminal-prompts-disabled-error-for-github-private-repo)
 * [git报错remote: Repository not found的一种可能](https://www.jianshu.com/p/5eb3a91458de)
 * [How to correctly use sync.Cond?](https://stackoverflow.com/questions/36857167/how-to-correctly-use-sync-cond)
+* [go安装gin框架失败错误解决：sum.golang.org被墙](https://blog.csdn.net/LXDOS/article/details/104749071/)

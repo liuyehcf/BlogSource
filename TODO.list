@@ -13,9 +13,6 @@
     * /boot分区和/boot/efi 的作用和关系
     * cobbler：https://www.cnblogs.com/yanjieli/p/11016825.html
 1. go 分析工具 https://golang.org/pkg/net/http/pprof/
-    * verifying github.com/liuyehcf/common-gtools@v0.1.11/go.mod: github.com/liuyehcf/common-gtools@v0.1.11/go.mod: Get https://sum.golang.org/lookup/github.com/liuyehcf/common-gtools@v0.1.11: dial tcp 216.58.197.113:443: i/o timeout
-        * https://blog.csdn.net/LXDOS/article/details/104749071/
-        * 或者设置 export GOSUMDB="sum.golang.google.cn"
 1. nm
     * https://zhuanlan.zhihu.com/p/43556975
 1. Excalidraw 画图工具
@@ -24,7 +21,6 @@
 1. 网络
     * bridge fdb show
     * cat /proc/sys/net/ipv4/conf/cni0/proxy_arp
-    * firewalld的OUTPUT_direct
     * iptables打日志（https://blog.csdn.net/magerguo/article/details/81052106）
         * iptables -I INPUT -p icmp -j LOG --log-prefix "liuye-input: "
         * iptables -I FORWARD -p icmp -j LOG --log-prefix "liuye-forward: "
