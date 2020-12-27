@@ -20,16 +20,6 @@
     * https://learnku.com/articles/47662
 1. 网络
     * bridge fdb show
-    * cat /proc/sys/net/ipv4/conf/cni0/proxy_arp
-    * iptables打日志（https://blog.csdn.net/magerguo/article/details/81052106）
-        * iptables -I INPUT -p icmp -j LOG --log-prefix "liuye-input: "
-        * iptables -I FORWARD -p icmp -j LOG --log-prefix "liuye-forward: "
-        * iptables -I OUTPUT -p icmp -j LOG --log-prefix "liuye-output: "
-        * iptables -t nat -I PREROUTING -p icmp -j LOG --log-prefix "liuye-prerouting: "
-        * iptables -t nat -I POSTROUTING -p icmp -j LOG --log-prefix "liuye-postrouting: "
-    * net.ipv4.tcp_syncookies = 1 表示开启SYN Cookies。当出现SYN等待队列溢出时，启用cookies来处理，可防范少量SYN攻击，默认为0，表示关闭；
-    * net.ipv4.tcp_tw_reuse = 1 表示开启重用。允许将TIME-WAIT sockets重新用于新的TCP连接，默认为0，表示关闭；
-    * net.ipv4.tcp_tw_recycle = 1 表示开启TCP连接中TIME-WAIT sockets的快速回收，默认为0，表示关闭。
 1. 时区
     * https://blog.csdn.net/qq_41264674/article/details/83781600
     * https://blog.csdn.net/fishinhouse/article/details/105536777

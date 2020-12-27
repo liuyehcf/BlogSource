@@ -1591,6 +1591,12 @@ __示例：__
 * `iptables -A INPUT -i lo -j ACCEPT`：不论数据包来自何处或去向哪里，只要是lo这个接口，就予以接受，这就是所谓的信任设备
 * `iptables -A INPUT -i eth1 -j ACCEPT`：添加接口为eth1的网卡为信任设备
 * `iptables -A INPUT -s 192.168.2.200 -j LOG`：该网段的数据包，其相关信息就会被写入到内核日志文件中，即`/var/log/messages`，然后，该数据包会继续进行后续的规则比对(这一点与其他规则不同)
+* 配置打印日志的规则
+    * `iptables -I INPUT -p icmp -j LOG --log-prefix "liuye-input: "`
+    * `iptables -I FORWARD -p icmp -j LOG --log-prefix "liuye-forward: "`
+    * `iptables -I OUTPUT -p icmp -j LOG --log-prefix "liuye-output: "`
+    * `iptables -t nat -I PREROUTING -p icmp -j LOG --log-prefix "liuye-prerouting: "`
+    * `iptables -t nat -I POSTROUTING -p icmp -j LOG --log-prefix "liuye-postrouting: "`
 
 ### 5.6.5 TCP、UDP的规则：针对端口设置
 
@@ -2461,3 +2467,4 @@ __示例：__
 * [tcpdump 选项及过滤规则](https://www.cnblogs.com/tangxiaosheng/p/4950055.html)
 * [如何知道进程运行在哪个 CPU 内核上？](https://www.jianshu.com/p/48ca58e55077)
 * [Don't understand [0:0] iptable syntax](https://serverfault.com/questions/373871/dont-understand-00-iptable-syntax)
+* [Linux iptables drop日志记录](https://blog.csdn.net/magerguo/article/details/81052106)

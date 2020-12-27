@@ -720,7 +720,20 @@ systemctl status firewalld
 1. 对于普通的容器网络的容器来说，容器内的`/etc/resolv.conf`配置的是coredns的clusterIp，因此不需要改动
 1. 对于主机网络，且dnsPolicy为`ClusterFirst`的容器来说，容器内的`/etc/resolv.conf`文件是在容器创建的时候，从宿主机上拷贝的。如果主机恰好用的dhcp的方式获取ip，那么获取的dns地址很有可能是dhcp的地址，这个地址是可能会失效的
 
-## 4.2 容器网络不通
+## 4.2 排查手段
+
+1. tcpdump抓包
+1. iptables配置一些打印日志的规则
+
+```sh
+iptables -I INPUT -p icmp -j LOG --log-prefix "liuye-input: "
+iptables -I FORWARD -p icmp -j LOG --log-prefix "liuye-forward: "
+iptables -I OUTPUT -p icmp -j LOG --log-prefix "liuye-output: "
+iptables -t nat -I PREROUTING -p icmp -j LOG --log-prefix "liuye-prerouting: "
+iptables -t nat -I POSTROUTING -p icmp -j LOG --log-prefix "liuye-postrouting: "
+```
+
+## 4.3 容器网络不通
 
 现象：在容器中，pingk8s域名失败，ping外网域名失败
 
