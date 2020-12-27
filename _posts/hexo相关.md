@@ -131,6 +131,7 @@ menu:
 | [hexo-toc](https://github.com/bubkoo/hexo-toc) | hexo插件-目录 |
 | [hexo-wordcount](https://github.com/willin/hexo-wordcount) | hexo插件-字数统计 |
 | [hexo-symbols-count-time](https://github.com/theme-next/hexo-symbols-count-time) | 阅读时间统计 |
+| [hexo-filter-mermaid-diagrams](https://github.com/webappdevelp/hexo-filter-mermaid-diagrams) |  |
 
 # 10 取消侧栏编号
 
@@ -197,3 +198,4 @@ code {
 * [hexo的next主题个性化教程:打造炫酷网站](http://shenzekun.cn/hexo%E7%9A%84next%E4%B8%BB%E9%A2%98%E4%B8%AA%E6%80%A7%E5%8C%96%E9%85%8D%E7%BD%AE%E6%95%99%E7%A8%8B.html)
 * [hexo-filter-plantuml](https://github.com/wafer-li/hexo-filter-plantuml)
 * [时序图](http://plantuml.com/sequence-diagram)
+* [Hexo中引入Mermaid流程图](https://tyloafer.github.io/posts/7790/)
