@@ -511,9 +511,16 @@ __重要配置项__
 
 带有图形化界面的配网工具
 
+### 6.2.4 配置文件
+
+路径：`/etc/NetworkManager/NetworkManager.conf`
+
+配置文件详细内容参考[NetworkManager.conf](https://developer.gnome.org/NetworkManager/stable/NetworkManager.conf.html)
+
 ## 6.3 参考
 
 * [NetworkManager官方文档](https://wiki.archlinux.org/index.php/NetworkManager)
 * [为 Red Hat Enterprise Linux 7 配置和管理联网](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/7/html/networking_guide/index)
 * [Networking Guide](https://docs.fedoraproject.org/en-US/Fedora/25/html/Networking_Guide/index.html)
 * [Connecting to a Network Using nmcli](https://docs.fedoraproject.org/en-US/Fedora/25/html/Networking_Guide/sec-Connecting_to_a_Network_Using_nmcli.html)
+* [Linux DNS 查询剖析（第三部分）](https://zhuanlan.zhihu.com/p/43556975)

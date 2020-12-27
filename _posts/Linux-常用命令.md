@@ -709,6 +709,12 @@ __参数说明：__
 * `-p`：保留备份数据原本权限与属性，常用语备份(-c)重要的配置文件
 * `-P`：保留绝对路径，即允许备份数据中含有根目录存在之意
 
+__示例：__
+
+* `tar -czvf /test.tar.gz -C /home/liuye`
+* `tar -zxvf /test.tar.gz -C /home/liuye`
+* `tar cvf - /home/liuye | sha1sum`：`-`表示标准输入输出，这里表示标准出
+
 ## 2.14 wget
 
 __格式：__

@@ -3,7 +3,6 @@
     * 域套接字
     * 如何编写TUI程序(https://github.com/marcusolsson/tui-go)
     * hping3
-    * tar cvf - /path/to/folder | sha1sum  - 表示标准输入输出
 1. Kubernetes-Single-Master-Cluster
     * nginx ingress
 1. helm
@@ -13,8 +12,6 @@
     * /boot分区和/boot/efi 的作用和关系
     * cobbler：https://www.cnblogs.com/yanjieli/p/11016825.html
 1. go 分析工具 https://golang.org/pkg/net/http/pprof/
-1. nm
-    * https://zhuanlan.zhihu.com/p/43556975
 1. Excalidraw 画图工具
     * https://github.com/excalidraw/excalidraw
     * https://learnku.com/articles/47662
