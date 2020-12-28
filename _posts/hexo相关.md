@@ -13,9 +13,11 @@ __阅读更多__
 
 # 1 Math
 
+[Hexo渲染LaTeX公式](https://www.jianshu.com/p/9b9c241146bc)
+
 [MathJax-配置](http://theme-next.iissnan.com/third-party-services.html#mathjax)
 
-__禁止markdown对`-`、`\\`、`\{`、`\}`等进行转义__：修改配置文件`/node_modules/marked/lib/`
+__禁止markdown对`-`、`\\`、`\{`、`\}`等进行转义__：修改配置文件`node_modules/marked/lib/marked.js`
 
 将
 
