@@ -53,6 +53,40 @@ em: /^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
 
 [hexo-filter-flowchart](https://github.com/bubkoo/hexo-filter-flowchart)
 
+# mermaid流程图
+
+[hexo-filter-mermaid-diagrams](https://github.com/webappdevelp/hexo-filter-mermaid-diagrams)
+
+__步骤1：安装插件__
+
+```sh
+npm install hexo-filter-mermaid-diagrams --save
+```
+
+__步骤2：修改站点配置文件，追加如下内容__
+
+```
+# mermaid chart
+mermaid: ## mermaid url https://github.com/knsv/mermaid
+  enable: true  # default true
+  version: "7.1.2" # default v7.1.2
+  options:  # find more api options from https://github.com/knsv/mermaid/blob/master/src/mermaidAPI.js
+    #startOnload: true  // default true
+```
+
+__步骤3：修改主题页脚文件`themes/next/layout/_partials/footer.swig`，追加如下内容__
+
+```
+{% if (theme.mermaid.enable)  %}
+  <script src='https://unpkg.com/mermaid@{{ theme.mermaid.version }}/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+{% endif %}
+```
+
 # 4 目录功能
 
 [hexo-toc](https://github.com/bubkoo/hexo-toc)
@@ -128,12 +162,12 @@ menu:
 | [theme-yilia](https://github.com/litten/hexo-theme-yilia) | hexo主题 |
 | [theme-next](https://github.com/theme-next/hexo-theme-next) | hexo主题 |
 | [hexo-filter-sequence](https://github.com/bubkoo/hexo-filter-sequence) | hexo插件-序列图 |
+| [hexo-filter-mermaid-diagrams](https://github.com/webappdevelp/hexo-filter-mermaid-diagrams) | hexo插件-序列图 |
 | [hexo-filter-plantuml](https://github.com/wafer-li/hexo-filter-plantuml) | hexo插件-高级时序图 |
 | [hexo-filter-flowchart](https://github.com/bubkoo/hexo-filter-flowchart) | hexo插件-流程图 |
 | [hexo-toc](https://github.com/bubkoo/hexo-toc) | hexo插件-目录 |
 | [hexo-wordcount](https://github.com/willin/hexo-wordcount) | hexo插件-字数统计 |
 | [hexo-symbols-count-time](https://github.com/theme-next/hexo-symbols-count-time) | 阅读时间统计 |
-| [hexo-filter-mermaid-diagrams](https://github.com/webappdevelp/hexo-filter-mermaid-diagrams) |  |
 
 # 10 取消侧栏编号
 
