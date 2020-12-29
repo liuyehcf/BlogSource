@@ -47,13 +47,7 @@ em: /^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
 
 [来必力-配置](http://theme-next.iissnan.com/third-party-services.html#livere)
 
-# 3 sequence/flow
-
-[hexo-filter-sequence](https://github.com/bubkoo/hexo-filter-sequence)
-
-[hexo-filter-flowchart](https://github.com/bubkoo/hexo-filter-flowchart)
-
-# mermaid流程图
+# 3 mermaid流程图
 
 [hexo-filter-mermaid-diagrams](https://github.com/webappdevelp/hexo-filter-mermaid-diagrams)
 
@@ -63,39 +57,255 @@ __步骤1：安装插件__
 npm install hexo-filter-mermaid-diagrams --save
 ```
 
-__步骤2：修改站点配置文件，追加如下内容__
+__步骤2：修改主题配置文件`themes/next/_config.yml`，找到`mermaid`的配置项，将`enable`改为true即可__
+
+## 3.1 效果：横向流程图
+
+__源码：__
 
 ```
-# mermaid chart
-mermaid: ## mermaid url https://github.com/knsv/mermaid
-  enable: true  # default true
-  version: "7.1.2" # default v7.1.2
-  options:  # find more api options from https://github.com/knsv/mermaid/blob/master/src/mermaidAPI.js
-    #startOnload: true  // default true
+graph LR
+A[方形] -->B(圆角)
+    B --> C{条件a}
+    C -->|a=1| D[结果1]
+    C -->|a=2| E[结果2]
+    F[横向流程图]
 ```
 
-__步骤3：修改主题页脚文件`themes/next/layout/_partials/footer.swig`，追加如下内容__
+__渲染后：__
 
-```
-{% if (theme.mermaid.enable)  %}
-  <script src='https://unpkg.com/mermaid@{{ theme.mermaid.version }}/dist/mermaid.min.js'></script>
-  <script>
-    if (window.mermaid) {
-      mermaid.initialize({theme: 'forest'});
-    }
-  </script>
-{% endif %}
+```mermaid
+graph LR
+A[方形] -->B(圆角)
+    B --> C{条件a}
+    C -->|a=1| D[结果1]
+    C -->|a=2| E[结果2]
+    F[横向流程图]
 ```
 
-# 4 目录功能
+## 3.2 效果：竖向流程图
+
+__源码：__
+
+```
+graph TD
+A[方形] --> B(圆角)
+    B --> C{条件a}
+    C --> |a=1| D[结果1]
+    C --> |a=2| E[结果2]
+    F[竖向流程图]
+```
+
+__渲染后：__
+
+```mermaid
+graph TD
+A[方形] --> B(圆角)
+    B --> C{条件a}
+    C --> |a=1| D[结果1]
+    C --> |a=2| E[结果2]
+    F[竖向流程图]
+```
+
+# 4 plantuml时序图
+
+__步骤1：安装插件__
+
+```sh
+npm install hexo-filter-plantuml --save
+```
+
+## 4.1 效果
+
+__源码：__
+
+```
+skinparam backgroundColor #EEEBDC
+skinparam handwritten true
+
+skinparam sequence {
+	ArrowColor DeepSkyBlue
+	ActorBorderColor DeepSkyBlue
+	LifeLineBorderColor blue
+	LifeLineBackgroundColor #A9DCDF
+	
+	ParticipantBorderColor DeepSkyBlue
+	ParticipantBackgroundColor DodgerBlue
+	ParticipantFontName Impact
+	ParticipantFontSize 17
+	ParticipantFontColor #A9DCDF
+	
+	ActorBackgroundColor aqua
+	ActorFontColor DeepSkyBlue
+	ActorFontSize 17
+	ActorFontName Aapex
+}
+
+actor User
+box "foo1"
+participant "First Class" as A
+end box
+box "foo2"
+participant "Second Class" as B
+end box
+box "foo3"
+participant "Last Class" as C
+end box
+
+User -> A: DoWork
+activate A
+
+A -> B: Create Request
+activate B
+
+B -> C: DoWork
+activate C
+C --> B: WorkDone
+destroy C
+
+B --> A: Request Created
+deactivate B
+
+A --> User: Done
+deactivate A
+```
+
+__渲染后：__
+
+```plantuml
+skinparam backgroundColor #EEEBDC
+skinparam handwritten true
+
+skinparam sequence {
+	ArrowColor DeepSkyBlue
+	ActorBorderColor DeepSkyBlue
+	LifeLineBorderColor blue
+	LifeLineBackgroundColor #A9DCDF
+	
+	ParticipantBorderColor DeepSkyBlue
+	ParticipantBackgroundColor DodgerBlue
+	ParticipantFontName Impact
+	ParticipantFontSize 17
+	ParticipantFontColor #A9DCDF
+	
+	ActorBackgroundColor aqua
+	ActorFontColor DeepSkyBlue
+	ActorFontSize 17
+	ActorFontName Aapex
+}
+
+actor User
+box "foo1"
+participant "First Class" as A
+end box
+box "foo2"
+participant "Second Class" as B
+end box
+box "foo3"
+participant "Last Class" as C
+end box
+
+User -> A: DoWork
+activate A
+
+A -> B: Create Request
+activate B
+
+B -> C: DoWork
+activate C
+C --> B: WorkDone
+destroy C
+
+B --> A: Request Created
+deactivate B
+
+A --> User: Done
+deactivate A
+```
+
+# 5 flow流程图
+
+[hexo-filter-flowchart](https://github.com/bubkoo/hexo-filter-flowchart)
+
+__步骤1：安装插件__
+
+```sh
+npm install hexo-filter-flowchart --save 
+```
+
+## 5.1 效果：纵向流程图
+
+__源码：__
+
+```
+st=>start: 开始框
+op=>operation: 处理框
+cond=>condition: 判断框(是或否?)
+sub1=>subroutine: 子流程
+io=>inputoutput: 输入输出框
+e=>end: 结束框
+st->op->cond
+cond(yes)->io->e
+cond(no)->sub1(right)->op
+```
+
+__渲染后：__
+
+```flow
+st=>start: 开始框
+op=>operation: 处理框
+cond=>condition: 判断框(是或否?)
+sub1=>subroutine: 子流程
+io=>inputoutput: 输入输出框
+e=>end: 结束框
+st->op->cond
+cond(yes)->io->e
+cond(no)->sub1(right)->op
+```
+
+## 5.2 效果：横向流程图
+
+__源码：__
+
+```
+st=>start: 开始框
+op=>operation: 处理框
+cond=>condition: 判断框(是或否?)
+sub1=>subroutine: 子流程
+io=>inputoutput: 输入输出框
+e=>end: 结束框
+st(right)->op(right)->cond
+cond(yes)->io(bottom)->e
+cond(no)->sub1(right)->op
+```
+
+__渲染后：__
+
+```flow
+st=>start: 开始框
+op=>operation: 处理框
+cond=>condition: 判断框(是或否?)
+sub1=>subroutine: 子流程
+io=>inputoutput: 输入输出框
+e=>end: 结束框
+st(right)->op(right)->cond
+cond(yes)->io(bottom)->e
+cond(no)->sub1(right)->op
+```
+
+# 6 sequence时序图
+
+[hexo-filter-sequence](https://github.com/bubkoo/hexo-filter-sequence)
+
+# 7 目录功能
 
 [hexo-toc](https://github.com/bubkoo/hexo-toc)
 
-# 5 访问统计
+# 8 访问统计
 
 [阅读次数统计-配置](http://theme-next.iissnan.com/third-party-services.html#analytics-tencent-mta)
 
-# 6 本地搜索
+# 9 本地搜索
 
 [本地搜索-配置](http://theme-next.iissnan.com/third-party-services.html#local-search)
 
@@ -103,11 +313,11 @@ __步骤3：修改主题页脚文件`themes/next/layout/_partials/footer.swig`�
 
 [Mac 上的 VSCode 编写 Markdown 总是出现隐藏字符？](https://www.zhihu.com/question/61638859)
 
-# 7 背景动画
+# 10 背景动画
 
 [背景动画-配置](http://theme-next.iissnan.com/theme-settings.html#use-bg-animation)
 
-# 8 增加菜单
+# 11 增加菜单
 
 `hexo new page "explore"`
 
@@ -155,7 +365,7 @@ menu:
   commonweal: 公益404
 ```
 
-# 9 hexo相关的项目
+# 12 hexo相关的项目
 
 | 项目 | 描述 |
 |:--|:--|
@@ -169,7 +379,7 @@ menu:
 | [hexo-wordcount](https://github.com/willin/hexo-wordcount) | hexo插件-字数统计 |
 | [hexo-symbols-count-time](https://github.com/theme-next/hexo-symbols-count-time) | 阅读时间统计 |
 
-# 10 取消侧栏编号
+# 13 取消侧栏编号
 
 主题配置文件修改如下配置，将number改为false即可
 
@@ -184,7 +394,7 @@ toc:
   wrap: false
 ```
 
-# 11 修改行内代码样式
+# 14 修改行内代码样式
 
 修改方式：在`themes/next/source/css/_custom/custom.styl`中增加如下代码
 
@@ -197,7 +407,7 @@ code {
 }
 ```
 
-# 12 修改链接样式
+# 15 修改链接样式
 
 链接即如下的语法
 
@@ -222,7 +432,7 @@ code {
 }
 ```
 
-# 13 参考
+# 16 参考
 
 * [next官方文档](http://theme-next.iissnan.com/getting-started.html)
 * [搭建一个支持LaTEX的hexo博客](http://blog.csdn.net/emptyset110/article/details/50123231)
