@@ -432,13 +432,13 @@ code {
 }
 ```
 
-# deploy
+# 16 deploy
 
 ```sh
 npm install hexo-deployer-git --save
 ```
 
-# 16 参考
+# 17 参考
 
 * [next官方文档](http://theme-next.iissnan.com/getting-started.html)
 * [搭建一个支持LaTEX的hexo博客](http://blog.csdn.net/emptyset110/article/details/50123231)
