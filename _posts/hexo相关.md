@@ -432,6 +432,12 @@ code {
 }
 ```
 
+# deploy
+
+```sh
+npm install hexo-deployer-git --save
+```
+
 # 16 参考
 
 * [next官方文档](http://theme-next.iissnan.com/getting-started.html)
