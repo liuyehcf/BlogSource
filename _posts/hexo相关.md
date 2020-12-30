@@ -438,6 +438,8 @@ code {
 npm install hexo-deployer-git --save
 ```
 
+[nodejs更新后hexo没法deploy](https://blog.csdn.net/qq_41535611/article/details/106309335)
+
 # 17 参考
 
 * [next官方文档](http://theme-next.iissnan.com/getting-started.html)
