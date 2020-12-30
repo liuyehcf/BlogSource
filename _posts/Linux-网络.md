@@ -23,97 +23,1075 @@ __阅读更多__
 | `net.ipv4.tcp_tw_recycle` | `1`表示开启TCP连接中`TIME-WAIT`状态的`sockets`的快速回收，默认为0，表示关闭 |
 | `net.ipv4.conf.<net_device>.proxy_arp` | `1`表示当ARP请求目标跨网段时，网卡设备收到此ARP请求会用自己的MAC地址返回给请求者 |
 
-# 2 虚拟机的网络模式
+# 2 Virtual Networking
 
-## 2.1 Network Address Translation (NAT)
+## 2.1 bridge
 
-在NAT模式下，当一个VM操作系统启动时，它通常通过发送一个`DHCP Request`来获取一个`IP`地址。`VirtualBox`将会处理这个`DHCP Request`，然后返回一个`DHCP Response`给VM，这个`DHCP Response`包含了一个`IP`地址以及网关地址，其中网关地址用于路由`Outbound connections`
+编写一个脚本，内容如下，这里我取名为`bridge.sh`
 
-在这种模式下，每一个VM被分配到的都是一个相同的IP（`10.0.2.15`），因为每一个VM都认为他们处于一个隔离的网络中，也就是说不同的VM之间无法感知到对方的存在
+```sh
+cat > ~/bridge.sh << 'EOF'
+#!/bin/bash
 
-当VM通过网关（`10.0.2.2`）发送流量时，`VirtualBox`会重写数据包，使其看起来好像来自主机，而不是来自VM（在主机内运行）
+export namespace=liuye
 
-逻辑上，网络看起来像下面这样
+export ifname_outside_ns=veth1
+export ifname_inside_ns=veth2
+export ifname_external=""
 
-![fig1](/images/Linux-网络/fig1.png)
+export ip_bridge=""
+export ip_inside_ns=""
 
-总结一下，NAT包含如下特征
+export ip_net=""
+export ip_netmask=""
+export ip_broadcast=""
 
-1. VM处于一个私有的局域网
-1. `VirtualBox`扮演着`DHCP`服务器的角色
-1. `VirtualBox Engine`起到转换地址的作用
-1. 适用于当VM作为Client的场景，因此不是适用于VM作为Server的场景
-1. VM可以访问外界网络，而外界网络无法访问VM
+export bridge_name=demobridge
 
-## 2.2 Bridged Networking
+function setup(){
+	echo "1/14: 创建网桥 '${bridge_name}'"
+	ip link add ${bridge_name} type bridge
+	ip link set ${bridge_name} up
 
-当您希望您的VM成为完整的网络公民，即与网络上的主机相同时，使用`Bridged Networking`；在此模式下，虚拟NIC“桥接”到主机上的物理网卡
+	echo "2/14: 配置网桥 '${bridge_name}' 的IP '${ip_bridge}'"
+	ip addr add ${ip_bridge}/${ip_netmask} broadcast ${ip_broadcast} dev ${bridge_name}
+    
+	echo "3/14: 创建名为 '${namespace}' 的网络命名空间"
+	ip netns add ${namespace}
 
-这样做的结果是每个VM都可以像访问主机一样访问物理网络。它可以像访问主机一样访问网络上的任何服务，例如外部DHCP服务，名称查找服务和路由信息
+	echo "4/14: 创建一对 'veth' 类型的网卡设备，一个网卡为 '${ifname_outside_ns}'，另一个网卡为 '${ifname_inside_ns}'"
+	ip link add ${ifname_outside_ns} type veth peer name ${ifname_inside_ns}
 
-逻辑上，网络看起来像下面这样
+	echo "5/14: 开启网卡 '${ifname_outside_ns}'"
+	ip link set ${ifname_outside_ns} up
 
-![fig2](/images/Linux-网络/fig2.png)
+	echo "6/14: 将网卡 '${ifname_outside_ns}' 绑定到网桥 '${bridge_name}' 上"
+	ip link set ${ifname_outside_ns} master ${bridge_name}
+	
+	echo "7/14: 将网卡 '${ifname_inside_ns}' 加入网络命名空间 '${namespace}' 中"
+	ip link set ${ifname_inside_ns} netns ${namespace}
 
-总结一下，`Bridged Networking`网络包含如下特征
+	echo "8/14: 将在网络命名空间 '${namespace}' 中的网卡 '${ifname_inside_ns}' 的IP地址设置为 '${ip_inside_ns}'，它需要和网卡 '${ifname_outside_ns}' 的IP地址在同一个网段上"
+	ip netns exec ${namespace} ip link set ${ifname_inside_ns} up
+	ip netns exec ${namespace} ip addr add ${ip_inside_ns}/${ip_netmask} broadcast ${ip_broadcast} dev ${ifname_inside_ns}
 
-1. `VirtualBox`桥接到主机网络
-1. 会消耗IP地址
-1. 适用于Client VM或Server VM
+	echo "9/14: 将在网络命名空间 '${namespace}' 中，启用回环网卡lo"
+	ip netns exec ${namespace} ip link set lo up
 
-## 2.3 Internal Networking
+	echo "10/14: 将网络命名空间 '${namespace}' 中的默认路由设置为网桥 '${bridge_name}' 的IP地址 '${ip_bridge}'"
+	ip netns exec ${namespace} ip route add default via ${ip_bridge} dev ${ifname_inside_ns}
 
-`Internal Networking`网络（在本例中为“intnet”）是一个完全隔离的网络，因此非常“安静”。当您需要一个单独的，干净的网络时，这适用于测试，您可以使用VM创建复杂的内部网络，为内部网络提供自己的服务。（例如Active Directory，DHCP等）。__请注意，即使主机也不是内部网络的成员__，但即使主机未连接到网络（例如，在平面上），此模式也允许VM运行
+	echo "11/14: 配置SNAT，将从网络命名空间 '${namespace}' 中发出的网络包的源IP地址替换为网卡 '${ifname_external}' 的IP地址"
+	iptables -t nat -A POSTROUTING -s ${ip_net}/${ip_netmask} -o ${ifname_external} -j MASQUERADE
 
-逻辑上，网络看起来像下面这样
+	echo "12/14: 在默认的 'FORWARD' 策略为 'DROP' 时，显式地允许网桥 '${bridge_name}' 和网卡 '${ifname_external}' 之间的进行数据包转发"
+	iptables -t filter -A FORWARD -i ${ifname_external} -o ${bridge_name} -j ACCEPT
+	iptables -t filter -A FORWARD -i ${bridge_name} -o ${ifname_external} -j ACCEPT
+	
+	echo "13/14: 开启内核转发功能"
+	echo 1 > /proc/sys/net/ipv4/ip_forward
 
-![fig3](/images/Linux-网络/fig3.png)
+	echo "14/14: 为网络命名空间 '${namespace}' 配置DNS服务，用于域名解析"
+	mkdir -p /etc/netns/${namespace}
+	echo "nameserver 8.8.8.8" > /etc/netns/${namespace}/resolv.conf
+}
 
-请注意，在此模式下，`VirtualBox`不提供`DHCP`等“便利”服务，因此必须静态配置您的计算机，或者VM需要提供`DHCP`/名称服务
+function cleanup(){
+	echo "1/6: 删除 'FORWARD' 规则"
+	iptables -t filter -D FORWARD -i ${ifname_external} -o ${bridge_name} -j ACCEPT
+	iptables -t filter -D FORWARD -i ${bridge_name} -o ${ifname_external} -j ACCEPT
 
-总结一下，`Internal Networking`网络包含如下特征
+	echo "2/6: 删除 'NAT'"
+	iptables -t nat -D POSTROUTING -s ${ip_net}/${ip_netmask} -o ${ifname_external} -j MASQUERADE
 
-1. 不同VM之间处于同一个私有网络
-1. VM无法访问外部网络
-1. 宿主机断网时，VM也能正常工作（本来就不需要外网）
+	echo "3/6: 删除网卡设备 '${ifname_outside_ns}' 以及 '${ifname_inside_ns}'"
+	ip link delete ${ifname_outside_ns}
+	
+	echo "4/6: 删除网络命名空间 '${namespace}'"
+	ip netns delete ${namespace}
+	rm -rf /etc/netns/${namespace}
 
-## 2.4 Host-only Networking
+	echo "5/6: 关闭网桥 '${bridge_name}'"
+	ip link set ${bridge_name} down
 
-坐在这个“vboxnet0”网络上的所有VM都会看到对方，此外，主机也可以看到这些VM。但是，其他外部计算机无法在此网络上看到VM，因此名称为“Host-only”
+	echo "6/6: 删除网桥 '${bridge_name}'"
+	brctl delbr ${bridge_name}
+}
 
-逻辑上，网络看起来像下面这样
+export -f setup
+export -f cleanup
+EOF
+```
 
-![fig4](/images/Linux-网络/fig4.png)
+下面进行测试
 
-这看起来非常类似于`Internal Networking`，但主机现在位于“vboxnet0”并且可以提供`DHCP`服务
+```sh
+# 配置
+source bridge.sh
+export ifname_external="enp0s3" # 主机的外网网卡
+export ip_bridge=192.168.45.2 # 网桥的ip
+export ip_inside_ns=192.168.45.3 # 位于网络命名空间内的veth接口的ip
+export ip_net=192.168.45.0 # 网桥以及veth接口的网络
+export ip_netmask=255.255.255.0 # 子网掩码
+export ip_broadcast=192.168.45.255 # 广播ip
+setup
+#-------------------------↓↓↓↓↓↓-------------------------
+1/14: 创建网桥 'demobridge'
+2/14: 配置网桥 'demobridge' 的IP '192.168.45.2'
+3/14: 创建名为 'liuye' 的网络命名空间
+4/14: 创建一对 'veth' 类型的网卡设备，一个网卡为 'veth1'，另一个网卡为 'veth2'
+5/14: 开启网卡 'veth1'
+6/14: 将网卡 'veth1' 绑定到网桥 'demobridge' 上
+7/14: 将网卡 'veth2' 加入网络命名空间 'liuye' 中
+8/14: 将在网络命名空间 'liuye' 中的网卡 'veth2' 的IP地址设置为 '192.168.45.3'，它需要和网卡 'veth1' 的IP地址在同一个网段上
+9/14: 将在网络命名空间 'liuye' 中，启用回环网卡lo
+10/14: 将网络命名空间 'liuye' 中的默认路由设置为网桥 'demobridge' 的IP地址 '192.168.45.2'
+11/14: 配置SNAT，将从网络命名空间 'liuye' 中发出的网络包的源IP地址替换为网卡 'enp0s3' 的IP地址
+12/14: 在默认的 'FORWARD' 策略为 'DROP' 时，显式地允许网桥 'demobridge' 和网卡 'enp0s3' 之间的进行数据包转发
+13/14: 开启内核转发功能
+14/14: 为网络命名空间 'liuye' 配置DNS服务，用于域名解析
+#-------------------------↑↑↑↑↑↑-------------------------
 
-总结一下，`Host-only Networking`网络包含如下特征
+# 测试网络连通性（如果不通的话，可能是被防火墙拦截了）
+ip netns exec liuye ping -c 3 www.aliyun.com
+#-------------------------↓↓↓↓↓↓-------------------------
+PING xjp-adns.aliyun.com.gds.alibabadns.com (47.88.251.173) 56(84) bytes of data.
+64 bytes from 47.88.251.173 (47.88.251.173): icmp_seq=1 ttl=32 time=74.8 ms
+64 bytes from 47.88.251.173 (47.88.251.173): icmp_seq=2 ttl=32 time=73.1 ms
+64 bytes from 47.88.251.173 (47.88.251.173): icmp_seq=3 ttl=32 time=74.3 ms
 
-1. `VirtualBox`为VM以及宿主机创建了一个私有网络
-1. `VirtualBox`提供DHCP服务
-1. VM无法看到外部网络
-1. 宿主机断网时，VM也能正常工作（本来就不需要外网）
+--- xjp-adns.aliyun.com.gds.alibabadns.com ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2025ms
+rtt min/avg/max/mdev = 73.192/74.111/74.808/0.747 ms
+#-------------------------↑↑↑↑↑↑-------------------------
 
-## 2.5 Port-Forwarding with NAT Networking
+# 清理
+cleanup
+#-------------------------↓↓↓↓↓↓-------------------------
+1/6: 删除 'FORWARD' 规则
+2/6: 删除 'NAT'
+3/6: 删除网卡设备 'veth1' 以及 'veth2'
+4/6: 删除网络命名空间 'liuye'
+5/6: 关闭网桥 'demobridge'
+6/6: 删除网桥 'demobridge'
+#-------------------------↑↑↑↑↑↑-------------------------
+```
 
-如果您在笔记本电脑上购买移动演示或开发环境并且您有一台或多台VM需要其他机器连接，该怎么办？而且你不断地跳到不同的VM网络上。在这样的场景下
+## 2.2 bonded interface
 
-1. NAT：无法满足，因为外部机器无法连接到VM上
-1. Bridged：可以满足，但是会消耗IP资源，且VM网络环境随着外部网络环境的改变而改变
-1. Internal：无法满足，因为外部机器无法连接到VM上
-1. Host-only：无法满足，因为外部机器无法连接到VM上
+## 2.3 team device
 
-当外部机器连接到宿主机的“host:port”时，`VirtualBox`会将连接`forward`到VM的“guest:port”上
+## 2.4 vlan（virtual lan）
 
-逻辑上，网络看起来像下面这样（forward并没有在这张图体现出来，所以这幅图与NAT很像）
+## 2.5 vxlan（virtual extensible lan）
 
-![fig5](/images/Linux-网络/fig5.png)
+## 2.6 macvlan
 
-## 2.6 参考
+__macvlan可以在一个接口上创建具有不同mac地址的多个接口__
 
-* [Oracle VM VirtualBox: Networking options and how-to manage them](https://blogs.oracle.com/scoter/networking-in-virtualbox-v2)
-* [Chapter 6. Virtual networking](https://www.virtualbox.org/manual/ch06.html#network_bridged)
-* [VMware虚拟机三种网络模式详解](https://www.linuxidc.com/Linux/2016-09/135521.htm)
+__macvlan包含多种模式__
+
+1. `private`：过滤掉所有来自其他`macvlan`接口的报文，因此不同`macvlan`接口之间无法互相通信
+	* ![macvlan_private](/images/Linux-网络/macvlan_private.png)
+1. `vepa（Virtual Ethernet Port Aggregator）`：需要主接口连接的交换机支持 `VEPA/802.1Qbg`特性。所有发送出去的报文都会经过交换机，交换机作为再发送到对应的目标地址（即使目标地址就是主机上的其他`macvlan`接口），也就是`hairpin mode`模式，这个模式用在交换机上需要做过滤、统计等功能的场景
+1. `bridge`：通过虚拟的交换机将主接口的所有`macvlan`接口连接在一起，这样的话，不同`macvlan`接口之间能够直接通信，不需要将报文发送到主机之外。这个模式下，主机外是看不到主机上`macvlan interface`之间通信的报文的
+1. `passthru`
+	* ![macvlan_passthru](/images/Linux-网络/macvlan_passthru.png)
+1. `source`
+
+__准备一个脚本，用于验证各个模式__
+
+```sh
+cat > ~/macvlan.sh << 'EOF'
+#!/bin/bash
+
+export macvlan_mode=""
+
+export namespace1=liuye1
+export namespace2=liuye2
+
+export ifname_external=""
+export ifname_macvlan1=macvlan1
+export ifname_macvlan2=macvlan2
+
+export ip_host=""
+export default_gateway=""
+export ip_macvlan1=""
+export ip_macvlan2=""
+export ip_netmask=""
+
+function setup() {
+	echo "1/5: 创建macvlan设备 '${ifname_macvlan1}' 和 '${ifname_macvlan2}'，类型为 '${macvlan_mode}'"
+	ip link add ${ifname_macvlan1} link ${ifname_external} type macvlan mode ${macvlan_mode}
+	ip link add ${ifname_macvlan2} link ${ifname_external} type macvlan mode ${macvlan_mode}
+
+	echo "2/5: 创建网络命名空间 '${namespace1}' 和 '${namespace2}'"
+	ip netns add ${namespace1}
+	ip netns add ${namespace2}
+
+	echo "3/5: 将 '${ifname_macvlan1}' 放入网络命名空间 '${namespace1}'；'${ifname_macvlan2}' 放入网络命名空间 '${namespace2}'"
+	ip link set ${ifname_macvlan1} netns ${namespace1}
+	ip link set ${ifname_macvlan2} netns ${namespace2}
+
+	echo "4/5: 进入网络命名空间 '${namespace1}'，将 '${ifname_macvlan1}' 的ip设置为 '${ip_macvlan1}'，同时配置默认路由 '${default_gateway}'"
+	ip netns exec ${namespace1} ip link set ${ifname_macvlan1} up
+	ip netns exec ${namespace1} ip addr add ${ip_macvlan1}/${ip_netmask} dev ${ifname_macvlan1}
+	if [ -z "${default_gateway}" ]; then
+		ip netns exec ${namespace1} ip route add default dev ${ifname_macvlan1}
+	else
+		ip netns exec ${namespace1} ip route add default via ${default_gateway} dev ${ifname_macvlan1}
+	fi
+
+	echo "5/5: 进入网络命名空间 '${namespace2}'，将 '${ifname_macvlan2}' 的ip设置为 '${ip_macvlan2}'，同时配置默认路由 '${default_gateway}'"
+	ip netns exec ${namespace2} ip link set ${ifname_macvlan2} up
+	ip netns exec ${namespace2} ip addr add ${ip_macvlan2}/${ip_netmask} dev ${ifname_macvlan2}
+	if [ -z "${default_gateway}" ]; then
+		ip netns exec ${namespace2} ip route add default dev ${ifname_macvlan2}
+	else
+		ip netns exec ${namespace2} ip route add default via ${default_gateway} dev ${ifname_macvlan2}
+	fi
+}
+
+function cleanup() {
+	echo "1/2: 删除macvlan设备 '${ifname_macvlan1}' 和 '${ifname_macvlan2}'"
+	ip netns exec ${namespace1} ip link delete ${ifname_macvlan1}
+	ip netns exec ${namespace2} ip link delete ${ifname_macvlan2}
+
+	echo "2/2: 删除网络命名空间 '${namespace1}' 和 '${namespace2}'"
+	ip netns delete ${namespace1}
+	ip netns delete ${namespace2}
+}
+
+export -f setup
+export -f cleanup
+EOF
+```
+
+### 2.6.1 bridge mode
+
+![macvlan_bridge](/images/Linux-网络/macvlan_bridge.png)
+
+__验证1：macvlan接口与宿主机同一个网段__
+
+1. macvlan接口之间是否连通
+1. macvlan接口和主机是否连通
+1. macvlan接口是否能通外网
+
+```sh
+# 配置
+source macvlan.sh
+export ifname_external="enp0s3" # 主机的外网网卡
+export macvlan_mode="bridge"
+export ip_host="10.0.2.15" # 主机ip
+export default_gateway="10.0.2.2" # 默认路由网关ip
+export ip_macvlan1="10.0.2.16" # macvlan接口1的ip
+export ip_macvlan2="10.0.2.17" # macvlan接口2的ip
+export ip_netmask="255.255.255.0" # macvlan接口的子网掩码
+setup
+#-------------------------↓↓↓↓↓↓-------------------------
+1/5: 创建macvlan设备 'macvlan1' 和 'macvlan2'，类型为 'bridge'
+2/5: 创建网络命名空间 'liuye1' 和 'liuye2'
+3/5: 将 'macvlan1' 放入网络命名空间 'liuye1'；'macvlan2' 放入网络命名空间 'liuye2'
+4/5: 进入网络命名空间 'liuye1'，将 'macvlan1' 的ip设置为 '10.0.2.16'，同时配置默认路由 '10.0.2.2'
+5/5: 进入网络命名空间 'liuye2'，将 'macvlan2' 的ip设置为 '10.0.2.17'，同时配置默认路由 '10.0.2.2'
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在macvlan1所在的网络命名空间中ping macvlan2的ip
+ip netns exec ${namespace1} ping ${ip_macvlan2} -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 10.0.2.17 (10.0.2.17) 56(84) bytes of data.
+64 bytes from 10.0.2.17: icmp_seq=1 ttl=64 time=0.104 ms
+64 bytes from 10.0.2.17: icmp_seq=2 ttl=64 time=0.071 ms
+64 bytes from 10.0.2.17: icmp_seq=3 ttl=64 time=0.105 ms
+
+--- 10.0.2.17 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2017ms
+rtt min/avg/max/mdev = 0.071/0.093/0.105/0.017 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在macvlan2所在的网络命名空间中ping macvlan1的ip
+ip netns exec ${namespace2} ping ${ip_macvlan1} -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 10.0.2.16 (10.0.2.16) 56(84) bytes of data.
+64 bytes from 10.0.2.16: icmp_seq=1 ttl=64 time=0.047 ms
+64 bytes from 10.0.2.16: icmp_seq=2 ttl=64 time=0.069 ms
+64 bytes from 10.0.2.16: icmp_seq=3 ttl=64 time=0.174 ms
+
+--- 10.0.2.16 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2053ms
+rtt min/avg/max/mdev = 0.047/0.096/0.174/0.056 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在macvlan1所在的网络命名空间中ping 主机的ip（同一个网段）
+ip netns exec ${namespace1} ping ${ip_host} -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 10.0.2.15 (10.0.2.15) 56(84) bytes of data.
+
+--- 10.0.2.15 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2052ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在macvlan1所在的网络命名空间中ping 外网ip
+ip netns exec ${namespace1} ping 223.5.5.5 -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=117 time=17.9 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=117 time=1.77 ms
+64 bytes from 223.5.5.5: icmp_seq=3 ttl=117 time=1.52 ms
+
+--- 223.5.5.5 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2002ms
+rtt min/avg/max/mdev = 1.527/7.075/17.927/7.674 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 清理
+cleanup
+#-------------------------↓↓↓↓↓↓-------------------------
+1/2: 删除macvlan设备 'macvlan1' 和 'macvlan2'
+2/2: 删除网络命名空间 'liuye1' 和 'liuye2'
+#-------------------------↑↑↑↑↑↑-------------------------
+```
+
+__结论1：两个macvlan子接口可以相互ping通，但是ping不通master接口。在ip正确配置的情况下，能够正常通外网__
+
+__验证2：macvlan接口与宿主机不同网段__
+
+1. macvlan接口之间是否连通
+
+```sh
+# 配置
+source macvlan.sh
+export ifname_external="enp0s3" # 主机的外网网卡
+export macvlan_mode="bridge"
+export ip_host="10.0.2.15" # 主机ip
+export default_gateway="" # 默认路由网关ip
+export ip_macvlan1="192.168.100.1" # macvlan接口1的ip
+export ip_macvlan2="192.168.200.1" # macvlan接口2的ip
+export ip_netmask="255.255.255.0" # macvlan接口的子网掩码
+setup
+#-------------------------↓↓↓↓↓↓-------------------------
+1/5: 创建macvlan设备 'macvlan1' 和 'macvlan2'，类型为 'bridge'
+2/5: 创建网络命名空间 'liuye1' 和 'liuye2'
+3/5: 将 'macvlan1' 放入网络命名空间 'liuye1'；'macvlan2' 放入网络命名空间 'liuye2'
+4/5: 进入网络命名空间 'liuye1'，将 'macvlan1' 的ip设置为 '192.168.100.1'，同时配置默认路由 ''
+5/5: 进入网络命名空间 'liuye2'，将 'macvlan2' 的ip设置为 '192.168.200.1'，同时配置默认路由 ''
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在macvlan1所在的网络命名空间中ping macvlan2的ip
+ip netns exec ${namespace1} ping ${ip_macvlan2} -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 192.168.200.1 (192.168.200.1) 56(84) bytes of data.
+64 bytes from 192.168.200.1: icmp_seq=1 ttl=64 time=0.243 ms
+64 bytes from 192.168.200.1: icmp_seq=2 ttl=64 time=0.041 ms
+64 bytes from 192.168.200.1: icmp_seq=3 ttl=64 time=0.045 ms
+
+--- 192.168.200.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2056ms
+rtt min/avg/max/mdev = 0.041/0.109/0.243/0.095 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在macvlan2所在的网络命名空间中ping macvlan1的ip
+ip netns exec ${namespace2} ping ${ip_macvlan1} -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 192.168.100.1 (192.168.100.1) 56(84) bytes of data.
+64 bytes from 192.168.100.1: icmp_seq=1 ttl=64 time=0.042 ms
+64 bytes from 192.168.100.1: icmp_seq=2 ttl=64 time=0.126 ms
+64 bytes from 192.168.100.1: icmp_seq=3 ttl=64 time=0.052 ms
+
+--- 192.168.100.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2280ms
+rtt min/avg/max/mdev = 0.042/0.073/0.126/0.038 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 清理
+cleanup
+#-------------------------↓↓↓↓↓↓-------------------------
+1/2: 删除macvlan设备 'macvlan1' 和 'macvlan2'
+2/2: 删除网络命名空间 'liuye1' 和 'liuye2'
+#-------------------------↑↑↑↑↑↑-------------------------
+```
+
+__结论2：两个macvlan接口，即便配置不同网段的ip，也能相互ping通__
+
+### 2.6.2 vepa mode
+
+![macvlan_vepa](/images/Linux-网络/macvlan_vepa.png)
+
+__验证1：macvlan接口与宿主机同一个网段__
+
+1. macvlan接口之间是否连通
+1. macvlan接口和主机是否连通
+1. macvlan接口是否能通外网
+
+```sh
+# 配置
+source macvlan.sh
+export ifname_external="enp0s3" # 主机的外网网卡
+export macvlan_mode="vepa"
+export ip_host="10.0.2.15" # 主机ip
+export default_gateway="10.0.2.2" # 默认路由网关ip
+export ip_macvlan1="10.0.2.16" # macvlan接口1的ip
+export ip_macvlan2="10.0.2.17" # macvlan接口2的ip
+export ip_netmask="255.255.255.0" # macvlan接口的子网掩码
+setup
+#-------------------------↓↓↓↓↓↓-------------------------
+1/5: 创建macvlan设备 'macvlan1' 和 'macvlan2'，类型为 'vepa'
+2/5: 创建网络命名空间 'liuye1' 和 'liuye2'
+3/5: 将 'macvlan1' 放入网络命名空间 'liuye1'；'macvlan2' 放入网络命名空间 'liuye2'
+4/5: 进入网络命名空间 'liuye1'，将 'macvlan1' 的ip设置为 '10.0.2.16'，同时配置默认路由 '10.0.2.2'
+5/5: 进入网络命名空间 'liuye2'，将 'macvlan2' 的ip设置为 '10.0.2.17'，同时配置默认路由 '10.0.2.2'
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在macvlan1所在的网络命名空间中ping macvlan2的ip
+ip netns exec ${namespace1} ping ${ip_macvlan2} -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 10.0.2.17 (10.0.2.17) 56(84) bytes of data.
+
+--- 10.0.2.17 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2004ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在macvlan2所在的网络命名空间中ping macvlan1的ip
+ip netns exec ${namespace2} ping ${ip_macvlan1} -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 10.0.2.16 (10.0.2.16) 56(84) bytes of data.
+
+--- 10.0.2.16 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2005ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在macvlan1所在的网络命名空间中ping 主机的ip（同一个网段）
+ip netns exec ${namespace1} ping ${ip_host} -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 10.0.2.15 (10.0.2.15) 56(84) bytes of data.
+
+--- 10.0.2.15 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2010ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在macvlan1所在的网络命名空间中ping 外网ip
+ip netns exec ${namespace1} ping 223.5.5.5 -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=117 time=16.8 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=117 time=8.12 ms
+64 bytes from 223.5.5.5: icmp_seq=3 ttl=117 time=4.62 ms
+
+--- 223.5.5.5 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2001ms
+rtt min/avg/max/mdev = 4.627/9.862/16.839/5.136 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 清理
+cleanup
+#-------------------------↓↓↓↓↓↓-------------------------
+1/2: 删除macvlan设备 'macvlan1' 和 'macvlan2'
+2/2: 删除网络命名空间 'liuye1' 和 'liuye2'
+#-------------------------↑↑↑↑↑↑-------------------------
+```
+
+__结论1：macvlan接口之间无法ping通（要求switch支持`802.1Qbg/VPEA`，我的测试环境是virtualBox虚拟机，估计不支持），macvlan接口与宿主机无法ping通。ip配置正确的情况下，可以通外网__
+
+__验证2：macvlan接口与宿主机不同网段__
+
+1. macvlan接口之间是否连通
+
+```sh
+# 配置
+source macvlan.sh
+export ifname_external="enp0s3" # 主机的外网网卡
+export macvlan_mode="vepa"
+export ip_host="10.0.2.15" # 主机ip
+export default_gateway="" # 默认路由网关ip
+export ip_macvlan1="192.168.100.1" # macvlan接口1的ip
+export ip_macvlan2="192.168.200.1" # macvlan接口2的ip
+export ip_netmask="255.255.255.0" # macvlan接口的子网掩码
+setup
+#-------------------------↓↓↓↓↓↓-------------------------
+1/5: 创建macvlan设备 'macvlan1' 和 'macvlan2'，类型为 'vepa'
+2/5: 创建网络命名空间 'liuye1' 和 'liuye2'
+3/5: 将 'macvlan1' 放入网络命名空间 'liuye1'；'macvlan2' 放入网络命名空间 'liuye2'
+4/5: 进入网络命名空间 'liuye1'，将 'macvlan1' 的ip设置为 '192.168.100.1'，同时配置默认路由 ''
+5/5: 进入网络命名空间 'liuye2'，将 'macvlan2' 的ip设置为 '192.168.200.1'，同时配置默认路由 ''
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在macvlan1所在的网络命名空间中ping macvlan2的ip
+ip netns exec ${namespace1} ping ${ip_macvlan2} -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 192.168.200.1 (192.168.200.1) 56(84) bytes of data.
+
+--- 192.168.200.1 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2031ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在macvlan2所在的网络命名空间中ping macvlan1的ip
+ip netns exec ${namespace2} ping ${ip_macvlan1} -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 192.168.100.1 (192.168.100.1) 56(84) bytes of data.
+
+--- 192.168.100.1 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2037ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 清理
+cleanup
+#-------------------------↓↓↓↓↓↓-------------------------
+1/2: 删除macvlan设备 'macvlan1' 和 'macvlan2'
+2/2: 删除网络命名空间 'liuye1' 和 'liuye2'
+#-------------------------↑↑↑↑↑↑-------------------------
+```
+
+__结论1：macvlan接口之间无法ping通（要求switch支持`802.1Qbg/VPEA`，我的测试环境是virtualBox虚拟机，估计不支持）__
+
+## 2.7 ipvlan
+
+__内核版本3.19才支持这一特性__
+
+ipvlan和macvlan比较相似，区别就是ipvlan虚拟出来的接口都具有相同的mac地址。对于ipvlan，只要父接口相同，即使子接口不在同一个网络，也可以互相ping通对方，因为ipvlan会在中间做报文的转发工作
+
+内核默认是没有启用ipvlan模块的，需要设置内核参数`CONFIG_IPVLAN=y`并重新编译内核，如何编译请参考{% post_link Linux-Kernel %}，执行`make menuconfig`时开启该参数，操作如下
+
+1. `Networking support`
+	* `Networking options`
+		* `L3 Master device support`：选中（对应配置项`CONFIG_NET_L3_MASTER_DEV`）
+1. `Device Drivers`
+	* `Network device support`
+		* `IP-VLAN support`：选中（对应配置项`CONFIG_IPVLAN`）
+			* `IP-VLAN based tap driver`：选中（对应配置项`CONFIG_IPVTAP`）
+
+__ipvlan包含如下三种模式__
+
+1. `l2`：该模式下，父接口有点像交换机或者网桥，工作在2层
+1. `l3`：该模式下，父接口有点像路由器的功能，工作在3层
+1. `l3s`
+
+__准备一个脚本，用于验证各个模式__
+
+```sh
+cat > ~/ipvlan.sh << 'EOF'
+#!/bin/bash
+
+export ipvlan_mode=""
+
+export namespace1=liuye1
+export namespace2=liuye2
+
+export ifname_external=""
+export ifname_ipvlan1=ipvlan1
+export ifname_ipvlan2=ipvlan2
+
+export ip_host=""
+export default_gateway=""
+export ip_ipvlan1=""
+export ip_ipvlan2=""
+export ip_netmask=""
+
+function setup() {
+	echo "1/5: 创建ipvlan设备 '${ifname_ipvlan1}' 和 '${ifname_ipvlan2}'，类型为 '${ipvlan_mode}'"
+	ip link add ${ifname_ipvlan1} link ${ifname_external} type ipvlan mode ${ipvlan_mode}
+	ip link add ${ifname_ipvlan2} link ${ifname_external} type ipvlan mode ${ipvlan_mode}
+
+	echo "2/5: 创建网络命名空间 '${namespace1}' 和 '${namespace2}'"
+	ip netns add ${namespace1}
+	ip netns add ${namespace2}
+
+	echo "3/5: 将 '${ifname_ipvlan1}' 放入网络命名空间 '${namespace1}'；'${ifname_ipvlan2}' 放入网络命名空间 '${namespace2}'"
+	ip link set ${ifname_ipvlan1} netns ${namespace1}
+	ip link set ${ifname_ipvlan2} netns ${namespace2}
+
+	echo "4/5: 进入网络命名空间 '${namespace1}'，将 '${ifname_ipvlan1}' 的ip设置为 '${ip_ipvlan1}'，同时配置默认路由 '${default_gateway}'"
+	ip netns exec ${namespace1} ip link set ${ifname_ipvlan1} up
+	ip netns exec ${namespace1} ip addr add ${ip_ipvlan1}/${ip_netmask} dev ${ifname_ipvlan1}
+	if [ -z "${default_gateway}" ]; then
+		ip netns exec ${namespace1} ip route add default dev ${ifname_ipvlan1}
+	else
+		ip netns exec ${namespace1} ip route add default via ${default_gateway} dev ${ifname_ipvlan1}
+	fi
+
+	echo "5/5: 进入网络命名空间 '${namespace2}'，将 '${ifname_ipvlan2}' 的ip设置为 '${ip_ipvlan2}'，同时配置默认路由 '${default_gateway}'"
+	ip netns exec ${namespace2} ip link set ${ifname_ipvlan2} up
+	ip netns exec ${namespace2} ip addr add ${ip_ipvlan2}/${ip_netmask} dev ${ifname_ipvlan2}
+	if [ -z "${default_gateway}" ]; then
+		ip netns exec ${namespace2} ip route add default dev ${ifname_ipvlan2}
+	else
+		ip netns exec ${namespace2} ip route add default via ${default_gateway} dev ${ifname_ipvlan2}
+	fi
+}
+
+function cleanup() {
+	echo "1/2: 删除ipvlan设备 '${ifname_ipvlan1}' 和 '${ifname_ipvlan2}'"
+	ip netns exec ${namespace1} ip link delete ${ifname_ipvlan1}
+	ip netns exec ${namespace2} ip link delete ${ifname_ipvlan2}
+
+	echo "2/2: 删除网络命名空间 '${namespace1}' 和 '${namespace2}'"
+	ip netns delete ${namespace1}
+	ip netns delete ${namespace2}
+}
+
+export -f setup
+export -f cleanup
+EOF
+```
+
+### 2.7.1 l2 mode
+
+![ipvlan_l2](/images/Linux-网络/ipvlan_l2.png)
+
+__验证1：ipvlan接口与宿主机同一个网段__
+
+1. ipvlan接口之间是否连通
+1. ipvlan接口和主机是否连通
+1. ipvlan接口是否能通外网
+
+```sh
+source ipvlan.sh
+export ifname_external="enp0s3" # 主机的外网网卡
+export ipvlan_mode="l2"
+export ip_host="10.0.2.15" # 主机ip
+export default_gateway="10.0.2.2" # 默认路由网关ip
+export ip_ipvlan1="10.0.2.16" # ipvlan接口1的ip
+export ip_ipvlan2="10.0.2.17" # ipvlan接口2的ip
+export ip_netmask="255.255.255.0" # ipvlan接口的子网掩码
+setup
+#-------------------------↓↓↓↓↓↓-------------------------
+1/5: 创建ipvlan设备 'ipvlan1' 和 'ipvlan2'，类型为 'l2'
+2/5: 创建网络命名空间 'liuye1' 和 'liuye2'
+3/5: 将 'ipvlan1' 放入网络命名空间 'liuye1'；'ipvlan2' 放入网络命名空间 'liuye2'
+4/5: 进入网络命名空间 'liuye1'，将 'ipvlan1' 的ip设置为 '10.0.2.16'，同时配置默认路由 '10.0.2.2'
+5/5: 进入网络命名空间 'liuye2'，将 'ipvlan2' 的ip设置为 '10.0.2.17'，同时配置默认路由 '10.0.2.2'
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在ipvlan1所在的网络命名空间中ping ipvlan2的ip
+ip netns exec ${namespace1} ping ${ip_ipvlan2} -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 10.0.2.17 (10.0.2.17) 56(84) bytes of data.
+64 bytes from 10.0.2.17: icmp_seq=1 ttl=64 time=1.01 ms
+64 bytes from 10.0.2.17: icmp_seq=2 ttl=64 time=0.422 ms
+64 bytes from 10.0.2.17: icmp_seq=3 ttl=64 time=0.050 ms
+
+--- 10.0.2.17 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2057ms
+rtt min/avg/max/mdev = 0.050/0.494/1.012/0.396 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在ipvlan2所在的网络命名空间中ping ipvlan1的ip
+ip netns exec ${namespace2} ping ${ip_ipvlan1} -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 10.0.2.16 (10.0.2.16) 56(84) bytes of data.
+64 bytes from 10.0.2.16: icmp_seq=1 ttl=64 time=0.033 ms
+64 bytes from 10.0.2.16: icmp_seq=2 ttl=64 time=0.050 ms
+64 bytes from 10.0.2.16: icmp_seq=3 ttl=64 time=0.043 ms
+
+--- 10.0.2.16 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2091ms
+rtt min/avg/max/mdev = 0.033/0.042/0.050/0.007 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在ipvlan1所在的网络命名空间中ping 主机的ip（同一个网段）
+ip netns exec ${namespace1} ping ${ip_host} -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 10.0.2.15 (10.0.2.15) 56(84) bytes of data.
+
+--- 10.0.2.15 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2010ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在ipvlan1所在的网络命名空间中ping 外网ip
+ip netns exec ${namespace1} ping 223.5.5.5 -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=63 time=43.6 ms
+64 bytes from 223.5.5.5: icmp_seq=3 ttl=63 time=94.1 ms
+
+--- 223.5.5.5 ping statistics ---
+3 packets transmitted, 2 received, 33% packet loss, time 2018ms
+rtt min/avg/max/mdev = 43.677/68.897/94.118/25.221 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 清理
+cleanup
+#-------------------------↓↓↓↓↓↓-------------------------
+1/2: 删除ipvlan设备 'ipvlan1' 和 'ipvlan2'
+2/2: 删除网络命名空间 'liuye1' 和 'liuye2'
+#-------------------------↑↑↑↑↑↑-------------------------
+```
+
+__结论1：ipvlan接口之间可以相互ping通，但是无法ping通master接口。ip配置正确的情况下，可以通外网__
+
+__验证2：ipvlan接口与宿主机不同网段__
+
+1. ipvlan接口之间是否连通
+
+```sh
+source ipvlan.sh
+export ifname_external="enp0s3" # 主机的外网网卡
+export ipvlan_mode="l2"
+export ip_host="10.0.2.15" # 主机ip
+export default_gateway="" # 默认路由网关ip
+export ip_ipvlan1="192.168.100.1" # ipvlan接口1的ip
+export ip_ipvlan2="192.168.100.2" # ipvlan接口2的ip
+export ip_netmask="255.255.255.0" # ipvlan接口的子网掩码
+setup
+#-------------------------↓↓↓↓↓↓-------------------------
+1/5: 创建ipvlan设备 'ipvlan1' 和 'ipvlan2'，类型为 'l2'
+2/5: 创建网络命名空间 'liuye1' 和 'liuye2'
+3/5: 将 'ipvlan1' 放入网络命名空间 'liuye1'；'ipvlan2' 放入网络命名空间 'liuye2'
+4/5: 进入网络命名空间 'liuye1'，将 'ipvlan1' 的ip设置为 '192.168.100.1'，同时配置默认路由 ''
+5/5: 进入网络命名空间 'liuye2'，将 'ipvlan2' 的ip设置为 '192.168.100.2'，同时配置默认路由 ''
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在ipvlan1所在的网络命名空间中ping ipvlan2的ip
+ip netns exec ${namespace1} ping ${ip_ipvlan2} -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 192.168.100.2 (192.168.100.2) 56(84) bytes of data.
+64 bytes from 192.168.100.2: icmp_seq=1 ttl=64 time=1.34 ms
+64 bytes from 192.168.100.2: icmp_seq=2 ttl=64 time=0.039 ms
+64 bytes from 192.168.100.2: icmp_seq=3 ttl=64 time=0.038 ms
+
+--- 192.168.100.2 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2056ms
+rtt min/avg/max/mdev = 0.038/0.475/1.349/0.618 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在ipvlan2所在的网络命名空间中ping ipvlan1的ip
+ip netns exec ${namespace2} ping ${ip_ipvlan1} -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 192.168.100.1 (192.168.100.1) 56(84) bytes of data.
+64 bytes from 192.168.100.1: icmp_seq=1 ttl=64 time=0.028 ms
+64 bytes from 192.168.100.1: icmp_seq=2 ttl=64 time=0.180 ms
+64 bytes from 192.168.100.1: icmp_seq=3 ttl=64 time=0.043 ms
+
+--- 192.168.100.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2325ms
+rtt min/avg/max/mdev = 0.028/0.083/0.180/0.069 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 清理
+cleanup
+#-------------------------↓↓↓↓↓↓-------------------------
+1/2: 删除ipvlan设备 'ipvlan1' 和 'ipvlan2'
+2/2: 删除网络命名空间 'liuye1' 和 'liuye2'
+#-------------------------↑↑↑↑↑↑-------------------------
+```
+
+__结论2：ipvlan接口之间可以相互ping通，即便网段不同__
+
+### 2.7.2 l3 mode
+
+![ipvlan_l3](/images/Linux-网络/ipvlan_l3.png)
+
+__验证1：ipvlan接口与宿主机同一个网段__
+
+1. ipvlan接口之间是否连通
+1. ipvlan接口和主机是否连通
+1. ipvlan接口是否能通外网
+
+```sh
+source ipvlan.sh
+export ifname_external="enp0s3" # 主机的外网网卡
+export ipvlan_mode="l3"
+export ip_host="10.0.2.15" # 主机ip
+export default_gateway="10.0.2.2" # 默认路由网关ip
+export ip_ipvlan1="10.0.2.16" # ipvlan接口1的ip
+export ip_ipvlan2="10.0.2.17" # ipvlan接口2的ip
+export ip_netmask="255.255.255.0" # ipvlan接口的子网掩码
+setup
+#-------------------------↓↓↓↓↓↓-------------------------
+1/5: 创建ipvlan设备 'ipvlan1' 和 'ipvlan2'，类型为 'l3'
+2/5: 创建网络命名空间 'liuye1' 和 'liuye2'
+3/5: 将 'ipvlan1' 放入网络命名空间 'liuye1'；'ipvlan2' 放入网络命名空间 'liuye2'
+4/5: 进入网络命名空间 'liuye1'，将 'ipvlan1' 的ip设置为 '10.0.2.16'，同时配置默认路由 '10.0.2.2'
+5/5: 进入网络命名空间 'liuye2'，将 'ipvlan2' 的ip设置为 '10.0.2.17'，同时配置默认路由 '10.0.2.2'
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在ipvlan1所在的网络命名空间中ping ipvlan2的ip
+ip netns exec ${namespace1} ping ${ip_ipvlan2} -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 10.0.2.17 (10.0.2.17) 56(84) bytes of data.
+64 bytes from 10.0.2.17: icmp_seq=1 ttl=64 time=0.037 ms
+64 bytes from 10.0.2.17: icmp_seq=2 ttl=64 time=0.039 ms
+64 bytes from 10.0.2.17: icmp_seq=3 ttl=64 time=0.055 ms
+
+--- 10.0.2.17 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2044ms
+rtt min/avg/max/mdev = 0.037/0.043/0.055/0.011 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在ipvlan2所在的网络命名空间中ping ipvlan1的ip
+ip netns exec ${namespace2} ping ${ip_ipvlan1} -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 10.0.2.16 (10.0.2.16) 56(84) bytes of data.
+64 bytes from 10.0.2.16: icmp_seq=1 ttl=64 time=0.037 ms
+64 bytes from 10.0.2.16: icmp_seq=2 ttl=64 time=0.043 ms
+64 bytes from 10.0.2.16: icmp_seq=3 ttl=64 time=0.206 ms
+
+--- 10.0.2.16 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2058ms
+rtt min/avg/max/mdev = 0.037/0.095/0.206/0.078 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在ipvlan1所在的网络命名空间中ping 主机的ip（同一个网段）
+ip netns exec ${namespace1} ping ${ip_host} -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 10.0.2.15 (10.0.2.15) 56(84) bytes of data.
+
+--- 10.0.2.15 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2077ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在ipvlan1所在的网络命名空间中ping 外网ip
+ip netns exec ${namespace1} ping 223.5.5.5 -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=63 time=5.50 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=63 time=7.81 ms
+64 bytes from 223.5.5.5: icmp_seq=3 ttl=63 time=8.21 ms
+
+--- 223.5.5.5 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2005ms
+rtt min/avg/max/mdev = 5.503/7.177/8.215/1.195 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 清理
+cleanup
+#-------------------------↓↓↓↓↓↓-------------------------
+1/2: 删除ipvlan设备 'ipvlan1' 和 'ipvlan2'
+2/2: 删除网络命名空间 'liuye1' 和 'liuye2'
+#-------------------------↑↑↑↑↑↑-------------------------
+```
+
+__结论1：ipvlan接口之间可以相互ping通，但是无法ping通master接口。ip配置正确的情况下，可以通外网__
+
+__验证2：ipvlan接口与宿主机不同网段__
+
+1. ipvlan接口之间是否连通
+
+```sh
+source ipvlan.sh
+export ifname_external="enp0s3" # 主机的外网网卡
+export ipvlan_mode="l3"
+export ip_host="10.0.2.15" # 主机ip
+export default_gateway="" # 默认路由网关ip
+export ip_ipvlan1="192.168.100.1" # ipvlan接口1的ip
+export ip_ipvlan2="192.168.200.1" # ipvlan接口2的ip
+export ip_netmask="255.255.255.0" # ipvlan接口的子网掩码
+setup
+#-------------------------↓↓↓↓↓↓-------------------------
+1/5: 创建ipvlan设备 'ipvlan1' 和 'ipvlan2'，类型为 'l3'
+2/5: 创建网络命名空间 'liuye1' 和 'liuye2'
+3/5: 将 'ipvlan1' 放入网络命名空间 'liuye1'；'ipvlan2' 放入网络命名空间 'liuye2'
+4/5: 进入网络命名空间 'liuye1'，将 'ipvlan1' 的ip设置为 '192.168.100.1'，同时配置默认路由 ''
+5/5: 进入网络命名空间 'liuye2'，将 'ipvlan2' 的ip设置为 '192.168.200.1'，同时配置默认路由 ''
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在ipvlan1所在的网络命名空间中ping ipvlan2的ip
+ip netns exec ${namespace1} ping ${ip_ipvlan2} -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 192.168.200.1 (192.168.200.1) 56(84) bytes of data.
+64 bytes from 192.168.200.1: icmp_seq=1 ttl=64 time=0.044 ms
+64 bytes from 192.168.200.1: icmp_seq=2 ttl=64 time=0.066 ms
+64 bytes from 192.168.200.1: icmp_seq=3 ttl=64 time=0.047 ms
+
+--- 192.168.200.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2149ms
+rtt min/avg/max/mdev = 0.044/0.052/0.066/0.011 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在ipvlan2所在的网络命名空间中ping ipvlan1的ip
+ip netns exec ${namespace2} ping ${ip_ipvlan1} -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 192.168.100.1 (192.168.100.1) 56(84) bytes of data.
+64 bytes from 192.168.100.1: icmp_seq=1 ttl=64 time=0.032 ms
+64 bytes from 192.168.100.1: icmp_seq=2 ttl=64 time=0.097 ms
+64 bytes from 192.168.100.1: icmp_seq=3 ttl=64 time=0.042 ms
+
+--- 192.168.100.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2036ms
+rtt min/avg/max/mdev = 0.032/0.057/0.097/0.028 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 清理
+cleanup
+#-------------------------↓↓↓↓↓↓-------------------------
+1/2: 删除ipvlan设备 'ipvlan1' 和 'ipvlan2'
+2/2: 删除网络命名空间 'liuye1' 和 'liuye2'
+#-------------------------↑↑↑↑↑↑-------------------------
+```
+
+__结论2：ipvlan接口之间可以相互ping通，即便网段不同__
+
+### 2.7.3 l3s mode
+
+__验证1：ipvlan接口与宿主机同一个网段__
+
+1. ipvlan接口之间是否连通
+1. ipvlan接口和主机是否连通
+1. ipvlan接口是否能通外网
+
+```sh
+source ipvlan.sh
+export ifname_external="enp0s3" # 主机的外网网卡
+export ipvlan_mode="l3s"
+export ip_host="10.0.2.15" # 主机ip
+export default_gateway="10.0.2.2" # 默认路由网关ip
+export ip_ipvlan1="10.0.2.16" # ipvlan接口1的ip
+export ip_ipvlan2="10.0.2.17" # ipvlan接口2的ip
+export ip_netmask="255.255.255.0" # ipvlan接口的子网掩码
+setup
+#-------------------------↓↓↓↓↓↓-------------------------
+1/5: 创建ipvlan设备 'ipvlan1' 和 'ipvlan2'，类型为 'l3s'
+2/5: 创建网络命名空间 'liuye1' 和 'liuye2'
+3/5: 将 'ipvlan1' 放入网络命名空间 'liuye1'；'ipvlan2' 放入网络命名空间 'liuye2'
+4/5: 进入网络命名空间 'liuye1'，将 'ipvlan1' 的ip设置为 '10.0.2.16'，同时配置默认路由 '10.0.2.2'
+5/5: 进入网络命名空间 'liuye2'，将 'ipvlan2' 的ip设置为 '10.0.2.17'，同时配置默认路由 '10.0.2.2'
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在ipvlan1所在的网络命名空间中ping ipvlan2的ip
+ip netns exec ${namespace1} ping ${ip_ipvlan2} -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 10.0.2.17 (10.0.2.17) 56(84) bytes of data.
+64 bytes from 10.0.2.17: icmp_seq=1 ttl=64 time=0.119 ms
+64 bytes from 10.0.2.17: icmp_seq=2 ttl=64 time=0.042 ms
+64 bytes from 10.0.2.17: icmp_seq=3 ttl=64 time=0.046 ms
+
+--- 10.0.2.17 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2074ms
+rtt min/avg/max/mdev = 0.042/0.069/0.119/0.035 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在ipvlan2所在的网络命名空间中ping ipvlan1的ip
+ip netns exec ${namespace2} ping ${ip_ipvlan1} -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 10.0.2.16 (10.0.2.16) 56(84) bytes of data.
+64 bytes from 10.0.2.16: icmp_seq=1 ttl=64 time=0.078 ms
+64 bytes from 10.0.2.16: icmp_seq=2 ttl=64 time=0.046 ms
+64 bytes from 10.0.2.16: icmp_seq=3 ttl=64 time=0.037 ms
+
+--- 10.0.2.16 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2104ms
+rtt min/avg/max/mdev = 0.037/0.053/0.078/0.019 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在ipvlan1所在的网络命名空间中ping 主机的ip（同一个网段）
+ip netns exec ${namespace1} ping ${ip_host} -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 10.0.2.15 (10.0.2.15) 56(84) bytes of data.
+
+--- 10.0.2.15 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2061ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在ipvlan1所在的网络命名空间中ping 外网ip
+ip netns exec ${namespace1} ping 223.5.5.5 -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 223.5.5.5 (223.5.5.5) 56(84) bytes of data.
+64 bytes from 223.5.5.5: icmp_seq=1 ttl=63 time=88.4 ms
+64 bytes from 223.5.5.5: icmp_seq=2 ttl=63 time=66.6 ms
+64 bytes from 223.5.5.5: icmp_seq=3 ttl=63 time=159 ms
+
+--- 223.5.5.5 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2069ms
+rtt min/avg/max/mdev = 66.605/104.814/159.405/39.617 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 清理
+cleanup
+#-------------------------↓↓↓↓↓↓-------------------------
+1/2: 删除ipvlan设备 'ipvlan1' 和 'ipvlan2'
+2/2: 删除网络命名空间 'liuye1' 和 'liuye2'
+#-------------------------↑↑↑↑↑↑-------------------------
+```
+
+__结论1：ipvlan接口之间可以相互ping通，但是无法ping通master接口。ip配置正确的情况下，可以通外网__
+
+__验证2：ipvlan接口与宿主机不同网段__
+
+1. ipvlan接口之间是否连通
+
+```sh
+source ipvlan.sh
+export ifname_external="enp0s3" # 主机的外网网卡
+export ipvlan_mode="l3s"
+export ip_host="10.0.2.15" # 主机ip
+export default_gateway="" # 默认路由网关ip
+export ip_ipvlan1="192.168.100.1" # ipvlan接口1的ip
+export ip_ipvlan2="192.168.200.1" # ipvlan接口2的ip
+export ip_netmask="255.255.255.0" # ipvlan接口的子网掩码
+setup
+#-------------------------↓↓↓↓↓↓-------------------------
+1/5: 创建ipvlan设备 'ipvlan1' 和 'ipvlan2'，类型为 'l3s'
+2/5: 创建网络命名空间 'liuye1' 和 'liuye2'
+3/5: 将 'ipvlan1' 放入网络命名空间 'liuye1'；'ipvlan2' 放入网络命名空间 'liuye2'
+4/5: 进入网络命名空间 'liuye1'，将 'ipvlan1' 的ip设置为 '192.168.100.1'，同时配置默认路由 ''
+5/5: 进入网络命名空间 'liuye2'，将 'ipvlan2' 的ip设置为 '192.168.200.1'，同时配置默认路由 ''
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在ipvlan1所在的网络命名空间中ping ipvlan2的ip
+ip netns exec ${namespace1} ping ${ip_ipvlan2} -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 192.168.200.1 (192.168.200.1) 56(84) bytes of data.
+64 bytes from 192.168.200.1: icmp_seq=1 ttl=64 time=0.059 ms
+64 bytes from 192.168.200.1: icmp_seq=2 ttl=64 time=0.045 ms
+64 bytes from 192.168.200.1: icmp_seq=3 ttl=64 time=0.122 ms
+
+--- 192.168.200.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2191ms
+rtt min/avg/max/mdev = 0.045/0.075/0.122/0.034 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 在ipvlan2所在的网络命名空间中ping ipvlan1的ip
+ip netns exec ${namespace2} ping ${ip_ipvlan1} -c 3
+#-------------------------↓↓↓↓↓↓-------------------------
+PING 192.168.100.1 (192.168.100.1) 56(84) bytes of data.
+64 bytes from 192.168.100.1: icmp_seq=1 ttl=64 time=0.033 ms
+64 bytes from 192.168.100.1: icmp_seq=2 ttl=64 time=0.043 ms
+64 bytes from 192.168.100.1: icmp_seq=3 ttl=64 time=0.049 ms
+
+--- 192.168.100.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2037ms
+rtt min/avg/max/mdev = 0.033/0.041/0.049/0.009 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 清理
+cleanup
+#-------------------------↓↓↓↓↓↓-------------------------
+1/2: 删除ipvlan设备 'ipvlan1' 和 'ipvlan2'
+2/2: 删除网络命名空间 'liuye1' 和 'liuye2'
+#-------------------------↑↑↑↑↑↑-------------------------
+```
+
+__结论1：ipvlan接口之间可以相互ping通，但是无法ping通master接口。ip配置正确的情况下，可以通外网__
+
+## 2.8 macvtap/ipvtap
+
+## 2.9 macsec
+
+## 2.10 veth（virtual ethernet）
+
+## 2.11 vcan（virtual can）
+
+## 2.12 vxcan（virtual can tunnel）
+
+## 2.13 ipoib（ip-over-infiniBand）
+
+## 2.14 nlmon（netlink monitor）
+
+## 2.15 dummy interface
+
+## 2.16 ifb（intermediate functional block）
+
+## 2.17 netdevsim
+
+## 2.18 参考
+
+* [Introduction to Linux interfaces for virtual networking](https://developers.redhat.com/blog/2018/10/22/introduction-to-linux-interfaces-for-virtual-networking/)
+* [CONFIGURING AND MANAGING NETWORKING](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_and_managing_networking/index)
+* [IPVLAN Driver HOWTO](https://www.kernel.org/doc/html/latest/networking/ipvlan.html)
+* [VLAN 基础知识](https://zhuanlan.zhihu.com/p/35616289)
+* [Kubernetes网络的IPVlan方案](https://kernel.taobao.org/2019/11/ipvlan-for-kubernete-net/)
+* [IPVLAN网络模式](https://support.huaweicloud.com/dpmg-kunpengwebs/kunpengnginx_04_0010.html)
+* [linux 网络虚拟化： macvlan](https://cizixs.com/2017/02/14/network-virtualization-macvlan/)
+* [Macvlan与ipvlan解析](https://www.dazhuanlan.com/2019/12/12/5df17e01243b0/)
 
 # 3 Netfilter
 
@@ -151,7 +1129,7 @@ Linux中最常用的基本防火墙软件称为`iptables`。`iptables`防火墙�
 
 只有五个`netfilter`内核`hook`，因此，每个`hook`注册了多个来自不同`table`的`chian`。例如，三个`table`具有`PREROUTING chain`。当这些`chain`在相关的`NF_IP_PRE_ROUTING hook`处注册时，它们指定一个优先级，该优先级指示每个`table`的`PREROUTING chain`被调用的顺序。在进入下一个`PREROUTING`链之前，将按顺序评估最高优先级`PREROUTING chain`中的每个`rule`
 
-![fig6](/images/Linux-网络/fig6.jpg)
+![netfilter_hook](/images/Linux-网络/netfilter_hook.jpg)
 
 ## 3.3 Which Tables are Available?
 
@@ -425,9 +1403,101 @@ __集线器，交换机和网桥之间的主要区别在于：集线器工作在
 * [What’s the Difference Between Hubs, Switches & Bridges?](https://www.globalknowledge.com/us-en/resources/resource-library/articles/what-s-the-difference-between-hubs-switches-bridges/)
 * [集线器、交换机、网桥区别](https://blog.csdn.net/dataiyangu/article/details/82496340)
 
-# 6 配网
+# 6 虚拟机的网络模式
 
-## 6.1 配置文件
+## 6.1 Network Address Translation (NAT)
+
+在NAT模式下，当一个VM操作系统启动时，它通常通过发送一个`DHCP Request`来获取一个`IP`地址。`VirtualBox`将会处理这个`DHCP Request`，然后返回一个`DHCP Response`给VM，这个`DHCP Response`包含了一个`IP`地址以及网关地址，其中网关地址用于路由`Outbound connections`
+
+在这种模式下，每一个VM被分配到的都是一个相同的IP（`10.0.2.15`），因为每一个VM都认为他们处于一个隔离的网络中，也就是说不同的VM之间无法感知到对方的存在
+
+当VM通过网关（`10.0.2.2`）发送流量时，`VirtualBox`会重写数据包，使其看起来好像来自主机，而不是来自VM（在主机内运行）
+
+逻辑上，网络看起来像下面这样
+
+![vm_nat](/images/Linux-网络/vm_nat.png)
+
+总结一下，NAT包含如下特征
+
+1. VM处于一个私有的局域网
+1. `VirtualBox`扮演着`DHCP`服务器的角色
+1. `VirtualBox Engine`起到转换地址的作用
+1. 适用于当VM作为Client的场景，因此不是适用于VM作为Server的场景
+1. VM可以访问外界网络，而外界网络无法访问VM
+
+## 6.2 Bridged Networking
+
+当您希望您的VM成为完整的网络公民，即与网络上的主机相同时，使用`Bridged Networking`；在此模式下，虚拟NIC“桥接”到主机上的物理网卡
+
+这样做的结果是每个VM都可以像访问主机一样访问物理网络。它可以像访问主机一样访问网络上的任何服务，例如外部DHCP服务，名称查找服务和路由信息
+
+逻辑上，网络看起来像下面这样
+
+![vm_bridge](/images/Linux-网络/vm_bridge.png)
+
+总结一下，`Bridged Networking`网络包含如下特征
+
+1. `VirtualBox`桥接到主机网络
+1. 会消耗IP地址
+1. 适用于Client VM或Server VM
+
+## 6.3 Internal Networking
+
+`Internal Networking`网络（在本例中为“intnet”）是一个完全隔离的网络，因此非常“安静”。当您需要一个单独的，干净的网络时，这适用于测试，您可以使用VM创建复杂的内部网络，为内部网络提供自己的服务。（例如Active Directory，DHCP等）。__请注意，即使主机也不是内部网络的成员__，但即使主机未连接到网络（例如，在平面上），此模式也允许VM运行
+
+逻辑上，网络看起来像下面这样
+
+![vm_internel](/images/Linux-网络/vm_internel.png)
+
+请注意，在此模式下，`VirtualBox`不提供`DHCP`等“便利”服务，因此必须静态配置您的计算机，或者VM需要提供`DHCP`/名称服务
+
+总结一下，`Internal Networking`网络包含如下特征
+
+1. 不同VM之间处于同一个私有网络
+1. VM无法访问外部网络
+1. 宿主机断网时，VM也能正常工作（本来就不需要外网）
+
+## 6.4 Host-only Networking
+
+坐在这个“vboxnet0”网络上的所有VM都会看到对方，此外，主机也可以看到这些VM。但是，其他外部计算机无法在此网络上看到VM，因此名称为“Host-only”
+
+逻辑上，网络看起来像下面这样
+
+![vm_host_only](/images/Linux-网络/vm_host_only.png)
+
+这看起来非常类似于`Internal Networking`，但主机现在位于“vboxnet0”并且可以提供`DHCP`服务
+
+总结一下，`Host-only Networking`网络包含如下特征
+
+1. `VirtualBox`为VM以及宿主机创建了一个私有网络
+1. `VirtualBox`提供DHCP服务
+1. VM无法看到外部网络
+1. 宿主机断网时，VM也能正常工作（本来就不需要外网）
+
+## 6.5 Port-Forwarding with NAT Networking
+
+如果您在笔记本电脑上购买移动演示或开发环境并且您有一台或多台VM需要其他机器连接，该怎么办？而且你不断地跳到不同的VM网络上。在这样的场景下
+
+1. NAT：无法满足，因为外部机器无法连接到VM上
+1. Bridged：可以满足，但是会消耗IP资源，且VM网络环境随着外部网络环境的改变而改变
+1. Internal：无法满足，因为外部机器无法连接到VM上
+1. Host-only：无法满足，因为外部机器无法连接到VM上
+
+当外部机器连接到宿主机的“host:port”时，`VirtualBox`会将连接`forward`到VM的“guest:port”上
+
+逻辑上，网络看起来像下面这样（forward并没有在这张图体现出来，所以这幅图与NAT很像）
+
+![vm_nat_forwarding](/images/Linux-网络/vm_nat_forwarding.png)
+
+## 6.6 参考
+
+* [Oracle VM VirtualBox: Networking options and how-to manage them](https://blogs.oracle.com/scoter/networking-in-virtualbox-v2)
+* [Chapter 6. Virtual networking](https://www.virtualbox.org/manual/ch06.html#network_bridged)
+* [VMware虚拟机三种网络模式详解](https://www.linuxidc.com/Linux/2016-09/135521.htm)
+
+# 7 配网
+
+## 7.1 配置文件
 
 `CentOS`的网卡配置文件的位置在`/etc/sysconfig/network-scripts/`，配置文件的名称为`ifcfg-<网卡名>`，例如网卡名为`eno1`时，配置文件名称为`ifcfg-eno1`。示例配置如下
 
@@ -461,17 +1531,17 @@ DNS1=223.5.5.5
 * __`ONBOOT`__：是否开机启动
 * __`DNS1/DNS2/.../DNSx`__：dns配置
 
-## 6.2 network-manager
+## 7.2 network-manager
 
 `NetworkManager`是Linux下管理网络的一个服务，此外还有另一个服务`network`（这个服务已经过时，且与`NetworkManager`存在冲突
 
 `NetworkManager`服务提供了两个客户端用于网络配置，分别是`nmcli`以及`nmtui`
 
-### 6.2.1 设计
+### 7.2.1 设计
 
 在`NetworkManager`的设计中，存在两种概念，一个是网卡设备`device`，另一个是连接`conn`，一个`device`可以对应多个`conn`，但是这个多个`conn`中只有一个是开启状态。如何控制`conn`的启动优先级呢？可以通过设置`connection.autoconnect-priority`
 
-### 6.2.2 nmcli
+### 7.2.2 nmcli
 
 ```sh
 # 查看所有网络连接
@@ -507,17 +1577,17 @@ __重要配置项__
     * `nmcli conn modify eno1 ipv4.never-defaul 1`：连接`eno1`永远不设置默认路由
 1. `connection.autoconnect-priority`：当一个网卡设备，包含多个`conn`时，且`connection.autoconnect`的值都是`1`（即默认开启）时，可以通过设置该值来改变`conn`的优先级，优先级高的`conn`将会生效
 
-### 6.2.3 nmtui
+### 7.2.3 nmtui
 
 带有图形化界面的配网工具
 
-### 6.2.4 配置文件
+### 7.2.4 配置文件
 
 路径：`/etc/NetworkManager/NetworkManager.conf`
 
 配置文件详细内容参考[NetworkManager.conf](https://developer.gnome.org/NetworkManager/stable/NetworkManager.conf.html)
 
-## 6.3 参考
+## 7.3 参考
 
 * [NetworkManager官方文档](https://wiki.archlinux.org/index.php/NetworkManager)
 * [为 Red Hat Enterprise Linux 7 配置和管理联网](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/7/html/networking_guide/index)

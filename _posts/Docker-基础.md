@@ -215,6 +215,7 @@ RUN apk add -U tzdata
     * `-v $(which docker):/bin/docker `：将docker命令挂载到容器
 1. 启动容器时，加入网络命名空间
     * `docker run [--pid string] [--userns string] [--uts string] [--network string] <other options>`
+    * `docker run -d --net=container:<已有容器id> <镜像id>`
 1. 删除docker命令后，docker的工作目录仍然是保留的（包含了镜像）若要彻底删除，可以通过如下命令
     * `rm -rf /var/lib/docker`
 

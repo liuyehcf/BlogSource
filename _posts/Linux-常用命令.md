@@ -1285,17 +1285,22 @@ __示例：__
 
 ## 5.5 ip
 
-### 5.5.1 ip addr
+### 5.5.1 ip address
 
-简写为`ip a`
+具体用法参考`ip address help`
 
 ### 5.5.2 ip link
 
-简写为`ip l`
+具体用法参考`ip link help`
+
+__示例__
+
+* `ip link`
+* `ip -d link`：查看详细的信息
 
 ### 5.5.3 ip route
 
-简写为`ip r`
+具体用法参考`ip route help`
 
 #### 5.5.3.1 route table
 
@@ -1597,7 +1602,7 @@ __示例：__
 * `iptables -A INPUT -i lo -j ACCEPT`：不论数据包来自何处或去向哪里，只要是lo这个接口，就予以接受，这就是所谓的信任设备
 * `iptables -A INPUT -i eth1 -j ACCEPT`：添加接口为eth1的网卡为信任设备
 * `iptables -A INPUT -s 192.168.2.200 -j LOG`：该网段的数据包，其相关信息就会被写入到内核日志文件中，即`/var/log/messages`，然后，该数据包会继续进行后续的规则比对(这一点与其他规则不同)
-* 配置打印日志的规则
+* 配置打印日志的规则（这些规则要放在第一条，否则命中其他规则时，当前规则就不执行了）
     * `iptables -I INPUT -p icmp -j LOG --log-prefix "liuye-input: "`
     * `iptables -I FORWARD -p icmp -j LOG --log-prefix "liuye-forward: "`
     * `iptables -I OUTPUT -p icmp -j LOG --log-prefix "liuye-output: "`
