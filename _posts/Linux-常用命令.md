@@ -1319,6 +1319,7 @@ __此外：__
 * 系统管理员可以根据需要自己添加路由表，并向路由表中添加路由记录
 * 可以通过`/etc/iproute2/rt_tables`文件查看`table id`和`table name`的映射关系。
 * 如果管理员新增了一张路由表，需要在`/etc/iproute2/rt_tables`文件中为新路由表添加`table id`和`table name`的映射
+* 路由表存储于内存中，通过`procfs`文件系统对用户态露出，具体的文件位置是`/proc/net/route`
 
 #### 5.5.3.2 route type
 

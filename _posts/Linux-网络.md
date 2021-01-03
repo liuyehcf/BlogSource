@@ -49,73 +49,61 @@ export ip_broadcast=""
 export bridge_name=demobridge
 
 function setup(){
-	echo "1/14: 创建网桥 '${bridge_name}'"
+	set -x
+
 	ip link add ${bridge_name} type bridge
 	ip link set ${bridge_name} up
 
-	echo "2/14: 配置网桥 '${bridge_name}' 的IP '${ip_bridge}'"
 	ip addr add ${ip_bridge}/${ip_netmask} broadcast ${ip_broadcast} dev ${bridge_name}
     
-	echo "3/14: 创建名为 '${namespace}' 的网络命名空间"
 	ip netns add ${namespace}
 
-	echo "4/14: 创建一对 'veth' 类型的网卡设备，一个网卡为 '${ifname_outside_ns}'，另一个网卡为 '${ifname_inside_ns}'"
 	ip link add ${ifname_outside_ns} type veth peer name ${ifname_inside_ns}
 
-	echo "5/14: 开启网卡 '${ifname_outside_ns}'"
 	ip link set ${ifname_outside_ns} up
 
-	echo "6/14: 将网卡 '${ifname_outside_ns}' 绑定到网桥 '${bridge_name}' 上"
 	ip link set ${ifname_outside_ns} master ${bridge_name}
 	
-	echo "7/14: 将网卡 '${ifname_inside_ns}' 加入网络命名空间 '${namespace}' 中"
 	ip link set ${ifname_inside_ns} netns ${namespace}
 
-	echo "8/14: 将在网络命名空间 '${namespace}' 中的网卡 '${ifname_inside_ns}' 的IP地址设置为 '${ip_inside_ns}'，它需要和网卡 '${ifname_outside_ns}' 的IP地址在同一个网段上"
 	ip netns exec ${namespace} ip link set ${ifname_inside_ns} up
 	ip netns exec ${namespace} ip addr add ${ip_inside_ns}/${ip_netmask} broadcast ${ip_broadcast} dev ${ifname_inside_ns}
 
-	echo "9/14: 将在网络命名空间 '${namespace}' 中，启用回环网卡lo"
 	ip netns exec ${namespace} ip link set lo up
 
-	echo "10/14: 将网络命名空间 '${namespace}' 中的默认路由设置为网桥 '${bridge_name}' 的IP地址 '${ip_bridge}'"
 	ip netns exec ${namespace} ip route add default via ${ip_bridge} dev ${ifname_inside_ns}
 
-	echo "11/14: 配置SNAT，将从网络命名空间 '${namespace}' 中发出的网络包的源IP地址替换为网卡 '${ifname_external}' 的IP地址"
 	iptables -t nat -A POSTROUTING -s ${ip_net}/${ip_netmask} -o ${ifname_external} -j MASQUERADE
 
-	echo "12/14: 在默认的 'FORWARD' 策略为 'DROP' 时，显式地允许网桥 '${bridge_name}' 和网卡 '${ifname_external}' 之间的进行数据包转发"
 	iptables -t filter -A FORWARD -i ${ifname_external} -o ${bridge_name} -j ACCEPT
 	iptables -t filter -A FORWARD -i ${bridge_name} -o ${ifname_external} -j ACCEPT
 	
-	echo "13/14: 开启内核转发功能"
 	echo 1 > /proc/sys/net/ipv4/ip_forward
 
-	echo "14/14: 为网络命名空间 '${namespace}' 配置DNS服务，用于域名解析"
 	mkdir -p /etc/netns/${namespace}
 	echo "nameserver 8.8.8.8" > /etc/netns/${namespace}/resolv.conf
+
+	set +x
 }
 
 function cleanup(){
-	echo "1/6: 删除 'FORWARD' 规则"
+	set -x
+
 	iptables -t filter -D FORWARD -i ${ifname_external} -o ${bridge_name} -j ACCEPT
 	iptables -t filter -D FORWARD -i ${bridge_name} -o ${ifname_external} -j ACCEPT
 
-	echo "2/6: 删除 'NAT'"
 	iptables -t nat -D POSTROUTING -s ${ip_net}/${ip_netmask} -o ${ifname_external} -j MASQUERADE
 
-	echo "3/6: 删除网卡设备 '${ifname_outside_ns}' 以及 '${ifname_inside_ns}'"
 	ip link delete ${ifname_outside_ns}
 	
-	echo "4/6: 删除网络命名空间 '${namespace}'"
 	ip netns delete ${namespace}
 	rm -rf /etc/netns/${namespace}
 
-	echo "5/6: 关闭网桥 '${bridge_name}'"
 	ip link set ${bridge_name} down
 
-	echo "6/6: 删除网桥 '${bridge_name}'"
 	brctl delbr ${bridge_name}
+
+	set +x
 }
 
 export -f setup
@@ -136,24 +124,29 @@ export ip_netmask=255.255.255.0 # 子网掩码
 export ip_broadcast=192.168.45.255 # 广播ip
 setup
 #-------------------------↓↓↓↓↓↓-------------------------
-1/14: 创建网桥 'demobridge'
-2/14: 配置网桥 'demobridge' 的IP '192.168.45.2'
-3/14: 创建名为 'liuye' 的网络命名空间
-4/14: 创建一对 'veth' 类型的网卡设备，一个网卡为 'veth1'，另一个网卡为 'veth2'
-5/14: 开启网卡 'veth1'
-6/14: 将网卡 'veth1' 绑定到网桥 'demobridge' 上
-7/14: 将网卡 'veth2' 加入网络命名空间 'liuye' 中
-8/14: 将在网络命名空间 'liuye' 中的网卡 'veth2' 的IP地址设置为 '192.168.45.3'，它需要和网卡 'veth1' 的IP地址在同一个网段上
-9/14: 将在网络命名空间 'liuye' 中，启用回环网卡lo
-10/14: 将网络命名空间 'liuye' 中的默认路由设置为网桥 'demobridge' 的IP地址 '192.168.45.2'
-11/14: 配置SNAT，将从网络命名空间 'liuye' 中发出的网络包的源IP地址替换为网卡 'enp0s3' 的IP地址
-12/14: 在默认的 'FORWARD' 策略为 'DROP' 时，显式地允许网桥 'demobridge' 和网卡 'enp0s3' 之间的进行数据包转发
-13/14: 开启内核转发功能
-14/14: 为网络命名空间 'liuye' 配置DNS服务，用于域名解析
++ ip link add demobridge type bridge
++ ip link set demobridge up
++ ip addr add 192.168.45.2/255.255.255.0 broadcast 192.168.45.255 dev demobridge
++ ip netns add liuye
++ ip link add veth1 type veth peer name veth2
++ ip link set veth1 up
++ ip link set veth1 master demobridge
++ ip link set veth2 netns liuye
++ ip netns exec liuye ip link set veth2 up
++ ip netns exec liuye ip addr add 192.168.45.3/255.255.255.0 broadcast 192.168.45.255 dev veth2
++ ip netns exec liuye ip link set lo up
++ ip netns exec liuye ip route add default via 192.168.45.2 dev veth2
++ iptables -t nat -A POSTROUTING -s 192.168.45.0/255.255.255.0 -o enp0s3 -j MASQUERADE
++ iptables -t filter -A FORWARD -i enp0s3 -o demobridge -j ACCEPT
++ iptables -t filter -A FORWARD -i demobridge -o enp0s3 -j ACCEPT
++ echo 1
++ mkdir -p /etc/netns/liuye
++ echo 'nameserver 8.8.8.8'
++ set +x
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 测试网络连通性（如果不通的话，可能是被防火墙拦截了）
-ip netns exec liuye ping -c 3 www.aliyun.com
+ip netns exec ${namespace} ping -c 3 www.aliyun.com
 #-------------------------↓↓↓↓↓↓-------------------------
 PING xjp-adns.aliyun.com.gds.alibabadns.com (47.88.251.173) 56(84) bytes of data.
 64 bytes from 47.88.251.173 (47.88.251.173): icmp_seq=1 ttl=32 time=74.8 ms
@@ -168,12 +161,15 @@ rtt min/avg/max/mdev = 73.192/74.111/74.808/0.747 ms
 # 清理
 cleanup
 #-------------------------↓↓↓↓↓↓-------------------------
-1/6: 删除 'FORWARD' 规则
-2/6: 删除 'NAT'
-3/6: 删除网卡设备 'veth1' 以及 'veth2'
-4/6: 删除网络命名空间 'liuye'
-5/6: 关闭网桥 'demobridge'
-6/6: 删除网桥 'demobridge'
++ iptables -t filter -D FORWARD -i enp0s3 -o demobridge -j ACCEPT
++ iptables -t filter -D FORWARD -i demobridge -o enp0s3 -j ACCEPT
++ iptables -t nat -D POSTROUTING -s 192.168.45.0/255.255.255.0 -o enp0s3 -j MASQUERADE
++ ip link delete veth1
++ ip netns delete liuye
++ rm -i -rf /etc/netns/liuye
++ ip link set demobridge down
++ brctl delbr demobridge
++ set +x
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
@@ -187,17 +183,26 @@ cleanup
 
 ## 2.6 macvlan
 
-__macvlan可以在一个接口上创建具有不同mac地址的多个接口__
+在`macvlan`出现之前，我们只能为一块以太网卡添加多个`IP`地址，却不能添加多个`MAC`地址，因为`MAC`地址正是通过其全球唯一性来标识一块以太网卡的，即便你使用了创建`ethx:y`这样的方式，你会发现所有这些“网卡”的`MAC`地址和`ethx`都是一样的，本质上，它们还是一块网卡，这将限制你做很多二层的操作。有了`macvlan`技术，你可以这么做了
 
-__macvlan包含多种模式__
+`macvlan`允许你在主机的一个网络接口上配置多个虚拟的网络接口，这些网络interface有自己独立的`MAC`地址，也可以配置上`IP`地址进行通信。`macvlan`下的虚拟机或者容器网络和主机在同一个网段中，共享同一个广播域。`macvlan`和`Bridge`比较相似，但因为它省去了`Bridge`的存在，所以配置和调试起来比较简单，而且效率也相对高。除此之外`macvlan`自身也完美支持`VLAN`
 
-1. `private`：过滤掉所有来自其他`macvlan`接口的报文，因此不同`macvlan`接口之间无法互相通信
-	* ![macvlan_private](/images/Linux-网络/macvlan_private.png)
-1. `vepa（Virtual Ethernet Port Aggregator）`：需要主接口连接的交换机支持 `VEPA/802.1Qbg`特性。所有发送出去的报文都会经过交换机，交换机作为再发送到对应的目标地址（即使目标地址就是主机上的其他`macvlan`接口），也就是`hairpin mode`模式，这个模式用在交换机上需要做过滤、统计等功能的场景
-1. `bridge`：通过虚拟的交换机将主接口的所有`macvlan`接口连接在一起，这样的话，不同`macvlan`接口之间能够直接通信，不需要将报文发送到主机之外。这个模式下，主机外是看不到主机上`macvlan interface`之间通信的报文的
-1. `passthru`
-	* ![macvlan_passthru](/images/Linux-网络/macvlan_passthru.png)
-1. `source`
+同一`VLAN`间数据传输是通过二层互访，即`MAC`地址实现的，不需要使用路由。不同`VLAN`的用户单播默认不能直接通信，如果想要通信，还需要三层设备做路由，`macvlan`也是如此。用`macvlan`技术虚拟出来的虚拟网卡，在逻辑上和物理网卡是对等的。物理网卡也就相当于一个交换机，记录着对应的虚拟网卡和`MAC`地址，当物理网卡收到数据包后，会根据目的 MAC 地址判断这个包属于哪一个虚拟网卡。__这也就意味着，只要是从`macvlan`子接口发来的数据包（或者是发往`macvlan`子接口的数据包），物理网卡只接收数据包，不处理数据包，所以这就引出了一个问题：本机 macvlan 网卡上面的 IP 无法和物理网卡上面的 IP 通信！__
+
+__macvlan的技术实现：__
+
+![macvlan_principle](/images/Linux-网络/macvlan_principle.jpg)
+
+__`macvlan`有以下特点：__
+
+* 可让使用者在同一张实体网卡上设定多个`MAC`地址
+	* 带有上述设定的`MAC`地址的网卡称为子接口（`sub interface`）
+	* 实体网卡则称为父接口（`parent interface`）
+* `parent interface`可以是一个物理接口（eth0），可以是一个`802.1q`的子接口（`eth0.10`），也可以是`bonding`接口
+* 可在`parent/sub interface`上设定的不只是`MAC`地址，`IP`地址同样也可以被设定
+* `sub interface`无法直接与`parent interface`通讯 (带有`sub interface`的`VM`或容器无法与`host`直接通讯)
+	* 若`VM`或容器需要与`host`通讯，那就必须额外建立一个`sub interface`给`host`用
+* `sub interface`通常以`mac0@eth0`的形式来命名以方便区別
 
 __准备一个脚本，用于验证各个模式__
 
@@ -221,19 +226,17 @@ export ip_macvlan2=""
 export ip_netmask=""
 
 function setup() {
-	echo "1/5: 创建macvlan设备 '${ifname_macvlan1}' 和 '${ifname_macvlan2}'，类型为 '${macvlan_mode}'"
+	set -x
+
 	ip link add ${ifname_macvlan1} link ${ifname_external} type macvlan mode ${macvlan_mode}
 	ip link add ${ifname_macvlan2} link ${ifname_external} type macvlan mode ${macvlan_mode}
 
-	echo "2/5: 创建网络命名空间 '${namespace1}' 和 '${namespace2}'"
 	ip netns add ${namespace1}
 	ip netns add ${namespace2}
 
-	echo "3/5: 将 '${ifname_macvlan1}' 放入网络命名空间 '${namespace1}'；'${ifname_macvlan2}' 放入网络命名空间 '${namespace2}'"
 	ip link set ${ifname_macvlan1} netns ${namespace1}
 	ip link set ${ifname_macvlan2} netns ${namespace2}
 
-	echo "4/5: 进入网络命名空间 '${namespace1}'，将 '${ifname_macvlan1}' 的ip设置为 '${ip_macvlan1}'，同时配置默认路由 '${default_gateway}'"
 	ip netns exec ${namespace1} ip link set ${ifname_macvlan1} up
 	ip netns exec ${namespace1} ip addr add ${ip_macvlan1}/${ip_netmask} dev ${ifname_macvlan1}
 	if [ -z "${default_gateway}" ]; then
@@ -242,7 +245,6 @@ function setup() {
 		ip netns exec ${namespace1} ip route add default via ${default_gateway} dev ${ifname_macvlan1}
 	fi
 
-	echo "5/5: 进入网络命名空间 '${namespace2}'，将 '${ifname_macvlan2}' 的ip设置为 '${ip_macvlan2}'，同时配置默认路由 '${default_gateway}'"
 	ip netns exec ${namespace2} ip link set ${ifname_macvlan2} up
 	ip netns exec ${namespace2} ip addr add ${ip_macvlan2}/${ip_netmask} dev ${ifname_macvlan2}
 	if [ -z "${default_gateway}" ]; then
@@ -250,16 +252,18 @@ function setup() {
 	else
 		ip netns exec ${namespace2} ip route add default via ${default_gateway} dev ${ifname_macvlan2}
 	fi
+
+	set +x
 }
 
 function cleanup() {
-	echo "1/2: 删除macvlan设备 '${ifname_macvlan1}' 和 '${ifname_macvlan2}'"
+	set -x
 	ip netns exec ${namespace1} ip link delete ${ifname_macvlan1}
 	ip netns exec ${namespace2} ip link delete ${ifname_macvlan2}
 
-	echo "2/2: 删除网络命名空间 '${namespace1}' 和 '${namespace2}'"
 	ip netns delete ${namespace1}
 	ip netns delete ${namespace2}
+	set +x
 }
 
 export -f setup
@@ -267,9 +271,15 @@ export -f cleanup
 EOF
 ```
 
-### 2.6.1 bridge mode
+### 2.6.1 private mode
 
-![macvlan_bridge](/images/Linux-网络/macvlan_bridge.png)
+![macvlan_private](/images/Linux-网络/macvlan_private.jpg)
+
+此种模式相当于`vepa`模式的增强模式，其完全阻止共享同一父接口的`macvlan`虚拟网卡之间的通讯，即使配置了`Hairpin`让从父接口发出的流量返回到宿主机，相应的通讯流量依然被丢弃。__具体实现方式是丢弃广播/多播数据，这就意味着以太网地址解析`arp`将不可运行，除非手工探测`MAC`地址，否则通信将无法在同一宿主机下的多个`macvlan`网卡间展开__。之所以隔离广播流量，是因为以太网是基于广播的，隔离了广播，以太网将失去了依托
+
+### 2.6.2 bridge mode
+
+![macvlan_bridge](/images/Linux-网络/macvlan_bridge.jpg)
 
 __验证1：macvlan接口与宿主机同一个网段__
 
@@ -289,11 +299,21 @@ export ip_macvlan2="10.0.2.17" # macvlan接口2的ip
 export ip_netmask="255.255.255.0" # macvlan接口的子网掩码
 setup
 #-------------------------↓↓↓↓↓↓-------------------------
-1/5: 创建macvlan设备 'macvlan1' 和 'macvlan2'，类型为 'bridge'
-2/5: 创建网络命名空间 'liuye1' 和 'liuye2'
-3/5: 将 'macvlan1' 放入网络命名空间 'liuye1'；'macvlan2' 放入网络命名空间 'liuye2'
-4/5: 进入网络命名空间 'liuye1'，将 'macvlan1' 的ip设置为 '10.0.2.16'，同时配置默认路由 '10.0.2.2'
-5/5: 进入网络命名空间 'liuye2'，将 'macvlan2' 的ip设置为 '10.0.2.17'，同时配置默认路由 '10.0.2.2'
++ ip link add macvlan1 link enp0s3 type macvlan mode bridge
++ ip link add macvlan2 link enp0s3 type macvlan mode bridge
++ ip netns add liuye1
++ ip netns add liuye2
++ ip link set macvlan1 netns liuye1
++ ip link set macvlan2 netns liuye2
++ ip netns exec liuye1 ip link set macvlan1 up
++ ip netns exec liuye1 ip addr add 10.0.2.16/255.255.255.0 dev macvlan1
++ '[' -z 10.0.2.2 ']'
++ ip netns exec liuye1 ip route add default via 10.0.2.2 dev macvlan1
++ ip netns exec liuye2 ip link set macvlan2 up
++ ip netns exec liuye2 ip addr add 10.0.2.17/255.255.255.0 dev macvlan2
++ '[' -z 10.0.2.2 ']'
++ ip netns exec liuye2 ip route add default via 10.0.2.2 dev macvlan2
++ set +x
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 在macvlan1所在的网络命名空间中ping macvlan2的ip
@@ -347,12 +367,17 @@ rtt min/avg/max/mdev = 1.527/7.075/17.927/7.674 ms
 # 清理
 cleanup
 #-------------------------↓↓↓↓↓↓-------------------------
-1/2: 删除macvlan设备 'macvlan1' 和 'macvlan2'
-2/2: 删除网络命名空间 'liuye1' 和 'liuye2'
++ ip netns exec liuye1 ip link delete macvlan1
++ ip netns exec liuye2 ip link delete macvlan2
++ ip netns delete liuye1
++ ip netns delete liuye2
++ set +x
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 __结论1：两个macvlan子接口可以相互ping通，但是ping不通master接口。在ip正确配置的情况下，能够正常通外网__
+
+* 我的实验环境是`VirtualBox`虚拟机，第一次setup之后，`ping 223.5.5.5`是可以通的，但是当执行`cleanup`后再次执行`setup`，此时发现`ping 223.5.5.5`是无法ping通的，估计是因为VirtualBox对mac地址是有缓存的，先后两次创建的`macvlan`的mac地址不同，但是ip是相同的，转发逻辑就出问题了。这时，只需要修改macvlan的ip地址，就能再次ping通`223.5.5.5`了
 
 __验证2：macvlan接口与宿主机不同网段__
 
@@ -370,11 +395,21 @@ export ip_macvlan2="192.168.200.1" # macvlan接口2的ip
 export ip_netmask="255.255.255.0" # macvlan接口的子网掩码
 setup
 #-------------------------↓↓↓↓↓↓-------------------------
-1/5: 创建macvlan设备 'macvlan1' 和 'macvlan2'，类型为 'bridge'
-2/5: 创建网络命名空间 'liuye1' 和 'liuye2'
-3/5: 将 'macvlan1' 放入网络命名空间 'liuye1'；'macvlan2' 放入网络命名空间 'liuye2'
-4/5: 进入网络命名空间 'liuye1'，将 'macvlan1' 的ip设置为 '192.168.100.1'，同时配置默认路由 ''
-5/5: 进入网络命名空间 'liuye2'，将 'macvlan2' 的ip设置为 '192.168.200.1'，同时配置默认路由 ''
++ ip link add macvlan1 link enp0s3 type macvlan mode bridge
++ ip link add macvlan2 link enp0s3 type macvlan mode bridge
++ ip netns add liuye1
++ ip netns add liuye2
++ ip link set macvlan1 netns liuye1
++ ip link set macvlan2 netns liuye2
++ ip netns exec liuye1 ip link set macvlan1 up
++ ip netns exec liuye1 ip addr add 192.168.100.1/255.255.255.0 dev macvlan1
++ '[' -z '' ']'
++ ip netns exec liuye1 ip route add default dev macvlan1
++ ip netns exec liuye2 ip link set macvlan2 up
++ ip netns exec liuye2 ip addr add 192.168.200.1/255.255.255.0 dev macvlan2
++ '[' -z '' ']'
++ ip netns exec liuye2 ip route add default dev macvlan2
++ set +x
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 在macvlan1所在的网络命名空间中ping macvlan2的ip
@@ -406,16 +441,34 @@ rtt min/avg/max/mdev = 0.042/0.073/0.126/0.038 ms
 # 清理
 cleanup
 #-------------------------↓↓↓↓↓↓-------------------------
-1/2: 删除macvlan设备 'macvlan1' 和 'macvlan2'
-2/2: 删除网络命名空间 'liuye1' 和 'liuye2'
++ ip netns exec liuye1 ip link delete macvlan1
++ ip netns exec liuye2 ip link delete macvlan2
++ ip netns delete liuye1
++ ip netns delete liuye2
++ set +x
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 __结论2：两个macvlan接口，即便配置不同网段的ip，也能相互ping通__
 
-### 2.6.2 vepa mode
+### 2.6.3 vepa mode
 
-![macvlan_vepa](/images/Linux-网络/macvlan_vepa.png)
+在`vepa`模式下，所有从`macvlan`接口发出的流量，不管目的地全部都发送给父接口，即使流量的目的地是共享同一个父接口的其它`macvlan`接口。在二层网络场景下，由于生成树协议的原因，两个`macvlan`接口之间的通讯会被阻塞，这时需要上层路由器上为其添加路由（需要外部交换机配置`Hairpin`支持，即需要兼容`802.1Qbg`的交换机支持，其可以把源和目的地址都是本地`macvlan`接口地址的流量发回给相应的接口）。此模式下从父接口收到的广播包，会泛洪给`vepa`模式的所有子接口。
+
+现在大多数交换机都不支持`Hairpin`模式，但`Linux`主机中可以通过一种`Harpin`模式的`Bridge`来让`vepa`模式下的不同`macvlan`接口通信(前文已经提到，`Bridge`其实就是一种旧式交换机)。怎么配置呢？非常简单，通过一条命令就可以解决：
+
+```sh
+# 方式1
+brctl hairpin br0 eth1 on
+
+# 方式2
+bridge link set dev eth0 hairpin on
+
+# 方式3
+echo 1 >/sys/class/net/br0/brif/eth1/hairpin_mode
+```
+
+![macvlan_vepa](/images/Linux-网络/macvlan_vepa.jpg)
 
 __验证1：macvlan接口与宿主机同一个网段__
 
@@ -435,11 +488,21 @@ export ip_macvlan2="10.0.2.17" # macvlan接口2的ip
 export ip_netmask="255.255.255.0" # macvlan接口的子网掩码
 setup
 #-------------------------↓↓↓↓↓↓-------------------------
-1/5: 创建macvlan设备 'macvlan1' 和 'macvlan2'，类型为 'vepa'
-2/5: 创建网络命名空间 'liuye1' 和 'liuye2'
-3/5: 将 'macvlan1' 放入网络命名空间 'liuye1'；'macvlan2' 放入网络命名空间 'liuye2'
-4/5: 进入网络命名空间 'liuye1'，将 'macvlan1' 的ip设置为 '10.0.2.16'，同时配置默认路由 '10.0.2.2'
-5/5: 进入网络命名空间 'liuye2'，将 'macvlan2' 的ip设置为 '10.0.2.17'，同时配置默认路由 '10.0.2.2'
++ ip link add macvlan1 link enp0s3 type macvlan mode vepa
++ ip link add macvlan2 link enp0s3 type macvlan mode vepa
++ ip netns add liuye1
++ ip netns add liuye2
++ ip link set macvlan1 netns liuye1
++ ip link set macvlan2 netns liuye2
++ ip netns exec liuye1 ip link set macvlan1 up
++ ip netns exec liuye1 ip addr add 10.0.2.16/255.255.255.0 dev macvlan1
++ '[' -z 10.0.2.2 ']'
++ ip netns exec liuye1 ip route add default via 10.0.2.2 dev macvlan1
++ ip netns exec liuye2 ip link set macvlan2 up
++ ip netns exec liuye2 ip addr add 10.0.2.17/255.255.255.0 dev macvlan2
++ '[' -z 10.0.2.2 ']'
++ ip netns exec liuye2 ip route add default via 10.0.2.2 dev macvlan2
++ set +x
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 在macvlan1所在的网络命名空间中ping macvlan2的ip
@@ -485,8 +548,11 @@ rtt min/avg/max/mdev = 4.627/9.862/16.839/5.136 ms
 # 清理
 cleanup
 #-------------------------↓↓↓↓↓↓-------------------------
-1/2: 删除macvlan设备 'macvlan1' 和 'macvlan2'
-2/2: 删除网络命名空间 'liuye1' 和 'liuye2'
++ ip netns exec liuye1 ip link delete macvlan1
++ ip netns exec liuye2 ip link delete macvlan2
++ ip netns delete liuye1
++ ip netns delete liuye2
++ set +x
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
@@ -508,11 +574,21 @@ export ip_macvlan2="192.168.200.1" # macvlan接口2的ip
 export ip_netmask="255.255.255.0" # macvlan接口的子网掩码
 setup
 #-------------------------↓↓↓↓↓↓-------------------------
-1/5: 创建macvlan设备 'macvlan1' 和 'macvlan2'，类型为 'vepa'
-2/5: 创建网络命名空间 'liuye1' 和 'liuye2'
-3/5: 将 'macvlan1' 放入网络命名空间 'liuye1'；'macvlan2' 放入网络命名空间 'liuye2'
-4/5: 进入网络命名空间 'liuye1'，将 'macvlan1' 的ip设置为 '192.168.100.1'，同时配置默认路由 ''
-5/5: 进入网络命名空间 'liuye2'，将 'macvlan2' 的ip设置为 '192.168.200.1'，同时配置默认路由 ''
++ ip link add macvlan1 link enp0s3 type macvlan mode vepa
++ ip link add macvlan2 link enp0s3 type macvlan mode vepa
++ ip netns add liuye1
++ ip netns add liuye2
++ ip link set macvlan1 netns liuye1
++ ip link set macvlan2 netns liuye2
++ ip netns exec liuye1 ip link set macvlan1 up
++ ip netns exec liuye1 ip addr add 192.168.100.1/255.255.255.0 dev macvlan1
++ '[' -z '' ']'
++ ip netns exec liuye1 ip route add default dev macvlan1
++ ip netns exec liuye2 ip link set macvlan2 up
++ ip netns exec liuye2 ip addr add 192.168.200.1/255.255.255.0 dev macvlan2
++ '[' -z '' ']'
++ ip netns exec liuye2 ip route add default dev macvlan2
++ set +x
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 在macvlan1所在的网络命名空间中ping macvlan2的ip
@@ -536,12 +612,19 @@ PING 192.168.100.1 (192.168.100.1) 56(84) bytes of data.
 # 清理
 cleanup
 #-------------------------↓↓↓↓↓↓-------------------------
-1/2: 删除macvlan设备 'macvlan1' 和 'macvlan2'
-2/2: 删除网络命名空间 'liuye1' 和 'liuye2'
++ ip netns exec liuye1 ip link delete macvlan1
++ ip netns exec liuye2 ip link delete macvlan2
++ ip netns delete liuye1
++ ip netns delete liuye2
++ set +x
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-__结论1：macvlan接口之间无法ping通（要求switch支持`802.1Qbg/VPEA`，我的测试环境是virtualBox虚拟机，估计不支持）__
+__结论2：macvlan接口之间无法ping通（要求switch支持`802.1Qbg/VPEA`，我的测试环境是virtualBox虚拟机，估计不支持）__
+
+### 2.6.4 passthru mode
+
+![macvlan_passthru](/images/Linux-网络/macvlan_passthru.jpg)
 
 ## 2.7 ipvlan
 
@@ -587,19 +670,17 @@ export ip_ipvlan2=""
 export ip_netmask=""
 
 function setup() {
-	echo "1/5: 创建ipvlan设备 '${ifname_ipvlan1}' 和 '${ifname_ipvlan2}'，类型为 '${ipvlan_mode}'"
+	set -x
+
 	ip link add ${ifname_ipvlan1} link ${ifname_external} type ipvlan mode ${ipvlan_mode}
 	ip link add ${ifname_ipvlan2} link ${ifname_external} type ipvlan mode ${ipvlan_mode}
 
-	echo "2/5: 创建网络命名空间 '${namespace1}' 和 '${namespace2}'"
 	ip netns add ${namespace1}
 	ip netns add ${namespace2}
 
-	echo "3/5: 将 '${ifname_ipvlan1}' 放入网络命名空间 '${namespace1}'；'${ifname_ipvlan2}' 放入网络命名空间 '${namespace2}'"
 	ip link set ${ifname_ipvlan1} netns ${namespace1}
 	ip link set ${ifname_ipvlan2} netns ${namespace2}
 
-	echo "4/5: 进入网络命名空间 '${namespace1}'，将 '${ifname_ipvlan1}' 的ip设置为 '${ip_ipvlan1}'，同时配置默认路由 '${default_gateway}'"
 	ip netns exec ${namespace1} ip link set ${ifname_ipvlan1} up
 	ip netns exec ${namespace1} ip addr add ${ip_ipvlan1}/${ip_netmask} dev ${ifname_ipvlan1}
 	if [ -z "${default_gateway}" ]; then
@@ -608,7 +689,6 @@ function setup() {
 		ip netns exec ${namespace1} ip route add default via ${default_gateway} dev ${ifname_ipvlan1}
 	fi
 
-	echo "5/5: 进入网络命名空间 '${namespace2}'，将 '${ifname_ipvlan2}' 的ip设置为 '${ip_ipvlan2}'，同时配置默认路由 '${default_gateway}'"
 	ip netns exec ${namespace2} ip link set ${ifname_ipvlan2} up
 	ip netns exec ${namespace2} ip addr add ${ip_ipvlan2}/${ip_netmask} dev ${ifname_ipvlan2}
 	if [ -z "${default_gateway}" ]; then
@@ -616,16 +696,20 @@ function setup() {
 	else
 		ip netns exec ${namespace2} ip route add default via ${default_gateway} dev ${ifname_ipvlan2}
 	fi
+
+	set +x
 }
 
 function cleanup() {
-	echo "1/2: 删除ipvlan设备 '${ifname_ipvlan1}' 和 '${ifname_ipvlan2}'"
+	set -x
+
 	ip netns exec ${namespace1} ip link delete ${ifname_ipvlan1}
 	ip netns exec ${namespace2} ip link delete ${ifname_ipvlan2}
 
-	echo "2/2: 删除网络命名空间 '${namespace1}' 和 '${namespace2}'"
 	ip netns delete ${namespace1}
 	ip netns delete ${namespace2}
+
+	set +x
 }
 
 export -f setup
@@ -654,11 +738,21 @@ export ip_ipvlan2="10.0.2.17" # ipvlan接口2的ip
 export ip_netmask="255.255.255.0" # ipvlan接口的子网掩码
 setup
 #-------------------------↓↓↓↓↓↓-------------------------
-1/5: 创建ipvlan设备 'ipvlan1' 和 'ipvlan2'，类型为 'l2'
-2/5: 创建网络命名空间 'liuye1' 和 'liuye2'
-3/5: 将 'ipvlan1' 放入网络命名空间 'liuye1'；'ipvlan2' 放入网络命名空间 'liuye2'
-4/5: 进入网络命名空间 'liuye1'，将 'ipvlan1' 的ip设置为 '10.0.2.16'，同时配置默认路由 '10.0.2.2'
-5/5: 进入网络命名空间 'liuye2'，将 'ipvlan2' 的ip设置为 '10.0.2.17'，同时配置默认路由 '10.0.2.2'
++ ip link add ipvlan1 link enp0s3 type ipvlan mode l2
++ ip link add ipvlan2 link enp0s3 type ipvlan mode l2
++ ip netns add liuye1
++ ip netns add liuye2
++ ip link set ipvlan1 netns liuye1
++ ip link set ipvlan2 netns liuye2
++ ip netns exec liuye1 ip link set ipvlan1 up
++ ip netns exec liuye1 ip addr add 10.0.2.16/255.255.255.0 dev ipvlan1
++ '[' -z 10.0.2.2 ']'
++ ip netns exec liuye1 ip route add default via 10.0.2.2 dev ipvlan1
++ ip netns exec liuye2 ip link set ipvlan2 up
++ ip netns exec liuye2 ip addr add 10.0.2.17/255.255.255.0 dev ipvlan2
++ '[' -z 10.0.2.2 ']'
++ ip netns exec liuye2 ip route add default via 10.0.2.2 dev ipvlan2
++ set +x
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 在ipvlan1所在的网络命名空间中ping ipvlan2的ip
@@ -711,8 +805,11 @@ rtt min/avg/max/mdev = 43.677/68.897/94.118/25.221 ms
 # 清理
 cleanup
 #-------------------------↓↓↓↓↓↓-------------------------
-1/2: 删除ipvlan设备 'ipvlan1' 和 'ipvlan2'
-2/2: 删除网络命名空间 'liuye1' 和 'liuye2'
++ ip netns exec liuye1 ip link delete ipvlan1
++ ip netns exec liuye2 ip link delete ipvlan2
++ ip netns delete liuye1
++ ip netns delete liuye2
++ set +x
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
@@ -729,48 +826,61 @@ export ipvlan_mode="l2"
 export ip_host="10.0.2.15" # 主机ip
 export default_gateway="" # 默认路由网关ip
 export ip_ipvlan1="192.168.100.1" # ipvlan接口1的ip
-export ip_ipvlan2="192.168.100.2" # ipvlan接口2的ip
+export ip_ipvlan2="192.168.200.1" # ipvlan接口2的ip
 export ip_netmask="255.255.255.0" # ipvlan接口的子网掩码
 setup
 #-------------------------↓↓↓↓↓↓-------------------------
-1/5: 创建ipvlan设备 'ipvlan1' 和 'ipvlan2'，类型为 'l2'
-2/5: 创建网络命名空间 'liuye1' 和 'liuye2'
-3/5: 将 'ipvlan1' 放入网络命名空间 'liuye1'；'ipvlan2' 放入网络命名空间 'liuye2'
-4/5: 进入网络命名空间 'liuye1'，将 'ipvlan1' 的ip设置为 '192.168.100.1'，同时配置默认路由 ''
-5/5: 进入网络命名空间 'liuye2'，将 'ipvlan2' 的ip设置为 '192.168.100.2'，同时配置默认路由 ''
++ ip link add ipvlan1 link enp0s3 type ipvlan mode l2
++ ip link add ipvlan2 link enp0s3 type ipvlan mode l2
++ ip netns add liuye1
++ ip netns add liuye2
++ ip link set ipvlan1 netns liuye1
++ ip link set ipvlan2 netns liuye2
++ ip netns exec liuye1 ip link set ipvlan1 up
++ ip netns exec liuye1 ip addr add 192.168.100.1/255.255.255.0 dev ipvlan1
++ '[' -z '' ']'
++ ip netns exec liuye1 ip route add default dev ipvlan1
++ ip netns exec liuye2 ip link set ipvlan2 up
++ ip netns exec liuye2 ip addr add 192.168.200.1/255.255.255.0 dev ipvlan2
++ '[' -z '' ']'
++ ip netns exec liuye2 ip route add default dev ipvlan2
++ set +x
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 在ipvlan1所在的网络命名空间中ping ipvlan2的ip
 ip netns exec ${namespace1} ping ${ip_ipvlan2} -c 3
 #-------------------------↓↓↓↓↓↓-------------------------
-PING 192.168.100.2 (192.168.100.2) 56(84) bytes of data.
-64 bytes from 192.168.100.2: icmp_seq=1 ttl=64 time=1.34 ms
-64 bytes from 192.168.100.2: icmp_seq=2 ttl=64 time=0.039 ms
-64 bytes from 192.168.100.2: icmp_seq=3 ttl=64 time=0.038 ms
+PING 192.168.200.1 (192.168.200.1) 56(84) bytes of data.
+64 bytes from 192.168.200.1: icmp_seq=1 ttl=64 time=0.783 ms
+64 bytes from 192.168.200.1: icmp_seq=2 ttl=64 time=0.041 ms
+64 bytes from 192.168.200.1: icmp_seq=3 ttl=64 time=0.087 ms
 
---- 192.168.100.2 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2056ms
-rtt min/avg/max/mdev = 0.038/0.475/1.349/0.618 ms
+--- 192.168.200.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2085ms
+rtt min/avg/max/mdev = 0.041/0.303/0.783/0.340 ms
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 在ipvlan2所在的网络命名空间中ping ipvlan1的ip
 ip netns exec ${namespace2} ping ${ip_ipvlan1} -c 3
 #-------------------------↓↓↓↓↓↓-------------------------
 PING 192.168.100.1 (192.168.100.1) 56(84) bytes of data.
-64 bytes from 192.168.100.1: icmp_seq=1 ttl=64 time=0.028 ms
-64 bytes from 192.168.100.1: icmp_seq=2 ttl=64 time=0.180 ms
-64 bytes from 192.168.100.1: icmp_seq=3 ttl=64 time=0.043 ms
+64 bytes from 192.168.100.1: icmp_seq=1 ttl=64 time=0.029 ms
+64 bytes from 192.168.100.1: icmp_seq=2 ttl=64 time=0.089 ms
+64 bytes from 192.168.100.1: icmp_seq=3 ttl=64 time=0.047 ms
 
 --- 192.168.100.1 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2325ms
-rtt min/avg/max/mdev = 0.028/0.083/0.180/0.069 ms
+3 packets transmitted, 3 received, 0% packet loss, time 2074ms
+rtt min/avg/max/mdev = 0.029/0.055/0.089/0.025 ms
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 清理
 cleanup
 #-------------------------↓↓↓↓↓↓-------------------------
-1/2: 删除ipvlan设备 'ipvlan1' 和 'ipvlan2'
-2/2: 删除网络命名空间 'liuye1' 和 'liuye2'
++ ip netns exec liuye1 ip link delete ipvlan1
++ ip netns exec liuye2 ip link delete ipvlan2
++ ip netns delete liuye1
++ ip netns delete liuye2
++ set +x
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
@@ -797,11 +907,21 @@ export ip_ipvlan2="10.0.2.17" # ipvlan接口2的ip
 export ip_netmask="255.255.255.0" # ipvlan接口的子网掩码
 setup
 #-------------------------↓↓↓↓↓↓-------------------------
-1/5: 创建ipvlan设备 'ipvlan1' 和 'ipvlan2'，类型为 'l3'
-2/5: 创建网络命名空间 'liuye1' 和 'liuye2'
-3/5: 将 'ipvlan1' 放入网络命名空间 'liuye1'；'ipvlan2' 放入网络命名空间 'liuye2'
-4/5: 进入网络命名空间 'liuye1'，将 'ipvlan1' 的ip设置为 '10.0.2.16'，同时配置默认路由 '10.0.2.2'
-5/5: 进入网络命名空间 'liuye2'，将 'ipvlan2' 的ip设置为 '10.0.2.17'，同时配置默认路由 '10.0.2.2'
++ ip link add ipvlan1 link enp0s3 type ipvlan mode l3
++ ip link add ipvlan2 link enp0s3 type ipvlan mode l3
++ ip netns add liuye1
++ ip netns add liuye2
++ ip link set ipvlan1 netns liuye1
++ ip link set ipvlan2 netns liuye2
++ ip netns exec liuye1 ip link set ipvlan1 up
++ ip netns exec liuye1 ip addr add 10.0.2.16/255.255.255.0 dev ipvlan1
++ '[' -z 10.0.2.2 ']'
++ ip netns exec liuye1 ip route add default via 10.0.2.2 dev ipvlan1
++ ip netns exec liuye2 ip link set ipvlan2 up
++ ip netns exec liuye2 ip addr add 10.0.2.17/255.255.255.0 dev ipvlan2
++ '[' -z 10.0.2.2 ']'
++ ip netns exec liuye2 ip route add default via 10.0.2.2 dev ipvlan2
++ set +x
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 在ipvlan1所在的网络命名空间中ping ipvlan2的ip
@@ -855,8 +975,11 @@ rtt min/avg/max/mdev = 5.503/7.177/8.215/1.195 ms
 # 清理
 cleanup
 #-------------------------↓↓↓↓↓↓-------------------------
-1/2: 删除ipvlan设备 'ipvlan1' 和 'ipvlan2'
-2/2: 删除网络命名空间 'liuye1' 和 'liuye2'
++ ip netns exec liuye1 ip link delete ipvlan1
++ ip netns exec liuye2 ip link delete ipvlan2
++ ip netns delete liuye1
++ ip netns delete liuye2
++ set +x
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
@@ -877,11 +1000,21 @@ export ip_ipvlan2="192.168.200.1" # ipvlan接口2的ip
 export ip_netmask="255.255.255.0" # ipvlan接口的子网掩码
 setup
 #-------------------------↓↓↓↓↓↓-------------------------
-1/5: 创建ipvlan设备 'ipvlan1' 和 'ipvlan2'，类型为 'l3'
-2/5: 创建网络命名空间 'liuye1' 和 'liuye2'
-3/5: 将 'ipvlan1' 放入网络命名空间 'liuye1'；'ipvlan2' 放入网络命名空间 'liuye2'
-4/5: 进入网络命名空间 'liuye1'，将 'ipvlan1' 的ip设置为 '192.168.100.1'，同时配置默认路由 ''
-5/5: 进入网络命名空间 'liuye2'，将 'ipvlan2' 的ip设置为 '192.168.200.1'，同时配置默认路由 ''
++ ip link add ipvlan1 link enp0s3 type ipvlan mode l3
++ ip link add ipvlan2 link enp0s3 type ipvlan mode l3
++ ip netns add liuye1
++ ip netns add liuye2
++ ip link set ipvlan1 netns liuye1
++ ip link set ipvlan2 netns liuye2
++ ip netns exec liuye1 ip link set ipvlan1 up
++ ip netns exec liuye1 ip addr add 192.168.100.1/255.255.255.0 dev ipvlan1
++ '[' -z '' ']'
++ ip netns exec liuye1 ip route add default dev ipvlan1
++ ip netns exec liuye2 ip link set ipvlan2 up
++ ip netns exec liuye2 ip addr add 192.168.200.1/255.255.255.0 dev ipvlan2
++ '[' -z '' ']'
++ ip netns exec liuye2 ip route add default dev ipvlan2
++ set +x
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 在ipvlan1所在的网络命名空间中ping ipvlan2的ip
@@ -913,8 +1046,11 @@ rtt min/avg/max/mdev = 0.032/0.057/0.097/0.028 ms
 # 清理
 cleanup
 #-------------------------↓↓↓↓↓↓-------------------------
-1/2: 删除ipvlan设备 'ipvlan1' 和 'ipvlan2'
-2/2: 删除网络命名空间 'liuye1' 和 'liuye2'
++ ip netns exec liuye1 ip link delete ipvlan1
++ ip netns exec liuye2 ip link delete ipvlan2
++ ip netns delete liuye1
++ ip netns delete liuye2
++ set +x
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
@@ -939,11 +1075,21 @@ export ip_ipvlan2="10.0.2.17" # ipvlan接口2的ip
 export ip_netmask="255.255.255.0" # ipvlan接口的子网掩码
 setup
 #-------------------------↓↓↓↓↓↓-------------------------
-1/5: 创建ipvlan设备 'ipvlan1' 和 'ipvlan2'，类型为 'l3s'
-2/5: 创建网络命名空间 'liuye1' 和 'liuye2'
-3/5: 将 'ipvlan1' 放入网络命名空间 'liuye1'；'ipvlan2' 放入网络命名空间 'liuye2'
-4/5: 进入网络命名空间 'liuye1'，将 'ipvlan1' 的ip设置为 '10.0.2.16'，同时配置默认路由 '10.0.2.2'
-5/5: 进入网络命名空间 'liuye2'，将 'ipvlan2' 的ip设置为 '10.0.2.17'，同时配置默认路由 '10.0.2.2'
++ ip link add ipvlan1 link enp0s3 type ipvlan mode l3s
++ ip link add ipvlan2 link enp0s3 type ipvlan mode l3s
++ ip netns add liuye1
++ ip netns add liuye2
++ ip link set ipvlan1 netns liuye1
++ ip link set ipvlan2 netns liuye2
++ ip netns exec liuye1 ip link set ipvlan1 up
++ ip netns exec liuye1 ip addr add 10.0.2.16/255.255.255.0 dev ipvlan1
++ '[' -z 10.0.2.2 ']'
++ ip netns exec liuye1 ip route add default via 10.0.2.2 dev ipvlan1
++ ip netns exec liuye2 ip link set ipvlan2 up
++ ip netns exec liuye2 ip addr add 10.0.2.17/255.255.255.0 dev ipvlan2
++ '[' -z 10.0.2.2 ']'
++ ip netns exec liuye2 ip route add default via 10.0.2.2 dev ipvlan2
++ set +x
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 在ipvlan1所在的网络命名空间中ping ipvlan2的ip
@@ -997,8 +1143,11 @@ rtt min/avg/max/mdev = 66.605/104.814/159.405/39.617 ms
 # 清理
 cleanup
 #-------------------------↓↓↓↓↓↓-------------------------
-1/2: 删除ipvlan设备 'ipvlan1' 和 'ipvlan2'
-2/2: 删除网络命名空间 'liuye1' 和 'liuye2'
++ ip netns exec liuye1 ip link delete ipvlan1
++ ip netns exec liuye2 ip link delete ipvlan2
++ ip netns delete liuye1
++ ip netns delete liuye2
++ set +x
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
@@ -1019,11 +1168,21 @@ export ip_ipvlan2="192.168.200.1" # ipvlan接口2的ip
 export ip_netmask="255.255.255.0" # ipvlan接口的子网掩码
 setup
 #-------------------------↓↓↓↓↓↓-------------------------
-1/5: 创建ipvlan设备 'ipvlan1' 和 'ipvlan2'，类型为 'l3s'
-2/5: 创建网络命名空间 'liuye1' 和 'liuye2'
-3/5: 将 'ipvlan1' 放入网络命名空间 'liuye1'；'ipvlan2' 放入网络命名空间 'liuye2'
-4/5: 进入网络命名空间 'liuye1'，将 'ipvlan1' 的ip设置为 '192.168.100.1'，同时配置默认路由 ''
-5/5: 进入网络命名空间 'liuye2'，将 'ipvlan2' 的ip设置为 '192.168.200.1'，同时配置默认路由 ''
++ ip link add ipvlan1 link enp0s3 type ipvlan mode l3s
++ ip link add ipvlan2 link enp0s3 type ipvlan mode l3s
++ ip netns add liuye1
++ ip netns add liuye2
++ ip link set ipvlan1 netns liuye1
++ ip link set ipvlan2 netns liuye2
++ ip netns exec liuye1 ip link set ipvlan1 up
++ ip netns exec liuye1 ip addr add 192.168.100.1/255.255.255.0 dev ipvlan1
++ '[' -z '' ']'
++ ip netns exec liuye1 ip route add default dev ipvlan1
++ ip netns exec liuye2 ip link set ipvlan2 up
++ ip netns exec liuye2 ip addr add 192.168.200.1/255.255.255.0 dev ipvlan2
++ '[' -z '' ']'
++ ip netns exec liuye2 ip route add default dev ipvlan2
++ set +x
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 在ipvlan1所在的网络命名空间中ping ipvlan2的ip
@@ -1055,12 +1214,15 @@ rtt min/avg/max/mdev = 0.033/0.041/0.049/0.009 ms
 # 清理
 cleanup
 #-------------------------↓↓↓↓↓↓-------------------------
-1/2: 删除ipvlan设备 'ipvlan1' 和 'ipvlan2'
-2/2: 删除网络命名空间 'liuye1' 和 'liuye2'
++ ip netns exec liuye1 ip link delete ipvlan1
++ ip netns exec liuye2 ip link delete ipvlan2
++ ip netns delete liuye1
++ ip netns delete liuye2
++ set +x
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-__结论1：ipvlan接口之间可以相互ping通，但是无法ping通master接口。ip配置正确的情况下，可以通外网__
+__结论2：ipvlan接口之间可以相互ping通，但是无法ping通master接口。ip配置正确的情况下，可以通外网__
 
 ## 2.8 macvtap/ipvtap
 
@@ -1092,6 +1254,9 @@ __结论1：ipvlan接口之间可以相互ping通，但是无法ping通master接
 * [IPVLAN网络模式](https://support.huaweicloud.com/dpmg-kunpengwebs/kunpengnginx_04_0010.html)
 * [linux 网络虚拟化： macvlan](https://cizixs.com/2017/02/14/network-virtualization-macvlan/)
 * [Macvlan与ipvlan解析](https://www.dazhuanlan.com/2019/12/12/5df17e01243b0/)
+* [Linux 虚拟网卡技术：Macvlan](https://fuckcloudnative.io/posts/netwnetwork-virtualization-macvlan/)
+* [VXLAN 基础教程：VXLAN 协议原理介绍](https://fuckcloudnative.io/posts/vxlan-protocol-introduction/)
+* [VXLAN 基础教程：在 Linux 上配置 VXLAN 网络](https://fuckcloudnative.io/posts/vxlan-linux/)
 
 # 3 Netfilter
 

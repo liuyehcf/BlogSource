@@ -62,6 +62,10 @@ __举例__
 1. `/proc/buddyinfo`：内存碎片信息
 1. `/proc/sys/net`：网络相关配置
 1. `/proc/interrupts`：中断映射表
+1. `/proc/net`：网络相关的统计信息
+    * `/proc/net/route`：路由表
+    * `/proc/net/arp`：mac地址表
+    * `/proc/net/tcp`：tcp连接信息
 
 # 3 其他
 
