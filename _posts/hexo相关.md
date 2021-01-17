@@ -305,6 +305,15 @@ cond(no)->sub1(right)->op
 
 [阅读次数统计-配置](http://theme-next.iissnan.com/third-party-services.html#analytics-tencent-mta)
 
+[解决使用LEANCLOUD配置NEXT主题文章浏览量显示不正常的问题](https://www.freesion.com/article/6399428835/)
+
+编辑`主题`配置文件
+
+1. 关闭`leancloud_visitors`配置
+    * `enable`置为false
+1. 打开`valine`配置
+    * `enable`设置为true
+
 # 9 本地搜索
 
 [本地搜索-配置](http://theme-next.iissnan.com/third-party-services.html#local-search)
