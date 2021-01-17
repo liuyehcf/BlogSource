@@ -307,6 +307,8 @@ cond(no)->sub1(right)->op
 
 [解决使用LEANCLOUD配置NEXT主题文章浏览量显示不正常的问题](https://www.freesion.com/article/6399428835/)
 
+[Hexo Next主题 使用LeanCloud统计文章阅读次数、添加热度排行页面](https://blog.qust.cc/archives/48665.html)
+
 编辑`主题`配置文件
 
 1. 关闭`leancloud_visitors`配置
@@ -315,6 +317,23 @@ cond(no)->sub1(right)->op
     * `enable`设置为true
     * 配置`appid`以及`appkey`
     * `visitor`设置为true
+
+编辑`站点`配置文件
+
+```yaml
+deploy:
+...
+- type: leancloud_counter_security_sync
+...
+
+leancloud_counter_security:
+  enable_sync: true # 先关了，开启有问题，总是报`Too many requests. [429 GET https://qhehlume.api.lncld.net/1.1/classes/Counter]`
+  app_id: xxx
+  app_key: xxx
+  server_url: https://leancloud.cn # 内地region需要配置这个
+  username: 'liuyehcf'
+  password: '19930101' # 究极大坑，这里需要用引号
+```
 
 # 9 本地搜索
 
