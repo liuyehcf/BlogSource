@@ -426,7 +426,18 @@ toc:
 
 # 14 修改行内代码样式
 
-修改方式：在`themes/next/source/css/_custom/custom.styl`中增加如下代码
+修改方式（这个方式在最新的next版本中好像失效了）：在`themes/next/source/css/_custom/custom.styl`中增加如下代码
+
+```css
+// Custom styles.
+code {
+    color: #C33258;
+    background: #F9F2F4;
+    margin: 2px;
+}
+```
+
+修改方式：在`themes/next/source/css/_common/scaffolding/highlight/highlight.styl`中修改`code`的样式定义
 
 ```css
 // Custom styles.
