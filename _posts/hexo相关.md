@@ -313,6 +313,8 @@ cond(no)->sub1(right)->op
     * `enable`置为false
 1. 打开`valine`配置
     * `enable`设置为true
+    * 配置`appid`以及`appkey`
+    * `visitor`设置为true
 
 # 9 本地搜索
 
