@@ -19,6 +19,7 @@
     * https://blog.csdn.net/fishinhouse/article/details/105536777
 1. docker
     * 裁剪工具：dockerslim https://dockersl.im/
+1. linux 测速，https://www.linuxprobe.com/speedtest-network-in-linux.html
 1. tcp
     * https://zhuanlan.zhihu.com/p/35684094（一个因tcp_tw_recycle引起的跨机房连接超时问题）
         * close_wait会占用文件描述符
