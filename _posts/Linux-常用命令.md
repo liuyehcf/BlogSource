@@ -67,6 +67,34 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 
 ## 1.5 useradd
 
+__用useradd创建账号会更改的文件：__
+
+1. `/etc/passwd`、`/etc/shadow`
+1. `/etc/group`、`/etc/gshadow`
+1. 用户组的文件夹：`/home/<user name>`
+
+__格式：__
+
+* `useradd [-u UID] [-g 初始用户组] [-G 次要用户组] [-mM] [-c 说明栏] [-d 主文件夹绝对路径] [-s shell] 用户账号名`
+
+__参数说明：__
+
+`-u`：后接UID
+`-g`：后接用户组名（初始用户组，initial gropu）
+`-G`：这个账号还可以加入的用户组
+`-M`：不要创建用户主文件夹（系统账号默认值）
+`-m`：要创建用户主文件夹（一般账号默认值）
+`-c`：这个就是`/etc/passwd`第五列的说明内容，随便设置
+`-d`：指定某个目录称为主文件夹，而不要使用默认值，务必使用绝对路径
+`-r`：创建一个系统账号，这个账号的UID会有限制
+`-s`：后面接一个shell，若没有指定则默认是`/bin/bash`
+`-e`：后面接一个日期，格式"YYYY-MM-DD"，此选项写入`/etc/shadow`第八个字段，账号失效日期的设置选项
+`-f`：后面接/etc/shadow的第七个字段，指定密码是否会失效，0为立即失效，-1为永远不失效
+
+__示例：__
+
+* `useradd owner -g admin -G admin -s /bin/bash`
+
 ## 1.6 passwd
 
 __示例：__
