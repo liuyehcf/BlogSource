@@ -27,6 +27,10 @@ __阅读更多__
 
 ## 2.1 bridge
 
+![bridge](/images/Linux-网络/bridge.png)
+
+Linux虚拟网桥类似于一个交换机，它在与其连接的接口之间转发数据包。通常用于在路由器、网关、VM以及网络命名空间之间转发数据包
+
 编写一个脚本，内容如下，这里我取名为`bridge.sh`
 
 ```sh
@@ -174,6 +178,125 @@ cleanup
 ```
 
 ## 2.2 bonded interface
+
+![bond](/images/Linux-网络/bond.png)
+
+`bond`可以将多张网卡组织成一张逻辑网卡，存在多种组织方式（`mode`），包括
+
+1. `balance-rr`：轮询（`round-robin`）
+1. `active-backup`：热备
+1. `balance-xor`
+1. `broadcast`：广播，每张slave都会收到消息
+1. `802.3ad`
+1. `balance-tlb`
+1. `balance-alb`
+
+编写一个脚本，内容如下，这里我取名为`bond.sh`
+
+```sh
+cat > ~/bond.sh << 'EOF'
+#!/bin/bash
+
+export ifname_physics_1=""
+export ifname_physics_2=""
+export bond_name=""
+export bond_mode=""
+export ip_bond=""
+export ip_gateway=""
+export ip_net=""
+export ip_netmask=""
+export ip_broadcast=""
+
+function setup(){
+	set -x
+
+	ip link add ${bond_name} type bond miimon 100 updelay 100 downdelay 100 mode ${bond_mode}
+
+	ip link set ${ifname_physics_1} master ${bond_name}
+	ip link set ${ifname_physics_2} master ${bond_name}
+
+	ip link set ${bond_name} up
+	ip link set ${ifname_physics_1} up
+	ip link set ${ifname_physics_2} up
+
+	ip addr add ${ip_bond}/${ip_netmask} broadcast ${ip_broadcast} dev ${bond_name}
+
+	ip route add default via ${ip_gateway} dev ${bond_name}
+
+	echo "nameserver 8.8.8.8" > /etc/resolv.conf
+
+	set +x
+}
+
+function cleanup(){
+	set -x
+
+	ip link set ${bond_name} down
+	ip link set ${ifname_physics_1} down
+	ip link set ${ifname_physics_2} down
+
+	ip link del ${bond_name}
+
+	set +x
+}
+
+export -f setup
+export -f cleanup
+EOF
+```
+
+下面进行测试，环境要求如下
+
+1. 两个待绑定的网卡在同一个网段
+1. 由于我的测试环境是VirtualBox虚拟机，两个待绑定的网卡的网络类型是`NAT网络`，需要将这两张网卡设置为开机不自启，避免生成mac缓存干扰测试（修改完后重启机器）
+
+```sh
+# 配置
+source bond.sh
+export ifname_physics_1="enp0s3" # 待绑定的子网卡名称1
+export ifname_physics_2="enp0s9" # 待绑定的子网卡名称2
+export bond_name="bond_liuye" # bond名称
+export bond_mode="active-backup" # bond模式，可以通过`ip link help bond`查询所有的mode
+export ip_bond="10.0.2.66"
+export ip_gateway="10.0.2.2"
+export ip_net="10.0.2.0"
+export ip_netmask="255.255.255.0"
+export ip_broadcast="10.0.2.255"
+setup
+#-------------------------↓↓↓↓↓↓-------------------------
++ ip link set enp0s3 down
++ ip link set enp0s9 down
++ ip link add bond_liuye type bond miimon 100 mode active-backup
++ ip link set enp0s3 master bond_liuye
++ ip link set enp0s9 master bond_liuye
++ ip link set bond_liuye up
++ ip link set enp0s3 up
++ ip link set enp0s9 up
++ ip addr add 10.0.2.66/255.255.255.0 broadcast 10.0.2.255 dev bond_liuye
++ ip route add default via 10.0.2.2 dev bond_liuye
++ echo 'nameserver 8.8.8.8'
++ set +x
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 测试连通性
+ping -c 3 www.aliyun.com
+#-------------------------↓↓↓↓↓↓-------------------------
+PING aliyun-adns.aliyun.com.gds.alibabadns.com (106.11.172.56) 56(84) bytes of data.
+64 bytes from 106.11.172.56 (106.11.172.56): icmp_seq=1 ttl=63 time=7.63 ms
+64 bytes from 106.11.172.56 (106.11.172.56): icmp_seq=2 ttl=63 time=7.24 ms
+64 bytes from 106.11.172.56 (106.11.172.56): icmp_seq=3 ttl=63 time=7.14 ms
+
+--- aliyun-adns.aliyun.com.gds.alibabadns.com ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2025ms
+rtt min/avg/max/mdev = 7.140/7.340/7.631/0.210 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 将其中一个网卡关掉，查看连通性
+ip link set ${ifname_physics_1} down
+ping -c 3 www.aliyun.com
+#-------------------------↓↓↓↓↓↓-------------------------
+#-------------------------↑↑↑↑↑↑-------------------------
+```
 
 ## 2.3 team device
 
@@ -1257,6 +1380,7 @@ __结论2：ipvlan接口之间可以相互ping通，但是无法ping通master接
 * [Linux 虚拟网卡技术：Macvlan](https://fuckcloudnative.io/posts/netwnetwork-virtualization-macvlan/)
 * [VXLAN 基础教程：VXLAN 协议原理介绍](https://fuckcloudnative.io/posts/vxlan-protocol-introduction/)
 * [VXLAN 基础教程：在 Linux 上配置 VXLAN 网络](https://fuckcloudnative.io/posts/vxlan-linux/)
+* [Linux bonding研究及实现](https://developer.aliyun.com/article/478834)
 
 # 3 Netfilter
 

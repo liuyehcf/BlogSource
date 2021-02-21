@@ -67,34 +67,6 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 
 ## 1.5 useradd
 
-__用useradd创建账号会更改的文件：__
-
-1. `/etc/passwd`、`/etc/shadow`
-1. `/etc/group`、`/etc/gshadow`
-1. 用户组的文件夹：`/home/<user name>`
-
-__格式：__
-
-* `useradd [-u UID] [-g 初始用户组] [-G 次要用户组] [-mM] [-c 说明栏] [-d 主文件夹绝对路径] [-s shell] 用户账号名`
-
-__参数说明：__
-
-`-u`：后接UID
-`-g`：后接用户组名（初始用户组，initial gropu）
-`-G`：这个账号还可以加入的用户组
-`-M`：不要创建用户主文件夹（系统账号默认值）
-`-m`：要创建用户主文件夹（一般账号默认值）
-`-c`：这个就是`/etc/passwd`第五列的说明内容，随便设置
-`-d`：指定某个目录称为主文件夹，而不要使用默认值，务必使用绝对路径
-`-r`：创建一个系统账号，这个账号的UID会有限制
-`-s`：后面接一个shell，若没有指定则默认是`/bin/bash`
-`-e`：后面接一个日期，格式"YYYY-MM-DD"，此选项写入`/etc/shadow`第八个字段，账号失效日期的设置选项
-`-f`：后面接/etc/shadow的第七个字段，指定密码是否会失效，0为立即失效，-1为永远不失效
-
-__示例：__
-
-* `useradd owner -g admin -G admin -s /bin/bash`
-
 ## 1.6 passwd
 
 __示例：__
@@ -2043,6 +2015,32 @@ __-D参数为啥能够检测ip冲突__
     * ![arping-3](/images/Linux-常用命令/arping-4.png)
     * arp-reply直接指定了目标机器的mac地址，因此直接送达机器A
 
+## 5.18 hping3
+
+__安装：__
+
+```sh
+# 安装 yum 源
+yum install -y epel-release
+
+# 安装hping3
+yum install -y hping3
+```
+
+__参数说明：__
+
+* `-c`：发送、接收数据包的数量（如果只发包不收包是不会停止的）
+* `-d`：指定数据包大小（不包含header）
+* `-S`：只发送syn数据包
+* `-w`：设置tcp窗口大小
+* `-p`：目的端口
+* `--flood`：洪范模式，尽可能快地发送数据包
+* `--rand-source`：使用随机ip作为源IP
+
+__示例：__
+
+* `hping3 -c 10000 -d 120 -S -w 64 -p 21 --flood --rand-source www.baidu.com`
+
 # 6 运维监控
 
 ## 6.1 ssh
@@ -2319,7 +2317,7 @@ __格式：__
 
 * `dstat [options]`
 
-__参数：__
+__参数说明：__
 
 * `-c, --cpu`：cpu统计信息
     * `system`
@@ -2460,7 +2458,7 @@ __strace能做什么：__
 1. 当程序出现`Out of memory`时被系统发出的SIGKILL信息所kill
 1. 另外因为strace拿到的是系统调用相关信息，一般也即是IO操作信息，这个对于排查比如cpu占用100%问题是无能为力的。这个时候就可以使用GDB工具了
 
-__参数：__
+__参数说明：__
 
 * `-c`：输出统计报表
 * `-e`：后接系统调用的表达式

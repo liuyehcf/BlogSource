@@ -128,7 +128,9 @@ docker --help # 查询所有顶层的参数
 docker image --help # 参数image参数的子参数
 ```
 
-# 3 Alpine
+# 3 基础镜像
+
+## 3.1 Alpine
 
 Alpine Linux是一个轻型Linux发行版，它不同于通常的Linux发行版，Alpine采用了musl libc 和 BusyBox以减少系统的体积和运行时的资源消耗。Alpine Linux提供了自己的包管理工具：apk
 
@@ -153,7 +155,7 @@ RUN apk update \
 RUN apk add -U tzdata
 ```
 
-# 4 Jib
+## 3.2 Jib
 
 ```xml
             <plugin>
@@ -180,9 +182,7 @@ RUN apk add -U tzdata
             </plugin>
 ```
 
-## 4.1 修改系统变量
-
-# 5 Tips
+# 4 Tips
 
 1. 启动并保持容器运行
     * 可以执行一个不会终止的程序：`docker run -dit xxx:v1`
@@ -219,7 +219,84 @@ RUN apk add -U tzdata
 1. 删除docker命令后，docker的工作目录仍然是保留的（包含了镜像）若要彻底删除，可以通过如下命令
     * `rm -rf /var/lib/docker`
 
-# 6 参考
+## 4.1 跨平台运行容器
+
+如果我们在x86的平台上运行arm64的docker镜像，会得到如下错误信息
+
+```sh
+docker run --platform linux/arm64 --rm arm64v8/ubuntu:18.04 uname -a
+
+#-------------------------↓↓↓↓↓↓-------------------------
+standard_init_linux.go:219: exec user process caused: exec format error
+#-------------------------↑↑↑↑↑↑-------------------------
+```
+
+此时，我们可以借助跨平台工具`qemu`，[下载地址](https://github.com/multiarch/qemu-user-static/releases)。该方法对内核版本有要求，貌似要4.x以上，我的测试环境的内核版本是`4.14.134`
+
+```sh
+# 下载qemu-aarch64-static
+wget 'https://github.com/multiarch/qemu-user-static/releases/download/v5.2.0-2/qemu-aarch64-static.tar.gz'
+tar -zxvf qemu-aarch64-static.tar.gz -C /usr/bin
+
+# 安装qume
+docker run --rm --privileged multiarch/qemu-user-static:register
+
+#-------------------------↓↓↓↓↓↓-------------------------
+Setting /usr/bin/qemu-alpha-static as binfmt interpreter for alpha
+Setting /usr/bin/qemu-arm-static as binfmt interpreter for arm
+Setting /usr/bin/qemu-armeb-static as binfmt interpreter for armeb
+Setting /usr/bin/qemu-sparc-static as binfmt interpreter for sparc
+Setting /usr/bin/qemu-sparc32plus-static as binfmt interpreter for sparc32plus
+Setting /usr/bin/qemu-sparc64-static as binfmt interpreter for sparc64
+Setting /usr/bin/qemu-ppc-static as binfmt interpreter for ppc
+Setting /usr/bin/qemu-ppc64-static as binfmt interpreter for ppc64
+Setting /usr/bin/qemu-ppc64le-static as binfmt interpreter for ppc64le
+Setting /usr/bin/qemu-m68k-static as binfmt interpreter for m68k
+Setting /usr/bin/qemu-mips-static as binfmt interpreter for mips
+Setting /usr/bin/qemu-mipsel-static as binfmt interpreter for mipsel
+Setting /usr/bin/qemu-mipsn32-static as binfmt interpreter for mipsn32
+Setting /usr/bin/qemu-mipsn32el-static as binfmt interpreter for mipsn32el
+Setting /usr/bin/qemu-mips64-static as binfmt interpreter for mips64
+Setting /usr/bin/qemu-mips64el-static as binfmt interpreter for mips64el
+Setting /usr/bin/qemu-sh4-static as binfmt interpreter for sh4
+Setting /usr/bin/qemu-sh4eb-static as binfmt interpreter for sh4eb
+Setting /usr/bin/qemu-s390x-static as binfmt interpreter for s390x
+Setting /usr/bin/qemu-aarch64-static as binfmt interpreter for aarch64
+Setting /usr/bin/qemu-aarch64_be-static as binfmt interpreter for aarch64_be
+Setting /usr/bin/qemu-hppa-static as binfmt interpreter for hppa
+Setting /usr/bin/qemu-riscv32-static as binfmt interpreter for riscv32
+Setting /usr/bin/qemu-riscv64-static as binfmt interpreter for riscv64
+Setting /usr/bin/qemu-xtensa-static as binfmt interpreter for xtensa
+Setting /usr/bin/qemu-xtensaeb-static as binfmt interpreter for xtensaeb
+Setting /usr/bin/qemu-microblaze-static as binfmt interpreter for microblaze
+Setting /usr/bin/qemu-microblazeel-static as binfmt interpreter for microblazeel
+Setting /usr/bin/qemu-or1k-static as binfmt interpreter for or1k
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 再次运行
+docker run --platform linux/arm64 --rm arm64v8/ubuntu:18.04 uname -a
+
+#-------------------------↓↓↓↓↓↓-------------------------
+standard_init_linux.go:219: exec user process caused: no such file or directory
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 将qemu挂到容器内，再次运行
+docker run --platform linux/arm64 --rm -v /usr/bin/qemu-aarch64-static:/usr/bin/qemu-aarch64-static arm64v8/ubuntu:18.04 uname -a
+
+#-------------------------↓↓↓↓↓↓-------------------------
+Linux c3fb58ea543c 4.14.134 #1 SMP Tue Dec 29 21:27:58 EST 2020 aarch64 aarch64 aarch64 GNU/Linux
+#-------------------------↑↑↑↑↑↑-------------------------
+```
+
+## 4.2 镜像裁剪工具-dockerslim
+
+```sh
+docker-slim build --http-probe=false centos:7.6.1810
+```
+
+裁剪之后，镜像的体积从`202MB`变为`3.55MB`。但是裁剪之后，大部分的命令都被裁剪了（包括`ls`这种最基础的命令）
+
+# 5 参考
 
 * [Docker Hub](https://hub.docker.com/)
 * [Docker历史版本下载](https://docs.docker.com/docker-for-mac/release-notes/#docker-community-edition-17120-ce-mac49-2018-01-19)
@@ -238,3 +315,9 @@ RUN apk add -U tzdata
 * [探讨Docker容器中修改系统变量的方法](https://tonybai.com/2014/10/14/discussion-on-the-approach-to-modify-system-variables-in-docker/)
 * [What is the difference between CMD and ENTRYPOINT in a Dockerfile?](https://stackoverflow.com/questions/21553353/what-is-the-difference-between-cmd-and-entrypoint-in-a-dockerfile)
 * [Sharing Network Namespaces in Docker](https://blog.mikesir87.io/2019/03/sharing-network-namespaces-in-docker/)
+* [x86机器上运行arm64 docker](https://blog.csdn.net/xiang_freedom/article/details/92724299)
+* [github-qemu](https://github.com/multiarch/qemu-user-static/releases)
+* [跨平台构建 Docker 镜像](https://juejin.cn/post/6844903605355577358)
+* [跨平台构建 Docker 镜像新姿势，x86、arm 一把梭](https://cloud.tencent.com/developer/article/1543689)
+* [QEMU和KVM的关系](https://zhuanlan.zhihu.com/p/48664113)
+* [dockerslim](https://dockersl.im/)

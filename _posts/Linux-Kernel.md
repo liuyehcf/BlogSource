@@ -169,9 +169,11 @@ Pass 5: run completed in 10usr/50sys/327real ms.
 
 ## 3.3 参考
 
-* [SystemTap Doc](http://sourceware.org/systemtap/documentation.html)
+* [SystemTap Wiki](https://sourceware.org/systemtap/wiki)
+* [SystemTap Kprobe原理](http://lzz5235.github.io/2013/12/18/systemtap-kprobe.html)
 * [centos 7 systemtap 安装](https://www.jianshu.com/p/25e84f2e5a95)
 * [再聊 TCP backlog](https://juejin.im/post/6844904071367753736)
+* [systemtap从入门到放弃（一）](https://zhuanlan.zhihu.com/p/347313289)
 
 # 4 内核源码浅析
 

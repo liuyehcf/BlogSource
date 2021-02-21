@@ -142,6 +142,11 @@ __设置滚动行数__
 
 * `Preferences`->`Profiles`->`Terminal`
 
+__设置语言__
+
+* `export LANG=en_US.UTF-8`
+* `export zh_CN.UTF-8`
+
 # 4 zsh
 
 # 5 更换home-brew镜像源

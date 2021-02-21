@@ -12,7 +12,7 @@ __阅读更多__
 
 <!--more-->
 
-# 1 `/sys`目录
+# 1 /sys目录
 
 首先，先通过`tree -L 1 /sys`看下`/sys`的目录结构，结果如下
 
@@ -57,7 +57,7 @@ __举例__
 * [linux 目录/sys 解析](https://blog.csdn.net/zqixiao_09/article/details/50320799)
 * [What's the “/sys” directory for?](https://askubuntu.com/questions/720471/whats-the-sys-directory-for)
 
-# 2 `/proc`目录
+# 2 /proc目录
 
 1. `/proc/buddyinfo`：内存碎片信息
 1. `/proc/sys/net`：网络相关配置
@@ -74,4 +74,6 @@ __举例__
 1. `/dev/disk/by-uuid`：以uuid为名称的软链接文件
 1. `/dev/disk/by-partlabel`：以分区标签为名称的软链接文件
 1. `/dev/disk/by-id`：以id为名称的软链接文件
+1. `/usr/share/zoneinfo`：时区配置文件
+    * `/etc/localtime`：时区配置文件的软连接，实际生效的时区配置
 

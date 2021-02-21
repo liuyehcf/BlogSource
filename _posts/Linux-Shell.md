@@ -1013,9 +1013,33 @@ sleep 2
 
 举个简单的例子，如何创建一个名为`-f`的目录？`mkdir -f`肯定是不行的，因为`-f`会被当做mkdir命令的选项，此时我们就需要选项分隔符来终止`mkdir`对于后续字符串的解析，即`mkdir -- -f`
 
-# 16 函数
+# 16 环境变量
 
-## 16.1 read
+## 16.1 单独给某个程序传递环境变量
+
+```sh
+FOO=bar env | grep FOO
+env | grep FOO
+```
+
+## 16.2 给管道中的所有命令传递环境变量
+
+```sh
+FOO=bar bash -c 'somecommand someargs | somecommand2'
+```
+
+## 16.3 给会话中的所有命令传递环境变量
+
+```sh
+export FOO=bar
+env | grep FOO
+unset FOO
+env | grep FOO
+```
+
+# 17 函数
+
+## 17.1 read
 
 __格式：__
 
@@ -1033,7 +1057,7 @@ __参数说明：__
 `-t`：后面跟秒数，定义输入字符的等待时间
 `-u`：后面跟fd，从文件描述符中读入，该文件描述符可以是exec新开启的
 
-## 16.2 getopts
+## 17.2 getopts
 
 __格式：`getopts [option[:]] VARIABLE`__
 
@@ -1125,7 +1149,7 @@ option '-b', OPTIND: '7'
 
 __注意：如果getopts置于函数内部时，getopts解析的是函数的所有入参，可以通过`$@`将脚本的所有参数传递给函数__
 
-## 16.3 getopt
+## 17.3 getopt
 
 __格式：`getopt [options] -- parameters`__
 
@@ -1264,7 +1288,7 @@ Remaining arguments:
 --> `arg1'
 ```
 
-# 17 参考
+# 18 参考
 
 * [shell教程](http://www.runoob.com/linux/linux-shell.html)
 * [Shell脚本8种字符串截取方法总结](https://www.jb51.net/article/56563.htm)

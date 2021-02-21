@@ -1323,3 +1323,59 @@ __测试__
 * [Use systemd to Start a Linux Service at Boot](https://www.linode.com/docs/quick-answers/linux/start-service-at-boot/)
 * [Play With Container Network Interface](https://arthurchiao.github.io/blog/play-with-container-network-if/)
 * [systemd forking vs simple?](https://superuser.com/questions/1274901/systemd-forking-vs-simple)
+
+# 4 动态链接
+
+## 4.1 demo
+
+```sh
+cat > sample.c << 'EOF'
+#include <stdio.h>
+int main(void) {
+    printf("Calling the fopen() function...\n");
+    FILE *fd = fopen("test.txt","r");
+    if (!fd) {
+        printf("fopen() returned NULL\n");
+        return 1;
+    }
+    printf("fopen() succeeded\n");
+    return 0;
+}
+EOF
+gcc -o sample sample.c
+
+./sample 
+#-------------------------↓↓↓↓↓↓-------------------------
+Calling the fopen() function...
+fopen() returned NULL
+#-------------------------↑↑↑↑↑↑-------------------------
+
+touch test.txt
+./sample
+#-------------------------↓↓↓↓↓↓-------------------------
+Calling the fopen() function...
+fopen() succeeded
+#-------------------------↑↑↑↑↑↑-------------------------
+
+cat > myfopen.c << 'EOF'
+#include <stdio.h>
+FILE *fopen(const char *path, const char *mode) {
+    printf("This is my fopen!\n");
+    return NULL;
+}
+EOF
+
+gcc -Wall -fPIC -shared -o myfopen.so myfopen.c
+
+LD_PRELOAD=./myfopen.so ./sample
+#-------------------------↓↓↓↓↓↓-------------------------
+Calling the fopen() function...
+This is my fopen!
+fopen() returned NULL
+#-------------------------↑↑↑↑↑↑-------------------------
+```
+
+## 4.2 参考
+
+* [Linux hook：Ring3下动态链接库.so函数劫持](https://www.cnblogs.com/reuodut/articles/13723437.html)
+
