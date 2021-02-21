@@ -248,7 +248,7 @@ EOF
 下面进行测试，环境要求如下
 
 1. 两个待绑定的网卡在同一个网段
-1. 不能用`VirtualBox`进行测试，因为bond网卡会使用第一个子网卡的mac地址作为bond网卡的mac地址，当我们将自网卡关闭后，`VirtualBox`会感知这一事件，并将该自网卡的mac地址标记为不可达，从而导致整个bond网卡也不可达（即便此时另一个网卡是正常工作的）
+1. 不能用`VirtualBox`进行测试，因为`bond`网卡会使用第一个子网卡的mac地址作为`bond`网卡的mac地址，当我们将自网卡关闭后，`VirtualBox`会感知这一事件，并将该自网卡的mac地址标记为不可达，从而导致整个`bond`网卡也不可达（即便此时另一个网卡是正常工作的）
 
 ```sh
 # 配置
@@ -299,6 +299,114 @@ ping -c 3 www.aliyun.com
 ```
 
 ## 2.3 team device
+
+![team](/images/Linux-网络/team.png)
+
+与`bond`类似，`team`也提供了将两个网络接口组合成一个逻辑网络接口的方法，它工作在二层。`bond`与`team`之间的差异可以参考[Bonding vs. Team features](https://github.com/jpirko/libteam/wiki/Bonding-vs.-Team-features)
+
+编写一个脚本，内容如下，这里我取名为`team.sh`
+
+```sh
+cat > ~/team.sh << 'EOF'
+#!/bin/bash
+
+export ifname_physics_1=""
+export ifname_physics_2=""
+export team_name=""
+export ip_team=""
+export ip_gateway=""
+export ip_net=""
+export ip_netmask=""
+export ip_broadcast=""
+
+function setup(){
+	set -x
+
+	teamd -o -n -U -d -t ${team_name} -c '{"runner": {"name": "activebackup"},"link_watch": {"name": "ethtool"}}'
+
+	ip link set ${ifname_physics_1} master ${team_name}
+	ip link set ${ifname_physics_2} master ${team_name}
+
+	ip link set ${team_name} up
+	ip link set ${ifname_physics_1} up
+	ip link set ${ifname_physics_2} up
+
+	ip addr add ${ip_team}/${ip_netmask} broadcast ${ip_broadcast} dev ${team_name}
+
+	ip route add default via ${ip_gateway} dev ${team_name}
+
+	echo "nameserver 8.8.8.8" > /etc/resolv.conf
+
+	set +x
+}
+
+function cleanup(){
+	set -x
+
+	ip link set ${team_name} down
+	ip link set ${ifname_physics_1} down
+	ip link set ${ifname_physics_2} down
+
+	ip link del ${team_name}
+
+	set +x
+}
+
+export -f setup
+export -f cleanup
+EOF
+```
+
+下面进行测试，环境要求如下
+
+1. 两个待绑定的网卡在同一个网段
+1. 不能用`VirtualBox`进行测试，因为`team`网卡会使用第一个子网卡的mac地址作为`team`网卡的mac地址，当我们将自网卡关闭后，`VirtualBox`会感知这一事件，并将该自网卡的mac地址标记为不可达，从而导致整个`team`网卡也不可达（即便此时另一个网卡是正常工作的）
+
+```sh
+# 配置
+source team.sh
+export ifname_physics_1="enp0s3" # 待绑定的子网卡名称1
+export ifname_physics_2="enp0s9" # 待绑定的子网卡名称2
+export team_name="team_liuye" # team名称
+export ip_team="10.0.2.66"
+export ip_gateway="10.0.2.2"
+export ip_net="10.0.2.0"
+export ip_netmask="255.255.255.0"
+export ip_broadcast="10.0.2.255"
+setup
+#-------------------------↓↓↓↓↓↓-------------------------
++ teamd -o -n -U -d -t team_liuye -c '{"runner": {"name": "activebackup"},"link_watch": {"name": "ethtool"}}'
+This program is not intended to be run as root.
++ ip link set enp0s3 master team_liuye
++ ip link set enp0s9 master team_liuye
++ ip link set team_liuye up
++ ip link set enp0s3 up
++ ip link set enp0s9 up
++ ip addr add 10.0.2.66/255.255.255.0 broadcast 10.0.2.255 dev team_liuye
++ ip route add default via 10.0.2.2 dev team_liuye
++ echo 'nameserver 8.8.8.8'
++ set +x
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 测试连通性
+ping -c 3 www.aliyun.com
+#-------------------------↓↓↓↓↓↓-------------------------
+PING aliyun-adns.aliyun.com.gds.alibabadns.com (106.11.249.99) 56(84) bytes of data.
+64 bytes from 106.11.249.99 (106.11.249.99): icmp_seq=1 ttl=63 time=24.5 ms
+64 bytes from 106.11.249.99 (106.11.249.99): icmp_seq=2 ttl=63 time=18.7 ms
+64 bytes from 106.11.249.99 (106.11.249.99): icmp_seq=3 ttl=63 time=25.9 ms
+
+--- aliyun-adns.aliyun.com.gds.alibabadns.com ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+rtt min/avg/max/mdev = 18.719/23.071/25.969/3.133 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 将其中一个网卡关掉，查看连通性
+ip link set ${ifname_physics_1} down
+ping -c 3 www.aliyun.com
+#-------------------------↓↓↓↓↓↓-------------------------
+#-------------------------↑↑↑↑↑↑-------------------------
+```
 
 ## 2.4 vlan（virtual lan）
 
