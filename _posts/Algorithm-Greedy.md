@@ -8,13 +8,13 @@ categories:
 - Leetcode
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
 # 1 Question-55[★★★★★]
 
-__Jump Game__
+**Jump Game**
 
 > Given an array of non-negative integers, you are initially positioned at the first index of the array.
 

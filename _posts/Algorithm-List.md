@@ -8,13 +8,13 @@ categories:
 - Leetcode
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
 # 1 Question-21[★★]
 
-__Merge Two Sorted Lists__
+**Merge Two Sorted Lists**
 
 > Merge two sorted linked lists and return it as a new list. The new list should be made by splicing together the nodes of the first two lists.
 
@@ -51,7 +51,7 @@ public class Solution {
 
 # 2 Question-23[★★★★★]
 
-__Merge k Sorted Lists__
+**Merge k Sorted Lists**
 
 > Merge k sorted linked lists and return it as one sorted list. Analyze and describe its complexity.
 
@@ -102,7 +102,7 @@ public class Solution {
 
 # 3 Question-148[★★★★★]
 
-__Sort List__
+**Sort List**
 
 > Sort a linked list in O(n log n) time using constant space complexity.
 

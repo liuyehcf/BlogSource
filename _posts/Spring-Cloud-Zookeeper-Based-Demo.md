@@ -9,7 +9,7 @@ categories:
 - Spring
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -23,7 +23,7 @@ Spring-Cloud对注册中心这一模块做了抽象，其实现不局限于`Zook
 
 # 2 Demo概览
 
-__本Demo工程（`spring-cloud-cluster-zookeeper-based`）包含了如下几个子模块__
+**本Demo工程（`spring-cloud-cluster-zookeeper-based`）包含了如下几个子模块**
 
 1. `zookeeper-provider`：服务提供方
 1. `ribbon-consumer`：服务消费方-以ribbon方式
@@ -78,11 +78,11 @@ __本Demo工程（`spring-cloud-cluster-zookeeper-based`）包含了如下几个
 
 具体步骤，请移步{% post_link Zookeeper-Overview %}，由于篇幅原因，这里不再赘述
 
-zookeeper启动地址为__`http://localhost:2181`__
+zookeeper启动地址为**`http://localhost:2181`**
 
 # 4 Zookeeper-Provider
 
-__`zookeeper-provider`模块的目录结构如下__
+**`zookeeper-provider`模块的目录结构如下**
 
 ```
 .
@@ -353,12 +353,12 @@ numChildren = 0
 
 于是，我们可以得出结论：
 
-1. __Spring-Cloud-Zookeeper在注册服务时，会根据服务名创建一个节点（一个服务对应一个节点），其路径为`/services/<service name>`__
-1. __一个服务可能会有多个实例存在，每个实例对应着一个子节点，子节点的名称是一个类似uuid的字符串，且子节点保存着对应实例的注册信息，包括ip，port等一系列元数据__
+1. **Spring-Cloud-Zookeeper在注册服务时，会根据服务名创建一个节点（一个服务对应一个节点），其路径为`/services/<service name>`**
+1. **一个服务可能会有多个实例存在，每个实例对应着一个子节点，子节点的名称是一个类似uuid的字符串，且子节点保存着对应实例的注册信息，包括ip，port等一系列元数据**
 
 # 5 Ribbon-Consumer
 
-__`ribbon-consumer`模块的目录结构如下__
+**`ribbon-consumer`模块的目录结构如下**
 
 ```
 .
@@ -595,10 +595,10 @@ spring:
 
 `Feign`是一个声明式的伪Http客户端，它使得写Http客户端变得更简单。使用`Feign`，只需要创建一个接口并注解。它具有可插拔的注解特性，可使用`Feign` 注解和JAX-RS注解。`Feign`支持可插拔的编码器和解码器。`Feign`默认集成了`Ribbon`，并和`Zookeeper`结合，默认实现了负载均衡的效果
 
-* __`Feign`采用的是基于接口的注解__
-* __`Feign`整合了`Ribbon`__
+* **`Feign`采用的是基于接口的注解**
+* **`Feign`整合了`Ribbon`**
 
-__`feign-consumer`模块的目录结构如下__
+**`feign-consumer`模块的目录结构如下**
 
 ```
 .
@@ -830,7 +830,7 @@ spring:
 
 # 7 Config-Server
 
-__`config-server`模块的目录结构如下__
+**`config-server`模块的目录结构如下**
 
 ```
 .
@@ -1009,9 +1009,9 @@ spring:
 * [http://localhost:1140/temp/cloud.config.demo-dev.yml](http://localhost:1140/temp/cloud.config.demo-dev.yml)
 * 其中，`master`和`temp`是[git](https://github.com/liuyehcf/spring-cloud-config-demo)仓库的两个分支
 
-__HTTP URL与Resource的对应关系如下，其中__
+**HTTP URL与Resource的对应关系如下，其中**
 
-1. `{application}`：表示的是文件名，__一般来说会以应用名作为配置的文件名，因此占位符的名字叫`application`__
+1. `{application}`：表示的是文件名，**一般来说会以应用名作为配置的文件名，因此占位符的名字叫`application`**
 1. `{profile}`：表示profile后缀
 1. `{label}`：表示git的分支
 
@@ -1025,7 +1025,7 @@ __HTTP URL与Resource的对应关系如下，其中__
 
 # 8 Config-Client
 
-__`config-client`模块的目录结构如下__
+**`config-client`模块的目录结构如下**
 
 ```
 .
@@ -1199,9 +1199,9 @@ server:
 
 应用读取配置中心参数时，会配置配置中心的地址等相关参数，而这部分配置需优先于`application.yml`被应用读取。`Spring Cloud`中的 `bootstrap.yml`是会比`application.yml`先加载的，所以这部分配置要定义在`bootstrap.yml`里面，这就引申出两个需要注意的地方
 
-* `spring.application.name`：它应该配置在`bootstrap.yml`，它的名字应该等于配置中心的配置文件的`{application}`。__所以配置中心在给配置文件取名字时，最好让它等于对应的应用服务名__
-* __配置中心与注册中心联合使用：若应用通过`serviceId`而非`url`来指定配置中心__，则`spring.cloud.zookeeper.connect-string`也要配置在`bootstrap.yml`，要不启动的时候，应用会找不到注册中心，自然也就找不到配置中心了
-* __此外还必须配置`spring.cloud.zookeeper.discovery.register`属性。按照Spring-Cloud的官方文档，该属性默认是true，但是配置了`spring.cloud.config`相关配置项后，必须手动将`spring.cloud.zookeeper.discovery.register`属性设置为true，否则将不会注册到Zookeeper中__
+* `spring.application.name`：它应该配置在`bootstrap.yml`，它的名字应该等于配置中心的配置文件的`{application}`。**所以配置中心在给配置文件取名字时，最好让它等于对应的应用服务名**
+* **配置中心与注册中心联合使用：若应用通过`serviceId`而非`url`来指定配置中心**，则`spring.cloud.zookeeper.connect-string`也要配置在`bootstrap.yml`，要不启动的时候，应用会找不到注册中心，自然也就找不到配置中心了
+* **此外还必须配置`spring.cloud.zookeeper.discovery.register`属性。按照Spring-Cloud的官方文档，该属性默认是true，但是配置了`spring.cloud.config`相关配置项后，必须手动将`spring.cloud.zookeeper.discovery.register`属性设置为true，否则将不会注册到Zookeeper中**
 
 ```yml
 spring:

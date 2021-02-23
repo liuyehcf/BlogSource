@@ -8,7 +8,7 @@ categories:
 - Linux
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -418,13 +418,13 @@ ping -c 3 www.aliyun.com
 
 `macvlan`允许你在主机的一个网络接口上配置多个虚拟的网络接口，这些网络interface有自己独立的`MAC`地址，也可以配置上`IP`地址进行通信。`macvlan`下的虚拟机或者容器网络和主机在同一个网段中，共享同一个广播域。`macvlan`和`Bridge`比较相似，但因为它省去了`Bridge`的存在，所以配置和调试起来比较简单，而且效率也相对高。除此之外`macvlan`自身也完美支持`VLAN`
 
-同一`VLAN`间数据传输是通过二层互访，即`MAC`地址实现的，不需要使用路由。不同`VLAN`的用户单播默认不能直接通信，如果想要通信，还需要三层设备做路由，`macvlan`也是如此。用`macvlan`技术虚拟出来的虚拟网卡，在逻辑上和物理网卡是对等的。物理网卡也就相当于一个交换机，记录着对应的虚拟网卡和`MAC`地址，当物理网卡收到数据包后，会根据目的 MAC 地址判断这个包属于哪一个虚拟网卡。__这也就意味着，只要是从`macvlan`子接口发来的数据包（或者是发往`macvlan`子接口的数据包），物理网卡只接收数据包，不处理数据包，所以这就引出了一个问题：本机 macvlan 网卡上面的 IP 无法和物理网卡上面的 IP 通信！__
+同一`VLAN`间数据传输是通过二层互访，即`MAC`地址实现的，不需要使用路由。不同`VLAN`的用户单播默认不能直接通信，如果想要通信，还需要三层设备做路由，`macvlan`也是如此。用`macvlan`技术虚拟出来的虚拟网卡，在逻辑上和物理网卡是对等的。物理网卡也就相当于一个交换机，记录着对应的虚拟网卡和`MAC`地址，当物理网卡收到数据包后，会根据目的 MAC 地址判断这个包属于哪一个虚拟网卡。**这也就意味着，只要是从`macvlan`子接口发来的数据包（或者是发往`macvlan`子接口的数据包），物理网卡只接收数据包，不处理数据包，所以这就引出了一个问题：本机 macvlan 网卡上面的 IP 无法和物理网卡上面的 IP 通信！**
 
-__macvlan的技术实现：__
+**macvlan的技术实现：**
 
 ![macvlan_principle](/images/Linux-网络/macvlan_principle.jpg)
 
-__`macvlan`有以下特点：__
+**`macvlan`有以下特点：**
 
 * 可让使用者在同一张实体网卡上设定多个`MAC`地址
 	* 带有上述设定的`MAC`地址的网卡称为子接口（`sub interface`）
@@ -435,7 +435,7 @@ __`macvlan`有以下特点：__
 	* 若`VM`或容器需要与`host`通讯，那就必须额外建立一个`sub interface`给`host`用
 * `sub interface`通常以`mac0@eth0`的形式来命名以方便区別
 
-__准备一个脚本，用于验证各个模式__
+**准备一个脚本，用于验证各个模式**
 
 ```sh
 cat > ~/macvlan.sh << 'EOF'
@@ -506,13 +506,13 @@ EOF
 
 ![macvlan_private](/images/Linux-网络/macvlan_private.jpg)
 
-此种模式相当于`vepa`模式的增强模式，其完全阻止共享同一父接口的`macvlan`虚拟网卡之间的通讯，即使配置了`Hairpin`让从父接口发出的流量返回到宿主机，相应的通讯流量依然被丢弃。__具体实现方式是丢弃广播/多播数据，这就意味着以太网地址解析`arp`将不可运行，除非手工探测`MAC`地址，否则通信将无法在同一宿主机下的多个`macvlan`网卡间展开__。之所以隔离广播流量，是因为以太网是基于广播的，隔离了广播，以太网将失去了依托
+此种模式相当于`vepa`模式的增强模式，其完全阻止共享同一父接口的`macvlan`虚拟网卡之间的通讯，即使配置了`Hairpin`让从父接口发出的流量返回到宿主机，相应的通讯流量依然被丢弃。**具体实现方式是丢弃广播/多播数据，这就意味着以太网地址解析`arp`将不可运行，除非手工探测`MAC`地址，否则通信将无法在同一宿主机下的多个`macvlan`网卡间展开**。之所以隔离广播流量，是因为以太网是基于广播的，隔离了广播，以太网将失去了依托
 
 ### 2.6.2 bridge mode
 
 ![macvlan_bridge](/images/Linux-网络/macvlan_bridge.jpg)
 
-__验证1：macvlan接口与宿主机同一个网段__
+**验证1：macvlan接口与宿主机同一个网段**
 
 1. macvlan接口之间是否连通
 1. macvlan接口和主机是否连通
@@ -606,11 +606,11 @@ cleanup
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-__结论1：两个macvlan子接口可以相互ping通，但是ping不通master接口。在ip正确配置的情况下，能够正常通外网__
+**结论1：两个macvlan子接口可以相互ping通，但是ping不通master接口。在ip正确配置的情况下，能够正常通外网**
 
 * 我的实验环境是`VirtualBox`虚拟机，第一次setup之后，`ping 223.5.5.5`是可以通的，但是当执行`cleanup`后再次执行`setup`，此时发现`ping 223.5.5.5`是无法ping通的，估计是因为VirtualBox对mac地址是有缓存的，先后两次创建的`macvlan`的mac地址不同，但是ip是相同的，转发逻辑就出问题了。这时，只需要修改macvlan的ip地址，就能再次ping通`223.5.5.5`了
 
-__验证2：macvlan接口与宿主机不同网段__
+**验证2：macvlan接口与宿主机不同网段**
 
 1. macvlan接口之间是否连通
 
@@ -680,7 +680,7 @@ cleanup
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-__结论2：两个macvlan接口，即便配置不同网段的ip，也能相互ping通__
+**结论2：两个macvlan接口，即便配置不同网段的ip，也能相互ping通**
 
 ### 2.6.3 vepa mode
 
@@ -701,7 +701,7 @@ echo 1 >/sys/class/net/br0/brif/eth1/hairpin_mode
 
 ![macvlan_vepa](/images/Linux-网络/macvlan_vepa.jpg)
 
-__验证1：macvlan接口与宿主机同一个网段__
+**验证1：macvlan接口与宿主机同一个网段**
 
 1. macvlan接口之间是否连通
 1. macvlan接口和主机是否连通
@@ -787,9 +787,9 @@ cleanup
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-__结论1：macvlan接口之间无法ping通（要求switch支持`802.1Qbg/VPEA`，我的测试环境是virtualBox虚拟机，估计不支持），macvlan接口与宿主机无法ping通。ip配置正确的情况下，可以通外网__
+**结论1：macvlan接口之间无法ping通（要求switch支持`802.1Qbg/VPEA`，我的测试环境是virtualBox虚拟机，估计不支持），macvlan接口与宿主机无法ping通。ip配置正确的情况下，可以通外网**
 
-__验证2：macvlan接口与宿主机不同网段__
+**验证2：macvlan接口与宿主机不同网段**
 
 1. macvlan接口之间是否连通
 
@@ -851,7 +851,7 @@ cleanup
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-__结论2：macvlan接口之间无法ping通（要求switch支持`802.1Qbg/VPEA`，我的测试环境是virtualBox虚拟机，估计不支持）__
+**结论2：macvlan接口之间无法ping通（要求switch支持`802.1Qbg/VPEA`，我的测试环境是virtualBox虚拟机，估计不支持）**
 
 ### 2.6.4 passthru mode
 
@@ -859,7 +859,7 @@ __结论2：macvlan接口之间无法ping通（要求switch支持`802.1Qbg/VPEA`
 
 ## 2.7 ipvlan
 
-__内核版本3.19才支持这一特性__
+**内核版本3.19才支持这一特性**
 
 ipvlan和macvlan比较相似，区别就是ipvlan虚拟出来的接口都具有相同的mac地址。对于ipvlan，只要父接口相同，即使子接口不在同一个网络，也可以互相ping通对方，因为ipvlan会在中间做报文的转发工作
 
@@ -873,13 +873,13 @@ ipvlan和macvlan比较相似，区别就是ipvlan虚拟出来的接口都具有�
 		* `IP-VLAN support`：选中（对应配置项`CONFIG_IPVLAN`）
 			* `IP-VLAN based tap driver`：选中（对应配置项`CONFIG_IPVTAP`）
 
-__ipvlan包含如下三种模式__
+**ipvlan包含如下三种模式**
 
 1. `l2`：该模式下，父接口有点像交换机或者网桥，工作在2层
 1. `l3`：该模式下，父接口有点像路由器的功能，工作在3层
 1. `l3s`
 
-__准备一个脚本，用于验证各个模式__
+**准备一个脚本，用于验证各个模式**
 
 ```sh
 cat > ~/ipvlan.sh << 'EOF'
@@ -952,7 +952,7 @@ EOF
 
 ![ipvlan_l2](/images/Linux-网络/ipvlan_l2.png)
 
-__验证1：ipvlan接口与宿主机同一个网段__
+**验证1：ipvlan接口与宿主机同一个网段**
 
 1. ipvlan接口之间是否连通
 1. ipvlan接口和主机是否连通
@@ -1044,9 +1044,9 @@ cleanup
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-__结论1：ipvlan接口之间可以相互ping通，但是无法ping通master接口。ip配置正确的情况下，可以通外网__
+**结论1：ipvlan接口之间可以相互ping通，但是无法ping通master接口。ip配置正确的情况下，可以通外网**
 
-__验证2：ipvlan接口与宿主机不同网段__
+**验证2：ipvlan接口与宿主机不同网段**
 
 1. ipvlan接口之间是否连通
 
@@ -1115,13 +1115,13 @@ cleanup
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-__结论2：ipvlan接口之间可以相互ping通，即便网段不同__
+**结论2：ipvlan接口之间可以相互ping通，即便网段不同**
 
 ### 2.7.2 l3 mode
 
 ![ipvlan_l3](/images/Linux-网络/ipvlan_l3.png)
 
-__验证1：ipvlan接口与宿主机同一个网段__
+**验证1：ipvlan接口与宿主机同一个网段**
 
 1. ipvlan接口之间是否连通
 1. ipvlan接口和主机是否连通
@@ -1214,9 +1214,9 @@ cleanup
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-__结论1：ipvlan接口之间可以相互ping通，但是无法ping通master接口。ip配置正确的情况下，可以通外网__
+**结论1：ipvlan接口之间可以相互ping通，但是无法ping通master接口。ip配置正确的情况下，可以通外网**
 
-__验证2：ipvlan接口与宿主机不同网段__
+**验证2：ipvlan接口与宿主机不同网段**
 
 1. ipvlan接口之间是否连通
 
@@ -1285,11 +1285,11 @@ cleanup
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-__结论2：ipvlan接口之间可以相互ping通，即便网段不同__
+**结论2：ipvlan接口之间可以相互ping通，即便网段不同**
 
 ### 2.7.3 l3s mode
 
-__验证1：ipvlan接口与宿主机同一个网段__
+**验证1：ipvlan接口与宿主机同一个网段**
 
 1. ipvlan接口之间是否连通
 1. ipvlan接口和主机是否连通
@@ -1382,9 +1382,9 @@ cleanup
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-__结论1：ipvlan接口之间可以相互ping通，但是无法ping通master接口。ip配置正确的情况下，可以通外网__
+**结论1：ipvlan接口之间可以相互ping通，但是无法ping通master接口。ip配置正确的情况下，可以通外网**
 
-__验证2：ipvlan接口与宿主机不同网段__
+**验证2：ipvlan接口与宿主机不同网段**
 
 1. ipvlan接口之间是否连通
 
@@ -1453,7 +1453,7 @@ cleanup
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-__结论2：ipvlan接口之间可以相互ping通，但是无法ping通master接口。ip配置正确的情况下，可以通外网__
+**结论2：ipvlan接口之间可以相互ping通，但是无法ping通master接口。ip配置正确的情况下，可以通外网**
 
 ## 2.8 macvtap/ipvtap
 
@@ -1500,11 +1500,11 @@ Linux中最常用的基本防火墙软件称为`iptables`。`iptables`防火墙�
 
 `netfilter`一共包含5个`hook`。当数据包通过网络堆栈时，注册到这些`hook`的内核模块将被触发执行。数据包是否触发`hook`，取决于数据包是`incoming`还是`outgoing`，数据包的目标，以及数据包是否在之前的点已被丢弃或拒绝
 
-1. __`NF_IP_PRE_ROUTING`__：该`hook`会在任意`incoming`数据包进入网络堆栈时触发。并且，会在做出路由决定前处理完毕
-1. __`NF_IP_LOCAL_IN`__：该`hook`会在某个`incoming`数据包被路由到`local system`时触发
-1. __`NF_IP_FORWARD`__：该`hook`会在某个`incoming`数据包被`forwarded`到其他主机时触发
-1. __`NF_IP_LOCAL_OUT`__：该`hook`会在任意`outgoing`数据包进入网络堆栈时触发
-1. __`NF_IP_POST_ROUTING`__：该`hook`会在任意`outgoing`或`forwarded`数据包发生路由之后，传输之前触发
+1. **`NF_IP_PRE_ROUTING`**：该`hook`会在任意`incoming`数据包进入网络堆栈时触发。并且，会在做出路由决定前处理完毕
+1. **`NF_IP_LOCAL_IN`**：该`hook`会在某个`incoming`数据包被路由到`local system`时触发
+1. **`NF_IP_FORWARD`**：该`hook`会在某个`incoming`数据包被`forwarded`到其他主机时触发
+1. **`NF_IP_LOCAL_OUT`**：该`hook`会在任意`outgoing`数据包进入网络堆栈时触发
+1. **`NF_IP_POST_ROUTING`**：该`hook`会在任意`outgoing`或`forwarded`数据包发生路由之后，传输之前触发
 
 在`hook`处注册的内核模块必须提供优先级编号，来确定触发`hook`时调用内核模块的顺序。每个模块将按照优先级顺序依次被调用，并在处理后将处理结果返回`netfilter`，以便让`netfilter`决定对数据包进行何种操作
 
@@ -1512,7 +1512,7 @@ Linux中最常用的基本防火墙软件称为`iptables`。`iptables`防火墙�
 
 `iptables`防火墙使用`table`来组织其`rule`。这些`table`根据决策类型进行分类。例如，如果`rule`处理网络地址转换，它将被放入`nat table`中。如果该`rule`用于决定是否允许数据包继续到其目的地，则可能会将其添加到`filter table`中
 
-在每个`iptables table`中，`rule`进一步被拆分到不同的`chain`中。__其中，`table`代表了决策类型；`chain`表示由哪个`hook`来触发，即决定`rule`何时进行校验__
+在每个`iptables table`中，`rule`进一步被拆分到不同的`chain`中。**其中，`table`代表了决策类型；`chain`表示由哪个`hook`来触发，即决定`rule`何时进行校验**
 
 | `Chain` | `hoook` |
 |:--|:--|
@@ -1568,32 +1568,32 @@ Linux中最常用的基本防火墙软件称为`iptables`。`iptables`防火墙�
 | `security`| | ✓ | ✓ | ✓ | |
 | `nat (SNAT)` | | ✓ | | | ✓ |
 
-__Chain Traversal Order__
+**Chain Traversal Order**
 
-1. __Incoming packets destined for the local system__：`PREROUTING -> INPUT`
-1. __Incoming packets destined to another host__：`PREROUTING -> FORWARD -> POSTROUTING`
-1. __Locally generated packets__：`OUTPUT -> POSTROUTING`
+1. **Incoming packets destined for the local system**：`PREROUTING -> INPUT`
+1. **Incoming packets destined to another host**：`PREROUTING -> FORWARD -> POSTROUTING`
+1. **Locally generated packets**：`OUTPUT -> POSTROUTING`
 
 举个例子，一个`incoming`数据包，其目的地是`local systeml`，那么`PREROUTING chain`会被首先触发，按照优先级顺序，依次是`raw table`、`mangle table`、`nat table`的逻辑会被执行。然后`INPUT chain`会被触发，按照优先级顺序，依次是`mangle table`、`filter table`、`security table`以及`nat table`
 
 ## 3.5 IPTables Rules
 
-__一个`rule`由一个`table`以及一个`chain`唯一确定__。每个`rule`都有一个`matching component`以及一个`action component`
+**一个`rule`由一个`table`以及一个`chain`唯一确定**。每个`rule`都有一个`matching component`以及一个`action component`
 
-__`matching component`用于指定数据包必须满足的条件，以便执行相关的操作__。匹配系统非常灵活，可以通过系统上的`iptables`进行配置，允许进行如下粒度的配置
+**`matching component`用于指定数据包必须满足的条件，以便执行相关的操作**。匹配系统非常灵活，可以通过系统上的`iptables`进行配置，允许进行如下粒度的配置
 
-1. __协议类型__
-1. __目的地或源地址__
-1. __目的地或源端口__
-1. __目的地或源网络__
-1. __输入或输出接口__
-1. __报头或连接状态以及其他标准__
+1. **协议类型**
+1. **目的地或源地址**
+1. **目的地或源端口**
+1. **目的地或源网络**
+1. **输入或输出接口**
+1. **报头或连接状态以及其他标准**
 * 上述规则可以自由组合，用来创建相当复杂的规则集以区分不同的流量
 
-__`action component`用于在满足规则匹配条件时，输出一个`target`__：`target`通常分为以下两类
+**`action component`用于在满足规则匹配条件时，输出一个`target`**：`target`通常分为以下两类
 
-1. __`Terminating targets`__：执行一个动作，该动作终止`chain`中的执行逻辑并将控制返回到`netfilter`的`hook`中。根据提供的返回值，`hook`可能会丢弃数据包或允许数据包继续进行下一个处理阶段
-1. __`Non-terminating targets`__：执行一个动作，并继续`chain`中的执行逻辑。尽管每个`chain`最终必须传回`Terminating targets`，但是可以预先执行任意数量的`Non-terminating targets`
+1. **`Terminating targets`**：执行一个动作，该动作终止`chain`中的执行逻辑并将控制返回到`netfilter`的`hook`中。根据提供的返回值，`hook`可能会丢弃数据包或允许数据包继续进行下一个处理阶段
+1. **`Non-terminating targets`**：执行一个动作，并继续`chain`中的执行逻辑。尽管每个`chain`最终必须传回`Terminating targets`，但是可以预先执行任意数量的`Non-terminating targets`
 
 ## 3.6 Jumping to User-Defined Chains
 
@@ -1603,19 +1603,19 @@ __`action component`用于在满足规则匹配条件时，输出一个`target`_
 
 在讨论`raw table`时，我们介绍了在`netfilter`框架之上实现的`connection tracking`。`connection tracking`允许`iptables`在当前连接的上下文中查看数据包。`connection tracking`为`iptables`提供执行“有状态”操作所需的功能
 
-数据包进入网络堆栈后很快就会应用`connection tracking`。__`raw table chains`和一些基本的健全性检查是在将`数据包`与`连接`相关联之前对数据包执行的唯一逻辑__
+数据包进入网络堆栈后很快就会应用`connection tracking`。**`raw table chains`和一些基本的健全性检查是在将`数据包`与`连接`相关联之前对数据包执行的唯一逻辑**
 
-系统根据一组现有连接检查每个数据包，将更新数据包所属连接的状态，或增加一个新的连接。__在`raw table chains`中标记有`NOTRACK target`的数据包将绕过`connection tracking`处理流程__
+系统根据一组现有连接检查每个数据包，将更新数据包所属连接的状态，或增加一个新的连接。**在`raw table chains`中标记有`NOTRACK target`的数据包将绕过`connection tracking`处理流程**
 
 在`connection tracking`中，一个数据包可能被标记为如下几种状态
 
-1. __`NEW`__：当前数据包不属于任何一个现有的`connection`，且是一个合法的`first package`，那么将会创建一个新的`connection`
-1. __`ESTABLISHED`__：当收到一个`response`时，`connection`会从`NEW`状态变为`ESTABLISHED`状态。对于`TCP`，这意味着这是一个`SYN/ACK`数据包；对于`UDP`，这意味着这是一个`ICMP`数据包
-1. __`RELATED`__：当前数据包不属于任何一个现有的`connection`，但是关联到某个`connection`。这通常是一个`helper connection`，例如`FTP data transmission connection`或者是`ICMP`对其他协议的`连接尝试`的响应
-1. __`INVALID`__：当前数据包不属于任何一个现有的`connection`，也不是一个合法的`first package`
-1. __`UNTRACKED`__：通过`raw table`的配置，绕过`connection tracking`的处理流程
-1. __`SNAT`__：`source address`被`NAT`修改时设置的虚拟状态，被记录在`connection tracking`中，以便在`reply package`（我回复别人）中更改`source address`
-1. __`DNAT`__：`destination address`被`NAT`修改时设置的虚拟状态，被记录在`connection tracking`中，以便在路由`reply package`（别人回复我）时知道更改`destination address`
+1. **`NEW`**：当前数据包不属于任何一个现有的`connection`，且是一个合法的`first package`，那么将会创建一个新的`connection`
+1. **`ESTABLISHED`**：当收到一个`response`时，`connection`会从`NEW`状态变为`ESTABLISHED`状态。对于`TCP`，这意味着这是一个`SYN/ACK`数据包；对于`UDP`，这意味着这是一个`ICMP`数据包
+1. **`RELATED`**：当前数据包不属于任何一个现有的`connection`，但是关联到某个`connection`。这通常是一个`helper connection`，例如`FTP data transmission connection`或者是`ICMP`对其他协议的`连接尝试`的响应
+1. **`INVALID`**：当前数据包不属于任何一个现有的`connection`，也不是一个合法的`first package`
+1. **`UNTRACKED`**：通过`raw table`的配置，绕过`connection tracking`的处理流程
+1. **`SNAT`**：`source address`被`NAT`修改时设置的虚拟状态，被记录在`connection tracking`中，以便在`reply package`（我回复别人）中更改`source address`
+1. **`DNAT`**：`destination address`被`NAT`修改时设置的虚拟状态，被记录在`connection tracking`中，以便在路由`reply package`（别人回复我）时知道更改`destination address`
 
 ## 3.8 NAT原理
 
@@ -1630,7 +1630,7 @@ __`action component`用于在满足规则匹配条件时，输出一个`target`_
     * 一张网卡的`IP`为`192.168.2.1`，与`Machine B`在同一个网段，且为`Machine B`的默认路由地址
     * 一张网卡的`IP`为`200.200.200.1`，为公网`IP`
 
-__Request from Machine A to Machine B__
+**Request from Machine A to Machine B**
 
 1. `Request`从`Machine A`发出，经过默认路由到达`NAT Gateway A`
 1. `NAT Gateway A`发现配置了`SNAT规则`，于是将`srcIP`从`192.168.1.2`改为`100.100.100.1`
@@ -1663,7 +1663,7 @@ NAT Gateway A   |  msrc ip : 100.100.100.1 |                   internet         
                 +--------------------------+                                               +--------------------------+
 ```
 
-__Response from Machine B to Machine A__
+**Response from Machine B to Machine A**
 
 1. `Response`从`Machine B`发出，经过默认路由到达`NAT Gateway B`
 1. `NAT Gateway B`发现配置了`DNAT`规则，于是将`srcIP`从`192.168.2.2`改为`200.200.200.1`
@@ -1694,7 +1694,7 @@ NAT Gateway A   |  src port: 443           |                   internet         
                 +--------------------------+                                               +--------------------------+
 ```
 
-__细心的朋友可能会发现，`NAT Gateway A`只配置了`SNAT`，而`NAT Gateway B`只配置了`DNAT`，但是在`Response`的链路中，`NAT Gateway A`做了`DNAT`的工作，而`NAT Gateway B`做了`SNAT`的工作__
+**细心的朋友可能会发现，`NAT Gateway A`只配置了`SNAT`，而`NAT Gateway B`只配置了`DNAT`，但是在`Response`的链路中，`NAT Gateway A`做了`DNAT`的工作，而`NAT Gateway B`做了`SNAT`的工作**
 
 * 当`Request`到达`NAT Gateway A`时，`NAT Gateway A`会在`NAT`表中添加一行，然后再改写`srcIP`（SNAT）
     * 前缀`o`是`original`的缩写
@@ -1713,9 +1713,9 @@ __细心的朋友可能会发现，`NAT Gateway A`只配置了`SNAT`，而`NAT G
 * 当`Response`到达`NAT Gateway B`时，会查找`srcIP`与`mdstIP`相同且`srcPort`与`mdstPort`相同的表项，并将`srcIP`和`srcPort`替换成`odstIP`和`odstPort`（SNAT）
 * 当`Response`到达`NAT Gateway A`时，会查找`dstIP`与`msrcIP`相同且`dstPort`与`msrcPort`相同的表项，并将`dstIP`和`dstPort`替换成`osrcIP`和`osrcPort`（DNAT）
 
-__如此一来，有了IP+端口，一台网关就可以为多台机器配置SNAT；同理，也可以为多台机器配置DNAT__
+**如此一来，有了IP+端口，一台网关就可以为多台机器配置SNAT；同理，也可以为多台机器配置DNAT**
 
-__但是，如果两台私网的机器A和B（均在网关上配置了SNAT规则），同时ping某个外网IP的话，NAT又是如何工作的呢？（ICMP协议没有port，而只根据IP是没法区分这两台私网机器的）方法就是：创造端口（下面这种做法是我猜的，与实际情况未必一致，但是思路是相似的）__
+**但是，如果两台私网的机器A和B（均在网关上配置了SNAT规则），同时ping某个外网IP的话，NAT又是如何工作的呢？（ICMP协议没有port，而只根据IP是没法区分这两台私网机器的）方法就是：创造端口（下面这种做法是我猜的，与实际情况未必一致，但是思路是相似的）**
 
 * 假设A的IP为`192.168.1.2`，`NAT Gateway`的IP是`100.100.100.1`，ping的公网IP是`200.200.200.1`
 * 当`ICMP Request`报文到达`NAT Gateway`的时候，根据`identifier`生成源端口号，修改`srcIP`，以及`identifier`并增加如下记录（SNAT）
@@ -1763,7 +1763,7 @@ tcpdump是通过libpcap来抓取报文的，libpcap在不同平台有不同的�
 
 # 5 网桥/交换机/集线器
 
-__集线器，交换机和网桥之间的主要区别在于：集线器工作在`OSI`模型的第`1`层，而网桥和交换机工作在第`2`层（使用MAC地址）。集线器在所有端口上广播传入的流量，而网桥和交换机仅将流量路由到目的端口（交换机上的端口）__
+**集线器，交换机和网桥之间的主要区别在于：集线器工作在`OSI`模型的第`1`层，而网桥和交换机工作在第`2`层（使用MAC地址）。集线器在所有端口上广播传入的流量，而网桥和交换机仅将流量路由到目的端口（交换机上的端口）**
 
 ## 5.1 什么是Hub
 
@@ -1773,7 +1773,7 @@ __集线器，交换机和网桥之间的主要区别在于：集线器工作在
 
 ## 5.2 什么是Bridge
 
-在现实世界中，桥梁连接着河流或铁轨两侧的道路。__在技术领域，网桥连接两个物理网段__。每个网桥都跟踪连接到其每个接口的网络上的MAC地址。当网络流量到达网桥并且其目标地址在网桥的那一侧是本地的时，网桥会过滤该以太网帧，因此它仅停留在网桥的本地
+在现实世界中，桥梁连接着河流或铁轨两侧的道路。**在技术领域，网桥连接两个物理网段**。每个网桥都跟踪连接到其每个接口的网络上的MAC地址。当网络流量到达网桥并且其目标地址在网桥的那一侧是本地的时，网桥会过滤该以太网帧，因此它仅停留在网桥的本地
 
 如果网桥无法在接收流量的那一侧找到目标地址，它将跨网桥转发帧，希望目的地在另一个网段上。有时，到达目标地址需要经过多个网桥
 
@@ -1840,7 +1840,7 @@ __集线器，交换机和网桥之间的主要区别在于：集线器工作在
 
 ## 6.3 Internal Networking
 
-`Internal Networking`网络（在本例中为“intnet”）是一个完全隔离的网络，因此非常“安静”。当您需要一个单独的，干净的网络时，这适用于测试，您可以使用VM创建复杂的内部网络，为内部网络提供自己的服务。（例如Active Directory，DHCP等）。__请注意，即使主机也不是内部网络的成员__，但即使主机未连接到网络（例如，在平面上），此模式也允许VM运行
+`Internal Networking`网络（在本例中为“intnet”）是一个完全隔离的网络，因此非常“安静”。当您需要一个单独的，干净的网络时，这适用于测试，您可以使用VM创建复杂的内部网络，为内部网络提供自己的服务。（例如Active Directory，DHCP等）。**请注意，即使主机也不是内部网络的成员**，但即使主机未连接到网络（例如，在平面上），此模式也允许VM运行
 
 逻辑上，网络看起来像下面这样
 
@@ -1920,13 +1920,13 @@ ONBOOT=yes
 DNS1=223.5.5.5
 ```
 
-* __`BOOTPROTO`__：可选项有`static`或`dhcp`
-* __`DEFROUTE`__：是否生成default路由，注意，一台机器只能有一个网卡可以设置默认路由，否则即便有多个默认路由，第二个默认路由也是无效的
-* __`IPADDR`__：ip地址
-* __`NETMASK`__：子网掩码
-* __`GATEWAY`__：网关ip
-* __`ONBOOT`__：是否开机启动
-* __`DNS1/DNS2/.../DNSx`__：dns配置
+* **`BOOTPROTO`**：可选项有`static`或`dhcp`
+* **`DEFROUTE`**：是否生成default路由，注意，一台机器只能有一个网卡可以设置默认路由，否则即便有多个默认路由，第二个默认路由也是无效的
+* **`IPADDR`**：ip地址
+* **`NETMASK`**：子网掩码
+* **`GATEWAY`**：网关ip
+* **`ONBOOT`**：是否开机启动
+* **`DNS1/DNS2/.../DNSx`**：dns配置
 
 ## 7.2 network-manager
 
@@ -1968,7 +1968,7 @@ nmcli conn up <id>/<uuid>/<path>
 nmcli conn down <id>/<uuid>/<path>
 ```
 
-__重要配置项__
+**重要配置项**
 
 1. `ipv4.never-default`：`1`表示永远不设置为默认路由，`0`反之
     * `nmcli conn modify eno1 ipv4.never-defaul 1`：连接`eno1`永远不设置默认路由

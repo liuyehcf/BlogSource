@@ -8,13 +8,13 @@ categories:
 - Leetcode
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
 # 1 Question-17[★★]
 
-__Letter Combinations of a Phone Number__
+**Letter Combinations of a Phone Number**
 
 > Given a digit string, return all possible letter combinations that the number could represent.
 
@@ -69,7 +69,7 @@ public class Solution {
 
 # 2 Question-39[★★★★]
 
-__Combination Sum__
+**Combination Sum**
 
 > Given a set of candidate numbers (C) (without duplicates) and a target number (T), find all unique combinations in C where the candidate numbers sums to T.
 
@@ -115,7 +115,7 @@ public class Solution {
 
 # 3 Question-46[★★★★★]
 
-__Permutations__
+**Permutations**
 
 > Given a collection of distinct numbers, return all possible permutations.
 
@@ -160,7 +160,7 @@ public class Solution {
 
 # 4 Question-78[★★★★★]
 
-__Subsets__
+**Subsets**
 
 > Given a set of distinct integers, nums, return all possible subsets.
 
@@ -194,7 +194,7 @@ class Solution {
 
 # 5 Question-79[★★★★]
 
-__Word Search__
+**Word Search**
 
 > Given a 2D board and a word, find if the word exists in the grid.
 
@@ -246,7 +246,7 @@ class Solution {
 
 # 6 Question-90[★★★★★]
 
-__Subsets II__
+**Subsets II**
 
 > Given a collection of integers that might contain duplicates, nums, return all possible subsets.
 

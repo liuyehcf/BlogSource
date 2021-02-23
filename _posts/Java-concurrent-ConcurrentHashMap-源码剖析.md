@@ -9,15 +9,15 @@ categories:
 - Source Code Analysis
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
 # 1 前言
 
-__本篇博客分析的是JDK 1.8 的ConcurrentHashMap，该版本的ConcurrentHashMap与JDK 1.7有较大的差异__
+**本篇博客分析的是JDK 1.8 的ConcurrentHashMap，该版本的ConcurrentHashMap与JDK 1.7有较大的差异**
 
-__ConcurrentHashMap源码分析分为以下几个部分__
+**ConcurrentHashMap源码分析分为以下几个部分**
 
 * 常量简介
 * 字段简介
@@ -124,28 +124,28 @@ __ConcurrentHashMap源码分析分为以下几个部分__
     static final int HASH_BITS = 0x7fffffff; //usable bits of normal node hash
 ```
 
-__常量分为两大类__
+**常量分为两大类**
 
-1. __第一大类是配置参数__
-    * __MAXIMUM_CAPACITY__：32位整型中最高两位作为控制参数，因此hashtable的最大容量是1<<30，必须是2的幂次(至于为什么必须是2的幂次，以及2的幂次能带来的好处，下面的分析会多次提到)
-    * __DEFAULT_CAPACITY__：hashtable的默认初始容量，当构造函数不指定大小时，以该值为默认的初始hashtable大小
-    * __MAX_ARRAY_SIZE__：toArray方法中会用到，大小可以是非2的幂次
-    * __DEFAULT_CONCURRENCY_LEVEL__：并发等级，用于兼容之前的版本(暂时不用关心这个常数)
-    * __LOAD_FACTOR__：负载因子，计算公式为：factor=元素总个数/bucket数量。实际上代码中并不用这个浮点数来计算，而是用(n-n>>2)来计算n*LOAD_FACTORY，因为位运算比乘法效率更高
-    * __TREEIFY_THRESHOLD__：树化的临界值，当一个bin/bucket新增一个元素后，节点数量达到该值时，就要从链表转为红黑树
-    * __UNTREEIFY_THRESHOLD__：逆树化的临界值，当一个bin/bucket删除一个元素后，节点数量到达该值时，就要从红黑树转为链表
+1. **第一大类是配置参数**
+    * **MAXIMUM_CAPACITY**：32位整型中最高两位作为控制参数，因此hashtable的最大容量是1<<30，必须是2的幂次(至于为什么必须是2的幂次，以及2的幂次能带来的好处，下面的分析会多次提到)
+    * **DEFAULT_CAPACITY**：hashtable的默认初始容量，当构造函数不指定大小时，以该值为默认的初始hashtable大小
+    * **MAX_ARRAY_SIZE**：toArray方法中会用到，大小可以是非2的幂次
+    * **DEFAULT_CONCURRENCY_LEVEL**：并发等级，用于兼容之前的版本(暂时不用关心这个常数)
+    * **LOAD_FACTOR**：负载因子，计算公式为：factor=元素总个数/bucket数量。实际上代码中并不用这个浮点数来计算，而是用(n-n>>2)来计算n*LOAD_FACTORY，因为位运算比乘法效率更高
+    * **TREEIFY_THRESHOLD**：树化的临界值，当一个bin/bucket新增一个元素后，节点数量达到该值时，就要从链表转为红黑树
+    * **UNTREEIFY_THRESHOLD**：逆树化的临界值，当一个bin/bucket删除一个元素后，节点数量到达该值时，就要从红黑树转为链表
         * 这两个临界值设置为不同的值，我认为是为了避免当节点数量到达临界值时的多次树化与逆树化操作(增加节点/删除节点交替进行这种特殊情况)
-    * __MIN_TREEIFY_CAPACITY__：树化时，hashtable的最小容量。如果一个bin/bucket需要进行树化操作，但是此时hashtable的容量小于该常量，则hashtable应该扩容而不是树化该bin/bucket
-    * __MIN_TRANSFER_STRIDE__：进行并发扩容时，每个线程分得的最小bin/bucket数量
-    * __RESIZE_STAMP_BITS__：
-    * __MAX_RESIZERS__：参与并发扩容的最大线程数量
-    * __RESIZE_STAMP_SHIFT__：32-RESIZE_STAMP_BITS
+    * **MIN_TREEIFY_CAPACITY**：树化时，hashtable的最小容量。如果一个bin/bucket需要进行树化操作，但是此时hashtable的容量小于该常量，则hashtable应该扩容而不是树化该bin/bucket
+    * **MIN_TRANSFER_STRIDE**：进行并发扩容时，每个线程分得的最小bin/bucket数量
+    * **RESIZE_STAMP_BITS**：
+    * **MAX_RESIZERS**：参与并发扩容的最大线程数量
+    * **RESIZE_STAMP_SHIFT**：32-RESIZE_STAMP_BITS
         * RESIZE_STAMP_BITS与RESIZE_STAMP_SHIFT的含义并没有弄明白
-1. __第二大类是特殊节点的hash值__
-    * __MOVED__：forwarding节点的hash值
-    * __TREEBIN__：树根节点的hash值
-    * __RESERVED__：
-    * __HASH_BITS__：用于节点hash值的计算
+1. **第二大类是特殊节点的hash值**
+    * **MOVED**：forwarding节点的hash值
+    * **TREEBIN**：树根节点的hash值
+    * **RESERVED**：
+    * **HASH_BITS**：用于节点hash值的计算
 
 # 3 字段简介
 
@@ -199,39 +199,39 @@ __常量分为两大类__
     private transient EntrySetView<K,V> entrySet;
 ```
 
-* __table__：bin/bucket的数组，其大小一定是2的幂次
-* __nextTable__：仅在扩容时有用，扩容后的数组
-* __baseCount__：节点计数值
-* __sizeCtl__：非常重要的字段
+* **table**：bin/bucket的数组，其大小一定是2的幂次
+* **nextTable**：仅在扩容时有用，扩容后的数组
+* **baseCount**：节点计数值
+* **sizeCtl**：非常重要的字段
     * 若为负数则代表正在初始化或者扩容。-1代表正在初始化，其余值代表正在扩容-(1 + 参与扩容的线程数量)
     * 当table == null时，代表table初始化大小
     * 当table != null时，代表table需要扩容时的节点数量临界值，即容器中节点数量超过sizeCtl时，需要进行扩容操作
-* __transferIndex__：用于并发扩容时槽位的分配
-* __cellsBusy__：？？？
-* __counterCells__：初始化时counterCells为空，在并发量很高时，如果存在两个线程同时执行CAS修改baseCount值，则失败的线程会继续执行方法体中的逻辑，使用CounterCell记录元素个数的变化
-* __keySet__：Key集合
-* __values__：Value集合
-* __entrySet__：键值对集合
+* **transferIndex**：用于并发扩容时槽位的分配
+* **cellsBusy**：？？？
+* **counterCells**：初始化时counterCells为空，在并发量很高时，如果存在两个线程同时执行CAS修改baseCount值，则失败的线程会继续执行方法体中的逻辑，使用CounterCell记录元素个数的变化
+* **keySet**：Key集合
+* **values**：Value集合
+* **entrySet**：键值对集合
 
 # 4 内部类简介
 
 ## 4.1 Node
 
-__Node继承自Map.Entry，是其余节点的父类__
+**Node继承自Map.Entry，是其余节点的父类**
 
 * Node子类中如果hash值为负数，代表这类节点是特殊节点，特殊节点不持有key-value。例如TreeBin，ForwardingNode，ReservationNode
 * Node子类中如果hash值非负数，代表这类节点是正常节点，持有key-value。例如Node本身以及TreeNode
 
 ## 4.2 TreeNode
 
-__TreeNode节点是树节点__
+**TreeNode节点是树节点**
 
 * 增加了左右孩子字段，父节点字段，颜色字段等
 * 采用的树形结构是：红黑树
 
 ## 4.3 TreeBin
 
-__当一个bin/bucket持有一颗树时，该槽位放置的节点是TreeBin__
+**当一个bin/bucket持有一颗树时，该槽位放置的节点是TreeBin**
 
 * TreeBin节点持有红黑树根节点
 * TreeBin节点持有读写锁，该读写所强制写操作必须等待读操作执行完毕
@@ -239,20 +239,20 @@ __当一个bin/bucket持有一颗树时，该槽位放置的节点是TreeBin__
 
 ## 4.4 ForwardingNode
 
-__ForwardingNode节点表明此时正在进行扩容__
+**ForwardingNode节点表明此时正在进行扩容**
 
 * 同时表明当前槽位中的节点已经转移到新的hashtable中去了
 * 该节点持有nextTable的引用
 
 ## 4.5 ReservationNode
 
-__??__
+**??**
 
 # 5 Utils方法简介
 
 ## 5.1 spread
 
-__spread用于转换hash值__
+**spread用于转换hash值**
 
 * 由于table的大小是2的幂次，槽位的计算利用的是求余运算，因此那些高位有区别的散列值在低容量时将始终冲突
     * 举个例子，假设当前table的大小是16，hash值为5，(5+1<<7)，(5+1<<8),...这些元素将始终冲突，因为求余后，这些元素都位于同一个槽位中
@@ -282,7 +282,7 @@ __spread用于转换hash值__
 
 ## 5.2 tableSizeFor
 
-__tableSizeFor方法用于计算不小于给定数值的最大2的幂次__
+**tableSizeFor方法用于计算不小于给定数值的最大2的幂次**
 
 * 该方法等效的逻辑是：找到c-1的最高位，假设为第i位，生成一个从第i位到第0位都是1，其余位全是0的数值，然后返回该数值+1
 * 5条位或语句就可以生成一个从第i位到第0位都是1，其余位全是0的数值
@@ -305,7 +305,7 @@ __tableSizeFor方法用于计算不小于给定数值的最大2的幂次__
 
 ## 5.3 access方法
 
-__访问table元素的方法__
+**访问table元素的方法**
 
 * 其中ASHIFT是指数组元素的大小
 * ABASE指的是数组头元素的偏移量
@@ -330,7 +330,7 @@ __访问table元素的方法__
 
 ## 6.1 put
 
-__put方法用于向HashMap中插入一个键值对__
+**put方法用于向HashMap中插入一个键值对**
 
 * 键和值都必须不为null(为什么)
 
@@ -355,7 +355,7 @@ __put方法用于向HashMap中插入一个键值对__
 
 ## 6.2 putVal
 
-__putVal是真正执行插入操作的方法__
+**putVal是真正执行插入操作的方法**
 
 * 第三个参数为true时代表插入的键值必须不存在，否则不会更新原值，而是返回null
 * 
@@ -450,7 +450,7 @@ __putVal是真正执行插入操作的方法__
 
 ## 6.3 initTable
 
-__initTable方法用于初始化hashtable__
+**initTable方法用于初始化hashtable**
 
 * sizeCtl字段的值代表的就是初始化的hashtable的大小
 * 初始化过程仅能通过一个线程来完成
@@ -489,7 +489,7 @@ __initTable方法用于初始化hashtable__
 
 ## 6.4 transfer
 
-__transfer方法用于hashtable的扩张__
+**transfer方法用于hashtable的扩张**
 
 * 多个线程将会同时参与扩张过程
 * 利用transferIndex字段来串行化槽位的分配
@@ -667,7 +667,7 @@ __transfer方法用于hashtable的扩张__
 
 ## 6.5 addCount
 
-__addCount方法用于更新键值对计数值baseCount__
+**addCount方法用于更新键值对计数值baseCount**
 
 ```java
     /**
@@ -725,7 +725,7 @@ __addCount方法用于更新键值对计数值baseCount__
 
 ## 6.6 fullAddCount
 
-__fullAddCount方法用于__
+**fullAddCount方法用于**
 
 ```java
     //See LongAdder version for explanation
@@ -817,7 +817,7 @@ __fullAddCount方法用于__
 
 ## 6.7 sumCount
 
-__sumCount方法用于__
+**sumCount方法用于**
 
 ```java
     final long sumCount() {

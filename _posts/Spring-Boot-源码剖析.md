@@ -9,13 +9,13 @@ categories:
 - Spring
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
 # 1 Normal
 
-__分析起点是`SpringApplication.run`方法__
+**分析起点是`SpringApplication.run`方法**
 
 ```java
 public ConfigurableApplicationContext run(String... args) {
@@ -132,7 +132,7 @@ public ConfigurableApplicationContext run(String... args) {
 
 ## 2.1 SpringJUnit4ClassRunner的初始化过程
 
-__分析启动从`SpringJUnit4ClassRunner`类的创建开始__
+**分析启动从`SpringJUnit4ClassRunner`类的创建开始**
 
 1. 沿着继承链路调用父类构造方法，最终创建了一个`TestClass`对象
 1. 创建一个`TestContextManager`对象
@@ -153,7 +153,7 @@ __分析启动从`SpringJUnit4ClassRunner`类的创建开始__
 
 ### 2.1.1 TestClass对象创建
 
-__沿着继承链路调用父类构造方法，最终创建了一个`TestClass`对象__
+**沿着继承链路调用父类构造方法，最终创建了一个`TestClass`对象**
 
 ```java
     public BlockJUnit4ClassRunner(Class<?> klass) throws InitializationError {
@@ -198,11 +198,11 @@ __沿着继承链路调用父类构造方法，最终创建了一个`TestClass`�
     }
 ```
 
-__创建`TestContext`，根据是否包含`@ContextHierarchy`，`@ContextConfiguration`这两个注解，创建Context的配置信息__
+**创建`TestContext`，根据是否包含`@ContextHierarchy`，`@ContextConfiguration`这两个注解，创建Context的配置信息**
 
-1. __不含有上述两个注解，即`Context`有且仅有一个__
-1. __含有`@ContextHierarchy`注解，即`Context`可能有多个不同的层级，且每个层级可能有多个`Context`__
-1. __仅含有`@ContextConfiguration`注解，`Context`的层级有且仅有一个，但是`Context`可能有多个__
+1. **不含有上述两个注解，即`Context`有且仅有一个**
+1. **含有`@ContextHierarchy`注解，即`Context`可能有多个不同的层级，且每个层级可能有多个`Context`**
+1. **仅含有`@ContextConfiguration`注解，`Context`的层级有且仅有一个，但是`Context`可能有多个**
 * 上述三种情况，最终都会调用`AbstractTestContextBootstrapper.buildMergedContextConfiguration`方法
 
 ```java
@@ -330,17 +330,17 @@ __创建`TestContext`，根据是否包含`@ContextHierarchy`，`@ContextConfigu
     }
 ```
 
-__注册Test监听器，找到`TestExecutionListener`的所有实现类，一共有8个，分别是__
+**注册Test监听器，找到`TestExecutionListener`的所有实现类，一共有8个，分别是**
 
-1. __`MockitoTestExecutionListener`__
-1. __`ResetMocksTestExecutionListener`__
-1. __`TransactionalTestExecutionListener`__
-1. __`AbstractDirtiesContextTestExecutionListener`__
-1. __`DirtiesContextBeforeModesTestExecutionListener`__
-1. __`DirtiesContextTestExecutionListener`__
-1. __`ServletTestExecutionListener`__
-1. __`DependencyInjectionTestExecutionListener`__
-1. __`SqlScriptsTestExecutionListener`__
+1. **`MockitoTestExecutionListener`**
+1. **`ResetMocksTestExecutionListener`**
+1. **`TransactionalTestExecutionListener`**
+1. **`AbstractDirtiesContextTestExecutionListener`**
+1. **`DirtiesContextBeforeModesTestExecutionListener`**
+1. **`DirtiesContextTestExecutionListener`**
+1. **`ServletTestExecutionListener`**
+1. **`DependencyInjectionTestExecutionListener`**
+1. **`SqlScriptsTestExecutionListener`**
 * 监听器是否启用，需要看测试类是否进行了相关的配置。例如，加了`@Transactional`注解后，该监听器才会触发
 
 ```java
@@ -445,7 +445,7 @@ __注册Test监听器，找到`TestExecutionListener`的所有实现类，一共
 
 ## 2.2 SpringJUnit4ClassRunner.run
 
-__分析起点，`SpringJUnit4ClassRunner.run`__
+**分析起点，`SpringJUnit4ClassRunner.run`**
 
 ```java
     public void run(RunNotifier notifier) {
@@ -458,7 +458,7 @@ __分析起点，`SpringJUnit4ClassRunner.run`__
     }
 ```
 
-__继续追踪，`ParentRunner.run`__
+**继续追踪，`ParentRunner.run`**
 
 ```java
     public void run(final RunNotifier notifier) {
@@ -478,7 +478,7 @@ __继续追踪，`ParentRunner.run`__
     }
 ```
 
-__继续追踪，`RunAfterTestClassCallbacks.evaluate`__
+**继续追踪，`RunAfterTestClassCallbacks.evaluate`**
 
 ```java
     public void evaluate() throws Throwable {
@@ -502,7 +502,7 @@ __继续追踪，`RunAfterTestClassCallbacks.evaluate`__
     }
 ```
 
-__继续追踪，`RunBeforeTestClassCallbacks.evaluate`__
+**继续追踪，`RunBeforeTestClassCallbacks.evaluate`**
 
 1. 触发监听器的`TestExecutionListener.beforeTestClass`方法
 
@@ -533,7 +533,7 @@ __继续追踪，`RunBeforeTestClassCallbacks.evaluate`__
     }
 ```
 
-__继续追踪，`ParentRunner.childrenInvoker`中的匿名内部类的`evaluate`方法__
+**继续追踪，`ParentRunner.childrenInvoker`中的匿名内部类的`evaluate`方法**
 
 ```java
     protected Statement childrenInvoker(final RunNotifier notifier) {
@@ -563,7 +563,7 @@ __继续追踪，`ParentRunner.childrenInvoker`中的匿名内部类的`evaluate
     }
 ```
 
-__继续追踪，`SpringJUnit4ClassRunner.runChild`方法__
+**继续追踪，`SpringJUnit4ClassRunner.runChild`方法**
 
 ```java
     protected void runChild(FrameworkMethod frameworkMethod, RunNotifier notifier) {
@@ -620,7 +620,7 @@ __继续追踪，`SpringJUnit4ClassRunner.runChild`方法__
     }
 ```
 
-__继续追踪，`SpringJUnit4ClassRunner.createTest`方法__
+**继续追踪，`SpringJUnit4ClassRunner.createTest`方法**
 
 ```java
     protected Object createTest() throws Exception {
@@ -630,7 +630,7 @@ __继续追踪，`SpringJUnit4ClassRunner.createTest`方法__
         return testInstance;
     } 
 ```
-__继续追踪，`TestContextManager.prepareTestInstance`方法__
+**继续追踪，`TestContextManager.prepareTestInstance`方法**
 
 1. 触发监听器的`TestExecutionListener.prepareTestInstance`方法
 
@@ -657,9 +657,9 @@ __继续追踪，`TestContextManager.prepareTestInstance`方法__
     }
 ```
 
-__继续追踪，`ServletTestExecutionListener.prepareTestInstance`方法__
+**继续追踪，`ServletTestExecutionListener.prepareTestInstance`方法**
 
-1. __这里创建`ApplicationContext`__
+1. **这里创建`ApplicationContext`**
 
 ```java
     public void prepareTestInstance(TestContext testContext) throws Exception {
@@ -708,7 +708,7 @@ __继续追踪，`ServletTestExecutionListener.prepareTestInstance`方法__
     }
 ```
 
-__继续追踪，`DefaultTestContext.getApplicationContext`方法__
+**继续追踪，`DefaultTestContext.getApplicationContext`方法**
 
 ```java
     public ApplicationContext getApplicationContext() {
@@ -728,7 +728,7 @@ __继续追踪，`DefaultTestContext.getApplicationContext`方法__
         return context;
     }
 ```
-__继续追踪，`DefaultCacheAwareContextLoaderDelegate.loadContext`方法__
+**继续追踪，`DefaultCacheAwareContextLoaderDelegate.loadContext`方法**
 
 ```java
     public ApplicationContext loadContext(MergedContextConfiguration mergedContextConfiguration) {
@@ -785,7 +785,7 @@ __继续追踪，`DefaultCacheAwareContextLoaderDelegate.loadContext`方法__
         return applicationContext;
     }
 ```
-__继续追踪，`SpringBootContextLoader.loadContext`方法__
+**继续追踪，`SpringBootContextLoader.loadContext`方法**
 
 1. 这里启动了`SpringBoot`
 

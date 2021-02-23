@@ -8,7 +8,7 @@ categories:
 - JMH
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -191,7 +191,7 @@ public class SerializerCmp {
 }
 ```
 
-__注解含义解释__
+**注解含义解释**
 
 1. `Warmup`：配置预热参数
     * `iterations`: 预测执行次数
@@ -205,7 +205,7 @@ __注解含义解释__
 1. `BenchmarkMode`：衡量的指标，包括平均值，峰值等
 1. `OutputTimeUnit`：输出结果的时间单位
 
-__输出__
+**输出**
 
 ```
 ...

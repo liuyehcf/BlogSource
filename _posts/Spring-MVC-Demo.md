@@ -9,7 +9,7 @@ categories:
 - Spring
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -93,7 +93,7 @@ __阅读更多__
 
 * 在`(1)`处，通过contextConfigLocation指定`业务层`Spring容器的配置文件(多个配置文件使用逗号分隔)
 * 在`(2)`处，ContextLoaderListener是一个ServletContextListener，它通过contextConfigLocation参数指定的Spring配置文件启动`业务层`的Spring容器
-* 在`(3)`处，配置了名为spring-mvc的DispatcherServlet，__它默认自动加载/WEB-INF/spring-mvc-servlet.xml(默认格式为：`<servlet-Name>-servlet.xml`)的Spring配置文件__，启动`Web层`的Spring容器
+* 在`(3)`处，配置了名为spring-mvc的DispatcherServlet，**它默认自动加载/WEB-INF/spring-mvc-servlet.xml(默认格式为：`<servlet-Name>-servlet.xml`)的Spring配置文件**，启动`Web层`的Spring容器
 * 在`(4)`处，通过`<servlet-mapping>`指定DispatcherServlet处理所有rest风格的HTTP请求
 
 # 4 web.xml元素详解
@@ -101,14 +101,14 @@ __阅读更多__
 `<web-app>`是web.xml的根元素，其子元素如下：
 
 1. `<icon>`：指出IDE和GUI工具用来表示Web应用的一个和两个图像文件的位置
-1. __`<display-name>`：提供GUI工具可能会用来标记这个特定的Web应用的一个名称__
-1. __`<description>`：给出与此有关的说明性文本__
-1. __`<context-param>`：声明应用范围内的初始化参数__
-1. __`<filter>`：将一个名字与一个实现javax.servlet.Filter接口的类相关联__
-1. __`<filter-mapping>`：一旦命名了一个过滤器，就要利用filter-mapping元素把它与一个或多个servlet或JSP页面相关联__
-1. __`<listener>`：对事件监听程序的支持，事件监听程序在建立、修改和删除会话或servlet环境时得到通知。listener元素指出事件的监听器类__
-1. __`<servlet>`：在向servlet或JSP页面制定初始化参数或定制URL时，必须首先命名servlet或JSP页面。servlet元素就是用来完成此项任务的__
-1. __`<servlet-mapping>`：服务器一般为servlet提供一个缺省的URL：http://host/webAppPrefix/servlet/ServletName。但是，常常会更改这个URL，以便servlet可以访问初始化参数或更容易地处理相对URL。在更改缺省URL时，使用servlet-mapping元素__
+1. **`<display-name>`：提供GUI工具可能会用来标记这个特定的Web应用的一个名称**
+1. **`<description>`：给出与此有关的说明性文本**
+1. **`<context-param>`：声明应用范围内的初始化参数**
+1. **`<filter>`：将一个名字与一个实现javax.servlet.Filter接口的类相关联**
+1. **`<filter-mapping>`：一旦命名了一个过滤器，就要利用filter-mapping元素把它与一个或多个servlet或JSP页面相关联**
+1. **`<listener>`：对事件监听程序的支持，事件监听程序在建立、修改和删除会话或servlet环境时得到通知。listener元素指出事件的监听器类**
+1. **`<servlet>`：在向servlet或JSP页面制定初始化参数或定制URL时，必须首先命名servlet或JSP页面。servlet元素就是用来完成此项任务的**
+1. **`<servlet-mapping>`：服务器一般为servlet提供一个缺省的URL：http://host/webAppPrefix/servlet/ServletName。但是，常常会更改这个URL，以便servlet可以访问初始化参数或更容易地处理相对URL。在更改缺省URL时，使用servlet-mapping元素**
 1. `<session-config>`：如果某个会话在一定时间内未被访问，服务器可以抛弃它以节省内存。可通过使用HttpSession的setMaxInactiveInterval方法明确设置单个会话对象的超时值，或者可利用session-config元素制定缺省超时值
 1. `<mime-mapping>`：如果Web应用具有想到特殊的文件，希望能保证给他们分配特定的MIME类型，则mime-mapping元素提供这种保证
 1. `<welcome-file-list>`：指示服务器在收到引用一个目录名而不是文件名的URL时，使用哪个文件

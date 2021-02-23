@@ -8,7 +8,7 @@ categories:
 - Basic
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -32,7 +32,7 @@ __阅读更多__
 
 因此，在导入一个外部包后，能够且只能够访问该包中导出的对象。
 
-假设在包`pack1`中我们有一个变量或函数叫做`Thing`（以`T`开头，所以它能够被导出），那么在当前包中导入`pack1`包，`Thing`就可以像面向对象语言那样使用点标记来调用：`pack1.Thing`（__`pack1`在这里是不可以省略的__）。
+假设在包`pack1`中我们有一个变量或函数叫做`Thing`（以`T`开头，所以它能够被导出），那么在当前包中导入`pack1`包，`Thing`就可以像面向对象语言那样使用点标记来调用：`pack1.Thing`（**`pack1`在这里是不可以省略的**）。
 
 因此包也可以作为命名空间使用，帮助避免命名冲突（名称冲突）：两个包中的同名变量的区别在于他们的包名，例如`pack1.Thing`和`pack2.Thing`。
 
@@ -91,13 +91,13 @@ func main() {
 
 ## 2.7 go文件命名规范
 
-__区分平台和cpu架构：`<name>_<platform>_<cpu arch>.go`__
+**区分平台和cpu架构：`<name>_<platform>_<cpu arch>.go`**
 
 * `file.go`
 * `file_linux.go`
 * `file_linux_amd64.go`
 
-__测试：`<name>_<platform>_<cpu arch>_test.go`__
+**测试：`<name>_<platform>_<cpu arch>_test.go`**
 
 * `file_test.go`
 * `file_linux_test.go`
@@ -228,7 +228,7 @@ go build -mod=vendor
 
 ### 3.2.3 版本管理
 
-go module支持在报名后增加`/v2`，`/v3`这样的后缀和对应的三位版本号标签（`git tag`），解决兼容性问题，__包的版本号格式为：`v{major}.{minor}.{patch}`__
+go module支持在报名后增加`/v2`，`/v3`这样的后缀和对应的三位版本号标签（`git tag`），解决兼容性问题，**包的版本号格式为：`v{major}.{minor}.{patch}`**
 
 go module对版本号的约定
 
@@ -269,7 +269,7 @@ export GOPROXY=direct
 export GOPRIVATE=gitlab.com/tom/*, gitlab.com/jerry/*
 ```
 
-__[unable to install go module (private nested repository)](https://gitlab.com/gitlab-org/gitlab-foss/issues/65681)__
+**[unable to install go module (private nested repository)](https://gitlab.com/gitlab-org/gitlab-foss/issues/65681)**
 
 在设置完`GOPROXY`以及`GOPRIVATE`之后，有时会出现如下问题
 
@@ -281,7 +281,7 @@ Confirm the import path was entered correctly.
 If this is a private repository, see https://golang.org/doc/faq#git_https for additional information.
 ```
 
-我们可以通过设置`export GIT_TERMINAL_PROMPT=1`来开启交互模式，__但是随后执行`go mod tidy`时，auth的交互是有bug的，他会让你输入两次密码（很坑）__。所以我们换另一种方式来解决，执行`git ls-remote -q https://gitlab.com/xxx/yyy.git`，执行过程中会要求你输入`gitlab`的账号和密码
+我们可以通过设置`export GIT_TERMINAL_PROMPT=1`来开启交互模式，**但是随后执行`go mod tidy`时，auth的交互是有bug的，他会让你输入两次密码（很坑）**。所以我们换另一种方式来解决，执行`git ls-remote -q https://gitlab.com/xxx/yyy.git`，执行过程中会要求你输入`gitlab`的账号和密码
 
 随后，我们继续执行`go mod tidy`，还是报错，但报错信息如下
 
@@ -296,18 +296,18 @@ If this is a private repository, see https://golang.org/doc/faq#git_https for ad
 
 所以我们现在在`go.mod`文件中，将依赖加上即可
 
-__此外，如果我们`gitlab`的账号密码更新了，那么`git`仍然会用上一次的密码来进行鉴权，此时需要将该过期的密码从系统的秘钥中删除__
+**此外，如果我们`gitlab`的账号密码更新了，那么`git`仍然会用上一次的密码来进行鉴权，此时需要将该过期的密码从系统的秘钥中删除**
 
 * 如果是Mac的OSX系统，在钥匙串的密码一项中，找到gitlab相关的数据，删掉即可
 
 ### 3.2.7 IDE-GoLand
 
-__新建go module项目__
+**新建go module项目**
 
 1. 在新建时，可以直接选择go module项目（`Go Modules (vgo)`）
 1. 创建完毕之后，会自动在项目根目录创建go.mod文件
 
-__将非go module项目改造成go module项目__
+**将非go module项目改造成go module项目**
 
 1. 在工程根目录执行`go mod init xxx/xxx`创建`go.mod`文件
 1. `Preferences`->`GO`->`Go Modules (vgo)`->勾上`Enable Go Modules (vgo) integration`

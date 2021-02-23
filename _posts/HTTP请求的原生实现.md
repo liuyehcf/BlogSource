@@ -9,17 +9,17 @@ categories:
 - HTTP
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
 # 1 前言
 
-HTTP协议本质上是__文本协议__，其内容表示形式为__人类可读格式__。通常就是ASCII码或者UTF-8编码所得
+HTTP协议本质上是**文本协议**，其内容表示形式为**人类可读格式**。通常就是ASCII码或者UTF-8编码所得
 
 在Java中，HTTP客户端种类繁多，包括HttpURLConnection、Netty、OkHttp等等
 
-__本篇博客旨在使用原生的Java IO API来实现一个简单的HttpClient，借此体验一下HTTP协议的运作方式__
+**本篇博客旨在使用原生的Java IO API来实现一个简单的HttpClient，借此体验一下HTTP协议的运作方式**
 
 # 2 HTTP请求概述
 

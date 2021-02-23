@@ -8,13 +8,13 @@ categories:
 - Leetcode
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
 # 1 Question-3[★★★]
 
-__Longest Substring Without Repeating Characters__
+**Longest Substring Without Repeating Characters**
 
 > Given a string, find the length of the longest substring without repeating characters.
 
@@ -45,7 +45,7 @@ public class Solution {
 
 # 2 Question-5[★★★]
 
-__Longest Palindromic Substring__
+**Longest Palindromic Substring**
 
 > Given a string s, find the longest palindromic substring in s. You may assume that the maximum length of s is 1000.
 
@@ -80,13 +80,13 @@ public class Solution {
 
 # 3 Question-20[★★★★]
 
-__Valid Parentheses__
+**Valid Parentheses**
 
 > Given a string containing just the characters `'('`, `')'`, `'{'`, `'}'`, `'['` and `']'`, determine if the input string is valid.
 
 > The brackets must close in the correct order, `"()"` and `"()[]{}"` are all valid but `"(]"` and `"([)]"` are not.
 
-__错误的版本__
+**错误的版本**
 
 * 反例：`[(])`
 
@@ -118,7 +118,7 @@ public class Solution {
 }
 ```
 
-__正确的版本__
+**正确的版本**
 
 ```java
 public class Solution {
@@ -150,7 +150,7 @@ public class Solution {
 
 # 4 Question-22[★★★]
 
-__Generate Parentheses__
+**Generate Parentheses**
 
 > Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
 
@@ -193,13 +193,13 @@ public class Solution {
 
 # 5 Question-32[★★★★]
 
-__Longest Valid Parentheses__
+**Longest Valid Parentheses**
 
 > Given a string containing just the characters `'('` and `')'`, find the length of the longest valid (well-formed) parentheses substring.
 
 > For `"(()"`, the longest valid parentheses substring is `"()"`, which has `length = 2`.
 
-__超时的版本__
+**超时的版本**
 
 ```java
 public class Solution {
@@ -235,7 +235,7 @@ public class Solution {
 }
 ```
 
-__改进后的版本__
+**改进后的版本**
 
 ```java
 public class Solution {
@@ -270,7 +270,7 @@ public class Solution {
 
 # 6 Question-49[★★★★]
 
-__Group Anagrams__
+**Group Anagrams**
 
 > Given an array of strings, group anagrams together.
 

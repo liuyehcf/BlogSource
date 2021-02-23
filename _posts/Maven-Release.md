@@ -8,7 +8,7 @@ categories:
 - Maven
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -16,7 +16,7 @@ __阅读更多__
 
 本篇博文介绍如何将自己的项目发布到Maven中央仓库
 
-__大致步骤如下:__
+**大致步骤如下:**
 
 1. 注册`Sonatype Jira`帐户
 1. 为新项目托管创建`Jira issue`
@@ -31,14 +31,14 @@ __大致步骤如下:__
 
 [点击注册 Sonatype Jira](https://issues.sonatype.org/secure/Signup!default.jspa)
 
-__分别填写__
+**分别填写**
 
 1. `Email`: 邮箱
 1. `Full name`: 不知道什么用
 1. `Username`: 这是用于登陆的账号
 1. `Password`: 登陆密码
 
-__记录一下账号__
+**记录一下账号**
 
 1. Full Name: Chenfeng He
 1. username: liuyehcf
@@ -49,7 +49,7 @@ __记录一下账号__
 
 [点击创建 Jira issue](https://issues.sonatype.org/secure/CreateIssue.jspa?issuetype=21&pid=10134)
 
-__分别填写__
+**分别填写**
 
 1. `概要`: 描述一下你的项目
 1. `Group Id`: 非常重要，如果你已经有一个公司或者个人的域名了，可以将这个域名作为`Group Id`，如果随便填写了一个，那么后续工作人员会要求你修改成一个合法域名，或者可以免费使用`com.github.xxx`
@@ -156,7 +156,7 @@ sub   rsa2048 2019-06-01 [E]
 1. `maven-javadoc-plugin`
 1. `maven-deploy-plugin`
 
-__下面是博主编译引擎项目的`pom`文件示例__
+**下面是博主编译引擎项目的`pom`文件示例**
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -418,13 +418,13 @@ __下面是博主编译引擎项目的`pom`文件示例__
 
 执行`mvn clean deploy`，大概1-2天，在maven中央仓库就可以看到你的项目了
 
-__注意，在执行过程中，可能会遇到如下问题__
+**注意，在执行过程中，可能会遇到如下问题**
 
 * gpg: signing failed: Inappropriate ioctl for device
 * 原因是 gpg 在当前终端无法弹出密码输入页面。
 * 解决办法很简单：`export GPG_TTY=$(tty)`，然后再执行`mvn clean deploy`，就能弹出一个密码输入界面了
 
-__[sonatype-查看进度](https://oss.sonatype.org/index.html#stagingRepositories)__
+**[sonatype-查看进度](https://oss.sonatype.org/index.html#stagingRepositories)**
 
 # 10 参考
 

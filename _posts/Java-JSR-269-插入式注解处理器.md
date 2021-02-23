@@ -8,7 +8,7 @@ categories:
 - Annotation
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -36,7 +36,7 @@ cond(no)->op1
 op3->en
 ```
 
-__Javac编译动作的入口是`com.sun.tools.javac.main.JavaCompiler`类__，上述3个过程的代码逻辑集中在这个类的__`compile()`和`compile2()`__方法中，下面给出整个编译过程中最关键的几个步骤
+**Javac编译动作的入口是`com.sun.tools.javac.main.JavaCompiler`类**，上述3个过程的代码逻辑集中在这个类的**`compile()`和`compile2()`**方法中，下面给出整个编译过程中最关键的几个步骤
 
 ```java
 public void compile(List<JavaFileObject> var1, List<String> var2, Iterable<? extends Processor> var3) {
@@ -88,29 +88,29 @@ private void compile2() {
 
 解析步骤由上述代码清单中的`parseFiles()`方法（过程`(2)`）完成，解析步骤包括了经典程序编译原理中的词法分析和语法分析两个过程
 
-__词法分析是将源代码的字符流转变为标记（Token）集合__，单个字符是程序编写过程的最小元素，而标记则是编译过程的最小元素，关键字、变量名、字面量、运算符都可以成为标记，如`int a= b + 2`这句代码包含了6个标记，分别是`int`、`a`、`=`、`b`、`+`、`2`，虽然关键字int由3个字符构成，但是它只是一个Token，不可再拆分。__在Javac的源码中，词法分析过程由`com.sun.tools.javac.parser.Scanner`类来实现__
+**词法分析是将源代码的字符流转变为标记（Token）集合**，单个字符是程序编写过程的最小元素，而标记则是编译过程的最小元素，关键字、变量名、字面量、运算符都可以成为标记，如`int a= b + 2`这句代码包含了6个标记，分别是`int`、`a`、`=`、`b`、`+`、`2`，虽然关键字int由3个字符构成，但是它只是一个Token，不可再拆分。**在Javac的源码中，词法分析过程由`com.sun.tools.javac.parser.Scanner`类来实现**
 
-__语法分析是根据Token序列构造抽象语法树的过程__，抽象语法树（Abstract Syntax Tree,AST）是一种用来描述程序代码语法结构的树形表示方式，语法树的每一个节点都代表着程序代码中的一个语法结构（Construct），例如包、类型、修饰符、运算符、接口、返回值甚至代码注释等都可以是一个语法结构。在Javac的源码中，__语法分析过程由`com.sun.tools.javac.parser.Parser`类实现，这个阶段产出的抽象语法树由`com.sun.tools.javac.tree.JCTree`类表示__，经过这个步骤之后，编译器就基本不会再对源码文件进行操作了，后续的操作都建立在抽象语法树之上
+**语法分析是根据Token序列构造抽象语法树的过程**，抽象语法树（Abstract Syntax Tree,AST）是一种用来描述程序代码语法结构的树形表示方式，语法树的每一个节点都代表着程序代码中的一个语法结构（Construct），例如包、类型、修饰符、运算符、接口、返回值甚至代码注释等都可以是一个语法结构。在Javac的源码中，**语法分析过程由`com.sun.tools.javac.parser.Parser`类实现，这个阶段产出的抽象语法树由`com.sun.tools.javac.tree.JCTree`类表示**，经过这个步骤之后，编译器就基本不会再对源码文件进行操作了，后续的操作都建立在抽象语法树之上
 
 ## 1.2 填充符号表
 
-完成了语法分析和词法分析之后，下一步就是填充符号表的过程，也就是`enterTrees()`方法（过程`(3)`）所做的事情。__符号表（Symbol Table）是由一组符号地址和符号信息构成的表格，可以把它想象成哈希表中K-V值对的形式（实际上符号表不一定是哈希表实现，可以是有序符号表、树状符号表、栈结构符号表等）__。符号表中所登记的信息在编译的不同阶段都要用到。在语义分析中，符号表所登记的内容将用于语义检查（如检查一个名字的使用和原先的说明是否一致）和产生中间代码。在目标代码生成阶段，当对符号名进行地址分配时，符号表是地址分配的依据
+完成了语法分析和词法分析之后，下一步就是填充符号表的过程，也就是`enterTrees()`方法（过程`(3)`）所做的事情。**符号表（Symbol Table）是由一组符号地址和符号信息构成的表格，可以把它想象成哈希表中K-V值对的形式（实际上符号表不一定是哈希表实现，可以是有序符号表、树状符号表、栈结构符号表等）**。符号表中所登记的信息在编译的不同阶段都要用到。在语义分析中，符号表所登记的内容将用于语义检查（如检查一个名字的使用和原先的说明是否一致）和产生中间代码。在目标代码生成阶段，当对符号名进行地址分配时，符号表是地址分配的依据
 
-__在Javac源代码中，填充符号表的过程由`com.sun.tools.javac.comp.Enter`类实现__，此过程的出口是一个待处理列表（To Do List），包含了每一个编译单元的抽象语法树的顶级节点，以及package-info.java（如果存在的话）的顶级节点
+**在Javac源代码中，填充符号表的过程由`com.sun.tools.javac.comp.Enter`类实现**，此过程的出口是一个待处理列表（To Do List），包含了每一个编译单元的抽象语法树的顶级节点，以及package-info.java（如果存在的话）的顶级节点
 
 # 2 JSR-269简介
 
 在Javac源码中，插入式注解处理器的初始化过程是在`initPorcessAnnotations()`方法中完成的，而它的执行过程则是在`processAnnotations()`方法中完成的，这个方法判断是否还有新的注解处理器需要执行，如果有的话，通过`com.sun.tools.javac.processing.JavacProcessingEnvironment`类的`doProcessing()`方法生成一个新的JavaCompiler对象对编译的后续步骤进行处理
 
-在JDK 1.5之后，Java语言提供了对注解（Annotation）的支持，这些注解与普通的Java代码一样，是在运行期间发挥作用的。__在JDK 1.6中实现了JSR-269规范JSR-269：Pluggable Annotations Processing API（插入式注解处理API）。提供了一组插入式注解处理器的标准API在编译期间对注解进行处理__。我们可以把它看做是一组编译器的插件，在这些插件里面，可以读取、修改、添加抽象语法树中的任意元素。__如果这些插件在处理注解期间对语法树进行了修改，编译器将回到解析及填充符号表的过程重新处理，直到所有插入式注解处理器都没有再对语法树进行修改为止，每一次循环称为一个Round，也就是第一张图中的回环过程__。 有了编译器注解处理的标准API后，我们的代码才有可能干涉编译器的行为，由于语法树中的任意元素，甚至包括代码注释都可以在插件之中访问到，所以通过插入式注解处理器实现的插件在功能上有很大的发挥空间。只要有足够的创意，程序员可以使用插入式注解处理器来实现许多原本只能在编码中完成的事情
+在JDK 1.5之后，Java语言提供了对注解（Annotation）的支持，这些注解与普通的Java代码一样，是在运行期间发挥作用的。**在JDK 1.6中实现了JSR-269规范JSR-269：Pluggable Annotations Processing API（插入式注解处理API）。提供了一组插入式注解处理器的标准API在编译期间对注解进行处理**。我们可以把它看做是一组编译器的插件，在这些插件里面，可以读取、修改、添加抽象语法树中的任意元素。**如果这些插件在处理注解期间对语法树进行了修改，编译器将回到解析及填充符号表的过程重新处理，直到所有插入式注解处理器都没有再对语法树进行修改为止，每一次循环称为一个Round，也就是第一张图中的回环过程**。 有了编译器注解处理的标准API后，我们的代码才有可能干涉编译器的行为，由于语法树中的任意元素，甚至包括代码注释都可以在插件之中访问到，所以通过插入式注解处理器实现的插件在功能上有很大的发挥空间。只要有足够的创意，程序员可以使用插入式注解处理器来实现许多原本只能在编码中完成的事情
 
-我们知道编译器在把Java程序源码编译为字节码的时候，会对Java程序源码做各方面的检查校验。这些校验主要以程序“写得对不对”为出发点，虽然也有各种WARNING的信息，但总体来讲还是较少去校验程序“写得好不好”。__有鉴于此，业界出现了许多针对程序“写得好不好”的辅助校验工具，如CheckStyle、FindBug、Klocwork等。这些代码校验工具有一些是基于Java的源码进行校验，还有一些是通过扫描字节码来完成__
+我们知道编译器在把Java程序源码编译为字节码的时候，会对Java程序源码做各方面的检查校验。这些校验主要以程序“写得对不对”为出发点，虽然也有各种WARNING的信息，但总体来讲还是较少去校验程序“写得好不好”。**有鉴于此，业界出现了许多针对程序“写得好不好”的辅助校验工具，如CheckStyle、FindBug、Klocwork等。这些代码校验工具有一些是基于Java的源码进行校验，还有一些是通过扫描字节码来完成**
 
 # 3 编译相关的数据结构与API
 
 ## 3.1 JCTree
 
-JCTree是语法树元素的基类，__包含一个重要的字段`pos`，该字段用于指明当前语法树节点（JCTree）在语法树中的位置__，因此我们不能直接用new关键字来创建语法树节点，即使创建了也没有意义。此外，__结合访问者模式，将数据结构与数据的处理进行解耦__，部分源码如下：
+JCTree是语法树元素的基类，**包含一个重要的字段`pos`，该字段用于指明当前语法树节点（JCTree）在语法树中的位置**，因此我们不能直接用new关键字来创建语法树节点，即使创建了也没有意义。此外，**结合访问者模式，将数据结构与数据的处理进行解耦**，部分源码如下：
 
 ```java
 public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
@@ -136,11 +136,11 @@ public abstract class JCTree implements Tree, Cloneable, DiagnosticPosition {
 1. JCModifiers：`访问标志`语法树节点
 1. JCExpression：`表达式`语法树节点，常见的子类如下
     * JCAssign：`赋值语句`语法树节点
-    * JCIdent：`标识符`语法树节点，__可以是变量，类型，关键字等等__
+    * JCIdent：`标识符`语法树节点，**可以是变量，类型，关键字等等**
 
 ## 3.2 TreeMaker
 
-TreeMaker用于创建一系列`语法树节点`，__创建时会为创建出来的JCTree设置pos字段，所以必须用上下文相关的TreeMaker对象来创建语法树节点，而不能直接new语法树节点__
+TreeMaker用于创建一系列`语法树节点`，**创建时会为创建出来的JCTree设置pos字段，所以必须用上下文相关的TreeMaker对象来创建语法树节点，而不能直接new语法树节点**
 
 源码可以参考[TreeMaker DOC](http://www.docjar.com/docs/api/com/sun/tools/javac/tree/TreeMaker.html)
 
@@ -257,7 +257,7 @@ public JCMethodDecl MethodDef(MethodSymbol m,
 }
 ```
 
-__其中，返回类型填`null`或者`treeMaker.TypeIdent(TypeTag.VOID)`都代表返回void类型__
+**其中，返回类型填`null`或者`treeMaker.TypeIdent(TypeTag.VOID)`都代表返回void类型**
 
 ### 3.2.4 TreeMaker.VarDef
 
@@ -416,7 +416,7 @@ public JCExpressionStatement Exec(JCExpression expr) {
 }
 ```
 
-__例如，TreeMaker.Apply以及TreeMaker.Assign就需要外面包一层TreeMaker.Exec来获得一个JCExpressionStatement__
+**例如，TreeMaker.Apply以及TreeMaker.Assign就需要外面包一层TreeMaker.Exec来获得一个JCExpressionStatement**
 
 ### 3.2.12 TreeMaker.Block
 
@@ -509,7 +509,7 @@ public class List<A> extends AbstractCollection<A> implements java.util.List<A> 
 
 ### 3.5.1 创建一个构造方法
 
-__注意点：方法的名字就是`<init>`__
+**注意点：方法的名字就是`<init>`**
 
 ```java
 treeMaker.MethodDef(
@@ -526,7 +526,7 @@ treeMaker.MethodDef(
 
 ### 3.5.2 创建一个方法的参数
 
-__注意点：访问标志设置成`Flags.PARAMETER`__
+**注意点：访问标志设置成`Flags.PARAMETER`**
 
 ```java
 treeMaker.VarDef(
@@ -583,7 +583,7 @@ treeMaker.Exec(
 注意，直接拿`vartype`字段，而不是`type`字段或者`getType()`方法
 
 * `vartype`的类型是`JCTree.JCExpression`
-* `type`的类型是`com.sun.tools.javac.code.Type`，__这是个非标准api，理应不该使用__
+* `type`的类型是`com.sun.tools.javac.code.Type`，**这是个非标准api，理应不该使用**
 
 # 4 手撸lombok经典注解
 
@@ -701,7 +701,7 @@ public class TestUserDTO {
 
 ### 4.2.1 注解定义源码
 
-__定义4个注解，源码如下：__
+**定义4个注解，源码如下：**
 
 * 将`@Retention`指定为`RetentionPolicy.SOURCE`，即该注解仅在源码期间有效
 
@@ -771,7 +771,7 @@ public @interface Builder {
 
 ### 4.2.2 注解处理器源码
 
-__编写插入式注解处理器，要点如下：__
+**编写插入式注解处理器，要点如下：**
 
 1. 重写`init`方法，获取一些必要的构建对象
 1. 重写`process`方法，实现Builder逻辑，源码已经给出足够的注释，配合上一小节JSR-269 API的介绍，理解起来应该没什么大问题
@@ -780,7 +780,7 @@ __编写插入式注解处理器，要点如下：__
 
 #### 4.2.2.1 BaseProcessor
 
-__注解处理器基类__，抽出了一些公用的字段以及初始化方法
+**注解处理器基类**，抽出了一些公用的字段以及初始化方法
 
 ```java
 package org.liuyehcf.annotation.source.processor;
@@ -836,7 +836,7 @@ public abstract class BaseProcessor extends AbstractProcessor {
 
 #### 4.2.2.2 ProcessUtil
 
-__工具类__
+**工具类**
 
 ```java
 package org.liuyehcf.annotation.source.processor;
@@ -1931,7 +1931,7 @@ UserDTO{firstName='明', lastName='小', age=25, address='火星'}
 
 那么如何在调用的时候不用加参数呢，其实我们知道Java在编译的时候会去资源文件夹下读一个META-INF文件夹，这个文件夹下面除了MANIFEST.MF文件之外，还可以添加一个`services`文件夹，我们可以在这个文件夹下创建一个文件，文件名是`javax.annotation.processing.Processor`，具体内容将在下一小节给出
 
-我们知道maven在编译前会先拷贝资源文件夹，然后当他在编译时候发现了资源文件夹下的META-INF/serivces文件夹时，他就会读取里面的文件，并将文件名所代表的接口用文件内容表示的类来实现。__这就相当于做了-processor参数该做的事了__
+我们知道maven在编译前会先拷贝资源文件夹，然后当他在编译时候发现了资源文件夹下的META-INF/serivces文件夹时，他就会读取里面的文件，并将文件名所代表的接口用文件内容表示的类来实现。**这就相当于做了-processor参数该做的事了**
 
 当然这个文件我们并不希望调用者去写，而是希望在processor项目里集成，调用的时候能直接继承META-INF
 

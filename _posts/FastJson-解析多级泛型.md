@@ -9,13 +9,13 @@ categories:
 - FastJson
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
 # 1 代码清单
 
-__OuterEntity__：第一级
+**OuterEntity**：第一级
 
 * 包含泛型参数T
 
@@ -58,7 +58,7 @@ public class OuterEntity<T> {
 }
 ```
 
-__MiddleEntity__：第二级
+**MiddleEntity**：第二级
 
 * 包含泛型参数T
 
@@ -101,7 +101,7 @@ public class MiddleEntity<T> {
 }
 ```
 
-__InnerEntity__：第三级
+**InnerEntity**：第三级
 
 ```java
 package org.liuyehcf.fastjson.entity;
@@ -132,7 +132,7 @@ public class InnerEntity {
 }
 ```
 
-__测试代码__
+**测试代码**
 
 * 将Java对象转化为Json字符串
 * 将Json字符串，配合类型信息，转化为Java对象

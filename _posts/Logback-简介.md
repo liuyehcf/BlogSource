@@ -9,7 +9,7 @@ categories:
 - Log
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -35,7 +35,7 @@ logback-access是为了集成Servlet环境而准备的，可提供HTTP-access的
 1. scanPeriod：设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒。当scan为true时，此属性生效。默认的时间间隔为1分钟
 1. debug：当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。默认值为false
 
-__示例__
+**示例**
 
 ```xml
 <configuration scan="true" scanPeriod="60 second" debug="false">  
@@ -51,7 +51,7 @@ __示例__
 
 每个logger都关联到logger上下文，默认上下文名称为"default"。但可以使用`<contextName>`设置成其他名字，用于区分不同应用程序的记录。一旦设置，不能修改
 
-__示例__
+**示例**
 
 ```xml
 <configuration scan="true" scanPeriod="60 second" debug="false">  
@@ -70,7 +70,7 @@ __示例__
 1. value的值时变量定义的值
 * 通过`<property>`定义的值会被插入到logger上下文中。定义变量后，可以使`${}`来使用变量
 
-__示例__
+**示例**
 
 ```xml
 <configuration scan="true" scanPeriod="60 second" debug="false">  
@@ -87,7 +87,7 @@ __示例__
 * key:标识此`<timestamp>`的名字
 * datePattern：设置将当前时间（解析配置文件的时间）转换为字符串的模式，遵循Java.txt.SimpleDateFormat的格式
 
-__示例__
+**示例**
 
 ```xml
 <configuration scan="true" scanPeriod="60 second" debug="false">  
@@ -101,10 +101,10 @@ __示例__
 
 一个`<logger>`元素对应了一个或者多个`org.slf4j.Logger`实例
 
-* 如果我们在程序中采用`Logger logger = LoggerFactory.getLogger(A.class);`来获取一个Logger的实例，那么在`<logger>`元素中用name属性来设定__包名__或者__类名__就可以控制该Logger实例的行为
-* 如果我们在程序中采用`Logger logger = LoggerFactory.getLogger("MyLogger");`来获取一个Logger的实例，那么在`<logger>`元素中用name属性设定__同样的名字__("MyLogger")就可以控制该Logger实例的行为
+* 如果我们在程序中采用`Logger logger = LoggerFactory.getLogger(A.class);`来获取一个Logger的实例，那么在`<logger>`元素中用name属性来设定**包名**或者**类名**就可以控制该Logger实例的行为
+* 如果我们在程序中采用`Logger logger = LoggerFactory.getLogger("MyLogger");`来获取一个Logger的实例，那么在`<logger>`元素中用name属性设定**同样的名字**("MyLogger")就可以控制该Logger实例的行为
 
-`<logger>`元素用来设置__一个或者多个Logger实例__的日志打印级别、以及指定`<appender>`
+`<logger>`元素用来设置**一个或者多个Logger实例**的日志打印级别、以及指定`<appender>`
 
 `<logger>`仅有一个name属性，一个可选的level和一个可选的additivity属性
 
@@ -112,19 +112,19 @@ __示例__
     * 可以是包名
     * 可以是类名
     * 可以是自定义的名字
-* level：用来设置打印级别，大小写无关：__TRACE, DEBUG, INFO, WARN, ERROR, ALL 和 OFF__，还有一个特殊值__INHERITED__或者同义词__NULL__，代表强制执行上级的级别
+* level：用来设置打印级别，大小写无关：**TRACE, DEBUG, INFO, WARN, ERROR, ALL 和 OFF**，还有一个特殊值**INHERITED**或者同义词**NULL**，代表强制执行上级的级别
     * 如果未设置此属性，那么当前logger将会继承上级的级别
 * additivity：是否向上级logger传递打印信息。默认是true
-    * 如果配置了两个logger，一个logger的name属性配置的是包名（记为logger1），另一个logger的name属性配置的是类名（记为logger2），那么logger1是logger2的__上级logger__
-    * 其余情况，一个logger的__上级logger__就是root
+    * 如果配置了两个logger，一个logger的name属性配置的是包名（记为logger1），另一个logger的name属性配置的是类名（记为logger2），那么logger1是logger2的**上级logger**
+    * 其余情况，一个logger的**上级logger**就是root
 
 `<logger>`可以包含零个或多个`<appender-ref>`元素，标识这个appender将会添加到这个logger
 
 ## 3.5 &lt;root&gt;
 
-`<root>`也是`<logger>`元素，但是它是__根logger__。__只有一个level属性，应为已经被命名为"root"__
+`<root>`也是`<logger>`元素，但是它是**根logger**。**只有一个level属性，应为已经被命名为"root"**
 
-* level：用来设置打印级别，大小写无关：__TRACE, DEBUG, INFO, WARN, ERROR, ALL 和 OFF__，__不能__设置为__INHERITED__或者同义词__NULL__。默认是DEBUG
+* level：用来设置打印级别，大小写无关：**TRACE, DEBUG, INFO, WARN, ERROR, ALL 和 OFF**，**不能**设置为**INHERITED**或者同义词**NULL**。默认是DEBUG
 
 `<root>`可以包含零个或多个`<appender-ref>`元素，标识这个appender将会添加到这个logger
 
@@ -139,7 +139,7 @@ __示例__
 * `<encoder>`：对日志进行格式化
 * `<target>`：字符串System.out或者 System.err，默认System.out
 
-__示例__
+**示例**
 
 ```xml
 <configuration>  
@@ -164,7 +164,7 @@ __示例__
 * `<encoder>`：对记录事件进行格式化
 * `<prudent>`：如果是true，日志会被安全的写入文件，即使其他的FileAppender也在向此文件做写入操作，效率低，默认是false
 
-__示例__
+**示例**
 
 ```xml
 <configuration>  
@@ -195,7 +195,7 @@ __示例__
 
 #### 3.6.3.1 &lt;rollingPolicy&gt;
 
-__ch.qos.logback.core.rolling.TimeBasedRollingPolicy__：最常用的滚动策略，它根据时间来制定滚动策略，既负责滚动也负责触发滚动。有以下子节点：
+**ch.qos.logback.core.rolling.TimeBasedRollingPolicy**：最常用的滚动策略，它根据时间来制定滚动策略，既负责滚动也负责触发滚动。有以下子节点：
 
 * `<fileNamePattern>`: 必要节点，包含文件名及`%d`转换符
     * `%d`可以包含一个Java.text.SimpleDateFormat指定的时间格式，如：`%d{yyyy-MM}`
@@ -203,7 +203,7 @@ __ch.qos.logback.core.rolling.TimeBasedRollingPolicy__：最常用的滚动策�
     * RollingFileAppender的file子元素可有可无，通过设置file，可以为活动文件和归档文件指定不同位置，当前日志总是记录到file指定的文件（活动文件），活动文件的名字不会改变；如果没设置file，活动文件的名字会根据fileNamePattern的值，每隔一段时间改变一次。"/"或者"\"会被当做目录分隔符
 * `<maxHistory>`: 可选元素，控制保留的归档文件的最大数量，超出数量就删除旧文件。假设设置每个月滚动，且`<maxHistory>`是6，则只保存最近6个月的文件，删除之前的旧文件。注意，删除旧文件是，那些为了归档而创建的目录也会被删除
 
-__ch.qos.logback.core.rolling.FixedWindowRollingPolicy__：根据固定窗口算法重命名文件的滚动策略。有以下子元素：
+**ch.qos.logback.core.rolling.FixedWindowRollingPolicy**：根据固定窗口算法重命名文件的滚动策略。有以下子元素：
 
 * `<minIndex>`：窗口索引最小值
 * `<maxIndex>`：窗口索引最大值，当用户指定的窗口过大时，会自动将窗口设置为12
@@ -211,7 +211,7 @@ __ch.qos.logback.core.rolling.FixedWindowRollingPolicy__：根据固定窗口算
     * 例如，假设最小值和最大值分别为1和2，命名模式为`mylog%i.log`，会产生归档文件`mylog1.log`和`mylog2.log`
     * 还可以指定文件压缩选项，例如，`mylog%i.log.gz`或者`log%i.log.zip`
 
-__示例1：__每天生产一个日志文件，保存30天的日志文件
+**示例1：**每天生产一个日志文件，保存30天的日志文件
 
 ```xml
 <configuration>   
@@ -233,7 +233,7 @@ __示例1：__每天生产一个日志文件，保存30天的日志文件
 </configuration>
 ```
 
-__示例2：__按照固定窗口模式生成日志文件，当文件大于20MB时，生成新的日志文件。窗口大小是1到3，当保存了3个归档文件后，将覆盖最早的日志
+**示例2：**按照固定窗口模式生成日志文件，当文件大于20MB时，生成新的日志文件。窗口大小是1到3，当保存了3个归档文件后，将覆盖最早的日志
 
 ```xml
 <configuration>   
@@ -262,11 +262,11 @@ __示例2：__按照固定窗口模式生成日志文件，当文件大于20MB�
 
 #### 3.6.3.2 &lt;triggeringPolicy&gt;
 
-__ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy__：查看当前活动文件的大小，如果超过指定大小会告知RollingFileAppender触发当前活动文件滚动。只有一个子元素：
+**ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy**：查看当前活动文件的大小，如果超过指定大小会告知RollingFileAppender触发当前活动文件滚动。只有一个子元素：
 
 * `<maxFileSize>`:这是活动文件的大小，默认值是10MB
 
-__示例__
+**示例**
 
 ```xml
 <configuration>   
@@ -301,7 +301,7 @@ __示例__
 
 [layout官方文档](http://logback.qos.ch/manual/layouts.html)
 
-__示例__
+**示例**
 
 ```xml
 <encoder>   
@@ -309,7 +309,7 @@ __示例__
 </encoder>
 ```
 
-__格式修饰符，与转换符共同使用__：可选的格式修饰符位于"%"和转换符之间
+**格式修饰符，与转换符共同使用**：可选的格式修饰符位于"%"和转换符之间
 
 * 第一个可选修饰符是左对齐标志，符号是减号"-"
 * 接着是可选的最小宽度修饰符，用十进制数表示。如果字符小于最小宽度，则左填充或右填充，默认是左填充（即右对齐），填充符为空格。如果字符大于最小宽度，字符永远不会被截断
@@ -529,9 +529,9 @@ __格式修饰符，与转换符共同使用__：可选的格式修饰符位于"
 
 # 8 Spring-Boot默认的配置
 
-__参考`org.springframework.boot.logging.logback.DefaultLogbackConfiguration`__
+**参考`org.springframework.boot.logging.logback.DefaultLogbackConfiguration`**
 
-__相关配置项参考`spring-configuration-metadata.json`__
+**相关配置项参考`spring-configuration-metadata.json`**
 
 * `logging.pattern.console`：默认的console pattern配置
 * `logging.config`：用于指定spring加载的logback配置文件
@@ -697,7 +697,7 @@ AsyncAppender会异步打印日志，从而避免磁盘IO阻塞当前线程的�
     }
 ```
 
-__总结：根据上面的分析可以发现，如果打日志的并发度非常高，且打的是warn或error日志，仍然会阻塞当前线程__
+**总结：根据上面的分析可以发现，如果打日志的并发度非常高，且打的是warn或error日志，仍然会阻塞当前线程**
 
 # 10 参考
 

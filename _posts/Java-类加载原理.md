@@ -8,7 +8,7 @@ categories:
 - Isolation Technology
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -17,12 +17,12 @@ __阅读更多__
 通常，在我们需要动态加载一个类的时候，总有三个类加载器可以使用，它们分别是
 
 1. system classloader：系统类加载器（或者称为应用类加载器，application classloader）
-1. current classloader：当前类加载器（__CCL的加载过程是由JVM运行时来控制的，是无法通过Java编程来更改的__）
+1. current classloader：当前类加载器（**CCL的加载过程是由JVM运行时来控制的，是无法通过Java编程来更改的**）
 1. current thread context classloader：线程上下文类加载器
 
 那么问题来了，我们应该选择哪个类加载器去加载呢，或者说JVM会使用哪个类加载器去加载呢？
 
-首先排除掉的是system classloader（系统类加载器），这个类加载器用于加载`-classpath`路径下的类，并且可以通过静态方法`ClassLoader.getSystemClassLoader()`来获得。实际上，我们很少在代码中明确使用系统类加载器来加载类，因为我们总是可以通过其他类加载器并__通过委托__到达系统类加载器。如果你编写的程序运行在__最后一个ClassLoader__是AppClassLoader的情况下，那么你的代码就只能工作于命令行中，即通过`-classpath`参数来指定类加载路径，如果程序运行于Web容器中，那么这种方式就行不通了
+首先排除掉的是system classloader（系统类加载器），这个类加载器用于加载`-classpath`路径下的类，并且可以通过静态方法`ClassLoader.getSystemClassLoader()`来获得。实际上，我们很少在代码中明确使用系统类加载器来加载类，因为我们总是可以通过其他类加载器并**通过委托**到达系统类加载器。如果你编写的程序运行在**最后一个ClassLoader**是AppClassLoader的情况下，那么你的代码就只能工作于命令行中，即通过`-classpath`参数来指定类加载路径，如果程序运行于Web容器中，那么这种方式就行不通了
 
 current classloader是当前方法所属类的类加载器。通俗来讲，类A中使用了类B（类B在此前并未加载），那么会使用加载A的加载器来加载B。等效于通过`A.class.getClassLoader().loadClass("B");`来加载
 
@@ -37,15 +37,15 @@ B b = (B) ois.readObject();
 ```
 这种调用的时候，依旧能够通过“当前”的ClassLoader正确的加载用户的类
 
-ContextClassLoader是作为Thread的一个成员变量出现的，一个线程在构造的时候，它会从parent线程中继承这个ClassLoader。__使用线程上下文类加载器，可以在执行线程中抛弃双亲委派加载链模式，使用线程上下文里的类加载器加载类__。CurrentClassLoader对用户来说是自动的，隐式的，而ContextClassLoader需要显示的使用，先进行设置然后再进行使用
+ContextClassLoader是作为Thread的一个成员变量出现的，一个线程在构造的时候，它会从parent线程中继承这个ClassLoader。**使用线程上下文类加载器，可以在执行线程中抛弃双亲委派加载链模式，使用线程上下文里的类加载器加载类**。CurrentClassLoader对用户来说是自动的，隐式的，而ContextClassLoader需要显示的使用，先进行设置然后再进行使用
 
 # 2 Class#forName的类加载过程
 
-__接下来我们会查看openjdk中的相关C++源码（源码下载请参考参考文献），openjdk的起始路径记为`${OPEN_JDK}`，我们将以如下形式来表示源码文件的位置__
+**接下来我们会查看openjdk中的相关C++源码（源码下载请参考参考文献），openjdk的起始路径记为`${OPEN_JDK}`，我们将以如下形式来表示源码文件的位置**
 
 * `${OPEN_JDK}/path1/path2/path3/source.c`
 
-forName用于加载一个类并且会执行后续操作，包括验证，解析，初始化。并且触发static字段以及static域的执行。__下面仅分析类加载过程__
+forName用于加载一个类并且会执行后续操作，包括验证，解析，初始化。并且触发static字段以及static域的执行。**下面仅分析类加载过程**
 
 ```java
     public static Class<?> forName(String className)
@@ -118,7 +118,7 @@ Java_java_lang_Class_forName0(JNIEnv *env, jclass this, jstring classname,
 * `${OPEN_JDK}/hotspot/src/share/vm/prims/jvm.h`
 * `${OPEN_JDK}/hotspot/src/share/vm/prims/jvm.cpp`
 
-__声明如下__
+**声明如下**
 ```c
 /*
  * Find a class from a given class loader.  Throws ClassNotFoundException.
@@ -134,7 +134,7 @@ JVM_FindClassFromCaller(JNIEnv *env, const char *name, jboolean init,
                         jobject loader, jclass caller);
 ```
 
-__定义如下__
+**定义如下**
 ```c
 JVM_ENTRY(jclass, JVM_FindClassFromCaller(JNIEnv* env, const char* name,
                                           jboolean init, jobject loader,
@@ -305,7 +305,7 @@ Java_java_lang_ClassLoader_findLoadedClass0(JNIEnv *env, jobject loader,
 * `${OPEN_JDK}/hotspot/src/share/vm/prims/jvm.h`
 `${OPEN_JDK}/hotspot/src/share/vm/prims/jvm.cpp`
 
-__声明如下__
+**声明如下**
 
 ```c
 /* Find a loaded class cached by the VM */
@@ -313,7 +313,7 @@ JNIEXPORT jclass JNICALL
 JVM_FindLoadedClass(JNIEnv *env, jobject loader, jstring name);
 ```
 
-__定义如下__
+**定义如下**
 
 ```c
 JVM_ENTRY(jclass, JVM_FindLoadedClass(JNIEnv *env, jobject loader, jstring name))
@@ -364,7 +364,7 @@ JVM_ENTRY(jclass, JVM_FindLoadedClass(JNIEnv *env, jobject loader, jstring name)
 JVM_END
 ```
 
-该方法会以__类加载器实例以及类全限定名作为key__，在缓存中查找Class实例
+该方法会以**类加载器实例以及类全限定名作为key**，在缓存中查找Class实例
 
 如果命中了直接返回。如果没有命中，则根据双亲委派模型依次调用双亲类加载器加载
 
@@ -613,7 +613,7 @@ Java_java_lang_ClassLoader_defineClass2(JNIEnv *env,
 * `${OPEN_JDK}/hotspot/src/share/vm/prims/jvm.h`
 * `${OPEN_JDK}/hotspot/src/share/vm/prims/jvm.cpp`
 
-__声明如下__
+**声明如下**
 
 ```c
 /* Define a class with a source (added in JDK1.5) */
@@ -623,7 +623,7 @@ JVM_DefineClassWithSource(JNIEnv *env, const char *name, jobject loader,
                           const char *source);
 ```
 
-__定义如下__
+**定义如下**
 
 ```c
 JVM_ENTRY(jclass, JVM_DefineClassWithSource(JNIEnv *env, const char *name, jobject loader, const jbyte *buf, jsize len, jobject pd, const char *source))
@@ -638,7 +638,7 @@ static jclass jvm_define_class_common(JNIEnv *env, const char *name,
                                       jobject loader, const jbyte *buf,
                                       jsize len, jobject pd, const char *source,
                                       jboolean verify, TRAPS) {
-  if (source == NULL)  source = "__JVM_DefineClass__";
+  if (source == NULL)  source = "**JVM_DefineClass**";
 
   assert(THREAD->is_Java_thread(), "must be a JavaThread");
   JavaThread* jt = (JavaThread*) THREAD;
@@ -689,11 +689,11 @@ static jclass jvm_define_class_common(JNIEnv *env, const char *name,
 }
 ```
 
-该方法根据传入的字节数组来创建一个Class对象，并验证其正确性。__如果创建成功，那么建立一条`<类加载器实例，类全限定名，Class对象实例>`的缓存，也就是说Class对象的命名空间是由传给defineClass0、defineClass1、defineClass2的ClassLoader的实例提供的，因此并不一定是执行loadClass的类加载器实例__
+该方法根据传入的字节数组来创建一个Class对象，并验证其正确性。**如果创建成功，那么建立一条`<类加载器实例，类全限定名，Class对象实例>`的缓存，也就是说Class对象的命名空间是由传给defineClass0、defineClass1、defineClass2的ClassLoader的实例提供的，因此并不一定是执行loadClass的类加载器实例**
 
 # 3 Class#forName流程分析
 
-我们知道Class#forName与ClassLoader.loadClass()的差异在于Class#forName会在加载类后执行后续的验证解析初始化动作，而ClassLoader.loadClass()仅仅加载类。因此，这里__仅针对__Class#forName于ClassLoader.loadClass()的类加载过程进行分析
+我们知道Class#forName与ClassLoader.loadClass()的差异在于Class#forName会在加载类后执行后续的验证解析初始化动作，而ClassLoader.loadClass()仅仅加载类。因此，这里**仅针对**Class#forName于ClassLoader.loadClass()的类加载过程进行分析
 
 ```plantuml
 skinparam backgroundColor #EEEBDC

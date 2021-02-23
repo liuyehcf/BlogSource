@@ -9,7 +9,7 @@ categories:
 - Spring
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -230,16 +230,16 @@ public class Application {
 
 数据层的SpringBoot方式的配置，包括如下注解
 
-* __`MapperScan`__：`Mapper`的扫描路径，通过`sqlSessionFactoryRef`参数指定sql会话工厂
-* __`EnableTransactionManagement`__：开启声明式事务
+* **`MapperScan`**：`Mapper`的扫描路径，通过`sqlSessionFactoryRef`参数指定sql会话工厂
+* **`EnableTransactionManagement`**：开启声明式事务
 
-__综上，一个数据层的完整配置包括如下几项__
+**综上，一个数据层的完整配置包括如下几项**
 
-1. __Mapper映射器__：通过`MapperScan`注解实现
-1. __声明式事务__：通过`EnableTransactionManagement`注解开启
-1. __数据源__
-1. __事务管理器__
-1. __会话工厂__
+1. **Mapper映射器**：通过`MapperScan`注解实现
+1. **声明式事务**：通过`EnableTransactionManagement`注解开启
+1. **数据源**
+1. **事务管理器**
+1. **会话工厂**
 
 ```java
 package org.liuyehcf.spring.tx;
@@ -640,7 +640,7 @@ public class TestController extends BaseConfig {
 
 ## 6.5 create_h2.sql
 
-__注意，千万别忘了`SET mode MySQL;`这句__
+**注意，千万别忘了`SET mode MySQL;`这句**
 
 ```sql
 SET mode MySQL;
@@ -656,9 +656,9 @@ UNIQUE KEY(name)
 
 # 7 源码剖析
 
-__`Spring-tx`利用了`Spring-aop`，在目标方法上织入了一系列事务相关的逻辑。相关织入逻辑可以参考{% post_link Spring-AOP-源码剖析 %}。这里仅介绍事务相关的增强逻辑__
+**`Spring-tx`利用了`Spring-aop`，在目标方法上织入了一系列事务相关的逻辑。相关织入逻辑可以参考{% post_link Spring-AOP-源码剖析 %}。这里仅介绍事务相关的增强逻辑**
 
-__分析的起点是`TransactionInterceptor.invoke`，该类是事务对应的增强类，或者说拦截器（Spring AOP的本质就是一系列的拦截器）__
+**分析的起点是`TransactionInterceptor.invoke`，该类是事务对应的增强类，或者说拦截器（Spring AOP的本质就是一系列的拦截器）**
 
 ```java
     @Override
@@ -674,11 +674,11 @@ __分析的起点是`TransactionInterceptor.invoke`，该类是事务对应的�
     }
 ```
 
-__沿着调用链往下走，下面是`TransactionAspectSupport.invokeWithinTransaction`，主要关注三个方法调用__
+**沿着调用链往下走，下面是`TransactionAspectSupport.invokeWithinTransaction`，主要关注三个方法调用**
 
-1. __`createTransactionIfNecessary`方法__：在必要时，创建一个事务。与事务传播方式等等有关系
-1. __`completeTransactionAfterThrowing`方法__：拦截到异常时，根据异常类型选择是否进行回滚操作
-1. __`commitTransactionAfterReturning`方法__：未拦截到异常时，提交本次事务
+1. **`createTransactionIfNecessary`方法**：在必要时，创建一个事务。与事务传播方式等等有关系
+1. **`completeTransactionAfterThrowing`方法**：拦截到异常时，根据异常类型选择是否进行回滚操作
+1. **`commitTransactionAfterReturning`方法**：未拦截到异常时，提交本次事务
 
 ```java
     @Nullable
@@ -776,8 +776,8 @@ __沿着调用链往下走，下面是`TransactionAspectSupport.invokeWithinTran
 
 我们先来看一下`createTransactionIfNecessary`方法，该方法的核心逻辑就是
 
-1. __`getTransaction`__：获取`TransactionStatus`对象（该对象包含了当前事务的一些状态信息，包括`是否是新事务`、`是否为rollback-only模式`、`是否有savepoint`），基本Spring事务的核心概念都在这个方法中有所体现，包括事务的传播方式等等
-1. __`prepareTransactionInfo`__：创建一个`TransactionInfo`对象（该对象持有了一系列事务相关的对象，包括`PlatformTransactionManager`、`TransactionAttribute`、`TransactionStatus`等对象）
+1. **`getTransaction`**：获取`TransactionStatus`对象（该对象包含了当前事务的一些状态信息，包括`是否是新事务`、`是否为rollback-only模式`、`是否有savepoint`），基本Spring事务的核心概念都在这个方法中有所体现，包括事务的传播方式等等
+1. **`prepareTransactionInfo`**：创建一个`TransactionInfo`对象（该对象持有了一系列事务相关的对象，包括`PlatformTransactionManager`、`TransactionAttribute`、`TransactionStatus`等对象）
 
 ```java
     protected TransactionInfo createTransactionIfNecessary(@Nullable PlatformTransactionManager tm,
@@ -814,8 +814,8 @@ __沿着调用链往下走，下面是`TransactionAspectSupport.invokeWithinTran
 
 ## 7.2 completeTransactionAfterThrowing
 
-__继续跟踪`TransactionAspectSupport.completeTransactionAfterThrowing`方法。首先会根据异常类型以及事务配置的属性值来判断，本次是否进行回滚操作。主要的判断逻辑在`txInfo.transactionAttribute.rollbackOn`方法中，本Demo对应的`TransactionAttribute`接口的实现类是
-`RuleBasedTransactionAttribute`__
+**继续跟踪`TransactionAspectSupport.completeTransactionAfterThrowing`方法。首先会根据异常类型以及事务配置的属性值来判断，本次是否进行回滚操作。主要的判断逻辑在`txInfo.transactionAttribute.rollbackOn`方法中，本Demo对应的`TransactionAttribute`接口的实现类是
+`RuleBasedTransactionAttribute`**
 
 ```java
     protected void completeTransactionAfterThrowing(@Nullable TransactionInfo txInfo, Throwable ex) {
@@ -858,7 +858,7 @@ __继续跟踪`TransactionAspectSupport.completeTransactionAfterThrowing`方法�
     }
 ```
 
-__我们接着来看一下`RuleBasedTransactionAttribute.rollbackOn`方法__
+**我们接着来看一下`RuleBasedTransactionAttribute.rollbackOn`方法**
 
 ```java
     public boolean rollbackOn(Throwable ex) {
@@ -894,7 +894,7 @@ __我们接着来看一下`RuleBasedTransactionAttribute.rollbackOn`方法__
     }
 ```
 
-__`RuleBasedTransactionAttribute`的父类`DefaultTransactionAttribute`的`rollbackOn`方法如下，可以看到，默认的回滚异常类型就是`RuntimeException`以及`Error`__
+**`RuleBasedTransactionAttribute`的父类`DefaultTransactionAttribute`的`rollbackOn`方法如下，可以看到，默认的回滚异常类型就是`RuntimeException`以及`Error`**
 
 ```java
     public boolean rollbackOn(Throwable ex) {

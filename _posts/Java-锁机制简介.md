@@ -9,13 +9,13 @@ categories:
 - Lock
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
 # 1 前言
 
-本篇博客对Java中与 __锁__ 有关的概念进行了整理，大致上分为如下几个部分
+本篇博客对Java中与 **锁** 有关的概念进行了整理，大致上分为如下几个部分
 
 * Java内建锁机制及其优化
 * 自旋锁及其相关变体
@@ -117,7 +117,7 @@ Ticket Lock优劣势总结
 
 ## 3.3 CLH锁
 
-CLH锁(Craig，Landin，and Hagersten locks)在Ticket锁的机制上进行了优化，让每个线程在 __非共享变量上自旋__ ，减少了共享变量的同步开销
+CLH锁(Craig，Landin，and Hagersten locks)在Ticket锁的机制上进行了优化，让每个线程在 **非共享变量上自旋** ，减少了共享变量的同步开销
 
 CLH锁的简单Demo
 ```java

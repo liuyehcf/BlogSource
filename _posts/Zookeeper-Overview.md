@@ -8,7 +8,7 @@ categories:
 - Zookeeper
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -38,60 +38,60 @@ bin/zkCli.sh
 
 Zookeeper客户端提供如下命令（可用`help`查看）
 
-1. __`ls`__：列出指定节点的孩子节点列表
-1. __`ls2`__：列出指定节点的孩子节点列表，以及该节点的状态信息
-1. __`create`__：创建节点
-1. __`get`__：获取节点的数据以及状态信息
-1. __`set`__：设置节点的数据
-1. __`rmr`__：移除指定的znode并递归其所有子节点
-1. __`delete`__：移除指定的znode节点（该节点不能有孩子节点）
-1. __`stat`__：获取节点的状态信息
-1. __`listquota`__：查询节点的配额
-1. __`setquota`__：设置节点的配额
-1. __`delquota`__：删除节点的配额
-1. __`getAcl`__：获取ACL权限
-1. __`setAcl`__：设置ACL权限
-1. __`history`__：列出命令历史
-1. __`redo`__：重新执行指定命令
-1. __`printwatches`__：开启/关闭在输出流打印watch触发的信息
-1. __`sync`__：同步
-1. __`addauth`__：添加授权用户信息
-1. __`quit`__：关闭当前Zookeeper会话（连接），并退出客户端程序
-1. __`close`__：仅关闭当前Zookeeper会话（连接）
-1. __`connect`__：连接到指定Zookeeper服务器
+1. **`ls`**：列出指定节点的孩子节点列表
+1. **`ls2`**：列出指定节点的孩子节点列表，以及该节点的状态信息
+1. **`create`**：创建节点
+1. **`get`**：获取节点的数据以及状态信息
+1. **`set`**：设置节点的数据
+1. **`rmr`**：移除指定的znode并递归其所有子节点
+1. **`delete`**：移除指定的znode节点（该节点不能有孩子节点）
+1. **`stat`**：获取节点的状态信息
+1. **`listquota`**：查询节点的配额
+1. **`setquota`**：设置节点的配额
+1. **`delquota`**：删除节点的配额
+1. **`getAcl`**：获取ACL权限
+1. **`setAcl`**：设置ACL权限
+1. **`history`**：列出命令历史
+1. **`redo`**：重新执行指定命令
+1. **`printwatches`**：开启/关闭在输出流打印watch触发的信息
+1. **`sync`**：同步
+1. **`addauth`**：添加授权用户信息
+1. **`quit`**：关闭当前Zookeeper会话（连接），并退出客户端程序
+1. **`close`**：仅关闭当前Zookeeper会话（连接）
+1. **`connect`**：连接到指定Zookeeper服务器
 
 # 5 Znode Status
 
 znode包含如下状态
 
-1. __cZxid__：创建节点时的zxid
-1. __mZxid__：修改节点时的zxid
-1. __pZxid__：修改节点的子节点列表的zxid
-1. __ctime__：创建节点的时间
-1. __mtime__：修改节点的时间
-1. __dataVersion__：节点数据修改的次数
-1. __cversion__：节点的子节点列表修改的次数
-1. __aclVersion__：节点的ACL权限修改的次数
-1. __ephemeralOwner__：临时节点的会话id，若不是临时节点，那么此id为0
-1. __dataLength__：数据长度
-1. __numChildren__：子节点数量
+1. **cZxid**：创建节点时的zxid
+1. **mZxid**：修改节点时的zxid
+1. **pZxid**：修改节点的子节点列表的zxid
+1. **ctime**：创建节点的时间
+1. **mtime**：修改节点的时间
+1. **dataVersion**：节点数据修改的次数
+1. **cversion**：节点的子节点列表修改的次数
+1. **aclVersion**：节点的ACL权限修改的次数
+1. **ephemeralOwner**：临时节点的会话id，若不是临时节点，那么此id为0
+1. **dataLength**：数据长度
+1. **numChildren**：子节点数量
 
 # 6 ACL
 
-__Zookeeper使用ACL来控制访问znode__。ACL的实现和UNIX的实现非常相似：它采用权限位来控制那些操作被允许，那些操作被禁止。但是和标准的UNIX权限不同的是，znode没有限制用户（user，即文件的所有者），组（group）和其他（world）。Zookeepr是没有所有者的概念的
+**Zookeeper使用ACL来控制访问znode**。ACL的实现和UNIX的实现非常相似：它采用权限位来控制那些操作被允许，那些操作被禁止。但是和标准的UNIX权限不同的是，znode没有限制用户（user，即文件的所有者），组（group）和其他（world）。Zookeepr是没有所有者的概念的
 
-__每个znode的ACL是独立的，且子节点不会继承父节点的ACL__。例如：znode `/app`对于ip为172.16.16.1只有只读权限，而`/app/status`是world可读，那么任何人都可以获取`/app/status`;所以在Zookeeper中权限是没有继承和传递关系的，每个znode的权限都是独立存在的
+**每个znode的ACL是独立的，且子节点不会继承父节点的ACL**。例如：znode `/app`对于ip为172.16.16.1只有只读权限，而`/app/status`是world可读，那么任何人都可以获取`/app/status`;所以在Zookeeper中权限是没有继承和传递关系的，每个znode的权限都是独立存在的
 
-__ACL权限是针对当前会话（连接）起作用的__。例如，在当前会话中执行`addauth digest user1:password1`以及`setAcl /app auth:user1:password1:crwda`。那么此时开启另一个会话后，对`/app`节点是没有访问权限的，通过执行`addauth digest user1:password1`可以获取到`/app`节点的相关权限。__因此`addauth digest <username>:<password>`命令，就是给当前会话增加了某个角色，从而能够获取到该角色的权限__
+**ACL权限是针对当前会话（连接）起作用的**。例如，在当前会话中执行`addauth digest user1:password1`以及`setAcl /app auth:user1:password1:crwda`。那么此时开启另一个会话后，对`/app`节点是没有访问权限的，通过执行`addauth digest user1:password1`可以获取到`/app`节点的相关权限。**因此`addauth digest <username>:<password>`命令，就是给当前会话增加了某个角色，从而能够获取到该角色的权限**
 
-__Zookeeper支持可插拔的权限认证方案，分为三个维度__：
+**Zookeeper支持可插拔的权限认证方案，分为三个维度**：
 
-1. __`scheme`__：表示使用何种方式来进行访问控制
-1. __`id`__：表示在指定scheme下的__表达式__（该表达式可能包含`:`）
-1. __`permission`__：表示有什么权限
+1. **`scheme`**：表示使用何种方式来进行访问控制
+1. **`id`**：表示在指定scheme下的**表达式**（该表达式可能包含`:`）
+1. **`permission`**：表示有什么权限
 * 通常表示为`<scheme>:<id>:<permissions>`
 
-__Zookeeper支持如下几种permission__
+**Zookeeper支持如下几种permission**
 
 1. `CREATE`：允许创建子节点
 1. `READ`：允许获取节点元数据以及子节点列表
@@ -99,58 +99,58 @@ __Zookeeper支持如下几种permission__
 1. `DELETE`：允许删除子节点
 1. `ADMIN`：允许设置权限
 
-__Zookeeper支持如下几种scheme__
+**Zookeeper支持如下几种scheme**
 
-1. __world__：只有一个id，即`anyone`
-    * __`ACL Exp`__：`world:anyone:<permissions>`
-1. __auth__：可以指定id或不用id，只要是通过auth的user都有权限。__当使用addauth命令添加多个认证用户后（作用域是当前会话，关闭会话后，添加的认证用户即被清除了），使用auth策略来设置acl，那么所有认证过的用户都被会加入到acl中__
-    * __`ACL Exp`__：`auth::<permissions>`
-    * __`ACL Exp`__：`auth:<username>:<password>:<permissions>`
-1. __digest__：使用用户名/密码的方式验证，采用`<username>:BASE64(SHA1(<username>:<password>))`的字符串作为ACL的`id`
-    * __`ACL Exp`__：`digest:<username>:<encriedUserPassowrd>:<permissions>`
-    * 其中，`<encriedUserPassowrd>=BASE64(SHA1(<username>:<password>))`，__换言之，你得自己做加密操作__
-    * __`echo -n <username>:<password> | openssl dgst -binary -sha1 | openssl base64`可以实现加密功能__
-1. __ip__：使用客户端的IP地址作为ACL的ID，设置的时候可以设置一个IP段，比如ip:192.168.1.0/16, 表示匹配前16个bit的IP段
-    * __`ACL Exp`__：`ip:192.168.0.1:<permissions>`
-    * __`ACL Exp`__：`ip:192.168.0.0/16:<permissions>`
+1. **world**：只有一个id，即`anyone`
+    * **`ACL Exp`**：`world:anyone:<permissions>`
+1. **auth**：可以指定id或不用id，只要是通过auth的user都有权限。**当使用addauth命令添加多个认证用户后（作用域是当前会话，关闭会话后，添加的认证用户即被清除了），使用auth策略来设置acl，那么所有认证过的用户都被会加入到acl中**
+    * **`ACL Exp`**：`auth::<permissions>`
+    * **`ACL Exp`**：`auth:<username>:<password>:<permissions>`
+1. **digest**：使用用户名/密码的方式验证，采用`<username>:BASE64(SHA1(<username>:<password>))`的字符串作为ACL的`id`
+    * **`ACL Exp`**：`digest:<username>:<encriedUserPassowrd>:<permissions>`
+    * 其中，`<encriedUserPassowrd>=BASE64(SHA1(<username>:<password>))`，**换言之，你得自己做加密操作**
+    * **`echo -n <username>:<password> | openssl dgst -binary -sha1 | openssl base64`可以实现加密功能**
+1. **ip**：使用客户端的IP地址作为ACL的ID，设置的时候可以设置一个IP段，比如ip:192.168.1.0/16, 表示匹配前16个bit的IP段
+    * **`ACL Exp`**：`ip:192.168.0.1:<permissions>`
+    * **`ACL Exp`**：`ip:192.168.0.0/16:<permissions>`
 
-__设定ACL权限后，忘记密码怎么办__
+**设定ACL权限后，忘记密码怎么办**
 
 1. 如果这个节点是`/`的子节点，由于我们有`/`目录的权限，所以我们还是可以通过`delete`来删除这个节点的
-1. 如果这个节点不是`/`的子节点，且父节点也没有权限，那么只能通过__设置配置文件`skipACL=yes`然后重启服务__，这样就能跳过acl控制
+1. 如果这个节点不是`/`的子节点，且父节点也没有权限，那么只能通过**设置配置文件`skipACL=yes`然后重启服务**，这样就能跳过acl控制
 
 # 7 Watch
 
-我们可以为znode设置watch，__znode的任何改变都会触发这个watch，watch一旦触发就被清除了__。当一个watch被触发时，Zookeeper会给对应的Client发送一个通知（notification）
+我们可以为znode设置watch，**znode的任何改变都会触发这个watch，watch一旦触发就被清除了**。当一个watch被触发时，Zookeeper会给对应的Client发送一个通知（notification）
 
 Zookeeper中的所有读操作，都可以设置一个watch作为它的副作用（side effect）
 
-__以下是Zookeeper官方文档对watch的定义以及解释__
+**以下是Zookeeper官方文档对watch的定义以及解释**
 
 > All of the read operations in ZooKeeper - getData(), getChildren(), and exists() - have the option of setting a watch as a side effect. Here is ZooKeeper's definition of a watch: a watch event is one-time trigger, sent to the client that set the watch, which occurs when the data for which the watch was set changes. There are three key points to consider in this definition of a watch:
-> * __One-time trigger__
+> * **One-time trigger**
 > One watch event will be sent to the client when the data has changed. For example, if a client does a getData("/znode1", true) and later the data for /znode1 is changed or deleted, the client will get a watch event for /znode1. If /znode1 changes again, no watch event will be sent unless the client has done another read that sets a new watch.
-> * __Sent to the client__
+> * **Sent to the client**
 > his implies that an event is on the way to the client, but may not reach the client before the successful return code to the change operation reaches the client that initiated the change. Watches are sent asynchronously to watchers. ZooKeeper provides an ordering guarantee: a client will never see a change for which it has set a watch until it first sees the watch event. Network delays or other factors may cause different clients to see watches and return codes from updates at different times. The key point is that everything seen by the different clients will have a consistent order.
-> * __The data for which the watch was set__
+> * **The data for which the watch was set**
 > This refers to the different ways a node can change. It helps to think of ZooKeeper as maintaining two lists of watches: data watches and child watches. getData() and exists() set data watches. getChildren() sets child watches. Alternatively, it may help to think of watches being set according to the kind of data returned. getData() and exists() return information about the data of the node, whereas getChildren() returns a list of children. Thus, setData() will trigger data watches for the znode being set (assuming the set is successful). A successful create() will trigger a data watch for the znode being created and a child watch for the parent znode. A successful delete() will trigger both a data watch and a child watch (since there can be no more children) for a znode being deleted as well as a child watch for the parent znode.
 
 > Watches are maintained locally at the ZooKeeper server to which the client is connected. This allows watches to be lightweight to set, maintain, and dispatch. When a client connects to a new server, the watch will be triggered for any session events. Watches will not be received while disconnected from a server. When a client reconnects, any previously registered watches will be reregistered and triggered if needed. In general this all occurs transparently. There is one case where a watch may be missed: a watch for the existence of a znode not yet created will be missed if the znode is created and deleted while disconnected.
 
 # 8 ls
 
-__描述__：列出指定节点的孩子节点列表
+**描述**：列出指定节点的孩子节点列表
 
-__语法__
+**语法**
 
 * `ls path [watch]`
 
-__参数解释__
+**参数解释**
 
 * `path`：必填参数，节点路径
-* `watch`：选填参数，__任意字符均表示设置一个watch__。__当节点的孩子列表发生变动时（仅当前路径的孩子列表，不包含孩子的孩子列表）__，会触发该watch
+* `watch`：选填参数，**任意字符均表示设置一个watch**。**当节点的孩子列表发生变动时（仅当前路径的孩子列表，不包含孩子的孩子列表）**，会触发该watch
 
-__示例__
+**示例**
 
 ```sh
 # 查询子节点列表
@@ -169,18 +169,18 @@ WatchedEvent state:SyncConnected type:NodeChildrenChanged path:/
 
 # 9 ls2
 
-__描述__：列出指定节点的孩子节点列表，以及该节点的状态信息
+**描述**：列出指定节点的孩子节点列表，以及该节点的状态信息
 
-__语法__
+**语法**
 
 * `ls2 path [watch]`
 
-__参数解释__
+**参数解释**
 
 * `path`：必填参数，节点路径
-* `watch`：选填参数，__任意字符均表示设置一个watch__。__当节点的孩子列表发生变动时（仅当前路径的孩子列表，不包含孩子的孩子列表）__，会触发该watch
+* `watch`：选填参数，**任意字符均表示设置一个watch**。**当节点的孩子列表发生变动时（仅当前路径的孩子列表，不包含孩子的孩子列表）**，会触发该watch
 
-__示例__
+**示例**
 
 ```sh
 # 查询子节点列表及状态
@@ -221,24 +221,24 @@ WatchedEvent state:SyncConnected type:NodeChildrenChanged path:/
 
 # 10 create
 
-__描述__：创建节点
+**描述**：创建节点
 
-__语法__
+**语法**
 
 * `create [-s] [-e] path data acl`
 
-__选项解释__
+**选项解释**
 
 * `-s`：创建一个顺序节点（每个节点都会维护一个严格递增的序列）
 * `-e`：创建一个临时节点，所谓临时节点，就是当前会话（连接）退出时，该节点就会被删除
 
-__参数解释__
+**参数解释**
 
 * `path`：必填参数，节点路径
 * `data`：必填参数，节点数据
 * `acl`：必填参数，访问控制，默认值为`world:anyone:crwda`
 
-__示例__
+**示例**
 
 ```sh
 # 创建永久节点
@@ -266,18 +266,18 @@ Created /SecondNode
 
 # 11 get
 
-__描述__：获取节点的数据以及状态信息
+**描述**：获取节点的数据以及状态信息
 
-__语法__
+**语法**
 
 * `get path [watch]`
 
-__参数解释__
+**参数解释**
 
 * `path`：必填参数，节点路径
-* `watch`：选填参数，__任意字符均表示设置一个watch__。__当节点数据发生变动时__，会触发该watch
+* `watch`：选填参数，**任意字符均表示设置一个watch**。**当节点数据发生变动时**，会触发该watch
 
-__示例__
+**示例**
 
 ```sh
 # 查看节点元数据及状态信息
@@ -318,19 +318,19 @@ WatchedEvent state:SyncConnected type:NodeDataChanged path:/FirstNode
 
 # 12 set
 
-__描述__：设置节点的数据
+**描述**：设置节点的数据
 
-__语法__
+**语法**
 
 * `set path data [version]`
 
-__参数解释__
+**参数解释**
 
 * `path`：必填参数，节点路径
 * `data`：必填参数，节点数据
 * `version`：选填参数，指定版本号，当且仅当版本号一致时修改成功
 
-__示例__
+**示例**
 
 ```sh
 # 设置节点数据
@@ -372,17 +372,17 @@ version No is not valid : /FirstNode
 
 # 13 rmr
 
-__描述__：移除指定的znode并递归其所有子节点
+**描述**：移除指定的znode并递归其所有子节点
 
-__语法__
+**语法**
 
 * `rmr path`
 
-__参数解释__
+**参数解释**
 
 * `path`：必填参数，节点路径
 
-__示例__
+**示例**
 
 ```sh
 [zk: localhost:2181(CONNECTED) 40] rmr /FirstNode
@@ -390,18 +390,18 @@ __示例__
 
 # 14 delete
 
-__描述__：移除指定的znode节点（该节点不能有孩子节点）
+**描述**：移除指定的znode节点（该节点不能有孩子节点）
 
-__语法__
+**语法**
 
 * `delete path [version]`
 
-__参数解释__
+**参数解释**
 
 * `path`：必填参数，节点路径
 * `version`：选填参数，当且仅当版本号一致时，才允许删除
 
-__示例__
+**示例**
 
 ```sh
 # 删除节点
@@ -422,18 +422,18 @@ version No is not valid : /FirstNode
 
 # 15 stat
 
-__描述__：获取节点的状态信息
+**描述**：获取节点的状态信息
 
-__语法__
+**语法**
 
 * `stat path [watch]`
 
-__参数解释__
+**参数解释**
 
 * `path`：必填参数，节点路径
-* `watch`：选填参数，__任意字符均表示设置一个watch__。__当节点数据发生变动时__，会触发该watch
+* `watch`：选填参数，**任意字符均表示设置一个watch**。**当节点数据发生变动时**，会触发该watch
 
-__示例__
+**示例**
 
 ```sh
 # 查看节点状态
@@ -472,17 +472,17 @@ WatchedEvent state:SyncConnected type:NodeDataChanged path:/FirstNode
 
 # 16 listquota
 
-__描述__：查询节点的配额，其中`-1`表示不限制
+**描述**：查询节点的配额，其中`-1`表示不限制
 
-__语法__
+**语法**
 
 * `listquota path`
 
-__参数解释__
+**参数解释**
 
 * `path`：必填参数，节点路径
 
-__示例__
+**示例**
 
 ```sh
 # 查询节点配额
@@ -497,24 +497,24 @@ Output stat for /app count=1,bytes=4
 
 # 17 setquota
 
-__描述__：设置节点的配额（__一旦节点配额被设定，便不能重写，只能删掉再设置__）
+**描述**：设置节点的配额（**一旦节点配额被设定，便不能重写，只能删掉再设置**）
 
-__语法__
+**语法**
 
 * `setquota -n|-b val path`
 
-__选项解释__
+**选项解释**
 
 * `-n`：设置节点个数（包括当前节点以及所有子节点，包括层层嵌套的子节点）
 * `-b`：设置节点的数据大小（包括当前节点以及所有子节点，包括层层嵌套的子节点）
-* __只能选择其中之一进行设置__
+* **只能选择其中之一进行设置**
 
-__参数解释__
+**参数解释**
 
 * `val`：必填参数，设置的值
 * `path`：必填参数，节点路径
 
-__示例__
+**示例**
 
 ```sh
 # 为节点 /app 设置配额，节点数量为100
@@ -528,23 +528,23 @@ Comment: the parts are option -b val 10000 path /app
 
 # 18 delquota
 
-__描述__：删除节点的配额
+**描述**：删除节点的配额
 
-__语法__
+**语法**
 
 * `delquota [-n|-b] path`
 
-__选项解释__
+**选项解释**
 
 * `-n`：删除节点数量限制，置为`-1`
 * `-b`：删除节点大小限制，置为`-1`
 * 不填选项代表删除配额设置，此时用`listquota`查询配额会报错
 
-__参数解释__
+**参数解释**
 
 * `path`：必填参数，节点路径
 
-__示例__
+**示例**
 
 ```sh
 [zk: localhost:2181(CONNECTED) 38] delquota -b /app
@@ -554,17 +554,17 @@ __示例__
 
 # 19 getAcl
 
-__描述__：获取ACL权限
+**描述**：获取ACL权限
 
-__语法__
+**语法**
 
 * `getAcl path`
 
-__参数解释__
+**参数解释**
 
 * `path`：必填参数，节点路径
 
-__示例__
+**示例**
 
 ```sh
 # 获取节点的ACL权限
@@ -575,18 +575,18 @@ __示例__
 
 # 20 setAcl
 
-__描述__：设置ACL权限
+**描述**：设置ACL权限
 
-__语法__
+**语法**
 
 * `setAcl path acl`
 
-__参数解释__
+**参数解释**
 
 * `path`：必填参数，节点路径
 * `acl`：必填参数，ACL权限
 
-__示例__
+**示例**
 
 ```sh
 # 设置节点ACL权限(world schema)
@@ -667,13 +667,13 @@ numChildren = 0
 
 # 21 history
 
-__描述__：列出命令历史
+**描述**：列出命令历史
 
-__语法__
+**语法**
 
 * `history`
 
-__示例__
+**示例**
 
 ```sh
 # 列出历史命令
@@ -693,17 +693,17 @@ __示例__
 
 # 22 redo
 
-__描述__：重新执行指定命令
+**描述**：重新执行指定命令
 
-__语法__
+**语法**
 
 * `redo cmdno`
 
-__参数解释__
+**参数解释**
 
 * `cmdno`：必填参数，命令编号
 
-__示例__
+**示例**
 
 ```sh
 # 重新执行第61条命令
@@ -723,18 +723,18 @@ __示例__
 
 # 23 printwatches
 
-__描述__：开启/关闭在输出流打印watch触发的信息
+**描述**：开启/关闭在输出流打印watch触发的信息
 
-__语法__
+**语法**
 
 * `printwatches on|off`
 
-__参数解释__
+**参数解释**
 
 * `on`：开启
 * `off`：关闭
 
-__示例__
+**示例**
 
 ```sh
 # 开启
@@ -746,17 +746,17 @@ __示例__
 
 # 24 sync
 
-__描述__：同步
+**描述**：同步
 
-__语法__
+**语法**
 
 * `sync path`
 
-__参数解释__
+**参数解释**
 
 * `path`：必填参数，节点路径
 
-__示例__
+**示例**
 
 ```sh
 # 强制同步 /app 的数据
@@ -766,18 +766,18 @@ __示例__
 
 # 25 addauth
 
-__描述__：添加授权用户信息
+**描述**：添加授权用户信息
 
-__语法__
+**语法**
 
 * `addauth scheme auth`
 
-__参数解释__
+**参数解释**
 
 * `scheme`：必填参数，策略
 * `auth`：授权用户信息，与scheme相关
 
-__示例__
+**示例**
 
 ```sh
 # 添加scheme为digest的认证用户
@@ -786,13 +786,13 @@ __示例__
 
 # 26 quit
 
-__描述__：关闭当前Zookeeper会话（连接），并退出客户端程序
+**描述**：关闭当前Zookeeper会话（连接），并退出客户端程序
 
-__语法__
+**语法**
 
 * `quit`
 
-__示例__
+**示例**
 
 ```sh
 [zk: localhost:2181(CONNECTED) 72] quit
@@ -803,13 +803,13 @@ Quitting...
 
 # 27 close
 
-__描述__：仅关闭当前Zookeeper会话（连接）
+**描述**：仅关闭当前Zookeeper会话（连接）
 
-__语法__
+**语法**
 
 * `close`
 
-__示例__
+**示例**
 
 ```sh
 # 关闭当前会话
@@ -820,18 +820,18 @@ __示例__
 
 # 28 connect
 
-__描述__：连接到指定Zookeeper服务器
+**描述**：连接到指定Zookeeper服务器
 
-__语法__
+**语法**
 
 * `connect host:port`
 
-__参数解释__
+**参数解释**
 
 * `host`：主机名
 * `port`：端口号
 
-__示例__
+**示例**
 
 ```sh
 # 连接到 localhost:2181

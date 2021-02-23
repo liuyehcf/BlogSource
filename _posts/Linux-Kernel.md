@@ -8,7 +8,7 @@ categories:
 - Linux
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -21,9 +21,9 @@ __阅读更多__
 
 # 2 如何编译内核
 
-__准备环境：这里我安装的系统是`CentOS-7-x86_64-Minimal-1908.iso`__
+**准备环境：这里我安装的系统是`CentOS-7-x86_64-Minimal-1908.iso`**
 
-__第一步：安装编译相关的软件__
+**第一步：安装编译相关的软件**
 
 ```sh
 yum makecache
@@ -32,7 +32,7 @@ yum -y install elfutils-libelf-devel
 yum -y install rpm-build
 ```
 
-__第二步：下载内核源码并解压__
+**第二步：下载内核源码并解压**
 
 ```sh
 yum install -y wget
@@ -40,7 +40,7 @@ wget -O ~/linux-4.14.134.tar.gz 'http://ftp.sjtu.edu.cn/sites/ftp.kernel.org/pub
 tar -zxvf ~/linux-4.14.134.tar.gz -C ~
 ```
 
-__第三步：配置内核编译参数__
+**第三步：配置内核编译参数**
 
 ```sh
 cd ~/linux-4.14.134
@@ -50,14 +50,14 @@ cp -v /boot/config-$(uname -r) .config
 make menuconfig
 ```
 
-__第四步：编译内核__
+**第四步：编译内核**
 
 ```sh
 cd ~/linux-4.14.134
 make rpm-pkg
 ```
 
-__第五步：更新内核__
+**第五步：更新内核**
 
 ```sh
 rpm -iUv ~/rpmbuild/RPMS/x86_64/*.rpm
@@ -74,9 +74,9 @@ rpm -iUv ~/rpmbuild/RPMS/x86_64/*.rpm
 
 ## 3.1 如何安装
 
-__准备环境：这里我安装的系统是`CentOS-7-x86_64-Minimal-1810.iso`__
+**准备环境：这里我安装的系统是`CentOS-7-x86_64-Minimal-1810.iso`**
 
-__第一步：安装systemtap以及其他相关依赖__
+**第一步：安装systemtap以及其他相关依赖**
 
 ```sh
 yum makecache
@@ -85,7 +85,7 @@ yum install -y yum-utils
 yum install -y gcc
 ```
 
-__第二步：下载并安装跟当前内核版本匹配的rpm包，包括`kernel-devel-$(uname -r).rpm`、`kernel-debuginfo-$(uname -r).rpm`、`kernel-debuginfo-common-x86_64-$(uname -r).rpm`，我的内核版本是`3.10.0-957.el7.x86_64`__
+**第二步：下载并安装跟当前内核版本匹配的rpm包，包括`kernel-devel-$(uname -r).rpm`、`kernel-debuginfo-$(uname -r).rpm`、`kernel-debuginfo-common-x86_64-$(uname -r).rpm`，我的内核版本是`3.10.0-957.el7.x86_64`**
 
 ```sh
 wget "ftp://ftp.pbone.net/mirror/ftp.scientificlinux.org/linux/scientific/7.6/x86_64/os/Packages/kernel-devel-$(uname -r).rpm"
@@ -95,7 +95,7 @@ wget "http://debuginfo.centos.org/7/x86_64/kernel-debuginfo-common-x86_64-$(unam
 rpm -ivh kernel-devel-$(uname -r).rpm kernel-debuginfo-$(uname -r).rpm kernel-debuginfo-common-x86_64-$(uname -r).rpm
 ```
 
-__第三步：验证__
+**第三步：验证**
 
 ```sh
 stap -v -e 'probe vfs.read {printf("read performed\n"); exit()}'
@@ -199,7 +199,7 @@ tcp对应的`proto_ops`对象为`inet_stream_ops`
 ```
 sys_socket | net/socket.c SYSCALL_DEFINE3(socket
 sock_create | net/socket.c
-__sock_create | net/socket.c
+**sock_create | net/socket.c
     pf->create | net/socket.c
         ⬇️  socket --> af_inet
 inet_create | net/ipv4/af_inet.c
@@ -217,8 +217,8 @@ do_sync_write | fs/read_write.c
 # socket
 socket_file_ops.aio_write ==> sock_aio_write | net/socket.c
 do_sock_write | net/socket.c
-__sock_sendmsg | net/socket.c
-__sock_sendmsg_nosec | net/socket.c
+**sock_sendmsg | net/socket.c
+**sock_sendmsg_nosec | net/socket.c
     sock->ops->sendmsg
         ⬇️  socket --> inet_stream
 # inet_stream
@@ -228,7 +228,7 @@ inet_stream_ops.sendmsg ==> inet_sendmsg | net/ipv4/af_inet.c
 # tcp
 tcp_prot.sendmsg ==> tcp_sendmsg | net/ipv4/tcp.c
 tcp_push | net/ipv4/tcp.c
-__tcp_push_pending_frames | net/ipv4/tcp_output.c
+**tcp_push_pending_frames | net/ipv4/tcp_output.c
 tcp_write_xmit | net/ipv4/tcp_output.c
 tcp_transmit_skb | net/ipv4/tcp_output.c
     icsk->icsk_af_ops->queue_xmit
@@ -253,7 +253,7 @@ e1000_netdev_ops.ndo_start_xmit ==> e1000_xmit_frame | drivers/net/ethernet/inte
 
 #### 4.2.1.3 read socket
 
-__数据从网卡设备流入__
+**数据从网卡设备流入**
 
 ```
 # link
@@ -274,7 +274,7 @@ tcp_v4_do_rcv | net/ipv4/tcp_ipv4.c
 tcp_rcv_established | net/ipv4/tcp_ipv4.c
 ```
 
-__通过系统调用阻塞读取到达的数据__
+**通过系统调用阻塞读取到达的数据**
 
 ```
 # syscall
@@ -286,8 +286,8 @@ do_sync_read | fs/read_write.c
 # socket
 socket_file_ops.aio_read ==> sock_aio_read | net/socket.c
 do_sock_read | net/socket.c
-__sock_recvmsg | net/socket.c
-__sock_recvmsg_nosec | net/socket.c
+**sock_recvmsg | net/socket.c
+**sock_recvmsg_nosec | net/socket.c
     sock->ops->recvmsg
         ⬇️  socket --> inet_stream
 # inet_stream

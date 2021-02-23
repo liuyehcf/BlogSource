@@ -9,13 +9,13 @@ categories:
 - Lombok
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
 # 1 Overview
 
-__lombok中常用的注解__
+**lombok中常用的注解**
 
 1. `@AllArgsConstructor`
 1. `@NoArgsConstructor`
@@ -29,19 +29,19 @@ __lombok中常用的注解__
 1. `@Singular`
 1. `@Slf4j`
 
-__原理：lombok注解都是`编译期`注解，`编译期`注解最大的魅力就是能够干预编译器的行为，相关技术就是`JSR-269`__。我在另一篇博客中详细介绍了`JSR-269`的相关原理以及接口的使用方式，并且实现了类似lombok的`@Builder`注解。__对原理部分感兴趣的话，请移步{% post_link Java-JSR-269-插入式注解处理器 %}__
+**原理：lombok注解都是`编译期`注解，`编译期`注解最大的魅力就是能够干预编译器的行为，相关技术就是`JSR-269`**。我在另一篇博客中详细介绍了`JSR-269`的相关原理以及接口的使用方式，并且实现了类似lombok的`@Builder`注解。**对原理部分感兴趣的话，请移步{% post_link Java-JSR-269-插入式注解处理器 %}**
 
 # 2 构造方法
 
 lombok提供了3个注解，用于创建构造方法，它们分别是
 
-1. __`@AllArgsConstructor`__：`@AllArgsConstructor`会生成一个全量的构造方法，包括所有的字段（非final字段以及未在定义处初始化的final字段）
-1. __`@NoArgsConstructor`__：`@NoArgsConstructor`会生成一个无参构造方法（当然，不允许类中含有未在定义处初始化的final字段）
-1. __`@RequiredArgsConstructor`__：`@RequiredArgsConstructor`会生成一个仅包含必要参数的构造方法，什么是必要参数呢？就是那些未在定义处初始化的final字段
+1. **`@AllArgsConstructor`**：`@AllArgsConstructor`会生成一个全量的构造方法，包括所有的字段（非final字段以及未在定义处初始化的final字段）
+1. **`@NoArgsConstructor`**：`@NoArgsConstructor`会生成一个无参构造方法（当然，不允许类中含有未在定义处初始化的final字段）
+1. **`@RequiredArgsConstructor`**：`@RequiredArgsConstructor`会生成一个仅包含必要参数的构造方法，什么是必要参数呢？就是那些未在定义处初始化的final字段
 
 # 3 @Builder
 
-__`@Builder`是我最爱的lombok注解，没有之一__。通常我们在业务代码中，时时刻刻都会用到数据传输对象（DTO），例如，我们调用一个RPC接口，需要传入一个DTO，代码通常是这样的
+**`@Builder`是我最爱的lombok注解，没有之一**。通常我们在业务代码中，时时刻刻都会用到数据传输对象（DTO），例如，我们调用一个RPC接口，需要传入一个DTO，代码通常是这样的
 
 ```java
 // 首先构造DTO对象
@@ -55,7 +55,7 @@ xxxDTO.setPron(...);
 rpcService.doSomething(xxxDTO);
 ```
 
-其实，上述代码中的`xxxDTO`对象的创建以及赋值的过程，仅与`rpcService`有关，但是从肉眼来看，这确确实实又是两部分，我们无法快速确定`xxxDTO`对象只在`rpcService.doSomething`方法中用到。显然，这个代码片段最核心的部分就是`rpcService.doSomething`方法调用，__而上面这种写法使得核心代码淹没在非核心代码中__
+其实，上述代码中的`xxxDTO`对象的创建以及赋值的过程，仅与`rpcService`有关，但是从肉眼来看，这确确实实又是两部分，我们无法快速确定`xxxDTO`对象只在`rpcService.doSomething`方法中用到。显然，这个代码片段最核心的部分就是`rpcService.doSomething`方法调用，**而上面这种写法使得核心代码淹没在非核心代码中**
 
 借助lombok的`@Builder`注解，我们便可以这样重构上面这段代码
 
@@ -70,11 +70,11 @@ rpcService.doSomething(
 );
 ```
 
-这样一来，由于`XxxDTO`的实例仅在`rpcService.doSomething`方法中用到，我们就把创建的步骤放到方法参数里面去完成，代码更内聚了。__通过这种方式，业务流程的脉络将会更清晰地展现出来，而不至于淹没在一大堆`set`方法的调用之中__
+这样一来，由于`XxxDTO`的实例仅在`rpcService.doSomething`方法中用到，我们就把创建的步骤放到方法参数里面去完成，代码更内聚了。**通过这种方式，业务流程的脉络将会更清晰地展现出来，而不至于淹没在一大堆`set`方法的调用之中**
 
 ## 3.1 使用方式
 
-如果是一个简单的DTO，__那么直接在类上方标记`@Builder`注解，同时需要提供一个全参构造方法__，lombok就会在编译期为该类创建一个`建造者模式`的静态内部类
+如果是一个简单的DTO，**那么直接在类上方标记`@Builder`注解，同时需要提供一个全参构造方法**，lombok就会在编译期为该类创建一个`建造者模式`的静态内部类
 
 ```java
 @Builder
@@ -446,11 +446,11 @@ public class BaseCarDTO {
 }
 ```
 
-__注意，字段在被`@Builder.Default`修饰后，生成class文件中是没有初始值的，这是个大坑！__
+**注意，字段在被`@Builder.Default`修饰后，生成class文件中是没有初始值的，这是个大坑！**
 
 ## 3.4 @EqualsAndHashCode
 
-`@EqualsAndHashCode`注解用于创建Object的`hashCode`方法以及`equals`方法，同样地，如果一个DTO包含父类，那么最平凡的`@EqualsAndHashCode`注解不会考虑父类包含的字段。__因此如果子类的`hashCode`方法以及`equals`方法需要考虑父类的字段，那么需要将`@EqualsAndHashCode`注解的`callSuper`属性设置为true，这样就会调用父类的同名方法__
+`@EqualsAndHashCode`注解用于创建Object的`hashCode`方法以及`equals`方法，同样地，如果一个DTO包含父类，那么最平凡的`@EqualsAndHashCode`注解不会考虑父类包含的字段。**因此如果子类的`hashCode`方法以及`equals`方法需要考虑父类的字段，那么需要将`@EqualsAndHashCode`注解的`callSuper`属性设置为true，这样就会调用父类的同名方法**
 
 ```java
 public class BaseCarDTO {

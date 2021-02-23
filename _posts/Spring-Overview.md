@@ -9,7 +9,7 @@ categories:
 - Spring
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -19,13 +19,13 @@ __阅读更多__
 
 # 2 Core Container
 
-__核心容器（Core Container）由`spring-core`、`spring-beans`、`spring-context`、`spring-context-support`、`spring-expression`5个模块构成__
+**核心容器（Core Container）由`spring-core`、`spring-beans`、`spring-context`、`spring-context-support`、`spring-expression`5个模块构成**
 
 其中，`spring-core`和`spring-beans`模块是Spring框架的基本部分，提供了`IoC`以及`依赖注入`等核心功能，BeanFactory采用了工厂模式，消除了应用对编程式单例的需求，同时，将对象创建与依赖注入进行解耦
 
-`spring-context`模块建立在`spring-core`和`spring-beans`模块构成的坚实基础之上，它提__供了一种框架式的对象访问方式__（例如JNDI registry）。`spring-context`模块继承了`spring-beans`模块的种种特性，同时，并增加了对__国际化__（internationalization，例如使用资源包），__事件传播__（event propagation），__资源加载__（resource loading）以及__上下文透明创建__（例如Servlet容器）的支持。__`ApplicationContext`__接口是`spring-context`模块的核心。此外，`spring-context-support`模块提供了__集成其他三方库到Spring应用上下文__的能力，例如EhCache，Guava，JCache，邮件（JavaMail），调度（CommonJ，Quartz）和模板引擎（FreeMarker，JasperReports，Velocity）等等
+`spring-context`模块建立在`spring-core`和`spring-beans`模块构成的坚实基础之上，它提**供了一种框架式的对象访问方式**（例如JNDI registry）。`spring-context`模块继承了`spring-beans`模块的种种特性，同时，并增加了对**国际化**（internationalization，例如使用资源包），**事件传播**（event propagation），**资源加载**（resource loading）以及**上下文透明创建**（例如Servlet容器）的支持。**`ApplicationContext`**接口是`spring-context`模块的核心。此外，`spring-context-support`模块提供了**集成其他三方库到Spring应用上下文**的能力，例如EhCache，Guava，JCache，邮件（JavaMail），调度（CommonJ，Quartz）和模板引擎（FreeMarker，JasperReports，Velocity）等等
 
-`spring-expression`模块__提供了一种在运行时查询以及操作对象图的表达式语言（Expression language）__。它是JSP 2.1规范中规定的统一表达式语言（unified EL）的扩展。该语言支持属性值的存取（getter/setter）、方法调用、数组访问、收集和索引、逻辑和算数运算符、命名变量、从Spring的IoC容器中检索对象
+`spring-expression`模块**提供了一种在运行时查询以及操作对象图的表达式语言（Expression language）**。它是JSP 2.1规范中规定的统一表达式语言（unified EL）的扩展。该语言支持属性值的存取（getter/setter）、方法调用、数组访问、收集和索引、逻辑和算数运算符、命名变量、从Spring的IoC容器中检索对象
 
 ## 2.1 Dependency
 
@@ -72,7 +72,7 @@ spring-context-support
 
 # 3 AOP and Instrumentation
 
-`spring-aop`模块__提供了一种兼容AOP联盟面向切面编程接口的实现__，它允许我们定义方法拦截器（MethodInterceptor）以及切点（Pointcut）来解耦本应该进行功能拆分的业务代码。使用源码级（source-level）元数据功能，我们还可以将一些行为整合到代码中（Aspectj，我估计用的是JSR-269插入式注解API）
+`spring-aop`模块**提供了一种兼容AOP联盟面向切面编程接口的实现**，它允许我们定义方法拦截器（MethodInterceptor）以及切点（Pointcut）来解耦本应该进行功能拆分的业务代码。使用源码级（source-level）元数据功能，我们还可以将一些行为整合到代码中（Aspectj，我估计用的是JSR-269插入式注解API）
 
 `spring-aspects`模块整合了AspectJ
 
@@ -104,7 +104,7 @@ spring-instrument-tomcat
 
 # 4 Messaging
 
-Spring 4.x 新增了`spring-messaging`模块，在Spring的集成项目中抽象出了__消息模块__（例如Message、MessageChannel、MessageHandler等）__作为基于消息传递的应用程序的基础__。该模块还包含了一组用于将__消息映射到方法__的注解，__类似于基于Spring MVC注解的编程模式__
+Spring 4.x 新增了`spring-messaging`模块，在Spring的集成项目中抽象出了**消息模块**（例如Message、MessageChannel、MessageHandler等）**作为基于消息传递的应用程序的基础**。该模块还包含了一组用于将**消息映射到方法**的注解，**类似于基于Spring MVC注解的编程模式**
 
 ## 4.1 Dependency
 
@@ -121,17 +121,17 @@ spring-messaging
 
 # 5 Data Access/Integration
 
-__Data Access/Integration层由JDBC、ORM、OXM、JMS以及Transaction模块构成__
+**Data Access/Integration层由JDBC、ORM、OXM、JMS以及Transaction模块构成**
 
-`spring-jdbc`模块提供了一个JDBC层的抽象，让我们从__单调乏味的JDBC编码以及解析数据库供应商特定的错误代码__中解放出来
+`spring-jdbc`模块提供了一个JDBC层的抽象，让我们从**单调乏味的JDBC编码以及解析数据库供应商特定的错误代码**中解放出来
 
-`spring-tx`模块支持对POJO（Plain Old Java Object）的__编程式__以及__声明式__事务管理
+`spring-tx`模块支持对POJO（Plain Old Java Object）的**编程式**以及**声明式**事务管理
 
 `spring-orm`模块为流行的ORM（object-relational mapping）API的集成层，包括JPA、JDO以及Hibernate。利用`spring-orm`模块，我们可以将这些ORM框架与Spring提供的其他所有功能结合使用，例如声明式事务管理
 
 `spring-oxm`模块为流行的OXM（object-xml mapping）框架提供一个抽象层，例如JAXB，Castor，XMLBeans，JiBX以及XStream
 
-`spring-jms`模块（Java Messaging Service）提供了__生产和消费消息__的机制，在Spring 4.1之后，它集成了`spring-messaging`模块
+`spring-jms`模块（Java Messaging Service）提供了**生产和消费消息**的机制，在Spring 4.1之后，它集成了`spring-messaging`模块
 
 ## 5.1 Dependency
 

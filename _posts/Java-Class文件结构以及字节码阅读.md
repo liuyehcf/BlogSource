@@ -9,7 +9,7 @@ categories:
 - ClassFile
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -17,7 +17,7 @@ __阅读更多__
 
 Class文件格式采用一种类似于C语言结构体的伪结构来存储数据。整个Class文件本质上就是一张表
 
-* 这种伪结构中只有两类数据类型：__无符号数和表__，后面的解析都要以这两种数据类型为基础
+* 这种伪结构中只有两类数据类型：**无符号数和表**，后面的解析都要以这两种数据类型为基础
 * 无符号数属于基本的数据类型，以u1、u2、u4、u8来分别代表一个字节、2个字节、4个字节和8个字节的无符号数，无符号数可以用来描述数字、索引引用、数量值或者按照UTF-8编码构成字符串值
 * 表是由多个无符号数或者其他表作为数据项构成的复合数据类型，所有表都习惯性地以"`_info`"结尾
 * 无论是无符号数还是表，当需要描述同一类型但数量不定的多个数据时，经常会使用一个前置的容量计数器加若干个连续的数据项的形式，这时称这一系列连续的某一类型数据为某一类型的集合
@@ -60,7 +60,7 @@ Class文件格式采用一种类似于C语言结构体的伪结构来存储数�
 
 ### 1.2.1 符号引用
 
-常量池中主要存放两大类常量：字面量(Literal)和 __符号引用(Symbolic References)__
+常量池中主要存放两大类常量：字面量(Literal)和 **符号引用(Symbolic References)**
 
 * 字面量比较接近于Java语言层面的常量概念，如文本字符串、声明为final的常量值等
 * <符号引用>则属于编译原理方面的概念，包括以下三类常量
@@ -192,19 +192,19 @@ Java代码在进行Javac编译的时候，并不像C和C++那样有"连接"这�
 
 ### 1.5.1 概念解析：全限定名、简单名称、描述符
 
-__全限定名__
+**全限定名**
 
 * 含有包名的完整类名
 * 并且将'.'换成了'/'
 * 并且为了使连续的多个全限定名之间不产生混淆，在使用时最后一般会加一个";"表示全限定名结束
 
-__简单名称__
+**简单名称**
 
 * 没有类型和参数修饰的方法或者字段名称
 * 例如int a;中的a
 * 例如void f();中的f
 
-__描述符__
+**描述符**
 
 * 描述符的作用是用来描述字段的数据类型、方法的参数列表(包括数量、类型以及顺序)和返回值
 * 基本数据类型以及代表无返回值的void类型都用一个大写字符来表示，而对象则用字符L加对象的全限定名来表示
@@ -283,21 +283,21 @@ Class文件存储格式中对方法的表述与对字段的描述几乎采用了
 
 # 2 javap参数简介
 
-* __-c：输出类中各方法的未解析的代码，即构成java字节码的指令__
+* **-c：输出类中各方法的未解析的代码，即构成java字节码的指令**
 * `-classpath <pathlist>`：指定javap用来查找类的路径。目录用：分隔
 * `-extdirs <dirs>`：覆盖搜索安装方式扩展的位置，扩展的缺省位置为jre/lib/ext
 * `-help`：输出帮助信息
 * `-J <flag>`： 直接将flag传给运行时系统
-* __`-l`：输出行及局部变量表__
+* **`-l`：输出行及局部变量表**
 * `-public`：只显示public类及成员
 * `-protected`：只显示protected和public类及成员
 * `-package`：只显示包、protected和public类及成员，，这是缺省设置
 * `-private`：显示所有的类和成员
 * `-s`：输出内部类型签名
 * `-bootclasspath <pathlist>`：指定加载自举类所用的路径，如jre/lib/rt.jar或i18n.jar
-* __`-verbose`：打印堆栈大小、各方法的locals及args参数，以及class文件的编译版本__
+* **`-verbose`：打印堆栈大小、各方法的locals及args参数，以及class文件的编译版本**
 
-__javap或者用文本形式表示Java字节码时，那些带offset参数的字节码指令通常都不是把裸的offset写出来，而是把计算过后的跳转目标写出来__
+**javap或者用文本形式表示Java字节码时，那些带offset参数的字节码指令通常都不是把裸的offset写出来，而是把计算过后的跳转目标写出来**
 
 * 例如goto 有两个byte操作数，而javap会直接把这两个byte offset所代表的数值计算出来
 
@@ -307,15 +307,15 @@ __javap或者用文本形式表示Java字节码时，那些带offset参数的字
 
 若有异议或疑问，请参考以下3个参考文献
 
-* __[Java bytecode instruction listings](https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings)__
-* __[Java Virtual Machine Specification](https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5.jsr)__
-* __深入理解Java虚拟机__
+* **[Java bytecode instruction listings](https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings)**
+* **[Java Virtual Machine Specification](https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html#jvms-6.5.jsr)**
+* **深入理解Java虚拟机**
 
 ## 3.2 什么是字节码
 
 Java虚拟机就的指令由一个字节长度的、代表着某种特定操作含义的数字(称为操作码，Opcode)以及跟随其后的零个或多个代表此操作所需参数(称为操作数，Operands)而构成
  
-__由于Java虚拟机采用面向操作数栈而不是寄存器的架构，所以大多数指令都不包含操作数，只有一个操作码__
+**由于Java虚拟机采用面向操作数栈而不是寄存器的架构，所以大多数指令都不包含操作数，只有一个操作码**
 
 字节码指令集是一种具有鲜明特点、优劣势都很突出的指令集架构
 
@@ -324,7 +324,7 @@ __由于Java虚拟机采用面向操作数栈而不是寄存器的架构，所�
 * 这种操作在某种程度上会导致解释执行字节码时损失一些性能，但这样做的优势也很明显，放弃了操作数长度对齐，这就意味着可以省略很多填充和间隔符号
 * 用一个字节来代表操作码，也是为了尽可能获得短小精干的编译代码，这种追求尽可能小数据量、高传输效率的设计是由Java语言设计之初面向网络、智能家电的技术背景所决定的，并一直沿用至今
 
-__Java解释器的伪代码模型__
+**Java解释器的伪代码模型**
 ```
     do{
         自动计算PC寄存器值+1
@@ -336,13 +336,13 @@ __Java解释器的伪代码模型__
 
 ## 3.3 字节码与数据类型
 
-__Java虚拟机的指令集中，大多数的指令都包含了其操作对应的数据类型__
+**Java虚拟机的指令集中，大多数的指令都包含了其操作对应的数据类型**
 
 * 例如iload指用于从局部变量表中加载int型的数据到操作数栈中
 * fload指令加载的则是float类型的数据
 * 这两条指令的操作在虚拟机内部可能会是由同一段代码实现的，但在Class文件中它们必须拥有各自独立的代码
 
-__对于大部分与数据类型相关的字节码指令，它们的操作码助记符中都有特殊的字符来表明专门为哪种数据类型服务__
+**对于大部分与数据类型相关的字节码指令，它们的操作码助记符中都有特殊的字符来表明专门为哪种数据类型服务**
 
 * i：int类型
 * l：long类型
@@ -351,176 +351,176 @@ __对于大部分与数据类型相关的字节码指令，它们的操作码助
 * c：char类型
 * f：float类型
 * d：double类型
-* __a：reference类型__
+* **a：reference类型**
 
 ## 3.4 加载和存储指令
 
-__加载和存储指令用于将数据在栈帧中的局部变量和操作数栈之间来回传输(伴随着操作数栈的入栈和出栈操作)__
+**加载和存储指令用于将数据在栈帧中的局部变量和操作数栈之间来回传输(伴随着操作数栈的入栈和出栈操作)**
 
 * 将一个局部变量加载到操作数栈：`iload`、`iload_<n>`、`lload`、`lload_<n>`、`fload`、`fload_<n>`、`dload`、`dload_<n>`、`aload`、`aload<n>`
-    * 其中 __0<=n<=3__，__带有`_<n>`后缀的字节码不带有操作数__，后缀即代表局部变量表的偏移量
-    * __不带有`_<n>`后缀的字节码有一个操作数__，该操作数代表局部变量表的偏移量
-    * __这些字节码伴随着入栈操作__
+    * 其中 **0<=n<=3**，**带有`_<n>`后缀的字节码不带有操作数**，后缀即代表局部变量表的偏移量
+    * **不带有`_<n>`后缀的字节码有一个操作数**，该操作数代表局部变量表的偏移量
+    * **这些字节码伴随着入栈操作**
 * 将一个数值从操作数栈存储到局部变量表：`istore`、`istore_<n>`、`lstore`、`lstore_<n>`、`fstore`、`fstore_<n>`、`dstore`、`dstore_<n>`、`astore、astore_<n>`
-    * 其中 __0<=n<=3__，__带有`_<n>`后缀的字节码不带有操作数__，后缀即代表局部变量表的偏移量
-    * __不带有`_<n>`后缀的字节码有一个操作数__，该操作数代表局部变量表的偏移量
-    * __这些字节码伴随着出栈操作__
+    * 其中 **0<=n<=3**，**带有`_<n>`后缀的字节码不带有操作数**，后缀即代表局部变量表的偏移量
+    * **不带有`_<n>`后缀的字节码有一个操作数**，该操作数代表局部变量表的偏移量
+    * **这些字节码伴随着出栈操作**
 * 将一个常量加载到操作数栈：`bipush`、`sipush`、`ldc`、`ldc_w`、`ldc2_w`、`aconst_null`、`iconst_m1`、`iconst_<i>`、`lconst_<l>`、`fconst_<f>`、`dconst_<d>`
-    * `bipush`：将操作数指定的字节push到栈顶，作为一个int。__一个操作数__，类型为字节
-    * `sipush`：将操作数指定的short(该shrot由操作数提供)push到栈顶，作为一个int，__一个操作数__，类型为short
-    * `ldc`、`ldc_w`：将一个位于常量池的String, int, float, Class, java.lang.invoke.MethodType, or java.lang.invoke.MethodHandle push到栈顶，这两个字节码的区别是操作数的含义不同，__ldc的操作数只有一个__，是常量池偏移量；__`ldc_w`有两个字节操作数__，这两个字节操作数共同决定一个常量池偏移量(index=indexbyte1 << 8 + indexbyte2)
-    * `ldc_w2`：将一个位于常量池的double或long push到栈顶，__有两个字节操作数__，这两个字节操作数共同决定一个常量池偏移量(index=indexbyte1 << 8 + indexbyte2)
-    * `aconst_null`：将一个null push到栈顶，__没有操作数__
-    * `iconst_m1`：将常量-1 push到栈顶，__没有操作数__
-    * `iconst_<i>`、`lconst_<l>`、`fconst_<f>`、`dconst_<d>`：其中0<=i<=5，0<=l<=1，0<=f<=2，0<=d<=1。将一个指定的 整数、长整数、浮点数、双精度浮点数压入栈顶。__这些字节码均没有操作数__
+    * `bipush`：将操作数指定的字节push到栈顶，作为一个int。**一个操作数**，类型为字节
+    * `sipush`：将操作数指定的short(该shrot由操作数提供)push到栈顶，作为一个int，**一个操作数**，类型为short
+    * `ldc`、`ldc_w`：将一个位于常量池的String, int, float, Class, java.lang.invoke.MethodType, or java.lang.invoke.MethodHandle push到栈顶，这两个字节码的区别是操作数的含义不同，**ldc的操作数只有一个**，是常量池偏移量；**`ldc_w`有两个字节操作数**，这两个字节操作数共同决定一个常量池偏移量(index=indexbyte1 << 8 + indexbyte2)
+    * `ldc_w2`：将一个位于常量池的double或long push到栈顶，**有两个字节操作数**，这两个字节操作数共同决定一个常量池偏移量(index=indexbyte1 << 8 + indexbyte2)
+    * `aconst_null`：将一个null push到栈顶，**没有操作数**
+    * `iconst_m1`：将常量-1 push到栈顶，**没有操作数**
+    * `iconst_<i>`、`lconst_<l>`、`fconst_<f>`、`dconst_<d>`：其中0<=i<=5，0<=l<=1，0<=f<=2，0<=d<=1。将一个指定的 整数、长整数、浮点数、双精度浮点数压入栈顶。**这些字节码均没有操作数**
 * 扩充局部变量表的访问索引的指令：wide
 
-__注意：不同数据类型的同类字节码，例如`iload`、`lload`、`fload`、`dload`、`aload`共享同一个局部变量表偏移量，例如局部变量大小为5，分别存放着：`reference`，`int`，`long`，`float`，`double`，那么可能涉及到的字节码就是`aload_0`，`iload_1`，`lload_2`，`fload_3`，`dload 4`。!!!不要认为!!! `iload_0`作用的是局部变量表中第0个int型变量，`aload_0`作用的是局部变量表中第0个引用__
+**注意：不同数据类型的同类字节码，例如`iload`、`lload`、`fload`、`dload`、`aload`共享同一个局部变量表偏移量，例如局部变量大小为5，分别存放着：`reference`，`int`，`long`，`float`，`double`，那么可能涉及到的字节码就是`aload_0`，`iload_1`，`lload_2`，`fload_3`，`dload 4`。!!!不要认为!!! `iload_0`作用的是局部变量表中第0个int型变量，`aload_0`作用的是局部变量表中第0个引用**
 
 ## 3.5 运算指令
 
 运算或算数指令用于对操作数栈上的两个值进行某种特定运算，并把结果重新存入到操作数栈顶
 
-__大体上算数指令可以分为两种：对整数数据进行运算的指令与对浮点型数据进行运算的指令__
+**大体上算数指令可以分为两种：对整数数据进行运算的指令与对浮点型数据进行运算的指令**
 
 * 无论是哪种算数指令，都是用Java虚拟机的数据类型
 * 由于没有直接支持byte、short、char、boolean类型的算数指令，对于这些数据的运算，应使用操作int类型的指令代替
 
-__算数指令__
+**算数指令**
 
-* 加法指令：`iadd、ladd、fadd、dadd`：计算 __栈次顶元素 + 栈顶元素__ 的结果，然后弹出栈顶和栈次顶元素并将结果push到栈顶。__没有操作数__
-* 减法指令：`isub、lsub、fsub、dsub`：计算 __栈次顶元素 - 栈顶元素__ 的结果，然后弹出栈顶和栈次顶元素并将结果push到栈顶。__没有操作数__
-* 乘法指令：`imul、lmul、fmul、dmul`：计算 __栈次顶元素 * 栈顶元素__ 的结果，然后弹出栈顶和栈次顶元素并将结果push到栈顶。__没有操作数__
-* 除法指令：`idiv、ldiv、fdiv、ddiv`：计算 __栈次顶元素 / 栈顶元素__ 的结果，然后弹出栈顶和栈次顶元素并将结果push到栈顶。__没有操作数__
-* 求余指令：`irem、lrem、frem、drem`：计算 __栈次顶元素 % 栈顶元素__ 的结果，然后弹出栈顶和栈次顶元素并将结果push到栈顶。__没有操作数__
-* 取反指令：`ineg、lneg、fneg、dneg`：计算 __栈顶元素的相反数__ ，然后弹出栈顶元素并将相反数push到栈顶。__没有操作数__
-* 位移指令：`ishl、ishr、iushr、lshl、lshr、lushr`：计算 __栈次顶元素<< or >> or >>>栈顶元素__ 的结果，然后弹出栈顶和栈次顶元素并将结果push到栈顶。__没有操作数__。其中iushr和lushr为逻辑右移
-* 按位或指令：`ior、lor`：计算 __栈次顶元素 | 栈顶元素__ 的结果，然后弹出栈顶和栈次顶元素并将结果push到栈顶。__没有操作数__
-* 按位与指令：`iand、land`：计算 __栈次顶元素 & 栈顶元素__ 的结果，然后弹出栈顶和栈次顶元素并将结果push到栈顶。__没有操作数__
-* 按位异或指令：`ixor、lxor`：计算 __栈次顶元素 ^ 栈顶元素__ 的结果，然后弹出栈顶和栈次顶元素并将结果push到栈顶。__没有操作数__
-* 局部变量自增指令：`iinc`：__该字节码不操作操作数栈。有2个操作数，第一个操作数代表局部变量表的偏移量，第二个操作数是一个常量，将第一个操作数所指定的局部变量表中的变量加上指定的常量__
-* 比较指令：`dcmpg、dcmpl、fcmpg、fcmpl、lcmp`：计算 __栈次顶元素 和 栈顶元素__ 的大小关系结果，然后弹出栈顶和栈次顶元素并将结果push到栈顶。__没有操作数__
+* 加法指令：`iadd、ladd、fadd、dadd`：计算 **栈次顶元素 + 栈顶元素** 的结果，然后弹出栈顶和栈次顶元素并将结果push到栈顶。**没有操作数**
+* 减法指令：`isub、lsub、fsub、dsub`：计算 **栈次顶元素 - 栈顶元素** 的结果，然后弹出栈顶和栈次顶元素并将结果push到栈顶。**没有操作数**
+* 乘法指令：`imul、lmul、fmul、dmul`：计算 **栈次顶元素 * 栈顶元素** 的结果，然后弹出栈顶和栈次顶元素并将结果push到栈顶。**没有操作数**
+* 除法指令：`idiv、ldiv、fdiv、ddiv`：计算 **栈次顶元素 / 栈顶元素** 的结果，然后弹出栈顶和栈次顶元素并将结果push到栈顶。**没有操作数**
+* 求余指令：`irem、lrem、frem、drem`：计算 **栈次顶元素 % 栈顶元素** 的结果，然后弹出栈顶和栈次顶元素并将结果push到栈顶。**没有操作数**
+* 取反指令：`ineg、lneg、fneg、dneg`：计算 **栈顶元素的相反数** ，然后弹出栈顶元素并将相反数push到栈顶。**没有操作数**
+* 位移指令：`ishl、ishr、iushr、lshl、lshr、lushr`：计算 **栈次顶元素<< or >> or >>>栈顶元素** 的结果，然后弹出栈顶和栈次顶元素并将结果push到栈顶。**没有操作数**。其中iushr和lushr为逻辑右移
+* 按位或指令：`ior、lor`：计算 **栈次顶元素 | 栈顶元素** 的结果，然后弹出栈顶和栈次顶元素并将结果push到栈顶。**没有操作数**
+* 按位与指令：`iand、land`：计算 **栈次顶元素 & 栈顶元素** 的结果，然后弹出栈顶和栈次顶元素并将结果push到栈顶。**没有操作数**
+* 按位异或指令：`ixor、lxor`：计算 **栈次顶元素 ^ 栈顶元素** 的结果，然后弹出栈顶和栈次顶元素并将结果push到栈顶。**没有操作数**
+* 局部变量自增指令：`iinc`：**该字节码不操作操作数栈。有2个操作数，第一个操作数代表局部变量表的偏移量，第二个操作数是一个常量，将第一个操作数所指定的局部变量表中的变量加上指定的常量**
+* 比较指令：`dcmpg、dcmpl、fcmpg、fcmpl、lcmp`：计算 **栈次顶元素 和 栈顶元素** 的大小关系结果，然后弹出栈顶和栈次顶元素并将结果push到栈顶。**没有操作数**
 
 ## 3.6 类型转换指令
 
 类型转换指令可以将两种不同的数值类型进行相互转换，这些转换操作一般用于实现用户代码中的显式类型转换操作
 
-__Java虚拟机直接支持以下数值类型的宽化类型转换(Widening Numeric Conversions，即小范围向大范围类型的安全转换)__
+**Java虚拟机直接支持以下数值类型的宽化类型转换(Widening Numeric Conversions，即小范围向大范围类型的安全转换)**
 
-* `i2l`：将栈顶元素转从int转换成long。__没有操作数__
-* `i2f`：将栈顶元素转从int转换成float。__没有操作数__
-* `i2d`：将栈顶元素转从int转换成double。__没有操作数__
-* `l2f`：将栈顶元素转从long转换成float。__没有操作数__
-* `l2d`：将栈顶元素转从long转换成double。__没有操作数__
-* `f2d`：将栈顶元素转从float转换成double。__没有操作数__
+* `i2l`：将栈顶元素转从int转换成long。**没有操作数**
+* `i2f`：将栈顶元素转从int转换成float。**没有操作数**
+* `i2d`：将栈顶元素转从int转换成double。**没有操作数**
+* `l2f`：将栈顶元素转从long转换成float。**没有操作数**
+* `l2d`：将栈顶元素转从long转换成double。**没有操作数**
+* `f2d`：将栈顶元素转从float转换成double。**没有操作数**
 
-__处理窄化类型转换(Narrowing Numeric Conversions)时，必须显式地使用转换指令来完成，包括__
+**处理窄化类型转换(Narrowing Numeric Conversions)时，必须显式地使用转换指令来完成，包括**
 
-* `i2b`：将栈顶元素转从int转换成byte。__没有操作数__
-* `i2c`：将栈顶元素转从int转换成char。__没有操作数__
-* `i2s`：将栈顶元素转从int转换成short。__没有操作数__
-* `l2i`：将栈顶元素转从long转换成int。__没有操作数__
-* `f2i`：将栈顶元素转从float转换成int。__没有操作数__
-* `f2l`：将栈顶元素转从long转换成long。__没有操作数__
-* `d2i`：将栈顶元素转从double转换成int。__没有操作数__
-* `d2l`：将栈顶元素转从double转换成long。__没有操作数__
-* `d2f`：将栈顶元素转从double转换成float。__没有操作数__
+* `i2b`：将栈顶元素转从int转换成byte。**没有操作数**
+* `i2c`：将栈顶元素转从int转换成char。**没有操作数**
+* `i2s`：将栈顶元素转从int转换成short。**没有操作数**
+* `l2i`：将栈顶元素转从long转换成int。**没有操作数**
+* `f2i`：将栈顶元素转从float转换成int。**没有操作数**
+* `f2l`：将栈顶元素转从long转换成long。**没有操作数**
+* `d2i`：将栈顶元素转从double转换成int。**没有操作数**
+* `d2l`：将栈顶元素转从double转换成long。**没有操作数**
+* `d2f`：将栈顶元素转从double转换成float。**没有操作数**
 
 ## 3.7 对象创建与访问指令
 
 虽然类实例和数组都是对象，但Java虚拟机对实例和数组的创建与操作使用了不同的字节码指令，对象创建后，就可以通过对象访问指令获取对象实例或者数组实例中的字段或者数组元素
-__创建类实例的指令__
+**创建类实例的指令**
 
-* `new`：创建指定类的实例，并将创建的对象的引用push到栈顶。__2个字节操作数__，这2个字节操作数构成一个常量池偏移量(index=indexbyte1 << 8 + indexbyte2)
+* `new`：创建指定类的实例，并将创建的对象的引用push到栈顶。**2个字节操作数**，这2个字节操作数构成一个常量池偏移量(index=indexbyte1 << 8 + indexbyte2)
 
-__创建数组的指令__
+**创建数组的指令**
 
-* `newarray`：栈顶元素即数组大小，创建指定类的数组，然后将栈顶元素出栈，并将创建的数组对象的引用push到栈顶。__1个操作数__，这个操作数表示数组元素的类型
-* `anewarray`：栈顶元素即数组大小，创建指定类的数组，然后将栈顶元素出栈，并将创建的数组对象的引用push到栈顶。__2个字节操作数__，这2个字节操作数共同表示常量池偏移量(index=indexbyte1 << 8 + indexbyte2)，用于确定数组元素的类型
-* `multianewarray`：__2个字节操作数 + 1个操作数__，前2个字节操作数共同表示常量池偏移量(index=indexbyte1 << 8 + indexbyte2)，后1个操作数表示维度，即当前字节码会消耗操作数栈的元素的个数。例如`new int[5][4][];`对应的字节码为`multianewarray ? ? 2`，后面的2表示栈顶与栈次顶操作数作为数组创建时的维度
+* `newarray`：栈顶元素即数组大小，创建指定类的数组，然后将栈顶元素出栈，并将创建的数组对象的引用push到栈顶。**1个操作数**，这个操作数表示数组元素的类型
+* `anewarray`：栈顶元素即数组大小，创建指定类的数组，然后将栈顶元素出栈，并将创建的数组对象的引用push到栈顶。**2个字节操作数**，这2个字节操作数共同表示常量池偏移量(index=indexbyte1 << 8 + indexbyte2)，用于确定数组元素的类型
+* `multianewarray`：**2个字节操作数 + 1个操作数**，前2个字节操作数共同表示常量池偏移量(index=indexbyte1 << 8 + indexbyte2)，后1个操作数表示维度，即当前字节码会消耗操作数栈的元素的个数。例如`new int[5][4][];`对应的字节码为`multianewarray ? ? 2`，后面的2表示栈顶与栈次顶操作数作为数组创建时的维度
 
-__访问类字段(static字段、或称为类变量)和实例字段(非static字段，或者称为实例变量)的指令__
+**访问类字段(static字段、或称为类变量)和实例字段(非static字段，或者称为实例变量)的指令**
 
-* `getfield`：访问栈顶元素所代表对象的指定字段，然后将栈顶元素出栈，将访问的结果puhs到栈顶。__2个字节操作数__，这2个字节操作数共同表示常量池偏移量(index=indexbyte1 << 8 + indexbyte2)，用于确定字段
-* `putfield`：将栈顶元素的值赋值给栈次顶元素所代表的对象的指定字段，然后将栈顶元素和次顶元素出栈。__2个字节操作数__，这2个字节操作数共同表示常量池偏移量(index=indexbyte1 << 8 + indexbyte2)，用于确定字段
-* `getstatic`：访问指定的静态字段并push到栈顶。__2个字节操作数__，这2个字节操作数共同表示常量池偏移量(index=indexbyte1 << 8 + indexbyte2)，用于确定静态字段
-* `putstatic`：将栈顶元素的值赋值给指定静态字段，并弹出栈顶元素。__2个字节操作数__，这2个字节操作数共同表示常量池偏移量(index=indexbyte1 << 8 + indexbyte2)，用于确定静态字段
+* `getfield`：访问栈顶元素所代表对象的指定字段，然后将栈顶元素出栈，将访问的结果puhs到栈顶。**2个字节操作数**，这2个字节操作数共同表示常量池偏移量(index=indexbyte1 << 8 + indexbyte2)，用于确定字段
+* `putfield`：将栈顶元素的值赋值给栈次顶元素所代表的对象的指定字段，然后将栈顶元素和次顶元素出栈。**2个字节操作数**，这2个字节操作数共同表示常量池偏移量(index=indexbyte1 << 8 + indexbyte2)，用于确定字段
+* `getstatic`：访问指定的静态字段并push到栈顶。**2个字节操作数**，这2个字节操作数共同表示常量池偏移量(index=indexbyte1 << 8 + indexbyte2)，用于确定静态字段
+* `putstatic`：将栈顶元素的值赋值给指定静态字段，并弹出栈顶元素。**2个字节操作数**，这2个字节操作数共同表示常量池偏移量(index=indexbyte1 << 8 + indexbyte2)，用于确定静态字段
 
-__把一个数组元素加载到操作数栈的指令：`baload、caload、saload、iaload、laload、faload、daload、aaload`__
+**把一个数组元素加载到操作数栈的指令：`baload、caload、saload、iaload、laload、faload、daload、aaload`**
 
-* 栈顶元素为数组下标，栈次顶元素为数组对象的引用，访问指定元素，然后将栈顶元素和栈次顶元素出栈。并将访问到的元素push到栈顶。__没有操作数__
+* 栈顶元素为数组下标，栈次顶元素为数组对象的引用，访问指定元素，然后将栈顶元素和栈次顶元素出栈。并将访问到的元素push到栈顶。**没有操作数**
 
-__将一个操作数栈的值存储到数组元素中的指令：`bastore、castore、sastore、iastore、fastore、dastore、aastore`__
+**将一个操作数栈的值存储到数组元素中的指令：`bastore、castore、sastore、iastore、fastore、dastore、aastore`**
 
-* 栈顶元素为值，栈次顶元素为下标，栈次次顶元素为数组对象的引用，将指定值赋值给指定数组元素，然后将栈顶元素和栈次顶元素和栈次次顶元素出栈。__没有操作数__
+* 栈顶元素为值，栈次顶元素为下标，栈次次顶元素为数组对象的引用，将指定值赋值给指定数组元素，然后将栈顶元素和栈次顶元素和栈次次顶元素出栈。**没有操作数**
 
-__取数组长度的指令__
+**取数组长度的指令**
 
-* `arraylength`：访问栈顶元素代表的数组对象的长度，然后将栈顶元素出栈，并且将数组长度push到栈顶。__没有操作数__
+* `arraylength`：访问栈顶元素代表的数组对象的长度，然后将栈顶元素出栈，并且将数组长度push到栈顶。**没有操作数**
 
-__检查类实例类型的指令__
+**检查类实例类型的指令**
 
-* `instanceof`：检查栈顶元素是否为指定类型的对象。弹出栈顶元素，并将检查结果push到栈顶。__2个字节操作数__，这2个字节操作数共同表示常量池偏移量(index=indexbyte1 << 8 + indexbyte2)，用于确定类型
+* `instanceof`：检查栈顶元素是否为指定类型的对象。弹出栈顶元素，并将检查结果push到栈顶。**2个字节操作数**，这2个字节操作数共同表示常量池偏移量(index=indexbyte1 << 8 + indexbyte2)，用于确定类型
 * `checkcast`：???
 
 ## 3.8 操作数栈管理指令
 
 如果操作一个普通数据结构中的堆栈那样，Java虚拟机提供了一些用于直接操作操作数栈的指令
-__将操作数栈顶的一个或两个元素出栈__
+**将操作数栈顶的一个或两个元素出栈**
 
-* `pop`：将栈顶元素出栈。__没有操作数__
-* `pop2`：将栈顶两个元素出栈，或者将一个元素出栈(这个元素是double或者long)。__没有操作数__
+* `pop`：将栈顶元素出栈。**没有操作数**
+* `pop2`：将栈顶两个元素出栈，或者将一个元素出栈(这个元素是double或者long)。**没有操作数**
 
-__赋值栈顶一个或两个数值并将赋值值或双份的赋值值重新压入栈顶__
+**赋值栈顶一个或两个数值并将赋值值或双份的赋值值重新压入栈顶**
 
-* `dup`：复制栈顶元素，然后将拷贝push到栈顶。__没有操作数__
-* `dup2`：如果栈顶元素和栈次顶元素非double或long类型，那么复制这对元素，并push到栈顶；如果栈顶元素是long或double，那么复制该元素并push到栈顶。__没有操作数__
+* `dup`：复制栈顶元素，然后将拷贝push到栈顶。**没有操作数**
+* `dup2`：如果栈顶元素和栈次顶元素非double或long类型，那么复制这对元素，并push到栈顶；如果栈顶元素是long或double，那么复制该元素并push到栈顶。**没有操作数**
 * `dup_x1`：
 * `dup2_x1`：
 * `dup_x2`：
 * `dup2_x2`：
 
-__将栈最顶端的两个数值互换__
+**将栈最顶端的两个数值互换**
 
-* swap：交换栈顶两个元素，这两个元素必须是非long或double类型的。__没有操作数__
+* swap：交换栈顶两个元素，这两个元素必须是非long或double类型的。**没有操作数**
 
 ## 3.9 控制转移指令
 
 控制转义指令可以让Java虚拟机有条件或无条件地从指定位置指令而不是控制转移指令的下一条指令继续执行程序，从概念模型上理解，可以认为控制转义指令就是在有条件或无条件地修改PC寄存器的值
 
-__条件分支__
+**条件分支**
 
-* `ifeq`：如果栈顶元素等于0，跳转到指定的字节码位置，并将栈顶元素出栈。__2个字节操作数__，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
-* `iflt`：如果栈顶元素小于0，跳转到指定的字节码位置，并将栈顶元素出栈。__2个字节操作数__，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
-* `ifle`：如果栈顶元素小于或等于0，跳转到指定的字节码位置，并将栈顶元素出栈。__2个字节操作数__，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
-* `ifne`：如果栈顶元素不等于0，跳转到指定的字节码位置，并将栈顶元素出栈。__2个字节操作数__，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
-* `ifgt`：如果栈顶元素大于0，跳转到指定的字节码位置，并将栈顶元素出栈。__2个字节操作数__，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
-* `ifge`：如果栈顶元素大于或等于0，跳转到指定的字节码位置，并将栈顶元素出栈。__2个字节操作数__，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
-* `ifnull`：如果栈顶元素为null，跳转到指定的字节码位置，并将栈顶元素出栈。__2个字节操作数__，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
-* `ifnonnull`：如果栈顶元素不为null，跳转到指定的字节码位置，并将栈顶元素出栈。__2个字节操作数__，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
-* `if_icmpeq`：如果栈次顶元素与栈顶元素相等，跳转到指定的字节码位置，并将栈顶元素和栈次顶元素出栈。__2个字节操作数__，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
-* `if_icmpne`：如果栈次顶元素与栈顶元素不相等，跳转到指定的字节码位置，并将栈顶元素和栈次顶元素出栈。__2个字节操作数__，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
-* `if_icmplt`：如果栈次顶元素小于栈顶元素，跳转到指定的字节码位置，并将栈顶元素和栈次顶元素出栈。__2个字节操作数__，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
-* `if_icmpgt`：如果栈次顶元素大于栈顶元素，跳转到指定的字节码位置，并将栈顶元素和栈次顶元素出栈。__2个字节操作数__，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
-* `if_icmple`：如果栈次顶元素小于或等于栈顶元素，跳转到指定的字节码位置，并将栈顶元素和栈次顶元素出栈。__2个字节操作数__，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
-* `if_icmpge`：如果栈次顶元素大于或等于栈顶元素，跳转到指定的字节码位置，并将栈顶元素和栈次顶元素出栈。__2个字节操作数__，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
-* `if_acmpeq`：如果栈次顶元素与栈顶元素是同一个引用，跳转到指定的字节码位置，并将栈顶元素和栈次顶元素出栈。__2个字节操作数__，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
-* `if_acmpne`：如果栈次顶元素与栈顶元素不是同一个引用，跳转到指定的字节码位置，并将栈顶元素和栈次顶元素出栈。__2个字节操作数__，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
+* `ifeq`：如果栈顶元素等于0，跳转到指定的字节码位置，并将栈顶元素出栈。**2个字节操作数**，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
+* `iflt`：如果栈顶元素小于0，跳转到指定的字节码位置，并将栈顶元素出栈。**2个字节操作数**，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
+* `ifle`：如果栈顶元素小于或等于0，跳转到指定的字节码位置，并将栈顶元素出栈。**2个字节操作数**，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
+* `ifne`：如果栈顶元素不等于0，跳转到指定的字节码位置，并将栈顶元素出栈。**2个字节操作数**，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
+* `ifgt`：如果栈顶元素大于0，跳转到指定的字节码位置，并将栈顶元素出栈。**2个字节操作数**，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
+* `ifge`：如果栈顶元素大于或等于0，跳转到指定的字节码位置，并将栈顶元素出栈。**2个字节操作数**，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
+* `ifnull`：如果栈顶元素为null，跳转到指定的字节码位置，并将栈顶元素出栈。**2个字节操作数**，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
+* `ifnonnull`：如果栈顶元素不为null，跳转到指定的字节码位置，并将栈顶元素出栈。**2个字节操作数**，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
+* `if_icmpeq`：如果栈次顶元素与栈顶元素相等，跳转到指定的字节码位置，并将栈顶元素和栈次顶元素出栈。**2个字节操作数**，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
+* `if_icmpne`：如果栈次顶元素与栈顶元素不相等，跳转到指定的字节码位置，并将栈顶元素和栈次顶元素出栈。**2个字节操作数**，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
+* `if_icmplt`：如果栈次顶元素小于栈顶元素，跳转到指定的字节码位置，并将栈顶元素和栈次顶元素出栈。**2个字节操作数**，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
+* `if_icmpgt`：如果栈次顶元素大于栈顶元素，跳转到指定的字节码位置，并将栈顶元素和栈次顶元素出栈。**2个字节操作数**，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
+* `if_icmple`：如果栈次顶元素小于或等于栈顶元素，跳转到指定的字节码位置，并将栈顶元素和栈次顶元素出栈。**2个字节操作数**，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
+* `if_icmpge`：如果栈次顶元素大于或等于栈顶元素，跳转到指定的字节码位置，并将栈顶元素和栈次顶元素出栈。**2个字节操作数**，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
+* `if_acmpeq`：如果栈次顶元素与栈顶元素是同一个引用，跳转到指定的字节码位置，并将栈顶元素和栈次顶元素出栈。**2个字节操作数**，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
+* `if_acmpne`：如果栈次顶元素与栈顶元素不是同一个引用，跳转到指定的字节码位置，并将栈顶元素和栈次顶元素出栈。**2个字节操作数**，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
 
-__复合条件分支__
+**复合条件分支**
 
 * `tableswitch`：操作数有点复杂，暂时没搞明白
 * `lookupswitch`：操作数有点复杂，暂时没搞明白
 
-__无条件分支__
+**无条件分支**
 
-* `goto`：跳转到指定字节码位置。__该字节码不操作操作数栈__。__2个字节操作数__，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
-* `goto_w`：跳转到指定字节码位置。__该字节码不操作操作数栈__。__4个操作数__，这4个操作数共同决定了一个字节码偏移量(index=branchbyte1 << 24 + branchbyte2 << 16 + branchbyte3 << 8 + branchbyte4)
-* `jsr`：跳转到指定偏移量的字节码处。__并且将jsr这条字节码之后的字节码地址压到操作数栈__。__2个字节操作数__，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
+* `goto`：跳转到指定字节码位置。**该字节码不操作操作数栈**。**2个字节操作数**，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
+* `goto_w`：跳转到指定字节码位置。**该字节码不操作操作数栈**。**4个操作数**，这4个操作数共同决定了一个字节码偏移量(index=branchbyte1 << 24 + branchbyte2 << 16 + branchbyte3 << 8 + branchbyte4)
+* `jsr`：跳转到指定偏移量的字节码处。**并且将jsr这条字节码之后的字节码地址压到操作数栈**。**2个字节操作数**，这两个字节操作数共同决定了一个字节码偏移量(index=indexbyte1 << 8 + indexbyte2)
     * 该字节码曾经用于实现try{}finally{}语句。JDK 1.4.2之后已经弃用，现在的做法是：javac采用的办法是把finally块的内容复制到原本每个jsr指令所在的地方。这样就不需要jsr/ret了，代价则是字节码大小会膨胀
-* `jsr_w`：跳转到指定偏移量的字节码处。__并且将`jsr_w`这条字节码之后的字节码地址压到操作数栈__。__4个字节操作数__，这4个字节操作数共同决定了一个字节码偏移量(index=branchbyte1 << 24 + branchbyte2 << 16 + branchbyte3 << 8 + branchbyte4)
+* `jsr_w`：跳转到指定偏移量的字节码处。**并且将`jsr_w`这条字节码之后的字节码地址压到操作数栈**。**4个字节操作数**，这4个字节操作数共同决定了一个字节码偏移量(index=branchbyte1 << 24 + branchbyte2 << 16 + branchbyte3 << 8 + branchbyte4)
 * `ret`：从指定的局部变量表中变量(该变量保存了jsr字节码压入的字节码地址???)
-* __[jsr/ret字节码剖析](https://www.zhihu.com/question/29056872)__
+* **[jsr/ret字节码剖析](https://www.zhihu.com/question/29056872)**
 
 ### 3.9.1 其他类型的条件分支
 
@@ -532,13 +532,13 @@ __无条件分支__
 
 ### 3.10.1 invokevirtual
 
-__invokevirtual字节码调用对象实例的方法，根据对象的实际类型进行分派(动态单分派)，这也是Java语言中最常见的分派方式__
+**invokevirtual字节码调用对象实例的方法，根据对象的实际类型进行分派(动态单分派)，这也是Java语言中最常见的分派方式**
 
-* __该字节码有两个字节操作数__，这两个字节操作数共同决定一个常量池偏移量(index=indexbyte1 << 8 + indexbyte2)
+* **该字节码有两个字节操作数**，这两个字节操作数共同决定一个常量池偏移量(index=indexbyte1 << 8 + indexbyte2)
 * 操作数栈：.., objectref, [arg1, [arg2 ...]] →...
 * 不能用于调用实例的初始化方法
 
-__实际被调用的方法将按照下面的步骤进行(假设C是objectref的类型)__
+**实际被调用的方法将按照下面的步骤进行(假设C是objectref的类型)**
 
 * 如果C中存在名字和描述符与调用方法的名字和描述符完全一致的方法，那么调用这个实例方法即可
 * 否则，沿着继承体系向上迭代查找与调用方法名字和描述符完全一致的方法，如果找到了，则调用这个实例方法即可
@@ -546,16 +546,16 @@ __实际被调用的方法将按照下面的步骤进行(假设C是objectref的�
 
 ### 3.10.2 invokeinterface
 
-__invokeinterface字节码用于调用接口方法__
+**invokeinterface字节码用于调用接口方法**
 
-* __该字节码有4个字节操作数__   (indexbyte1, indexbyte2, count, 0)
+* **该字节码有4个字节操作数**   (indexbyte1, indexbyte2, count, 0)
     * 前两个字节操作数共同决定一个常量池偏移量(index=indexbyte1 << 8 + indexbyte2)
-    * 第3个操作数count用于记录参数的度量，(double和long类型度量值为2，其他类型度量值为1。__这个信息完全可以从方法描述符中获取，因此该参数是冗余的，这个冗余是历史性的__
+    * 第3个操作数count用于记录参数的度量，(double和long类型度量值为2，其他类型度量值为1。**这个信息完全可以从方法描述符中获取，因此该参数是冗余的，这个冗余是历史性的**
     * 第4个操作数必须为0，作为扩展之用
 * 操作数栈：..., objectref, [arg1, [arg2 ...]] →...
 * 不能用于调用实例的初始化方法
 
-__实际被调用的方法将按照下面的步骤进行(假设C是objectref的类型)__
+**实际被调用的方法将按照下面的步骤进行(假设C是objectref的类型)**
 
 * 如果C中存在名字和描述符与调用方法的名字和描述符完全一致的方法，那么调用这个实例方法即可
 * 否则，沿着继承体系向上迭代查找与调用方法名字和描述符完全一致的方法，如果找到了，则调用这个实例方法即可
@@ -563,18 +563,18 @@ __实际被调用的方法将按照下面的步骤进行(假设C是objectref的�
 
 ### 3.10.3 invokespecial
 
-__invokespecial：用于调用一些需要特殊处理的实例方法，包括实力初始化方法、私有方法和父类方法__
+**invokespecial：用于调用一些需要特殊处理的实例方法，包括实力初始化方法、私有方法和父类方法**
 
-* __该字节码有两个字节操作数__，这两个字节操作数共同决定一个常量池偏移量(index=indexbyte1 << 8 + indexbyte2)
+* **该字节码有两个字节操作数**，这两个字节操作数共同决定一个常量池偏移量(index=indexbyte1 << 8 + indexbyte2)
 * 操作数栈：.., objectref, [arg1, [arg2 ...]] →...
 
-__满足以下3个条件时，C被解析为objectref的父类，否则C被解析为objectref的类型__
+**满足以下3个条件时，C被解析为objectref的父类，否则C被解析为objectref的类型**
 
 1. 调用方法不是实例初始化方法
 2. 符号引用包含类型，且该类型是objectref的父类
 3. `access_flag`中含有`ACC_SUPER`
 
-__实际被调用的方法将按照下面的步骤进行(类型C的解析按照上述要求进行)__
+**实际被调用的方法将按照下面的步骤进行(类型C的解析按照上述要求进行)**
 
 * 如果C中存在名字和描述符与调用方法的名字和描述符完全一致的方法，那么调用这个实例方法即可
 * 否则，沿着继承体系向上迭代查找与调用方法名字和描述符完全一致的方法，如果找到了，则调用这个实例方法即可
@@ -597,50 +597,50 @@ class Test {
 
 ### 3.10.4 invokestatic
 
-__invokestatic：用于调用类方法(static)__
+**invokestatic：用于调用类方法(static)**
 
-* __该字节码有两个字节操作数__，这两个字节操作数共同决定一个常量池偏移量(index=indexbyte1 << 8 + indexbyte2)
+* **该字节码有两个字节操作数**，这两个字节操作数共同决定一个常量池偏移量(index=indexbyte1 << 8 + indexbyte2)
 * 操作数栈：..., [arg1, [arg2 ...]] →...
 
 ### 3.10.5 invokedynamic
 
-__invokedynamic：用于在运行时动态解析出调用点限定符所引用的方法，并执行该方法，前面4条指令的分派逻辑都固化在Java虚拟机内部，而invokedynamic指令的分派逻辑是由用户设定的引导方法决定的__
+**invokedynamic：用于在运行时动态解析出调用点限定符所引用的方法，并执行该方法，前面4条指令的分派逻辑都固化在Java虚拟机内部，而invokedynamic指令的分派逻辑是由用户设定的引导方法决定的**
 
-* __该字节码有4个字节操作数__   (indexbyte1, indexbyte2, 0, 0)
+* **该字节码有4个字节操作数**   (indexbyte1, indexbyte2, 0, 0)
     * 前两个字节操作数共同决定一个常量池偏移量(index=indexbyte1 << 8 + indexbyte2)
 
 ### 3.10.6 方法返回指令
 
-__方法调用指令与数据类型无关，而方法返回指令是根据返回值的类型区分的，包括ireturn(当返回值是boolean、byte、char、short和int类型时使用)、lreturn、freturn、dreturn和areturn，另外还有一条return指令供声明为void的方法、实例初始化方法以及类和接口的类初始化方法使用__
+**方法调用指令与数据类型无关，而方法返回指令是根据返回值的类型区分的，包括ireturn(当返回值是boolean、byte、char、short和int类型时使用)、lreturn、freturn、dreturn和areturn，另外还有一条return指令供声明为void的方法、实例初始化方法以及类和接口的类初始化方法使用**
 
-* `ireturn`：返回栈顶元素，并且将栈顶元素出栈。__没有操作数__
-* `lreturn`：返回栈顶元素，并且将栈顶元素出栈。__没有操作数__
-* `freturn`：返回栈顶元素，并且将栈顶元素出栈。__没有操作数__
-* `dreturn`：返回栈顶元素，并且将栈顶元素出栈。__没有操作数__
-* `areturn`：返回栈顶元素，并且将栈顶元素出栈。__没有操作数__
+* `ireturn`：返回栈顶元素，并且将栈顶元素出栈。**没有操作数**
+* `lreturn`：返回栈顶元素，并且将栈顶元素出栈。**没有操作数**
+* `freturn`：返回栈顶元素，并且将栈顶元素出栈。**没有操作数**
+* `dreturn`：返回栈顶元素，并且将栈顶元素出栈。**没有操作数**
+* `areturn`：返回栈顶元素，并且将栈顶元素出栈。**没有操作数**
 
 ## 3.11 异常处理指令
 
 在Java程序中显式抛出异常的操作(throw语句)都由athrow指令来实现，除了用throw语句显式抛出异常情况之外，Java虚拟机规范还规定了许多运行时异常会在其他Java虚拟机指令检测到异常状况时抛出
 
-__在Java虚拟机中，处理异常(catch语句)不是由字节码指令来实现的，而是采用异常表来完成的__
+**在Java虚拟机中，处理异常(catch语句)不是由字节码指令来实现的，而是采用异常表来完成的**
 
 ## 3.12 同步指令
 
 Java虚拟机可以支持方法级的同步和方法内部一段指令序列的同步，这两种同步结构都是使用管理(Monitor)来支持的
 
-__方法级同步是隐式的，即无需通过字节码指令来控制，它实现在方法调用和返回操作之中__
+**方法级同步是隐式的，即无需通过字节码指令来控制，它实现在方法调用和返回操作之中**
 
 * 虚拟机可以从方法常量池的方法表结构中的`ACC_SYNCHRONIZED`访问标志得知一个方法是否声明为同步方法
 * 当方法调用时，调用指令将会检查方法的`ACC_SYNCHRONIZED`访问标志是否被设置，如果设置了，执行线程就要求先成功持有锁，然后才能执行方法，最后当方法完成(无论是正常还是非正常完成)时释放锁
 * 在方法执行期间，执行线程持有了锁，其他任何线程都无法在获取到同一个锁
 * 如果一个同步方法执行期间抛出了异常，并且在方法内部无法处理此异常，那么这个同步方法所持有的锁将在异常抛到同步方法之外时自动释放
 
-__同步一段指令集序列通常是由Java语言中的synchronized语句块来表示的__
+**同步一段指令集序列通常是由Java语言中的synchronized语句块来表示的**
 
 * Java虚拟机的指令集有`monitorenter`和`monitorexit`两条指令来支持synchronized关键字的语义
-    * `monitorenter`：获取栈顶元素的锁，并且将栈顶元素出栈。__没有操作数__
-    * `monitorexit`：释放栈顶元素的锁，并且将栈顶元素出栈。__没有操作数__
+    * `monitorenter`：获取栈顶元素的锁，并且将栈顶元素出栈。**没有操作数**
+    * `monitorexit`：释放栈顶元素的锁，并且将栈顶元素出栈。**没有操作数**
 * 正确实现synchronized关键字需要Javac编译器与Java虚拟机两者共同协作支持
 * 编译器必须确保无论方法通过何种方式完成，方法中调用过的每条monitorenter指令都必须执行其对应的monitorexit指令，而无论这个方法是正常结束还是异常结束
 
@@ -693,7 +693,7 @@ __同步一段指令集序列通常是由Java语言中的synchronized语句块�
 8 }
 ```
 
-执行 __javap -c -v .\Test.class__ 得到以下输出
+执行 **javap -c -v .\Test.class** 得到以下输出
 ```
   Last modified Jun 21, 2017; size 381 bytes
   MD5 checksum 16aa41fa84971176496b06f0ebcb7fd5
@@ -772,27 +772,27 @@ Constant pool:
 }
 SourceFile: "Test.java"
 ```
-__着重对testFor方法的字节码进行分析__
+**着重对testFor方法的字节码进行分析**
 
-* `<0: iconst_0>`：将整形 __常数0__ push到栈顶
+* `<0: iconst_0>`：将整形 **常数0** push到栈顶
 * `<1: istore_1>`：将栈顶元素存入local variable 1，此处指的就是var变量
-* `<2: iconst_0>`：将整形 __常数0__ push到栈顶
+* `<2: iconst_0>`：将整形 **常数0** push到栈顶
 * `<3: istore_2>`：将栈顶元素存入local variable 2，此处指的就是循环变量i
 * `<4: iload_2>`：将local variable 2的值push到栈顶，此处就是将变量i的值push到栈顶
-* `<5: bipush        10>`：将整形常 __数10__，push到栈顶
+* `<5: bipush        10>`：将整形常 **数10**，push到栈顶
 * `<7: if_icmpge     20>`：如果栈次顶元素大于等于(greater equal)栈顶元素，跳转到偏移量为20的字节码指令处
-    * __以下为if_icmpge不成立时的执行逻辑__
+    * **以下为if_icmpge不成立时的执行逻辑**
     * `<10: iload_1>`：将local variable 1的值push到栈顶，此处就是将变量var的值push到栈顶
     * `<11: iload_2>`：将local variable 2的值push到栈顶，此处就是将变量i的值push到栈顶
     * `<12: iadd>`：取出栈顶和栈次顶元素相加，并将结果push到栈顶
     * `<13: istore_1&gt`;：将栈顶元素存入local variable 1，就是将相加后的结果保存到变量var中
-    * `<14: iinc          2, 1>`：将local variable 2的值增加1，iinc第一个参数指的是local variable的偏移量，第二个参数指的是一个有符号整数。__这个字节码不操作操作数栈，而是直接操作局部变量__
+    * `<14: iinc          2, 1>`：将local variable 2的值增加1，iinc第一个参数指的是local variable的偏移量，第二个参数指的是一个有符号整数。**这个字节码不操作操作数栈，而是直接操作局部变量**
     * `<17: goto          4>`：跳转到偏移量为4的字节码指令处
-    * __以下为if_icmpge成立时的执行逻辑__
+    * **以下为if_icmpge成立时的执行逻辑**
     * `<20: iload_1>`：将local variable 1的值push到栈顶，这里就是将变量var的值push到栈顶
     * `<21: ireturn>`：将栈顶元素作为整形返回
 
-__注意点__：注意到local variable 0被保留了，这个是用于存放this引用的
+**注意点**：注意到local variable 0被保留了，这个是用于存放this引用的
 
 ### 4.1.2 while循环
 
@@ -810,7 +810,7 @@ __注意点__：注意到local variable 0被保留了，这个是用于存放thi
 10     }
 11 }
 ```
-执行 __javap -c -v .\Test.class__ 得到以下输出
+执行 **javap -c -v .\Test.class** 得到以下输出
 ```
   Last modified Jun 21, 2017; size 387 bytes
   MD5 checksum 95a3da37e5574195d4b7dae5f9e0919d
@@ -890,27 +890,27 @@ Constant pool:
 }
 SourceFile: "Test.java"
 ```
-__着重对testWhile方法的字节码进行分析__
+**着重对testWhile方法的字节码进行分析**
 
-* `<0: iconst_0>`：将整形 __常数0__ push到栈顶
+* `<0: iconst_0>`：将整形 **常数0** push到栈顶
 * `<1: istore_1>`：将栈顶元素存入local variable 1，此处指的就是var变量
-* `<2: iconst_0>`：将整形 __常数0__ push到栈顶
+* `<2: iconst_0>`：将整形 **常数0** push到栈顶
 * `<3: istore_2>`：将栈顶元素存入local variable 2，此处指的就是循环变量i
 * `<4: iload_2>`：将local variable 2的值push到栈顶，此处就是将变量i的值push到栈顶
-* `<5: bipush        10>`：将整形常 __数10__，push到栈顶
+* `<5: bipush        10>`：将整形常 **数10**，push到栈顶
 * `<7: if_icmpge     20>`：如果栈次顶元素大于等于(greater equal)栈顶元素，跳转到偏移量为20的字节码指令处
-    * __以下为if_icmpge不成立时的执行逻辑__
+    * **以下为if_icmpge不成立时的执行逻辑**
     * `<10: iload_1>`：将local variable 1的值push到栈顶，此处指的就是变量var
     * `<11: iload_2>`：将local variable 2的值push到栈顶，此处指的就是循环变量i
     * `<12: iadd>`：取出栈顶和栈次顶元素相加，并将结果push到栈顶
     * `<13: istore_1>`：将栈顶元素存入local variable 1，就是将相加后的结果保存到变量var中
-    * `<14: iinc          2, 1>`：将local variable 2的值增加1，iinc第一个参数指的是local variable的偏移量，第二个参数指的是一个有符号整数。__这个字节码不操作操作数栈，而是直接操作局部变量__
+    * `<14: iinc          2, 1>`：将local variable 2的值增加1，iinc第一个参数指的是local variable的偏移量，第二个参数指的是一个有符号整数。**这个字节码不操作操作数栈，而是直接操作局部变量**
     * `<17: goto          4>`：跳转到偏移量为4的字节码指令处
-    * __以下为if_icmpge成立时的执行逻辑__
+    * **以下为if_icmpge成立时的执行逻辑**
     * `<20: iload_1>`：将local variable 1的值push到栈顶，这里就是将变量var的值push到栈顶
     * `<21: ireturn>`：将栈顶元素作为整形返回
 
-__可以看出，while循环的字节码与for循环的字节码没什么区别__
+**可以看出，while循环的字节码与for循环的字节码没什么区别**
 
 ### 4.1.3 for each循环
 
@@ -930,7 +930,7 @@ fo each需要用到实现了Iterable接口的容器
 11 }
 ```
 
-执行 __javap -c -v .\Test.class__ 得到以下输出，可以看出foreach的字节码稍微复杂一点
+执行 **javap -c -v .\Test.class** 得到以下输出，可以看出foreach的字节码稍微复杂一点
 
 ```
   Last modified Jun 21, 2017; size 831 bytes
@@ -1050,9 +1050,9 @@ Constant pool:
 SourceFile: "Test.java"
 ```
 
-__着重对testForeach方法的字节码进行分析__
+**着重对testForeach方法的字节码进行分析**
 
-* `<0: iconst_0>`：将整形 __常数0__ push到栈顶
+* `<0: iconst_0>`：将整形 **常数0** push到栈顶
 * `<1: istore_2>`：将栈顶元素存入local variable 2，此处指的就是var变量
 * `<2: aload_1>`：将local variable 1的引用push到栈顶，即将入参list的引用push到栈顶
 * `<3: invokeinterface #2,  1>`：对栈顶元素执行#2符号引用所表示的接口方法，并将方法执行的结果push到栈顶，这里就是调用iterator方法并返回一个Iterator对象
@@ -1060,7 +1060,7 @@ __着重对testForeach方法的字节码进行分析__
 * `<9: aload_3>`：将local variable 3的值push到栈顶，这里就是将Iterator对象的引用push到栈顶
 * `<10: invokeinterface #3,  1>`：对栈顶元素执行#3符号引用所表示的接口方法，并将方法执行结果push到栈顶，这里就是调用Iterator#hasNext()方法，并返回一个boolean值
 * `<15: ifeq          40>`：如果栈顶元素为0，则跳转到偏移量为40的字节码指令处
-    * __以下为ifeq不成立时的执行逻辑__
+    * **以下为ifeq不成立时的执行逻辑**
     * `<18: aload_3>`：将local variable 3的值push到栈顶，这里就是将Iterator对象的引用push到栈顶
     * `<19: invokeinterface #4,  1>`：对栈顶元素执行#4符号引用所表示的接口方法，并将方法执行结果push到栈顶，这里就是调用Iterator#next()方法，并返回一个Object
     * `<24: checkcast     #5>`：取出栈顶元素，并强制转换成#5符号引用所表示的类型，并重新push到栈顶
@@ -1071,11 +1071,11 @@ __着重对testForeach方法的字节码进行分析__
     * `<35: iadd>`：取出栈顶和栈次顶元素相加，并将结果push到栈顶
     * `<36: istore_2>`：将栈顶元素存入local variable 2，此处指的就是变量var
     * `<37: goto          9>`：跳转到偏移量为9的字节码指令处
-    * __以下为ifeq成立时的执行逻辑__
+    * **以下为ifeq成立时的执行逻辑**
     * `<40: iload_2>`：将local variable 2的值push到栈顶，这里指的就是变量var
     * `<41: ireturn>`：将栈顶元素作为整形返回
 
-__可以看出，for each本质上就是通过返回一个迭代器Iterator，并且通过hasNext以及next来进行循环操作__
+**可以看出，for each本质上就是通过返回一个迭代器Iterator，并且通过hasNext以及next来进行循环操作**
 
 ## 4.2 方法调用字节码分析
 
@@ -1091,7 +1091,7 @@ __可以看出，for each本质上就是通过返回一个迭代器Iterator，�
 7 }
 ```
 
-执行 __javap -c -v .\Test.class__ 得到以下输出
+执行 **javap -c -v .\Test.class** 得到以下输出
 
 ```
   Last modified Jun 21, 2017; size 592 bytes
@@ -1170,11 +1170,11 @@ Constant pool:
 }
 SourceFile: "Test.java"
 ```
-__着重对invokeInterfaceMethod方法的字节码进行分析__
+**着重对invokeInterfaceMethod方法的字节码进行分析**
 
 * `<0: aload_1>`：将local variable 1的引用push到栈顶，此处就是将方法的入参list push到栈顶
 * `<1: aconst_null>`：将null push到栈顶
-* `<2: invokeinterface #2,  2>`： __对次顶元素调用#2符号引用所代表的接口方法，并将栈顶元素作为入参__。方法返回结果push到栈顶
+* `<2: invokeinterface #2,  2>`： **对次顶元素调用#2符号引用所代表的接口方法，并将栈顶元素作为入参**。方法返回结果push到栈顶
 * `<7: pop>`：弹出栈顶元素
 * `<8: return>`：返回
 
@@ -1189,7 +1189,7 @@ __着重对invokeInterfaceMethod方法的字节码进行分析__
 6 }
 ```
 
-执行 __javap -c -v .\Test.class__ 得到以下输出
+执行 **javap -c -v .\Test.class** 得到以下输出
 
 ```
   Last modified Jun 21, 2017; size 420 bytes
@@ -1267,13 +1267,13 @@ Constant pool:
 SourceFile: "Test.java"
 ```
 
-__着重对invokeStaticMethod方法的字节码进行分析__
+**着重对invokeStaticMethod方法的字节码进行分析**
 
-* `<0: iconst_1>`：0: `iconst_1`：将 __常数0__ push到栈顶
+* `<0: iconst_1>`：0: `iconst_1`：将 **常数0** push到栈顶
 * `<1: invokestatic  #2>`：调用#2符号引用所表示的静态方法
 * `<4: return>`：返回
 
-__对比invokeinterface字节码指令，invokestatic少了一个表示操作数数量的参数__，因为静态方法不需要调用对象，而非静态方法需要指定调用对象。因此invokeinterface字节码必须确定方法调用所需要的操作数数量，最下面的操作数就是调用对象的引用
+**对比invokeinterface字节码指令，invokestatic少了一个表示操作数数量的参数**，因为静态方法不需要调用对象，而非静态方法需要指定调用对象。因此invokeinterface字节码必须确定方法调用所需要的操作数数量，最下面的操作数就是调用对象的引用
 
 ### 4.2.3 调用private方法
 
@@ -1286,7 +1286,7 @@ __对比invokeinterface字节码指令，invokestatic少了一个表示操作数
 6 }
 ```
 
-执行 __javap -c -v .\Test.class__ 得到以下输出
+执行 **javap -c -v .\Test.class** 得到以下输出
 
 ```
   Last modified Jun 21, 2017; size 433 bytes
@@ -1353,10 +1353,10 @@ Constant pool:
 SourceFile: "Test.java"
 ```
 
-__着重对invokePrivateMethod方法的字节码进行分析__
+**着重对invokePrivateMethod方法的字节码进行分析**
 
 * `<0: aload_0>`：将local variable 0 push到栈顶，这里指的就是this
-* `<1: iconst_1>`：将 __常数1__ push到栈顶
+* `<1: iconst_1>`：将 **常数1** push到栈顶
 * `<2: invokespecial #2>`：调用#2符号引用所表示的方法，并将结果push到栈顶
 * `<5: return>`：返回
 
@@ -1373,7 +1373,7 @@ __着重对invokePrivateMethod方法的字节码进行分析__
 6 }
 ```
 
-执行 __javap -c -v .\Test.class__ 得到以下输出
+执行 **javap -c -v .\Test.class** 得到以下输出
 
 ```
   Last modified Jun 21, 2017; size 443 bytes
@@ -1453,18 +1453,18 @@ Constant pool:
 SourceFile: "Test.java"
 ```
 
-__着重对invokeSynchronizedMethod方法的字节码进行分析__
+**着重对invokeSynchronizedMethod方法的字节码进行分析**
 
 * `<0: aload_0>`：将local variable 0 push到栈顶，这里指的就是this
-* `<1: iconst_1>`：将 __常数1__ push到栈顶
+* `<1: iconst_1>`：将 **常数1** push到栈顶
 * `<2: invokevirtual #2>`：调用#2符号引用所表示的方法，并将方法执行结果push到栈顶
 * `<5: return>`：返回
 
-__很奇怪，在字节码中并没有发现monitorenter与monitorexit，那么这两个字节码何时会插入呢__
+**很奇怪，在字节码中并没有发现monitorenter与monitorexit，那么这两个字节码何时会插入呢**
 
 ### 4.3.2 synchronized块
 
-__以一个单例模式为例子，其中父类Base，接口Interface1和Interface2是空类以及空接口__
+**以一个单例模式为例子，其中父类Base，接口Interface1和Interface2是空类以及空接口**
 ```java
 1  public class Singleton extends Base implements Interface1,Interface2{
 2      private static volatile Singleton instance;
@@ -1484,7 +1484,7 @@ __以一个单例模式为例子，其中父类Base，接口Interface1和Interfa
 16 }
 ```
 
-执行命令 __javap -c -l -verbose Singleton.class__ 后得到以下输出
+执行命令 **javap -c -l -verbose Singleton.class** 后得到以下输出
 
 ```
   Last modified Jun 20, 2017; size 456 bytes
@@ -1581,7 +1581,7 @@ Constant pool:
 SourceFile: "Singleton.java"
 ```
 
-__javap对于class文件的解析是根据java源文件的书写顺序来展现的，这是为了便于我们的理解，所以解析结果出现的顺序与上述介绍的Class文件结构并不一致__
+**javap对于class文件的解析是根据java源文件的书写顺序来展现的，这是为了便于我们的理解，所以解析结果出现的顺序与上述介绍的Class文件结构并不一致**
 
 * 最开始是minor version以及major version
 * 紧跟着的是flags(访问标志)，Singleton的访问标志有`ACC_PUBLIC`(即public)，和`ACC_SUPER`(是否允许使用invokespecial字节码指令的新语意，invokespecial指令的语意在JDK 1.0.2发生过改变，为了区别这条指令使用哪种语意，JDK 1.0.2之后编译出来的类的这个标志都必须为真)
@@ -1590,38 +1590,38 @@ __javap对于class文件的解析是根据java源文件的书写顺序来展现�
 * 然后是私有的构造方法的描述符、访问标志以及Code属性表
 * 最后是getSingleton方法的描述符、访问标志以及Code属性表
 
-__着重对getSingleton方法的字节码进行分析__
+**着重对getSingleton方法的字节码进行分析**
 
 * `<0: getstatic     #2>`：getstatic获取类的静态字段，其中字段由常量池的符号引用表示，并push到操作数栈
 * `<3: ifnonnull     37>`：判断栈顶元素是否为null，如果不是null则跳转到偏移量为37的字节码指令处，指令结束后，栈顶元素出栈
-    * __以下为ifnonnull不成立时的执行逻辑__
+    * **以下为ifnonnull不成立时的执行逻辑**
     * `<6: ldc           #3>`：ldc从常量池中将一个(String, int, float, Class, java.lang.invoke.MethodType, or java.lang.invoke.MethodHandle) ，这里指的应该是Class对象，push 到操作数栈(stack)
     * `<8: dup>`：复制栈顶元素，并将副本入栈
     * `<9: astore_0>`：弹出栈顶元素，并存入local variable 0(???)
     * `<10: monitorenter>`：进入synchronized代码块，必须与monitorexit成对出现
     * `<11: getstatic     #2>`：getstatic获取类的静态字段，其中字段由常量池的符号引用表示，并push到操作数栈
     * `<14: ifnonnull     27>`：判断栈顶元素是否为null，如果不是null则跳转到偏移量为27的字节码指令处，指令结束后，栈顶元素出栈
-        * __以下为ifnonnull不成立时的执行逻辑__
+        * **以下为ifnonnull不成立时的执行逻辑**
         * `<17: new           #3>`：根据常量池的符号引用，创建相应的对象，并push到操作数栈
-        * `<20: dup>`：复制栈顶元素，并将副本入栈。__该条字节码通常与new成对出现，由于之后会执行invokespecial字节码来进行初始化操作，该字节码会消耗栈顶元素，为了在初始化完毕后操作数栈还保留着new出来的对象的引用，于是这里进行一次dup__
+        * `<20: dup>`：复制栈顶元素，并将副本入栈。**该条字节码通常与new成对出现，由于之后会执行invokespecial字节码来进行初始化操作，该字节码会消耗栈顶元素，为了在初始化完毕后操作数栈还保留着new出来的对象的引用，于是这里进行一次dup**
         * `<21: invokespecial #4>`：调用符号引用所指定的方法
         * `<24: putstatic     #2>`：将栈顶元素存入指定静态域
         * `<27: aload_0>`：将local variable 0存入操作数栈
-        * `<28: monitorexit>`：退出synchronized代码块，__该字节码必须与monitorenter成对出现，保证代码在任何情况下退出(正常执行，或抛出异常)都可以正常释放锁__
+        * `<28: monitorexit>`：退出synchronized代码块，**该字节码必须与monitorenter成对出现，保证代码在任何情况下退出(正常执行，或抛出异常)都可以正常释放锁**
         * `<29: goto          37>`：跳转到偏移量为37的字节码指令处，该字节码不改变操作数栈
         * `<37: getstatic     #2>`：getstatic获取类的静态字段，其中字段由常量池的符号引用表示，并push到操作数栈
         * `<40: areturn>`：返回操作数顶部元素，方法结束
-        * __以下为ifnonnull成立时的执行逻辑__
+        * **以下为ifnonnull成立时的执行逻辑**
         * `<27: aload_0>`：将local variable 0存入操作数栈
-        * `<28: monitorexit>`：退出synchronized代码块，__该字节码必须与monitorenter成对出现，保证代码在任何情况下退出(正常执行，或抛出异常)都可以正常释放锁__
+        * `<28: monitorexit>`：退出synchronized代码块，**该字节码必须与monitorenter成对出现，保证代码在任何情况下退出(正常执行，或抛出异常)都可以正常释放锁**
         * `<29: goto          37>`：跳转到偏移量为37的字节码指令处，该字节码不改变操作数栈
         * `<37: getstatic     #2>`：getstatic获取类的静态字段，其中字段由常量池的符号引用表示，并push到操作数栈
         * `<40: areturn>`：返回操作数顶部元素，方法结束
-    * __以下为ifnonnull成立时的执行逻辑__
+    * **以下为ifnonnull成立时的执行逻辑**
     * `<37: getstatic     #2>`：getstatic获取类的静态字段，其中字段由常量池的符号引用表示，并push到操作数栈
     * `<40: areturn>`：返回操作数顶部元素，方法结束
 
-__Exception table该如何解读__
+**Exception table该如何解读**
 
 # 5 参考
 

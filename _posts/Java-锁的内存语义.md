@@ -9,7 +9,7 @@ categories:
 - Java Memory Model
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -76,7 +76,7 @@ Note over 线程B:6：线程B释放锁
 
 ## 3.1 锁释放的内存语义
 
-__锁释放的内存语义：当线程释放锁时，JMM会把该线程对应的(所有)本地内存中的共享变量刷新到主内存中__
+**锁释放的内存语义：当线程释放锁时，JMM会把该线程对应的(所有)本地内存中的共享变量刷新到主内存中**
 
 以上面的MonitorExample为例，A线程释放锁后，共享数据的状态示意图如下
 
@@ -84,7 +84,7 @@ __锁释放的内存语义：当线程释放锁时，JMM会把该线程对应的
 
 ## 3.2 锁获取的内存语义
 
-__锁获取的内存语义：当线程获取锁时，JMM会把该线程对应的(所有)本地内存置为无效，从而使得被监视器保护的临界区代码必须从主内存中读取共享变量__
+**锁获取的内存语义：当线程获取锁时，JMM会把该线程对应的(所有)本地内存置为无效，从而使得被监视器保护的临界区代码必须从主内存中读取共享变量**
 
 以上面的MonitorExample为例，B线程获取锁后，共享数据的状态示意图如下
 
@@ -105,7 +105,7 @@ __锁获取的内存语义：当线程获取锁时，JMM会把该线程对应的
 
 # 4 锁内存语义的实现
 
-__正是由于JDK 1.5之后volatile的内存语义得到增强，才可能实现Java concurrent包__
+**正是由于JDK 1.5之后volatile的内存语义得到增强，才可能实现Java concurrent包**
 
 借助ReentrantLock的源代码，来分析锁内存语义的具体实现机制，请看下面代码
 
@@ -137,7 +137,7 @@ class ReentrantLockExample {
 ```
 
 * ReentrantLock的实现依赖于Java同步器框架AbstractQueuedSynchronizer(简称为AQS)，关于concurrent包下源码分析，请参考[Java concurrent 源码剖析](https://liuyehcf.github.io/categories/Java/Java-%E5%B9%B6%E5%8F%91/Java-concurrent-%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/)
-* __AQS使用一个整型的volatile变量(state)来维护同步状态，这个volatile变量是实现ReentrantLock内存语义实现的关键__
+* **AQS使用一个整型的volatile变量(state)来维护同步状态，这个volatile变量是实现ReentrantLock内存语义实现的关键**
 
 ReentrantLock分为公平锁和非公平锁
 
@@ -236,7 +236,7 @@ protected final boolean compareAndSetState(int expect, int update) {
     inline jint Atomic::cmpxchg(jint exchange_value, volatile jint* dest, jint compare_value){
         //alternative for InterlockedCompareExchange
         int mp = os::is_MP();
-        __asm{
+        **asm{
             mov edx, dest
             mov ecx, exchange_value
             mov eax, compare_value
@@ -266,7 +266,7 @@ intel手册对lock前缀说明如下
 1. 公平锁获取时，首先会去读volatile变量
 1. 非公平锁获取时，首先会用CAS更新volatile变量，这个操作同时具有volatie读和volatile写的内存语义
 
-__从本文对ReentrantLock的分析可以看出，锁释放-获取的内存语义的实现至少有下面两种方式__
+**从本文对ReentrantLock的分析可以看出，锁释放-获取的内存语义的实现至少有下面两种方式**
 
 1. 利用volatile变量的写-读所具有的内存语义
 1. 利用CAS所附带的volatile读和volatile写的内存语义

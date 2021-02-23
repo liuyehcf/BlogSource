@@ -9,7 +9,7 @@ categories:
 - Flowable
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -65,7 +65,7 @@ __阅读更多__
 
 # 3 pom文件
 
-__主要依赖项如下__
+**主要依赖项如下**
 
 1. `flowable`
 1. `spring-boot`
@@ -927,41 +927,41 @@ spring.datasource.password=xxx
 
 ## 6.1 数据库初始化
 
-__详细步骤如下__
+**详细步骤如下**
 
 1. 首先执行`CreateSqlUtils`中的`main`函数，创建`sql文件`
 1. 执行命令`mysql -u root -p`登录数据库
 1. 在`mysql`会话中执行`sql`文件：`source <yourDir>/create.sql`
-* __至此，建库建表工作完成__
+* **至此，建库建表工作完成**
 
 ## 6.2 部署工作流
 
-__部署工作流__
+**部署工作流**
 
 * [http://localhost:7001/process/deploy](http://localhost:7001/process/deploy)
 * 显示`Deploy Succeeded, processDefinitionId=process1:2:6`
 
-__启动工作流实例（将上面的`processDefinitionId`填入下方url中）__
+**启动工作流实例（将上面的`processDefinitionId`填入下方url中）**
 
 * [http://localhost:7001/process/start?processDefinitionId=process1:2:6](http://localhost:7001/process/start?processDefinitionId=process1:2:6)
 * 显示`Start Succeeded, processInstance=7`
 
-__完成UserTask1__
+**完成UserTask1**
 
 * [http://localhost:7001//userTask/completeByAssignee?assignee=tom](http://localhost:7001//userTask/completeByAssignee?assignee=tom)
 * 显示`task[13] is complete by tom`
 
-__完成UserTask2__
+**完成UserTask2**
 
 * [http://localhost:7001//userTask/completeByCandidateUser?candidateUser=bob](http://localhost:7001//userTask/completeByCandidateUser?candidateUser=bob)
 * 显示`task[17] is complete by bob`
 
-__完成UserTask3__
+**完成UserTask3**
 
 * [http://localhost:7001//userTask/completeByCandidateUser?candidateUser=lucy](http://localhost:7001//userTask/completeByCandidateUser?candidateUser=lucy)
 * 显示`task[23] is complete by lucy`
 
-__日志如下__
+**日志如下**
 ```
 74514 [http-nio-7001-exec-1] INFO  o.l.flowalbe.service.DemoService - Deploy process success! processDefinition=process1:1:3 
 133034 [http-nio-7001-exec-2] INFO  o.l.flowalbe.service.DemoService - Deploy process success! processDefinition=process1:2:6 
@@ -979,7 +979,7 @@ __日志如下__
 
 ## 7.1 DemoTest
 
-__`@ContextHierarchy`将创建子容器，`EmbeddedDatabaseConfig`将会在子容器中加载，会覆盖父容器的同名Bean，通过这种方式来替换数据源的配置__
+**`@ContextHierarchy`将创建子容器，`EmbeddedDatabaseConfig`将会在子容器中加载，会覆盖父容器的同名Bean，通过这种方式来替换数据源的配置**
 
 ```java
 package org.liuyehcf.flowable.test;
@@ -1108,7 +1108,7 @@ public class TestApplication {
 
 ## 7.4 logback-test.xml
 
-__Test中的`logback`的配置文件必须为`logback-test.xml`才能生效__
+**Test中的`logback`的配置文件必须为`logback-test.xml`才能生效**
 
 ```xml
 <configuration>
@@ -1130,7 +1130,7 @@ __Test中的`logback`的配置文件必须为`logback-test.xml`才能生效__
 
 从上面的日志中，我们可以看到`DemoServiceTask`的`field2`注入失败，而`field1`与`field2`的唯一区别在于`field1`有`public`的`setter`方法
 
-__情景还原__：
+**情景还原**：
 
 1. 一个`JavaDelegate`（`org.flowable.engine.delegate.JavaDelegate`）的实现类`DemoServiceTask`，该实现类包含了一个类型为`Expression（org.flowable.engine.common.api.delegate.Expression）`的字段`field2`，且该字段没有`public`的`setter`方法
 1. 一个Spring AOP，拦截了该`DemoServiceTask`，AOP配置源码已经在之前的小节中给出
@@ -1182,13 +1182,13 @@ __情景还原__：
     }
 ```
 
-上述`setField`成功调用，说明`field2`字段设置成功了。__重点来了，这里的`object`(`setField`方法的第二个参数)，也就是目标对象，并不是`DemoServiceTask`的实例，而是一个`Cglib`的代理类，这个代理类同样包含了一个`field2`字段，因此`setField`仅仅设置了`Cglib`的代理类的`field2`字段而已。当执行到目标方法，也就是`DemoServiceTask`类的`execute`方法中时，我们取的是`DemoServiceTask`的`field2`字段，也就是说，`DemoServiceTask`根本无法取到那个设置到`Cglib`的代理类中去的`field2`字段__
+上述`setField`成功调用，说明`field2`字段设置成功了。**重点来了，这里的`object`(`setField`方法的第二个参数)，也就是目标对象，并不是`DemoServiceTask`的实例，而是一个`Cglib`的代理类，这个代理类同样包含了一个`field2`字段，因此`setField`仅仅设置了`Cglib`的代理类的`field2`字段而已。当执行到目标方法，也就是`DemoServiceTask`类的`execute`方法中时，我们取的是`DemoServiceTask`的`field2`字段，也就是说，`DemoServiceTask`根本无法取到那个设置到`Cglib`的代理类中去的`field2`字段**
 
-__其实，这并不是什么`Security`造成的问题，而是AOP使用时的细节问题__
+**其实，这并不是什么`Security`造成的问题，而是AOP使用时的细节问题**
 
 ## 8.2 Test
 
-__在测试方法中不要加`@Transactional`注解，由于工作流的执行是由工作流引擎完成的，并不是在当前测试方法中完成的，因此在别的线程无法拿到`Test方法所在线程`的`尚未提交的数据`__
+**在测试方法中不要加`@Transactional`注解，由于工作流的执行是由工作流引擎完成的，并不是在当前测试方法中完成的，因此在别的线程无法拿到`Test方法所在线程`的`尚未提交的数据`**
 
 ## 8.3 xml文件名
 
@@ -1203,7 +1203,7 @@ Deployment deployment = repositoryService.createDeployment()
 
 ## 8.4 Table "ACT_RU_JOB" not found
 
-__情景还原：配置了两个异步的`ServiceTask`，执行部署、启动的流程__
+**情景还原：配置了两个异步的`ServiceTask`，执行部署、启动的流程**
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -1245,7 +1245,7 @@ __情景还原：配置了两个异步的`ServiceTask`，执行部署、启动�
 </definitions>
 ```
 
-__单元测试运行过程中，出现了如下的错误__
+**单元测试运行过程中，出现了如下的错误**
 
 ```
 ### The error may exist in org/flowable/job/service/db/mapping/entity/Job.xml
@@ -1255,4 +1255,4 @@ __单元测试运行过程中，出现了如下的错误__
 ### Cause: org.h2.jdbc.JdbcSQLException: Table "ACT_RU_JOB" not found; SQL statement:
 ```
 
-__原因分析：由于`ServiceTask`配置的是异步方式，因此Test执行线程结束后，整个进程就被终止了，因此导致的这个问题。解决方法：Test最后sleep一段时间即可__
+**原因分析：由于`ServiceTask`配置的是异步方式，因此Test执行线程结束后，整个进程就被终止了，因此导致的这个问题。解决方法：Test最后sleep一段时间即可**

@@ -8,7 +8,7 @@ categories:
 - Security Model
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -28,9 +28,9 @@ CodeSource有一个重要的字段
 
 Permission类是AccessController处理的基本实体
 
-__Permission类本身是抽象的，它的一个实例代表一个具体的权限（例如FilePermission的实例就表示了哪个文件的什么权限，读/写等等）__。权限有两个作用，一个是允许Java API完成对某些资源的访问。另一个是可以为自定义权限提供一个范本。权限包含了权限类型、权限名和一组权限操作。具体可以看看BasicPermission类的代码。典型的也可以参看FilePermission的实现
+**Permission类本身是抽象的，它的一个实例代表一个具体的权限（例如FilePermission的实例就表示了哪个文件的什么权限，读/写等等）**。权限有两个作用，一个是允许Java API完成对某些资源的访问。另一个是可以为自定义权限提供一个范本。权限包含了权限类型、权限名和一组权限操作。具体可以看看BasicPermission类的代码。典型的也可以参看FilePermission的实现
 
-__Permission继承属性结构如下（从这里可以得知Java对哪些资源进行了管理）__：
+**Permission继承属性结构如下（从这里可以得知Java对哪些资源进行了管理）**：
 
 ```
 Permission (java.security)
@@ -135,13 +135,13 @@ AccessController最重要的方法就是checkPermission()方法，作用是基�
     }
 ```
 
-然而，AccessController的使用还是重度关联类加载器的。__如果都是一个类加载器且都从一个保护域加载类，那么你构造的checkPermission的方法将正常返回__
+然而，AccessController的使用还是重度关联类加载器的。**如果都是一个类加载器且都从一个保护域加载类，那么你构造的checkPermission的方法将正常返回**
 
-当使用了其他类加载器或者使用了Java扩展包时，这种情况比较普遍。AccessController另一个比较实用的功能是doPrivilege（授权）：__假设一个保护域A有读文件的权限，另一个保护域B没有。那么通过AccessController.doPrivileged方法，可以将该权限临时授予B保护域的类。而这种授权是单向的。__也就是说，它__可以为调用它的代码授权__，但是__不能为它调用的代码授权__
+当使用了其他类加载器或者使用了Java扩展包时，这种情况比较普遍。AccessController另一个比较实用的功能是doPrivilege（授权）：**假设一个保护域A有读文件的权限，另一个保护域B没有。那么通过AccessController.doPrivileged方法，可以将该权限临时授予B保护域的类。而这种授权是单向的。**也就是说，它**可以为调用它的代码授权**，但是**不能为它调用的代码授权**
 
 # 3 Demo
 
-__我的IDEA工程目录如下，其中security是一个子模块，下面的代码中会涉及到多个路径的配置，这些路径都是基于父模块的相对路径__
+**我的IDEA工程目录如下，其中security是一个子模块，下面的代码中会涉及到多个路径的配置，这些路径都是基于父模块的相对路径**
 
 ```
 .
@@ -216,7 +216,7 @@ grant codeBase "file:security/src/main/resources/external.jar" {
 上述配置文件的含义如下：
 
 1. 为`file:security/src/main/resources/external.jar`配置`security/src/main/resources/targetDir/*`中写、读、删除文件的权限
-1. 为`file:security/src/main/resources/external.jar`配置__读用户目录这一系统属性__的权限
+1. 为`file:security/src/main/resources/external.jar`配置**读用户目录这一系统属性**的权限
 
 然后编写测试类ReflectAccessControllerDemo，如下
 
@@ -312,7 +312,7 @@ Caused by: java.security.AccessControlException: access denied ("java.util.Prope
 解释一下这个Demo的意义：
 
 1. 首先，为代码源`external.jar`中的`FileUtils`配置了一些权限（在指定路径读写文件的权限，以及读取用户主目录的权限）
-1. 让`ReflectAccessControllerDemo`通过调用`FileUtils`的`createFilePrivilege`方法（该方法会调用AccessController.doPrivileged来绕过权限检查）来获取访问这些资源的特权。__即为调用它的代码授权__，它指的是`FileUtils`，代码指的是`ReflectAccessControllerDemo`
+1. 让`ReflectAccessControllerDemo`通过调用`FileUtils`的`createFilePrivilege`方法（该方法会调用AccessController.doPrivileged来绕过权限检查）来获取访问这些资源的特权。**即为调用它的代码授权**，它指的是`FileUtils`，代码指的是`ReflectAccessControllerDemo`
 
 # 4 参考
 

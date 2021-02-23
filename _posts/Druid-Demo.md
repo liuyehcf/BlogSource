@@ -9,13 +9,13 @@ categories:
 - Druid
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
 # 1 Slf4jLogFilter
 
-__Slf4jLogFilter的日志级别都是DEBUG的__
+**Slf4jLogFilter的日志级别都是DEBUG的**
 
 ```java
 @Bean

@@ -9,7 +9,7 @@ categories:
 - Spring
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -35,10 +35,10 @@ AOP是Aspect-Oriented Pogramming（面向切面编程）的简称
 
 ## 1.2 AOP Alliance
 
-__AOP联盟定义了两个重要的基本概念__
+**AOP联盟定义了两个重要的基本概念**
 
-1. `Advice`：__增强，代表要织入的逻辑__
-1. `Joinpoint`：__织入点，增强逻辑的织入地点__
+1. `Advice`：**增强，代表要织入的逻辑**
+1. `Joinpoint`：**织入点，增强逻辑的织入地点**
 
 接下来我们看一下，AOP联盟是如何定义这两个基本概念的
 
@@ -46,10 +46,10 @@ __AOP联盟定义了两个重要的基本概念__
 
 Advice接口的继承体系如下：
 
-1. `Advice`：标记接口，这个接口代表一个增强，__即要执行的动作__
-1. `Interceptor`：标记接口，这个接口代表一个通用的拦截器。__Interceptor是Advice的一种具体的语义__
-1. `MethodInterceptor`：方法拦截器，__MethodInterceptor是Interceptor的一种具体语义__
-1. `ConstructorInterceptor`：构造器拦截器，__ConstructorInterceptor是Interceptor的一种具体语义__
+1. `Advice`：标记接口，这个接口代表一个增强，**即要执行的动作**
+1. `Interceptor`：标记接口，这个接口代表一个通用的拦截器。**Interceptor是Advice的一种具体的语义**
+1. `MethodInterceptor`：方法拦截器，**MethodInterceptor是Interceptor的一种具体语义**
+1. `ConstructorInterceptor`：构造器拦截器，**ConstructorInterceptor是Interceptor的一种具体语义**
 
 ```
  Advice
@@ -95,8 +95,8 @@ public interface ConstructorInterceptor extends Interceptor  {
 Joinpoint接口的继承体系如下：
 
 1. `Joinpoint`：织入点，这个接口代表了运行时的`通用`织入点（可以是代码中的任何地方）
-1. `Invocation`：调用织入点，这个接口代表了程序中的`调用`织入点，__Invocation是Joinpoint的一种具体语义__
-1. `MethodInvocation`：方法调用织入点，这个接口代表了程序中的`方法调用`织入点，__MethodInvocation是Invocation的一种具体语义__
+1. `Invocation`：调用织入点，这个接口代表了程序中的`调用`织入点，**Invocation是Joinpoint的一种具体语义**
+1. `MethodInvocation`：方法调用织入点，这个接口代表了程序中的`方法调用`织入点，**MethodInvocation是Invocation的一种具体语义**
 
 ```
  Joinpoint
@@ -157,9 +157,9 @@ Spring对于Advice接口的继承体系进行了扩展，扩展后的继承体�
 1. `IntroductionInterceptor`：标记接口，引介增强，用于类级别的增强
 1. `BeforeAdvice`：标记接口，代表前置增强逻辑
 1. `AfterAdvice`：标记接口，代表后置增强逻辑
-1. `MethodBeforeAdvice`：方法前置增强，__MethodBeforeAdvice是BeforeAdvice的一种具体语义__
-1. `AfterReturningAdvice`：方法后置增强，__AfterReturningAdvice是AfterAdvice的一种具体语义__
-1. `ThrowsAdvice`：异常增强，__ThrowsAdvice是AfterAdvice的一种具体语义__
+1. `MethodBeforeAdvice`：方法前置增强，**MethodBeforeAdvice是BeforeAdvice的一种具体语义**
+1. `AfterReturningAdvice`：方法后置增强，**AfterReturningAdvice是AfterAdvice的一种具体语义**
+1. `ThrowsAdvice`：异常增强，**ThrowsAdvice是AfterAdvice的一种具体语义**
 
 ```
  Advice (AOP Alliance)
@@ -239,7 +239,7 @@ Spring AOP对Joinpoint接口进行了少量的扩展
 
 ### 1.3.3 Pointcut
 
-Pointcut是Spring AOP新增的接口，__该接口定义了Joinpoint的匹配规则，即一个Pointcut关联着一组Joinpoint__
+Pointcut是Spring AOP新增的接口，**该接口定义了Joinpoint的匹配规则，即一个Pointcut关联着一组Joinpoint**
 
 接口定义如下
 
@@ -270,7 +270,7 @@ public interface Pointcut {
     ├── IntroductionAdvisor
 ```
 
-Advisor也是Spring AOP新增的接口，可以理解为切面（还有的称为通知器，Advice就是通知）。__PointcutAdvisor接口关联着一个Advice和一个Pointcut，其中Advice代表着织入的逻辑，Pointcut代表着织入的地点集合__。因此一个Advisor包含了__一个增强逻辑__以及__织入地点的集合__
+Advisor也是Spring AOP新增的接口，可以理解为切面（还有的称为通知器，Advice就是通知）。**PointcutAdvisor接口关联着一个Advice和一个Pointcut，其中Advice代表着织入的逻辑，Pointcut代表着织入的地点集合**。因此一个Advisor包含了**一个增强逻辑**以及**织入地点的集合**
 
 几个核心扩展接口的定义如下
 
@@ -315,7 +315,7 @@ Spring AOP源码分析将分为以下几个部分
 
 Spring AOP通常与Spring IoC结合使用，通过BeanPostProcessor接口，以低耦合的方式将Spring AOP整合到Spring IoC容器当中
 
-__在BeanPostProcessor的继承体系中，与Spring AOP相关部分如下__
+**在BeanPostProcessor的继承体系中，与Spring AOP相关部分如下**
 
 ```
 BeanPostProcessor 
@@ -410,7 +410,7 @@ wrapIfNecessary方法也定义在AbstractAutoProxyCreator之中。该方法主�
 
 ## 2.2 Advice/Advisor的获取
 
-在AbstractAutoProxyCreator.wrapIfNecessary方法中调用了getAdvicesAndAdvisorsForBean方法来__获取增强（Advice）或者切面（Advisor）__，该方法是AbstractAutoProxyCreator中的一个抽象方法，具体的实现由子类AbstractAdvisorAutoProxyCreator提供
+在AbstractAutoProxyCreator.wrapIfNecessary方法中调用了getAdvicesAndAdvisorsForBean方法来**获取增强（Advice）或者切面（Advisor）**，该方法是AbstractAutoProxyCreator中的一个抽象方法，具体的实现由子类AbstractAdvisorAutoProxyCreator提供
 
 ```java
     protected Object[] getAdvicesAndAdvisorsForBean(Class<?> beanClass, String beanName, TargetSource targetSource) {
@@ -422,7 +422,7 @@ wrapIfNecessary方法也定义在AbstractAutoProxyCreator之中。该方法主�
     }
 ```
 
-继续跟踪findEligibleAdvisors方法，该方法同样位于AbstractAdvisorAutoProxyCreator中，__该方法就是为指定Bean收集所有匹配的Advisor__，其逻辑可以分为如下三部分
+继续跟踪findEligibleAdvisors方法，该方法同样位于AbstractAdvisorAutoProxyCreator中，**该方法就是为指定Bean收集所有匹配的Advisor**，其逻辑可以分为如下三部分
 
 1. 找出所有可用的Advisor
 1. 在所有Advisor中筛选出匹配当前Bean的Advisor
@@ -536,7 +536,7 @@ AnnotationAwareAspectJAutoProxyCreator复写了该方法。Spring AOP支持两�
     }
 ```
 
-AbstractAdvisorAutoProxyCreator.findCandidateAdvisors方法方法继续转调用BeanFactoryAdvisorRetrievalHelper.findAdvisorBeans，__该方法的主要逻辑就是从Spring的IoC容器中找出Advisor类型的所有Bean__
+AbstractAdvisorAutoProxyCreator.findCandidateAdvisors方法方法继续转调用BeanFactoryAdvisorRetrievalHelper.findAdvisorBeans，**该方法的主要逻辑就是从Spring的IoC容器中找出Advisor类型的所有Bean**
 
 ```java
 public List<Advisor> findAdvisorBeans() {
@@ -594,7 +594,7 @@ public List<Advisor> findAdvisorBeans() {
     }
 ```
 
-接着，我们回到AnnotationAwareAspectJAutoProxyCreator.findCandidateAdvisors方法中，看一下buildAspectJAdvisors方法的具体逻辑，该方法定义在BeanFactoryAspectJAdvisorsBuilder之中。__该方法的主要逻辑是：针对每一个用@Aspect注解标记的类，遍历其所有标记了注解（包括@Before、@After等）的方法，将每个方法封装成一个Advice，然后再封装成Advisor__
+接着，我们回到AnnotationAwareAspectJAutoProxyCreator.findCandidateAdvisors方法中，看一下buildAspectJAdvisors方法的具体逻辑，该方法定义在BeanFactoryAspectJAdvisorsBuilder之中。**该方法的主要逻辑是：针对每一个用@Aspect注解标记的类，遍历其所有标记了注解（包括@Before、@After等）的方法，将每个方法封装成一个Advice，然后再封装成Advisor**
 
 ```java
     public List<Advisor> buildAspectJAdvisors() {
@@ -677,7 +677,7 @@ public List<Advisor> findAdvisorBeans() {
     }
 ```
 
-接着，回到AbstractAdvisorAutoProxyCreator.findEligibleAdvisors方法中，继续分析findAdvisorsThatCanApply方法。__该方法用于在给定的Advisor集合中，筛选出匹配指定Bean的Advisor__
+接着，回到AbstractAdvisorAutoProxyCreator.findEligibleAdvisors方法中，继续分析findAdvisorsThatCanApply方法。**该方法用于在给定的Advisor集合中，筛选出匹配指定Bean的Advisor**
 
 ```java
     protected List<Advisor> findAdvisorsThatCanApply(
@@ -837,7 +837,7 @@ public List<Advisor> findAdvisorBeans() {
     }
 ```
 
-AbstractAutoProxyCreator.buildAdvisors方法用于将Advice封装成Advisor，__例如将MethodBeforeAdvice、AfterReturningAdvice之类的接口转换成标准的方法拦截器接口MethodInterceptor__
+AbstractAutoProxyCreator.buildAdvisors方法用于将Advice封装成Advisor，**例如将MethodBeforeAdvice、AfterReturningAdvice之类的接口转换成标准的方法拦截器接口MethodInterceptor**
 
 ```java
     protected Advisor[] buildAdvisors(String beanName, Object[] specificInterceptors) {
@@ -872,7 +872,7 @@ AbstractAutoProxyCreator.buildAdvisors方法用于将Advice封装成Advisor，__
     }
 ```
 
-我们继续看wrap方法，该方法定义在DefaultAdvisorAdapterRegistry（该类是AdvisorAdapterRegistry接口的唯一实现）中。该方法用于将Advice类型的对象封装成一个Advisor，__在封装的过程中，会用到一系列适配器（Adapter），例如MethodBeforeAdviceAdapter、ThrowsAdviceAdapter、AfterReturningAdviceAdapter，这些适配器的作用就是将MethodBeforeAdvice、AfterReturningAdvice之类的接口转换成标准的方法拦截器接口MethodInterceptor__（我们之前分析的AbstractAdvisorAutoProxyCreator.getAdvicesAndAdvisorsForBean方法获取到的本身就是Advisor，因此，这些Advisor在wrap方法的处理逻辑中直接就返回了）
+我们继续看wrap方法，该方法定义在DefaultAdvisorAdapterRegistry（该类是AdvisorAdapterRegistry接口的唯一实现）中。该方法用于将Advice类型的对象封装成一个Advisor，**在封装的过程中，会用到一系列适配器（Adapter），例如MethodBeforeAdviceAdapter、ThrowsAdviceAdapter、AfterReturningAdviceAdapter，这些适配器的作用就是将MethodBeforeAdvice、AfterReturningAdvice之类的接口转换成标准的方法拦截器接口MethodInterceptor**（我们之前分析的AbstractAdvisorAutoProxyCreator.getAdvicesAndAdvisorsForBean方法获取到的本身就是Advisor，因此，这些Advisor在wrap方法的处理逻辑中直接就返回了）
 
 ```java
     //可以看到DefaultAdvisorAdapterRegistry默认注册了三个适配器
@@ -1110,7 +1110,7 @@ public Object invoke(Object proxy, Method method, Object[] args) throws Throwabl
     }
 ```
 
-接下来，看一下AdvisedSupport.getInterceptorsAndDynamicInterceptionAdvice方法。__该方法的逻辑很简单，将每个方法的拦截器链保存在缓存中，若不命中，则调用AdvisorChainFactory.getInterceptorsAndDynamicInterceptionAdvice方法来初始化__
+接下来，看一下AdvisedSupport.getInterceptorsAndDynamicInterceptionAdvice方法。**该方法的逻辑很简单，将每个方法的拦截器链保存在缓存中，若不命中，则调用AdvisorChainFactory.getInterceptorsAndDynamicInterceptionAdvice方法来初始化**
 
 ```java
     public List<Object> getInterceptorsAndDynamicInterceptionAdvice(Method method, Class<?> targetClass) {
@@ -1249,7 +1249,7 @@ public class MethodBeforeAdviceInterceptor implements MethodInterceptor, Seriali
 
 ```
 
-我们接着回到JdkDynamicAopProxy的invoke方法当中，来看一下ReflectiveMethodInvocation这个类。__这个类实现了ProxyMethodInvocation接口，其继承链路的起点是Joinpoint，ReflectiveMethodInvocation就是一个连接点（增强织入点）。且包含了触发目标对象的目标方法所需的所有条件，目标对象的目标方法的触发是交由该对象来完成的，其最核心的方法就是proceed__
+我们接着回到JdkDynamicAopProxy的invoke方法当中，来看一下ReflectiveMethodInvocation这个类。**这个类实现了ProxyMethodInvocation接口，其继承链路的起点是Joinpoint，ReflectiveMethodInvocation就是一个连接点（增强织入点）。且包含了触发目标对象的目标方法所需的所有条件，目标对象的目标方法的触发是交由该对象来完成的，其最核心的方法就是proceed**
 
 ```java
     protected final Object proxy;

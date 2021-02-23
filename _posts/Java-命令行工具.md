@@ -9,23 +9,23 @@ categories:
 - Command Line Tool
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
 # 1 jps
 
-列出正在运行的虚拟机进程，并显示虚拟机执行主类(Main Class, main()函数所在的类)名称以及这些进程的__本地虚拟机唯一ID(Local Virtual Machine Identifier, LVMID)__
+列出正在运行的虚拟机进程，并显示虚拟机执行主类(Main Class, main()函数所在的类)名称以及这些进程的**本地虚拟机唯一ID(Local Virtual Machine Identifier, LVMID)**
 
 虽然功能比较单一，但它是使用频率最高的JDK命令行工具，因为其他JDK工具大多需要输入它查询到的LVMID来确定要监控的是哪一个虚拟机进程
 
-__对本地虚拟机来说，LVMID与操作系统的进程ID(Process Identifier，PID)是一致的__，使用Windows的任务管理器或者UNIX的ps命令也可以查询到虚拟机进程的LVMID，如果同时启动了多个虚拟机进程，无法根据进程名称定位时，就只能依赖jps命令显示主类的功能才能区分了
+**对本地虚拟机来说，LVMID与操作系统的进程ID(Process Identifier，PID)是一致的**，使用Windows的任务管理器或者UNIX的ps命令也可以查询到虚拟机进程的LVMID，如果同时启动了多个虚拟机进程，无法根据进程名称定位时，就只能依赖jps命令显示主类的功能才能区分了
 
-__格式：__
+**格式：**
 
 * `jps [options] [hostid]`
 
-__参数说明：__
+**参数说明：**
 
 * `-q`：只输出LVMID，省略主类的名称
 * `-m`：输出虚拟机进程启动时传递给主类main()函数的参数
@@ -38,11 +38,11 @@ jstat(JVM Statistics Monitoring Tool)是用于监视虚拟机各种运行状态�
 
 jstat可以显示本地或者远程虚拟机进程中的类装载、内存、垃圾收集、JIT编译等运行数据，在没有GUI图形界面，只提供了纯文本控制台环境的服务器上，它将是运行期定位虚拟机性能问题的首选工具
 
-__格式：__
+**格式：**
 
 * `jstat [option vmid [interval [s|ms] [count] ] ]`
 
-__参数说明：__
+**参数说明：**
 
 * 如果是本地虚拟机进程，VMID与LVMID是一致的，如果是远程虚拟机进程，那VMID的格式应当是
     * `[protocol:] [//] lvmid [@hostname[:port]/servername]`
@@ -61,7 +61,7 @@ __参数说明：__
 * `-compiler`：输出JIT编译器编译过的方法、耗时等信息
 * `-printcompilation`：输出已经被JIT编译的方法
 
-__输出内容意义：__
+**输出内容意义：**
 
 * `E`：新生代区Eden
 * `S0\S1`：Survivor0、Survivor1这两个Survivor区
@@ -77,17 +77,17 @@ __输出内容意义：__
 
 jinfo(Configuration Info for Java)的作用是实时地查看和调整虚拟机各项参数
 
-使用jps命令的-v参数可以查看虚拟机启动时显示指定的参数列表，__但如果想知道未被显式指定的参数的系统默认值，除了去查找资料外，就只能用jinfo的-flag选项进行查询__
+使用jps命令的-v参数可以查看虚拟机启动时显示指定的参数列表，**但如果想知道未被显式指定的参数的系统默认值，除了去查找资料外，就只能用jinfo的-flag选项进行查询**
 
 如果JDK1.6或者以上版本，可以使用-XX:+PrintFlagsFinal查看参数默认值
 
 jinfo还可以使用-sysprops选项把虚拟机进程的System.getProperties()的内容打印出来
 
-__格式：__
+**格式：**
 
 * `jinfo [option] pid`
 
-__参数说明__
+**参数说明**
 
 * `-flag`：显式默认值
     * `jinfo -flags 1874`：显式所有项的默认值
@@ -100,11 +100,11 @@ jmap(Memory Map for Java)命令用于生成堆转储快照(一般称为heapdump�
 
 jmap的作用并不仅仅为了获取dump文件，它还可以查询finalize执行队列、Java堆和永久代的详细信息，如空间使用率、当前用的是哪种收集器等
 
-__格式：__
+**格式：**
 
 * `jmap [option] vmid`
 
-__参数说明：__
+**参数说明：**
 
 * `-dump`：生成Java堆转储快照，格式为`-dump:[live, ]format=b, file=<filename>`，其中live子参数说明是否只dump出存活对象
 * `-finalizerinfo`：显示在F-Queue中等待Finalizer线程执行finalize方法的对象
@@ -113,7 +113,7 @@ __参数说明：__
 * `-permstat`：以ClassLoader为统计口径显示永久代内存状态
 * `-F`：当虚拟机进程对-dump选项没有响应时，可使用这个选项强制生成dump快照
 
-__示例__
+**示例**
 
 * `jmap -dump:format=b,file=<dump_文件名> <java进程号>`：dump进程所有对象的堆栈
 * `jmap -dump:live,format=b,file=<dump_文件名> <java进程号>`：dump进程中存活对象的堆栈，会触发full gc
@@ -133,7 +133,7 @@ jhat内置了一个微型的HTTP/HTML服务器，生成dump文件的分析结果
 * 一般不会再部署应用程序的服务器上直接分析dump文件，即使可以这样做，也会尽量将dump文件复制到其他机器上进行分析，因为分析工作是一个耗时而且消耗硬件资源的过程，既然都要在其他机器上进行，就没有必要受到命令工具的限制了
 * jhat的分析功能相对来说比较简陋，VisualVM，以及专业用于分析dump文件的Eclipse Memory Analyzer、IBM HeapAnalyzer等工具，都能实现比jhat更强大更专业的分析功能
 
-__配合jmap的例子__
+**配合jmap的例子**
 
 1. `jmap -dump:format=b,file=dump.bin 1874`
     * 文件相对路径为`dump.bin`
@@ -152,17 +152,17 @@ jstack(Stack Trace for Java)命令用于生成虚拟机当前时刻的线程快�
 
 线程出现停顿的时候通过jstack来查看各个线程的调用堆栈，就可以知道没有响应的线程到底在后台做了什么，或者等待什么资源
 
-__格式：__
+**格式：**
 
 * jstack [option] vmid
 
-__参数说明：__
+**参数说明：**
 
 * `-F`：当正常输出的请求不被响应时，强制输出线程堆栈
 * `-l`：除堆栈外，显示关于锁的附加信息
 * `-m`：如果调用本地方法的话，可以显示C/C++的堆栈
 
-__在JDK1.5中，java.lang.Thread类新增一个getAllStackTraces()方法用于获取虚拟机中所有线程的StackTraceElement对象，使用这个对象可以通过简单的几行代码就能完成jstack的大部分功能，在实际项目中不妨调用这个方法做个管理员页面，可以随时使用浏览器来查看线程堆栈__
+**在JDK1.5中，java.lang.Thread类新增一个getAllStackTraces()方法用于获取虚拟机中所有线程的StackTraceElement对象，使用这个对象可以通过简单的几行代码就能完成jstack的大部分功能，在实际项目中不妨调用这个方法做个管理员页面，可以随时使用浏览器来查看线程堆栈**
 
 # 7 jad
 

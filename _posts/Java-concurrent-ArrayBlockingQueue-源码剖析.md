@@ -9,13 +9,13 @@ categories:
 - Source Code Analysis
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
 # 1 前言
 
-__ArrayBlockingQueue的分析分为以下几个部分__
+**ArrayBlockingQueue的分析分为以下几个部分**
 
 * 字段介绍
 * 重要方法源码分析
@@ -65,19 +65,19 @@ __ArrayBlockingQueue的分析分为以下几个部分__
     transient Itrs itrs = null;
 ```
 
-* __items__：用于存放元素的数组，注意到该字段是final修饰的，因此ArrayBlockingQueue是不能扩容的，其容量在初始化时就已经确定    
-* __takeIndex__：队列头元素的下标，指向take/poll/peek/remove方法操作的元素
-* __putIndex__：队列尾元素的下标，指向put/offer/add方法方法操作的元素
-* __lock__：重复锁，关于ReentrantLock源码，可以参考另一篇博客 {% post_link Java-concurrent-ReentrantLock-源码剖析 %}
-* __notEmpty__：条件对象(Condition)，关于ConditionObject源码分析，可以参考另一篇博客 {% post_link Java-concurrent-AQS-ConditionObject-源码剖析 %}
-* __notFull__：条件对象(Condition)
-* __itrs__：迭代器
+* **items**：用于存放元素的数组，注意到该字段是final修饰的，因此ArrayBlockingQueue是不能扩容的，其容量在初始化时就已经确定    
+* **takeIndex**：队列头元素的下标，指向take/poll/peek/remove方法操作的元素
+* **putIndex**：队列尾元素的下标，指向put/offer/add方法方法操作的元素
+* **lock**：重复锁，关于ReentrantLock源码，可以参考另一篇博客 {% post_link Java-concurrent-ReentrantLock-源码剖析 %}
+* **notEmpty**：条件对象(Condition)，关于ConditionObject源码分析，可以参考另一篇博客 {% post_link Java-concurrent-AQS-ConditionObject-源码剖析 %}
+* **notFull**：条件对象(Condition)
+* **itrs**：迭代器
 
 # 3 重要方法源码分析
 
 ## 3.1 offer
 
-__该方法向队列中添加一个元素__
+**该方法向队列中添加一个元素**
 
 * 当队列未满时，会成功添加
 * 当队列已满时，添加失败，但不会阻塞调用offer方法的线程
@@ -134,7 +134,7 @@ __该方法向队列中添加一个元素__
 
 ### 3.1.2 offer的另一个重载版本
 
-__这个版本的offer允许阻塞当前线程一段时间__
+**这个版本的offer允许阻塞当前线程一段时间**
 
 * 当队列已满时，会阻塞一段指定的时间。直至成功将元素入队，或者超时
 
@@ -175,7 +175,7 @@ __这个版本的offer允许阻塞当前线程一段时间__
 
 ## 3.2 put
 
-__put方法向队列添加一个元素__
+**put方法向队列添加一个元素**
 
 * 若队列已满，则阻塞调用put方法的线程，直至队列非满
 
@@ -207,7 +207,7 @@ __put方法向队列添加一个元素__
 
 ## 3.3 poll
 
-__poll方法从队列中取出一个元素__
+**poll方法从队列中取出一个元素**
 
 * 如果队列为空，则返回null，并不会阻塞当前线程
 
@@ -251,7 +251,7 @@ __poll方法从队列中取出一个元素__
 
 ### 3.3.2 poll的另一个重载版本
 
-__这个重载版本的poll方法允许阻塞一段指定的时间__
+**这个重载版本的poll方法允许阻塞一段指定的时间**
 
 * 当队列为空，则阻塞一段时间，直至获取元素或者阻塞超时
 
@@ -280,7 +280,7 @@ __这个重载版本的poll方法允许阻塞一段指定的时间__
 
 ## 3.4 take
 
-__take方法从队列中取出一个元素__
+**take方法从队列中取出一个元素**
 
 * 如果队列为空，则阻塞当前线程，直至队列不为空
 

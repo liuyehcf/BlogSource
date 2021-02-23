@@ -9,7 +9,7 @@ categories:
 - Source Code Analysis
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -27,7 +27,7 @@ Fork/Join框架是Java7提供了的一个用于并行执行任务的框架，是
 
 ![fig2](/images/Java-concurrent-Fork-Join-源码剖析/fig2.png)
 
-那么为什么需要使用工作窃取算法呢？假如我们需要做一个比较大的任务，我们可以把这个任务分割为若干互不依赖的子任务，为了减少线程间的竞争，于是把这些子任务分别放到不同的队列里，并为每个队列创建一个单独的线程来执行队列里的任务，线程和队列一一对应，比如A线程负责处理A队列里的任务。但是有的线程会先把自己队列里的任务干完，而其他线程对应的队列里还有任务等待处理。干完活的线程与其等着，不如去帮其他线程干活，于是它就去其他线程的队列里窃取一个任务来执行。而在这时它们会访问同一个队列，所以为了减少窃取任务线程和被窃取任务线程之间的竞争，__通常会使用双端队列，被窃取任务线程永远从双端队列的头部拿任务执行，而窃取任务的线程永远从双端队列的尾部拿任务执行。__
+那么为什么需要使用工作窃取算法呢？假如我们需要做一个比较大的任务，我们可以把这个任务分割为若干互不依赖的子任务，为了减少线程间的竞争，于是把这些子任务分别放到不同的队列里，并为每个队列创建一个单独的线程来执行队列里的任务，线程和队列一一对应，比如A线程负责处理A队列里的任务。但是有的线程会先把自己队列里的任务干完，而其他线程对应的队列里还有任务等待处理。干完活的线程与其等着，不如去帮其他线程干活，于是它就去其他线程的队列里窃取一个任务来执行。而在这时它们会访问同一个队列，所以为了减少窃取任务线程和被窃取任务线程之间的竞争，**通常会使用双端队列，被窃取任务线程永远从双端队列的头部拿任务执行，而窃取任务的线程永远从双端队列的尾部拿任务执行。**
 
 工作窃取算法的优点是充分利用线程进行并行计算，并减少了线程间的竞争，其缺点是在某些情况下还是存在竞争，比如双端队列里只有一个任务时。并且消耗了更多的系统资源，比如创建多个线程和多个双端队列
 
@@ -131,12 +131,12 @@ public abstract class RecursiveTask<V> extends ForkJoinTask<V> {
     static final int SMASK       = 0x0000ffff;  //short bits for tags
 ```
 
-* __DONE_MASK__：completion的掩码，即高四位为completion bits
-* __NORMAL__：正常状态，负数
-* __CANCELLED__：取消状态，负数，且小于NORMAL
-* __EXCEPTIONAL__：异常状态，负数，且小于CANCELLED
-* __SIGNAL__：？？？
-* __SMASK__：tags的掩码，即低四位
+* **DONE_MASK**：completion的掩码，即高四位为completion bits
+* **NORMAL**：正常状态，负数
+* **CANCELLED**：取消状态，负数，且小于NORMAL
+* **EXCEPTIONAL**：异常状态，负数，且小于CANCELLED
+* **SIGNAL**：？？？
+* **SMASK**：tags的掩码，即低四位
 
 ## 3.2 字段
 
@@ -144,7 +144,7 @@ public abstract class RecursiveTask<V> extends ForkJoinTask<V> {
     volatile int status; //accessed directly by pool and workers
 ```
 
-* __status__：用于标记任务的状态
+* **status**：用于标记任务的状态
 
 ## 3.3 重要方法
 
@@ -330,12 +330,12 @@ doJoin方法执行具体的join逻辑，即合并各个线程执行任务的结�
     private static final int  SHUTDOWN   = 1 << 31;
 ```
 
-* __RSLOCK__：
-* __RSIGNAL__：
-* __STARTED__：
-* __STOP__：
-* __TERMINATED__：
-* __SHUTDOWN__：
+* **RSLOCK**：
+* **RSIGNAL**：
+* **STARTED**：
+* **STOP**：
+* **TERMINATED**：
+* **SHUTDOWN**：
 
 ## 4.2 字段
 
@@ -353,7 +353,7 @@ doJoin方法执行具体的join逻辑，即合并各个线程执行任务的结�
 
 ## 4.3 WorkQueue
 
-WorkQueue(ForkJoinPool的静态内部类)用于支持__任务窃取(work-stealing)__以及__任务提交(task submission)__。下面即给出WorkQueue的源码，以及注释
+WorkQueue(ForkJoinPool的静态内部类)用于支持**任务窃取(work-stealing)**以及**任务提交(task submission)**。下面即给出WorkQueue的源码，以及注释
 
 ```java
     static final class WorkQueue {

@@ -8,13 +8,13 @@ categories:
 - Exception
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
 # 1 情景复现
 
-一个类的静态域或者静态块在初始化的过程中，如果抛出异常，那么在类加载的时候将会抛出`java.lang.ExceptionInInitializerError`。__如果用try-catch语句捕获该异常__，那么在使用该类的时候就会抛出`java.lang.NoClassDefFoundError`，且提示信息是`Could not initialize class XXX`
+一个类的静态域或者静态块在初始化的过程中，如果抛出异常，那么在类加载的时候将会抛出`java.lang.ExceptionInInitializerError`。**如果用try-catch语句捕获该异常**，那么在使用该类的时候就会抛出`java.lang.NoClassDefFoundError`，且提示信息是`Could not initialize class XXX`
 
 ```java
 package org.liuyehcf.error;
@@ -58,12 +58,12 @@ class InitializeThrowError {
     }
 ```
 
-__可以看到，异常是由JVM抛出，并且调用了一个Java实现的handler方法来处理该异常，于是我猜测Java字节码的执行是位于JVM当中的__
+**可以看到，异常是由JVM抛出，并且调用了一个Java实现的handler方法来处理该异常，于是我猜测Java字节码的执行是位于JVM当中的**
 
-对于下面的语句，我__猜测__执行过程如下
+对于下面的语句，我**猜测**执行过程如下
 
-1. Java字节码的解释执行__位于JVM空间__
-1. 执行语句1，第一次遇到类型A，__隐式触发__类加载过程。这时，用的是当前类加载器（假设是AppClassLoader），于是JVM调用Java代码（`ClassLoader.loadClass(String)`）来执行类加载过程。然后JVM调用Java代码（A的构造方法）创建实例
+1. Java字节码的解释执行**位于JVM空间**
+1. 执行语句1，第一次遇到类型A，**隐式触发**类加载过程。这时，用的是当前类加载器（假设是AppClassLoader），于是JVM调用Java代码（`ClassLoader.loadClass(String)`）来执行类加载过程。然后JVM调用Java代码（A的构造方法）创建实例
     * 类加载过程涉及到很多次Java代码与JVM代码交互的过程，可以参考{% post_link Java-类加载原理 %}
 1. 执行语句2，再一次遇到类型A，在JVM维护的内部数据结构中，通过类加载器实例（当前类加载器，即AppClassLoader）以及全限定名定位Class实例，发现命中，则不触发加载过程，然后JVM调用Java代码（A的构造方法）创建实例
 1. 执行语句3，JVM调用java代码
@@ -78,7 +78,7 @@ __可以看到，异常是由JVM抛出，并且调用了一个Java实现的handl
 
 ClassNotFoundException：意味着类加载器找不到某个类，即拿不到代表某个类的.class文件，通常来说，是由于classpath没有引入该类的加载路径
 
-NoClassDefFoundError：意味着JVM之前已经尝试加载某个类，__但是由于某些原因，加载失败了__。后来，我们又用到了这个类，于是抛出了该异常。因此，NoClassDefFoundError并不是classpath的问题。__因此，产生NoClassDefFoundError这个异常有两个条件：加载失败；加载失败抛出的异常被捕获，且后来用使用到了这个类__
+NoClassDefFoundError：意味着JVM之前已经尝试加载某个类，**但是由于某些原因，加载失败了**。后来，我们又用到了这个类，于是抛出了该异常。因此，NoClassDefFoundError并不是classpath的问题。**因此，产生NoClassDefFoundError这个异常有两个条件：加载失败；加载失败抛出的异常被捕获，且后来用使用到了这个类**
 
 # 3 参考
 

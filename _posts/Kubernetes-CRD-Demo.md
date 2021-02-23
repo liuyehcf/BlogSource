@@ -7,7 +7,7 @@ categories:
 - Kubernetes
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -49,7 +49,7 @@ __阅读更多__
 
 * `artifacts`：该目录下包含crd以及对应资源的yaml文件
 * `hack`：该目录下包含动态创建源码的脚本
-* `pkg/apis`：__crd资源定义，这部分是本示例的关键__
+* `pkg/apis`：**crd资源定义，这部分是本示例的关键**
     * 其中`zz_generated.deepcopy.go`文件是由`code-generator`创建的
 * `generated`：该目录下的文件全部是由`code-generator`创建的
 
@@ -129,7 +129,7 @@ type MyConfigList struct {
 1. `XXXSpec`
 1. `XXXList`
 
-__此外，注意一个`code-generator`的神坑，在上述源码中，包含了如下注释，这部分内容是`code-generator`的元数据，不写或写错都会导致代码生成失败，请注意！！！__
+**此外，注意一个`code-generator`的神坑，在上述源码中，包含了如下注释，这部分内容是`code-generator`的元数据，不写或写错都会导致代码生成失败，请注意！！！**
 
 ```go
 // +genclient
@@ -164,7 +164,7 @@ limitations under the License.
 package v1 // import "github.com/liuyehcf/demo-controller/pkg/apis/democontroller/v1"
 ```
 
-__这个文件乍一看就一个package声明，但是，注意上方两行注释，没有这两行注释，这部分内容是`code-generator`的元数据，不写或写错都会导致代码生成失败，请注意！！！__
+**这个文件乍一看就一个package声明，但是，注意上方两行注释，没有这两行注释，这部分内容是`code-generator`的元数据，不写或写错都会导致代码生成失败，请注意！！！**
 
 ```go
 // +k8s:deepcopy-gen=package
@@ -309,7 +309,7 @@ spec:
   scope: Namespaced
 ```
 
-__注意__
+**注意**
 
 1. `metadata.name`的结构为`<spec.names.plural>.<spec.group>`
 1. `spec.group`必须与`doc.go`中的注释，以及`register.go`中的`var SchemeGroupVersion = schema.GroupVersion...`保持一致

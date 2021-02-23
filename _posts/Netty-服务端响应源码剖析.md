@@ -9,7 +9,7 @@ categories:
 - Netty
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -424,7 +424,7 @@ public class EchoServer {
 ```
 
 1. 继续追踪read方法
-    * `read`方法位于`AbstractNioMessageChannel`的__非静态__内部类`NioMessageUnsafe`中，该方法的核心是doReadMessages方法
+    * `read`方法位于`AbstractNioMessageChannel`的**非静态**内部类`NioMessageUnsafe`中，该方法的核心是doReadMessages方法
 ```java
         public void read() {
             assert eventLoop().inEventLoop();
@@ -562,8 +562,8 @@ public class EchoServer {
     }
 ```
 
-1. 接下来，回到位于`AbstractNioMessageChannel`的__非静态__内部类`NioMessageUnsafe`的`read`方法中，于是触发了一些生命周期，例如fireChannelRead以及fireChannelReadComplete等
-    * 注意到，在服务端启动过程中，在NioServerSocketChannel中绑定了一个`ServerBootstrapAcceptor`，绑定的地方：__位于`ServerBootstrap`的`init`方法__，详见{% post_link Netty-服务端启动源码剖析 %}
+1. 接下来，回到位于`AbstractNioMessageChannel`的**非静态**内部类`NioMessageUnsafe`的`read`方法中，于是触发了一些生命周期，例如fireChannelRead以及fireChannelReadComplete等
+    * 注意到，在服务端启动过程中，在NioServerSocketChannel中绑定了一个`ServerBootstrapAcceptor`，绑定的地方：**位于`ServerBootstrap`的`init`方法**，详见{% post_link Netty-服务端启动源码剖析 %}
 ```java
     @Override
     void init(Channel channel) throws Exception {
@@ -618,7 +618,7 @@ public class EchoServer {
 ```
 
 1. 接下来，我们分析一下ServerBootstrapAcceptor这个服务端内置的Handler
-    * `ServerBootstrapAcceptor`位于`ServerBootstrap`，是一个__静态__内部类。我们关注channelRead方法，该方法将我们在代码清单中配置的childHandler（即那个ChannelInitializer）添加到child Channel的Pipeline中，要注意，此时注入的仅仅是这个ChannelInitializer，而非用户自定义的Handler
+    * `ServerBootstrapAcceptor`位于`ServerBootstrap`，是一个**静态**内部类。我们关注channelRead方法，该方法将我们在代码清单中配置的childHandler（即那个ChannelInitializer）添加到child Channel的Pipeline中，要注意，此时注入的仅仅是这个ChannelInitializer，而非用户自定义的Handler
     * 用户自定义的Handler要等到后续的register操作过程中被注入到child Channel的Pipeline中
 ```java
     private static class ServerBootstrapAcceptor extends ChannelInboundHandlerAdapter {
@@ -699,15 +699,15 @@ public class EchoServer {
     }
 ```
 
-1. 于是，回到位于`AbstractNioMessageChannel`的__非静态__内部类`NioMessageUnsafe`的`read`方法中来，触发的生命周期fireChannelRead将会触发`ServerBootstrapAcceptor`中的`channelRead`方法的调用，于是完成了Channel的创建以及初始化工作
+1. 于是，回到位于`AbstractNioMessageChannel`的**非静态**内部类`NioMessageUnsafe`的`read`方法中来，触发的生命周期fireChannelRead将会触发`ServerBootstrapAcceptor`中的`channelRead`方法的调用，于是完成了Channel的创建以及初始化工作
 
 至此，Channel的创建以及初始化工作完毕
 
 # 6 注册Channel
 
-__这之后的执行过程与{% post_link Netty-服务端启动源码剖析 %}中的register过程完全一致__
+**这之后的执行过程与{% post_link Netty-服务端启动源码剖析 %}中的register过程完全一致**
 
-1. 我们接着回到位于`ServerBootstrap`的__静态__内部来`ServerBootstrapAcceptor`的`channelRead`方法中来，继续register方法的分析
+1. 我们接着回到位于`ServerBootstrap`的**静态**内部来`ServerBootstrapAcceptor`的`channelRead`方法中来，继续register方法的分析
     * `register`方法位于`MultithreadEventLoopGroup`，调用next方法获取EventLoop来执行register方法
 ```java
     public ChannelFuture register(Channel channel) {
@@ -731,7 +731,7 @@ __这之后的执行过程与{% post_link Netty-服务端启动源码剖析 %}�
     }
 ```
 
-    * `register`方法位于`AbstractChannel`中的__非静态__内部类`AbstractUnsafe`，该方法主要通过异步方式执行了register0方法
+    * `register`方法位于`AbstractChannel`中的**非静态**内部类`AbstractUnsafe`，该方法主要通过异步方式执行了register0方法
 ```java
         public final void register(EventLoop eventLoop, final ChannelPromise promise) {
             if (eventLoop == null) {
@@ -772,7 +772,7 @@ __这之后的执行过程与{% post_link Netty-服务端启动源码剖析 %}�
 ```
 
 1. 接下来跟踪register0的执行流程
-    * `register0`方法位于`AbstractChannel`中的__非静态__内部类`AbstractUnsafe`，该方法主要执行了doRegister方法，并触发了一些生命周期，例如invokeHandlerAddedIfNeeded、fireChannelRegistered、fireChannelActive
+    * `register0`方法位于`AbstractChannel`中的**非静态**内部类`AbstractUnsafe`，该方法主要执行了doRegister方法，并触发了一些生命周期，例如invokeHandlerAddedIfNeeded、fireChannelRegistered、fireChannelActive
 ```java
         private void register0(ChannelPromise promise) {
             try {
@@ -878,7 +878,7 @@ __这之后的执行过程与{% post_link Netty-服务端启动源码剖析 %}�
     }
 ```
 
-    * `execute`方法位于`DefaultChannelPipeline`中的__非静态__内部类`PendingHandlerAddedTask`，该方法主要用于触发callHandlerAdded0方法
+    * `execute`方法位于`DefaultChannelPipeline`中的**非静态**内部类`PendingHandlerAddedTask`，该方法主要用于触发callHandlerAdded0方法
 ```java
         void execute() {
             EventExecutor executor = ctx.executor();

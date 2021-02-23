@@ -9,7 +9,7 @@ categories:
 - Netty
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -47,7 +47,7 @@ DefaultChannelPipeline为ChannelPipeline接口提供了基本的实现
 
 DefaultChannelPipeline的作用就是用于存放所有Netty内置的Handler或者用户自定义的Handler，并且提供触发这些Handler的方法
 
-__包含如下重要字段__
+**包含如下重要字段**
 
 1. `AbstractChannelHandlerContext head`：Pipeline中所有的Handler形成一个双向链表，这是表头
 1. `AbstractChannelHandlerContext tail`：Pipeline中所有的Handler形成一个双向链表，这是表尾

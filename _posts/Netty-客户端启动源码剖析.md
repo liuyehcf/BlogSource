@@ -9,7 +9,7 @@ categories:
 - Netty
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -90,11 +90,11 @@ public class EchoClient {
 
 启动过程可以概括为以下步骤
 
-1. __配置启动参数__
-1. __创建Channel__
-1. __初始化Channel__
-1. __注册Channel__
-1. __连接Channel__
+1. **配置启动参数**
+1. **创建Channel**
+1. **初始化Channel**
+1. **注册Channel**
+1. **连接Channel**
 
 # 4 配置启动参数
 
@@ -234,7 +234,7 @@ channel注册的详细过程，其详细过程参见{% post_link Netty-服务端
 
 1. 首先，执行doRegister方法，进行真正的底层的register操作
 1. 然后，执行`pipeline.invokeHandlerAddedIfNeeded();`
-1. __将initAndRegister对应的ChannelFuture设置为成功__
+1. **将initAndRegister对应的ChannelFuture设置为成功**
 1. 最后，触发其他生命周期，例如`fireChannelRegistered`以及`fireChannelActive`
 
 ```java

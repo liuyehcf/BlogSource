@@ -9,13 +9,13 @@ categories:
 - MyBatis
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
 # 1 MyBatis的基本构成
 
-我们先了解一下MyBatis的核心组件（__先不整合Spring，以下内容都是纯MyBatis的概念、使用以及配置方式__）
+我们先了解一下MyBatis的核心组件（**先不整合Spring，以下内容都是纯MyBatis的概念、使用以及配置方式**）
 
 1. `SqlSessionFactoryBuilder`：构造器，它会根据配置信息或者代码来生成SqlSessionFactory
     * 利用XML(提取到流对象)或者Java编码(Configuration)对象来构建SqlSessionFactory
@@ -255,7 +255,7 @@ public TypeAliasRegistry() {
     </typeAliases>
 ```
 
-__我们可以通过@Alias自定义别名，如下：__
+**我们可以通过@Alias自定义别名，如下：**
 
 ```java
 @Alias("role")
@@ -264,7 +264,7 @@ public class Role{
 }
 ```
 
-__如果没有@Alias注解，MyBatis也会装载，默认的规则是：将首字母小写的类名，作为MyBatis的别名__
+**如果没有@Alias注解，MyBatis也会装载，默认的规则是：将首字母小写的类名，作为MyBatis的别名**
 
 ## 2.2 environments配置环境
 
@@ -313,7 +313,7 @@ __如果没有@Alias注解，MyBatis也会装载，默认的规则是：将首�
 
 ## 2.3 引入映射器的方法
 
-__用文件路径引入映射器__
+**用文件路径引入映射器**
 
 ```xml
 <mappers>
@@ -321,7 +321,7 @@ __用文件路径引入映射器__
 </mappers>
 ```
 
-__用包名引入映射器__
+**用包名引入映射器**
 
 ```xml
 <mappers>
@@ -329,7 +329,7 @@ __用包名引入映射器__
 </mappers>
 ```
 
-__用类注册引入映射器__
+**用类注册引入映射器**
 
 ```xml
 <mappers>
@@ -338,7 +338,7 @@ __用类注册引入映射器__
 </mappers>
 ```
 
-__用userMapper.xml引入映射器__
+**用userMapper.xml引入映射器**
 
 ```xml
 <mappers>
@@ -366,7 +366,7 @@ MyBatis-Spring项目提供了`org.mybatis.spring.SqlSessionFactoryBean`来配置
 1. 数据源
 1. MyBatis配置文件路径
 
-__示例：__
+**示例：**
 
 ```xml
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -382,7 +382,7 @@ __示例：__
     </bean>
 ```
 
-__MyBatis配置文件`sqlMapConfig.xml`如下__
+**MyBatis配置文件`sqlMapConfig.xml`如下**
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>

@@ -9,7 +9,7 @@ categories:
 - Akka
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -67,7 +67,7 @@ Optimistic concurrency control (OCC)通常是`obstruction-free`。在这种方�
 
 `Actor System`的典型特征就是，一个大任务通常会被分解成多个（可能包含多个层级）更易执行的子任务。为了达到这样的目的，任务本身需要清晰地定义，同时，返回的结果也必须清晰地定义。也就是说，一个`Actor`可以处理哪些响应，不可以处理哪些响应都是需要严格设计过的，当一个`Actor`收到了一个它无法处理的消息时，它应该将其返回给它的`Supervisor`，这样可以保证异常情况可以在一个合适的位置得到处理
 
-__设计一个满足上述要求的系统的难点在于：谁来监管什么。通常，这没有一个万能的解决方案，但是下面给出一些建议__
+**设计一个满足上述要求的系统的难点在于：谁来监管什么。通常，这没有一个万能的解决方案，但是下面给出一些建议**
 
 1. If one actor manages the work another actor is doing, e.g. by passing on sub-tasks, then the manager should supervise the child. The reason is that the manager knows which kind of failures are expected and how to handle them.
 1. If one actor carries very important data (i.e. its state shall not be lost if avoidable), this actor should source out any possibly dangerous sub-tasks to children it supervises and handle failures of these children as appropriate. Depending on the nature of the requests, it may be best to create a new child for each request, which simplifies state management for collecting the replies. This is known as the “Error Kernel Pattern” from Erlang.
@@ -153,7 +153,7 @@ Akka会透明地处理错误，由于`Strategy`是如何构建`Actor System`的�
 
 除非错误能够被精确地识别，那就不能排除第三种原因的可能性。如果能够断定某个`Subordinate Actor`产生的异常与自身或者其他`Subordinate Actor`无关时，最佳做法便是重启这个异常的`Subordinate Actor`。重启意味着创建一个新的`Subordinate Actor`，并且更新`Subordinate Actor List`，这也是封装的原因之一，使用者无须关心重启的细节。新创建的`Actor`会继续处理`Mailbox`中的消息，但是不会重复处理引发异常的那个消息。总之，对于外部而言，`Actor`重启是不可见的，无须感知的
 
-__重启的步骤__
+**重启的步骤**
 
 1. 暂停当前`Actor`、递归暂停所有的`Subordinate Actor`，暂停意味着停止处理消息
 1. 触发旧实例的`preRestart`钩子方法，该方法默认会发送`terminatation request`给所有的`Subordinate Actor`（可以被覆盖，也就是说具体会给哪些`Subordinate Actor`发送`terminatation request`是可以定制的），并触发`postStop`钩子方法
@@ -247,9 +247,9 @@ system.actorOf(supervisorProps, "echoSupervisor");
 
 #### 1.5.2.2 Actor Path Anchors
 
-__pure local actor path__: `akka://<akka-system-name>/user/<actor-hierarchy-path>`
+**pure local actor path**: `akka://<akka-system-name>/user/<actor-hierarchy-path>`
 
-__remote actor path__: `akka.<protocol>://<akka-system-name>@<host>:<port>/user/<actor-hierarchy-path>`
+**remote actor path**: `akka.<protocol>://<akka-system-name>@<host>:<port>/user/<actor-hierarchy-path>`
 
 * 默认的`protocol`是`tcp`
 
@@ -297,7 +297,7 @@ __remote actor path__: `akka.<protocol>://<akka-system-name>@<host>:<port>/user/
 
 ### 1.5.6 The Interplay with Remote Deployment
 
-在远程模式下，我们创建一个`Actor`，Akka系统会决定在本地JVM创建该`Actor`或者在远程JVM中创建该`Actor`。对于后者，`Action`的创建可能触发在另一个远程JVM中，显然对应的是另一个`Actor System`。因此，__`Actor System`会为这种方式创建的`Actor`赋予一个特殊的`Actor Path`__。在这种情况下，新创建的`Actor`，其对应的`Supervisor Actor`就在另一个`Actor System`中（触发创建动作的`Actor System`），因此`context.parent`与`context.path.parent`并不是同一个`Actor`
+在远程模式下，我们创建一个`Actor`，Akka系统会决定在本地JVM创建该`Actor`或者在远程JVM中创建该`Actor`。对于后者，`Action`的创建可能触发在另一个远程JVM中，显然对应的是另一个`Actor System`。因此，**`Actor System`会为这种方式创建的`Actor`赋予一个特殊的`Actor Path`**。在这种情况下，新创建的`Actor`，其对应的`Supervisor Actor`就在另一个`Actor System`中（触发创建动作的`Actor System`），因此`context.parent`与`context.path.parent`并不是同一个`Actor`
 
 ![fig3](/images/Akka-Overview/fig3.png)
 
@@ -318,11 +318,11 @@ __remote actor path__: `akka.<protocol>://<akka-system-name>@<host>:<port>/user/
 
 ### 1.6.1 Distributed by Default
 
-__Akka在设计之初就考虑到了分布式的场景：`Actor`之间所有的交互都是通过Message来完成的，且都是异步的，这就保证了所有的操作在单节点或者多节点上都是等价的__。为了实现这一愿景，所有的机制都是从`Remote`模式开始设计，然后对于`Local`模式进行优化。而不是从`Local`开始，然后再去考虑`Remote`的场景
+**Akka在设计之初就考虑到了分布式的场景：`Actor`之间所有的交互都是通过Message来完成的，且都是异步的，这就保证了所有的操作在单节点或者多节点上都是等价的**。为了实现这一愿景，所有的机制都是从`Remote`模式开始设计，然后对于`Local`模式进行优化。而不是从`Local`开始，然后再去考虑`Remote`的场景
 
 ### 1.6.2 How is Remoting Used
 
-__Akka几乎没有提供任何有关Remote的API，是否以Remote模式工作，完全取决于配置__。这种特性可以让我们在不改动任何一行代码的情况下，让`Akka System`工作于不同的模式下，并且可以得到很好的可伸缩性、扩展性
+**Akka几乎没有提供任何有关Remote的API，是否以Remote模式工作，完全取决于配置**。这种特性可以让我们在不改动任何一行代码的情况下，让`Akka System`工作于不同的模式下，并且可以得到很好的可伸缩性、扩展性
 
 Akka中唯一个与Remote相关的API就是：我们可以向`Props`提供一个`Deploy`参数，来改变模式。但是当`Code`与`Configuration`共存时，`Configuration`最终生效
 
@@ -337,7 +337,7 @@ Akka中唯一个与Remote相关的API就是：我们可以向`Props`提供一个
 
 ### 1.6.4 Marking Points for Scaling Up with Routers
 
-__更进一步，有时候，我们不想让我们的系统拆分成多个部分运行在不同的节点上，而是想让我们的系统在不同的节点上运行多个实例__。Akka提供了不同的路由策略，包括`round-robin`。
+**更进一步，有时候，我们不想让我们的系统拆分成多个部分运行在不同的节点上，而是想让我们的系统在不同的节点上运行多个实例**。Akka提供了不同的路由策略，包括`round-robin`。
 
 The only thing necessary to achieve this is that the developer needs to declare a certain actor as “withRouter”, then—in its stead—a router actor will be created which will spawn up a configurable number of children of the desired type and route to them in the configured fashion. Once such a router has been declared, its configuration can be freely overridden from the configuration file, including mixing it with the remote deployment of (some of) the children.
 
@@ -359,7 +359,7 @@ The only thing necessary to achieve this is that the developer needs to declare 
 1. 在大多数情况下，发送的消息要求是不可变的。但是如果消息是可变的，那么将不会存在`happens-before`规则，接受者可能看到构建了一半的对象，或者说看到了某些值的一部分（例如double以及long）
 1. 如果`Actor`在处理某个消息时修改了该消息的内部状态，并且在后续某个时间点又访问了这个消息的状态。`Actor Model`不保证同一个`Actor`在处理不同消息时位于同一个线程中
 
-__为了避免可见性问题以及有序性问题，Akka保证了如下两条happens-before规则__
+**为了避免可见性问题以及有序性问题，Akka保证了如下两条happens-before规则**
 
 1. `The actor send rule`：对于同一个`Actor`，消息的发送`happens-before`消息的接收？？？
 1. `The actor subsequent processing rule`：对于同一个`Actor`，处理某个消息`happens-before`处理下一个消息
@@ -384,11 +384,11 @@ Akka建议不要将`non-final`字段包装到闭包当中，如果一定要将`n
 
 ### 2.1.1 Term
 
-__`node`（下文称为节点）__：`Akka Cluster`中的逻辑单元，由`hostname:port:uid`三元组唯一确定。一台物理机上可能运行着多个`node`
+**`node`（下文称为节点）**：`Akka Cluster`中的逻辑单元，由`hostname:port:uid`三元组唯一确定。一台物理机上可能运行着多个`node`
 
-__`cluster`（下文称为集群）__：由多个`node`组成的一个有机整体
+**`cluster`（下文称为集群）**：由多个`node`组成的一个有机整体
 
-__`leader`__：在`cluster`中扮演者领导者的__单个`node`__。管理者`cluter`以及`node`状态的转换
+**`leader`**：在`cluster`中扮演者领导者的**单个`node`**。管理者`cluter`以及`node`状态的转换
 
 ### 2.1.2 Membership
 
@@ -436,15 +436,15 @@ __`leader`__：在`cluster`中扮演者领导者的__单个`node`__。管理者`
 
 上面说到，当节点进入变得`unreachable`时，集群无法达到收敛状态，我们可以通过配置`akka.cluster.allow-weakly-up-members`（默认开启），这样一来，在非收敛状态时，新节点允许进入集群，但会被标记为`weaklyup`状态，当收敛状态重新达到时，`leader`会将`weaklyup`标记为`up`
 
-__`akka.cluster.allow-weakly-up-members=off`时，状态机如下__
+**`akka.cluster.allow-weakly-up-members=off`时，状态机如下**
 
 ![fig4](/images/Akka-Overview/fig4.png)
 
-__`akka.cluster.allow-weakly-up-members=on`时，状态机如下__
+**`akka.cluster.allow-weakly-up-members=on`时，状态机如下**
 
 ![fig5](/images/Akka-Overview/fig5.png)
 
-__成员状态__
+**成员状态**
 
 1. `joinging`：节点加入集群时的瞬态
 1. `weakly up`：当集群未收敛，且`akka.cluster.allow-weakly-up-members=on`时，节点加入集群时的瞬态
@@ -453,13 +453,13 @@ __成员状态__
 1. `down`：不再参与集群的决策
 1. `removed`：不再是集群的成员
 
-__用户可以进行的操作__
+**用户可以进行的操作**
 
 1. `join`：加入集群
 1. `leave`：优雅地离开集群
 1. `down`：将节点标记为down
 
-__leader actions__
+**leader actions**
 
 1. `joinint->up`
 1. `weakly up->up`
@@ -471,7 +471,7 @@ __leader actions__
 
 微服务架构有着诸多的优点，微服务的独立性允许多个更小、更专业的团队能够频繁地提供新功能，能够快速响应业务需求
 
-__在微服务架构中，我们必须考虑`服务间`以及`服务内`这两种通信方式__
+**在微服务架构中，我们必须考虑`服务间`以及`服务内`这两种通信方式**
 
 通常，我们不建议用`Akka Cluster`来完成服务间的通信，因为这会导致两个微服务产生严重的代码耦合，且会带来部署的依赖性，这与微服务架构的初衷相悖
 
@@ -516,7 +516,7 @@ cluster.joinSeedNodes(list);
 
 如果一个正常执行的节点将自身标记为`down`，那么该节点将会终止
 
-此外，`Akka`还提供了一种自动将`unreachable`节点标记为`down`的机制，这意味着`Leader`会自动将超过配置时间的`unreachable`节点标记为`down`。__`Akka`强烈建议`不要使用该特性`__：该`auto-down`特性不应该在生产环境使用，因为当出现网络抖动时（或者长时间的Full GC，或者其他原因），集群的两部分变得相互不可见，于是会将对方移除集群，随后形成了两个完全独立的集群
+此外，`Akka`还提供了一种自动将`unreachable`节点标记为`down`的机制，这意味着`Leader`会自动将超过配置时间的`unreachable`节点标记为`down`。**`Akka`强烈建议`不要使用该特性`**：该`auto-down`特性不应该在生产环境使用，因为当出现网络抖动时（或者长时间的Full GC，或者其他原因），集群的两部分变得相互不可见，于是会将对方移除集群，随后形成了两个完全独立的集群
 
 ### 2.2.4 Leaving
 
@@ -546,7 +546,7 @@ cluster.leave(cluster.selfAddress());
 cluster.subscribe(getSelf(), MemberEvent.class, UnreachableMember.class);
 ```
 
-__与节点生命周期相关的事件如下__
+**与节点生命周期相关的事件如下**
 
 1. `ClusterEvent.MemberJoined`：节点刚加入集群，被标记为`joining`状态
 1. `ClusterEvent.MemberUp`：节点加入集群，被标记为`up`状态

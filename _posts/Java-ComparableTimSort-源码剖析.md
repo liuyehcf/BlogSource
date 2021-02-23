@@ -9,7 +9,7 @@ categories:
 - Sort
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -17,7 +17,7 @@ __阅读更多__
 
 Timsort是结合了合并排序（merge sort）和插入排序（insertion sort）而得出的排序算法，它在现实中有很好的效率。Tim Peters在2002年设计了该算法并在Python中使用（TimSort是python中list.sort的默认实现）。该算法找到数据中已经排好序的块-分区，每一个分区叫一个run，然后按规则合并这些run。Pyhton自从2.3版以来一直采用Timsort算法排序，现在Java SE7和Android也采用Timsort算法对数组排序
 
-JDK 1.8的实现中，Arrays.sort根据数组元素的类型会采用两种不同的排序算法。__对于基本类型(byte,short,int,long,float,double)__，采用的是一种优化过的快速排序（本篇博客不做介绍），虽然快速排序是不稳定的排序，但是对于基本类型而言，稳定与否没有任何区别。__对于类类型（reference）__，采用的是就是本篇博客将要讨论的TimSort，TimSort是一种优化过的归并排序，具有稳定性
+JDK 1.8的实现中，Arrays.sort根据数组元素的类型会采用两种不同的排序算法。**对于基本类型(byte,short,int,long,float,double)**，采用的是一种优化过的快速排序（本篇博客不做介绍），虽然快速排序是不稳定的排序，但是对于基本类型而言，稳定与否没有任何区别。**对于类类型（reference）**，采用的是就是本篇博客将要讨论的TimSort，TimSort是一种优化过的归并排序，具有稳定性
 
 ComparableTimSort与TimSort是一样的，TimSort利用的是Comparator来进行对象的比较，而ComparableTimSort直接利用的是实现了Comparable接口的对象来进行比较操作
 
@@ -59,9 +59,9 @@ ComparableTimSort与TimSort是一样的，TimSort利用的是Comparator来进行
     private static final int INITIAL_TMP_STORAGE_LENGTH = 256;
 ```
 
-* __`MIN_MERGE`__：进行归并算法的最小长度，小于这个长度的序列将会采用二分插入排序算法
-* __`MIN_GALLOP`__：在进行merge操作时，会利用这个数值进行一些优化措施，具体请参考mergeLo方法的分析
-* __`INITIAL_TMP_STORAGE_LENGTH`__：tem临时数组的初始大小，tem的具体大小会根据情况进行调整
+* **`MIN_MERGE`**：进行归并算法的最小长度，小于这个长度的序列将会采用二分插入排序算法
+* **`MIN_GALLOP`**：在进行merge操作时，会利用这个数值进行一些优化措施，具体请参考mergeLo方法的分析
+* **`INITIAL_TMP_STORAGE_LENGTH`**：tem临时数组的初始大小，tem的具体大小会根据情况进行调整
 
 # 3 字段
 
@@ -95,13 +95,13 @@ ComparableTimSort与TimSort是一样的，TimSort利用的是Comparator来进行
     private final int[] runLen;
 ```
 
-* __a__：待排序的数组
-* __tmp__：临时数组
-* __tmpBase__：临时数组起始下标
-* __tmpLen__：临时数组长度
-* __stackSize__：栈大小
-* __runBase__：run的起始下标数组
-* __runLen__：run的长度数组
+* **a**：待排序的数组
+* **tmp**：临时数组
+* **tmpBase**：临时数组起始下标
+* **tmpLen**：临时数组长度
+* **stackSize**：栈大小
+* **runBase**：run的起始下标数组
+* **runLen**：run的长度数组
 
 > run是数组中一段已排序的片段。片段的起始地址存在runBase数组中，片段的长度存在runLen中
 
@@ -285,7 +285,7 @@ ComparableTimSort与TimSort是一样的，TimSort利用的是Comparator来进行
 
 二分插入排序，对于一个较小的数组来说，二分插入排序是最优的一种算法
 
-二分插入排序算法相比于插入排序算法而言进行了一些优化：__对于开头已排序的部分，二分插入排序算法能够充分利用已排序这一点来减少的次数，提升交换的速度(System.arraycopy)__
+二分插入排序算法相比于插入排序算法而言进行了一些优化：**对于开头已排序的部分，二分插入排序算法能够充分利用已排序这一点来减少的次数，提升交换的速度(System.arraycopy)**
 
 参数说明
 
@@ -383,7 +383,7 @@ ComparableTimSort与TimSort是一样的，TimSort利用的是Comparator来进行
 
 ## 4.7 mergeCollapse
 
-mergeCollapse会在__不满足__堆栈不变式的情况下进行合并操作，__堆栈不变式__是指
+mergeCollapse会在**不满足**堆栈不变式的情况下进行合并操作，**堆栈不变式**是指
 
 1. `runLen[i - 3] > runLen[i - 2] + runLen[i - 1]`
 1. `runLen[i - 2] > runLen[i - 1]`

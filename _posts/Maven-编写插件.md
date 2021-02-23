@@ -8,7 +8,7 @@ categories:
 - Maven
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -16,19 +16,19 @@ __阅读更多__
 
 编写Maven插件的主要步骤如下：
 
-1. __创建一个maven-plugin项目__：
+1. **创建一个maven-plugin项目**：
     * 插件本身也是Maven项目，特殊的地方在于它的packaging必须是maven-plugin
     * 用户可以使用`maven-archetype-plugin`快速创建一个Maven插件项目
-1. __为插件编写目标__：
+1. **为插件编写目标**：
     * 每个插件都必须包含一个或多个目标，Maven称之为Mojo（与Pojo对应，后者指Plain Old Java Object，这里指Maven Old Java Object）
     * 编写插件的时候必须提供一个或者多个继承自AbstractMojo的类
-1. __为目标提供配置点__：
+1. **为目标提供配置点**：
     * 大部分Maven插件其目标都是可配置的，因此在编写Mojo的时候需要注意提供可配置的参数
-1. __编写代码实现目标行为__：
+1. **编写代码实现目标行为**：
     * 根据实际需要实现Mojo
-1. __错误处理及日志__：
+1. **错误处理及日志**：
     * 当Mojo发生异常时，根据情况控制Maven的运行状态。在代码中编写必要的日志以便为用户提供足够的信息
-1. __测试插件__：
+1. **测试插件**：
     * 编写自动化的测试代码测试行为，然后再实际运行插件以验证其行为
 
 # 2 案例：编写一个用于代码行统计的Maven插件
@@ -86,7 +86,7 @@ Define value for property 'package':  org.liuyehcf: : <在这里键入>
 
 键入`Enter`
 
-__生成了如下的Pom文件__
+**生成了如下的Pom文件**
 
 ```xml
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

@@ -7,7 +7,7 @@ categories:
 - Hexo
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -17,7 +17,7 @@ __阅读更多__
 
 [MathJax-配置](http://theme-next.iissnan.com/third-party-services.html#mathjax)
 
-__禁止markdown对`-`、`\\`、`\{`、`\}`等进行转义__：修改配置文件`node_modules/marked/lib/marked.js`
+**禁止markdown对`-`、`\\`、`\{`、`\}`等进行转义**：修改配置文件`node_modules/marked/lib/marked.js`
 
 将
 
@@ -34,7 +34,7 @@ escape: /^\\([`*\[\]()# +\-.!_>])/,
 将
 
 ```
-em: /^\b_((?:[^_]|__)+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
+em: /^\b_((?:[^_]|**)+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
 ```
 
 替换为
@@ -51,17 +51,17 @@ em: /^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
 
 [hexo-filter-mermaid-diagrams](https://github.com/webappdevelp/hexo-filter-mermaid-diagrams)
 
-__步骤1：安装插件__
+**步骤1：安装插件**
 
 ```sh
 npm install hexo-filter-mermaid-diagrams --save
 ```
 
-__步骤2：修改主题配置文件`themes/next/_config.yml`，找到`mermaid`的配置项，将`enable`改为true即可__
+**步骤2：修改主题配置文件`themes/next/_config.yml`，找到`mermaid`的配置项，将`enable`改为true即可**
 
 ## 3.1 效果：横向流程图
 
-__源码：__
+**源码：**
 
 ```
 graph LR
@@ -72,7 +72,7 @@ A[方形] -->B(圆角)
     F[横向流程图]
 ```
 
-__渲染后：__
+**渲染后：**
 
 ```mermaid
 graph LR
@@ -85,7 +85,7 @@ A[方形] -->B(圆角)
 
 ## 3.2 效果：竖向流程图
 
-__源码：__
+**源码：**
 
 ```
 graph TD
@@ -96,7 +96,7 @@ A[方形] --> B(圆角)
     F[竖向流程图]
 ```
 
-__渲染后：__
+**渲染后：**
 
 ```mermaid
 graph TD
@@ -109,7 +109,7 @@ A[方形] --> B(圆角)
 
 # 4 plantuml时序图
 
-__步骤1：安装插件__
+**步骤1：安装插件**
 
 ```sh
 npm install hexo-filter-plantuml --save
@@ -117,7 +117,7 @@ npm install hexo-filter-plantuml --save
 
 ## 4.1 效果
 
-__源码：__
+**源码：**
 
 ```
 skinparam backgroundColor #EEEBDC
@@ -170,7 +170,7 @@ A --> User: Done
 deactivate A
 ```
 
-__渲染后：__
+**渲染后：**
 
 ```plantuml
 skinparam backgroundColor #EEEBDC
@@ -227,7 +227,7 @@ deactivate A
 
 [hexo-filter-flowchart](https://github.com/bubkoo/hexo-filter-flowchart)
 
-__步骤1：安装插件__
+**步骤1：安装插件**
 
 ```sh
 npm install hexo-filter-flowchart --save 
@@ -235,7 +235,7 @@ npm install hexo-filter-flowchart --save
 
 ## 5.1 效果：纵向流程图
 
-__源码：__
+**源码：**
 
 ```
 st=>start: 开始框
@@ -249,7 +249,7 @@ cond(yes)->io->e
 cond(no)->sub1(right)->op
 ```
 
-__渲染后：__
+**渲染后：**
 
 ```flow
 st=>start: 开始框
@@ -265,7 +265,7 @@ cond(no)->sub1(right)->op
 
 ## 5.2 效果：横向流程图
 
-__源码：__
+**源码：**
 
 ```
 st=>start: 开始框
@@ -279,7 +279,7 @@ cond(yes)->io(bottom)->e
 cond(no)->sub1(right)->op
 ```
 
-__渲染后：__
+**渲染后：**
 
 ```flow
 st=>start: 开始框

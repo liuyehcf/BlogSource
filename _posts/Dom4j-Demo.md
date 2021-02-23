@@ -9,7 +9,7 @@ categories:
 - Dom4j
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -21,7 +21,7 @@ __阅读更多__
 1. 在读取该带有xmlns的配置文件时，需要为SAXReader绑定xmlns，即代码清单中的(2)
 1. 在写`xPathExpress`时，需要带上xmlns前缀，即代码清单中的(3)
 
-__代码清单__
+**代码清单**
 
 ```java
 package org.liuyehcf.dom4j;
@@ -131,7 +131,7 @@ public class Dom4jDemo {
 }
 ```
 
-__生成的xml文件如下__
+**生成的xml文件如下**
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -148,7 +148,7 @@ __生成的xml文件如下__
 
 ```
 
-__输出如下__
+**输出如下**
 
 ```
 3
@@ -165,11 +165,11 @@ __输出如下__
 
 dom4j几乎所有的数据类型都继承自Node接口，下面介绍几个常用的数据类型
 
-__Document__：表示整个xml文件
+**Document**：表示整个xml文件
 
-__Element__：元素
+**Element**：元素
 
-__Attribute__：元素的属性
+**Attribute**：元素的属性
 
 # 3 Node.selectNodes
 
@@ -177,7 +177,7 @@ __Attribute__：元素的属性
 
 1. `"/beans/bean/property"`：从跟节点`<beans>`开始，经过`<bean>`节点的所有`<property>`节点
 1. `"//property"`：所有`<property>`节点
-1. "property"：__当前节点开始__的所有`<property>`节点
+1. "property"：**当前节点开始**的所有`<property>`节点
 1. `"/beans//property"`：从根节点`<beans>`开始，所有所有`<property>`节点（无论经过几个中间节点）
 1. `"/beans/bean/property/@value"`：从跟节点`<beans>`开始，经过`<bean>`节点，包含属性`value`的所有`<property>`节点
 1. `"/beans/bean/property/@value=liuye"`：从跟节点`<beans>`开始，经过`<bean>`节点，包含属性`value`且值为`liuye`的所有`<property>`节点
@@ -186,9 +186,9 @@ __Attribute__：元素的属性
     * `*`可以匹配任意节点
     * `@*`可以匹配任意属性
     * `|`表示或运算
-* __所有以`/`或者`//`开始的`xPathExpress`都与当前节点的位置无关__
+* **所有以`/`或者`//`开始的`xPathExpress`都与当前节点的位置无关**
 
-__注意，如果xml文件带有xmlns，那么在写xPathExpress时需要带上xmlns前缀，例如Demo中那样的写法__
+**注意，如果xml文件带有xmlns，那么在写xPathExpress时需要带上xmlns前缀，例如Demo中那样的写法**
 
 # 4 参考
 

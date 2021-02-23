@@ -8,7 +8,7 @@ categories:
 - HTTP
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -26,7 +26,7 @@ __阅读更多__
 
 既然问题的原因是在SSL握手时缺少主机头信息，那么补上就是了。
 
-__`SNI（Server Name Indication）`定义在RFC 4366，是一项用于改善`SSL/TLS`的技术，在`SSLv3/TLSv1`中被启用。它允许客户端在发起SSL握手请求时（具体说来，是客户端发出SSL请求中的ClientHello阶段），就提交请求的Host信息，使得服务器能够切换到正确的域并返回相应的证书__
+**`SNI（Server Name Indication）`定义在RFC 4366，是一项用于改善`SSL/TLS`的技术，在`SSLv3/TLSv1`中被启用。它允许客户端在发起SSL握手请求时（具体说来，是客户端发出SSL请求中的ClientHello阶段），就提交请求的Host信息，使得服务器能够切换到正确的域并返回相应的证书**
 
 要使用SNI，需要客户端和服务器端同时满足条件，幸好对于现代浏览器来说，大部分都支持`SSLv3/TLSv1`，所以都可以享受SNI带来的便利
 
@@ -50,11 +50,11 @@ X.509是公钥证书的标准格式，通常一个证书包含如下信息
     * `Version Number`: 版本号
     * `Serial Number`: 序列号
     * `Signature Algorithm`: 签名算法
-    * __`Issuer Name`__: 证书颁发机构名字，即CA
+    * **`Issuer Name`**: 证书颁发机构名字，即CA
     * `Validity period`: 证书有效期
         * `Not Before`: 有效起始时间
         * `Not After`: 有效的终止时间
-    * __`Subject name`__: 证书持有者名字
+    * **`Subject name`**: 证书持有者名字
     * `Subject Public Key Info`: 证书公钥信息
         * `Public Key Algorithm`: 公钥算法
         * `Subject Public Key`: 公钥
@@ -72,7 +72,7 @@ X.509是公钥证书的标准格式，通常一个证书包含如下信息
 1. `O`: Organization
 1. `CN`: Common Name
 
-__若`Issuer Name`与`Subject name`相同，则表示自签名，根证书都是自签名的__
+**若`Issuer Name`与`Subject name`相同，则表示自签名，根证书都是自签名的**
 
 ## 2.2 证书类型
 
@@ -99,7 +99,7 @@ __若`Issuer Name`与`Subject name`相同，则表示自签名，根证书都是
 
 在进一步探讨证书之前，我们需要引入一个概念，叫做证书链。我们先从一个问题入手：浏览器如何判断一个证书是否合法？当你访问一个站点时，浏览器会快速地校验这个证书的合法性
 
-浏览器会沿着证书的__证书链__进行校验，那么什么是证书链呢？我们在申请证书时，需要创建一个`Certificate Signing Request`以及`Private Key`，`Certificate Signing Request`会发送给证书颁发机构，该机构会用根证书的私钥来对证书进行签名，然后再发还给请求者
+浏览器会沿着证书的**证书链**进行校验，那么什么是证书链呢？我们在申请证书时，需要创建一个`Certificate Signing Request`以及`Private Key`，`Certificate Signing Request`会发送给证书颁发机构，该机构会用根证书的私钥来对证书进行签名，然后再发还给请求者
 
 当浏览器校验这个站点证书时，发现这个证书由根证书签名（准确地说，用根证书的私钥签名），且浏览器信任这个根证书，因此浏览器信任由这个根证书签名的站点证书。在这个例子中，站点证书直链根证书
 
@@ -113,14 +113,14 @@ __若`Issuer Name`与`Subject name`相同，则表示自签名，根证书都是
 
 ![fig1](/images/SSL协议/fig1.jpg)
 
-__要获得中间证书，一般有两种方式__
+**要获得中间证书，一般有两种方式**
 
 1. 由客户端自动下载中间证书
 2. 由服务器推送中间证书
 
 #### 2.3.3.1 客户端自动下载中间证书
 
-__一张标准的证书，都会包含自己的颁发者名称，以及颁发者机构访问信息：Authority Info Access，其中就会有颁发者CA证书的下载地址__，可以通过`openssl x509 -in <cert> -noout -text`查看证书信息。通过这个CA证书下载地址，我们就能够获得CA证书，__但有些平台不支持这种方式，例如Android，在这种平台上，仅通过站点证书就无法建立安全连接__
+**一张标准的证书，都会包含自己的颁发者名称，以及颁发者机构访问信息：Authority Info Access，其中就会有颁发者CA证书的下载地址**，可以通过`openssl x509 -in <cert> -noout -text`查看证书信息。通过这个CA证书下载地址，我们就能够获得CA证书，**但有些平台不支持这种方式，例如Android，在这种平台上，仅通过站点证书就无法建立安全连接**
 
 除了操作系统支持外，还有一个很重要的因素，就是客户端可以正常访问公网。如果客户端本身在一个封闭的网络环境内，无法访问公网下载中间证书，就会造成失败，无法建立可信连接
 
@@ -130,7 +130,7 @@ __一张标准的证书，都会包含自己的颁发者名称，以及颁发者
 
 #### 2.3.3.2 服务器推送中间证书
 
-__服务器推送中间证书，就是将中间证书，预先部署在服务器上，服务器在发送证书的同时，将中间证书一起发给客户端__
+**服务器推送中间证书，就是将中间证书，预先部署在服务器上，服务器在发送证书的同时，将中间证书一起发给客户端**
 
 如果我们在服务器上不主动推送中间证书，可能会造成下列问题：
 
@@ -151,10 +151,10 @@ __服务器推送中间证书，就是将中间证书，预先部署在服务器
 
 每当浏览器或设备收到SSL证书时，都会收到证书本身以及与证书关联的公钥。使用公钥解密数字签名并查看由谁签署的证书。当浏览器验证站点SSL证书时，它使用证书提供的公钥来解密签名并沿着证书链向上移动。不断重复这个过程--解密签名并跟随证书链到签署它的证书--直到最终到达浏览器信任库中的一个根证书。如果最后的根证书不在信任库中，那么浏览器就不信任该证书
 
-__证书包含以下内容__
+**证书包含以下内容**
 
 1. 证书包含了颁发证书的机构的名字--CA（CA可能是`Root CA`也可能是`Intermediate CA`）
-1. 证书内容本身的数字签名(用__CA的私钥__对摘要加密后的结果)
+1. 证书内容本身的数字签名(用**CA的私钥**对摘要加密后的结果)
 1. 证书持有者的公钥
 1. 证书签名用到的hash算法
 
@@ -170,7 +170,7 @@ __证书包含以下内容__
 
 下面是两者的差异
 
-1. `Chained Root`安装起来更麻烦，__因为持有站点证书的应用最好能够同时提供中间证书（以免中间证书无法正常下载，导致验证失败）__，这就是为什么在制作证书时，需要将站点证书和中间证书一并打入证书中
+1. `Chained Root`安装起来更麻烦，**因为持有站点证书的应用最好能够同时提供中间证书（以免中间证书无法正常下载，导致验证失败）**，这就是为什么在制作证书时，需要将站点证书和中间证书一并打入证书中
 1. `Chained Root`受它们所链接的`Third-party CA`支配，它们无法控制根证书，如果`Root CA`停业，那么`Chained Root`也会失效
 1. 根证书和中间证书都会过期，虽然时间较长，但是中间证书的失效时间必须早于根证书，这增加了复杂度
 
@@ -184,25 +184,25 @@ req指令既可以直接生成一个新的自签名证书，也可以根据现�
 
 req指令也可以生成密钥对，但在使用req同时生成密钥对是对密钥对保存和格式有限制（只能是PEM编码，DES3-CBC模式加密）。如果需要更灵活的处理，可以使用genrsa或者gendsa先生成密钥然后使用-key选项指定
 
-__参数选项__
+**参数选项**
 
-* __`-new`: 指定执行生成新的证书请求，此时会忽略`-in`指定的内容__
-* __`-x509`: 根据现有的证书请求生成自签名根证书（要求使用-key指定证书请求里面的公钥相应的私钥，以便对自签名根证书进行签名）__
-* __`-key`: 指定输入的密钥，如果不指定此选项会根据`-newkey`选项的参数生成密钥对__
-* __`-newkey`: 指定生成一个新的密钥对，只有在没有`-key`选项的时候才生效，参数形式为`rsa:numbits`或者`dsa:file`__
-* __`-subj`: 直接从指令行指定证书请求的主体名称，格式为/分割的键值对字符串，如果没有此选项，那么会弹出交互提示__
-* __`-days`: 设定了生成的自签名根证书的有效期，单位为天；该选项只有在使用了`-x509`选项生成自签名证书的时候才生效，默认为30天__
-* __`-config`: 指定req指令在生成证书请求的时候使用的OpenSSL配置文件，一般默认为`/etc/pki/tls/openssl.cnf`__
-* __`-extensions`: 选项指定了生成自签名根证书的时候使用的扩展字段，其参数为OpenSSL配置文件中的某个字段名__
-* __`-reqexts`: 选项指定了生成证书请求是使用的扩展字段，该字段参数也是配置文件中的某个字段名__
+* **`-new`: 指定执行生成新的证书请求，此时会忽略`-in`指定的内容**
+* **`-x509`: 根据现有的证书请求生成自签名根证书（要求使用-key指定证书请求里面的公钥相应的私钥，以便对自签名根证书进行签名）**
+* **`-key`: 指定输入的密钥，如果不指定此选项会根据`-newkey`选项的参数生成密钥对**
+* **`-newkey`: 指定生成一个新的密钥对，只有在没有`-key`选项的时候才生效，参数形式为`rsa:numbits`或者`dsa:file`**
+* **`-subj`: 直接从指令行指定证书请求的主体名称，格式为/分割的键值对字符串，如果没有此选项，那么会弹出交互提示**
+* **`-days`: 设定了生成的自签名根证书的有效期，单位为天；该选项只有在使用了`-x509`选项生成自签名证书的时候才生效，默认为30天**
+* **`-config`: 指定req指令在生成证书请求的时候使用的OpenSSL配置文件，一般默认为`/etc/pki/tls/openssl.cnf`**
+* **`-extensions`: 选项指定了生成自签名根证书的时候使用的扩展字段，其参数为OpenSSL配置文件中的某个字段名**
+* **`-reqexts`: 选项指定了生成证书请求是使用的扩展字段，该字段参数也是配置文件中的某个字段名**
 * `-text`: 让指令输出证书请求或者自签名根证书内容的明文解析，默认情况下，它将输出所有可能输出的内容，如果使用了reqopt选项，则输出内容取决于reqopt选项
 * `-reqopt`: 指定text选项输出的内容可以为多个，每个之间使用`,`分隔
 * `set_serial`: 指定生成的自签名根证书的序列号，默认情况下生成的自签名根证书序列号是0；该选项也只有在生成自签名根证书的时候有效
 * `-keyout`: 置顶新生成的私钥的输出（仅在使用了`-newKey`或`-new`选项导致生成新密钥对的时候才有效，如果使用了`-key`则此选项被忽略）
 * `-keyform`: 指定输入密钥的编码格式（比如PEM，DER，PKCS#12，Netscape，IIS SGC，Engine等）
-* __`-in`: 指定输入证书请求文件，如果使用了`-new`或者`-newkey`选项，此选项被忽略__
+* **`-in`: 指定输入证书请求文件，如果使用了`-new`或者`-newkey`选项，此选项被忽略**
 * `-inform`: 指定输入证书请求文件的编码格式（比如PEM，DER）
-* __`-out`: 指定输出证书请求文件或自签名证书文件__
+* **`-out`: 指定输出证书请求文件或自签名证书文件**
 * `-noout`: 使用此选项后，指令将不会输出编码的证书请求或者自签名根证书到-out选项指定的文件中，一般用来测试指令或者查看证书请求的信息
 * `-outform`: 指定输出证书请求文件或自签名证书的编码格式（比如PEM，DER）
 * `-pubkey`: 使用此选项的话，指令将输出PEM编码的公钥到`-out`指定的文件中，默认情况下只输出私钥到`-keyout`指定的文件，并不输出公钥
@@ -214,7 +214,7 @@ __参数选项__
 * 如果没有`-key`选项也没有`-newkey`选项，则会根据`openssl.cnf`中`req`字段的`default_bits`选项的参数，生成一个RSA密钥
 * 如果没有使用`-nodes`选项，并且生成了新的私钥，私钥会被输出到`-keyout`指定的文件中时将被以DES3的CBC模式加密
 
-__示例__
+**示例**
 
 ```sh
 # 生成一个新的证书请求，使用新的`rsa2048`位密钥
@@ -243,30 +243,30 @@ openssl req \
 
 ca指令模拟一个完整的CA服务器，它包括签发用户证书，吊销证书，产生CRL及更新证书库等管理操作
 
-__参数选项__
+**参数选项**
 
-* __`-config`: 指定要使用的配置文件，如果没有此选项，则会先查找OPENSSL_CONF或者SSLEAY_CONF定义的文件名，如果这两个环境变量都没有定义，就使用OpenSSL安装的默认路径，一般是`/usr/local/openssl/openssl.cnf`，具体看安装配置__
+* **`-config`: 指定要使用的配置文件，如果没有此选项，则会先查找OPENSSL_CONF或者SSLEAY_CONF定义的文件名，如果这两个环境变量都没有定义，就使用OpenSSL安装的默认路径，一般是`/usr/local/openssl/openssl.cnf`，具体看安装配置**
 * `-startdate`: 设置证书的生效时间 格式为`YYMMDDHHMMSSZ`指定年月日时分秒，如果没有则使用主配置文件中的default_startdate
 * `-enddate`: 格式跟`-startdate`一样
-* __`-days`: 设置证书的有效天数，生效时间到到期时间之间的天数，如果使用了`-enddate`，此选项被忽略__
+* **`-days`: 设置证书的有效天数，生效时间到到期时间之间的天数，如果使用了`-enddate`，此选项被忽略**
 * `-name`: 指定配置文件中CA选项的名称
 * `-notext`: 不输出明文信息到证书文件
-* __`-subj`: 直接从指令行指定证书请求的主体名称，格式为/分割的键值对字符串，如果没有此选项，那么会弹出交互提示__
-* __`-cert`: 参数是一个可以包含路径的文件名，该文件是一个PEM编码的X.509证书文件__
-* __`-keyfile`: 参数是一个包含路径的文件名，文件格式可以为PEM，DER，PKCS#12，Netscape，IIS SGC，Engine，但需要通过`-keyform`指定到底是哪种格式__
+* **`-subj`: 直接从指令行指定证书请求的主体名称，格式为/分割的键值对字符串，如果没有此选项，那么会弹出交互提示**
+* **`-cert`: 参数是一个可以包含路径的文件名，该文件是一个PEM编码的X.509证书文件**
+* **`-keyfile`: 参数是一个包含路径的文件名，文件格式可以为PEM，DER，PKCS#12，Netscape，IIS SGC，Engine，但需要通过`-keyform`指定到底是哪种格式**
 * `-policy`: 指定CA的匹配策略
-* __`-extensions` 指定`x509 v3`扩展字段的字段名，如果没有这个选项，就由`-extfile`选项指定__
+* **`-extensions` 指定`x509 v3`扩展字段的字段名，如果没有这个选项，就由`-extfile`选项指定**
 * `-extfile`: 指定`x509 v3`扩展的配置文件，如果没有`-extensions`字段，则由CA主配置文件中的`x509_extensions`选项指定
-* __`-in`: 指定一个可以包含路径的证书请求文件名，应该是PEM变得PKCS#10格式的证书请求__
+* **`-in`: 指定一个可以包含路径的证书请求文件名，应该是PEM变得PKCS#10格式的证书请求**
 * `-infiles`: 指定一系列包含PEM编码证书请求的文件，包含多个，只能作为指令的最后一个选项，其后的参数都被认为是证书请求文件
-* __`-out`: 选项指定了输出签发好的证书或者新生成的CRL的文件，如果没有使用`-notext`选项，那么证书的明文信息也会输出到`-out`选项指定的文件中__
+* **`-out`: 选项指定了输出签发好的证书或者新生成的CRL的文件，如果没有使用`-notext`选项，那么证书的明文信息也会输出到`-out`选项指定的文件中**
 * `-outdir`: 选项指定了新生成的证书的输出目录，默认输出到`newecerts`目录，并使用`.pem`作为后缀，都是PEM编码。
 
 ## 3.3 证书转换
 
 ### 3.3.1 crt与pkcs12
 
-__将`crt`格式的站点私钥与站点证书，转存为`pkcs12`格式的证书__
+**将`crt`格式的站点私钥与站点证书，转存为`pkcs12`格式的证书**
 
 ```sh
 openssl pkcs12 -export -in <cert> -inkey <private key> -name <aliasName> -out <pkcs12 file>
@@ -278,7 +278,7 @@ openssl pkcs12 -export -in <cert> -inkey <private key> -name <aliasName> -out <p
 # 4. <pkcs12 file> 指待创建的pkcs12证书
 ```
 
-__将`crt`格式的站点私钥与站点证书、中间证书、CA证书，转存为`pkcs12`格式的证书__
+**将`crt`格式的站点私钥与站点证书、中间证书、CA证书，转存为`pkcs12`格式的证书**
 
 ```sh
 openssl pkcs12 -export -in <server cert> -inkey <server private key>  -certfile <intermediate cert> -CAfile <ca cert> -name <aliasName> -out <pkcs12 file>
@@ -292,7 +292,7 @@ openssl pkcs12 -export -in <server cert> -inkey <server private key>  -certfile 
 # 6. <pkcs12 file> 指待创建的pkcs12证书
 ```
 
-__将`crt`格式的根证书添加到`pkcs12`的信任证书链中__
+**将`crt`格式的根证书添加到`pkcs12`的信任证书链中**
 
 ```sh
 keytool -import -trustcacerts -alias <aliasName> -file <ca cert> -keystore <pkcs12 file>
@@ -302,7 +302,7 @@ keytool -import -trustcacerts -alias <aliasName> -file <ca cert> -keystore <pkcs
 # <pkcs12 file> pkcs12证书
 ```
 
-__从`pkcs12`格式的证书中导出`der`格式的证书__
+**从`pkcs12`格式的证书中导出`der`格式的证书**
 
 ```sh
 keytool -export -alias <aliasName> -keystore <pkcs12 file> -file <der file>
@@ -314,7 +314,7 @@ keytool -export -alias <aliasName> -keystore <pkcs12 file> -file <der file>
 
 ### 3.3.2 crt与der
 
-__将`der`格式的证书转换为`crt`格式的证书__
+**将`der`格式的证书转换为`crt`格式的证书**
 
 * `der`格式的证书，其后缀为`.cer`或`.der`
 
@@ -327,7 +327,7 @@ openssl x509 -inform DER -in <der file> -out <crt file>
 
 ### 3.3.3 crt与pem
 
-__将`pem`格式的证书转换为`crt`格式的证书__
+**将`pem`格式的证书转换为`crt`格式的证书**
 
 ```sh
 openssl x509 -inform PEM -in <pem file> -out <crt file>
@@ -424,7 +424,7 @@ keytool -export -keystore <key store path> -alias <aliasName> -file <cert file>
 
 我们如何使用Java连接到颁发了合法证书的服务端？当然，不校验服务端的合法性是可以的，但是此时客户端会存在安全风险
 
-如果Java客户端需要校验服务端的合法性，那么我们需要将站点证书对应的__根证书__导入本地的JKS中
+如果Java客户端需要校验服务端的合法性，那么我们需要将站点证书对应的**根证书**导入本地的JKS中
 
 ```sh
 keytool -import -alias <aliasName> -file <root cert file> -keystore <key store path>
@@ -438,7 +438,7 @@ keytool -import -alias <aliasName> -file <root cert file> -keystore <key store p
 
 ### 4.1.4 将服务端证书导入JKS
 
-__将`pkcs12`格式的证书导入JKS，并转为`jks`格式__
+**将`pkcs12`格式的证书导入JKS，并转为`jks`格式**
 
 ```sh
 keytool -importkeystore -srckeystore <pkcs12 file> -destkeystore <jks file> -srcstoretype PKCS12 -deststoretype JKS
@@ -448,7 +448,7 @@ keytool -importkeystore -srckeystore <pkcs12 file> -destkeystore <jks file> -src
 # 2. <jks file> 指待创建的jks证书的路径
 ```
 
-__将`pkcs12`格式的证书直接导入JKS，保持其`pkcs12`格式__
+**将`pkcs12`格式的证书直接导入JKS，保持其`pkcs12`格式**
 
 ```sh
 keytool -importkeystore -srckeystore <pkcs12 file> -destkeystore <jks file> -srcstoretype PKCS12 -deststoretype PKCS12
@@ -582,7 +582,7 @@ public class KeyStoreExample {
 
 Java环境下，数字证书是用`keytool`生成的，这些证书被存储在`store`中，就是证书仓库。我们来调用keytool命令为服务端生成数字证书和保存它使用的证书仓库：
 
-__生成数字证书和证书仓库__
+**生成数字证书和证书仓库**
 
 * 证书名称：`liuyehcf_server_key`
 * 证书仓库路径：`~/liuyehcf_server_ks`
@@ -603,9 +603,9 @@ JKS 密钥库使用专用格式。建议使用 "keytool -importkeystore -srckeys
 
 有了服务端，我们原来的客户端就不能使用了，必须要走SSL协议。由于服务端的证书是我们自己生成的，没有任何受信任机构的签名，所以客户端是无法验证服务端证书的有效性的，通信必然会失败。所以我们需要为客户端创建一个保存所有信任证书的仓库，然后把服务端证书导进这个仓库。这样，当客户端连接服务端时，会发现服务端的证书在自己的信任列表中，就可以正常通信了
 
-因此现在我们要做的是生成一个客户端的证书仓库，__因为keytool不能仅生成一个空白仓库，所以和服务端一样，我们还是生成一个证书加一个仓库（客户端证书加仓库）__
+因此现在我们要做的是生成一个客户端的证书仓库，**因为keytool不能仅生成一个空白仓库，所以和服务端一样，我们还是生成一个证书加一个仓库（客户端证书加仓库）**
 
-__生成数字证书和证书仓库__
+**生成数字证书和证书仓库**
 
 * 证书名称：`liuyehcf_client_key`
 * 证书仓库路径：`~/liuyehcf_client_ks`
@@ -622,7 +622,7 @@ Warning:
 JKS 密钥库使用专用格式。建议使用 "keytool -importkeystore -srckeystore /Users/HCF/liuyehcf_client_ks -destkeystore /Users/HCF/liuyehcf_client_ks -deststoretype pkcs12" 迁移到行业标准格式 PKCS12。
 ```
 
-__接下来，我们要把服务端的证书导出来，并导入到客户端的仓库。第一步是导出服务端的证书__
+**接下来，我们要把服务端的证书导出来，并导入到客户端的仓库。第一步是导出服务端的证书**
 
 ```sh
 keytool -export -alias liuyehcf_server_key -keystore ~/liuyehcf_server_ks -file ~/server_key.cer
@@ -635,7 +635,7 @@ Warning:
 JKS 密钥库使用专用格式。建议使用 "keytool -importkeystore -srckeystore /Users/HCF/liuyehcf_server_ks -destkeystore /Users/HCF/liuyehcf_server_ks -deststoretype pkcs12" 迁移到行业标准格式 PKCS12。
 ```
 
-__然后是把导出的证书导入到客户端证书仓库__
+**然后是把导出的证书导入到客户端证书仓库**
 
 ```sh
 keytool -import -trustcacerts -alias liuyehcf_server_key -file ~/server_key.cer -keystore ~/liuyehcf_client_ks
@@ -816,7 +816,7 @@ public class SSLClient {
 
 上述示例中，仅仅客户端对服务端做了单向认证，如果要进行双向认证，需要将客户端的证书添加到服务端的keyStore中
 
-__接下来，我们要把客户端的证书导出来，并导入到服务端的仓库。第一步是导出客户端的证书__
+**接下来，我们要把客户端的证书导出来，并导入到服务端的仓库。第一步是导出客户端的证书**
 
 ```sh
 keytool -export -alias liuyehcf_client_key -keystore ~/liuyehcf_client_ks -file ~/client_key.cer
@@ -829,7 +829,7 @@ Warning:
 JKS 密钥库使用专用格式。建议使用 "keytool -importkeystore -srckeystore /Users/HCF/liuyehcf_client_ks -destkeystore /Users/HCF/liuyehcf_client_ks -deststoretype pkcs12" 迁移到行业标准格式 PKCS12。
 ```
 
-__然后是把导出的证书导入到服务端证书仓库__
+**然后是把导出的证书导入到服务端证书仓库**
 
 ```sh
 keytool -import -trustcacerts -alias liuyehcf_client_key -file ~/client_key.cer -keystore ~/liuyehcf_server_ks
@@ -865,7 +865,7 @@ Warning:
 JKS 密钥库使用专用格式。建议使用 "keytool -importkeystore -srckeystore /Users/HCF/liuyehcf_server_ks -destkeystore /Users/HCF/liuyehcf_server_ks -deststoretype pkcs12" 迁移到行业标准格式 PKCS12。
 ```
 
-__改造服务端的代码__
+**改造服务端的代码**
 
 ```java
 ((SSLServerSocket) socket).setNeedClientAuth(false);
@@ -881,7 +881,7 @@ __改造服务端的代码__
 
 Java环境下，数字证书是用`keytool`生成的，这些证书被存储在`store`中，就是证书仓库。我们来调用keytool命令为服务端生成数字证书和保存它使用的证书仓库：
 
-__生成数字证书和证书仓库__
+**生成数字证书和证书仓库**
 
 * 证书名称：`liuyehcf_server_key`
 * 证书仓库路径：`~/liuyehcf_server_ks`
@@ -900,9 +900,9 @@ keytool -genkey -v -alias liuyehcf_server_key -keyalg RSA -keystore ~/liuyehcf_s
 
 有了服务端，我们原来的客户端就不能使用了，必须要走SSL协议。由于服务端的证书是我们自己生成的，没有任何受信任机构的签名，所以客户端是无法验证服务端证书的有效性的，通信必然会失败。所以我们需要为客户端创建一个保存所有信任证书的仓库，然后把服务端证书导进这个仓库。这样，当客户端连接服务端时，会发现服务端的证书在自己的信任列表中，就可以正常通信了
 
-因此现在我们要做的是生成一个客户端的证书仓库，__因为keytool不能仅生成一个空白仓库，所以和服务端一样，我们还是生成一个证书加一个仓库（客户端证书加仓库）__
+因此现在我们要做的是生成一个客户端的证书仓库，**因为keytool不能仅生成一个空白仓库，所以和服务端一样，我们还是生成一个证书加一个仓库（客户端证书加仓库）**
 
-__生成数字证书和证书仓库__
+**生成数字证书和证书仓库**
 
 * 证书名称：`liuyehcf_client_key`
 * 证书仓库路径：`~/liuyehcf_client_ks`
@@ -917,7 +917,7 @@ keytool -genkey -v -alias liuyehcf_client_key -keyalg RSA -keystore ~/liuyehcf_c
 [正在存储/Users/HCF/liuyehcf_client_ks]
 ```
 
-__接下来，我们要把服务端的证书导出来，并导入到客户端的仓库。第一步是导出服务端的证书__
+**接下来，我们要把服务端的证书导出来，并导入到客户端的仓库。第一步是导出服务端的证书**
 
 ```sh
 keytool -export -alias liuyehcf_server_key -keystore ~/liuyehcf_server_ks -file ~/server_key.cer
@@ -927,7 +927,7 @@ keytool -export -alias liuyehcf_server_key -keystore ~/liuyehcf_server_ks -file 
 存储在文件 </Users/HCF/server_key.cer> 中的证书
 ```
 
-__然后是把导出的证书导入到客户端证书仓库__
+**然后是把导出的证书导入到客户端证书仓库**
 
 ```sh
 keytool -import -trustcacerts -alias liuyehcf_server_key -file ~/server_key.cer -keystore ~/liuyehcf_client_ks
@@ -1105,7 +1105,7 @@ public class SSLClient {
 
 上述示例中，仅仅客户端对服务端做了单向认证，如果要进行双向认证，需要将客户端的证书添加到服务端的keyStore中
 
-__接下来，我们要把客户端的证书导出来，并导入到服务端的仓库。第一步是导出客户端的证书__
+**接下来，我们要把客户端的证书导出来，并导入到服务端的仓库。第一步是导出客户端的证书**
 
 ```sh
 keytool -export -alias liuyehcf_client_key -keystore ~/liuyehcf_client_ks -file ~/client_key.cer
@@ -1115,7 +1115,7 @@ keytool -export -alias liuyehcf_client_key -keystore ~/liuyehcf_client_ks -file 
 存储在文件 </Users/HCF/client_key.cer> 中的证书
 ```
 
-__然后是把导出的证书导入到服务端证书仓库__
+**然后是把导出的证书导入到服务端证书仓库**
 
 ```sh
 keytool -import -trustcacerts -alias liuyehcf_client_key -file ~/client_key.cer -keystore ~/liuyehcf_server_ks
@@ -1148,7 +1148,7 @@ KeyIdentifier [
 证书已添加到密钥库中
 ```
 
-__改造服务端的代码__
+**改造服务端的代码**
 
 ```java
 ((SSLServerSocket) socket).setNeedClientAuth(false);
@@ -1164,7 +1164,7 @@ __改造服务端的代码__
 
 ### 7.1.1 创建自签名的单域名证书
 
-__第一步：创建自签名ca__
+**第一步：创建自签名ca**
 
 ```sh
 # 创建ca私钥
@@ -1180,7 +1180,7 @@ openssl req -new \
     -out ca.crt
 ```
 
-__第二步：创建服务端私钥__
+**第二步：创建服务端私钥**
 
 ```sh
 # 创建服务端私钥
@@ -1192,7 +1192,7 @@ cat server.key
 openssl rsa -in server.key -noout -text
 ```
 
-__第三步：根据私钥生成证书签名请求__
+**第三步：根据私钥生成证书签名请求**
 
 ```sh
 # 创建证书签名请求
@@ -1217,7 +1217,7 @@ cat server.csr
 openssl req -noout -text -in server.csr
 ```
 
-__第四步：用自签名ca进行证书签名__
+**第四步：用自签名ca进行证书签名**
 
 ```sh
 # 使用CA的私钥和证书对用户证书签名，下面有两种方式，效果一样
@@ -1253,7 +1253,7 @@ cat server.crt
 openssl x509 -in server.crt -noout -text
 ```
 
-__验证__
+**验证**
 
 启动Http服务（参考`[Java验证]`小节），并配置host
 
@@ -1267,7 +1267,7 @@ __验证__
 
 ### 7.1.2 创建自签名的SAN证书
 
-__第一步：创建自签名ca__
+**第一步：创建自签名ca**
 
 ```sh
 # 创建ca私钥
@@ -1283,14 +1283,14 @@ openssl req -new \
     -out ca.crt
 ```
 
-__第二步：创建服务端私钥__
+**第二步：创建服务端私钥**
 
 ```sh
 # 创建服务端私钥
 openssl genrsa -out server.key 2048
 ```
 
-__第三步：根据私钥生成证书签名请求__
+**第三步：根据私钥生成证书签名请求**
 
 ```sh
 # 创建证书签名请求
@@ -1301,7 +1301,7 @@ openssl req -new \
     -out server.csr
 ```
 
-__第四步：用自签名ca进行证书签名__
+**第四步：用自签名ca进行证书签名**
 
 ```sh
 # 使用CA的私钥和证书对用户证书签名，下面有两种方式，效果一样
@@ -1344,7 +1344,7 @@ openssl x509 -req \
     -out server.crt
 ```
 
-__验证__
+**验证**
 
 启动Http服务（参考`[Java验证]`小节），并配置三个host
 
@@ -1370,13 +1370,13 @@ __验证__
 * `curl https://www.liuyehcf.test2:8866/`
     * `curl: (51) SSL: no alternative certificate subject name matches target host name 'www.liuyehcf.test2'`
 
-__问题__
+**问题**
 
-1. __在用`openssl ca`进行签名时，要确保`.csr`文件包含的CN必须是唯一的，否则在签名时会出现`TXT_DB error number 2`的问题__
+1. **在用`openssl ca`进行签名时，要确保`.csr`文件包含的CN必须是唯一的，否则在签名时会出现`TXT_DB error number 2`的问题**
 
 ### 7.1.3 Java验证
 
-__将证书导入JavaKeyStore__
+**将证书导入JavaKeyStore**
 
 ```sh
 # 转成pkcs12格式的证书，会要求创建密码，我创建的是 123456
@@ -1386,7 +1386,7 @@ openssl pkcs12 -export -in server.crt -inkey server.key -name liuyehcf -out serv
 keytool -importkeystore -srckeystore server.p12 -destkeystore liuyehcf_server_ks -srcstoretype PKCS12 -deststoretype PKCS12
 ```
 
-__Java验证代码__
+**Java验证代码**
 
 ```java
 package org.liuyehcf.netty.https;

@@ -8,19 +8,19 @@ categories:
 - Maven
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
 # 1 生命周期详解
 
-Maven拥有__三套相互独立__的生命周期，分别是
+Maven拥有**三套相互独立**的生命周期，分别是
 
-1. `cleean`：其目的是__清理项目__
-1. `default`：其目的是__构建项目__
-1. `site`：其目的是__建立项目站点__
+1. `cleean`：其目的是**清理项目**
+1. `default`：其目的是**构建项目**
+1. `site`：其目的是**建立项目站点**
 
-每个生命周期包含一些阶段(phase)，这些阶段有顺序，并且后面的阶段依赖于前面的阶段，__用户和Maven最直接的交互方式就是调用这些生命周期阶段__
+每个生命周期包含一些阶段(phase)，这些阶段有顺序，并且后面的阶段依赖于前面的阶段，**用户和Maven最直接的交互方式就是调用这些生命周期阶段**
 
 另外，三套生命周期之间是相互独立的，用户可以仅仅调用clean生命周期的某个阶段，或者仅仅调用default生命周期的某个阶段
 
@@ -34,31 +34,31 @@ clean生命周期的目的是清理项目，它包含三个阶段：
 
 ## 1.2 default生命周期
 
-default生命周期定义了真正构建时所需要执行的所有步骤，__它是所有生命周期中最核心的部分__，包含如下阶段：
+default生命周期定义了真正构建时所需要执行的所有步骤，**它是所有生命周期中最核心的部分**，包含如下阶段：
 
 1. `validate`
 1. `initialize`
 1. `generate-sources`
-1. __`process-sources`__：处理项目主资源文件。一般来说，是对`src/main/resources`目录的内容进行变量替换等工作后，复制到项目输出的主classpath目录中
+1. **`process-sources`**：处理项目主资源文件。一般来说，是对`src/main/resources`目录的内容进行变量替换等工作后，复制到项目输出的主classpath目录中
 1. `generate-resources`
 1. `process-resources`
-1. __`compile`__：编译项目的主源码。一般来说，是编译`src/main/java`目录下的Java文件至项目输出的主classpath目录中
+1. **`compile`**：编译项目的主源码。一般来说，是编译`src/main/java`目录下的Java文件至项目输出的主classpath目录中
 1. `process-classes`
 1. `generate-test-sources`
-1. __`process-test-sources`__：处理项目测试资源文件。一般来说，是对`src/test/resources`目录的内容进行变量替换等工作后，复制到项目输出的测试classpath目录中
+1. **`process-test-sources`**：处理项目测试资源文件。一般来说，是对`src/test/resources`目录的内容进行变量替换等工作后，复制到项目输出的测试classpath目录中
 1. `generate-test-resources`
 1. `process-test-resources`
-1. __`test-compile`__：编译项目的测试代码。一般来说，是编译`src/test/java`目录下的Java文件至项目输出的测试classpath目录中
+1. **`test-compile`**：编译项目的测试代码。一般来说，是编译`src/test/java`目录下的Java文件至项目输出的测试classpath目录中
 1. `process-test-classes`
-1. __`test`__：使用单元测试框架运行测试，测试代码不会被打包或部署
+1. **`test`**：使用单元测试框架运行测试，测试代码不会被打包或部署
 1. `prepare-package`
-1. __`package`__：接受编译好的代码，打包成可发布的格式，如JAR、WAR等
+1. **`package`**：接受编译好的代码，打包成可发布的格式，如JAR、WAR等
 1. `pre-integration-test`
 1. `integration-test`
 1. `post-integration-test`
 1. `verify`
-1. __`install`__：将包安装到__Maven__本地仓库，供本地其他Maven项目使用
-1. __`deploy`__：将最终的包复制到远程仓库，供其他开发人员和Maven项目使用
+1. **`install`**：将包安装到**Maven**本地仓库，供本地其他Maven项目使用
+1. **`deploy`**：将最终的包复制到远程仓库，供其他开发人员和Maven项目使用
 
 ## 1.3 site生命周期
 
@@ -75,37 +75,37 @@ default生命周期定义了真正构建时所需要执行的所有步骤，__�
 1. `$mvn test`：该命令调用default生命周期的test阶段。实际执行的阶段为default生命周期的validate、initialize等，直至test的所有阶段
 1. `$mvn clean install`：该命令调用clean生命周期的clean阶段和default生命周期的install阶段。实际执行的阶段为clean生命周期的pre-clean、clean阶段，以及default生命周期的从validate直至install的所有阶段
 1. `$mvn clean deploy site-deploy`：该命令调用clean生命周期的clean阶段、default生命周期的deploy阶段，以及site生命周期的site-deploy阶段。实际执行的阶段为clean生命周期的pre-clean、clean阶段，default生命周期的所有阶段，以及site生命周期的所有阶段
-* __Maven中主要的生命周期并不多，而常用的Maven命令实际都是基于这些阶段简单组合而成的__
+* **Maven中主要的生命周期并不多，而常用的Maven命令实际都是基于这些阶段简单组合而成的**
 
 # 2 插件目标
 
-Maven的核心仅仅定义了__抽象的生命周期__，具体的任务是交由插件完成的，插件以独立的构件形式存在，因此，Maven核心的分发包只有不到3MB大小，__Maven会在需要的时候下载并使用插件__
+Maven的核心仅仅定义了**抽象的生命周期**，具体的任务是交由插件完成的，插件以独立的构件形式存在，因此，Maven核心的分发包只有不到3MB大小，**Maven会在需要的时候下载并使用插件**
 
-对于插件本身，__为了能够复用代码，它往往能够完成多个任务__。例如`maven-dependency-plugin`，它能够基于项目依赖做很多事情：
+对于插件本身，**为了能够复用代码，它往往能够完成多个任务**。例如`maven-dependency-plugin`，它能够基于项目依赖做很多事情：
 
 1. 能够分析项目依赖，帮助找出潜在的无用依赖
 1. 能够列出项目的依赖树，帮助分析依赖来源
 1. 能够列出项目所有已解析的依赖
 1. 等等
 
-__为每个这样的功能编写一个独立的插件显然是不可取的，因为这些任务背后有很多可复用的代码__。因此，__这些功能聚集在一个插件里，每个功能就是一个插件目标__
+**为每个这样的功能编写一个独立的插件显然是不可取的，因为这些任务背后有很多可复用的代码**。因此，**这些功能聚集在一个插件里，每个功能就是一个插件目标**
 
 `maven-dependency-plugin`有十多个目标，每个目标对应了一个功能，上述提到的几个功能分别对应的插件目标为：
 
 1. `dependency:analyze`
 1. `dependency:tree`
 1. `dependency:list`
-* __通用写法是：`<插件前缀>:<插件目标>`__
+* **通用写法是：`<插件前缀>:<插件目标>`**
 
 # 3 插件绑定
 
-__Maven的生命周期与插件相互绑定，用以完成实际的构建任务__。具体而言，是生命周期的阶段与插件的目标相互绑定，以完成某个具体的构建任务。例如项目编译这一任务，它对应了default生命周期的compile这一阶段，而`maven-compiler-plugin`这一插件的compile目标能够完成该任务
+**Maven的生命周期与插件相互绑定，用以完成实际的构建任务**。具体而言，是生命周期的阶段与插件的目标相互绑定，以完成某个具体的构建任务。例如项目编译这一任务，它对应了default生命周期的compile这一阶段，而`maven-compiler-plugin`这一插件的compile目标能够完成该任务
 
 ## 3.1 内置绑定
 
-为了简化配置，__Maven在核心为一些主要的生命周期阶段绑定了很多插件的目标__，当用户通过命令行调用生命周期阶段的时候，对应的插件目标就会执行相应的任务
+为了简化配置，**Maven在核心为一些主要的生命周期阶段绑定了很多插件的目标**，当用户通过命令行调用生命周期阶段的时候，对应的插件目标就会执行相应的任务
 
-__clean生命周期阶段与插件目标的绑定关系__
+**clean生命周期阶段与插件目标的绑定关系**
 
 | 生命周期阶段 | 插件目标 |
 |:--|:--|
@@ -113,7 +113,7 @@ __clean生命周期阶段与插件目标的绑定关系__
 | clean | maven-clean-plugin:clean |
 | post-clean | \ |
 
-__site生命周期阶段与插件目标的绑定关系__
+**site生命周期阶段与插件目标的绑定关系**
 
 | 生命周期阶段 | 插件目标 |
 |:--|:--|
@@ -122,7 +122,7 @@ __site生命周期阶段与插件目标的绑定关系__
 | post-site | \ |
 | site-deploy | maven-site-plugin:deploy |
 
-__default生命周期阶段与插件目标的绑定关系__
+**default生命周期阶段与插件目标的绑定关系**
 
 <style>
 table th:nth-of-type(1) {
@@ -183,10 +183,10 @@ table th:nth-of-type(3) {
 * 此外，除了基本的插件坐标声明外，还有插件执行配置
     * `<executions>`下每个`<execution>`子元素可以用来配置执行一个任务，在上述例子中
         * 配置了一个`<id>`为attach-sources的任务，就是个名字，随便起
-        * __通过`<phrase>`配置，将其绑定到verify生命周期阶段上__
-        * __通过`<goals>`配置指定要执行的插件目标__
+        * **通过`<phrase>`配置，将其绑定到verify生命周期阶段上**
+        * **通过`<goals>`配置指定要执行的插件目标**
 
-有时候，即使不通过`<phase>`元素配置生命周期阶段，插件目标也能够绑定到生命周期中，__这是因为很多插件的目标在编写时已经定义了默认的绑定阶段__。可以使用`maven-help-plugin`插件查看指定插件的详细信息，了解插件目标的默认绑定阶段，示例如下：
+有时候，即使不通过`<phase>`元素配置生命周期阶段，插件目标也能够绑定到生命周期中，**这是因为很多插件的目标在编写时已经定义了默认的绑定阶段**。可以使用`maven-help-plugin`插件查看指定插件的详细信息，了解插件目标的默认绑定阶段，示例如下：
 
 * `mvn help:describe -Dplugin=org.apache.maven.plugins:maven-source-plugin:2.1.1 -Ddetail`
 * 输出如下
@@ -203,7 +203,7 @@ source:test-jar-no-fork
 ...
 ```
 
-当插件目标__绑定到不同的生命周期阶段__的时候，其执行顺序会由__生命周期阶段的先后顺序决定__。如果多个目标被__绑定到同一个阶段__，那么__插件声明的先后顺序决定了目标的执行顺序__
+当插件目标**绑定到不同的生命周期阶段**的时候，其执行顺序会由**生命周期阶段的先后顺序决定**。如果多个目标被**绑定到同一个阶段**，那么**插件声明的先后顺序决定了目标的执行顺序**
 
 # 4 插件配置
 
@@ -304,7 +304,7 @@ Maven插件非常多，而其中大部分没有完善的文档，因此使用正
 
 ## 5.1 在线插件信息
 
-__基本上所有主要的插件都来自Apache和Codehaus__。由于Maven本身属于Apache软件基金会的，因此它有很多官方的插件，详细的列表参见[Available Plugins](https://maven.apache.org/plugins/index.html)
+**基本上所有主要的插件都来自Apache和Codehaus**。由于Maven本身属于Apache软件基金会的，因此它有很多官方的插件，详细的列表参见[Available Plugins](https://maven.apache.org/plugins/index.html)
 
 虽然并非所有插件都提供了完善的文档，但一些核心插件的文档还是非常丰富的。例如`maven-surefire-plugin`，详见[Maven Surefire Plugin](https://maven.apache.org/surefire/maven-surefire-plugin/)
 
@@ -328,7 +328,7 @@ __基本上所有主要的插件都来自Apache和Codehaus__。由于Maven本身
 
 除了选项options之外，mvn命令后面可以添加一个或者多个goal和phase，它们分别是指插件目标和生命周期阶段
 
-我们可以通过mvn命令激活生命周期阶段，从而执行那些绑定在生命周期阶段上的插件目标。__但Maven还支持直接从命令行调用插件目标__。Maven支持这种方式是因为__有些任务不适合绑定在生命周期上__，例如`maven-help-plugin:describe`，我们不需要在构建项目的时候去描述插件信息，又如`maven-dependency-plugin:tree`，我们也不需要在构建项目的时候去显示依赖树。__因此这些插件目标应该通过如下方式使用__：
+我们可以通过mvn命令激活生命周期阶段，从而执行那些绑定在生命周期阶段上的插件目标。**但Maven还支持直接从命令行调用插件目标**。Maven支持这种方式是因为**有些任务不适合绑定在生命周期上**，例如`maven-help-plugin:describe`，我们不需要在构建项目的时候去描述插件信息，又如`maven-dependency-plugin:tree`，我们也不需要在构建项目的时候去显示依赖树。**因此这些插件目标应该通过如下方式使用**：
 
 * `mvn help:describe -Dplugin=compiler`
 * `mvn dependency:tree`
@@ -340,17 +340,17 @@ __基本上所有主要的插件都来自Apache和Codehaus__。由于Maven本身
 * `mvn org.apache.maven.plugins:maven-help-plugin:2.2:describe -Dplugin=compiler`
 * `mvn org.apache.maven.plugins:maven-dependency-plugin:2.1:tree`
 
-上述两条命令与之前两条命令是一样的，但显然前面的那种更简洁，更容易记忆和使用。为了达到该目的，__Maven引入了目标前缀的概念__，help是`maven-help-plugin`的目标前缀，dependency是`maven-dependency-plugin`的目标前缀。有了目标前缀，Maven就能找到对应的artifactId。__不过除了artifactId，Maven还需要groupId和version才能精确定位到某个插件，下一节中详细解释__
+上述两条命令与之前两条命令是一样的，但显然前面的那种更简洁，更容易记忆和使用。为了达到该目的，**Maven引入了目标前缀的概念**，help是`maven-help-plugin`的目标前缀，dependency是`maven-dependency-plugin`的目标前缀。有了目标前缀，Maven就能找到对应的artifactId。**不过除了artifactId，Maven还需要groupId和version才能精确定位到某个插件，下一节中详细解释**
 
 # 7 插件解析机制
 
-为了方便用户使用和配置插件，__Maven不需要用户提供完整的插件坐标信息__，就可以解析得到正确的插件，Maven的这一特性是一把双刃剑，虽然简化了插件的使用和配置，可一旦插件的行为出现异常，用户就很难快速定位到出问题的插件构件
+为了方便用户使用和配置插件，**Maven不需要用户提供完整的插件坐标信息**，就可以解析得到正确的插件，Maven的这一特性是一把双刃剑，虽然简化了插件的使用和配置，可一旦插件的行为出现异常，用户就很难快速定位到出问题的插件构件
 
 ## 7.1 插件仓库
 
-__与依赖构件一样，插件构件同样基于坐标存储在Maven仓库中__。在需要的时候，Maven会从本地仓库寻找插件，如果不存在，则从远程仓库查找。找到插件之后，再下载到本地仓库使用
+**与依赖构件一样，插件构件同样基于坐标存储在Maven仓库中**。在需要的时候，Maven会从本地仓库寻找插件，如果不存在，则从远程仓库查找。找到插件之后，再下载到本地仓库使用
 
-值得一提的是，__Maven会区别对待依赖的远程仓库和插件的远程仓库__
+值得一提的是，**Maven会区别对待依赖的远程仓库和插件的远程仓库**
 
 * 当Maven需要的依赖在本地仓库不存在时，它会去所配置的远程仓库查找
 * 当Maven需要的插件在本地仓库不存在时，它就不会去这些（可能是指自己设定的仓库，对于在中央仓库的核心插件而言，还是会查找然后下载到本地的）远程仓库查找
@@ -359,7 +359,7 @@ __与依赖构件一样，插件构件同样基于坐标存储在Maven仓库中_
 
 ## 7.2 插件的默认groupId
 
-在POM中配置插件的时候，如果该插件是Maven的官方插件，即org.apache.maven.plugins，就可以省略groupId的配置。__不建议这样使用，会让人感到费解__
+在POM中配置插件的时候，如果该插件是Maven的官方插件，即org.apache.maven.plugins，就可以省略groupId的配置。**不建议这样使用，会让人感到费解**
 
 ## 7.3 解析插件版本
 
@@ -369,11 +369,11 @@ Maven在超级POM中为所有核心插件设定了版本，超级POM是所有Mav
 
 当用户使用某个非核心插件且没有声明版本的时候，Maven会将版本解析为所有可用仓库中的稳定版本
 
-依赖Maven解析插件版本其实是不推荐的做法，会导致潜在的不稳定性。__因此使用插件的时候，应该一直显式地设定版本__，这也解释了Maven为什么要在超级POM为核心插件设定版本
+依赖Maven解析插件版本其实是不推荐的做法，会导致潜在的不稳定性。**因此使用插件的时候，应该一直显式地设定版本**，这也解释了Maven为什么要在超级POM为核心插件设定版本
 
 ## 7.4 解析插件前缀
 
-mvn命令行支持使用插件前缀来简化插件的使用，__插件前缀与groupId:artifactid是一一对应的，这种匹配关系存储在仓库元数据中__，这里的仓库元数据为`groupId/maven-metadata.xml`，这里的groupId是指默认的org.apache.maven.plugins和org.codehaus.mojo，也可以通过配置settings.xml让Maven检查其他groupId上的插件仓库元数据
+mvn命令行支持使用插件前缀来简化插件的使用，**插件前缀与groupId:artifactid是一一对应的，这种匹配关系存储在仓库元数据中**，这里的仓库元数据为`groupId/maven-metadata.xml`，这里的groupId是指默认的org.apache.maven.plugins和org.codehaus.mojo，也可以通过配置settings.xml让Maven检查其他groupId上的插件仓库元数据
 
 ```xml
 <settings>

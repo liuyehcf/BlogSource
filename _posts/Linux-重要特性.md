@@ -8,7 +8,7 @@ categories:
 - Linux
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -18,7 +18,7 @@ __阅读更多__
 
 ## 1.1 UTS
 
-__UTS(UNIX Time-sharing System) Namespace：用于隔离hostname与domain__
+**UTS(UNIX Time-sharing System) Namespace：用于隔离hostname与domain**
 
 ```c
 #define _GNU_SOURCE
@@ -60,7 +60,7 @@ int main()
 
 ## 1.2 IPC
 
-__IPC(Inter-Process Communication) Namespace：用于隔离进程间的通信方式，例如共享内存、信号量、消息队列等__
+**IPC(Inter-Process Communication) Namespace：用于隔离进程间的通信方式，例如共享内存、信号量、消息队列等**
 
 ```c
 #define _GNU_SOURCE
@@ -102,7 +102,7 @@ int main()
 
 ## 1.3 PID
 
-__PID Namespace：用于隔离进程的PID__
+**PID Namespace：用于隔离进程的PID**
 
 ```c
 #define _GNU_SOURCE
@@ -146,7 +146,7 @@ int main()
 
 ## 1.4 Mount
 
-__Mount Namespace：用于隔离文件系统__
+**Mount Namespace：用于隔离文件系统**
 
 ```c
 #define _GNU_SOURCE
@@ -189,12 +189,12 @@ int main()
 }
 ```
 
-__小插曲：`mount -t proc proc /proc`如何解释__
+**小插曲：`mount -t proc proc /proc`如何解释**
 
 * `-t`参数后跟文件系统类型，这里指`proc`
 * 第二个`proc`是设备名
 * 第三个`/proc`是挂载目录
-* __对于proc文件系统来说，它没有设备，具体的内核代码如下，传什么设备名称都无所谓，因此好的实践是`mount -t proc nodev /proc`__
+* **对于proc文件系统来说，它没有设备，具体的内核代码如下，传什么设备名称都无所谓，因此好的实践是`mount -t proc nodev /proc`**
 
 相关内核源码
 ```c
@@ -215,7 +215,7 @@ static struct dentry *proc_mount(struct file_system_type *fs_type, int flags, co
 
 ## 1.5 User
 
-__User Namespace：用于隔离user以及group__
+**User Namespace：用于隔离user以及group**
 
 ```c
 #define _GNU_SOURCE
@@ -325,7 +325,7 @@ int main()
 }
 ```
 
-__小插曲__：笔者用的是centos7，该功能默认是关闭的，通过下面的方式可以打开
+**小插曲**：笔者用的是centos7，该功能默认是关闭的，通过下面的方式可以打开
 
 ```sh
 # 该命令输出0，代表该功能尚未开启
@@ -346,11 +346,11 @@ cat /proc/sys/user/max_net_namespaces
 
 ## 1.6 Network
 
-__Network Namespace：用于隔离网络__
+**Network Namespace：用于隔离网络**
 
 ### 1.6.1 无网桥
 
-__编写一个脚本，内容如下，这里我取名为`netns_without_bridge.sh`__
+**编写一个脚本，内容如下，这里我取名为`netns_without_bridge.sh`**
 
 ```sh
 #!/bin/bash
@@ -421,7 +421,7 @@ export -f setup
 export -f cleanup
 ```
 
-__下面进行测试__
+**下面进行测试**
 
 ```sh
 # 执行脚本，将函数以及环境变量导出
@@ -467,7 +467,7 @@ rtt min/avg/max/mdev = 73.125/73.818/74.841/0.802 ms
 
 ### 1.6.2 有网桥
 
-__编写一个脚本，内容如下，这里我取名为`netns_with_bridge.sh`__
+**编写一个脚本，内容如下，这里我取名为`netns_with_bridge.sh`**
 
 ```sh
 #!/bin/bash
@@ -556,7 +556,7 @@ export -f setup
 export -f cleanup
 ```
 
-__下面进行测试__
+**下面进行测试**
 
 ```sh
 # 执行脚本，将函数以及环境变量导出
@@ -611,11 +611,11 @@ rtt min/avg/max/mdev = 73.192/74.111/74.808/0.747 ms
 
 ### 1.7.1 术语解释
 
-__Container__：容器是一组技术的集合，包括`namespace`、`cgroup`，在本小结，我们关注的重点是`namespace`
+**Container**：容器是一组技术的集合，包括`namespace`、`cgroup`，在本小结，我们关注的重点是`namespace`
 
-__Namespace__：包含六种namespace，包括`PID`、`User`、`Net`、`Mnt`、`Uts`、`Ipc`
+**Namespace**：包含六种namespace，包括`PID`、`User`、`Net`、`Mnt`、`Uts`、`Ipc`
 
-__Btrfs__：Btrfs是一种采用`Copy On Write`模式的高效、易用的文件系统
+**Btrfs**：Btrfs是一种采用`Copy On Write`模式的高效、易用的文件系统
 
 ### 1.7.2 准备工作
 
@@ -889,7 +889,7 @@ proc on /proc type proc (rw,relatime)
 
 #### 1.7.3.11 网络命名空间
 
-__以下命令，在容器终端执行（unshare创建的容器终端）__
+**以下命令，在容器终端执行（unshare创建的容器终端）**
 
 ```sh
 [root@tupperware /]$ ping 8.8.8.8
@@ -909,7 +909,7 @@ lo        Link encap:Local Loopback
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-__以下命令，在另一个终端执行（非上述unshare创建的容器终端）__
+**以下命令，在另一个终端执行（非上述unshare创建的容器终端）**
 
 ```sh
 
@@ -926,7 +926,7 @@ __以下命令，在另一个终端执行（非上述unshare创建的容器终�
 [root@liuyehcf ~]$ ip link set c$CPID netns $CPID
 ```
 
-__以下命令，在容器终端执行（unshare创建的容器终端）__
+**以下命令，在容器终端执行（unshare创建的容器终端）**
 
 ```sh
 [root@tupperware /]$ ifconfig -a
@@ -947,7 +947,7 @@ lo        Link encap:Local Loopback
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-__以下命令，在另一个终端执行（非上述unshare创建的容器终端）__
+**以下命令，在另一个终端执行（非上述unshare创建的容器终端）**
 
 ```sh
 # 利用 ip link set 将网卡 c2204 关联到网桥 docker0
@@ -965,7 +965,7 @@ docker0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-__以下命令，在容器终端执行（unshare创建的容器终端）__
+**以下命令，在容器终端执行（unshare创建的容器终端）**
 
 ```sh
 # 开启loopback网卡
@@ -1039,12 +1039,12 @@ exit
 
 # 2 cgroup
 
-__2种cgroup驱动__
+**2种cgroup驱动**
 
 1. `system cgroup driver`
 1. `cgroupfs cgroup driver`
 
-__容器中常用的cgroup__
+**容器中常用的cgroup**
 
 1. `cpu cpuset cpuacct`
 1. `memory`
@@ -1053,7 +1053,7 @@ __容器中常用的cgroup__
 1. `blkio`：限制容器用到的磁盘的iops、vps速率限制
 1. `pid`：容器可以用到的最大进程数量
 
-__查看当前系统可用的cgroup__
+**查看当前系统可用的cgroup**
 
 * `mount -t cgroup`
 
@@ -1076,13 +1076,13 @@ __查看当前系统可用的cgroup__
 1. 一是启动时间长。`init`进程是串行启动，只有前一个进程启动完，才会启动下一个进程
 1. 二是启动脚本复杂。`init`进程只是执行启动脚本，不管其他事情。脚本需要自己处理各种情况，这往往使得脚本变得很长
 
-__`Systemd`就是为了解决这些问题而诞生的。它的设计目标是，为系统的启动和管理提供一套完整的解决方案__
+**`Systemd`就是为了解决这些问题而诞生的。它的设计目标是，为系统的启动和管理提供一套完整的解决方案**
 
 ## 3.2 Unit
 
 `Systemd`可以管理所有系统资源。不同的资源统称为`Unit`（单位），`Unit`一共分成12种
 
-1. __`Service unit`：系统服务__
+1. **`Service unit`：系统服务**
 1. `Target unit`：多个 Unit 构成的一个组
     * 启动计算机的时候，需要启动大量的`Unit`。如果每一次启动，都要一一写明本次启动需要哪些`Unit`，显然非常不方便。`Systemd`的解决方案就是`Target`
     * 简单说，`Target`就是一个`Unit`组，包含许多相关的`Unit`。启动某个`Target`的时候，`Systemd`就会启动里面所有的 `Unit`。从这个意义上说，`Target`这个概念类似于“状态点”，启动某个`Target`就好比启动到某种状态
@@ -1098,7 +1098,7 @@ __`Systemd`就是为了解决这些问题而诞生的。它的设计目标是，
 1. `Swap Unit`：swap 文件
 1. `Timer Unit`：定时器
 
-每一个`Unit`都有一个配置文件，告诉`Systemd`怎么启动这个`Unit`。__`Systemd`默认从目录`/etc/systemd/system/`读取配置文件。但是，里面存放的大部分文件都是符号链接，指向目录`/usr/lib/systemd/system/`，真正的配置文件存放在那个目录__。`systemctl enable`命令用于在上面两个目录之间，建立符号链接关系。与之对应的，`systemctl disable`命令用于在两个目录之间，撤销符号链接关系，相当于撤销开机启动。配置文件的后缀名，就是该`Unit`的种类。如果省略，__`Systemd`默认后缀名为`.service`__
+每一个`Unit`都有一个配置文件，告诉`Systemd`怎么启动这个`Unit`。**`Systemd`默认从目录`/etc/systemd/system/`读取配置文件。但是，里面存放的大部分文件都是符号链接，指向目录`/usr/lib/systemd/system/`，真正的配置文件存放在那个目录**。`systemctl enable`命令用于在上面两个目录之间，建立符号链接关系。与之对应的，`systemctl disable`命令用于在两个目录之间，撤销符号链接关系，相当于撤销开机启动。配置文件的后缀名，就是该`Unit`的种类。如果省略，**`Systemd`默认后缀名为`.service`**
 
 ```sh
 systemctl enable demo-service.service
@@ -1112,11 +1112,11 @@ ln -s '/usr/lib/systemd/system/demo-service.service' '/etc/systemd/system/multi-
 1. `disabled`：没建立启动链接
 1. `static`：该配置文件没有`[Install]`部分（无法执行），只能作为其他配置文件的依赖
 1. `masked`：该配置文件被禁止建立启动链接
-* __注意，从配置文件的状态无法看出，该`Unit`是否正在运行。若要查看`Unit`的运行状态，需要使用`systemctl status`命令__
+* **注意，从配置文件的状态无法看出，该`Unit`是否正在运行。若要查看`Unit`的运行状态，需要使用`systemctl status`命令**
 
 ## 3.3 文件格式
 
-__`systemctl cat`可以查看配置文件的内容，例如`systemctl cat sshd.service`__
+**`systemctl cat`可以查看配置文件的内容，例如`systemctl cat sshd.service`**
 
 一般来说，一个`Unit`的格式如下
 
@@ -1131,7 +1131,7 @@ __`systemctl cat`可以查看配置文件的内容，例如`systemctl cat sshd.s
 ...
 ```
 
-__`[Unit]`区块通常是配置文件的第一个区块，用来定义`Unit`的元数据，以及配置与其他`Unit`的关系。它的主要字段如下__
+**`[Unit]`区块通常是配置文件的第一个区块，用来定义`Unit`的元数据，以及配置与其他`Unit`的关系。它的主要字段如下**
 
 * `Description`：简短描述
 * `Documentation`：文档地址
@@ -1144,7 +1144,7 @@ __`[Unit]`区块通常是配置文件的第一个区块，用来定义`Unit`的�
 * `Condition...`：当前`Unit`运行必须满足的条件，否则不会运行
 * `Assert...`：当前`Unit`运行必须满足的条件，否则会报启动失败
 
-__`[Service]`区块用来`Service`的配置，只有`Service`类型的`Unit`才有这个区块。它的主要字段如下__
+**`[Service]`区块用来`Service`的配置，只有`Service`类型的`Unit`才有这个区块。它的主要字段如下**
 
 * `Type`：定义启动时的进程行为。它有以下几种值。
     * `simple`：默认值，执行`ExecStart`指定的命令，启动主进程
@@ -1174,7 +1174,7 @@ __`[Service]`区块用来`Service`的配置，只有`Service`类型的`Unit`才�
 
 ## 3.4 命令行工具
 
-__systemctl命令行工具__
+**systemctl命令行工具**
 
 * `systemctl start xxx.service`：启动xxx服务
 * `systemctl stop xxx.service`：停止xxx服务
@@ -1188,13 +1188,13 @@ __systemctl命令行工具__
 * `systemctl show xxx.service`
 * `systemctl show xxx.service --property=ActiveState`：查看服务的某个属性
 
-__journalctl命令行工具__
+**journalctl命令行工具**
 
 * `journalctl -u xxx.service`：查看xxx服务的日志
 
 ## 3.5 demo
 
-__下面写了一个非常简单的程序（文件名为`demo-service.c`）：接受并处理`1`、`2`、`15`三种信号__
+**下面写了一个非常简单的程序（文件名为`demo-service.c`）：接受并处理`1`、`2`、`15`三种信号**
 
 1. `SIGHUP(1)`：打印日志，模拟加载配置文件
 1. `SIGINT(2)`：打印日志，以错误码1结束进程
@@ -1251,7 +1251,7 @@ void sigHandler(int signum) {
 }
 ```
 
-__接下来将它注册到systemd中__
+**接下来将它注册到systemd中**
 
 文件路径：`/usr/lib/systemd/system/demo-service.service`
 
@@ -1273,7 +1273,7 @@ PrivateTmp=true
 WantedBy=multi-user.target
 ```
 
-__测试__
+**测试**
 
 ```sh
 # 编译

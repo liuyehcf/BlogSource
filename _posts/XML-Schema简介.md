@@ -8,7 +8,7 @@ categories:
 - XML
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -49,9 +49,9 @@ xmlns其实是XML Namespace的缩写
 
 `xsi:schemaLocation`属性其实是Namespace为`http://www.w3.org/2001/XMLSchema-instance`里的`schemaLocation`属性，正是因为我们一开始声明了`xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"`
 
-它定义了`XML Namespace`和`对应的XSD(Xml Schema Definition)文档的位置`的__关系__
+它定义了`XML Namespace`和`对应的XSD(Xml Schema Definition)文档的位置`的**关系**
 
-它的值由__一个或多个URI__引用对组成，两个URI之间以空白符分隔(空格和换行均可)
+它的值由**一个或多个URI**引用对组成，两个URI之间以空白符分隔(空格和换行均可)
 
 1. 第一个URI是定义的XML Namespace的值
 1. 第二个URI给出Schema文档的位置

@@ -9,7 +9,7 @@ categories:
 - Netty
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -25,7 +25,7 @@ __阅读更多__
 
 # 2 Echo Server示例
 
-__Handler代码清单如下__
+**Handler代码清单如下**
 
 ```java
 package org.liuyehcf.protocol.echo;
@@ -53,7 +53,7 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter { //(1)
 }
 ```
 
-__Server代码清单如下__
+**Server代码清单如下**
 
 ```java
 package org.liuyehcf.protocol.echo;
@@ -172,7 +172,7 @@ NioEventLoopGroup的继承结构图如下
     * 另一方面，由于`EventExecutorGroup`接口间接继承自`ExecutorService`接口，因此`EventExecutorGroup`也可以看成是一个Executor，这是比较奇特的一个地方
     * 提供了一个重要的方法next
 * `EventLoopGroup`
-    * 在`EventExecutorGroup`基础之上，提供了__异步的__`register`方法
+    * 在`EventExecutorGroup`基础之上，提供了**异步的**`register`方法
 * `AbstractEventExecutorGroup`
     * 为那些从JDK接口中继承而来的方法提供基础实现，就是调用next()方法然后调用对应的方法
     * next()方法依据不同策略从管理的所有Executor中选出下一个

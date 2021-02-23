@@ -9,7 +9,7 @@ categories:
 - Source Code Analysis
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -61,7 +61,7 @@ CountDownLatch会阻塞调用await的线程，而concurrent包下最基础的类
     }
 ```
 
-__注意到，资源状态只减不增，因此CountDownLatch是无法重用的，是一次性的__
+**注意到，资源状态只减不增，因此CountDownLatch是无法重用的，是一次性的**
 
 ## 2.1 为什么要使用共享模式
 
@@ -69,7 +69,7 @@ __注意到，资源状态只减不增，因此CountDownLatch是无法重用的�
 
 > 所谓共享模式是指，在sync queue(AQS内部的同步阻塞队列)中的节点会陆续通过临界点，直至资源消耗殆尽
 
-当count个线程执行countDown方法后，资源的状态是0，而tryAcquireShared方法告诉我们，只要资源状态是0，便能够获取到资源。也就意味着，只要资源状态是0，sync queue中的节点__全部__都会通过临界点。因此CountDownLatch可以实现任意多个线程阻塞在await方法上，直到count个线程调用countDown方法，所有这些阻塞在await方法上的线程都会通过
+当count个线程执行countDown方法后，资源的状态是0，而tryAcquireShared方法告诉我们，只要资源状态是0，便能够获取到资源。也就意味着，只要资源状态是0，sync queue中的节点**全部**都会通过临界点。因此CountDownLatch可以实现任意多个线程阻塞在await方法上，直到count个线程调用countDown方法，所有这些阻塞在await方法上的线程都会通过
 
 那么独占模式就不能实现唤醒多个阻塞在await方法上的线程吗？不能，因为在独占模式下，每次释放锁，只能唤醒一个在sync queue中等待的线程(假设有线程排队在sync queue中)。要想唤醒多个阻塞在await方法上的线程，只能不停地触发AQS的release方法。因此，采用共享模式能很好的解决这个问题，共享模式的主要特征就是能够在资源可获取时不断地让sync queue中的节点通过临界点
 

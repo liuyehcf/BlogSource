@@ -8,7 +8,7 @@ categories:
 - Compile Principle
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -16,20 +16,20 @@ __阅读更多__
 
 ## 1.1 文法符号
 
-在文法定义中会有两种类型的符号：一种称为__终结符__，另一种称为__非终结符__
+在文法定义中会有两种类型的符号：一种称为**终结符**，另一种称为**非终结符**
 
-所谓终结符就是__不可再分__的符号，是__原子__的，是__具体的语法成分__。例如，在英文文法中，每个字母就是终结符，标点符号就是终结符。又例如，在Java文法中，所有关键字（int、boolean、void、abstract、public、return等等），分号，逗号、括号都属于终结符
+所谓终结符就是**不可再分**的符号，是**原子**的，是**具体的语法成分**。例如，在英文文法中，每个字母就是终结符，标点符号就是终结符。又例如，在Java文法中，所有关键字（int、boolean、void、abstract、public、return等等），分号，逗号、括号都属于终结符
 
-所谓非终结符就是__可以再分__的符号，是__非原子__的，是__抽象的语法成分__。例如，在英文文法中，单词，祈使句、宾语从句、状语从句就是非终结符。又例如，在Java文法中，if语句、while语句，方法定义、类定义、赋值语句等等都属于非终结符
+所谓非终结符就是**可以再分**的符号，是**非原子**的，是**抽象的语法成分**。例如，在英文文法中，单词，祈使句、宾语从句、状语从句就是非终结符。又例如，在Java文法中，if语句、while语句，方法定义、类定义、赋值语句等等都属于非终结符
 
-__为了方便描述，我们有如下约定__
+**为了方便描述，我们有如下约定**
 
-1. 排在前面的大写字母表示__非终结符__，例如{% raw %}$A${% endraw %}、{% raw %}$B${% endraw %}、{% raw %}$C${% endraw %}、{% raw %}$D${% endraw %}、{% raw %}$E${% endraw %}、{% raw %}$F${% endraw %}、{% raw %}$G${% endraw %}
-1. {% raw %}$S${% endraw %}表示__文法开始符号__
-1. 排在前面的小写字母表示__终结符__，例如{% raw %}$a${% endraw %}、{% raw %}$b${% endraw %}、{% raw %}$c${% endraw %}
-1. {% raw %}$w${% endraw %}表示__终结符号串__
+1. 排在前面的大写字母表示**非终结符**，例如{% raw %}$A${% endraw %}、{% raw %}$B${% endraw %}、{% raw %}$C${% endraw %}、{% raw %}$D${% endraw %}、{% raw %}$E${% endraw %}、{% raw %}$F${% endraw %}、{% raw %}$G${% endraw %}
+1. {% raw %}$S${% endraw %}表示**文法开始符号**
+1. 排在前面的小写字母表示**终结符**，例如{% raw %}$a${% endraw %}、{% raw %}$b${% endraw %}、{% raw %}$c${% endraw %}
+1. {% raw %}$w${% endraw %}表示**终结符号串**
 1. 排在后面的大写字母表示文法符号，例如{% raw %}$X${% endraw %}、{% raw %}$Y${% endraw %}、{% raw %}$Z${% endraw %}
-1. {% raw %}$α${% endraw %}、{% raw %}$β${% endraw %}等希腊字母表示__文法符号串__
+1. {% raw %}$α${% endraw %}、{% raw %}$β${% endraw %}等希腊字母表示**文法符号串**
 
 ## 1.2 文法符号串
 
@@ -37,7 +37,7 @@ __为了方便描述，我们有如下约定__
 
 ## 1.3 产生式
 
-产生式描述了不同文法符号串之间的__转换关系__，这种关系是单向的。例如
+产生式描述了不同文法符号串之间的**转换关系**，这种关系是单向的。例如
 
 {% raw %}$$
 \alpha \to \beta
@@ -52,7 +52,7 @@ $${% endraw %}
 * 2-型文法，又称为上下文无关文法{% raw %}$$A \to \beta$${% endraw %}
 * 3-型文法，又称为正则文法{% raw %}$$A \to wB\;\;\;or\;\;\;A \to w$${% endraw %} or {% raw %}$$A \to Bw\;\;\;or\;\;\;A \to w$${% endraw %}
 
-__一般的编程语言都是2-型文法，即上下文无关文法__
+**一般的编程语言都是2-型文法，即上下文无关文法**
 
 ## 1.5 分析法概述
 
@@ -79,17 +79,17 @@ __一般的编程语言都是2-型文法，即上下文无关文法__
 
 ### 1.5.1 first集
 
-{% raw %}$First(X)${% endraw %}定义为可以由__文法符号__{% raw %}$X${% endraw %}推导出的所有__终结符集合__
+{% raw %}$First(X)${% endraw %}定义为可以由**文法符号**{% raw %}$X${% endraw %}推导出的所有**终结符集合**
 
 * 显然如果{% raw %}$X${% endraw %}是终结符，那么{% raw %}$First(X)=\{X\}${% endraw %}
 
 ### 1.5.2 follow集
 
-{% raw %}$First(A)${% endraw %}定义为可以紧跟在__非终结符{% raw %}$A${% endraw %}__之后的所有__终结符集合__，不包括{% raw %}$\epsilon${% endraw %}
+{% raw %}$First(A)${% endraw %}定义为可以紧跟在**非终结符{% raw %}$A${% endraw %}**之后的所有**终结符集合**，不包括{% raw %}$\epsilon${% endraw %}
 
 # 2 正则表达式实践篇
 
-__正则表达式引擎__
+**正则表达式引擎**
 
 * base package: `org.liuyehcf.grammar.rg`
 * 包括nfa自动机以及dfa自动机
@@ -179,14 +179,14 @@ Hua文法的定义参考了Java的文法定义，且大部分保持一致。包�
 <dims> → [ ] | <dims> [ ]
 <do statement> → do <mark loop offset> <statement> while ( <expression> ) ;
 <empty statement> → ;
-<epsilon or argument list> → __ε__ | <argument list>
-<epsilon or block statements> → __ε__ | <block statements>
-<epsilon or digits> → __ε__ | <digits>
-<epsilon or dims> → __ε__ | <dims>
-<epsilon or expression> → __ε__ | <expression>
-<epsilon or for init> → __ε__ | <for init>
-<epsilon or for update> → __ε__ | <for update>
-<epsilon or formal parameter list> → __ε__ | <formal parameter list>
+<epsilon or argument list> → **ε** | <argument list>
+<epsilon or block statements> → **ε** | <block statements>
+<epsilon or digits> → **ε** | <digits>
+<epsilon or dims> → **ε** | <dims>
+<epsilon or expression> → **ε** | <expression>
+<epsilon or for init> → **ε** | <for init>
+<epsilon or for update> → **ε** | <for update>
+<epsilon or formal parameter list> → **ε** | <formal parameter list>
 <equality expression> → <equality expression> != <relational expression> | <equality expression> == <relational expression> | <relational expression>
 <exclusive or expression> → <and expression> | <exclusive or expression> ^ <and expression>
 <expression name> → @identifier
@@ -209,23 +209,23 @@ Hua文法的定义参考了Java的文法定义，且大部分保持一致。包�
 <literal> → <boolean literal> | <integer literal>
 <local variable declaration statement> → <local variable declaration> ;
 <local variable declaration> → <type> <mark 146_1_1> <variable declarators>
-<mark 139_1_1> → __ε__
-<mark 146_1_1> → __ε__
-<mark 222_1_1> → __ε__
-<mark 230_2_1> → __ε__
-<mark 232_2_1> → __ε__
-<mark 286_1_1> → __ε__
-<mark 50_1_1> → __ε__
-<mark 66_2_1> → __ε__
-<mark 74_1_1> → __ε__
-<mark 74_1_2> → __ε__
-<mark after update> → __ε__
-<mark before init> → __ε__
-<mark before update> → __ε__
-<mark false block> → __ε__
-<mark loop offset> → __ε__
-<mark prefix expression> → __ε__
-<mark true block> → __ε__
+<mark 139_1_1> → **ε**
+<mark 146_1_1> → **ε**
+<mark 222_1_1> → **ε**
+<mark 230_2_1> → **ε**
+<mark 232_2_1> → **ε**
+<mark 286_1_1> → **ε**
+<mark 50_1_1> → **ε**
+<mark 66_2_1> → **ε**
+<mark 74_1_1> → **ε**
+<mark 74_1_2> → **ε**
+<mark after update> → **ε**
+<mark before init> → **ε**
+<mark before update> → **ε**
+<mark false block> → **ε**
+<mark loop offset> → **ε**
+<mark prefix expression> → **ε**
+<mark true block> → **ε**
 <method body> → ; | <block>
 <method declaration> → <mark 74_1_1> <method header> <mark 74_1_2> <method body>
 <method declarations> → <method declaration> | <method declarations> <method declaration>

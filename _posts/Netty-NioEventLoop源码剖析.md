@@ -9,7 +9,7 @@ categories:
 - Netty
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -50,7 +50,7 @@ NioEventLoop仅有一个构造方法，该方法接受如下几个参数
 
 * 该方法继续调用父类的构造方法
 * 初始化同步阻塞队列，用的是LinkedBlockingQueue作为实现
-* 其中tailTasks用于存放__非ScheduledTask__
+* 其中tailTasks用于存放**非ScheduledTask**
 
 ```java
     protected SingleThreadEventLoop(EventLoopGroup parent, Executor executor,
@@ -65,7 +65,7 @@ NioEventLoop仅有一个构造方法，该方法接受如下几个参数
 
 * 该方法继续调用父类的构造方法
 * 初始化任务队列，用的是LinkedBlockingQueue作为实现
-* 其中taskQueue用于存放__ScheduledTask__
+* 其中taskQueue用于存放**ScheduledTask**
 
 ```java
     protected SingleThreadEventExecutor(EventExecutorGroup parent, Executor executor,
@@ -301,7 +301,7 @@ doStartThread方法调用executor.execute来执行该Runnable，executor一般�
     }
 ```
 
-再回到doStartThread方法中，该方法中定义的Runnble的run方法中，__最重要的步骤就是执行SingleThreadEventExecutor.this.run()方法__，这个方法在NioEventLoop中定义，我们在下一节中进行分析
+再回到doStartThread方法中，该方法中定义的Runnble的run方法中，**最重要的步骤就是执行SingleThreadEventExecutor.this.run()方法**，这个方法在NioEventLoop中定义，我们在下一节中进行分析
 
 # 4 run
 

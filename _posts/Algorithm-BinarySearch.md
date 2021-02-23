@@ -8,7 +8,7 @@ categories:
 - Leetcode
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -30,19 +30,19 @@ __阅读更多__
 
 共有四题，分别是33、81、153、154
 
-__对于查找给定值__
+**对于查找给定值**
 
 * 这个给定值可能位于任意一段序列中
 * 通过nums[mid]与nums[right]的大小关系来确定mid位于第一段还是第二段序列中，再根据target的值来进行left和right的更新
 
-__查找最值(最大或最小)__
+**查找最值(最大或最小)**
 
 * 这个最值必定位于某一段序列中，因此必须保证[left,right]，要么包含两段序列，要么位于那段存在最值的序列
 * 对于153和154而言(最小值)，当`nums[mid] < nums[right]`时，只能`right = mid`，而不能`right = mid - 1`。因为如果执行`right = mid - 1`，可能会使得[left,right]只包含第一段序列，这样的话找到的是第一段的最小值，而非整个的最小值
 
 # 2 Question-4[★★★★]
 
-__Median of Two Sorted Arrays__
+**Median of Two Sorted Arrays**
 
 > There are two sorted arrays nums1 and nums2 of size m and n respectively.
 
@@ -79,11 +79,11 @@ public class Solution {
 
 # 3 Question-33[★★★★★]
 
-__Search in Rotated Sorted Array__
+**Search in Rotated Sorted Array**
 
 > Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
 
-__版本1__
+**版本1**
 
 ```java
 public class Solution {
@@ -116,7 +116,7 @@ public class Solution {
 }
 ```
 
-__版本2__
+**版本2**
 
 ```java
 public class Solution {
@@ -151,7 +151,7 @@ public class Solution {
 
 # 4 Question-34[★★★]
 
-__Search for a Range__
+**Search for a Range**
 
 > Given an array of integers sorted in ascending order, find the starting and ending position of a given target value.
 
@@ -210,7 +210,7 @@ public class Solution {
 
 # 5 Question-35[★★★]
 
-__Search Insert Position__
+**Search Insert Position**
 
 > Given a sorted array and a target value, return the index if the target is found. If not, return the index where it would be if it were inserted in order.
 
@@ -240,7 +240,7 @@ public class Solution {
 
 # 6 Question-50[★★]
 
-__`Pow(x, n)`__
+**`Pow(x, n)`**
 
 > Implement `pow(x, n)`.
 
@@ -261,7 +261,7 @@ public class Solution {
 
 # 7 Question-74[★★★★★]
 
-__Search a 2D Matrix__
+**Search a 2D Matrix**
 
 > Write an efficient algorithm that searches for a value in an m x n matrix. This matrix has the following properties:
 
@@ -335,13 +335,13 @@ public class Solution {
 
 # 8 Question-81[★★★★★]
 
-__Search in Rotated Sorted Array II__
+**Search in Rotated Sorted Array II**
 
 > Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
 
 思路：通过`nums[mid]`与`nums[right]`的关系来判断mid位于那一段有序的序列上。如果`nums[mid]>nums[right]`，那么意味着`[left,right]`必然存在两段序列且mid位于左边这段序列上，而`nums[mid]<nums[right]`意味着可能`[left,right]`本身就是有序的，或者存在两端序列且mid位于右边这段
 
-__版本1__
+**版本1**
 
 ```java
 public class Solution {
@@ -376,7 +376,7 @@ public class Solution {
 }
 ```
 
-__版本2__
+**版本2**
 
 ```java
 public class Solution {
@@ -413,7 +413,7 @@ public class Solution {
 
 # 9 Question-153[★★★★★]
 
-__Find Minimum in Rotated Sorted Array__
+**Find Minimum in Rotated Sorted Array**
 
 > Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
 
@@ -454,7 +454,7 @@ public class Solution {
 }
 ```
 
-__变体1：查找最大值__
+**变体1：查找最大值**
 
 > 最大值必定位于第一段序列中。二分查找时，必须保证[left,right]包含两个序列，或者位于第一个单调序列中
 
@@ -473,7 +473,7 @@ while (left < right) {
 ...
 ```
 
-__变体2：递增序列改为递减序列，然后查找最小值__
+**变体2：递增序列改为递减序列，然后查找最小值**
 
 > 最小值必定位于第一段序列中。二分查找时，必须保证[left,right]包含两段序列，或者位于第一个单调序列中
 
@@ -492,7 +492,7 @@ while (left < right) {
 ...
 ```
 
-__变体3：递增序列改为递减序列，然后查找最大值__
+**变体3：递增序列改为递减序列，然后查找最大值**
 
 > 最大值必定位于第二段序列中。二分查找时，必须保证[left,right]包含两端序列，或者位于第二个单调序列中
 
@@ -513,7 +513,7 @@ while (left < right) {
 
 # 10 Question-154[★★★★★]
 
-__Find Minimum in Rotated Sorted Array II__
+**Find Minimum in Rotated Sorted Array II**
 
 > Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
 
@@ -554,7 +554,7 @@ public class Solution {
 
 # 11 Question-167[★★]
 
-__Two Sum II - Input array is sorted__
+**Two Sum II - Input array is sorted**
 
 > Given an array of integers that is already sorted in ascending order, find two numbers such that they add up to a specific target number.
 
@@ -596,7 +596,7 @@ public class Solution {
 
 # 12 Question-240[★★★]
 
-__Search a 2D Matrix II__
+**Search a 2D Matrix II**
 
 > Write an efficient algorithm that searches for a value in an m x n matrix. This matrix has the following properties:
 

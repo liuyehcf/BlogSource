@@ -8,13 +8,13 @@ categories:
 - Maven
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
 # 1 maven-surefire-plugin插件简介
 
-Maven本身并不是一个单元测试框架，Java世界中主流的单元测试框架为Junit和TestNG。__Maven所做的只是在构建执行到特定生命周期阶段的时候，通过插件来执行Junit或者TestNG的测试用例，这一插件就是`maven-surefire-plugin`__
+Maven本身并不是一个单元测试框架，Java世界中主流的单元测试框架为Junit和TestNG。**Maven所做的只是在构建执行到特定生命周期阶段的时候，通过插件来执行Junit或者TestNG的测试用例，这一插件就是`maven-surefire-plugin`**
 
 在默认情况下，`maven-surefire-plugin`的test目标会自动执行测试源码路径下所有符合一组命名模式的测试类
 
@@ -53,7 +53,7 @@ Maven本身并不是一个单元测试框架，Java世界中主流的单元测�
 </project>
 ```
 
-如果不仅想跳过测试，还想临时性地__跳过测试代码的编译__，Maven也允许，但是不推荐
+如果不仅想跳过测试，还想临时性地**跳过测试代码的编译**，Maven也允许，但是不推荐
 
 * `$mvn package -Dmaven.test.skip=true`
 * 注意到，参数`maven.test.skip`同时控制了`maven-compiler-plugin`和`maven-surefire-plugin`两个插件的行为，测试代码编译跳过了，测试运行也跳过了
@@ -92,7 +92,7 @@ Maven本身并不是一个单元测试框架，Java世界中主流的单元测�
 </project>
 ```
 
-实际上，`maven-compiler-plugin`的testCompile目标和`maven-surefire-plugin`的test目标__都提供__了一个参数skip用来跳过测试编译和测试运行，而这个参数对应的命令行表达式为`maven.test.skip`
+实际上，`maven-compiler-plugin`的testCompile目标和`maven-surefire-plugin`的test目标**都提供**了一个参数skip用来跳过测试编译和测试运行，而这个参数对应的命令行表达式为`maven.test.skip`
 
 # 3 动态指定要运行的测试用例
 
@@ -106,18 +106,18 @@ Maven本身并不是一个单元测试框架，Java世界中主流的单元测�
     * `$mvn test -Dtest=SampleTest1,SampleTest2`：SampleTest1与SampleTest2这两个测试类得到执行
 * 结合多种特殊符号
     * `$mvn test -Dtest=*Test,SampleTest1,SampleTest2`
-* __注意，匹配的是简单类名，既不需要包名以及后缀`.java`__
+* **注意，匹配的是简单类名，既不需要包名以及后缀`.java`**
 
 test参数的值必须匹配一个或者多个测试类，如果`maven-surefire-plugin`找不到任何匹配的测试类，就会报错并导致构建失败。可以加上参数`-DfailIfNoTests=false`，告诉`maven-surefire-plugin`即使没有任何测试也不要报错
 
 * `$mvn test -Dtest -DfailIfNoTests=false`：这也是另外一种跳过测试运行的方法
 * `$mvn test -Dtest=NotExists -DfailIfNoTests=false`
 
-`maven-surefire-plugin`__没有提供__任何的命令行参数支持用户从命令行__跳过__指定的测试类，但好在可以在POM文件中配置`maven-surefire-plugin`以排除特定的测试类
+`maven-surefire-plugin`**没有提供**任何的命令行参数支持用户从命令行**跳过**指定的测试类，但好在可以在POM文件中配置`maven-surefire-plugin`以排除特定的测试类
 
 # 4 包含与排除测试用例
 
-前面介绍了一组命名模式，符合这一组模式的测试类会自动执行。Maven提倡约定优于配置原则，因此用户应该尽量遵守这一组模式来为测试类命名。即便如此，`maven-surefire-plugin`还是允许用户通过额外的配置来__自定义包含一些其他测试类__，或者__排除一些符合默认命名模式的测试类__
+前面介绍了一组命名模式，符合这一组模式的测试类会自动执行。Maven提倡约定优于配置原则，因此用户应该尽量遵守这一组模式来为测试类命名。即便如此，`maven-surefire-plugin`还是允许用户通过额外的配置来**自定义包含一些其他测试类**，或者**排除一些符合默认命名模式的测试类**
 
 ```xml
 <project>
@@ -148,10 +148,10 @@ test参数的值必须匹配一个或者多个测试类，如果`maven-surefire-
 </project>
 ```
 
-__注意__
+**注意**
 
-1. __使用`<includes>`元素后__，默认的匹配规则__将会失效__
-1. __使用`<excludes>`元素后__，默认的匹配规则__不会失效__
+1. **使用`<includes>`元素后**，默认的匹配规则**将会失效**
+1. **使用`<excludes>`元素后**，默认的匹配规则**不会失效**
 
 # 5 测试报告
 
@@ -201,7 +201,7 @@ table th:nth-of-type(3) {
 | org.junit.BeforeClass | org.testng.annotations.BeforeClass | 标注方法在所有测试方法之前执行 |
 | org.junit.AfterClass | org.testng.annotations.AfterClass | 标注方法在所有测试方法之后执行 |
 
-TestNG允许用户使用一个名为testng.xml的文件来配置想要运行的测试集合。在__项目根目录__创建`testng.xml`文件，内容如下
+TestNG允许用户使用一个名为testng.xml的文件来配置想要运行的测试集合。在**项目根目录**创建`testng.xml`文件，内容如下
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -284,7 +284,7 @@ TestNG允许用户使用一个名为testng.xml的文件来配置想要运行的�
 </project>
 ```
 
-__注意__
+**注意**
 
 1. 不要同时包含Junit以及TestNG的依赖，否则Junit的测试用例不会生效
 1. 使用TestNG且配置了`<suiteXmlFiles>`元素后，默认的匹配规则将不会生效，且`<includes>`元素以及`<excludes>`元素也不会生效
@@ -321,7 +321,7 @@ __注意__
 </project>
 ```
 
-`maven-jar-plugin`有两个目标，分别是jar和test-jar，前者通过Maven的内置绑定在default生命周期的package阶段运行，其行为就是对项目主代码进行打包，而后者并没有内置绑定，因此上述的插件配置__显式声明该目标__来打包测试代码。test-jar的默认绑定生命周期阶段为package。因此，执行`$mvn clean package`后，就可以在`target/`目录中看到测试jar包了
+`maven-jar-plugin`有两个目标，分别是jar和test-jar，前者通过Maven的内置绑定在default生命周期的package阶段运行，其行为就是对项目主代码进行打包，而后者并没有内置绑定，因此上述的插件配置**显式声明该目标**来打包测试代码。test-jar的默认绑定生命周期阶段为package。因此，执行`$mvn clean package`后，就可以在`target/`目录中看到测试jar包了
 
 # 7 参考
 

@@ -9,7 +9,7 @@ categories:
 - Spring
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -23,7 +23,7 @@ Spring-Cloud对注册中心这一模块做了抽象，其实现不局限于`Eure
 
 # 2 Demo概览
 
-__本Demo工程（`spring-cloud-cluster-eureka-based`）包含了如下几个子模块__
+**本Demo工程（`spring-cloud-cluster-eureka-based`）包含了如下几个子模块**
 
 1. `eureka-server`：服务注册/发现的配置中心
 1. `eureka-provider`：服务提供方
@@ -74,7 +74,7 @@ __本Demo工程（`spring-cloud-cluster-eureka-based`）包含了如下几个子
 
 # 3 Eureka-Server
 
-__`eureka-server`模块的目录结构如下__
+**`eureka-server`模块的目录结构如下**
 
 ```
 .
@@ -215,7 +215,7 @@ eureka:
 
 # 4 Eureka-Provider
 
-__`eureka-provider`模块的目录结构如下__
+**`eureka-provider`模块的目录结构如下**
 
 ```
 .
@@ -385,14 +385,14 @@ eureka:
 
 # 5 Ribbon-Consumer
 
-__`Spring Cloud`有两种服务调用方式__
+**`Spring Cloud`有两种服务调用方式**
 
 1. 一种是`Ribbon`+`RestTemplate`
 1. 另一种是`Feign`，其中`Feign`集成了`Ribbon`
 
 本小结先介绍`Ribbon`+`RestTemplate`方式的服务调用
 
-__`ribbon-consumer`模块的目录结构如下__
+**`ribbon-consumer`模块的目录结构如下**
 
 ```
 .
@@ -612,10 +612,10 @@ eureka:
 
 `Feign`是一个声明式的伪Http客户端，它使得写Http客户端变得更简单。使用`Feign`，只需要创建一个接口并注解。它具有可插拔的注解特性，可使用`Feign` 注解和JAX-RS注解。`Feign`支持可插拔的编码器和解码器。`Feign`默认集成了`Ribbon`，并和`Eureka`结合，默认实现了负载均衡的效果
 
-* __`Feign`采用的是基于接口的注解__
-* __`Feign`整合了`Ribbon`__
+* **`Feign`采用的是基于接口的注解**
+* **`Feign`整合了`Ribbon`**
 
-__`feign-consumer`模块的目录结构如下__
+**`feign-consumer`模块的目录结构如下**
 
 ```
 .
@@ -825,7 +825,7 @@ eureka:
 
 # 7 Config-Server
 
-__`config-server`模块的目录结构如下__
+**`config-server`模块的目录结构如下**
 
 ```
 .
@@ -983,9 +983,9 @@ eureka:
 * [http://localhost:1140/temp/cloud.config.demo-dev.yml](http://localhost:1140/temp/cloud.config.demo-dev.yml)
 * 其中，`master`和`temp`是[git](https://github.com/liuyehcf/spring-cloud-config-demo)仓库的两个分支
 
-__HTTP URL与Resource的对应关系如下，其中__
+**HTTP URL与Resource的对应关系如下，其中**
 
-1. `{application}`：表示的是文件名，__一般来说会以应用名作为配置的文件名，因此占位符的名字叫`application`__
+1. `{application}`：表示的是文件名，**一般来说会以应用名作为配置的文件名，因此占位符的名字叫`application`**
 1. `{profile}`：表示profile后缀
 1. `{label}`：表示git的分支
 
@@ -999,7 +999,7 @@ __HTTP URL与Resource的对应关系如下，其中__
 
 # 8 Config-Client
 
-__`config-client`模块的目录结构如下__
+**`config-client`模块的目录结构如下**
 
 ```
 .
@@ -1157,8 +1157,8 @@ eureka:
 
 应用读取配置中心参数时，会配置配置中心的地址等相关参数，而这部分配置需优先于`application.yml`被应用读取。`Spring Cloud`中的 `bootstrap.yml`是会比`application.yml`先加载的，所以这部分配置要定义在`bootstrap.yml`里面，这就引申出两个需要注意的地方
 
-* `spring.application.name`：它应该配置在`bootstrap.yml`，它的名字应该等于配置中心的配置文件的`{application}`。__所以配置中心在给配置文件取名字时，最好让它等于对应的应用服务名__
-* __配置中心与注册中心联合使用：若应用通过`serviceId`而非`url`来指定配置中心__，则`eureka.client.serviceUrl.defaultZone`也要配置在`bootstrap.yml`，要不启动的时候，应用会找不到注册中心，自然也就找不到配置中心了
+* `spring.application.name`：它应该配置在`bootstrap.yml`，它的名字应该等于配置中心的配置文件的`{application}`。**所以配置中心在给配置文件取名字时，最好让它等于对应的应用服务名**
+* **配置中心与注册中心联合使用：若应用通过`serviceId`而非`url`来指定配置中心**，则`eureka.client.serviceUrl.defaultZone`也要配置在`bootstrap.yml`，要不启动的时候，应用会找不到注册中心，自然也就找不到配置中心了
 
 ```yml
 spring:

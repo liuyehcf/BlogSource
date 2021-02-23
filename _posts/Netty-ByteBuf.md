@@ -9,7 +9,7 @@ categories:
 - Netty
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -19,7 +19,7 @@ __阅读更多__
 
 有时，我们想将多个`ByteBuf`拼接成一个`ByteBuf`，但是又不想进行拷贝操作（数据量大时有性能开销），那么`CompositeByteBuf`就是最好的解决方案。`CompositeByteBuf`封装了一组`ByteBuf`，我们可以像操作普通`ByteBuf`一样操作这一组`ByteBuf`，同时又可避免拷贝，极大地提高了效率
 
-__注意，writeXXX不要和addComponent混用__
+**注意，writeXXX不要和addComponent混用**
 
 ```java
     public static void main(String[] args) {
@@ -115,7 +115,7 @@ public class AthenaFrameHandler extends ByteToMessageCodec<AthenaFrame> {
 
 问题在于`in.readBytes(totalLength)`，该方法创建了一个新的`ByteBuf`，但是这个`ByteBuf`并没有被释放掉，造成了内存泄漏
 
-__如何筛查堆外内存泄露？可以通过反射查看`PlatformDependent`类中的静态字段`DIRECT_MEMORY_COUNTER`__
+**如何筛查堆外内存泄露？可以通过反射查看`PlatformDependent`类中的静态字段`DIRECT_MEMORY_COUNTER`**
 
 # 4 参考
 

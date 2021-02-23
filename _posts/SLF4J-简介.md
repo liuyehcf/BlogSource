@@ -9,7 +9,7 @@ categories:
 - Log
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -19,7 +19,7 @@ SLF4J，即简单日志门面（Simple Logging Facade for Java, SLF4J），不�
 
 实际上，SLF4J所提供的核心API是一些接口以及一个LoggerFactory的工厂类。从某种程度上，SLF4J有点类似JDBC，不过比JDBC更简单，在JDBC中，你需要指定驱动程序，而在使用SLF4J的时候，不需要在代码中或配置文件中指定你打算使用那个具体的日志系统。如同使用JDBC基本不用考虑具体数据库一样，SLF4J提供了统一的记录日志的接口，只要按照其提供的方法记录即可，最终日志的格式、记录级别、输出方式等通过具体日志系统的配置来实现，因此可以在应用中灵活切换日志系统
 
-__简单地说，SLF4J只提供日志框架的接口，而不提供具体的实现。因此SLF4J必须配合具体的日志框架才能正常工作__
+**简单地说，SLF4J只提供日志框架的接口，而不提供具体的实现。因此SLF4J必须配合具体的日志框架才能正常工作**
 
 # 2 Maven依赖
 
@@ -37,9 +37,9 @@ __简单地说，SLF4J只提供日志框架的接口，而不提供具体的实�
 
 Log4j由三个重要的组件构成：
 
-1. __日志信息的优先级__：从高到低有ERROR、WARN、 INFO、DEBUG，分别用来指定这条日志信息的重要程度
-1. __日志信息的输出目的地__：指定了日志将打印到控制台还是文件中
-1. __日志信息的输出格式__：控制了日志信息的显示内容
+1. **日志信息的优先级**：从高到低有ERROR、WARN、 INFO、DEBUG，分别用来指定这条日志信息的重要程度
+1. **日志信息的输出目的地**：指定了日志将打印到控制台还是文件中
+1. **日志信息的输出格式**：控制了日志信息的显示内容
 
 ## 3.1 Log级别
 
@@ -54,7 +54,7 @@ Log4j由三个重要的组件构成：
 
 ## 3.2 Log4j配置
 
-可以完全不使用配置文件，而是在代码中配置Log4j环境。但是，使用配置文件将使应用程序更加灵活。__Log4j支持两种配置文件格式__，一种是XML格式的文件，一种是Java特性文件（键 = 值）。下面我们介绍使用Java特性文件做为配置文件的方法
+可以完全不使用配置文件，而是在代码中配置Log4j环境。但是，使用配置文件将使应用程序更加灵活。**Log4j支持两种配置文件格式**，一种是XML格式的文件，一种是Java特性文件（键 = 值）。下面我们介绍使用Java特性文件做为配置文件的方法
 
 ### 3.2.1 配置根Logger
 
@@ -76,7 +76,7 @@ log4j.appender.<appenderName>.<option1> = <value1>
 log4j.appender.<appenderName>.<optionN> = <valueN>
 ```
 
-__其中，Log4j提供的appender有以下几种__
+**其中，Log4j提供的appender有以下几种**
 
 1. `org.apache.log4j.ConsoleAppender`：控制台
 1. `org.apache.log4j.FileAppender`：文件
@@ -94,14 +94,14 @@ log4j.appender.<appenderName>.<option1> = <value1>
 log4j.appender.<appenderName>.<optionN> = <valueN>
 ```
 
-__其中，Log4j提供的layout有以下几种__
+**其中，Log4j提供的layout有以下几种**
 
 1. `org.apache.log4j.HTMLLayout`：以HTML表格形式布局
 1. `org.apache.log4j.PatternLayout`：可以灵活地指定布局模式
 1. `org.apache.log4j.SimpleLayout`：包含日志信息的级别和信息字符串
 1. `org.apache.log4j.TTCCLayout`：包含日志产生的时间、线程、类别等等信息
 
-__Log4J采用类似C语言中的printf函数的打印格式格式化日志信息__
+**Log4J采用类似C语言中的printf函数的打印格式格式化日志信息**
 
 1. `%%`：输出一个"%"字符
 1. `%c`：输出所属的类目，通常就是所在类的全名

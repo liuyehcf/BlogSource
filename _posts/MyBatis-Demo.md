@@ -9,7 +9,7 @@ categories:
 - MyBatis
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -142,7 +142,7 @@ MyBatis配置文件
 
 ### 1.4.1 CrmUserDAO.java
 
-映射器（Mapper）的Java接口。__为了搞清参数传递的方式，这里的参数命名比较恶心，接口中的参数名字anyName在映射器配置文件中不会出现__
+映射器（Mapper）的Java接口。**为了搞清参数传递的方式，这里的参数命名比较恶心，接口中的参数名字anyName在映射器配置文件中不会出现**
 
 ```java
 package org.liuyehcf.mybatis;
@@ -530,17 +530,17 @@ public class TestWithoutParam {
 
 映射器配置文件，以下是我总结的参数映射规则
 
-1. 对于__不含有__@Param注解的方法
+1. 对于**不含有**@Param注解的方法
     * 一个参数
         * 对于非JavaBean参数：`${}`与`#{}`里面可以填任何字符，无所谓；test属性只能填写`_parameter`
         * 对于JavaBean参数：`${}`与`#{}`以及test属性只能填写JavaBean的属性名（set方法去掉set字符串并小写首字母）
     * 多个参数：`${}`与`#{}`
         * 对于JavaBean参数：`${}`与`#{}`以及test属性只能填写JavaBean的属性名（set方法去掉set字符串并小写首字母）
         * 对于非JavaBean参数：`${}`与`#{}`以及test属性只能填写`arg0、arg1、...`以及`param1、param2、...`
-1. 对于__含有__@Param注解的方法（假设注解配置的值是`myParam`）
+1. 对于**含有**@Param注解的方法（假设注解配置的值是`myParam`）
     * 对于JavaBean参数：`${}`与`#{}`以及test属性只能以@Param注解配置的值或者`param1、param2、...`作为前缀，再加上JavaBean属性名。例如，`#{param1.id}`以及`#{myParam.id}`
     * 对于非JavaBean参数：`${}`与`#{}`以及test属性只能填写@Param注解配置的值或者`param1、param2、...`
-* __产生上述规则的原因，请参考{% post_link MyBatis-源码剖析 %}__
+* **产生上述规则的原因，请参考{% post_link MyBatis-源码剖析 %}**
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>

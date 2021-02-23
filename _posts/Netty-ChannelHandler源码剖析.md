@@ -9,7 +9,7 @@ categories:
 - Netty
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -37,7 +37,7 @@ ChannelInboundHandler接口定义了与Inbound operations相关的一些方法
 
 ## 2.4 ChannelHandlerAdapter
 
-ChannelHandlerAdapter为ChannelHandler接口提供的方法提供了一个__空的实现__，并且增加了用于判断是否是共享Handler的方法。如果是共享的Handler，则Netty可以为所有的Pipeline都注入同一个Handler，从而避免创建Handler对象的开销
+ChannelHandlerAdapter为ChannelHandler接口提供的方法提供了一个**空的实现**，并且增加了用于判断是否是共享Handler的方法。如果是共享的Handler，则Netty可以为所有的Pipeline都注入同一个Handler，从而避免创建Handler对象的开销
 
 由于添加或删除Handler的方法仅仅在非常特定的时刻会被触发（例如第一次register的时候），因此这里提供了一个空的实现。常见的实现该方法的类有ChannelInitializer
 

@@ -9,13 +9,13 @@ categories:
 - Source Code Analysis
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
 # 1 前言
 
-__FutureTask源码分析将分为以下几个部分__
+**FutureTask源码分析将分为以下几个部分**
 
 1. 继承体系介绍
 1. 常量简介
@@ -53,11 +53,11 @@ public interface Future<V> {
 
 ## 3.1 RunnableFuture
 
-__接口仅仅继承了Runnable接口与Future接口，FutureTask实现了RunnableFuture接口__
+**接口仅仅继承了Runnable接口与Future接口，FutureTask实现了RunnableFuture接口**
 
 # 4 常量简介
 
-__FutureTask定义了7个状态常量来表示FutureTask自身的状态__
+**FutureTask定义了7个状态常量来表示FutureTask自身的状态**
 
 ```java
     private static final int NEW          = 0;
@@ -69,17 +69,17 @@ __FutureTask定义了7个状态常量来表示FutureTask自身的状态__
     private static final int INTERRUPTED  = 6;
 ```
 
-* __NEW__：初始状态，FutureTask对象创建完毕后就处于这个状态
-* __COMPLETING__：暂时状态，位于NEW-->NORMAL或者NEW-->EXCEPTION的中间状态。处于该状态下时，会进行outcome的赋值操作，赋值操作完毕后，立即进入NORMAL或者EXCEPTION状态中去
-* __NORMAL__：最终状态，正常结束时FutureTask就是这个状态
-* __EXCEPTIONAL__：最终状态，任务执行过程中如果抛出异常，那么FutureTask最终会处于该状态下
-* __CANCELLED__：最终状态，执行cancel方法，并且mayInterruptIfRunning为false时，FutureTask最终处于该状态
-* __INTERRUPTING__：暂时状态，执行cancel方法，并且mayInterruptIfRunning为true时，FutureTask会处于该状态，随后会给关联线程发送一个中断信号，然后转移到INTERRUPTED状态
-* __INTERRUPTED__：最终状态，执行cancel方法，并且mayInterruptIfRunning为true时，FutureTask会处于该状态
+* **NEW**：初始状态，FutureTask对象创建完毕后就处于这个状态
+* **COMPLETING**：暂时状态，位于NEW-->NORMAL或者NEW-->EXCEPTION的中间状态。处于该状态下时，会进行outcome的赋值操作，赋值操作完毕后，立即进入NORMAL或者EXCEPTION状态中去
+* **NORMAL**：最终状态，正常结束时FutureTask就是这个状态
+* **EXCEPTIONAL**：最终状态，任务执行过程中如果抛出异常，那么FutureTask最终会处于该状态下
+* **CANCELLED**：最终状态，执行cancel方法，并且mayInterruptIfRunning为false时，FutureTask最终处于该状态
+* **INTERRUPTING**：暂时状态，执行cancel方法，并且mayInterruptIfRunning为true时，FutureTask会处于该状态，随后会给关联线程发送一个中断信号，然后转移到INTERRUPTED状态
+* **INTERRUPTED**：最终状态，执行cancel方法，并且mayInterruptIfRunning为true时，FutureTask会处于该状态
 
 # 5 字段简介
 
-__FutureTask仅有以下五个字段__
+**FutureTask仅有以下五个字段**
 
 ```java
     /**
@@ -120,7 +120,7 @@ __FutureTask仅有以下五个字段__
 
 ## 6.1 WaitNode
 
-__WaitNode将Thread对象封装成一个链表的节点__
+**WaitNode将Thread对象封装成一个链表的节点**
 
 * 那些阻塞在get()方法调用中的线程将会在此链表中排队等候
 * 当任务完成或者异常结束时，FutureTask会依次唤醒阻塞在get()方法中的线程
@@ -142,7 +142,7 @@ __WaitNode将Thread对象封装成一个链表的节点__
 
 ## 7.1 构造方法
 
-__FutureTask含有两个构造方法__
+**FutureTask含有两个构造方法**
 
 * 一个构造方法接受一个Callable对象
 * 另一个构造方法接受一个Runnable对象，和一个Result
@@ -183,7 +183,7 @@ __FutureTask含有两个构造方法__
 
 ### 7.1.1 Executors.callable
 
-__该静态方法负责将Runnable对象适配成一个Callable对象__
+**该静态方法负责将Runnable对象适配成一个Callable对象**
 
 ```java
     /**
@@ -204,7 +204,7 @@ __该静态方法负责将Runnable对象适配成一个Callable对象__
     }
 ```
 
-__其中适配器RunnableAdapter如下__
+**其中适配器RunnableAdapter如下**
 
 * 该类仅仅是将一个Runnable对象适配成一个Callable对象，并无他用
 * 注意到result通过构造方法进行赋值，然后在call方法中直接返回，与Runnable无任何关系
@@ -232,7 +232,7 @@ __其中适配器RunnableAdapter如下__
 
 ## 7.2 run
 
-__线程执行的主要方法__
+**线程执行的主要方法**
 
 * 首先判断状态，只有NEW状态才能正常执行该方法，否则说明被cancel了
 * 执行Callable的call方法，正常执行或者异常执行将会触发不同的状态转移方法
@@ -280,7 +280,7 @@ __线程执行的主要方法__
 
 ### 7.2.1 setException
 
-__该方法逻辑如下__
+**该方法逻辑如下**
 
 * 该方法将FutureTask的状态通过CAS改为COMPLETING
 * 然后将outcome赋值为异常对象
@@ -308,7 +308,7 @@ __该方法逻辑如下__
 
 ### 7.2.2 set
 
-__该方法逻辑如下__
+**该方法逻辑如下**
 
 * 该方法将FutureTask的状态通过CAS改为COMPLETING
 * 然后将outcome赋值Callable#run的返回结果
@@ -335,7 +335,7 @@ __该方法逻辑如下__
 
 ### 7.2.3 finishCompletion
 
-__该方法会唤醒所有阻塞在get方法中的所有WaitNode节点__
+**该方法会唤醒所有阻塞在get方法中的所有WaitNode节点**
 
 ```java
     /**
@@ -399,7 +399,7 @@ __该方法会唤醒所有阻塞在get方法中的所有WaitNode节点__
 
 ## 7.3 get
 
-__get方法有两个重载版本__
+**get方法有两个重载版本**
 
 * 第一个版本会阻塞线程，直至FutureTask以某种方式结束后被唤醒
 * 第二个版本可以设定最长阻塞时间。阻塞线程，直至FutureTask以某种方式结束后被唤醒，或者超时
@@ -434,7 +434,7 @@ __get方法有两个重载版本__
 
 ### 7.3.1 awaitDone
 
-__阻塞get()方法的调用线程__
+**阻塞get()方法的调用线程**
 
 ```java
     /**
@@ -498,7 +498,7 @@ __阻塞get()方法的调用线程__
 
 ### 7.3.2 removeWaiter
 
-__将一个阻塞超时的节点，或者被中断的节点移出链表__
+**将一个阻塞超时的节点，或者被中断的节点移出链表**
 
 * 这个方法可能存在竞争，但是Doug Lea(作者)并未采用CAS操作串行化链表处理，而是采用另一种方式，一旦发现异常就重新遍历链表
 * 这种方式在链表非常长且存在竞争时会导致效率比较低，但是Doug Lea认为并不需要考虑这种特殊情况
@@ -544,7 +544,7 @@ __将一个阻塞超时的节点，或者被中断的节点移出链表__
 
 ### 7.3.3 report
 
-__根据FutureTask的状态，返回相应的结果__
+**根据FutureTask的状态，返回相应的结果**
 
 * 若FutureTask的最终状态是NORMAL，说明Callable#call正常执行，返回Callable#call方法返回的结果即可
 * 若FutureTask的最终状态大于等于CANCEL，说明FutureTask被cancel了，抛出CancellationException异常

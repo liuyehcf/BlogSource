@@ -9,7 +9,7 @@ categories:
 - Netty
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -17,7 +17,7 @@ __阅读更多__
 
 ## 1.1 复现问题
 
-__对Client进行如下改造__：
+**对Client进行如下改造**：
 
 1. 将`handshake`挪到`connect`之后执行（原本在`WebSocketClientHandler.channelActive`方法中执行）
 1. 循环connect，直到出现异常（问题出现的概率较小，因此用死循环循环）
@@ -131,7 +131,7 @@ public class Client {
 }
 ```
 
-__对WebSocketClientHandler进行如下改造__：
+**对WebSocketClientHandler进行如下改造**：
 
 1. 注释掉`handShaker.handshake(ctx.channel());`一句
 
@@ -145,7 +145,7 @@ __对WebSocketClientHandler进行如下改造__：
     }
 ```
 
-__运行后得到如下异常__
+**运行后得到如下异常**
 
 ```java
 java.lang.UnsupportedOperationException: unsupported message type: TextWebSocketFrame (expected: ByteBuf, FileRegion)
@@ -194,7 +194,7 @@ channel.writeAndFlush(new TextWebSocketFrame("Hello, I'm client"))
     .addListener(ChannelFutureListener.CLOSE);
 ```
 
-__正常的时候，其handler如下__
+**正常的时候，其handler如下**
 
 1. WebSocket13FrameDecoder
 1. WebSocket13FrameEncoder
@@ -204,7 +204,7 @@ __正常的时候，其handler如下__
 1. WebSocketClientHandler
 1. ClientHandler
 
-__异常的时候，其handler如下__
+**异常的时候，其handler如下**
 
 1. WebSocket13FrameDecoder
 1. ChunkedWriteHandler
@@ -316,7 +316,7 @@ content: at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocal
 content: at java.lang.Thread.run(Thread.java:766)
 ```
 
-__原因，没有释放`ch.readOutbound()`返回的`ByteBuf`，调整代码如下：__
+**原因，没有释放`ch.readOutbound()`返回的`ByteBuf`，调整代码如下：**
 
 ```java
 @Override

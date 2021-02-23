@@ -8,15 +8,15 @@ categories:
 - Generic
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
 # 1 Type接口
 
-众所周知，JDK 1.5之后引入了泛型。Java中的泛型与C++中的泛型（说模板更确切）实现方式完全不同。C++中的泛型利用的是__模板技术__，在预处理期将为每个不同的__泛型实参__生成一份源码。而Java中的泛型利用的是__擦除技术__，在将源文件`.java`编译成字节码文件`.class`的时候，将所有泛型形参都替换成了Object，称之为擦除，因此，__不同的泛型实参对应的是同一份字节码__
+众所周知，JDK 1.5之后引入了泛型。Java中的泛型与C++中的泛型（说模板更确切）实现方式完全不同。C++中的泛型利用的是**模板技术**，在预处理期将为每个不同的**泛型实参**生成一份源码。而Java中的泛型利用的是**擦除技术**，在将源文件`.java`编译成字节码文件`.class`的时候，将所有泛型形参都替换成了Object，称之为擦除，因此，**不同的泛型实参对应的是同一份字节码**
 
-Java泛型新增了一个Type接口，__我们熟知的Class类实现了该接口__。因此Type接口是整个类型体系的顶层
+Java泛型新增了一个Type接口，**我们熟知的Class类实现了该接口**。因此Type接口是整个类型体系的顶层
 
 ```
 Type 
@@ -38,7 +38,7 @@ Class是Type接口的实现，是运行时获取类型信息的入口
 
 ParameterizedType接口实现了Type接口，增加了如下方法
 
-1. getActualTypeArguments：用于获取__泛型实参__列表，例如`AbstractMap.SimpleEntry<String, List>`返回的就是`String`和`List`
+1. getActualTypeArguments：用于获取**泛型实参**列表，例如`AbstractMap.SimpleEntry<String, List>`返回的就是`String`和`List`
 1. getRawType：用于获取类型本身，例如`AbstractMap.SimpleEntry<String, List>`返回的就是`AbstractMap.SimpleEntry`
 1. getOwnerType：用于获取所有者类型，例如`AbstractMap.SimpleEntry<String, List>`返回的就是`AbstractMap`
 
@@ -62,12 +62,12 @@ public class TypeHolder extends HashMap.SimpleEntry<String, List> {
 }
 ```
 
-这个`TypeHolder`类继承了`HashMap.SimpleEntry<String, List>`，__这个父类的类型信息（HashMap.SimpleEntry以及泛型实参String、List）在`编译期`就可以完全确定了，Java将它的父类的类型信息封装成`ParameterizedType`，保留在字节码文件中__
+这个`TypeHolder`类继承了`HashMap.SimpleEntry<String, List>`，**这个父类的类型信息（HashMap.SimpleEntry以及泛型实参String、List）在`编译期`就可以完全确定了，Java将它的父类的类型信息封装成`ParameterizedType`，保留在字节码文件中**
 
 那么，我们如何能够获取到这个类型信息呢？我们可以通过`Class.getGenericSuperclass`获取到`ParameterizedType`
 
-1. 如果一个类的__父类不是泛型__，那么`Class.getGenericSuperclass`返回的就是一个Class
-1. 如果一个类的__父类是泛型__，那么`Class.getGenericSuperclass`返回的就是`ParameterizedType`
+1. 如果一个类的**父类不是泛型**，那么`Class.getGenericSuperclass`返回的就是一个Class
+1. 如果一个类的**父类是泛型**，那么`Class.getGenericSuperclass`返回的就是`ParameterizedType`
 
 下面以一个例子来说明：
 
@@ -117,7 +117,7 @@ OwnerType: class java.util.AbstractMap
 
 ## 1.3 TypeVariable接口
 
-TypeVariable接口实现了Type接口，TypeVariable接口__主要用于封装泛型形参__。增加了如下方法
+TypeVariable接口实现了Type接口，TypeVariable接口**主要用于封装泛型形参**。增加了如下方法
 
 1. getBounds：用于获取泛型边界
 1. getGenericDeclaration：用于获取泛型声明
@@ -173,7 +173,7 @@ T
 
 在业务代码中会定义许多的DTO，这些DTO有些非常庞大，嵌套层级非常多，这时候写测试代码将会非常讨厌，我们必须先new一个DTO，然后用set方法一个个去填充值，动辄就30多行，十分臃肿
 
-那么，__如果对DTO填充的内容并不关心的话__，我们可以用一个工具类`JavaBeanInitializerUtils`来帮助我们自动填充这个DTO，它有如下特点
+那么，**如果对DTO填充的内容并不关心的话**，我们可以用一个工具类`JavaBeanInitializerUtils`来帮助我们自动填充这个DTO，它有如下特点
 
 1. 支持泛型以及泛型嵌套
 1. 对常用的容器类型，例如List、Map进行自动填充
@@ -185,7 +185,7 @@ T
 1. 如果我们要初始化这样一个类`DataDTO<UserDTO>`，我们如何保留其泛型实参`UserDTO`，显然，通过DataDTO.class是无法得到的
 1. 对于`setXXX(T data)`这样一个含有泛型形参的方法，其中T是泛型形参，我们如何传入一个泛型实参的实例
 
-__上一小节介绍过ParameterizedType可以将泛型实参保留在继承链路中。因此，对于第一个问题，我们通过如下方式来解决：__
+**上一小节介绍过ParameterizedType可以将泛型实参保留在继承链路中。因此，对于第一个问题，我们通过如下方式来解决：**
 
 1. TypeReference是一个抽象类，避免实例化本类
 1. TypeReference包含一个type字段，用于保留父类的类型信息
@@ -210,8 +210,8 @@ __上一小节介绍过ParameterizedType可以将泛型实参保留在继承链�
 
 TypeReference的使用方式如下：
 
-* 注意这个大括号`{}`。这个语句的意思是，__创建一个TypeReference的匿名内部类__
-* 在创建对象时，`(1)`中`getClass()`获取到的是这个匿名内部类的Class对象，通过getGenericSuperclass方法得到的就是`TypeReference<DataDTO<UserDTO>>`，然后通过`(2)`得到泛型实参`DataDTO<UserDTO>`。__因此类型信息通过继承链路保留了下来，这是一个比较tricky的地方__
+* 注意这个大括号`{}`。这个语句的意思是，**创建一个TypeReference的匿名内部类**
+* 在创建对象时，`(1)`中`getClass()`获取到的是这个匿名内部类的Class对象，通过getGenericSuperclass方法得到的就是`TypeReference<DataDTO<UserDTO>>`，然后通过`(2)`得到泛型实参`DataDTO<UserDTO>`。**因此类型信息通过继承链路保留了下来，这是一个比较tricky的地方**
 
 ```java
     public static void main(String[] args) {
@@ -227,7 +227,7 @@ TypeReference的使用方式如下：
 DataDTO<UserDTO>
 ```
 
-__对于第二个问题，我们可以建立一个Map<String, Type>，从泛型形参映射到泛型实参，这样每当遇到setXXX(T data)这样含有泛型形参的方法时，我们通过这个Map字典查询到泛型实参__
+**对于第二个问题，我们可以建立一个Map<String, Type>，从泛型形参映射到泛型实参，这样每当遇到setXXX(T data)这样含有泛型形参的方法时，我们通过这个Map字典查询到泛型实参**
 
 ## 2.3 代码清单
 
@@ -622,7 +622,7 @@ public class JavaBeanInitializerUtils {
 
 ### 2.4.1 DTO定义
 
-__首先定义几个DTO__
+**首先定义几个DTO**
 
 AddressDTO
 

@@ -9,7 +9,7 @@ categories:
 - MyBatis
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -22,7 +22,7 @@ __阅读更多__
 1. 映射器的两个组件：Java接口和映射器配置文件如何建立关联
 1. 映射器如何执行SQL操作
 
-__分析用到的Demo源码详见{% post_link MyBatis-Demo %}__
+**分析用到的Demo源码详见{% post_link MyBatis-Demo %}**
 
 分析的源码版本为
 
@@ -36,7 +36,7 @@ __分析用到的Demo源码详见{% post_link MyBatis-Demo %}__
 
 # 2 SqlSessionFactory生成
 
-__分析起点__
+**分析起点**
 
 ```java
 SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
@@ -73,7 +73,7 @@ MyBatis采用建造者模式来创建SqlSessionFactory，SqlSessionFactoryBuilde
 
 我们接着看一下XMLConfigBuilder.parse方法（该方法将在后面的小节中详细分析），该方法从XML的DOM树节点中取出相应的配置项，初始化Configuration，然后返回Configuration的对象
 
-__至此，配置文件的生命周期已经结束，所有的配置信息都保存在了这个Configuration的对象之中__
+**至此，配置文件的生命周期已经结束，所有的配置信息都保存在了这个Configuration的对象之中**
 
 接着，我们回到SqlSessionFactoryBuilder的build方法中，继续看同名的build方法，该方法返回一个SqlSessionFactory的对象
 
@@ -312,11 +312,11 @@ Configuration.addMapper将任务转交给了MapperRegistry的同名方法，Mapp
     }
 ```
 
-该方法首先创建一个键值对，类型为`<Class<?>, MapperProxyFactory<?>>`，__其中MapperProxyFactory为代理工厂，其主要职能是为Mapper创建代理类，这是MyBatis的核心内容__，在后面的小节将会详细介绍，这里不再赘述。其次，该方法会__扫描接口中配置的注解__，譬如@Select、@Insert、@Update、@Delete等（但是__不会解析@Param这种参数注解__）
+该方法首先创建一个键值对，类型为`<Class<?>, MapperProxyFactory<?>>`，**其中MapperProxyFactory为代理工厂，其主要职能是为Mapper创建代理类，这是MyBatis的核心内容**，在后面的小节将会详细介绍，这里不再赘述。其次，该方法会**扫描接口中配置的注解**，譬如@Select、@Insert、@Update、@Delete等（但是**不会解析@Param这种参数注解**）
 
-因此，__如果一个映射器的配置方式是Java接口加上注解__，那么配置Mapper的属性为class，根据XMLConfigBuilder.mapperElement的逻辑，将会直接调用Configuration.addMapper方法，于是同样会走到MapperRegistry.addMapper的逻辑来扫描注解
+因此，**如果一个映射器的配置方式是Java接口加上注解**，那么配置Mapper的属性为class，根据XMLConfigBuilder.mapperElement的逻辑，将会直接调用Configuration.addMapper方法，于是同样会走到MapperRegistry.addMapper的逻辑来扫描注解
 
-注意一下，__MyBatis`不要求`映射器配置文件的namespace必须对应着一个接口__。如果namespace不是一个接口的话，无法使用Mapper方式来操作SQL，不过还是能通过iBatis的方式进行SQL操作，例如
+注意一下，**MyBatis`不要求`映射器配置文件的namespace必须对应着一个接口**。如果namespace不是一个接口的话，无法使用Mapper方式来操作SQL，不过还是能通过iBatis的方式进行SQL操作，例如
 
 ```java
 sqlSession.selectList("some-namespace.update", map);
@@ -324,7 +324,7 @@ sqlSession.selectList("some-namespace.update", map);
 
 # 3 SqlSession生成
 
-__分析起点__
+**分析起点**
 
 ```java
 sqlSession = sqlSessionFactory.openSession();
@@ -528,9 +528,9 @@ Executor
 
 # 4 Mapper代理生成
 
-__分析起点__
+**分析起点**
 
-首先，我们要明确，__每次__我们通过SqlSession接口的getMapper方法获取Mapper时，MyBatis就会为我们创建一个Mapper的代理对象
+首先，我们要明确，**每次**我们通过SqlSession接口的getMapper方法获取Mapper时，MyBatis就会为我们创建一个Mapper的代理对象
 
 ```java
 CrmUserDAO mapper = sqlSession.getMapper(CrmUserDAO.class);
@@ -556,8 +556,8 @@ CrmUserDAO mapper = sqlSession.getMapper(CrmUserDAO.class);
 
 继续跟踪MapperRegistry的同名方法，该方法的逻辑如下
 
-1. __首先从MapperRegistry的缓存中（knownMappers）以Class对象为键，拿到MapperProxyFactory对象__
-    * __如果无法获取到，那么意味着namespace没有对应着一个Java接口，因此，无法使用Mapper方式操作SQL__，于是直接抛出异常
+1. **首先从MapperRegistry的缓存中（knownMappers）以Class对象为键，拿到MapperProxyFactory对象**
+    * **如果无法获取到，那么意味着namespace没有对应着一个Java接口，因此，无法使用Mapper方式操作SQL**，于是直接抛出异常
 1. 然后用这个获取到的MapperProxyFactory对象来为当前Java接口创建代理对象
 
 在Configuration对象创建的分析中，我们已经分析过了knownMappers的添加流程，关键逻辑在MapperRegistry.addMapper方法中，这里不再赘述
@@ -768,7 +768,7 @@ SqlCommand如下，该类的主要作用就是获取一条SQL语句的名字（�
     }
 ```
 
-MethodSignature如下，该类的主要作用就是封装一个Method（映射器的Java接口的方法）的各类信息，__还包含了一个重要的方法convertArgsToSqlCommandParam，该方法定义了参数的映射方法（参数的传递方式），也是@Param注解生效的地方__
+MethodSignature如下，该类的主要作用就是封装一个Method（映射器的Java接口的方法）的各类信息，**还包含了一个重要的方法convertArgsToSqlCommandParam，该方法定义了参数的映射方法（参数的传递方式），也是@Param注解生效的地方**
 
 ```java
     public static class MethodSignature {
@@ -1015,9 +1015,9 @@ public class ParamNameResolver {
 }
 ```
 
-__参数映射规则__
+**参数映射规则**
 
-1. 如果只有一个参数，且__没有__@Param注解修饰，那么将参数透传，不将其封装成Map
+1. 如果只有一个参数，且**没有**@Param注解修饰，那么将参数透传，不将其封装成Map
 1. 如果有多个参数，或者至少有一个参数被@Param注解修饰，那么将参数封装成Map
     * 若参数有@Param修饰，添加以`@Param的值作为key`的参数键值对
     * 若参数没有@Param修饰，添加以`argi`或`i`（大概率是`argi`）作为key的参数键值对（i是参数的位置，从0开始计算，具体逻辑详见`ParamNameResolver`的构造方法）
@@ -1085,7 +1085,7 @@ __参数映射规则__
     }
 ```
 
-__这里，每种SQL的操作流程如下__
+**这里，每种SQL的操作流程如下**
 
 1. 首先，通过MethodSignature.convertArgsToSqlCommandParam方法进行参数映射
 1. 然后通过iBatis的接口进行SQL操作

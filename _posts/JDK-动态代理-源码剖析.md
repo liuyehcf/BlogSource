@@ -8,7 +8,7 @@ categories:
 - Dynamic proxy
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -30,8 +30,8 @@ __阅读更多__
         proxyClassCache = new WeakCache<>(new KeyFactory(), new ProxyClassFactory());
 ```
 
-* __constructorParams__：代理类的构造方法的参数的类型列表，说明所有代理类的构造方法只接受InvocationHandler的对象作为参数
-* __proxyClassCache__：代理类Class对象的缓存，如果代理类已经被生成了，那么会从缓存中取出
+* **constructorParams**：代理类的构造方法的参数的类型列表，说明所有代理类的构造方法只接受InvocationHandler的对象作为参数
+* **proxyClassCache**：代理类Class对象的缓存，如果代理类已经被生成了，那么会从缓存中取出
 
 # 3 方法
 
@@ -721,7 +721,7 @@ apply方法中主要进行一些校验工作以及确定代理类的全限定名
 
 ## 4.1 源码
 
-__Person__：接口
+**Person**：接口
 
 ```java
 package org.liuyehcf.jdkproxy;
@@ -731,7 +731,7 @@ public interface Person {
 }
 ```
 
-__Chinese__：Person接口的实现类
+**Chinese**：Person接口的实现类
 
 ```java
 package org.liuyehcf.jdkproxy;
@@ -743,7 +743,7 @@ public class Chinese implements Person {
 }
 ```
 
-__Handler__：增强
+**Handler**：增强
 
 ```java
 package org.liuyehcf.jdkproxy;
@@ -771,7 +771,7 @@ public class JdkProxyHandler implements InvocationHandler {
 }
 ```
 
-__Demo__
+**Demo**
 
 ```java
 package org.liuyehcf.jdkproxy;

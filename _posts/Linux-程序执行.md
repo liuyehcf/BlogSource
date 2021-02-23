@@ -8,7 +8,7 @@ categories:
 - Linux
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -18,13 +18,13 @@ __阅读更多__
 
 ## 1.1 ELF格式详解
 
-__`ELF`大致包含`ELF headers`、`program header table`、`section header table`__
+**`ELF`大致包含`ELF headers`、`program header table`、`section header table`**
 
-__可以通过`man 5 ELF`查看详细介绍__
+**可以通过`man 5 ELF`查看详细介绍**
 
 ### 1.1.1 ELF headers
 
-__可以通过`readelf -h <binary>`查看详细介绍__
+**可以通过`readelf -h <binary>`查看详细介绍**
 
 对应的数据结构如下
 
@@ -49,7 +49,7 @@ typedef struct {
 
 ### 1.1.2 Section
 
-__目标代码文件中的`section`和`section header table`中的条目是一一对应的。`section`的信息用于链接器对代码重定位。下面列了系统预定义的`section`__
+**目标代码文件中的`section`和`section header table`中的条目是一一对应的。`section`的信息用于链接器对代码重定位。下面列了系统预定义的`section`**
 
 * `.bss`：程序运行时未初始化的数据。当程序运行时，这些数据初始化为0
 * `.comment`：版本控制信息
@@ -92,7 +92,7 @@ __目标代码文件中的`section`和`section header table`中的条目是一�
 
 # 2 程序如何加载执行
 
-__系统调用`sys_execve`的调用栈如下（内核版本3.10.10）__
+**系统调用`sys_execve`的调用栈如下（内核版本3.10.10）**
 
 ```sh
 # syscall
@@ -106,7 +106,7 @@ sys_execve | fs/exec.c SYSCALL_DEFINE3(execve
 load_elf_binary | fs/binfmt_elf.c
 ```
 
-__`load_elf_binary`的主要步骤如下__
+**`load_elf_binary`的主要步骤如下**
 
 1. 读取并检查`ELF headers | elfhdr`
 1. 读取并检查`program header table | elf_phdr`
@@ -153,7 +153,7 @@ none  /proc/sys/fs/binfmt_misc binfmt_misc defaults 0 0
 * `interpreter`：表示要用哪个程序来启动这个类型的文件，一定要使用全路径名，不要使用相对路径名
 * `flags`：这个字段可选，主要用来控制`interpreter`打开文件的行为。比较常用的是`P`（请注意，一定要大写），表示保留原始的`argv[0]`参数。这是什么意思呢？默认情况下，如果不设置这个标志的话，`binfmt_misc`会将传给`interpreter`的第一个参数，即`argv[0]`，修改成要被打开文件的全路径名。当设置了`P`之后，`binfmt_misc`会保留原来的argv[0]，在原来的`argv[0]`和`argv[1]`之间插入一个参数，用来存放要被打开文件的全路径名。比如，如果想用程序`/bin/foo`来打开`/usr/local/bin/blah`这个文件，如果不设置`P`的话，传给程序`/bin/foo`的参数列表`argv[]`是`["/usr/local/bin/blah", "blah"]`，而如果设置了`P`之后，程序`/bin/foo`得到的参数列表是`["/bin/foo", "/usr/local/bin/blah", "blah"]`
 
-__每次成功写入一行规则，都会在`/proc/sys/fs/binfmt_misc/`目录下，创建一个名字为输入的匹配规则字符串中`name`字段的文件__
+**每次成功写入一行规则，都会在`/proc/sys/fs/binfmt_misc/`目录下，创建一个名字为输入的匹配规则字符串中`name`字段的文件**
 
 在`/proc/sys/fs/binfmt_misc/`目录下，还缺省存在一个叫做`status`的文件，通过它可以查看和控制整个`binfmt_misc`的状态，而不光是单个匹配规则
 

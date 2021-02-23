@@ -7,7 +7,7 @@ categories:
 - Kubernetes
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -15,7 +15,7 @@ __阅读更多__
 
 `Virtual Box`+`CentOS-7-x86_64-Minimal-1804.iso`
 
-__tips__
+**tips**
 
 1. 主机与`Virtual Box`之间不能共享剪切板（不知道为什么）
     * 开启sshd服务，通过ssh连接到虚拟机即可
@@ -27,7 +27,7 @@ __tips__
 
 ## 2.1 关闭swap
 
-__首先，需要关闭Swap，否则kubelet可能会不正常工作__
+**首先，需要关闭Swap，否则kubelet可能会不正常工作**
 
 ```sh
 swapon -s # 查看swap的设备
@@ -45,7 +45,7 @@ systemctl stop firewalld
 
 ## 2.3 修改hostname
 
-__所有node的hostname必须不一样，这个很关键！因为k8s是通过hostname来路由的__
+**所有node的hostname必须不一样，这个很关键！因为k8s是通过hostname来路由的**
 
 ```sh
 hostnamectl set-hostname <name>
@@ -53,9 +53,9 @@ hostnamectl set-hostname <name>
 
 ## 2.4 检查mac地址以及UUID
 
-__执行`ifconfig -a`，发现没有该命令！！！（我下载的镜像是Minimal，并且是最小安装）__
+**执行`ifconfig -a`，发现没有该命令！！！（我下载的镜像是Minimal，并且是最小安装）**
 
-__于是，执行`yum install ifconfig`，发现没有网络！！！我靠！！！估计是网卡没有开启，下面启用网卡__
+**于是，执行`yum install ifconfig`，发现没有网络！！！我靠！！！估计是网卡没有开启，下面启用网卡**
 
 ```sh
 cd /etc/sysconfig/network-scripts
@@ -63,27 +63,27 @@ vi ifcfg-enp0s3 # 将`ONBOOT`设置为yes。（如果有多个网卡配置文件
 systemctl restart network # 重启网卡
 ```
 
-__然后，安装`ifconfig`__
+**然后，安装`ifconfig`**
 
 ```sh
 yum search ifconfig # 找到软件包名为`net-tools.x86_64`
 yum install -y net-tools.x86_64
 ```
 
-__查看mac地址__
+**查看mac地址**
 
 ```sh
 ifconfig -a
 ip link
 ```
 
-__查看主板uuid__
+**查看主板uuid**
 
 ```sh
 cat /sys/class/dmi/id/product_uuid
 ```
 
-__建议：通过主机ssh连接到虚拟机。由于虚拟机bash界面不能拷贝命令，而且不能翻看标准输出的内容，用起来非常蛋疼__
+**建议：通过主机ssh连接到虚拟机。由于虚拟机bash界面不能拷贝命令，而且不能翻看标准输出的内容，用起来非常蛋疼**
 
 ## 2.5 检查网络适配器
 
@@ -98,9 +98,9 @@ systemctl enable docker && systemctl start docker
 
 ## 2.7 安装kubeadm/kubelet/kubectl
 
-* __kubeadm__：用于启动集群
-* __kubelet__：存在于集群中所有机器上，用于启动pods以及containers等
-* __kubectl__：用于与集群交互
+* **kubeadm**：用于启动集群
+* **kubelet**：存在于集群中所有机器上，用于启动pods以及containers等
+* **kubectl**：用于与集群交互
 
 kubelet/kubectl的版本必须与kubeadm一致，否则可能会导致某些异常以及bug
 
@@ -124,13 +124,13 @@ yum install -y kubelet kubeadm kubectl
 systemctl enable kubelet && systemctl start kubelet
 ```
 
-* __`setenforce 0`：SELinux转换为宽容模式，否则可能会有权限问题（例如，Start kube-proxy就会有问题）__
+* **`setenforce 0`：SELinux转换为宽容模式，否则可能会有权限问题（例如，Start kube-proxy就会有问题）**
 
-__这里用的是阿里云的镜像，官方文档提供的是谷歌镜像（海外，需要翻墙），下面的配置流程都以墙内（使用的都是阿里云镜像）为主__
+**这里用的是阿里云的镜像，官方文档提供的是谷歌镜像（海外，需要翻墙），下面的配置流程都以墙内（使用的都是阿里云镜像）为主**
 
 # 3 Start Master
 
-__接下来初始化master节点__
+**接下来初始化master节点**
 
 ```sh
 kubeadm init --pod-network-cidr=10.244.0.0/16 --image-repository=registry.cn-hangzhou.aliyuncs.com/google_containers --apiserver-advertise-address=192.168.56.105
@@ -159,10 +159,10 @@ kubeadm join 192.168.56.105:6443 --token xlys6c.70evo8lwk7ta4hbo \
     --discovery-token-ca-cert-hash sha256:0fac04a6a3a18aaf7d9c3e154bdf1813119b9840f43e8c1649cbdfe5d50d1f2c
 ```
 
-* __注意，我们需要保留下上面的join命令，即`kubeadm join ...`这个命令__
-* __node节点需要通过这个命令来join master节点__
+* **注意，我们需要保留下上面的join命令，即`kubeadm join ...`这个命令**
+* **node节点需要通过这个命令来join master节点**
 
-__根据上述提示，安装network pod。[安装命令参考，一定要看这个，不同版本url是不同的](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/)。这里，我们选择flannel（安装过程需要翻墙，否则拉取镜像会失败！！）__
+**根据上述提示，安装network pod。[安装命令参考，一定要看这个，不同版本url是不同的](https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/)。这里，我们选择flannel（安装过程需要翻墙，否则拉取镜像会失败！！）**
 
 ```sh
 # 在master上，为了让kubectl命令行起作用，必须配置如下环境变量
@@ -172,7 +172,7 @@ export KUBECONFIG=/etc/kubernetes/admin.conf
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/62e44c867a2846fefb68bd5f178daf4da3095ccb/Documentation/kube-flannel.yml
 ```
 
-__待flannel安装成功后（大约需要5-10分钟），查看节点概要信息。至此，master启动成功__
+**待flannel安装成功后（大约需要5-10分钟），查看节点概要信息。至此，master启动成功**
 
 ```sh
 # 查看节点概要信息
@@ -201,7 +201,7 @@ kubeadm join <master ip>:6443 --token <token> --discovery-token-ca-cert-hash sha
 
 ## 3.2 Restart
 
-__如果我们将master这台机器重启的话，k8s服务不会自动起来，需要进行如下操作__
+**如果我们将master这台机器重启的话，k8s服务不会自动起来，需要进行如下操作**
 
 ```sh
 # 关闭swap
@@ -222,14 +222,14 @@ export KUBECONFIG=/etc/kubernetes/admin.conf
 
 # 4 Start Node
 
-__另外启动两台虚拟机，执行 [Install Kubeadm](#install-kubeadm) 小节的所有操作__
+**另外启动两台虚拟机，执行 [Install Kubeadm](#install-kubeadm) 小节的所有操作**
 
-__现在需要将新启动的虚拟机，加入刚才启动的master__
+**现在需要将新启动的虚拟机，加入刚才启动的master**
 
 * 还记得master节点初始化k8s输出的`kubeadm join`命令吗，这个指令就用于node节点
 * 如果忘记了，我们还可以通过在master节点上执行`kubeadm token create --print-join-command`来创建`kubeadm join`命令
 
-__回到node节点对应的虚拟机，执行上述`kubeadm join`命令（该过程需要翻墙，因为会安装flannel，需要拉取镜像）__
+**回到node节点对应的虚拟机，执行上述`kubeadm join`命令（该过程需要翻墙，因为会安装flannel，需要拉取镜像）**
 
 ```sh
 kubeadm join 192.168.56.108:6443 --token 3yokh0.16u9wvjk1x50nde2 --discovery-token-ca-cert-hash sha256:c36ac2694b043a660624e9d86a56999fcd23bf13b3994af6560aac713eacc54d
@@ -242,7 +242,7 @@ you can solve this problem with following methods:
 2. Provide the missing builtin kernel ipvs support
 ```
 
-__按照提示，安装缺少的模块__
+**按照提示，安装缺少的模块**
 
 ```sh
 modprobe -- ip_vs
@@ -251,7 +251,7 @@ modprobe -- ip_vs_wrr
 modprobe -- ip_vs_sh
 ```
 
-__继续执行join指令，加入master节点__
+**继续执行join指令，加入master节点**
 
 ```sh
 # 先重置
@@ -269,9 +269,9 @@ This node has joined the cluster:
 Run 'kubectl get nodes' on the master to see this node join the cluster.
 ```
 
-__至此一台node节点加入master节点完毕（大约需要5分钟的时间，才能在master上看到ready状态），另一台node节点重复上述操作__
+**至此一台node节点加入master节点完毕（大约需要5分钟的时间，才能在master上看到ready状态），另一台node节点重复上述操作**
 
-__全部完成后，回到master节点，执行如下指令__
+**全部完成后，回到master节点，执行如下指令**
 
 ```sh
 kubectl get nodes
@@ -287,13 +287,13 @@ k8s-node-2   Ready     <none>    11m       v1.11.1
 
 ## 5.1 制作镜像
 
-这里以一个简单的`Spring-Boot`应用为例，制作一个镜像。__具体示例代码详见{% post_link Spring-Boot-Demo %}__
+这里以一个简单的`Spring-Boot`应用为例，制作一个镜像。**具体示例代码详见{% post_link Spring-Boot-Demo %}**
 
-__首先，将`Spring-Boot`应用打包成一个fat-jar__，例如`spring-boot-1.0-SNAPSHOT.jar`
+**首先，将`Spring-Boot`应用打包成一个fat-jar**，例如`spring-boot-1.0-SNAPSHOT.jar`
 
 * 你可以随便搞一个简单的Web应用
 
-__然后，创建Dockerfile，内容如下__
+**然后，创建Dockerfile，内容如下**
 
 ```docker
 # 设置基础镜像
@@ -315,7 +315,7 @@ EXPOSE 8080
 CMD ["java", "-jar", "lib/spring-boot-1.0-SNAPSHOT.jar"]
 ```
 
-__将上述`Dockerfile`与`spring-boot-1.0-SNAPSHOT.jar`放入同一个目录下，此时目录结构如下__
+**将上述`Dockerfile`与`spring-boot-1.0-SNAPSHOT.jar`放入同一个目录下，此时目录结构如下**
 
 ```
 .
@@ -323,7 +323,7 @@ __将上述`Dockerfile`与`spring-boot-1.0-SNAPSHOT.jar`放入同一个目录下
 └── spring-boot-1.0-SNAPSHOT.jar
 ```
 
-__接着，我们开始制作镜像__
+**接着，我们开始制作镜像**
 
 ```sh
 # -t参数指定tag
@@ -331,7 +331,7 @@ __接着，我们开始制作镜像__
 docker build -t hello-world:v1 .
 ```
 
-__本地测试一下，能否运行起来（经验证，没问题）__
+**本地测试一下，能否运行起来（经验证，没问题）**
 
 ```sh
 # docker run -help 查看详细用法
@@ -340,7 +340,7 @@ docker run hello-world:v1
 
 ## 5.2 上传镜像到镜像仓库
 
-__这里以`阿里云-容器镜像服务`为例，将刚才制作的镜像上传到镜像仓库。详细操作请参考[阿里云-容器镜像服务](https://www.aliyun.com/product/acr?spm=5176.10695662.1996646101.searchclickresult.3cab795dkMnIFM)__
+**这里以`阿里云-容器镜像服务`为例，将刚才制作的镜像上传到镜像仓库。详细操作请参考[阿里云-容器镜像服务](https://www.aliyun.com/product/acr?spm=5176.10695662.1996646101.searchclickresult.3cab795dkMnIFM)**
 
 创建完成后，镜像仓库`url`如下（你创建的镜像仓库肯定与我的不同）
 
@@ -348,7 +348,7 @@ __这里以`阿里云-容器镜像服务`为例，将刚才制作的镜像上传
 registry.cn-hangzhou.aliyuncs.com/liuyehcf_default/liuye_repo 
 ```
 
-__在`阿里云-容器镜像服务`控制台，点击刚才创建的镜像-管理，按照文档说明上传镜像，大致分为两步（以我的镜像仓库`url`为例）__
+**在`阿里云-容器镜像服务`控制台，点击刚才创建的镜像-管理，按照文档说明上传镜像，大致分为两步（以我的镜像仓库`url`为例）**
 
 ```sh
 # 登录
@@ -364,7 +364,7 @@ sudo docker push registry.cn-hangzhou.aliyuncs.com/liuyehcf_default/liuye_repo:v
 
 ## 5.3 部署应用
 
-__首先，编写应用所在pod的yml文件，hello-world.yml文件如下__
+**首先，编写应用所在pod的yml文件，hello-world.yml文件如下**
 
 ```yml
 apiVersion: v1
@@ -384,13 +384,13 @@ spec:
     - containerPort: 8080
 ```
 
-__在master节点上，启动该pod__
+**在master节点上，启动该pod**
 
 ```sh
 kubectl create -f hello-world.yml
 ```
 
-__查看pod运行状态，可以看到pod部署成功__
+**查看pod运行状态，可以看到pod部署成功**
 
 ```sh
 kubectl get pod
@@ -400,7 +400,7 @@ NAME          READY     STATUS    RESTARTS   AGE
 hello-world   1/1       Running   0          4m
 ```
 
-__由于我们这个Web应用服务在8080端口，但是上面的`hello-world.yml`文件中配置的是容器端口，我们仍然不能在外界访问这个服务。我们还需要增加一个`hello-world-service`，`hello-world-service.yml`文件内容如下__
+**由于我们这个Web应用服务在8080端口，但是上面的`hello-world.yml`文件中配置的是容器端口，我们仍然不能在外界访问这个服务。我们还需要增加一个`hello-world-service`，`hello-world-service.yml`文件内容如下**
 
 ```yml
 apiVersion: v1
@@ -417,13 +417,13 @@ spec:
   type: NodePort
 ```
 
-__启动service__
+**启动service**
 
 ```sh
 kubectl create -f hello-world-service.yml
 ```
 
-__查看端口号（nodePort）__
+**查看端口号（nodePort）**
 
 ```sh
 kubectl describe svc hello-world-service
@@ -445,11 +445,11 @@ External Traffic Policy:  Cluster
 Events:                   <none>
 ```
 
-__访问`http://<node_ip>:30001/home`，成功！__
+**访问`http://<node_ip>:30001/home`，成功！**
 
 # 6 Helm
 
-__步骤__
+**步骤**
 
 1. 下载，二进制包，传送门[helm release](https://github.com/helm/helm/releases)
 1. 解压缩，`tar -zxvf <file>`
@@ -465,11 +465,11 @@ __步骤__
 
 todo ingress nginx
 
-__helm安装（未成功）__
+**helm安装（未成功）**
 
 1. `helm install stable/nginx-ingress --name my-nginx`
 
-__非helm安装__
+**非helm安装**
 
 1. 安装`nginx-ingress-controller`
     * `kubectl apply -f mandatory.yaml`
@@ -533,7 +533,7 @@ test-ingress   *         192.168.56.101   80        19d
 
 [https://192.168.56.101/home](https://192.168.56.101/home)
 
-__Ingress Controller的作用__
+**Ingress Controller的作用**
 
 1. 读取`Ingress`，并写入到nginx的配置文件中
 1. 监听集群中`Service`的变化，及时更新backend

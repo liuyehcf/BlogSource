@@ -9,7 +9,7 @@ categories:
 - Sort
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -55,12 +55,12 @@ Java中Arrays.sort排序方法对于基本类型的排序采用的是双轴快�
     private static final int COUNTING_SORT_THRESHOLD_FOR_SHORT_OR_CHAR = 3200;
 ```
 
-* __`MAX_RUN_COUNT`__：run数量的最大值，如果超过这个值，那么便认为数组不是特别的有序
-* __`MAX_RUN_LENGTH`__：run长度的最大值
-* __`QUICKSORT_THRESHOLD`__：如果数组长度小于这个值，那么快排的效率会比归并排序的效率要高
-* __`INSERTION_SORT_THRESHOLD`__：如果数组长度小于这个值，那么插入排序的效率会比快排的效率要高
-* __`COUNTING_SORT_THRESHOLD_FOR_BYTE`__：对于字节数组而言，如果长度大于这个数值，那么用计数排序效率比较高，因为额外的内存空间是确定的，256
-* __`COUNTING_SORT_THRESHOLD_FOR_SHORT_OR_CHAR`__：对于char或者short而言，如果数组长度大于这个数值，那么计数排序效率会比较高
+* **`MAX_RUN_COUNT`**：run数量的最大值，如果超过这个值，那么便认为数组不是特别的有序
+* **`MAX_RUN_LENGTH`**：run长度的最大值
+* **`QUICKSORT_THRESHOLD`**：如果数组长度小于这个值，那么快排的效率会比归并排序的效率要高
+* **`INSERTION_SORT_THRESHOLD`**：如果数组长度小于这个值，那么插入排序的效率会比快排的效率要高
+* **`COUNTING_SORT_THRESHOLD_FOR_BYTE`**：对于字节数组而言，如果长度大于这个数值，那么用计数排序效率比较高，因为额外的内存空间是确定的，256
+* **`COUNTING_SORT_THRESHOLD_FOR_SHORT_OR_CHAR`**：对于char或者short而言，如果数组长度大于这个数值，那么计数排序效率会比较高
 
 > 从这几个常量就能清晰地看出，DualPivotQuickSort对于不同的基本类型的排序方式是不同的，对于short、char以及byte等16bit或者8bit的基本类型而言，计数排序不会造成特别大的空间开销。而对于其他基本类型，比如int，long，float，double等。则会根据数组的长度来选择相应的排序算法，包括插入排序、快速排序和归并排序
 

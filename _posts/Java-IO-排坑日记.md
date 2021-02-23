@@ -8,7 +8,7 @@ categories:
 - IO
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -104,7 +104,7 @@ public class BufferIssue {
 }
 ```
 
-__当`writeSize>bufferSize`会发现数据打印会有明显卡顿__：由于`PipedInputStream`内部实现会有一个缓存，该缓存大小即`PipedInputStream`一次可以接收的最大数据量。当一次到达的数据大于该缓存大小时，必将造成分批读取
+**当`writeSize>bufferSize`会发现数据打印会有明显卡顿**：由于`PipedInputStream`内部实现会有一个缓存，该缓存大小即`PipedInputStream`一次可以接收的最大数据量。当一次到达的数据大于该缓存大小时，必将造成分批读取
 
 因此，依据数据的规模的大小，适当调整bufferSize的大小，可以解决IO卡顿的问题
 
@@ -227,7 +227,7 @@ try {
         }
 ```
 
-__此外，在内存中将一个`byte array`打包成一个`zipped byte array`时，需要调用`ZipOutputStream.finish()`方法，否则得到的是一个不完整的zip文件__
+**此外，在内存中将一个`byte array`打包成一个`zipped byte array`时，需要调用`ZipOutputStream.finish()`方法，否则得到的是一个不完整的zip文件**
 
 ```java
 public static byte[] packageFiles(ZipEntity... entities) {
@@ -338,7 +338,7 @@ System.out.println(ANSI_GREEN_BACKGROUND + ANSI_RED + "This text has a green bac
 1. 当缓冲区被写满的时候，子进程就被阻塞挂起了
 1. 父进程由于等待子进程退出，也被阻塞挂起了，死锁就此产生
 
-__解决方法__
+**解决方法**
 
 1. 使用`inheritIO`方法，让java进程从缓冲区读取数据
 1. 自己异步从缓冲区读取数据

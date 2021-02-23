@@ -7,7 +7,7 @@ categories:
 - Kubernetes
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -15,7 +15,7 @@ __阅读更多__
 
 ## 1.1 单副本
 
-__deployment（hello-world-deployment.yml）__
+**deployment（hello-world-deployment.yml）**
 
 ```yaml
 apiVersion: apps/v1
@@ -43,7 +43,7 @@ spec:
         - containerPort: 8080
 ```
 
-__service（hello-world-service.yml）__
+**service（hello-world-service.yml）**
 
 ```yaml
 apiVersion: v1
@@ -226,7 +226,7 @@ lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
 
 可以看到，在`k8s-n-1`节点上，直接路由到了`flannel.1`这样网卡，然后通过`flannel`的网络（主机网络或覆盖网络）到达`k8s-n-1`上
 
-__iptables规则链__
+**iptables规则链**
 
 ```mermaid
 graph TD
@@ -242,7 +242,7 @@ D1 --> E1[DNAT redirect to nginx pod's ip and port]
 
 ## 1.2 多副本
 
-__deployment（hello-world-deployment.yml）__
+**deployment（hello-world-deployment.yml）**
 
 ```yaml
 apiVersion: apps/v1
@@ -270,7 +270,7 @@ spec:
         - containerPort: 8080
 ```
 
-__service（hello-world-service.yml）__
+**service（hello-world-service.yml）**
 
 ```yaml
 apiVersion: v1
@@ -368,7 +368,7 @@ hello-world-deployment-cbdf4db7b-qc624   1/1     Running   0          5m      10
 
 这里，可以看到，三个`Chain`，每个`Chain`分别配置了一个DNAT，指向某一个`pod`。后续的链路，如果在`pod`在本机，则走`cni0`网桥，否则就走`flannel`
 
-__iptables规则链__
+**iptables规则链**
 
 ```mermaid
 graph TD
@@ -406,7 +406,7 @@ coredns         2/2     2            2           149d
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-__下面，我们用一个pod来验证一下`dnsutils.yaml`，yaml文件内容如下，`dnsutils`这个镜像中包含了`dig`、`nslookup`等命令，换成其他任何包含这个两个命令的镜像都行__
+**下面，我们用一个pod来验证一下`dnsutils.yaml`，yaml文件内容如下，`dnsutils`这个镜像中包含了`dig`、`nslookup`等命令，换成其他任何包含这个两个命令的镜像都行**
 
 ```yaml
 apiVersion: v1
@@ -487,7 +487,7 @@ pod "dnsutils" deleted
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-__接下来，将修改`dnsutils.yaml`，设置成`hostnetwork`，同时不指定`dnsPolicy`__
+**接下来，将修改`dnsutils.yaml`，设置成`hostnetwork`，同时不指定`dnsPolicy`**
 
 ```yaml
 apiVersion: v1
@@ -562,7 +562,7 @@ pod "dnsutils" deleted
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-__我们继续修改`dnsutils.yaml`，设置成`hostnetwork`，同时将`dnsPolicy`设置为`ClusterFirstWithHostNet`__
+**我们继续修改`dnsutils.yaml`，设置成`hostnetwork`，同时将`dnsPolicy`设置为`ClusterFirstWithHostNet`**
 
 ```yaml
 apiVersion: v1
@@ -668,18 +668,18 @@ pod "dnsutils" deleted
 
 ### 4.1.1 步骤1：确认系统网络参数是否配置正确
 
-__以下两个配置项，需要设置成1，否则iptables规则无法应用于二层转发（同主机的pod之间的网络通信走的是二层转发）__
+**以下两个配置项，需要设置成1，否则iptables规则无法应用于二层转发（同主机的pod之间的网络通信走的是二层转发）**
 
 1. net.bridge.bridge-nf-call-ip6tables
 1. net.bridge.bridge-nf-call-iptables
 
-__以下三个配置项，需要设置成1，否则流量从网卡`cni0`出来之后，无法forward到主机的外网网卡上，意味着，容器里面是无法访问公网的，具体表现就是在容器网络的容器中无法ping通外网ip__
+**以下三个配置项，需要设置成1，否则流量从网卡`cni0`出来之后，无法forward到主机的外网网卡上，意味着，容器里面是无法访问公网的，具体表现就是在容器网络的容器中无法ping通外网ip**
 
 1. net.ipv4.ip_forward
 1. net.ipv4.conf.all.forwarding
 1. net.ipv6.conf.all.forwarding
 
-__如何修改配置__
+**如何修改配置**
 
 ```sh
 # 临时修改
@@ -745,7 +745,7 @@ W1009 12:41:47.192659       6 proxier.go:320] missing br-netfilter module or uns
 
 原因就是没有开启`bridge-nf-call-iptables`，当`bridge-nf-call-iptables`开启时，在二层网桥转发的数据也会被iptables链进制规则限制，而同主机的pod直接的数据转发是直接通过网桥进行转发的，而网桥在二层网络进行数据处理，所以`bridge-nf-call-iptables`没有开启时，pod无法通过clusterIP访问同主机的pod
 
-__如何开启__
+**如何开启**
 
 1. `echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables`：立即生效，重启后还原为默认配置
 1. `echo 'net.bridge.bridge-nf-call-iptables=1' >> /etc/sysctl.conf && sysctl -p /etc/sysctl.conf`：修改默认配置，重启后也能生效

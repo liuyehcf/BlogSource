@@ -9,7 +9,7 @@ categories:
 - Spring
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -62,7 +62,7 @@ Instantiation of bean failed; nested exception is org.springframework.beans.Bean
 
 这意味着，Spring为我的静态内部类Pair创建了单例，并且通过反射调用默认构造函数，由于我没有定义无参构造函数，于是报错
 
-__那么，问题来了，我根本就没有配置过这个Pair啊！！！__
+**那么，问题来了，我根本就没有配置过这个Pair啊！！！**
 
 纠结了一天之后，发现Spring配置文件中的一段配置，如下
 
@@ -73,9 +73,9 @@ __那么，问题来了，我根本就没有配置过这个Pair啊！！！__
     </context:component-scan>
 ```
 
-__就是这段配置让所有匹配正则表达式的类都被Spring扫描到，并且为之创建单例！！！__
+**就是这段配置让所有匹配正则表达式的类都被Spring扫描到，并且为之创建单例！！！**
 
-__DONE__
+**DONE**
 
 # 2 水坑2-SpringBoot非Web应用
 
@@ -101,7 +101,7 @@ Caused by: org.springframework.context.ApplicationContextException: Unable to st
 
 `mvn dependency:tree`查看依赖树，确实发现有servlet-api的依赖项。排除掉servlet有关的依赖项即可
 
-__类似的，还有如下异常（也需要排除掉servlet有关的依赖项）__
+**类似的，还有如下异常（也需要排除掉servlet有关的依赖项）**
 
 ```java
 Caused by: org.apache.catalina.LifecycleException: A child container failed during start

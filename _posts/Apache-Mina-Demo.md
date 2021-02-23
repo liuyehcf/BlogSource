@@ -9,7 +9,7 @@ categories:
 - Mina
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -43,7 +43,7 @@ __阅读更多__
         </dependency>
 ```
 
-__其中__
+**其中**
 
 1. `jsch`是另一个`ssh-client`库
 1. `jnativehook`用于捕获键盘的输入，如果仅用Java标准输入，则无法捕获类似`ctrl + c`这样的按键组合

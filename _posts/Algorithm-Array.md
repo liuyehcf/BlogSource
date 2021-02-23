@@ -8,13 +8,13 @@ categories:
 - Leetcode
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
 # 1 Question-11[★★★]
 
-__Container With Most Water__
+**Container With Most Water**
 
 > Given n non-negative integers a1, a2, ..., an, where each represents a point at coordinate (i, ai). n vertical lines are drawn such that the two endpoints of line i is at (i, ai) and (i, 0). Find two lines, which together with x-axis forms a container, such that the container contains the most water.
 
@@ -57,7 +57,7 @@ public class Solution {
 
 # 2 Question-15[★★]
 
-__3Sum__
+**3Sum**
 
 > Given an array S of n integers, are there elements a, b, c in S such that `a + b + c = 0`? Find all unique triplets in the array which gives the sum of zero.
 
@@ -98,7 +98,7 @@ public class Solution {
 
 # 3 Question-31[★★★★★]
 
-__Next Permutation__
+**Next Permutation**
 
 > Implement next permutation, which rearranges numbers into the lexicographically next greater permutation of numbers.
 
@@ -168,7 +168,7 @@ public class Solution {
 
 # 4 Question-42[★★★★★]
 
-__Trapping Rain Water__
+**Trapping Rain Water**
 
 > Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it is able to trap after raining.
 
@@ -204,7 +204,7 @@ public class Solution {
 
 # 5 Question-56[★★★★]
 
-__Merge Intervals__
+**Merge Intervals**
 
 > Given a collection of intervals, merge all overlapping intervals.
 
@@ -255,7 +255,7 @@ public class Solution {
 
 # 6 Question-75[★★]
 
-__Sort Colors__
+**Sort Colors**
 
 > Given an array with n objects colored red, white or blue, sort them so that objects of the same color are adjacent, with the colors in the order red, white and blue.
 
@@ -282,7 +282,7 @@ class Solution {
 
 # 7 Question-76[★★★★★]
 
-__Minimum Window Substring__
+**Minimum Window Substring**
 
 > Given a string S and a string T, find the minimum window in S which will contain all the characters in T in complexity O(n).
 
@@ -327,7 +327,7 @@ class Solution {
 
 # 8 Question-130[★★★★★]
 
-__Surrounded Regions__
+**Surrounded Regions**
 
 > Given a 2D board containing 'X' and 'O' (the letter O), capture all regions surrounded by 'X'.
 
@@ -425,7 +425,7 @@ public class Solution {
 
 # 9 Question-134[★★★★★]
 
-__Gas Station__
+**Gas Station**
 
 > There are N gas stations along a circular route, where the amount of gas at station i is gas[i].
 
@@ -457,7 +457,7 @@ public class Solution {
 
 # 10 Question-200[★★★★★]
 
-__Number of Islands__
+**Number of Islands**
 
 > Given a 2d grid map of '1's (land) and '0's (water), count the number of islands. An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically. You may assume all four edges of the grid are all surrounded by water.
 
@@ -530,7 +530,7 @@ public class Solution {
 
 # 11 Question-209[★★★]
 
-__Minimum Size Subarray Sum__
+**Minimum Size Subarray Sum**
 
 > Given an array of n positive integers and a positive integer s, find the minimal length of a contiguous subarray of which the sum ≥ s. If there isn't one, return 0 instead.
 

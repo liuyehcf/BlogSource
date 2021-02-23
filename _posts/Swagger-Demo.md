@@ -9,7 +9,7 @@ categories:
 - Swagger
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -245,7 +245,7 @@ public class UserController {
 }
 ```
 
-我们通过@ApiOperation注解来给API增加说明、通过@ApiParam、@ApiImplicitParams、@ApiImplicitParam注解来给参数增加说明（__其实不加这些注解，API文档也能生成，只不过描述主要来源于函数等命名产生，对用户并不友好，我们通常需要自己增加一些说明来丰富文档内容__）
+我们通过@ApiOperation注解来给API增加说明、通过@ApiParam、@ApiImplicitParams、@ApiImplicitParam注解来给参数增加说明（**其实不加这些注解，API文档也能生成，只不过描述主要来源于函数等命名产生，对用户并不友好，我们通常需要自己增加一些说明来丰富文档内容**）
 
 * @ApiImplicitParam最好指明`paramType`与`dataType`属性。`paramType`可以是`path`、`query`、`body`
 * @ApiParam没有`paramType`与`dataType`属性，因为该注解可以从参数（参数类型及其Spring MVC注解）中获取这些信息

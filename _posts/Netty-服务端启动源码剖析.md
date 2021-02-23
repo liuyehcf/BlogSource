@@ -9,7 +9,7 @@ categories:
 - Netty
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -92,11 +92,11 @@ public class EchoServer {
 
 启动过程可以概括为以下步骤
 
-1. __配置启动参数__
-1. __创建Channel__
-1. __初始化Channel__
-1. __注册Channel__
-1. __绑定Channel__
+1. **配置启动参数**
+1. **创建Channel**
+1. **初始化Channel**
+1. **注册Channel**
+1. **绑定Channel**
 
 # 4 启动参数配置
 
@@ -524,7 +524,7 @@ public class EchoServer {
     }
 ```
 
-    * `register`方法位于`AbstractChannel`的__非静态__内部类`AbstractUnsafe`中，该方法通过异步方式调用register0
+    * `register`方法位于`AbstractChannel`的**非静态**内部类`AbstractUnsafe`中，该方法通过异步方式调用register0
 ```java
         public final void register(EventLoop eventLoop, final ChannelPromise promise) {
             if (eventLoop == null) {
@@ -565,10 +565,10 @@ public class EchoServer {
 ```
 
 1. 接着，我们来看一下register0方法
-    * `register0`方法位于`AbstractChannel`的__非静态__内部类`AbstractUnsafe`中
+    * `register0`方法位于`AbstractChannel`的**非静态**内部类`AbstractUnsafe`中
     * 首先，执行doRegister方法，进行真正的底层的register操作
     * 然后，执行`pipeline.invokeHandlerAddedIfNeeded();`，触发位于`ServerBootstrap`的`init`方法中的ChannelInitializer（封装了handler，注意哦，不是childHandler，在代码清单中我们没有配置过这个handler）
-    * __将initAndRegister对应的ChannelFuture设置为成功__
+    * **将initAndRegister对应的ChannelFuture设置为成功**
     * 最后，触发其他生命周期，例如`fireChannelRegistered`以及`fireChannelActive`
 ```java
        private void register0(ChannelPromise promise) {
@@ -677,7 +677,7 @@ public class EchoServer {
     }
 ```
 
-    * `execute`方法位于`DefaultChannelPipeline`中的__非静态__内部类`PendingHandlerAddedTask`中，该方法主要作用就是执行callHandlerAdded0方法
+    * `execute`方法位于`DefaultChannelPipeline`中的**非静态**内部类`PendingHandlerAddedTask`中，该方法主要作用就是执行callHandlerAdded0方法
 ```java
         void execute() {
             EventExecutor executor = ctx.executor();
@@ -699,7 +699,7 @@ public class EchoServer {
         }
 ```
 
-    * `callHandlerAdded0`方法位于`DefaultChannelPipeline`，__该方法主要作用就是触发绑定的Handler的handlerAdded方法__。handlerAdded方法触发的地方非常少，到目前仅在此一处出现。这也保证了在ChannelInitializer配置的Handler不会被重复添加
+    * `callHandlerAdded0`方法位于`DefaultChannelPipeline`，**该方法主要作用就是触发绑定的Handler的handlerAdded方法**。handlerAdded方法触发的地方非常少，到目前仅在此一处出现。这也保证了在ChannelInitializer配置的Handler不会被重复添加
 ```java
     private void callHandlerAdded0(final AbstractChannelHandlerContext ctx) {
         try {
@@ -819,7 +819,7 @@ public class EchoServer {
     }
 ```
 
-    * `bind`方法位于`DefaultChannelPipeline`的__非静态__内部类`HeadContext`中，该方法通过其关联的Unsafe对象执行底层的bind操作。关于HeadContext以及TailContext暂时不太清楚设计目的
+    * `bind`方法位于`DefaultChannelPipeline`的**非静态**内部类`HeadContext`中，该方法通过其关联的Unsafe对象执行底层的bind操作。关于HeadContext以及TailContext暂时不太清楚设计目的
 ```java
         public void bind(
                 ChannelHandlerContext ctx, SocketAddress localAddress, ChannelPromise promise)
@@ -828,7 +828,7 @@ public class EchoServer {
         }
 ```
 
-    * `bind`方法位于`AbstractChannel`的__非静态__内部类`AbstractUnsafe`中，该方做了一些额外校验工作后，触发doBind方法
+    * `bind`方法位于`AbstractChannel`的**非静态**内部类`AbstractUnsafe`中，该方做了一些额外校验工作后，触发doBind方法
 ```java
         @Override
         public final void bind(final SocketAddress localAddress, final ChannelPromise promise) {

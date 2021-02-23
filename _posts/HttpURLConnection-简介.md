@@ -9,13 +9,13 @@ categories:
 - HTTP
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
 # 1 GET方法
 
-__代码清单如下__
+**代码清单如下**
 
 ```java
     public static void doGet(String value1, String value2, String operator) {
@@ -44,7 +44,7 @@ __代码清单如下__
     }
 ```
 
-__详细步骤分析__
+**详细步骤分析**
 
 1. 创建URL对象，将String类型的URL转为URL类型
 1. 利用URL对象创建URLConnection对象，并转型为HttpURLConnection
@@ -56,7 +56,7 @@ __详细步骤分析__
 
 # 2 POST方法
 
-__代码清单如下__
+**代码清单如下**
 
 ```java
     public static void doPost() {
@@ -91,7 +91,7 @@ __代码清单如下__
     }
 ```
 
-__详细步骤分析__
+**详细步骤分析**
 
 1. 创建URL对象，将String类型的URL转为URL类型
 1. 利用URL对象创建URLConnection对象，并转型为HttpURLConnection
@@ -105,7 +105,7 @@ __详细步骤分析__
 
 # 3 HttpURLConnection默认参数
 
-__代码清单__
+**代码清单**
 ```java
 public class DefaultParameters {
     public static void main(String[] args) {
@@ -129,7 +129,7 @@ public class DefaultParameters {
 }
 ```
 
-__输出如下__
+**输出如下**
 
 ```
 Default RequestMethod: GET

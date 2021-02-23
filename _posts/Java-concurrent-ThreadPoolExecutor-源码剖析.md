@@ -9,7 +9,7 @@ categories:
 - Source Code Analysis
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -35,13 +35,13 @@ ThreadPoolExecutor源码分析分为以下三部分
     private static final int TERMINATED =  3 << COUNT_BITS;
 ```
 
-* __COUNT_BITS__：对于一个32位整型，用于记录线程数量的位数，29位
-* __CAPACITY__：对于一个32位整型，用于记录线程池状态的位数，3位
-* __RUNNING__：其数值为：-536870912。此状态下，线程池可以接受新任务，也可以执行任务队列(之前提交的)中的任务
-* __SHUTDOWN__：其数值为：0。此状态下，线程池不能接受新任务，但是可以执行任务队列(之前提交的)中的任务
-* __STOP__：其数值为：536870912。此状态下，线程池不能接受新任务，也不会执行任务队列中的任务，同时会给正在执行的任务发送一个中断信号(Thread#interrupt())
-* __TIDYING__：其数值为：1073741824。所有任务已经终止，workCount为0，将运行terminate钩子方法
-* __TERMINATED__：其数值为：1610612736。钩子方法terminate已经运行完毕
+* **COUNT_BITS**：对于一个32位整型，用于记录线程数量的位数，29位
+* **CAPACITY**：对于一个32位整型，用于记录线程池状态的位数，3位
+* **RUNNING**：其数值为：-536870912。此状态下，线程池可以接受新任务，也可以执行任务队列(之前提交的)中的任务
+* **SHUTDOWN**：其数值为：0。此状态下，线程池不能接受新任务，但是可以执行任务队列(之前提交的)中的任务
+* **STOP**：其数值为：536870912。此状态下，线程池不能接受新任务，也不会执行任务队列中的任务，同时会给正在执行的任务发送一个中断信号(Thread#interrupt())
+* **TIDYING**：其数值为：1073741824。所有任务已经终止，workCount为0，将运行terminate钩子方法
+* **TERMINATED**：其数值为：1610612736。钩子方法terminate已经运行完毕
 * 可以发现，只有RUNNING状态是负值，并且RUNNING-->SHUTDOWN-->STOP-->TIDYING-->TERMINATED数值依次增大
 
 # 3 字段简介
@@ -51,12 +51,12 @@ ThreadPoolExecutor源码分析分为以下三部分
 ```java
 private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
 ```
-__该字段起到两个作用__
+**该字段起到两个作用**
 
 1. 记录线程池状态(RUNNNG/SHUTDOWN/STOP/TIDYING/TERMINATED)
 1. 记录线程池线程的数量
 
-__与该字段相关的方法__
+**与该字段相关的方法**
 
 ```java
     //从ctl中提取出runState
@@ -192,20 +192,20 @@ __与该字段相关的方法__
     private volatile int maximumPoolSize;
 ```
 
-* __workQueue__：任务队列，Blocking相关源码分析可以参考{% post_link Java-concurrent-ArrayBlockingQueue-源码剖析 %}
-* __mainLock__：重入锁，在访问或者修改workers时，需要该重入锁来保证线程安全。ReentrantLock相关源码分析可以参考{% post_link Java-concurrent-ReentrantLock-源码剖析 %}
-* __workers__：用于存放Worker的集合，采用非线程安全的HashSet，因此该字段的访问和修改必须配合mainLock
-* __termination__：ConditionObject相关源码分析可以参考{% post_link Java-concurrent-AQS-ConditionObject-源码剖析 %}
-* __corePoolSize__：核心线程数量，所谓核心线是指即便空闲也不会终止的线程(allowCoreThreadTimeOut必须是false)
-* __maximumPoolSize__：最大线程数量，核心线程+非核心线程的总数不能超过这个数值
-* __largestPoolSize__：在线程池的生命周期中，线程池持有线程数量的最大值
-* __keepAliveTime__：非核心线程在空闲状态下保持active的最长时间，超过这个时间若仍然空闲，那么该线程便会结束
+* **workQueue**：任务队列，Blocking相关源码分析可以参考{% post_link Java-concurrent-ArrayBlockingQueue-源码剖析 %}
+* **mainLock**：重入锁，在访问或者修改workers时，需要该重入锁来保证线程安全。ReentrantLock相关源码分析可以参考{% post_link Java-concurrent-ReentrantLock-源码剖析 %}
+* **workers**：用于存放Worker的集合，采用非线程安全的HashSet，因此该字段的访问和修改必须配合mainLock
+* **termination**：ConditionObject相关源码分析可以参考{% post_link Java-concurrent-AQS-ConditionObject-源码剖析 %}
+* **corePoolSize**：核心线程数量，所谓核心线是指即便空闲也不会终止的线程(allowCoreThreadTimeOut必须是false)
+* **maximumPoolSize**：最大线程数量，核心线程+非核心线程的总数不能超过这个数值
+* **largestPoolSize**：在线程池的生命周期中，线程池持有线程数量的最大值
+* **keepAliveTime**：非核心线程在空闲状态下保持active的最长时间，超过这个时间若仍然空闲，那么该线程便会结束
 
 # 4 内部类简介
 
-__Worker封装了Thread，因此Worker可以理解为一个线程。Worker实现了Runnable，负责从任务队列中获取任务并执行__
+**Worker封装了Thread，因此Worker可以理解为一个线程。Worker实现了Runnable，负责从任务队列中获取任务并执行**
 
-__同时Worker还继承了AQS，（{% post_link Java-concurrent-AQS-源码剖析 %}）也就是说Work对象本身可以作为Lock来使用，但这是为什么呢?__
+**同时Worker还继承了AQS，（{% post_link Java-concurrent-AQS-源码剖析 %}）也就是说Work对象本身可以作为Lock来使用，但这是为什么呢?**
 
 * 在ThreadPoolExecutor#runWorker方法中，在成功获取到任务后，会将自己锁定，这个锁定状态用于表示当前work处于工作状态(在执行任务)，当一个任务处理完毕之后，又会解除锁定状态
 * 在ThreadPoolExecutor#interruptIdleWorkers方法中会调用Worker#tryLock()方法，该方法就是尝试获取锁，如果获取失败，则表明worker处于工作状态
@@ -307,7 +307,7 @@ __同时Worker还继承了AQS，（{% post_link Java-concurrent-AQS-源码剖析
 
 ## 5.1 execute
 
-__该方法是Executor接口的方法，用于向线程池提交任务，其主要逻辑如下__
+**该方法是Executor接口的方法，用于向线程池提交任务，其主要逻辑如下**
 
 * 如果当前线程池核心线程数量小于corePoolSize，那么添加一个Work来执行这个提交的任务
 * 否则向线程池的任务队列提交这个任务，如果发现线程池现有的线程数量为0，则添加一个Worker
@@ -381,12 +381,12 @@ __该方法是Executor接口的方法，用于向线程池提交任务，其主�
 
 ## 5.2 addWorker
 
-__该方法向线程池添加一个Worker，包含以下两个参数__
+**该方法向线程池添加一个Worker，包含以下两个参数**
 
 * firstTask：执行的任务，可以为null。(当线程池中没有线程并且任务队列尚有任务时会传入null参数)
 * core：用于标记添加的Worker是否为核心线程
 
-__该方法实现的逻辑如下__
+**该方法实现的逻辑如下**
 
 * 首先检查线程池的状态，看是否允许添加新的Worker，若不允许，直接返回false
 * 尝试递增线程池计数，如果数量已达上限，直接返回false
@@ -508,7 +508,7 @@ __该方法实现的逻辑如下__
 
 ## 5.3 runWorker
 
-__runWorker被封装成Worker#run方法，该方法的主要逻辑如下__
+**runWorker被封装成Worker#run方法，该方法的主要逻辑如下**
 
 * 从任务队列中获取任务并执行
 * 如果任务队列为空，则阻塞在获取任务的过程中
@@ -616,7 +616,7 @@ __runWorker被封装成Worker#run方法，该方法的主要逻辑如下__
 
 ### 5.3.1 processWorkerExit
 
-__线程exit后的处理方法__
+**线程exit后的处理方法**
 
 ```java
     /**
@@ -670,7 +670,7 @@ __线程exit后的处理方法__
 
 ### 5.3.2 tryTerminate
 
-__将状态转移成TERMINATED__
+**将状态转移成TERMINATED**
 
 * 如果状态是SHUTDOWN并且线程池中无线程且队列为空
 * 如果状态是STOP并且线程池中无线程
@@ -727,11 +727,11 @@ __将状态转移成TERMINATED__
     }
 ```
 
-__可以看到TIDYING状态存在的意义就是提供一个额外的terminated()生命周期，该方法为空方法，允许子类执行一些相应的处理逻辑__
+**可以看到TIDYING状态存在的意义就是提供一个额外的terminated()生命周期，该方法为空方法，允许子类执行一些相应的处理逻辑**
 
 ## 5.4 getTask
 
-__该方法从任务队列中获取任务__
+**该方法从任务队列中获取任务**
 
 * 实现阻塞或者超时终止(keepAliveTime)线程的逻辑
 * 以下情况时，该方法返回null，这会导致runWorker方法退出while循环，从而结束线程生命周期
@@ -811,7 +811,7 @@ __该方法从任务队列中获取任务__
 
 ## 5.5 shutdown
 
-__该方法的逻辑如下__
+**该方法的逻辑如下**
 
 * 将线程池的状态提高到SHUTDOWN(若之前线程池的状态是RUNNING，那么线程池的状态将会升级到SHUTDOWN，此后不再接受新的任务)或者保持不变
 * 中断所有空闲线程，所谓空闲是指阻塞在getTask()方法调用中的Worker 
@@ -848,7 +848,7 @@ __该方法的逻辑如下__
 
 ### 5.5.1 advanceRunState
 
-__将线程池的状态提高到指定状态，或者保持不变__
+**将线程池的状态提高到指定状态，或者保持不变**
 
 ```java
     /**
@@ -870,7 +870,7 @@ __将线程池的状态提高到指定状态，或者保持不变__
 
 ### 5.5.2 interruptIdleWorkers
 
-__中断空闲的Worker__
+**中断空闲的Worker**
 
 * 如何判断是否空闲：调用Worker#tryLock，若返回true，则说明空闲，否则非空闲
 
@@ -931,7 +931,7 @@ __中断空闲的Worker__
 
 ## 5.6 shutdownNow
 
-__该方法的逻辑如下__
+**该方法的逻辑如下**
 
 * 将线程池的状态提高到STOP(之前的状态是RUNNING或者SHUTDOWN)或者保持不变
 * 中断所有线程
@@ -976,7 +976,7 @@ __该方法的逻辑如下__
 
 ### 5.6.1 interruptWorkers
 
-__中断所有线程__
+**中断所有线程**
 
 ```java
     /**
@@ -997,7 +997,7 @@ __中断所有线程__
 
 ### 5.6.2 drainQueue
 
-__返回所有未执行的任务__
+**返回所有未执行的任务**
 
 ```java
     /**
@@ -1024,7 +1024,7 @@ __返回所有未执行的任务__
 
 ## 5.7 submit
 
-__该方法是ThreadPoolExecutor父类AbstractExecutorService的方法，AbstractExecutorService实现了ExecutorService接口的部分方法__
+**该方法是ThreadPoolExecutor父类AbstractExecutorService的方法，AbstractExecutorService实现了ExecutorService接口的部分方法**
 
 * 该方法将Runnable封装成一个RunnableFuture，该接口实现了Runnable，然后交给execute方法执行
 * 返回封装好的RunnableFuture，以便调用者使用RunnableFuture执行一些操作，例如cancel等
@@ -1040,7 +1040,7 @@ __该方法是ThreadPoolExecutor父类AbstractExecutorService的方法，Abstrac
     }
 ```
 
-__Future源码分析请参见 {% post_link Java-concurrent-FutureTask-源码剖析 %}__
+**Future源码分析请参见 {% post_link Java-concurrent-FutureTask-源码剖析 %}**
 
 ### 5.7.1 newTaskFor
 

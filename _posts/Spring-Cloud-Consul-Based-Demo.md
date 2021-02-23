@@ -9,7 +9,7 @@ categories:
 - Spring
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -17,18 +17,18 @@ __阅读更多__
 
 ## 1.1 安装
 
-__方式1：下载二进制程序__
+**方式1：下载二进制程序**
 
 1. [consul install](https://www.consul.io/downloads.html)
 
-__方式2：直接用包管理工具下载，以macOS为例__
+**方式2：直接用包管理工具下载，以macOS为例**
 
 1. `brew install consul`
 1. 其他Linux操作系统类似，比如`yum`、`apt-get`等
 
 ## 1.2 run
 
-__dev模式__
+**dev模式**
 
 ```sh
 consul agent -dev
@@ -48,7 +48,7 @@ consul agent -dev
 ==> Log data will now stream in as it occurs:
 ```
 
-__server模式__
+**server模式**
 
 ```sh
 # 以下命令是官方文档提供的

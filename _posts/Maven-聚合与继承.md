@@ -8,7 +8,7 @@ categories:
 - Maven
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -16,14 +16,14 @@ __阅读更多__
 
 有时候，我们想要一次构建多个项目，而不是到这些模块的目录下分别执行mvn命令。Maven聚合（或者称多模块）这一特性就是为该需求服务的
 
-__对于聚合项目，其POM文件的`<packaging>`元素必须是pom__，否则无法构建
+**对于聚合项目，其POM文件的`<packaging>`元素必须是pom**，否则无法构建
 
 一个聚合项目，其POM文件包含如下几个重要元素，详见下方示意代码
 
 1. `<packaging>`：打包方式，必须为pom
 1. `<name>`：提供一个更易阅读的名字，会在构建时显示
 1. `<modules>`：聚合项目的核心配置
-    * 每个`<module>`元素的值都是一个当前POM的__相对目录__（很重要）
+    * 每个`<module>`元素的值都是一个当前POM的**相对目录**（很重要）
 
 ```xml
 <project>
@@ -43,7 +43,7 @@ __对于聚合项目，其POM文件的`<packaging>`元素必须是pom__，否则
 </project>
 ```
 
-一般来说，为了方便快速定位内容，__模块所处目录的名称应当与其artifactId一致__。当然也可以不一样，只不过需要修改聚合POM文件中的`<module>`元素的值
+一般来说，为了方便快速定位内容，**模块所处目录的名称应当与其artifactId一致**。当然也可以不一样，只不过需要修改聚合POM文件中的`<module>`元素的值
 
 此外，为了方便用户构建项目，通常将聚合模块放在项目目录的最顶层，其他模块则作为聚合模块的子目录存在。这样当用户得到源码的时候，第一眼发现的就是聚合模块的POM，不用从多个模块中去寻找聚合模块来构建整个项目
 
@@ -53,7 +53,7 @@ __对于聚合项目，其POM文件的`<packaging>`元素必须是pom__，否则
 
 对于一个父模块，其POM文件包含如下几个重要元素，详见下方示意代码
 
-1. `<packaging>`：打包方式，__必须为pom，这一点与聚合模块一样__
+1. `<packaging>`：打包方式，**必须为pom，这一点与聚合模块一样**
 1. `<name>`：提供一个更易阅读的名字，会在构建时显示
 
 ```xml
@@ -73,9 +73,9 @@ __对于聚合项目，其POM文件的`<packaging>`元素必须是pom__，否则
 
 1. `<parent>`：用于声明父模块
     * `<groupId>`、`<artifactId>`、`<version>`：父模块的坐标，必须指定
-    * `<relativePath>`：当前POM的__相对目录__，用于定位父模块pom文件的目录
+    * `<relativePath>`：当前POM的**相对目录**，用于定位父模块pom文件的目录
         * 在项目构建时，Maven会首先根据relativePath检查父POM，如果找不到，再从本地仓库找
-        * __relativePath的默认值是：`../pom.xml`，也就是默认父POM在上一层目录下__
+        * **relativePath的默认值是：`../pom.xml`，也就是默认父POM在上一层目录下**
 
 ## 2.1 可继承的POM元素
 
@@ -103,11 +103,11 @@ __对于聚合项目，其POM文件的`<packaging>`元素必须是pom__，否则
 
 Maven提供的`<dependencyManagement>`元素既能让子模块继承到父模块的依赖配置，又能保证子模块依赖使用的灵活性
 
-在父模块的POM文件中的`<dependencyManagement>`元素下的依赖声明__不会引入实际的依赖（父子模块都不会引入实际的依赖）__，不过它能够__约束__`<dependencies>`下的依赖使用
+在父模块的POM文件中的`<dependencyManagement>`元素下的依赖声明**不会引入实际的依赖（父子模块都不会引入实际的依赖）**，不过它能够**约束**`<dependencies>`下的依赖使用
 
-`<dependencyManagement>`元素是__可以被继承__的，但是__并不会引入实际的依赖__。因此在子模块的POM文件中，还是需要在`<dependencies>`元素中声明所需的依赖，但是只需要配置依赖的groupId以及artifactId即可，详见下方示意代码
+`<dependencyManagement>`元素是**可以被继承**的，但是**并不会引入实际的依赖**。因此在子模块的POM文件中，还是需要在`<dependencies>`元素中声明所需的依赖，但是只需要配置依赖的groupId以及artifactId即可，详见下方示意代码
 
-__父POM文件__
+**父POM文件**
 
 ```xml
 <project>
@@ -147,7 +147,7 @@ __父POM文件__
 </project>
 ```
 
-__子POM文件__
+**子POM文件**
 
 ```xml
 <project>
@@ -192,22 +192,22 @@ __子POM文件__
 </project>
 ```
 
-可以看到，子POM文件中的依赖配置较原来简单了一些，所有的springframework只配置了groupId和artifactId，省去了version；而junit不仅省去了version还省去了scope。这是因为__完整的依赖声明已经包含在父POM中__，子模块__只需要配置简单的groupId和artifactId就能获得对应的依赖信息__，从而引入正确的依赖
+可以看到，子POM文件中的依赖配置较原来简单了一些，所有的springframework只配置了groupId和artifactId，省去了version；而junit不仅省去了version还省去了scope。这是因为**完整的依赖声明已经包含在父POM中**，子模块**只需要配置简单的groupId和artifactId就能获得对应的依赖信息**，从而引入正确的依赖
 
-这种依赖管理机制似乎不能减少太多的POM配置，__不过还是建议采用这种方法__，原因如下
+这种依赖管理机制似乎不能减少太多的POM配置，**不过还是建议采用这种方法**，原因如下
 
-* 父POM中使用`<dependencyManagement>`声明依赖能够__统一__项目范围中__依赖的版本__
+* 父POM中使用`<dependencyManagement>`声明依赖能够**统一**项目范围中**依赖的版本**
 * 当依赖版本在父POM中声明之后，子模块在使用依赖的时候就无需声明版本，也就不会发生多个子模块使用依赖版本不一致的情况，这可以帮助降低依赖冲突的概率
 
 此外，{% post_link Maven-基本概念 %}中提到了名为import的依赖范围，该范围的依赖只在`<dependencyManagement>`元素下才有效果，使用该范围的依赖通常指向一个POM，作用是：将目标POM中的`<dependencyManagement>`配置导入并合并到当前POM的`<dependencyManagement>`元素中
 
 ## 2.3 插件管理
 
-类似的，Maven也提供了`<pluginManagement>`元素帮助管理插件，该元素中配置的依赖__不会造成实际的插件调用行为__。由于`<build>`元素可被继承，因此其子元素`<pluginManagement>`也可以被继承。在子POM文件中配置了真正的`<plugin>`元素，其groupId与artifactId与父POM文件中的`<pluginManagement>`元素中配置的插件匹配时，`<pluginManagement>`的配置才会起作用
+类似的，Maven也提供了`<pluginManagement>`元素帮助管理插件，该元素中配置的依赖**不会造成实际的插件调用行为**。由于`<build>`元素可被继承，因此其子元素`<pluginManagement>`也可以被继承。在子POM文件中配置了真正的`<plugin>`元素，其groupId与artifactId与父POM文件中的`<pluginManagement>`元素中配置的插件匹配时，`<pluginManagement>`的配置才会起作用
 
-同样的，__完整的插件声明已经包含在父POM中__，子模块__只需要配置简单的groupId和artifactId就能获得对应的插件信息__，从而引入正确的插件
+同样的，**完整的插件声明已经包含在父POM中**，子模块**只需要配置简单的groupId和artifactId就能获得对应的插件信息**，从而引入正确的插件
 
-__父POM文件__
+**父POM文件**
 
 ```xml
 <project>
@@ -236,7 +236,7 @@ __父POM文件__
 </project>
 ```
 
-__子POM文件__
+**子POM文件**
 
 ```xml
 <project>
@@ -255,7 +255,7 @@ __子POM文件__
 
 # 3 聚合与继承的关系
 
-__聚合__主要是为了__方便快速构建项目__，而__继承__主要是为了__消除重复配置__。__聚合和继承是两个正交的概念__
+**聚合**主要是为了**方便快速构建项目**，而**继承**主要是为了**消除重复配置**。**聚合和继承是两个正交的概念**
 
 对于聚合模块来说，它知道有哪些被聚合的模块，但那些被聚合的模块不知道这个聚合模块的存在
 
@@ -278,7 +278,7 @@ Maven会假设用户的项目是这样的：
 
 没有约定，意味着10个项目可能使用10种不同的项目目录结构，这意味着交流学习成本的增加，而这种增加的成本往往就是浪费
 
-任何一个Maven项目都隐式地继承自`超级POM`（`$MAVEN_HOME/lib/maven-model-builder-x.x.jar`中的`org/apache/maven/model/pom-4.0.0.xml`），这有点类似于任何一个Java类都隐式地继承于Object类。__因此大量超级POM的配置都会被所有Maven项目继承，这些配置也就成了Maven所提倡的约定__
+任何一个Maven项目都隐式地继承自`超级POM`（`$MAVEN_HOME/lib/maven-model-builder-x.x.jar`中的`org/apache/maven/model/pom-4.0.0.xml`），这有点类似于任何一个Java类都隐式地继承于Object类。**因此大量超级POM的配置都会被所有Maven项目继承，这些配置也就成了Maven所提倡的约定**
 
 # 5 反应堆
 

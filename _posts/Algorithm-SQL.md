@@ -8,13 +8,13 @@ categories:
 - Leetcode
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
 # 1 Question-175[★★★]
 
-> Write a SQL query for a report that provides the following information for each person in the Person table, regardless if there is an address for each of those people: __FirstName, LastName, City, State__
+> Write a SQL query for a report that provides the following information for each person in the Person table, regardless if there is an address for each of those people: **FirstName, LastName, City, State**
 
 ```
 Table: Person
@@ -46,7 +46,7 @@ ON Person.PersonId = Address.PersonId
 
 # 2 Question-182[★★★★★]
 
-__Duplicate Emails__
+**Duplicate Emails**
 
 > Write a SQL query to find all duplicate emails in a table named Person.
 

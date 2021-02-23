@@ -7,13 +7,13 @@ categories:
 - Editor
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
 # 1 标题跳转
 
-__语法__
+**语法**
 
 * `[跳转](#标题名)`
 * 其中，如果标题名中间有空格，那么将空格替换为`-`
@@ -116,7 +116,7 @@ cond(no)->sub1(right)->op
 
 ## 3.1 示例
 
-__源码：__
+**源码：**
 
 ```
 skinparam backgroundColor #EEEBDC
@@ -169,7 +169,7 @@ A --> User: Done
 deactivate A
 ```
 
-__效果图：__
+**效果图：**
 
 ```plantuml
 skinparam backgroundColor #EEEBDC
@@ -224,13 +224,13 @@ deactivate A
 
 ## 3.2 查看所有可用的参数
 
-__源码：__
+**源码：**
 
 ```
 help skinparams
 ```
 
-__示例：__
+**示例：**
 
 ```plantuml
 help skinparams

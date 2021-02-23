@@ -8,7 +8,7 @@ categories:
 - OS X
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -16,7 +16,7 @@ __阅读更多__
 
 ## 1.1 brew
 
-__格式：__
+**格式：**
 
 * `brew install <software>`
 * `brew uninstall <software>`
@@ -28,7 +28,7 @@ __格式：__
 
 ## 2.1 launchctl
 
-__以ssh为例：__
+**以ssh为例：**
 
 * `sudo launchctl load -w /System/Library/LaunchDaemons/ssh.plist`
 * `sudo launchctl unload -w /System/Library/LaunchDaemons/ssh.plist`
@@ -36,7 +36,7 @@ __以ssh为例：__
 
 ## 2.2 其他方式
 
-__mysql：__
+**mysql：**
 
 * `mysql.server start`
 * `mysql.server stop`
@@ -51,7 +51,7 @@ __mysql：__
 
 `⌘ + ⇧ + .`
 
-__也有如下非快捷键的方法__
+**也有如下非快捷键的方法**
 
 ```
 //显示

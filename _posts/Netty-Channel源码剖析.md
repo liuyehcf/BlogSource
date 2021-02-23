@@ -9,7 +9,7 @@ categories:
 - Netty
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -69,7 +69,7 @@ AbstractChannel抽象类对Channel接口（包括Channel的父接口）提供了
 
 ![AbstractChannel](/images/Netty-Channel源码剖析/AbstractChannel.png)
 
-__AbstractChannel包含如下关键字段__
+**AbstractChannel包含如下关键字段**
 
 1. `Channel parent`：与当前Channel相关联的Channel，比如NioServerSocketChannel中创建的NioSocketChannel，那么NioServerSocketChannel就是NioSocketChannel的parent Channel
 1. `Unsafe unsafe`：用于底层IO操作的对象，该字段的初始化会调用一个protected方法，AbstractChannel可以重写该方法来绑定特殊的Unsafe对象
@@ -78,7 +78,7 @@ __AbstractChannel包含如下关键字段__
 1. `SocketAddress remoteAddress`：远程地址，该地址是抽象的，未指定任何协议
 1. `EventLoop eventLoop`：当前Channel关联的EventLoop，即一个线程池
 
-此外，AbstractChannel抽象类实现了__非静态__内部类AbstractUnsafe
+此外，AbstractChannel抽象类实现了**非静态**内部类AbstractUnsafe
 
 ## 2.9 AbstractNioChannel
 
@@ -86,14 +86,14 @@ AbstractNioChannel抽象类实现了Channel的isOpen方法，重写了AbstractCh
 
 ![AbstractNioChannel](/images/Netty-Channel源码剖析/AbstractNioChannel.png)
 
-__AbstractNioChannel包含如下关键字段__
+**AbstractNioChannel包含如下关键字段**
 
 1. `SelectableChannel ch`：底层的Java NIO原生Channel
 1. `int readInterestOp`：感兴趣的操作
 1. `SelectionKey selectionKey`：底层的Java NIO原生SelectionKey
 1. `SocketAddress requestedRemoteAddress`：当主动发起连接时，保存远程的Socket地址
 
-此外，AbstractNioChannel抽象类实现了__非静态__内部类AbstractNioUnsafe
+此外，AbstractNioChannel抽象类实现了**非静态**内部类AbstractNioUnsafe
 
 ## 2.10 AbstractNioByteChannel
 
@@ -101,7 +101,7 @@ AbstractNioByteChannel抽象类实现了Channel接口的metadata方法
 
 ![AbstractNioByteChannel](/images/Netty-Channel源码剖析/AbstractNioByteChannel.png)
 
-此外，AbstractNioByteChannel抽象类实现了__非静态__内部类NioByteUnsafe（实现read方法）
+此外，AbstractNioByteChannel抽象类实现了**非静态**内部类NioByteUnsafe（实现read方法）
 
 ## 2.11 NioSocketChannel
 
@@ -133,4 +133,4 @@ ServerSocketChannel接口修改了Channel接口中的3个方法的返回值
 
 ## 3.4 AbstractNioMessageChannel
 
-AbstractNioMessageChannel抽象类主要定义了__非静态内部类__NioMessageUnsafe（实现read方法）
+AbstractNioMessageChannel抽象类主要定义了**非静态内部类**NioMessageUnsafe（实现read方法）

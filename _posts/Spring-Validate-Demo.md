@@ -9,7 +9,7 @@ categories:
 - Spring
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -195,9 +195,9 @@ public class UserDTO {
 
 UserService用validator相关注解进行标注，以声明式的方式进行参数校验
 
-1. __必须__，用`@Validated`标记接口（可以指明校验的组别）
-1. __非必须__，用`@Validated`标记方法（可以指明校验的组别），会覆盖类级别的`@Validated`注解
-1. __必须__，用`@Valid`标记参数，声明对参数进行校验
+1. **必须**，用`@Validated`标记接口（可以指明校验的组别）
+1. **非必须**，用`@Validated`标记方法（可以指明校验的组别），会覆盖类级别的`@Validated`注解
+1. **必须**，用`@Valid`标记参数，声明对参数进行校验
 
 ```java
 package org.liuyehcf.spring.validate.service;

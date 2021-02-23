@@ -8,13 +8,13 @@ categories:
 - Leetcode
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
 # 1 Question-105[★★★★★]
 
-__Construct Binary Tree from Preorder and Inorder Traversal__
+**Construct Binary Tree from Preorder and Inorder Traversal**
 
 > Given preorder and inorder traversal of a tree, construct the binary tree.
 
@@ -62,7 +62,7 @@ public class Solution {
 
 # 2 Question-106[★★★★★]
 
-__Construct Binary Tree from Inorder and Postorder Traversal__
+**Construct Binary Tree from Inorder and Postorder Traversal**
 
 > Given inorder and postorder traversal of a tree, construct the binary tree.
 
@@ -109,7 +109,7 @@ public class Solution {
 
 # 3 Question-124[★★★★★]
 
-__Binary Tree Maximum Path Sum__
+**Binary Tree Maximum Path Sum**
 
 > Given a binary tree, find the maximum path sum.
 
@@ -162,7 +162,7 @@ maxLength方法计算以给定节点为根节点的子树中，从根到叶节�
 
 # 4 Question-222[★★★★★]
 
-__Count Complete Tree Nodes__
+**Count Complete Tree Nodes**
 
 > Given a complete binary tree, count the number of nodes.
 
@@ -204,7 +204,7 @@ public class Solution {
 
 # 5 Question-230[★★]
 
-__Kth Smallest Element in a BST__
+**Kth Smallest Element in a BST**
 
 > Given a binary search tree, write a function kthSmallest to find the kth smallest element in it.
 
@@ -233,7 +233,7 @@ public class Solution {
 
 # 6 Question-236[★★★★★]
 
-__Lowest Common Ancestor of a Binary Tree__
+**Lowest Common Ancestor of a Binary Tree**
 
 > Given a binary tree, find the lowest common ancestor (LCA) of two given nodes in the tree.
 

@@ -8,7 +8,7 @@ categories:
 - Linux
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -16,7 +16,7 @@ __阅读更多__
 
 ## 1.1 用网络主机名取得IP的历史渊源
 
-__单一文件处理上网的年代：`/etc/hosts`__
+**单一文件处理上网的年代：`/etc/hosts`**
 
 * 利用某些特定的文件将主机名与IP做一个对应，如此一来，我们就可以通过主机名来取得该主机的IP了
 * 但是主机名与IP的对应无法自动在所有计算机内更新，且要将主机名加入该文件仅能向INTERNIC注册，若IP数量太多时，该文件会过大，也就更不利于其他主机同步化了
@@ -26,13 +26,13 @@ __单一文件处理上网的年代：`/etc/hosts`__
 
 ### 1.2.1 DNS的阶层架构与TLD
 
-__在整个DNS系统的最上方一定是`.`（小数点）这个DNS服务器，称为`root`__，最早在它下面管理的就只有`.com`、`.edu`、`.gov`、`.mil`、`.org`、`.net`这种特殊区域以及以国家为分类的第二层的主机名，这两者称为`Top Level Domains（TLDs）`
+**在整个DNS系统的最上方一定是`.`（小数点）这个DNS服务器，称为`root`**，最早在它下面管理的就只有`.com`、`.edu`、`.gov`、`.mil`、`.org`、`.net`这种特殊区域以及以国家为分类的第二层的主机名，这两者称为`Top Level Domains（TLDs）`
 
-__一般顶级域名（Generic TLDs, gTLD）：例如`.com`、`.org`、`.gov`等__
+**一般顶级域名（Generic TLDs, gTLD）：例如`.com`、`.org`、`.gov`等**
 
-__地区顶级层域名（Country Code TLDs, ccTLD）：例如`.uk`、`.jp`、`.cn`等__
+**地区顶级层域名（Country Code TLDs, ccTLD）：例如`.uk`、`.jp`、`.cn`等**
 
-__最早root管理六大领域域名，如下表：__
+**最早root管理六大领域域名，如下表：**
 
 | 名称 | 代表意义 |
 |:--|:--|
@@ -47,7 +47,7 @@ __最早root管理六大领域域名，如下表：__
 
 1. 我们不能执行设置TLD，必须向上层ISP申请域名的授权才行
 1. 每个国家之下记录的主要区域，基本与root管理的六大类类似
-1. __每一个上层的DNS服务器所记录的信息，其实只有其下一层的主机名而已__
+1. **每一个上层的DNS服务器所记录的信息，其实只有其下一层的主机名而已**
 1. 这样设置的好处：每台机器管理的只有下一层的hostname对应的IP，所以减少了管理上的困扰，如果下层Client端如果有问题，只要询问上一层DNS Server即可，不需要跨越上层，排错也会比较简单
 
 ### 1.2.3 通过DNS查询主机名IP的流程
@@ -104,9 +104,9 @@ DNS服务器的架设还有合法与不合法之分，而不像其他服务器�
 
 拥有区域查询权后，所有的主机名信息都以自己为准，与上层无关。DNS系统记录的信息非常多，重点有两个
 
-1. __记录服务器所在的NS（NameServer）标志__
-1. __记录主机名对应的A（Address）标志__
-1. __架设的DNS主机在其上层DNS主机中记录的是NS标志__
+1. **记录服务器所在的NS（NameServer）标志**
+1. **记录主机名对应的A（Address）标志**
+1. **架设的DNS主机在其上层DNS主机中记录的是NS标志**
 
 ## 1.4 主机名交由ISP代管还是自己设置DNS服务器
 
@@ -131,7 +131,7 @@ DNS服务器的架设还有合法与不合法之分，而不像其他服务器�
 
 记录的东西可以称为数据库，在数据库里针对每个要解析的域（domain），就称为一个区域（zone）
 
-__概念__：
+**概念**：
 
 1. 正解：从主机名查询到IP的流程
 1. 反解：从IP反解析到主机名的流程
@@ -140,7 +140,7 @@ __概念__：
     * 昆山科大DNS服务器管理的就是`*.ksu.edu.tw`这个域的查询权，任何想要知道`*.ksu.edu.tw`主机名的IP都得向昆山科大的DNS服务器查询，此时`.ksu.edu.tw`就是一个“正解的区域”
     * 昆山科大有几个`Class C`的子域，例如`120.114.140.0/24`，如果这254个可用IP都要设置主机名，那么这个`120.114.140.0/24`就是一个“反解的区域”
 
-__正解的设置权以及DNS正解Zone记录的标志__
+**正解的设置权以及DNS正解Zone记录的标志**
 
 1. 只要该域没有人使用，那谁先抢到了，就能够使用了
 1. 正解的Zone通常有以下几种标志
@@ -148,11 +148,11 @@ __正解的设置权以及DNS正解Zone记录的标志__
     * `NS`：就是名称服务器（Name Server）的缩写，后面记录的数据时DNS服务器
     * `A`：就是地址（Address）的缩写，后面记录的是IP的对应
 
-__反解的设置权以及DNS反解Zone记录的标志__
+**反解的设置权以及DNS反解Zone记录的标志**
 
 1. 反解主要是由IP找到主机名，重点是IP所有人是谁
 1. IP都是INTERNIC发放给各家ISP的，而且IP不能乱设置（路由问题）
-1. __因此能够设置反解的就只有IP的拥有人，亦即ISP才有权利设置反解__
+1. **因此能够设置反解的就只有IP的拥有人，亦即ISP才有权利设置反解**
 1. 除非你取得是整个`Class C`以上等级的IP网段，那你的ISP才可能给你IP反解授权，否则，若有反解的需求，就需要向你的直属上层ISP申请才行
 1. 反解的Zone记录的主要信息如下：
     * `NS`
@@ -184,51 +184,51 @@ __反解的设置权以及DNS反解Zone记录的标志__
     * `Master`（主人，主要）数据库
     * `Slave`（奴隶，次要）数据库
 
-__Master__
+**Master**
 
 1. 这种类型的DNS数据库中，里面所有的主机名相关信息，都需要管理员自己手动去修改与设置，设置完毕后还需要重新启动DNS服务去读取正确的数据库内容，才算完成数据库更新
 1. 一般来说，我们说的DNS架设，就是指这种数据库的类型
 1. 同时这种类型的数据库，还能够提供数据库内容给`Slave`的DNS服务器
 
-__Slave__
+**Slave**
 
 1. 通常不会只有一台DNS服务器，如果每台DNS都使用Master数据库类型，当有用户想我们要求修改或添加、删除数据时，一笔数据就需要做三次
 1. `Slave`必须与`Master`相互搭配
 1. 假如有三台主机提供DNS服务，且三台内容相同，那么只需要指定一台服务器为Master，其他两台为该Master的Slave服务器，那么当要修改的一笔名称对应时，我们只要手动更改Master那台机器的配置文件，然后重新启动BIND这个服务后，其他两台Slave就会自动被通知更新了
 
-__Master/Slave的查询优先权__
+**Master/Slave的查询优先权**
 
 1. 不论是`Master`还是`Slave`服务器，都必须可以同时提供DNS服务才行，因为在DNS系统中，域名的查询是“先进先出”的状态
 1. 每一台DNS服务器的数据库内容需要完全一致，否则就会造成客户端找到的IP是错误的
 
-__Master/Slave数据的同步化过程__
+**Master/Slave数据的同步化过程**
 
 1. `Slave`需要更新来自`Master`的数据，所以当然`Slave`在设置之初就需要存在`Master`才行
 1. 不论`Master`还是`Slave`数据库，都会有一个代表该数据库新旧的“序号”，这个序号数值的大小，是会影响是否要更新的操作
 1. 更新的方式主要有以下两种
-    * __Master主动告知__：在Master修改了数据库内容，并加大数据库序号后，重新启动DNS服务，那Master会主动告知Slave来更新数据库，此时能实现数据同步
-    * __Slave主动提出要求__：Slave会定时向Master查看数据库的序号，当发现Master数据库序号比Slave序号更大时，那么Slave就会开始更新，如果序号不变，就判断数据库没有变动，不会进行同步更新
+    * **Master主动告知**：在Master修改了数据库内容，并加大数据库序号后，重新启动DNS服务，那Master会主动告知Slave来更新数据库，此时能实现数据同步
+    * **Slave主动提出要求**：Slave会定时向Master查看数据库的序号，当发现Master数据库序号比Slave序号更大时，那么Slave就会开始更新，如果序号不变，就判断数据库没有变动，不会进行同步更新
 
 # 2 Client端的设置
 
 ## 2.1 相关配置文件
 
-__问题：__
+**问题：**
 
 1. 从主机名对应到IP有两种方法，`/etc/hosts`或者通过DNS架构
 1. 那么这两种方法分别使用什么配置文件
 1. 可否同时存在
 1. 若可以同时存在，哪种优先
 
-__如下几个配置文件__
+**如下几个配置文件**
 
 1. `/etc/hosts`：最早的Hostname对应IP的文件
 1. `/etc/reslov.conf`：就是ISP的DNS服务器IP记录处
 1.` /etc/nsswitch.conf`：决定先使用`/etc/hosts`还是`/etc/reslov.conf`的设置
 
-__一般而言，默认的Linux主机与IP的对应解析都以/etc/hosts优先__
+**一般而言，默认的Linux主机与IP的对应解析都以/etc/hosts优先**
 
-__`/etc/resolv.conf`__
+**`/etc/resolv.conf`**
 
 1. DNS服务器的IP可以设置多个，为什么要多个（避免DNS服务器宕机找不到IP），有点类似DNS备份功能
 1. 在正常情况下，永远只有第一台DNS服务器会被用来查询
@@ -240,12 +240,12 @@ __`/etc/resolv.conf`__
 
 ### 2.2.1 host
 
-__格式：__
+**格式：**
 
 * `host [-a] FQDN [server]`
 * `host -l domain [server]`
 
-__参数说明：__
+**参数说明：**
 
 * `-a`：代表列出该主机所有的相关信息，包括IP、TTL与排错信息等
 * `-l`：若后面接的那个domian设置允许allow-transfer时，则列出该domain所管理的所有主机名对应数据
@@ -253,32 +253,32 @@ __参数说明：__
 
 ### 2.2.2 nslookup
 
-__格式：__
+**格式：**
 
 * `nslookup [FQDN] [server]`
 * `nslookup`
 
 ### 2.2.3 dig
 
-__格式：__
+**格式：**
 
 * `dig [option] FQDN [@server]`
 
-__参数说明：__
+**参数说明：**
 
 * `+trace`：从`.`开始追踪
 * `-t type`：查询的数据主要有MX，NS，SOA等类型
 * `-x`：查询反解信息，非常重要
 * `@server`：如果不以`/etc/resolv.conf`的设置来作为DNS查询，可在此填入其他的IP
 
-__查询结果介绍__
+**查询结果介绍**
 
 1. 整个显示出的信息包括以下几个部分
 1. QUESTION（问题）：显示所要查询的内容
 1. ANSWER（回答）：依据刚刚的QUESTION去查询所得到的结果
 1. AUTHORITY（验证）：查询结果是由哪台服务器提供的（好像没有了???）
 
-__示例：__
+**示例：**
 
 * `dig linux.vbird.org`
 * `dig -x 120.114.100.20`
@@ -327,7 +327,7 @@ chroot代表的是“change to root（根目录）”，root代表的是根目�
 
 ## 3.3 单纯的cache-only DNS服务器与forwarding功能
 
-__什么是cache-only与forwarding DNS服务器__
+**什么是cache-only与forwarding DNS服务器**
 
 1. 有个只需要`.`这个zone file的简单DNS服务器，我们称这种没有公开的DNS数据库的服务器为cache-only（唯高速缓存） DNS Server
     * 这个DNS Server只有缓存搜寻结果的功能
@@ -337,13 +337,13 @@ __什么是cache-only与forwarding DNS服务器__
     * 将原本自己要往`.`查询的任务，丢给上层DNS服务器去处理即可
     * 即便forwarding DNS具有`.`这个zone file，还是会将查询权委托请求上层DNS查询
 
-__什么时候有搭建cache-only DNS的需求__
+**什么时候有搭建cache-only DNS的需求**
 
 * 在某些公司，为了预防员工利用公司网络资源做自己的事情，所以都会针对Internet的连接作比较严格的限制，连port 53这个DNS会用到的port也可能会被挡在防火墙外，此时，可以在防火墙那台机器上面，加装一个cache-only DNS服务器
 * 即利用自己的防火墙主机上的DNS服务区帮你的Client端解析`hostname<-->IP`，因为防火墙主机可以设置放行自己的DNS功能，而Client端就设置该防火墙IP为DNS服务器的IP即可，这样就可以取得主机名与IP的转译了
 * 通常搭建cache-only DNS服务器大都是为了系统安全
 
-__实际设置cache-only DNS Server__
+**实际设置cache-only DNS Server**
 
 * 由于不需要设置正反解的Zone，只需要`.`的Zone支持即可
 * 所以只需要设置一个文件（`named.conf`主配置文件）
@@ -365,7 +365,7 @@ __实际设置cache-only DNS Server__
         * 如果你的DNS服务器具有连上因特网的功能，那么通过`dig www.baidu.com @127.0.0.1`
         * 如果找到`www.baidu.com`的IP，并且最先面显示`SERVER:127.0.0.1#53（127.0.0.1）`字样，就代表成功了
 
-__forwarders的好处与问题分析__
+**forwarders的好处与问题分析**
 
 1. 利用forwarders的功能来提高效率的理论
     * 当很多下层DNS服务器都使用forwarders时，那么那个被设置为forwarder的主机，由于会记录很多的查询信息记录
@@ -378,7 +378,7 @@ __forwarders的好处与问题分析__
 
 # 4 DNS服务器的详细设置
 
-__架设DNS服务器的细节__
+**架设DNS服务器的细节**
 
 1. DNS服务器的架设需要上层DNS的授权才可以成为合法的DNS服务器（否则只是练习）
     * 没有注册，就代表在上层的DNS服务器中是没有这台DNS服务器的记录的，即本台DNS服务器是没有一个合法域名，因此不具备分配主机名的能力
@@ -391,7 +391,7 @@ __架设DNS服务器的细节__
 
 ## 4.1 正解文件记录的数据（Resource Record,RR）
 
-__正解文件资源记录（Resource Record，RR）格式__，我们可以发现，dig命令输出结果的格式几乎是固定的
+**正解文件资源记录（Resource Record，RR）格式**，我们可以发现，dig命令输出结果的格式几乎是固定的
 ```
 [domain]        [ttl]             [class]      [[RR type]       [RR data]]
 [待查数据]       [暂存时间（秒）]     IN           [资源类型]        [资源内容]
@@ -407,7 +407,7 @@ __正解文件资源记录（Resource Record，RR）格式__，我们可以发�
 * 此外，在domain部分，若可能的话，请尽量使用FQDN，即主机名结尾加一个小数点（`.`），就被称为FQDN（Fully Qualified Domain Name，全限定域名）
 * `ttl`：time to live的缩写，这笔记录被其他DNS服务器查询到后，这个记录会在对方DNS服务器的缓存中，保持多少秒钟的意思，由于ttl可由特定参数统一管理，因此在RR记录格式中，通常这个ttl字段是可以忽略的
 
-__正解文件的RR记录格式汇整如下__
+**正解文件的RR记录格式汇整如下**
 
 | `[domian]` | `IN` | `[[RR type]` | `[RR data]]` |
 |:--|:--|:--|:--|
@@ -418,22 +418,22 @@ __正解文件的RR记录格式汇整如下__
 | `域名.` | `IN` | `MX` | `顺序数字，接收邮件的服务器主机名` |
 | `主机别名.` | `IN` | `CNAME` | `实际代表这个主机别名的主机名` |
 
-__A、AAAA（Address）：查询IP的记录__
+**A、AAAA（Address）：查询IP的记录**
 
 * `dig -t a www.ksu.edu.tw`
 * 这个A的RR类型是在查询某个主机名的IP，也是最常被查询的一个RR标志
 * 如果IP设置的是IPv6的话，那么查询就需要使用AAAA类型才行
 
-__NS（Name Server）：查询管理区域名（Zone）的服务器主机名__
+**NS（Name Server）：查询管理区域名（Zone）的服务器主机名**
 
 * `dig -t ns ksu.edu.cn`
 
-__SOA（Start of Authority）：查询管理域名的服务器管理信息__
+**SOA（Start of Authority）：查询管理域名的服务器管理信息**
 
 * 如果有多台DNS服务器管理同一个域名，那么最好使用Master/Slave的方式来进行管理，就需要声明被管理的zone file是如何进行传输的，此时就需要SOA（Start Of Authorty）的标志了
 * `dig -t soa ksu.edu.tw`
 
-__SOA后面总共会接七个参数__
+**SOA后面总共会接七个参数**
 
 1. `Master DNS服务器主机名`：这个区域主要是哪台DNS作为Master的意思
 1. `管理员的E-mail`：由于@在数据库文件中是有特殊意义的，因此就将@替换为mail
@@ -443,21 +443,21 @@ __SOA后面总共会接七个参数__
 1. `时效时间（Expire）`：如果一直尝试失败，持续连接到这个设置值时限，那么Save将不再继续尝试连接，并尝试删除这份下载的zone file信息
 1. `缓存时间（Mimumum TTL）`：如果数据库zone file中，每笔RR记录都没有写到TTL缓存时间的话，那么就以SOA的设置值为主
 
-__参数限制__
+**参数限制**
 
 1. `Refresh>=Retry*2`
 1. `Refresh+Retry<Expire`
 1. `Expire>=Retry*10`
 1. `Expire>=7Days`
 
-__CNAME（Canonical Name）：设置某主机名的别名（alias）__
+**CNAME（Canonical Name）：设置某主机名的别名（alias）**
 
 * 有时候你不想针对某个主机名设置A标志，而是想通过另外一台主机名的A来规范这个新主机名，这时可以使用CNAME的设置
 * 为什么要用CNAME?
     * 如果你有一个IP，这个IP是给很多主机名使用的，那么当你的IP更改时，所有的数据就得全部更新A标志才行
     * 如果你只有一个主要主机名设置A，而其他的标志使用CNAME，那么当IP更改时你只需要修订一个A标志，其他的CNAME就跟着变动了，处理起来比较容易
 
-__MX（Mail Exchanger）：查询某域名的邮件服务器主机名__
+**MX（Mail Exchanger）：查询某域名的邮件服务器主机名**
 
 * MX是Mail eXchanger（邮件交换）的意思
 * 通常整个区域会设置一个MX，表示所有寄给这个区域的E-mail应该要送到后头的E-mail Server主机名上才行
@@ -477,7 +477,7 @@ __MX（Mail Exchanger）：查询某域名的邮件服务器主机名__
 ...
 ```
 
-__PRT就是反解，即是查询IP所对应的主机名__：反解最重要的地方就是：后面的主机名尽量使用完整的FQDN，亦即机上小数点`.`，
+**PRT就是反解，即是查询IP所对应的主机名**：反解最重要的地方就是：后面的主机名尽量使用完整的FQDN，亦即机上小数点`.`，
 
 ## 4.3 步骤一：DNS的环境规划
 
@@ -496,7 +496,7 @@ __PRT就是反解，即是查询IP所对应的主机名__：反解最重要的�
 * `zone`：设置出Zone（domain name）以及zone file的所在（包含master/slave/hint）
 * 其他：设置DNS本机管理接口以及相关的密钥文件（key file）
 
-__以下为配置内容__
+**以下为配置内容**
 
 ```
 options {
@@ -547,12 +547,12 @@ BIND软件已经提供了一个名为`namced.ca`的文件了
 
 | 字符 | 意义 |
 |:--|:--|
-| 一定从行首开始 | __所有设置数据一定要从行首开始，前面不可有空格符，若有空格符，代表延续前一个domain的意思，非常重要__ |
+| 一定从行首开始 | **所有设置数据一定要从行首开始，前面不可有空格符，若有空格符，代表延续前一个domain的意思，非常重要** |
 | `@` | 代表Zone的意思，例如写在`named.centso.liuye`中，@代表`centos.liuye.`（注意最后的点），如果写在`named.192.168.200`文件中，则`@`代表200.168.192.in-addr.arpa.（注意最后的点）|
 | `.` | 非常重要，因为它带包一个完整主机名（FQDN）而不是仅有hostname而已。例如在`named.centos.liuye`当中写`www.centos.liuye`则FQDN为`www.centos.liuye.@`==>`www.centos.liuye.centos.liuye.`，因此自然要写成`www.centos.liuye.` |
 | `;` | 代表批注符号，似乎`#`也是批注，两个都能用 |
 
-__以下为配置内容__
+**以下为配置内容**
 ```
 $TTL 600
 @  IN  SOA  master.centos.liuye.  liuye.www.centos.liuye.  
@@ -568,7 +568,7 @@ ftp.centos.liuye.  IN CNAME  www.centos.liuye.
 Linux2.centos.liuye.  IN  A  192.168.200.101
 ```
 
-__务必注意完整主机名（FQDN）之后的点__
+**务必注意完整主机名（FQDN）之后的点**
 
 * 加上了`.`表示这是个完整的主机名（FQDN），亦即`hostname+domain name`
 * 若没有加上`.`，表示该名称仅为`hostname`，因此完整的FQDN要加上Zone，即`hostname.@`
@@ -579,7 +579,7 @@ __务必注意完整主机名（FQDN）之后的点__
 
 由于我们的Zone是`200.168.192.in-addr.arpa.`，因此IP的全名部分已经含有192.168.200了，因此我们只需要写出最后一个IP即可，而且不用加点，利用hostname.@来帮助我们补全
 
-__以下为配置内容__
+**以下为配置内容**
 
 ```
 $TTL    600
@@ -600,25 +600,25 @@ $TTL    600
 systemctl restart named.service
 systemctl enable named.service
 ```
-__利用firewall-cmd或者firewall-config来配置防火墙__
+**利用firewall-cmd或者firewall-config来配置防火墙**
 
 ## 4.9 测试与数据库更新
 
-__测试有两种方式__
+**测试有两种方式**
 
 1. 一种通过Client端的查询功能，目的是检验数据库设置有无错误
 1. 利用`http://thednsreport.com/`来检验，但是该网站的检验主要是以合法授权的Zone为主，我们自己乱搞的DNS是没法检验的
 
-__修改`/etc/resolv.conf`__
+**修改`/etc/resolv.conf`**
 
 * 使得自己的非合法DNS主机IP写在最上面，否则只要上面的DNS网络通畅，那么该DNS便是无效的，因此自然查不到自己设定的非法主机名
 
-__判断成功与否__
+**判断成功与否**
 
 * 是否与预期相符合
 * 如果出现错误信息或者找不到某个反解的IP或者正解的主机名那么就说明不正确了
 
-__数据库更新，例如主机名或IP变更，或者添加某个主机名与IP对应__
+**数据库更新，例如主机名或IP变更，或者添加某个主机名与IP对应**
 
 * 先针对要更改的那个Zone的数据库文件去做更新，就是加入RR（Resource Record）标志
 * 更改该zone file的序号（Serial），就是SOA的第三个参数（第一个数字），因为这个数字会影响到Master/Slave的判定更新与否
@@ -626,7 +626,7 @@ __数据库更新，例如主机名或IP变更，或者添加某个主机名与I
 
 # 5 协同工作的DNS：Slave DNS及子域授权设定
 
-__Slave DNS的特色__
+**Slave DNS的特色**
 
 * 为了不间断地提供DNS服务，你的领域至少需要有两台DNS服务器来提供查询的功能
 * 这几台DNS服务器应该要分散在两个以上的不同IP网段才好
@@ -636,7 +636,7 @@ __Slave DNS的特色__
 
 ## 5.1 masterDNS权限的开放
 
-__基本假设__
+**基本假设**
 
 1. 提供Slave DNS服务器进行zone transfer的服务器为`master.centos.liuye`
 1. `centos.liuye`以及`200.168.192.in-addr.arpa`两个Zone都提供给Slave DNS使用
@@ -685,7 +685,7 @@ zone "200.168.192.in-addr.arpa." IN {
 * 唯一要注意的就是zone type类型，以及声明Master在哪里
 * 至于zone filename部分，由于zone file都是从Master取得的，通过named这个程序来主动建立起需要的zone file，因此这个zone file放置的目录权限就很重要
 
-__以下是`/etc/named.conf`配置内容__
+**以下是`/etc/named.conf`配置内容**
 
 ```
 options {
@@ -726,12 +726,12 @@ zone "200.168.192.in-addr.arpa." IN {
 * 上层DNS服务器：也就是`master.centos.liuye`这一台，只要在`centos.liuye`那个zone file内，增加指定NS并指向下层DNS主机名与IP对应即可，而zone file的需要也要增加才行
 * 下层DNS服务器：申请的域名必须是上层DNS所可以提供的名称，并告知上层DNS管理员，我们这个Zone所需指定的DNS主机名与对应的IP即可，然后就可以开始设置自己的Zone与zone file相关数据了
 
-__上层DNS服务器__：只需要添加zone file的`NS`与`A`即可，在`/etc/named.conf`中添加如下两行
+**上层DNS服务器**：只需要添加zone file的`NS`与`A`即可，在`/etc/named.conf`中添加如下两行
 ```
 lh.centos.liuye.	IN NS	dns.lh.centos.liuye.
 dns.lh.centos.liuye.	IN A	192.168.200.102
 ```
-__下层DNS服务器__：需要有完整的Zone相关设置，`/etc/named.conf`中内容如下
+**下层DNS服务器**：需要有完整的Zone相关设置，`/etc/named.conf`中内容如下
 ```
 options {
 	listen-on port 53 { any; };
@@ -757,7 +757,7 @@ zone "lh.centos.liuye." IN{
 };
 ```
 
-__`/var/named/named.lh.centos.liuye`内容如下__
+**`/var/named/named.lh.centos.liuye`内容如下**
 ```
 $TTL	600
 @		IN SOA	dns.lh.centos.liuye. root.lh.centos.liuye. 
@@ -771,16 +771,16 @@ dns		IN A	192.168.200.101
 以目前的局域网服务器来说，我的`master.centos.liuye`有两个接口，分别是`192.168.200.254/24`（对内）以及`192.168.136.166`（对外）
 
 * 外边的用户想要了解到`master.centos.liuye`这台服务器的IP时，取得的是`192.168.200.254`，因此需要通过NAT才能连接到该接口
-* 但是明明`192.168.136.166`与`192.168.200.254`是同一台服务器主机，有没有办法让外部查询找到`master.centos.liuye`是`192.168.136.166`而内部的找到则回应1`92.168.200.254`---__通过view功能__
+* 但是明明`192.168.136.166`与`192.168.200.254`是同一台服务器主机，有没有办法让外部查询找到`master.centos.liuye`是`192.168.136.166`而内部的找到则回应1`92.168.200.254`---**通过view功能**
 
-__设置view__
+**设置view**
 
 1. 建立一个名为intranet的名字，这个名字代表客户端为`192.168.200.0/24`的来源
 1. 建立一个名为internet的名字，这个名字代表客户端为非`192.168.136.0/24`的其他来源
 1. intranet使用的zone file为前面所建立的zone filename，internet使用的zone filename则在原本的文件名后面累加inter的扩展名，并修订各标志的结果
 1. 最终的结果中，从内网查到的`www.centos.liuye`的IP应该是`192.168.200.254`，从外网中查询到的`www.centos.liuye`的IP应该是`192.168.136.166`
 
-__以下为修改后的`/etc/named.conf`__
+**以下为修改后的`/etc/named.conf`**
 
 ```
 options {
@@ -872,13 +872,13 @@ inet 127.0.0.1 port 953 allow { 127.0.0.1; } keys { "rndc-key"; };
 
 如果以拨号方式的ADSL连上Internet，那么IP通常是ISP随机提供的，因此，每次上网的IP都不固定，因此DDNS（Dynamic DNS,DDNS）主机就必须提供一个机制，让客户端可以通过这个机制来修改他们在DDNS主机上面的zone file内的数据才行
 
-__如何实现__
+**如何实现**
 
 * BIND9就提供类似的机制
 * 我们的DDNS主机现提供Client一个key（就是认证用的数据，你可以将它理解成账号与密码的概念）
 * Client端利用这个key，并配合BIND9的nsupdate命令，就可以连上DDNS主机，并且修改主机上面zone file内的对应表了
 
-__DDNS Server端的设置__
+**DDNS Server端的设置**
 
 * `<dnssec-keygen>`
     * `dnssec-keygen -a [算法] -b [密码长度] -n [类型] 名称`
@@ -914,7 +914,7 @@ zone "centos.liuye." IN{
     * `systemctl restart named.service`
     * `setsebool -P named_write_master_zones=1`
 
-__设置Client端__
+**设置Client端**
 
 * 将Server端的密码公钥与私钥文件通过sftp传送到客户端的`/usr/local/ddns`目录下
 * `cd /usr/local/ddns`

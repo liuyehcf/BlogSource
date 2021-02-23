@@ -9,7 +9,7 @@ categories:
 - Source Code Analysis
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -53,7 +53,7 @@ Condition接口定义了一系列monitor methods，正如AQS作为synchronized�
 * 其次，Condition对象还需要提供一个同步队列，用于放置那些收到signal的线程，这些线程将会竞争锁(或者资源)
 
 在AQS框架中，ConditionObject的实现确实需要这两个队列，阻塞队列(我称之为condition queue)是ConditionObject自身维护的，而同步队列直接依赖于AQS的sync queue，因此ConditionObject作为内部类存在于AQS中，以便于ConditionObject可以直接利用AQS实现的sync queue
-__强调一点：AQS的独占模式才支持ConditionObject__
+**强调一点：AQS的独占模式才支持ConditionObject**
 
 # 3 源码分析
 
@@ -66,7 +66,7 @@ __强调一点：AQS的独占模式才支持ConditionObject__
         private transient Node lastWaiter;
 ```
 ConditionObject就两个字段，一个是condition queue头结点，另一个则是condition queue尾节点
-ConditionObject利用了AQS中的Node静态内部类用于封装节点。__指的注意的是，对于位于condition queue中的节点而言，这些节点的Node#prev以及Node#next字段是无用的，也就是null，condition queue是利用Node#nextWaiter来连接整个conditoin queue的__
+ConditionObject利用了AQS中的Node静态内部类用于封装节点。**指的注意的是，对于位于condition queue中的节点而言，这些节点的Node#prev以及Node#next字段是无用的，也就是null，condition queue是利用Node#nextWaiter来连接整个conditoin queue的**
 
 ## 3.2 await
 

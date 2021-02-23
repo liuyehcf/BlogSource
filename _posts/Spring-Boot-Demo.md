@@ -9,7 +9,7 @@ categories:
 - Spring
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -101,7 +101,7 @@ pom文件可以直接继承自`org.springframework.boot:spring-boot-starter-pare
 </project>
 ```
 
-__注意，如果是Web应用的话，`org.springframework.boot:spring-boot-starter-web`是必须的，这个依赖项包含了内嵌的Tomcat容器__
+**注意，如果是Web应用的话，`org.springframework.boot:spring-boot-starter-web`是必须的，这个依赖项包含了内嵌的Tomcat容器**
 
 ## 3.2 不继承自spring-boot
 
@@ -298,7 +298,7 @@ public class SampleApplication {
 1. `@ComponentScan`：会自动扫描指定包下的全部标有@Component的类，并注册成bean，当然包括@Component下的子注解@Service，@Repository，@Controller
 1. `@SpringBootApplication`：@SpringBootApplication = (默认属性)@Configuration + @EnableAutoConfiguration + @ComponentScan
 
-__测试__
+**测试**
 
 1. `http://localhost:8080/home/`
 1. 其他两个API可以通过post man测试
@@ -307,7 +307,7 @@ __测试__
 
 从Spring3.0开始，就提供了一种与xml配置文件对称的Java版本的配置
 
-__核心注解__
+**核心注解**
 
 1. @Configuration
 1. @Bean
@@ -364,7 +364,7 @@ public class Service{
 }
 ```
 
-__注意，构造方法注入对象，只能用@Autowired而不能用@Resource__
+**注意，构造方法注入对象，只能用@Autowired而不能用@Resource**
 
 ## 6.3 情景3
 
@@ -445,9 +445,9 @@ public class DataSourceConfig{
 
 Spring会为DataSourceConfig生成代理类（Cglib），不用担心多次调用dataSource()方法会创建多个不同的对象
 
-__注意，MapperScannerConfigurer的等效配置必须用@MapperScan注解，否则，整个配置类就会有问题（原因尚不清楚）__
+**注意，MapperScannerConfigurer的等效配置必须用@MapperScan注解，否则，整个配置类就会有问题（原因尚不清楚）**
 
-__此外，`<tx:annotation-driven transaction-manager="dataSourceTransactionManager"/>`的等效配置，不知道是不是@EnableTransactionManagement__
+**此外，`<tx:annotation-driven transaction-manager="dataSourceTransactionManager"/>`的等效配置，不知道是不是@EnableTransactionManagement**
 
 ## 6.4 情景4
 
@@ -458,7 +458,7 @@ __此外，`<tx:annotation-driven transaction-manager="dataSourceTransactionMana
     </bean>
 ```
 
-对于FactoryBean，我们仍然可以像配置普通Bean一样配置它。__注意必须返回FactoryBean（不要调用getObject()返回Bean对象）__，如果这个FactoryBean实现了一些Aware接口，那么在生成FactoryBean对象时会进行一些额外操作，然后再调用getObject方法创建Bean
+对于FactoryBean，我们仍然可以像配置普通Bean一样配置它。**注意必须返回FactoryBean（不要调用getObject()返回Bean对象）**，如果这个FactoryBean实现了一些Aware接口，那么在生成FactoryBean对象时会进行一些额外操作，然后再调用getObject方法创建Bean
 
 ```java
 @Configuration
@@ -519,9 +519,9 @@ keytool -genkey -v -alias liuyehcf_server_key -keyalg RSA -keystore ~/liuyehcf_s
 
 ## 9.1 @ComponentScan.excludeFilters
 
-当我们在项目中需要做集成测试的时候，我们可以选择`h2 database`来代替`mysql`数据库，但通常数据源的配置仍然包含在指定的包扫描路径下。__那么如何让Spring加载`h2 database`的数据源配置，而不是加载`mysql`的数据源配置呢？__
+当我们在项目中需要做集成测试的时候，我们可以选择`h2 database`来代替`mysql`数据库，但通常数据源的配置仍然包含在指定的包扫描路径下。**那么如何让Spring加载`h2 database`的数据源配置，而不是加载`mysql`的数据源配置呢？**
 
-__我们可以用`@ComponentScan`注解的`excludeFilters`属性来实现这个目标__，`@ComponentScan`注解可以指定排除某个或某些`Bean`。可选的匹配类型有如下几种
+**我们可以用`@ComponentScan`注解的`excludeFilters`属性来实现这个目标**，`@ComponentScan`注解可以指定排除某个或某些`Bean`。可选的匹配类型有如下几种
 
 1. `FilterType.ANNOTATION`：排除指定注解标记的Bean，注解的类用`classes`属性指定
 1. `FilterType.ASSIGNABLE_TYPE`：排除指定类，用`classes`属性指定
@@ -529,7 +529,7 @@ __我们可以用`@ComponentScan`注解的`excludeFilters`属性来实现这个�
 1. `FilterType.REGEX`：排除匹配指定模式的类，用`pattern`属性指定正则表达式
 1. `FilterType.CUSTOM`：即用户自定义的`org.springframework.core.type.filter.TypeFilter`
 
-__配置示例：排除项目中的数据源配置__
+**配置示例：排除项目中的数据源配置**
 
 ```java
 @Slf4j
@@ -581,7 +581,7 @@ public class TestApplication {
 }
 ```
 
-__注意，在上面的`@ComponentScan`注解中，排除了两个类，一个是`DataSourceConfig`，即数据源配置；另一个是`Application`。这么做是有必要的，如果仅排除了`DataSourceConfig`（仅对当前`@ComponentScan`有效），`Application`仍然会被扫描到，而`Application`是应用的启动类，也会配置`@ComponentScan`注解，仍然会扫描到`DataSourceConfig`__
+**注意，在上面的`@ComponentScan`注解中，排除了两个类，一个是`DataSourceConfig`，即数据源配置；另一个是`Application`。这么做是有必要的，如果仅排除了`DataSourceConfig`（仅对当前`@ComponentScan`有效），`Application`仍然会被扫描到，而`Application`是应用的启动类，也会配置`@ComponentScan`注解，仍然会扫描到`DataSourceConfig`**
 
 ```
 # 不配置excludeFilters属性
@@ -603,11 +603,11 @@ TestApplication
 
 ## 9.3 Spring集成测试&Mockito
 
-__`@MockBean`__：生成一个mock对象，并且添加到Spring的上下文中，将替换掉原有的`bean`，被注入到其他依赖该`bean`的`bean`当中
+**`@MockBean`**：生成一个mock对象，并且添加到Spring的上下文中，将替换掉原有的`bean`，被注入到其他依赖该`bean`的`bean`当中
 
 ## 9.4 在测试类中定义Controller
 
-__将注解`SpringBootTest`的属性值`webEnvironment`设置为`SpringBootTest.WebEnvironment.DEFINED_PORT`，例如：__
+**将注解`SpringBootTest`的属性值`webEnvironment`设置为`SpringBootTest.WebEnvironment.DEFINED_PORT`，例如：**
 
 * `@SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)`
 * 否则，会忽视`server.port`属性值，使用一个随机端口来提供http服务
@@ -634,11 +634,11 @@ SpringBoot默认加载的属性文件，其路径为`classpath:application.prope
 
 我们无需做任何配置，`Spring`就会为我们自动初始化这些项目。那么`Spring`如何实现这种`code-free`的`Auto-Configuration`呢？
 
-__答案就是基于约定，`Spring`会默认加载`classpath:META-INF/spring.factories`这个配置文件（加载的代码在`org.springframework.core.io.support.SpringFactoriesLoader`类中）__
+**答案就是基于约定，`Spring`会默认加载`classpath:META-INF/spring.factories`这个配置文件（加载的代码在`org.springframework.core.io.support.SpringFactoriesLoader`类中）**
 
 # 12 排错
 
-当我采用第二种pom文件时（__不继承spring boot的pom文件__），启动时会产生如下异常信息
+当我采用第二种pom文件时（**不继承spring boot的pom文件**），启动时会产生如下异常信息
 
 ```java
 ...

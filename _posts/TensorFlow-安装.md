@@ -8,7 +8,7 @@ categories:
 - Machine Learning
 ---
 
-__阅读更多__
+**阅读更多**
 
 <!--more-->
 
@@ -18,7 +18,7 @@ TensorFlow官网（需要翻墙）给出了非常详细的安装教程，这里�
 
 # 2 PyCharm
 
-如果你觉得文本编辑器编写TensorFlow程序非常不方便，不妨试试PyCharm（__Jetbrains出品，必属精品__），PyCharm集成了TensorFlow。这里附上PyCharm下载的[传送门](https://www.jetbrains.com/pycharm/)
+如果你觉得文本编辑器编写TensorFlow程序非常不方便，不妨试试PyCharm（**Jetbrains出品，必属精品**），PyCharm集成了TensorFlow。这里附上PyCharm下载的[传送门](https://www.jetbrains.com/pycharm/)
 
 PyCharm如何搭建TensorFlow环境
 
