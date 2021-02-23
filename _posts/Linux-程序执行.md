@@ -22,7 +22,32 @@ __`ELF`大致包含`ELF headers`、`program header table`、`section header tabl
 
 __可以通过`man 5 ELF`查看详细介绍__
 
-### 1.1.1 Section
+### 1.1.1 ELF headers
+
+__可以通过`readelf -h <binary>`查看详细介绍__
+
+对应的数据结构如下
+
+```c
+typedef struct {
+    unsigned char e_ident[EI_NIDENT]; // ELF的Magic Number
+    uint16_t      e_type; // 描述了ELF文件的类型
+    uint16_t      e_machine; // 描述了文件面向的架构
+    uint32_t      e_version; // 描述了ELF文件的版本号
+    ElfN_Addr     e_entry; // 执行入口点，如果文件没有入口点，这个域保持0
+    ElfN_Off      e_phoff; // program header table的offset，如果文件没有PH，这个值是0
+    ElfN_Off      e_shoff; // section header table的offset，如果文件没有SH，这个值是0
+    uint32_t      e_flags; // 特定于处理器的标志，32位和64位Intel架构都没有定义标志，因此eflags的值是0
+    uint16_t      e_ehsize; // ELF header的大小，32位ELF是52字节，64位是64字节
+    uint16_t      e_phentsize; // program header table中每个条目的大小
+    uint16_t      e_phnum; // program header table中header的数目。如果文件没有program header table, e_phnum的值为0。e_phentsize乘以e_phnum就得到了整个program header table的大小
+    uint16_t      e_shentsize; // section header table中每个条目的大小
+    uint16_t      e_shnum; // section header table中header的数目。如果文件没有section header table, e_shnum的值为0。e_shentsize乘以e_shnum，就得到了整个section header table的大小
+    uint16_t      e_shstrndx; // section header string table index. 包含了section header table中section name string table
+} ElfN_Ehdr;
+```
+
+### 1.1.2 Section
 
 __目标代码文件中的`section`和`section header table`中的条目是一一对应的。`section`的信息用于链接器对代码重定位。下面列了系统预定义的`section`__
 
@@ -50,7 +75,7 @@ __目标代码文件中的`section`和`section header table`中的条目是一�
 
 可以通过`readelf -S <name>`查看`section header table`以及`section`信息
 
-### 1.1.2 Segment
+### 1.1.3 Segment
 
 可执行文件载入内存执行时，是以`segment`组织的，每个`segment`对应`ELF`文件中`program header table`中的一个条目，用来建立可执行文件的进程映像。比如我们通常说的，`代码段`、`数据段`，目标代码中的`section`会被链接器组织到可执行文件的各个`segment`中（一个`segment`可以包含0个或多个`section`），例如`.text`的内容会组装到代码段中；`.data`、`.bss`等节的内容会包含在数据段中
 
@@ -63,6 +88,7 @@ __目标代码文件中的`section`和`section header table`中的条目是一�
 * [ELF格式探析之三：sections](https://segmentfault.com/a/1190000016834180)
 * [What's the difference of section and segment in ELF file format](https://stackoverflow.com/questions/14361248/whats-the-difference-of-section-and-segment-in-elf-file-format)
 * [https://segmentfault.com/a/1190000016664025](https://segmentfault.com/a/1190000016664025)
+* [ELF文件解析（二）：ELF header详解](https://blog.csdn.net/qq_43248127/article/details/104366050)
 
 # 2 程序如何加载执行
 
