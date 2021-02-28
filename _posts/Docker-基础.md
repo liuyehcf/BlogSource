@@ -218,6 +218,9 @@ RUN apk add -U tzdata
     * `docker run -d --net=container:<已有容器id> <镜像id>`
 1. 删除docker命令后，docker的工作目录仍然是保留的（包含了镜像）若要彻底删除，可以通过如下命令
     * `rm -rf /var/lib/docker`
+1. 查看img的构建记录：`docker history <img>`
+1. 查看img的详情：`docker inspect <img>`
+1. 查看容器资源占用情况：`docker stats <container>`
 
 ## 4.1 跨平台运行容器
 

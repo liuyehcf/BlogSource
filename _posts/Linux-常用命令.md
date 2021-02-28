@@ -1659,6 +1659,7 @@ iptables可以使用扩展目标模块，并且可以在指定目标后使用`-h
 1. `DNAT`
 1. `SNAT`
 1. `REJECT`
+1. `MASQUERADE`：用于实现自动化SNAT，若出口ip经常变化的话，可以通过该目标来实现SNAT
 
 ### 5.6.8 ICMP数据包规则的比对：针对是否响应ping来设计
 

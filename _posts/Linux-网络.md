@@ -191,6 +191,13 @@ cleanup
 1. `balance-tlb`
 1. `balance-alb`
 
+下面开始验证，我的测试环境如下：
+
+* 使用kvm虚拟机，安装的镜像为`CentOS-7-x86_64-Minimal-1908.iso`
+* 宿主机上有1个网桥：`br0`
+	* `br0`：ip为`10.0.2.1/24`，并添加了SNAT配置`iptables -t nat -A POSTROUTING -s 10.0.2.0/24 -o eno1 -j MASQUERADE`（`eno1`为宿主机的外网网卡）
+* kvm虚拟机包含2个网卡，`eth0`和`ens9`，分别接到宿主机上的`br0`
+
 编写一个脚本，内容如下，这里我取名为`bond.sh`
 
 ```sh
@@ -245,35 +252,30 @@ export -f cleanup
 EOF
 ```
 
-下面进行测试，环境要求如下
-
-1. 两个待绑定的网卡在同一个网段
-1. 不能用`VirtualBox`进行测试，因为`bond`网卡会使用第一个子网卡的mac地址作为`bond`网卡的mac地址，当我们将自网卡关闭后，`VirtualBox`会感知这一事件，并将该自网卡的mac地址标记为不可达，从而导致整个`bond`网卡也不可达（即便此时另一个网卡是正常工作的）
+开始验证
 
 ```sh
 # 配置
 source bond.sh
-export ifname_physics_1="enp0s3" # 待绑定的子网卡名称1
-export ifname_physics_2="enp0s9" # 待绑定的子网卡名称2
+export ifname_physics_1="eth0" # 待绑定的子网卡名称1
+export ifname_physics_2="ens9" # 待绑定的子网卡名称2
 export bond_name="bond_liuye" # bond名称
 export bond_mode="active-backup" # bond模式，可以通过`ip link help bond`查询所有的mode
 export ip_bond="10.0.2.66"
-export ip_gateway="10.0.2.2"
+export ip_gateway="10.0.2.1"
 export ip_net="10.0.2.0"
 export ip_netmask="255.255.255.0"
 export ip_broadcast="10.0.2.255"
 setup
 #-------------------------↓↓↓↓↓↓-------------------------
-+ ip link set enp0s3 down
-+ ip link set enp0s9 down
-+ ip link add bond_liuye type bond miimon 100 mode active-backup
-+ ip link set enp0s3 master bond_liuye
-+ ip link set enp0s9 master bond_liuye
++ ip link add bond_liuye type bond miimon 100 updelay 100 downdelay 100 mode active-backup
++ ip link set eth0 master bond_liuye
++ ip link set ens9 master bond_liuye
 + ip link set bond_liuye up
-+ ip link set enp0s3 up
-+ ip link set enp0s9 up
++ ip link set eth0 up
++ ip link set ens9 up
 + ip addr add 10.0.2.66/255.255.255.0 broadcast 10.0.2.255 dev bond_liuye
-+ ip route add default via 10.0.2.2 dev bond_liuye
++ ip route add default via 10.0.2.1 dev bond_liuye
 + echo 'nameserver 8.8.8.8'
 + set +x
 #-------------------------↑↑↑↑↑↑-------------------------
@@ -281,20 +283,70 @@ setup
 # 测试连通性
 ping -c 3 www.aliyun.com
 #-------------------------↓↓↓↓↓↓-------------------------
-PING aliyun-adns.aliyun.com.gds.alibabadns.com (106.11.172.56) 56(84) bytes of data.
-64 bytes from 106.11.172.56 (106.11.172.56): icmp_seq=1 ttl=63 time=7.63 ms
-64 bytes from 106.11.172.56 (106.11.172.56): icmp_seq=2 ttl=63 time=7.24 ms
-64 bytes from 106.11.172.56 (106.11.172.56): icmp_seq=3 ttl=63 time=7.14 ms
+PING xjp-adns.aliyun.com.gds.alibabadns.com (47.88.251.168) 56(84) bytes of data.
+64 bytes from 47.88.251.168 (47.88.251.168): icmp_seq=1 ttl=31 time=70.6 ms
+64 bytes from 47.88.251.168 (47.88.251.168): icmp_seq=2 ttl=31 time=70.3 ms
+64 bytes from 47.88.251.168 (47.88.251.168): icmp_seq=3 ttl=31 time=70.5 ms
 
---- aliyun-adns.aliyun.com.gds.alibabadns.com ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2025ms
-rtt min/avg/max/mdev = 7.140/7.340/7.631/0.210 ms
+--- xjp-adns.aliyun.com.gds.alibabadns.com ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2002ms
+rtt min/avg/max/mdev = 70.335/70.511/70.679/0.258 ms
 #-------------------------↑↑↑↑↑↑-------------------------
 
-# 将其中一个网卡关掉，查看连通性
+# 将网卡1关掉，查看连通性
 ip link set ${ifname_physics_1} down
 ping -c 3 www.aliyun.com
 #-------------------------↓↓↓↓↓↓-------------------------
+PING xjp-adns.aliyun.com.gds.alibabadns.com (47.88.251.175) 56(84) bytes of data.
+64 bytes from 47.88.251.175 (47.88.251.175): icmp_seq=1 ttl=31 time=81.5 ms
+64 bytes from 47.88.251.175 (47.88.251.175): icmp_seq=2 ttl=31 time=81.4 ms
+64 bytes from 47.88.251.175 (47.88.251.175): icmp_seq=3 ttl=31 time=81.4 ms
+
+--- xjp-adns.aliyun.com.gds.alibabadns.com ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2003ms
+rtt min/avg/max/mdev = 81.432/81.487/81.555/0.238 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 查看此时生效的网卡
+ip -d link show dev ${bond_name}
+#-------------------------↓↓↓↓↓↓-------------------------
+12: bond_liuye: <BROADCAST,MULTICAST,MASTER,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+    link/ether 52:54:00:1e:f1:21 brd ff:ff:ff:ff:ff:ff promiscuity 0
+    bond mode active-backup active_slave ens9 miimon 100 updelay 100 downdelay 100 use_carrier 1 arp_interval 0 arp_validate none arp_all_targets any primary_reselect always fail_over_mac none xmit_hash_policy layer2 resend_igmp 1 num_grat_arp 1 all_slaves_active 0 min_links 0 lp_interval 1 packets_per_slave 1 lacp_rate slow ad_select stable tlb_dynamic_lb 1 addrgenmode eui64 numtxqueues 16 numrxqueues 16 gso_max_size 65536 gso_max_segs 65535
+#-------------------------↑↑↑↑↑↑-------------------------
+# 可以看到，此时生效的网卡是ens9（bond mode active-backup active_slave ens9）
+
+# 打开网卡1，关掉网卡2，再看连通性
+ip link set ${ifname_physics_1} up
+ip link set ${ifname_physics_2} down
+ping -c 3 www.aliyun.com
+#-------------------------↓↓↓↓↓↓-------------------------
+PING xjp-adns.aliyun.com.gds.alibabadns.com (47.88.198.24) 56(84) bytes of data.
+64 bytes from 47.88.198.24 (47.88.198.24): icmp_seq=1 ttl=31 time=80.6 ms
+64 bytes from 47.88.198.24 (47.88.198.24): icmp_seq=2 ttl=31 time=80.9 ms
+64 bytes from 47.88.198.24 (47.88.198.24): icmp_seq=3 ttl=31 time=80.5 ms
+
+--- xjp-adns.aliyun.com.gds.alibabadns.com ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2002ms
+rtt min/avg/max/mdev = 80.579/80.725/80.995/0.191 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 查看此时生效的网卡
+ip -d link show dev ${bond_name}
+#-------------------------↓↓↓↓↓↓-------------------------
+12: bond_liuye: <BROADCAST,MULTICAST,MASTER,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+    link/ether 52:54:00:1e:f1:21 brd ff:ff:ff:ff:ff:ff promiscuity 0
+    bond mode active-backup active_slave eth0 miimon 100 updelay 100 downdelay 100 use_carrier 1 arp_interval 0 arp_validate none arp_all_targets any primary_reselect always fail_over_mac none xmit_hash_policy layer2 resend_igmp 1 num_grat_arp 1 all_slaves_active 0 min_links 0 lp_interval 1 packets_per_slave 1 lacp_rate slow ad_select stable tlb_dynamic_lb 1 addrgenmode eui64 numtxqueues 16 numrxqueues 16 gso_max_size 65536 gso_max_segs 65535
+#-------------------------↑↑↑↑↑↑-------------------------
+# 可以看到，此时生效的网卡是eth0（bond mode active-backup active_slave eth0）
+
+# 清理
+#-------------------------↓↓↓↓↓↓-------------------------
++ ip link set bond_liuye down
++ ip link set eth0 down
++ ip link set ens9 down
++ ip link del bond_liuye
++ set +x
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
@@ -303,6 +355,13 @@ ping -c 3 www.aliyun.com
 ![team](/images/Linux-网络/team.png)
 
 与`bond`类似，`team`也提供了将两个网络接口组合成一个逻辑网络接口的方法，它工作在二层。`bond`与`team`之间的差异可以参考[Bonding vs. Team features](https://github.com/jpirko/libteam/wiki/Bonding-vs.-Team-features)
+
+下面开始验证，我的测试环境如下：
+
+* 使用kvm虚拟机，安装的镜像为`CentOS-7-x86_64-Minimal-1908.iso`
+* 宿主机上有1个网桥：`br0`
+	* `br0`：ip为`10.0.2.1/24`，并添加了SNAT配置`iptables -t nat -A POSTROUTING -s 10.0.2.0/24 -o eno1 -j MASQUERADE`（`eno1`为宿主机的外网网卡）
+* kvm虚拟机包含2个网卡，`eth0`和`ens9`，分别接到宿主机上的`br0`
 
 编写一个脚本，内容如下，这里我取名为`team.sh`
 
@@ -357,19 +416,16 @@ export -f cleanup
 EOF
 ```
 
-下面进行测试，环境要求如下
-
-1. 两个待绑定的网卡在同一个网段
-1. 不能用`VirtualBox`进行测试，因为`team`网卡会使用第一个子网卡的mac地址作为`team`网卡的mac地址，当我们将自网卡关闭后，`VirtualBox`会感知这一事件，并将该自网卡的mac地址标记为不可达，从而导致整个`team`网卡也不可达（即便此时另一个网卡是正常工作的）
+开始验证
 
 ```sh
 # 配置
 source team.sh
-export ifname_physics_1="enp0s3" # 待绑定的子网卡名称1
-export ifname_physics_2="enp0s9" # 待绑定的子网卡名称2
+export ifname_physics_1="eth0" # 待绑定的子网卡名称1
+export ifname_physics_2="ens9" # 待绑定的子网卡名称2
 export team_name="team_liuye" # team名称
 export ip_team="10.0.2.66"
-export ip_gateway="10.0.2.2"
+export ip_gateway="10.0.2.1"
 export ip_net="10.0.2.0"
 export ip_netmask="255.255.255.0"
 export ip_broadcast="10.0.2.255"
@@ -377,13 +433,13 @@ setup
 #-------------------------↓↓↓↓↓↓-------------------------
 + teamd -o -n -U -d -t team_liuye -c '{"runner": {"name": "activebackup"},"link_watch": {"name": "ethtool"}}'
 This program is not intended to be run as root.
-+ ip link set enp0s3 master team_liuye
-+ ip link set enp0s9 master team_liuye
++ ip link set eth0 master team_liuye
++ ip link set ens9 master team_liuye
 + ip link set team_liuye up
-+ ip link set enp0s3 up
-+ ip link set enp0s9 up
++ ip link set eth0 up
++ ip link set ens9 up
 + ip addr add 10.0.2.66/255.255.255.0 broadcast 10.0.2.255 dev team_liuye
-+ ip route add default via 10.0.2.2 dev team_liuye
++ ip route add default via 10.0.2.1 dev team_liuye
 + echo 'nameserver 8.8.8.8'
 + set +x
 #-------------------------↑↑↑↑↑↑-------------------------
@@ -391,20 +447,53 @@ This program is not intended to be run as root.
 # 测试连通性
 ping -c 3 www.aliyun.com
 #-------------------------↓↓↓↓↓↓-------------------------
-PING aliyun-adns.aliyun.com.gds.alibabadns.com (106.11.249.99) 56(84) bytes of data.
-64 bytes from 106.11.249.99 (106.11.249.99): icmp_seq=1 ttl=63 time=24.5 ms
-64 bytes from 106.11.249.99 (106.11.249.99): icmp_seq=2 ttl=63 time=18.7 ms
-64 bytes from 106.11.249.99 (106.11.249.99): icmp_seq=3 ttl=63 time=25.9 ms
+PING xjp-adns.aliyun.com.gds.alibabadns.com (47.88.251.174) 56(84) bytes of data.
+64 bytes from 47.88.251.174 (47.88.251.174): icmp_seq=1 ttl=30 time=69.2 ms
+64 bytes from 47.88.251.174 (47.88.251.174): icmp_seq=2 ttl=30 time=68.8 ms
+64 bytes from 47.88.251.174 (47.88.251.174): icmp_seq=3 ttl=30 time=68.6 ms
 
---- aliyun-adns.aliyun.com.gds.alibabadns.com ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2003ms
-rtt min/avg/max/mdev = 18.719/23.071/25.969/3.133 ms
+--- xjp-adns.aliyun.com.gds.alibabadns.com ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2002ms
+rtt min/avg/max/mdev = 68.633/68.912/69.219/0.386 ms
 #-------------------------↑↑↑↑↑↑-------------------------
 
-# 将其中一个网卡关掉，查看连通性
+# 将网卡1关掉，查看连通性
 ip link set ${ifname_physics_1} down
 ping -c 3 www.aliyun.com
 #-------------------------↓↓↓↓↓↓-------------------------
+PING xjp-adns.aliyun.com.gds.alibabadns.com (47.88.251.176) 56(84) bytes of data.
+64 bytes from 47.88.251.176 (47.88.251.176): icmp_seq=1 ttl=31 time=70.3 ms
+64 bytes from 47.88.251.176 (47.88.251.176): icmp_seq=2 ttl=31 time=70.2 ms
+64 bytes from 47.88.251.176 (47.88.251.176): icmp_seq=3 ttl=31 time=70.2 ms
+
+--- xjp-adns.aliyun.com.gds.alibabadns.com ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2002ms
+rtt min/avg/max/mdev = 70.205/70.266/70.313/0.045 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 打开网卡1，关掉网卡2，再看连通性
+ip link set ${ifname_physics_1} up
+ip link set ${ifname_physics_2} down
+ping -c 3 www.aliyun.com
+#-------------------------↓↓↓↓↓↓-------------------------
+PING xjp-adns.aliyun.com.gds.alibabadns.com (47.88.251.171) 56(84) bytes of data.
+64 bytes from 47.88.251.171 (47.88.251.171): icmp_seq=1 ttl=30 time=82.7 ms
+64 bytes from 47.88.251.171 (47.88.251.171): icmp_seq=2 ttl=30 time=218 ms
+64 bytes from 47.88.251.171 (47.88.251.171): icmp_seq=3 ttl=30 time=340 ms
+
+--- xjp-adns.aliyun.com.gds.alibabadns.com ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2000ms
+rtt min/avg/max/mdev = 82.756/213.799/340.219/105.160 ms
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 清理
+cleanup
+#-------------------------↓↓↓↓↓↓-------------------------
++ ip link set team_liuye down
++ ip link set eth0 down
++ ip link set ens9 down
++ ip link del team_liuye
++ set +x
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 

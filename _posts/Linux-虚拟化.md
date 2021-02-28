@@ -145,6 +145,7 @@ int main() {
 ## 2.7 参考
 
 * [汇编语言入门教程](http://www.ruanyifeng.com/blog/2018/01/assembly-language-primer.html)
+* [一口气看完45个寄存器，CPU核心技术大揭秘](https://zhuanlan.zhihu.com/p/272135463?utm_source=qzone)
 
 # 3 CPU虚拟化
 
@@ -196,29 +197,125 @@ int main() {
 | 性能 | 差 | 全虚拟化下，CPU需要在两种模式之间切换，带来性能开销；但是，其性能在逐渐逼近半虚拟化 | 好。半虚拟化下CPU性能开销几乎为0，虚机的性能接近于物理机 |
 | 应用厂商 | VMware Workstation/QEMU/Virtual PC | VMware ESXi/Microsoft Hyper-V/Xen 3.0/KVM | Xen |
 
-## 3.4 问题
+## 3.4 参考
+
+* [KVM 介绍（2）：CPU 和内存虚拟化](https://www.cnblogs.com/sammyliu/p/4543597.html)
+* [KVM之CPU虚拟化](https://www.cnblogs.com/clsn/p/10175960.html)
+* [分不清ARM和X86架构，别跟我说你懂CPU！](https://zhuanlan.zhihu.com/p/21266987)
+
+## 3.5 问题
 
 1. 访问内存需要在`Ring 0`上么？用户态程序也存在大量的内存读写，如何访问的？
 1. 客户机的kernel为什么运行在`Ring 1`上，它不是应该认为自己跑在`Ring 0`上才对么，`Ring x`这个属性是谁赋予的？操作系统本身感知么？
 1. 普通程序在执行的过程中（用户态），需要操作系统参与吗？参与了哪些过程
 1. 在内核态执行指令与在用户态执行指令有什么区别？为什么VMM能拦截到客户机的特权指令的执行？（`VMM`通过显式调用`VMLAUNCH`或`VMRESUME`）
+1. 有操作系统和没有操作系统时，程序分别是如何执行的。对于有操作系统的情况下，操作系统对程序执行多了哪些干预操作？
+1. `Ring x`这个信息记录在哪
+1. Guest Machine本身并不感知自己跑在一个虚拟的环境中，但是CPU知道！！！
 
 # 4 内存虚拟化
 
-内存管理相关知识点参考{% post_link Linux-内存管理 %}
+**内存管理相关知识点参考{% post_link Linux-内存管理 %}**
+
+**本小结转载摘录自[虚拟化技术 - 内存虚拟化 [一]](https://zhuanlan.zhihu.com/p/69828213)**
+
+大型操作系统（比如Linux）的内存管理的内容是很丰富的，而内存的虚拟化技术在OS内存管理的基础上又叠加了一层复杂性，比如我们常说的虚拟内存（virtual memory），如果使用虚拟内存的OS是运行在虚拟机中的，那么需要对虚拟内存再进行虚拟化，也就是`vitualizing virtualized memory`。本文将仅从「内存地址转换」和「内存回收」两个方面探讨内存虚拟化技术
+
+在Linux这种使用虚拟地址的OS中，虚拟地址经过`page table`转换可得到物理地址
+
+![memory_1](/images/Linux-虚拟化/memory_1.jpg)
+
+如果这个操作系统是运行在虚拟机上的，那么这只是一个中间的物理地址（`Intermediate Phyical Address - IPA`），需要经过`VMM/hypervisor`的转换，才能得到最终的物理地址（`Host Phyical Address - HPA`）。从`VMM`的角度，`guest VM`中的虚拟地址就成了`GVA（Guest Virtual Address）`，`IPA`就成了`GPA（Guest Phyical Address）`
+
+![memory_2](/images/Linux-虚拟化/memory_2.jpg)
+
+可见，如果使用VMM，并且`guest VM`中的程序使用虚拟地址（如果`guest VM`中运行的是不支持虚拟地址的`RTOS（real time OS）`，则在虚拟机层面不需要地址转换），那么就需要两次地址转换
+
+![memory_3](/images/Linux-虚拟化/memory_3.jpg)
+
+**但是传统的`IA32`架构从硬件上只支持一次地址转换，即由`CR3`寄存器指向进程第一级页表的首地址，通过MMU查询进程的各级页表，获得物理地址**
+
+针对`GVA->GPA->HPA`的两次转换的问题，存在2种解决方案
+
+1. 软件实现「影子页表」
+1. 硬件辅助「EPT/NPT」
+
+**首先介绍「影子页表」的实现方式**
+
+在一个运行Linux的`guest VM`中，每个进程有一个由内核维护的页表，用于`GVA->GPA`的转换，这里我们把它称作`gPT（guest Page Table）`。VMM层的软件会将`gPT`本身使用的物理页面设为`write protected`的，也就是说`gPT`的每次写操作都会触发`page fault`，该异常会被VM捕获，然后由VM来维护`gPT`的相关数据（该页表在VMM视角下，称为`sPT（shadow Page Table）`）。**「影子页表」是将`GVA-GPA`和`GPA-HPA`的两次转换合并成一次转换`GVA-HPA`，因此`gPT`和`sPT`指代的是同一个页表，只是视角不同而已**
+
+1. 在`guest VM`的视角下，这就是一个普通的`page table`，负责将线性地址转换成物理地址（`GVA->GPA`），**`guest VM`并不知道这个页表的维护实际上是VMM负责的（被骗了）**
+1. 在`VVM`的视角下，这就是一个影子页表`shadow page table`，它可以直接将虚拟机的虚拟地址转换成物理机的物理地址（`GVA->HPA`）
+
+「影子页表」存在如下两个缺点：
+
+1. 实现较为复杂，需要为每个`guest VM`中的每个进程的`gPT`都维护一个对应的`sPT`，增加了内存的开销
+1. VMM使用的截获方法增多了`page fault`和`trap/vm-exit`的数量，加重了CPU的负担
+   * 在一些场景下，这种影子页表机制造成的开销可以占到整个VMM软件负载的75%
+
+![memory_4](/images/Linux-虚拟化/memory_4.jpg)
+
+**在「影子页表」的方案中，CPU还是按照传统的方式来进行内存的寻址（一次转换），因此CPU并不感知**，为了更好的支持虚拟化，各大CPU厂商相继推出了硬件辅助的内存虚拟化技术，比如Intel的`EPT（Extended Page Table）`和AMD的`NPT（Nested Page Table）`，它们都能够从硬件上同时支持`GVA->GPA`和`GPA->HPA`的地址转换的技术
+
+`GVA->GPA`的转换依然是通过查找`gPT`页表完成的，而`GPA->HPA`的转换则通过查找`nPT`页表来实现，每个`guest VM`有一个由VMM维护的`nPT`。其实，`EPT/NPT`就是一种扩展的MMU（以下称`EPT/NPT MMU`），它可以交叉地查找`gPT`和`nPT`两个页表。在这种方案下，**CPU是明确感知这是虚拟机的寻址过程**
+
+![memory_5](/images/Linux-虚拟化/memory_5.jpg)
+
+假设`gPT`和`nPT`都是4级页表，那么`EPT/NPT MMU`完成一次地址转换的过程是这样的（不考虑TLB）：
+
+首先它会查找`guest VM`中`CR3`寄存器（`gCR3`）指向的`PML4`页表，由于`gCR3`中存储的地址是`GPA`，因此CPU需要查找`nPT`来获取`gCR3`的`GPA`对应的`HPA`。`nPT`的查找和前面文章讲的页表查找方法是一样的，这里我们称一次`nPT`的查找过程为一次`nested walk`
+
+![memory_6](/images/Linux-虚拟化/memory_6.jpg)
+
+如果在`nPT`中没有找到，则产生`EPT violation`异常（可理解为VMM层的`page fault`）。如果找到了，也就是获得了`PML4`页表的物理地址后，就可以用`GVA`中的bit位子集作为`PML4`页表的索引，得到`PDPE`页表的`GPA`。接下来又是通过一次`nested walk`进行`PDPE`页表的`GPA->HPA`转换，然后重复上述过程，依次查找PD和PE页表，最终获得该`GVA`对应的`HPA`
+
+![memory_7](/images/Linux-虚拟化/memory_7.jpg)
+
+不同于影子页表是一个进程需要一个`sPT`，`EPT/NPT MMU`解耦了`GVA->GPA`转换和`GPA->HPA`转换之间的依赖关系，一个VM只需要一个`nPT`，减少了内存开销。如果`guest VM`中发生了`page fault`，可直接由`guest OS`处理，不会产生`vm-exit`，减少了CPU的开销。可以说，`EPT/NPT MMU`这种硬件辅助的内存虚拟化技术解决了纯软件实现存在的两个问题
+
+**EPT/NPT MMU优化**
+
+事实上，`EPT/NPT MMU`作为传统`MMU`的扩展，自然也是有`TLB`的，它在查找`gPT`和`nPT`之前，会先去查找自己的`TLB`（前面为了描述的方便省略了这一步）。**但这里的`TLB`存储的并不是一个`GVA->GPA`的映射关系，也不是一个`GPA->HPA`的映射关系，而是最终的转换结果，也就是`GVA->HPA`的映射**
+
+不同的进程可能会有相同的虚拟地址，为了避免进程切换的时候flush所有的TLB，可通过给`TLB entry`加上一个标识进程的`PCID/ASID`的`tag`来区分（参考[这篇文章](https://zhuanlan.zhihu.com/p/66971714)）。同样地，不同的`guest VM`也会有相同的`GVA`，为了flush的时候有所区分，需要再加上一个标识虚拟机的`tag`，这个`tag`在ARM体系中被叫做`VMID`，在Intel体系中则被叫做`VPID`
+
+![memory_8](/images/Linux-虚拟化/memory_8.jpg)
+
+在最坏的情况下（也就是`TLB`完全没有命中），`gPT`中的每一级转换都需要一次`nested walk`，而每次`nested walk`需要`4`次内存访问，因此`5`次`nested walk`总共需要`(4 + 1) * 5 - 1 =24`次内存访问（就像一个5x5的二维矩阵一样）：
+
+![memory_9](/images/Linux-虚拟化/memory_9.jpg)
+
+虽然这24次内存访问都是由硬件自动完成的，不需要软件的参与，但是内存访问的速度毕竟不能与CPU的运行速度同日而语，而且内存访问还涉及到对总线的争夺，次数自然是越少越好。
+
+要想减少内存访问次数，要么是增大`EPT/NPT TLB`的容量，增加`TLB`的命中率，要么是减少`gPT`和`nPT`的级数。`gPT`是为`guest VM`中的进程服务的，通常采用4KB粒度的页，那么在64位系统下使用4级页表是非常合适的（参考[这篇文章](https://zhuanlan.zhihu.com/p/64978946)）。
+
+而`nPT`是为`guset VM`服务的，对于划分给一个VM的内存，粒度不用太小。64位的x86_64支持`2MB`和`1GB`的`large page`，假设创建一个VM的时候申请的是2G物理内存，那么只需要给这个VM分配2个1G的`large pages`就可以了（这2个`large pages`不用相邻，但`large page`内部的物理内存是连续的），这样`nPT`只需要2级（`nPML4`和`nPDPE`）
+
+如果现在物理内存中确实找不到2个连续的`1G`内存区域，那么就退而求其次，使用`2MB`的`large page`，这样`nPT`就是3级（`nPML4`，`nPDPE`和`nPD`）
 
 ## 4.1 问题
 
-1. 内核是直接访问内存的么？（内核和内存之间是否存在抽象层）。内核面向的是内存的物理地址还是逻辑地址？（固定的起始地址？）
+1. 内核是直接访问内存的么？（内核和内存之间是否存在抽象层）。内核面向的是内存的物理地址还是逻辑地址？（固定的起始地址？）。内核是怎么感知到物理地址的范围的
 1. 在内存分页的方案中，cpu访问的是虚拟内存地址，即页号+页内偏移。但是程序本身应该不感知这个事情，程序又是如何使用内存的呢
 1. 内存管理是CPU完成的还是OS完成的？（MMU是CPU的一个芯片）
 1. 每个进程的页表目录都不同么？页表目录本身不经过内存管理么？
+1. Guest上的进程在访问内存时，如果产生了一个缺页异常，为啥捕获到异常的是Guest Kernel而不是Host Kernel
+   * CPU在发现缺页异常后，会通过寄存idtr查询中断描述符表（Interrupt Descriptor Table，IDT），并根据表中的地址来获取相应的中断处理程序。当Guest运行的时候，CPU的该寄存器内填写的是Guest OS的IDT，因此捕获到异常的是Guest Kernel而不是Host Kernel
+1. 段寄存器中包含了特权指令级别（ring0-ring3），当Guest访问ring0级别的段时，为啥会报错？寄存器中的ring级别又没有虚拟化，Guest的ring0和Host的ring0有什么差别呢？
+1. 影子页表如何起作用？GVA->GPA，内存的寻址过程已经结束了，为啥可以再插入一个GPA-HPA的过程？
+   * 并不是插入一个GPA-HPA的过程，而是让GVA直接映射到HPA（Guest在一次正常的寻址就能直接定位到物理机的内存）
 
 ## 4.2 参考
 
 * [20 张图揭开「内存管理」的迷雾，瞬间豁然开朗](https://zhuanlan.zhihu.com/p/152119007)
 * [线性地址转换为物理地址是硬件实现还是软件实现？具体过程如何？](https://www.zhihu.com/question/23898566)
 * [浅谈Linux内存管理](https://zhuanlan.zhihu.com/p/67059173)
+* [虚拟化技术 - 内存虚拟化 [一]](https://zhuanlan.zhihu.com/p/69828213)
+* [虚拟化技术 - 内存虚拟化 [二]](https://zhuanlan.zhihu.com/p/75468128)
+* [内存虚拟化之影子页表](https://www.cnblogs.com/miachel-zheng/p/7860369.html)
+* [影子页表的问题？](https://www.zhihu.com/question/41224767)
+* [What exactly do shadow page tables (for VMMs) do?](https://stackoverflow.com/questions/9832140/what-exactly-do-shadow-page-tables-for-vmms-do)
+* [内存虚拟化之基本原理](https://www.codenong.com/cs106434119/)
 
 # 5 QEMU
 
@@ -231,10 +328,231 @@ int main() {
 ## 6.1 参考
 
 * [随笔分类 - KVM](https://www.cnblogs.com/sammyliu/category/696699.html)
+* [[原] KVM 虚拟化原理探究 —— 目录](https://www.cnblogs.com/Bozh/p/5788431.html)
+* [虚拟化技术基础原理](https://www.cnblogs.com/yinzhengjie/p/7478797.html)
+* [使用KVM API实现Emulator Demo](http://soulxu.github.io/blog/2014/08/11/use-kvm-api-write-emulator/)
 * [KVM 学习笔记](https://blog.opskumu.com/kvm-notes.html)
 * [KVM的原理与使用](https://www.jianshu.com/p/03d3afff3b5f)
 
-# 7 TODO
+# 7 KVM初体验
+
+物理机系统：`CentOS-7-x86_64-DVD-1810.iso`
+
+查看系统是否支持kvm
+
+```sh
+lsmod | grep kvm
+#-------------------------↓↓↓↓↓↓-------------------------
+kvm_intel             183621  0
+kvm                   586948  1 kvm_intel
+irqbypass              13503  1 kvm
+#-------------------------↑↑↑↑↑↑-------------------------
+```
+
+软件安装：
+
+```sh
+yum install -y qemu-kvm qemu-img
+yum install -y virt-manager libvirt libvirt-python python-virtinst libvirt-client virt-install
+
+systemctl enable libvirtd
+systemctl start libvirtd
+```
+
+用于安装虚拟机的镜像为：`CentOS-7-x86_64-Minimal-1908.iso`，运行虚拟机的命令如下
+
+```sh
+# 创建虚拟网桥br0
+ip link add br0 type bridge
+ip addr add 10.0.2.1/24 broadcast 10.0.2.255 dev br0
+ip link set br0 up
+iptables -t nat -A POSTROUTING -s 10.0.2.0/24 -o eno1 -j MASQUERADE # eno1是我主机上的外网网卡
+
+# 创建disk目录
+mkdir -p /kvm/disk
+
+# 创建虚拟机
+virt-install \
+   --virt-type=kvm \
+   --name myvm_centos7 \
+   --ram 2048 \
+   --vcpus=2 \
+   --os-variant=rhel7.6 \
+   --cdrom=/root/CentOS-7-x86_64-Minimal-1908.iso \
+   --network=bridge=br0,model=virtio \
+   --graphics vnc \
+   --disk path=/kvm/disk/myvm_centos7.disk,size=10,bus=virtio,format=qcow2
+#-------------------------↓↓↓↓↓↓-------------------------
+WARNING  无法连接到图形控制台：没有安装 virt-viewer。请安装 'virt-viewer' 软件包。
+WARNING  没有控制台用于启动客户机，默认为 --wait -1
+
+开始安装......
+正在分配 'myvm_centos7.disk'                                                                                                                                                   |  10 GB  00:00:00
+ERROR    internal error: qemu unexpectedly closed the monitor: 2021-02-27T03:55:11.298881Z qemu-kvm: -drive file=/root/CentOS-7-x86_64-Minimal-1908.iso,format=raw,if=none,id=drive-ide0-0-0,readonly=on: could not open disk image /root/CentOS-7-x86_64-Minimal-1908.iso: Could not open '/root/CentOS-7-x86_64-Minimal-1908.iso': Permission denied
+正在删除磁盘 'myvm_centos7.disk'                                                                                                                                             |    0 B  00:00:00
+域安装失败，您可以运行下列命令重启您的域：
+'virsh start virsh --connect qemu:///system start myvm_centos7'
+否则请重新开始安装。
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 修改配置文件，取消以下两行的注释
+   #user = "root"
+   #group = "root"
+vi /etc/libvirt/qemu.conf
+
+# 重启服务
+systemctl daemon-reload
+systemctl restart libvirtd
+
+# 再次执行virt-install
+virt-install \
+   --virt-type=kvm \
+   --name myvm_centos7 \
+   --ram 2048 \
+   --vcpus=2 \
+   --os-variant=rhel7.6 \
+   --cdrom=/root/CentOS-7-x86_64-Minimal-1908.iso \
+   --network=bridge=br0,model=virtio \
+   --graphics vnc \
+   --disk path=/kvm/disk/myvm_centos7.disk,size=10,bus=virtio,format=qcow2
+#-------------------------↓↓↓↓↓↓-------------------------
+WARNING  无法连接到图形控制台：没有安装 virt-viewer。请安装 'virt-viewer' 软件包。
+WARNING  没有控制台用于启动客户机，默认为 --wait -1
+
+开始安装......
+正在分配 'myvm_centos7.disk'                                                                                                                                                   |  10 GB  00:00:00
+ERROR    unsupported format character '�' (0xffffffe7) at index 47
+域安装失败，您可以运行下列命令重启您的域：
+'virsh start virsh --connect qemu:///system start myvm_centos7'
+否则请重新开始安装。
+#-------------------------↑↑↑↑↑↑-------------------------
+```
+
+看起来是因为没有安装图形化的工具
+
+```sh
+yum install -y 'virt-viewer'
+
+# 重新尝试创建虚拟机
+virsh destroy myvm_centos7
+virsh undefine myvm_centos7
+rm -f /kvm/disk/myvm_centos7.disk
+virt-install \
+   --virt-type=kvm \
+   --name myvm_centos7 \
+   --ram 2048 \
+   --vcpus=2 \
+   --os-variant=rhel7.6 \
+   --cdrom=/root/CentOS-7-x86_64-Minimal-1908.iso \
+   --network=bridge=br0,model=virtio \
+   --graphics vnc \
+   --disk path=/kvm/disk/myvm_centos7.disk,size=10,bus=virtio,format=qcow2
+#-------------------------↓↓↓↓↓↓-------------------------
+WARNING  需要图形显示，但未设置 DISPLAY。不能运行 virt-viewer。
+WARNING  没有控制台用于启动客户机，默认为 --wait -1
+
+开始安装......
+正在分配 'myvm_centos7.disk'                                                                                                                                                   |  10 GB  00:00:00
+ERROR    unsupported format character '�' (0xffffffe7) at index 47
+域安装失败，您可以运行下列命令重启您的域：
+'virsh start virsh --connect qemu:///system start myvm_centos7'
+否则请重新开始安装。
+#-------------------------↑↑↑↑↑↑-------------------------
+```
+
+由于我是通过ssh连到服务器上，然后执行相关指令的，看起来这种方式不行，得在服务器上装一个桌面应用，然后通过vnc连接过去，再执行`virt-install`进行安装
+
+```sh
+# 安装桌面应用
+yum groupinstall -y 'GNOME Desktop' 'Graphical Administration Tools'
+
+# 安装vncserver
+yum -y install "vnc-server"
+# 启动vncserver，:x表示端口号为 5900+x。例如:1表示监听端口号为5901
+vncserver :1
+#-------------------------↓↓↓↓↓↓-------------------------
+Password:
+Verify:
+Would you like to enter a view-only password (y/n)? y
+Password:
+Verify:
+xauth:  file /root/.Xauthority does not exist
+
+New 'iot-6wbudf-name-nick-name:1 (root)' desktop is iot-6wbudf-name-nick-name:1
+
+Creating default startup script /root/.vnc/xstartup
+Creating default config /root/.vnc/config
+Starting applications specified in /root/.vnc/xstartup
+Log file is /root/.vnc/iot-6wbudf-name-nick-name:1.log
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 检查端口号是否已启动
+lsof -i tcp:5901
+#-------------------------↓↓↓↓↓↓-------------------------
+COMMAND   PID USER   FD   TYPE  DEVICE SIZE/OFF NODE NAME
+Xvnc    64424 root   10u  IPv4 1850241      0t0  TCP *:5901 (LISTEN)
+Xvnc    64424 root   11u  IPv6 1850242      0t0  TCP *:5901 (LISTEN)
+#-------------------------↑↑↑↑↑↑-------------------------
+```
+
+通过`vnc-client`登录到该机器上之后，再执行下面的操作
+
+```sh
+virsh destroy myvm_centos7
+virsh undefine myvm_centos7
+rm -f /kvm/disk/myvm_centos7.disk
+virt-install \
+   --virt-type=kvm \
+   --name myvm_centos7 \
+   --ram 2048 \
+   --vcpus=2 \
+   --os-variant=rhel7.6 \
+   --cdrom=/root/CentOS-7-x86_64-Minimal-1908.iso \
+   --network=bridge=br0,model=virtio \
+   --graphics vnc \
+   --disk path=/kvm/disk/myvm_centos7.disk,size=10,bus=virtio,format=qcow2
+```
+
+**以图形化的方式连入虚拟机：**
+
+1. 通过`vnc-client`连接到服务器上
+1. `virt-viewer -a <vmname>`
+
+**以文本的方式连入虚拟机：**
+
+1. 通过`ssh`或其他方式连接到服务器上
+1. `virsh console <vmname>`
+
+```sh
+virsh console myvm_centos7
+#-------------------------↓↓↓↓↓↓-------------------------
+连接到域 myvm_centos7
+换码符为 ^]
+
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 需要在虚拟机进行一些配置（以下三行命令要在虚拟机上执行，可以通过图形化的方式连上去执行）
+echo "ttyS0" >> /etc/securetty 
+grubby --update-kernel=ALL --args="console=ttyS0" # 更新内核参数
+reboot
+```
+
+## 7.1 常用命令
+
+1. `virsh domiflist <vmname>`
+1. `virsh attach-interface <vmname> --type bridge --source <主机上的网卡名>`
+1. `virsh detach-interface <vmname> --type bridge --mac <网卡mac地址>`
+
+## 7.2 参考
+
+* [KVM 介绍（1）：简介及安装](https://www.cnblogs.com/sammyliu/p/4543110.html)
+* [virsh console连接虚拟机遇到的问题](https://www.cnblogs.com/zhimao/p/13744257.html)
+* [【虚拟化】KVM、Qemu、Virsh的区别与联系](https://blog.csdn.net/qq_34018840/article/details/101194571)
+* [How to install KVM on CentOS 7 / RHEL 7 Headless Server](https://www.cyberciti.biz/faq/how-to-install-kvm-on-centos-7-rhel-7-headless-server/)
+* [Install and Configure VNC Server in CentOS 7 and RHEL 7](https://www.linuxtechi.com/install-configure-vnc-server-centos-7-rhel-7/)
+* [阿里云CentOS7.x服务器安装GNOME桌面并使用VNC server](https://blog.csdn.net/weixin_38312031/article/details/79415394)
+
+# 8 TODO
 
 1. 物理机的内核如何与硬件交互？软件分层之后，下层才能屏蔽差异（欺骗）。虚拟机又是如何被虚拟硬件欺骗的？
 1. 总线、RAM、CPU、时钟。内存和CPU如何通信。VM使用的是物理内存中的某一段，VM中内存与CPU的交互与普通进程的内存与CPU的交互是类似的

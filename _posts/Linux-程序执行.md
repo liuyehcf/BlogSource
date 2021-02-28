@@ -185,3 +185,4 @@ echo -1 > /proc/sys/fs/binfmt_misc/status
 * [linux下使用binfmt_misc设定不同二进制的打开程序](https://blog.csdn.net/whatday/article/details/88299482)
 * [ELF文件的加载过程(load_elf_binary函数详解)--Linux进程的管理与调度（十三）](https://cloud.tencent.com/developer/article/1351964)
 * [ELF文件加载过程](https://zhuanlan.zhihu.com/p/287863861)
+* [操作系统是如何运行可执行文件的？](https://www.zhihu.com/question/430325644/answer/1577888383)
