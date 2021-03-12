@@ -137,7 +137,7 @@ kubeadm init --pod-network-cidr=10.244.0.0/16 --image-repository=registry.cn-han
 
 # 其中
 # --pod-network-cidr参数指定pod网络（这里用10.244.0.0/16是为了与下面的flannel覆盖网络的默认参数一致）
-# --apiserver-advertise-address参数指定master的ip
+# --apiserver-advertise-address参数指定master的ip（这个参数是可选的，我的测试虚拟机有两个网段：10.0.2.0/24以及192.168.56.0/24，其中10.0.2.0/24这个网段上，两台虚拟机之间是无法通信的；192.168.56.0/24这个网段，两台虚拟机之间是可以通信的）
 
 # 出现如下信息，提示启动成功
 ...
@@ -549,6 +549,9 @@ test-ingress   *         192.168.56.101   80        19d
 ## 8.1 kubectl
 
 ```sh
+# 列出所有资源类型
+kubectl api-resources
+
 # 查看node概要信息
 kubectl get nodes
 kubectl get node <node-name>
@@ -588,7 +591,51 @@ kubectl get pod -n <namespace> <pod-name> -o yaml
 kubectl label pod -n <namespace> <pod-name> <label_name>=<label_value>
 ```
 
-# 9 参考
+---
+
+# 9 2021-03-09再次部署
+
+```sh
+#!/bin/bash
+
+# docker安装
+# step 1: 安装必要的一些系统工具
+yum install -y yum-utils device-mapper-persistent-data lvm2
+# Step 2: 添加软件源信息
+yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+# Step 3
+sed -i 's+download.docker.com+mirrors.aliyun.com/docker-ce+' /etc/yum.repos.d/docker-ce.repo
+# Step 4: 更新并安装Docker-CE
+yum makecache fast
+yum -y install docker-ce-18.06.3.ce-3.el7
+# Step 4: 开启Docker服务
+systemctl enable docker
+systemctl start docker
+
+# 配置内核参数
+cat >> /etc/sysctl.conf << 'EOF'
+net.bridge.bridge-nf-call-ip6tables=1
+net.bridge.bridge-nf-call-iptables=1
+net.ipv4.ip_forward=1
+net.ipv4.conf.all.forwarding=1
+net.ipv6.conf.all.forwarding=1
+fs.inotify.max_user_watches=524288
+vm.swappiness = 0
+EOF
+sysctl -p /etc/sysctl.conf
+
+# 关闭防火墙
+systemctl disable firewalld
+systemctl stop firewalld
+
+# 关闭selinux
+sed -r -i '/SELINUX=/s/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
+
+# 重启
+reboot
+```
+
+# 10 参考
 
 * [Kubernetes-Creating a single master cluster with kubeadm](https://kubernetes.io/docs/setup/)
 * [Kubernetes-Installing kubeadm](https://kubernetes.io/docs/setup/independent/install-kubeadm/)

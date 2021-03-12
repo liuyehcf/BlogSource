@@ -291,6 +291,8 @@ Linux c3fb58ea543c 4.14.134 #1 SMP Tue Dec 29 21:27:58 EST 2020 aarch64 aarch64 
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
+* `docker run --rm --privileged multiarch/qemu-user-static:register`是向内核注册了各异构平台的`binfmt handler`，包括`aarch64`等等，这些注册信息就包括了`binfmt handler`的路径，比如`/usr/bin/qemu-aarch64-static`等等，注册信息都在`/proc/sys/fs/binfmt_misc`目录下，每个注册项都是该目录下的一个文件。**实际的`qemu-xxx-static`文件还得手动放置到对应目录中才能生效**
+
 ## 4.2 镜像裁剪工具-dockerslim
 
 ```sh
@@ -298,6 +300,10 @@ docker-slim build --http-probe=false centos:7.6.1810
 ```
 
 裁剪之后，镜像的体积从`202MB`变为`3.55MB`。但是裁剪之后，大部分的命令都被裁剪了（包括`ls`这种最基础的命令）
+
+## 4.3 异常排查
+
+在k8s环境中，若容器运行时用的是`docker`，那么该`docker`会依赖`containerd`，当`containerd`不正常的时候，`docker`也就不正常了。恢复`containerd`的办法：将`/var/lib/containerd/io.containerd.metadata.v1.bolt`这个文件删掉
 
 # 5 参考
 

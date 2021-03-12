@@ -2,6 +2,8 @@
     * blktrace/iowatcher
     * 域套接字
     * 如何编写TUI程序(https://github.com/marcusolsson/tui-go)
+    * iotop、pidstat
+    * ss -anptu
 1. 操作系统安装
     * /boot分区和/boot/efi 的作用和关系
     * cobbler：https://www.cnblogs.com/yanjieli/p/11016825.html
@@ -31,6 +33,16 @@
     * [Linux的中断处理机制 [三] - hardirq](https://zhuanlan.zhihu.com/p/85454778)
     * [Linux 中断](https://zhuanlan.zhihu.com/p/94788008)
     * [Linux 内核中断内幕](https://www.ibm.com/developerworks/cn/linux/l-cn-linuxkernelint/index.html)
-1. systemd
-    * systemctl set-default graphical.target
-    * http://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-commands.html
+    * [彻底搞懂异常控制流](https://www.cnblogs.com/niuyourou/p/12097856.html)
+    * [嵌入式杂谈之中断向量表](https://zhuanlan.zhihu.com/p/125480457)
+1. k8s
+    * prometheus
+        * https://www.cnblogs.com/dudu/p/12146344.html
+        * [kubernetes1.18安装kube-prometheus](https://blog.csdn.net/guoxiaobo2010/article/details/106532357/)
+        * [grafana模板](https://grafana.com/grafana/dashboards)
+        * [Prometheus核心组件](https://yunlzheng.gitbook.io/prometheus-book/parti-prometheus-ji-chu/quickstart/prometheus-arch)
+    * istio 
+        * [istio doc](https://istio.io/latest/docs/)
+        * [Istio：xDS协议解析](https://blog.csdn.net/fly910905/article/details/104036296)
+        * [Service Mesh和API Gateway关系深度探讨](https://www.servicemesher.com/blog/service-mesh-and-api-gateway/)
+        * [Istio 中的 Sidecar 注入及透明流量劫持过程详解](https://www.servicemesher.com/blog/sidecar-injection-iptables-and-traffic-routing/)

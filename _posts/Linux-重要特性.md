@@ -1144,7 +1144,7 @@ ln -s '/usr/lib/systemd/system/demo-service.service' '/etc/systemd/system/multi-
 * `Condition...`：当前`Unit`运行必须满足的条件，否则不会运行
 * `Assert...`：当前`Unit`运行必须满足的条件，否则会报启动失败
 
-**`[Service]`区块用来`Service`的配置，只有`Service`类型的`Unit`才有这个区块。它的主要字段如下**
+**`[Service]`区块定义如何启动当前`Service`（只有`Service`类型的`Unit`才有这个区块）。它的主要字段如下**
 
 * `Type`：定义启动时的进程行为。它有以下几种值。
     * `simple`：默认值，执行`ExecStart`指定的命令，启动主进程
@@ -1169,6 +1169,11 @@ ln -s '/usr/lib/systemd/system/demo-service.service' '/etc/systemd/system/multi-
     * `on-watchdog`
 * `TimeoutSec`：定义`Systemd`停止当前服务之前等待的秒数
 * `Environment`：指定环境变量
+
+**`[Install]`区块，定义如何安装这个配置文件，即怎样做到开机启动**
+
+* `WantedBy`：表示该配置所在的`Target`
+* `Target`的含义是服务组，表示一组服务。`WantedBy=multi-user.target`指的是，`sshd`所在的`Target`是`multi-user.target`。这个设置非常重要，因为执行`systemctl enable sshd.service`命令时，`sshd.service`的一个符号链接，就会放在`/etc/systemd/system`目录下面的`multi-user.target.wants`子目录之中
 
 完整的配置项清单参考[systemd.unit — Unit configuration](https://www.freedesktop.org/software/systemd/man/systemd.unit.html)
 

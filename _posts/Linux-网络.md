@@ -2049,6 +2049,9 @@ nmcli -p device show
 # 进入交互的编辑模式
 nmcli conn edit <id>/<uuid>/<path>
 
+# 添加网络配置
+nmcli conn add con-name <conn name> type <net type> ifname <if name> -- ipv4.address <ip/netmask>
+
 # 修改某个配置值
 nmcli conn modify <id>/<uuid>/<path> ipv4.address <ip/netmask>
 
@@ -2072,6 +2075,18 @@ nmcli conn down <id>/<uuid>/<path>
 路径：`/etc/NetworkManager/NetworkManager.conf`
 
 配置文件详细内容参考[NetworkManager.conf](https://developer.gnome.org/NetworkManager/stable/NetworkManager.conf.html)
+
+### 7.2.5 网卡配置文件
+
+**`CentOS`**
+
+* 与`network`共用同一套配置文件，目录是：`/etc/sysconfig/network-scripts/`
+* 文件名：`ifcfg-<conn name>`
+
+**`ubuntu`**
+
+* 目录是：`/etc/NetworkManager/system-connections`
+* 文件名：以`<conn name>`作为文件名
 
 ## 7.3 参考
 

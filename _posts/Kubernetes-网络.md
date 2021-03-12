@@ -11,9 +11,174 @@ categories:
 
 <!--more-->
 
-# 1 NodePort网络链路-示例讲解
+# 1 综述
 
-## 1.1 单副本
+![overall](/images/Kubernetes-网络/overall.png)
+
+**pod的网络类型可以是容器网络也可以是主机网络，这里仅讨论容器网络这一类型的pod**
+
+* **同主机pod互访**：`A->B`
+* **pod访问外网**：`A->C->E`
+* **跨主机pod互访**：`A->D->F->J->H`
+
+# 2 kube-proxy
+
+## 2.1 工作模式
+
+### 2.1.1 Proxy-mode: userspace
+
+1. **该模式最主要的特征是：流量重定向工作是由`kube-proxy`完成的，也就是在用户空间完成的**
+1. `kube-proxy`会监听`Service`的创建和删除，当发现新的`Service`创建出来后，`kube-proxy`会在`localhost`网络开启一个随机端口（记为`loPort`）进行监听，同时向`iptable`写入路由规则（`Cluster IP:Port`->`localhost:loPort`），即将流向`Service`的流量转发到本地监听的端口上来
+1. `kube-proxy`会监听`Endpoint`的变更，并将`Service`及其对应的`Pod`列表保存起来
+
+![proxy-mode-userspace](/images/Kubernetes-Concept/proxy-mode-userspace.svg)
+
+在`Pod`中访问`Service`的时序图如下
+
+```plantuml
+skinparam backgroundColor #EEEBDC
+skinparam handwritten true
+
+skinparam sequence {
+	ArrowColor DeepSkyBlue
+	ActorBorderColor DeepSkyBlue
+	LifeLineBorderColor blue
+	LifeLineBackgroundColor #A9DCDF
+	
+	ParticipantBorderColor DeepSkyBlue
+	ParticipantBackgroundColor DodgerBlue
+	ParticipantFontName Impact
+	ParticipantFontSize 17
+	ParticipantFontColor #A9DCDF
+	
+	ActorBackgroundColor aqua
+	ActorFontColor DeepSkyBlue
+	ActorFontSize 17
+	ActorFontName Aapex
+}
+participant Pod
+participant coreDNS
+participant iptables
+participant kube_proxy as "kube proxy"
+participant endpoint
+
+Pod->coreDNS: 查询serviceName对应的Cluster IP
+coreDNS-->Pod: return
+Pod->iptables: traffic to Cluster IP
+iptables->iptables: 规则匹配
+iptables->kube_proxy: traffic to kube_proxy
+kube_proxy->kube_proxy: 查询代理端口号和Service的映射关系，以及Service和Endpoint的映射关系
+kube_proxy->endpoint: traffic to endpoint
+```
+
+### 2.1.2 Proxy-mode: iptables
+
+1. **该模式最主要的特征是：流量重定向的工作是由`iptable`完成的，也就是在内核空间完成的**
+1. `kube-proxy`会监听`Service`、`Endpoint`的变化，并且更新`iptable`的路由表
+1. 更高效、安全，但是灵活性较差（当某个`Pod`没有应答时，不会尝试其他`Pod`）
+
+![proxy-mode-iptables](/images/Kubernetes-Concept/proxy-mode-iptables.svg)
+
+在`Pod`中访问`Service`的时序图如下
+
+```plantuml
+skinparam backgroundColor #EEEBDC
+skinparam handwritten true
+
+skinparam sequence {
+	ArrowColor DeepSkyBlue
+	ActorBorderColor DeepSkyBlue
+	LifeLineBorderColor blue
+	LifeLineBackgroundColor #A9DCDF
+	
+	ParticipantBorderColor DeepSkyBlue
+	ParticipantBackgroundColor DodgerBlue
+	ParticipantFontName Impact
+	ParticipantFontSize 17
+	ParticipantFontColor #A9DCDF
+	
+	ActorBackgroundColor aqua
+	ActorFontColor DeepSkyBlue
+	ActorFontSize 17
+	ActorFontName Aapex
+}
+participant Pod
+participant coreDNS
+participant iptables
+participant endpoint
+
+Pod->coreDNS: 查询serviceName对应的Cluster IP
+coreDNS-->Pod: return
+Pod->iptables: traffic to Cluster IP
+iptables->iptables: 规则匹配
+iptables->endpoint: traffic to remotePod
+```
+
+### 2.1.3 Proxy-mode: ipvs
+
+与`iptable`模式类似，`ipvs`也是利用`netfilter`的`hook function`来实现的，但是`ipvs`利用的是哈希表，且工作在内核空间，因此效率非常高，同时`ipvs`还支持多种负载均衡算法
+
+1. `rr`: round-rogin
+1. `lc`: least connection
+1. `dh`: destination hashing
+1. `sh`: source hashing
+1. `sed`: shortest expected delay
+1. `nq`: never queue
+
+![proxy-mode-ipvs](/images/Kubernetes-Concept/proxy-mode-ipvs.svg)
+
+在以上任何一种模式中，来自`Cluster IP:Port`的流量都会被重定向到其中一个后端`Pod`中，且用户不感知这些过程
+
+## 2.2 自定义chain介绍
+
+![iptables_chains](/images/Kubernetes-网络/iptables-chains.svg)
+
+定义可以参考源码[proxier.go ](https://github.com/kubernetes/kubernetes/blob/master/pkg/proxy/iptables/proxier.go)
+
+```golang
+const (
+	// the services chain
+	kubeServicesChain utiliptables.Chain = "KUBE-SERVICES"
+
+	// the external services chain
+	kubeExternalServicesChain utiliptables.Chain = "KUBE-EXTERNAL-SERVICES"
+
+	// the nodeports chain
+	kubeNodePortsChain utiliptables.Chain = "KUBE-NODEPORTS"
+
+	// the kubernetes postrouting chain
+	kubePostroutingChain utiliptables.Chain = "KUBE-POSTROUTING"
+
+	// KubeMarkMasqChain is the mark-for-masquerade chain
+	KubeMarkMasqChain utiliptables.Chain = "KUBE-MARK-MASQ"
+
+	// KubeMarkDropChain is the mark-for-drop chain
+	KubeMarkDropChain utiliptables.Chain = "KUBE-MARK-DROP"
+
+	// the kubernetes forward chain
+	kubeForwardChain utiliptables.Chain = "KUBE-FORWARD"
+
+	// kube proxy canary chain is used for monitoring rule reload
+	kubeProxyCanaryChain utiliptables.Chain = "KUBE-PROXY-CANARY"
+)
+```
+
+**KUBE-SERVICES**：所有的`service`（无论是`ClusterIP`、`NodePort`、`LoadBalance`，因为它们都有`ClusterIP`）都会存在一条或多条（每个端口映射对应一条规则）指向`KUBE-SVC-xxx`链的规则。而每个`KUBE-SVC-xxx`链的规则，依据副本数量的不同，会存在一个或多个指向`KUBE-SEP-xxx`链的规则（通过随机变量实现负载均衡）
+
+**KUBE-NODEPORTS**：`NodePort`类型的`service`会存在一条或多条（每个端口映射对应一条规则）指向`KUBE-SVC-xxx`链的规则。而每个`KUBE-SVC-xxx`链的规则，依据副本数量的不同，会存在一个或多个指向`KUBE-SEP-xxx`链的规则（通过随机变量实现负载均衡）
+
+**KUBE-MARK-MASQ**：用于给流量打上标签，配合`KUBE-POSTROUTING`链一起作用
+
+**KUBE-POSTROUTING**：一般用于`SNAT`配置。对于通过`ClusterIP`访问某个服务的流量而言（`NodePort`同理，不再赘述），存在如下几种情况
+
+* `sourceIp`不属于`podCidr`，会设置`SNAT`，这样服务看到的流量来源就是`cni0`（这样做的目的是？）
+* `sourceIp`属于`podCidr`，但是与`ClusterIP`背后的`pod`的`IP`不同，不设置`SNAT`
+* `sourceIp`属于`podCidr`，且与`ClusterIP`背后的`pod`的`IP`不同（自己访问自己），会设置`SNAT`，这样服务看到的流量来源就是`cni0`（这样做的目的是？）
+* **即便不做SNAT，也是没有问题的，只不过服务看到的流量来源没有被隐藏（通过`iptables -t nat -I KUBE-POSTROUTING -j RETURN`可以禁用后续的规则）**
+
+## 2.3 iptables规则链-示例讲解
+
+### 2.3.1 nodeport-单副本
 
 **deployment（hello-world-deployment.yml）**
 
@@ -240,7 +405,7 @@ C2 --> D1[KUBE-SEP-nginx]
 D1 --> E1[DNAT redirect to nginx pod's ip and port]
 ```
 
-## 1.2 多副本
+### 2.3.2 nodeport-多副本
 
 **deployment（hello-world-deployment.yml）**
 
@@ -386,13 +551,13 @@ D2 --> E2[DNAT redirect to nginx pod2's ip and port]
 D3 --> E3[DNAT redirect to nginx pod3's ip and port]
 ```
 
-## 1.3 总结
+## 2.4 总结
 
 1. 每个`node`上的`pod`，其子网都相同
 1. 同个`node`之间`pod`相互访问，最终会走到`cni`网桥，该网桥等价于一个二层交换机，接着一对`veth`网卡，其中一段在默认的网络命名空间，另一端在`pod`的网络命名空间
 1. 不同`node`之间的`pod`相互访问，最终会走到`flannel`
 
-# 2 NDS
+# 3 coreDNS
 
 `coreDNS`是每个`Kubernetes`集群都会安装的系统组件，用于`Service`的解析，将服务名称解析成`ClusterIP`
 
@@ -645,7 +810,7 @@ pod "dnsutils" deleted
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-# 3 HostNetwork
+# 4 HostNetwork
 
 使用主机网络后，`PodIP`就是主机`IP`，`ContainerPort`就是主机`Port`
 
@@ -662,11 +827,11 @@ pod "dnsutils" deleted
     * 当`Pod`的IP是其他主机的IP时，经过`FORWARD`，由于没有配置对应的规则，流量被直接`DROP`，无法正常访问服务
 * 解决方式：`iptables -P FORWARD ACCEPT`，将默认的`FORWARD`策略改为`ACCEPT`
 
-# 4 问题排查
+# 5 问题排查
 
-## 4.1 排查一般思路
+## 5.1 排查一般思路
 
-### 4.1.1 步骤1：确认系统网络参数是否配置正确
+### 5.1.1 步骤1：确认系统网络参数是否配置正确
 
 **以下两个配置项，需要设置成1，否则iptables规则无法应用于二层转发（同主机的pod之间的网络通信走的是二层转发）**
 
@@ -700,11 +865,11 @@ EOF
 sysctl -p /etc/sysctl.conf
 ```
 
-### 4.1.2 步骤2：检查防火墙是否已关闭
+### 5.1.2 步骤2：检查防火墙是否已关闭
 
 systemctl status firewalld
 
-### 4.1.3 步骤3：校验iptables中的DNAT规则的目的ip是否可访问
+### 5.1.3 步骤3：校验iptables中的DNAT规则的目的ip是否可访问
 
 一般来说，DNAT的目的ip的流转方式有3类
 
@@ -714,13 +879,13 @@ systemctl status firewalld
 1. 如果`目的ip`是某个`机器的ip`，那么直接走外网网卡或者`lo`
     * 机器的ip如果变化了，那么iptables中记录的DNAT目的ip可能还是一个旧的主机ip，因此这个时候需要重启下pod，更新下iptables规则
 
-### 4.1.4 步骤4：检查容器中/etc/resolv.conf配置是否有效
+### 5.1.4 步骤4：检查容器中/etc/resolv.conf配置是否有效
 
 1. 对于`coredns`来说，容器内的`/etc/resolv.conf`文件是在容器创建的时候，从宿主机上拷贝的。如果主机恰好用的dhcp的方式获取ip，那么获取的dns地址很有可能是dhcp的地址，这个地址是可能会失效的
 1. 对于普通的容器网络的容器来说，容器内的`/etc/resolv.conf`配置的是coredns的clusterIp，因此不需要改动
 1. 对于主机网络，且dnsPolicy为`ClusterFirst`的容器来说，容器内的`/etc/resolv.conf`文件是在容器创建的时候，从宿主机上拷贝的。如果主机恰好用的dhcp的方式获取ip，那么获取的dns地址很有可能是dhcp的地址，这个地址是可能会失效的
 
-## 4.2 排查手段
+## 5.2 排查手段
 
 1. tcpdump抓包
 1. iptables配置一些打印日志的规则
@@ -733,7 +898,7 @@ iptables -t nat -I PREROUTING -p icmp -j LOG --log-prefix "liuye-prerouting: "
 iptables -t nat -I POSTROUTING -p icmp -j LOG --log-prefix "liuye-postrouting: "
 ```
 
-## 4.3 容器网络不通
+## 5.3 容器网络不通
 
 现象：在容器中，pingk8s域名失败，ping外网域名失败
 
@@ -750,7 +915,7 @@ W1009 12:41:47.192659       6 proxier.go:320] missing br-netfilter module or uns
 1. `echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables`：立即生效，重启后还原为默认配置
 1. `echo 'net.bridge.bridge-nf-call-iptables=1' >> /etc/sysctl.conf && sysctl -p /etc/sysctl.conf`：修改默认配置，重启后也能生效
 
-# 5 参考
+# 6 参考
 
 * [kubernetes入门之kube-proxy实现原理](https://xuxinkun.github.io/2016/07/22/kubernetes-proxy/)
 * [kubernetes 简介：service 和 kube-proxy 原理](https://cizixs.com/2017/03/30/kubernetes-introduction-service-and-kube-proxy/)
@@ -759,3 +924,6 @@ W1009 12:41:47.192659       6 proxier.go:320] missing br-netfilter module or uns
 * [技术干货|深入理解flannel](https://zhuanlan.zhihu.com/p/34749675)
 * [Debugging DNS Resolution](https://kubernetes.io/docs/tasks/administer-cluster/dns-debugging-resolution/)
 * [记一次pod无法通过clusterIP访问同主机其它pod的排障过程](https://yuyicai.com/posts/k8s-pod-can-not-conne-to-pod-with-clusterip/)
+* [理解kubernetes环境的iptables](https://www.cnblogs.com/charlieroro/p/9588019.html)
+* [Kubernetes Networking Demystified: A Brief Guide](https://www.stackrox.com/post/2020/01/kubernetes-networking-demystified/)
+* [Kube Proxy 工作模式对比分析](https://blog.csdn.net/shida_csdn/article/details/104626839/)

@@ -172,6 +172,10 @@ int main() {
 
 ![cpu_full_progress](/images/Linux-虚拟化/cpu_full_progress.jpg)
 
+**为什么`VMM`可以捕获到`Guest OS`执行特权指令时触发的异常？**
+
+> 中断向量表中记录了每个异常/中断所对应的处理程序，该中断表的首地址记录在`idtr`寄存器中，但是当`Guest OS`在执行的时候，`idtr`是中记录的是`Guest OS`的线性地址。但是`Guest OS`中的所有线性地址，都通过「影子页表」被`Host OS`接管了，因此，中断向量表也是可以被`Host OS`完全管控的（这是我的猜测）
+
 ## 3.2 超虚拟化（或者半虚拟化/操作系统辅助虚拟化 Paravirtualization） 
 
 半虚拟化的思想就是，修改操作系统内核，替换掉不能虚拟化的指令，通过超级调用（hypercall）直接和底层的虚拟化层`hypervisor`来通讯，`hypervisor`同时也提供了超级调用接口来满足其他关键内核操作，比如内存管理、中断和时间保持
@@ -202,6 +206,7 @@ int main() {
 * [KVM 介绍（2）：CPU 和内存虚拟化](https://www.cnblogs.com/sammyliu/p/4543597.html)
 * [KVM之CPU虚拟化](https://www.cnblogs.com/clsn/p/10175960.html)
 * [分不清ARM和X86架构，别跟我说你懂CPU！](https://zhuanlan.zhihu.com/p/21266987)
+* [CPU环，特权和保护](https://blog.csdn.net/langb2014/article/details/79372104)
 
 ## 3.5 问题
 

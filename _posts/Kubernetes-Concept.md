@@ -1374,7 +1374,7 @@ participant remotePod
 Pod->localDNS: 查询serviceName对应的Cluster IP
 localDNS-->Pod: return
 Pod->iptable: traffic to Cluster IP
-iptable->iptable: 查找路由表
+iptable->iptable: 规则匹配
 iptable->kube_proxy: traffic to kube_proxy
 kube_proxy->kube_proxy: 查询代理端口号和Service的映射关系，以及Service和Endpoint的映射关系
 kube_proxy->remotePod: traffic to remotePod
@@ -1419,7 +1419,7 @@ participant remotePod
 Pod->localDNS: 查询serviceName对应的Cluster IP
 localDNS-->Pod: return
 Pod->iptable: traffic to Cluster IP
-iptable->iptable: 查找路由表
+iptable->iptable: 规则匹配
 iptable->remotePod: traffic to remotePod
 ```
 
