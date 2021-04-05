@@ -425,7 +425,7 @@ func init() {
 
 ## 1.8 测试
 
-自行搭建一个k8s集群，这部分就不细讲了，可以参考{% post_link Kubernetes-Single-Master-Cluster-Demo %}
+自行搭建一个k8s集群，这部分就不细讲了，可以参考{% post_link Kubernetes-Demo %}
 
 ```sh
 kubectl create -f crd.yaml

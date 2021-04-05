@@ -51,6 +51,8 @@ categories:
 
 1. `/sys/class/net`：网卡（包含物理网卡+虚拟网卡的符号链接文件）
 1. `/sys/devices/virtual/net`：虚拟网卡
+1. `/sys/class/dmi/id`：主板相关信息
+    * `/sys/class/dmi/id/product_uuid`：主板uuid
 
 ## 1.1 参考
 

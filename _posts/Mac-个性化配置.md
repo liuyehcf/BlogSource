@@ -195,6 +195,8 @@ sudo ln -s /usr/local/bin/bash /bin/bash
 
 # 7 清理磁盘
 
+[macOS 系统占用储存空间太大怎么办？](https://www.zhihu.com/question/52784342)
+
 最近我的磁盘容量快被系统吃满了，排查了一下，发现这几个路径
 
 1. `/Library/Application Support`

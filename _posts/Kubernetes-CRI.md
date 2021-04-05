@@ -13,7 +13,11 @@ categories:
 
 # 1 容器
 
-## 1.1 docker组件介绍
+## 1.1 容器发展史
+
+![container_timeline](/images/Kubernetes-CRI/container_timeline.jpeg)
+
+## 1.2 docker组件介绍
 
 **docker（`/usr/bin/docker`）**：在早期版本中（`1.11.x`之前），docker的所有功能都用这一个二进制完成，同时充当`docker-cli`以及`docker-daemon`。`1.11.x`版本之后，docker只充当`docker-cli`这一角色
 
@@ -38,7 +42,7 @@ categories:
 1. 由于`containerd-shim`与容器是父子进程关系，因此可以拿到容器的`stdin`、`stdout`、`stderr`，通过socket将容器的`stdin`、`stdout`、`stderr`暴露给外界，以提供流式传输的功能。与此对应的功能是`docker exec -it <container>`或`kubectl exec -it <pod>`
 1. 用于追踪容器的`exit code`。在`detached`模式下，`RunC`在启动完容器后便退出了，此时容器进程的父子进程关系将会调整。如果没有`containerd-shim`，那么容器的父进程将会变成`containerd`，如果`containerd`重启了或意外退出了，那么容器的父进程又会进一步变成`pid = 1`的进程，于是容器的状态信息将会全部丢失；引入`containerd-shim`后，容器的父进程就变成了`containerd-shim`，而`containerd-shim`会等待容器运行直至退出，从而能够捕获到容器的`exit code`
 
-## 1.2 OCI
+## 1.3 OCI
 
 以下是[维基百科](https://en.wikipedia.org/wiki/Open_Container_Initiative)对于`OCI`的定义：
 
@@ -170,6 +174,7 @@ service ImageService {
 
 # 3 参考
 
+* [Docker的历史与发展](https://www.jianshu.com/p/4c9ff1619e96)
 * [Kubernetes 容器运行时演进](https://zhuanlan.zhihu.com/p/73728920)
 * [如何为Kubernetes选择合适的容器运行时？](https://www.zhihu.com/question/324124344)
 * [40 年回顾，一文读懂容器发展史](https://www.infoq.cn/article/ss6sitklgolexqp4umr5)

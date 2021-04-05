@@ -22,6 +22,7 @@ categories:
 | `net.ipv4.tcp_tw_reuse` | `1`表示开启重用。允许将`TIME-WAIT`状态的`sockets`重新用于新的TCP连接，默认为0，表示关闭 |
 | `net.ipv4.tcp_tw_recycle` | `1`表示开启TCP连接中`TIME-WAIT`状态的`sockets`的快速回收，默认为0，表示关闭 |
 | `net.ipv4.conf.<net_device>.proxy_arp` | `1`表示当ARP请求目标跨网段时，网卡设备收到此ARP请求会用自己的MAC地址返回给请求者 |
+| `net.ipv4.conf.all.rp_filter` | `1`表示过滤反向路由不通的包，比如进来的数据报是`srcIp->dstIp`，会校验`dstIp->srcIp`的路由是否会经过同一个网卡。换言之，`1`不允许正反链路不一致，`0`允许正反链路不一致 |
 
 # 2 Virtual Networking
 
