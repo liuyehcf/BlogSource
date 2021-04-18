@@ -1,5 +1,5 @@
 ---
-title: Linux-常用服务
+title: Linux-常用工具
 date: 2018-07-20 14:55:26
 tags: 
 - 摘录
@@ -34,3 +34,14 @@ systemctl start rc-local.service
 ```
 
 将需要开机执行的脚本的`绝对路径`，`追加`到`/etc/rc.local`文件尾，`/etc/rc.d/rc.local`文件不需要手动修改，生效后会自动将`/etc/rc.local`的内容同步到`/etc/rc.d/rc.local`中去
+
+# 4 测速
+
+**互联网测速：[speedtest](https://github.com/sivel/speedtest-cli)**
+
+**局域网测速：iperf**
+
+# 5 参考
+
+* [Linux下使用Speedtest测试网速](https://www.linuxprobe.com/speedtest-network-in-linux.html)
+* [使用iPerf进行网络吞吐量测试](https://www.jianshu.com/p/15f888309c72)

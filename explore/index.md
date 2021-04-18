@@ -6,6 +6,7 @@ date: 2018-02-05 09:25:59
 | 博客 | 描述 |
 |:--|:--|
 | [美团技术博客](https://tech.meituan.com/) | 美团技术博客 |
+| [CloudNative 架构](http://team.jiunile.com/) | CloudNative |
 | [fuck cloud native](https://fuckcloudnative.io/posts/) |  |
 | [陈皓](https://coolshell.cn/articles/author/haoel) | 耗子哥 |
 | [Medium](https://medium.com/) | 国外很多不错的博客都在该网站上，这个网站就是一个博客发布站点，涵盖了多方面的内容，包括文化、艺术、科学等 |

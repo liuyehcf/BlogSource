@@ -2,34 +2,30 @@
     * blktrace/iowatcher
     * 域套接字
     * 如何编写TUI程序(https://github.com/marcusolsson/tui-go)
-    * iotop、pidstat
-    * ss -anptu
-    * last -x
 1. 操作系统安装
-    * /boot分区和/boot/efi 的作用和关系
     * cobbler：https://www.cnblogs.com/yanjieli/p/11016825.html
     * ubuntu
         * 如何修改rootfs
         * resize-helper
         * 查看已安装的包 https://blog.csdn.net/sunchenzl/article/details/82117212
+1. 操作系统问题排查
+    * [NMI watchdog: BUG: soft lockup](https://zzyongx.github.io/blogs/NMI_watchdog_BUG_soft_lockup.html)
+    * 内核日志，`dmesg`，`cat /proc/kmsg`、`/var/log/messages`
+    * [Differences in /var/log/{syslog,dmesg,messages} log files](https://superuser.com/questions/565927/differences-in-var-log-syslog-dmesg-messages-log-files)
 1. go 分析工具 https://golang.org/pkg/net/http/pprof/
     * [如何使用go pprof定位内存泄露](http://team.jiunile.com/blog/2020/09/go-pprof.html)
+    * [Golang 大杀器之性能剖析 PProf](https://www.jianshu.com/p/4e4ff6be6af9)
+    * [How to run go pprof on Docker daemon](https://gist.github.com/Jimmy-Xu/85fb01cd7620454c6d65)
 1. Excalidraw 画图工具
     * https://github.com/excalidraw/excalidraw
     * https://learnku.com/articles/47662
-1. linux 测速
-    * speedtest：[Linux下使用Speedtest测试网速](https://www.linuxprobe.com/speedtest-network-in-linux.html)
-    * iperf：[使用iPerf进行网络吞吐量测试](https://www.jianshu.com/p/15f888309c72)
 1. tcp
     * https://zhuanlan.zhihu.com/p/35684094（一个因tcp_tw_recycle引起的跨机房连接超时问题）
         * close_wait会占用文件描述符
         * time_wait不会占用
-    * https://zhuanlan.zhihu.com/p/60382685
+    * [服务器TIME_WAIT和CLOSE_WAIT详解和解决办法](https://zhuanlan.zhihu.com/p/60382685)
+    * [线上大量CLOSE_WAIT的原因深入分析](https://juejin.cn/post/6844903734300901390)
 1. linker
-1. 文件路径
-    * /proc/self/maps
-    * readelf
-    * ar -t
 1. Linux-异常处理（中断）
     * https://www.cnblogs.com/gulan-zmc/p/11604437.html
     * [Linux的中断处理机制 [一] - 数据结构(1)](https://zhuanlan.zhihu.com/p/83709066)
@@ -43,28 +39,10 @@
     * 调度
         * [Kubernetes Pod调度入门](https://blog.frognew.com/2017/06/kubernetes-scheduling.html)
     * k8s.io/api k8s.io/apimachinery k8s.io/client-go 版本不匹配
-    * prometheus
-        * https://www.cnblogs.com/dudu/p/12146344.html
-        * [kubernetes1.18安装kube-prometheus](https://blog.csdn.net/guoxiaobo2010/article/details/106532357/)
-        * [grafana模板](https://grafana.com/grafana/dashboards)
-        * [Prometheus核心组件](https://yunlzheng.gitbook.io/prometheus-book/parti-prometheus-ji-chu/quickstart/prometheus-arch)
-    * istio 
-        * [istio doc](https://istio.io/latest/docs/)
-        * [Istio：xDS协议解析](https://blog.csdn.net/fly910905/article/details/104036296)
-        * [Service Mesh和API Gateway关系深度探讨](https://www.servicemesher.com/blog/service-mesh-and-api-gateway/)
-        * [Istio 中的 Sidecar 注入及透明流量劫持过程详解](https://www.servicemesher.com/blog/sidecar-injection-iptables-and-traffic-routing/)
-    * 如何增加api-server的地址
-        * https://blog.csdn.net/DANTE54/article/details/105297228
     * ipvs
-        * kube-proxy依赖一个同名的configMap，里面可以配置mode
         * [IPVS从入门到精通kube-proxy实现原理](https://zhuanlan.zhihu.com/p/94418251)
-    * 证书更新
-        * [更新一个10年有效期的 Kubernetes 证书](https://www.qikqiak.com/post/update-k8s-10y-expire-certs/)
-        * [使用 kubeadm 进行证书管理](https://kubernetes.io/zh/docs/tasks/administer-cluster/kubeadm/kubeadm-certs/)
-    * blog
-        * [CloudNative 架构](http://team.jiunile.com/)
     * 异常问题排查
         * [docker 卡死引起的 container runtime is down](http://team.jiunile.com/blog/2020/10/docker-hang.html)
-    * cncf 
-        * [Graduated and incubating projects](https://www.cncf.io/projects/)
+        * [no-space-left-on-device](https://stackoverflow.com/questions/30604846/docker-error-no-space-left-on-device)
 1. [CPU 和 GPU 的区别是什么？](https://www.zhihu.com/question/19903344)
+1. dracut

@@ -318,7 +318,7 @@ Events:                   <none>
 * [github helm](https://github.com/helm/helm/blob/master/docs/install.md)
 * [helm doc](https://helm.sh/docs/using_helm/#quickstart-guide)
 
-# 4 Command
+# 4 Tips
 
 ## 4.1 kubectl
 
@@ -365,6 +365,105 @@ kubectl get pod -n <namespace> <pod-name> -o yaml
 kubectl label pod -n <namespace> <pod-name> <label_name>=<label_value>
 ```
 
+## 4.2 如何修改kube-proxy的工作模式
+
+`kube-proxy`的配置信息存储在`kube-system`命名空间下的同名configMap，修改该configMap即可调整`kube-proxy`的工作模式，可选的值包括
+
+1. `iptables`：配置缺省时的默认值
+1. `ipvs`
+1. `userspace`
+
+## 4.3 如何更新证书
+
+k8s存放证书的目录是：`/etc/kubernetes/pki`
+
+**先备份原有证书**
+
+```sh
+cd /etc/kubernetes/pki
+mkdir backup
+cp -vrf *.crt *.key backup/
+```
+
+**创建新的证书**
+
+```sh
+kubeadm certs renew all
+
+#-------------------------↓↓↓↓↓↓-------------------------
+[renew] Reading configuration from the cluster...
+[renew] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
+
+certificate embedded in the kubeconfig file for the admin to use and for kubeadm itself renewed
+certificate for serving the Kubernetes API renewed
+certificate the apiserver uses to access etcd renewed
+certificate for the API server to connect to kubelet renewed
+certificate embedded in the kubeconfig file for the controller manager to use renewed
+certificate for liveness probes to healthcheck etcd renewed
+certificate for etcd nodes to communicate with each other renewed
+certificate for serving etcd renewed
+certificate for the front proxy client renewed
+certificate embedded in the kubeconfig file for the scheduler manager to use renewed
+
+Done renewing certificates. You must restart the kube-apiserver, kube-controller-manager, kube-scheduler and etcd, so that they can use the new certificates.
+#-------------------------↑↑↑↑↑↑-------------------------
+```
+
+**查看证书有效期**
+
+```sh
+kubeadm certs check-expiration
+
+#-------------------------↓↓↓↓↓↓-------------------------
+[check-expiration] Reading configuration from the cluster...
+[check-expiration] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -o yaml'
+
+CERTIFICATE                EXPIRES                  RESIDUAL TIME   CERTIFICATE AUTHORITY   EXTERNALLY MANAGED
+admin.conf                 Apr 06, 2022 07:20 UTC   364d                                    no
+apiserver                  Apr 06, 2022 07:20 UTC   364d            ca                      no
+apiserver-etcd-client      Apr 06, 2022 07:20 UTC   364d            etcd-ca                 no
+apiserver-kubelet-client   Apr 06, 2022 07:20 UTC   364d            ca                      no
+controller-manager.conf    Apr 06, 2022 07:20 UTC   364d                                    no
+etcd-healthcheck-client    Apr 06, 2022 07:20 UTC   364d            etcd-ca                 no
+etcd-peer                  Apr 06, 2022 07:20 UTC   364d            etcd-ca                 no
+etcd-server                Apr 06, 2022 07:20 UTC   364d            etcd-ca                 no
+front-proxy-client         Apr 06, 2022 07:21 UTC   364d            front-proxy-ca          no
+scheduler.conf             Apr 06, 2022 07:21 UTC   364d                                    no
+
+CERTIFICATE AUTHORITY   EXPIRES                  RESIDUAL TIME   EXTERNALLY MANAGED
+ca                      Mar 21, 2031 03:26 UTC   9y              no
+etcd-ca                 Mar 21, 2031 03:26 UTC   9y              no
+front-proxy-ca          Mar 21, 2031 03:26 UTC   9y              no
+#-------------------------↑↑↑↑↑↑-------------------------
+```
+
+## 4.4 加签api-server的地址
+
+**先备份原有证书**
+
+```sh
+cd /etc/kubernetes/pki
+mkdir backup
+cp -vrf apiserver.* backup/
+```
+
+**加签地址**
+
+```sh
+# 删除api-server原有的证书
+rm /etc/kubernetes/pki/apiserver.*
+
+# 重新生成api-server的证书
+# 1. --apiserver-advertise-address 后跟原有的api-server地址
+# 2. --apiserver-cert-extra-sans 后跟需要加签的地址
+kubeadm init phase certs apiserver --apiserver-advertise-address ${api-server原有的地址} --apiserver-cert-extra-sans ${api-server新增的地址，可以是多个}
+
+# 刷新证书
+kubeadm certs renew admin.conf
+```
+
+**重启api-server后生效**
+
 # 5 参考
 
 * [Kubernetes-Creating a single master cluster with kubeadm](https://kubernetes.io/docs/setup/)
@@ -374,3 +473,6 @@ kubectl label pod -n <namespace> <pod-name> <label_name>=<label_value>
 * [kubernetes创建资源yaml文件例子--pod](https://blog.csdn.net/liyingke112/article/details/76155428)
 * [十分钟带你理解Kubernetes核心概念](http://www.dockone.io/article/932)
 * [Kubernetes集群中flannel因网卡名启动失败问题](https://blog.csdn.net/ygqygq2/article/details/81698193)
+* [更新一个10年有效期的 Kubernetes 证书](https://www.qikqiak.com/post/update-k8s-10y-expire-certs/)
+* [使用 kubeadm 进行证书管理](https://kubernetes.io/zh/docs/tasks/administer-cluster/kubeadm/kubeadm-certs/)
+* [证书加签域名](https://blog.csdn.net/DANTE54/article/details/105297228)

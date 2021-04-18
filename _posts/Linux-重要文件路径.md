@@ -64,6 +64,7 @@ categories:
 1. `/proc/buddyinfo`：内存碎片信息
 1. `/proc/sys/net`：网络相关配置
 1. `/proc/interrupts`：中断映射表
+1. `/proc/self`：我们可以通过`/proc/${pid}`目录来获取指定进程的信息。当pid可能发生变化时，我们还可以通过`/proc/self`来访问当前进程的信息，不同的进程访问该目录下的文件得到的结果是不同的
 1. `/proc/net`：网络相关的统计信息
     * `/proc/net/route`：路由表
     * `/proc/net/arp`：mac地址表
