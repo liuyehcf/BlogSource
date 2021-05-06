@@ -75,6 +75,10 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 
 添加账号
 
+**示例：**
+
+* `useradd test -g wheel -G wheel -m -s /bin/bash`
+
 ## 1.7 passwd
 
 **示例：**
@@ -302,7 +306,7 @@ sed '/<tag>/ r file2.txt' file1.txt
 **awk处理流程：**
 
 1. 读入第一行
-    * **如果包含正则匹配部分，如果不匹配则跳过该行；如果匹配（任意子串），那么将第一行的数据填入`$0`,`$1`,...等变量中**
+    * **如果包含正则匹配部分（`[/regex/]`），如果不匹配则跳过该行；如果匹配（任意子串），那么将第一行的数据填入`$0`,`$1`,...等变量中**
     * 如果不包含正则匹配部分，那么将第一行的数据填入`$0`,`$1`,...等变量中
 1. 依据条件类型的限制，判断是否需要进行后面的动作
 1. 做完所有的动作与条件类型
@@ -1109,7 +1113,15 @@ free
 
 * `/etc/sudoers`
 
-## 4.11 nohup
+## 4.11 pkexec
+
+允许授权用户以其他身份执行程序
+
+**格式：**
+
+* `pkexec [command]`
+
+## 4.12 nohup
 
 **`nohup`会忽略所有挂断（SIGHUP）信号**。比如通过`ssh`登录到远程服务器上，然后启动一个程序，当`ssh`登出时，这个程序就会随即终止。如果用`nohup`方式启动，那么当`ssh`登出时，这个程序仍然会继续运行
 
@@ -1127,7 +1139,7 @@ free
 
 * `nohup java -jar xxx.jar &`
 
-## 4.12 screen
+## 4.13 screen
 
 **如果想在关闭`ssh`连接后继续运行启动的程序，可以使用`nohup`。如果要求下次`ssh`登录时，还能查看到上一次`ssh`登录时运行的程序的状态，那么就需要使用`screen`**
 
@@ -2194,7 +2206,30 @@ yum install -y hping3
     * `V`：以树型格式展示command
     * `H`：展示线程
 
-## 6.5 tsar
+## 6.5 sar
+
+**格式：**
+
+* `sar [ 选项 ] [ <时间间隔> [ <次数> ] ]`
+
+**参数说明：**
+
+* `-u`：查看cpu使用情况
+* `-r`：查看内存使用情况
+* `-b`：I/O 和传输速率信息状况
+* `-n [关键词]`：查看网络相关的情况，其中关键词可以是
+    * `DEV`：网卡
+    * `SOCK`：套接字
+    * `IP`：IP流
+    * `TCP`：TCP流
+    * `UDP`：UDP流
+
+**示例：**
+
+* `sar -u 1 10`
+* `sar -n DEV 1`
+
+## 6.6 tsar
 
 **格式：**
 
@@ -2208,7 +2243,7 @@ yum install -y hping3
 
 * `tsar -l`
 
-## 6.6 vmstat
+## 6.7 vmstat
 
 **格式：**
 
@@ -2270,7 +2305,7 @@ yum install -y hping3
 * `vmstat -p /dev/sda1`
 * `vmstat -m`
 
-## 6.7 mpstat
+## 6.8 mpstat
 
 `mpstat`（`multiprocessor statistics`）是实时监控工具，报告与cpu的一些统计信息这些信息都存在`/proc/stat`文件中，在多cpu系统里，其不但能查看所有的cpu的平均状况的信息，而且能够有查看特定的cpu信息，`mpstat`最大的特点是可以查看多核心的cpu中每个计算核心的统计数据；而且类似工具`vmstat`只能查看系统的整体cpu情况
 
@@ -2297,7 +2332,7 @@ yum install -y hping3
 * `mpstat 2 5`：打印整体信息，间隔2s，打印5次
 * `mpstat -P ALL 2 5`：已单核为粒度打印信息，间隔2s，打印5次
 
-## 6.8 iostat
+## 6.9 iostat
 
 **格式：**
 
@@ -2334,7 +2369,7 @@ yum install -y hping3
 
 * `iostat -d -t -x 1`
 
-## 6.9 dstat
+## 6.10 dstat
 
 **格式：**
 
@@ -2420,13 +2455,13 @@ yum install -y hping3
     * 等价于`dstat --time --cpu --net --disk --sys --load --proc --top-cpu`
 * `dstat -tcyif`
 
-## 6.10 ifstat
+## 6.11 ifstat
 
 该命令用于查看网卡的流量状况，包括成功接收/发送，以及错误接收/发送的数据包，看到的东西基本上和`ifconfig`类似
 
-## 6.11 pidstat
+## 6.12 pidstat
 
-## 6.12 nethogs
+## 6.13 nethogs
 
 nethogs会以进程为单位，列出每个进程占用的网卡以及带宽
 
@@ -2444,9 +2479,9 @@ yum install -y nethogs
 
 * `nethogs`
 
-## 6.13 iptraf
+## 6.14 iptraf
 
-## 6.14 iftop
+## 6.15 iftop
 
 iftop会以连接为单位，列出每个连接的进出流量
 
@@ -2464,7 +2499,7 @@ yum install -y iftop
 
 * `iftop`
 
-## 6.15 iotop
+## 6.16 iotop
 
 **安装：**
 
@@ -2480,7 +2515,7 @@ yum install -y iotop
 
 * `iotop`
 
-## 6.16 strace
+## 6.17 strace
 
 `strace`是Linux环境下的一款程序调试工具，用来监察一个应用程序所使用的系统调用
 `strace`是一个简单的跟踪系统调用执行的工具。在其最简单的形式中，它可以从开始到结束跟踪二进制的执行，并在进程的生命周期中输出一行具有系统调用名称，每个系统调用的参数和返回值的文本行
@@ -2512,9 +2547,136 @@ yum install -y iotop
 1. `strace -c cat /etc/fstab`：统计cat查看文件的系统调用（按调用频率）
 1. `timeout 10 strace -p {PID} -f -c`：统计指定进程的系统调用
 
-# 7 内建
+# 7 addr2line
 
-## 7.1 set
+该工具用于查看二进制的偏移量与源码的对应关系
+
+**示例：**
+
+* `addr2line 4005f5 -e test`：查看二进制`test`中位置为`4005f5`指令对应的源码
+
+# 8 audit
+
+## 8.1 架构
+
+![audit_architecture](/images/Linux-常用命令/audit_architecture.png)
+
+审核系统包含两个主要部分：用户空间的应用程序、实用程序，以及`kernel-side`系统调用处理。Kernel的组件从用户空间的应用程序接受系统调用，并且通过三个过滤器中的一个过滤器来进行筛选：`user`、`task`或者`exit`。一旦系统调用通过其中的一个过滤器，就将通过`exclude`过滤器进行传送，这是基于审核规则的配置，并把它传送给审核的守护程序做进一步的处理
+
+处理过程和`iptables`差不多，有规则链，可以在链中增加规则，它发现一个`syscall`或者特殊事件的时候会去遍历这个链，然后按规则处理，吐不同的日志
+
+__与audit相关的内核编译参数__
+
+```
+CONFIG_AUDIT_ARCH=y
+CONFIG_AUDIT=y
+CONFIG_AUDITSYSCALL=y
+CONFIG_AUDIT_WATCH=y
+CONFIG_AUDIT_TREE=y
+CONFIG_NETFILTER_XT_TARGET_AUDIT=m
+CONFIG_IMA_AUDIT=y
+CONFIG_KVM_MMU_AUDIT=y
+```
+
+**只要编译内核时，开启了审计的选项，那么内核就会产生审计事件，并将审计事件送往一个socket，然后auditd负责从这个socket读出审计事件并记录**
+
+## 8.2 auditctl
+
+### 8.2.1 控制规则
+
+**参数说明：**
+
+* `-b`：设置允许的未完成审核缓冲区的最大数量，默认值是`64`
+* `-e [0..2]`：设置启用标志位
+    * `0`：关闭审计功能
+    * `1`：开启审计功能，且允许修改配置
+    * `2`：开启审计功能，且不允许修改配置
+* `-f [0..2]`：设置异常标志位（告诉内如如何处理这些异常）
+    * `0`：silent，当发现异常时，不处理（静默）
+    * `1`：printk，打日志（这是默认值）
+    * `2`：panic，崩溃
+* `-r`：消息产生的速率，单位秒
+* `-s`：报告审核系统状态
+* `-l`：列出所有当前装载的审核规则
+* `-D`：清空所有规则以及watch
+
+**示例：**
+
+* `auditctl -b 8192`
+* `auditctl -e 0`
+* `auditctl -r 0`
+* `auditctl -s`
+* `auditctl -l`
+
+### 8.2.2 文件系统规则
+
+**格式：**
+
+* `auditctl -w <path_to_file> -p <permissions> -k <key_name>`
+
+**参数说明：**
+
+* `-w`：路径名称
+* `-p`：后接权限，包括
+    * `r`：读取文件或者目录
+    * `w`：写入文件或者目录
+    * `x`：运行文件或者目录
+    * `a`：改变在文件或者目录中的属性
+* `-k`：后接字符串，可以任意指定，用于搜索
+
+**示例：**
+
+* `auditctl -w /etc/shadow -p wa -k passwd_changes`：等价于`auditctl -a always,exit -F path=/etc/shadow -F perm=wa -k passwd_changes`
+
+### 8.2.3 系统调用规则
+
+**格式：**
+
+* `auditctl -a <action>,<filter> -S <system_call> -F field=value -k <key_name>`
+
+**参数说明：**
+
+* `-a`：后接`action`和`filter`
+    * `action`：决定匹配`filter`的审计事件是否要记录，可选值包括
+        * `always`：记录
+        * `never`：不记录
+    * `filter`：审计事件过滤器，可选值包括
+        * `task`：匹配进程创建时（`fork`或`clone`）产生的审计事件
+        * **`exit`：匹配系统调用结束时产生的审计事件**
+        * `user`：匹配来自用户空间的审计事件
+        * `exclude`：用于屏蔽不想要的审计事件
+* `-S`：后接系统调用名称，系统调用清单可以参考`/usr/include/asm/unistd_64.h`，如果要指定多个系统调用名称，那么需要多个`-S`参数，每个指定一个系统调用
+* `-F`：扩展选项，键值对
+* `-k`：后接字符串，可以任意指定，用于搜索
+
+**示例：**
+
+* `auditctl -a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time_change`
+
+## 8.3 ausearch
+
+**参数说明：**
+
+* `-i`：翻译结果，使其更可读
+* `-m`：指定类型
+* `-sc`：指定系统调用名称
+* `-sv`：系统调用是否成功
+
+**示例：**
+
+* `ausearch -i`：搜索全量事件
+* `ausearch --message USER_LOGIN --success no --interpret`：搜索登录失败的相关事件
+* `ausearch -m ADD_USER -m DEL_USER -m ADD_GROUP -m USER_CHAUTHTOK -m DEL_GROUP -m CHGRP_ID -m ROLE_ASSIGN -m ROLE_REMOVE -i`：搜索所有的账户，群组，角色变更相关的事件
+* `ausearch --start yesterday --end now -m SYSCALL -sv no -i`：搜寻从昨天至今所有的失败的系统调用相关的事件
+* `ausearch -m SYSCALL -sc open -i`：搜寻系统调用open相关的事件
+
+## 8.4 审核记录类型
+
+[B.2. 审核记录类型](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/7/html/security_guide/sec-Audit_Record_Types)
+
+# 9 内建
+
+## 9.1 set
 
 **格式：**
 
@@ -2532,7 +2694,7 @@ yum install -y iotop
 * `set -x`
 * `set -o pipefail`
 
-## 7.2 exec
+## 9.2 exec
 
 `exec`用于进程替换（类似系统调用`exec`），或者标准输入输出的重定向
 
@@ -2540,9 +2702,9 @@ yum install -y iotop
 
 * `exec 1>my.log 2>&1`：将标准输出、以及标准异常重定向到my.log文件中，对后续的所有命令都生效
 
-# 8 包管理工具
+# 10 包管理工具
 
-## 8.1 yum
+## 10.1 yum
 
 **示例：**
 
@@ -2564,7 +2726,7 @@ yum install -y iotop
 
 -->
 
-# 9 参考
+# 11 参考
 
 * 《鸟哥的Linux私房菜》
 * [linux shell awk 流程控制语句（if,for,while,do)详细介绍](https://www.cnblogs.com/chengmo/archive/2010/10/04/1842073.html)
@@ -2593,3 +2755,5 @@ yum install -y iotop
 * [Don't understand [0:0] iptable syntax](https://serverfault.com/questions/373871/dont-understand-00-iptable-syntax)
 * [Linux iptables drop日志记录](https://blog.csdn.net/magerguo/article/details/81052106)
 * [Iptables 指南 1.1.19](https://www.frozentux.net/iptables-tutorial/cn/iptables-tutorial-cn-1.1.19.html)
+* [redhat-安全性指南-定义审核规则](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/7/html/security_guide/sec-defining_audit_rules_and_controls)
+* [addr2line](https://www.jianshu.com/p/c2e2b8f8ea0d)

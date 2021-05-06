@@ -1039,6 +1039,40 @@ exit
 
 # 2 cgroup
 
+## 2.1 概念介绍
+
+![cgroup_arch](/images/Linux-重要特性/cgroup_arch.webp)
+
+* `hierarchy`：cgroups从用户态看，提供了一种叫`cgroup`类型的文件系统(Filesystem)，这是一种虚拟的文件系统，并不真正保存文件，类似`/proc`。通过对这个文件系统的操作（读，写，创建子目录），告诉内核，你希望内核如何控制进程对资源的使用。文件系统本身是层级的，所以构成了`hierarchy`
+* `task`：进程（`process`）在cgroups中称为`task`，`taskid`就是`pid`
+* `subsystem`：cgroups支持的所有可配置的资源称为`subsystem`。例如`cpu`是一种`subsystem`，`memory`也是一种`subsystem`。linux内核在演进过程中`subsystem`是不断增加的
+* `libcgroup`：一个开源软件，提供了一组支持cgroups的应用程序和库，方便用户配置和使用cgroups。目前许多发行版都附带这个软件
+    * 如何安装：`yum install -y libcgroup libcgroup-tools`
+
+## 2.2 子系统
+
+### 2.2.1 cpu子系统
+
+我们可以通过`cpu.cfs_period_us`、`cpu.cfs_quota_us`这两个参数来控制cpu的使用上限
+
+1. `cpu.cfs_period_us`：该参数的单位是微秒，用于定义cpu调度周期的带宽（时间长度）
+1. `cpu.cfs_quota_us`：该参数的单位是微秒，用于定义在一个cpu调度周期中，可以使用的cpu的带宽
+
+**`cpu.cfs_quota_us`与`cpu.cfs_period_us`的比值，就是cpu的占用比。但是，在保证比例不变的情况下，`cpu.cfs_period_us`数值的大小也会影响进程实际的行为**
+
+* 若`cpu.cfs_period_us`非常大，比如`1s`，然后占用比是20%，进程的行为可能就是，前`0.2s`满负荷运行，后面`0.8s`阻塞，停滞的感觉会比较大
+* 若`cpu.cfs_period_us`非常小，比如`10ms`，然后占用比是20%，进程的行为可能就是，前`2ms`满负荷运行，后面`8ms`阻塞，停滞的感觉会比较若，相对较平顺
+
+**`cpu.stat`记录了cpu时间统计**
+
+* `nr_periods`：经过的cpu调度周期的个数
+* `nr_throttled`：cgrpu中任务被节流的次数（耗尽所有配额时间后，被禁止运行）
+* `throttled_time`：cgroup中任务被节流的时间总量
+
+**若我们想控制两个cgroup的相对比例，可以通过配置`cpu.shares`来实现。例如，第一个cgroup设置成200，第二个cgroup设置成100，那么前者可使用的cpu时间是后者的两倍**
+
+## 2.3 docker与cgroup
+
 **2种cgroup驱动**
 
 1. `system cgroup driver`
@@ -1057,13 +1091,20 @@ exit
 
 * `mount -t cgroup`
 
-## 2.1 参考
+## 2.4 kubernetes与cgroup
 
+在k8s中，以pod为单位进行资源限制（充分利用了`cgroup`的`hierarchy`），对应的目录为`/sys/fs/cgroup/<resource type>/kubepods.slice`
+
+## 2.5 参考
+
+* [RedHat-资源管理指南](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/7/html/resource_management_guide/index)
 * [DOCKER基础技术：LINUX CGROUP](https://coolshell.cn/articles/17049.html)
-* [资​​​源​​​管​​​理​​​指​​​南​​​-RedHat](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/6/html-single/resource_management_guide/index#ch-Subsystems_and_Tunable_Parameters)
+* [LINUX CGROUP总结](https://www.cnblogs.com/menkeyi/p/10941843.html)
 * [clone-manpage](http://man7.org/linux/man-pages/man2/clone.2.html)
 * [Linux资源管理之cgroups简介](https://tech.meituan.com/2015/03/31/cgroups.html)
 * [Docker 背后的内核知识——cgroups 资源限制](https://www.infoq.cn/article/docker-kernel-knowledge-cgroups-resource-isolation/)
+* [理解Docker（4）：Docker 容器使用 cgroups 限制资源使用](https://www.cnblogs.com/sammyliu/p/5886833.html)
+* [kubernetes kubelet组件中cgroup的层层"戒备"](https://www.cnblogs.com/gaorong/p/11716907.html)
 
 # 3 Systemd
 

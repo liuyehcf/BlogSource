@@ -1,7 +1,15 @@
 1. Linux-常用命令
     * blktrace/iowatcher
+    * printf
+    * w
     * 域套接字
     * 如何编写TUI程序(https://github.com/marcusolsson/tui-go)
+1. Linux-安全
+    * [红帽企业版 Linux 7安全性指南](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/7/html/security_guide/index)
+1. 文件系统
+    * df、du看到的大小不同
+    * 挂载之后，df、du统计结果
+    * overlay2文件系统的使用：[Example OverlayFS Usage [duplicate]](https://askubuntu.com/questions/699565/example-overlayfs-usage)
 1. 操作系统安装
     * cobbler：https://www.cnblogs.com/yanjieli/p/11016825.html
     * ubuntu
@@ -44,5 +52,10 @@
     * 异常问题排查
         * [docker 卡死引起的 container runtime is down](http://team.jiunile.com/blog/2020/10/docker-hang.html)
         * [no-space-left-on-device](https://stackoverflow.com/questions/30604846/docker-error-no-space-left-on-device)
+        * no space left on device
+            * [Docker storage-driver overlay2 限制容器可占用的磁盘空间](https://blog.csdn.net/qq_34556414/article/details/108058302)
+            * [Docker error : no space left on device](https://stackoverflow.com/questions/30604846/docker-error-no-space-left-on-device)
+            * [docker cp returns “no space left on device” if entire host filesystem is mounted](https://github.com/moby/moby/issues/38995)
+            * [[WIP] Fix mount loop on "docker cp" #38993](https://github.com/moby/moby/pull/38993)
 1. [CPU 和 GPU 的区别是什么？](https://www.zhihu.com/question/19903344)
 1. dracut

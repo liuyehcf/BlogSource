@@ -62,15 +62,41 @@ categories:
 # 2 /proc目录
 
 1. `/proc/buddyinfo`：内存碎片信息
-1. `/proc/sys/net`：网络相关配置
+1. `/proc/cmdline`：系统启动时输入给内核的命令行参数
+1. `/proc/version`：内核版本
+1. `/proc/cpuinfo`：cpu硬件信息
+1. `/proc/filesystems`：当前内核支持的文件系统列表
+1. `/proc/kallsyms`：内核符号表
+1. `/proc/kmsg`：内核消息，对应dmesg命令
+1. `/proc/modules`：已经加载的模块列表，对应lsmod命令
+1. `/proc/mounts`：已经挂载的文件系统，对应mount命令
+1. `/proc/stat`：全面统计状态表
 1. `/proc/interrupts`：中断映射表
 1. `/proc/self`：我们可以通过`/proc/${pid}`目录来获取指定进程的信息。当pid可能发生变化时，我们还可以通过`/proc/self`来访问当前进程的信息，不同的进程访问该目录下的文件得到的结果是不同的
+1. `/proc/sys/net`：网络相关配置
 1. `/proc/net`：网络相关的统计信息
     * `/proc/net/route`：路由表
     * `/proc/net/arp`：mac地址表
     * `/proc/net/tcp`：tcp连接信息
+        * `1 -> TCP_ESTABLISHED`
+        * `2 -> TCP_SYN_SENT`
+        * `3 -> TCP_SYN_RECV`
+        * `4 -> TCP_FIN_WAIT1`
+        * `5 -> TCP_FIN_WAIT2`
+        * `6 -> TCP_TIME_WAIT`
+        * `7 -> TCP_CLOSE`
+        * `8 -> TCP_CLOSE_WAIT`
+        * `9 -> TCP_LAST_ACL`
+        * `10 -> TCP_LISTEN`
+        * `11 -> TCP_CLOSING`
 
-# 3 其他
+# 3 /var目录
+
+1. `/var/crash`：内核crash日志
+1. `/var/log`：日志
+    * `/var/log/audit`：审计日志
+
+# 4 其他
 
 1. `/dev/disk/by-path`：以磁盘路径为名称的软链接文件
 1. `/dev/disk/by-partuuid`：以分区uuid为名称的软链接文件
