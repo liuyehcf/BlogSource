@@ -16,3 +16,4 @@ categories:
 
 * [官方文档](https://github.com/Netflix/Hystrix/wiki)
 * [Property详解](https://github.com/Netflix/Hystrix/wiki/Configuration)
+* [三种常见的限流算法](https://www.cnblogs.com/linjiqin/p/9707713.html)

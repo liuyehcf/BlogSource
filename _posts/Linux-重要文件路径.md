@@ -12,7 +12,11 @@ categories:
 
 <!--more-->
 
-# 1 /sys目录
+# 1 /etc目录
+
+1. `/etc/ssl/certs`：根证书存放位置
+
+# 2 /sys目录
 
 首先，先通过`tree -L 1 /sys`看下`/sys`的目录结构，结果如下
 
@@ -54,12 +58,12 @@ categories:
 1. `/sys/class/dmi/id`：主板相关信息
     * `/sys/class/dmi/id/product_uuid`：主板uuid
 
-## 1.1 参考
+## 2.1 参考
 
 * [linux 目录/sys 解析](https://blog.csdn.net/zqixiao_09/article/details/50320799)
 * [What's the “/sys” directory for?](https://askubuntu.com/questions/720471/whats-the-sys-directory-for)
 
-# 2 /proc目录
+# 3 /proc目录
 
 1. `/proc/buddyinfo`：内存碎片信息
 1. `/proc/cmdline`：系统启动时输入给内核的命令行参数
@@ -90,13 +94,13 @@ categories:
         * `10 -> TCP_LISTEN`
         * `11 -> TCP_CLOSING`
 
-# 3 /var目录
+# 4 /var目录
 
 1. `/var/crash`：内核crash日志
 1. `/var/log`：日志
     * `/var/log/audit`：审计日志
 
-# 4 其他
+# 5 其他
 
 1. `/dev/disk/by-path`：以磁盘路径为名称的软链接文件
 1. `/dev/disk/by-partuuid`：以分区uuid为名称的软链接文件

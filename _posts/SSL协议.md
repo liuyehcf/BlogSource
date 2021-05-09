@@ -174,6 +174,41 @@ X.509是公钥证书的标准格式，通常一个证书包含如下信息
 1. `Chained Root`受它们所链接的`Third-party CA`支配，它们无法控制根证书，如果`Root CA`停业，那么`Chained Root`也会失效
 1. 根证书和中间证书都会过期，虽然时间较长，但是中间证书的失效时间必须早于根证书，这增加了复杂度
 
+## 2.4 认证过程
+
+**以一个深度为3的证书链的为例进行介绍**
+
+```plantuml
+skinparam backgroundColor #EEEBDC
+skinparam handwritten true
+
+skinparam sequence {
+	ArrowColor DeepSkyBlue
+	ActorBorderColor DeepSkyBlue
+	LifeLineBorderColor blue
+	LifeLineBackgroundColor #A9DCDF
+	
+	ParticipantBorderColor DeepSkyBlue
+	ParticipantBackgroundColor DodgerBlue
+	ParticipantFontName Impact
+	ParticipantFontSize 17
+	ParticipantFontColor #A9DCDF
+	
+	ActorBackgroundColor aqua
+	ActorFontColor DeepSkyBlue
+	ActorFontSize 17
+	ActorFontName Aapex
+}
+
+client -> server: say hello
+server -> client: 发送「站点证书」
+client -> client: 根据「站点证书」中的下载链接，下载「Intermediate CA」
+client -> client: 用「Intermediate CA」校验「站点证书」的合法性\n计算「站点证书」的摘要，用「Intermediate CA」的公钥解码「站点证书」中的数字签名得到摘要，对比两个摘要是否相同
+client -> client: 根据「Intermediate CA」中的下载链接，下载「Root CA」
+client -> client: 用「Root CA」校验「Intermediate CA」的合法性\n计算「Intermediate CA」的摘要，用「Root CA」的公钥解码「Intermediate CA」中的数字签名得到摘要，对比两个摘要是否相同
+client -> client: 校验「Root CA」是否在本机的可信根证书列表中
+```
+
 # 3 openssl
 
 ## 3.1 openssl req
@@ -1530,3 +1565,4 @@ echo | openssl s_client -servername www.aliyun.com -connect www.aliyun.com:443 2
 * [Requirements for trusted certificates in iOS 13 and macOS 10.15](https://support.apple.com/en-us/HT210176)
 * [HTTPS之SNI介绍](https://blog.51cto.com/zengestudy/2170245)
 * [centos 添加CA 证书](https://blog.csdn.net/coder9999/article/details/79664282)
+* [阮一峰-数字签名是什么？](http://www.ruanyifeng.com/blog/2011/08/what_is_a_digital_signature.html)

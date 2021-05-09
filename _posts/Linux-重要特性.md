@@ -1210,6 +1210,7 @@ ln -s '/usr/lib/systemd/system/demo-service.service' '/etc/systemd/system/multi-
     * `on-watchdog`
 * `TimeoutSec`：定义`Systemd`停止当前服务之前等待的秒数
 * `Environment`：指定环境变量
+* `PrivateTmp`：是否拥有私有的`/tmp`目录
 
 **`[Install]`区块，定义如何安装这个配置文件，即怎样做到开机启动**
 

@@ -2,6 +2,7 @@
     * blktrace/iowatcher
     * printf
     * w
+    * mount[confusion about mount options](https://unix.stackexchange.com/questions/117414/confusion-about-mount-options)
     * 域套接字
     * 如何编写TUI程序(https://github.com/marcusolsson/tui-go)
 1. Linux-安全
