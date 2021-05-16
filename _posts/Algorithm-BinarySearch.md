@@ -22,9 +22,9 @@ categories:
 
 循环条件是`left < right`，因此循环结束时`left == right`，只需要讨论以下三种情况即可
 
-* `target < nums[left]`
-* `target == nums[right]`
 * `nums[left] < target`
+* `nums[left] == target`
+* `nums[left] > target`
 
 ## 1.3 循环位移的二分查找
 
@@ -77,32 +77,101 @@ public class Solution {
 }
 ```
 
+还有一个非常简单的思路，与合并两个有序数组是一样的
+
+```java
+class Solution {
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int totalLength = nums1.length + nums2.length;
+        int mid1Index = totalLength - 1 >> 1;
+        int mid2Index = totalLength >> 1;
+
+        int iter1 = 0, iter2 = 0;
+        int cnt = 0;
+        int curVal;
+        int mid1 = 0, mid2 = 0;
+        while (iter1 < nums1.length && iter2 < nums2.length) {
+            if (nums1[iter1] <= nums2[iter2]) {
+                curVal = nums1[iter1++];
+            } else {
+                curVal = nums2[iter2++];
+            }
+
+            if (cnt == mid1Index) {
+                mid1 = curVal;
+            }
+            if (cnt == mid2Index) {
+                mid2 = curVal;
+            }
+
+            cnt++;
+        }
+
+        while (iter1 < nums1.length) {
+            curVal = nums1[iter1++];
+
+            if (cnt == mid1Index) {
+                mid1 = curVal;
+            }
+            if (cnt == mid2Index) {
+                mid2 = curVal;
+            }
+
+            cnt++;
+        }
+
+        while (iter2 < nums2.length) {
+            curVal = nums2[iter2++];
+
+            if (cnt == mid1Index) {
+                mid1 = curVal;
+            }
+            if (cnt == mid2Index) {
+                mid2 = curVal;
+            }
+
+            cnt++;
+        }
+
+        return 1.0d * (mid1 + mid2) / 2;
+    }
+}
+```
+
 # 3 Question-33[★★★★★]
 
 **Search in Rotated Sorted Array**
 
 > Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
 
-**版本1**
+**分类讨论条件**
+
+> 由于循环条件是`left < right`，当`right = left + 1`时，`left == mid`，而`mid < right`一定成立，为了避免讨论特殊情况，可以用`nums[mid]`与`nums[right]`的大小关系作为分类条件
+
+**版本1（需要讨论特殊情况，即left==mid）**
 
 ```java
-public class Solution {
+class Solution {
     public int search(int[] nums, int target) {
-        if (nums == null || nums.length == 0) return -1;
-
         int left = 0, right = nums.length - 1;
 
         while (left < right) {
             int mid = left + (right - left >> 1);
 
-            if (nums[mid] == target) return mid;
-            else if (nums[mid] >= nums[left]) { //意味着mid位于左半段或者[left,right]就是有序的。这个等号只可能代表mid与left相同，因为数组是unique的
+            if (nums[mid] == target) {
+                return mid;
+            }
+            // [left, mid] 这个区间是有序的
+            // 等号一定要在这，因为，若mid==left时，一定要取右半边
+            else if (nums[mid] >= nums[left]) {
                 if (nums[left] <= target && target < nums[mid]) {
                     right = mid;
                 } else {
                     left = mid + 1;
                 }
-            } else { //意味着mid位于右半段上
+            }
+            // [left, mid] 这个区间是无序的，那么[mid, right]就一定是有序的
+            else {
                 if (nums[mid] < target && target <= nums[right]) {
                     left = mid + 1;
                 } else {
@@ -116,26 +185,29 @@ public class Solution {
 }
 ```
 
-**版本2**
+**版本2（无须讨论特殊情况）**
 
 ```java
-public class Solution {
+class Solution {
     public int search(int[] nums, int target) {
-        if (nums == null || nums.length == 0) return -1;
-
         int left = 0, right = nums.length - 1;
 
         while (left < right) {
             int mid = left + (right - left >> 1);
 
-            if (nums[mid] == target) return mid;
-            else if (nums[mid] <= nums[right]) {
+            if (nums[mid] == target) {
+                return mid;
+            }
+            // [mid, right] 这个区间是有序的
+            else if (nums[mid] < nums[right]) {
                 if (nums[mid] < target && target <= nums[right]) {
                     left = mid + 1;
                 } else {
                     right = mid;
                 }
-            } else {
+            }
+            // [mid, right] 这个区间是无序的，那么[left, mid]就一定是有序的
+            else {
                 if (nums[left] <= target && target < nums[mid]) {
                     right = mid;
                 } else {
@@ -175,10 +247,10 @@ public class Solution {
         while (left < right) {
             int mid = left + (right - left >> 1);
 
-            if (nums[mid] < target) {
-                left = mid + 1;
-            } else {
+            if (nums[mid] >= target) {
                 right = mid;
+            } else {
+                left = mid + 1;
             }
         }
 
@@ -341,7 +413,9 @@ public class Solution {
 
 思路：通过`nums[mid]`与`nums[right]`的关系来判断mid位于那一段有序的序列上。如果`nums[mid]>nums[right]`，那么意味着`[left,right]`必然存在两段序列且mid位于左边这段序列上，而`nums[mid]<nums[right]`意味着可能`[left,right]`本身就是有序的，或者存在两端序列且mid位于右边这段
 
-**版本1**
+**分类讨论条件**
+
+> 由于循环条件是`left < right`，当`right = left + 1`时，`left == mid`，而`mid < right`一定成立，为了避免讨论特殊情况，可以用`nums[mid]`与`nums[right]`的大小关系作为分类条件
 
 ```java
 public class Solution {
@@ -353,55 +427,27 @@ public class Solution {
         while (left < right) {
             int mid = left + (right - left >> 1);
 
-            if (nums[mid] == target) return true;
-            else if (nums[mid] > nums[left]) {
-                if (nums[left] <= target && target < nums[mid]) {
-                    right = mid;
-                } else {
-                    left = mid + 1;
-                }
-            } else if (nums[mid] < nums[left]) {
+            if (nums[mid] == target) {
+                return true;
+            }
+            // [mid, right] 是有序的
+            else if (nums[mid] < nums[right]) {
                 if (nums[mid] < target && target <= nums[right]) {
                     left = mid + 1;
                 } else {
                     right = mid;
                 }
-            } else {
-                left++;
             }
-        }
-
-        return nums[left] == target;
-    }
-}
-```
-
-**版本2**
-
-```java
-public class Solution {
-    public boolean search(int[] nums, int target) {
-        if (nums == null || nums.length == 0) return false;
-
-        int left = 0, right = nums.length - 1;
-
-        while (left < right) {
-            int mid = left + (right - left >> 1);
-
-            if (nums[mid] == target) return true;
+            // [mid, right] 是无序的，因此[left, mid]一定是有序的
             else if (nums[mid] > nums[right]) {
                 if (nums[left] <= target && target < nums[mid]) {
                     right = mid;
                 } else {
                     left = mid + 1;
                 }
-            } else if (nums[mid] < nums[right]) {
-                if (nums[mid] < target && target <= nums[right]) {
-                    left = mid + 1;
-                } else {
-                    right = mid;
-                }
-            } else {
+            }
+            // 无法判断
+            else {
                 right--;
             }
         }
