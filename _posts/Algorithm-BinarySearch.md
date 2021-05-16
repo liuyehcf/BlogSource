@@ -467,94 +467,33 @@ public class Solution {
 
 > You may assume no duplicate exists in the array.
 
-如果一个数组经过了循环位移，那么存在两段单调序列，最小值必然位于第二段单调序列中。二分查找时，必须保证[left,right]包含两个序列，或者位于第二个单调序列中
+**分类讨论条件**
+
+> 由于循环条件是`left < right`，当`right = left + 1`时，`left == mid`，而`mid < right`一定成立，为了避免讨论特殊情况，可以用`nums[mid]`与`nums[right]`的大小关系作为分类条件
 
 ```java
-public class Solution {
+class Solution {
     public int findMin(int[] nums) {
         int left = 0, right = nums.length - 1;
 
-        //不得不采用left<right作为条件
         while (left < right) {
             int mid = left + (right - left >> 1);
 
-            //可能会造成[left=mid+1,right]是一个单调区间，但是是右边那个单调区间，没有关系，递归逻辑会向左边移动(即最小值的那一边)
-            if (nums[mid] > nums[right]) {
-                left = mid + 1;
-            } 
-            //若right=mid-1会造成[left,right=mid-1]是一个单调区间，如果是左边的单调区间，则最后会跑到最左边，这样是找不到最小值的，因此，每次迭代后，必须保证[left,right]包含最小值，或者是一个单调区间，但是是右边那个单调区间
-            else {
+            // [mid, right]是有序的
+            if (nums[mid] < nums[right]) {
+                // 即便mid是最小值，仍然包含在[left, mid]中
                 right = mid;
+            }
+            // [mid, right]是无序的
+            else {
+                // [mid, right]中的最小值一定小于nums[left]，因此最小值一定包含在[mid + 1, right]中
+                left = mid + 1;
             }
         }
 
-        int num1 = Integer.MAX_VALUE, num2 = Integer.MAX_VALUE, num3 = Integer.MAX_VALUE;
-
-        //懒得进行讨论了，反正结果总在这里面
-        if (left > 0) num1 = nums[left - 1];
-        if (left >= 0 && left < nums.length) num2 = nums[left];
-        if (left < nums.length - 1) num3 = nums[left + 1];
-
-        return Math.min(Math.min(num1, num2), num3);
+        return nums[left];
     }
 }
-```
-
-**变体1：查找最大值**
-
-> 最大值必定位于第一段序列中。二分查找时，必须保证[left,right]包含两个序列，或者位于第一个单调序列中
-
-```java
-...
-while (left < right) {
-    int mid = left + (right - left >> 1);
-
-    if (nums[mid] > nums[right]) {
-        right = mid - 1;
-    } 
-    else {
-        left = mid;
-    }
-}
-...
-```
-
-**变体2：递增序列改为递减序列，然后查找最小值**
-
-> 最小值必定位于第一段序列中。二分查找时，必须保证[left,right]包含两段序列，或者位于第一个单调序列中
-
-```java
-...
-while (left < right) {
-    int mid = left + (right - left >> 1);
-
-    if (nums[mid] > nums[left]) {
-        right = mid - 1;
-    } 
-    else {
-        left = mid;
-    }
-}
-...
-```
-
-**变体3：递增序列改为递减序列，然后查找最大值**
-
-> 最大值必定位于第二段序列中。二分查找时，必须保证[left,right]包含两端序列，或者位于第二个单调序列中
-
-```java
-...
-while (left < right) {
-    int mid = left + (right - left >> 1);
-
-    if (nums[mid] > nums[left]) {
-        left = mid + 1;
-    } 
-    else {
-        right = mid;
-    }
-}
-...
 ```
 
 # 10 Question-154[★★★★★]
