@@ -509,30 +509,28 @@ class Solution {
 这题思路与153一样，只是在nums[mid]与nums[right]相等时特殊处理一下，因为此时并不知道mid位于哪一段
 
 ```java
-public class Solution {
+class Solution {
     public int findMin(int[] nums) {
-        int left = 0, right = nums.length - 1;
+        int left = 0;
+        int right = nums.length - 1;
 
         while (left < right) {
             int mid = left + (right - left >> 1);
 
-            if (nums[mid] > nums[right]) {
-                left = mid + 1;
-            } else if (nums[mid] < nums[right]) {
+            // [mid, right]是有序的
+            if (nums[mid] < nums[right]) {
+                // 即便mid是最小值，仍然会包含在[left, mid]中
                 right = mid;
+            } else if (nums[mid] > nums[right]) {
+                // [mid, right]是无序的，最小值一定包含在[mid+1, right]中
+                left = mid + 1;
             } else {
+                // 只能right--，比如[1,3,3],left=0, right=2, mid=1
                 right--;
             }
         }
 
-        int num1 = Integer.MAX_VALUE, num2 = Integer.MAX_VALUE, num3 = Integer.MAX_VALUE;
-
-        //懒得进行讨论了，反正结果总在这里面
-        if (left > 0) num1 = nums[left - 1];
-        if (left >= 0 && left < nums.length) num2 = nums[left];
-        if (left < nums.length - 1) num3 = nums[left + 1];
-
-        return Math.min(Math.min(num1, num2), num3);
+        return nums[left];
     }
 }
 ```
