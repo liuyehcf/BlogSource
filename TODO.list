@@ -35,6 +35,10 @@
         * time_wait不会占用
     * [服务器TIME_WAIT和CLOSE_WAIT详解和解决办法](https://zhuanlan.zhihu.com/p/60382685)
     * [线上大量CLOSE_WAIT的原因深入分析](https://juejin.cn/post/6844903734300901390)
+    * [TCP协议的滑动窗口具体是怎样控制流量的？](https://www.zhihu.com/question/32255109/answer/898371009)
+1. java
+    * [JVM ：关于捕获 Java Heap Dump 的6种方式](https://blog.csdn.net/u010647035/article/details/86563736)
+    * 如何定位java进程crash core Dump
 1. linker
 1. Linux-异常处理（中断）
     * https://www.cnblogs.com/gulan-zmc/p/11604437.html
@@ -68,6 +72,8 @@
     * [解决死锁之路 - 了解常见的锁类型](https://www.aneasystone.com/archives/2017/11/solving-dead-locks-two.html)
     * [解决死锁之路 - 常见 SQL 语句的加锁分析](https://www.aneasystone.com/archives/2017/12/solving-dead-locks-three.html)
     * [解决死锁之路（终结篇） - 再见死锁](https://www.aneasystone.com/archives/2018/04/solving-dead-locks-four.html)
+    * mvcc 客户端1更新某一行，提交，然后客户端更新同一行，回滚的case（回滚时也会比较版本号，否则就把已经提交的数据覆盖了）
+    * mysql中，普通的select是不加锁的，读快照
 1. 面试
     * mq推拉什么时候用比较好
     * java程序退出了，有什么方法可以分析
