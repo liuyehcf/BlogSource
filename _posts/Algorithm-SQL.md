@@ -4,7 +4,7 @@ date: 2018-09-21 11:34:23
 tags: 
 - 原创
 categories: 
-- Job
+- Algorithm
 - Leetcode
 ---
 
