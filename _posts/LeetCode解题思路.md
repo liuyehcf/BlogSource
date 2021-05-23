@@ -107,30 +107,31 @@ table th:nth-of-type(5) {
 | 73 | Set Matrix Zeroes | Array | ★★ | 先记录下为0的row和col，然后最后把这些row和col置为0 |
 | 74 |  |  |  |  |
 | 75 | Sort Colors | Array | ★★ | 基数排序的思路，统计0、1、2的次数，然后填充原数组即可 |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
+| 76 | Minimum Window Substring | String | ★★★★ | 移动窗口。首先统计子串中各个字符的数量，当有效长度等于各字符数量之和时，保留子串，并调整左边界，使得有效长度小于各字符数量之和 |
+| 77 | Combinations | Recursion | ★★★ | 经典递归，n个元素中取k个元素的取法，由于不同排列算一种，因此可以按递增的顺序取，且不需要isUsed作为辅助 |
+| 78 | Subsets | Recursion | ★★★ | 经典递归，无递归终止条件，任何一种状态都是一个解 |
+| 79 | Word Search | Recursion | ★★★ | 经典递归，每一个位置都可以是一个单词的起始位置 |
+| 80 | Remove Duplicates from Sorted Array II | Array | ★★★ | 判断相同只能向后找，因为前面的部分已经重新赋值了 |
+| 81 | Search in Rotated Sorted Array II | BinarySearch | ★★★★ | 同33，要用`[mid, right]`这个区间来判断单调性，因为在`left < right`这个循环条件下，`mid`不可能等于`right`，省去多余讨论 |
+| 82 | Remove Duplicates from Sorted List II | LinkList | ★★★ | pre在去重时无须更新 |
+| 83 | Remove Duplicates from Sorted List | LinkList | ★★★ | 同82，无须pre，更简单一些 |
+| 84 | Largest Rectangle in Histogram | Stack | ★★★★★ | 尝试将每个索引入栈，入栈前检查高度是否严格递增，若当前高度小于或等于栈顶索引对应的高度，那么计算栈顶高度对应的面积，并将其出栈，直至当前高度为栈中的最高高度 |
+| 85 | Maximal Rectangle | Stack | ★★★★★ | 同84 |
+| 86 | Partition List | LinkList | ★★★ | 用两个链表分别接收两部分节点，然后再拼起来就可以了 |
+| 87 |  |  |  |  |
+| 88 | Merge Sorted Array | ArrayList | ★★ | 由于nums1要放两个数组的所有元素，因此首先要把nums1中原始的元素放到最后面，然后再开始合并，这样不会撞车 |
+| 89 | Gray Code |  |  |  |
+| 90 | Subsets II | Recursion | ★★★ | 同78，去重即可，比如当前递归第i个元素，只要第i个元素不重复即可 |
+| 91 | Decode Ways | Dp | ★★★★ | 若`s[i-1,i]`可以解码，那么`dp[i] += dp[i - 1]`；若`s[i-2,i]`可以解码，那么`dp[i]+=dp[i-2]` |
+| 92 | Reverse Linked List II | LinkList | ★★★ | 找到pseudoHead以及tail，然后再reverse即可 |
+| 93 | Restore IP Addresses | Recursion | ★★★ | 经典递归，分别尝试1位、2位、3位，注意递归结束的条件：总共解析出4个数，且没有剩余字符 |
+| 94 | Binary Tree Inorder Traversal | Tree | ★★★ | 中序遍历，栈式，需要cur以及栈，根节点赋值给cur，不入栈 |
+| 95 | Unique Binary Search Trees II | Dp | ★★★★ | `dp[i][j]`表示由数字(i, i+1, ..., j)可以构成的所有二叉树。最外层的循环是步长 |
+| 96 | Unique Binary Search Trees | Dp | ★★★★ | 同95，`dp[i][j]`表示由数字(i, i+1, ..., j)可以构成的所有二叉树的数量 |
+| 97 | Interleaving String | Recursion | ★★★ | 经典递归，若`s1[i1] == s3[i3]`，那么尝试继续匹配；若`s2[21] == s3[i3]`，那么尝试继续匹配，否则匹配失败 |
+| 98 | Validate Binary Search Tree | Recursion | ★★ | 递归的时候，传入取值范围，最开始的范围是`[Long.MIN_VALUE, Long.MAX_VALUE]` |
+| 99 | Recover Binary Search Tree | Stack | ★★★ | 在中序遍历的过程中，找到不满足约束的节点。不满足约束的位置可能有1个（两个异常节点在中序遍历中相邻），也可能有2个（两个异常节点在中序遍历中不相邻） |
+| 100 | Same Tree | Recursion | ★ | 最简单的递归，不解释了 |
 |  |  |  |  |  |
 |  |  |  |  |  |
 |  |  |  |  |  |
