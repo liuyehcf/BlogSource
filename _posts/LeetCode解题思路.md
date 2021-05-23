@@ -92,21 +92,21 @@ table th:nth-of-type(5) {
 | 58 | Length of Last Word | String | ★ | 毫无意义 |
 | 59 |  |  |  |  |
 | 60 | Permutation Sequence | Array | ★★★★ | 首先计算出total数组，`total[i]`表示i个整数有多少种排列方式。首位取第几个数？`int index = (k - 1) / total[i - 1]`，将该数从`candidates`中取出，并更新`k -= index * total[i - 1]` |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
+| 61 | Rotate List | LinkList | ★★★ | 循环位移等价于3次反转。注意，左半部分反转会导致边界更新 |
+| 62 | Unique Paths | Dp | ★★ | 经典dp，递推式：`dp[i][j] = dp[i - 1][j] + dp[i][j - 1`，注意边界初始化 |
+| 63 | Unique Paths II | Dp | ★★ | 同62，经典dp，注意有障碍物的位置直接将`dp[i][j]`设置为0，边界初始化也是如此 |
+| 64 | Minimum Path Sum | Dp | ★★ | 经典dp，递推式：`dp[i][j] = Math.min(dp[i - 1][j], dp[i][j - 1]) + grid[i][j]` |
+| 65 | ~~Valid Number~~ | \ | \ | 垃圾题目 |
+| 66 | Plus One | Numerical | ★ | 处理好进位就行 |
+| 67 | Add Binary | Numerical | ★ | 二进制加法，处理好进位就行 |
+| 68 |  |  |  |  |
+| 69 | Sqrt(x) | Numerical |  | 没啥意思 |
+| 70 | Climbing Stairs | Dp | ★★ | 经典dp，递推式：`dp[i] = dp[i - 1] + dp[i - 2]` |
+| 71 |  |  |  |  |
+| 72 | Edit Distance | Dp | ★★★★ | 经典dp，若c1==c2，`dp[i][j] = Math.min(dp[i - 1][j - 1], dp[i][j - 1] + 1, dp[i - 1][j] + 1)`；若c1!=c2，`dp[i][j] = Math.min(dp[i - 1][j - 1] + 1, dp[i][j - 1] + 1, dp[i - 1][j] + 1)` |
+| 73 | Set Matrix Zeroes | Array | ★★ | 先记录下为0的row和col，然后最后把这些row和col置为0 |
+| 74 |  |  |  |  |
+| 75 | Sort Colors | Array | ★★ | 基数排序的思路，统计0、1、2的次数，然后填充原数组即可 |
 |  |  |  |  |  |
 |  |  |  |  |  |
 |  |  |  |  |  |
