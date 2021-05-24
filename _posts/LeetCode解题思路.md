@@ -125,23 +125,23 @@ table th:nth-of-type(5) {
 | 91 | Decode Ways | Dp | ★★★★ | 若`s[i-1,i]`可以解码，那么`dp[i] += dp[i - 1]`；若`s[i-2,i]`可以解码，那么`dp[i]+=dp[i-2]` |
 | 92 | Reverse Linked List II | LinkList | ★★★ | 找到pseudoHead以及tail，然后再reverse即可 |
 | 93 | Restore IP Addresses | Recursion | ★★★ | 经典递归，分别尝试1位、2位、3位，注意递归结束的条件：总共解析出4个数，且没有剩余字符 |
-| 94 | Binary Tree Inorder Traversal | Tree | ★★★ | 中序遍历，栈式，需要cur以及栈，根节点赋值给cur，不入栈 |
-| 95 | Unique Binary Search Trees II | Dp | ★★★★ | `dp[i][j]`表示由数字(i, i+1, ..., j)可以构成的所有二叉树。最外层的循环是步长 |
-| 96 | Unique Binary Search Trees | Dp | ★★★★ | 同95，`dp[i][j]`表示由数字(i, i+1, ..., j)可以构成的所有二叉树的数量 |
+| 94 | Binary Tree Inorder Traversal | Tree/Stack | ★★★ | 中序遍历，栈式，需要cur以及栈，根节点赋值给cur，不入栈 |
+| 95 | Unique Binary Search Trees II | Tree/Dp | ★★★★ | `dp[i][j]`表示由数字(i, i+1, ..., j)可以构成的所有二叉树。最外层的循环是步长 |
+| 96 | Unique Binary Search Trees | Tree/Dp | ★★★★ | 同95，`dp[i][j]`表示由数字(i, i+1, ..., j)可以构成的所有二叉树的数量 |
 | 97 | Interleaving String | Recursion | ★★★ | 经典递归，若`s1[i1] == s3[i3]`，那么尝试继续匹配；若`s2[21] == s3[i3]`，那么尝试继续匹配，否则匹配失败 |
-| 98 | Validate Binary Search Tree | Recursion | ★★ | 递归的时候，传入取值范围，最开始的范围是`[Long.MIN_VALUE, Long.MAX_VALUE]` |
-| 99 | Recover Binary Search Tree | Stack | ★★★ | 在中序遍历的过程中，找到不满足约束的节点。不满足约束的位置可能有1个（两个异常节点在中序遍历中相邻），也可能有2个（两个异常节点在中序遍历中不相邻） |
-| 100 | Same Tree | Recursion | ★ | 最简单的递归，不解释了 |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
+| 98 | Validate Binary Search Tree | Tree/Recursion | ★★ | 递归的时候，传入取值范围，最开始的范围是`[Long.MIN_VALUE, Long.MAX_VALUE]` |
+| 99 | Recover Binary Search Tree | Tree/Stack | ★★★ | 在中序遍历的过程中，找到不满足约束的节点。不满足约束的位置可能有1个（两个异常节点在中序遍历中相邻），也可能有2个（两个异常节点在中序遍历中不相邻） |
+| 100 | Same Tree | Tree/Recursion | ★ | 最简单的递归，不解释了 |
+| 101 | Symmetric Tree | Tree/Recursion | ★★ | 同100 |
+| 102 | Binary Tree Level Order Traversal | Tree/Queue | ★★ | 经典层序遍历，用队列，每次处理一层 |
+| 103 | Binary Tree Zigzag Level Order Traversal | Tree/Queue | ★★ | 同102，每层数值的收集逻辑反转一下，即加入到尾部还是插入到头部 |
+| 104 | Maximum Depth of Binary Tree | Tree/Recursion | ★★ | 简单递归思路，注意叶节点的判断逻辑 |
+| 105 | Construct Binary Tree from Preorder and Inorder Traversal | Tree/Recursion | ★★★ | 存下每个元素在中序遍历中的位置，这样可以知道左右子树的长度，找到左右子树在前序遍历和中序遍历的边界，并继续递归 |
+| 106 | Construct Binary Tree from Inorder and Postorder Traversal | Tree/Recursion | ★★★ | 同106，存下每个元素在中序遍历中的位置，这样可以知道左右子树的长度，找到左右子树在后续遍历和中序遍历的边界，并继续递归 |
+| 107 | Binary Tree Level Order Traversal II | Tree/Queue | ★★ | 同102 |
+| 108 | Convert Sorted Array to Binary Search Tree | Tree/Recursion | ★★ | 递归即可，每次递归，中间的元素作为根 |
+| 109 | Convert Sorted List to Binary Search Tree | Tree/Recursion/LinkList | ★★ | 同108，取中点的逻辑需要用两个指针来完成，即slowIter以及fastIter |
+| 110 | Balanced Binary Tree | Tree/Recursion | ★★ | 递归即可，每次递归时比较当前节点是否平衡，并向上返回深度 |
 |  |  |  |  |  |
 |  |  |  |  |  |
 |  |  |  |  |  |
