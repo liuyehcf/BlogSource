@@ -58,11 +58,12 @@
     * 异常问题排查
         * [docker 卡死引起的 container runtime is down](http://team.jiunile.com/blog/2020/10/docker-hang.html)
         * [no-space-left-on-device](https://stackoverflow.com/questions/30604846/docker-error-no-space-left-on-device)
-        * no space left on device
-            * [Docker storage-driver overlay2 限制容器可占用的磁盘空间](https://blog.csdn.net/qq_34556414/article/details/108058302)
-            * [Docker error : no space left on device](https://stackoverflow.com/questions/30604846/docker-error-no-space-left-on-device)
-            * [docker cp returns “no space left on device” if entire host filesystem is mounted](https://github.com/moby/moby/issues/38995)
+        * no space left on device（mount namespace）
             * [[WIP] Fix mount loop on "docker cp" #38993](https://github.com/moby/moby/pull/38993)
+            * [Linux Namespace系列（04）：mount namespaces (CLONE_NEWNS)](https://segmentfault.com/a/1190000006912742)
+            * [黄东升: mount namespace和共享子树](https://cloud.tencent.com/developer/article/1518101)
+            * k8s mountPropagation 可以控制mount namespace的传播级别，貌似改不了根目录
+            * 在主机上将根目录标记为private即可解决该问题 mount / --make-private
 1. [CPU 和 GPU 的区别是什么？](https://www.zhihu.com/question/19903344)
 1. dracut
 1. 方法论
@@ -79,8 +80,20 @@
     * java程序退出了，有什么方法可以分析
     * mybatis延迟加载
     * redis集群相关的知识点
+        * [Redis集群方案应该怎么做？](https://www.zhihu.com/question/21419897)
+        * 普通hash --> 一致性hash，本质上就是固定模的长度，在增加或删除节点后hash求模的值不变
+        * presharding，假设集群最大容量是50台机器，而最开始只有5台，那可以在5台机器上，每台机器跑10个副本，当需要扩容的时候，进行数据拷贝即可（通过主从配置）。同时节点宕机也不会带来更大的问题
+        * 集群中的每个节点再加主从
     * 秒杀场景
     * 有一堆音频文件需要下载，有多台机器，如何实现这个任务
         * 一个中心节点存储下载状态，其他机器请求任务并去执行
         * 执行完了之后回复中心节点，中心节点拿到回复之后将任务标记为已完成。若超时或者失败，都是失败，需要重新下载
         * 中心节点要持久化存储，宕机后能够恢复
+    * Integer、int的区别
+    * Java泛型，类型信息何时保留，何时擦除
+    * hash算法的常规实现
+    * 两列是否能做联合主键
+    * 联合索引是如何实现的，和单索引的区别是啥
+    * undo、redo
+    * 迁移数据库的基本操作
+    * 算法题combinationSum2
