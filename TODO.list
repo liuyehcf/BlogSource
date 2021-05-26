@@ -92,8 +92,22 @@
     * Integer、int的区别
     * Java泛型，类型信息何时保留，何时擦除
     * hash算法的常规实现
+        * sha、MD5等
     * 两列是否能做联合主键
+        * 可以的
     * 联合索引是如何实现的，和单索引的区别是啥
+        * 单索引的话每个中间节点存的就是该字段边界值，叶节点存的是值以及主键id
+        * 联合索引每个中间节点存的就是所有索引相关字段的边界值（无非比较是个复合比较），叶节点比中间节点多了主键id
+        * [联合索引在B+树上的存储结构及数据查找方式](https://blog.csdn.net/ibigboy/article/details/104571930?depth_1-)
     * undo、redo
+        * [详细分析MySQL事务日志(redo log和undo log)](https://www.cnblogs.com/f-ck-need-u/archive/2018/05/08/9010872.html)
+        * [必须了解的mysql三大日志-binlog、redo log和undo log](https://segmentfault.com/a/1190000023827696)
+        * 为什么需要redo log？数据库四大特性ACID中的D，持久化，就是成功提交的数据要落盘，但是如果每次commit都去刷新磁盘的话，如果不是顺序写而是横跨多个物理页时，性能就会大幅降低。redo log就是用来做持久化的中间层的。每次提交先写redo log，然后由后台线程将redo log中的内容刷到对应的磁盘上。看起来只是将写物理页改成了写redo log，但由于redo log是顺序写，因此性能是有提高的
+            * 先写日志，将随机写优化为顺序写
+            * 将每次写优化为批量写（但是日志还是每次都写？）
     * 迁移数据库的基本操作
+        * t0：开启双写，通过注解，在切面中完成双写，要区分insert（新库的主键id）、update和delete
+        * t1：存量数据迁移
+        * t2：数据一致性校验，以老库为准更新
+        * t3：读切到新库
     * 算法题combinationSum2
