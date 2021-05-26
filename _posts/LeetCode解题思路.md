@@ -142,16 +142,16 @@ table th:nth-of-type(5) {
 | 108 | Convert Sorted Array to Binary Search Tree | Tree/Recursion | ★★ | 递归即可，每次递归，中间的元素作为根 |
 | 109 | Convert Sorted List to Binary Search Tree | Tree/Recursion/LinkList | ★★ | 同108，取中点的逻辑需要用两个指针来完成，即slowIter以及fastIter |
 | 110 | Balanced Binary Tree | Tree/Recursion | ★★ | 递归即可，每次递归时比较当前节点是否平衡，并向上返回深度 |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
+| 111 | Minimum Depth of Binary Tree | Tree/Recursion | ★★ | 同104 |
+| 112 | Path Sum | Tree/Recursion | ★★ | 递归即可，递归时将路径和传递下去 |
+| 113 | Path Sum II | Tree/Recursion | ★★ | 递归即可，递归时将solution和路径和传递下去，当路径和等于target时，将solution拷贝后添加到res中 |
+| 114 | Flatten Binary Tree to Linked List | Tree/Recursion | ★★ | 递归即可，递归时将左子树插入到当前节点和右孩子中间 |
+| 115 | Distinct Subsequences | Dp | ★★★★ | 想不到用dp。当`s[i]==t[j]`时，`dp[i][j] = dp[i - 1][j - 1] + dp[i - 1][j]`；当`s[i]!=t[j]`时，`dp[i][j] = dp[i - 1][j]` |
+| 116 | Populating Next Right Pointers in Each Node | Tree/Queue | ★★ | 经典层序遍历，用队列，每次处理一层 |
+| 117 | Populating Next Right Pointers in Each Node II | Tree/Queue | ★★ | 同116 |
+| 118 | Pascal's Triangle | Array | ★ | 太简单了，略 |
+| 119 | Pascal's Triangle II | Array | ★ | 同118 |
+| 120 | Triangle | Array | ★★ | 依次计算每一层的最小路径和即可 |
 |  |  |  |  |  |
 |  |  |  |  |  |
 |  |  |  |  |  |
