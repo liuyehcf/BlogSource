@@ -159,7 +159,7 @@ table th:nth-of-type(5) {
 | 125 | Valid Palindrome | String | ★ | 首先将非法字符过滤掉，然后转成小写，再判断是否对称 |
 | 126 | Word Ladder II |  |  |  |
 | 127 | Word Ladder |  |  |  |
-| 128 | Longest Consecutive Sequence | Array | ★★★★★ | 无法理解思路 |
+| 128 | Longest Consecutive Sequence | Array | ★★★★★ | 首先将所有数字添加到set中，再循环，找到最长的连续片段，找的过程中将数字remove出来，避免重复计算。此外O(N)复杂度的那个算法看不懂 |
 | 129 | Sum Root to Leaf Numbers | Tree/Recursion | ★★★ | 经典递归，抵达叶节点时，计算List中对应的数字 |
 | 130 | Surrounded Regions | Array/Recursion | ★★★★ | 先从边界上，递归将未被包围的`O`改成`1`，然后将剩下的`O`改成`X`，再将`1`改回`O` |
 |  |  |  |  |  |
