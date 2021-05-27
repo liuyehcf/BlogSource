@@ -152,16 +152,16 @@ table th:nth-of-type(5) {
 | 118 | Pascal's Triangle | Array | ★ | 太简单了，略 |
 | 119 | Pascal's Triangle II | Array | ★ | 同118 |
 | 120 | Triangle | Array | ★★ | 依次计算每一层的最小路径和即可 |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
+| 121 | Best Time to Buy and Sell Stock | Array | ★★ | 遍历一遍，更新buyPrice以及sellPrice即可 |
+| 122 | Best Time to Buy and Sell Stock II | Array | ★★★★ | 遍历一遍，如果今天的价格比昨天高，就交易一次 |
+| 123 | Best Time to Buy and Sell Stock III | Array | ★★★★ | 思路同121，更新buyPrice1、sellPrice1、buyPrice2、sellPrice2即可 |
+| 124 | Binary Tree Maximum Path Sum | Tree/Recursion | ★★★★ | 递归方法返回的是当前节点到叶节点的最大和，同时维护最大路径，可能是：左子树路径和+当前节点+右子树路径和、左（右）子树路径和+当前节点、当前节点 |
+| 125 | Valid Palindrome | String | ★ | 首先将非法字符过滤掉，然后转成小写，再判断是否对称 |
+| 126 | Word Ladder II |  |  |  |
+| 127 | Word Ladder |  |  |  |
+| 128 | Longest Consecutive Sequence | Array | ★★★★★ | 无法理解思路 |
+| 129 | Sum Root to Leaf Numbers | Tree/Recursion | ★★★ | 经典递归，抵达叶节点时，计算List中对应的数字 |
+| 130 | Surrounded Regions | Array/Recursion | ★★★★ | 先从边界上，递归将未被包围的`O`改成`1`，然后将剩下的`O`改成`X`，再将`1`改回`O` |
 |  |  |  |  |  |
 |  |  |  |  |  |
 |  |  |  |  |  |
