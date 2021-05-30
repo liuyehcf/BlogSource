@@ -172,8 +172,8 @@ table th:nth-of-type(5) {
 | 138 | Copy List with Random Pointer | LinkList/Recursion | ★★★ | 同133，random属性在递归结束后再维护即可 |
 | 139 | Word Break | Dp | ★★★ | `dp[i]`表示`s[1...i]`是否可以拆分 |
 | 140 | Word Break II | Recursion | ★★★ | 普通递归思路，从start开始，遍历每个word，看当前子串是否与word相同，若相同则继续递归 |
-|  |  |  |  |  |
-|  |  |  |  |  |
+| 141 | Linked List Cycle | LinkList | ★★ | 一个fast指针，一个slow指针，若flow==slow那么说明存在循环 |
+| 142 | Linked List Cycle II | LinkList | ★★★ | 同样一个fast指针，一个slow指针。假设`k`步骤后相遇，那么`2k - k = nr`，其中`r`是循环部分的长度，`n`可能是任意非零整数。假设非循环部分的长度是`s1`，循环起始到相遇点部分的长度是`s2`，相遇点经循环到达循环起始点的长度是`s3`，那么slow指针走过的路程就是`s1 + n1r + s2`、fast指针走过的路程就是`s1 + n2r +s2`，于是可以得到`2 * (s1 + n1r + s2) = s1 + n2r +s2`，即`s1 + s2 = (n2 - 2n1)r`。而`s2 + s3 = r`，可以推导出`s1 = s3 + (n2 - 2n1 -1)r`。此时用两个slow指针，一个在起始位置，一个在相遇点，它们最终会在循环起始点碰头 |
 |  |  |  |  |  |
 |  |  |  |  |  |
 |  |  |  |  |  |
