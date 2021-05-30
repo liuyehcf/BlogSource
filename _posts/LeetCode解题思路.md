@@ -157,21 +157,21 @@ table th:nth-of-type(5) {
 | 123 | Best Time to Buy and Sell Stock III | Array | ★★★★ | 思路同121，更新buyPrice1、sellPrice1、buyPrice2、sellPrice2即可 |
 | 124 | Binary Tree Maximum Path Sum | Tree/Recursion | ★★★★ | 递归方法返回的是当前节点到叶节点的最大和，同时维护最大路径，可能是：左子树路径和+当前节点+右子树路径和、左（右）子树路径和+当前节点、当前节点 |
 | 125 | Valid Palindrome | String | ★ | 首先将非法字符过滤掉，然后转成小写，再判断是否对称 |
-| 126 | Word Ladder II |  |  |  |
-| 127 | Word Ladder |  |  |  |
+| 126 | Word Ladder II | BFS/Recursion | ★★★★★ | 首先计算出所有单词的neighbor（仅有一个字符不同），利用单元最短路径的算法依次计算出每个单词与起始单词的距离。然后从目标单词往前，用递归收集所有可能的组合 |
+| 127 | Word Ladder | BFS | ★★★★★ | 同126 |
 | 128 | Longest Consecutive Sequence | Array | ★★★★★ | 首先将所有数字添加到set中，再循环，找到最长的连续片段，找的过程中将数字remove出来，避免重复计算。此外O(N)复杂度的那个算法看不懂 |
 | 129 | Sum Root to Leaf Numbers | Tree/Recursion | ★★★ | 经典递归，抵达叶节点时，计算List中对应的数字 |
 | 130 | Surrounded Regions | Array/Recursion | ★★★★ | 先从边界上，递归将未被包围的`O`改成`1`，然后将剩下的`O`改成`X`，再将`1`改回`O` |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
+| 131 | Palindrome Partitioning | String/Recursion | ★★★ | 经典递归，递归时，`end from start to len-1`，若子串是对称的，则继续递归 |
+| 132 | Palindrome Partitioning II | String/Dp | ★★★★★ |  |
+| 133 | Clone Graph | Recursion | ★★★ | 维护老节点和新节点的映射关系，当克隆节点已存在时，从映射关系中取，否则新建 |
+| 134 | Gas Station | Array | ★★★★ | 从第一个加油站出发，维护剩余油量以及欠的油量。当剩余油量够用时，只需要更新剩余油量，当剩余油量不足时，更新欠的油量，并且出发地从下一个站点开始。遍历结束后，查看剩余油量和欠的油量，若剩余油量大于欠的油量，那么可以走完；否则不行 |
+| 135 | Candy | Array | ★★★★ | 1. 从左向右维护关系；2. 再从右向左维护关系，若期间有增发糖果，那么不断循环步骤1和2 |
+| 136 | Single Number | Array | ★★★★ | 异或 |
+| 137 | Single Number II | Array | ★★★★ |  |
+| 138 | Copy List with Random Pointer | LinkList/Recursion | ★★★ | 同133，random属性在递归结束后再维护即可 |
+| 139 | Word Break | Dp | ★★★ | `dp[i]`表示`s[1...i]`是否可以拆分 |
+| 140 | Word Break II | Recursion | ★★★ | 普通递归思路，从start开始，遍历每个word，看当前子串是否与word相同，若相同则继续递归 |
 |  |  |  |  |  |
 |  |  |  |  |  |
 |  |  |  |  |  |
