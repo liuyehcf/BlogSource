@@ -174,14 +174,14 @@ table th:nth-of-type(5) {
 | 140 | Word Break II | Recursion | ★★★ | 普通递归思路，从start开始，遍历每个word，看当前子串是否与word相同，若相同则继续递归 |
 | 141 | Linked List Cycle | LinkList | ★★ | 一个fast指针，一个slow指针，若flow==slow那么说明存在循环 |
 | 142 | Linked List Cycle II | LinkList | ★★★ | 同样一个fast指针，一个slow指针。假设`k`步骤后相遇，那么`2k - k = nr`，其中`r`是循环部分的长度，`n`可能是任意非零整数。假设非循环部分的长度是`s1`，循环起始到相遇点部分的长度是`s2`，相遇点经循环到达循环起始点的长度是`s3`，那么slow指针走过的路程就是`s1 + n1r + s2`、fast指针走过的路程就是`s1 + n2r +s2`，于是可以得到`2 * (s1 + n1r + s2) = s1 + n2r +s2`，即`s1 + s2 = (n2 - 2n1)r`。而`s2 + s3 = r`，可以推导出`s1 = s3 + (n2 - 2n1 -1)r`。此时用两个slow指针，一个在起始位置，一个在相遇点，它们最终会在循环起始点碰头 |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
+| 143 | Reorder List | LinkList | ★★★★ | 找到中点（`fast != null && fast.next != null`，若把条件不成立时的slow当成中点，那么slow要么是中间那个，要么是第二段第一个元素），把后面部分逆序，然后前后两段交替合并即可 |
+| 144 | Binary Tree Preorder Traversal | Tree/Stack/Recursion | ★★★ | 前序遍历，经典题 |
+| 145 | Binary Tree Postorder Traversal | Tree/Stack/Recursion | ★★★ | 后续遍历，经典题。两种栈式：一种可以理解成先当前节点，再右子树再左子树的逆向操作，这样就与前序、中序遍历的逻辑对称了；另一种需要维护pre，当pre是当前节点的孩子时，说明当前节点可以访问 |
+| 146 | LRU Cache | LinkList | ★★★ | 一个map和一个双向链表，注意用两个额外的节点当作为head和tail，避免讨论 |
+| 147 | Insertion Sort List | LinkList | ★★★ | 链表的插入排序 |
+| 148 | Sort List | LinkList | ★★★★ | 链表的快速排序 |
+| 149 |  |  |  |  |
+| 150 | Evaluate Reverse Polish Notation | Stack | ★★★ | 逆波兰式，遍历token序列，遇到数值就压入栈，遇到运算符就计算，并将结果压入栈 |
 |  |  |  |  |  |
 |  |  |  |  |  |
 |  |  |  |  |  |
