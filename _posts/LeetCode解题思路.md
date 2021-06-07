@@ -182,16 +182,16 @@ table th:nth-of-type(5) {
 | 148 | Sort List | LinkList | ★★★★ | 链表的归并排序。找到中点（`fast.next != null && fast.next.next != null`，若把条件不成立时的slow当成中点，那么slow要么是中间那个，要么是第一段最后一个元素） |
 | 149 |  |  |  |  |
 | 150 | Evaluate Reverse Polish Notation | Stack | ★★★ | 逆波兰式，遍历token序列，遇到数值就压入栈，遇到运算符就计算，并将结果压入栈 |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
+| 151 | Reverse Words in a String | String | ★★ | 挨个扫描，过滤非法字符即可 |
+| 152 | Maximum Product Subarray | Dp | ★★★ | 负负可以得正，分别维护以i结尾的子序列的最大值和最小值 |
+| 153 | Find Minimum in Rotated Sorted Array | BinarySearch | ★★★★ | 用mid和left和right的大小关系，来判断左右哪个部分是有序的 |
+| 154 | Find Minimum in Rotated Sorted Array II | BinarySearch | ★★★★ | 思路同153，由于存在重复元素，当无法判断时，边界减一 |
+| 155 | Min Stack | Stack | ★★★ | 栈中的节点维护两个属性：本身的值和以该节点为栈顶元素时的最小值 |
+| 156 |  |  |  |  |
+| 157 |  |  |  |  |
+| 158 |  |  |  |  |
+| 159 |  |  |  |  |
+| 160 | Intersection of Two Linked Lists | LinkList | ★★ | 先计算两个链的长度，较长的那个链先移动iter，等长后，两个iter同时前进，然后找到相同的节点即可 |
 |  |  |  |  |  |
 |  |  |  |  |  |
 |  |  |  |  |  |
