@@ -535,7 +535,64 @@ class Solution {
 }
 ```
 
-# 11 Question-167[★★]
+# 11 Find Peak Element
+
+> A peak element is an element that is strictly greater than its neighbors.
+
+> Given an integer array nums, find a peak element, and return its index. If the array contains multiple peaks, return the index to any of the peaks.
+
+> You may imagine that nums[-1] = nums[n] = -∞.
+
+> You must write an algorithm that runs in O(log n) time.
+
+```java
+class Solution {
+    public int findPeakElement(int[] nums) {
+        int left = 0, right = nums.length - 1;
+
+        // 维护不变性：nums[left-1] < nums[left] && nums[right] > nums[right+1]
+        // 初始时，区间[left, right]满足该不变性约束
+        while (left < right) {
+            int mid = left + (right - left >> 1);
+
+            // 此时[mid+1, right]这个区间，满足不变性约束
+            if (nums[mid] < nums[mid + 1]) {
+                left = mid + 1;
+            }
+            // 此时[left, mid]这个区间，满足不变性约束
+            else if (nums[mid] > nums[mid + 1]) {
+                right = mid;
+            }
+            // 找到两个不相等的值
+            else {
+                boolean canFind = false;
+                for (mid = left; mid + 1 <= right; mid++) {
+                    // 此时[mid+1, right]这个区间，满足不变性约束
+                    if (nums[mid] < nums[mid + 1]) {
+                        canFind = true;
+                        left = mid + 1;
+                        break;
+                    }
+                    // 此时[left, mid]这个区间，满足不变性约束
+                    else if (nums[mid] > nums[mid + 1]) {
+                        canFind = true;
+                        right = mid;
+                        break;
+                    }
+                }
+
+                if (!canFind) {
+                    return -1;
+                }
+            }
+        }
+
+        return left;
+    }
+}
+```
+
+# 12 Question-167[★★]
 
 **Two Sum II - Input array is sorted**
 
@@ -577,7 +634,7 @@ public class Solution {
 }
 ```
 
-# 12 Question-240[★★★]
+# 13 Question-240[★★★]
 
 **Search a 2D Matrix II**
 
@@ -615,7 +672,7 @@ public class Solution {
 
 <!--
 
-# 13 Question-000[★]
+# 14 Question-000[★]
 
 ____
 

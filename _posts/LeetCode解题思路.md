@@ -192,8 +192,10 @@ table th:nth-of-type(5) {
 | 158 |  |  |  |  |
 | 159 |  |  |  |  |
 | 160 | Intersection of Two Linked Lists | LinkList | ★★ | 先计算两个链的长度，较长的那个链先移动iter，等长后，两个iter同时前进，然后找到相同的节点即可 |
-|  |  |  |  |  |
-|  |  |  |  |  |
+| 161 |  |  |  |  |
+| 162 | Find Peak Element | BinarySearch | ★★★★★ | 维护不变性约束：`nums[left-1] < nums[left] && nums[right] > nums[right+1]`，比较`nums[mid]`和`nums[mid+1]`的大小关系。若两者相等，则从`[left, right]`找到一组相邻且不等并比较大小关系，继续缩减搜索范围 |
+| 163 |  |  |  |  |
+| 164 | Maximum Gap | Bucket | ★★★★★ | 首先，找出最大值和最小值。桶的个数是数组的大小，桶的步长是差值除以桶的个数。初始化两个桶，最大桶和最小桶。然后遍历每个元素，维护最大桶和最小桶，入桶时维护最大差值。最后，两个相邻桶之间的差值也要考虑在内 |
 |  |  |  |  |  |
 |  |  |  |  |  |
 |  |  |  |  |  |
