@@ -196,13 +196,13 @@ table th:nth-of-type(5) {
 | 162 | Find Peak Element | BinarySearch | ★★★★★ | 维护不变性约束：`nums[left-1] < nums[left] && nums[right] > nums[right+1]`，比较`nums[mid]`和`nums[mid+1]`的大小关系。若两者相等，则从`[left, right]`找到一组相邻且不等并比较大小关系，继续缩减搜索范围 |
 | 163 |  |  |  |  |
 | 164 | Maximum Gap | Bucket | ★★★★★ | 首先，找出最大值和最小值。桶的个数是数组的大小，桶的步长是差值除以桶的个数。初始化两个桶，最大桶和最小桶。然后遍历每个元素，维护最大桶和最小桶，入桶时维护最大差值。最后，两个相邻桶之间的差值也要考虑在内 |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
+| 165 | Compare Version Numbers | String | ★★ | 挺无聊的题目 |
+| 166 | Fraction to Recurring Decimal | Numerical | ★★★ | 纯数学题，无限循环小数的表示 |
+| 167 | Two Sum II - Input array is sorted | Numerical | ★ | 左右两个索引，按照比较结果将left右移或者左移即可 |
+| 168 | Excel Sheet Column Title | Numerical | ★★★ | 字母可以看成是26进制，但是是从1开始的26进制，因此每次计算余数前需要先把数值-1 |
+| 169 | Majority Element | Array | ★★★ | majority记录当前出现次数最多的值，cnt记录次数。遍历数组，若当前值不等于majority，减小cnt，若cnt减值0，那么更新majority和cnt；若当前值等于majority，递增cnt |
+| 170 |  |  |  |  |
+| 171 | Excel Sheet Column Number | Numerical | ★★★ | 168的反向逻辑。每次追加的时候要加上1 |
 |  |  |  |  |  |
 |  |  |  |  |  |
 |  |  |  |  |  |

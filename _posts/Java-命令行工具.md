@@ -117,6 +117,7 @@ jmap的作用并不仅仅为了获取dump文件，它还可以查询finalize执�
 
 * `jmap -dump:format=b,file=<dump_文件名> <java进程号>`：dump进程所有对象的堆栈
 * `jmap -dump:live,format=b,file=<dump_文件名> <java进程号>`：dump进程中存活对象的堆栈，会触发full gc
+* `jmap -histo:live <pid>`：触发full gc
 * `jmap -histo <pid> | sort -k 2 -g -r | less`：统计堆栈中对象的内存信息，按照对象实例个数降序打印
 * `jmap -histo <pid> | sort -k 3 -g -r | less`：统计堆栈中对象的内存信息，按照对象占用内存大小降序打印
 

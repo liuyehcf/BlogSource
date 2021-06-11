@@ -40,6 +40,13 @@
     * [JVM ：关于捕获 Java Heap Dump 的6种方式](https://blog.csdn.net/u010647035/article/details/86563736)
     * 如何定位java进程crash core Dump
     * [Netty堆外内存泄漏排查，这一篇全讲清楚了](https://juejin.cn/post/6844904036672471048)
+    * [Netty堆外内存泄漏排查，这一篇全讲清楚了](https://segmentfault.com/a/1190000021469481)
+        * -Dio.netty.leakDetectionLevel=paranoid 可以设置泄漏检测级别
+        * -Dio.netty.leakDetection.targetRecords=100 可以设置内存泄漏的统计数量
+    * [Netty 防止内存泄漏措施](https://zhuanlan.zhihu.com/p/58444143)
+        * 消息堆积也可导致内存泄漏
+        * ChannelOutboundBuffer.incrementPendingOutboundBytes
+        * netty 读写水位控制，ChannelOption.WRITE_BUFFER_WATER_MARK，默认值可以看DefaultChannelConfig的writeBufferWaterMark字段
 1. linker
 1. Linux-异常处理（中断）
     * https://www.cnblogs.com/gulan-zmc/p/11604437.html
@@ -86,6 +93,14 @@
         * 普通hash --> 一致性hash，本质上就是固定模的长度，在增加或删除节点后hash求模的值不变
         * presharding，假设集群最大容量是50台机器，而最开始只有5台，那可以在5台机器上，每台机器跑10个副本，当需要扩容的时候，进行数据拷贝即可（通过主从配置）。同时节点宕机也不会带来更大的问题
         * 集群中的每个节点再加主从
+        * [一致性哈希和哈希槽对比](https://www.jianshu.com/p/4163916a2a8a)
+        * [如何发现 Redis 热点 Key ，解决方案有哪些？](https://zhuanlan.zhihu.com/p/104942776)
+        * [Redis为什么是单线程的](https://www.cnblogs.com/tuyang1129/p/12822501.html)
+            * redis是基于内存的操作，cpu不是瓶颈
+            * 单线程的好处：简单
+        * redis如何实现过期
+            * 惰性删除：访问的时候进行过期检查，需要有额外的后台线程来执行真正的物理删除，以免占用内存
+            * 定期删除：从过期字典中随机取出20个键，删除这20个建中过期的键，若比例大于25%，那么重复该步骤（需要控制扫描速度，以免消耗大量的cpu）
     * 秒杀场景
     * 有一堆音频文件需要下载，有多台机器，如何实现这个任务
         * 一个中心节点存储下载状态，其他机器请求任务并去执行
@@ -115,9 +130,7 @@
     * 算法题combinationSum2
     * interrupt状态恢复，判断方法本身可以恢复
     * 哈希冲突，key一样的时候，是增加还是替换
-    * redis如何实现过期
     * 1.8把锁粒度降低有没有坏处
-    * redis单线程的好处
     * 朋友圈
         1. 业务模型，存储
         1. 服务架构，发消息，mq，削峰填谷
@@ -127,3 +140,11 @@
         * [深度理解 Linux 读取文件过程！](https://zhuanlan.zhihu.com/p/371574406)
     * 最大子数组和
     * 并发包：CompletableFuture
+    * ConcurrentHashMap
+        * 1.8做了哪些优化？
+            1. 分段锁改成cas+syn
+            1. 当碰撞过多时，用红黑树而非链表
+    * ThreadPoolExecutor
+        * 如何知道哪个是核心线程？worker是有个标记的，标记是否为core线程
+        * keepAlive如何实现，阻塞获取任务时，会根据当前线程数量是否大于core线程数量来决定是否要加超时时间（keepalive）。线程退出时，会唤醒所有线程，避免阻塞在获取任务上
+    * [Cache 和 Buffer 都是缓存，主要区别是什么？](https://www.zhihu.com/question/26190832)
