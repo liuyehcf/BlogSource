@@ -71,7 +71,15 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 
 * `last -x`
 
-## 1.6 useradd
+## 1.6 w
+
+该命令用于查看当前谁登录了系统，并且正在做什么事情，比`who`更强大一点
+
+**示例：**
+
+* `w`
+
+## 1.7 useradd
 
 添加账号
 
@@ -79,13 +87,13 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 
 * `useradd test -g wheel -G wheel -m -s /bin/bash`
 
-## 1.7 passwd
+## 1.8 passwd
 
 **示例：**
 
 * `echo '123456' | passwd --stdin root`
 
-## 1.8 readelf
+## 1.9 readelf
 
 用于读取、解析可执行程序
 
@@ -2565,7 +2573,7 @@ yum install -y iotop
 
 处理过程和`iptables`差不多，有规则链，可以在链中增加规则，它发现一个`syscall`或者特殊事件的时候会去遍历这个链，然后按规则处理，吐不同的日志
 
-__与audit相关的内核编译参数__
+**与audit相关的内核编译参数**
 
 ```
 CONFIG_AUDIT_ARCH=y

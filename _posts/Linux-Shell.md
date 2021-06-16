@@ -1288,6 +1288,15 @@ Remaining arguments:
 --> `arg1'
 ```
 
+## 17.4 printf
+
+主要用于格式转换
+
+```sh
+[root@localhost ~]$ printf %x 255
+ff
+```
+
 # 18 参考
 
 * [shell教程](http://www.runoob.com/linux/linux-shell.html)

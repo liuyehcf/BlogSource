@@ -100,6 +100,10 @@ categories:
 1. `/var/log`：日志
     * `/var/log/audit`：审计日志
 
+## 4.1 参考
+
+* [Differences in /var/log/{syslog,dmesg,messages} log files](https://superuser.com/questions/565927/differences-in-var-log-syslog-dmesg-messages-log-files)
+
 # 5 其他
 
 1. `/dev/disk/by-path`：以磁盘路径为名称的软链接文件

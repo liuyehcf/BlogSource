@@ -1,16 +1,12 @@
 1. Linux-常用命令
     * [工具参考篇](https://linuxtools-rst.readthedocs.io/zh_CN/latest/tool/strace.html)
     * blktrace/iowatcher
-    * printf
-    * w
     * mount[confusion about mount options](https://unix.stackexchange.com/questions/117414/confusion-about-mount-options)
     * 域套接字
     * 如何编写TUI程序(https://github.com/marcusolsson/tui-go)
 1. Linux-安全
     * [红帽企业版 Linux 7安全性指南](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/7/html/security_guide/index)
 1. 文件系统
-    * df、du看到的大小不同
-    * 挂载之后，df、du统计结果
     * overlay2文件系统的使用：[Example OverlayFS Usage [duplicate]](https://askubuntu.com/questions/699565/example-overlayfs-usage)
 1. 操作系统安装
     * cobbler：https://www.cnblogs.com/yanjieli/p/11016825.html
@@ -18,10 +14,6 @@
         * 如何修改rootfs
         * resize-helper
         * 查看已安装的包 https://blog.csdn.net/sunchenzl/article/details/82117212
-1. 操作系统问题排查
-    * [NMI watchdog: BUG: soft lockup](https://zzyongx.github.io/blogs/NMI_watchdog_BUG_soft_lockup.html)
-    * 内核日志，`dmesg`，`cat /proc/kmsg`、`/var/log/messages`
-    * [Differences in /var/log/{syslog,dmesg,messages} log files](https://superuser.com/questions/565927/differences-in-var-log-syslog-dmesg-messages-log-files)
 1. go 分析工具 https://golang.org/pkg/net/http/pprof/
     * [如何使用go pprof定位内存泄露](http://team.jiunile.com/blog/2020/09/go-pprof.html)
     * [Golang 大杀器之性能剖析 PProf](https://www.jianshu.com/p/4e4ff6be6af9)
@@ -30,11 +22,8 @@
     * https://github.com/excalidraw/excalidraw
     * https://learnku.com/articles/47662
 1. tcp
-    * https://zhuanlan.zhihu.com/p/35684094（一个因tcp_tw_recycle引起的跨机房连接超时问题）
-        * close_wait会占用文件描述符
-        * time_wait不会占用
-    * [服务器TIME_WAIT和CLOSE_WAIT详解和解决办法](https://zhuanlan.zhihu.com/p/60382685)
-    * [线上大量CLOSE_WAIT的原因深入分析](https://juejin.cn/post/6844903734300901390)
+    * close_wait会占用文件描述符
+    * time_wait不会占用
     * [TCP协议的滑动窗口具体是怎样控制流量的？](https://www.zhihu.com/question/32255109/answer/898371009)
 1. java
     * [JVM ：关于捕获 Java Heap Dump 的6种方式](https://blog.csdn.net/u010647035/article/details/86563736)
@@ -63,29 +52,20 @@
     * k8s.io/api k8s.io/apimachinery k8s.io/client-go 版本不匹配
     * ipvs
         * [IPVS从入门到精通kube-proxy实现原理](https://zhuanlan.zhihu.com/p/94418251)
-    * 异常问题排查
-        * [docker 卡死引起的 container runtime is down](http://team.jiunile.com/blog/2020/10/docker-hang.html)
-        * [no-space-left-on-device](https://stackoverflow.com/questions/30604846/docker-error-no-space-left-on-device)
-        * no space left on device（mount namespace）
-            * [[WIP] Fix mount loop on "docker cp" #38993](https://github.com/moby/moby/pull/38993)
-            * [Linux Namespace系列（04）：mount namespaces (CLONE_NEWNS)](https://segmentfault.com/a/1190000006912742)
-            * [黄东升: mount namespace和共享子树](https://cloud.tencent.com/developer/article/1518101)
-            * k8s mountPropagation 可以控制mount namespace的传播级别，貌似改不了根目录
-            * 在主机上将根目录标记为private即可解决该问题 mount / --make-private
     * oam [5分钟带你快速入门和了解 OAM Kubernetes](https://www.cnblogs.com/ants/p/13300407.html)
 1. [CPU 和 GPU 的区别是什么？](https://www.zhihu.com/question/19903344)
 1. dracut
 1. 方法论
     * [epoll和select](https://zhuanlan.zhihu.com/p/64771809)
+    * Kiss原则
 1. mysql
     * [解决死锁之路 - 学习事务与隔离级别](https://www.aneasystone.com/archives/2017/10/solving-dead-locks-one.html)
     * [解决死锁之路 - 了解常见的锁类型](https://www.aneasystone.com/archives/2017/11/solving-dead-locks-two.html)
     * [解决死锁之路 - 常见 SQL 语句的加锁分析](https://www.aneasystone.com/archives/2017/12/solving-dead-locks-three.html)
     * [解决死锁之路（终结篇） - 再见死锁](https://www.aneasystone.com/archives/2018/04/solving-dead-locks-four.html)
     * mvcc 客户端1更新某一行，提交，然后客户端更新同一行，回滚的case（回滚时也会比较版本号，否则就把已经提交的数据覆盖了）
-    * mysql中，普通的select是不加锁的，读快照
+    * mysql索引如何存储数据，联合索引？[联合索引在B+树上的存储结构及数据查找方式](https://blog.csdn.net/ibigboy/article/details/104571930?depth_1-)
 1. 面试
-    * mq推拉什么时候用比较好
     * java程序退出了，有什么方法可以分析
     * mybatis延迟加载
     * redis集群相关的知识点
@@ -101,40 +81,8 @@
         * redis如何实现过期
             * 惰性删除：访问的时候进行过期检查，需要有额外的后台线程来执行真正的物理删除，以免占用内存
             * 定期删除：从过期字典中随机取出20个键，删除这20个建中过期的键，若比例大于25%，那么重复该步骤（需要控制扫描速度，以免消耗大量的cpu）
-    * 秒杀场景
-    * 有一堆音频文件需要下载，有多台机器，如何实现这个任务
-        * 一个中心节点存储下载状态，其他机器请求任务并去执行
-        * 执行完了之后回复中心节点，中心节点拿到回复之后将任务标记为已完成。若超时或者失败，都是失败，需要重新下载
-        * 中心节点要持久化存储，宕机后能够恢复
-    * Integer、int的区别
-    * Java泛型，类型信息何时保留，何时擦除
-    * hash算法的常规实现
-        * sha、MD5等
-    * 两列是否能做联合主键
-        * 可以的
-    * 联合索引是如何实现的，和单索引的区别是啥
-        * 单索引的话每个中间节点存的就是该字段边界值，叶节点存的是值以及主键id
-        * 联合索引每个中间节点存的就是所有索引相关字段的边界值（无非比较是个复合比较），叶节点比中间节点多了主键id
-        * [联合索引在B+树上的存储结构及数据查找方式](https://blog.csdn.net/ibigboy/article/details/104571930?depth_1-)
-    * undo、redo
-        * [详细分析MySQL事务日志(redo log和undo log)](https://www.cnblogs.com/f-ck-need-u/archive/2018/05/08/9010872.html)
-        * [必须了解的mysql三大日志-binlog、redo log和undo log](https://segmentfault.com/a/1190000023827696)
-        * 为什么需要redo log？数据库四大特性ACID中的D，持久化，就是成功提交的数据要落盘，但是如果每次commit都去刷新磁盘的话，如果不是顺序写而是横跨多个物理页时，性能就会大幅降低。redo log就是用来做持久化的中间层的。每次提交先写redo log，然后由后台线程将redo log中的内容刷到对应的磁盘上。看起来只是将写物理页改成了写redo log，但由于redo log是顺序写，因此性能是有提高的
-            * 先写日志，将随机写优化为顺序写
-            * 将每次写优化为批量写（但是日志还是每次都写？）
-    * 迁移数据库的基本操作
-        * t0：开启双写，通过注解，在切面中完成双写，要区分insert（新库的主键id）、update和delete
-        * t1：存量数据迁移
-        * t2：数据一致性校验，以老库为准更新
-        * t3：读切到新库
     * 算法题combinationSum2
-    * interrupt状态恢复，判断方法本身可以恢复
-    * 哈希冲突，key一样的时候，是增加还是替换
     * 1.8把锁粒度降低有没有坏处
-    * 朋友圈
-        1. 业务模型，存储
-        1. 服务架构，发消息，mq，削峰填谷
-        1. 写扩散
     * mmap：系统调用使得进程之间通过映射同一个普通文件实现共享内存，普通文件被映射到进程地址空间后，进程可以像访问普通内存一样对文件进行访问，不必再调用read()，write（）等操作
     * 打开文件做了几次拷贝
         * [深度理解 Linux 读取文件过程！](https://zhuanlan.zhihu.com/p/371574406)
@@ -144,17 +92,5 @@
         * 1.8做了哪些优化？
             1. 分段锁改成cas+syn
             1. 当碰撞过多时，用红黑树而非链表
-    * ThreadPoolExecutor
-        * 如何知道哪个是核心线程？worker是有个标记的，标记是否为core线程
-        * keepAlive如何实现，阻塞获取任务时，会根据当前线程数量是否大于core线程数量来决定是否要加超时时间（keepalive）。线程退出时，会唤醒所有线程，避免阻塞在获取任务上
     * [Cache 和 Buffer 都是缓存，主要区别是什么？](https://www.zhihu.com/question/26190832)
-    * b+树相比于b树有哪些优势
-    * 有一个集合有1亿条记录，其中每条记录长度在100~1000Bytes之间。假设有一台机器，内存100M，磁盘500G，请设计一个查询系统，每次用户给定一条记录，能够快速确认该记录是否在集合中
-        * 内存：bitmap
-        * 内存：LRU
-        * 磁盘：索引
-    * 100个硬币，A和B两个人，每人每次只能拿1~6个硬币，谁拿到最后一个谁赢，A先拿，A能保证必胜吗?
-        * 1-6：A胜利
-        * 7：B胜利
-        * 8-13：A胜利（只要剩下的是7即可）
-        * 因此100不是7的倍数，A胜利
+
