@@ -93,4 +93,4 @@
             1. 分段锁改成cas+syn
             1. 当碰撞过多时，用红黑树而非链表
     * [Cache 和 Buffer 都是缓存，主要区别是什么？](https://www.zhihu.com/question/26190832)
-
+    * 数据库范式
