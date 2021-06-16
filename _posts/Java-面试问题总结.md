@@ -1439,6 +1439,60 @@ public class Solution {
     > 8-13：A胜利（只要剩下的是7即可）
     > 因此100不是7的倍数，A胜利。如何操作：A每次拿完后，剩下的硬币数量只要是7的倍数即可
 
+1. 给定一颗二叉树和一个整数 sum，求累加和为 sum 的最长路径长度。路径是指从某个节点往下，每次最多选择一个孩子节点或者不选所形成的节点链。
+    > 
+```java
+import java.util.*;
+
+/*
+ * public class TreeNode {
+ *   int val = 0;
+ *   TreeNode left = null;
+ *   TreeNode right = null;
+ * }
+ */
+
+public class Solution {
+
+    private int maxLen = 0;
+
+    /**
+     * @param root   TreeNode类 the root
+     * @param target int整型 the target
+     * @return int整型
+     */
+    public int findLengthofSum(TreeNode root, int sum) {
+        List<TreeNode> pathNodes = new ArrayList<>();
+        findLengthofSum(root, pathNodes, sum);
+        return maxLen;
+    }
+
+    private void findLengthofSum(TreeNode root, List<TreeNode> pathNodes, int sum) {
+        if (root == null) {
+            return;
+        }
+
+        pathNodes.add(root);
+        int curSum = 0;
+        int len = 0;
+
+        for (int i = pathNodes.size() - 1; i >= 0; i--) {
+            len++;
+
+            curSum += pathNodes.get(i).val;
+            if (curSum == sum) {
+                maxLen = Math.max(maxLen, len);
+            }
+        }
+
+        findLengthofSum(root.left, pathNodes, sum);
+        findLengthofSum(root.right, pathNodes, sum);
+
+        pathNodes.remove(pathNodes.size() - 1);
+    }
+}
+```
+
 # 10 数据库
 
 1. 数据库触发器是什么
