@@ -1041,13 +1041,48 @@ exit
 
 ## 2.1 概念介绍
 
+**本小结摘录转载自[【docker 底层知识】cgroup 原理分析](https://blog.csdn.net/zhonglinzhang/article/details/64905759)**
+
 ![cgroup_arch](/images/Linux-重要特性/cgroup_arch.webp)
 
-* `hierarchy`：cgroups从用户态看，提供了一种叫`cgroup`类型的文件系统(Filesystem)，这是一种虚拟的文件系统，并不真正保存文件，类似`/proc`。通过对这个文件系统的操作（读，写，创建子目录），告诉内核，你希望内核如何控制进程对资源的使用。文件系统本身是层级的，所以构成了`hierarchy`
-* `task`：进程（`process`）在cgroups中称为`task`，`taskid`就是`pid`
-* `subsystem`：cgroups支持的所有可配置的资源称为`subsystem`。例如`cpu`是一种`subsystem`，`memory`也是一种`subsystem`。linux内核在演进过程中`subsystem`是不断增加的
-* `libcgroup`：一个开源软件，提供了一组支持cgroups的应用程序和库，方便用户配置和使用cgroups。目前许多发行版都附带这个软件
+**`cgroup`提供了以下功能：**
+
+* **限制进程组可以使用的资源（Resource limiting）**：比如`memory`子系统可以为进程组设定一个memory使用上限，进程组使用的内存达到限额再申请内存，就会出发OOM（out of memory）
+* **进程组的优先级控制（Prioritization）**：比如可以使用`cpu`子系统为某个进程组分配cpu share
+* **记录进程组使用的资源量（Accounting）**：比如使用`cpuacct`子系统记录某个进程组使用的cpu时间
+* **进程组隔离（Isolation）**：比如使用`ns`子系统可以使不同的进程组使用不同的namespace，以达到隔离的目的，不同的进程组有各自的进程、网络、文件系统挂载空间
+* **进程组控制（Control）**：比如使用`freezer`子系统可以将进程组挂起和恢复
+
+**`cgroup`的子系统**
+
+* `blkio`：这个子系统为块设备设定输入/输出限制，比如物理设备（磁盘，固态硬盘，USB 等等）
+* **`cpu`：这个子系统使用调度程序提供对CPU的`cgroup`任务访问**
+* `cpuacct`：这个子系统自动生成`cgroup`中任务所使用的CPU报告
+* `cpuset`：这个子系统为`cgroup`中的任务分配独立CPU（在多核系统）和内存节点
+* `devices`：这个子系统可允许或者拒绝`cgroup`中的任务访问设备
+* `freezer`：这个子系统挂起或者恢复`cgroup`中的任务。
+* **`memory`：这个子系统设定`cgroup`中任务使用的内存限制，并自动生成由那些任务使用的内存资源报告**
+* `net_cls`：这个子系统使用等级识别符（classid）标记网络数据包，可允许Linux流量控制程序（tc）识别从具体`cgroup`中生成的数据包
+* **`ns`：名称空间子系统**
+
+**`cgroup`的术语**
+
+* `task`：进程（`process`）在`cgroup`中称为`task`，`taskid`就是`pid`
+* `control group`：控制族群就是按照某种标准划分的进程。`cgroup`中的资源控制都是以控制族群为单位实现。一个进程可以加入到某个控制族群，也从一个进程组迁移到另一个控制族群。一个进程组的进程可以使用`cgroup`以控制族群为单位分配的资源，同时受到`cgroup`以控制族群为单位设定的限制
+* `hierarchy`：控制族群可以组织成`hierarchical`的形式，既一颗`控制族群树`。控制族群树上的子节点控制族群是父节点控制族群的孩子，继承父控制族群的特定的属性。从用户态看，内核提供了一种叫`cgroup`类型的文件系统，这是一种虚拟的文件系统，并不真正保存文件，类似`/proc`。通过对这个文件系统的操作（读，写，创建子目录），告诉内核，你希望内核如何控制进程对资源的使用。文件系统本身是层级的，所以构成了`hierarchy`
+* `subsystem`：`cgroup`支持的所有可配置的资源称为`subsystem`，一个子系统就是一个资源控制器。例如`cpu`是一种`subsystem`，`memory`也是一种`subsystem`。子系统必须附加（attach）到一个层级上才能起作用，一个子系统附加到某个层级以后，这个层级上的所有控制族群都受到这个子系统的控制。linux内核在演进过程中`subsystem`是不断增加的
+* `libcgroup`：一个开源软件，提供了一组支持`cgroup`的应用程序和库，方便用户配置和使用`cgroup`。目前许多发行版都附带这个软件
     * 如何安装：`yum install -y libcgroup libcgroup-tools`
+
+**相互关系**
+
+* 每次在系统中创建新层级时，该系统中的所有任务都是那个层级的默认`cgroup`（我们称之为`root cgroup`，此`cgroup`在创建层级时自动创建，后面在该层级中创建的`cgroup`都是此`cgroup`的后代）的初始成员
+* 一个子系统最多只能附加到一个层级
+* 一个层级可以附加多个子系统
+* 一个任务可以是多个`cgroup`的成员，但是这些`cgroup`必须在不同的层级
+* 系统中的进程（任务）创建子进程（任务）时，该子任务自动成为其父进程所在`cgroup`的成员。然后可根据需要将该子任务移动到不同的`cgroup`中，但开始时它总是继承其父任务的`cgroup`
+
+![cgroup_struct](/images/Linux-重要特性/cgroup_struct.jpeg)
 
 ## 2.2 子系统
 
@@ -1067,18 +1102,18 @@ exit
 
 * `nr_periods`：经过的cpu调度周期的个数
 * `nr_throttled`：cgrpu中任务被节流的次数（耗尽所有配额时间后，被禁止运行）
-* `throttled_time`：cgroup中任务被节流的时间总量
+* `throttled_time`：`cgroup`中任务被节流的时间总量
 
-**若我们想控制两个cgroup的相对比例，可以通过配置`cpu.shares`来实现。例如，第一个cgroup设置成200，第二个cgroup设置成100，那么前者可使用的cpu时间是后者的两倍**
+**若我们想控制两个`cgroup`的相对比例，可以通过配置`cpu.shares`来实现。例如，第一个`cgroup`设置成200，第二个`cgroup`设置成100，那么前者可使用的cpu时间是后者的两倍**
 
 ## 2.3 docker与cgroup
 
-**2种cgroup驱动**
+**2种`cgroup`驱动**
 
 1. `system cgroup driver`
 1. `cgroupfs cgroup driver`
 
-**容器中常用的cgroup**
+**容器中常用的`cgroup`**
 
 1. `cpu cpuset cpuacct`
 1. `memory`
@@ -1087,7 +1122,7 @@ exit
 1. `blkio`：限制容器用到的磁盘的iops、vps速率限制
 1. `pid`：容器可以用到的最大进程数量
 
-**查看当前系统可用的cgroup**
+**查看当前系统可用的`cgroup`**
 
 * `mount -t cgroup`
 
@@ -1105,6 +1140,8 @@ exit
 * [Docker 背后的内核知识——cgroups 资源限制](https://www.infoq.cn/article/docker-kernel-knowledge-cgroups-resource-isolation/)
 * [理解Docker（4）：Docker 容器使用 cgroups 限制资源使用](https://www.cnblogs.com/sammyliu/p/5886833.html)
 * [kubernetes kubelet组件中cgroup的层层"戒备"](https://www.cnblogs.com/gaorong/p/11716907.html)
+* [【docker 底层知识】cgroup 原理分析](https://blog.csdn.net/zhonglinzhang/article/details/64905759)
+* [Linux Cgroup浅析](https://zhuanlan.zhihu.com/p/102372680)
 
 # 3 Systemd
 
