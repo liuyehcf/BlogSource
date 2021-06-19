@@ -69,6 +69,7 @@ categories:
 1. `/proc/cmdline`：系统启动时输入给内核的命令行参数
 1. `/proc/version`：内核版本
 1. `/proc/cpuinfo`：cpu硬件信息
+1. `/proc/cgroups`：当前内核支持的cgroup子系统
 1. `/proc/filesystems`：当前内核支持的文件系统列表
 1. `/proc/kallsyms`：内核符号表
 1. `/proc/kmsg`：内核消息，对应dmesg命令

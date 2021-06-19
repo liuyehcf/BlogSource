@@ -1039,52 +1039,32 @@ exit
 
 # 2 cgroup
 
-## 2.1 概念介绍
+**`cgroup`和`namespace`类似，也是将进程进行分组，但它的目的和`namespace`不一样，`namespace`是为了隔离进程组之间的资源（每个进程都有一个隔离的资源视图），而`cgroup`是为了对一组进程进行统一的资源监控和限制**
 
-**本小结摘录转载自[【docker 底层知识】cgroup 原理分析](https://blog.csdn.net/zhonglinzhang/article/details/64905759)**
+## 2.1 层级结构（hierarch）
 
-![cgroup_arch](/images/Linux-重要特性/cgroup_arch.webp)
+**一个`hierarchy`可以理解为一棵`cgroup`树，树的每个`节点`就是一个`进程组`，每棵树都会与零到多个`subsystem`关联**。在一颗树里面，会包含Linux系统中的所有进程，但每个进程只能属于一个节点（进程组）。系统中可以有很多颗`cgroup`树，每棵树都和不同的`subsystem`关联，一个进程可以属于多颗树，即一个进程可以属于多个进程组，只是这些进程组和不同的`subsystem`关联。目前Linux支持12种`subsystem`，如果不考虑不与任何`subsystem`关联的情况（`systemd`就属于这种情况），Linux里面最多可以建12颗`cgroup`树，每棵树关联一个`subsystem`，当然也可以只建一棵树，然后让这棵树关联所有的`subsystem`。当一颗`cgroup`树不和任何`subsystem`关联的时候，意味着这棵树只是将进程进行分组，至于要在分组的基础上做些什么，将由应用程序自己决定，`systemd`就是一个这样的例子
 
-**`cgroup`提供了以下功能：**
+## 2.2 子系统（subsystem）
 
-* **限制进程组可以使用的资源（Resource limiting）**：比如`memory`子系统可以为进程组设定一个memory使用上限，进程组使用的内存达到限额再申请内存，就会出发OOM（out of memory）
-* **进程组的优先级控制（Prioritization）**：比如可以使用`cpu`子系统为某个进程组分配cpu share
-* **记录进程组使用的资源量（Accounting）**：比如使用`cpuacct`子系统记录某个进程组使用的cpu时间
-* **进程组隔离（Isolation）**：比如使用`ns`子系统可以使不同的进程组使用不同的namespace，以达到隔离的目的，不同的进程组有各自的进程、网络、文件系统挂载空间
-* **进程组控制（Control）**：比如使用`freezer`子系统可以将进程组挂起和恢复
+**一个`subsystem`就是一个内核模块，他被关联到一颗`cgroup`树之后，就会在树的每个节点（进程组）上做具体的操作。**`subsystem`经常被称作`resource controller`，因为它主要被用来调度或者限制每个进程组的资源，但是这个说法不完全准确，因为有时我们将进程分组只是为了做一些监控，观察一下他们的状态，比如`perf_event subsystem`。到目前为止，Linux支持12种`subsystem`，比如限制CPU的使用时间，限制使用的内存，统计CPU的使用情况，冻结和恢复一组进程等，后续会对它们一一进行介绍
 
-**`cgroup`的子系统**
+**以下是12种`cgroup`子系统**
 
-* `blkio`：这个子系统为块设备设定输入/输出限制，比如物理设备（磁盘，固态硬盘，USB 等等）
-* **`cpu`：这个子系统使用调度程序提供对CPU的`cgroup`任务访问**
-* `cpuacct`：这个子系统自动生成`cgroup`中任务所使用的CPU报告
-* `cpuset`：这个子系统为`cgroup`中的任务分配独立CPU（在多核系统）和内存节点
-* `devices`：这个子系统可允许或者拒绝`cgroup`中的任务访问设备
-* `freezer`：这个子系统挂起或者恢复`cgroup`中的任务。
-* **`memory`：这个子系统设定`cgroup`中任务使用的内存限制，并自动生成由那些任务使用的内存资源报告**
-* `net_cls`：这个子系统使用等级识别符（classid）标记网络数据包，可允许Linux流量控制程序（tc）识别从具体`cgroup`中生成的数据包
-* **`ns`：名称空间子系统**
+1. `blkio`：这个子系统为块设备设定输入/输出限制，比如物理设备（磁盘，固态硬盘，USB 等等）
+1. **`cpu`：这个子系统使用调度程序提供对CPU的`cgroup`任务访问**
+1. `cpuacct`：这个子系统自动生成`cgroup`中任务所使用的CPU报告
+1. `cpuset`：这个子系统为`cgroup`中的任务分配独立CPU（在多核系统）和内存节点
+1. `devices`：这个子系统可允许或者拒绝`cgroup`中的任务访问设备
+1. `freezer`：这个子系统挂起或者恢复`cgroup`中的任务。
+1. `hugetlb`：
+1. **`memory`：这个子系统设定`cgroup`中任务使用的内存限制，并自动生成由那些任务使用的内存资源报告**
+1. `net_cls`：这个子系统使用等级识别符（classid）标记网络数据包，可允许Linux流量控制程序（tc）识别从具体`cgroup`中生成的数据包
+1. `net_prio`：
+1. **`ns`：名称空间子系统**
+1. `perf_event`：
 
-**`cgroup`的术语**
-
-* `task`：进程（`process`）在`cgroup`中称为`task`，`taskid`就是`pid`
-* `control group`：控制族群就是按照某种标准划分的进程。`cgroup`中的资源控制都是以控制族群为单位实现。一个进程可以加入到某个控制族群，也从一个进程组迁移到另一个控制族群。一个进程组的进程可以使用`cgroup`以控制族群为单位分配的资源，同时受到`cgroup`以控制族群为单位设定的限制
-* `hierarchy`：控制族群可以组织成`hierarchical`的形式，既一颗`控制族群树`。控制族群树上的子节点控制族群是父节点控制族群的孩子，继承父控制族群的特定的属性。从用户态看，内核提供了一种叫`cgroup`类型的文件系统，这是一种虚拟的文件系统，并不真正保存文件，类似`/proc`。通过对这个文件系统的操作（读，写，创建子目录），告诉内核，你希望内核如何控制进程对资源的使用。文件系统本身是层级的，所以构成了`hierarchy`
-* `subsystem`：`cgroup`支持的所有可配置的资源称为`subsystem`，一个子系统就是一个资源控制器。例如`cpu`是一种`subsystem`，`memory`也是一种`subsystem`。子系统必须附加（attach）到一个层级上才能起作用，一个子系统附加到某个层级以后，这个层级上的所有控制族群都受到这个子系统的控制。linux内核在演进过程中`subsystem`是不断增加的
-* `libcgroup`：一个开源软件，提供了一组支持`cgroup`的应用程序和库，方便用户配置和使用`cgroup`。目前许多发行版都附带这个软件
-    * 如何安装：`yum install -y libcgroup libcgroup-tools`
-
-**相互关系**
-
-* 每次在系统中创建新层级时，该系统中的所有任务都是那个层级的默认`cgroup`（我们称之为`root cgroup`，此`cgroup`在创建层级时自动创建，后面在该层级中创建的`cgroup`都是此`cgroup`的后代）的初始成员
-* 一个子系统最多只能附加到一个层级
-* 一个层级可以附加多个子系统
-* 一个任务可以是多个`cgroup`的成员，但是这些`cgroup`必须在不同的层级
-* 系统中的进程（任务）创建子进程（任务）时，该子任务自动成为其父进程所在`cgroup`的成员。然后可根据需要将该子任务移动到不同的`cgroup`中，但开始时它总是继承其父任务的`cgroup`
-
-![cgroup_struct](/images/Linux-重要特性/cgroup_struct.jpeg)
-
-## 2.2 子系统
+**可以通过`cat /proc/cgroups`或者`mount -t cgroup`查看系统支持的子系统**
 
 ### 2.2.1 cpu子系统
 
@@ -1112,19 +1092,6 @@ exit
 
 1. `system cgroup driver`
 1. `cgroupfs cgroup driver`
-
-**容器中常用的`cgroup`**
-
-1. `cpu cpuset cpuacct`
-1. `memory`
-1. `device`：控制可以在容器中看到的设备
-1. `freezer`：在停止容器的时候使用，冻结容器内所有进程，防止进程逃逸到宿主机？？？
-1. `blkio`：限制容器用到的磁盘的iops、vps速率限制
-1. `pid`：容器可以用到的最大进程数量
-
-**查看当前系统可用的`cgroup`**
-
-* `mount -t cgroup`
 
 ## 2.4 kubernetes与cgroup
 
