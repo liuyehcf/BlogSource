@@ -368,53 +368,53 @@ export ip_net=192.168.45.0
 export ip_netmask=255.255.255.0
 
 function setup(){
-	echo "1/10: 创建名为 '${namespace}' 的网络命名空间"
-	ip netns add ${namespace}
+    echo "1/10: 创建名为 '${namespace}' 的网络命名空间"
+    ip netns add ${namespace}
 
-	echo "2/10: 创建一对 'veth' 类型的网卡设备，一个网卡为 '${ifname_outside_ns}'，另一个网卡为 '${ifname_inside_ns}'"
-	ip link add ${ifname_outside_ns} type veth peer name ${ifname_inside_ns}
+    echo "2/10: 创建一对 'veth' 类型的网卡设备，一个网卡为 '${ifname_outside_ns}'，另一个网卡为 '${ifname_inside_ns}'"
+    ip link add ${ifname_outside_ns} type veth peer name ${ifname_inside_ns}
 
-	echo "3/10: 配置网卡 '${ifname_outside_ns}' 的IP地址 '${ip_outside_ns}'"
-	ifconfig ${ifname_outside_ns} ${ip_outside_ns} netmask ${ip_netmask} up
+    echo "3/10: 配置网卡 '${ifname_outside_ns}' 的IP地址 '${ip_outside_ns}'"
+    ifconfig ${ifname_outside_ns} ${ip_outside_ns} netmask ${ip_netmask} up
 
-	echo "4/10: 将网卡 '${ifname_inside_ns}' 加入网络命名空间 '${namespace}' 中"
-	ip link set ${ifname_inside_ns} netns ${namespace}
+    echo "4/10: 将网卡 '${ifname_inside_ns}' 加入网络命名空间 '${namespace}' 中"
+    ip link set ${ifname_inside_ns} netns ${namespace}
 
-	echo "5/10: 将在网络命名空间 '${namespace}' 中的网卡 '${ifname_inside_ns}' 的IP地址设置为 '${ip_inside_ns}'，它需要和网卡 '${ifname_outside_ns}' 的IP地址在同一个网段上"
-	ip netns exec ${namespace} ifconfig ${ifname_inside_ns} ${ip_inside_ns} netmask ${ip_netmask} up
+    echo "5/10: 将在网络命名空间 '${namespace}' 中的网卡 '${ifname_inside_ns}' 的IP地址设置为 '${ip_inside_ns}'，它需要和网卡 '${ifname_outside_ns}' 的IP地址在同一个网段上"
+    ip netns exec ${namespace} ifconfig ${ifname_inside_ns} ${ip_inside_ns} netmask ${ip_netmask} up
 
-	echo "6/10: 将网络命名空间 '${namespace}' 中的默认路由设置为网卡 '${ifname_outside_ns}' 的IP地址 '${ip_outside_ns}'"
-	ip netns exec ${namespace} route add default gw ${ip_outside_ns}
+    echo "6/10: 将网络命名空间 '${namespace}' 中的默认路由设置为网卡 '${ifname_outside_ns}' 的IP地址 '${ip_outside_ns}'"
+    ip netns exec ${namespace} route add default gw ${ip_outside_ns}
 
-	echo "7/10: 配置SNAT，将从网络命名空间 '${namespace}' 中发出的网络包的源IP地址替换为网卡 '${ifname_external}' 的IP地址"
-	iptables -t nat -A POSTROUTING -s ${ip_net}/${ip_netmask} -o ${ifname_external} -j MASQUERADE
+    echo "7/10: 配置SNAT，将从网络命名空间 '${namespace}' 中发出的网络包的源IP地址替换为网卡 '${ifname_external}' 的IP地址"
+    iptables -t nat -A POSTROUTING -s ${ip_net}/${ip_netmask} -o ${ifname_external} -j MASQUERADE
 
-	echo "8/10: 在默认的 'FORWARD' 策略为 'DROP' 时，显式地允许网卡 '${ifname_outside_ns}' 和网卡 '${ifname_external}' 之间的进行数据包转发"
-	iptables -t filter -A FORWARD -i ${ifname_external} -o ${ifname_outside_ns} -j ACCEPT
-	iptables -t filter -A FORWARD -i ${ifname_outside_ns} -o ${ifname_external} -j ACCEPT
+    echo "8/10: 在默认的 'FORWARD' 策略为 'DROP' 时，显式地允许网卡 '${ifname_outside_ns}' 和网卡 '${ifname_external}' 之间的进行数据包转发"
+    iptables -t filter -A FORWARD -i ${ifname_external} -o ${ifname_outside_ns} -j ACCEPT
+    iptables -t filter -A FORWARD -i ${ifname_outside_ns} -o ${ifname_external} -j ACCEPT
 
-	echo "9/10: 开启内核转发功能"
-	echo 1 > /proc/sys/net/ipv4/ip_forward
+    echo "9/10: 开启内核转发功能"
+    echo 1 > /proc/sys/net/ipv4/ip_forward
 
-	echo "10/10: 为网络命名空间 '${namespace}' 配置DNS服务，用于域名解析"
-	mkdir -p /etc/netns/${namespace}
-	echo "nameserver 8.8.8.8" > /etc/netns/${namespace}/resolv.conf
+    echo "10/10: 为网络命名空间 '${namespace}' 配置DNS服务，用于域名解析"
+    mkdir -p /etc/netns/${namespace}
+    echo "nameserver 8.8.8.8" > /etc/netns/${namespace}/resolv.conf
 }
 
 function cleanup(){
-	echo "1/4: 删除 'FORWARD' 规则"
-	iptables -t filter -D FORWARD -i ${ifname_external} -o ${ifname_outside_ns} -j ACCEPT
-	iptables -t filter -D FORWARD -i ${ifname_outside_ns} -o ${ifname_external} -j ACCEPT
+    echo "1/4: 删除 'FORWARD' 规则"
+    iptables -t filter -D FORWARD -i ${ifname_external} -o ${ifname_outside_ns} -j ACCEPT
+    iptables -t filter -D FORWARD -i ${ifname_outside_ns} -o ${ifname_external} -j ACCEPT
 
-	echo "2/4: 删除 'NAT'"
-	iptables -t nat -D POSTROUTING -s ${ip_net}/${ip_netmask} -o ${ifname_external} -j MASQUERADE
+    echo "2/4: 删除 'NAT'"
+    iptables -t nat -D POSTROUTING -s ${ip_net}/${ip_netmask} -o ${ifname_external} -j MASQUERADE
 
-	echo "3/4: 删除网卡设备 '${ifname_outside_ns}' 以及 '${ifname_inside_ns}'"
-	ip link delete ${ifname_outside_ns}
-	
-	echo "4/4: 删除网络命名空间 '${namespace}'"
-	ip netns delete ${namespace}
-	rm -rf /etc/netns/${namespace}
+    echo "3/4: 删除网卡设备 '${ifname_outside_ns}' 以及 '${ifname_inside_ns}'"
+    ip link delete ${ifname_outside_ns}
+    
+    echo "4/4: 删除网络命名空间 '${namespace}'"
+    ip netns delete ${namespace}
+    rm -rf /etc/netns/${namespace}
 }
 
 export -f setup
@@ -487,69 +487,69 @@ export ip_netmask=255.255.255.0
 export bridge_name=demobridge
 
 function setup(){
-	echo "1/13: 创建网桥 '${bridge_name}'"
-	brctl addbr ${bridge_name}
-	brctl stp ${bridge_name} off
+    echo "1/13: 创建网桥 '${bridge_name}'"
+    brctl addbr ${bridge_name}
+    brctl stp ${bridge_name} off
 
-	echo "2/13: 配置网桥 '${bridge_name}' 的IP '${ip_outside_ns}'"
-	ifconfig ${bridge_name} ${ip_outside_ns} netmask ${ip_netmask} up
+    echo "2/13: 配置网桥 '${bridge_name}' 的IP '${ip_outside_ns}'"
+    ifconfig ${bridge_name} ${ip_outside_ns} netmask ${ip_netmask} up
 
-	echo "3/13: 创建名为 '${namespace}' 的网络命名空间"
-	ip netns add ${namespace}
+    echo "3/13: 创建名为 '${namespace}' 的网络命名空间"
+    ip netns add ${namespace}
 
-	echo "4/13: 创建一对 'veth' 类型的网卡设备，一个网卡为 '${ifname_outside_ns}'，另一个网卡为 '${ifname_inside_ns}'"
-	ip link add ${ifname_outside_ns} type veth peer name ${ifname_inside_ns}
+    echo "4/13: 创建一对 'veth' 类型的网卡设备，一个网卡为 '${ifname_outside_ns}'，另一个网卡为 '${ifname_inside_ns}'"
+    ip link add ${ifname_outside_ns} type veth peer name ${ifname_inside_ns}
 
-	echo "5/13: 开启网卡 '${ifname_outside_ns}'"
-	ip link set ${ifname_outside_ns} up
+    echo "5/13: 开启网卡 '${ifname_outside_ns}'"
+    ip link set ${ifname_outside_ns} up
 
-	echo "6/13: 将网卡 '${ifname_outside_ns}' 绑定到网桥 '${bridge_name}' 上"
-	brctl addif ${bridge_name} ${ifname_outside_ns}
-	
-	echo "7/13: 将网卡 '${ifname_inside_ns}' 加入网络命名空间 '${namespace}' 中"
-	ip link set ${ifname_inside_ns} netns ${namespace}
+    echo "6/13: 将网卡 '${ifname_outside_ns}' 绑定到网桥 '${bridge_name}' 上"
+    brctl addif ${bridge_name} ${ifname_outside_ns}
+    
+    echo "7/13: 将网卡 '${ifname_inside_ns}' 加入网络命名空间 '${namespace}' 中"
+    ip link set ${ifname_inside_ns} netns ${namespace}
 
-	echo "8/13: 将在网络命名空间 '${namespace}' 中的网卡 '${ifname_inside_ns}' 的IP地址设置为 '${ip_inside_ns}'，它需要和网卡 '${ifname_outside_ns}' 的IP地址在同一个网段上"
-	ip netns exec ${namespace} ifconfig ${ifname_inside_ns} ${ip_inside_ns} netmask ${ip_netmask} up
+    echo "8/13: 将在网络命名空间 '${namespace}' 中的网卡 '${ifname_inside_ns}' 的IP地址设置为 '${ip_inside_ns}'，它需要和网卡 '${ifname_outside_ns}' 的IP地址在同一个网段上"
+    ip netns exec ${namespace} ifconfig ${ifname_inside_ns} ${ip_inside_ns} netmask ${ip_netmask} up
 
-	echo "9/13: 将网络命名空间 '${namespace}' 中的默认路由设置为网卡 '${ifname_outside_ns}' 的IP地址 '${ip_outside_ns}'"
-	ip netns exec ${namespace} route add default gw ${ip_outside_ns}
+    echo "9/13: 将网络命名空间 '${namespace}' 中的默认路由设置为网卡 '${ifname_outside_ns}' 的IP地址 '${ip_outside_ns}'"
+    ip netns exec ${namespace} route add default gw ${ip_outside_ns}
 
-	echo "10/13: 配置SNAT，将从网络命名空间 '${namespace}' 中发出的网络包的源IP地址替换为网卡 '${ifname_external}' 的IP地址"
-	iptables -t nat -A POSTROUTING -s ${ip_net}/${ip_netmask} -o ${ifname_external} -j MASQUERADE
+    echo "10/13: 配置SNAT，将从网络命名空间 '${namespace}' 中发出的网络包的源IP地址替换为网卡 '${ifname_external}' 的IP地址"
+    iptables -t nat -A POSTROUTING -s ${ip_net}/${ip_netmask} -o ${ifname_external} -j MASQUERADE
 
-	echo "11/13: 在默认的 'FORWARD' 策略为 'DROP' 时，显式地允许网桥 '${bridge_name}' 和网卡 '${ifname_external}' 之间的进行数据包转发"
-	iptables -t filter -A FORWARD -i ${ifname_external} -o ${bridge_name} -j ACCEPT
-	iptables -t filter -A FORWARD -i ${bridge_name} -o ${ifname_external} -j ACCEPT
-	
-	echo "12/13: 开启内核转发功能"
-	echo 1 > /proc/sys/net/ipv4/ip_forward
+    echo "11/13: 在默认的 'FORWARD' 策略为 'DROP' 时，显式地允许网桥 '${bridge_name}' 和网卡 '${ifname_external}' 之间的进行数据包转发"
+    iptables -t filter -A FORWARD -i ${ifname_external} -o ${bridge_name} -j ACCEPT
+    iptables -t filter -A FORWARD -i ${bridge_name} -o ${ifname_external} -j ACCEPT
+    
+    echo "12/13: 开启内核转发功能"
+    echo 1 > /proc/sys/net/ipv4/ip_forward
 
-	echo "13/13: 为网络命名空间 '${namespace}' 配置DNS服务，用于域名解析"
-	mkdir -p /etc/netns/${namespace}
-	echo "nameserver 8.8.8.8" > /etc/netns/${namespace}/resolv.conf
+    echo "13/13: 为网络命名空间 '${namespace}' 配置DNS服务，用于域名解析"
+    mkdir -p /etc/netns/${namespace}
+    echo "nameserver 8.8.8.8" > /etc/netns/${namespace}/resolv.conf
 }
 
 function cleanup(){
-	echo "1/6: 删除 'FORWARD' 规则"
-	iptables -t filter -D FORWARD -i ${ifname_external} -o ${bridge_name} -j ACCEPT
-	iptables -t filter -D FORWARD -i ${bridge_name} -o ${ifname_external} -j ACCEPT
+    echo "1/6: 删除 'FORWARD' 规则"
+    iptables -t filter -D FORWARD -i ${ifname_external} -o ${bridge_name} -j ACCEPT
+    iptables -t filter -D FORWARD -i ${bridge_name} -o ${ifname_external} -j ACCEPT
 
-	echo "2/6: 删除 'NAT'"
-	iptables -t nat -D POSTROUTING -s ${ip_net}/${ip_netmask} -o ${ifname_external} -j MASQUERADE
+    echo "2/6: 删除 'NAT'"
+    iptables -t nat -D POSTROUTING -s ${ip_net}/${ip_netmask} -o ${ifname_external} -j MASQUERADE
 
-	echo "3/6: 删除网卡设备 '${ifname_outside_ns}' 以及 '${ifname_inside_ns}'"
-	ip link delete ${ifname_outside_ns}
-	
-	echo "4/6: 删除网络命名空间 '${namespace}'"
-	ip netns delete ${namespace}
-	rm -rf /etc/netns/${namespace}
+    echo "3/6: 删除网卡设备 '${ifname_outside_ns}' 以及 '${ifname_inside_ns}'"
+    ip link delete ${ifname_outside_ns}
+    
+    echo "4/6: 删除网络命名空间 '${namespace}'"
+    ip netns delete ${namespace}
+    rm -rf /etc/netns/${namespace}
 
-	echo "5/6: 关闭网桥 '${bridge_name}'"
-	ifconfig ${bridge_name} down
+    echo "5/6: 关闭网桥 '${bridge_name}'"
+    ifconfig ${bridge_name} down
 
-	echo "6/6: 删除网桥 '${bridge_name}'"
-	brctl delbr ${bridge_name}
+    echo "6/6: 删除网桥 '${bridge_name}'"
+    brctl delbr ${bridge_name}
 }
 
 export -f setup
@@ -1051,18 +1051,18 @@ exit
 
 **以下是12种`cgroup`子系统**
 
-1. `blkio`：这个子系统为块设备设定输入/输出限制，比如物理设备（磁盘，固态硬盘，USB 等等）
-1. **`cpu`：这个子系统使用调度程序提供对CPU的`cgroup`任务访问**
-1. `cpuacct`：这个子系统自动生成`cgroup`中任务所使用的CPU报告
-1. `cpuset`：这个子系统为`cgroup`中的任务分配独立CPU（在多核系统）和内存节点
-1. `devices`：这个子系统可允许或者拒绝`cgroup`中的任务访问设备
-1. `freezer`：这个子系统挂起或者恢复`cgroup`中的任务。
-1. `hugetlb`：
-1. **`memory`：这个子系统设定`cgroup`中任务使用的内存限制，并自动生成由那些任务使用的内存资源报告**
-1. `net_cls`：这个子系统使用等级识别符（classid）标记网络数据包，可允许Linux流量控制程序（tc）识别从具体`cgroup`中生成的数据包
-1. `net_prio`：
-1. **`ns`：名称空间子系统**
-1. `perf_event`：
+1. `blkio`：限制`cgroup`访问块设备的IO速度
+1. **`cpu`：用来限制`cgroup`的CPU使用率**
+1. `cpuacct`：统计`cgroup`的CPU的使用率
+1. `cpuset`：绑定`cgroup`到指定`CPUs`和`NUMA`节点
+1. `devices`：限制`cgroup`创建（`mknod`）和访问设备的权限
+1. `freezer`：`suspend`和`restore`一个`cgroup`中的所有进程
+1. `hugetlb`：限制`cgroup`的`huge pages`的使用量
+1. **`memory`：统计和限制`cgroup`的内存的使用率，包括`process memory`、`kernel memory`、和`swap`**
+1. `net_cls`：将一个`cgroup`中进程创建的所有网络包加上一个`classid`标记，用于`tc`和`iptables`。只对发出去的网络包生效，对收到的网络包不起作用
+1. `net_prio`：针对每个网络接口设置`cgroup`的访问优先级
+1. `perf_event`：对`cgroup`进行性能监控
+1. **`pids`：限制一个`cgroup`及其子孙`cgroup`中的总进程数**
 
 **可以通过`cat /proc/cgroups`或者`mount -t cgroup`查看系统支持的子系统**
 
@@ -1086,29 +1086,90 @@ exit
 
 **若我们想控制两个`cgroup`的相对比例，可以通过配置`cpu.shares`来实现。例如，第一个`cgroup`设置成200，第二个`cgroup`设置成100，那么前者可使用的cpu时间是后者的两倍**
 
-## 2.3 docker与cgroup
+## 2.3 内核实现
+
+![cgroup_struct](/images/Linux-重要特性/cgroup_struct.png)
+
+上面这个图从整体结构上描述了进程与`cgroup`之间的关系。最下面的`P`代表一个进程。每一个进程的描述符中有一个指针指向了一个辅助数据结构`css_set`（`cgroups subsystem set`）。指向某一个`css_set`的进程会被加入到当前`css_set`的进程链表中。一个进程只能隶属于一个`css_set`，一个`css_set`可以包含多个进程，隶属于同一`css_set`的进程受到同一个`css_set`所关联的资源限制
+
+上图中的`M×N Linkage`说明的是`css_set`通过辅助数据结构可以与层级结构的`节点`进行多对多的关联。但是`cgroup`不允许`css_set`同时关联同一个层级结构下的多个`节点`，这是因为`cgroup`对同一组进程的同一种资源不允许有多个限制配置
+
+一个`css_set`关联多个层级结构的`节点`时，表明需要对当前`css_set`下的进程进行多种资源的控制。而一个层级结构的`节点`关联多个`css_set`时，表明多个`css_set`下的进程列表受到同一份资源的相同限制
+
+```c
+struct task_struct {
+    /* ... 省略无关定义 */
+
+#ifdef CONFIG_CGROUPS
+    /* Control Group info protected by css_set_lock */
+    struct css_set __rcu *cgroups;
+    /* cg_list protected by css_set_lock and tsk->alloc_lock */
+    struct list_head cg_list;
+#endif
+
+    /* ... 省略无关定义 */
+};
+
+struct css_set {
+
+    /* Reference count */
+    atomic_t refcount;
+
+    /*
+     * List running through all cgroup groups in the same hash
+     * slot. Protected by css_set_lock
+     */
+    struct hlist_node hlist;
+
+    /*
+     * List running through all tasks using this cgroup
+     * group. Protected by css_set_lock
+     */
+    struct list_head tasks;
+
+    /*
+     * List of cg_cgroup_link objects on link chains from
+     * cgroups referenced from this css_set. Protected by
+     * css_set_lock
+     */
+    struct list_head cg_links;
+
+    /*
+     * Set of subsystem states, one for each subsystem. This array
+     * is immutable after creation apart from the init_css_set
+     * during subsystem registration (at boot time) and modular subsystem
+     * loading/unloading.
+     */
+    struct cgroup_subsys_state *subsys[CGROUP_SUBSYS_COUNT];
+
+    /* For RCU-protected deletion */
+    struct rcu_head rcu_head;
+};
+```
+
+## 2.4 docker与cgroup
 
 **2种`cgroup`驱动**
 
 1. `system cgroup driver`
 1. `cgroupfs cgroup driver`
 
-## 2.4 kubernetes与cgroup
+## 2.5 kubernetes与cgroup
 
 在k8s中，以pod为单位进行资源限制（充分利用了`cgroup`的`hierarchy`），对应的目录为`/sys/fs/cgroup/<resource type>/kubepods.slice`
 
-## 2.5 参考
+## 2.6 参考
 
 * [【docker 底层知识】cgroup 原理分析](https://blog.csdn.net/zhonglinzhang/article/details/64905759)
 * [Linux Cgroup 入门教程：基本概念](https://fuckcloudnative.io/posts/understanding-cgroups-part-1-basics/)
 * [Linux Cgroup 入门教程：CPU](https://fuckcloudnative.io/posts/understanding-cgroups-part-2-cpu/)
 * [Linux Cgroup 入门教程：内存](https://fuckcloudnative.io/posts/understanding-cgroups-part-3-memory/)
+* [Linux资源管理之cgroups简介](https://tech.meituan.com/2015/03/31/cgroups.html)
 * [Linux Cgroup浅析](https://zhuanlan.zhihu.com/p/102372680)
 * [RedHat-资源管理指南](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/7/html/resource_management_guide/index)
 * [DOCKER基础技术：LINUX CGROUP](https://coolshell.cn/articles/17049.html)
 * [LINUX CGROUP总结](https://www.cnblogs.com/menkeyi/p/10941843.html)
 * [clone-manpage](http://man7.org/linux/man-pages/man2/clone.2.html)
-* [Linux资源管理之cgroups简介](https://tech.meituan.com/2015/03/31/cgroups.html)
 * [Docker 背后的内核知识——cgroups 资源限制](https://www.infoq.cn/article/docker-kernel-knowledge-cgroups-resource-isolation/)
 * [理解Docker（4）：Docker 容器使用 cgroups 限制资源使用](https://www.cnblogs.com/sammyliu/p/5886833.html)
 * [kubernetes kubelet组件中cgroup的层层"戒备"](https://www.cnblogs.com/gaorong/p/11716907.html)
