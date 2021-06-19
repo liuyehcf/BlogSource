@@ -77,6 +77,7 @@ categories:
 1. `/proc/stat`：全面统计状态表
 1. `/proc/loadavg`：cpu负载，分别表示1分钟、5分钟、15分钟的平均cpu负载
     * `cpu load`的含义：正在执行或者等待执行的进程数量。在内核代码中（`3.10.x`），计算`cpu load`的方法是`spu_calc_load`
+    * `cpu_load = α * cpu_load + (1 - α) * active_task_size`。`cpu_load`与原值以及当前活跃进程数量两者均相关，在1分钟、5分钟、15分钟三种情况下`α`的取值不同
 1. `/proc/interrupts`：中断映射表
 1. `/proc/self`：我们可以通过`/proc/${pid}`目录来获取指定进程的信息。当pid可能发生变化时，我们还可以通过`/proc/self`来访问当前进程的信息，不同的进程访问该目录下的文件得到的结果是不同的
 1. `/proc/sys/net`：网络相关配置
