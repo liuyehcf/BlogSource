@@ -1145,6 +1145,105 @@ struct css_set {
     /* For RCU-protected deletion */
     struct rcu_head rcu_head;
 };
+
+struct cgroup_subsys_state {
+    /*
+     * The cgroup that this subsystem is attached to. Useful
+     * for subsystems that want to know about the cgroup
+     * hierarchy structure
+     */
+    struct cgroup *cgroup;
+
+    /*
+     * State maintained by the cgroup system to allow subsystems
+     * to be "busy". Should be accessed via css_get(),
+     * css_tryget() and css_put().
+     */
+
+    atomic_t refcnt;
+
+    unsigned long flags;
+    /* ID for this css, if possible */
+    struct css_id __rcu *id;
+
+    /* Used to put @cgroup->dentry on the last css_put() */
+    struct work_struct dput_work;
+};
+
+struct cgroup {
+    unsigned long flags;		/* "unsigned long" so bitops work */
+
+    /*
+     * count users of this cgroup. >0 means busy, but doesn't
+     * necessarily indicate the number of tasks in the cgroup
+     */
+    atomic_t count;
+
+    int id;				/* ida allocated in-hierarchy ID */
+
+    /*
+     * We link our 'sibling' struct into our parent's 'children'.
+     * Our children link their 'sibling' into our 'children'.
+     */
+    struct list_head sibling;	/* my parent's children */
+    struct list_head children;	/* my children */
+    struct list_head files;		/* my files */
+
+    struct cgroup *parent;		/* my parent */
+    struct dentry *dentry;		/* cgroup fs entry, RCU protected */
+
+    /*
+     * This is a copy of dentry->d_name, and it's needed because
+     * we can't use dentry->d_name in cgroup_path().
+     *
+     * You must acquire rcu_read_lock() to access cgrp->name, and
+     * the only place that can change it is rename(), which is
+     * protected by parent dir's i_mutex.
+     *
+     * Normally you should use cgroup_name() wrapper rather than
+     * access it directly.
+     */
+    struct cgroup_name __rcu *name;
+
+    /* Private pointers for each registered subsystem */
+    struct cgroup_subsys_state *subsys[CGROUP_SUBSYS_COUNT];
+
+    struct cgroupfs_root *root;
+
+    /*
+     * List of cg_cgroup_links pointing at css_sets with
+     * tasks in this cgroup. Protected by css_set_lock
+     */
+    struct list_head css_sets;
+
+    struct list_head allcg_node;	/* cgroupfs_root->allcg_list */
+    struct list_head cft_q_node;	/* used during cftype add/rm */
+
+    /*
+     * Linked list running through all cgroups that can
+     * potentially be reaped by the release agent. Protected by
+     * release_list_lock
+     */
+    struct list_head release_list;
+
+    /*
+     * list of pidlists, up to two for each namespace (one for procs, one
+     * for tasks); created on demand.
+     */
+    struct list_head pidlists;
+    struct mutex pidlist_mutex;
+
+    /* For RCU-protected deletion */
+    struct rcu_head rcu_head;
+    struct work_struct free_work;
+
+    /* List of events which userspace want to receive */
+    struct list_head event_list;
+    spinlock_t event_list_lock;
+
+    /* directory xattrs */
+    struct simple_xattrs xattrs;
+};
 ```
 
 ## 2.4 docker与cgroup
