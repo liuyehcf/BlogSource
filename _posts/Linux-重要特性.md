@@ -1132,6 +1132,13 @@ exit
 
 ## 2.5 参考
 
+* [【docker 底层知识】cgroup 原理分析](https://blog.csdn.net/zhonglinzhang/article/details/64905759)
+* [深入理解 Linux Cgroup 系列（一）：基本概念](https://www.cnblogs.com/ryanyangcs/p/11198140.html)
+* [深入理解 Linux Cgroup 系列（二）：玩转 CPU](https://www.cnblogs.com/ryanyangcs/p/11198161.html)
+* [Linux Cgroup 入门教程：基本概念](https://fuckcloudnative.io/posts/understanding-cgroups-part-1-basics/)
+* [Linux Cgroup 入门教程：CPU](https://fuckcloudnative.io/posts/understanding-cgroups-part-2-cpu/)
+* [Linux Cgroup 入门教程：内存](https://fuckcloudnative.io/posts/understanding-cgroups-part-3-memory/)
+* [Linux Cgroup浅析](https://zhuanlan.zhihu.com/p/102372680)
 * [RedHat-资源管理指南](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/7/html/resource_management_guide/index)
 * [DOCKER基础技术：LINUX CGROUP](https://coolshell.cn/articles/17049.html)
 * [LINUX CGROUP总结](https://www.cnblogs.com/menkeyi/p/10941843.html)
@@ -1140,8 +1147,6 @@ exit
 * [Docker 背后的内核知识——cgroups 资源限制](https://www.infoq.cn/article/docker-kernel-knowledge-cgroups-resource-isolation/)
 * [理解Docker（4）：Docker 容器使用 cgroups 限制资源使用](https://www.cnblogs.com/sammyliu/p/5886833.html)
 * [kubernetes kubelet组件中cgroup的层层"戒备"](https://www.cnblogs.com/gaorong/p/11716907.html)
-* [【docker 底层知识】cgroup 原理分析](https://blog.csdn.net/zhonglinzhang/article/details/64905759)
-* [Linux Cgroup浅析](https://zhuanlan.zhihu.com/p/102372680)
 
 # 3 Systemd
 
