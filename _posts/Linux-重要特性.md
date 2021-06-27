@@ -1068,15 +1068,65 @@ exit
 
 ### 2.2.1 cpu子系统
 
-我们可以通过`cpu.cfs_period_us`、`cpu.cfs_quota_us`这两个参数来控制cpu的使用上限
+cpu子系统可以调度`cgroup`对cpu的获取量。可用以下两个调度程序来管理对cpu资源的获取
+
+* 完全公平调度程序（CFS）：一个比例分配调度程序，可根据任务优先级∕权重或cgroup分得的份额，在cgroups间按比例分配cpu时间（cpu带宽）
+* 实时调度程序（RT）：一个任务调度程序，可对实时任务使用cpu的时间进行限定
+
+**我们可以通过`cpu.cfs_period_us`、`cpu.cfs_quota_us`这两个参数来控制cpu的使用上限**
 
 1. `cpu.cfs_period_us`：该参数的单位是微秒，用于定义cpu调度周期的带宽（时间长度）
 1. `cpu.cfs_quota_us`：该参数的单位是微秒，用于定义在一个cpu调度周期中，可以使用的cpu的带宽
 
 **`cpu.cfs_quota_us`与`cpu.cfs_period_us`的比值，就是cpu的占用比。但是，在保证比例不变的情况下，`cpu.cfs_period_us`数值的大小也会影响进程实际的行为**
 
-* 若`cpu.cfs_period_us`非常大，比如`1s`，然后占用比是20%，进程的行为可能就是，前`0.2s`满负荷运行，后面`0.8s`阻塞，停滞的感觉会比较大
-* 若`cpu.cfs_period_us`非常小，比如`10ms`，然后占用比是20%，进程的行为可能就是，前`2ms`满负荷运行，后面`8ms`阻塞，停滞的感觉会比较若，相对较平顺
+* 若`cpu.cfs_period_us`非常大，比如`1s`，然后占用比是20%，进程的行为可能就是，前`0.2s`满负荷运行，后面`0.8s`阻塞，停滞的感觉会比较强
+* 若`cpu.cfs_period_us`非常小，比如`10ms`，然后占用比是20%，进程的行为可能就是，前`2ms`满负荷运行，后面`8ms`阻塞，停滞的感觉会比较弱，相对较平顺
+
+**下面进行验证**
+
+```sh
+# 终端A：编写测试程序
+cat > test_cpu_subsystem.c << 'EOF'
+#include <stdio.h>
+void main()
+{
+    long cnt = 0;
+
+    while(1) {
+        printf("cnt=%d\n", cnt++);
+    }
+}
+EOF
+
+gcc -o test_cpu_subsystem test_cpu_subsystem.c
+
+# 终端A：运行该程序
+./test_cpu_subsystem
+
+# 终端B：在cpu子系统所在的层级结构上创建一个新的节点（目录）
+mkdir /sys/fs/cgroup/cpu/test_cpu_subsystem
+
+# cpu.cfs_period_us设置成1s，cpu.cfs_quota_us设置成0.2s，占比是20%
+echo 1000000 > /sys/fs/cgroup/cpu/test_cpu_subsystem/cpu.cfs_period_us
+echo 200000 > /sys/fs/cgroup/cpu/test_cpu_subsystem/cpu.cfs_quota_us
+pgrep -f test_cpu_subsystem > /sys/fs/cgroup/cpu/test_cpu_subsystem/tasks
+# 此时可以发现，在终端A中，输出的速率有明显顿挫，刷屏0.2s后，会停0.8s，然后循环此过程
+
+# cpu.cfs_period_us设置成10ms，cpu.cfs_quota_us设置成2ms，占比也是20%
+echo 10000 > /sys/fs/cgroup/cpu/test_cpu_subsystem/cpu.cfs_period_us
+echo 2000 > /sys/fs/cgroup/cpu/test_cpu_subsystem/cpu.cfs_quota_us
+# 此时可以发现，在终端A中，刷屏比较平顺
+
+# 终端B：停止进程，并删除测试cgroup节点
+pkill -f test_cpu_subsystem
+cgdelete cpu:test_cpu_subsystem
+```
+
+**我们可以通过`cpu.rt_period_us`、`cpu.rt_runtime_us`这两个参数，用来限制某个任务的cpu限制**
+
+* `cpu.rt_period_us`：该参数的单位是微秒，用于定义在某个时间段中，cgroup对cpu资源访问重新分配的时间周期
+* `cpu.rt_runtime_us`：该参数的单位是微秒，用于定义在某个时间段中，cgroup中的任务对cpu资源的最长连续访问时间（建立这个限制是为了防止一个cgroup中的任务独占cpu时间）
 
 **`cpu.stat`记录了cpu时间统计**
 

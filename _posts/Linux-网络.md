@@ -23,6 +23,9 @@ categories:
 | `net.ipv4.tcp_tw_recycle` | `1`表示开启TCP连接中`TIME-WAIT`状态的`sockets`的快速回收，默认为0，表示关闭 |
 | `net.ipv4.conf.<net_device>.proxy_arp` | `1`表示当ARP请求目标跨网段时，网卡设备收到此ARP请求会用自己的MAC地址返回给请求者 |
 | `net.ipv4.conf.all.rp_filter` | `1`表示过滤反向路由不通的包，比如进来的数据报是`srcIp->dstIp`，会校验`dstIp->srcIp`的路由是否会经过同一个网卡。换言之，`1`不允许正反链路不一致，`0`允许正反链路不一致 |
+| `net.ipv4.ip_local_port_range` | 可用的临时端口号的范围 |
+| `fs.file-max` | 整个操作系统最多可打开的文件描述符的数量，一个tcp连接会占用一个文件描述符，因此系统能够打开多少个tcp连接也受到该参数的影响 |
+| `fs.nr_open` | 单个进程最多可打开的文件描述符的数量，一个tcp连接会占用一个文件描述符，因此进程能够打开多少个tcp连接也受到该参数的影响 |
 
 # 2 Virtual Networking
 
@@ -2096,3 +2099,4 @@ nmcli conn down <id>/<uuid>/<path>
 * [Networking Guide](https://docs.fedoraproject.org/en-US/Fedora/25/html/Networking_Guide/index.html)
 * [Connecting to a Network Using nmcli](https://docs.fedoraproject.org/en-US/Fedora/25/html/Networking_Guide/sec-Connecting_to_a_Network_Using_nmcli.html)
 * [Linux DNS 查询剖析（第三部分）](https://zhuanlan.zhihu.com/p/43556975)
+* [一台主机上只能保持最多 65535 个 TCP 连接吗？](https://www.zhihu.com/question/361111920/answer/1861488526)

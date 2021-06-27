@@ -224,6 +224,16 @@ RUN apk add -U tzdata
 
 ## 4.1 跨平台运行容器
 
+默认情况下，docker是不支持`--platform`参数的，可以通过修改`/etc/docker/daemon.json`，添加如下配置项后，重启docker，开启该功能
+
+```json
+{
+  ...
+  "experimental": true,
+  ...
+}
+```
+
 如果我们在x86的平台上运行arm64的docker镜像，会得到如下错误信息
 
 ```sh
