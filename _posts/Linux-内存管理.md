@@ -378,10 +378,13 @@ mov 0x80495b0, %eax
 1. `vmstat`
 1. `cat /proc/meminfo`
 1. `top`
+1. `slabtop`
 
 ## 7.2 buff/cache
 
 ### 7.2.1 什么是buffer/cache？
+
+**简单来说，buffer是为了解决读写速率不一致的问题，比如从内存往磁盘上写数据，往往需要通过buffer来进行缓冲；cache是为了解决热点问题，比如频繁访问一些热点数据，那么就可以把这些热点数据放到读性能更高的存储介质中**
 
 `buffer`和`cache`是两个在计算机技术中被用滥的名词，放在不通语境下会有不同的意义。在Linux的内存管理中，这里的`buffer`指Linux内存的：`buffer cache`。这里的`cache`指Linux内存中的：`page cache`。翻译成中文可以叫做缓冲区缓存和页面缓存。在历史上，它们一个（`buffer`）被用来当成对io设备写的缓存，而另一个（`cache`）被用来当作对io设备的读缓存，这里的io设备，主要指的是块设备文件和文件系统上的普通文件。但是现在，它们的意义已经不一样了。在当前的内核中，`page cache`顾名思义就是针对内存页的缓存，说白了就是，如果有内存是以`page`进行分配管理的，都可以使用`page cache`作为其缓存来管理使用。当然，不是所有的内存都是以页（`page`）进行管理的，也有很多是针对块（`block`）进行管理的，这部分内存使用如果要用到`cache`功能，则都集中到`buffer cache`中来使用。（从这个角度出发，是不是`buffer cache`改名叫做`block cache`更好？）然而，也不是所有块（`block`）都有固定长度，系统上块的长度主要是根据所使用的块设备决定的，而页长度在x86上无论是32位还是64位都是4k
 
@@ -411,3 +414,6 @@ Linux内核会在内存将要耗尽的时候，触发内存回收的工作，以
 * [线性地址转换为物理地址是硬件实现还是软件实现？具体过程如何？](https://www.zhihu.com/question/23898566)
 * [How to Clear RAM Memory Cache, Buffer and Swap Space on Linux](https://www.tecmint.com/clear-ram-memory-cache-buffer-and-swap-space-on-linux/)
 * [Linux使用free命令buff/cache过高](https://blog.csdn.net/u014520745/article/details/79949874)
+* [linux内存占用问题调查——slab](https://blog.csdn.net/liuxiao723846/article/details/72625394)
+* [How much RAM does the kernel use?](https://unix.stackexchange.com/questions/97261/how-much-ram-does-the-kernel-use)
+* [Linux系统排查1——内存篇](https://www.cnblogs.com/Security-Darren/p/4685629.html)

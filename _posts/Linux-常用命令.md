@@ -799,12 +799,13 @@ echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
 
 * `Men`：物理内存
 * `Swap`：虚拟内存
-* `total`：总量
-* `user`：使用量
-* `free`：剩余可用量
-* `shared`与`buffers/cached`：被使用的量当中用来作为缓冲以及快取的量
-* `buffers`：缓冲记忆
-* `cached`：缓存
+* `total`：内存总大小，该信息可以从`/proc/meminfo`中获取（`MemTotal`、`SwapTotal`）
+* `user`：已使用的内存大小，计算方式为`total - free - buffers - cache`
+* `free`：未被使用的内存大小，该信息可以从`/proc/meminfo`中获取（`MemFree`、`SwapFree`）
+* `shared`：被`tmpfs`使用的内存大小，该信息可以从`/proc/meminfo`中获取（`Shmem`）
+* `buffers`：内核`buffer`使用的内存大小，该信息可以从`/proc/meminfo`中获取（`Buffers`）
+* `cached`：`slabs`以及`page cache`使用的内存大小，该信息可以从`/proc/meminfo`（`Cached`）
+* `available`：仍然可以分配给应用程序的内存大小（非`swap`内存），该信息可以从`/proc/meminfo`（`MemAvailable`）
 * **一般来说系统会很有效地将所有内存用光，目的是为了让系统的访问性能加速，这一点与Windows很不同，因此对于Linux系统来说，内存越大越好**
 
 **示例：**
@@ -975,6 +976,7 @@ free
 
 **参数说明：**
 
+* `-f`：匹配完整的`command line`，默认情况下只能匹配15个字符
 * `-signal`：同`kill`
 * `-P ppid,...`：匹配指定`parent id`
 * `-s sid,...`：匹配指定`session id`
@@ -1054,6 +1056,7 @@ free
 
 **参数说明：**
 
+* `-f`：匹配完整的`command line`，默认情况下只能匹配15个字符
 * `-l`：列出pid以及进程名
 * `-o`：列出oldest的进程
 * `-n`：列出newest的进程
@@ -1315,10 +1318,12 @@ netstat的功能就是查看网络的连接状态，而网络连接状态中，�
 * `-r`：解析服务名称
 * `-m`：显示内存占用情况
 * `-h`：查看帮助文档
+* `-i`：显示tcp-socket详情
 
 **示例：**
 
 * `ss -t -a`：显示所有tcp-socket
+* `ss -ti -a`：显示所有tcp-socket以及详情
 * `ss -u –a`：显示所有udp-socket
 * `ss -lp | grep 22`：找出打开套接字/端口应用程序
 * `ss -o state established`：显示所有状态为established的socket
@@ -2214,7 +2219,15 @@ yum install -y hping3
     * `V`：以树型格式展示command
     * `H`：展示线程
 
-## 6.5 sar
+## 6.5 slabtop
+
+`slabtop`用于展示内核的`slab cache`相关信息
+
+**示例：**
+
+* `slabtop`
+
+## 6.6 sar
 
 sar是由有类似日志切割的功能的，它会依据`/etc/cron.d/sysstat`中的计划任务，将日志放入`/var/log/sa/`中
 
@@ -2241,7 +2254,7 @@ sar是由有类似日志切割的功能的，它会依据`/etc/cron.d/sysstat`�
 * `sar -u 1 10`
 * `sar -n DEV 1`
 
-## 6.6 tsar
+## 6.7 tsar
 
 **格式：**
 
@@ -2255,7 +2268,7 @@ sar是由有类似日志切割的功能的，它会依据`/etc/cron.d/sysstat`�
 
 * `tsar -l`
 
-## 6.7 vmstat
+## 6.8 vmstat
 
 **格式：**
 
@@ -2317,7 +2330,7 @@ sar是由有类似日志切割的功能的，它会依据`/etc/cron.d/sysstat`�
 * `vmstat -p /dev/sda1`
 * `vmstat -m`
 
-## 6.8 mpstat
+## 6.9 mpstat
 
 `mpstat`（`multiprocessor statistics`）是实时监控工具，报告与cpu的一些统计信息这些信息都存在`/proc/stat`文件中，在多cpu系统里，其不但能查看所有的cpu的平均状况的信息，而且能够有查看特定的cpu信息，`mpstat`最大的特点是可以查看多核心的cpu中每个计算核心的统计数据；而且类似工具`vmstat`只能查看系统的整体cpu情况
 
@@ -2344,7 +2357,7 @@ sar是由有类似日志切割的功能的，它会依据`/etc/cron.d/sysstat`�
 * `mpstat 2 5`：打印整体信息，间隔2s，打印5次
 * `mpstat -P ALL 2 5`：已单核为粒度打印信息，间隔2s，打印5次
 
-## 6.9 iostat
+## 6.10 iostat
 
 **格式：**
 
@@ -2381,7 +2394,7 @@ sar是由有类似日志切割的功能的，它会依据`/etc/cron.d/sysstat`�
 
 * `iostat -d -t -x 1`
 
-## 6.10 dstat
+## 6.11 dstat
 
 **格式：**
 
@@ -2467,13 +2480,13 @@ sar是由有类似日志切割的功能的，它会依据`/etc/cron.d/sysstat`�
     * 等价于`dstat --time --cpu --net --disk --sys --load --proc --top-cpu`
 * `dstat -tcyif`
 
-## 6.11 ifstat
+## 6.12 ifstat
 
 该命令用于查看网卡的流量状况，包括成功接收/发送，以及错误接收/发送的数据包，看到的东西基本上和`ifconfig`类似
 
-## 6.12 pidstat
+## 6.13 pidstat
 
-## 6.13 nethogs
+## 6.14 nethogs
 
 nethogs会以进程为单位，列出每个进程占用的网卡以及带宽
 
@@ -2491,9 +2504,9 @@ yum install -y nethogs
 
 * `nethogs`
 
-## 6.14 iptraf
+## 6.15 iptraf
 
-## 6.15 iftop
+## 6.16 iftop
 
 iftop会以连接为单位，列出每个连接的进出流量
 
@@ -2511,7 +2524,7 @@ yum install -y iftop
 
 * `iftop`
 
-## 6.16 iotop
+## 6.17 iotop
 
 **安装：**
 
@@ -2527,7 +2540,7 @@ yum install -y iotop
 
 * `iotop`
 
-## 6.17 strace
+## 6.18 strace
 
 `strace`是Linux环境下的一款程序调试工具，用来监察一个应用程序所使用的系统调用
 `strace`是一个简单的跟踪系统调用执行的工具。在其最简单的形式中，它可以从开始到结束跟踪二进制的执行，并在进程的生命周期中输出一行具有系统调用名称，每个系统调用的参数和返回值的文本行

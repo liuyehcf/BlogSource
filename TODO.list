@@ -21,15 +21,6 @@
 1. Excalidraw 画图工具
     * https://github.com/excalidraw/excalidraw
     * https://learnku.com/articles/47662
-1. tcp
-    * close_wait会占用文件描述符
-    * time_wait不会占用
-    * [TCP协议的滑动窗口具体是怎样控制流量的？](https://www.zhihu.com/question/32255109/answer/898371009)
-    * [TCP的拥塞避免](https://zhuanlan.zhihu.com/p/102382380)
-        * 慢启动，拥塞窗口指数增长
-        * 拥塞避免，拥塞窗口增长到指定阈值后，线性增长
-        * 快速重传，同一个ack重复发3次，触发发送端的快速重传，避免等待超时浪费时间
-        * 快速恢复，当触发快速重传时，可能仅发生了乱序，而网络实际上还是正常的，因此没必要将拥塞窗口调成最小值
 1. java
     * [JVM ：关于捕获 Java Heap Dump 的6种方式](https://blog.csdn.net/u010647035/article/details/86563736)
     * 如何定位java进程crash core Dump
@@ -105,8 +96,6 @@
         * 第二范式：确保表中的每列都和主键相关（每一列都与主键相关，而不能只与主键的某一部分相关，主要针对的是联合主键这种情况）
         * 第三范式：确保每列都和主键列直接相关，而不是间接相关（订单和客户信息如果存在一张表里，那么客户的联系方式和订单id其实是间接相关）
     * raft和paxos的区别
-        * [raft算法与paxos算法相比有什么优势，使用场景有什么差异？](https://www.zhihu.com/question/36648084)
-        * [比较Raft和Paxos](https://zhuanlan.zhihu.com/p/365284343)
         * raft弱化了选主过程中的强一致性，可能会先后选出多个leader，但是这些leader的term（类似于paxos中的proposal-id）是不同的，成员可以根据term的大小关系选出最终的leader，也就是保证了最终只会有一个leader
         * 相同点：因此它们其实在同一个时刻，都只会存在一个「合法的leader」，言下之意，可以存在多个leader，只有一个是合法的
         * Raft协议强调日志的连续性，multi-paxos则允许日志有空洞：协议的最终目的其实是为了维护数据的最终一致性，raft协议能够保证选出的leader一定包含所有已提交的日志（会将term最大且日志序号最大的选为leader）；而paxos无法保证，因此需要有额外的补偿流程来恢复那些已经提交，但是又未被leader记录的日志。根本原因就在于：raft在选主时会兼顾数据的完整性，而paxos不会
@@ -118,3 +107,6 @@
         * 端口号资源
         * 文件描述符资源
         * 线程资源，管理tcp连接需要线程，即便是io多路复用，也需要线程
+* 时序数据库
+    * [关于时序数据库的一些思考](https://zhuanlan.zhihu.com/p/100146332)
+    * [LSM树详解](https://zhuanlan.zhihu.com/p/181498475)

@@ -171,22 +171,7 @@ echo $[ $a % $b ]
 echo $[ 1 + 3, 5 + 6 ]
 ```
 
-## 4.2 expr
-
-**`expr`是一个用于数值计算的命令，运算符号两边必须加空格，不加空格会原样输出，不会计算**
-
-```sh
-expr 1 + 3
- 
-a=10;b=5
-expr $a + $b
-expr $a - $b
-expr $a \* $b   #因为乘号*在shell中有特殊的含义，所以要转义
-expr $a / $b    #除法取商
-expr $a % $b    #除法取模
-```
-
-## 4.3 `$(())`
+## 4.2 `$(())`
 
 **`$(())`有如下两个功能**
 
@@ -207,7 +192,7 @@ echo $((16#ff))
 echo $((8#77))
 ```
 
-## 4.4 `(())`
+## 4.3 `(())`
 
 **整数扩展，只计算，不返回值。通常用于重定义变量值，只有赋值语句才能起到重定义变量的作用**
 
@@ -221,6 +206,29 @@ echo $a     # 输出11
 
 ((a++))
 echo $a     # 输出12
+```
+
+## 4.4 expr
+
+**`expr`是一个用于数值计算的命令，运算符号两边必须加空格，不加空格会原样输出，不会计算**
+
+```sh
+expr 1 + 3
+ 
+a=10;b=5
+expr $a + $b
+expr $a - $b
+expr $a \* $b   #因为乘号*在shell中有特殊的含义，所以要转义
+expr $a / $b    #除法取商
+expr $a % $b    #除法取模
+```
+
+## 4.5 bc
+
+**`bc`可以用来进行浮点数运算**
+
+```sh
+echo "scale=2; 1/3" | bc
 ```
 
 # 5 特殊符号
@@ -623,6 +631,45 @@ STDOUT | while read line
 do
 　　echo $line
 done
+```
+
+## 8.6 判断字符串是否包含
+
+**方式1：利用运算符`=~`**
+
+```sh
+str1="abcd"
+str2="bc"
+if [[ "${str1}" =~ "${str2}" ]]; then
+    echo "contains"
+else
+    echo "not contains"
+fi
+```
+
+**方式2：利用通配符**
+
+```sh
+str1="abcd"
+str2="bc"
+if [[ "${str1}" == *"${str2}"* ]]; then
+    echo "contains"
+else
+    echo "not contains"
+fi
+```
+
+**方式3：利用grep**
+
+```sh
+str1="abcd"
+str2="bc"
+result=$(echo ${str1} | grep ${str2})
+if [ -n "${result}" ]; then
+    echo "contains"
+else
+    echo "not contains"
+fi
 ```
 
 # 9 Array
