@@ -52,17 +52,7 @@
         * [IPVS从入门到精通kube-proxy实现原理](https://zhuanlan.zhihu.com/p/94418251)
     * oam [5分钟带你快速入门和了解 OAM Kubernetes](https://www.cnblogs.com/ants/p/13300407.html)
 1. [CPU 和 GPU 的区别是什么？](https://www.zhihu.com/question/19903344)
-1. dracut
-1. 方法论
-    * [epoll和select](https://zhuanlan.zhihu.com/p/64771809)
-    * Kiss原则
-1. mysql
-    * [解决死锁之路 - 学习事务与隔离级别](https://www.aneasystone.com/archives/2017/10/solving-dead-locks-one.html)
-    * [解决死锁之路 - 了解常见的锁类型](https://www.aneasystone.com/archives/2017/11/solving-dead-locks-two.html)
-    * [解决死锁之路 - 常见 SQL 语句的加锁分析](https://www.aneasystone.com/archives/2017/12/solving-dead-locks-three.html)
-    * [解决死锁之路（终结篇） - 再见死锁](https://www.aneasystone.com/archives/2018/04/solving-dead-locks-four.html)
-    * mvcc 客户端1更新某一行，提交，然后客户端更新同一行，回滚的case（回滚时也会比较版本号，否则就把已经提交的数据覆盖了）
-    * mysql索引如何存储数据，联合索引？[联合索引在B+树上的存储结构及数据查找方式](https://blog.csdn.net/ibigboy/article/details/104571930?depth_1-)
+1. dracut    
 1. 面试
     * java程序退出了，有什么方法可以分析
     * mybatis延迟加载
