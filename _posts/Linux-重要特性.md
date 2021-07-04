@@ -1588,9 +1588,22 @@ WantedBy=multi-user.target
 * [Play With Container Network Interface](https://arthurchiao.github.io/blog/play-with-container-network-if/)
 * [systemd forking vs simple?](https://superuser.com/questions/1274901/systemd-forking-vs-simple)
 
-# 4 动态链接
+# 4 中断
 
-## 4.1 demo
+## 4.1 参考
+
+* [linux异常处理体系结构](https://www.cnblogs.com/gulan-zmc/p/11604437.html)
+* [Linux的中断处理机制 [一] - 数据结构(1)](https://zhuanlan.zhihu.com/p/83709066)
+* [Linux的中断处理机制 [二] - 数据结构(2)](https://zhuanlan.zhihu.com/p/85353687)
+* [Linux的中断处理机制 [三] - hardirq](https://zhuanlan.zhihu.com/p/85454778)
+* [Linux 中断](https://zhuanlan.zhihu.com/p/94788008)
+* [Linux 内核中断内幕](https://www.ibm.com/developerworks/cn/linux/l-cn-linuxkernelint/index.html)
+* [彻底搞懂异常控制流](https://www.cnblogs.com/niuyourou/p/12097856.html)
+* [嵌入式杂谈之中断向量表](https://zhuanlan.zhihu.com/p/125480457)
+
+# 5 动态链接
+
+## 5.1 demo
 
 ```sh
 cat > sample.c << 'EOF'
@@ -1639,7 +1652,7 @@ fopen() returned NULL
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-## 4.2 参考
+## 5.2 参考
 
 * [Linux hook：Ring3下动态链接库.so函数劫持](https://www.cnblogs.com/reuodut/articles/13723437.html)
 

@@ -32,16 +32,6 @@
         * 消息堆积也可导致内存泄漏
         * ChannelOutboundBuffer.incrementPendingOutboundBytes
         * netty 读写水位控制，ChannelOption.WRITE_BUFFER_WATER_MARK，默认值可以看DefaultChannelConfig的writeBufferWaterMark字段
-1. linker
-1. Linux-异常处理（中断）
-    * https://www.cnblogs.com/gulan-zmc/p/11604437.html
-    * [Linux的中断处理机制 [一] - 数据结构(1)](https://zhuanlan.zhihu.com/p/83709066)
-    * [Linux的中断处理机制 [二] - 数据结构(2)](https://zhuanlan.zhihu.com/p/85353687)
-    * [Linux的中断处理机制 [三] - hardirq](https://zhuanlan.zhihu.com/p/85454778)
-    * [Linux 中断](https://zhuanlan.zhihu.com/p/94788008)
-    * [Linux 内核中断内幕](https://www.ibm.com/developerworks/cn/linux/l-cn-linuxkernelint/index.html)
-    * [彻底搞懂异常控制流](https://www.cnblogs.com/niuyourou/p/12097856.html)
-    * [嵌入式杂谈之中断向量表](https://zhuanlan.zhihu.com/p/125480457)
 1. Docker
     * 生命周期：[第三章 Docker容器的生命周期](https://www.jianshu.com/p/442b726f8cca)
 1. k8s
