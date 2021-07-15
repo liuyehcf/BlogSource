@@ -1566,3 +1566,4 @@ echo | openssl s_client -servername www.aliyun.com -connect www.aliyun.com:443 2
 * [HTTPS之SNI介绍](https://blog.51cto.com/zengestudy/2170245)
 * [centos 添加CA 证书](https://blog.csdn.net/coder9999/article/details/79664282)
 * [阮一峰-数字签名是什么？](http://www.ruanyifeng.com/blog/2011/08/what_is_a_digital_signature.html)
+* [SSL证书文件校验工具](https://www.chinassl.net/ssltools/decoder-ssl.html)

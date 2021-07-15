@@ -85,6 +85,7 @@ categories:
 1. `/proc/net`：网络相关的统计信息
     * `/proc/net/route`：路由表
     * `/proc/net/arp`：mac地址表
+    * `/proc/net/sockstat`：socket汇总信息
     * `/proc/net/tcp`：tcp连接信息
         * `1 -> TCP_ESTABLISHED`
         * `2 -> TCP_SYN_SENT`

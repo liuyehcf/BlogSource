@@ -60,6 +60,9 @@ make rpm-pkg
 **第五步：更新内核**
 
 ```sh
+# 查看rpm包的信息
+rpm2cpio kernel-4.14.134.x86_64.rpm | cpio -div
+
 rpm -iUv ~/rpmbuild/RPMS/x86_64/*.rpm
 ```
 
@@ -69,6 +72,7 @@ rpm -iUv ~/rpmbuild/RPMS/x86_64/*.rpm
 * [Compile Linux Kernel on CentOS7](https://linuxhint.com/compile-linux-kernel-centos7/)
 * [How to Compile a Linux Kernel](https://www.linux.com/topic/desktop/how-compile-linux-kernel-0/)
 * [CentOS 7上Systemtap的安装](https://www.linuxidc.com/Linux/2019-03/157818.htm)
+* [如何解压RPM包](https://www.cnblogs.com/joeblackzqq/archive/2011/03/19/1989137.html)
 
 # 3 systemtap
 
@@ -334,3 +338,4 @@ net/ipv4/ip_input.c
 * [rpm下载地址1](http://rpm.pbone.net/)
 * [rpm下载地址2](http://www.rpmfind.net/)
 * [debuginfo相关rpm下载地址](http://debuginfo.centos.org/)
+* [kernel官方下载地址](https://mirrors.edge.kernel.org/pub/linux/kernel/)

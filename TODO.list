@@ -2,10 +2,16 @@
     * [工具参考篇](https://linuxtools-rst.readthedocs.io/zh_CN/latest/tool/strace.html)
     * blktrace/iowatcher
     * mount[confusion about mount options](https://unix.stackexchange.com/questions/117414/confusion-about-mount-options)
+    * [How to use OpenSSL to encrypt/decrypt files?](https://stackoverflow.com/questions/16056135/how-to-use-openssl-to-encrypt-decrypt-files)
     * 域套接字
     * 如何编写TUI程序(https://github.com/marcusolsson/tui-go)
 1. Linux-安全
     * [红帽企业版 Linux 7安全性指南](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/7/html/security_guide/index)
+1. kernel panic
+    * [比较 kdump makedumpfile 中的压缩方法](https://feichashao.com/compare_compression_method_of_makedumpfile/)
+    * [使用CRASH分析LINUX内核崩溃转储文件VMCORE](https://www.freesion.com/article/1560535243/)
+    * crash 命令
+    * [教你三步在CentOS 7 中安装或升级最新的内核](https://www.linuxprobe.com/update-kernel-centos7.html)
 1. 文件系统
     * overlay2文件系统的使用：[Example OverlayFS Usage [duplicate]](https://askubuntu.com/questions/699565/example-overlayfs-usage)
 1. 操作系统安装
@@ -59,6 +65,7 @@
         * redis如何实现过期
             * 惰性删除：访问的时候进行过期检查，需要有额外的后台线程来执行真正的物理删除，以免占用内存
             * 定期删除：从过期字典中随机取出20个键，删除这20个建中过期的键，若比例大于25%，那么重复该步骤（需要控制扫描速度，以免消耗大量的cpu）
+        * redis的map是如何实现的
     * 算法题combinationSum2
     * 1.8把锁粒度降低有没有坏处
     * mmap：系统调用使得进程之间通过映射同一个普通文件实现共享内存，普通文件被映射到进程地址空间后，进程可以像访问普通内存一样对文件进行访问，不必再调用read()，write（）等操作
@@ -87,6 +94,10 @@
         * 端口号资源
         * 文件描述符资源
         * 线程资源，管理tcp连接需要线程，即便是io多路复用，也需要线程
+    * 数据结构
+        * skip list，以空间复杂度换时间复杂度
 * 时序数据库
     * [关于时序数据库的一些思考](https://zhuanlan.zhihu.com/p/100146332)
     * [LSM树详解](https://zhuanlan.zhihu.com/p/181498475)
+* netty实现一个server，同时支持http和websocket
+    * https://medium.com/@irunika/how-to-write-a-http-websocket-server-using-netty-f3c136adcba9
