@@ -97,7 +97,7 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 
 用于读取、解析可执行程序
 
-# 2 文件字符管道工具
+# 2 常用处理工具
 
 ## 2.1 echo
 
@@ -778,6 +778,33 @@ echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
 **参数说明：**
 
 * `-N`：显示非ASCII字符，可以显示中文
+
+## 2.16 base64
+
+用于对输入进行`base64`编码以及解码
+
+**示例：**
+
+* `echo "hello" | base64`
+* `echo "hello" | base64 | base64 -d`
+
+## 2.17 md5sum
+
+计算输入或文件的MD5值
+
+**示例：**
+
+* `echo "hello" | md5sum`
+
+## 2.18 openssl
+
+openssl可以对文件，以指定算法进行加密或者解密
+
+**示例：**
+
+* `openssl -h`：查看所有支持的加解密算法
+* `openssl aes-256-cbc -a -salt -in blob.txt -out cipher`
+* `openssl aes-256-cbc -a -d -in cipher -out blob-rebuild.txt`
 
 # 3 设备管理
 
@@ -2782,3 +2809,4 @@ CONFIG_KVM_MMU_AUDIT=y
 * [Iptables 指南 1.1.19](https://www.frozentux.net/iptables-tutorial/cn/iptables-tutorial-cn-1.1.19.html)
 * [redhat-安全性指南-定义审核规则](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/7/html/security_guide/sec-defining_audit_rules_and_controls)
 * [addr2line](https://www.jianshu.com/p/c2e2b8f8ea0d)
+* [How to use OpenSSL to encrypt/decrypt files?](https://stackoverflow.com/questions/16056135/how-to-use-openssl-to-encrypt-decrypt-files)
