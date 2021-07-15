@@ -1169,9 +1169,52 @@ public class SslNonSocketDemo {
 }
 ```
 
-# 4 参考
+# 4 内存泄露检测
+
+Netty也自带了内存泄漏检测工具，可用于检测出`ByteBuf`对象被GC回收，但`ByteBuf`管理的内存没有释放的情况，但不适用`ByteBuf`对象还没被GC回收内存泄漏的情况，例如任务队列积压
+
+为了便于用户发现内存泄露，`Netty`提供4个检测级别
+
+* `disabled`：完全关闭内存泄露检测
+* `simple`：以约1%的抽样率检测是否泄露，默认级别
+* `advanced`：抽样率同simple，但显示详细的泄露报告
+* `paranoid`：抽样率为100%，显示报告信息同advanced
+
+使用方法是在命令行参数设置：
+
+```sh
+-Dio.netty.leakDetectionLevel=[检测级别]
+-Dio.netty.leakDetection.targetRecords=100 # 可以设置内存泄漏的统计数量
+```
+
+# 5 水位控制
+
+读写消息速率不一致，例如读的速率远大于写的速率，也会导致内存不断升高。正常情况下，写操作是异步的，若底层tcp的buffer已满的情况下，netty会将消息放入`ChannelOutboundBuffer`中，`ChannelOutboundBuffer`是一个不限长度的队列，不断堆积消息可能会引发`out-of-memory`
+
+为了避免消息堆积过多，netty提供了一个高低水位线的机制，可以通过`ChannelOption.WRITE_BUFFER_WATER_MARK`设置高低水位线，当`ChannelOutboundBuffer`中堆积的消息数量大于`HIGH_WATER_MARK`时，netty会将`channel`的`isWritable`属性设置为false，当消息数量低于`LOW_WATER_MARK`时，netty会将`channel`的`isWritable`属性设置为true
+
+```java
+boolean isWritable = channel.isWritable();
+ChannelFuture future = channel.writeAndFlush(msg);
+if (!isWritable) {
+    // synchronously wait for the write operation to complete, avoiding memory surge caused by mismatched read write rates
+    try {
+        boolean await = future.await(120, TimeUnit.SECONDS);
+        if (!await) {
+            channel.close(); // channel is not writable, and unable to complete the write operation within 120 seconds
+        }
+    } catch (InterruptedException ignored) {
+        // ignored
+    }
+}
+```
+
+# 6 参考
 
 * [Java SSL 证书细节](https://www.jianshu.com/p/5fcc6a219c8b)
 * [JDK自带工具keytool生成ssl证书](https://www.cnblogs.com/zhangzb/p/5200418.html)
 * [netty-example](https://github.com/spmallette/netty-example/blob/master/src/test/java/com/genoprime/netty/example/WebSocketClientHandler.java)
 * [单机千万并发连接实战](https://zhuanlan.zhihu.com/p/21378825)
+* [Netty堆外内存泄漏排查，这一篇全讲清楚了](https://juejin.cn/post/6844904036672471048)
+* [Netty堆外内存泄漏排查，这一篇全讲清楚了](https://segmentfault.com/a/1190000021469481)
+* [Netty 防止内存泄漏措施](https://zhuanlan.zhihu.com/p/58444143)
