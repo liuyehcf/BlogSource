@@ -808,7 +808,55 @@ openssl可以对文件，以指定算法进行加密或者解密
 
 # 3 设备管理
 
-## 3.1 free
+## 3.1 mount
+
+mount用于挂载一个文件系统
+
+**格式：**
+
+* `mount [-t vfstype] [-o options] device dir`
+
+**参数说明：**
+
+* `-t`：后接文件系统类型，不指定类型的话会自适应
+* `-o`：后接挂载选项
+
+**示例：**
+
+* `mount -o loop /CentOS-7-x86_64-Minimal-1908.iso /mnt/iso`
+
+### 3.1.1 传播级别
+
+内核引入`mount namespace`之初，各个`namespace`之间的隔离性较差，例如在某个`namespace`下做了`mount`或者`umount`动作，那么这一事件会被传播到其他的`namespace`中，在某些场景下，是不适用的
+
+因此，在`2.6.15`版本之后，内核允许将一个挂载点标记为`shared`、`private`、`slave`、`unbindable`，以此来提供细粒度的隔离性控制
+
+* `shared`：默认的传播级别，`mount`、`unmount`事件会在不同`namespace`之间相互传播
+* `private`：禁止`mount`、`unmount`事件在不同`namespace`之间相互传播
+* `slave`：仅允许单向传播，即只允许`master`产生的事件传播到`slave`中
+* `unbindable`：不允许`bind`操作，在这种传播级别下，无法创建新的`namespace`
+
+## 3.2 umount
+
+umount用于卸载一个文件系统
+
+**示例：**
+
+* `umount /home`
+
+## 3.3 findmnt
+
+findmnt用于查看挂载点的信息
+
+**参数说明：**
+
+* `-o [option]`：指定要显示的列
+
+**示例：**
+
+* `findmnt -o TARGET,PROPAGATION`
+
+## 3.4 free
 
 **格式：**
 
@@ -839,7 +887,7 @@ openssl可以对文件，以指定算法进行加密或者解密
 
 * `free -m`
 
-## 3.2 swap
+## 3.5 swap
 
 **制作swap：**
 
@@ -850,7 +898,19 @@ swapon /tmp/swap
 free
 ```
 
-## 3.3 du
+## 3.6 df
+
+**参数说明：**
+
+* `-h`：以`K`，`M`，`G`为单位，提高信息的可读性
+* `-i`：显示inode信息
+
+**示例：**
+
+* `df -h`
+* `df -ih`
+
+## 3.7 du
 
 **格式：**
 
@@ -867,7 +927,7 @@ free
 * `du -sh`：当前文件夹的总大小
 * `du -h -d 1`：列出深度为1的所有文件/文件夹大小
 
-## 3.4 lsblk
+## 3.8 lsblk
 
 `lsblk`命令用于列出所有可用块设备的信息
 
@@ -902,15 +962,15 @@ free
 * `lsblk -fp`
 * `lsblk -o name,mountpoint,label,size,uuid`
 
-## 3.5 lsusb
+## 3.9 lsusb
 
 `lsusb`命令用于列出所有usb接口的设备
 
-## 3.6 lspci
+## 3.10 lspci
 
 `lspci`命令用于列出所有pci接口的设备
 
-## 3.7 sync
+## 3.11 sync
 
 `sync`指令会将存于`buffer`中的资料强制写入硬盘中
 
@@ -2810,3 +2870,4 @@ CONFIG_KVM_MMU_AUDIT=y
 * [redhat-安全性指南-定义审核规则](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/7/html/security_guide/sec-defining_audit_rules_and_controls)
 * [addr2line](https://www.jianshu.com/p/c2e2b8f8ea0d)
 * [How to use OpenSSL to encrypt/decrypt files?](https://stackoverflow.com/questions/16056135/how-to-use-openssl-to-encrypt-decrypt-files)
+* [confusion about mount options](https://unix.stackexchange.com/questions/117414/confusion-about-mount-options)
