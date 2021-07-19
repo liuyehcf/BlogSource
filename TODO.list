@@ -96,3 +96,24 @@
     * [LSM树详解](https://zhuanlan.zhihu.com/p/181498475)
 * netty实现一个server，同时支持http和websocket
     * https://medium.com/@irunika/how-to-write-a-http-websocket-server-using-netty-f3c136adcba9
+* 复制标记、复制整理的优缺点
+* lru的实现方式（不用双链表）
+* 1000w个数据，top k问题
+* P50，P90？
+* hash算法的实现原理
+* 虚拟内存的作用是啥
+* java内存怎么分布
+* gc cms的大致流程
+* 一个boolean对象占用多少内存
+* 对象头里面包含什么东西
+* 重量级锁以及相应的锁优化
+* 可重入锁是如何实现的
+* 并发安全的集合有什么特点？写操作是串行的，读操作不能读到瞬态的值
+* spring 依赖注入的方式？set以及字段
+* 代码优化（公共代码提取）
+* tcp为什么可以实现有序无误的传输
+* http如何表示payload的长度
+* cpu流水线什么指令不能并行
+* full gc的问题如何分析
+* cas操作适用场景，数据只改变一次。若需要改变多次，需要用普通的锁
+* 两个球，100个楼层，如何最快的找到临界楼层（扔球会碎）
