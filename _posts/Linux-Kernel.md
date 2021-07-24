@@ -179,26 +179,144 @@ Pass 5: run completed in 10usr/50sys/327real ms.
 * [再聊 TCP backlog](https://juejin.im/post/6844904071367753736)
 * [systemtap从入门到放弃（一）](https://zhuanlan.zhihu.com/p/347313289)
 
-# 4 内核源码浅析
+# 4 ftrace
 
-## 4.1 syscall
+**本小结转载摘录自[Linux ftrace框架介绍及运用](https://www.cnblogs.com/arnoldlu/p/7211249.html)**
+
+在日常工作中，经常会需要对内核进行debug、或者进行优化工作。一些简单的问题，可以通过`dmesg/printk`查看，优化借助一些工具进行。但是当问题逻辑复杂，优化面宽泛的时候，往往无从下手。需要从上到下、模块到模块之间分析，这时候就不得不借助于Linux提供的静态（`trace event`）动态（各种`tracer`）工具进行分析。同时还不得不借助工具、或者编写脚本进行分析，以缩小问题范围、发现问题。简单的使用`tracepoint`已经不能满足需求，因此就花点精力进行梳理
+
+`ftrace`是`function trace`的意思，最开始主要用于记录内核函数运行轨迹，随着功能的逐渐增加，演变成一个跟踪框架。包含了静态`tracepoint`，针对不同`subsystem`提供一个目录进行开关。还包括不同的动态跟踪器，`function`、`function_graph`、`wakeup`等等
+
+`ftrace`的帮助文档在`Documentation/trace`，`ftrace`代码主要在`kernel/trace`，`ftrace`相关头文件在i`nclude/trace`中
+
+## 4.1 ftrace框架介绍
+
+整个`ftrace`框架可以分为几部分：
+
+1. `ftrace`核心框架：整个`ftrace`功能的纽带，包括对内和的修改，`tracer`的注册，`ring`的控制等等
+1. `ring buffer`：静态动态`ftrace`的载体
+1. `debugfs`：提供了用户空间对`ftrace`设置接口
+1. `tracepoint`：静态`trace`
+    * 他需要提前编译进内核
+    * 可以定制打印内容，自由添加
+    * 内核对主要`subsystem`提供了`tracepoint`
+1. `tracer`：包含如下几类
+    * `函数类`：`function`、`function_graph`、`stack`
+    * `延时类`：`irqsoff`、`preemptoff`、`preemptirqsoff`、`wakeup`、`wakeup_rt`、`waktup_dl`
+    * `其他`：`nop`、`mmiotrace`、`blk`
+
+## 4.2 ftrace的配置和使用
+
+`/sys/kernel/debug/tracing`目录下提供了ftrace的设置和属性接口，对`ftrace`的配置可以通过echo。了解每个文件的作用和如何设置对于理解整个`ftrace`框架很有作用
+
+kernel很贴心的在这个目录下准备了一个README文档，查看这个文档就可以看到所有文件的使用方式和具体含义
+
+```sh
+cat /sys/kernel/debug/tracing/README
+```
+
+**通用配置：**
+
+* `available_tracers`当前编译及内核的跟踪器列表，`current_tracer`必须是这里面支持的跟踪器
+* `current_tracer`：用于设置或者显示当前使用的跟踪器列表。系统启动缺省值为`nop`，使用echo将跟踪器名字写入即可打开。可以通过写入`nop`重置跟踪器
+* `buffer_size_kb`：用于设置单个CPU所使用的跟踪缓存的大小。跟踪缓存为`ring buffer`形式，如果跟踪太多，旧的信息会被新的跟踪信息覆盖掉。需要先将`current_trace`设置为nop才可以
+* `buffer_total_size_kb`：显示所有的跟踪缓存大小，不同之处在于`buffer_size_kb`是单个CPU的，`buffer_total_size_kb`是所有CPU的和
+* `free_buffer`：此文件用于在一个进程被关闭后，同时释放`ring buffer`内存，并将调整大小到最小值
+* `hwlat_detector/`：
+* `instances/`：创建不同的`trace buffer`实例，可以在不同的`trace buffers`中分开记录
+* `tracing_cpumask`：可以通过此文件设置允许跟踪特定CPU，二进制格式
+* `per_cpu`：CPU相关的trace信息，包括`stats`、`trace`、`trace_pipe`和`trace_pipe_raw`
+* `printk_formats`：提供给工具读取原始格式`trace`的文件
+* `saved_cmdlines`：存放`pid`对应的`comm`名称作为`ftrace`的`cache`，这样`ftrace`中不光能显示`pid`还能显示`comm`
+* `saved_cmdlines_size`：`saved_cmdlines`的数目
+* `snapshot`：是对trace的snapshot
+    * `echo 0`：清空缓存，并释放对应内存
+    * `echo 1`：进行对当前trace进行snapshot，如没有内存则分配
+    * `echo 2`：清空缓存，不释放也不分配内存
+* `trace`：查看获取到的跟踪信息的接口，`echo > trace`可以清空当前`ring buffer`
+* `trace_pipe`：输出和`trace`一样的内容，但是此文件输出`trace`同时将`ring buffer`中的内容删除，这样就避免了`ring buffer`的溢出。可以通过`cat trace_pipe > trace.txt &`保存文件
+* `trace_clock`：显示当前`trace`的`timestamp`所基于的时钟，默认使用local时钟
+    * `local`：默认时钟；可能无法在不同CPU间同步
+    * `global`：不同CUP间同步，但是可能比local慢
+    * `counter`：这是一个跨CPU计数器，需要分析不同CPU间event顺序比较有效
+* `trace_marker`：从用户空间写入标记到trace中，用于用户空间行为和内核时间同步
+* `trace_marker_raw`：以二进制格式写入到trace中
+* `trace_options`：控制`trace`打印内容或者操作跟踪器，可以通过`trace_options`添加很多附加信息
+* `options`：`trace`选项的一系列文件，和`trace_options`对应
+* `trace_stat/`：每个CPU的`trace`统计信息
+* `tracing_max_latency`：记录`tracer`的最大延时
+* `tracing_on`：用于控制跟踪打开或停止
+    * `echo 0`：停止跟踪
+    * `echo 1`：继续跟踪
+* `tracing_thresh`：延时记录`trace`的阈值，当延时超过此值时才开始记录`trace`。单位是ms，只有非0才起作用
+
+**events配置：**
+
+* `available_events`：列出系统中所有可用的`trace events`，分两个层级，用冒号隔开
+* `events/`：系统`trace events`目录，在每个`events`下面都有`enable`、`filter`和`fotmat`。`enable`是开关；`format`是`events`的格式，然后根据格式设置`filter`
+* `set_event`：将`trace events`名称直接写入`set_event`就可以打开
+* `set_event_pid`：指定追踪特定进程的`events`
+
+**function配置：**
+
+* `available_filter_functions`：记录了当前可以跟踪的内核函数，不在该文件中列出的函数，无法跟踪其活动
+* `dyn_ftrace_total_info`：显示`available_filter_functins`中跟中函数的数目，两者一致
+* `enabled_functions`：显示有回调附着的函数名称
+* `function_profile_enabled`：打开此选项，在`trace_stat`中就会显示`function`的统计信息
+* `set_ftrace_filter`：用于显示指定要跟踪的函数
+* `set_ftrace_notrace`：用于指定不跟踪的函数，缺省为空
+* `set_ftrace_pid`：用于指定要追踪特定进程的函数
+
+**function graph配置：**
+
+* `max_graph_depth`：函数嵌套的最大深度
+* `set_graph_function`：设置要清晰显示调用关系的函数，在使用`function_graph`跟踪器是使用，缺省对所有函数都生成调用关系
+* `set_graph_notrace`：不跟踪特定的函数嵌套调用
+
+**Stack trace设置：**
+
+* `stack_max_size`：当使用`stack`跟踪器时，记录产生过的最大`stack size`
+* `stack_trace`：显示`stack`的`back trace`
+* `stack_trace_filter`：设置`stack tracer`不检查的函数名称
+
+## 4.3 trace-cmd
+
+```sh
+# 该命令会在当前目录下生成一个trace.dat文件
+trace-cmd record -e irq
+
+# 该命令会分析当前目录下的trace.dat文件
+trace-cmd report
+```
+
+## 4.4 参考
+
+* [Linux ftrace框架介绍及运用](https://www.cnblogs.com/arnoldlu/p/7211249.html)
+* [Ftrace Linux Kernel Tracing（论文）](https://events.static.linuxfound.org/slides/2010/linuxcon_japan/linuxcon_jp2010_rostedt.pdf)
+* [ftrace和trace-cmd：跟踪内核函数的利器](https://blog.csdn.net/weixin_44410537/article/details/103587609)
+* [使用 ftrace 跟踪内核](https://blog.csdn.net/qq_32534441/article/details/90244495)
+* [【Kernel ftrace】使用kernel ftrace追踪IRQ的例子](https://www.cnblogs.com/smilingsusu/p/12705780.html)
+
+# 5 内核源码浅析
+
+## 5.1 syscall
 
 系统调用的声明位于`include/linux/syscall.h`文件中，但是通过vs code等文本编辑工具无法跳转到定义处，这是因为系统调用的定义使用了非常多的宏
 
 如何找到系统调用的定义：举个例子，对于系统调用`open`，它有3个参数，那么就全局搜索`SYSCALL_DEFINE3(open`；对于系统调用`openat`，它有4个参数，那么就全局搜索`SYSCALL_DEFINE4(openat`
 
-### 4.1.1 参考
+### 5.1.1 参考
 
 * [linux 内核源码 系统调用宏定义](https://blog.csdn.net/yueyingshaqiu01/article/details/48786961)
 
-## 4.2 network
+## 5.2 network
 
-### 4.2.1 tcp
+### 5.2.1 tcp
 
 socket对应的`file_operations`对象为`socket_file_ops`
 tcp对应的`proto_ops`对象为`inet_stream_ops`
 
-#### 4.2.1.1 create socket
+#### 5.2.1.1 create socket
 
 ```
 sys_socket | net/socket.c SYSCALL_DEFINE3(socket
@@ -209,7 +327,7 @@ sock_create | net/socket.c
 inet_create | net/ipv4/af_inet.c
 ```
 
-#### 4.2.1.2 write socket
+#### 5.2.1.2 write socket
 
 ```
 # syscall
@@ -255,7 +373,7 @@ ops->ndo_start_xmit
 e1000_netdev_ops.ndo_start_xmit ==> e1000_xmit_frame | drivers/net/ethernet/intel/e1000/e1000_main.c
 ```
 
-#### 4.2.1.3 read socket
+#### 5.2.1.3 read socket
 
 **数据从网卡设备流入**
 
@@ -302,7 +420,7 @@ inet_stream_ops.recvmsg ==> inet_recvmsg | net/ipv4/af_inet.c
 tcp_prot.recvmsg ==> tcp_recvmsg | net/ipv4/tcp_ipv4.c
 ```
 
-### 4.2.2 ip
+### 5.2.2 ip
 
 ```
 net/ipv4/ip_input.c
@@ -312,7 +430,7 @@ net/ipv4/ip_input.c
     nf_hook_thresh
 ```
 
-### 4.2.3 参考
+### 5.2.3 参考
 
 * [Linux 网络协议栈开发（五）—— 二层桥转发蓝图（上）](https://blog.csdn.net/zqixiao_09/article/details/79057169)
 * [计算机网络基础 — Linux 内核网络协议栈](https://www.cnblogs.com/jmilkfan-fanguiju/p/12789808.html)
@@ -325,15 +443,15 @@ net/ipv4/ip_input.c
 * [最详细的Linux TCP/IP 协议栈源码分析](https://zhuanlan.zhihu.com/p/265102696?utm_source=wechat_session)
 * [kernel-tcp注释](https://github.com/run/kernel-tcp)
 
-## 4.3 file
+## 5.3 file
 
-### 4.3.1 参考
+### 5.3.1 参考
 
 [linux文件系统四 VFS数据读取vfs_read](https://blog.csdn.net/frank_zyp/article/details/88853932)
 
-# 5 杂项
+# 6 杂项
 
-## 5.1 哪里下载rpm包
+## 6.1 哪里下载rpm包
 
 * [rpm下载地址1](http://rpm.pbone.net/)
 * [rpm下载地址2](http://www.rpmfind.net/)

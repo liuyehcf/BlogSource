@@ -337,6 +337,11 @@ git clone git@github.com:xxx/yyy.git
 
 # 不下载历史提交，当整个仓库体积非常大的时候，下载全部会比较耗费存储以及时间
 git clone https://github.com/xxx/yyy.git --depth 1
+git clone -b <branch_name> https://github.com/xxx/yyy.git --depth 1
+
+# 使用<--depth 1>会衍生另一个问题，无法获取其他分支，可以通过如下方式处理
+git remote set-branches origin '<需要获取的分支名>'
+git fetch --depth 1 origin '<需要获取的分支名>'
 ```
 
 # 11 插件

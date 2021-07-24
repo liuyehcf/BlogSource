@@ -3,6 +3,7 @@
     * blktrace/iowatcher
     * 域套接字
     * [Linux查看实时网卡流量的几种方式](jianshu.com/p/b9e942f3682c)
+    * 如何查看进程使用文件句柄的数量
     * 如何编写TUI程序(https://github.com/marcusolsson/tui-go)
 1. Linux-安全
     * [红帽企业版 Linux 7安全性指南](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/7/html/security_guide/index)
@@ -99,6 +100,7 @@
 * 复制标记、复制整理的优缺点
 * lru的实现方式（不用双链表）
 * 1000w个数据，top k问题
+    * 最小堆，当前元素若大于堆顶元素，那么将堆顶出堆，然后将当前元素入堆
 * P50，P90？
 * hash算法的实现原理
 * 虚拟内存的作用是啥
@@ -115,5 +117,6 @@
 * http如何表示payload的长度
 * cpu流水线什么指令不能并行
 * full gc的问题如何分析
+* 什么是协程，协程和线程的区别
 * cas操作适用场景，数据只改变一次。若需要改变多次，需要用普通的锁
 * 两个球，100个楼层，如何最快的找到临界楼层（扔球会碎）
