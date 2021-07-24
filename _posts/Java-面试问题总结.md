@@ -539,6 +539,9 @@ init Derive's constructor
     > 1. {% post_link Java-锁机制简介 %}
     > 1. {% post_link Java-synchronized的实现原理与应用 %}
 
+1. java程序退出了，有什么方法可以分析
+1. full gc的问题如何分析
+
 # 3 JUC
 
 1. 源码相关
@@ -585,6 +588,7 @@ init Derive's constructor
     > 1. table大小为2的幂次，这样做可以实现一个扩张单调性，类似于一致性hash
     > 1. hash值的改造
     > 详细源码剖析请参考{% post_link Java-concurrent-ConcurrentHashMap-源码剖析 %}
+    > 1. 1.8把锁粒度降低有没有坏处
 
 1. 原子类实现原理
     > 循环+CAS，即自旋
@@ -842,6 +846,13 @@ public class Solution {
 1. interrupt状态恢复
     > `Thread.isInterrupted()`方法本身会将中断标志位复位
 
+1. java对象头以及锁的优化
+    > {% post_link Java-synchronized的实现原理与应用 %}
+
+1. CAS和普通锁的适用场景
+    > * 大概率不冲突：cas
+    > * 大概率会冲突：锁
+
 # 4 Spring
 
 1. Spring AOP实现原理
@@ -932,6 +943,9 @@ public class Solution {
 1. JUNIT
     > 待补充
 
+1. mybatis
+    > mybatis延迟加载
+
 # 6 操作系统
 
 1. 操作系统内存管理
@@ -954,6 +968,10 @@ public class Solution {
     > 1. E：Exclusive，该行数据有效，且数据与内存中的数据一致，但数据值只存在于本Cache中。通俗来说，该数据只在Cache中独一份
     > 1. S：Share，该行数据有效，且该数据与内存中的数据一致。同时，该数据存在与其它多个Cache中
     > 1. I：Invalid，该数据无效
+
+1. [Cache 和 Buffer 都是缓存，主要区别是什么？](https://www.zhihu.com/question/26190832)
+    > * buffer是为了解决读写速率不一致的问题，比如从内存往磁盘上写数据，往往需要通过buffer来进行缓冲
+    > * cache是为了解决热点问题，比如频繁访问一些热点数据，那么就可以把这些热点数据放到读性能更高的存储介质中
 
 1. 缓存替换策略有哪些
     > LRU(Least Recently Used)
@@ -1013,6 +1031,17 @@ public class Solution {
 
 1. 跨进程通信，消费者模式的阻塞式如何实现的
     > 待补充
+
+1. mmap什么作用
+    > 系统调用使得进程之间通过映射同一个普通文件实现共享内存，普通文件被映射到进程地址空间后，进程可以像访问普通内存一样对文件进行访问，不必再调用read()，write（）等操作
+
+1. [深度理解 Linux 读取文件过程！](https://zhuanlan.zhihu.com/p/371574406)
+    > 做了几次拷贝操作？
+
+1. 虚拟内存的作用是啥
+    > 程序不用关心绝对地址，只需要关心虚拟地址，操作系统会协助做地址映射
+
+1. 什么是协程，协程和线程的区别
 
 # 7 Linux
 
@@ -1143,6 +1172,9 @@ public class Solution {
     > **hard link**：hard link只是在某个目录下新建一条文件名连接到某inode号码的关联记录而已。因此两个文件名会连接到同一个inode号码。ls -l查看的连接数就是多少个文件名连接到这个inode号码的意思
     > **symbolic link**：创建一个独立的文件，这个文件会让数据的读取指向它**连接的文件名。注意这里连接到文件名而不是inode号码**
 
+1. cgroup实现原理
+    > {% post_link Linux-重要特性 %}
+
 # 8 分布式相关
 
 1. 说说分布式计算
@@ -1248,7 +1280,11 @@ public class Solution {
 1. mq的推模式和拉模式各有什么优势
     > 推模式，实时性更高；拉模式，批量拉取，实时性要求不高，吞吐量大
 
-# 9 算法
+1. raft和paxos的区别
+    > * raft弱化了选主过程中的强一致性，可能会先后选出多个leader，但是这些leader的term（类似于paxos中的proposal-id）是不同的，成员可以根据term的大小关系选出最终的leader，也就是保证了最终只会有一个leader
+    > * Raft协议强调日志的连续性，multi-paxos则允许日志有空洞：协议的最终目的其实是为了维护数据的最终一致性，raft协议能够保证选出的leader一定包含所有已提交的日志（会将term最大且日志序号最大的选为leader）；而paxos无法保证，因此需要有额外的补偿流程来恢复那些已经提交，但是又未被leader记录的日志。根本原因就在于：raft在选主时会兼顾数据的完整性，而paxos不会
+
+# 9 算法&数据结构
 
 1. 贪心的计算思想是什么？其弊端是什么？
     > 局部最优解就是全局最优解
@@ -1313,8 +1349,10 @@ public class Solution {
     > 开放寻址法，空间利用率不高，对hash函数的性能要求非常高
 
 1. 什么是一致性hash
-    > {% post_link 一致性hash %}
+    > * {% post_link 一致性hash %}
+    > * 普通hash --> 一致性hash，本质上就是固定模的长度，在增加或删除节点后hash求模的值不变
 
+1. [一致性哈希和哈希槽对比](https://www.jianshu.com/p/4163916a2a8a)
 1. paxos算法
     > {% post_link Paxos协议 %}
 
@@ -1493,7 +1531,21 @@ public class Solution {
 }
 ```
 
+1. skip list
+    > 以空间复杂度换时间复杂度
+
+1. 1000w个数据，top k问题
+    > 最小堆，当前元素若大于堆顶元素，那么将堆顶出堆，然后将当前元素入堆
+
+1. hash算法的实现原理
+1. 两个球，100个楼层，如何最快的找到临界楼层（扔球会碎）
+
 # 10 数据库
+
+1. [数据库设计三大范式](https://zhuanlan.zhihu.com/p/63146817)
+    > * 第一范式：确保每列保持原子性
+    > * 第二范式：确保表中的每列都和主键相关（每一列都与主键相关，而不能只与主键的某一部分相关，主要针对的是联合主键这种情况）
+    > * 第三范式：确保每列都和主键列直接相关，而不是间接相关（订单和客户信息如果存在一张表里，那么客户的联系方式和订单id其实是间接相关）
 
 1. 数据库触发器是什么
     > 其是一种特殊的存储过程。一般的存储过程是通过存储过程名直接调用，而触发器主要是通过事件(增、删、改)进行触发而被执行的。其在表中数据发生变化时自动强制执行。常见的触发器有两种：after(for)、instead of，用于insert、update、delete事件
@@ -1642,6 +1694,10 @@ WHERE sex = 0;
 
 # 11 Redis&缓存相关
 
+1. [Redis为什么是单线程的](https://www.cnblogs.com/tuyang1129/p/12822501.html)
+    > * redis是基于内存的操作，cpu不是瓶颈
+    > * 单线程的好处：简单
+
 1. Redis的并发竞争问题如何解决，了解Redis事务的CAS操作吗
     > {% post_link Redis-面试总结 %}
 
@@ -1663,12 +1719,11 @@ WHERE sex = 0;
     > 1. Bloom Filter
     > 1. 缓存该不存在的键(其值是一个约定好的值)，其过期时间较短，并且应用端能够处理这个缓存值
 
-1. Redis集群，高可用，原理
-    > 待补充
+1. [Redis集群方案应该怎么做？](https://www.zhihu.com/question/21419897)
+    > * presharding，假设集群最大容量是50台机器，而最开始只有5台，那可以在5台机器上，每台机器跑10个副本，当需要扩容的时候，进行数据拷贝即可（通过主从配置）。同时节点宕机也不会带来更大的问题
+    > * 集群中的每个节点再加主从
 
-1. MySQL里有2000w数据，Redis中只存20w的数据，如何保证Redis中的数据都是热点数据
-    > 感觉就是淘汰策略
-
+1. [如何发现 Redis 热点 Key ，解决方案有哪些？](https://zhuanlan.zhihu.com/p/104942776)
 1. 用Redis和任意语言实现一段恶意登录保护的代码，限制1小时内每用户Id最多只能登录5次
     > 待补充
 
@@ -1878,6 +1933,13 @@ WHERE sex = 0;
 
 1. 数字证书
     > {% post_link HTTPS协议 %}
+
+1. 进程最多可以打开多少个tcp连接受到哪些因素的影响
+    > * CPU
+    > * 内存，每个tcp连接需要缓冲区
+    > * 端口号资源
+    > * 文件描述符资源
+    > * 线程资源，管理tcp连接需要线程，即便是io多路复用，也需要线程
 
 # 13 场景设计
 

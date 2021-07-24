@@ -45,78 +45,8 @@
     * oam [5分钟带你快速入门和了解 OAM Kubernetes](https://www.cnblogs.com/ants/p/13300407.html)
 1. [CPU 和 GPU 的区别是什么？](https://www.zhihu.com/question/19903344)
 1. dracut    
-1. 面试
-    * java程序退出了，有什么方法可以分析
-    * mybatis延迟加载
-    * redis集群相关的知识点
-        * [Redis集群方案应该怎么做？](https://www.zhihu.com/question/21419897)
-        * 普通hash --> 一致性hash，本质上就是固定模的长度，在增加或删除节点后hash求模的值不变
-        * presharding，假设集群最大容量是50台机器，而最开始只有5台，那可以在5台机器上，每台机器跑10个副本，当需要扩容的时候，进行数据拷贝即可（通过主从配置）。同时节点宕机也不会带来更大的问题
-        * 集群中的每个节点再加主从
-        * [一致性哈希和哈希槽对比](https://www.jianshu.com/p/4163916a2a8a)
-        * [如何发现 Redis 热点 Key ，解决方案有哪些？](https://zhuanlan.zhihu.com/p/104942776)
-        * [Redis为什么是单线程的](https://www.cnblogs.com/tuyang1129/p/12822501.html)
-            * redis是基于内存的操作，cpu不是瓶颈
-            * 单线程的好处：简单
-        * redis如何实现过期
-            * 惰性删除：访问的时候进行过期检查，需要有额外的后台线程来执行真正的物理删除，以免占用内存
-            * 定期删除：从过期字典中随机取出20个键，删除这20个建中过期的键，若比例大于25%，那么重复该步骤（需要控制扫描速度，以免消耗大量的cpu）
-        * redis的map是如何实现的
-    * 算法题combinationSum2
-    * 1.8把锁粒度降低有没有坏处
-    * mmap：系统调用使得进程之间通过映射同一个普通文件实现共享内存，普通文件被映射到进程地址空间后，进程可以像访问普通内存一样对文件进行访问，不必再调用read()，write（）等操作
-    * 打开文件做了几次拷贝
-        * [深度理解 Linux 读取文件过程！](https://zhuanlan.zhihu.com/p/371574406)
-    * 最大子数组和
-    * 并发包：CompletableFuture
-    * ConcurrentHashMap
-        * 1.8做了哪些优化？
-            1. 分段锁改成cas+syn
-            1. 当碰撞过多时，用红黑树而非链表
-    * [Cache 和 Buffer 都是缓存，主要区别是什么？](https://www.zhihu.com/question/26190832)
-    * [数据库设计三大范式](https://zhuanlan.zhihu.com/p/63146817)
-        * 第一范式：确保每列保持原子性
-        * 第二范式：确保表中的每列都和主键相关（每一列都与主键相关，而不能只与主键的某一部分相关，主要针对的是联合主键这种情况）
-        * 第三范式：确保每列都和主键列直接相关，而不是间接相关（订单和客户信息如果存在一张表里，那么客户的联系方式和订单id其实是间接相关）
-    * raft和paxos的区别
-        * raft弱化了选主过程中的强一致性，可能会先后选出多个leader，但是这些leader的term（类似于paxos中的proposal-id）是不同的，成员可以根据term的大小关系选出最终的leader，也就是保证了最终只会有一个leader
-        * 相同点：因此它们其实在同一个时刻，都只会存在一个「合法的leader」，言下之意，可以存在多个leader，只有一个是合法的
-        * Raft协议强调日志的连续性，multi-paxos则允许日志有空洞：协议的最终目的其实是为了维护数据的最终一致性，raft协议能够保证选出的leader一定包含所有已提交的日志（会将term最大且日志序号最大的选为leader）；而paxos无法保证，因此需要有额外的补偿流程来恢复那些已经提交，但是又未被leader记录的日志。根本原因就在于：raft在选主时会兼顾数据的完整性，而paxos不会
-    * cgroup实现原理
-        * https://blog.csdn.net/zhonglinzhang/article/details/64905759
-    * 进程最多可以打开多少个tcp连接受到哪些因素的影响
-        * CPU
-        * 内存，每个tcp连接需要缓冲区
-        * 端口号资源
-        * 文件描述符资源
-        * 线程资源，管理tcp连接需要线程，即便是io多路复用，也需要线程
-    * 数据结构
-        * skip list，以空间复杂度换时间复杂度
 * 时序数据库
     * [关于时序数据库的一些思考](https://zhuanlan.zhihu.com/p/100146332)
     * [LSM树详解](https://zhuanlan.zhihu.com/p/181498475)
 * netty实现一个server，同时支持http和websocket
-    * https://medium.com/@irunika/how-to-write-a-http-websocket-server-using-netty-f3c136adcba9
-* 复制标记、复制整理的优缺点
-* lru的实现方式（不用双链表）
-* 1000w个数据，top k问题
-    * 最小堆，当前元素若大于堆顶元素，那么将堆顶出堆，然后将当前元素入堆
-* P50，P90？
-* hash算法的实现原理
-* 虚拟内存的作用是啥
-* java内存怎么分布
-* gc cms的大致流程
-* 一个boolean对象占用多少内存
-* 对象头里面包含什么东西
-* 重量级锁以及相应的锁优化
-* 可重入锁是如何实现的
-* 并发安全的集合有什么特点？写操作是串行的，读操作不能读到瞬态的值
-* spring 依赖注入的方式？set以及字段
-* 代码优化（公共代码提取）
-* tcp为什么可以实现有序无误的传输
-* http如何表示payload的长度
-* cpu流水线什么指令不能并行
-* full gc的问题如何分析
-* 什么是协程，协程和线程的区别
-* cas操作适用场景，数据只改变一次。若需要改变多次，需要用普通的锁
-* 两个球，100个楼层，如何最快的找到临界楼层（扔球会碎）
+    * https://medium.com/@irunika/how-to-write-a-http-websocket-server-using-netty-f3c136adcba9* P50，P90？
