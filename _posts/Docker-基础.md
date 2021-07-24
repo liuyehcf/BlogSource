@@ -12,7 +12,17 @@ categories:
 
 <!--more-->
 
-# 1 创建镜像
+# 1 容器的生命周期
+
+![container_lifecycle](/images/Docker-基础/container_lifecycle.webp)
+
+# 2 文件系统
+
+## 2.1 overlay2
+
+[Example OverlayFS Usage [duplicate]](https://askubuntu.com/questions/699565/example-overlayfs-usage)
+
+# 3 创建镜像
 
 **创建一个空的目录**，例如`/tmp/test`
 
@@ -119,7 +129,7 @@ if **name** == "**main**":
 
 **运行应用：`docker run -p 4000:80 friendlyhello`**
 
-# 2 docker命令行工具
+# 4 docker命令行工具
 
 学会利用`--help`参数
 
@@ -128,9 +138,9 @@ docker --help # 查询所有顶层的参数
 docker image --help # 参数image参数的子参数
 ```
 
-# 3 基础镜像
+# 5 基础镜像
 
-## 3.1 Alpine
+## 5.1 Alpine
 
 Alpine Linux是一个轻型Linux发行版，它不同于通常的Linux发行版，Alpine采用了musl libc 和 BusyBox以减少系统的体积和运行时的资源消耗。Alpine Linux提供了自己的包管理工具：apk
 
@@ -155,7 +165,7 @@ RUN apk update \
 RUN apk add -U tzdata
 ```
 
-## 3.2 Jib
+## 5.2 Jib
 
 ```xml
             <plugin>
@@ -182,7 +192,7 @@ RUN apk add -U tzdata
             </plugin>
 ```
 
-# 4 Tips
+# 6 Tips
 
 1. 启动并保持容器运行
     * 可以执行一个不会终止的程序：`docker run -dit xxx:v1`
@@ -222,7 +232,7 @@ RUN apk add -U tzdata
 1. 查看img的详情：`docker inspect <img>`
 1. 查看容器资源占用情况：`docker stats <container>`
 
-## 4.1 跨平台运行容器
+## 6.1 跨平台运行容器
 
 默认情况下，docker是不支持`--platform`参数的，可以通过修改`/etc/docker/daemon.json`，添加如下配置项后，重启docker，开启该功能
 
@@ -303,7 +313,7 @@ Linux c3fb58ea543c 4.14.134 #1 SMP Tue Dec 29 21:27:58 EST 2020 aarch64 aarch64 
 
 * `docker run --rm --privileged multiarch/qemu-user-static:register`是向内核注册了各异构平台的`binfmt handler`，包括`aarch64`等等，这些注册信息就包括了`binfmt handler`的路径，比如`/usr/bin/qemu-aarch64-static`等等，注册信息都在`/proc/sys/fs/binfmt_misc`目录下，每个注册项都是该目录下的一个文件。**实际的`qemu-xxx-static`文件还得手动放置到对应目录中才能生效**
 
-## 4.2 镜像裁剪工具-dockerslim
+## 6.2 镜像裁剪工具-dockerslim
 
 ```sh
 docker-slim build --http-probe=false centos:7.6.1810
@@ -311,11 +321,11 @@ docker-slim build --http-probe=false centos:7.6.1810
 
 裁剪之后，镜像的体积从`202MB`变为`3.55MB`。但是裁剪之后，大部分的命令都被裁剪了（包括`ls`这种最基础的命令）
 
-## 4.3 异常排查
+## 6.3 异常排查
 
 在k8s环境中，若容器运行时用的是`docker`，那么该`docker`会依赖`containerd`，当`containerd`不正常的时候，`docker`也就不正常了。恢复`containerd`的办法：将`/var/lib/containerd/io.containerd.metadata.v1.bolt`这个文件删掉
 
-# 5 参考
+# 7 参考
 
 * [Docker Hub](https://hub.docker.com/)
 * [Docker历史版本下载](https://docs.docker.com/docker-for-mac/release-notes/#docker-community-edition-17120-ce-mac49-2018-01-19)
@@ -340,3 +350,4 @@ docker-slim build --http-probe=false centos:7.6.1810
 * [跨平台构建 Docker 镜像新姿势，x86、arm 一把梭](https://cloud.tencent.com/developer/article/1543689)
 * [QEMU和KVM的关系](https://zhuanlan.zhihu.com/p/48664113)
 * [dockerslim](https://dockersl.im/)
+* [第三章 Docker容器的生命周期](https://www.jianshu.com/p/442b726f8cca)

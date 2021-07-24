@@ -12,30 +12,12 @@
     * [使用CRASH分析LINUX内核崩溃转储文件VMCORE](https://www.freesion.com/article/1560535243/)
     * crash 命令
     * [教你三步在CentOS 7 中安装或升级最新的内核](https://www.linuxprobe.com/update-kernel-centos7.html)
-1. 重要路径
-    * /proc/<pid>/maps
-    * /proc/<pid>/smaps
-        * https://www.jianshu.com/p/8203457a11cc
-1. 文件系统
-    * overlay2文件系统的使用：[Example OverlayFS Usage [duplicate]](https://askubuntu.com/questions/699565/example-overlayfs-usage)
-1. 操作系统安装
-    * cobbler：https://www.cnblogs.com/yanjieli/p/11016825.html
-    * ubuntu
-        * 如何修改rootfs
-        * resize-helper
-        * 查看已安装的包 https://blog.csdn.net/sunchenzl/article/details/82117212
-1. go 分析工具 https://golang.org/pkg/net/http/pprof/
-    * [如何使用go pprof定位内存泄露](http://team.jiunile.com/blog/2020/09/go-pprof.html)
-    * [Golang 大杀器之性能剖析 PProf](https://www.jianshu.com/p/4e4ff6be6af9)
-    * [How to run go pprof on Docker daemon](https://gist.github.com/Jimmy-Xu/85fb01cd7620454c6d65)
 1. Excalidraw 画图工具
     * https://github.com/excalidraw/excalidraw
     * https://learnku.com/articles/47662
 1. java
     * [JVM ：关于捕获 Java Heap Dump 的6种方式](https://blog.csdn.net/u010647035/article/details/86563736)
     * 如何定位java进程crash core Dump
-1. Docker
-    * 生命周期：[第三章 Docker容器的生命周期](https://www.jianshu.com/p/442b726f8cca)
 1. k8s
     * 调度
         * [Kubernetes Pod调度入门](https://blog.frognew.com/2017/06/kubernetes-scheduling.html)
@@ -43,10 +25,6 @@
     * ipvs
         * [IPVS从入门到精通kube-proxy实现原理](https://zhuanlan.zhihu.com/p/94418251)
     * oam [5分钟带你快速入门和了解 OAM Kubernetes](https://www.cnblogs.com/ants/p/13300407.html)
-1. [CPU 和 GPU 的区别是什么？](https://www.zhihu.com/question/19903344)
-1. dracut    
 * 时序数据库
     * [关于时序数据库的一些思考](https://zhuanlan.zhihu.com/p/100146332)
     * [LSM树详解](https://zhuanlan.zhihu.com/p/181498475)
-* netty实现一个server，同时支持http和websocket
-    * https://medium.com/@irunika/how-to-write-a-http-websocket-server-using-netty-f3c136adcba9* P50，P90？

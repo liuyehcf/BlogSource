@@ -1218,3 +1218,4 @@ if (!isWritable) {
 * [Netty堆外内存泄漏排查，这一篇全讲清楚了](https://juejin.cn/post/6844904036672471048)
 * [Netty堆外内存泄漏排查，这一篇全讲清楚了](https://segmentfault.com/a/1190000021469481)
 * [Netty 防止内存泄漏措施](https://zhuanlan.zhihu.com/p/58444143)
+* [netty实现一个server，同时支持http和websocket](https://medium.com/@irunika/how-to-write-a-http-websocket-server-using-netty-f3c136adcba9)

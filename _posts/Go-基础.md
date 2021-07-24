@@ -337,19 +337,21 @@ dep ensure -add github.com/pkg/errors
 dep ensure
 ```
 
-# 4 Common-Libs
+# 4 pprof
 
-## 4.1 mysql
+# 5 Common-Libs
+
+## 5.1 mysql
 
 [使用go语言操作mysql数据库](https://studygolang.com/articles/3022)
 
-## 4.2 template
+## 5.2 template
 
 [gotemplate](https://golang.org/pkg/text/template/）
 
-# 5 GoLand
+# 6 GoLand
 
-## 5.1 build tags
+## 6.1 build tags
 
 例如，我在Mac上安装了GoLand，但是我想要调用linux环境下的syscall，但是在GoLand默认解析的是Mac版本的源码（`syscall_darwin_amd64.go`）
 
@@ -359,7 +361,7 @@ dep ensure
    * `Go`
       * `Vendoring & Build Tags`，然后将`OS`改成`linux`即可
 
-# 6 参考
+# 7 参考
 
 * [Frequently Asked Questions](https://golang.org/doc/faq)
 * [go中包的概念、导入与可见性](https://studygolang.com/articles/7165)
@@ -373,3 +375,7 @@ dep ensure
 * [git报错remote: Repository not found的一种可能](https://www.jianshu.com/p/5eb3a91458de)
 * [How to correctly use sync.Cond?](https://stackoverflow.com/questions/36857167/how-to-correctly-use-sync-cond)
 * [go安装gin框架失败错误解决：sum.golang.org被墙](https://blog.csdn.net/LXDOS/article/details/104749071/)
+* [pprof doc](https://pkg.go.dev/net/http/pprof)
+* [如何使用go pprof定位内存泄露](http://team.jiunile.com/blog/2020/09/go-pprof.html)
+* [Golang 大杀器之性能剖析 PProf](https://www.jianshu.com/p/4e4ff6be6af9)
+* [How to run go pprof on Docker daemon](https://gist.github.com/Jimmy-Xu/85fb01cd7620454c6d65)
