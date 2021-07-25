@@ -2,8 +2,7 @@
     * blktrace/iowatcher
     * [Linux查看实时网卡流量的几种方式](jianshu.com/p/b9e942f3682c)
     * 如何编写TUI程序(https://github.com/marcusolsson/tui-go)
-1. java
-    * [JVM ：关于捕获 Java Heap Dump 的6种方式](https://blog.csdn.net/u010647035/article/details/86563736)
+1. Linux-coredump
     * 如何定位java进程crash core Dump
 * 时序数据库
     * [关于时序数据库的一些思考](https://zhuanlan.zhihu.com/p/100146332)
