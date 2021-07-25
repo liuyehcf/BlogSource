@@ -29,3 +29,7 @@ Kafka的服务露出有点问题，如果简单地把`Service`从`ClusterIP`修�
 ## 4.1 参考
 
 * [理解 Istio Service Mesh 中 Envoy 代理 Sidecar 注入及流量劫持](https://jimmysong.io/posts/envoy-sidecar-injection-in-istio-service-mesh-deep-dive/?from=groupmessage&isappinstalled=0)
+
+# 5 OAM
+
+* [5分钟带你快速入门和了解 OAM Kubernetes](https://www.cnblogs.com/ants/p/13300407.html)

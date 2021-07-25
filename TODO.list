@@ -1,28 +1,10 @@
 1. Linux-常用命令
     * blktrace/iowatcher
     * [Linux查看实时网卡流量的几种方式](jianshu.com/p/b9e942f3682c)
-    * 如何查看进程使用文件句柄的数量
-    * 如何编写TUI程序(https://github.com/marcusolsson/tui-go)
-1. Linux-安全
-    * [红帽企业版 Linux 7安全性指南](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/7/html/security_guide/index)
-1. kernel panic
-    * [比较 kdump makedumpfile 中的压缩方法](https://feichashao.com/compare_compression_method_of_makedumpfile/)
-    * [使用CRASH分析LINUX内核崩溃转储文件VMCORE](https://www.freesion.com/article/1560535243/)
-    * crash 命令
-    * [教你三步在CentOS 7 中安装或升级最新的内核](https://www.linuxprobe.com/update-kernel-centos7.html)
-1. Excalidraw 画图工具
-    * https://github.com/excalidraw/excalidraw
-    * https://learnku.com/articles/47662
+    * 如何编写TUI程序(https://github.com/marcusolsson/tui-go)    * 
 1. java
     * [JVM ：关于捕获 Java Heap Dump 的6种方式](https://blog.csdn.net/u010647035/article/details/86563736)
     * 如何定位java进程crash core Dump
-1. k8s
-    * 调度
-        * [Kubernetes Pod调度入门](https://blog.frognew.com/2017/06/kubernetes-scheduling.html)
-    * k8s.io/api k8s.io/apimachinery k8s.io/client-go 版本不匹配
-    * ipvs
-        * [IPVS从入门到精通kube-proxy实现原理](https://zhuanlan.zhihu.com/p/94418251)
-    * oam [5分钟带你快速入门和了解 OAM Kubernetes](https://www.cnblogs.com/ants/p/13300407.html)
 * 时序数据库
     * [关于时序数据库的一些思考](https://zhuanlan.zhihu.com/p/100146332)
     * [LSM树详解](https://zhuanlan.zhihu.com/p/181498475)

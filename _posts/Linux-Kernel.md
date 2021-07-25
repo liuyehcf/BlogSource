@@ -73,6 +73,7 @@ rpm -iUv ~/rpmbuild/RPMS/x86_64/*.rpm
 * [How to Compile a Linux Kernel](https://www.linux.com/topic/desktop/how-compile-linux-kernel-0/)
 * [CentOS 7上Systemtap的安装](https://www.linuxidc.com/Linux/2019-03/157818.htm)
 * [如何解压RPM包](https://www.cnblogs.com/joeblackzqq/archive/2011/03/19/1989137.html)
+* [教你三步在CentOS 7 中安装或升级最新的内核](https://www.linuxprobe.com/update-kernel-centos7.html)
 
 # 3 systemtap
 
@@ -297,26 +298,35 @@ trace-cmd report
 * [使用 ftrace 跟踪内核](https://blog.csdn.net/qq_32534441/article/details/90244495)
 * [【Kernel ftrace】使用kernel ftrace追踪IRQ的例子](https://www.cnblogs.com/smilingsusu/p/12705780.html)
 
-# 5 内核源码浅析
+# 5 kdump
 
-## 5.1 syscall
+## 5.1 crash命令
+
+## 5.2 参考
+
+* [比较 kdump makedumpfile 中的压缩方法](https://feichashao.com/compare_compression_method_of_makedumpfile/)
+* [使用CRASH分析LINUX内核崩溃转储文件VMCORE](https://www.freesion.com/article/1560535243/)
+
+# 6 内核源码浅析
+
+## 6.1 syscall
 
 系统调用的声明位于`include/linux/syscall.h`文件中，但是通过vs code等文本编辑工具无法跳转到定义处，这是因为系统调用的定义使用了非常多的宏
 
 如何找到系统调用的定义：举个例子，对于系统调用`open`，它有3个参数，那么就全局搜索`SYSCALL_DEFINE3(open`；对于系统调用`openat`，它有4个参数，那么就全局搜索`SYSCALL_DEFINE4(openat`
 
-### 5.1.1 参考
+### 6.1.1 参考
 
 * [linux 内核源码 系统调用宏定义](https://blog.csdn.net/yueyingshaqiu01/article/details/48786961)
 
-## 5.2 network
+## 6.2 network
 
-### 5.2.1 tcp
+### 6.2.1 tcp
 
 socket对应的`file_operations`对象为`socket_file_ops`
 tcp对应的`proto_ops`对象为`inet_stream_ops`
 
-#### 5.2.1.1 create socket
+#### 6.2.1.1 create socket
 
 ```
 sys_socket | net/socket.c SYSCALL_DEFINE3(socket
@@ -327,7 +337,7 @@ sock_create | net/socket.c
 inet_create | net/ipv4/af_inet.c
 ```
 
-#### 5.2.1.2 write socket
+#### 6.2.1.2 write socket
 
 ```
 # syscall
@@ -373,7 +383,7 @@ ops->ndo_start_xmit
 e1000_netdev_ops.ndo_start_xmit ==> e1000_xmit_frame | drivers/net/ethernet/intel/e1000/e1000_main.c
 ```
 
-#### 5.2.1.3 read socket
+#### 6.2.1.3 read socket
 
 **数据从网卡设备流入**
 
@@ -420,7 +430,7 @@ inet_stream_ops.recvmsg ==> inet_recvmsg | net/ipv4/af_inet.c
 tcp_prot.recvmsg ==> tcp_recvmsg | net/ipv4/tcp_ipv4.c
 ```
 
-### 5.2.2 ip
+### 6.2.2 ip
 
 ```
 net/ipv4/ip_input.c
@@ -430,7 +440,7 @@ net/ipv4/ip_input.c
     nf_hook_thresh
 ```
 
-### 5.2.3 参考
+### 6.2.3 参考
 
 * [Linux 网络协议栈开发（五）—— 二层桥转发蓝图（上）](https://blog.csdn.net/zqixiao_09/article/details/79057169)
 * [计算机网络基础 — Linux 内核网络协议栈](https://www.cnblogs.com/jmilkfan-fanguiju/p/12789808.html)
@@ -443,15 +453,15 @@ net/ipv4/ip_input.c
 * [最详细的Linux TCP/IP 协议栈源码分析](https://zhuanlan.zhihu.com/p/265102696?utm_source=wechat_session)
 * [kernel-tcp注释](https://github.com/run/kernel-tcp)
 
-## 5.3 file
+## 6.3 file
 
-### 5.3.1 参考
+### 6.3.1 参考
 
 [linux文件系统四 VFS数据读取vfs_read](https://blog.csdn.net/frank_zyp/article/details/88853932)
 
-# 6 杂项
+# 7 杂项
 
-## 6.1 哪里下载rpm包
+## 7.1 哪里下载rpm包
 
 * [rpm下载地址1](http://rpm.pbone.net/)
 * [rpm下载地址2](http://www.rpmfind.net/)

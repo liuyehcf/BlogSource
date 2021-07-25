@@ -927,3 +927,4 @@ W1009 12:41:47.192659       6 proxier.go:320] missing br-netfilter module or uns
 * [理解kubernetes环境的iptables](https://www.cnblogs.com/charlieroro/p/9588019.html)
 * [Kubernetes Networking Demystified: A Brief Guide](https://www.stackrox.com/post/2020/01/kubernetes-networking-demystified/)
 * [Kube Proxy 工作模式对比分析](https://blog.csdn.net/shida_csdn/article/details/104626839/)
+* [IPVS从入门到精通kube-proxy实现原理](https://zhuanlan.zhihu.com/p/94418251)

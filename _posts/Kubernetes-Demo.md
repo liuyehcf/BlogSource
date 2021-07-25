@@ -464,7 +464,13 @@ kubeadm certs renew admin.conf
 
 **重启api-server后生效**
 
-# 5 参考
+# 5 常见问题
+
+## 5.1 kubernetes相关依赖不兼容
+
+`k8s.io/api`、`k8s.io/apimachinery`、`k8s.io/client-go`这个三个包的版本要保持一致，否则可能会有兼容性问题
+
+# 6 参考
 
 * [Kubernetes-Creating a single master cluster with kubeadm](https://kubernetes.io/docs/setup/)
 * [Kubernetes-Installing kubeadm](https://kubernetes.io/docs/setup/independent/install-kubeadm/)
