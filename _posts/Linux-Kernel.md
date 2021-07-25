@@ -298,7 +298,9 @@ trace-cmd report
 * [使用 ftrace 跟踪内核](https://blog.csdn.net/qq_32534441/article/details/90244495)
 * [【Kernel ftrace】使用kernel ftrace追踪IRQ的例子](https://www.cnblogs.com/smilingsusu/p/12705780.html)
 
-# 5 kdump
+# 5 dump
+
+## 5.1 kdump
 
 **如何模拟内核crash？执行下面这个命令即可**
 
@@ -344,7 +346,38 @@ crash /lib/debug/lib/modules/`uname -r`/vmlinux /var/crash/127.0.0.1-2021-07-24-
 * 上述命令的详细用法可以通过`help <cmd>`
 * 其他命令可以通过`help`查看
 
-## 5.1 参考
+## 5.2 coredump
+
+`core dump`又叫核心转储，当程序运行过程中发生异常，程序异常退出时, 由操作系统把程序当前的内存状况存储在一个core文件中，叫`core dump`
+
+**产生`core dump`的可能原因**
+
+1. 内存访问越界
+1. 多线程程序使用了线程不安全的函数
+1. 多线程读写的数据未加锁保护
+1. 非法指针
+1. 使用空指针
+1. 随意使用指针转换
+1. 堆栈溢出
+1. ...
+
+**与`core dump`相关的配置项**
+
+* `ulimit -c`：若是0，则不支持，可以通过`ulimit -c unlimited`或者`ulimit -c <size>`来开启
+* `/proc/sys/kernel/core_pattern`：`core dump`的存储路径
+    * 默认是`core`，若程序产生`core dump`，那么其存放路径位于当前路径
+    * `echo "/data/coredump/core.%e.%p" >/proc/sys/kernel/core_pattern`：可以通过类似的语句修改存储路径，其中`%e`表示二进制名称，`%p`表示进程id
+* `/proc/sys/kernel/core_pipe_limit`
+* `/proc/sys/kernel/core_uses_pid`：如果这个文件的内容被配置成`1`，那么即使`core_pattern`中没有设置`%p`，最后生成的`core dump`文件名仍会加上进程id
+
+**如何分析**
+
+```sh
+# 其中可执行程序<binary>需要通过-g参数编译而来，这样会带上debug信息，才能分析core dump文件
+gdb <binary> <core dump file>
+```
+
+## 5.3 参考
 
 * [比较 kdump makedumpfile 中的压缩方法](https://feichashao.com/compare_compression_method_of_makedumpfile/)
 * [使用CRASH分析LINUX内核崩溃转储文件VMCORE](https://www.freesion.com/article/1560535243/)
