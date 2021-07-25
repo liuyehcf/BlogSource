@@ -300,9 +300,51 @@ trace-cmd report
 
 # 5 kdump
 
-## 5.1 crash命令
+**如何模拟内核crash？执行下面这个命令即可**
 
-## 5.2 参考
+```sh
+# 执行完后，会在/var/crash目录下生成dump文件，并会重启机器
+echo c > /proc/sysrq-trigger
+```
+
+**下载分析crash文件所需的rpm包**
+
+```sh
+# 首先，我们需要下载带有完整调试信息的内核映像文件(编译时带-g选项)，内核调试信息包kernel-debuginfo有两个
+# 1. kernel-debuginfo
+# 2. kernel-debuginfo-common
+
+wget http://debuginfo.centos.org/7/x86_64/kernel-debuginfo-common-x86_64-`uname -r`.rpm
+wget http://debuginfo.centos.org/7/x86_64/kernel-debuginfo-`uname -r`.rpm
+
+# 安装，之后我们就可以在/lib/debug/lib/modules/`uname -r`目录下看到vmlinux内核映像文件
+rpm -ivh *.rpm
+ll /lib/debug/lib/modules/`uname -r`
+```
+
+**如何分析系统crash文件**
+
+```sh
+crash /lib/debug/lib/modules/`uname -r`/vmlinux /var/crash/127.0.0.1-2021-07-24-22\:59\:34/vmcore
+```
+
+* `bt`：backtrace打印内核栈回溯信息，`bt pid`打印指定进程栈信息
+    * 最重要的是RIP信息，指出了发生crash的`function`以及`offset`
+* `log`：打印vmcore所在的系统内核日志信息
+* `dis`：反汇编出指令所在代码开始，`dis -l (function+offset)`，其中`function+offset`可以是`bt`中RIP对应的信息
+    * 示例：`dis -l sysrq_handle_crash+22`
+* `mod`：查看当时内核加载的所有内核模块信息
+* `sym`：将地址转换为符号信息，其中地址可以是`bt`中RIP对应的信息
+    * 示例：`sym ffffffff8d26d9b6`
+* `ps`：打印内核崩溃时，正常的进程信息
+* `files`：`files pid`打印指定进程所打开的文件信息
+* `vm`：`vm pid`打印某指定进程当时虚拟内存基本信息
+* `task`：查看当前进程或指定进程`task_struct`和`thread_info`的信息
+* `kmem`：查看当时系统内存使用信息
+* 上述命令的详细用法可以通过`help <cmd>`
+* 其他命令可以通过`help`查看
+
+## 5.1 参考
 
 * [比较 kdump makedumpfile 中的压缩方法](https://feichashao.com/compare_compression_method_of_makedumpfile/)
 * [使用CRASH分析LINUX内核崩溃转储文件VMCORE](https://www.freesion.com/article/1560535243/)
