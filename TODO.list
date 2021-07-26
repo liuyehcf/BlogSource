@@ -6,7 +6,7 @@
     * [关于时序数据库的一些思考](https://zhuanlan.zhihu.com/p/100146332)
     * [LSM树详解](https://zhuanlan.zhihu.com/p/181498475)
 1. DorisDB
-    * https://github.com/apache/incubator-doris/wiki
-    * https://15445.courses.cs.cmu.edu/fall2020/schedule.html
-    * https://www.infoq.cn/theme/46
-    * https://hpi.de/plattner/teaching/archive/winter-term-201819/develop-your-own-database.html
+    * [apache-incubator-doris](https://github.com/apache/incubator-doris/wiki)
+    * [query-schedule](https://15445.courses.cs.cmu.edu/fall2020/schedule.html)
+    * [数据库内核杂谈](https://www.infoq.cn/theme/46)
+    * [Develop your own Database](https://hpi.de/plattner/teaching/archive/winter-term-201819/develop-your-own-database.html)
