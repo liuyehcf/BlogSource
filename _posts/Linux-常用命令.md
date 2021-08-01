@@ -1400,6 +1400,13 @@ netstat的功能就是查看网络的连接状态，而网络连接状态中，�
 * `lsof -i tcp@127.0.0.1:22`
 * `lsof -i tcp@localhost`
 * `lsof -i tcp:22`
+* `lsof -i :22`
+
+**最佳实践：**
+
+1. 如何查询指定tcp连接的建立时间：
+    * `lsof -i :<端口号>`：首先通过连接的端口号查询出socket信息，包括进程的pid以及fd
+    * `ll /proc/<pid>/fd/<fd>`：查看socket文件的创建时间，这个就是tcp连接的建立时间
 
 ## 5.4 ss
 

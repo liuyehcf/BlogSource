@@ -84,6 +84,12 @@ categories:
 1. `/proc/sys/net`：网络相关配置
 1. `/proc/sys/kernel`：内核相关的配置
     * `/proc/sys/kernel/core_pattern`：`core dump`的存储格式
+1. `/proc/sys/fs`：文件系统相关配置
+    * `/proc/sys/fs/file-nr`：系统文件描述符的使用情况
+        * 第一列：已分配文件句柄的数目（包括socket）
+        * 第二列：已分配未使用文件句柄的数目
+        * 第三列：文件句柄的最大数目（也可以通过`cat /proc/sys/fs/file-max`查看）
+    * `/proc/sys/fs/file-max`：文件句柄的最大数目
 1. `/proc/net`：网络相关的统计信息
     * `/proc/net/route`：路由表
     * `/proc/net/arp`：mac地址表

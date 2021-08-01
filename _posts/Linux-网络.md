@@ -1698,6 +1698,8 @@ Linux中最常用的基本防火墙软件称为`iptables`。`iptables`防火墙�
 
 数据包进入网络堆栈后很快就会应用`connection tracking`。**`raw table chains`和一些基本的健全性检查是在将`数据包`与`连接`相关联之前对数据包执行的唯一逻辑**
 
+**`connection tracking`是实现`NAT`地址转换的灵魂，一个连接仅在首次经过`netfilter`链条时会计算`NAT`表，一旦`connection tracking`记录下这次的改写关系，后续无论是去程包还是回程包都是依据`connection tracking`表进行改写关系的处理，不会再重复执行`NAT`表中的`DNAT/SNAT`规则**
+
 系统根据一组现有连接检查每个数据包，将更新数据包所属连接的状态，或增加一个新的连接。**在`raw table chains`中标记有`NOTRACK target`的数据包将绕过`connection tracking`处理流程**
 
 在`connection tracking`中，一个数据包可能被标记为如下几种状态
@@ -1710,7 +1712,16 @@ Linux中最常用的基本防火墙软件称为`iptables`。`iptables`防火墙�
 1. **`SNAT`**：`source address`被`NAT`修改时设置的虚拟状态，被记录在`connection tracking`中，以便在`reply package`（我回复别人）中更改`source address`
 1. **`DNAT`**：`destination address`被`NAT`修改时设置的虚拟状态，被记录在`connection tracking`中，以便在路由`reply package`（别人回复我）时知道更改`destination address`
 
+#### 3.7.0.1 conntrack
+
+**示例：**
+
+* `conntrack -S`：查看统计信息，以cpu为维度进行聚合，当机器的核数很多时，会输出比cpu核数更多的行，但是多出来的那部分都是冗余的数据，无实际意义
+* `conntrack -L`
+
 ## 3.8 NAT原理
+
+**NAT的实现依赖`connection tracking`**
 
 以一个示例来进行解释，条件如下：
 
@@ -1833,6 +1844,7 @@ NAT Gateway A   |  src port: 443           |                   internet         
 * [How Network Address Translation Works](https://computer.howstuffworks.com/nat.htm)
 * [Traditional IP Network Address Translator (Traditional NAT) - 4.1](https://tools.ietf.org/html/rfc3022)
 * [纯文本作图-asciiflow.com](http://asciiflow.com/)
+* [连接跟踪（conntrack）：原理、应用及 Linux 内核实现](http://arthurchiao.art/blog/conntrack-design-and-implementation-zh/)
 
 # 4 tcpdump
 
