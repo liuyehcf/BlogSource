@@ -11,7 +11,7 @@ categories:
 
 <!--more-->
 
-# markdown
+# 1 markdown
 
 更换markdown渲染引擎
 
@@ -23,7 +23,7 @@ npm uninstall hexo-renderer-marked -g --save
 npm i hexo-renderer-markdown-it -g --save
 ```
 
-# 1 Math
+# 2 Math
 
 [Hexo渲染LaTeX公式](https://www.jianshu.com/p/9b9c241146bc)
 
@@ -55,11 +55,11 @@ em: /^\b_((?:[^_]|**)+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
 em: /^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
 ```
 
-# 2 来必力评论系统
+# 3 来必力评论系统
 
 [来必力-配置](http://theme-next.iissnan.com/third-party-services.html#livere)
 
-# 3 mermaid流程图
+# 4 mermaid流程图
 
 [hexo-filter-mermaid-diagrams](https://github.com/webappdevelp/hexo-filter-mermaid-diagrams)
 
@@ -71,7 +71,7 @@ npm install hexo-filter-mermaid-diagrams --save
 
 **步骤2：修改主题配置文件`themes/next/_config.yml`，找到`mermaid`的配置项，将`enable`改为true即可**
 
-## 3.1 效果：横向流程图
+## 4.1 效果：横向流程图
 
 **源码：**
 
@@ -95,7 +95,7 @@ A[方形] -->B(圆角)
     F[横向流程图]
 ```
 
-## 3.2 效果：竖向流程图
+## 4.2 效果：竖向流程图
 
 **源码：**
 
@@ -119,7 +119,7 @@ A[方形] --> B(圆角)
     F[竖向流程图]
 ```
 
-# 4 plantuml时序图
+# 5 plantuml时序图
 
 **步骤1：安装插件**
 
@@ -127,7 +127,7 @@ A[方形] --> B(圆角)
 npm install hexo-filter-plantuml --save
 ```
 
-## 4.1 效果
+## 5.1 效果
 
 **源码：**
 
@@ -235,7 +235,7 @@ A --> User: Done
 deactivate A
 ```
 
-# 5 flow流程图
+# 6 flow流程图
 
 [hexo-filter-flowchart](https://github.com/bubkoo/hexo-filter-flowchart)
 
@@ -245,7 +245,7 @@ deactivate A
 npm install hexo-filter-flowchart --save 
 ```
 
-## 5.1 效果：纵向流程图
+## 6.1 效果：纵向流程图
 
 **源码：**
 
@@ -275,7 +275,7 @@ cond(yes)->io->e
 cond(no)->sub1(right)->op
 ```
 
-## 5.2 效果：横向流程图
+## 6.2 效果：横向流程图
 
 **源码：**
 
@@ -305,15 +305,15 @@ cond(yes)->io(bottom)->e
 cond(no)->sub1(right)->op
 ```
 
-# 6 sequence时序图
+# 7 sequence时序图
 
 [hexo-filter-sequence](https://github.com/bubkoo/hexo-filter-sequence)
 
-# 7 目录功能
+# 8 目录功能
 
 [hexo-toc](https://github.com/bubkoo/hexo-toc)
 
-# 8 访问统计
+# 9 访问统计
 
 [阅读次数统计-配置](http://theme-next.iissnan.com/third-party-services.html#analytics-tencent-mta)
 
@@ -347,7 +347,7 @@ leancloud_counter_security:
   password: '19930101' # 究极大坑，这里需要用引号
 ```
 
-# 9 本地搜索
+# 10 本地搜索
 
 [本地搜索-配置](http://theme-next.iissnan.com/third-party-services.html#local-search)
 
@@ -355,11 +355,11 @@ leancloud_counter_security:
 
 [Mac 上的 VSCode 编写 Markdown 总是出现隐藏字符？](https://www.zhihu.com/question/61638859)
 
-# 10 背景动画
+# 11 背景动画
 
 [背景动画-配置](http://theme-next.iissnan.com/theme-settings.html#use-bg-animation)
 
-# 11 增加菜单
+# 12 增加菜单
 
 `hexo new page "explore"`
 
@@ -407,7 +407,7 @@ menu:
   commonweal: 公益404
 ```
 
-# 12 hexo相关的项目
+# 13 hexo相关的项目
 
 | 项目 | 描述 |
 |:--|:--|
@@ -421,7 +421,7 @@ menu:
 | [hexo-wordcount](https://github.com/willin/hexo-wordcount) | hexo插件-字数统计 |
 | [hexo-symbols-count-time](https://github.com/theme-next/hexo-symbols-count-time) | 阅读时间统计 |
 
-# 13 取消侧栏编号
+# 14 取消侧栏编号
 
 主题配置文件修改如下配置，将number改为false即可
 
@@ -436,7 +436,7 @@ toc:
   wrap: false
 ```
 
-# 14 修改行内代码样式
+# 15 修改行内代码样式
 
 修改方式（这个方式在最新的next版本中好像失效了）：在`themes/next/source/css/_custom/custom.styl`中增加如下代码
 
@@ -460,7 +460,7 @@ code {
 }
 ```
 
-# 15 修改链接样式
+# 16 修改链接样式
 
 链接即如下的语法
 
@@ -485,7 +485,7 @@ code {
 }
 ```
 
-# 16 deploy
+# 17 deploy
 
 ```sh
 npm install hexo-deployer-git --save
@@ -493,7 +493,7 @@ npm install hexo-deployer-git --save
 
 [nodejs更新后hexo没法deploy](https://blog.csdn.net/qq_41535611/article/details/106309335)
 
-# 17 参考
+# 18 参考
 
 * [next官方文档](http://theme-next.iissnan.com/getting-started.html)
 * [搭建一个支持LaTEX的hexo博客](http://blog.csdn.net/emptyset110/article/details/50123231)
