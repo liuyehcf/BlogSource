@@ -485,7 +485,23 @@ code {
 }
 ```
 
-# 17 deploy
+# 17 调整next主题的字体大小
+
+文件相对路径：`themes/next/source/css/_variables/base.styl`
+
+将`Font size`部分的配置修改成如下内容
+
+```
+// Font size
+$font-size-base           = 14px
+$font-size-base           = unit(hexo-config('font.global.size'), px) if hexo-config('font.global.size') is a 'unit'
+$font-size-small          = $font-size-base - 2px
+$font-size-smaller        = $font-size-base - 4px
+$font-size-large          = $font-size-base + 2px
+$font-size-larger         = $font-size-base + 4px
+```
+
+# 18 deploy
 
 ```sh
 npm install hexo-deployer-git --save
@@ -493,7 +509,7 @@ npm install hexo-deployer-git --save
 
 [nodejs更新后hexo没法deploy](https://blog.csdn.net/qq_41535611/article/details/106309335)
 
-# 18 参考
+# 19 参考
 
 * [next官方文档](http://theme-next.iissnan.com/getting-started.html)
 * [搭建一个支持LaTEX的hexo博客](http://blog.csdn.net/emptyset110/article/details/50123231)
