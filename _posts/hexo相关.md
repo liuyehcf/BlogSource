@@ -11,6 +11,18 @@ categories:
 
 <!--more-->
 
+# markdown
+
+更换markdown渲染引擎
+
+```sh
+# 卸载默认的渲染引擎
+npm uninstall hexo-renderer-marked -g --save
+
+# 安装新的渲染引擎
+npm i hexo-renderer-markdown-it -g --save
+```
+
 # 1 Math
 
 [Hexo渲染LaTeX公式](https://www.jianshu.com/p/9b9c241146bc)
