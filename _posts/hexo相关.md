@@ -489,7 +489,7 @@ code {
 
 文件相对路径：`themes/next/source/css/_variables/base.styl`
 
-将`Font size`部分的配置修改成如下内容
+将`Font size`以及`Headings font size`部分的配置修改成如下内容
 
 ```
 // Font size
@@ -499,6 +499,15 @@ $font-size-small          = $font-size-base - 2px
 $font-size-smaller        = $font-size-base - 4px
 $font-size-large          = $font-size-base + 2px
 $font-size-larger         = $font-size-base + 4px
+
+// Headings font size
+$font-size-headings-step    = 2px
+$font-size-headings-base    = 24px
+$font-size-headings-base    = unit(hexo-config('font.headings.size'), px) if hexo-config('font.headings.size') is a 'unit'
+$font-size-headings-small   = $font-size-headings-base - $font-size-headings-step
+$font-size-headings-smaller = $font-size-headings-small - $font-size-headings-step
+$font-size-headings-large   = $font-size-headings-base + $font-size-headings-step
+$font-size-headings-larger  = $font-size-headings-large + $font-size-headings-step
 ```
 
 # 18 deploy
