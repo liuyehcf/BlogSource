@@ -128,7 +128,7 @@ else
 
 ## 4.1 tutorial
 
-### 4.1.1 Step 1
+### 4.1.1 step1
 
 `tutorial.cxx`内容如下：
 
@@ -203,7 +203,7 @@ make
 ./Tutorial 256
 ```
 
-### 4.1.2 step2~3
+### 4.1.2 step2
 
 接下来，我们用自己实现的求开方的函数替换标准库中的实现。创建`MathFunctions`子目录，并在该子目录添加`MathFunctions.h`以及`mysqrt.cxx`、`CMakeLists.txt`三个文件
 
@@ -377,9 +377,9 @@ make
 ./Tutorial 256
 ```
 
-## 4.2 step4
+### 4.1.3 step3
 
-在`step2~3`的基础上，修改`MathFunctions/CMakeLists.txt`以及`CMakeLists.txt`这两个文件
+在`step2`的基础上，修改`MathFunctions/CMakeLists.txt`以及`CMakeLists.txt`这两个文件
 
 修改`MathFunctions/CMakeLists.txt`文件，内容如下：
 
@@ -455,7 +455,94 @@ make
 make install
 ```
 
-## 4.3 参考
+### 4.1.4 step4
+
+接下来，增加测试功能，继续修改`CMakeLists.txt`文件，内容如下：
+
+* `add_test`：用于增加测试，其中`NAME`指定的是测试用例的名称，`RUN`指定的是测试的命令
+* `function`：用于定义一个方法
+* `set_tests_properties`：用于设置测试项的属性，这里指定了测试结果的通配符
+
+```
+cmake_minimum_required(VERSION 3.10)
+
+# set the project name and version
+project(Tutorial VERSION 1.0)
+
+# specify the C++ standard
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+option(USE_MYMATH "Use tutorial provided math implementation" ON)
+
+# configure a header file to pass some of the CMake settings
+# to the source code
+configure_file(TutorialConfig.h.in TutorialConfig.h)
+
+if(USE_MYMATH)
+  add_subdirectory(MathFunctions)
+  list(APPEND EXTRA_LIBS MathFunctions)
+  list(APPEND EXTRA_INCLUDES "${PROJECT_SOURCE_DIR}/MathFunctions")
+endif()
+
+# add the executable
+add_executable(Tutorial tutorial.cxx)
+
+target_link_libraries(Tutorial PUBLIC ${EXTRA_LIBS})
+
+# add the binary tree to the search path for include files
+# so that we will find TutorialConfig.h
+target_include_directories(Tutorial PUBLIC
+                           "${PROJECT_BINARY_DIR}"
+                           ${EXTRA_INCLUDES}
+                           )
+
+# add the install targets
+install (TARGETS Tutorial DESTINATION bin)
+install (FILES "${PROJECT_BINARY_DIR}/TutorialConfig.h" DESTINATION include)
+
+enable_testing()
+
+# does the application run
+add_test(NAME Runs COMMAND Tutorial 25)
+
+# does the usage message work?
+add_test(NAME Usage COMMAND Tutorial)
+set_tests_properties(Usage
+  PROPERTIES PASS_REGULAR_EXPRESSION "Usage:.*number"
+  )
+
+# define a function to simplify adding tests
+function(do_test target arg result)
+  add_test(NAME Comp_${arg} COMMAND ${target} ${arg})
+  set_tests_properties(Comp${arg}
+    PROPERTIES PASS_REGULAR_EXPRESSION ${result}
+    )
+endfunction(do_test)
+
+# do a bunch of result based tests
+do_test(Tutorial 4 "4 is 2")
+do_test(Tutorial 9 "9 is 3")
+do_test(Tutorial 5 "5 is 2.236")
+do_test(Tutorial 7 "7 is 2.645")
+do_test(Tutorial 25 "25 is 5")
+do_test(Tutorial -25 "-25 is [-nan|nan|0]")
+do_test(Tutorial 0.0001 "0.0001 is 0.01")
+```
+
+---
+
+测试：
+
+```
+mkdir build
+cd build
+cmake ..
+make
+make test
+```
+
+## 4.2 参考
 
 * [CMake Tutorial](https://cmake.org/cmake/help/latest/guide/tutorial/index.html)
     * [CMake Tutorial对应的source code](https://github.com/Kitware/CMake/tree/master/Help/guide/tutorial)
