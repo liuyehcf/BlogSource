@@ -825,6 +825,17 @@ openssl可以对文件，以指定算法进行加密或者解密
 * `openssl aes-256-cbc -a -salt -in blob.txt -out cipher`
 * `openssl aes-256-cbc -a -d -in cipher -out blob-rebuild.txt`
 
+## 2.20 bc
+
+bc可以用于进制转换
+
+**示例：**
+
+* `echo "obase=8;255" | bc`：十进制转8进制
+* `echo "obase=16;255" | bc`：十进制转16进制
+* `((num=8#77)); echo ${num}`：8进制转十进制
+* `((num=16#FF)); echo ${num}`：16进制转十进制
+
 # 3 设备管理
 
 ## 3.1 mount

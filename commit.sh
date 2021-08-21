@@ -7,13 +7,8 @@ NAME=$(hostname)
 
 echo "Hello, $NAME"
 
-if [ "${NAME}" == 'ChenfengHe' ]
-then
-    git add .
-    git commit -m $description
-    git push origin master:master
-else
-    echo "Sorry ${NAME}, you cannot commit&push"
-fi
+git add .
+git commit -m $description
+git push origin master:master
 
 

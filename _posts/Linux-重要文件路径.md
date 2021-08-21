@@ -107,6 +107,8 @@ categories:
         * `10 -> TCP_LISTEN`
         * `11 -> TCP_CLOSING`
 1. `/proc/<pid>`：进程相关的信息
+    * `/proc/<pid>/status`：查看进程相关的一些概要信息
+        * `Threads`：线程数量
     * `/proc/<pid>/maps`：展示了一个进程的内存消耗
     * `/proc/<pid>/smaps`：展示了一个进程的内存消耗，内容比`/proc/<pid>/maps`更为详细
 
