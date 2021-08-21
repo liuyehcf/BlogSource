@@ -124,11 +124,17 @@ else
 
 * [Linux下c/c++头文件和库文件的查找路径](https://blog.csdn.net/guotianqing/article/details/104224439)
 
-# 4 CMake
+# 4 Make
 
-## 4.1 tutorial
+## 4.1 参考
 
-### 4.1.1 step1: A Basic Starting Point
+* [Make 命令教程](https://www.ruanyifeng.com/blog/2015/02/make.html)
+
+# 5 CMake
+
+## 5.1 tutorial
+
+### 5.1.1 step1: A Basic Starting Point
 
 `tutorial.cxx`内容如下：
 
@@ -203,7 +209,7 @@ make
 ./Tutorial 256
 ```
 
-### 4.1.2 step2: Adding a Library and Adding Usage Requirements for a Library
+### 5.1.2 step2: Adding a Library and Adding Usage Requirements for a Library
 
 接下来，我们用自己实现的求开方的函数替换标准库中的实现。创建`MathFunctions`子目录，并在该子目录添加`MathFunctions.h`以及`mysqrt.cxx`、`CMakeLists.txt`三个文件
 
@@ -377,7 +383,7 @@ make
 ./Tutorial 256
 ```
 
-### 4.1.3 step3: Installing
+### 5.1.3 step3: Installing
 
 现在，我们要安装`make`后产生的二进制、库文件、头文件
 
@@ -421,7 +427,7 @@ make
 make install
 ```
 
-### 4.1.4 step4: Testing
+### 5.1.4 step4: Testing
 
 接下来，增加测试功能。在`step2`的基础上，修改`CMakeLists.txt`文件，追加如下内容：
 
@@ -471,7 +477,7 @@ make
 make test
 ```
 
-### 4.1.5 step5: Adding System Introspection
+### 5.1.5 step5: Adding System Introspection
 
 同一个库，在不同平台上的实现可能不同，例如A平台有方法`funcA`，而B平台没有`funcA`，因此我们需要有一种机制来检测这种差异
 
@@ -548,13 +554,13 @@ make
 ./Tutorial 25
 ```
 
-## 4.2 target
+## 5.2 target
 
 `cmake`可以使用`add_executable`、`add_library`或`add_custom_target`等命令来定义目标`target`。与变量不同，目标在每个作用域都可见，且可以使用`get_property`和`set_property`获取或设置其属性
 
-## 4.3 property
+## 5.3 property
 
-### 4.3.1 INCLUDE_DIRECTORIES
+### 5.3.1 INCLUDE_DIRECTORIES
 
 1. `include_directories`：该方法会在全局维度添加`include`的搜索路径。这些搜索路径会被添加到所有`target`中去（包括所有`sub target`），会追加到所有`target`的`INCLUDE_DIRECTORIES`属性中去
 1. `target_include_directories`：该方法为指定`target`添加`include`的搜索路径，会追加到该`target`的`INCLUDE_DIRECTORIES`属性中去
@@ -573,15 +579,80 @@ foreach(target_dir ${target_dirs})
 endforeach()
 ```
 
-## 4.4 command
+## 5.4 command
 
-1. `set`：用于设置变量，`${}`可以引用变量
+### 5.4.1 message
 
-## 4.5 参考
+用于打印信息
+
+格式：`message([<mode>] "message text" ...)`
+
+合法的`mode`包括
+
+* `FATAL_ERROR`：致命错误，终止构建
+* `SEND_ERROR`：继续构建，终止`generation`
+* `WARNING`：告警信息，继续构建
+* `AUTHOR_WARNING`：告警信息，继续构建
+* `DEPRECATION`：当`CMAKE_ERROR_DEPRECATED`或`CMAKE_WARN_DEPRECATED`参数启用时，若使用了`deprecated`的特性，会打印`error`或者`warn`信息
+* `NOTICE`：通过`stderr`打印的信息
+* **`STATUS`：用户最应该关注的信息**
+* `VERBOSE`：项目构建者需要关注的信息
+* `DEBUG`：项目调试需要关注的信息
+* `TRACE`：最低级别的信息
+
+### 5.4.2 set
+
+`set`用于设置：`cmake`变量或环境变量
+
+格式：
+
+* `cmake`变量：`set(<variable> <value>... [PARENT_SCOPE])`
+* 环境变量：`set(ENV{<variable>} [<value>]`
+
+变量如何引用：
+
+* `cmake`变量：`${<variable>}`
+* 环境变量：`$ENV{<variable>}`
+
+### 5.4.3 option
+
+`option`用于设置构建选项
+
+格式：`option(<variable> "<help_text>" [value])`
+
+* 其中`value`的可选值就是`ON`和`OFF`，其中`OFF`是默认值
+
+### 5.4.4 aux_source_directory
+
+Find all source files in a directory
+
+## 5.5 Tips
+
+### 5.5.1 同一目录，多个源文件
+
+如果同一个目录下有多个源文件，那么在使用`add_executable`命令的时候，如果要一个个填写，那么将会非常麻烦，并且后续维护的代价也很大
+
+```
+add_executable(Demo main.cxx opt1.cxx opt2.cxx)
+```
+
+我们可以使用`aux_source_directory(<dir> <variable>)`）命令，该命令可以扫描一个目录下得所有源文件，并将文件列表赋值给一个变量
+
+```sh
+# 查找当前目录下的所有源文件
+# 并将名称保存到 DIR_SRCS 变量
+aux_source_directory(. DIR_SRCS)
+
+# 指定生成目标
+add_executable(Demo ${DIR_SRCS})
+```
+
+## 5.6 参考
 
 * [CMake Tutorial](https://cmake.org/cmake/help/latest/guide/tutorial/index.html)
     * [CMake Tutorial对应的source code](https://github.com/Kitware/CMake/tree/master/Help/guide/tutorial)
     * [CMake Tutorial 翻译](https://www.jianshu.com/p/6df3857462cd)
+* [CMake 入门实战](https://www.hahack.com/codes/cmake/)
 * [CMake 语言 15 分钟入门教程](https://leehao.me/cmake-%E8%AF%AD%E8%A8%80-15-%E5%88%86%E9%92%9F%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/)
 * [CMake Table of Contents](https://cmake.org/cmake/help/latest/manual/cmake-buildsystem.7.html#manual:cmake-buildsystem(7))
 * [What is the difference between include_directories and target_include_directories in CMake?](https://stackoverflow.com/questions/31969547/what-is-the-difference-between-include-directories-and-target-include-directorie/40244458)
