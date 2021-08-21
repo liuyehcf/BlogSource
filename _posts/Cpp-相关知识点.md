@@ -548,13 +548,15 @@ make
 ./Tutorial 25
 ```
 
-## 4.2 参考
+## 4.2 cmake属性
+
+1. `include_directories`：添加`include`的搜索路径，全局`scope`。为`cmake`中的所有`target`包括`subdirectories`中的`target`
+1. `target_include_directories`：为指定`target`添加`include`的搜索路径，非全局`scope`
+
+## 4.3 参考
 
 * [CMake Tutorial](https://cmake.org/cmake/help/latest/guide/tutorial/index.html)
     * [CMake Tutorial对应的source code](https://github.com/Kitware/CMake/tree/master/Help/guide/tutorial)
     * [CMake Tutorial 翻译](https://www.jianshu.com/p/6df3857462cd)
 * [CMake 语言 15 分钟入门教程](https://leehao.me/cmake-%E8%AF%AD%E8%A8%80-15-%E5%88%86%E9%92%9F%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/)
-* [CMake 入门教程](https://leehao.me/CMake-%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/)
-* [CMake教程](https://www.guyuehome.com/33957)
-* [cmake : add_library详解](https://blog.csdn.net/LaineGates/article/details/108242803)
-* [cmake导入外部链接库](https://blog.csdn.net/jijun0817/article/details/40395273)
+* [What is the difference between include_directories and target_include_directories in CMake?](https://stackoverflow.com/questions/31969547/what-is-the-difference-between-include-directories-and-target-include-directorie/40244458)
