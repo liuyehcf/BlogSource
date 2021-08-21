@@ -1,5 +1,5 @@
 ---
-title: 文本编辑器个性化配置
+title: vscode
 date: 2021-02-09 13:58:20
 tags: 
 - 摘录
@@ -11,7 +11,7 @@ categories:
 
 <!--more-->
 
-# 1 vscode
+# 1 快捷键
 
 1. 禁用行内作者提示链接：`gitlens.codeLens.authors.enabled`
 1. 搜索文件：`ctrl+p`
@@ -19,7 +19,7 @@ categories:
 1. `⇧⌘O`：在当前文件中查询符号
 1. `⌘T`：在当前工作目录中查询符号
 
-## 1.1 插件
+# 2 插件
 
 **c++相关**
 
@@ -31,11 +31,11 @@ categories:
 
 * `Markdown Preview Enhanced`
 
-## 1.2 c_cpp_properties.json
+# 3 c_cpp_properties.json
 
 如何打开该配置：`⇧⌘P`，然后输入`Edit Configurations`
 
-## 1.3 参考
+# 4 参考
 
 * [How to disable inline author link?](https://github.com/eamodio/vscode-gitlens/issues/54)
 * [vscode快捷键（Mac版）](https://zhuanlan.zhihu.com/p/66331018)

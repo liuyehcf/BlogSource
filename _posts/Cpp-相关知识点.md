@@ -156,6 +156,8 @@ int main(int argc, char* argv[])
 }
 ```
 
+---
+
 `CMakeLists.txt`内容如下：
 
 * `cmake_minimum_required`：用于指定`cmake`的最小版本，避免出现兼容性问题（包含了高级版本的特性，但是实际的`cmake`版本较小）
@@ -179,6 +181,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_executable(Tutorial tutorial.cxx)
 ```
 
+---
+
 此时文件结构如下：
 
 ```
@@ -186,6 +190,10 @@ add_executable(Tutorial tutorial.cxx)
 ├── CMakeLists.txt
 └── tutorial.cxx
 ```
+
+---
+
+测试：
 
 ```sh
 mkdir build
@@ -195,7 +203,7 @@ make
 ./Tutorial 256
 ```
 
-### 4.1.2 step2
+### 4.1.2 step2~3
 
 接下来，我们用自己实现的求开方的函数替换标准库中的实现。创建`MathFunctions`子目录，并在该子目录添加`MathFunctions.h`以及`mysqrt.cxx`、`CMakeLists.txt`三个文件
 
@@ -204,6 +212,8 @@ make
 ```c++
 double mysqrt(double x);
 ```
+
+---
 
 `MathFunctions/mysqrt.cxx`内容如下：
 
@@ -232,17 +242,23 @@ double mysqrt(double x)
 }
 ```
 
+---
+
 `MathFunctions/CMakeLists.txt`内容如下：
 
 ```
 add_library(MathFunctions mysqrt.cxx)
 ```
 
+---
+
 添加`TutorialConfig.h.in`文件，内容如下：
 
 ```c++
 #cmakedefine USE_MYMATH
 ```
+
+---
 
 修改`tutorial.cxx`文件，内容如下：
 
@@ -277,6 +293,8 @@ int main(int argc, char* argv[])
   return 0;
 }
 ```
+
+---
 
 修改`CMakeLists.txt`文件，内容如下：
 
@@ -324,6 +342,8 @@ target_include_directories(Tutorial PUBLIC
                            )
 ```
 
+---
+
 此时目录结构如下：
 
 ```
@@ -336,6 +356,8 @@ target_include_directories(Tutorial PUBLIC
 ├── TutorialConfig.h.in
 └── tutorial.cxx
 ```
+
+---
 
 测试：
 
@@ -355,7 +377,85 @@ make
 ./Tutorial 256
 ```
 
-## 4.2 参考
+## 4.2 step4
+
+在`step2~3`的基础上，修改`MathFunctions/CMakeLists.txt`以及`CMakeLists.txt`这两个文件
+
+修改`MathFunctions/CMakeLists.txt`文件，内容如下：
+
+* 其中这里指定了两个相对路径`lib`、`include`。前缀由`cmake`变量`CMAKE_INSTALL_PREFIX`确定，默认值为`/usr/local`
+
+```
+add_library(MathFunctions mysqrt.cxx)
+
+install (TARGETS MathFunctions DESTINATION bin)
+install(FILES MathFunctions.h DESTINATION include)
+```
+
+---
+
+修改`CMakeLists.txt`文件，内容如下：
+
+```
+cmake_minimum_required(VERSION 3.10)
+
+# set the project name and version
+project(Tutorial VERSION 1.0)
+
+# specify the C++ standard
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+option(USE_MYMATH "Use tutorial provided math implementation" ON)
+
+# configure a header file to pass some of the CMake settings
+# to the source code
+configure_file(TutorialConfig.h.in TutorialConfig.h)
+
+if(USE_MYMATH)
+  add_subdirectory(MathFunctions)
+  list(APPEND EXTRA_LIBS MathFunctions)
+  list(APPEND EXTRA_INCLUDES "${PROJECT_SOURCE_DIR}/MathFunctions")
+endif()
+
+# add the executable
+add_executable(Tutorial tutorial.cxx)
+
+target_link_libraries(Tutorial PUBLIC ${EXTRA_LIBS})
+
+# add the binary tree to the search path for include files
+# so that we will find TutorialConfig.h
+target_include_directories(Tutorial PUBLIC
+                           "${PROJECT_BINARY_DIR}"
+                           ${EXTRA_INCLUDES}
+                           )
+
+# add the install targets
+install (TARGETS Tutorial DESTINATION bin)
+install (FILES "${PROJECT_BINARY_DIR}/TutorialConfig.h" DESTINATION include)
+```
+
+---
+
+测试：
+
+```sh
+# 使用默认的安装路径
+mkdir build
+cd build
+cmake ..
+make
+make install
+
+# 指定安装路径
+mkdir build
+cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=/tmp/mydir
+make
+make install
+```
+
+## 4.3 参考
 
 * [CMake Tutorial](https://cmake.org/cmake/help/latest/guide/tutorial/index.html)
     * [CMake Tutorial对应的source code](https://github.com/Kitware/CMake/tree/master/Help/guide/tutorial)

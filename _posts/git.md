@@ -143,8 +143,14 @@ $ git merge [branch]
 # rebase指定分支到当前分支
 $ git rebase [branch]
 
-# rebase当前分支的HEAD到指定的提交
-$ git rebase -i [commit]
+# rebase过程中可能会有冲突，解决完冲突后继续rebase
+$ git rebase --continue
+
+# rebase当前分支，(startcommit, endcommit]（左开右闭）区间的提交
+$ git rebase -i [startcommit] [endcommit]
+
+# rebase当前分支，(startcommit, HEAD]（左开右闭）区间的提交
+$ git rebase -i [startcommit]
 
 # 选择一个commit，合并进当前分支（从左到右时间线递增，也就是commit1.time 早于 commit2.time）
 $ git cherry-pick [commit1] [commit2] ...
