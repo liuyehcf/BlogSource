@@ -2269,6 +2269,7 @@ yum install -y hping3
 * `scp /etc/hosts* student@127.0.0.1:~`
 * `scp /tmp/Ubuntu.txt root@192.168.136.130:~/Desktop`
 * `scp -P 16666 root@192.168.136.130:/tmp/test.log ~/Desktop`：指定主机`192.168.136.130`的端口号为16666
+* `scp -r local_folder remote_username@remote_ip:remote_folder `
 
 ## 6.3 watch
 
