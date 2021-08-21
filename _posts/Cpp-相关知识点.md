@@ -548,15 +548,40 @@ make
 ./Tutorial 25
 ```
 
-## 4.2 cmake属性
+## 4.2 target
 
-1. `include_directories`：添加`include`的搜索路径，全局`scope`。为`cmake`中的所有`target`包括`subdirectories`中的`target`
-1. `target_include_directories`：为指定`target`添加`include`的搜索路径，非全局`scope`
+`cmake`可以使用`add_executable`、`add_library`或`add_custom_target`等命令来定义目标`target`。与变量不同，目标在每个作用域都可见，且可以使用`get_property`和`set_property`获取或设置其属性
 
-## 4.3 参考
+## 4.3 property
+
+### 4.3.1 INCLUDE_DIRECTORIES
+
+1. `include_directories`：该方法会在全局维度添加`include`的搜索路径。这些搜索路径会被添加到所有`target`中去（包括所有`sub target`），会追加到所有`target`的`INCLUDE_DIRECTORIES`属性中去
+1. `target_include_directories`：该方法为指定`target`添加`include`的搜索路径，会追加到该`target`的`INCLUDE_DIRECTORIES`属性中去
+
+如何查看全局维度以及target维度的`INCLUDE_DIRECTORIES`属性值
+
+```
+get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+foreach(dir ${dirs})
+  message(STATUS "dir of include_directories='${dir}'")
+endforeach()
+
+get_target_property(target_dirs <TARGET-NAME> INCLUDE_DIRECTORIES)
+foreach(target_dir ${target_dirs})
+  message(STATUS "dir of target_include_directories='${target_dir}'")
+endforeach()
+```
+
+## 4.4 command
+
+1. `set`：用于设置变量，`${}`可以引用变量
+
+## 4.5 参考
 
 * [CMake Tutorial](https://cmake.org/cmake/help/latest/guide/tutorial/index.html)
     * [CMake Tutorial对应的source code](https://github.com/Kitware/CMake/tree/master/Help/guide/tutorial)
     * [CMake Tutorial 翻译](https://www.jianshu.com/p/6df3857462cd)
 * [CMake 语言 15 分钟入门教程](https://leehao.me/cmake-%E8%AF%AD%E8%A8%80-15-%E5%88%86%E9%92%9F%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B/)
+* [CMake Table of Contents](https://cmake.org/cmake/help/latest/manual/cmake-buildsystem.7.html#manual:cmake-buildsystem(7))
 * [What is the difference between include_directories and target_include_directories in CMake?](https://stackoverflow.com/questions/31969547/what-is-the-difference-between-include-directories-and-target-include-directorie/40244458)
