@@ -128,7 +128,7 @@ else
 
 ## 4.1 tutorial
 
-### 4.1.1 step1
+### 4.1.1 step1: A Basic Starting Point
 
 `tutorial.cxx`内容如下：
 
@@ -203,7 +203,7 @@ make
 ./Tutorial 256
 ```
 
-### 4.1.2 step2
+### 4.1.2 step2: Adding a Library and Adding Usage Requirements for a Library
 
 接下来，我们用自己实现的求开方的函数替换标准库中的实现。创建`MathFunctions`子目录，并在该子目录添加`MathFunctions.h`以及`mysqrt.cxx`、`CMakeLists.txt`三个文件
 
@@ -377,59 +377,25 @@ make
 ./Tutorial 256
 ```
 
-### 4.1.3 step3
+### 4.1.3 step3: Installing
 
-在`step2`的基础上，修改`MathFunctions/CMakeLists.txt`以及`CMakeLists.txt`这两个文件
+现在，我们要安装`make`后产生的二进制、库文件、头文件
 
-修改`MathFunctions/CMakeLists.txt`文件，内容如下：
+在`step2`的基础上，修改`MathFunctions/CMakeLists.txt`文件，追加如下内容：
 
 * 其中这里指定了两个相对路径`lib`、`include`。前缀由`cmake`变量`CMAKE_INSTALL_PREFIX`确定，默认值为`/usr/local`
 
 ```
-add_library(MathFunctions mysqrt.cxx)
-
+# add the install targets
 install (TARGETS MathFunctions DESTINATION bin)
 install(FILES MathFunctions.h DESTINATION include)
 ```
 
 ---
 
-修改`CMakeLists.txt`文件，内容如下：
+在`step2`的基础上，修改`CMakeLists.txt`文件，追加如下内容：
 
 ```
-cmake_minimum_required(VERSION 3.10)
-
-# set the project name and version
-project(Tutorial VERSION 1.0)
-
-# specify the C++ standard
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-option(USE_MYMATH "Use tutorial provided math implementation" ON)
-
-# configure a header file to pass some of the CMake settings
-# to the source code
-configure_file(TutorialConfig.h.in TutorialConfig.h)
-
-if(USE_MYMATH)
-  add_subdirectory(MathFunctions)
-  list(APPEND EXTRA_LIBS MathFunctions)
-  list(APPEND EXTRA_INCLUDES "${PROJECT_SOURCE_DIR}/MathFunctions")
-endif()
-
-# add the executable
-add_executable(Tutorial tutorial.cxx)
-
-target_link_libraries(Tutorial PUBLIC ${EXTRA_LIBS})
-
-# add the binary tree to the search path for include files
-# so that we will find TutorialConfig.h
-target_include_directories(Tutorial PUBLIC
-                           "${PROJECT_BINARY_DIR}"
-                           ${EXTRA_INCLUDES}
-                           )
-
 # add the install targets
 install (TARGETS Tutorial DESTINATION bin)
 install (FILES "${PROJECT_BINARY_DIR}/TutorialConfig.h" DESTINATION include)
@@ -455,52 +421,15 @@ make
 make install
 ```
 
-### 4.1.4 step4
+### 4.1.4 step4: Testing
 
-接下来，增加测试功能，继续修改`CMakeLists.txt`文件，内容如下：
+接下来，增加测试功能。在`step2`的基础上，修改`CMakeLists.txt`文件，追加如下内容：
 
 * `add_test`：用于增加测试，其中`NAME`指定的是测试用例的名称，`RUN`指定的是测试的命令
 * `function`：用于定义一个方法
 * `set_tests_properties`：用于设置测试项的属性，这里指定了测试结果的通配符
 
 ```
-cmake_minimum_required(VERSION 3.10)
-
-# set the project name and version
-project(Tutorial VERSION 1.0)
-
-# specify the C++ standard
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-option(USE_MYMATH "Use tutorial provided math implementation" ON)
-
-# configure a header file to pass some of the CMake settings
-# to the source code
-configure_file(TutorialConfig.h.in TutorialConfig.h)
-
-if(USE_MYMATH)
-  add_subdirectory(MathFunctions)
-  list(APPEND EXTRA_LIBS MathFunctions)
-  list(APPEND EXTRA_INCLUDES "${PROJECT_SOURCE_DIR}/MathFunctions")
-endif()
-
-# add the executable
-add_executable(Tutorial tutorial.cxx)
-
-target_link_libraries(Tutorial PUBLIC ${EXTRA_LIBS})
-
-# add the binary tree to the search path for include files
-# so that we will find TutorialConfig.h
-target_include_directories(Tutorial PUBLIC
-                           "${PROJECT_BINARY_DIR}"
-                           ${EXTRA_INCLUDES}
-                           )
-
-# add the install targets
-install (TARGETS Tutorial DESTINATION bin)
-install (FILES "${PROJECT_BINARY_DIR}/TutorialConfig.h" DESTINATION include)
-
 enable_testing()
 
 # does the application run
@@ -540,6 +469,83 @@ cd build
 cmake ..
 make
 make test
+```
+
+### 4.1.5 step5: Adding System Introspection
+
+同一个库，在不同平台上的实现可能不同，例如A平台有方法`funcA`，而B平台没有`funcA`，因此我们需要有一种机制来检测这种差异
+
+接下来，增加测试功能。在`step2`的基础上，修改`MathFunctions/CMakeLists.txt`文件，追加如下内容：
+
+* `include`：加载`cmake`模块，这里加载了`CheckSymbolExists`模块，该模块用于检测指定文件中的指定符号是否存在
+
+```
+include(CheckSymbolExists)
+check_symbol_exists(log "math.h" HAVE_LOG)
+check_symbol_exists(exp "math.h" HAVE_EXP)
+if(NOT (HAVE_LOG AND HAVE_EXP))
+  unset(HAVE_LOG CACHE)
+  unset(HAVE_EXP CACHE)
+  set(CMAKE_REQUIRED_LIBRARIES "m")
+  check_symbol_exists(log "math.h" HAVE_LOG)
+  check_symbol_exists(exp "math.h" HAVE_EXP)
+  if(HAVE_LOG AND HAVE_EXP)
+    target_link_libraries(MathFunctions PRIVATE m)
+  endif()
+endif()
+
+if(HAVE_LOG AND HAVE_EXP)
+  target_compile_definitions(MathFunctions
+                             PRIVATE "HAVE_LOG" "HAVE_EXP")
+endif()
+```
+
+---
+
+修改`MathFunctions/mysqrt.cxx`文件，内容如下：
+
+```c++
+#include <iostream>
+#include <cmath>
+
+// a hack square root calculation using simple operations
+double mysqrt(double x)
+{
+  if (x <= 0) {
+    return 0;
+  }
+
+#if defined(HAVE_LOG) && defined(HAVE_EXP)
+  double result = exp(log(x) * 0.5);
+  std::cout << "Computing sqrt of " << x << " to be " << result
+            << " using log and exp" << std::endl;
+#else
+  double result = x;
+
+  // do ten iterations
+  for (int i = 0; i < 10; ++i) {
+    if (result <= 0) {
+      result = 0.1;
+    }
+    double delta = x - (result * result);
+    result = result + 0.5 * delta / result;
+    std::cout << "Computing sqrt of " << x << " to be " << result << std::endl;
+  }
+#endif
+  return result;
+}
+```
+
+---
+
+测试：
+
+```
+mkdir build
+cd build
+cmake ..
+make
+./Tutorial 25
 ```
 
 ## 4.2 参考
