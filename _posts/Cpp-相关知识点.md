@@ -465,8 +465,6 @@ int main(int argc, char* argv[])
 }
 ```
 
----
-
 `CMakeLists.txt`内容如下：
 
 * `cmake_minimum_required`：用于指定`cmake`的最小版本，避免出现兼容性问题（包含了高级版本的特性，但是实际的`cmake`版本较小）
@@ -490,8 +488,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_executable(Tutorial tutorial.cxx)
 ```
 
----
-
 此时文件结构如下：
 
 ```
@@ -499,8 +495,6 @@ add_executable(Tutorial tutorial.cxx)
 ├── CMakeLists.txt
 └── tutorial.cxx
 ```
-
----
 
 测试：
 
@@ -521,8 +515,6 @@ make
 ```c++
 double mysqrt(double x);
 ```
-
----
 
 `MathFunctions/mysqrt.cxx`内容如下：
 
@@ -551,23 +543,17 @@ double mysqrt(double x)
 }
 ```
 
----
-
 `MathFunctions/CMakeLists.txt`内容如下：
 
 ```cmake
 add_library(MathFunctions mysqrt.cxx)
 ```
 
----
-
 添加`TutorialConfig.h.in`文件，内容如下：
 
 ```c++
 #cmakedefine USE_MYMATH
 ```
-
----
 
 修改`tutorial.cxx`文件，内容如下：
 
@@ -602,8 +588,6 @@ int main(int argc, char* argv[])
   return 0;
 }
 ```
-
----
 
 修改`CMakeLists.txt`文件，内容如下：
 
@@ -651,8 +635,6 @@ target_include_directories(Tutorial PUBLIC
                            )
 ```
 
----
-
 此时目录结构如下：
 
 ```
@@ -665,8 +647,6 @@ target_include_directories(Tutorial PUBLIC
 ├── TutorialConfig.h.in
 └── tutorial.cxx
 ```
-
----
 
 测试：
 
@@ -700,8 +680,6 @@ install (TARGETS MathFunctions DESTINATION bin)
 install(FILES MathFunctions.h DESTINATION include)
 ```
 
----
-
 在`step2`的基础上，修改`CMakeLists.txt`文件，追加如下内容：
 
 ```cmake
@@ -709,8 +687,6 @@ install(FILES MathFunctions.h DESTINATION include)
 install (TARGETS Tutorial DESTINATION bin)
 install (FILES "${PROJECT_BINARY_DIR}/TutorialConfig.h" DESTINATION include)
 ```
-
----
 
 测试：
 
@@ -768,8 +744,6 @@ do_test(Tutorial -25 "-25 is [-nan|nan|0]")
 do_test(Tutorial 0.0001 "0.0001 is 0.01")
 ```
 
----
-
 测试：
 
 ```
@@ -809,8 +783,6 @@ if(HAVE_LOG AND HAVE_EXP)
 endif()
 ```
 
----
-
 修改`MathFunctions/mysqrt.cxx`文件，内容如下：
 
 ```c++
@@ -844,8 +816,6 @@ double mysqrt(double x)
   return result;
 }
 ```
-
----
 
 测试：
 
