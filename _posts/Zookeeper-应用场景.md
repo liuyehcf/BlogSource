@@ -45,9 +45,9 @@ categories:
 
 阿里巴巴集团开源的分布式服务框架Dubbo中使用ZooKeeper来作为其命名服务，维护全局的服务地址列表，点击这里查看Dubbo开源项目。在Dubbo实现中：
 
-**服务提供者**在启动的时候，向ZK上的指定节点/dubbo/${serviceName}/providers目录下写入自己的URL地址，这个操作就完成了服务的发布
+**服务提供者**在启动的时候，向ZK上的指定节点`/dubbo/${serviceName}/providers`目录下写入自己的URL地址，这个操作就完成了服务的发布
 
-**服务消费者**启动的时候，订阅/dubbo/${serviceName}/providers目录下的提供者URL地址， 并向/dubbo/${serviceName} /consumers目录下写入自己的URL地址
+**服务消费者**启动的时候，订阅`/dubbo/${serviceName}/providers`目录下的提供者URL地址， 并向`/dubbo/${serviceName}/consumers`目录下写入自己的URL地址
 
 注意，所有向ZK上注册的地址都是临时节点，这样就能够保证服务提供者和消费者能够自动感应资源的变化
 
