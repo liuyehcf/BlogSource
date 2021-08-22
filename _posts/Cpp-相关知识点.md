@@ -929,11 +929,11 @@ endforeach()
 
 **本小节转载摘录自[Cmake之深入理解find_package()的用法](https://zhuanlan.zhihu.com/p/97369704)**
 
-为了方便我们在项目中引入外部依赖包，`cmake`官方为我们预定义了许多寻找依赖包的`Module`，他们存储在`path_to_your_cmake/share/cmake-<version>/Modules`目录下。每个以`Find<LibaryName>.cmake`命名的文件都可以帮我们找到一个包
+为了方便我们在项目中引入外部依赖包，`cmake`官方为我们预定义了许多寻找依赖包的`Module`，他们存储在`path_to_your_cmake/share/cmake-<version>/Modules`目录下。每个以`Find<LibaryName>.cmake`命名的文件都可以帮我们找到一个包。**注意，`find_package(<LibaryName>)`与`Find<LibaryName>.cmake`中的`<LibaryName>`部分，大小写必须完全一致**
 
 我们以`curl`库为例，假设我们项目需要引入这个库，从网站中请求网页到本地，我们看到官方已经定义好了`FindCURL.cmake`。所以我们在`CMakeLists.txt`中可以直接用`find_pakcage`进行引用
 
-对于系统预定义的`Find<LibaryName>.cmake`模块，使用方法如下，每一个模块都会定义以下几个变量（这些信息会在`Find<LibaryName>.cmake`文件的最上方注释中说明）
+对于系统预定义的`Find<LibaryName>.cmake`模块，使用方法如下，每一个模块都会定义以下几个变量（这些信息会在`Find<LibaryName>.cmake`文件的最上方注释中说明）。**注意，这些变量命名只是规范，命名中`<LibaryName>`部分是全部大写还是包含大小写完全由`Find<LibaryName>.cmake`文件决定。一般来说是大写的，例如`FindDemo.cmake`中定义的变量名为`DEMO_FOUND`**
 
 * `<LibaryName>_FOUND`
 * `<LibaryName>_INCLUDE_DIR`
