@@ -342,8 +342,12 @@ git clone https://github.com/xxx/yyy.git
 git clone git@github.com:xxx/yyy.git
 
 # 不下载历史提交，当整个仓库体积非常大的时候，下载全部会比较耗费存储以及时间
+# 我们可以指定下载深度为1，这种情况下下载的版本叫做「shallow」
 git clone https://github.com/xxx/yyy.git --depth 1
 git clone -b <branch_name> https://github.com/xxx/yyy.git --depth 1
+
+# 后续如果又想要下载完整仓库的时候，可以通过如下方式获取完整仓库
+git fetch --unshallow
 
 # 使用<--depth 1>会衍生另一个问题，无法获取其他分支，可以通过如下方式处理
 git remote set-branches origin '<需要获取的分支名>'
