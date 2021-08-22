@@ -17,10 +17,22 @@ categories:
 
 ```sh
 # 卸载默认的渲染引擎
-npm uninstall hexo-renderer-marked -g --save
+npm uninstall hexo-renderer-marked
 
 # 安装新的渲染引擎
-npm i hexo-renderer-markdown-it -g --save
+npm install hexo-renderer-markdown-it
+```
+
+**将渲染引擎更新为`markdown-it`后，会导致toc功能不正常（一级目录无法跳转）。参考解决方式参考[Cannot render headings with ids?](https://github.com/hexojs/hexo-renderer-markdown-it/issues/40)**
+
+**好像并未解决，不折腾了，我换回默认的渲染引擎了**
+
+```sh
+# 卸载markdown-it渲染引擎
+npm uninstall hexo-renderer-markdown-it
+
+# 安装新的渲染引擎
+npm install hexo-renderer-marked
 ```
 
 # 2 Math
@@ -545,3 +557,4 @@ npm install hexo-deployer-git --save
 * [hexo-filter-plantuml](https://github.com/wafer-li/hexo-filter-plantuml)
 * [时序图](http://plantuml.com/sequence-diagram)
 * [Hexo中引入Mermaid流程图](https://tyloafer.github.io/posts/7790/)
+* [如何解决next5主题目录无法跳转的问题](https://www.cnblogs.com/Createsequence/p/14150758.html)
