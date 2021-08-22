@@ -11,28 +11,18 @@ categories:
 
 <!--more-->
 
-# 1 markdown
+# 1 markdown-renderer
 
-更换markdown渲染引擎
+[Hexo的多种Markdown渲染器对比分析](https://bugwz.com/2019/09/17/hexo-markdown-renderer/#2-4-hexo-renderer-markdown-it)
+
+更换markdown渲染引擎，默认的是`hexo-renderer-marked`，换成`hexo-renderer-markdown-it-plus`（我更换渲染引擎的原因是，默认的引擎在更新之后，对加粗的支持反而变弱了，比如`测试**加粗**测试`）
 
 ```sh
 # 卸载默认的渲染引擎
 npm uninstall hexo-renderer-marked
 
 # 安装新的渲染引擎
-npm install hexo-renderer-markdown-it
-```
-
-**将渲染引擎更新为`markdown-it`后，会导致toc功能不正常（一级目录无法跳转）。参考解决方式参考[Cannot render headings with ids?](https://github.com/hexojs/hexo-renderer-markdown-it/issues/40)**
-
-**好像并未解决，不折腾了，我换回默认的渲染引擎了**
-
-```sh
-# 卸载markdown-it渲染引擎
-npm uninstall hexo-renderer-markdown-it
-
-# 安装新的渲染引擎
-npm install hexo-renderer-marked
+npm install hexo-renderer-markdown-it-plus
 ```
 
 # 2 Math
