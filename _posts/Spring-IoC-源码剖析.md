@@ -128,7 +128,7 @@ ApplicationContext
 1. `AbstractXmlApplicationContext`：该抽象类指明了配置文件的类型是XML，实现了AbstractRefreshableApplicationContext提供的抽象方法（loadBeanDefinitions），即加载配置文件
 1. `FileSystemXmlApplicationContext`与`ClassPathXmlApplicationContext`：这两个类是应用中会用到的两个类，分别代表XML路径的不同模式
 
-那么`spring-context`模块与`spring-beans`模块是如何联系到一起的呢？从ClassPathXmlApplicationContext的继承链路来看，并没有用到**`spring-beans`模块中核心的BeanFactory引擎类`DefaultListableBeanFactory`**。其实，在AbstractApplicationContext的实现中，由于**该类提供了一个抽象方法`getBeanFactory`**，于是**所有的BeanFactory体系相关的接口方法的实现都是通过该方法来获取BeanFactory，并委托给getBeanFactory方法返回的实例来实现的**。而getBeanFactory方法的定义在AbstractRefreshableApplicationContext中，也是该类持有了一个BeanFactory字段`private DefaultListableBeanFactory beanFactory`
+那么`spring-context`模块与`spring-beans`模块是如何联系到一起的呢？从ClassPathXmlApplicationContext的继承链路来看，**并没有用到`spring-beans`模块中核心的BeanFactory引擎类`DefaultListableBeanFactory`**。其实，在AbstractApplicationContext的实现中，由于**该类提供了一个抽象方法`getBeanFactory`**，于是**所有的BeanFactory体系相关的接口方法的实现都是通过该方法来获取BeanFactory，并委托给getBeanFactory方法返回的实例来实现的**。而getBeanFactory方法的定义在AbstractRefreshableApplicationContext中，也是该类持有了一个BeanFactory字段`private DefaultListableBeanFactory beanFactory`
 
 ```java
     //---------------------------------------------------------------------

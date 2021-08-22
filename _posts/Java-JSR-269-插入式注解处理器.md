@@ -36,7 +36,7 @@ cond(no)->op1
 op3->en
 ```
 
-**Javac编译动作的入口是`com.sun.tools.javac.main.JavaCompiler`类**，上述3个过程的代码逻辑集中在这个类的**`compile()`和`compile2()`**方法中，下面给出整个编译过程中最关键的几个步骤
+**Javac编译动作的入口是`com.sun.tools.javac.main.JavaCompiler`类**，上述3个过程的代码逻辑集中在这个类的`compile()`和`compile2()`方法中，下面给出整个编译过程中最关键的几个步骤
 
 ```java
 public void compile(List<JavaFileObject> var1, List<String> var2, Iterable<? extends Processor> var3) {
@@ -576,7 +576,7 @@ treeMaker.Exec(
                 List.of(treeMaker.Ident(jcVariableDecl.getName())) //传入的参数集合
         )
 )
-````
+```
 
 ### 3.5.6 从JCTree.JCVariable中获取类型信息
 

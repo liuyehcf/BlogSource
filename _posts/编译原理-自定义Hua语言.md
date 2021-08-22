@@ -24,12 +24,12 @@ categories:
 
 **为了方便描述，我们有如下约定**
 
-1. 排在前面的大写字母表示**非终结符**，例如{% raw %}$A${% endraw %}、{% raw %}$B${% endraw %}、{% raw %}$C${% endraw %}、{% raw %}$D${% endraw %}、{% raw %}$E${% endraw %}、{% raw %}$F${% endraw %}、{% raw %}$G${% endraw %}
-1. {% raw %}$S${% endraw %}表示**文法开始符号**
-1. 排在前面的小写字母表示**终结符**，例如{% raw %}$a${% endraw %}、{% raw %}$b${% endraw %}、{% raw %}$c${% endraw %}
-1. {% raw %}$w${% endraw %}表示**终结符号串**
+1. 排在前面的大写字母表示非终结符，例如{% raw %}$A${% endraw %}、{% raw %}$B${% endraw %}、{% raw %}$C${% endraw %}、{% raw %}$D${% endraw %}、{% raw %}$E${% endraw %}、{% raw %}$F${% endraw %}、{% raw %}$G${% endraw %}
+1. {% raw %}$S${% endraw %}表示文法开始符号
+1. 排在前面的小写字母表示终结符，例如{% raw %}$a${% endraw %}、{% raw %}$b${% endraw %}、{% raw %}$c${% endraw %}
+1. {% raw %}$w${% endraw %}表示终结符号串
 1. 排在后面的大写字母表示文法符号，例如{% raw %}$X${% endraw %}、{% raw %}$Y${% endraw %}、{% raw %}$Z${% endraw %}
-1. {% raw %}$α${% endraw %}、{% raw %}$β${% endraw %}等希腊字母表示**文法符号串**
+1. {% raw %}$α${% endraw %}、{% raw %}$β${% endraw %}等希腊字母表示文法符号串
 
 ## 1.2 文法符号串
 
@@ -79,13 +79,13 @@ $${% endraw %}
 
 ### 1.5.1 first集
 
-{% raw %}$First(X)${% endraw %}定义为可以由**文法符号**{% raw %}$X${% endraw %}推导出的所有**终结符集合**
+{% raw %}$First(X)${% endraw %}定义为可以由文法符号{% raw %}$X${% endraw %}推导出的所有终结符集合
 
 * 显然如果{% raw %}$X${% endraw %}是终结符，那么{% raw %}$First(X)=\{X\}${% endraw %}
 
 ### 1.5.2 follow集
 
-{% raw %}$First(A)${% endraw %}定义为可以紧跟在**非终结符{% raw %}$A${% endraw %}**之后的所有**终结符集合**，不包括{% raw %}$\epsilon${% endraw %}
+{% raw %}$First(A)${% endraw %}定义为可以紧跟在非终结符{% raw %}$A${% endraw %}之后的所有终结符集合，不包括{% raw %}$\epsilon${% endraw %}
 
 # 2 正则表达式实践篇
 

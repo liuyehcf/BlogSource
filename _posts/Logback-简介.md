@@ -211,7 +211,7 @@ logback-access是为了集成Servlet环境而准备的，可提供HTTP-access的
     * 例如，假设最小值和最大值分别为1和2，命名模式为`mylog%i.log`，会产生归档文件`mylog1.log`和`mylog2.log`
     * 还可以指定文件压缩选项，例如，`mylog%i.log.gz`或者`log%i.log.zip`
 
-**示例1：**每天生产一个日志文件，保存30天的日志文件
+**示例1**：每天生产一个日志文件，保存30天的日志文件
 
 ```xml
 <configuration>   
@@ -233,7 +233,7 @@ logback-access是为了集成Servlet环境而准备的，可提供HTTP-access的
 </configuration>
 ```
 
-**示例2：**按照固定窗口模式生成日志文件，当文件大于20MB时，生成新的日志文件。窗口大小是1到3，当保存了3个归档文件后，将覆盖最早的日志
+**示例2**：按照固定窗口模式生成日志文件，当文件大于20MB时，生成新的日志文件。窗口大小是1到3，当保存了3个归档文件后，将覆盖最早的日志
 
 ```xml
 <configuration>   

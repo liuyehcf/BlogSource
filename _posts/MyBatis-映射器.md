@@ -57,7 +57,7 @@ Java映射器（即Mapper），由两个元素组成
 
 **有这样一个参数`autoMappingBehavior`，当它不设置为NONE的时候，MyBatis会提供自动映射功能：只要返回的`SQL列名`和`JavaBean属性`一致，MyBatis就会帮助我们回填这些字段而无需任何配置**
 
-在实际的情况中，大部分的数据库规范都是要求每个单词用下划线分隔，而Java则是用驼峰命名法来命名，于是**使用列的别名（`AS`）**就可以使得MyBatis自动映射，**或者直接在配置文件中开启驼峰命名方式**
+在实际的情况中，大部分的数据库规范都是要求每个单词用下划线分隔，而Java则是用驼峰命名法来命名，于是**使用列的别名**（`AS`）就可以使得MyBatis自动映射，**或者直接在配置文件中开启驼峰命名方式**
 
 自动映射可以在settings元素中配置autoMappingBehavior属性值来设置其策略。它包含3个值
 
@@ -86,7 +86,7 @@ public List<Role> findRoleByMap(Map<String, String> params);
 
 ### 2.2.2 @Param注解
 
-我们也可以使用MyBatis提供的参数注解**@Param(org.apache.ibatis.annotations.Param)**来实现想要的功能。但如果参数多于5个，那么@Param注解也会造成可读性的下降
+我们也可以使用MyBatis提供的参数注解`@Param(org.apache.ibatis.annotations.Param)`来实现想要的功能。但如果参数多于5个，那么@Param注解也会造成可读性的下降
 
 ```xml
 <select id="findRoleByAnnotation" resultMap="roleMap">

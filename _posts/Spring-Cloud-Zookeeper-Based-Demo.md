@@ -78,7 +78,7 @@ Spring-Cloud对注册中心这一模块做了抽象，其实现不局限于`Zook
 
 具体步骤，请移步{% post_link Zookeeper-Overview %}，由于篇幅原因，这里不再赘述
 
-zookeeper启动地址为**`http://localhost:2181`**
+zookeeper启动地址为`http://localhost:2181`
 
 # 4 Zookeeper-Provider
 
