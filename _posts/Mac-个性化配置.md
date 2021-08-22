@@ -149,7 +149,31 @@ export LSCOLORS='CxfxcxdxbxegedabagGxGx' #指定颜色
 
 # 4 zsh
 
-# 5 更换home-brew镜像源
+# 5 国内安装homebrew
+
+参考[国内安装homebrew](https://zhuanlan.zhihu.com/p/111014448)
+
+**常规安装脚本（推荐/完全体/几分钟安装完成）：**
+
+```sh
+/bin/bash -c "$(curl -fsSL https://gitee.com/cunkai/HomebrewCN/raw/master/Homebrew.sh)"
+```
+
+**极速安装脚本（精简版/几秒钟安装完成）：**
+
+```sh
+/bin/bash -c "$(curl -fsSL https://gitee.com/cunkai/HomebrewCN/raw/master/Homebrew.sh)" speed
+```
+
+**卸载脚本：**
+
+```sh
+/bin/bash -c "$(curl -fsSL https://gitee.com/cunkai/HomebrewCN/raw/master/HomebrewUninstall.sh)"
+```
+
+**[FAQ](https://gitee.com/cunkai/HomebrewCN/blob/master/error.md)**
+
+# 6 更换homebrew镜像源
 
 ```sh
 # step 1: 替换brew.git
@@ -178,7 +202,7 @@ $ source ~/.bash_profile
 $ brew update
 ```
 
-# 6 升级bash
+# 7 升级bash
 
 ```sh
 brew install bash
@@ -193,7 +217,7 @@ sudo ln -s /usr/local/bin/bash /bin/bash
 1. 在Terminal中输入`csrutil disable`关闭SIP(csrutil enable打开SIP)
 1. 重启
 
-# 7 清理磁盘
+# 8 清理磁盘
 
 [macOS 系统占用储存空间太大怎么办？](https://www.zhihu.com/question/52784342)
 
@@ -205,7 +229,7 @@ sudo ln -s /usr/local/bin/bash /bin/bash
 1. `~/Library/Caches`
     * `~/Library/Caches/IntelliJIdea2018.1`：`IntelliJIdea`的一些缓存数据
 
-# 8 卸载itunes
+# 9 卸载itunes
 
 为什么要卸载，升级完mac之后，发现某些应用的`f8`快捷键失效了，一按`f8`就会自动打开itunes
 
@@ -224,7 +248,7 @@ sudo ln -s /usr/local/bin/bash /bin/bash
 * `System Preferences` -> `Keyboard` -> `Keyboard`
 * 取消`Use all F1,F2,etc. keys as standard function keys`选项的勾选
 
-# 9 参考
+# 10 参考
 
 * [mac下vim的16种配色方案（代码高亮）展示，及配置](http://blog.csdn.net/myhelperisme/article/details/49700715)
 * [mac终端(Terminal)字体颜色更改教程 [ls、vim操作颜色] [复制链接]](https://bbs.feng.com/forum.php?mod=viewthread&tid=10508780)

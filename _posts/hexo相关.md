@@ -518,7 +518,21 @@ npm install hexo-deployer-git --save
 
 [nodejs更新后hexo没法deploy](https://blog.csdn.net/qq_41535611/article/details/106309335)
 
-# 19 参考
+# 19 更换电脑后迁移
+
+1. 参考[hexo-README](https://github.com/hexojs/hexo)，安装`hexo`
+1. 参考[theme-next-README](https://github.com/theme-next/hexo-theme-next)，安装`hexo`主题`theme-next`
+1. 在老电脑上查看`theme-next`的修改项，将改动应用于新电脑，由于新老电脑`theme-next`的版本可能不一致，所以可能存在一些差异，看情况调整即可
+1. 修改站点配置文件，该文件没有被git仓库管理，修改前备份一下。并根据老电脑上的改动项依次调整即可，主要包含如下几个配置
+    * title
+    * description
+    * author
+    * language
+    * theme
+    * deploy
+    * search
+
+# 20 参考
 
 * [next官方文档](http://theme-next.iissnan.com/getting-started.html)
 * [搭建一个支持LaTEX的hexo博客](http://blog.csdn.net/emptyset110/article/details/50123231)
