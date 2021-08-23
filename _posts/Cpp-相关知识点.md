@@ -38,9 +38,36 @@ m.unlock();
 }
 ```
 
-## 1.4 参考
+## 1.4 std::condition_variable
+
+调用`wait`方法时，必须获取监视器。而调用`notify`方法时，无需获取监视器
+
+## 1.5 std::atomic
+
+`compare_exchange_strong(T& expected_value, T new_value)`方法的第一个参数是个左值
+
+* 当前值与期望值`expected_value`相等时，修改当前值为设定值`new_value`，返回true
+* 当前值与期望值`expected_value`不等时，将期望值修改为当前值，返回false（搞不懂为什么要这样设计，啥脑回路）
+
+```c++
+std::atomic_bool flag = false;
+bool expected = false;
+
+std::cout << "result: " << flag.compare_exchange_strong(expected, true)
+              << ", flag: " << flag << ", expected: " << expected << std::endl;
+std::cout << "result: " << flag.compare_exchange_strong(expected, true)
+              << ", flag: " << flag << ", expected: " << expected << std::endl;
+```
+
+```
+result: 1, flag: 1, expected: 0
+result: 0, flag: 1, expected: 1
+```
+
+## 1.6 参考
 
 * [C++11 中的std::function和std::bind](https://www.jianshu.com/p/f191e88dcc80)
+* [Do I have to acquire lock before calling condition_variable.notify_one()?](https://stackoverflow.com/questions/17101922/do-i-have-to-acquire-lock-before-calling-condition-variable-notify-one)
 
 # 2 宏
 
