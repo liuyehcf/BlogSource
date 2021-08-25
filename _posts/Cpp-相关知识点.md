@@ -155,11 +155,11 @@ public:
     }
 
     A(const A &a) : _a(a._a), _b(a._b) {
-        std::cout << "A's copy constructor2" << std::endl;
+        std::cout << "A's copy constructor" << std::endl;
     }
 
     A(A &&a) : _a(a._a), _b(a._b) {
-        std::cout << "A's move constructor2" << std::endl;
+        std::cout << "A's move constructor" << std::endl;
     }
 
     A &operator=(const A &a) {
@@ -223,14 +223,14 @@ int main() {
 A's (int, int) constructor
 
 ============(create b1)============
-A's copy constructor2
+A's copy constructor
 
 ============(create b2)============
 A's default constructor
 A's copy assign operator
 
 ============(create b3)============
-A's move constructor2
+A's move constructor
 
 ============(create b4)============
 A's default constructor
@@ -259,11 +259,11 @@ public:
     }
 
     A(const A &a) : _a(a._a), _b(a._b) {
-        std::cout << "A's copy constructor2" << std::endl;
+        std::cout << "A's copy constructor" << std::endl;
     }
 
     A(A &&a) : _a(a._a), _b(a._b) {
-        std::cout << "A's move constructor2" << std::endl;
+        std::cout << "A's move constructor" << std::endl;
     }
 
     A &operator=(const A &a) {
