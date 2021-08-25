@@ -1330,7 +1330,46 @@ endforeach()
 
 * 其中`value`的可选值就是`ON`和`OFF`，其中`OFF`是默认值
 
-### 7.4.4 find_package
+### 7.4.4 file
+
+`file`用于文件操作
+
+格式：
+
+* `file(READ <filename> <out-var> [...])`
+* `file({WRITE | APPEND} <filename> <content>...)`
+
+操作类型说明：
+
+* `READ`：读取文件到变量中
+* `WRITE`：覆盖写，文件不存在就创建
+* `APPEND`：追加写，文件不存在就创建
+
+### 7.4.5 add_executable
+
+`add_executable`用于添加可执行文件
+
+### 7.4.6 add_library
+
+`add_library`用于添加链接文件
+
+### 7.4.7 target_link_libraries
+
+`target_link_libraries`指定链接给定目标时要使用的库或标志
+
+### 7.4.8 include_directories
+
+`include_directories`：该方法会在全局维度添加`include`的搜索路径。这些搜索路径会被添加到所有`target`中去（包括所有`sub target`），会追加到所有`target`的`INCLUDE_DIRECTORIES`属性中去
+
+### 7.4.9 target_include_directories
+
+`target_include_directories`：该方法为指定`target`添加`include`的搜索路径，会追加到该`target`的`INCLUDE_DIRECTORIES`属性中去
+
+### 7.4.10 include
+
+`include`用于加载模块
+
+### 7.4.11 find_package
 
 **本小节转载摘录自[Cmake之深入理解find_package()的用法](https://zhuanlan.zhihu.com/p/97369704)**
 
@@ -1342,7 +1381,7 @@ endforeach()
 
 * `<LibaryName>_FOUND`
 * `<LibaryName>_INCLUDE_DIR`
-* `<LibaryName>_LIBRARY`
+* `<LibaryName>_LIBRARY`：该模块通过`add_library`定义的名称
 * `<LibaryName>_STATIC_LIB`
 
 ```cmake
@@ -1358,7 +1397,7 @@ endif(CURL_FOUND)
 
 你可以通过`<LibaryName>_FOUND`来判断模块是否被找到，如果没有找到，按照工程的需要关闭某些特性、给出提醒或者中止编译，上面的例子就是报出致命错误并终止构建。如果`<LibaryName>_FOUND`为真，则将`<LibaryName>_INCLUDE_DIR`加入`INCLUDE_DIRECTORIES`
 
-#### 7.4.4.1 引入非官方的库
+#### 7.4.11.1 引入非官方的库
 
 **通过`find_package`引入非官方的库，该方式只对支持cmake编译安装的库有效**
 
@@ -1390,7 +1429,7 @@ else(GLOG_FOUND)
 endif(GLOG_FOUND)
 ```
 
-#### 7.4.4.2 Module模式与Config模式
+#### 7.4.11.2 Module模式与Config模式
 
 通过上文我们了解了通过`cmake`引入依赖库的基本用法。知其然也要知其所以然，`find_package`对我们来说是一个黑盒子，那么它是具体通过什么方式来查找到我们依赖的库文件的路径的呢。到这里我们就不得不聊到`find_package`的两种模式，一种是`Module`模式，也就是我们引入`curl`库的方式。另一种叫做`Config`模式，也就是引入`glog`库的模式。下面我们来详细介绍着两种方式的运行机制
 
@@ -1398,7 +1437,7 @@ endif(GLOG_FOUND)
 
 如果`Module`模式搜索失败，没有找到对应的`Find<LibraryName>.cmake`文件，则转入`Config`模式进行搜索。它主要通过`<LibraryName>Config.cmake`或`<lower-case-package-name>-config.cmake`这两个文件来引入我们需要的库。以我们刚刚安装的`glog`库为例，在我们安装之后，它在`/usr/local/lib/cmake/glog/`目录下生成了`glog-config.cmake`文件，而`/usr/local/lib/cmake/<LibraryName>/`正是`find_package`函数的搜索路径之一
 
-#### 7.4.4.3 编写自己的`Find<LibraryName>.cmake`模块
+#### 7.4.11.3 编写自己的`Find<LibraryName>.cmake`模块
 
 假设我们编写了一个新的函数库，我们希望别的项目可以通过`find_package`对它进行引用我们应该怎么办呢。
 
@@ -1470,13 +1509,28 @@ else(ADD_FOUND)
 endif(ADD_FOUND)
 ```
 
-### 7.4.5 aux_source_directory
+### 7.4.12 aux_source_directory
 
 Find all source files in a directory
 
 ## 7.5 Tips
 
-### 7.5.1 同一目录，多个源文件
+### 7.5.1 打印cmake中所有的变量
+
+```cmake
+get_cmake_property(_variableNames VARIABLES)
+foreach (_variableName ${_variableNames})
+    message(STATUS "${_variableName}=${${_variableName}}")
+endforeach()
+```
+
+### 7.5.2 打印cmake中所有环境变量
+
+```cmake
+execute_process(COMMAND "${CMAKE_COMMAND}" "-E" "environment")
+```
+
+### 7.5.3 同一目录，多个源文件
 
 如果同一个目录下有多个源文件，那么在使用`add_executable`命令的时候，如果要一个个填写，那么将会非常麻烦，并且后续维护的代价也很大
 
