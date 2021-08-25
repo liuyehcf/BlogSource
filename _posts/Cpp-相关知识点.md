@@ -237,9 +237,19 @@ A's default constructor
 A's move assign operator
 ```
 
-### 1.8.2 类的列表初始化
+### 1.8.2 各种初始化类型
 
-本质上列表初始化会调用相应的构造函数（匹配参数类型以及参数数量）来进行初始化，它的好处之一是可以简化方法返回值，否则需要先创建对象再调用`return`
+1. 默认初始化：`type variableName;`
+1. 直接初始化/构造初始化（至少有1个参数）：`type variableName(args);`
+1. 列表初始化：`type variableName{args};`
+    * 本质上列表初始化会调用相应的构造函数（匹配参数类型以及参数数量）来进行初始化
+    * 它的好处之一是可以简化`return`语句，可以直接`return {args};`
+1. 拷贝初始化：
+    * `type variableName = otherVariableName`，本质上调用了拷贝构造函数
+    * `type variableName = <type (args)>`，其中`<type (args)>`指的是返回类型为`type`的函数。看起来会调用拷贝构造函数，但是编译器会对这种形式的初始化进行优化，也就是只有函数内部调用了构造函数（如果有的话），而`=`并未调用任何构造函数
+1. 值初始化：`type variableName()`
+    * 对于内置类型，初始化为`0`或者`nullptr`
+    * 对于类类型，等同于默认初始化。测试发现并未调用任何构造函数
 
 ```c++
 #include <iostream>
@@ -299,31 +309,68 @@ A createA(int argNum) {
 }
 
 int main() {
-    std::cout << "============(create a1)============" << std::endl;
-    A a1 = createA(0);
-    std::cout << "\n============(create a2)============" << std::endl;
-    A a2 = createA(1);
-    std::cout << "\n============(create a3)============" << std::endl;
-    A a3 = createA(2);
+    std::cout << "============(默认初始化 a1)============" << std::endl;
+    A a1;
+    std::cout << "\n============(直接初始化 a2)============" << std::endl;
+    A a2(1);
+    std::cout << "\n============(直接初始化 a3)============" << std::endl;
+    A a3(1, 2);
+    std::cout << "\n============(列表初始化 a4)============" << std::endl;
+    A a4 = {};
+    std::cout << "\n============(列表初始化 a5)============" << std::endl;
+    A a5 = {1};
+    std::cout << "\n============(列表初始化 a6)============" << std::endl;
+    A a6 = {1, 2};
+    std::cout << "\n============(拷贝初始化 a7)============" << std::endl;
+    A a7 = a6;
+    std::cout << "\n============(拷贝初始化 a8)============" << std::endl;
+    A a8 = createA(0);
+    std::cout << "\n============(拷贝初始化 a9)============" << std::endl;
+    A a9 = createA(1);
+    std::cout << "\n============(拷贝初始化 a10)============" << std::endl;
+    A a10 = createA(2);
+    std::cout << "\n============(值初始化 a11)============" << std::endl;
+    A a11();
 }
 ```
 
 输出：
 
 ```
-============(create a1)============
+============(默认初始化 a1)============
 A's default constructor
 
-============(create a2)============
+============(直接初始化 a2)============
 A's (int) constructor
 
-============(create a3)============
+============(直接初始化 a3)============
 A's (int, int) constructor
+
+============(列表初始化 a4)============
+A's default constructor
+
+============(列表初始化 a5)============
+A's (int) constructor
+
+============(列表初始化 a6)============
+A's (int, int) constructor
+
+============(拷贝初始化 a7)============
+A's copy constructor
+
+============(拷贝初始化 a8)============
+A's default constructor
+
+============(拷贝初始化 a9)============
+A's (int) constructor
+
+============(拷贝初始化 a10)============
+A's (int, int) constructor
+
+============(值初始化 a11)============
 ```
 
-## 1.9 类的成员变量是引用类型，如何初始化
-
-## 1.10 参考
+## 1.9 参考
 
 * [C++11\14\17\20 特性介绍](https://www.jianshu.com/p/8c4952e9edec)
 * [关于C++：静态常量字符串(类成员)](https://www.codenong.com/1563897/)
