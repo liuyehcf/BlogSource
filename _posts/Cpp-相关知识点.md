@@ -11,17 +11,336 @@ categories:
 
 <!--more-->
 
-# 1 标准库
+# 1 语法
 
-## 1.1 std::string
+## 1.1 c++11新特性
+
+1. `auto`与`decltype`类型推导
+1. `default`与`delete`函数
+1. `final`与`override`
+1. 尾置返回类型
+1. 右值引用
+1. 移动构造函数与移动赋值运算符
+1. 有作⽤域的枚举
+1. `constexpr`与字⾯类型
+1. 扩展「初始化列表」的适⽤范围
+1. 委托与继承的构造函数
+1. 花括号或等号初始化器
+1. 空指针`nullptr`
+1. `long long`
+1. `char16_t`与`char32_t`
+1. `using`定义类型别名
+1. 变长参数模板
+1. 推⼴的（⾮平凡）联合体
+1. 推⼴的`POD`（平凡类型与标准布局类型）
+1. `Unicode`字符串字⾯量
+1. ⽤户定义字⾯量
+1. 属性，用于提供额外信息
+1. `Lambda`表达式
+1. `noexcept`说明符与`noexcept`运算符
+1. `alignof`与`alignas`
+1. 多线程内存模型
+1. 线程局部存储，`thread_local`关键词
+1. `GC`接口，`declare_reachable`与`undeclare_reachable`（并未实现）
+1. 基于范围的for循环
+1. `static_assert`
+1. 智能指针
+
+## 1.2 c++14新特性
+
+1. 变量模板
+1. 泛型`Lambda`
+1. `Lambda`初始化捕获右值对象
+1. `new/delete`消除
+1. `constexpr`函数上放松的限制
+1. ⼆进制字⾯量，`0b101010`
+1. 数字分隔符，`100'0000`
+1. 函数的返回类型推导
+1. 带默认成员初始化器的聚合类
+1. `decltype(auto)`
+
+## 1.3 c++17新特性
+
+1. 折叠表达式
+1. 类模板实参推导
+1. `auto`占位的⾮类型模板形参
+1. 编译期的`constexpr if`语句
+1. 内联变量，`inline`变量
+1. 结构化绑定
+1. `if/switch`语句的变量初始化
+1. `u8-char`
+1. 简化的嵌套命名空间
+1. `using`声明语句可以声明多个名称
+1. 将`noexcept`作为类型系统的一部分
+1. 新的求值顺序规则
+1. 强制的复制消除
+1. `Lambda`表达式捕获`*this`
+1. `constexpr`的`Lambda`表达式
+1. 属性命名空间不必重复
+1. 新属性`[[fallthrough]]`、`[[nodiscard]]`和`[[maybe_unused]]`
+1. `__has_include`
+
+## 1.4 C++20新特性
+
+1. 特性测试宏
+1. 三路比较运算符`<=>`
+1. 范围`for`中的初始化语句和初始化器
+1. `char8_t`
+1. `[[no_unique_address]]`
+1. `[[likely]]`与`[[unlikely]]`
+1. `Lambda`初始化捕获中的包展开
+1. 移除了在多种上下文语境中，使用`typename`关键字以消除类型歧义的要求
+1. `consteval`、`constinit`
+1. 更为宽松的`constexpr`要求
+1. 规定有符号整数以补码实现
+1. 使用圆括号的聚合初始化
+1. 协程
+1. 模块
+1. 限定与概念(concepts)
+1. 缩略函数模板
+1. 数组长度推导
+
+## 1.5 throw与异常
+
+throw关键字可以抛出任何对象，例如可以抛出一个整数
+
+```c++
+    try {
+        throw 1;
+    } catch (int &i) {
+        std::cout << i << std::endl;
+    }
+```
+
+## 1.6 类型转换
+
+### 1.6.1 static_cast
+
+### 1.6.2 dynamic_cast
+
+### 1.6.3 const_cast
+
+### 1.6.4 reinterpret_cast
+
+## 1.7 如何在类中定义常量
+
+## 1.8 初始化
+
+### 1.8.1 初始化列表
+
+1. 对于内置类型，直接进行值拷贝。使用初始化列表还是在构造函数体中进行初始化没有差别
+1. 对于类类型
+    * 在初始化列表中初始化：调用的是拷贝构造函数或者移动构造函数
+    * 在构造函数体中初始化：虽然在初始化列表中没有显式指定，但是仍然会用默认的构造函数来进行初始化，然后在构造函数体中使用拷贝或者移动赋值运算符
+1. 哪些东西必须放在初始化列表中
+    * 常量成员
+    * 引用类型
+    * 没有默认构造函数的类类型，因为使用初始化列表可以不必调用默认构造函数来初始化，而是直接调用拷贝或者移动构造函数初始化
+
+```c++
+#include <iostream>
+
+class A {
+public:
+    A() {
+        std::cout << "A's default constructor" << std::endl;
+    }
+
+    A(int a) : _a(a), _b(0) {
+        std::cout << "A's (int) constructor" << std::endl;
+    }
+
+    A(int a, int b) : _a(a), _b(b) {
+        std::cout << "A's (int, int) constructor" << std::endl;
+    }
+
+    A(const A &a) : _a(a._a), _b(a._b) {
+        std::cout << "A's copy constructor2" << std::endl;
+    }
+
+    A(A &&a) : _a(a._a), _b(a._b) {
+        std::cout << "A's move constructor2" << std::endl;
+    }
+
+    A &operator=(const A &a) {
+        std::cout << "A's copy assign operator" << std::endl;
+        this->_a = a._a;
+        this->_b = a._b;
+        return *this;
+    }
+
+    A &operator=(A &&a) noexcept {
+        if (this == &a) {
+            return *this;
+        }
+        std::cout << "A's move assign operator" << std::endl;
+        this->_a = a._a;
+        this->_b = a._b;
+        return *this;
+    }
+
+private:
+    int _a;
+    int _b;
+};
+
+class B {
+public:
+    B(A &a) : _a(a) {}
+
+    B(A &a, std::nullptr_t) {
+        this->_a = a;
+    }
+
+    B(A &&a) : _a(std::move(a)) {}
+
+    B(A &&a, std::nullptr_t) {
+        this->_a = std::move(a);
+    }
+
+private:
+    A _a;
+};
+
+int main() {
+    std::cout << "============(create a)============" << std::endl;
+    A a(1, 2);
+    std::cout << "\n============(create b1)============" << std::endl;
+    B b1(a);
+    std::cout << "\n============(create b2)============" << std::endl;
+    B b2(a, nullptr);
+    std::cout << "\n============(create b3)============" << std::endl;
+    B b3(static_cast<A &&>(a));
+    std::cout << "\n============(create b4)============" << std::endl;
+    B b4(static_cast<A &&>(a), nullptr);
+}
+```
+
+输出：
+
+```
+============(create a)============
+A's (int, int) constructor
+
+============(create b1)============
+A's copy constructor2
+
+============(create b2)============
+A's default constructor
+A's copy assign operator
+
+============(create b3)============
+A's move constructor2
+
+============(create b4)============
+A's default constructor
+A's move assign operator
+```
+
+### 1.8.2 类的列表初始化
+
+本质上列表初始化会调用相应的构造函数（匹配参数类型以及参数数量）来进行初始化，它的好处之一是可以简化方法返回值，否则需要先创建对象再调用`return`
+
+```c++
+#include <iostream>
+
+class A {
+public:
+    A() {
+        std::cout << "A's default constructor" << std::endl;
+    }
+
+    A(int a) : _a(a), _b(0) {
+        std::cout << "A's (int) constructor" << std::endl;
+    }
+
+    A(int a, int b) : _a(a), _b(b) {
+        std::cout << "A's (int, int) constructor" << std::endl;
+    }
+
+    A(const A &a) : _a(a._a), _b(a._b) {
+        std::cout << "A's copy constructor2" << std::endl;
+    }
+
+    A(A &&a) : _a(a._a), _b(a._b) {
+        std::cout << "A's move constructor2" << std::endl;
+    }
+
+    A &operator=(const A &a) {
+        std::cout << "A's copy assign operator" << std::endl;
+        this->_a = a._a;
+        this->_b = a._b;
+        return *this;
+    }
+
+    A &operator=(A &&a) noexcept {
+        if (this == &a) {
+            return *this;
+        }
+        std::cout << "A's move assign operator" << std::endl;
+        this->_a = a._a;
+        this->_b = a._b;
+        return *this;
+    }
+
+private:
+    int _a;
+    int _b;
+};
+
+A createA(int argNum) {
+    if (argNum == 0) {
+        return {};
+    } else if (argNum == 1) {
+        return {1};
+    } else {
+        return {1, 2};
+    }
+}
+
+int main() {
+    std::cout << "============(create a1)============" << std::endl;
+    A a1 = createA(0);
+    std::cout << "\n============(create a2)============" << std::endl;
+    A a2 = createA(1);
+    std::cout << "\n============(create a3)============" << std::endl;
+    A a3 = createA(2);
+}
+```
+
+输出：
+
+```
+============(create a1)============
+A's default constructor
+
+============(create a2)============
+A's (int) constructor
+
+============(create a3)============
+A's (int, int) constructor
+```
+
+## 1.9 类的成员变量是引用类型，如何初始化
+
+## 1.10 参考
+
+* [C++11\14\17\20 特性介绍](https://www.jianshu.com/p/8c4952e9edec)
+* [关于C++：静态常量字符串(类成员)](https://www.codenong.com/1563897/)
+
+# 2 标准库
+
+## 2.1 std::promise/std::future
+
+## 2.2 std::string
 
 字符串比较函数：`strcmp`
 
-## 1.2 std::thread
+## 2.3 std::thread
 
-## 1.3 std::chrono
+## 2.4 std::chrono
 
-## 1.4 std::shared_ptr
+## 2.5 std::shared_ptr
 
 **只在函数使用指针，但并不保存对象内容**
 
@@ -44,13 +363,13 @@ void func(std::shared_ptr<Widget> ptr);
 
 这样的话，外部传过来值的时候，可以选择`move`或者赋值。函数内部直接把这个对象通过`move`的方式保存起来
 
-## 1.5 std::function
+## 2.6 std::function
 
 其功能类似于函数指针，在需要函数指针的地方，可以传入`std::function`类型的对象（不是指针）
 
-## 1.6 std::bind
+## 2.7 std::bind
 
-## 1.7 std::lock_guard
+## 2.8 std::lock_guard
 
 一般的使用方法，如果getVar方法抛出异常了，那么就会导致`m.unlock()`方法无法执行，可能会造成死锁
 
@@ -71,11 +390,11 @@ m.unlock();
 }
 ```
 
-## 1.8 std::condition_variable
+## 2.9 std::condition_variable
 
 调用`wait`方法时，必须获取监视器。而调用`notify`方法时，无需获取监视器
 
-## 1.9 std::atomic
+## 2.10 std::atomic
 
 `compare_exchange_strong(T& expected_value, T new_value)`方法的第一个参数是个左值
 
@@ -97,23 +416,13 @@ result: 1, flag: 1, expected: 0
 result: 0, flag: 1, expected: 1
 ```
 
-## 1.10 参考
+## 2.11 std::mem_fn
+
+## 2.12 参考
 
 * [C++11 中的std::function和std::bind](https://www.jianshu.com/p/f191e88dcc80)
 * [Do I have to acquire lock before calling condition_variable.notify_one()?](https://stackoverflow.com/questions/17101922/do-i-have-to-acquire-lock-before-calling-condition-variable-notify-one)
 * [C++ 智能指针的正确使用方式](https://www.cyhone.com/articles/right-way-to-use-cpp-smart-pointer/)
-
-# 2 语法Tips
-
-## 2.1 如何在类中定义常量
-
-## 2.2 类的列表初始化
-
-## 2.3 参考
-
-* [关于C++：静态常量字符串(类成员)](https://www.codenong.com/1563897/)
-
-## 2.4 类的成员变量是引用类型，如何初始化
 
 # 3 编程范式
 
