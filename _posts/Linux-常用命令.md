@@ -87,13 +87,19 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 
 * `useradd test -g wheel -G wheel -m -s /bin/bash`
 
-## 1.8 passwd
+## 1.8 usermod
+
+**示例**
+
+* `usermod -s /bin/zsh admin`
+
+## 1.9 passwd
 
 **示例：**
 
 * `echo '123456' | passwd --stdin root`
 
-## 1.9 readelf
+## 1.10 readelf
 
 用于读取、解析可执行程序
 

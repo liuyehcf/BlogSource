@@ -370,10 +370,81 @@ A's (int, int) constructor
 ============(值初始化 a11)============
 ```
 
-## 1.9 参考
+## 1.9 宏
+
+### 1.9.1 do while(0) in macros
+
+考虑下面的宏定义
+
+```c++
+#define foo(x) bar(x); baz(x)
+```
+
+然后我们调用
+
+```c++
+foo(wolf);
+```
+
+会被展开为
+
+```c++
+bar(wolf); baz(wolf);
+```
+
+看起来没有问题，我们接着考虑另一个情况
+
+```c++
+if (condition) 
+    foo(wolf);
+```
+
+会被展开为
+
+```c++
+if (condition) 
+    bar(wolf);
+baz(wolf);
+```
+
+这并不符合我们的预期，为了避免出现这种问题，需要用一个作用域将宏包围起来，避免语句的作用域发生偏移，于是我们进一步将宏表示为如下形式
+
+```c++
+#define foo(x) { bar(x); baz(x); }
+```
+
+然后我们调用
+
+```c++
+if (condition)
+    foo(wolf);
+else
+    bin(wolf);
+```
+
+会被展开为
+
+```c++
+if (condition) {
+    bar(wolf);
+    baz(wolf);
+}; // syntax error
+else
+    bin(wolf);
+```
+
+最终，我们将宏优化成如下形式
+
+```c++
+#define foo(x) do { bar(x); baz(x); } while (0)
+```
+
+## 1.10 参考
 
 * [C++11\14\17\20 特性介绍](https://www.jianshu.com/p/8c4952e9edec)
 * [关于C++：静态常量字符串(类成员)](https://www.codenong.com/1563897/)
+* [do {…} while (0) in macros](https://hownot2code.com/2016/12/05/do-while-0-in-macros/)
+* [PRE10-C. Wrap multistatement macros in a do-while loop](https://wiki.sei.cmu.edu/confluence/display/c/PRE10-C.+Wrap+multistatement+macros+in+a+do-while+loop)
 
 # 2 标准库
 
@@ -477,93 +548,13 @@ result: 0, flag: 1, expected: 1
 
 ## 3.2 返回类型是否需要左右值引用
 
-# 4 宏
+# 4 GDB
 
-## 4.1 do while(0) in macros
-
-考虑下面的宏定义
-
-```c++
-#define foo(x) bar(x); baz(x)
-```
-
-然后我们调用
-
-```c++
-foo(wolf);
-```
-
-会被展开为
-
-```c++
-bar(wolf); baz(wolf);
-```
-
-看起来没有问题，我们接着考虑另一个情况
-
-```c++
-if (condition) 
-    foo(wolf);
-```
-
-会被展开为
-
-```c++
-if (condition) 
-    bar(wolf);
-baz(wolf);
-```
-
-这并不符合我们的预期，为了避免出现这种问题，需要用一个作用域将宏包围起来，避免语句的作用域发生偏移，于是我们进一步将宏表示为如下形式
-
-```c++
-#define foo(x) { bar(x); baz(x); }
-```
-
-然后我们调用
-
-```c++
-if (condition)
-    foo(wolf);
-else
-    bin(wolf);
-```
-
-会被展开为
-
-```c++
-if (condition) {
-    bar(wolf);
-    baz(wolf);
-}; // syntax error
-else
-    bin(wolf);
-```
-
-最终，我们将宏优化成如下形式
-
-```c++
-#define foo(x) do { bar(x); baz(x); } while (0)
-```
-
-## 4.2 参考
-
-* [do {…} while (0) in macros](https://hownot2code.com/2016/12/05/do-while-0-in-macros/)
-* [PRE10-C. Wrap multistatement macros in a do-while loop](https://wiki.sei.cmu.edu/confluence/display/c/PRE10-C.+Wrap+multistatement+macros+in+a+do-while+loop)
-
-# 5 三方库
-
-## 5.1 头文件如何查找
-
-## 5.2 参考
-
-* [Linux下c/c++头文件和库文件的查找路径](https://blog.csdn.net/guotianqing/article/details/104224439)
-
-# 6 Make
+# 5 Make
 
 **代码变成可执行文件，叫做编译`compile`；先编译这个，还是先编译那个（即编译的安排），叫做构建`build`**
 
-## 6.1 Makefile文件的格式
+## 5.1 Makefile文件的格式
 
 **`Makefile`文件由一系列规则`rules`构成。每条规则的形式如下：**
 
@@ -576,7 +567,7 @@ else
 * `prerequisites`：前置条件，不是必须的，但是`prerequisites`与`commands`至少有一个是必须的
 * `commands`：即完成目标需要执行的命令，不是必须的，但是`prerequisites`与`commands`至少有一个是必须的
 
-### 6.1.1 target
+### 5.1.1 target
 
 一个目标`target`就构成一条规则。**目标通常是文件名**，指明`make`命令所要构建的对象。目标可以是一个文件名，也可以是多个文件名，之间用空格分隔
 
@@ -597,7 +588,7 @@ clean:
 
 **如果`make`命令运行时没有指定目标，默认会执行`Makefile`文件的第一个目标**
 
-### 6.1.2 prerequisites
+### 5.1.2 prerequisites
 
 前置条件通常是一组文件名，之间用空格分隔。它指定了目标是否重新构建的判断标准：只要有一个前置文件不存在，或者有过更新（前置文件的`last-modification`时间戳比目标的时间戳新），目标就需要重新构建
 
@@ -623,7 +614,7 @@ source: file1 file2 file3
 
 这样仅需要执行`make source`便可生成3个文件，而无需执行`make file1`、`make file2`、`make file3`
 
-### 6.1.3 commands
+### 5.1.3 commands
 
 命令`commands`表示如何更新目标文件，由一行或多行的`shell`命令组成。它是构建目标的具体指令，它的运行结果通常就是生成目标文件
 
@@ -667,9 +658,9 @@ var-kept:
     echo "foo=[$$foo]"
 ```
 
-## 6.2 Makefile文件的语法
+## 5.2 Makefile文件的语法
 
-### 6.2.1 注释
+### 5.2.1 注释
 
 井号`#`在`Makefile`中表示注释
 
@@ -680,7 +671,7 @@ result.txt: source.txt
     cp source.txt result.txt # 这也是注释
 ```
 
-### 6.2.2 回声（echoing）
+### 5.2.2 回声（echoing）
 
 正常情况下，`make`会打印每条命令，然后再执行，这就叫做回声`echoing`
 
@@ -703,7 +694,7 @@ test:
     @# 这是测试
 ```
 
-### 6.2.3 通配符
+### 5.2.3 通配符
 
 通配符`wildcard`用来指定一组符合条件的文件名。`Makefile`的通配符与 `Bash`一致，主要有星号`*`、问号`？`和`...`。比如，`*.o`表示所有后缀名为`o`的文件
 
@@ -712,7 +703,7 @@ clean:
         rm -f *.o
 ```
 
-### 6.2.4 模式匹配
+### 5.2.4 模式匹配
 
 `make`命令允许对文件名，进行类似正则运算的匹配，主要用到的匹配符是`%`。比如，假定当前目录下有`f1.c`和`f2.c`两个源码文件，需要将它们编译为对应的对象文件
 
@@ -729,7 +720,7 @@ f2.o: f2.c
 
 **使用匹配符`%`，可以将大量同类型的文件，只用一条规则就完成构建**
 
-### 6.2.5 变量和赋值符
+### 5.2.5 变量和赋值符
 
 `Makefile`允许使用等号自定义变量
 
@@ -748,7 +739,7 @@ test:
     @echo $$HOME
 ```
 
-### 6.2.6 内置变量（Implicit Variables）
+### 5.2.6 内置变量（Implicit Variables）
 
 `make`命令提供一系列内置变量，比如，`$(CC)`指向当前使用的编译器，`$(MAKE)`指向当前使用的`make`工具。这主要是为了跨平台的兼容性，详细的内置变量清单见[手册](https://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html)
 
@@ -757,11 +748,11 @@ output:
     $(CC) -o output input.c
 ```
 
-### 6.2.7 自动变量（Automatic Variables）
+### 5.2.7 自动变量（Automatic Variables）
 
 `make`命令还提供一些自动变量，它们的值与当前规则有关。主要有以下几个，可以参考[手册](https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html)
 
-#### 6.2.7.1 `$@`
+#### 5.2.7.1 `$@`
 
 `$@`指代当前目标，就是`make`命令当前构建的那个目标。比如，`make foo`的`$@`就指代`foo`
 
@@ -779,7 +770,7 @@ b.txt:
     touch b.txt
 ```
 
-#### 6.2.7.2 `$<`
+#### 5.2.7.2 `$<`
 
 `$<`指代第一个前置条件。比如，规则为`t: p1 p2`，那么`$<`就指代`p1`
 
@@ -795,27 +786,27 @@ a.txt: b.txt c.txt
     cp b.txt a.txt 
 ```
 
-#### 6.2.7.3 `$?`
+#### 5.2.7.3 `$?`
 
 `$?`指代比目标更新的所有前置条件，之间以空格分隔。比如，规则为`t: p1 p2`，其中`p2`的时间戳比`t`新，`$?`就指代`p2`
 
-#### 6.2.7.4 `$^`
+#### 5.2.7.4 `$^`
 
 `$^`指代所有前置条件，之间以空格分隔。比如，规则为`t: p1 p2`，那么`$^`就指代`p1 p2`
 
-#### 6.2.7.5 `$*`
+#### 5.2.7.5 `$*`
 
 `$*`指代匹配符`%`匹配的部分，比如`%.txt`匹配`f1.txt`中的`f1`，`$*`就表示`f1`
 
-#### 6.2.7.6 `$(@D)/$(@F)`
+#### 5.2.7.6 `$(@D)/$(@F)`
 
 `$(@D)`和`$(@F)`分别指向`$@`的目录名和文件名。比如，`$@`是`src/input.c`，那么`$(@D)`的值为`src`，`$(@F)`的值为`input.c`
 
-#### 6.2.7.7 `$(<D)/$(<F)`
+#### 5.2.7.7 `$(<D)/$(<F)`
 
 `$(<D)`和`$(<F)`分别指向`$<`的目录名和文件名
 
-#### 6.2.7.8 例子
+#### 5.2.7.8 例子
 
 ```makefile
 dest/%.txt: src/%.txt
@@ -825,7 +816,7 @@ dest/%.txt: src/%.txt
 
 上面代码将`src`目录下的`txt`文件，拷贝到`dest`目录下。首先判断`dest`目录是否存在，如果不存在就新建，然后，`$<`指代前置文件`src/%.txt`，`$@`指代目标文件`dest/%.txt`
 
-### 6.2.8 判断和循环
+### 5.2.8 判断和循环
 
 `Makefile`使用`Bash`语法，完成判断和循环
 
@@ -852,7 +843,7 @@ all:
     done
 ```
 
-### 6.2.9 函数
+### 5.2.9 函数
 
 `Makefile`还可以使用函数，格式如下
 
@@ -864,15 +855,15 @@ ${function arguments}
 
 `Makefile`提供了许多[内置函数](https://www.gnu.org/software/make/manual/html_node/Functions.html)，可供调用
 
-## 6.3 参考
+## 5.3 参考
 
 * [Make 命令教程](https://www.ruanyifeng.com/blog/2015/02/make.html)
 
-# 7 CMake
+# 6 CMake
 
-## 7.1 tutorial
+## 6.1 tutorial
 
-### 7.1.1 step1: A Basic Starting Point
+### 6.1.1 step1: A Basic Starting Point
 
 `tutorial.cxx`内容如下：
 
@@ -941,7 +932,7 @@ make
 ./Tutorial 256
 ```
 
-### 7.1.2 step2: Adding a Library and Adding Usage Requirements for a Library
+### 6.1.2 step2: Adding a Library and Adding Usage Requirements for a Library
 
 接下来，我们用自己实现的求开方的函数替换标准库中的实现。创建`MathFunctions`子目录，并在该子目录添加`MathFunctions.h`以及`mysqrt.cxx`、`CMakeLists.txt`三个文件
 
@@ -1101,7 +1092,7 @@ make
 ./Tutorial 256
 ```
 
-### 7.1.3 step3: Installing
+### 6.1.3 step3: Installing
 
 现在，我们要安装`make`后产生的二进制、库文件、头文件
 
@@ -1141,7 +1132,7 @@ make
 make install
 ```
 
-### 7.1.4 step4: Testing
+### 6.1.4 step4: Testing
 
 接下来，增加测试功能。在`step2`的基础上，修改`CMakeLists.txt`文件，追加如下内容：
 
@@ -1189,7 +1180,7 @@ make
 make test
 ```
 
-### 7.1.5 step5: Adding System Introspection
+### 6.1.5 step5: Adding System Introspection
 
 同一个库，在不同平台上的实现可能不同，例如A平台有方法`funcA`，而B平台没有`funcA`，因此我们需要有一种机制来检测这种差异
 
@@ -1262,13 +1253,15 @@ make
 ./Tutorial 25
 ```
 
-## 7.2 target
+## 6.2 target
 
 `cmake`可以使用`add_executable`、`add_library`或`add_custom_target`等命令来定义目标`target`。与变量不同，目标在每个作用域都可见，且可以使用`get_property`和`set_property`获取或设置其属性
 
-## 7.3 property
+## 6.3 property
 
-### 7.3.1 INCLUDE_DIRECTORIES
+### 6.3.1 INCLUDE_DIRECTORIES
+
+**去哪找头文件`.h`，`-I（GCC）`**
 
 1. `include_directories`：该方法会在全局维度添加`include`的搜索路径。这些搜索路径会被添加到所有`target`中去（包括所有`sub target`），会追加到所有`target`的`INCLUDE_DIRECTORIES`属性中去
 1. `target_include_directories`：该方法为指定`target`添加`include`的搜索路径，会追加到该`target`的`INCLUDE_DIRECTORIES`属性中去
@@ -1287,9 +1280,17 @@ foreach(target_dir ${target_dirs})
 endforeach()
 ```
 
-## 7.4 command
+### 6.3.2 LINK_DIRECTORIES
 
-### 7.4.1 message
+**去哪找库文件`.so/.dll/.lib/.dylib/...`，`-L（GCC）`**
+
+### 6.3.3 LINK_LIBRARIES
+
+**需要链接的库文件的名字：`-l（GCC）`**
+
+## 6.4 command
+
+### 6.4.1 message
 
 用于打印信息
 
@@ -1308,7 +1309,7 @@ endforeach()
 * `DEBUG`：项目调试需要关注的信息
 * `TRACE`：最低级别的信息
 
-### 7.4.2 set
+### 6.4.2 set
 
 `set`用于设置：`cmake`变量或环境变量
 
@@ -1322,7 +1323,7 @@ endforeach()
 * `cmake`变量：`${<variable>}`
 * 环境变量：`$ENV{<variable>}`
 
-### 7.4.3 option
+### 6.4.3 option
 
 `option`用于设置构建选项
 
@@ -1330,7 +1331,7 @@ endforeach()
 
 * 其中`value`的可选值就是`ON`和`OFF`，其中`OFF`是默认值
 
-### 7.4.4 file
+### 6.4.4 file
 
 `file`用于文件操作
 
@@ -1345,31 +1346,31 @@ endforeach()
 * `WRITE`：覆盖写，文件不存在就创建
 * `APPEND`：追加写，文件不存在就创建
 
-### 7.4.5 add_executable
+### 6.4.5 add_executable
 
 `add_executable`用于添加可执行文件
 
-### 7.4.6 add_library
+### 6.4.6 add_library
 
 `add_library`用于添加链接文件
 
-### 7.4.7 target_link_libraries
+### 6.4.7 target_link_libraries
 
 `target_link_libraries`指定链接给定目标时要使用的库或标志
 
-### 7.4.8 include_directories
+### 6.4.8 include_directories
 
 `include_directories`：该方法会在全局维度添加`include`的搜索路径。这些搜索路径会被添加到所有`target`中去（包括所有`sub target`），会追加到所有`target`的`INCLUDE_DIRECTORIES`属性中去
 
-### 7.4.9 target_include_directories
+### 6.4.9 target_include_directories
 
 `target_include_directories`：该方法为指定`target`添加`include`的搜索路径，会追加到该`target`的`INCLUDE_DIRECTORIES`属性中去
 
-### 7.4.10 include
+### 6.4.10 include
 
 `include`用于加载模块
 
-### 7.4.11 find_package
+### 6.4.11 find_package
 
 **本小节转载摘录自[Cmake之深入理解find_package()的用法](https://zhuanlan.zhihu.com/p/97369704)**
 
@@ -1397,7 +1398,7 @@ endif(CURL_FOUND)
 
 你可以通过`<LibaryName>_FOUND`来判断模块是否被找到，如果没有找到，按照工程的需要关闭某些特性、给出提醒或者中止编译，上面的例子就是报出致命错误并终止构建。如果`<LibaryName>_FOUND`为真，则将`<LibaryName>_INCLUDE_DIR`加入`INCLUDE_DIRECTORIES`
 
-#### 7.4.11.1 引入非官方的库
+#### 6.4.11.1 引入非官方的库
 
 **通过`find_package`引入非官方的库，该方式只对支持cmake编译安装的库有效**
 
@@ -1429,7 +1430,7 @@ else(GLOG_FOUND)
 endif(GLOG_FOUND)
 ```
 
-#### 7.4.11.2 Module模式与Config模式
+#### 6.4.11.2 Module模式与Config模式
 
 通过上文我们了解了通过`cmake`引入依赖库的基本用法。知其然也要知其所以然，`find_package`对我们来说是一个黑盒子，那么它是具体通过什么方式来查找到我们依赖的库文件的路径的呢。到这里我们就不得不聊到`find_package`的两种模式，一种是`Module`模式，也就是我们引入`curl`库的方式。另一种叫做`Config`模式，也就是引入`glog`库的模式。下面我们来详细介绍着两种方式的运行机制
 
@@ -1437,7 +1438,7 @@ endif(GLOG_FOUND)
 
 如果`Module`模式搜索失败，没有找到对应的`Find<LibraryName>.cmake`文件，则转入`Config`模式进行搜索。它主要通过`<LibraryName>Config.cmake`或`<lower-case-package-name>-config.cmake`这两个文件来引入我们需要的库。以我们刚刚安装的`glog`库为例，在我们安装之后，它在`/usr/local/lib/cmake/glog/`目录下生成了`glog-config.cmake`文件，而`/usr/local/lib/cmake/<LibraryName>/`正是`find_package`函数的搜索路径之一
 
-#### 7.4.11.3 编写自己的`Find<LibraryName>.cmake`模块
+#### 6.4.11.3 编写自己的`Find<LibraryName>.cmake`模块
 
 假设我们编写了一个新的函数库，我们希望别的项目可以通过`find_package`对它进行引用我们应该怎么办呢。
 
@@ -1509,13 +1510,13 @@ else(ADD_FOUND)
 endif(ADD_FOUND)
 ```
 
-### 7.4.12 aux_source_directory
+### 6.4.12 aux_source_directory
 
 Find all source files in a directory
 
-## 7.5 Tips
+## 6.5 Tips
 
-### 7.5.1 打印cmake中所有的变量
+### 6.5.1 打印cmake中所有的变量
 
 ```cmake
 get_cmake_property(_variableNames VARIABLES)
@@ -1524,13 +1525,23 @@ foreach (_variableName ${_variableNames})
 endforeach()
 ```
 
-### 7.5.2 打印cmake中所有环境变量
+### 6.5.2 打印cmake中所有环境变量
 
 ```cmake
 execute_process(COMMAND "${CMAKE_COMMAND}" "-E" "environment")
 ```
 
-### 7.5.3 同一目录，多个源文件
+### 6.5.3 开启debug模式
+
+```sh
+# If you want to build for debug (including source information, i.e. -g) when compiling, use
+cmake -DCMAKE_BUILD_TYPE=Debug <path>
+
+# cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo <path>
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo <path>
+```
+
+### 6.5.4 同一目录，多个源文件
 
 如果同一个目录下有多个源文件，那么在使用`add_executable`命令的时候，如果要一个个填写，那么将会非常麻烦，并且后续维护的代价也很大
 
@@ -1549,7 +1560,7 @@ aux_source_directory(. DIR_SRCS)
 add_executable(Demo ${DIR_SRCS})
 ```
 
-## 7.6 参考
+## 6.6 参考
 
 * [CMake Tutorial](https://cmake.org/cmake/help/latest/guide/tutorial/index.html)
     * [CMake Tutorial对应的source code](https://github.com/Kitware/CMake/tree/master/Help/guide/tutorial)
@@ -1559,3 +1570,12 @@ add_executable(Demo ${DIR_SRCS})
 * [CMake Table of Contents](https://cmake.org/cmake/help/latest/manual/cmake-buildsystem.7.html#manual:cmake-buildsystem(7))
 * [What is the difference between include_directories and target_include_directories in CMake?](https://stackoverflow.com/questions/31969547/what-is-the-difference-between-include-directories-and-target-include-directorie/40244458)
 * [Cmake之深入理解find_package()的用法](https://zhuanlan.zhihu.com/p/97369704)
+* [How do you set GDB debug flag with cmake?](https://stackoverflow.com/questions/10005982/how-do-you-set-gdb-debug-flag-with-cmake)
+
+# 7 三方库
+
+## 7.1 gtest
+
+[github-googletest](https://github.com/google/googletest)
+
+单元测试框架
