@@ -550,6 +550,290 @@ result: 0, flag: 1, expected: 1
 
 # 4 GDB
 
+## 4.1 GDB能够做什么？
+
+1. 一个支持包括`c`以及`c++`等众多语言的`debugger`工具
+1. 它允许您检查程序在执行期间的某个时刻正在做什么
+1. 能够定位诸如`segmentation faults`等错误的具体原因
+1. 
+
+对`c/c++`程序的调试，需要在编译前就加上`-g`选项：
+
+```sh
+gcc -g hello.c -o hello
+g++ -g hello.cpp -o hello
+```
+
+## 4.2 如何进入GDB shell
+
+`gdb`提供了一个交互式的`shell`，能够通过`↑`查询历史命令，可以通过`tab`进行命令行补全，可以通过`help [command]`查询帮助文档
+
+**进入gdb交互界面的几种方式：**
+
+* `gdb <binary_with_-g>`：调试可执行文件
+* `gdb <binary_with_-g> core.xxx`：分析coredump
+* `gdb <binary_with_-g> <pid_without_-g>`：以可执行文件为元数据，调试指定进程
+    * `<binary>`需要用`-g`参数编译出来，否则指定该文件没有意义
+    * `<pid>`对应的进程可以是不带`-g`参数编译出来的版本，只要保证源码一样即可
+* `gdb -p <pid_with_-g>`：调试指定进程
+    * 若`<pid>`对应的进程如果是用`-g`参数编译出来，那么等效于`gdb <binary_with_-g>` + `run`
+
+## 4.3 run
+
+当我们通过`gdb <binary>`这种方式进入`gdb shell`后，程序不会立即执行，需要通过`run`命令触发程序的执行
+
+如果程序有异常（比如包含段错误），那么我们将会得到一些有用的信息，包括：程序出错的行号，函数的参数等等信息
+
+```sh
+# c++源文件
+$ cat > segment_fault.cpp << 'EOF'
+int main() {
+    int *num = nullptr;
+    *num = 100;
+    return 0;
+}
+EOF
+
+# 编译（可以试下不加-g参数）
+$ g++ -o segment_fault segment_fault.cpp -std=gnu++11 -g
+
+# 进入gdb shell
+$ gdb segment_fault
+
+# 执行程序，程序会出现段错误而退出，并输出相关的错误信息
+# 如果编译时没有加-g参数，输出的信息就会少很多（比如行号和具体的代码就没有了）
+(gdb) run
+
+Starting program: xxx/segment_fault
+
+Program received signal SIGSEGV, Segmentation fault.
+0x000000000040051d in main () at segment_fault.cpp:3
+3	    *num = 100;
+
+```
+
+## 4.4 断点调试相关命令
+
+* `break`：用于设置断点
+    * `break <line_num>`
+    * `break <func_name>`
+    * `break <file_name>:<line_num>`
+    * `break <file_name>:<func_name>`
+* `info break`：查看所有断点
+* `delete`：用于删除断点
+    * `delete <break_id>`：删除指定断点
+    * `delete`：删除所有断点
+* `enable`：用于启用断点
+    * `enable <break_id>`
+* `disable`：用于停用断点
+    * `disable <break_id>`
+* `continue`：继续运行直至程序结束或者遇到下一个断点
+* `step`：单步调试，会进入方法，另一种说法是`step into`
+* `next`：单步调试，不会进入方法，将方法调用视为一步，另一种说法是`step over`
+* `until`：退出循环
+* `finish`：结束当前函数的执行
+
+```sh
+# c++源文件
+$ cat > set_break.cpp << 'EOF'
+#include <iostream>
+
+void funcA() {
+    std::cout << "invoke funcA()" << std::endl;
+}
+
+int main() {
+    std::cout << "hello world" << std::endl;
+
+    int num = 0;
+
+    int *num_ptr = &num;
+
+    funcA();
+
+    for(int i=0; i < 10; i++) {
+        ++(*num_ptr);
+    }
+
+    std::cout << "num: " << *num_ptr << std::endl;
+
+    return 0;
+}
+EOF
+
+# 编译（可以试下不加-g参数）
+$ g++ -o set_break set_break.cpp -std=gnu++11 -g
+
+# 进入gdb shell
+$ gdb set_break
+
+# 通过list查看源码
+$ (gdb) list 0
+1	#include <iostream>
+2
+3	void funcA() {
+4	    std::cout << "invoke funcA()" << std::endl;
+5	}
+6
+7	int main() {
+8	    std::cout << "hello world" << std::endl;
+9
+10	    int num = 0;
+# 回车，继续输出下10行
+$ (gdb)
+11
+12	    int *num_ptr = &num;
+13
+14	    funcA();
+15
+16	    for(int i=0; i < 10; i++) {
+17	        ++(*num_ptr);
+18	    }
+19
+20	    std::cout << "num: " << *num_ptr << std::endl;
+# 回车，继续输出下10行
+$ (gdb)
+21
+22	    return 0;
+23	}
+```
+
+```sh
+# 在行号为8的位置打断点
+$ (gdb) break 8
+Breakpoint 1 at 0x400848: file set_break.cpp, line 8.
+
+# 在行号为10的位置打断点
+$ (gdb) break set_break.cpp:10
+Breakpoint 2 at 0x400864: file set_break.cpp, line 10.
+
+# 在行号为12的位置打断点
+$ (gdb) break 12
+Breakpoint 3 at 0x40086b: file set_break.cpp, line 12.
+
+# 在行号为4的位置打断点
+$ (gdb) break 4
+Breakpoint 4 at 0x400821: file set_break.cpp, line 4.
+
+# 在行号为17的位置打断点
+$ (gdb) break 17
+Breakpoint 5 at 0x400881: file set_break.cpp, line 17.
+
+# 在行号为20的位置打断点
+$ (gdb) break 20
+Breakpoint 6 at 0x40089a: file set_break.cpp, line 20.
+
+# 在函数funcA处打断点，发现该断点已经重复了
+$ (gdb) break funcA
+Note: breakpoint 4 also set at pc 0x400821.
+Breakpoint 7 at 0x400821: file set_break.cpp, line 4.
+
+# 查看所有断点
+(gdb) info break
+Num     Type           Disp Enb Address            What
+1       breakpoint     keep y   0x0000000000400848 in main() at set_break.cpp:8
+2       breakpoint     keep y   0x0000000000400864 in main() at set_break.cpp:10
+3       breakpoint     keep y   0x000000000040086b in main() at set_break.cpp:12
+4       breakpoint     keep y   0x0000000000400821 in funcA() at set_break.cpp:4
+5       breakpoint     keep y   0x0000000000400881 in main() at set_break.cpp:17
+6       breakpoint     keep y   0x000000000040089a in main() at set_break.cpp:20
+7       breakpoint     keep y   0x0000000000400821 in funcA() at set_break.cpp:4
+
+# 执行命令run开始运行程序，发现现在程序卡在了行号为8的位置
+$ (gdb) run
+Starting program: xxx/set_break
+
+Breakpoint 1, main () at set_break.cpp:8
+8	    std::cout << "hello world" << std::endl;
+```
+
+篇幅原因，其他命令，包括`continue`、`step`、`next`、`until`、`finish`等请自行尝试
+
+## 4.5 print
+
+`print`用于查看变量
+
+```sh
+# c++源文件
+$ cat > print.cpp << 'EOF'
+struct Person {
+    const char* name;
+    const char* phone_num;
+    const int age;
+};
+
+int main() {
+    Person p {"张三", "123456789", 18};
+    return 0;
+}
+EOF
+
+# 编译（可以试下不加-g参数）
+$ g++ -o print print.cpp -std=gnu++11 -g
+
+# 进入gdb shell
+$ gdb print
+
+# 查看源码
+$ list
+(gdb) list
+1	struct Person {
+2	    const char* name;
+3	    const char* phone_num;
+4	    const int age;
+5	};
+6
+7	int main() {
+8	    Person p {"张三", "123456789", 18};
+9	    return 0;
+10	}
+
+# 设置断点
+$ (gdb) break 9
+Breakpoint 1 at 0x400528: file print.cpp, line 9.
+
+# 运行程序，会停在断点处
+$ (gdb) run
+Starting program: xxx/print
+
+Breakpoint 1, main () at print.cpp:9
+9	    return 0;
+
+# 查看相关信息
+$ (gdb) print p
+$1 = {name = 0x4005c0 "张三", phone_num = 0x4005c7 "123456789", age = 18}
+$ (gdb) print p.name
+$2 = 0x4005c0 "张三"
+$ (gdb) print p.phone_num
+$3 = 0x4005c7 "123456789"
+$ (gdb) print p.age
+$4 = 18
+$ (gdb) print &p
+$5 = (Person *) 0x7fffffffe0c0
+```
+
+## 4.6 info
+
+`info`用于查看信息，常见的包括
+
+* `info break`：查看断点
+* `info reg`：查看寄存器
+* `info stack`：查看堆栈
+* `info thread`：查看线程
+
+## 4.7 `!`执行外部命令
+
+格式：`!<command> [params]`
+
+```sh
+(gdb) !pwd
+xxx/gdb_tutorial
+```
+
+## 4.8 参考
+
+* [GDB Tutorial - A Walkthrough with Examples](https://www.cs.umd.edu/~srhuang/teaching/cmsc212/gdb-tutorial-handout.pdf)
+
 # 5 Make
 
 **代码变成可执行文件，叫做编译`compile`；先编译这个，还是先编译那个（即编译的安排），叫做构建`build`**
