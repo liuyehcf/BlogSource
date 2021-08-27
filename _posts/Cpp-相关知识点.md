@@ -661,6 +661,11 @@ Program received signal SIGSEGV, Segmentation fault.
 * `info break`：查看所有断点
 * `info local`：查看局部变量
 * `info args`：查看方法入参
+* `info thread`：查看线程信息
+* `bt`、`backtrace`、`where`：查看当前调用堆栈
+    * `bt 3`：最上面3层
+    * `bt -3`：最下面3层
+* `thread <id>`：切换调试的线程为指定线程
 * `delete`：用于删除断点
     * `delete <break_id>`：删除指定断点
     * `delete`：删除所有断点
@@ -878,15 +883,7 @@ $5 = (Person *) 0x7fffffffe0c0
 * `info locals`：查看本地变量
 * `info args`：查看参数
 
-## 4.7 bt
-
-`bt`是`backtrace`的缩写，`bt`、`backtrace`、`where`这三个命令作用相同
-
-## 4.8 thread
-
-`thread <id>`：切换调试的线程为指定线程
-
-## 4.9 `!`执行外部命令
+## 4.7 `!`执行外部命令
 
 格式：`!<command> [params]`
 
@@ -895,7 +892,7 @@ $5 = (Person *) 0x7fffffffe0c0
 xxx/gdb_tutorial
 ```
 
-## 4.10 参考
+## 4.8 参考
 
 * [GDB Tutorial - A Walkthrough with Examples](https://www.cs.umd.edu/~srhuang/teaching/cmsc212/gdb-tutorial-handout.pdf)
 * [《100个gdb小技巧》](https://wizardforcel.gitbooks.io/100-gdb-tips/content/break-on-linenum.html)
