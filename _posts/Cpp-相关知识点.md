@@ -578,6 +578,45 @@ g++ -g hello.cpp -o hello
 * `gdb -p <pid_with_-g>`：调试指定进程
     * 若`<pid>`对应的进程如果是用`-g`参数编译出来，那么等效于`gdb <binary_with_-g>` + `run`
 
+**下面演示一下使用`gdb <binary_with_-g> <pid_without_-g>`这种方式进入gdb shell**
+
+```sh
+# 源码
+cat > main.cpp << 'EOF'
+#include<iostream>
+#include<thread>
+#include<chrono>
+
+int main() {
+    std::cout << "hello, world!" <<std::endl;
+
+    int cnt = 0;
+    while(true) {
+        ++cnt;
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+	std::cout << "cnt=" << cnt << std::endl;
+    }
+}
+EOF
+
+# 编译两个版本，一个带-g参数，一个不带
+g++ -o main_without_debug main.cpp -std=gnu++11
+g++ -o main_with_debug main.cpp -std=gnu++11 -g
+```
+
+```sh
+# 运行非debug版本
+./main_without_debug
+```
+
+```sh
+# 查询进程id
+pid=$(ps -ef | grep main_without_debug | grep -v grep | awk '{print $2}')
+
+# 进入gdb shell
+gdb main_with_debug ${pid}
+```
+
 ## 4.3 run
 
 当我们通过`gdb <binary>`这种方式进入`gdb shell`后，程序不会立即执行，需要通过`run`命令触发程序的执行
@@ -632,6 +671,14 @@ Program received signal SIGSEGV, Segmentation fault.
 * `next`：单步调试，不会进入方法，将方法调用视为一步，另一种说法是`step over`
 * `until`：退出循环
 * `finish`：结束当前函数的执行
+* `list`：查看源码
+    * `list`：紧接着上一次的输出，继续输出10行源码
+    * `list <linenumber>`：输出当前文件指定行号开始的10行源码
+    * `list <function>`：输出指定函数的10行源码
+    * `list <filename:linenum>`：输出指定文件指定行号开始的10行源码
+    * `list <filename:function>`：输出指定文件指定函数的10行源码
+* `detach`：让程序与`GDB`调试器分离
+* `attach <pid>`：让指定程序与`GDB`调试器关联
 
 ```sh
 # c++源文件
@@ -751,7 +798,11 @@ Breakpoint 1, main () at set_break.cpp:8
 
 ## 4.5 print
 
-`print`用于查看变量
+**`print`用于查看变量**
+
+* `print <variable>`
+* `print <variable>.<field>`
+* `p *((std::vector<uint32_t>*) <address>)`：查看智能指针
 
 ```sh
 # c++源文件
@@ -820,8 +871,18 @@ $5 = (Person *) 0x7fffffffe0c0
 * `info reg`：查看寄存器
 * `info stack`：查看堆栈
 * `info thread`：查看线程
+* `info locals`：查看本地变量
+* `info args`：查看参数
 
-## 4.7 `!`执行外部命令
+## 4.7 bt
+
+`bt`是`backtrace`的缩写，`bt`、`backtrace`、`where`这三个命令作用相同
+
+## 4.8 thread
+
+`thread <id>`：切换调试的线程为指定线程
+
+## 4.9 `!`执行外部命令
 
 格式：`!<command> [params]`
 
@@ -830,7 +891,7 @@ $5 = (Person *) 0x7fffffffe0c0
 xxx/gdb_tutorial
 ```
 
-## 4.8 参考
+## 4.10 参考
 
 * [GDB Tutorial - A Walkthrough with Examples](https://www.cs.umd.edu/~srhuang/teaching/cmsc212/gdb-tutorial-handout.pdf)
 
