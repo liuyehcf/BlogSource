@@ -659,6 +659,8 @@ Program received signal SIGSEGV, Segmentation fault.
     * `break <file_name>:<line_num>`
     * `break <file_name>:<func_name>`
 * `info break`：查看所有断点
+* `info local`：查看局部变量
+* `info args`：查看方法入参
 * `delete`：用于删除断点
     * `delete <break_id>`：删除指定断点
     * `delete`：删除所有断点
@@ -679,6 +681,8 @@ Program received signal SIGSEGV, Segmentation fault.
     * `list <filename:function>`：输出指定文件指定函数的10行源码
 * `detach`：让程序与`GDB`调试器分离
 * `attach <pid>`：让指定程序与`GDB`调试器关联
+* `display <variable>`：跟踪查看某个变量，每次停下来都显示它的值
+* `undisplay <display_id>`：取消跟踪
 
 ```sh
 # c++源文件
@@ -894,6 +898,7 @@ xxx/gdb_tutorial
 ## 4.10 参考
 
 * [GDB Tutorial - A Walkthrough with Examples](https://www.cs.umd.edu/~srhuang/teaching/cmsc212/gdb-tutorial-handout.pdf)
+* [《100个gdb小技巧》](https://wizardforcel.gitbooks.io/100-gdb-tips/content/break-on-linenum.html)
 
 # 5 Make
 
