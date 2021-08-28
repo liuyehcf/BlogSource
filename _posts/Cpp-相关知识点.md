@@ -947,10 +947,17 @@ $5 = (Person *) 0x7fffffffe0c0
 xxx/gdb_tutorial
 ```
 
-## 4.8 参考
+## 4.8 ASAN
+
+[google/sanitizers](https://github.com/google/sanitizers)
+
+## 4.9 参考
 
 * [GDB Tutorial - A Walkthrough with Examples](https://www.cs.umd.edu/~srhuang/teaching/cmsc212/gdb-tutorial-handout.pdf)
 * [《100个gdb小技巧》](https://wizardforcel.gitbooks.io/100-gdb-tips/content/break-on-linenum.html)
+* [gdb 调试coredump文件中烂掉的栈帧的方法](https://blog.csdn.net/muclenerd/article/details/48005171)
+* [GDB corrupted stack frame - How to debug?](https://stackoverflow.com/questions/9809810/gdb-corrupted-stack-frame-how-to-debug)
+* [追core笔记之五：如何查看一个corrupt stack的core](https://izualzhy.cn/why-the-code-stack-is-overflow)
 
 # 5 Make
 

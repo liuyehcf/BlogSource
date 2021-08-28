@@ -843,6 +843,24 @@ bc可以用于进制转换
 * `((num=8#77)); echo ${num}`：8进制转十进制
 * `((num=16#FF)); echo ${num}`：16进制转十进制
 
+## 2.21 dirname
+
+`dirname`用于返回文件路径的目录部分，该命令不会检查路径所对应的目录或文件是否真实存在
+
+**示例：**
+
+* `dirname /var/log/messages`：返回的是`/var/log`
+* `dirname dirname aaa/bbb/ccc`：返回的是`aaa/bbb`
+* `dirname .././../.././././a`：返回的是`.././../../././.`
+
+通常在脚本中用于获取脚本所在的目录，示例如下：
+
+```sh
+# 其中$0代表脚本的路径（相对或绝对路径）
+ROOT=`dirname "$0"`
+ROOT=`cd "$ROOT"; pwd`
+```
+
 # 3 设备管理
 
 ## 3.1 mount
