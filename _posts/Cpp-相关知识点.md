@@ -370,9 +370,43 @@ A's (int, int) constructor
 ============(值初始化 a11)============
 ```
 
-## 1.9 宏
+## 1.9 模板
 
-### 1.9.1 do while(0) in macros
+模板形参可以是一个类型或者枚举
+
+**模板形参是枚举的示例：**
+
+```c++
+enum BasicType {
+    INT,
+    DOUBLE
+};
+
+template<BasicType BT>
+struct RuntimeTypeTraits {
+};
+
+// 特化
+template<>
+struct RuntimeTypeTraits<INT> {
+    using Type = int;
+};
+
+// 特化
+template<>
+struct RuntimeTypeTraits<DOUBLE> {
+    using Type = double;
+};
+
+int main() {
+    // 编译期类型推断，value的类型是int
+    RuntimeTypeTraits<INT>::Type value = 100;
+}
+```
+
+## 1.10 宏
+
+### 1.10.1 do while(0) in macros
 
 考虑下面的宏定义
 
@@ -439,7 +473,7 @@ else
 #define foo(x) do { bar(x); baz(x); } while (0)
 ```
 
-## 1.10 参考
+## 1.11 参考
 
 * [C++11\14\17\20 特性介绍](https://www.jianshu.com/p/8c4952e9edec)
 * [关于C++：静态常量字符串(类成员)](https://www.codenong.com/1563897/)
@@ -536,7 +570,9 @@ result: 0, flag: 1, expected: 1
 
 ## 2.11 std::mem_fn
 
-## 2.12 参考
+## 2.12 std::any_cast
+
+## 2.13 参考
 
 * [C++11 中的std::function和std::bind](https://www.jianshu.com/p/f191e88dcc80)
 * [Do I have to acquire lock before calling condition_variable.notify_one()?](https://stackoverflow.com/questions/17101922/do-i-have-to-acquire-lock-before-calling-condition-variable-notify-one)
@@ -547,6 +583,25 @@ result: 0, flag: 1, expected: 1
 ## 3.1 形参类型是否需要左右值引用
 
 ## 3.2 返回类型是否需要左右值引用
+
+## 3.3 traits编译期萃取类型信息
+
+```c++
+#include<iostream>
+
+template<typename T>
+constexpr bool isVoid = false;
+
+// 特化
+template<>
+inline constexpr bool isVoid<void> = true;
+
+int main() {
+    std::cout << std::boolalpha;
+    std::cout << "isVoid<void>=" << isVoid<void> << std::endl;
+    std::cout << "isVoid<int>=" << isVoid<int> << std::endl;
+};
+```
 
 # 4 GDB
 
@@ -1926,3 +1981,7 @@ add_executable(Demo ${DIR_SRCS})
 [github-googletest](https://github.com/google/googletest)
 
 单元测试框架
+
+## 7.2 phmap
+
+全称：`parallel-hashmap`，提供了一组高性能、并发安全的map，用于替换`std`以及`boost`中的map
