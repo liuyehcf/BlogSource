@@ -672,7 +672,9 @@ pid=$(ps -ef | grep main_without_debug | grep -v grep | awk '{print $2}')
 gdb main_with_debug ${pid}
 ```
 
-## 4.3 run
+## 4.3 command
+
+### 4.3.1 运行程序
 
 当我们通过`gdb <binary>`这种方式进入`gdb shell`后，程序不会立即执行，需要通过`run`命令触发程序的执行
 
@@ -706,21 +708,16 @@ Program received signal SIGSEGV, Segmentation fault.
 
 ```
 
-## 4.4 断点调试相关命令
+### 4.3.2 GDB与程序关联
+
+### 4.3.3 断点设置
 
 * `break`：用于设置断点
     * `break <line_num>`
     * `break <func_name>`
     * `break <file_name>:<line_num>`
     * `break <file_name>:<func_name>`
-* `info break`：查看所有断点
-* `info local`：查看局部变量
-* `info args`：查看方法入参
-* `info thread`：查看线程信息
-* `bt`、`backtrace`、`where`：查看当前调用堆栈
-    * `bt 3`：最上面3层
-    * `bt -3`：最下面3层
-* `thread <id>`：切换调试的线程为指定线程
+* `info break`：用于查看断点
 * `delete`：用于删除断点
     * `delete <break_id>`：删除指定断点
     * `delete`：删除所有断点
@@ -728,21 +725,8 @@ Program received signal SIGSEGV, Segmentation fault.
     * `enable <break_id>`
 * `disable`：用于停用断点
     * `disable <break_id>`
-* `continue`：继续运行直至程序结束或者遇到下一个断点
-* `step`：单步调试，会进入方法，另一种说法是`step into`
-* `next`：单步调试，不会进入方法，将方法调用视为一步，另一种说法是`step over`
-* `until`：退出循环
-* `finish`：结束当前函数的执行
-* `list`：查看源码
-    * `list`：紧接着上一次的输出，继续输出10行源码
-    * `list <linenumber>`：输出当前文件指定行号开始的10行源码
-    * `list <function>`：输出指定函数的10行源码
-    * `list <filename:linenum>`：输出指定文件指定行号开始的10行源码
-    * `list <filename:function>`：输出指定文件指定函数的10行源码
-* `detach`：让程序与`GDB`调试器分离
-* `attach <pid>`：让指定程序与`GDB`调试器关联
-* `display <variable>`：跟踪查看某个变量，每次停下来都显示它的值
-* `undisplay <display_id>`：取消跟踪
+
+#### 4.3.3.1 demo 
 
 ```sh
 # c++源文件
@@ -858,15 +842,41 @@ Breakpoint 1, main () at set_break.cpp:8
 8	    std::cout << "hello world" << std::endl;
 ```
 
-篇幅原因，其他命令，包括`continue`、`step`、`next`、`until`、`finish`等请自行尝试
+### 4.3.4 调试
 
-## 4.5 print
+* `continue`：继续运行直至程序结束或者遇到下一个断点
+* `step`：单步调试，会进入方法，另一种说法是`step into`
+* `next`：单步调试，不会进入方法，将方法调用视为一步，另一种说法是`step over`
+* `until`：退出循环
+* `finish`：结束当前函数的执行
+* `display <variable>`：跟踪查看某个变量，每次停下来都显示它的值
+* `undisplay <display_id>`：取消跟踪
+* `thread <id>`：切换调试的线程为指定线程
 
-**`print`用于查看变量**
+### 4.3.5 查看调试相关信息
 
-* `print <variable>`
-* `print <variable>.<field>`
-* `p *((std::vector<uint32_t>*) <address>)`：查看智能指针
+* `list`：查看源码
+    * `list`：紧接着上一次的输出，继续输出10行源码
+    * `list <linenumber>`：输出当前文件指定行号开始的10行源码
+    * `list <function>`：输出指定函数的10行源码
+    * `list <filename:linenum>`：输出指定文件指定行号开始的10行源码
+    * `list <filename:function>`：输出指定文件指定函数的10行源码
+* `info`用于查看各种调试相关的信息
+    * `info break`：查看断点
+    * `info reg`：查看寄存器
+    * `info stack`：查看堆栈
+    * `info thread`：查看线程
+    * `info locals`：查看本地变量
+    * `info args`：查看参数
+* `bt`、`backtrace`、`where`：查看当前调用堆栈
+    * `bt 3`：最上面3层
+    * `bt -3`：最下面3层
+* `print`：用于查看变量
+    * `print <variable>`
+    * `print <variable>.<field>`
+    * `p *((std::vector<uint32_t>*) <address>)`：查看智能指针
+
+#### 4.3.5.1 demo of print
 
 ```sh
 # c++源文件
@@ -927,18 +937,7 @@ $ (gdb) print &p
 $5 = (Person *) 0x7fffffffe0c0
 ```
 
-## 4.6 info
-
-`info`用于查看信息，常见的包括
-
-* `info break`：查看断点
-* `info reg`：查看寄存器
-* `info stack`：查看堆栈
-* `info thread`：查看线程
-* `info locals`：查看本地变量
-* `info args`：查看参数
-
-## 4.7 `!`执行外部命令
+### 4.3.6 `!`执行外部命令
 
 格式：`!<command> [params]`
 
@@ -947,17 +946,18 @@ $5 = (Person *) 0x7fffffffe0c0
 xxx/gdb_tutorial
 ```
 
-## 4.8 ASAN
+## 4.4 ASAN
 
 [google/sanitizers](https://github.com/google/sanitizers)
 
-## 4.9 参考
+## 4.5 参考
 
 * [GDB Tutorial - A Walkthrough with Examples](https://www.cs.umd.edu/~srhuang/teaching/cmsc212/gdb-tutorial-handout.pdf)
 * [《100个gdb小技巧》](https://wizardforcel.gitbooks.io/100-gdb-tips/content/break-on-linenum.html)
 * [gdb 调试coredump文件中烂掉的栈帧的方法](https://blog.csdn.net/muclenerd/article/details/48005171)
 * [GDB corrupted stack frame - How to debug?](https://stackoverflow.com/questions/9809810/gdb-corrupted-stack-frame-how-to-debug)
 * [追core笔记之五：如何查看一个corrupt stack的core](https://izualzhy.cn/why-the-code-stack-is-overflow)
+* [How do you set GDB debug flag with cmake?](https://stackoverflow.com/questions/10005982/how-do-you-set-gdb-debug-flag-with-cmake)
 
 # 5 Make
 
@@ -1979,7 +1979,6 @@ add_executable(Demo ${DIR_SRCS})
 * [CMake Table of Contents](https://cmake.org/cmake/help/latest/manual/cmake-buildsystem.7.html#manual:cmake-buildsystem(7))
 * [What is the difference between include_directories and target_include_directories in CMake?](https://stackoverflow.com/questions/31969547/what-is-the-difference-between-include-directories-and-target-include-directorie/40244458)
 * [Cmake之深入理解find_package()的用法](https://zhuanlan.zhihu.com/p/97369704)
-* [How do you set GDB debug flag with cmake?](https://stackoverflow.com/questions/10005982/how-do-you-set-gdb-debug-flag-with-cmake)
 
 # 7 三方库
 
