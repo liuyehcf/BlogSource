@@ -676,7 +676,10 @@ gdb main_with_debug ${pid}
 
 ### 4.3.1 运行程序
 
-当我们通过`gdb <binary>`这种方式进入`gdb shell`后，程序不会立即执行，需要通过`run`命令触发程序的执行
+当我们通过`gdb <binary>`这种方式进入`gdb shell`后，程序不会立即执行，需要通过`run`或者`start`命令触发程序的执行
+
+* `run`：开始执行程序，直到碰到第一个断点或者程序结束
+* `start`：开始执行程序，在main函数第一行停下来
 
 如果程序有异常（比如包含段错误），那么我们将会得到一些有用的信息，包括：程序出错的行号，函数的参数等等信息
 
@@ -845,16 +848,25 @@ Breakpoint 1, main () at set_break.cpp:8
 ### 4.3.4 调试
 
 * `continue`：继续运行直至程序结束或者遇到下一个断点
-* `step`：单步调试，会进入方法，另一种说法是`step into`
-* `next`：单步调试，不会进入方法，将方法调用视为一步，另一种说法是`step over`
+* `step`：源码级别的单步调试，会进入方法，另一种说法是`step into`
+* `next`：源码级别的单步调试，不会进入方法，将方法调用视为一步，另一种说法是`step over`
+* `stepi`：指令级别的单步调试，会进入方法，另一种说法是`step into`
+* `nexti`：指令级别的单步调试，不会进入方法，将方法调用视为一步，另一种说法是`step over`
 * `until`：退出循环
 * `finish`：结束当前函数的执行
 * `display <variable>`：跟踪查看某个变量，每次停下来都显示它的值
 * `undisplay <display_id>`：取消跟踪
+* `watch`：设置观察点。当被设置观察点的变量发生修改时，打印显示
 * `thread <id>`：切换调试的线程为指定线程
 
 ### 4.3.5 查看调试相关信息
 
+* `bt`、`backtrace`、`where`：查看当前调用堆栈
+    * `bt 3`：最上面3层
+    * `bt -3`：最下面3层
+* `disassemble`：查看当前的汇编指令
+    * `disassemble`：当前函数的汇编指令
+    * `disassemble <function>`：指定函数的汇编指令
 * `list`：查看源码
     * `list`：紧接着上一次的输出，继续输出10行源码
     * `list <linenumber>`：输出当前文件指定行号开始的10行源码
@@ -868,13 +880,64 @@ Breakpoint 1, main () at set_break.cpp:8
     * `info thread`：查看线程
     * `info locals`：查看本地变量
     * `info args`：查看参数
-* `bt`、`backtrace`、`where`：查看当前调用堆栈
-    * `bt 3`：最上面3层
-    * `bt -3`：最下面3层
+    * `info symbol <address>`：查看指定内存地址所对应的符号信息（如果有的话）
 * `print`：用于查看变量
     * `print <variable>`
     * `print <variable>.<field>`
     * `p *((std::vector<uint32_t>*) <address>)`：查看智能指针
+* `x/<n/f/u>  <addr>`：以指定格式打印内存信息
+    * `n`：正整数，表示需要显示的内存单元的个数，即从当前地址向后显示n个内存单元的内容，一个内存单元的大小由第三个参数`u`定义
+    * `f`：表示`addr`指向的内存内容的输出格式
+        * `s`：对应输出字符串
+        * `x`：按十六进制格式显示变量
+        * `d`：按十进制格式显示变量
+        * `u`：按十进制格式显示无符号整型
+        * `o`：按八进制格式显示变量
+        * `t`：按二进制格式显示变量
+        * `a`：按十六进制格式显示变量
+        * `c`：按字符格式显示变量
+        * `f`：按浮点数格式显示变量
+    * `u`：就是指以多少个字节作为一个内存单元-unit，默认为4。`u`还可以用被一些字符表示:
+        * `b`：1 byte
+        * `h`：2 bytes
+        * `w`：4 bytes
+        * `g`：8 bytes
+    * 示例：
+        * `x /1ug $rbp-0x4`：查看寄存器`rbp`存储的内容减去`0x4`得到的地址中所存储的内容
+        * `x /1xg $rsp`：查看寄存器`rsp`存储的地址中所存储的内容
+
+**`info reg`会显示所有寄存器的内容，其中内容会打印两列，第一列是以16进制的形式输出（`raw format`），另一列是以原始形式输出（`natural format`），下面显式了所有寄存器的大小以及类型**
+
+* 类型为`int64`的寄存器，`natural format`用十进制表示
+* 类型为`data_ptr`以及`code_ptr`的寄存器，`natural format`仍然以十六进制表示，所以你会看到两列完全一样的值
+
+```xml
+<reg name="rax" bitsize="64" type="int64"/>
+<reg name="rbx" bitsize="64" type="int64"/>
+<reg name="rcx" bitsize="64" type="int64"/>
+<reg name="rdx" bitsize="64" type="int64"/>
+<reg name="rsi" bitsize="64" type="int64"/>
+<reg name="rdi" bitsize="64" type="int64"/>
+<reg name="rbp" bitsize="64" type="data_ptr"/>
+<reg name="rsp" bitsize="64" type="data_ptr"/>
+<reg name="r8" bitsize="64" type="int64"/>
+<reg name="r9" bitsize="64" type="int64"/>
+<reg name="r10" bitsize="64" type="int64"/>
+<reg name="r11" bitsize="64" type="int64"/>
+<reg name="r12" bitsize="64" type="int64"/>
+<reg name="r13" bitsize="64" type="int64"/>
+<reg name="r14" bitsize="64" type="int64"/>
+<reg name="r15" bitsize="64" type="int64"/>
+
+<reg name="rip" bitsize="64" type="code_ptr"/>
+<reg name="eflags" bitsize="32" type="i386_eflags"/>
+<reg name="cs" bitsize="32" type="int32"/>
+<reg name="ss" bitsize="32" type="int32"/>
+<reg name="ds" bitsize="32" type="int32"/>
+<reg name="es" bitsize="32" type="int32"/>
+<reg name="fs" bitsize="32" type="int32"/>
+<reg name="gs" bitsize="32" type="int32"/>
+```
 
 #### 4.3.5.1 demo of print
 
@@ -957,7 +1020,9 @@ xxx/gdb_tutorial
 * [gdb 调试coredump文件中烂掉的栈帧的方法](https://blog.csdn.net/muclenerd/article/details/48005171)
 * [GDB corrupted stack frame - How to debug?](https://stackoverflow.com/questions/9809810/gdb-corrupted-stack-frame-how-to-debug)
 * [追core笔记之五：如何查看一个corrupt stack的core](https://izualzhy.cn/why-the-code-stack-is-overflow)
+* [gdb 调试coredump文件中烂掉的栈帧的方法](https://blog.csdn.net/muclenerd/article/details/48005171)
 * [How do you set GDB debug flag with cmake?](https://stackoverflow.com/questions/10005982/how-do-you-set-gdb-debug-flag-with-cmake)
+* [GDB info registers command - Second column of output](https://stackoverflow.com/questions/31026000/gdb-info-registers-command-second-column-of-output)
 
 # 5 Make
 
