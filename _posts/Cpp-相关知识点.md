@@ -370,7 +370,16 @@ A's (int, int) constructor
 ============(值初始化 a11)============
 ```
 
-## 1.9 模板
+## 1.9 placement new
+
+`placement new`的功能就是在一个已经分配好的空间上，调用构造函数，创建一个对象
+
+```c++
+void *buf = // 在这里为buf分配内存
+Class *pc = new (buf) Class();  
+```
+
+## 1.10 模板
 
 模板形参可以是一个类型或者枚举
 
@@ -404,9 +413,9 @@ int main() {
 }
 ```
 
-## 1.10 宏
+## 1.11 宏
 
-### 1.10.1 do while(0) in macros
+### 1.11.1 do while(0) in macros
 
 考虑下面的宏定义
 
@@ -473,7 +482,186 @@ else
 #define foo(x) do { bar(x); baz(x); } while (0)
 ```
 
-## 1.11 参考
+## 1.12 mock class
+
+有时在测试的时候，我们需要mock一个类的实现，我们可以在测试的cpp文件中实现这个类的所有方法（**注意，必须是所有方法**），就能够覆盖原有库文件中的实现。下面以一个例子来说明
+
+**目录结构如下**
+
+```
+.
+├── lib
+│   ├── libperson.a
+│   ├── person.cpp
+│   ├── person.h
+│   └── person.o
+└── main.cpp
+```
+
+**`lib/person.h`内容如下：**
+
+```c++
+#pragma once
+
+#include <string>
+
+class Person {
+public:
+    void work();
+
+    void sleep();
+
+    void eat();
+};
+```
+
+**`lib/person.cpp`内容如下：**
+
+```c++
+#include "person.h"
+#include <iostream>
+
+void Person::work() {
+    std::cout << "work" << std::endl;
+}
+
+void Person::sleep() {
+    std::cout << "sleep" << std::endl;
+}
+
+void Person::eat() {
+    std::cout << "eat" << std::endl;
+}
+```
+
+**编译`person.cpp`生成链接文件，并生成`.a`归档文件**
+
+```sh
+# 指定-c参数，只生成目标文件（person.o），不进行链接
+g++ person.cpp -c -std=gnu++11
+
+# 生成归档文件
+ar crv libperson.a person.o
+```
+
+**`main.cpp`内容如下：**
+
+```c++
+#include <iostream>
+#include "lib/person.h"
+
+int main() {
+    Person person;
+    person.work();
+    person.sleep();
+    person.eat();
+};
+```
+
+**编译`main.cpp`并执行**
+
+```sh
+# 编译
+# -L参数将lib目录加入到库文件的扫描路径
+# -l参数指定需要链接的库文件
+g++ -o main main.cpp -std=gnu++11 -L lib -lperson
+
+# 执行，输出如下
+./main
+
+work
+sleep
+eat
+```
+
+**接下来，我们修改`main.cpp`，覆盖原有的`work`、`sleep`、`eat`方法**
+
+```c++
+#include <iostream>
+#include "lib/person.h"
+
+void Person::work() {
+    std::cout << "mock work" << std::endl;
+}
+
+void Person::sleep() {
+    std::cout << "mock sleep" << std::endl;
+}
+
+void Person::eat() {
+    std::cout << "mock eat" << std::endl;
+}
+
+int main() {
+    Person person;
+    person.work();
+    person.sleep();
+    person.eat();
+};
+```
+
+**编译`main.cpp`并执行**
+
+```sh
+# 编译
+# -L参数将lib目录加入到库文件的扫描路径
+# -l参数指定需要链接的库文件
+g++ -o main main.cpp -std=gnu++11 -L lib -lperson
+
+# 执行，输出如下，可以发现，都变成了mock版本
+./main
+
+mock work
+mock sleep
+mock eat
+```
+
+**然后，我们继续修改`main.cpp`，删去其中一个方法**
+
+```c++
+#include <iostream>
+#include "lib/person.h"
+
+void Person::work() {
+    std::cout << "mock work" << std::endl;
+}
+
+void Person::sleep() {
+    std::cout << "mock sleep" << std::endl;
+}
+
+// void Person::eat() {
+//     std::cout << "mock eat" << std::endl;
+// }
+
+int main() {
+    Person person;
+    person.work();
+    person.sleep();
+    person.eat();
+};
+```
+
+**编译`main.cpp`（编译会失败）**
+
+```sh
+# 编译
+# -L参数将lib目录加入到库文件的扫描路径
+# -l参数指定需要链接的库文件
+g++ -o main main.cpp -std=gnu++11 -L lib -lperson
+
+lib/libperson.a(person.o)：在函数‘Person::work()’中：
+person.cpp:(.text+0x0): Person::work() 的多重定义
+/tmp/ccfhnlz4.o:main.cpp:(.text+0x0)：第一次在此定义
+lib/libperson.a(person.o)：在函数‘Person::sleep()’中：
+person.cpp:(.text+0x2a): Person::sleep() 的多重定义
+/tmp/ccfhnlz4.o:main.cpp:(.text+0x2a)：第一次在此定义
+collect2: 错误：ld 返回 1
+```
+
+### 1.12.1 demo using cmake
+
+## 1.13 参考
 
 * [C++11\14\17\20 特性介绍](https://www.jianshu.com/p/8c4952e9edec)
 * [关于C++：静态常量字符串(类成员)](https://www.codenong.com/1563897/)
@@ -572,7 +760,9 @@ result: 0, flag: 1, expected: 1
 
 ## 2.12 std::any_cast
 
-## 2.13 参考
+## 2.13 std::conditional_t
+
+## 2.14 参考
 
 * [C++11 中的std::function和std::bind](https://www.jianshu.com/p/f191e88dcc80)
 * [Do I have to acquire lock before calling condition_variable.notify_one()?](https://stackoverflow.com/questions/17101922/do-i-have-to-acquire-lock-before-calling-condition-variable-notify-one)
@@ -585,6 +775,8 @@ result: 0, flag: 1, expected: 1
 ## 3.2 返回类型是否需要左右值引用
 
 ## 3.3 traits编译期萃取类型信息
+
+### 3.3.1 示例1
 
 ```c++
 #include<iostream>
@@ -602,6 +794,10 @@ int main() {
     std::cout << "isVoid<int>=" << isVoid<int> << std::endl;
 };
 ```
+
+### 3.3.2 示例2
+
+用`std::conditional_t`
 
 # 4 GDB
 
