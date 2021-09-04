@@ -27,6 +27,7 @@ categories:
 * `C/C++`
 * `C++ Intellisense`
 * `Remote Development`
+* `Better C++ Syntax`
 
 **markdown相关**
 
@@ -44,3 +45,4 @@ categories:
 * [Frequently asked questions](https://code.visualstudio.com/docs/cpp/faq-cpp)
 * [c_cpp_properties.json reference](https://code.visualstudio.com/docs/cpp/c-cpp-properties-schema-reference)
 * [vscode使用compile_commands.json配置includePath环境](https://blog.csdn.net/qq_37868450/article/details/105013325)
+* [VS Code 的常用快捷键](https://zhuanlan.zhihu.com/p/44044896)

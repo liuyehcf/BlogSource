@@ -370,7 +370,84 @@ A's (int, int) constructor
 ============(值初始化 a11)============
 ```
 
-## 1.9 placement new
+## 1.9 const
+
+默认状态下，`const`对象仅在文件内有效。编译器将在编译过程中把用到该变量的地方都替代成对应的值，也就是说，编译器会找到代码中所有用到该`const`变量的地方，然后将其替换成定义的值
+
+为了执行上述替换，编译器必须知道变量的初始值，如果程序包含多个文件，则每个用了`const`对象的文件都必须能访问到它的初始值才行。要做到这一点，就必须在每一个用到该变量的文件中都对它有定义（将定义该`const`变量的语句放在头文件中，然后用到该变量的源文件包含头文件即可），为了支持这一用法，同时避免对同一变量的重复定义，默认情况下`const`被设定为尽在文件内有效（`const`的全局变量，其实只是在每个文件中都定义了一边而已）
+
+有时候出现这样的情况：`const`变量的初始值不是一个常量表达式，但又确实有必要在文件间共享。这种情况下，我们不希望编译器为每个文件生成独立的变量，相反，我们想让这类`const`对象像其他对象一样工作。**即：在一个文件中定义`const`，在多个文件中声明并使用它，无论声明还是定 义都添加`extern`关键字**
+
+* `.h`文件中：`extern const int a;`
+* `.cpp`文件中：`extern const int a=f();`
+
+### 1.9.1 顶层/底层const
+
+顶层的`const`可以表示任意的对象是常量（包括指针，不包括引用，因为引用本身不是对象，没法指定顶层的`const`属性）
+
+只有指针的`const`属性既可以是顶层又可以是底层，例如：
+
+```cpp
+const int i = 1;
+const int *const pi = &i;
+```
+
+### 1.9.2 const实参和形参
+
+实参初始化形参时会自动忽略掉顶层`const`属性
+
+顶层`const`不影响形参的类型，例如下面的代码，编译会失败，错误信息是函数重定义
+
+```cpp
+void func(int value) {}
+
+void func(const int value) {}
+
+int main() {
+    int value = 5;
+    func(value);
+}
+```
+
+### 1.9.3 const成员
+
+构造函数中显式初始化：在初始化部分进行初始化，而不能在函数体内初始化；如果没有显式初始化，就调用定义时的初始值进行初始化
+
+### 1.9.4 const成员函数
+
+`const`关键词修饰的成员函数，不能修改当前类的任何字段的值，如果字段是对象类型，也不能调用非const修饰的成员方法
+
+常量对象以及常量对象的引用或指针都只能调用常量成员函数
+
+常量对象以及常量对象的引用或指针都可以调用常量成员函数以及非常量成员函数
+
+```cpp
+#include <iostream>
+
+class Demo {
+public:
+    void sayHello1() const {
+        std::cout << "hello world, const version" << std::endl;
+    }
+
+    void sayHello2() {
+        std::cout << "hello world, non const version" << std::endl;
+    }
+};
+
+int main() {
+    Demo d;
+    d.sayHello1();
+    d.sayHello2();
+
+    const Demo cd;
+    cd.sayHello1();
+    // the following statement will lead to compile error
+    // cd.sayHello2();
+};
+```
+
+## 1.10 placement new
 
 `placement new`的功能就是在一个已经分配好的空间上，调用构造函数，创建一个对象
 
@@ -379,7 +456,7 @@ void *buf = // 在这里为buf分配内存
 Class *pc = new (buf) Class();  
 ```
 
-## 1.10 模板
+## 1.11 模板
 
 模板形参可以是一个类型或者枚举
 
@@ -413,9 +490,9 @@ int main() {
 }
 ```
 
-## 1.11 宏
+## 1.12 宏
 
-### 1.11.1 do while(0) in macros
+### 1.12.1 do while(0) in macros
 
 考虑下面的宏定义
 
@@ -482,7 +559,7 @@ else
 #define foo(x) do { bar(x); baz(x); } while (0)
 ```
 
-## 1.12 mock class
+## 1.13 mock class
 
 有时在测试的时候，我们需要mock一个类的实现，我们可以在测试的cpp文件中实现这个类的所有方法（**注意，必须是所有方法**），就能够覆盖原有库文件中的实现。下面以一个例子来说明
 
@@ -659,14 +736,15 @@ person.cpp:(.text+0x2a): Person::sleep() 的多重定义
 collect2: 错误：ld 返回 1
 ```
 
-### 1.12.1 demo using cmake
+### 1.13.1 demo using cmake
 
-## 1.13 参考
+## 1.14 参考
 
 * [C++11\14\17\20 特性介绍](https://www.jianshu.com/p/8c4952e9edec)
 * [关于C++：静态常量字符串(类成员)](https://www.codenong.com/1563897/)
 * [do {…} while (0) in macros](https://hownot2code.com/2016/12/05/do-while-0-in-macros/)
 * [PRE10-C. Wrap multistatement macros in a do-while loop](https://wiki.sei.cmu.edu/confluence/display/c/PRE10-C.+Wrap+multistatement+macros+in+a+do-while+loop)
+* [C++ const 关键字小结](https://www.runoob.com/w3cnote/cpp-const-keyword.html)
 
 # 2 标准库
 
@@ -2259,3 +2337,9 @@ add_executable(Demo ${DIR_SRCS})
 ## 8.1 格式化
 
 `.clang-format`
+
+**如何安装`clang-format`**
+
+```sh
+npm install -g clang-format
+```
