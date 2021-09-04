@@ -110,17 +110,137 @@ throw关键字可以抛出任何对象，例如可以抛出一个整数
     } catch (int &i) {
         std::cout << i << std::endl;
     }
+
+    try {
+        // 保护代码
+    } catch (...) {
+        // 能处理任何异常的代码
+    }
 ```
 
 ## 1.6 类型转换
 
 ### 1.6.1 static_cast
 
+**用法：`static_cast<type> (expr)`**
+
+`static_cast`运算符执行非动态转换，没有运行时类检查来保证转换的安全性。例如，它可以用来把一个基类指针转换为派生类指针。任何具有明确意义的类型转换，只要不包含底层`const`，都可以使用`static_cast`
+
+```cpp
+#include <iostream>
+#include <string>
+
+int main() {
+    const char *cc = "hello, world";
+    auto s = static_cast<std::string>(cc);
+    std::cout << s << std::endl;
+
+    // compile error
+    // auto i = static_cast<int>(cc);
+}
+```
+
 ### 1.6.2 dynamic_cast
+
+**用法：`dynamic_cast<type> (expr)`**
+
+`dynamic_cast`通常用于在继承结构之间进行转换，在运行时执行转换，验证转换的有效性。`type`必须是类的指针、类的引用或者`void*`。若指针转换失败，则得到的是`nullptr`；若引用转换失败，那么会抛出`std::bad_cast`类型的异常
+
+```cpp
+#include <iostream>
+#include <string>
+
+class Base {
+public:
+    virtual void func() const {
+        std::cout << "Base's func" << std::endl;
+    }
+};
+
+class Derive : public Base {
+public:
+    void func() const override {
+        std::cout << "Derive's func" << std::endl;
+    }
+};
+
+int main() {
+    const Base &b = Derive{};
+    try {
+        auto &d = dynamic_cast<const Derive &>(b);
+        d.func();
+        auto &s = dynamic_cast<const std::string &>(b); // error case
+    } catch (std::bad_cast &err) {
+        std::cout << "err=" << err.what() << std::endl;
+    }
+
+    const Base *pb = &b;
+    auto *pd = dynamic_cast<const Derive *>(pb);
+    pd->func();
+    auto *ps = dynamic_cast<const std::string *>(pb); // error case
+    std::cout << "ps=" << ps << std::endl; // print nullptr
+}
+```
 
 ### 1.6.3 const_cast
 
+**用法：`const_cast<type> (expr)`**
+
+这种类型的转换主要是用来操作所传对象的`const`属性，可以加上`const`属性，也可以去掉`const`属性（顶层底层均可）。其中，`type`只能是如下几类（必须是引用或者指针类型）
+
+* `T &`
+* `const T &`
+* `T &&`
+* `T *`
+* `const T *`
+* `T *const`
+* `const T *const`
+
+```cpp
+#include <iostream>
+
+int main() {
+    std::cout << "const T & -> T &" << std::endl;
+    const int &v1 = 100;
+    std::cout << "v1's address=" << &v1 << std::endl;
+    int &v2 = const_cast<int &>(v1);
+    v2 = 200;
+    std::cout << "v2's address=" << &v2 << std::endl;
+
+    std::cout << "\nT & -> T &&" << std::endl;
+    int &&v3 = const_cast< int &&>(v2);
+    std::cout << "v3's address=" << &v3 << std::endl;
+
+    std::cout << "\nT * -> const T *const" << std::endl;
+    int *p1 = &v2;
+    std::cout << "p1=" << p1 << std::endl;
+    const int *const p2 = const_cast<const int *const >(p1);
+    std::cout << "p2=" << p2 << std::endl;
+}
+```
+
 ### 1.6.4 reinterpret_cast
+
+**用法：`reinterpret_cast<type> (expr)`**
+
+`reinterpret_cast`是最危险的类型转换，它能够直接将一种类型的指针转换为另一种类型的指针，应该非常谨慎地使用。在很大程度上，使用`reinterpret_cast`获得的唯一保证是，通常如果你将结果转换回原始类型，您将获得完全相同的值（但如果中间类型小于原始类型，则不会）。也有许多`reinterpret_cast`不能做的转换。它主要用于特别奇怪的转换和位操作，例如将原始数据流转换为实际数据，或将数据存储在指向对齐数据的指针的低位中
+
+```cpp
+#include <iostream>
+#include <vector>
+
+int main() {
+    int32_t i = 0x7FFFFFFF;
+    int32_t *pi = &i;
+
+    {
+        auto *pl = reinterpret_cast<int64_t *> (pi);
+        std::cout << *pl << std::endl;
+        auto *rebuild_pi = reinterpret_cast<int32_t *> (pl);
+        std::cout << *rebuild_pi << std::endl;
+    }
+}
+```
 
 ## 1.7 如何在类中定义常量
 
@@ -745,6 +865,8 @@ collect2: 错误：ld 返回 1
 * [do {…} while (0) in macros](https://hownot2code.com/2016/12/05/do-while-0-in-macros/)
 * [PRE10-C. Wrap multistatement macros in a do-while loop](https://wiki.sei.cmu.edu/confluence/display/c/PRE10-C.+Wrap+multistatement+macros+in+a+do-while+loop)
 * [C++ const 关键字小结](https://www.runoob.com/w3cnote/cpp-const-keyword.html)
+* [C++ 强制转换运算符](https://www.runoob.com/cplusplus/cpp-casting-operators.html)
+* [When should static_cast, dynamic_cast, const_cast and reinterpret_cast be used?](https://stackoverflow.com/questions/332030/when-should-static-cast-dynamic-cast-const-cast-and-reinterpret-cast-be-used)
 
 # 2 标准库
 
