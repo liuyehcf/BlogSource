@@ -870,7 +870,7 @@ collect2: 错误：ld 返回 1
 
 # 2 标准库
 
-## 2.1 utility
+## 2.1 `<utility>`
 
 ### 2.1.1 std::move
 
@@ -954,17 +954,29 @@ int main() {
 * 如果模板实参是左值或右值，那么匹配的是第二个方法
     * 右值：`_Tp&&`得到的是个右值
 
-## 2.2 std::promise/std::future
+## 2.2 `<future>`
 
-## 2.3 std::string
+### 2.2.1 std::promise
+
+### 2.2.2 std::future
+
+## 2.3 `<string>`
+
+### 2.3.1 std::string
 
 字符串比较函数：`strcmp`
 
-## 2.4 std::thread
+## 2.4 `<thread>`
 
-## 2.5 std::chrono
+### 2.4.1 std::thread
 
-## 2.6 std::shared_ptr
+## 2.5 `<chrono>`
+
+### 2.5.1 std::chrono
+
+## 2.6 `<memory>`
+
+### 2.6.1 std::shared_ptr
 
 **只在函数使用指针，但并不保存对象内容**
 
@@ -987,13 +999,23 @@ void func(std::shared_ptr<Widget> ptr);
 
 这样的话，外部传过来值的时候，可以选择`move`或者赋值。函数内部直接把这个对象通过`move`的方式保存起来
 
-## 2.7 std::function
+### 2.6.2 std::unique_ptr
+
+## 2.7 `<functional>`
+
+### 2.7.1 std::function
 
 其功能类似于函数指针，在需要函数指针的地方，可以传入`std::function`类型的对象（不是指针）
 
-## 2.8 std::bind
+### 2.7.2 std::bind
 
-## 2.9 std::lock_guard
+### 2.7.3 std::mem_fn
+
+## 2.8 `<mutex>`
+
+### 2.8.1 std::mutex
+
+### 2.8.2 std::lock_guard
 
 一般的使用方法，如果getVar方法抛出异常了，那么就会导致`m.unlock()`方法无法执行，可能会造成死锁
 
@@ -1014,11 +1036,15 @@ m.unlock();
 }
 ```
 
-## 2.10 std::condition_variable
+### 2.8.3 std::unique_lock
+
+### 2.8.4 std::condition_variable
 
 调用`wait`方法时，必须获取监视器。而调用`notify`方法时，无需获取监视器
 
-## 2.11 std::atomic
+## 2.9 `<atomic>`
+
+### 2.9.1 std::atomic
 
 `compare_exchange_strong(T& expected_value, T new_value)`方法的第一个参数是个左值
 
@@ -1040,13 +1066,17 @@ result: 1, flag: 1, expected: 0
 result: 0, flag: 1, expected: 1
 ```
 
-## 2.12 std::mem_fn
+## 2.10 `<any>`
 
-## 2.13 std::any_cast
+### 2.10.1 std::any_cast
 
-## 2.14 std::conditional_t
+## 2.11 `<type_traits>`
 
-## 2.15 参考
+### 2.11.1 std::conditional_t
+
+### 2.11.2 std::remove_reference
+
+## 2.12 参考
 
 * [C++11 中的std::function和std::bind](https://www.jianshu.com/p/f191e88dcc80)
 * [Do I have to acquire lock before calling condition_variable.notify_one()?](https://stackoverflow.com/questions/17101922/do-i-have-to-acquire-lock-before-calling-condition-variable-notify-one)
