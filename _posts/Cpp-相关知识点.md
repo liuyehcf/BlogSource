@@ -887,7 +887,7 @@ collect2: 错误：ld 返回 1
 
 ### 2.1.2 std::forward
 
-先看一个例子：
+`std::forward`主要用于实现模板的完美转发：因为对于一个变量而言，无论该变量的类型是左值引用还是右值引用，变量本身都是左值，如果直接将变量传递到下一个方法中，那么一定是按照左值来匹配重载函数的，而`std::forward`就是为了解决这个问题。请看下面这个例子：
 
 ```cpp
 #include <iostream>
@@ -918,10 +918,14 @@ int main() {
     value = 2;
     dispatch_with_forward(value); // left reference version, value=2
     dispatch_with_forward(3); // right reference version, value=3
+
+    value = 4;
+    func(std::forward<int>(value)); // right reference version, value=4 (!!! very strange !!!)
+    value = 5;
+    func(std::forward<int &>(value)); // left reference version, value=5
+    func(std::forward<int &&>(6)); // right reference version, value=6
 }
 ```
-
-`std::forward`主要用于实现模板的完美转发：因为对于一个变量而言，无论该变量的类型是左值引用还是右值引用，变量本身都是左值，如果直接将变量传递到下一个方法中，那么一定是按照左值来匹配重载函数的，而`std::forward`就是为了解决这个问题
 
 标准库的实现如下：
 
@@ -941,8 +945,14 @@ int main() {
     }
 ```
 
-* 如果入参是左值或者左值引用，那么匹配的是第一个方法，通过`static_cast`引用折叠后输出的仍然是左值
-* 如果入参是右值或者右值引用，那么匹配的是第二个方法，通过`static_cast`引用折叠后输出的仍然是右值
+**在使用`std::forward`时，模板实参都是需要显式指定的，而不是推断出来的**
+
+* 如果模板实参是左值、左值引用或右值引用，那么匹配第一个方法
+    * 左值：`_Tp&&`得到的是个右值（很奇怪吧，因为一般都不是这么用的）
+    * **左值引用：`_Tp&&`得到的是个左值引用（完美转发会用到）**
+    * **右值应用：`_Tp&&`得到的是个右值引用（完美转发会用到）**
+* 如果模板实参是左值或右值，那么匹配的是第二个方法
+    * 右值：`_Tp&&`得到的是个右值
 
 ## 2.2 std::promise/std::future
 
