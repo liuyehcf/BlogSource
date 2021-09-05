@@ -580,7 +580,7 @@ Class *pc = new (buf) Class();
 
 模板形参可以是一个类型或者枚举
 
-**模板形参是枚举的示例：**
+### 1.11.1 模板形参是枚举
 
 ```c++
 enum BasicType {
@@ -607,6 +607,31 @@ struct RuntimeTypeTraits<DOUBLE> {
 int main() {
     // 编译期类型推断，value的类型是int
     RuntimeTypeTraits<INT>::Type value = 100;
+}
+```
+
+### 1.11.2 模板形参无法推断
+
+通常，在`::`左边的模板形参是无法进行推断的（这里的`::`特指用于连接两个类型），例如下面这个例子
+
+```cpp
+template<typename T>
+void func(const typename T::type &obj) {
+    // ...
+}
+
+struct Int {
+    using type = int;
+};
+
+struct Long {
+    using type = long;
+};
+
+int main() {
+    // func(1); compile error
+    func<Int>(1);
+    func<Long>(2);
 }
 ```
 
@@ -867,6 +892,7 @@ collect2: 错误：ld 返回 1
 * [C++ const 关键字小结](https://www.runoob.com/w3cnote/cpp-const-keyword.html)
 * [C++ 强制转换运算符](https://www.runoob.com/cplusplus/cpp-casting-operators.html)
 * [When should static_cast, dynamic_cast, const_cast and reinterpret_cast be used?](https://stackoverflow.com/questions/332030/when-should-static-cast-dynamic-cast-const-cast-and-reinterpret-cast-be-used)
+* [Candidate template ignored because template argument could not be inferred](https://stackoverflow.com/questions/12566228/candidate-template-ignored-because-template-argument-could-not-be-inferred)
 
 # 2 标准库
 
