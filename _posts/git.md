@@ -221,7 +221,6 @@ $ git log [tag] HEAD --grep feature
 
 # 显示某个文件的版本历史，包括文件改名
 $ git log --follow [file]
-$ git whatchanged [file]
 
 # 显示指定文件相关的每一次diff
 $ git log -p [file]
@@ -256,11 +255,23 @@ $ git diff --shortstat "@{0 day ago}"
 # 显示某次提交的元数据和内容变化
 $ git show [commit]
 
+# 显示某次提交的元数据和内容变化的统计信息
+$ git show [commit] --stat
+
 # 显示某次提交发生变化的文件
 $ git show --name-only [commit]
 
 # 显示某次提交时，某个文件的内容
 $ git show [commit]:[filename]
+
+# 显示每次修改的文件列表
+$ git whatchanged
+
+# 显示每次修改的文件列表以及统计信息
+$ git whatchanged –stat
+
+# 显示某个文件的版本历史，包括文件改名
+$ git whatchanged [file]
 
 # 显示当前分支的最近几次提交
 $ git reflog

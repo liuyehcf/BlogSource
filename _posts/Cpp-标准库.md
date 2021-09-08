@@ -222,3 +222,4 @@ result: 0, flag: 1, expected: 1
 * [C++11 中的std::function和std::bind](https://www.jianshu.com/p/f191e88dcc80)
 * [Do I have to acquire lock before calling condition_variable.notify_one()?](https://stackoverflow.com/questions/17101922/do-i-have-to-acquire-lock-before-calling-condition-variable-notify-one)
 * [C++ 智能指针的正确使用方式](https://www.cyhone.com/articles/right-way-to-use-cpp-smart-pointer/)
+* [C++11 - atomic类型和内存模型](https://zhuanlan.zhihu.com/p/107092432)

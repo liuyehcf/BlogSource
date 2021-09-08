@@ -20,3 +20,11 @@ categories:
 # 2 phmap
 
 全称：`parallel-hashmap`，提供了一组高性能、并发安全的map，用于替换`std`以及`boost`中的map
+
+# 3 benchmark
+
+[google-benchmark](https://github.com/google/benchmark)
+
+## 3.1 参考
+
+* [c++性能测试工具：google benchmark入门（一）](https://www.cnblogs.com/apocelipes/p/10348925.html)
