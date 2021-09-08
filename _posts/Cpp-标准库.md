@@ -142,6 +142,10 @@ void func(std::shared_ptr<Widget> ptr);
 
 ## 6.2 std::unique_ptr
 
+## 6.3 参考
+
+* [C++ 智能指针的正确使用方式](https://www.cyhone.com/articles/right-way-to-use-cpp-smart-pointer/)
+
 # 7 `<functional>`
 
 ## 7.1 std::function
@@ -151,6 +155,10 @@ void func(std::shared_ptr<Widget> ptr);
 ## 7.2 std::bind
 
 ## 7.3 std::mem_fn
+
+## 7.4 参考
+
+* [C++11 中的std::function和std::bind](https://www.jianshu.com/p/f191e88dcc80)
 
 # 8 `<mutex>`
 
@@ -183,9 +191,24 @@ m.unlock();
 
 调用`wait`方法时，必须获取监视器。而调用`notify`方法时，无需获取监视器
 
+## 8.5 参考
+
+* [Do I have to acquire lock before calling condition_variable.notify_one()?](https://stackoverflow.com/questions/17101922/do-i-have-to-acquire-lock-before-calling-condition-variable-notify-one)
+
 # 9 `<atomic>`
 
-## 9.1 std::atomic
+## 9.1 内存模型
+
+### 9.1.1 顺序一致性
+
+> the result of any execution is the same as if the operations of all the processors were executed in some sequential order, and the operations of each individual processor appear in this sequence in the order specified by its program
+
+**SC其实就是规定了两件事情：**
+
+1. **每个线程内部的指令都是按照程序规定的顺序（program order）执行的（单个线程的视角）**
+1. **线程执行的交错顺序可以是任意的，但是所有线程所看见的整个程序的总体执行顺序都是一样的（整个程序的视角）**
+
+## 9.2 std::atomic
 
 `compare_exchange_strong(T& expected_value, T new_value)`方法的第一个参数是个左值
 
@@ -207,6 +230,42 @@ result: 1, flag: 1, expected: 0
 result: 0, flag: 1, expected: 1
 ```
 
+## 9.3 std::memory_order
+
+这是个枚举类型，包含6个枚举值
+
+* `memory_order_relaxed`
+* `memory_order_consume`
+* `memory_order_acquire`
+* `memory_order_release`
+* `memory_order_acq_rel`
+* `memory_order_seq_cst`
+
+### 9.3.1 顺序一致次序（sequential consisten ordering）
+
+`memory_order_seq_cst`属于这种内存模型
+
+`SC`作为默认的内存序，是因为它意味着将程序看做是一个简单的序列。如果对于一个原子变量的操作都是顺序一致的，那么多线程程序的行为就像是这些操作都以一种特定顺序被单线程程序执行
+
+### 9.3.2 松弛次序（relaxed ordering）
+
+`memory_order_relaxed`属于这种内存模型
+
+在原子变量上采用`relaxed ordering`的操作不参与`synchronized-with`关系。在同一线程内对同一变量的操作仍保持`happens-before`关系，但这与别的线程无关
+
+在`relaxed ordering`中唯一的要求是在同一线程中，对同一原子变量的访问不可以被重排
+
+### 9.3.3 获取-释放次序（acquire-release ordering）
+
+`memory_order_release`、`memory_order_acquire`、`memory_order_acq_rel`属于这种内存模型
+
+## 9.4 参考
+
+* [C++11 - atomic类型和内存模型](https://zhuanlan.zhihu.com/p/107092432)
+* [doc-std::memory_order](https://www.apiref.com/cpp-zh/cpp/atomic/memory_order.html)
+* [如何理解 C++11 的六种 memory order？](https://www.zhihu.com/question/24301047)
+* [并行编程——内存模型之顺序一致性](https://www.cnblogs.com/jiayy/p/3246157.html)
+
 # 10 `<any>`
 
 ## 10.1 std::any_cast
@@ -217,9 +276,3 @@ result: 0, flag: 1, expected: 1
 
 ## 11.2 std::remove_reference
 
-# 12 参考
-
-* [C++11 中的std::function和std::bind](https://www.jianshu.com/p/f191e88dcc80)
-* [Do I have to acquire lock before calling condition_variable.notify_one()?](https://stackoverflow.com/questions/17101922/do-i-have-to-acquire-lock-before-calling-condition-variable-notify-one)
-* [C++ 智能指针的正确使用方式](https://www.cyhone.com/articles/right-way-to-use-cpp-smart-pointer/)
-* [C++11 - atomic类型和内存模型](https://zhuanlan.zhihu.com/p/107092432)
