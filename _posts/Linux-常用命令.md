@@ -1,6 +1,7 @@
 ---
 title: Linux-常用命令
 date: 2017-08-15 20:17:57
+top: true
 tags: 
 - 摘录
 categories: 
