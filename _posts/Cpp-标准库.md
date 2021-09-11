@@ -197,16 +197,24 @@ m.unlock();
 
 # 9 `<atomic>`
 
-## 9.1 内存模型
+## 9.1 内存一致性模型
 
-### 9.1.1 顺序一致性
+### 9.1.1 Sequential consistency model
 
 > the result of any execution is the same as if the operations of all the processors were executed in some sequential order, and the operations of each individual processor appear in this sequence in the order specified by its program
 
-**SC其实就是规定了两件事情：**
+**`Sequential consistency model（SC）`，也称为顺序一致性模型，其实就是规定了两件事情：**
 
 1. **每个线程内部的指令都是按照程序规定的顺序（program order）执行的（单个线程的视角）**
 1. **线程执行的交错顺序可以是任意的，但是所有线程所看见的整个程序的总体执行顺序都是一样的（整个程序的视角）**
+    * 即不能存在这样一种情况，对于写操作`W1`和`W2`，处理器1看来，顺序是：`W1 -> W2`；而处理器2看来，顺序是：`W2 -> W1`
+
+### 9.1.2 Relaxed consistency model
+
+**`Relaxed consistency model`也称为宽松内存一致性模型，它的特点是：**
+
+1. **唯一的要求是在同一线程中，对同一原子变量的访问不可以被重排（单个线程的视角）**
+1. **除了保证操作的原子性之外，没有限定前后指令的顺序，其他线程看到数据的变化顺序也可能不一样（整个程序的视角）**
 
 ## 9.2 std::atomic
 
@@ -247,6 +255,8 @@ result: 0, flag: 1, expected: 1
 
 `SC`作为默认的内存序，是因为它意味着将程序看做是一个简单的序列。如果对于一个原子变量的操作都是顺序一致的，那么多线程程序的行为就像是这些操作都以一种特定顺序被单线程程序执行
 
+**该原子操作前后的读写（包括非原子的读写操作）不能跨过该操作乱序；该原子操作之前的写操作（包括非原子的写操作）都能被所有线程观察到**
+
 ### 9.3.2 松弛次序（relaxed ordering）
 
 `memory_order_relaxed`属于这种内存模型
@@ -259,12 +269,42 @@ result: 0, flag: 1, expected: 1
 
 `memory_order_release`、`memory_order_acquire`、`memory_order_acq_rel`属于这种内存模型
 
+`memory_order_release`用于写操作`store`，`memory_order_acquire`用于读操作`load`
+
+* `memory_order_release`「原子操作之前的读写（包括非原子的读写）」不能往后乱序；并且之前的写操作（包括非原子的写操作），会被使用`acquire/consume`的线程观察到，这里要注意它和`seq_cst`不同的是只有相关的线程才能观察到写变化，所谓相关线程就是使用`acquire`或`consume`模式加载同一个共享变量的线程；而`seq_cst`是所有线程都观察到了
+* `memory_order_acquire`「原子操作之后的读写」不能往前乱序；它能看到`release`线程在调用`load`之前的那些写操作
+* `memory_order_acq_rel`是`memory_order_release`与`memory_order_acquire`的合并，前后的读写都是不能跨过这个原子操作，但仅相关的线程能看到前面写的变化
+* `memory_order_consume`和`memory_order_acquire`比较接近，也是和`memory_order_release`一起使用的；和`memory_order_acquire`不一样的地方是加了一个限定条件：依赖于该读操作的后续读写不能往前乱序；它可以看到release线程在调用load之前那些依赖的写操作，依赖于的意思是和该共享变量有关的写操作
+
+看个例子：
+
+```
+-Thread 1-
+ n = 1
+ m = 1
+ p.store (&n, memory_order_release)
+
+-Thread 2-
+ t = p.load (memory_order_acquire);
+ if (*t == 1)
+    assert(m == 1);
+
+-Thread 3-
+ t = p.load (memory_order_consume);
+ if (*t == 1)
+    assert(m == 1);
+```
+
+* 线程2的断言会成功，因为线程1对`n`和`m`在store之前修改；线程2在`load`之后，可以观察到`m`的修改
+* 但线程3的断言不一定会成功，因为`m`是和`load/store`操作不相关的变量，线程3不一定能观察看到
+
 ## 9.4 参考
 
 * [C++11 - atomic类型和内存模型](https://zhuanlan.zhihu.com/p/107092432)
 * [doc-std::memory_order](https://www.apiref.com/cpp-zh/cpp/atomic/memory_order.html)
 * [如何理解 C++11 的六种 memory order？](https://www.zhihu.com/question/24301047)
 * [并行编程——内存模型之顺序一致性](https://www.cnblogs.com/jiayy/p/3246157.html)
+* [漫谈内存一致性模型](https://zhuanlan.zhihu.com/p/91406250)
 
 # 10 `<any>`
 
