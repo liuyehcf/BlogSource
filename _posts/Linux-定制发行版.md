@@ -1,6 +1,7 @@
 ---
-title: 操作系统安装
+title: Linux-定制发行版
 date: 2019-11-23 14:19:39
+top: true
 tags: 
 - 原创
 categories: 
@@ -635,7 +636,7 @@ data blocks changed from 2354176 to 4451328
 
 1. 进入`emergency`模式
     * 在CentOS的boot菜单下按`e`，并编辑grub命令，在`linux16`配置项最后追加`systemd.unit=emergency.target`，按`Ctrl+x`即可进入`emergency`模式
-    * ![2-3-1](/images/操作系统安装/2-3-1.png)
+    * ![2-3-1](/images/Linux-定制发行版/2-3-1.png)
 1. 找到`Linux LVM`的根分区地址和设备
 1. `cat /etc/fstab`确定根分区文件系统类型，通常为`ext4`或`xfs`
     * 若文件系统为`ext4`，运行`fsck -f`，例如`fsck -f /dev/mapper/centos-root`
@@ -651,14 +652,14 @@ data blocks changed from 2354176 to 4451328
     * 在CentOS的boot菜单下按`e`，并编辑grub命令，在`linux16`配置项最后追加`rw init=/sysroot/bin/bash`，按`Ctrl+x`即可进入
         * `rw`表示以可读写的方式挂载根分区
         * `init=/sysroot/bin/bash`：系统安装所在分区里面路径为`/bin/bash`的文件，内核启动过程中会查找系统安装所在分区，然后把该分区挂载到`/sysroot`目录下
-    * ![2-3-2](/images/操作系统安装/2-3-2.png)
+    * ![2-3-2](/images/Linux-定制发行版/2-3-2.png)
 1. 修改密码
     * `chroot /sysroot`
     * `passwd`：修改密码，键入两次新密码即可
     * `touch /.autorelabel`
     * `exit`
     * `reboot -f`
-    * ![2-3-3](/images/操作系统安装/2-3-3.png)
+    * ![2-3-3](/images/Linux-定制发行版/2-3-3.png)
 
 **`touch /.autorelabel`这个命令有什么作用**：当我们用`passwd`修改密码时，`/etc/shadow`文件会在错误的`SELinux`上下文中被修改。`touch /.autorelabel`命令会创建一个隐藏文件，在下次启动时，`SELinux`子系统将检测到该文件，然后使用正确的`SELinux`上下文重新标记文件系统上的所有文件。在大磁盘上，此过程可能消耗大量的时间
 
@@ -669,13 +670,13 @@ data blocks changed from 2354176 to 4451328
 1. 进入`Single User`模式
     * 在CentOS的boot菜单下按`e`，并编辑grub命令，在`linux16`配置项最后追加`init=/bin/bash`，按`Ctrl+x`即可进入
         * `init=/bin/bash`：内核启动过程中临时文件系统（`initrd.img`）里面路径为`/bin/bash`的文件
-    * ![2-3-4](/images/操作系统安装/2-3-4.png)
+    * ![2-3-4](/images/Linux-定制发行版/2-3-4.png)
 1. 修改密码
     * `mount -o remount,rw /`：重新以`rw`的方式挂载根分区（因为这次，我们没有在内核参数中增加`rw`参数）
     * `passwd`：修改密码，键入两次新密码即可
     * `touch /.autorelabel`
     * `/sbin/reboot -f`
-    * ![2-3-5](/images/操作系统安装/2-3-5.png)
+    * ![2-3-5](/images/Linux-定制发行版/2-3-5.png)
 
 ---
 
@@ -684,7 +685,7 @@ data blocks changed from 2354176 to 4451328
 1. 进入`Single User && Emergency`模式
     * 在CentOS的boot菜单下按`e`，并编辑grub命令，在`linux16`配置项最后追加`rd.break`，按`Ctrl+x`即可进入
         * `rd.break`：`rd`指的是`init ram disk`；`break`指的是`boot`程序在将控制权从`initramfs`转交给`systemd`之前进行中断
-    * ![2-3-6](/images/操作系统安装/2-3-6.png)
+    * ![2-3-6](/images/Linux-定制发行版/2-3-6.png)
 1. 修改密码
     * `mount -o remount,rw /sysroot`：重新以`rw`的方式挂载根分区（因为这次，我们没有在内核参数中增加`rw`参数）
     * `chroot /sysroot`
@@ -692,13 +693,13 @@ data blocks changed from 2354176 to 4451328
     * `touch /.autorelabel`
     * `exit`
     * `reboot -f`
-    * ![2-3-7](/images/操作系统安装/2-3-7.png)
+    * ![2-3-7](/images/Linux-定制发行版/2-3-7.png)
 
 ## 2.5 恢复boot分区
 
 当boot分区不小心被破坏之后（比如，用fdisk将boot分区误删了），机器是无法启动成功的，会出现如下错误页面
 
-![2-3-8](/images/操作系统安装/2-3-8.png)
+![2-3-8](/images/Linux-定制发行版/2-3-8.png)
 
 **可以通过以下步骤进行恢复**
 
@@ -706,16 +707,16 @@ data blocks changed from 2354176 to 4451328
 
 **第二步**：在grub菜单页，依次选择`Troubleshooting`、`Rescue a CentOS system`
 
-* ![2-3-9](/images/操作系统安装/2-3-9.png)
-* ![2-3-10](/images/操作系统安装/2-3-10.png)
+* ![2-3-9](/images/Linux-定制发行版/2-3-9.png)
+* ![2-3-10](/images/Linux-定制发行版/2-3-10.png)
 
 **第三步**：从u盘启动linux系统，并获取shell
 
-* ![2-3-11](/images/操作系统安装/2-3-11.png)
+* ![2-3-11](/images/Linux-定制发行版/2-3-11.png)
 
 **第四步**：重新安装grub以及grub配置文件
 
-* ![2-3-12](/images/操作系统安装/2-3-12.png)
+* ![2-3-12](/images/Linux-定制发行版/2-3-12.png)
 
 ```sh
 # 硬盘的挂载点是/mnt/sysimage
@@ -1864,7 +1865,7 @@ grub2-install --efi-directory=/mnt/efi
 
 下图描述了各个`img`文件之间的关系。其中`core.img`是动态生成的，路径为`/boot/grub2/i386-pc/core.img`，而其他的`img`则存在于`/usr/lib/grub/i386-pc`目录下。当然，在安装`grub`时，`boot.img`会被拷贝到`/boot/grub2/i386-pc`目录下
 
-![4-3-2-2-1](/images/操作系统安装/4-3-2-2-1.png)
+![4-3-2-2-1](/images/Linux-定制发行版/4-3-2-2-1.png)
 
 1. `boot.img`
     * 在`BIOS`平台下，`boot.img`是`grub`启动的第一个`img`文件，它被写入到`MBR`中或分区的`boot sector`中，因为`boot sector`的大小是`512`字节，所以该`img`文件的大小也是`512`字节

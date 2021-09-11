@@ -11,7 +11,21 @@ categories:
 
 <!--more-->
 
-# 1 markdown-renderer
+# 1 hexo相关的项目
+
+| 项目 | 描述 |
+|:--|:--|
+| [theme-yilia](https://github.com/litten/hexo-theme-yilia) | hexo主题 |
+| [theme-next](https://github.com/theme-next/hexo-theme-next) | hexo主题 |
+| [hexo-filter-sequence](https://github.com/bubkoo/hexo-filter-sequence) | hexo插件-序列图 |
+| [hexo-filter-mermaid-diagrams](https://github.com/webappdevelp/hexo-filter-mermaid-diagrams) | hexo插件-序列图 |
+| [hexo-filter-plantuml](https://github.com/wafer-li/hexo-filter-plantuml) | hexo插件-高级时序图 |
+| [hexo-filter-flowchart](https://github.com/bubkoo/hexo-filter-flowchart) | hexo插件-流程图 |
+| [hexo-toc](https://github.com/bubkoo/hexo-toc) | hexo插件-目录 |
+| [hexo-wordcount](https://github.com/willin/hexo-wordcount) | hexo插件-字数统计 |
+| [hexo-symbols-count-time](https://github.com/theme-next/hexo-symbols-count-time) | 阅读时间统计 |
+
+# 2 markdown-renderer
 
 [Hexo的多种Markdown渲染器对比分析](https://bugwz.com/2019/09/17/hexo-markdown-renderer/#2-4-hexo-renderer-markdown-it)
 
@@ -25,7 +39,7 @@ npm uninstall hexo-renderer-marked
 npm install hexo-renderer-markdown-it-plus
 ```
 
-# 2 Math
+# 3 Math
 
 [Hexo渲染LaTeX公式](https://www.jianshu.com/p/9b9c241146bc)
 
@@ -57,11 +71,11 @@ em: /^\b_((?:[^_]|**)+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
 em: /^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
 ```
 
-# 3 来必力评论系统
+# 4 来必力评论系统
 
 [来必力-配置](http://theme-next.iissnan.com/third-party-services.html#livere)
 
-# 4 mermaid流程图
+# 5 mermaid流程图
 
 [hexo-filter-mermaid-diagrams](https://github.com/webappdevelp/hexo-filter-mermaid-diagrams)
 
@@ -73,7 +87,7 @@ npm install hexo-filter-mermaid-diagrams --save
 
 **步骤2：修改主题配置文件`themes/next/_config.yml`，找到`mermaid`的配置项，将`enable`改为true即可**
 
-## 4.1 效果：横向流程图
+## 5.1 效果：横向流程图
 
 **源码：**
 
@@ -97,7 +111,7 @@ A[方形] -->B(圆角)
     F[横向流程图]
 ```
 
-## 4.2 效果：竖向流程图
+## 5.2 效果：竖向流程图
 
 **源码：**
 
@@ -121,7 +135,7 @@ A[方形] --> B(圆角)
     F[竖向流程图]
 ```
 
-# 5 plantuml时序图
+# 6 plantuml时序图
 
 **步骤1：安装插件**
 
@@ -129,7 +143,7 @@ A[方形] --> B(圆角)
 npm install hexo-filter-plantuml --save
 ```
 
-## 5.1 效果
+## 6.1 效果
 
 **源码：**
 
@@ -237,7 +251,7 @@ A --> User: Done
 deactivate A
 ```
 
-# 6 flow流程图
+# 7 flow流程图
 
 [hexo-filter-flowchart](https://github.com/bubkoo/hexo-filter-flowchart)
 
@@ -247,7 +261,7 @@ deactivate A
 npm install hexo-filter-flowchart --save 
 ```
 
-## 6.1 效果：纵向流程图
+## 7.1 效果：纵向流程图
 
 **源码：**
 
@@ -277,7 +291,7 @@ cond(yes)->io->e
 cond(no)->sub1(right)->op
 ```
 
-## 6.2 效果：横向流程图
+## 7.2 效果：横向流程图
 
 **源码：**
 
@@ -307,15 +321,15 @@ cond(yes)->io(bottom)->e
 cond(no)->sub1(right)->op
 ```
 
-# 7 sequence时序图
+# 8 sequence时序图
 
 [hexo-filter-sequence](https://github.com/bubkoo/hexo-filter-sequence)
 
-# 8 目录功能
+# 9 目录功能
 
 [hexo-toc](https://github.com/bubkoo/hexo-toc)
 
-# 9 访问统计
+# 10 访问统计
 
 [阅读次数统计-配置](http://theme-next.iissnan.com/third-party-services.html#analytics-tencent-mta)
 
@@ -349,7 +363,7 @@ leancloud_counter_security:
   password: '19930101' # 究极大坑，这里需要用引号
 ```
 
-# 10 本地搜索
+# 11 本地搜索
 
 [本地搜索-配置](http://theme-next.iissnan.com/third-party-services.html#local-search)
 
@@ -357,11 +371,11 @@ leancloud_counter_security:
 
 [Mac 上的 VSCode 编写 Markdown 总是出现隐藏字符？](https://www.zhihu.com/question/61638859)
 
-# 11 背景动画
+# 12 背景动画
 
 [背景动画-配置](http://theme-next.iissnan.com/theme-settings.html#use-bg-animation)
 
-# 12 增加菜单
+# 13 增加菜单
 
 `hexo new page "explore"`
 
@@ -408,20 +422,6 @@ menu:
   sitemap: 站点地图
   commonweal: 公益404
 ```
-
-# 13 hexo相关的项目
-
-| 项目 | 描述 |
-|:--|:--|
-| [theme-yilia](https://github.com/litten/hexo-theme-yilia) | hexo主题 |
-| [theme-next](https://github.com/theme-next/hexo-theme-next) | hexo主题 |
-| [hexo-filter-sequence](https://github.com/bubkoo/hexo-filter-sequence) | hexo插件-序列图 |
-| [hexo-filter-mermaid-diagrams](https://github.com/webappdevelp/hexo-filter-mermaid-diagrams) | hexo插件-序列图 |
-| [hexo-filter-plantuml](https://github.com/wafer-li/hexo-filter-plantuml) | hexo插件-高级时序图 |
-| [hexo-filter-flowchart](https://github.com/bubkoo/hexo-filter-flowchart) | hexo插件-流程图 |
-| [hexo-toc](https://github.com/bubkoo/hexo-toc) | hexo插件-目录 |
-| [hexo-wordcount](https://github.com/willin/hexo-wordcount) | hexo插件-字数统计 |
-| [hexo-symbols-count-time](https://github.com/theme-next/hexo-symbols-count-time) | 阅读时间统计 |
 
 # 14 取消侧栏编号
 
@@ -512,7 +512,29 @@ $font-size-headings-large   = $font-size-headings-base + $font-size-headings-ste
 $font-size-headings-larger  = $font-size-headings-large + $font-size-headings-step
 ```
 
-# 18 deploy
+# 18 文章置顶
+
+```sh
+
+npm uninstall hexo-generator-index --save
+npm install hexo-generator-index-pin-top --save
+```
+
+然后在文章的header中加上`top:true`即可，例如
+
+```
+---
+title: test
+tags:
+  - test
+categories:
+  - test
+date: 2021-09-11 11:45:59
+top: true
+---
+```
+
+# 19 deploy
 
 ```sh
 npm install hexo-deployer-git --save
@@ -520,7 +542,7 @@ npm install hexo-deployer-git --save
 
 [nodejs更新后hexo没法deploy](https://blog.csdn.net/qq_41535611/article/details/106309335)
 
-# 19 更换电脑后迁移
+# 20 更换电脑后迁移
 
 1. 参考[hexo-README](https://github.com/hexojs/hexo)，安装`hexo`
 1. 参考[theme-next-README](https://github.com/theme-next/hexo-theme-next)，安装`hexo`主题`theme-next`
@@ -534,7 +556,7 @@ npm install hexo-deployer-git --save
     * deploy
     * search
 
-# 20 参考
+# 21 参考
 
 * [next官方文档](http://theme-next.iissnan.com/getting-started.html)
 * [搭建一个支持LaTEX的hexo博客](http://blog.csdn.net/emptyset110/article/details/50123231)
