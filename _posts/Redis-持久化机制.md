@@ -4,7 +4,7 @@ date: 2017-08-03 14:30:33
 tags: 
 - 摘录
 categories: 
-- Data Base
+- Database
 - NoSQL
 ---
 
