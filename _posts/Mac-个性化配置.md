@@ -147,6 +147,83 @@ export LSCOLORS='CxfxcxdxbxegedabagGxGx' #指定颜色
 * `export LANG=en_US.UTF-8`
 * `export zh_CN.UTF-8`
 
+## 3.1 更换主题
+
+**本小结转载摘录自[iTerm 2 && Oh My Zsh【DIY教程——亲身体验过程】](https://www.jianshu.com/p/7de00c73a2bb)**
+
+**先上效果**
+
+![iterm2-theme](/images/Mac-个性化配置/iterm2-theme.png)
+
+**步骤1：[安装iterm2](https://iterm2.com/)，不赘述**
+
+**步骤2：[安装ohmyzsh](https://github.com/ohmyzsh/ohmyzsh)，不赘述**
+
+**步骤3：[安装Powerline](https://powerline.readthedocs.io/en/latest/installation.html)**
+
+```sh
+$ sudo brew install pip
+$ sudo pip install powerline-status
+```
+
+**步骤4：[安装Powerline的字体库](https://github.com/powerline/fonts)**
+
+```
+$ git clone https://github.com/powerline/fonts.git --depth 1
+$ cd fonts
+$ ./install.sh
+$ cd ..
+$ rm -rf fonts
+```
+
+安装时，会提示所有字体均已下载到`/Users/<user name>/Library/Fonts`
+
+**步骤5：将iterm2的字体设置为Powerline的字体**
+
+![step5](/images/Mac-个性化配置/step5.png)
+
+在iterm2中使用Powerline字体：`Preferences` -> `Profiles` -> `Text`
+
+**步骤6：[安装配色方案solarized](https://github.com/altercation/solarized)**
+
+```sh
+$ git clone https://github.com/altercation/solarized.git --depth 1
+$ open solarized/iterm2-colors-solarized
+```
+
+上面的open命令会弹出finder，然后在弹出的finder中，双击`Solarized Dark.itermcolors`以及`Solarized Light.itermcolors`便可将配色方案安装到iterm2中
+
+然后在iterm2中选择该配色方案即可：`Preferences` -> `Profiles` -> `Colors`
+
+![step6](/images/Mac-个性化配置/step6.png)
+
+**步骤7：[安装agnoster主题](https://github.com/fcamblor/oh-my-zsh-agnoster-fcamblor)**
+
+```sh
+$ git clone  https://github.com/fcamblor/oh-my-zsh-agnoster-fcamblor.git --depth 1
+$ cd oh-my-zsh-agnoster-fcamblor
+$ ./install
+$ cd ..
+$ rm -rf oh-my-zsh-agnoster-fcamblor
+```
+
+这些主题会被安装到`~/.oh-my-zsh/themes`目录下，然后修改`~/.zshrc`文件，将`ZSH_THEME`配置项的值改成`agnoster`
+
+**步骤8：[安装zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)用于高亮指令**
+
+```sh
+# 进入到 .zshrc 所在的目录，一般在用户目录下
+$ cd ~
+$ git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
+```
+
+然后修改`.zshrc`文件，在最后添加下面内容
+
+```
+source ~/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+plugins=(zsh-syntax-highlighting)
+```
+
 # 4 zsh
 
 # 5 国内安装homebrew
