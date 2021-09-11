@@ -149,7 +149,7 @@ export LSCOLORS='CxfxcxdxbxegedabagGxGx' #指定颜色
 
 ## 3.1 更换主题
 
-**本小结转载摘录自[iTerm 2 && Oh My Zsh【DIY教程——亲身体验过程】](https://www.jianshu.com/p/7de00c73a2bb)**
+**本小节转载摘录自[iTerm 2 && Oh My Zsh【DIY教程——亲身体验过程】](https://www.jianshu.com/p/7de00c73a2bb)**
 
 **先上效果**
 

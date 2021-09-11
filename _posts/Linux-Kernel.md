@@ -182,7 +182,7 @@ Pass 5: run completed in 10usr/50sys/327real ms.
 
 # 4 ftrace
 
-**本小结转载摘录自[Linux ftrace框架介绍及运用](https://www.cnblogs.com/arnoldlu/p/7211249.html)**
+**本小节转载摘录自[Linux ftrace框架介绍及运用](https://www.cnblogs.com/arnoldlu/p/7211249.html)**
 
 在日常工作中，经常会需要对内核进行debug、或者进行优化工作。一些简单的问题，可以通过`dmesg/printk`查看，优化借助一些工具进行。但是当问题逻辑复杂，优化面宽泛的时候，往往无从下手。需要从上到下、模块到模块之间分析，这时候就不得不借助于Linux提供的静态（`trace event`）动态（各种`tracer`）工具进行分析。同时还不得不借助工具、或者编写脚本进行分析，以缩小问题范围、发现问题。简单的使用`tracepoint`已经不能满足需求，因此就花点精力进行梳理
 
