@@ -297,6 +297,7 @@ trace-cmd report
 * [ftrace和trace-cmd：跟踪内核函数的利器](https://blog.csdn.net/weixin_44410537/article/details/103587609)
 * [使用 ftrace 跟踪内核](https://blog.csdn.net/qq_32534441/article/details/90244495)
 * [【Kernel ftrace】使用kernel ftrace追踪IRQ的例子](https://www.cnblogs.com/smilingsusu/p/12705780.html)
+* [使用 ftrace 来跟踪系统问题 - ftrace 介绍](https://www.jianshu.com/p/99e127973abe)
 
 # 5 dump
 
