@@ -188,7 +188,7 @@ Pass 5: run completed in 10usr/50sys/327real ms.
 
 `ftrace`是`function trace`的意思，最开始主要用于记录内核函数运行轨迹，随着功能的逐渐增加，演变成一个跟踪框架。包含了静态`tracepoint`，针对不同`subsystem`提供一个目录进行开关。还包括不同的动态跟踪器，`function`、`function_graph`、`wakeup`等等
 
-`ftrace`的帮助文档在`Documentation/trace`，`ftrace`代码主要在`kernel/trace`，`ftrace`相关头文件在i`nclude/trace`中
+`ftrace`的帮助文档在`Documentation/trace`，`ftrace`代码主要在`kernel/trace`，`ftrace`相关头文件在`include/trace`中
 
 ## 4.1 ftrace框架介绍
 
@@ -218,8 +218,8 @@ cat /sys/kernel/debug/tracing/README
 
 **通用配置：**
 
-* `available_tracers`当前编译及内核的跟踪器列表，`current_tracer`必须是这里面支持的跟踪器
-* `current_tracer`：用于设置或者显示当前使用的跟踪器列表。系统启动缺省值为`nop`，使用echo将跟踪器名字写入即可打开。可以通过写入`nop`重置跟踪器
+* **`available_tracers`当前编译及内核的跟踪器列表，`current_tracer`必须是这里面支持的跟踪器**
+* **`current_tracer`：用于设置或者显示当前使用的跟踪器列表。系统启动缺省值为`nop`，使用echo将跟踪器名字写入即可打开。可以通过写入`nop`重置跟踪器**
 * `buffer_size_kb`：用于设置单个CPU所使用的跟踪缓存的大小。跟踪缓存为`ring buffer`形式，如果跟踪太多，旧的信息会被新的跟踪信息覆盖掉。需要先将`current_trace`设置为nop才可以
 * `buffer_total_size_kb`：显示所有的跟踪缓存大小，不同之处在于`buffer_size_kb`是单个CPU的，`buffer_total_size_kb`是所有CPU的和
 * `free_buffer`：此文件用于在一个进程被关闭后，同时释放`ring buffer`内存，并将调整大小到最小值
@@ -234,7 +234,7 @@ cat /sys/kernel/debug/tracing/README
     * `echo 0`：清空缓存，并释放对应内存
     * `echo 1`：进行对当前trace进行snapshot，如没有内存则分配
     * `echo 2`：清空缓存，不释放也不分配内存
-* `trace`：查看获取到的跟踪信息的接口，`echo > trace`可以清空当前`ring buffer`
+* **`trace`：查看获取到的跟踪信息的接口，`echo > trace`可以清空当前`ring buffer`**
 * `trace_pipe`：输出和`trace`一样的内容，但是此文件输出`trace`同时将`ring buffer`中的内容删除，这样就避免了`ring buffer`的溢出。可以通过`cat trace_pipe > trace.txt &`保存文件
 * `trace_clock`：显示当前`trace`的`timestamp`所基于的时钟，默认使用local时钟
     * `local`：默认时钟；可能无法在不同CPU间同步
@@ -246,21 +246,21 @@ cat /sys/kernel/debug/tracing/README
 * `options`：`trace`选项的一系列文件，和`trace_options`对应
 * `trace_stat/`：每个CPU的`trace`统计信息
 * `tracing_max_latency`：记录`tracer`的最大延时
-* `tracing_on`：用于控制跟踪打开或停止
+* **`tracing_on`：用于控制跟踪打开或停止**
     * `echo 0`：停止跟踪
     * `echo 1`：继续跟踪
 * `tracing_thresh`：延时记录`trace`的阈值，当延时超过此值时才开始记录`trace`。单位是ms，只有非0才起作用
 
 **events配置：**
 
-* `available_events`：列出系统中所有可用的`trace events`，分两个层级，用冒号隔开
+* **`available_events`：列出系统中所有可用的`trace events`，分两个层级，用冒号隔开**
 * `events/`：系统`trace events`目录，在每个`events`下面都有`enable`、`filter`和`fotmat`。`enable`是开关；`format`是`events`的格式，然后根据格式设置`filter`
 * `set_event`：将`trace events`名称直接写入`set_event`就可以打开
 * `set_event_pid`：指定追踪特定进程的`events`
 
 **function配置：**
 
-* `available_filter_functions`：记录了当前可以跟踪的内核函数，不在该文件中列出的函数，无法跟踪其活动
+* **`available_filter_functions`：记录了当前可以跟踪的内核函数，不在该文件中列出的函数，无法跟踪其活动**
 * `dyn_ftrace_total_info`：显示`available_filter_functins`中跟中函数的数目，两者一致
 * `enabled_functions`：显示有回调附着的函数名称
 * `function_profile_enabled`：打开此选项，在`trace_stat`中就会显示`function`的统计信息
