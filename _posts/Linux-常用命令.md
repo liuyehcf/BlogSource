@@ -104,6 +104,14 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 
 用于读取、解析可执行程序
 
+## 1.11 getconf
+
+查看系统相关的信息
+
+**示例：**
+
+* `getconf -a | grep CACHE`：查看CPU cache相关的配置项
+
 # 2 常用处理工具
 
 ## 2.1 echo
@@ -862,6 +870,14 @@ bc可以用于进制转换
 ROOT=`dirname "$0"`
 ROOT=`cd "$ROOT"; pwd`
 ```
+
+## 2.22 addr2line
+
+该工具用于查看二进制的偏移量与源码的对应关系
+
+**示例：**
+
+* `addr2line 4005f5 -e test`：查看二进制`test`中位置为`4005f5`指令对应的源码
 
 # 3 设备管理
 
@@ -2703,7 +2719,9 @@ yum install -y iotop
 
 * `iotop`
 
-## 6.18 strace
+# 7 性能分析工具
+
+## 7.1 strace
 
 `strace`是Linux环境下的一款程序调试工具，用来监察一个应用程序所使用的系统调用
 `strace`是一个简单的跟踪系统调用执行的工具。在其最简单的形式中，它可以从开始到结束跟踪二进制的执行，并在进程的生命周期中输出一行具有系统调用名称，每个系统调用的参数和返回值的文本行
@@ -2735,13 +2753,41 @@ yum install -y iotop
 1. `strace -c cat /etc/fstab`：统计cat查看文件的系统调用（按调用频率）
 1. `timeout 10 strace -p {PID} -f -c`：统计指定进程的系统调用
 
-# 7 addr2line
+## 7.2 perf
 
-该工具用于查看二进制的偏移量与源码的对应关系
+**`perf`的原理是这样的：每隔一个固定的时间，就在CPU上（每个核上都有）产生一个中断，在中断上看看，当前是哪个`pid`，哪个函数，然后给对应的`pid`和函数加一个统计值，这样，我们就知道CPU有百分几的时间在某个`pid`，或者某个函数上了**
+
+**常用子命令**
+
+* `archive`：由于`perf.data`的解析需要一些其他信息，比如符号表、`pid`、进程对应关系等，该命令就是将这些相关的文件都打成一个包，这样在别的机器上也能进行分析
+* `diff`：用于展示两个`perf.data`之间的差异
+* `evlist`：列出`perf.data`中包含的额事件
+* `list`：查看支持的所有事件
+* `record`：启动分析，并将记录写入`perf.data`
+    * `perf record`在当前目录产生一个`perf.data`文件（如果这个文件已经存在，旧的文件会被改名为`perf.data.old`）
+    * `perf record`不一定用于跟踪自己启动的进程，通过指定`pid`，可以直接跟踪固定的一组进程。另外，大家应该也注意到了，上面给出的跟踪都仅仅跟踪发生在特定pid的事件。但很多模型，比如一个webserver，你其实关心的是整个系统的性能，网络上会占掉一部分CPU，WebServer本身占一部分CPU，存储子系统也会占据部分的CPU，网络和存储不一定就属于你的WebServer这个`pid`。**所以，对于全系统调优，我们常常给`perf record`命令加上`-a`参数，这样可以跟踪整个系统的性能**
+* `report`：读取`perf.data`并展示
+* `stat`：仅展示一些统计信息
+* `top`：以交互式的方式进行分析
+
+**关键参数：**
+
+* `-e`：指定跟踪的事件
+    * `perf top -e branch-misses,cycles`
+    * `perf top -e branch-misses:u,cycles`：事件可以指定后缀，只跟踪发生在用户态时产生的分支预测失败
+    * `perf top -e ‘{branch-misses,cycles}:u'`：全部事件都只关注用户态部分
+* `-s`：指定按什么参数来进行分类
+    * `perf top -e 'cycles' -s comm,pid,dso`
+* `-p`：指定跟踪的`pid`
 
 **示例：**
 
-* `addr2line 4005f5 -e test`：查看二进制`test`中位置为`4005f5`指令对应的源码
+1. `perf list`查看支持的所有事件
+1. `perf stat -e L1-dcache-load-misses,L1-dcache-loads -- cat /etc/passwd`：统计缓存miss率
+1. `timeout 10 perf record -e 'cycles' -a`：统计整个系统，统计10秒
+1. `perf record -e 'cycles' -p xxx`：统计指定的进程
+1. `perf record -e 'cycles' -- myapplication arg1 arg2`：启动程序并进行统计
+1. `perf report`：查看分析报告
 
 # 8 audit
 
@@ -2950,3 +2996,4 @@ CONFIG_KVM_MMU_AUDIT=y
 * [addr2line](https://www.jianshu.com/p/c2e2b8f8ea0d)
 * [How to use OpenSSL to encrypt/decrypt files?](https://stackoverflow.com/questions/16056135/how-to-use-openssl-to-encrypt-decrypt-files)
 * [confusion about mount options](https://unix.stackexchange.com/questions/117414/confusion-about-mount-options)
+* [在Linux下做性能分析3：perf](https://zhuanlan.zhihu.com/p/22194920)
