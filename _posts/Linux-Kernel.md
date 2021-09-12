@@ -284,6 +284,7 @@ cat /sys/kernel/debug/tracing/README
 
 ```sh
 # 该命令会在当前目录下生成一个trace.dat文件
+# （注意，不要在/sys/kernel/debug/tracing这个目录下使用这个命令，因为无法在这些目录中创建trace.dat文件）
 trace-cmd record -e irq
 
 # 该命令会分析当前目录下的trace.dat文件
