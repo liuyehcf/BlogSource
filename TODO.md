@@ -26,3 +26,5 @@
     * OSI
     * apache license/elastic license
 1. hexo 置顶
+1. cpp
+    * gcc各种常用

@@ -25,6 +25,22 @@ categories:
 1. 由于pipeline之间是有依赖关系的，因此，当前驱pipeline完成后需要通知并驱动下一个pipeline，这种机制叫做`passive state machine`
 1. `elasticity`：在任何时候可以将core分配给任何查询任务的能力
 1. 在`morsel-driven`架构中，取消查询的代价非常低（可能原因是用户取消查询，或者内存分配超限等等异常情况），只需要将查询相关的pipeline标记为`cancel`，那么所有的worker便不再处理这个查询了（相比于让操作系统杀掉线程的操作来说轻量很多）
+1. `morsel-size`对于性能来说不是特别重要，通常它只需要保证足够大以分摊调度开销，同时提供良好的响应时间即可
+1. 在一些系统中，那些共享的数据结构，即便是`lock-free`，也很容易成为性能瓶颈。而在`morsel-driven`架构中，包含如下几个特点
+    * 数据会被切割成一组互补重合的区间，`worker`工作在某一个区间上，因此`cache line`基本是和每个区间对齐的，不太可能出现缓存冲突的问题（除非`worker`从其他`worker`那边窃取了数据并进行处理
+    * 并发度越高，数据结构带来的压力越低（这个怎么理解？）
+    * 我们总是可以通过调大`morsel-size`来降低`work-stealing`的发生。如果`morsel-size`特别大，虽然会降低线程的工作效率（本来一份工作可以由多个线程同时处理，比如scan，但现在只由一个线程处理，有些core可能没在工作）。但是随着并发度的提高，这种负增益将会被逐渐抵消（每个core都在工作）
+1. `Lock-Free Tagged Hash Table`没太看懂
+    * The key idea is to tag a hash bucket list with a small filter into which all elements of that partic- ular list are “hashed” to set their 1-bit.
+    * 与`Bloom filter`相比，优势是？
+        * `Bloom filter`是一个额外的数据结构，而`tagged hash table`不需要，并且性能开销很低，只需要几个位运算即可
+        * 对于大表，`Bloom filter`体积也会比较大，很难全部加载到cache中（或者只存在于`low-level`的cache中）
+        * 可以直接使用，无需依赖优化器对选择进行一个预测（是否要构建`Bloom filter`）
+    * 存储的是`tuple`的地址而不是对象本身，因此不能使用开放寻址法（为什么？？？，开放寻址法不能存指针么）
+        * 可以通过降低装载因子减小冲突，同时空间开销较小
+        * 链表允许存储大小不同的`tuple`（开放寻址法做不到，为什么？？？）
+1. `NUMA-Aware Table Partitioning`
+    * 对于需要频繁执行的join查询，最好将其通过同一个key进行散列，这样有更好的locality，避免多个节点之间的交互（shuffle）
 
 **progress：5/12 3.3**
 
