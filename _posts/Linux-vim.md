@@ -308,31 +308,9 @@ categories:
 # 卸载
 $ yum remove vim-* -y
 
-# 安装依赖
-$ yum install -y gcc make ncurses ncurses-devel
-$ yum install -y ctags git tcl-devel \
-    ruby ruby-devel \
-    lua lua-devel \
-    luajit luajit-devel \
-    python python-devel \
-    perl perl-devel \
-    perl-ExtUtils-ParseXS \
-    perl-ExtUtils-XSpp \
-    perl-ExtUtils-CBuilder \
-    perl-ExtUtils-Embed
-
-# 下载、编译并安装vim
-$ git clone https://github.com/vim/vim.git --depth 1
-$ cd vim
-$ ./configure --with-features=huge \
---enable-multibyte \
---enable-rubyinterp \
---enable-pythoninterp \
---enable-perlinterp \
---enable-luainterp \
---enable-gui=no
-$ make
-$ make install
+# 通过非官方源fedora安装最新版的vim
+$ curl -L https://copr.fedorainfracloud.org/coprs/lantw44/vim-latest/repo/epel-7/lantw44-vim-latest-epel-7.repo -o /etc/yum.repos.d/lantw44-vim-latest-epel-7.repo
+$ yum install -y vim
 
 # 确认
 $ vim --version | head -1
@@ -361,7 +339,7 @@ curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 * `:PlugInstall`：安装插件
 * `:PlugClean`：清除插件
 
-**修改下载源：默认从`github`上下载，稳定性较差，可以按照如下方式修改`.vim/autoload/plug.vim`**
+**修改下载源：默认从`github`上下载，稳定性较差，可以按照如下方式修改`~/.vim/autoload/plug.vim`**
 
 ```js
 // 将
