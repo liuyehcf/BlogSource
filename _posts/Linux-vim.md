@@ -287,8 +287,8 @@ set tabstop=4
 set softtabstop=4
 " 表示每一级缩进的长度，一般设置成和softtabstop长度一样
 set shiftwidth=4
-" 当设置成expantab时表示缩进用空格来表示，noexpandtab则用制表符表示一个缩进
-set expantab
+" 当设置成expandtab时表示缩进用空格来表示，noexpandtab则用制表符表示一个缩进
+set expandtab
 " 表示自动缩进
 set autoindent
 ```
@@ -636,9 +636,12 @@ set tags+=~/.vim/systags
 
 **使用：**
 
-* `ctrl + ]`：跳转到符号定义处
-* `ctrl + w + ]`：在新的窗口中跳转到符号定义处
+* `ctrl + ]`：跳转到符号定义处。如果有多条匹配项，则会跳转到第一个匹配项
+* `ctrl + w + ]`：在新的窗口中跳转到符号定义处。如果有多条匹配项，则会跳转到第一个匹配项
 * `:ts`：显示所有的匹配项。按`ECS`再输入序号，再按`Enter`就可以进入指定的匹配项
+* `:tn`：跳转到下一个匹配项
+* `:tp`：跳转到上一个匹配项
+* `g + ]`：如果有多条匹配项，会直接显式（同`:ts`）
 
 ## 2.11 自动索引-`vim-gutentags`
 
@@ -1024,7 +1027,7 @@ set number
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
-set expantab
+set expandtab
 set autoindent
 ```
 
