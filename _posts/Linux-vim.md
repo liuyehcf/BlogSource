@@ -278,9 +278,18 @@ categories:
 
 修改`~/.vimrc`，追加如下内容
 
-```
-set ts=4
-set expandtab
+```vim
+" 表示打开文件自动显示行号
+set number
+" 表示一个Tab键显示出来多少个空格的长度，默认是8，这里设置为4
+set tabstop=4
+" 表示在编辑模式下按退格键时候退回缩进的长度，设置为4
+set softtabstop=4
+" 表示每一级缩进的长度，一般设置成和softtabstop长度一样
+set shiftwidth=4
+" 当设置成expantab时表示缩进用空格来表示，noexpandtab则用制表符表示一个缩进
+set expantab
+" 表示自动缩进
 set autoindent
 ```
 
@@ -482,7 +491,7 @@ Plug 'Yggdroot/indentLine'
 " -------- 下面是该插件的一些参数 --------
 
 let g:indentLine_noConcealCursor = 1
-let g:indentLine_color_term = 0
+let g:indentLine_color_term = 239
 let g:indentLine_char = '|'
 
 call plug#end()
@@ -854,7 +863,7 @@ call plug#end()
 
 ## 2.18 个人完整配置
 
-**`~/.vimrc`完整配置如下**
+**初学`vim`，水平有限，仅供参考，`~/.vimrc`完整配置如下**
 
 ```vim
 call plug#begin()
@@ -878,7 +887,7 @@ Plug 'vim-airline/vim-airline'
 Plug 'Yggdroot/indentLine'
 
 let g:indentLine_noConcealCursor = 1
-let g:indentLine_color_term = 0
+let g:indentLine_color_term = 239
 let g:indentLine_char = '|'
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -1010,9 +1019,12 @@ set tags+=~/.vim/systags
 " 退格失效的配置
 set backspace=indent,eol,start
 
-" tab相关配置
-set ts=4
-set expandtab
+" 其他配置
+set number
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set expantab
 set autoindent
 ```
 
