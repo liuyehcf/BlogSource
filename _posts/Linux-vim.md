@@ -359,14 +359,14 @@ set encoding=utf-8
 
 ```sh
 # 卸载
-$ yum remove vim-* -y
+yum remove vim-* -y
 
 # 通过非官方源fedora安装最新版的vim
-$ curl -L https://copr.fedorainfracloud.org/coprs/lantw44/vim-latest/repo/epel-7/lantw44-vim-latest-epel-7.repo -o /etc/yum.repos.d/lantw44-vim-latest-epel-7.repo
-$ yum install -y vim
+curl -L https://copr.fedorainfracloud.org/coprs/lantw44/vim-latest/repo/epel-7/lantw44-vim-latest-epel-7.repo -o /etc/yum.repos.d/lantw44-vim-latest-epel-7.repo
+yum install -y vim
 
 # 确认
-$ vim --version | head -1
+vim --version | head -1
 ```
 
 ## 2.3 安装vim-plug
@@ -444,8 +444,8 @@ call plug#end()
 
 ```sh
 # ~/.vim/colors 目录默认是不存在的
-$ mkdir ~/.vim/colors
-$ cp ~/.vim/plugged/gruvbox/colors/gruvbox.vim ~/.vim/colors/
+mkdir ~/.vim/colors
+cp ~/.vim/plugged/gruvbox/colors/gruvbox.vim ~/.vim/colors/
 ```
 
 ## 2.5 状态栏-`vim-airline`
@@ -586,12 +586,12 @@ call plug#end()
 **安装：参照[github官网文档](https://github.com/universal-ctags/ctags)进行编译安装即可**
 
 ```sh
-$ git clone https://github.com/universal-ctags/ctags.git --depth 1
-$ cd ctags
-$ ./autogen.sh
-$ ./configure --prefix=/where/you/want # defaults to /usr/local
-$ make
-$ make install # may require extra privileges depending on where to install
+git clone https://github.com/universal-ctags/ctags.git --depth 1
+cd ctags
+./autogen.sh
+./configure --prefix=/where/you/want # defaults to /usr/local
+make
+make install # may require extra privileges depending on where to install
 ```
 
 **推荐配置，在`~/.vimrc`中增加如下配置**
