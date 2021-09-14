@@ -216,6 +216,7 @@ categories:
 1. `vim -on file1 file2...`：左右分屏
 1. `Ctrl+w c`：关闭当前窗口(无法关闭最后一个)
 1. `Ctrl+w q`：关闭当前窗口(可以关闭最后一个)
+1. `Ctrl+w o`：关闭其他窗口
 1. `Ctrl+w s`：上下分割当前打开的文件
 1. `Ctrl+w v`：左右分割当前打开的文件
 1. `:sp filename`：上下分割并打开一个新的文件
@@ -265,7 +266,25 @@ categories:
 :syntax off         禁止语法高亮
 ```
 
-## 1.12 其他
+## 1.12 vim配置文件
+
+`vim`会主动将你曾经做过的行为记录下来，好让你下次可以轻松作业，记录操作的文件就是`~/.viminfo`
+
+整体vim的设置值一般放置在`/etc/vimrc`这个文件中，不过不建议修改它，但是可以修改`~/.vimrc`这个文件(默认不存在，手动创建)
+
+**在运行`vim`的时候，如果修改了`~/.vimrc`文件的内容，可以通过执行`:so %`来重新加载`~/.vimrc`，立即生效配置**
+
+### 1.12.1 修改tab的行为
+
+修改`~/.vimrc`，追加如下内容
+
+```
+set ts=4
+set expandtab
+set autoindent
+```
+
+## 1.13 其他
 
 **第一部分：一般模式可用的按钮说明，光标移动，复制粘贴，查找替换等**
 
@@ -281,6 +300,33 @@ categories:
     * 可以用ctrl-c退出历史编辑回到编辑缓冲区，但此时历史编辑窗口不关闭，可以参照之前的命令再自己输入
     * **输入`:x`关闭历史编辑并放弃编辑结果回到编辑缓冲区**
     * 可以在空命令上回车相当于退出历史编辑区回到编辑缓冲区
+
+## 1.14 Tips
+
+### 1.14.1 多行更新
+
+**示例：多行同时插入相同内容**
+
+1. 在需要插入内容的列的位置，按`[Ctrl]+v`，选择需要同时修改的行
+1. 按`I`进入编辑模式
+1. 编写需要插入的文本
+1. 按两下`ecs`
+
+**示例：多行同时删除相同的内容**
+
+1. 在需要插入内容的列的位置，按`[Ctrl]+v`，选择需要同时修改的行
+1. 选中需要同时修改的列
+1. 按`d`即可同时删除
+
+### 1.14.2 中文乱码
+
+**编辑`/etc/vimrc`，追加如下内容**
+
+```sh
+set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
+set termencoding=utf-8
+set encoding=utf-8
+```
 
 # 2 vim插件管理
 
@@ -379,7 +425,25 @@ call plug#begin()
 
 Plug 'morhetz/gruvbox'
 
+" -------- 下面是该插件的一些参数 --------
+
+" 启用gruvbox配色方案（~/.vim/colors目录下需要有gruvbox对应的.vim文件）
+colorscheme gruvbox
+" 设置背景，可选值有：dark, light
+set background=dark
+" 设置软硬度，可选值有soft、medium、hard。针对dark和light主题分别有一个配置项
+let g:gruvbox_contrast_dark = 'hard'
+let g:gruvbox_contrast_light = 'hard'
+
 call plug#end()
+```
+
+**将`gruvbox`中的配色方案移动到`vim`指定目录下**
+
+```sh
+# ~/.vim/colors 目录默认是不存在的
+$ mkdir ~/.vim/colors
+$ cp ~/.vim/plugged/gruvbox/colors/gruvbox.vim ~/.vim/colors/
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
@@ -748,52 +812,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-# 3 Tips
-
-## 3.1 多行更新
-
-**示例：多行同时插入相同内容**
-
-1. 在需要插入内容的列的位置，按`[Ctrl]+v`，选择需要同时修改的行
-1. 按`I`进入编辑模式
-1. 编写需要插入的文本
-1. 按两下`ecs`
-
-**示例：多行同时删除相同的内容**
-
-1. 在需要插入内容的列的位置，按`[Ctrl]+v`，选择需要同时修改的行
-1. 选中需要同时修改的列
-1. 按`d`即可同时删除
-
-## 3.2 vim环境设置与记录
-
-`vim`会主动将你曾经做过的行为记录下来，好让你下次可以轻松作业，记录操作的文件就是`~/.viminfo`
-
-整体vim的设置值一般放置在`/etc/vimrc`这个文件中，不过不建议修改它，但是可以修改`~/.vimrc`这个文件(默认不存在，手动创建)
-
-### 3.2.1 修改tab的行为
-
-修改`~/.vimrc`，追加如下内容
-
-```
-set ts=4
-set expandtab
-set autoindent
-```
-
-# 4 问题
-
-## 4.1 中文乱码
-
-**编辑`/etc/vimrc`，追加如下内容**
-
-```sh
-set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
-set termencoding=utf-8
-set encoding=utf-8
-```
-
-# 5 参考
+# 3 参考
 
 * **[《Vim 中文版入门到精通》](https://github.com/wsdjeg/vim-galore-zh_cn)**
 * **[《Vim 中文速查表》](https://github.com/skywind3000/awesome-cheatsheets/blob/master/editors/vim.txt)**
@@ -802,7 +821,7 @@ set encoding=utf-8
 * [如何优雅的使用 Vim（二）：插件介绍](https://segmentfault.com/a/1190000014560645)
 * [打造 vim 编辑 C/C++ 环境](https://carecraft.github.io/language-instrument/2018/06/config_vim/)
 * [VIM-Plug安装插件时，频繁更新失败，或报端口443被拒绝等](https://blog.csdn.net/htx1020/article/details/114364510)
-* [Linux 中的各种栈：进程栈 线程栈 内核栈 中断栈](http://blog.csdn.net/yangkuanqaz85988/article/details/52403726)
+* [Cannot find color scheme 'gruvbox' #85](https://github.com/morhetz/gruvbox/issues/85)
 * 《鸟哥的Linux私房菜》
 * [Mac 的 Vim 中 delete 键失效的原因和解决方案](https://blog.csdn.net/jiang314/article/details/51941479)
 * [解决linux下vim中文乱码的方法](https://blog.csdn.net/zhangjiarui130/article/details/69226109)
