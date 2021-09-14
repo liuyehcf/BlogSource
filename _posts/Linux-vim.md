@@ -1,6 +1,7 @@
 ---
 title: Linux-vim
 date: 2018-01-16 22:58:45
+top: true
 tags: 
 - 摘录
 categories: 
@@ -289,6 +290,12 @@ categories:
 
 | 插件名称 | 用途 | 官网地址 |
 |:--|:--|:--|
+| `gruvbox` | 配色方案 | https://github.com/morhetz/gruvbox |
+| `vim-airline` | 状态栏 | https://github.com/vim-airline/vim-airline |
+| `indentLine` | 缩进标线 | https://github.com/Yggdroot/indentLine |
+| `nerdtree` | 文件管理器 | https://github.com/preservim/nerdtree |
+| `tagbar` | 代码提纲 | https://github.com/preservim/tagbar |
+| `rainbow_parentheses` | 彩虹括号 | https://github.com/kien/rainbow_parentheses.vim |
 | `Universal CTags` | 符号索引 | https://ctags.io/ |
 | `vim-gutentags` | 自动索引 | https://github.com/ludovicchabant/vim-gutentags |
 | `AsyncRun` | 编译运行 | https://github.com/skywind3000/asyncrun.vim |
@@ -353,7 +360,164 @@ let fmt = get(g:, 'plug_url_format', 'https://git::@hub.fastgit.org/%s.git')
 \ '^https://git::@hub.fastgit\.org', 'https://hub.fastgit.org', '')
 ```
 
-## 2.4 符号索引-`Universal CTags`
+**退格失效，编辑`~/.vimrc`，追加如下内容**
+
+```vim
+set backspace=indent,eol,start
+```
+
+## 2.4 配色方案-`gruvbox`
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'morhetz/gruvbox'
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+## 2.5 状态栏-`vim-airline`
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'vim-airline/vim-airline'
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+## 2.6 缩进标线-`indentLine`
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'Yggdroot/indentLine'
+
+" -------- 下面是该插件的一些参数 --------
+
+let g:indentLine_noConcealCursor = 1
+let g:indentLine_color_term = 0
+let g:indentLine_char = '|'
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+## 2.7 文件管理器-`nerdtree`
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'scrooloose/nerdtree'
+
+" -------- 下面是该插件的一些参数 --------
+
+" F2 快速切换
+nmap <F2> :NERDTreeToggle<CR>
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+## 2.8 代码提纲-`tagbar`
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'majutsushi/tagbar'
+
+" -------- 下面是该插件的一些参数 --------
+
+nmap <F8> :TagbarToggle<CR>
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+## 2.9 彩虹括号-`rainbow_parentheses`
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'kien/rainbow_parentheses.vim'
+
+" -------- 下面是该插件的一些参数 --------
+
+let g:rbpt_colorpairs = [
+    \ ['brown', 'RoyalBlue3'],
+    \ ['Darkblue', 'SeaGreen3'],
+    \ ['darkgray', 'DarkOrchid3'],
+    \ ['darkgreen', 'firebrick3'],
+    \ ['darkcyan', 'RoyalBlue3'],
+    \ ['darkred', 'SeaGreen3'],
+    \ ['darkmagenta', 'DarkOrchid3'],
+    \ ['brown', 'firebrick3'],
+    \ ['gray', 'RoyalBlue3'],
+    \ ['black', 'SeaGreen3'],
+    \ ['darkmagenta', 'DarkOrchid3'],
+    \ ['Darkblue', 'firebrick3'],
+    \ ['darkgreen', 'RoyalBlue3'],
+    \ ['darkcyan', 'SeaGreen3'],
+    \ ['darkred', 'DarkOrchid3'],
+    \ ['red', 'firebrick3'],
+    \ ]
+let g:rbpt_max = 8
+let g:rbpt_loadcmd_toggle = 0
+au VimEnter * RainbowParenthesesToggle
+au Syntax * RainbowParenthesesLoadRound
+au Syntax * RainbowParenthesesLoadSquare
+au Syntax * RainbowParenthesesLoadBraces
+au Syntax * RainbowParenthesesLoadChevrons
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+## 2.10 符号索引-`Universal CTags`
 
 **安装：参照[github官网文档](https://github.com/universal-ctags/ctags)进行编译安装即可**
 
@@ -397,15 +561,18 @@ ctags --fields=+iaS --extras=+q -R -f ~/.vim/systags \
 set tags+=~/.vim/systags
 ```
 
-## 2.5 自动索引-`vim-gutentags`
+## 2.11 自动索引-`vim-gutentags`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
 ```vim
 call plug#begin()
-" ... 其他插件
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
 Plug 'ludovicchabant/vim-gutentags'
-call plug#end()
 
 " -------- 下面是该插件的一些参数 --------
 
@@ -428,11 +595,13 @@ let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
 if !isdirectory(s:vim_tags)
    silent! call mkdir(s:vim_tags, 'p')
 endif
+
+call plug#end()
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.6 编译运行-`AsyncRun`
+## 2.12 编译运行-`AsyncRun`
 
 本质上，`AsyncRun`插件就是提供了异步执行命令的机制，我们可以利用这个机制定义一些动作，比如`编译`、`构建`、`运行`、`测试`等，提供类似于`IDE`的体验
 
@@ -440,9 +609,12 @@ endif
 
 ```vim
 call plug#begin()
-" ... 其他插件
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
 Plug 'skywind3000/asyncrun.vim'
-call plug#end()
 
 " -------- 下面是该插件的一些参数 --------
 
@@ -463,64 +635,71 @@ nnoremap <silent> <F8> :AsyncRun -cwd=<root> -raw make run <cr>
 
 " 设置测试项目的快捷键（这里只是示例，具体命令需要自行调整） 
 nnoremap <silent> <F6> :AsyncRun -cwd=<root> -raw make test <cr>
+
+call plug#end()
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.7 动态检查-`ALE`
+## 2.13 动态检查-`ALE`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
 ```vim
 call plug#begin()
-" ... 其他插件
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
 Plug 'dense-analysis/ale'
-call plug#end()
 
 " -------- 下面是该插件的一些参数 --------
 
-" 显示状态栏+不需要高亮行
-let g:ale_sign_column_always = 1
+" 不显示状态栏+不需要高亮行
+let g:ale_sign_column_always = 0
 let g:ale_set_highlights = 0
 
 " 错误和警告标志
 let g:ale_sign_error = '✗'
 let g:ale_sign_warning = '⚡'
 
-" 文件保存时，显示警告
-let g:ale_lint_on_text_changed = 'never'
-let g:ale_lint_on_enter = 0
-
-" 使用clang对c和c++进行语法检查
-let g:ale_linters = {
-\   'c++': ['clang'],
-\   'c': ['clang'],
-\}
-
 let g:ale_linters_explicit = 1
+let g:ale_linters = {
+  \   'c': ['clang'],
+  \   'cpp': ['clang'],
+  \}
+
 let g:ale_completion_delay = 500
 let g:ale_echo_delay = 20
 let g:ale_lint_delay = 500
 let g:ale_echo_msg_format = '[%linter%] %code: %%s'
+let g:ale_lint_on_text_changed = 'normal'
 let g:ale_lint_on_insert_leave = 1
 let g:airline#extensions#ale#enabled = 1
-
 let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
 let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++14'
 let g:ale_c_cppcheck_options = ''
 let g:ale_cpp_cppcheck_options = ''
+
+call plug#end()
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.8 修改比较-`vim-signify`
+## 2.14 修改比较-`vim-signify`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
 ```vim
 call plug#begin()
-" ... 其他插件
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
 Plug 'mhinz/vim-signify'
+
 call plug#end()
 ```
 
@@ -531,41 +710,43 @@ call plug#end()
 * `set signcolumn=yes`，有改动的行会标出
 * `:SignifyDiff`：以左右分屏的方式对比当前文件的差异
 
-## 2.9 文本对象
+## 2.15 文本对象
 
-## 2.10 语法高亮-`vim-cpp-enhanced-highlight`
+## 2.16 语法高亮-`vim-cpp-enhanced-highlight`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
 ```vim
 call plug#begin()
-" ... 其他插件
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
 Plug 'octol/vim-cpp-enhanced-highlight'
+
 call plug#end()
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.11 代码补全-`YouCompleteMe`
+## 2.17 代码补全-`YouCompleteMe`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
 ```vim
 call plug#begin()
-" ... 其他插件
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
 Plug 'ycm-core/YouCompleteMe'
+
 call plug#end()
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
-
-## 2.12 todo
-
-退格失效
-
-```vim
-set backspace=indent,eol,start
-```
 
 # 3 Tips
 
