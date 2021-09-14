@@ -225,7 +225,7 @@ categories:
 1. `Ctrl+w h`：把光标移动到左边的屏中
 1. `Ctrl+w k`：把光标移动到上边的屏中
 1. `Ctrl+w j`：把光标移动到下边的屏中
-1. `Ctrl+w w`：把光标移动到下一个屏中
+1. **`Ctrl+w w`：把光标移动到下一个屏中，如果只有两个窗口的话，就可以相互切换了**
 1. `Ctrl+w L`：向右移动屏幕
 1. `Ctrl+w H`：向左移动屏幕
 1. `Ctrl+w K`：向上移动屏幕
@@ -438,15 +438,15 @@ let g:gruvbox_contrast_light = 'hard'
 call plug#end()
 ```
 
-**将`gruvbox`中的配色方案移动到`vim`指定目录下**
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**将`gruvbox`中的配色方案（执行完`:PlugInstall`才有这个文件哦）移动到`vim`指定目录下**
 
 ```sh
 # ~/.vim/colors 目录默认是不存在的
 $ mkdir ~/.vim/colors
 $ cp ~/.vim/plugged/gruvbox/colors/gruvbox.vim ~/.vim/colors/
 ```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
 
 ## 2.5 状态栏-`vim-airline`
 
@@ -625,6 +625,12 @@ ctags --fields=+iaS --extras=+q -R -f ~/.vim/systags \
 set tags+=~/.vim/systags
 ```
 
+**使用：**
+
+* `ctrl + ]`：跳转到符号定义处
+* `ctrl + w + ]`：在新的窗口中跳转到符号定义处
+* `:ts`：显示所有的匹配项。按`ECS`再输入序号，再按`Enter`就可以进入指定的匹配项
+
 ## 2.11 自动索引-`vim-gutentags`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
@@ -728,11 +734,12 @@ let g:ale_set_highlights = 0
 let g:ale_sign_error = '✗'
 let g:ale_sign_warning = '⚡'
 
-let g:ale_linters_explicit = 1
-let g:ale_linters = {
-  \   'c': ['clang'],
-  \   'cpp': ['clang'],
-  \}
+" 设置linter（但是并没有效果，所以我注释了
+" let g:ale_linters_explicit = 1
+" let g:ale_linters = {
+"   \   'c': ['gcc'],
+"   \   'cpp': ['g++'],
+"   \}
 
 let g:ale_completion_delay = 500
 let g:ale_echo_delay = 20
@@ -741,15 +748,32 @@ let g:ale_echo_msg_format = '[%linter%] %code: %%s'
 let g:ale_lint_on_text_changed = 'normal'
 let g:ale_lint_on_insert_leave = 1
 let g:airline#extensions#ale#enabled = 1
-let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
-let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++14'
-let g:ale_c_cppcheck_options = ''
-let g:ale_cpp_cppcheck_options = ''
+
+" 设置编译器的参数（由于我无法更改默认的linter，所以下面的配置也是无效的，我也注释掉了
+" let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
+" let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++14'
+" let g:ale_c_cppcheck_options = ''
+" let g:ale_cpp_cppcheck_options = ''
+
+" 默认的linter是cc，cc是个alias，包含了clang、clang++、gcc、g++，且默认会用clang和clang++
+" :ALEInfo 可以看到这些配置
+let g:ale_c_cc_executable = 'clang'
+let g:ale_cpp_cc_executable = 'clang++'
+let g:ale_cpp_cc_options = '-std=c++11 -Wall'
+let g:ale_c_cc_options = '-std=c11 -Wall'
 
 call plug#end()
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
+
+**使用：**
+
+* **`:ALEInfo`：查看配置信息，拉到最后有命令执行结果**
+
+**问题：**
+
+1. 即便我为`cpp`指定了`g:ale_linters`，并将`g:ale_linters_explicit`设置成1，但是实际的`linter`仍然是默认的`cc`，默认使用的是`clang`、`clang++`
 
 ## 2.14 修改比较-`vim-signify`
 
@@ -774,7 +798,23 @@ call plug#end()
 * `set signcolumn=yes`，有改动的行会标出
 * `:SignifyDiff`：以左右分屏的方式对比当前文件的差异
 
-## 2.15 文本对象
+## 2.15 文本对象-`textobj-user`
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'kana/vim-textobj-user'
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
 
 ## 2.16 语法高亮-`vim-cpp-enhanced-highlight`
 
@@ -811,6 +851,170 @@ call plug#end()
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
+
+## 2.18 个人完整配置
+
+**`~/.vimrc`完整配置如下**
+
+```vim
+call plug#begin()
+
+Plug 'morhetz/gruvbox'
+
+" 启用gruvbox配色方案（~/.vim/colors目录下需要有gruvbox对应的.vim文件）
+colorscheme gruvbox
+" 设置背景，可选值有：dark, light
+set background=dark
+" 设置软硬度，可选值有soft、medium、hard。针对dark和light主题分别有一个配置项
+let g:gruvbox_contrast_dark = 'hard'
+let g:gruvbox_contrast_light = 'hard'
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'vim-airline/vim-airline'
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'Yggdroot/indentLine'
+
+let g:indentLine_noConcealCursor = 1
+let g:indentLine_color_term = 0
+let g:indentLine_char = '|'
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'scrooloose/nerdtree'
+
+" F2 快速切换
+nmap <F2> :NERDTreeToggle<CR>
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'majutsushi/tagbar'
+
+nmap <F8> :TagbarToggle<CR>
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'kien/rainbow_parentheses.vim'
+
+let g:rbpt_colorpairs = [
+    \ ['brown', 'RoyalBlue3'],
+    \ ['Darkblue', 'SeaGreen3'],
+    \ ['darkgray', 'DarkOrchid3'],
+    \ ['darkgreen', 'firebrick3'],
+    \ ['darkcyan', 'RoyalBlue3'],
+    \ ['darkred', 'SeaGreen3'],
+    \ ['darkmagenta', 'DarkOrchid3'],
+    \ ['brown', 'firebrick3'],
+    \ ['gray', 'RoyalBlue3'],
+    \ ['black', 'SeaGreen3'],
+    \ ['darkmagenta', 'DarkOrchid3'],
+    \ ['Darkblue', 'firebrick3'],
+    \ ['darkgreen', 'RoyalBlue3'],
+    \ ['darkcyan', 'SeaGreen3'],
+    \ ['darkred', 'DarkOrchid3'],
+    \ ['red', 'firebrick3'],
+    \ ]
+let g:rbpt_max = 8
+let g:rbpt_loadcmd_toggle = 0
+au VimEnter * RainbowParenthesesToggle
+au Syntax * RainbowParenthesesLoadRound
+au Syntax * RainbowParenthesesLoadSquare
+au Syntax * RainbowParenthesesLoadBraces
+au Syntax * RainbowParenthesesLoadChevrons
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'ludovicchabant/vim-gutentags'
+
+" gutentags 搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归
+let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
+
+" 所生成的数据文件的名称
+let g:gutentags_ctags_tagfile = '.tags'
+
+" 将自动生成的 tags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
+let s:vim_tags = expand('~/.cache/tags')
+let g:gutentags_cache_dir = s:vim_tags
+
+" 配置 ctags 的参数
+let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+
+" 检测 ~/.cache/tags 不存在就新建
+if !isdirectory(s:vim_tags)
+   silent! call mkdir(s:vim_tags, 'p')
+endif
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'skywind3000/asyncrun.vim'
+
+" 自动打开 quickfix window ，高度为 6
+let g:asyncrun_open = 6
+
+" 任务结束时候响铃提醒
+let g:asyncrun_bell = 1
+
+" 设置 F10 打开/关闭 Quickfix 窗口
+nnoremap <F10> :call asyncrun#quickfix_toggle(6)<cr>
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'dense-analysis/ale'
+
+" 不显示状态栏+不需要高亮行
+let g:ale_sign_column_always = 0
+let g:ale_set_highlights = 0
+
+" 错误和警告标志
+let g:ale_sign_error = '✗'
+let g:ale_sign_warning = '⚡'
+
+" 设置linter（但是并没有效果，所以我注释了
+" let g:ale_linters_explicit = 1
+" let g:ale_linters = {
+"   \   'c': ['gcc'],
+"   \   'cpp': ['g++'],
+"   \}
+
+let g:ale_completion_delay = 500
+let g:ale_echo_delay = 20
+let g:ale_lint_delay = 500
+let g:ale_echo_msg_format = '[%linter%] %code: %%s'
+let g:ale_lint_on_text_changed = 'normal'
+let g:ale_lint_on_insert_leave = 1
+let g:airline#extensions#ale#enabled = 1
+
+" 设置编译器的参数（由于我无法更改默认的linter，所以下面的配置也是无效的，我也注释掉了
+" let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
+" let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++14'
+" let g:ale_c_cppcheck_options = ''
+" let g:ale_cpp_cppcheck_options = ''
+
+" 默认的linter是cc，cc是个alias，包含了clang、clang++、gcc、g++，且默认会用clang和clang++
+" :ALEInfo 可以看到这些配置
+let g:ale_c_cc_executable = 'clang'
+let g:ale_cpp_cc_executable = 'clang++'
+let g:ale_cpp_cc_options = '-std=c++11 -Wall'
+let g:ale_c_cc_options = '-std=c11 -Wall'
+
+call plug#end()
+
+" ctags的配置
+set tags=./.tags;,.tags
+set tags+=~/.vim/systags
+
+" 退格失效的配置
+set backspace=indent,eol,start
+
+" tab相关配置
+set ts=4
+set expandtab
+set autoindent
+```
 
 # 3 参考
 
