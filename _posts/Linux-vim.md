@@ -361,8 +361,51 @@ set encoding=utf-8
 | `YouCompleteMe` | 代码补全 | https://github.com/ycm-core/YouCompleteMe |
 | `LeaderF` | 函数列表 | https://github.com/Yggdroot/LeaderF |
 | `echodoc` | 参数提示 | https://github.com/Shougo/echodoc.vim |
+| `vim-auto-popmenu` | 轻量补全 | https://github.com/skywind3000/vim-auto-popmenu |
 
-## 2.2 centos安装vim8
+## 2.2 环境准备
+
+**为什么需要准备环境，vim的插件管理不是会为我们安装插件么？因为某些复杂插件，比如`ycm`是需要手动编译的，而编译就会依赖一些编译相关的工具，并且要求的版本比较高**
+
+**由于我用的系统是`CentOS 7.9`，通过`yum install`安装的工具都过于陈旧，包括`gcc`、`g++`、`clang`、`clang++`、`cmake`等等，这些工具都需要通过其他方式重新安装**
+
+### 2.2.1 安装gcc
+
+**[gcc各版本源码包下载地址](http://ftp.gnu.org/gnu/gcc/)，我选择的版本是`gcc-10.3.0`**
+
+```sh
+# 下载并解压源码包
+wget -O gcc-10.3.0.tar.gz 'http://ftp.gnu.org/gnu/gcc/gcc-10.3.0/gcc-10.3.0.tar.gz'
+tar -zxf gcc-10.3.0.tar.gz
+cd gcc-10.3.0
+
+# 安装依赖项
+yum install bzip2 -y
+./contrib/download_prerequisites
+
+# 编译安装（比较耗时，耐心等待）
+./configure --disable-multilib --enable-languages=c,c++
+make -j 4
+make install
+```
+
+### 2.2.2 安装clang
+
+### 2.2.3 安装cmake
+
+**源码从[github-cmake](https://github.com/Kitware/CMake)获取，并参照`README`进行安装即可**
+
+```sh
+# 安装依赖
+yum install -y openssl-devel
+
+# 下载并安装cmake
+git clone https://hub.fastgit.org/Kitware/CMake.git --depth 1
+cd CMake
+./bootstrap && make && sudo make install
+```
+
+### 2.2.4 centos安装vim8
 
 上述很多插件对`vim`的版本有要求，至少是`vim8`，而一般通过`yum install`安装的`vim`版本是`7.x`
 
@@ -378,224 +421,12 @@ yum install -y vim
 vim --version | head -1
 ```
 
-## 2.3 安装vim-plug
-
-按照[vim-plug](https://github.com/junegunn/vim-plug)官网文档，通过一个命令直接安装即可
-
-```sh
-curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-```
-
-**基本用法**
-
-1. 以`call plug#begin()`开头
-1. 中间是`Plug`的相关命令
-1. 以`call plug#end()`结尾，默认会开启如下功能，如果不需要的话，可以手动关闭
-    * `filetype plugin indent on`
-    * `syntax enable`
-
-**基本操作**
-
-* `:PlugStatus`：查看插件状态
-* `:PlugInstall`：安装插件
-* `:PlugClean`：清除插件
-
-**修改下载源：默认从`github`上下载，稳定性较差，可以按照如下方式修改`~/.vim/autoload/plug.vim`**
-
-```js
-// 将
-let fmt = get(g:, 'plug_url_format', 'https://git::@github.com/%s.git')
-// 修改为
-let fmt = get(g:, 'plug_url_format', 'https://git::@hub.fastgit.org/%s.git')
-
-// 将
-\ '^https://git::@github\.com', 'https://github.com', '')
-// 修改为
-\ '^https://git::@hub.fastgit\.org', 'https://hub.fastgit.org', '')
-```
-
-**退格失效，编辑`~/.vimrc`，追加如下内容**
-
-```vim
-set backspace=indent,eol,start
-```
-
-## 2.4 配色方案-`gruvbox`
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....其他插件及配置.....
-" ......................
-
-Plug 'morhetz/gruvbox'
-
-" -------- 下面是该插件的一些参数 --------
-
-" 启用gruvbox配色方案（~/.vim/colors目录下需要有gruvbox对应的.vim文件）
-colorscheme gruvbox
-" 设置背景，可选值有：dark, light
-set background=dark
-" 设置软硬度，可选值有soft、medium、hard。针对dark和light主题分别有一个配置项
-let g:gruvbox_contrast_dark = 'hard'
-let g:gruvbox_contrast_light = 'hard'
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**将`gruvbox`中的配色方案（执行完`:PlugInstall`才有这个文件哦）移动到`vim`指定目录下**
-
-```sh
-# ~/.vim/colors 目录默认是不存在的
-mkdir ~/.vim/colors
-cp ~/.vim/plugged/gruvbox/colors/gruvbox.vim ~/.vim/colors/
-```
-
-## 2.5 状态栏-`vim-airline`
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....其他插件及配置.....
-" ......................
-
-Plug 'vim-airline/vim-airline'
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-## 2.6 缩进标线-`indentLine`
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....其他插件及配置.....
-" ......................
-
-Plug 'Yggdroot/indentLine'
-
-" -------- 下面是该插件的一些参数 --------
-
-let g:indentLine_noConcealCursor = 1
-let g:indentLine_color_term = 239
-let g:indentLine_char = '|'
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-## 2.7 文件管理器-`nerdtree`
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....其他插件及配置.....
-" ......................
-
-Plug 'scrooloose/nerdtree'
-
-" -------- 下面是该插件的一些参数 --------
-
-" F2 快速切换
-nmap <F2> :NERDTreeToggle<CR>
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-## 2.8 代码提纲-`tagbar`
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....其他插件及配置.....
-" ......................
-
-Plug 'majutsushi/tagbar'
-
-" -------- 下面是该插件的一些参数 --------
-
-nmap <F8> :TagbarToggle<CR>
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-## 2.9 彩虹括号-`rainbow_parentheses`
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....其他插件及配置.....
-" ......................
-
-Plug 'kien/rainbow_parentheses.vim'
-
-" -------- 下面是该插件的一些参数 --------
-
-let g:rbpt_colorpairs = [
-    \ ['brown', 'RoyalBlue3'],
-    \ ['Darkblue', 'SeaGreen3'],
-    \ ['darkgray', 'DarkOrchid3'],
-    \ ['darkgreen', 'firebrick3'],
-    \ ['darkcyan', 'RoyalBlue3'],
-    \ ['darkred', 'SeaGreen3'],
-    \ ['darkmagenta', 'DarkOrchid3'],
-    \ ['brown', 'firebrick3'],
-    \ ['gray', 'RoyalBlue3'],
-    \ ['black', 'SeaGreen3'],
-    \ ['darkmagenta', 'DarkOrchid3'],
-    \ ['Darkblue', 'firebrick3'],
-    \ ['darkgreen', 'RoyalBlue3'],
-    \ ['darkcyan', 'SeaGreen3'],
-    \ ['darkred', 'DarkOrchid3'],
-    \ ['red', 'firebrick3'],
-    \ ]
-let g:rbpt_max = 8
-let g:rbpt_loadcmd_toggle = 0
-au VimEnter * RainbowParenthesesToggle
-au Syntax * RainbowParenthesesLoadRound
-au Syntax * RainbowParenthesesLoadSquare
-au Syntax * RainbowParenthesesLoadBraces
-au Syntax * RainbowParenthesesLoadChevrons
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-## 2.10 符号索引-`Universal CTags`
+### 2.2.5 符号索引-`Universal CTags`
 
 **安装：参照[github官网文档](https://github.com/universal-ctags/ctags)进行编译安装即可**
 
 ```sh
-git clone https://github.com/universal-ctags/ctags.git --depth 1
+git clone https://hub.fastgit.org/universal-ctags/ctags.git --depth 1
 cd ctags
 ./autogen.sh
 ./configure --prefix=/usr/local
@@ -643,7 +474,219 @@ set tags+=~/.vim/systags
 * `:tp`：跳转到上一个匹配项
 * `g + ]`：如果有多条匹配项，会直接显式（同`:ts`）
 
-## 2.11 自动索引-`vim-gutentags`
+### 2.2.6 安装vim-plug
+
+按照[vim-plug](https://github.com/junegunn/vim-plug)官网文档，通过一个命令直接安装即可
+
+```sh
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+```
+
+**基本用法**
+
+1. 以`call plug#begin()`开头
+1. 中间是`Plug`的相关命令
+1. 以`call plug#end()`结尾，默认会开启如下功能，如果不需要的话，可以手动关闭
+    * `filetype plugin indent on`
+    * `syntax enable`
+
+**基本操作**
+
+* `:PlugStatus`：查看插件状态
+* `:PlugInstall`：安装插件
+* `:PlugClean`：清除插件
+
+**修改下载源：默认从`github`上下载，稳定性较差，可以按照如下方式修改`~/.vim/autoload/plug.vim`**
+
+```js
+// 将
+let fmt = get(g:, 'plug_url_format', 'https://git::@github.com/%s.git')
+// 修改为
+let fmt = get(g:, 'plug_url_format', 'https://git::@hub.fastgit.org/%s.git')
+
+// 将
+\ '^https://git::@github\.com', 'https://github.com', '')
+// 修改为
+\ '^https://git::@hub.fastgit\.org', 'https://hub.fastgit.org', '')
+```
+
+**退格失效，编辑`~/.vimrc`，追加如下内容**
+
+```vim
+set backspace=indent,eol,start
+```
+
+## 2.3 配色方案-`gruvbox`
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'morhetz/gruvbox'
+
+" -------- 下面是该插件的一些参数 --------
+
+" 启用gruvbox配色方案（~/.vim/colors目录下需要有gruvbox对应的.vim文件）
+colorscheme gruvbox
+" 设置背景，可选值有：dark, light
+set background=dark
+" 设置软硬度，可选值有soft、medium、hard。针对dark和light主题分别有一个配置项
+let g:gruvbox_contrast_dark = 'hard'
+let g:gruvbox_contrast_light = 'hard'
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**将`gruvbox`中的配色方案（执行完`:PlugInstall`才有这个文件哦）移动到`vim`指定目录下**
+
+```sh
+# ~/.vim/colors 目录默认是不存在的
+mkdir ~/.vim/colors
+cp ~/.vim/plugged/gruvbox/colors/gruvbox.vim ~/.vim/colors/
+```
+
+## 2.4 状态栏-`vim-airline`
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'vim-airline/vim-airline'
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+## 2.5 缩进标线-`indentLine`
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'Yggdroot/indentLine'
+
+" -------- 下面是该插件的一些参数 --------
+
+let g:indentLine_noConcealCursor = 1
+let g:indentLine_color_term = 239
+let g:indentLine_char = '|'
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+## 2.6 文件管理器-`nerdtree`
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'scrooloose/nerdtree'
+
+" -------- 下面是该插件的一些参数 --------
+
+" F2 快速切换
+nmap <F2> :NERDTreeToggle<CR>
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+## 2.7 代码提纲-`tagbar`
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'majutsushi/tagbar'
+
+" -------- 下面是该插件的一些参数 --------
+
+nmap <F8> :TagbarToggle<CR>
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+## 2.8 彩虹括号-`rainbow_parentheses`
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'kien/rainbow_parentheses.vim'
+
+" -------- 下面是该插件的一些参数 --------
+
+let g:rbpt_colorpairs = [
+    \ ['brown', 'RoyalBlue3'],
+    \ ['Darkblue', 'SeaGreen3'],
+    \ ['darkgray', 'DarkOrchid3'],
+    \ ['darkgreen', 'firebrick3'],
+    \ ['darkcyan', 'RoyalBlue3'],
+    \ ['darkred', 'SeaGreen3'],
+    \ ['darkmagenta', 'DarkOrchid3'],
+    \ ['brown', 'firebrick3'],
+    \ ['gray', 'RoyalBlue3'],
+    \ ['black', 'SeaGreen3'],
+    \ ['darkmagenta', 'DarkOrchid3'],
+    \ ['Darkblue', 'firebrick3'],
+    \ ['darkgreen', 'RoyalBlue3'],
+    \ ['darkcyan', 'SeaGreen3'],
+    \ ['darkred', 'DarkOrchid3'],
+    \ ['red', 'firebrick3'],
+    \ ]
+let g:rbpt_max = 8
+let g:rbpt_loadcmd_toggle = 0
+au VimEnter * RainbowParenthesesToggle
+au Syntax * RainbowParenthesesLoadRound
+au Syntax * RainbowParenthesesLoadSquare
+au Syntax * RainbowParenthesesLoadBraces
+au Syntax * RainbowParenthesesLoadChevrons
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+## 2.9 自动索引-`vim-gutentags`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -683,7 +726,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.12 编译运行-`AsyncRun`
+## 2.10 编译运行-`AsyncRun`
 
 本质上，`AsyncRun`插件就是提供了异步执行命令的机制，我们可以利用这个机制定义一些动作，比如`编译`、`构建`、`运行`、`测试`等，提供类似于`IDE`的体验
 
@@ -723,7 +766,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.13 动态检查-`ALE`
+## 2.11 动态检查-`ALE`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -787,7 +830,7 @@ call plug#end()
 
 1. 即便我为`cpp`指定了`g:ale_linters`，并将`g:ale_linters_explicit`设置成1，但是实际的`linter`仍然是默认的`cc`，默认使用的是`clang`、`clang++`
 
-## 2.14 修改比较-`vim-signify`
+## 2.12 修改比较-`vim-signify`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -810,7 +853,7 @@ call plug#end()
 * `set signcolumn=yes`，有改动的行会标出
 * `:SignifyDiff`：以左右分屏的方式对比当前文件的差异
 
-## 2.15 文本对象-`textobj-user`
+## 2.13 文本对象-`textobj-user`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -828,7 +871,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.16 语法高亮-`vim-cpp-enhanced-highlight`
+## 2.14 语法高亮-`vim-cpp-enhanced-highlight`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -846,7 +889,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.17 代码补全-`YouCompleteMe`
+## 2.15 代码补全-`YouCompleteMe`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -864,7 +907,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.18 个人完整配置
+## 2.16 个人完整配置
 
 **初学`vim`，水平有限，仅供参考，`~/.vimrc`完整配置如下**
 
@@ -1039,6 +1082,10 @@ set autoindent
 * **[三十分钟配置一个顺滑如水的 Vim](https://zhuanlan.zhihu.com/p/102033129)**
 * [如何优雅的使用 Vim（二）：插件介绍](https://segmentfault.com/a/1190000014560645)
 * [打造 vim 编辑 C/C++ 环境](https://carecraft.github.io/language-instrument/2018/06/config_vim/)
+* [Vim2021：超轻量级代码补全系统](https://zhuanlan.zhihu.com/p/349271041)
+* [How To Install GCC on CentOS 7](https://linuxhostsupport.com/blog/how-to-install-gcc-on-centos-7/)
+* [Software Collections](https://www.softwarecollections.org/en/scls/user/rhscl/)
+* [8.x版本的gcc以及g++](https://www.softwarecollections.org/en/scls/rhscl/devtoolset-8/)
 * [VIM-Plug安装插件时，频繁更新失败，或报端口443被拒绝等](https://blog.csdn.net/htx1020/article/details/114364510)
 * [Cannot find color scheme 'gruvbox' #85](https://github.com/morhetz/gruvbox/issues/85)
 * 《鸟哥的Linux私房菜》
