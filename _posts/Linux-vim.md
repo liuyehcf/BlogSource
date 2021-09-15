@@ -936,6 +936,26 @@ call plug#begin()
 
 Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
 
+" -------- 下面是该插件的一些参数 --------
+
+" 将文件模糊搜索映射到快捷键 ctrl + p
+let g:Lf_ShortcutF = '<c-p>'
+let g:Lf_ShortcutB = '<m-n>'
+noremap <c-n> :LeaderfMru<cr>
+noremap <m-p> :LeaderfFunction!<cr>
+noremap <m-n> :LeaderfBuffer<cr>
+noremap <m-m> :LeaderfTag<cr>
+let g:Lf_StlSeparator = { 'left': '', 'right': '', 'font': '' }
+
+let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git']
+let g:Lf_WorkingDirectoryMode = 'Ac'
+let g:Lf_WindowHeight = 0.30
+let g:Lf_CacheDirectory = expand('~/.vim/cache')
+let g:Lf_ShowRelativePath = 0
+let g:Lf_HideHelp = 1
+let g:Lf_StlColorscheme = 'powerline'
+let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
+
 call plug#end()
 ```
 
@@ -944,8 +964,11 @@ call plug#end()
 **用法：**
 
 1. `:LeaderfFunction!`：弹出函数列表
-    * `ctrl j/k`：上下移动
-    * 键盘输入，即可进行模糊搜索
+    * `tab`可以在搜索和移动两种模式之间进行切换
+    * 移动模式下：`j/k`：上下移动
+    * 搜索模式下：输入即可进行模糊搜索
+1. `:LeaderfMru`：查找最近访问的文件，通过上面的配置映射到快捷键`ctrl + n`
+1. 通过上面的配置，将文件模糊搜索映射到快捷键`ctrl + p`
 
 ## 2.17 个人完整配置
 
@@ -1093,6 +1116,24 @@ let g:ale_c_cc_options = '-std=c11 -Wall'
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
+
+" 将文件模糊搜索映射到快捷键 ctrl + p
+let g:Lf_ShortcutF = '<c-p>'
+let g:Lf_ShortcutB = '<m-n>'
+noremap <c-n> :LeaderfMru<cr>
+noremap <m-p> :LeaderfFunction!<cr>
+noremap <m-n> :LeaderfBuffer<cr>
+noremap <m-m> :LeaderfTag<cr>
+let g:Lf_StlSeparator = { 'left': '', 'right': '', 'font': '' }
+
+let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git']
+let g:Lf_WorkingDirectoryMode = 'Ac'
+let g:Lf_WindowHeight = 0.30
+let g:Lf_CacheDirectory = expand('~/.vim/cache')
+let g:Lf_ShowRelativePath = 0
+let g:Lf_HideHelp = 1
+let g:Lf_StlColorscheme = 'powerline'
+let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
 
 call plug#end()
 
