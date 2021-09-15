@@ -387,25 +387,54 @@ yum install bzip2 -y
 ./configure --disable-multilib --enable-languages=c,c++
 make -j 4
 make install
+
+# 删除原来的gcc
+yum remove -y gcc
+
+# 创建软连接
+rm -f /usr/bin/gcc /usr/bin/g++ /usr/bin/cc /usr/bin/c++ /lib64/libstdc++.so.6
+ln -s /usr/local/bin/gcc /usr/bin/gcc
+ln -s /usr/local/bin/g++ /usr/bin/g++
+ln -s /usr/bin/gcc /usr/bin/cc
+ln -s /usr/bin/g++ /usr/bin/c++
+ln -s /usr/local/lib64/libstdc++.so.6.0.28 /lib64/libstdc++.so.6
 ```
 
-### 2.2.2 安装clang
+## 2.3 安装python3
 
-### 2.2.3 安装cmake
+```
+yum install -y python3
+yum install -y python3-devel.x86_64
+```
 
-**源码从[github-cmake](https://github.com/Kitware/CMake)获取，并参照`README`进行安装即可**
+### 2.3.1 安装cmake
+
+**[cmake官网](https://cmake.org/download/)有二进制包可以下载，下载安装即可**
 
 ```sh
-# 安装依赖
-yum install -y openssl-devel
-
-# 下载并安装cmake
-git clone https://hub.fastgit.org/Kitware/CMake.git --depth 1
-cd CMake
-./bootstrap && make && sudo make install
+# 下载二进制包
+wget https://github.com/Kitware/CMake/releases/download/v3.21.2/cmake-3.21.2-linux-x86_64.tar.gz
+# 解压到/usr/local/lib目录下
+tar -zxvf cmake-3.21.2-linux-x86_64.tar.gz -C /usr/local/lib
+# 创建软连接
+ln -s /usr/local/lib/cmake-3.21.2-linux-x86_64/bin/cmake /usr/local/bin/cmake
 ```
 
-### 2.2.4 centos安装vim8
+### 2.3.2 安装llvm
+
+**根据[官网安装说明](https://clang.llvm.org/get_started.html)进行安装，其代码托管在[github-llvm-project](https://github.com/llvm/llvm-project)**
+
+```sh
+git clone https://hub.fastgit.org/llvm/llvm-project.git --depth 1
+cd llvm-project
+mkdir build
+cd build
+cmake -DLLVM_ENABLE_PROJECTS=clang -G "Unix Makefiles" ../llvm
+make
+make install
+```
+
+### 2.3.3 centos安装vim8
 
 上述很多插件对`vim`的版本有要求，至少是`vim8`，而一般通过`yum install`安装的`vim`版本是`7.x`
 
@@ -421,7 +450,7 @@ yum install -y vim
 vim --version | head -1
 ```
 
-### 2.2.5 符号索引-`Universal CTags`
+### 2.3.4 符号索引-`Universal CTags`
 
 **安装：参照[github官网文档](https://github.com/universal-ctags/ctags)进行编译安装即可**
 
@@ -474,7 +503,7 @@ set tags+=~/.vim/systags
 * `:tp`：跳转到上一个匹配项
 * `g + ]`：如果有多条匹配项，会直接显式（同`:ts`）
 
-### 2.2.6 安装vim-plug
+### 2.3.5 安装vim-plug
 
 按照[vim-plug](https://github.com/junegunn/vim-plug)官网文档，通过一个命令直接安装即可
 
@@ -517,7 +546,7 @@ let fmt = get(g:, 'plug_url_format', 'https://git::@hub.fastgit.org/%s.git')
 set backspace=indent,eol,start
 ```
 
-## 2.3 配色方案-`gruvbox`
+## 2.4 配色方案-`gruvbox`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -553,7 +582,7 @@ mkdir ~/.vim/colors
 cp ~/.vim/plugged/gruvbox/colors/gruvbox.vim ~/.vim/colors/
 ```
 
-## 2.4 状态栏-`vim-airline`
+## 2.5 状态栏-`vim-airline`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -571,7 +600,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.5 缩进标线-`indentLine`
+## 2.6 缩进标线-`indentLine`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -595,7 +624,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.6 文件管理器-`nerdtree`
+## 2.7 文件管理器-`nerdtree`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -618,7 +647,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.7 代码提纲-`tagbar`
+## 2.8 代码提纲-`tagbar`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -640,7 +669,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.8 彩虹括号-`rainbow_parentheses`
+## 2.9 彩虹括号-`rainbow_parentheses`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -686,7 +715,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.9 自动索引-`vim-gutentags`
+## 2.10 自动索引-`vim-gutentags`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -726,7 +755,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.10 编译运行-`AsyncRun`
+## 2.11 编译运行-`AsyncRun`
 
 本质上，`AsyncRun`插件就是提供了异步执行命令的机制，我们可以利用这个机制定义一些动作，比如`编译`、`构建`、`运行`、`测试`等，提供类似于`IDE`的体验
 
@@ -766,7 +795,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.11 动态检查-`ALE`
+## 2.12 动态检查-`ALE`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -830,7 +859,7 @@ call plug#end()
 
 1. 即便我为`cpp`指定了`g:ale_linters`，并将`g:ale_linters_explicit`设置成1，但是实际的`linter`仍然是默认的`cc`，默认使用的是`clang`、`clang++`
 
-## 2.12 修改比较-`vim-signify`
+## 2.13 修改比较-`vim-signify`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -853,7 +882,7 @@ call plug#end()
 * `set signcolumn=yes`，有改动的行会标出
 * `:SignifyDiff`：以左右分屏的方式对比当前文件的差异
 
-## 2.13 文本对象-`textobj-user`
+## 2.14 文本对象-`textobj-user`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -871,7 +900,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.14 语法高亮-`vim-cpp-enhanced-highlight`
+## 2.15 语法高亮-`vim-cpp-enhanced-highlight`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -889,7 +918,17 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.15 代码补全-`YouCompleteMe`
+## 2.16 代码补全-`YouCompleteMe`
+
+**这个插件比较复杂，建议手工安装**
+
+```sh
+GIT_MODULES=( $(find . -name '.gitmodules') )
+for GIT_MODULE in ${GIT_MODULES[@]}
+do
+    sed -i 's|https://github.com|https://hub.fastgit.org|' ${GIT_MODULE}
+done
+```
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -907,7 +946,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.16 个人完整配置
+## 2.17 个人完整配置
 
 **初学`vim`，水平有限，仅供参考，`~/.vimrc`完整配置如下**
 
