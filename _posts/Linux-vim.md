@@ -266,7 +266,7 @@ categories:
 :syntax off         禁止语法高亮
 ```
 
-## 1.12 vim配置文件
+## 1.12 vim配置
 
 `vim`会主动将你曾经做过的行为记录下来，好让你下次可以轻松作业，记录操作的文件就是`~/.viminfo`
 
@@ -292,6 +292,14 @@ set expandtab
 " 表示自动缩进
 set autoindent
 ```
+
+### 1.12.2 键位映射
+
+1. `map`
+1. `noremap`
+1. `nnoremap`
+1. `unmap`
+1. `mapclear`：消所有`map`配置，慎用
 
 ## 1.13 其他
 
@@ -399,14 +407,14 @@ ln -s /usr/bin/g++ /usr/bin/c++
 ln -s /usr/local/lib64/libstdc++.so.6.0.28 /lib64/libstdc++.so.6
 ```
 
-## 2.3 安装python3
+### 2.2.2 安装python3
 
 ```
 yum install -y python3
 yum install -y python3-devel.x86_64
 ```
 
-### 2.3.1 安装cmake
+### 2.2.3 安装cmake
 
 **[cmake官网](https://cmake.org/download/)有二进制包可以下载，下载安装即可**
 
@@ -419,7 +427,7 @@ tar -zxvf cmake-3.21.2-linux-x86_64.tar.gz -C /usr/local/lib
 ln -s /usr/local/lib/cmake-3.21.2-linux-x86_64/bin/cmake /usr/local/bin/cmake
 ```
 
-### 2.3.2 安装llvm
+### 2.2.4 安装llvm
 
 **根据[官网安装说明](https://clang.llvm.org/get_started.html)进行安装，其代码托管在[github-llvm-project](https://github.com/llvm/llvm-project)**
 
@@ -433,7 +441,7 @@ make
 make install
 ```
 
-### 2.3.3 centos安装vim8
+### 2.2.5 centos安装vim8
 
 上述很多插件对`vim`的版本有要求，至少是`vim8`，而一般通过`yum install`安装的`vim`版本是`7.x`
 
@@ -449,7 +457,7 @@ yum install -y vim
 vim --version | head -1
 ```
 
-### 2.3.4 符号索引-`Universal CTags`
+### 2.2.6 符号索引-`Universal CTags`
 
 **安装：参照[github官网文档](https://github.com/universal-ctags/ctags)进行编译安装即可**
 
@@ -502,7 +510,7 @@ set tags+=~/.vim/systags
 * `:tp`：跳转到上一个匹配项
 * `g + ]`：如果有多条匹配项，会直接显式（同`:ts`）
 
-### 2.3.5 安装vim-plug
+### 2.2.7 安装vim-plug
 
 按照[vim-plug](https://github.com/junegunn/vim-plug)官网文档，通过一个命令直接安装即可
 
@@ -545,7 +553,7 @@ let fmt = get(g:, 'plug_url_format', 'https://git::@hub.fastgit.org/%s.git')
 set backspace=indent,eol,start
 ```
 
-## 2.4 配色方案-`gruvbox`
+## 2.3 配色方案-`gruvbox`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -581,7 +589,7 @@ mkdir ~/.vim/colors
 cp ~/.vim/plugged/gruvbox/colors/gruvbox.vim ~/.vim/colors/
 ```
 
-## 2.5 状态栏-`vim-airline`
+## 2.4 状态栏-`vim-airline`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -599,7 +607,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.6 缩进标线-`indentLine`
+## 2.5 缩进标线-`indentLine`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -623,7 +631,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.7 文件管理器-`nerdtree`
+## 2.6 文件管理器-`nerdtree`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -646,7 +654,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.8 彩虹括号-`rainbow_parentheses`
+## 2.7 彩虹括号-`rainbow_parentheses`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -692,7 +700,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.9 自动索引-`vim-gutentags`
+## 2.8 自动索引-`vim-gutentags`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -732,7 +740,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.10 编译运行-`AsyncRun`
+## 2.9 编译运行-`AsyncRun`
 
 本质上，`AsyncRun`插件就是提供了异步执行命令的机制，我们可以利用这个机制定义一些动作，比如`编译`、`构建`、`运行`、`测试`等，提供类似于`IDE`的体验
 
@@ -772,7 +780,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.11 动态检查-`ALE`
+## 2.10 动态检查-`ALE`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -836,7 +844,7 @@ call plug#end()
 
 1. 即便我为`cpp`指定了`g:ale_linters`，并将`g:ale_linters_explicit`设置成1，但是实际的`linter`仍然是默认的`cc`，默认使用的是`clang`、`clang++`
 
-## 2.12 修改比较-`vim-signify`
+## 2.11 修改比较-`vim-signify`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -859,7 +867,7 @@ call plug#end()
 * `set signcolumn=yes`，有改动的行会标出
 * `:SignifyDiff`：以左右分屏的方式对比当前文件的差异
 
-## 2.13 文本对象-`textobj-user`
+## 2.12 文本对象-`textobj-user`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -877,7 +885,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.14 语法高亮-`vim-cpp-enhanced-highlight`
+## 2.13 语法高亮-`vim-cpp-enhanced-highlight`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -895,7 +903,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.15 代码补全-`YouCompleteMe`
+## 2.14 代码补全-`YouCompleteMe`
 
 **这个插件比较复杂，建议手工安装**
 
@@ -923,7 +931,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.16 函数列表-`LeaderF`
+## 2.15 函数列表-`LeaderF`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -941,10 +949,12 @@ Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
 " 将文件模糊搜索映射到快捷键 ctrl + p
 let g:Lf_ShortcutF = '<c-p>'
 let g:Lf_ShortcutB = '<m-n>'
+" 将 :LeaderfMru 映射到快捷键 ctrl + n
 noremap <c-n> :LeaderfMru<cr>
-noremap <m-p> :LeaderfFunction!<cr>
-noremap <m-n> :LeaderfBuffer<cr>
-noremap <m-m> :LeaderfTag<cr>
+" 将 :LeaderfFunction! 映射到快捷键 alt + p，由于我用的是mac，mac是没有alt键的，只有option键
+" 而 option + p 是没法用 <m-p> 来表示的，我们只需打出 option + p 作为key即可
+" noremap <m-p> :LeaderfFunction!<cr>
+noremap π :LeaderfFunction!<cr>
 let g:Lf_StlSeparator = { 'left': '', 'right': '', 'font': '' }
 
 let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git']
@@ -970,7 +980,7 @@ call plug#end()
 1. `:LeaderfMru`：查找最近访问的文件，通过上面的配置映射到快捷键`ctrl + n`
 1. 通过上面的配置，将文件模糊搜索映射到快捷键`ctrl + p`
 
-## 2.17 个人完整配置
+## 2.16 个人完整配置
 
 **初学`vim`，水平有限，仅供参考，`~/.vimrc`完整配置如下**
 
@@ -1120,10 +1130,12 @@ Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
 " 将文件模糊搜索映射到快捷键 ctrl + p
 let g:Lf_ShortcutF = '<c-p>'
 let g:Lf_ShortcutB = '<m-n>'
+" 将 :LeaderfMru 映射到快捷键 ctrl + n
 noremap <c-n> :LeaderfMru<cr>
-noremap <m-p> :LeaderfFunction!<cr>
-noremap <m-n> :LeaderfBuffer<cr>
-noremap <m-m> :LeaderfTag<cr>
+" 将 :LeaderfFunction! 映射到快捷键 alt + p，由于我用的是mac，mac是没有alt键的，只有option键
+" 而 option + p 是没法用 <m-p> 来表示的，我们只需打出 option + p 作为key即可
+" noremap <m-p> :LeaderfFunction!<cr>
+noremap π :LeaderfFunction!<cr>
 let g:Lf_StlSeparator = { 'left': '', 'right': '', 'font': '' }
 
 let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git']
