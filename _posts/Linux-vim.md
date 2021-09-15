@@ -349,7 +349,6 @@ set encoding=utf-8
 | `vim-airline` | 状态栏 | https://github.com/vim-airline/vim-airline |
 | `indentLine` | 缩进标线 | https://github.com/Yggdroot/indentLine |
 | `nerdtree` | 文件管理器 | https://github.com/preservim/nerdtree |
-| `tagbar` | 代码提纲 | https://github.com/preservim/tagbar |
 | `rainbow_parentheses` | 彩虹括号 | https://github.com/kien/rainbow_parentheses.vim |
 | `Universal CTags` | 符号索引 | https://ctags.io/ |
 | `vim-gutentags` | 自动索引 | https://github.com/ludovicchabant/vim-gutentags |
@@ -647,29 +646,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.8 代码提纲-`tagbar`
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....其他插件及配置.....
-" ......................
-
-Plug 'majutsushi/tagbar'
-
-" -------- 下面是该插件的一些参数 --------
-
-nmap <F8> :TagbarToggle<CR>
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-## 2.9 彩虹括号-`rainbow_parentheses`
+## 2.8 彩虹括号-`rainbow_parentheses`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -715,7 +692,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.10 自动索引-`vim-gutentags`
+## 2.9 自动索引-`vim-gutentags`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -755,7 +732,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.11 编译运行-`AsyncRun`
+## 2.10 编译运行-`AsyncRun`
 
 本质上，`AsyncRun`插件就是提供了异步执行命令的机制，我们可以利用这个机制定义一些动作，比如`编译`、`构建`、`运行`、`测试`等，提供类似于`IDE`的体验
 
@@ -795,7 +772,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.12 动态检查-`ALE`
+## 2.11 动态检查-`ALE`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -859,7 +836,7 @@ call plug#end()
 
 1. 即便我为`cpp`指定了`g:ale_linters`，并将`g:ale_linters_explicit`设置成1，但是实际的`linter`仍然是默认的`cc`，默认使用的是`clang`、`clang++`
 
-## 2.13 修改比较-`vim-signify`
+## 2.12 修改比较-`vim-signify`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -882,7 +859,7 @@ call plug#end()
 * `set signcolumn=yes`，有改动的行会标出
 * `:SignifyDiff`：以左右分屏的方式对比当前文件的差异
 
-## 2.14 文本对象-`textobj-user`
+## 2.13 文本对象-`textobj-user`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -900,7 +877,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.15 语法高亮-`vim-cpp-enhanced-highlight`
+## 2.14 语法高亮-`vim-cpp-enhanced-highlight`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -918,7 +895,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.16 代码补全-`YouCompleteMe`
+## 2.15 代码补全-`YouCompleteMe`
 
 **这个插件比较复杂，建议手工安装**
 
@@ -945,6 +922,30 @@ call plug#end()
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
+
+## 2.16 函数列表-`LeaderF`
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**用法：**
+
+1. `:LeaderfFunction!`：弹出函数列表
+    * `ctrl j/k`：上下移动
+    * 键盘输入，即可进行模糊搜索
 
 ## 2.17 个人完整配置
 
@@ -981,12 +982,6 @@ Plug 'scrooloose/nerdtree'
 
 " F2 快速切换
 nmap <F2> :NERDTreeToggle<CR>
-
-" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-Plug 'majutsushi/tagbar'
-
-nmap <F8> :TagbarToggle<CR>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1094,6 +1089,10 @@ let g:ale_c_cc_executable = 'clang'
 let g:ale_cpp_cc_executable = 'clang++'
 let g:ale_cpp_cc_options = '-std=c++11 -Wall'
 let g:ale_c_cc_options = '-std=c11 -Wall'
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
 
 call plug#end()
 
