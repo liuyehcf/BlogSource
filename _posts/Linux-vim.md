@@ -367,6 +367,7 @@ set encoding=utf-8
 | `vim-cpp-enhanced-highlight` | 语法高亮 | https://github.com/octol/vim-cpp-enhanced-highlight |
 | `YouCompleteMe` | 代码补全 | https://github.com/ycm-core/YouCompleteMe |
 | `LeaderF` | 函数列表 | https://github.com/Yggdroot/LeaderF |
+| `fzf.vim` | 全局搜搜 | https://github.com/junegunn/fzf.vim |
 | `echodoc` | 参数提示 | https://github.com/Shougo/echodoc.vim |
 | `vim-auto-popmenu` | 轻量补全 | https://github.com/skywind3000/vim-auto-popmenu |
 
@@ -980,7 +981,31 @@ call plug#end()
 1. `:LeaderfMru`：查找最近访问的文件，通过上面的配置映射到快捷键`ctrl + n`
 1. 通过上面的配置，将文件模糊搜索映射到快捷键`ctrl + p`
 
-## 2.16 个人完整配置
+## 2.16 全局搜索-`fzf.vim`
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**用法：**
+
+1. `:Ag`：进行全局搜索
+    * `ctrl + j/k`可以在条目中上下移动
+
+## 2.17 个人完整配置
 
 **初学`vim`，水平有限，仅供参考，`~/.vimrc`完整配置如下**
 
@@ -1146,6 +1171,11 @@ let g:Lf_ShowRelativePath = 0
 let g:Lf_HideHelp = 1
 let g:Lf_StlColorscheme = 'powerline'
 let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 
 call plug#end()
 
