@@ -438,7 +438,9 @@ cd llvm-project
 mkdir build
 cd build
 cmake -DLLVM_ENABLE_PROJECTS=clang -G "Unix Makefiles" ../llvm
-make
+# 这一步会非常耗时，非常占内存，如果内存不足的话请分配足够的swap内存
+# 我的编译环境是虚拟机，4c8G，swap分配了25G。编译时，最多使用了4G（主存） + 15G（swap）的内存
+make -j 4
 make install
 ```
 
