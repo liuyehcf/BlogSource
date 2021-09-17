@@ -2414,6 +2414,12 @@ yum install -y hping3
 
 sar是由有类似日志切割的功能的，它会依据`/etc/cron.d/sysstat`中的计划任务，将日志放入`/var/log/sa/`中
 
+**安装：**
+
+```sh
+yum install -y sysstat
+```
+
 **格式：**
 
 * `sar [ 选项 ] [ <时间间隔> [ <次数> ] ]`

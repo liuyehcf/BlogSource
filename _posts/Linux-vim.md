@@ -433,13 +433,23 @@ ln -s /usr/local/lib/cmake-3.21.2-linux-x86_64/bin/cmake /usr/local/bin/cmake
 **根据[官网安装说明](https://clang.llvm.org/get_started.html)进行安装，其代码托管在[github-llvm-project](https://github.com/llvm/llvm-project)**
 
 ```sh
+# 编译过程会非常耗时，非常占内存，如果内存不足的话请分配足够的swap内存
+# 我的编译环境是虚拟机，4c8G，swap分配了25G。编译时，最多使用了4G（主存） + 25G（swap）的内存
+# 建议准备150G的磁盘空间，以及30G的swap空间
+dd if=/dev/zero of=swapfile bs=1M count=30720 status=progress oflag=sync
+mkswap swapfile
+chmod 600 swapfile
+swapon swapfile
+
 git clone https://hub.fastgit.org/llvm/llvm-project.git --depth 1
 cd llvm-project
 mkdir build
 cd build
-cmake -DLLVM_ENABLE_PROJECTS=clang -G "Unix Makefiles" ../llvm
-# 这一步会非常耗时，非常占内存，如果内存不足的话请分配足够的swap内存
-# 我的编译环境是虚拟机，4c8G，swap分配了25G。编译时，最多使用了4G（主存） + 15G（swap）的内存
+# DLLVM_ENABLE_PROJECTS: 选择clang子项目
+# DCMAKE_BUILD_TYPE: 构建类型指定为MinSizeRel。可选值有 Debug, Release, RelWithDebInfo, and MinSizeRel。其中Debug是默认值
+cmake -DLLVM_ENABLE_PROJECTS=clang \
+-DCMAKE_BUILD_TYPE=MinSizeRel \
+-G "Unix Makefiles" ../llvm
 make -j 4
 make install
 ```
