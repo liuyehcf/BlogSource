@@ -105,7 +105,7 @@ tar -xvf /tmp/home.tar -C /
 vim /etc/fstab
 ```
 
-## 2.2 添加硬盘以及扩容LVM
+## 2.2 LVM扩容
 
 ### 2.2.1 fdisk
 
@@ -630,7 +630,29 @@ data blocks changed from 2354176 to 4451328
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-## 2.3 修复因断电导致磁盘inode损坏
+## 2.3 LVM缩容
+
+**缩容需谨慎，一不小心就会导致系统整个无法使用**
+
+```sh
+# 将lvm的容量缩小
+# 1. 下面这个命令表示将lvm的容量调整为40G
+[root@liuyehcf ~]$ lvreduce -L 30G /dev/mapper/centos-root
+# 2. 下面这个命令表示将lvm的容量调整为：在原来的基础上减少40G
+[root@liuyehcf ~]$ lvreduce -L -30G /dev/mapper/centos-root
+
+# 将pv从vg中移走
+[root@liuyehcf ~]$ vgreduce centos /dev/sdb1
+
+# 将pv删除
+[root@liuyehcf ~]$ pvremove  /dev/sdb1
+
+# 将vg中剩余的容量分配到lvm中
+[root@liuyehcf ~]$ lvextend -l +100%FREE /dev/mapper/centos-root
+[root@liuyehcf ~]$ xfs_growfs /dev/mapper/centos-root
+```
+
+## 2.4 修复因断电导致磁盘inode损坏
 
 **步骤**
 
@@ -644,7 +666,7 @@ data blocks changed from 2354176 to 4451328
         * 针对根分区已加载的情况下，可以执行`xfs_repair -d /dev/mapper/centos-root`尝试修复
         * 如果修复失败，可以添加参数`-L`进行修复，但是这样会丢失一部分文件系统日志，不建议一开始就尝试，可以作为最终解决方案
 
-## 2.4 忘记root密码
+## 2.5 忘记root密码
 
 **方法1**
 
@@ -695,7 +717,7 @@ data blocks changed from 2354176 to 4451328
     * `reboot -f`
     * ![2-3-7](/images/Linux-定制发行版/2-3-7.png)
 
-## 2.5 恢复boot分区
+## 2.6 恢复boot分区
 
 当boot分区不小心被破坏之后（比如，用fdisk将boot分区误删了），机器是无法启动成功的，会出现如下错误页面
 
@@ -739,7 +761,7 @@ sh-4.2$ grub2-mkconfig > /boot/grub2/grub.cfg
 
 **第五步（可选）**：这一步取决于boot分区是如何被破坏的，如果整个分区都删掉了，那么需要修改`/etc/fstab`将`/boot`分区的配置项注释掉，然后重启
 
-## 2.6 概念理解
+## 2.7 概念理解
 
 1. 物理卷（physics volume）
     * 可以用`pvdisplay`查看逻辑卷
@@ -752,7 +774,7 @@ sh-4.2$ grub2-mkconfig > /boot/grub2/grub.cfg
         * `dmsetup info /dev/dm-0`可以查看`/dev/dm-0`的信息
         * `sudo lvdisplay|awk  '/LV Name/{n=$3} /Block device/{d=$3; sub(".*:","dm-",d); print d,n;}'`可以查看映射关系
 
-## 2.7 参考
+## 2.8 参考
 
 * [CentOS 7 调整 home分区 扩大 root分区](https://my.oschina.net/jasonMrliu/blog/1604954)
 * [手把手教你给 CentOS 7 添加硬盘及扩容(LVM)](https://aurthurxlc.github.io/Aurthur-2017/Centos-7-extend-lvm-volume.html)
