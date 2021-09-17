@@ -501,11 +501,21 @@ ctags -R -f .tags *
 **如何为系统库生成ctags**
 
 ```sh
+# 下面2种选一个即可
+
+# 1. 通过yum install -y gcc安装的gcc是4.8.5版本
 ctags --fields=+iaS --extras=+q -R -f ~/.vim/systags \
 /usr/include \
 /usr/local/include \
 /usr/lib/gcc/x86_64-redhat-linux/4.8.5/include/ \
 /usr/include/c++/4.8.5/
+
+# 2. 通过上面编译安装的gcc是10.3.0版本
+ctags --fields=+iaS --extras=+q -R -f ~/.vim/systags \
+/usr/include \
+/usr/local/include \
+/usr/local/lib/gcc/x86_64-pc-linux-gnu/10.3.0/include \
+/usr/local/include/c++/10.3.0
 ```
 
 然后在`~/.vimrc`中增加如下配置
@@ -959,6 +969,7 @@ Plug 'ycm-core/YouCompleteMe'
 
 " -------- 下面是该插件的一些参数 --------
 
+let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
 let g:ycm_add_preview_to_completeopt = 0
 let g:ycm_show_diagnostics_ui = 0
 let g:ycm_server_log_level = 'info'
@@ -980,6 +991,10 @@ call plug#end()
 
 **配置`~/.ycm_extra_conf.py`，内容如下（仅针对c/c++），仅供参考**
 
+* 由于我安装的是`gcc`的`10.3.0`版本，所以c和c++的头文件的路径分别是
+    * `/usr/local/lib/gcc/x86_64-pc-linux-gnu/10.3.0/include`
+    * `/usr/local/include/c++/10.3.0`
+
 ```python
 import os
 import ycm_core
@@ -998,13 +1013,9 @@ flags = [
     '-I',
     '/usr/include',
     '-isystem',
-    '/usr/lib/gcc/x86_64-linux-gnu/5/include',
+    '/usr/local/lib/gcc/x86_64-pc-linux-gnu/10.3.0/include',
     '-isystem',
-    '/usr/include/x86_64-linux-gnu',
-    '-isystem'
-    '/usr/include/c++/5',
-    '-isystem',
-    '/usr/include/c++/5/bits'
+    '/usr/local/include/c++/10.3.0',
   ]
  
 SOURCE_EXTENSIONS = [ '.cpp', '.cxx', '.cc', '.c', ]
@@ -1267,6 +1278,7 @@ Plug 'junegunn/fzf.vim'
 
 Plug 'ycm-core/YouCompleteMe'
 
+let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
 let g:ycm_add_preview_to_completeopt = 0
 let g:ycm_show_diagnostics_ui = 0
 let g:ycm_server_log_level = 'info'
