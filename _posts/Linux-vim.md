@@ -921,11 +921,29 @@ call plug#end()
 **这个插件比较复杂，建议手工安装**
 
 ```sh
-GIT_MODULES=( $(find . -name '.gitmodules') )
-for GIT_MODULE in ${GIT_MODULES[@]}
-do
-    sed -i 's|https://github.com|https://hub.fastgit.org|' ${GIT_MODULE}
-done
+# 定义一个函数，用于调整github的地址，加速下载过程，该函数会用到多次
+function setup_github_repo() {
+    CONFIGS=( $(grep -rnl 'https://github.com' .git) )
+    for CONFIG in ${CONFIGS[@]}
+    do
+        echo "setup github repo for '${CONFIG}'"
+        sed -i 's|https://github.com|https://hub.fastgit.org|g' ${CONFIG}
+    done
+}
+
+cd ~/.vim/plugged
+git clone https://hub.fastgit.org/ycm-core/YouCompleteMe.git --depth 1
+cd YouCompleteMe
+
+# 递归下载ycm的子模块
+git submodule update --init --recursive
+
+# 如果下载超时了，重复执行下面这两个命令，直至完毕
+setup_github_repo
+git submodule update --init --recursive
+
+# 编译
+python3 install.py --clang-completer
 ```
 
 **编辑`~/.vimrc`，添加Plug相关配置**
@@ -939,7 +957,63 @@ call plug#begin()
 
 Plug 'ycm-core/YouCompleteMe'
 
+" -------- 下面是该插件的一些参数 --------
+
+let g:ycm_add_preview_to_completeopt = 0
+let g:ycm_show_diagnostics_ui = 0
+let g:ycm_server_log_level = 'info'
+let g:ycm_min_num_identifier_candidate_chars = 2
+let g:ycm_collect_identifiers_from_comments_and_strings = 1
+let g:ycm_complete_in_strings=1
+let g:ycm_key_invoke_completion = '<c-z>'
+set completeopt=menu,menuone
+
+noremap <c-z> <NOP>
+
+let g:ycm_semantic_triggers =  {
+           \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
+           \ 'cs,lua,javascript': ['re!\w{2}'],
+           \ }
+
 call plug#end()
+```
+
+**配置`~/.ycm_extra_conf.py`，内容如下（仅针对c/c++），仅供参考**
+
+```python
+import os
+import ycm_core
+ 
+flags = [
+    '-Wall',
+    '-Wextra',
+    '-Werror',
+    '-Wno-long-long',
+    '-Wno-variadic-macros',
+    '-fexceptions',
+    '-DNDEBUG',
+    '-std=c++14',
+    '-x',
+    'c++',
+    '-I',
+    '/usr/include',
+    '-isystem',
+    '/usr/lib/gcc/x86_64-linux-gnu/5/include',
+    '-isystem',
+    '/usr/include/x86_64-linux-gnu',
+    '-isystem'
+    '/usr/include/c++/5',
+    '-isystem',
+    '/usr/include/c++/5/bits'
+  ]
+ 
+SOURCE_EXTENSIONS = [ '.cpp', '.cxx', '.cc', '.c', ]
+ 
+def FlagsForFile( filename, **kwargs ):
+  return {
+    'flags': flags,
+    'do_cache': True
+  }
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
@@ -1188,6 +1262,26 @@ let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
 
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'ycm-core/YouCompleteMe'
+
+let g:ycm_add_preview_to_completeopt = 0
+let g:ycm_show_diagnostics_ui = 0
+let g:ycm_server_log_level = 'info'
+let g:ycm_min_num_identifier_candidate_chars = 2
+let g:ycm_collect_identifiers_from_comments_and_strings = 1
+let g:ycm_complete_in_strings=1
+let g:ycm_key_invoke_completion = '<c-z>'
+set completeopt=menu,menuone
+
+noremap <c-z> <NOP>
+
+let g:ycm_semantic_triggers =  {
+           \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
+           \ 'cs,lua,javascript': ['re!\w{2}'],
+           \ }
 
 call plug#end()
 
