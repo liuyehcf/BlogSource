@@ -970,6 +970,8 @@ Plug 'ycm-core/YouCompleteMe'
 " -------- 下面是该插件的一些参数 --------
 
 let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+let g:ycm_confirm_extra_conf = 0
+
 let g:ycm_add_preview_to_completeopt = 0
 let g:ycm_show_diagnostics_ui = 0
 let g:ycm_server_log_level = 'info'
@@ -1279,6 +1281,8 @@ Plug 'junegunn/fzf.vim'
 Plug 'ycm-core/YouCompleteMe'
 
 let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+let g:ycm_confirm_extra_conf = 0
+
 let g:ycm_add_preview_to_completeopt = 0
 let g:ycm_show_diagnostics_ui = 0
 let g:ycm_server_log_level = 'info'
