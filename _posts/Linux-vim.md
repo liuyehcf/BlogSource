@@ -483,14 +483,6 @@ make
 make install # may require extra privileges depending on where to install
 ```
 
-**推荐配置，在`~/.vimrc`中增加如下配置**
-
-* **注意，这里将tag的文件名从`tags`换成了`.tags`，这样避免污染项目中的其他文件。因此在使用`ctags`命令生成tag文件时，需要通过`-f .tags`参数指定文件名**
-
-```vim
-set tags=./.tags;,.tags
-```
-
 **在工程中生成ctags**
 
 ```sh
@@ -498,7 +490,7 @@ set tags=./.tags;,.tags
 ctags -R -f .tags *
 ```
 
-**如何为系统库生成ctags**
+**如何为系统库生成ctags，这里生成的系统库对应的ctags文件是`~/.vim/systags`**
 
 ```sh
 # 下面2种选一个即可
@@ -518,12 +510,6 @@ ctags --fields=+iaS --extras=+q -R -f ~/.vim/systags \
 /usr/local/include/c++/10.3.0
 ```
 
-然后在`~/.vimrc`中增加如下配置
-
-```vim
-set tags+=~/.vim/systags
-```
-
 **使用：**
 
 * `ctrl + ]`：跳转到符号定义处。如果有多条匹配项，则会跳转到第一个匹配项
@@ -532,6 +518,23 @@ set tags+=~/.vim/systags
 * `:tn`：跳转到下一个匹配项
 * `:tp`：跳转到上一个匹配项
 * `g + ]`：如果有多条匹配项，会直接显式（同`:ts`）
+
+**推荐配置，在`~/.vimrc`中增加如下配置**
+
+* **注意，这里将tag的文件名从`tags`换成了`.tags`，这样避免污染项目中的其他文件。因此在使用`ctags`命令生成tag文件时，需要通过`-f .tags`参数指定文件名**
+* **`./.tags;`表示在文件所在目录下查找名字为`.tags`的符号文件，`;`表示查找不到的话，向上递归到父目录，直到找到`.tags`或者根目录**
+* **`.tags`是指在`vim`的当前目录（在`vim`中执行`:pwd`）下查找`.tags`文件**
+
+```vim
+" 将 :tn 和 :tp 分别映射到 alt + 和 alt -，而mac并没有alt键只有option键
+" 于是我们需要直接打出 option + 和 option - 作为映射的key即可
+noremap ≠ :tn<cr>
+noremap – :tp<cr>
+" tags搜索模式
+set tags=./.tags;,.tags
+" 系统库的ctags
+set tags+=~/.vim/systags
+```
 
 ### 2.2.7 安装vim-plug
 
@@ -1302,7 +1305,13 @@ let g:ycm_semantic_triggers =  {
 call plug#end()
 
 " ctags的配置
+" 将 :tn 和 :tp 分别映射到 alt + 和 alt -，而mac并没有alt键只有option键
+" 于是我们需要直接打出 option + 和 option - 作为映射的key即可
+noremap ≠ :tn<cr>
+noremap – :tp<cr>
+" tags搜索模式
 set tags=./.tags;,.tags
+" 系统库的ctags
 set tags+=~/.vim/systags
 
 " 退格失效的配置
