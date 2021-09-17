@@ -526,10 +526,10 @@ ctags --fields=+iaS --extras=+q -R -f ~/.vim/systags \
 * **`.tags`是指在`vim`的当前目录（在`vim`中执行`:pwd`）下查找`.tags`文件**
 
 ```vim
-" 将 :tn 和 :tp 分别映射到 alt + 和 alt -，而mac并没有alt键只有option键
-" 于是我们需要直接打出 option + 和 option - 作为映射的key即可
-noremap ≠ :tn<cr>
-noremap – :tp<cr>
+" 将 :tn 和 :tp 分别映射到 alt + j 和 alt + k，而mac并没有alt键只有option键
+" 于是我们需要直接打出 option + j 和 option + k 作为映射的key即可
+noremap ∆ :tn<cr>
+noremap ˚ :tp<cr>
 " tags搜索模式
 set tags=./.tags;,.tags
 " 系统库的ctags
@@ -1305,10 +1305,10 @@ let g:ycm_semantic_triggers =  {
 call plug#end()
 
 " ctags的配置
-" 将 :tn 和 :tp 分别映射到 alt + 和 alt -，而mac并没有alt键只有option键
-" 于是我们需要直接打出 option + 和 option - 作为映射的key即可
-noremap ≠ :tn<cr>
-noremap – :tp<cr>
+" 将 :tn 和 :tp 分别映射到 alt + j 和 alt + k，而mac并没有alt键只有option键
+" 于是我们需要直接打出 option + j 和 option + k 作为映射的key即可
+noremap ∆ :tn<cr>
+noremap ˚ :tp<cr>
 " tags搜索模式
 set tags=./.tags;,.tags
 " 系统库的ctags
