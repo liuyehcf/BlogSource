@@ -59,16 +59,16 @@ categories:
 * 可以配合数字使用，如向右移动30个字符`30l`或`30→`
 * **`[Ctrl]+f`：屏幕向下移动一页，相当于[Page Down]按键**
 * **`[Ctrl]+b`：屏幕向上移动一页，相当于[Page Up]按键**
-* `[Ctrl]+d`：屏幕向下移动半页
-* `[Ctrl]+u`：屏幕向上移动半页
-* `+`：光标移动到非空格符的下一行
-* `-`：光标移动到非空格符的上一行
+* **`[Ctrl]+d`：屏幕向下移动半页**
+* **`[Ctrl]+u`：屏幕向上移动半页**
+* **`+`：光标移动到非空格符的下一行**
+* **`-`：光标移动到非空格符的上一行**
 * `[n][space]`：n表示数字，再按空格键，光标会向右移动n个字符
 * **`0(数字零)或[home]`：移动到这一行的最前面字符处**
 * **`$或功能键end`：移动到这一行最后面的字符处**
-* `H`：光标移动到屏幕最上方那一行的第一个字符
-* `M`：光标移动到这个屏幕的中央那一行的第一个字符
-* `L`：光标移动到这个屏幕的最下方那一行的第一个字符
+* **`H`：光标移动到屏幕最上方那一行的第一个字符**
+* **`M`：光标移动到这个屏幕的中央那一行的第一个字符**
+* **`L`：光标移动到这个屏幕的最下方那一行的第一个字符**
 * **`w`：跳到下一个单词开头（标点或空格分隔的单词）**
 * **`e`：跳到下一个单词尾部（标点或空格分隔的单词）**
 * **`b`：跳到上一个单词开头（标点或空格分隔的单词）**
@@ -185,6 +185,7 @@ categories:
 * **`:q`：离开**
 * **`:q!`：若曾修改过文件，又不想存储，使用"!"为强制离开不保存的意思**
 * **`:wq`：保存后离开,若为:wq!则代表强制保存并离开**
+* **`:e [filename]`：打开文件并编辑**
 * `ZZ`：若文件没有变更，则不保存离开，若文件已经变更过，保存后离开
 * `:w [filename]`：将编辑文件保存称为另一个文件,注意w和文件名中间有空格
 * `:r [filename]`：在编辑的数据中，读入另一个文件的数据，即将filename这个文件的内容加到光标所在行后面，注意r和文件名之间有空格
@@ -904,12 +905,23 @@ call plug#begin()
 " .....其他插件及配置.....
 " ......................
 
+" 其中 kana/vim-textobj-user 提供了自定义文本对象的基础能力，其他插件是基于该插件的扩展
 Plug 'kana/vim-textobj-user'
+Plug 'kana/vim-textobj-indent'
+Plug 'kana/vim-textobj-syntax'
+Plug 'kana/vim-textobj-function', { 'for':['c', 'cpp', 'vim', 'java'] }
+Plug 'sgur/vim-textobj-parameter'
 
 call plug#end()
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
+
+**使用：**
+
+* **`i,/a,`：函数对象。可以用`vi,`/`di,`/`ci,`来选中/删除/改写当前参数**
+* **`ii/ai`：缩进对象。可以用`vii`/`dii`/`cii`来选中/删除/改写同一缩进层次的内容**
+* **`if/af`：函数对象。可以用`vif`/`dif`/`cif`来选中/删除/改写当前函数的内容**
 
 ## 2.13 语法高亮-`vim-cpp-enhanced-highlight`
 
@@ -929,7 +941,80 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.14 代码补全-`YouCompleteMe`
+## 2.14 函数列表-`LeaderF`
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
+
+" -------- 下面是该插件的一些参数 --------
+
+" 将文件模糊搜索映射到快捷键 ctrl + p
+let g:Lf_ShortcutF = '<c-p>'
+let g:Lf_ShortcutB = '<m-n>'
+" 将 :LeaderfMru 映射到快捷键 ctrl + n
+noremap <c-n> :LeaderfMru<cr>
+" 将 :LeaderfFunction! 映射到快捷键 alt + p，由于我用的是mac，mac是没有alt键的，只有option键
+" 而 option + p 是没法用 <m-p> 来表示的，我们只需打出 option + p 作为key即可
+" noremap <m-p> :LeaderfFunction!<cr>
+noremap π :LeaderfFunction!<cr>
+let g:Lf_StlSeparator = { 'left': '', 'right': '', 'font': '' }
+
+let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git']
+let g:Lf_WorkingDirectoryMode = 'Ac'
+let g:Lf_WindowHeight = 0.30
+let g:Lf_CacheDirectory = expand('~/.vim/cache')
+let g:Lf_ShowRelativePath = 0
+let g:Lf_HideHelp = 1
+let g:Lf_StlColorscheme = 'powerline'
+let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**用法：**
+
+1. `:LeaderfFunction!`：弹出函数列表
+    * `tab`可以在搜索和移动两种模式之间进行切换
+    * 移动模式下：`j/k`：上下移动
+    * 搜索模式下：输入即可进行模糊搜索
+1. `:LeaderfMru`：查找最近访问的文件，通过上面的配置映射到快捷键`ctrl + n`
+1. 通过上面的配置，将文件模糊搜索映射到快捷键`ctrl + p`
+
+## 2.15 全局搜索-`fzf.vim`
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**用法：**
+
+1. `:Ag`：进行全局搜索
+    * `ctrl + j/k`可以在条目中上下移动
+
+## 2.16 代码补全-`YouCompleteMe`
 
 **这个插件比较复杂，建议手工安装**
 
@@ -1033,79 +1118,6 @@ def FlagsForFile( filename, **kwargs ):
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
-
-## 2.15 函数列表-`LeaderF`
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....其他插件及配置.....
-" ......................
-
-Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
-
-" -------- 下面是该插件的一些参数 --------
-
-" 将文件模糊搜索映射到快捷键 ctrl + p
-let g:Lf_ShortcutF = '<c-p>'
-let g:Lf_ShortcutB = '<m-n>'
-" 将 :LeaderfMru 映射到快捷键 ctrl + n
-noremap <c-n> :LeaderfMru<cr>
-" 将 :LeaderfFunction! 映射到快捷键 alt + p，由于我用的是mac，mac是没有alt键的，只有option键
-" 而 option + p 是没法用 <m-p> 来表示的，我们只需打出 option + p 作为key即可
-" noremap <m-p> :LeaderfFunction!<cr>
-noremap π :LeaderfFunction!<cr>
-let g:Lf_StlSeparator = { 'left': '', 'right': '', 'font': '' }
-
-let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git']
-let g:Lf_WorkingDirectoryMode = 'Ac'
-let g:Lf_WindowHeight = 0.30
-let g:Lf_CacheDirectory = expand('~/.vim/cache')
-let g:Lf_ShowRelativePath = 0
-let g:Lf_HideHelp = 1
-let g:Lf_StlColorscheme = 'powerline'
-let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**用法：**
-
-1. `:LeaderfFunction!`：弹出函数列表
-    * `tab`可以在搜索和移动两种模式之间进行切换
-    * 移动模式下：`j/k`：上下移动
-    * 搜索模式下：输入即可进行模糊搜索
-1. `:LeaderfMru`：查找最近访问的文件，通过上面的配置映射到快捷键`ctrl + n`
-1. 通过上面的配置，将文件模糊搜索映射到快捷键`ctrl + p`
-
-## 2.16 全局搜索-`fzf.vim`
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....其他插件及配置.....
-" ......................
-
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**用法：**
-
-1. `:Ag`：进行全局搜索
-    * `ctrl + j/k`可以在条目中上下移动
 
 ## 2.17 个人完整配置
 
@@ -1249,6 +1261,15 @@ let g:ale_c_cc_executable = 'clang'
 let g:ale_cpp_cc_executable = 'clang++'
 let g:ale_cpp_cc_options = '-std=c++11 -Wall'
 let g:ale_c_cc_options = '-std=c11 -Wall'
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+" 其中 kana/vim-textobj-user 提供了自定义文本对象的基础能力，其他插件是基于该插件的扩展
+Plug 'kana/vim-textobj-user'
+Plug 'kana/vim-textobj-indent'
+Plug 'kana/vim-textobj-syntax'
+Plug 'kana/vim-textobj-function', { 'for':['c', 'cpp', 'vim', 'java'] }
+Plug 'sgur/vim-textobj-parameter'
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
