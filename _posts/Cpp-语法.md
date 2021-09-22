@@ -565,7 +565,68 @@ int main() {
 };
 ```
 
-# 10 placement new
+# 10 指针
+
+## 10.1 成员函数指针
+
+成员函数指针需要通过`.*`或者`->*`运算符进行调用
+
+* 类内调用：`(this->*<name>)(args...)`
+* 类外调用：`(obj.*obj.<name>)(args...)`或者`(pointer->*pointer-><name>)(args...)`
+
+```cpp
+#include <iostream>
+#include <memory>
+
+class Demo {
+public:
+    explicit Demo(bool flag) {
+        if (flag) {
+            say_hi = &Demo::say_hi_1;
+        } else {
+            say_hi = &Demo::say_hi_2;
+        }
+    }
+
+    void invoke_say_hi() {
+        (this->*say_hi)();
+    }
+
+    void (Demo::*say_hi)() = nullptr;
+
+    void say_hi_1();
+
+    void say_hi_2();
+};
+
+void Demo::say_hi_1() {
+    std::cout << "say_hi_1" << std::endl;
+}
+
+void Demo::say_hi_2() {
+    std::cout << "say_hi_2" << std::endl;
+}
+
+int main() {
+    Demo demo1(true);
+
+    // invoke inside class
+    demo1.invoke_say_hi();
+
+    // invoke outside class with obj
+    (demo1.*demo1.say_hi)();
+
+    // invoke outside class with pointer
+    Demo *p1 = &demo1;
+    (p1->*p1->say_hi)();
+
+    // invoke outside class with pointer
+    std::shared_ptr<Demo> sp1 = std::make_shared<Demo>(false);
+    (sp1.get()->*sp1->say_hi)();
+}
+```
+
+# 11 placement new
 
 `placement new`的功能就是在一个已经分配好的空间上，调用构造函数，创建一个对象
 
@@ -574,11 +635,11 @@ void *buf = // 在这里为buf分配内存
 Class *pc = new (buf) Class();  
 ```
 
-# 11 模板
+# 12 模板
 
 模板形参可以是一个类型或者枚举
 
-## 11.1 非类型模板参数
+## 12.1 非类型模板参数
 
 我们还可以在模板中定义非类型参数，一个非类型参数表示一个值而非一个类型。当一个模板被实例化时，非类型参数被编译器推断出的值所代替，这些值必须是常量表达式，从而允许编译器在编译时实例化模板。一个非类型参数可以是一个整型（枚举可以理解为整型），或是一个指向对象或函数类型的指针或引用
 
@@ -614,7 +675,7 @@ int main() {
 }
 ```
 
-## 11.2 模板形参无法推断
+## 12.2 模板形参无法推断
 
 通常，在`::`左边的模板形参是无法进行推断的（这里的`::`特指用于连接两个类型），例如下面这个例子
 
@@ -639,9 +700,9 @@ int main() {
 }
 ```
 
-# 12 宏
+# 13 宏
 
-## 12.1 do while(0) in macros
+## 13.1 do while(0) in macros
 
 考虑下面的宏定义
 
@@ -708,7 +769,7 @@ else
 #define foo(x) do { bar(x); baz(x); } while (0)
 ```
 
-# 13 mock class
+# 14 mock class
 
 有时在测试的时候，我们需要mock一个类的实现，我们可以在测试的cpp文件中实现这个类的所有方法（**注意，必须是所有方法**），就能够覆盖原有库文件中的实现。下面以一个例子来说明
 
@@ -885,9 +946,9 @@ person.cpp:(.text+0x2a): Person::sleep() 的多重定义
 collect2: 错误：ld 返回 1
 ```
 
-## 13.1 demo using cmake
+## 14.1 demo using cmake
 
-# 14 参考
+# 15 参考
 
 * [C++11\14\17\20 特性介绍](https://www.jianshu.com/p/8c4952e9edec)
 * [关于C++：静态常量字符串(类成员)](https://www.codenong.com/1563897/)
@@ -897,3 +958,4 @@ collect2: 错误：ld 返回 1
 * [C++ 强制转换运算符](https://www.runoob.com/cplusplus/cpp-casting-operators.html)
 * [When should static_cast, dynamic_cast, const_cast and reinterpret_cast be used?](https://stackoverflow.com/questions/332030/when-should-static-cast-dynamic-cast-const-cast-and-reinterpret-cast-be-used)
 * [Candidate template ignored because template argument could not be inferred](https://stackoverflow.com/questions/12566228/candidate-template-ignored-because-template-argument-could-not-be-inferred)
+* [calling a member function pointer from outside the class - is it possible?](https://stackoverflow.com/questions/60438079/calling-a-member-function-pointer-from-outside-the-class-is-it-possible)
