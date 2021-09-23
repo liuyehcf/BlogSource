@@ -47,9 +47,40 @@ categories:
 
 **progress：5/12 3.3**
 
-# 2 Efficiency in the Columbia Database Query Optimizer
+# 2 Google File System
 
-# 3 Fast Selection and Aggregation on Encoded Data using Operator Specialization
+1. GFS的目标包括：performance（高性能）、scalability（高可扩展）、reliability（高可靠）、availability（高可用）
+1. 在设计中，把失败视为常态而非异常。因此系统必须具备的核心能力包括：持续监控、错误勘探、错误容忍、自动恢复
+1. 管理几十亿个`KB`大小的文件不是一种好方法，需要重新设计文件格式、`I/O`操作的块大小等参数
+1. 绝大部分情况下，文件总是追加写入而不是覆盖写入，因此并无随机写入的需求
+1. GFS放宽了一致性模型的要求，从而大大简化了文件系统的设计，降低用户的使用心智
+1. GFS的假设
+    * 文件系统由许多廉价的机器构成，并且这些机器容易出错（宕机等）。因此必须能够持续监控自身、探测错误、容错，并且敏捷地从异常中恢复
+    * 系统存储少量大文件，大小在100M、1G甚至更大。并且能够基于这些大文件提供高效的操作。小文件肯定支持，但是不会针对小文件做太多优化
+    * 工作负载包含两类读操作：大数据量的流式读取以及小数据量的随机读取。对于小数据量的随机读取，性能敏感性应用通常会进行批处理和排序，以稳定地浏览文件而不是来回移动
+    * 工作负载支持两类写操作：大数据量的顺序写入以及小数据量的随机写入。其中小数据量的随机写入性能不会很好
+    * 系统必须为并发写入提供高效的实现，并且提供明确的语义
+    * 可持续的高带宽比低延迟更重要
+1. GFS具有常规文件系统的接口，包括：`create`、`delete`、`open`、`close`、`read`、`write`。同时增加了两个新操作`snapshot`以及`record append`
+    * `snapshot`以非常低的开销进行文件或者目录树的拷贝
+    * `record append`能够处理大量客户端的并发请求，并且保证其写入的原子性
+1. GFS包含一个`master`、多个`chunkserver`以及大量的`clients`
+    * 文件被拆分成大小固定的`chunks`，每个`chunk`由一个全局唯一的`chunk handler`标识，该标识由`master`签发
+    * `chunkserver`将`chunk`以linux文件的形式存储在本地磁盘上，并且通过`chunk handler`进行操作。基于可靠性考虑，每个`chunk`都会存在多个副本，并且分布在不同的`chunkserver`中
+    * `master`中存储了全部的元信息，包括`namespace`、`access control`、文件与`chunk`的映射关系、`chunk`的位置信息等。同时，`master`也控制着`chunk lease`、垃圾回收（无用chunk）、`chunk`迁移等过程。`master`与`chunkserver`之间通过心跳包保持通信，用于传递指令以及采集状态信息
+    * `client`从`master`中获取元数据，然后直接从`chunkserver`中读写数据
+    * 无论是`client`（`client`会缓存元数据，但是不会缓存数据）或者`chunkserver`都不用缓存（这里的缓存指的是GFS层面的缓存），这是由工作负载决定的，大部分的时间都在读写大批量的数据，缓存在这种场景中，用处很小。无缓存降低了系统的复杂度。虽然`chunkserver`不用缓存，但是其存储是基于Linux文件系统的，Linux文件系统本身是有缓存的，对于频繁读写的数据是有性能增益的
+1. `single-master`能够有效的降低系统复杂度，并且使得`master`能够借助全局信息处理诸如`chunk`替换以及复制等复杂操作。同时，我们要尽最大努力降低`master`在普通读写操作中的参与度，避免其成为性能瓶颈。虽然`client`不从`master`中读取数据，但是它需要知道从`master`中获取哪些`chunkserver`存储了相应的数据，因此`client`可以缓存这些信息，从而降低与`master`的交互频率
+1. `chunk size`是GFS的关键参数，建议值是`64MB`。大的`chunk size`包含如下优势
+    * 降低了`client`与`master`的交互频率，如果读取的数据在同一个`chunk`中，那么直接从`chunkserver`中读取即可，无需与`master`交互
+    * 使得`client`的大部分操作集中在一个`chunk`中，避免多机网络开销
+    * 降低了`master`中元数据的大小，`chunk size`越大，元数据数量越少，从而使得`master`将元数据存储在内存中成为可能
+1. 大的`chunk size`也存在劣势，包括
+    * 增大了热点chunk出现的概率。但是对于GFS的预设的工作负载来说，热点不会是主要问题，因为大部分都是顺序读写大批量的chunk
 
-# 4 Shared memory consistency models - A tutorial
+# 3 Efficiency in the Columbia Database Query Optimizer
+
+# 4 Fast Selection and Aggregation on Encoded Data using Operator Specialization
+
+# 5 Shared memory consistency models - A tutorial
 
