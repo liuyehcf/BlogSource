@@ -77,6 +77,34 @@ categories:
     * 降低了`master`中元数据的大小，`chunk size`越大，元数据数量越少，从而使得`master`将元数据存储在内存中成为可能
 1. 大的`chunk size`也存在劣势，包括
     * 增大了热点chunk出现的概率。但是对于GFS的预设的工作负载来说，热点不会是主要问题，因为大部分都是顺序读写大批量的chunk
+1. `master`存储了如下三种元数据
+    1. 文件以及`chunk`的`namespace`
+    1. `file`到`chunk`的映射关系
+    1. `chunk`的每个副本的具体位置信息
+    * 所有的元数据都存储在`master`的内存中，前两种类型也会以日志的形式持久化到本地磁盘上
+    * `master`不存储`chunk`的具体位置信息，而是在`master`每次启动或者有新的`chunkserver`加入集群时主动询问
+1. 对于存储在内存中的元数据，`master`会对其进行周期性的扫描，主要实现以下功能
+    * 实现垃圾回收，清理那些被标记删除的chunk
+    * `chunk`复制，用以应对`chunkserver`宕机
+    * `chunk`迁移，实现负载均衡
+1. `master`不会存储`chunk`的位置信息，而是在启动时，主动向`chunkserver`拉取这些信息，`master`始终保持原信息的有效性，因为它控制着所有`chunk`的迁移、拷贝等操作，并且与`chunkserver`通过周期性的心跳包来定期同步状态
+    * **采用这种设计的另一个原因是：`chunkserver`对一个`chunk`是否在其本地磁盘上有最终解释权，没有必要维护一个`master`视角下的一致性视图。大大降低了复杂度**
+1. `operation log`记录了`metadata`的历史变更。`master`必须确保操作日志落盘后（本机以及用以备份的远程主机），才能返回`client`，
+    * `master`可以通过重放日志来恢复自身的状态
+    * 当日志数量超过一定的阈值后，可以通过`checkpoint`来解决这个问题，`checkpoint`可以简单理解成某个时刻`master`内存数据的快照，其数据结构类似B-tree
+1. GFS采用了一种松一致性模型。引入两个概念`consistent`以及`defined`
+    * `consistent`：所有客户端看到的数据都是一样的（从任意副本上）
+    * `defined`：所有客户端都能看到引起数据变更的操作具体是什么
+    * `a serial success mutation`：`consistent`，`difined`
+    * `concurrent success mutations`：`consistent`、`undefined`
+    * `failed mutations`：`inconsistent`、`undefined`
+1. `Data mutations`包含两种操作`write`以及`record append`
+    * `write`：表示往指定的offset写入数据
+    * `record append`：表示往文件最后追加数据。在并发的场景下，至少有一个能追加成功
+1. GFS的松一致性模型保证的约束有
+    * 文件命名空间变更是个原子操作
+    * 在`a sequence of successful mutations`之后，相应的文件是`consistent`，`difined`。GFS通过在副本上重放操作来保证`defined`特性，并且通过版本号来检测那些过时的`chunk`（`chunkserver`从错误中恢复回来，但是错过了一些变更），这些过时的`chunk`将不包含在`master`中。此外，由于`client`会缓存`chunk`的位置信息，因此在缓存失效之前可能读到旧的数据，而大部分的文件都是`append-only`的，因此大概率读到的是不完整的数据而不是错误的数据，又进一步降低了影响
+    * 当一个`chunk`的所有副本均丢失后，`chunk`才算丢失。在恢复之前，GFS会返回清晰的错误信息而不是错误的数据
 
 # 3 Efficiency in the Columbia Database Query Optimizer
 
