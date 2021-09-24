@@ -29,3 +29,4 @@
 1. cpp
     * gcc各种常用
     * c++内存对齐
+    * jemalloc/jcmalloc
