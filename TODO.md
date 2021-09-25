@@ -30,3 +30,11 @@
     * gcc各种常用
     * c++内存对齐
     * jemalloc/jcmalloc
+    * 如何安装boost？ `yum install -y boost-devel`
+1. 伙伴算法
+1. 异常中断的区别
+1. rpc框架，thrift
+1. codegen原理
+1. 什么是体系结构
+1. sa：解决方案架构师
+1. sre：
