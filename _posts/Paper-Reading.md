@@ -95,9 +95,9 @@ categories:
 1. GFS采用了一种松一致性模型。引入两个概念`consistent`以及`defined`
     * `consistent`：所有客户端看到的数据都是一样的（从任意副本上）
     * `defined`：所有客户端都能看到引起数据变更的操作具体是什么
-    * `a serial success mutation`：`consistent`，`difined`
-    * `concurrent success mutations`：`consistent`、`undefined`
-    * `failed mutations`：`inconsistent`、`undefined`
+    * `a serial success mutation`：`consistent and difined`
+    * `concurrent success mutations`：`consistent and undefined`
+    * `failed mutations`：`inconsistent and undefined`
 1. `Data mutations`包含两种操作`write`以及`record append`
     * `write`：表示往指定的offset写入数据
     * `record append`：表示往文件最后追加数据。在并发的场景下，至少有一个能追加成功
@@ -105,6 +105,19 @@ categories:
     * 文件命名空间变更是个原子操作
     * 在`a sequence of successful mutations`之后，相应的文件是`consistent`，`difined`。GFS通过在副本上重放操作来保证`defined`特性，并且通过版本号来检测那些过时的`chunk`（`chunkserver`从错误中恢复回来，但是错过了一些变更），这些过时的`chunk`将不包含在`master`中。此外，由于`client`会缓存`chunk`的位置信息，因此在缓存失效之前可能读到旧的数据，而大部分的文件都是`append-only`的，因此大概率读到的是不完整的数据而不是错误的数据，又进一步降低了影响
     * 当一个`chunk`的所有副本均丢失后，`chunk`才算丢失。在恢复之前，GFS会返回清晰的错误信息而不是错误的数据
+1. 使用GFS的应用，最好使用追加写而不是覆盖写，因为追加写具有更好的性能以及错误恢复能力
+1. 系统被设计为尽量避免与master交互
+1. `Leases and Mutation Order`
+    * 在执行变更操作时，`master`会挑选出某一个副本作为`primary`，然后由这个`primary`决定这一组操作的执行顺序，然后将这个执行顺序同步给其他副本
+    * 租赁机制是为了降低`master`的参与度，避免`master`成为系统的瓶颈
+    * 在执行变更的过程中，`master`还有可能通过心跳包发送额外的变更请求，或者直接终止变更操作
+        * 假设有2个副本A、B，A变更结束，B还在变更，此时`master`发送终止变更的消息，A和B将如何恢复？
+    * 变更操作的整体流程（看论文就行，这里不赘述）
+        * 第三步：论文中是由client向所有的replicas推送待写入的数据，这就要求clients必须知道集群中的所有副本情况，才知道发给谁，感觉有点怪。更好的做法是：发给其中某个副本，然后让这个副本同步给其他副本
+        * 第六步：如果部分副本变更成功，部分副本变更失败时，怎么回滚？不需要回滚，因为数据有版本的概念，假设有三个副本A、B、C，A、B都写入成功了，`chunk`的版本号是6；C写失败，版本号还是5。但此时，A和B构成了一个多数派，变更操作成功，并且将版本信息告知`master`，下次`client`读的时候，仍然可以从A、B、C三个副本中随机读取，假设选择的是C，但是一看版本号不是最新的，那么就会重新发起读操作，直至读取到最新的数据。此外，失败的副本会有补偿机制来进行修复
+    * 如果需要写入大量数据（规模超过`chunkSize`），`client`会首先将其拆分成多个小块，但是这多个小块的多次写操作可能不是原子的。因为在写入的过程中，可能会插入其他client的写入操作。最终多个副本上的数据一定是相同的，但是从不同client的视角上来说，变更的顺序可能是不同的。因此此时就是`consistent but undefined`
+
+PROCESS: Data Flow
 
 # 3 Efficiency in the Columbia Database Query Optimizer
 

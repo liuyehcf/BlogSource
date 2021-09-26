@@ -725,6 +725,9 @@ echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
     * `posix-basic`
     * `posix-egrep`
     * `posix-extended`
+* `-type`：后接类型
+    * `f`：普通文件，默认的类型
+    * `d`：目录
 
 **示例：**
 
