@@ -17,6 +17,10 @@ categories:
 
 单元测试框架
 
+## 1.1 Tips
+
+1. 假设编译得到的二进制是`test`，通过执行`./test --help`就可以看到所有gtest支持的参数，包括执行特定case等等
+
 # 2 phmap
 
 全称：`parallel-hashmap`，提供了一组高性能、并发安全的map，用于替换`std`以及`boost`中的map

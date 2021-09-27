@@ -291,6 +291,12 @@ Breakpoint 1, main () at set_break.cpp:8
     * `print <variable>`
     * `print <variable>.<field>`
     * `p *((std::vector<uint32_t>*) <address>)`：查看智能指针
+    * 查看、设置属性：`show print <property>`、`set print <property> on/off`，下面列出几个常用的属性名
+        * `address`：当程序显式函数信息时，显示函数地址，默认开启
+        * `array`：当显示数组时，每个元素占一行，默认关闭
+        * `elements`：数组的最大长度，超过该长度的元素就不再显示了，0表示无限制
+        * **`pretty`：是否以优雅的方式显式（分行、缩进等等，便于人阅读），默认关闭**
+        * 其他属性可以通过`show print [tab][tab]`来查看
 * `x/<n/f/u>  <addr>`：以指定格式打印内存信息
     * `n`：正整数，表示需要显示的内存单元的个数，即从当前地址向后显示n个内存单元的内容，一个内存单元的大小由第三个参数`u`定义
     * `f`：表示`addr`指向的内存内容的输出格式
