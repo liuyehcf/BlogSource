@@ -1009,7 +1009,7 @@ Plug 'junegunn/fzf.vim'
 " -------- 下面是该插件的一些参数 --------
 
 " 将 :Rg 映射到快捷键 [Ctrl] + a
-noremap <c-a> :Ag<cr>
+noremap <c-a> :Rg<cr>
 
 call plug#end()
 ```
@@ -1310,7 +1310,7 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
 " 将 :Rg 映射到快捷键 [Ctrl] + a
-noremap <c-a> :Ag<cr>
+noremap <c-a> :Rg<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
