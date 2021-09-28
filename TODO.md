@@ -31,8 +31,10 @@
 1. cpp
     * gcc各种常用
     * c++内存对齐
-    * jemalloc/jcmalloc
+    * jemalloc/jcmalloc/mimalloc
     * 如何安装boost？ `yum install -y boost-devel`
+    * `cpp reference`
+    * `cppman`
 1. 伙伴算法
 1. 异常中断的区别
 1. rpc框架，thrift

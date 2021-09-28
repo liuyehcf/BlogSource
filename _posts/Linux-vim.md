@@ -368,9 +368,9 @@ set encoding=utf-8
 | `vim-signify` | 修改比较 | https://github.com/mhinz/vim-signify |
 | `textobj-user` | 文本对象 | https://github.com/kana/vim-textobj-user |
 | `vim-cpp-enhanced-highlight` | 语法高亮 | https://github.com/octol/vim-cpp-enhanced-highlight |
-| `YouCompleteMe` | 代码补全 | https://github.com/ycm-core/YouCompleteMe |
 | `LeaderF` | 函数列表 | https://github.com/Yggdroot/LeaderF |
 | `fzf.vim` | 全局搜搜 | https://github.com/junegunn/fzf.vim |
+| `YouCompleteMe` | 代码补全 | https://github.com/ycm-core/YouCompleteMe |
 | `echodoc` | 参数提示 | https://github.com/Shougo/echodoc.vim |
 | `vim-auto-popmenu` | 轻量补全 | https://github.com/skywind3000/vim-auto-popmenu |
 
@@ -473,7 +473,7 @@ yum install -y vim
 vim --version | head -1
 ```
 
-### 2.2.6 符号索引-`Universal CTags`
+### 2.2.6 符号索引-[Universal CTags](https://ctags.io/)
 
 **安装：参照[github官网文档](https://github.com/universal-ctags/ctags)进行编译安装即可**
 
@@ -582,7 +582,7 @@ let fmt = get(g:, 'plug_url_format', 'https://git::@hub.fastgit.org/%s.git')
 set backspace=indent,eol,start
 ```
 
-## 2.3 配色方案-`gruvbox`
+## 2.3 配色方案-[gruvbox](https://github.com/morhetz/gruvbox)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -618,7 +618,7 @@ mkdir ~/.vim/colors
 cp ~/.vim/plugged/gruvbox/colors/gruvbox.vim ~/.vim/colors/
 ```
 
-## 2.4 状态栏-`vim-airline`
+## 2.4 状态栏-[vim-airline](https://github.com/vim-airline/vim-airline)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -636,7 +636,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.5 缩进标线-`indentLine`
+## 2.5 缩进标线-[indentLine](https://github.com/Yggdroot/indentLine)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -660,7 +660,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.6 文件管理器-`nerdtree`
+## 2.6 文件管理器-[nerdtree](https://github.com/preservim/nerdtree)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -683,7 +683,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.7 彩虹括号-`rainbow_parentheses`
+## 2.7 彩虹括号-[rainbow_parentheses](https://github.com/kien/rainbow_parentheses.vim)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -729,7 +729,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.8 自动索引-`vim-gutentags`
+## 2.8 自动索引-[vim-gutentags](https://github.com/ludovicchabant/vim-gutentags)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -769,7 +769,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.9 编译运行-`AsyncRun`
+## 2.9 编译运行-[AsyncRun](https://github.com/skywind3000/asyncrun.vim)
 
 本质上，`AsyncRun`插件就是提供了异步执行命令的机制，我们可以利用这个机制定义一些动作，比如`编译`、`构建`、`运行`、`测试`等，提供类似于`IDE`的体验
 
@@ -809,7 +809,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.10 动态检查-`ALE`
+## 2.10 动态检查-[ALE](https://github.com/dense-analysis/ale)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -873,7 +873,7 @@ call plug#end()
 
 1. 即便我为`cpp`指定了`g:ale_linters`，并将`g:ale_linters_explicit`设置成1，但是实际的`linter`仍然是默认的`cc`，默认使用的是`clang`、`clang++`
 
-## 2.11 修改比较-`vim-signify`
+## 2.11 修改比较-[vim-signify](https://github.com/mhinz/vim-signify)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -896,7 +896,7 @@ call plug#end()
 * `set signcolumn=yes`，有改动的行会标出
 * `:SignifyDiff`：以左右分屏的方式对比当前文件的差异
 
-## 2.12 文本对象-`textobj-user`
+## 2.12 文本对象-[textobj-user](https://github.com/kana/vim-textobj-user)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -925,7 +925,7 @@ call plug#end()
 * **`ii/ai`：缩进对象。可以用`vii`/`dii`/`cii`来选中/删除/改写同一缩进层次的内容**
 * **`if/af`：函数对象。可以用`vif`/`dif`/`cif`来选中/删除/改写当前函数的内容**
 
-## 2.13 语法高亮-`vim-cpp-enhanced-highlight`
+## 2.13 语法高亮-[vim-cpp-enhanced-highlight](https://github.com/octol/vim-cpp-enhanced-highlight)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -943,7 +943,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.14 函数列表-`LeaderF`
+## 2.14 函数列表-[LeaderF](https://github.com/Yggdroot/LeaderF)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -992,7 +992,7 @@ call plug#end()
 1. `:LeaderfMru`：查找最近访问的文件，通过上面的配置映射到快捷键`[Ctrl] + n`
 1. 通过上面的配置，将文件模糊搜索映射到快捷键`[Ctrl] + p`
 
-## 2.15 全局搜索-`fzf.vim`
+## 2.15 全局搜索-[fzf.vim](https://github.com/junegunn/fzf.vim)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1006,6 +1006,11 @@ call plug#begin()
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
+" -------- 下面是该插件的一些参数 --------
+
+" 将 :Rg 映射到快捷键 [Ctrl] + a
+noremap <c-a> :Ag<cr>
+
 call plug#end()
 ```
 
@@ -1013,10 +1018,12 @@ call plug#end()
 
 **用法：**
 
-1. `:Ag`：进行全局搜索
+1. `:Ag`：进行全局搜索（依赖命令行工具`ag`，安装方式参考该插件github主页）
+    * `[Ctrl] + j/k`可以在条目中上下移动
+1. `:Rg`：进行全局搜索（依赖命令行工具`rg`，安装方式参考该插件github主页）
     * `[Ctrl] + j/k`可以在条目中上下移动
 
-## 2.16 代码补全-`YouCompleteMe`
+## 2.16 代码补全-[YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
 
 **这个插件比较复杂，建议手工安装**
 
@@ -1301,6 +1308,9 @@ let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
 
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+
+" 将 :Rg 映射到快捷键 [Ctrl] + a
+noremap <c-a> :Ag<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
