@@ -70,7 +70,7 @@ categories:
     * `master`中存储了全部的元信息，包括`namespace`、`access control`、文件与`chunk`的映射关系、`chunk`的位置信息等。同时，`master`也控制着`chunk lease`、垃圾回收（无用chunk）、`chunk`迁移等过程。`master`与`chunkserver`之间通过心跳包保持通信，用于传递指令以及采集状态信息
     * `client`从`master`中获取元数据，然后直接从`chunkserver`中读写数据
     * 无论是`client`（`client`会缓存元数据，但是不会缓存数据）或者`chunkserver`都不用缓存（这里的缓存指的是GFS层面的缓存），这是由工作负载决定的，大部分的时间都在读写大批量的数据，缓存在这种场景中，用处很小。无缓存降低了系统的复杂度。虽然`chunkserver`不用缓存，但是其存储是基于Linux文件系统的，Linux文件系统本身是有缓存的，对于频繁读写的数据是有性能增益的
-1. `single-master`能够有效的降低系统复杂度，并且使得`master`能够借助全局信息处理诸如`chunk`替换以及复制等复杂操作。同时，我们要尽最大努力降低`master`在普通读写操作中的参与度，避免其成为性能瓶颈。虽然`client`不从`master`中读取数据，但是它需要知道从`master`中获取哪些`chunkserver`存储了相应的数据，因此`client`可以缓存这些信息，从而降低与`master`的交互频率
+1. `single-master`能够有效的降低系统复杂度，并且使得`master`能够借助全局信息处理诸如`chunk`替换以及克隆等复杂操作。同时，我们要尽最大努力降低`master`在普通读写操作中的参与度，避免其成为性能瓶颈。虽然`client`不从`master`中读取数据，但是它需要知道从`master`中获取哪些`chunkserver`存储了相应的数据，因此`client`可以缓存这些信息，从而降低与`master`的交互频率
 1. `chunk size`是GFS的关键参数，建议值是`64MB`。大的`chunk size`包含如下优势
     * 降低了`client`与`master`的交互频率，如果读取的数据在同一个`chunk`中，那么直接从`chunkserver`中读取即可，无需与`master`交互
     * 使得`client`的大部分操作集中在一个`chunk`中，避免多机网络开销
@@ -85,7 +85,7 @@ categories:
     * `master`不存储`chunk`的具体位置信息，而是在`master`每次启动或者有新的`chunkserver`加入集群时主动询问
 1. 对于存储在内存中的元数据，`master`会对其进行周期性的扫描，主要实现以下功能
     * 实现垃圾回收，清理那些被标记删除的chunk
-    * `chunk`复制，用以应对`chunkserver`宕机
+    * `chunk`克隆，用以应对`chunkserver`宕机
     * `chunk`迁移，实现负载均衡
 1. `master`不会存储`chunk`的位置信息，而是在启动时，主动向`chunkserver`拉取这些信息，`master`始终保持原信息的有效性，因为它控制着所有`chunk`的迁移、拷贝等操作，并且与`chunkserver`通过周期性的心跳包来定期同步状态
     * **采用这种设计的另一个原因是：`chunkserver`对一个`chunk`是否在其本地磁盘上有最终解释权，没有必要维护一个`master`视角下的一致性视图。大大降低了复杂度**
@@ -145,6 +145,16 @@ categories:
         * 最大化可靠性和可用性
         * 最大化带宽利用率
     * 为了达到上述两个目的，仅跨机传播副本是不够的，还必须跨机房传播副本，以提高容灾能力。即便一个机房挂了，服务也照样可用。同时跨机传输会带来带宽的开销，因此需要在两者之间做一个权衡
+1. `Creation, Re-replication, Rebalancing`
+    * `chunk`副本的主要原因有三个：`chunk`的创建、恢复以及负载均衡
+    * 当`master`创建一个新的`chunk`时，需要决定将这个`chunk`放到哪个`chunkserver`上，会考虑如下几个因素
+        * 挑选一个磁盘负载最低的`chunkserver`
+        * 控制每个`chunksever`近期创建`chunk`的数量。尽管`chunk`创建本身开销很低，但是创建通常伴随着大量的写入操作，因此整体上来讲需要做一个动态平衡
+        * 将`chunk`跨机房分布
+    * 当`chunk`的副本数量小于一个阈值时，`master`会开启副本拷贝的流程
+    * 此外，`chunk`克隆也有优先级。因素包括：缺失的`chunk`数量
+    * 为了避免克隆带来的网络开销，`master`会在集群维度和`chunkserver`维度分别限制克隆任务的数量
+    * `master`还会周期性的迁移这些`chunk`，以获得更好的分布情况，磁盘利用率以及负载均衡
 
 # 3 Efficiency in the Columbia Database Query Optimizer
 
