@@ -35,6 +35,7 @@
     * 如何安装boost？ `yum install -y boost-devel`
     * `cpp reference`
     * `cppman`
+    * `std::numeric_limits`
 1. 伙伴算法
 1. 异常中断的区别
 1. rpc框架，thrift

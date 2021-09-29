@@ -155,6 +155,20 @@ categories:
     * 此外，`chunk`克隆也有优先级。因素包括：缺失的`chunk`数量
     * 为了避免克隆带来的网络开销，`master`会在集群维度和`chunkserver`维度分别限制克隆任务的数量
     * `master`还会周期性的迁移这些`chunk`，以获得更好的分布情况，磁盘利用率以及负载均衡
+1. `Garbage Collection`
+    * 当一个文件或被删除后，`GFS`不会立即进行物理删除，而是记录日志，并且将其名字改成一个隐藏名。同时`master`会定期扫描所有`namespace`，并对这些特殊名称且过期的文件（超过一定时间，默认3天）进行物理删除。而在此之前，仍然可以通过这个特殊的隐藏名访问读写文件，或者将其重命名为正常文件
+    * `chunkserver`会与`master`通过心跳包交换信息，`chunkserver`会告知`master`自身存储的所有`chunk`，而`master`会告知`chunkserver`哪些`chunk`已经可以删除了（没有被任何一个文件关联），`chunkserver`会在空闲时间删除它们
+    * GFS中的`garbage collection`特别简单，它能够快速确认哪些`chunk`可以删除，因为`master`在元数据中维护了`file->chunk`的映射。同时可以很容易地确认所有`chunk`副本的信息，任何不在`master`中记录的副本都可以当成是`garbage`
+    * 与传统的即时删除相比，GFS的垃圾回收有如下优势
+        * 简单可靠
+        * 定期与`chunkserver`同步chunk信息，确保信息的正确性
+        * 批量写操作，开销低
+        * 仅在`master`空闲的时候进行，避免影响正常业务
+        * 容错性更好，由于删除只是写日志以及重命名，当有异常时，可以非常方便的进行错误恢复，比如回滚等等
+    * 与传统的即时删除相比，GFS的垃圾回收有如下劣势
+        * 存储资源紧张时，可能会存在问题，此时需要调整过期的阈值，让文件尽早物理删除
+        * 频繁的创建、删除同名文件可能会占用不同的存储资源
+    * GFS允许为不同的`namespace`设置不同的存储策略，包括副本数量、是否即时删除等等来解决上面的问题
 
 # 3 Efficiency in the Columbia Database Query Optimizer
 
