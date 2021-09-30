@@ -93,6 +93,7 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 **示例**
 
 * `usermod -s /bin/zsh admin`
+* `usermod -d /opt/home/admin admin`
 
 ## 1.9 passwd
 
