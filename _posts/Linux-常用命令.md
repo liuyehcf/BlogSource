@@ -2307,6 +2307,14 @@ yum install -y hping3
 1. `cat id_rsa.pub >> .ssh/authorized_keys`
 1. `chmod 644 .ssh/authorized_keys`
 
+### 6.1.2 禁止密码登录
+
+修改`/etc/ssh/sshd_config`
+
+```
+PasswordAuthentication no
+```
+
 ## 6.2 scp
 
 **格式：**
@@ -2728,9 +2736,18 @@ yum install -y epel-release
 yum install -y iotop
 ```
 
+**参数说明：**
+
+* `-o`：只显示正在执行io操作的进程或者线程
+* `-P`：只显示进程不显示线程
+* `-b`：批处理，即非交互模式
+* `-n`：后接次数
+
 **示例：**
 
 * `iotop`
+* `iotop -oP`
+* `iotop -oP -b -n 10`
 
 # 7 性能分析工具
 
