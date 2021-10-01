@@ -855,12 +855,28 @@ let g:airline#extensions#ale#enabled = 1
 
 " 默认的linter是cc，cc是个alias，包含了clang、clang++、gcc、g++，且默认会用clang和clang++
 " :ALEInfo 可以看到这些配置
-let g:ale_c_cc_executable = 'clang'
-let g:ale_cpp_cc_executable = 'clang++'
-let g:ale_cpp_cc_options = '-std=c++11 -Wall'
-let g:ale_c_cc_options = '-std=c11 -Wall'
+let g:ale_c_cc_executable = 'gcc'
+let g:ale_cpp_cc_executable = 'g++'
+let g:ale_cpp_cc_options = '-std=c++17 -Wall'
+let g:ale_c_cc_options = '-std=c17 -Wall'
 
 call plug#end()
+```
+
+**指定系统库或者三方库的头文件路径，可以将下面的片段加入到`~/.bashrc`中。每种类型的编译器对应的环境变量名是不同的，这里仅以`gcc`和g`++`为例**
+
+```sh
+# c头文件路径（gcc）
+export C_INCLUDE_PATH=${C_INCLUDE_PATH}:\
+/usr/local/lib/gcc/x86_64-pc-linux-gnu/10.3.0/include:\
+/usr/local/include/c++/10.3.0/:\
+<其他三方库的头文件路径>
+
+# c++头文件路径（g++）
+export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:\
+/usr/local/lib/gcc/x86_64-pc-linux-gnu/10.3.0/include:\
+/usr/local/include/c++/10.3.0/:\
+<其他三方库的头文件路径>
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
@@ -1266,10 +1282,10 @@ let g:airline#extensions#ale#enabled = 1
 
 " 默认的linter是cc，cc是个alias，包含了clang、clang++、gcc、g++，且默认会用clang和clang++
 " :ALEInfo 可以看到这些配置
-let g:ale_c_cc_executable = 'clang'
-let g:ale_cpp_cc_executable = 'clang++'
-let g:ale_cpp_cc_options = '-std=c++11 -Wall'
-let g:ale_c_cc_options = '-std=c11 -Wall'
+let g:ale_c_cc_executable = 'gcc'
+let g:ale_cpp_cc_executable = 'g++'
+let g:ale_cpp_cc_options = '-std=c++17 -Wall'
+let g:ale_c_cc_options = '-std=c17 -Wall'
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
