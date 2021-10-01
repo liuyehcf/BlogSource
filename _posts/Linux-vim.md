@@ -832,12 +832,14 @@ let g:ale_set_highlights = 0
 let g:ale_sign_error = '✗'
 let g:ale_sign_warning = '⚡'
 
-" 设置linter（但是并没有效果，所以我注释了）
-" let g:ale_linters_explicit = 1
-" let g:ale_linters = {
-"   \   'c': ['gcc'],
-"   \   'cpp': ['g++'],
-"   \}
+" 设置linters，并且仅用指定的linters
+" 由于在我的环境中，Available Linters中并没有gcc和g++，但是有cc（Linter Aliases）。cc包含clang、clang++、gcc、g++
+" 于是，下面两个配置会使得最终ALE生效的Linter是cc
+let g:ale_linters_explicit = 1
+let g:ale_linters = {
+  \   'c': ['gcc'],
+  \   'cpp': ['g++'],
+  \}
 
 let g:ale_completion_delay = 500
 let g:ale_echo_delay = 20
@@ -847,13 +849,14 @@ let g:ale_lint_on_text_changed = 'normal'
 let g:ale_lint_on_insert_leave = 1
 let g:airline#extensions#ale#enabled = 1
 
-" 设置编译器的参数（由于我无法更改默认的linter，所以下面的配置也是无效的，我也注释掉了）
-" let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
-" let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++14'
-" let g:ale_c_cppcheck_options = ''
-" let g:ale_cpp_cppcheck_options = ''
+" 设置编译器的参数
+let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
+let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++20'
+let g:ale_c_cppcheck_options = ''
+let g:ale_cpp_cppcheck_options = ''
 
-" 默认的linter是cc，cc是个alias，包含了clang、clang++、gcc、g++，且默认会用clang和clang++
+" 上面的配置使得linter是cc，cc是个alias，包含了clang、clang++、gcc、g++，且默认会用clang和clang++
+" 但是这里我想用gcc和g++，因此将cc对应的executable改成对应的gcc和g++即可
 " :ALEInfo 可以看到这些配置
 let g:ale_c_cc_executable = 'gcc'
 let g:ale_cpp_cc_executable = 'g++'
@@ -1259,12 +1262,14 @@ let g:ale_set_highlights = 0
 let g:ale_sign_error = '✗'
 let g:ale_sign_warning = '⚡'
 
-" 设置linter（但是并没有效果，所以我注释了）
-" let g:ale_linters_explicit = 1
-" let g:ale_linters = {
-"   \   'c': ['gcc'],
-"   \   'cpp': ['g++'],
-"   \}
+" 设置linters，并且仅用指定的linters
+" 由于在我的环境中，Available Linters中并没有gcc和g++，但是有cc（Linter Aliases）。cc包含clang、clang++、gcc、g++
+" 于是，下面两个配置会使得最终ALE生效的Linter是cc
+let g:ale_linters_explicit = 1
+let g:ale_linters = {
+  \   'c': ['gcc'],
+  \   'cpp': ['g++'],
+  \}
 
 let g:ale_completion_delay = 500
 let g:ale_echo_delay = 20
@@ -1274,13 +1279,14 @@ let g:ale_lint_on_text_changed = 'normal'
 let g:ale_lint_on_insert_leave = 1
 let g:airline#extensions#ale#enabled = 1
 
-" 设置编译器的参数（由于我无法更改默认的linter，所以下面的配置也是无效的，我也注释掉了）
-" let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
-" let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++14'
-" let g:ale_c_cppcheck_options = ''
-" let g:ale_cpp_cppcheck_options = ''
+" 设置编译器的参数
+let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
+let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++20'
+let g:ale_c_cppcheck_options = ''
+let g:ale_cpp_cppcheck_options = ''
 
-" 默认的linter是cc，cc是个alias，包含了clang、clang++、gcc、g++，且默认会用clang和clang++
+" 上面的配置使得linter是cc，cc是个alias，包含了clang、clang++、gcc、g++，且默认会用clang和clang++
+" 但是这里我想用gcc和g++，因此将cc对应的executable改成对应的gcc和g++即可
 " :ALEInfo 可以看到这些配置
 let g:ale_c_cc_executable = 'gcc'
 let g:ale_cpp_cc_executable = 'g++'
