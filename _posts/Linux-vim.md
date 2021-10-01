@@ -841,6 +841,13 @@ let g:ale_linters = {
   \   'cpp': ['g++'],
   \}
 
+" 上面的配置使得linter是cc，cc是个alias，包含了clang、clang++、gcc、g++，且默认会用clang和clang++
+" 你也可以改成gcc、g++，但是在我的环境里不会有错误提示（:ALEInfo可以看到错误信息）
+let g:ale_c_cc_executable = 'clang'
+let g:ale_cpp_cc_executable = 'clang++'
+let g:ale_c_cc_options = '-std=c17 -Wall'
+let g:ale_cpp_cc_options = '-std=c++17 -Wall'
+
 let g:ale_completion_delay = 500
 let g:ale_echo_delay = 20
 let g:ale_lint_delay = 500
@@ -849,37 +856,17 @@ let g:ale_lint_on_text_changed = 'normal'
 let g:ale_lint_on_insert_leave = 1
 let g:airline#extensions#ale#enabled = 1
 
-" 设置编译器的参数
-let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
-let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++17'
-let g:ale_c_cppcheck_options = ''
-let g:ale_cpp_cppcheck_options = ''
-
-" 上面的配置使得linter是cc，cc是个alias，包含了clang、clang++、gcc、g++，且默认会用clang和clang++
-" 你也可以改成gcc、g++，但是在我的环境里不会有错误提示（:ALEInfo可以看到错误信息）
-" :ALEInfo 可以看到这些配置
-let g:ale_c_cc_executable = 'clang'
-let g:ale_cpp_cc_executable = 'clang++'
-let g:ale_cpp_cc_options = '-std=c++17 -Wall'
-let g:ale_c_cc_options = '-std=c17 -Wall'
-
 call plug#end()
 ```
 
-**指定系统库或者三方库的头文件路径，可以将下面的片段加入到`~/.bashrc`中。每种类型的编译器对应的环境变量名是不同的，这里仅以`gcc`和g`++`为例**
+**指定三方库的头文件路径。每种类型的编译器对应的环境变量名是不同的，这里仅以`gcc`和g`++`为例**
 
 ```sh
 # c头文件路径（gcc）
-export C_INCLUDE_PATH=${C_INCLUDE_PATH}:\
-/usr/local/lib/gcc/x86_64-pc-linux-gnu/10.3.0/include:\
-/usr/local/include/c++/10.3.0/:\
-<其他三方库的头文件路径>
+export C_INCLUDE_PATH=${C_INCLUDE_PATH}:<third party include path...>
 
 # c++头文件路径（g++）
-export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:\
-/usr/local/lib/gcc/x86_64-pc-linux-gnu/10.3.0/include:\
-/usr/local/include/c++/10.3.0/:\
-<其他三方库的头文件路径>
+export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:<third party include path...>
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
@@ -890,7 +877,7 @@ export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:\
 
 **问题：**
 
-1. 即便我为`cpp`指定了`g:ale_linters`，并将`g:ale_linters_explicit`设置成1，但是实际的`linter`仍然是默认的`cc`，默认使用的是`clang`、`clang++`
+1. 若`linter`使用的是`gcc`或者`g++`，即便有语法错误，也不会有提示信息。除非使用`:ALEInfo`查看
 
 ## 2.11 修改比较-[vim-signify](https://github.com/mhinz/vim-signify)
 
@@ -1271,6 +1258,13 @@ let g:ale_linters = {
   \   'cpp': ['g++'],
   \}
 
+" 上面的配置使得linter是cc，cc是个alias，包含了clang、clang++、gcc、g++，且默认会用clang和clang++
+" 你也可以改成gcc、g++，但是在我的环境里不会有错误提示（:ALEInfo可以看到错误信息）
+let g:ale_c_cc_executable = 'clang'
+let g:ale_cpp_cc_executable = 'clang++'
+let g:ale_c_cc_options = '-std=c17 -Wall'
+let g:ale_cpp_cc_options = '-std=c++17 -Wall'
+
 let g:ale_completion_delay = 500
 let g:ale_echo_delay = 20
 let g:ale_lint_delay = 500
@@ -1278,20 +1272,6 @@ let g:ale_echo_msg_format = '[%linter%] %code: %%s'
 let g:ale_lint_on_text_changed = 'normal'
 let g:ale_lint_on_insert_leave = 1
 let g:airline#extensions#ale#enabled = 1
-
-" 设置编译器的参数
-let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
-let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++17'
-let g:ale_c_cppcheck_options = ''
-let g:ale_cpp_cppcheck_options = ''
-
-" 上面的配置使得linter是cc，cc是个alias，包含了clang、clang++、gcc、g++，且默认会用clang和clang++
-" 你也可以改成gcc、g++，但是在我的环境里不会有错误提示（:ALEInfo可以看到错误信息）
-" :ALEInfo 可以看到这些配置
-let g:ale_c_cc_executable = 'clang'
-let g:ale_cpp_cc_executable = 'clang++'
-let g:ale_cpp_cc_options = '-std=c++17 -Wall'
-let g:ale_c_cc_options = '-std=c17 -Wall'
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
