@@ -851,15 +851,15 @@ let g:airline#extensions#ale#enabled = 1
 
 " 设置编译器的参数
 let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
-let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++20'
+let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++17'
 let g:ale_c_cppcheck_options = ''
 let g:ale_cpp_cppcheck_options = ''
 
 " 上面的配置使得linter是cc，cc是个alias，包含了clang、clang++、gcc、g++，且默认会用clang和clang++
-" 但是这里我想用gcc和g++，因此将cc对应的executable改成对应的gcc和g++即可
+" 你也可以改成gcc、g++，但是在我的环境里不会有错误提示（:ALEInfo可以看到错误信息）
 " :ALEInfo 可以看到这些配置
-let g:ale_c_cc_executable = 'gcc'
-let g:ale_cpp_cc_executable = 'g++'
+let g:ale_c_cc_executable = 'clang'
+let g:ale_cpp_cc_executable = 'clang++'
 let g:ale_cpp_cc_options = '-std=c++17 -Wall'
 let g:ale_c_cc_options = '-std=c17 -Wall'
 
@@ -1281,15 +1281,15 @@ let g:airline#extensions#ale#enabled = 1
 
 " 设置编译器的参数
 let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
-let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++20'
+let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++17'
 let g:ale_c_cppcheck_options = ''
 let g:ale_cpp_cppcheck_options = ''
 
 " 上面的配置使得linter是cc，cc是个alias，包含了clang、clang++、gcc、g++，且默认会用clang和clang++
-" 但是这里我想用gcc和g++，因此将cc对应的executable改成对应的gcc和g++即可
+" 你也可以改成gcc、g++，但是在我的环境里不会有错误提示（:ALEInfo可以看到错误信息）
 " :ALEInfo 可以看到这些配置
-let g:ale_c_cc_executable = 'gcc'
-let g:ale_cpp_cc_executable = 'g++'
+let g:ale_c_cc_executable = 'clang'
+let g:ale_cpp_cc_executable = 'clang++'
 let g:ale_cpp_cc_options = '-std=c++17 -Wall'
 let g:ale_c_cc_options = '-std=c17 -Wall'
 
