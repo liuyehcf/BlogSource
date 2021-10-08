@@ -1303,7 +1303,8 @@ TEMP=`getopt -o ab:c:: --long a-long,b-long:,c-long:: \
      -n 'example.bash' -- "$@"`
  
 if [ $? != 0 ] ; then echo "Terminating..." >&2 ; exit 1 ; fi
- 
+
+# 重新设置参数 
 eval set -- "$TEMP"
  
 while true ; do

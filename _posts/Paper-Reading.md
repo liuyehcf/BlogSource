@@ -169,6 +169,23 @@ categories:
         * 存储资源紧张时，可能会存在问题，此时需要调整过期的阈值，让文件尽早物理删除
         * 频繁的创建、删除同名文件可能会占用不同的存储资源
     * GFS允许为不同的`namespace`设置不同的存储策略，包括副本数量、是否即时删除等等来解决上面的问题
+1. `Stale Replica Detection`
+    * `master`通过给每个`chunk`维护一个`version`，来判断`chunk`是否是最新的
+    * `master`在垃圾回收时，进行过期副本的处理。因此`master`仅可简单地认为自己维护的副本都是最新的即可。此外，作为补偿，在进行写操作或者进行`chunk`克隆的时候，都会校验`version`
+1. GFS最大的挑战之一就是如何处理频繁发生的组件异常
+    * 不能完全信任硬件设备（包括磁盘等）
+    * 组件异常可能导致服务不可用，或者数据损坏
+1. `High Availability`
+    * `Fast Recovery`
+        * 无论`master`或者`chunkserver`正常或异常终止，都需要在启动时进行信息同步
+    * `chunk replication`
+        * 前面讨论到，`chunk`的不同副本存放在不同机器，以及不同机架上，当`chunkserver`宕机后，`master`便会开启克隆任务，确保副本数量不小于某个值（默认3）
+    * `master replication`
+        * 处于可靠性考虑，`master`的状态也会以多副本存储在多个机器上。一个写操作当且仅当其操作日志在当前机器以及所有副本机器上成功落盘后，才算成功
+        * 正常情况下，只有一个`master`提供服务，并管理所有的任务（包括克隆等等）
+        * 当`master`宕机后，一个GFS之外的监控系统就会在另一台机器上重新拉起`master`，并且按照日志重建状态即可
+        * `client`需要使用dns、而不是`master ip`，这样当`master`发生切换时，`client`无需感知
+        * `shadow master`会提供读服务（即便`primary master`宕机）
 
 # 3 Efficiency in the Columbia Database Query Optimizer
 

@@ -2943,7 +2943,37 @@ CONFIG_KVM_MMU_AUDIT=y
 
 # 9 内建
 
-## 9.1 set
+## 9.1 shift
+
+shift用于移动参数的位置
+
+**格式：**
+
+* `shift [n]`：n是数字，默认是1
+
+```sh
+eval set -- a b c d
+
+echo $1 # 输出a
+shift
+echo $1 # 输出b
+shift 2
+echo $1 # 输出d
+```
+
+## 9.2 eval
+
+通过连接参数构造命令，如果包含间接引用，也会保持原有语义，下面以一个例子来说明
+
+```sh
+foo=10 x=foo
+y='$'$x
+echo $y # 输出foo
+eval y='$'$x
+echo $y # 输出10
+```
+
+## 9.3 set
 
 **格式：**
 
@@ -2960,8 +2990,9 @@ CONFIG_KVM_MMU_AUDIT=y
 * `set -e`
 * `set -x`
 * `set -o pipefail`
+* `eval set -- "some new params"`：设置当前shell的参数
 
-## 9.2 exec
+## 9.4 exec
 
 `exec`用于进程替换（类似系统调用`exec`），或者标准输入输出的重定向
 

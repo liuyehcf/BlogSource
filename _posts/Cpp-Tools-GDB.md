@@ -117,6 +117,8 @@ Program received signal SIGSEGV, Segmentation fault.
 
 ```
 
+**此外，可以通过`set args设置参数。例如`set args -l a -C abc`**
+
 ## 3.2 GDB与程序关联
 
 ## 3.3 断点设置
