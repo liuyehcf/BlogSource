@@ -552,6 +552,20 @@ endif(CURL_FOUND)
 
 **通过`find_package`引入非官方的库，该方式只对支持cmake编译安装的库有效**
 
+一般来说说，对于需要引入的三方库`xxx`，步骤通常如下
+
+```sh
+git clone https://github.com/xxx.git
+cd xxx
+
+mkdir build
+cd build
+
+cmake ..
+make
+make install
+```
+
 假设此时我们需要引入`glog`库来进行日志的记录，我们在`Module`目录下并没有找到`FindGlog.cmake`。所以我们需要自行安装`glog`库，再进行引用
 
 ```sh
@@ -681,7 +695,13 @@ endforeach()
 execute_process(COMMAND "${CMAKE_COMMAND}" "-E" "environment")
 ```
 
-## 5.3 开启debug模式
+## 5.3 指定编译器
+
+```sh
+cmake -DCMAKE_CXX_COMPILER=/usr/local/bin/g++ -DCMAKE_C_COMPILER=/usr/local/bin/gcc ..
+```
+
+## 5.4 开启debug模式
 
 ```sh
 # If you want to build for debug (including source information, i.e. -g) when compiling, use
@@ -691,7 +711,7 @@ cmake -DCMAKE_BUILD_TYPE=Debug <path>
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo <path>
 ```
 
-## 5.4 同一目录，多个源文件
+## 5.5 同一目录，多个源文件
 
 如果同一个目录下有多个源文件，那么在使用`add_executable`命令的时候，如果要一个个填写，那么将会非常麻烦，并且后续维护的代价也很大
 

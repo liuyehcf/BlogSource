@@ -20,8 +20,10 @@ categories:
 ```sh
 git clone https://github.com/google/googletest.git --depth 1
 cd googletest
+
 mkdir build
 cd build
+
 cmake ..
 make
 make install
@@ -37,6 +39,57 @@ message(STATUS "GTEST_LIBRARIES: ${GTEST_LIBRARIES}")
 message(STATUS "GTEST_MAIN_LIBRARIES: ${GTEST_MAIN_LIBRARIES}")
 
 target_link_libraries(xxx ${GTEST_LIBRARIES})
+```
+
+**完整示例**
+
+```sh
+# 编写CMakeLists.txt 
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(gtest_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+
+set(EXEC_FILES ./test_main.cpp)
+
+add_executable(gtest_demo ${EXEC_FILES})
+
+find_package(GTest REQUIRED)
+message(STATUS "GTEST_INCLUDE_DIRS: ${GTEST_INCLUDE_DIRS}")
+message(STATUS "GTEST_BOTH_LIBRARIES: ${GTEST_BOTH_LIBRARIES}")
+message(STATUS "GTEST_LIBRARIES: ${GTEST_LIBRARIES}")
+message(STATUS "GTEST_MAIN_LIBRARIES: ${GTEST_MAIN_LIBRARIES}")
+
+target_link_libraries(gtest_demo ${GTEST_LIBRARIES})
+EOF
+
+# 编写test_main.cpp
+cat > test_main.cpp << 'EOF' 
+#include <gtest/gtest.h>
+
+TEST(TestDemo, case_right) {
+    ASSERT_EQ(1, 1);
+}
+
+TEST(TestDemo, case_wrong) {
+    ASSERT_EQ(1, 0);
+}
+
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
+EOF
+
+mkdir build
+cd build
+
+cmake ..
+make
+
+./gtest_demo
 ```
 
 ## 1.1 Tips

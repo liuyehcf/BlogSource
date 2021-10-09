@@ -314,6 +314,13 @@ ${function arguments}
 
 `Makefile`提供了许多[内置函数](https://www.gnu.org/software/make/manual/html_node/Functions.html)，可供调用
 
-# 3 参考
+# 3 make
+
+**参数说明：**
+
+* `-s`：不显示echo
+* `-n`：仅打印需要执行的命令，而不是实际运行
+
+# 4 参考
 
 * [Make 命令教程](https://www.ruanyifeng.com/blog/2015/02/make.html)
