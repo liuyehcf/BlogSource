@@ -15,6 +15,18 @@ categories:
 
 [github-googletest](https://github.com/google/googletest)
 
+**安装googletest**
+
+```sh
+git clone https://github.com/google/googletest.git --depth 1
+cd googletest
+mkdir build
+cd build
+cmake ..
+make
+make install
+```
+
 **在`cmake`中添加`gtest`依赖**
 
 ```cmake
