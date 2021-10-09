@@ -15,7 +15,17 @@ categories:
 
 [github-googletest](https://github.com/google/googletest)
 
-单元测试框架
+**在`cmake`中添加`gtest`依赖**
+
+```cmake
+find_package(GTest REQUIRED)
+message(STATUS "GTEST_INCLUDE_DIRS: ${GTEST_INCLUDE_DIRS}")
+message(STATUS "GTEST_BOTH_LIBRARIES: ${GTEST_BOTH_LIBRARIES}")
+message(STATUS "GTEST_LIBRARIES: ${GTEST_LIBRARIES}")
+message(STATUS "GTEST_MAIN_LIBRARIES: ${GTEST_MAIN_LIBRARIES}")
+
+target_link_libraries(xxx ${GTEST_LIBRARIES})
+```
 
 ## 1.1 Tips
 

@@ -61,7 +61,7 @@ int main() {
 }
 EOF
 
-gcc test_memory_leak.cpp -o test_memory_leak -lstdc++ -fsanitize=address -static-libasan
+gcc test_memory_leak.cpp -o test_memory_leak -g -lstdc++ -fsanitize=address -static-libasan
 ./test_memory_leak
 ```
 
@@ -87,11 +87,11 @@ int main() {
 EOF
 
 # 非asan模式
-gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -lstdc++ 
+gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ 
 ./test_stack_buffer_underflow
 
 # asan模式
-gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -lstdc++ -fsanitize=address -static-libasan
+gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -fsanitize=address -static-libasan
 ./test_stack_buffer_underflow
 ```
 
