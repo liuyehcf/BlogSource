@@ -1,6 +1,7 @@
 ---
 title: hexo相关
 date: 2017-09-24 15:15:58
+mathjax: true
 tags: 
 - 摘录
 categories: 
@@ -38,6 +39,26 @@ npm uninstall hexo-renderer-marked
 # 安装新的渲染引擎
 npm install hexo-renderer-markdown-it-plus
 ```
+
+更换后会导致latex中无法通过`\\`进行换行，可以通过使用`\begin{split}`和`\end{split}`
+
+```
+$$
+\begin{split}
+&first \\
+&second
+\end{split}
+$$
+```
+
+效果如下
+
+{% raw %}$$
+\begin{split}
+&first \\
+&second
+\end{split}
+$${% endraw %}
 
 # 3 Math
 

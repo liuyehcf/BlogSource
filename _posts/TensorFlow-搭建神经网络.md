@@ -254,10 +254,10 @@ $${% endraw %}
 
 该算法在更新参数时，利用了超参数，参数更新公式如下
 
-{% raw %}$$
-d_{i} = \beta d_{i-1} + g(\theta_{i-1}) \\
-\theta_{i} = \theta_{i-1} - \alpha d_{i}
-$${% endraw %}
+{% raw %}$$\begin{split}
+d_{i} &= \beta d_{i-1} + g(\theta_{i-1}) \\
+\theta_{i} &= \theta_{i-1} - \alpha d_{i}
+\end{split}$${% endraw %}
 
 * {% raw %}$\alpha${% endraw %}表示学习率
 * {% raw %}$\beta${% endraw %}表示超参数

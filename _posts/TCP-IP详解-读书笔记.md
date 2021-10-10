@@ -448,11 +448,12 @@ TCP服务模型是一个字节流。TCP必须检测并修补所有在IP层产生
 1. 平均偏差（mean deviation）是对标准偏差的一种好的逼近。计算标准差需要对方差进行平方根运算，对于快速TCP实现来说代价较大
 1. 可对每个RTT测量值{% raw %}$M${% endraw %}（前面称为{% raw %}$RTT_s${% endraw %}）采用如下算式 
     * {% raw %}$srtt${% endraw %}值代替了之前的SRTT，且{% raw %}$rttvar${% endraw %}为平均偏差的EWMA，而非采用先前的{% raw %}$\beta${% endraw %}来设置RTO
-{% raw %}$$
-srtt ← (1 - g)(srtt) + (g)M \\
-rttvar ← (1 - h)rttvar +(h)(|M - srtt|) \\
-RTO = srtt + 4(rttvar)
-$${% endraw %}
+    
+{% raw %}$$\begin{split}
+srtt &= (1 - g)(srtt) + (g)M \\
+rttvar &= (1 - h)rttvar +(h)(|M - srtt|) \\
+RTO &= srtt + 4(rttvar)
+\end{split}$${% endraw %}
 
 1. 上述算式可以简化为
     * {% raw %}$srtt${% endraw %}为均值的EWMA，{% raw %}$rttvar${% endraw %}为绝对误差{% raw %}$|Err|${% endraw %}的EWMA，{% raw %}$Err${% endraw %}为测量值{% raw %}$M${% endraw %}与当前RTT估计值{% raw %}$srtt${% endraw %}之间的偏差
@@ -460,12 +461,13 @@ $${% endraw %}
     * 增量{% raw %}$g${% endraw %}为新RTT样本{% raw %}$M${% endraw %}占{% raw %}$srtt${% endraw %}估计值的权重，取{% raw %}$1/8${% endraw %}
     * 增量{% raw %}$h${% endraw %}为新平均偏差样本（新样本{% raw %}$M${% endraw %}与当前平均值{% raw %}$srtt${% endraw %}之间的绝对误差）占偏差估计值{% raw %}$rttvar${% endraw %}的权重，取{% raw %}$1/4${% endraw %}
     * g和h取值为2的负幂次，使得计算过程较为简单，只需要移位和加法即可
-{% raw %}$$
-Err = M - srtt \\
-srtt ← srtt + g(Err) \\
-rttvar ← rttvar + h(|Err| - rttvar) \\
-RTO = srtt + 4(rttvar)
-$${% endraw %}
+    
+{% raw %}$$\begin{split}
+Err &= M - srtt \\
+srtt &= srtt + g(Err) \\
+rttvar &= rttvar + h(|Err| - rttvar) \\
+RTO &= srtt + 4(rttvar)
+\end{split}$${% endraw %}
 
 #### 10.3.2.1 时钟粒度与RTO边界
 
@@ -480,10 +482,11 @@ $${% endraw %}
 1. 在首个SYN交换前，TCP无法设置RTO初始值。除非系统提供（有些系统在转发表中缓存了该信息），否则也无法设置估计器的初始值
 1. 根据[RFC6298]，RTO的初始值为1s，而初始SYN报文段采用的超时时间间隔为3s
 1. 当接收到首个RTT的测量结果M，估计器按如下方式进行初始化
-{% raw %}$$
-srtt ← M \\
-rttvar ← M/2
-$${% endraw %}
+
+{% raw %}$$\begin{split}
+srtt &= M \\
+rttvar &= M/2
+\end{split}$${% endraw %}
 
 #### 10.3.2.3 重传二义性与Karn算法
 
@@ -536,12 +539,13 @@ $${% endraw %}
     * {% raw %}$RTO = srtt + 4(rttvar) = 26 + 4(50) = 226ms${% endraw %}
 1. 若每个窗口只测量一个RTT样本，rttvar相对变动则较小。利用时间戳和对每个包的测量就可以得到更多的样本值。但同时，短时间内得到的大量样本值可能导致平均偏差变小（接近0，基于大数定理）。为了解决这个问题，Linux维护瞬时平均偏差估计值mdev，但设置RTO时则基于rttvar（在一个窗口数据期间记录的最大mdev，且最小值为50ms）。仅当进入下一个窗口时，rttvar才可能减小
 1. 标准方法中，rttvar所占权重较大（系数为4），因此即使当RTT减小时，也会导致RTO增长。在时钟粒度较粗时，这种情况不会造成很大影响，因为RTO可用值很少。若时钟粒度较细，如Linux的1ms，就可能出现问题。针对RTT减小的情况，若新样本值小于RTT估计范围的下界（srtt - mdev），则减小新样本的权重，完整的关系如下
-{% raw %}$$
-if (m < (srtt - mdev)) \\
-mdev = (\frac{31}{32})mdev + (\frac{1}{32})|srtt-m| \\
-else \\
-mdev = (\frac{3}{4})mdev + (\frac{1}{4})|srtt-m|
-$${% endraw %}
+
+{% raw %}$$\begin{split}
+&if (m < (srtt - mdev)) \\
+&\;\;\;\;mdev = (\frac{31}{32})mdev + (\frac{1}{32})|srtt-m| \\
+&else \\
+&\;\;\;\;mdev = (\frac{3}{4})mdev + (\frac{1}{4})|srtt-m|
+\end{split}$${% endraw %}
 
 ### 10.3.4 RTT估计器行为
 
@@ -638,20 +642,22 @@ $${% endraw %}
 1. 响应算法只针对第一种重传事件。若在恢复阶段完成之前再次发生超时，则不会执行响应算法。在重传计时器超时后，它会查看srtt和rttvar的值，并按如下方式记录新的变量`srtt_prev`和`rttvar_prev`
     * 在任何一次计时器超时后，都会指定这两个变量，但只有在判定出现伪超时时才会使用它们，用于设定新的RTO
     * {% raw %}$G${% endraw %}代表时钟粒度。{% raw %}$srtt\_prev${% endraw %}设置为{% raw %}$srtt${% endraw %}加上两倍的时钟粒度是由于：{% raw %}$srtt${% endraw %}的值过小，可能出现伪超时。如果{% raw %}$srtt${% endraw %}稍大，就可能不会发生超时
-{% raw %}$$
-srtt\_prev = srtt + 2(G) \\
-rttvar\_prev = rttvar
-$${% endraw %}
+
+{% raw %}$$\begin{split}
+srtt\_prev &= srtt + 2(G) \\
+rttvar\_prev &= rttvar
+\end{split}$${% endraw %}
 
 1. 完成{% raw %}$srtt\_prev${% endraw %}和{% raw %}$rttvar\_prev${% endraw %}的存储后，就要触发某种检测算法。运行检测算法后可得到一个特殊的值，称为`伪恢复（SpuriousRecovery）`。如果检测到一次`伪超时`，则将`伪恢复`设置为`SPUR_TO`。如果检测到`迟伪超时`，则将其设置为`LATE_SPUR_TO`。否则，该次超时为正常超时，TCP继续执行正常的响应行为
 1. 若`伪恢复`为`SPUR_TO`，TCP可在恢复阶段完成之前进行操作，通过将下一个要发送的报文段（称为`SND.NXT`）的序列号修改为最新的未发送过的报文段（称为`SND.MAX`），这样就可在首次重传后避免不必要的“回退N”行为。若`伪恢复`为`LATE_SPUR_TO`，此时已收到首次重传的ACK，则`SND.NXT`不改变。以上两种情况中，都要重新设置拥塞控制状态，并且一旦接收到重传计时器超时后发送的报文段的ACK，就要按如下方式更新{% raw %}$srtt${% endraw %}、{% raw %}$rttvar${% endraw %}和RTO
     * {% raw %}$m${% endraw %}是一个RTT样本值，它是基于超时后收个发送数据收到的ACK而计算得到的
     * 进行这些变量更新的目的在于：实际的RTT值可能发生了很大变化，RTT当前估计值已不适用于设置RTO。若路径上的实际RTT突然增大，当前的{% raw %}$srtt${% endraw %}和{% raw %}$rttvar${% endraw %}就显得过小，应重新设置；而另一方面，RTT的增大可能只是暂时的，这时重新设置{% raw %}$srtt${% endraw %}和{% raw %}$rttvar${% endraw %}就不那么明智了，因为它们原先的值可能更为精确
-{% raw %}$$
-srtt ← max(srtt\_prev, m) \\
-rttvar ← max(rttvar\_prev, \frac{m}{2}) \\
-RTO = srtt + max(G, 4(rttvar))
-$${% endraw %}
+
+{% raw %}$$\begin{split}
+srtt &= max(srtt\_prev, m) \\
+rttvar &= max(rttvar\_prev, \frac{m}{2}) \\
+RTO &= srtt + max(G, 4(rttvar))
+\end{split}$${% endraw %}
 
 1. 在新RTT样本值较大的情况下，上述等式尽力获得上述两种情况的平衡。这样做可以有效地抛弃之前的RTT历史值（和RTT的历史变化情况）。只有在响应算法中{% raw %}$srtt${% endraw %}和{% raw %}$rttvar${% endraw %}的值才会增大。若RTT不会增大，则维持估计值不变，这本质上是忽略超时情况发生。两种情况中，RTO还是按正常方式进行鞥新，并针对此次超时设置新的重传计时器值
 

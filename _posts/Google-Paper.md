@@ -1,6 +1,7 @@
 ---
 title: Google-Paper
 date: 2019-02-11 16:18:03
+mathjax: true
 tags: 
 - 原创
 categories: 
@@ -33,14 +34,14 @@ categories:
 1. 充分利用`link structure`来为每个网页计算`PageRank`
 1. 充分利用`Anchor text`来优化搜索结果
 
-**PageRank**: 网页质量以及重要程度的量化，它不是简单地计算该网页被引用的次数，假设网页$T_1$, $T_2$, ..., $T_n$都引用了网页$A$，那么网页A的`PageRank`可以表示为
+**PageRank**: 网页质量以及重要程度的量化，它不是简单地计算该网页被引用的次数，假设网页{% raw %}$T_1${% endraw %}, {% raw %}$T_2${% endraw %}, ..., {% raw %}$T_n${% endraw %}都引用了网页{% raw %}$A${% endraw %}，那么网页A的`PageRank`可以表示为
 
-$$
-PR(A)=(1-d)+d(\frac{PR(T_1)}{C(T_1)}+...+\frac{PR(T_n)}{C(T_n)})\\
-$$
+{% raw %}$$
+PR(A)=(1-d)+d(\frac{PR(T_1)}{C(T_1)}+...+\frac{PR(T_n)}{C(T_n)})
+$${% endraw %}
 
-* 其中$C(A)$表示网页A包含的引用数量，即网页A的出度
-* $d$为阻尼因子，在0-1之间，通常设置为0.85
+* 其中{% raw %}$C(A)${% endraw %}表示网页A包含的引用数量，即网页A的出度
+* {% raw %}$d${% endraw %}为阻尼因子，在0-1之间，通常设置为0.85
 
 **Anchor text**: 链接文本在搜索引擎中是非常重要的，很多搜索引擎仅仅把链接文本与链接文本所在的网页关联起来，但是Google将链接文本与连接所指向的网页关联起来
 
