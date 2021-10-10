@@ -169,6 +169,10 @@ jstack(Stack Trace for Java)命令用于生成虚拟机当前时刻的线程快�
 
 Java反编译工具，[下载地址](http://www.javadecompilers.com/jad)
 
-# 8 参考
+# 8 java_home
+
+**`/usr/libexec/java_home -V`：用于查看本机上所有版本java的安装目录**
+
+# 9 参考
 
 * [JVM性能调优监控工具jps、jstack、jmap、jhat、jstat、hprof使用详解](https://my.oschina.net/feichexia/blog/196575)

@@ -580,3 +580,15 @@ public class TrunkDTO extends BaseCarDTO {
 ```java
   private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger("error");
 ```
+
+# 8 Tips
+
+## 8.1 java16编译失败
+
+若编译器版本是`java16`的话，编译使用了`lombok`的项目会出现如下的错误
+
+```
+Fatal error compiling: java.lang.ExceptionInInitializerError: Unable to make field private com.sun.tools.javac.processing.JavacProcessingEnvironment$DiscoveredProcessors com.sun.tools.javac.processing.JavacProcessingEnvironment.discoveredProcs accessible: module jdk.compiler does not "opens com.sun.tools.javac.processing" to unnamed module
+```
+
+解决方式：安装低版本的`java`，比如`java8`，设置`JAVA_HOME`环境变量用于指定`java`版本

@@ -246,6 +246,16 @@ go module对版本号的约定
 
 ### 3.2.5 从github上下载依赖包
 
+#### 3.2.5.1 修改proxy
+
+在墙内下载依赖包，很有可能会timeout，可以通过配置proxy来解决这个问题
+
+```sh
+go env -w GOPROXY=https://goproxy.cn,direct
+```
+
+#### 3.2.5.2 修改sum
+
 go module默认会从`sum.golang.org`对依赖包进行一个校验，但是在墙内环境，`sum.golang.org`是无法访问的，通常会报如下的一个错误
 
 ```
