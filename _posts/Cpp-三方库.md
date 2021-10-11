@@ -179,6 +179,20 @@ make
 ./benchmark_demo
 ```
 
+**输出如下：**
+
+* `Time`：每次迭代消耗的总时间，包括cpu时间+等待时间
+* `CPU`：每次迭代真正占用cpu的时间
+* `Iterations`：迭代次数
+
+```
+------------------------------------------------------------
+Benchmark                  Time             CPU   Iterations
+------------------------------------------------------------
+BM_StringCreation       5.12 ns         5.12 ns    136772962
+BM_StringCopy           21.0 ns         21.0 ns     33441350
+```
+
 ## 3.1 参考
 
 * [c++性能测试工具：google benchmark入门（一）](https://www.cnblogs.com/apocelipes/p/10348925.html)

@@ -20,6 +20,8 @@
     * [TPC-H数据导入MySQL教程](https://www.cnblogs.com/joyeecheung/p/3599698.html)
 1. sqlancher
 1. sqlmith
+1. mysql-doc
+    * [sqlite-window-function](https://www.sqlite.org/windowfunctions.html)
 1. opensource
     * PMC
         * [WHAT IS A PMC?](https://www.apache.org/dev/pmc.html#what-is-a-pmc)
