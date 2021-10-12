@@ -113,3 +113,4 @@ categories:
 * [TPC-H 使用](https://blog.csdn.net/leixingbang1989/article/details/8766047)
 * [DB性能测试-常用3套件-手把手一步一步跑TPCH](http://ilongda.com/2020/06/22/TPCH/)
 * [TPC-C 、TPC-H和TPC-DS区别](https://zhuanlan.zhihu.com/p/339886289)
+* [TPC-H数据导入MySQL教程](https://www.cnblogs.com/joyeecheung/p/3599698.html)
