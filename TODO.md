@@ -19,6 +19,13 @@
 1. TPC-H
     * [TPC-H数据导入MySQL教程](https://www.cnblogs.com/joyeecheung/p/3599698.html)
 1. sqlancher
+1. DDL/DML/DCL
+    * DML（data manipulation language）
+    * DDL（data definition language）
+    * DCL（Data Control Language）
+1. mysql
+    * mysql -uroot -p123456 -e "source /root/temp.sql"
+    * mysql -uroot -p123456 < /root/temp.sql
 1. sqlmith
 1. mysql-doc
     * [sqlite-window-function](https://www.sqlite.org/windowfunctions.html)

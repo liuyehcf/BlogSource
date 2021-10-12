@@ -391,7 +391,9 @@ set encoding=utf-8
 | `textobj-user` | 文本对象 | https://github.com/kana/vim-textobj-user |
 | `vim-cpp-enhanced-highlight` | 语法高亮 | https://github.com/octol/vim-cpp-enhanced-highlight |
 | `LeaderF` | 函数列表 | https://github.com/Yggdroot/LeaderF |
-| `fzf.vim` | 全局搜搜 | https://github.com/junegunn/fzf.vim |
+| `fzf.vim` | 全局搜索（支持模糊搜索） | https://github.com/junegunn/fzf.vim |
+| `mhinz/vim-grepper` | 全局搜搜 | https://github.com/mhinz/vim-grepper |
+| `tpope/vim-fugitive` | git扩展 | https://github.com/tpope/vim-fugitive |
 | `YouCompleteMe` | 代码补全 | https://github.com/ycm-core/YouCompleteMe |
 | `echodoc` | 参数提示 | https://github.com/Shougo/echodoc.vim |
 | `vim-auto-popmenu` | 轻量补全 | https://github.com/skywind3000/vim-auto-popmenu |
@@ -1020,7 +1022,7 @@ call plug#end()
 1. `:LeaderfMru`：查找最近访问的文件，通过上面的配置映射到快捷键`[Ctrl] + n`
 1. 通过上面的配置，将文件模糊搜索映射到快捷键`[Ctrl] + p`
 
-## 2.15 全局搜索-[fzf.vim](https://github.com/junegunn/fzf.vim)
+## 2.15 全局模糊搜索-[fzf.vim](https://github.com/junegunn/fzf.vim)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1034,11 +1036,6 @@ call plug#begin()
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
-" -------- 下面是该插件的一些参数 --------
-
-" 将 :Rg 映射到快捷键 [Ctrl] + a
-noremap <c-a> :Rg<cr>
-
 call plug#end()
 ```
 
@@ -1051,7 +1048,56 @@ call plug#end()
 1. `:Rg`：进行全局搜索（依赖命令行工具`rg`，安装方式参考该插件github主页）
     * `[Ctrl] + j/k`可以在条目中上下移动
 
-## 2.16 代码补全-[YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
+## 2.16 全局搜索-[vim-grepper](https://github.com/mhinz/vim-grepper)
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'mhinz/vim-grepper'
+
+" -------- 下面是该插件的一些参数 --------
+
+" 将 :Grepper 映射到快捷键 [Ctrl] + a
+noremap <c-a> :Grepper<cr>
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**用法：**
+
+* `:Grepper`：进行全局搜索（依赖grep命令）
+
+## 2.17 git扩展-[vim-fugitive](https://github.com/tpope/vim-fugitive)
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'tpope/vim-fugitive'
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**用法：**
+
+* `:Git`：作为`git`的替代，后跟`git`命令行工具的正常参数即可
+
+## 2.18 代码补全-[YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
 
 **这个插件比较复杂，建议手工安装**
 
@@ -1156,7 +1202,7 @@ def FlagsForFile( filename, **kwargs ):
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.17 个人完整配置
+## 2.19 个人完整配置
 
 **初学`vim`，水平有限，仅供参考，`~/.vimrc`完整配置如下**
 
@@ -1333,8 +1379,16 @@ let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
-" 将 :Rg 映射到快捷键 [Ctrl] + a
-noremap <c-a> :Rg<cr>
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'mhinz/vim-grepper'
+
+" 将 :Grepper 映射到快捷键 [Ctrl] + a
+noremap <c-a> :Grepper<cr>
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'tpope/vim-fugitive'
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
