@@ -187,9 +187,23 @@ categories:
         * `client`需要使用dns、而不是`master ip`，这样当`master`发生切换时，`client`无需感知
         * `shadow master`会提供读服务（即便`primary master`宕机）
 
-# 3 Efficiency in the Columbia Database Query Optimizer
+# 3 Google Big Table
 
-# 4 Fast Selection and Aggregation on Encoded Data using Operator Specialization
+1. GBT的目标包括
+    * 适用范围广
+    * 高可扩展
+    * 高性能
+    * 高可用
+    * 高可靠
+1. GBT不完全支持关系型数据模型。相反，它提供了一种简单的数据模型，但是支持对数据的布局以及格式进行动态修改
+1. `Data Model`
+    * 一个稀疏的、分布式的、持久化的、多维度的、有序字典
+    * `key`可以是行、列、时间戳等等
+    * `value`是一个不能修改的字节数组
 
-# 5 Shared memory consistency models - A tutorial
+# 4 Efficiency in the Columbia Database Query Optimizer
+
+# 5 Fast Selection and Aggregation on Encoded Data using Operator Specialization
+
+# 6 Shared memory consistency models - A tutorial
 
