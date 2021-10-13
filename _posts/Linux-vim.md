@@ -474,7 +474,7 @@ mkswap swapfile
 chmod 600 swapfile
 swapon swapfile
 
-git clone https://hub.fastgit.org/llvm/llvm-project.git --depth 1
+git clone -b release/10.x https://hub.fastgit.org/llvm/llvm-project.git --depth 1
 cd llvm-project
 mkdir build
 cd build
@@ -875,8 +875,8 @@ let g:ale_linters = {
 " 你也可以改成gcc、g++，但是在我的环境里不会有错误提示（:ALEInfo可以看到错误信息）
 let g:ale_c_cc_executable = 'clang'
 let g:ale_cpp_cc_executable = 'clang++'
-let g:ale_c_cc_options = '-std=c17 -Wall'
-let g:ale_cpp_cc_options = '-std=c++17 -Wall'
+let g:ale_c_cc_options = '-std=c20 -Wall'
+let g:ale_cpp_cc_options = '-std=c++20 -Wall'
 
 let g:ale_completion_delay = 500
 let g:ale_echo_delay = 20
@@ -1042,15 +1042,26 @@ call plug#begin()
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
+" -------- 下面是该插件的一些参数 --------
+
+" 将 :Ag 映射到快捷键 [Ctrl] + a
+noremap <c-a> :Ag<cr>
+
 call plug#end()
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-**用法：**
+**用法（搜索相关的语法可以参考[junegunn/fzf-search-syntax](https://github.com/junegunn/fzf#search-syntax)）：**
 
 1. `:Ag`：进行全局搜索（依赖命令行工具`ag`，安装方式参考该插件github主页）
     * `[Ctrl] + j/k`可以在条目中上下移动
+    * **`xxx`：模糊匹配（可能被分词）**
+    * **`'xxx`：非模糊匹配（不会被分词）**
+    * **`^xxx`：前缀匹配**
+    * **`xxx$`：后缀匹配**
+    * **`!xxx`：反向匹配**
+    * **上述规则均可自由组合**
 1. `:Rg`：进行全局搜索（依赖命令行工具`rg`，安装方式参考该插件github主页）
     * `[Ctrl] + j/k`可以在条目中上下移动
 
@@ -1066,11 +1077,6 @@ call plug#begin()
 " ......................
 
 Plug 'mhinz/vim-grepper'
-
-" -------- 下面是该插件的一些参数 --------
-
-" 将 :Grepper 映射到快捷键 [Ctrl] + a
-noremap <c-a> :Grepper<cr>
 
 call plug#end()
 ```
@@ -1336,8 +1342,8 @@ let g:ale_linters = {
 " 你也可以改成gcc、g++，但是在我的环境里不会有错误提示（:ALEInfo可以看到错误信息）
 let g:ale_c_cc_executable = 'clang'
 let g:ale_cpp_cc_executable = 'clang++'
-let g:ale_c_cc_options = '-std=c17 -Wall'
-let g:ale_cpp_cc_options = '-std=c++17 -Wall'
+let g:ale_c_cc_options = '-std=c20 -Wall'
+let g:ale_cpp_cc_options = '-std=c++20 -Wall'
 
 let g:ale_completion_delay = 500
 let g:ale_echo_delay = 20
@@ -1385,12 +1391,12 @@ let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
+" 将 :Ag 映射到快捷键 [Ctrl] + a
+noremap <c-a> :Ag<cr>
+
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 Plug 'mhinz/vim-grepper'
-
-" 将 :Grepper 映射到快捷键 [Ctrl] + a
-noremap <c-a> :Grepper<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1430,6 +1436,13 @@ noremap ˚ :tp<cr>
 set tags=./.tags;,.tags
 " 系统库的ctags
 set tags+=~/.vim/systags
+
+" 搜索和替换的快捷键配置
+" 搜索和替换分别映射到 alt + f 和 alt + r，而mac并没有alt键只有option键
+" 于是我们需要直接打出 option + f 和 option + r 作为映射的key即可
+" 其中，<c-r><c-w> 表示 [ctrl] + r 以及 [ctrl] + w，用于将光标所在的单词填入搜索/替换项中
+noremap ® :%s/<c-r><c-w>
+noremap ƒ :/<c-r><c-w><cr>
 
 " 退格失效的配置
 set backspace=indent,eol,start
