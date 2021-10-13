@@ -146,11 +146,17 @@ $ git rebase [branch]
 # rebase过程中可能会有冲突，解决完冲突后继续rebase
 $ git rebase --continue
 
+# rebase过程中可能会有冲突，或者错误，可以撤销整个rebase
+$ git rebase --abort
+
 # rebase当前分支，(startcommit, endcommit]（左开右闭）区间的提交
 $ git rebase -i [startcommit] [endcommit]
 
 # rebase当前分支，(startcommit, HEAD]（左开右闭）区间的提交
 $ git rebase -i [startcommit]
+
+# rebase当前分支，startcommit指定为root（root指的是第一个提交之前的那个位置）
+$ git rebase -i --root
 
 # 选择一个commit，合并进当前分支（从左到右时间线递增，也就是commit1.time 早于 commit2.time）
 $ git cherry-pick [commit1] [commit2] ...
