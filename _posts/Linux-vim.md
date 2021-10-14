@@ -1442,7 +1442,7 @@ set tags+=~/.vim/systags
 " 于是我们需要直接打出 option + f 和 option + r 作为映射的key即可
 " 其中，<c-r><c-w> 表示 [ctrl] + r 以及 [ctrl] + w，用于将光标所在的单词填入搜索/替换项中
 noremap ® :%s/<c-r><c-w>
-noremap ƒ :/<c-r><c-w><cr>
+noremap ƒ :/<c-r><c-w>
 
 " 退格失效的配置
 set backspace=indent,eol,start
