@@ -701,7 +701,24 @@ execute_process(COMMAND "${CMAKE_COMMAND}" "-E" "environment")
 cmake -DCMAKE_CXX_COMPILER=/usr/local/bin/g++ -DCMAKE_C_COMPILER=/usr/local/bin/gcc ..
 ```
 
-## 5.4 开启debug模式
+## 5.4 设置编译器参数
+
+**示例如下：**
+
+```cmake
+SET(CMAKE_BUILD_TYPE "Release")
+SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g2 -ggdb")
+SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O1 -Wall")
+```
+
+**`CMAKE_BUILD_TYPE`的所有可选值包括**
+
+1. `Debug`
+1. `Release`
+1. `RelWithDebInfo`
+1. `MinSizeRel`
+
+## 5.5 开启debug模式
 
 ```sh
 # If you want to build for debug (including source information, i.e. -g) when compiling, use
@@ -711,7 +728,7 @@ cmake -DCMAKE_BUILD_TYPE=Debug <path>
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo <path>
 ```
 
-## 5.5 同一目录，多个源文件
+## 5.6 同一目录，多个源文件
 
 如果同一个目录下有多个源文件，那么在使用`add_executable`命令的时候，如果要一个个填写，那么将会非常麻烦，并且后续维护的代价也很大
 

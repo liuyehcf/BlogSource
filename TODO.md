@@ -42,6 +42,7 @@
     * apache license/elastic license
 1. cpp
     * gcc各种常用
+        * gcc -o aaa.s -S aaa.cpp -fverbose-asm
     * c++内存对齐
     * jemalloc/jcmalloc/mimalloc
     * 如何安装boost？ `yum install -y boost-devel`
@@ -49,7 +50,6 @@
     * `cppman`
     * `std::numeric_limits`
     * extern
-    * clang-format  .format
     * 性能开销测试
         * 虚函数
             * ck /AggregateFunctions/IAggregateFunction.h

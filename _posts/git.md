@@ -347,6 +347,9 @@ $ git revert [commit]
 # 暂时将未提交的变化移除，稍后再移入
 $ git stash
 $ git stash pop
+
+# 丢弃工作区的改动
+$ git restore [file]
 ```
 
 # 10 克隆

@@ -1,5 +1,5 @@
 ---
-title: Cpp-杂项
+title: Cpp-Tools-Trivial
 date: 2021-08-19 09:38:42
 tags: 
 - 原创
@@ -11,9 +11,23 @@ categories:
 
 <!--more-->
 
-# 1 格式化
+# 1 gcc
 
-`.clang-format`
+## 1.1 编译优化
+
+**`-O0`（默认）：不做任何优化**
+
+**`-O/-O1`：在不影响编译速度的前提下，尽量采用一些优化算法降低代码大小和可执行代码的运行速度**
+
+**`-O2`：该优化选项会牺牲部分编译速度，除了执行`-O1`所执行的所有优化之外，还会采用几乎所有的目标配置支持的优化算法，用以提高目标代码的运行速度**
+
+**`-O3`：该选项除了执行-O2所有的优化选项之外，一般都是采取很多向量化算法，提高代码的并行执行程度，利用现代CPU中的流水线，Cache等**
+
+**不同优化等级对应开启的优化参数参考`man page`**
+
+## 1.2 参考
+
+# 2 clang-format
 
 **如何安装`clang-format`**
 
@@ -21,7 +35,29 @@ categories:
 npm install -g clang-format
 ```
 
-# 2 头文件搜索路径
+**如何使用：在`用户目录`或者`项目根目录`中创建`.clang-format`文件用于指定格式化的方式，下面给一个示例**
+
+* **优先使用项目根目录中的`.clang-format`；如果不存在，则使用用户目录中的`.clang-format`**
+
+```
+---
+Language: Cpp
+BasedOnStyle: Google
+AccessModifierOffset: -4
+AllowShortFunctionsOnASingleLine: Inline
+ColumnLimit: 120
+ConstructorInitializerIndentWidth: 8 # double of IndentWidth
+ContinuationIndentWidth: 8 # double of IndentWidth
+DerivePointerAlignment: false # always use PointerAlignment
+IndentCaseLabels: false
+IndentWidth: 4
+PointerAlignment: Left
+ReflowComments: false
+SortUsingDeclarations: false
+SpacesBeforeTrailingComments: 1
+```
+
+# 3 头文件搜索路径
 
 **头文件`#include "xxx.h"`的搜索顺序**
 
@@ -42,13 +78,13 @@ npm install -g clang-format
     * `/usr/local/include`
     * `/usr/lib/gcc/x86_64-redhat-linux/<gcc version>/include`（C头文件）或者`/usr/include/c++/<gcc version>`（C++头文件）
 
-## 2.1 参考
+## 3.1 参考
 
 * [C/C++ 头文件以及库的搜索路径](https://blog.csdn.net/crylearner/article/details/17013187)
 
-# 3 Address Sanitizer
+# 4 Address Sanitizer
 
-## 3.1 memory leak
+## 4.1 memory leak
 
 ```sh
 cat > test_memory_leak.cpp << 'EOF'
@@ -65,7 +101,7 @@ gcc test_memory_leak.cpp -o test_memory_leak -g -lstdc++ -fsanitize=address -sta
 ./test_memory_leak
 ```
 
-## 3.2 stack buffer underflow
+## 4.2 stack buffer underflow
 
 ```sh
 cat > test_stack_buffer_underflow.cpp << 'EOF'
@@ -95,7 +131,8 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
 ./test_stack_buffer_underflow
 ```
 
-## 3.3 参考
+## 4.3 参考
 
 * [c++ Asan(address-sanitize)的配置和使用](https://blog.csdn.net/weixin_41644391/article/details/103450401)
 * [HOWTO: Use Address Sanitizer](https://www.osc.edu/resources/getting_started/howto/howto_use_address_sanitizer)
+* [google/sanitizers](https://github.com/google/sanitizers)
