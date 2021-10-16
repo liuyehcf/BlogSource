@@ -5,8 +5,6 @@
     * ag
 1. 性能分析
     * Perf
-        * https://pingcap.com/zh/blog/flame-graph
-        * https://www.brendangregg.com/FlameGraphs/cpuflamegraphs.html
     * vtune
         * [《A Top-Down Method for Performance Analysis and Counters Architecture》阅读笔记](https://andrewei1316.github.io/2020/12/20/top-down-performance-analysis/)
         * [Intel® VTune™ Profiler Performance Analysis Cookbook](https://software.intel.com/content/www/us/en/develop/documentation/vtune-cookbook/top/methodologies/top-down-microarchitecture-analysis-method.html)
@@ -27,10 +25,6 @@
         * mysql
             * mysql -uroot -p123456 -e "source /root/temp.sql"
             * mysql -uroot -p123456 < /root/temp.sql
-    * 相关概念
-        * DML（data manipulation language）
-        * DDL（data definition language）
-        * DCL（Data Control Language）
     * doc
         * [sqlite-window-function](https://www.sqlite.org/windowfunctions.html)
 1. opensource

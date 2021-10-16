@@ -11,9 +11,31 @@ categories:
 
 <!--more-->
 
-# 1 概述
+# 1 perf
 
-# 2 cpu火焰图
+`perf`命令具体用法参考{% post_link Linux-常用命令 %}
+
+## 1.1 cpu火焰图
+
+**相关git项目**
+
+* [FlameGraph](https://github.com/brendangregg/FlameGraph)
+
+```sh
+# 以99Hz的频率捕获指定进程的堆栈信息，捕获时长60s
+# 该命令会在当前目录生成 perf.data 文件
+perf record -F 99 -p <pid> -g -- sleep 60
+
+# 解析 perf.data 文件
+perf script > out.perf
+
+# 生成火焰图
+# 下面这两个脚本来自FlameGraph项目，我的安装目录是/opt/FlameGraph
+/opt/FlameGraph/stackcollapse-perf.pl out.perf > out.folded
+/opt/FlameGraph/flamegraph.pl out.folded > out.svg
+```
+
+### 1.1.1 java-cpu火焰图
 
 **相关git项目**
 
@@ -31,16 +53,19 @@ sudo perf record -F 90 -a -g -- sleep 300
 # 安装依赖cmake，openjdk（只有jre是不够的）
 perf-map-agent/bin/create-java-perf-map.sh <pid>
 
+# 解析 perf.data 文件
 sudo perf script > out.perf
 
-# 下载FlameGraph
-FlameGraph/stackcollapse-perf.pl out.perf > out.folded
-
-FlameGraph/flamegraph.pl out.folded > out.svg
+# 生成火焰图
+# 下面这两个脚本来自FlameGraph项目，我的安装目录是/opt/FlameGraph
+/opt/FlameGraph/stackcollapse-perf.pl out.perf > out.folded
+/opt/FlameGraph/flamegraph.pl out.folded > out.svg
 ```
 
-# 3 参考
+# 2 参考
 
+* [工欲性能调优，必先利其器（2）- 火焰图](https://pingcap.com/zh/blog/flame-graph)
+* [CPU Flame Graphs](https://www.brendangregg.com/FlameGraphs/cpuflamegraphs.html)
 * [在Linux下做性能分析1：基本模型](https://zhuanlan.zhihu.com/p/22124514)
 * [在Linux下做性能分析2：ftrace](https://zhuanlan.zhihu.com/p/22130013)
 * [在Linux下做性能分析3：perf](https://zhuanlan.zhihu.com/p/22194920)
