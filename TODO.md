@@ -56,8 +56,3 @@
     * 什么是体系结构
     * sa（Solution Architect）：解决方案架构师
     * sre（Site Reliability Engineering）：站点可靠工程师
-    * 搜索
-        * site:zhihu.com
-        * filetype:ppt
-        * +
-        * -
