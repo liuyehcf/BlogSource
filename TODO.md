@@ -22,9 +22,6 @@
     * 相关工具
         * sqlancher
         * sqlmith
-        * mysql
-            * mysql -uroot -p123456 -e "source /root/temp.sql"
-            * mysql -uroot -p123456 < /root/temp.sql
     * doc
         * [sqlite-window-function](https://www.sqlite.org/windowfunctions.html)
 1. opensource
