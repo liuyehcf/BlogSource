@@ -136,3 +136,19 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
 * [c++ Asan(address-sanitize)的配置和使用](https://blog.csdn.net/weixin_41644391/article/details/103450401)
 * [HOWTO: Use Address Sanitizer](https://www.osc.edu/resources/getting_started/howto/howto_use_address_sanitizer)
 * [google/sanitizers](https://github.com/google/sanitizers)
+
+# 5 doc
+
+## 5.1 [cpp reference](https://en.cppreference.com/w/)
+
+## 5.2 [cppman](https://github.com/aitjcize/cppman/)
+
+**如何安装：**
+
+```sh
+pip install cppman
+```
+
+**示例：**
+
+* `cppman vector::begin`

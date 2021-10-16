@@ -107,17 +107,23 @@ int main() {
 
 字符串比较函数：`strcmp`
 
-# 4 `<thread>`
+# 4 `<limits>`
 
-## 4.1 std::thread
+## 4.1 std::numeric_limits
 
-# 5 `<chrono>`
+`std::numeric_limits<int32_t>::max()`
 
-## 5.1 std::chrono
+# 5 `<thread>`
 
-# 6 `<memory>`
+## 5.1 std::thread
 
-## 6.1 std::shared_ptr
+# 6 `<chrono>`
+
+## 6.1 std::chrono
+
+# 7 `<memory>`
+
+## 7.1 std::shared_ptr
 
 **只在函数使用指针，但并不保存对象内容**
 
@@ -140,31 +146,31 @@ void func(std::shared_ptr<Widget> ptr);
 
 这样的话，外部传过来值的时候，可以选择`move`或者赋值。函数内部直接把这个对象通过`move`的方式保存起来
 
-## 6.2 std::unique_ptr
+## 7.2 std::unique_ptr
 
-## 6.3 参考
+## 7.3 参考
 
 * [C++ 智能指针的正确使用方式](https://www.cyhone.com/articles/right-way-to-use-cpp-smart-pointer/)
 
-# 7 `<functional>`
+# 8 `<functional>`
 
-## 7.1 std::function
+## 8.1 std::function
 
 其功能类似于函数指针，在需要函数指针的地方，可以传入`std::function`类型的对象（不是指针）
 
-## 7.2 std::bind
+## 8.2 std::bind
 
-## 7.3 std::mem_fn
+## 8.3 std::mem_fn
 
-## 7.4 参考
+## 8.4 参考
 
 * [C++11 中的std::function和std::bind](https://www.jianshu.com/p/f191e88dcc80)
 
-# 8 `<mutex>`
+# 9 `<mutex>`
 
-## 8.1 std::mutex
+## 9.1 std::mutex
 
-## 8.2 std::lock_guard
+## 9.2 std::lock_guard
 
 一般的使用方法，如果getVar方法抛出异常了，那么就会导致`m.unlock()`方法无法执行，可能会造成死锁
 
@@ -185,21 +191,21 @@ m.unlock();
 }
 ```
 
-## 8.3 std::unique_lock
+## 9.3 std::unique_lock
 
-## 8.4 std::condition_variable
+## 9.4 std::condition_variable
 
 调用`wait`方法时，必须获取监视器。而调用`notify`方法时，无需获取监视器
 
-## 8.5 参考
+## 9.5 参考
 
 * [Do I have to acquire lock before calling condition_variable.notify_one()?](https://stackoverflow.com/questions/17101922/do-i-have-to-acquire-lock-before-calling-condition-variable-notify-one)
 
-# 9 `<atomic>`
+# 10 `<atomic>`
 
-## 9.1 内存一致性模型
+## 10.1 内存一致性模型
 
-### 9.1.1 Sequential consistency model
+### 10.1.1 Sequential consistency model
 
 > the result of any execution is the same as if the operations of all the processors were executed in some sequential order, and the operations of each individual processor appear in this sequence in the order specified by its program
 
@@ -209,14 +215,14 @@ m.unlock();
 1. **线程执行的交错顺序可以是任意的，但是所有线程所看见的整个程序的总体执行顺序都是一样的（整个程序的视角）**
     * 即不能存在这样一种情况，对于写操作`W1`和`W2`，处理器1看来，顺序是：`W1 -> W2`；而处理器2看来，顺序是：`W2 -> W1`
 
-### 9.1.2 Relaxed consistency model
+### 10.1.2 Relaxed consistency model
 
 **`Relaxed consistency model`也称为宽松内存一致性模型，它的特点是：**
 
 1. **唯一的要求是在同一线程中，对同一原子变量的访问不可以被重排（单个线程的视角）**
 1. **除了保证操作的原子性之外，没有限定前后指令的顺序，其他线程看到数据的变化顺序也可能不一样（整个程序的视角）**
 
-## 9.2 std::atomic
+## 10.2 std::atomic
 
 `compare_exchange_strong(T& expected_value, T new_value)`方法的第一个参数是个左值
 
@@ -238,7 +244,7 @@ result: 1, flag: 1, expected: 0
 result: 0, flag: 1, expected: 1
 ```
 
-## 9.3 std::memory_order
+## 10.3 std::memory_order
 
 这是个枚举类型，包含6个枚举值
 
@@ -249,7 +255,7 @@ result: 0, flag: 1, expected: 1
 * `memory_order_acq_rel`
 * `memory_order_seq_cst`
 
-### 9.3.1 顺序一致次序（sequential consisten ordering）
+### 10.3.1 顺序一致次序（sequential consisten ordering）
 
 `memory_order_seq_cst`属于这种内存模型
 
@@ -257,7 +263,7 @@ result: 0, flag: 1, expected: 1
 
 **该原子操作前后的读写（包括非原子的读写操作）不能跨过该操作乱序；该原子操作之前的写操作（包括非原子的写操作）都能被所有线程观察到**
 
-### 9.3.2 松弛次序（relaxed ordering）
+### 10.3.2 松弛次序（relaxed ordering）
 
 `memory_order_relaxed`属于这种内存模型
 
@@ -265,7 +271,7 @@ result: 0, flag: 1, expected: 1
 
 在`relaxed ordering`中唯一的要求是在同一线程中，对同一原子变量的访问不可以被重排
 
-### 9.3.3 获取-释放次序（acquire-release ordering）
+### 10.3.3 获取-释放次序（acquire-release ordering）
 
 `memory_order_release`、`memory_order_acquire`、`memory_order_acq_rel`属于这种内存模型
 
@@ -298,7 +304,7 @@ result: 0, flag: 1, expected: 1
 * 线程2的断言会成功，因为线程1对`n`和`m`在store之前修改；线程2在`load`之后，可以观察到`m`的修改
 * 但线程3的断言不一定会成功，因为`m`是和`load/store`操作不相关的变量，线程3不一定能观察看到
 
-## 9.4 参考
+## 10.4 参考
 
 * [C++11 - atomic类型和内存模型](https://zhuanlan.zhihu.com/p/107092432)
 * [doc-std::memory_order](https://www.apiref.com/cpp-zh/cpp/atomic/memory_order.html)
@@ -306,13 +312,13 @@ result: 0, flag: 1, expected: 1
 * [并行编程——内存模型之顺序一致性](https://www.cnblogs.com/jiayy/p/3246157.html)
 * [漫谈内存一致性模型](https://zhuanlan.zhihu.com/p/91406250)
 
-# 10 `<any>`
+# 11 `<any>`
 
-## 10.1 std::any_cast
+## 11.1 std::any_cast
 
-# 11 `<type_traits>`
+# 12 `<type_traits>`
 
-## 11.1 std::conditional_t
+## 12.1 std::conditional_t
 
-## 11.2 std::remove_reference
+## 12.2 std::remove_reference
 
