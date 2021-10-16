@@ -1,5 +1,5 @@
 ---
-title: Cpp-语法
+title: Cpp-语言
 date: 2021-09-06 10:53:48
 tags: 
 - 原创
@@ -769,7 +769,131 @@ else
 #define foo(x) do { bar(x); baz(x); } while (0)
 ```
 
-# 14 mock class
+# 14 内存对齐
+
+**内存对齐最最底层的原因是内存的IO是以`8`个字节`64bit`为单位进行的**
+
+假如你指定要获取的是`0x0001-0x0008`，也是8字节，但是不是0开头的，内存需要怎么工作呢？没有好办法，内存只好先工作一次把`0x0000-0x0007`取出来，然后再把`0x0008-0x0015`取出来，把两次的结果都返回给你。CPU和内存IO的硬件限制导致没办法一次跨在两个数据宽度中间进行IO。这样你的应用程序就会变慢，算是计算机因为你不懂内存对齐而给你的一点点惩罚
+
+**内存对齐规则**
+
+1. **结构体第一个成员的偏移量`offset`为`0`，以后每个成员相对于结构体首地址的`offset`都是该成员大小与`有效对齐值`中较小那个的整数倍，如有需要编译器会在成员之间加上填充字节**
+1. **结构体的总大小为`有效对齐值`的整数倍，如有需要编译器会在最末一个成员之后加上填充字节**
+* **有效对齐值：是给定值`#pragma pack(n)`和结构体中最长数据类型长度中较小的那个。有效对齐值也叫对齐单位。gcc中默认`#pragma pack(4)`，可以通过预编译命令`#pragma pack(n)，n = 1,2,4,8,16`来改变这一系数**
+
+**下面以一个例子来说明**
+
+```sh
+# 创建源文件
+cat > main.cpp << 'EOF'
+#include <iostream>
+
+struct Align1 {
+    int8_t f1;
+};
+
+struct Align2 {
+    int8_t f1;
+    int16_t f2;
+};
+
+struct Align3 {
+    int8_t f1;
+    int16_t f2;
+    int32_t f3;
+};
+
+struct Align4 {
+    int8_t f1;
+    int16_t f2;
+    int32_t f3;
+    int64_t f4;
+};
+
+int main() {
+    std::cout << "Align1's size = " << sizeof(Align1) << std::endl;
+    std::cout << "\tf1's offset = " << offsetof(Align1, f1) << ", f1's size = " << sizeof(Align1::f1) << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "Align2's size = " << sizeof(Align2) << std::endl;
+    std::cout << "\tf1's offset = " << offsetof(Align2, f1) << ", f1's size = " << sizeof(Align2::f1) << std::endl;
+    std::cout << "\tf2's offset = " << offsetof(Align2, f2) << ", f2's size = " << sizeof(Align2::f2) << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "Align3's size = " << sizeof(Align3) << std::endl;
+    std::cout << "\tf1's offset = " << offsetof(Align3, f1) << ", f1's size = " << sizeof(Align3::f1) << std::endl;
+    std::cout << "\tf2's offset = " << offsetof(Align3, f2) << ", f2's size = " << sizeof(Align3::f2) << std::endl;
+    std::cout << "\tf3's offset = " << offsetof(Align3, f3) << ", f3's size = " << sizeof(Align3::f3) << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "Align4's size = " << sizeof(Align4) << std::endl;
+    std::cout << "\tf1's offset = " << offsetof(Align4, f1) << ", f1's size = " << sizeof(Align4::f1) << std::endl;
+    std::cout << "\tf2's offset = " << offsetof(Align4, f2) << ", f2's size = " << sizeof(Align4::f2) << std::endl;
+    std::cout << "\tf3's offset = " << offsetof(Align4, f3) << ", f3's size = " << sizeof(Align4::f3) << std::endl;
+    std::cout << "\tf4's offset = " << offsetof(Align4, f4) << ", f4's size = " << sizeof(Align4::f4) << std::endl;
+    std::cout << std::endl;
+    return 0;
+}
+EOF
+
+# 编译
+gcc -o main main.cpp -lstdc++
+
+# 执行
+./main
+```
+
+**执行结果如下**
+
+* 由于每个成员的offset必须是该成员与`有效对齐值`中较小的那个值的整数倍，下面称较小的这个值为`成员有效对齐值`
+* `Align1`：最长数据类型的长度是`1`，pack=`4`，因此，`有效对齐值`是`min(1, 4) = 1`
+    * 规则1：
+        * `f1`，第一个成员的`offset = 0`
+    * 规则2：
+        * 类型总长度为`1`，是`有效对齐值（1）`的整数倍
+* `Align2`：最长数据类型的长度是`2`，pack=`4`，因此，`有效对齐值`是`min(2, 4) = 2`
+    * 规则1：
+        * `f1`，第一个成员的`offset = 0`
+        * `f2`，类型长度为`2`，因此，`成员有效对齐值`是`min(2, 2) = 2`。`offset = 2`是`成员有效对齐值（2)`的整数倍
+    * 规则2：
+        * 类型总长度为`4`，是`有效对齐值（2）`的整数倍
+* `Align3`：最长数据类型的长度是`4`，pack=`4`，因此，`有效对齐值`是`min(4, 4) = 4`
+    * 规则1：
+        * `f1`，第一个成员的`offset = 0`
+        * `f2`，类型长度为`2`，因此，`成员有效对齐值`是`min(2, 4) = 2`。`offset = 2`是`成员有效对齐值（2)`的整数倍
+        * `f3`，类型长度为`4`，因此，`成员有效对齐值`是`min(4, 4) = 4`。`offset = 4`是`成员有效对齐值（4)`的整数倍
+    * 规则2：
+        * 类型总长度为`8`，是`有效对齐值（4）`的整数倍
+* `Align4`：最长数据类型的长度是`8`，pack=`4`，因此，`有效对齐值`是`min(8, 4) = 4`
+    * 规则1：
+        * `f1`，第一个成员的`offset = 0`
+        * `f2`，类型长度为`2`，因此，`成员有效对齐值`是`min(2, 4) = 2`。`offset = 2`是`成员有效对齐值（2)`的整数倍
+        * `f3`，类型长度为`4`，因此，`成员有效对齐值`是`min(4, 4) = 4`。`offset = 4`是`成员有效对齐值（4)`的整数倍
+        * `f4`，类型长度为`8`，因此，`成员有效对齐值`是`min(8, 4) = 4`。`offset = 8`是`成员有效对齐值（4)`的整数倍
+    * 规则2：
+        * 类型总长度为`16`，是`有效对齐值（4）`的整数倍
+
+```
+Align1's size = 1
+	f1's offset = 0, f1's size = 1
+
+Align2's size = 4
+	f1's offset = 0, f1's size = 1
+	f2's offset = 2, f2's size = 2
+
+Align3's size = 8
+	f1's offset = 0, f1's size = 1
+	f2's offset = 2, f2's size = 2
+	f3's offset = 4, f3's size = 4
+
+Align4's size = 16
+	f1's offset = 0, f1's size = 1
+	f2's offset = 2, f2's size = 2
+	f3's offset = 4, f3's size = 4
+	f4's offset = 8, f4's size = 8
+```
+
+# 15 mock class
 
 有时在测试的时候，我们需要mock一个类的实现，我们可以在测试的cpp文件中实现这个类的所有方法（**注意，必须是所有方法**），就能够覆盖原有库文件中的实现。下面以一个例子来说明
 
@@ -946,9 +1070,9 @@ person.cpp:(.text+0x2a): Person::sleep() 的多重定义
 collect2: 错误：ld 返回 1
 ```
 
-## 14.1 demo using cmake
+## 15.1 demo using cmake
 
-# 15 参考
+# 16 参考
 
 * [C++11\14\17\20 特性介绍](https://www.jianshu.com/p/8c4952e9edec)
 * [关于C++：静态常量字符串(类成员)](https://www.codenong.com/1563897/)
@@ -959,3 +1083,4 @@ collect2: 错误：ld 返回 1
 * [When should static_cast, dynamic_cast, const_cast and reinterpret_cast be used?](https://stackoverflow.com/questions/332030/when-should-static-cast-dynamic-cast-const-cast-and-reinterpret-cast-be-used)
 * [Candidate template ignored because template argument could not be inferred](https://stackoverflow.com/questions/12566228/candidate-template-ignored-because-template-argument-could-not-be-inferred)
 * [calling a member function pointer from outside the class - is it possible?](https://stackoverflow.com/questions/60438079/calling-a-member-function-pointer-from-outside-the-class-is-it-possible)
+* [带你深入理解内存对齐最底层原理](https://zhuanlan.zhihu.com/p/83449008)
