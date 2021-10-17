@@ -33,7 +33,6 @@
     * apache license/elastic license
 1. cpp
     * gcc各种常用
-        * gcc -o aaa.s -S aaa.cpp -fverbose-asm
     * jemalloc/jcmalloc/mimalloc
     * 如何安装boost？ `yum install -y boost-devel`
     * 性能开销测试

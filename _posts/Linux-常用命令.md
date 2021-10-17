@@ -891,6 +891,15 @@ ROOT=`cd "$ROOT"; pwd`
 
 * `addr2line 4005f5 -e test`：查看二进制`test`中位置为`4005f5`指令对应的源码
 
+## 2.24 objdump
+
+该工具用于反汇编
+
+**示例：**
+
+* `objdump -drwCS main.o`
+* `objdump -drwCS -M intel main.o`
+
 # 3 设备管理
 
 ## 3.1 mount
