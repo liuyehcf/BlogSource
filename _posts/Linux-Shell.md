@@ -390,7 +390,7 @@ shell中的特殊符号包括如下几种
     * `[ condition1 ] && [ condition2 ]`
     * `[ condition1 ] || [ condition2 ]`
 
-**示例**
+**示例：**
 
 ```sh
 # 正确写法
@@ -433,7 +433,7 @@ fi
 1. 如果要在bash的语法当中使用括号作为shell的判断式时，**必须要注意在中括号的两端需要有空格符来分隔**
 1. **逻辑与逻辑或，用的是`&&`和`||`，用一个`[]`或者用两个`[[]]`都可以，但使用`[[]]`时不能用`-a`和`-o`**
 
-**示例**
+**示例：**
 
 ```sh
 # 正确写法
@@ -701,7 +701,7 @@ ${#array[@]}
 ${#array[*]}
 ```
 
-**示例**
+**示例：**
 
 ```sh
 text='my name is liuye'
@@ -786,7 +786,7 @@ ${!map[@]}
 ${!map[*]}
 ```
 
-**示例**
+**示例：**
 
 ```sh
 declare -A map
@@ -1121,7 +1121,7 @@ env | grep FOO
 1. `OPTARG`：选项后面的参数
 1. `OPTIND`：下一个选项的索引（该索引是相对于`$*`的索引，因此如果选项有参数的话，索引是非连续的）
 
-**示例**：`getopts ":a:bc:" opt`（参数部分：`-a 11 -b -c 5`）
+**示例：**：`getopts ":a:bc:" opt`（参数部分：`-a 11 -b -c 5`）
 
 * 第一个冒号表示忽略错误
 * 字符后面的冒号表示该选项必须有自己的参数
@@ -1293,7 +1293,7 @@ getopt: option '--along' requires an argument
  --
 ```
 
-**示例**
+**示例：**
 
 ```sh
 [root@localhost ~]$ cat > test.sh << 'EOF'
@@ -1345,6 +1345,14 @@ Remaining arguments:
 [root@localhost ~]$ printf %x 255
 ff
 ```
+
+## 17.5 typeset
+
+该函数主要用于：声明变量和/或赋予它们属性
+
+**示例：**
+
+* `typeset -f <function_name>`：查看函数定义
 
 # 18 参考
 

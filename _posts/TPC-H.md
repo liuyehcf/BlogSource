@@ -106,6 +106,60 @@ categories:
 
 在[TPC Download Current Specs/Source](http://tpc.org/tpc_documents_current_versions/current_specifications5.asp)中下载`TCP-H`相关的程序
 
+## 5.1 编译安装
+
+将上述源码包解压缩，例如我下载的是
+
+```sh
+cd ???/dbgen
+cp makefile.suite makefile
+```
+
+**修改`makefile`文件中的`CC`、`DATABASE`、`MACHINE`、`WORKLOAD`的变量的定义**
+
+```sh
+CC      = gcc
+DATABASE= MYSQL
+MACHINE = LINUX
+WORKLOAD = TPCH
+```
+
+**修改`tpcd.h`，在最后增加几行宏定义**
+
+```c
+#ifdef MYSQL
+#define GEN_QUERY_PLAN ""
+#define START_TRAN "START TRANSACTION"
+#define END_TRAN "COMMIT"
+#define SET_OUTPUT ""
+#define SET_ROWCOUNT "limit %d;\n"
+#define SET_DBASE "use %s;\n"
+#endif
+```
+
+**编译，编译后会生成几个可执行文件**
+
+* `dbgen`：数据生成工具
+* `qgen`：sql生成工具
+
+```sh
+make
+```
+
+**目录结构：**
+
+* `dbgen/queries`：查询语句
+
+## 5.2 生成数据
+
+```sh
+# 生成1G大小的数据
+./dbgen -s 1
+
+# 查看生成后的数据
+ls -lh *tbl
+```
+
 # 6 参考
 
 * [TPC-H Vesion 2 and Version 3](http://www.tpc.org/tpch/)
@@ -114,3 +168,4 @@ categories:
 * [DB性能测试-常用3套件-手把手一步一步跑TPCH](http://ilongda.com/2020/06/22/TPCH/)
 * [TPC-C 、TPC-H和TPC-DS区别](https://zhuanlan.zhihu.com/p/339886289)
 * [TPC-H数据导入MySQL教程](https://www.cnblogs.com/joyeecheung/p/3599698.html)
+* [MySQL TPCH测试工具简要手册](https://www.php.cn/mysql-tutorials-133722.html)

@@ -47,3 +47,4 @@
     * 什么是体系结构
     * sa（Solution Architect）：解决方案架构师
     * sre（Site Reliability Engineering）：站点可靠工程师
+    * [cpu的制造和](https://plantegg.github.io/2021/06/01/CPU%E7%9A%84%E5%88%B6%E9%80%A0%E5%92%8C%E6%A6%82%E5%BF%B5/)

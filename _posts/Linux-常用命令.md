@@ -90,7 +90,7 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 
 ## 1.8 usermod
 
-**示例**
+**示例：**
 
 * `usermod -s /bin/zsh admin`
 * `usermod -d /opt/home/admin admin`
@@ -1306,8 +1306,16 @@ pstack 12345
     * `0,1,2,3 ==> 1 + 2 + 4 + 8 = 15 = 0xf`
     * `0,1,2,3,4,5 ==> 1 + 2 + 4 + 8 + 16 + 32 = 0x3f`
     * `2,3 ==> 4 + 8 = 12 = 0xc`
- 
-## 4.11 sudo
+
+## 4.11 su
+
+su命令用于切换用户
+
+* `su`：以`non-login-shell`的方式，切换到root用户
+* `su -`：以`login-shell`的方式（更换目录，环境变量等等），切换到root用户
+* `su test`：以`non-loign-shell`的方式，切换到test用户
+
+## 4.12 sudo
 
 **注意，sudo本身是一个进程。比如用`sudo tail -f xxx`，在另一个会话中`ps aux | grep tail`会发现两个进程**
 
@@ -1315,7 +1323,7 @@ pstack 12345
 
 * `/etc/sudoers`
 
-## 4.12 pkexec
+## 4.13 pkexec
 
 允许授权用户以其他身份执行程序
 
@@ -1323,7 +1331,7 @@ pstack 12345
 
 * `pkexec [command]`
 
-## 4.13 nohup
+## 4.14 nohup
 
 **`nohup`会忽略所有挂断（SIGHUP）信号**。比如通过`ssh`登录到远程服务器上，然后启动一个程序，当`ssh`登出时，这个程序就会随即终止。如果用`nohup`方式启动，那么当`ssh`登出时，这个程序仍然会继续运行
 
@@ -1341,7 +1349,7 @@ pstack 12345
 
 * `nohup java -jar xxx.jar &`
 
-## 4.14 screen
+## 4.15 screen
 
 **如果想在关闭`ssh`连接后继续运行启动的程序，可以使用`nohup`。如果要求下次`ssh`登录时，还能查看到上一次`ssh`登录时运行的程序的状态，那么就需要使用`screen`**
 
@@ -1540,7 +1548,7 @@ netstat的功能就是查看网络的连接状态，而网络连接状态中，�
 
 具体用法参考`ip link help`
 
-**示例**
+**示例：**
 
 * `ip link`：查看所有网卡
 * `ip link up`：查看up状态的网卡
@@ -2063,7 +2071,7 @@ nsenter用于在某个网络命名空间下执行某个命令。例如某些dock
     * **其中`protocol`要与`type`相匹配，比如当`protocol`是`tcp`时，那么`type`就不能是`host`或`net`，而应该是`port`或`portrange`**
 * **逻辑运算**：`条件表达式`可由多个`表达元`通过`逻辑运算`组合而成。逻辑运算包括（`!`或`not`）、（`&&`或`and`）、（`||`或`or`）三种逻辑运算
 
-**示例**
+**示例：**
 
 * `tcp src port 123`
 * `tcp src portrange 100-200`

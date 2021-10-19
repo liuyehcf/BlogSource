@@ -200,6 +200,30 @@ categories:
     * 一个稀疏的、分布式的、持久化的、多维度的、有序字典
     * `key`可以是行、列、时间戳等等
     * `value`是一个不能修改的字节数组
+    * `Rows`
+        * GBT中的行键是string，针对行键的读写操作都是原子的
+        * GBT通过行键值的字典序维护数据
+        * `row range`会动态分区，每个分区叫做`tablet`。`tablet`是分布和负载均衡的最小单元
+        * `client`通过指定`row key`可以获得很好的`locality`
+    * `Column Families`
+        * `column families`主要用于访问控制
+    * `Timestamps`
+        * GBT中的版本通过时间戳进行索引
+        * 为了避免版本号的不断累积，GBT提供了版本号的回收机制（仅保留最后n个版本或者仅保留最新的版本等等）
+1. `Building Blocks`
+    * `SSTable`使用了一种持久化的、有序的、不可变的字典，`key`和`value`都是`byte string`
+    * `SSTable`内部使用了`blocks`来存储数据，并且提供了索引来加速查询，减少磁盘访问频率
+    * `GBT`依赖一个高可靠、持久化、分布式的锁（`Chubby`）
+        * `Chubby`提供了`namespace`，包含了目录和文件。每个文件可以当做一个锁来使用，文件的读写都是原子的
+        * `Chubby client`会在会话中保存租约信息，当租约过期时，会释放所有占有的文件以及目录
+        * `Chubby client`可以注册回调来感知数据变更以及租约信息
+        * 一旦`Chubby`不可用，那么`GBT`也变得不可用
+    * `GBT`使用`Chubby`来完成如下事情
+        * 确保同时只有一个master
+        * 存储`GBT`数据的引导程序位置
+        * 用于`tablet service`的服务发现以及`tablet service`死亡后的清理工作
+        * 存储`GBT`的`schema`信息
+        * 存储权限控制相关的数据
 
 # 4 Efficiency in the Columbia Database Query Optimizer
 
