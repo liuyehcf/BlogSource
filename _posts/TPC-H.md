@@ -111,7 +111,7 @@ categories:
 将上述源码包解压缩，例如我下载的是
 
 ```sh
-cd ???/dbgen
+cd dbgen
 cp makefile.suite makefile
 ```
 
@@ -126,7 +126,7 @@ WORKLOAD = TPCH
 
 **修改`tpcd.h`，在最后增加几行宏定义**
 
-```c
+```
 #ifdef MYSQL
 #define GEN_QUERY_PLAN ""
 #define START_TRAN "START TRANSACTION"
@@ -146,19 +146,36 @@ WORKLOAD = TPCH
 make
 ```
 
-**目录结构：**
+**重要文件以及目录：**
 
-* `dbgen/queries`：查询语句
+* `dbgen/queries`：查询语句模板
+* `dbgen/dss.ddl`：建表语句
 
 ## 5.2 生成数据
 
 ```sh
+cd dbgen
+
 # 生成1G大小的数据
 ./dbgen -s 1
 
 # 查看生成后的数据
 ls -lh *tbl
 ```
+
+## 5.3 生成sql
+
+```sh
+cd dbgen
+
+mkdir q
+for id in `seq 1 22`
+do
+    DSS_QUERY=./queries ./qgen ${id} > q/${id}.sql
+done
+```
+
+**注意，这样生成的sql，可能格式稍微有些出入，看情况修改就行**
 
 # 6 参考
 
