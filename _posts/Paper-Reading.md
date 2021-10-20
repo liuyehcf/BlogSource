@@ -213,17 +213,37 @@ categories:
 1. `Building Blocks`
     * `SSTable`使用了一种持久化的、有序的、不可变的字典，`key`和`value`都是`byte string`
     * `SSTable`内部使用了`blocks`来存储数据，并且提供了索引来加速查询，减少磁盘访问频率
-    * `GBT`依赖一个高可靠、持久化、分布式的锁（`Chubby`）
+    * GBT依赖一个高可靠、持久化、分布式的锁（`Chubby`）
         * `Chubby`提供了`namespace`，包含了目录和文件。每个文件可以当做一个锁来使用，文件的读写都是原子的
         * `Chubby client`会在会话中保存租约信息，当租约过期时，会释放所有占有的文件以及目录
         * `Chubby client`可以注册回调来感知数据变更以及租约信息
-        * 一旦`Chubby`不可用，那么`GBT`也变得不可用
-    * `GBT`使用`Chubby`来完成如下事情
+        * 一旦`Chubby`不可用，那么GBT也变得不可用
+    * GBT使用`Chubby`来完成如下事情
         * 确保同时只有一个master
-        * 存储`GBT`数据的引导程序位置
+        * 存储GBT数据的引导程序位置
         * 用于`tablet service`的服务发现以及`tablet service`死亡后的清理工作
-        * 存储`GBT`的`schema`信息
+        * 存储GBT的`schema`信息
         * 存储权限控制相关的数据
+1. `Impletation`
+    * GBT包含3个核心组件
+        * 支持各种语言的`client-sdk`
+            * 与大多数单`master`的分布式系统类似，`client`仅在必要时才与`master`进行通信，大部分时候都直接与`tablet server`进行交互
+            * 在GBT中，`client`不依赖于`master`就能获取`tablet`信息，这进一步降低了`master`的负载
+        * 一个`master`
+             * 将表分配给`tablet server`
+            * 负责管理`tablet server`的生命周期
+            * 负责`tablet server`的负载均衡
+        * 多个`tablet server`，并且支持扩缩容
+             * 负责管理一组`tablet`，大约10-1000
+            * 负责响应读写请求
+            * 当`tablet`过大后，拆分`tablet`
+    * `Table Location`
+        * GBT使用一个三层类似于`B+-tree`的树形结构来存储`Table Location Information`
+            * 存储在`Chubby`中
+        * 第一级是一个文件（存储在`Chubby`中），该文件包含了`root table`的位置信息。`root table`中存储的是各个`tablet`在`METADATA table`中的位置，每个`METADATA table`包含了`User tablet`的具体位置。此外，`root table`是`METADATA table`中的第一个`tablet`，但是它被特殊对待了，它永远不会分裂，确保层级永远是三层
+        * `METADATA table`存储的是由`tablet`相关信息（`table identifier`、`row end`等信息）经过编码得到的一个`key`。`METADATA table`中的每行大约`1K`的内存。假设内存`128M`的话，三级的结构可以存储$(128 * 1000)^2 ≈ 2^{34}$个`tablet`
+            * `METADATA table`存在哪？
+        * `client`会缓存`tablet location`。当发现缓存不存在，或者缓存信息有问题时（如何发现有问题？），会重新获取正确的信息。此外，`client`在获取`table location`时，会多获取一些（即便用不到），这样下次访问`tablet`时，可能直接就命中缓存了
 
 # 4 Efficiency in the Columbia Database Query Optimizer
 

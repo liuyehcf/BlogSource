@@ -19,11 +19,17 @@
         * [数据库内核杂谈](https://www.infoq.cn/theme/46)
         * [Develop your own Database](https://hpi.de/plattner/teaching/archive/winter-term-201819/develop-your-own-database.html)
         * [DorisDB doc](http://doc.dorisdb.com)
+        * 一些概念
+            * 桶就是tablet
+            * 如何查看数据分布情况：show tablet from test_basic;
     * 相关工具
         * sqlancher
         * sqlmith
     * doc
         * [sqlite-window-function](https://www.sqlite.org/windowfunctions.html)
+        * [ck-blog](https://clickhouse.com/docs/zh/whats-new/changelog/)
+    * ssb测试集
+        * https://www.cnblogs.com/tgzhu/p/9083092.html
 1. opensource
     * PMC
         * [WHAT IS A PMC?](https://www.apache.org/dev/pmc.html#what-is-a-pmc)

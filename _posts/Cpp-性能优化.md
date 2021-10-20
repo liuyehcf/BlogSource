@@ -15,9 +15,11 @@ categories:
 
 **`Pointer Aliasing`指的是两个指针（在作用域内）指向了同一个物理地址，或者说指向的物理地址有重叠。`__restrict`关键词用于给编译器一个提示：确保被标记的指针是独占物理地址的**
 
-## 1.1 case1
+## 1.1 汇编
 
-**下面以一个简单的例子说明`__restrict`关键词的作用，以及它是如何引导编译器进行指令优化的**
+**下面以几个简单的例子说明`__restrict`关键词的作用，以及它是如何引导编译器进行指令优化的**
+
+### 1.1.1 case1
 
 ```sh
 # 创建源文件
@@ -106,9 +108,7 @@ uint32_t add3(uint32_t* __restrict a, uint32_t* b) {
 * 对于函数`add1`，其结果可能是3（`a`和`b`指向不同地址）或者4（`a`和`b`指向相同地址）
 * 函数`add2`和`add3`得到的汇编指令是一样的，因为只有`*a = 1;`可能会被`*b = 2;`覆盖
 
-## 1.2 case2
-
-**下面再以一个简单的例子说明`__restrict`关键词的作用，以及它是如何引导编译器进行指令优化的**
+### 1.1.2 case2
 
 ```sh
 # 创建源文件
@@ -216,9 +216,180 @@ uint32_t loop3(uint32_t* __restrict num1, uint32_t* num2) {
 1. 对于函数`loop1`，由于赋值语句`*num2 = i;`的存在，导致编译器无法直接计算结果，因为该语句可能会修改`num1`的值（`num1`和`num2`指向同一地址）
 1. 函数`loop2`和`loop3`生成的指令一样，都可以在编译期直接计算结果
 
+## 1.2 benchmark
+
+```cpp
+#include <benchmark/benchmark.h>
+
+uint32_t __attribute__((noinline)) sum_without_restrict(uint32_t* num1, uint32_t* num2) {
+    uint32_t res = 0;
+    for (size_t i = 0; i < 10000; ++i) {
+        *num2 = i;
+        res += *num1;
+    }
+    return res;
+}
+
+uint32_t __attribute__((noinline)) sum_with_restrict(uint32_t* __restrict num1, uint32_t* __restrict num2) {
+    uint32_t res = 0;
+    for (size_t i = 0; i < 10000; ++i) {
+        *num2 = i;
+        res += *num1;
+    }
+    return res;
+}
+
+void __attribute__((noinline)) loop_without_restrict(float* dest, float* value) {
+    for (size_t i = 0; i < 10000; ++i) {
+        dest[i] += *value;
+    }
+}
+
+void __attribute__((noinline)) loop_with_restrict(float* __restrict dest, float* __restrict value) {
+    for (size_t i = 0; i < 10000; ++i) {
+        dest[i] += *value;
+    }
+}
+
+void __attribute__((noinline)) transform_without_restrict(float* dest, float* src, float* matrix, size_t n) {
+    for (size_t i = 0; i < n; ++i, src += 4, dest += 4) {
+        dest[0] = src[0] * matrix[0] + src[1] * matrix[1] + src[2] * matrix[2] + src[3] * matrix[3];
+        dest[1] = src[0] * matrix[4] + src[1] * matrix[5] + src[2] * matrix[6] + src[3] * matrix[7];
+        dest[2] = src[0] * matrix[8] + src[1] * matrix[9] + src[2] * matrix[10] + src[3] * matrix[11];
+        dest[3] = src[0] * matrix[12] + src[1] * matrix[13] + src[2] * matrix[14] + src[3] * matrix[15];
+    }
+}
+
+void __attribute__((noinline))
+transform_with_restrict(float* __restrict dest, float* __restrict src, float* __restrict matrix, size_t n) {
+    for (size_t i = 0; i < n; ++i, src += 4, dest += 4) {
+        dest[0] = src[0] * matrix[0] + src[1] * matrix[1] + src[2] * matrix[2] + src[3] * matrix[3];
+        dest[1] = src[0] * matrix[4] + src[1] * matrix[5] + src[2] * matrix[6] + src[3] * matrix[7];
+        dest[2] = src[0] * matrix[8] + src[1] * matrix[9] + src[2] * matrix[10] + src[3] * matrix[11];
+        dest[3] = src[0] * matrix[12] + src[1] * matrix[13] + src[2] * matrix[14] + src[3] * matrix[15];
+    }
+}
+
+static void BM_sum_without_restrict(benchmark::State& state) {
+    uint32_t num1 = 0;
+    uint32_t num2 = 0;
+    for (auto _ : state) {
+        ++num1;
+        ++num2;
+        sum_without_restrict(&num1, &num2);
+    }
+}
+
+static void BM_sum_with_restrict(benchmark::State& state) {
+    uint32_t num1 = 0;
+    uint32_t num2 = 0;
+    for (auto _ : state) {
+        ++num1;
+        ++num2;
+        sum_with_restrict(&num1, &num2);
+    }
+}
+
+static void BM_loop_without_restrict(benchmark::State& state) {
+    float dstdata[4 * 10000];
+    size_t i = 0;
+    for (i = 0; i < 4 * 10000; ++i) {
+        dstdata[i] = 0;
+    }
+
+    i = 0;
+    for (auto _ : state) {
+        float value = ++i;
+        loop_without_restrict(dstdata, &value);
+    }
+}
+
+static void BM_loop_with_restrict(benchmark::State& state) {
+    float dstdata[4 * 10000];
+    size_t i = 0;
+    for (i = 0; i < 4 * 10000; ++i) {
+        dstdata[i] = 0;
+    }
+
+    i = 0;
+    for (auto _ : state) {
+        float value = ++i;
+        loop_with_restrict(dstdata, &value);
+    }
+}
+
+static void BM_transform_without_restrict(benchmark::State& state) {
+    float srcdata[4 * 10000];
+    float dstdata[4 * 10000];
+
+    size_t i;
+    float matrix[16];
+
+    for (i = 0; i < 16; ++i) {
+        matrix[i] = 1;
+    }
+    for (i = 0; i < 4 * 10000; ++i) {
+        srcdata[i] = i;
+        dstdata[i] = 0;
+    }
+    for (auto _ : state) {
+        transform_without_restrict(dstdata, srcdata, matrix, 10000);
+    }
+}
+
+static void BM_transform_with_restrict(benchmark::State& state) {
+    float srcdata[4 * 10000];
+    float dstdata[4 * 10000];
+
+    size_t i;
+    float matrix[16];
+
+    for (i = 0; i < 16; ++i) {
+        matrix[i] = 1;
+    }
+    for (i = 0; i < 4 * 10000; ++i) {
+        srcdata[i] = i;
+        dstdata[i] = 0;
+    }
+    for (auto _ : state) {
+        transform_with_restrict(dstdata, srcdata, matrix, 10000);
+    }
+}
+
+BENCHMARK(BM_sum_without_restrict);
+BENCHMARK(BM_sum_with_restrict);
+
+BENCHMARK(BM_loop_without_restrict);
+BENCHMARK(BM_loop_with_restrict);
+
+BENCHMARK(BM_transform_without_restrict);
+BENCHMARK(BM_transform_with_restrict);
+
+BENCHMARK_MAIN();
+```
+
+**输出如下：**
+
+```
+------------------------------------------------------------------------
+Benchmark                              Time             CPU   Iterations
+------------------------------------------------------------------------
+BM_sum_without_restrict             6301 ns         6300 ns       111172
+BM_sum_with_restrict                2.89 ns         2.89 ns    242847831
+BM_loop_without_restrict            1106 ns         1106 ns       632797
+BM_loop_with_restrict               1113 ns         1113 ns       615683
+BM_transform_without_restrict      16108 ns        16106 ns        43250
+BM_transform_with_restrict         15619 ns        15617 ns        44817
+```
+
+**奇怪的问题：**
+
+1. 若`sum_with_restrict`以及`sum_without_restrict`的循环长度不写死，而是传入参数，那么结果完全不同
+1. `loop_without_restrict`以及`loop_with_restrict`没有差异
+
 # 2 虚函数
 
-## 2.1 case 1
+## 2.1 汇编
 
 ```sh
 # 创建源文件
@@ -282,3 +453,174 @@ void invoke_normal(Base* base) {
 **结论：**
 
 1. 对于虚函数，由于无法确认实际类型，因此无法进行函数内敛优化
+
+## 2.2 benchmark
+
+```cpp
+#include <benchmark/benchmark.h>
+
+class Base {
+public:
+    Base() = default;
+    virtual ~Base() = default;
+    virtual void func_virtual() {}
+    void func_normal() {}
+
+protected:
+    size_t value = 0;
+};
+
+class Derive : public Base {
+public:
+    Derive() = default;
+    virtual ~Derive() = default;
+    virtual void func_virtual() override {}
+};
+
+void __attribute__((noinline)) invoke_virtual(Base* base) {
+    base->func_virtual();
+}
+
+void __attribute__((noinline)) invoke_normal(Base* base) {
+    base->func_normal();
+}
+
+static void BM_virtual(benchmark::State& state) {
+    Base* base = new Derive();
+    for (auto _ : state) {
+        invoke_virtual(base);
+        benchmark::DoNotOptimize(base);
+    }
+    delete base;
+}
+
+static void BM_normal(benchmark::State& state) {
+    Base* base = new Derive();
+    for (auto _ : state) {
+        invoke_normal(base);
+        benchmark::DoNotOptimize(base);
+    }
+    delete base;
+}
+
+BENCHMARK(BM_normal);
+BENCHMARK(BM_virtual);
+
+BENCHMARK_MAIN();
+```
+
+**输出如下：**
+
+```
+-----------------------------------------------------
+Benchmark           Time             CPU   Iterations
+-----------------------------------------------------
+BM_normal       0.314 ns        0.313 ns   1000000000
+BM_virtual       1.88 ns         1.88 ns    372088713
+```
+
+# 3 向量化
+
+## 3.1 benchmark
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#include <vector>
+
+class Buffer {
+public:
+    std::vector<size_t>& container() { return _container; }
+    void append(size_t value) { _container.push_back(value); }
+    size_t& sum() { return _sum; }
+
+private:
+    std::vector<size_t> _container;
+    size_t _sum = 0;
+};
+
+void __attribute__((noinline)) loop_non_optimize(Buffer* buffer) {
+    size_t len = buffer->container().size();
+    for (size_t i = 0; i < len; ++i) {
+        buffer->sum() += buffer->container()[i];
+    }
+}
+
+void __attribute__((noinline)) loop_with_local_array(Buffer* buffer) {
+    size_t len = buffer->container().size();
+    auto* data = buffer->container().data();
+    size_t local_sum = 0;
+    for (size_t i = 0; i < len; ++i) {
+        local_sum += data[i];
+    }
+    buffer->sum() = local_sum;
+}
+
+void __attribute__((noinline)) loop_with_restrict(Buffer* __restrict buffer) {
+    size_t len = buffer->container().size();
+    for (size_t i = 0; i < len; ++i) {
+        buffer->sum() += buffer->container()[i];
+    }
+}
+
+static void BM_loop_non_optimize(benchmark::State& state) {
+    Buffer buffer;
+    size_t len = 100000000;
+    for (size_t i = 0; i < len; ++i) {
+        buffer.append(i);
+    }
+
+    for (auto _ : state) {
+        loop_non_optimize(&buffer);
+        benchmark::DoNotOptimize(buffer);
+    }
+}
+
+static void BM_loop_with_local_array(benchmark::State& state) {
+    Buffer buffer;
+    size_t len = 100000000;
+    for (size_t i = 0; i < len; ++i) {
+        buffer.append(i);
+    }
+
+    for (auto _ : state) {
+        loop_with_local_array(&buffer);
+        benchmark::DoNotOptimize(buffer);
+    }
+}
+
+static void BM_loop_with_restrict(benchmark::State& state) {
+    Buffer buffer;
+    size_t len = 100000000;
+    for (size_t i = 0; i < len; ++i) {
+        buffer.append(i);
+    }
+
+    for (auto _ : state) {
+        loop_with_restrict(&buffer);
+        benchmark::DoNotOptimize(buffer);
+    }
+}
+
+BENCHMARK(BM_loop_non_optimize);
+BENCHMARK(BM_loop_with_local_array);
+BENCHMARK(BM_loop_with_restrict);
+
+BENCHMARK_MAIN();
+```
+
+**输出如下：**
+
+```
+-------------------------------------------------------------------
+Benchmark                         Time             CPU   Iterations
+-------------------------------------------------------------------
+BM_loop_non_optimize      111553240 ns    111541974 ns            8
+BM_loop_with_local_array   72268718 ns     72261354 ns            9
+BM_loop_with_restrict      78483112 ns     78475769 ns           10
+```
+
+**结论：**
+
+1. `gcc`无法对类型的成员变量进行向量化优化
+1. `__restrict`与本地数组能达到相似地优化效果

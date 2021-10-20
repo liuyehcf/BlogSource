@@ -2764,6 +2764,7 @@ yum install -y iotop
 **参数说明：**
 
 * `-o`：只显示正在执行io操作的进程或者线程
+* `-u`：后接用户名
 * `-P`：只显示进程不显示线程
 * `-b`：批处理，即非交互模式
 * `-n`：后接次数
@@ -2773,6 +2774,7 @@ yum install -y iotop
 * `iotop`
 * `iotop -oP`
 * `iotop -oP -b -n 10`
+* `iotop -u admin`
 
 # 7 性能分析工具
 

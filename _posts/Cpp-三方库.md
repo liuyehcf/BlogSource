@@ -114,7 +114,7 @@ mkdir build
 cd build
 
 # 这里指定googletest的工程路径（不加任何参数会有提示）
-cmake -DGOOGLETEST_PATH=~/googletest/ ..
+cmake -DGOOGLETEST_PATH=~/googletest/ -DCMAKE_BUILD_TYPE=Release ..
 make
 make install
 ```
@@ -197,7 +197,13 @@ BM_StringCopy           21.0 ns         21.0 ns     33441350
 
 [quick-bench（在线）](https://quick-bench.com/)
 
-## 3.2 参考
+## 3.2 Tips
+
+### 3.2.1 benchmark::DoNotOptimize
+
+避免优化本不应该优化的代码
+
+## 3.3 参考
 
 * [benchmark/docs/user_guide.md](https://github.com/google/benchmark/blob/main/docs/user_guide.md)
 * [c++性能测试工具：google benchmark入门（一）](https://www.cnblogs.com/apocelipes/p/10348925.html)
