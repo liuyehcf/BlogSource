@@ -380,8 +380,8 @@ BM_transform_with_restrict         15619 ns        15617 ns        44817
 
 **问题：**
 
-1. 若`sum_with_restrict`以及`sum_without_restrict`的循环长度不写死，而是传入参数，那么结果完全不同
-1. `loop_without_restrict`以及`loop_with_restrict`没有差异
+1. 若`sum_with_restrict`以及`sum_without_restrict`的循环长度不写死，而是传入参数，那么结果完全不同。传入参数的情况下，两个函数被优化成一样的了
+1. **`loop_without_restrict`以及`loop_with_restrict`没有差异。如果把其他几组测试的代码全删除（包括待测函数、BM函数），那么结果是有差异的。不知道为啥，非常奇怪**
 
 # 2 虚函数
 
