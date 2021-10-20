@@ -221,9 +221,11 @@ uint32_t loop3(uint32_t* __restrict num1, uint32_t* num2) {
 ```cpp
 #include <benchmark/benchmark.h>
 
+#define ARRAY_LEN 10000
+
 uint32_t __attribute__((noinline)) sum_without_restrict(uint32_t* num1, uint32_t* num2) {
     uint32_t res = 0;
-    for (size_t i = 0; i < 10000; ++i) {
+    for (size_t i = 0; i < ARRAY_LEN; ++i) {
         *num2 = i;
         res += *num1;
     }
@@ -232,7 +234,7 @@ uint32_t __attribute__((noinline)) sum_without_restrict(uint32_t* num1, uint32_t
 
 uint32_t __attribute__((noinline)) sum_with_restrict(uint32_t* __restrict num1, uint32_t* __restrict num2) {
     uint32_t res = 0;
-    for (size_t i = 0; i < 10000; ++i) {
+    for (size_t i = 0; i < ARRAY_LEN; ++i) {
         *num2 = i;
         res += *num1;
     }
@@ -240,13 +242,13 @@ uint32_t __attribute__((noinline)) sum_with_restrict(uint32_t* __restrict num1, 
 }
 
 void __attribute__((noinline)) loop_without_restrict(float* dest, float* value) {
-    for (size_t i = 0; i < 10000; ++i) {
+    for (size_t i = 0; i < ARRAY_LEN; ++i) {
         dest[i] += *value;
     }
 }
 
 void __attribute__((noinline)) loop_with_restrict(float* __restrict dest, float* __restrict value) {
-    for (size_t i = 0; i < 10000; ++i) {
+    for (size_t i = 0; i < ARRAY_LEN; ++i) {
         dest[i] += *value;
     }
 }
@@ -291,68 +293,62 @@ static void BM_sum_with_restrict(benchmark::State& state) {
 }
 
 static void BM_loop_without_restrict(benchmark::State& state) {
-    float dstdata[4 * 10000];
-    size_t i = 0;
-    for (i = 0; i < 4 * 10000; ++i) {
+    float dstdata[ARRAY_LEN];
+    for (size_t i = 0; i < ARRAY_LEN; ++i) {
         dstdata[i] = 0;
     }
 
-    i = 0;
+    float value = 0;
     for (auto _ : state) {
-        float value = ++i;
+        value += 1.0;
         loop_without_restrict(dstdata, &value);
     }
 }
 
 static void BM_loop_with_restrict(benchmark::State& state) {
-    float dstdata[4 * 10000];
-    size_t i = 0;
-    for (i = 0; i < 4 * 10000; ++i) {
+    float dstdata[ARRAY_LEN];
+    for (size_t i = 0; i < ARRAY_LEN; ++i) {
         dstdata[i] = 0;
     }
 
-    i = 0;
+    float value = 0;
     for (auto _ : state) {
-        float value = ++i;
+        value += 1.0;
         loop_with_restrict(dstdata, &value);
     }
 }
 
 static void BM_transform_without_restrict(benchmark::State& state) {
-    float srcdata[4 * 10000];
-    float dstdata[4 * 10000];
-
-    size_t i;
+    float srcdata[4 * ARRAY_LEN];
+    float dstdata[4 * ARRAY_LEN];
     float matrix[16];
 
-    for (i = 0; i < 16; ++i) {
+    for (size_t i = 0; i < 16; ++i) {
         matrix[i] = 1;
     }
-    for (i = 0; i < 4 * 10000; ++i) {
+    for (size_t i = 0; i < 4 * ARRAY_LEN; ++i) {
         srcdata[i] = i;
         dstdata[i] = 0;
     }
     for (auto _ : state) {
-        transform_without_restrict(dstdata, srcdata, matrix, 10000);
+        transform_without_restrict(dstdata, srcdata, matrix, ARRAY_LEN);
     }
 }
 
 static void BM_transform_with_restrict(benchmark::State& state) {
-    float srcdata[4 * 10000];
-    float dstdata[4 * 10000];
-
-    size_t i;
+    float srcdata[4 * ARRAY_LEN];
+    float dstdata[4 * ARRAY_LEN];
     float matrix[16];
 
-    for (i = 0; i < 16; ++i) {
+    for (size_t i = 0; i < 16; ++i) {
         matrix[i] = 1;
     }
-    for (i = 0; i < 4 * 10000; ++i) {
+    for (size_t i = 0; i < 4 * ARRAY_LEN; ++i) {
         srcdata[i] = i;
         dstdata[i] = 0;
     }
     for (auto _ : state) {
-        transform_with_restrict(dstdata, srcdata, matrix, 10000);
+        transform_with_restrict(dstdata, srcdata, matrix, ARRAY_LEN);
     }
 }
 
@@ -382,7 +378,7 @@ BM_transform_without_restrict      16108 ns        16106 ns        43250
 BM_transform_with_restrict         15619 ns        15617 ns        44817
 ```
 
-**奇怪的问题：**
+**问题：**
 
 1. 若`sum_with_restrict`以及`sum_without_restrict`的循环长度不写死，而是传入参数，那么结果完全不同
 1. `loop_without_restrict`以及`loop_with_restrict`没有差异
