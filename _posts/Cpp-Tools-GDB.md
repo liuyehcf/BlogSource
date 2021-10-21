@@ -284,6 +284,7 @@ Breakpoint 1, main () at set_break.cpp:8
 * `info`用于查看各种调试相关的信息
     * `info break`：查看断点
     * `info reg`：查看寄存器
+    * `info all-reg`：查看所有寄存器，包括浮点寄存器和向量寄存器
     * `info stack`：查看堆栈
     * `info thread`：查看线程
     * `info locals`：查看本地变量
@@ -292,6 +293,7 @@ Breakpoint 1, main () at set_break.cpp:8
 * `print`：用于查看变量
     * `print <variable>`
     * `print <variable>.<field>`
+    * `print (<type>)(*<address>)`：查看地址指向的对象，需要转型
     * `p *((std::vector<uint32_t>*) <address>)`：查看智能指针
     * 查看、设置属性：`show print <property>`、`set print <property> on/off`，下面列出几个常用的属性名
         * `address`：当程序显式函数信息时，显示函数地址，默认开启
