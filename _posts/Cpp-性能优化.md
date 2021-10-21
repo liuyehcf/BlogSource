@@ -461,9 +461,6 @@ public:
     virtual ~Base() = default;
     virtual void func_virtual() {}
     void func_normal() {}
-
-protected:
-    size_t value = 0;
 };
 
 class Derive : public Base {
@@ -543,7 +540,7 @@ void __attribute__((noinline)) loop_without_optimize(Aggregator* aggregator, uin
 }
 
 void __attribute__((noinline)) loop_with_local_sum(Aggregator* aggregator, uint32_t* nums, size_t len) {
-    size_t local_sum = 0;
+    uint32_t local_sum = 0;
     for (size_t i = 0; i < len; ++i) {
         local_sum += nums[i];
     }
@@ -608,9 +605,9 @@ BENCHMARK_MAIN();
 -------------------------------------------------------------------
 Benchmark                         Time             CPU   Iterations
 -------------------------------------------------------------------
-BM_loop_without_optimize       53.8 ns         53.8 ns     13006609
-BM_loop_with_local_sum         16.9 ns         16.9 ns     41323897
-BM_loop_with_restrict          10.0 ns         10.0 ns     69784521
+BM_loop_without_optimize       52.7 ns         52.6 ns     13278349
+BM_loop_with_local_sum         10.2 ns         10.2 ns     68763960
+BM_loop_with_restrict          10.2 ns         10.2 ns     69550202
 ```
 
 **结论：**
@@ -618,7 +615,171 @@ BM_loop_with_restrict          10.0 ns         10.0 ns     69784521
 1. `gcc`无法对类型的成员变量进行向量化优化
 1. `__restrict`与本地数组能达到相似地优化效果
 
+**如果把`uint32_t* nums`换成`std::vector<unt32_t>& nums`或者`std::vector<unt32_t>* nums`。都无法得到上述的结果，因为在这种情况下gcc不会认为`Aggregator::_sum`存在`Pointer Aliasing`，因此可以直接进行优化**
+
 ### 3.1.2 case2
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#include <vector>
+
+#define LEN 100
+
+class Aggregator {
+public:
+    uint32_t& sum() { return _sum; }
+
+private:
+    uint32_t _sum = 0;
+};
+
+class Container {
+public:
+    std::vector<uint32_t>& container() { return _container; }
+
+private:
+    std::vector<uint32_t> _container;
+};
+
+void __attribute__((noinline)) loop_without_optimize(Aggregator* aggregator, Container* container) {
+    size_t len = container->container().size();
+    for (size_t i = 0; i < len; ++i) {
+        aggregator->sum() += container->container()[i];
+    }
+}
+
+void __attribute__((noinline)) loop_with_local_sum(Aggregator* aggregator, Container* container) {
+    size_t len = container->container().size();
+    uint32_t local_sum = 0;
+    for (size_t i = 0; i < len; ++i) {
+        local_sum += container->container()[i];
+    }
+    aggregator->sum() += local_sum;
+}
+
+void __attribute__((noinline)) loop_with_local_array(Aggregator* aggregator, Container* container) {
+    size_t len = container->container().size();
+    auto* local_array = container->container().data();
+    for (size_t i = 0; i < len; ++i) {
+        aggregator->sum() += local_array[i];
+    }
+}
+
+void __attribute__((noinline)) loop_with_local_sum_and_local_array(Aggregator* aggregator, Container* container) {
+    size_t len = container->container().size();
+    uint32_t local_sum = 0;
+    auto* local_array = container->container().data();
+    for (size_t i = 0; i < len; ++i) {
+        local_sum += local_array[i];
+    }
+    aggregator->sum() += local_sum;
+}
+
+void __attribute__((noinline)) loop_with_restrict(Aggregator* __restrict aggregator, Container* container) {
+    size_t len = container->container().size();
+    for (size_t i = 0; i < len; ++i) {
+        aggregator->sum() += container->container()[i];
+    }
+}
+
+static void BM_loop_without_optimize(benchmark::State& state) {
+    Aggregator aggregator;
+    Container container;
+    for (size_t i = 0; i < LEN; ++i) {
+        container.container().push_back(i);
+    }
+
+    for (auto _ : state) {
+        loop_without_optimize(&aggregator, &container);
+        benchmark::DoNotOptimize(aggregator);
+        benchmark::DoNotOptimize(container);
+    }
+}
+
+static void BM_loop_with_local_sum(benchmark::State& state) {
+    Aggregator aggregator;
+    Container container;
+    for (size_t i = 0; i < LEN; ++i) {
+        container.container().push_back(i);
+    }
+
+    for (auto _ : state) {
+        loop_with_local_sum(&aggregator, &container);
+        benchmark::DoNotOptimize(aggregator);
+        benchmark::DoNotOptimize(container);
+    }
+}
+
+static void BM_loop_with_local_array(benchmark::State& state) {
+    Aggregator aggregator;
+    Container container;
+    for (size_t i = 0; i < LEN; ++i) {
+        container.container().push_back(i);
+    }
+
+    for (auto _ : state) {
+        loop_with_local_array(&aggregator, &container);
+        benchmark::DoNotOptimize(aggregator);
+        benchmark::DoNotOptimize(container);
+    }
+}
+
+static void BM_loop_with_local_sum_and_local_array(benchmark::State& state) {
+    Aggregator aggregator;
+    Container container;
+    for (size_t i = 0; i < LEN; ++i) {
+        container.container().push_back(i);
+    }
+
+    for (auto _ : state) {
+        loop_with_local_sum_and_local_array(&aggregator, &container);
+        benchmark::DoNotOptimize(aggregator);
+        benchmark::DoNotOptimize(container);
+    }
+}
+
+static void BM_loop_with_restrict(benchmark::State& state) {
+    Aggregator aggregator;
+    Container container;
+    for (size_t i = 0; i < LEN; ++i) {
+        container.container().push_back(i);
+    }
+
+    for (auto _ : state) {
+        loop_with_restrict(&aggregator, &container);
+        benchmark::DoNotOptimize(aggregator);
+        benchmark::DoNotOptimize(container);
+    }
+}
+
+BENCHMARK(BM_loop_without_optimize);
+BENCHMARK(BM_loop_with_local_sum);
+BENCHMARK(BM_loop_with_local_array);
+BENCHMARK(BM_loop_with_local_sum_and_local_array);
+BENCHMARK(BM_loop_with_restrict);
+
+BENCHMARK_MAIN();
+```
+
+**输出如下：**
+
+```
+---------------------------------------------------------------------------------
+Benchmark                                       Time             CPU   Iterations
+---------------------------------------------------------------------------------
+BM_loop_without_optimize                     52.8 ns         52.8 ns     13226009
+BM_loop_with_local_sum                       12.0 ns         12.0 ns     58367441
+BM_loop_with_local_array                     51.3 ns         51.3 ns     13633006
+BM_loop_with_local_sum_and_local_array       11.0 ns         11.0 ns     63853532
+BM_loop_with_restrict                        11.6 ns         11.6 ns     60978133
+```
+
+**结论：**
+
+1. 由`loop_without_optimize`与`loop_with_local_array`对比可以看出，是否直接使用数组对性能无影响
+
+### 3.1.3 case3
 
 **这个case非常奇怪，`_sum`和`_nums`都是Aggregator的成员。编译器在没有`__restrict`的情况下，居然没法进行优化**
 
@@ -699,6 +860,81 @@ Benchmark                         Time             CPU   Iterations
 -------------------------------------------------------------------
 BM_loop_without_optimize       54.1 ns         54.1 ns     12959382
 BM_loop_with_restrict          14.8 ns         14.8 ns     47479924
+```
+
+---
+
+**`Aggregator::_nums`的类型换成`std::vector<uint32_t>`得到的也是类似的结果**
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#include <vector>
+
+#define LEN 100
+
+class Aggregator {
+public:
+    std::vector<uint32_t>& nums() { return _nums; }
+    uint32_t& sum() { return _sum; }
+
+private:
+    std::vector<uint32_t> _nums;
+    uint32_t _sum = 0;
+};
+
+void __attribute__((noinline)) loop_without_optimize(Aggregator* aggregator) {
+    size_t len = aggregator->nums().size();
+    for (size_t i = 0; i < len; ++i) {
+        aggregator->sum() += aggregator->nums()[i];
+    }
+}
+
+void __attribute__((noinline)) loop_with_restrict(Aggregator* __restrict aggregator) {
+    size_t len = aggregator->nums().size();
+    for (size_t i = 0; i < len; ++i) {
+        aggregator->sum() += aggregator->nums()[i];
+    }
+}
+
+static void BM_loop_without_optimize(benchmark::State& state) {
+    Aggregator aggregator;
+    for (size_t i = 0; i < LEN; ++i) {
+        aggregator.nums().push_back(i);
+    }
+
+    for (auto _ : state) {
+        loop_without_optimize(&aggregator);
+        benchmark::DoNotOptimize(aggregator);
+    }
+}
+
+static void BM_loop_with_restrict(benchmark::State& state) {
+    Aggregator aggregator;
+    for (size_t i = 0; i < LEN; ++i) {
+        aggregator.nums().push_back(i);
+    }
+
+    for (auto _ : state) {
+        loop_with_restrict(&aggregator);
+        benchmark::DoNotOptimize(aggregator);
+    }
+}
+
+BENCHMARK(BM_loop_without_optimize);
+BENCHMARK(BM_loop_with_restrict);
+
+BENCHMARK_MAIN();
+```
+
+**输出如下：**
+
+```
+-------------------------------------------------------------------
+Benchmark                         Time             CPU   Iterations
+-------------------------------------------------------------------
+BM_loop_without_optimize       52.1 ns         52.1 ns     13445879
+BM_loop_with_restrict          17.9 ns         17.9 ns     38901664
 ```
 
 ## 3.2 参考
