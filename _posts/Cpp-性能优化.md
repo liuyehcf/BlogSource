@@ -514,9 +514,24 @@ BM_virtual       1.88 ns         1.88 ns    372088713
 
 # 3 向量化
 
-## 3.1 benchmark
+## 3.1 简洁
 
-### 3.1.1 case1
+**向量化使用的特殊寄存器**
+
+* `xmm`：128-bit
+* `ymm`：256-bit
+* `zmm`：512-bit
+
+**gcc中与向量化有关的参数**
+
+* `-fopt-info-vec`/`-fopt-info-vec-optimized`：The compiler will log which loops (by line N°) are being vector optimized.
+* `-fopt-info-vec-missed`：Detailed info about loops not being vectorized, and a lot of other detailed information.
+* `-fopt-info-vec-note`：Detailed info about all loops and optimizations being done.
+* `-fopt-info-vec-all`：All previous options together.
+
+## 3.2 benchmark
+
+### 3.2.1 case1
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -617,7 +632,7 @@ BM_loop_with_restrict          10.2 ns         10.2 ns     69550202
 
 **如果把`uint32_t* nums`换成`std::vector<unt32_t>& nums`或者`std::vector<unt32_t>* nums`。都无法得到上述的结果，因为在这种情况下gcc不会认为`Aggregator::_sum`存在`Pointer Aliasing`，因此可以直接进行优化**
 
-### 3.1.2 case2
+### 3.2.2 case2
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -779,7 +794,7 @@ BM_loop_with_restrict                        11.6 ns         11.6 ns     6097813
 
 1. 由`loop_without_optimize`与`loop_with_local_array`对比可以看出，是否直接使用数组对性能无影响
 
-### 3.1.3 case3
+### 3.2.3 case3
 
 **这个case非常奇怪，`_sum`和`_nums`都是Aggregator的成员。编译器在没有`__restrict`的情况下，居然没法进行优化**
 
@@ -937,6 +952,96 @@ BM_loop_without_optimize       52.1 ns         52.1 ns     13445879
 BM_loop_with_restrict          17.9 ns         17.9 ns     38901664
 ```
 
-## 3.2 参考
+## 3.3 case4
+
+**一个`object`参数，内部的多个成员变量的关系，函数是无法判断的，所以传入单个 `object`指针，如果有对多个成员变量的访问（并且还是指针），那gcc也没法判断**
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#define LEN 100
+
+class Aggregator {
+public:
+    uint32_t* nums() { return _nums; }
+    size_t len() { return _len; }
+    uint32_t* sum() { return _sum; }
+    void set_nums(uint32_t* nums, size_t len) {
+        _nums = nums;
+        _len = len;
+    }
+    void set_sum(uint32_t* sum) { _sum = sum; }
+
+private:
+    uint32_t* _nums;
+    size_t _len;
+    uint32_t* _sum = 0;
+};
+
+void __attribute__((noinline)) loop_without_optimize(Aggregator* aggregator) {
+    size_t len = aggregator->len();
+    for (size_t i = 0; i < len; ++i) {
+        *aggregator->sum() += aggregator->nums()[i];
+    }
+}
+
+void __attribute__((noinline)) loop_with_restrict(Aggregator* __restrict aggregator) {
+    size_t len = aggregator->len();
+    for (size_t i = 0; i < len; ++i) {
+        *aggregator->sum() += aggregator->nums()[i];
+    }
+}
+
+static void BM_loop_without_optimize(benchmark::State& state) {
+    Aggregator aggregator;
+    uint32_t nums[LEN];
+    for (size_t i = 0; i < LEN; ++i) {
+        nums[i] = i;
+    }
+    aggregator.set_nums(nums, LEN);
+
+    uint32_t sum = 0;
+    aggregator.set_sum(&sum);
+
+    for (auto _ : state) {
+        loop_without_optimize(&aggregator);
+        benchmark::DoNotOptimize(aggregator);
+    }
+}
+
+static void BM_loop_with_restrict(benchmark::State& state) {
+    Aggregator aggregator;
+    uint32_t nums[LEN];
+    for (size_t i = 0; i < LEN; ++i) {
+        nums[i] = i;
+    }
+    aggregator.set_nums(nums, LEN);
+
+    uint32_t sum = 0;
+    aggregator.set_sum(&sum);
+
+    for (auto _ : state) {
+        loop_with_restrict(&aggregator);
+        benchmark::DoNotOptimize(aggregator);
+    }
+}
+
+BENCHMARK(BM_loop_without_optimize);
+BENCHMARK(BM_loop_with_restrict);
+
+BENCHMARK_MAIN();
+```
+
+**输出如下：**
+
+```
+-------------------------------------------------------------------
+Benchmark                         Time             CPU   Iterations
+-------------------------------------------------------------------
+BM_loop_without_optimize       54.9 ns         54.9 ns     12764430
+BM_loop_with_restrict          52.5 ns         52.4 ns     13384598
+```
+
+## 3.4 参考
 
 * [Auto-vectorization in GCC](https://gcc.gnu.org/projects/tree-ssa/vectorization.html)
