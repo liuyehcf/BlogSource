@@ -952,7 +952,7 @@ BM_loop_without_optimize       52.1 ns         52.1 ns     13445879
 BM_loop_with_restrict          17.9 ns         17.9 ns     38901664
 ```
 
-## 3.3 case4
+### 3.2.4 case4
 
 **一个`object`参数，内部的多个成员变量的关系，函数是无法判断的，所以传入单个 `object`指针，如果有对多个成员变量的访问（并且还是指针），那gcc也没法判断**
 
@@ -1042,6 +1042,6 @@ BM_loop_without_optimize       54.9 ns         54.9 ns     12764430
 BM_loop_with_restrict          52.5 ns         52.4 ns     13384598
 ```
 
-## 3.4 参考
+## 3.3 参考
 
 * [Auto-vectorization in GCC](https://gcc.gnu.org/projects/tree-ssa/vectorization.html)
