@@ -524,6 +524,8 @@ BM_virtual       1.88 ns         1.88 ns    372088713
 
 #include <vector>
 
+#define LEN 100
+
 class Buffer {
 public:
     std::vector<size_t>& container() { return _container; }
@@ -545,11 +547,28 @@ void __attribute__((noinline)) loop_non_optimize(Buffer* buffer) {
 void __attribute__((noinline)) loop_with_local_array(Buffer* buffer) {
     size_t len = buffer->container().size();
     auto* data = buffer->container().data();
+    for (size_t i = 0; i < len; ++i) {
+        buffer->sum() += data[i];
+    }
+}
+
+void __attribute__((noinline)) loop_with_local_sum(Buffer* buffer) {
+    size_t len = buffer->container().size();
+    size_t local_sum = 0;
+    for (size_t i = 0; i < len; ++i) {
+        local_sum += buffer->container()[i];
+    }
+    buffer->sum() += local_sum;
+}
+
+void __attribute__((noinline)) loop_with_local_array_and_local_sum(Buffer* buffer) {
+    size_t len = buffer->container().size();
+    auto* data = buffer->container().data();
     size_t local_sum = 0;
     for (size_t i = 0; i < len; ++i) {
         local_sum += data[i];
     }
-    buffer->sum() = local_sum;
+    buffer->sum() += local_sum;
 }
 
 void __attribute__((noinline)) loop_with_restrict(Buffer* __restrict buffer) {
@@ -561,8 +580,7 @@ void __attribute__((noinline)) loop_with_restrict(Buffer* __restrict buffer) {
 
 static void BM_loop_non_optimize(benchmark::State& state) {
     Buffer buffer;
-    size_t len = 100000000;
-    for (size_t i = 0; i < len; ++i) {
+    for (size_t i = 0; i < LEN; ++i) {
         buffer.append(i);
     }
 
@@ -574,8 +592,7 @@ static void BM_loop_non_optimize(benchmark::State& state) {
 
 static void BM_loop_with_local_array(benchmark::State& state) {
     Buffer buffer;
-    size_t len = 100000000;
-    for (size_t i = 0; i < len; ++i) {
+    for (size_t i = 0; i < LEN; ++i) {
         buffer.append(i);
     }
 
@@ -585,10 +602,33 @@ static void BM_loop_with_local_array(benchmark::State& state) {
     }
 }
 
+static void BM_loop_with_local_sum(benchmark::State& state) {
+    Buffer buffer;
+    for (size_t i = 0; i < LEN; ++i) {
+        buffer.append(i);
+    }
+
+    for (auto _ : state) {
+        loop_with_local_sum(&buffer);
+        benchmark::DoNotOptimize(buffer);
+    }
+}
+
+static void BM_loop_with_local_array_and_local_sum(benchmark::State& state) {
+    Buffer buffer;
+    for (size_t i = 0; i < LEN; ++i) {
+        buffer.append(i);
+    }
+
+    for (auto _ : state) {
+        loop_with_local_array_and_local_sum(&buffer);
+        benchmark::DoNotOptimize(buffer);
+    }
+}
+
 static void BM_loop_with_restrict(benchmark::State& state) {
     Buffer buffer;
-    size_t len = 100000000;
-    for (size_t i = 0; i < len; ++i) {
+    for (size_t i = 0; i < LEN; ++i) {
         buffer.append(i);
     }
 
@@ -600,6 +640,8 @@ static void BM_loop_with_restrict(benchmark::State& state) {
 
 BENCHMARK(BM_loop_non_optimize);
 BENCHMARK(BM_loop_with_local_array);
+BENCHMARK(BM_loop_with_local_sum);
+BENCHMARK(BM_loop_with_local_array_and_local_sum);
 BENCHMARK(BM_loop_with_restrict);
 
 BENCHMARK_MAIN();
@@ -608,15 +650,21 @@ BENCHMARK_MAIN();
 **输出如下：**
 
 ```
--------------------------------------------------------------------
-Benchmark                         Time             CPU   Iterations
--------------------------------------------------------------------
-BM_loop_non_optimize      111553240 ns    111541974 ns            8
-BM_loop_with_local_array   72268718 ns     72261354 ns            9
-BM_loop_with_restrict      78483112 ns     78475769 ns           10
+---------------------------------------------------------------------------------
+Benchmark                                       Time             CPU   Iterations
+---------------------------------------------------------------------------------
+BM_loop_non_optimize                         52.3 ns         52.3 ns     13586761
+BM_loop_with_local_array                     53.7 ns         53.7 ns     13387695
+BM_loop_with_local_sum                       21.2 ns         21.2 ns     32628088
+BM_loop_with_local_array_and_local_sum       21.2 ns         21.2 ns     33101760
+BM_loop_with_restrict                        21.3 ns         21.3 ns     32676862
 ```
 
 **结论：**
 
 1. `gcc`无法对类型的成员变量进行向量化优化
 1. `__restrict`与本地数组能达到相似地优化效果
+
+## 3.2 参考
+
+* [Auto-vectorization in GCC](https://gcc.gnu.org/projects/tree-ssa/vectorization.html)

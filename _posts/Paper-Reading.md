@@ -244,6 +244,29 @@ categories:
         * `METADATA table`存储的是由`tablet`相关信息（`table identifier`、`row end`等信息）经过编码得到的一个`key`。`METADATA table`中的每行大约`1K`的内存。假设内存`128M`的话，三级的结构可以存储$(128 * 1000)^2 ≈ 2^{34}$个`tablet`
             * `METADATA table`存在哪？
         * `client`会缓存`tablet location`。当发现缓存不存在，或者缓存信息有问题时（如何发现有问题？），会重新获取正确的信息。此外，`client`在获取`table location`时，会多获取一些（即便用不到），这样下次访问`tablet`时，可能直接就命中缓存了
+    * `Tablet Assignment`
+        * 一个`tablet`在同一时刻只能分配给一个`tablet server`
+        * `master`负责`tablet`在不同`tablet server`的调度
+        * GBT通过`Chubby`来追踪`tablet server`，每当`tablet server`启动时，都会在`Chubyy`的特殊目录下创建文件（锁）。`master`通过监视这个特殊目录来发现并管理`table server`
+        * `master`在启动时会做如下步骤
+            1. 尝试获取一把特殊的锁（避免多个master）
+            1. 扫描`Chubby`获取所有活跃状态的`tablet server`
+            1. 与每个活跃的`tablet server`通信，获取相关的`tablet`信息
+            1. 扫描`METADATA tabble`，获取`tablet`的分配情况
+        * `tablet`当数据过大时，会分裂成两个`tablet`，或者两个较小的`tablet`会合并成一个大的`tablet`，并且`tablet server`会将这些变更信息同步给`master`，同步的信息丢失也没关系，假设`master`仍然感知的是老的`tablet`，当要求对这个`tablet`进行读写操作时，也会再一次进行信息的同步
+    * `Tablet serving`
+        * `tablet`的持久化信息存储在GFS中（这部分信息参考论文中的原图`Figure 5`），涉及到的组件包括
+            * memtable（mem），存储最近更新的数据
+            * tablet log（GFS），用于记录更新操作的的`commit log`
+            * SSTable Files（GFS），存储`tablet`的数据
+        * 对于更新操作，先写`commit log`（包含`redo log`），最近的更新会存储在`memtable`中
+        * `tablet`恢复：`tablet server`首先从`METADATA table`中读取该`tablet`的元信息，该元信息包含一系列的`SSTables`，而`SSTable`包含了一系列的`tablet`以及`redo point`，`redo point`指向`commit log`（可能包含数据）。`tablet server`根据这些信息就可以重建`memtable`
+        * 当`tablet server`接收到读操作时，它会在`memtable`和`SSTable`上进行合并查找，因为`memtable`和`SSTable`中对于键值的存储都是字典顺序的，所以整个读操作的执行会非常快
+        * 随着写操作的进行，`memtable`会随着事件的推移逐渐增大，当`memtable`的大小超过一定的阈值时，就会将当前的`memtable`冻结，并且创建一个新的`memtable`，被冻结的`memtable`会被转换为一个`SSTable`并且写入到`GFS`系统中，这种压缩方式也被称作`Minor Compaction`
+
+## 3.1 参考
+
+* [浅析 Bigtable 和 LevelDB 的实现](https://www.cnblogs.com/jpfss/p/10721384.html)
 
 # 4 Efficiency in the Columbia Database Query Optimizer
 
