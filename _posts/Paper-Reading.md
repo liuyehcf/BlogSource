@@ -262,7 +262,26 @@ categories:
         * 对于更新操作，先写`commit log`（包含`redo log`），最近的更新会存储在`memtable`中
         * `tablet`恢复：`tablet server`首先从`METADATA table`中读取该`tablet`的元信息，该元信息包含一系列的`SSTables`，而`SSTable`包含了一系列的`tablet`以及`redo point`，`redo point`指向`commit log`（可能包含数据）。`tablet server`根据这些信息就可以重建`memtable`
         * 当`tablet server`接收到读操作时，它会在`memtable`和`SSTable`上进行合并查找，因为`memtable`和`SSTable`中对于键值的存储都是字典顺序的，所以整个读操作的执行会非常快
-        * 随着写操作的进行，`memtable`会随着事件的推移逐渐增大，当`memtable`的大小超过一定的阈值时，就会将当前的`memtable`冻结，并且创建一个新的`memtable`，被冻结的`memtable`会被转换为一个`SSTable`并且写入到`GFS`系统中，这种压缩方式也被称作`Minor Compaction`
+    * `Compactions`
+        * 随着写入操作增多，`memtable`的大小也随之增大，当其达到一个阈值后，`memtable`会转换成`SSTable`，并且写入到GFS中
+        * 这种`micro-compaction`有两个目的
+            1. 缩小`table server`的的内存占用量
+            1. 当`server`从宕机中恢复，并要恢复之前的数据时，可以减少从`commit log`中读取的数据量
+        * 在进行`compaction`的过程时，仍然可以进行读写操作
+        * `merging compaction`会周期性地将一小部分`SSTable`以及`memtable`写入到一个新的`SSTable`中，操作完成后，原来的`SSTable`以及`memtable`可以被丢弃
+        * 将所有`SSTable`写入一个新的`SSTable`中的过程叫做`major compaction`。`non-major compaction`产生的`SSTable`可能包含某些条目的删除信息，这些条目的数据还存储在其他`SSTable`中。因此`major compaction`可以消除这部分数据。GBT会周期性的对所有`table`执行`major compaction`过程
+1. `Refinements`
+    * `Locality groups`
+        * `client`可以将一组`column family`作为一个`locality group`
+        * 通常，将不会一起访问的`column family`分离到不同的`locality group`中可以实现更高效的读取
+        * 每个`locality group`支持独立设置参数。例如声明某个`locality group`直接在内存中存储，这个`locality group`中的数据会延迟加载进内存，一旦在内存中存在后，就可以避免磁盘访问，进一步提高效率。在GBT内部，`METADATA table`中存储的`location column family`就使用了这个功能
+    * `Compression`
+        * `client`可以控制`SSTable`中的某个`locality group`是否需要压缩，若需要压缩，可以指定压缩算法
+        * 尽管独立压缩会增加复杂度以及降低空间利用率。但是某一部分不压缩的数据，可以提高读取的效率
+        * 大部分的`client`会采用`two-pass`的压缩方案
+            * `first pass`：采用`Bentley and McIlroy’s scheme`，对长`string`进行压缩
+            * `second pass`：采用快速压缩算法，在数据的`16 KB`小窗口中查找重复项
+        * `two-pass`不仅及其高效，而且压缩效率很高，能够达到`10-1`
 
 ## 3.1 参考
 
