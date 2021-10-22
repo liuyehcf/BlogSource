@@ -11,15 +11,188 @@ categories:
 
 <!--more-->
 
-# 1 Pointer Aliasing
+# 1 Basic
 
-**`Pointer Aliasing`指的是两个指针（在作用域内）指向了同一个物理地址，或者说指向的物理地址有重叠。`__restrict`关键词用于给编译器一个提示：确保被标记的指针是独占物理地址的**
+## 1.1 virtual function
 
-## 1.1 汇编
+### 1.1.1 assembly
+
+```sh
+# 创建源文件
+cat > main.cpp << 'EOF'
+#include <iostream>
+
+class Base {
+public:
+    virtual void func_virtual() { std::cout << "Base::func_virtual" << std::endl; }
+    void func_normal() { std::cout << "Base::func_normal" << std::endl; }
+};
+
+class Derive : public Base {
+public:
+    virtual void func_virtual() override { std::cout << "Derive::func_virtual" << std::endl; }
+};
+
+void invoke_virtual(Base* base) {
+    base->func_virtual();
+}
+
+void invoke_normal(Base* base) {
+    base->func_normal();
+}
+
+int main() {
+    return 0;
+}
+EOF
+
+# 编译
+gcc -o main.c main.cpp -c -Wall -O3 -g
+
+# 反汇编
+objdump -drwCS main.c
+```
+
+**输出如下：**
+
+```
+void invoke_virtual(Base* base) {
+    base->func_virtual();
+   0:	48 8b 07             	mov    (%rdi),%rax
+   3:	ff 20                	jmpq   *(%rax)
+   5:	90                   	nop
+   6:	66 2e 0f 1f 84 00 00 00 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+
+0000000000000010 <invoke_normal(Base*)>:
+}
+
+void invoke_normal(Base* base) {
+  10:	55                   	push   %rbp
+    operator<<(basic_ostream<char, _Traits>& __out, const char* __s)
+    {
+      if (!__s)
+	__out.setstate(ios_base::badbit);
+      else
+# 省略其他指令（都是内敛展开的指令）
+```
+
+**结论：**
+
+1. 对于虚函数，由于无法确认实际类型，因此无法进行函数内敛优化
+
+### 1.1.2 benchmark
+
+```cpp
+#include <benchmark/benchmark.h>
+
+class Base {
+public:
+    Base() = default;
+    virtual ~Base() = default;
+    virtual void func_virtual() {}
+    void func_normal() {}
+};
+
+class Derive : public Base {
+public:
+    Derive() = default;
+    virtual ~Derive() = default;
+    virtual void func_virtual() override {}
+};
+
+void __attribute__((noinline)) invoke_virtual(Base* base) {
+    base->func_virtual();
+}
+
+void __attribute__((noinline)) invoke_normal(Base* base) {
+    base->func_normal();
+}
+
+static void BM_virtual(benchmark::State& state) {
+    Base* base = new Derive();
+    for (auto _ : state) {
+        invoke_virtual(base);
+        benchmark::DoNotOptimize(base);
+    }
+    delete base;
+}
+
+static void BM_normal(benchmark::State& state) {
+    Base* base = new Derive();
+    for (auto _ : state) {
+        invoke_normal(base);
+        benchmark::DoNotOptimize(base);
+    }
+    delete base;
+}
+
+BENCHMARK(BM_normal);
+BENCHMARK(BM_virtual);
+
+BENCHMARK_MAIN();
+```
+
+**输出如下：**
+
+```
+-----------------------------------------------------
+Benchmark           Time             CPU   Iterations
+-----------------------------------------------------
+BM_normal       0.314 ns        0.313 ns   1000000000
+BM_virtual       1.88 ns         1.88 ns    372088713
+```
+
+## 1.2 move smart pointer
+
+### 1.2.1 benchmark
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#include <memory>
+
+static int perform_add(std::shared_ptr<int> num_ptr) {
+    return (*num_ptr) + 1;
+}
+
+static int add_with_move(std::shared_ptr<int> num_ptr) {
+    return perform_add(std::move(num_ptr));
+}
+
+static int add_with_copy(std::shared_ptr<int> num_ptr) {
+    return perform_add(num_ptr);
+}
+
+static void BM_add_with_move(benchmark::State& state) {
+    std::shared_ptr<int> num_ptr = std::make_shared<int>(10);
+
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(add_with_move(num_ptr));
+    }
+}
+
+static void BM_add_with_copy(benchmark::State& state) {
+    std::shared_ptr<int> num_ptr = std::make_shared<int>(10);
+
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(add_with_copy(num_ptr));
+    }
+}
+BENCHMARK(BM_add_with_move);
+BENCHMARK(BM_add_with_copy);
+
+BENCHMARK_MAIN();
+```
+
+# 2 pointer aliasing
+
+**`pointer aliasing`指的是两个指针（在作用域内）指向了同一个物理地址，或者说指向的物理地址有重叠。`__restrict`关键词用于给编译器一个提示：确保被标记的指针是独占物理地址的**
+
+## 2.1 assembly
 
 **下面以几个简单的例子说明`__restrict`关键词的作用，以及它是如何引导编译器进行指令优化的**
 
-### 1.1.1 case1
+### 2.1.1 case1
 
 ```sh
 # 创建源文件
@@ -108,7 +281,7 @@ uint32_t add3(uint32_t* __restrict a, uint32_t* b) {
 * 对于函数`add1`，其结果可能是3（`a`和`b`指向不同地址）或者4（`a`和`b`指向相同地址）
 * 函数`add2`和`add3`得到的汇编指令是一样的，因为只有`*a = 1;`可能会被`*b = 2;`覆盖
 
-### 1.1.2 case2
+### 2.1.2 case2
 
 ```sh
 # 创建源文件
@@ -216,7 +389,7 @@ uint32_t loop3(uint32_t* __restrict num1, uint32_t* num2) {
 1. 对于函数`loop1`，由于赋值语句`*num2 = i;`的存在，导致编译器无法直接计算结果，因为该语句可能会修改`num1`的值（`num1`和`num2`指向同一地址）
 1. 函数`loop2`和`loop3`生成的指令一样，都可以在编译期直接计算结果
 
-## 1.2 benchmark
+## 2.2 benchmark
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -383,136 +556,7 @@ BM_transform_with_restrict         15619 ns        15617 ns        44817
 1. 若`sum_with_restrict`以及`sum_without_restrict`的循环长度不写死，而是传入参数，那么结果完全不同。传入参数的情况下，两个函数被优化成一样的了
 1. **`loop_without_restrict`以及`loop_with_restrict`没有差异。如果把其他几组测试的代码全删除（包括待测函数、BM函数），那么结果是有差异的。不知道为啥，非常奇怪**
 
-# 2 虚函数
-
-## 2.1 汇编
-
-```sh
-# 创建源文件
-cat > main.cpp << 'EOF'
-#include <iostream>
-
-class Base {
-public:
-    virtual void func_virtual() { std::cout << "Base::func_virtual" << std::endl; }
-    void func_normal() { std::cout << "Base::func_normal" << std::endl; }
-};
-
-class Derive : public Base {
-public:
-    virtual void func_virtual() override { std::cout << "Derive::func_virtual" << std::endl; }
-};
-
-void invoke_virtual(Base* base) {
-    base->func_virtual();
-}
-
-void invoke_normal(Base* base) {
-    base->func_normal();
-}
-
-int main() {
-    return 0;
-}
-EOF
-
-# 编译
-gcc -o main.c main.cpp -c -Wall -O3 -g
-
-# 反汇编
-objdump -drwCS main.c
-```
-
-**输出如下：**
-
-```
-void invoke_virtual(Base* base) {
-    base->func_virtual();
-   0:	48 8b 07             	mov    (%rdi),%rax
-   3:	ff 20                	jmpq   *(%rax)
-   5:	90                   	nop
-   6:	66 2e 0f 1f 84 00 00 00 00 00 	nopw   %cs:0x0(%rax,%rax,1)
-
-0000000000000010 <invoke_normal(Base*)>:
-}
-
-void invoke_normal(Base* base) {
-  10:	55                   	push   %rbp
-    operator<<(basic_ostream<char, _Traits>& __out, const char* __s)
-    {
-      if (!__s)
-	__out.setstate(ios_base::badbit);
-      else
-# 省略其他指令（都是内敛展开的指令）
-```
-
-**结论：**
-
-1. 对于虚函数，由于无法确认实际类型，因此无法进行函数内敛优化
-
-## 2.2 benchmark
-
-```cpp
-#include <benchmark/benchmark.h>
-
-class Base {
-public:
-    Base() = default;
-    virtual ~Base() = default;
-    virtual void func_virtual() {}
-    void func_normal() {}
-};
-
-class Derive : public Base {
-public:
-    Derive() = default;
-    virtual ~Derive() = default;
-    virtual void func_virtual() override {}
-};
-
-void __attribute__((noinline)) invoke_virtual(Base* base) {
-    base->func_virtual();
-}
-
-void __attribute__((noinline)) invoke_normal(Base* base) {
-    base->func_normal();
-}
-
-static void BM_virtual(benchmark::State& state) {
-    Base* base = new Derive();
-    for (auto _ : state) {
-        invoke_virtual(base);
-        benchmark::DoNotOptimize(base);
-    }
-    delete base;
-}
-
-static void BM_normal(benchmark::State& state) {
-    Base* base = new Derive();
-    for (auto _ : state) {
-        invoke_normal(base);
-        benchmark::DoNotOptimize(base);
-    }
-    delete base;
-}
-
-BENCHMARK(BM_normal);
-BENCHMARK(BM_virtual);
-
-BENCHMARK_MAIN();
-```
-
-**输出如下：**
-
-```
------------------------------------------------------
-Benchmark           Time             CPU   Iterations
------------------------------------------------------
-BM_normal       0.314 ns        0.313 ns   1000000000
-BM_virtual       1.88 ns         1.88 ns    372088713
-```
-
-# 3 向量化
+# 3 auto vectorization
 
 ## 3.1 简介
 
@@ -531,12 +575,12 @@ BM_virtual       1.88 ns         1.88 ns    372088713
 
 ## 3.2 benchmark
 
-### 3.2.1 case1
+### 3.2.1 pointer aliasing
+
+#### 3.2.1.1 case1
 
 ```cpp
 #include <benchmark/benchmark.h>
-
-#include <vector>
 
 #define LEN 100
 
@@ -630,9 +674,9 @@ BM_loop_with_restrict          10.2 ns         10.2 ns     69550202
 1. `gcc`无法对类型的成员变量进行向量化优化
 1. `__restrict`与本地数组能达到相似地优化效果
 
-**如果把`uint32_t* nums`换成`std::vector<unt32_t>& nums`或者`std::vector<unt32_t>* nums`。都无法得到上述的结果，因为在这种情况下gcc不会认为`Aggregator::_sum`存在`Pointer Aliasing`，因此可以直接进行优化**
+**如果把`uint32_t* nums`换成`std::vector<unt32_t>& nums`或者`std::vector<unt32_t>* nums`。都无法得到上述的结果，因为在这种情况下gcc不会认为`Aggregator::_sum`存在`pointer aliasing`，因此可以直接进行优化**
 
-### 3.2.2 case2
+#### 3.2.1.2 case2
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -794,7 +838,7 @@ BM_loop_with_restrict                        11.6 ns         11.6 ns     6097813
 
 1. 由`loop_without_optimize`与`loop_with_local_array`对比可以看出，是否直接使用数组对性能无影响
 
-### 3.2.3 case3
+#### 3.2.1.3 case3
 
 **这个case非常奇怪，`_sum`和`_nums`都是Aggregator的成员。编译器在没有`__restrict`的情况下，居然没法进行优化**
 
@@ -952,7 +996,7 @@ BM_loop_without_optimize       52.1 ns         52.1 ns     13445879
 BM_loop_with_restrict          17.9 ns         17.9 ns     38901664
 ```
 
-### 3.2.4 case4
+#### 3.2.1.4 case4
 
 **一个`object`参数，内部的多个成员变量的关系，函数是无法判断的，所以传入单个 `object`指针，如果有对多个成员变量的访问（并且还是指针），那gcc也没法判断**
 
@@ -1042,6 +1086,81 @@ BM_loop_without_optimize       54.9 ns         54.9 ns     12764430
 BM_loop_with_restrict          52.5 ns         52.4 ns     13384598
 ```
 
-## 3.3 参考
+## 3.3 integer vs floating
+
+### 3.3.1 benchmark
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#define LEN 100
+
+void __attribute__((noinline))
+loop_with_integer(uint32_t* __restrict a, uint32_t* __restrict b, uint32_t* __restrict c, size_t len) {
+    for (size_t i = 0; i < len; ++i) {
+        b[i]++;
+        c[i]++;
+        a[i] = b[i] + c[i];
+    }
+}
+
+void __attribute__((noinline))
+loop_with_float(double* __restrict a, double* __restrict b, double* __restrict c, size_t len) {
+    for (size_t i = 0; i < len; ++i) {
+        b[i]++;
+        c[i]++;
+        a[i] = b[i] + c[i];
+    }
+}
+
+static void BM_loop_with_integer(benchmark::State& state) {
+    uint32_t a[LEN], b[LEN], c[LEN];
+    for (size_t i = 0; i < LEN; ++i) {
+        a[i] = i;
+        b[i] = i;
+        c[i] = i;
+    }
+
+    for (auto _ : state) {
+        loop_with_integer(a, b, c, LEN);
+        benchmark::DoNotOptimize(a);
+        benchmark::DoNotOptimize(b);
+        benchmark::DoNotOptimize(c);
+    }
+}
+
+static void BM_loop_with_float(benchmark::State& state) {
+    double a[LEN], b[LEN], c[LEN];
+    for (size_t i = 0; i < LEN; ++i) {
+        a[i] = i;
+        b[i] = i;
+        c[i] = i;
+    }
+
+    for (auto _ : state) {
+        loop_with_float(a, b, c, LEN);
+        benchmark::DoNotOptimize(a);
+        benchmark::DoNotOptimize(b);
+        benchmark::DoNotOptimize(c);
+    }
+}
+
+BENCHMARK(BM_loop_with_integer);
+BENCHMARK(BM_loop_with_float);
+
+BENCHMARK_MAIN();
+```
+
+**输出如下：**
+
+```
+---------------------------------------------------------------
+Benchmark                     Time             CPU   Iterations
+---------------------------------------------------------------
+BM_loop_with_integer       64.0 ns         64.0 ns     10942085
+BM_loop_with_float         97.3 ns         97.3 ns      7197218
+```
+
+## 3.4 参考
 
 * [Auto-vectorization in GCC](https://gcc.gnu.org/projects/tree-ssa/vectorization.html)

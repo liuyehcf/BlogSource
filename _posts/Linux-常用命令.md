@@ -2692,9 +2692,11 @@ yum install -y sysstat
     * `listen`
     * `active`
 * **`-f, --full`**：显示详情，例如cpu会按每个cpu分别展示，network会按网卡分别展示
-* `--top-cpu`：显示最耗cpu资源的进程
-* `--top-io`：显示最耗io资源的进程
-* `--top-mem`：显示最耗mem资源的进程
+* **`--top-cpu`：显示最耗cpu资源的进程**
+* **`--top-cpu-adv`：显示最耗cpu资源的进程，以及进程的其他信息**
+* **`--top-io`：显示最耗io资源的进程**
+* **`--top-io-adv`：显示最耗io资源的进程，以及进程的其他信息**
+* **`--top-mem`：显示最耗mem资源的进程**
 
 **示例：**
 
@@ -2845,6 +2847,8 @@ yum install -y iotop
 1. `perf record -e 'cycles' -p xxx`：统计指定的进程
 1. `perf record -e 'cycles' -- myapplication arg1 arg2`：启动程序并进行统计
 1. `perf report`：查看分析报告
+1. **`perf top -p <pid>`：以交互式的方式分析一个程序的性能（神器）**
+    * 选中某个条目，然后选择`Anotate xxx`可以查看对应的汇编
 
 # 8 audit
 
