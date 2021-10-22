@@ -146,20 +146,33 @@ BM_virtual       1.88 ns         1.88 ns    372088713
 
 ### 1.2.1 benchmark
 
+在下面这个例子中
+
+* 在函数`add_with_move`的生命周期中
+    * 进入`add_with_move`时，调用`shared_ptr`的拷贝构造函数，计数值`+1`
+    * 进入`perform_add`时，调用`shared_ptr`的移动构造函数，计数值不变
+    * 退出`perform_add`时，调用`shared_ptr`的析构函数，计数值`-1`
+    * 退出`add_with_move`，调用`shared_ptr`的析构函数，计数值不变
+* 在函数`add_with_copy`的生命周期中
+    * 进入`add_with_copy`时，调用`shared_ptr`的拷贝构造函数，计数值`+1`
+    * 进入`perform_add`时，调用`shared_ptr`的拷贝构造函数，计数值`+1`
+    * 退出`perform_add`时，调用`shared_ptr`的析构函数，计数值`-1`
+    * 退出`add_with_copy`，调用`shared_ptr`的析构函数，计数值`-1`
+
 ```cpp
 #include <benchmark/benchmark.h>
 
 #include <memory>
 
-static int perform_add(std::shared_ptr<int> num_ptr) {
+int __attribute__((noinline)) perform_add(std::shared_ptr<int> num_ptr) {
     return (*num_ptr) + 1;
 }
 
-static int add_with_move(std::shared_ptr<int> num_ptr) {
+int __attribute__((noinline)) add_with_move(std::shared_ptr<int> num_ptr) {
     return perform_add(std::move(num_ptr));
 }
 
-static int add_with_copy(std::shared_ptr<int> num_ptr) {
+int __attribute__((noinline)) add_with_copy(std::shared_ptr<int> num_ptr) {
     return perform_add(num_ptr);
 }
 
@@ -182,6 +195,74 @@ BENCHMARK(BM_add_with_move);
 BENCHMARK(BM_add_with_copy);
 
 BENCHMARK_MAIN();
+```
+
+**输出如下：**
+
+```
+-----------------------------------------------------------
+Benchmark                 Time             CPU   Iterations
+-----------------------------------------------------------
+BM_add_with_move       15.4 ns         15.4 ns     44609411
+BM_add_with_copy       31.4 ns         31.4 ns     21773464
+```
+
+## 1.3 ++i or i++
+
+一般情况下，单独的`++i`或者`i++`都会被编译器优化成相同的指令集。除非`i++`赋值后的变量无法被优化掉，那么`++i`的性能会略优于`i++`
+
+### 1.3.1 benchmark
+
+```cpp
+#include <benchmark/benchmark.h>
+
+void __attribute__((noinline)) increment_and_assign(int32_t& num1, int32_t& num2) {
+    num1 = ++num2;
+
+    benchmark::DoNotOptimize(num1);
+    benchmark::DoNotOptimize(num2);
+}
+
+void __attribute__((noinline)) assign_and_increment(int32_t& num1, int32_t& num2) {
+    num1 = num2++;
+
+    benchmark::DoNotOptimize(num1);
+    benchmark::DoNotOptimize(num2);
+}
+
+static void BM_increment_and_assign(benchmark::State& state) {
+    int32_t num1 = 0;
+    int32_t num2 = 0;
+    for (auto _ : state) {
+        increment_and_assign(num1, num2);
+        benchmark::DoNotOptimize(num1);
+        benchmark::DoNotOptimize(num2);
+    }
+}
+
+static void BM_assign_and_increment(benchmark::State& state) {
+    int32_t num1 = 0;
+    int32_t num2 = 0;
+    for (auto _ : state) {
+        assign_and_increment(num1, num2);
+        benchmark::DoNotOptimize(num1);
+        benchmark::DoNotOptimize(num2);
+    }
+}
+BENCHMARK(BM_increment_and_assign);
+BENCHMARK(BM_assign_and_increment);
+
+BENCHMARK_MAIN();
+```
+
+**输出如下：**
+
+```
+------------------------------------------------------------------
+Benchmark                        Time             CPU   Iterations
+------------------------------------------------------------------
+BM_increment_and_assign       2.75 ns         2.75 ns    254502792
+BM_assign_and_increment       2.88 ns         2.88 ns    239756481
 ```
 
 # 2 pointer aliasing

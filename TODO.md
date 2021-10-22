@@ -42,10 +42,9 @@
     * jemalloc/jcmalloc/mimalloc
     * 如何安装boost？ `yum install -y boost-devel`
     * cmake
-        * CXX_COMMON_FLAGS
+        * CXX_COMMON_FLAGS（benchmark的示例中加上这个，-O3）
     * 性能开销测试
             * ck /AggregateFunctions/IAggregateFunction.h
-        * ++i、i++性能
 1. 其他
     * 伙伴算法
     * 异常中断的区别
