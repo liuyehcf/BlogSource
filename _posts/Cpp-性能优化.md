@@ -1299,10 +1299,6 @@ BM_loop_with_integer       64.0 ns         64.0 ns     10942085
 BM_loop_with_float         97.3 ns         97.3 ns      7197218
 ```
 
-## 3.4 multi-condition
-
-### 3.4.1 benchmark
-
-## 3.5 参考
+## 3.4 参考
 
 * [Auto-vectorization in GCC](https://gcc.gnu.org/projects/tree-ssa/vectorization.html)
