@@ -814,40 +814,40 @@ private:
 
 class Container {
 public:
-    std::vector<uint32_t>& container() { return _container; }
+    std::vector<uint32_t>& nums() { return _nums; }
 
 private:
-    std::vector<uint32_t> _container;
+    std::vector<uint32_t> _nums;
 };
 
 void __attribute__((noinline)) loop_without_optimize(Aggregator* aggregator, Container* container) {
-    size_t len = container->container().size();
+    size_t len = container->nums().size();
     for (size_t i = 0; i < len; ++i) {
-        aggregator->sum() += container->container()[i];
+        aggregator->sum() += container->nums()[i];
     }
 }
 
 void __attribute__((noinline)) loop_with_local_sum(Aggregator* aggregator, Container* container) {
-    size_t len = container->container().size();
+    size_t len = container->nums().size();
     uint32_t local_sum = 0;
     for (size_t i = 0; i < len; ++i) {
-        local_sum += container->container()[i];
+        local_sum += container->nums()[i];
     }
     aggregator->sum() += local_sum;
 }
 
 void __attribute__((noinline)) loop_with_local_array(Aggregator* aggregator, Container* container) {
-    size_t len = container->container().size();
-    auto* local_array = container->container().data();
+    size_t len = container->nums().size();
+    auto* local_array = container->nums().data();
     for (size_t i = 0; i < len; ++i) {
         aggregator->sum() += local_array[i];
     }
 }
 
 void __attribute__((noinline)) loop_with_local_sum_and_local_array(Aggregator* aggregator, Container* container) {
-    size_t len = container->container().size();
+    size_t len = container->nums().size();
     uint32_t local_sum = 0;
-    auto* local_array = container->container().data();
+    auto* local_array = container->nums().data();
     for (size_t i = 0; i < len; ++i) {
         local_sum += local_array[i];
     }
@@ -855,9 +855,9 @@ void __attribute__((noinline)) loop_with_local_sum_and_local_array(Aggregator* a
 }
 
 void __attribute__((noinline)) loop_with_restrict(Aggregator* __restrict aggregator, Container* container) {
-    size_t len = container->container().size();
+    size_t len = container->nums().size();
     for (size_t i = 0; i < len; ++i) {
-        aggregator->sum() += container->container()[i];
+        aggregator->sum() += container->nums()[i];
     }
 }
 
@@ -865,7 +865,7 @@ static void BM_loop_without_optimize(benchmark::State& state) {
     Aggregator aggregator;
     Container container;
     for (size_t i = 0; i < LEN; ++i) {
-        container.container().push_back(i);
+        container.nums().push_back(i);
     }
 
     for (auto _ : state) {
@@ -879,7 +879,7 @@ static void BM_loop_with_local_sum(benchmark::State& state) {
     Aggregator aggregator;
     Container container;
     for (size_t i = 0; i < LEN; ++i) {
-        container.container().push_back(i);
+        container.nums().push_back(i);
     }
 
     for (auto _ : state) {
@@ -893,7 +893,7 @@ static void BM_loop_with_local_array(benchmark::State& state) {
     Aggregator aggregator;
     Container container;
     for (size_t i = 0; i < LEN; ++i) {
-        container.container().push_back(i);
+        container.nums().push_back(i);
     }
 
     for (auto _ : state) {
@@ -907,7 +907,7 @@ static void BM_loop_with_local_sum_and_local_array(benchmark::State& state) {
     Aggregator aggregator;
     Container container;
     for (size_t i = 0; i < LEN; ++i) {
-        container.container().push_back(i);
+        container.nums().push_back(i);
     }
 
     for (auto _ : state) {
@@ -921,7 +921,7 @@ static void BM_loop_with_restrict(benchmark::State& state) {
     Aggregator aggregator;
     Container container;
     for (size_t i = 0; i < LEN; ++i) {
-        container.container().push_back(i);
+        container.nums().push_back(i);
     }
 
     for (auto _ : state) {
@@ -946,11 +946,11 @@ BENCHMARK_MAIN();
 ---------------------------------------------------------------------------------
 Benchmark                                       Time             CPU   Iterations
 ---------------------------------------------------------------------------------
-BM_loop_without_optimize                     52.8 ns         52.8 ns     13226009
-BM_loop_with_local_sum                       12.0 ns         12.0 ns     58367441
-BM_loop_with_local_array                     51.3 ns         51.3 ns     13633006
-BM_loop_with_local_sum_and_local_array       11.0 ns         11.0 ns     63853532
-BM_loop_with_restrict                        11.6 ns         11.6 ns     60978133
+BM_loop_without_optimize                     51.1 ns         51.1 ns     13628157
+BM_loop_with_local_sum                       12.1 ns         12.1 ns     58127051
+BM_loop_with_local_array                     51.8 ns         51.8 ns     13632597
+BM_loop_with_local_sum_and_local_array       11.0 ns         11.0 ns     63710893
+BM_loop_with_restrict                        11.6 ns         11.6 ns     60794941
 ```
 
 **结论：**
