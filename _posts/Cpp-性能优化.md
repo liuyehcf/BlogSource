@@ -477,52 +477,33 @@ uint32_t loop3(uint32_t* __restrict num1, uint32_t* num2) {
 
 #define ARRAY_LEN 10000
 
-uint32_t __attribute__((noinline)) sum_without_restrict(uint32_t* num1, uint32_t* num2) {
+uint32_t __attribute__((noinline)) sum_without_restrict(uint32_t* num1, uint32_t* num2, size_t len) {
     uint32_t res = 0;
-    for (size_t i = 0; i < ARRAY_LEN; ++i) {
+    for (size_t i = 0; i < len; ++i) {
         *num2 = i;
         res += *num1;
     }
     return res;
 }
 
-uint32_t __attribute__((noinline)) sum_with_restrict(uint32_t* __restrict num1, uint32_t* __restrict num2) {
+uint32_t __attribute__((noinline)) sum_with_restrict(uint32_t* __restrict num1, uint32_t* __restrict num2, size_t len) {
     uint32_t res = 0;
-    for (size_t i = 0; i < ARRAY_LEN; ++i) {
+    for (size_t i = 0; i < len; ++i) {
         *num2 = i;
         res += *num1;
     }
     return res;
 }
 
-void __attribute__((noinline)) loop_without_restrict(float* dest, float* value) {
-    for (size_t i = 0; i < ARRAY_LEN; ++i) {
+void __attribute__((noinline)) loop_without_restrict(uint32_t* dest, uint32_t* value, size_t len) {
+    for (size_t i = 0; i < len; ++i) {
         dest[i] += *value;
     }
 }
 
-void __attribute__((noinline)) loop_with_restrict(float* __restrict dest, float* __restrict value) {
-    for (size_t i = 0; i < ARRAY_LEN; ++i) {
+void __attribute__((noinline)) loop_with_restrict(uint32_t* __restrict dest, uint32_t* __restrict value, size_t len) {
+    for (size_t i = 0; i < len; ++i) {
         dest[i] += *value;
-    }
-}
-
-void __attribute__((noinline)) transform_without_restrict(float* dest, float* src, float* matrix, size_t n) {
-    for (size_t i = 0; i < n; ++i, src += 4, dest += 4) {
-        dest[0] = src[0] * matrix[0] + src[1] * matrix[1] + src[2] * matrix[2] + src[3] * matrix[3];
-        dest[1] = src[0] * matrix[4] + src[1] * matrix[5] + src[2] * matrix[6] + src[3] * matrix[7];
-        dest[2] = src[0] * matrix[8] + src[1] * matrix[9] + src[2] * matrix[10] + src[3] * matrix[11];
-        dest[3] = src[0] * matrix[12] + src[1] * matrix[13] + src[2] * matrix[14] + src[3] * matrix[15];
-    }
-}
-
-void __attribute__((noinline))
-transform_with_restrict(float* __restrict dest, float* __restrict src, float* __restrict matrix, size_t n) {
-    for (size_t i = 0; i < n; ++i, src += 4, dest += 4) {
-        dest[0] = src[0] * matrix[0] + src[1] * matrix[1] + src[2] * matrix[2] + src[3] * matrix[3];
-        dest[1] = src[0] * matrix[4] + src[1] * matrix[5] + src[2] * matrix[6] + src[3] * matrix[7];
-        dest[2] = src[0] * matrix[8] + src[1] * matrix[9] + src[2] * matrix[10] + src[3] * matrix[11];
-        dest[3] = src[0] * matrix[12] + src[1] * matrix[13] + src[2] * matrix[14] + src[3] * matrix[15];
     }
 }
 
@@ -532,7 +513,7 @@ static void BM_sum_without_restrict(benchmark::State& state) {
     for (auto _ : state) {
         ++num1;
         ++num2;
-        sum_without_restrict(&num1, &num2);
+        benchmark::DoNotOptimize(sum_without_restrict(&num1, &num2, ARRAY_LEN));
     }
 }
 
@@ -542,67 +523,37 @@ static void BM_sum_with_restrict(benchmark::State& state) {
     for (auto _ : state) {
         ++num1;
         ++num2;
-        sum_with_restrict(&num1, &num2);
+        benchmark::DoNotOptimize(sum_with_restrict(&num1, &num2, ARRAY_LEN));
     }
 }
 
 static void BM_loop_without_restrict(benchmark::State& state) {
-    float dstdata[ARRAY_LEN];
+    uint32_t dstdata[ARRAY_LEN];
     for (size_t i = 0; i < ARRAY_LEN; ++i) {
         dstdata[i] = 0;
     }
 
-    float value = 0;
+    uint32_t value = 0;
     for (auto _ : state) {
-        value += 1.0;
-        loop_without_restrict(dstdata, &value);
+        value += 1;
+        loop_without_restrict(dstdata, &value, ARRAY_LEN);
+
+        benchmark::DoNotOptimize(dstdata);
     }
 }
 
 static void BM_loop_with_restrict(benchmark::State& state) {
-    float dstdata[ARRAY_LEN];
+    uint32_t dstdata[ARRAY_LEN];
     for (size_t i = 0; i < ARRAY_LEN; ++i) {
         dstdata[i] = 0;
     }
 
-    float value = 0;
+    uint32_t value = 0;
     for (auto _ : state) {
-        value += 1.0;
-        loop_with_restrict(dstdata, &value);
-    }
-}
+        value += 1;
+        loop_with_restrict(dstdata, &value, ARRAY_LEN);
 
-static void BM_transform_without_restrict(benchmark::State& state) {
-    float srcdata[4 * ARRAY_LEN];
-    float dstdata[4 * ARRAY_LEN];
-    float matrix[16];
-
-    for (size_t i = 0; i < 16; ++i) {
-        matrix[i] = 1;
-    }
-    for (size_t i = 0; i < 4 * ARRAY_LEN; ++i) {
-        srcdata[i] = i;
-        dstdata[i] = 0;
-    }
-    for (auto _ : state) {
-        transform_without_restrict(dstdata, srcdata, matrix, ARRAY_LEN);
-    }
-}
-
-static void BM_transform_with_restrict(benchmark::State& state) {
-    float srcdata[4 * ARRAY_LEN];
-    float dstdata[4 * ARRAY_LEN];
-    float matrix[16];
-
-    for (size_t i = 0; i < 16; ++i) {
-        matrix[i] = 1;
-    }
-    for (size_t i = 0; i < 4 * ARRAY_LEN; ++i) {
-        srcdata[i] = i;
-        dstdata[i] = 0;
-    }
-    for (auto _ : state) {
-        transform_with_restrict(dstdata, srcdata, matrix, ARRAY_LEN);
+        benchmark::DoNotOptimize(dstdata);
     }
 }
 
@@ -612,30 +563,27 @@ BENCHMARK(BM_sum_with_restrict);
 BENCHMARK(BM_loop_without_restrict);
 BENCHMARK(BM_loop_with_restrict);
 
-BENCHMARK(BM_transform_without_restrict);
-BENCHMARK(BM_transform_with_restrict);
-
 BENCHMARK_MAIN();
 ```
 
 **输出如下：**
 
 ```
-------------------------------------------------------------------------
-Benchmark                              Time             CPU   Iterations
-------------------------------------------------------------------------
-BM_sum_without_restrict             6301 ns         6300 ns       111172
-BM_sum_with_restrict                2.89 ns         2.89 ns    242847831
-BM_loop_without_restrict            1106 ns         1106 ns       632797
-BM_loop_with_restrict               1113 ns         1113 ns       615683
-BM_transform_without_restrict      16108 ns        16106 ns        43250
-BM_transform_with_restrict         15619 ns        15617 ns        44817
+-------------------------------------------------------------------
+Benchmark                         Time             CPU   Iterations
+-------------------------------------------------------------------
+BM_sum_without_restrict        6278 ns         6277 ns       111483
+BM_sum_with_restrict           2.68 ns         2.68 ns    256724053
+BM_loop_without_restrict       2749 ns         2748 ns       254780
+BM_loop_with_restrict          2439 ns         2439 ns       286565
 ```
 
-**问题：**
+**结论：**
 
-1. 若`sum_with_restrict`以及`sum_without_restrict`的循环长度不写死，而是传入参数，那么结果完全不同。传入参数的情况下，两个函数被优化成一样的了
-1. **`loop_without_restrict`以及`loop_with_restrict`没有差异。如果把其他几组测试的代码全删除（包括待测函数、BM函数），那么结果是有差异的。不知道为啥，非常奇怪**
+* 若编译时加上`-fopt-info-vec`参数，那么会输出如下信息
+    * `24:26: optimized: loop vectorized using 16 byte vectors`
+    * `24:26: optimized:  loop versioned for vectorization because of possible aliasing`
+    * 其中`24`行就是`loop_without_restrict`的`for`循环，可以看到，即便不加`__restrict`，编译器也能向量化，只不过加上`__restrict`能够得到更彻底的向量化
 
 # 3 auto vectorization
 
@@ -659,6 +607,94 @@ BM_transform_with_restrict         15619 ns        15617 ns        44817
 ### 3.2.1 pointer aliasing
 
 #### 3.2.1.1 case1
+
+**在这个`case`中，`sum`和`nums`都是`uint32_t`类型的指针，它们之间是存在`pointer aliasing`的。在不加`__restrict`的情况下，编译器无法对其进行向量化（这与`pointer aliasing`的`benchmark`结果不一致！！！）**
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#define LEN 100
+
+void __attribute__((noinline)) loop_without_optimize(uint32_t* sum, uint32_t* nums, size_t len) {
+    for (size_t i = 0; i < len; ++i) {
+        *sum += nums[i];
+    }
+}
+
+void __attribute__((noinline)) loop_with_local_sum(uint32_t* sum, uint32_t* nums, size_t len) {
+    uint32_t local_sum = 0;
+    for (size_t i = 0; i < len; ++i) {
+        local_sum += nums[i];
+    }
+    *sum += local_sum;
+}
+
+void __attribute__((noinline)) loop_with_restrict(uint32_t* __restrict sum, uint32_t* nums, size_t len) {
+    for (size_t i = 0; i < len; ++i) {
+        *sum += nums[i];
+    }
+}
+
+static void BM_loop_without_optimize(benchmark::State& state) {
+    uint32_t sum;
+    uint32_t nums[LEN];
+    for (size_t i = 0; i < LEN; ++i) {
+        nums[i] = i;
+    }
+
+    for (auto _ : state) {
+        loop_without_optimize(&sum, nums, LEN);
+        benchmark::DoNotOptimize(sum);
+    }
+}
+
+static void BM_loop_with_local_sum(benchmark::State& state) {
+    uint32_t sum;
+    uint32_t nums[LEN];
+    for (size_t i = 0; i < LEN; ++i) {
+        nums[i] = i;
+    }
+
+    for (auto _ : state) {
+        loop_with_local_sum(&sum, nums, LEN);
+        benchmark::DoNotOptimize(sum);
+    }
+}
+
+static void BM_loop_with_restrict(benchmark::State& state) {
+    uint32_t sum;
+    uint32_t nums[LEN];
+    for (size_t i = 0; i < LEN; ++i) {
+        nums[i] = i;
+    }
+
+    for (auto _ : state) {
+        loop_with_restrict(&sum, nums, LEN);
+        benchmark::DoNotOptimize(sum);
+    }
+}
+
+BENCHMARK(BM_loop_without_optimize);
+BENCHMARK(BM_loop_with_local_sum);
+BENCHMARK(BM_loop_with_restrict);
+
+BENCHMARK_MAIN();
+```
+
+**输出如下：**
+
+```
+-------------------------------------------------------------------
+Benchmark                         Time             CPU   Iterations
+-------------------------------------------------------------------
+BM_loop_without_optimize       52.1 ns         52.1 ns     13414412
+BM_loop_with_local_sum         9.69 ns         9.69 ns     72266654
+BM_loop_with_restrict          9.79 ns         9.79 ns     70959645
+```
+
+#### 3.2.1.2 case2
+
+**在`case1`的基础之上，将`sum`放到一个结构体内，且将sum改成非指针类型**
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -757,7 +793,9 @@ BM_loop_with_restrict          10.2 ns         10.2 ns     69550202
 
 **如果把`uint32_t* nums`换成`std::vector<unt32_t>& nums`或者`std::vector<unt32_t>* nums`。都无法得到上述的结果，因为在这种情况下gcc不会认为`Aggregator::_sum`存在`pointer aliasing`，因此可以直接进行优化**
 
-#### 3.2.1.2 case2
+#### 3.2.1.3 case3
+
+**在`case2`的基础之上，`nums`放到另一个结构体中**
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -919,9 +957,9 @@ BM_loop_with_restrict                        11.6 ns         11.6 ns     6097813
 
 1. 由`loop_without_optimize`与`loop_with_local_array`对比可以看出，是否直接使用数组对性能无影响
 
-#### 3.2.1.3 case3
+#### 3.2.1.4 case4
 
-**这个case非常奇怪，`_sum`和`_nums`都是Aggregator的成员。编译器在没有`__restrict`的情况下，居然没法进行优化**
+**在`case3`的基础之上，将`sum`和`nums`放到同一个结构体中，这个case非常奇怪，`sum`和`nums`都是Aggregator的成员，编译器在没有`__restrict`的情况下，居然没法进行优化**
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -1077,9 +1115,9 @@ BM_loop_without_optimize       52.1 ns         52.1 ns     13445879
 BM_loop_with_restrict          17.9 ns         17.9 ns     38901664
 ```
 
-#### 3.2.1.4 case4
+#### 3.2.1.5 case5
 
-**一个`object`参数，内部的多个成员变量的关系，函数是无法判断的，所以传入单个 `object`指针，如果有对多个成员变量的访问（并且还是指针），那gcc也没法判断**
+**在`case4`的基础之上，将`sum`的类型改成指针类型。一个`object`参数，内部的多个成员变量的关系，函数是无法判断的，所以传入单个 `object`指针，如果有对多个成员变量的访问（并且还是指针），那gcc也没法判断**
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -1167,9 +1205,7 @@ BM_loop_without_optimize       54.9 ns         54.9 ns     12764430
 BM_loop_with_restrict          52.5 ns         52.4 ns     13384598
 ```
 
-## 3.3 integer vs floating
-
-### 3.3.1 benchmark
+### 3.2.2 integer vs floating
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -1242,6 +1278,6 @@ BM_loop_with_integer       64.0 ns         64.0 ns     10942085
 BM_loop_with_float         97.3 ns         97.3 ns      7197218
 ```
 
-## 3.4 参考
+## 3.3 参考
 
 * [Auto-vectorization in GCC](https://gcc.gnu.org/projects/tree-ssa/vectorization.html)
