@@ -419,6 +419,8 @@ set encoding=utf-8
 
 **[gcc各版本源码包下载地址](http://ftp.gnu.org/gnu/gcc/)，我选择的版本是`gcc-10.3.0`**
 
+**若国内下载太慢，可以到[GCC mirror sites](http://gcc.gnu.org/mirrors.html)就近选择镜像源**
+
 ```sh
 # 下载并解压源码包
 wget -O gcc-10.3.0.tar.gz 'http://ftp.gnu.org/gnu/gcc/gcc-10.3.0/gcc-10.3.0.tar.gz'
@@ -426,7 +428,7 @@ tar -zxf gcc-10.3.0.tar.gz
 cd gcc-10.3.0
 
 # 安装依赖项
-yum install bzip2 -y
+yum install -y bzip2 gcc gcc-c++
 ./contrib/download_prerequisites
 
 # 编译安装（比较耗时，耐心等待）
@@ -435,7 +437,7 @@ make -j 4
 make install
 
 # 删除原来的gcc
-yum remove -y gcc
+yum remove -y gcc gcc-c++
 
 # 创建软连接
 rm -f /usr/bin/gcc /usr/bin/g++ /usr/bin/cc /usr/bin/c++ /lib64/libstdc++.so.6
@@ -479,7 +481,7 @@ mkswap swapfile
 chmod 600 swapfile
 swapon swapfile
 
-git clone -b release/10.x https://hub.fastgit.org/llvm/llvm-project.git --depth 1
+git clone -b release/10.x https://github.com.cnpmjs.org/llvm/llvm-project.git --depth 1
 cd llvm-project
 mkdir build
 cd build
@@ -513,8 +515,12 @@ vim --version | head -1
 **安装：参照[github官网文档](https://github.com/universal-ctags/ctags)进行编译安装即可**
 
 ```sh
-git clone https://hub.fastgit.org/universal-ctags/ctags.git --depth 1
+git clone https://github.com.cnpmjs.org/universal-ctags/ctags.git --depth 1
 cd ctags
+
+# 安装依赖工具
+yum install -y autoconf automake
+
 ./autogen.sh
 ./configure --prefix=/usr/local
 make
@@ -531,6 +537,7 @@ ctags -R -f .tags *
 **如何为系统库生成ctags，这里生成的系统库对应的ctags文件是`~/.vim/systags`**
 
 ```sh
+mkdir -p ~/.vim
 # 下面2种选一个即可
 
 # 1. 通过yum install -y gcc安装的gcc是4.8.5版本
@@ -603,12 +610,12 @@ curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 // 将
 let fmt = get(g:, 'plug_url_format', 'https://git::@github.com/%s.git')
 // 修改为
-let fmt = get(g:, 'plug_url_format', 'https://git::@hub.fastgit.org/%s.git')
+let fmt = get(g:, 'plug_url_format', 'https://git::@github.com.cnpmjs.org/%s.git')
 
 // 将
 \ '^https://git::@github\.com', 'https://github.com', '')
 // 修改为
-\ '^https://git::@hub.fastgit\.org', 'https://hub.fastgit.org', '')
+\ '^https://git::@github\.com\.cnpmjs\.org', 'https://github.com.cnpmjs.org', '')
 ```
 
 **退格失效，编辑`~/.vimrc`，追加如下内容**
@@ -1125,12 +1132,12 @@ function setup_github_repo() {
     for CONFIG in ${CONFIGS[@]}
     do
         echo "setup github repo for '${CONFIG}'"
-        sed -i 's|https://github.com|https://hub.fastgit.org|g' ${CONFIG}
+        sed -i 's|https://github.com/|https://github.com.cnpmjs.org/|g' ${CONFIG}
     done
 }
 
 cd ~/.vim/plugged
-git clone https://hub.fastgit.org/ycm-core/YouCompleteMe.git --depth 1
+git clone https://github.com.cnpmjs.org/ycm-core/YouCompleteMe.git --depth 1
 cd YouCompleteMe
 
 # 递归下载ycm的子模块

@@ -1302,3 +1302,4 @@ BM_loop_with_float         97.3 ns         97.3 ns      7197218
 ## 3.4 参考
 
 * [Auto-vectorization in GCC](https://gcc.gnu.org/projects/tree-ssa/vectorization.html)
+* [Type-Based Alias Analysis](https://www.drdobbs.com/cpp/type-based-alias-analysis/184404273)

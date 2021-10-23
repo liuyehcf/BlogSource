@@ -62,10 +62,13 @@ sudo perf script > out.perf
 /opt/FlameGraph/flamegraph.pl out.folded > out.svg
 ```
 
-# 2 参考
+# 2 VTune
+
+# 3 参考
 
 * [工欲性能调优，必先利其器（2）- 火焰图](https://pingcap.com/zh/blog/flame-graph)
 * [CPU Flame Graphs](https://www.brendangregg.com/FlameGraphs/cpuflamegraphs.html)
+* [Intel® VTune™ Profiler](https://www.intel.com/content/www/us/en/developer/tools/oneapi/vtune-profiler.html#gs.edu99w)
 * [在Linux下做性能分析1：基本模型](https://zhuanlan.zhihu.com/p/22124514)
 * [在Linux下做性能分析2：ftrace](https://zhuanlan.zhihu.com/p/22130013)
 * [在Linux下做性能分析3：perf](https://zhuanlan.zhihu.com/p/22194920)
