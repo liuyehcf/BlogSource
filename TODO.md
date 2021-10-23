@@ -30,6 +30,7 @@
         * [ck-blog](https://clickhouse.com/docs/zh/whats-new/changelog/)
     * ssb测试集
         * https://www.cnblogs.com/tgzhu/p/9083092.html
+    * tpcds测试集
 1. opensource
     * PMC
         * [WHAT IS A PMC?](https://www.apache.org/dev/pmc.html#what-is-a-pmc)

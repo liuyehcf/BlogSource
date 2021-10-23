@@ -495,18 +495,6 @@ uint32_t __attribute__((noinline)) sum_with_restrict(uint32_t* __restrict num1, 
     return res;
 }
 
-void __attribute__((noinline)) loop_without_restrict(uint32_t* dest, uint32_t* value, size_t len) {
-    for (size_t i = 0; i < len; ++i) {
-        dest[i] += *value;
-    }
-}
-
-void __attribute__((noinline)) loop_with_restrict(uint32_t* __restrict dest, uint32_t* __restrict value, size_t len) {
-    for (size_t i = 0; i < len; ++i) {
-        dest[i] += *value;
-    }
-}
-
 static void BM_sum_without_restrict(benchmark::State& state) {
     uint32_t num1 = 0;
     uint32_t num2 = 0;
@@ -527,41 +515,8 @@ static void BM_sum_with_restrict(benchmark::State& state) {
     }
 }
 
-static void BM_loop_without_restrict(benchmark::State& state) {
-    uint32_t dstdata[ARRAY_LEN];
-    for (size_t i = 0; i < ARRAY_LEN; ++i) {
-        dstdata[i] = 0;
-    }
-
-    uint32_t value = 0;
-    for (auto _ : state) {
-        value += 1;
-        loop_without_restrict(dstdata, &value, ARRAY_LEN);
-
-        benchmark::DoNotOptimize(dstdata);
-    }
-}
-
-static void BM_loop_with_restrict(benchmark::State& state) {
-    uint32_t dstdata[ARRAY_LEN];
-    for (size_t i = 0; i < ARRAY_LEN; ++i) {
-        dstdata[i] = 0;
-    }
-
-    uint32_t value = 0;
-    for (auto _ : state) {
-        value += 1;
-        loop_with_restrict(dstdata, &value, ARRAY_LEN);
-
-        benchmark::DoNotOptimize(dstdata);
-    }
-}
-
 BENCHMARK(BM_sum_without_restrict);
 BENCHMARK(BM_sum_with_restrict);
-
-BENCHMARK(BM_loop_without_restrict);
-BENCHMARK(BM_loop_with_restrict);
 
 BENCHMARK_MAIN();
 ```
@@ -569,21 +524,12 @@ BENCHMARK_MAIN();
 **输出如下：**
 
 ```
--------------------------------------------------------------------
-Benchmark                         Time             CPU   Iterations
--------------------------------------------------------------------
-BM_sum_without_restrict        6278 ns         6277 ns       111483
-BM_sum_with_restrict           2.68 ns         2.68 ns    256724053
-BM_loop_without_restrict       2749 ns         2748 ns       254780
-BM_loop_with_restrict          2439 ns         2439 ns       286565
+------------------------------------------------------------------
+Benchmark                        Time             CPU   Iterations
+------------------------------------------------------------------
+BM_sum_without_restrict       3145 ns         3145 ns       222606
+BM_sum_with_restrict          2.85 ns         2.85 ns    243455429
 ```
-
-**结论：**
-
-* 若编译时加上`-fopt-info-vec`参数，那么会输出如下信息
-    * `24:26: optimized: loop vectorized using 16 byte vectors`
-    * `24:26: optimized:  loop versioned for vectorization because of possible aliasing`
-    * 其中`24`行就是`loop_without_restrict`的`for`循环，可以看到，即便不加`__restrict`，编译器也能向量化，只不过加上`__restrict`能够得到更彻底的向量化
 
 # 3 auto vectorization
 
@@ -602,9 +548,9 @@ BM_loop_with_restrict          2439 ns         2439 ns       286565
 * `-fopt-info-vec-note`：Detailed info about all loops and optimizations being done.
 * `-fopt-info-vec-all`：All previous options together.
 
-## 3.2 benchmark
+## 3.2 pointer aliasing
 
-### 3.2.1 pointer aliasing
+### 3.2.1 benchmark
 
 #### 3.2.1.1 case1
 
@@ -1205,7 +1151,82 @@ BM_loop_without_optimize       54.9 ns         54.9 ns     12764430
 BM_loop_with_restrict          52.5 ns         52.4 ns     13384598
 ```
 
-### 3.2.2 integer vs floating
+#### 3.2.1.6 case6: versioned for vectorization
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#define ARRAY_LEN 10000
+
+void __attribute__((noinline)) loop_without_restrict(uint32_t* dest, uint32_t* value, size_t len) {
+    for (size_t i = 0; i < len; ++i) {
+        dest[i] += *value;
+    }
+}
+
+void __attribute__((noinline)) loop_with_restrict(uint32_t* __restrict dest, uint32_t* __restrict value, size_t len) {
+    for (size_t i = 0; i < len; ++i) {
+        dest[i] += *value;
+    }
+}
+
+static void BM_loop_without_restrict(benchmark::State& state) {
+    uint32_t dstdata[ARRAY_LEN];
+    for (size_t i = 0; i < ARRAY_LEN; ++i) {
+        dstdata[i] = 0;
+    }
+
+    uint32_t value = 0;
+    for (auto _ : state) {
+        value += 1;
+        loop_without_restrict(dstdata, &value, ARRAY_LEN);
+
+        benchmark::DoNotOptimize(dstdata);
+    }
+}
+
+static void BM_loop_with_restrict(benchmark::State& state) {
+    uint32_t dstdata[ARRAY_LEN];
+    for (size_t i = 0; i < ARRAY_LEN; ++i) {
+        dstdata[i] = 0;
+    }
+
+    uint32_t value = 0;
+    for (auto _ : state) {
+        value += 1;
+        loop_with_restrict(dstdata, &value, ARRAY_LEN);
+
+        benchmark::DoNotOptimize(dstdata);
+    }
+}
+
+BENCHMARK(BM_loop_without_restrict);
+BENCHMARK(BM_loop_with_restrict);
+
+BENCHMARK_MAIN();
+```
+
+**输出如下：**
+
+```
+-------------------------------------------------------------------
+Benchmark                         Time             CPU   Iterations
+-------------------------------------------------------------------
+BM_loop_without_restrict       2386 ns         2386 ns       295003
+BM_loop_with_restrict          2379 ns         2378 ns       294599
+```
+
+**分析：**
+
+* 可以看到，就不加`__restrict`性能差不多，若编译时加上`-fopt-info-vec`参数，那么会输出如下信息
+    * `6:26: optimized: loop vectorized using 16 byte vectors`
+    * `6:26: optimized: loop versioned for vectorization because of possible aliasing`
+* **其中第`6`行就是`loop_without_restrict`的`for`循环，可以看到，即便不加`__restrict`，编译器也能向量化，这是为什么呢？下面是我的猜测**
+    * 这个函数的主要作用就是在`dest`的每个元素上都增加`value`。由于`value`和`dest`可能存在`pointer aliasing`的关系。那么编译器可以假定存在`pointer aliasing`，那么`&value == &dest[k]`，那么此时循环可以分割成两部分：`0, 1, ..., k-1`以及`k+1, k+2, ..., n`，那么此时，这两部分一定不存在`pointer aliasing`的关系，可以分别向量化
+
+## 3.3 integer vs floating
+
+### 3.3.1 benchmark
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -1278,6 +1299,10 @@ BM_loop_with_integer       64.0 ns         64.0 ns     10942085
 BM_loop_with_float         97.3 ns         97.3 ns      7197218
 ```
 
-## 3.3 参考
+## 3.4 multi-condition
+
+### 3.4.1 benchmark
+
+## 3.5 参考
 
 * [Auto-vectorization in GCC](https://gcc.gnu.org/projects/tree-ssa/vectorization.html)
