@@ -986,8 +986,6 @@ BM_loop_without_optimize       54.1 ns         54.1 ns     12959382
 BM_loop_with_restrict          14.8 ns         14.8 ns     47479924
 ```
 
----
-
 **`Aggregator::_nums`的类型换成`std::vector<uint32_t>`得到的也是类似的结果**
 
 ```cpp
