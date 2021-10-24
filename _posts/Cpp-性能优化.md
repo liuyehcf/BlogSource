@@ -1303,3 +1303,115 @@ BM_loop_with_float         97.3 ns         97.3 ns      7197218
 
 * [Auto-vectorization in GCC](https://gcc.gnu.org/projects/tree-ssa/vectorization.html)
 * [Type-Based Alias Analysis](https://www.drdobbs.com/cpp/type-based-alias-analysis/184404273)
+
+# 4 cache
+
+**关键字`__builtin_prefetch`**
+
+## 4.1 benchmark
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#define LEN 10000
+
+int64_t binary_search_without_prefetch(int64_t* nums, int64_t len, int64_t target) {
+    int64_t left = 0, right = len - 1;
+
+    while (left < right) {
+        int64_t mid = (left + right) >> 1;
+
+        if (nums[mid] == target) {
+            return mid;
+        } else if (nums[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+
+    return nums[left] == target ? left : -1;
+}
+
+int64_t binary_search_with_prefetch(int64_t* nums, int64_t len, int64_t target) {
+    int64_t left = 0, right = len - 1;
+
+    while (left < right) {
+        int64_t mid = (left + right) >> 1;
+
+        {
+            // left part
+            int64_t next_left = left, next_right = mid;
+            int64_t next_mid = (next_left + next_right) >> 1;
+            __builtin_prefetch(&nums[next_mid], 0, 1);
+        }
+
+        {
+            // right part
+            int64_t next_left = mid + 1, next_right = right;
+            int64_t next_mid = (next_left + next_right) >> 1;
+            __builtin_prefetch(&nums[next_mid], 0, 1);
+        }
+
+        if (nums[mid] == target) {
+            return mid;
+        } else if (nums[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+
+    return nums[left] == target ? left : -1;
+}
+
+int64_t nums[LEN];
+bool is_nums_init = false;
+
+void init_nums() {
+    if (is_nums_init) {
+        return;
+    }
+
+    for (size_t i = 0; i < LEN; ++i) {
+        nums[i] = i;
+    }
+
+    is_nums_init = true;
+}
+
+static void BM_binary_search_without_prefetch(benchmark::State& state) {
+    init_nums();
+
+    for (auto _ : state) {
+        for (size_t i = 0; i < LEN; ++i) {
+            benchmark::DoNotOptimize(binary_search_without_prefetch(nums, LEN, nums[i]));
+        }
+    }
+}
+
+static void BM_binary_search_with_prefetch(benchmark::State& state) {
+    init_nums();
+
+    for (auto _ : state) {
+        for (size_t i = 0; i < LEN; ++i) {
+            benchmark::DoNotOptimize(binary_search_with_prefetch(nums, LEN, nums[i]));
+        }
+    }
+}
+
+BENCHMARK(BM_binary_search_without_prefetch);
+BENCHMARK(BM_binary_search_with_prefetch);
+
+BENCHMARK_MAIN();
+```
+
+**输出如下：**
+
+```
+----------------------------------------------------------------------------
+Benchmark                                  Time             CPU   Iterations
+----------------------------------------------------------------------------
+BM_binary_search_without_prefetch     400223 ns       400186 ns         1750
+BM_binary_search_with_prefetch        273521 ns       273495 ns         2560
+```

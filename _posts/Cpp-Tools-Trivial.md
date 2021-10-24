@@ -44,7 +44,7 @@ npm install -g clang-format
 
 **如何使用：在`用户目录`或者`项目根目录`中创建`.clang-format`文件用于指定格式化的方式，下面给一个示例**
 
-* **优先使用项目根目录中的`.clang-format`；如果不存在，则使用用户目录中的`.clang-format`**
+* **优先使用项目根目录中的`.clang-format`；如果不存在，则使用用户目录中的`~/.clang-format`**
 
 ```
 ---

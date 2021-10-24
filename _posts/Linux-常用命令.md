@@ -747,7 +747,26 @@ echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
     * `find ./ -regex '.*\.cfg\|.*\.conf'`
     * `find ./ -regextype posix-extended -regex '.*\.(cfg|conf)'`
 
-## 2.13 cp
+## 2.13 locate
+
+**`locate`是在已创建的数据库`/var/lib/mlocate`里面的数据所查找到的，所以不用直接在硬盘当中去访问，因此，相比于`find`，速度更快**
+
+**如何安装：**
+
+```sh
+yum install -y mlocate
+```
+
+**如何使用：**
+
+```sh
+# 第一次使用时，需要先更新db
+updatedb
+
+locate stl_vector.h
+```
+
+## 2.14 cp
 
 **示例：**
 
@@ -755,14 +774,14 @@ echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
 * `cp -vrf /a/* /b`：递归拷贝目录`/a`下的所有文件、目录，但不包括隐藏文件和隐藏目录
 * `cp -vrf /a/. /b`：递归拷贝目录`/a`中所有的文件、目录、隐藏文件和隐藏目录到目录`/b`中
 
-## 2.14 rm
+## 2.15 rm
 
 **示例：**
 
 * `rm -rf /a/*`：递归删除目录`/a`下的所有文件、目录，但不包括隐藏文件和隐藏目录
 * `rm -rf /path/{..?*,.[!.]*,*}`：递归删除目录`/path`下的所有文件、目录、隐藏文件和隐藏目录
 
-## 2.15 tar
+## 2.16 tar
 
 **格式：**
 
@@ -796,7 +815,7 @@ echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
 * `tar -zxvf /test.tar.gz -C /home/liuye`
 * `tar cvf - /home/liuye | sha1sum`：`-`表示标准输入输出，这里表示标准出
 
-## 2.16 wget
+## 2.17 wget
 
 **格式：**
 
@@ -817,7 +836,7 @@ echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
 * `wget -r -np -nH -P /root/test -R "index.html*" 'http://192.168.66.1/stuff'`
 * `wget -r -np -nH -P /root/test 'ftp://192.168.66.1/stuff'`
 
-## 2.17 tree
+## 2.18 tree
 
 **格式：**
 
@@ -827,7 +846,7 @@ echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
 
 * `-N`：显示非ASCII字符，可以显示中文
 
-## 2.18 base64
+## 2.19 base64
 
 用于对输入进行`base64`编码以及解码
 
@@ -836,7 +855,7 @@ echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
 * `echo "hello" | base64`
 * `echo "hello" | base64 | base64 -d`
 
-## 2.19 md5sum
+## 2.20 md5sum
 
 计算输入或文件的MD5值
 
@@ -844,7 +863,7 @@ echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
 
 * `echo "hello" | md5sum`
 
-## 2.20 openssl
+## 2.21 openssl
 
 openssl可以对文件，以指定算法进行加密或者解密
 
@@ -854,7 +873,7 @@ openssl可以对文件，以指定算法进行加密或者解密
 * `openssl aes-256-cbc -a -salt -in blob.txt -out cipher`
 * `openssl aes-256-cbc -a -d -in cipher -out blob-rebuild.txt`
 
-## 2.21 bc
+## 2.22 bc
 
 bc可以用于进制转换
 
@@ -865,7 +884,7 @@ bc可以用于进制转换
 * `((num=8#77)); echo ${num}`：8进制转十进制
 * `((num=16#FF)); echo ${num}`：16进制转十进制
 
-## 2.22 dirname
+## 2.23 dirname
 
 `dirname`用于返回文件路径的目录部分，该命令不会检查路径所对应的目录或文件是否真实存在
 
@@ -883,7 +902,7 @@ ROOT=`dirname "$0"`
 ROOT=`cd "$ROOT"; pwd`
 ```
 
-## 2.23 addr2line
+## 2.24 addr2line
 
 该工具用于查看二进制的偏移量与源码的对应关系
 
@@ -891,7 +910,7 @@ ROOT=`cd "$ROOT"; pwd`
 
 * `addr2line 4005f5 -e test`：查看二进制`test`中位置为`4005f5`指令对应的源码
 
-## 2.24 objdump
+## 2.25 objdump
 
 该工具用于反汇编
 

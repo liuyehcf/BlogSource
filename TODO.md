@@ -6,8 +6,7 @@
 1. 性能分析
     * Perf
     * vtune
-        * [《A Top-Down Method for Performance Analysis and Counters Architecture》阅读笔记](https://andrewei1316.github.io/2020/12/20/top-down-performance-analysis/)
-        * [Intel® VTune™ Profiler Performance Analysis Cookbook](https://software.intel.com/content/www/us/en/develop/documentation/vtune-cookbook/top/methodologies/top-down-microarchitecture-analysis-method.html)
+
     * [socket tracer](https://mp.weixin.qq.com/s/0w5t_KkHRLXkEY1_qbdTtw)
 1. 数据库
     * 时序数据库
@@ -42,8 +41,8 @@
     * gcc各种常用
     * jemalloc/jcmalloc/mimalloc
     * 如何安装boost？ `yum install -y boost-devel`
-    * 性能开销测试
-            * ck /AggregateFunctions/IAggregateFunction.h
+    * 性能优化
+        * ck /AggregateFunctions/IAggregateFunction.h
 1. 其他
     * 伙伴算法
     * 异常中断的区别

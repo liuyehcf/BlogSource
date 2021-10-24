@@ -62,13 +62,22 @@ sudo perf script > out.perf
 /opt/FlameGraph/flamegraph.pl out.folded > out.svg
 ```
 
-# 2 VTune
-
-# 3 参考
+## 1.2 参考
 
 * [工欲性能调优，必先利其器（2）- 火焰图](https://pingcap.com/zh/blog/flame-graph)
 * [CPU Flame Graphs](https://www.brendangregg.com/FlameGraphs/cpuflamegraphs.html)
+* [Java 火焰图](https://www.jianshu.com/p/bea2b6a1eb6e)
+
+# 2 VTune
+
+## 2.1 参考
+
 * [Intel® VTune™ Profiler](https://www.intel.com/content/www/us/en/developer/tools/oneapi/vtune-profiler.html#gs.edu99w)
+* [Intel® VTune™ Profiler Performance Analysis Cookbook](https://software.intel.com/content/www/us/en/develop/documentation/vtune-cookbook/top/methodologies/top-down-microarchitecture-analysis-method.html)
+* [《A Top-Down Method for Performance Analysis and Counters Architecture》阅读笔记](https://andrewei1316.github.io/2020/12/20/top-down-performance-analysis/)
+
+# 3 参考
+
 * [在Linux下做性能分析1：基本模型](https://zhuanlan.zhihu.com/p/22124514)
 * [在Linux下做性能分析2：ftrace](https://zhuanlan.zhihu.com/p/22130013)
 * [在Linux下做性能分析3：perf](https://zhuanlan.zhihu.com/p/22194920)
@@ -77,4 +86,3 @@ sudo perf script > out.perf
 * [Linux下做性能分析6：理解一些基础的CPU执行模型](https://zhuanlan.zhihu.com/p/22386524)
 * [Linux下做性能分析7：IO等待问题](https://zhuanlan.zhihu.com/p/22389927)
 * [Linux下做性能分析8：Docker环境](https://zhuanlan.zhihu.com/p/22409793)
-* [Java 火焰图](https://www.jianshu.com/p/bea2b6a1eb6e)
