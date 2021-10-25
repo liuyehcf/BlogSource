@@ -43,6 +43,10 @@
     * 如何安装boost？ `yum install -y boost-devel`
     * 性能优化
         * ck /AggregateFunctions/IAggregateFunction.h
+1. 汇编
+    * avx2指令
+1. vim
+    * ex模式
 1. 其他
     * 伙伴算法
     * 异常中断的区别

@@ -717,13 +717,20 @@ Plug 'scrooloose/nerdtree'
 
 " -------- 下面是该插件的一些参数 --------
 
-" F2 快速切换
+" 配置 F2 打开文件管理器 
 nmap <F2> :NERDTreeToggle<CR>
+" 配置 F3 定位当前文件
+nmap <F3> :NERDTreeFind<CR>
 
 call plug#end()
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
+
+**使用：**
+
+* `:NERDTreeToggle`：打开文件管理器
+* `:NERDTreeFind`：打开文件管理器，并且定位到当前文件
 
 ## 2.7 彩虹括号-[rainbow_parentheses](https://github.com/kien/rainbow_parentheses.vim)
 
@@ -764,7 +771,6 @@ au VimEnter * RainbowParenthesesToggle
 au Syntax * RainbowParenthesesLoadRound
 au Syntax * RainbowParenthesesLoadSquare
 au Syntax * RainbowParenthesesLoadBraces
-au Syntax * RainbowParenthesesLoadChevrons
 
 call plug#end()
 ```
@@ -1259,8 +1265,10 @@ let g:indentLine_char = '|'
 
 Plug 'scrooloose/nerdtree'
 
-" F2 快速切换
+" 配置 F2 打开文件管理器 
 nmap <F2> :NERDTreeToggle<CR>
+" 配置 F3 定位当前文件
+nmap <F3> :NERDTreeFind<CR>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1290,7 +1298,6 @@ au VimEnter * RainbowParenthesesToggle
 au Syntax * RainbowParenthesesLoadRound
 au Syntax * RainbowParenthesesLoadSquare
 au Syntax * RainbowParenthesesLoadBraces
-au Syntax * RainbowParenthesesLoadChevrons
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

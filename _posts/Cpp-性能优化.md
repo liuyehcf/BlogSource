@@ -1304,7 +1304,10 @@ BM_loop_with_float         97.3 ns         97.3 ns      7197218
 
 # 4 cache
 
-**关键字`__builtin_prefetch`**
+**内置函数`__builtin_prefetch(const void* addr, [rw], [locality])`用于将可能在将来被访问的数据提前加载到缓存中来，以提高命中率**
+
+* **`rw`：可选参数，编译期常量，可选值`0`或`1`。`0`（默认值）表示预取的数据用于`read`。`1`表示预取的数据用于`write`**
+* **`locality`：可选参数，编译期常量，可选值`0`、`1`、`2`、`3`。其中`0`表示数据没有局部性，在数据访问后无需放在cache的左边。`3`（默认值）表示数据具有很高的局部性，尽可能将数据放在cache的左边。`1`和`2`介于两者之间**
 
 ## 4.1 benchmark
 
@@ -1331,7 +1334,39 @@ int64_t binary_search_without_prefetch(int64_t* nums, int64_t len, int64_t targe
     return nums[left] == target ? left : -1;
 }
 
-int64_t binary_search_with_prefetch(int64_t* nums, int64_t len, int64_t target) {
+int64_t binary_search_with_prefetch_locality_0(int64_t* nums, int64_t len, int64_t target) {
+    int64_t left = 0, right = len - 1;
+
+    while (left < right) {
+        int64_t mid = (left + right) >> 1;
+
+        {
+            // left part
+            int64_t next_left = left, next_right = mid;
+            int64_t next_mid = (next_left + next_right) >> 1;
+            __builtin_prefetch(&nums[next_mid], 0, 0);
+        }
+
+        {
+            // right part
+            int64_t next_left = mid + 1, next_right = right;
+            int64_t next_mid = (next_left + next_right) >> 1;
+            __builtin_prefetch(&nums[next_mid], 0, 0);
+        }
+
+        if (nums[mid] == target) {
+            return mid;
+        } else if (nums[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+
+    return nums[left] == target ? left : -1;
+}
+
+int64_t binary_search_with_prefetch_locality_1(int64_t* nums, int64_t len, int64_t target) {
     int64_t left = 0, right = len - 1;
 
     while (left < right) {
@@ -1349,6 +1384,70 @@ int64_t binary_search_with_prefetch(int64_t* nums, int64_t len, int64_t target) 
             int64_t next_left = mid + 1, next_right = right;
             int64_t next_mid = (next_left + next_right) >> 1;
             __builtin_prefetch(&nums[next_mid], 0, 1);
+        }
+
+        if (nums[mid] == target) {
+            return mid;
+        } else if (nums[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+
+    return nums[left] == target ? left : -1;
+}
+
+int64_t binary_search_with_prefetch_locality_2(int64_t* nums, int64_t len, int64_t target) {
+    int64_t left = 0, right = len - 1;
+
+    while (left < right) {
+        int64_t mid = (left + right) >> 1;
+
+        {
+            // left part
+            int64_t next_left = left, next_right = mid;
+            int64_t next_mid = (next_left + next_right) >> 1;
+            __builtin_prefetch(&nums[next_mid], 0, 2);
+        }
+
+        {
+            // right part
+            int64_t next_left = mid + 1, next_right = right;
+            int64_t next_mid = (next_left + next_right) >> 1;
+            __builtin_prefetch(&nums[next_mid], 0, 2);
+        }
+
+        if (nums[mid] == target) {
+            return mid;
+        } else if (nums[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+
+    return nums[left] == target ? left : -1;
+}
+
+int64_t binary_search_with_prefetch_locality_3(int64_t* nums, int64_t len, int64_t target) {
+    int64_t left = 0, right = len - 1;
+
+    while (left < right) {
+        int64_t mid = (left + right) >> 1;
+
+        {
+            // left part
+            int64_t next_left = left, next_right = mid;
+            int64_t next_mid = (next_left + next_right) >> 1;
+            __builtin_prefetch(&nums[next_mid], 0, 3);
+        }
+
+        {
+            // right part
+            int64_t next_left = mid + 1, next_right = right;
+            int64_t next_mid = (next_left + next_right) >> 1;
+            __builtin_prefetch(&nums[next_mid], 0, 3);
         }
 
         if (nums[mid] == target) {
@@ -1388,18 +1487,51 @@ static void BM_binary_search_without_prefetch(benchmark::State& state) {
     }
 }
 
-static void BM_binary_search_with_prefetch(benchmark::State& state) {
+static void BM_binary_search_with_prefetch_locality_0(benchmark::State& state) {
     init_nums();
 
     for (auto _ : state) {
         for (size_t i = 0; i < LEN; ++i) {
-            benchmark::DoNotOptimize(binary_search_with_prefetch(nums, LEN, nums[i]));
+            benchmark::DoNotOptimize(binary_search_with_prefetch_locality_0(nums, LEN, nums[i]));
+        }
+    }
+}
+
+static void BM_binary_search_with_prefetch_locality_1(benchmark::State& state) {
+    init_nums();
+
+    for (auto _ : state) {
+        for (size_t i = 0; i < LEN; ++i) {
+            benchmark::DoNotOptimize(binary_search_with_prefetch_locality_1(nums, LEN, nums[i]));
+        }
+    }
+}
+
+static void BM_binary_search_with_prefetch_locality_2(benchmark::State& state) {
+    init_nums();
+
+    for (auto _ : state) {
+        for (size_t i = 0; i < LEN; ++i) {
+            benchmark::DoNotOptimize(binary_search_with_prefetch_locality_2(nums, LEN, nums[i]));
+        }
+    }
+}
+
+static void BM_binary_search_with_prefetch_locality_3(benchmark::State& state) {
+    init_nums();
+
+    for (auto _ : state) {
+        for (size_t i = 0; i < LEN; ++i) {
+            benchmark::DoNotOptimize(binary_search_with_prefetch_locality_3(nums, LEN, nums[i]));
         }
     }
 }
 
 BENCHMARK(BM_binary_search_without_prefetch);
-BENCHMARK(BM_binary_search_with_prefetch);
+BENCHMARK(BM_binary_search_with_prefetch_locality_0);
+BENCHMARK(BM_binary_search_with_prefetch_locality_1);
+BENCHMARK(BM_binary_search_with_prefetch_locality_2);
+BENCHMARK(BM_binary_search_with_prefetch_locality_3);
 
 BENCHMARK_MAIN();
 ```
@@ -1407,9 +1539,16 @@ BENCHMARK_MAIN();
 **输出如下：**
 
 ```
-----------------------------------------------------------------------------
-Benchmark                                  Time             CPU   Iterations
-----------------------------------------------------------------------------
-BM_binary_search_without_prefetch     400223 ns       400186 ns         1750
-BM_binary_search_with_prefetch        273521 ns       273495 ns         2560
+------------------------------------------------------------------------------------
+Benchmark                                          Time             CPU   Iterations
+------------------------------------------------------------------------------------
+BM_binary_search_without_prefetch             402491 ns       402450 ns         1737
+BM_binary_search_with_prefetch_locality_0     281033 ns       281001 ns         2440
+BM_binary_search_with_prefetch_locality_1     273952 ns       273921 ns         2558
+BM_binary_search_with_prefetch_locality_2     274237 ns       274204 ns         2557
+BM_binary_search_with_prefetch_locality_3     272844 ns       272819 ns         2560
 ```
+
+## 4.2 参考
+
+* [Other Built-in Functions Provided by GCC](https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html)
