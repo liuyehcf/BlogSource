@@ -780,6 +780,8 @@ locate stl_vector.h
 
 * `rm -rf /a/*`：递归删除目录`/a`下的所有文件、目录，但不包括隐藏文件和隐藏目录
 * `rm -rf /path/{..?*,.[!.]*,*}`：递归删除目录`/path`下的所有文件、目录、隐藏文件和隐藏目录
+* `rm -rf /path/!(a.txt|b.txt)`：递归删除目录`path`下的除了`a.txt`以及`b.txt`之外的所有文件、目录，但不包括隐藏文件和隐藏目录
+    * 需要通过命令`shopt -s extglob`开启`extglob`
 
 ## 2.16 tar
 
@@ -3048,6 +3050,15 @@ echo $y # 输出10
 **示例：**
 
 * `exec 1>my.log 2>&1`：将标准输出、以及标准异常重定向到my.log文件中，对后续的所有命令都生效
+
+## 9.5 shopt
+
+用于启用/禁用shell扩展功能
+
+**示例：**
+
+* `shopt -s extglob`：启用`extglob`
+* `shopt -u extglob`：禁用`extglob`
 
 # 10 包管理工具
 

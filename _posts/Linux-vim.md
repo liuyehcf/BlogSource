@@ -67,6 +67,10 @@ categories:
 * `(`：向后移动一个句子（句号分隔）
 * `}`：向前移动一个段落
 * `{`：向后移动一个段落
+* **`f<x>`：向后，跳转到第1个为`x`的字符**
+* **`[n]f<x>`：向后，跳转到第n个为`x`的字符**
+* **`F<x>`：向前，跳转到第1个为`x`的字符**
+* **`[n]F<x>`：向前，跳转到第n个为`x`的字符**
 * **`G`：移动到这个文件的最后一行**
 * `[n]G`：n为数字，移动到这个文件的第n行
 * **`gg`：移动到这个文件的第一行，相当于1G**
@@ -893,8 +897,8 @@ let g:ale_linters = {
 " 你也可以改成gcc、g++，但是在我的环境里不会有错误提示（:ALEInfo可以看到错误信息）
 let g:ale_c_cc_executable = 'clang'
 let g:ale_cpp_cc_executable = 'clang++'
-let g:ale_c_cc_options = '-std=c20 -Wall'
-let g:ale_cpp_cc_options = '-std=c++20 -Wall'
+let g:ale_c_cc_options = '-std=c17 -Wall'
+let g:ale_cpp_cc_options = '-std=c++17 -Wall'
 
 let g:ale_completion_delay = 500
 let g:ale_echo_delay = 20
@@ -1361,8 +1365,8 @@ let g:ale_linters = {
 " 你也可以改成gcc、g++，但是在我的环境里不会有错误提示（:ALEInfo可以看到错误信息）
 let g:ale_c_cc_executable = 'clang'
 let g:ale_cpp_cc_executable = 'clang++'
-let g:ale_c_cc_options = '-std=c20 -Wall'
-let g:ale_cpp_cc_options = '-std=c++20 -Wall'
+let g:ale_c_cc_options = '-std=c17 -Wall'
+let g:ale_cpp_cc_options = '-std=c++17 -Wall'
 
 let g:ale_completion_delay = 500
 let g:ale_echo_delay = 20

@@ -48,6 +48,7 @@
 1. vim
     * ex模式
 1. 其他
+    * [macOS开启HiDPI](https://zhuanlan.zhihu.com/p/227788155)
     * 伙伴算法
     * 异常中断的区别
     * rpc框架，thrift

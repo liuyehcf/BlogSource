@@ -282,6 +282,13 @@ categories:
             * `first pass`：采用`Bentley and McIlroy’s scheme`，对长`string`进行压缩
             * `second pass`：采用快速压缩算法，在数据的`16 KB`小窗口中查找重复项
         * `two-pass`不仅及其高效，而且压缩效率很高，能够达到`10-1`
+    * `Caching for read performance`
+        * 为了提高读性能，`tablet server`使用了两级缓存，分别是`scan cache`以及`block cache`，其中`scan cache`是`high level cache`，存储的是`SSTable`接口返回的键值对；`block cache`是`low level cache`，存储的是从GFS读取到的数据
+        * `scan cache`对于那些需要重复读取数据的应用来说十分友好
+        * `block cache`对于那些需要读取相关信息的应用来说十分友好
+    * `Bloom filters`
+        * 用于减少磁盘访问的速率
+    * `Commit-log implementation`
 
 ## 3.1 参考
 
