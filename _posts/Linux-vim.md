@@ -894,9 +894,9 @@ let g:ale_linters = {
   \}
 
 " 上面的配置使得linter是cc，cc是个alias，包含了clang、clang++、gcc、g++，且默认会用clang和clang++
-" 你也可以改成gcc、g++，但是在我的环境里不会有错误提示（:ALEInfo可以看到错误信息）
-let g:ale_c_cc_executable = 'clang'
-let g:ale_cpp_cc_executable = 'clang++'
+" 这边我改成gcc、g++
+let g:ale_c_cc_executable = 'gcc'
+let g:ale_cpp_cc_executable = 'g++'
 let g:ale_c_cc_options = '-std=c17 -Wall'
 let g:ale_cpp_cc_options = '-std=c++17 -Wall'
 
@@ -929,7 +929,10 @@ export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:<third party include path...>
 
 **问题：**
 
-1. 若`linter`使用的是`gcc`或者`g++`，即便有语法错误，也不会有提示信息。除非使用`:ALEInfo`查看
+1. **若`linter`使用的是`gcc`或者`g++`，即便有语法错误，也不会有提示信息。但是使用`:ALEInfo`查看，是可以看到报错信息的。这是因为ALE识别错误是通过一个关键词`error`，而在我的环境中，gcc编译错误输出的是中文`错误`，因此ALE不认为这是个错误。修改方式如下**
+    1. `mv /usr/share/locale/zh_CN/LC_MESSAGES/gcc.mo /usr/share/locale/zh_CN/LC_MESSAGES/gcc.mo.bak`
+    1. `mv /usr/local/share/locale/zh_CN/LC_MESSAGES/gcc.mo /usr/local/share/locale/zh_CN/LC_MESSAGES/gcc.mo.bak`
+    * 如果找不到`gcc.mo`文件的话，可以用`locate`命令搜索一下
 
 ## 2.11 修改比较-[vim-signify](https://github.com/mhinz/vim-signify)
 
@@ -1362,9 +1365,9 @@ let g:ale_linters = {
   \}
 
 " 上面的配置使得linter是cc，cc是个alias，包含了clang、clang++、gcc、g++，且默认会用clang和clang++
-" 你也可以改成gcc、g++，但是在我的环境里不会有错误提示（:ALEInfo可以看到错误信息）
-let g:ale_c_cc_executable = 'clang'
-let g:ale_cpp_cc_executable = 'clang++'
+" 这边我改成gcc、g++
+let g:ale_c_cc_executable = 'gcc'
+let g:ale_cpp_cc_executable = 'g++'
 let g:ale_c_cc_options = '-std=c17 -Wall'
 let g:ale_cpp_cc_options = '-std=c++17 -Wall'
 
@@ -1497,3 +1500,4 @@ set autoindent
 * [Mac 的 Vim 中 delete 键失效的原因和解决方案](https://blog.csdn.net/jiang314/article/details/51941479)
 * [解决linux下vim中文乱码的方法](https://blog.csdn.net/zhangjiarui130/article/details/69226109)
 * [vim-set命令使用](https://www.jianshu.com/p/97d34b62d40d)
+* [解決 ale 的 gcc 不顯示錯誤 | 把 gcc 輸出改成英文](https://aben20807.blogspot.com/2018/03/1070302-ale-gcc-gcc.html)
