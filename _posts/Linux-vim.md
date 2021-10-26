@@ -898,8 +898,8 @@ let g:ale_linters = {
 let g:ale_c_cc_executable = 'gcc'
 let g:ale_cpp_cc_executable = 'g++'
 " -std=c17 和 -std=c++17 会有很多奇怪的问题，因此改用 gnu17 和 gnu++17
-let g:ale_c_cc_options = '-std=gnu17 -Wall'
-let g:ale_cpp_cc_options = '-std=gnu++17 -Wall'
+let g:ale_c_cc_options = '-std=gnu17 -Wall -O3'
+let g:ale_cpp_cc_options = '-std=gnu++17 -Wall -O3'
 
 let g:ale_completion_delay = 500
 let g:ale_echo_delay = 20
@@ -1370,8 +1370,8 @@ let g:ale_linters = {
 let g:ale_c_cc_executable = 'gcc'
 let g:ale_cpp_cc_executable = 'g++'
 " -std=c17 和 -std=c++17 会有很多奇怪的问题，因此改用 gnu17 和 gnu++17
-let g:ale_c_cc_options = '-std=gnu17 -Wall'
-let g:ale_cpp_cc_options = '-std=gnu++17 -Wall'
+let g:ale_c_cc_options = '-std=gnu17 -Wall -O3'
+let g:ale_cpp_cc_options = '-std=gnu++17 -Wall -O3'
 
 let g:ale_completion_delay = 500
 let g:ale_echo_delay = 20

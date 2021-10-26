@@ -751,6 +751,10 @@ aux_source_directory(. DIR_SRCS)
 add_executable(Demo ${DIR_SRCS})
 ```
 
+## 5.7 打印所有编译指令
+
+`cmake`指定参数`-DCMAKE_VERBOSE_MAKEFILE=ON`即可
+
 # 6 参考
 
 * [CMake Tutorial](https://cmake.org/cmake/help/latest/guide/tutorial/index.html)
