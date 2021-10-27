@@ -289,6 +289,17 @@ categories:
     * `Bloom filters`
         * 用于减少磁盘访问的速率
     * `Commit-log implementation`
+        * 如果每个`tablet`的`commit log`都单独记录在不同的文件，那么会出现大量文件同时写入GFS的情况。因此，GBT中的实现是，多个`tablet`的`commit log`共享同一个日志文件
+        * 使用同一个日志文件可以显著地提升性能（为啥？？？），但同时增大了恢复的复杂度。当一个`tablet server`宕机后，该机器上的所有`tablet`会被打散到其他`tablet server`中，因此，其他`tablet server`都需要全量读取一遍这个日志文件来进行数据的恢复（因为不知道某个`tablet`相关日志记录的具体位置）
+        * 为了解决单日志文件造成的恢复时需要读取多次日志文件的问题。GBT会首先先对日志中的记录进行排序（`table, row name, log sequence num`）。于是同一个`tablet`的记录就会连续存储，通过少量的磁盘访问就可以全部读取出来
+        * 此外，写日志可能会因为各种原因而失败，比如宕机、网络隔离等等。为了提高可用性，每个`tablet server`都由两个线程，每个线程写独立的文件。同一时刻只有一个线程是活跃状态。如果处于活跃状态的线程写入出现问题，那么会切换到另一个线程进行写入。日志条目包含序列号，以允许恢复过程消除由此日志切换过程产生的重复条目。
+    * `Speeding up tablet recovery`
+        * 当`master`要将某个`tablet`从一个`tablet server`迁移到另一个`tablet server`中时，第一步，会进行第一次压缩（减小数据量），且此时`tablet server`仍在提供服务；第二步，`tablet server`会停止对该`tablet`的服务；第三步，再进行一次压缩操作，因为在第一次压缩时，可能有新的数据变更产生；第四步，其他`tablet server`读取该`tablet`来重建`tablet`
+    * `Exploiting immutability`
+        * 由于`SStable`是不可变的，因此读取`SSTable`是不需要同步措施的。并发控制实现起来非常简单
+        * 唯一可读可写的数据结构，存储在`memtable`中，为了降低冲突的可能性，采用了`COW`的技术
+        * 由于`SSTable`是不可变的，清理删除的数据转变成了垃圾收集器收集过时的`SSTable`
+        * 由于`SSTable`是不可变的，因此`tablet`的拆分变得很容易，因为`child tablet`可以共享`parent tablet`的`SSTable`而无需拷贝 
 
 ## 3.1 参考
 
