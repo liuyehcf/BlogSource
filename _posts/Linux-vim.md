@@ -83,6 +83,7 @@ categories:
 * **`[ctrl] + i`：回到下一次编辑处**
 * **`gf`：跳转光标指向的头文件**
     * 通过`set path=`或`set path+=`设置或增加头文件搜索路径
+    * 通过`set path?`可以查看该变量的内容
 * **`[ctrl] + ^`：在前后两个文件之间跳转**
 
 ## 1.4 编辑模式
@@ -645,7 +646,9 @@ let fmt = get(g:, 'plug_url_format', 'https://git::@github.com.cnpmjs.org/%s.git
 set backspace=indent,eol,start
 ```
 
-## 2.3 配色方案-[gruvbox](https://github.com/morhetz/gruvbox)
+## 2.3 配色方案
+
+### 2.3.1 [gruvbox](https://github.com/morhetz/gruvbox)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -679,6 +682,39 @@ call plug#end()
 # ~/.vim/colors 目录默认是不存在的
 mkdir ~/.vim/colors
 cp ~/.vim/plugged/gruvbox/colors/gruvbox.vim ~/.vim/colors/
+```
+
+### 2.3.2 [solarized](https://github.com/altercation/vim-colors-solarized)
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'altercation/vim-colors-solarized'
+
+" -------- 下面是该插件的一些参数 --------
+
+" 启用solarized配色方案（~/.vim/colors目录下需要有solarized对应的.vim文件）
+colorscheme solarized
+" 设置背景，可选值有：dark, light
+set background=dark
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**将`solarized`中的配色方案（执行完`:PlugInstall`才有这个文件哦）移动到`vim`指定目录下**
+
+```sh
+# ~/.vim/colors 目录默认是不存在的
+mkdir ~/.vim/colors
+cp ~/.vim/plugged/vim-colors-solarized/colors/solarized.vim ~/.vim/colors/
 ```
 
 ## 2.4 状态栏-[vim-airline](https://github.com/vim-airline/vim-airline)

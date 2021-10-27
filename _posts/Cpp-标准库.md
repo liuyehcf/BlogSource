@@ -227,7 +227,7 @@ m.unlock();
 `compare_exchange_strong(T& expected_value, T new_value)`方法的第一个参数是个左值
 
 * 当前值与期望值`expected_value`相等时，修改当前值为设定值`new_value`，返回true
-* 当前值与期望值`expected_value`不等时，将期望值修改为当前值，返回false（搞不懂为什么要这样设计，啥脑回路）
+* 当前值与期望值`expected_value`不等时，将期望值修改为当前值，返回false（这样更加方便循环，否则还得手动再读一次）
 
 ```c++
 std::atomic_bool flag = false;
@@ -243,6 +243,8 @@ std::cout << "result: " << flag.compare_exchange_strong(expected, true)
 result: 1, flag: 1, expected: 0
 result: 0, flag: 1, expected: 1
 ```
+
+**`compare_exchange_weak(T& expected_value, T new_value)`方法与`strong`版本基本相同，唯一的区别是`weak`版本允许偶然出乎意料的返回（相等时却返回了false），在大部分场景中，这种意外是可以接受的，通常比`strong`版本有更高的性能**
 
 ## 10.3 std::memory_order
 

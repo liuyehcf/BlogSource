@@ -848,7 +848,14 @@ locate stl_vector.h
 
 * `-N`：显示非ASCII字符，可以显示中文
 
-## 2.19 base64
+## 2.19 split
+
+**示例：**
+
+* `split -b 2048M bigfile bigfile-slice-`：按大小切分文件，切分后的文件最大为`2048M`，文件的前缀是`bigfile-slice-`
+* `split -l 10000 bigfile bigfile-slice-`：按行切分文件，切分后的文件最大行数为`10000`，文件的前缀是`bigfile-slice-`
+
+## 2.20 base64
 
 用于对输入进行`base64`编码以及解码
 
@@ -857,7 +864,7 @@ locate stl_vector.h
 * `echo "hello" | base64`
 * `echo "hello" | base64 | base64 -d`
 
-## 2.20 md5sum
+## 2.21 md5sum
 
 计算输入或文件的MD5值
 
@@ -865,7 +872,7 @@ locate stl_vector.h
 
 * `echo "hello" | md5sum`
 
-## 2.21 openssl
+## 2.22 openssl
 
 openssl可以对文件，以指定算法进行加密或者解密
 
@@ -875,7 +882,7 @@ openssl可以对文件，以指定算法进行加密或者解密
 * `openssl aes-256-cbc -a -salt -in blob.txt -out cipher`
 * `openssl aes-256-cbc -a -d -in cipher -out blob-rebuild.txt`
 
-## 2.22 bc
+## 2.23 bc
 
 bc可以用于进制转换
 
@@ -886,7 +893,7 @@ bc可以用于进制转换
 * `((num=8#77)); echo ${num}`：8进制转十进制
 * `((num=16#FF)); echo ${num}`：16进制转十进制
 
-## 2.23 dirname
+## 2.24 dirname
 
 `dirname`用于返回文件路径的目录部分，该命令不会检查路径所对应的目录或文件是否真实存在
 
@@ -904,7 +911,7 @@ ROOT=`dirname "$0"`
 ROOT=`cd "$ROOT"; pwd`
 ```
 
-## 2.24 addr2line
+## 2.25 addr2line
 
 该工具用于查看二进制的偏移量与源码的对应关系
 
@@ -912,7 +919,7 @@ ROOT=`cd "$ROOT"; pwd`
 
 * `addr2line 4005f5 -e test`：查看二进制`test`中位置为`4005f5`指令对应的源码
 
-## 2.25 objdump
+## 2.26 objdump
 
 该工具用于反汇编
 
