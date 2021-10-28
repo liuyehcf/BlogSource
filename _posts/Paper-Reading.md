@@ -47,7 +47,7 @@ categories:
 
 **progress：5/12 3.3**
 
-# 2 Google File System
+# 2 The Google File System
 
 1. GFS的目标包括：performance（高性能）、scalability（高可扩展）、reliability（高可靠）、availability（高可用）
 1. 在设计中，把失败视为常态而非异常。因此系统必须具备的核心能力包括：持续监控、错误勘探、错误容忍、自动恢复
@@ -187,7 +187,7 @@ categories:
         * `client`需要使用dns、而不是`master ip`，这样当`master`发生切换时，`client`无需感知
         * `shadow master`会提供读服务（即便`primary master`宕机）
 
-# 3 Google Big Table
+# 3 Bigtable: A Distributed Storage System for Structured Data
 
 1. GBT的目标包括
     * 适用范围广
@@ -301,13 +301,20 @@ categories:
         * 由于`SSTable`是不可变的，清理删除的数据转变成了垃圾收集器收集过时的`SSTable`
         * 由于`SSTable`是不可变的，因此`tablet`的拆分变得很容易，因为`child tablet`可以共享`parent tablet`的`SSTable`而无需拷贝 
 
-## 3.1 参考
+# 4 MapReduce: Simplified Data Processing on Large Clusters
+
+1. `Abstract`
+    * `map`用于产生一组`key/value`对
+    * `reduct`用于合并具有相同`key`的`key/value`对
+    * `GMR`会处理数据的分区、执行调度、异常恢复、节点通信等等细节问题。这允许用户在无任何并发和分布式的经验的前提下，就能够利用好大规模的资源来进行计算
+
+## 4.1 参考
 
 * [浅析 Bigtable 和 LevelDB 的实现](https://www.cnblogs.com/jpfss/p/10721384.html)
 
-# 4 Efficiency in the Columbia Database Query Optimizer
+# 5 Efficiency in the Columbia Database Query Optimizer
 
-# 5 Fast Selection and Aggregation on Encoded Data using Operator Specialization
+# 6 Fast Selection and Aggregation on Encoded Data using Operator Specialization
 
-# 6 Shared memory consistency models - A tutorial
+# 7 Shared memory consistency models - A tutorial
 
