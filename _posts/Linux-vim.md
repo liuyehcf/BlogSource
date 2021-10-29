@@ -1129,8 +1129,8 @@ Plug 'junegunn/fzf.vim'
 
 " -------- 下面是该插件的一些参数 --------
 
-" 将 :Ag 映射到快捷键 [Ctrl] + a
-noremap <c-a> :Ag<cr>
+" 将 :Rg 映射到快捷键 [Ctrl] + a
+noremap <c-a> :Rg<cr>
 
 call plug#end()
 ```
@@ -1141,14 +1141,15 @@ call plug#end()
 
 1. `:Ag`：进行全局搜索（依赖命令行工具`ag`，安装方式参考该插件github主页）
     * `[Ctrl] + j/k`可以在条目中上下移动
+1. `:Rg`：进行全局搜索（依赖命令行工具`rg`，安装方式参考该插件github主页）
+    * `[Ctrl] + j/k`可以在条目中上下移动
+* **匹配规则**
     * **`xxx`：模糊匹配（可能被分词）**
     * **`'xxx`：非模糊匹配（不会被分词）**
     * **`^xxx`：前缀匹配**
     * **`xxx$`：后缀匹配**
     * **`!xxx`：反向匹配**
     * **上述规则均可自由组合**
-1. `:Rg`：进行全局搜索（依赖命令行工具`rg`，安装方式参考该插件github主页）
-    * `[Ctrl] + j/k`可以在条目中上下移动
 
 ## 2.16 全局搜索-[vim-grepper](https://github.com/mhinz/vim-grepper)
 
@@ -1484,8 +1485,8 @@ let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
-" 将 :Ag 映射到快捷键 [Ctrl] + a
-noremap <c-a> :Ag<cr>
+" 将 :Rg 映射到快捷键 [Ctrl] + a
+noremap <c-a> :Rg<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
