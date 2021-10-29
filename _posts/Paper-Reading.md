@@ -307,6 +307,12 @@ categories:
     * `map`用于产生一组`key/value`对
     * `reduct`用于合并具有相同`key`的`key/value`对
     * `GMR`会处理数据的分区、执行调度、异常恢复、节点通信等等细节问题。这允许用户在无任何并发和分布式的经验的前提下，就能够利用好大规模的资源来进行计算
+1. `Programming Model`
+    * `GMR library`暴露两个函数`Map`和`Reduce`
+        * `Map function`（由用户编写），负责产生一组`key/value`。然后`GMR library`会将具有相同`key`的`pair`输送到`Reduce function`
+        * `Reduce function`（由用户编写），负责接受一个`key`以及一组`value`，并将其合并成一个或少量`value`
+    * `Types`
+        * `GMR`只处理string，用户负责在string和正确的类型之间进行转换
 
 ## 4.1 参考
 

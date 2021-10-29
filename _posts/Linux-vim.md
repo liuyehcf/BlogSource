@@ -962,6 +962,12 @@ let g:ale_lint_on_text_changed = 'normal'
 let g:ale_lint_on_insert_leave = 1
 let g:airline#extensions#ale#enabled = 1
 
+" 配置快捷键用于在warnings/errors之间跳转
+" [Ctrl] + j: 下一个warning/error
+" [Ctrl] + k: 上一个warning/error
+nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+nmap <silent> <C-j> <Plug>(ale_next_wrap)
+
 call plug#end()
 ```
 
@@ -1433,6 +1439,12 @@ let g:ale_echo_msg_format = '[%linter%] %code: %%s'
 let g:ale_lint_on_text_changed = 'normal'
 let g:ale_lint_on_insert_leave = 1
 let g:airline#extensions#ale#enabled = 1
+
+" 配置快捷键用于在warnings/errors之间跳转
+" [Ctrl] + j: 下一个warning/error
+" [Ctrl] + k: 上一个warning/error
+nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+nmap <silent> <C-j> <Plug>(ale_next_wrap)
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
