@@ -127,7 +127,14 @@ categories:
 * `i"`：双引号内
 * `a"`：双引号内（包含双引号本身）
 
-## 1.6 文本编辑
+## 1.6 多行折叠
+
+* **`zf`：创建折行**
+* **`zo`：打开折行**
+* **`zc`：关闭折行**
+* **`zd`：删除折行**
+
+## 1.7 文本编辑
 
 * **`x,X`：在一行字当中，x为向后删除一个字符（相当于`[Del]`键）,X为向前删除一个字符（相当于`[Backspace]`）**
 * `[n]x`：连续向后删除n个字符
@@ -151,7 +158,7 @@ categories:
 * **`[Ctrl] + r`：重做上一个操作**
 * **`.`：重做上一个操作**
 
-## 1.7 复制粘贴
+## 1.8 复制粘贴
 
 * **`yy`：复制光标所在那一行**
 * **`[n]yy`：复制光标所在的向下n行（包括当前这一行）**
@@ -162,7 +169,7 @@ categories:
 * **`p`：将已复制的数据粘贴到光标之前**
 * **`P`：将已复制的数据粘贴到光标之后**
 
-### 1.7.1 剪切板
+### 1.8.1 剪切板
 
 **`vim`中有许多寄存器（该寄存器并不是cpu中的寄存器），或者称为剪切板，分别是：**
 
@@ -184,7 +191,7 @@ categories:
 * `"+yy`：将当前行拷贝到系统剪切板
 * `"+p`：将系统剪切板中的内容粘贴到光标之后
 
-## 1.8 范围选择
+## 1.9 范围选择
 
 * **`v`：字符选择：会将光标经过的地方反白选择**
 * **`vw`：选择光标开始处的当前单词（若光标在单词中间，不会选择整个单词）**
@@ -205,7 +212,7 @@ categories:
 * `o`：跳转到标记区的另外一端
 * `O`：跳转到标记块的另外一端
 
-## 1.9 查找替换
+## 1.10 查找替换
 
 * **查找**
     * **`/[word]`：向下寻找一个名为word的字符串，支持正则表达式**
@@ -221,7 +228,7 @@ categories:
     * **`:1,$s/[word1]/[word2]/gc`或者`:%s/[word1]/[word2]/gc`：从第一行到最后一行查找word1字符串，并将该字符串替换为word2，且在替换前显示提示字符给用户确认是否替换，支持正则表达式**
 * **`[Ctrl]+r`以及`[Ctrl]+w`：将光标下的字符串添加到搜索或者替换表达式中**
 
-## 1.10 文件操作
+## 1.11 文件操作
 
 * **`:w`：将编辑的数据写入硬盘文件中**
 * **`:w!`：若文件属性为只读时，强制写入该文件，不过到底能不能写入，还是跟你对该文件的文件属性权限有关**
@@ -239,7 +246,7 @@ categories:
 * `:files`：列出这个`vim`打开的所有文件
 * **`:Vex`：打开目录**
 
-## 1.11 多窗口功能
+## 1.12 多窗口功能
 
 有一个文件非常大，在查阅后面的数据时，想要对照前面的数据，如果用翻页等命令`[Ctrl] + f`、`[Ctrl] + b`会显得很麻烦
 
@@ -284,7 +291,7 @@ categories:
 1. `[Ctrl] + w + <`：宽度减小1
 1. `[Ctrl] + w + [n] + <`：宽度减小n
 
-## 1.12 vim常用配置项
+## 1.13 vim常用配置项
 
 ```
 :set nocompatible   设置不兼容原始 vi 模式（必须设置在最开头）
@@ -316,7 +323,7 @@ categories:
 :syntax off         禁止语法高亮
 ```
 
-## 1.13 vim配置
+## 1.14 vim配置
 
 `vim`会主动将你曾经做过的行为记录下来，好让你下次可以轻松作业，记录操作的文件就是`~/.viminfo`
 
@@ -324,7 +331,7 @@ categories:
 
 **在运行`vim`的时候，如果修改了`~/.vimrc`文件的内容，可以通过执行`:so %`来重新加载`~/.vimrc`，立即生效配置**
 
-### 1.13.1 修改tab的行为
+### 1.14.1 修改tab的行为
 
 修改`~/.vimrc`，追加如下内容
 
@@ -343,7 +350,7 @@ set expandtab
 set autoindent
 ```
 
-### 1.13.2 键位映射
+### 1.14.2 键位映射
 
 1. `map`
 1. `noremap`
@@ -351,7 +358,7 @@ set autoindent
 1. `unmap`
 1. `mapclear`：消所有`map`配置，慎用
 
-## 1.14 其他
+## 1.15 其他
 
 * `[Shift] + 3`：以暗黄色为底色显示所有指定的字符串
 * **`[Shift] + >`：向右移动**
@@ -366,9 +373,9 @@ set autoindent
     * **输入`:x`关闭历史编辑并放弃编辑结果回到编辑缓冲区**
     * 可以在空命令上回车相当于退出历史编辑区回到编辑缓冲区
 
-## 1.15 Tips
+## 1.16 Tips
 
-### 1.15.1 多行更新
+### 1.16.1 多行更新
 
 **示例：多行同时插入相同内容**
 
@@ -383,7 +390,7 @@ set autoindent
 1. 选中需要同时修改的列
 1. 按`d`即可同时删除
 
-### 1.15.2 中文乱码
+### 1.16.2 中文乱码
 
 **编辑`/etc/vimrc`，追加如下内容**
 
@@ -393,7 +400,7 @@ set termencoding=utf-8
 set encoding=utf-8
 ```
 
-### 1.15.3 为每个项目配置vim
+### 1.16.3 为每个项目配置vim
 
 同一份`~./vimrc`无法适用于所有的项目，不同的项目可能需要一些特化的配置项，可以采用如下的设置方式
 
@@ -549,11 +556,22 @@ make
 make install # may require extra privileges depending on where to install
 ```
 
+**ctags参数**
+
+* `--c++-kinds=+px`：`ctags`记录c++文件中的函数声明，各种外部和前向声明  
+* `--fields=+ialS`：`ctags`要求描述的信息，其中：　　
+    * `i`：表示如果有继承，则表示出父类  
+	* `a`：表示如果元素是类成员的话，要标明其调用权限(即public或者private)  
+	* `l`：表示包含标记源文件的语言  
+	* `S`：表示函数的签名(即函数原型或者参数列表)  
+* `--extras=+q`：强制要求ctags做如下操作，如果某个语法元素是类的一个成员，ctags默认会给其记录一行，以要求ctags对同一个语法元素再记一行，这样可以保证在VIM中多个同名函数可以通过路径不同来区分
+* `-R`：`ctags`递归生成子目录的tags（在项目的根目录下很有意义）  
+
 **在工程中生成ctags**
 
 ```sh
 # 与上面的~/.vimrc中的配置对应，需要将tag文件名指定为.tags
-ctags -R -f .tags *
+ctags --c++-kinds=+px --fields=+ialS --extras=+q -R -f .tags *
 ```
 
 **如何为系统库生成ctags，这里生成的系统库对应的ctags文件是`~/.vim/systags`**
@@ -563,14 +581,14 @@ mkdir -p ~/.vim
 # 下面2种选一个即可
 
 # 1. 通过yum install -y gcc安装的gcc是4.8.5版本
-ctags --fields=+iaS --extras=+q -R -f ~/.vim/systags \
+ctags --c++-kinds=+px --fields=+ialS --extras=+q -R -f ~/.vim/systags \
 /usr/include \
 /usr/local/include \
 /usr/lib/gcc/x86_64-redhat-linux/4.8.5/include/ \
 /usr/include/c++/4.8.5/
 
 # 2. 通过上面编译安装的gcc是10.3.0版本
-ctags --fields=+iaS --extras=+q -R -f ~/.vim/systags \
+ctags --c++-kinds=+px --fields=+ialS --extras=+q -R -f ~/.vim/systags \
 /usr/include \
 /usr/local/include \
 /usr/local/lib/gcc/x86_64-pc-linux-gnu/10.3.0/include \
@@ -860,7 +878,7 @@ let s:vim_tags = expand('~/.cache/tags')
 let g:gutentags_cache_dir = s:vim_tags
 
 " 配置 ctags 的参数
-let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extras=+q']
 let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
 let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
 
@@ -1382,7 +1400,7 @@ let s:vim_tags = expand('~/.cache/tags')
 let g:gutentags_cache_dir = s:vim_tags
 
 " 配置 ctags 的参数
-let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extras=+q']
 let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
 let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
 
