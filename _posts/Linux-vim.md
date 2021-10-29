@@ -129,10 +129,15 @@ categories:
 
 ## 1.6 多行折叠
 
-* **`zf`：创建折行**
+* **`zf`：创建折行（需要配合范围选择）**
 * **`zo`：打开折行**
 * **`zc`：关闭折行**
 * **`zd`：删除折行**
+
+**此外，`zf`还可以与文本对象配合，例如**
+
+* `zfi{`：折叠大括号之间的内容，不包括大括号所在行
+* `zfa{`：折叠大括号之间的内容，包括大括号所在行
 
 ## 1.7 文本编辑
 
@@ -436,6 +441,7 @@ endif
 | `tpope/vim-fugitive` | git扩展 | https://github.com/tpope/vim-fugitive |
 | `YouCompleteMe` | 代码补全 | https://github.com/ycm-core/YouCompleteMe |
 | `echodoc` | 参数提示 | https://github.com/Shougo/echodoc.vim |
+| `nerdcommenter` | 注释 | https://github.com/preservim/nerdcommenter |
 | `vim-auto-popmenu` | 轻量补全 | https://github.com/skywind3000/vim-auto-popmenu |
 
 ## 2.2 环境准备
@@ -1213,7 +1219,46 @@ call plug#end()
 
 * `:Git`：作为`git`的替代，后跟`git`命令行工具的正常参数即可
 
-## 2.18 代码补全-[YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
+## 2.18 添加注释-[nerdcommenter](https://github.com/preservim/nerdcommenter)
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'preservim/nerdcommenter'
+
+" -------- 下面是该插件的一些参数 --------
+
+let g:NERDCreateDefaultMappings = 1
+let g:NERDSpaceDelims = 1
+let g:NERDCompactSexyComs = 1
+let g:NERDDefaultAlign = 'left'
+let g:NERDAltDelims_java = 1
+" let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' }
+let g:NERDCommentEmptyLines = 1
+let g:NERDTrimTrailingWhitespace = 1
+let g:NERDToggleCheckAllLines = 1
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**用法：**
+
+* **`\cc`：添加注释，对每一行都会添加注释**
+* **`\cm`：对被选区域用一对注释符进行注释**
+* **`\cs`：添加性感的注释**
+* **`\ca`：更换注释的方式**
+* **`\cu`：取消注释**
+* **`\c<space>`：如果被选区域有部分被注释，则对被选区域执行取消注释操作，其它情况执行反转注释操作
+
+## 2.19 代码补全-[YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
 
 **这个插件比较复杂，建议手工安装**
 
@@ -1318,7 +1363,7 @@ def FlagsForFile( filename, **kwargs ):
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.19 个人完整配置
+## 2.20 个人完整配置
 
 **初学`vim`，水平有限，仅供参考，`~/.vimrc`完整配置如下**
 
@@ -1513,6 +1558,20 @@ Plug 'mhinz/vim-grepper'
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 Plug 'tpope/vim-fugitive'
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'preservim/nerdcommenter'
+
+let g:NERDCreateDefaultMappings = 1
+let g:NERDSpaceDelims = 1
+let g:NERDCompactSexyComs = 1
+let g:NERDDefaultAlign = 'left'
+let g:NERDAltDelims_java = 1
+" let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' }
+let g:NERDCommentEmptyLines = 1
+let g:NERDTrimTrailingWhitespace = 1
+let g:NERDToggleCheckAllLines = 1
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
