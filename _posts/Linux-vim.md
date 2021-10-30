@@ -78,13 +78,13 @@ categories:
 
 ## 1.3 文件跳转
 
-* **`[ctrl] + ]`：跳转到光标指向的符号的定义处**
-* **`[ctrl] + o`：回到上一次编辑处**
-* **`[ctrl] + i`：回到下一次编辑处**
+* **`[Ctrl] + ]`：跳转到光标指向的符号的定义处**
+* **`[Ctrl] + o`：回到上一次编辑处**
+* **`[Ctrl] + i`：回到下一次编辑处**
 * **`gf`：跳转光标指向的头文件**
     * 通过`set path=`或`set path+=`设置或增加头文件搜索路径
     * 通过`set path?`可以查看该变量的内容
-* **`[ctrl] + ^`：在前后两个文件之间跳转**
+* **`[Ctrl] + ^`：在前后两个文件之间跳转**
 
 ## 1.4 编辑模式
 
@@ -377,11 +377,24 @@ set autoindent
 
 ### 1.14.2 键位映射
 
-1. `map`
-1. `noremap`
-1. `nnoremap`
+1. **`map`：递归映射**
+1. **`noremap`：非递归映射**
+1. 映射的作用域包含如下几种：
+    * `normal`：如果想要映射仅在这个作用域中生效，那么在前面加上`n`，例如`nmap`以及`nnoremap`
+    * `insert`：同上。例如`imap`以及`inoremap`
+    * `visual`：同上。例如`vmap`以及`vnoremap`
+    * `select`：同上。例如`smap`以及`snoremap`
+    * `operator`：同上。例如`omap`以及`onoremap`
 1. `unmap`
 1. `mapclear`：消所有`map`配置，慎用
+
+**键位表示**
+
+* **`<F-num>`：例如`<F1>`、`<F2>`**
+* **`<c-key>`：表示`[Ctrl]`加另一个字母**
+* **`<a-key>/<m-key>`：表示`[Alt]`加另一个字母**
+* **对于mac上的`[Option]`，并没有`<p-key>`这样的表示方法。而是用`[Option]`加另一个字母实际输出的结果作为映射键值，例如**
+    * `[Option] + a`：`å`
 
 ## 1.15 其他
 
@@ -457,13 +470,14 @@ endif
 | `textobj-user` | 文本对象 | https://github.com/kana/vim-textobj-user |
 | `vim-cpp-enhanced-highlight` | 语法高亮 | https://github.com/octol/vim-cpp-enhanced-highlight |
 | `LeaderF` | 函数列表 | https://github.com/Yggdroot/LeaderF |
-| `fzf.vim` | 全局搜索（支持模糊搜索） | https://github.com/junegunn/fzf.vim |
-| `mhinz/vim-grepper` | 全局搜搜 | https://github.com/mhinz/vim-grepper |
+| `fzf.vim` | 全局模糊搜索 | https://github.com/junegunn/fzf.vim |
+| `mhinz/vim-grepper` | 全局搜索 | https://github.com/mhinz/vim-grepper |
 | `tpope/vim-fugitive` | git扩展 | https://github.com/tpope/vim-fugitive |
-| `YouCompleteMe` | 代码补全 | https://github.com/ycm-core/YouCompleteMe |
 | `echodoc` | 参数提示 | https://github.com/Shougo/echodoc.vim |
-| `nerdcommenter` | 注释 | https://github.com/preservim/nerdcommenter |
+| `nerdcommenter` | 添加注释 | https://github.com/preservim/nerdcommenter |
+| `vim-clang-format` | 代码格式化 | https://github.com/rhysd/vim-clang-format |
 | `vim-auto-popmenu` | 轻量补全 | https://github.com/skywind3000/vim-auto-popmenu |
+| `YouCompleteMe` | 代码补全 | https://github.com/ycm-core/YouCompleteMe |
 
 ## 2.2 环境准备
 
@@ -638,8 +652,7 @@ ctags --c++-kinds=+px --fields=+ialS --extras=+q -R -f ~/.vim/systags \
 * **`.tags`是指在`vim`的当前目录（在`vim`中执行`:pwd`）下查找`.tags`文件**
 
 ```vim
-" 将 :tn 和 :tp 分别映射到 alt + j 和 alt + k，而mac并没有alt键只有option键
-" 于是我们需要直接打出 option + j 和 option + k 作为映射的key即可
+" 将 :tn 和 :tp 分别映射到 [Option] + j 和 [Option] + k，即「∆」和「˚」
 noremap ∆ :tn<cr>
 noremap ˚ :tp<cr>
 " tags搜索模式
@@ -1129,9 +1142,7 @@ let g:Lf_ShortcutF = '<c-p>'
 let g:Lf_ShortcutB = '<m-n>'
 " 将 :LeaderfMru 映射到快捷键 [Ctrl] + n
 noremap <c-n> :LeaderfMru<cr>
-" 将 :LeaderfFunction! 映射到快捷键 alt + p，由于我用的是mac，mac是没有alt键的，只有option键
-" 而 option + p 是没法用 <m-p> 来表示的，我们只需打出 option + p 作为key即可
-" noremap <m-p> :LeaderfFunction!<cr>
+" 将 :LeaderfFunction! 映射到快捷键 [Option] + p，即「π」
 noremap π :LeaderfFunction!<cr>
 let g:Lf_StlSeparator = { 'left': '', 'right': '', 'font': '' }
 
@@ -1279,7 +1290,34 @@ call plug#end()
 * **`\cu`：取消注释**
 * **`\c<space>`：如果被选区域有部分被注释，则对被选区域执行取消注释操作，其它情况执行反转注释操作
 
-## 2.19 代码补全-[YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
+## 2.19 代码格式化-[vim-clang-format](https://github.com/rhysd/vim-clang-format)
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'rhysd/vim-clang-format'
+
+" -------- 下面是该插件的一些参数 --------
+
+" 将 :ClangFormat 映射到快捷键 [Option] + l，即「¬」
+noremap ¬ :ClangFormat<cr>
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**用法：**
+
+* **`:ClangFormat`：会使用工程目录下的`.clang-format`或者用户目录下的`~/.clang-format`来对代码进行格式化**
+
+## 2.20 代码补全-[YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
 
 **这个插件比较复杂，建议手工安装**
 
@@ -1384,7 +1422,7 @@ def FlagsForFile( filename, **kwargs ):
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.20 个人完整配置
+## 2.21 个人完整配置
 
 **初学`vim`，水平有限，仅供参考，`~/.vimrc`完整配置如下**
 
@@ -1549,9 +1587,7 @@ let g:Lf_ShortcutF = '<c-p>'
 let g:Lf_ShortcutB = '<m-n>'
 " 将 :LeaderfMru 映射到快捷键 [Ctrl] + n
 noremap <c-n> :LeaderfMru<cr>
-" 将 :LeaderfFunction! 映射到快捷键 alt + p，由于我用的是mac，mac是没有alt键的，只有option键
-" 而 option + p 是没法用 <m-p> 来表示的，我们只需打出 option + p 作为key即可
-" noremap <m-p> :LeaderfFunction!<cr>
+" 将 :LeaderfFunction! 映射到快捷键 [Option] + p，即「π」
 noremap π :LeaderfFunction!<cr>
 let g:Lf_StlSeparator = { 'left': '', 'right': '', 'font': '' }
 
@@ -1596,6 +1632,13 @@ let g:NERDToggleCheckAllLines = 1
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+Plug 'rhysd/vim-clang-format'
+
+" 将 :ClangFormat 映射到快捷键 [Option] + l，即「¬」
+noremap ¬ :ClangFormat<cr>
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
 Plug 'ycm-core/YouCompleteMe'
 
 let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
@@ -1620,8 +1663,7 @@ let g:ycm_semantic_triggers =  {
 call plug#end()
 
 " ctags的配置
-" 将 :tn 和 :tp 分别映射到 alt + j 和 alt + k，而mac并没有alt键只有option键
-" 于是我们需要直接打出 option + j 和 option + k 作为映射的key即可
+" 将 :tn 和 :tp 分别映射到 [Option] + j 和 [Option] + k，即「∆」和「˚」
 noremap ∆ :tn<cr>
 noremap ˚ :tp<cr>
 " tags搜索模式
@@ -1630,11 +1672,10 @@ set tags=./.tags;,.tags
 set tags+=~/.vim/systags
 
 " 搜索和替换的快捷键配置
-" 搜索和替换分别映射到 alt + f 和 alt + r，而mac并没有alt键只有option键
-" 于是我们需要直接打出 option + f 和 option + r 作为映射的key即可
-" 其中，<c-r><c-w> 表示 [ctrl] + r 以及 [ctrl] + w，用于将光标所在的单词填入搜索/替换项中
-noremap ® :%s/<c-r><c-w>
+" 搜索和替换分别映射到 [Option] + f 和 [Option] + r，即「ƒ」和「®」
+" 其中，<c-r><c-w> 表示 [Ctrl] + r 以及 [Ctrl] + w，用于将光标所在的单词填入搜索/替换项中
 noremap ƒ :/<c-r><c-w>
+noremap ® :%s/<c-r><c-w>
 
 " 退格失效的配置
 set backspace=indent,eol,start
@@ -1680,3 +1721,4 @@ endif
 * [解决linux下vim中文乱码的方法](https://blog.csdn.net/zhangjiarui130/article/details/69226109)
 * [vim-set命令使用](https://www.jianshu.com/p/97d34b62d40d)
 * [解決 ale 的 gcc 不顯示錯誤 | 把 gcc 輸出改成英文](https://aben20807.blogspot.com/2018/03/1070302-ale-gcc-gcc.html)
+* [Mapping keys in Vim - Tutorial](https://vim.fandom.com/wiki/Mapping_keys_in_Vim_-_Tutorial_(Part_2))
