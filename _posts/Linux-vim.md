@@ -661,7 +661,39 @@ set tags=./.tags;,.tags
 set tags+=~/.vim/systags
 ```
 
-### 2.2.7 安装vim-plug
+### 2.2.7 进阶符号索引-Global source code tagging system
+
+**这里有个坑，上面安装的是`gcc-10.3.0`，这个版本编译安装`global`源码会报错，错误信息大概是`global.o:(.bss+0x74): first defined here`，因此，我们需要再安装一个低版本的gcc，并且用这个低版本的gcc来编译`global`**
+
+```sh
+# 安装源
+yum install -y centos-release-scl scl-utils
+
+# 安装gcc 7
+yum install -y devtoolset-7-toolchain
+
+# 切换软件环境（本小节剩余的操作都需要在这个环境中执行，如果不小心退出来的话，可以再执行一遍重新进入该环境）
+scl enable devtoolset-7 bash
+```
+
+```sh
+# 安装相关软件
+yum install -y ncurses-devel gperf bison flex libtool libtool-ltdl-devel texinfo
+
+wget http://tamacom.com/global/global-6.6.4.tar.gz --no-check-certificate
+tar -zxvf global-6.6.4.tar.gz
+cd global-6.6.4
+
+# 检测脚本，缺什么就装什么
+sh reconf.sh
+
+# 编译安装
+./configure
+make
+sudo make install
+```
+
+### 2.2.8 安装vim-plug
 
 按照[vim-plug](https://github.com/junegunn/vim-plug)官网文档，通过一个命令直接安装即可
 
@@ -1710,11 +1742,11 @@ endif
 * **[Vim 8 中 C/C++ 符号索引：GTags 篇](https://zhuanlan.zhihu.com/p/36279445)**
 * **[Vim 8 中 C/C++ 符号索引：LSP 篇](https://zhuanlan.zhihu.com/p/37290578)**
 * **[三十分钟配置一个顺滑如水的 Vim](https://zhuanlan.zhihu.com/p/102033129)**
+* **[CentOS Software Repo](https://www.softwarecollections.org/en/scls/user/rhscl/)**
 * [如何优雅的使用 Vim（二）：插件介绍](https://segmentfault.com/a/1190000014560645)
 * [打造 vim 编辑 C/C++ 环境](https://carecraft.github.io/language-instrument/2018/06/config_vim/)
 * [Vim2021：超轻量级代码补全系统](https://zhuanlan.zhihu.com/p/349271041)
 * [How To Install GCC on CentOS 7](https://linuxhostsupport.com/blog/how-to-install-gcc-on-centos-7/)
-* [Software Collections](https://www.softwarecollections.org/en/scls/user/rhscl/)
 * [8.x版本的gcc以及g++](https://www.softwarecollections.org/en/scls/rhscl/devtoolset-8/)
 * [VIM-Plug安装插件时，频繁更新失败，或报端口443被拒绝等](https://blog.csdn.net/htx1020/article/details/114364510)
 * [Cannot find color scheme 'gruvbox' #85](https://github.com/morhetz/gruvbox/issues/85)
@@ -1724,3 +1756,4 @@ endif
 * [vim-set命令使用](https://www.jianshu.com/p/97d34b62d40d)
 * [解決 ale 的 gcc 不顯示錯誤 | 把 gcc 輸出改成英文](https://aben20807.blogspot.com/2018/03/1070302-ale-gcc-gcc.html)
 * [Mapping keys in Vim - Tutorial](https://vim.fandom.com/wiki/Mapping_keys_in_Vim_-_Tutorial_(Part_2))
+* [centos7 安装GNU GLOBAL](http://www.cghlife.com/tool/install-gnu-global-on-centos7.html)
