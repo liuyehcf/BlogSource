@@ -713,7 +713,8 @@ cp -vrf /usr/local/share/gtags/gtags.vim /usr/local/share/gtags/gtags-cscope.vim
 1. 第二个环境变量必须设置，否则会找不到`native-pygments`和`language map`的定义
 
 ```vim
-let $GTAGSLABEL = 'native-pygments'
+" 设置后会出现「gutentags: gtags-cscope job failed, returned: 1」，所以我把它注释了
+" let $GTAGSLABEL = 'native-pygments'
 let $GTAGSCONF = '/usr/local/share/gtags/gtags.conf'
 if filereadable("~/.vim/gtags.vim")
     source ~/.vim/gtags.vim
@@ -1008,6 +1009,13 @@ call plug#end()
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
+
+**问题排查：**
+
+1. `let g:gutentags_define_advanced_commands = 1`：允许`gutentags`打开一些高级命令和选项
+1. 运行`:GutentagsToggleTrace`：它会将`ctags/gtags`命令的输出记录在`vim`的`message`记录里
+1. 保存文件，触发数据库更新
+1. `:message`：可以重新查看message
 
 ### 2.8.1 gtags查询快捷键-[gutentags_plus](https://github.com/skywind3000/gutentags_plus)
 
@@ -1876,7 +1884,8 @@ set tags=./.tags;,.tags
 set tags+=~/.vim/systags
 
 " gtags的配置
-let $GTAGSLABEL = 'native-pygments'
+" 设置后会出现「gutentags: gtags-cscope job failed, returned: 1」，所以我把它注释了
+" let $GTAGSLABEL = 'native-pygments'
 let $GTAGSCONF = '/usr/local/share/gtags/gtags.conf'
 if filereadable("~/.vim/gtags.vim")
     source ~/.vim/gtags.vim
