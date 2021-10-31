@@ -1558,6 +1558,18 @@ noremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
 call plug#end()
 ```
 
+**其中，`~/.vim/languageclient.json`的内容示例如下（必须是决定路径，不能用`~`）**
+
+```json
+{
+	"ccls": {
+		"cache": {
+			"directory": "/root/.cache/LanguageClient"
+		}
+	}
+}
+```
+
 **安装：进入vim界面后执行`:PlugInstall`即可。由于安装时，还需执行一个脚本`install.sh`，该脚本要从github下载一个二进制，在国内容易超时失败，可以用如下方式进行手动安装**
 
 ```sh
