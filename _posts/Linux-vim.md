@@ -757,7 +757,11 @@ cmake --build Release
 cmake --build Release --target install
 ```
 
-**使用：`ccls`需要配合`LanguageClient-neovim`插件一起使用，后面会介绍**
+**如何为工程生成全量索引？**
+
+1. 通过`cmake`等构建工具生成`compile_commands.json`，并将该文件至于工程根目录下
+1. 配置`LSP-client`插件，我用的是`LanguageClient-neovim`
+1. vim打开工程，便开始自动创建索引
 
 ### 2.2.9 安装vim-plug
 
@@ -1554,6 +1558,8 @@ noremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
 noremap <leader>rr :call LanguageClient#textDocument_references()<cr>
 noremap <leader>rv :call LanguageClient#textDocument_hover()<cr>
 noremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
+noremap <leader>hb :call LanguageClient#findLocations({'method':'$ccls/inheritance'})<cr>
+noremap <leader>hd :call LanguageClient#findLocations({'method':'$ccls/inheritance','derived':v:true})<cr>
 
 call plug#end()
 ```
@@ -1589,6 +1595,8 @@ sed -i 's|github.com/|github.com.cnpmjs.org/|' install.sh
 * `\rr`：查找光标下符号的引用
 * `\rv`：查看光标下符号的说明
 * `\rn`：重命名光标下的符号
+* `\hb`：查找光标下符号的父类
+* `\hd`：查找光标下符号的子类
 
 ## 2.21 代码补全-[YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
 
@@ -1975,6 +1983,8 @@ noremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
 noremap <leader>rr :call LanguageClient#textDocument_references()<cr>
 noremap <leader>rv :call LanguageClient#textDocument_hover()<cr>
 noremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
+noremap <leader>hb :call LanguageClient#findLocations({'method':'$ccls/inheritance'})<cr>
+noremap <leader>hd :call LanguageClient#findLocations({'method':'$ccls/inheritance','derived':v:true})<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
