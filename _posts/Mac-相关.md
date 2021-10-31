@@ -136,14 +136,24 @@ sudo ln -s /usr/local/bin/bash /bin/bash
 
 **注意，`sudo mv /bin/bash  /bin/bash.origin`可能因为权限的问题，无法成功执行，这时，我们需要关闭Mac的SIP机制**
 
-## 2.4 开关SIP
+## 2.4 开启关闭SIP
 
 1. 进入恢复模式：重启，然后按住`⌘ + R`
 1. 出现界面之后，上面菜单栏->实用工具->终端
 1. 在Terminal中输入`csrutil disable`关闭SIP(csrutil enable打开SIP)
 1. 重启
 
-## 2.5 刻录iso文件
+## 2.5 开启关闭任何来源
+
+```sh
+# 开启
+sudo spctl --master-disable
+
+# 关闭
+sudo spctl --master-enable
+```
+
+## 2.6 刻录iso文件
 
 ```sh
 # 先列出所有设备
@@ -159,7 +169,7 @@ sudo dd if=<iso文件路径> of=/dev/disk6 bs=1m
 diskutil eject /dev/disk6
 ```
 
-## 2.6 打开/禁止产生.DS_Store文件
+## 2.7 打开/禁止产生.DS_Store文件
 
 ```sh
 # 禁止
@@ -169,7 +179,7 @@ defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool TRUE
 defaults delete com.apple.desktopservices DSDontWriteNetworkStores
 ```
 
-## 2.7 清理磁盘
+## 2.8 清理磁盘
 
 [macOS 系统占用储存空间太大怎么办？](https://www.zhihu.com/question/52784342)
 
@@ -181,7 +191,7 @@ defaults delete com.apple.desktopservices DSDontWriteNetworkStores
 1. `~/Library/Caches`
     * `~/Library/Caches/IntelliJIdea2018.1`：`IntelliJIdea`的一些缓存数据
 
-## 2.8 卸载itunes
+## 2.9 卸载itunes
 
 为什么要卸载，升级完mac之后，发现某些应用的`f8`快捷键失效了，一按`f8`就会自动打开itunes
 
@@ -212,6 +222,12 @@ defaults delete com.apple.desktopservices DSDontWriteNetworkStores
 1. 重启
 1. 在系统偏好设置->安全与隐私->允许Virtual Box
 1. 重启
+
+## 3.2 您没有权限来打开应用程序
+
+```sh
+sudo xattr -r -d com.apple.quarantine <app path>
+```
 
 # 4 Iterm2
 
@@ -367,3 +383,4 @@ plugins=(zsh-syntax-highlighting)
 * [iTerm 2 && Oh My Zsh【DIY教程——亲身体验过程】](https://www.jianshu.com/p/7de00c73a2bb)
 * [更换Homebrew的更新源](https://blog.csdn.net/u010275932/article/details/76080833)
 * [VirtualBox 在 macOS 出現 Kernel driver not installed 問題解決方式](https://officeguide.cc/virtualbox-macos-kernel-driver-not-installed-error-solution-2020/)
+* [macOS Catalina/Big Sur 无法打开app，提示“因为无法确认开发者身份”问题的解决方法](https://heipg.cn/tutorial/solution-for-macos-10-15-catalina-cant-run-apps.html)
