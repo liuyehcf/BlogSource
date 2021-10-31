@@ -486,6 +486,7 @@ endif
 | `echodoc` | 参数提示 | https://github.com/Shougo/echodoc.vim |
 | `nerdcommenter` | 添加注释 | https://github.com/preservim/nerdcommenter |
 | `vim-clang-format` | 代码格式化 | https://github.com/rhysd/vim-clang-format |
+| `LanguageClient-neovim` | 语义索引 | https://github.com/autozimu/LanguageClient-neovim |
 | `vim-auto-popmenu` | 轻量补全 | https://github.com/skywind3000/vim-auto-popmenu |
 | `YouCompleteMe` | 代码补全 | https://github.com/ycm-core/YouCompleteMe |
 
@@ -724,7 +725,41 @@ if filereadable("~/.vim/gtags-cscope.vim")
 endif
 ```
 
-### 2.2.8 安装vim-plug
+### 2.2.8 语义索引-ccls
+
+**`ccls`是`Language Server Protocol（LSP）`的一种实现，主要用于`C/C++/Objective-C`等语言**
+
+**安装：参照[github官网文档](https://github.com/MaskRay/ccls)进行编译安装即可**
+
+```sh
+git clone https://github.com.cnpmjs.org/MaskRay/ccls.git --depth 1
+cd ccls
+
+function setup_github_repo() {
+    CONFIGS=( $(grep -rnl 'https://github.com' .git) )
+    for CONFIG in ${CONFIGS[@]}
+    do
+        echo "setup github repo for '${CONFIG}'"
+        sed -i 's|https://github.com/|https://github.com.cnpmjs.org/|g' ${CONFIG}
+    done
+}
+# 初始化子模块
+setup_github_repo
+git submodule init && git submodule update
+
+# 其中 CMAKE_PREFIX_PATH 用于指定 clang/llvm 相关头文件和lib的搜索路径，按照「安装llvm」小节中的安装方法，安装路径就是 /usr/local
+cmake -H. -BRelease -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/usr/local
+
+# 编译
+cmake --build Release
+
+# 安装
+cmake --build Release --target install
+```
+
+**使用：`ccls`需要配合`LanguageClient-neovim`插件一起使用，后面会介绍**
+
+### 2.2.9 安装vim-plug
 
 按照[vim-plug](https://github.com/junegunn/vim-plug)官网文档，通过一个命令直接安装即可
 
@@ -1485,7 +1520,65 @@ call plug#end()
 
 * **`:ClangFormat`：会使用工程目录下的`.clang-format`或者用户目录下的`~/.clang-format`来对代码进行格式化**
 
-## 2.20 代码补全-[YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
+## 2.20 语义索引-[LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim)
+
+**该插件是作为`LSP`的客户端，这里我们选用的`LSP`的实现是`ccls`**
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
+    
+" -------- 下面是该插件的一些参数 --------
+
+let g:LanguageClient_loadSettings = 1
+let g:LanguageClient_diagnosticsEnable = 0
+let g:LanguageClient_settingsPath = expand('~/.vim/languageclient.json')
+let g:LanguageClient_selectionUI = 'quickfix'
+let g:LanguageClient_diagnosticsList = v:null
+let g:LanguageClient_hoverPreview = 'Never'
+let g:LanguageClient_serverCommands = {}
+let g:LanguageClient_serverCommands.c = ['ccls']
+let g:LanguageClient_serverCommands.cpp = ['ccls']
+
+noremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
+noremap <leader>rr :call LanguageClient#textDocument_references()<cr>
+noremap <leader>rv :call LanguageClient#textDocument_hover()<cr>
+noremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可。由于安装时，还需执行一个脚本`install.sh`，该脚本要从github下载一个二进制，在国内容易超时失败，可以用如下方式进行手动安装**
+
+```sh
+# 假定通过 :PlugInstall 已经将工程下载到本地了
+cd ~/.vim/plugged/LanguageClient-neovim
+
+# 修改地址
+sed -i 's|github.com/|github.com.cnpmjs.org/|' install.sh
+
+# 手动执行安装脚本
+./install.sh
+```
+
+**用法：**
+
+* `\rd`：查找光标下符号的定义
+* `\rr`：查找光标下符号的引用
+* `\rv`：查看光标下符号的说明
+* `\rn`：重命名光标下的符号
+
+## 2.21 代码补全-[YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
 
 **这个插件比较复杂，建议手工安装**
 
@@ -1590,7 +1683,7 @@ def FlagsForFile( filename, **kwargs ):
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.21 个人完整配置
+## 2.22 个人完整配置
 
 **初学`vim`，水平有限，仅供参考，`~/.vimrc`完整配置如下**
 
@@ -1848,6 +1941,28 @@ Plug 'rhysd/vim-clang-format'
 
 " 将 :ClangFormat 映射到快捷键 [Option] + l，即「¬」
 noremap ¬ :ClangFormat<cr>
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
+
+let g:LanguageClient_loadSettings = 1
+let g:LanguageClient_diagnosticsEnable = 0
+let g:LanguageClient_settingsPath = expand('~/.vim/languageclient.json')
+let g:LanguageClient_selectionUI = 'quickfix'
+let g:LanguageClient_diagnosticsList = v:null
+let g:LanguageClient_hoverPreview = 'Never'
+let g:LanguageClient_serverCommands = {}
+let g:LanguageClient_serverCommands.c = ['ccls']
+let g:LanguageClient_serverCommands.cpp = ['ccls']
+
+noremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
+noremap <leader>rr :call LanguageClient#textDocument_references()<cr>
+noremap <leader>rv :call LanguageClient#textDocument_hover()<cr>
+noremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
