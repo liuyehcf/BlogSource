@@ -316,7 +316,17 @@ categories:
 1. `[Ctrl] + w + <`：宽度减小1
 1. `[Ctrl] + w + [n] + <`：宽度减小n
 
-## 1.13 vim常用配置项
+## 1.13 Quickfix
+
+* `:cc`：显示详细信息
+* **`:cp`：跳到上一个条目**
+* **`:cn`：跳到下一个条目**
+* `:cl`：列出所有条目
+* `:cw`：如果有错误列表，则打开quickfix窗口 
+* `:col`：到前一个旧的错误列表
+* `:cnew`：到后一个较新的错误列表
+
+## 1.14 vim常用配置项
 
 ```
 :set nocompatible   设置不兼容原始 vi 模式（必须设置在最开头）
@@ -348,7 +358,7 @@ categories:
 :syntax off         禁止语法高亮
 ```
 
-## 1.14 vim配置
+## 1.15 vim配置
 
 `vim`会主动将你曾经做过的行为记录下来，好让你下次可以轻松作业，记录操作的文件就是`~/.viminfo`
 
@@ -356,7 +366,7 @@ categories:
 
 **在运行`vim`的时候，如果修改了`~/.vimrc`文件的内容，可以通过执行`:so %`来重新加载`~/.vimrc`，立即生效配置**
 
-### 1.14.1 修改tab的行为
+### 1.15.1 修改tab的行为
 
 修改`~/.vimrc`，追加如下内容
 
@@ -375,7 +385,7 @@ set expandtab
 set autoindent
 ```
 
-### 1.14.2 键位映射
+### 1.15.2 键位映射
 
 1. **`map`：递归映射**
 1. **`noremap`：非递归映射**
@@ -396,7 +406,7 @@ set autoindent
 * **对于mac上的`[Option]`，并没有`<p-key>`这样的表示方法。而是用`[Option]`加另一个字母实际输出的结果作为映射键值，例如**
     * `[Option] + a`：`å`
 
-## 1.15 其他
+## 1.16 其他
 
 * **`set <variable>?`：可以查看`<variable>`的值**
 * `[Shift] + 3`：以暗黄色为底色显示所有指定的字符串
@@ -412,9 +422,9 @@ set autoindent
     * **输入`:x`关闭历史编辑并放弃编辑结果回到编辑缓冲区**
     * 可以在空命令上回车相当于退出历史编辑区回到编辑缓冲区
 
-## 1.16 Tips
+## 1.17 Tips
 
-### 1.16.1 多行更新
+### 1.17.1 多行更新
 
 **示例：多行同时插入相同内容**
 
@@ -429,7 +439,7 @@ set autoindent
 1. 选中需要同时修改的列
 1. 按`d`即可同时删除
 
-### 1.16.2 中文乱码
+### 1.17.2 中文乱码
 
 **编辑`/etc/vimrc`，追加如下内容**
 
@@ -439,7 +449,7 @@ set termencoding=utf-8
 set encoding=utf-8
 ```
 
-### 1.16.3 为每个项目配置vim
+### 1.17.3 为每个项目配置vim
 
 同一份`~./vimrc`无法适用于所有的项目，不同的项目可能需要一些特化的配置项，可以采用如下的设置方式
 
@@ -663,7 +673,7 @@ set tags+=~/.vim/systags
 
 ### 2.2.7 进阶符号索引-Global source code tagging system
 
-**这里有个坑，上面安装的是`gcc-10.3.0`，这个版本编译安装`global`源码会报错，错误信息大概是`global.o:(.bss+0x74): first defined here`，因此，我们需要再安装一个低版本的gcc，并且用这个低版本的gcc来编译`global`**
+**这里有个坑，上面安装的是`gcc-10.3.0`，这个版本编译安装`global`源码会报错（[dev-util/global-6.6.4 : fails to build with -fno-common or gcc-10](https://bugs.gentoo.org/706890)），错误信息大概是`global.o:(.bss+0x74): first defined here`，因此，我们需要再安装一个低版本的gcc，并且用这个低版本的gcc来编译`global`**
 
 ```sh
 # 安装源
@@ -691,6 +701,26 @@ sh reconf.sh
 ./configure
 make
 sudo make install
+
+# 安装成功后，在目录 /usr/local/share/gtags 中会有 gtags.vim 以及 gtags-cscope.vim 这两个文件
+# 将这两个文件拷贝到 ~/.vim 目录中
+cp -vrf /usr/local/share/gtags/gtags.vim /usr/local/share/gtags/gtags-cscope.vim ~/.vim
+```
+
+**在`~/.vimrc`中增加如下配置**
+
+1. 第一个`GTAGSLABEL`告诉`gtags`默认`C/C++/Java`等六种原生支持的代码直接使用`gtags`本地分析器，而其他语言使用`pygments`模块
+1. 第二个环境变量必须设置，否则会找不到`native-pygments`和`language map`的定义
+
+```vim
+let $GTAGSLABEL = 'native-pygments'
+let $GTAGSCONF = '/usr/local/share/gtags/gtags.conf'
+if filereadable("~/.vim/gtags.vim")
+    source ~/.vim/gtags.vim
+endif
+if filereadable("~/.vim/gtags-cscope.vim")
+    source ~/.vim/gtags-cscope.vim
+endif
 ```
 
 ### 2.2.8 安装vim-plug
@@ -945,14 +975,29 @@ let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
 " 所生成的数据文件的名称
 let g:gutentags_ctags_tagfile = '.tags'
 
-" 将自动生成的 tags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
+" 同时开启 ctags 和 gtags 支持：
+let g:gutentags_modules = []
+if executable('ctags')
+	let g:gutentags_modules += ['ctags']
+endif
+if executable('gtags-cscope') && executable('gtags')
+	let g:gutentags_modules += ['gtags_cscope']
+endif
+
+" 将自动生成的 ctags/gtags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
 let s:vim_tags = expand('~/.cache/tags')
 let g:gutentags_cache_dir = s:vim_tags
 
-" 配置 ctags 的参数
+" 配置 ctags 的参数，老的 Exuberant-ctags 不能有 --extras=+q，注意
 let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extras=+q']
 let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
 let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+
+" 如果使用 universal ctags 需要增加下面一行，老的 Exuberant-ctags 不能加下一行
+let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
+
+" 禁用 gutentags 自动加载 gtags 数据库的行为
+let g:gutentags_auto_add_gtags_cscope = 0
 
 " 检测 ~/.cache/tags 不存在就新建
 if !isdirectory(s:vim_tags)
@@ -963,6 +1008,89 @@ call plug#end()
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
+
+### 2.8.1 gtags查询快捷键-[gutentags_plus](https://github.com/skywind3000/gutentags_plus)
+
+该插件提供一个命令`GscopeFind`，用于`gtags`查询
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'skywind3000/gutentags_plus'
+
+" -------- 下面是该插件的一些参数 --------
+
+" 在查询后，光标切换到 Quickfix 窗口
+let g:gutentags_plus_switch = 1
+
+" 禁用默认的映射，默认的映射会与 nerdcommenter 插件冲突
+let g:gutentags_plus_nomap = 1
+
+" 定义新的映射
+noremap <silent> <leader>gs :GscopeFind s <C-R><C-W><cr>
+noremap <silent> <leader>gg :GscopeFind g <C-R><C-W><cr>
+noremap <silent> <leader>gc :GscopeFind c <C-R><C-W><cr>
+noremap <silent> <leader>gt :GscopeFind t <C-R><C-W><cr>
+noremap <silent> <leader>ge :GscopeFind e <C-R><C-W><cr>
+noremap <silent> <leader>gf :GscopeFind f <C-R>=expand("<cfile>")<cr><cr>
+noremap <silent> <leader>gi :GscopeFind i <C-R>=expand("<cfile>")<cr><cr>
+noremap <silent> <leader>gd :GscopeFind d <C-R><C-W><cr>
+noremap <silent> <leader>ga :GscopeFind a <C-R><C-W><cr>
+noremap <silent> <leader>gz :GscopeFind z <C-R><C-W><cr>
+
+call plug#end()
+```
+
+**键位映射说明：**
+
+| keymap | desc |
+|--------|------|
+| **`<leader>gs`** | 查找光标下符号的引用 |
+| `<leader>gg` | 查找光标下符号的定义 |
+| `<leader>gd` | 查找被当前函数调用的函数 |
+| **`<leader>gc`** | **查找调用当前函数的函数** |
+| `<leader>gt` | 查找光标下的字符串 |
+| `<leader>ge` | 以`egrep pattern`查找光标下的字符串 |
+| `<leader>gf` | 查找光标下的文件名 |
+| **`<leader>gi`** | **查找引用光标下头文件的文件** |
+| **`<leader>ga`** | **查找光标下符号的赋值处** |
+| `<leader>gz` | 在`ctags`中查找光标下的符号 |
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+### 2.8.2 Quickfix预览-[vim-preview](https://github.com/skywind3000/vim-preview)
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'skywind3000/vim-preview'
+
+" -------- 下面是该插件的一些参数 --------
+
+autocmd FileType qf nnoremap <silent><buffer> p :PreviewQuickfix<cr>
+autocmd FileType qf nnoremap <silent><buffer> P :PreviewClose<cr>
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**用法：**
+
+* 在`Quickfix`中，按`p`打开预览
+* 在`Quickfix`中，按`P`关闭预览
 
 ## 2.9 编译运行-[AsyncRun](https://github.com/skywind3000/asyncrun.vim)
 
@@ -1531,19 +1659,63 @@ let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
 " 所生成的数据文件的名称
 let g:gutentags_ctags_tagfile = '.tags'
 
-" 将自动生成的 tags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
+" 同时开启 ctags 和 gtags 支持：
+let g:gutentags_modules = []
+if executable('ctags')
+	let g:gutentags_modules += ['ctags']
+endif
+if executable('gtags-cscope') && executable('gtags')
+	let g:gutentags_modules += ['gtags_cscope']
+endif
+
+" 将自动生成的 ctags/gtags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
 let s:vim_tags = expand('~/.cache/tags')
 let g:gutentags_cache_dir = s:vim_tags
 
-" 配置 ctags 的参数
+" 配置 ctags 的参数，老的 Exuberant-ctags 不能有 --extras=+q，注意
 let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extras=+q']
 let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
 let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+
+" 如果使用 universal ctags 需要增加下面一行，老的 Exuberant-ctags 不能加下一行
+let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
+
+" 禁用 gutentags 自动加载 gtags 数据库的行为
+let g:gutentags_auto_add_gtags_cscope = 0
 
 " 检测 ~/.cache/tags 不存在就新建
 if !isdirectory(s:vim_tags)
    silent! call mkdir(s:vim_tags, 'p')
 endif
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'skywind3000/gutentags_plus'
+
+" 在查询后，光标切换到 Quickfix 窗口
+let g:gutentags_plus_switch = 1
+
+" 禁用默认的映射，默认的映射会与 nerdcommenter 插件冲突
+let g:gutentags_plus_nomap = 1
+
+" 定义新的映射
+noremap <silent> <leader>gs :GscopeFind s <C-R><C-W><cr>
+noremap <silent> <leader>gg :GscopeFind g <C-R><C-W><cr>
+noremap <silent> <leader>gc :GscopeFind c <C-R><C-W><cr>
+noremap <silent> <leader>gt :GscopeFind t <C-R><C-W><cr>
+noremap <silent> <leader>ge :GscopeFind e <C-R><C-W><cr>
+noremap <silent> <leader>gf :GscopeFind f <C-R>=expand("<cfile>")<cr><cr>
+noremap <silent> <leader>gi :GscopeFind i <C-R>=expand("<cfile>")<cr><cr>
+noremap <silent> <leader>gd :GscopeFind d <C-R><C-W><cr>
+noremap <silent> <leader>ga :GscopeFind a <C-R><C-W><cr>
+noremap <silent> <leader>gz :GscopeFind z <C-R><C-W><cr>
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'skywind3000/vim-preview'
+
+autocmd FileType qf nnoremap <silent><buffer> p :PreviewQuickfix<cr>
+autocmd FileType qf nnoremap <silent><buffer> P :PreviewClose<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1702,6 +1874,16 @@ noremap ˚ :tp<cr>
 set tags=./.tags;,.tags
 " 系统库的ctags
 set tags+=~/.vim/systags
+
+" gtags的配置
+let $GTAGSLABEL = 'native-pygments'
+let $GTAGSCONF = '/usr/local/share/gtags/gtags.conf'
+if filereadable("~/.vim/gtags.vim")
+    source ~/.vim/gtags.vim
+endif
+if filereadable("~/.vim/gtags-cscope.vim")
+    source ~/.vim/gtags-cscope.vim
+endif
 
 " 搜索和替换的快捷键配置
 " 搜索和替换分别映射到 [Option] + f 和 [Option] + r，即「ƒ」和「®」
