@@ -316,13 +316,13 @@ categories:
 1. `[Ctrl] + w + <`：宽度减小1
 1. `[Ctrl] + w + [n] + <`：宽度减小n
 
-## 1.13 Quickfix
+## 1.13 quickfix
 
 * `:cc`：显示详细信息
 * **`:cp`：跳到上一个条目**
 * **`:cn`：跳到下一个条目**
 * `:cl`：列出所有条目
-* `:cw`：如果有错误列表，则打开quickfix窗口 
+* `:cw`：如果有错误列表，则打开`quickfix`窗口 
 * `:col`：到前一个旧的错误列表
 * `:cnew`：到后一个较新的错误列表
 
@@ -474,7 +474,7 @@ endif
 | `vim-cpp-enhanced-highlight` | 语法高亮 | https://github.com/octol/vim-cpp-enhanced-highlight |
 | `rainbow_parentheses` | 彩虹括号1 | https://github.com/kien/rainbow_parentheses.vim |
 | `rainbow` | 彩虹括号2 | https://github.com/luochen1990/rainbow |
-| `Universal CTags` | 符号索引 | https://ctags.io/ |
+| `ctags` | 符号索引 | https://ctags.io/ |
 | `vim-gutentags` | 自动索引 | https://github.com/ludovicchabant/vim-gutentags |
 | `LanguageClient-neovim` | 语义索引 | https://github.com/autozimu/LanguageClient-neovim |
 | `vim-auto-popmenu` | 轻量补全 | https://github.com/skywind3000/vim-auto-popmenu |
@@ -592,7 +592,9 @@ yum install -y vim
 vim --version | head -1
 ```
 
-### 2.2.6 符号索引-[Universal CTags](https://ctags.io/)
+### 2.2.6 符号索引-[ctags](https://ctags.io/)
+
+**`ctags`的全称是`universal-ctags`**
 
 **安装：参照[github官网文档](https://github.com/universal-ctags/ctags)进行编译安装即可**
 
@@ -673,7 +675,9 @@ set tags=./.tags;,.tags
 set tags+=~/.vim/systags
 ```
 
-### 2.2.7 进阶符号索引-Global source code tagging system
+### 2.2.7 进阶符号索引-gtags
+
+**`gtags`的全称是`GNU Global source code tagging system`**
 
 **这里有个坑，上面安装的是`gcc-10.3.0`，这个版本编译安装`global`源码会报错（[dev-util/global-6.6.4 : fails to build with -fno-common or gcc-10](https://bugs.gentoo.org/706890)），错误信息大概是`global.o:(.bss+0x74): first defined here`，因此，我们需要再安装一个低版本的gcc，并且用这个低版本的gcc来编译`global`**
 
@@ -1086,7 +1090,7 @@ Plug 'skywind3000/gutentags_plus'
 
 " -------- 下面是该插件的一些参数 --------
 
-" 在查询后，光标切换到 Quickfix 窗口
+" 在查询后，光标切换到 quickfix 窗口
 let g:gutentags_plus_switch = 1
 
 " 禁用默认的映射，默认的映射会与 nerdcommenter 插件冲突
@@ -1124,7 +1128,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-### 2.9.2 Quickfix预览-[vim-preview](https://github.com/skywind3000/vim-preview)
+### 2.9.2 quickfix预览-[vim-preview](https://github.com/skywind3000/vim-preview)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1151,8 +1155,8 @@ call plug#end()
 
 **用法：**
 
-* **在`Quickfix`中，按`p`打开预览**
-* **在`Quickfix`中，按`P`关闭预览**
+* **在`quickfix`中，按`p`打开预览**
+* **在`quickfix`中，按`P`关闭预览**
 * **`\wd`：预览页向下滚动半页**
 * **`\wu`：预览页向上滚动半页**
 
@@ -1331,7 +1335,7 @@ let g:asyncrun_open = 6
 " 任务结束时候响铃提醒
 let g:asyncrun_bell = 1
 
-" 设置 F10 打开/关闭 Quickfix 窗口
+" 设置 F10 打开/关闭 quickfix 窗口
 nnoremap <F10> :call asyncrun#quickfix_toggle(6)<cr>
 
 " 设置编译项目的快捷键（这里只是示例，具体命令需要自行调整） 
@@ -1772,7 +1776,7 @@ endif
 
 Plug 'skywind3000/gutentags_plus'
 
-" 在查询后，光标切换到 Quickfix 窗口
+" 在查询后，光标切换到 quickfix 窗口
 let g:gutentags_plus_switch = 1
 
 " 禁用默认的映射，默认的映射会与 nerdcommenter 插件冲突
@@ -1855,7 +1859,7 @@ let g:asyncrun_open = 6
 " 任务结束时候响铃提醒
 let g:asyncrun_bell = 1
 
-" 设置 F10 打开/关闭 Quickfix 窗口
+" 设置 F10 打开/关闭 quickfix 窗口
 nnoremap <F10> :call asyncrun#quickfix_toggle(6)<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
