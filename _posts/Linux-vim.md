@@ -1141,6 +1141,8 @@ Plug 'skywind3000/vim-preview'
 
 autocmd FileType qf nnoremap <silent><buffer> p :PreviewQuickfix<cr>
 autocmd FileType qf nnoremap <silent><buffer> P :PreviewClose<cr>
+noremap <silent> <leader>wd :PreviewScroll +1<cr>
+noremap <silent> <leader>wu :PreviewScroll -1<cr>
 
 call plug#end()
 ```
@@ -1149,8 +1151,10 @@ call plug#end()
 
 **用法：**
 
-* 在`Quickfix`中，按`p`打开预览
-* 在`Quickfix`中，按`P`关闭预览
+* **在`Quickfix`中，按`p`打开预览**
+* **在`Quickfix`中，按`P`关闭预览**
+* **`\wd`：预览页向下滚动半页**
+* **`\wu`：预览页向上滚动半页**
 
 ## 2.10 语义索引-[LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim)
 
@@ -1792,6 +1796,8 @@ Plug 'skywind3000/vim-preview'
 
 autocmd FileType qf nnoremap <silent><buffer> p :PreviewQuickfix<cr>
 autocmd FileType qf nnoremap <silent><buffer> P :PreviewClose<cr>
+noremap <silent> <leader>wd :PreviewScroll +1<cr>
+noremap <silent> <leader>wu :PreviewScroll -1<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
