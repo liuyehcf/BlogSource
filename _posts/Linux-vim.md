@@ -471,14 +471,18 @@ endif
 | `vim-airline` | 状态栏 | https://github.com/vim-airline/vim-airline |
 | `indentLine` | 缩进标线 | https://github.com/Yggdroot/indentLine |
 | `nerdtree` | 文件管理器 | https://github.com/preservim/nerdtree |
-| `rainbow_parentheses` | 彩虹括号 | https://github.com/kien/rainbow_parentheses.vim |
+| `vim-cpp-enhanced-highlight` | 语法高亮 | https://github.com/octol/vim-cpp-enhanced-highlight |
+| `rainbow_parentheses` | 彩虹括号1 | https://github.com/kien/rainbow_parentheses.vim |
+| `rainbow` | 彩虹括号2 | https://github.com/luochen1990/rainbow |
 | `Universal CTags` | 符号索引 | https://ctags.io/ |
 | `vim-gutentags` | 自动索引 | https://github.com/ludovicchabant/vim-gutentags |
+| `LanguageClient-neovim` | 语义索引 | https://github.com/autozimu/LanguageClient-neovim |
+| `vim-auto-popmenu` | 轻量补全 | https://github.com/skywind3000/vim-auto-popmenu |
+| `YouCompleteMe` | 代码补全 | https://github.com/ycm-core/YouCompleteMe |
 | `AsyncRun` | 编译运行 | https://github.com/skywind3000/asyncrun.vim |
 | `ALE` | 动态检查 | https://github.com/dense-analysis/ale |
 | `vim-signify` | 修改比较 | https://github.com/mhinz/vim-signify |
 | `textobj-user` | 文本对象 | https://github.com/kana/vim-textobj-user |
-| `vim-cpp-enhanced-highlight` | 语法高亮 | https://github.com/octol/vim-cpp-enhanced-highlight |
 | `LeaderF` | 函数列表 | https://github.com/Yggdroot/LeaderF |
 | `fzf.vim` | 全局模糊搜索 | https://github.com/junegunn/fzf.vim |
 | `mhinz/vim-grepper` | 全局搜索 | https://github.com/mhinz/vim-grepper |
@@ -486,9 +490,6 @@ endif
 | `echodoc` | 参数提示 | https://github.com/Shougo/echodoc.vim |
 | `nerdcommenter` | 添加注释 | https://github.com/preservim/nerdcommenter |
 | `vim-clang-format` | 代码格式化 | https://github.com/rhysd/vim-clang-format |
-| `LanguageClient-neovim` | 语义索引 | https://github.com/autozimu/LanguageClient-neovim |
-| `vim-auto-popmenu` | 轻量补全 | https://github.com/skywind3000/vim-auto-popmenu |
-| `YouCompleteMe` | 代码补全 | https://github.com/ycm-core/YouCompleteMe |
 
 ## 2.2 环境准备
 
@@ -949,7 +950,7 @@ call plug#end()
 * `:NERDTreeToggle`：打开文件管理器
 * `:NERDTreeFind`：打开文件管理器，并且定位到当前文件
 
-## 2.7 彩虹括号-[rainbow_parentheses](https://github.com/kien/rainbow_parentheses.vim)
+## 2.7 语法高亮-[vim-cpp-enhanced-highlight](https://github.com/octol/vim-cpp-enhanced-highlight)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -960,41 +961,44 @@ call plug#begin()
 " .....其他插件及配置.....
 " ......................
 
-Plug 'kien/rainbow_parentheses.vim'
+Plug 'octol/vim-cpp-enhanced-highlight'
 
 " -------- 下面是该插件的一些参数 --------
 
-let g:rbpt_colorpairs = [
-    \ ['brown', 'RoyalBlue3'],
-    \ ['Darkblue', 'SeaGreen3'],
-    \ ['darkgray', 'DarkOrchid3'],
-    \ ['darkgreen', 'firebrick3'],
-    \ ['darkcyan', 'RoyalBlue3'],
-    \ ['darkred', 'SeaGreen3'],
-    \ ['darkmagenta', 'DarkOrchid3'],
-    \ ['brown', 'firebrick3'],
-    \ ['gray', 'RoyalBlue3'],
-    \ ['black', 'SeaGreen3'],
-    \ ['darkmagenta', 'DarkOrchid3'],
-    \ ['Darkblue', 'firebrick3'],
-    \ ['darkgreen', 'RoyalBlue3'],
-    \ ['darkcyan', 'SeaGreen3'],
-    \ ['darkred', 'DarkOrchid3'],
-    \ ['red', 'firebrick3'],
-    \ ]
-let g:rbpt_max = 8
-let g:rbpt_loadcmd_toggle = 0
-au VimEnter * RainbowParenthesesToggle
-au Syntax * RainbowParenthesesLoadRound
-au Syntax * RainbowParenthesesLoadSquare
-au Syntax * RainbowParenthesesLoadBraces
+let g:cpp_class_scope_highlight = 1
+let g:cpp_member_variable_highlight = 1
+let g:cpp_class_decl_highlight = 1
+let g:cpp_experimental_simple_template_highlight = 1
+let g:cpp_concepts_highlight = 1
 
 call plug#end()
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.8 自动索引-[vim-gutentags](https://github.com/ludovicchabant/vim-gutentags)
+## 2.8 彩虹括号-[rainbow](https://github.com/luochen1990/rainbow)
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'luochen1990/rainbow'
+
+" -------- 下面是该插件的一些参数 --------
+
+let g:rainbow_active = 1
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+## 2.9 自动索引-[vim-gutentags](https://github.com/ludovicchabant/vim-gutentags)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1056,7 +1060,7 @@ call plug#end()
 1. 保存文件，触发数据库更新
 1. `:message`：可以重新查看message
 
-### 2.8.1 gtags查询快捷键-[gutentags_plus](https://github.com/skywind3000/gutentags_plus)
+### 2.9.1 gtags查询快捷键-[gutentags_plus](https://github.com/skywind3000/gutentags_plus)
 
 该插件提供一个命令`GscopeFind`，用于`gtags`查询
 
@@ -1111,7 +1115,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-### 2.8.2 Quickfix预览-[vim-preview](https://github.com/skywind3000/vim-preview)
+### 2.9.2 Quickfix预览-[vim-preview](https://github.com/skywind3000/vim-preview)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1139,392 +1143,7 @@ call plug#end()
 * 在`Quickfix`中，按`p`打开预览
 * 在`Quickfix`中，按`P`关闭预览
 
-## 2.9 编译运行-[AsyncRun](https://github.com/skywind3000/asyncrun.vim)
-
-本质上，`AsyncRun`插件就是提供了异步执行命令的机制，我们可以利用这个机制定义一些动作，比如`编译`、`构建`、`运行`、`测试`等，提供类似于`IDE`的体验
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....其他插件及配置.....
-" ......................
-
-Plug 'skywind3000/asyncrun.vim'
-
-" -------- 下面是该插件的一些参数 --------
-
-" 自动打开 quickfix window ，高度为 6
-let g:asyncrun_open = 6
-
-" 任务结束时候响铃提醒
-let g:asyncrun_bell = 1
-
-" 设置 F10 打开/关闭 Quickfix 窗口
-nnoremap <F10> :call asyncrun#quickfix_toggle(6)<cr>
-
-" 设置编译项目的快捷键（这里只是示例，具体命令需要自行调整） 
-nnoremap <silent> <F7> :AsyncRun -cwd=<root> make <cr>
-
-" 设置运行项目的快捷键（这里只是示例，具体命令需要自行调整） 
-nnoremap <silent> <F8> :AsyncRun -cwd=<root> -raw make run <cr>
-
-" 设置测试项目的快捷键（这里只是示例，具体命令需要自行调整） 
-nnoremap <silent> <F6> :AsyncRun -cwd=<root> -raw make test <cr>
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-## 2.10 动态检查-[ALE](https://github.com/dense-analysis/ale)
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....其他插件及配置.....
-" ......................
-
-Plug 'dense-analysis/ale'
-
-" -------- 下面是该插件的一些参数 --------
-
-" 不显示状态栏+不需要高亮行
-let g:ale_sign_column_always = 0
-let g:ale_set_highlights = 0
-
-" 错误和警告标志
-let g:ale_sign_error = '✗'
-let g:ale_sign_warning = '⚡'
-
-" 设置linters，并且仅用指定的linters
-" 由于在我的环境中，Available Linters中并没有gcc和g++，但是有cc（Linter Aliases）。cc包含clang、clang++、gcc、g++
-" 于是，下面两个配置会使得最终ALE生效的Linter是cc
-let g:ale_linters_explicit = 1
-let g:ale_linters = {
-  \   'c': ['gcc'],
-  \   'cpp': ['g++'],
-  \}
-
-" 上面的配置使得linter是cc，cc是个alias，包含了clang、clang++、gcc、g++，且默认会用clang和clang++
-" 这边我改成gcc、g++
-let g:ale_c_cc_executable = 'gcc'
-let g:ale_cpp_cc_executable = 'g++'
-" -std=c17 和 -std=c++17 会有很多奇怪的问题，因此改用 gnu17 和 gnu++17
-let g:ale_c_cc_options = '-std=gnu17 -Wall'
-let g:ale_cpp_cc_options = '-std=gnu++17 -Wall'
-
-let g:ale_completion_delay = 500
-let g:ale_echo_delay = 20
-let g:ale_lint_delay = 500
-let g:ale_echo_msg_format = '[%linter%] %code: %%s'
-let g:ale_lint_on_text_changed = 'normal'
-let g:ale_lint_on_insert_leave = 1
-let g:airline#extensions#ale#enabled = 1
-
-" 配置快捷键用于在warnings/errors之间跳转
-" [Ctrl] + j: 下一个warning/error
-" [Ctrl] + k: 上一个warning/error
-nmap <silent> <C-k> <Plug>(ale_previous_wrap)
-nmap <silent> <C-j> <Plug>(ale_next_wrap)
-
-call plug#end()
-```
-
-**指定三方库的头文件路径。每种类型的编译器对应的环境变量名是不同的，这里仅以`gcc`和g`++`为例**
-
-```sh
-# c头文件路径（gcc）
-export C_INCLUDE_PATH=${C_INCLUDE_PATH}:<third party include path...>
-
-# c++头文件路径（g++）
-export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:<third party include path...>
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**使用：**
-
-* **`:ALEInfo`：查看配置信息，拉到最后有命令执行结果**
-
-**问题：**
-
-1. **若`linter`使用的是`gcc`或者`g++`，即便有语法错误，也不会有提示信息。但是使用`:ALEInfo`查看，是可以看到报错信息的。这是因为ALE识别错误是通过一个关键词`error`，而在我的环境中，gcc编译错误输出的是中文`错误`，因此ALE不认为这是个错误。修改方式如下**
-    1. `mv /usr/share/locale/zh_CN/LC_MESSAGES/gcc.mo /usr/share/locale/zh_CN/LC_MESSAGES/gcc.mo.bak`
-    1. `mv /usr/local/share/locale/zh_CN/LC_MESSAGES/gcc.mo /usr/local/share/locale/zh_CN/LC_MESSAGES/gcc.mo.bak`
-    * 如果找不到`gcc.mo`文件的话，可以用`locate`命令搜索一下
-
-## 2.11 修改比较-[vim-signify](https://github.com/mhinz/vim-signify)
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....其他插件及配置.....
-" ......................
-
-Plug 'mhinz/vim-signify'
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**使用：**
-
-* `set signcolumn=yes`，有改动的行会标出
-* `:SignifyDiff`：以左右分屏的方式对比当前文件的差异
-
-## 2.12 文本对象-[textobj-user](https://github.com/kana/vim-textobj-user)
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....其他插件及配置.....
-" ......................
-
-" 其中 kana/vim-textobj-user 提供了自定义文本对象的基础能力，其他插件是基于该插件的扩展
-Plug 'kana/vim-textobj-user'
-Plug 'kana/vim-textobj-indent'
-Plug 'kana/vim-textobj-syntax'
-Plug 'kana/vim-textobj-function', { 'for':['c', 'cpp', 'vim', 'java'] }
-Plug 'sgur/vim-textobj-parameter'
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**使用：**
-
-* **`i,/a,`：函数对象。可以用`vi,`/`di,`/`ci,`来选中/删除/改写当前参数**
-* **`ii/ai`：缩进对象。可以用`vii`/`dii`/`cii`来选中/删除/改写同一缩进层次的内容**
-* **`if/af`：函数对象。可以用`vif`/`dif`/`cif`来选中/删除/改写当前函数的内容**
-
-## 2.13 语法高亮-[vim-cpp-enhanced-highlight](https://github.com/octol/vim-cpp-enhanced-highlight)
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....其他插件及配置.....
-" ......................
-
-Plug 'octol/vim-cpp-enhanced-highlight'
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-## 2.14 函数列表-[LeaderF](https://github.com/Yggdroot/LeaderF)
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....其他插件及配置.....
-" ......................
-
-Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
-
-" -------- 下面是该插件的一些参数 --------
-
-" 将文件模糊搜索映射到快捷键 [Ctrl] + p
-let g:Lf_ShortcutF = '<c-p>'
-let g:Lf_ShortcutB = '<m-n>'
-" 将 :LeaderfMru 映射到快捷键 [Ctrl] + n
-noremap <c-n> :LeaderfMru<cr>
-" 将 :LeaderfFunction! 映射到快捷键 [Option] + p，即「π」
-noremap π :LeaderfFunction!<cr>
-let g:Lf_StlSeparator = { 'left': '', 'right': '', 'font': '' }
-
-let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git']
-let g:Lf_WorkingDirectoryMode = 'Ac'
-let g:Lf_WindowHeight = 0.30
-let g:Lf_CacheDirectory = expand('~/.vim/cache')
-let g:Lf_ShowRelativePath = 0
-let g:Lf_HideHelp = 1
-let g:Lf_StlColorscheme = 'powerline'
-let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**用法：**
-
-1. `:LeaderfFunction!`：弹出函数列表
-    * `tab`可以在搜索和移动两种模式之间进行切换
-    * 移动模式下：`j/k`：上下移动
-    * 搜索模式下：输入即可进行模糊搜索
-1. `:LeaderfMru`：查找最近访问的文件，通过上面的配置映射到快捷键`[Ctrl] + n`
-1. 通过上面的配置，将文件模糊搜索映射到快捷键`[Ctrl] + p`
-
-## 2.15 全局模糊搜索-[fzf.vim](https://github.com/junegunn/fzf.vim)
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....其他插件及配置.....
-" ......................
-
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-
-" -------- 下面是该插件的一些参数 --------
-
-" 将 :Rg 映射到快捷键 [Ctrl] + a
-noremap <c-a> :Rg<cr>
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**用法（搜索相关的语法可以参考[junegunn/fzf-search-syntax](https://github.com/junegunn/fzf#search-syntax)）：**
-
-1. `:Ag`：进行全局搜索（依赖命令行工具`ag`，安装方式参考该插件github主页）
-    * `[Ctrl] + j/k`可以在条目中上下移动
-1. `:Rg`：进行全局搜索（依赖命令行工具`rg`，安装方式参考该插件github主页）
-    * `[Ctrl] + j/k`可以在条目中上下移动
-* **匹配规则**
-    * **`xxx`：模糊匹配（可能被分词）**
-    * **`'xxx`：非模糊匹配（不会被分词）**
-    * **`^xxx`：前缀匹配**
-    * **`xxx$`：后缀匹配**
-    * **`!xxx`：反向匹配**
-    * **上述规则均可自由组合**
-
-## 2.16 全局搜索-[vim-grepper](https://github.com/mhinz/vim-grepper)
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....其他插件及配置.....
-" ......................
-
-Plug 'mhinz/vim-grepper'
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**用法：**
-
-* `:Grepper`：进行全局搜索（依赖grep命令）
-
-## 2.17 git扩展-[vim-fugitive](https://github.com/tpope/vim-fugitive)
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....其他插件及配置.....
-" ......................
-
-Plug 'tpope/vim-fugitive'
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**用法：**
-
-* `:Git`：作为`git`的替代，后跟`git`命令行工具的正常参数即可
-
-## 2.18 添加注释-[nerdcommenter](https://github.com/preservim/nerdcommenter)
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....其他插件及配置.....
-" ......................
-
-Plug 'preservim/nerdcommenter'
-
-" -------- 下面是该插件的一些参数 --------
-
-let g:NERDCreateDefaultMappings = 1
-let g:NERDSpaceDelims = 1
-let g:NERDCompactSexyComs = 1
-let g:NERDDefaultAlign = 'left'
-let g:NERDAltDelims_java = 1
-" let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' }
-let g:NERDCommentEmptyLines = 1
-let g:NERDTrimTrailingWhitespace = 1
-let g:NERDToggleCheckAllLines = 1
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**用法：**
-
-* **`\cc`：添加注释，对每一行都会添加注释**
-* **`\cm`：对被选区域用一对注释符进行注释**
-* **`\cs`：添加性感的注释**
-* **`\ca`：更换注释的方式**
-* **`\cu`：取消注释**
-* **`\c<space>`：如果被选区域有部分被注释，则对被选区域执行取消注释操作，其它情况执行反转注释操作**
-
-## 2.19 代码格式化-[vim-clang-format](https://github.com/rhysd/vim-clang-format)
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....其他插件及配置.....
-" ......................
-
-Plug 'rhysd/vim-clang-format'
-
-" -------- 下面是该插件的一些参数 --------
-
-" 将 :ClangFormat 映射到快捷键 [Option] + l，即「¬」
-noremap ¬ :ClangFormat<cr>
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**用法：**
-
-* **`:ClangFormat`：会使用工程目录下的`.clang-format`或者用户目录下的`~/.clang-format`来对代码进行格式化**
-
-## 2.20 语义索引-[LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim)
+## 2.10 语义索引-[LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim)
 
 **该插件是作为`LSP`的客户端，这里我们选用的`LSP`的实现是`ccls`**
 
@@ -1598,7 +1217,7 @@ sed -i 's|github.com/|github.com.cnpmjs.org/|' install.sh
 * `\hb`：查找光标下符号的父类
 * `\hd`：查找光标下符号的子类
 
-## 2.21 代码补全-[YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
+## 2.11 代码补全-[YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
 
 **这个插件比较复杂，建议手工安装**
 
@@ -1703,6 +1322,373 @@ def FlagsForFile( filename, **kwargs ):
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
+## 2.12 编译运行-[AsyncRun](https://github.com/skywind3000/asyncrun.vim)
+
+本质上，`AsyncRun`插件就是提供了异步执行命令的机制，我们可以利用这个机制定义一些动作，比如`编译`、`构建`、`运行`、`测试`等，提供类似于`IDE`的体验
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'skywind3000/asyncrun.vim'
+
+" -------- 下面是该插件的一些参数 --------
+
+" 自动打开 quickfix window ，高度为 6
+let g:asyncrun_open = 6
+
+" 任务结束时候响铃提醒
+let g:asyncrun_bell = 1
+
+" 设置 F10 打开/关闭 Quickfix 窗口
+nnoremap <F10> :call asyncrun#quickfix_toggle(6)<cr>
+
+" 设置编译项目的快捷键（这里只是示例，具体命令需要自行调整） 
+nnoremap <silent> <F7> :AsyncRun -cwd=<root> make <cr>
+
+" 设置运行项目的快捷键（这里只是示例，具体命令需要自行调整） 
+nnoremap <silent> <F8> :AsyncRun -cwd=<root> -raw make run <cr>
+
+" 设置测试项目的快捷键（这里只是示例，具体命令需要自行调整） 
+nnoremap <silent> <F6> :AsyncRun -cwd=<root> -raw make test <cr>
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+## 2.13 动态检查-[ALE](https://github.com/dense-analysis/ale)
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'dense-analysis/ale'
+
+" -------- 下面是该插件的一些参数 --------
+
+" 不显示状态栏+不需要高亮行
+let g:ale_sign_column_always = 0
+let g:ale_set_highlights = 0
+
+" 错误和警告标志
+let g:ale_sign_error = '✗'
+let g:ale_sign_warning = '⚡'
+
+" 设置linters，并且仅用指定的linters
+" 由于在我的环境中，Available Linters中并没有gcc和g++，但是有cc（Linter Aliases）。cc包含clang、clang++、gcc、g++
+" 于是，下面两个配置会使得最终ALE生效的Linter是cc
+let g:ale_linters_explicit = 1
+let g:ale_linters = {
+  \   'c': ['gcc'],
+  \   'cpp': ['g++'],
+  \}
+
+" 上面的配置使得linter是cc，cc是个alias，包含了clang、clang++、gcc、g++，且默认会用clang和clang++
+" 这边我改成gcc、g++
+let g:ale_c_cc_executable = 'gcc'
+let g:ale_cpp_cc_executable = 'g++'
+" -std=c17 和 -std=c++17 会有很多奇怪的问题，因此改用 gnu17 和 gnu++17
+let g:ale_c_cc_options = '-std=gnu17 -Wall'
+let g:ale_cpp_cc_options = '-std=gnu++17 -Wall'
+
+let g:ale_completion_delay = 500
+let g:ale_echo_delay = 20
+let g:ale_lint_delay = 500
+let g:ale_echo_msg_format = '[%linter%] %code: %%s'
+let g:ale_lint_on_text_changed = 'normal'
+let g:ale_lint_on_insert_leave = 1
+let g:airline#extensions#ale#enabled = 1
+
+" 配置快捷键用于在warnings/errors之间跳转
+" [Ctrl] + j: 下一个warning/error
+" [Ctrl] + k: 上一个warning/error
+nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+nmap <silent> <C-j> <Plug>(ale_next_wrap)
+
+call plug#end()
+```
+
+**指定三方库的头文件路径。每种类型的编译器对应的环境变量名是不同的，这里仅以`gcc`和g`++`为例**
+
+```sh
+# c头文件路径（gcc）
+export C_INCLUDE_PATH=${C_INCLUDE_PATH}:<third party include path...>
+
+# c++头文件路径（g++）
+export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:<third party include path...>
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**使用：**
+
+* **`:ALEInfo`：查看配置信息，拉到最后有命令执行结果**
+
+**问题：**
+
+1. **若`linter`使用的是`gcc`或者`g++`，即便有语法错误，也不会有提示信息。但是使用`:ALEInfo`查看，是可以看到报错信息的。这是因为ALE识别错误是通过一个关键词`error`，而在我的环境中，gcc编译错误输出的是中文`错误`，因此ALE不认为这是个错误。修改方式如下**
+    1. `mv /usr/share/locale/zh_CN/LC_MESSAGES/gcc.mo /usr/share/locale/zh_CN/LC_MESSAGES/gcc.mo.bak`
+    1. `mv /usr/local/share/locale/zh_CN/LC_MESSAGES/gcc.mo /usr/local/share/locale/zh_CN/LC_MESSAGES/gcc.mo.bak`
+    * 如果找不到`gcc.mo`文件的话，可以用`locate`命令搜索一下
+
+## 2.14 修改比较-[vim-signify](https://github.com/mhinz/vim-signify)
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'mhinz/vim-signify'
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**使用：**
+
+* `set signcolumn=yes`，有改动的行会标出
+* `:SignifyDiff`：以左右分屏的方式对比当前文件的差异
+
+## 2.15 文本对象-[textobj-user](https://github.com/kana/vim-textobj-user)
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+" 其中 kana/vim-textobj-user 提供了自定义文本对象的基础能力，其他插件是基于该插件的扩展
+Plug 'kana/vim-textobj-user'
+Plug 'kana/vim-textobj-indent'
+Plug 'kana/vim-textobj-syntax'
+Plug 'kana/vim-textobj-function', { 'for':['c', 'cpp', 'vim', 'java'] }
+Plug 'sgur/vim-textobj-parameter'
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**使用：**
+
+* **`i,/a,`：函数对象。可以用`vi,`/`di,`/`ci,`来选中/删除/改写当前参数**
+* **`ii/ai`：缩进对象。可以用`vii`/`dii`/`cii`来选中/删除/改写同一缩进层次的内容**
+* **`if/af`：函数对象。可以用`vif`/`dif`/`cif`来选中/删除/改写当前函数的内容**
+
+## 2.16 函数列表-[LeaderF](https://github.com/Yggdroot/LeaderF)
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
+
+" -------- 下面是该插件的一些参数 --------
+
+" 将文件模糊搜索映射到快捷键 [Ctrl] + p
+let g:Lf_ShortcutF = '<c-p>'
+let g:Lf_ShortcutB = '<m-n>'
+" 将 :LeaderfMru 映射到快捷键 [Ctrl] + n
+noremap <c-n> :LeaderfMru<cr>
+" 将 :LeaderfFunction! 映射到快捷键 [Option] + p，即「π」
+noremap π :LeaderfFunction!<cr>
+let g:Lf_StlSeparator = { 'left': '', 'right': '', 'font': '' }
+
+let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git']
+let g:Lf_WorkingDirectoryMode = 'Ac'
+let g:Lf_WindowHeight = 0.30
+let g:Lf_CacheDirectory = expand('~/.vim/cache')
+let g:Lf_ShowRelativePath = 0
+let g:Lf_HideHelp = 1
+let g:Lf_StlColorscheme = 'powerline'
+let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**用法：**
+
+1. `:LeaderfFunction!`：弹出函数列表
+    * `tab`可以在搜索和移动两种模式之间进行切换
+    * 移动模式下：`j/k`：上下移动
+    * 搜索模式下：输入即可进行模糊搜索
+1. `:LeaderfMru`：查找最近访问的文件，通过上面的配置映射到快捷键`[Ctrl] + n`
+1. 通过上面的配置，将文件模糊搜索映射到快捷键`[Ctrl] + p`
+
+## 2.17 全局模糊搜索-[fzf.vim](https://github.com/junegunn/fzf.vim)
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+
+" -------- 下面是该插件的一些参数 --------
+
+" 将 :Rg 映射到快捷键 [Ctrl] + a
+noremap <c-a> :Rg<cr>
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**用法（搜索相关的语法可以参考[junegunn/fzf-search-syntax](https://github.com/junegunn/fzf#search-syntax)）：**
+
+1. `:Ag`：进行全局搜索（依赖命令行工具`ag`，安装方式参考该插件github主页）
+    * `[Ctrl] + j/k`可以在条目中上下移动
+1. `:Rg`：进行全局搜索（依赖命令行工具`rg`，安装方式参考该插件github主页）
+    * `[Ctrl] + j/k`可以在条目中上下移动
+* **匹配规则**
+    * **`xxx`：模糊匹配（可能被分词）**
+    * **`'xxx`：非模糊匹配（不会被分词）**
+    * **`^xxx`：前缀匹配**
+    * **`xxx$`：后缀匹配**
+    * **`!xxx`：反向匹配**
+    * **上述规则均可自由组合**
+
+## 2.18 全局搜索-[vim-grepper](https://github.com/mhinz/vim-grepper)
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'mhinz/vim-grepper'
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**用法：**
+
+* `:Grepper`：进行全局搜索（依赖grep命令）
+
+## 2.19 git扩展-[vim-fugitive](https://github.com/tpope/vim-fugitive)
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'tpope/vim-fugitive'
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**用法：**
+
+* `:Git`：作为`git`的替代，后跟`git`命令行工具的正常参数即可
+
+## 2.20 添加注释-[nerdcommenter](https://github.com/preservim/nerdcommenter)
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'preservim/nerdcommenter'
+
+" -------- 下面是该插件的一些参数 --------
+
+let g:NERDCreateDefaultMappings = 1
+let g:NERDSpaceDelims = 1
+let g:NERDCompactSexyComs = 1
+let g:NERDDefaultAlign = 'left'
+let g:NERDAltDelims_java = 1
+" let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' }
+let g:NERDCommentEmptyLines = 1
+let g:NERDTrimTrailingWhitespace = 1
+let g:NERDToggleCheckAllLines = 1
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**用法：**
+
+* **`\cc`：添加注释，对每一行都会添加注释**
+* **`\cm`：对被选区域用一对注释符进行注释**
+* **`\cs`：添加性感的注释**
+* **`\ca`：更换注释的方式**
+* **`\cu`：取消注释**
+* **`\c<space>`：如果被选区域有部分被注释，则对被选区域执行取消注释操作，其它情况执行反转注释操作**
+
+## 2.21 代码格式化-[vim-clang-format](https://github.com/rhysd/vim-clang-format)
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'rhysd/vim-clang-format'
+
+" -------- 下面是该插件的一些参数 --------
+
+" 将 :ClangFormat 映射到快捷键 [Option] + l，即「¬」
+noremap ¬ :ClangFormat<cr>
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**用法：**
+
+* **`:ClangFormat`：会使用工程目录下的`.clang-format`或者用户目录下的`~/.clang-format`来对代码进行格式化**
+
 ## 2.22 个人完整配置
 
 **初学`vim`，水平有限，仅供参考，`~/.vimrc`完整配置如下**
@@ -1743,32 +1729,19 @@ nmap <F3> :NERDTreeFind<CR>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-Plug 'kien/rainbow_parentheses.vim'
+Plug 'octol/vim-cpp-enhanced-highlight'
 
-let g:rbpt_colorpairs = [
-    \ ['brown', 'RoyalBlue3'],
-    \ ['Darkblue', 'SeaGreen3'],
-    \ ['darkgray', 'DarkOrchid3'],
-    \ ['darkgreen', 'firebrick3'],
-    \ ['darkcyan', 'RoyalBlue3'],
-    \ ['darkred', 'SeaGreen3'],
-    \ ['darkmagenta', 'DarkOrchid3'],
-    \ ['brown', 'firebrick3'],
-    \ ['gray', 'RoyalBlue3'],
-    \ ['black', 'SeaGreen3'],
-    \ ['darkmagenta', 'DarkOrchid3'],
-    \ ['Darkblue', 'firebrick3'],
-    \ ['darkgreen', 'RoyalBlue3'],
-    \ ['darkcyan', 'SeaGreen3'],
-    \ ['darkred', 'DarkOrchid3'],
-    \ ['red', 'firebrick3'],
-    \ ]
-let g:rbpt_max = 8
-let g:rbpt_loadcmd_toggle = 0
-au VimEnter * RainbowParenthesesToggle
-au Syntax * RainbowParenthesesLoadRound
-au Syntax * RainbowParenthesesLoadSquare
-au Syntax * RainbowParenthesesLoadBraces
+let g:cpp_class_scope_highlight = 1
+let g:cpp_member_variable_highlight = 1
+let g:cpp_class_decl_highlight = 1
+let g:cpp_experimental_simple_template_highlight = 1
+let g:cpp_concepts_highlight = 1
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'luochen1990/rainbow'
+
+let g:rainbow_active = 1
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1837,6 +1810,53 @@ Plug 'skywind3000/vim-preview'
 
 autocmd FileType qf nnoremap <silent><buffer> p :PreviewQuickfix<cr>
 autocmd FileType qf nnoremap <silent><buffer> P :PreviewClose<cr>
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
+
+let g:LanguageClient_loadSettings = 1
+let g:LanguageClient_diagnosticsEnable = 0
+let g:LanguageClient_settingsPath = expand('~/.vim/languageclient.json')
+let g:LanguageClient_selectionUI = 'quickfix'
+let g:LanguageClient_diagnosticsList = v:null
+let g:LanguageClient_hoverPreview = 'Never'
+let g:LanguageClient_serverCommands = {}
+let g:LanguageClient_serverCommands.c = ['ccls']
+let g:LanguageClient_serverCommands.cpp = ['ccls']
+
+noremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
+noremap <leader>rr :call LanguageClient#textDocument_references()<cr>
+noremap <leader>rv :call LanguageClient#textDocument_hover()<cr>
+noremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
+noremap <leader>hb :call LanguageClient#findLocations({'method':'$ccls/inheritance'})<cr>
+noremap <leader>hd :call LanguageClient#findLocations({'method':'$ccls/inheritance','derived':v:true})<cr>
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'ycm-core/YouCompleteMe'
+
+let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+let g:ycm_confirm_extra_conf = 0
+
+let g:ycm_add_preview_to_completeopt = 0
+let g:ycm_show_diagnostics_ui = 0
+let g:ycm_server_log_level = 'info'
+let g:ycm_min_num_identifier_candidate_chars = 2
+let g:ycm_collect_identifiers_from_comments_and_strings = 1
+let g:ycm_complete_in_strings=1
+let g:ycm_key_invoke_completion = '<c-z>'
+set completeopt=menu,menuone
+
+noremap <c-z> <NOP>
+
+let g:ycm_semantic_triggers =  {
+           \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
+           \ 'cs,lua,javascript': ['re!\w{2}'],
+           \ }
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1961,53 +1981,6 @@ Plug 'rhysd/vim-clang-format'
 
 " 将 :ClangFormat 映射到快捷键 [Option] + l，即「¬」
 noremap ¬ :ClangFormat<cr>
-
-" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
-
-let g:LanguageClient_loadSettings = 1
-let g:LanguageClient_diagnosticsEnable = 0
-let g:LanguageClient_settingsPath = expand('~/.vim/languageclient.json')
-let g:LanguageClient_selectionUI = 'quickfix'
-let g:LanguageClient_diagnosticsList = v:null
-let g:LanguageClient_hoverPreview = 'Never'
-let g:LanguageClient_serverCommands = {}
-let g:LanguageClient_serverCommands.c = ['ccls']
-let g:LanguageClient_serverCommands.cpp = ['ccls']
-
-noremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
-noremap <leader>rr :call LanguageClient#textDocument_references()<cr>
-noremap <leader>rv :call LanguageClient#textDocument_hover()<cr>
-noremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
-noremap <leader>hb :call LanguageClient#findLocations({'method':'$ccls/inheritance'})<cr>
-noremap <leader>hd :call LanguageClient#findLocations({'method':'$ccls/inheritance','derived':v:true})<cr>
-
-" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-Plug 'ycm-core/YouCompleteMe'
-
-let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
-let g:ycm_confirm_extra_conf = 0
-
-let g:ycm_add_preview_to_completeopt = 0
-let g:ycm_show_diagnostics_ui = 0
-let g:ycm_server_log_level = 'info'
-let g:ycm_min_num_identifier_candidate_chars = 2
-let g:ycm_collect_identifiers_from_comments_and_strings = 1
-let g:ycm_complete_in_strings=1
-let g:ycm_key_invoke_completion = '<c-z>'
-set completeopt=menu,menuone
-
-noremap <c-z> <NOP>
-
-let g:ycm_semantic_triggers =  {
-           \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
-           \ 'cs,lua,javascript': ['re!\w{2}'],
-           \ }
 
 call plug#end()
 
