@@ -712,7 +712,7 @@ cp -vrf /usr/local/share/gtags/gtags.vim /usr/local/share/gtags/gtags-cscope.vim
 **在`~/.vimrc`中增加如下配置**
 
 1. 第一个`GTAGSLABEL`告诉`gtags`默认`C/C++/Java`等六种原生支持的代码直接使用`gtags`本地分析器，而其他语言使用`pygments`模块
-1. 第二个环境变量必须设置，否则会找不到`native-pygments`和`language map`的定义
+1. 第二个环境变量必须设置（在我的环境里，不设置也能work），否则会找不到`native-pygments`和`language map`的定义
 
 ```vim
 " 设置后会出现「gutentags: gtags-cscope job failed, returned: 1」，所以我把它注释了
@@ -1053,12 +1053,17 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-**问题排查：**
+**问题排查步骤：**
 
 1. `let g:gutentags_define_advanced_commands = 1`：允许`gutentags`打开一些高级命令和选项
 1. 运行`:GutentagsToggleTrace`：它会将`ctags/gtags`命令的输出记录在`vim`的`message`记录里
 1. 保存文件，触发数据库更新
 1. `:message`：可以重新查看message
+
+**常见问题：**
+
+* `gutentags: gtags-cscope job failed, returned: 1`
+    * 原因1：cache数据有问题，删掉重建就恢复了
 
 ### 2.9.1 gtags查询快捷键-[gutentags_plus](https://github.com/skywind3000/gutentags_plus)
 
@@ -1163,6 +1168,8 @@ Plug 'autozimu/LanguageClient-neovim', {
     
 " -------- 下面是该插件的一些参数 --------
 
+" 默认关闭，对于一些大型项目来说，初始化有点慢，需要用的时候再通过 :LanguageClientStart 启动即可
+let g:LanguageClient_autoStart = 0
 let g:LanguageClient_loadSettings = 1
 let g:LanguageClient_diagnosticsEnable = 0
 let g:LanguageClient_settingsPath = expand('~/.vim/languageclient.json')
@@ -1818,6 +1825,8 @@ Plug 'autozimu/LanguageClient-neovim', {
     \ 'do': 'bash install.sh',
     \ }
 
+" 默认关闭，对于一些大型项目来说，初始化有点慢，需要用的时候再通过 :LanguageClientStart 启动即可
+let g:LanguageClient_autoStart = 0
 let g:LanguageClient_loadSettings = 1
 let g:LanguageClient_diagnosticsEnable = 0
 let g:LanguageClient_settingsPath = expand('~/.vim/languageclient.json')
