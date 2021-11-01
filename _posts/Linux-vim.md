@@ -2019,7 +2019,7 @@ set foldmethod=indent
 set foldlevel=0
 
 " 回车时，默认取消搜索高亮
-nnoremap <CR> :nohlsearch<CR><CR>
+nnoremap <silent> <CR> :nohlsearch<CR><CR>
 
 " 其他配置
 set number
