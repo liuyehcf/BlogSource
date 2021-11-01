@@ -1217,12 +1217,14 @@ sed -i 's|github.com/|github.com.cnpmjs.org/|' install.sh
 
 **用法：**
 
-* `\rd`：查找光标下符号的定义
-* `\rr`：查找光标下符号的引用
-* `\rv`：查看光标下符号的说明
-* `\rn`：重命名光标下的符号
-* `\hb`：查找光标下符号的父类
-* `\hd`：查找光标下符号的子类
+* **`:LanguageClientStart`：由于在上面的配置中取消了自启动，因此需要手动开启**
+* **`:LanguageClientStop`：关闭**
+* **`\rd`：查找光标下符号的定义**
+* **`\rr`：查找光标下符号的引用**
+* **`\rv`：查看光标下符号的说明**
+* **`\rn`：重命名光标下的符号**
+* **`\hb`：查找光标下符号的父类**
+* **`\hd`：查找光标下符号的子类**
 
 ## 2.11 代码补全-[YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
 
@@ -1267,9 +1269,6 @@ Plug 'ycm-core/YouCompleteMe'
 
 " -------- 下面是该插件的一些参数 --------
 
-let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
-let g:ycm_confirm_extra_conf = 0
-
 let g:ycm_add_preview_to_completeopt = 0
 let g:ycm_show_diagnostics_ui = 0
 let g:ycm_server_log_level = 'info'
@@ -1289,45 +1288,12 @@ let g:ycm_semantic_triggers =  {
 call plug#end()
 ```
 
-**配置`~/.ycm_extra_conf.py`，内容如下（仅针对c/c++），仅供参考**
-
-* 由于我安装的是`gcc`的`10.3.0`版本，所以c和c++的头文件的路径分别是
-    * `/usr/local/lib/gcc/x86_64-pc-linux-gnu/10.3.0/include`
-    * `/usr/local/include/c++/10.3.0`
-
-```python
-import os
-import ycm_core
- 
-flags = [
-    '-Wall',
-    '-Wextra',
-    '-Werror',
-    '-Wno-long-long',
-    '-Wno-variadic-macros',
-    '-fexceptions',
-    '-DNDEBUG',
-    '-std=c++14',
-    '-x',
-    'c++',
-    '-I',
-    '/usr/include',
-    '-isystem',
-    '/usr/local/lib/gcc/x86_64-pc-linux-gnu/10.3.0/include',
-    '-isystem',
-    '/usr/local/include/c++/10.3.0',
-  ]
- 
-SOURCE_EXTENSIONS = [ '.cpp', '.cxx', '.cc', '.c', ]
- 
-def FlagsForFile( filename, **kwargs ):
-  return {
-    'flags': flags,
-    'do_cache': True
-  }
-```
-
 **安装：进入vim界面后执行`:PlugInstall`即可**
+
+**使用：**
+
+* **默认情况下，只能进行通用补全，比如将文件中已经出现的字符加入到字典中，这样如果编写同样的字符串的话，就能够提示补全了**
+* **如果要进行语义补全，可以结合`compile_commands.json`，通过`cmake`等构建工具生成`compile_commands.json`，并将该文件至于工程根目录下。再用vim打开工程便可进行语义补全**
 
 ## 2.12 编译运行-[AsyncRun](https://github.com/skywind3000/asyncrun.vim)
 
@@ -1847,9 +1813,6 @@ noremap <leader>hd :call LanguageClient#findLocations({'method':'$ccls/inheritan
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 Plug 'ycm-core/YouCompleteMe'
-
-let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
-let g:ycm_confirm_extra_conf = 0
 
 let g:ycm_add_preview_to_completeopt = 0
 let g:ycm_show_diagnostics_ui = 0
