@@ -717,10 +717,10 @@ cp -vrf /usr/local/share/gtags/gtags.vim /usr/local/share/gtags/gtags-cscope.vim
 " 设置后会出现「gutentags: gtags-cscope job failed, returned: 1」，所以我把它注释了
 " let $GTAGSLABEL = 'native-pygments'
 let $GTAGSCONF = '/usr/local/share/gtags/gtags.conf'
-if filereadable("~/.vim/gtags.vim")
+if filereadable(expand('~/.vim/gtags.vim'))
     source ~/.vim/gtags.vim
 endif
-if filereadable("~/.vim/gtags-cscope.vim")
+if filereadable(expand('~/.vim/gtags-cscope.vim'))
     source ~/.vim/gtags-cscope.vim
 endif
 ```
@@ -1495,7 +1495,7 @@ call plug#end()
 * **`\cs`：添加性感的注释**
 * **`\ca`：更换注释的方式**
 * **`\cu`：取消注释**
-* **`\c<space>`：如果被选区域有部分被注释，则对被选区域执行取消注释操作，其它情况执行反转注释操作
+* **`\c<space>`：如果被选区域有部分被注释，则对被选区域执行取消注释操作，其它情况执行反转注释操作**
 
 ## 2.19 代码格式化-[vim-clang-format](https://github.com/rhysd/vim-clang-format)
 
@@ -2024,10 +2024,10 @@ set tags+=~/.vim/systags
 " 设置后会出现「gutentags: gtags-cscope job failed, returned: 1」，所以我把它注释了
 " let $GTAGSLABEL = 'native-pygments'
 let $GTAGSCONF = '/usr/local/share/gtags/gtags.conf'
-if filereadable("~/.vim/gtags.vim")
+if filereadable(expand('~/.vim/gtags.vim'))
     source ~/.vim/gtags.vim
 endif
-if filereadable("~/.vim/gtags-cscope.vim")
+if filereadable(expand('~/.vim/gtags-cscope.vim'))
     source ~/.vim/gtags-cscope.vim
 endif
 
@@ -2044,6 +2044,9 @@ set backspace=indent,eol,start
 set nofoldenable
 set foldmethod=indent
 set foldlevel=0
+
+" 回车时，默认取消搜索高亮
+nnoremap <CR> :nohlsearch<CR><CR>
 
 " 其他配置
 set number
