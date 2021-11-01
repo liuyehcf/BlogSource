@@ -2368,6 +2368,15 @@ yum install -y hping3
 PasswordAuthentication no
 ```
 
+### 6.1.3 避免长时间不操作就断开连接
+
+修改`/etc/ssh/sshd_config`
+
+```
+ClientAliveInterval 60
+ClientAliveCountMax 3
+```
+
 ## 6.2 scp
 
 **格式：**
