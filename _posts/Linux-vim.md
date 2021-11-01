@@ -826,8 +826,6 @@ call plug#begin()
 
 Plug 'morhetz/gruvbox'
 
-" -------- 下面是该插件的一些参数 --------
-
 " 启用gruvbox配色方案（~/.vim/colors目录下需要有gruvbox对应的.vim文件）
 colorscheme gruvbox
 " 设置背景，可选值有：dark, light
@@ -861,8 +859,6 @@ call plug#begin()
 " ......................
 
 Plug 'altercation/vim-colors-solarized'
-
-" -------- 下面是该插件的一些参数 --------
 
 " 启用solarized配色方案（~/.vim/colors目录下需要有solarized对应的.vim文件）
 colorscheme solarized
@@ -913,8 +909,6 @@ call plug#begin()
 
 Plug 'Yggdroot/indentLine'
 
-" -------- 下面是该插件的一些参数 --------
-
 let g:indentLine_noConcealCursor = 1
 let g:indentLine_color_term = 239
 let g:indentLine_char = '|'
@@ -936,8 +930,6 @@ call plug#begin()
 " ......................
 
 Plug 'scrooloose/nerdtree'
-
-" -------- 下面是该插件的一些参数 --------
 
 " 配置 F2 打开文件管理器 
 nmap <F2> :NERDTreeToggle<CR>
@@ -967,8 +959,6 @@ call plug#begin()
 
 Plug 'octol/vim-cpp-enhanced-highlight'
 
-" -------- 下面是该插件的一些参数 --------
-
 let g:cpp_class_scope_highlight = 1
 let g:cpp_member_variable_highlight = 1
 let g:cpp_class_decl_highlight = 1
@@ -993,8 +983,6 @@ call plug#begin()
 
 Plug 'luochen1990/rainbow'
 
-" -------- 下面是该插件的一些参数 --------
-
 let g:rainbow_active = 1
 
 call plug#end()
@@ -1014,8 +1002,6 @@ call plug#begin()
 " ......................
 
 Plug 'ludovicchabant/vim-gutentags'
-
-" -------- 下面是该插件的一些参数 --------
 
 " gutentags 搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归
 let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
@@ -1088,8 +1074,6 @@ call plug#begin()
 
 Plug 'skywind3000/gutentags_plus'
 
-" -------- 下面是该插件的一些参数 --------
-
 " 在查询后，光标切换到 quickfix 窗口
 let g:gutentags_plus_switch = 1
 
@@ -1141,8 +1125,6 @@ call plug#begin()
 
 Plug 'skywind3000/vim-preview'
 
-" -------- 下面是该插件的一些参数 --------
-
 autocmd FileType qf nnoremap <silent><buffer> p :PreviewQuickfix<cr>
 autocmd FileType qf nnoremap <silent><buffer> P :PreviewClose<cr>
 noremap <silent> <leader>wd :PreviewScroll +1<cr>
@@ -1178,8 +1160,6 @@ Plug 'autozimu/LanguageClient-neovim', {
     \ 'do': 'bash install.sh',
     \ }
     
-" -------- 下面是该插件的一些参数 --------
-
 " 默认关闭，对于一些大型项目来说，初始化有点慢，需要用的时候再通过 :LanguageClientStart 启动即可
 let g:LanguageClient_autoStart = 0
 let g:LanguageClient_loadSettings = 1
@@ -1284,8 +1264,6 @@ call plug#begin()
 
 Plug 'ycm-core/YouCompleteMe'
 
-" -------- 下面是该插件的一些参数 --------
-
 let g:ycm_add_preview_to_completeopt = 0
 let g:ycm_show_diagnostics_ui = 0
 let g:ycm_server_log_level = 'info'
@@ -1327,8 +1305,6 @@ call plug#begin()
 
 Plug 'skywind3000/asyncrun.vim'
 
-" -------- 下面是该插件的一些参数 --------
-
 " 自动打开 quickfix window ，高度为 6
 let g:asyncrun_open = 6
 
@@ -1364,8 +1340,6 @@ call plug#begin()
 " ......................
 
 Plug 'dense-analysis/ale'
-
-" -------- 下面是该插件的一些参数 --------
 
 " 不显示状态栏+不需要高亮行
 let g:ale_sign_column_always = 0
@@ -1497,8 +1471,6 @@ call plug#begin()
 
 Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
 
-" -------- 下面是该插件的一些参数 --------
-
 " 将文件模糊搜索映射到快捷键 [Ctrl] + p
 let g:Lf_ShortcutF = '<c-p>'
 let g:Lf_ShortcutB = '<m-n>'
@@ -1544,8 +1516,6 @@ call plug#begin()
 
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-
-" -------- 下面是该插件的一些参数 --------
 
 " 将 :Rg 映射到快捷键 [Ctrl] + a
 noremap <c-a> :Rg<cr>
@@ -1626,8 +1596,6 @@ call plug#begin()
 
 Plug 'preservim/nerdcommenter'
 
-" -------- 下面是该插件的一些参数 --------
-
 let g:NERDCreateDefaultMappings = 1
 let g:NERDSpaceDelims = 1
 let g:NERDCompactSexyComs = 1
@@ -1664,8 +1632,6 @@ call plug#begin()
 " ......................
 
 Plug 'rhysd/vim-clang-format'
-
-" -------- 下面是该插件的一些参数 --------
 
 " 将 :ClangFormat 映射到快捷键 [Option] + l，即「¬」
 noremap ¬ :ClangFormat<cr>
