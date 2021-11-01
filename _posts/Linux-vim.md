@@ -1159,7 +1159,7 @@ Plug 'autozimu/LanguageClient-neovim', {
     \ 'branch': 'next',
     \ 'do': 'bash install.sh',
     \ }
-    
+
 " 默认关闭，对于一些大型项目来说，初始化有点慢，需要用的时候再通过 :LanguageClientStart 启动即可
 let g:LanguageClient_autoStart = 0
 let g:LanguageClient_loadSettings = 1
