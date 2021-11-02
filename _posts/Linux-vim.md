@@ -355,6 +355,8 @@ categories:
 :set incsearch      查找输入时动态增量显示查找结果
 :set insertmode     Vim 始终处于插入模式下，使用 [Ctrl] + o 临时执行命令
 :set all            列出所有选项设置情况
+:set cursorcolumn   高亮当前列
+:set cursorline     高亮当前行
 :syntax on          允许语法高亮
 :syntax off         禁止语法高亮
 ```
@@ -1978,8 +1980,8 @@ set foldlevel=0
 
 " 回车时，默认取消搜索高亮
 nnoremap <silent> <CR> :nohlsearch<CR><CR>
-" ecs，默认关闭 quickfix
-nnoremap <silent> <Esc> :cclose<CR><Esc>
+" [Ctrl] + q 关闭 quickfix
+nnoremap <c-q> :cclose<CR>
 
 " 其他配置
 set number
@@ -1988,6 +1990,7 @@ set softtabstop=4
 set shiftwidth=4
 set expandtab
 set autoindent
+set cursorline
 
 " 设置头文件搜索路径，可以在项目的 .workspace.vim 文件中通过 set path+= 追加搜索路径
 set path=.,/usr/include,/usr/local/include,/usr/local/lib/gcc/x86_64-pc-linux-gnu/10.3.0/include,/usr/local/include/c++/10.3.0
