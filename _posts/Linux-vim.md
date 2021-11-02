@@ -318,13 +318,14 @@ categories:
 
 ## 1.13 quickfix
 
-* `:cc`：显示详细信息
-* **`:cp`：跳到上一个条目**
-* **`:cn`：跳到下一个条目**
-* `:cl`：列出所有条目
-* `:cw`：如果有错误列表，则打开`quickfix`窗口 
-* `:col`：到前一个旧的错误列表
-* `:cnew`：到后一个较新的错误列表
+* `:copen`：打开`quickfix`窗口（查看编译，grep等信息）
+* `:copen 10`：打开`quickfix`窗口，并且设置高度为`10`
+* `:cclose`：关闭`quickfix`窗口
+* `:cfirst`：跳到`quickfix`中第一个错误信息
+* `:clast`：跳到`quickfix`中最后一条错误信息
+* `:cc [nr]`：查看错误`[nr]`
+* `:cnext`：跳到`quickfix`中下一个错误信息
+* `:cprev`：跳到`quickfix`中上一个错误信息
 
 ## 1.14 vim常用配置项
 
@@ -1081,16 +1082,16 @@ let g:gutentags_plus_switch = 1
 let g:gutentags_plus_nomap = 1
 
 " 定义新的映射
-noremap <silent> <leader>gs :GscopeFind s <C-R><C-W><cr>
-noremap <silent> <leader>gg :GscopeFind g <C-R><C-W><cr>
-noremap <silent> <leader>gc :GscopeFind c <C-R><C-W><cr>
-noremap <silent> <leader>gt :GscopeFind t <C-R><C-W><cr>
-noremap <silent> <leader>ge :GscopeFind e <C-R><C-W><cr>
-noremap <silent> <leader>gf :GscopeFind f <C-R>=expand("<cfile>")<cr><cr>
-noremap <silent> <leader>gi :GscopeFind i <C-R>=expand("<cfile>")<cr><cr>
-noremap <silent> <leader>gd :GscopeFind d <C-R><C-W><cr>
-noremap <silent> <leader>ga :GscopeFind a <C-R><C-W><cr>
-noremap <silent> <leader>gz :GscopeFind z <C-R><C-W><cr>
+noremap <leader>gs :GscopeFind s <C-R><C-W><cr>
+noremap <leader>gg :GscopeFind g <C-R><C-W><cr>
+noremap <leader>gc :GscopeFind c <C-R><C-W><cr>
+noremap <leader>gt :GscopeFind t <C-R><C-W><cr>
+noremap <leader>ge :GscopeFind e <C-R><C-W><cr>
+noremap <leader>gf :GscopeFind f <C-R>=expand("<cfile>")<cr><cr>
+noremap <leader>gi :GscopeFind i <C-R>=expand("<cfile>")<cr><cr>
+noremap <leader>gd :GscopeFind d <C-R><C-W><cr>
+noremap <leader>ga :GscopeFind a <C-R><C-W><cr>
+noremap <leader>gz :GscopeFind z <C-R><C-W><cr>
 
 call plug#end()
 ```
@@ -1125,10 +1126,10 @@ call plug#begin()
 
 Plug 'skywind3000/vim-preview'
 
-autocmd FileType qf nnoremap <silent><buffer> p :PreviewQuickfix<cr>
-autocmd FileType qf nnoremap <silent><buffer> P :PreviewClose<cr>
-noremap <silent> <leader>wd :PreviewScroll +1<cr>
-noremap <silent> <leader>wu :PreviewScroll -1<cr>
+autocmd FileType qf nnoremap <buffer> p :PreviewQuickfix<cr>
+autocmd FileType qf nnoremap <buffer> P :PreviewClose<cr>
+noremap <leader>wd :PreviewScroll +1<cr>
+noremap <leader>wu :PreviewScroll -1<cr>
 
 call plug#end()
 ```
@@ -1749,25 +1750,25 @@ let g:gutentags_plus_switch = 1
 let g:gutentags_plus_nomap = 1
 
 " 定义新的映射
-noremap <silent> <leader>gs :GscopeFind s <C-R><C-W><cr>
-noremap <silent> <leader>gg :GscopeFind g <C-R><C-W><cr>
-noremap <silent> <leader>gc :GscopeFind c <C-R><C-W><cr>
-noremap <silent> <leader>gt :GscopeFind t <C-R><C-W><cr>
-noremap <silent> <leader>ge :GscopeFind e <C-R><C-W><cr>
-noremap <silent> <leader>gf :GscopeFind f <C-R>=expand("<cfile>")<cr><cr>
-noremap <silent> <leader>gi :GscopeFind i <C-R>=expand("<cfile>")<cr><cr>
-noremap <silent> <leader>gd :GscopeFind d <C-R><C-W><cr>
-noremap <silent> <leader>ga :GscopeFind a <C-R><C-W><cr>
-noremap <silent> <leader>gz :GscopeFind z <C-R><C-W><cr>
+noremap <leader>gs :GscopeFind s <C-R><C-W><cr>
+noremap <leader>gg :GscopeFind g <C-R><C-W><cr>
+noremap <leader>gc :GscopeFind c <C-R><C-W><cr>
+noremap <leader>gt :GscopeFind t <C-R><C-W><cr>
+noremap <leader>ge :GscopeFind e <C-R><C-W><cr>
+noremap <leader>gf :GscopeFind f <C-R>=expand("<cfile>")<cr><cr>
+noremap <leader>gi :GscopeFind i <C-R>=expand("<cfile>")<cr><cr>
+noremap <leader>gd :GscopeFind d <C-R><C-W><cr>
+noremap <leader>ga :GscopeFind a <C-R><C-W><cr>
+noremap <leader>gz :GscopeFind z <C-R><C-W><cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 Plug 'skywind3000/vim-preview'
 
-autocmd FileType qf nnoremap <silent><buffer> p :PreviewQuickfix<cr>
-autocmd FileType qf nnoremap <silent><buffer> P :PreviewClose<cr>
-noremap <silent> <leader>wd :PreviewScroll +1<cr>
-noremap <silent> <leader>wu :PreviewScroll -1<cr>
+autocmd FileType qf nnoremap <buffer> p :PreviewQuickfix<cr>
+autocmd FileType qf nnoremap <buffer> P :PreviewClose<cr>
+noremap <leader>wd :PreviewScroll +1<cr>
+noremap <leader>wu :PreviewScroll -1<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1977,6 +1978,8 @@ set foldlevel=0
 
 " 回车时，默认取消搜索高亮
 nnoremap <silent> <CR> :nohlsearch<CR><CR>
+" ecs，默认关闭 quickfix
+nnoremap <silent> <Esc> :cclose<CR><Esc>
 
 " 其他配置
 set number

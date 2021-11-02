@@ -313,6 +313,15 @@ categories:
         * `Reduce function`（由用户编写），负责接受一个`key`以及一组`value`，并将其合并成一个或少量`value`
     * `Types`
         * `GMR`只处理string，用户负责在string和正确的类型之间进行转换
+1. `Implementation`
+    * `MapReduce`大致包含如下几个步骤
+        1. 用户程序中的`MapReduce`库函数将数据源拆分成`16M-64M`的多个小块
+        1. 总共有`M`个`map task`以及`N`个`reduce task`，`master`根据负载情况，将这些`task`分配给`worker`
+        1. `map worker`收到`map task`后，将输入数据解析成键值对（`key/value pair`），并将其作为输入传入用户自定义的`Map function`，然后产生中间键值对，并缓存在内存中
+        1. 上一步被缓存在内存中的中间键值对会通过`partitioning function`分成`R`个分区，并写入本地磁盘，这些数据的位置信息会被传送给`master`，后面的`Reduce`过程会用到这些信息
+        1. `reduce worker`收到`reduce task`（包含上一步提到的位置信息）后，会发起远程调用，读取远端机器（`map worker`）上的中间键值对。读取完毕后，会根据键值进行排序，相同键值的会进行聚合（链表的形式）
+        1. `reduce worker`对排序后的键值对进行遍历，并将每个`key/value set`送入用户自定义的`Reduce function`，其结果会追加到`final output file`
+        1. 当所有`map task`以及`reduce task`处理完毕后，`master`会唤醒用户程序，并将结果返回给该程序
 
 ## 4.1 参考
 

@@ -9,6 +9,9 @@
 
     * [socket tracer](https://mp.weixin.qq.com/s/0w5t_KkHRLXkEY1_qbdTtw)
 1. 数据库
+    * 相关概念
+        * 确定性事务
+        * 2pc
     * 时序数据库
         * [关于时序数据库的一些思考](https://zhuanlan.zhihu.com/p/100146332)
         * [LSM树详解](https://zhuanlan.zhihu.com/p/181498475)
