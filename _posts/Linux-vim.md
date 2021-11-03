@@ -1031,7 +1031,7 @@ let g:gutentags_ctags_extra_args = ['--fields=+niazSl']
 let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
 let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
 
-# 配置 universal ctags 特有参数
+" 配置 universal ctags 特有参数
 let g:ctags_version = system('ctags --version')[0:8]
 if g:ctags_version == "Universal"
   let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
@@ -1737,7 +1737,7 @@ let g:gutentags_ctags_extra_args = ['--fields=+niazSl']
 let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
 let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
 
-# 配置 universal ctags 特有参数
+" 配置 universal ctags 特有参数
 let g:ctags_version = system('ctags --version')[0:8]
 if g:ctags_version == "Universal"
   let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
