@@ -411,7 +411,8 @@ set autoindent
 
 ## 1.16 其他
 
-* **`set <variable>?`：可以查看`<variable>`的值**
+* **`set <config>?`：可以查看`<config>`的值**
+* **`:echo <variable>`：可以查看`<variable>`的值**
 * `[Shift] + 3`：以暗黄色为底色显示所有指定的字符串
 * **`[Shift] + >`：向右移动**
 * **`[Shift] + <`：向左移动**
@@ -1025,16 +1026,22 @@ endif
 let s:vim_tags = expand('~/.cache/tags')
 let g:gutentags_cache_dir = s:vim_tags
 
-" 配置 ctags 的参数，老的 Exuberant-ctags 不能有 --extras=+q，注意
-let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extras=+q']
+" 配置 ctags 的参数
+let g:gutentags_ctags_extra_args = ['--fields=+niazSl']
 let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
 let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
 
-" 如果使用 universal ctags 需要增加下面一行，老的 Exuberant-ctags 不能加下一行
-let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
+# 配置 universal ctags 特有参数
+let g:ctags_version = system('ctags --version')[0:8]
+if g:ctags_version == "Universal"
+  let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
+endif
 
 " 禁用 gutentags 自动加载 gtags 数据库的行为
 let g:gutentags_auto_add_gtags_cscope = 0
+
+" 启用高级命令，比如 :GutentagsToggleTrace 等
+let g:gutentags_define_advanced_commands = 1
 
 " 检测 ~/.cache/tags 不存在就新建
 if !isdirectory(s:vim_tags)
@@ -1725,16 +1732,22 @@ endif
 let s:vim_tags = expand('~/.cache/tags')
 let g:gutentags_cache_dir = s:vim_tags
 
-" 配置 ctags 的参数，老的 Exuberant-ctags 不能有 --extras=+q，注意
-let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extras=+q']
+" 配置 ctags 的参数
+let g:gutentags_ctags_extra_args = ['--fields=+niazSl']
 let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
 let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
 
-" 如果使用 universal ctags 需要增加下面一行，老的 Exuberant-ctags 不能加下一行
-let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
+# 配置 universal ctags 特有参数
+let g:ctags_version = system('ctags --version')[0:8]
+if g:ctags_version == "Universal"
+  let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
+endif
 
 " 禁用 gutentags 自动加载 gtags 数据库的行为
 let g:gutentags_auto_add_gtags_cscope = 0
+
+" 启用高级命令，比如 :GutentagsToggleTrace 等
+let g:gutentags_define_advanced_commands = 1
 
 " 检测 ~/.cache/tags 不存在就新建
 if !isdirectory(s:vim_tags)
