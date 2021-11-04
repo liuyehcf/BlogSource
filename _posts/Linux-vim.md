@@ -723,8 +723,9 @@ cp -vrf /usr/local/share/gtags/gtags.vim /usr/local/share/gtags/gtags-cscope.vim
 1. 第二个环境变量必须设置（在我的环境里，不设置也能work），否则会找不到`native-pygments`和`language map`的定义
 
 ```vim
-" 设置后会出现「gutentags: gtags-cscope job failed, returned: 1」，所以我把它注释了
+" native-pygments 设置后会出现「gutentags: gtags-cscope job failed, returned: 1」，所以我把它换成了 native
 " let $GTAGSLABEL = 'native-pygments'
+let $GTAGSLABEL = 'native'
 let $GTAGSCONF = '/usr/local/share/gtags/gtags.conf'
 if filereadable(expand('~/.vim/gtags.vim'))
     source ~/.vim/gtags.vim
@@ -1067,9 +1068,16 @@ call plug#end()
 **常见问题：**
 
 * `gutentags: gtags-cscope job failed, returned: 1`
-    * 原因1：cache数据有问题，删掉重建就恢复了
+    * **原因1：由于`git`仓库切换分支，可能会导致`gtagsdb`乱掉。而`gutentags`会用`gtags --incremental <gtagsdb-path>`这样的命令来更新`gtagsdb`，这样可能会导致`segment fault`，表象就是`gutentags: gtags-cscope job failed, returned: 1`**
+        * **解决方式：修改`gutentags`源码，将`--incremental`参数去掉即可。一键修改命令：`sed -ri "s|'--incremental', *||g" ~/.vim/plugged/vim-gutentags/autoload/gutentags/gtags_cscope.vim`**
 
 ### 2.9.1 gtags查询快捷键-[gutentags_plus](https://github.com/skywind3000/gutentags_plus)
+
+**没有该插件时，我们一般按照如下方式使用`gtags`**
+
+1. **`set cscopeprg='gtags-cscope'`：让`cscope`命令指向`gtags-cscope`**
+1. **`cscope add <gtags-path>/GTAGS`：添加`gtagsdb`到`cscope`中**
+1. **`cscope find s <symbol>`：开始符号索引**
 
 该插件提供一个命令`GscopeFind`，用于`gtags`查询
 
@@ -1967,8 +1975,9 @@ set tags=./.tags;,.tags
 set tags+=~/.vim/systags
 
 " gtags的配置
-" 设置后会出现「gutentags: gtags-cscope job failed, returned: 1」，所以我把它注释了
+" native-pygments 设置后会出现「gutentags: gtags-cscope job failed, returned: 1」，所以我把它换成了 native
 " let $GTAGSLABEL = 'native-pygments'
+let $GTAGSLABEL = 'native'
 let $GTAGSCONF = '/usr/local/share/gtags/gtags.conf'
 if filereadable(expand('~/.vim/gtags.vim'))
     source ~/.vim/gtags.vim
