@@ -2346,6 +2346,7 @@ yum install -y hping3
 * `ssh student@127.0.0.1`：账号为该IP的主机上的账号，而非本地账号哦
 * `ssh student@127.0.0.1 find / &> ~/find1.log`
 * `ssh -f student@127.0.0.1 find / &> ~/find1.log`：会立即注销127.0.0.1，find在远程服务器运行
+* `ssh demo@1.2.3.4 '/bin/bash -l -c "xxx.sh"'`：以`login shell`登录远端，并执行脚本，其中`bash`的参数`-l`就是指定以`login shell`的方式
 
 ### 6.1.1 免密登录
 

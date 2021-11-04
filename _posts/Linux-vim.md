@@ -413,6 +413,7 @@ set autoindent
 
 * **`set <config>?`：可以查看`<config>`的值**
 * **`:echo <variable>`：可以查看`<variable>`的值**
+* **`:echom xxx`：信息会保留在message中，可以通过`:message`查看**
 * `[Shift] + 3`：以暗黄色为底色显示所有指定的字符串
 * **`[Shift] + >`：向右移动**
 * **`[Shift] + <`：向左移动**
@@ -717,6 +718,25 @@ sudo make install
 cp -vrf /usr/local/share/gtags/gtags.vim /usr/local/share/gtags/gtags-cscope.vim ~/.vim
 ```
 
+**如何使用命令行工具：**
+
+```sh
+# 把头文件也当成源文件进行解析，否则可能识别不到头文件中的符号
+export GTAGSFORCECPP=1
+
+# 在当前目录构建数据库，会在当前目录生成如下三个文件
+# 1. GTAGS: 存储符号定义的数据库
+# 2. GRTAGS: 存储符号引用的数据库
+# 3. GPATH: 存储路径的数据库
+gtags
+
+# 查找定义
+global -d <symbol>
+
+# 查找引用
+global -r <symbol>
+```
+
 **在`~/.vimrc`中增加如下配置**
 
 1. 第一个`GTAGSLABEL`告诉`gtags`默认`C/C++/Java`等六种原生支持的代码直接使用`gtags`本地分析器，而其他语言使用`pygments`模块
@@ -734,6 +754,12 @@ if filereadable(expand('~/.vim/gtags-cscope.vim'))
     source ~/.vim/gtags-cscope.vim
 endif
 ```
+
+**`FAQ`：**
+
+1. `global -d`找不到类定义，可能原因包括
+    1. **final修饰的类，`gtags`找不到其定义，坑爹的bug，害我折腾了很久**
+1. `global -d`无法查找成员变量的定义
 
 ### 2.2.8 语义索引-ccls
 

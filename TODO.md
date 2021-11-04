@@ -27,6 +27,7 @@
     * 相关工具
         * sqlancher
         * sqlmith
+        * https://godbolt.org/
     * doc
         * [sqlite-window-function](https://www.sqlite.org/windowfunctions.html)
         * [ck-blog](https://clickhouse.com/docs/zh/whats-new/changelog/)
@@ -46,6 +47,15 @@
     * 如何安装boost？ `yum install -y boost-devel`
     * 性能优化
         * ck /AggregateFunctions/IAggregateFunction.h
+1. vim
+    * gtags
+        * [GNU Global manual](https://phenix3443.github.io/notebook/emacs/modes/gnu-global-manual.html)
+    * cscope
+        * [The Vim/Cscope tutorial](http://cscope.sourceforge.net/cscope_vim_tutorial.html)
+        * `cscope -Rbkq`
+    * ccls
+        * [ccls-project-setup](https://github.com/MaskRay/ccls/wiki/Project-Setup)
+    * filereadable 无法识别 ~  expand
 1. 汇编
     * avx2指令
 1. vim
