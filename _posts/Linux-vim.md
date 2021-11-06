@@ -171,6 +171,7 @@ categories:
 * **`dG`：删除光标所在到最后一行的所有数据（包括当前这一行）**
 * **`d$`：删除光标所在的字符到该行的最后一个字符（包括光标所指向的字符）**
 * **`d0（这是零）`：删除从光标所在的字符到该行最前面一个字符（不包括光标所指向的字符）**
+* **`D`：同`d$`**
 * `J`：将光标所在行与下一行的数据结合成同一行
 * `cc`：改写当前行（删除当前行并进入插入模式），同`S`
 * `cw`：改写光标开始处的当前单词（若光标在单词中间，不会修改整个单词）
@@ -684,7 +685,7 @@ set tags+=~/.vim/systags
 
 ### 2.2.7 符号索引-[cscope](http://cscope.sourceforge.net/)
 
-**相比于`ctags`，`cscope`支持更多功能，包括查找定义、查找引用等等**
+**相比于`ctags`，`cscope`支持更多功能，包括查找定义、查找引用等等。但是该项目最近一次更新是2012年，因此不推荐使用。推荐使用`gtags`**
 
 **如何安装：**
 
@@ -702,12 +703,58 @@ sudo make install
 
 ```sh
 # 创建索引，该命令会在当前目录生成一个名为cscope.out索引文件
-# -f：可以指定索引文件的路径
+# -R: 在生成索引文件时，搜索子目录树中的代码
+# -b: 只生成索引文件，不进入cscope的界面
+# -k: 在生成索引文件时，不搜索/usr/include目录
+# -q: 生成cscope.in.out和cscope.po.out文件，加快cscope的索引速度
+# -i: 指定namefile
+# -f: 可以指定索引文件的路径
 cscope -Rbkq
 
 # 查找符号，执行下面的命令可以进入一个交互式的查询界面
 cscope
 ```
+
+**如何在`vim`中使用**
+
+```vim
+" 添加数据库
+:cscope add cscope.out
+
+" 查找定义
+:cscope find g <symbol>
+
+" 查找引用
+:cscope find s <symbol>
+
+" 启用 quickfix
+" +: 将结果追加到 quickfix 中
+" -: 清除 quickfix 中的内容，并将结果添加到 quickfix 中
+:set cscopequickfix=s-,c-,d-,i-,t-,e-,a-
+
+" 其他配置方式以及使用方式参考help
+:help cscope
+```
+
+**配置快捷键（`~/.vimrc`）：**
+
+```vim
+" 启用 quickfix
+set cscopequickfix=s-,c-,d-,i-,t-,e-,a-
+
+" 最后面的 :copen<cr> 表示打开 quickfix
+noremap <leader>sd :cscope find g <c-r><c-w><cr>:copen<cr>
+noremap <leader>sr :cscope find s <c-r><c-w><cr>:copen<cr>
+noremap <leader>sa :cscope find a <c-r><c-w><cr>:copen<cr>
+noremap <leader>st :cscope find t <c-r><c-w><cr>:copen<cr>
+noremap <leader>se :cscope find e <c-r><c-w><cr>:copen<cr>
+noremap <leader>sf :cscope find f <c-r>=expand("<cfile>")<cr><cr>:copen<cr>
+noremap <leader>si :cscope find i <c-r>=expand("<cfile>")<cr><cr>:copen<cr>
+```
+
+**注意事项：**
+
+* 尽量在源码目录创建数据库，否则cscope默认会扫描所有文件，效率很低
 
 ### 2.2.8 符号索引-[gtags](https://www.gnu.org/software/global/global.html)
 
