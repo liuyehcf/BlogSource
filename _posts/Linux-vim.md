@@ -1198,8 +1198,6 @@ autocmd FileType qf nnoremap <buffer> p :PreviewQuickfix<cr>
 autocmd FileType qf nnoremap <buffer> P :PreviewClose<cr>
 autocmd FileType qf nnoremap <buffer> d :PreviewScroll +1<cr>
 autocmd FileType qf nnoremap <buffer> u :PreviewScroll -1<cr>
-autocmd FileType qf nnoremap <buffer> <c-j> :cn<cr>
-autocmd FileType qf nnoremap <buffer> <c-k> :cp<cr>
 
 call plug#end()
 ```
@@ -1844,8 +1842,6 @@ autocmd FileType qf nnoremap <buffer> p :PreviewQuickfix<cr>
 autocmd FileType qf nnoremap <buffer> P :PreviewClose<cr>
 autocmd FileType qf nnoremap <buffer> d :PreviewScroll +1<cr>
 autocmd FileType qf nnoremap <buffer> u :PreviewScroll -1<cr>
-autocmd FileType qf nnoremap <buffer> <c-j> :cn<cr>
-autocmd FileType qf nnoremap <buffer> <c-k> :cp<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
