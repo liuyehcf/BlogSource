@@ -994,9 +994,9 @@ call plug#begin()
 Plug 'scrooloose/nerdtree'
 
 " 配置 F2 打开文件管理器 
-nmap <F2> :NERDTreeToggle<CR>
+nmap <F2> :NERDTreeToggle<cr>
 " 配置 F3 定位当前文件
-nmap <F3> :NERDTreeFind<CR>
+nmap <F3> :NERDTreeFind<cr>
 
 call plug#end()
 ```
@@ -1156,13 +1156,13 @@ let g:gutentags_plus_switch = 1
 let g:gutentags_plus_nomap = 1
 
 " 定义新的映射
-noremap <leader>gd :GscopeFind g <C-R><C-W><cr>
-noremap <leader>gr :GscopeFind s <C-R><C-W><cr>
-noremap <leader>ga :GscopeFind a <C-R><C-W><cr>
-noremap <leader>gt :GscopeFind t <C-R><C-W><cr>
-noremap <leader>ge :GscopeFind e <C-R><C-W><cr>
-noremap <leader>gf :GscopeFind f <C-R>=expand("<cfile>")<cr><cr>
-noremap <leader>gi :GscopeFind i <C-R>=expand("<cfile>")<cr><cr>
+noremap <leader>gd :GscopeFind g <c-r><c-w><cr>
+noremap <leader>gr :GscopeFind s <c-r><c-w><cr>
+noremap <leader>ga :GscopeFind a <c-r><c-w><cr>
+noremap <leader>gt :GscopeFind t <c-r><c-w><cr>
+noremap <leader>ge :GscopeFind e <c-r><c-w><cr>
+noremap <leader>gf :GscopeFind f <c-r>=expand("<cfile>")<cr><cr>
+noremap <leader>gi :GscopeFind i <c-r>=expand("<cfile>")<cr><cr>
 
 call plug#end()
 ```
@@ -1196,8 +1196,10 @@ Plug 'skywind3000/vim-preview'
 
 autocmd FileType qf nnoremap <buffer> p :PreviewQuickfix<cr>
 autocmd FileType qf nnoremap <buffer> P :PreviewClose<cr>
-noremap <leader>wd :PreviewScroll +1<cr>
-noremap <leader>wu :PreviewScroll -1<cr>
+autocmd FileType qf nnoremap <buffer> d :PreviewScroll +1<cr>
+autocmd FileType qf nnoremap <buffer> u :PreviewScroll -1<cr>
+autocmd FileType qf nnoremap <buffer> <c-j> :cn<cr>
+autocmd FileType qf nnoremap <buffer> <c-k> :cp<cr>
 
 call plug#end()
 ```
@@ -1342,7 +1344,7 @@ let g:ycm_complete_in_strings=1
 let g:ycm_key_invoke_completion = '<c-z>'
 set completeopt=menu,menuone
 
-noremap <c-z> <NOP>
+noremap <c-z> <nop>
 
 let g:ycm_semantic_triggers =  {
            \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
@@ -1448,8 +1450,8 @@ let g:airline#extensions#ale#enabled = 1
 " 配置快捷键用于在warnings/errors之间跳转
 " [Ctrl] + j: 下一个warning/error
 " [Ctrl] + k: 上一个warning/error
-nmap <silent> <C-k> <Plug>(ale_previous_wrap)
-nmap <silent> <C-j> <Plug>(ale_next_wrap)
+nmap <silent> <c-k> <plug>(ale_previous_wrap)
+nmap <silent> <c-j> <plug>(ale_next_wrap)
 
 call plug#end()
 ```
@@ -1750,9 +1752,9 @@ let g:indentLine_char = '|'
 Plug 'scrooloose/nerdtree'
 
 " 配置 F2 打开文件管理器 
-nmap <F2> :NERDTreeToggle<CR>
+nmap <F2> :NERDTreeToggle<cr>
 " 配置 F3 定位当前文件
-nmap <F3> :NERDTreeFind<CR>
+nmap <F3> :NERDTreeFind<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1826,13 +1828,13 @@ let g:gutentags_plus_switch = 1
 let g:gutentags_plus_nomap = 1
 
 " 定义新的映射
-noremap <leader>gd :GscopeFind g <C-R><C-W><cr>
-noremap <leader>gr :GscopeFind s <C-R><C-W><cr>
-noremap <leader>ga :GscopeFind a <C-R><C-W><cr>
-noremap <leader>gt :GscopeFind t <C-R><C-W><cr>
-noremap <leader>ge :GscopeFind e <C-R><C-W><cr>
-noremap <leader>gf :GscopeFind f <C-R>=expand("<cfile>")<cr><cr>
-noremap <leader>gi :GscopeFind i <C-R>=expand("<cfile>")<cr><cr>
+noremap <leader>gd :GscopeFind g <c-r><c-w><cr>
+noremap <leader>gr :GscopeFind s <c-r><c-w><cr>
+noremap <leader>ga :GscopeFind a <c-r><c-w><cr>
+noremap <leader>gt :GscopeFind t <c-r><c-w><cr>
+noremap <leader>ge :GscopeFind e <c-r><c-w><cr>
+noremap <leader>gf :GscopeFind f <c-r>=expand("<cfile>")<cr><cr>
+noremap <leader>gi :GscopeFind i <c-r>=expand("<cfile>")<cr><cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1840,8 +1842,10 @@ Plug 'skywind3000/vim-preview'
 
 autocmd FileType qf nnoremap <buffer> p :PreviewQuickfix<cr>
 autocmd FileType qf nnoremap <buffer> P :PreviewClose<cr>
-noremap <leader>wd :PreviewScroll +1<cr>
-noremap <leader>wu :PreviewScroll -1<cr>
+autocmd FileType qf nnoremap <buffer> d :PreviewScroll +1<cr>
+autocmd FileType qf nnoremap <buffer> u :PreviewScroll -1<cr>
+autocmd FileType qf nnoremap <buffer> <c-j> :cn<cr>
+autocmd FileType qf nnoremap <buffer> <c-k> :cp<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1882,7 +1886,7 @@ let g:ycm_complete_in_strings=1
 let g:ycm_key_invoke_completion = '<c-z>'
 set completeopt=menu,menuone
 
-noremap <c-z> <NOP>
+noremap <c-z> <nop>
 
 let g:ycm_semantic_triggers =  {
            \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
@@ -1942,8 +1946,8 @@ let g:airline#extensions#ale#enabled = 1
 " 配置快捷键用于在warnings/errors之间跳转
 " [Ctrl] + j: 下一个warning/error
 " [Ctrl] + k: 上一个warning/error
-nmap <silent> <C-k> <Plug>(ale_previous_wrap)
-nmap <silent> <C-j> <Plug>(ale_next_wrap)
+nmap <silent> <c-k> <plug>(ale_previous_wrap)
+nmap <silent> <c-j> <plug>(ale_next_wrap)
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2051,9 +2055,9 @@ set foldmethod=indent
 set foldlevel=0
 
 " 回车时，默认取消搜索高亮
-nnoremap <silent> <CR> :nohlsearch<CR><CR>
+nnoremap <silent> <cr> :nohlsearch<cr><cr>
 " [Ctrl] + q 关闭 quickfix
-nnoremap <c-q> :cclose<CR>
+nnoremap <c-q> :cclose<cr>
 
 " 其他配置
 set number
