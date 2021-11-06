@@ -214,14 +214,34 @@ defaults delete com.apple.desktopservices DSDontWriteNetworkStores
 
 ## 3.1 VirtualBox(rc=-1908)
 
-**解决方式如下：**
+**解决方式如下（请挨个尝试）：**
 
+**方法1：**
+
+```sh
+sudo "/Library/Application Support/VirtualBox/LaunchDaemons/VirtualBoxStartup.sh" restart
+```
+
+**方法2：**
+
+```sh
+sudo kextload -b org.virtualbox.kext.VBoxDrv
+sudo kextload -b org.virtualbox.kext.VBoxNetFlt
+sudo kextload -b org.virtualbox.kext.VBoxNetAdp
+sudo kextload -b org.virtualbox.kext.VBoxUSB
+```
+
+**方法3：**
+
+```
 1. 进入恢复模式：重启，然后按住`⌘ + R`
-1. 出现界面之后，上面菜单栏->实用工具->终端
-1. 在terminal中输入`spctl kext-consent add VB5E2TV963`，其中`VB5E2TV963`是`Oracle`的`Developer ID`
-1. 重启
-1. 在系统偏好设置->安全与隐私->允许Virtual Box
-1. 重启
+2. 恢复模式中，上面菜单栏->实用工具->启动安全性实用工具，选择无安全性
+3. 恢复模式中，上面菜单栏->实用工具->终端，在terminal中输入`csrutil disable`
+4. 恢复模式中，上面菜单栏->实用工具->终端，在terminal中输入`spctl kext-consent add VB5E2TV963`，其中`VB5E2TV963`是`Oracle`的`Developer ID`
+5. 重启
+6. 在系统偏好设置->安全与隐私->允许Virtual Box
+7. 重启
+```
 
 ## 3.2 您没有权限来打开应用程序
 

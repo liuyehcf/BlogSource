@@ -75,6 +75,7 @@ categories:
 * `[n]G`：n为数字，移动到这个文件的第n行
 * **`gg`：移动到这个文件的第一行，相当于1G**
 * **`[n][Enter]`：光标向下移动n行**
+* **`%`：跳转到`{} () []`的匹配`**
 
 ## 1.3 文件跳转
 
@@ -255,7 +256,8 @@ categories:
 
 ## 1.11 文件操作
 
-* **`:w`：将编辑的数据写入硬盘文件中**
+* **`:w`：保存文件**
+* **`:wa`：保存所有文件**
 * **`:w!`：若文件属性为只读时，强制写入该文件，不过到底能不能写入，还是跟你对该文件的文件属性权限有关**
 * **`:q`：离开**
 * **`:q!`：若曾修改过文件，又不想存储，使用"!"为强制离开不保存的意思**
@@ -680,7 +682,34 @@ set tags=./.tags;,.tags
 set tags+=~/.vim/systags
 ```
 
-### 2.2.7 进阶符号索引-[gtags](https://www.gnu.org/software/global/global.html)
+### 2.2.7 符号索引-[cscope](http://cscope.sourceforge.net/)
+
+**相比于`ctags`，`cscope`支持更多功能，包括查找定义、查找引用等等**
+
+**如何安装：**
+
+```sh
+wget -O cscope-15.9.tar.gz 'https://sourceforge.net/projects/cscope/files/latest/download' --no-check-certificate
+tar -zxvf cscope-15.9.tar.gz
+cd cscope-15.9
+
+./configure
+make
+sudo make install
+```
+
+**如何使用命令行工具：**
+
+```sh
+# 创建索引，该命令会在当前目录生成一个名为cscope.out索引文件
+# -f：可以指定索引文件的路径
+cscope -Rbkq
+
+# 查找符号，执行下面的命令可以进入一个交互式的查询界面
+cscope
+```
+
+### 2.2.8 符号索引-[gtags](https://www.gnu.org/software/global/global.html)
 
 **`gtags`的全称是`GNU Global source code tagging system`**
 
@@ -763,7 +792,7 @@ endif
     1. **final修饰的类，`gtags`找不到其定义，坑爹的bug，害我折腾了很久**
 1. `global -d`无法查找成员变量的定义
 
-### 2.2.8 语义索引-ccls
+### 2.2.9 语义索引-ccls
 
 **`ccls`是`Language Server Protocol（LSP）`的一种实现，主要用于`C/C++/Objective-C`等语言**
 
@@ -801,7 +830,7 @@ cmake --build Release --target install
 1. 配置`LSP-client`插件，我用的是`LanguageClient-neovim`
 1. vim打开工程，便开始自动创建索引
 
-### 2.2.9 安装vim-plug
+### 2.2.10 安装vim-plug
 
 按照[vim-plug](https://github.com/junegunn/vim-plug)官网文档，通过一个命令直接安装即可
 
@@ -1127,16 +1156,13 @@ let g:gutentags_plus_switch = 1
 let g:gutentags_plus_nomap = 1
 
 " 定义新的映射
-noremap <leader>gs :GscopeFind s <C-R><C-W><cr>
-noremap <leader>gg :GscopeFind g <C-R><C-W><cr>
-noremap <leader>gc :GscopeFind c <C-R><C-W><cr>
+noremap <leader>gd :GscopeFind g <C-R><C-W><cr>
+noremap <leader>gr :GscopeFind s <C-R><C-W><cr>
+noremap <leader>ga :GscopeFind a <C-R><C-W><cr>
 noremap <leader>gt :GscopeFind t <C-R><C-W><cr>
 noremap <leader>ge :GscopeFind e <C-R><C-W><cr>
 noremap <leader>gf :GscopeFind f <C-R>=expand("<cfile>")<cr><cr>
 noremap <leader>gi :GscopeFind i <C-R>=expand("<cfile>")<cr><cr>
-noremap <leader>gd :GscopeFind d <C-R><C-W><cr>
-noremap <leader>ga :GscopeFind a <C-R><C-W><cr>
-noremap <leader>gz :GscopeFind z <C-R><C-W><cr>
 
 call plug#end()
 ```
@@ -1145,16 +1171,13 @@ call plug#end()
 
 | keymap | desc |
 |--------|------|
-| **`\gs`** | **查找光标下符号的引用** |
-| **`\gg`** | **查找光标下符号的定义** |
-| `\gd` | 查找被当前函数调用的函数 |
-| **`\gc`** | **查找调用当前函数的函数** |
+| **`\gd`** | **查找光标下符号的定义** |
+| **`\gr`** | **查找光标下符号的引用** |
+| **`\ga`** | **查找光标下符号的赋值处** |
 | `\gt` | 查找光标下的字符串 |
 | `\ge` | 以`egrep pattern`查找光标下的字符串 |
 | `\gf` | 查找光标下的文件名 |
 | **`\gi`** | **查找引用光标下头文件的文件** |
-| **`\ga`** | **查找光标下符号的赋值处** |
-| `\gz` | 在`ctags`中查找光标下的符号 |
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
@@ -1335,6 +1358,8 @@ call plug#end()
 
 * **默认情况下，只能进行通用补全，比如将文件中已经出现的字符加入到字典中，这样如果编写同样的字符串的话，就能够提示补全了**
 * **如果要进行语义补全，可以结合`compile_commands.json`，通过`cmake`等构建工具生成`compile_commands.json`，并将该文件至于工程根目录下。再用vim打开工程便可进行语义补全**
+* `[Ctrl] + n`：下一个条目
+* `[Ctrl] + p`：上一个条目
 
 ## 2.12 编译运行-[AsyncRun](https://github.com/skywind3000/asyncrun.vim)
 
@@ -1801,16 +1826,13 @@ let g:gutentags_plus_switch = 1
 let g:gutentags_plus_nomap = 1
 
 " 定义新的映射
-noremap <leader>gs :GscopeFind s <C-R><C-W><cr>
-noremap <leader>gg :GscopeFind g <C-R><C-W><cr>
-noremap <leader>gc :GscopeFind c <C-R><C-W><cr>
+noremap <leader>gd :GscopeFind g <C-R><C-W><cr>
+noremap <leader>gr :GscopeFind s <C-R><C-W><cr>
+noremap <leader>ga :GscopeFind a <C-R><C-W><cr>
 noremap <leader>gt :GscopeFind t <C-R><C-W><cr>
 noremap <leader>ge :GscopeFind e <C-R><C-W><cr>
 noremap <leader>gf :GscopeFind f <C-R>=expand("<cfile>")<cr><cr>
 noremap <leader>gi :GscopeFind i <C-R>=expand("<cfile>")<cr><cr>
-noremap <leader>gd :GscopeFind d <C-R><C-W><cr>
-noremap <leader>ga :GscopeFind a <C-R><C-W><cr>
-noremap <leader>gz :GscopeFind z <C-R><C-W><cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2074,3 +2096,6 @@ endif
 * [解決 ale 的 gcc 不顯示錯誤 | 把 gcc 輸出改成英文](https://aben20807.blogspot.com/2018/03/1070302-ale-gcc-gcc.html)
 * [Mapping keys in Vim - Tutorial](https://vim.fandom.com/wiki/Mapping_keys_in_Vim_-_Tutorial_(Part_2))
 * [centos7 安装GNU GLOBAL](http://www.cghlife.com/tool/install-gnu-global-on-centos7.html)
+* [The Vim/Cscope tutorial](http://cscope.sourceforge.net/cscope_vim_tutorial.html)
+* [GNU Global manual](https://phenix3443.github.io/notebook/emacs/modes/gnu-global-manual.html)
+* [ccls-project-setup](https://github.com/MaskRay/ccls/wiki/Project-Setup)

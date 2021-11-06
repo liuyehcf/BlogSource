@@ -48,18 +48,11 @@
     * 性能优化
         * ck /AggregateFunctions/IAggregateFunction.h
 1. vim
-    * gtags
-        * [GNU Global manual](https://phenix3443.github.io/notebook/emacs/modes/gnu-global-manual.html)
-    * cscope
-        * [The Vim/Cscope tutorial](http://cscope.sourceforge.net/cscope_vim_tutorial.html)
-        * `cscope -Rbkq`
-    * ccls
-        * [ccls-project-setup](https://github.com/MaskRay/ccls/wiki/Project-Setup)
     * filereadable 无法识别 ~  expand
+    * vimscript https://zhuanlan.zhihu.com/p/37352209
+    * ex模式
 1. 汇编
     * avx2指令
-1. vim
-    * ex模式
 1. 其他
     * [macOS开启HiDPI](https://zhuanlan.zhihu.com/p/227788155)
     * 伙伴算法
