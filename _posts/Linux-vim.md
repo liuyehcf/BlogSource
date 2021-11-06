@@ -680,7 +680,7 @@ set tags=./.tags;,.tags
 set tags+=~/.vim/systags
 ```
 
-### 2.2.7 进阶符号索引-gtags
+### 2.2.7 进阶符号索引-[gtags](https://www.gnu.org/software/global/global.html)
 
 **`gtags`的全称是`GNU Global source code tagging system`**
 
@@ -697,13 +697,15 @@ yum install -y devtoolset-7-toolchain
 scl enable devtoolset-7 bash
 ```
 
+**[gtags下载地址](https://ftp.gnu.org/pub/gnu/global/)**
+
 ```sh
 # 安装相关软件
 yum install -y ncurses-devel gperf bison flex libtool libtool-ltdl-devel texinfo
 
-wget http://tamacom.com/global/global-6.6.4.tar.gz --no-check-certificate
-tar -zxvf global-6.6.4.tar.gz
-cd global-6.6.4
+wget https://ftp.gnu.org/pub/gnu/global/global-6.6.7.tar.gz --no-check-certificate
+tar -zxvf global-6.6.7.tar.gz
+cd global-6.6.7
 
 # 检测脚本，缺什么就装什么
 sh reconf.sh
