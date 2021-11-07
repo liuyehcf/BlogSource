@@ -335,7 +335,35 @@ categories:
 * `:cnext`：跳到`quickfix`中下一个错误信息
 * `:cprev`：跳到`quickfix`中上一个错误信息
 
-## 1.14 vim常用配置项
+## 1.14 buffer/window/tab
+
+### 1.14.1 buffer
+
+**每个打开的文件都对应一个buffer。buffer可以显示或者不显示**
+
+* **`:buffers`：列出所有buffer**
+* **`:buffer [n]`：显示指定buffer**
+* **`:bnext`：显示下一个buffer**
+* **`:bprev`：显示上一个buffer**
+* **`:edit [filename]`：将一个文件放入一个新的buffer中**
+* **`:bdelete [n]`：删除指定buffer（不指定时，表示当前buffer**
+
+### 1.14.2 window
+
+**window就是我们看到的并且可以操作的那个界面。一个window可以包含一个或多个buffer，总是会显示其中一个buffer（文件或者空）。允许同时开启多个窗口**
+
+窗口相关的命令，这不再赘述，参考[多窗口功能](#1.12-多窗口功能)
+
+### 1.14.3 tab
+
+**tab可以包含一个或多个window。如果存在多个tab，那么会在最上方显示这些tab，就像一个现代的编辑器一样（vscode）**
+
+* **`:tabnew [filename]`：在一个新的tab中打开文件**
+* **`gt`/`:tabnext`：下一个tab**
+* **`gT`/`:tabprev`：上一个tab**
+* **`:tab sball`：将所有buffer**
+
+## 1.15 vim常用配置项
 
 ```
 :set nocompatible   设置不兼容原始 vi 模式（必须设置在最开头）
@@ -369,7 +397,7 @@ categories:
 :syntax off         禁止语法高亮
 ```
 
-## 1.15 vim配置
+## 1.16 vim配置
 
 `vim`会主动将你曾经做过的行为记录下来，好让你下次可以轻松作业，记录操作的文件就是`~/.viminfo`
 
@@ -377,7 +405,7 @@ categories:
 
 **在运行`vim`的时候，如果修改了`~/.vimrc`文件的内容，可以通过执行`:so %`来重新加载`~/.vimrc`，立即生效配置**
 
-### 1.15.1 修改tab的行为
+### 1.16.1 修改tab的行为
 
 修改`~/.vimrc`，追加如下内容
 
@@ -396,7 +424,7 @@ set expandtab
 set autoindent
 ```
 
-### 1.15.2 键位映射
+### 1.16.2 键位映射
 
 1. **`map`：递归映射**
 1. **`noremap`：非递归映射**
@@ -417,7 +445,7 @@ set autoindent
 * **对于mac上的`[Option]`，并没有`<p-key>`这样的表示方法。而是用`[Option]`加另一个字母实际输出的结果作为映射键值，例如**
     * `[Option] + a`：`å`
 
-## 1.16 其他
+## 1.17 其他
 
 * **`set <config>?`：可以查看`<config>`的值**
 * **`:echo <variable>`：可以查看`<variable>`的值**
@@ -435,9 +463,9 @@ set autoindent
     * **输入`:x`关闭历史编辑并放弃编辑结果回到编辑缓冲区**
     * 可以在空命令上回车相当于退出历史编辑区回到编辑缓冲区
 
-## 1.17 Tips
+## 1.18 Tips
 
-### 1.17.1 多行更新
+### 1.18.1 多行更新
 
 **示例：多行同时插入相同内容**
 
@@ -452,7 +480,7 @@ set autoindent
 1. 选中需要同时修改的列
 1. 按`d`即可同时删除
 
-### 1.17.2 中文乱码
+### 1.18.2 中文乱码
 
 **编辑`/etc/vimrc`，追加如下内容**
 
@@ -462,7 +490,7 @@ set termencoding=utf-8
 set encoding=utf-8
 ```
 
-### 1.17.3 为每个项目配置vim
+### 1.18.3 为每个项目配置vim
 
 同一份`~./vimrc`无法适用于所有的项目，不同的项目可能需要一些特化的配置项，可以采用如下的设置方式
 
@@ -2151,3 +2179,4 @@ endif
 * [The Vim/Cscope tutorial](http://cscope.sourceforge.net/cscope_vim_tutorial.html)
 * [GNU Global manual](https://phenix3443.github.io/notebook/emacs/modes/gnu-global-manual.html)
 * [ccls-project-setup](https://github.com/MaskRay/ccls/wiki/Project-Setup)
+* [Vim Buffers, Windows and Tabs — an overview](https://medium.com/@paulodiovani/vim-buffers-windows-and-tabs-an-overview-8e2a57c57afa)
