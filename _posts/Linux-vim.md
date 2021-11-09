@@ -708,8 +708,8 @@ ctags --c++-kinds=+px --fields=+ialS --extras=+q -R -f ~/.vim/systags \
 
 ```vim
 " 将 :tn 和 :tp 分别映射到 [Option] + j 和 [Option] + k，即「∆」和「˚」
-noremap ∆ :tn<cr>
-noremap ˚ :tp<cr>
+nnoremap ∆ :tn<cr>
+nnoremap ˚ :tp<cr>
 " tags搜索模式
 set tags=./.tags;,.tags
 " 系统库的ctags
@@ -776,13 +776,13 @@ cscope
 set cscopequickfix=s-,c-,d-,i-,t-,e-,a-
 
 " 最后面的 :copen<cr> 表示打开 quickfix
-noremap <leader>sd :cscope find g <c-r><c-w><cr>:copen<cr>
-noremap <leader>sr :cscope find s <c-r><c-w><cr>:copen<cr>
-noremap <leader>sa :cscope find a <c-r><c-w><cr>:copen<cr>
-noremap <leader>st :cscope find t <c-r><c-w><cr>:copen<cr>
-noremap <leader>se :cscope find e <c-r><c-w><cr>:copen<cr>
-noremap <leader>sf :cscope find f <c-r>=expand("<cfile>")<cr><cr>:copen<cr>
-noremap <leader>si :cscope find i <c-r>=expand("<cfile>")<cr><cr>:copen<cr>
+nnoremap <leader>sd :cscope find g <c-r><c-w><cr>:copen<cr>
+nnoremap <leader>sr :cscope find s <c-r><c-w><cr>:copen<cr>
+nnoremap <leader>sa :cscope find a <c-r><c-w><cr>:copen<cr>
+nnoremap <leader>st :cscope find t <c-r><c-w><cr>:copen<cr>
+nnoremap <leader>se :cscope find e <c-r><c-w><cr>:copen<cr>
+nnoremap <leader>sf :cscope find f <c-r>=expand("<cfile>")<cr><cr>:copen<cr>
+nnoremap <leader>si :cscope find i <c-r>=expand("<cfile>")<cr><cr>:copen<cr>
 ```
 
 **注意事项：**
@@ -1236,13 +1236,13 @@ let g:gutentags_plus_switch = 1
 let g:gutentags_plus_nomap = 1
 
 " 定义新的映射
-noremap <leader>gd :GscopeFind g <c-r><c-w><cr>
-noremap <leader>gr :GscopeFind s <c-r><c-w><cr>
-noremap <leader>ga :GscopeFind a <c-r><c-w><cr>
-noremap <leader>gt :GscopeFind t <c-r><c-w><cr>
-noremap <leader>ge :GscopeFind e <c-r><c-w><cr>
-noremap <leader>gf :GscopeFind f <c-r>=expand("<cfile>")<cr><cr>
-noremap <leader>gi :GscopeFind i <c-r>=expand("<cfile>")<cr><cr>
+nnoremap <leader>gd :GscopeFind g <c-r><c-w><cr>
+nnoremap <leader>gr :GscopeFind s <c-r><c-w><cr>
+nnoremap <leader>ga :GscopeFind a <c-r><c-w><cr>
+nnoremap <leader>gt :GscopeFind t <c-r><c-w><cr>
+nnoremap <leader>ge :GscopeFind e <c-r><c-w><cr>
+nnoremap <leader>gf :GscopeFind f <c-r>=expand("<cfile>")<cr><cr>
+nnoremap <leader>gi :GscopeFind i <c-r>=expand("<cfile>")<cr><cr>
 
 call plug#end()
 ```
@@ -1321,12 +1321,12 @@ let g:LanguageClient_serverCommands = {}
 let g:LanguageClient_serverCommands.c = ['ccls']
 let g:LanguageClient_serverCommands.cpp = ['ccls']
 
-noremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
-noremap <leader>rr :call LanguageClient#textDocument_references()<cr>
-noremap <leader>rv :call LanguageClient#textDocument_hover()<cr>
-noremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
-noremap <leader>hb :call LanguageClient#findLocations({'method':'$ccls/inheritance'})<cr>
-noremap <leader>hd :call LanguageClient#findLocations({'method':'$ccls/inheritance','derived':v:true})<cr>
+nnoremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
+nnoremap <leader>rr :call LanguageClient#textDocument_references()<cr>
+nnoremap <leader>rv :call LanguageClient#textDocument_hover()<cr>
+nnoremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
+nnoremap <leader>hb :call LanguageClient#findLocations({'method':'$ccls/inheritance'})<cr>
+nnoremap <leader>hd :call LanguageClient#findLocations({'method':'$ccls/inheritance','derived':v:true})<cr>
 
 call plug#end()
 ```
@@ -1626,9 +1626,9 @@ Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
 let g:Lf_ShortcutF = '<c-p>'
 let g:Lf_ShortcutB = '<m-n>'
 " 将 :LeaderfMru 映射到快捷键 [Ctrl] + n
-noremap <c-n> :LeaderfMru<cr>
+nnoremap <c-n> :LeaderfMru<cr>
 " 将 :LeaderfFunction! 映射到快捷键 [Option] + p，即「π」
-noremap π :LeaderfFunction!<cr>
+nnoremap π :LeaderfFunction!<cr>
 let g:Lf_StlSeparator = { 'left': '', 'right': '', 'font': '' }
 
 let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git']
@@ -1669,7 +1669,7 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
 " 将 :Rg 映射到快捷键 [Ctrl] + a
-noremap <c-a> :Rg<cr>
+nnoremap <c-a> :Rg<cr>
 
 call plug#end()
 ```
@@ -1784,8 +1784,8 @@ call plug#begin()
 
 Plug 'rhysd/vim-clang-format'
 
-" 将 :ClangFormat 映射到快捷键 [Option] + l，即「¬」
-noremap ¬ :ClangFormat<cr>
+" 将 :ClangFormat 映射到快捷键 [Ctrl] + l
+nnoremap <c-l> :ClangFormat<cr>
 
 call plug#end()
 ```
@@ -1906,13 +1906,13 @@ let g:gutentags_plus_switch = 1
 let g:gutentags_plus_nomap = 1
 
 " 定义新的映射
-noremap <leader>gd :GscopeFind g <c-r><c-w><cr>
-noremap <leader>gr :GscopeFind s <c-r><c-w><cr>
-noremap <leader>ga :GscopeFind a <c-r><c-w><cr>
-noremap <leader>gt :GscopeFind t <c-r><c-w><cr>
-noremap <leader>ge :GscopeFind e <c-r><c-w><cr>
-noremap <leader>gf :GscopeFind f <c-r>=expand("<cfile>")<cr><cr>
-noremap <leader>gi :GscopeFind i <c-r>=expand("<cfile>")<cr><cr>
+nnoremap <leader>gd :GscopeFind g <c-r><c-w><cr>
+nnoremap <leader>gr :GscopeFind s <c-r><c-w><cr>
+nnoremap <leader>ga :GscopeFind a <c-r><c-w><cr>
+nnoremap <leader>gt :GscopeFind t <c-r><c-w><cr>
+nnoremap <leader>ge :GscopeFind e <c-r><c-w><cr>
+nnoremap <leader>gf :GscopeFind f <c-r>=expand("<cfile>")<cr><cr>
+nnoremap <leader>gi :GscopeFind i <c-r>=expand("<cfile>")<cr><cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -1942,12 +1942,12 @@ let g:LanguageClient_serverCommands = {}
 let g:LanguageClient_serverCommands.c = ['ccls']
 let g:LanguageClient_serverCommands.cpp = ['ccls']
 
-noremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
-noremap <leader>rr :call LanguageClient#textDocument_references()<cr>
-noremap <leader>rv :call LanguageClient#textDocument_hover()<cr>
-noremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
-noremap <leader>hb :call LanguageClient#findLocations({'method':'$ccls/inheritance'})<cr>
-noremap <leader>hd :call LanguageClient#findLocations({'method':'$ccls/inheritance','derived':v:true})<cr>
+nnoremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
+nnoremap <leader>rr :call LanguageClient#textDocument_references()<cr>
+nnoremap <leader>rv :call LanguageClient#textDocument_hover()<cr>
+nnoremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
+nnoremap <leader>hb :call LanguageClient#findLocations({'method':'$ccls/inheritance'})<cr>
+nnoremap <leader>hd :call LanguageClient#findLocations({'method':'$ccls/inheritance','derived':v:true})<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2042,9 +2042,9 @@ Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
 let g:Lf_ShortcutF = '<c-p>'
 let g:Lf_ShortcutB = '<m-n>'
 " 将 :LeaderfMru 映射到快捷键 [Ctrl] + n
-noremap <c-n> :LeaderfMru<cr>
+nnoremap <c-n> :LeaderfMru<cr>
 " 将 :LeaderfFunction! 映射到快捷键 [Option] + p，即「π」
-noremap π :LeaderfFunction!<cr>
+nnoremap π :LeaderfFunction!<cr>
 let g:Lf_StlSeparator = { 'left': '', 'right': '', 'font': '' }
 
 let g:Lf_RootMarkers = ['.project', '.root', '.svn', '.git']
@@ -2062,7 +2062,7 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
 " 将 :Rg 映射到快捷键 [Ctrl] + a
-noremap <c-a> :Rg<cr>
+nnoremap <c-a> :Rg<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2090,15 +2090,15 @@ let g:NERDToggleCheckAllLines = 1
 
 Plug 'rhysd/vim-clang-format'
 
-" 将 :ClangFormat 映射到快捷键 [Option] + l，即「¬」
-noremap ¬ :ClangFormat<cr>
+" 将 :ClangFormat 映射到快捷键 [Ctrl] + l
+nnoremap <c-l> :ClangFormat<cr>
 
 call plug#end()
 
 " ctags的配置
 " 将 :tn 和 :tp 分别映射到 [Option] + j 和 [Option] + k，即「∆」和「˚」
-noremap ∆ :tn<cr>
-noremap ˚ :tp<cr>
+nnoremap ∆ :tn<cr>
+nnoremap ˚ :tp<cr>
 " tags搜索模式
 set tags=./.tags;,.tags
 " 系统库的ctags
@@ -2119,8 +2119,8 @@ endif
 " 搜索和替换的快捷键配置
 " 搜索和替换分别映射到 [Option] + f 和 [Option] + r，即「ƒ」和「®」
 " 其中，<c-r><c-w> 表示 [Ctrl] + r 以及 [Ctrl] + w，用于将光标所在的单词填入搜索/替换项中
-noremap ƒ :/<c-r><c-w>
-noremap ® :%s/<c-r><c-w>
+nnoremap ƒ :/<c-r><c-w>
+nnoremap ® :%s/<c-r><c-w>
 
 " 退格失效的配置
 set backspace=indent,eol,start
@@ -2129,6 +2129,10 @@ set backspace=indent,eol,start
 set nofoldenable
 set foldmethod=indent
 set foldlevel=0
+
+" tab 切换
+nnoremap ¬ :tabnext<cr>
+nnoremap ˙ :tabprev<cr>
 
 " 回车时，默认取消搜索高亮
 nnoremap <silent> <cr> :nohlsearch<cr><cr>
