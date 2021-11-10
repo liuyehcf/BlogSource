@@ -13,17 +13,17 @@ categories:
 
 <!--more-->
 
-# 1 vim的使用
+# 1 基本概念
 
 ## 1.1 模式
 
-基本上`vim`分为三种模式：**一般模式、编辑模式与命令模式**
+基本上vim分为三种模式：**一般模式、编辑模式与命令模式**
 
 一般模式与编辑模式以及命令行模式可以相互切换，但是编辑模式与命令行模式之间不可相互切换
 
 ### 1.1.1 一般模式
 
-以vi打开一个文件就进入一般模式了（这是默认模式）
+以vim打开一个文件就进入一般模式了（这是默认模式）
 
 在这个模式中，你可以使用上下左右按键来移动光标，可以删除字符或删除整行，也可以复制粘贴你的文件数据
 
@@ -31,13 +31,41 @@ categories:
 
 在一般模式中，可以进行删除，复制，粘贴等操作，但是却无法编辑文件内容。要等到你按下`i(I),o(O),a(A),r(R)`等任何一个字母后才会进入编辑模式
 
-如果要回到一般模式，必须按下Esc这个按键即可退出编辑器
+如果要回到一般模式，必须按下`Esc`这个按键即可退出编辑器
 
 ### 1.1.3 命令行模式
 
-在一般模式中，输入`:`、`/`、`?`这三个钟的任何一个按钮，就可以将光标移动到最下面一行，在这个模式中，可以提供你查找数据的操作，而读取、保存、大量替换字符、离开`vim`、显示行号等操作则是在此模式中完成的
+在一般模式中，输入`:`、`/`、`?`这三个钟的任何一个按钮，就可以将光标移动到最下面一行，在这个模式中，可以提供你查找数据的操作，而读取、保存、大量替换字符、离开vim、显示行号等操作则是在此模式中完成的
 
-## 1.2 光标移动
+## 1.2 buffer
+
+**每个打开的文件都对应一个buffer。buffer可以显示或者不显示**
+
+## 1.3 window
+
+**window就是我们看到的并且可以操作的那个界面。一个window可以包含一个或多个buffer，总是会显示其中一个buffer（文件或者空）。允许同时开启多个窗口**
+
+## 1.4 tab
+
+**tab可以包含一个或多个window。如果存在多个tab，那么会在最上方显示这些tab，就像一个现代的编辑器一样（vscode）**
+
+# 2 操作手册
+
+## 2.1 编辑模式
+
+* **`i,I`：进入插入模式，i为从光标所在处插入，I为在目前所在行的第一个非空格处开始插入**
+* **`a,A`：进入插入模式，a为从目前光标所在的下一个字符处开始插入，A为从光标所在行的最后一个字符处开始插入**
+* **`o,O`：进入插入模式，o为在目前光标所在的下一行处插入新的一行，O为在目前光标所在处的上一行插入新的一行**
+* **`s,S`：进入插入模式，s为删除目前光标所在的字符，S为删除目前光标所在的行**
+* **`r,R`：进入替换模式，r只会替换光标所在的那一个字符一次，R会一直替换光标所在行的文字，直到按下Esc**
+* **`Esc`：退回一般模式**
+* **`[Ctrl] + [`：退回一般模式**
+* **`[Shift] + [Left]`：向左移动一个单词**
+* **`[Shift] + [Right]`：向右移动一个单词**
+* **`[Shift] + [Up]`：向上翻页**
+* **`[Shift] + [Down]`：向下翻页**
+
+## 2.2 光标移动
 
 * **`j或↓`：光标向下移动一个字符**
 * **`k或↑`：光标向上移动一个字符**
@@ -82,7 +110,121 @@ categories:
 * **`gk`：光标上移一行（忽略自动换行）**
 * **`%`：跳转到`{} () []`的匹配`**
 
-## 1.3 文件跳转
+## 2.3 文本编辑
+
+* **`x,X`：在一行字当中，x为向后删除一个字符（相当于`[Del]`键）,X为向前删除一个字符（相当于`[Backspace]`）**
+* `[n]x`：连续向后删除n个字符
+* **`dd`：删除光标所在一整行**
+* **`dw`：删除光标所在的字符到光标所在单词的最后一个字符**
+* **`[n]dd`：删除光标所在的向下n行（包括当前这一行）**
+* **`d1G`：删除光标所在到第一行的所有数据（包括当前这一行）**
+* **`dG`：删除光标所在到最后一行的所有数据（包括当前这一行）**
+* **`d$`：删除光标所在的字符到该行的最后一个字符（包括光标所指向的字符）**
+* **`d0（这是零）`：删除从光标所在的字符到该行最前面一个字符（不包括光标所指向的字符）**
+* **`D`：同`d$`**
+* `J`：将光标所在行与下一行的数据结合成同一行
+* `cc`：改写当前行（删除当前行并进入插入模式），同`S`
+* `cw`：改写光标开始处的当前单词（若光标在单词中间，不会修改整个单词）
+* **`ciw`：改写光标所处的单词（若光标在单词中间，也可以修改整个单词）**
+* **`ci'`：改写单引号中的内容**
+* **`ci"`：改写双引号中的内容**
+* **`ci(`：改写小括号中的内容**
+* **`ci[`：改写中括号中的内容**
+* **`ci{`：改写大括号中的内容**
+* **`u`：复原（撤销）前一个操作**
+* **`[Ctrl] + r`：重做上一个操作**
+* **`.`：重做上一个操作**
+
+## 2.4 复制粘贴
+
+* **`yy`：复制光标所在那一行**
+* **`[n]yy`：复制光标所在的向下n行（包括当前这一行）**
+* **`y1G`：复制光标所在行到第一行的所有数据（包括当前这一行）**
+* **`yG`：复制光标所在行到最后一行的数据（包括当前这一行）**
+* **`y0（这是零）`：复制光标所在那个字符到该行第一个字符的所有数据（不包括光标所指向的字符）**
+* **`y$`：复制光标所在那个字符到该行最后一个字符的所有数据（包括光标所指向的字符）**
+* **`p`：将已复制的数据粘贴到光标之前**
+* **`P`：将已复制的数据粘贴到光标之后**
+
+### 2.4.1 剪切板
+
+**vim中有许多寄存器（该寄存器并不是cpu中的寄存器），或者称为剪切板，分别是：**
+
+* `0-9`：vim用来保存最近复制、删除等操作的内容，其中0号寄存器保存的是最近一次操作的内容
+* `a-zA-Z`：用户寄存器，vim不会读写这部分寄存器
+* `"`：未命名的寄存器
+* `+`：关联系统剪切板
+
+**如何使用这些寄存器：`"<reg name><operator>`**
+
+* 最左侧的`"`是固定语法
+* `<reg name>`：寄存器名称，比如`0`、`a`、`+`、`"`等
+* `<operator>`：需要执行的操作，就是`y/d/p`等等
+
+**示例：**
+
+* `:reg`：查看寄存器的信息
+* `:reg <reg name>`：查看某个寄存器的内容
+* `"+yy`：将当前行拷贝到系统剪切板
+* `"+p`：将系统剪切板中的内容粘贴到光标之后
+
+## 2.5 范围选择
+
+* **`v`：字符选择：会将光标经过的地方反白选择**
+* **`vw`：选择光标开始处的当前单词（若光标在单词中间，不会选择整个单词）**
+* **`viw`：选择光标所处的单词（若光标在单词中间，也可以选中整个单词）**
+* **`vi'`：选择单引号中的内容**
+* **`vi"`：选择双引号中的内容**
+* **`vi(`：选择小括号中的内容**
+* **`vi[`：选择中括号中的内容**
+* **`vi{`：选择大括号中的内容**
+* **`V`：行选择：会将光标经过的行反白选择**
+* **`[Ctrl] + v`：块选择，可以用长方形的方式选择数据**
+* `>`：增加缩进
+* `<`：减少缩进
+* `~`：转换大小写
+* `c/y/d`：改写/拷贝/删除
+* `u`：变为小写
+* `U`：变为大写
+* `o`：跳转到标记区的另外一端
+* `O`：跳转到标记块的另外一端
+
+## 2.6 查找替换
+
+* **查找**
+    * **`/[word]`：向下寻找一个名为word的字符串，支持正则表达式**
+    * **`/\<[word]\>`：向下寻找一个名为word的字符串（全词匹配），支持正则表达式**
+    * `?[word]`：向上寻找一个名为word的字符串，支持正则表达式
+    * `?\<[word]\>`：向上寻找一个名为word的字符串（全词匹配），支持正则表达式
+    * `n`：重复前一个查找操作
+    * `N`："反向"进行前一个查找操作
+* **替换**
+    * **`:[n1],[n2]s/[word1]/[word2]/g`：在n1与n2行之间寻找word1这个字符串，并将该字符串替换为word2，支持正则表达式**
+    * **`:[n1],[n2]s/\<[word1]\>/[word2]/g`：在n1与n2行之间寻找word1这个字符串（全词匹配），并将该字符串替换为word2，支持正则表达式**
+    * **`:1,$s/[word1]/[word2]/g`或者`:%s/[word1]/[word2]/g`：从第一行到最后一行查找word1字符串，并将该字符串替换为word2，支持正则表达式**
+    * **`:1,$s/[word1]/[word2]/gc`或者`:%s/[word1]/[word2]/gc`：从第一行到最后一行查找word1字符串，并将该字符串替换为word2，且在替换前显示提示字符给用户确认是否替换，支持正则表达式**
+* **`[Ctrl]+r`以及`[Ctrl]+w`：将光标下的字符串添加到搜索或者替换表达式中**
+
+## 2.7 文件操作
+
+* **`:w`：保存文件**
+* **`:wa`：保存所有文件**
+* **`:w!`：若文件属性为只读时，强制写入该文件，不过到底能不能写入，还是跟你对该文件的文件属性权限有关**
+* **`:q`：离开**
+* **`:q!`：若曾修改过文件，又不想存储，使用"!"为强制离开不保存的意思**
+* **`:wq`：保存后离开,若为:wq!则代表强制保存并离开**
+* **`:e [filename]`：打开文件并编辑**
+* `ZZ`：若文件没有变更，则不保存离开，若文件已经变更过，保存后离开
+* `:w [filename]`：将编辑文件保存称为另一个文件,注意w和文件名中间有空格
+* `:r [filename]`：在编辑的数据中，读入另一个文件的数据，即将filename这个文件的内容加到光标所在行后面，注意r和文件名之间有空格
+* `:[n1],[n2]w [filename]`：将`n1`到`n2`的内容保存成`filename`这个文件，注意w和文件名中间有空格，`[n2]`与`w`之间可以没有空格
+* `vim [filename1] [filename2]...`：同时编辑多个文件
+* `:n`：编辑下一个文件
+* `:N`：编辑上一个文件
+* `:files`：列出这个vim打开的所有文件
+* **`:Vex`：打开目录**
+
+## 2.8 文件跳转
 
 * **`[Ctrl] + ]`：跳转到光标指向的符号的定义处**
 * **`[Ctrl] + o`：回到上一次编辑处**
@@ -92,21 +234,7 @@ categories:
     * 通过`set path?`可以查看该变量的内容
 * **`[Ctrl] + ^`：在前后两个文件之间跳转**
 
-## 1.4 编辑模式
-
-* **`i,I`：进入插入模式，i为从光标所在处插入，I为在目前所在行的第一个非空格处开始插入**
-* **`a,A`：进入插入模式，a为从目前光标所在的下一个字符处开始插入，A为从光标所在行的最后一个字符处开始插入**
-* **`o,O`：进入插入模式，o为在目前光标所在的下一行处插入新的一行，O为在目前光标所在处的上一行插入新的一行**
-* **`s,S`：进入插入模式，s为删除目前光标所在的字符，S为删除目前光标所在的行**
-* **`r,R`：进入替换模式，r只会替换光标所在的那一个字符一次，R会一直替换光标所在行的文字，直到按下Esc**
-* **`Esc`：退回一般模式**
-* **`[Ctrl] + [`：退回一般模式**
-* **`[Shift] + [Left]`：向左移动一个单词**
-* **`[Shift] + [Right]`：向右移动一个单词**
-* **`[Shift] + [Up]`：向上翻页**
-* **`[Shift] + [Down]`：向下翻页**
-
-## 1.5 文本对象
+## 2.9 文本对象
 
 **文本对象：`c`、`d`、`v`、`y`等命令后接文本对象，一般格式为：`<范围><类型>`**
 
@@ -133,7 +261,7 @@ categories:
 * `i"`：双引号内
 * `a"`：双引号内（包含双引号本身）
 
-## 1.6 代码折叠
+## 2.10 代码折叠
 
 **按照折叠所依据的规则，可以分为如下4种：**
 
@@ -143,7 +271,7 @@ categories:
     * **`zf`还可以与文本对象配合，例如**
         * `zfi{`：折叠大括号之间的内容，不包括大括号所在行
         * `zfa{`：折叠大括号之间的内容，包括大括号所在行
-    * `zd/zD`：删除当前折叠**
+    * **`zd/zD`：删除当前折叠**
     * `zE`：删除所有折叠
 1. **`indent`：缩进折叠**
     * **`:set foldmethod=indent`**
@@ -165,135 +293,17 @@ categories:
 * **`zj`：移动到下一个折叠**
 * **`zk`：移动到上一个折叠**
 
-## 1.7 文本编辑
+## 2.11 buffer
 
-* **`x,X`：在一行字当中，x为向后删除一个字符（相当于`[Del]`键）,X为向前删除一个字符（相当于`[Backspace]`）**
-* `[n]x`：连续向后删除n个字符
-* **`dd`：删除光标所在一整行**
-* **`dw`：删除光标所在的字符到光标所在单词的最后一个字符**
-* **`[n]dd`：删除光标所在的向下n行（包括当前这一行）**
-* **`d1G`：删除光标所在到第一行的所有数据（包括当前这一行）**
-* **`dG`：删除光标所在到最后一行的所有数据（包括当前这一行）**
-* **`d$`：删除光标所在的字符到该行的最后一个字符（包括光标所指向的字符）**
-* **`d0（这是零）`：删除从光标所在的字符到该行最前面一个字符（不包括光标所指向的字符）**
-* **`D`：同`d$`**
-* `J`：将光标所在行与下一行的数据结合成同一行
-* `cc`：改写当前行（删除当前行并进入插入模式），同`S`
-* `cw`：改写光标开始处的当前单词（若光标在单词中间，不会修改整个单词）
-* **`ciw`：改写光标所处的单词（若光标在单词中间，也可以修改整个单词）**
-* **`ci'`：改写单引号中的内容**
-* **`ci"`：改写双引号中的内容**
-* **`ci(`：改写小括号中的内容**
-* **`ci[`：改写中括号中的内容**
-* **`ci{`：改写大括号中的内容**
-* **`u`：复原（撤销）前一个操作**
-* **`[Ctrl] + r`：重做上一个操作**
-* **`.`：重做上一个操作**
+* **`:buffers`：列出所有buffer**
+* **`:buffer [n]`：显示指定buffer**
+* **`:bnext`：显示下一个buffer**
+* **`:bprev`：显示上一个buffer**
+* **`:edit [filename]`：将一个文件放入一个新的buffer中**
+* **`:bdelete [n]`：删除指定buffer（不指定时，表示当前buffer）**
+* **`%bdelete`：删除所有buffer**
 
-## 1.8 复制粘贴
-
-* **`yy`：复制光标所在那一行**
-* **`[n]yy`：复制光标所在的向下n行（包括当前这一行）**
-* **`y1G`：复制光标所在行到第一行的所有数据（包括当前这一行）**
-* **`yG`：复制光标所在行到最后一行的数据（包括当前这一行）**
-* **`y0（这是零）`：复制光标所在那个字符到该行第一个字符的所有数据（不包括光标所指向的字符）**
-* **`y$`：复制光标所在那个字符到该行最后一个字符的所有数据（包括光标所指向的字符）**
-* **`p`：将已复制的数据粘贴到光标之前**
-* **`P`：将已复制的数据粘贴到光标之后**
-
-### 1.8.1 剪切板
-
-**`vim`中有许多寄存器（该寄存器并不是cpu中的寄存器），或者称为剪切板，分别是：**
-
-* `0-9`：vim用来保存最近复制、删除等操作的内容，其中0号寄存器保存的是最近一次操作的内容
-* `a-zA-Z`：用户寄存器，`vim`不会读写这部分寄存器
-* `"`：未命名的寄存器
-* `+`：关联系统剪切板
-
-**如何使用这些寄存器：`"<reg name><operator>`**
-
-* 最左侧的`"`是固定语法
-* `<reg name>`：寄存器名称，比如`0`、`a`、`+`、`"`等
-* `<operator>`：需要执行的操作，就是`y/d/p`等等
-
-**示例：**
-
-* `:reg`：查看寄存器的信息
-* `:reg <reg name>`：查看某个寄存器的内容
-* `"+yy`：将当前行拷贝到系统剪切板
-* `"+p`：将系统剪切板中的内容粘贴到光标之后
-
-## 1.9 范围选择
-
-* **`v`：字符选择：会将光标经过的地方反白选择**
-* **`vw`：选择光标开始处的当前单词（若光标在单词中间，不会选择整个单词）**
-* **`viw`：选择光标所处的单词（若光标在单词中间，也可以选中整个单词）**
-* **`vi'`：选择单引号中的内容**
-* **`vi"`：选择双引号中的内容**
-* **`vi(`：选择小括号中的内容**
-* **`vi[`：选择中括号中的内容**
-* **`vi{`：选择大括号中的内容**
-* **`V`：行选择：会将光标经过的行反白选择**
-* **`[Ctrl] + v`：块选择，可以用长方形的方式选择数据**
-* `>`：增加缩进
-* `<`：减少缩进
-* `~`：转换大小写
-* `c/y/d`：改写/拷贝/删除
-* `u`：变为小写
-* `U`：变为大写
-* `o`：跳转到标记区的另外一端
-* `O`：跳转到标记块的另外一端
-
-## 1.10 查找替换
-
-* **查找**
-    * **`/[word]`：向下寻找一个名为word的字符串，支持正则表达式**
-    * **`/\<[word]\>`：向下寻找一个名为word的字符串（全词匹配），支持正则表达式**
-    * `?[word]`：向上寻找一个名为word的字符串，支持正则表达式
-    * `?\<[word]\>`：向上寻找一个名为word的字符串（全词匹配），支持正则表达式
-    * `n`：重复前一个查找操作
-    * `N`："反向"进行前一个查找操作
-* **替换**
-    * **`:[n1],[n2]s/[word1]/[word2]/g`：在n1与n2行之间寻找word1这个字符串，并将该字符串替换为word2，支持正则表达式**
-    * **`:[n1],[n2]s/\<[word1]\>/[word2]/g`：在n1与n2行之间寻找word1这个字符串（全词匹配），并将该字符串替换为word2，支持正则表达式**
-    * **`:1,$s/[word1]/[word2]/g`或者`:%s/[word1]/[word2]/g`：从第一行到最后一行查找word1字符串，并将该字符串替换为word2，支持正则表达式**
-    * **`:1,$s/[word1]/[word2]/gc`或者`:%s/[word1]/[word2]/gc`：从第一行到最后一行查找word1字符串，并将该字符串替换为word2，且在替换前显示提示字符给用户确认是否替换，支持正则表达式**
-* **`[Ctrl]+r`以及`[Ctrl]+w`：将光标下的字符串添加到搜索或者替换表达式中**
-
-## 1.11 文件操作
-
-* **`:w`：保存文件**
-* **`:wa`：保存所有文件**
-* **`:w!`：若文件属性为只读时，强制写入该文件，不过到底能不能写入，还是跟你对该文件的文件属性权限有关**
-* **`:q`：离开**
-* **`:q!`：若曾修改过文件，又不想存储，使用"!"为强制离开不保存的意思**
-* **`:wq`：保存后离开,若为:wq!则代表强制保存并离开**
-* **`:e [filename]`：打开文件并编辑**
-* `ZZ`：若文件没有变更，则不保存离开，若文件已经变更过，保存后离开
-* `:w [filename]`：将编辑文件保存称为另一个文件,注意w和文件名中间有空格
-* `:r [filename]`：在编辑的数据中，读入另一个文件的数据，即将filename这个文件的内容加到光标所在行后面，注意r和文件名之间有空格
-* `:[n1],[n2]w [filename]`：将`n1`到`n2`的内容保存成`filename`这个文件，注意w和文件名中间有空格，`[n2]`与`w`之间可以没有空格
-* `vim [filename1] [filename2]...`：同时编辑多个文件
-* `:n`：编辑下一个文件
-* `:N`：编辑上一个文件
-* `:files`：列出这个`vim`打开的所有文件
-* **`:Vex`：打开目录**
-
-## 1.12 多窗口功能
-
-有一个文件非常大，在查阅后面的数据时，想要对照前面的数据，如果用翻页等命令`[Ctrl] + f`、`[Ctrl] + b`会显得很麻烦
-
-在一般模式中输入命令`sp:`
-
-* 若要打开同一文件，输入`sp`即可
-* 若要代开其他文件，输入`sp [filename]`即可
-
-**窗口切换命令：**
-
-* `[Ctrl] + w + ↓`：首先按下`[Ctrl]`，在按下`w`，然后放开两个键，再按下`↓`切换到下方窗口
-* `[Ctrl] + w + ↑`：首先按下`[Ctrl]`，在按下`w`，然后放开两个键，再按下`↑`切换到上方窗口
-
-**分屏**
+## 2.12 window
 
 * **`[Ctrl] + w + <xxx>`：先`[Ctrl]`再`w`，放掉`[Ctrl]`和`w`再按`<xxx>`，以下操作以此为基准**
 1. `vim -On file1 file2...`：垂直分屏
@@ -305,10 +315,10 @@ categories:
 1. `[Ctrl] + w + v`：左右分割当前打开的文件
 1. `:sp filename`：上下分割并打开一个新的文件
 1. `:vsp filename`：左右分割，并打开一个新的文件
-1. `[Ctrl] + w + l`：把光标移动到右边的屏中
-1. `[Ctrl] + w + h`：把光标移动到左边的屏中
-1. `[Ctrl] + w + k`：把光标移动到上边的屏中
-1. `[Ctrl] + w + j`：把光标移动到下边的屏中
+1. **`[Ctrl] + w + l`：把光标移动到右边的屏中**
+1. **`[Ctrl] + w + h`：把光标移动到左边的屏中**
+1. **`[Ctrl] + w + k`：把光标移动到上边的屏中**
+1. **`[Ctrl] + w + j`：把光标移动到下边的屏中**
 1. **`[Ctrl] + w + w`：把光标移动到下一个屏中，如果只有两个窗口的话，就可以相互切换了**
 1. `[Ctrl] + w + L`：向右移动屏幕
 1. `[Ctrl] + w + H`：向左移动屏幕
@@ -324,7 +334,14 @@ categories:
 1. `[Ctrl] + w + <`：宽度减小1
 1. `[Ctrl] + w + [n] + <`：宽度减小n
 
-## 1.13 quickfix
+## 2.13 tab
+
+* **`:tabnew [filename]`：在一个新的tab中打开文件**
+* **`gt`/`:tabnext`：下一个tab**
+* **`gT`/`:tabprev`：上一个tab**
+* **`:tab sball`：将所有buffer**
+
+## 2.14 quickfix
 
 * `:copen`：打开`quickfix`窗口（查看编译，grep等信息）
 * `:copen 10`：打开`quickfix`窗口，并且设置高度为`10`
@@ -335,37 +352,17 @@ categories:
 * `:cnext`：跳到`quickfix`中下一个错误信息
 * `:cprev`：跳到`quickfix`中上一个错误信息
 
-## 1.14 buffer/window/tab
+## 2.15 vim配置文件
 
-### 1.14.1 buffer
+vim会主动将你曾经做过的行为记录下来，好让你下次可以轻松作业，记录操作的文件就是`~/.viminfo`
 
-**每个打开的文件都对应一个buffer。buffer可以显示或者不显示**
+整体vim的设置值一般放置在`/etc/vimrc`这个文件中，不过不建议修改它，但是可以修改`~/.vimrc`这个文件（默认不存在，手动创建）
 
-* **`:buffers`：列出所有buffer**
-* **`:buffer [n]`：显示指定buffer**
-* **`:bnext`：显示下一个buffer**
-* **`:bprev`：显示上一个buffer**
-* **`:edit [filename]`：将一个文件放入一个新的buffer中**
-* **`:bdelete [n]`：删除指定buffer（不指定时，表示当前buffer**
+**在运行vim的时候，如果修改了`~/.vimrc`文件的内容，可以通过执行`:so %`来重新加载`~/.vimrc`，立即生效配置**
 
-### 1.14.2 window
+**常用配置项：**
 
-**window就是我们看到的并且可以操作的那个界面。一个window可以包含一个或多个buffer，总是会显示其中一个buffer（文件或者空）。允许同时开启多个窗口**
-
-窗口相关的命令，这不再赘述，参考[多窗口功能](#1.12-多窗口功能)
-
-### 1.14.3 tab
-
-**tab可以包含一个或多个window。如果存在多个tab，那么会在最上方显示这些tab，就像一个现代的编辑器一样（vscode）**
-
-* **`:tabnew [filename]`：在一个新的tab中打开文件**
-* **`gt`/`:tabnext`：下一个tab**
-* **`gT`/`:tabprev`：上一个tab**
-* **`:tab sball`：将所有buffer**
-
-## 1.15 vim常用配置项
-
-```
+```vim
 :set nocompatible   设置不兼容原始 vi 模式（必须设置在最开头）
 :set bs=?           设置BS键模式，现代编辑器为 :set bs=eol,start,indent
 :set sw=4           设置缩进宽度为 4
@@ -397,15 +394,7 @@ categories:
 :syntax off         禁止语法高亮
 ```
 
-## 1.16 vim配置
-
-`vim`会主动将你曾经做过的行为记录下来，好让你下次可以轻松作业，记录操作的文件就是`~/.viminfo`
-
-整体vim的设置值一般放置在`/etc/vimrc`这个文件中，不过不建议修改它，但是可以修改`~/.vimrc`这个文件（默认不存在，手动创建）
-
-**在运行`vim`的时候，如果修改了`~/.vimrc`文件的内容，可以通过执行`:so %`来重新加载`~/.vimrc`，立即生效配置**
-
-### 1.16.1 修改tab的行为
+### 2.15.1 修改tab的行为
 
 修改`~/.vimrc`，追加如下内容
 
@@ -424,7 +413,7 @@ set expandtab
 set autoindent
 ```
 
-### 1.16.2 键位映射
+### 2.15.2 键位映射
 
 1. **`map`：递归映射**
 1. **`noremap`：非递归映射**
@@ -445,7 +434,7 @@ set autoindent
 * **对于mac上的`[Option]`，并没有`<p-key>`这样的表示方法。而是用`[Option]`加另一个字母实际输出的结果作为映射键值，例如**
     * `[Option] + a`：`å`
 
-## 1.17 其他
+## 2.16 其他
 
 * **`set <config>?`：可以查看`<config>`的值**
 * **`:echo <variable>`：可以查看`<variable>`的值**
@@ -463,9 +452,9 @@ set autoindent
     * **输入`:x`关闭历史编辑并放弃编辑结果回到编辑缓冲区**
     * 可以在空命令上回车相当于退出历史编辑区回到编辑缓冲区
 
-## 1.18 Tips
+## 2.17 Tips
 
-### 1.18.1 多行更新
+### 2.17.1 多行更新
 
 **示例：多行同时插入相同内容**
 
@@ -480,7 +469,7 @@ set autoindent
 1. 选中需要同时修改的列
 1. 按`d`即可同时删除
 
-### 1.18.2 中文乱码
+### 2.17.2 中文乱码
 
 **编辑`/etc/vimrc`，追加如下内容**
 
@@ -490,7 +479,7 @@ set termencoding=utf-8
 set encoding=utf-8
 ```
 
-### 1.18.3 为每个项目配置vim
+### 2.17.3 为每个项目配置vim
 
 同一份`~./vimrc`无法适用于所有的项目，不同的项目可能需要一些特化的配置项，可以采用如下的设置方式
 
@@ -500,11 +489,11 @@ if filereadable("./.workspace.vim")
 endif
 ```
 
-# 2 vim插件管理
+# 3 vim插件管理
 
 **目前，使用最广泛的插件管理工具是：[vim-plug](https://github.com/junegunn/vim-plug)**
 
-## 2.1 常用插件概览
+## 3.1 常用插件概览
 
 | 插件名称 | 用途 | 官网地址 |
 |:--|:--|:--|
@@ -532,13 +521,13 @@ endif
 | `nerdcommenter` | 添加注释 | https://github.com/preservim/nerdcommenter |
 | `vim-clang-format` | 代码格式化 | https://github.com/rhysd/vim-clang-format |
 
-## 2.2 环境准备
+## 3.2 环境准备
 
 **为什么需要准备环境，vim的插件管理不是会为我们安装插件么？因为某些复杂插件，比如`ycm`是需要手动编译的，而编译就会依赖一些编译相关的工具，并且要求的版本比较高**
 
 **由于我用的系统是`CentOS 7.9`，通过`yum install`安装的工具都过于陈旧，包括`gcc`、`g++`、`clang`、`clang++`、`cmake`等等，这些工具都需要通过其他方式重新安装**
 
-### 2.2.1 安装gcc
+### 3.2.1 安装gcc
 
 **[gcc各版本源码包下载地址](http://ftp.gnu.org/gnu/gcc/)，我选择的版本是`gcc-10.3.0`**
 
@@ -571,14 +560,14 @@ ln -s /usr/bin/g++ /usr/bin/c++
 ln -s /usr/local/lib64/libstdc++.so.6.0.28 /lib64/libstdc++.so.6
 ```
 
-### 2.2.2 安装python3
+### 3.2.2 安装python3
 
 ```
 yum install -y python3
 yum install -y python3-devel.x86_64
 ```
 
-### 2.2.3 安装cmake
+### 3.2.3 安装cmake
 
 **[cmake官网](https://cmake.org/download/)有二进制包可以下载，下载安装即可**
 
@@ -591,7 +580,7 @@ tar -zxvf cmake-3.21.2-linux-x86_64.tar.gz -C /usr/local/lib
 ln -s /usr/local/lib/cmake-3.21.2-linux-x86_64/bin/cmake /usr/local/bin/cmake
 ```
 
-### 2.2.4 安装llvm
+### 3.2.4 安装llvm
 
 **根据[官网安装说明](https://clang.llvm.org/get_started.html)进行安装，其代码托管在[github-llvm-project](https://github.com/llvm/llvm-project)**
 
@@ -617,9 +606,9 @@ make -j 4
 make install
 ```
 
-### 2.2.5 centos安装vim8
+### 3.2.5 centos安装vim8
 
-上述很多插件对`vim`的版本有要求，至少是`vim8`，而一般通过`yum install`安装的`vim`版本是`7.x`
+上述很多插件对vim的版本有要求，至少是`vim8`，而一般通过`yum install`安装的vim版本是`7.x`
 
 ```sh
 # 卸载
@@ -633,7 +622,7 @@ yum install -y vim
 vim --version | head -1
 ```
 
-### 2.2.6 符号索引-[ctags](https://ctags.io/)
+### 3.2.6 符号索引-[ctags](https://ctags.io/)
 
 **`ctags`的全称是`universal-ctags`**
 
@@ -704,7 +693,7 @@ ctags --c++-kinds=+px --fields=+ialS --extras=+q -R -f ~/.vim/systags \
 
 * **注意，这里将tag的文件名从`tags`换成了`.tags`，这样避免污染项目中的其他文件。因此在使用`ctags`命令生成tag文件时，需要通过`-f .tags`参数指定文件名**
 * **`./.tags;`表示在文件所在目录下查找名字为`.tags`的符号文件，`;`表示查找不到的话，向上递归到父目录，直到找到`.tags`或者根目录**
-* **`.tags`是指在`vim`的当前目录（在`vim`中执行`:pwd`）下查找`.tags`文件**
+* **`.tags`是指在vim的当前目录（在vim中执行`:pwd`）下查找`.tags`文件**
 
 ```vim
 " 将 :tn 和 :tp 分别映射到 [Option] + j 和 [Option] + k，即「∆」和「˚」
@@ -716,7 +705,7 @@ set tags=./.tags;,.tags
 set tags+=~/.vim/systags
 ```
 
-### 2.2.7 符号索引-[cscope](http://cscope.sourceforge.net/)
+### 3.2.7 符号索引-[cscope](http://cscope.sourceforge.net/)
 
 **相比于`ctags`，`cscope`支持更多功能，包括查找定义、查找引用等等。但是该项目最近一次更新是2012年，因此不推荐使用。推荐使用`gtags`**
 
@@ -748,7 +737,7 @@ cscope -Rbkq
 cscope
 ```
 
-**如何在`vim`中使用**
+**如何在vim中使用**
 
 ```vim
 " 添加数据库
@@ -789,7 +778,7 @@ nnoremap <leader>si :cscope find i <c-r>=expand("<cfile>")<cr><cr>:copen<cr>
 
 * 尽量在源码目录创建数据库，否则cscope默认会扫描所有文件，效率很低
 
-### 2.2.8 符号索引-[gtags](https://www.gnu.org/software/global/global.html)
+### 3.2.8 符号索引-[gtags](https://www.gnu.org/software/global/global.html)
 
 **`gtags`的全称是`GNU Global source code tagging system`**
 
@@ -872,7 +861,7 @@ endif
     1. **final修饰的类，`gtags`找不到其定义，坑爹的bug，害我折腾了很久**
 1. `global -d`无法查找成员变量的定义
 
-### 2.2.9 语义索引-ccls
+### 3.2.9 语义索引-ccls
 
 **`ccls`是`Language Server Protocol（LSP）`的一种实现，主要用于`C/C++/Objective-C`等语言**
 
@@ -910,7 +899,7 @@ cmake --build Release --target install
 1. 配置`LSP-client`插件，我用的是`LanguageClient-neovim`
 1. vim打开工程，便开始自动创建索引
 
-### 2.2.10 安装vim-plug
+### 3.2.10 安装vim-plug
 
 按照[vim-plug](https://github.com/junegunn/vim-plug)官网文档，通过一个命令直接安装即可
 
@@ -953,9 +942,9 @@ let fmt = get(g:, 'plug_url_format', 'https://git::@github.com.cnpmjs.org/%s.git
 set backspace=indent,eol,start
 ```
 
-## 2.3 配色方案
+## 3.3 配色方案
 
-### 2.3.1 [gruvbox](https://github.com/morhetz/gruvbox)
+### 3.3.1 [gruvbox](https://github.com/morhetz/gruvbox)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -981,7 +970,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-**将`gruvbox`中的配色方案（执行完`:PlugInstall`才有这个文件哦）移动到`vim`指定目录下**
+**将`gruvbox`中的配色方案（执行完`:PlugInstall`才有这个文件哦）移动到vim指定目录下**
 
 ```sh
 # ~/.vim/colors 目录默认是不存在的
@@ -989,7 +978,7 @@ mkdir ~/.vim/colors
 cp ~/.vim/plugged/gruvbox/colors/gruvbox.vim ~/.vim/colors/
 ```
 
-### 2.3.2 [solarized](https://github.com/altercation/vim-colors-solarized)
+### 3.3.2 [solarized](https://github.com/altercation/vim-colors-solarized)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1012,7 +1001,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-**将`solarized`中的配色方案（执行完`:PlugInstall`才有这个文件哦）移动到`vim`指定目录下**
+**将`solarized`中的配色方案（执行完`:PlugInstall`才有这个文件哦）移动到vim指定目录下**
 
 ```sh
 # ~/.vim/colors 目录默认是不存在的
@@ -1020,7 +1009,7 @@ mkdir ~/.vim/colors
 cp ~/.vim/plugged/vim-colors-solarized/colors/solarized.vim ~/.vim/colors/
 ```
 
-## 2.4 状态栏-[vim-airline](https://github.com/vim-airline/vim-airline)
+## 3.4 状态栏-[vim-airline](https://github.com/vim-airline/vim-airline)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1038,7 +1027,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.5 缩进标线-[indentLine](https://github.com/Yggdroot/indentLine)
+## 3.5 缩进标线-[indentLine](https://github.com/Yggdroot/indentLine)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1060,7 +1049,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.6 文件管理器-[nerdtree](https://github.com/preservim/nerdtree)
+## 3.6 文件管理器-[nerdtree](https://github.com/preservim/nerdtree)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1088,7 +1077,7 @@ call plug#end()
 * `:NERDTreeToggle`：打开文件管理器
 * `:NERDTreeFind`：打开文件管理器，并且定位到当前文件
 
-## 2.7 语法高亮-[vim-cpp-enhanced-highlight](https://github.com/octol/vim-cpp-enhanced-highlight)
+## 3.7 语法高亮-[vim-cpp-enhanced-highlight](https://github.com/octol/vim-cpp-enhanced-highlight)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1112,7 +1101,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.8 彩虹括号-[rainbow](https://github.com/luochen1990/rainbow)
+## 3.8 彩虹括号-[rainbow](https://github.com/luochen1990/rainbow)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1132,7 +1121,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.9 自动索引-[vim-gutentags](https://github.com/ludovicchabant/vim-gutentags)
+## 3.9 自动索引-[vim-gutentags](https://github.com/ludovicchabant/vim-gutentags)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1198,7 +1187,7 @@ call plug#end()
 **问题排查步骤：**
 
 1. `let g:gutentags_define_advanced_commands = 1`：允许`gutentags`打开一些高级命令和选项
-1. 运行`:GutentagsToggleTrace`：它会将`ctags/gtags`命令的输出记录在`vim`的`message`记录里
+1. 运行`:GutentagsToggleTrace`：它会将`ctags/gtags`命令的输出记录在vim的`message`记录里
 1. 保存文件，触发数据库更新
 1. `:message`：可以重新查看message
 
@@ -1208,7 +1197,7 @@ call plug#end()
     * **原因1：由于`git`仓库切换分支，可能会导致`gtagsdb`乱掉。而`gutentags`会用`gtags --incremental <gtagsdb-path>`这样的命令来更新`gtagsdb`，这样可能会导致`segment fault`，表象就是`gutentags: gtags-cscope job failed, returned: 1`**
         * **解决方式：修改`gutentags`源码，将`--incremental`参数去掉即可。一键修改命令：`sed -ri "s|'--incremental', *||g" ~/.vim/plugged/vim-gutentags/autoload/gutentags/gtags_cscope.vim`**
 
-### 2.9.1 gtags查询快捷键-[gutentags_plus](https://github.com/skywind3000/gutentags_plus)
+### 3.9.1 gtags查询快捷键-[gutentags_plus](https://github.com/skywind3000/gutentags_plus)
 
 **没有该插件时，我们一般按照如下方式使用`gtags`**
 
@@ -1261,7 +1250,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-### 2.9.2 quickfix预览-[vim-preview](https://github.com/skywind3000/vim-preview)
+### 3.9.2 quickfix预览-[vim-preview](https://github.com/skywind3000/vim-preview)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1291,7 +1280,7 @@ call plug#end()
 * **`\wd`：预览页向下滚动半页**
 * **`\wu`：预览页向上滚动半页**
 
-## 2.10 语义索引-[LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim)
+## 3.10 语义索引-[LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim)
 
 **该插件是作为`LSP`的客户端，这里我们选用的`LSP`的实现是`ccls`**
 
@@ -1372,7 +1361,7 @@ sed -i 's|github.com/|github.com.cnpmjs.org/|' install.sh
 | **`\hb`** | **查找光标下符号的父类** |
 | **`\hd`** | **查找光标下符号的子类** |
 
-## 2.11 代码补全-[YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
+## 3.11 代码补全-[YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
 
 **这个插件比较复杂，建议手工安装**
 
@@ -1441,7 +1430,7 @@ call plug#end()
 * `[Ctrl] + n`：下一个条目
 * `[Ctrl] + p`：上一个条目
 
-## 2.12 编译运行-[AsyncRun](https://github.com/skywind3000/asyncrun.vim)
+## 3.12 编译运行-[AsyncRun](https://github.com/skywind3000/asyncrun.vim)
 
 本质上，`AsyncRun`插件就是提供了异步执行命令的机制，我们可以利用这个机制定义一些动作，比如`编译`、`构建`、`运行`、`测试`等，提供类似于`IDE`的体验
 
@@ -1479,7 +1468,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 2.13 动态检查-[ALE](https://github.com/dense-analysis/ale)
+## 3.13 动态检查-[ALE](https://github.com/dense-analysis/ale)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1557,7 +1546,7 @@ export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:<third party include path...>
     1. `mv /usr/local/share/locale/zh_CN/LC_MESSAGES/gcc.mo /usr/local/share/locale/zh_CN/LC_MESSAGES/gcc.mo.bak`
     * 如果找不到`gcc.mo`文件的话，可以用`locate`命令搜索一下
 
-## 2.14 修改比较-[vim-signify](https://github.com/mhinz/vim-signify)
+## 3.14 修改比较-[vim-signify](https://github.com/mhinz/vim-signify)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1580,7 +1569,7 @@ call plug#end()
 * `set signcolumn=yes`，有改动的行会标出
 * `:SignifyDiff`：以左右分屏的方式对比当前文件的差异
 
-## 2.15 文本对象-[textobj-user](https://github.com/kana/vim-textobj-user)
+## 3.15 文本对象-[textobj-user](https://github.com/kana/vim-textobj-user)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1609,7 +1598,7 @@ call plug#end()
 * **`ii/ai`：缩进对象。可以用`vii`/`dii`/`cii`来选中/删除/改写同一缩进层次的内容**
 * **`if/af`：函数对象。可以用`vif`/`dif`/`cif`来选中/删除/改写当前函数的内容**
 
-## 2.16 函数列表-[LeaderF](https://github.com/Yggdroot/LeaderF)
+## 3.16 函数列表-[LeaderF](https://github.com/Yggdroot/LeaderF)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1654,7 +1643,7 @@ call plug#end()
 1. `:LeaderfMru`：查找最近访问的文件，通过上面的配置映射到快捷键`[Ctrl] + n`
 1. 通过上面的配置，将文件模糊搜索映射到快捷键`[Ctrl] + p`
 
-## 2.17 全局模糊搜索-[fzf.vim](https://github.com/junegunn/fzf.vim)
+## 3.17 全局模糊搜索-[fzf.vim](https://github.com/junegunn/fzf.vim)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1690,7 +1679,7 @@ call plug#end()
     * **`!xxx`：反向匹配**
     * **上述规则均可自由组合**
 
-## 2.18 全局搜索-[vim-grepper](https://github.com/mhinz/vim-grepper)
+## 3.18 全局搜索-[vim-grepper](https://github.com/mhinz/vim-grepper)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1712,7 +1701,7 @@ call plug#end()
 
 * `:Grepper`：进行全局搜索（依赖grep命令）
 
-## 2.19 git扩展-[vim-fugitive](https://github.com/tpope/vim-fugitive)
+## 3.19 git扩展-[vim-fugitive](https://github.com/tpope/vim-fugitive)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1734,7 +1723,7 @@ call plug#end()
 
 * `:Git`：作为`git`的替代，后跟`git`命令行工具的正常参数即可
 
-## 2.20 添加注释-[nerdcommenter](https://github.com/preservim/nerdcommenter)
+## 3.20 添加注释-[nerdcommenter](https://github.com/preservim/nerdcommenter)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1771,7 +1760,7 @@ call plug#end()
 * **`\cu`：取消注释**
 * **`\c<space>`：如果被选区域有部分被注释，则对被选区域执行取消注释操作，其它情况执行反转注释操作**
 
-## 2.21 代码格式化-[vim-clang-format](https://github.com/rhysd/vim-clang-format)
+## 3.21 代码格式化-[vim-clang-format](https://github.com/rhysd/vim-clang-format)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1796,9 +1785,9 @@ call plug#end()
 
 * **`:ClangFormat`：会使用工程目录下的`.clang-format`或者用户目录下的`~/.clang-format`来对代码进行格式化**
 
-## 2.22 个人完整配置
+## 3.22 个人完整配置
 
-**初学`vim`，水平有限，仅供参考，`~/.vimrc`完整配置如下**
+**初学vim，水平有限，仅供参考，`~/.vimrc`完整配置如下**
 
 ```vim
 call plug#begin()
@@ -2157,7 +2146,7 @@ if filereadable("./.workspace.vim")
 endif
 ```
 
-# 3 参考
+# 4 参考
 
 * **[《Vim 中文版入门到精通》](https://github.com/wsdjeg/vim-galore-zh_cn)**
 * **[《Vim 中文速查表》](https://github.com/skywind3000/awesome-cheatsheets/blob/master/editors/vim.txt)**

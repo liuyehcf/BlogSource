@@ -47,6 +47,7 @@
     * 如何安装boost？ `yum install -y boost-devel`
     * 性能优化
         * ck /AggregateFunctions/IAggregateFunction.h
+    * [Google 开源项目风格指南](https://zh-google-styleguide.readthedocs.io/en/latest/google-cpp-styleguide/)
 1. vim
     * filereadable 无法识别 ~  expand
     * vimscript https://zhuanlan.zhihu.com/p/37352209
