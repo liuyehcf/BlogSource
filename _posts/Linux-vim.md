@@ -1426,13 +1426,19 @@ let g:ycm_semantic_triggers =  {
 call plug#end()
 ```
 
-**配置`~/.ycm_extra_conf.py`，内容如下（仅针对c++），仅供参考**
+**`ycm`如何解析代码：**
+
+1. **使用`compilation database`：如果当前目录下存在`compile_commands.json`， 则读取该文件，对代码进行编译解析**
+1. **`.ycm_extra_conf.py`：若没有`compilation database`，那么`ycm`会在当前目录递归向上寻找并加载第一个`.ycm_extra_conf.py`文件，如果都找不到，则加载全局配置（如果配置了`g:ycm_global_ycm_extra_conf`参数的话）**
+
+**配置`~/.ycm_extra_conf.py`，内容如下（仅针对c/c++，对大部分简单的工程均适用），仅供参考**
 
 ```python
 def Settings( **kwargs ):
-  return {
-    'flags': [ '-x', 'c++', '-Wall', '-Wextra', '-Werror' ],
-  }
+  if kwargs[ 'language' ] == 'cfamily':
+    return {
+      'flags': [ '-x', 'c++', '-Wall', '-Wextra', '-Werror' ],
+    }
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
