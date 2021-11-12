@@ -2511,6 +2511,7 @@ yum install -y sysstat
 * `-r`：查看内存使用情况
 * `-b`：I/O 和传输速率信息状况
 * `-f <filename>`：指定sa日志文件
+* `-P <cpu num>|ALL`：查看某个cpu的统计信息，`ALL`表示所有CPU
 * `-n [关键词]`：查看网络相关的情况，其中关键词可以是
     * `DEV`：网卡
     * `SOCK`：套接字
@@ -2521,6 +2522,7 @@ yum install -y sysstat
 **示例：**
 
 * `sar -u 1 10`
+* `sar -P ALL -u 1 10`
 * `sar -n DEV 1`
 
 ## 6.7 tsar
