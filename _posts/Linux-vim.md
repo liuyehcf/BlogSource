@@ -1402,6 +1402,11 @@ call plug#begin()
 
 Plug 'ycm-core/YouCompleteMe'
 
+" ycm全局的配置文件，当没有 compile_commands.json 文件时，这个配置会起作用
+let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+" 禁止ycm在每次打开文件时都询问是否要使用全局的配置
+let g:ycm_confirm_extra_conf = 0
+
 let g:ycm_add_preview_to_completeopt = 0
 let g:ycm_show_diagnostics_ui = 0
 let g:ycm_server_log_level = 'info'
@@ -1419,6 +1424,15 @@ let g:ycm_semantic_triggers =  {
            \ }
 
 call plug#end()
+```
+
+**配置`~/.ycm_extra_conf.py`，内容如下（仅针对c++），仅供参考**
+
+```python
+def Settings( **kwargs ):
+  return {
+    'flags': [ '-x', 'c++', '-Wall', '-Wextra', '-Werror' ],
+  }
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
@@ -1941,6 +1955,11 @@ nnoremap <leader>hd :call LanguageClient#findLocations({'method':'$ccls/inherita
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 Plug 'ycm-core/YouCompleteMe'
+
+" ycm全局的配置文件，当没有 compile_commands.json 文件时，这个配置会起作用
+let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+" 禁止ycm在每次打开文件时都询问是否要使用全局的配置
+let g:ycm_confirm_extra_conf = 0
 
 let g:ycm_add_preview_to_completeopt = 0
 let g:ycm_show_diagnostics_ui = 0
