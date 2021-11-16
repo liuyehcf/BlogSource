@@ -79,7 +79,37 @@ $ git ls-files
 $ git mv [file-original] [file-renamed]
 ```
 
-# 4 代码提交
+## 3.1 彻底删除文件
+
+**如何查找仓库记录中的大文件：**
+
+```sh
+git rev-list --objects --all | grep "$(git verify-pack -v .git/objects/pack/*.idx | sort -k 3 -n | tail -5 | awk '{print$1}')"
+```
+
+**步骤1：通过`filter-branch`来重写这些大文件涉及到的所有提交（重写历史记录，非常危险的操作）：**
+
+```sh
+# 该命令会 checkout 到每个提交，然后依次执行 --index-filter 参数指定的bash命令
+git filter-branch -f --prune-empty --index-filter 'git rm -rf --cached --ignore-unmatch <your-file-name>' --tag-name-filter cat -- --all
+```
+
+**步骤2：将本地的分支全部推送到远程仓库。如果不加all的话，只推送了默认分支或者指定分支，如果远程仓库的其他分支还包含这个大文件的话，那么它仍然存在于仓库中**
+
+```sh
+git push origin --force --all
+```
+
+**步骤3：删除本地仓库中的相关记录**
+
+```sh
+rm -rf .git/refs/original/
+git reflog expire --expire=now --all
+git gc --prune=now
+git gc --aggressive --prune=now
+```
+
+# 4 提交
 
 ```shell
 # 提交暂存区到仓库区
@@ -102,7 +132,48 @@ $ git commit --amend -m [message]
 $ git commit --amend [file1] [file2] ...
 ```
 
-# 5 分支
+# 5 撤销
+
+```shell
+# 恢复暂存区的指定文件到工作区，注意'--'表示的是：后面接的是path而非分支名
+$ git checkout [file]
+$ git checkout -- [file]
+
+# 恢复某个commit的指定文件到暂存区和工作区
+$ git checkout [commit] [file]
+
+# 恢复暂存区的所有文件到工作区
+$ git checkout .
+$ git checkout -- .
+
+# 重置暂存区的指定文件，与上一次commit保持一致，但工作区不变
+$ git reset [file]
+
+# 重置暂存区与工作区，与上一次commit保持一致
+$ git reset --hard
+
+# 重置当前分支的指针为指定commit，同时重置暂存区，但工作区不变
+$ git reset [commit]
+
+# 重置当前分支的HEAD为指定commit，同时重置暂存区和工作区，与指定commit一致
+$ git reset --hard [commit]
+
+# 重置当前HEAD为指定commit，但保持暂存区和工作区不变
+$ git reset --keep [commit]
+
+# 新建一个commit，用来撤销指定commit
+# 后者的所有变化都将被前者抵消，并且应用到当前分支
+$ git revert [commit]
+
+# 暂时将未提交的变化移除，稍后再移入
+$ git stash
+$ git stash pop
+
+# 丢弃工作区的改动
+$ git restore [file]
+```
+
+# 6 分支
 
 ```shell
 # 列出所有本地分支
@@ -174,7 +245,7 @@ $ git branch -m [oldbranch] [newbranch]
 $ git branch -M [oldbranch] [newbranch]
 ```
 
-# 6 标签
+# 7 标签
 
 ```shell
 # 列出所有tag
@@ -205,7 +276,7 @@ $ git push [remote] --tags
 $ git checkout -b [branch] [tag]
 ```
 
-# 7 查看信息
+# 8 查看信息
 
 ```shell
 # 显示有变更的文件
@@ -284,7 +355,29 @@ $ git whatchanged [file]
 $ git reflog
 ```
 
-# 8 远程同步
+# 9 克隆
+
+```sh
+# https方式下载
+git clone https://github.com/xxx/yyy.git
+
+# ssh方式下载
+git clone git@github.com:xxx/yyy.git
+
+# 不下载历史提交，当整个仓库体积非常大的时候，下载全部会比较耗费存储以及时间
+# 我们可以指定下载深度为1，这种情况下下载的版本叫做「shallow」
+git clone https://github.com/xxx/yyy.git --depth 1
+git clone -b <branch_name> https://github.com/xxx/yyy.git --depth 1
+
+# 后续如果又想要下载完整仓库的时候，可以通过如下方式获取完整仓库
+git fetch --unshallow
+
+# 使用<--depth 1>会衍生另一个问题，无法获取其他分支，可以通过如下方式处理
+git remote set-branches origin '<需要获取的分支名>'
+git fetch --depth 1 origin '<需要获取的分支名>'
+```
+
+# 10 远程同步
 
 ```shell
 # 下载远程仓库的所有变动
@@ -310,69 +403,6 @@ $ git push [remote] --force
 
 # 推送所有分支到远程仓库
 $ git push [remote] --all
-```
-
-# 9 撤销
-
-```shell
-# 恢复暂存区的指定文件到工作区，注意'--'表示的是：后面接的是path而非分支名
-$ git checkout [file]
-$ git checkout -- [file]
-
-# 恢复某个commit的指定文件到暂存区和工作区
-$ git checkout [commit] [file]
-
-# 恢复暂存区的所有文件到工作区
-$ git checkout .
-$ git checkout -- .
-
-# 重置暂存区的指定文件，与上一次commit保持一致，但工作区不变
-$ git reset [file]
-
-# 重置暂存区与工作区，与上一次commit保持一致
-$ git reset --hard
-
-# 重置当前分支的指针为指定commit，同时重置暂存区，但工作区不变
-$ git reset [commit]
-
-# 重置当前分支的HEAD为指定commit，同时重置暂存区和工作区，与指定commit一致
-$ git reset --hard [commit]
-
-# 重置当前HEAD为指定commit，但保持暂存区和工作区不变
-$ git reset --keep [commit]
-
-# 新建一个commit，用来撤销指定commit
-# 后者的所有变化都将被前者抵消，并且应用到当前分支
-$ git revert [commit]
-
-# 暂时将未提交的变化移除，稍后再移入
-$ git stash
-$ git stash pop
-
-# 丢弃工作区的改动
-$ git restore [file]
-```
-
-# 10 克隆
-
-```sh
-# https方式下载
-git clone https://github.com/xxx/yyy.git
-
-# ssh方式下载
-git clone git@github.com:xxx/yyy.git
-
-# 不下载历史提交，当整个仓库体积非常大的时候，下载全部会比较耗费存储以及时间
-# 我们可以指定下载深度为1，这种情况下下载的版本叫做「shallow」
-git clone https://github.com/xxx/yyy.git --depth 1
-git clone -b <branch_name> https://github.com/xxx/yyy.git --depth 1
-
-# 后续如果又想要下载完整仓库的时候，可以通过如下方式获取完整仓库
-git fetch --unshallow
-
-# 使用<--depth 1>会衍生另一个问题，无法获取其他分支，可以通过如下方式处理
-git remote set-branches origin '<需要获取的分支名>'
-git fetch --depth 1 origin '<需要获取的分支名>'
 ```
 
 # 11 插件
@@ -454,3 +484,4 @@ $ git config --global core.quotepath false
 * [git bash中 中文显示为数字](http://blog.csdn.net/zhujiangtaotaise/article/details/74424157)
 * [git 合并历史提交](https://www.cnblogs.com/woshimrf/p/git-rebase.html)
 * [Configuring diff tool with .gitconfig](https://stackoverflow.com/questions/6412516/configuring-diff-tool-with-gitconfig)
+* [寻找并删除 Git 记录中的大文件](https://harttle.land/2016/03/22/purge-large-files-in-gitrepo.html)
