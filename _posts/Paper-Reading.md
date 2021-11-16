@@ -322,6 +322,19 @@ categories:
         1. `reduce worker`收到`reduce task`（包含上一步提到的位置信息）后，会发起远程调用，读取远端机器（`map worker`）上的中间键值对。读取完毕后，会根据键值进行排序，相同键值的会进行聚合（链表的形式）
         1. `reduce worker`对排序后的键值对进行遍历，并将每个`key/value set`送入用户自定义的`Reduce function`，其结果会追加到`final output file`
         1. 当所有`map task`以及`reduce task`处理完毕后，`master`会唤醒用户程序，并将结果返回给该程序
+    * `Master Data Structures`
+        * `master`会存储每个`map task`和`reduce task`的状态（空闲、处理中、完成）
+        * `master`是将中间文件区域的位置从`map task`传播到`reduce task`的管道。因此，对于每个完成的`map task`，`master`会存储`map task`产生的中间文件的位置和大小，并且将这些信息推送给正在执行的`reduece task`
+    * `Fault Tolerance`
+        * `Worker Failure`
+            * `master`会周期性地`ping`每个`worker`
+            * `failed worker`上的`map task`以及`reduce task`会被发送到其他空闲的`worker`中进行重新计算
+        * `Master Failure`
+            * `master`会周期性的记录`checkpoint`，当`master`宕机后，一个新的机器会从最新的`checkpoint`中恢复
+        * `Semantics in the Presence of Failures`
+            * 当用户提供的`map`和`reduce`操作是它们输入值的确定性函数时，我们的分布式实现产生的输出与整个程序的无故障顺序执行产生的输出相同。`GMR`通过`map task`以及`reduce task`的原子提交来实现这个属性。每个`task`会将其结果保存在私有的临时文件中
+            * 当`map task`完成时，会发送一条消息到`master`，告知其文件的位置。若`master`此前已经收到过该消息了，那么会直接忽略当前消息
+            * 当`reduct task`完成时，会将私有的临时文件重命名为一个全局文件，当多个`reduce task`在不同机器上执行时，`GMR`中的原子重命名操作会保证只有一个会成功
 
 ## 4.1 参考
 
