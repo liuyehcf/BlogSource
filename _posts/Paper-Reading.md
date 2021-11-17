@@ -11,7 +11,7 @@ categories:
 
 <!--more-->
 
-# 1 Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age
+# 1 [Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age](/Papers/Morsel-Driven-Parallelism.pdf)
 
 1. 为什么现在开始关注`many-core`架构：随着内存带宽的增长，出现了一些内存级的数据库（广义或者狭义，狭义指的是所有数据完全存在于内存中；广义指的是部分数据以某种形式存在于内存中，比如缓存），对于这些数据库系统，I/O不再是性能瓶颈，能否高效利用好计算机的多个`core`决定了系统整体的性能
 1. 核心是调度机制：（称为`dispatcher`），能够灵活的调整pipeline的并发度
@@ -47,7 +47,7 @@ categories:
 
 **progress：5/12 3.3**
 
-# 2 The Google File System
+# 2 [The Google File System](/Papers/Google-File-System.pdf)
 
 1. GFS的目标包括：performance（高性能）、scalability（高可扩展）、reliability（高可靠）、availability（高可用）
 1. 在设计中，把失败视为常态而非异常。因此系统必须具备的核心能力包括：持续监控、错误勘探、错误容忍、自动恢复
@@ -187,7 +187,7 @@ categories:
         * `client`需要使用dns、而不是`master ip`，这样当`master`发生切换时，`client`无需感知
         * `shadow master`会提供读服务（即便`primary master`宕机）
 
-# 3 Bigtable: A Distributed Storage System for Structured Data
+# 3 [Bigtable: A Distributed Storage System for Structured Data](/Papers/Google-Bigtable.pdf)
 
 1. GBT的目标包括
     * 适用范围广
@@ -301,7 +301,7 @@ categories:
         * 由于`SSTable`是不可变的，清理删除的数据转变成了垃圾收集器收集过时的`SSTable`
         * 由于`SSTable`是不可变的，因此`tablet`的拆分变得很容易，因为`child tablet`可以共享`parent tablet`的`SSTable`而无需拷贝 
 
-# 4 MapReduce: Simplified Data Processing on Large Clusters
+# 4 [MapReduce: Simplified Data Processing on Large Clusters](/Papers/Google-MapReduce.pdf)
 
 1. `Abstract`
     * `map`用于产生一组`key/value`对
@@ -335,6 +335,17 @@ categories:
             * 当用户提供的`map`和`reduce`操作是它们输入值的确定性函数时，我们的分布式实现产生的输出与整个程序的无故障顺序执行产生的输出相同。`GMR`通过`map task`以及`reduce task`的原子提交来实现这个属性。每个`task`会将其结果保存在私有的临时文件中
             * 当`map task`完成时，会发送一条消息到`master`，告知其文件的位置。若`master`此前已经收到过该消息了，那么会直接忽略当前消息
             * 当`reduct task`完成时，会将私有的临时文件重命名为一个全局文件，当多个`reduce task`在不同机器上执行时，`GMR`中的原子重命名操作会保证只有一个会成功
+    * `Locality`
+        * `master`更倾向于将`map task`调度到包含更多相关输入的机器上，或者相关输入距离最近的机器上（比如相关输入位于同一个交换机下的不同机器）。这样能够极大程度地降低网络资源的开销
+    * `Task Granularity`
+        * `map-task`会被切分为更小的`M`份，而`reduce task`会被切分为更小的`N`份。理论上`M`和`N`的大小要远远大于机器的数量。这样能够获得更均衡的负载，也能够提升异常恢复的速度
+        * 如何确定`M`和`N`的具体数值呢？有如下几点考量
+            1. 这些任务的信息必须能够保存在`master`的内存中
+            1. `M`与输入的总量有关，最好将输入文件的大小控制在`16M-64M`之间
+            1. `N`是机器数量的几倍（2-3倍）
+    * `Backup Tasks`
+        * `MapReduce`的整体耗时与最慢的`task`密切相关
+        * `GMR`提供了一种机制来解决这个问题，在任务完成后，`master`会将尚未结束的任务分配给这台机器，称为`backup-task`。一旦`original-task`或是`backup-task`完成，那么该任务就算完成
 
 ## 4.1 参考
 
