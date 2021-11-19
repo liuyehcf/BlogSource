@@ -390,6 +390,7 @@ vim会主动将你曾经做过的行为记录下来，好让你下次可以轻�
 :set all            列出所有选项设置情况
 :set cursorcolumn   高亮当前列
 :set cursorline     高亮当前行
+:set fileencoding   查看当前文件的编码格式
 :syntax on          允许语法高亮
 :syntax off         禁止语法高亮
 ```

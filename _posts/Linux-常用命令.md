@@ -928,6 +928,22 @@ ROOT=`cd "$ROOT"; pwd`
 * `objdump -drwCS main.o`
 * `objdump -drwCS -M intel main.o`
 
+## 2.27 iconf
+
+**参数说明：**
+
+* `-l`：列出所有编码
+* `-f`：来源编码
+* `-t`：目标编码
+* `-c`：忽略有问题的编码
+* `-s`：忽略警告
+* `-o`：输出文件
+* `--verbose`：输出处理文件进度
+
+**示例：**
+
+* `iconv -f gbk -t utf-8 s.txt > t.txt`
+
 # 3 设备管理
 
 ## 3.1 mount
