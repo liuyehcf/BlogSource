@@ -170,8 +170,9 @@ categories:
 
 **ssh到远程主机后，如何将本机系统剪切板的内容粘贴到远程主机的vim中？**
 
-1. 修改`/etc/ssh/sshd.conf`，开启`X11Forwarding`
-1. ssh加上`-Y`参数，例如：`ssh -Y your_server`。这样一来，本机和远程主机就共享系统剪切板了
+* 首先确认远程主机的vim是否支持`clipboard`，通过`vim --version | grep clipboard`。`-clipboard`说明不支持，`+clipboard`说明支持。带桌面程序（如X11）的一般都支持，而不带桌面程序的一般不支持
+* 修改`/etc/ssh/sshd.conf`，开启`X11Forwarding`
+* `ssh`加上`-Y`参数，例如：`ssh -Y your_server`。这样一来，本机和远程主机就共享系统剪切板了
 
 ## 2.5 范围选择
 

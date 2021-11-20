@@ -1451,6 +1451,13 @@ ln -s '/usr/lib/systemd/system/demo-service.service' '/etc/systemd/system/multi-
 * `systemctl daemon-reload`：重新加载`systemd`的配置文件，当我们修改了`/usr/lib/systemd/system/`目录下的文件时，我们需要使用这个命令来使修改生效
 * `systemctl show xxx.service`
 * `systemctl show xxx.service --property=ActiveState`：查看服务的某个属性
+* **`systemctl set-default xxx.target`：设置系统的启动级别，常用的有`multi-user.target`、`graphical.target`。与`CentOS 6.x`的`run level`类似**
+    * `poweroff.target`：对应`level-0`
+    * `rescue.target`：对应`level-1`
+    * `multi-user.target`：对应`level-2/3/4`
+    * `graphical.target`：对应`level-5`
+    * `reboot.target`：对应`level-6`
+* **`systemctl get-default`：查看系统的启动级别**
 
 **journalctl命令行工具**
 

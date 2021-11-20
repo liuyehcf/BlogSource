@@ -2525,7 +2525,9 @@ EOF
 * [debian软件包下载站](https://www.debian.org/distrib/packages)
 * [ubuntu安装/查看已安装包的方法](https://blog.csdn.net/sunchenzl/article/details/82117212)
 
-# 7 查看版本号
+# 7 其他常见问题
+
+## 7.1 查看版本号
 
 1. `lsb_release -a`：`yum install -y redhat-lsb`
 1. `uname -r`：内核版本号
@@ -2534,9 +2536,9 @@ EOF
     * `/etc/centos-release`：发行版
 1. `/proc/version`
 
-# 8 制作U盘启动盘
+## 7.2 制作U盘启动盘
 
-## 8.1 MacOS
+### 7.2.1 MacOS
 
 ```sh
 # 先列出所有设备
@@ -2552,7 +2554,7 @@ sudo dd if=<iso文件路径> of=/dev/disk6 bs=1m
 diskutil eject /dev/disk6
 ```
 
-## 8.2 Linux
+### 7.2.2 Linux
 
 ```sh
 # 先列出所有设备
@@ -2564,4 +2566,26 @@ umount /dev/sdb
 # 烧制ISO文件到u盘，通过status=progress显示实时进度
 sudo dd bs=4M if=<iso文件路径> of=/dev/sdb status=progress oflag=sync
 ```
+
+## 7.3 安装图形化界面
+
+**如果你的`CentOS`是最小化安装的那默认都是不带`X WINDOWS`的，所以在安装这些桌面之前得先安装一下`X WINDOWS`，这个控制功能**
+
+```sh
+yum -y groupinstall "X Window System"
+```
+
+### 7.3.1 安装GNOME
+
+```sh
+yum -y groups install "GNOME Desktop"
+
+systemctl set-default graphical.target
+
+reboot
+```
+
+## 7.4 参考
+
+* [CENTOS7安装各种桌面系统 CENTOS安装桌面图形化GUI GNOME/KDE/Cinnamon/MATE/Xfce](https://www.bnxb.com/linuxserver/27457.html)
 
