@@ -733,7 +733,7 @@ test3="$(trim " one leading and one trailing ")"
 echo "'$test1', '$test2', '$test3', '$test4', '$test5', '$test6'"
 ```
 
-## 8.8 方法2
+### 8.7.2 方法2
 
 ```sh
 function trim() {
