@@ -418,6 +418,7 @@ bash test.sh one two "three four"
 1. **逻辑与逻辑或，用的是`&&`和`||`，且需要将条件分开写，如下**
     * `[ condition1 ] && [ condition2 ]`
     * `[ condition1 ] || [ condition2 ]`
+1. **不可以使用通配符**
 
 **示例：**
 
@@ -461,6 +462,7 @@ fi
 
 1. 如果要在bash的语法当中使用括号作为shell的判断式时，**必须要注意在中括号的两端需要有空格符来分隔**
 1. **逻辑与逻辑或，用的是`&&`和`||`，用一个`[]`或者用两个`[[]]`都可以，但使用`[[]]`时不能用`-a`和`-o`**
+1. **可以使用通配符**
 
 **示例：**
 
@@ -700,6 +702,53 @@ if [ -n "${result}" ]; then
 else
     echo "not contains"
 fi
+```
+
+## 8.7 trim
+
+### 8.7.1 方法1
+
+```sh
+function trim() {
+    local trimmed="$1"
+
+    # Strip leading spaces.
+    while [[ "${trimmed}" == " "* ]]; do
+       trimmed="${trimmed## }"
+    done
+    # Strip trailing spaces.
+    while [[ "${trimmed}" == *" " ]]; do
+        trimmed="${trimmed%% }"
+    done
+
+    echo -n "$trimmed"
+}
+
+test4="$(trim "  two leading")"
+test5="$(trim "two trailing  ")"
+test6="$(trim "  two leading and two trailing  ")"
+test1="$(trim " one leading")"
+test2="$(trim "one trailing ")"
+test3="$(trim " one leading and one trailing ")"
+echo "'$test1', '$test2', '$test3', '$test4', '$test5', '$test6'"
+```
+
+## 8.8 方法2
+
+```sh
+function trim() {
+    local trimmed="$1"
+
+    echo $(echo -n ${trimmed} | xargs)
+}
+
+test4="$(trim "  two leading")"
+test5="$(trim "two trailing  ")"
+test6="$(trim "  two leading and two trailing  ")"
+test1="$(trim " one leading")"
+test2="$(trim "one trailing ")"
+test3="$(trim " one leading and one trailing ")"
+echo "'$test1', '$test2', '$test3', '$test4', '$test5', '$test6'"
 ```
 
 # 9 Array
@@ -1397,3 +1446,4 @@ ff
 * [shell——trap捕捉信号（附信号表）](https://www.cnblogs.com/maxgongzuo/p/6372898.html)
 * [Shell进程替换](http://c.biancheng.net/view/3025.html)
 * [Bash scripting cheatsheet](https://devhints.io/bash)
+* [how-to-trim-whitespace-from-a-bash-variable](https://stackoverflow.com/questions/369758/how-to-trim-whitespace-from-a-bash-variable)
