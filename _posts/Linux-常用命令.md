@@ -1369,9 +1369,17 @@ su命令用于切换用户
 
 **注意，sudo本身是一个进程。比如用`sudo tail -f xxx`，在另一个会话中`ps aux | grep tail`会发现两个进程**
 
-**配置文件：**
+**配置文件：`/etc/sudoers`**
 
-* `/etc/sudoers`
+**如何给`test`用户添加`sudoer`权限？在`/etc/sudoers`后追加如下内容（任选其一即可）**
+
+```conf
+# 不需要密码就可以执行sudo命令
+test	ALL=(ALL)	NOPASSWD: ALL
+
+# 需要密码才能执行sudo命令
+test	ALL=(ALL)	ALL
+```
 
 ## 4.13 pkexec
 

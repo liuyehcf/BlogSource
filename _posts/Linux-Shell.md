@@ -988,6 +988,30 @@ case 值 in
 esac
 ```
 
+### 11.7.1 判断是否为数字
+
+```sh
+function isNumber() {
+    local content=$1
+    case "${content}" in
+    [0-9])
+        echo "'${content}' is number"
+        ;;
+    [1-9][0-9]*)
+        echo "'${content}' is number"
+        ;;
+    *)
+        echo "'${content}' is not number"
+        ;;
+    esac
+}
+
+for ((i=0; i<100; i++)) 
+do
+    isNumber ${i}
+done
+```
+
 # 12 函数
 
 ## 12.1 参数传递

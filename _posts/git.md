@@ -171,6 +171,9 @@ $ git stash pop
 
 # 丢弃工作区的改动
 $ git restore [file]
+
+# 丢弃暂存区，但工作区不变
+$ git restore --staged [file]
 ```
 
 # 6 分支
