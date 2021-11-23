@@ -249,6 +249,18 @@ sudo kextload -b org.virtualbox.kext.VBoxUSB
 sudo xattr -r -d com.apple.quarantine <app path>
 ```
 
+## 3.3 中文输入法卡顿
+
+**以下步骤可以解决`Chrome`中的卡顿问题（通用问题）**
+
+1. 系统偏好设置->键盘
+    * 键盘：按键重复调到最快，重复前延迟调到最短
+    * 文本：所有的功能都关了，什么联想、提示之类的功能
+
+**以下步骤可以解决`VSCode`中的卡顿问题，参考[Lagging/freezing using VSCode Insiders in Big Sur](https://github.com/microsoft/vscode/issues/107103#issuecomment-731664821)**
+
+1. `codesign --remove-signature /Applications/Visual\ Studio\ Code.app/Contents/Frameworks/Code\ Helper\ \(Renderer\).app`
+
 # 4 Iterm2
 
 **智能选中**
