@@ -72,7 +72,19 @@ categories:
 `^blah^foo`：将上一条命令中的`blah`替换为`foo`
 `^blah^foo^`：将上一条命令中所有的`blah`都替换为`foo`
 
-# 6 Bash相关文件
+# 6 补全
+
+**默认情况下，bash只有路径补全、命令补全，而没有命令行参数的补全**
+
+**如何安装命令行参数补全？**
+
+```sh
+yum install -y bash-completion
+```
+
+**相关的配置文件：`/etc/profile.d/bash_completion.sh`**
+
+# 7 Bash相关文件
 
 1. `/etc/profile`：系统整体设置（所有用户）
 1. `~/.bash_profile`：bash个性化设置，login shell（当前用户）
@@ -82,7 +94,7 @@ categories:
 1. `/etc/motd`：登录成功后显示的欢迎界面
 1. `/etc/issue`：本地串口登录前的显示栏
 
-# 7 参考
+# 8 参考
 
 * [Bash 实用技巧大全](https://www.cnblogs.com/napoleon_liu/articles/1952228.html)
 * [较完整的Bash快捷键，让命令更有效率](http://www.linuxde.net/2011/11/1877.html)

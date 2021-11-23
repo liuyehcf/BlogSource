@@ -1444,6 +1444,26 @@ test	ALL=(ALL)	ALL
 1. `Ctrl a + d`：暂时断开screen会话
 1. `Ctrl a + k`：杀掉当前窗口
 
+## 4.16 tmux
+
+**`tmux`相当于`screen`的进阶版本，例如可以实现结对编程等功能（允许两个终端进入同一个`tmux`会话中，而`screen`是不允许的）**
+
+**用法：**
+
+* `tmux`：开启新session，并用递增的数字命名
+* `tmux new -s <name>`：开启新session，并指定命名
+* `tmux ls`：列出所有的session
+* `tmux attach -t <name>`：接入指定名字的session
+* `tmux kill-session -t <name>`
+* `tmux rename-session -t <old-name> <new-name>`：重命名
+
+**小技巧：**
+
+* 在`tmux`中，vim的color配置可能会失效，因此需要配置环境变量`export TERM="xterm-256color"`
+* 修改快捷键前缀（默认的快捷键前缀是`C-b`）
+    1. 方法1：`tmux set -g prefix C-x`，仅对当前登录有效
+    1. 方法2：在配置文件`~/.tmux.conf`中添加如下配置`set -g prefix C-x`即可
+
 # 5 网络管理
 
 ## 5.1 netstat
@@ -3168,3 +3188,4 @@ echo $y # 输出10
 * [How to use OpenSSL to encrypt/decrypt files?](https://stackoverflow.com/questions/16056135/how-to-use-openssl-to-encrypt-decrypt-files)
 * [confusion about mount options](https://unix.stackexchange.com/questions/117414/confusion-about-mount-options)
 * [在Linux下做性能分析3：perf](https://zhuanlan.zhihu.com/p/22194920)
+* [tmux使用指南：比screen好用n倍！](https://zhuanlan.zhihu.com/p/386085431)

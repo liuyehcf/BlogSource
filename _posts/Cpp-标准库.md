@@ -121,6 +121,18 @@ int main() {
 
 ## 6.1 std::chrono
 
+**三种时钟：**
+
+1. `steady_clock`：是单调的时钟。其绝对值无意义，只会增长，适合用于记录程序耗时。
+1. `system_clock`：是系统的时钟，且系统的时钟可以修改，甚至可以网络对时。所以用系统时间计算时间差可能不准
+1. `high_resolution_clock`：是当前系统能够提供的最高精度的时钟。它也是不可以修改的。相当于`steady_clock`的高精度版本
+
+```sh
+auto start = std::chrono::steady_clock::now();
+auto end = std::chrono::steady_clock::now();
+auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+```
+
 # 7 `<memory>`
 
 ## 7.1 std::shared_ptr

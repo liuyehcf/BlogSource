@@ -3,7 +3,6 @@
     * [Linux查看实时网卡流量的几种方式](jianshu.com/p/b9e942f3682c)
     * 如何编写TUI程序(https://github.com/marcusolsson/tui-go)
     * ag
-    * [tmux使用指南：比screen好用n倍！](https://zhuanlan.zhihu.com/p/386085431)
 1. 性能分析
     * Perf
     * vtune
@@ -43,6 +42,7 @@
     * apache license/elastic license
 1. cpp
     * gcc各种常用
+    * gdb-dashboard
     * jemalloc/jcmalloc/mimalloc
     * 如何安装boost？ `yum install -y boost-devel`
     * 性能优化
