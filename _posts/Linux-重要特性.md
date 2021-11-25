@@ -1136,6 +1136,8 @@ cgdelete cpu:test_cpu_subsystem
 
 **若我们想控制两个`cgroup`的相对比例，可以通过配置`cpu.shares`来实现。例如，第一个`cgroup`设置成200，第二个`cgroup`设置成100，那么前者可使用的cpu时间是后者的两倍**
 
+**当一个进程被添加到某个cgroup中的task中后，由该进程创建的线程都自动属于这个cgroup。换言之，就是在之前创建的那些线程，并不会自动属于这个cgroup！！！**
+
 ## 2.3 内核实现
 
 ![cgroup_struct](/images/Linux-重要特性/cgroup_struct.png)
@@ -1307,7 +1309,13 @@ struct cgroup {
 
 在k8s中，以pod为单位进行资源限制（充分利用了`cgroup`的`hierarchy`），对应的目录为`/sys/fs/cgroup/<resource type>/kubepods.slice`
 
-## 2.6 参考
+## 2.6 cgroup相关命令行工具
+
+```sh
+yum install -y libcgroup libcgroup-tools
+```
+
+## 2.7 参考
 
 * [【docker 底层知识】cgroup 原理分析](https://blog.csdn.net/zhonglinzhang/article/details/64905759)
 * [Linux Cgroup 入门教程：基本概念](https://fuckcloudnative.io/posts/understanding-cgroups-part-1-basics/)

@@ -2565,8 +2565,8 @@ yum install -y sysstat
 
 **示例：**
 
-* `sar -u 1 10`
-* `sar -P ALL -u 1 10`
+* `sar -u 1 10`：输出cpu的相关信息（聚合了所有核）
+* `sar -P ALL -u 1 10`：输出每个核的cpu的相关信息
 * `sar -n DEV 1`
 
 ## 6.7 tsar
