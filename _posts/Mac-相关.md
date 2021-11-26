@@ -324,7 +324,34 @@ codesign --remove-signature /Applications/Visual\ Studio\ Code.app/Contents/Fram
 
 **步骤1：[安装iterm2](https://iterm2.com/)，不赘述**
 
-**步骤2：[安装ohmyzsh](https://github.com/ohmyzsh/ohmyzsh)，不赘述**
+**步骤2：[安装ohmyzsh](https://github.com/ohmyzsh/ohmyzsh)，不赘述。有时国内下载不下来，可以参考下面的步骤安装**
+
+```sh
+$ git clone https://github.com.cnpmjs.org/ohmyzsh/ohmyzsh.git --depth 1
+$ mv ohmyzsh ~/.oh-my-zsh
+
+$ cd ~/.oh-my-zsh/tools
+
+$ ./install.sh
+
+The $ZSH folder already exists (/root/.oh-my-zsh).
+You'll need to remove it if you want to reinstall.
+
+# install.sh发现目录已存在，就会认为已经安装成功了，此时，我们需要稍微调整下脚本
+# 用任意编辑器编辑 install.sh，删除「folder already exists」所在位置的那段 if 逻辑
+
+# 再次尝试安装
+$ ./install.sh
+
+Cloning Oh My Zsh...
+fatal: 目标路径 '/root/.oh-my-zsh' 已经存在，并且不是一个空目录。
+Error: git clone of oh-my-zsh repo failed
+
+# 按照上面的思路，继续调整脚本，删除 「git clone of oh-my-zsh repo failed」所在位置的 git clone 命令
+
+# 再次尝试安装，成功
+$ ./install.sh
+```
 
 **步骤3：[安装Powerline](https://powerline.readthedocs.io/en/latest/installation.html)**
 
@@ -336,7 +363,7 @@ $ sudo pip install powerline-status
 **步骤4：[安装Powerline的字体库](https://github.com/powerline/fonts)**
 
 ```
-$ git clone https://github.com/powerline/fonts.git --depth 1
+$ git clone https://github.com.cnpmjs.org/powerline/fonts.git --depth 1
 $ cd fonts
 $ ./install.sh
 $ cd ..
@@ -354,7 +381,7 @@ $ rm -rf fonts
 **步骤6：[安装配色方案solarized](https://github.com/altercation/solarized)**
 
 ```sh
-$ git clone https://github.com/altercation/solarized.git --depth 1
+$ git clone https://github.com.cnpmjs.org/altercation/solarized.git --depth 1
 $ open solarized/iterm2-colors-solarized
 ```
 
@@ -367,7 +394,7 @@ $ open solarized/iterm2-colors-solarized
 **步骤7：[安装agnoster主题](https://github.com/fcamblor/oh-my-zsh-agnoster-fcamblor)**
 
 ```sh
-$ git clone  https://github.com/fcamblor/oh-my-zsh-agnoster-fcamblor.git --depth 1
+$ git clone  https://github.com.cnpmjs.org/fcamblor/oh-my-zsh-agnoster-fcamblor.git --depth 1
 $ cd oh-my-zsh-agnoster-fcamblor
 $ ./install
 $ cd ..
@@ -405,7 +432,7 @@ prompt_status() {
 ```sh
 # 进入到 .zshrc 所在的目录，一般在用户目录下
 $ cd ~
-$ git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
+$ git clone https://github.com.cnpmjs.org/zsh-users/zsh-syntax-highlighting.git --depth 1
 ```
 
 然后修改`.zshrc`文件，在最后添加下面内容
@@ -414,6 +441,12 @@ $ git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
 source ~/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 plugins=(zsh-syntax-highlighting)
 ```
+
+**如果在`iterm2`中通过`ssh`访问远程主机，也想获得上述效果，那么需要在远程主机上执行如下几个步骤：**
+
+* **步骤2**
+* **步骤7**
+* **步骤8**
 
 ## 4.2 `Alt + f/b`在ssh场景下失效
 
