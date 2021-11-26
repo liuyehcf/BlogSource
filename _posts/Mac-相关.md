@@ -379,12 +379,22 @@ $ rm -rf oh-my-zsh-agnoster-fcamblor
 1. `~/.zshrc`增加配置项`SOLARIZED_THEME="light"`
 1. `~/.oh-my-zsh/themes/agnoster.zsh-theme`修改背景
     * 找到关键词`build_prompt`，这就是命令提示符的全部构成，每一个配置项的颜色都可以单独调整
-    * 以`prompt_context`为例，将`prompt_segment`后跟的`black`改为`white`
+    * 以`prompt_context`为例，将`prompt_segment`和`prompt_status`后跟的`black`改为`white`
     ```
 prompt_context() {
   if [[ "$USERNAME" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
     prompt_segment white default "%(!.%{%F{yellow}%}.)%n@%m"
   fi
+}
+
+prompt_status() {
+  local -a symbols
+
+  [[ $RETVAL -ne 0 ]] && symbols+="%{%F{red}%}✘"
+  [[ $UID -eq 0 ]] && symbols+="%{%F{yellow}%}⚡"
+  [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%{%F{cyan}%}⚙"
+
+  [[ -n "$symbols" ]] && prompt_segment white default "$symbols"
 }
     ```
 
@@ -402,6 +412,20 @@ $ git clone https://github.com/zsh-users/zsh-syntax-highlighting.git
 source ~/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 plugins=(zsh-syntax-highlighting)
 ```
+
+## 4.2 ssh-profile
+
+**bash默认使用`emacs`模式，在该模式下，光标按单词移动的快捷键是`Alt + b`以及`Alt + f`，但是`mac`是没有这两个快捷键的，可以通过设置`profile`来解决这个问题，步骤如下：**
+
+1. `Preferences` -> `Profiles` -> `+`：新建profile
+1. `Preferences` -> `Profiles` -> `General` -> `Command` -> `Send text at start`：这里输入ssh远程主机的命令
+1. `Preferences` -> `Profiles` -> `Keys` -> `Key Mappings` -> `+`：新建快捷键
+    1. `Alt + b`的替代快捷键
+        * `Shortcut`：`⌥←`
+        * `Action`：选择`Send Escape Sequence`，填`b`
+    1. `Alt + f`的替代快捷键
+        * `Shortcut`：`⌥→`
+        * `Action`：选择`Send Escape Sequence`，填`f`
 
 # 5 参考
 

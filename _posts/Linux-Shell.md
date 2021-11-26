@@ -1193,7 +1193,7 @@ env | grep FOO
 
 **格式：**
 
-* `read [-ers] [-a aname] [-d delim] [-i text] [-n nchars] [-N nchars] [-p prompt] [-t timeout] [-u fd] [name ...]`
+* `read [-ers] [-a name] [-d delim] [-i text] [-n nchars] [-N nchars] [-p prompt] [-t timeout] [-u fd] [name ...]`
 
 **参数说明：**
 

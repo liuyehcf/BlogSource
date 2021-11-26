@@ -961,6 +961,47 @@ ROOT=`cd "$ROOT"; pwd`
 
 * `iconv -f gbk -t utf-8 s.txt > t.txt`
 
+## 2.29 expect
+
+expect是一个自动交互的工具，通过编写自定义的配置，就可以实现自动填充数据的功能
+
+**示例：**
+
+```sh
+cat > /tmp/interact.cpp << 'EOF'
+#include <iostream>
+#include <string>
+
+int main() {
+    std::cout << "please input your first name: ";
+    std::string first_name;
+    std::cin >> first_name;
+
+    std::cout << "please input your last name: ";
+    std::string last_name;
+    std::cin >> last_name;
+
+    std::cout << "Welcome " << last_name << " " << first_name << std::endl;
+}
+EOF
+
+gcc -o /tmp/interact /tmp/interact.cpp -lstdc++
+
+cat > /tmp/test_expect.config << 'EOF'
+spawn /tmp/interact
+expect {
+    "*first name*" {
+        send "Bruce\n";
+        exp_continue;
+    }
+    "*last name*" { send "Lee\n"; }
+}
+interact
+EOF
+
+expect /tmp/test_expect.config
+```
+
 # 3 设备管理
 
 ## 3.1 mount
