@@ -413,12 +413,10 @@ source ~/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 plugins=(zsh-syntax-highlighting)
 ```
 
-## 4.2 ssh-profile
+## 4.2 `Alt + f/b`在ssh场景下失效
 
 **bash默认使用`emacs`模式，在该模式下，光标按单词移动的快捷键是`Alt + b`以及`Alt + f`，但是`mac`是没有这两个快捷键的，可以通过设置`profile`来解决这个问题，步骤如下：**
 
-1. `Preferences` -> `Profiles` -> `+`：新建profile
-1. `Preferences` -> `Profiles` -> `General` -> `Command` -> `Send text at start`：这里输入ssh远程主机的命令
 1. `Preferences` -> `Profiles` -> `Keys` -> `Key Mappings` -> `+`：新建快捷键
     1. `Alt + b`的替代快捷键
         * `Shortcut`：`⌥←`
