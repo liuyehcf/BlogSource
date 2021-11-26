@@ -259,7 +259,9 @@ sudo xattr -r -d com.apple.quarantine <app path>
 
 **以下步骤可以解决`VSCode`中的卡顿问题，参考[Lagging/freezing using VSCode Insiders in Big Sur](https://github.com/microsoft/vscode/issues/107103#issuecomment-731664821)**
 
-1. `codesign --remove-signature /Applications/Visual\ Studio\ Code.app/Contents/Frameworks/Code\ Helper\ \(Renderer\).app`
+```sh
+codesign --remove-signature /Applications/Visual\ Studio\ Code.app/Contents/Frameworks/Code\ Helper\ \(Renderer\).app
+```
 
 # 4 Iterm2
 

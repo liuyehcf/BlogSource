@@ -88,20 +88,28 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 
 * `useradd test -g wheel -G wheel -m -s /bin/bash`
 
-## 1.8 usermod
+## 1.8 userdel
+
+删除账号
+
+**示例：**
+
+* `userdel -r test`
+
+## 1.9 usermod
 
 **示例：**
 
 * `usermod -s /bin/zsh admin`
 * `usermod -d /opt/home/admin admin`
 
-## 1.9 passwd
+## 1.10 passwd
 
 **示例：**
 
 * `echo '123456' | passwd --stdin root`
 
-## 1.10 id
+## 1.11 id
 
 用于查看用户信息，包括`uid`，`gid`等
 
@@ -111,11 +119,11 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 * `id <username>`：查看指定用户的信息
 * `id -u`：查看当前用户的uid
 
-## 1.11 readelf
+## 1.12 readelf
 
 用于读取、解析可执行程序
 
-## 1.12 getconf
+## 1.13 getconf
 
 查看系统相关的信息
 
@@ -2459,16 +2467,26 @@ yum install -y hping3
 
 ### 6.1.1 免密登录
 
-**Client端步骤：**
+**方法1（手动)：**
 
-1. `ssh-keygen [-t rsa|dsa]`
-1. `scp ~/.ssh/id_rsa.pub [account@]host:~`
+```sh
+# 创建 rsa 密钥对（如果之前没有的话）
+ssh-keygen -t rsa
 
-**Server端步骤：**
+# 将本机的公钥 ~/.ssh/id_rsa.pub 放入目标机器目标用户的 ~/.ssh/authorized_keys 文件中
+ssh user@target 'mkdir ~/.ssh; chmod 700 ~/.ssh'
+cat ~/.ssh/id_rsa.pub | ssh user@target 'cat >> ~/.ssh/authorized_keys; chmod 644 ~/.ssh/authorized_keys'
+```
 
-1. `mkdir ~/.ssh; chmod 700 .ssh`，若不存在`~/.ssh`文件夹，则创建
-1. `cat id_rsa.pub >> .ssh/authorized_keys`
-1. `chmod 644 .ssh/authorized_keys`
+**方法2（自动，`ssh-copy-id`）**
+
+```sh
+# 创建 rsa 密钥对（如果之前没有的话）
+ssh-keygen -t rsa
+
+# 将本机的公钥 ~/.ssh/id_rsa.pub 放入目标机器目标用户的 ~/.ssh/authorized_keys 文件中
+ssh-copy-id user@target
+```
 
 ### 6.1.2 禁止密码登录
 
