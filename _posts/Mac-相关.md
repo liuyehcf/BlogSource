@@ -257,6 +257,11 @@ sudo xattr -r -d com.apple.quarantine <app path>
     * 键盘：按键重复调到最快，重复前延迟调到最短
     * 文本：所有的功能都关了，什么联想、提示之类的功能
 
+**以下步骤可以解决`Chrome`中的卡顿问题，参考[How To Fix Input Lag And Slow Performance In Google Chrome](https://www.alphr.com/how-to-fix-input-lag-and-slow-performance-in-google-chrome/)**
+
+* `Chrome` -> `Settings` -> `Advanced` -> `System` -> Disable `Use hardware acceleration when available`
+    * 开启或关闭可能都会有问题，重新切换一下开关状态可以恢复
+
 **以下步骤可以解决`VSCode`中的卡顿问题，参考[Lagging/freezing using VSCode Insiders in Big Sur](https://github.com/microsoft/vscode/issues/107103#issuecomment-731664821)**
 
 ```sh

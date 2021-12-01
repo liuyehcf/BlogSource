@@ -346,6 +346,16 @@ categories:
     * `Backup Tasks`
         * `MapReduce`的整体耗时与最慢的`task`密切相关
         * `GMR`提供了一种机制来解决这个问题，在任务完成后，`master`会将尚未结束的任务分配给这台机器，称为`backup-task`。一旦`original-task`或是`backup-task`完成，那么该任务就算完成
+1. `Refinements`
+    * `Partitioning Function`：用于将输入拆分成多份，通常来说，`hash`可以将输入均匀地拆分成多份。但是在某些场景中，比如将网站的URL进行拆分，更希望于将相同host的URL拆分到同一个分区中，此时就需要一个特殊的分区函数
+    * `Ordering Guarantees`：对于某个分区，GBR保证输入是按照key的升序排列。基于这个约束，可以很容易地得到一个有序的输出
+    * `Combiner Function`：在许多场景下，`map-task`产生的数据中包含大量的重复。`Combiner Function`用于合并这些重复的数据，以减少网络开销
+    * `Input and Output Types`：`Input Types`与如何切割输入流有关。例如按行读入和按单词读入，对数据流的切分是不同的
+    * `Side-effects`：在一些场景中，用户会在`map-reduce`的过程中，产生一些额外的输出（文件）。这些额外的操作需要保证原子以及幂等。通常，应用会写临时文件，结束时重命名文件
+    * `Skipping Bad Records`：有时候`map`或者`reduce`的实现中可能存在bug，导致crash，这些bug会导致整个`MapReduce`过程无法完成。通常来说，最好的方法是修复bug，但有时是无法修复的，比如bug来自三方库，或者源码未开放。因此，在适当的情况下，忽略一些数据（会触发bug的数据）是可接受的
+    * `Location Execution`：GBR很难debug，因为任务分布在不同的机器上。为此，开发了一个`MapReduce`库用户debug，该库会将所有任务都在本地运行
+    * `Status Information`：`master`会启动一个HTTP服务，用于管理和展示
+    * `Counters`：GBR提供了一系列的Counter来统计数据。每个`worker`中的`Counters`信息会定期的同步给`master`并做汇总。如果有相同的任务，`master`可以基于已完成的任务的`Counter`对尚在进行的任务做出预测
 
 ## 4.1 参考
 

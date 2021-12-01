@@ -1523,6 +1523,19 @@ test	ALL=(ALL)	ALL
 * `tmux attach -t <name>`：接入指定名字的session
 * `tmux kill-session -t <name>`
 * `tmux rename-session -t <old-name> <new-name>`：重命名
+* `C-b s`：选择需要跳转的session
+* `C-b $`：重命名当前session
+* `C-b d`：断开当前session
+* `C-b c`：在当前session中多加一个window
+* `C-b w`：在当前session中的多个window中做出选择
+* `C-b x`：关闭当前session中的当前window
+* `C-b !`：关闭一个session中所有window
+* `C-b %`：将当前window分成左右两部分
+* `C-b "`：将当前window分成上下两部分
+* `C-b 方向键`：在不同window中跳转
+* `C-b 方向键（C-b按住不放）`：调整当前window的大小
+* `C-b [`：翻屏模式，实现上下翻页
+    * `q`：退出翻屏模式
 
 **小技巧：**
 
