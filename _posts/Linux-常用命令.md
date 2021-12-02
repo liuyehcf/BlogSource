@@ -3029,6 +3029,8 @@ yum install -y iotop
 1. `perf report`：查看分析报告
 1. **`perf top -p <pid>`：以交互式的方式分析一个程序的性能（神器）**
     * 选中某个条目，然后选择`Anotate xxx`可以查看对应的汇编
+1. **`perf stat -p <pid> -e branch-instructions,branch-misses,cache-misses,cache-references,cpu-cycles,ref-cycles,instructions,mem_load_retired.l1_hit,mem_load_retired.l1_miss,mem_load_retired.l2_hit,mem_load_retired.l2_miss,cpu-migration
+s,context-switches,page-faults,major-faults,minor-faults`**
 
 # 8 audit
 
