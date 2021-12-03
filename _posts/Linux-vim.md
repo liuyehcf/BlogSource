@@ -220,6 +220,7 @@ categories:
 * **`:q!`：若曾修改过文件，又不想存储，使用"!"为强制离开不保存的意思**
 * **`:wq`：保存后离开,若为:wq!则代表强制保存并离开**
 * **`:e [filename]`：打开文件并编辑**
+* **`:e`：重新载入当前文件**
 * `ZZ`：若文件没有变更，则不保存离开，若文件已经变更过，保存后离开
 * `:w [filename]`：将编辑文件保存称为另一个文件,注意w和文件名中间有空格
 * `:r [filename]`：在编辑的数据中，读入另一个文件的数据，即将filename这个文件的内容加到光标所在行后面，注意r和文件名之间有空格
@@ -307,7 +308,9 @@ categories:
 * **`:bprev`：显示上一个buffer**
 * **`:edit [filename]`：将一个文件放入一个新的buffer中**
 * **`:bdelete [n]`：删除指定buffer（不指定时，表示当前buffer）**
-* **`%bdelete`：删除所有buffer**
+* **`:%bdelete`：删除所有buffer**
+* **`:bufdo <cmd>`：对所有buffer执行操作**
+    * **`:bufdo e`：重新载入所有buffer对应的文件**
 
 ## 2.12 window
 

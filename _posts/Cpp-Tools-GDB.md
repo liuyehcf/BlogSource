@@ -266,6 +266,9 @@ Breakpoint 1, main () at set_break.cpp:8
 * `undisplay <display_id>`：取消跟踪
 * `watch`：设置观察点。当被设置观察点的变量发生修改时，打印显示
 * `thread <id>`：切换调试的线程为指定线程
+* `up [<n>]`：沿着栈往上走一层或`n`层
+* `down [<n>]`：沿着栈网下走一层或`n`层
+* `frame <n>`：跳转到栈的指定层
 
 ## 3.5 查看调试相关信息
 

@@ -758,6 +758,7 @@ echo "'$test1', '$test2', '$test3', '$test4', '$test5', '$test6'"
 Shell 数组用括号来表示，元素用`空格`符号分割开，语法格式如下：
 
 ```sh
+array_name=()
 array_name=(value1 ... valuen)
 
 # 或者直接这样定义，注意，不需要${}
@@ -770,15 +771,24 @@ array_name[n]=valuen
 **数组属性**
 
 * `@`或`*`可以获取数组中的所有元素
-```
+```sh
 ${array[@]}
 ${array[*]}
 ```
 
 * 获取数组长度的方法与获取字符串长度的方法相同，即利用`#`
-```
+```sh
 ${#array[@]}
 ${#array[*]}
+```
+
+**数组合并：**
+
+```sh
+array1=(1 2 3)
+array2=(4 5 6)
+array3=( ${array1[@]} ${array2[@]} )
+echo "array3='${array3[@]}'"
 ```
 
 **示例：**
