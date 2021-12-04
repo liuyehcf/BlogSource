@@ -428,7 +428,11 @@ $5 = (Person *) 0x7fffffffe0c0
 xxx/gdb_tutorial
 ```
 
-# 4 参考
+# 4 [gdb-dashboard](https://github.com/cyrus-and/gdb-dashboard)
+
+`gdb-dashboard`在`gdb`的基础之上，提供了一个更加友好的格式化界面
+
+# 5 参考
 
 * [GDB Tutorial - A Walkthrough with Examples](https://www.cs.umd.edu/~srhuang/teaching/cmsc212/gdb-tutorial-handout.pdf)
 * [GDB Command Reference](https://visualgdb.com/gdbreference/commands/)

@@ -165,9 +165,14 @@ $ git reset --keep [commit]
 # 后者的所有变化都将被前者抵消，并且应用到当前分支
 $ git revert [commit]
 
-# 暂时将未提交的变化移除，稍后再移入
+# 将暂未提交的改动保存到缓存中
 $ git stash
+
+# 将缓存的改动恢复到工作区
 $ git stash pop
+
+# 清除缓存
+$ git stash clear
 
 # 丢弃工作区的改动
 $ git restore [file]

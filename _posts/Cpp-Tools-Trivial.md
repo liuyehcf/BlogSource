@@ -11,16 +11,33 @@ categories:
 
 <!--more-->
 
-# 1 gcc
+# 1 lib
 
-## 1.1 汇编/目标/可执行
+## 1.1 什么是`libc`、`glic`
+
+`libc`实现了C的标准库函数（例如`strcpy()`），以及`POSIX`函数（例如系统调用`getpid()`）。此外，不是所有的C标准库函数都包含在`libc`中，比如大多数`math`相关的库函数都封装在`libm`中
+
+系统调用有别于普通函数，它无法被链接器解析。实现系统调用必须引入平台相关的汇编指令。我们可以通过手动实现这些汇编指令来完成系统调用，或者直接使用`libc`（它已经为我们封装好了）
+
+`glibc, GNU C Library`可以看做是`libc`的另一种实现，它不仅包含`libc`的所有功能还包含`libm`以及其他核心库，比如`libpthread`
+
+## 1.2 静态/动态链接库
+
+**后缀**
+
+* 静态链接库：`*.a`
+* 动态链接库：`*.so`
+
+# 2 gcc
+
+## 2.1 汇编/目标/可执行
 
 1. `-S`：生成汇编文件（`.s`）
     * `-fverbose-asm`：带上一些注释信息
 1. `-c`：生成目标文件（`.o`）
 1. 默认生成可执行文件
 
-## 1.2 编译优化
+## 2.2 编译优化
 
 **`-O0`（默认）：不做任何优化**
 
@@ -32,9 +49,9 @@ categories:
 
 **不同优化等级对应开启的优化参数参考`man page`**
 
-## 1.3 参考
+## 2.3 参考
 
-# 2 clang-format
+# 3 clang-format
 
 **如何安装`clang-format`**
 
@@ -64,7 +81,7 @@ SortUsingDeclarations: false
 SpacesBeforeTrailingComments: 1
 ```
 
-# 3 头文件搜索路径
+# 4 头文件搜索路径
 
 **头文件`#include "xxx.h"`的搜索顺序**
 
@@ -85,13 +102,13 @@ SpacesBeforeTrailingComments: 1
     * `/usr/local/include`
     * `/usr/lib/gcc/x86_64-redhat-linux/<gcc version>/include`（C头文件）或者`/usr/include/c++/<gcc version>`（C++头文件）
 
-## 3.1 参考
+## 4.1 参考
 
 * [C/C++ 头文件以及库的搜索路径](https://blog.csdn.net/crylearner/article/details/17013187)
 
-# 4 Address Sanitizer
+# 5 Address Sanitizer
 
-## 4.1 memory leak
+## 5.1 memory leak
 
 ```sh
 cat > test_memory_leak.cpp << 'EOF'
@@ -108,7 +125,7 @@ gcc test_memory_leak.cpp -o test_memory_leak -g -lstdc++ -fsanitize=address -sta
 ./test_memory_leak
 ```
 
-## 4.2 stack buffer underflow
+## 5.2 stack buffer underflow
 
 ```sh
 cat > test_stack_buffer_underflow.cpp << 'EOF'
@@ -138,17 +155,17 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
 ./test_stack_buffer_underflow
 ```
 
-## 4.3 参考
+## 5.3 参考
 
 * [c++ Asan(address-sanitize)的配置和使用](https://blog.csdn.net/weixin_41644391/article/details/103450401)
 * [HOWTO: Use Address Sanitizer](https://www.osc.edu/resources/getting_started/howto/howto_use_address_sanitizer)
 * [google/sanitizers](https://github.com/google/sanitizers)
 
-# 5 doc
+# 6 doc
 
-## 5.1 [cpp reference](https://en.cppreference.com/w/)
+## 6.1 [cpp reference](https://en.cppreference.com/w/)
 
-## 5.2 [cppman](https://github.com/aitjcize/cppman/)
+## 6.2 [cppman](https://github.com/aitjcize/cppman/)
 
 **如何安装：**
 
