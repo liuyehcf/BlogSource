@@ -11,7 +11,7 @@ categories:
 
 <!--more-->
 
-# 1 [Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age](/Papers/Morsel-Driven-Parallelism.pdf)
+# 1 [Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age](/resources/Morsel-Driven-Parallelism.pdf)
 
 1. 为什么现在开始关注`many-core`架构：随着内存带宽的增长，出现了一些内存级的数据库（广义或者狭义，狭义指的是所有数据完全存在于内存中；广义指的是部分数据以某种形式存在于内存中，比如缓存），对于这些数据库系统，I/O不再是性能瓶颈，能否高效利用好计算机的多个`core`决定了系统整体的性能
 1. 核心是调度机制：（称为`dispatcher`），能够灵活的调整pipeline的并发度
@@ -47,7 +47,7 @@ categories:
 
 **progress：5/12 3.3**
 
-# 2 [The Google File System](/Papers/Google-File-System.pdf)
+# 2 [The Google File System](/resources/Google-File-System.pdf)
 
 1. GFS的目标包括：performance（高性能）、scalability（高可扩展）、reliability（高可靠）、availability（高可用）
 1. 在设计中，把失败视为常态而非异常。因此系统必须具备的核心能力包括：持续监控、错误勘探、错误容忍、自动恢复
@@ -187,7 +187,7 @@ categories:
         * `client`需要使用dns、而不是`master ip`，这样当`master`发生切换时，`client`无需感知
         * `shadow master`会提供读服务（即便`primary master`宕机）
 
-# 3 [Bigtable: A Distributed Storage System for Structured Data](/Papers/Google-Bigtable.pdf)
+# 3 [Bigtable: A Distributed Storage System for Structured Data](/resources/Google-Bigtable.pdf)
 
 1. GBT的目标包括
     * 适用范围广
@@ -301,7 +301,7 @@ categories:
         * 由于`SSTable`是不可变的，清理删除的数据转变成了垃圾收集器收集过时的`SSTable`
         * 由于`SSTable`是不可变的，因此`tablet`的拆分变得很容易，因为`child tablet`可以共享`parent tablet`的`SSTable`而无需拷贝 
 
-# 4 [MapReduce: Simplified Data Processing on Large Clusters](/Papers/Google-MapReduce.pdf)
+# 4 [MapReduce: Simplified Data Processing on Large Clusters](/resources/Google-MapReduce.pdf)
 
 1. `Abstract`
     * `map`用于产生一组`key/value`对
