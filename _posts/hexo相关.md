@@ -23,6 +23,7 @@ categories:
 | [hexo-filter-plantuml](https://github.com/wafer-li/hexo-filter-plantuml) | hexo插件-高级时序图 |
 | [hexo-filter-flowchart](https://github.com/bubkoo/hexo-filter-flowchart) | hexo插件-流程图 |
 | [hexo-simple-mindmap](https://github.com/HunterXuan/hexo-simple-mindmap) | hexo插件-思维导图 |
+| [hexo-markmap](https://github.com/MaxChang3/hexo-markmap) | hexo插件-思维导图 |
 | [hexo-toc](https://github.com/bubkoo/hexo-toc) | hexo插件-目录 |
 | [hexo-wordcount](https://github.com/willin/hexo-wordcount) | hexo插件-字数统计 |
 | [hexo-symbols-count-time](https://github.com/theme-next/hexo-symbols-count-time) | 阅读时间统计 |
@@ -349,33 +350,93 @@ cond(no)->sub1(right)->op
 
 # 9 mindmap思维导图
 
+## 9.1 simple-mindmap
+
 [hexo-simple-mindmap](https://github.com/HunterXuan/hexo-simple-mindmap)
 
 **示例：**
 
 ```
 {% pullquote mindmap mindmap-md %}
-- [在 Hexo 中使用思维导图](https://hunterx.xyz/use-mindmap-in-hexo.html)
-  - 前言
-  - 操作指南
-    - 准备需要的文件
-    - 为主题添加 CSS/JS 文件
-  - 使用方法
+- Test A
+    - Test a
+        - Test 1
+        - Test 2
+    - Test b
+        - Test 3
+        - Test 4
+- Test B
+    - Test c
+        - Test 5
+        - Test 6
+    - Test d
+        - Test 7
+        - Test 8
 {% endpullquote %}
 ```
 
 **效果：**
 
 {% pullquote mindmap mindmap-md %}
-
-- [在 Hexo 中使用思维导图](https://hunterx.xyz/use-mindmap-in-hexo.html)
-
-  - 前言
-  - 操作指南
-    - 准备需要的文件
-    - 为主题添加 CSS/JS 文件
-  - 使用方法
+- Test A
+    - Test a
+        - Test 1
+        - Test 2
+    - Test b
+        - Test 3
+        - Test 4
+- Test B
+    - Test c
+        - Test 5
+        - Test 6
+    - Test d
+        - Test 7
+        - Test 8
 {% endpullquote %}
+
+## 9.2 markmap
+
+[hexo-markmap](https://github.com/MaxChang3/hexo-markmap)
+
+**示例：**
+
+```
+{% markmap %}
+- Test A
+    - Test a
+        - Test 1
+        - Test 2
+    - Test b
+        - Test 3
+        - Test 4
+- Test B
+    - Test c
+        - Test 5
+        - Test 6
+    - Test d
+        - Test 7
+        - Test 8
+{% endmarkmap %}
+```
+
+**效果：**
+
+{% markmap %}
+- Test A
+    - Test a
+        - Test 1
+        - Test 2
+    - Test b
+        - Test 3
+        - Test 4
+- Test B
+    - Test c
+        - Test 5
+        - Test 6
+    - Test d
+        - Test 7
+        - Test 8
+{% endmarkmap %}
 
 # 10 目录功能
 
