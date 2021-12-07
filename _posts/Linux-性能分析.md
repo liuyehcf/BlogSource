@@ -70,9 +70,20 @@ sudo perf script > out.perf
 
 # 2 VTune
 
+**大致步骤：**
+
+1. 在`MacOS`、`Windows`、`Linux`上安装`Vtune-Profile`
+2. 假设安装目录是`/opt/intel/oneapi`，将`/opt/intel/oneapi/vtune/2021.8.0/target/linux`下的压缩包拷贝到目标机器上并解压
+
+```sh
+vtune -collect hotspots -knob sampling-mode=hw -knob sampling-interval=0.5 -d 60 a.out
+vtune -collect hotspots -knob sampling-mode=hw -knob sampling-interval=0.5 -target-pid=123 -d 60
+```
+
 ## 2.1 参考
 
-* [Intel® VTune™ Profiler](https://www.intel.com/content/www/us/en/developer/tools/oneapi/vtune-profiler.html#gs.edu99w)
+* [Intel® VTune™ Profiler User Guide](https://www.intel.com/content/www/us/en/develop/documentation/vtune-help/top.html)
+* [Intel® VTune™ Profiler User Guide - Run Command Line Analysis](https://www.intel.com/content/www/us/en/develop/documentation/vtune-help/top/command-line-interface/running-command-line-analysis.html)
 * [Intel® VTune™ Profiler Performance Analysis Cookbook](https://software.intel.com/content/www/us/en/develop/documentation/vtune-cookbook/top/methodologies/top-down-microarchitecture-analysis-method.html)
 * [《A Top-Down Method for Performance Analysis and Counters Architecture》阅读笔记](https://andrewei1316.github.io/2020/12/20/top-down-performance-analysis/)
 
