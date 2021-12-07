@@ -22,6 +22,7 @@ categories:
 | [hexo-filter-mermaid-diagrams](https://github.com/webappdevelp/hexo-filter-mermaid-diagrams) | hexo插件-序列图 |
 | [hexo-filter-plantuml](https://github.com/wafer-li/hexo-filter-plantuml) | hexo插件-高级时序图 |
 | [hexo-filter-flowchart](https://github.com/bubkoo/hexo-filter-flowchart) | hexo插件-流程图 |
+| [hexo-simple-mindmap](https://github.com/HunterXuan/hexo-simple-mindmap) | hexo插件-思维导图 |
 | [hexo-toc](https://github.com/bubkoo/hexo-toc) | hexo插件-目录 |
 | [hexo-wordcount](https://github.com/willin/hexo-wordcount) | hexo插件-字数统计 |
 | [hexo-symbols-count-time](https://github.com/theme-next/hexo-symbols-count-time) | 阅读时间统计 |
@@ -346,11 +347,41 @@ cond(no)->sub1(right)->op
 
 [hexo-filter-sequence](https://github.com/bubkoo/hexo-filter-sequence)
 
-# 9 目录功能
+# 9 mindmap思维导图
+
+[hexo-simple-mindmap](https://github.com/HunterXuan/hexo-simple-mindmap)
+
+**示例：**
+
+```
+{% pullquote mindmap mindmap-md %}
+- [在 Hexo 中使用思维导图](https://hunterx.xyz/use-mindmap-in-hexo.html)
+  - 前言
+  - 操作指南
+    - 准备需要的文件
+    - 为主题添加 CSS/JS 文件
+  - 使用方法
+{% endpullquote %}
+```
+
+**效果：**
+
+{% pullquote mindmap mindmap-md %}
+
+- [在 Hexo 中使用思维导图](https://hunterx.xyz/use-mindmap-in-hexo.html)
+
+  - 前言
+  - 操作指南
+    - 准备需要的文件
+    - 为主题添加 CSS/JS 文件
+  - 使用方法
+{% endpullquote %}
+
+# 10 目录功能
 
 [hexo-toc](https://github.com/bubkoo/hexo-toc)
 
-# 10 访问统计
+# 11 访问统计
 
 [阅读次数统计-配置](http://theme-next.iissnan.com/third-party-services.html#analytics-tencent-mta)
 
@@ -384,7 +415,7 @@ leancloud_counter_security:
   password: '19930101' # 究极大坑，这里需要用引号
 ```
 
-# 11 本地搜索
+# 12 本地搜索
 
 [本地搜索-配置](http://theme-next.iissnan.com/third-party-services.html#local-search)
 
@@ -392,11 +423,11 @@ leancloud_counter_security:
 
 [Mac 上的 VSCode 编写 Markdown 总是出现隐藏字符？](https://www.zhihu.com/question/61638859)
 
-# 12 背景动画
+# 13 背景动画
 
 [背景动画-配置](http://theme-next.iissnan.com/theme-settings.html#use-bg-animation)
 
-# 13 增加菜单
+# 14 增加菜单
 
 `hexo new page "explore"`
 
@@ -444,7 +475,7 @@ menu:
   commonweal: 公益404
 ```
 
-# 14 取消侧栏编号
+# 15 取消侧栏编号
 
 主题配置文件修改如下配置，将number改为false即可
 
@@ -459,7 +490,7 @@ toc:
   wrap: false
 ```
 
-# 15 修改行内代码样式
+# 16 修改行内代码样式
 
 修改方式（这个方式在最新的next版本中好像失效了）：在`themes/next/source/css/_custom/custom.styl`中增加如下代码
 
@@ -483,7 +514,7 @@ code {
 }
 ```
 
-# 16 修改链接样式
+# 17 修改链接样式
 
 链接即如下的语法
 
@@ -508,7 +539,7 @@ code {
 }
 ```
 
-# 17 调整next主题的字体大小
+# 18 调整next主题的字体大小
 
 文件相对路径：`themes/next/source/css/_variables/base.styl`
 
@@ -533,7 +564,7 @@ $font-size-headings-large   = $font-size-headings-base + $font-size-headings-ste
 $font-size-headings-larger  = $font-size-headings-large + $font-size-headings-step
 ```
 
-# 18 文章置顶
+# 19 文章置顶
 
 ```sh
 
@@ -555,7 +586,7 @@ top: true
 ---
 ```
 
-# 19 deploy
+# 20 deploy
 
 ```sh
 npm install hexo-deployer-git --save
@@ -563,7 +594,7 @@ npm install hexo-deployer-git --save
 
 [nodejs更新后hexo没法deploy](https://blog.csdn.net/qq_41535611/article/details/106309335)
 
-# 20 更换电脑后迁移
+# 21 更换电脑后迁移
 
 1. 参考[hexo-README](https://github.com/hexojs/hexo)，安装`hexo`
 1. 参考[theme-next-README](https://github.com/theme-next/hexo-theme-next)，安装`hexo`主题`theme-next`
@@ -577,7 +608,7 @@ npm install hexo-deployer-git --save
     * deploy
     * search
 
-# 21 参考
+# 22 参考
 
 * [next官方文档](http://theme-next.iissnan.com/getting-started.html)
 * [搭建一个支持LaTEX的hexo博客](http://blog.csdn.net/emptyset110/article/details/50123231)
