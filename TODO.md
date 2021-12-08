@@ -4,6 +4,8 @@
     * 如何编写TUI程序(https://github.com/marcusolsson/tui-go)
     * ag
     * xquartz
+    * vncserver-vncviewer
+    * https://www.nomachine.com/
 1. 性能分析
     * Perf
     * vtune

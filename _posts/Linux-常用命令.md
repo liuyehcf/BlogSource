@@ -2518,6 +2518,26 @@ ClientAliveInterval 60
 ClientAliveCountMax 3
 ```
 
+### 6.1.4 隧道
+
+**格式：**
+
+* `ssh -L [local_bind_addr:]local_port:remote_host:remote_port [-fN] middle_host`
+    * `local`与`middle_host`互通
+    * `middle_host`与`remote_host`互通（当然，`remote_host`可以与`middle_host`相同）
+    * **路径：`frontend --tcp--> local_host:local_port --tcp over ssh--> middle_host:22 --tcp--> remote_host:remote_port`**
+
+**参数说明：**
+
+* `-f`：在后台运行
+* `-N`：不要执行远程命令
+
+**示例：**
+
+* `ssh -L 5901:127.0.0.1:5901 -N -f user@remote_host`：仅监听在`127.0.0.1`上
+* `ssh -L "*:5901:127.0.0.1:5901" -N -f user@remote_host`：监听在所有ip上
+    * 同`ssh -g -L 5901:127.0.0.1:5901 -N -f user@remote_host`
+
 ## 6.2 scp
 
 **格式：**
@@ -3282,3 +3302,4 @@ echo $y # 输出10
 * [在Linux下做性能分析3：perf](https://zhuanlan.zhihu.com/p/22194920)
 * [tmux使用指南：比screen好用n倍！](https://zhuanlan.zhihu.com/p/386085431)
 * [Perf: what do [<n percent>] records mean in perf stat output?](https://stackoverflow.com/questions/33679408/perf-what-do-n-percent-records-mean-in-perf-stat-output)
+* [SSH隧道：端口转发功能详解](https://www.cnblogs.com/f-ck-need-u/p/10482832.html)
