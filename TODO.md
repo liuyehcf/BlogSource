@@ -5,6 +5,7 @@
     * ag
     * xquartz
     * vncserver-vncviewer
+    * nx
     * https://www.nomachine.com/
 1. 性能分析
     * Perf
@@ -47,9 +48,16 @@
     * cpp summit
     * jemalloc/jcmalloc/mimalloc
     * 如何安装boost？ `yum install -y boost-devel`
+    * map下标访问是非const的，因为可能会插入数据
     * 性能优化
         * ck /AggregateFunctions/IAggregateFunction.h
     * [Google 开源项目风格指南](https://zh-google-styleguide.readthedocs.io/en/latest/google-cpp-styleguide/)
+1. 函数式编程
+    * 高阶函数
+        * 入参出参可以是函数
+        * 可以在方法内定义函数
+    * 代数数据结构
+        * 子类正交，比如：是否常量、是否可空、是否可空且常量，是用2个子类实现还是3个子类实现？代数数据结构会选择用3个子类实现，这样每个实现都是正交的
 1. vim
     * filereadable 无法识别 ~  expand
     * vimscript https://zhuanlan.zhihu.com/p/37352209
