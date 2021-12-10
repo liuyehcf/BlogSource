@@ -7,6 +7,7 @@
     * vncserver-vncviewer
     * nx
     * https://www.nomachine.com/
+    * 僵尸进程：https://zhuanlan.zhihu.com/p/92381918
 1. 性能分析
     * Perf
     * vtune
@@ -74,3 +75,4 @@
     * sa（Solution Architect）：解决方案架构师
     * sre（Site Reliability Engineering）：站点可靠工程师
     * [cpu的制造和](https://plantegg.github.io/2021/06/01/CPU%E7%9A%84%E5%88%B6%E9%80%A0%E5%92%8C%E6%A6%82%E5%BF%B5/)
+    * [Mac 安装 iTerm2 + Oh My Zsh 实现命令提示](http://www.manoner.com/tools/iTerm2+OhMyZsh/)

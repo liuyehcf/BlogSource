@@ -41,6 +41,14 @@ systemctl start rc-local.service
 
 **局域网测速：iperf**
 
+```sh
+# 服务端
+iperf -s -p 3389 -i 1
+
+# 客户端
+iperf -c <server_addr> -p 3389 -i 1
+```
+
 # 5 参考
 
 * [Linux下使用Speedtest测试网速](https://www.linuxprobe.com/speedtest-network-in-linux.html)
