@@ -3070,7 +3070,7 @@ yum install -y iotop
 
 * `VNCServer`在远程Linux主机上启动一个端口，并通过该端口对外提供桌面服务
     * 可以理解为一个安装了`X`的机器，只是没有外设（鼠标、键盘、显示器）
-* `VNCClient`通过与`VNCServer`暴露的端口建联，获取图形化输出所需的信息（包括传递I/O设备的信号）
+* `VNCClient`通过与`VNCServer`暴露的端口连接，获取图形化输出所需的信息（包括传递I/O设备的信号）
     * 可以理解为一个远程的外设（鼠标、键盘、显示器）
 
 **如何使用：**
@@ -3092,7 +3092,7 @@ yum install -y iotop
     * `rpm -ivh nomachine_7.7.4_1_x86_64.rpm`
     * `/etc/NX/nxserver --restart`
 1. **从官网下载`NXClient`**
-    * 默认端口号是4000
+    * `NXServer`的默认端口号是`4000`
     * 默认可以用`Linux`的账号密码登录
 
 **配置文件：`/usr/NX/etc/server.cfg`**
