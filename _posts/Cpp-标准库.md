@@ -336,3 +336,8 @@ result: 0, flag: 1, expected: 1
 
 ## 12.2 std::remove_reference
 
+# 13 C标准库
+
+1. `stdio.h`
+1. `stddef.h`
+1. `stdint.h`

@@ -1384,12 +1384,14 @@ sed -i 's|github.com/|github.com.cnpmjs.org/|' install.sh
 ```sh
 # 定义一个函数，用于调整github的地址，加速下载过程，该函数会用到多次
 function setup_github_repo() {
-    CONFIGS=( $(grep -rnl 'https://github.com' .git) )
-    for CONFIG in ${CONFIGS[@]}
+    gitmodules=( $(find . -name '.gitmodules' -type f) )
+    for gitmodule in ${gitmodules[@]}
     do
-        echo "setup github repo for '${CONFIG}'"
-        sed -i 's|https://github.com/|https://github.com.cnpmjs.org/|g' ${CONFIG}
+        echo "setup github repo for '${gitmodule}'"
+        sed -i 's|//github.com/|//github.com.cnpmjs.org/|g' ${gitmodule}
     done
+
+    git submodule sync --recursive
 }
 
 cd ~/.vim/plugged

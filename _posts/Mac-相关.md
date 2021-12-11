@@ -101,29 +101,29 @@ Page DOWN：`Fn+↓`
 
 ```sh
 # step 1: 替换brew.git
-$ cd "$(brew --repo)"
+cd "$(brew --repo)"
 # 中国科大:
-$ git remote set-url origin https://mirrors.ustc.edu.cn/brew.git
+git remote set-url origin https://mirrors.ustc.edu.cn/brew.git
 # 清华大学:
-$ git remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git
+git remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/brew.git
 
 # step 2: 替换homebrew-core.git
-$ cd "$(brew --repo)/Library/Taps/homebrew/homebrew-core"
+cd "$(brew --repo)/Library/Taps/homebrew/homebrew-core"
 # 中国科大:
-$ git remote set-url origin https://mirrors.ustc.edu.cn/homebrew-core.git
+git remote set-url origin https://mirrors.ustc.edu.cn/homebrew-core.git
 # 清华大学:
-$ git remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git
+git remote set-url origin https://mirrors.tuna.tsinghua.edu.cn/git/homebrew/homebrew-core.git
 
 # step 3: 替换homebrew-bottles
 # 中国科大:
-$ echo 'export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles' >> ~/.bash_profile
-$ source ~/.bash_profile
+echo 'export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.ustc.edu.cn/homebrew-bottles' >> ~/.bash_profile
+source ~/.bash_profile
 # 清华大学:
-$ echo 'export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles' >> ~/.bash_profile
-$ source ~/.bash_profile
+echo 'export HOMEBREW_BOTTLE_DOMAIN=https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles' >> ~/.bash_profile
+source ~/.bash_profile
 
 # step 4: 应用生效
-$ brew update
+brew update
 ```
 
 ## 2.3 升级bash
@@ -332,47 +332,52 @@ codesign --remove-signature /Applications/Visual\ Studio\ Code.app/Contents/Fram
 **步骤2：[安装ohmyzsh](https://github.com/ohmyzsh/ohmyzsh)，不赘述。有时国内下载不下来，可以参考下面的步骤安装**
 
 ```sh
-$ git clone https://github.com.cnpmjs.org/ohmyzsh/ohmyzsh.git --depth 1
-$ mv ohmyzsh ~/.oh-my-zsh
+git clone https://github.com.cnpmjs.org/ohmyzsh/ohmyzsh.git --depth 1
+mv ohmyzsh ~/.oh-my-zsh
 
-$ cd ~/.oh-my-zsh/tools
+cd ~/.oh-my-zsh/tools
 
-$ ./install.sh
+./install.sh
+```
 
+```
 The $ZSH folder already exists (/root/.oh-my-zsh).
 You'll need to remove it if you want to reinstall.
+```
 
-# install.sh发现目录已存在，就会认为已经安装成功了，此时，我们需要稍微调整下脚本
-# 用任意编辑器编辑 install.sh，删除「folder already exists」所在位置的那段 if 逻辑
+**`install.sh`发现目录已存在，就会认为已经安装成功了，此时，我们需要稍微调整下脚本。用任意编辑器编辑`install.sh`，删除`folder already exists`所在位置的那段`if`逻辑。并再次尝试安装**
 
-# 再次尝试安装
-$ ./install.sh
+```sh
+./install.sh
+```
 
+```
 Cloning Oh My Zsh...
 fatal: 目标路径 '/root/.oh-my-zsh' 已经存在，并且不是一个空目录。
 Error: git clone of oh-my-zsh repo failed
+```
 
-# 按照上面的思路，继续调整脚本，删除 「git clone of oh-my-zsh repo failed」所在位置的 git clone 命令
+**按照上面的思路，继续调整脚本，删除`git clone of oh-my-zsh repo failed`所在位置的`git clone`命令。并再次尝试安装，成功**
 
-# 再次尝试安装，成功
-$ ./install.sh
+```sh
+./install.sh
 ```
 
 **步骤3：[安装Powerline](https://powerline.readthedocs.io/en/latest/installation.html)**
 
 ```sh
-$ sudo brew install pip
-$ sudo pip install powerline-status
+sudo brew install pip
+sudo pip install powerline-status
 ```
 
 **步骤4：[安装Powerline的字体库](https://github.com/powerline/fonts)**
 
 ```
-$ git clone https://github.com.cnpmjs.org/powerline/fonts.git --depth 1
-$ cd fonts
-$ ./install.sh
-$ cd ..
-$ rm -rf fonts
+git clone https://github.com.cnpmjs.org/powerline/fonts.git --depth 1
+cd fonts
+./install.sh
+cd ..
+rm -rf fonts
 ```
 
 安装时，会提示所有字体均已下载到`/Users/<user name>/Library/Fonts`
@@ -386,8 +391,8 @@ $ rm -rf fonts
 **步骤6：[安装配色方案solarized](https://github.com/altercation/solarized)**
 
 ```sh
-$ git clone https://github.com.cnpmjs.org/altercation/solarized.git --depth 1
-$ open solarized/iterm2-colors-solarized
+git clone https://github.com.cnpmjs.org/altercation/solarized.git --depth 1
+open solarized/iterm2-colors-solarized
 ```
 
 上面的open命令会弹出finder，然后在弹出的finder中，双击`Solarized Dark.itermcolors`以及`Solarized Light.itermcolors`便可将配色方案安装到iterm2中
@@ -399,11 +404,11 @@ $ open solarized/iterm2-colors-solarized
 **步骤7：[安装agnoster主题](https://github.com/fcamblor/oh-my-zsh-agnoster-fcamblor)**
 
 ```sh
-$ git clone  https://github.com.cnpmjs.org/fcamblor/oh-my-zsh-agnoster-fcamblor.git --depth 1
-$ cd oh-my-zsh-agnoster-fcamblor
-$ ./install
-$ cd ..
-$ rm -rf oh-my-zsh-agnoster-fcamblor
+git clone  https://github.com.cnpmjs.org/fcamblor/oh-my-zsh-agnoster-fcamblor.git --depth 1
+cd oh-my-zsh-agnoster-fcamblor
+./install
+cd ..
+rm -rf oh-my-zsh-agnoster-fcamblor
 ```
 
 这些主题会被安装到`~/.oh-my-zsh/themes`目录下，然后修改`~/.zshrc`文件，将`ZSH_THEME`配置项的值改成`agnoster`
@@ -413,7 +418,7 @@ $ rm -rf oh-my-zsh-agnoster-fcamblor
 1. `~/.zshrc`增加配置项`SOLARIZED_THEME="light"`
 1. `~/.oh-my-zsh/themes/agnoster.zsh-theme`修改背景
     * 找到关键词`build_prompt`，这就是命令提示符的全部构成，每一个配置项的颜色都可以单独调整
-    * 以`prompt_context`为例，将`prompt_segment`和`prompt_status`后跟的`black`改为`white`
+    * 以`prompt_context`和`prompt_status`为例，将`prompt_segment`后面接的`black`改为`white`
     ```
 prompt_context() {
   if [[ "$USERNAME" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
@@ -435,7 +440,7 @@ prompt_status() {
 **步骤8：[安装zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)用于高亮指令**
 
 ```sh
-$ git clone https://github.com.cnpmjs.org/zsh-users/zsh-syntax-highlighting.git --depth 1 ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+git clone https://github.com.cnpmjs.org/zsh-users/zsh-syntax-highlighting.git --depth 1 ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 ```
 
 然后修改`~/.zshrc`文件，修改配置项`plugins`，添加`zsh-syntax-highlighting`
@@ -447,7 +452,7 @@ plugins=(<原有插件> zsh-syntax-highlighting)
 **步骤9：[安装zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)用于指令提示**
 
 ```sh
-$ git clone https://github.com.cnpmjs.org/zsh-users/zsh-autosuggestions.git --depth 1 ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+git clone https://github.com.cnpmjs.org/zsh-users/zsh-autosuggestions.git --depth 1 ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
 ```
 
 然后修改`~/.zshrc`文件，修改配置项`plugins`，添加`zsh-autosuggestions`
