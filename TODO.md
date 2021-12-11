@@ -2,7 +2,6 @@
     * blktrace/iowatcher
     * 如何编写TUI程序(https://github.com/marcusolsson/tui-go)
     * ag
-    * xquartz
     * 僵尸进程：https://zhuanlan.zhihu.com/p/92381918
 1. 性能分析
     * Perf

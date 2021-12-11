@@ -15,6 +15,12 @@ categories:
 # 1 /etc目录
 
 1. `/etc/ssl/certs`：根证书存放位置
+1. `rc-local`：用于在开机时执行一些初始化脚本，它默认是关闭的，可以通过以下命令开启
+    * `chmod +x /etc/rc.d/rc.local`
+    * `chmod +x /etc/rc.local`
+    * `systemctl enable rc-local.service`
+    * `systemctl start rc-local.service`
+    * 将需要开机执行的脚本的绝对路径，追加到`/etc/rc.local`文件尾，`/etc/rc.d/rc.local`文件不需要手动修改，生效后会自动将`/etc/rc.local`的内容同步到`/etc/rc.d/rc.local`中去
 
 # 2 /sys目录
 

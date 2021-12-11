@@ -15,7 +15,27 @@ categories:
 
 `perf`命令具体用法参考{% post_link Linux-常用命令 %}
 
-## 1.1 cpu火焰图
+## 1.1 event
+
+![perf_events_map](/images/Linux-性能分析/perf_events_map.png)
+
+**`perf list`可以查看当前环境支持的所有`event`。`event`可以分为`Software event`以及`Tracepoint event`两大类**
+
+* `Software event`：需要采样的`event`。比如需要通过`perf record -F 99`指定采样频率
+* `Tracepoint event`：不需要采样的`event`，有其固定的埋点，执行到了就会统计。`Tracepoint event`又可细分为许多类别
+
+**下面仅列出常用的一小部分`event`**
+
+1. `context-switches`：线程上下文切换
+1. `block`
+    * `block:block_rq_issue`：发出`device I/O request`触发该事件。`rq`是`request`的缩写
+1. `kmem`
+    * `kmem:kmalloc`
+    * `kmem:kfree`
+1. `sched`
+    * `sched:sched_switch`：线程上下文切换
+
+## 1.2 cpu火焰图
 
 **相关git项目**
 
@@ -35,7 +55,7 @@ perf script > out.perf
 /opt/FlameGraph/flamegraph.pl out.folded > out.svg
 ```
 
-### 1.1.1 java-cpu火焰图
+### 1.2.1 java-cpu火焰图
 
 **相关git项目**
 
@@ -62,7 +82,7 @@ sudo perf script > out.perf
 /opt/FlameGraph/flamegraph.pl out.folded > out.svg
 ```
 
-## 1.2 参考
+## 1.3 参考
 
 * [工欲性能调优，必先利其器（2）- 火焰图](https://pingcap.com/zh/blog/flame-graph)
 * [CPU Flame Graphs](https://www.brendangregg.com/FlameGraphs/cpuflamegraphs.html)
@@ -89,6 +109,7 @@ vtune -collect hotspots -knob sampling-mode=hw -knob sampling-interval=0.5 -targ
 
 # 3 参考
 
+* [perf Examples](https://www.brendangregg.com/perf.html)
 * [在Linux下做性能分析1：基本模型](https://zhuanlan.zhihu.com/p/22124514)
 * [在Linux下做性能分析2：ftrace](https://zhuanlan.zhihu.com/p/22130013)
 * [在Linux下做性能分析3：perf](https://zhuanlan.zhihu.com/p/22194920)

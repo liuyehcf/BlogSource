@@ -2454,6 +2454,15 @@ yum install -y hping3
 
 * `hping3 -c 10000 -d 120 -S -w 64 -p 21 --flood --rand-source www.baidu.com`
 
+## 5.19 iperf
+
+**网络测速工具，一般用于局域网测试。互联网测速：[speedtest](https://github.com/sivel/speedtest-cli)**
+
+**示例：**
+
+* `iperf -s -p 3389 -i 1`：服务端
+* `iperf -c <server_addr> -p 3389 -i 1`：客户端
+
 # 6 运维监控
 
 ## 6.1 ssh
@@ -3053,11 +3062,43 @@ yum install -y iotop
 1. **`perf stat -p <pid> -e branch-instructions,branch-misses,cache-misses,cache-references,cpu-cycles,ref-cycles,instructions,mem_load_retired.l1_hit,mem_load_retired.l1_miss,mem_load_retired.l2_hit,mem_load_retired.l2_miss,cpu-migrations,context-switches,page-faults,major-faults,minor-faults`**
     * 该命令会在右边输出一个百分比，该百分比的含义是：`perf`统计指定`event`所花费的时间与`peft`统计总时间的比例
 
-# 8 audit
+# 8 远程桌面
+
+## 8.1 vnc
+
+**如何使用：**
+
+1. **在Linux上安装`VNCServer`：以CentOS为例**
+    * `yum install -y tigervnc-server`
+    * `vncserver :1`：在`5901`端口上启动服务
+1. **安装VNCViewer**
+
+## 8.2 NX
+
+[No Machine官网](https://www.nomachine.com/)
+
+**如何使用：**
+
+1. **在Linux上安装`NXServer`：以CentOS为例，从官网下载rpm包并安装**
+    * `rpm -ivh nomachine_7.7.4_1_x86_64.rpm`
+    * `/etc/NX/nxserver --restart`
+1. **从官网下载`NXClient`**
+    * 默认端口号是4000
+    * 默认可以用`Linux`的账号密码登录
+
+**配置文件：`/usr/NX/etc/server.cfg`**
+
+* `NXPort`：修改启动端口号
+* `EnableUserDB/EnablePasswordDB`：是否用独立于`Linux`的账号进行登录（1开启，0关闭，默认关闭）
+    * `/etc/NX/nxserver --useradd admin --system --administrator`
+
+## 8.3 xquartz
+
+# 9 audit
 
 [红帽企业版 Linux 7安全性指南](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/7/html/security_guide/index)
 
-## 8.1 架构
+## 9.1 架构
 
 ![audit_architecture](/images/Linux-常用命令/audit_architecture.png)
 
@@ -3080,9 +3121,9 @@ CONFIG_KVM_MMU_AUDIT=y
 
 **只要编译内核时，开启了审计的选项，那么内核就会产生审计事件，并将审计事件送往一个socket，然后auditd负责从这个socket读出审计事件并记录**
 
-## 8.2 auditctl
+## 9.2 auditctl
 
-### 8.2.1 控制规则
+### 9.2.1 控制规则
 
 **参数说明：**
 
@@ -3108,7 +3149,7 @@ CONFIG_KVM_MMU_AUDIT=y
 * `auditctl -s`
 * `auditctl -l`
 
-### 8.2.2 文件系统规则
+### 9.2.2 文件系统规则
 
 **格式：**
 
@@ -3128,7 +3169,7 @@ CONFIG_KVM_MMU_AUDIT=y
 
 * `auditctl -w /etc/shadow -p wa -k passwd_changes`：等价于`auditctl -a always,exit -F path=/etc/shadow -F perm=wa -k passwd_changes`
 
-### 8.2.3 系统调用规则
+### 9.2.3 系统调用规则
 
 **格式：**
 
@@ -3153,7 +3194,7 @@ CONFIG_KVM_MMU_AUDIT=y
 
 * `auditctl -a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time_change`
 
-## 8.3 ausearch
+## 9.3 ausearch
 
 **参数说明：**
 
@@ -3170,13 +3211,13 @@ CONFIG_KVM_MMU_AUDIT=y
 * `ausearch --start yesterday --end now -m SYSCALL -sv no -i`：搜寻从昨天至今所有的失败的系统调用相关的事件
 * `ausearch -m SYSCALL -sc open -i`：搜寻系统调用open相关的事件
 
-## 8.4 审核记录类型
+## 9.4 审核记录类型
 
 [B.2. 审核记录类型](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/7/html/security_guide/sec-Audit_Record_Types)
 
-# 9 内建
+# 10 内建
 
-## 9.1 shift
+## 10.1 shift
 
 shift用于移动参数的位置
 
@@ -3194,7 +3235,7 @@ shift 2
 echo $1 # 输出d
 ```
 
-## 9.2 eval
+## 10.2 eval
 
 通过连接参数构造命令，如果包含间接引用，也会保持原有语义，下面以一个例子来说明
 
@@ -3206,7 +3247,7 @@ eval y='$'$x
 echo $y # 输出10
 ```
 
-## 9.3 set
+## 10.3 set
 
 **格式：**
 
@@ -3225,7 +3266,7 @@ echo $y # 输出10
 * `set -o pipefail`
 * `eval set -- "some new params"`：设置当前shell的参数
 
-## 9.4 exec
+## 10.4 exec
 
 `exec`用于进程替换（类似系统调用`exec`），或者标准输入输出的重定向
 
@@ -3233,7 +3274,7 @@ echo $y # 输出10
 
 * `exec 1>my.log 2>&1`：将标准输出、以及标准异常重定向到my.log文件中，对后续的所有命令都生效
 
-## 9.5 shopt
+## 10.5 shopt
 
 用于启用/禁用shell扩展功能
 
@@ -3242,9 +3283,9 @@ echo $y # 输出10
 * `shopt -s extglob`：启用`extglob`
 * `shopt -u extglob`：禁用`extglob`
 
-# 10 包管理工具
+# 11 包管理工具
 
-## 10.1 yum
+## 11.1 yum
 
 **示例：**
 
@@ -3266,7 +3307,7 @@ echo $y # 输出10
 
 -->
 
-# 11 参考
+# 12 参考
 
 * 《鸟哥的Linux私房菜》
 * [Linux Tools Quick Tutorial](https://linuxtools-rst.readthedocs.io/zh_CN/latest/tool/index.html)
