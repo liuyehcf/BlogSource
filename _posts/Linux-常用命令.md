@@ -3064,7 +3064,14 @@ yum install -y iotop
 
 # 8 远程桌面
 
-## 8.1 vnc
+## 8.1 VNC（不推荐）
+
+**工作原理：**
+
+* `VNCServer`在目标Linux主机上启动一个端口，并通过该端口对外提供桌面服务
+    * 可以理解为一个安装了`X`的机器，只是没有外设（鼠标、键盘、显示器）
+* `VNCClient`通过与`VNCServer`暴露的端口建联，获取图形化输出所需的信息（包括传递I/O设备的信号）
+    * 可以理解为一个远程的外设（鼠标、键盘、显示器）
 
 **如何使用：**
 
@@ -3073,9 +3080,11 @@ yum install -y iotop
     * `vncserver :1`：在`5901`端口上启动服务
 1. **安装VNCViewer**
 
-## 8.2 NX
+## 8.2 NX（推荐）
 
 [No Machine官网](https://www.nomachine.com/)
+
+**工作原理：与VNC类似，但是使用了`NX`协议，占用带宽更小**
 
 **如何使用：**
 
@@ -3089,10 +3098,61 @@ yum install -y iotop
 **配置文件：`/usr/NX/etc/server.cfg`**
 
 * `NXPort`：修改启动端口号
-* `EnableUserDB/EnablePasswordDB`：是否用独立于`Linux`的账号进行登录（1开启，0关闭，默认关闭）
-    * `/etc/NX/nxserver --useradd admin --system --administrator`
+* `EnableUserDB/EnablePasswordDB`：是否用额外的账号进行登录（1开启，0关闭，默认关闭）
+    * `/etc/NX/nxserver --useradd admin --system --administrator`：该命令本质上也会创建一个Linux账号，第一个密码是Linux账号的密码，第二个密码是`NXServer`独立的密码（仅用于`NX`登录）
 
-## 8.3 xquartz
+## 8.3 xquartz（不推荐）
+
+**工作原理：`xquartz`的工作机制与`VNC`以及`NX`完全不同。`xquartz`利用了`X11`（通信协议），`X11`并不要求远程主机安装`X`。`X Server`是我们本地的电脑，`X Client`是目标Linux主机**
+
+* [Differences between VNC and ssh -X](https://unix.stackexchange.com/questions/1960/differences-between-vnc-and-ssh-x)
+* `X Server`：管理主机上与显示相关的硬件设置（如显卡、硬盘、鼠标等），它负责屏幕画面的绘制与显示，以及将输入设置（如键盘、鼠标）的动作告知`X Client`
+* `X Client`：即`X`应用程序，主要负责事件的处理（即程序的逻辑）
+
+```plantuml
+skinparam backgroundColor #EEEBDC
+skinparam handwritten true
+
+skinparam sequence {
+	ArrowColor DeepSkyBlue
+	ActorBorderColor DeepSkyBlue
+	LifeLineBorderColor blue
+	LifeLineBackgroundColor #A9DCDF
+	
+	ParticipantBorderColor DeepSkyBlue
+	ParticipantBackgroundColor DodgerBlue
+	ParticipantFontName Impact
+	ParticipantFontSize 17
+	ParticipantFontColor #A9DCDF
+	
+	ActorBackgroundColor aqua
+	ActorFontColor DeepSkyBlue
+	ActorFontSize 17
+	ActorFontName Aapex
+}
+
+box "X-Server"
+participant X_Server as "带有外设的本地电脑"
+end box
+
+box "X-Client"
+participant X_Client as "目标Linux主机"
+end box
+
+X_Server -> X_Client: ssh -Y user@target
+X_Client -> X_Client: 运行图形化程序，例如xclock
+X_Client -> X_Server: X request
+X_Server -> X_Client: X reply
+```
+
+**如何使用：**
+
+* 在本地电脑（以`Mac`为例）安装`Xquartz`
+* 用`ssh`以`X11 Forwarding`方式连接到目标Linux机器（Linux机器需要开启`X11 Forwarding`功能）
+    * `/etc/ssh/sshd_config`设置`X11Forwarding yes`
+* 在远程ssh会话中，运行`X`程序，例如`xclock`
+
+**缺点：占用大量带宽，且一个`ssh`会话只能运行一个`X`程序**
 
 # 9 audit
 
