@@ -435,16 +435,25 @@ prompt_status() {
 **步骤8：[安装zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)用于高亮指令**
 
 ```sh
-# 进入到 .zshrc 所在的目录，一般在用户目录下
-$ cd ~
-$ git clone https://github.com.cnpmjs.org/zsh-users/zsh-syntax-highlighting.git --depth 1
+$ git clone https://github.com.cnpmjs.org/zsh-users/zsh-syntax-highlighting.git --depth 1 ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 ```
 
-然后修改`.zshrc`文件，在最后添加下面内容
+然后修改`~/.zshrc`文件，修改配置项`plugins`，添加`zsh-syntax-highlighting`
 
+```config
+plugins=(<原有插件> zsh-syntax-highlighting)
 ```
-source ~/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-plugins=(zsh-syntax-highlighting)
+
+**步骤9：[安装zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)用于指令提示**
+
+```sh
+$ git clone https://github.com.cnpmjs.org/zsh-users/zsh-autosuggestions.git --depth 1 ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+```
+
+然后修改`~/.zshrc`文件，修改配置项`plugins`，添加`zsh-autosuggestions`
+
+```config
+plugins=(<原有插件> zsh-autosuggestions)
 ```
 
 **如果在`iterm2`中通过`ssh`访问远程主机，也想获得上述效果，那么需要在远程主机上执行如下几个步骤：**
@@ -452,6 +461,7 @@ plugins=(zsh-syntax-highlighting)
 * **步骤2**
 * **步骤7**
 * **步骤8**
+* **步骤9**
 
 ## 4.2 `Alt + f/b`在ssh场景下失效
 

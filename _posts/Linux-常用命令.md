@@ -2667,7 +2667,8 @@ yum install -y sysstat
 * `-f <filename>`：指定sa日志文件
 * `-P <cpu num>|ALL`：查看某个cpu的统计信息，`ALL`表示所有CPU
 * `-n [关键词]`：查看网络相关的情况，其中关键词可以是
-    * `DEV`：网卡
+    * `DEV`：网络接口
+    * `EDEV`：网络接口错误
     * `SOCK`：套接字
     * `IP`：IP流
     * `TCP`：TCP流
@@ -2677,7 +2678,7 @@ yum install -y sysstat
 
 * `sar -u 1 10`：输出cpu的相关信息（聚合了所有核）
 * `sar -P ALL -u 1 10`：输出每个核的cpu的相关信息
-* `sar -n DEV 1`
+* `sar -n DEV 1`：查看网卡实时流量
 
 ## 6.7 tsar
 

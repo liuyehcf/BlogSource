@@ -1,12 +1,8 @@
 1. Linux-常用命令
     * blktrace/iowatcher
-    * [Linux查看实时网卡流量的几种方式](jianshu.com/p/b9e942f3682c)
     * 如何编写TUI程序(https://github.com/marcusolsson/tui-go)
     * ag
     * xquartz
-    * vncserver-vncviewer
-    * nx
-    * https://www.nomachine.com/
     * 僵尸进程：https://zhuanlan.zhihu.com/p/92381918
 1. 性能分析
     * Perf
@@ -37,7 +33,6 @@
         * [ck-blog](https://clickhouse.com/docs/zh/whats-new/changelog/)
     * ssb测试集
         * https://www.cnblogs.com/tgzhu/p/9083092.html
-    * tpcds测试集
 1. opensource
     * PMC
         * [WHAT IS A PMC?](https://www.apache.org/dev/pmc.html#what-is-a-pmc)
@@ -60,19 +55,13 @@
     * 代数数据结构
         * 子类正交，比如：是否常量、是否可空、是否可空且常量，是用2个子类实现还是3个子类实现？代数数据结构会选择用3个子类实现，这样每个实现都是正交的
 1. vim
-    * filereadable 无法识别 ~  expand
-    * vimscript https://zhuanlan.zhihu.com/p/37352209
-    * ex模式
 1. 汇编
     * avx2指令
 1. 其他
     * [macOS开启HiDPI](https://zhuanlan.zhihu.com/p/227788155)
     * 伙伴算法
-    * 异常中断的区别
     * rpc框架，thrift
     * codegen原理
-    * 什么是体系结构
     * sa（Solution Architect）：解决方案架构师
     * sre（Site Reliability Engineering）：站点可靠工程师
     * [cpu的制造和](https://plantegg.github.io/2021/06/01/CPU%E7%9A%84%E5%88%B6%E9%80%A0%E5%92%8C%E6%A6%82%E5%BF%B5/)
-    * [Mac 安装 iTerm2 + Oh My Zsh 实现命令提示](http://www.manoner.com/tools/iTerm2+OhMyZsh/)

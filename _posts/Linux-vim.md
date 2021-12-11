@@ -49,6 +49,12 @@ categories:
 
 **tab可以包含一个或多个window。如果存在多个tab，那么会在最上方显示这些tab，就像一个现代的编辑器一样（vscode）**
 
+## 1.5 ex命令
+
+`ex`是`Unix`下的一个文本编辑器。`vim`就是`ex`的`visual mode`。`vim`中的`:w`、`:q!`就是来自于`ex`命令
+
+`ex`命令远不止这些，实际上所有`:`开头的命令，也就是你在`vim`最下面看到的命令行，都属于`ex`命令。
+
 # 2 操作手册
 
 ## 2.1 编辑模式
@@ -2181,15 +2187,22 @@ if filereadable("./.workspace.vim")
 endif
 ```
 
-# 4 参考
+# 4 vim-script
 
-* **[《Vim 中文版入门到精通》](https://github.com/wsdjeg/vim-galore-zh_cn)**
+## 4.1 Tips
+
+1. `filereadable`无法识别`~`，需要用`expand`，例如`filereadable(expand('~/.vim/gtags.vim'))`
+
+# 5 参考
+
 * **[《Vim 中文速查表》](https://github.com/skywind3000/awesome-cheatsheets/blob/master/editors/vim.txt)**
 * **[如何在 Linux 下利用 Vim 搭建 C/C++ 开发环境?](https://www.zhihu.com/question/47691414)**
 * **[Vim 8 中 C/C++ 符号索引：GTags 篇](https://zhuanlan.zhihu.com/p/36279445)**
 * **[Vim 8 中 C/C++ 符号索引：LSP 篇](https://zhuanlan.zhihu.com/p/37290578)**
 * **[三十分钟配置一个顺滑如水的 Vim](https://zhuanlan.zhihu.com/p/102033129)**
 * **[CentOS Software Repo](https://www.softwarecollections.org/en/scls/user/rhscl/)**
+* **[《Vim 中文版入门到精通》](https://github.com/wsdjeg/vim-galore-zh_cn)**
+* **[VimScript 五分钟入门（翻译）](https://zhuanlan.zhihu.com/p/37352209)**
 * [如何优雅的使用 Vim（二）：插件介绍](https://segmentfault.com/a/1190000014560645)
 * [打造 vim 编辑 C/C++ 环境](https://carecraft.github.io/language-instrument/2018/06/config_vim/)
 * [Vim2021：超轻量级代码补全系统](https://zhuanlan.zhihu.com/p/349271041)
