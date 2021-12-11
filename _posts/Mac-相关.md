@@ -453,6 +453,7 @@ $ git clone https://github.com.cnpmjs.org/zsh-users/zsh-autosuggestions.git --de
 然后修改`~/.zshrc`文件，修改配置项`plugins`，添加`zsh-autosuggestions`
 
 ```config
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=red,bold'
 plugins=(<原有插件> zsh-autosuggestions)
 ```
 
