@@ -3152,6 +3152,7 @@ X_Server -> X_Client: X reply
     * `yum install -y xauth`
     * `/etc/ssh/sshd_config`设置`X11Forwarding yes`
 * 本地电脑用`ssh`以`X11 Forwarding`方式连接到远程Linux主机
+    * `ssh -Y user@target`
 * 在远程ssh会话中，运行`X`程序，例如`xclock`
 
 **缺点：占用大量带宽，且一个`ssh`会话只能运行一个`X`程序**
