@@ -3068,7 +3068,7 @@ yum install -y iotop
 
 **工作原理：**
 
-* `VNCServer`在目标Linux主机上启动一个端口，并通过该端口对外提供桌面服务
+* `VNCServer`在远程Linux主机上启动一个端口，并通过该端口对外提供桌面服务
     * 可以理解为一个安装了`X`的机器，只是没有外设（鼠标、键盘、显示器）
 * `VNCClient`通过与`VNCServer`暴露的端口建联，获取图形化输出所需的信息（包括传递I/O设备的信号）
     * 可以理解为一个远程的外设（鼠标、键盘、显示器）
@@ -3103,7 +3103,7 @@ yum install -y iotop
 
 ## 8.3 xquartz（不推荐）
 
-**工作原理：`xquartz`的工作机制与`VNC`以及`NX`完全不同。`xquartz`利用了`X11`（通信协议），`X11`并不要求远程主机安装`X`。`X Server`是我们本地的电脑，`X Client`是目标Linux主机**
+**工作原理：`xquartz`的工作机制与`VNC`以及`NX`完全不同。`xquartz`利用了`X11`（通信协议），`X11`并不要求远程主机安装`X`。`X Server`是我们本地的电脑，`X Client`是远程Linux主机**
 
 * [Differences between VNC and ssh -X](https://unix.stackexchange.com/questions/1960/differences-between-vnc-and-ssh-x)
 * `X Server`：管理主机上与显示相关的硬件设置（如显卡、硬盘、鼠标等），它负责屏幕画面的绘制与显示，以及将输入设置（如键盘、鼠标）的动作告知`X Client`
@@ -3136,7 +3136,7 @@ participant X_Server as "带有外设的本地电脑"
 end box
 
 box "X-Client"
-participant X_Client as "目标Linux主机"
+participant X_Client as "远程Linux主机"
 end box
 
 X_Server -> X_Client: ssh -Y user@target
@@ -3148,8 +3148,10 @@ X_Server -> X_Client: X reply
 **如何使用：**
 
 * 在本地电脑（以`Mac`为例）安装`Xquartz`
-* 用`ssh`以`X11 Forwarding`方式连接到目标Linux机器（Linux机器需要开启`X11 Forwarding`功能）
+* 远程Linux主机安装`xauth`，并且开启`sshd`的`X11 Forwarding`功能
+    * `yum install -y xauth`
     * `/etc/ssh/sshd_config`设置`X11Forwarding yes`
+* 本地电脑用`ssh`以`X11 Forwarding`方式连接到远程Linux主机
 * 在远程ssh会话中，运行`X`程序，例如`xclock`
 
 **缺点：占用大量带宽，且一个`ssh`会话只能运行一个`X`程序**
