@@ -3130,7 +3130,7 @@ X_Quartz -> X_Client: X reply
 
 **缺点：占用大量带宽，且一个`ssh`会话只能运行一个`X Client`程序**
 
-## 8.2 VNC（不推荐）
+## 8.2 VNC（推荐）
 
 **`Virtual Network Computing, VNC`。主要由两个部分组成：`VNC Server`及`VNC Viewer`**
 
@@ -3179,7 +3179,12 @@ X_VNC <--> X_Client: X Protocol
     * `vncserver :x`：在`5900 + x`端口上启动服务
     * `vncserver -kill :x`：关闭`5900 + x`端口上的服务
     * `vncserver -list`：显示所有`Xvnc`
-1. **安装`VNC Viewer`**
+1. **从官网下载`VNC Viewer`**
+    * 默认可以用`Linux`的账号密码登录
+
+**高级用法：**
+
+* `vncserver -SecurityTypes None :x`：允许免密登录
 
 ## 8.3 NX（推荐）
 
