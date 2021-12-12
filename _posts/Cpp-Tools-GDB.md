@@ -91,7 +91,7 @@ gdb main_with_debug ${pid}
 
 ```sh
 # c++源文件
-$ cat > segment_fault.cpp << 'EOF'
+cat > segment_fault.cpp << 'EOF'
 int main() {
     int *num = nullptr;
     *num = 100;
@@ -100,10 +100,10 @@ int main() {
 EOF
 
 # 编译（可以试下不加-g参数）
-$ g++ -o segment_fault segment_fault.cpp -std=gnu++11 -g
+g++ -o segment_fault segment_fault.cpp -std=gnu++11 -g
 
 # 进入gdb shell
-$ gdb segment_fault
+gdb segment_fault
 
 # 执行程序，程序会出现段错误而退出，并输出相关的错误信息
 # 如果编译时没有加-g参数，输出的信息就会少很多（比如行号和具体的代码就没有了）
@@ -141,7 +141,7 @@ Program received signal SIGSEGV, Segmentation fault.
 
 ```sh
 # c++源文件
-$ cat > set_break.cpp << 'EOF'
+cat > set_break.cpp << 'EOF'
 #include <iostream>
 
 void funcA() {
@@ -168,13 +168,16 @@ int main() {
 EOF
 
 # 编译（可以试下不加-g参数）
-$ g++ -o set_break set_break.cpp -std=gnu++11 -g
+g++ -o set_break set_break.cpp -std=gnu++11 -g
 
 # 进入gdb shell
-$ gdb set_break
+gdb set_break
 
 # 通过list查看源码
-$ (gdb) list 0
+(gdb) list 0
+```
+
+```
 1	#include <iostream>
 2
 3	void funcA() {
@@ -185,8 +188,14 @@ $ (gdb) list 0
 8	    std::cout << "hello world" << std::endl;
 9
 10	    int num = 0;
+```
+
+```sh
 # 回车，继续输出下10行
-$ (gdb)
+(gdb)
+```
+
+```
 11
 12	    int *num_ptr = &num;
 13
@@ -197,8 +206,14 @@ $ (gdb)
 18	    }
 19
 20	    std::cout << "num: " << *num_ptr << std::endl;
+```
+
+```sh
 # 回车，继续输出下10行
-$ (gdb)
+(gdb)
+```
+
+```
 21
 22	    return 0;
 23	}
@@ -206,31 +221,31 @@ $ (gdb)
 
 ```sh
 # 在行号为8的位置打断点
-$ (gdb) break 8
+(gdb) break 8
 Breakpoint 1 at 0x400848: file set_break.cpp, line 8.
 
 # 在行号为10的位置打断点
-$ (gdb) break set_break.cpp:10
+(gdb) break set_break.cpp:10
 Breakpoint 2 at 0x400864: file set_break.cpp, line 10.
 
 # 在行号为12的位置打断点
-$ (gdb) break 12
+(gdb) break 12
 Breakpoint 3 at 0x40086b: file set_break.cpp, line 12.
 
 # 在行号为4的位置打断点
-$ (gdb) break 4
+(gdb) break 4
 Breakpoint 4 at 0x400821: file set_break.cpp, line 4.
 
 # 在行号为17的位置打断点
-$ (gdb) break 17
+(gdb) break 17
 Breakpoint 5 at 0x400881: file set_break.cpp, line 17.
 
 # 在行号为20的位置打断点
-$ (gdb) break 20
+(gdb) break 20
 Breakpoint 6 at 0x40089a: file set_break.cpp, line 20.
 
 # 在函数funcA处打断点，发现该断点已经重复了
-$ (gdb) break funcA
+(gdb) break funcA
 Note: breakpoint 4 also set at pc 0x400821.
 Breakpoint 7 at 0x400821: file set_break.cpp, line 4.
 
@@ -246,7 +261,7 @@ Num     Type           Disp Enb Address            What
 7       breakpoint     keep y   0x0000000000400821 in funcA() at set_break.cpp:4
 
 # 执行命令run开始运行程序，发现现在程序卡在了行号为8的位置
-$ (gdb) run
+(gdb) run
 Starting program: xxx/set_break
 
 Breakpoint 1, main () at set_break.cpp:8
@@ -362,7 +377,7 @@ Breakpoint 1, main () at set_break.cpp:8
 
 ```sh
 # c++源文件
-$ cat > print.cpp << 'EOF'
+cat > print.cpp << 'EOF'
 struct Person {
     const char* name;
     const char* phone_num;
@@ -376,14 +391,16 @@ int main() {
 EOF
 
 # 编译（可以试下不加-g参数）
-$ g++ -o print print.cpp -std=gnu++11 -g
+g++ -o print print.cpp -std=gnu++11 -g
 
 # 进入gdb shell
-$ gdb print
+gdb print
 
 # 查看源码
-$ list
 (gdb) list
+```
+
+```
 1	struct Person {
 2	    const char* name;
 3	    const char* phone_num;
@@ -394,28 +411,30 @@ $ list
 8	    Person p {"张三", "123456789", 18};
 9	    return 0;
 10	}
+```
 
+```sh
 # 设置断点
-$ (gdb) break 9
+(gdb) break 9
 Breakpoint 1 at 0x400528: file print.cpp, line 9.
 
 # 运行程序，会停在断点处
-$ (gdb) run
+(gdb) run
 Starting program: xxx/print
 
 Breakpoint 1, main () at print.cpp:9
 9	    return 0;
 
 # 查看相关信息
-$ (gdb) print p
+(gdb) print p
 $1 = {name = 0x4005c0 "张三", phone_num = 0x4005c7 "123456789", age = 18}
-$ (gdb) print p.name
+(gdb) print p.name
 $2 = 0x4005c0 "张三"
-$ (gdb) print p.phone_num
+(gdb) print p.phone_num
 $3 = 0x4005c7 "123456789"
-$ (gdb) print p.age
+(gdb) print p.age
 $4 = 18
-$ (gdb) print &p
+(gdb) print &p
 $5 = (Person *) 0x7fffffffe0c0
 ```
 

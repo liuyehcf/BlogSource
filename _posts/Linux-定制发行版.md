@@ -110,7 +110,7 @@ vim /etc/fstab
 ### 2.2.1 fdisk
 
 ```sh
-[root@liuyehcf ~]$ fdisk -l
+fdisk -l
 #-------------------------↓↓↓↓↓↓-------------------------
 磁盘 /dev/sda：11.9 GB, 11913920512 字节，23269376 个扇区
 Units = 扇区 of 1 * 512 = 512 bytes
@@ -139,7 +139,7 @@ Units = 扇区 of 1 * 512 = 512 bytes
 I/O 大小(最小/最佳)：512 字节 / 512 字节
 #-------------------------↑↑↑↑↑↑-------------------------
 
-[root@liuyehcf ~]$ fdisk /dev/sdb
+fdisk /dev/sdb
 #-------------------------↓↓↓↓↓↓-------------------------
 欢迎使用 fdisk (util-linux 2.23.2)。
 
@@ -241,8 +241,8 @@ Calling ioctl() to re-read partition table.
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 重新读取分区表
-[root@liuyehcf ~]$ partprobe
-[root@liuyehcf ~]$ fdisk -l
+partprobe
+fdisk -l
 #-------------------------↓↓↓↓↓↓-------------------------
 磁盘 /dev/sda：11.9 GB, 11913920512 字节，23269376 个扇区
 Units = 扇区 of 1 * 512 = 512 bytes
@@ -277,7 +277,7 @@ I/O 大小(最小/最佳)：512 字节 / 512 字节
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 查看当前pv
-[root@liuyehcf ~]$ pvdisplay
+pvdisplay
 #-------------------------↓↓↓↓↓↓-------------------------
   --- Physical volume ---
   PV Name               /dev/sda2
@@ -292,13 +292,13 @@ I/O 大小(最小/最佳)：512 字节 / 512 字节
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 创建pv
-[root@liuyehcf ~]$ pvcreate /dev/sdb1
+pvcreate /dev/sdb1
 #-------------------------↓↓↓↓↓↓-------------------------
   Physical volume "/dev/sdb1" successfully created.
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 再次查看pv
-[root@liuyehcf ~]$ pvdisplay
+pvdisplay
 #-------------------------↓↓↓↓↓↓-------------------------
   --- Physical volume ---
   PV Name               /dev/sda2
@@ -325,7 +325,7 @@ I/O 大小(最小/最佳)：512 字节 / 512 字节
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 查看卷组（volume group）
-[root@liuyehcf ~]$ vgdisplay
+vgdisplay
 #-------------------------↓↓↓↓↓↓-------------------------
   --- Volume group ---
   VG Name               centos
@@ -350,13 +350,13 @@ I/O 大小(最小/最佳)：512 字节 / 512 字节
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 将新的pv加入 centos 卷组
-[root@liuyehcf ~]$ vgextend centos /dev/sdb1
+vgextend centos /dev/sdb1
 #-------------------------↓↓↓↓↓↓-------------------------
   Volume group "centos" successfully extended
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 再次查看卷组，可以看到free PE有8G
-[root@liuyehcf ~]$ vgdisplay
+vgdisplay
 #-------------------------↓↓↓↓↓↓-------------------------
   --- Volume group ---
   VG Name               centos
@@ -381,10 +381,10 @@ I/O 大小(最小/最佳)：512 字节 / 512 字节
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 将当前卷组中剩余 P E添加到 centos-root 中
-[root@liuyehcf ~]$ lvextend -l +100%FREE /dev/mapper/centos-root
+lvextend -l +100%FREE /dev/mapper/centos-root
 
 # 扩展centos-root文件系统
-[root@liuyehcf ~]$ xfs_growfs /dev/mapper/centos-root
+xfs_growfs /dev/mapper/centos-root
 #-------------------------↓↓↓↓↓↓-------------------------
 meta-data=/dev/mapper/centos-root isize=512    agcount=4, agsize=588544 blks
          =                       sectsz=512   attr=2, projid32bit=1
@@ -404,7 +404,7 @@ data blocks changed from 2354176 to 4451328
 `fdisk`最多只能添加容量小于2TB的硬盘，当需要添加大于2TB容量的硬盘时，需要使用`parted`
 
 ```sh
-[root@liuyehcf ~]$ fdisk -l
+fdisk -l
 #-------------------------↓↓↓↓↓↓-------------------------
 磁盘 /dev/sda：11.9 GB, 11913920512 字节，23269376 个扇区
 Units = 扇区 of 1 * 512 = 512 bytes
@@ -433,7 +433,7 @@ Units = 扇区 of 1 * 512 = 512 bytes
 I/O 大小(最小/最佳)：512 字节 / 512 字节
 #-------------------------↑↑↑↑↑↑-------------------------
 
-[root@liuyehcf ~]$ parted /dev/sdb
+parted /dev/sdb
 #-------------------------↓↓↓↓↓↓-------------------------
 GNU Parted 3.1
 使用 /dev/sdb
@@ -488,7 +488,7 @@ Number  Start   End     Size    File system  Name     标志
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 磁盘格式化
-[root@liuyehcf ~]$ mkfs.xfs /dev/sdb1
+mkfs.xfs /dev/sdb1
 #-------------------------↓↓↓↓↓↓-------------------------
 meta-data=/dev/sdb1              isize=512    agcount=4, agsize=524230 blks
          =                       sectsz=512   attr=2, projid32bit=1
@@ -502,7 +502,7 @@ realtime =none                   extsz=4096   blocks=0, rtextents=0
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 查看物理卷
-[root@liuyehcf ~]$ pvdisplay
+pvdisplay
 #-------------------------↓↓↓↓↓↓-------------------------
   --- Physical volume ---
   PV Name               /dev/sda2
@@ -517,7 +517,7 @@ realtime =none                   extsz=4096   blocks=0, rtextents=0
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 创建物理卷
-[root@liuyehcf ~]$ pvcreate /dev/sdb1
+pvcreate /dev/sdb1
 WARNING: xfs signature detected on /dev/sdb1 at offset 0. Wipe it? [y/n]: y
 #-------------------------↓↓↓↓↓↓-------------------------
   Wiping xfs signature on /dev/sdb1.
@@ -525,7 +525,7 @@ WARNING: xfs signature detected on /dev/sdb1 at offset 0. Wipe it? [y/n]: y
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 查看物理卷，发现多了个 /dev/sdb1
-[root@liuyehcf ~]$ pvdisplay
+pvdisplay
 #-------------------------↓↓↓↓↓↓-------------------------
   --- Physical volume ---
   PV Name               /dev/sda2
@@ -552,7 +552,7 @@ WARNING: xfs signature detected on /dev/sdb1 at offset 0. Wipe it? [y/n]: y
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 查看卷组
-[root@liuyehcf ~]$ vgdisplay
+vgdisplay
 #-------------------------↓↓↓↓↓↓-------------------------
   --- Volume group ---
   VG Name               centos
@@ -577,13 +577,13 @@ WARNING: xfs signature detected on /dev/sdb1 at offset 0. Wipe it? [y/n]: y
   #-------------------------↑↑↑↑↑↑-------------------------
 
 # 将新的pv加入 centos 卷组
-[root@liuyehcf ~]$ vgextend centos /dev/sdb1
+vgextend centos /dev/sdb1
 #-------------------------↓↓↓↓↓↓-------------------------
   Volume group "centos" successfully extended
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 再次查看卷组，发现Free PE有8个G
-[root@liuyehcf ~]$ vgdisplay
+vgdisplay
 #-------------------------↓↓↓↓↓↓-------------------------
   --- Volume group ---
   VG Name               centos
@@ -608,14 +608,14 @@ WARNING: xfs signature detected on /dev/sdb1 at offset 0. Wipe it? [y/n]: y
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 将当前卷组中剩余 P E添加到 centos-root 中
-[root@liuyehcf ~]$ lvextend -l +100%FREE /dev/mapper/centos-root
+lvextend -l +100%FREE /dev/mapper/centos-root
 #-------------------------↓↓↓↓↓↓-------------------------
   Size of logical volume centos/root changed from 8.98 GiB (2299 extents) to 16.98 GiB (4347 extents).
   Logical volume centos/root successfully resized.
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 扩展centos-root文件系统
-[root@liuyehcf ~]$ xfs_growfs /dev/mapper/centos-root
+xfs_growfs /dev/mapper/centos-root
 #-------------------------↓↓↓↓↓↓-------------------------
 meta-data=/dev/mapper/centos-root isize=512    agcount=4, agsize=588544 blks
          =                       sectsz=512   attr=2, projid32bit=1
@@ -637,19 +637,19 @@ data blocks changed from 2354176 to 4451328
 ```sh
 # 将lvm的容量缩小
 # 1. 下面这个命令表示将lvm的容量调整为40G
-[root@liuyehcf ~]$ lvreduce -L 30G /dev/mapper/centos-root
+lvreduce -L 30G /dev/mapper/centos-root
 # 2. 下面这个命令表示将lvm的容量调整为：在原来的基础上减少40G
-[root@liuyehcf ~]$ lvreduce -L -30G /dev/mapper/centos-root
+lvreduce -L -30G /dev/mapper/centos-root
 
 # 将pv从vg中移走
-[root@liuyehcf ~]$ vgreduce centos /dev/sdb1
+vgreduce centos /dev/sdb1
 
 # 将pv删除
-[root@liuyehcf ~]$ pvremove  /dev/sdb1
+pvremove  /dev/sdb1
 
 # 将vg中剩余的容量分配到lvm中
-[root@liuyehcf ~]$ lvextend -l +100%FREE /dev/mapper/centos-root
-[root@liuyehcf ~]$ xfs_growfs /dev/mapper/centos-root
+lvextend -l +100%FREE /dev/mapper/centos-root
+xfs_growfs /dev/mapper/centos-root
 ```
 
 ## 2.4 修复因断电导致磁盘inode损坏
@@ -742,21 +742,21 @@ data blocks changed from 2354176 to 4451328
 
 ```sh
 # 硬盘的挂载点是/mnt/sysimage
-sh-4.2$ chroot /mnt/sysimage
+chroot /mnt/sysimage
 
 # 将cdrom挂载到/mnt/cdrom目录，可以通过lsblk查看cdrom设备名
-sh-4.2$ mkdir -p /mnt/cdrom
-sh-4.2$ mount /dev/sr0 /mnt/cdrom
+mkdir -p /mnt/cdrom
+mount /dev/sr0 /mnt/cdrom
 
 # 将可执行内核拷贝到/boot目录中
-sh-4.2$ cp /mnt/cdrom/isolinux/vmlinuz /boot/vmlinuz-`uname -r`
+cp /mnt/cdrom/isolinux/vmlinuz /boot/vmlinuz-`uname -r`
 
 # 重新制作initram
-sh-4.2$ mkinitrd /boot/initramfs-`uname -r`.img `uname -r`
+mkinitrd /boot/initramfs-`uname -r`.img `uname -r`
 
 # 重新安装grub2，磁盘盘符视实际情况而定（我这里是/dev/sda）
-sh-4.2$ grub2-install /dev/sda
-sh-4.2$ grub2-mkconfig > /boot/grub2/grub.cfg
+grub2-install /dev/sda
+grub2-mkconfig > /boot/grub2/grub.cfg
 ```
 
 **第五步（可选）**：这一步取决于boot分区是如何被破坏的，如果整个分区都删掉了，那么需要修改`/etc/fstab`将`/boot`分区的配置项注释掉，然后重启

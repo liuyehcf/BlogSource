@@ -1843,13 +1843,16 @@ ip route add throw 172.16.0.0/12
     * `src 127.0.0.1`
 
 ```sh
-[root@tristan]$ ip route show table local
+ip route show table local
+
+#-------------------------↓↓↓↓↓↓-------------------------
 local 192.168.99.35 dev eth0  proto kernel  scope host  src 192.168.99.35 
 broadcast 127.255.255.255 dev lo  proto kernel  scope link  src 127.0.0.1 
 broadcast 192.168.99.255 dev eth0  proto kernel  scope link  src 192.168.99.35 
 broadcast 127.0.0.0 dev lo  proto kernel  scope link  src 127.0.0.1 
 local 127.0.0.1 dev lo  proto kernel  scope host  src 127.0.0.1 
 local 127.0.0.0/8 dev lo  proto kernel  scope host  src 127.0.0.1
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 ### 5.5.4 ip rule
@@ -1867,10 +1870,10 @@ local 127.0.0.0/8 dev lo  proto kernel  scope host  src 127.0.0.1
 
 ```sh
 # 增加一条规则，规则匹配的对象是所有的数据包，动作是选用路由表1的路由，这条规则的优先级是32800
-$ ip rule add [from 0/0] table 1 pref 32800
+ip rule add [from 0/0] table 1 pref 32800
 
 # 增加一条规则，规则匹配的对象是IP为192.168.3.112, tos等于0x10的包，使用路由表2，这条规则的优先级是1500，动作是丢弃。
-$ ip rule add from 192.168.3.112/32 [tos 0x10] table 2 pref 1500 prohibit
+ip rule add from 192.168.3.112/32 [tos 0x10] table 2 pref 1500 prohibit
 ```
 
 ### 5.5.5 ip netns

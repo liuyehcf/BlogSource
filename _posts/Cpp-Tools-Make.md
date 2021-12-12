@@ -142,7 +142,7 @@ test:
 执行上面的规则，会得到下面的结果
 
 ```sh
-$ make test
+make test
 # 这是测试
 ```
 

@@ -141,7 +141,7 @@ categories:
 可以通过如下命令查看系统中的`Namespaces`
 
 ```sh
-$ kubectl get namespaces
+kubectl get namespaces
 ```
 
 `Kubernetes`默认包含三个`Namespaces`
@@ -155,9 +155,9 @@ $ kubectl get namespaces
 我们可以为`kubectl`设定`Namespace`上下文，后续所有的命令都默认指定该`Namespace`
 
 ```sh
-$ kubectl config set-context $(kubectl config current-context) --namespace=<insert-namespace-name-here>
+kubectl config set-context $(kubectl config current-context) --namespace=<insert-namespace-name-here>
 # Validate it
-$ kubectl config view | grep namespace:
+kubectl config view | grep namespace:
 ```
 
 #### 1.2.2.3 Namespaces and DNS（未完成）
@@ -172,10 +172,10 @@ $ kubectl config view | grep namespace:
 
 ```sh
 # In a namespace
-$ kubectl api-resources --namespaced=true
+kubectl api-resources --namespaced=true
 
 # Not in a namespace
-$ kubectl api-resources --namespaced=false
+kubectl api-resources --namespaced=false
 ```
 
 ### 1.2.3 Labels and Selectors
@@ -240,13 +240,10 @@ selector:
 #### 1.2.3.3 API
 
 ```sh
-$ kubectl get pods -l environment=production,tier=frontend
-
-$ kubectl get pods -l 'environment in (production),tier in (frontend)'
-
-$ kubectl get pods -l 'environment in (production, qa)'
-
-$ kubectl get pods -l 'environment,environment notin (frontend)'
+kubectl get pods -l environment=production,tier=frontend
+kubectl get pods -l 'environment in (production),tier in (frontend)'
+kubectl get pods -l 'environment in (production, qa)'
+kubectl get pods -l 'environment,environment notin (frontend)'
 ```
 
 ### 1.2.4 Annotations
@@ -258,8 +255,8 @@ $ kubectl get pods -l 'environment,environment notin (frontend)'
 `Field Selector`允许我们基于`Kubernetes Object`的字段匹配来过滤`Kubernetes Object`，支持的匹配操作包括：`=`、`==`、`!=`，其中`=`与`==`都表示相等型比较
 
 ```sh
-$ kubectl get pods --field-selector status.phase=Running
-$ kubectl get statefulsets,services --field-selector metadata.namespace!=default
+kubectl get pods --field-selector status.phase=Running
+kubectl get statefulsets,services --field-selector metadata.namespace!=default
 ```
 
 ### 1.2.6 Recommended Labels
@@ -626,7 +623,7 @@ spec:
 可以通过如下命令查看`phase`
 
 ```sh
-$ kubectl get pod -n <namespace> <pod-name> -o yaml
+kubectl get pod -n <namespace> <pod-name> -o yaml
 ```
 
 #### 3.1.3.2 Pod conditions
@@ -1089,16 +1086,16 @@ spec:
 
 ```sh
 # create deployment
-$ kubectl create -f <filepath or url>
+kubectl create -f <filepath or url>
 
 # get deployment
-$ kubectl get deployments
+kubectl get deployments
 
 # get replicaSet
-$ kubectl get rs
+kubectl get rs
 
 # get pods
-$ kubectl get pods --show-labels
+kubectl get pods --show-labels
 ```
 
 #### 3.2.3.2 Updating a Deployment
@@ -1121,26 +1118,26 @@ $ kubectl get pods --show-labels
 
 ```sh
 # check the revisions of this deployment
-$ kubectl rollout history deployment.v1.apps/nginx-deployment
+kubectl rollout history deployment.v1.apps/nginx-deployment
 
 # see details of specific revision
-$ kubectl rollout history deployment.v1.apps/nginx-deployment --revision=2
+kubectl rollout history deployment.v1.apps/nginx-deployment --revision=2
 
 # undo the current rollout
-$ kubectl rollout undo deployment.v1.apps/nginx-deployment
+kubectl rollout undo deployment.v1.apps/nginx-deployment
 
 # rollback to previous revision
-$ kubectl rollout undo deployment.v1.apps/nginx-deployment --to-revision=2
+kubectl rollout undo deployment.v1.apps/nginx-deployment --to-revision=2
 ```
 
 #### 3.2.3.4 Scaling a Deployment
 
 ```sh
 # scale a deployment
-$ kubectl scale deployment.v1.apps/nginx-deployment --replicas=10
+kubectl scale deployment.v1.apps/nginx-deployment --replicas=10
 
 # autoscale
-$ kubectl autoscale deployment.v1.apps/nginx-deployment --min=10 --max=15 --cpu-percent=80
+kubectl autoscale deployment.v1.apps/nginx-deployment --min=10 --max=15 --cpu-percent=80
 ```
 
 #### 3.2.3.5 Pausing and Resuming a Deployment
@@ -1149,16 +1146,16 @@ $ kubectl autoscale deployment.v1.apps/nginx-deployment --min=10 --max=15 --cpu-
 
 ```sh
 # pause deployment
-$ kubectl rollout pause deployment.v1.apps/nginx-deployment
+kubectl rollout pause deployment.v1.apps/nginx-deployment
 
 # update image
-$ kubectl set image deployment.v1.apps/nginx-deployment nginx=nginx:1.9.1
+kubectl set image deployment.v1.apps/nginx-deployment nginx=nginx:1.9.1
 
 # update resource
-$ kubectl set resources deployment.v1.apps/nginx-deployment -c=nginx --limits=cpu=200m,memory=512Mi
+kubectl set resources deployment.v1.apps/nginx-deployment -c=nginx --limits=cpu=200m,memory=512Mi
 
 # resume deployment
-$ kubectl rollout resume deployment.v1.apps/nginx-deployment
+kubectl rollout resume deployment.v1.apps/nginx-deployment
 ```
 
 #### 3.2.3.6 Deployment Status
@@ -1725,22 +1722,28 @@ spec:
 
 ```sh
 # 创建 Deployment
-$ kubectl create -f ./run-my-nginx.yaml
+kubectl create -f ./run-my-nginx.yaml
 
+#-------------------------↓↓↓↓↓↓-------------------------
 deployment.apps/my-nginx created
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 查看 Pod
-$ kubectl get pods -l run=my-nginx -o wide
+kubectl get pods -l run=my-nginx -o wide
 
+#-------------------------↓↓↓↓↓↓-------------------------
 NAME                        READY     STATUS    RESTARTS   AGE       IP           NODE
 my-nginx-59497d7745-9z9f7   1/1       Running   0          3m        10.244.1.8   k8s-node-1
 my-nginx-59497d7745-kww92   1/1       Running   0          3m        10.244.2.5   k8s-node-2
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 查看 Pod ip
-$ kubectl get pods -l run=my-nginx -o yaml | grep podIP
+kubectl get pods -l run=my-nginx -o yaml | grep podIP
 
+#-------------------------↓↓↓↓↓↓-------------------------
     podIP: 10.244.1.8
     podIP: 10.244.2.5
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 注意到，这些`Pod`并没有用附属`Node`的`80`端口，也没有配置任何`NAT`规则来路由流量，这意味着，我们可以在同一个`Node`上部署多个`Pod`，并且利用`IP`来访问这些`Pod`
@@ -1748,7 +1751,7 @@ $ kubectl get pods -l run=my-nginx -o yaml | grep podIP
 登录`Pod`的命令如下
 
 ```sh
-$ kubectl exec -it <pod-name> -n <namespace> -- bash
+kubectl exec -it <pod-name> -n <namespace> -- bash
 ```
 
 ### 4.3.2 Create a Service
@@ -1761,18 +1764,24 @@ $ kubectl exec -it <pod-name> -n <namespace> -- bash
 
 ```sh
 # 创建service
-$ kubectl expose deployment/my-nginx
+kubectl expose deployment/my-nginx
+
+#-------------------------↓↓↓↓↓↓-------------------------
 service/my-nginx exposed
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 查看service
-$ kubectl get svc my-nginx
+kubectl get svc my-nginx
 
+#-------------------------↓↓↓↓↓↓-------------------------
 NAME       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
 my-nginx   ClusterIP   10.96.104.176   <none>        80/TCP    3m
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 查看service的状态
-$ kubectl describe svc my-nginx
+kubectl describe svc my-nginx
 
+#-------------------------↓↓↓↓↓↓-------------------------
 Name:              my-nginx
 Namespace:         default
 Labels:            run=my-nginx
@@ -1785,7 +1794,11 @@ TargetPort:        80/TCP
 Endpoints:         10.244.1.8:80,10.244.2.5:80
 Session Affinity:  None
 Events:            <none>
-[root@k8s-master ~]# kubectl describe svc my-nginx
+#-------------------------↑↑↑↑↑↑-------------------------
+
+kubectl describe svc my-nginx
+
+#-------------------------↓↓↓↓↓↓-------------------------
 Name:              my-nginx
 Namespace:         default
 Labels:            run=my-nginx
@@ -1798,12 +1811,15 @@ TargetPort:        80/TCP
 Endpoints:         10.244.1.8:80,10.244.2.5:80
 Session Affinity:  None
 Events:            <none>
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 查看endpoint
-$ kubectl get ep my-nginx
+kubectl get ep my-nginx
 
+#-------------------------↓↓↓↓↓↓-------------------------
 NAME       ENDPOINTS                     AGE
 my-nginx   10.244.1.8:80,10.244.2.5:80   11m
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 `kubectl expose`等价于`kubectl create -f <如下配置文件>`
@@ -1838,37 +1854,45 @@ spec:
 首先，我们查看一下现有`Pod`的环境变量
 
 ```sh
-$ kubectl exec <pod name> -- printenv | grep SERVICE
+kubectl exec <pod name> -- printenv | grep SERVICE
 
+#-------------------------↓↓↓↓↓↓-------------------------
 KUBERNETES_SERVICE_PORT_HTTPS=443
 KUBERNETES_SERVICE_PORT=443
 KUBERNETES_SERVICE_HOST=10.96.0.1
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 可以看到，这里没有我们创建的`Service`的相关信息，这是因为我们在创建`Service`之前，首先创建了`Pod`。另一个弊端是，`Scheduler`可能会将上述两个`Pod`部署到同一个`Node`中，这会导致整个`Service`不可用，我们可以通过杀死这两个`Pod`并等待`Deployment`重新创建两个新的`Pod`来修复这个问题
 
 ```sh
 # 杀死现有的Pod，并创建新的Pod
-$ kubectl scale deployment my-nginx --replicas=0; kubectl scale deployment my-nginx --replicas=2;
+kubectl scale deployment my-nginx --replicas=0; kubectl scale deployment my-nginx --replicas=2;
 
+#-------------------------↓↓↓↓↓↓-------------------------
 deployment.extensions/my-nginx scaled
 deployment.extensions/my-nginx scaled
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 查看Pod
-$ kubectl get pods -l run=my-nginx -o wide
+kubectl get pods -l run=my-nginx -o wide
 
+#-------------------------↓↓↓↓↓↓-------------------------
 NAME                        READY     STATUS    RESTARTS   AGE       IP           NODE
 my-nginx-59497d7745-jb8zm   1/1       Running   0          1m        10.244.1.9   k8s-node-1
 my-nginx-59497d7745-nrxj7   1/1       Running   0          1m        10.244.2.6   k8s-node-2
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 查看环境变量
-$ kubectl exec <pod name> -- printenv | grep SERVICE
+kubectl exec <pod name> -- printenv | grep SERVICE
 
+#-------------------------↓↓↓↓↓↓-------------------------
 KUBERNETES_SERVICE_HOST=10.96.0.1
 KUBERNETES_SERVICE_PORT_HTTPS=443
 MY_NGINX_SERVICE_HOST=10.96.104.176
 MY_NGINX_SERVICE_PORT=80
 KUBERNETES_SERVICE_PORT=443
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 #### 4.3.3.2 DNS
@@ -1876,25 +1900,29 @@ KUBERNETES_SERVICE_PORT=443
 `Kubernetes`提供了一个`DNS cluster addon Service`，它会为每个`Service`分配一个`DNS Name`，我们可以通过如下命令查看
 
 ```sh
-$ kubectl get services kube-dns --namespace=kube-system
+kubectl get services kube-dns --namespace=kube-system
 
+#-------------------------↓↓↓↓↓↓-------------------------
 NAME       TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)         AGE
 kube-dns   ClusterIP   10.96.0.10   <none>        53/UDP,53/TCP   212d
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 在集群中的任何`Pod`都可以用标准的方式来访问`Service`，我们运行另一个`curl`应用来进行测试
 
 ```sh
 # 以交互的方式运行一个`container`
-$ kubectl run curl --image=radial/busyboxplus:curl -i --tty
+kubectl run curl --image=radial/busyboxplus:curl -i --tty
 
-$ nslookup my-nginx
+nslookup my-nginx
 
+#-------------------------↓↓↓↓↓↓-------------------------
 Server:    10.96.0.10
 Address 1: 10.96.0.10 kube-dns.kube-system.svc.cluster.local
 
 Name:      my-nginx
 Address 1: 10.96.104.176 my-nginx.default.svc.cluster.local
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 ### 4.3.4 Securing the Service
@@ -1903,10 +1931,10 @@ Address 1: 10.96.104.176 my-nginx.default.svc.cluster.local
 
 ```sh
 #create a public private key pair
-$ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /tmp/nginx.key -out /tmp/nginx.crt -subj "/CN=my-nginx/O=my-nginx"
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /tmp/nginx.key -out /tmp/nginx.crt -subj "/CN=my-nginx/O=my-nginx"
 #convert the keys to base64 encoding
-$ cat /tmp/nginx.crt | base64
-$ cat /tmp/nginx.key | base64
+cat /tmp/nginx.crt | base64
+cat /tmp/nginx.key | base64
 ```
 
 下面创建一个`Secret`，配置如下
@@ -1923,15 +1951,19 @@ data:
 ```
 
 ```sh
-$ kubectl create -f nginxsecrets.yaml
+kubectl create -f nginxsecrets.yaml
 
+#-------------------------↓↓↓↓↓↓-------------------------
 secret/nginxsecret created
+#-------------------------↑↑↑↑↑↑-------------------------
 
-$ kubectl get secrets
+kubectl get secrets
 
+#-------------------------↓↓↓↓↓↓-------------------------
 NAME                  TYPE                                  DATA      AGE
 default-token-m7tnl   kubernetes.io/service-account-token   3         212d
 nginxsecret           Opaque                                2         14s
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 现在需要替换掉之前的`nginx`服务，配置如下
@@ -1993,34 +2025,42 @@ spec:
 
 利用上述配置，替换原先的`nginx`
 ```sh
-$ kubectl delete deployments,svc my-nginx; kubectl create -f ./nginx-secure-app.yaml
+kubectl delete deployments,svc my-nginx; kubectl create -f ./nginx-secure-app.yaml
 
+#-------------------------↓↓↓↓↓↓-------------------------
 deployment.extensions "my-nginx" deleted
 service "my-nginx" deleted
 service/my-nginx created
 deployment.apps/my-nginx created
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 于是我们就能通过`Service`来访问`Nginx Server`了
 
 ```sh
 # 查询Server的Cluster Ip
-$ kubectl get svc -o wide
+kubectl get svc -o wide
 
+#-------------------------↓↓↓↓↓↓-------------------------
 NAME                  TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                        AGE       SELECTOR
 kubernetes            ClusterIP   10.96.0.1        <none>        443/TCP                        212d      <none>
 my-nginx              NodePort    10.102.252.181   <none>        8080:31530/TCP,443:32730/TCP   24m       run=my-nginx
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 通过Cluster IP访问nginx
-$ curl -k https://10.102.252.181
+curl -k https://10.102.252.181
 
+#-------------------------↓↓↓↓↓↓-------------------------
 ...
 <title>Welcome to nginx!</title>
 ...
+#-------------------------↑↑↑↑↑↑-------------------------
 
-$ curl -k http://10.102.252.181:8080
+curl -k http://10.102.252.181:8080
 
+#-------------------------↓↓↓↓↓↓-------------------------
 <title>Welcome to nginx!</title>
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 ```yml
@@ -2056,23 +2096,28 @@ spec:
 
 ```sh
 # 创建另一个curl pod
-$ kubectl create -f ./curlpod.yaml
+kubectl create -f ./curlpod.yaml
 
+#-------------------------↓↓↓↓↓↓-------------------------
 deployment.apps/curl-deployment created
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 获取pod名称
-$ kubectl get pods -l app=curlpod
+kubectl get pods -l app=curlpod
 
+#-------------------------↓↓↓↓↓↓-------------------------
 NAME                              READY     STATUS    RESTARTS   AGE
 curl-deployment-d74d885b7-tc7z8   1/1       Running   0          25s
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 用指定的pod执行curl命令访问ngix服务
-$ kubectl exec curl-deployment-d74d885b7-tc7z8 -- curl https://my-nginx --cacert /etc/nginx/ssl/nginx.crt 
+kubectl exec curl-deployment-d74d885b7-tc7z8 -- curl https://my-nginx --cacert /etc/nginx/ssl/nginx.crt 
 
+#-------------------------↓↓↓↓↓↓-------------------------
 ...
 <title>Welcome to nginx!</title>
 ...
-
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 ### 4.3.5 Exposing the Service（未完成）
@@ -2081,8 +2126,9 @@ $ kubectl exec curl-deployment-d74d885b7-tc7z8 -- curl https://my-nginx --cacert
 
 ```sh
 # 查看nodePort
-$ kubectl get svc my-nginx -o yaml | grep nodePort -C 5
+kubectl get svc my-nginx -o yaml | grep nodePort -C 5
 
+#-------------------------↓↓↓↓↓↓-------------------------
 spec:
   clusterIP: 10.102.252.181
   externalTrafficPolicy: Cluster
@@ -2099,9 +2145,10 @@ spec:
     targetPort: 443
   selector:
     run: my-nginx
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 查看externalIP
-$ kubectl get nodes -o yaml | grep ExternalIP -C 1
+kubectl get nodes -o yaml | grep ExternalIP -C 1
 ```
 
 ## 4.4 Ingress
@@ -2285,7 +2332,7 @@ spec:
 ### 4.4.6 Updating an Ingress
 
 ```sh
-$ kubectl edit ingress test
+kubectl edit ingress test
 ```
 
 ## 4.5 Ingress Controller
@@ -2486,19 +2533,24 @@ spec:
 ### 4.7.1 Default Hosts File Content
 
 ```sh
-$ kubectl run nginx --image nginx --generator=run-pod/v1
+kubectl run nginx --image nginx --generator=run-pod/v1
 
+#-------------------------↓↓↓↓↓↓-------------------------
 pod/nginx created
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 查看Pod ip
-$ kubectl get pods --output=wide
+kubectl get pods --output=wide
 
+#-------------------------↓↓↓↓↓↓-------------------------
 NAME          READY     STATUS    RESTARTS   AGE       IP            NODE
 nginx         1/1       Running   0          8m        10.244.2.49   k8s-node-2
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 查看nginx的/etc/hosts文件的默认内容
-$ kubectl exec nginx -- cat /etc/hosts
+kubectl exec nginx -- cat /etc/hosts
 
+#-------------------------↓↓↓↓↓↓-------------------------
 # Kubernetes-managed hosts file.
 127.0.0.1	localhost
 ::1	localhost ip6-localhost ip6-loopback
@@ -2507,6 +2559,7 @@ fe00::0	ip6-mcastprefix
 fe00::1	ip6-allnodes
 fe00::2	ip6-allrouters
 10.244.2.49	nginx
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 ### 4.7.2 Adding Additional Entries with HostAliases
@@ -2539,19 +2592,24 @@ spec:
 ```
 
 ```sh
-$ kubectl apply -f hostaliases-pod.yaml
+kubectl apply -f hostaliases-pod.yaml
 
+#-------------------------↓↓↓↓↓↓-------------------------
 pod/hostaliases-pod created
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 查看Pod IP
-$ kubectl get pod -o=wide
+kubectl get pod -o=wide
 
+#-------------------------↓↓↓↓↓↓-------------------------
 NAME              READY     STATUS      RESTARTS   AGE       IP            NODE
 hello-world       1/1       Running     16         225d      10.244.1.49   k8s-node-1
 hostaliases-pod   0/1       Completed   0          1m        10.244.2.50   k8s-node-2
+#-------------------------↑↑↑↑↑↑-------------------------
 
-$ kubectl logs hostaliases-pod
+kubectl logs hostaliases-pod
 
+#-------------------------↓↓↓↓↓↓-------------------------
 # Kubernetes-managed hosts file.
 127.0.0.1	localhost
 ::1	localhost ip6-localhost ip6-loopback
@@ -2565,6 +2623,7 @@ fe00::2	ip6-allrouters
 127.0.0.1	bar.local
 10.1.2.3	foo.remote
 10.1.2.3	bar.remote
+#-------------------------↑↑↑↑↑↑-------------------------
 ```
 
 ### 4.7.3 Why Does Kubelet Manage the Hosts File?

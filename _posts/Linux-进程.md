@@ -34,27 +34,35 @@ Linux提供了一系列的机制和策略
 
 ```sh
 # 通过shell执行一个后台进程
-[root@liuyehcf ~]$ tail -f /dev/null &
+tail -f /dev/null &
+#-------------------------↓↓↓↓↓↓-------------------------
 127775
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 查看这个tail进程的信息
-[root@liuyehcf ~]$ ps -f --pid 127775
+ps -f --pid 127775
+#-------------------------↓↓↓↓↓↓-------------------------
 UID         PID   PPID  C STIME TTY          TIME CMD
 root     127775 126213  0 16:28 pts/0    00:00:00 tail -f /dev/null
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 查看父进程的信息
-[root@liuyehcf ~]$ ps -f --pid 126213
+ps -f --pid 126213
+#-------------------------↓↓↓↓↓↓-------------------------
 UID         PID   PPID  C STIME TTY          TIME CMD
 root     126213 125787  0 16:28 pts/0    00:00:00 -bash
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 我们发现，此时tail进程的父进程就是shell本身（-bash进程）
 # 此时我们退出终端
-[root@liuyehcf ~]$ exit
+exit
 
 # 再次登录，并查看tail进程
-[root@liuyehcf ~]$ ps -f --pid 127775
+ps -f --pid 127775
+#-------------------------↓↓↓↓↓↓-------------------------
 UID         PID   PPID  C STIME TTY          TIME CMD
 root     127775      1  0 16:28 ?        00:00:00 tail -f /dev/null
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 此时发现，tail进程仍然存在，但是它的父进程变成了1
 ```
@@ -63,26 +71,34 @@ root     127775      1  0 16:28 ?        00:00:00 tail -f /dev/null
 
 ```sh
 # 通过shell执行一个后台进程
-[root@liuyehcf ~]$ tail -f /dev/null &
+tail -f /dev/null &
+#-------------------------↓↓↓↓↓↓-------------------------
 62925
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 查看这个tail进程的信息
-[root@liuyehcf ~]$ ps -f --pid 62925
+ps -f --pid 62925
+#-------------------------↓↓↓↓↓↓-------------------------
 UID         PID   PPID  C STIME TTY          TIME CMD
 root      62925  23709  0 16:37 pts/1    00:00:00 tail -f /dev/null
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 查看父进程的信息
-[root@liuyehcf ~]$ ps -f --pid 23709
+ps -f --pid 23709
+#-------------------------↓↓↓↓↓↓-------------------------
 UID         PID   PPID  C STIME TTY          TIME CMD
 root      23709  23636  0 16:32 pts/1    00:00:00 -bash
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 我们发现，此时tail进程的父进程就是shell本身（-bash进程）
 # 此时我们通过sighup停止shell
-[root@liuyehcf ~]$ kill -sighup 23709
+kill -sighup 23709
 
 # 再次登录，并查看tail进程
-[root@liuyehcf ~]$ ps -f --pid 62925
+ps -f --pid 62925
+#-------------------------↓↓↓↓↓↓-------------------------
 UID         PID   PPID  C STIME TTY          TIME CMD
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 此时发现，tail进程已经退出了
 ```
@@ -91,27 +107,35 @@ UID         PID   PPID  C STIME TTY          TIME CMD
 
 ```sh
 # 通过shell执行一个后台进程，且使用nohup
-[root@liuyehcf ~]$ nohup tail -f /dev/null &
+nohup tail -f /dev/null &
+#-------------------------↓↓↓↓↓↓-------------------------
 84964
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 查看这个tail进程的信息
-[root@liuyehcf ~]$ ps -f --pid 84964
+ps -f --pid 84964
+#-------------------------↓↓↓↓↓↓-------------------------
 UID         PID   PPID  C STIME TTY          TIME CMD
 root      84964  78471  0 16:40 pts/0    00:00:00 tail -f /dev/null
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 查看父进程的信息
-[root@liuyehcf ~]$ ps -f --pid 78471
+ps -f --pid 78471
+#-------------------------↓↓↓↓↓↓-------------------------
 UID         PID   PPID  C STIME TTY          TIME CMD
 root      78471  78213  0 16:40 pts/0    00:00:00 -bash
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 我们发现，此时tail进程的父进程就是shell本身（-bash进程）
 # 此时我们通过sighup停止shell
-[root@liuyehcf ~]$ kill -sighup 78471
+kill -sighup 78471
 
 # 再次登录，并查看tail进程
-[root@liuyehcf ~]$ ps -f --pid 84964
+ps -f --pid 84964
+#-------------------------↓↓↓↓↓↓-------------------------
 UID         PID   PPID  C STIME TTY          TIME CMD
 root      84964      1  0 16:40 ?        00:00:00 tail -f /dev/null
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 此时发现，tail进程仍然存在，但是它的父进程变成了1
 ```
@@ -120,19 +144,22 @@ root      84964      1  0 16:40 ?        00:00:00 tail -f /dev/null
 
 ```sh
 # 编写脚本
-[root@liuyehcf ~]$ cat > tail1.sh << 'EOF'
+cat > tail1.sh << 'EOF'
 #!/bin/sh
 
 tail -f /dev/null &
 EOF
-[root@liuyehcf ~]$ chmod a+x tail1.sh
+
+chmod a+x tail1.sh
 
 # 执行脚本
-[root@liuyehcf ~]$ ./tail1.sh
+./tail1.sh
 
 # 查看这个tail进程的信息
-[root@liuyehcf ~]$ ps -ef | grep 'tail -f'
+ps -ef | grep 'tail -f'
+#-------------------------↓↓↓↓↓↓-------------------------
 root      31417      1  0 16:52 pts/0    00:00:00 tail -f /dev/null
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 发现tail进程的进程id是31417，其父进程的进程id是1
 ```
@@ -141,32 +168,39 @@ root      31417      1  0 16:52 pts/0    00:00:00 tail -f /dev/null
 
 ```sh
 # 编写脚本
-[root@liuyehcf ~]$ cat > tail2.sh << 'EOF'
+cat > tail2.sh << 'EOF'
 #!/bin/sh
 
 tail -f /dev/null &
 
 sleep 60
 EOF
-[root@liuyehcf ~]$ chmod a+x tail2.sh
+
+chmod a+x tail2.sh
 
 # 执行脚本
-[root@liuyehcf ~]$ ./tail2.sh
+./tail2.sh
 
 # 1分钟内，在另一个终端中，查看这个tail进程的信息
-[root@liuyehcf ~]$ ps -ef | grep 'tail -f'
+ps -ef | grep 'tail -f'
+#-------------------------↓↓↓↓↓↓-------------------------
 root      67472  67471  0 16:57 pts/0    00:00:00 tail -f /dev/null
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 发现tail进程的进程id是67472，其父进程的进程id是67471
 # 在另一个终端中，查看父进程的信息
-[root@liuyehcf ~]$ ps -f --pid 67471
+ps -f --pid 67471
+#-------------------------↓↓↓↓↓↓-------------------------
 UID         PID   PPID  C STIME TTY          TIME CMD
 root      67471  91584  0 16:57 pts/0    00:00:00 /bin/sh ./tail2.sh
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 过一分钟之后，在另一个终端中，再次查看tail进程
-[root@liuyehcf ~]$ ps -f --pid 67472
+ps -f --pid 67472
+#-------------------------↓↓↓↓↓↓-------------------------
 UID         PID   PPID  C STIME TTY          TIME CMD
 root      67472      1  0 16:57 pts/0    00:00:00 tail -f /dev/null
+#-------------------------↑↑↑↑↑↑-------------------------
 
 # 此时，tail进程仍然存在，父进程变成了1
 ```
