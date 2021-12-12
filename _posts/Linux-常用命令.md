@@ -3176,7 +3176,9 @@ X_VNC <--> X_Client: X Protocol
 
 1. **在Linux上安装`VNC Server`：以CentOS为例**
     * `yum install -y tigervnc-server`
-    * `vncserver :1`：在`5901`端口上启动服务
+    * `vncserver :x`：在`5900 + x`端口上启动服务
+    * `vncserver -kill :x`：关闭`5900 + x`端口上的服务
+    * `vncserver -list`：显示所有`Xvnc`
 1. **安装`VNC Viewer`**
 
 ## 8.3 NX（推荐）
