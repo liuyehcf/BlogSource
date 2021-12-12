@@ -3064,50 +3064,23 @@ yum install -y iotop
 
 # 8 远程桌面
 
-## 8.1 VNC（不推荐）
+**`X Window System, X11, X`是一个图形显示系统。包含2个组件：`X Server`**
 
-**工作原理：**
+* **`X Server`：必须运行在一个有图形显示能力的主机上，管理主机上与显示相关的硬件设置（如显卡、硬盘、鼠标等），它负责屏幕画面的绘制与显示，以及将输入设置（如键盘、鼠标）的动作告知`X Client`**
+    * `X Server`的实现包括
+        * `XFree86`
+        * `Xorg`：`XFree86`的衍生版本。这是运行在大多数Linux系统上的`X Server`
+        * `Accelerated X`：由`Accelerated X Product`开发，在图形的加速显示上做了改进
+        * `X Server suSE`：`SuSE Team’s`开发
+        * `Xquartz`：运行在`MacOS`系统上的`X Server`
+* **`X Client`：是应用程序的核心部分，它与硬件无关，每个应用程序就是一个`X Client`。`X Client`可以是终端仿真器（`Xterm`）或图形界面程序，它不直接对显示器绘制或者操作图形，而是与`X Server`通信，由`X Server`控制显示**
+* **`X Server`和`X Client`可以在同一台机器上，也可以在不同机器上。两种通过`xlib`进行通信**
 
-* `VNCServer`在远程Linux主机上启动一个端口，并通过该端口对外提供桌面服务
-    * 可以理解为一个安装了`X`的机器，只是没有外设（鼠标、键盘、显示器）
-* `VNCClient`通过与`VNCServer`暴露的端口连接，获取图形化输出所需的信息（包括传递I/O设备的信号）
-    * 可以理解为一个远程的外设（鼠标、键盘、显示器）
+![X-Window-System](/images/Linux-常用命令/X-Window-System.awebp)
 
-**如何使用：**
+## 8.1 xquartz（不推荐）
 
-1. **在Linux上安装`VNCServer`：以CentOS为例**
-    * `yum install -y tigervnc-server`
-    * `vncserver :1`：在`5901`端口上启动服务
-1. **安装VNCViewer**
-
-## 8.2 NX（推荐）
-
-[No Machine官网](https://www.nomachine.com/)
-
-**工作原理：与VNC类似，但是使用了`NX`协议，占用带宽更小**
-
-**如何使用：**
-
-1. **在Linux上安装`NXServer`：以CentOS为例，从官网下载rpm包并安装**
-    * `rpm -ivh nomachine_7.7.4_1_x86_64.rpm`
-    * `/etc/NX/nxserver --restart`
-1. **从官网下载`NXClient`**
-    * `NXServer`的默认端口号是`4000`
-    * 默认可以用`Linux`的账号密码登录
-
-**配置文件：`/usr/NX/etc/server.cfg`**
-
-* `NXPort`：修改启动端口号
-* `EnableUserDB/EnablePasswordDB`：是否用额外的账号进行登录（1开启，0关闭，默认关闭）
-    * `/etc/NX/nxserver --useradd admin --system --administrator`：该命令本质上也会创建一个Linux账号，第一个密码是Linux账号的密码，第二个密码是`NXServer`独立的密码（仅用于`NX`登录）
-
-## 8.3 xquartz（不推荐）
-
-**工作原理：`xquartz`的工作机制与`VNC`以及`NX`完全不同。`xquartz`利用了`X11`（通信协议），`X11`并不要求远程主机安装`X`。`X Server`是我们本地的电脑，`X Client`是远程Linux主机**
-
-* [Differences between VNC and ssh -X](https://unix.stackexchange.com/questions/1960/differences-between-vnc-and-ssh-x)
-* `X Server`：管理主机上与显示相关的硬件设置（如显卡、硬盘、鼠标等），它负责屏幕画面的绘制与显示，以及将输入设置（如键盘、鼠标）的动作告知`X Client`
-* `X Client`：即`X`应用程序，主要负责事件的处理（即程序的逻辑）
+**工作原理：纯`X Window System`方案，其中，`xquartz`就是`X Server`的一种实现**
 
 ```plantuml
 skinparam backgroundColor #EEEBDC
@@ -3131,18 +3104,18 @@ skinparam sequence {
 	ActorFontName Aapex
 }
 
-box "X-Server"
-participant X_Server as "带有外设的本地电脑"
+box "带有显示相关硬件的主机"
+participant X_Quartz as "X Quartz"
 end box
 
-box "X-Client"
-participant X_Client as "远程Linux主机"
+box "远程Linux主机"
+participant X_Client as "X client"
 end box
 
-X_Server -> X_Client: ssh -Y user@target
+X_Quartz -> X_Client: ssh -Y user@target
 X_Client -> X_Client: 运行图形化程序，例如xclock
-X_Client -> X_Server: X request
-X_Server -> X_Client: X reply
+X_Client -> X_Quartz: X request
+X_Quartz -> X_Client: X reply
 ```
 
 **如何使用：**
@@ -3153,9 +3126,79 @@ X_Server -> X_Client: X reply
     * `/etc/ssh/sshd_config`设置`X11Forwarding yes`
 * 本地电脑用`ssh`以`X11 Forwarding`方式连接到远程Linux主机
     * `ssh -Y user@target`
-* 在远程ssh会话中，运行`X`程序，例如`xclock`
+* 在远程ssh会话中，运行`X Client`程序，例如`xclock`
 
-**缺点：占用大量带宽，且一个`ssh`会话只能运行一个`X`程序**
+**缺点：占用大量带宽，且一个`ssh`会话只能运行一个`X Client`程序**
+
+## 8.2 VNC（不推荐）
+
+**`Virtual Network Computing, VNC`。主要由两个部分组成：`VNC Server`及`VNC Viewer`**
+
+* **`VNC Server`：运行了`Xvnc`（`X Server`的一种实现），只不过`Xvnc`并不直接控制与显示相关的硬件，而是通过`VNC Protocol`与`VNC Viewer`进行通信，并控制`VNC Viewer`所在的主机上与显示相关的硬件。一个主机可以运行多个`Xvnc`，每个`Xvnc`会在本地监听一个端口（`590x`）**
+* **`VNC Client`：与`VNC Server`暴露的端口连接，获取图形化输出所需的信息（包括传递I/O设备的信号）**
+
+```plantuml
+skinparam backgroundColor #EEEBDC
+skinparam handwritten true
+
+skinparam sequence {
+	ArrowColor DeepSkyBlue
+	ActorBorderColor DeepSkyBlue
+	LifeLineBorderColor blue
+	LifeLineBackgroundColor #A9DCDF
+	
+	ParticipantBorderColor DeepSkyBlue
+	ParticipantBackgroundColor DodgerBlue
+	ParticipantFontName Impact
+	ParticipantFontSize 17
+	ParticipantFontColor #A9DCDF
+	
+	ActorBackgroundColor aqua
+	ActorFontColor DeepSkyBlue
+	ActorFontSize 17
+	ActorFontName Aapex
+}
+
+box "带有显示相关硬件的主机"
+participant VNC_Viewer as "VNC Viewer"
+end box
+
+box "远程Linux主机"
+participant X_VNC as "Xvnc"
+participant X_Client as "X Client"
+end box
+
+VNC_Viewer <--> X_VNC: VNC Protocol
+X_VNC <--> X_Client: X Protocol
+```
+
+**如何使用：**
+
+1. **在Linux上安装`VNC Server`：以CentOS为例**
+    * `yum install -y tigervnc-server`
+    * `vncserver :1`：在`5901`端口上启动服务
+1. **安装`VNC Viewer`**
+
+## 8.3 NX（推荐）
+
+[No Machine官网](https://www.nomachine.com/)
+
+**工作原理：与`VNC`类似，但是使用了`NX`协议，占用带宽更小**
+
+**如何使用：**
+
+1. **在Linux上安装`NX Server`：以CentOS为例，从官网下载rpm包并安装**
+    * `rpm -ivh nomachine_7.7.4_1_x86_64.rpm`
+    * `/etc/NX/nxserver --restart`
+1. **从官网下载`NX Client`**
+    * `NX Server`的默认端口号是`4000`
+    * 默认可以用`Linux`的账号密码登录
+
+**配置文件：`/usr/NX/etc/server.cfg`**
+
+* `NXPort`：修改启动端口号
+* `EnableUserDB/EnablePasswordDB`：是否用额外的账号进行登录（1开启，0关闭，默认关闭）
+    * `/etc/NX/nxserver --useradd admin --system --administrator`：该命令本质上也会创建一个Linux账号，第一个密码是Linux账号的密码，第二个密码是`NX Server`独立的密码（仅用于`NX`登录）
 
 # 9 audit
 
@@ -3408,3 +3451,4 @@ echo $y # 输出10
 * [tmux使用指南：比screen好用n倍！](https://zhuanlan.zhihu.com/p/386085431)
 * [Perf: what do [<n percent>] records mean in perf stat output?](https://stackoverflow.com/questions/33679408/perf-what-do-n-percent-records-mean-in-perf-stat-output)
 * [SSH隧道：端口转发功能详解](https://www.cnblogs.com/f-ck-need-u/p/10482832.html)
+* [X Window系统](https://juejin.cn/post/6971037787575451661)
