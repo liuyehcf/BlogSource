@@ -366,6 +366,9 @@ crash /lib/debug/lib/modules/`uname -r`/vmlinux /var/crash/127.0.0.1-2021-07-24-
 **与`core dump`相关的配置项**
 
 * `ulimit -c`：若是0，则不支持，可以通过`ulimit -c unlimited`或者`ulimit -c <size>`来开启
+    * 或者通过编辑`/etc/security/limits.conf`文件来使配置永久生效
+    * `echo " * soft core unlimited" >> /etc/security/limits.conf`
+    * `echo " * hard core unlimited" >> /etc/security/limits.conf`
 * `/proc/sys/kernel/core_pattern`：`core dump`的存储路径
     * 默认是`core`，若程序产生`core dump`，那么其存放路径位于当前路径
     * `echo "/data/coredump/core.%e.%p" >/proc/sys/kernel/core_pattern`：可以通过类似的语句修改存储路径，其中`%e`表示二进制名称，`%p`表示进程id

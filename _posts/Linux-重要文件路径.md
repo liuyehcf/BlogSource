@@ -15,6 +15,9 @@ categories:
 # 1 /etc目录
 
 1. `/etc/ssl/certs`：根证书存放位置
+1. `/etc/security/limits.conf`：`ulimit -a`对应的配置文件
+    * `echo " * soft core unlimited" >> /etc/security/limits.conf`
+    * `echo " * hard core unlimited" >> /etc/security/limits.conf`
 1. `rc-local`：用于在开机时执行一些初始化脚本，它默认是关闭的，可以通过以下命令开启
     * `chmod +x /etc/rc.d/rc.local`
     * `chmod +x /etc/rc.local`
@@ -57,12 +60,13 @@ categories:
 
 可以看到`/sys`下的目录结构是经过精心设计的：在`/sys/devices`下是所有设备的真实对象，包括如视频卡和以太网卡等真实的设备，也包括`ACPI`等不那么显而易见的真实设备、还有`tty`、`bonding`等纯粹虚拟的设备；在其它目录如`class`、`bus`等中则在分类的目录中含有大量对`/sys/devices`中真实对象引用的符号链接文件
 
-**举例**
-
-1. `/sys/class/net`：网卡（包含物理网卡+虚拟网卡的符号链接文件）
-1. `/sys/devices/virtual/net`：虚拟网卡
-1. `/sys/class/dmi/id`：主板相关信息
-    * `/sys/class/dmi/id/product_uuid`：主板uuid
+1. `/sys/class`
+    * `/sys/class/net`：网卡（包含物理网卡+虚拟网卡的符号链接文件）
+    * `/sys/class/dmi/id`：主板相关信息
+        * `/sys/class/dmi/id/product_uuid`：主板uuid
+1. `/sys/devices`
+    * `/sys/devices/virtual/net`：虚拟网卡
+    * `/sys/devices/system/cpu/cpu0/cache/`：`Cache`相关的信息，`getconf -a | grep -i cache`也可以查看相关信息
 
 ## 2.1 参考
 
