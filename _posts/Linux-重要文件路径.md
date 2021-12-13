@@ -16,8 +16,8 @@ categories:
 
 1. `/etc/ssl/certs`：根证书存放位置
 1. `/etc/security/limits.conf`：`ulimit -a`对应的配置文件
-    * `echo " * soft core unlimited" >> /etc/security/limits.conf`
-    * `echo " * hard core unlimited" >> /etc/security/limits.conf`
+    * `echo "* soft core unlimited" >> /etc/security/limits.conf`
+    * `echo "* hard core unlimited" >> /etc/security/limits.conf`
 1. `rc-local`：用于在开机时执行一些初始化脚本，它默认是关闭的，可以通过以下命令开启
     * `chmod +x /etc/rc.d/rc.local`
     * `chmod +x /etc/rc.local`
