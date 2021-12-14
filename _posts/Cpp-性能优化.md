@@ -269,6 +269,8 @@ BM_assign_and_increment       2.88 ns         2.88 ns    239756481
 
 在`vector`查找某个元素只能遍历，查找性能是`O(n)`，但是`set`提供了`O(1)`的查找性能
 
+### 1.4.1 benchmark
+
 ```cpp
 #include <benchmark/benchmark.h>
 
@@ -276,7 +278,7 @@ BM_assign_and_increment       2.88 ns         2.88 ns    239756481
 #include <unordered_set>
 #include <vector>
 
-#define UPPER_BOUNDARY 4
+#define UPPER_BOUNDARY 1
 
 bool lookup_for_vector(const std::vector<int64_t>& container, const int64_t& target) {
     for (auto& item : container) {
