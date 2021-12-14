@@ -240,7 +240,170 @@ int main() {
 }
 ```
 
-# 7 如何在类中定义常量
+# 7 类型推断
+
+## 7.1 auto
+
+**`auto`会忽略顶层`const`，保留底层的`const`，但是当设置一个类型为`auto`的引用时，初始值中的顶层常量属性仍然保留**
+
+## 7.2 decltype
+
+* **`decltype`会保留变量的所有类型信息（包括顶层`const`和引用在内）**
+* 如果表达式的内容是解引用操作，得到的将是引用类型
+    * `int i = 42;`
+    * `int *p = &i;`
+    * `decltype(*p)`得到的是`int&`
+* **`decltype((c))`会得到`c`的引用类型（无论`c`本身是不是引用）**
+
+```cpp
+#include <iostream>
+#include <type_traits>
+
+#define print_type_info(exp)                                                                     \
+    do {                                                                                         \
+        std::cout << #exp << ": " << std::endl;                                                  \
+        std::cout << "\tis_reference_v=" << std::is_reference_v<exp> << std::endl;               \
+        std::cout << "\tis_lvalue_reference_v=" << std::is_lvalue_reference_v<exp> << std::endl; \
+        std::cout << "\tis_rvalue_reference_v=" << std::is_rvalue_reference_v<exp> << std::endl; \
+        std::cout << "\tis_const_v=" << std::is_const_v<exp> << std::endl;                       \
+        std::cout << "\tis_pointer_v=" << std::is_pointer_v<exp> << std::endl;                   \
+        std::cout << std::endl;                                                                  \
+    } while (0)
+
+int main() {
+    int num1 = 0;
+    int& num2 = num1;
+    const int& num3 = num1;
+    int&& num4 = 0;
+    int* ptr1 = &num1;
+    int* const ptr2 = &num1;
+    const int* ptr3 = &num1;
+
+    print_type_info(decltype(0));
+    print_type_info(decltype((0)));
+
+    print_type_info(decltype(num1));
+    print_type_info(decltype((num1)));
+
+    print_type_info(decltype(num2));
+    print_type_info(decltype(num3));
+    print_type_info(decltype(num4));
+
+    print_type_info(decltype(ptr1));
+    print_type_info(decltype(*ptr1));
+
+    print_type_info(decltype(ptr2));
+    print_type_info(decltype(*ptr2));
+
+    print_type_info(decltype(ptr3));
+    print_type_info(decltype(*ptr3));
+}
+```
+
+**输出如下：**
+
+```
+decltype(0):
+	is_reference_v=0
+	is_lvalue_reference_v=0
+	is_rvalue_reference_v=0
+	is_const_v=0
+	is_pointer_v=0
+
+decltype((0)):
+	is_reference_v=0
+	is_lvalue_reference_v=0
+	is_rvalue_reference_v=0
+	is_const_v=0
+	is_pointer_v=0
+
+decltype(num1):
+	is_reference_v=0
+	is_lvalue_reference_v=0
+	is_rvalue_reference_v=0
+	is_const_v=0
+	is_pointer_v=0
+
+decltype((num1)):
+	is_reference_v=1
+	is_lvalue_reference_v=1
+	is_rvalue_reference_v=0
+	is_const_v=0
+	is_pointer_v=0
+
+decltype(num2):
+	is_reference_v=1
+	is_lvalue_reference_v=1
+	is_rvalue_reference_v=0
+	is_const_v=0
+	is_pointer_v=0
+
+decltype(num3):
+	is_reference_v=1
+	is_lvalue_reference_v=1
+	is_rvalue_reference_v=0
+	is_const_v=0
+	is_pointer_v=0
+
+decltype(num4):
+	is_reference_v=1
+	is_lvalue_reference_v=0
+	is_rvalue_reference_v=1
+	is_const_v=0
+	is_pointer_v=0
+
+decltype(ptr1):
+	is_reference_v=0
+	is_lvalue_reference_v=0
+	is_rvalue_reference_v=0
+	is_const_v=0
+	is_pointer_v=1
+
+decltype(*ptr1):
+	is_reference_v=1
+	is_lvalue_reference_v=1
+	is_rvalue_reference_v=0
+	is_const_v=0
+	is_pointer_v=0
+
+decltype(ptr2):
+	is_reference_v=0
+	is_lvalue_reference_v=0
+	is_rvalue_reference_v=0
+	is_const_v=1
+	is_pointer_v=1
+
+decltype(*ptr2):
+	is_reference_v=1
+	is_lvalue_reference_v=1
+	is_rvalue_reference_v=0
+	is_const_v=0
+	is_pointer_v=0
+
+decltype(ptr3):
+	is_reference_v=0
+	is_lvalue_reference_v=0
+	is_rvalue_reference_v=0
+	is_const_v=0
+	is_pointer_v=1
+
+decltype(*ptr3):
+	is_reference_v=1
+	is_lvalue_reference_v=1
+	is_rvalue_reference_v=0
+	is_const_v=0
+	is_pointer_v=0
+```
+
+## 7.3 typeof
+
+**非c++标准**
+
+## 7.4 typeid
+
+**`typeid`运算符允许在运行时确定对象的类型，貌似几乎没啥用**
+
+# 8 如何在类中定义常量
 
 **在类中声明静态成员，在类外定义（赋值）静态成员，示例如下：**
 
@@ -268,13 +431,13 @@ gcc -o main main.cpp -lstdc++ -Wall
 ./main
 ```
 
-# 8 extern/static
+# 9 extern/static
 
 **`extern`：告诉编译器，这个符号在别的编译单元里定义，也就是要把这个符号放到未解决符号表里去（外部链接）**
 
 **`static`：如果该关键字位于全局函数或者变量声明的前面，表示该编译单元不 导出这个函数/变量的符号，因此无法再别的编译单元里使用。(内部链接)。如果 `static`是局部变量，则该变量的存储方式和全局变量一样，但仍然不导出符号**
 
-## 8.1 共享全局变量
+## 9.1 共享全局变量
 
 **每个源文件中都得有该变量的声明，但是只有一个源文件中可以包含该变量的定义，通常可以采用如下做法**
 
@@ -317,9 +480,9 @@ gcc -o main main.cpp extern.cpp -lstdc++ -Wall
 ./main
 ```
 
-# 9 初始化
+# 10 初始化
 
-## 9.1 初始化列表
+## 10.1 初始化列表
 
 1. 对于内置类型，直接进行值拷贝。使用初始化列表还是在构造函数体中进行初始化没有差别
 1. 对于类类型
@@ -430,7 +593,7 @@ A's default constructor
 A's move assign operator
 ```
 
-## 9.2 各种初始化类型
+## 10.2 各种初始化类型
 
 1. 默认初始化：`type variableName;`
 1. 直接初始化/构造初始化（至少有1个参数）：`type variableName(args);`
@@ -563,7 +726,7 @@ A's (int, int) constructor
 ============(值初始化 a11)============
 ```
 
-# 10 const
+# 11 const
 
 默认状态下，`const`对象仅在文件内有效。编译器将在编译过程中把用到该变量的地方都替代成对应的值，也就是说，编译器会找到代码中所有用到该`const`变量的地方，然后将其替换成定义的值
 
@@ -574,7 +737,7 @@ A's (int, int) constructor
 * `.h`文件中：`extern const int a;`
 * `.cpp`文件中：`extern const int a=f();`
 
-## 10.1 顶层/底层const
+## 11.1 顶层/底层const
 
 顶层的`const`可以表示任意的对象是常量（包括指针，不包括引用，因为引用本身不是对象，没法指定顶层的`const`属性）
 
@@ -585,7 +748,7 @@ const int i = 1;
 const int *const pi = &i;
 ```
 
-## 10.2 const实参和形参
+## 11.2 const实参和形参
 
 实参初始化形参时会自动忽略掉顶层`const`属性
 
@@ -602,11 +765,11 @@ int main() {
 }
 ```
 
-## 10.3 const成员
+## 11.3 const成员
 
 构造函数中显式初始化：在初始化部分进行初始化，而不能在函数体内初始化；如果没有显式初始化，就调用定义时的初始值进行初始化
 
-## 10.4 const成员函数
+## 11.4 const成员函数
 
 `const`关键字修饰的成员函数，不能修改当前类的任何字段的值，如果字段是对象类型，也不能调用非const修饰的成员方法
 
@@ -640,9 +803,9 @@ int main() {
 };
 ```
 
-# 11 指针
+# 12 指针
 
-## 11.1 成员函数指针
+## 12.1 成员函数指针
 
 成员函数指针需要通过`.*`或者`->*`运算符进行调用
 
@@ -701,7 +864,7 @@ int main() {
 }
 ```
 
-# 12 placement new
+# 13 placement new
 
 `placement new`的功能就是在一个已经分配好的空间上，调用构造函数，创建一个对象
 
@@ -710,12 +873,12 @@ void *buf = // 在这里为buf分配内存
 Class *pc = new (buf) Class();  
 ```
 
-# 13 模板
+# 14 模板
 
 1. 模板形参可以是一个类型或者枚举
 1. 模板成员默认不认为是类型，用`typename`消除歧义。例如`T::type* ptr`：如果`type`是个类型，那么这个是声明；如果`type`不是类型，那么这个是乘法表达式。因此这里存在一个歧义，而且编译器默认认为不是类型
 
-## 13.1 非类型模板参数
+## 14.1 非类型模板参数
 
 我们还可以在模板中定义非类型参数，一个非类型参数表示一个值而非一个类型。当一个模板被实例化时，非类型参数被编译器推断出的值所代替，这些值必须是常量表达式，从而允许编译器在编译时实例化模板。一个非类型参数可以是一个整型（枚举可以理解为整型），或是一个指向对象或函数类型的指针或引用
 
@@ -751,7 +914,7 @@ int main() {
 }
 ```
 
-## 13.2 模板形参无法推断
+## 14.2 模板形参无法推断
 
 通常，在`::`左边的模板形参是无法进行推断的（这里的`::`特指用于连接两个类型），例如下面这个例子
 
@@ -776,9 +939,15 @@ int main() {
 }
 ```
 
-# 14 宏
+# 15 宏
 
-## 14.1 do while(0) in macros
+## 15.1 语法
+
+* `#`：字符串化操作符
+* `##`：连接操作符
+* `\`：续行操作符
+
+## 15.2 do while(0) in macros
 
 考虑下面的宏定义
 
@@ -845,7 +1014,7 @@ else
 #define foo(x) do { bar(x); baz(x); } while (0)
 ```
 
-# 15 内存对齐
+# 16 内存对齐
 
 **内存对齐最最底层的原因是内存的IO是以`8`个字节`64bit`为单位进行的**
 
@@ -969,7 +1138,7 @@ Align4's size = 16
 	f4's offset = 8, f4's size = 8
 ```
 
-# 16 mock class
+# 17 mock class
 
 有时在测试的时候，我们需要mock一个类的实现，我们可以在测试的cpp文件中实现这个类的所有方法（**注意，必须是所有方法**），就能够覆盖原有库文件中的实现。下面以一个例子来说明
 
@@ -1146,9 +1315,9 @@ person.cpp:(.text+0x2a): Person::sleep() 的多重定义
 collect2: 错误：ld 返回 1
 ```
 
-## 16.1 demo using cmake
+## 17.1 demo using cmake
 
-# 17 参考
+# 18 参考
 
 * [C++11\14\17\20 特性介绍](https://www.jianshu.com/p/8c4952e9edec)
 * [关于C++：静态常量字符串(类成员)](https://www.codenong.com/1563897/)
@@ -1160,3 +1329,4 @@ collect2: 错误：ld 返回 1
 * [Candidate template ignored because template argument could not be inferred](https://stackoverflow.com/questions/12566228/candidate-template-ignored-because-template-argument-could-not-be-inferred)
 * [calling a member function pointer from outside the class - is it possible?](https://stackoverflow.com/questions/60438079/calling-a-member-function-pointer-from-outside-the-class-is-it-possible)
 * [带你深入理解内存对齐最底层原理](https://zhuanlan.zhihu.com/p/83449008)
+* [C++那些事](https://light-city.club/sc/)
