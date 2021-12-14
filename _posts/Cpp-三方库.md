@@ -100,6 +100,8 @@ make
 
 全称：`parallel-hashmap`，提供了一组高性能、并发安全的map，用于替换`std`以及`boost`中的map
 
+[parallel-hashmap](https://github.com/greg7mdp/parallel-hashmap)
+
 # 3 benchmark
 
 [google-benchmark](https://github.com/google/benchmark)

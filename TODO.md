@@ -47,13 +47,13 @@
     * 性能优化
         * ck /AggregateFunctions/IAggregateFunction.h
     * [Google 开源项目风格指南](https://zh-google-styleguide.readthedocs.io/en/latest/google-cpp-styleguide/)
+    * `pointer stability`
 1. 函数式编程
     * 高阶函数
         * 入参出参可以是函数
         * 可以在方法内定义函数
     * 代数数据结构
         * 子类正交，比如：是否常量、是否可空、是否可空且常量，是用2个子类实现还是3个子类实现？代数数据结构会选择用3个子类实现，这样每个实现都是正交的
-1. vim
 1. 汇编
     * avx2指令
 1. 其他

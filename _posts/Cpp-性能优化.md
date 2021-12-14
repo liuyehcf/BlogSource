@@ -265,6 +265,97 @@ BM_increment_and_assign       2.75 ns         2.75 ns    254502792
 BM_assign_and_increment       2.88 ns         2.88 ns    239756481
 ```
 
+## 1.4 container lookup
+
+在`vector`查找某个元素只能遍历，查找性能是`O(n)`，但是`set`提供了`O(1)`的查找性能
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#include <set>
+#include <unordered_set>
+#include <vector>
+
+#define UPPER_BOUNDARY 4
+
+bool lookup_for_vector(const std::vector<int64_t>& container, const int64_t& target) {
+    for (auto& item : container) {
+        if (item == target) {
+            return true;
+        }
+    }
+    return false;
+}
+
+template <typename Container>
+bool lookup_for_set(const Container& container, const typename Container::value_type& target) {
+    return container.find(target) != container.end();
+}
+
+static void BM_vector(benchmark::State& state) {
+    std::vector<int64_t> container;
+    for (int64_t i = 1; i <= UPPER_BOUNDARY; i++) {
+        container.push_back(i);
+    }
+
+    int64_t target = 1;
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(lookup_for_vector(container, target));
+        if (target++ == UPPER_BOUNDARY) {
+            target = 1;
+        }
+    }
+}
+
+static void BM_set(benchmark::State& state) {
+    std::set<int64_t> container;
+    for (int64_t i = 1; i <= UPPER_BOUNDARY; i++) {
+        container.insert(i);
+    }
+
+    int64_t target = 1;
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(lookup_for_set(container, target));
+        if (target++ == UPPER_BOUNDARY) {
+            target = 1;
+        }
+    }
+}
+
+static void BM_unordered_set(benchmark::State& state) {
+    std::unordered_set<int64_t> container;
+    for (int64_t i = 1; i <= UPPER_BOUNDARY; i++) {
+        container.insert(i);
+    }
+
+    int64_t target = 1;
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(lookup_for_set(container, target));
+        if (target++ == UPPER_BOUNDARY) {
+            target = 1;
+        }
+    }
+}
+
+BENCHMARK(BM_vector);
+BENCHMARK(BM_set);
+BENCHMARK(BM_unordered_set);
+
+BENCHMARK_MAIN();
+```
+
+| UPPER_BOUNDARY | vector | set | unordered_set |
+|:--|:--|:--|:--|
+| 1 | 0.628 ns | 1.26 ns | 8.55 ns |
+| 2 | 0.941 ns | 1.57 ns | 8.47 ns |
+| 4 | 1.49 ns | 2.84 ns | 8.51 ns |
+| 8 | 2.44 ns | 3.61 ns | 8.50 ns |
+| 16 | 3.88 ns | 4.31 ns | 8.52 ns |
+| 32 | 10.0 ns | 5.03 ns | 8.55 ns |
+| 64 | 21.0 ns | 5.62 ns | 8.54 ns |
+| 128 | 33.9 ns | 6.51 ns | 8.52 ns |
+| 16384 | 2641 ns | 54.7 ns | 8.51 ns |
+
 # 2 pointer aliasing
 
 **`pointer aliasing`指的是两个指针（在作用域内）指向了同一个物理地址，或者说指向的物理地址有重叠。`__restrict`关键词用于给编译器一个提示：确保被标记的指针是独占物理地址的**
