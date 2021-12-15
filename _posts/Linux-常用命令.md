@@ -88,6 +88,19 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 
 * `useradd test -g wheel -G wheel -m -s /bin/bash`
 
+### 1.7.1 迁移用户目录
+
+```sh
+# 拷贝数据
+rsync -avzP <old_dir> <new_dir>
+
+# 切换到root
+sudo su
+
+# 更新用户目录
+usermod -d <new_dir> <username>
+```
+
 ## 1.8 userdel
 
 删除账号
@@ -3185,9 +3198,10 @@ X_VNC <--> X_Client: X Protocol
 1. **从官网下载`VNC Viewer`**
     * 默认可以用`Linux`的账号密码登录
 
-**高级用法：**
+**Tips：**
 
 * `vncserver -SecurityTypes None :x`：允许免密登录
+* 键盘无法输入：`ctrl + shift`
 
 ## 8.3 NX（推荐）
 
