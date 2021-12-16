@@ -1,11 +1,11 @@
 ---
-title: Python基础
+title: Python-基础
 date: 2018-04-23 19:44:12
 tags: 
 - 原创
 categories: 
 - Python
-- Grammar
+- Basic
 ---
 
 **阅读更多**
@@ -138,7 +138,8 @@ for ch in 'ABC':
 
 ```py
 isinstance('abc', Iterable) 
-isinstance([1,2,3], Iterable) isinstance(123, Iterable) 
+isinstance([1,2,3], Iterable)
+isinstance(123, Iterable) 
 ```
 
 ### 2.2.7 带循环下标
@@ -222,10 +223,38 @@ Python的Iterator对象表示的是一个数据流，Iterator对象可以被next
 1. 凡是可作用于next()函数的对象都是Iterator类型，它们表示一个惰性计算的序列；
 1. 集合数据类型如list、dict、str等是Iterable但不是Iterator，不过可以通过iter()函数获得一个Iterator对象
 
-# 3 模块
+# 3 常用内置函数
+
+## 3.1 filter
+
+思考这样一个场景，我们需要在一个给定的list中删除某些符合条件的元素，应该怎么做？
+
+```py
+lst = [1, 2, 3, 4, 5, 6]
+newLst = list(filter(lambda x: x % 2 != 0, lst))
+print(newLst)
+
+# 或者
+def is_odd(num):
+    return num % 2 != 0
+
+lst = [1, 2, 3, 4, 5, 6]
+newLst = list(filter(is_odd, lst))
+print(newLst)
+
+# 或者
+lst = [1, 2, 3, 4, 5, 6]
+for v in lst[:]:
+    if v % 2 == 0:
+        lst.remove(v)
+print(lst)
+```
+
+# 4 模块
 
 为了编写可维护的代码，我们把很多函数分组，分别放到不同的文件里，这样，每个文件包含的代码就相对较少，很多编程语言都采用这种组织代码的方式。**在Python中，一个.py文件就称之为一个模块（Module）**
 
-# 4 参考
+# 5 参考
 
 * [廖雪峰-Python教程](https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000)
+* [Python 3 教程](https://www.runoob.com/python3/python3-tutorial.html)
