@@ -2660,11 +2660,14 @@ ClientAliveCountMax 3
     * `V`：以树型格式展示command
     * `H`：展示线程
     * `W`：将当前交互式的一些配置（比如是否展示每个cpu的状态，是否以cpu使用量排序等等）存储到配置文件`~/.toprc`中，然后我们就可以用`top -b -n 1`这种非交互的方式来获取top的输出了（会读取`~/.toprc`中的内容）
-* `VIRT`：进程使用的虚拟内存，包括代码、数据、共享库、被换出的`page`、已映射但未使用的`page`
-* `RES`：进程使用的非`swap`内存
-* `SWAP`：进程使用的`swap`内存
+* `VIRT, virtual memory size`：进程使用的总虚拟内存，包括代码、数据、共享库、被置换的`page`、已映射但未使用的`page`
     * `VIRT = SWAP + RES`
+* `SWAP, swapped size`：进程被置换的虚拟内存
+* `RES, resident memory size`：进程非被置换的物理内存
     * `RES = CODE + DATA`
+* `CODE, text resident set size or TRS`：进程代码所占的物理内存
+* `DATA, data resident set size or DRS`：进程非代码所占的物理内存（包括数据以及堆栈）
+* `SHR, shared memory size`：进程使用的共享内存大小
 
 ## 6.5 slabtop
 
