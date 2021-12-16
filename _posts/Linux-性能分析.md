@@ -92,8 +92,14 @@ sudo perf script > out.perf
 
 **大致步骤：**
 
-1. 在`MacOS`、`Windows`、`Linux`上安装`Vtune-Profile`
-2. 假设安装目录是`/opt/intel/oneapi`，将`/opt/intel/oneapi/vtune/2021.8.0/target/linux`下的压缩包拷贝到目标机器上并解压
+1. 在个人电脑上（`MacOS`、`Windows`、`Linux`均可）安装`Vtune-Profile`
+    * 我的`MacOS`系统版本是`Monterey 12.0.1`，这个版本无法远程Linux机器。如何解决？在目标Linux系统上安装`X Window System`、`Vtune-Profile`，通过`vnc`或者`nx`等远程桌面软件登录目标Linux机器，再通过`vtune-gui`打开`Vtune-Profile`，并分析本地的程序
+1. 在目标Linux机器上安装`Vtune-Profile-Target`（采集数据所需的软件包）：
+    * 自动安装：`Configure Analysis` -> `Remote Linux(ssh)` -> `Deploy`
+    * 手动安装：假设`Vtune-Profile`安装目录是`/opt/intel/oneapi`，将`/opt/intel/oneapi/vtune/2021.8.0/target/linux`下的压缩包拷贝到目标机器上并解压
+* `Vtune-Profile`和`Vtune-Profile-Target`可以在同一台机器，也可以在不同机器
+
+**如何通过命令行采集数据：**
 
 ```sh
 vtune -collect hotspots -knob sampling-mode=hw -knob sampling-interval=0.5 -d 60 a.out
@@ -104,6 +110,8 @@ vtune -collect hotspots -knob sampling-mode=hw -knob sampling-interval=0.5 -targ
 
 * [Intel® VTune™ Profiler User Guide](https://www.intel.com/content/www/us/en/develop/documentation/vtune-help/top.html)
 * [Intel® VTune™ Profiler User Guide - Run Command Line Analysis](https://www.intel.com/content/www/us/en/develop/documentation/vtune-help/top/command-line-interface/running-command-line-analysis.html)
+* [Intel® VTune™ Profiler User Guide - Window: Bottom-up](https://www.intel.com/content/www/us/en/develop/documentation/vtune-help/top/reference/user-interface-reference/window-bottom-up.html)
+* [Intel® VTune™ Profiler User Guide - Window: Caller/Callee](https://www.intel.com/content/www/us/en/develop/documentation/vtune-help/top/reference/user-interface-reference/window-caller-callee.html)
 * [Intel® VTune™ Profiler Performance Analysis Cookbook](https://software.intel.com/content/www/us/en/develop/documentation/vtune-cookbook/top/methodologies/top-down-microarchitecture-analysis-method.html)
 * [《A Top-Down Method for Performance Analysis and Counters Architecture》阅读笔记](https://andrewei1316.github.io/2020/12/20/top-down-performance-analysis/)
 

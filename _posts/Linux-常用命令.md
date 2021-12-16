@@ -2660,6 +2660,11 @@ ClientAliveCountMax 3
     * `V`：以树型格式展示command
     * `H`：展示线程
     * `W`：将当前交互式的一些配置（比如是否展示每个cpu的状态，是否以cpu使用量排序等等）存储到配置文件`~/.toprc`中，然后我们就可以用`top -b -n 1`这种非交互的方式来获取top的输出了（会读取`~/.toprc`中的内容）
+* `VIRT`：进程使用的虚拟内存，包括代码、数据、共享库、被换出的`page`、已映射但未使用的`page`
+* `RES`：进程使用的非`swap`内存
+* `SWAP`：进程使用的`swap`内存
+    * `VIRT = SWAP + RES`
+    * `RES = CODE + DATA`
 
 ## 6.5 slabtop
 
@@ -3202,6 +3207,17 @@ X_VNC <--> X_Client: X Protocol
 
 * `vncserver -SecurityTypes None :x`：允许免密登录
 * 键盘无法输入：按住`ctrl + shift`，再打开终端
+* 在远程桌面的终端中执行`vncconfig -display :x`，会弹出一个小框，可以进行一些选项配置
+* **如何在Mac与远程Linux之间拷贝，参考[copy paste between mac and remote desktop](https://discussions.apple.com/thread/8470438)**
+    * `Remote Linux -> Mac`：
+        1. 在`VNC Viewer`中，鼠标选中再按`Ctrl + Shift + C`（貌似鼠标选中即可）进行复制
+        1. 在Mac上，`Command + V`进行粘贴
+    * `Mac -> Remote Linux`（很大概率失败，不知道为啥）：
+        1. 在Mac上，鼠标选中，再按`Command + C`进行复制
+        1. 在`VNC Viewer`中，按`Ctrl + Shift + V`进行粘贴
+    * `Remote Linux -> Remote Linux`
+        1. 在`VNC Viewer`中，鼠标选中再按`Ctrl + Shift + C`进行复制
+        1. 在`VNC Viewer`中，按`Ctrl + Shift + V`进行粘贴
 
 ## 8.3 NX（推荐）
 
