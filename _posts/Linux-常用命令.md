@@ -3201,7 +3201,7 @@ X_VNC <--> X_Client: X Protocol
 **Tips：**
 
 * `vncserver -SecurityTypes None :x`：允许免密登录
-* 键盘无法输入：`ctrl + shift`
+* 键盘无法输入：按住`ctrl + shift`，再打开终端
 
 ## 8.3 NX（推荐）
 
