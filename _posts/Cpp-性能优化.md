@@ -358,6 +358,63 @@ BENCHMARK_MAIN();
 | 128 | 33.9 ns | 6.51 ns | 8.52 ns |
 | 16384 | 2641 ns | 54.7 ns | 8.51 ns |
 
+## 1.5 `atomic` or `mutex`
+
+非原子变量、原子变量、`mutex`之间的性能差距
+
+### 1.5.1 benchmark
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#include <atomic>
+#include <mutex>
+
+static void BM_normal(benchmark::State& state) {
+    int64_t cnt = 0;
+
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(cnt++);
+    }
+}
+
+static void BM_atomic(benchmark::State& state) {
+    std::atomic<int64_t> cnt = 0;
+
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(cnt++);
+    }
+}
+
+static void BM_mutex(benchmark::State& state) {
+    std::mutex lock;
+    int64_t cnt = 0;
+
+    for (auto _ : state) {
+        {
+            std::lock_guard<std::mutex> l(lock);
+            benchmark::DoNotOptimize(cnt++);
+        }
+    }
+}
+
+BENCHMARK(BM_normal);
+BENCHMARK(BM_atomic);
+BENCHMARK(BM_mutex);
+
+BENCHMARK_MAIN();
+```
+**输出如下：**
+
+```
+-----------------------------------------------------
+Benchmark           Time             CPU   Iterations
+-----------------------------------------------------
+BM_normal       0.314 ns        0.314 ns   1000000000
+BM_atomic        5.65 ns         5.65 ns    124013879
+BM_mutex         16.6 ns         16.6 ns     42082466
+```
+
 # 2 pointer aliasing
 
 **`pointer aliasing`指的是两个指针（在作用域内）指向了同一个物理地址，或者说指向的物理地址有重叠。`__restrict`关键词用于给编译器一个提示：确保被标记的指针是独占物理地址的**

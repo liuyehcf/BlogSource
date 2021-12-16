@@ -1812,7 +1812,7 @@ call plug#begin()
 Plug 'rhysd/vim-clang-format'
 
 " 将 :ClangFormat 映射到快捷键 [Ctrl] + l
-nnoremap <c-l> :ClangFormat<cr>
+autocmd FileType c,cpp,objc nnoremap <c-l> :ClangFormat<cr>
 
 call plug#end()
 ```
@@ -2123,7 +2123,7 @@ let g:NERDToggleCheckAllLines = 1
 Plug 'rhysd/vim-clang-format'
 
 " 将 :ClangFormat 映射到快捷键 [Ctrl] + l
-nnoremap <c-l> :ClangFormat<cr>
+autocmd FileType c,cpp,objc nnoremap <c-l> :ClangFormat<cr>
 
 call plug#end()
 
