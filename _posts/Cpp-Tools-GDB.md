@@ -284,6 +284,7 @@ Breakpoint 1, main () at set_break.cpp:8
 * `up [<n>]`：沿着栈往上走一层或`n`层
 * `down [<n>]`：沿着栈网下走一层或`n`层
 * `frame <n>`：跳转到栈的指定层
+* `attach <pid>`：重新连接到某个进程
 
 ## 3.5 查看调试相关信息
 

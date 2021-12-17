@@ -450,6 +450,18 @@ set autoindent
 * **对于mac上的`[Option]`，并没有`<p-key>`这样的表示方法。而是用`[Option]`加另一个字母实际输出的结果作为映射键值，例如**
     * `[Option] + a`：`å`
 
+**查看所有map**
+
+* `:map`
+* `:noremap`
+* `:nnoremap`
+
+**重定向所有`map`到文件中**
+
+1. `:redir! > vim_keys.txt`
+1. `:silent verbose map`
+1. `:redir END`
+
 ## 2.16 其他
 
 * **`set <config>?`：可以查看`<config>`的值**
@@ -1812,7 +1824,7 @@ call plug#begin()
 Plug 'rhysd/vim-clang-format'
 
 " 将 :ClangFormat 映射到快捷键 [Ctrl] + l
-autocmd FileType c,cpp,objc nnoremap <c-l> :ClangFormat<cr>
+autocmd FileType c,cpp,objc nnoremap <buffer> <c-l> :ClangFormat<cr>
 
 call plug#end()
 ```
@@ -2123,7 +2135,7 @@ let g:NERDToggleCheckAllLines = 1
 Plug 'rhysd/vim-clang-format'
 
 " 将 :ClangFormat 映射到快捷键 [Ctrl] + l
-autocmd FileType c,cpp,objc nnoremap <c-l> :ClangFormat<cr>
+autocmd FileType c,cpp,objc nnoremap <buffer> <c-l> :ClangFormat<cr>
 
 call plug#end()
 

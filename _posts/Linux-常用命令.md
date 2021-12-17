@@ -1556,6 +1556,9 @@ test	ALL=(ALL)	ALL
 * 修改快捷键前缀（默认的快捷键前缀是`C-b`）
     1. 方法1：`tmux set -g prefix C-x`，仅对当前登录有效
     1. 方法2：在配置文件`~/.tmux.conf`中添加如下配置`set -g prefix C-x`即可
+* 修改默认的shell
+    1. 方法1：`tmux set-option -g default-shell /usr/bin/zsh`，仅对当前登录有效
+    1. 方法2：在配置文件`~/.tmux.conf`中添加如下配置`set -g default-shell /usr/bin/zsh`即可
 
 # 5 网络管理
 

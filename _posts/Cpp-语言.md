@@ -401,7 +401,36 @@ decltype(*ptr3):
 
 ## 7.4 typeid
 
-**`typeid`运算符允许在运行时确定对象的类型，貌似几乎没啥用**
+**`typeid`运算符允许在运行时确定对象的类型。其原理是由编译器静态推断，并非真正的runtime，例如无法在继承关系之间判断其准确的类型**
+
+```cpp
+class Base {
+
+};
+
+class Derive : public Base {
+
+};
+
+int main() {
+    std::cout << std::boolalpha;
+
+    std::string str;
+    std::cout << (typeid(str) == typeid(std::string)) << std::endl; // true
+
+    Base *ptr1 = nullptr;
+    std::cout << (typeid(*ptr1) == typeid(Base)) << std::endl; // true
+    std::cout << (typeid(*ptr1) == typeid(Derive)) << std::endl; // false
+
+    Base *ptr2 = new Base();
+    std::cout << (typeid(*ptr2) == typeid(Base)) << std::endl; // true
+    std::cout << (typeid(*ptr2) == typeid(Derive)) << std::endl; // false
+
+    Base *ptr3 = new Derive();
+    std::cout << (typeid(*ptr2) == typeid(Base)) << std::endl; // true
+    std::cout << (typeid(*ptr2) == typeid(Derive)) << std::endl; // false
+}
+```
 
 # 8 如何在类中定义常量
 
@@ -941,13 +970,24 @@ int main() {
 
 # 15 宏
 
-## 15.1 语法
+## 15.1 预定义宏
+
+**`ANSI C`标准中有几个标准预定义宏（也是常用的）：**
+
+* `__LINE__`：在源代码中插入当前源代码行号
+* `__FILE__`：在源文件中插入当前源文件名
+* `__DATE__`：在源文件中插入当前的编译日期
+* `__TIME__`：在源文件中插入当前编译时间
+* `__STDC__`：当要求程序严格遵循`ANSI C`标准时该标识被赋值为1
+* `__cplusplus`：当编写C++程序时该标识符被定义
+
+## 15.2 语法
 
 * `#`：字符串化操作符
 * `##`：连接操作符
 * `\`：续行操作符
 
-## 15.2 do while(0) in macros
+## 15.3 do while(0) in macros
 
 考虑下面的宏定义
 
