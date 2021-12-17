@@ -1728,6 +1728,7 @@ call plug#end()
     * **`xxx$`：后缀匹配**
     * **`!xxx`：反向匹配**
     * **上述规则均可自由组合**
+    * **如何精确匹配一个包含空格的字符串：`'Hello\ world`，即空格要用`\ `**
 
 ## 3.18 全局搜索-[vim-grepper](https://github.com/mhinz/vim-grepper)
 
