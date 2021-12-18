@@ -49,7 +49,7 @@ Bloom Filter算法如下：
 
 下面是每个字符串处理的过程，首先是将字符串str“记录”到BitSet中的过程：
 
-　　对于字符串str，分别计算h(1，str)，h(2，str)...h(k，str)。然后将BitSet的第h(1，str)、h(2，str)...h(k，str)位设为1
+对于字符串str，分别计算h(1，str)，h(2，str)...h(k，str)。然后将BitSet的第h(1，str)、h(2，str)...h(k，str)位设为1
 
 ![fig1](/images/Bloom-Filter/fig1.jpg)
 

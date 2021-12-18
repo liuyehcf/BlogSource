@@ -672,7 +672,7 @@ make install # may require extra privileges depending on where to install
 **ctags参数**
 
 * `--c++-kinds=+px`：`ctags`记录c++文件中的函数声明，各种外部和前向声明  
-* `--fields=+ialS`：`ctags`要求描述的信息，其中：　　
+* `--fields=+ialS`：`ctags`要求描述的信息，其中：
     * `i`：表示如果有继承，则表示出父类  
 	* `a`：表示如果元素是类成员的话，要标明其调用权限(即public或者private)  
 	* `l`：表示包含标记源文件的语言  

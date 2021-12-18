@@ -645,14 +645,14 @@ echo ${FOO:?error} # 输出error
 # 文件名若包含空格，且不用引号，则会报错：ambiguous redirect
 while read line
 do
-　　echo $line
+    echo $line
 done < "test.txt"
 
 # 或者利用 进程替换
 
 while read line
 do
-　　echo $line
+    echo $line
 done < <(cmd) 
 ```
 
@@ -663,7 +663,7 @@ done < <(cmd)
 ```sh
 STDOUT | while read line
 do
-　　echo $line
+    echo $line
 done
 ```
 
