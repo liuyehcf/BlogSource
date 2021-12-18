@@ -768,18 +768,25 @@ array_name[2]=value2
 array_name[n]=valuen
 ```
 
-**数组属性**
-
-* `@`或`*`可以获取数组中的所有元素
+**获取数组中的所有元素：**
+ 
 ```sh
 ${array[@]}
 ${array[*]}
 ```
 
-* 获取数组长度的方法与获取字符串长度的方法相同，即利用`#`
+**获取数组长度：**
+
 ```sh
 ${#array[@]}
 ${#array[*]}
+```
+
+**获取数组的所有下标：**
+
+```sh
+${!array[@]}
+${!array[*]}
 ```
 
 **数组合并：**
@@ -827,6 +834,9 @@ echo "数组元素为：${array[*]}"
 
 echo "数组长度为：${#array[@]}"
 echo "数组长度为：${#array[*]}"
+
+echo "数组下标为：${!array[@]}"
+echo "数组下标为：${!array[*]}"
 
 for element in ${array[@]}
 do
@@ -1523,31 +1533,35 @@ ff
 
 ## 17.5 declare
 
-`declare`用于声明变量、设置属性、或者查看变量信息。若在函数内部使用`declare`，那么默认是`local`的
+`declare`用于定义变量、增减属性、查看变量信息。若在函数内部使用`declare`，那么默认是`local`的
 
-**格式：`declare [-aAfFgilrtux] [-p] [name[=value] ...]`**
+**格式：`declare [-/+ aAfFgilrtux] [-p] [name[=value] ...]`**
 
 **参数说明：**
 
-* `-a`：定义数组
-* `-A`：定义map
-* `-f`：定义函数
-* `-i`：定义整数
+* `-/+`：增加属性`+`：删除属性
+    * `a`：数组
+    * `A`：map
+    * `f`：函数
+    * `i`：整数
+* `-p`：查看变量信息，包括类型以及值
 
 **示例：**
 
 ```sh
 # 查看函数定义
-declare -f my_function
+declare -f <function>
+# 查看普通变量
+declare -p <variable>
 
 # 定义数组
-declare -a array
+declare -a <array>
 
 # 定义map
-declare -A map
+declare -A <map>
 
 # 定义整数
-declare -i integer
+declare -i <integer>
 ```
 
 ## 17.6 typeset
