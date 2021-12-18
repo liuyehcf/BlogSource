@@ -791,6 +791,31 @@ array3=( ${array1[@]} ${array2[@]} )
 echo "array3='${array3[@]}'"
 ```
 
+**追加元素：**
+
+```sh
+# 方法1
+array1=()
+array1=( ${array1[@]} 1 )
+array1=( ${array1[@]} 2 )
+array1=( ${array1[@]} 3 )
+echo "array1='${array1[@]}'"
+
+# 方法2，针对bash，数组下标从0开始
+array2=()
+array2[${#array2[@]}]=4
+array2[${#array2[@]}]=5
+array2[${#array2[@]}]=6
+echo "array2='${array2[@]}'"
+
+# 方法2，针对zsh，数组下标从1开始（bash也适用）
+array3=()
+array3[${#array3[@]}+1]=7
+array3[${#array3[@]}+1]=8
+array3[${#array3[@]}+1]=9
+echo "array3='${array3[@]}'"
+```
+
 **示例：**
 
 ```sh
@@ -1496,13 +1521,38 @@ ff
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-## 17.5 typeset
+## 17.5 declare
 
-该函数主要用于：声明变量和/或赋予它们属性
+`declare`用于声明变量、设置属性、或者查看变量信息。若在函数内部使用`declare`，那么默认是`local`的
+
+**格式：`declare [-aAfFgilrtux] [-p] [name[=value] ...]`**
+
+**参数说明：**
+
+* `-a`：定义数组
+* `-A`：定义map
+* `-f`：定义函数
+* `-i`：定义整数
 
 **示例：**
 
-* `typeset -f <function_name>`：查看函数定义
+```sh
+# 查看函数定义
+declare -f my_function
+
+# 定义数组
+declare -a array
+
+# 定义map
+declare -A map
+
+# 定义整数
+declare -i integer
+```
+
+## 17.6 typeset
+
+**功能属于`declare`的子集，不推荐使用**
 
 # 18 参考
 

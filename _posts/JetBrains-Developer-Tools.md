@@ -173,6 +173,8 @@ categories:
 
 ### 1.5.3 定义格式化风格
 
+**如何导入自定义格式化`schema`：`Perference -> Editor -> Code Style`**
+
 [starrocks-示例](https://github.com/StarRocks/starrocks/blob/main/fe/starrocks_intellij_style.xml)
 
 ```xml
@@ -224,6 +226,12 @@ categories:
   </codeStyleSettings>
 </code_scheme>
 ```
+
+### 1.5.4 如何用命令行工具格式化
+
+参考[command-line-formatter](https://www.jetbrains.com/help/idea/command-line-formatter.html)
+
+格式化工具的路径：`<安装目录>/bin/format.sh`
 
 ## 1.6 参考
 
