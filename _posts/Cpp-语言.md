@@ -11,7 +11,9 @@ categories:
 
 <!--more-->
 
-# 1 c++11新特性
+# 1 版本新特性
+
+## 1.1 c++11新特性
 
 1. `auto`与`decltype`类型推导
 1. `default`与`delete`函数
@@ -44,7 +46,7 @@ categories:
 1. `static_assert`
 1. 智能指针
 
-# 2 c++14新特性
+## 1.2 c++14新特性
 
 1. 变量模板
 1. 泛型`Lambda`
@@ -57,7 +59,7 @@ categories:
 1. 带默认成员初始化器的聚合类
 1. `decltype(auto)`
 
-# 3 c++17新特性
+## 1.3 c++17新特性
 
 1. 折叠表达式
 1. 类模板实参推导
@@ -78,7 +80,7 @@ categories:
 1. 新属性`[[fallthrough]]`、`[[nodiscard]]`和`[[maybe_unused]]`
 1. `__has_include`
 
-# 4 C++20新特性
+## 1.4 C++20新特性
 
 1. 特性测试宏
 1. 三路比较运算符`<=>`
@@ -98,7 +100,7 @@ categories:
 1. 缩略函数模板
 1. 数组长度推导
 
-# 5 throw与异常
+# 2 throw与异常
 
 throw关键字可以抛出任何对象，例如可以抛出一个整数
 
@@ -116,9 +118,9 @@ throw关键字可以抛出任何对象，例如可以抛出一个整数
     }
 ```
 
-# 6 类型转换
+# 3 类型转换
 
-## 6.1 static_cast
+## 3.1 static_cast
 
 **用法：`static_cast<type> (expr)`**
 
@@ -138,7 +140,7 @@ int main() {
 }
 ```
 
-## 6.2 dynamic_cast
+## 3.2 dynamic_cast
 
 **用法：`dynamic_cast<type> (expr)`**
 
@@ -180,7 +182,7 @@ int main() {
 }
 ```
 
-## 6.3 const_cast
+## 3.3 const_cast
 
 **用法：`const_cast<type> (expr)`**
 
@@ -217,7 +219,7 @@ int main() {
 }
 ```
 
-## 6.4 reinterpret_cast
+## 3.4 reinterpret_cast
 
 **用法：`reinterpret_cast<type> (expr)`**
 
@@ -240,13 +242,13 @@ int main() {
 }
 ```
 
-# 7 类型推断
+# 4 类型推断
 
-## 7.1 auto
+## 4.1 auto
 
 **`auto`会忽略顶层`const`，保留底层的`const`，但是当设置一个类型为`auto`的引用时，初始值中的顶层常量属性仍然保留**
 
-## 7.2 decltype
+## 4.2 decltype
 
 * **`decltype`会保留变量的所有类型信息（包括顶层`const`和引用在内）**
 * 如果表达式的内容是解引用操作，得到的将是引用类型
@@ -395,11 +397,11 @@ decltype(*ptr3):
 	is_pointer_v=0
 ```
 
-## 7.3 typeof
+## 4.3 typeof
 
 **非c++标准**
 
-## 7.4 typeid
+## 4.4 typeid
 
 **`typeid`运算符允许在运行时确定对象的类型。其原理是由编译器静态推断，并非真正的runtime，例如无法在继承关系之间判断其准确的类型**
 
@@ -432,7 +434,7 @@ int main() {
 }
 ```
 
-# 8 如何在类中定义常量
+# 5 如何在类中定义常量
 
 **在类中声明静态成员，在类外定义（赋值）静态成员，示例如下：**
 
@@ -460,13 +462,13 @@ gcc -o main main.cpp -lstdc++ -Wall
 ./main
 ```
 
-# 9 extern/static
+# 6 extern/static
 
 **`extern`：告诉编译器，这个符号在别的编译单元里定义，也就是要把这个符号放到未解决符号表里去（外部链接）**
 
 **`static`：如果该关键字位于全局函数或者变量声明的前面，表示该编译单元不 导出这个函数/变量的符号，因此无法再别的编译单元里使用。(内部链接)。如果 `static`是局部变量，则该变量的存储方式和全局变量一样，但仍然不导出符号**
 
-## 9.1 共享全局变量
+## 6.1 共享全局变量
 
 **每个源文件中都得有该变量的声明，但是只有一个源文件中可以包含该变量的定义，通常可以采用如下做法**
 
@@ -509,9 +511,9 @@ gcc -o main main.cpp extern.cpp -lstdc++ -Wall
 ./main
 ```
 
-# 10 初始化
+# 7 初始化
 
-## 10.1 初始化列表
+## 7.1 初始化列表
 
 1. 对于内置类型，直接进行值拷贝。使用初始化列表还是在构造函数体中进行初始化没有差别
 1. 对于类类型
@@ -622,7 +624,7 @@ A's default constructor
 A's move assign operator
 ```
 
-## 10.2 各种初始化类型
+## 7.2 各种初始化类型
 
 1. 默认初始化：`type variableName;`
 1. 直接初始化/构造初始化（至少有1个参数）：`type variableName(args);`
@@ -755,7 +757,7 @@ A's (int, int) constructor
 ============(值初始化 a11)============
 ```
 
-# 11 const
+# 8 const
 
 默认状态下，`const`对象仅在文件内有效。编译器将在编译过程中把用到该变量的地方都替代成对应的值，也就是说，编译器会找到代码中所有用到该`const`变量的地方，然后将其替换成定义的值
 
@@ -766,7 +768,7 @@ A's (int, int) constructor
 * `.h`文件中：`extern const int a;`
 * `.cpp`文件中：`extern const int a=f();`
 
-## 11.1 顶层/底层const
+## 8.1 顶层/底层const
 
 顶层的`const`可以表示任意的对象是常量（包括指针，不包括引用，因为引用本身不是对象，没法指定顶层的`const`属性）
 
@@ -777,7 +779,7 @@ const int i = 1;
 const int *const pi = &i;
 ```
 
-## 11.2 const实参和形参
+## 8.2 const实参和形参
 
 实参初始化形参时会自动忽略掉顶层`const`属性
 
@@ -794,11 +796,11 @@ int main() {
 }
 ```
 
-## 11.3 const成员
+## 8.3 const成员
 
 构造函数中显式初始化：在初始化部分进行初始化，而不能在函数体内初始化；如果没有显式初始化，就调用定义时的初始值进行初始化
 
-## 11.4 const成员函数
+## 8.4 const成员函数
 
 `const`关键字修饰的成员函数，不能修改当前类的任何字段的值，如果字段是对象类型，也不能调用非const修饰的成员方法
 
@@ -832,9 +834,9 @@ int main() {
 };
 ```
 
-# 12 指针
+# 9 指针
 
-## 12.1 成员函数指针
+## 9.1 成员函数指针
 
 成员函数指针需要通过`.*`或者`->*`运算符进行调用
 
@@ -893,7 +895,7 @@ int main() {
 }
 ```
 
-# 13 placement new
+# 10 placement new
 
 `placement new`的功能就是在一个已经分配好的空间上，调用构造函数，创建一个对象
 
@@ -902,12 +904,12 @@ void *buf = // 在这里为buf分配内存
 Class *pc = new (buf) Class();  
 ```
 
-# 14 模板
+# 11 模板
 
 1. 模板形参可以是一个类型或者枚举
 1. 模板成员默认不认为是类型，用`typename`消除歧义。例如`T::type* ptr`：如果`type`是个类型，那么这个是声明；如果`type`不是类型，那么这个是乘法表达式。因此这里存在一个歧义，而且编译器默认认为不是类型
 
-## 14.1 非类型模板参数
+## 11.1 非类型模板参数
 
 我们还可以在模板中定义非类型参数，一个非类型参数表示一个值而非一个类型。当一个模板被实例化时，非类型参数被编译器推断出的值所代替，这些值必须是常量表达式，从而允许编译器在编译时实例化模板。一个非类型参数可以是一个整型（枚举可以理解为整型），或是一个指向对象或函数类型的指针或引用
 
@@ -943,9 +945,9 @@ int main() {
 }
 ```
 
-## 14.2 模板形参无法推断
+## 11.2 模板形参无法推断
 
-通常，在`::`左边的模板形参是无法进行推断的（这里的`::`特指用于连接两个类型），例如下面这个例子
+**通常，在`::`左边的模板形参是无法进行推断的（这里的`::`特指用于连接两个类型），例如下面这个例子**
 
 ```cpp
 template<typename T>
@@ -962,15 +964,130 @@ struct Long {
 };
 
 int main() {
-    // func(1); compile error
+    func(1); // compile error
     func<Int>(1);
     func<Long>(2);
 }
 ```
 
-# 15 宏
+## 11.3 typename消除歧义
 
-## 15.1 预定义宏
+**什么情况下会有歧义？。例如`foo* ptr;`**
+
+* 若`foo`是个类型，那么该语句就是个声明语句，即定义了一个类型为`foo*`变量
+* 若`foo`是个变量，那么该语句就是个表达式语句，即对`foo`以及`ptr`进行`*`运算
+* 编译器无法分辨出是上述两种情况的哪一种，因此可以显式使用`typename`来告诉编译器`foo`是个类型
+
+**对于模板而言，例如`T::value_type`，编译器同样无法确定`T::value_type`是个类型还是不是类型。因为类作用域运算符`::`可以访问类型成员也可以访问静态成员。而编译器默认会认为`T::value_type`这种形式默认不是类型**
+
+**示例1：**
+
+```cpp
+// 下面这个会编译失败
+template<typename T>
+T::value_type sum(const T &container) {
+    T::value_type res = {};
+    for (const auto &item: container) {
+        res += item;
+    }
+    return res;
+}
+```
+
+**上面的代码有2处错误：**
+
+1. 需要用`typename`显式指定返回类型`T::value_type`
+1. 需要用`typename`显式指定`res`的声明类型
+
+**修正后：**
+
+```cpp
+template<typename T>
+typename T::value_type sum(const T &container) {
+    typename T::value_type res = {};
+    for (const auto &item: container) {
+        res += item;
+    }
+    return res;
+}
+```
+
+## 11.4 template消除歧义
+
+**什么情况下会有歧义？。例如`container.emplace<int>(1);`**
+
+* 若`container.emplace`是个成员变量，那么`<`可以理解成小于号
+* 若`container.emplace`是个模板，那么`<`可以理解成模板形参的括号
+
+**示例1：**
+
+```cpp
+class Container {
+public:
+    template<typename T>
+    void emplace(T value) {
+        std::cout << "emplace value: " << value << std::endl;
+    }
+};
+
+// 下面这个会编译失败
+template<typename T>
+void add(T &container) {
+    container.emplace<int>(1);
+}
+```
+
+**上面的代码有1处错误：**
+
+1. 编译器无法确定`container.emplace`是什么含义
+
+**修正后：**
+
+```cpp
+template<typename T>
+void add(T &container) {
+    container.template emplace<int>(1);
+}
+```
+
+**示例2：**
+
+```cpp
+template<typename T>
+class Foo {
+    template<typename C>
+    using container = std::vector<C>;
+};
+
+template<typename T>
+void bar() {
+    T::container<int> res;
+}
+```
+
+**上面的代码有1处错误：**
+
+1. 编译器无法确定`T::container`是什么含义
+1. 需要用`typename`显式指定`T::container<int>`是个类型
+
+**修正后：**
+
+```cpp
+template<typename T>
+class Foo {
+    template<typename C>
+    using container = std::vector<C>;
+};
+
+template<typename T>
+void bar() {
+    typename T::template container<int> res;
+}
+```
+
+# 12 宏
+
+## 12.1 预定义宏
 
 **`ANSI C`标准中有几个标准预定义宏（也是常用的）：**
 
@@ -981,13 +1098,13 @@ int main() {
 * `__STDC__`：当要求程序严格遵循`ANSI C`标准时该标识被赋值为1
 * `__cplusplus`：当编写C++程序时该标识符被定义
 
-## 15.2 语法
+## 12.2 语法
 
 * `#`：字符串化操作符
 * `##`：连接操作符
 * `\`：续行操作符
 
-## 15.3 do while(0) in macros
+## 12.3 do while(0) in macros
 
 考虑下面的宏定义
 
@@ -1054,7 +1171,7 @@ else
 #define foo(x) do { bar(x); baz(x); } while (0)
 ```
 
-# 16 内存对齐
+# 13 内存对齐
 
 **内存对齐最最底层的原因是内存的IO是以`8`个字节`64bit`为单位进行的**
 
@@ -1178,7 +1295,7 @@ Align4's size = 16
 	f4's offset = 8, f4's size = 8
 ```
 
-# 17 mock class
+# 14 mock class
 
 有时在测试的时候，我们需要mock一个类的实现，我们可以在测试的cpp文件中实现这个类的所有方法（**注意，必须是所有方法**），就能够覆盖原有库文件中的实现。下面以一个例子来说明
 
@@ -1355,9 +1472,9 @@ person.cpp:(.text+0x2a): Person::sleep() 的多重定义
 collect2: 错误：ld 返回 1
 ```
 
-## 17.1 demo using cmake
+## 14.1 demo using cmake
 
-# 18 参考
+# 15 参考
 
 * [C++11\14\17\20 特性介绍](https://www.jianshu.com/p/8c4952e9edec)
 * [关于C++：静态常量字符串(类成员)](https://www.codenong.com/1563897/)

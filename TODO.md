@@ -32,18 +32,28 @@
         * [ck-blog](https://clickhouse.com/docs/zh/whats-new/changelog/)
     * ssb测试集
         * https://www.cnblogs.com/tgzhu/p/9083092.html
-1. opensource
-    * PMC
+1. 大数据
+    * hive
+    * hbase
+    * spark
+    * hadoop
+1. 缩写
+    * PMC（Project Management Committee）
         * [WHAT IS A PMC?](https://www.apache.org/dev/pmc.html#what-is-a-pmc)
         * [How to become an open-source committer (and why you'd want to)](https://www.gridgain.com/resources/blog/how-become-open-source-committer-and-why-youd-want)
         * Podling Project Management Committee.
     * OSI
     * apache license/elastic license
+    * bsd：Berkeley Software Distribution
+    * gpl：GNU General Public License
+    * POSIX：The Portable Operating System Interface 
 1. cpp
     * cpp summit
     * jemalloc/jcmalloc/mimalloc
     * 如何安装boost？ `yum install -y boost-devel`
     * map下标访问是非const的，因为可能会插入数据
+    * 编译
+        * 链接器的作用？
     * 性能优化
         * ck /AggregateFunctions/IAggregateFunction.h
     * [Google 开源项目风格指南](https://zh-google-styleguide.readthedocs.io/en/latest/google-cpp-styleguide/)

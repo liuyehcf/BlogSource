@@ -140,3 +140,4 @@ print "Starting analysis\n" if $verbose;
 * [Perl Tutorial](https://www.tutorialspoint.com/perl/perl_function_references.htm)
 * [什么编程语言写脚本好？](https://www.zhihu.com/question/505203283/answer/2266164064)
 * [Perl | qw Operator](https://www.geeksforgeeks.org/perl-qw-operator/?ref=lbp)
+* [$_ the default variable of Perl](https://perlmaven.com/the-default-variable-of-perl)
