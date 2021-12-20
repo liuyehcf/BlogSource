@@ -395,14 +395,24 @@ lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
 
 ```mermaid
 graph TD
-A[PREROUTING/INPUT/OUTPUT/FORWARD] -->B[KUBE-SERVICES]
-B -->|nginx, srcIp not in cidr| C1[KUBE-MARK-MASQ]
-B -->|nginx, srcIp in cidr| C2[KUBE-SVC-nginx]
-B -->|tomcat, srcIp not in cidr| C3[KUBE-MARK-MASQ]
-B -->|tomcat, srcIp in cidr| C4[KUBE-SVC-tomcat]
-B -->|last rule in the chain 'KUBE-SERVICES'| C5[KUBE-NODEPORTS]
-C2 --> D1[KUBE-SEP-nginx]
-D1 --> E1[DNAT redirect to nginx pod's ip and port]
+A["PREROUTING/INPUT/OUTPUT/FORWARD"]
+B["KUBE-SERVICES"]
+C1["KUBE-MARK-MASQ"]
+C2["KUBE-SVC-nginx"]
+C3["KUBE-MARK-MASQ"]
+C4["KUBE-SVC-tomcat"]
+C5["KUBE-NODEPORTS"]
+D1["KUBE-SEP-nginx"]
+E1["DNAT redirect to nginx pod's ip and port"]
+
+A --> B
+B --> |nginx, srcIp not in cidr| C1
+B --> |nginx, srcIp in cidr| C2
+B --> |tomcat, srcIp not in cidr| C3
+B --> |tomcat, srcIp in cidr| C4
+B --> |last rule in the chain 'KUBE-SERVICES'| C5
+C2 --> D1
+D1 --> E1
 ```
 
 ### 2.3.2 nodeport-多副本
@@ -537,18 +547,32 @@ hello-world-deployment-cbdf4db7b-qc624   1/1     Running   0          5m      10
 
 ```mermaid
 graph TD
-A[PREROUTING/INPUT/OUTPUT/FORWARD] -->B[KUBE-SERVICES]
-B -->|nginx, srcIp not in cidr| C1[KUBE-MARK-MASQ]
-B -->|nginx, srcIp in cidr| C2[KUBE-SVC-NGINX]
-B -->|tomcat, srcIp not in cidr| C3[KUBE-MARK-MASQ]
-B -->|tomcat, srcIp in cidr| C4[KUBE-SVC-TOMCAT]
-B -->|last rule in the chain 'KUBE-SERVICES'| C5[KUBE-NODEPORTS]
-C2 -->|random| D1[KUBE-SEP-nginx1]
-C2 -->|random| D2[KUBE-SEP-nginx2]
-C2 -->|random| D3[KUBE-SEP-nginx3]
-D1 --> E1[DNAT redirect to nginx pod1's ip and port]
-D2 --> E2[DNAT redirect to nginx pod2's ip and port]
-D3 --> E3[DNAT redirect to nginx pod3's ip and port]
+A["PREROUTING/INPUT/OUTPUT/FORWARD"]
+B["KUBE-SERVICES"]
+C1["KUBE-MARK-MASQ"]
+C2["KUBE-SVC-NGINX"]
+C3["KUBE-MARK-MASQ"]
+C4["KUBE-SVC-TOMCAT"]
+C5["KUBE-NODEPORTS"]
+D1["KUBE-SEP-nginx1"]
+D2["KUBE-SEP-nginx2"]
+D3["KUBE-SEP-nginx3"]
+E1["DNAT redirect to nginx pod1's ip and port"]
+E2["DNAT redirect to nginx pod2's ip and port"]
+E3["DNAT redirect to nginx pod3's ip and port"]
+
+A --> B
+B --> |nginx, srcIp not in cidr| C1
+B --> |nginx, srcIp in cidr| C2
+B --> |tomcat, srcIp not in cidr| C3
+B --> |tomcat, srcIp in cidr| C4
+B --> |last rule in the chain 'KUBE-SERVICES'| C5
+C2 --> |random| D1
+C2 --> |random| D2
+C2 --> |random| D3
+D1 --> E1
+D2 --> E2
+D3 --> E3
 ```
 
 ## 2.4 总结

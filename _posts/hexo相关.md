@@ -274,83 +274,13 @@ A --> User: Done
 deactivate A
 ```
 
-# 7 flow流程图
-
-[hexo-filter-flowchart](https://github.com/bubkoo/hexo-filter-flowchart)
-
-**步骤1：安装插件**
-
-```sh
-npm install hexo-filter-flowchart --save 
-```
-
-## 7.1 效果：纵向流程图
-
-**源码：**
-
-```
-st=>start: 开始框
-op=>operation: 处理框
-cond=>condition: 判断框(是或否?)
-sub1=>subroutine: 子流程
-io=>inputoutput: 输入输出框
-e=>end: 结束框
-st->op->cond
-cond(yes)->io->e
-cond(no)->sub1(right)->op
-```
-
-**渲染后：**
-
-```flow
-st=>start: 开始框
-op=>operation: 处理框
-cond=>condition: 判断框(是或否?)
-sub1=>subroutine: 子流程
-io=>inputoutput: 输入输出框
-e=>end: 结束框
-st->op->cond
-cond(yes)->io->e
-cond(no)->sub1(right)->op
-```
-
-## 7.2 效果：横向流程图
-
-**源码：**
-
-```
-st=>start: 开始框
-op=>operation: 处理框
-cond=>condition: 判断框(是或否?)
-sub1=>subroutine: 子流程
-io=>inputoutput: 输入输出框
-e=>end: 结束框
-st(right)->op(right)->cond
-cond(yes)->io(bottom)->e
-cond(no)->sub1(right)->op
-```
-
-**渲染后：**
-
-```flow
-st=>start: 开始框
-op=>operation: 处理框
-cond=>condition: 判断框(是或否?)
-sub1=>subroutine: 子流程
-io=>inputoutput: 输入输出框
-e=>end: 结束框
-st(right)->op(right)->cond
-cond(yes)->io(bottom)->e
-cond(no)->sub1(right)->op
-```
-
-# 8 sequence时序图
+# 7 sequence时序图
 
 [hexo-filter-sequence](https://github.com/bubkoo/hexo-filter-sequence)
 
-# 9 mindmap思维导图
+# 8 mindmap思维导图
 
-## 9.1 simple-mindmap
+## 8.1 simple-mindmap
 
 [hexo-simple-mindmap](https://github.com/HunterXuan/hexo-simple-mindmap)
 
@@ -394,7 +324,7 @@ cond(no)->sub1(right)->op
         - Test 8
 {% endpullquote %}
 
-## 9.2 markmap
+## 8.2 markmap
 
 [hexo-markmap](https://github.com/MaxChang3/hexo-markmap)
 
@@ -438,11 +368,11 @@ cond(no)->sub1(right)->op
         - Test 8
 {% endmarkmap %}
 
-# 10 目录功能
+# 9 目录功能
 
 [hexo-toc](https://github.com/bubkoo/hexo-toc)
 
-# 11 访问统计
+# 10 访问统计
 
 [阅读次数统计-配置](http://theme-next.iissnan.com/third-party-services.html#analytics-tencent-mta)
 
@@ -476,7 +406,7 @@ leancloud_counter_security:
   password: '19930101' # 究极大坑，这里需要用引号
 ```
 
-# 12 本地搜索
+# 11 本地搜索
 
 [本地搜索-配置](http://theme-next.iissnan.com/third-party-services.html#local-search)
 
@@ -484,11 +414,11 @@ leancloud_counter_security:
 
 [Mac 上的 VSCode 编写 Markdown 总是出现隐藏字符？](https://www.zhihu.com/question/61638859)
 
-# 13 背景动画
+# 12 背景动画
 
 [背景动画-配置](http://theme-next.iissnan.com/theme-settings.html#use-bg-animation)
 
-# 14 增加菜单
+# 13 增加菜单
 
 `hexo new page "explore"`
 
@@ -536,7 +466,7 @@ menu:
   commonweal: 公益404
 ```
 
-# 15 取消侧栏编号
+# 14 取消侧栏编号
 
 主题配置文件修改如下配置，将number改为false即可
 
@@ -551,7 +481,7 @@ toc:
   wrap: false
 ```
 
-# 16 修改行内代码样式
+# 15 修改行内代码样式
 
 修改方式（这个方式在最新的next版本中好像失效了）：在`themes/next/source/css/_custom/custom.styl`中增加如下代码
 
@@ -575,7 +505,7 @@ code {
 }
 ```
 
-# 17 修改链接样式
+# 16 修改链接样式
 
 链接即如下的语法
 
@@ -600,7 +530,7 @@ code {
 }
 ```
 
-# 18 调整next主题的字体大小
+# 17 调整next主题的字体大小
 
 文件相对路径：`themes/next/source/css/_variables/base.styl`
 
@@ -625,7 +555,7 @@ $font-size-headings-large   = $font-size-headings-base + $font-size-headings-ste
 $font-size-headings-larger  = $font-size-headings-large + $font-size-headings-step
 ```
 
-# 19 文章置顶
+# 18 文章置顶
 
 ```sh
 
@@ -647,7 +577,7 @@ top: true
 ---
 ```
 
-# 20 deploy
+# 19 deploy
 
 ```sh
 npm install hexo-deployer-git --save
@@ -655,7 +585,7 @@ npm install hexo-deployer-git --save
 
 [nodejs更新后hexo没法deploy](https://blog.csdn.net/qq_41535611/article/details/106309335)
 
-# 21 更换电脑后迁移
+# 20 更换电脑后迁移
 
 1. 参考[hexo-README](https://github.com/hexojs/hexo)，安装`hexo`
 1. 参考[theme-next-README](https://github.com/theme-next/hexo-theme-next)，安装`hexo`主题`theme-next`
@@ -669,7 +599,7 @@ npm install hexo-deployer-git --save
     * deploy
     * search
 
-# 22 参考
+# 21 参考
 
 * [next官方文档](http://theme-next.iissnan.com/getting-started.html)
 * [搭建一个支持LaTEX的hexo博客](http://blog.csdn.net/emptyset110/article/details/50123231)

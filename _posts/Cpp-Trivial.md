@@ -15,20 +15,32 @@ categories:
 
 ```mermaid
 graph TD
-other_target([其他目标代码]) --> linker[[链接器]]
+other_target(["其他目标代码"])
+linker[["链接器"]]
+source(["源代码"])
+compiler[["编译器"]]
+assembly(["汇编代码"])
+assembler[["汇编器"]]
+target(["目标代码"])
+lib(["库文件"])
+result_target(["目标代码"])
+exec(["可执行程序"])
+result_lib(["库文件"])
+
+other_target --> linker
 
 subgraph 编译过程
-source([源代码]) --> compiler[[编译器]]
-compiler --> assembly([汇编代码])
-assembly --> assembler[[汇编器]]
-assembler --> target([目标代码])
+source --> compiler
+compiler --> assembly
+assembly --> assembler
+assembler --> target
 end
 target --> linker
-lib([库文件]) --> linker
+lib --> linker
 
-linker --> result_target([目标代码])
-linker --> exec([可执行程序])
-linker --> result_lib([库文件])
+linker --> result_target
+linker --> exec
+linker --> result_lib
 ```
 
 # 2 lib

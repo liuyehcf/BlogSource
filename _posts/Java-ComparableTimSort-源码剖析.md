@@ -994,32 +994,33 @@ mergeAt方法合并栈中第i个run和第i+1个run，i必须是栈中倒数第2�
 
 # 5 流程
 
-```flow
-st=>start: 开始
-en=>end: 结束
-cond1=>condition: nRemaining > MIN_MERGE ?
-op1=>operation: 二分插入排序
-op2=>operation: 获取一段递增片段run
-cond2=>condition: runLen < minRun ?
-op3=>operation: 利用二分插入排序扩张run片段
-op4=>operation: 将run入栈
-op5=>operation: 合并占中的run，直至满足栈不变式
-cond3=>condition: 所有元素均已排序?
-op6=>operation: 合并占中剩余的run，直至栈为空
+```mermaid
+graph TD
+st(["开始"])
+en(["结束"])
+cond1{"nRemaining > MIN_MERGE ?"}
+op1["二分插入排序"]
+op2["获取一段递增片段run"]
+cond2{"runLen < minRun ?"}
+op3["利用二分插入排序扩张run片段"]
+op4["将run入栈"]
+op5["合并占中的run，直至满足栈不变式"]
+cond3{"所有元素均已排序 ?"}
+op6["合并占中剩余的run，直至栈为空"]
 
-st->cond1
-cond1(no)->op1
-op1->en
-cond1(yes)->op2
-op2->cond2
-cond2(no)->op3
-cond2(yes)->op4
-op3->op4
-op4->op5
-op5->cond3
-cond3(no)->op2
-cond3(yes)->op6
-op6->en
+st --> cond1
+cond1 --> |no| op1
+op1 --> en
+cond1 --> |yes| op2
+op2 --> cond2
+cond2 --> |no| op3
+cond2 --> |yes| op4
+op3 --> op4
+op4 --> op5
+op5 --> cond3
+cond3 --> |no| op2
+cond3 --> |yes| op6
+op6-->en
 ```
 
 # 6 参考

@@ -21,20 +21,21 @@ categories:
 1. 插入式注解处理器的注解处理过程
 1. 分析与字节码生成过程
 
-```flow
-st=>start: 开始
-en=>end: 结束
-op1=>operation: 解析与填充符号表
-op2=>operation: 插入式注解处理器进行注解处理
-op3=>operation: 分析与字节码生成
-cond=>condition: 语法树没有变动 ?
+```mermaid
+graph TD
+st(["开始"])
+en(["结束"])
+op1["解析与填充符号表"]
+op2["插入式注解处理器进行注解处理"]
+op3["分析与字节码生成"]
+cond{"语法树没有变动 ?"}
 
-st->op1
-op1->op2
-op2->cond
-cond(yes)->op3
-cond(no)->op1
-op3->en
+st --> op1
+op1 --> op2
+op2 --> cond
+cond --> |yes| op3
+cond --> |no| op1
+op3 --> en
 ```
 
 **Javac编译动作的入口是`com.sun.tools.javac.main.JavaCompiler`类**，上述3个过程的代码逻辑集中在这个类的`compile()`和`compile2()`方法中，下面给出整个编译过程中最关键的几个步骤

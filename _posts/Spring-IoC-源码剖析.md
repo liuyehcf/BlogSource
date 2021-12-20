@@ -909,5 +909,3 @@ resetCommonCaches方法用于**重置Spring core的核心cache**
 * [Introduction to the Spring Framework](https://docs.spring.io/spring/docs/4.3.13.RELEASE/spring-framework-reference/html/overview.html)
 * 《Spring技术内幕》
 
-```flow
-```

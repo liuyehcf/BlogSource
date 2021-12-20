@@ -18,9 +18,23 @@ categories:
 * `[跳转](#标题名)`
 * 其中，如果标题名中间有空格，那么将空格替换为`-`
 
-# 2 [mermaid](https://mermaid-js.github.io/mermaid/#/)
+# 2 mermaid
 
-## 2.1 横向流程图
+* [mermaid-github](https://github.com/mermaid-js/mermaid)
+* [mermaid-doc](https://mermaid-js.github.io/mermaid/#/)
+
+## 2.1 Tips
+
+1. 如何包含特殊符号？用引号，例如`item1("user@target")`
+1. 如何换行？用`<br>`，例如`item2("first line<br>second line")`
+
+```mermaid
+graph TD
+item1("user@target")
+item2("first line<br>second line")
+```
+
+## 2.2 横向流程图
 
 ```
 graph LR
@@ -40,7 +54,7 @@ A[方形] -->B(圆角)
     F[横向流程图]
 ```
 
-## 2.2 竖向流程图
+## 2.3 竖向流程图
 
 ```
 graph TD
@@ -60,7 +74,7 @@ A[方形] --> B(圆角)
     F[竖向流程图]
 ```
 
-## 2.3 时序图
+## 2.4 时序图
 
 ```
 sequenceDiagram
@@ -90,7 +104,7 @@ sequenceDiagram
     Bob-->>John: Jolly good!
 ```
 
-## 2.4 甘地图
+## 2.5 甘地图
 
 ```
 gantt
@@ -118,7 +132,7 @@ Future task               :         des3, after des2, 5d
 Future task2               :         des4, after des3, 5d
 ```
 
-## 2.5 类图
+## 2.6 类图
 
 ```
 classDiagram
@@ -154,63 +168,9 @@ Class01 : int gorilla
 Class08 <--> C2: Cool label
 ```
 
-# 3 flow
+# 3 plantuml
 
-## 3.1 标准纵向流程图
-
-```
-st=>start: 开始框
-op=>operation: 处理框
-cond=>condition: 判断框(是或否?)
-sub1=>subroutine: 子流程
-io=>inputoutput: 输入输出框
-e=>end: 结束框
-st->op->cond
-cond(yes)->io->e
-cond(no)->sub1(right)->op
-```
-
-```flow
-st=>start: 开始框
-op=>operation: 处理框
-cond=>condition: 判断框(是或否?)
-sub1=>subroutine: 子流程
-io=>inputoutput: 输入输出框
-e=>end: 结束框
-st->op->cond
-cond(yes)->io->e
-cond(no)->sub1(right)->op
-```
-
-## 3.2 标准横向流程图
-
-```
-st=>start: 开始框
-op=>operation: 处理框
-cond=>condition: 判断框(是或否?)
-sub1=>subroutine: 子流程
-io=>inputoutput: 输入输出框
-e=>end: 结束框
-st(right)->op(right)->cond
-cond(yes)->io(bottom)->e
-cond(no)->sub1(right)->op
-```
-
-```flow
-st=>start: 开始框
-op=>operation: 处理框
-cond=>condition: 判断框(是或否?)
-sub1=>subroutine: 子流程
-io=>inputoutput: 输入输出框
-e=>end: 结束框
-st(right)->op(right)->cond
-cond(yes)->io(bottom)->e
-cond(no)->sub1(right)->op
-```
-
-# 4 plantuml
-
-## 4.1 示例
+## 3.1 示例
 
 **源码：**
 
@@ -318,7 +278,7 @@ A --> User: Done
 deactivate A
 ```
 
-## 4.2 查看所有可用的参数
+## 3.2 查看所有可用的参数
 
 **源码：**
 
@@ -332,7 +292,7 @@ help skinparams
 help skinparams
 ```
 
-## 4.3 参考
+## 3.3 参考
 
 * [Ashley's PlantUML Doc](https://plantuml-documentation.readthedocs.io/en/latest/formatting/all-skin-params.html)
 * [PlantUML Doc](https://plantuml.com/zh/sequence-diagram)

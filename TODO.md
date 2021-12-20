@@ -59,6 +59,8 @@
         * ck /AggregateFunctions/IAggregateFunction.h
     * [Google 开源项目风格指南](https://zh-google-styleguide.readthedocs.io/en/latest/google-cpp-styleguide/)
     * `pointer stability`
+    * [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines)
+    * [C++ FAQ](https://isocpp.org/faq)
 1. 汇编
     * avx2指令
 1. 其他

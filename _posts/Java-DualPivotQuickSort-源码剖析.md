@@ -205,28 +205,30 @@ Java中Arrays.sort排序方法对于基本类型的排序采用的是双轴快�
 
 下面给一个流程图
 
-```flow
-st=>start: 开始
-en1=>end: 结束
-en2=>end: 结束
-en3=>end: 结束
-cond1=>condition: QUICKSORT_THRESHOLD ?
-op1=>operation: 利用sort方法进行排序
-cond2=>condition: 重复元素较少 ?
-cond3=>condition: 存在有序片段 ? 
-op2=>operation: 利用sort方法进行排序
-op3=>operation: 类似于Timsort的归并排序
+```mermaid
+graph TD
 
-st->cond1
-cond1(no)->op1
-op1->en1
-cond1(yes)->cond2
-cond2(yes)->cond3
-cond2(no)->op2
-cond3(yes)->op3
-cond3(no)->op2
-op2->en2
-op3->en3
+st(["开始"])
+en1(["结束"])
+en2(["结束"])
+en3(["结束"])
+cond1{"QUICKSORT_THRESHOLD ?"}
+op1["利用sort方法进行排序"]
+cond2{"重复元素较少 ?"}
+cond3{"存在有序片段 ?"} 
+op2["利用sort方法进行排序"]
+op3["类似于Timsort的归并排序"]
+
+st --> cond1
+cond1 --> |no| op1
+op1 --> en1
+cond1 --> |yes| cond2
+cond2 --> |yes| cond3
+cond2 --> |no| op2
+cond3 --> |yes| op3
+cond3 --> |no| op2
+op2 --> en2
+op3 --> en3
 ```
 
 ## 3.2 sort
@@ -647,56 +649,57 @@ op3->en3
 
 下面给一个流程图
 
-```flow
-st=>start: 开始
-en1=>end: 结束
-en2=>end: 结束
-en3=>end: 结束
-cond1=>condition: INSERTION_SORT_THRESHOLD ?
+```mermaid
+graph TD
+st(["开始"])
+en1(["结束"])
+en2(["结束"])
+en3(["结束"])
 
-cond2=>condition: leftmost ?
+cond1{"INSERTION_SORT_THRESHOLD ?"}
+cond2{"leftmost ?"}
 
-op1=>operation: 经典插入排序
-op2=>operation: pair-插入排序
+op1["经典插入排序"]
+op2["pair-插入排序"]
 
-op3=>operation: 找出均匀分布的5个位置e1-e5
-op4=>operation: 冒泡排序e1-e5
+op3["找出均匀分布的5个位置e1-e5"]
+op4["冒泡排序e1-e5"]
 
-cond3=>condition: e1-e5严格单调 ?
-op5=>operation: 以e2和e4为双轴进行第一次双轴partition
-op6=>operation: left-part(小于pivot1的部分)递归sort
-op7=>operation: right-part(大于pivot2的部分)递归sort
+cond3{"e1-e5严格单调 ?"}
+op5["以e2和e4为双轴进行第一次双轴partition"]
+op6["left-part(小于pivot1的部分)递归sort"]
+op7["right-part(大于pivot2的部分)递归sort"]
 
-cond4=>condition: center-part过大 ?
+cond4{"center-part过大 ?"}
 
-op8=>operation: 进行第二次双轴partition
-op9=>operation: center-part递归sort
+op8["进行第二次双轴partition"]
+op9["center-part递归sort"]
 
-op10=>operation: 以e3位单轴进行3-way-partition
-op11=>operation: left-part(小于pivot的部分)递归sort
-op12=>operation: right-part(大于pivot的部分)递归sort
+op10["以e3位单轴进行3-way-partition"]
+op11["left-part(小于pivot的部分)递归sort"]
+op12["right-part(大于pivot的部分)递归sort"]
 
-st->cond1
-cond1(no)->cond2
-cond2(yes)->op1
-cond2(no)->op2
-op1->en1
-op2->en1
-cond1(yes)->op3
-op3->op4
-op4->cond3
-cond3(yes)->op5
-op5->op6
-op6->op7
-op7->cond4
-cond4(yes)->op8
-op8->op9
-cond4(no)->op9
-op9->en2
-cond3(no)->op10
-op10->op11
-op11->op12
-op12->en3
+st --> cond1
+cond1 --> |no| cond2
+cond2 --> |yes| op1
+cond2 --> |no| op2
+op1 --> en1
+op2 --> en1
+cond1 --> |yes| op3
+op3 --> op4
+op4 --> cond3
+cond3 --> |yes| op5
+op5 --> op6
+op6 --> op7
+op7 --> cond4
+cond4 --> |yes| op8
+op8 --> op9
+cond4 --> |no| op9
+op9 --> en2
+cond3 --> |no| op10
+op10 --> op11
+op11 --> op12
+op12 --> en3
 ```
 
 # 4 参考
