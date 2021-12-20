@@ -18,7 +18,7 @@ categories:
 * `[跳转](#标题名)`
 * 其中，如果标题名中间有空格，那么将空格替换为`-`
 
-# 2 flow
+# 2 [mermaid](https://mermaid-js.github.io/mermaid/#/)
 
 ## 2.1 横向流程图
 
@@ -60,7 +60,103 @@ A[方形] --> B(圆角)
     F[竖向流程图]
 ```
 
-## 2.3 标准纵向流程图
+## 2.3 时序图
+
+```
+sequenceDiagram
+    participant Alice
+    participant Bob
+    Alice->>John: Hello John, how are you?
+    loop Healthcheck
+        John->>John: Fight against hypochondria
+    end
+    Note right of John: Rational thoughts <br/>prevail!
+    John-->>Alice: Great!
+    John->>Bob: How about you?
+    Bob-->>John: Jolly good!
+```
+
+```mermaid
+sequenceDiagram
+    participant Alice
+    participant Bob
+    Alice->>John: Hello John, how are you?
+    loop Healthcheck
+        John->>John: Fight against hypochondria
+    end
+    Note right of John: Rational thoughts <br/>prevail!
+    John-->>Alice: Great!
+    John->>Bob: How about you?
+    Bob-->>John: Jolly good!
+```
+
+## 2.4 甘地图
+
+```
+gantt
+dateFormat  YYYY-MM-DD
+title Adding GANTT diagram to mermaid
+excludes weekdays 2014-01-10
+
+section A section
+Completed task            :done,    des1, 2014-01-06,2014-01-08
+Active task               :active,  des2, 2014-01-09, 3d
+Future task               :         des3, after des2, 5d
+Future task2               :         des4, after des3, 5d
+```
+
+```mermaid
+gantt
+dateFormat  YYYY-MM-DD
+title Adding GANTT diagram to mermaid
+excludes weekdays 2014-01-10
+
+section A section
+Completed task            :done,    des1, 2014-01-06,2014-01-08
+Active task               :active,  des2, 2014-01-09, 3d
+Future task               :         des3, after des2, 5d
+Future task2               :         des4, after des3, 5d
+```
+
+## 2.5 类图
+
+```
+classDiagram
+Class01 <|-- AveryLongClass : Cool
+Class03 *-- Class04
+Class05 o-- Class06
+Class07 .. Class08
+Class09 --> C2 : Where am i?
+Class09 --* C3
+Class09 --|> Class07
+Class07 : equals()
+Class07 : Object[] elementData
+Class01 : size()
+Class01 : int chimp
+Class01 : int gorilla
+Class08 <--> C2: Cool label
+```
+
+```mermaid
+classDiagram
+Class01 <|-- AveryLongClass : Cool
+Class03 *-- Class04
+Class05 o-- Class06
+Class07 .. Class08
+Class09 --> C2 : Where am i?
+Class09 --* C3
+Class09 --|> Class07
+Class07 : equals()
+Class07 : Object[] elementData
+Class01 : size()
+Class01 : int chimp
+Class01 : int gorilla
+Class08 <--> C2: Cool label
+```
+
+# 3 flow
+
+## 3.1 标准纵向流程图
 
 ```
 st=>start: 开始框
@@ -86,7 +182,7 @@ cond(yes)->io->e
 cond(no)->sub1(right)->op
 ```
 
-## 2.4 标准横向流程图
+## 3.2 标准横向流程图
 
 ```
 st=>start: 开始框
@@ -112,9 +208,9 @@ cond(yes)->io(bottom)->e
 cond(no)->sub1(right)->op
 ```
 
-# 3 plantuml
+# 4 plantuml
 
-## 3.1 示例
+## 4.1 示例
 
 **源码：**
 
@@ -222,7 +318,7 @@ A --> User: Done
 deactivate A
 ```
 
-## 3.2 查看所有可用的参数
+## 4.2 查看所有可用的参数
 
 **源码：**
 
@@ -236,11 +332,11 @@ help skinparams
 help skinparams
 ```
 
-## 3.3 参考
+## 4.3 参考
 
 * [Ashley's PlantUML Doc](https://plantuml-documentation.readthedocs.io/en/latest/formatting/all-skin-params.html)
 * [PlantUML Doc](https://plantuml.com/zh/sequence-diagram)
 * [Skinparam](http://plantuml.com/zh/skinparam)
-* [纯文本作图-asciiflow.com](http://asciiflow.com/)
 * [Markdown 高级技巧](https://www.runoob.com/markdown/md-advance.html)
+* [About Mermaid](https://mermaid-js.github.io/mermaid/#/)
 * [Hexo中引入Mermaid流程图](https://tyloafer.github.io/posts/7790/)

@@ -1,5 +1,5 @@
 ---
-title: Cpp-Tools-Trivial
+title: Cpp-Trivial
 date: 2021-08-19 09:38:42
 tags: 
 - 原创
@@ -11,9 +11,29 @@ categories:
 
 <!--more-->
 
-# 1 lib
+# 1 编译过程
 
-## 1.1 什么是`libc`、`glic`
+```mermaid
+graph TD
+other_target([其他目标代码]) --> linker[[链接器]]
+
+subgraph 编译过程
+source([源代码]) --> compiler[[编译器]]
+compiler --> assembly([汇编代码])
+assembly --> assembler[[汇编器]]
+assembler --> target([目标代码])
+end
+target --> linker
+lib([库文件]) --> linker
+
+linker --> result_target([目标代码])
+linker --> exec([可执行程序])
+linker --> result_lib([库文件])
+```
+
+# 2 lib
+
+## 2.1 什么是`libc`、`glic`
 
 `libc`实现了C的标准库函数（例如`strcpy()`），以及`POSIX`函数（例如系统调用`getpid()`）。此外，不是所有的C标准库函数都包含在`libc`中，比如大多数`math`相关的库函数都封装在`libm`中
 
@@ -21,23 +41,23 @@ categories:
 
 `glibc, GNU C Library`可以看做是`libc`的另一种实现，它不仅包含`libc`的所有功能还包含`libm`以及其他核心库，比如`libpthread`
 
-## 1.2 静态/动态链接库
+## 2.2 静态/动态链接库
 
 **后缀**
 
 * 静态链接库：`*.a`
 * 动态链接库：`*.so`
 
-# 2 gcc
+# 3 gcc
 
-## 2.1 汇编/目标/可执行
+## 3.1 汇编/目标/可执行
 
 1. `-S`：生成汇编文件（`.s`）
     * `-fverbose-asm`：带上一些注释信息
 1. `-c`：生成目标文件（`.o`）
 1. 默认生成可执行文件
 
-## 2.2 编译优化
+## 3.2 编译优化
 
 **`-O0`（默认）：不做任何优化**
 
@@ -49,9 +69,9 @@ categories:
 
 **不同优化等级对应开启的优化参数参考`man page`**
 
-## 2.3 参考
+## 3.3 参考
 
-# 3 clang-format
+# 4 clang-format
 
 **如何安装`clang-format`**
 
@@ -81,7 +101,7 @@ SortUsingDeclarations: false
 SpacesBeforeTrailingComments: 1
 ```
 
-# 4 头文件搜索路径
+# 5 头文件搜索路径
 
 **头文件`#include "xxx.h"`的搜索顺序**
 
@@ -102,13 +122,13 @@ SpacesBeforeTrailingComments: 1
     * `/usr/local/include`
     * `/usr/lib/gcc/x86_64-redhat-linux/<gcc version>/include`（C头文件）或者`/usr/include/c++/<gcc version>`（C++头文件）
 
-## 4.1 参考
+## 5.1 参考
 
 * [C/C++ 头文件以及库的搜索路径](https://blog.csdn.net/crylearner/article/details/17013187)
 
-# 5 Address Sanitizer
+# 6 Address Sanitizer
 
-## 5.1 memory leak
+## 6.1 memory leak
 
 ```sh
 cat > test_memory_leak.cpp << 'EOF'
@@ -125,7 +145,7 @@ gcc test_memory_leak.cpp -o test_memory_leak -g -lstdc++ -fsanitize=address -sta
 ./test_memory_leak
 ```
 
-## 5.2 stack buffer underflow
+## 6.2 stack buffer underflow
 
 ```sh
 cat > test_stack_buffer_underflow.cpp << 'EOF'
@@ -155,17 +175,17 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
 ./test_stack_buffer_underflow
 ```
 
-## 5.3 参考
+## 6.3 参考
 
 * [c++ Asan(address-sanitize)的配置和使用](https://blog.csdn.net/weixin_41644391/article/details/103450401)
 * [HOWTO: Use Address Sanitizer](https://www.osc.edu/resources/getting_started/howto/howto_use_address_sanitizer)
 * [google/sanitizers](https://github.com/google/sanitizers)
 
-# 6 doc
+# 7 doc
 
-## 6.1 [cpp reference](https://en.cppreference.com/w/)
+## 7.1 [cpp reference](https://en.cppreference.com/w/)
 
-## 6.2 [cppman](https://github.com/aitjcize/cppman/)
+## 7.2 [cppman](https://github.com/aitjcize/cppman/)
 
 **如何安装：**
 

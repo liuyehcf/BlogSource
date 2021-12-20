@@ -11,13 +11,33 @@ categories:
 
 <!--more-->
 
-# 1 缩写表
+# 1 Introduction
+
+**关系型代数（`Relational algebra`）**
+
+| 符号 | 含义 |
+|:--|:--|
+| **`σ`** | **Select, Choose a subset of the tuples from a relation that satisfies a selection predicate** |
+| **`π`** | **Projection, Generate a relation with tuples that contains only the specified attributes** |
+| **`∪`** | **Union, Generate a relation that contains all tuples that appear in either only one or both input relations** |
+| **`∩`** | **Intersection, Generate a relation that contains only the tuples that appear in both of the input relations** |
+| **`-`** | **Difference, Generate a relation that contains only the tuples that appear in the first and not the second of the input relations** |
+| **`×`** | **Product, Generate a relation that contains all possible combinations of tuples from the input relations** |
+| **`⋈`** | **Join, Generate a relation that contains all tuples that are a combination of two tuples (one from each input relation) with a common value(s) for one or more attributes** |
+| `ρ` | Rename |
+| `←` | Assignment |
+| `δ` | Duplicate Elimination |
+| `γ` | Aggregation |
+| `τ` | Sorting |
+| `÷` | Division |
+
+# 2 缩写表
 
 | 缩写 | 全称 |
 |:--|:--|
 | DBMS | Database Management System |
 
-# 2 CMU-课件
+# 3 CMU-课件
 
 1. [01-introduction](/resources/Database-System/01-introduction.pdf)
 1. [02-advancedsql](/resources/Database-System/02-advancedsql.pdf)
@@ -45,3 +65,5 @@ categories:
 1. [24-distributedolap](/resources/Database-System/24-distributedolap.pdf)
 1. [25-oracle](/resources/Database-System/25-oracle.pdf)
 1. [26-potpourri](/resources/Database-System/26-potpourri.pdf)
+
+进度：01

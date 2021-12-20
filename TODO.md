@@ -32,6 +32,7 @@
         * [ck-blog](https://clickhouse.com/docs/zh/whats-new/changelog/)
     * ssb测试集
         * https://www.cnblogs.com/tgzhu/p/9083092.html
+    * [数据库学习资料（持续更新中）](https://blog.bcmeng.com/post/database-learning.html)
 1. 大数据
     * hive
     * hbase
@@ -47,13 +48,13 @@
     * bsd：Berkeley Software Distribution
     * gpl：GNU General Public License
     * POSIX：The Portable Operating System Interface 
+    * sa（Solution Architect）：解决方案架构师
+    * sre（Site Reliability Engineering）：站点可靠工程师
 1. cpp
     * cpp summit
     * jemalloc/jcmalloc/mimalloc
     * 如何安装boost？ `yum install -y boost-devel`
     * map下标访问是非const的，因为可能会插入数据
-    * 编译
-        * 链接器的作用？
     * 性能优化
         * ck /AggregateFunctions/IAggregateFunction.h
     * [Google 开源项目风格指南](https://zh-google-styleguide.readthedocs.io/en/latest/google-cpp-styleguide/)
@@ -62,9 +63,7 @@
     * avx2指令
 1. 其他
     * [macOS开启HiDPI](https://zhuanlan.zhihu.com/p/227788155)
-    * 伙伴算法
+    * 内存分配，伙伴算法
     * rpc框架，thrift
     * codegen原理
-    * sa（Solution Architect）：解决方案架构师
-    * sre（Site Reliability Engineering）：站点可靠工程师
-    * [cpu的制造和](https://plantegg.github.io/2021/06/01/CPU%E7%9A%84%E5%88%B6%E9%80%A0%E5%92%8C%E6%A6%82%E5%BF%B5/)
+

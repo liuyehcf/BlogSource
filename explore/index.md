@@ -10,6 +10,7 @@ date: 2018-02-05 09:25:59
 | [CloudNative 架构](http://team.jiunile.com/) | CloudNative |
 | [fuck cloud native](https://fuckcloudnative.io/posts/) |  |
 | [陈皓](https://coolshell.cn/articles/author/haoel) | 耗子哥 |
+| [编程小梦](https://blog.bcmeng.com/) | 数据库大佬 |
 | [Medium](https://medium.com/) | 国外很多不错的博客都在该网站上，这个网站就是一个博客发布站点，涵盖了多方面的内容，包括文化、艺术、科学等 |
 | [Julia Evans](https://jvns.ca/) | 主要讨论Linux debug工具和网络相关的内容 |
 | [Bruce Eckel's Programming Blog](http://bruceeckel.github.io/) | 《Thinking in Java》的作者 |
@@ -19,7 +20,6 @@ date: 2018-02-05 09:25:59
 | [fxliutao](https://www.jianshu.com/u/c169fce5179b) | Java爱好者 |
 | [Myths](https://blog.mythsman.com/) | 在技术上比较有钻研精神，比如编写类似lombok类似的注解等 |
 | [负雪明烛的博客](http://fuxuemingzhu.me/2017/08/12/hexo-next-polish/) | 大佬校友 |
-| [王孟君](https://my.oschina.net/wangmengjun?sort=time&p=10&temp=1518002154206) | 大佬同事，哈哈哈 |
 | [方志朋](https://blog.csdn.net/forezp?t=1) | 主要出教程，包括Docker、Spring Cloud等 |
 | [玄玉](https://jadyer.cn/) | 主要出教程，包括Docker、Spring Cloud等 |
 | [敖小剑](https://skyao.io/) | Service Mesh |
