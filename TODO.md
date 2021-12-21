@@ -52,7 +52,12 @@
     * sre（Site Reliability Engineering）：站点可靠工程师
 1. cpp
     * cpp summit
-    * jemalloc/jcmalloc/mimalloc
+    * 内存管理
+        * 库：jemalloc/jcmalloc/mimalloc，位于用户态
+        * 涉及的系统调用（只涉及虚拟内存，物理内存只能通过缺页异常来分配）
+            * brk：调整堆顶指针
+            * sbrk：
+            * mmap：mmap是在进程的虚拟地址空间中（堆和栈中间，称为文件映射区域的地方）找一块空闲的虚拟内存
     * 如何安装boost？ `yum install -y boost-devel`
     * map下标访问是非const的，因为可能会插入数据
     * 性能优化
