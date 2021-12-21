@@ -429,32 +429,84 @@ decltype(*ptr3):
 **`typeid`运算符允许在运行时确定对象的类型。其原理是由编译器静态推断，并非真正的runtime，例如无法在继承关系之间判断其准确的类型**
 
 ```cpp
-class Base {
+#define CHECK_TYPE(left, right)                                                            \
+    std::cout << "typeid(" << #left << ") == typeid(" << #right << "): " << std::boolalpha \
+              << (typeid(left) == typeid(right)) << std::noboolalpha << std::endl;
 
+class Base {};
+
+class Derive : public Base {};
+
+int main() {
+    std::string str;
+    CHECK_TYPE(str, std::string);
+
+    Base* ptr1 = nullptr;
+    CHECK_TYPE(*ptr1, Base);
+    CHECK_TYPE(*ptr1, Derive);
+
+    Base* ptr2 = new Base();
+    CHECK_TYPE(*ptr2, Base);
+    CHECK_TYPE(*ptr2, Derive);
+
+    Base* ptr3 = new Derive();
+    CHECK_TYPE(*ptr3, Base);
+    CHECK_TYPE(*ptr3, Derive);
+}
+```
+
+输出如下：
+
+```
+typeid(str) == typeid(std::string): true
+typeid(*ptr1) == typeid(Base): true
+typeid(*ptr1) == typeid(Derive): false
+typeid(*ptr2) == typeid(Base): true
+typeid(*ptr2) == typeid(Derive): false
+typeid(*ptr3) == typeid(Base): true
+typeid(*ptr3) == typeid(Derive): false
+```
+
+**那么如何在运行时判断一个指向父类的指针是子类还是父类呢？答案是`dynamic_cast`**
+
+```cpp
+#define CHECK_TYPE(left, right)                                                                   \
+    std::cout << "dynamic_cast<" << #right << ">(" << #left << ") != nullptr: " << std::boolalpha \
+              << (dynamic_cast<right>(left) != nullptr) << std::noboolalpha << std::endl;
+
+class Base {
+public:
+    virtual ~Base() {}
 };
 
 class Derive : public Base {
-
+    virtual ~Derive() {}
 };
 
 int main() {
-    std::cout << std::boolalpha;
+    Base* ptr1 = nullptr;
+    CHECK_TYPE(ptr1, Base*);
+    CHECK_TYPE(ptr1, Derive*);
 
-    std::string str;
-    std::cout << (typeid(str) == typeid(std::string)) << std::endl; // true
+    Base* ptr2 = new Base();
+    CHECK_TYPE(ptr2, Base*);
+    CHECK_TYPE(ptr2, Derive*);
 
-    Base *ptr1 = nullptr;
-    std::cout << (typeid(*ptr1) == typeid(Base)) << std::endl; // true
-    std::cout << (typeid(*ptr1) == typeid(Derive)) << std::endl; // false
-
-    Base *ptr2 = new Base();
-    std::cout << (typeid(*ptr2) == typeid(Base)) << std::endl; // true
-    std::cout << (typeid(*ptr2) == typeid(Derive)) << std::endl; // false
-
-    Base *ptr3 = new Derive();
-    std::cout << (typeid(*ptr2) == typeid(Base)) << std::endl; // true
-    std::cout << (typeid(*ptr2) == typeid(Derive)) << std::endl; // false
+    Base* ptr3 = new Derive();
+    CHECK_TYPE(ptr3, Base*);
+    CHECK_TYPE(ptr3, Derive*);
 }
+```
+
+输出如下：
+
+```
+dynamic_cast<Base*>(ptr1) != nullptr: false
+dynamic_cast<Derive*>(ptr1) != nullptr: false
+dynamic_cast<Base*>(ptr2) != nullptr: true
+dynamic_cast<Derive*>(ptr2) != nullptr: false
+dynamic_cast<Base*>(ptr3) != nullptr: true
+dynamic_cast<Derive*>(ptr3) != nullptr: true
 ```
 
 ## 3.3 类型转换
