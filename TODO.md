@@ -73,4 +73,5 @@
     * 内存分配，伙伴算法
     * rpc框架，thrift
     * codegen原理
+    * [调度系统设计精要](https://draveness.me/system-design-scheduler/)
 

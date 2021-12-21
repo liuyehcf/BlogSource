@@ -1603,9 +1603,68 @@ systemctl stop demo-service.service
 * [Play With Container Network Interface](https://arthurchiao.github.io/blog/play-with-container-network-if/)
 * [systemd forking vs simple?](https://superuser.com/questions/1274901/systemd-forking-vs-simple)
 
-# 4 中断
+# 4 SELinux
 
-## 4.1 参考
+## 4.1 DAC
+
+自主式存取控制(Discretionary Access Control, DAC)。基本上，就是依据程序的拥有者与文件资源的`rwx`权限来决定有无存取的能力
+
+## 4.2 MAC
+
+委任式存取控制(Mandatory Access Control, MAC)。MAC可以针对特定的程序与特定的文件资源来进行权限的控管。也就是说，即使你是`root`，那么在使用不同的程序时，你所能取得的权限并不一定是`root`，而得要看当时该程序的配置而定。如此一来，我们针对控制的『主体』变成了『程序』而不是用户。此外，这个主体程序也不能任意使用系统文件资源，因为每个文件资源也有针对该主体程序配置可取用的权限。如此一来，控制项目就细的多了。但整个系统程序那么多、文件那么多，一项一项控制可就没完没了。所以`SELinux`也提供一些默认的政策(Policy)，并在该政策内提供多个守则(rule)，让你可以选择是否激活该控制守则
+
+## 4.3 SELinux的运行模式
+
+`SELinux`是透过MAC的方式来控管程序，他控制的主体是程序，而目标则是该程序能否读取的『文件资源』
+
+**主体(Subject)**：`SELinux`主要想要管理的就是`程序`，因此你可以将『主体』跟`process`划上等号
+
+**目标(Object)**：主体程序能否存取的『目标资源』一般就是文件系统。因此这个目标项目可以等`文件系统`划上等号
+
+**政策(Policy)**：由於程序与文件数量庞大，因此`SELinux`会依据某些服务来制订基本的存取安全性政策。这些政策内还会有详细的守则(rule)来指定不同的服务开放某些资源的存取与否。`SELinux`提供两个主要的政策，分别是：
+
+* `targeted`：针对网络服务限制较多，针对本机限制较少，是默认的政策
+* `strict`：完整的`SELinux`限制，限制方面较为严格
+* 建议使用默认的`targeted`政策即可。
+
+**安全性本文(security context)**：我们刚刚谈到了主体、目标与政策面，但是主体能不能存取目标除了政策指定之外，主体与目标的安全性本文必须一致才能够顺利存取。这个安全性本文(security context)有点类似文件系统的`rwx`。安全性本文的内容与配置是非常重要的。如果配置错误，你的某些服务(主体程序)就无法存取文件系统(目标资源)，当然就会一直出现『权限不符』的错误信息了
+
+![fig1](/images/Linux-重要特性/selinux.jpg)
+
+上图的重点在『主体』如何取得『目标』的资源存取权限。由上图我们可以发现，主体程序必须要通过`SELinux`政策内的守则放行后，就可以与目标资源进行安全性本文的比对，若比对失败则无法存取目标，若比对成功则可以开始存取目标。问题是，最终能否存取目标还是与文件系统的`rwx`权限配置有关
+
+## 4.4 安全性文本
+
+**安全性本文存在於`主体程序`中与`目标文件资源`中**
+
+* **程序在内存内，所以安全性本文可以存入是没问题**
+* **那文件的安全性本文是记录在哪里呢？事实上，安全性本文是放置到文件的`inode`内的**，因此主体程序想要读取目标文件资源时，同样需要读取`inode`，这`inode`内就可以比对安全性本文以及`rwx`等权限值是否正确，而给予适当的读取权限依据
+
+安全性本文主要用冒号分为三个栏位，这三个栏位的意义为
+
+1. **身份识别(Identify)**：相当於帐号方面的身份识别。主要的身份识别则有底下三种常见的类型：
+    * `root`：表示`root`的帐号身份
+    * `system_u`：表示系统程序方面的识别，通常就是程序
+    * `user_u`：代表的是一般使用者帐号相关的身份
+    * 系统上面大部分的数据都会是`system_u`或`root`
+    * 如果是在`/home`底下的数据，那么大部分应该就会是`user_u`
+1. **角色(Role)**：这个数据是属於程序、文件资源还是代表使用者。一般的角色有：
+    * `object_r`：代表的是文件或目录等文件资源，这应该是最常见的
+    * `system_r`：代表的就是程序。不过，一般使用者也会被指定成为`system_r`喔
+1. **类型(Type)**：在默认的`targeted`政策中，`Identify`与`Role`栏位基本上是不重要的。重要的在於这个类型(type)栏位。基本上，一个主体程序能不能读取到这个文件资源，与类型栏位有关，而类型栏位在文件与程序的定义不太相同，分别是
+    * `type`：在文件资源(Object)上面称为类型(Type)
+    * `domain`：在主体程序(Subject)则称为领域(domain)了
+    * `domain`需要与`type`搭配，则该程序才能够顺利的读取文件资源
+
+## 4.5 参考
+
+* [第十七章、程序管理与 SELinux 初探](http://cn.linux.vbird.org/linux_basic/0440processcontrol_5.php)
+* [INTRODUCTION TO SELINUX](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/5/html/deployment_guide/ch-selinux)
+* [sVIrt概述](https://www.cnblogs.com/ck1020/p/5901662.html)
+
+# 5 中断
+
+## 5.1 参考
 
 * [linux异常处理体系结构](https://www.cnblogs.com/gulan-zmc/p/11604437.html)
 * [Linux的中断处理机制 [一] - 数据结构(1)](https://zhuanlan.zhihu.com/p/83709066)
@@ -1616,9 +1675,9 @@ systemctl stop demo-service.service
 * [彻底搞懂异常控制流](https://www.cnblogs.com/niuyourou/p/12097856.html)
 * [嵌入式杂谈之中断向量表](https://zhuanlan.zhihu.com/p/125480457)
 
-# 5 动态链接
+# 6 动态链接
 
-## 5.1 demo
+## 6.1 demo
 
 ```sh
 cat > sample.c << 'EOF'
@@ -1667,7 +1726,7 @@ fopen() returned NULL
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-## 5.2 参考
+## 6.2 参考
 
 * [Linux hook：Ring3下动态链接库.so函数劫持](https://www.cnblogs.com/reuodut/articles/13723437.html)
 
