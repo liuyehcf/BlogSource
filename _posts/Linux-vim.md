@@ -1704,6 +1704,9 @@ call plug#begin()
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
+" 将 :Ag 和 :Rg 分别映射到 \ag 和 \rg
+nnoremap <leader>ag :Ag<cr>
+nnoremap <leader>rg :Rg<cr>
 " 配置快捷键[Ctrl] + a，[Ctrl] + q，将结果导入quickfix
 " https://github.com/junegunn/fzf.vim/issues/185
 function! s:build_quickfix_list(lines)
@@ -2112,6 +2115,9 @@ let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
+" 将 :Ag 和 :Rg 分别映射到 \ag 和 \rg
+nnoremap <leader>ag :Ag<cr>
+nnoremap <leader>rg :Rg<cr>
 " 配置快捷键[Ctrl] + a，[Ctrl] + q，将结果导入quickfix
 " https://github.com/junegunn/fzf.vim/issues/185
 function! s:build_quickfix_list(lines)
