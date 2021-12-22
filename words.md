@@ -38,6 +38,11 @@
 1. 微服务的核心是服务治理，而服务治理的关键是服务划分。因此，微服务架构的本质就是对码农的分化和治理
 1. 术的极值就是道。对术的性能渴求并加以真正专注的实践，自然而然就会触摸到对道的感悟
 
+# 方法论
+
+1. Kiss原则
+1. 向上编排理论
+
 # 英文表述
 
 1. Data Cache misses per 1000 instructions comparing LRU, Random, FIFO replacement for several sizes and associativities.

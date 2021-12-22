@@ -1178,16 +1178,8 @@ public class Solution {
 # 8 分布式相关
 
 1. 说说分布式计算
-    > {% post_link 分布式计算 %}
-
 1. 分布式存储
-    > {% post_link 分布式存储 %}
-
 1. Zookeeper
-    > 1. {% post_link Zookeeper-概论 %}
-    > 1. {% post_link Zookeeper-基础 %}
-    > 1. {% post_link Zookeeper-原理 %}
-    > 1. {% post_link Zookeeper-应用场景 %}
     > 1. {% post_link Paxos协议 %}
 
 1. Zookeeper watch机制
@@ -1226,20 +1218,13 @@ public class Solution {
     > http://www.cnblogs.com/binyue/p/5380322.html
 
 1. 消息中间件
-    > 1. {% post_link 消息中间件简介 %}
-    > 1. {% post_link 消息中间件的消息发送一致性 %}
-    > 1. {% post_link 消息的重复产生和应对 %}
-
 1. 分布式事务
-    > 1. {% post_link 分布式事务 %}
     > 1. {% post_link 分布式事务-两阶段三阶段协议 %}
 
 1. 分布式锁
     > http://www.cnblogs.com/PurpleDream/p/5559352.html
 
 1. 接口的幂等性的概念
-    > {% post_link 分布式系统接口幂等性 %}
-
 1. 数据表垂直拆分/水平拆分
     > 垂直拆分，将一张表中的不同类别的数据分别放到不同的表中去
     > 水平拆分，将一张表的不同数据项放到两台机器上
@@ -1251,8 +1236,6 @@ public class Solution {
     > http://blog.csdn.net/dinglang_2009/article/details/53195835
 
 1. 负载均衡算法
-    > {% post_link 负载均衡算法 %}
-
 1. 分布式集群下的唯一序列号
     > 1. 数据库自增id
     > 1. uuid(MacAddress+timeStamp)
@@ -1266,8 +1249,6 @@ public class Solution {
     > 待补充
 
 1. MQ系统的数据如何保证不丢失
-    > {% post_link 消息中间件的消息发送一致性 %}
-
 1. 描述一个服务从发布到被消费的详细过程
     > 待补充
 
@@ -1748,8 +1729,6 @@ WHERE sex = 0;
     > 1. 被伪装
     > 1. 被窃听
 
-    > 详细内容请参考{% post_link HTTPS协议 %}
-
 1. HTTPS的建立过程
     > 发送客户端支持的加密协议以及版本，例如SSL，TLS
     > 服务器端从中筛选合适的加密协议
@@ -1758,7 +1737,6 @@ WHERE sex = 0;
     > 客户端生成对称密钥，通过证书中的公钥加密，发送到服务端
     > 服务器端使用私钥解密，获取对称密钥，使用对称密钥加密数据
     > 客户端解密数据，SSL开始通信
-    > 详细内容请参考{% post_link HTTPS协议 %}
 
 1. `TIME_WAIT`状态什么情况下会产生，以及它有什么用
     > 主动关闭的一方在收到FIN之后会进入`TIME_WAIT`状态
@@ -1767,8 +1745,6 @@ WHERE sex = 0;
     > 1. 避免上次一连接的数据包在新连接的周期内到达，可以认为`TIME_WAIT`之后，所有本次连接的数据包都消逝了，不会再重新出现了
 
 1. HTTP请求详细过程
-    > {% post_link HTTP请求详细过程 %}
-
 1. 一个IP包大概是多大呢，有限制没有？
     > IP数据包的最大长度是64K字节(65535)，因为在IP包头中用2个字节描述报文长度，2个字节所能表达的最大数字就是65535
 
@@ -1892,8 +1868,6 @@ WHERE sex = 0;
     > 1. 客户端收到服务端的response后，发现其中包含"Connection： keep-alive"，就认为是一个长连接，不关闭这个连接。并用该连接再发送request
 
 1. Http请求get和post的区别以及数据包格式
-    > {% post_link HTTP协议 %}
-
 1. 关闭连接时，出现TIMEWAIT过多是由什么原因引起，是出现在主动断开方还是被动断开方
     > 待补充
 
@@ -1920,8 +1894,6 @@ WHERE sex = 0;
     > UTF-16：每个字符两个字节，即16位
 
 1. Session和Cookie
-    > {% post_link Cookie和Session %}
-
 1. OSI七层协议
     > 1. 物理层
     > 1. 链路层
@@ -1932,8 +1904,6 @@ WHERE sex = 0;
     > 1. 应用层
 
 1. 数字证书
-    > {% post_link HTTPS协议 %}
-
 1. 进程最多可以打开多少个tcp连接受到哪些因素的影响
     > * CPU
     > * 内存，每个tcp连接需要缓冲区
