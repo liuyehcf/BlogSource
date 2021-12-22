@@ -426,32 +426,47 @@ decltype(*ptr3):
 
 ### 3.2.4 typeid
 
-**`typeid`运算符允许在运行时确定对象的类型。其原理是由编译器静态推断，并非真正的runtime，例如无法在继承关系之间判断其准确的类型**
+**`typeid`运算符允许在运行时确定对象的类型。若要判断是父类还是子类的话，那么父类必须包含虚函数**
 
 ```cpp
 #define CHECK_TYPE(left, right)                                                            \
     std::cout << "typeid(" << #left << ") == typeid(" << #right << "): " << std::boolalpha \
               << (typeid(left) == typeid(right)) << std::noboolalpha << std::endl;
 
-class Base {};
+class BaseWithoutVirtualFunc {};
 
-class Derive : public Base {};
+class DeriveWithoutVirtualFunc : public BaseWithoutVirtualFunc {};
+
+class BaseWithVirtualFunc {
+public:
+    virtual void func() {}
+};
+
+class DeriveWithVirtualFunc : public BaseWithVirtualFunc {};
 
 int main() {
     std::string str;
     CHECK_TYPE(str, std::string);
 
-    Base* ptr1 = nullptr;
-    CHECK_TYPE(*ptr1, Base);
-    CHECK_TYPE(*ptr1, Derive);
+    BaseWithoutVirtualFunc* ptr1 = nullptr;
+    CHECK_TYPE(*ptr1, BaseWithoutVirtualFunc);
+    CHECK_TYPE(*ptr1, DeriveWithoutVirtualFunc);
 
-    Base* ptr2 = new Base();
-    CHECK_TYPE(*ptr2, Base);
-    CHECK_TYPE(*ptr2, Derive);
+    BaseWithoutVirtualFunc* ptr2 = new BaseWithoutVirtualFunc();
+    CHECK_TYPE(*ptr2, BaseWithoutVirtualFunc);
+    CHECK_TYPE(*ptr2, DeriveWithoutVirtualFunc);
 
-    Base* ptr3 = new Derive();
-    CHECK_TYPE(*ptr3, Base);
-    CHECK_TYPE(*ptr3, Derive);
+    BaseWithoutVirtualFunc* ptr3 = new DeriveWithoutVirtualFunc();
+    CHECK_TYPE(*ptr3, BaseWithoutVirtualFunc);
+    CHECK_TYPE(*ptr3, DeriveWithoutVirtualFunc);
+
+    BaseWithVirtualFunc* ptr4 = new BaseWithVirtualFunc();
+    CHECK_TYPE(*ptr4, BaseWithVirtualFunc);
+    CHECK_TYPE(*ptr4, DeriveWithVirtualFunc);
+
+    BaseWithVirtualFunc* ptr5 = new DeriveWithVirtualFunc();
+    CHECK_TYPE(*ptr5, BaseWithVirtualFunc);
+    CHECK_TYPE(*ptr5, DeriveWithVirtualFunc);
 }
 ```
 
@@ -459,12 +474,16 @@ int main() {
 
 ```
 typeid(str) == typeid(std::string): true
-typeid(*ptr1) == typeid(Base): true
-typeid(*ptr1) == typeid(Derive): false
-typeid(*ptr2) == typeid(Base): true
-typeid(*ptr2) == typeid(Derive): false
-typeid(*ptr3) == typeid(Base): true
-typeid(*ptr3) == typeid(Derive): false
+typeid(*ptr1) == typeid(BaseWithoutVirtualFunc): true
+typeid(*ptr1) == typeid(DeriveWithoutVirtualFunc): false
+typeid(*ptr2) == typeid(BaseWithoutVirtualFunc): true
+typeid(*ptr2) == typeid(DeriveWithoutVirtualFunc): false
+typeid(*ptr3) == typeid(BaseWithoutVirtualFunc): true
+typeid(*ptr3) == typeid(DeriveWithoutVirtualFunc): false
+typeid(*ptr4) == typeid(BaseWithVirtualFunc): true
+typeid(*ptr4) == typeid(DeriveWithVirtualFunc): false
+typeid(*ptr5) == typeid(BaseWithVirtualFunc): false
+typeid(*ptr5) == typeid(DeriveWithVirtualFunc): true
 ```
 
 **那么如何在运行时判断一个指向父类的指针是子类还是父类呢？答案是`dynamic_cast`**
