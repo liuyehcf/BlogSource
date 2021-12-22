@@ -486,7 +486,7 @@ typeid(*ptr5) == typeid(BaseWithVirtualFunc): false
 typeid(*ptr5) == typeid(DeriveWithVirtualFunc): true
 ```
 
-**那么如何在运行时判断一个指向父类的指针是子类还是父类呢？答案是`dynamic_cast`**
+**此外，还可以使用`dynamic_cast`来判断指针指向子类还是父类**
 
 ```cpp
 #define CHECK_TYPE(left, right)                                                                   \
