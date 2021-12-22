@@ -1706,7 +1706,7 @@ nnoremap <leader>ag :Ag<cr>
 " 将 :Rg 映射到快捷键 \rg
 nnoremap <leader>rg :Rg<cr>
 " 配置快捷键[Ctrl] + a，[Ctrl] + q，将结果导入quickfix
-" https://github.com/mitaki28/vscode-clang/issues/53
+" https://github.com/junegunn/fzf.vim/issues/185
 function! s:build_quickfix_list(lines)
   call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
   copen
@@ -2116,7 +2116,7 @@ nnoremap <leader>ag :Ag<cr>
 " 将 :Rg 映射到快捷键 \rg
 nnoremap <leader>rg :Rg<cr>
 " 配置快捷键[Ctrl] + a，[Ctrl] + q，将结果导入quickfix
-" https://github.com/mitaki28/vscode-clang/issues/53
+" https://github.com/junegunn/fzf.vim/issues/185
 function! s:build_quickfix_list(lines)
   call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
   copen
