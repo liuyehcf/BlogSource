@@ -366,6 +366,7 @@ categories:
 * `:cc [nr]`：查看错误`[nr]`
 * `:cnext`：跳到`quickfix`中下一个错误信息
 * `:cprev`：跳到`quickfix`中上一个错误信息
+* `:set modifiable`，将`quickfix`改成可写，可以用`dd`等删除某个条目
 
 ## 2.15 vim配置文件
 
@@ -1293,8 +1294,10 @@ Plug 'skywind3000/vim-preview'
 
 autocmd FileType qf nnoremap <buffer> p :PreviewQuickfix<cr>
 autocmd FileType qf nnoremap <buffer> P :PreviewClose<cr>
-autocmd FileType qf nnoremap <buffer> d :PreviewScroll +1<cr>
-autocmd FileType qf nnoremap <buffer> u :PreviewScroll -1<cr>
+" 将 :PreviewScroll +1 和 :PreviewScroll -1 
+" 分别映射到 [Option] + d 和 [Option] + u，即「∂」和「¨」
+autocmd FileType qf nnoremap <buffer> ∂ :PreviewScroll +1<cr>
+autocmd FileType qf nnoremap <buffer> ¨ :PreviewScroll -1<cr>
 
 call plug#end()
 ```
@@ -1961,8 +1964,10 @@ Plug 'skywind3000/vim-preview'
 
 autocmd FileType qf nnoremap <buffer> p :PreviewQuickfix<cr>
 autocmd FileType qf nnoremap <buffer> P :PreviewClose<cr>
-autocmd FileType qf nnoremap <buffer> d :PreviewScroll +1<cr>
-autocmd FileType qf nnoremap <buffer> u :PreviewScroll -1<cr>
+" 将 :PreviewScroll +1 和 :PreviewScroll -1 
+" 分别映射到 [Option] + d 和 [Option] + u，即「∂」和「¨」
+autocmd FileType qf nnoremap <buffer> ∂ :PreviewScroll +1<cr>
+autocmd FileType qf nnoremap <buffer> ¨ :PreviewScroll -1<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
