@@ -1294,10 +1294,9 @@ Plug 'skywind3000/vim-preview'
 
 autocmd FileType qf nnoremap <buffer> p :PreviewQuickfix<cr>
 autocmd FileType qf nnoremap <buffer> P :PreviewClose<cr>
-" 将 :PreviewScroll +1 和 :PreviewScroll -1 
-" 分别映射到 [Option] + D 和 [Option] + U，即「Î」和「¨」
-autocmd FileType qf nnoremap <buffer> Î :PreviewScroll +1<cr>
-autocmd FileType qf nnoremap <buffer> ¨ :PreviewScroll -1<cr>
+" 将 :PreviewScroll +1 和 :PreviewScroll -1 分别映射到 D 和 U
+autocmd FileType qf nnoremap <buffer> D :PreviewScroll +1<cr>
+autocmd FileType qf nnoremap <buffer> U :PreviewScroll -1<cr>
 
 call plug#end()
 ```
@@ -1967,10 +1966,9 @@ Plug 'skywind3000/vim-preview'
 
 autocmd FileType qf nnoremap <buffer> p :PreviewQuickfix<cr>
 autocmd FileType qf nnoremap <buffer> P :PreviewClose<cr>
-" 将 :PreviewScroll +1 和 :PreviewScroll -1 
-" 分别映射到 [Option] + D 和 [Option] + U，即「Î」和「¨」
-autocmd FileType qf nnoremap <buffer> Î :PreviewScroll +1<cr>
-autocmd FileType qf nnoremap <buffer> ¨ :PreviewScroll -1<cr>
+" 将 :PreviewScroll +1 和 :PreviewScroll -1 分别映射到 D 和 U
+autocmd FileType qf nnoremap <buffer> D :PreviewScroll +1<cr>
+autocmd FileType qf nnoremap <buffer> U :PreviewScroll -1<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
