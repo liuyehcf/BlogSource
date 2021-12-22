@@ -447,7 +447,7 @@ set autoindent
 * **`<F-num>`：例如`<F1>`、`<F2>`**
 * **`<c-key>`：表示`[Ctrl]`加另一个字母**
 * **`<a-key>/<m-key>`：表示`[Alt]`加另一个字母**
-* **对于mac上的`[Option]`，并没有`<p-key>`这样的表示方法。而是用`[Option]`加另一个字母实际输出的结果作为映射键值，例如**
+* **对于mac上的`[Option]`，并没有`<p-key>`这样的表示方法。而是用`[Option]`加另一个字母实际输出的结果作为映射键值，例如：**
     * `[Option] + a`：`å`
 
 **查看所有map**
@@ -1573,21 +1573,15 @@ nmap <silent> <c-j> <plug>(ale_next_wrap)
 call plug#end()
 ```
 
-**指定三方库的头文件路径。每种类型的编译器对应的环境变量名是不同的，这里仅以`gcc`和g`++`为例**
-
-```sh
-# c头文件路径（gcc）
-export C_INCLUDE_PATH=${C_INCLUDE_PATH}:<third party include path...>
-
-# c++头文件路径（g++）
-export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:<third party include path...>
-```
-
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
 **使用：**
 
 * **`:ALEInfo`：查看配置信息，拉到最后有命令执行结果**
+* **如何配置`C/C++`项目：不同`C/C++`项目的结构千差万别，构建工具也有很多种，因此`ALE`很难得知需要用什么编译参数来编译当前文件。因此`ALE`会尝试读取工程目录下的`compile_commands.json`文件，并以此获取编译参数**
+* **指定三方库的头文件路径。每种类型的编译器对应的环境变量名是不同的，这里仅以`gcc`和g`++`为例**
+    * `export C_INCLUDE_PATH=${C_INCLUDE_PATH}:<third party include path...>`
+    * `export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:<third party include path...>`
 
 **问题：**
 
@@ -1707,8 +1701,19 @@ call plug#begin()
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
-" 将 :Rg 映射到快捷键 [Ctrl] + a
-nnoremap <c-a> :Rg<cr>
+" 将 :Ag 映射到快捷键 \ag
+nnoremap <leader>ag :Ag<cr>
+" 将 :Rg 映射到快捷键 \rg
+nnoremap <leader>rg :Rg<cr>
+" 配置快捷键[Ctrl] + a，[Ctrl] + q，将结果导入quickfix
+" https://github.com/mitaki28/vscode-clang/issues/53
+function! s:build_quickfix_list(lines)
+  call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
+  copen
+  cc
+endfunction
+let g:fzf_action = { 'ctrl-q': function('s:build_quickfix_list') }
+let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
 
 call plug#end()
 ```
@@ -2106,8 +2111,19 @@ let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
-" 将 :Rg 映射到快捷键 [Ctrl] + a
-nnoremap <c-a> :Rg<cr>
+" 将 :Ag 映射到快捷键 \ag
+nnoremap <leader>ag :Ag<cr>
+" 将 :Rg 映射到快捷键 \rg
+nnoremap <leader>rg :Rg<cr>
+" 配置快捷键[Ctrl] + a，[Ctrl] + q，将结果导入quickfix
+" https://github.com/mitaki28/vscode-clang/issues/53
+function! s:build_quickfix_list(lines)
+  call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
+  copen
+  cc
+endfunction
+let g:fzf_action = { 'ctrl-q': function('s:build_quickfix_list') }
+let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2181,8 +2197,8 @@ nnoremap ˙ :tabprev<cr>
 
 " 回车时，默认取消搜索高亮
 nnoremap <silent> <cr> :nohlsearch<cr><cr>
-" [Ctrl] + q 关闭 quickfix
-nnoremap <c-q> :cclose<cr>
+" \qc 关闭 quickfix
+nnoremap <leader>qc :cclose<cr>
 
 " 其他配置
 set number
