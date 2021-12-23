@@ -113,16 +113,23 @@ usermod -d <new_dir> <username>
 
 **示例：**
 
-* `usermod -s /bin/zsh admin`
-* `usermod -d /opt/home/admin admin`
+* `usermod -s /bin/zsh admin`：修改指定账号的默认shell
+* `usermod -d /opt/home/admin admin`：修改指定账号的用户目录
 
-## 1.10 passwd
+## 1.10 chown
+
+**示例：**
+
+* `chown [-R] 账号名称 文件或目录`
+* `chown [-R] 账号名称:用户组名称 文件或目录`
+
+## 1.11 passwd
 
 **示例：**
 
 * `echo '123456' | passwd --stdin root`
 
-## 1.11 id
+## 1.12 id
 
 用于查看用户信息，包括`uid`，`gid`等
 
@@ -132,11 +139,11 @@ usermod -d <new_dir> <username>
 * `id <username>`：查看指定用户的信息
 * `id -u`：查看当前用户的uid
 
-## 1.12 readelf
+## 1.13 readelf
 
 用于读取、解析可执行程序
 
-## 1.13 getconf
+## 1.14 getconf
 
 查看系统相关的信息
 
