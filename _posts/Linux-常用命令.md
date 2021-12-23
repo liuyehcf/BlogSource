@@ -82,11 +82,27 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 
 ## 1.7 useradd
 
-添加账号
+**参数说明：**
+
+* `-g`：指定用户组
+* `-G`：附加的用户组
+* `-d`：指定用户目录
+* `-m`：自动创建用户目录
+* `-s`：指定shell
 
 **示例：**
 
 * `useradd test -g wheel -G wheel -m -s /bin/bash`
+
+**`useradd`在创建账号时执行的步骤**
+
+1. 新建所需要的用户组：`/etc/group`
+1. 将`/etc/group`与`/etc/gshadow`同步：`grpconv`
+1. 新建账号的各个属性：`/etc/passwd`
+1. 将`/etc/passwd`与`/etc/shadow`同步：`pwconv`
+1. 新建该账号的密码，`passwd <name>`
+1. 新建用户主文件夹：`cp -a /etc/sekl /home/<name>`
+1. 更改用户文件夹的属性：`chown -R <group>/home/<name>`
 
 ### 1.7.1 迁移用户目录
 
@@ -103,7 +119,9 @@ usermod -d <new_dir> <username>
 
 ## 1.8 userdel
 
-删除账号
+**参数说明：**
+
+* `-r`：删除用户主目录
 
 **示例：**
 
@@ -111,10 +129,16 @@ usermod -d <new_dir> <username>
 
 ## 1.9 usermod
 
+**参数说明：**
+
+* `-d`：修改用户目录
+* `-s`：修改shell
+
 **示例：**
 
 * `usermod -s /bin/zsh admin`：修改指定账号的默认shell
 * `usermod -d /opt/home/admin admin`：修改指定账号的用户目录
+    * 注意，新的路径最后不要加`/`，例如，不要写成`/opt/home/admin/`，这样会导致`zsh`无法将用户目录替换成`~`符号，这样命令行提示符中的路径就会是绝对路径，而不是`~`了
 
 ## 1.10 chown
 

@@ -14,6 +14,14 @@ categories:
 
 # 1 /etc目录
 
+1. `/etc/passwd`：系统用户配置文件，每一行共7个部分
+    1. `username`
+    1. `password`
+    1. `UID`
+    1. `GID`
+    1. `UID Info`
+    1. `Home Directory`，决定了`HOME`环境变量的内容
+    1. `Shell`
 1. `/etc/ssl/certs`：根证书存放位置
 1. `/etc/security/limits.conf`：`ulimit -a`对应的配置文件
     * `echo "* soft core unlimited" >> /etc/security/limits.conf`
