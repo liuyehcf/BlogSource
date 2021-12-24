@@ -66,6 +66,9 @@
     * `pointer stability`
     * [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines)
     * [C++ FAQ](https://isocpp.org/faq)
+    * 设置线程名，https://blog.csdn.net/Betterc5/article/details/111996038
+        * prctl
+    * 序列化框架arrow；https://zhuanlan.zhihu.com/p/339132159
 1. 汇编
     * avx2指令
 1. 其他

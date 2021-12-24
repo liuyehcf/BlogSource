@@ -315,6 +315,7 @@ categories:
 * **`:edit [filename]`：将一个文件放入一个新的buffer中**
 * **`:bdelete [n]`：删除指定buffer（不指定时，表示当前buffer）**
 * **`:%bdelete`：删除所有buffer**
+    * **`:%bdelete|e#`：删除除了当前buffer之外的所有buffer。其中`:e#`表示重新打开最后一个关闭的buffer**
 * **`:bufdo <cmd>`：对所有buffer执行操作**
     * **`:bufdo e`：重新载入所有buffer对应的文件**
 
