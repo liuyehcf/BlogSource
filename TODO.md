@@ -69,6 +69,9 @@
     * 设置线程名，https://blog.csdn.net/Betterc5/article/details/111996038
         * prctl
     * 序列化框架arrow；https://zhuanlan.zhihu.com/p/339132159
+    * 异常安全：在任何位置抛出异常，都要确保资源能够清理
+    * gcc
+        * `-fsized-deallocation`，http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3778.html
 1. 汇编
     * avx2指令
 1. 其他

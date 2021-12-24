@@ -87,6 +87,7 @@ sudo perf script > out.perf
 * [工欲性能调优，必先利其器（2）- 火焰图](https://pingcap.com/zh/blog/flame-graph)
 * [CPU Flame Graphs](https://www.brendangregg.com/FlameGraphs/cpuflamegraphs.html)
 * [Java 火焰图](https://www.jianshu.com/p/bea2b6a1eb6e)
+* [Linux 性能诊断 perf使用指南](https://developer.aliyun.com/article/65255#slide-17)
 
 # 2 VTune
 

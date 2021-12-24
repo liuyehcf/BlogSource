@@ -6,6 +6,8 @@ date: 2018-02-05 09:25:59
 # 性能分析
 
 1. [Brendan Gregg's Homepage](https://www.brendangregg.com/)
+1. [Denis Bakhvalov](https://easyperf.net/)
+    * 《Performance Analysis and Tuning on Modern CPUs》
 1. [Julia Evans](https://jvns.ca/)
 
 # 数据库
