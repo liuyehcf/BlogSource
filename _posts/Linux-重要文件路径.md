@@ -87,6 +87,16 @@ categories:
 1. `/proc/cmdline`：系统启动时输入给内核的命令行参数
 1. `/proc/version`：内核版本
 1. `/proc/cpuinfo`：cpu硬件信息
+1. `/proc/meminfo`：内存信息
+    * `MemTotal`：物理内存的大小
+    * `MemFree`：未使用的内存
+    * **`MemAvailable`：系统可使用内存的估算值。注意`MemTotal - MemFree`并不代表可用内存，因为有部分内存会被用于`cache/buffer/slab`，这部分内存在资源紧张的情况下是可以回收的**
+    * `Buffers`：用于buffer的内存
+    * `Cached`：用于cache的内存
+    * `Slab`：slab内存
+        * `SReclaimable`：slab中可回收的部分，与`MemAvailable`相关
+        * `SUnreclaim`：slab中不可回收的部分
+1. `/proc/slabinfo`：slab内存的详细分配信息
 1. `/proc/cgroups`：当前内核支持的cgroup子系统
 1. `/proc/filesystems`：当前内核支持的文件系统列表
 1. `/proc/kallsyms`：内核符号表
@@ -94,10 +104,15 @@ categories:
 1. `/proc/modules`：已经加载的模块列表，对应lsmod命令
 1. `/proc/mounts`：已经挂载的文件系统，对应mount命令
 1. `/proc/stat`：全面统计状态表
+1. `/proc/softirqs`：软中断统计信息
+1. `/proc/interrupts`：硬件中断统计信息，第一列是中断号
+    * 硬件中断可能存在CPU亲和性，比如某个网卡的中断全部由某个CPU处理
+1. `/proc/irq/<irq>`：某个特定硬件中断的信息
+    * `/proc/irq/<irq>/smp_affinity`：CPU亲和性掩码
+    * `/proc/irq/<irq>/smp_affinity_list`：CPU亲和性列表
 1. `/proc/loadavg`：cpu负载，分别表示1分钟、5分钟、15分钟的平均cpu负载
     * `cpu load`的含义：正在执行或者等待执行的进程数量。在内核代码中（`3.10.x`），计算`cpu load`的方法是`spu_calc_load`
     * `cpu_load = α * cpu_load + (1 - α) * active_task_size`。`cpu_load`与原值以及当前活跃进程数量两者均相关，在1分钟、5分钟、15分钟三种情况下`α`的取值不同
-1. `/proc/interrupts`：中断映射表
 1. `/proc/self`：我们可以通过`/proc/${pid}`目录来获取指定进程的信息。当pid可能发生变化时，我们还可以通过`/proc/self`来访问当前进程的信息，不同的进程访问该目录下的文件得到的结果是不同的
 1. `/proc/sys/net`：网络相关配置
 1. `/proc/sys/kernel`：内核相关的配置
