@@ -1770,7 +1770,7 @@ WHERE sex = 0;
     > http://blog.csdn.net/wangfeng2500/article/details/9127421
 
 1. 介绍一下TCP三次握手/四次挥手
-    > 三次握手、四次挥手详见{% post_link TCP-IP %}
+    > 三次握手、四次挥手详见{% post_link TCP-IP详解-读书笔记 %}
     > 流量控制是点到点的通信量的控制
 
 1. TCP流量控制
@@ -1817,7 +1817,7 @@ WHERE sex = 0;
     > http://www.360doc.com/content/12/1218/10/3405077_254718387.shtml
 
 1. TCP/IP如何保证可靠性，数据包有哪些数据组成
-    > 以下是TCP提供可靠性的方式：详细内容参考{% post_link TCP-IP %}
+    > 以下是TCP提供可靠性的方式：详细内容参考{% post_link TCP-IP详解-读书笔记 %}
     > 1. **将数据截断为合理的长度**
     > 1. **超时重发**
     > 1. **对于收到的请求，给出确认响应**
