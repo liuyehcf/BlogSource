@@ -458,7 +458,7 @@ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Crese
 **安装：**
 
 ```sh
-pip3 install git+https://github.com/jeffkaufman/icdiff.git
+pip3 install git+https://github.com.cnpmjs.org/jeffkaufman/icdiff.git
 
 # 配置git icdiff
 git difftool --extcmd icdiff

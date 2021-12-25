@@ -65,8 +65,6 @@
         * ck /AggregateFunctions/IAggregateFunction.h
     * [Google 开源项目风格指南](https://zh-google-styleguide.readthedocs.io/en/latest/google-cpp-styleguide/)
     * `pointer stability`
-    * [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines)
-    * [C++ FAQ](https://isocpp.org/faq)
     * 设置线程名，https://blog.csdn.net/Betterc5/article/details/111996038
         * prctl
     * 序列化框架arrow；https://zhuanlan.zhihu.com/p/339132159

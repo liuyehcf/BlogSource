@@ -904,9 +904,73 @@ void bar() {
 
 [Compiler-specific Features](https://www.keil.com/support/man/docs/armcc/armcc_chr1359124965789.htm)
 
-# 6 Tips
+# 6 ASM
 
-## 6.1 如何在类中定义静态成员
+[gcc-online-docs](https://gcc.gnu.org/onlinedocs/gcc/)
+
+## 6.1 Basic Asm
+
+## 6.2 Extended Asm
+
+GCC设计了一种特有的嵌入方式，它规定了汇编代码嵌入的形式和嵌入汇编代码需要由哪几个部分组成，格式如下：
+
+* 汇编语句模板是必须的，其余三部分是可选的
+
+```cpp
+asm asm-qualifiers ( AssemblerTemplate 
+                      : OutputOperands
+                      : InputOperands
+                      : Clobbers
+                      : GotoLabels)
+```
+
+**`Qualifiers`，修饰符：**
+
+* `volatile`：禁止编译器优化
+* `inline`
+* `goto`
+
+**`AssemblerTemplate`，汇编语句模板：**
+
+* 汇编语句模板由汇编语句序列组成，语句之间使用`;`、`\n`、`\n\t`分开
+* 指令中的操作数可以使用占位符，占位符可以指向`OutputOperands`、`InputOperands`、`GotoLabels`
+* 指令中使用占位符表示的操作数，总被视为`long`型（4个字节），但对其施加的操作根据指令可以是字或者字节，当把操作数当作字或者字节使用时，默认为低字或者低字节
+* 对字节操作可以显式的指明是低字节还是次字节。方法是在`%`和序号之间插入一个字母
+    * `b`代表低字节
+    * `h`代表高字节
+    * 例如：`%h1`
+
+**`OutputOperands`，输出操作数：**
+
+* 操作数之间用逗号分隔
+* 每个操作数描述符由限定字符串（`Constraints`）和C语言变量或表达式组成
+
+**`InputOperands`，输入操作数：**
+
+* 操作数之间用逗号分隔
+* 每个操作数描述符由限定字符串（`Constraints`）和C语言变量或表达式组成
+
+**`Clobbers`，描述部分：**
+
+* 用于通知编译器我们使用了哪些寄存器或内存，由逗号格开的字符串组成
+* 每个字符串描述一种情况，一般是寄存器名；除寄存器外还有`memory`。例如：`%eax`，`%ebx`，`memory`等
+
+**`Constraints`，限定字符串（下面仅列出常用的）：**
+
+* `m`：内存
+* `o`：内存，但是其寻址方式是偏移量类型
+* `v`：内存，但寻址方式不是偏移量类型
+* `r`：通用寄存器
+* `i`：整型立即数
+* `g`：任意通用寄存器、内存、立即数
+* `p`：合法指针
+* `=`：write-only
+* `+`：read-write
+* `&`：该输出操作数不能使用过和输入操作数相同的寄存器
+
+# 7 Tips
+
+## 7.1 如何在类中定义静态成员
 
 **在类中声明静态成员，在类外定义（赋值）静态成员，示例如下：**
 
@@ -934,9 +998,9 @@ gcc -o main main.cpp -lstdc++ -Wall
 ./main
 ```
 
-## 6.2 初始化
+## 7.2 初始化
 
-### 6.2.1 初始化列表
+### 7.2.1 初始化列表
 
 1. 对于内置类型，直接进行值拷贝。使用初始化列表还是在构造函数体中进行初始化没有差别
 1. 对于类类型
@@ -1047,7 +1111,7 @@ A's default constructor
 A's move assign operator
 ```
 
-### 6.2.2 各种初始化类型
+### 7.2.2 各种初始化类型
 
 1. 默认初始化：`type variableName;`
 1. 直接初始化/构造初始化（至少有1个参数）：`type variableName(args);`
@@ -1180,9 +1244,9 @@ A's (int, int) constructor
 ============(值初始化 a11)============
 ```
 
-## 6.3 指针
+## 7.3 指针
 
-### 6.3.1 成员函数指针
+### 7.3.1 成员函数指针
 
 成员函数指针需要通过`.*`或者`->*`运算符进行调用
 
@@ -1241,7 +1305,7 @@ int main() {
 }
 ```
 
-## 6.4 placement new
+## 7.4 placement new
 
 `placement new`的功能就是在一个已经分配好的空间上，调用构造函数，创建一个对象
 
@@ -1250,7 +1314,7 @@ void *buf = // 在这里为buf分配内存
 Class *pc = new (buf) Class();  
 ```
 
-## 6.5 内存对齐
+## 7.5 内存对齐
 
 **内存对齐最最底层的原因是内存的IO是以`8`个字节`64bit`为单位进行的**
 
@@ -1374,7 +1438,7 @@ Align4's size = 16
 	f4's offset = 8, f4's size = 8
 ```
 
-## 6.6 mock class
+## 7.6 mock class
 
 有时在测试的时候，我们需要mock一个类的实现，我们可以在测试的cpp文件中实现这个类的所有方法（**注意，必须是所有方法**），就能够覆盖原有库文件中的实现。下面以一个例子来说明
 
@@ -1551,9 +1615,9 @@ person.cpp:(.text+0x2a): Person::sleep() 的多重定义
 collect2: 错误：ld 返回 1
 ```
 
-### 6.6.1 demo using cmake
+### 7.6.1 demo using cmake
 
-# 7 参考
+# 8 参考
 
 * [C++11\14\17\20 特性介绍](https://www.jianshu.com/p/8c4952e9edec)
 * [关于C++：静态常量字符串(类成员)](https://www.codenong.com/1563897/)
@@ -1566,3 +1630,5 @@ collect2: 错误：ld 返回 1
 * [calling a member function pointer from outside the class - is it possible?](https://stackoverflow.com/questions/60438079/calling-a-member-function-pointer-from-outside-the-class-is-it-possible)
 * [带你深入理解内存对齐最底层原理](https://zhuanlan.zhihu.com/p/83449008)
 * [C++那些事](https://light-city.club/sc/)
+* [ARM GCC Inline Assembler Cookbook](http://www.ethernut.de/en/documents/arm-inline-asm.html)
+* [GCC's assembler syntax](https://www.felixcloutier.com/documents/gcc-asm.html#constraints)
