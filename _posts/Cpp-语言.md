@@ -968,6 +968,122 @@ asm asm-qualifiers ( AssemblerTemplate
 * `+`：read-write
 * `&`：该输出操作数不能使用过和输入操作数相同的寄存器
 
+**示例1：**
+
+```cpp
+#include <stddef.h>
+#include <stdint.h>
+
+#include <iostream>
+
+struct atomic_t {
+    volatile int32_t a_count;
+};
+
+static inline int32_t atomic_read(const atomic_t* v) {
+    return (*(volatile int32_t*)&(v)->a_count);
+}
+
+static inline void atomic_write(atomic_t* v, int32_t i) {
+    v->a_count = i;
+}
+
+static inline void atomic_add(atomic_t* v, int32_t i) {
+    __asm__ __volatile__(
+            "lock;"
+            "addl %1,%0"
+            : "+m"(v->a_count)
+            : "ir"(i));
+}
+
+static inline void atomic_sub(atomic_t* v, int32_t i) {
+    __asm__ __volatile__(
+            "lock;"
+            "subl %1,%0"
+            : "+m"(v->a_count)
+            : "ir"(i));
+}
+
+static inline void atomic_inc(atomic_t* v) {
+    __asm__ __volatile__(
+            "lock;"
+            "incl %0"
+            : "+m"(v->a_count));
+}
+
+static inline void atomic_dec(atomic_t* v) {
+    __asm__ __volatile__(
+            "lock;"
+            "decl %0"
+            : "+m"(v->a_count));
+}
+
+int main() {
+    atomic_t v;
+    atomic_write(&v, 0);
+    atomic_add(&v, 10);
+    atomic_sub(&v, 5);
+    atomic_inc(&v);
+    atomic_dec(&v);
+    std::cout << atomic_read(&v) << std::endl;
+    return 0;
+}
+```
+
+**示例2（会`coredump`，`cli`无法执行）：**
+
+* `hal_save_flags_cli`：将`eflags`寄存器的值保存到内存中，然后关闭中断
+* `hal_restore_flags_sti`：将`hal_save_flags_cli`保存在内存中的值恢复到`eflags`寄存器中
+
+```cpp
+#include <stddef.h>
+#include <stdint.h>
+
+#include <iostream>
+
+typedef uint64_t cpuflg_t;
+
+static inline void hal_save_flags_cli(cpuflg_t* flags) {
+    __asm__ __volatile__(
+            "pushf;" // 把eflags寄存器的值压入当前栈顶
+            "cli;"   // 关闭中断，会改变eflags寄存器的值
+            "pop %0" // 把当前栈顶弹出到eflags为地址的内存中
+            : "=m"(*flags)
+            :
+            : "memory");
+}
+
+static inline void hal_restore_flags_sti(cpuflg_t* flags) {
+    __asm__ __volatile__(
+            "push %0;" // 把flags为地址处的值寄存器压入当前栈顶
+            "popf"     // 把当前栈顶弹出到eflags寄存器中
+            :
+            : "m"(*flags)
+            : "memory");
+}
+
+void foo(cpuflg_t* flags) {
+    hal_save_flags_cli(flags);
+    std::cout << "step1: foo()" << std::endl;
+    hal_restore_flags_sti(flags);
+}
+
+void bar() {
+    cpuflg_t flags;
+    hal_save_flags_cli(&flags);
+    foo(&flags);
+    std::cout << "step2: bar()" << std::endl;
+    hal_restore_flags_sti(&flags);
+}
+
+int main() {
+    bar();
+    return 0;
+}
+```
+
+**示例3：linux提供了一些原子类型，这些原子类型的实现就依赖了`asm`，具体参考[atomic.h](https://github.com/torvalds/linux/blob/master/arch/x86/include/asm/atomic.h)**
+
 # 7 Tips
 
 ## 7.1 如何在类中定义静态成员

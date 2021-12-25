@@ -53,6 +53,7 @@
     * sre（Site Reliability Engineering）：站点可靠工程师
 1. cpp
     * cpp summit
+    * `volatile`
     * 内存管理
         * 库：jemalloc/jcmalloc/mimalloc，位于用户态
         * 涉及的系统调用（只涉及虚拟内存，物理内存只能通过缺页异常来分配）
