@@ -243,13 +243,23 @@ sudo kextload -b org.virtualbox.kext.VBoxUSB
 7. 重启
 ```
 
-## 3.2 您没有权限来打开应用程序
+## 3.2 VirtualBox cannot enable nested VT-x/AMD-V
+
+`nested VT-x/AMD-V`这个特性不开的话，如果在虚拟机里面安装了`VirtualBox`，那么这个`VirtualBox`只能安装32位的系统
+
+[Virtualbox enable nested vtx/amd-v greyed out](https://stackoverflow.com/questions/54251855/virtualbox-enable-nested-vtx-amd-v-greyed-out)
+
+```sh
+VBoxManage modifyvm <vm-name> --nested-hw-virt on
+```
+
+## 3.3 您没有权限来打开应用程序
 
 ```sh
 sudo xattr -r -d com.apple.quarantine <app path>
 ```
 
-## 3.3 中文输入法卡顿
+## 3.4 中文输入法卡顿
 
 **以下步骤可以解决`Chrome`中的卡顿问题（通用问题）**
 

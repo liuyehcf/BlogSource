@@ -18,7 +18,11 @@ categories:
 
 以`CentOS-7.7.1908`为例，下载地址为：`http://mirrors.163.com/centos/7.7.1908/isos/x86_64/CentOS-7-x86_64-Minimal-1908.iso`
 
-## 1.2 [centos镜像站](http://mirror.centos.org/)
+## 1.2 [阿里云镜像站](https://developer.aliyun.com/mirror/)
+
+以`ubuntu-18.04.6`为例，下载地址为：`https://mirrors.aliyun.com/ubuntu-releases/bionic/ubuntu-18.04.6-desktop-amd64.iso`
+
+## 1.3 [centos镜像站](http://mirror.centos.org/)
 
 以`CentOS-7.7.1908`为例，下载地址列表为：`http://isoredirect.centos.org/centos/7.7.1908/isos/x86_64/`
 
