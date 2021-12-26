@@ -701,7 +701,57 @@ gcc -o main main.cpp extern.cpp -lstdc++ -Wall
 ./main
 ```
 
-## 3.5 throw与异常
+## 3.5 volatile
+
+`volatile`关键字是一种类型修饰符，用它声明的类型变量表示可以被某些编译器未知的因素更改，比如：操作系统、硬件或者其它线程等。遇到这个关键字声明的变量，编译器对访问该变量的代码就不再进行优化，从而可以提供对特殊地址的稳定访问
+
+**示例如下：**
+
+```sh
+cat > volatile.cpp << 'EOF'
+#include <stdint.h>
+
+void with_volatile(volatile int32_t* src, int32_t* target) {
+    *target = *(src);
+    *target = *(src);
+    *target = *(src);
+}
+
+void without_volatile(int32_t* src, int32_t* target) {
+    *target = *(src);
+    *target = *(src);
+    *target = *(src);
+}
+EOF
+
+gcc -o volatile.o -c volatile.cpp -O3 -lstdc++ -std=gnu++17
+objdump -drwCS volatile.o
+```
+
+**输出如下：**
+
+```
+volatile.o：     文件格式 elf64-x86-64
+
+Disassembly of section .text:
+
+0000000000000000 <with_volatile(int volatile*, int*)>:
+   0:	8b 07                	mov    (%rdi),%eax
+   2:	89 06                	mov    %eax,(%rsi)
+   4:	8b 07                	mov    (%rdi),%eax
+   6:	89 06                	mov    %eax,(%rsi)
+   8:	8b 07                	mov    (%rdi),%eax
+   a:	89 06                	mov    %eax,(%rsi)
+   c:	c3                   	retq
+   d:	0f 1f 00             	nopl   (%rax)
+
+0000000000000010 <without_volatile(int*, int*)>:
+  10:	8b 07                	mov    (%rdi),%eax
+  12:	89 06                	mov    %eax,(%rsi)
+  14:	c3                   	retq
+```
+
+## 3.6 throw与异常
 
 throw关键字可以抛出任何对象，例如可以抛出一个整数
 
@@ -1030,8 +1080,9 @@ int main() {
 }
 ```
 
-**示例2（会`coredump`，`cli`无法执行）：**
+**示例2：**
 
+* 这个程序是没法跑的，因为`cli`指令必须在内核态执行
 * `hal_save_flags_cli`：将`eflags`寄存器的值保存到内存中，然后关闭中断
 * `hal_restore_flags_sti`：将`hal_save_flags_cli`保存在内存中的值恢复到`eflags`寄存器中
 
@@ -1041,7 +1092,7 @@ int main() {
 
 #include <iostream>
 
-typedef uint64_t cpuflg_t;
+typedef uint32_t cpuflg_t;
 
 static inline void hal_save_flags_cli(cpuflg_t* flags) {
     __asm__ __volatile__(
@@ -1082,11 +1133,47 @@ int main() {
 }
 ```
 
-**示例3：linux提供了一些原子类型，这些原子类型的实现就依赖了`asm`，具体参考[atomic.h](https://github.com/torvalds/linux/blob/master/arch/x86/include/asm/atomic.h)**
+**示例3：linux内核大量用到了`asm`，具体可以参考[linux-asm](https://github.com/torvalds/linux/blob/master/arch/x86/include/asm)**
 
-# 7 Tips
+# 7 Policy
 
-## 7.1 如何在类中定义静态成员
+## 7.1 Pointer Stability
+
+**`pointer stability`通常用于描述容器。当我们说一个容器是`pointer stability`时，是指，当某个元素添加到容器之后、从容器删除之前，该元素的内存地址不变，也就是说，该元素的内存地址，不会受到容器的添加删除元素、扩缩容、或者其他操作影响**
+
+**[absl](https://abseil.io/docs/cpp/guides/container)**
+
+| 容器 | 是否`pointer stability` |
+|:--|:--|
+| `std::vector` | ❎ |
+| `std::list` | ✅ |
+| `std::map` | ✅ |
+| `std::unordered_map` | ✅ |
+| `std::set` | ✅ |
+| `std::unordered_set` | ✅ |
+| `absl::flat_hash_map` | ❎ |
+| `absl::flat_hash_set` | ❎ |
+| `absl::node_hash_map` | ✅ |
+| `absl::node_hash_set` | ✅ |
+| `phmap::flat_hash_map` | ❎ |
+| `phmap::flat_hash_set` | ❎ |
+| `phmap::node_hash_map` | ✅ |
+| `phmap::node_hash_set` | ✅ |
+
+## 7.2 Exception Safe
+
+[Wiki-Exception safety](https://en.wikipedia.org/wiki/Exception_safety)
+
+**`exception safety`的几个级别：**
+
+1. `No-throw guarantee`：承诺不会对外抛出任何异常。方法内部可能会抛异常，但都会被正确处理
+1. `Strong exception safety`：可能会抛出异常，但是承诺不会有副作用，所有对象都会恢复到调用方法时的初始状态
+1. `Basic exception safety`：可能会抛出异常，操作失败的部分可能会导致副作用，但所有不变量都会被保留。任何存储的数据都将包含可能与原始值不同的有效值。资源泄漏（包括内存泄漏）通常通过一个声明所有资源都被考虑和管理的不变量来排除
+1. `No exception safety`：不承诺异常安全
+
+# 8 Tips
+
+## 8.1 如何在类中定义静态成员
 
 **在类中声明静态成员，在类外定义（赋值）静态成员，示例如下：**
 
@@ -1114,9 +1201,9 @@ gcc -o main main.cpp -lstdc++ -Wall
 ./main
 ```
 
-## 7.2 初始化
+## 8.2 初始化
 
-### 7.2.1 初始化列表
+### 8.2.1 初始化列表
 
 1. 对于内置类型，直接进行值拷贝。使用初始化列表还是在构造函数体中进行初始化没有差别
 1. 对于类类型
@@ -1227,7 +1314,7 @@ A's default constructor
 A's move assign operator
 ```
 
-### 7.2.2 各种初始化类型
+### 8.2.2 各种初始化类型
 
 1. 默认初始化：`type variableName;`
 1. 直接初始化/构造初始化（至少有1个参数）：`type variableName(args);`
@@ -1360,9 +1447,9 @@ A's (int, int) constructor
 ============(值初始化 a11)============
 ```
 
-## 7.3 指针
+## 8.3 指针
 
-### 7.3.1 成员函数指针
+### 8.3.1 成员函数指针
 
 成员函数指针需要通过`.*`或者`->*`运算符进行调用
 
@@ -1421,7 +1508,7 @@ int main() {
 }
 ```
 
-## 7.4 placement new
+## 8.4 placement new
 
 `placement new`的功能就是在一个已经分配好的空间上，调用构造函数，创建一个对象
 
@@ -1430,7 +1517,7 @@ void *buf = // 在这里为buf分配内存
 Class *pc = new (buf) Class();  
 ```
 
-## 7.5 内存对齐
+## 8.5 内存对齐
 
 **内存对齐最最底层的原因是内存的IO是以`8`个字节`64bit`为单位进行的**
 
@@ -1554,7 +1641,7 @@ Align4's size = 16
 	f4's offset = 8, f4's size = 8
 ```
 
-## 7.6 mock class
+## 8.6 mock class
 
 有时在测试的时候，我们需要mock一个类的实现，我们可以在测试的cpp文件中实现这个类的所有方法（**注意，必须是所有方法**），就能够覆盖原有库文件中的实现。下面以一个例子来说明
 
@@ -1731,9 +1818,9 @@ person.cpp:(.text+0x2a): Person::sleep() 的多重定义
 collect2: 错误：ld 返回 1
 ```
 
-### 7.6.1 demo using cmake
+### 8.6.1 demo using cmake
 
-# 8 参考
+# 9 参考
 
 * [C++11\14\17\20 特性介绍](https://www.jianshu.com/p/8c4952e9edec)
 * [关于C++：静态常量字符串(类成员)](https://www.codenong.com/1563897/)

@@ -60,9 +60,32 @@ linker --> result_lib
 * 静态链接库：`*.a`
 * 动态链接库：`*.so`
 
-# 3 gcc
+# 3 gun工具链
 
-## 3.1 编译流程
+1. `ld`：the GNU linker
+1. `as`：the GNU assembler
+1. `gold`：a new, faster, ELF only linker
+1. `addr2line`：Converts addresses into filenames and line numbers
+1. `ar`：A utility for creating, modifying and extracting from archives
+1. `c++filt` - Filter to demangle encoded C++ symbols.
+1. `dlltool` - Creates files for building and using DLLs.
+1. `elfedit` - Allows alteration of ELF format files.
+1. `gprof` - Displays profiling information.
+1. `nlmconv` - Converts object code into an NLM.
+1. `nm` - Lists symbols from object files.
+1. `objcopy` - Copies and translates object files.
+1. `objdump` - Displays information from object files.
+1. `ranlib` - Generates an index to the contents of an archive.
+1. `readelf` - Displays information from any ELF format object file.
+1. `size` - Lists the section sizes of an object or archive file.
+1. `strings` - Lists printable strings from files.
+1. `strip` - Discards symbols.
+1. `windmc` - A Windows compatible message compiler.
+1. `windres` - A compiler for Windows resource files.
+
+## 3.1 gcc
+
+### 3.1.1 编译选项
 
 1. `-E`：生成预处理文件（`.i`）
 1. `-S`：生成汇编文件（`.s`）
@@ -70,19 +93,19 @@ linker --> result_lib
 1. `-c`：生成目标文件（`.o`）
 1. 默认生成可执行文件
 
-## 3.2 编译优化
+### 3.1.2 编译优化
 
-**`-O0`（默认）：不做任何优化**
+1. **`-O0`（默认）：不做任何优化**
+1. **`-O/-O1`：在不影响编译速度的前提下，尽量采用一些优化算法降低代码大小和可执行代码的运行速度**
+1. **`-O2`：该优化选项会牺牲部分编译速度，除了执行`-O1`所执行的所有优化之外，还会采用几乎所有的目标配置支持的优化算法，用以提高目标代码的运行速度**
+1. **`-O3`：该选项除了执行-O2所有的优化选项之外，一般都是采取很多向量化算法，提高代码的并行执行程度，利用现代CPU中的流水线，Cache等**
+* **不同优化等级对应开启的优化参数参考`man page`**
 
-**`-O/-O1`：在不影响编译速度的前提下，尽量采用一些优化算法降低代码大小和可执行代码的运行速度**
+### 3.1.3 其他参数
 
-**`-O2`：该优化选项会牺牲部分编译速度，除了执行`-O1`所执行的所有优化之外，还会采用几乎所有的目标配置支持的优化算法，用以提高目标代码的运行速度**
+1. `-fsized-deallocation`：启用接收`size`参数的`delete`运算符。[C++ Sized Deallocation](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3778.html)。现代内存分配器在给对象分配内存时，需要指定大小，出于空间利用率的考虑，不会在对象内存周围存储对象的大小信息。因此在释放对象时，需要查找对象占用的内存大小，查找的开销很大，因为通常不在缓存中。因此，编译器允许提供接受一个`size`参数的`global delete operator`，并用这个版本来对对象进行析构
 
-**`-O3`：该选项除了执行-O2所有的优化选项之外，一般都是采取很多向量化算法，提高代码的并行执行程度，利用现代CPU中的流水线，Cache等**
-
-**不同优化等级对应开启的优化参数参考`man page`**
-
-## 3.3 参考
+## 3.2 参考
 
 # 4 clang-format
 

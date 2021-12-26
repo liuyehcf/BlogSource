@@ -117,6 +117,73 @@ int main() {
 
 ## 5.1 std::thread
 
+**如何设置或修改线程名：**
+
+1. `pthread_setname_np/pthread_getname_np`，需要引入头文件`<pthread.h>`
+1. `prctl(PR_GET_NAME, name)/prctl(PR_SET_NAME, name)`，需要引入头文件`<sys/prctl.h>`
+
+```cpp
+#include <pthread.h>
+#include <sys/prctl.h>
+
+#include <chrono>
+#include <functional>
+#include <iostream>
+#include <sstream>
+#include <thread>
+
+void* change_thread_name(void* = nullptr) {
+    // avoid change name before set original thread name
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    char original_thread_name[16];
+    prctl(PR_GET_NAME, original_thread_name);
+    uint32_t cnt = 0;
+
+    while (true) {
+        if (cnt > 1000) {
+            cnt = 0;
+        }
+
+        std::stringstream ss;
+        ss << original_thread_name << "-" << cnt++;
+        prctl(PR_SET_NAME, ss.str().data());
+
+        char current_thread_name[16];
+        prctl(PR_GET_NAME, current_thread_name);
+        std::cout << current_thread_name << std::endl;
+
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+    return nullptr;
+}
+
+void create_thread_by_pthread() {
+    pthread_t tid;
+    pthread_create(&tid, nullptr, change_thread_name, nullptr);
+    pthread_setname_np(tid, "pthread");
+    pthread_detach(tid);
+}
+
+void create_thread_by_std() {
+    std::function<void()> func = []() { change_thread_name(); };
+    std::thread t(func);
+    pthread_setname_np(t.native_handle(), "std-thread");
+    t.detach();
+}
+
+int main() {
+    std::this_thread::sleep_for(std::chrono::milliseconds(333));
+    create_thread_by_pthread();
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(333));
+    create_thread_by_std();
+
+    prctl(PR_SET_NAME, "main");
+    change_thread_name();
+}
+```
+
 # 6 `<chrono>`
 
 ## 6.1 std::chrono

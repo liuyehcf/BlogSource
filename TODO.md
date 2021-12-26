@@ -24,16 +24,13 @@
             * 桶就是tablet
             * 如何查看数据分布情况：show tablet from test_basic;
     * 相关工具
-        * sqlancher
+        * [sqlancer](https://github.com/sqlancer/sqlancer)
         * sqlmith
-        * https://godbolt.org/
     * doc
         * [sqlite-window-function](https://www.sqlite.org/windowfunctions.html)
         * [ck-blog](https://clickhouse.com/docs/zh/whats-new/changelog/)
     * ssb测试集
         * https://www.cnblogs.com/tgzhu/p/9083092.html
-    * [sqlancer](https://github.com/sqlancer/sqlancer)
-    * [数据库学习资料（持续更新中）](https://blog.bcmeng.com/post/database-learning.html)
 1. 大数据
     * hive
     * hbase
@@ -53,7 +50,6 @@
     * sre（Site Reliability Engineering）：站点可靠工程师
 1. cpp
     * cpp summit
-    * `volatile`
     * 内存管理
         * 库：jemalloc/jcmalloc/mimalloc，位于用户态
         * 涉及的系统调用（只涉及虚拟内存，物理内存只能通过缺页异常来分配）
@@ -64,15 +60,7 @@
     * map下标访问是非const的，因为可能会插入数据
     * 性能优化
         * ck /AggregateFunctions/IAggregateFunction.h
-    * [Google 开源项目风格指南](https://zh-google-styleguide.readthedocs.io/en/latest/google-cpp-styleguide/)
-    * `pointer stability`
-    * 设置线程名，https://blog.csdn.net/Betterc5/article/details/111996038
-        * prctl
     * 序列化框架arrow；https://zhuanlan.zhihu.com/p/339132159
-    * 异常安全：在任何位置抛出异常，都要确保资源能够清理
-    * gcc
-        * `-fsized-deallocation`，http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3778.html
-    * gcc-ar
 1. 汇编
     * avx2指令
 1. 其他

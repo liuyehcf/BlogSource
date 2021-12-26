@@ -16,6 +16,9 @@ date: 2018-02-05 09:25:59
 * [News, Status & Discussion about Standard C++](https://isocpp.org/)
     * [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines)
     * [C++ FAQ](https://isocpp.org/faq)
+* [Google-Abseil](https://abseil.io/)
+* [Google 开源项目风格指南](https://zh-google-styleguide.readthedocs.io/en/latest/google-cpp-styleguide/)
+* [Online Benchmark](https://godbolt.org/)
 
 # 性能分析
 
@@ -27,6 +30,7 @@ date: 2018-02-05 09:25:59
 # 数据库
 
 * [编程小梦](https://blog.bcmeng.com/)
+    * [数据库学习资料（持续更新中）](https://blog.bcmeng.com/post/database-learning.html)
 
 # 云原生
 
