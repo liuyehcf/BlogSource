@@ -12,7 +12,6 @@
         * 确定性事务
         * 2pc
     * 时序数据库
-        * [关于时序数据库的一些思考](https://zhuanlan.zhihu.com/p/100146332)
         * [LSM树详解](https://zhuanlan.zhihu.com/p/181498475)
     * starrocks
         * [apache-incubator-doris](https://github.com/apache/incubator-doris/wiki)
@@ -20,15 +19,11 @@
         * [数据库内核杂谈](https://www.infoq.cn/theme/46)
         * [Develop your own Database](https://hpi.de/plattner/teaching/archive/winter-term-201819/develop-your-own-database.html)
         * [DorisDB doc](http://doc.dorisdb.com)
-        * 一些概念
-            * 桶就是tablet
-            * 如何查看数据分布情况：show tablet from test_basic;
     * 相关工具
         * [sqlancer](https://github.com/sqlancer/sqlancer)
         * sqlmith
     * doc
         * [sqlite-window-function](https://www.sqlite.org/windowfunctions.html)
-        * [ck-blog](https://clickhouse.com/docs/zh/whats-new/changelog/)
     * ssb测试集
         * https://www.cnblogs.com/tgzhu/p/9083092.html
 1. 大数据
@@ -49,7 +44,6 @@
     * sa（Solution Architect）：解决方案架构师
     * sre（Site Reliability Engineering）：站点可靠工程师
 1. cpp
-    * cpp summit
     * 内存管理
         * 库：jemalloc/jcmalloc/mimalloc，位于用户态
         * 涉及的系统调用（只涉及虚拟内存，物理内存只能通过缺页异常来分配）
