@@ -5,7 +5,7 @@ date: 2018-02-05 09:25:59
 
 # GNU
 
-* [Free the Software](https://sourceware.org/)
+* [Free the Software](https://sourceware.org/) - ★★★★★
     * [GNU Binutils](https://sourceware.org/binutils/)
         * [Using as](https://sourceware.org/binutils/docs/as/index.html)
 * [GNU Manuals Online](https://www.gnu.org/manual/manual.html)
@@ -13,29 +13,36 @@ date: 2018-02-05 09:25:59
 
 # Cpp
 
-* [News, Status & Discussion about Standard C++](https://isocpp.org/)
+* [News, Status & Discussion about Standard C++](https://isocpp.org/) - ★★★★★
     * [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines)
     * [C++ FAQ](https://isocpp.org/faq)
+        * [Conferences Worldwide](https://isocpp.org/wiki/faq/conferences-worldwide/)
 * [CppCon](https://cppcon.org/)
     * [CppCon-Download](https://github.com/CppCon)
-* [Cpp-Summit](http://cpp-summit.org/en)
+* [C++ Notes for Professionals book](https://goalkicker.com/CPlusPlusBook/)
 * [Google-Abseil](https://abseil.io/)
 * [Google 开源项目风格指南](https://zh-google-styleguide.readthedocs.io/en/latest/google-cpp-styleguide/)
 * [LLVM Coding Standards](https://llvm.org/docs/CodingStandards.html)
 * [Online Benchmark](https://godbolt.org/)
+* 《A Tour of C++》
 
 # 性能分析
 
-* [Brendan Gregg's Homepage](https://www.brendangregg.com/)
+* [Brendan Gregg's Homepage](https://www.brendangregg.com/) - ★★★★★
 * [Denis Bakhvalov](https://easyperf.net/)
     * 《Performance Analysis and Tuning on Modern CPUs》
 * [Julia Evans](https://jvns.ca/)
 
+# Kernel
+
+* [LDD-LinuxDeviceDrivers](https://github.com/gatieme/LDD-LinuxDeviceDrivers)
+
 # 数据库
 
-* [编程小梦](https://blog.bcmeng.com/)
+* [编程小梦](https://blog.bcmeng.com/) - ★★★★★
     * [数据库学习资料（持续更新中）](https://blog.bcmeng.com/post/database-learning.html)
 * [ClickHouse Blog](https://clickhouse.com/docs/zh/whats-new/changelog/)
+* [Develop your own Database](https://hpi.de/plattner/teaching/archive/winter-term-201819/develop-your-own-database.html)
 
 # 云原生
 

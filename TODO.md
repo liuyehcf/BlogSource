@@ -5,6 +5,7 @@
     * 僵尸进程：https://zhuanlan.zhihu.com/p/92381918
     * dnf
         * `dnf provides /usr/lib/grub/x86_64-efi`
+    * [如何查看磁盘是gpt还是mbr](https://unix.stackexchange.com/questions/120221/gpt-or-mbr-how-do-i-know)
 1. 性能分析
     * Perf
     * vtune

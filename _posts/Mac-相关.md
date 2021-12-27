@@ -70,10 +70,17 @@ End键：`Fn+→`
 Page UP：`Fn+↑`
 Page DOWN：`Fn+↓`
 向前Delete：`Fn+delete`
+ 
+# 2 Homebrew
 
-# 2 常用功能
+## 2.1 常用操作
 
-## 2.1 国内安装homebrew
+```sh
+# 软件安装路径
+brew list <software>
+```
+
+## 2.2 国内安装Homebrew
 
 参考[国内安装homebrew](https://zhuanlan.zhihu.com/p/111014448)
 
@@ -97,7 +104,7 @@ Page DOWN：`Fn+↓`
 
 **[FAQ](https://gitee.com/cunkai/HomebrewCN/blob/master/error.md)**
 
-## 2.2 更换homebrew镜像源
+## 2.3 更换Homebrew镜像源
 
 ```sh
 # step 1: 替换brew.git
@@ -126,7 +133,9 @@ source ~/.bash_profile
 brew update
 ```
 
-## 2.3 升级bash
+# 3 常用功能
+
+## 3.1 升级bash
 
 ```sh
 brew install bash
@@ -136,14 +145,14 @@ sudo ln -s /usr/local/bin/bash /bin/bash
 
 **注意，`sudo mv /bin/bash  /bin/bash.origin`可能因为权限的问题，无法成功执行，这时，我们需要关闭Mac的SIP机制**
 
-## 2.4 开启关闭SIP
+## 3.2 开启关闭SIP
 
 1. 进入恢复模式：重启，然后按住`⌘ + R`
 1. 出现界面之后，上面菜单栏->实用工具->终端
 1. 在Terminal中输入`csrutil disable`关闭SIP(csrutil enable打开SIP)
 1. 重启
 
-## 2.5 开启关闭任何来源
+## 3.3 开启关闭任何来源
 
 ```sh
 # 开启
@@ -153,7 +162,7 @@ sudo spctl --master-disable
 sudo spctl --master-enable
 ```
 
-## 2.6 刻录iso文件
+## 3.4 刻录iso文件
 
 ```sh
 # 先列出所有设备
@@ -169,7 +178,7 @@ sudo dd if=<iso文件路径> of=/dev/disk6 bs=1m
 diskutil eject /dev/disk6
 ```
 
-## 2.7 打开/禁止产生.DS_Store文件
+## 3.5 打开/禁止产生.DS_Store文件
 
 ```sh
 # 禁止
@@ -179,7 +188,7 @@ defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool TRUE
 defaults delete com.apple.desktopservices DSDontWriteNetworkStores
 ```
 
-## 2.8 清理磁盘
+## 3.6 清理磁盘
 
 [macOS 系统占用储存空间太大怎么办？](https://www.zhihu.com/question/52784342)
 
@@ -191,7 +200,7 @@ defaults delete com.apple.desktopservices DSDontWriteNetworkStores
 1. `~/Library/Caches`
     * `~/Library/Caches/IntelliJIdea2018.1`：`IntelliJIdea`的一些缓存数据
 
-## 2.9 卸载itunes
+## 3.7 卸载itunes
 
 为什么要卸载，升级完mac之后，发现某些应用的`f8`快捷键失效了，一按`f8`就会自动打开itunes
 
@@ -210,9 +219,9 @@ defaults delete com.apple.desktopservices DSDontWriteNetworkStores
 * `System Preferences` -> `Keyboard` -> `Keyboard`
 * 取消`Use all F1,F2,etc. keys as standard function keys`选项的勾选
 
-# 3 常见问题
+# 4 常见问题
 
-## 3.1 VirtualBox(rc=-1908)
+## 4.1 VirtualBox(rc=-1908)
 
 **解决方式如下（请挨个尝试）：**
 
@@ -243,7 +252,7 @@ sudo kextload -b org.virtualbox.kext.VBoxUSB
 7. 重启
 ```
 
-## 3.2 VirtualBox cannot enable nested VT-x/AMD-V
+## 4.2 VirtualBox cannot enable nested VT-x/AMD-V
 
 `nested VT-x/AMD-V`这个特性不开的话，如果在虚拟机里面安装了`VirtualBox`，那么这个`VirtualBox`只能安装32位的系统
 
@@ -253,13 +262,13 @@ sudo kextload -b org.virtualbox.kext.VBoxUSB
 VBoxManage modifyvm <vm-name> --nested-hw-virt on
 ```
 
-## 3.3 您没有权限来打开应用程序
+## 4.3 您没有权限来打开应用程序
 
 ```sh
 sudo xattr -r -d com.apple.quarantine <app path>
 ```
 
-## 3.4 中文输入法卡顿
+## 4.4 中文输入法卡顿
 
 **以下步骤可以解决`Chrome`中的卡顿问题（通用问题）**
 
@@ -278,7 +287,7 @@ sudo xattr -r -d com.apple.quarantine <app path>
 codesign --remove-signature /Applications/Visual\ Studio\ Code.app/Contents/Frameworks/Code\ Helper\ \(Renderer\).app
 ```
 
-# 4 Iterm2
+# 5 Iterm2
 
 **智能选中**
 
@@ -329,7 +338,7 @@ codesign --remove-signature /Applications/Visual\ Studio\ Code.app/Contents/Fram
 * `export LANG=en_US.UTF-8`
 * `export zh_CN.UTF-8`
 
-## 4.1 更换主题
+## 5.1 更换主题
 
 **本小节转载摘录自[iTerm 2 && Oh My Zsh【DIY教程——亲身体验过程】](https://www.jianshu.com/p/7de00c73a2bb)**
 
@@ -479,11 +488,11 @@ plugins=(<原有插件> zsh-autosuggestions)
 * **步骤8**
 * **步骤9**
 
-### 4.1.1 Tips
+### 5.1.1 Tips
 
 1. **登录时，命令行提示符显式的是`~`，但是执行`cd`后，显示的目录是用户目录的绝对路径，比如`/home/test`。这是因为`HOME`变量设置有问题，该变量最后不能有`/`符号，否则在将主目录替换成`~`的时候就会替换失败**
 
-## 4.2 `Alt + f/b`在ssh场景下失效
+## 5.2 `Alt + f/b`在ssh场景下失效
 
 **bash默认使用`emacs`模式，在该模式下，光标按单词移动的快捷键是`Alt + b`以及`Alt + f`，但是`mac`是没有这两个快捷键的，可以通过设置`profile`来解决这个问题，步骤如下：**
 
@@ -495,7 +504,7 @@ plugins=(<原有插件> zsh-autosuggestions)
         * `Shortcut`：`⌥→`
         * `Action`：选择`Send Escape Sequence`，填`f`
 
-# 5 参考
+# 6 参考
 
 * [Mac 下利用 Launchctl 自启动 mysql](http://squll369.iteye.com/blog/1965185)
 * [Mac 有哪些鲜为人知的使用技巧？](https://www.zhihu.com/question/26379660)
