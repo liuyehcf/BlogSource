@@ -2513,7 +2513,45 @@ done
 EOF
 ```
 
-## 6.4 参考
+## 6.4 允许root登录图形化界面
+
+**step1：编辑`/usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf`文件，改成如下内容：**
+
+```
+[Seat:*]
+user-session=ubuntu
+greeter-show-manual-login=true
+```
+
+**step2：编辑`/etc/pam.d/gdm-autologin`文件，注释掉如下行（大约是第三行）：**
+
+```
+#auth   required        pam_succeed_if.so user != root quiet_success
+```
+
+**step3：编辑`/etc/pam.d/gdm-password`文件，注释掉如下行（大约是第三行）：**
+
+```
+#auth   required        pam_succeed_if.so user != root quiet_success
+```
+
+**step4：编辑`/root/.profile`，修改成如下内容：**
+
+```sh
+# ~/.profile: executed by Bourne-compatible login shells.
+
+if [ "$BASH" ]; then
+  if [ -f ~/.bashrc ]; then
+    . ~/.bashrc
+  fi
+fi
+
+tty -s && mesg n || true
+```
+
+**step5：重启生效配置**
+
+## 6.5 参考
 
 * [Automatic Installation](https://help.ubuntu.com/lts/installation-guide/powerpc/ch04s05.html)
 * [Appendix B. Automating the installation using preseeding](https://help.ubuntu.com/lts/installation-guide/powerpc/apb.html)
