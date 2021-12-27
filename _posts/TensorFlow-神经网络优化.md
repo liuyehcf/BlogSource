@@ -47,6 +47,7 @@ categories:
 {% raw %}$$MSE(y\_, y)=\frac{\sum_{i=1}^{n}{(y-y\_)^2}}{n}$${% endraw %}
 
 在TensorFlow中表示为
+
 ```py
 loss_mse = tf.reduce_mean(tf.square(y_ - y))
 ```

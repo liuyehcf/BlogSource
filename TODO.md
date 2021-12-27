@@ -3,6 +3,8 @@
     * 如何编写TUI程序(https://github.com/marcusolsson/tui-go)
     * ag
     * 僵尸进程：https://zhuanlan.zhihu.com/p/92381918
+    * dnf
+        * `dnf provides /usr/lib/grub/x86_64-efi`
 1. 性能分析
     * Perf
     * vtune

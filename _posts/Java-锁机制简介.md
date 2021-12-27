@@ -40,6 +40,7 @@ categories:
 * 所以说，自旋等待的时间(自旋的次数)必须要有一个限度，如果自旋超过了定义的时间仍然没有获取到锁，则应该被挂起
 
 一个简单的自旋锁Demo
+
 ```java
 public class SpinLockDemo {
 
@@ -75,6 +76,7 @@ public class SpinLockDemo {
 Ticket Lock是自旋锁的改进，这种锁机制可以类比去银行办理业务，一开始，我们会拿一个号，然后等着，直到办理业务的工作人员叫到我们的号，然后我们去办理业务
 
 一个简单的Ticket Lock的例子
+
 ```java
 public class TicketLockDemo {
 
@@ -120,6 +122,7 @@ Ticket Lock优劣势总结
 CLH锁(Craig，Landin，and Hagersten locks)在Ticket锁的机制上进行了优化，让每个线程在 **非共享变量上自旋** ，减少了共享变量的同步开销
 
 CLH锁的简单Demo
+
 ```java
 class QNode {
     volatile boolean locked;

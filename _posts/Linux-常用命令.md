@@ -286,6 +286,7 @@ echo -e "\033[47;30m 白底黑字 \033[0m"
 **示例：**
 
 * **`a`**：
+
 ```sh
 echo -e "a\nb\nc" | sed '1,2anewLine'
 
@@ -298,6 +299,7 @@ c
 ```
 
 * **`c`**：
+
 ```sh
 # /^a$/通过正则表达式匹配第一行，需要配合-r参数
 echo -e "a\nb\nc" | sed -r '/^a$/,2cnewLine'
@@ -308,6 +310,7 @@ c
 ```
 
 * **`d`**：
+
 ```sh
 # 删除第2行，到第一个包含字符'c'的行
 echo -e "a\nb\nc" | sed '2,/c/d'
@@ -317,6 +320,7 @@ a
 ```
 
 * **`i`**：
+
 ```sh
 echo -e "a\nb\nc" | sed '1,2inewLine'
 
@@ -329,6 +333,7 @@ c
 ```
 
 * **`p`**：
+
 ```sh
 # $表示最后一行
 echo -e "a\nb\nc" | sed -n '/b/,$p'
@@ -339,6 +344,7 @@ c
 ```
 
 * **`s`**：
+
 ```sh
 # 作用于所有行，对于每一行，将第一个a替换为A
 echo -e "abcabc\nbcabca\ncabcab" | sed 's/a/A/'
@@ -368,6 +374,7 @@ echo "abc" | sed -nr 's|a\|b|A|gp'  # 此时'|'需要转义，因为分隔符是
 ```
 
 * **`r`：**
+
 ```sh
 # 准备文件1
 cat > file1.txt << EOF
@@ -524,6 +531,7 @@ awk -v awkVar="$var" 'BEGIN{print awkVar}'
 **以下的示例都在BEGIN中，只执行一次，不需要指定文件或者输入流**
 
 **if语句：**
+
 ```sh
 awk 'BEGIN{ 
 test=100;
@@ -543,6 +551,7 @@ else
 ```
 
 **while语句：**
+
 ```sh
 awk 'BEGIN{ 
 test=100;
@@ -557,6 +566,7 @@ print total;
 ```
 
 **for语句：**
+
 ```sh
 awk 'BEGIN{ 
 for(k in ENVIRON)
@@ -576,6 +586,7 @@ print total;
 ```
 
 **do语句：**
+
 ```sh
 awk 'BEGIN{ 
 total=0;

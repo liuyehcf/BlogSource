@@ -31,6 +31,7 @@ current classloader是当前方法所属类的类加载器。通俗来讲，类A
 答案是通过查询栈信息，通过sun.misc.VM.latestUserDefinedLoader(); 获取从栈上开始计算，第一个不为空（bootstrap classloader是空）的ClassLoader便返回
 
 可以试想，在ObjectInputStream运作中，通过直接获取当前调用栈中，第一个非空的ClassLoader，这种做法能够非常便捷的定位用户的ClassLoader，也就是用户在进行：
+
 ```java
 ObjectInputStream ois = new ObjectInputStream(new FileInputStream(“xx.dat”));
 B b = (B) ois.readObject();
@@ -119,6 +120,7 @@ Java_java_lang_Class_forName0(JNIEnv *env, jclass this, jstring classname,
 * `${OPEN_JDK}/hotspot/src/share/vm/prims/jvm.cpp`
 
 **声明如下**
+
 ```c
 /*
  * Find a class from a given class loader.  Throws ClassNotFoundException.
@@ -135,6 +137,7 @@ JVM_FindClassFromCaller(JNIEnv *env, const char *name, jboolean init,
 ```
 
 **定义如下**
+
 ```c
 JVM_ENTRY(jclass, JVM_FindClassFromCaller(JNIEnv* env, const char* name,
                                           jboolean init, jobject loader,

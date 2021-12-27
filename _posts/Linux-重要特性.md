@@ -197,6 +197,7 @@ int main()
 * **对于proc文件系统来说，它没有设备，具体的内核代码如下，传什么设备名称都无所谓，因此好的实践是`mount -t proc nodev /proc`**
 
 相关内核源码
+
 ```c
 static struct dentry *proc_mount(struct file_system_type *fs_type, int flags, const char *dev_name, void *data)
 {

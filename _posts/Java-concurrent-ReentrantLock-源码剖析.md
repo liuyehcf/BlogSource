@@ -20,6 +20,7 @@ categories:
 # 2 内部类Sync
 
 Sync是ReentrantLock的静态内部类，Sync继承自AQS，重写了tryRelease方法，但是并未重写tryAcquire方法而是提供了一个nonfairTryAcquire，这意味着tryAcquire方法会交给Sync的子类实现。ReentrantLock的lock方法unLock方法均会调用Sync实例的相应acquire以及release方法
+
 ```java
     /**
      * Base of synchronization control for this lock. Subclassed
@@ -117,6 +118,7 @@ Sync是ReentrantLock的静态内部类，Sync继承自AQS，重写了tryRelease�
 ## 2.1 内部类NonfairSync
 
 NonfairSync继承自抽象类Sync，是非公平锁。非公平性是指：当一个线程调用lock方法时，不论sync queue中是否有等待的线程，直接尝试获取锁，如果竞争成功便获取锁。这种方式对于已经入队并等待一段时间的节点来说是不公平的。这是ReentrantLock的默认实现
+
 ```java
     /**
      * Sync object for non-fair locks
@@ -147,6 +149,7 @@ NonfairSync继承自抽象类Sync，是非公平锁。非公平性是指：当�
 ## 2.2 内部类FairSync
 
 内部类FairSync继承自抽象类Sync，是公平锁。公平是指：当一个线程调用lock方法时，如果sync queue中已有节点正在等待，那么当前线程不直接竞争，而是进入sync queue
+
 ```java
     /**
      * Sync object for fair locks
@@ -186,6 +189,7 @@ NonfairSync继承自抽象类Sync，是非公平锁。非公平性是指：当�
 ```
 
 hasQueuedPredecessors方法如下，这是AQS的方法
+
 ```java
     public final boolean hasQueuedPredecessors() {
         //The correctness of this depends on head being initialized
@@ -203,12 +207,14 @@ hasQueuedPredecessors方法如下，这是AQS的方法
 # 3 重要方法
 
 ReentrantLock只有一个字段
+
 ```java
     /** Synchronizer providing all implementation mechanics */
     private final Sync sync;
 ```
 
 ReentrantLock有两个构造方法，默认构造方法采用非公平锁
+
 ```java
     public ReentrantLock() {
         sync = new NonfairSync();
@@ -220,6 +226,7 @@ ReentrantLock有两个构造方法，默认构造方法采用非公平锁
 ```
 
 ReentrantLock的一系列lock以及unlock方法仅仅转调用sync的相应方法而已
+
 ```java
     public void lock() {
         sync.lock();
@@ -236,6 +243,7 @@ ReentrantLock的一系列lock以及unlock方法仅仅转调用sync的相应方�
 ```
 
 获取条件对象的方法，关于ConditionObject的内部机制以及源码分析可参考 {% post_link Java-concurrent-AQS-ConditionObject-源码剖析 %}
+
 ```java
     public Condition newCondition() {
         return sync.newCondition();

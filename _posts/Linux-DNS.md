@@ -553,6 +553,7 @@ BIND软件已经提供了一个名为`namced.ca`的文件了
 | `;` | 代表批注符号，似乎`#`也是批注，两个都能用 |
 
 **以下为配置内容**
+
 ```
 $TTL 600
 @  IN  SOA  master.centos.liuye.  liuye.www.centos.liuye.  
@@ -758,6 +759,7 @@ zone "lh.centos.liuye." IN{
 ```
 
 **`/var/named/named.lh.centos.liuye`内容如下**
+
 ```
 $TTL	600
 @		IN SOA	dns.lh.centos.liuye. root.lh.centos.liuye. 

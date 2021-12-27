@@ -207,6 +207,7 @@ public class EchoClient {
 我们回到位于`AbstractBootstrap`的`initAndRegister`方法中来，该方法在创建Channel完毕后，调用了init方法对其进行初始化操作
 
 1. `init`方法位于`Bootstrap`，该方法主要就是将之前启动时通过建造者模式配置的参数注入到该Channel中去
+
 ```java
     void init(Channel channel) throws Exception {
         ChannelPipeline p = channel.pipeline();

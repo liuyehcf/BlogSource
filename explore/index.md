@@ -21,6 +21,7 @@ date: 2018-02-05 09:25:59
 * [Cpp-Summit](http://cpp-summit.org/en)
 * [Google-Abseil](https://abseil.io/)
 * [Google 开源项目风格指南](https://zh-google-styleguide.readthedocs.io/en/latest/google-cpp-styleguide/)
+* [LLVM Coding Standards](https://llvm.org/docs/CodingStandards.html)
 * [Online Benchmark](https://godbolt.org/)
 
 # 性能分析

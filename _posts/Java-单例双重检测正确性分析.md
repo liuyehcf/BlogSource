@@ -39,7 +39,8 @@ class UnsafeLazyInitialization{
 
 * 在UnsafeLazyInitialization类中，假设A线程执行代码1的同时，B线程执行代码2。此时，线程可能会看到instance引用的对象还没有完成初始化
 
-对于UnsafeLazyInitialization类，我们可以对getInstance()方法做同步处理来实现线程安全的延迟初始化，示例代码如下、
+对于UnsafeLazyInitialization类，我们可以对getInstance()方法做同步处理来实现线程安全的延迟初始化，示例代码如下
+
 ```java
 class Instance{
 

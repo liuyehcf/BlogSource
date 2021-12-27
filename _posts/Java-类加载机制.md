@@ -73,6 +73,7 @@ categories:
     * 当一个接口在初始化时，并不要求其父接口全部都完成了初始化，只有在真正使用到父接口的时候(如引用接口中定义的常量)才会初始化
 
 **神奇的例子**
+
 ```java
 class ConstClass{
     static{System.out.println("ConstClass.init!");}

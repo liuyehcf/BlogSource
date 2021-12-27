@@ -71,6 +71,7 @@ ConditionObject利用了AQS中的Node静态内部类用于封装节点。**指�
 ## 3.2 await
 
 该方法类似于Object#wait方法，让当前线程在该ConditionObject上阻塞，直至被signal(类似于Object的notify/notifyAll)或者被中断，必须在持有锁的状态下才能调用该方法，否则会引发异常
+
 ```java
         /**
          * Implements interruptible condition wait.
@@ -113,6 +114,7 @@ ConditionObject利用了AQS中的Node静态内部类用于封装节点。**指�
         }
 ```
 接下来，逐个分析上述方法中调用的子方法。首先是addConditionWaiter()方法，源码如下
+
 ```java
         /**
          * Adds a new waiter to wait queue.
@@ -142,6 +144,7 @@ ConditionObject利用了AQS中的Node静态内部类用于封装节点。**指�
 可以看出该方法中的所有赋值操作均不需要加锁，也不需要CAS操作，因为处于独占模式下，当前线程持有锁，那么只有该线程能够执行这些赋值操作，因此是线程安全的。因此await方法必须在持有锁的状态下才能进行调用，另外仅支持AQS独占模式
 
 然后是fullyRelease方法，该方法并非ConditionObject的方法，而是AQS的方法，该方法调用独占模式下的release来释放资源
+
 ```java
     /**
      * Invokes release with current state value; returns saved state.
@@ -170,6 +173,7 @@ ConditionObject利用了AQS中的Node静态内部类用于封装节点。**指�
 ```
 
 isOnSyncQueue方法用于判断节点是否位于sync queue，该方法也是AQS的方法而非ConditionObject方法。如果发现节点位于sync queue，说明另一个线程执行了signal/signalAll，节点从condition queue移动到sync queue，此时再次排队竞争锁，如果位于condition queue，那么说明条件还未成立，需要继续阻塞自己
+
 ```java
     /**
      * Returns true if a node, always one that was initially placed on
@@ -203,6 +207,7 @@ isOnSyncQueue方法用于判断节点是否位于sync queue，该方法也是AQS
 ```
 
 在while循环中等待时，需要检查当前线程是被unpark正常唤醒还是被interrupt唤醒
+
 ```java
         /**
          * Checks for interrupt, returning THROW_IE if interrupted
@@ -217,6 +222,7 @@ isOnSyncQueue方法用于判断节点是否位于sync queue，该方法也是AQS
 ```
 
 transferAfterCancelledWait方法在发生中断时，将节点从condition queue中转移到sync queue中去。该方法是AQS的方法
+
 ```java
     /**
      * Transfers node, if necessary, to sync queue after a cancelled wait.
@@ -251,6 +257,7 @@ transferAfterCancelledWait方法在发生中断时，将节点从condition queue
 ## 3.3 signal
 
 signal方法类似于Object#notify方法，将一个节点(线程)从条件变量的阻塞队列(condition queue)中移动到同步队列中(sync queue)，让该节点重新尝试获取资源
+
 ```java
         /**
          * Moves the longest-waiting thread, if one exists, from the
@@ -272,6 +279,7 @@ signal方法类似于Object#notify方法，将一个节点(线程)从条件变�
 ```
 
 下面是doSignal方法源码。该方法调整阻塞队列头结点，并且执行transferForSignal方法将节点移送至sync queue，让其重新入队尝试获取锁
+
 ```java
         /**
          * Removes and transfers nodes until hit non-cancelled one or
@@ -293,6 +301,7 @@ signal方法类似于Object#notify方法，将一个节点(线程)从条件变�
 ```
 
 以下是transferForSignal方法，该方法是AQS的方法
+
 ```java
     /**
      * Transfers a node from a condition queue onto sync queue.
@@ -330,6 +339,7 @@ signal方法类似于Object#notify方法，将一个节点(线程)从条件变�
 ## 3.4 signalAll
 
 signalAll方法类似于Object的notifyAll方法，该方法唤醒所有阻塞在condition queue中的节点，并将其全部移送至sync queue中
+
 ```java
         /**
          * Moves all threads from the wait queue for this condition to
@@ -349,6 +359,7 @@ signalAll方法类似于Object的notifyAll方法，该方法唤醒所有阻塞�
 ```
 
 以下是doSignalAll源码。该方法将所有位于condition queue中的节点全部移送至sync queue中
+
 ```java
         /**
          * Removes and transfers all nodes.
@@ -371,6 +382,7 @@ signalAll方法类似于Object的notifyAll方法，该方法唤醒所有阻塞�
 ## 3.5 其他形式的await
 
 首先是awaitNanos(long nanosTimeout)，该方法等待指定时间，超时后便直接转移到sync queue中。方法返回剩余纳秒数
+
 ```java
         /**
          * Implements timed condition wait.
@@ -421,6 +433,7 @@ signalAll方法类似于Object的notifyAll方法，该方法唤醒所有阻塞�
 ```
 
 其次是await(long time, TimeUnit unit)，该方法与awaitNanos(long nanosTimeout)基本一致，返回是否超时
+
 ```java
         /**
          * Implements timed condition wait.
@@ -469,6 +482,7 @@ signalAll方法类似于Object的notifyAll方法，该方法唤醒所有阻塞�
 ```
 
 最后是awaitUntil(Date deadline)，该方法指定超时时刻，逻辑与上述两种方法基本一致。返回是否超时
+
 ```java
         /**
          * Implements absolute timed condition wait.

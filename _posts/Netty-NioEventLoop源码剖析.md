@@ -219,6 +219,7 @@ execute方法位于SingleThreadEventExecutor中，主要就是将任务添加到
 ```
 
 若当前线程池尚未启动线程，那么执行startThread方法启动新线程，startThread方法继续调用doStartThread方法（如果这两个条件不成立会怎样？）
+
 ```java
     private void startThread() {
         if (state == ST_NOT_STARTED) {
@@ -230,6 +231,7 @@ execute方法位于SingleThreadEventExecutor中，主要就是将任务添加到
 ```
 
 doStartThread方法调用executor.execute来执行该Runnable，executor一般来说是ThreadPerTaskExecutor
+
 ```java
     private void doStartThread() {
         assert thread == null;
@@ -587,6 +589,7 @@ runAllTasks方法位于`SingleThreadEventExecutor`，该方法主要用于执行
 ```
 
 `runAllTasksFrom`方法位于`SingleThreadEventExecutor`中，其逻辑很简单，从指定的任务队列中获取任务，然后执行
+
 ```java
     protected final boolean runAllTasksFrom(Queue<Runnable> taskQueue) {
         Runnable task = pollTaskFrom(taskQueue);

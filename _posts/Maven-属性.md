@@ -38,6 +38,7 @@ categories:
 # 3 自定义属性
 
 用户可以在POM的<properties>元素下自定义Maven属性，例如
+
 ```xml
 <project>
     ...

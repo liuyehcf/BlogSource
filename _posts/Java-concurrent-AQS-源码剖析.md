@@ -27,6 +27,7 @@ AQS(AbstractQueuedSynchronizer，同步阻塞队列)是concurrent包下锁机制
 # 2 Node解析
 
 AQS在内部维护了一个同步阻塞队列，**下面简称sync queue**，该队列的元素即静态内部类Node的实例。首先来看Node中涉及的常量定义，源码如下
+
 ```java
         /** Marker to indicate a node is waiting in shared mode */
         static final Node SHARED = new Node();
@@ -59,6 +60,7 @@ AQS在内部维护了一个同步阻塞队列，**下面简称sync queue**，该
 * **PROPAGATE**：仅用于标记sync queue头节点，用于确保release操作propagate下去
 
 其次，再看Node中重要字段，源码如下
+
 ```java
         /**
          * Status field, taking on only the values:
@@ -156,6 +158,7 @@ AQS在内部维护了一个同步阻塞队列，**下面简称sync queue**，该
 # 3 AQS字段解析
 
 AQS字段仅有三个，源码如下
+
 ```java
     /**
      * Head of the wait queue, lazily initialized.  Except for

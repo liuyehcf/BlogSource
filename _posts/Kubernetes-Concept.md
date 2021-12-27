@@ -2024,6 +2024,7 @@ spec:
 1. `Container`通过挂载到`/etc/nginx/ssl`上的卷来获取`secret key`
 
 利用上述配置，替换原先的`nginx`
+
 ```sh
 kubectl delete deployments,svc my-nginx; kubectl create -f ./nginx-secure-app.yaml
 
