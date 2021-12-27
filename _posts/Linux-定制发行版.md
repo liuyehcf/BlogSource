@@ -2513,7 +2513,7 @@ done
 EOF
 ```
 
-## 6.4 允许root登录图形化界面
+### 6.3.4 允许root登录图形化界面
 
 **step1：编辑`/usr/share/lightdm/lightdm.conf.d/50-ubuntu.conf`文件，改成如下内容：**
 
@@ -2551,7 +2551,7 @@ tty -s && mesg n || true
 
 **step5：重启生效配置**
 
-## 6.5 参考
+## 6.4 参考
 
 * [Automatic Installation](https://help.ubuntu.com/lts/installation-guide/powerpc/ch04s05.html)
 * [Appendix B. Automating the installation using preseeding](https://help.ubuntu.com/lts/installation-guide/powerpc/apb.html)
