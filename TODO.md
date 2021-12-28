@@ -60,6 +60,9 @@
     * 序列化框架arrow；https://zhuanlan.zhihu.com/p/339132159
 1. 汇编
     * avx2指令
+    * 安装
+        * wget http://mirror.centos.org/centos/7/os/x86_64/Packages/nasm-2.10.07-7.el7.x86_64.rpm
+        * yum localinstall -y nasm-2.10.07-7.el7.x86_64.rpm
 1. 其他
     * [macOS开启HiDPI](https://zhuanlan.zhihu.com/p/227788155)
     * 内存分配，伙伴算法
