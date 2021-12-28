@@ -294,6 +294,8 @@ Breakpoint 1, main () at set_break.cpp:8
 * `disassemble`：查看当前的汇编指令
     * `disassemble`：当前函数的汇编指令
     * `disassemble <function>`：指定函数的汇编指令
+    * `set disassembly-flavor intel`：汇编风格指定为`Intel Syntax`
+    * `set disassembly-flavor att`：汇编风格指定为`AT&T Syntax`，该风格为默认风格
 * `list`：查看源码
     * `list`：紧接着上一次的输出，继续输出10行源码
     * `list <linenumber>`：输出当前文件指定行号开始的10行源码
