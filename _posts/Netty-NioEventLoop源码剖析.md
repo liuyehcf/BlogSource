@@ -190,7 +190,7 @@ NioEventLoop仅有一个构造方法，该方法接受如下几个参数
 
 # 3 execute
 
-execute方法用于添加Runnable，并执行。本小结将解析任务提交以及执行的过程
+execute方法用于添加Runnable，并执行。本小节将解析任务提交以及执行的过程
 
 execute方法位于SingleThreadEventExecutor中，主要就是将任务添加到队列当中。如果当前线程池的线程尚未启动，则启动它
 

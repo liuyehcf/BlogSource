@@ -1541,7 +1541,7 @@ status:
 
 ### 4.1.8 The gory details of virtual IPs
 
-本小结将介绍`Service`的一些细节问题
+本小节将介绍`Service`的一些细节问题
 
 #### 4.1.8.1 Avoiding collisions
 

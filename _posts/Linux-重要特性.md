@@ -612,7 +612,7 @@ cleanup
 
 ### 1.7.1 术语解释
 
-**Container**：容器是一组技术的集合，包括`namespace`、`cgroup`，在本小结，我们关注的重点是`namespace`
+**Container**：容器是一组技术的集合，包括`namespace`、`cgroup`，在本小节，我们关注的重点是`namespace`
 
 **Namespace**：包含六种namespace，包括`PID`、`User`、`Net`、`Mnt`、`Uts`、`Ipc`
 
@@ -1334,7 +1334,7 @@ yum install -y libcgroup libcgroup-tools
 
 # 3 Systemd
 
-本小结转载自[Systemd 入门教程：命令篇](http://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-commands.html)
+本小节转载自[Systemd 入门教程：命令篇](http://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-commands.html)
 
 ## 3.1 概述
 

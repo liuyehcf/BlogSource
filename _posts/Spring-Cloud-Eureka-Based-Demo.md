@@ -390,7 +390,7 @@ eureka:
 1. 一种是`Ribbon`+`RestTemplate`
 1. 另一种是`Feign`，其中`Feign`集成了`Ribbon`
 
-本小结先介绍`Ribbon`+`RestTemplate`方式的服务调用
+本小节先介绍`Ribbon`+`RestTemplate`方式的服务调用
 
 **`ribbon-consumer`模块的目录结构如下**
 

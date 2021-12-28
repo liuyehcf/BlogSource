@@ -16,7 +16,7 @@ categories:
 
 ## 1.1 SNI
 
-本小结内容转载自[HTTPS之SNI介绍](https://blog.51cto.com/zengestudy/2170245)
+本小节内容转载自[HTTPS之SNI介绍](https://blog.51cto.com/zengestudy/2170245)
 
 早期的`SSLv2`根据经典的公钥基础设施`PKI(Public Key Infrastructure)`设计，它默认认为：一台服务器（或者说一个IP）只会提供一个服务，所以在SSL握手时，服务器端可以确信客户端申请的是哪张证书
 
