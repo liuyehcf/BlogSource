@@ -565,7 +565,7 @@ foo.c : foo.y
 
 # 4 使用变量
 
-**本小节转载摘录自[跟我一起写 Makefile（七）](https://blog.csdn.net/haoel/article/details/2892)**
+**本小节转载摘录自[跟我一起写 Makefile（七）](https://blog.csdn.net/haoel/article/details/2892)、[跟我一起写 Makefile（八）](https://blog.csdn.net/haoel/article/details/2893)**
 
 在`Makefile`中的定义的变量，就像是`C/C++`语言中的宏一样，他代表了一个文本字串，在`Makefile`中执行的时候其会自动原模原样地展开在所使用的地方。其与`C/C++`所不同的是，你可以在`Makefile`中改变其值。在`Makefile`中，变量可以使用在目标，依赖目标，命令或是`Makefile`的其它部分中
 
@@ -575,7 +575,7 @@ foo.c : foo.y
 
 ## 4.1 变量的基础
 
-变量在声明时需要给予初值，而在使用时，需要给在变量名前加上`$`符号，但最好用小括号`()`或是大括号`{}`把变量给包括起来。如果你要使用真实的`$`字符，那么你需要用`$$`来表示。
+变量在声明时需要给予初值，而在使用时，需要给在变量名前加上`$`符号，但最好用小括号`()`或是大括号`{}`把变量给包括起来。如果你要使用真实的`$`字符，那么你需要用`$$`来表示
 
 变量可以使用在许多地方，如规则中的目标、依赖、命令以及新的变量中。先看一个例子：
 
@@ -815,7 +815,7 @@ bar := a d b g q c
 foo := $($(func) $(bar))
 ```
 
-这个示例中，如果定义了`do_sort`，那么：`foo := $(sort a d b g q c)`，于是`$(foo)`的值就是`a b c d g q`，而如果没有定义`do_sort`，那么：`foo := $(strip a d b g q c)`，调用的就是`strip`函数。
+这个示例中，如果定义了`do_sort`，那么：`foo := $(sort a d b g q c)`，于是`$(foo)`的值就是`a b c d g q`，而如果没有定义`do_sort`，那么：`foo := $(strip a d b g q c)`，调用的就是`strip`函数
 
 当然，把变量的值再当成变量这种技术，同样可以用在操作符的左边：
 
@@ -895,6 +895,446 @@ bar
 endef
 ```
 
+## 4.6 多行变量
+ 
+还有一种设置变量值的方法是使用`define`关键字。使用`define`关键字设置变量的值可以有换行，这有利于定义一系列的命令（前面我们讲过命令包的技术就是利用这个关键字）
+
+`define`指示符后面跟的是变量的名字，而重起一行定义变量的值，定义是以`endef`关键字结束。其工作方式和`=`操作符一样。变量的值可以包含函数、命令、文字，或是其它变量。因为命令需要以`Tab`键开头，所以如果你用`define`定义的命令变量中没有以`Tab`键开头，那么`make`就不会把其认为是命令
+
+下面的这个示例展示了`define`的用法：
+
+```makefile
+define two-lines
+echo foo
+echo $(bar)
+endef
+```
+
+## 4.7 环境变量
+
+`make`运行时的系统环境变量可以在`make`开始运行时被载入到`Makefile`文件中，但是如果`Makefile`中已定义了这个变量，或是这个变量由`make`命令行带入，那么系统的环境变量的值将被覆盖。（如果`make`指定了`-e`参数，那么，系统环境变量将覆盖`Makefile`中定义的变量）
+
+因此，如果我们在环境变量中设置了`CFLAGS`环境变量，那么我们就可以在所有的`Makefile`中使用这个变量了。这对于我们使用统一的编译参数有比较大的好处。如果`Makefile`中定义了`CFLAGS`，那么则会使用`Makefile`中的这个变量，如果没有定义则使用系统环境变量的值，一个共性和个性的统一，很像全局变量和局部变量的特性
+
+当`make`嵌套调用时（参见前面的嵌套调用章节），上层`Makefile`中定义的变量会以系统环境变量的方式传递到下层的`Makefile`中。当然，默认情况下，只有通过命令行设置的变量会被传递。而定义在文件中的变量，如果要向下层`Makefile`传递，则需要使用`exprot`关键字来声明。（参见前面章节）
+
+当然，我并不推荐把许多的变量都定义在系统环境中，这样，在我们执行不用的`Makefile`时，拥有的是同一套系统变量，这可能会带来更多的麻烦
+
+## 4.8 目标变量
+
+前面我们所讲的在`Makefile`中定义的变量都是全局变量，在整个文件，我们都可以访问这些变量。当然，自动化变量除外，如`$<`等这种类量的自动化变量就属于规则型变量，这种变量的值依赖于规则的目标和依赖目标的定义
+
+当然，我样同样可以为某个目标设置局部变量，这种变量被称为`Target-specific Variable`，它可以和全局变量同名，因为它的作用范围只在这条规则以及连带规则中，所以其值也只在作用范围内有效。而不会影响规则链以外的全局变量的值
+
+其语法是：
+
+```makefile
+<target ...> : <variable-assignment>
+<target ...> : overide <variable-assignment>
+```
+
+`<variable-assignment>`可以是前面讲过的各种赋值表达式，如`=`、`:=`、`+=`或是`?=`。第二个语法是针对于make命令行带入的变量，或是系统环境变量
+
+这个特性非常的有用，当我们设置了这样一个变量，这个变量会作用到由这个目标所引发的所有的规则中去。如：
+
+```makefile
+prog : CFLAGS = -g
+prog : prog.o foo.o bar.o
+    $(CC) $(CFLAGS) prog.o foo.o bar.o
+
+prog.o : prog.c
+    $(CC) $(CFLAGS) prog.c
+
+foo.o : foo.c
+    $(CC) $(CFLAGS) foo.c
+
+bar.o : bar.c
+    $(CC) $(CFLAGS) bar.c
+```
+
+在这个示例中，不管全局的`$(CFLAGS)`的值是什么，在`prog`目标，以及其所引发的所有规则中（`prog.o foo.o bar.o`的规则），`$(CFLAGS)`的值都是`-g`
+
+## 4.9 模式变量
+
+在GNU的`make`中，还支持模式变量（`Pattern-specific Variable`），通过上面的目标变量中，我们知道，变量可以定义在某个目标上。模式变量的好处就是，我们可以给定一种模式，可以把变量定义在符合这种模式的所有目标上
+
+我们知道，`make`的模式一般是至少含有一个`%`的，所以，我们可以以如下方式给所有以`.o`结尾的目标定义目标变量：
+
+```makefile
+%.o : CFLAGS = -O
+```
+
+同样，模式变量的语法和目标变量一样：
+
+```makefile
+<pattern ...> : <variable-assignment>
+<pattern ...> : override <variable-assignment>
+```
+
+`override`同样是针对于系统环境传入的变量，或是make命令行指定的变量
+
+# 5 使用条件判断
+
+使用条件判断，可以让`make`根据运行时的不同情况选择不同的执行分支。条件表达式可以是比较变量的值，或是比较变量和常量的值
+
+## 5.1 示例
+
+下面的例子，判断`$(CC)`变量是否`gcc`，如果是的话，则使用GNU函数编译目标
+
+```makefile
+libs_for_gcc = -lgnu
+normal_libs =
+
+foo: $(objects)
+ifeq ($(CC),gcc)
+    $(CC) -o foo $(objects) $(libs_for_gcc)
+else
+    $(CC) -o foo $(objects) $(normal_libs)
+endif
+```
+
+可见，在上面示例的这个规则中，目标`foo`可以根据变量`$(CC)`值来选取不同的函数库来编译程序
+
+我们可以从上面的示例中看到三个关键字：`ifeq`、`else`和`endif`。`ifeq`的意思表示条件语句的开始，并指定一个条件表达式，表达式包含两个参数，以逗号分隔，表达式以圆括号括起。`else`表示条件表达式为假的情况。`endif`表示一个条件语句的结束，任何一个条件表达式都应该以`endif`结束
+
+当我们的变量`$(CC)`值是`gcc`时，目标`foo`的规则是：
+
+```makefile
+foo: $(objects)
+    $(CC) -o foo $(objects) $(libs_for_gcc)
+```
+
+而当我们的变量`$(CC)`值不是`gcc`时（比如`cc`），目标`foo`的规则是：
+
+```makefile
+foo: $(objects)
+    $(CC) -o foo $(objects) $(normal_libs)
+```
+
+当然，我们还可以把上面的那个例子写得更简洁一些：
+
+```makefile
+libs_for_gcc = -lgnu
+normal_libs =
+
+ifeq ($(CC),gcc)
+    libs=$(libs_for_gcc)
+else
+    libs=$(normal_libs)
+endif
+
+foo: $(objects)
+    $(CC) -o foo $(objects) $(libs)
+```
+
+## 5.2 语法
+
+条件表达式的语法为：
+
+```makefile
+<conditional-directive>
+<text-if-true>
+endif
+```
+
+以及：
+
+```makefile
+<conditional-directive>
+<text-if-true>
+else
+<text-if-false>
+endif
+```
+
+其中`<conditional-directive>`表示条件关键字，如`ifeq`。这个关键字有四个
+
+**第一个是我们前面所见过的`ifeq`。语法是：**
+
+```makefile
+ifeq (<arg1>, <arg2>)
+ifeq '<arg1>' '<arg2>'
+ifeq "<arg1>" "<arg2>"
+ifeq "<arg1>" '<arg2>'
+ifeq '<arg1>' "<arg2>"
+```
+
+比较参数`arg1`和`arg2`的值是否相同。当然，参数中我们还可以使用`make`的函数。如：
+
+```makefile
+ifeq ($(strip $(foo)),)
+<text-if-empty>
+endif
+```
+
+这个示例中使用了`strip`函数，如果这个函数的返回值是空（`Empty`），那么`<text-if-empty>`就生效
+
+**第二个条件关键字是`ifneq`。语法是：**
+
+```makefile
+ifneq (<arg1>, <arg2>)
+ifneq '<arg1>' '<arg2>'
+ifneq "<arg1>" "<arg2>"
+ifneq "<arg1>" '<arg2>'
+ifneq '<arg1>' "<arg2>"
+```
+
+其比较参数`arg1`和`arg2`的值是否相同，如果不同，则为真。和`ifeq`类似
+
+**第三个条件关键字是`ifdef`。语法是：**
+
+```makefile
+ifdef <variable-name>
+```
+
+如果变量`<variable-name>`的值非空，那到表达式为真。否则，表达式为假。当然，`<variable-name>`同样可以是一个函数的返回值。注意，`ifdef`只是测试一个变量是否有值，其并不会把变量扩展到当前位置。还是来看两个例子：
+
+示例一：
+
+```makefile
+bar =
+foo = $(bar)
+ifdef foo
+frobozz = yes
+else
+frobozz = no
+endif
+```
+
+示例二：
+
+```makefile
+foo =
+ifdef foo
+frobozz = yes
+else
+frobozz = no
+endif
+```
+
+第一个例子中，`$(frobozz)`值是`yes`，第二个则是`no`
+
+**第四个条件关键字是`ifndef`。其语法是：**
+
+```makefile
+ifndef <variable-name>
+```
+
+这个我就不多说了，和`ifdef`是相反的意思
+
+在`<conditional-directive>`这一行上，多余的空格是被允许的，但是不能以`Tab`键做为开始（不然就被认为是命令）。而注释符`#`同样也是安全的。`else`和`endif`也一样，只要不是以`Tab`键开始就行了
+
+特别注意的是，`make`是在读取`Makefile`时就计算条件表达式的值，并根据条件表达式的值来选择语句，所以，你最好不要把自动化变量（如`$@`等）放入条件表达式中，因为自动化变量是在运行时才有的
+
+而且，为了避免混乱，`make`不允许把整个条件语句分成两部分放在不同的文件中
+
+# 6 使用函数
+
+**本小节转载摘录自[跟我一起写 Makefile（九）](https://blog.csdn.net/haoel/article/details/2894)**
+
+在`Makefile`中可以使用函数来处理变量，从而让我们的命令或是规则更为的灵活和具有智能。`make`所支持的函数也不算很多，不过已经足够我们的操作了。函数调用后，函数的返回值可以当做变量来使用
+
+## 6.1 函数的调用语法
+
+函数调用，很像变量的使用，也是以`$`来标识的，其语法如下：
+
+```makefile
+$(<function> <arguments>)
+```
+
+或是
+
+```makefile
+${<function> <arguments>}
+```
+
+这里，`<function>`就是函数名，`make`支持的函数不多。`<arguments>`是函数的参数，参数间以逗号`,`分隔，而函数名和参数之间以空格分隔。函数调用以`$`开头，以圆括号或花括号把函数名和参数括起。感觉很像一个变量，是不是？函数中的参数可以使用变量，为了风格的统一，函数和变量的括号最好一样，如使用`$(subst a,b,$(x))`这样的形式，而不是`$(subst a,b,${x})`的形式。因为统一会更清楚，也会减少一些不必要的麻烦
+
+还是来看一个示例：
+
+```makefile
+comma := ,
+empty :=
+space := $(empty) $(empty)
+foo := a b c
+bar := $(subst $(space),$(comma),$(foo))
+```
+
+在这个示例中，`$(comma)`的值是一个逗号。`$(space)`使用了`$(empty)`定义了一个空格，`$(foo)`的值是`a b c`，`$(bar)`的定义用，调用了函数`subst`，这是一个替换函数，这个函数有三个参数，第一个参数是被替换字串，第二个参数是替换字串，第三个参数是替换操作作用的字串。这个函数也就是把`$(foo)`中的空格替换成逗号，所以`$(bar)`的值是`a,b,c`
+
+## 6.2 字符串处理函数
+
+### 6.2.1 subst
+
+```makefile
+$(subst <from>,<to>,<text>)
+```
+
+功能：把字串`<text>`中的`<from>`字符串替换成`<to>`
+返回：函数返回被替换过后的字符串
+示例：
+
+```makefile
+        $(subst ee,EE,feet on the street)，
+```
+
+把`feet on the street`中的`ee`替换成`EE`，返回结果是`fEEt on the strEEt`
+
+### 6.2.2 patsubst
+
+```makefile
+$(patsubst <pattern>,<replacement>,<text>)
+```
+
+功能：查找`<text>`中的单词（单词以空格、`Tab`、回车、换行分隔）是否符合模式`<pattern>`，如果匹配的话，则以`<replacement>`替换。这里，`<pattern>`可以包括通配符`%`，表示任意长度的字串。如果`<replacement>`中也包含`%`，那么，`<replacement>`中的这个`%`将是`<pattern>`中的那个`%`所代表的字串。（可以用`/`来转义，以`/%`来表示真实含义的`%`字符）
+返回：函数返回被替换过后的字符串
+示例：
+
+```makefile
+$(patsubst %.c,%.o,x.c.c bar.c)
+```
+
+把字串`x.c.c bar.c`符合模式`%.c`的单词替换成`%.o`，返回结果是`x.c.o bar.o`
+
+备注：这和我们前面变量章节说过的相关知识有点相似。如：
+
+* `$(var:<pattern>=<replacement>)`相当于`$(patsubst <pattern>,<replacement>,$(var))`
+* `$(var: <suffix>=<replacement>)`则相当于`$(patsubst %<suffix>,%<replacement>,$(var))`
+
+例如有：`objects = foo.o bar.o baz.o`。那么，`$(objects:.o=.c)`和`$(patsubst %.o,%.c,$(objects))`是一样的
+
+### 6.2.3 strip
+
+```makefile
+$(strip <string>)
+```
+
+功能：去掉`<string>`字串中开头和结尾的空字符
+返回：返回被去掉空格的字符串值
+示例：
+       
+```makefile
+$(strip a b c )
+```
+
+把字串`a b c `去到开头和结尾的空格，结果是`a b c`
+
+### 6.2.4 findstring
+
+```makefile
+$(findstring <find>,<in>)
+```
+
+功能：在字串`<in>`中查找`<find>`字串
+返回：如果找到，那么返回`<find>`，否则返回空字符串
+示例：
+
+```makefile
+$(findstring a,a b c)
+$(findstring a,b c)
+```
+
+第一个函数返回`a`字符串，第二个返回空字符串
+
+### 6.2.5 filter
+
+```makefile
+$(filter <pattern...>,<text>)
+```
+
+功能：以`<pattern>`模式过滤`<text>`字符串中的单词，保留符合模式`<pattern>`的单词。可以有多个模式
+返回：返回符合模式`<pattern>`的字串
+示例：
+
+```makefile
+sources := foo.c bar.c baz.s ugh.h
+foo: $(sources)
+    cc $(filter %.c %.s,$(sources)) -o foo
+```
+
+`$(filter %.c %.s,$(sources))`返回的值是`foo.c bar.c baz.s`
+
+### 6.2.6 filter-out
+
+```makefile
+$(filter-out <pattern...>,<text>)
+```
+
+功能：以`<pattern>`模式过滤`<text>`字符串中的单词，去除符合模式`<pattern>`的单词。可以有多个模式
+返回：返回不符合模式`<pattern>`的字串
+示例：
+
+```makefile
+objects=main1.o foo.o main2.o bar.o
+mains=main1.o main2.o
+$(filter-out $(mains),$(objects))
+```
+
+`$(filter-out $(mains),$(objects))`返回值是`foo.o bar.o`
+
+### 6.2.7 sort
+
+```makefile
+$(sort <list>)
+```
+
+功能：给字符串`<list>`中的单词排序（升序）
+返回：返回排序后的字符串
+示例：`$(sort foo bar lose)`返回`bar foo lose`
+备注：`sort`函数会去掉`<list>`中相同的单词
+
+### 6.2.8 word
+
+```makefile
+$(word <n>,<text>)
+```
+
+功能：取字符串`<text>`中第`<n>`个单词
+返回：返回字符串`<text>`中第`<n>`个单词。如果`<n>`比`<text>`中的单词数要大，那么返回空字符串
+示例：`$(word 2, foo bar baz)`返回值是`bar`
+
+### 6.2.9 wordlist
+
+```makefile
+$(wordlist <s>,<e>,<text>)
+```
+
+功能：从字符串`<text>`中取从`<s>`开始到`<e>`的单词串。`<s>`和`<e>`是一个数字。
+返回：返回字符串`<text>`中从`<s>`到`<e>`的单词字串。如果`<s>`比`<text>`中的单词数要大，那么返回空字符串。如果`<e>`大于`<text>`的单词数，那么返回从`<s>`开始，到`<text>`结束的单词串
+示例： `$(wordlist 2, 3, foo bar baz)`返回值是`bar baz`
+
+### 6.2.10 words
+
+```makefile
+$(words <text>)
+```
+
+功能：统计`<text>`中字符串中的单词个数
+返回：返回`<text>`中的单词数
+示例：`$(words, foo bar baz)`返回值是`3`
+备注：如果我们要取`<text>`中最后的一个单词，我们可以这样：`$(word $(words <text>),<text>)`
+
+### 6.2.11 firstword
+
+```makefile
+$(firstword <text>)
+```
+
+功能：取字符串`<text>`中的第一个单词
+返回：返回字符串`<text>`的第一个单词
+示例：`$(firstword foo bar)`返回值是`foo`
+备注：这个函数可以用`word`函数来实现：`$(word 1,<text>)`
+
+### 6.2.12 示例
+
+以上，是所有的字符串操作函数，如果搭配混合使用，可以完成比较复杂的功能。这里，举一个现实中应用的例子。我们知道，`make`使用`VPATH`变量来指定`依赖文件`的搜索路径。于是，我们可以利用这个搜索路径来指定编译器对头文件的搜索路径参数`CFLAGS`，如：
+
+```makefile
+override CFLAGS += $(patsubst %,-I%,$(subst :, ,$(VPATH)))
+```
+
+如果我们的`$(VPATH)`值是`src:../headers`，那么`$(patsubst %,-I%,$(subst :, ,$(VPATH)))`将返回`-Isrc -I../headers`，这正是`cc`或`gcc`搜索头文件路径的参数
+
 ---
 
 **需要注意的是，每行命令在一个单独的`shell`中执行。这些`shell`之间没有继承关系**
@@ -929,9 +1369,9 @@ var-kept:
     echo "foo=[$$foo]"
 ```
 
-# 5 TODO
+# 7 TODO
 
-## 5.1 内置变量（Implicit Variables）
+## 7.1 内置变量（Implicit Variables）
 
 `make`命令提供一系列内置变量，比如，`$(CC)`指向当前使用的编译器，`$(MAKE)`指向当前使用的`make`工具。这主要是为了跨平台的兼容性，详细的内置变量清单见[手册](https://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html)
 
@@ -940,11 +1380,11 @@ output:
     $(CC) -o output input.c
 ```
 
-## 5.2 自动变量（Automatic Variables）
+## 7.2 自动变量（Automatic Variables）
 
 `make`命令还提供一些自动变量，它们的值与当前规则有关。主要有以下几个，可以参考[手册](https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html)
 
-### 5.2.1 `$@`
+### 7.2.1 `$@`
 
 `$@`指代当前目标，就是`make`命令当前构建的那个目标。比如，`make foo`的`$@`就指代`foo`
 
@@ -962,7 +1402,7 @@ b.txt:
     touch b.txt
 ```
 
-### 5.2.2 `$<`
+### 7.2.2 `$<`
 
 `$<`指代第一个前置条件。比如，规则为`t: p1 p2`，那么`$<`就指代`p1`
 
@@ -978,27 +1418,27 @@ a.txt: b.txt c.txt
     cp b.txt a.txt 
 ```
 
-### 5.2.3 `$?`
+### 7.2.3 `$?`
 
 `$?`指代比目标更新的所有前置条件，之间以空格分隔。比如，规则为`t: p1 p2`，其中`p2`的时间戳比`t`新，`$?`就指代`p2`
 
-### 5.2.4 `$^`
+### 7.2.4 `$^`
 
 `$^`指代所有前置条件，之间以空格分隔。比如，规则为`t: p1 p2`，那么`$^`就指代`p1 p2`
 
-### 5.2.5 `$*`
+### 7.2.5 `$*`
 
 `$*`指代匹配符`%`匹配的部分，比如`%.txt`匹配`f1.txt`中的`f1`，`$*`就表示`f1`
 
-### 5.2.6 `$(@D)/$(@F)`
+### 7.2.6 `$(@D)/$(@F)`
 
 `$(@D)`和`$(@F)`分别指向`$@`的目录名和文件名。比如，`$@`是`src/input.c`，那么`$(@D)`的值为`src`，`$(@F)`的值为`input.c`
 
-### 5.2.7 `$(<D)/$(<F)`
+### 7.2.7 `$(<D)/$(<F)`
 
 `$(<D)`和`$(<F)`分别指向`$<`的目录名和文件名
 
-### 5.2.8 例子
+### 7.2.8 例子
 
 ```makefile
 dest/%.txt: src/%.txt
@@ -1008,7 +1448,7 @@ dest/%.txt: src/%.txt
 
 上面代码将`src`目录下的`txt`文件，拷贝到`dest`目录下。首先判断`dest`目录是否存在，如果不存在就新建，然后，`$<`指代前置文件`src/%.txt`，`$@`指代目标文件`dest/%.txt`
 
-## 5.3 判断和循环
+## 7.3 判断和循环
 
 `Makefile`使用`Bash`语法，完成判断和循环
 
@@ -1035,7 +1475,7 @@ all:
     done
 ```
 
-## 5.4 函数
+## 7.4 函数
 
 `Makefile`还可以使用函数，格式如下
 
@@ -1047,14 +1487,14 @@ ${function arguments}
 
 `Makefile`提供了许多[内置函数](https://www.gnu.org/software/make/manual/html_node/Functions.html)，可供调用
 
-# 6 make
+# 8 make
 
 **参数说明：**
 
 * `-s`：不显示echo
 * `-n`：仅打印需要执行的命令，而不是实际运行
 
-# 7 参考
+# 9 参考
 
 * [Make 命令教程](https://www.ruanyifeng.com/blog/2015/02/make.html)
 * [跟我一起写 Makefile（一）](https://blog.csdn.net/haoel/article/details/2886)
