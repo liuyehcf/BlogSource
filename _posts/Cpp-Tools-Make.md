@@ -883,7 +883,7 @@ variable += more
 
 ## 4.5 override指示符
 
-如果有变量是通常`make`的命令行参数设置的，那么`Makefile`中对这个变量的赋值会被忽略。如果你想在`Makefile`中设置这类参数的值，那么，你可以使用`override`指示符。其语法是：
+如果变量是通过`make`命令行参数设置的，那么`Makefile`中对这个变量的赋值会被忽略。如果你想在`Makefile`中设置这类参数的值，那么，你可以使用`override`指示符。其语法是：
 
 ```makefile
 override <variable> = <value>
@@ -896,7 +896,7 @@ override <variable> := <value>
 override <variable> += <more text>
 ```
 
-对于多行的变量定义，我们用`define`指示符，在`define`指示符前，也同样可以使用`ovveride`指示符，如：
+对于多行的变量定义，我们用`define`指示符，在`define`指示符前，也同样可以使用`overide`指示符，如：
 
 ```makefile
 override define foo

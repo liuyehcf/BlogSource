@@ -31,13 +31,84 @@ categories:
 | `τ` | Sorting |
 | `÷` | Division |
 
-# 2 缩写表
+# 2 Advanced Sql
+
+`Relational Languages`：用户只需要描述结果，而无需描述如何获取结果
+
+**Sql支持的语法：**
+
+1. `Aggregations + Group By`
+1. `String / Date / Time Operations`
+1. `Output Control + Redirection`
+    * `SORT`
+    * `LIMIT`
+1. `Nested Queries`
+1. `Window Functions`
+1. `Common Table Expressions`
+    * `WITH`
+    * `WITH RECURSIVE`
+
+`COMMON TABLE EXPRESSIONS`
+
+# 3 Storage 1
+
+# 4 Storage 2
+
+# 5 Buffer Pool
+
+# 6 Hash Tables
+
+# 7 Trees1
+
+# 8 Trees2
+
+# 9 Index Concurrency
+
+# 10 Sorting
+
+# 11 Joins
+
+# 12 Query Execution 1
+
+# 13 Query Execution 2
+
+# 14 Optimization 1
+
+# 15 Optimization 2
+
+# 16 Concurrency Control
+
+# 17 Two Phase Locking
+
+# 18 Timestamp Ordering
+
+# 19 Multiversoning
+
+# 20 Logging
+
+# 21 Recovery
+
+# 22 Distributed
+
+# 23 Distributed OLTP
+
+# 24 Distributed OLAP
+
+# 25 Oracle
+
+# 26 Potpourri
+
+# 27 缩写表
 
 | 缩写 | 全称 |
 |:--|:--|
-| DBMS | Database Management System |
+| `DBMS` | Database Management System |
+| `DML` | Data Manipulation Language |
+| `DDL` | Data Definition Language |
+| `DCL` | Data Control Language |
+| `CTE` | Common Table Expressions |
 
-# 3 CMU-课件
+# 28 CMU-课件
 
 1. [01-introduction](/resources/Database-System/01-introduction.pdf)
 1. [02-advancedsql](/resources/Database-System/02-advancedsql.pdf)
