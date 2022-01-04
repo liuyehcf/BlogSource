@@ -169,7 +169,7 @@ ls -lh *tbl
 cd dbgen
 
 mkdir q
-for id in `seq 1 22`
+for id in $(seq 1 22)
 do
     DSS_QUERY=./queries ./qgen ${id} > q/${id}.sql
 done

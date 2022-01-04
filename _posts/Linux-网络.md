@@ -264,7 +264,7 @@ source bond.sh
 export ifname_physics_1="eth0" # 待绑定的子网卡名称1
 export ifname_physics_2="ens9" # 待绑定的子网卡名称2
 export bond_name="bond_liuye" # bond名称
-export bond_mode="active-backup" # bond模式，可以通过`ip link help bond`查询所有的mode
+export bond_mode="active-backup" # bond模式，可以通过 ip link help bond 查询所有的mode
 export ip_bond="10.0.2.66"
 export ip_gateway="10.0.2.1"
 export ip_net="10.0.2.0"

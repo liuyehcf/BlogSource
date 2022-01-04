@@ -264,7 +264,7 @@ spring:
 启动后，执行`bin/zkCli.sh`运行Zookeeper客户端交互程序
 
 ```sh
-# 查询`/services`路径下的服务，即注册到zookeeper的应用
+# 查询 /services 路径下的服务，即注册到zookeeper的应用
 [zk: localhost:2181(CONNECTED) 34] ls /services
 [ZookeeperProvider]
 
@@ -284,7 +284,7 @@ dataLength = 0
 numChildren = 1
 
 # 我们发现，上述节点信息中，并没有任何节点数据
-# 奇怪的是，`numnumChildren`是1，说明有子节点
+# 奇怪的是，numnumChildren 是1，说明有子节点
 # 继续查看ZookeeperProvider的子节点
 [zk: localhost:2181(CONNECTED) 37] ls /services/ZookeeperProvider
 [b3735b44-3e69-4a1c-9de9-c7c813767bb6]
@@ -582,7 +582,7 @@ spring:
 启动后，执行`bin/zkCli.sh`运行Zookeeper客户端交互程序
 
 ```sh
-# 查询`/services`路径下的服务，即注册到zookeeper的应用
+# 查询 /services 路径下的服务，即注册到zookeeper的应用
 [zk: localhost:2181(CONNECTED) 39] ls /services
 [ZookeeperProvider, RibbonConsumer]
 ```
@@ -819,7 +819,7 @@ spring:
 启动后，执行`bin/zkCli.sh`运行Zookeeper客户端交互程序
 
 ```sh
-# 查询`/services`路径下的服务，即注册到zookeeper的应用
+# 查询 /services 路径下的服务，即注册到zookeeper的应用
 [zk: localhost:2181(CONNECTED) 40] ls /services
 [ZookeeperProvider, FeignConsumer, RibbonConsumer]
 ```
@@ -992,7 +992,7 @@ spring:
 启动后，执行`bin/zkCli.sh`运行Zookeeper客户端交互程序
 
 ```sh
-# 查询`/services`路径下的服务，即注册到zookeeper的应用
+# 查询 /services 路径下的服务，即注册到zookeeper的应用
 [zk: localhost:2181(CONNECTED) 42] ls /services
 [ZookeeperProvider, FeignConsumer, ConfigServer, RibbonConsumer]
 ```
@@ -1216,7 +1216,7 @@ spring:
 
     zookeeper:
       discovery:
-        register: true              # 当前应用注册到Zookeeper中，其默认值为true，但是由于配置了`spring.cloud.config`的相关属性，还需要手动设置为true
+        register: true              # 当前应用注册到Zookeeper中，其默认值为true，但是由于配置了 spring.cloud.config 的相关属性，还需要手动设置为true
       connect-string: localhost:2181
 ```
 
@@ -1225,7 +1225,7 @@ spring:
 启动后，执行`bin/zkCli.sh`运行Zookeeper客户端交互程序
 
 ```sh
-# 查询`/services`路径下的服务，即注册到zookeeper的应用
+# 查询 /services 路径下的服务，即注册到zookeeper的应用
 [zk: localhost:2181(CONNECTED) 126] ls /services
 [ZookeeperProvider, cloud.config.demo, FeignConsumer, ConfigServer, RibbonConsumer]
 ```

@@ -1911,7 +1911,7 @@ kube-dns   ClusterIP   10.96.0.10   <none>        53/UDP,53/TCP   212d
 在集群中的任何`Pod`都可以用标准的方式来访问`Service`，我们运行另一个`curl`应用来进行测试
 
 ```sh
-# 以交互的方式运行一个`container`
+# 以交互的方式运行一个 container
 kubectl run curl --image=radial/busyboxplus:curl -i --tty
 
 nslookup my-nginx

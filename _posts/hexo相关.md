@@ -398,12 +398,12 @@ deploy:
 ...
 
 leancloud_counter_security:
-  enable_sync: true # 先关了，开启有问题，总是报`Too many requests. [429 GET https://qhehlume.api.lncld.net/1.1/classes/Counter]`
+  enable_sync: true # 先关了，开启有问题，总是报 Too many requests. [429 GET https://qhehlume.api.lncld.net/1.1/classes/Counter]
   app_id: xxx
   app_key: xxx
   server_url: https://leancloud.cn # 内地region需要配置这个
   username: 'liuyehcf'
-  password: '19930101' # 究极大坑，这里需要用引号
+  password: '19990101' # 究极大坑，这里需要用引号
 ```
 
 # 11 本地搜索

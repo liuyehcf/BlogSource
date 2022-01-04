@@ -893,8 +893,8 @@ inet 127.0.0.1 port 953 allow { 127.0.0.1; } keys { "rndc-key"; };
     * `dnssec-keygen -a HMAC-MD5 -b 512 -n HOST web`
     * 接下来将公钥的密码复制到`/etc/named.conf`中，将私钥传给`web.centos.liuye`那台主机
     * `vim /etc/named.conf`
-        * 
-```
+    * 
+	```
 key "web" {
 	algorithm hmac-md5;
 	secret "<这里是公钥密码>";
@@ -908,9 +908,9 @@ zone "centos.liuye." IN{
 		grant web name web.centos.liuye. A;
 	};
 };
-```
+	```
 
-        * `grant [key_name] name [hostname] 标签`：允许指定主机通过指定密码修改指定标签
+    * `grant [key_name] name [hostname] 标签`：允许指定主机通过指定密码修改指定标签
     * `chmod g+w /var/named`
     * `chown named /var/named/named.centos.liuye`
     * `systemctl restart named.service`

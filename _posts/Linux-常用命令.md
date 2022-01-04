@@ -1004,8 +1004,8 @@ bc可以用于进制转换
 
 ```sh
 # 其中$0代表脚本的路径（相对或绝对路径）
-ROOT=`dirname "$0"`
-ROOT=`cd "$ROOT"; pwd`
+ROOT=$(dirname "$0")
+ROOT=$(cd "$ROOT"; pwd)
 ```
 
 ## 2.26 addr2line
@@ -1299,7 +1299,7 @@ free
 
 * `fg %jobnumber`：取出编号为`jobnumber`的工作。jubnumber为工作号码(数字)，%是可有可无的
 * `fg +`：取出标记为+的工作
-* `fg -`：取出标记为-的工作`
+* `fg -`：取出标记为-的工作
 
 ## 4.3 bg
 
