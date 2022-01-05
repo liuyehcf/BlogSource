@@ -52,6 +52,105 @@ categories:
 
 # 3 Storage 1
 
+**存储架构，从上往下依次是：**
+
+1. `Registers`
+1. `L1 Cache`、`L2 Cache`、`L3 Cache`
+1. `DRAM`
+1. `SSD`
+1. `HDD`
+1. `Network Storage`
+* 1-3是易失性存储（`volatile storage`）
+* 4-6是非易失性存储（`non-volatile storage`）
+
+**设计目标：**
+
+1. 允许`DBMS`管理超过内存大小的数据
+1. 由于直接读写磁盘的开销很大，因此需要避免产生大停顿
+
+![3-1](/images/Database-System/3-1)
+
+![3-2](/images/Database-System/3-2)
+
+![3-3](/images/Database-System/3-3)
+
+![3-4](/images/Database-System/3-4)
+
+**为什么不直接使用OS？几乎所有的`DMBS`都希望完全掌控如下事情：**
+
+* 将脏页（`Dirty Page`）以合适的顺序刷入磁盘
+* `Prefetching`以提高缓存命中率
+* 缓存替换策略
+* 线程调度
+
+## 3.1 File Storage
+
+**`Storage Manager`：**
+
+* 管理文件，对读写任务进行调度，以提高时间上以及空间上的局部性
+* 以`Page`的形式管理文件
+
+**`Database Pages`：**
+
+* 一个`Page`指的是固定大小的数据
+* 每个`Page`都由一个唯一的标识，该标识可以映射到物理位置
+* 该`Page`不是`Hardware Page`也不是`OS Page`
+* 组织`Page`的形式有如下几种
+    1. `Heap File Organization`
+        * `Heap File`中包含了一组无序的`Page`
+        * 实现方式有2种：
+            1. `Linked List`
+                * 每个`Heap File`存储2个指针，分别指向`Free Page List`以及`Data Page List`
+                * 每个`Page`存储2个指针，分别指向`Next`以及`Prev`
+                * ![3-5](/images/Database-System/3-5)
+            1. `Page Directory`
+                * ![3-6](/images/Database-System/3-6.png)
+    1. `Sequential / Sorted File Organization`
+    1. `Hashing File Organization`
+
+## 3.2 Page Layout
+
+**`Page Header`：每个`Page`都包含一个`Header`用以存储元数据，包括：**
+
+1. `Page Size`
+1. `Checksum`
+1. `DBMS Version`
+1. `Transaction Visibility`
+1. `Compression Information`
+
+**`Slotted Pages`：**
+
+* `Slot Array`中的`Slots`存储的是对应`Tuple`的起始偏移量
+* 同时`Header`还需要维护`Slot`的占用情况以及最后一个`Slot`的起始偏移量
+* ![3-7](/images/Database-System/3-7)
+
+**`Log-Structured File Organization`：**
+
+* 不同于`Slotted Pages`存储`Tuple`，`Log-Structured File Organization`只存储日志记录
+* 在读取记录时，`DBMS`扫描日志，并依据日志重建`Tuple`
+* 构建索引，用于在不同记录之间进行跳转
+* 定期整理精简日志
+* ![3-8](/images/Database-System/3-8)
+
+## 3.3 Tuple Layout
+
+**`Tuple`本质上就是一个字节序列，`DBMS`需要将`Tuple`对应的字节序列解析成对应的属性和数值**
+
+![3-9](/images/Database-System/3-9)
+
+**`Tuple Header`用于存储元数据，包括：**
+
+* 可见性（并发控制）
+* 针对`NULL`的`Bit Map`
+
+**`Tuple Data`：**
+
+* 按照创建`Table`时定义的顺序依次存储每个属性
+
+**`Records ids`：**
+
+* 每个`Tuple`都由一个唯一标识，通常是`page_id + offset/slot`
+
 # 4 Storage 2
 
 # 5 Buffer Pool
@@ -107,6 +206,8 @@ categories:
 | `DDL` | Data Definition Language |
 | `DCL` | Data Control Language |
 | `CTE` | Common Table Expressions |
+| `HDD` | Hard Disk Drive |
+| `SSD` | Solid-state Drive |
 
 # 28 CMU-课件
 
