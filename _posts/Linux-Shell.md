@@ -1564,11 +1564,121 @@ declare -A <map>
 declare -i <integer>
 ```
 
-## 17.6 typeset
+## 17.6 local
+
+用于在函数内定义局部变量，其作用域就是函数本身
+
+**格式：`local [option] [name[=value] ...]`，其中`option`部分参考`declare`即可**
+
+**示例：**
+
+```sh
+function test() {
+    local -a arr
+    arr=( 1 2 3 )
+    echo "inside function: '${arr[@]}'"
+}
+
+test
+echo "outside function: '${arr[@]}'"
+```
+
+## 17.7 typeset
 
 **功能属于`declare`的子集，不推荐使用**
 
-# 18 参考
+# 18 颜色
+
+## 18.1  ANSI escape codes
+
+```sh
+NOCOLOR='\033[0m'
+
+BLACK='\033[0;30m'
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+ORANGE='\033[0;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+LIGHTGRAY='\033[0;37m'
+DARKGRAY='\033[1;30m'
+LIGHTRED='\033[1;31m'
+LIGHTGREEN='\033[1;32m'
+YELLOW='\033[1;33m'
+LIGHTBLUE='\033[1;34m'
+LIGHTPURPLE='\033[1;35m'
+LIGHTCYAN='\033[1;36m'
+WHITE='\033[1;37m'
+
+echo -e ${BLACK} 黑色 ${NOCOLOR}
+echo -e ${RED} 红色 ${NOCOLOR}
+echo -e ${GREEN} 绿色 ${NOCOLOR}
+echo -e ${ORANGE} 橘黄色 ${NOCOLOR}
+echo -e ${BLUE} 蓝色 ${NOCOLOR}
+echo -e ${PURPLE} 紫色 ${NOCOLOR}
+echo -e ${CYAN} 青色 ${NOCOLOR}
+echo -e ${LIGHTGRAY} 浅灰色 ${NOCOLOR}
+echo -e ${DARKGRAY} 深灰色 ${NOCOLOR}
+echo -e ${LIGHTRED} 浅红色 ${NOCOLOR}
+echo -e ${LIGHTGREEN} 浅绿色 ${NOCOLOR}
+echo -e ${YELLOW} 黄色 ${NOCOLOR}
+echo -e ${LIGHTBLUE} 浅蓝色 ${NOCOLOR}
+echo -e ${LIGHTPURPLE} 浅紫色 ${NOCOLOR}
+echo -e ${LIGHTCYAN} 浅青色 ${NOCOLOR}
+echo -e ${WHITE} 白色 ${NOCOLOR}
+```
+
+## 18.2 tput
+
+**设置颜色：**
+
+```sh
+tput setab [1-7] # Set the background colour using ANSI escape
+tput setaf [1-7] # Set the foreground colour using ANSI escape
+```
+
+其中颜色编号表如下：
+
+```
+Num  Colour    #define         R G B
+
+0    black     COLOR_BLACK     0,0,0
+1    red       COLOR_RED       1,0,0
+2    green     COLOR_GREEN     0,1,0
+3    yellow    COLOR_YELLOW    1,1,0
+4    blue      COLOR_BLUE      0,0,1
+5    magenta   COLOR_MAGENTA   1,0,1
+6    cyan      COLOR_CYAN      0,1,1
+7    white     COLOR_WHITE     1,1,1
+```
+
+**样式设置：**
+
+```sh
+tput bold    # Select bold mode
+tput dim     # Select dim (half-bright) mode
+tput smul    # Enable underline mode
+tput rmul    # Disable underline mode
+tput rev     # Turn on reverse video mode
+tput smso    # Enter standout (bold) mode
+tput rmso    # Exit standout mode
+```
+
+**其他：**
+
+```sh
+tput sgr0    # Reset text format to the terminal's default
+tput bel     # Play a bell
+```
+
+**示例：**
+
+```sh
+tput setaf 1; tput setab 2; tput bold; echo "this is text"
+```
+
+# 19 参考
 
 * [shell教程](http://www.runoob.com/linux/linux-shell.html)
 * [Shell脚本8种字符串截取方法总结](https://www.jb51.net/article/56563.htm)
@@ -1583,3 +1693,5 @@ declare -i <integer>
 * [Shell进程替换](http://c.biancheng.net/view/3025.html)
 * [Bash scripting cheatsheet](https://devhints.io/bash)
 * [how-to-trim-whitespace-from-a-bash-variable](https://stackoverflow.com/questions/369758/how-to-trim-whitespace-from-a-bash-variable)
+* [How to change the output color of echo in Linux](https://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux)
+* [jonsuh/.bash_profile](https://gist.github.com/jonsuh/3c89c004888dfc7352be)

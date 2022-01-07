@@ -6,6 +6,10 @@
     * dnf
         * `dnf provides /usr/lib/grub/x86_64-efi`
     * [如何查看磁盘是gpt还是mbr](https://unix.stackexchange.com/questions/120221/gpt-or-mbr-how-do-i-know)
+    * 链接器
+        * export STARROCKS_CXX_LINKER_FLAGS=""
+        * export STARROCKS_CXX_LINKER_FLAGS="-fuse-ld=gold"
+        * export STARROCKS_CXX_LINKER_FLAGS="-B/usr/local/bin/gcc-mold"
 1. 性能分析
     * Perf
     * vtune

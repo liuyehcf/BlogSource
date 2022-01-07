@@ -273,6 +273,65 @@ WHERE table_name = '<table name>';
 
 # 5 Buffer Pool
 
+**`Database Storage`的两个问题：**
+
+1. `DBMS`如何用磁盘上的文件表示数据库
+1. `DBMS`如何管理其内存并从磁盘来回移动数据
+
+**`Spatial Control`：**
+
+* 将`Page`刷到磁盘上的什么位置
+* 目标是让经常一起使用的页面在磁盘上尽可能地靠近在一起
+
+**`Temporal Control`：**
+
+* 何时将`Page`读入内存，何时将其写入磁盘
+* 目标是最大限度地减少从磁盘读取数据的延时
+
+## 5.1 Buffer Pool Manager
+
+**内存结构**
+
+* **内存区域被组织成由多个定长`Page`构成的数组，数组中的每个元素称为`Frame`（`Page`需要放置到`Frame`中）**
+* **每个在内存中的`Page`都会记录在`Page Table`中**
+* ![5-1](/images/Database-System/5-1.png)
+
+**`Locks vs. Latches`**
+
+* `Locks`
+    * 保护数据库的逻辑内容免受其他事务的影响
+    * 在事务期间持有
+    * 需要支持回滚
+* `Latches`
+    * 保护`DBMS`中的关键数据避免收到其其他线程的影响
+    * 在操作期间持有
+    * 无需支持回滚
+
+**`Page Table vs. Page Directory`**
+
+* `Page Table`
+    * 存储的是`Page Id`到`Buffer Pool Frame`的映射关系
+* `Page Directory`
+    * 存储的是`Page Id`到该`Page`对应的磁盘文件的位置
+
+**`Buffer Pool Optimization`：**
+
+* `Multiple Buffer Pool`
+    * `Per-database buffer pool`
+    * `Per-page type buffer pool`
+    * 分成多个`Pool`可以减少`Latch`的竞争
+* `Pre-Fetching`
+    * 针对部分查询，比如`Sequential Scans`、`Index Scans`，可以将`Page`预取到`Buffer Poll`中的`Frame`
+* `Scan Sharing`
+    * 相同或者不同的查询（只要`Scan`部分相同或相似），可以复用同一份数据（这里指的是内存中的`Page`，无需取多次）
+* `Buffer Pool Bypass`
+    * `Sequential Scan`不会将从存储层取到的`Page`放入`Buffer Pool`，从而降低负载
+    * 在`Informix`中被称为`Light Scans`
+
+## 5.2 Replacement Policies
+
+## 5.3 Other Memory Pools
+
 # 6 Hash Tables
 
 # 7 Trees1
