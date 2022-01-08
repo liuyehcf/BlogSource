@@ -1234,7 +1234,9 @@ unset FOO
 env | grep FOO
 ```
 
-# 17 函数
+# 17 built-in函数
+
+`bash shell`的命令分为两类：外部命令和内部命令。外部命令是通过系统调用或独立的程序实现的，如`sed`、`awk`等等。内部命令是由特殊的文件格式（`.def`）所实现，如`cd`、`history`、`exec`等等
 
 ## 17.1 read
 

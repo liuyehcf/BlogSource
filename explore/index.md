@@ -33,9 +33,10 @@ date: 2018-02-05 09:25:59
     * 《Performance Analysis and Tuning on Modern CPUs》
 * [Julia Evans](https://jvns.ca/)
 
-# Kernel
+# 调度
 
-* [LDD-LinuxDeviceDrivers](https://github.com/gatieme/LDD-LinuxDeviceDrivers)
+* [Linux-进程的管理与调度](https://github.com/gatieme/LDD-LinuxDeviceDrivers)
+* [调度系统设计精要](https://draveness.me/system-design-scheduler/)
 
 # 数据库
 

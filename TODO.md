@@ -6,6 +6,9 @@
     * dnf
         * `dnf provides /usr/lib/grub/x86_64-efi`
     * [如何查看磁盘是gpt还是mbr](https://unix.stackexchange.com/questions/120221/gpt-or-mbr-how-do-i-know)
+    * [shell并行度控制](https://blog.csdn.net/d2457638978/article/details/80178847)
+    * [Shell多进程执行任务](https://blog.csdn.net/FataliBud/article/details/101692038)
+    * [linux exec与重定向](http://xstarcd.github.io/wiki/shell/exec_redirect.html)
     * 链接器
         * export STARROCKS_CXX_LINKER_FLAGS=""
         * export STARROCKS_CXX_LINKER_FLAGS="-fuse-ld=gold"
