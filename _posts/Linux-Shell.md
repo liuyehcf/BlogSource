@@ -15,24 +15,39 @@ categories:
 
 # 1 基本概念
 
-## 1.1 重定向
+## 1.1 I/O重定向
 
-| 命令 | 说明 |
+| 命令（可以加空格地方都加了空格，否则就是不能加空格） | 说明 |
 |:--|:--|
-| `command > file` | 将输出重定向到`file` |
-| `command < file` | 将输入重定向到`file` |
-| `command >> file` | 将输出以追加的方式重定向到`file` |
-| `n > file` | 将文件描述符为`n`的文件重定向到`file` |
-| `n >> file` | 将文件描述符为`n`的文件以追加的方式重定向到 `file` |
-| `n >& m` | 将输出文件`m`和`n`合并 |
-| `n <& m` | 将输入文件`m`和`n`合并 |
+| `[command] > [file]` | 重定向命令的`stdout`到文件`file` |
+| `[command] < [file]` | 重定向命令的`stdin`到文件`file` |
+| `[command] >> [file]` | 重定向并追加命令的`stdout`到文件`file` |
+| `0< [file]` | 重定向`stdin`到文件`file` |
+| `1> [file]` | 重定向`stdout`到文件`file` |
+| `1>> [file]` | 重定向并追加`stdout`到文件`file` |
+| `2> [file]` | 重定向`stderr`到文件`file` |
+| `2>> [file]` | 重定向并追加`stderr`到文件`file` |
+| `&> [file]` | 重定向`stdout`和`stderr`到文件`file` |
+| `&>> [file]` | 重定向并追加`stdout`和`stderr`到文件`file` |
+| `[fd_m]> [file]` | 重定向文件描述符`fd_m`到文件`file`，`fd_m`可以省略，默认为`1` |
+| `[fd_m]>&[fd_n]` | 重定向文件描述符`fd_m`到文件描述符`fd_n`，`fd_m`可以省略，默认为`1` |
+| `[fd_m]<> [file]` | 把文件`file`打开, 并且将文件描述符`fd_m`分配给它，`fd_m`可以省略，默认为`0` |
+| `0<&-`、`<&-` | 关闭`stdin` |
+| `[fd_in]<&-` | 关闭输入文件描述符`fd_in` |
+| `1>&-`、`>&-` | 关闭`stdout` |
+| `[fd_out]>&-` | 关闭输出文件描述符`fd_out` |
 | `<< tag` | 将开始标记 tag 和结束标记 tag 之间的内容作为输入 |
 
-**需要注意的是文件描述符 0 通常是标准输入（STDIN），1 是标准输出（STDOUT），2 是标准错误输出（STDERR）**
+**注意：**
+
+* `0`：`stdin`的文件描述符
+* `1`：`stdout`的文件描述符
+* `2`：`stderr`的文件描述符
+* `&-`：用于关闭文件描述符
 
 ### 1.1.1 Here Document
 
-Here Document 是 Shell 中的一种特殊的重定向方式，用来将输入重定向到一个交互式 Shell 脚本或程序
+`Here Document`是`Shell`中的一种特殊的重定向方式，用来将输入重定向到一个交互式`Shell`脚本或程序
 
 它的基本的形式如下
 
@@ -327,7 +342,7 @@ bash test.sh one two "three four"
 1. **`(())`：双括号（double parentheses）**
     * 详见[数值运算](#数值运算)
 1. **`> >& >> < &< << <>`：重定向（redirection）**
-    * 详见[重定向](#重定向)
+    * 详见[I/O重定向](#I/O重定向)
 1. **`|`：管道**
     * 详见[管道](#管道)
 1. **`(command)>  <(command)`：进程替换（Process Substitution)**
@@ -1237,6 +1252,103 @@ echo $y # 输出10
 
 * `exec 1>my.log 2>&1`：将标准输出、以及标准异常重定向到my.log文件中，对后续的所有命令都生效
 
+### 7.4.1 使用fifo管道特性控制
+
+```sh
+#!/bin/bash
+
+# 总数
+count=20 
+
+# 并行度
+paracount=5 
+
+# $$表示当前执行文件的PID
+tempfifo=$$.fifo        
+
+# 捕获信号 2 （ctrl C），并执行相应的动作
+trap "exec 1000>&-; exec 1000<&-; exit 0" 2
+
+# 创建fifo
+mkfifo ${tempfifo}
+
+# 将文件描述符 fd_fifo 分配给 tempfifo
+exec 1000<> ${tempfifo}
+rm -rf ${tempfifo}
+
+for ((i=1; i<=${paracount}; i++))
+do
+    # 向文件描述符中输入空行
+    echo >&1000
+done
+
+for((i=1; i<=${count}; i++))
+do
+    # 从文件描述符中读取一行
+    read -u 1000
+    {
+        echo "$i, sleep $(($i%5))s"
+        sleep $(($i%5))
+        echo >&1000
+    } &
+done
+
+# 等待所有后台任务结束
+wait
+
+echo "done"
+```
+
+**文件描述符用变量替代的版本：**
+
+```sh
+#!/bin/bash
+
+# 总数
+count=20 
+
+# 并行度
+paracount=5 
+
+# 文件描述符（随意定）
+fd_fifo=1000
+
+# $$表示当前执行文件的PID
+tempfifo=$$.fifo        
+
+# 捕获信号 2 （ctrl C），并执行相应的动作
+trap "eval 'exec ${fd_fifo}>&-; exec ${fd_fifo}<&-; exit 0'" 2
+
+# 创建fifo
+mkfifo ${tempfifo}
+
+# 将文件描述符 fd_fifo 分配给 tempfifo
+eval "exec ${fd_fifo}<> ${tempfifo}"
+rm -rf ${tempfifo}
+
+for ((i=1; i<=${paracount}; i++))
+do
+    # 向文件描述符中输入空行
+    eval "echo >&${fd_fifo}"
+done
+
+for((i=1; i<=${count}; i++))
+do
+    # 从文件描述符中读取一行
+    eval "read -u ${fd_fifo}"
+    {
+        echo "$i, sleep $(($i%5))s"
+        sleep $(($i%5))
+        eval "echo >&${fd_fifo}"
+    } &
+done
+
+# 等待所有后台任务结束
+wait
+
+echo "done"
+```
+
 ## 7.5 shopt
 
 用于启用/禁用shell扩展功能
@@ -1755,6 +1867,7 @@ tput setaf 1; tput setab 2; tput bold; echo "this is text"
 # 9 参考
 
 * [shell教程](http://www.runoob.com/linux/linux-shell.html)
+* [linux exec与重定向](http://xstarcd.github.io/wiki/shell/exec_redirect.html)
 * [Shell脚本8种字符串截取方法总结](https://www.jb51.net/article/56563.htm)
 * [shell的命令替换和命令组合](https://www.cnblogs.com/f-ck-need-u/archive/2017/08/20/7401591.html)
 * [shell脚本--数值计算](https://www.cnblogs.com/-beyond/p/8232496.html)
@@ -1769,3 +1882,4 @@ tput setaf 1; tput setab 2; tput bold; echo "this is text"
 * [how-to-trim-whitespace-from-a-bash-variable](https://stackoverflow.com/questions/369758/how-to-trim-whitespace-from-a-bash-variable)
 * [How to change the output color of echo in Linux](https://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux)
 * [jonsuh/.bash_profile](https://gist.github.com/jonsuh/3c89c004888dfc7352be)
+* [shell并行执行程序](https://blog.csdn.net/d2457638978/article/details/80178847)
