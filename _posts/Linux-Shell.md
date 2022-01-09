@@ -245,7 +245,7 @@ shell中的特殊符号包括如下几种
 1. **`;;`：连续分号（Terminator [double semicolon]）**
     * 在使用case选项的时候，作为每个选项的终结符
 1. **`.`：点号（dot command [period]）**
-    * 相当于bash内建命令source
+    * 相当于`bash`内建命令`source`
     * 作为文件名的一部分，在文件名的开头
     * 作为目录名，一个点代表当前目录，两个点号代表上层目录（当前目录的父目录）
     * 正则表达式中，点号表示任意一个字符
@@ -1244,7 +1244,37 @@ echo $y # 输出10
 * `set -o pipefail`
 * `eval set -- "some new params"`：设置当前shell的参数
 
-## 7.4 exec
+## 7.4 source
+
+**执行`shell`脚本有2种方式：**
+
+1. **`./script.sh`或者`sh script.sh`**
+    * 当前`shell`是父进程，生成一个子`shell`进程，在子`shell`中执行脚本。脚本执行完毕，退出子`shell`，回到当前`shell`
+1. **`source script.sh`或者`. script.sh`**
+    * 在当前上下文中执行脚本，不会生成新的进程。脚本执行完毕，回到当前`shell`
+
+**示例：**
+
+```sh
+cat > test.sh << 'EOF'
+#!/bin/bash
+
+cd /
+EOF
+
+dir=$(pwd)
+echo "current dir: '$(pwd)'"
+
+# 当前的工作目录没有切换
+cd ${dir} && bash test.sh && echo "current dir: '$(pwd)' after execute script"
+
+# 当前的工作目录切换到了 /
+cd ${dir} && source test.sh && echo "current dir: '$(pwd)' after execute script using source"
+
+cd ${dir}
+```
+
+## 7.5 exec
 
 `exec`用于进程替换（类似系统调用`exec`），或者标准输入输出的重定向
 
@@ -1252,7 +1282,7 @@ echo $y # 输出10
 
 * `exec 1>my.log 2>&1`：将标准输出、以及标准异常重定向到my.log文件中，对后续的所有命令都生效
 
-### 7.4.1 使用fifo管道特性控制
+### 7.5.1 使用fifo管道特性控制
 
 ```sh
 #!/bin/bash
@@ -1403,7 +1433,7 @@ wait
 echo "done"
 ```
 
-## 7.5 shopt
+## 7.6 shopt
 
 用于启用/禁用shell扩展功能
 
@@ -1412,7 +1442,7 @@ echo "done"
 * `shopt -s extglob`：启用`extglob`
 * `shopt -u extglob`：禁用`extglob`
 
-## 7.6 read
+## 7.7 read
 
 **格式：**
 
@@ -1430,7 +1460,7 @@ echo "done"
 `-t`：后面跟秒数，定义输入字符的等待时间
 `-u`：后面跟fd，从文件描述符中读入，该文件描述符可以是exec新开启的
 
-## 7.7 getopts
+## 7.8 getopts
 
 **格式：`getopts [option[:]] VARIABLE`**
 
@@ -1522,7 +1552,7 @@ option '-b', OPTIND: '7'
 
 **注意：如果getopts置于函数内部时，getopts解析的是函数的所有入参，可以通过`$@`将脚本的所有参数传递给函数**
 
-## 7.8 getopt
+## 7.9 getopt
 
 **格式：`getopt [options] -- parameters`**
 
@@ -1696,7 +1726,7 @@ Remaining arguments:
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-## 7.9 printf
+## 7.10 printf
 
 主要用于格式转换
 
@@ -1707,7 +1737,7 @@ ff
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-## 7.10 declare
+## 7.11 declare
 
 `declare`用于定义变量、增减属性、查看变量信息。若在函数内部使用`declare`，那么默认是`local`的
 
@@ -1740,7 +1770,7 @@ declare -A <map>
 declare -i <integer>
 ```
 
-## 7.11 local
+## 7.12 local
 
 用于在函数内定义局部变量，其作用域就是函数本身
 
@@ -1759,7 +1789,7 @@ test
 echo "outside function: '${arr[@]}'"
 ```
 
-## 7.12 typeset
+## 7.13 typeset
 
 **功能属于`declare`的子集，不推荐使用**
 

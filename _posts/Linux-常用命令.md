@@ -2365,7 +2365,10 @@ docker -H tcp://localhost:18081 images
 **如何安装：**
 
 ```sh
+# 安装 yum 源
 yum install -y epel-release
+
+# 安装 dsniff
 yum install -y dsniff
 ```
 
@@ -2516,7 +2519,7 @@ make install
 # 安装 yum 源
 yum install -y epel-release
 
-# 安装hping3
+# 安装 hping3
 yum install -y hping3
 ```
 
@@ -2733,7 +2736,25 @@ ClientAliveCountMax 3
 * `DATA, data resident set size or DRS`：进程非代码所占的物理内存（包括数据以及堆栈）
 * `SHR, shared memory size`：进程使用的共享内存大小
 
-## 6.5 slabtop
+## 6.5 htop
+
+**`htop`在界面上提供了非常详细的操作方式**
+
+**安装：**
+
+```sh
+# 安装 yum 源
+yum install -y epel-release
+
+# 安装 htop
+yum install -y htop
+```
+
+**示例：**
+
+* `htop`
+
+## 6.6 slabtop
 
 `slabtop`用于展示内核的`slab cache`相关信息
 
@@ -2741,7 +2762,7 @@ ClientAliveCountMax 3
 
 * `slabtop`
 
-## 6.6 sar
+## 6.7 sar
 
 sar是由有类似日志切割的功能的，它会依据`/etc/cron.d/sysstat`中的计划任务，将日志放入`/var/log/sa/`中
 
@@ -2777,7 +2798,7 @@ yum install -y sysstat
 * `sar -P ALL -u 1 10`：输出每个核的cpu的相关信息
 * `sar -n DEV 1`：查看网卡实时流量
 
-## 6.7 tsar
+## 6.8 tsar
 
 **格式：**
 
@@ -2791,7 +2812,7 @@ yum install -y sysstat
 
 * `tsar -l`
 
-## 6.8 vmstat
+## 6.9 vmstat
 
 **格式：**
 
@@ -2853,7 +2874,7 @@ yum install -y sysstat
 * `vmstat -p /dev/sda1`
 * `vmstat -m`
 
-## 6.9 mpstat
+## 6.10 mpstat
 
 `mpstat`（`multiprocessor statistics`）是实时监控工具，报告与cpu的一些统计信息这些信息都存在`/proc/stat`文件中，在多cpu系统里，其不但能查看所有的cpu的平均状况的信息，而且能够有查看特定的cpu信息，`mpstat`最大的特点是可以查看多核心的cpu中每个计算核心的统计数据；而且类似工具`vmstat`只能查看系统的整体cpu情况
 
@@ -2880,7 +2901,7 @@ yum install -y sysstat
 * `mpstat 2 5`：打印整体信息，间隔2s，打印5次
 * `mpstat -P ALL 2 5`：已单核为粒度打印信息，间隔2s，打印5次
 
-## 6.10 iostat
+## 6.11 iostat
 
 **格式：**
 
@@ -2917,7 +2938,7 @@ yum install -y sysstat
 
 * `iostat -d -t -x 1`
 
-## 6.11 dstat
+## 6.12 dstat
 
 **格式：**
 
@@ -3006,13 +3027,13 @@ yum install -y sysstat
     * 等价于`dstat --time --cpu --net --disk --sys --load --proc --top-cpu`
 * `dstat -tcyif`
 
-## 6.12 ifstat
+## 6.13 ifstat
 
 该命令用于查看网卡的流量状况，包括成功接收/发送，以及错误接收/发送的数据包，看到的东西基本上和`ifconfig`类似
 
-## 6.13 pidstat
+## 6.14 pidstat
 
-## 6.14 nethogs
+## 6.15 nethogs
 
 nethogs会以进程为单位，列出每个进程占用的网卡以及带宽
 
@@ -3022,7 +3043,7 @@ nethogs会以进程为单位，列出每个进程占用的网卡以及带宽
 # 安装 yum 源
 yum install -y epel-release
 
-# 安装nethogs
+# 安装 nethogs
 yum install -y nethogs
 ```
 
@@ -3030,9 +3051,9 @@ yum install -y nethogs
 
 * `nethogs`
 
-## 6.15 iptraf
+## 6.16 iptraf
 
-## 6.16 iftop
+## 6.17 iftop
 
 iftop会以连接为单位，列出每个连接的进出流量
 
@@ -3042,7 +3063,7 @@ iftop会以连接为单位，列出每个连接的进出流量
 # 安装 yum 源
 yum install -y epel-release
 
-# 安装ifgop
+# 安装 iftop
 yum install -y iftop
 ```
 
@@ -3050,7 +3071,7 @@ yum install -y iftop
 
 * `iftop`
 
-## 6.17 iotop
+## 6.18 iotop
 
 **安装：**
 
@@ -3058,7 +3079,7 @@ yum install -y iftop
 # 安装 yum 源
 yum install -y epel-release
 
-# 安装iotop
+# 安装 iotop
 yum install -y iotop
 ```
 
@@ -3433,9 +3454,31 @@ CONFIG_KVM_MMU_AUDIT=y
 
 ## 10.1 yum
 
-**示例：**
+**源管理（`/etc/yum.repos.d`）：**
 
-* `yum list docker-ce --showduplicates | sort -r`：查询软件的版本信息
+* `yum repolist`
+* `yum-config-manager --enable <repo>`
+* `yum-config-manager --disable <repo>`
+* `yum-config-manager --add-repo <repo_url>`
+
+**安装、卸载：**
+
+* `yum install <software>`
+* `yum remove <software>`
+* `yum localinstall <rpms>`
+
+**缓存：**
+
+* `yum makecache`
+    * `yum makecache fast`：确保缓存仅包含最新的信息，等效于`yum clean expire-cache`
+* `yum clean`：清除缓存
+    * `yum clean expire-cache`：清除无效的缓存
+    * `yum clean all`：清除所有缓存
+
+**软件列表：**
+
+* `yum list`：列出所有可安装的软件
+    * `yum list docker-ce --showduplicates | sort -r`：查询软件的版本信息
 
 ## 10.2 dnf
 
