@@ -13,7 +13,47 @@ categories:
 
 <!--more-->
 
-# 1 管道
+# 1 基本概念
+
+## 1.1 重定向
+
+| 命令 | 说明 |
+|:--|:--|
+| `command > file` | 将输出重定向到`file` |
+| `command < file` | 将输入重定向到`file` |
+| `command >> file` | 将输出以追加的方式重定向到`file` |
+| `n > file` | 将文件描述符为`n`的文件重定向到`file` |
+| `n >> file` | 将文件描述符为`n`的文件以追加的方式重定向到 `file` |
+| `n >& m` | 将输出文件`m`和`n`合并 |
+| `n <& m` | 将输入文件`m`和`n`合并 |
+| `<< tag` | 将开始标记 tag 和结束标记 tag 之间的内容作为输入 |
+
+**需要注意的是文件描述符 0 通常是标准输入（STDIN），1 是标准输出（STDOUT），2 是标准错误输出（STDERR）**
+
+### 1.1.1 Here Document
+
+Here Document 是 Shell 中的一种特殊的重定向方式，用来将输入重定向到一个交互式 Shell 脚本或程序
+
+它的基本的形式如下
+
+```sh
+command << delimiter
+    document
+delimiter
+```
+
+例如
+
+```sh
+wc -l << EOF
+    欢迎来到
+    菜鸟教程
+    www.runoob.com
+EOF
+3          # 输出结果为 3 行
+```
+
+## 1.2 管道
 
 **管道命令使用的是`|`这个界定符号，这个管道命令`|`仅能处理有前面一个命令传来的`正确信息`，也就是`standard output`的信息，对于standard error并没有直接处理的能力**
 
@@ -21,7 +61,7 @@ categories:
 
 **管道是作为子进程的方式来运行的。因此在管道中进行一些变量赋值操作，在管道结束后会丢失**
 
-# 2 命令替换
+## 1.3 命令替换
 
 **`命令替换（command substitution）`可以让`括号里`或`单引号里`的命令提前于整个命令运行，然后将`执行结果`插入在命令替换符号处。由于命令替换的结果经常交给外部命令，不应该让结果有换行的行为，所以默认将所有的换行符替换为了空格（实际上所有的空白符都被压缩成了单个空格）**
 
@@ -39,7 +79,7 @@ echo "$(ls)"
 echo $(ls)
 ```
 
-# 3 进程替换
+## 1.4 进程替换
 
 **进程替换（Process Substitution）的作用有点类似管道，但在实现方式上有所区别，管道是作为子进程的方式来运行的，而进程替换会在`/dev/fd/`下面产生类似`/dev/fd/63`,`/dev/fd/62`这类临时文件，用来传递数据。用法如下：**
 
@@ -153,86 +193,31 @@ echo "finish"
 exit 0
 ```
 
-# 4 数值运算
+## 1.5 环境变量
 
-## 4.1 `$[]`
-
-**整数扩展，会返回执行后的结果。如果有`,`分隔，那么只返回最后一个表达式执行的结果**
+### 1.5.1 单独给某个程序传递环境变量
 
 ```sh
-echo $[ 1 + 3 ]
-
-a=10;b=5
-echo $[ $a + $b ]
-echo $[ $a - $b ]
-echo $[ $a * $b ]       #此时不用对*转义
-echo $[ $a / $b ]
-echo $[ $a % $b ]
-
-echo $[ 1 + 3, 5 + 6 ]
+FOO=bar env | grep FOO
+env | grep FOO
 ```
 
-## 4.2 `$(())`
-
-**`$(())`有如下两个功能**
-
-1. 数值计算
-1. 进制转换
-* **在`$(())`中的变量名称，可于其前面加$符号来替换，也可以不用**
+### 1.5.2 给管道中的所有命令传递环境变量
 
 ```sh
-# 数值计算
-a=5;b=7;c=2
-echo $((a+b*c))
-echo $(($a+$b*$c))
-
-# 进制转换
-a=06;b=09;c=02;
-echo $(( 10#$a + 10#$b + 10#$c ))
-echo $((16#ff))
-echo $((8#77))
+FOO=bar bash -c 'somecommand someargs | somecommand2'
 ```
 
-## 4.3 `(())`
-
-**整数扩展，只计算，不返回值。通常用于重定义变量值，只有赋值语句才能起到重定义变量的作用**
+### 1.5.3 给会话中的所有命令传递环境变量
 
 ```sh
-a=1
-((a+10))
-echo $a     # 输出1
-
-((a+=10))
-echo $a     # 输出11
-
-((a++))
-echo $a     # 输出12
+export FOO=bar
+env | grep FOO
+unset FOO
+env | grep FOO
 ```
 
-## 4.4 expr
-
-**`expr`是一个用于数值计算的命令，运算符号两边必须加空格，不加空格会原样输出，不会计算**
-
-```sh
-expr 1 + 3
- 
-a=10;b=5
-expr $a + $b
-expr $a - $b
-expr $a \* $b   #因为乘号*在shell中有特殊的含义，所以要转义
-expr $a / $b    #除法取商
-expr $a % $b    #除法取模
-```
-
-## 4.5 bc
-
-**`bc`可以用来进行浮点数运算**
-
-```sh
-echo "scale=2; 1/3" | bc
-```
-
-# 5 特殊符号
+# 2 特殊符号
 
 shell中的特殊符号包括如下几种
 
@@ -352,159 +337,90 @@ bash test.sh one two "three four"
 1. **`&`：与号（Run job in background[ampersand]）**
     * 如果命令后面跟上一个&符号，这个命令将会在后台运行
 
-# 6 判断式
+# 3 数据类型
 
-**关于某个文件名的“文件类型”判断，如`test -e filename`**
+## 3.1 数值运算
 
-* **`-e`：该文件名是否存在**
-* **`-f`：该文件名是否存在且为文件**
-* **`-d`：该文件名是否存在且为目录**
-* `-b`：该文件名是否存在且为一个block device设备
-* `-c`：该文件名是否存在且为一个character device设备
-* `-S`：该文件名是否存在且为一个Socket文件
-* `-p`：该文件名是否存在且为以FIFO（pipe）文件
-* `-L`：该文件名是否存在且为一个链接文件
+### 3.1.1 `$[]`
 
-**关于文件的权限检测，如`test -r filename`**
-
-* **`-r`：检测该文件名是否存在且具有"可读"的权限**
-* **`-w`：检测该文件名是否存在且具有"可写"的权限**
-* **`-x`：检测该文件名是否存在且具有"可执行"的权限**
-* `-u`：检测该文件名是否存在且具有"SUID"的属性
-* `-g`：检测该文件名是否存在且具有"GUID"的属性
-* `-k`：检测该文件名是否存在且具有"Sticky bit（SBIT）"的属性
-* `-s`：检测该文件名是否存在且为"非空白文件"
-
-**两个文件之间的比较，如`test file1 -nt file2`**
-
-* `-nt`：（newer than） 判断file1是否比file2新
-* `-ot`：（older than） 判断file1是否比file2旧
-* `-ef`：判断file1与file2是否为同一文件，可用在判断hard link的判断上，主要意义在于判断两个文件是否均指向同一个inode
-
-**数值比较，如`test n1 -eq n2`**
-
-* **`-eq`：两数值相等（equal）**
-* **`-ne`：两数值不等（not equal）**
-* **`-gt`：n1大于n1（greater than）**
-* **`-lt`：n1小于n2（less than）**
-* **`-ge`：n1大于等于n2（greater than or equal）**
-* **`-le`：n1小于n2（less than or equal）**
-
-**字符串比较，例如`test n1 = n2`**
-
-* **`-z`：判定字符串是否为空，空返回true**
-    * **在`[]`中，变量需要加引号，例如`[ -z "${a}}" ]`**
-    * **在`[[]]`中，变量需要加引号，例如`[[ -z ${a}} ]]`**
-* **`-n`：判断字符串是否为空，非空返回true**
-    * **在`[]`中，变量需要加引号，例如`[ -n "${a}}" ]`**
-    * **在`[[]]`中，变量需要加引号，例如`[[ -n ${a}} ]]`**
-* **`=`：判断str1是否等于str2**
-* **`!=`：判断str1是否等于str2**
-* **字符串变量的引用方式：`"${var_name}"`，即必须加上双引号`""`**
-
-**逻辑与/或/非**
-
-* **`-a`：两个条件同时成立，返回true，如test -r file1 -a -x file2**
-* **`-o`：任一条件成立，返回true，如test -r file1 -o -x file2**
-* **`!`：反向状态**
-
-# 7 判断符号`[]`/`[[]]`
-
-## 7.1 `[]`
-
-**判断符号`[]`与判断式`test`用法基本一致，有以下几条注意事项**
-
-1. 如果要在bash的语法当中使用括号作为shell的判断式时，**必须要注意在中括号的两端需要有空格符来分隔**
-1. **逻辑与逻辑或，用的是`&&`和`||`，且需要将条件分开写，如下**
-    * `[ condition1 ] && [ condition2 ]`
-    * `[ condition1 ] || [ condition2 ]`
-1. **不可以使用通配符**
-1. **仅支持`=`作为相等比较的运算符，不支持`==`（取决于shell的实现，`bash`就支持这两种，但是`zsh`对语法更严格，仅支持`=`）**
-
-**示例：**
+**整数扩展，会返回执行后的结果。如果有`,`分隔，那么只返回最后一个表达式执行的结果**
 
 ```sh
-# 正确写法
-if [ 2 -gt 1 ] && [ 3 -gt 2 ]
-then
-    echo "yes"
-else
-    echo "no"
-fi
+echo $[ 1 + 3 ]
 
-# 错误写法
-if [ 2 -gt 1 && 3 -gt 2 ]
-then
-    echo "yes"
-else
-    echo "no"
-fi
+a=10;b=5
+echo $[ $a + $b ]
+echo $[ $a - $b ]
+echo $[ $a * $b ]       #此时不用对*转义
+echo $[ $a / $b ]
+echo $[ $a % $b ]
 
-# 正确写法
-if [ 2 -gt 1 -a 3 -gt 2 ]
-then
-    echo "yes"
-else
-    echo "no"
-fi
-
-# 错误写法
-if [ 2 -gt 1 ] -a [ 3 -gt 2 ]
-then
-    echo "yes"
-else
-    echo "no"
-fi
+echo $[ 1 + 3, 5 + 6 ]
 ```
 
-## 7.2 `[[]]`
+### 3.1.2 `$(())`
 
-**判断符号`[[]]`与判断式`test`用法基本一致，有以下几条注意事项**
+**`$(())`有如下两个功能**
 
-1. 如果要在bash的语法当中使用括号作为shell的判断式时，**必须要注意在中括号的两端需要有空格符来分隔**
-1. **逻辑与逻辑或，用的是`&&`和`||`，用一个`[]`或者用两个`[[]]`都可以，但使用`[[]]`时不能用`-a`和`-o`**
-1. **可以使用通配符**
-1. **支持`=`与`==`作为相等比较的运算符**
-
-**示例：**
+1. 数值计算
+1. 进制转换
+* **在`$(())`中的变量名称，可于其前面加$符号来替换，也可以不用**
 
 ```sh
-# 正确写法
-if [[ 2 -gt 1 ]] && [[ 3 -gt 2 ]]
-then
-    echo "yes"
-else
-    echo "no"
-fi
+# 数值计算
+a=5;b=7;c=2
+echo $((a+b*c))
+echo $(($a+$b*$c))
 
-# 正确写法
-if [[ 2 -gt 1 && 3 -gt 2 ]]
-then
-    echo "yes"
-else
-    echo "no"
-fi
-
-# 错误写法
-if [[ 2 -gt 1 -a 3 -gt 2 ]]
-then
-    echo "yes"
-else
-    echo "no"
-fi
-
-# 错误写法
-if [[ 2 -gt 1 ]] -a [[ 3 -gt 2 ]]
-then
-    echo "yes"
-else
-    echo "no"
-fi
+# 进制转换
+a=06;b=09;c=02;
+echo $(( 10#$a + 10#$b + 10#$c ))
+echo $((16#ff))
+echo $((8#77))
 ```
 
-# 8 String
+### 3.1.3 `(())`
 
-## 8.1 拼接字符串
+**整数扩展，只计算，不返回值。通常用于重定义变量值，只有赋值语句才能起到重定义变量的作用**
+
+```sh
+a=1
+((a+10))
+echo $a     # 输出1
+
+((a+=10))
+echo $a     # 输出11
+
+((a++))
+echo $a     # 输出12
+```
+
+### 3.1.4 expr
+
+**`expr`是一个用于数值计算的命令，运算符号两边必须加空格，不加空格会原样输出，不会计算**
+
+```sh
+expr 1 + 3
+ 
+a=10;b=5
+expr $a + $b
+expr $a - $b
+expr $a \* $b   #因为乘号*在shell中有特殊的含义，所以要转义
+expr $a / $b    #除法取商
+expr $a % $b    #除法取模
+```
+
+### 3.1.5 bc
+
+**`bc`可以用来进行浮点数运算**
+
+```sh
+echo "scale=2; 1/3" | bc
+```
+
+## 3.2 字符串
+
+### 3.2.1 拼接字符串
 
 ```sh
 your_name="qinjx"
@@ -512,14 +428,14 @@ greeting="hello, "${your_name}" \!"
 echo ${greeting}
 ```
 
-## 8.2 获取字符串长度
+### 3.2.2 获取字符串长度
 
 ```sh
 text="abcdefg"
 echo "字符串长度为 ${#text}"
 ```
 
-## 8.3 提取子字符串
+### 3.2.3 提取子字符串
 
 下面以字符串`http://www.aaa.com/123.htm`为例，介绍几种不同的截取方式
 
@@ -601,7 +517,7 @@ var='http://www.aaa.com/123.htm'
 echo ${var:0-7}
 ```
 
-## 8.4 条件默认值
+### 3.2.4 条件默认值
 
 **变量为空时，返回默认值**
 
@@ -636,7 +552,7 @@ echo ${FOO:+val2} # 输出空白
 echo ${FOO:?error} # 输出error
 ```
 
-## 8.5 按行读取
+### 3.2.5 按行读取
 
 **方式1**
 
@@ -667,7 +583,7 @@ do
 done
 ```
 
-## 8.6 判断字符串是否包含
+### 3.2.6 判断字符串是否包含
 
 **方式1：利用运算符`=~`**
 
@@ -706,9 +622,9 @@ else
 fi
 ```
 
-## 8.7 trim
+### 3.2.7 trim
 
-### 8.7.1 方法1
+#### 3.2.7.1 方法1
 
 ```sh
 function trim() {
@@ -735,7 +651,7 @@ test3="$(trim " one leading and one trailing ")"
 echo "'$test1', '$test2', '$test3', '$test4', '$test5', '$test6'"
 ```
 
-### 8.7.2 方法2
+#### 3.2.7.2 方法2
 
 ```sh
 function trim() {
@@ -753,7 +669,7 @@ test3="$(trim " one leading and one trailing ")"
 echo "'$test1', '$test2', '$test3', '$test4', '$test5', '$test6'"
 ```
 
-# 9 Array
+## 3.3 数组
 
 Shell 数组用括号来表示，元素用`空格`符号分割开，语法格式如下：
 
@@ -848,7 +764,7 @@ done
 
 1. 数组下标从0开始
 
-## 9.1 集合运算
+### 3.3.1 集合运算
 
 假设`F1`和`F2`是两个数组
 
@@ -876,7 +792,7 @@ F2=( 2 3 4 )
 echo ${F1[@]} ${F2[@]} | tr ' ' '\n' | sort | uniq -u
 ```
 
-# 10 Map
+## 3.4 字典
 
 Shell map用括号来表示，元素用`空格`符号分割开，语法格式如下：
 
@@ -934,9 +850,159 @@ do
 done
 ```
 
-# 11 控制流
+# 4 条件判断
 
-## 11.1 if
+## 4.1 test
+
+**关于某个文件名的“文件类型”判断，如`test -e filename`**
+
+* **`-e`：该文件名是否存在**
+* **`-f`：该文件名是否存在且为文件**
+* **`-d`：该文件名是否存在且为目录**
+* `-b`：该文件名是否存在且为一个block device设备
+* `-c`：该文件名是否存在且为一个character device设备
+* `-S`：该文件名是否存在且为一个Socket文件
+* `-p`：该文件名是否存在且为以FIFO（pipe）文件
+* `-L`：该文件名是否存在且为一个链接文件
+
+**关于文件的权限检测，如`test -r filename`**
+
+* **`-r`：检测该文件名是否存在且具有"可读"的权限**
+* **`-w`：检测该文件名是否存在且具有"可写"的权限**
+* **`-x`：检测该文件名是否存在且具有"可执行"的权限**
+* `-u`：检测该文件名是否存在且具有"SUID"的属性
+* `-g`：检测该文件名是否存在且具有"GUID"的属性
+* `-k`：检测该文件名是否存在且具有"Sticky bit（SBIT）"的属性
+* `-s`：检测该文件名是否存在且为"非空白文件"
+
+**两个文件之间的比较，如`test file1 -nt file2`**
+
+* `-nt`：（newer than） 判断file1是否比file2新
+* `-ot`：（older than） 判断file1是否比file2旧
+* `-ef`：判断file1与file2是否为同一文件，可用在判断hard link的判断上，主要意义在于判断两个文件是否均指向同一个inode
+
+**数值比较，如`test n1 -eq n2`**
+
+* **`-eq`：两数值相等（equal）**
+* **`-ne`：两数值不等（not equal）**
+* **`-gt`：n1大于n1（greater than）**
+* **`-lt`：n1小于n2（less than）**
+* **`-ge`：n1大于等于n2（greater than or equal）**
+* **`-le`：n1小于n2（less than or equal）**
+
+**字符串比较，例如`test n1 = n2`**
+
+* **`-z`：判定字符串是否为空，空返回true**
+    * **在`[]`中，变量需要加引号，例如`[ -z "${a}}" ]`**
+    * **在`[[]]`中，变量需要加引号，例如`[[ -z ${a}} ]]`**
+* **`-n`：判断字符串是否为空，非空返回true**
+    * **在`[]`中，变量需要加引号，例如`[ -n "${a}}" ]`**
+    * **在`[[]]`中，变量需要加引号，例如`[[ -n ${a}} ]]`**
+* **`=`：判断str1是否等于str2**
+* **`!=`：判断str1是否等于str2**
+* **字符串变量的引用方式：`"${var_name}"`，即必须加上双引号`""`**
+
+**逻辑与/或/非**
+
+* **`-a`：两个条件同时成立，返回true，如test -r file1 -a -x file2**
+* **`-o`：任一条件成立，返回true，如test -r file1 -o -x file2**
+* **`!`：反向状态**
+
+## 4.2 `[]`
+
+**判断符号`[]`与判断式`test`用法基本一致，有以下几条注意事项**
+
+1. 如果要在bash的语法当中使用括号作为shell的判断式时，**必须要注意在中括号的两端需要有空格符来分隔**
+1. **逻辑与逻辑或，用的是`&&`和`||`，且需要将条件分开写，如下**
+    * `[ condition1 ] && [ condition2 ]`
+    * `[ condition1 ] || [ condition2 ]`
+1. **不可以使用通配符**
+1. **仅支持`=`作为相等比较的运算符，不支持`==`（取决于shell的实现，`bash`就支持这两种，但是`zsh`对语法更严格，仅支持`=`）**
+
+**示例：**
+
+```sh
+# 正确写法
+if [ 2 -gt 1 ] && [ 3 -gt 2 ]
+then
+    echo "yes"
+else
+    echo "no"
+fi
+
+# 错误写法
+if [ 2 -gt 1 && 3 -gt 2 ]
+then
+    echo "yes"
+else
+    echo "no"
+fi
+
+# 正确写法
+if [ 2 -gt 1 -a 3 -gt 2 ]
+then
+    echo "yes"
+else
+    echo "no"
+fi
+
+# 错误写法
+if [ 2 -gt 1 ] -a [ 3 -gt 2 ]
+then
+    echo "yes"
+else
+    echo "no"
+fi
+```
+
+## 4.3 `[[]]`
+
+**判断符号`[[]]`与判断式`test`用法基本一致，有以下几条注意事项**
+
+1. 如果要在bash的语法当中使用括号作为shell的判断式时，**必须要注意在中括号的两端需要有空格符来分隔**
+1. **逻辑与逻辑或，用的是`&&`和`||`，用一个`[]`或者用两个`[[]]`都可以，但使用`[[]]`时不能用`-a`和`-o`**
+1. **可以使用通配符**
+1. **支持`=`与`==`作为相等比较的运算符**
+
+**示例：**
+
+```sh
+# 正确写法
+if [[ 2 -gt 1 ]] && [[ 3 -gt 2 ]]
+then
+    echo "yes"
+else
+    echo "no"
+fi
+
+# 正确写法
+if [[ 2 -gt 1 && 3 -gt 2 ]]
+then
+    echo "yes"
+else
+    echo "no"
+fi
+
+# 错误写法
+if [[ 2 -gt 1 -a 3 -gt 2 ]]
+then
+    echo "yes"
+else
+    echo "no"
+fi
+
+# 错误写法
+if [[ 2 -gt 1 ]] -a [[ 3 -gt 2 ]]
+then
+    echo "yes"
+else
+    echo "no"
+fi
+```
+
+# 5 控制流
+
+## 5.1 if
 
 ```sh
 if condition
@@ -948,7 +1014,7 @@ then
 fi
 ```
 
-## 11.2 if else
+## 5.2 if else
 
 ```sh
 if condition
@@ -962,7 +1028,7 @@ else
 fi
 ```
 
-## 11.3 if else-if else
+## 5.3 if else-if else
 
 ```sh
 if condition1
@@ -976,7 +1042,7 @@ else
 fi
 ```
 
-## 11.4 for
+## 5.4 for
 
 ```sh
 for var in item1 item2 ... itemN
@@ -998,7 +1064,7 @@ do
 done
 ```
 
-## 11.5 while
+## 5.5 while
 
 ```sh
 while condition
@@ -1007,7 +1073,7 @@ do
 done
 ```
 
-## 11.6 until
+## 5.6 until
 
 ```sh
 until condition
@@ -1016,7 +1082,7 @@ do
 done
 ```
 
-## 11.7 case
+## 5.7 case
 
 ```sh
 case 值 in
@@ -1035,7 +1101,7 @@ case 值 in
 esac
 ```
 
-### 11.7.1 判断是否为数字
+### 5.7.1 判断是否为数字
 
 ```sh
 function isNumber() {
@@ -1059,9 +1125,9 @@ do
 done
 ```
 
-# 12 函数
+# 6 函数
 
-## 12.1 参数传递
+## 6.1 参数传递
 
 **传递数组**
 
@@ -1080,7 +1146,7 @@ array=('a', 'b', 'c', 'd', 'e')
 func "${array[*]}"
 ```
 
-## 12.2 标准输出
+## 6.2 标准输出
 
 **返回数组**
 
@@ -1096,7 +1162,7 @@ array=( $(func) )
 echo ${array[*]}
 ```
 
-## 12.3 返回值
+## 6.3 返回值
 
 ```sh
 function func() {
@@ -1110,135 +1176,11 @@ func
 echo $?
 ```
 
-# 13 重定向
-
-| 命令 | 说明 |
-|:--|:--|
-| `command > file` | 将输出重定向到`file` |
-| `command < file` | 将输入重定向到`file` |
-| `command >> file` | 将输出以追加的方式重定向到`file` |
-| `n > file` | 将文件描述符为`n`的文件重定向到`file` |
-| `n >> file` | 将文件描述符为`n`的文件以追加的方式重定向到 `file` |
-| `n >& m` | 将输出文件`m`和`n`合并 |
-| `n <& m` | 将输入文件`m`和`n`合并 |
-| `<< tag` | 将开始标记 tag 和结束标记 tag 之间的内容作为输入 |
-
-**需要注意的是文件描述符 0 通常是标准输入（STDIN），1 是标准输出（STDOUT），2 是标准错误输出（STDERR）**
-
-## 13.1 Here Document
-
-Here Document 是 Shell 中的一种特殊的重定向方式，用来将输入重定向到一个交互式 Shell 脚本或程序
-
-它的基本的形式如下
-
-```sh
-command << delimiter
-    document
-delimiter
-```
-
-例如
-
-```sh
-wc -l << EOF
-    欢迎来到
-    菜鸟教程
-    www.runoob.com
-EOF
-3          # 输出结果为 3 行
-```
-
-# 14 捕获信号
-
-`trap`常用来做一些清理工作，比如你在脚本中将一些进程放到后台执行，但如果脚本异常终止（比如用ctrl+c），那么这些后台进程可能得不到及时处理，这个时候就可以用`trap`来捕获信号，从而执行清理动作
-
-**格式**
-
-* `trap "commands" signal-list`
-
-**注意**
-
-* 如果commands中包含变量，那么该变量在执行`trap`语句时就已解析，而非到真正捕获信号的时候才解析
-
-**示例1**
-
-```sh
-# do other things
-
-ping www.baidu.com &
-
-ping_pid=$!
-trap "kill -9 ${ping_pid}; exit 0" SIGINT SIGTERM EXIT
-
-sleep 2
-# do other things
-```
-
-**示例2（错误），该示例与示例1的差别就是用sudo执行ping命令**
-
-* 这样是没法杀死`ping`这个后台进程的，因为`ping_pid`变量获取到的并不是`ping`的`pid`，而是`sudo`的`pid`
-
-```sh
-# do other things
-
-sudo ping www.baidu.com &
-
-ping_pid=$!
-trap "kill -9 ${ping_pid}; exit 0" SIGINT SIGTERM EXIT
-
-sleep 2
-# do other things
-```
-
-**实例3（对实例2进行调整）**
-
-```sh
-# do other things
-
-sudo ping www.baidu.com &
-
-ping_pid=$!
-trap "pkill -9 ping; exit 0" SIGINT SIGTERM EXIT
-
-sleep 2
-# do other things
-```
-
-# 15 选项分隔符
-
-选项分隔符为`--`，它有什么用呢？
-
-举个简单的例子，如何创建一个名为`-f`的目录？`mkdir -f`肯定是不行的，因为`-f`会被当做mkdir命令的选项，此时我们就需要选项分隔符来终止`mkdir`对于后续字符串的解析，即`mkdir -- -f`
-
-# 16 环境变量
-
-## 16.1 单独给某个程序传递环境变量
-
-```sh
-FOO=bar env | grep FOO
-env | grep FOO
-```
-
-## 16.2 给管道中的所有命令传递环境变量
-
-```sh
-FOO=bar bash -c 'somecommand someargs | somecommand2'
-```
-
-## 16.3 给会话中的所有命令传递环境变量
-
-```sh
-export FOO=bar
-env | grep FOO
-unset FOO
-env | grep FOO
-```
-
-# 17 built-in函数
+# 7 built-in函数
 
 `bash shell`的命令分为两类：外部命令和内部命令。外部命令是通过系统调用或独立的程序实现的，如`sed`、`awk`等等。内部命令是由特殊的文件格式（`.def`）所实现，如`cd`、`history`、`exec`等等
 
-## 17.1 shift
+## 7.1 shift
 
 shift用于移动参数的位置
 
@@ -1256,7 +1198,7 @@ shift 2
 echo $1 # 输出d
 ```
 
-## 17.2 eval
+## 7.2 eval
 
 通过连接参数构造命令，如果包含间接引用，也会保持原有语义，下面以一个例子来说明
 
@@ -1268,7 +1210,7 @@ eval y='$'$x
 echo $y # 输出10
 ```
 
-## 17.3 set
+## 7.3 set
 
 **格式：**
 
@@ -1287,7 +1229,7 @@ echo $y # 输出10
 * `set -o pipefail`
 * `eval set -- "some new params"`：设置当前shell的参数
 
-## 17.4 exec
+## 7.4 exec
 
 `exec`用于进程替换（类似系统调用`exec`），或者标准输入输出的重定向
 
@@ -1295,7 +1237,7 @@ echo $y # 输出10
 
 * `exec 1>my.log 2>&1`：将标准输出、以及标准异常重定向到my.log文件中，对后续的所有命令都生效
 
-## 17.5 shopt
+## 7.5 shopt
 
 用于启用/禁用shell扩展功能
 
@@ -1304,7 +1246,7 @@ echo $y # 输出10
 * `shopt -s extglob`：启用`extglob`
 * `shopt -u extglob`：禁用`extglob`
 
-## 17.6 read
+## 7.6 read
 
 **格式：**
 
@@ -1322,7 +1264,7 @@ echo $y # 输出10
 `-t`：后面跟秒数，定义输入字符的等待时间
 `-u`：后面跟fd，从文件描述符中读入，该文件描述符可以是exec新开启的
 
-## 17.7 getopts
+## 7.7 getopts
 
 **格式：`getopts [option[:]] VARIABLE`**
 
@@ -1414,7 +1356,7 @@ option '-b', OPTIND: '7'
 
 **注意：如果getopts置于函数内部时，getopts解析的是函数的所有入参，可以通过`$@`将脚本的所有参数传递给函数**
 
-## 17.8 getopt
+## 7.8 getopt
 
 **格式：`getopt [options] -- parameters`**
 
@@ -1588,7 +1530,7 @@ Remaining arguments:
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-## 17.9 printf
+## 7.9 printf
 
 主要用于格式转换
 
@@ -1599,7 +1541,7 @@ ff
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-## 17.10 declare
+## 7.10 declare
 
 `declare`用于定义变量、增减属性、查看变量信息。若在函数内部使用`declare`，那么默认是`local`的
 
@@ -1632,7 +1574,7 @@ declare -A <map>
 declare -i <integer>
 ```
 
-## 17.11 local
+## 7.11 local
 
 用于在函数内定义局部变量，其作用域就是函数本身
 
@@ -1651,13 +1593,77 @@ test
 echo "outside function: '${arr[@]}'"
 ```
 
-## 17.12 typeset
+## 7.12 typeset
 
 **功能属于`declare`的子集，不推荐使用**
 
-# 18 颜色
+# 8 Tips
 
-## 18.1  ANSI escape codes
+## 8.1 选项分隔符
+
+选项分隔符为`--`，它有什么用呢？
+
+举个简单的例子，如何创建一个名为`-f`的目录？`mkdir -f`肯定是不行的，因为`-f`会被当做mkdir命令的选项，此时我们就需要选项分隔符来终止`mkdir`对于后续字符串的解析，即`mkdir -- -f`
+
+## 8.2 捕获信号
+
+`trap`常用来做一些清理工作，比如你在脚本中将一些进程放到后台执行，但如果脚本异常终止（比如用ctrl+c），那么这些后台进程可能得不到及时处理，这个时候就可以用`trap`来捕获信号，从而执行清理动作
+
+**格式**
+
+* `trap "commands" signal-list`
+
+**注意**
+
+* 如果commands中包含变量，那么该变量在执行`trap`语句时就已解析，而非到真正捕获信号的时候才解析
+
+**示例1**
+
+```sh
+# do other things
+
+ping www.baidu.com &
+
+ping_pid=$!
+trap "kill -9 ${ping_pid}; exit 0" SIGINT SIGTERM EXIT
+
+sleep 2
+# do other things
+```
+
+**示例2（错误），该示例与示例1的差别就是用sudo执行ping命令**
+
+* 这样是没法杀死`ping`这个后台进程的，因为`ping_pid`变量获取到的并不是`ping`的`pid`，而是`sudo`的`pid`
+
+```sh
+# do other things
+
+sudo ping www.baidu.com &
+
+ping_pid=$!
+trap "kill -9 ${ping_pid}; exit 0" SIGINT SIGTERM EXIT
+
+sleep 2
+# do other things
+```
+
+**实例3（对实例2进行调整）**
+
+```sh
+# do other things
+
+sudo ping www.baidu.com &
+
+ping_pid=$!
+trap "pkill -9 ping; exit 0" SIGINT SIGTERM EXIT
+
+sleep 2
+# do other things
+```
+
+## 8.3 颜色
+
+### 8.3.1  ANSI escape codes
 
 ```sh
 NOCOLOR='\033[0m'
@@ -1697,7 +1703,7 @@ echo -e ${LIGHTCYAN} 浅青色 ${NOCOLOR}
 echo -e ${WHITE} 白色 ${NOCOLOR}
 ```
 
-## 18.2 tput
+### 8.3.2 tput
 
 **设置颜色：**
 
@@ -1746,7 +1752,7 @@ tput bel     # Play a bell
 tput setaf 1; tput setab 2; tput bold; echo "this is text"
 ```
 
-# 19 参考
+# 9 参考
 
 * [shell教程](http://www.runoob.com/linux/linux-shell.html)
 * [Shell脚本8种字符串截取方法总结](https://www.jb51.net/article/56563.htm)
