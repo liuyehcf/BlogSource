@@ -1272,7 +1272,7 @@ trap "exec 1000>&-; exec 1000<&-; exit 0" 2
 # 创建fifo
 mkfifo ${tempfifo}
 
-# 将文件描述符 fd_fifo 分配给 tempfifo
+# 将文件描述符 1000 分配给 tempfifo
 exec 1000<> ${tempfifo}
 rm -rf ${tempfifo}
 
@@ -1301,6 +1301,8 @@ echo "done"
 
 **文件描述符用变量替代的版本1：**
 
+* 在`exec`中用`{}`而不是`${}`来引用变量
+
 ```sh
 #!/bin/bash
 
@@ -1317,29 +1319,29 @@ fd_fifo=1000
 tempfifo=$$.fifo        
 
 # 捕获信号 2 （ctrl C），并执行相应的动作
-trap "eval 'exec {fd_fifo}>&-; exec {fd_fifo}<&-; exit 0'" 2
+trap "exec {fd_fifo}>&-; exec {fd_fifo}<&-; exit 0" 2
 
 # 创建fifo
 mkfifo ${tempfifo}
 
 # 将文件描述符 fd_fifo 分配给 tempfifo
-eval "exec {fd_fifo}<> ${tempfifo}"
+exec {fd_fifo}<> ${tempfifo}
 rm -rf ${tempfifo}
 
 for ((i=1; i<=${paracount}; i++))
 do
     # 向文件描述符中输入空行
-    eval "echo >&${fd_fifo}"
+    echo >&${fd_fifo}
 done
 
 for((i=1; i<=${count}; i++))
 do
     # 从文件描述符中读取一行
-    eval "read -u ${fd_fifo}"
+    read -u ${fd_fifo}
     {
         echo "$i, sleep $(($i%5))s"
         sleep $(($i%5))
-        eval "echo >&${fd_fifo}"
+        echo >&${fd_fifo}
     } &
 done
 
@@ -1350,6 +1352,8 @@ echo "done"
 ```
 
 **文件描述符用变量替代的版本2：**
+
+* 使用`eval`
 
 ```sh
 #!/bin/bash
@@ -1379,17 +1383,17 @@ rm -rf ${tempfifo}
 for ((i=1; i<=${paracount}; i++))
 do
     # 向文件描述符中输入空行
-    eval "echo >&${fd_fifo}"
+    echo >&${fd_fifo}
 done
 
 for((i=1; i<=${count}; i++))
 do
     # 从文件描述符中读取一行
-    eval "read -u ${fd_fifo}"
+    read -u ${fd_fifo}
     {
         echo "$i, sleep $(($i%5))s"
         sleep $(($i%5))
-        eval "echo >&${fd_fifo}"
+        echo >&${fd_fifo}
     } &
 done
 
