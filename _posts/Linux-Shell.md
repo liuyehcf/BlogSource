@@ -1299,7 +1299,57 @@ wait
 echo "done"
 ```
 
-**文件描述符用变量替代的版本：**
+**文件描述符用变量替代的版本1：**
+
+```sh
+#!/bin/bash
+
+# 总数
+count=20 
+
+# 并行度
+paracount=5 
+
+# 文件描述符（随意定）
+fd_fifo=1000
+
+# $$表示当前执行文件的PID
+tempfifo=$$.fifo        
+
+# 捕获信号 2 （ctrl C），并执行相应的动作
+trap "eval 'exec {fd_fifo}>&-; exec {fd_fifo}<&-; exit 0'" 2
+
+# 创建fifo
+mkfifo ${tempfifo}
+
+# 将文件描述符 fd_fifo 分配给 tempfifo
+eval "exec {fd_fifo}<> ${tempfifo}"
+rm -rf ${tempfifo}
+
+for ((i=1; i<=${paracount}; i++))
+do
+    # 向文件描述符中输入空行
+    eval "echo >&${fd_fifo}"
+done
+
+for((i=1; i<=${count}; i++))
+do
+    # 从文件描述符中读取一行
+    eval "read -u ${fd_fifo}"
+    {
+        echo "$i, sleep $(($i%5))s"
+        sleep $(($i%5))
+        eval "echo >&${fd_fifo}"
+    } &
+done
+
+# 等待所有后台任务结束
+wait
+
+echo "done"
+```
+
+**文件描述符用变量替代的版本2：**
 
 ```sh
 #!/bin/bash
@@ -1883,3 +1933,4 @@ tput setaf 1; tput setab 2; tput bold; echo "this is text"
 * [How to change the output color of echo in Linux](https://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux)
 * [jonsuh/.bash_profile](https://gist.github.com/jonsuh/3c89c004888dfc7352be)
 * [shell并行执行程序](https://blog.csdn.net/d2457638978/article/details/80178847)
+* [How to use a variable to indicate a file descriptor in bash?](https://stackoverflow.com/questions/8295908/how-to-use-a-variable-to-indicate-a-file-descriptor-in-bash)
