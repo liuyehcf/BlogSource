@@ -3429,81 +3429,19 @@ CONFIG_KVM_MMU_AUDIT=y
 
 [B.2. 审核记录类型](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/7/html/security_guide/sec-Audit_Record_Types)
 
-# 10 内建
+# 10 包管理工具
 
-## 10.1 shift
-
-shift用于移动参数的位置
-
-**格式：**
-
-* `shift [n]`：n是数字，默认是1
-
-```sh
-eval set -- a b c d
-
-echo $1 # 输出a
-shift
-echo $1 # 输出b
-shift 2
-echo $1 # 输出d
-```
-
-## 10.2 eval
-
-通过连接参数构造命令，如果包含间接引用，也会保持原有语义，下面以一个例子来说明
-
-```sh
-foo=10 x=foo
-y='$'$x
-echo $y # 输出foo
-eval y='$'$x
-echo $y # 输出10
-```
-
-## 10.3 set
-
-**格式：**
-
-* `set [option]`
-
-**参数说明：**
-
-* `-e`：当任意一个命令的返回值为非0时，立即退出
-* `-x`：将每个命令及其详细参数输出到标准输出中
-* `-o pipefail`：针对管道命令，取从右往左第一个非零返回值作为整个管道命令的返回值
-
-**示例：**
-
-* `set -e`
-* `set -x`
-* `set -o pipefail`
-* `eval set -- "some new params"`：设置当前shell的参数
-
-## 10.4 exec
-
-`exec`用于进程替换（类似系统调用`exec`），或者标准输入输出的重定向
-
-**示例：**
-
-* `exec 1>my.log 2>&1`：将标准输出、以及标准异常重定向到my.log文件中，对后续的所有命令都生效
-
-## 10.5 shopt
-
-用于启用/禁用shell扩展功能
-
-**示例：**
-
-* `shopt -s extglob`：启用`extglob`
-* `shopt -u extglob`：禁用`extglob`
-
-# 11 包管理工具
-
-## 11.1 yum
+## 10.1 yum
 
 **示例：**
 
 * `yum list docker-ce --showduplicates | sort -r`：查询软件的版本信息
+
+## 10.2 dnf
+
+**示例：**
+
+* `dnf provides /usr/lib/grub/x86_64-efi`
 
 <!--
 
@@ -3521,7 +3459,7 @@ echo $y # 输出10
 
 -->
 
-# 12 参考
+# 11 参考
 
 * 《鸟哥的Linux私房菜》
 * [Linux Tools Quick Tutorial](https://linuxtools-rst.readthedocs.io/zh_CN/latest/tool/index.html)

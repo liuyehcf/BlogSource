@@ -23,9 +23,9 @@ categories:
 
 # 2 命令替换
 
-**`命令替换(command substitution)`可以让`括号里`或`单引号里`的命令提前于整个命令运行，然后将`执行结果`插入在命令替换符号处。由于命令替换的结果经常交给外部命令，不应该让结果有换行的行为，所以默认将所有的换行符替换为了空格(实际上所有的空白符都被压缩成了单个空格)**
+**`命令替换（command substitution）`可以让`括号里`或`单引号里`的命令提前于整个命令运行，然后将`执行结果`插入在命令替换符号处。由于命令替换的结果经常交给外部命令，不应该让结果有换行的行为，所以默认将所有的换行符替换为了空格（实际上所有的空白符都被压缩成了单个空格）**
 
-**`命令替换(command substitution)`有如下种形式**
+**`命令替换（command substitution）`有如下种形式**
 
 1. `` `command` ``
 1. `$(command)`
@@ -41,7 +41,7 @@ echo $(ls)
 
 # 3 进程替换
 
-**进程替换(Process Substitution)的作用有点类似管道，但在实现方式上有所区别，管道是作为子进程的方式来运行的，而进程替换会在`/dev/fd/`下面产生类似`/dev/fd/63`,`/dev/fd/62`这类临时文件，用来传递数据。用法如下：**
+**进程替换（Process Substitution）的作用有点类似管道，但在实现方式上有所区别，管道是作为子进程的方式来运行的，而进程替换会在`/dev/fd/`下面产生类似`/dev/fd/63`,`/dev/fd/62`这类临时文件，用来传递数据。用法如下：**
 
 1. **`<(command)`：用来产生标准输出，借助输入重定向，它的结果可以作为另一个命令的输入**
     * `cat <(ls)`
@@ -236,57 +236,57 @@ echo "scale=2; 1/3" | bc
 
 shell中的特殊符号包括如下几种
 
-1. **`#`：注释符号(Hashmark[Comments])**
+1. **`#`：注释符号（Hashmark[Comments]）**
     * 在shell文件的行首，作为shebang标记，`#!/bin/bash`
     * 其他地方作为注释使用，在一行中，#后面的内容并不会被执行
     * 但是用单/双引号包围时，#作为#号字符本身，不具有注释作用
-1. **`;`：分号，作为多语句的分隔符(Command separator [semicolon])**
+1. **`;`：分号，作为多语句的分隔符（Command separator [semicolon]）**
     * 多个语句要放在同一行的时候，可以使用分号分隔
-1. **`;;`：连续分号(Terminator [double semicolon])**
+1. **`;;`：连续分号（Terminator [double semicolon]）**
     * 在使用case选项的时候，作为每个选项的终结符
-1. **`.`：点号(dot command [period])**
+1. **`.`：点号（dot command [period]）**
     * 相当于bash内建命令source
     * 作为文件名的一部分，在文件名的开头
     * 作为目录名，一个点代表当前目录，两个点号代表上层目录（当前目录的父目录）
     * 正则表达式中，点号表示任意一个字符
 1. **`"`：双引号（partial quoting [double quote]）**
     * 双引号包围的内容可以允许变量扩展，**允许转义字符的存在**。如果字符串内出现双引号本身，需要转义。因此不一定双引号是成对的
-1. **`'`：单引号(full quoting [single quote])**
+1. **`'`：单引号（full quoting [single quote]）**
     * 单引号内的禁止变量扩展，**不允许转义字符的存在，所有字符均作为字符本身处理（除单引号本身之外）**。单引号必须成对出现
-1. **`,`：逗号(comma operator [comma])**
+1. **`,`：逗号（comma operator [comma]）**
     * 用在连接一连串的数学表达式中，这串数学表达式均被求值，但只有最后一个求值结果被返回。例如`echo $[1+2,3+4,5+6]`返回11
     * 用于参数替代中，表示首字母小写，如果是两个逗号，则表示全部小写。这个特性在`bash version 4`的时候被添加的（Mac OS不支持）
         * `a="ATest";echo ${a,}` 输出aTest
         * `a="ATest";echo ${a,,}` 输出atest
-1. **`\`：反斜线，反斜杆(escape [backslash])**
+1. **`\`：反斜线，反斜杆（escape [backslash]）**
     * 放在特殊符号之前，转义特殊符号的作用，仅表示特殊符号本身，这在字符串中常用
     * 放在一行指令的最末端，表示紧接着的回车无效（其实也就是转义了Enter），后继新行的输入仍然作为当前指令的一部分
 1. **`/`：斜线，斜杆（Filename path separator [forward slash]）**
     * 作为路径的分隔符，路径中仅有一个斜杆表示根目录，以斜杆开头的路径表示从根目录开始的路径
     * 在作为运算符的时候，表示除法符号
-1. **`` ` ``：反引号，后引号（Command substitution[backquotes])**
+1. **`` ` ``：反引号，后引号（Command substitution[backquotes]）**
     * 命令替换。这个引号包围的为命令，可以执行包围的命令，并将执行的结果赋值给变量
-1. **`:`：冒号(null command [colon])**
+1. **`:`：冒号（null command [colon]）**
     * 空命令，这个命令什么都不做，但是有返回值，返回值为0
     * 可做while死循环的条件
     * 在if分支中作为占位符（即某一分支什么都不做的时候）
     * 放在必须要有两元操作的地方作为分隔符
     * 可以作为域分隔符，比如环境变量$PATH中，或者passwd中，都有冒号的作为域分隔符的存在
-1. **`!`：感叹号，取反一个测试结果或退出状态（reverse (or negate) [bang],[exclamation mark])**
+1. **`!`：感叹号，取反一个测试结果或退出状态（reverse （or negate） [bang],[exclamation mark]）**
     * 表示反逻辑，例如`!=`表示不等于
-1. **`*`：星号（wildcard/arithmetic operator[asterisk])**
+1. **`*`：星号（wildcard/arithmetic operator[asterisk]）**
     * 作为匹配文件名扩展的一个通配符，能自动匹配给定目录下的每一个文件
     * 正则表达式中可以作为字符限定符，表示其前面的匹配规则匹配任意次
     * 算术运算中表示乘法
-1. **`**`：双星号(double asterisk)**
+1. **`**`：双星号（double asterisk）**
     * 算术运算中表示求幂运算
-1. **`?`：问号（test operator/wildcard[Question mark])**
+1. **`?`：问号（test operator/wildcard[Question mark]）**
     * 表示条件测试
     * 条件语句（三元运算符）
     * 参数替换表达式中用来测试一个变量是否设置了值，例如`echo ${a?}`，若a已经设定过值，则与`echo ${a}`相同，否则会出现异常信息`parameter null or not set`
     * 作为通配符，用于匹配文件名扩展特性中，用于匹配单个字符
     * 正则表达式中，表示匹配其前面规则0次或者1次
-1. **`$`：美元符号(Variable substitution[Dollar sign])**
+1. **`$`：美元符号（Variable substitution[Dollar sign]）**
     * 作为变量的前导符，用作变量替换，即引用一个变量的内容
     * 在正则表达式中被定义为行末
     * 特殊变量
@@ -323,33 +323,33 @@ bash test.sh one two "three four"
         * **`$#`**：表示传递给脚本的参数数量
         * **`$?`**：此变量值在使用的时候，返回的是最后一个命令、函数、或脚本的退出状态码值，如果没有错误则是0，如果为非0，则表示在此之前的最后一次执行有错误
         * **`$$`**：进程ID变量，这个变量保存了运行当前脚本的进程ID值
-1. **`()`：圆括号(parentheses)**
+1. **`()`：圆括号（parentheses）**
     * 命令组（Command group）。由一组圆括号括起来的命令是命令组，**命令组中的命令是在子shell（subshell）中执行**。因为是在子shell内运行，因此在括号外面是没有办法获取括号内变量的值，但反过来，命令组内是可以获取到外面的值，这点有点像局部变量和全局变量的关系，在实作中，如果碰到要cd到子目录操作，并在操作完成后要返回到当前目录的时候，可以考虑使用subshell来处理
     * 用于数组初始化
-1. **`{}`：代码块(curly brackets)**
+1. **`{}`：代码块（curly brackets）**
     * 这个是匿名函数，但是又与函数不同，在代码块里面的变量在代码块后面仍能访问
 1. **`[]`：中括号（brackets）**
     * **`[`是bash的内部命令**（注意与`[[`的区别）
     * 作为test用途，不支持正则
     * 在数组的上下文中，表示数组元素的索引，方括号内填上数组元素的位置就能获得对应位置的内容，例如`${ary[1]}`
     * 在正表达式中，方括号表示该位置可以匹配的字符集范围
-1. **`[[]]`：双中括号(double brackets)**
+1. **`[[]]`：双中括号（double brackets）**
     * **`[[`是 bash 程序语言的关键字**（注意与`[`的区别）
     * 作为test用途。`[[]]`比`[]`支持更多的运算符，比如：`&&,||,<,>`操作符。同时，支持正则，例如`[[ hello == hell? ]]`
     * bash把双中括号中的表达式看作一个单独的元素，并返回一个退出状态码
-1. **`$[...]`：表示整数扩展(integer expansion)**
+1. **`$[...]`：表示整数扩展（integer expansion）**
     * 详见[数值运算](#数值运算)
-1. **`(())`：双括号(double parentheses)**
+1. **`(())`：双括号（double parentheses）**
     * 详见[数值运算](#数值运算)
-1. **`> >& >> < &< << <>`：重定向(redirection)**
+1. **`> >& >> < &< << <>`：重定向（redirection）**
     * 详见[重定向](#重定向)
 1. **`|`：管道**
     * 详见[管道](#管道)
-1. **`(command)>  <(command)`：进程替换(Process Substitution)**
+1. **`(command)>  <(command)`：进程替换（Process Substitution)**
     * 详见[进程替换](#进程替换)
 1. **`&& ||`：逻辑操作符**
     * 在测试结构中，可以用这两个操作符来进行连接两个逻辑值
-1. **`&`：与号(Run job in background[ampersand])**
+1. **`&`：与号（Run job in background[ampersand]）**
     * 如果命令后面跟上一个&符号，这个命令将会在后台运行
 
 # 6 判断式
@@ -362,7 +362,7 @@ bash test.sh one two "three four"
 * `-b`：该文件名是否存在且为一个block device设备
 * `-c`：该文件名是否存在且为一个character device设备
 * `-S`：该文件名是否存在且为一个Socket文件
-* `-p`：该文件名是否存在且为以FIFO(pipe)文件
+* `-p`：该文件名是否存在且为以FIFO（pipe）文件
 * `-L`：该文件名是否存在且为一个链接文件
 
 **关于文件的权限检测，如`test -r filename`**
@@ -372,23 +372,23 @@ bash test.sh one two "three four"
 * **`-x`：检测该文件名是否存在且具有"可执行"的权限**
 * `-u`：检测该文件名是否存在且具有"SUID"的属性
 * `-g`：检测该文件名是否存在且具有"GUID"的属性
-* `-k`：检测该文件名是否存在且具有"Sticky bit(SBIT)"的属性
+* `-k`：检测该文件名是否存在且具有"Sticky bit（SBIT）"的属性
 * `-s`：检测该文件名是否存在且为"非空白文件"
 
 **两个文件之间的比较，如`test file1 -nt file2`**
 
-* `-nt`：(newer than) 判断file1是否比file2新
-* `-ot`：(older than) 判断file1是否比file2旧
+* `-nt`：（newer than） 判断file1是否比file2新
+* `-ot`：（older than） 判断file1是否比file2旧
 * `-ef`：判断file1与file2是否为同一文件，可用在判断hard link的判断上，主要意义在于判断两个文件是否均指向同一个inode
 
 **数值比较，如`test n1 -eq n2`**
 
-* **`-eq`：两数值相等(equal)**
-* **`-ne`：两数值不等(not equal)**
-* **`-gt`：n1大于n1(greater than)**
-* **`-lt`：n1小于n2(less than)**
-* **`-ge`：n1大于等于n2(greater than or equal)**
-* **`-le`：n1小于n2(less than or equal)**
+* **`-eq`：两数值相等（equal）**
+* **`-ne`：两数值不等（not equal）**
+* **`-gt`：n1大于n1（greater than）**
+* **`-lt`：n1小于n2（less than）**
+* **`-ge`：n1大于等于n2（greater than or equal）**
+* **`-le`：n1小于n2（less than or equal）**
 
 **字符串比较，例如`test n1 = n2`**
 
@@ -1238,7 +1238,73 @@ env | grep FOO
 
 `bash shell`的命令分为两类：外部命令和内部命令。外部命令是通过系统调用或独立的程序实现的，如`sed`、`awk`等等。内部命令是由特殊的文件格式（`.def`）所实现，如`cd`、`history`、`exec`等等
 
-## 17.1 read
+## 17.1 shift
+
+shift用于移动参数的位置
+
+**格式：**
+
+* `shift [n]`：n是数字，默认是1
+
+```sh
+eval set -- a b c d
+
+echo $1 # 输出a
+shift
+echo $1 # 输出b
+shift 2
+echo $1 # 输出d
+```
+
+## 17.2 eval
+
+通过连接参数构造命令，如果包含间接引用，也会保持原有语义，下面以一个例子来说明
+
+```sh
+foo=10 x=foo
+y='$'$x
+echo $y # 输出foo
+eval y='$'$x
+echo $y # 输出10
+```
+
+## 17.3 set
+
+**格式：**
+
+* `set [option]`
+
+**参数说明：**
+
+* `-e`：当任意一个命令的返回值为非0时，立即退出
+* `-x`：将每个命令及其详细参数输出到标准输出中
+* `-o pipefail`：针对管道命令，取从右往左第一个非零返回值作为整个管道命令的返回值
+
+**示例：**
+
+* `set -e`
+* `set -x`
+* `set -o pipefail`
+* `eval set -- "some new params"`：设置当前shell的参数
+
+## 17.4 exec
+
+`exec`用于进程替换（类似系统调用`exec`），或者标准输入输出的重定向
+
+**示例：**
+
+* `exec 1>my.log 2>&1`：将标准输出、以及标准异常重定向到my.log文件中，对后续的所有命令都生效
+
+## 17.5 shopt
+
+用于启用/禁用shell扩展功能
+
+**示例：**
+
+* `shopt -s extglob`：启用`extglob`
+* `shopt -u extglob`：禁用`extglob`
+
+## 17.6 read
 
 **格式：**
 
@@ -1256,7 +1322,7 @@ env | grep FOO
 `-t`：后面跟秒数，定义输入字符的等待时间
 `-u`：后面跟fd，从文件描述符中读入，该文件描述符可以是exec新开启的
 
-## 17.2 getopts
+## 17.7 getopts
 
 **格式：`getopts [option[:]] VARIABLE`**
 
@@ -1348,7 +1414,7 @@ option '-b', OPTIND: '7'
 
 **注意：如果getopts置于函数内部时，getopts解析的是函数的所有入参，可以通过`$@`将脚本的所有参数传递给函数**
 
-## 17.3 getopt
+## 17.8 getopt
 
 **格式：`getopt [options] -- parameters`**
 
@@ -1522,7 +1588,7 @@ Remaining arguments:
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-## 17.4 printf
+## 17.9 printf
 
 主要用于格式转换
 
@@ -1533,7 +1599,7 @@ ff
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-## 17.5 declare
+## 17.10 declare
 
 `declare`用于定义变量、增减属性、查看变量信息。若在函数内部使用`declare`，那么默认是`local`的
 
@@ -1566,7 +1632,7 @@ declare -A <map>
 declare -i <integer>
 ```
 
-## 17.6 local
+## 17.11 local
 
 用于在函数内定义局部变量，其作用域就是函数本身
 
@@ -1585,7 +1651,7 @@ test
 echo "outside function: '${arr[@]}'"
 ```
 
-## 17.7 typeset
+## 17.12 typeset
 
 **功能属于`declare`的子集，不推荐使用**
 
@@ -1659,11 +1725,11 @@ Num  Colour    #define         R G B
 
 ```sh
 tput bold    # Select bold mode
-tput dim     # Select dim (half-bright) mode
+tput dim     # Select dim （half-bright） mode
 tput smul    # Enable underline mode
 tput rmul    # Disable underline mode
 tput rev     # Turn on reverse video mode
-tput smso    # Enter standout (bold) mode
+tput smso    # Enter standout （bold） mode
 tput rmso    # Exit standout mode
 ```
 
