@@ -2947,15 +2947,15 @@ yum install -y sysstat
 **参数说明：**
 
 * `-c, --cpu`：cpu统计信息
-    * `system`
-    * `user`
-    * `idle`
-    * `wait`
-    * `hardware interrupt`
-    * `software interrupt`
+    * `usr`（`user`）
+    * `sys`（`system`）
+    * `idl`（`idle`）
+    * `wai`（`wait`）
+    * `hiq`（`hardware interrupt`）
+    * `siq`（`software interrupt`）
 * `-d, --disk`：磁盘统计信息
     * `read`
-    * `write`
+    * `writ`（`write`）
 * `-i, --int`：中断统计信息
 * `-l, --load`：cpu负载统计信息
     * `1 min`
@@ -2963,54 +2963,59 @@ yum install -y sysstat
     * `15mins`
 * `-m, --mem`：内存统计信息
     * `used`
-    * `buffers`
-    * `cache`
+    * `buff`（`buffers`）
+    * `cach`（`cache`）
     * `free`
 * `-n, --net`：网络统计信息
-    * `receive`
+    * `recv`（`receive`）
     * `send`
 * `-p, --proc`：进程统计信息
-    * `runnable`
-    * `uninterruptible`
+    * `run`（`runnable`）
+    * `blk`（`uninterruptible`）
     * `new`
 * `-r, --io`：I/O统计信息
-    * `read requests`
-    * `write requests`
+    * `read`（`read requests`）
+    * `writ`（`write requests`）
 * `-s, --swap`：swap统计信息
     * `used`
     * `free`
 * `-t, --time`：时间信息
 * `-v, --vmstat`：等效于`dstat -pmgdsc -D total`，类似于`vmstat`的输出
+* `--vm`：虚拟内存相关的信息
+    * `majpf`（`hard pagefaults`）
+    * `minpf`（`soft pagefaults`）
+    * `alloc`
+    * `free`
 * `-y, --sys`：系统统计信息
-    * `interrupts`
-    * `context switches`
+    * `int`（`interrupts`）
+    * `csw`（`context switches`）
 * `--fs, --filesystem`：文件系统统计信息
-    * `open files`
+    * `files`（`open files`）
     * `inodes`
 * `--ipc`：ipc统计信息
-    * `message queue`
-    * `semaphores`
-    * `shared memory`
+    * `msg`（`message queue`）
+    * `sem`（`semaphores`）
+    * `shm`（`shared memory`）
 * `--lock`：文件锁统计信息
-    * `posix`
-    * `flock`
-    * `read`
-    * `write`
+    * `pos`（`posix`）
+    * `lck`（`flock`）
+    * `rea`（`read`）
+    * `wri`（`write`）
 * `--socket`：socket统计信息
-    * `total`
+    * `tot`（`total`）
     * `tcp`
     * `udp`
     * `raw`
-    * `ip-fragments`
+    * `frg`（`ip-fragments`）
 * `--tcp`：tcp统计信息，包括
-    * `listen`
-    * `established`
+    * `lis`（`listen`）
+    * `act`（`established`）
     * `syn`
-    * `time_wait`
-    * `close`
+    * `tim`（`time_wait`）
+    * `clo`（`close`）
 * `--udp`：udp统计信息，包括
-    * `listen`
-    * `active`
+    * `lis`（`listen`）
+    * `act`（`active`）
 * **`-f, --full`**：显示详情，例如cpu会按每个cpu分别展示，network会按网卡分别展示
 * **`--top-cpu`：显示最耗cpu资源的进程**
 * **`--top-cpu-adv`：显示最耗cpu资源的进程，以及进程的其他信息**
