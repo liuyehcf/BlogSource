@@ -328,9 +328,89 @@ WHERE table_name = '<table name>';
     * `Sequential Scan`不会将从存储层取到的`Page`放入`Buffer Pool`，从而降低负载
     * 在`Informix`中被称为`Light Scans`
 
+**大多数`DBMS`会使用直接`I/O`（`Direct I/O`）来绕开`OS' Cache`**
+
+* `OS Cache`提供的预读取、顺序读等特性，并不适用于所有场景，比如数据库
+* 数据库通常都由自己的一套缓存机制，如果不使用`Direct I/O`，就会存在双重`Cache`
+
 ## 5.2 Replacement Policies
 
+当`DBMS`需要释放一个`Frame`来为新的`Page`腾出空位时，需要决定释放`Buffer Pool`中的哪一个`Frame`
+
+**替换策略的设计目标包括：**
+
+1. 正确性
+1. 准确性
+1. 效率
+1. 开销
+
+### 5.2.1 Least-Recently Used
+
+需要维护每个`Page`最近一次访问的时间戳。当`DBMS`需要驱逐一个`Page`时，选择时间戳最小的那个`Page`
+
+* 保持`Page`的有序性，可以减小驱逐的搜索时间
+
+### 5.2.2 Clock
+
+**`Clock`类似于`LRU`，但是不需要为每个`Page`单独维护一个时间戳，而是：**
+
+* 每个`Page`维护一个`Reverence Bit`，当`Page`被访问时，设置成1
+* 通过时钟定时检查，扫描所有`Page`的`Reverence Bit`
+    * 若为`1`，那么设置成`0`
+    * 若为`0`，择驱逐
+
+**`Clock`和`LRU`的共同问题：`Sequential Flooding`**
+
+* 一个扫描全表的查询会读取该表所有的`Page`
+* 这会污染`Buffer Pool`，因为每个`Page`读取一次后就再也不用了
+
+### 5.2.3 LRU-K
+
+**`LRU-K`核心思想是将「最近使用过1次」的判断标准扩展成「最近使用K次」，需要多维护一个队列，用于记录所有缓存数据被访问的历史。只有当数据的访问次数达到`K`次的时候，才将数据放入缓存。当需要淘汰数据时，`LRU-K`会淘汰第`K`次访问时间距当前时间最大的数据**
+
+**`DBMS`会用访问记录来预估下一次`Page`的访问时间**
+
+### 5.2.4 Localization
+
+**`DBMS`根据查询来选择驱逐哪个`Page`**
+
+* 需要追踪每个查询访问的`Page`
+
+### 5.2.5 Priority Hints
+
+**`DBMS`有查询的上下文信息，它能向`Buffer Pool`提供有关页面是否重要的提示**
+
+### 5.2.6 Dirty Pages
+
+**针对脏页的处理策略**
+
+* 如果`Buffer Pool`中的`Page`不是`Dirty`的，那么可以简单的丢弃它
+* 如果`Buffer Pool`中的`Page`是`Dirty`的，那么需要将其写回存储层以持久化改动
+
+### 5.2.7 Background Writing
+
+**`DBMS`可以周期性的扫描`Page Table`，并将脏页写回**
+
+* 当脏页被成功写回后，`DBMS`可以选择驱逐该`Page`也可以选择保留该`Page`并将`Dirty Flag`置位
+* 注意，在日志写入成功之前，不能写回脏页
+
 ## 5.3 Other Memory Pools
+
+`DBMS`需要使用内存来做其他事情，而不仅仅只是缓存`Tuple`以及`Index`，包括：
+
+1. `Sorting + Join Buffers`
+1. `Query Caches`
+1. `Maintenance Buffers`
+1. `Log Buffers`
+1. `Dictionary Caches`
+
+## 5.4 总结
+
+1. `DBMS`需要维护缓存而不能依赖`OS Cache`
+1. 可以借助查询计划来更好地进行决策，包括：
+    * `Evictions`：如何驱逐
+    * `Allocations`：如何分配
+    * `Pre-Fetching`：如何预取
 
 # 6 Hash Tables
 
@@ -387,6 +467,7 @@ WHERE table_name = '<table name>';
 | `SSD` | Solid-state Drive |
 | `OLTP` | On-line Transaction Processing |
 | `OLAP` | On-line Analytical Processing |
+| `LRU` | Least-Recently Used |
 
 # 28 CMU-课件
 
