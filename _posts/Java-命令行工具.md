@@ -175,6 +175,10 @@ jstack(Stack Trace for Java)命令用于生成虚拟机当前时刻的线程快�
 * `-l`：除堆栈外，显示关于锁的附加信息
 * `-m`：如果调用本地方法的话，可以显示C/C++的堆栈
 
+**示例：**
+
+* **`jstat -gcutil vmid 1000 1000`：查看JVM内存使用**
+
 **在JDK1.5中，java.lang.Thread类新增一个getAllStackTraces()方法用于获取虚拟机中所有线程的StackTraceElement对象，使用这个对象可以通过简单的几行代码就能完成jstack的大部分功能，在实际项目中不妨调用这个方法做个管理员页面，可以随时使用浏览器来查看线程堆栈**
 
 # 8 jad

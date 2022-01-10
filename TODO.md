@@ -60,6 +60,10 @@
     * 性能优化
         * ck /AggregateFunctions/IAggregateFunction.h
     * 序列化框架arrow；https://zhuanlan.zhihu.com/p/339132159
+    * 打印堆栈：https://stackoverflow.com/Questions/3899870/print-call-stack-in-c-or-c
+        * -ldl，libdl干嘛的？dynamic linking library
+        * [Library Interfaces and Headers](https://docs.oracle.com/cd/E86824_01/html/E54772/makehtml-id-7.html#scrolltoc)
+    * /lib64/libstdc++.so.6，那一堆so是啥意思
 1. 汇编
     * avx2指令
 1. 其他
@@ -68,4 +72,4 @@
     * rpc框架，thrift
     * codegen原理
     * [调度系统设计精要](https://draveness.me/system-design-scheduler/)
-
+    * [构建工具bazel](https://github.com/bazelbuild/bazel)

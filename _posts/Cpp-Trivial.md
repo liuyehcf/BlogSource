@@ -107,7 +107,101 @@ linker --> result_lib
 
 ## 3.2 参考
 
-# 4 clang-format
+# 4 内存管理
+
+## 4.1 [tcmalloc](https://github.com/google/tcmalloc)
+
+**如何安装：**
+
+```sh
+yum -y install gperftools gperftools-devel
+```
+
+### 4.1.1 heapprofile
+
+**`main.cpp`：**
+
+```cpp
+#include <stdlib.h>
+
+void* create(unsigned int size) {
+    return malloc(size);
+}
+
+void create_destory(unsigned int size) {
+    void* p = create(size);
+    free(p);
+}
+
+int main(void) {
+    const int loop = 4;
+    char* a[loop];
+    unsigned int mega = 1024 * 1024;
+
+    for (int i = 0; i < loop; i++) {
+        const unsigned int create_size = 1024 * mega;
+        create(create_size);
+
+        const unsigned int malloc_size = 1024 * mega;
+        a[i] = (char*)malloc(malloc_size);
+
+        const unsigned int create_destory_size = mega;
+        create_destory(create_destory_size);
+    }
+
+    for (int i = 0; i < loop; i++) {
+        free(a[i]);
+    }
+
+    return 0;
+}
+```
+
+**编译：**
+
+```sh
+gcc -o main main.cpp -Wall -O3 -lstdc++ -ltcmalloc -std=gnu++17
+```
+
+**运行：**
+
+```sh
+# 开启 heap profile 功能
+export HEAPPROFILE=/tmp/test-profile
+
+./main
+```
+
+**输出如下：**
+
+```
+Starting tracking the heap
+tcmalloc: large alloc 1073741824 bytes == 0x2c46000 @  0x7f6a8fd244ef 0x7f6a8fd43e76 0x400571 0x7f6a8f962555 0x4005bf
+Dumping heap profile to /tmp/test-profile.0001.heap (1024 MB allocated cumulatively, 1024 MB currently in use)
+Dumping heap profile to /tmp/test-profile.0002.heap (2048 MB allocated cumulatively, 2048 MB currently in use)
+Dumping heap profile to /tmp/test-profile.0003.heap (3072 MB allocated cumulatively, 3072 MB currently in use)
+Dumping heap profile to /tmp/test-profile.0004.heap (4096 MB allocated cumulatively, 4096 MB currently in use)
+Dumping heap profile to /tmp/test-profile.0005.heap (Exiting, 0 bytes in use)
+```
+
+**使用`pprof`分析内存：**
+
+```sh
+# 文本格式
+pprof --text ./main /tmp/test-profile.0001.heap | head -30
+
+# 图片格式
+pprof --svg ./main /tmp/test-profile.0001.heap > heap.svg 
+```
+
+## 4.2 [jemalloc](https://github.com/jemalloc/jemalloc)
+
+## 4.3 参考
+
+* [heapprofile.html](https://gperftools.github.io/gperftools/heapprofile.html)
+* [Apache Doris-调试工具](https://doris.apache.org/master/zh-CN/developer-guide/debug-tool.html)
+
+# 5 clang-format
 
 **如何安装`clang-format`**
 
@@ -137,7 +231,7 @@ SortUsingDeclarations: false
 SpacesBeforeTrailingComments: 1
 ```
 
-# 5 头文件搜索路径
+# 6 头文件搜索路径
 
 **头文件`#include "xxx.h"`的搜索顺序**
 
@@ -158,13 +252,13 @@ SpacesBeforeTrailingComments: 1
     * `/usr/local/include`
     * `/usr/lib/gcc/x86_64-redhat-linux/<gcc version>/include`（C头文件）或者`/usr/include/c++/<gcc version>`（C++头文件）
 
-## 5.1 参考
+## 6.1 参考
 
 * [C/C++ 头文件以及库的搜索路径](https://blog.csdn.net/crylearner/article/details/17013187)
 
-# 6 Address Sanitizer
+# 7 Address Sanitizer
 
-## 6.1 memory leak
+## 7.1 memory leak
 
 ```sh
 cat > test_memory_leak.cpp << 'EOF'
@@ -181,7 +275,7 @@ gcc test_memory_leak.cpp -o test_memory_leak -g -lstdc++ -fsanitize=address -sta
 ./test_memory_leak
 ```
 
-## 6.2 stack buffer underflow
+## 7.2 stack buffer underflow
 
 ```sh
 cat > test_stack_buffer_underflow.cpp << 'EOF'
@@ -211,17 +305,17 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
 ./test_stack_buffer_underflow
 ```
 
-## 6.3 参考
+## 7.3 参考
 
 * [c++ Asan(address-sanitize)的配置和使用](https://blog.csdn.net/weixin_41644391/article/details/103450401)
 * [HOWTO: Use Address Sanitizer](https://www.osc.edu/resources/getting_started/howto/howto_use_address_sanitizer)
 * [google/sanitizers](https://github.com/google/sanitizers)
 
-# 7 doc
+# 8 doc
 
-## 7.1 [cpp reference](https://en.cppreference.com/w/)
+## 8.1 [cpp reference](https://en.cppreference.com/w/)
 
-## 7.2 [cppman](https://github.com/aitjcize/cppman/)
+## 8.2 [cppman](https://github.com/aitjcize/cppman/)
 
 **如何安装：**
 
