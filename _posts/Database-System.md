@@ -414,6 +414,74 @@ WHERE table_name = '<table name>';
 
 # 6 Hash Tables
 
+**哈希表实现了一个将键映射到值的无序关联数。通过哈希函数（`Hash Function`）计算出给定键的数组偏移量，从而找到对应的值**
+
+## 6.1 Hash Functions
+
+**关于哈希函数：**
+
+* 如何将大的键空间映射到较小的域
+* 如何在性能和冲突概率之间权衡
+* 如何处理冲突
+* 如何在分配大哈希表和通过额外操作和数据结构来实现插入和查找
+
+**哈希函数的实现：**
+
+* [CRC-64](https://create.stephan-brumme.com/crc32/)
+* [MurmurHash](https://github.com/aappleby/smhasher)
+* [Google CityHash](https://github.com/google/cityhash)
+* [Facebook XXHash](http://cyan4973.github.io/xxHash/)
+* [Google FarmHash](https://github.com/google/farmhash)
+* ![6-1](/images/Database-System/6-1.png)
+* ![6-2](/images/Database-System/6-2.png)
+
+## 6.2 Static Hashing Schemes
+
+### 6.2.1 Linear Probe Hashing
+
+其实现方式是一个巨大的数组
+
+**如何解决冲突：**
+
+* 在插入时，若某个槽位上已经有数据了，那么就顺延到下一个槽位，直至找到一个空的槽位。例如，通过哈希函数算出来的偏移量是`3`，若位置`3`上已经有数据了，那么看下槽位`4`是否空闲，若仍然有数据，继续看槽位`5`，以此类推，直至找到空的槽位
+* 需要记录槽位是否被占用
+* 在删除后，有两种选择
+    * `Tombstone`：将某个槽位标记为删除，这样其他元素就不需要移动
+    * `Movement`：如果有必要的话，移动其他元素
+
+**`Non-Unique Keys`：同一个键映射到不同的值**
+
+* 为每个键维护一个链表，哈希表中存的就是键到链表的映射
+* 直接在哈希表中进行冗余存储
+
+**缺点：**
+
+* 键值对存放的槽位可能距离最佳槽位（通过哈希计算出来的槽位）很远，这样会导致较差的性能（在这段距离上，是通过遍历查找的）
+
+### 6.2.2 Robin Hood Hashing
+
+**`Robin Hood Hashing`是`Linear Probe Hashing`的变体。每个键值对存放的最佳槽位（通过哈希计算出来的槽位）和实际槽位之间的距离称为`d`，那么`Robin Hood Hashing`的核心思想在于降低距离`d`的总和$\sum{d}$**
+
+* 会在插入、删除时，调整已有元素的位置，从而保证$\sum{d}$最小
+
+### 6.2.3 Cuckoo Hashing
+
+**`Cuckoo Hashing`会维护两个哈希函数和两张哈希表，其中`Hash Function 1`对应`Hash Table 1`，`Hash Function 2`对应`Hash Table 2`**
+
+* 会在插入、删除时，动态调整元素的位置，比如把一个哈希表中的某个元素挪到另一个哈希表中
+* 如果动态调整后也无法存入元素，那么会将哈希表进行大小调整（例如扩容）
+
+**举个例子：**
+
+* 插入键值对`A -> V(A）`，其中通过`Hash Function 1`计算出来的槽位是`1`，且`Hash Table 1`中的该槽位空闲，那么直接将其存入
+* 插入键值对`B -> V(B）`，其中通过`Hash Function 1`计算出来的槽位是`1`（与`A`冲突），通过`Hash Function 2`计算出来的槽位是`2`，且`Hash Table 2`中的该槽位空闲，那么直接将其存入
+* 插入键值对`C -> V(C）`，其中通过`Hash Function 1`计算出来的槽位是`1`（与`A`冲突），通过`Hash Function 2`计算出来的槽位是`2`（与`B`冲突）
+    * 将`C -> V(C）`存入`Hash Table 2`中的槽位`2`，此时`B -> V(B）`被换出
+    * 将`B -> V(B）`存入`Hash Table 1`中的槽位`1`，此时`A -> V(A）`被换出
+    * `A -> V(A）`，通过`Hash Function 2`计算出来的槽位是`3`，且`Hash Table 2`中的该槽位空闲，那么直接将其存入
+
+## 6.3 Dynamic Hashing Schemes
+
 # 7 Trees1
 
 # 8 Trees2
