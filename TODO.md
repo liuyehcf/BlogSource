@@ -1,7 +1,6 @@
 1. Linux-常用命令
     * blktrace/iowatcher
     * 如何编写TUI程序(https://github.com/marcusolsson/tui-go)
-    * ag
     * 僵尸进程：https://zhuanlan.zhihu.com/p/92381918
     * [如何查看磁盘是gpt还是mbr](https://unix.stackexchange.com/questions/120221/gpt-or-mbr-how-do-i-know)
     * 链接器
@@ -67,9 +66,10 @@
         * [What is libstdc++.so.6 and GLIBCXX_3.4.20?](https://unix.stackexchange.com/questions/557919/what-is-libstdc-so-6-and-glibcxx-3-4-20)
     * ldd
 1. 汇编
+    * avx, advanced vector extension
     * avx2指令
+    * avx512
 1. 其他
-    * [macOS开启HiDPI](https://zhuanlan.zhihu.com/p/227788155)
     * 内存分配，伙伴算法
     * rpc框架，thrift
     * codegen原理

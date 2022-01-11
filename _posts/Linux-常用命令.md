@@ -661,7 +661,31 @@ grep分析一行信息，若当前有我们所需要的信息，就将该行拿�
 
 * `grep -r [--color=auto] '查找的字符串' [目录名]`
 
-## 2.6 sort
+## 2.6 ag
+
+`ack`是`grep`的升级版，`ag`是`ack`的升级版。`ag`默认使用扩展的正则表达式，并且在当前目录递归搜索
+
+**格式：**
+
+* `ag [options] pattern [path ...]`
+
+**参数说明：**
+
+* `-c`：计算找到'查找字符串'的次数
+* `-i`：忽略大小写的不同
+* `-l`：输出匹配的文件名，而不是匹配的内容
+* `-n`：禁止递归
+* `-v`：反向选择，即输出没有'查找字符串'内容的哪一行
+* `-r`：在指定目录中递归查找，这是默认行为
+* `-A`：后面可加数字，为after的意思，除了列出该行外，后面的n行也列出来
+* `-B`：后面可加数字，为before的意思，除了列出该行外，前面的n行也列出来
+* `-C`：后面可加数字，除了列出该行外，前后的n行也列出来
+
+**示例：**
+
+* `ag printf`
+
+## 2.7 sort
 
 **格式：**
 
@@ -683,7 +707,7 @@ grep分析一行信息，若当前有我们所需要的信息，就将该行拿�
 * `cat /etc/passwd | sort`
 * `cat /etc/passwd | sort -t ':' -k 3`
 
-## 2.7 uniq
+## 2.8 uniq
 
 **格式：**
 
@@ -702,7 +726,7 @@ grep分析一行信息，若当前有我们所需要的信息，就将该行拿�
 * `echo -e 'a\na\nb' | uniq -d`
 * `echo -e 'a\na\nb' | uniq -u`
 
-## 2.8 tr
+## 2.9 tr
 
 `tr`指令从标准输入设备读取数据，经过字符串转译后，将结果输出到标准输出设备
 
@@ -754,14 +778,14 @@ grep分析一行信息，若当前有我们所需要的信息，就将该行拿�
 * `echo "thissss is      a text linnnnnnne." | tr -s ' sn'`：删除多余的空格、`s`和`n`
 * `head /dev/urandom | tr -dc A-Za-z0-9 | head -c 20`：生成随机串
 
-## 2.9 xargs
+## 2.10 xargs
 
 **示例：**
 
 * `docker ps -aq | xargs docker rm -f`
 * `echo "   a  b  c  " | xargs`：实现`trim`
 
-## 2.10 tee
+## 2.11 tee
 
 `>`、`>>`等会将数据流传送给文件或设备，因此除非去读取该文件或设备，否则就无法继续利用这个数据流，如果我们想要将这个数据流的处理过程中将某段信息存下来，可以利用`tee`（`tee`本质上，就是将`stdout`复制一份）
 
@@ -779,7 +803,7 @@ grep分析一行信息，若当前有我们所需要的信息，就将该行拿�
 
 * `command | tee <文件名> | command`
 
-## 2.11 cat
+## 2.12 cat
 
 **格式：**
 
@@ -806,14 +830,14 @@ cat /tmp/test
 echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
 ```
 
-## 2.12 tail
+## 2.13 tail
 
 **示例：**
 
 * `tail -f xxx.txt`
 * `tail -n +2 xxx.txt`：输出第二行到最后一行
 
-## 2.13 find
+## 2.14 find
 
 **格式：**
 
@@ -844,7 +868,7 @@ echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
     * `find ./ -regex '.*\.cfg\|.*\.conf'`
     * `find ./ -regextype posix-extended -regex '.*\.(cfg|conf)'`
 
-## 2.14 locate
+## 2.15 locate
 
 **`locate`是在已创建的数据库`/var/lib/mlocate`里面的数据所查找到的，所以不用直接在硬盘当中去访问，因此，相比于`find`，速度更快**
 
@@ -863,7 +887,7 @@ updatedb
 locate stl_vector.h
 ```
 
-## 2.15 cp
+## 2.16 cp
 
 **示例：**
 
@@ -871,7 +895,7 @@ locate stl_vector.h
 * `cp -vrf /a/* /b`：递归拷贝目录`/a`下的所有文件、目录，但不包括隐藏文件和隐藏目录
 * `cp -vrf /a/. /b`：递归拷贝目录`/a`中所有的文件、目录、隐藏文件和隐藏目录到目录`/b`中
 
-## 2.16 rm
+## 2.17 rm
 
 **示例：**
 
@@ -880,7 +904,7 @@ locate stl_vector.h
 * `rm -rf /path/!(a.txt|b.txt)`：递归删除目录`path`下的除了`a.txt`以及`b.txt`之外的所有文件、目录，但不包括隐藏文件和隐藏目录
     * 需要通过命令`shopt -s extglob`开启`extglob`
 
-## 2.17 tar
+## 2.18 tar
 
 **格式：**
 
@@ -914,7 +938,7 @@ locate stl_vector.h
 * `tar -zxvf /test.tar.gz -C /home/liuye`
 * `tar cvf - /home/liuye | sha1sum`：`-`表示标准输入输出，这里表示标准出
 
-## 2.18 wget
+## 2.19 wget
 
 **格式：**
 
@@ -935,7 +959,7 @@ locate stl_vector.h
 * `wget -r -np -nH -P /root/test -R "index.html*" 'http://192.168.66.1/stuff'`
 * `wget -r -np -nH -P /root/test 'ftp://192.168.66.1/stuff'`
 
-## 2.19 tree
+## 2.20 tree
 
 **格式：**
 
@@ -945,14 +969,14 @@ locate stl_vector.h
 
 * `-N`：显示非ASCII字符，可以显示中文
 
-## 2.20 split
+## 2.21 split
 
 **示例：**
 
 * `split -b 2048M bigfile bigfile-slice-`：按大小切分文件，切分后的文件最大为`2048M`，文件的前缀是`bigfile-slice-`
 * `split -l 10000 bigfile bigfile-slice-`：按行切分文件，切分后的文件最大行数为`10000`，文件的前缀是`bigfile-slice-`
 
-## 2.21 base64
+## 2.22 base64
 
 用于对输入进行`base64`编码以及解码
 
@@ -961,7 +985,7 @@ locate stl_vector.h
 * `echo "hello" | base64`
 * `echo "hello" | base64 | base64 -d`
 
-## 2.22 md5sum
+## 2.23 md5sum
 
 计算输入或文件的MD5值
 
@@ -969,7 +993,7 @@ locate stl_vector.h
 
 * `echo "hello" | md5sum`
 
-## 2.23 openssl
+## 2.24 openssl
 
 openssl可以对文件，以指定算法进行加密或者解密
 
@@ -979,7 +1003,7 @@ openssl可以对文件，以指定算法进行加密或者解密
 * `openssl aes-256-cbc -a -salt -in blob.txt -out cipher`
 * `openssl aes-256-cbc -a -d -in cipher -out blob-rebuild.txt`
 
-## 2.24 bc
+## 2.25 bc
 
 bc可以用于进制转换
 
@@ -990,7 +1014,7 @@ bc可以用于进制转换
 * `((num=8#77)); echo ${num}`：8进制转十进制
 * `((num=16#FF)); echo ${num}`：16进制转十进制
 
-## 2.25 dirname
+## 2.26 dirname
 
 `dirname`用于返回文件路径的目录部分，该命令不会检查路径所对应的目录或文件是否真实存在
 
@@ -1008,7 +1032,7 @@ ROOT=$(dirname "$0")
 ROOT=$(cd "$ROOT"; pwd)
 ```
 
-## 2.26 addr2line
+## 2.27 addr2line
 
 该工具用于查看二进制的偏移量与源码的对应关系
 
@@ -1016,7 +1040,7 @@ ROOT=$(cd "$ROOT"; pwd)
 
 * `addr2line 4005f5 -e test`：查看二进制`test`中位置为`4005f5`指令对应的源码
 
-## 2.27 objdump
+## 2.28 objdump
 
 该工具用于反汇编
 
@@ -1025,7 +1049,7 @@ ROOT=$(cd "$ROOT"; pwd)
 * `objdump -drwCS main.o`
 * `objdump -drwCS -M intel main.o`
 
-## 2.28 iconf
+## 2.29 iconf
 
 **参数说明：**
 
@@ -1041,7 +1065,7 @@ ROOT=$(cd "$ROOT"; pwd)
 
 * `iconv -f gbk -t utf-8 s.txt > t.txt`
 
-## 2.29 expect
+## 2.30 expect
 
 expect是一个自动交互的工具，通过编写自定义的配置，就可以实现自动填充数据的功能
 

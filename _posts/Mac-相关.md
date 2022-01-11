@@ -188,7 +188,11 @@ defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool TRUE
 defaults delete com.apple.desktopservices DSDontWriteNetworkStores
 ```
 
-## 3.6 清理磁盘
+## 3.6 开启HiDPI
+
+[macOS开启HiDPI](https://zhuanlan.zhihu.com/p/227788155)
+
+## 3.7 清理磁盘
 
 [macOS 系统占用储存空间太大怎么办？](https://www.zhihu.com/question/52784342)
 
@@ -200,7 +204,7 @@ defaults delete com.apple.desktopservices DSDontWriteNetworkStores
 1. `~/Library/Caches`
     * `~/Library/Caches/IntelliJIdea2018.1`：`IntelliJIdea`的一些缓存数据
 
-## 3.7 卸载itunes
+## 3.8 卸载itunes
 
 为什么要卸载，升级完mac之后，发现某些应用的`f8`快捷键失效了，一按`f8`就会自动打开itunes
 
