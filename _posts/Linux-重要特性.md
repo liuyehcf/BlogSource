@@ -1663,9 +1663,15 @@ systemctl stop demo-service.service
 * [INTRODUCTION TO SELINUX](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/5/html/deployment_guide/ch-selinux)
 * [sVIrt概述](https://www.cnblogs.com/ck1020/p/5901662.html)
 
-# 5 中断
+# 5 eBPF
 
 ## 5.1 参考
+
+* [socket tracer](https://mp.weixin.qq.com/s/0w5t_KkHRLXkEY1_qbdTtw)
+
+# 6 中断
+
+## 6.1 参考
 
 * [linux异常处理体系结构](https://www.cnblogs.com/gulan-zmc/p/11604437.html)
 * [Linux的中断处理机制 [一] - 数据结构(1)](https://zhuanlan.zhihu.com/p/83709066)
@@ -1675,59 +1681,4 @@ systemctl stop demo-service.service
 * [Linux 内核中断内幕](https://www.ibm.com/developerworks/cn/linux/l-cn-linuxkernelint/index.html)
 * [彻底搞懂异常控制流](https://www.cnblogs.com/niuyourou/p/12097856.html)
 * [嵌入式杂谈之中断向量表](https://zhuanlan.zhihu.com/p/125480457)
-
-# 6 动态链接
-
-## 6.1 demo
-
-```sh
-cat > sample.c << 'EOF'
-#include <stdio.h>
-int main(void) {
-    printf("Calling the fopen() function...\n");
-    FILE *fd = fopen("test.txt","r");
-    if (!fd) {
-        printf("fopen() returned NULL\n");
-        return 1;
-    }
-    printf("fopen() succeeded\n");
-    return 0;
-}
-EOF
-gcc -o sample sample.c
-
-./sample 
-#-------------------------↓↓↓↓↓↓-------------------------
-Calling the fopen() function...
-fopen() returned NULL
-#-------------------------↑↑↑↑↑↑-------------------------
-
-touch test.txt
-./sample
-#-------------------------↓↓↓↓↓↓-------------------------
-Calling the fopen() function...
-fopen() succeeded
-#-------------------------↑↑↑↑↑↑-------------------------
-
-cat > myfopen.c << 'EOF'
-#include <stdio.h>
-FILE *fopen(const char *path, const char *mode) {
-    printf("This is my fopen!\n");
-    return NULL;
-}
-EOF
-
-gcc -Wall -fPIC -shared -o myfopen.so myfopen.c
-
-LD_PRELOAD=./myfopen.so ./sample
-#-------------------------↓↓↓↓↓↓-------------------------
-Calling the fopen() function...
-This is my fopen!
-fopen() returned NULL
-#-------------------------↑↑↑↑↑↑-------------------------
-```
-
-## 6.2 参考
-
-* [Linux hook：Ring3下动态链接库.so函数劫持](https://www.cnblogs.com/reuodut/articles/13723437.html)
 

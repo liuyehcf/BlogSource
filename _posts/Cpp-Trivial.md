@@ -53,14 +53,24 @@ linker --> result_lib
 
 `glibc, GNU C Library`可以看做是`libc`的另一种实现，它不仅包含`libc`的所有功能还包含`libm`以及其他核心库，比如`libpthread`
 
-## 2.2 静态/动态链接库
+## 2.2 静态链接库
 
-**后缀**
+**后缀：`*.a`**
 
-* 静态链接库：`*.a`
-* 动态链接库：`*.so`
+## 2.3 动态链接库
 
-## 2.3 Linux下so的版本机制介绍
+**后缀：`*.so`**
+
+### 2.3.1 动态库搜索顺序
+
+**搜索如下：详见`man ld.so`**
+
+1. 在环境变量`LD_LIBRARY_PATH`指定的目录下搜索
+1. 在`/etc/ld.so.cache`指定的目录中搜索
+1. 在`/lib`中搜索
+1. 在`/usr/lib`中搜索
+
+### 2.3.2 Linux下so的版本机制介绍
 
 **本小节转载摘录自[一文读懂Linux下动态链接库版本管理及查找加载方式](https://blog.ideawand.com/2020/02/15/how-does-linux-shared-library-versioning-works/)**
 
@@ -74,7 +84,7 @@ libbar.so.x  ->  libbar.so.x.y
 
 这里的`x`、`y`、`z`分别代表的是这个`so`的主版本号（`MAJOR`），次版本号（`MINOR`），以及发行版本号（`RELEASE`），对于这三个数字各自的含义，以及什么时候会进行增长，不同的文献上有不同的解释，不同的组织遵循的规定可能也有细微的差别，但有一个可以肯定的事情是：主版本号（`MAJOR`）不同的两个`so`库，所暴露出的`API`接口是不兼容的。而对于次版本号，和发行版本号，则有着不同定义，其中一种定义是：次要版本号表示`API`接口的定义发生了改变（比如参数的含义发生了变化），但是保持向前兼容；而发行版本号则是函数内部的一些功能调整、优化、BUG修复，不涉及`API`接口定义的修改
 
-### 2.3.1 几个so库有关名字的介绍
+#### 2.3.2.1 几个so库有关名字的介绍
 
 **介绍一下在`so`查找过程中的几个名字**
 
@@ -82,7 +92,7 @@ libbar.so.x  ->  libbar.so.x.y
 * **`real name`：是真实具有`so`库可执行代码的那个文件，之所以叫`real`是相对于`SONAME`和`linker name`而言的，因为另外两种名字一般都是一个软连接，这些软连接最终指向的文件都是具有`real name`命名形式的文件。`real name`的命名格式中，可能有`2`个数字尾缀，也可能有`3`个数字尾缀，但这不重要。你只要记住，真实的那个，不是以软连接形式存在的，就是一个`real name`**
 * **`linker name`：这个名字只是给编译工具链中的连接器使用的名字，和程序运行并没有什么关系，仅仅在链接得到可执行文件的过程中才会用到。它的命名特征是以`lib`开头，以`.so`结尾，不带任何数字后缀的格式**
 
-### 2.3.2 SONAME的作用
+#### 2.3.2.2 SONAME的作用
 
 假设在你的Linux系统中有3个不同版本的`bar`共享库，他们在磁盘上保存的文件名如下：
 
@@ -106,7 +116,7 @@ libbar.so.x  ->  libbar.so.x.y
 * 通过修改软连接的指向，可以让应用程序在互相兼容的`so`库中方便切换使用哪一个
 * 通常情况下，大家使用最新版本即可，除非是为了在特定版本下做一些调试、开发工作
 
-### 2.3.3 linker name的作用
+#### 2.3.2.3 linker name的作用
 
 上一节中我们提到，可执行文件里会存储精确到主版本号的`SONAME`，但是在编译生成可执行文件的过程中，编译器怎么知道应该用哪个主版本号呢？为了回答这个问题，我们从编译链接的过程来梳理一下
 
@@ -125,12 +135,67 @@ libbar.so.x  ->  libbar.so.x.y
 * 编译器从软链接指向的文件里找到其`SONAME`，并将`SONAME`写入到生成的可执行文件中
 * 通过改变`linker name`软连接的指向，可以将不同主版本号的`SONAME`写入到生成的可执行文件中
 
-## 2.4 参考
+## 2.4 LD_PRELOAD
+
+**环境变量`LD_PRELOAD`指定的目录拥有最高优先级**
+
+### 2.4.1 demo
+
+```sh
+cat > sample.c << 'EOF'
+#include <stdio.h>
+int main(void) {
+    printf("Calling the fopen() function...\n");
+    FILE *fd = fopen("test.txt","r");
+    if (!fd) {
+        printf("fopen() returned NULL\n");
+        return 1;
+    }
+    printf("fopen() succeeded\n");
+    return 0;
+}
+EOF
+gcc -o sample sample.c
+
+./sample 
+#-------------------------↓↓↓↓↓↓-------------------------
+Calling the fopen() function...
+fopen() returned NULL
+#-------------------------↑↑↑↑↑↑-------------------------
+
+touch test.txt
+./sample
+#-------------------------↓↓↓↓↓↓-------------------------
+Calling the fopen() function...
+fopen() succeeded
+#-------------------------↑↑↑↑↑↑-------------------------
+
+cat > myfopen.c << 'EOF'
+#include <stdio.h>
+FILE *fopen(const char *path, const char *mode) {
+    printf("This is my fopen!\n");
+    return NULL;
+}
+EOF
+
+gcc -o myfopen.so myfopen.c -Wall -fPIC -shared
+
+LD_PRELOAD=./myfopen.so ./sample
+#-------------------------↓↓↓↓↓↓-------------------------
+Calling the fopen() function...
+This is my fopen!
+fopen() returned NULL
+#-------------------------↑↑↑↑↑↑-------------------------
+```
+
+## 2.5 参考
 
 * [Program Library HOWTO](https://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html)
 * [Shared Libraries: Understanding Dynamic Loading](https://amir.rachum.com/blog/2016/09/17/shared-libraries/)
 * [wiki-Rpath](https://en.wikipedia.org/wiki/Rpath)
 * [RPATH handling](https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/RPATH-handling)
+* [Linux hook：Ring3下动态链接库.so函数劫持](https://www.cnblogs.com/reuodut/articles/13723437.html)
+* [What is the difference between LD_PRELOAD_PATH and LD_LIBRARY_PATH?](https://stackoverflow.com/questions/14715175/what-is-the-difference-between-ld-preload-path-and-ld-library-path)
 
 # 3 gun工具链
 

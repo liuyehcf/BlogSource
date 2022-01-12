@@ -458,11 +458,15 @@ WHERE table_name = '<table name>';
 
 * 键值对存放的槽位可能距离最佳槽位（通过哈希计算出来的槽位）很远，这样会导致较差的性能（在这段距离上，是通过遍历查找的）
 
+**示意图参考课件中的`18 ~ 31`页**
+
 ### 6.2.2 Robin Hood Hashing
 
 **`Robin Hood Hashing`是`Linear Probe Hashing`的变体。每个键值对存放的最佳槽位（通过哈希计算出来的槽位）和实际槽位之间的距离称为`d`，那么`Robin Hood Hashing`的核心思想在于降低距离`d`的总和$\sum{d}$**
 
 * 会在插入、删除时，调整已有元素的位置，从而保证$\sum{d}$最小
+
+**示意图参考课件中的`34 ~ 40`页**
 
 ### 6.2.3 Cuckoo Hashing
 
@@ -480,7 +484,39 @@ WHERE table_name = '<table name>';
     * 将`B -> V(B）`存入`Hash Table 1`中的槽位`1`，此时`A -> V(A）`被换出
     * `A -> V(A）`，通过`Hash Function 2`计算出来的槽位是`3`，且`Hash Table 2`中的该槽位空闲，那么直接将其存入
 
+**示意图参考课件中的`42 ~ 49`页**
+
 ## 6.3 Dynamic Hashing Schemes
+
+`Dynamic Hashing Schemes`的特点是：在必要时会进行`resize`操作
+
+### 6.3.1 Chained Hashing
+
+每个槽位维护一个链表，链表中的元素称为`Bucket`，每个`Bucket`存放`Hash Key`相同的元素
+
+![6-3](/images/Database-System/6-3.png)
+
+### 6.3.2 Extendible Hashing
+
+由于`Chained Hashing`中的`Bucket Chain`可能会不断膨胀，`Extendible Hashing`是`Chained Hashing`的改良版，特点包括：
+
+* 会在必要时对`Bucket Chain`进行分裂操作
+* 多个`Slot`可能指向同一个`Bucket Chain`
+* 在`Bucket Chain Split`时，会进行`reshuffle`操作，进行重组
+
+**示意图参考课件中的`55 ~ 63`页**
+
+### 6.3.3 Linear Hashing
+
+`Linear Hashing`是`Extendible Hashing`的改良版，特点包括：
+
+* 每个`Bucket`会维护一个`pointer`指向其分裂得到的`Bucket`（如果有分裂过的话）
+* 可以通过不同的`Hash`来定位指定的`Bucket`
+* 可以使用不同的`Overflow`标准，包括
+    * 空间利用率
+    * `Bucket Chain`平均长度
+
+**示意图参考课件中的`65 ~ 83`页**
 
 # 7 Trees1
 
