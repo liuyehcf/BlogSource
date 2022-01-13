@@ -520,6 +520,124 @@ WHERE table_name = '<table name>';
 
 # 7 Trees1
 
+## 7.1 Table Indexes
+
+**表索引（`Table Index`）是表中部分属性的副本，且有序组织，用于提高查询效率。`DBMS`会保证表中数据与索引中的数据在逻辑上是同步的。`DBMS`的任务之一就是为每个查询寻找最合适的索引**
+
+**索引的开销包括：**
+
+1. 存储开销
+1. 维护成本
+
+## 7.2 B+ Tree Overview
+
+**`B-Tree Family`包括：****
+
+1. `B-Tree`
+1. `B+Tree`
+1. `B*Tree`
+1. `Blink-Tree`
+
+**`B+Tree`包含如下特点：**
+
+1. 平衡树，各叶子节点高度完全一致
+1. 节点存储的数据多，有利于减少磁盘读写
+1. 数据有序组织
+1. 便于顺序访问
+1. 查询、插入、删除等操作的复杂度是`O(log n)`
+
+**关于`B+Tree`的定义可以参考{% post_link BPlus-tree-详解%}**
+
+**`B+Tree`叶节点存放的值是什么？**
+
+* 存放记录`id`
+    * `PostgreSQL`
+    * `SQLServer`
+    * `DB2`
+    * `Oracle`
+* 存放`Tuple Data`
+    * `Sqlite`
+    * `SQLServer`
+    * `Mysql`
+    * `Oracle`
+
+**`B-Tree`和`B+Tree`的差异：**
+
+* `B-Tree`在非叶节点也存储具体的数据，更节省空间
+* `B+Tree`只在叶节点存储数据，因此需要额外的非叶节点来辅助索引过程。对顺序访问、范围查找比较友好
+
+**`B+Tree`可视化网站：**
+
+* [BTree](https://www.cs.usfca.edu/~galles/visualization/BTree.html)
+* [BPlusTree](https://www.cs.usfca.edu/~galles/visualization/BPlusTree.html)
+
+**聚簇索引`Cluster Indexes`是指，整个数据表以`primary key`作为排序键，进行有序存储**
+
+**哈希索引 vs. B+Tree**
+
+* 哈希索引不支持前缀匹配，比如创建一个包含三列的哈希索引，那么查询条件必须包含这三列才能使用哈希索引
+* `B+Tree`支持前缀匹配，比如创建了一个`Index(a, b, c)`，那么`a = 5`、`a = 5 and b = 2`都能使用索引
+
+## 7.3 Design Decisions
+
+在设计实现`B+Tree`时，需要考虑如下节点：
+
+1. `Node Size`：存储性能越差的设备，`Node Size`建议更大
+    * `HDD`：1MB
+    * `SSD`：10KB
+    * `Memory`：512B
+1. `Merge Threshold`：**在实现时，并不一定要完全按照定义，比如当某个节点中的数据数量少于容量的一半时，可以不执行合并操作。有些`DBMS`允许`underflows`，且会定期重新构建整颗树**
+1. `Variable Length Keys`
+    * 节点大小固定，存储`Key`的指针
+    * 节点的大小可以动态变化，直接存储`Key`，复杂度提升
+    * 节点大小固定，且给`Key`分配的空间是该类型的最大值，不足部分补白，比较浪费空间
+    * `Key Map / Indirection`，没看懂
+1. `Non-Unique Indexes`
+1. `Intra-Node Search`
+
+**`Non-Unique Indexes`有如下两种策略：**
+
+1. 重复存储`Key`
+    * ![7-1](/images/Database-System/7-1.png)
+1. 每个`Key`维护一个`List`
+    * ![7-2](/images/Database-System/7-2.png)
+
+**`Intra-Node Search`节点中的查找策略：**
+
+1. `Linear`：从左往右遍历
+1. `Binary`：二分查找
+1. `Interpolation`：基于分布信息预估一个位置，然后再继续查找
+
+## 7.4 Optimization
+
+### 7.4.1 Prefix Compression
+
+在同一个叶子节点中，由于`Key`是有序排列的，通常具有相同的前缀
+
+![7-3](/images/Database-System/7-3.png)
+
+### 7.4.2 Suffix Truncation
+
+由于非叶子节点在`B+Tree`仅起到导航作用，因此有时不必存储整个`Key`，只需要存储前缀即可
+
+![7-4](/images/Database-System/7-4.png)
+
+![7-5](/images/Database-System/7-5.png)
+
+### 7.4.3 Bulk Insert
+
+构建一颗`B+Tree`最快的方法是先将所有`Key`排序，从叶节点开始往上构建，这样可以直接避免分裂操作
+
+### 7.4.4 Pointer Swizzling
+
+如果节点通过`Page Id`来引用其他索引中的节点，那么在内存中通过`B+Tree`进行查找时，需要将`Page Id`转换成内存地址。如果该`Page`已经在`Buffer Pool`中时，可以用指针代替`Page Id`
+
+![7-6](/images/Database-System/7-6.png)
+
+![7-7](/images/Database-System/7-7.png)
+
+![7-8](/images/Database-System/7-8.png)
+
 # 8 Trees2
 
 # 9 Index Concurrency

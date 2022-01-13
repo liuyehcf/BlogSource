@@ -166,10 +166,19 @@ git reset --keep [commit]
 git revert [commit]
 
 # 将暂未提交的改动保存到缓存中
-git stash
+git stash -m [message]
 
-# 将缓存的改动恢复到工作区
+# 将缓存的改动弹出，并恢复到工作区
 git stash pop
+
+# 查看缓存列表
+git stash list
+
+# 应用指定缓存
+git stash apply [id]
+
+# 删除指定缓存
+git stash drop [id]
 
 # 清除缓存
 git stash clear
