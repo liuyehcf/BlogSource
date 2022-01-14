@@ -13,27 +13,76 @@ categories:
 
 # 1 ClickHouse
 
-# 2 Doris
+OLAP
 
-# 3 Druid
+# 2 Delta
 
-# 4 Gbase
+Data Lake
 
-# 5 GreenPlum
+# 3 Doris
 
-# 6 Impala & Kudu
+OLAP
 
-# 7 Kylin
+# 4 Druid
 
-# 8 Pinot
+OLAP
 
-# 9 Presto
+# 5 Gbase
 
-# 10 Starrocks
+# 6 GreenPlum
 
-# 11 Snowflake
+OLAP
 
-# 12 TiDB
+# 7 Hawq
 
-# 13 Vertica
+OLAP
 
+# 8 Hive
+
+OLAP
+
+# 9 Hudi
+
+Data Lake
+
+# 10 Iceberg
+
+Data Lake
+
+# 11 Impala & Kudu
+
+OLAP
+
+# 12 Kylin
+
+OLAP
+
+# 13 Pinot
+
+# 14 Presto
+
+OLAP
+
+# 15 Starrocks
+
+OLAP
+
+# 16 Snowflake
+
+OLAP
+
+# 17 Sparksql
+
+OLAP
+
+# 18 TiDB
+
+OLTP
+
+# 19 Vertica
+
+# 20 参考
+
+* [你需要的不是实时数仓 | 你需要的是一款合适且强大的OLAP数据库(上)](https://segmentfault.com/a/1190000020385432)
+* [你需要的不是实时数仓 | 你需要的是一款强大的OLAP数据库(下)](https://segmentfault.com/a/1190000020385389)
+* [开源OLAP引擎测评报告(SparkSql、Presto、Impala、HAWQ、ClickHouse、GreenPlum)](https://blog.csdn.net/oDaiLiDong/article/details/86570211)
