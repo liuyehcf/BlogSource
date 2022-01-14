@@ -180,6 +180,16 @@ git stash apply [id]
 # 删除指定缓存
 git stash drop [id]
 
+# 查看指定缓存的改动文件列表
+git stash show [id]
+
+# 查看指定缓存的改动内容
+git stash show [id] -p
+
+# 查看指定缓存跟当前的差异
+# 例如 git diff stash@{0}
+git diff stash@{[id]}
+
 # 清除缓存
 git stash clear
 

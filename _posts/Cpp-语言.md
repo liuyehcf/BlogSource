@@ -1508,7 +1508,35 @@ int main() {
 }
 ```
 
-## 8.4 placement new
+## 8.4 引用
+
+### 8.4.1 引用赋值
+
+**引用只能在定义处初始化**
+
+```cpp
+int main() {
+    int a = 1;
+    int b = 2;
+
+    int &ref = a;
+    ref = b; // a的值变为2
+
+    std::cout << "a=" << a << std::endl;
+    std::cout << "b=" << b << std::endl;
+    std::cout << "ref=" << ref << std::endl;
+}
+```
+
+结果：
+
+```
+a=2
+b=2
+ref=2
+```
+
+## 8.5 placement new
 
 `placement new`的功能就是在一个已经分配好的空间上，调用构造函数，创建一个对象
 
@@ -1517,7 +1545,7 @@ void *buf = // 在这里为buf分配内存
 Class *pc = new (buf) Class();  
 ```
 
-## 8.5 内存对齐
+## 8.6 内存对齐
 
 **内存对齐最最底层的原因是内存的IO是以`8`个字节`64bit`为单位进行的**
 
@@ -1641,7 +1669,7 @@ Align4's size = 16
 	f4's offset = 8, f4's size = 8
 ```
 
-## 8.6 mock class
+## 8.7 mock class
 
 有时在测试的时候，我们需要mock一个类的实现，我们可以在测试的cpp文件中实现这个类的所有方法（**注意，必须是所有方法**），就能够覆盖原有库文件中的实现。下面以一个例子来说明
 
@@ -1818,7 +1846,7 @@ person.cpp:(.text+0x2a): Person::sleep() 的多重定义
 collect2: 错误：ld 返回 1
 ```
 
-### 8.6.1 demo using cmake
+### 8.7.1 demo using cmake
 
 # 9 参考
 

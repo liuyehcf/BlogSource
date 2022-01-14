@@ -640,6 +640,118 @@ WHERE table_name = '<table name>';
 
 # 8 Trees2
 
+## 8.1 More B+Tree
+
+**`B+Tree`如何处理`Duplicate Keys`：**
+
+* `Append Record Id`：额外存储一个`Unique Id`，来保证所有`Key`的唯一性
+    * ![8-1](/images/Database-System/8-1.png)
+* `Overflow Leaf Nodes`：允许叶节点存储多余额定数量的数据，用于存储`Duplicate Key`
+    * ![8-2](/images/Database-System/8-2.png)
+
+## 8.2 Additional Index Magic
+
+**隐式索引（`Implicit Indexes`）：**
+
+* 大多数`DMBS`系统会创建一个隐式的索引来实现完整性约束
+
+**局部索引（`Partial Indexes`）：**
+
+* 仅在一部分数据上创建索引
+* 有效降低索引的大小以及维护的开销
+* 一个典型的使用场景是，根据日期来分别创建索引，比如每个月，或者每年单独创建索引
+* 
+    ```sql
+CREATE INDEX idx_foo
+ON foo(a, b)
+WHERE c = 'WuTang';
+
+SELECT b FROM foo 
+WHERE a = 123
+AND c = 'WuTang';
+    ```
+
+**覆盖索引（`Covering Indexes`）：**
+
+* 如果索引中包含查询所需的字段，那么仅通过索引就可以返回所有的`Tuple`
+* 提高查询效率，且可以有效得减少`Buffer Pool`的冲突（不需要额外访问`Page`了）
+* 
+    ```sql
+CREATE INDEX idx_foo
+ON foo(a, b);
+
+SELECT b FROM foo
+WHERE a = 123;
+    ```
+
+**`Index Include Columns`：**
+
+* 在索引中存储额外的列，这部分信息只能通过索引来查询。例如，`CREATE INDEX idx_foo ON foo(a, b) INCLUDE (c);`
+* 这些额外的列只存储在叶节点中，且不属于`Search Key`
+* 
+    ```sql
+CREATE INDEX idx_foo
+ON foo(a, b)
+INCLUDE(c);
+
+SELECT b FROM foo
+WHERE a = 123
+AND c = `WuTang`
+    ```
+
+**`Observation`：**
+
+* 非叶子结点中的`Key`仅起到导航作用，并不能判断出该`Key`是否真的存在，只能访问到叶子节点中，才能知道某个`Key`是否存在
+* 可以通过`Buffer Pool`来协助快速确定某个`Key`是否存在
+
+## 8.3 Tries Tree
+
+**`Tries Tree`称为前缀树或者字典树**
+
+![8-3](/images/Database-System/8-3.png)
+
+**属性：**
+
+* 树形结构仅依赖于键空间（`Key Space`）以及键长（`Key Length`），而不依赖于已有的`Key`以及插入顺序，且不需要平衡操作
+* 所有的操作的复杂度都是`O(k)`，其中`k`是键值的长度
+* 键值是隐式存储的（从根到叶的整条路径就是`Key`）
+
+**`Key Span`：**
+
+* 当某个字符存在于某一层时，存储一个指向下一层的指针，否则存储`null`
+* ![8-4](/images/Database-System/8-4.png)
+* **示意图参考课件中的`39 ~ 47`页**
+
+## 8.4 Radix Tree
+
+**`Radix Tree`在`Tries Tree`基础上，做了如下调整：**
+
+* 每个节点如果有孩子，那么至少要有2个孩子，否则就合并到上一层（当分布较为稀疏时，可以大大降低层级）
+* **示意图参考课件中的`49 ~ 56`页**
+
+**`Binary Comparable Keys`：并非所有属性类型都可以分解为基数树的二进制可比数字**
+
+* `Unsigned Integers`：小端机器的字节顺序必须翻转
+* `Signed Integers`：翻转二进制补码，使负数小于正数
+* `Floats`：分类（`neg vs. pos`，归一化 `vs.` 非规范化），然后存储为无符号整数
+* `Compound`：分别转换每个属性
+* **示意图参考课件中的`58 ~ 60`页**
+
+**`Observation`：**
+
+* 到目前位置，我们讨论的索引仅能有效地进行点查和范围查询
+* 并不是用于「在Wikipedia文章中查找包含`Pavlo`的所有文章」这种类型的查询
+
+## 8.5 Inverted Indexe
+
+倒排索引存储「单词」到「包含目标属性中这些单词的记录」的映射，又称为全文索引（`Full-text Search Index`）
+
+这部分内容包含在[CMU 11-442](https://boston.lti.cs.cmu.edu/classes/11-642/)
+
+## 8.6 Geo-Spatial Tree Indexes
+
+包括`R-Tree`、`Quad-Tree`、`KD-Tree`，这部分内容包含在[CMU 15-826](http://www.cs.cmu.edu/~christos/courses/826.S17/)
+
 # 9 Index Concurrency
 
 # 10 Sorting

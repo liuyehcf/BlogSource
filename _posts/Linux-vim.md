@@ -1720,7 +1720,10 @@ function! s:build_quickfix_list(lines)
 endfunction
 let g:fzf_action = { 'ctrl-q': function('s:build_quickfix_list') }
 let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
-
+" 排除 :Ag 和 :Rg 搜索结果中仅匹配文件名的条目
+" https://github.com/junegunn/fzf.vim/issues/346
+command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
+command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
 call plug#end()
 ```
 
@@ -2130,6 +2133,10 @@ function! s:build_quickfix_list(lines)
 endfunction
 let g:fzf_action = { 'ctrl-q': function('s:build_quickfix_list') }
 let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
+" 排除 :Ag 和 :Rg 搜索结果中仅匹配文件名的条目
+" https://github.com/junegunn/fzf.vim/issues/346
+command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
+command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
