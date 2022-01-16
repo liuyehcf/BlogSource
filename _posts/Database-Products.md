@@ -1,5 +1,5 @@
 ---
-title: Database-Product-Analysis
+title: Database-Products
 date: 2022-01-14 14:31:10
 tags: 
 - 摘录
@@ -41,6 +41,13 @@ categories:
 
 **特性：**
 
+1. 基于`Spark`上的`ACID`事务：可序列化的隔离级别确保读者永远不会看到不一致的数据
+1. 可扩展的元数据处理：利用`Spark`分布式处理能力轻松处理具有数十亿文件的`PB`级表的所有元数据
+1. 流和批处理统一
+1. `Schema enforcement`：自动处理`Schema`的变化，以防止在变更过程冲插入异常记录
+1. `Time travel`：数据版本控制支持回滚、完整的历史审计跟踪
+1. `Upserts`和`Deletes`：支持合并、更新和删除操作，以启用复杂的用例
+
 **架构：**
 
 **资料：**
@@ -67,8 +74,20 @@ categories:
 
 **特性：**
 
+1. `Columnar storage format`：列存储架构
+1. `Scalable distributed system`：可扩展的分布式架构
+1. `Massively parallel processing`：MPP架构的计算引擎
+1. `Realtime or batch ingestion`：支持实时和批处理
+1. `Self-healing, self-balancing, easy to operate`：具有自动异常恢复、自动负载均衡等能力，便于操作
+1. `Cloud-native, fault-tolerant architecture that won't lose data`：不会丢失数据的云原生容错架构
+1. `Indexes for quick filtering`：使用`bitmap`索引来加速数据过滤
+1. `Time-based partitioning`：支持数据分区，默认以时间分区
+1. `Approximate algorithms`：支持近似算法，比如近似计算`count-discount`等，用于应对一些正确性不敏感，但是时间敏感的场景
+1. `Automatic summarization at ingest time`：在查询数据时进行自动汇总，以提高效率
+
 **架构：**
 
+* ![druid-architecture](/images/Database-Products/druid-architecture.png)
 **资料：**
 
 * [home](https://druid.apache.org/)
