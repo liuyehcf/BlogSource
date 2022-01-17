@@ -59,8 +59,6 @@
     * 打印堆栈：https://stackoverflow.com/Questions/3899870/print-call-stack-in-c-or-c
         * -ldl，libdl干嘛的？dynamic linking library
         * [Library Interfaces and Headers](https://docs.oracle.com/cd/E86824_01/html/E54772/makehtml-id-7.html#scrolltoc)
-    * /lib64/libstdc++.so.6，那一堆so是啥意思
-        * [What is libstdc++.so.6 and GLIBCXX_3.4.20?](https://unix.stackexchange.com/questions/557919/what-is-libstdc-so-6-and-glibcxx-3-4-20)
     * ldd
 1. 汇编
     * avx, advanced vector extension

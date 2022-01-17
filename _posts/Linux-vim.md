@@ -627,13 +627,13 @@ mkswap swapfile
 chmod 600 swapfile
 swapon swapfile
 
-git clone -b release/10.x https://github.com.cnpmjs.org/llvm/llvm-project.git --depth 1
+git clone -b release/13.x https://github.com.cnpmjs.org/llvm/llvm-project.git --depth 1
 cd llvm-project
 mkdir build
 cd build
-# DLLVM_ENABLE_PROJECTS: 选择clang子项目
-# DCMAKE_BUILD_TYPE: 构建类型指定为MinSizeRel。可选值有 Debug, Release, RelWithDebInfo, and MinSizeRel。其中Debug是默认值
-cmake -DLLVM_ENABLE_PROJECTS=clang \
+# DLLVM_ENABLE_PROJECTS: 选择 clang 以及 clang-tools-extra 这两个子项目
+# DCMAKE_BUILD_TYPE: 构建类型指定为MinSizeRel。可选值有 Debug, Release, RelWithDebInfo, and MinSizeRel。其中 Debug 是默认值
+cmake -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
 -DCMAKE_BUILD_TYPE=MinSizeRel \
 -G "Unix Makefiles" ../llvm
 make -j 4
@@ -1317,11 +1317,46 @@ call plug#end()
 
 ## 3.10 语义索引-[LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim)
 
-**该插件是作为`LSP`的客户端，这里我们选用的`LSP`的实现是`ccls`**
+**该插件是作为`LSP`的客户端，这里我们选用的`LSP`的实现是`clangd`以及`ccls`**
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
-```vim
+* **`clangd`。相关配置参考[LanguageClient-neovim/wiki/Clangd](https://github.com/autozimu/LanguageClient-neovim/wiki/Clangd)**
+    * `clangd`无法更改缓存的存储路径，默认会使用`${project}/.cache`作为缓存目录
+    * **`clangd`会根据`--compile-commands-dir`参数指定的路径查找`compile_commands.json`，若查找不到，则在当前目录，以及每个源文件所在目录递归向上寻找`compile_commands.json`**
+    ```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
+
+let g:LanguageClient_autoStart = 1
+let g:LanguageClient_loadSettings = 1
+let g:LanguageClient_diagnosticsEnable = 0
+let g:LanguageClient_selectionUI = 'quickfix'
+let g:LanguageClient_diagnosticsList = v:null
+let g:LanguageClient_hoverPreview = 'Never'
+let g:LanguageClient_serverCommands = {}
+let g:LanguageClient_serverCommands.c = ['clangd']
+let g:LanguageClient_serverCommands.cpp = ['clangd']
+
+nnoremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
+nnoremap <leader>rr :call LanguageClient#textDocument_references()<cr>
+nnoremap <leader>rv :call LanguageClient#textDocument_hover()<cr>
+nnoremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
+
+call plug#end()
+    ```
+
+* **`ccls`。相关配置参考[ccls-project-setup](https://github.com/MaskRay/ccls/wiki/Project-Setup)**
+    * **`ccls`会在工程的根目录寻找`compile_commands.json`**
+    ```vim
 call plug#begin()
 
 " ......................
@@ -1353,9 +1388,11 @@ nnoremap <leader>hb :call LanguageClient#findLocations({'method':'$ccls/inherita
 nnoremap <leader>hd :call LanguageClient#findLocations({'method':'$ccls/inheritance','derived':v:true})<cr>
 
 call plug#end()
-```
+    ```
 
 **其中，`~/.vim/languageclient.json`的内容示例如下（必须是决定路径，不能用`~`）**
+
+* `ccls`可以通过如下配置更改缓存的存储路径
 
 ```json
 {
@@ -1393,8 +1430,8 @@ sed -i 's|github.com/|github.com.cnpmjs.org/|' install.sh
 | **`\rr`** | **查找光标下符号的引用** |
 | **`\rv`** | **查看光标下符号的说明** |
 | **`\rn`** | **重命名光标下的符号** |
-| **`\hb`** | **查找光标下符号的父类** |
-| **`\hd`** | **查找光标下符号的子类** |
+| **`\hb`** | **查找光标下符号的父类（ccls独有）** |
+| **`\hd`** | **查找光标下符号的子类（ccls独有）** |
 
 ## 3.11 代码补全-[YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
 
@@ -1985,24 +2022,20 @@ Plug 'autozimu/LanguageClient-neovim', {
     \ 'do': 'bash install.sh',
     \ }
 
-" 默认关闭，对于一些大型项目来说，初始化有点慢，需要用的时候再通过 :LanguageClientStart 启动即可
-let g:LanguageClient_autoStart = 0
+let g:LanguageClient_autoStart = 1
 let g:LanguageClient_loadSettings = 1
 let g:LanguageClient_diagnosticsEnable = 0
-let g:LanguageClient_settingsPath = expand('~/.vim/languageclient.json')
 let g:LanguageClient_selectionUI = 'quickfix'
 let g:LanguageClient_diagnosticsList = v:null
 let g:LanguageClient_hoverPreview = 'Never'
 let g:LanguageClient_serverCommands = {}
-let g:LanguageClient_serverCommands.c = ['ccls']
-let g:LanguageClient_serverCommands.cpp = ['ccls']
+let g:LanguageClient_serverCommands.c = ['clangd']
+let g:LanguageClient_serverCommands.cpp = ['clangd']
 
 nnoremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
 nnoremap <leader>rr :call LanguageClient#textDocument_references()<cr>
 nnoremap <leader>rv :call LanguageClient#textDocument_hover()<cr>
 nnoremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
-nnoremap <leader>hb :call LanguageClient#findLocations({'method':'$ccls/inheritance'})<cr>
-nnoremap <leader>hd :call LanguageClient#findLocations({'method':'$ccls/inheritance','derived':v:true})<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2263,5 +2296,4 @@ endif
 * [centos7 安装GNU GLOBAL](http://www.cghlife.com/tool/install-gnu-global-on-centos7.html)
 * [The Vim/Cscope tutorial](http://cscope.sourceforge.net/cscope_vim_tutorial.html)
 * [GNU Global manual](https://phenix3443.github.io/notebook/emacs/modes/gnu-global-manual.html)
-* [ccls-project-setup](https://github.com/MaskRay/ccls/wiki/Project-Setup)
 * [Vim Buffers, Windows and Tabs — an overview](https://medium.com/@paulodiovani/vim-buffers-windows-and-tabs-an-overview-8e2a57c57afa)

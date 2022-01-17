@@ -67,8 +67,8 @@ linker --> result_lib
 
 1. 在环境变量`LD_LIBRARY_PATH`指定的目录下搜索
 1. 在`/etc/ld.so.cache`指定的目录中搜索
-1. 在`/lib`中搜索
-1. 在`/usr/lib`中搜索
+1. 在`/lib`、`/lib64`中搜索（系统发行版安装的）
+1. 在`/usr/lib`、`/usr/lib64`中搜索（其他软件安装的）
 
 ### 2.3.2 Linux下so的版本机制介绍
 
@@ -196,6 +196,7 @@ fopen() returned NULL
 * [RPATH handling](https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/RPATH-handling)
 * [Linux hook：Ring3下动态链接库.so函数劫持](https://www.cnblogs.com/reuodut/articles/13723437.html)
 * [What is the difference between LD_PRELOAD_PATH and LD_LIBRARY_PATH?](https://stackoverflow.com/questions/14715175/what-is-the-difference-between-ld-preload-path-and-ld-library-path)
+* [What is libstdc++.so.6 and GLIBCXX_3.4.20?](https://unix.stackexchange.com/questions/557919/what-is-libstdc-so-6-and-glibcxx-3-4-20)
 
 # 3 gun工具链
 

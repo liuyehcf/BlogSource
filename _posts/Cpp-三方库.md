@@ -11,7 +11,9 @@ categories:
 
 <!--more-->
 
-# 1 gtest
+# 1 boost
+
+# 2 gtest
 
 [github-googletest](https://github.com/google/googletest)
 
@@ -92,17 +94,17 @@ make
 ./gtest_demo
 ```
 
-## 1.1 Tips
+## 2.1 Tips
 
 1. 假设编译得到的二进制是`test`，通过执行`./test --help`就可以看到所有gtest支持的参数，包括执行特定case等等
 
-# 2 phmap
+# 3 phmap
 
 全称：`parallel-hashmap`，提供了一组高性能、并发安全的map，用于替换`std`以及`boost`中的map
 
 [parallel-hashmap](https://github.com/greg7mdp/parallel-hashmap)
 
-# 3 benchmark
+# 4 benchmark
 
 [google-benchmark](https://github.com/google/benchmark)
 
@@ -196,17 +198,17 @@ BM_StringCreation       5.12 ns         5.12 ns    136772962
 BM_StringCopy           21.0 ns         21.0 ns     33441350
 ```
 
-## 3.1 quick-benchmark
+## 4.1 quick-benchmark
 
 [quick-bench（在线）](https://quick-bench.com/)
 
-## 3.2 Tips
+## 4.2 Tips
 
-### 3.2.1 benchmark::DoNotOptimize
+### 4.2.1 benchmark::DoNotOptimize
 
 避免优化本不应该优化的代码
 
-## 3.3 参考
+## 4.3 参考
 
 * [benchmark/docs/user_guide.md](https://github.com/google/benchmark/blob/main/docs/user_guide.md)
 * [c++性能测试工具：google benchmark入门（一）](https://www.cnblogs.com/apocelipes/p/10348925.html)
