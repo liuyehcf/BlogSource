@@ -13,6 +13,59 @@ categories:
 
 # 1 boost
 
+## 1.1 打印堆栈
+
+**源码如下：**
+
+```cpp
+// BOOST_STACKTRACE_USE_ADDR2LINE 用于获取行号
+#define BOOST_STACKTRACE_USE_ADDR2LINE
+#include <boost/stacktrace.hpp>
+#include <iostream>
+
+void foo(int cnt) {
+    if (cnt == 0) {
+        std::cout << boost::stacktrace::stacktrace() << std::endl;
+        return;
+    }
+    foo(cnt - 1);
+}
+
+int main() {
+    foo(5);
+    return 0;
+}
+```
+
+**编译执行：**
+
+```sh
+# -ldl: link libdl
+# -g: 保留行号
+# -DBOOST_STACKTRACE_USE_ADDR2LINE: 源码中宏的等效方式
+gcc -o main main.cpp -lstdc++ -std=gnu++17 -ldl -g
+./main
+```
+
+输出如下：
+
+```
+ 0# boost::stacktrace::basic_stacktrace<std::allocator<boost::stacktrace::frame> >::basic_stacktrace() at xxx/stacktrace.hpp:129
+ 1# foo(int) at /root/main.cpp:12
+ 2# foo(int) at /root/main.cpp:12
+ 3# foo(int) at /root/main.cpp:12
+ 4# foo(int) at /root/main.cpp:12
+ 5# foo(int) at /root/main.cpp:12
+ 6# main at /root/main.cpp:16
+ 7# __libc_start_main in /lib64/libc.so.6
+ 8# _start in ./main
+```
+
+## 1.2 参考
+
+* [How to print current call stack](https://www.boost.org/doc/libs/1_66_0/doc/html/stacktrace/getting_started.html)
+* [print call stack in C or C++](https://stackoverflow.com/Questions/3899870/print-call-stack-in-c-or-c)
+
 # 2 gtest
 
 [github-googletest](https://github.com/google/googletest)
