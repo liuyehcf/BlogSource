@@ -754,6 +754,51 @@ AND c = `WuTang`
 
 # 9 Index Concurrency
 
+到目前为止，讨论的数据结构都是在单线程模型下。因此，我们必须允许多个线程安全，高效地访问共享数据，这样才能充分利用多个CPU的计算资源
+
+## 9.1 Latches Overviews
+
+|  | Locks | Latches |
+|:--|:--|:--|
+| 粒度 | 事务 | 线程 |
+| 保护对象 | 用户数据 | 内存中的内部数据结构 |
+| 作用范围 | 整个事务 | 部分重要的片段 |
+| 模式 | Shared、Exclusive、Update、Intention | Read，Write |
+| 死锁 | 检测&解决 | 避免 |
+
+**`Latches`的两种模式：**
+
+* `Read Mode`
+    * 多个线程可以同时获取同一个共享对象的`Read Latch`
+    * 在其他线程持有同一个共享对象的`Write Latch`时，无法获取该对象`Read Latch`
+* `Write Mode`
+    * 仅有一个线程可以获取同一个共享对象的`Write Latch`
+    * 在其他线程持有同一个共享对象的`Read Latch`或`Write Latch`时，无法获取该对象`Write Latch`
+
+**`Latches`的三种实现方式：**
+
+* `Blocking OS Mutex`，例如`std::mutex`
+* `Test-and-Set Spin Latch（TAS）`，例如`std::atomic<T>`
+* `Reader-Writer Latch`
+
+## 9.2 Hash Table Latching
+
+由于访问数据结构的方式有限，因此`Hash Table`易于支持并发访问。但是，在进行扩缩容时，需要在整个`Hash Table`上加一个全局的`Latch`，该全局的`Latch`有两种实现方式
+
+* `Page Latches`
+    * 每个`Page`都有一个`Read-Write Latch`用于保护该`Page`中的所有数据
+    * 线程必须获取`Read Latch`或`Write Latch`之后才能访问一个`Page`
+* `Slot Latches`
+    * 每个`Slot`都有一个锁，粒度更细
+    * 可以使用一个单模式的`Latch`，来降低元数据以及计算的开销
+* **示意图参考课件中的`18 ~ 37`页**
+
+## 9.3 B+Tree Latching
+
+## 9.4 LeafNode Scans
+
+## 9.5 Delayed Parent Updates
+
 # 10 Sorting
 
 # 11 Joins
@@ -831,5 +876,3 @@ AND c = `WuTang`
 1. [24-distributedolap](/resources/Database-System/24-distributedolap.pdf)
 1. [25-oracle](/resources/Database-System/25-oracle.pdf)
 1. [26-potpourri](/resources/Database-System/26-potpourri.pdf)
-
-进度：01

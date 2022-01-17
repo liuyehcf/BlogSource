@@ -675,25 +675,25 @@ make
 make install # may require extra privileges depending on where to install
 ```
 
-**ctags参数**
+**`ctags`参数：**
 
-* `--c++-kinds=+px`：`ctags`记录c++文件中的函数声明，各种外部和前向声明  
+* `--c++-kinds=+px`：`ctags`记录c++文件中的函数声明，各种外部和前向声明
 * `--fields=+ialS`：`ctags`要求描述的信息，其中：
-    * `i`：表示如果有继承，则表示出父类  
-	* `a`：表示如果元素是类成员的话，要标明其调用权限(即public或者private)  
-	* `l`：表示包含标记源文件的语言  
-	* `S`：表示函数的签名(即函数原型或者参数列表)  
+    * `i`：表示如果有继承，则表示出父类
+    * `a`：表示如果元素是类成员的话，要标明其调用权限(即public或者private)
+    * `l`：表示包含标记源文件的语言
+    * `S`：表示函数的签名(即函数原型或者参数列表)
 * `--extras=+q`：强制要求ctags做如下操作，如果某个语法元素是类的一个成员，ctags默认会给其记录一行，以要求ctags对同一个语法元素再记一行，这样可以保证在VIM中多个同名函数可以通过路径不同来区分
 * `-R`：`ctags`递归生成子目录的tags（在项目的根目录下很有意义）  
 
-**在工程中生成ctags**
+**在工程中生成`ctags`：**
 
 ```sh
 # 与上面的~/.vimrc中的配置对应，需要将tag文件名指定为.tags
 ctags --c++-kinds=+px --fields=+ialS --extras=+q -R -f .tags *
 ```
 
-**如何为系统库生成ctags，这里生成的系统库对应的ctags文件是`~/.vim/systags`**
+**如何为系统库生成`ctags`，这里生成的系统库对应的`ctags`文件是`~/.vim/systags`**
 
 ```sh
 mkdir -p ~/.vim
@@ -1177,10 +1177,10 @@ let g:gutentags_ctags_tagfile = '.tags'
 " 同时开启 ctags 和 gtags 支持：
 let g:gutentags_modules = []
 if executable('ctags')
-	let g:gutentags_modules += ['ctags']
+    let g:gutentags_modules += ['ctags']
 endif
 if executable('gtags-cscope') && executable('gtags')
-	let g:gutentags_modules += ['gtags_cscope']
+    let g:gutentags_modules += ['gtags_cscope']
 endif
 
 " 将自动生成的 ctags/gtags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
@@ -1359,11 +1359,11 @@ call plug#end()
 
 ```json
 {
-	"ccls": {
-		"cache": {
-			"directory": "/root/.cache/LanguageClient"
-		}
-	}
+    "ccls": {
+        "cache": {
+            "directory": "/root/.cache/LanguageClient"
+        }
+    }
 }
 ```
 
@@ -1917,10 +1917,10 @@ let g:gutentags_ctags_tagfile = '.tags'
 " 同时开启 ctags 和 gtags 支持：
 let g:gutentags_modules = []
 if executable('ctags')
-	let g:gutentags_modules += ['ctags']
+    let g:gutentags_modules += ['ctags']
 endif
 if executable('gtags-cscope') && executable('gtags')
-	let g:gutentags_modules += ['gtags_cscope']
+    let g:gutentags_modules += ['gtags_cscope']
 endif
 
 " 将自动生成的 ctags/gtags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
