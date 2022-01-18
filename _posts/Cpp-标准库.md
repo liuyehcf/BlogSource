@@ -245,9 +245,33 @@ void func(std::shared_ptr<Widget> ptr);
 
 这样的话，外部传过来值的时候，可以选择`move`或者赋值。函数内部直接把这个对象通过`move`的方式保存起来
 
-## 8.2 std::unique_ptr
+## 8.2 std::enable_shared_from_this
 
-## 8.3 参考
+**`std::enable_shared_from_this`能让一个由`std::shared_ptr`管理的对象，安全地生成其他额外的`std::shared_ptr`实例，原实例和新生成的示例共享所有权**
+
+* 只能通过`std::make_shared`来创建实例（不能用`new`），否则会报错
+* 普通对象（非只能指针管理）调用`std::enable_shared_from_this::shared_from_this`方法，也会报错
+
+**有什么用途？当你持有的是某个对象的裸指针时（该对象的生命周期由智能指针管理），但此时你又想获取该对象的智能指针，此时就需要依赖`std::enable_shared_from_this`**
+
+* 不能将`this`直接放入某个`std::shared_ptr`中，这样会导致`delete`野指针
+
+```cpp
+class Demo : public std::enable_shared_from_this<Demo> {
+};
+
+int main() {
+    auto ptr = std::make_shared<Demo>();
+    auto another_ptr = ptr->shared_from_this();
+
+    std::cout << ptr << std::endl;
+    std::cout << another_ptr.get() << std::endl;
+}
+```
+
+## 8.3 std::unique_ptr
+
+## 8.4 参考
 
 * [C++ 智能指针的正确使用方式](https://www.cyhone.com/articles/right-way-to-use-cpp-smart-pointer/)
 
