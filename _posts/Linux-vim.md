@@ -1336,7 +1336,8 @@ Plug 'autozimu/LanguageClient-neovim', {
     \ 'do': 'bash install.sh',
     \ }
 
-let g:LanguageClient_autoStart = 1
+" 默认关闭
+let g:LanguageClient_autoStart = 0
 let g:LanguageClient_loadSettings = 1
 let g:LanguageClient_diagnosticsEnable = 0
 let g:LanguageClient_selectionUI = 'quickfix'
@@ -2022,7 +2023,8 @@ Plug 'autozimu/LanguageClient-neovim', {
     \ 'do': 'bash install.sh',
     \ }
 
-let g:LanguageClient_autoStart = 1
+" 默认关闭
+let g:LanguageClient_autoStart = 0
 let g:LanguageClient_loadSettings = 1
 let g:LanguageClient_diagnosticsEnable = 0
 let g:LanguageClient_selectionUI = 'quickfix'

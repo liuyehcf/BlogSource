@@ -13,6 +13,12 @@ categories:
 
 # 1 boost
 
+**如何安装：**
+
+```sh
+yum install -y boost-devel
+```
+
 ## 1.1 打印堆栈
 
 **源码如下：**
@@ -63,6 +69,7 @@ gcc -o main main.cpp -lstdc++ -std=gnu++17 -ldl -g
 
 ## 1.2 参考
 
+* [The Boost C++ Libraries BoostBook Documentation Subset](https://www.boost.org/doc/libs/master/doc/html/)
 * [How to print current call stack](https://www.boost.org/doc/libs/1_66_0/doc/html/stacktrace/getting_started.html)
 * [print call stack in C or C++](https://stackoverflow.com/Questions/3899870/print-call-stack-in-c-or-c)
 

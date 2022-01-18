@@ -51,7 +51,6 @@
             * brk：调整堆顶指针
             * sbrk：
             * mmap：mmap是在进程的虚拟地址空间中（堆和栈中间，称为文件映射区域的地方）找一块空闲的虚拟内存
-    * 如何安装boost？ `yum install -y boost-devel`
     * map下标访问是非const的，因为可能会插入数据
     * 性能优化
         * ck /AggregateFunctions/IAggregateFunction.h
