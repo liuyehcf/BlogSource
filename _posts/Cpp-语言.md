@@ -771,9 +771,6 @@ throw关键字可以抛出任何对象，例如可以抛出一个整数
 
 # 4 模板
 
-1. 模板形参可以是一个类型或者枚举
-1. 模板成员默认不认为是类型，用`typename`消除歧义。例如`T::type* ptr`：如果`type`是个类型，那么这个是声明；如果`type`不是类型，那么这个是乘法表达式。因此这里存在一个歧义，而且编译器默认认为不是类型
-
 ## 4.1 非类型模板参数
 
 我们还可以在模板中定义非类型参数，一个非类型参数表示一个值而非一个类型。当一个模板被实例化时，非类型参数被编译器推断出的值所代替，这些值必须是常量表达式，从而允许编译器在编译时实例化模板。一个非类型参数可以是一个整型（枚举可以理解为整型），或是一个指向对象或函数类型的指针或引用
@@ -950,17 +947,223 @@ void bar() {
 }
 ```
 
-# 5 `__attribute__`
+# 5 元编程
+
+**本章节转载摘录自[浅谈 C++ 元编程](https://bot-man-jl.github.io/articles/?post=2017/Cpp-Metaprogramming#%E4%BB%80%E4%B9%88%E6%98%AF%E5%85%83%E7%BC%96%E7%A8%8B)**
+
+## 5.1 引言
+
+### 5.1.1 什么是元编程
+
+**元编程（`metaprogramming`）通过操作程序实体（`program entity`），在编译时（`compile time`）计算出运行时（`runtime`）需要的常数、类型、代码的方法**
+
+一般的编程是通过直接编写程序（`program`），通过编译器编译（`compile`），产生目标代码，并用于运行时执行。与普通的编程不同，元编程则是借助语言提供的模板（`template`）机制，通过编译器推导（`deduce`），在编译时生成程序。元编程经过编译器推导得到的程序，再进一步通过编译器编译，产生最终的目标代码
+
+因此，元编程又被成为两级编程（`two-level programming`），生成式编程（`generative programming`）或模板元编程（`template metaprogramming`）
+
+### 5.1.2 元编程在C++中的位置
+
+**C++语言 = C语言的超集 + 抽象机制 + 标准库**
+
+**C++的抽象机制（`abstraction mechanisms`）主要有两种：**
+
+1. 面向对象编程（`object-oriented programming`）
+1. 模板编程（`template programming`）
+
+为了实现面向对象编程，C++提供了类（`class`），用C++的已有类型（`type`）构造出新的类型。而在模板编程方面，C++提供了模板（`template`），以一种直观的方式表示通用概念（`general concept`）
+
+**模板编程的应用主要有两种：**
+
+1. 泛型编程（`generic programming`）
+1. 元编程（`meta-programming`）
+
+前者注重于通用概念的抽象，设计通用的类型或算法（`algorithm`），不需要过于关心编译器如何生成具体的代码
+
+而后者注重于设计模板推导时的选择（`selection`）和迭代（`iteration`），通过模板技巧设计程序
+
+### 5.1.3 C++元编程的历史
+
+### 5.1.4 元编程的语言支持
+
+C++的元编程主要依赖于语言提供的模板机制。除了模板，现代C++还允许使用`constexpr`函数进行常量计算。由于`constexpr`函数的功能有限，递归调用层数和计算次数还受编译器限制，而且编译性能较差，所以目前的元编程程序主要基于模板。**这一部分主要总结`C++`模板机制相关的语言基础，包括狭义的模板和泛型`lambda`表达式**
+
+#### 5.1.4.1 狭义的模板
+
+**目前最新的C++将模板分成了4类：**
+
+1. 类模板（`class template`）
+1. 函数模板（`function template`）
+1. 别名模板（`alias template`）
+1. 变量模板（`variable template`）
+
+前两者能产生新的类型，属于类型构造器（`type constructor`）；而后两者是C++为前两者补充的简化记法，属于语法糖（`syntactic sugar`）
+
+类模板和函数模板分别用于定义具有相似功能的类和函数（`function`），是泛型中对类型和算法的抽象。在标准库中，容器（`container`）和函数都是类模板和函数模板的应用
+
+别名模板和变量模板分别在C++ 11和C++ 14引入，分别提供了具有模板特性的类型别名（`type alias`）和常量（`constant`）的简记方法。前者类模板的嵌套类等方法实现，后者则可以通过constexpr函数、类模板的静态成员、函数模板的返回值等方法实现。例如，C++ 14中的别名模板`std::enable_if_t<T>`等价于`typename std::enable_if<T>::type`，C++ 17中的变量模板`std::is_same<T, U>`等价于`std::is_same<T, U>::value`。尽管这两类模板不是必须的，但一方面可以增加程序的可读性，另一方面可以提高模板的编译性能
+
+**C++中的模板参数（`template parameter/argument`）可以分为三种：**
+
+1. 值参数
+1. 类型参数
+1. 模板参数
+
+从C++ 11开始，C++支持了变长模板（`variadic template`）：模板参数的个数可以不确定，变长参数折叠为一个参数包（`parameter pack`），使用时通过编译时迭代，遍历各个参数。标准库中的元组（`tuple`），`std::tuple`就是变长模板的一个应用（元组的类型参数是不定长的，可以用`template<typename... Ts>`匹配）
+
+尽管模板参数也可以当作一般的类型参数进行传递（模板也是一个类型），但之所以单独提出来，是因为它可以实现对传入模板的参数匹配。代码8使用`std::tuple`作为参数，然后通过匹配的方法，提取`std::tuple`内部的变长参数
+
+特化（`specialization`）类似于函数的重载（`overload`），即给出全部模板参数取值（完全特化）或部分模板参数取值（部分特化）的模板实现。实例化（`instantiation`）类似于函数的绑定（`binding`），是编译器根据参数的个数和类型，判断使用哪个重载的过程。由于函数和模板的重载具有相似性，所以他们的参数重载规则（`overloading rule`）也是相似的
+
+#### 5.1.4.2 泛型 lambda 表达式
+
+由于C++不允许在函数内定义模板，有时候为了实现函数内的局部特殊功能，需要在函数外专门定义一个模板。一方面，这导致了代码结构松散，不易于维护；另一方面，使用模板时，需要传递特定的上下文（`context`），不易于复用。（类似于C语言里的回调机制，不能在函数内定义回调函数，需要通过参数传递上下文。）
+
+为此，C++ 14引入了泛型`lambda`表达式（`generic lambda expression`）：一方面，能像C++ 11引入的`lambda`表达式一样，在函数内构造闭包（`closure`），避免在函数外定义函数内使用的局部功能；另一方面，能实现函数模板的功能，允许传递任意类型的参数
+
+## 5.2 元编程的基本演算
+
+C++的模板机制仅仅提供了纯函数（`pure functional`）的方法，即不支持变量，且所有的推导必须在编译时完成。但是C++中提供的模板是图灵完备（`turing complete`）的，所以可以使用模板实现完整的元编程
+
+元编程的基本演算规则（`calculus rule`）有两种：
+
+1. 编译时测试（`compile-time test`）
+1. 编译时迭代（`compile-time iteration`）
+
+分别实现了控制结构（`control structure`）中的选择（`selection`）和迭代（`iteration`）。基于这两种基本的演算方法，可以完成更复杂的演算
+
+另外，元编程中还常用模板参数传递不同的策略（`policy`），从而实现依赖注入（`dependency injection`）和控制反转（`Inversion of Control`）。例如，`std::vector<typename T, typename Allocator = std::allocator<T>>`允许传递`Allocator`实现自定义内存分配
+
+### 5.2.1 编译时测试
+
+编译时测试相当于面向过程编程中的选择语句（`selection statement`），可以实现`if-else/switch`的选择逻辑
+
+在C++ 17之前，编译时测试是通过模板的实例化和特化实现的，每次找到最特殊的模板进行匹配。而C++ 17提出了使用`constexpr-if`的编译时测试方法
+
+#### 5.2.1.1 测试表达式
+
+类似于静态断言（`static assert`），编译时测试的对象是常量表达式（`constexpr`），即编译时能得出结果的表达式。以不同的常量表达式作为参数，可以构造各种需要的模板重载。例如，代码1演示了如何构造谓词（`predicate`）`isZero<Val>`，编译时判断`Val`是不是`0`
+
+**代码1：**
+
+```cpp
+template <unsigned Val> struct _isZero {
+    constexpr static bool value = false;
+};
+
+template <> struct _isZero <0> {
+    constexpr static bool value = true;
+};
+
+template <unsigned Val>
+constexpr bool isZero = _isZero<Val>::value;
+
+static_assert (!isZero<1>, "compile error");
+static_assert (isZero<0>, "compile error");
+```
+
+#### 5.2.1.2 测试类型
+
+**在元编程的很多应用场景中，需要对类型进行测试，即对不同的类型实现不同的功能。而常见的测试类型又分为两种：**
+
+* **判断一个类型是否为特定的类型：**
+    * 可以通过对模板的特化直接实现
+* **判断一个类型是否满足某些条件：**
+    * 可以通过替换失败不是错误（`SFINAE, Substitution Failure Is Not An Error`）规则进行最优匹配
+    * 还能通过标签派发（`tag dispatch`）匹配可枚举的有限情况（例如，`std::advance<Iter>`根据`std::iterator_traits<Iter>::iterator_category`选择迭代器类型`Iter`支持的实现方式）
+
+**为了更好的支持`SFINAE`，C++ 11的`<type_traits>`除了提供类型检查的谓词模板`is_*/has_*`，还提供了两个重要的辅助模板：**
+
+1. `std::enable_if`将对条件的判断转化为常量表达式，类似「测试表达式」小节实现重载的选择（但需要添加一个冗余的函数参数/函数返回值/模板参数）
+1. `std::void_t`直接检查依赖的成员/函数是否存在，不存在则无法重载（可以用于构造谓词，再通过`std::enable_if`判断条件）
+
+是否为特定的类型的判断，类似于代码1，将`unsigned Val`改为`typename Type`，并把传入的模板参数由值参数改为类型参数，根据最优原则匹配重载
+
+是否满足某些条件的判断，在代码2中，展示了如何将C语言的基本类型数据，转换为`std::string`的函数`ToString`。代码具体分为三个部分：
+
+1. 首先定义三个变量模板`isNum/isStr/isBad`，分别对应了三个类型条件的谓词（使用了`<type_traits>`中的`std::is_arithmetic`和`std::is_same`）
+1. 然后根据`SFINAE`规则，使用`std::enable_if`重载函数`ToString`，分别对应了数值、C风格字符串和非法类型
+1. 在前两个重载中，分别调用`std::to_string`和`std::string`构造函数；在最后一个重载中，静态断言直接报错
+
+**代码2：**
+
+```cpp
+template <typename T>
+constexpr bool isNum = std::is_arithmetic<T>::value;
+
+template <typename T>
+constexpr bool isStr = std::is_same<T, const char *>::value;
+
+template <typename T>
+constexpr bool isBad = !isNum<T> && !isStr<T>;
+
+template <typename T>
+std::enable_if_t<isNum<T>, std::string> ToString (T num) {
+    return std::to_string (num);
+}
+
+template <typename T>
+std::enable_if_t<isStr<T>, std::string> ToString (T str) {
+    return std::string (str);
+}
+
+template <typename T>
+std::enable_if_t<isBad<T>, std::string> ToString (T bad) {
+    static_assert (sizeof (T) == 0, "neither Num nor Str");
+}
+
+auto a = ToString (1);  // std::to_string (num);
+auto b = ToString (1.0);  // std::to_string (num);
+auto c = ToString ("0x0");  // std::string (str);
+auto d = ToString (std::string {});  // not compile :-(
+```
+
+根据两阶段名称查找（`two-phase name lookup`）的规定：如果直接使用`static_assert (false)`断言，会在模板还没实例化的第一阶段编译失败；所以需要借助类型依赖（`type-dependent`）的`false`表达式（一般依赖于参数`T`）进行失败的静态断言
+
+类似的，可以通过定义一个变量模板`template <typename...> constexpr bool false_v = false`，并使用`false_v<T>`替换`sizeof (T) == 0`
+
+#### 5.2.1.3 使用 if 进行编译时测试
+
+### 5.2.2 编译时迭代
+
+#### 5.2.2.1 定长模板的迭代
+
+#### 5.2.2.2 变长模板的迭代
+
+#### 5.2.2.3 使用折叠表达式化简编译时迭代
+
+## 5.3 元编程的基本应用
+
+### 5.3.1 数值计算
+
+### 5.3.2 类型推导
+
+### 5.3.3 代码生成
+
+## 5.4 元编程的主要难点
+
+### 5.4.1 复杂性
+
+### 5.4.2 实例化错误
+
+### 5.4.3 代码膨胀
+
+### 5.4.4 编译性能
+
+### 5.4.5 调试模板
+
+## 5.5 总结
+
+# 6 `__attribute__`
 
 [Compiler-specific Features](https://www.keil.com/support/man/docs/armcc/armcc_chr1359124965789.htm)
 
-# 6 ASM
+# 7 ASM
 
 [gcc-online-docs](https://gcc.gnu.org/onlinedocs/gcc/)
 
-## 6.1 Basic Asm
+## 7.1 Basic Asm
 
-## 6.2 Extended Asm
+## 7.2 Extended Asm
 
 GCC设计了一种特有的嵌入方式，它规定了汇编代码嵌入的形式和嵌入汇编代码需要由哪几个部分组成，格式如下：
 
@@ -1135,9 +1338,9 @@ int main() {
 
 **示例3：linux内核大量用到了`asm`，具体可以参考[linux-asm](https://github.com/torvalds/linux/blob/master/arch/x86/include/asm)**
 
-# 7 Policy
+# 8 Policy
 
-## 7.1 Pointer Stability
+## 8.1 Pointer Stability
 
 **`pointer stability`通常用于描述容器。当我们说一个容器是`pointer stability`时，是指，当某个元素添加到容器之后、从容器删除之前，该元素的内存地址不变，也就是说，该元素的内存地址，不会受到容器的添加删除元素、扩缩容、或者其他操作影响**
 
@@ -1160,7 +1363,7 @@ int main() {
 | `phmap::node_hash_map` | ✅ |
 | `phmap::node_hash_set` | ✅ |
 
-## 7.2 Exception Safe
+## 8.2 Exception Safe
 
 [Wiki-Exception safety](https://en.wikipedia.org/wiki/Exception_safety)
 
@@ -1171,9 +1374,9 @@ int main() {
 1. `Basic exception safety`：可能会抛出异常，操作失败的部分可能会导致副作用，但所有不变量都会被保留。任何存储的数据都将包含可能与原始值不同的有效值。资源泄漏（包括内存泄漏）通常通过一个声明所有资源都被考虑和管理的不变量来排除
 1. `No exception safety`：不承诺异常安全
 
-# 8 Tips
+# 9 Tips
 
-## 8.1 如何在类中定义静态成员
+## 9.1 如何在类中定义静态成员
 
 **在类中声明静态成员，在类外定义（赋值）静态成员，示例如下：**
 
@@ -1201,9 +1404,9 @@ gcc -o main main.cpp -lstdc++ -Wall
 ./main
 ```
 
-## 8.2 初始化
+## 9.2 初始化
 
-### 8.2.1 初始化列表
+### 9.2.1 初始化列表
 
 1. 对于内置类型，直接进行值拷贝。使用初始化列表还是在构造函数体中进行初始化没有差别
 1. 对于类类型
@@ -1314,7 +1517,7 @@ A's default constructor
 A's move assign operator
 ```
 
-### 8.2.2 各种初始化类型
+### 9.2.2 各种初始化类型
 
 1. 默认初始化：`type variableName;`
 1. 直接初始化/构造初始化（至少有1个参数）：`type variableName(args);`
@@ -1447,9 +1650,9 @@ A's (int, int) constructor
 ============(值初始化 a11)============
 ```
 
-## 8.3 指针
+## 9.3 指针
 
-### 8.3.1 成员函数指针
+### 9.3.1 成员函数指针
 
 成员函数指针需要通过`.*`或者`->*`运算符进行调用
 
@@ -1508,9 +1711,9 @@ int main() {
 }
 ```
 
-## 8.4 引用
+## 9.4 引用
 
-### 8.4.1 引用赋值
+### 9.4.1 引用赋值
 
 **引用只能在定义处初始化**
 
@@ -1536,7 +1739,7 @@ b=2
 ref=2
 ```
 
-## 8.5 placement new
+## 9.5 placement new
 
 `placement new`的功能就是在一个已经分配好的空间上，调用构造函数，创建一个对象
 
@@ -1545,7 +1748,7 @@ void *buf = // 在这里为buf分配内存
 Class *pc = new (buf) Class();  
 ```
 
-## 8.6 内存对齐
+## 9.6 内存对齐
 
 **内存对齐最最底层的原因是内存的IO是以`8`个字节`64bit`为单位进行的**
 
@@ -1669,7 +1872,7 @@ Align4's size = 16
 	f4's offset = 8, f4's size = 8
 ```
 
-## 8.7 mock class
+## 9.7 mock class
 
 有时在测试的时候，我们需要mock一个类的实现，我们可以在测试的cpp文件中实现这个类的所有方法（**注意，必须是所有方法**），就能够覆盖原有库文件中的实现。下面以一个例子来说明
 
@@ -1846,9 +2049,9 @@ person.cpp:(.text+0x2a): Person::sleep() 的多重定义
 collect2: 错误：ld 返回 1
 ```
 
-### 8.7.1 demo using cmake
+### 9.7.1 demo using cmake
 
-# 9 参考
+# 10 参考
 
 * [C++11\14\17\20 特性介绍](https://www.jianshu.com/p/8c4952e9edec)
 * [关于C++：静态常量字符串(类成员)](https://www.codenong.com/1563897/)

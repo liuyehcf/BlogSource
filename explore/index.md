@@ -61,3 +61,4 @@ date: 2018-02-05 09:25:59
 * [陈皓-耗子哥](https://coolshell.cn/articles/author/haoel)
 * [美团技术博客](https://tech.meituan.com/)
 * [Richard Stallman-Make作者](https://www.stallman.org/)
+* [BOT Man | John Lee](https://bot-man-jl.github.io/articles/)

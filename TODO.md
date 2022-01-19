@@ -59,6 +59,13 @@
         * -ldl，libdl干嘛的？dynamic linking library
         * [Library Interfaces and Headers](https://docs.oracle.com/cd/E86824_01/html/E54772/makehtml-id-7.html#scrolltoc)
     * ldd
+    * `std::make_integer_sequence`、元编程：https://www.cnblogs.com/happenlee/p/14219925.html
+        * https://github.com/ClickHouse/ClickHouse/blob/785cb6510f65050f706a95f258529c4097d9e453/base/base/constexpr_helpers.h
+        * [C/C++ 宏编程的艺术](https://bot-man-jl.github.io/articles/?post=2020/Macro-Programming-Art)
+    * `constexpr`
+    * `static_assert`
+    * string和整数相互转化，std::to_string(), std::atoi
+    * `std::optional`
 1. 汇编
     * avx, advanced vector extension
     * avx2指令
