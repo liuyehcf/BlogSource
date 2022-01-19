@@ -51,4 +51,5 @@
 # 英文表述
 
 1. Data Cache misses per 1000 instructions comparing LRU, Random, FIFO replacement for several sizes and associativities.
-1. World-class
+1. World-class，世界级
+1. Divide-and-conquer，分而治之
