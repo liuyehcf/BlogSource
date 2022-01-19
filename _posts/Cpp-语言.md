@@ -1046,19 +1046,21 @@ C++的模板机制仅仅提供了纯函数（`pure functional`）的方法，即
 **代码1：**
 
 ```cpp
-template <unsigned Val> struct _isZero {
+template <unsigned Val>
+struct _isZero {
     constexpr static bool value = false;
 };
 
-template <> struct _isZero <0> {
+template <>
+struct _isZero<0> {
     constexpr static bool value = true;
 };
 
 template <unsigned Val>
 constexpr bool isZero = _isZero<Val>::value;
 
-static_assert (!isZero<1>, "compile error");
-static_assert (isZero<0>, "compile error");
+static_assert(!isZero<1>, "compile error");
+static_assert(isZero<0>, "compile error");
 ```
 
 #### 5.2.1.2 测试类型
@@ -1097,24 +1099,24 @@ template <typename T>
 constexpr bool isBad = !isNum<T> && !isStr<T>;
 
 template <typename T>
-std::enable_if_t<isNum<T>, std::string> ToString (T num) {
-    return std::to_string (num);
+std::enable_if_t<isNum<T>, std::string> ToString(T num) {
+    return std::to_string(num);
 }
 
 template <typename T>
-std::enable_if_t<isStr<T>, std::string> ToString (T str) {
-    return std::string (str);
+std::enable_if_t<isStr<T>, std::string> ToString(T str) {
+    return std::string(str);
 }
 
 template <typename T>
-std::enable_if_t<isBad<T>, std::string> ToString (T bad) {
-    static_assert (sizeof (T) == 0, "neither Num nor Str");
+std::enable_if_t<isBad<T>, std::string> ToString(T bad) {
+    static_assert(sizeof(T) == 0, "neither Num nor Str");
 }
 
-auto a = ToString (1);  // std::to_string (num);
-auto b = ToString (1.0);  // std::to_string (num);
-auto c = ToString ("0x0");  // std::string (str);
-auto d = ToString (std::string {});  // not compile :-(
+auto a = ToString(1);  // std::to_string (num);
+auto b = ToString(1.0);  // std::to_string (num);
+auto c = ToString("0x0");  // std::string (str);
+auto d = ToString(std::string {});  // not compile :-(
 ```
 
 根据两阶段名称查找（`two-phase name lookup`）的规定：如果直接使用`static_assert (false)`断言，会在模板还没实例化的第一阶段编译失败；所以需要借助类型依赖（`type-dependent`）的`false`表达式（一般依赖于参数`T`）进行失败的静态断言
@@ -1123,13 +1125,115 @@ auto d = ToString (std::string {});  // not compile :-(
 
 #### 5.2.1.3 使用 if 进行编译时测试
 
+对于初次接触元编程的人，往往会使用`if`语句进行编译时测试。代码3是代码2一个错误的写法，很代表性的体现了元编程和普通编程的不同之处
+
+**代码3：**
+
+```cpp
+template <typename T>
+std::string ToString(T val) {
+    if (isNum<T>)
+        return std::to_string(val);
+    else if (isStr<T>)
+        return std::string(val);
+    else
+        static_assert(!isBad<T>, "neither Num nor Str");
+}
+```
+
+代码3中的错误在于：编译代码的函数`ToString`时，对于给定的类型`T`，需要进行两次函数绑定，`val`作为参数分别调用`std::to_string(val)`和`std::string (val)`，再进行一次静态断言，判断`!isBad<T>`是否为`true`。这会导致：两次绑定中，有一次会失败。假设调用`ToString("str")`，在编译这段代码时，`std::string(const char *)`可以正确的重载，但是`std::to_string (const char *)`并不能找到正确的重载，导致编译失败
+
+假设是脚本语言，这段代码是没有问题的：因为脚本语言没有编译的概念，所有函数的绑定都在运行时完成。而静态语言的函数绑定是在编译时完成的。为了使得代码`3`的风格用于元编程，C++ 17引入了 `constexpr-if`，只需要把以上代码3中的`if`改为`if constexpr`就可以编译了
+
+`constexpr-if`的引入让模板测试更加直观，提高了模板代码的可读性。代码4展示了如何使用`constexpr-if`解决编译时选择的问题；而且最后的兜底（`catch-all`）语句，不再需要`isBad<T>`谓词模板，可以使用类型依赖的`false`表达式进行静态断言（但也不能直接使用`static_assert(false)`断言）
+
+**代码4：**
+
+```cpp
+template <typename T>
+std::string ToString(T val) {
+    if constexpr (isNum<T>)
+        return std::to_string(val);
+    else if constexpr (isStr<T>)
+        return std::string(val);
+    else
+        static_assert(false_v<T>, "neither Num nor Str");
+}
+```
+
+然而，`constexpr-if`背后的思路早在`Visual Studio 2012`已出现了。其引入了`__if_exists`语句，用于编译时测试标识符是否存在
+
 ### 5.2.2 编译时迭代
+
+编译时迭代和面向过程编程中的循环语句（`loop statement`）类似，用于实现与`for/while/do`类似的循环逻辑
+
+在C++ 17之前，和普通的编程不同，元编程的演算规则是纯函数的，不能通过变量迭代实现编译时迭代，只能用递归（`recursion`）和特化的组合实现。**一般思路是：提供两类重载，一类接受任意参数，内部递归 调用自己；另一类是前者的模板特化或函数重载，直接返回结果，相当于递归终止条件。它们的重载条件可以是表达式或类型**
+
+而C++ 17提出了折叠表达式（`fold expression`）的语法，化简了迭代的写法
 
 #### 5.2.2.1 定长模板的迭代
 
+代码5展示了如何使用编译时迭代实现编译时计算阶乘（`N!`）。函数`_Factor`有两个重载：一个是对任意非负整数的，一个是对`0`为参数的。前者利用递归产生结果，后者直接返回结果。当调用`_Factor<2>`时，编译器会展开为`2 * _Factor<1>`，然后`_Factor<1>`再展开为`1 * _Factor<0>`，最后`_Factor<0>`直接匹配到参数为`0`的重载
+
+**代码5：**
+
+```cpp
+template <unsigned N>
+constexpr unsigned _Factor() {
+    return N * _Factor<N - 1>();
+}
+
+template <>
+constexpr unsigned _Factor<0>() {
+    return 1;
+}
+
+template <unsigned N>
+constexpr unsigned Factor = _Factor<N>();
+
+static_assert(Factor<0> == 1, "compile error");
+static_assert(Factor<1> == 1, "compile error");
+static_assert(Factor<4> == 24, "compile error");
+```
+
 #### 5.2.2.2 变长模板的迭代
 
+为了遍历变长模板的每个参数，可以使用编译时迭代实现循环遍历。代码6实现了对所有参数求和的功能。函数`Sum`有两个重载：一个是对没有函数参数的情况，一个是对函数参数个数至少为`1`的情况。和定长模板的迭代类似，这里也是通过递归调用实现参数遍历
+
+**代码6：**
+
+```cpp
+template <typename T>
+constexpr auto Sum() {
+    return T(0);
+}
+
+template <typename T, typename... Ts>
+constexpr auto Sum(T arg, Ts... args) {
+    return arg + Sum<T>(args...);
+}
+
+static_assert(Sum<int>() == 0, "compile error");
+static_assert(Sum(1, 2.0, 3) == 6, "compile error");
+```
+
 #### 5.2.2.3 使用折叠表达式化简编译时迭代
+
+在C++ 11引入变长模板时，就支持了在模板内直接展开参数包的语法；但该语法仅支持对参数包里的每个参数进行一元操作（`unary operation`）；为了实现参数间的二元操作（`binary operation`），必须借助额外的模板实现（例如，代码6定义了两个`Sum`函数模板，其中一个展开参数包进行递归调用）。
+
+而C++ 17引入了折叠表达式，允许直接遍历参数包里的各个参数，对其应用二元运算符（`binary operator`）进行左折叠（`left fold`）或右折叠（`right fold`）。代码7使用初始值为`0`的左折叠表达式，对代码6进行改进
+
+**代码7：**
+
+```cpp
+template <typename... Ts>
+constexpr auto Sum(Ts... args) {
+    return (0 + ... + args);
+}
+
+static_assert(Sum() == 0, "compile error");
+static_assert(Sum(1, 2.0, 3) == 6, "compile error");
+```
 
 ## 5.3 元编程的基本应用
 
