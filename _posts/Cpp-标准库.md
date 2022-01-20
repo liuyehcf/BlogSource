@@ -11,7 +11,7 @@ categories:
 
 <!--more-->
 
-# 1 `<utility>`
+# 1 utility
 
 ## 1.1 std::move
 
@@ -95,7 +95,7 @@ int main() {
 * 如果模板实参是左值或右值，那么匹配的是第二个方法
     * 右值：`_Tp&&`得到的是个右值
 
-# 2 `<numeric>`
+# 2 numeric
 
 ## 2.1 std::accumulate
 
@@ -115,25 +115,25 @@ int main() {
 }
 ```
 
-# 3 `<future>`
+# 3 future
 
 ## 3.1 std::promise
 
 ## 3.2 std::future
 
-# 4 `<string>`
+# 4 string
 
 ## 4.1 std::string
 
 字符串比较函数：`strcmp`
 
-# 5 `<limits>`
+# 5 limits
 
 ## 5.1 std::numeric_limits
 
 `std::numeric_limits<int32_t>::max()`
 
-# 6 `<thread>`
+# 6 thread
 
 ## 6.1 std::thread
 
@@ -204,7 +204,7 @@ int main() {
 }
 ```
 
-# 7 `<chrono>`
+# 7 chrono
 
 ## 7.1 std::chrono
 
@@ -220,7 +220,7 @@ auto end = std::chrono::steady_clock::now();
 auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
 ```
 
-# 8 `<memory>`
+# 8 memory
 
 ## 8.1 std::shared_ptr
 
@@ -275,7 +275,7 @@ int main() {
 
 * [C++ 智能指针的正确使用方式](https://www.cyhone.com/articles/right-way-to-use-cpp-smart-pointer/)
 
-# 9 `<functional>`
+# 9 functional
 
 ## 9.1 std::function
 
@@ -289,7 +289,7 @@ int main() {
 
 * [C++11 中的std::function和std::bind](https://www.jianshu.com/p/f191e88dcc80)
 
-# 10 `<mutex>`
+# 10 mutex
 
 ## 10.1 std::mutex
 
@@ -324,7 +324,7 @@ m.unlock();
 
 * [Do I have to acquire lock before calling condition_variable.notify_one()?](https://stackoverflow.com/questions/17101922/do-i-have-to-acquire-lock-before-calling-condition-variable-notify-one)
 
-# 11 `<atomic>`
+# 11 atomic
 
 ## 11.1 内存一致性模型
 
@@ -437,15 +437,40 @@ result: 0, flag: 1, expected: 1
 * [并行编程——内存模型之顺序一致性](https://www.cnblogs.com/jiayy/p/3246157.html)
 * [漫谈内存一致性模型](https://zhuanlan.zhihu.com/p/91406250)
 
-# 12 `<any>`
+# 12 any
 
 ## 12.1 std::any_cast
 
-# 13 `<type_traits>`
+# 13 type_traits
 
-## 13.1 std::conditional_t
+**具体分类可以参考`<type_traits>`头文件的注释**
 
-## 13.2 std::remove_reference
+## 13.1 谓词模板
+
+用于判断类型
+
+1. `std::is_void`
+1. `std::is_array`
+1. ...
+
+## 13.2 属性模板
+
+用于调整类型信息
+
+1. `std::remove_reference`
+1. `std::add_lvalue_reference_t`
+1. `std::add_rvalue_reference_t`
+
+## 13.3 别名模板
+
+只是一种简写，例如`std::enable_if_t`等价于`typename enable_if<b,T>::type`
+
+1. `std::enable_if_t`
+1. `std::conditional_t`
+1. `std::remove_reference_t`
+1. `std::result_of_t`
+1. `std::invoke_result_t`
+1. ...
 
 # 14 C标准库
 

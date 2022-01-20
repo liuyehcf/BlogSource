@@ -19,6 +19,7 @@ date: 2018-02-05 09:25:59
         * [Conferences Worldwide](https://isocpp.org/wiki/faq/conferences-worldwide/)
 * [CppCon](https://cppcon.org/)
     * [CppCon-Download](https://github.com/CppCon)
+* [C++ 语言构造参考手册](https://www.bookstack.cn/books/cppreference-language)
 * [C++ Notes for Professionals book](https://goalkicker.com/CPlusPlusBook/)
 * [Google-Abseil](https://abseil.io/)
 * [Google 开源项目风格指南](https://zh-google-styleguide.readthedocs.io/en/latest/google-cpp-styleguide/)
