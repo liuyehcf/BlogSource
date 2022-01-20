@@ -1043,7 +1043,15 @@ ROOT=$(cd "$ROOT"; pwd)
 
 * `addr2line 4005f5 -e test`：查看二进制`test`中位置为`4005f5`指令对应的源码
 
-## 2.28 objdump
+## 2.28 ldd
+
+该工具用于查看可执行文件链接了哪些动态库
+
+**示例：**
+
+* `ldd main`
+
+## 2.29 objdump
 
 该工具用于反汇编
 
@@ -1052,7 +1060,7 @@ ROOT=$(cd "$ROOT"; pwd)
 * `objdump -drwCS main.o`
 * `objdump -drwCS -M intel main.o`
 
-## 2.29 iconf
+## 2.30 iconf
 
 **参数说明：**
 
@@ -1068,7 +1076,7 @@ ROOT=$(cd "$ROOT"; pwd)
 
 * `iconv -f gbk -t utf-8 s.txt > t.txt`
 
-## 2.30 expect
+## 2.31 expect
 
 expect是一个自动交互的工具，通过编写自定义的配置，就可以实现自动填充数据的功能
 

@@ -128,7 +128,26 @@ categories:
 * [home](https://greenplum.org/)
 * [github](https://github.com/greenplum-db/gpdb)
 
-# 7 Hawq
+# 7 Hadoop
+
+**包含三大组件：**
+
+1. `HDFS`：存储
+1. `MapReduce`：计算
+1. `YARN`：调度
+
+**类型：`Framework`**
+
+**特性：**
+
+**架构：**
+
+**主页：**
+
+* [home](https://hadoop.apache.org/)
+* [github](https://github.com/apache/hadoop)
+
+# 8 Hawq
 
 **类型：`OLAP`**
 
@@ -158,7 +177,30 @@ categories:
 * [home](https://hawq.apache.org/)
 * [github](https://github.com/apache/hawq)
 
-# 8 Hive
+# 9 HBase
+
+**类型：`NoSQL`/`Storage`**
+
+**特性：**
+
+1. 线性和模块化的可扩展性
+1. 强一致性的读写
+1. 自动和可配置的表分片
+1. 自动异常恢复
+1. 面向Java的连接器
+1. 通过`Block Cache`以及布隆过滤器支持实时查询
+
+**架构：**
+
+* [Architecture of HBase](https://www.geeksforgeeks.org/architecture-of-hbase/)
+* ![hbase_architecture](/images/Database-Products/hbase_architecture.png)
+
+**主页：**
+
+* [home](https://hbase.apache.org/)
+* [github](https://github.com/apache/hbase)
+
+# 10 Hive
 
 **类型：`OLAP`**
 
@@ -180,7 +222,7 @@ categories:
 * [home](https://hive.apache.org/)
 * [github](https://github.com/apache/hive)
 
-# 9 Hudi
+# 11 Hudi
 
 **类型：`Data Lake`**
 
@@ -203,7 +245,7 @@ categories:
 * [home](https://hudi.apache.org/)
 * [github](https://github.com/apache/hudi)
 
-# 10 Iceberg
+# 12 Iceberg
 
 **类型：`Data Lake`**
 
@@ -216,7 +258,7 @@ categories:
 * [home](https://iceberg.apache.org/)
 * [github](https://github.com/apache/iceberg)
 
-# 11 Impala
+# 13 Impala
 
 **类型：`OLAP`**
 
@@ -238,7 +280,7 @@ categories:
 * [impala-home](https://impala.apache.org/)
 * [impala-github](https://github.com/apache/impala)
 
-# 12 Kudu
+# 14 Kudu
 
 **类型：`Columnar Storage`**
 
@@ -263,7 +305,7 @@ categories:
 * [kudu-home](https://kudu.apache.org/)
 * [kudu-github](https://github.com/apache/kudu)
 
-# 13 Kylin
+# 15 Kylin
 
 **类型：`OLAP`**
 
@@ -283,7 +325,7 @@ categories:
 * [home](https://kylin.apache.org/cn/)
 * [github](https://github.com/apache/kylin)
 
-# 14 Pinot
+# 16 Pinot
 
 **类型：`OLAP`**
 
@@ -307,7 +349,7 @@ categories:
 * [home](https://pinot.apache.org/)
 * [github](https://github.com/apache/pinot)
 
-# 15 Presto
+# 17 Presto
 
 **类型：`OLAP`**
 
@@ -326,7 +368,7 @@ categories:
 * [home](https://prestodb.io/)
 * [github](https://github.com/prestodb/presto)
 
-# 16 Starrocks
+# 18 Starrocks
 
 **类型：`OLAP`**
 
@@ -339,7 +381,7 @@ categories:
 * [home](https://www.starrocks.com/zh-CN/index)
 * [github](https://github.com/StarRocks/starrocks)
 
-# 17 Snowflake
+# 19 Snowflake
 
 **类型：`OLAP`**
 
@@ -359,17 +401,23 @@ categories:
 
 * [home](https://www.snowflake.com/)
 
-# 18 Sparksql
+# 20 Spark
 
-**类型：`OLAP`**
+**类型：`OLAP?`**
 
 **特性：**
+
+1. 支持流批
+1. 支持`ANSI SQL`
 
 **架构：**
 
 **主页：**
 
-# 19 TiDB
+* [home](https://spark.apache.org/)
+* [github](https://github.com/apache/spark)
+
+# 21 TiDB
 
 **类型：`OLTP`**
 
@@ -391,7 +439,7 @@ categories:
 * [home](https://docs.pingcap.com/zh/tidb/stable/)
 * [github](https://github.com/pingcap/tidb)
 
-# 20 Trino
+# 22 Trino
 
 **类型：**
 
@@ -415,7 +463,7 @@ categories:
 * [home](https://trino.io/)
 * [github](https://github.com/trinodb/trino)
 
-# 21 Vertica
+# 23 Vertica
 
 **类型：`OLAP`**
 
@@ -427,7 +475,7 @@ categories:
 
 * [home](https://www.vertica.com/)
 
-# 22 参考
+# 24 参考
 
 * [你需要的不是实时数仓 | 你需要的是一款合适且强大的OLAP数据库(上)](https://segmentfault.com/a/1190000020385432)
 * [你需要的不是实时数仓 | 你需要的是一款强大的OLAP数据库(下)](https://segmentfault.com/a/1190000020385389)

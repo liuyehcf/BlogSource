@@ -22,16 +22,11 @@
         * [DorisDB doc](http://doc.dorisdb.com)
     * 相关工具
         * [sqlancer](https://github.com/sqlancer/sqlancer)
-        * sqlmith
+        * [sqlsmith](https://github.com/anse1/sqlsmith)
     * doc
         * [sqlite-window-function](https://www.sqlite.org/windowfunctions.html)
     * ssb测试集
         * https://www.cnblogs.com/tgzhu/p/9083092.html
-1. 大数据
-    * hive
-    * hbase
-    * spark
-    * hadoop
 1. 缩写
     * PMC（Project Management Committee）
         * [WHAT IS A PMC?](https://www.apache.org/dev/pmc.html#what-is-a-pmc)
@@ -51,17 +46,10 @@
             * brk：调整堆顶指针
             * sbrk：
             * mmap：mmap是在进程的虚拟地址空间中（堆和栈中间，称为文件映射区域的地方）找一块空闲的虚拟内存
-    * map下标访问是非const的，因为可能会插入数据
-    * 性能优化
-        * ck /AggregateFunctions/IAggregateFunction.h
-    * 序列化框架arrow；https://zhuanlan.zhihu.com/p/339132159
     * 打印堆栈：https://stackoverflow.com/Questions/3899870/print-call-stack-in-c-or-c
         * -ldl，libdl干嘛的？dynamic linking library
         * [Library Interfaces and Headers](https://docs.oracle.com/cd/E86824_01/html/E54772/makehtml-id-7.html#scrolltoc)
-    * ldd
-    * `std::make_integer_sequence`、元编程：https://www.cnblogs.com/happenlee/p/14219925.html
-        * https://github.com/ClickHouse/ClickHouse/blob/785cb6510f65050f706a95f258529c4097d9e453/base/base/constexpr_helpers.h
-        * [C/C++ 宏编程的艺术](https://bot-man-jl.github.io/articles/?post=2020/Macro-Programming-Art)
+    * [C/C++ 宏编程的艺术](https://bot-man-jl.github.io/articles/?post=2020/Macro-Programming-Art)
     * `constexpr`
     * `static_assert`
     * string和整数相互转化，std::to_string(), std::atoi
