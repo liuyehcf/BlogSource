@@ -1237,25 +1237,164 @@ static_assert(Sum(1, 2.0, 3) == 6, "compile error");
 
 ## 5.3 元编程的基本应用
 
+利用元编程，可以很方便的设计出类型安全（`type safe`）、运行时高效（`runtime effective`）的程序。到现在，元编程已被广泛的应用于C++的编程实践中。例如，`Todd Veldhuizen`提出了使用元编程的方法构造表达式模板（`expression template`），使用表达式优化的方法，提升向量计算的运行速度；`K. Czarnecki`和`U. Eisenecker`利用模板实现`Lisp`解释器
+
+尽管元编程的应用场景各不相同，但都是三类基本应用的组合：数值计算（`numeric computation`）、类型推导（`type deduction`）和代码生成（`code generation`）。例如，在`BOT Man`设计的对象关系映射`ORM, object-relation mapping`中，主要使用了类型推导和代码生成的功能。根据对象（`object`）在C++中的类型，推导出对应数据库关系（`relation`）中元组各个字段的类型。将对C++对象的操作，映射到对应的数据库语句上，并生成相应的代码
+
 ### 5.3.1 数值计算
+
+作为元编程的最早的应用，数值计算可以用于编译时常数计算和优化运行时表达式计算
+
+编译时常数计算能让程序员使用程序设计语言，写编译时确定的常量；而不是直接写常数（迷之数字（`magic number`））或在运行时计算这些常数。例如，代码5、6、7都是编译时对常数的计算
+
+最早的有关元编程优化表达式计算的思路是`Todd Veldhuizen`提出的。利用表达式模板，可以实现部分求值、惰性求值、表达式化简等特性
 
 ### 5.3.2 类型推导
 
+除了基本的数值计算之外，还可以利用元编程进行任意类型之间的相互推导。例如，在领域特定语言（`domain-specific language`）和C++语言原生结合时，类型推导可以实现将这些语言中的类型，转化为C++的类型，并保证类型安全
+
+`BOT Man`提出了一种能编译时进行`SQL`语言元组类型推导的方法。C++所有的数据类型都不能为`NULL`，而`SQL`的字段是允许为`NULL`的，所以在C++中使用`std::optional`容器存储可以为空的字段。通过`SQL`的`outer-join`拼接得到的元组的所有字段都可以为`NULL`，所以`ORM`需要一种方法：把字段可能是`std::optional<T>`或`T`的元组，转化为全部字段都是`std::optional<T>`的新元组。
+
+**代码8：**
+
+1. 定义`TypeToNullable`，并对`std::optional<T>`进行特化，作用是将`std::optional<T>`和`T`自动转换为`std::optional<T>`
+1. 定义`TupleToNullable`，拆解元组中的所有类型，转化为参数包，再把参数包中所有类型分别传入`TypeToNullable`，最后得到的结果重新组装为新的元组
+
+```cpp
+template <typename T>
+struct TypeToNullable {
+    using type = std::optional<T>;
+};
+template <typename T>
+struct TypeToNullable<std::optional<T>> {
+    using type = std::optional<T>;
+};
+
+template <typename... Args>
+auto TupleToNullable(const std::tuple<Args...>&) {
+    return std::tuple<typename TypeToNullable<Args>::type...>{};
+}
+
+auto t1 = std::make_tuple(std::optional<int>{}, int{});
+auto t2 = TupleToNullable(t1);
+static_assert(!std::is_same<std::tuple_element_t<0, decltype(t1)>, std::tuple_element_t<1, decltype(t1)>>::value,
+              "compile error");
+static_assert(std::is_same<std::tuple_element_t<0, decltype(t2)>, std::tuple_element_t<1, decltype(t2)>>::value,
+              "compile error");
+```
+
 ### 5.3.3 代码生成
+
+和泛型编程一样，元编程也常常被用于代码的生成。但是和简单的泛型编程不同，元编程生成的代码往往是通过编译时测试和编译时迭代的演算推导出来的。例如，代码2就是一个将C语言基本类型转化为`std::string`的代码的生成代码
+
+在实际项目中，我们往往需要将C++数据结构，和实际业务逻辑相关的领域模型（`domain model`）相互转化。例如，将承载着领域模型的`JSON`字符串反序列化（`deserialize`）为C++对象，再做进一步的业务逻辑处理，然后将处理后的C++对象序列化（`serialize`）变为`JSON`字符串。而这些序列化/反序列化的代码，一般不需要手动编写，可以自动生成
+
+`BOT Man`提出了一种基于编译时多态（`compile-time polymorphism`）的方法，定义领域模型的模式（`schema`），自动生成领域模型和C++对象的序列化/反序列化的代码。这样，业务逻辑的处理者可以更专注于如何处理业务逻辑，而不需要关注如何做底层的数据结构转换
 
 ## 5.4 元编程的主要难点
 
+尽管元编程的能力丰富，但学习、使用的难度都很大。一方面，复杂的语法和运算规则，往往让初学者望而却步；另一方面，即使是有经验的C++开发者，也可能掉进元编程看不见的坑里
+
 ### 5.4.1 复杂性
+
+由于元编程的语言层面上的限制较大，所以许多的元编程代码使用了很多的编译时测试和编译时迭代技巧，可读性（`readability`）都比较差。另外，由于巧妙的设计出编译时能完成的演算也是很困难的，相较于一般的C++程序，元编程的可写性（`writability`）也不是很好
+
+现代C++也不断地增加语言的特性，致力于降低元编程的复杂性：
+
+* C++ 11的别名模板提供了对模板中的类型的简记方法
+* C++ 14的变量模板提供了对模板中常量的简记方法
+* C++ 17的`constexpr-if`提供了编译时测试的新写法
+* C++ 17的折叠表达式降低了编译时迭代的编写难度
+
+基于C++ 14的泛型`lambda`表达式，`Louis Dionne`设计的元编程库`Boost.Hana`提出了不用模板就能元编程的理念，宣告从模板元编程（`template metaprogramming`）时代进入现代元编程（`modern metaprogramming`）时代。其核心思想是：只需要使用C++ 14的泛型`lambda`表达式和`C++ 11`的`constexpr/decltype`，就可以快速实现元编程的基本演算了
 
 ### 5.4.2 实例化错误
 
+模板的实例化和函数的绑定不同：在编译前，前者对传入的参数是什么，没有太多的限制；而后者则根据函数的声明，确定了应该传入参数的类型。而对于模板实参内容的检查，则是在实例化的过程中完成的。所以，程序的设计者在编译前，很难发现实例化时可能产生的错误
+
+为了减少可能产生的错误，`Bjarne Stroustrup`等人提出了在语言层面上，给模板上引入概念（`concept`）。利用概念，可以对传入的参数加上限制（`constraint`），即只有满足特定限制的类型才能作为参数传入模板。例如，模板`std::max`限制接受支持运算符`<`的类型传入。但是由于各种原因，这个语言特性一直没有能正式加入C++标准（可能在C++ 20中加入）。尽管如此，编译时仍可以通过编译时测试和静态断言等方法实现检查
+
+另外，编译时模板的实例化出错位置，在调用层数较深处时，编译器会提示每一层实例化的状态，这使得报错信息包含了很多的无用信息，很难让人较快的发现问题所在。`BOT Man`提出了一种短路编译（`short-circuit compiling`）的方法，能让基于元编程的库（`library`），给用户提供更人性化的编译时报错。具体方法是，在实现（`implementation`）调用需要的操作之前，接口（`interface`）先检查是传入的参数否有对应的操作；如果没有，就通过短路的方法，转到一个用于报错的接口，然后停止编译并使用静态断言提供报错信息。`Paul Fultz II`提出了一种类似于C++ 20的概念/限制的接口检查方法，通过定义概念对应的特征（`traits`）模板，然后在使用前检查特征是否满足
+
 ### 5.4.3 代码膨胀
+
+由于模板会对所有不同模板实参都进行一次实例化，所以当参数的组合很多的时候，很可能会发生代码膨胀（`code bloat`），即产生体积巨大的代码。这些代码可以分为两种：死代码（`dead code`）和有效代码（`effective code`）
+
+在元编程中，很多时候只关心推导的结果，而不是过程。例如，代码5中，只关心最后的`Factor<4> == 24`，而不需要中间过程中产生的临时模板。但是在`N`很大的时候，编译会产生很多临时模板。这些临时模板是死代码，即不被执行的代码。所以，编译器会自动优化最终的代码生成，在链接时（`link-time`）移除这些无用代码，使得最终的目标代码不会包含它们。尽管如此，如果产生过多的死代码，会浪费宝贵的编译时间
+
+另一种情况下，展开的代码都是有效代码，即都是被执行的，但是又由于需要的参数的类型繁多，最后的代码体积仍然很大。编译器很难优化这些代码，所以程序员应该在设计时避免代码膨胀。一般用薄模板（`thin template`）减小模板实例体积；具体思路是：将不同参数实例化得到的模板的相同部分抽象为共同的基类或函数，然后将不同参数对应的不同部分继承基类或调用函数，从而实现代码共享
+
+例如，在`std::vector`的实现中，对`T*`和`void*`进行了特化；然后将所有的`T*`的实现继承到`void*`的实现上，并在公开的函数里通过强制类型转换，进行`void*`和`T*`的相互转换；最后这使得所有的指针的`std::vector`就可以共享同一份实现，从而避免了代码膨胀（代码9）
+
+**代码9：**
+
+```cpp
+template <typename T>
+class vector; // general
+template <typename T>
+class vector<T*>; // partial spec
+template <>
+class vector<void*>; // complete spec
+
+template <typename T>
+class vector<T*> : private vector<void*> {
+    using Base = Vector<void∗>;
+
+public:
+    T∗& operator[](int i) {
+        return reinterpret_cast<T∗&>(Base::operator[](i));
+    }
+    ...
+}
+```
 
 ### 5.4.4 编译性能
 
+元编程尽管不会带来额外的运行时开销（`runtime overhead`），但如果过度使用，可能会大大增加编译时间（尤其是在大型项目中）。为了提高元编程的编译性能，需要使用特殊的技巧进行优化
+
+根据单定义规则（`One Definition Rule, ODR`），允许一个模板在多个翻译单元（`translation unit`）中使用相同的模板参数实例化，并在链接时合并为同一个实例。然而，每个翻译单元上的模板操作是独立的，一方面增加了编译时间，另一方面还会产生过多中间代码。因此，常用显式实例化（`explicit instantiation`）避免进行多次模板实例化操作；具体思路是：在一个翻译单元中显式定义模板实例，在其他翻译单元中只需要通过`extern`声明相同的实例。由于接口与实现分离，该方法还常用于静态库的模板接口
+
+`Chiel Douwes`对元编程中的常用模板操作进行了深入分析，对比了几种模板操作的代价（`Cost of operations: The Rule of Chiel`）（没有提到C++ 14的变量模板；从高到低）：
+
+1. 替换失败不是错误`SFINAE`
+1. 实例化函数模板
+1. 实例化类模板
+1. 使用别名模板
+1. 添加参数到类模板
+1. 添加参数到别名模板
+1. 使用缓存的类型
+
+基于以上原则，`Odin Holmes`设计了类型运算库`Kvasir`，相比基于C++ 98/11的类型运算库，拥有极高的编译性能。为了衡量编译性能的优化效果，`Louis Dionne`设计了一个基于`CMake`的编译时间基准测试框架
+
+另外，`Mateusz Pusz`总结了一些元编程性能的实践经验。例如，基于C++ 11别名模板的`std::conditional_t`和基于C++ 14变量模板的`std::is_same_v`都比基于`std::conditional/std::is_same`的传统方案更快。代码10展示了基于`std::is_same`和直接基于变量模板的`std::is_same_v`的实现
+
+**代码10：**
+
+```cpp
+// traditional, slow
+template <typename T, typename U>
+struct is_same : std::false_type {};
+template <typename T>
+struct is_same<T, T> : std::true_type {};
+template <typename T, typename U>
+constexpr bool is_same_v = is_same<T, U>::value;
+
+// using variable template, fast
+template <typename T, typename U>
+constexpr bool is_same_v = false;
+template <typename T>
+constexpr bool is_same_v<T, T> = true;
+```
+
 ### 5.4.5 调试模板
 
+元编程在运行时主要的难点在于：对模板代码的调试（`debugging`）。如果需要调试的是一段通过很多次的编译时测试和编译时迭代展开的代码，即这段代码是各个模板的拼接生成的（而且展开的层数很多）；那么，调试时需要不断地在各个模板的实例（`instance`）间来回切换。这种情景下，调试人员很难把具体的问题定位到展开后的代码上
+
+所以，一些大型项目很少使用复杂的代码生成技巧，而是通过传统的代码生成器生成重复的代码，易于调试。例如`Chromium`的通用扩展接口（`common extension api`）通过定义`JSON/IDL`文件，通过代码生成器生成相关的C++代码，同时还可以生成接口文档
+
 ## 5.5 总结
+
+C++元编程的出现，是一个无心插柳的偶然：人们发现C++语言提供的模板抽象机制，能很好的被应用于元编程上。借助元编程，可以写出类型安全、运行时高效的代码。但是，过度的使用元编程，一方面会增加编译时间，另一方面会降低程序的可读性。不过，在C++不断地演化中，新的语言特性被不断提出，为元编程提供更多的可能
 
 # 6 `__attribute__`
 

@@ -1,6 +1,7 @@
 ---
 title: Database-System
 date: 2021-12-06 09:39:17
+mathjax: true
 tags: 
 - 摘录
 categories: 
@@ -462,9 +463,9 @@ WHERE table_name = '<table name>';
 
 ### 6.2.2 Robin Hood Hashing
 
-**`Robin Hood Hashing`是`Linear Probe Hashing`的变体。每个键值对存放的最佳槽位（通过哈希计算出来的槽位）和实际槽位之间的距离称为`d`，那么`Robin Hood Hashing`的核心思想在于降低距离`d`的总和$\sum{d}$**
+**`Robin Hood Hashing`是`Linear Probe Hashing`的变体。每个键值对存放的最佳槽位（通过哈希计算出来的槽位）和实际槽位之间的距离称为`d`，那么`Robin Hood Hashing`的核心思想在于降低距离`d`的总和{% raw %}$\sum{d}${% endraw %}**
 
-* 会在插入、删除时，调整已有元素的位置，从而保证$\sum{d}$最小
+* 会在插入、删除时，调整已有元素的位置，从而保证{% raw %}$\sum{d}${% endraw %}最小
 
 **示意图参考课件中的`34 ~ 40`页**
 
@@ -919,6 +920,84 @@ AND c = `WuTang`
 * **示意图参考课件中的`37 ~ 45`页**
 
 # 11 Joins
+
+我们通常会将业务数据根据不同的数据模型，存放在多张不同的数据表中，从而避免存储重复的数据。于是，当我们需要的信息分散在不同的数据表中时，我们需要`Join`操作来合并这些信息
+
+通常来说，我们将数据规模更小的那张表称为`Left Table`或者`Outer Table`（在`Starrocks`中，更倾向于右表更小，这样可以构建出一个较小的`Hash Table`）
+
+**示意图参考课件中的`4 ~ 11`页**
+
+**`Join Algorithms`：**
+
+1. `Nested Loop Join`
+    * 简单而愚蠢的做法
+1. `Sort-Merge Join`
+1. `Hash Join`
+
+**下面的分析都针对如下查询：**
+
+```sql
+SELECT R.id, S.cdate
+FROM R JOIN S
+ON R.id = S.id
+WHERE S.value > 100
+```
+
+**这里涉及的代价计算，只考虑`I/O`开销，且有如下假设：**
+
+1. `R`中有`M`个`Page`，`m`个`tuple`
+1. `S`中有`N`个`Page`，`n`个`tuple`
+
+## 11.1 Nested Loop Join
+
+**为啥这个算法很愚蠢？因为对于`R`中的每个`tuple`都要扫描一遍`S`，因此开销是`Cost = M + (m * N)`**
+
+![11-1](/images/Database-System/11-1.png)
+
+## 11.2 Block Nested Loop Join
+
+**`Block Nested Loop Join`该算法在`Nested Loop Join`之上做了进一步的改进，以`Block`为单位进行循环。对于`R`中的每个`Blcok`，扫描一遍`S`，这样可以减小磁盘访问的频率，开销是`Cost = M + (M * N)`**
+
+![11-2](/images/Database-System/11-2.png)
+
+**更进一步，当我们有`B`个`Buffer Pool`时，对于`R`中每`B-2`个`Block`，扫描一遍`S`，这样可以进一步减小磁盘访问的频率，此时开销为`Cost = M + (⌈ M / (B-2) ⌉ * N)`**
+
+* `B-2`个用于扫描`Left Table`
+* 1个用于扫描`Right Table`
+* 1个用于输出
+
+![11-3](/images/Database-System/11-3.png)
+
+## 11.3 Index Nested Loop Join
+
+**为什么`Nested Loop Join`方法很糟糕？因为需要顺序扫描`S`。我们可以借助索引来快速查找`S`中的匹配项**
+
+1. 使用现有的索引
+1. 构建实时索引，比如`Hash Table`、`B+Tree`等
+
+![11-4](/images/Database-System/11-4.png)
+
+**假设索引访问的开销是`C`，那么整体的开销是`Cost = M + (m * C)`**
+
+## 11.4 Sort Merge Join
+
+`Sort Merge Join`算法的大体思路如下
+
+* 首先，对两张表按照`Join`列进行排序
+* 然后，合并两张排序后的表，在合并的过程中，过滤出匹配项
+
+![11-5](/images/Database-System/11-5.png)
+
+**示意图参考课件中的`31 ~ 48`页**
+
+**开销计算：**
+
+* {% raw %}$Sort\ Cost(R) = 2M * (1 + \lceil log_{B-1}{\lceil \frac{M}{B} \rceil} \rceil)${% endraw %}
+* {% raw %}$Sort\ Cost(S) = 2N * (1 + \lceil log_{B-1}{\lceil \frac{N}{B} \rceil} \rceil)${% endraw %}
+* `Merge Cost = M + N`
+* `Cost = Sort Cost(R) + Sort Cost(S) + Merge Cost`
+* **当`R.id`与`S.id`存在重复时，`M + N <= Merge Cost <= M * N`**
+* **当`R.id`与`S.id`全部一样时，退化成最差的情况，此时`Merge Cost = M * N`**
 
 # 12 Query Execution 1
 
