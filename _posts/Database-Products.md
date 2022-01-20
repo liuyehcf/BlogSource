@@ -403,7 +403,7 @@ categories:
 
 # 20 Spark
 
-**类型：`OLAP?`**
+**类型：`Analytics Engine`（`Alternative to MapReduce`）**
 
 **特性：**
 
@@ -411,6 +411,8 @@ categories:
 1. 支持`ANSI SQL`
 
 **架构：**
+
+* ![spark_ecology](/images/Database-Products/spark_ecology.png)
 
 **主页：**
 
