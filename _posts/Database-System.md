@@ -948,7 +948,7 @@ WHERE S.value > 100
 1. `R`中有`M`个`Page`，`m`个`tuple`
 1. `S`中有`N`个`Page`，`n`个`tuple`
 
-## 11.1 Nested Loop Join
+## 11.1 Simple Nested Loop Join
 
 **为啥这个算法很愚蠢？因为对于`R`中的每个`tuple`都要扫描一遍`S`，因此开销是`Cost = M + (m * N)`**
 
@@ -981,7 +981,7 @@ WHERE S.value > 100
 
 ## 11.4 Sort Merge Join
 
-`Sort Merge Join`算法的大体思路如下
+**`Sort Merge Join`算法的大体思路如下：**
 
 * 首先，对两张表按照`Join`列进行排序
 * 然后，合并两张排序后的表，在合并的过程中，过滤出匹配项
@@ -998,6 +998,74 @@ WHERE S.value > 100
 * `Cost = Sort Cost(R) + Sort Cost(S) + Merge Cost`
 * **当`R.id`与`S.id`存在重复时，`M + N <= Merge Cost <= M * N`**
 * **当`R.id`与`S.id`全部一样时，退化成最差的情况，此时`Merge Cost = M * N`**
+
+**什么时候使用`Sort Merge Join`：**
+
+1. 当`join`左右两路输入都已经按`join`列排序时
+1. 当`join`的结果需要排序时
+
+## 11.5 Hash Join
+
+**如果`r ∈ R`中的元组和`s ∈ S`中的元组满足`join`的条件，那么也就是说`join`列取值相同。当某个元组`r`被哈希到某个分区`i`时，那么`S`中对应的元组`s`也会被哈希到同一个分区。于是只需要在各自分区内进行匹配即可，大大缩减了复杂度**
+
+**`Hash Join`算法的大体思路如下：**
+
+1. `Build Phase`：扫描左表的数据，用哈希函数`h1`构建`Hash Table`
+1. `Probe Phase`：扫描右表的数据，对每个元组，用同一个哈希函数`h1`找到对应的分桶，然后在分桶内找匹配项
+
+![11-6](/images/Database-System/11-6.png)
+
+**示意图参考课件中的`55 ~ 59`页**
+
+**优化：**
+
+* 在`Build Phase`构建一个`Bloom Filter`
+* 在`Probe Phase`用`Bloom Filter`来快速判断元素是否存在于`Hash Table`中
+* 这种方式也被称为`Sideways Information Passing`
+
+**示意图参考课件中的`63 ~ 66`页**
+
+## 11.6 Grace Hash Join
+
+**如果没存不足以存放整个`Hash Table`时，而且不想用`Buffer Pool`，该怎么办？`Grace Hash Join`就是为解决这个问题而提出来的**
+
+**`Grace Hash Join`的大体思路：**
+
+1. `Build Phase`：将左右两张表哈希到不同的分区中
+1. `Probe Phase`：在每个分区中查询匹配项
+
+![11-7](/images/Database-System/11-7.png)
+
+**示意图参考课件中的`73 ~ 75`页**
+
+**如果分桶的大小仍然大于内存，那么可以使用`Recursive Partitioning`进行二次分区**
+
+* 使用哈希函数`h2`（`h2 ≠ h1`）对{% raw %}$Bucket_{R,i}${% endraw %}构建`Hash Table`
+* 对{% raw %}$Bucket_{S,i}${% endraw %}使用同一个哈希函数`h2`，在上一步构建的`Hash Table`中查找匹配项
+
+**示意图参考课件中的`77 ~ 82`页**
+
+**开销计算：**
+
+* `Partitioning Phase = 2(M + N)`：左右表分别两次哈希，各扫描两次
+* `Probing Phase =  M + N`：左右表各扫描一次
+* `Cost = Partitioning Phase + Probing Phase = 3(M + N)`
+
+## 11.7 总结
+
+**假设：**
+
+* `M = 1000, m = 100,000`
+* `N = 500, n = 40,000`
+* `Single I/O Cost = 0.1ms`
+
+| Algorighm | IO Cost | Example |
+|:--|:--|:--|
+| `Simple Nested Loop Join` | `M + (m * N)` | 1.3 hours |
+| `Block Nested Loop Join` | `M + (M * N)` | 50 seconds |
+| `Index Nested Loop Join` | `M + (m * C)` | 20 seconds |
+| `Sort-Merge Join` | `M + N + (Sort Cost)` | 0.59 seconds |
+| `Hash Join` | `3(M + N)` | 0.45 seconds |
 
 # 12 Query Execution 1
 
