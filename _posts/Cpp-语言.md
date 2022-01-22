@@ -186,6 +186,10 @@ else
 #define foo(x) do { bar(x); baz(x); } while (0)
 ```
 
+## 2.4 参考
+
+* [C/C++ 宏编程的艺术](https://bot-man-jl.github.io/articles/?post=2020/Macro-Programming-Art)
+
 # 3 关键字
 
 ## 3.1 const

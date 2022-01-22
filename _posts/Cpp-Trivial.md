@@ -45,23 +45,15 @@ linker --> result_lib
 
 # 2 lib
 
-## 2.1 什么是`libc`、`glic`
-
-`libc`实现了C的标准库函数（例如`strcpy()`），以及`POSIX`函数（例如系统调用`getpid()`）。此外，不是所有的C标准库函数都包含在`libc`中，比如大多数`math`相关的库函数都封装在`libm`中
-
-系统调用有别于普通函数，它无法被链接器解析。实现系统调用必须引入平台相关的汇编指令。我们可以通过手动实现这些汇编指令来完成系统调用，或者直接使用`libc`（它已经为我们封装好了）
-
-`glibc, GNU C Library`可以看做是`libc`的另一种实现，它不仅包含`libc`的所有功能还包含`libm`以及其他核心库，比如`libpthread`
-
-## 2.2 静态链接库
+## 2.1 静态链接库
 
 **后缀：`*.a`**
 
-## 2.3 动态链接库
+## 2.2 动态链接库
 
 **后缀：`*.so`**
 
-### 2.3.1 动态库搜索顺序
+### 2.2.1 动态库搜索顺序
 
 **搜索如下：详见`man ld.so`**
 
@@ -70,7 +62,7 @@ linker --> result_lib
 1. 在`/lib`、`/lib64`中搜索（系统发行版安装的）
 1. 在`/usr/lib`、`/usr/lib64`中搜索（其他软件安装的）
 
-### 2.3.2 Linux下so的版本机制介绍
+### 2.2.2 Linux下so的版本机制介绍
 
 **本小节转载摘录自[一文读懂Linux下动态链接库版本管理及查找加载方式](https://blog.ideawand.com/2020/02/15/how-does-linux-shared-library-versioning-works/)**
 
@@ -84,7 +76,7 @@ libbar.so.x  ->  libbar.so.x.y
 
 这里的`x`、`y`、`z`分别代表的是这个`so`的主版本号（`MAJOR`），次版本号（`MINOR`），以及发行版本号（`RELEASE`），对于这三个数字各自的含义，以及什么时候会进行增长，不同的文献上有不同的解释，不同的组织遵循的规定可能也有细微的差别，但有一个可以肯定的事情是：主版本号（`MAJOR`）不同的两个`so`库，所暴露出的`API`接口是不兼容的。而对于次版本号，和发行版本号，则有着不同定义，其中一种定义是：次要版本号表示`API`接口的定义发生了改变（比如参数的含义发生了变化），但是保持向前兼容；而发行版本号则是函数内部的一些功能调整、优化、BUG修复，不涉及`API`接口定义的修改
 
-#### 2.3.2.1 几个so库有关名字的介绍
+#### 2.2.2.1 几个so库有关名字的介绍
 
 **介绍一下在`so`查找过程中的几个名字**
 
@@ -92,7 +84,7 @@ libbar.so.x  ->  libbar.so.x.y
 * **`real name`：是真实具有`so`库可执行代码的那个文件，之所以叫`real`是相对于`SONAME`和`linker name`而言的，因为另外两种名字一般都是一个软连接，这些软连接最终指向的文件都是具有`real name`命名形式的文件。`real name`的命名格式中，可能有`2`个数字尾缀，也可能有`3`个数字尾缀，但这不重要。你只要记住，真实的那个，不是以软连接形式存在的，就是一个`real name`**
 * **`linker name`：这个名字只是给编译工具链中的连接器使用的名字，和程序运行并没有什么关系，仅仅在链接得到可执行文件的过程中才会用到。它的命名特征是以`lib`开头，以`.so`结尾，不带任何数字后缀的格式**
 
-#### 2.3.2.2 SONAME的作用
+#### 2.2.2.2 SONAME的作用
 
 假设在你的Linux系统中有3个不同版本的`bar`共享库，他们在磁盘上保存的文件名如下：
 
@@ -116,7 +108,7 @@ libbar.so.x  ->  libbar.so.x.y
 * 通过修改软连接的指向，可以让应用程序在互相兼容的`so`库中方便切换使用哪一个
 * 通常情况下，大家使用最新版本即可，除非是为了在特定版本下做一些调试、开发工作
 
-#### 2.3.2.3 linker name的作用
+#### 2.2.2.3 linker name的作用
 
 上一节中我们提到，可执行文件里会存储精确到主版本号的`SONAME`，但是在编译生成可执行文件的过程中，编译器怎么知道应该用哪个主版本号呢？为了回答这个问题，我们从编译链接的过程来梳理一下
 
@@ -135,11 +127,11 @@ libbar.so.x  ->  libbar.so.x.y
 * 编译器从软链接指向的文件里找到其`SONAME`，并将`SONAME`写入到生成的可执行文件中
 * 通过改变`linker name`软连接的指向，可以将不同主版本号的`SONAME`写入到生成的可执行文件中
 
-## 2.4 LD_PRELOAD
+## 2.3 LD_PRELOAD
 
 **环境变量`LD_PRELOAD`指定的目录拥有最高优先级**
 
-### 2.4.1 demo
+### 2.3.1 demo
 
 ```sh
 cat > sample.c << 'EOF'
@@ -188,6 +180,14 @@ fopen() returned NULL
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
+## 2.4 libc、glic、libm、libz
+
+`libc`实现了C的标准库函数（例如`strcpy()`），以及`POSIX`函数（例如系统调用`getpid()`）。此外，不是所有的C标准库函数都包含在`libc`中，比如大多数`math`相关的库函数都封装在`libm`中，大多数压缩相关的库函数都封装在`libz`中
+
+系统调用有别于普通函数，它无法被链接器解析。实现系统调用必须引入平台相关的汇编指令。我们可以通过手动实现这些汇编指令来完成系统调用，或者直接使用`libc`（它已经为我们封装好了）
+
+`glibc, GNU C Library`可以看做是`libc`的另一种实现，它不仅包含`libc`的所有功能还包含`libm`以及其他核心库，比如`libpthread`
+
 ## 2.5 参考
 
 * [Program Library HOWTO](https://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html)
@@ -198,56 +198,17 @@ fopen() returned NULL
 * [What is the difference between LD_PRELOAD_PATH and LD_LIBRARY_PATH?](https://stackoverflow.com/questions/14715175/what-is-the-difference-between-ld-preload-path-and-ld-library-path)
 * [What is libstdc++.so.6 and GLIBCXX_3.4.20?](https://unix.stackexchange.com/questions/557919/what-is-libstdc-so-6-and-glibcxx-3-4-20)
 
-# 3 gun工具链
+# 3 内存管理
 
-1. `ld`：the GNU linker
-1. `as`：the GNU assembler
-1. `gold`：a new, faster, ELF only linker
-1. `addr2line`：Converts addresses into filenames and line numbers
-1. `ar`：A utility for creating, modifying and extracting from archives
-1. `c++filt` - Filter to demangle encoded C++ symbols.
-1. `dlltool` - Creates files for building and using DLLs.
-1. `elfedit` - Allows alteration of ELF format files.
-1. `gprof` - Displays profiling information.
-1. `nlmconv` - Converts object code into an NLM.
-1. `nm` - Lists symbols from object files.
-1. `objcopy` - Copies and translates object files.
-1. `objdump` - Displays information from object files.
-1. `ranlib` - Generates an index to the contents of an archive.
-1. `readelf` - Displays information from any ELF format object file.
-1. `size` - Lists the section sizes of an object or archive file.
-1. `strings` - Lists printable strings from files.
-1. `strip` - Discards symbols.
-1. `windmc` - A Windows compatible message compiler.
-1. `windres` - A compiler for Windows resource files.
+**涉及的系统调用（只涉及虚拟内存，物理内存只能通过缺页异常来分配）**
 
-## 3.1 gcc
+* `brk`：详见`man brk`
+* `sbrk`：详见`man sbrk`
+* `mmap/munmap`：详见`man mmap/munmap`
 
-### 3.1.1 编译选项
+而内存管理的`lib`工作在用户态，底层还是通过上述系统调用来分配虚拟内存，不同的`lib`管理内存的算法可能有差异
 
-1. `-E`：生成预处理文件（`.i`）
-1. `-S`：生成汇编文件（`.s`）
-    * `-fverbose-asm`：带上一些注释信息
-1. `-c`：生成目标文件（`.o`）
-1. 默认生成可执行文件
-
-### 3.1.2 编译优化
-
-1. **`-O0`（默认）：不做任何优化**
-1. **`-O/-O1`：在不影响编译速度的前提下，尽量采用一些优化算法降低代码大小和可执行代码的运行速度**
-1. **`-O2`：该优化选项会牺牲部分编译速度，除了执行`-O1`所执行的所有优化之外，还会采用几乎所有的目标配置支持的优化算法，用以提高目标代码的运行速度**
-1. **`-O3`：该选项除了执行-O2所有的优化选项之外，一般都是采取很多向量化算法，提高代码的并行执行程度，利用现代CPU中的流水线，Cache等**
-* **不同优化等级对应开启的优化参数参考`man page`**
-
-### 3.1.3 其他参数
-
-1. `-fsized-deallocation`：启用接收`size`参数的`delete`运算符。[C++ Sized Deallocation](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3778.html)。现代内存分配器在给对象分配内存时，需要指定大小，出于空间利用率的考虑，不会在对象内存周围存储对象的大小信息。因此在释放对象时，需要查找对象占用的内存大小，查找的开销很大，因为通常不在缓存中。因此，编译器允许提供接受一个`size`参数的`global delete operator`，并用这个版本来对对象进行析构
-
-## 3.2 参考
-
-# 4 内存管理
-
-## 4.1 [tcmalloc](https://github.com/google/tcmalloc)
+## 3.1 [tcmalloc](https://github.com/google/tcmalloc)
 
 **如何安装：**
 
@@ -255,7 +216,7 @@ fopen() returned NULL
 yum -y install gperftools gperftools-devel
 ```
 
-### 4.1.1 heapprofile
+### 3.1.1 heapprofile
 
 **`main.cpp`：**
 
@@ -332,71 +293,18 @@ pprof --text ./main /tmp/test-profile.0001.heap | head -30
 pprof --svg ./main /tmp/test-profile.0001.heap > heap.svg 
 ```
 
-## 4.2 [jemalloc](https://github.com/jemalloc/jemalloc)
+## 3.2 [jemalloc](https://github.com/jemalloc/jemalloc)
 
-## 4.3 参考
+## 3.3 [mimalloc](https://github.com/microsoft/mimalloc)
+
+## 3.4 参考
 
 * [heapprofile.html](https://gperftools.github.io/gperftools/heapprofile.html)
-* [Apache Doris-调试工具](https://doris.apache.org/master/zh-CN/developer-guide/debug-tool.html)
+* [Apache Doris-调试工具](https://doris.apache.org/developer-guide/debug-tool.html)
 
-# 5 clang-format
+# 4 Address Sanitizer
 
-**如何安装`clang-format`**
-
-```sh
-npm install -g clang-format
-```
-
-**如何使用：在`用户目录`或者`项目根目录`中创建`.clang-format`文件用于指定格式化的方式，下面给一个示例**
-
-* **优先使用项目根目录中的`.clang-format`；如果不存在，则使用用户目录中的`~/.clang-format`**
-
-```
----
-Language: Cpp
-BasedOnStyle: Google
-AccessModifierOffset: -4
-AllowShortFunctionsOnASingleLine: Inline
-ColumnLimit: 120
-ConstructorInitializerIndentWidth: 8 # double of IndentWidth
-ContinuationIndentWidth: 8 # double of IndentWidth
-DerivePointerAlignment: false # always use PointerAlignment
-IndentCaseLabels: false
-IndentWidth: 4
-PointerAlignment: Left
-ReflowComments: false
-SortUsingDeclarations: false
-SpacesBeforeTrailingComments: 1
-```
-
-# 6 头文件搜索路径
-
-**头文件`#include "xxx.h"`的搜索顺序**
-
-1. 先搜索当前目录
-1. 然后搜索`-I`参数指定的目录
-1. 再搜索gcc的环境变量`CPLUS_INCLUDE_PATH`（C程序使用的是`C_INCLUDE_PATH`）
-1. 最后搜索gcc的内定目录，包括：
-    * `/usr/include`
-    * `/usr/local/include`
-    * `/usr/lib/gcc/x86_64-redhat-linux/<gcc version>/include`（C头文件）或者`/usr/include/c++/<gcc version>`（C++头文件）
-
-**头文件`#include <xxx.h>`的搜索顺序**
-
-1. 先搜索`-I`参数指定的目录
-1. 再搜索gcc的环境变量`CPLUS_INCLUDE_PATH`（C程序使用的是`C_INCLUDE_PATH`）
-1. 最后搜索gcc的内定目录，包括：
-    * `/usr/include`
-    * `/usr/local/include`
-    * `/usr/lib/gcc/x86_64-redhat-linux/<gcc version>/include`（C头文件）或者`/usr/include/c++/<gcc version>`（C++头文件）
-
-## 6.1 参考
-
-* [C/C++ 头文件以及库的搜索路径](https://blog.csdn.net/crylearner/article/details/17013187)
-
-# 7 Address Sanitizer
-
-## 7.1 memory leak
+## 4.1 memory leak
 
 ```sh
 cat > test_memory_leak.cpp << 'EOF'
@@ -413,7 +321,7 @@ gcc test_memory_leak.cpp -o test_memory_leak -g -lstdc++ -fsanitize=address -sta
 ./test_memory_leak
 ```
 
-## 7.2 stack buffer underflow
+## 4.2 stack buffer underflow
 
 ```sh
 cat > test_stack_buffer_underflow.cpp << 'EOF'
@@ -443,24 +351,134 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
 ./test_stack_buffer_underflow
 ```
 
-## 7.3 参考
+## 4.3 参考
 
 * [c++ Asan(address-sanitize)的配置和使用](https://blog.csdn.net/weixin_41644391/article/details/103450401)
 * [HOWTO: Use Address Sanitizer](https://www.osc.edu/resources/getting_started/howto/howto_use_address_sanitizer)
 * [google/sanitizers](https://github.com/google/sanitizers)
 
-# 8 doc
+# 5 gun工具链
 
-## 8.1 [cpp reference](https://en.cppreference.com/w/)
+1. `ld`：the GNU linker
+1. `as`：the GNU assembler
+1. `gold`：a new, faster, ELF only linker
+1. `addr2line`：Converts addresses into filenames and line numbers
+1. `ar`：A utility for creating, modifying and extracting from archives
+1. `c++filt` - Filter to demangle encoded C++ symbols.
+1. `dlltool` - Creates files for building and using DLLs.
+1. `elfedit` - Allows alteration of ELF format files.
+1. `gprof` - Displays profiling information.
+1. `nlmconv` - Converts object code into an NLM.
+1. `nm` - Lists symbols from object files.
+1. `objcopy` - Copies and translates object files.
+1. `objdump` - Displays information from object files.
+1. `ranlib` - Generates an index to the contents of an archive.
+1. `readelf` - Displays information from any ELF format object file.
+1. `size` - Lists the section sizes of an object or archive file.
+1. `strings` - Lists printable strings from files.
+1. `strip` - Discards symbols.
+1. `windmc` - A Windows compatible message compiler.
+1. `windres` - A compiler for Windows resource files.
 
-## 8.2 [cppman](https://github.com/aitjcize/cppman/)
+## 5.1 gcc
 
-**如何安装：**
+### 5.1.1 编译选项
+
+1. `-E`：生成预处理文件（`.i`）
+1. `-S`：生成汇编文件（`.s`）
+    * `-fverbose-asm`：带上一些注释信息
+1. `-c`：生成目标文件（`.o`）
+1. 默认生成可执行文件
+
+### 5.1.2 编译优化
+
+1. **`-O0`（默认）：不做任何优化**
+1. **`-O/-O1`：在不影响编译速度的前提下，尽量采用一些优化算法降低代码大小和可执行代码的运行速度**
+1. **`-O2`：该优化选项会牺牲部分编译速度，除了执行`-O1`所执行的所有优化之外，还会采用几乎所有的目标配置支持的优化算法，用以提高目标代码的运行速度**
+1. **`-O3`：该选项除了执行-O2所有的优化选项之外，一般都是采取很多向量化算法，提高代码的并行执行程度，利用现代CPU中的流水线，Cache等**
+* **不同优化等级对应开启的优化参数参考`man page`**
+
+### 5.1.3 其他参数
+
+1. `-fsized-deallocation`：启用接收`size`参数的`delete`运算符。[C++ Sized Deallocation](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3778.html)。现代内存分配器在给对象分配内存时，需要指定大小，出于空间利用率的考虑，不会在对象内存周围存储对象的大小信息。因此在释放对象时，需要查找对象占用的内存大小，查找的开销很大，因为通常不在缓存中。因此，编译器允许提供接受一个`size`参数的`global delete operator`，并用这个版本来对对象进行析构
+
+## 5.2 ld
+
+**种类**
+
+* `GNU gold`
+* `LLVM lld`
+* [mold](https://github.com/rui314/mold)
+
+**`Flags`**
+
+* -fuse-ld=gold
+* -B/usr/local/bin/gcc-mold
+
+## 5.3 参考
+
+# 6 llvm工具链
+
+## 6.1 clang-format
+
+**如何安装`clang-format`**
 
 ```sh
-pip install cppman
+npm install -g clang-format
 ```
 
-**示例：**
+**如何使用：在`用户目录`或者`项目根目录`中创建`.clang-format`文件用于指定格式化的方式，下面给一个示例**
 
-* `cppman vector::begin`
+* **优先使用项目根目录中的`.clang-format`；如果不存在，则使用用户目录中的`~/.clang-format`**
+
+```
+---
+Language: Cpp
+BasedOnStyle: Google
+AccessModifierOffset: -4
+AllowShortFunctionsOnASingleLine: Inline
+ColumnLimit: 120
+ConstructorInitializerIndentWidth: 8 # double of IndentWidth
+ContinuationIndentWidth: 8 # double of IndentWidth
+DerivePointerAlignment: false # always use PointerAlignment
+IndentCaseLabels: false
+IndentWidth: 4
+PointerAlignment: Left
+ReflowComments: false
+SortUsingDeclarations: false
+SpacesBeforeTrailingComments: 1
+```
+
+# 7 其他
+
+## 7.1 头文件搜索路径
+
+**头文件`#include "xxx.h"`的搜索顺序**
+
+1. 先搜索当前目录
+1. 然后搜索`-I`参数指定的目录
+1. 再搜索gcc的环境变量`CPLUS_INCLUDE_PATH`（C程序使用的是`C_INCLUDE_PATH`）
+1. 最后搜索gcc的内定目录，包括：
+    * `/usr/include`
+    * `/usr/local/include`
+    * `/usr/lib/gcc/x86_64-redhat-linux/<gcc version>/include`（C头文件）或者`/usr/include/c++/<gcc version>`（C++头文件）
+
+**头文件`#include <xxx.h>`的搜索顺序**
+
+1. 先搜索`-I`参数指定的目录
+1. 再搜索gcc的环境变量`CPLUS_INCLUDE_PATH`（C程序使用的是`C_INCLUDE_PATH`）
+1. 最后搜索gcc的内定目录，包括：
+    * `/usr/include`
+    * `/usr/local/include`
+    * `/usr/lib/gcc/x86_64-redhat-linux/<gcc version>/include`（C头文件）或者`/usr/include/c++/<gcc version>`（C++头文件）
+
+## 7.2 doc
+
+1. [cpp reference](https://en.cppreference.com/w/)
+1. [cppman](https://github.com/aitjcize/cppman/)
+    * 安装：`pip install cppman`
+    * 示例：`cppman vector::begin`
+
+## 7.3 参考
+
+* [C/C++ 头文件以及库的搜索路径](https://blog.csdn.net/crylearner/article/details/17013187)

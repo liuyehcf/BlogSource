@@ -1,11 +1,5 @@
 1. Linux-常用命令
     * blktrace/iowatcher
-    * 如何编写TUI程序(https://github.com/marcusolsson/tui-go)
-    * [如何查看磁盘是gpt还是mbr](https://unix.stackexchange.com/questions/120221/gpt-or-mbr-how-do-i-know)
-    * 链接器
-        * export STARROCKS_CXX_LINKER_FLAGS=""
-        * export STARROCKS_CXX_LINKER_FLAGS="-fuse-ld=gold"
-        * export STARROCKS_CXX_LINKER_FLAGS="-B/usr/local/bin/gcc-mold"
 1. 性能分析
     * vtune
 1. 数据库
@@ -40,16 +34,9 @@
     * sa（Solution Architect）：解决方案架构师
     * sre（Site Reliability Engineering）：站点可靠工程师
 1. cpp
-    * 内存管理
-        * 库：jemalloc/jcmalloc/mimalloc，位于用户态
-        * 涉及的系统调用（只涉及虚拟内存，物理内存只能通过缺页异常来分配）
-            * brk：调整堆顶指针
-            * sbrk：
-            * mmap：mmap是在进程的虚拟地址空间中（堆和栈中间，称为文件映射区域的地方）找一块空闲的虚拟内存
     * 打印堆栈：https://stackoverflow.com/Questions/3899870/print-call-stack-in-c-or-c
         * -ldl，libdl干嘛的？dynamic linking library
         * [Library Interfaces and Headers](https://docs.oracle.com/cd/E86824_01/html/E54772/makehtml-id-7.html#scrolltoc)
-    * [C/C++ 宏编程的艺术](https://bot-man-jl.github.io/articles/?post=2020/Macro-Programming-Art)
     * `constexpr`
     * `static_assert`
     * string和整数相互转化，std::to_string(), std::atoi
