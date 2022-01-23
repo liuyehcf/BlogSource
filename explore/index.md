@@ -64,3 +64,16 @@ date: 2018-02-05 09:25:59
 * [美团技术博客](https://tech.meituan.com/)
 * [Richard Stallman-Make作者](https://www.stallman.org/)
 * [BOT Man | John Lee](https://bot-man-jl.github.io/articles/)
+
+# 缩写表
+
+| 缩写 | 全称 | 相关资料 |
+|:--|:--|:--|
+| `BSD` | Berkeley Software Distribution |  |
+| `GPL` | GNU General Public License |  |
+| `OSI` | Open Systems Interconnection |  |
+| `PMC` | Project Management Committee | 1. [what-is-a-pmc](https://www.apache.org/dev/pmc.html#what-is-a-pmc)</br>2. [how-become-open-source-committer-and-why-youd-want](https://www.gridgain.com/resources/blog/how-become-open-source-committer-and-why-youd-want) |
+| `POSIX` | The Portable Operating System Interface |  |
+| `PPMC` | Podling Project Management | 1. [ppmc](https://incubator.apache.org/guides/ppmc.html) |
+| `SA` | Solution Architect |  |
+| `SRE` | Site Reliability Engineering |  |

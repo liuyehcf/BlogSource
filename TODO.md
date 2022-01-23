@@ -1,6 +1,5 @@
 1. Linux-常用命令
 1. 性能分析
-    * vtune
 1. 数据库
     * 相关概念
         * 确定性事务
@@ -20,28 +19,16 @@
         * [sqlite-window-function](https://www.sqlite.org/windowfunctions.html)
     * ssb测试集
         * https://www.cnblogs.com/tgzhu/p/9083092.html
-1. 缩写
-    * PMC（Project Management Committee）
-        * [WHAT IS A PMC?](https://www.apache.org/dev/pmc.html#what-is-a-pmc)
-        * [How to become an open-source committer (and why you'd want to)](https://www.gridgain.com/resources/blog/how-become-open-source-committer-and-why-youd-want)
-        * Podling Project Management Committee.
-    * OSI
-    * apache license/elastic license
-    * bsd：Berkeley Software Distribution
-    * gpl：GNU General Public License
-    * POSIX：The Portable Operating System Interface 
-    * sa（Solution Architect）：解决方案架构师
-    * sre（Site Reliability Engineering）：站点可靠工程师
+1. license
+    * [主流开源协议之间有何异同？](https://www.zhihu.com/question/19568896)
+    * apache license
+    * elastic license
+    * bsd
+    * mit
+    * gpl
 1. cpp
-    * 打印堆栈：https://stackoverflow.com/Questions/3899870/print-call-stack-in-c-or-c
-        * -ldl，libdl干嘛的？dynamic linking library
-        * [Library Interfaces and Headers](https://docs.oracle.com/cd/E86824_01/html/E54772/makehtml-id-7.html#scrolltoc)
     * `constexpr`
     * `static_assert`
-1. 汇编
-    * avx, advanced vector extension
-    * avx2指令
-    * avx512
 1. 其他
     * 内存分配，伙伴算法
     * rpc框架，thrift

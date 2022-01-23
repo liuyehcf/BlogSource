@@ -180,13 +180,19 @@ fopen() returned NULL
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-## 2.4 libc、glic、libm、libz
+## 2.4 libc、glic、libm、libz以及其他常用动态库
 
 `libc`实现了C的标准库函数（例如`strcpy()`），以及`POSIX`函数（例如系统调用`getpid()`）。此外，不是所有的C标准库函数都包含在`libc`中，比如大多数`math`相关的库函数都封装在`libm`中，大多数压缩相关的库函数都封装在`libz`中
 
 系统调用有别于普通函数，它无法被链接器解析。实现系统调用必须引入平台相关的汇编指令。我们可以通过手动实现这些汇编指令来完成系统调用，或者直接使用`libc`（它已经为我们封装好了）
 
 `glibc, GNU C Library`可以看做是`libc`的另一种实现，它不仅包含`libc`的所有功能还包含`libm`以及其他核心库，比如`libpthread`
+
+**其他常用动态库可以参考[Library Interfaces and Headers](https://docs.oracle.com/cd/E86824_01/html/E54772/makehtml-id-7.html#scrolltoc)中的介绍**
+
+1. `libdl`：dynamic linking library
+    * **`libdl`主要作用是将那些早已存在于`libc`中的`private dl functions`对外露出，便于用户实现一些特殊的需求**
+    * 可以通过`readelf -s /lib64/ld-linux-x86-64.so.2 | grep PRIVATE`查看露出的这些方法
 
 ## 2.5 参考
 
