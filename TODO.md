@@ -1,5 +1,4 @@
 1. Linux-常用命令
-    * blktrace/iowatcher
 1. 性能分析
     * vtune
 1. 数据库

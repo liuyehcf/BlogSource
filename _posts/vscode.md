@@ -16,6 +16,8 @@ categories:
 1. 禁用行内作者提示链接：`gitlens.codeLens.authors.enabled`
 1. 搜索文件：`ctrl+p`
 1. 回到上一个/下一个编辑处：`ctrl + -`/`ctrl + shift + -`
+1. `⌘]`：增加缩进
+1. `⌘[`：减少缩进
 1. `⇧⌘O`：函数列表
 1. `⌘T`：在当前工作目录中查询符号
 1. `⇧⌥F`：格式化代码

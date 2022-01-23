@@ -1827,15 +1827,14 @@ foo.o : foo.p
 1. 链接`Object`文件的隐含规则
     * `<n>`目标依赖于`<n>.o`，通过运行`C`的编译器来运行链接程序生成（一般是`ld`），其生成命令是：`$(CC) $(LDFLAGS) <n>.o $(LOADLIBES) $(LDLIBS)`。这个规则对于只有一个源文件的工程有效，同时也对多个`Object`文件（由不同的源文件生成）的也有效。例如如下规则：`x : y.o z.o`，并且`x.c`、`y.c`和`z.c`都存在时，隐含规则将执行如下命令：
     * 如果没有一个源文件（如上例中的x.c）和你的目标名字（如上例中的x）相关联，那么，你最好写出自己的生成规则，不然，隐含规则会报错的
-    * 
     ```makefile
-cc -c x.c -o x.o
-cc -c y.c -o y.o
-cc -c z.c -o z.o
-cc x.o y.o z.o -o x
-rm -f x.o
-rm -f y.o
-rm -f z.o
+    cc -c x.c -o x.o
+    cc -c y.c -o y.o
+    cc -c z.c -o z.o
+    cc x.o y.o z.o -o x
+    rm -f x.o
+    rm -f y.o
+    rm -f z.o
     ```
 
 1. `Yacc C`程序时的隐含规则

@@ -661,43 +661,40 @@ WHERE table_name = '<table name>';
 * 仅在一部分数据上创建索引
 * 有效降低索引的大小以及维护的开销
 * 一个典型的使用场景是，根据日期来分别创建索引，比如每个月，或者每年单独创建索引
-* 
     ```sql
-CREATE INDEX idx_foo
-ON foo(a, b)
-WHERE c = 'WuTang';
+    CREATE INDEX idx_foo
+    ON foo(a, b)
+    WHERE c = 'WuTang';
 
-SELECT b FROM foo 
-WHERE a = 123
-AND c = 'WuTang';
+    SELECT b FROM foo 
+    WHERE a = 123
+    AND c = 'WuTang';
     ```
 
 **覆盖索引（`Covering Indexes`）：**
 
 * 如果索引中包含查询所需的字段，那么仅通过索引就可以返回所有的`Tuple`
 * 提高查询效率，且可以有效得减少`Buffer Pool`的冲突（不需要额外访问`Page`了）
-* 
     ```sql
-CREATE INDEX idx_foo
-ON foo(a, b);
+    CREATE INDEX idx_foo
+    ON foo(a, b);
 
-SELECT b FROM foo
-WHERE a = 123;
+    SELECT b FROM foo
+    WHERE a = 123;
     ```
 
 **`Index Include Columns`：**
 
 * 在索引中存储额外的列，这部分信息只能通过索引来查询。例如，`CREATE INDEX idx_foo ON foo(a, b) INCLUDE (c);`
 * 这些额外的列只存储在叶节点中，且不属于`Search Key`
-* 
     ```sql
-CREATE INDEX idx_foo
-ON foo(a, b)
-INCLUDE(c);
+    CREATE INDEX idx_foo
+    ON foo(a, b)
+    INCLUDE(c);
 
-SELECT b FROM foo
-WHERE a = 123
-AND c = `WuTang`
+    SELECT b FROM foo
+    WHERE a = 123
+    AND c = `WuTang`
     ```
 
 **`Observation`：**

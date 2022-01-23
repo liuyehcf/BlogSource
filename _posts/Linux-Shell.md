@@ -293,31 +293,31 @@ shell中的特殊符号包括如下几种
         * **`$*`**：返回调用脚本文件的所有参数，且将所有参数作为一个整体（字符串）返回
         * **`$@`**：返回调用脚本文件的所有参数，且返回的是一个列表，每个参数作为一项。如果原参数是一个包含空格的字符串，那么最好用`"$@"`，这样会保留这个参数中的空格，而不是拆成多个参数
             ```sh
-cat > test.sh << 'EOF'
-#!/bin/bash
+            cat > test.sh << 'EOF'
+            #!/bin/bash
 
-echo "Using \"\$*\":"
-for a in "$*"; do
-    echo $a;
-done
+            echo "Using \"\$*\":"
+            for a in "$*"; do
+                echo $a;
+            done
 
-echo -e "\nUsing \$*:"
-for a in $*; do
-    echo $a;
-done
+            echo -e "\nUsing \$*:"
+            for a in $*; do
+                echo $a;
+            done
 
-echo -e "\nUsing \"\$@\":"
-for a in "$@"; do
-    echo $a;
-done
+            echo -e "\nUsing \"\$@\":"
+            for a in "$@"; do
+                echo $a;
+            done
 
-echo -e "\nUsing \$@:"
-for a in $@; do
-    echo $a;
-done              
-EOF
+            echo -e "\nUsing \$@:"
+            for a in $@; do
+                echo $a;
+            done              
+            EOF
 
-bash test.sh one two "three four"
+            bash test.sh one two "three four"
             ```
 
         * **`$#`**：表示传递给脚本的参数数量

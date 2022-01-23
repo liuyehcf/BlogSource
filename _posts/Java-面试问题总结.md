@@ -437,66 +437,66 @@ categories:
     > 比如父类静态数据，构造函数，字段，子类静态数据，构造函数，字段，他们的执行顺序
     > 以一个程序来说明
     ```java
-public class Test {
-    public static int init(String s) {
-        System.out.println(s);
-        return 1;
+    public class Test {
+        public static int init(String s) {
+            System.out.println(s);
+            return 1;
+        }
+
+        public static void main(String[] args){
+            new Derive();
+        }
     }
 
-    public static void main(String[] args){
-        new Derive();
-    }
-}
+    class Base {
+        private static int si = Test.init("init Base's static field");
 
-class Base {
-    private static int si = Test.init("init Base's static field");
+        private int i=Test.init("init Base's field");
 
-    private int i=Test.init("init Base's field");
+        static{
+            Test.init("init Base's static Statement");
+        }
 
-    static{
-        Test.init("init Base's static Statement");
-    }
+        {
+            Test.init("init Base's Statement");
+        }
 
-    {
-        Test.init("init Base's Statement");
-    }
-
-    public Base(){
-        Test.init("init Base's constructor");
-    }
-}
-
-class Derive extends Base{
-    private static int si = Test.init("init Derive's static field");
-
-    private int i=Test.init("init Derive's field");
-
-    static{
-        Test.init("init Derive's static Statement");
+        public Base(){
+            Test.init("init Base's constructor");
+        }
     }
 
-    {
-        Test.init("init Derive's Statement");
-    }
+    class Derive extends Base{
+        private static int si = Test.init("init Derive's static field");
 
-    public Derive(){
-        Test.init("init Derive's constructor");
+        private int i=Test.init("init Derive's field");
+
+        static{
+            Test.init("init Derive's static Statement");
+        }
+
+        {
+            Test.init("init Derive's Statement");
+        }
+
+        public Derive(){
+            Test.init("init Derive's constructor");
+        }
     }
-}
     ```
 
     > 以下是输出
     ```
-init Base's static field
-init Base's static Statement
-init Derive's static field
-init Derive's static Statement
-init Base's field
-init Base's Statement
-init Base's constructor
-init Derive's field
-init Derive's Statement
-init Derive's constructor
+    init Base's static field
+    init Base's static Statement
+    init Derive's static field
+    init Derive's static Statement
+    init Base's field
+    init Base's Statement
+    init Base's constructor
+    init Derive's field
+    init Derive's Statement
+    init Derive's constructor
     ```
 
 1. 环境变量classpath
@@ -652,195 +652,195 @@ init Derive's constructor
     > CAS能实现吗？CAS加循环可以串行化并行操作，但是，不能很好地排序，即控制三个线程交替执行CAS成功
     > 公平模式下，并且规定启动顺序时，可以用ReentrantLock
     ```java
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
+    import java.util.concurrent.TimeUnit;
+    import java.util.concurrent.locks.Condition;
+    import java.util.concurrent.locks.ReentrantLock;
 
-public class Solution {
+    public class Solution {
 
-    private static ReentrantLock lock = new ReentrantLock(true);
+        private static ReentrantLock lock = new ReentrantLock(true);
 
-    private static Condition conditionA = lock.newCondition();
-    private static Condition conditionB = lock.newCondition();
-    private static Condition conditionC = lock.newCondition();
+        private static Condition conditionA = lock.newCondition();
+        private static Condition conditionB = lock.newCondition();
+        private static Condition conditionC = lock.newCondition();
 
-    public static void main(String[] args) {
-        Thread t1 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    lock.lock();
-                    while (!Thread.currentThread().isInterrupted()) {
-                        System.out.println("a");
-                        try {
-                            TimeUnit.MILLISECONDS.sleep(500);
-                        } catch (InterruptedException e) {
-                            break;
+        public static void main(String[] args) {
+            Thread t1 = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        lock.lock();
+                        while (!Thread.currentThread().isInterrupted()) {
+                            System.out.println("a");
+                            try {
+                                TimeUnit.MILLISECONDS.sleep(500);
+                            } catch (InterruptedException e) {
+                                break;
+                            }
+                            conditionB.signal();
+                            try {
+                                conditionA.await();
+                            } catch (InterruptedException e) {
+                                break;
+                            }
                         }
-                        conditionB.signal();
-                        try {
-                            conditionA.await();
-                        } catch (InterruptedException e) {
-                            break;
-                        }
+                    } finally {
+                        lock.unlock();
                     }
-                } finally {
-                    lock.unlock();
                 }
-            }
-        });
+            });
 
-        Thread t2 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    lock.lock();
-                    while (!Thread.currentThread().isInterrupted()) {
-                        System.out.println("b");
-                        try {
-                            TimeUnit.MILLISECONDS.sleep(500);
-                        } catch (InterruptedException e) {
-                            break;
+            Thread t2 = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        lock.lock();
+                        while (!Thread.currentThread().isInterrupted()) {
+                            System.out.println("b");
+                            try {
+                                TimeUnit.MILLISECONDS.sleep(500);
+                            } catch (InterruptedException e) {
+                                break;
+                            }
+                            conditionC.signal();
+                            try {
+                                conditionB.await();
+                            } catch (InterruptedException e) {
+                                break;
+                            }
                         }
-                        conditionC.signal();
-                        try {
-                            conditionB.await();
-                        } catch (InterruptedException e) {
-                            break;
-                        }
+                    } finally {
+                        lock.unlock();
                     }
-                } finally {
-                    lock.unlock();
                 }
-            }
-        });
+            });
 
-        Thread t3 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    lock.lock();
-                    while (!Thread.currentThread().isInterrupted()) {
-                        System.out.println("c");
-                        try {
-                            TimeUnit.MILLISECONDS.sleep(500);
-                        } catch (InterruptedException e) {
-                            break;
+            Thread t3 = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        lock.lock();
+                        while (!Thread.currentThread().isInterrupted()) {
+                            System.out.println("c");
+                            try {
+                                TimeUnit.MILLISECONDS.sleep(500);
+                            } catch (InterruptedException e) {
+                                break;
+                            }
+                            conditionA.signal();
+                            try {
+                                conditionC.await();
+                            } catch (InterruptedException e) {
+                                break;
+                            }
                         }
-                        conditionA.signal();
-                        try {
-                            conditionC.await();
-                        } catch (InterruptedException e) {
-                            break;
-                        }
+                    } finally {
+                        lock.unlock();
                     }
-                } finally {
-                    lock.unlock();
                 }
+            });
+
+            t1.start();
+            try {
+                TimeUnit.MICROSECONDS.sleep(100);
+            } catch (InterruptedException e) {
+
             }
-        });
+            t2.start();
+            try {
+                TimeUnit.MICROSECONDS.sleep(100);
+            } catch (InterruptedException e) {
 
-        t1.start();
-        try {
-            TimeUnit.MICROSECONDS.sleep(100);
-        } catch (InterruptedException e) {
+            }
+            t3.start();
 
+            try {
+                TimeUnit.SECONDS.sleep(15);
+            } catch (InterruptedException e) {
+
+            }
+
+            t1.interrupt();
+            t2.interrupt();
+            t3.interrupt();
         }
-        t2.start();
-        try {
-            TimeUnit.MICROSECONDS.sleep(100);
-        } catch (InterruptedException e) {
-
-        }
-        t3.start();
-
-        try {
-            TimeUnit.SECONDS.sleep(15);
-        } catch (InterruptedException e) {
-
-        }
-
-        t1.interrupt();
-        t2.interrupt();
-        t3.interrupt();
     }
-}
     ```
     > volatile来实现，其中volatile只是为了保证可见性
     ```java
-import java.util.concurrent.TimeUnit;
+    import java.util.concurrent.TimeUnit;
 
-public class Solution {
+    public class Solution {
 
-    private static volatile int state = 0;
+        private static volatile int state = 0;
 
-    public static void main(String[] args) {
-        Thread t1 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (!Thread.currentThread().isInterrupted()) {
-                    if (state == 0) {
-                        System.out.println("a");
-                        try {
-                            TimeUnit.MILLISECONDS.sleep(500);
-                        } catch (InterruptedException e) {
-                            break;
+        public static void main(String[] args) {
+            Thread t1 = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (!Thread.currentThread().isInterrupted()) {
+                        if (state == 0) {
+                            System.out.println("a");
+                            try {
+                                TimeUnit.MILLISECONDS.sleep(500);
+                            } catch (InterruptedException e) {
+                                break;
+                            }
+                            state = 1;
                         }
-                        state = 1;
                     }
                 }
-            }
-        });
+            });
 
-        Thread t2 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (!Thread.currentThread().isInterrupted()) {
-                    if (state == 1) {
-                        System.out.println("b");
-                        try {
-                            TimeUnit.MILLISECONDS.sleep(500);
-                        } catch (InterruptedException e) {
-                            break;
+            Thread t2 = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (!Thread.currentThread().isInterrupted()) {
+                        if (state == 1) {
+                            System.out.println("b");
+                            try {
+                                TimeUnit.MILLISECONDS.sleep(500);
+                            } catch (InterruptedException e) {
+                                break;
+                            }
+                            state = 2;
                         }
-                        state = 2;
                     }
                 }
-            }
-        });
+            });
 
-        Thread t3 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (!Thread.currentThread().isInterrupted()) {
-                    if (state == 2) {
-                        System.out.println("c");
-                        try {
-                            TimeUnit.MILLISECONDS.sleep(500);
-                        } catch (InterruptedException e) {
-                            break;
+            Thread t3 = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (!Thread.currentThread().isInterrupted()) {
+                        if (state == 2) {
+                            System.out.println("c");
+                            try {
+                                TimeUnit.MILLISECONDS.sleep(500);
+                            } catch (InterruptedException e) {
+                                break;
+                            }
+                            state = 0;
                         }
-                        state = 0;
                     }
                 }
+            });
+
+            t1.start();
+            t2.start();
+            t3.start();
+
+            try {
+                TimeUnit.SECONDS.sleep(15);
+            } catch (InterruptedException e) {
+
             }
-        });
 
-        t1.start();
-        t2.start();
-        t3.start();
-
-        try {
-            TimeUnit.SECONDS.sleep(15);
-        } catch (InterruptedException e) {
-
+            t1.interrupt();
+            t2.interrupt();
+            t3.interrupt();
         }
-
-        t1.interrupt();
-        t2.interrupt();
-        t3.interrupt();
     }
-}
     ```
 
 1. interrupt状态恢复
@@ -1358,7 +1358,7 @@ public class Solution {
 1. 字符串hash成状态位的具体实现方式
     > 下面给出Java中的实现
     ```java
-        public int hashCode() {
+    public int hashCode() {
         //hash就是hash值，最开始是0，延迟初始化
         int h = hash;
         if (h == 0 && value.length > 0) {
@@ -1461,55 +1461,55 @@ public class Solution {
 1. 给定一颗二叉树和一个整数 sum，求累加和为 sum 的最长路径长度。路径是指从某个节点往下，每次最多选择一个孩子节点或者不选所形成的节点链。
     > 
     ```java
-import java.util.*;
+    import java.util.*;
 
-/*
- * public class TreeNode {
- *   int val = 0;
- *   TreeNode left = null;
- *   TreeNode right = null;
- * }
- */
+    /*
+    * public class TreeNode {
+    *   int val = 0;
+    *   TreeNode left = null;
+    *   TreeNode right = null;
+    * }
+    */
 
-public class Solution {
+    public class Solution {
 
-    private int maxLen = 0;
+        private int maxLen = 0;
 
-    /**
-     * @param root   TreeNode类 the root
-     * @param target int整型 the target
-     * @return int整型
-     */
-    public int findLengthofSum(TreeNode root, int sum) {
-        List<TreeNode> pathNodes = new ArrayList<>();
-        findLengthofSum(root, pathNodes, sum);
-        return maxLen;
-    }
-
-    private void findLengthofSum(TreeNode root, List<TreeNode> pathNodes, int sum) {
-        if (root == null) {
-            return;
+        /**
+        * @param root   TreeNode类 the root
+        * @param target int整型 the target
+        * @return int整型
+        */
+        public int findLengthofSum(TreeNode root, int sum) {
+            List<TreeNode> pathNodes = new ArrayList<>();
+            findLengthofSum(root, pathNodes, sum);
+            return maxLen;
         }
 
-        pathNodes.add(root);
-        int curSum = 0;
-        int len = 0;
-
-        for (int i = pathNodes.size() - 1; i >= 0; i--) {
-            len++;
-
-            curSum += pathNodes.get(i).val;
-            if (curSum == sum) {
-                maxLen = Math.max(maxLen, len);
+        private void findLengthofSum(TreeNode root, List<TreeNode> pathNodes, int sum) {
+            if (root == null) {
+                return;
             }
+
+            pathNodes.add(root);
+            int curSum = 0;
+            int len = 0;
+
+            for (int i = pathNodes.size() - 1; i >= 0; i--) {
+                len++;
+
+                curSum += pathNodes.get(i).val;
+                if (curSum == sum) {
+                    maxLen = Math.max(maxLen, len);
+                }
+            }
+
+            findLengthofSum(root.left, pathNodes, sum);
+            findLengthofSum(root.right, pathNodes, sum);
+
+            pathNodes.remove(pathNodes.size() - 1);
         }
-
-        findLengthofSum(root.left, pathNodes, sum);
-        findLengthofSum(root.right, pathNodes, sum);
-
-        pathNodes.remove(pathNodes.size() - 1);
     }
-}
     ```
 
 1. skip list
@@ -1568,17 +1568,17 @@ public class Solution {
     > 1. 适当的使用视图可以更清晰的表达查询
     > 
     ```sql
-CREATE VIEW view_name
-AS
-SELECT column1,column2,...columnk
-FROM table_name
-WHERE condition;
+    CREATE VIEW view_name
+    AS
+    SELECT column1,column2,...columnk
+    FROM table_name
+    WHERE condition;
 
-CREATE VIEW user_view_1
-AS
-SELECT first_name, last_name
-FROM crm_user
-WHERE sex = 0;
+    CREATE VIEW user_view_1
+    AS
+    SELECT first_name, last_name
+    FROM crm_user
+    WHERE sex = 0;
     ```
     > 索引：实质上得是单独的，物理的数据库结构，他是表中的一个列或者多个列的值的集合和相应的指向表中物理标识这些值的数据页的逻辑指针清单
 

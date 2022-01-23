@@ -1325,70 +1325,70 @@ call plug#end()
     * `clangd`无法更改缓存的存储路径，默认会使用`${project}/.cache`作为缓存目录
     * **`clangd`会根据`--compile-commands-dir`参数指定的路径查找`compile_commands.json`，若查找不到，则在当前目录，以及每个源文件所在目录递归向上寻找`compile_commands.json`**
     ```vim
-call plug#begin()
+    call plug#begin()
 
-" ......................
-" .....其他插件及配置.....
-" ......................
+    " ......................
+    " .....其他插件及配置.....
+    " ......................
 
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
+    Plug 'autozimu/LanguageClient-neovim', {
+        \ 'branch': 'next',
+        \ 'do': 'bash install.sh',
+        \ }
 
-" 默认关闭
-let g:LanguageClient_autoStart = 0
-let g:LanguageClient_loadSettings = 1
-let g:LanguageClient_diagnosticsEnable = 0
-let g:LanguageClient_selectionUI = 'quickfix'
-let g:LanguageClient_diagnosticsList = v:null
-let g:LanguageClient_hoverPreview = 'Never'
-let g:LanguageClient_serverCommands = {}
-let g:LanguageClient_serverCommands.c = ['clangd']
-let g:LanguageClient_serverCommands.cpp = ['clangd']
+    " 默认关闭
+    let g:LanguageClient_autoStart = 0
+    let g:LanguageClient_loadSettings = 1
+    let g:LanguageClient_diagnosticsEnable = 0
+    let g:LanguageClient_selectionUI = 'quickfix'
+    let g:LanguageClient_diagnosticsList = v:null
+    let g:LanguageClient_hoverPreview = 'Never'
+    let g:LanguageClient_serverCommands = {}
+    let g:LanguageClient_serverCommands.c = ['clangd']
+    let g:LanguageClient_serverCommands.cpp = ['clangd']
 
-nnoremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
-nnoremap <leader>rr :call LanguageClient#textDocument_references()<cr>
-nnoremap <leader>rv :call LanguageClient#textDocument_hover()<cr>
-nnoremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
+    nnoremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
+    nnoremap <leader>rr :call LanguageClient#textDocument_references()<cr>
+    nnoremap <leader>rv :call LanguageClient#textDocument_hover()<cr>
+    nnoremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
 
-call plug#end()
+    call plug#end()
     ```
 
 * **`ccls`。相关配置参考[ccls-project-setup](https://github.com/MaskRay/ccls/wiki/Project-Setup)**
     * **`ccls`会在工程的根目录寻找`compile_commands.json`**
     ```vim
-call plug#begin()
+    call plug#begin()
 
-" ......................
-" .....其他插件及配置.....
-" ......................
+    " ......................
+    " .....其他插件及配置.....
+    " ......................
 
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
+    Plug 'autozimu/LanguageClient-neovim', {
+        \ 'branch': 'next',
+        \ 'do': 'bash install.sh',
+        \ }
 
-" 默认关闭，对于一些大型项目来说，初始化有点慢，需要用的时候再通过 :LanguageClientStart 启动即可
-let g:LanguageClient_autoStart = 0
-let g:LanguageClient_loadSettings = 1
-let g:LanguageClient_diagnosticsEnable = 0
-let g:LanguageClient_settingsPath = expand('~/.vim/languageclient.json')
-let g:LanguageClient_selectionUI = 'quickfix'
-let g:LanguageClient_diagnosticsList = v:null
-let g:LanguageClient_hoverPreview = 'Never'
-let g:LanguageClient_serverCommands = {}
-let g:LanguageClient_serverCommands.c = ['ccls']
-let g:LanguageClient_serverCommands.cpp = ['ccls']
+    " 默认关闭，对于一些大型项目来说，初始化有点慢，需要用的时候再通过 :LanguageClientStart 启动即可
+    let g:LanguageClient_autoStart = 0
+    let g:LanguageClient_loadSettings = 1
+    let g:LanguageClient_diagnosticsEnable = 0
+    let g:LanguageClient_settingsPath = expand('~/.vim/languageclient.json')
+    let g:LanguageClient_selectionUI = 'quickfix'
+    let g:LanguageClient_diagnosticsList = v:null
+    let g:LanguageClient_hoverPreview = 'Never'
+    let g:LanguageClient_serverCommands = {}
+    let g:LanguageClient_serverCommands.c = ['ccls']
+    let g:LanguageClient_serverCommands.cpp = ['ccls']
 
-nnoremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
-nnoremap <leader>rr :call LanguageClient#textDocument_references()<cr>
-nnoremap <leader>rv :call LanguageClient#textDocument_hover()<cr>
-nnoremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
-nnoremap <leader>hb :call LanguageClient#findLocations({'method':'$ccls/inheritance'})<cr>
-nnoremap <leader>hd :call LanguageClient#findLocations({'method':'$ccls/inheritance','derived':v:true})<cr>
+    nnoremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
+    nnoremap <leader>rr :call LanguageClient#textDocument_references()<cr>
+    nnoremap <leader>rv :call LanguageClient#textDocument_hover()<cr>
+    nnoremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
+    nnoremap <leader>hb :call LanguageClient#findLocations({'method':'$ccls/inheritance'})<cr>
+    nnoremap <leader>hd :call LanguageClient#findLocations({'method':'$ccls/inheritance','derived':v:true})<cr>
 
-call plug#end()
+    call plug#end()
     ```
 
 **其中，`~/.vim/languageclient.json`的内容示例如下（必须是决定路径，不能用`~`）**

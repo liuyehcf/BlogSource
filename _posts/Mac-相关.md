@@ -443,21 +443,21 @@ rm -rf oh-my-zsh-agnoster-fcamblor
     * 找到关键词`build_prompt`，这就是命令提示符的全部构成，每一个配置项的颜色都可以单独调整
     * 以`prompt_context`和`prompt_status`为例，将`prompt_segment`后面接的`black`改为`white`
     ```
-prompt_context() {
-  if [[ "$USERNAME" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
-    prompt_segment white default "%(!.%{%F{yellow}%}.)%n@%m"
-  fi
-}
+    prompt_context() {
+    if [[ "$USERNAME" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
+        prompt_segment white default "%(!.%{%F{yellow}%}.)%n@%m"
+    fi
+    }
 
-prompt_status() {
-  local -a symbols
+    prompt_status() {
+    local -a symbols
 
-  [[ $RETVAL -ne 0 ]] && symbols+="%{%F{red}%}✘"
-  [[ $UID -eq 0 ]] && symbols+="%{%F{yellow}%}⚡"
-  [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%{%F{cyan}%}⚙"
+    [[ $RETVAL -ne 0 ]] && symbols+="%{%F{red}%}✘"
+    [[ $UID -eq 0 ]] && symbols+="%{%F{yellow}%}⚡"
+    [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%{%F{cyan}%}⚙"
 
-  [[ -n "$symbols" ]] && prompt_segment white default "$symbols"
-}
+    [[ -n "$symbols" ]] && prompt_segment white default "$symbols"
+    }
     ```
 
 **步骤8：[安装zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)用于高亮指令**

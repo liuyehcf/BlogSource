@@ -3143,6 +3143,43 @@ yum install -y iotop
 * `iotop -oP -b -n 10`
 * `iotop -u admin`
 
+## 6.19 blktrace
+
+[IO神器blktrace使用介绍](https://developer.aliyun.com/article/698568)
+
+![blktrace_1](/images/Linux-常用命令/blktrace_1.png)
+
+`blktrace`用于采集`I/O`数据，采集得到的数据一般无法直接分析，通常需要经过一些分析工具进行分析，这些工具包括：
+
+1. `blkparse`
+1. `btt`
+1. `blkiomon`
+1. `iowatcher`
+
+使用`blktrace`前提需要挂载`debugfs`
+
+```sh
+mount      –t debugfs    debugfs /sys/kernel/debug
+```
+
+**示例：**
+
+1. 先采集后分析
+    ```sh
+    # 该命令会在当前目录生成 sda.blktrace.<cpu> 文件簇
+    # Ctrl + C 终止采集
+    blktrace -d /dev/sda
+
+    # 分析 sda.blktrace.<cpu> 文件簇，并输出分析结果
+    blkparse sda
+
+    # 该命令会将 sda.blktrace.<cpu> 文件簇合并成一个文件 sda.blktrace.bin
+    blkparse -i sda -d sda.blktrace.bin
+
+    # 该命令会分析 sda.blktrace.bin 并输出分析结果
+    btt -i sda.blktrace.bin -l sda.d2c_latency
+    ```
+
 # 7 性能分析工具
 
 ## 7.1 strace
