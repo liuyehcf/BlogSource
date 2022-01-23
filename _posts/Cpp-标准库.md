@@ -13,7 +13,7 @@ categories:
 
 # 1 any
 
-## 1.1 std::any_cast
+1. `std::any_cast`
 
 # 2 atomic
 
@@ -146,29 +146,23 @@ auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).c
 
 # 4 functional
 
-## 4.1 std::function
+1. `std::function`：其功能类似于函数指针，在需要函数指针的地方，可以传入`std::function`类型的对象（不是指针）
+1. `std::bind`
+1. `std::mem_fn`
 
-其功能类似于函数指针，在需要函数指针的地方，可以传入`std::function`类型的对象（不是指针）
-
-## 4.2 std::bind
-
-## 4.3 std::mem_fn
-
-## 4.4 参考
+## 4.1 参考
 
 * [C++11 中的std::function和std::bind](https://www.jianshu.com/p/f191e88dcc80)
 
 # 5 future
 
-## 5.1 std::promise
-
-## 5.2 std::future
+1. `std::promise`
+1. `std::future`
 
 # 6 limits
 
-## 6.1 std::numeric_limits
-
-`std::numeric_limits<int32_t>::max()`
+1. `std::numeric_limits`
+    * `std::numeric_limits<int32_t>::max()`
 
 # 7 memory
 
@@ -227,68 +221,63 @@ int main() {
 
 # 8 mutex
 
-## 8.1 std::mutex
+1. `std::mutex`
+1. `std::lock_guard`
+    * 直接使用`std::mutex`，如下面的例子。如果`getVar`方法抛出异常了，那么就会导致`m.unlock()`方法无法执行，可能会造成死锁
+    ```c++
+    mutex m;
+    m.lock();
+    sharedVariable= getVar();
+    m.unlock();
+    ```
 
-## 8.2 std::lock_guard
+    * 一种优雅的方式是使用`std::lock_guard`，该对象的析构方法中会进行锁的释放，需要将串行部分放到一个`{}`中，当退出该作用域时，`std::lock_guard`对象会析构，并释放锁，在任何正常或异常情况下都能够释放锁
 
-一般的使用方法，如果getVar方法抛出异常了，那么就会导致`m.unlock()`方法无法执行，可能会造成死锁
+    ```c++
+    {
+    std::mutex m,
+    std::lock_guard<std::mutex> lockGuard(m);
+    sharedVariable= getVar();
+    }
+    ```
 
-```c++
-mutex m;
-m.lock();
-sharedVariable= getVar();
-m.unlock();
-```
+1. `std::unique_lock`
+1. `std::condition_variable`
+    * 调用`wait`方法时，必须获取监视器。而调用`notify`方法时，无需获取监视器
 
-一种优雅的方式是使用`std::lock_guard`，该对象的析构方法中会进行锁的释放，需要将串行部分放到一个`{}`中，当退出该作用域时，`std::lock_guard`对象会析构，并释放锁，在任何正常或异常情况下都能够释放锁
-
-```c++
-{
-  std::mutex m,
-  std::lock_guard<std::mutex> lockGuard(m);
-  sharedVariable= getVar();
-}
-```
-
-## 8.3 std::unique_lock
-
-## 8.4 std::condition_variable
-
-调用`wait`方法时，必须获取监视器。而调用`notify`方法时，无需获取监视器
-
-## 8.5 参考
+## 8.1 参考
 
 * [Do I have to acquire lock before calling condition_variable.notify_one()?](https://stackoverflow.com/questions/17101922/do-i-have-to-acquire-lock-before-calling-condition-variable-notify-one)
 
 # 9 numeric
 
-## 9.1 std::accumulate
+1. `std::accumulate`
+    ```cpp
+    int main() {
+        std::set<std::string> col = {"a", "b", "c"};
 
-```cpp
-int main() {
-    std::set<std::string> col = {"a", "b", "c"};
+        std::string res = std::accumulate(std::begin(col),
+                                        std::end(col),
+                                        std::string(),
+                                        [](const std::string &a, const std::string &b) {
+                                            return a.empty() ? b
+                                                            : a + ", " + b;
+                                        });
 
-    std::string res = std::accumulate(std::begin(col),
-                                      std::end(col),
-                                      std::string(),
-                                      [](const std::string &a, const std::string &b) {
-                                          return a.empty() ? b
-                                                           : a + ", " + b;
-                                      });
+        std::cout << res << std::endl;
+    }
+    ```
 
-    std::cout << res << std::endl;
-}
-```
+# 10 optional
 
-# 10 string
+1. `std::optional`
 
-## 10.1 std::string
+# 11 string
 
-字符串比较函数：`strcmp`
+1. `std::string`
+1. `std::to_string`
 
-# 11 thread
-
-## 11.1 std::thread
+# 12 thread
 
 **如何设置或修改线程名：**
 
@@ -357,11 +346,11 @@ int main() {
 }
 ```
 
-# 12 type_traits
+# 13 type_traits
 
 **具体分类可以参考`<type_traits>`头文件的注释**
 
-## 12.1 谓词模板
+## 13.1 谓词模板
 
 用于判断类型
 
@@ -369,7 +358,7 @@ int main() {
 1. `std::is_array`
 1. ...
 
-## 12.2 属性模板
+## 13.2 属性模板
 
 用于调整类型信息
 
@@ -377,7 +366,7 @@ int main() {
 1. `std::add_lvalue_reference_t`
 1. `std::add_rvalue_reference_t`
 
-## 12.3 别名模板
+## 13.3 别名模板
 
 只是一种简写，例如`std::enable_if_t`等价于`typename enable_if<b,T>::type`
 
@@ -388,7 +377,7 @@ int main() {
 1. `std::invoke_result_t`
 1. ...
 
-## 12.4 std::move
+## 13.4 std::move
 
 标准库的实现如下：
 
@@ -401,7 +390,7 @@ int main() {
 
 本质上，就是做了一次类型转换，返回的一定是个右值
 
-## 12.5 std::forward
+## 13.5 std::forward
 
 `std::forward`主要用于实现模板的完美转发：因为对于一个变量而言，无论该变量的类型是左值引用还是右值引用，变量本身都是左值，如果直接将变量传递到下一个方法中，那么一定是按照左值来匹配重载函数的，而`std::forward`就是为了解决这个问题。请看下面这个例子：
 
@@ -470,11 +459,11 @@ int main() {
 * 如果模板实参是左值或右值，那么匹配的是第二个方法
     * 右值：`_Tp&&`得到的是个右值
 
-# 13 utility
+# 14 utility
 
-## 13.1 std::pair
+1. `std::pair`
 
-# 14 容器
+# 15 容器
 
 1. `<vector>`
 1. `<array>`
@@ -486,13 +475,17 @@ int main() {
 1. `<set>`
 1. `<unordered_set>`
 
-## 14.1 Tips
+## 15.1 Tips
 
 1. `std::map`和`std::unordered_map`的`value`是`Pointer Stability`，即地址在容器自身容量调整前后是不会变的
 1. `std::map`或者`std::set`用下标访问后，即便访问前元素不存在，也会插入一个默认值。因此下标访问是非`const`的
 
-# 15 C标准库
+# 16 C标准库
 
 1. `stdio.h`
 1. `stddef.h`
 1. `stdint.h`
+1. `cstdlib`
+    * `std::atoi`
+    * `std::atol`
+    * `std::atoll`

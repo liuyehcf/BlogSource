@@ -3147,20 +3147,47 @@ yum install -y iotop
 
 [IO神器blktrace使用介绍](https://developer.aliyun.com/article/698568)
 
+**一个I/O请求的处理过程，可以梳理为这样一张简单的图：**
+
 ![blktrace_1](/images/Linux-常用命令/blktrace_1.png)
 
-`blktrace`用于采集`I/O`数据，采集得到的数据一般无法直接分析，通常需要经过一些分析工具进行分析，这些工具包括：
+**`blktrace`用于采集`I/O`数据，采集得到的数据一般无法直接分析，通常需要经过一些分析工具进行分析，这些工具包括：**
 
 1. `blkparse`
 1. `btt`
 1. `blkiomon`
 1. `iowatcher`
 
-使用`blktrace`前提需要挂载`debugfs`
+**使用`blktrace`前提需要挂载`debugfs`：**
 
 ```sh
 mount      –t debugfs    debugfs /sys/kernel/debug
 ```
+
+**`blkparse`输出参数说明：**
+
+* `8,0    0    21311     3.618501874  5099  Q WFSM 101872094 + 2 [kworker/0:2]`
+* 第一个参数：`8,0`，表示设备号`major device ID`和`minor device ID`
+* 第二个字段：`0`，表示CPU
+* 第三个字段：`21311`，表示序列号
+* 第四个字段：`3.618501874`，表示时间偏移
+* 第五个字段：`5099`，表示本次`I/O`对应的`pid`
+* **第六个字段：`Q`，表示`I/O Event`，这个字段非常重要，反映了`I/O`进行到了哪一步**
+    ```
+    Q – 即将生成IO请求
+    |
+    G – IO请求生成
+    |
+    I – IO请求进入IO Scheduler队列
+    |
+    D – IO请求进入driver
+    |
+    C – IO请求执行完毕
+    ```
+
+* 第七个字段：`WFSM`
+* 第八个字段：`101872094 + 2`，表示的是起始`block number`和 `number of blocks`，即我们常说的`Offset`和`Size`
+* 第九个字段：`[kworker/0:2]`，表示进程名
 
 **示例：**
 
@@ -3172,6 +3199,18 @@ mount      –t debugfs    debugfs /sys/kernel/debug
 
     # 分析 sda.blktrace.<cpu> 文件簇，并输出分析结果
     blkparse sda
+    ```
+
+1. 变采集边分析
+    ```sh
+    # blktrace 产生的标准输出直接通过管道送入 blkparse 的标准输入
+    # Ctrl + C 终止采集
+    blktrace -d /dev/sda -o - | blkparse -i -
+    ```
+
+1. 使用`btt`进行分析
+    ```sh
+    blktrace -d /dev/sda
 
     # 该命令会将 sda.blktrace.<cpu> 文件簇合并成一个文件 sda.blktrace.bin
     blkparse -i sda -d sda.blktrace.bin

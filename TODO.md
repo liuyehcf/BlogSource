@@ -38,8 +38,6 @@
         * [Library Interfaces and Headers](https://docs.oracle.com/cd/E86824_01/html/E54772/makehtml-id-7.html#scrolltoc)
     * `constexpr`
     * `static_assert`
-    * string和整数相互转化，std::to_string(), std::atoi
-    * `std::optional`
 1. 汇编
     * avx, advanced vector extension
     * avx2指令
