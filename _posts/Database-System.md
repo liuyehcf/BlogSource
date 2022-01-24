@@ -1066,6 +1066,114 @@ WHERE S.value > 100
 
 # 12 Query Execution 1
 
+## 12.1 Processing Models
+
+`DBMS`的`Processing Model`决定了系统如何执行一个查询计划。不同的`Processing Model`有不同的工作负载
+
+1. `Iterator Model`
+1. `Materialization Model`
+1. `Vectorized / Batch Model`
+
+### 12.1.1 Iterator Model
+
+**每个算子都要实现`Next`方法**
+
+* 每次触发该方法，都会返回一个`Tuple`或者返回一个标记表示没有可返回的`Tuple`
+* 每个算子的`Next`方法都通过调用孩子节点的`Next`方法来获取输入数据（1个`Tuple`），并进行处理，然后返回给上一级节点
+
+![12-1](/images/Database-System/12-1.png)
+
+也称为`Volcano`或者`Pipeline`模型
+
+**示意图参考课件中的`7 ~ 12`页**
+
+**特点：**
+
+* 易于进行输出控制，比如`limit`算子发现输出`Tuple`数量已经够了，非常容易实现提前结束
+
+### 12.1.2 Materialization Model
+
+**每个算子都要实现`Next`方法**
+
+* 每个算子一次处理所有的输入，并产生最终结果
+* `Next`方法拿到孩子节点的所有数据后，才会返回
+* `DBMS`通常需要进行谓词下推，以免扫描太多数据
+
+**示意图参考课件中的`15 ~ 18`页**
+
+**特点：**
+
+* 更少的函数调用次数
+* 适用于`OLTP`，因为每次查询一小部分数据
+* 不适用于`OLAP`，因为在查询中会产生非常大的中间结果
+
+### 12.1.3 Vectorized / Batch Model
+
+**每个算子都要实现`Next`方法**
+
+* `Next`方法一次最多返回`Batch`个`Tuple`
+* `Batch`可以动态调整
+
+![12-3](/images/Database-System/12-3.png)
+
+**示意图参考课件中的`21 ~ 22`页**
+
+**特点：**
+
+* 较少的函数调用次数
+* 适用于`OLAP`，且更有利于使用`SIMD`指令
+
+### 12.1.4 Plan Processing Direction
+
+**执行方向（`Plan Processing Direction`）有两种：**
+
+1. 自顶向下，`Pull`模型
+1. 自底向上，`Push`模型
+
+## 12.2 Access Methods
+
+`Access Method`是指`DBMS`如何访问表中的数据。该内容没有定义在关系型代数中
+
+**通常来说有三种方式：**
+
+1. `Sequential Scan`
+1. `Index Scan`
+1. `Multi-Index/Bitmap Scan`
+
+### 12.2.1 Sequential Scan
+
+**对于表中的每个`Page`：**
+
+* 从`Buffer Pool`获取该`Page`
+* 遍历`Page`，检查是否满足条件
+
+**这种方式是效率最差，通常来说有如下几种优化方向：**
+
+1. `Prefetching`
+1. `Buffer Pool Bypass`
+1. `Parallelization`
+1. `Zone Maps`
+1. `Late Materialization`
+1. `Heap Clustering`
+
+#### 12.2.1.1 Zone Maps
+
+提前计算好每个`Page`中的聚合信息，于是，在某些情况下，只需要先检查`Zone Map`中的数据，就可以判断出是否需要进一步扫描该`Page`
+
+![12-4](/images/Database-System/12-4.png)
+
+#### 12.2.1.2 Late Materialization
+
+其核心思路是，可以延迟将`Tuple`拼接在一起
+
+**示意图参考课件中的`29 ~ 32`页**
+
+### 12.2.2 Index Scan
+
+### 12.2.3 Multi-Index/Bitmap Scan
+
+## 12.3 Expression Evaluation
+
 # 13 Query Execution 2
 
 # 14 Optimization 1
