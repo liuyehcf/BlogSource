@@ -150,7 +150,7 @@ conf
     "type": "index_parallel",
     "spec": {
         "dataSchema": {
-            "dataSource": "lineorder_flat",
+            "dataSource": "<TBD>",
             "timestampSpec": {},
             "dimensionsSpec": {},
             "granularitySpec": {
@@ -181,7 +181,7 @@ conf
             "maxRowsPerSegment": 5000000,
             "maxRowsInMemory": 25000,
             "reportParseExceptions": true,
-            "maxNumConcurrentSubTasks": 64
+            "maxNumConcurrentSubTasks": 8
         }
     }
 }
@@ -775,7 +775,7 @@ conf
     "type": "index_parallel",
     "spec": {
         "dataSchema": {
-            "dataSource": "part",
+            "dataSource": "supplier",
             "timestampSpec": {
                 "column": "!!!_no_such_column_!!!",
                 "missingValue": "2010-01-01T00:00:00Z"
