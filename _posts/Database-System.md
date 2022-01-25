@@ -1170,9 +1170,54 @@ WHERE S.value > 100
 
 ### 12.2.2 Index Scan
 
+**`DBMS`使用某个索引来查找所需的`Tuple`，使用哪个索引，取决于：**
+
+* 索引包含哪些属性
+* 查询需要哪些属性
+* 属性的值域空间
+* 谓词构成
+* 索引键是否唯一
+
+**如果选择的是非聚簇索引，即获取的`Tuple`以该索引排序，那么按这种顺序从`Page`中读取数据，效率会比较低。因此，通常会先按照`Page Id`进行排序，然后进行磁盘访问**
+
+* **示意图参考课件中的`41 ~ 44`页**
+
 ### 12.2.3 Multi-Index/Bitmap Scan
 
+**如果针对某个查询，有多个可用索引时：**
+
+* 用每个索引获取匹配集合
+* 合并这些集合，取交集
+
+**示意图参考课件中的`38 ~ 40`页**
+
+**集合如何取交集？可以通过`Bitmap`、`Hash Table`、`Bloom Filter`**
+
 ## 12.3 Expression Evaluation
+
+**`DBMS`将`Where`子句表示为一颗`Expression Tree`，通常包含如下类型：**
+
+* `Comparisons`：包括`=, <, >, !=`等
+* `Conjunction`：包括`And`
+* `Disjunction`：包括`Or`
+* `Arithmetic Operators`：包括`+, -, *, /, %`等
+* `Const Values`
+* `Tuple Attribute References`
+
+![12-5](/images/Database-System/12-5.png)
+
+**示意图参考课件中的`46 ~ 53`页**
+
+**示意图这种方式的效率会比较低：**
+
+* `DBMS`会遍历整棵树，然后每个节点都需要计算一次
+* 如果表达式是`WHERE 1=1`，其实可以提前计算
+
+**常用优化手段：**
+
+1. 常量部分，在`SQL`解析阶段直接计算
+1. 提取公共表达式
+1. 即时编译（`JIT`）
 
 # 13 Query Execution 2
 
@@ -1212,6 +1257,7 @@ WHERE S.value > 100
 | `DCL` | Data Control Language |
 | `CTE` | Common Table Expressions |
 | `HDD` | Hard Disk Drive |
+| `JIT` | Just-In-Time |
 | `SSD` | Solid-state Drive |
 | `OLTP` | On-line Transaction Processing |
 | `OLAP` | On-line Analytical Processing |
