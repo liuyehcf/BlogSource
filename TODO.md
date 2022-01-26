@@ -1,6 +1,8 @@
 1. Linux-常用命令
 1. 性能分析
 1. 数据库
+    * product
+        * postgreSQL
     * 相关概念
         * 确定性事务
         * 2pc
