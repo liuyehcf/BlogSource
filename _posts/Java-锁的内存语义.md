@@ -236,7 +236,7 @@ protected final boolean compareAndSetState(int expect, int update) {
     inline jint Atomic::cmpxchg(jint exchange_value, volatile jint* dest, jint compare_value){
         //alternative for InterlockedCompareExchange
         int mp = os::is_MP();
-        **asm{
+        __asm{
             mov edx, dest
             mov ecx, exchange_value
             mov eax, compare_value

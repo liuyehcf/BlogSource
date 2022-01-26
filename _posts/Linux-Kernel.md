@@ -411,7 +411,7 @@ tcp对应的`proto_ops`对象为`inet_stream_ops`
 ```
 sys_socket | net/socket.c SYSCALL_DEFINE3(socket
 sock_create | net/socket.c
-**sock_create | net/socket.c
+__sock_create | net/socket.c
     pf->create | net/socket.c
         ⬇️  socket --> af_inet
 inet_create | net/ipv4/af_inet.c
@@ -429,8 +429,8 @@ do_sync_write | fs/read_write.c
 # socket
 socket_file_ops.aio_write ==> sock_aio_write | net/socket.c
 do_sock_write | net/socket.c
-**sock_sendmsg | net/socket.c
-**sock_sendmsg_nosec | net/socket.c
+__sock_sendmsg | net/socket.c
+__sock_sendmsg_nosec | net/socket.c
     sock->ops->sendmsg
         ⬇️  socket --> inet_stream
 # inet_stream
@@ -440,7 +440,7 @@ inet_stream_ops.sendmsg ==> inet_sendmsg | net/ipv4/af_inet.c
 # tcp
 tcp_prot.sendmsg ==> tcp_sendmsg | net/ipv4/tcp.c
 tcp_push | net/ipv4/tcp.c
-**tcp_push_pending_frames | net/ipv4/tcp_output.c
+__tcp_push_pending_frames | net/ipv4/tcp_output.c
 tcp_write_xmit | net/ipv4/tcp_output.c
 tcp_transmit_skb | net/ipv4/tcp_output.c
     icsk->icsk_af_ops->queue_xmit
@@ -498,8 +498,8 @@ do_sync_read | fs/read_write.c
 # socket
 socket_file_ops.aio_read ==> sock_aio_read | net/socket.c
 do_sock_read | net/socket.c
-**sock_recvmsg | net/socket.c
-**sock_recvmsg_nosec | net/socket.c
+__sock_recvmsg | net/socket.c
+__sock_recvmsg_nosec | net/socket.c
     sock->ops->recvmsg
         ⬇️  socket --> inet_stream
 # inet_stream

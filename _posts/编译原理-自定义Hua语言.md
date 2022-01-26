@@ -179,14 +179,14 @@ Hua文法的定义参考了Java的文法定义，且大部分保持一致。包�
 <dims> → [ ] | <dims> [ ]
 <do statement> → do <mark loop offset> <statement> while ( <expression> ) ;
 <empty statement> → ;
-<epsilon or argument list> → **ε** | <argument list>
-<epsilon or block statements> → **ε** | <block statements>
-<epsilon or digits> → **ε** | <digits>
-<epsilon or dims> → **ε** | <dims>
-<epsilon or expression> → **ε** | <expression>
-<epsilon or for init> → **ε** | <for init>
-<epsilon or for update> → **ε** | <for update>
-<epsilon or formal parameter list> → **ε** | <formal parameter list>
+<epsilon or argument list> → __ε__ | <argument list>
+<epsilon or block statements> → __ε__ | <block statements>
+<epsilon or digits> → __ε__ | <digits>
+<epsilon or dims> → __ε__ | <dims>
+<epsilon or expression> → __ε__ | <expression>
+<epsilon or for init> → __ε__ | <for init>
+<epsilon or for update> → __ε__ | <for update>
+<epsilon or formal parameter list> → __ε__ | <formal parameter list>
 <equality expression> → <equality expression> != <relational expression> | <equality expression> == <relational expression> | <relational expression>
 <exclusive or expression> → <and expression> | <exclusive or expression> ^ <and expression>
 <expression name> → @identifier
@@ -209,23 +209,23 @@ Hua文法的定义参考了Java的文法定义，且大部分保持一致。包�
 <literal> → <boolean literal> | <integer literal>
 <local variable declaration statement> → <local variable declaration> ;
 <local variable declaration> → <type> <mark 146_1_1> <variable declarators>
-<mark 139_1_1> → **ε**
-<mark 146_1_1> → **ε**
-<mark 222_1_1> → **ε**
-<mark 230_2_1> → **ε**
-<mark 232_2_1> → **ε**
-<mark 286_1_1> → **ε**
-<mark 50_1_1> → **ε**
-<mark 66_2_1> → **ε**
-<mark 74_1_1> → **ε**
-<mark 74_1_2> → **ε**
-<mark after update> → **ε**
-<mark before init> → **ε**
-<mark before update> → **ε**
-<mark false block> → **ε**
-<mark loop offset> → **ε**
-<mark prefix expression> → **ε**
-<mark true block> → **ε**
+<mark 139_1_1> → __ε__
+<mark 146_1_1> → __ε__
+<mark 222_1_1> → __ε__
+<mark 230_2_1> → __ε__
+<mark 232_2_1> → __ε__
+<mark 286_1_1> → __ε__
+<mark 50_1_1> → __ε__
+<mark 66_2_1> → __ε__
+<mark 74_1_1> → __ε__
+<mark 74_1_2> → __ε__
+<mark after update> → __ε__
+<mark before init> → __ε__
+<mark before update> → __ε__
+<mark false block> → __ε__
+<mark loop offset> → __ε__
+<mark prefix expression> → __ε__
+<mark true block> → __ε__
 <method body> → ; | <block>
 <method declaration> → <mark 74_1_1> <method header> <mark 74_1_2> <method body>
 <method declarations> → <method declaration> | <method declarations> <method declaration>

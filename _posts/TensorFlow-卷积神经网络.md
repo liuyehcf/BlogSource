@@ -223,7 +223,7 @@ def main():
     mnist = input_data.read_data_sets('./data/', one_hot=True)
     backward(mnist)
 
-if **name** == "**main**":
+if __name__ == "__main__":
     main()
 
 ```
@@ -281,7 +281,7 @@ def main():
     mnist = input_data.read_data_sets("./data/", one_hot=True)
     test(mnist)
 
-if **name** == '**main**':
+if __name__ == '__main__':
     main()
 
 ```
@@ -356,7 +356,7 @@ def application():
 def main():
     application()
 
-if **name** == '**main**':
+if __name__ == '__main__':
     main()
 
 ```

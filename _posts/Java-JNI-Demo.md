@@ -74,7 +74,7 @@ public class JniDemo {
 
 #ifndef _Included_org_liuyehcf_jni_JniDemo
 #define _Included_org_liuyehcf_jni_JniDemo
-#ifdef **cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 /*
@@ -85,7 +85,7 @@ extern "C" {
 JNIEXPORT void JNICALL Java_org_liuyehcf_jni_JniDemo_sayHello
   (JNIEnv *, jclass);
 
-#ifdef **cplusplus
+#ifdef __cplusplus
 }
 #endif
 #endif

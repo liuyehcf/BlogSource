@@ -739,7 +739,7 @@ search hz.ali.com
 Server:		10.65.0.201
 Address:	10.65.0.201#53
 
-** server cant find kubernetes: SERVFAIL
+server cant find kubernetes: SERVFAIL
 
 command terminated with exit code 1
 #-------------------------↑↑↑↑↑↑-------------------------

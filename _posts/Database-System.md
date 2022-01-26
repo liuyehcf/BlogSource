@@ -532,7 +532,7 @@ WHERE table_name = '<table name>';
 
 ## 7.2 B+ Tree Overview
 
-**`B-Tree Family`包括：****
+**`B-Tree Family`包括：**
 
 1. `B-Tree`
 1. `B+Tree`
@@ -839,7 +839,7 @@ WHERE table_name = '<table name>';
 
 * `89、90`为啥要释放节点C上的`R-Latch`呢？这个时候C节点的数据已经读完了，然后就可以释放了？
 
-**由于`Latch`没有死锁检测或者避免的机制，只能依靠编码原则来规避死锁，因此最好能提供`no-wait`模式
+**由于`Latch`没有死锁检测或者避免的机制，只能依靠编码原则来规避死锁，因此最好能提供`no-wait`模式**
 
 ## 9.5 Delayed Parent Updates
 
