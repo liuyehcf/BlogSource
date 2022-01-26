@@ -3071,12 +3071,8 @@ yum install -y sysstat
 
 **示例：**
 
-* `dstat -h`：参数说明
 * `dstat 5 10`：5秒刷新一次，刷新10次
-* `dstat -cdgilmnprstTy`
-* `dstat -tcndylp --top-cpu`
-    * 等价于`dstat --time --cpu --net --disk --sys --load --proc --top-cpu`
-* `dstat -tcyif`
+* `dstat -vln`
 
 ## 6.13 ifstat
 

@@ -468,9 +468,13 @@ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Crese
 1. `/**`开头，表示匹配内部的一切。例如`abc/**`匹配`abc`目录下的所有文件。**`abc/**`与`abc/`的作用是一样的**
 1. `/**/`表示匹配`0`个或`多`个`目录`。例如`a/**/b`匹配`a/b`、`a/x/b`、`a/x/y/b`
 
-# 14 Tips
+# 14 git-lfs
 
-## 14.1 修改diff工具
+[Git Large File Storage](https://git-lfs.github.com/)
+
+# 15 Tips
+
+## 15.1 修改diff工具
 
 **项目地址：[github-icdiff](https://github.com/jeffkaufman/icdiff)**
 
@@ -490,7 +494,7 @@ git config --global icdiff.options '--highlight --line-numbers'
 
 * 用`git icdiff`代替`git diff`即可
 
-## 14.2 中文显示为8进制形式的问题
+## 15.2 中文显示为8进制形式的问题
 
 在Windows中，git bash打印的中文可能表示成`\+三个数字`的形式，即八进制表示
 
@@ -500,7 +504,7 @@ git config --global icdiff.options '--highlight --line-numbers'
 git config --global core.quotepath false
 ```
 
-# 15 参考
+# 16 参考
 
 * [git官方文档](https://git-scm.com/docs/gitignore)
 * [git教程](https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/)

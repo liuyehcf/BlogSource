@@ -13,19 +13,19 @@ categories:
 
 # 1 组件介绍
 
-**组件构成：**
+**组件构成，参考[Design](https://druid.apache.org/docs/latest/design/architecture.html)：**
 
 * **`master`：负责协调集群**
-    * `coordinator`
-    * `overload`
+    * `coordinator`：负责集群中数据的可用性管理
+    * `overload`：负责对数据导入任务进行调度
     * `zookeeper`
 * **`data-server`：包括数据存储、计算等功能**
-    * `historical`
-    * `middle_manager`
+    * `historical`：负责管理持久化的数据
+    * `middle_manager`：负责进行数据的导入
     * `zookeeper`
 * **`query-server`：包括控制台，数据导入等功能功能**
-    * `broker`
-    * `router`
+    * `broker`：负责处理来自外部客户端的查询请求
+    * `router`：负责路由请求
     * `zookeeper`
 
 # 2 部署
@@ -2060,3 +2060,22 @@ conf
 
 ## 3.3 TPC-DS
 
+# 4 相关配置
+
+**详细配置请参考[Configuration reference](https://druid.apache.org/docs/latest/configuration/index.html)**
+
+| 配置文件 | 配置项 | 描述 |
+|:--|:--|:--|
+| `conf/druid/cluster/query/broker/runtime.properties` | `druid.server.http.maxSubqueryRows` | 子查询最大的行数，默认是。否则会报错，错误信息：`Resource limit exceeded. Subquery generated results beyond maximum[100000]` |
+
+# 5 使用体验
+
+1. 提供quick-start模式，能够快速体验
+1. 集群部署不友好，[Clustered deployment](https://druid.apache.org/docs/latest/tutorials/cluster.html)没有说明哪些配置项是必须修改的，比如`druid.host`、`druid.zk.service.host`这俩配置项
+1. 控制台的查询能力弱，主要体现在：
+    * `;`是非法字符
+    * `` ` ``是非法字符
+    * 不支持执行多个sql
+    * 不支持执行光标选中的部分
+1. 不支持`database`对数据表进行隔离，比如我要同时使用`SSB`以及`TPC-H`进行测试，而这两个测试集中包含同名的数据表
+1. 导入数据后，总有一些`segment`会是`unavailable`状态，也不知道如何修复
