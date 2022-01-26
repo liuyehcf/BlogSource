@@ -144,6 +144,8 @@ conf
 * `spec.ioConfig.inputSource.uris`：指定加载某几个文件
 * `spec.ioConfig.inputFormat.columns`：`csv/tsv`中数据对应的列名
 * `spec.ioConfig.appendToExisting`：是否追加到已有的表中
+* `spec.tuningConfig.maxRowsInMemory`：在持久化到硬盘前，内存中最多可以存放的数据的行数（太高容易OOM，看情况设置）
+* `spec.tuningConfig.maxNumConcurrentSubTasks`：控制导入的并发度（太高容易OOM，看情况设置）
 
 ```json
 {
@@ -1192,6 +1194,869 @@ conf
 ```
 
 ## 3.2 TPC-H
+
+### 3.2.1 customer
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "customer",
+            "timestampSpec": {
+                "column": "!!!_no_such_column_!!!",
+                "missingValue": "2010-01-01T00:00:00Z"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "C_CUSTKEY",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "C_NAME",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "C_ADDRESS",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "C_NATIONKEY",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "C_PHONE",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "C_ACCTBAL",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "C_MKTSEGMENT",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "C_COMMENT",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ],
+                "dimensionExclusions": [
+                    "!!!_no_such_column_!!!"
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "C_CUSTKEY",
+                    "C_NAME",
+                    "C_ADDRESS",
+                    "C_NATIONKEY",
+                    "C_PHONE",
+                    "C_ACCTBAL",
+                    "C_MKTSEGMENT",
+                    "C_COMMENT"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.2.2 lineitem
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "lineitem",
+            "timestampSpec": {
+                "column": "L_SHIPDATE",
+                "format": "yyyy-MM-dd",
+                "missingValue": null
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "L_ORDERKEY",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "L_PARTKEY",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "L_SUPPKEY",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "L_LINENUMBER",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "L_QUANTITY",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "L_EXTENDEDPRICE",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "L_DISCOUNT",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "L_TAX",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "L_RETURNFLAG",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "L_LINESTATUS",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "L_SHIPDATE",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "L_COMMITDATE",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "L_RECEIPTDATE",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "L_SHIPINSTRUCT",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "L_SHIPMODE",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "L_COMMENT",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "prefixes": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "L_ORDERKEY",
+                    "L_PARTKEY",
+                    "L_SUPPKEY",
+                    "L_LINENUMBER",
+                    "L_QUANTITY",
+                    "L_EXTENDEDPRICE",
+                    "L_DISCOUNT",
+                    "L_TAX",
+                    "L_RETURNFLAG",
+                    "L_LINESTATUS",
+                    "L_SHIPDATE",
+                    "L_COMMITDATE",
+                    "L_RECEIPTDATE",
+                    "L_SHIPINSTRUCT",
+                    "L_SHIPMODE",
+                    "L_COMMENT"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.2.3 nation
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "nation",
+            "timestampSpec": {
+                "column": "!!!_no_such_column_!!!",
+                "missingValue": "2010-01-01T00:00:00Z"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "N_NATIONKEY",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "N_NAME",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "N_REGIONKEY",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "N_COMMENT",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ],
+                "dimensionExclusions": [
+                    "!!!_no_such_column_!!!"
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "N_NATIONKEY",
+                    "N_NAME",
+                    "N_REGIONKEY",
+                    "N_COMMENT"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.2.4 orders
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "orders",
+            "timestampSpec": {
+                "column": "O_ORDERDATE",
+                "format": "yyyy-MM-dd",
+                "missingValue": null
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "O_ORDERKEY",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "O_CUSTKEY",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "O_ORDERSTATUS",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "O_TOTALPRICE",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "O_ORDERDATE",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "O_ORDERPRIORITY",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "O_CLERK",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "O_SHIPPRIORITY",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "O_COMMENT",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "O_ORDERKEY",
+                    "O_CUSTKEY",
+                    "O_ORDERSTATUS",
+                    "O_TOTALPRICE",
+                    "O_ORDERDATE",
+                    "O_ORDERPRIORITY",
+                    "O_CLERK",
+                    "O_SHIPPRIORITY",
+                    "O_COMMENT"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.2.5 part
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "part",
+            "timestampSpec": {
+                "column": "!!!_no_such_column_!!!",
+                "missingValue": "2010-01-01T00:00:00Z"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "P_PARTKEY",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "P_NAME",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "P_MFGR",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "P_BRAND",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "P_TYPE",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "P_SIZE",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "P_CONTAINER",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "P_RETAILPRICE",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "P_COMMENT",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ],
+                "dimensionExclusions": [
+                    "!!!_no_such_column_!!!"
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "P_PARTKEY",
+                    "P_NAME",
+                    "P_MFGR",
+                    "P_BRAND",
+                    "P_TYPE",
+                    "P_SIZE",
+                    "P_CONTAINER",
+                    "P_RETAILPRICE",
+                    "P_COMMENT"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.2.6 partsupp
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "partsupp",
+            "timestampSpec": {
+                "column": "!!!_no_such_column_!!!",
+                "missingValue": "2010-01-01T00:00:00Z"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "PS_PARTKEY",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "PS_SUPPKEY",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "PS_AVAILQTY",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "PS_SUPPLYCOST",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "PS_COMMENT",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ],
+                "dimensionExclusions": [
+                    "!!!_no_such_column_!!!"
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "PS_PARTKEY",
+                    "PS_SUPPKEY",
+                    "PS_AVAILQTY",
+                    "PS_SUPPLYCOST",
+                    "PS_COMMENT"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.2.7 region
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "region",
+            "timestampSpec": {
+                "column": "!!!_no_such_column_!!!",
+                "missingValue": "2010-01-01T00:00:00Z"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "R_REGIONKEY",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "R_NAME",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "R_COMMENT",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ],
+                "dimensionExclusions": [
+                    "!!!_no_such_column_!!!"
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "R_REGIONKEY",
+                    "R_NAME",
+                    "R_COMMENT"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.2.8 supplier
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "supplier",
+            "timestampSpec": {
+                "column": "!!!_no_such_column_!!!",
+                "missingValue": "2010-01-01T00:00:00Z"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "S_SUPPKEY",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "S_NAME",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "S_ADDRESS",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "S_NATIONKEY",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "S_PHONE",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "S_ACCTBAL",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "S_COMMENT",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ],
+                "dimensionExclusions": [
+                    "!!!_no_such_column_!!!"
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "S_SUPPKEY",
+                    "S_NAME",
+                    "S_ADDRESS",
+                    "S_NATIONKEY",
+                    "S_PHONE",
+                    "S_ACCTBAL",
+                    "S_COMMENT"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
 
 ## 3.3 TPC-DS
 
