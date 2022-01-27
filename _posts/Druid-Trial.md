@@ -2075,7 +2075,232 @@ conf
 
 ## 3.3 TPC-DS
 
-# 4 使用体验
+# 4 测试
+
+## 4.1 SSB单表测试
+
+## 4.2 SSB单表高并发测试
+
+```sql
+-- Q1.1
+SELECT SUM(lo_extendedprice * lo_discount) AS revenue
+FROM lineorder_flat
+WHERE lo_orderdate >= '1993-01-01'
+    AND lo_orderdate <= '1993-12-31'
+    AND lo_discount BETWEEN 1 AND 3
+    AND lo_quantity < 25;
+
+-- Q1.2
+SELECT SUM(lo_extendedprice * lo_discount) AS revenue
+FROM lineorder_flat
+WHERE lo_orderdate >= '1994-01-01'
+    AND lo_orderdate <= '1994-01-31'
+    AND lo_discount BETWEEN 4 AND 6
+    AND lo_quantity BETWEEN 26 AND 35;
+
+-- Q1.3
+SELECT SUM(lo_extendedprice * lo_discount) AS revenue
+FROM lineorder_flat
+WHERE lo_orderdate >= '1994-01-01'
+    AND lo_orderdate <= '1994-12-31'
+    AND lo_discount BETWEEN 5 AND 7
+    AND lo_quantity BETWEEN 26 AND 35;
+
+-- Q2.1
+SELECT SUM(lo_revenue), lo_orderdate, p_brand
+FROM lineorder_flat
+WHERE p_category = 'MFGR#12'
+    AND s_region = 'AMERICA'
+GROUP BY lo_orderdate, p_brand
+ORDER BY lo_orderdate, p_brand;
+
+-- Q2.2
+SELECT SUM(lo_revenue), lo_orderdate, p_brand
+FROM lineorder_flat
+WHERE p_brand >= 'MFGR#2221'
+    AND p_brand <= 'MFGR#2228'
+    AND s_region = 'ASIA'
+GROUP BY lo_orderdate, p_brand
+ORDER BY lo_orderdate, p_brand;
+
+-- Q2.3
+SELECT SUM(lo_revenue), lo_orderdate, p_brand
+FROM lineorder_flat
+WHERE p_brand = 'MFGR#2239'
+    AND s_region = 'EUROPE'
+GROUP BY lo_orderdate, p_brand
+ORDER BY lo_orderdate, p_brand;
+
+-- Q3.1
+SELECT c_nation, s_nation, lo_orderdate
+    , SUM(lo_revenue) AS revenue
+FROM lineorder_flat
+WHERE c_region = 'ASIA'
+    AND s_region = 'ASIA'
+    AND lo_orderdate >= '1992-01-01'
+    AND lo_orderdate <= '1997-12-31'
+GROUP BY c_nation, s_nation, lo_orderdate
+ORDER BY lo_orderdate ASC, revenue DESC;
+
+-- Q3.2
+SELECT c_city, s_city, lo_orderdate
+    , SUM(lo_revenue) AS revenue
+FROM lineorder_flat
+WHERE c_nation = 'UNITED STATES'
+    AND s_nation = 'UNITED STATES'
+    AND lo_orderdate >= '1992-01-01'
+    AND lo_orderdate <= '1997-12-31'
+GROUP BY c_city, s_city, lo_orderdate
+ORDER BY lo_orderdate ASC, revenue DESC;
+
+-- Q3.3
+SELECT c_city, s_city, lo_orderdate
+    , SUM(lo_revenue) AS revenue
+FROM lineorder_flat
+WHERE c_city IN ('UNITED KI1', 'UNITED KI5')
+    AND s_city IN ('UNITED KI1', 'UNITED KI5')
+    AND lo_orderdate >= '1992-01-01'
+    AND lo_orderdate <= '1997-12-31'
+GROUP BY c_city, s_city, lo_orderdate
+ORDER BY lo_orderdate ASC, revenue DESC;
+
+-- Q3.4
+SELECT c_city, s_city, lo_orderdate
+    , SUM(lo_revenue) AS revenue
+FROM lineorder_flat
+WHERE c_city IN ('UNITED KI1', 'UNITED KI5')
+    AND s_city IN ('UNITED KI1', 'UNITED KI5')
+    AND lo_orderdate >= '1997-12-01'
+    AND lo_orderdate <= '1997-12-31'
+GROUP BY c_city, s_city, lo_orderdate
+ORDER BY lo_orderdate ASC, revenue DESC;
+
+-- Q4.1
+SELECT lo_orderdate, c_nation
+    , SUM(lo_revenue - lo_supplycost) AS profit
+FROM lineorder_flat
+WHERE c_region = 'AMERICA'
+    AND s_region = 'AMERICA'
+    AND p_mfgr IN ('MFGR#1', 'MFGR#2')
+GROUP BY lo_orderdate, c_nation
+ORDER BY lo_orderdate ASC, c_nation ASC;
+
+-- Q4.2
+SELECT lo_orderdate, s_nation, p_category
+    , SUM(lo_revenue - lo_supplycost) AS profit
+FROM lineorder_flat
+WHERE c_region = 'AMERICA'
+    AND s_region = 'AMERICA'
+    AND lo_orderdate >= '1997-01-01'
+    AND lo_orderdate <= '1998-12-31'
+    AND p_mfgr IN ('MFGR#1', 'MFGR#2')
+GROUP BY lo_orderdate, s_nation, p_category
+ORDER BY lo_orderdate ASC, s_nation ASC, p_category ASC;
+
+-- Q4.3
+SELECT lo_orderdate, s_city, p_brand
+    , SUM(lo_revenue - lo_supplycost) AS profit
+FROM lineorder_flat
+WHERE s_nation = 'UNITED STATES'
+    AND lo_orderdate >= '1997-01-01'
+    AND lo_orderdate <= '1998-12-31'
+    AND p_category = 'MFGR#14'
+GROUP BY lo_orderdate, s_city, p_brand
+ORDER BY lo_orderdate ASC, s_city ASC, p_brand ASC;
+```
+
+```python
+import http.client
+import time
+import argparse
+import json
+import threading
+
+QUERIES = []
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--host', type=str, default="127.0.0.1")
+    parser.add_argument('--port', type=int, default=8888)
+    parser.add_argument('--concurrency', type=int, default=1)
+    parser.add_argument('--iterations', type=int, default=1)
+    parser.add_argument('--sql_file', type=str, default='test.sql')
+    global SHELL_ARGS
+    SHELL_ARGS = parser.parse_args()
+
+def parse_sqls():
+    file = open(SHELL_ARGS.sql_file, 'r')
+    query = ""
+    for line in file.readlines():
+        line = line.strip()
+        if(line == ""):
+            continue
+        if(line.startswith("--")):
+            continue
+        query = query + ' ' + line
+        if ';' in line:
+            QUERIES.append(query.strip(';'))
+            query = ""
+
+class TaskThread (threading.Thread):
+    successCount = 0
+    errorCount = 0
+    useTime = 0
+
+    def __init__(self, threadID, name, delay):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+        self.name = name
+        self.delay = delay
+
+    def run(self):
+        for i in range(SHELL_ARGS.iterations):
+            for query in QUERIES:
+                conn = http.client.HTTPConnection(
+                    '{}:{}'.format(SHELL_ARGS.host, SHELL_ARGS.port))
+                headers = {"Content-Type": "application/json",
+                           "Accept": "application/json"}
+                body = {"query": query}
+                startMs = int(round(time.time() * 1000))
+                conn.request("POST", "/druid/v2/sql",
+                             json.dumps(body), headers)
+                res = conn.getresponse()
+                endMs = int(round(time.time() * 1000))
+                if(res.status == 200):
+                    self.successCount += 1
+                else:
+                    self.errorCount += 1
+                self.useTime += (endMs - startMs)
+
+def main():
+    parse_args()
+    parse_sqls()
+
+    tasks = []
+    for i in range(SHELL_ARGS.concurrency):
+        task = TaskThread(i, "TaskThread{}".format(i), 0)
+        task.start()
+        tasks.append(task)
+
+    totalSuccessCount = 0
+    totalErrorCount = 0
+    totalUseTime = 0
+    for task in tasks:
+        task.join()
+        print("Task{}, success={}, error={}, avgUseTime={}ms".format(task.threadID, task.successCount,
+              task.errorCount, int(task.useTime/max(1, task.successCount + task.errorCount))))
+        totalSuccessCount += task.successCount
+        totalErrorCount += task.errorCount
+        totalUseTime += task.useTime
+
+    print("Overall: success={}, error={}, avgUseTime={}ms".format(totalSuccessCount, totalErrorCount,
+          int(totalUseTime/max(1, totalSuccessCount + totalErrorCount))))
+
+if __name__ == "__main__":
+    main()
+```
+
+# 5 使用体验
 
 1. 提供quick-start模式，能够快速体验
 1. 集群部署不友好，[Clustered deployment](https://druid.apache.org/docs/latest/tutorials/cluster.html)没有说明哪些配置项是必须修改的，比如`druid.host`、`druid.zk.service.host`这俩配置项
