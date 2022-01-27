@@ -1319,77 +1319,81 @@ call plug#end()
 
 **该插件是作为`LSP`的客户端，这里我们选用的`LSP`的实现是`clangd`以及`ccls`**
 
-**编辑`~/.vimrc`，添加Plug相关配置**
+**编辑`~/.vimrc`，添加Plug相关配置（`clangd`版本）**
 
 * **`clangd`。相关配置参考[LanguageClient-neovim/wiki/Clangd](https://github.com/autozimu/LanguageClient-neovim/wiki/Clangd)**
-    * `clangd`无法更改缓存的存储路径，默认会使用`${project}/.cache`作为缓存目录
-    * **`clangd`会根据`--compile-commands-dir`参数指定的路径查找`compile_commands.json`，若查找不到，则在当前目录，以及每个源文件所在目录递归向上寻找`compile_commands.json`**
-    ```vim
-    call plug#begin()
+* `clangd`无法更改缓存的存储路径，默认会使用`${project}/.cache`作为缓存目录
+* **`clangd`会根据`--compile-commands-dir`参数指定的路径查找`compile_commands.json`，若查找不到，则在当前目录，以及每个源文件所在目录递归向上寻找`compile_commands.json`**
 
-    " ......................
-    " .....其他插件及配置.....
-    " ......................
+```vim
+call plug#begin()
 
-    Plug 'autozimu/LanguageClient-neovim', {
-        \ 'branch': 'next',
-        \ 'do': 'bash install.sh',
-        \ }
+" ......................
+" .....其他插件及配置.....
+" ......................
 
-    " 默认关闭
-    let g:LanguageClient_autoStart = 0
-    let g:LanguageClient_loadSettings = 1
-    let g:LanguageClient_diagnosticsEnable = 0
-    let g:LanguageClient_selectionUI = 'quickfix'
-    let g:LanguageClient_diagnosticsList = v:null
-    let g:LanguageClient_hoverPreview = 'Never'
-    let g:LanguageClient_serverCommands = {}
-    let g:LanguageClient_serverCommands.c = ['clangd']
-    let g:LanguageClient_serverCommands.cpp = ['clangd']
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
 
-    nnoremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
-    nnoremap <leader>rr :call LanguageClient#textDocument_references()<cr>
-    nnoremap <leader>rv :call LanguageClient#textDocument_hover()<cr>
-    nnoremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
+" 默认关闭
+let g:LanguageClient_autoStart = 0
+let g:LanguageClient_loadSettings = 1
+let g:LanguageClient_diagnosticsEnable = 0
+let g:LanguageClient_selectionUI = 'quickfix'
+let g:LanguageClient_diagnosticsList = v:null
+let g:LanguageClient_hoverPreview = 'Never'
+let g:LanguageClient_serverCommands = {}
+let g:LanguageClient_serverCommands.c = ['clangd']
+let g:LanguageClient_serverCommands.cpp = ['clangd']
 
-    call plug#end()
-    ```
+nnoremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
+nnoremap <leader>rr :call LanguageClient#textDocument_references()<cr>
+nnoremap <leader>rv :call LanguageClient#textDocument_hover()<cr>
+nnoremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
+
+call plug#end()
+```
+
+**编辑`~/.vimrc`，添加Plug相关配置（`ccls`版本）**
 
 * **`ccls`。相关配置参考[ccls-project-setup](https://github.com/MaskRay/ccls/wiki/Project-Setup)**
-    * **`ccls`会在工程的根目录寻找`compile_commands.json`**
-    ```vim
-    call plug#begin()
+* **`ccls`会在工程的根目录寻找`compile_commands.json`**
 
-    " ......................
-    " .....其他插件及配置.....
-    " ......................
+```vim
+call plug#begin()
 
-    Plug 'autozimu/LanguageClient-neovim', {
-        \ 'branch': 'next',
-        \ 'do': 'bash install.sh',
-        \ }
+" ......................
+" .....其他插件及配置.....
+" ......................
 
-    " 默认关闭，对于一些大型项目来说，初始化有点慢，需要用的时候再通过 :LanguageClientStart 启动即可
-    let g:LanguageClient_autoStart = 0
-    let g:LanguageClient_loadSettings = 1
-    let g:LanguageClient_diagnosticsEnable = 0
-    let g:LanguageClient_settingsPath = expand('~/.vim/languageclient.json')
-    let g:LanguageClient_selectionUI = 'quickfix'
-    let g:LanguageClient_diagnosticsList = v:null
-    let g:LanguageClient_hoverPreview = 'Never'
-    let g:LanguageClient_serverCommands = {}
-    let g:LanguageClient_serverCommands.c = ['ccls']
-    let g:LanguageClient_serverCommands.cpp = ['ccls']
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
 
-    nnoremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
-    nnoremap <leader>rr :call LanguageClient#textDocument_references()<cr>
-    nnoremap <leader>rv :call LanguageClient#textDocument_hover()<cr>
-    nnoremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
-    nnoremap <leader>hb :call LanguageClient#findLocations({'method':'$ccls/inheritance'})<cr>
-    nnoremap <leader>hd :call LanguageClient#findLocations({'method':'$ccls/inheritance','derived':v:true})<cr>
+" 默认关闭，对于一些大型项目来说，初始化有点慢，需要用的时候再通过 :LanguageClientStart 启动即可
+let g:LanguageClient_autoStart = 0
+let g:LanguageClient_loadSettings = 1
+let g:LanguageClient_diagnosticsEnable = 0
+let g:LanguageClient_settingsPath = expand('~/.vim/languageclient.json')
+let g:LanguageClient_selectionUI = 'quickfix'
+let g:LanguageClient_diagnosticsList = v:null
+let g:LanguageClient_hoverPreview = 'Never'
+let g:LanguageClient_serverCommands = {}
+let g:LanguageClient_serverCommands.c = ['ccls']
+let g:LanguageClient_serverCommands.cpp = ['ccls']
 
-    call plug#end()
-    ```
+nnoremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
+nnoremap <leader>rr :call LanguageClient#textDocument_references()<cr>
+nnoremap <leader>rv :call LanguageClient#textDocument_hover()<cr>
+nnoremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
+nnoremap <leader>hb :call LanguageClient#findLocations({'method':'$ccls/inheritance'})<cr>
+nnoremap <leader>hd :call LanguageClient#findLocations({'method':'$ccls/inheritance','derived':v:true})<cr>
+
+call plug#end()
+```
 
 **其中，`~/.vim/languageclient.json`的内容示例如下（必须是决定路径，不能用`~`）**
 
@@ -1863,7 +1867,9 @@ call plug#end()
 * **`\cu`：取消注释**
 * **`\c<space>`：如果被选区域有部分被注释，则对被选区域执行取消注释操作，其它情况执行反转注释操作**
 
-## 3.21 代码格式化-[vim-clang-format](https://github.com/rhysd/vim-clang-format)
+## 3.21 代码格式化
+
+### 3.21.1 [vim-clang-format](https://github.com/rhysd/vim-clang-format)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1887,6 +1893,39 @@ call plug#end()
 **用法：**
 
 * **`:ClangFormat`：会使用工程目录下的`.clang-format`或者用户目录下的`~/.clang-format`来对代码进行格式化**
+
+### 3.21.2 [vim-autoformat](https://github.com/vim-autoformat/vim-autoformat)
+
+**安装`Python`的格式化工具[autopep8](https://pypi.org/project/autopep8/)**
+
+```sh
+pip install --upgrade autopep8
+
+# 创建软连接（下面是我的安装路径，改成你自己的就行）
+sudo chmod a+x /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.py
+sudo ln /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.py /usr/local/bin/autopep8
+```
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'Chiel92/vim-autoformat'
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**用法：**
+
+* **`:Autoformat`：格式化当前文件**
+* **`:AutoformatLine`：格式化当前行**
 
 ## 3.22 个人完整配置
 
@@ -2201,6 +2240,10 @@ Plug 'rhysd/vim-clang-format'
 
 " 将 :ClangFormat 映射到快捷键 [Ctrl] + l
 autocmd FileType c,cpp,objc nnoremap <buffer> <c-l> :ClangFormat<cr>
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'Chiel92/vim-autoformat'
 
 call plug#end()
 
