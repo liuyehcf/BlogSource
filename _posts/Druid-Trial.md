@@ -77,6 +77,11 @@ conf
 | `_common/common.runtime.properties` | `druid.oss.endpoint` | OSS的接入区域 |
 | `query/broker/runtime.properties` | `druid.server.http.maxSubqueryRows` | 子查询最大的行数，默认是。否则会报错，错误信息：`Resource limit exceeded. Subquery generated results beyond maximum[100000]` |
 | `data/historical/runtime.properties` | `druid.segmentCache.locations` | 存储位置以及存储容量 |
+| `data/historical/runtime.properties` | `druid.processing.buffer.sizeBytes` | 单个`Buffer`的容量 |
+| `data/historical/runtime.properties` | `druid.processing.numMergeBuffers` | 用于`Merge`查询结果的`Buffer`数量 |
+| `data/historical/runtime.properties` | `druid.processing.numThreads` | 处理线程数量，最好与物理核数一样。每个线程会独占一个`Buffer` |
+| `data/historical/runtime.properties` | `druid.cache.sizeInBytes` | `Cache`的容量 |
+| `data/historical/jvm.config` | `-XX:MaxDirectMemorySize` | `DirectMemroy`的容量。该值必须大于`druid.processing.buffer.sizeBytes * (druid.processing.numMergeBuffers + druid.processing.numThreads + 1)` |
 
 ## 2.3 集群部署
 
