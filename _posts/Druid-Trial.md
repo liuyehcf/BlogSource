@@ -42,7 +42,7 @@ categories:
     * `micro-quickstart`：用于Demo
     * `nano-quickstart`：用于Demo
 
-## 2.2 配置文件
+## 2.2 配置
 
 **不同的运行模式对应着不同的配置文件路径，如下（省略具体配置文件）：**
 
@@ -62,6 +62,21 @@ conf
 │   └── single-server
 └── zk
 ```
+
+**完整的配置请参考[Configuration reference](https://druid.apache.org/docs/latest/configuration/index.html)**
+
+**下面列出本文涉及到的配置项（省略配置文件路径前缀`conf/druid/cluster/`）：**
+
+| 配置文件路径 | 配置项 | 描述 |
+|:--|:--|:--|
+| `_common/common.runtime.properties` | `druid.extensions.loadList` | 用于配置更多的扩展加载方式，新增的扩展都要安装相应插件 |
+| `_common/common.runtime.properties` | `druid.host` | 当前机器的host，用于服务注册和服务发现 |
+| `_common/common.runtime.properties` | `druid.zk.service.host` | 集群中所有机器的host和port，用于服务发现 |
+| `_common/common.runtime.properties` | `druid.oss.accessKey` | 阿里云`AccessKey` |
+| `_common/common.runtime.properties` | `druid.oss.secretKey` | 阿里云`AccessSecret` |
+| `_common/common.runtime.properties` | `druid.oss.endpoint` | OSS的接入区域 |
+| `query/broker/runtime.properties` | `druid.server.http.maxSubqueryRows` | 子查询最大的行数，默认是。否则会报错，错误信息：`Resource limit exceeded. Subquery generated results beyond maximum[100000]` |
+| `data/historical/runtime.properties` | `druid.segmentCache.locations` | 存储位置以及存储容量 |
 
 ## 2.3 集群部署
 
@@ -2060,15 +2075,7 @@ conf
 
 ## 3.3 TPC-DS
 
-# 4 相关配置
-
-**详细配置请参考[Configuration reference](https://druid.apache.org/docs/latest/configuration/index.html)**
-
-| 配置文件 | 配置项 | 描述 |
-|:--|:--|:--|
-| `conf/druid/cluster/query/broker/runtime.properties` | `druid.server.http.maxSubqueryRows` | 子查询最大的行数，默认是。否则会报错，错误信息：`Resource limit exceeded. Subquery generated results beyond maximum[100000]` |
-
-# 5 使用体验
+# 4 使用体验
 
 1. 提供quick-start模式，能够快速体验
 1. 集群部署不友好，[Clustered deployment](https://druid.apache.org/docs/latest/tutorials/cluster.html)没有说明哪些配置项是必须修改的，比如`druid.host`、`druid.zk.service.host`这俩配置项
@@ -2079,3 +2086,6 @@ conf
     * 不支持执行光标选中的部分
 1. 不支持`database`对数据表进行隔离，比如我要同时使用`SSB`以及`TPC-H`进行测试，而这两个测试集中包含同名的数据表
 1. 导入数据后，总有一些`segment`会是`unavailable`状态，也不知道如何修复
+1. 性能方面
+    * 宽表性能不错
+    * 多表性能比较差

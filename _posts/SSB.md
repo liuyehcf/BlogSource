@@ -18,9 +18,42 @@ categories:
 ## 1.1 编译安装
 
 ```sh
-git clone https://github.com.cnpmjs.org/vadimtk/ssb-dbgen.git --depth 1
+git clone https://github.com.cnpmjs.org/electrum/ssb-dbgen.git --depth 1
 cd ssb-dbgen
 make
+
+# 执行 make 后会发现如下错误，即找不到 pid_t 的定义
+#-------------------------↓↓↓↓↓↓-------------------------
+driver.c:892:35: error: ‘pid_t’ undeclared (first use in this function)
+  892 |   pids = malloc(children * sizeof(pid_t));
+      |
+#-------------------------↑↑↑↑↑↑-------------------------
+
+# 由于 pid_t 定义在头文件 /usr/include/sys/types.h 中，因此修改 driver.c，在最开始的部分引入该头文件即可
+# 即 #include "/usr/include/sys/types.h"
+
+# 再次尝试编译，成功
+make
+```
+
+修改后的`driver.c`文件部分内容如下：
+
+```cpp
+/* @(#)driver.c	2.1.8.4 */
+/* main driver for dss banchmark */
+
+#define DECLARER				/* EXTERN references get defined here */
+#define NO_FUNC (int (*) ()) NULL	/* to clean up tdefs */
+#define NO_LFUNC (long (*) ()) NULL		/* to clean up tdefs */
+
+#include "config.h"
+#include <stdlib.h>
+#if (defined(_POSIX_)||!defined(WIN32))		/* Change for Windows NT */
+#include "/usr/include/sys/types.h"
+#ifndef DOS
+#include <unistd.h>
+#include <sys/wait.h>
+#endif
 ```
 
 ## 1.2 生成数据
@@ -40,6 +73,9 @@ make
 
 # 生成 date 的数据
 ./dbgen -s 1 -T d
+
+# 去除末尾的 DELIMITER
+sed -i 's/|$//' $(find *.tbl)
 ```
 
 ## 1.3 创建宽表

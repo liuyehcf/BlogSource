@@ -161,6 +161,9 @@ cd dbgen
 
 # 查看生成后的数据
 ls -lh *tbl
+
+# 去除末尾的 DELIMITER
+sed -i 's/|$//' $(find *.tbl)
 ```
 
 ## 5.3 生成sql

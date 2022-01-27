@@ -47,7 +47,11 @@ cd tools
 
 mkdir data
 
-./dsdgen -DIR data/ -SCALE 1 -TERMINATE Y
+# DIR 指定输出目录
+# SCALE 指定规模因子
+# DELIMITER 指定分隔符，默认是 |
+# TERMINATE 是否在每条记录后都增加一个分隔符
+./dsdgen -DIR data/ -SCALE 1 -TERMINATE N
 ```
 
 **将生成后的文件转换成utf-8格式**
