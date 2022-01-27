@@ -470,7 +470,8 @@ set autoindent
 
 ## 2.16 其他
 
-* **`set <config>?`：可以查看`<config>`的值**
+* **`:set <config>?`：可以查看`<config>`的值**
+    * `:set ft?`：查看文件类型
 * **`:echo <variable>`：可以查看`<variable>`的值**
 * **`:echom xxx`：信息会保留在message中，可以通过`:message`查看**
 * `[Shift] + 3`：以暗黄色为底色显示所有指定的字符串
@@ -485,6 +486,7 @@ set autoindent
     * 可以用`[Ctrl] + c`退出历史编辑回到编辑缓冲区，但此时历史编辑窗口不关闭，可以参照之前的命令再自己输入
     * **输入`:x`关闭历史编辑并放弃编辑结果回到编辑缓冲区**
     * 可以在空命令上回车相当于退出历史编辑区回到编辑缓冲区
+* **`q`：出现「记录中」或者「recording」字样时，按`q`可以取消**
 
 ## 2.17 Tips
 
@@ -1917,6 +1919,9 @@ call plug#begin()
 
 Plug 'Chiel92/vim-autoformat'
 
+" 将 :ClangFormat 映射到快捷键 [Ctrl] + l
+autocmd FileType python nnoremap <buffer> <c-l> :Autoformat<cr>
+
 call plug#end()
 ```
 
@@ -2244,6 +2249,9 @@ autocmd FileType c,cpp,objc nnoremap <buffer> <c-l> :ClangFormat<cr>
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 Plug 'Chiel92/vim-autoformat'
+
+" 将 :ClangFormat 映射到快捷键 [Ctrl] + l
+autocmd FileType python nnoremap <buffer> <c-l> :Autoformat<cr>
 
 call plug#end()
 
