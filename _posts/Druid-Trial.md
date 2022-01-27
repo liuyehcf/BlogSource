@@ -206,9 +206,111 @@ conf
 
 **此外，有关数据类型可以参考[data-types](https://druid.apache.org/docs/0.22.1/querying/sql.html#data-types)**
 
-## 3.1 SSB
+## 3.1 转换小工具
 
-### 3.1.1 customer
+**`transform_spec_for_druid.sh`内容如下**
+
+```sh
+#!/bin/bash
+
+file=$1
+blank_num=$2
+
+blank=""
+for((i=0; i<${blank_num}; i++))
+do
+    blank=${blank}" "
+done
+fields=( $(cat ${file} | awk '{print $1}') )
+types=( $(cat ${file} | awk '{print $2}' | tr 'A-Z' 'a-z') )
+
+function getType() {
+    local type=$1
+    if [[ "${type}" =~ "char" ]]; then
+        echo "string"
+        return
+    fi
+    if [[ "${type}" =~ "int" ]]; then
+        echo "long"
+        return
+    fi
+    if [[ "${type}" =~ "date" ]]; then
+        echo "string"
+        return
+    fi
+    if [[ "${type}" =~ "decimal" ]]; then
+        echo "double"
+        return
+    fi
+    echo "error"
+    exit 1
+}
+
+echo "spec.dataSchema.dimensionsSpec.dimensions:"
+
+for((i=0; i<${#fields[@]}; i++))
+do
+    field_name=${fields[i]}
+    field_type=$(getType ${types[i]})
+    echo "${blank}{"
+    echo "${blank}    \"type\": \"${field_type}\","
+    echo "${blank}    \"name\": \"${field_name}\","
+    echo "${blank}    \"multiValueHandling\": \"SORTED_ARRAY\","
+    echo "${blank}    \"createBitmapIndex\": true"
+    if [ $i -eq $((${#fields[@]} - 1)) ]; then
+        echo "${blank}}"
+    else
+        echo "${blank}},"
+    fi
+done
+
+echo
+echo "spec.ioConfig.inputFormat.columns:"
+
+for((i=0; i<${#fields[@]}; i++))
+do
+    field_name=${fields[i]}
+    if [ $i -eq $((${#fields[@]} - 1)) ]; then
+        echo "${blank}\"${field_name}\""
+    else
+        echo "${blank}\"${field_name}\","
+    fi
+done
+```
+
+**假设有如下建表语句：**
+
+```sql
+create table ship_mode
+(
+    sm_ship_mode_sk           integer               not null,
+    sm_ship_mode_id           char(16)              not null,
+    sm_type                   char(30)                      ,
+    sm_code                   char(10)                      ,
+    sm_carrier                char(20)                      ,
+    sm_contract               char(20)
+)
+```
+
+**将中间部分（即如下内容），粘贴到文件`input.txt`中**
+
+```
+    sm_ship_mode_sk           integer               not null,
+    sm_ship_mode_id           char(16)              not null,
+    sm_type                   char(30)                      ,
+    sm_code                   char(10)                      ,
+    sm_carrier                char(20)                      ,
+    sm_contract               char(20)
+```
+
+**然后执行：`./transform_spec_for_druid.sh input.txt 20`，便可以产生如下两段输出，将其粘贴到`spec.json`中的对应位置即可**
+
+1. `spec.dataSchema.dimensionsSpec.dimensions`
+1. `spec.ioConfig.inputFormat.columns`
+
+## 3.2 SSB
+
+### 3.2.1 customer
 
 ```json
 {
@@ -319,7 +421,7 @@ conf
 }
 ```
 
-### 3.1.2 dates
+### 3.2.2 dates
 
 **`d_datekey`字段存储的是时间（`January 1, 1992`这种格式），不知道怎么配置`timestampSpec`，先用不存在的列表示**
 
@@ -495,7 +597,7 @@ conf
 }
 ```
 
-### 3.1.3 lineorder
+### 3.2.3 lineorder
 
 ```json
 {
@@ -667,7 +769,7 @@ conf
 }
 ```
 
-### 3.1.4 part
+### 3.2.4 part
 
 ```json
 {
@@ -785,7 +887,7 @@ conf
 }
 ```
 
-### 3.1.5 supplier
+### 3.2.5 supplier
 
 ```json
 {
@@ -889,7 +991,7 @@ conf
 }
 ```
 
-### 3.1.6 lineorder_flat
+### 3.2.6 lineorder_flat
 
 ```json
 {
@@ -1208,9 +1310,9 @@ conf
 }
 ```
 
-## 3.2 TPC-H
+## 3.3 TPC-H
 
-### 3.2.1 customer
+### 3.3.1 customer
 
 ```json
 {
@@ -1321,7 +1423,7 @@ conf
 }
 ```
 
-### 3.2.2 lineitem
+### 3.3.2 lineitem
 
 ```json
 {
@@ -1486,7 +1588,7 @@ conf
 }
 ```
 
-### 3.2.3 nation
+### 3.3.3 nation
 
 ```json
 {
@@ -1569,7 +1671,7 @@ conf
 }
 ```
 
-### 3.2.4 orders
+### 3.3.4 orders
 
 ```json
 {
@@ -1685,7 +1787,7 @@ conf
 }
 ```
 
-### 3.2.5 part
+### 3.3.5 part
 
 ```json
 {
@@ -1803,7 +1905,7 @@ conf
 }
 ```
 
-### 3.2.6 partsupp
+### 3.3.6 partsupp
 
 ```json
 {
@@ -1893,7 +1995,7 @@ conf
 }
 ```
 
-### 3.2.7 region
+### 3.3.7 region
 
 ```json
 {
@@ -1969,7 +2071,7 @@ conf
 }
 ```
 
-### 3.2.8 supplier
+### 3.3.8 supplier
 
 ```json
 {
@@ -2073,7 +2175,4290 @@ conf
 }
 ```
 
-## 3.3 TPC-DS
+## 3.4 TPC-DS
+
+### 3.4.1 customer_address
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "customer_address",
+            "timestampSpec": {
+                "column": "!!!_no_such_column_!!!",
+                "missingValue": "2010-01-01T00:00:00Z"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "ca_address_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "ca_address_id",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "ca_street_number",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "ca_street_name",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "ca_street_type",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "ca_suite_number",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "ca_city",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "ca_county",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "ca_state",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "ca_zip",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "ca_country",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ca_gmt_offset",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "ca_location_type",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ],
+                "dimensionExclusions": [
+                    "!!!_no_such_column_!!!"
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "ca_address_sk",
+                    "ca_address_id",
+                    "ca_street_number",
+                    "ca_street_name",
+                    "ca_street_type",
+                    "ca_suite_number",
+                    "ca_city",
+                    "ca_county",
+                    "ca_state",
+                    "ca_zip",
+                    "ca_country",
+                    "ca_gmt_offset",
+                    "ca_location_type"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.4.2 customer_demographics
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "customer_demographics",
+            "timestampSpec": {
+                "column": "!!!_no_such_column_!!!",
+                "missingValue": "2010-01-01T00:00:00Z"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "cd_demo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cd_gender",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cd_marital_status",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cd_education_status",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cd_purchase_estimate",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cd_credit_rating",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cd_dep_count",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cd_dep_employed_count",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cd_dep_college_count",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ],
+                "dimensionExclusions": [
+                    "!!!_no_such_column_!!!"
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "cd_demo_sk",
+                    "cd_gender",
+                    "cd_marital_status",
+                    "cd_education_status",
+                    "cd_purchase_estimate",
+                    "cd_credit_rating",
+                    "cd_dep_count",
+                    "cd_dep_employed_count",
+                    "cd_dep_college_count"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.4.3 date_dim
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "date_dim",
+            "timestampSpec": {
+                "column": "d_date",
+                "format": "yyyy-MM-dd",
+                "missingValue": "2000-01-01"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "d_date_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "d_date_id",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "d_date",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "d_month_seq",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "d_week_seq",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "d_quarter_seq",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "d_year",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "d_dow",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "d_moy",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "d_dom",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "d_qoy",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "d_fy_year",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "d_fy_quarter_seq",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "d_fy_week_seq",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "d_day_name",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "d_quarter_name",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "d_holiday",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "d_weekend",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "d_following_holiday",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "d_first_dom",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "d_last_dom",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "d_same_day_ly",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "d_same_day_lq",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "d_current_day",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "d_current_week",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "d_current_month",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "d_current_quarter",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "d_current_year",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "d_date_sk",
+                    "d_date_id",
+                    "d_date",
+                    "d_month_seq",
+                    "d_week_seq",
+                    "d_quarter_seq",
+                    "d_year",
+                    "d_dow",
+                    "d_moy",
+                    "d_dom",
+                    "d_qoy",
+                    "d_fy_year",
+                    "d_fy_quarter_seq",
+                    "d_fy_week_seq",
+                    "d_day_name",
+                    "d_quarter_name",
+                    "d_holiday",
+                    "d_weekend",
+                    "d_following_holiday",
+                    "d_first_dom",
+                    "d_last_dom",
+                    "d_same_day_ly",
+                    "d_same_day_lq",
+                    "d_current_day",
+                    "d_current_week",
+                    "d_current_month",
+                    "d_current_quarter",
+                    "d_current_year"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.4.4 warehouse
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "warehouse",
+            "timestampSpec": {
+                "column": "!!!_no_such_column_!!!",
+                "missingValue": "2010-01-01T00:00:00Z"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "w_warehouse_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "w_warehouse_id",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "w_warehouse_name",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "w_warehouse_sq_ft",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "w_street_number",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "w_street_name",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "w_street_type",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "w_suite_number",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "w_city",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "w_county",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "w_state",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "w_zip",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "w_country",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "w_gmt_offset",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ],
+                "dimensionExclusions": [
+                    "!!!_no_such_column_!!!"
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "w_warehouse_sk",
+                    "w_warehouse_id",
+                    "w_warehouse_name",
+                    "w_warehouse_sq_ft",
+                    "w_street_number",
+                    "w_street_name",
+                    "w_street_type",
+                    "w_suite_number",
+                    "w_city",
+                    "w_county",
+                    "w_state",
+                    "w_zip",
+                    "w_country",
+                    "w_gmt_offset"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.4.5 ship_mode
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "ship_mode",
+            "timestampSpec": {
+                "column": "!!!_no_such_column_!!!",
+                "missingValue": "2010-01-01T00:00:00Z"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "sm_ship_mode_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "sm_ship_mode_id",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "sm_type",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "sm_code",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "sm_carrier",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "sm_contract",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ],
+                "dimensionExclusions": [
+                    "!!!_no_such_column_!!!"
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "sm_ship_mode_sk",
+                    "sm_ship_mode_id",
+                    "sm_type",
+                    "sm_code",
+                    "sm_carrier",
+                    "sm_contract"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.4.6 time_dim
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "time_dim",
+            "timestampSpec": {
+                "column": "!!!_no_such_column_!!!",
+                "missingValue": "2010-01-01T00:00:00Z"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "t_time_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "t_time_id",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "t_time",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "t_hour",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "t_minute",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "t_second",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "t_am_pm",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "t_shift",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "t_sub_shift",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "t_meal_time",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ],
+                "dimensionExclusions": [
+                    "!!!_no_such_column_!!!"
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "t_time_sk",
+                    "t_time_id",
+                    "t_time",
+                    "t_hour",
+                    "t_minute",
+                    "t_second",
+                    "t_am_pm",
+                    "t_shift",
+                    "t_sub_shift",
+                    "t_meal_time"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.4.7 reason
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "reason",
+            "timestampSpec": {
+                "column": "!!!_no_such_column_!!!",
+                "missingValue": "2010-01-01T00:00:00Z"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "r_reason_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "r_reason_id",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "r_reason_desc",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ],
+                "dimensionExclusions": [
+                    "!!!_no_such_column_!!!"
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "r_reason_sk",
+                    "r_reason_id",
+                    "r_reason_desc"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.4.8 income_band
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "income_band",
+            "timestampSpec": {
+                "column": "!!!_no_such_column_!!!",
+                "missingValue": "2010-01-01T00:00:00Z"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "ib_income_band_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ib_lower_bound",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ib_upper_bound",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ],
+                "dimensionExclusions": [
+                    "!!!_no_such_column_!!!"
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "ib_income_band_sk",
+                    "ib_lower_bound",
+                    "ib_upper_bound"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.4.9 item
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "item",
+            "timestampSpec": {
+                "column": "i_rec_start_date",
+                "format": "yyyy-MM-dd",
+                "missingValue": "2000-01-01"
+            },,
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "i_item_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "i_item_id",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "i_rec_start_date",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "i_rec_end_date",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "i_item_desc",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "i_current_price",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "i_wholesale_cost",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "i_brand_id",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "i_brand",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "i_class_id",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "i_class",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "i_category_id",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "i_category",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "i_manufact_id",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "i_manufact",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "i_size",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "i_formulation",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "i_color",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "i_units",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "i_container",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "i_manager_id",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "i_product_name",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "i_item_sk",
+                    "i_item_id",
+                    "i_rec_start_date",
+                    "i_rec_end_date",
+                    "i_item_desc",
+                    "i_current_price",
+                    "i_wholesale_cost",
+                    "i_brand_id",
+                    "i_brand",
+                    "i_class_id",
+                    "i_class",
+                    "i_category_id",
+                    "i_category",
+                    "i_manufact_id",
+                    "i_manufact",
+                    "i_size",
+                    "i_formulation",
+                    "i_color",
+                    "i_units",
+                    "i_container",
+                    "i_manager_id",
+                    "i_product_name"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.4.10 store
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "store",
+            "timestampSpec": {
+                "column": "s_rec_start_date",
+                "format": "yyyy-MM-dd",
+                "missingValue": "2000-01-01"
+            },,
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "s_store_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "s_store_id",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "s_rec_start_date",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "s_rec_end_date",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "s_closed_date_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "s_store_name",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "s_number_employees",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "s_floor_space",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "s_hours",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "s_manager",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "s_market_id",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "s_geography_class",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "s_market_desc",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "s_market_manager",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "s_division_id",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "s_division_name",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "s_company_id",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "s_company_name",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "s_street_number",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "s_street_name",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "s_street_type",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "s_suite_number",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "s_city",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "s_county",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "s_state",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "s_zip",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "s_country",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "s_gmt_offset",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "s_tax_precentage",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "s_store_sk",
+                    "s_store_id",
+                    "s_rec_start_date",
+                    "s_rec_end_date",
+                    "s_closed_date_sk",
+                    "s_store_name",
+                    "s_number_employees",
+                    "s_floor_space",
+                    "s_hours",
+                    "s_manager",
+                    "s_market_id",
+                    "s_geography_class",
+                    "s_market_desc",
+                    "s_market_manager",
+                    "s_division_id",
+                    "s_division_name",
+                    "s_company_id",
+                    "s_company_name",
+                    "s_street_number",
+                    "s_street_name",
+                    "s_street_type",
+                    "s_suite_number",
+                    "s_city",
+                    "s_county",
+                    "s_state",
+                    "s_zip",
+                    "s_country",
+                    "s_gmt_offset",
+                    "s_tax_precentage"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.4.11 call_center
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "call_center",
+            "timestampSpec": {
+                "column": "cc_rec_start_date",
+                "format": "yyyy-MM-dd",
+                "missingValue": "2000-01-01"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "cc_call_center_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cc_call_center_id",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cc_rec_start_date",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cc_rec_end_date",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cc_closed_date_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cc_open_date_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cc_name",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cc_class",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cc_employees",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cc_sq_ft",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cc_hours",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cc_manager",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cc_mkt_id",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cc_mkt_class",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cc_mkt_desc",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cc_market_manager",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cc_division",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cc_division_name",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cc_company",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cc_company_name",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cc_street_number",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cc_street_name",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cc_street_type",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cc_suite_number",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cc_city",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cc_county",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cc_state",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cc_zip",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cc_country",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cc_gmt_offset",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cc_tax_percentage",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "cc_call_center_sk",
+                    "cc_call_center_id",
+                    "cc_rec_start_date",
+                    "cc_rec_end_date",
+                    "cc_closed_date_sk",
+                    "cc_open_date_sk",
+                    "cc_name",
+                    "cc_class",
+                    "cc_employees",
+                    "cc_sq_ft",
+                    "cc_hours",
+                    "cc_manager",
+                    "cc_mkt_id",
+                    "cc_mkt_class",
+                    "cc_mkt_desc",
+                    "cc_market_manager",
+                    "cc_division",
+                    "cc_division_name",
+                    "cc_company",
+                    "cc_company_name",
+                    "cc_street_number",
+                    "cc_street_name",
+                    "cc_street_type",
+                    "cc_suite_number",
+                    "cc_city",
+                    "cc_county",
+                    "cc_state",
+                    "cc_zip",
+                    "cc_country",
+                    "cc_gmt_offset",
+                    "cc_tax_percentage"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.4.12 customer
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "customer",
+            "timestampSpec": {
+                "column": "!!!_no_such_column_!!!",
+                "missingValue": "2010-01-01T00:00:00Z"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "c_customer_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "c_customer_id",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "c_current_cdemo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "c_current_hdemo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "c_current_addr_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "c_first_shipto_date_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "c_first_sales_date_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "c_salutation",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "c_first_name",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "c_last_name",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "c_preferred_cust_flag",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "c_birth_day",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "c_birth_month",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "c_birth_year",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "c_birth_country",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "c_login",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "c_email_address",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "c_last_review_date",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ],
+                "dimensionExclusions": [
+                    "!!!_no_such_column_!!!"
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "c_customer_sk",
+                    "c_customer_id",
+                    "c_current_cdemo_sk",
+                    "c_current_hdemo_sk",
+                    "c_current_addr_sk",
+                    "c_first_shipto_date_sk",
+                    "c_first_sales_date_sk",
+                    "c_salutation",
+                    "c_first_name",
+                    "c_last_name",
+                    "c_preferred_cust_flag",
+                    "c_birth_day",
+                    "c_birth_month",
+                    "c_birth_year",
+                    "c_birth_country",
+                    "c_login",
+                    "c_email_address",
+                    "c_last_review_date"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.4.13 web_site
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "web_site",
+            "timestampSpec": {
+                "column": "web_rec_start_date",
+                "format": "yyyy-MM-dd",
+                "missingValue": "2000-01-01"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "web_site_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "web_site_id",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "web_rec_start_date",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "web_rec_end_date",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "web_name",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "web_open_date_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "web_close_date_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "web_class",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "web_manager",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "web_mkt_id",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "web_mkt_class",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "web_mkt_desc",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "web_market_manager",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "web_company_id",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "web_company_name",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "web_street_number",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "web_street_name",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "web_street_type",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "web_suite_number",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "web_city",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "web_county",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "web_state",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "web_zip",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "web_country",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "web_gmt_offset",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "web_tax_percentage",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "web_site_sk",
+                    "web_site_id",
+                    "web_rec_start_date",
+                    "web_rec_end_date",
+                    "web_name",
+                    "web_open_date_sk",
+                    "web_close_date_sk",
+                    "web_class",
+                    "web_manager",
+                    "web_mkt_id",
+                    "web_mkt_class",
+                    "web_mkt_desc",
+                    "web_market_manager",
+                    "web_company_id",
+                    "web_company_name",
+                    "web_street_number",
+                    "web_street_name",
+                    "web_street_type",
+                    "web_suite_number",
+                    "web_city",
+                    "web_county",
+                    "web_state",
+                    "web_zip",
+                    "web_country",
+                    "web_gmt_offset",
+                    "web_tax_percentage"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.4.14 store_returns
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "store_returns",
+            "timestampSpec": {
+                "column": "!!!_no_such_column_!!!",
+                "missingValue": "2010-01-01T00:00:00Z"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "sr_returned_date_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "sr_return_time_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "sr_item_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "sr_customer_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "sr_cdemo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "sr_hdemo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "sr_addr_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "sr_store_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "sr_reason_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "sr_ticket_number",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "sr_return_quantity",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "sr_return_amt",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "sr_return_tax",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "sr_return_amt_inc_tax",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "sr_fee",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "sr_return_ship_cost",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "sr_refunded_cash",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "sr_reversed_charge",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "sr_store_credit",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "sr_net_loss",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ],
+                "dimensionExclusions": [
+                    "!!!_no_such_column_!!!"
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "sr_returned_date_sk",
+                    "sr_return_time_sk",
+                    "sr_item_sk",
+                    "sr_customer_sk",
+                    "sr_cdemo_sk",
+                    "sr_hdemo_sk",
+                    "sr_addr_sk",
+                    "sr_store_sk",
+                    "sr_reason_sk",
+                    "sr_ticket_number",
+                    "sr_return_quantity",
+                    "sr_return_amt",
+                    "sr_return_tax",
+                    "sr_return_amt_inc_tax",
+                    "sr_fee",
+                    "sr_return_ship_cost",
+                    "sr_refunded_cash",
+                    "sr_reversed_charge",
+                    "sr_store_credit",
+                    "sr_net_loss"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.4.15 household_demographics
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "household_demographics",
+            "timestampSpec": {
+                "column": "!!!_no_such_column_!!!",
+                "missingValue": "2010-01-01T00:00:00Z"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "hd_demo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "hd_income_band_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "hd_buy_potential",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "hd_dep_count",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "hd_vehicle_count",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ],
+                "dimensionExclusions": [
+                    "!!!_no_such_column_!!!"
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "hd_demo_sk",
+                    "hd_income_band_sk",
+                    "hd_buy_potential",
+                    "hd_dep_count",
+                    "hd_vehicle_count"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.4.16 web_page
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "web_page",
+            "timestampSpec": {
+                "column": "wp_rec_start_date",
+                "format": "yyyy-MM-dd",
+                "missingValue": "2000-01-01"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "wp_web_page_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "wp_web_page_id",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "wp_rec_start_date",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "wp_rec_end_date",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "wp_creation_date_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "wp_access_date_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "wp_autogen_flag",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "wp_customer_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "wp_url",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "wp_type",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "wp_char_count",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "wp_link_count",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "wp_image_count",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "wp_max_ad_count",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "wp_web_page_sk",
+                    "wp_web_page_id",
+                    "wp_rec_start_date",
+                    "wp_rec_end_date",
+                    "wp_creation_date_sk",
+                    "wp_access_date_sk",
+                    "wp_autogen_flag",
+                    "wp_customer_sk",
+                    "wp_url",
+                    "wp_type",
+                    "wp_char_count",
+                    "wp_link_count",
+                    "wp_image_count",
+                    "wp_max_ad_count"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.4.17 promotion
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "promotion",
+            "timestampSpec": {
+                "column": "!!!_no_such_column_!!!",
+                "missingValue": "2010-01-01T00:00:00Z"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "p_promo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "p_promo_id",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "p_start_date_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "p_end_date_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "p_item_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "p_cost",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "p_response_target",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "p_promo_name",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "p_channel_dmail",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "p_channel_email",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "p_channel_catalog",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "p_channel_tv",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "p_channel_radio",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "p_channel_press",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "p_channel_event",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "p_channel_demo",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "p_channel_details",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "p_purpose",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "p_discount_active",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ],
+                "dimensionExclusions": [
+                    "!!!_no_such_column_!!!"
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "p_promo_sk",
+                    "p_promo_id",
+                    "p_start_date_sk",
+                    "p_end_date_sk",
+                    "p_item_sk",
+                    "p_cost",
+                    "p_response_target",
+                    "p_promo_name",
+                    "p_channel_dmail",
+                    "p_channel_email",
+                    "p_channel_catalog",
+                    "p_channel_tv",
+                    "p_channel_radio",
+                    "p_channel_press",
+                    "p_channel_event",
+                    "p_channel_demo",
+                    "p_channel_details",
+                    "p_purpose",
+                    "p_discount_active"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.4.18 catalog_page
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "catalog_page",
+            "timestampSpec": {
+                "column": "!!!_no_such_column_!!!",
+                "missingValue": "2010-01-01T00:00:00Z"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "cp_catalog_page_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cp_catalog_page_id",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cp_start_date_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cp_end_date_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cp_department",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cp_catalog_number",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cp_catalog_page_number",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cp_description",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "cp_type",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ],
+                "dimensionExclusions": [
+                    "!!!_no_such_column_!!!"
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "cp_catalog_page_sk",
+                    "cp_catalog_page_id",
+                    "cp_start_date_sk",
+                    "cp_end_date_sk",
+                    "cp_department",
+                    "cp_catalog_number",
+                    "cp_catalog_page_number",
+                    "cp_description",
+                    "cp_type"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.4.19 inventory
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "inventory",
+            "timestampSpec": {
+                "column": "!!!_no_such_column_!!!",
+                "missingValue": "2010-01-01T00:00:00Z"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "inv_date_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "inv_item_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "inv_warehouse_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "inv_quantity_on_hand",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ],
+                "dimensionExclusions": [
+                    "!!!_no_such_column_!!!"
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "inv_date_sk",
+                    "inv_item_sk",
+                    "inv_warehouse_sk",
+                    "inv_quantity_on_hand"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.4.20 catalog_returns
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "catalog_returns",
+            "timestampSpec": {
+                "column": "!!!_no_such_column_!!!",
+                "missingValue": "2010-01-01T00:00:00Z"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "cr_returned_date_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cr_returned_time_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cr_item_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cr_refunded_customer_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cr_refunded_cdemo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cr_refunded_hdemo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cr_refunded_addr_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cr_returning_customer_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cr_returning_cdemo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cr_returning_hdemo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cr_returning_addr_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cr_call_center_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cr_catalog_page_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cr_ship_mode_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cr_warehouse_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cr_reason_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cr_order_number",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cr_return_quantity",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cr_return_amount",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cr_return_tax",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cr_return_amt_inc_tax",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cr_fee",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cr_return_ship_cost",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cr_refunded_cash",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cr_reversed_charge",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cr_store_credit",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cr_net_loss",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ],
+                "dimensionExclusions": [
+                    "!!!_no_such_column_!!!"
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "cr_returned_date_sk",
+                    "cr_returned_time_sk",
+                    "cr_item_sk",
+                    "cr_refunded_customer_sk",
+                    "cr_refunded_cdemo_sk",
+                    "cr_refunded_hdemo_sk",
+                    "cr_refunded_addr_sk",
+                    "cr_returning_customer_sk",
+                    "cr_returning_cdemo_sk",
+                    "cr_returning_hdemo_sk",
+                    "cr_returning_addr_sk",
+                    "cr_call_center_sk",
+                    "cr_catalog_page_sk",
+                    "cr_ship_mode_sk",
+                    "cr_warehouse_sk",
+                    "cr_reason_sk",
+                    "cr_order_number",
+                    "cr_return_quantity",
+                    "cr_return_amount",
+                    "cr_return_tax",
+                    "cr_return_amt_inc_tax",
+                    "cr_fee",
+                    "cr_return_ship_cost",
+                    "cr_refunded_cash",
+                    "cr_reversed_charge",
+                    "cr_store_credit",
+                    "cr_net_loss"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.4.21 web_returns
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "web_returns",
+            "timestampSpec": {
+                "column": "!!!_no_such_column_!!!",
+                "missingValue": "2010-01-01T00:00:00Z"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "wr_returned_date_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "wr_returned_time_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "wr_item_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "wr_refunded_customer_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "wr_refunded_cdemo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "wr_refunded_hdemo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "wr_refunded_addr_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "wr_returning_customer_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "wr_returning_cdemo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "wr_returning_hdemo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "wr_returning_addr_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "wr_web_page_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "wr_reason_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "wr_order_number",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "wr_return_quantity",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "wr_return_amt",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "wr_return_tax",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "wr_return_amt_inc_tax",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "wr_fee",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "wr_return_ship_cost",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "wr_refunded_cash",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "wr_reversed_charge",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "wr_account_credit",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "wr_net_loss",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ],
+                "dimensionExclusions": [
+                    "!!!_no_such_column_!!!"
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "wr_returned_date_sk",
+                    "wr_returned_time_sk",
+                    "wr_item_sk",
+                    "wr_refunded_customer_sk",
+                    "wr_refunded_cdemo_sk",
+                    "wr_refunded_hdemo_sk",
+                    "wr_refunded_addr_sk",
+                    "wr_returning_customer_sk",
+                    "wr_returning_cdemo_sk",
+                    "wr_returning_hdemo_sk",
+                    "wr_returning_addr_sk",
+                    "wr_web_page_sk",
+                    "wr_reason_sk",
+                    "wr_order_number",
+                    "wr_return_quantity",
+                    "wr_return_amt",
+                    "wr_return_tax",
+                    "wr_return_amt_inc_tax",
+                    "wr_fee",
+                    "wr_return_ship_cost",
+                    "wr_refunded_cash",
+                    "wr_reversed_charge",
+                    "wr_account_credit",
+                    "wr_net_loss"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.4.22 web_sales
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "web_sales",
+            "timestampSpec": {
+                "column": "!!!_no_such_column_!!!",
+                "missingValue": "2010-01-01T00:00:00Z"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "ws_sold_date_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ws_sold_time_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ws_ship_date_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ws_item_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ws_bill_customer_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ws_bill_cdemo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ws_bill_hdemo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ws_bill_addr_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ws_ship_customer_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ws_ship_cdemo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ws_ship_hdemo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ws_ship_addr_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ws_web_page_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ws_web_site_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ws_ship_mode_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ws_warehouse_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ws_promo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ws_order_number",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ws_quantity",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ws_wholesale_cost",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ws_list_price",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ws_sales_price",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ws_ext_discount_amt",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ws_ext_sales_price",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ws_ext_wholesale_cost",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ws_ext_list_price",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ws_ext_tax",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ws_coupon_amt",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ws_ext_ship_cost",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ws_net_paid",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ws_net_paid_inc_tax",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ws_net_paid_inc_ship",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ws_net_paid_inc_ship_tax",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ws_net_profit",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ],
+                "dimensionExclusions": [
+                    "!!!_no_such_column_!!!"
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "ws_sold_date_sk",
+                    "ws_sold_time_sk",
+                    "ws_ship_date_sk",
+                    "ws_item_sk",
+                    "ws_bill_customer_sk",
+                    "ws_bill_cdemo_sk",
+                    "ws_bill_hdemo_sk",
+                    "ws_bill_addr_sk",
+                    "ws_ship_customer_sk",
+                    "ws_ship_cdemo_sk",
+                    "ws_ship_hdemo_sk",
+                    "ws_ship_addr_sk",
+                    "ws_web_page_sk",
+                    "ws_web_site_sk",
+                    "ws_ship_mode_sk",
+                    "ws_warehouse_sk",
+                    "ws_promo_sk",
+                    "ws_order_number",
+                    "ws_quantity",
+                    "ws_wholesale_cost",
+                    "ws_list_price",
+                    "ws_sales_price",
+                    "ws_ext_discount_amt",
+                    "ws_ext_sales_price",
+                    "ws_ext_wholesale_cost",
+                    "ws_ext_list_price",
+                    "ws_ext_tax",
+                    "ws_coupon_amt",
+                    "ws_ext_ship_cost",
+                    "ws_net_paid",
+                    "ws_net_paid_inc_tax",
+                    "ws_net_paid_inc_ship",
+                    "ws_net_paid_inc_ship_tax",
+                    "ws_net_profit"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.4.23 catalog_sales
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "catalog_sales",
+            "timestampSpec": {
+                "column": "!!!_no_such_column_!!!",
+                "missingValue": "2010-01-01T00:00:00Z"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "cs_sold_date_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cs_sold_time_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cs_ship_date_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cs_bill_customer_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cs_bill_cdemo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cs_bill_hdemo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cs_bill_addr_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cs_ship_customer_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cs_ship_cdemo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cs_ship_hdemo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cs_ship_addr_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cs_call_center_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cs_catalog_page_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cs_ship_mode_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cs_warehouse_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cs_item_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cs_promo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cs_order_number",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "cs_quantity",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cs_wholesale_cost",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cs_list_price",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cs_sales_price",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cs_ext_discount_amt",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cs_ext_sales_price",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cs_ext_wholesale_cost",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cs_ext_list_price",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cs_ext_tax",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cs_coupon_amt",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cs_ext_ship_cost",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cs_net_paid",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cs_net_paid_inc_tax",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cs_net_paid_inc_ship",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cs_net_paid_inc_ship_tax",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "cs_net_profit",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ],
+                "dimensionExclusions": [
+                    "!!!_no_such_column_!!!"
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "cs_sold_date_sk",
+                    "cs_sold_time_sk",
+                    "cs_ship_date_sk",
+                    "cs_bill_customer_sk",
+                    "cs_bill_cdemo_sk",
+                    "cs_bill_hdemo_sk",
+                    "cs_bill_addr_sk",
+                    "cs_ship_customer_sk",
+                    "cs_ship_cdemo_sk",
+                    "cs_ship_hdemo_sk",
+                    "cs_ship_addr_sk",
+                    "cs_call_center_sk",
+                    "cs_catalog_page_sk",
+                    "cs_ship_mode_sk",
+                    "cs_warehouse_sk",
+                    "cs_item_sk",
+                    "cs_promo_sk",
+                    "cs_order_number",
+                    "cs_quantity",
+                    "cs_wholesale_cost",
+                    "cs_list_price",
+                    "cs_sales_price",
+                    "cs_ext_discount_amt",
+                    "cs_ext_sales_price",
+                    "cs_ext_wholesale_cost",
+                    "cs_ext_list_price",
+                    "cs_ext_tax",
+                    "cs_coupon_amt",
+                    "cs_ext_ship_cost",
+                    "cs_net_paid",
+                    "cs_net_paid_inc_tax",
+                    "cs_net_paid_inc_ship",
+                    "cs_net_paid_inc_ship_tax",
+                    "cs_net_profit"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
+
+### 3.4.24 store_sales
+
+```json
+{
+    "type": "index_parallel",
+    "spec": {
+        "dataSchema": {
+            "dataSource": "store_sales",
+            "timestampSpec": {
+                "column": "!!!_no_such_column_!!!",
+                "missingValue": "2010-01-01T00:00:00Z"
+            },
+            "dimensionsSpec": {
+                "dimensions": [
+                    {
+                        "type": "long",
+                        "name": "ss_sold_date_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ss_sold_time_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ss_item_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ss_customer_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ss_cdemo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ss_hdemo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ss_addr_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ss_store_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ss_promo_sk",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ss_ticket_number",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "long",
+                        "name": "ss_quantity",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ss_wholesale_cost",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ss_list_price",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ss_sales_price",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ss_ext_discount_amt",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ss_ext_sales_price",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ss_ext_wholesale_cost",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ss_ext_list_price",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ss_ext_tax",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ss_coupon_amt",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ss_net_paid",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ss_net_paid_inc_tax",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    },
+                    {
+                        "type": "double",
+                        "name": "ss_net_profit",
+                        "multiValueHandling": "SORTED_ARRAY",
+                        "createBitmapIndex": true
+                    }
+                ],
+                "dimensionExclusions": [
+                    "!!!_no_such_column_!!!"
+                ]
+            },
+            "granularitySpec": {
+                "type": "uniform",
+                "segmentGranularity": "YEAR",
+                "queryGranularity": "HOUR",
+                "rollup": false,
+                "intervals": null
+            }
+        },
+        "ioConfig": {
+            "type": "index_parallel",
+            "inputSource": {
+                "type": "oss",
+                "uris": [
+                    "oss://<TBD>"
+                ]
+            },
+            "inputFormat": {
+                "type": "tsv",
+                "findColumnsFromHeader": false,
+                "columns": [
+                    "ss_sold_date_sk",
+                    "ss_sold_time_sk",
+                    "ss_item_sk",
+                    "ss_customer_sk",
+                    "ss_cdemo_sk",
+                    "ss_hdemo_sk",
+                    "ss_addr_sk",
+                    "ss_store_sk",
+                    "ss_promo_sk",
+                    "ss_ticket_number",
+                    "ss_quantity",
+                    "ss_wholesale_cost",
+                    "ss_list_price",
+                    "ss_sales_price",
+                    "ss_ext_discount_amt",
+                    "ss_ext_sales_price",
+                    "ss_ext_wholesale_cost",
+                    "ss_ext_list_price",
+                    "ss_ext_tax",
+                    "ss_coupon_amt",
+                    "ss_net_paid",
+                    "ss_net_paid_inc_tax",
+                    "ss_net_profit"
+                ],
+                "delimiter": "|"
+            },
+            "appendToExisting": false
+        },
+        "tuningConfig": {
+            "type": "index_parallel",
+            "maxRowsPerSegment": 5000000,
+            "maxRowsInMemory": 25000,
+            "reportParseExceptions": true,
+            "maxNumConcurrentSubTasks": 8
+        }
+    }
+}
+```
 
 # 4 测试
 

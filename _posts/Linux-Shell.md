@@ -696,6 +696,13 @@ test3="$(trim " one leading and one trailing ")"
 echo "'$test1', '$test2', '$test3', '$test4', '$test5', '$test6'"
 ```
 
+### 3.2.8 大小写转换
+
+```sh
+echo 'hello' | tr 'a-z' 'A-Z'
+echo 'HELLO' | tr 'A-Z' 'a-z'
+```
+
 ## 3.3 数组
 
 Shell 数组用括号来表示，元素用`空格`符号分割开，语法格式如下：
