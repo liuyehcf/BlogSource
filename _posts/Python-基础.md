@@ -310,7 +310,22 @@ if __name__=="__main__":
 
 ## 6.2 常用内置函数
 
-### 6.2.1 filter
+[内置函数清单](https://www.runoob.com/python/python-built-in-functions.html)
+
+### 6.2.1 enumerate
+
+`enumerate()`函数用于将一个可遍历的数据对象(如列表、元组或字符串)组合为一个索引序列，同时列出数据和数据下标，一般用在`for`循环当中
+
+```py
+seasons = ['Spring', 'Summer', 'Fall', 'Winter']
+list(enumerate(seasons))
+list(enumerate(seasons, start=1))
+
+for idx, season in enumerate(seasons):
+    print("idx:", idx, ", season:", season)
+```
+
+### 6.2.2 filter
 
 思考这样一个场景，我们需要在一个给定的list中删除某些符合条件的元素，应该怎么做？
 
