@@ -786,11 +786,13 @@ grep分析一行信息，若当前有我们所需要的信息，就将该行拿�
 **参数说明：**
 
 * `-r, --no-run-if-empty`：输入为空就不执行后续操作了
+* `-I {}`：用标准输入替换后续命令中的占位符`{}`
 
 **示例：**
 
 * `docker ps -aq | xargs docker rm -f`
 * `echo "   a  b  c  " | xargs`：实现`trim`
+* `ls | xargs -I {} rm -f {}`
 
 ## 2.11 tee
 
@@ -902,7 +904,38 @@ locate stl_vector.h
 * `cp -vrf /a/* /b`：递归拷贝目录`/a`下的所有文件、目录，但不包括隐藏文件和隐藏目录
 * `cp -vrf /a/. /b`：递归拷贝目录`/a`中所有的文件、目录、隐藏文件和隐藏目录到目录`/b`中
 
-## 2.17 rm
+## 2.17 rsync
+
+[rsync 用法教程](https://www.ruanyifeng.com/blog/2020/08/rsync.html)
+
+`rsync`用于文件同步。它可以在本地计算机与远程计算机之间，或者两个本地目录之间同步文件。它也可以当作文件复制工具，替代`cp`和`mv`命令
+
+它名称里面的`r`指的是`remote`，`rsync`其实就是远程同步（`remote sync`）的意思。与其他文件传输工具（如`FTP`或`scp`）不同，`rsync`的最大特点是会检查发送方和接收方已有的文件，仅传输有变动的部分（默认规则是文件大小或修改时间有变动
+
+**格式：**
+
+* `rsync [options] [src1] [src2] ... [dest]`
+* `rsync [options] [user@host:src1] ... [dest]`
+* `rsync [options] [src1] [src2] ... [user@host:dest]`
+
+**参数说明：**
+
+* `-r`：递归。该参数是必须的，否则会执行失败
+* `-a`：包含`-r`，还可以同步原信息（比如修改时间、权限等）。`rsync`默认使用文件大小和修改时间决定文件是否需要更新，加了`-a`参数后，权限不同也会触发更新
+* `-n`：模拟命令结果
+* `--delete`：默认情况下，`rsync`只确保源目录的所有内容（明确排除的文件除外）都复制到目标目录。它不会使两个目录保持相同，并且不会删除文件。如果要使得目标目录成为源目录的镜像副本，则必须使用`--delete`参数，这将删除只存在于目标目录、不存在于源目录的文件
+* `--exclude`：指定排除模式
+    * `--exclude '.*'`：排除隐藏文件
+    * `--exclude 'dir1/'`排除某个目录
+    * `--exclude 'dir1/*'`排除某个目录里面的所有文件，但不希望排除目录本身
+* `--include`：指定必须同步的文件模式，往往与`--exclude`结合使用
+
+**示例：**
+
+* `rsync -a --exclude log/ dir1/* dir2`：将`dir1`中的内容拷贝到`dir2`目录中（如果`dir2`不存在的话就创建），且排除所有名字为`log`的子目录
+* `rsync -a --exclude log/ dir1 dir2`：将`dir1`拷贝到`dir2`目录中（如果`dir2`不存在的话就创建），且排除所有名字为`log`的子目录。拷贝结束后，`dir2`中的一级子目录是`dir1`
+
+## 2.18 rm
 
 **示例：**
 
@@ -911,7 +944,7 @@ locate stl_vector.h
 * `rm -rf /path/!(a.txt|b.txt)`：递归删除目录`path`下的除了`a.txt`以及`b.txt`之外的所有文件、目录，但不包括隐藏文件和隐藏目录
     * 需要通过命令`shopt -s extglob`开启`extglob`
 
-## 2.18 tar
+## 2.19 tar
 
 **格式：**
 
@@ -945,7 +978,7 @@ locate stl_vector.h
 * `tar -zxvf /test.tar.gz -C /home/liuye`
 * `tar cvf - /home/liuye | sha1sum`：`-`表示标准输入输出，这里表示标准出
 
-## 2.19 wget
+## 2.20 wget
 
 **格式：**
 
@@ -966,7 +999,7 @@ locate stl_vector.h
 * `wget -r -np -nH -P /root/test -R "index.html*" 'http://192.168.66.1/stuff'`
 * `wget -r -np -nH -P /root/test 'ftp://192.168.66.1/stuff'`
 
-## 2.20 tree
+## 2.21 tree
 
 **格式：**
 
@@ -976,14 +1009,14 @@ locate stl_vector.h
 
 * `-N`：显示非ASCII字符，可以显示中文
 
-## 2.21 split
+## 2.22 split
 
 **示例：**
 
 * `split -b 2048M bigfile bigfile-slice-`：按大小切分文件，切分后的文件最大为`2048M`，文件的前缀是`bigfile-slice-`
 * `split -l 10000 bigfile bigfile-slice-`：按行切分文件，切分后的文件最大行数为`10000`，文件的前缀是`bigfile-slice-`
 
-## 2.22 base64
+## 2.23 base64
 
 用于对输入进行`base64`编码以及解码
 
@@ -992,7 +1025,7 @@ locate stl_vector.h
 * `echo "hello" | base64`
 * `echo "hello" | base64 | base64 -d`
 
-## 2.23 md5sum
+## 2.24 md5sum
 
 计算输入或文件的MD5值
 
@@ -1000,7 +1033,7 @@ locate stl_vector.h
 
 * `echo "hello" | md5sum`
 
-## 2.24 openssl
+## 2.25 openssl
 
 openssl可以对文件，以指定算法进行加密或者解密
 
@@ -1010,7 +1043,7 @@ openssl可以对文件，以指定算法进行加密或者解密
 * `openssl aes-256-cbc -a -salt -in blob.txt -out cipher`
 * `openssl aes-256-cbc -a -d -in cipher -out blob-rebuild.txt`
 
-## 2.25 bc
+## 2.26 bc
 
 bc可以用于进制转换
 
@@ -1021,7 +1054,7 @@ bc可以用于进制转换
 * `((num=8#77)); echo ${num}`：8进制转十进制
 * `((num=16#FF)); echo ${num}`：16进制转十进制
 
-## 2.26 dirname
+## 2.27 dirname
 
 `dirname`用于返回文件路径的目录部分，该命令不会检查路径所对应的目录或文件是否真实存在
 
@@ -1039,7 +1072,7 @@ ROOT=$(dirname "$0")
 ROOT=$(cd "$ROOT"; pwd)
 ```
 
-## 2.27 addr2line
+## 2.28 addr2line
 
 该工具用于查看二进制的偏移量与源码的对应关系
 
@@ -1047,7 +1080,7 @@ ROOT=$(cd "$ROOT"; pwd)
 
 * `addr2line 4005f5 -e test`：查看二进制`test`中位置为`4005f5`指令对应的源码
 
-## 2.28 ldd
+## 2.29 ldd
 
 该工具用于查看可执行文件链接了哪些动态库
 
@@ -1055,7 +1088,7 @@ ROOT=$(cd "$ROOT"; pwd)
 
 * `ldd main`
 
-## 2.29 objdump
+## 2.30 objdump
 
 该工具用于反汇编
 
@@ -1064,7 +1097,7 @@ ROOT=$(cd "$ROOT"; pwd)
 * `objdump -drwCS main.o`
 * `objdump -drwCS -M intel main.o`
 
-## 2.30 iconf
+## 2.31 iconf
 
 **参数说明：**
 
@@ -1080,7 +1113,7 @@ ROOT=$(cd "$ROOT"; pwd)
 
 * `iconv -f gbk -t utf-8 s.txt > t.txt`
 
-## 2.31 expect
+## 2.32 expect
 
 expect是一个自动交互的工具，通过编写自定义的配置，就可以实现自动填充数据的功能
 

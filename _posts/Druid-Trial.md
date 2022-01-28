@@ -3234,7 +3234,7 @@ create table ship_mode
                 "column": "i_rec_start_date",
                 "format": "yyyy-MM-dd",
                 "missingValue": "2000-01-01"
-            },,
+            },
             "dimensionsSpec": {
                 "dimensions": [
                     {
@@ -3441,7 +3441,7 @@ create table ship_mode
                 "column": "s_rec_start_date",
                 "format": "yyyy-MM-dd",
                 "missingValue": "2000-01-01"
-            },,
+            },
             "dimensionsSpec": {
                 "dimensions": [
                     {
