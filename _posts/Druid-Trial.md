@@ -6611,9 +6611,6 @@ import sys
 import threading
 import time
 
-QUERIES = []
-USETIME_OF_ITERATIONS = []
-
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--host', type=str, default="127.0.0.1")
@@ -6622,11 +6619,12 @@ def parse_args():
     parser.add_argument('--iterations', type=int, default=1)
     parser.add_argument('--number-of-queries', type=int, default=0)
     parser.add_argument('--sql_file', type=str, default='test.sql')
-    global SHELL_ARGS
-    SHELL_ARGS = parser.parse_args()
+    shell_args = parser.parse_args()
+    return shell_args
 
-def parse_sqls():
-    file = open(SHELL_ARGS.sql_file, 'r')
+def parse_sqls(shell_args):
+    queries = []
+    file = open(shell_args.sql_file, 'r')
     query = ""
     for line in file.readlines():
         line = line.strip()
@@ -6636,8 +6634,9 @@ def parse_sqls():
             continue
         query = query + ' ' + line
         if ';' in line:
-            QUERIES.append(query.strip(';'))
+            queries.append(query.strip(';'))
             query = ""
+    return queries
 
 class AtomicInt(object):
     def __init__(self, value=0):
@@ -6676,19 +6675,31 @@ class CycleBarrier(object):
 
 class TaskThread (threading.Thread):
 
-    def __init__(self, queryCounter, cycleBarrier, threadID, name, delay):
+    def __init__(
+            self,
+            host,
+            port,
+            iterations,
+            number_of_queries,
+            queries,
+            iterationUseTimes,
+            queryCounter,
+            cycleBarrier):
         threading.Thread.__init__(self)
+        self.queries = queries
+        self.host = host
+        self.port = port
+        self.iterations = iterations
+        self.number_of_queries = number_of_queries
+        self.iterationUseTimes = iterationUseTimes
         self.queryCounter = queryCounter
         self.cycleBarrier = cycleBarrier
-        self.threadID = threadID
-        self.name = name
-        self.delay = delay
         self.successCount = 0
         self.errorCount = 0
 
     def doRequest(self, query):
         conn = http.client.HTTPConnection(
-            '{}:{}'.format(SHELL_ARGS.host, SHELL_ARGS.port))
+            '{}:{}'.format(self.host, self.port))
         headers = {"Content-Type": "application/json",
                    "Accept": "application/json"}
         body = {"query": query}
@@ -6697,18 +6708,18 @@ class TaskThread (threading.Thread):
         response = conn.getresponse()
         return response
 
-    def doRun(self, iterations, warmup):
-        for _ in range(iterations):
+    def run(self):
+        for _ in range(self.iterations):
             start = time.time()
 
-            if not warmup and SHELL_ARGS.number_of_queries > 0:
+            if self.number_of_queries > 0:
                 # if --number-of-queries is set, all the threads of one iteration should run as many as
-                # SHELL_ARGS.number_of_queries
-                numQueriesOfSqlFile = len(QUERIES)
+                # shell_args.number_of_queries
+                numQueriesOfSqlFile = len(self.queries)
                 num = self.queryCounter.getAndIncrement()
-                while num < SHELL_ARGS.number_of_queries:
+                while num < self.number_of_queries:
                     queryIdx = num % numQueriesOfSqlFile
-                    query = QUERIES[queryIdx]
+                    query = self.queries[queryIdx]
 
                     response = self.doRequest(query)
 
@@ -6719,42 +6730,61 @@ class TaskThread (threading.Thread):
 
                     num = self.queryCounter.getAndIncrement()
             else:
-                # otherwise, each thread of one iteration should run all the sqls of the SHELL_ARGS.sql_file
-                for query in QUERIES:
+                # otherwise, each thread of one iteration should run all the
+                # sqls of the shell_args.sql_file
+                for query in self.queries:
                     response = self.doRequest(query)
 
-                    # skip statistics if warmup
-                    if not warmup:
-                        if(response.status == 200):
-                            self.successCount += 1
-                        else:
-                            self.errorCount += 1
+                    if(response.status == 200):
+                        self.successCount += 1
+                    else:
+                        self.errorCount += 1
 
             # wait for other threads with same iteration batch to be finished
-            useTimeOfIteration = time.time() - start
+            iterationUseTime = time.time() - start
 
             def callback():
                 self.queryCounter.set(0)
-                if not warmup:
-                    USETIME_OF_ITERATIONS.append(useTimeOfIteration)
+                self.iterationUseTimes.append(iterationUseTime)
             self.cycleBarrier.await(callback)
 
-    def run(self):
-        self.doRun(1, True)
-        self.doRun(SHELL_ARGS.iterations, False)
-
 def main():
-    parse_args()
-    parse_sqls()
-
     start = time.time()
 
+    shell_args = parse_args()
+    queries = parse_sqls(shell_args)
+
+    print("Warmup start...")
+    warmStart = time.time()
+    warmupTask = TaskThread(
+        shell_args.host,
+        shell_args.port,
+        1,
+        len(queries),
+        queries,
+        [],
+        AtomicInt(0),
+        CycleBarrier(1))
+    warmupTask.start()
+    warmupTask.join()
+    warmEnd = time.time()
+    print("Warmup end")
+
+    print("Benchmark start...")
     tasks = []
+    iterationUseTimes = []
     queryCounter = AtomicInt(0)
-    cycleBarrier = CycleBarrier(SHELL_ARGS.concurrency)
-    for i in range(SHELL_ARGS.concurrency):
-        task = TaskThread(queryCounter, cycleBarrier, i,
-                          "TaskThread{}".format(i), 0)
+    cycleBarrier = CycleBarrier(shell_args.concurrency)
+    for i in range(shell_args.concurrency):
+        task = TaskThread(
+            shell_args.host,
+            shell_args.port,
+            shell_args.iterations,
+            shell_args.number_of_queries,
+            queries,
+            iterationUseTimes,
+            queryCounter,
+            cycleBarrier)
         task.start()
         tasks.append(task)
 
@@ -6766,26 +6796,43 @@ def main():
         overallErrorCount += task.errorCount
 
     totalUseTime = 0
-    totalUseTime += sum(USETIME_OF_ITERATIONS)
-    overallMinUseTime = min(USETIME_OF_ITERATIONS)
-    overallMaxUseTime = max(USETIME_OF_ITERATIONS)
+    totalUseTime += sum(iterationUseTimes)
+    overallMinUseTime = min(iterationUseTimes)
+    overallMaxUseTime = max(iterationUseTimes)
+    print("Benchmark end")
 
     end = time.time()
 
-    overallAvgUseTime = totalUseTime / \
-        max(1, SHELL_ARGS.iterations)
-    print("Benchmark")
-    print("\tOverall time: {}s, success queries: {}, failure queries: {}".format(
-        format(end-start, '.3f'), overallSuccessCount, overallErrorCount))
+    overallAvgUseTime = totalUseTime / max(1, shell_args.iterations)
+    print("Benchmark statistics")
+    print(
+        "\tOverall time: {}s, warmup time: {}s, success queries: {}, failure queries: {}".format(
+            format(
+                end -
+                start,
+                '.3f'),
+            format(
+                warmEnd -
+                warmStart,
+                '.3f'),
+            overallSuccessCount,
+            overallErrorCount))
     print("\tAverage number of seconds to run all queries: {}s".format(
         format(overallAvgUseTime, '.3f')))
     print("\tMinimum number of seconds to run all queries: {}s".format(
         format(overallMinUseTime, '.3f')))
     print("\tMaximum number of seconds to run all queries: {}s".format(
         format(overallMaxUseTime, '.3f')))
-    print("\tNumber of clients running queries: {}".format(SHELL_ARGS.concurrency))
-    print("\tAverage number of queries per client: {}".format(
-        format((overallSuccessCount + overallErrorCount)/SHELL_ARGS.concurrency, '.2f')))
+    print(
+        "\tNumber of clients running queries: {}".format(
+            shell_args.concurrency))
+    print(
+        "\tAverage number of queries per client: {}".format(
+            format(
+                (overallSuccessCount +
+                 overallErrorCount) /
+                shell_args.concurrency,
+                '.2f')))
 
 if __name__ == "__main__":
     main()
