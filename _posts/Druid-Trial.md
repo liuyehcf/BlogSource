@@ -6612,6 +6612,7 @@ import threading
 import time
 
 QUERIES = []
+USETIME_OF_ITERATIONS = []
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -6638,36 +6639,54 @@ def parse_sqls():
             QUERIES.append(query.strip(';'))
             query = ""
 
+class AtomicInt(object):
+    def __init__(self, value=0):
+        self.value = value
+        self.lock = threading.Lock()
+
+    def getAndIncrement(self):
+        self.lock.acquire()
+        returnValue = self.value
+        self.value += 1
+        self.lock.release()
+        return returnValue
+
+    def set(self, value):
+        self.lock.acquire()
+        self.value = value
+        self.lock.release()
+
 class CycleBarrier(object):
     def __init__(self, parties):
         self.parties = parties
         self.count = parties
         self.lock = threading.Condition()
 
-    def await(self):
+    def await(self, callback):
         self.lock.acquire()
         self.count -= 1
-        while self.count > 0:
-            self.lock.wait()
-        # auto reset
         if self.count == 0:
+            # auto reset self and notify all block threads
             self.count = self.parties
+            self.lock.notifyAll()
+            callback()
+        else:
+            self.lock.wait()
         self.lock.release()
 
 class TaskThread (threading.Thread):
 
-    def __init__(self, barrier, threadID, name, delay):
+    def __init__(self, queryCounter, cycleBarrier, threadID, name, delay):
         threading.Thread.__init__(self)
-        self.barrier = barrier
+        self.queryCounter = queryCounter
+        self.cycleBarrier = cycleBarrier
         self.threadID = threadID
         self.name = name
         self.delay = delay
         self.successCount = 0
         self.errorCount = 0
-        self.useTimes = []
 
     def doRequest(self, query):
-        start = time.time()
         conn = http.client.HTTPConnection(
             '{}:{}'.format(SHELL_ARGS.host, SHELL_ARGS.port))
         headers = {"Content-Type": "application/json",
@@ -6676,34 +6695,33 @@ class TaskThread (threading.Thread):
         conn.request("POST", "/druid/v2/sql",
                      json.dumps(body), headers)
         response = conn.getresponse()
-        end = time.time()
-        return response, (end - start)
+        return response
 
     def doRun(self, iterations, warmup):
         for _ in range(iterations):
-            useTimeOfIteration = float(0)
+            start = time.time()
 
-            # if --number-of-queries is set, one iteration should run as many as
-            # SHELL_ARGS.number_of_queries
-            # otherwise, one iterator should run all the sqls of the SHELL_ARGS.sql_file
             if not warmup and SHELL_ARGS.number_of_queries > 0:
-                num = 0
+                # if --number-of-queries is set, all the threads of one iteration should run as many as
+                # SHELL_ARGS.number_of_queries
                 numQueriesOfSqlFile = len(QUERIES)
+                num = self.queryCounter.getAndIncrement()
                 while num < SHELL_ARGS.number_of_queries:
-                    num += 1
                     queryIdx = num % numQueriesOfSqlFile
                     query = QUERIES[queryIdx]
 
-                    response, useTimeOfSingleQuery = self.doRequest(query)
+                    response = self.doRequest(query)
 
                     if(response.status == 200):
                         self.successCount += 1
                     else:
                         self.errorCount += 1
-                    useTimeOfIteration += useTimeOfSingleQuery
+
+                    num = self.queryCounter.getAndIncrement()
             else:
+                # otherwise, each thread of one iteration should run all the sqls of the SHELL_ARGS.sql_file
                 for query in QUERIES:
-                    response, useTimeOfSingleQuery = self.doRequest(query)
+                    response = self.doRequest(query)
 
                     # skip statistics if warmup
                     if not warmup:
@@ -6711,14 +6729,15 @@ class TaskThread (threading.Thread):
                             self.successCount += 1
                         else:
                             self.errorCount += 1
-                        useTimeOfIteration += useTimeOfSingleQuery
-
-            # skip statistics if warmup
-            if not warmup:
-                self.useTimes.append(useTimeOfIteration)
 
             # wait for other threads with same iteration batch to be finished
-            self.barrier.await()
+            useTimeOfIteration = time.time() - start
+
+            def callback():
+                self.queryCounter.set(0)
+                if not warmup:
+                    USETIME_OF_ITERATIONS.append(useTimeOfIteration)
+            self.cycleBarrier.await(callback)
 
     def run(self):
         self.doRun(1, True)
@@ -6731,42 +6750,42 @@ def main():
     start = time.time()
 
     tasks = []
-    barrier = CycleBarrier(SHELL_ARGS.concurrency)
+    queryCounter = AtomicInt(0)
+    cycleBarrier = CycleBarrier(SHELL_ARGS.concurrency)
     for i in range(SHELL_ARGS.concurrency):
-        task = TaskThread(barrier, i, "TaskThread{}".format(i), 0)
+        task = TaskThread(queryCounter, cycleBarrier, i,
+                          "TaskThread{}".format(i), 0)
         task.start()
         tasks.append(task)
 
     overallSuccessCount = 0
     overallErrorCount = 0
-    totalUseTime = float(0)
-    overallMinUseTime = float('inf')
-    overallMaxUseTime = float('-inf')
     for task in tasks:
         task.join()
         overallSuccessCount += task.successCount
         overallErrorCount += task.errorCount
-        totalUseTime += sum(task.useTimes)
 
-        taskMinUseTime = min(task.useTimes)
-        taskMaxUseTime = max(task.useTimes)
-        if taskMinUseTime < overallMinUseTime:
-            overallMinUseTime = taskMinUseTime
-        if taskMaxUseTime > overallMaxUseTime:
-            overallMaxUseTime = taskMaxUseTime
+    totalUseTime = 0
+    totalUseTime += sum(USETIME_OF_ITERATIONS)
+    overallMinUseTime = min(USETIME_OF_ITERATIONS)
+    overallMaxUseTime = max(USETIME_OF_ITERATIONS)
 
     end = time.time()
 
     overallAvgUseTime = totalUseTime / \
-        max(1, SHELL_ARGS.concurrency*SHELL_ARGS.iterations)
+        max(1, SHELL_ARGS.iterations)
     print("Benchmark")
-    print("\tOverall time: {}s".format(format(end-start, '.3f')))
+    print("\tOverall time: {}s, success queries: {}, failure queries: {}".format(
+        format(end-start, '.3f'), overallSuccessCount, overallErrorCount))
     print("\tAverage number of seconds to run all queries: {}s".format(
         format(overallAvgUseTime, '.3f')))
     print("\tMinimum number of seconds to run all queries: {}s".format(
         format(overallMinUseTime, '.3f')))
     print("\tMaximum number of seconds to run all queries: {}s".format(
         format(overallMaxUseTime, '.3f')))
+    print("\tNumber of clients running queries: {}".format(SHELL_ARGS.concurrency))
+    print("\tAverage number of queries per client: {}".format(
+        format((overallSuccessCount + overallErrorCount)/SHELL_ARGS.concurrency, '.2f')))
 
 if __name__ == "__main__":
     main()
@@ -6778,9 +6797,9 @@ if __name__ == "__main__":
 * `--port`
 * `--concurrency`：并发数量
 * `--number-of-queries`：每个线程每轮执行多少个`sql`
-* `--iterations`：每个线程进行几轮测试
-    * 当不设置`--number-of-queries`参数时，执行完`--sql_file`中的所有`sql`就算一轮
-    * 当设置了`--number-of-queries`参数时，执行该参数指定的数量才算完成一轮
+* `--iterations`：总共进行几轮测试
+    * 当未设置`--number-of-queries`参数时，每个线程执行完`--sql_file`中的所有`sql`就算一轮
+    * 当设置了`--number-of-queries`参数时，所有线程总共执行完该参数指定的线程时，才算一轮
 * `--sql_file`：测试文件的路径
 
 **用法：**
