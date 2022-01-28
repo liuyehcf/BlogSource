@@ -6599,12 +6599,17 @@ GROUP BY lo_orderdate, s_city, p_brand
 ORDER BY lo_orderdate ASC, s_city ASC, p_brand ASC;
 ```
 
+### 4.2.1 并发测试工具
+
+**由于`Druid`不支持`mysql`协议，因此无法直接使用`mysqlslap`进行并发测试，因此自行实现了一个功能类似的脚本**
+
 ```python
-import http.client
-import time
 import argparse
+import http.client
 import json
+import sys
 import threading
+import time
 
 QUERIES = []
 
@@ -6614,6 +6619,7 @@ def parse_args():
     parser.add_argument('--port', type=int, default=8888)
     parser.add_argument('--concurrency', type=int, default=1)
     parser.add_argument('--iterations', type=int, default=1)
+    parser.add_argument('--number-of-queries', type=int, default=0)
     parser.add_argument('--sql_file', type=str, default='test.sql')
     global SHELL_ARGS
     SHELL_ARGS = parser.parse_args()
@@ -6632,63 +6638,155 @@ def parse_sqls():
             QUERIES.append(query.strip(';'))
             query = ""
 
-class TaskThread (threading.Thread):
-    successCount = 0
-    errorCount = 0
-    useTime = 0
+class CycleBarrier(object):
+    def __init__(self, parties):
+        self.parties = parties
+        self.count = parties
+        self.lock = threading.Condition()
 
-    def __init__(self, threadID, name, delay):
+    def await(self):
+        self.lock.acquire()
+        self.count -= 1
+        while self.count > 0:
+            self.lock.wait()
+        # auto reset
+        if self.count == 0:
+            self.count = self.parties
+        self.lock.release()
+
+class TaskThread (threading.Thread):
+
+    def __init__(self, barrier, threadID, name, delay):
         threading.Thread.__init__(self)
+        self.barrier = barrier
         self.threadID = threadID
         self.name = name
         self.delay = delay
+        self.successCount = 0
+        self.errorCount = 0
+        self.useTimes = []
+
+    def doRequest(self, query):
+        start = time.time()
+        conn = http.client.HTTPConnection(
+            '{}:{}'.format(SHELL_ARGS.host, SHELL_ARGS.port))
+        headers = {"Content-Type": "application/json",
+                   "Accept": "application/json"}
+        body = {"query": query}
+        conn.request("POST", "/druid/v2/sql",
+                     json.dumps(body), headers)
+        response = conn.getresponse()
+        end = time.time()
+        return response, (end - start)
+
+    def doRun(self, iterations, warmup):
+        for _ in range(iterations):
+            useTimeOfIteration = float(0)
+
+            # if --number-of-queries is set, one iteration should run as many as
+            # SHELL_ARGS.number_of_queries
+            # otherwise, one iterator should run all the sqls of the SHELL_ARGS.sql_file
+            if not warmup and SHELL_ARGS.number_of_queries > 0:
+                num = 0
+                numQueriesOfSqlFile = len(QUERIES)
+                while num < SHELL_ARGS.number_of_queries:
+                    num += 1
+                    queryIdx = num % numQueriesOfSqlFile
+                    query = QUERIES[queryIdx]
+
+                    response, useTimeOfSingleQuery = self.doRequest(query)
+
+                    if(response.status == 200):
+                        self.successCount += 1
+                    else:
+                        self.errorCount += 1
+                    useTimeOfIteration += useTimeOfSingleQuery
+            else:
+                for query in QUERIES:
+                    response, useTimeOfSingleQuery = self.doRequest(query)
+
+                    # skip statistics if warmup
+                    if not warmup:
+                        if(response.status == 200):
+                            self.successCount += 1
+                        else:
+                            self.errorCount += 1
+                        useTimeOfIteration += useTimeOfSingleQuery
+
+            # skip statistics if warmup
+            if not warmup:
+                self.useTimes.append(useTimeOfIteration)
+
+            # wait for other threads with same iteration batch to be finished
+            self.barrier.await()
 
     def run(self):
-        for i in range(SHELL_ARGS.iterations):
-            for query in QUERIES:
-                conn = http.client.HTTPConnection(
-                    '{}:{}'.format(SHELL_ARGS.host, SHELL_ARGS.port))
-                headers = {"Content-Type": "application/json",
-                           "Accept": "application/json"}
-                body = {"query": query}
-                startMs = int(round(time.time() * 1000))
-                conn.request("POST", "/druid/v2/sql",
-                             json.dumps(body), headers)
-                res = conn.getresponse()
-                endMs = int(round(time.time() * 1000))
-                if(res.status == 200):
-                    self.successCount += 1
-                else:
-                    self.errorCount += 1
-                self.useTime += (endMs - startMs)
+        self.doRun(1, True)
+        self.doRun(SHELL_ARGS.iterations, False)
 
 def main():
     parse_args()
     parse_sqls()
 
+    start = time.time()
+
     tasks = []
+    barrier = CycleBarrier(SHELL_ARGS.concurrency)
     for i in range(SHELL_ARGS.concurrency):
-        task = TaskThread(i, "TaskThread{}".format(i), 0)
+        task = TaskThread(barrier, i, "TaskThread{}".format(i), 0)
         task.start()
         tasks.append(task)
 
-    totalSuccessCount = 0
-    totalErrorCount = 0
-    totalUseTime = 0
+    overallSuccessCount = 0
+    overallErrorCount = 0
+    totalUseTime = float(0)
+    overallMinUseTime = float('inf')
+    overallMaxUseTime = float('-inf')
     for task in tasks:
         task.join()
-        print("Task{}, success={}, error={}, avgUseTime={}ms".format(task.threadID, task.successCount,
-              task.errorCount, int(task.useTime/max(1, task.successCount + task.errorCount))))
-        totalSuccessCount += task.successCount
-        totalErrorCount += task.errorCount
-        totalUseTime += task.useTime
+        overallSuccessCount += task.successCount
+        overallErrorCount += task.errorCount
+        totalUseTime += sum(task.useTimes)
 
-    print("Overall: success={}, error={}, avgUseTime={}ms".format(totalSuccessCount, totalErrorCount,
-          int(totalUseTime/max(1, totalSuccessCount + totalErrorCount))))
+        taskMinUseTime = min(task.useTimes)
+        taskMaxUseTime = max(task.useTimes)
+        if taskMinUseTime < overallMinUseTime:
+            overallMinUseTime = taskMinUseTime
+        if taskMaxUseTime > overallMaxUseTime:
+            overallMaxUseTime = taskMaxUseTime
+
+    end = time.time()
+
+    overallAvgUseTime = totalUseTime / \
+        max(1, SHELL_ARGS.concurrency*SHELL_ARGS.iterations)
+    print("Benchmark")
+    print("\tOverall time: {}s".format(format(end-start, '.3f')))
+    print("\tAverage number of seconds to run all queries: {}s".format(
+        format(overallAvgUseTime, '.3f')))
+    print("\tMinimum number of seconds to run all queries: {}s".format(
+        format(overallMinUseTime, '.3f')))
+    print("\tMaximum number of seconds to run all queries: {}s".format(
+        format(overallMaxUseTime, '.3f')))
 
 if __name__ == "__main__":
     main()
 ```
+
+**参数：**
+
+* `--host`
+* `--port`
+* `--concurrency`：并发数量
+* `--number-of-queries`：每个线程每轮执行多少个`sql`
+* `--iterations`：每个线程进行几轮测试
+    * 当不设置`--number-of-queries`参数时，执行完`--sql_file`中的所有`sql`就算一轮
+    * 当设置了`--number-of-queries`参数时，执行该参数指定的数量才算完成一轮
+* `--sql_file`：测试文件的路径
+
+**用法：**
+
+* `python3 druidslap.py --host=127.0.0.1 --port=8888 --concurrency=16 --iterations=10 --sql_file=test.sql`
+* `python3 druidslap.py --host=127.0.0.1 --port=8888 --concurrency=16 --number-of-queries=1000 --sql_file=test.sql`
 
 # 5 使用体验
 

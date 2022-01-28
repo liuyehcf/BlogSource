@@ -25,7 +25,20 @@ vars()
     * 当这段脚本被导入其他程序的时候，`__name__`变量等于脚本本身的名字，即`<module>`
 * `__file__`：模块的文件路径
 
-# 2 字符串
+# 2 基本类型
+
+## 2.1 整型
+
+`int`类型的最大最小值是不存在的，因为`int`类型是无边界的。[Maximum and Minimum values for ints](https://stackoverflow.com/questions/7604966/maximum-and-minimum-values-for-ints)
+
+## 2.2 浮点型
+
+```py
+float('inf')
+float('-inf')
+```
+
+## 2.3 字符串
 
 ```py
 str1 = "hello"
@@ -50,13 +63,27 @@ str4 = 'aaaaasomethingbbbb'
 str4.strip("ab")
 ```
 
-# 3 容器
+# 3 语法
+
+## 3.1 循环
+
+```py
+nums = [1, 2, 3, 4, 5]
+
+for num in nums:
+    print(num)
+
+for i, num in enumerate(nums):
+    print(i, num)
+```
+
+# 4 容器
 
 **功能函数**
 
 1. len
 
-## 3.1 list
+## 4.1 list
 
 ```py
 classmates = ['Michael', 'Bob', 'Tracy']
@@ -68,7 +95,7 @@ classmates = ['Michael', 'Bob', 'Tracy']
 1. insert 方法
 1. pop 方法
 
-## 3.2 tuple
+## 4.2 tuple
 
 元组不可变，指的是元组中元素的内存内容不变。言下之意，要是存的是一个`list`，这个`list`仍然可变（改变前后仍然是同一个`list`）
 
@@ -79,7 +106,7 @@ classmates = ('Michael', )
 
 包含单个元素的元组，要在最后加个逗号
 
-## 3.3 dict
+## 4.3 dict
 
 ```py
 d = {'Michael': 95, 'Bob': 75, 'Tracy': 85}
@@ -94,7 +121,7 @@ d = {'Michael': 95, 'Bob': 75, 'Tracy': 85}
 1. `pop`方法
 1. `values`方法
 
-## 3.4 set
+## 4.4 set
 
 ```py
 s = set([1, 2, 3])
@@ -105,9 +132,9 @@ s = set([1, 2, 3])
 1. `add`方法
 1. `remove`方法
 
-# 4 高级特性
+# 5 高级特性
 
-## 4.1 切片
+## 5.1 切片
 
 ```py
 L = ['Michael', 'Sarah', 'Tracy', 'Bob', 'Jack']
@@ -126,9 +153,9 @@ L[:] # 原样复制一个list
 
 切片操作同样支持字符串。因此`Python`中没有像其他编程语言一样的字符串截取函数，因为切片足够了
 
-## 4.2 迭代
+## 5.2 迭代
 
-### 4.2.1 list
+### 5.2.1 list
 
 ```py
 L = [1, 2, 3, 4]
@@ -136,7 +163,7 @@ for l in L:
     print(l)
 ```
 
-### 4.2.2 tuple
+### 5.2.2 tuple
 
 ```py
 T = (1, 2, 3, 4)
@@ -144,7 +171,7 @@ for t in T:
     print(t)
 ```
 
-### 4.2.3 dict
+### 5.2.3 dict
 
 默认情况下，`dict`迭代的是`key`。如果要迭代`value`，可以用`for value in d.values()`
 
@@ -157,7 +184,7 @@ for value in D.values():
     print(value)
 ```
 
-### 4.2.4 set
+### 5.2.4 set
 
 ```py
 S = set([1, 2, 3])
@@ -165,14 +192,14 @@ for s in S:
     print(s)
 ```
 
-### 4.2.5 字符串
+### 5.2.5 字符串
 
 ```py
 for ch in 'ABC':
     print(ch)
 ```
 
-### 4.2.6 判断对象是否可以迭代
+### 5.2.6 判断对象是否可以迭代
 
 ```py
 isinstance('abc', Iterable) 
@@ -180,7 +207,7 @@ isinstance([1,2,3], Iterable)
 isinstance(123, Iterable) 
 ```
 
-### 4.2.7 带循环下标
+### 5.2.7 带循环下标
 
 `Python`内置的`enumerate`函数可以把一个`list`变成索引-元素对，这样就可以在`for`循环中同时迭代索引和元素本身
 
@@ -189,7 +216,7 @@ for i, value in enumerate(['A', 'B', 'C']):
     print(i, value)
 ```
 
-### 4.2.8 多变量迭代
+### 5.2.8 多变量迭代
 
 ```py
 for x, y in [(1, 1), (2, 4), (3, 9)]:
@@ -199,7 +226,7 @@ for x, y, z in [(1, 1, 1), (2, 4, 8), (3, 9, 27)]:
     print(x, y, z)
 ```
 
-## 4.3 列表生成式
+## 5.3 列表生成式
 
 可以用`Java`里面的`stream`来理解
 
@@ -215,7 +242,7 @@ L = ['Hello', 'World', 'IBM', 'Apple']
 [s.lower() for s in L]
 ```
 
-## 4.4 生成器
+## 5.4 生成器
 
 通过列表生成式，我们可以直接创建一个列表。但是，受到内存限制，列表容量肯定是有限的。而且，创建一个包含100万个元素的列表，不仅占用很大的存储空间，如果我们仅仅需要访问前面几个元素，那后面绝大多数元素占用的空间都白白浪费了
 
@@ -249,7 +276,7 @@ for n in f:
     print(n)
 ```
 
-## 4.5 迭代器
+## 5.5 迭代器
 
 生成器都是`Iterator`对象，但`list`、`dict`、`str`虽然是`Iterable`，却不是`Iterator`（注意区分`Iterable`和`Iterator`）
 
@@ -261,9 +288,9 @@ for n in f:
 1. 凡是可作用于`next()`函数的对象都是`Iterator`类型，它们表示一个惰性计算的序列；
 1. 集合数据类型如`list`、`dict`、`str`等是`Iterable`但不是`Iterator`，不过可以通过`iter()`函数获得一个`Iterator`对象
 
-# 5 函数
+# 6 函数
 
-## 5.1 main函数
+## 6.1 main函数
 
 一些编程语言有一个称为的特殊函数`main()`，它是程序文件的执行点。但是，`Python`解释器从文件顶部开始依次运行每一行，并且没有显式`main()`函数
 
@@ -281,9 +308,9 @@ if __name__=="__main__":
     main()
 ```
 
-## 5.2 常用内置函数
+## 6.2 常用内置函数
 
-### 5.2.1 filter
+### 6.2.1 filter
 
 思考这样一个场景，我们需要在一个给定的list中删除某些符合条件的元素，应该怎么做？
 
@@ -308,20 +335,20 @@ for v in lst[:]:
 print(lst)
 ```
 
-# 6 模块
+# 7 模块
 
 为了编写可维护的代码，我们把很多函数分组，分别放到不同的文件里，这样，每个文件包含的代码就相对较少，很多编程语言都采用这种组织代码的方式。**在Python中，一个.py文件就称之为一个模块（Module）**
 
-# 7 常用库
+# 8 常用库
 
 **常用库请参考[library](https://docs.python.org/zh-cn/3/library)**
 
 * [http.client](https://docs.python.org/zh-cn/3/library/http.client.html)
 * [json](https://docs.python.org/zh-cn/3/library/json.html)
 
-# 8 Tips
+# 9 Tips
 
-## 8.1 查看系统库的路径
+## 9.1 查看系统库的路径
 
 **方式1：**
 
@@ -339,13 +366,13 @@ import os
 print(os.__file__)
 ```
 
-## 8.2 代码格式化
+## 9.2 代码格式化
 
 * [autopep8](https://pypi.org/project/autopep8/)
 * [vim-autopep8](https://github.com/tell-k/vim-autopep8)
 * [vim-autoformat](https://github.com/vim-autoformat/vim-autoformat)
 
-# 9 参考
+# 10 参考
 
 * [廖雪峰-Python教程](https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000)
 * [Python 3 教程](https://www.runoob.com/python3/python3-tutorial.html)
