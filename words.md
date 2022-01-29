@@ -54,3 +54,6 @@
 1. World-class，世界级
 1. Divide-and-conquer，分而治之
 1. In order to accomplish this, a series of trade-offs have to be balanced.
+1. get hands dirty，刚上手
+1. cutting edge，前言
+1. every feature rolled out，推出的每个功能
