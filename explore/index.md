@@ -22,11 +22,15 @@ date: 2018-02-05 09:25:59
 * [C++ 语言构造参考手册](https://www.bookstack.cn/books/cppreference-language)
 * [C++ Notes for Professionals book](https://goalkicker.com/CPlusPlusBook/)
 * [Google-Abseil](https://abseil.io/)
-* [Google 开源项目风格指南](https://zh-google-styleguide.readthedocs.io/en/latest/google-cpp-styleguide/)
-* [LLVM Coding Standards](https://llvm.org/docs/CodingStandards.html)
 * [Online Compiler](https://godbolt.org/)
 * [Online Benchmark](https://quick-bench.com/)
 * 《A Tour of C++》
+
+# Code Standard
+
+* [Google 开源项目风格指南](https://zh-google-styleguide.readthedocs.io/en/latest/google-cpp-styleguide/)
+* [LLVM Coding Standards](https://llvm.org/docs/CodingStandards.html)
+* [The Standard of Code Review](https://google.github.io/eng-practices/review/reviewer/standard.html)
 
 # 性能分析
 
@@ -67,13 +71,25 @@ date: 2018-02-05 09:25:59
 
 # 缩写表
 
-| 缩写 | 全称 | 相关资料 |
-|:--|:--|:--|
-| `BSD` | Berkeley Software Distribution |  |
-| `GPL` | GNU General Public License |  |
-| `OSI` | Open Systems Interconnection |  |
-| `PMC` | Project Management Committee | 1. [what-is-a-pmc](https://www.apache.org/dev/pmc.html#what-is-a-pmc)</br>2. [how-become-open-source-committer-and-why-youd-want](https://www.gridgain.com/resources/blog/how-become-open-source-committer-and-why-youd-want) |
-| `POSIX` | The Portable Operating System Interface |  |
-| `PPMC` | Podling Project Management | 1. [ppmc](https://incubator.apache.org/guides/ppmc.html) |
-| `SA` | Solution Architect |  |
-| `SRE` | Site Reliability Engineering |  |
+<table>
+  <tr> <th width="80px" align="center">缩写</th> <th width="240px" align="center">全称</th> <th width="200px" align="center">其他</th> </tr>
+  <tr> <td>BSD</td> <td>Berkeley Software Distribution</td> <td></td> </tr>
+  <tr> <td>GPL</td> <td>GNU General Public License</td> <td></td> </tr>
+  <tr> <td>PMC</td> <td>Project Management Committee</td> <td> 1. <a href="https://www.apache.org/dev/pmc.html#what-is-a-pmc">what-is-a-pmc</a> </br> 2. <a href="https://www.gridgain.com/resources/blog/how-become-open-source-committer-and-why-youd-want">how-become-open-source-committer-and-why-youd-want</a> </td> </tr>
+  <tr> <td>PPMC</td> <td>Podling Project Management Committee</td> <td><a href="https://incubator.apache.org/guides/ppmc.html">ppmc</a></td> </tr>
+  <tr> <td>POSIX</td> <td>The Portable Operating System Interface</td> <td></td> </tr>
+  <tr> <td>OSI</td> <td>Open Systems Interconnection</td> <td></td> </tr>
+  <tr> <td></td> <td></td> <td></td> </tr>
+  <tr> <th colspan="3" align="center">职位</th> </tr>
+  <tr> <td>SA</td> <td>Solution Architect</td> <td></td> </tr>
+  <tr> <td>SRE</td> <td>Site Reliability Engineering </br> (Server Restart Engineer😁)</td> <td></td> </tr>
+  <tr> <th colspan="3" align="center">Github</th> </tr>
+  <tr> <td>PR</td> <td>Pull Request</td> <td></td> </tr>
+  <tr> <td>LGTM</td> <td>Looks Good To Me</td> <td>代码已经过 review，可以合并</td> </tr>
+  <tr> <td>SGTM</td> <td>Sounds Good To Me</td> <td>代码已经过 review，可以合并</td> </tr>
+  <tr> <td>WIP</td> <td>Work In Progress</td> <td>如果你有个改动很大的 PR，可以在写了一部分的情况下先提交，但是在标题里写上 WIP，以告诉项目维护者这个功能还未完成，方便维护者提前 review 部分提交的代码</td> </tr>
+  <tr> <td>PTAL</td> <td>Please Take A Look</td> <td>请其他人 review 代码</td> </tr>
+  <tr> <td>TBR</td> <td>To Be Reviewed</td> <td>提示维护者进行 review</td> </tr>
+  <tr> <td>TL;DR</td> <td>Too Long; Didn't Read</td> <td>太长懒得看。也有很多文档在做简略描述之前会写这么一句</td> </tr>
+  <tr> <td>TBD</td> <td>To Be Done(or Defined/Discussed/Decided/Determined)</td> <td>根据语境不同意义有所区别，但一般都是还没搞定的意思</td> </tr>
+</table>

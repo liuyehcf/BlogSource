@@ -25,6 +25,36 @@ vars()
     * 当这段脚本被导入其他程序的时候，`__name__`变量等于脚本本身的名字，即`<module>`
 * `__file__`：模块的文件路径
 
+## 1.2 全局变量
+
+**`Python`中`global`关键字的基本规则是：**
+
+* 在函数内部定义变量时，默认情况下它是局部的
+* 在函数外部定义变量时，默认情况下它是全局的。不必使用`global`关键字
+* 使用`global`关键字，可以在函数内部读写全局变量。读全局变量可以不用`global`关键字
+* 在函数外使用`global`关键字无效
+
+```py
+global_value = 1
+
+def read_global():
+    print(global_value)
+
+def write_global():
+    global global_value
+    global_value += 2
+    print(global_value)
+
+def read_and_write_global():
+    global global_value
+    global_value += 2
+    print(global_value)
+
+read_global()
+write_global()
+read_and_write_global()
+```
+
 # 2 基本类型
 
 ## 2.1 整型

@@ -53,3 +53,4 @@
 1. Data Cache misses per 1000 instructions comparing LRU, Random, FIFO replacement for several sizes and associativities.
 1. World-class，世界级
 1. Divide-and-conquer，分而治之
+1. In order to accomplish this, a series of trade-offs have to be balanced.
