@@ -114,7 +114,18 @@ print "\$names[1] = $names[1]\n";
 print "\$names[2] = $names[2]\n";
 ```
 
-### 3.2.1 添加删除元素
+### 3.2.1 创建数组
+
+```perl
+@array1 = (1, 2, 'Hello');
+@array2 = qw/这是 一个 数组/;
+@array3 = qw/google
+taobao
+alibaba
+youj/;
+```
+
+### 3.2.2 添加删除元素
 
 1. `push`：添加元素到尾部
 1. `pop`：删除尾部元素
@@ -143,7 +154,9 @@ shift(@coins);
 print "5. \@coins  = @coins\n";
 ```
 
-### 3.2.2 `..` - range operator
+### 3.2.3 数组序列号
+
+`Perl`提供了可以按序列输出的数组形式，格式为：`起始值 + .. + 结束值`
 
 ```perl
 @array = (1..10);
@@ -153,7 +166,120 @@ print "array = @array\n";
 print "subarray = @subarray\n";
 ```
 
-### 3.2.3 合并数组
+### 3.2.4 数组大小
+
+```perl
+@array = (1,2,3);
+$array[50] = 4;
+
+$size = @array;
+$max_index = $#array;
+
+print "数组大小: $size\n";
+print "最大索引: $max_index\n";
+```
+
+### 3.2.5 切割数组
+
+```perl
+@sites = qw/google taobao youj weibo qq facebook 网易/;
+
+@sites2 = @sites[3,4,5];
+@sites3 = @sites[3..5];
+
+print "@sites2\n";
+print "@sites3\n";
+```
+
+### 3.2.6 替换数组元素
+
+`Perl`中数组元素替换使用`splice()`函数，语法格式如下：
+
+* `splice @ARRAY, OFFSET [ , LENGTH [ , LIST ] ]`
+* `@ARRAY`：要替换的数组
+* `OFFSET`：起始位置
+* `LENGTH`：替换的元素个数
+* `LIST`：替换元素列表
+
+```perl
+@nums = (1..20);
+print "替换前 - @nums\n";
+
+splice(@nums, 5, 5, 21..25); 
+print "替换后 - @nums\n";
+```
+
+### 3.2.7 将字符串转换为数组
+
+`Perl`中将字符串转换为数组使用`split()`函数，语法格式如下：
+
+* `split [ PATTERN [ , EXPR [ , LIMIT ] ] ]`
+* `PATTERN`：分隔符，默认为空格
+* `EXPR`：指定字符串数
+* `LIMIT`：如果指定该参数，则返回该数组的元素个数
+
+```perl
+# 定义字符串
+$var_test = "youj";
+$var_string = "www-youj-com";
+$var_names = "google,taobao,youj,weibo";
+
+# 字符串转为数组
+@test = split('', $var_test);
+@string = split('-', $var_string);
+@names  = split(',', $var_names);
+
+print "$test[3]\n";  # 输出 j
+print "$string[2]\n";  # 输出 com
+print "$names[3]\n";   # 输出 weibo
+```
+
+### 3.2.8 将数组转换为字符串
+
+`Perl`中将数组转换为字符串使用`join()`函数，语法格式如下：
+
+* `join EXPR, LIST`
+* `EXPR`：连接符
+* `LIST`：列表或数组
+
+```perl
+# 定义字符串
+$var_string = "www-youj-com";
+$var_names = "google,taobao,youj,weibo";
+
+# 字符串转为数组
+@string = split('-', $var_string);
+@names  = split(',', $var_names);
+
+# 数组转为字符串
+$string1 = join( '-', @string );
+$string2 = join( ',', @names );
+
+print "$string1\n";
+print "$string2\n";
+```
+
+### 3.2.9 数组排序
+
+`Perl`中数组排序使用`sort()`函数，语法格式如下：
+
+* `sort [ SUBROUTINE ] LIST`
+* `SUBROUTINE`：指定规则
+* `LIMIT`：列表或数组
+
+```perl
+# 定义数组
+@sites = qw(google taobao youj facebook);
+print "排序前: @sites\n";
+
+# 对数组进行排序
+@sites = sort(@sites);
+print "排序后: @sites\n";
+```
+
+### 3.2.10 合并数组
+
+数组的元素是以逗号来分割，我们也可以使用逗号来合并数组
 
 ```perl
 @numbers1 = (1,3,(4,5,6));
@@ -165,25 +291,25 @@ print "numbers1 = @numbers1\n";
 print "numbers2 = @numbers2\n";
 ```
 
-### 3.2.4 数组与String转换
+### 3.2.11 数组起始下标
+
+特殊变量`$[`表示数组的第一索引值，一般都为`0`，如果我们将`$[`设置为`1`，则数组的第一个索引值即为`1`，第二个为`2`，以此类推
+
+**该功能在未来版本可能被废弃，不建议使用**
 
 ```perl
-# define Strings
-$var_string = "Rain-Drops-On-Roses-And-Whiskers-On-Kittens";
-$var_names = "Larry,David,Roger,Ken,Michael,Tom";
+# 定义数组
+@sites = qw(google taobao youj facebook);
+print "网站: @sites\n";
 
-# transform above strings into arrays.
-@string = split('-', $var_string);
-@names  = split(',', $var_names);
+# 设置数组的第一个索引为 1
+$[ = 1;
 
-$string1 = join( '-', @string );
-$string2 = join( ',', @names );
-
-print "$string1\n";
-print "$string2\n";
+print "\@sites[1]: $sites[1]\n";
+print "\@sites[2]: $sites[2]\n";
 ```
 
-### 3.2.5 Tips
+### 3.2.12 Tips
 
 1. **用`print`打印数组时，最好放在引号里面，否则输出的时候，数组各元素就直接贴在一起了。而放在引号里面的话，各元素之间会用空格分隔**
 
