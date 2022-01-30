@@ -57,3 +57,4 @@
 1. get hands dirty，刚上手
 1. cutting edge，前言
 1. every feature rolled out，推出的每个功能
+1. A DBMS’s process model defines how the system is architected to support concurrent requests from a multi-user application

@@ -1221,6 +1221,131 @@ WHERE S.value > 100
 
 # 13 Query Execution 2
 
+**`Parallel DBMSs`：**
+
+* 共享物理资源
+* 线程间通信非常高效
+* 通信廉价且可靠
+
+**`Distributed DBMSs`：**
+
+* 资源分布在不同的节点
+* 通信效率比较低
+* 通信昂贵，且伴随着衍生问题（网络通信是不可靠的）
+
+## 13.1 Process Models
+
+`Process Model`定义了如何构建系统以支持来自多用户应用程序的并发请求。其中，`Worker`是`DBMS`的组件，负责代表客户端执行任务并返回结果
+
+### 13.1.1 Process per DBMS Worker
+
+**在这种架构下，每个`Worker`就是一个独立的`OS Process`：**
+
+* 依赖于操作系统的调度
+* 需要利用`Shared Memory`来共享一些全局的数据结构
+* 一个进程崩溃，不会导致系统不可用
+* 例子：`IBM DB2`、`Postgres`、`Oracle`
+
+### 13.1.2 Process Pool
+
+**在这种架构下，`DBMS`管理了一个进程池，`Work`可以使用该进程池中的空闲进程来处理客户端的请求：**
+
+* 仍然依赖于操作系统的调度，以及`Shared Memory`
+* `Cache Locality`较差
+* 例子：`IBM DB2`、`Postgres(2015)`
+
+### 13.1.3 Thread per DBMS Worker
+
+**在这种架构下，`DBMS`只有一个进程，但是包含了多个工作线程：**
+
+* 自行实现调度
+* 线程切换开销较小，无需管理`Shared Memory`
+* 一个线程崩溃，会导致整个进程崩溃，从而导致整个系统不可用
+* 例子：`IBM DB2`、`MSSQL`、`MySQL`、`Oracle(2014)`
+
+注意，该架构并不意味着一个请求的执行可以并行化
+
+### 13.1.4 Scheduling
+
+**对于每个查询，`DBMS`需要决定`Where/When/How to execute`：**
+
+* 需要产生多少个任务？
+* 需要使用多少个核？
+* 任务需要在哪个核上执行
+* 任务如何存储其结果
+
+## 13.2 Execution Parallelism
+
+**`Inter VS. Intra Query Parallelism`：**
+
+* **`Inter-Query`：重点在于，不同的查询可以并行执行，可以提高吞吐量以及降低时延**
+* **`Intra-Query`：重点在于，同一个查询可以分成多个子任务然后并行执行（或者说算子并行执行），可以降低复杂查询的时延**
+
+### 13.2.1 Intra-Query Parallelism
+
+**`Parallel Grace Hash Join`：**
+
+* 对于每个`Bucket`中的`R`和`S`的子集，使用一个独立的线程来进行`Join`运算
+* ![13-1](/images/Database-System/13-1.png)
+
+#### 13.2.1.1 Intra-Operator (Horizontal)
+
+**核心思想：将算子并行化，这些算子对不同的数据子集执行相同的操作。此外，需要额外增加`Exchange`算子，来合并孩子节点的数据**
+
+![13-2](/images/Database-System/13-2.png)
+
+**示意图参考课件中的`22 ~ 27`页**
+
+**`Exchange`算子有如下三种类型：**
+
+* `Gather`：将多路输入合并成一路输出
+* `Repartition`：将多路输入，重新组织成多路输出
+* `Distribute`：将一路输入，重新组织成多路输出
+* **示意图参考课件中的`29 ~ 36`页**
+
+#### 13.2.1.2 Inter-Operator (Vertical)
+
+**每种算子使用一个线程**
+
+**示意图参考课件中的`38 ~ 40`页（没太看明白）**
+
+#### 13.2.1.3 Bushy
+
+**`Inter-Operator`的扩展，多个算子组成一个算子组，每种算子组使用一个线程，不同算子组之间需要通过`Exchange`来交互数据**
+
+![13-3](/images/Database-System/13-3.png)
+
+## 13.3 I/O Parallelism
+
+在磁盘`I/O`成为性能瓶颈时，增加并行度不会提升效率，反而有可能降低效率，因为增大了磁盘读写的乱序程度
+
+**`DBMS`安装在不同的磁盘上，可以实现`I/O Parallelism`：**
+
+* 一个`Database`分布在一个`Disk`
+* 一个`Database`分布在多个`Disk`
+* 一个`Table`分布在一个`Disk`
+* 一个`Table`分布在多个`Disk`
+
+### 13.3.1 Multi-Disk Parallelism
+
+**通过配置操作系统或者硬件，使得`DBMS`安装在多块不同的磁盘上。这对于`DBMS`是透明的**
+
+* `LVM`
+* `RAID`
+
+![13-4](/images/Database-System/13-4.png)
+
+### 13.3.2 Database Partitioning
+
+**有些`DBMS`允许在创建`Database`时指定存储的路径**
+
+### 13.3.3 Table Partitioning
+
+**将单个逻辑表拆分为不相交的物理段，分别存储和管理**
+
+* `Vertical Partitioning`：将逻辑表按列进行进行切分，分别存储
+* `Horizontal Partitioning`：将逻辑表按行进行切分，分别存储
+
 # 14 Optimization 1
 
 # 15 Optimization 2
