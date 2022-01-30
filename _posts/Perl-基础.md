@@ -311,7 +311,7 @@ print "\@sites[2]: $sites[2]\n";
 
 ### 3.2.12 Tips
 
-1. **用`print`打印数组时，最好放在引号里面，否则输出的时候，数组各元素就直接贴在一起了。而放在引号里面的话，各元素之间会用空格分隔**
+1. 用`print`打印数组时，最好放在引号里面，否则输出的时候，数组各元素就直接贴在一起了。而放在引号里面的话，各元素之间会用空格分隔
 
 ## 3.3 哈希
 
@@ -325,6 +325,119 @@ print "\@sites[2]: $sites[2]\n";
 print "\$data{'google'} = $data{'google'}\n";
 print "\$data{'youj'} = $data{'youj'}\n";
 print "\$data{'taobao'} = $data{'taobao'}\n";
+```
+
+### 3.3.1 创建哈希
+
+创建哈希可以通过以下两种方式：
+
+1. 为每个`key`设置`value`
+    ```perl
+    $data{'google'} = 'google.com';
+    $data{'w3cschool'} = 'w3cschool.cn';
+    $data{'taobao'} = 'taobao.com';
+    ```
+
+1. 通过列表设置
+    ```perl
+    %data1 = ('google', 'google.com', 'w3cschool', 'w3cschool.cn', 'taobao', 'taobao.com');
+    %data2 = ('baidu'=>'baidu.com', 'aliyun'=>'aliyun.cn', 'douyu'=>'douyu.com');
+    # 这种方式，本质上键值就包含了中划线
+    %data3 = (-huya=>'huya.com', -bilibili=>'bilibili.com');
+
+    print "\$data1{'google'} = $data1{'google'}\n"; # 可以访问
+    print "\$data1{-google} = $data1{-google}\n";   # 无法访问
+
+    print "\$data2{'baidu'} = $data2{'baidu'}\n";   # 可以访问
+    print "\$data2{-baidu} = $data2{-baidu}\n";     # 无法访问
+
+    print "\$data3{'-huya'} = $data3{'-huya'}\n";   # 可以访问
+    print "\$data3{-huya} = $data3{-huya}\n";       # 可以访问
+    ```
+
+### 3.3.2 读取哈希的key和value
+
+我们可以使用`keys`函数读取哈希所有的键，语法格式如下：
+
+* `keys %HASH`
+
+```perl
+%data = ('google'=>'google.com', 'w3cschool'=>'w3cschool.cn', 'taobao'=>'taobao.com');
+
+@names = keys %data;
+
+print "$names[0]\n";
+print "$names[1]\n";
+print "$names[2]\n";
+```
+
+类似的我么可以使用`values`函数来读取哈希所有的值，语法格式如下：
+
+* `values %HASH`
+
+```perl
+%data = ('google'=>'google.com', 'w3cschool'=>'w3cschool.cn', 'taobao'=>'taobao.com');
+
+@urls = values %data;
+
+print "$urls[0]\n";
+print "$urls[1]\n";
+print "$urls[2]\n";
+```
+
+### 3.3.3 检测元素是否存在
+
+如果你在哈希中读取不存在的`key/value`对 ，会返回`undefined`值，且在执行时会有警告提醒。为了避免这种情况，我们可以使用`exists`函数来判断`key`是否存在，存在的时候读取
+
+```perl
+%data = ('google'=>'google.com', 'w3cschool'=>'w3cschool.cn', 'taobao'=>'taobao.com');
+
+if( exists($data{'facebook'} ) ){
+   print "facebook 的网址为 $data{'facebook'} \n";
+}
+else
+{
+   print "facebook 键不存在\n";
+}
+```
+
+### 3.3.4 获取哈希大小
+
+哈希大小为元素的个数，我们可以通过先获取`key`或`value`的所有元素数组，再计算数组元素多少来获取哈希的大小
+
+```perl
+%data = ('google'=>'google.com', 'w3cschool'=>'w3cschool.cn', 'taobao'=>'taobao.com');
+
+@keys = keys %data;
+$size = @keys;
+print "1 - 哈希大小: $size\n";
+
+@values = values %data;
+$size = @values;
+print "2 - 哈希大小: $size\n";
+```
+
+### 3.3.5 哈希中添加或删除元素
+
+添加`key/value`对可以通过简单的赋值来完成。但是删除哈希元素你需要使用`delete`函数
+
+```perl
+%data = ('google'=>'google.com', 'w3cschool'=>'w3cschool.cn', 'taobao'=>'taobao.com');
+@keys = keys %data;
+$size = @keys;
+print "1 - 哈希大小: $size\n";
+
+# 添加元素
+$data{'facebook'} = 'facebook.com';
+@keys = keys %data;
+$size = @keys;
+print "2 - 哈希大小: $size\n";
+
+# 删除哈希中的元素
+delete $data{'taobao'};
+@keys = keys %data;
+$size = @keys;
+print "3 - 哈希大小: $size\n";
 ```
 
 ## 3.4 变量上下文
