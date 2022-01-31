@@ -341,18 +341,11 @@ print "\$data{'taobao'} = $data{'taobao'}\n";
 1. 通过列表设置
     ```perl
     %data1 = ('google', 'google.com', 'w3cschool', 'w3cschool.cn', 'taobao', 'taobao.com');
-    %data2 = ('baidu'=>'baidu.com', 'aliyun'=>'aliyun.cn', 'douyu'=>'douyu.com');
-    # 这种方式，本质上键值就包含了中划线
-    %data3 = (-huya=>'huya.com', -bilibili=>'bilibili.com');
+    %data2 = ('baidu' => 'baidu.com', 'aliyun' => 'aliyun.cn', 'douyu' => 'douyu.com');
 
-    print "\$data1{'google'} = $data1{'google'}\n"; # 可以访问
-    print "\$data1{-google} = $data1{-google}\n";   # 无法访问
+    print "\$data1{'google'} = $data1{'google'}\n";
 
-    print "\$data2{'baidu'} = $data2{'baidu'}\n";   # 可以访问
-    print "\$data2{-baidu} = $data2{-baidu}\n";     # 无法访问
-
-    print "\$data3{'-huya'} = $data3{'-huya'}\n";   # 可以访问
-    print "\$data3{-huya} = $data3{-huya}\n";       # 可以访问
+    print "\$data2{'baidu'} = $data2{'baidu'}\n";
     ```
 
 ### 3.3.2 读取哈希的key和value
@@ -362,7 +355,7 @@ print "\$data{'taobao'} = $data{'taobao'}\n";
 * `keys %HASH`
 
 ```perl
-%data = ('google'=>'google.com', 'w3cschool'=>'w3cschool.cn', 'taobao'=>'taobao.com');
+%data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com');
 
 @names = keys %data;
 
@@ -376,7 +369,7 @@ print "$names[2]\n";
 * `values %HASH`
 
 ```perl
-%data = ('google'=>'google.com', 'w3cschool'=>'w3cschool.cn', 'taobao'=>'taobao.com');
+%data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com');
 
 @urls = values %data;
 
@@ -390,7 +383,7 @@ print "$urls[2]\n";
 如果你在哈希中读取不存在的`key/value`对 ，会返回`undefined`值，且在执行时会有警告提醒。为了避免这种情况，我们可以使用`exists`函数来判断`key`是否存在，存在的时候读取
 
 ```perl
-%data = ('google'=>'google.com', 'w3cschool'=>'w3cschool.cn', 'taobao'=>'taobao.com');
+%data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com');
 
 if (exists($data{'facebook'})) {
     print "facebook 的网址为 $data{'facebook'} \n";
@@ -404,7 +397,7 @@ if (exists($data{'facebook'})) {
 哈希大小为元素的个数，我们可以通过先获取`key`或`value`的所有元素数组，再计算数组元素多少来获取哈希的大小
 
 ```perl
-%data = ('google'=>'google.com', 'w3cschool'=>'w3cschool.cn', 'taobao'=>'taobao.com');
+%data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com');
 
 @keys = keys %data;
 $size = @keys;
@@ -420,7 +413,7 @@ print "2 - 哈希大小: $size\n";
 添加`key/value`对可以通过简单的赋值来完成。但是删除哈希元素你需要使用`delete`函数
 
 ```perl
-%data = ('google'=>'google.com', 'w3cschool'=>'w3cschool.cn', 'taobao'=>'taobao.com');
+%data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com');
 @keys = keys %data;
 $size = @keys;
 print "1 - 哈希大小: $size\n";
@@ -1250,17 +1243,126 @@ printf("%d-%d-%d %d:%d:%d", $year+1990, $mon+1, $mday, $hour, $min, $sec);
 print "\n";
 ```
 
-# 7 编码规范
+# 7 引用
 
-`Perl`允许我们以一种更易读的方式来写代码，例如
+引用就是指针，`Perl`引用是一个标量类型，可以指向变量、数组、哈希表（也叫关联数组）甚至子程序，可以应用在程序的任何地方
+
+## 7.1 创建引用
+
+定义变量的时候，在变量名前面加个`\`，就得到了这个变量的一个引用
 
 ```perl
-open(FOO,$foo) || die "Can't open $foo: $!";
+$scalarref = \$foo;     # 标量变量引用
+$arrayref  = \@ARGV;    # 列表的引用
+$hashref   = \%ENV;     # 哈希的引用
+$coderef   = \&handler; # 子过程引用
+$globref   = \*foo;     # GLOB句柄引用
+```
 
+此外，还可以创建匿名数组的引用、匿名哈希的引用、匿名子程序的引用
+
+```perl
+$aref1= [ 1,"foo",undef,13 ];
+$aref2 = [
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9],
+];
+
+$href= { APR => 4, AUG => 8 };
+
+$coderef = sub { print "W3CSchool!\n" };
+```
+
+## 7.2 使用引用
+
+使用引用可以根据不同的类型使用`$`、`@`或`%`
+
+```perl
+$var = 10;
+
+# $r 引用 $var 标量
+$r = \$var;
+
+# 输出本地存储的 $r 的变量值
+print "$var 为 : ", $$r, "\n";
+
+@var = (1, 2, 3);
+# $r 引用  @var 数组
+$r = \@var;
+# 输出本地存储的 $r 的变量值
+print "@var 为: ",  @$r, "\n";
+
+%var = ('key1' => 10, 'key2' => 20);
+# $r 引用  %var 数组
+$r = \%var;
+# 输出本地存储的 $r 的变量值
+print "%var 为 : ", %$r, "\n";
+```
+
+如果你不能确定变量类型，你可以使用`ref`来判断，返回值列表如下，如果没有以下的值返回`false`
+
+```perl
+$var = 10;
+$r = \$var;
+print "r 的引用类型 : ", ref($r), "\n";
+
+@var = (1, 2, 3);
+$r = \@var;
+print "r 的引用类型 : ", ref($r), "\n";
+
+%var = ('key1' => 10, 'key2' => 20);
+$r = \%var;
+print "r 的引用类型 : ", ref($r), "\n";
+```
+
+## 7.3 循环引用
+
+循环引用在两个引用相互包含时出现。你需要小心使用，不然会导致内存泄露
+
+```perl
+my $foo = 100;
+$foo = \$foo;
+
+print "Value of foo is : ", $$foo, "\n";
+```
+
+## 7.4 引用函数
+
+1. 函数引用格式：`\&`
+1. 调用引用函数格式：`& + 创建的引用名`
+
+```perl
+# 函数定义
+sub PrintHash {
+   my (%hash) = @_;
+   
+   foreach $item (%hash) {
+      print "元素 : $item\n";
+   }
+}
+%hash = ('name' => 'youj', 'age' => 3);
+
+# 创建函数的引用
+$cref = \&PrintHash;
+
+# 使用引用调用函数
+&$cref(%hash);
+```
+
+# 8 Perl 格式化输出
+
+1. `Perl`是一个非常强大的文本数据处理语言
+1. `Perl`中可以使用`format`来定义一个模板，然后使用`write`按指定模板输出数据
+1. `Perl`格式化定义语法格式如下
+
+# 9 TODO
+
+```perl
 print "Starting analysis\n" if $verbose;
 ```
 
-# 8 参考
+# 10 参考
 
 * [w3cschool-perl](https://www.w3cschool.cn/perl/)
 * [perl仓库-cpan](https://www.cpan.org/)
