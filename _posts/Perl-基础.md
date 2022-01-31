@@ -982,9 +982,9 @@ print "not(\$a)= $c\n";
 
 ## 5.7 引号运算
 
-1. `q{}`：为字符串添加单引号，`q{abcd}`结果为`'abcd'`
-1. `qq{}`：为字符串添加双引号，`qq{abcd}`结果为`"abcd"`
-1. `qx{}`：为字符串添加反引号，`qx{abcd}`结果为`` `abcd` ``
+1. `q{}/q()`：为字符串添加单引号，`q{abcd}`结果为`'abcd'`
+1. `qq{}/qq()`：为字符串添加双引号，`qq{abcd}`结果为`"abcd"`
+1. `qx{}/qx()`：为字符串添加反引号，`qx{abcd}`结果为`` `abcd` ``
 
 ```perl
 $a = 10;
@@ -1000,7 +1000,28 @@ $t = qx{date};
 print "qx{date} = $t\n";
 ```
 
-## 5.8 其他运算符
+## 5.8 qw
+
+将字符串以空白作为分隔符进行拆分，并返回一个数组
+
+```perl
+@String = qw/Ram is a boy/;
+print "@String", "\n";
+@String = qw{Geeks for Geeks};
+print "@String", "\n";
+@String = qw[Geeks for Geeks];
+print "@String", "\n";
+@String = qw'Geeks for Geeks';
+print "@String", "\n";
+@String = qw"Geeks for Geeks";
+print "@String", "\n";
+@String = qw!Geeks for Geeks!;
+print "@String", "\n";
+@String = qw@Geeks for Geeks@;
+print "@String", "\n";
+```
+
+## 5.9 其他运算符
 
 1. `.`：用于连接两个字符串
 1. `x`：将给定字符串重复给定次数
@@ -1037,33 +1058,196 @@ $c = $b ;
 print "\$b 执行 \$b-- = $c\n";
 ```
 
-# 6 高级特性
+# 6 子程序
 
-## 6.1 引号处理
-
-### 6.1.1 q
-
-### 6.1.2 qq
-
-### 6.1.3 qw
-
-将字符串以空白作为分隔符进行拆分，并返回一个数组
+1. `Perl`子程序也就是用户定义的函数
+1. `Perl`子程序即执行一个特殊任务的一段分离的代码，它可以使减少重复代码且使程序易读。
+1. `Perl`子程序可以出现在程序的任何地方，语法格式如下
 
 ```perl
-@String = qw/Ram is a boy/;
-print "@String", "\n";
-@String = qw{Geeks for Geeks};
-print "@String", "\n";
-@String = qw[Geeks for Geeks];
-print "@String", "\n";
-@String = qw'Geeks for Geeks';
-print "@String", "\n";
-@String = qw"Geeks for Geeks";
-print "@String", "\n";
-@String = qw!Geeks for Geeks!;
-print "@String", "\n";
-@String = qw@Geeks for Geeks@;
-print "@String", "\n";
+sub subroutine {
+    statements;
+}
+```
+
+## 6.1 向子程序传递参数
+
+1. `Perl`子程序可以和其他编程一样接受多个参数，子程序参数使用特殊数组`@_`标明
+1. 因此子程序第一个参数为`$_[0]`，第二个参数为`$_[1]`，以此类推
+1. 不论参数是标量型还是数组型的，用户把参数传给子程序时，`Perl`默认按引用的方式调用它们
+
+```perl
+# 定义求平均值函数
+sub Average{
+    # 获取所有传入的参数
+    $n = scalar(@_);
+    $sum = 0;
+
+    foreach $item (@_) {
+       $sum += $item;
+    }
+    $average = $sum / $n;
+    print '传入的参数为 : ',"@_\n";           # 打印整个数组
+    print "第一个参数值为 : $_[0]\n";         # 打印第一个参数
+    print "传入参数的平均值为 : $average\n";  # 打印平均值
+}
+
+# 调用函数
+Average(10, 20, 30);
+```
+
+### 6.1.1 向子程序传递列表
+
+1. 由于`@_`变量是一个数组，所以它可以向子程序中传递列表
+1. 但如果我们需要传入标量和数组参数时，需要把列表放在最后一个参数上
+
+```perl
+# 定义函数
+sub PrintList {
+    my @list = @_;
+    print "列表为 : @list\n";
+}
+$a = 10;
+@b = (1, 2, 3, 4);
+
+# 列表参数
+PrintList($a, @b);
+```
+
+### 6.1.2 向子程序传递哈希
+
+当向子程序传递哈希表时，它将复制到`@_`中，哈希表将被展开为键/值组合的列表
+
+```perl
+# 方法定义
+sub PrintHash {
+    my (%hash) = @_;
+
+    foreach my $key (keys %hash) {
+        my $value = $hash{$key};
+        print "$key : $value\n";
+    }
+}
+%hash = ('name' => 'youj', 'age' => 3);
+
+# 传递哈希
+PrintHash(%hash);
+```
+
+## 6.2 子程序返回值
+
+1. 子程序可以向其他编程语言一样使用`return`语句来返回函数值
+1. 如果没有使用`return`语句，则子程序的最后一行语句将作为返回值
+
+```perl
+# 方法定义1
+sub add_a_b_1 {
+    # 不使用 return
+    $_[0]+$_[1];   
+}
+
+# 方法定义2
+sub add_a_b_2 {
+    # 使用 return
+    return $_[0]+$_[1];  
+}
+
+print add_a_b_1(1, 2), "\n";
+print add_a_b_2(1, 2), "\n";
+```
+
+## 6.3 子程序的私有变量
+
+1. 默认情况下，`Perl`中所有的变量都是全局变量，这就是说变量在程序的任何地方都可以调用
+1. 如果我们需要设置私有变量，可以使用`my`操作符来设置
+1. `my`操作符用于创建词法作用域变量，通过`my`创建的变量，存活于声明开始的地方，直到闭合作用域的结尾
+1. 闭合作用域指的可以是一对花括号中的区域，可以是一个文件，也可以是一个`if`、`while`、`for`、`foreach`、`eval`字符串
+
+```perl
+# 全局变量
+$string = "Hello, World!";
+
+# 函数定义
+sub PrintHello {
+    # PrintHello 函数的私有变量
+    my $string;
+    $string = "Hello, W3Cschool!";
+    print "函数内字符串：$string\n";
+}
+
+# 调用函数
+PrintHello();
+print "函数外字符串：$string\n";
+```
+
+## 6.4 变量的临时赋值
+
+1. 我们可以使用`local`为全局变量提供临时的值，在退出作用域后将原来的值还回去
+1. `local`定义的变量不存在于主程序中，但存在于该子程序和该子程序调用的子程序中。定义时可以给其赋值
+
+```perl
+# 全局变量
+$string = "Hello, World!";
+
+sub PrintW3CSchool {
+    # PrintHello 函数私有变量
+    local $string;
+    $string = "Hello, W3Cschool!";
+    # 子程序调用的子程序
+    PrintMe();
+    print "PrintW3CSchool 函数内字符串值：$string\n";
+}
+
+sub PrintMe {
+    print "PrintMe 函数内字符串值：$string\n";
+}
+
+sub PrintHello {
+    print "PrintHello 函数内字符串值：$string\n";
+}
+
+# 函数调用
+PrintW3CSchool();
+PrintHello();
+print "函数外部字符串值：$string\n";
+```
+
+## 6.5 静态变量
+
+1. `state`操作符功能类似于`C`里面的`static`修饰符，`state`关键字将局部变量变得持久
+1. `state`也是词法变量，所以只在定义该变量的词法作用域中有效
+
+```perl
+use feature 'state';
+
+sub PrintCount {
+    state $count = 0; # 初始化变量
+
+    print "counter 值为：$count\n";
+    $count++;
+}
+
+for (1..5) {
+    PrintCount();
+}
+```
+
+## 6.6 子程序调用上下文
+
+子程序调用过程中，会根据上下文来返回不同类型的值，比如以下`localtime()`子程序，在标量上下文返回字符串，在列表上下文返回列表
+
+```perl
+# 标量上下文
+my $datestring = localtime(time);
+print $datestring;
+
+print "\n";
+
+# 列表上下文
+($sec,$min,$hour,$mday,$mon, $year,$wday,$yday,$isdst) = localtime(time);
+printf("%d-%d-%d %d:%d:%d", $year+1990, $mon+1, $mday, $hour, $min, $sec);
+
+print "\n";
 ```
 
 # 7 编码规范
