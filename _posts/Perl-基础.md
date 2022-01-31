@@ -1335,11 +1335,11 @@ print "Value of foo is : ", $$foo, "\n";
 ```perl
 # 函数定义
 sub PrintHash {
-   my (%hash) = @_;
+    my (%hash) = @_;
    
-   foreach $item (%hash) {
-      print "元素 : $item\n";
-   }
+    foreach $item (%hash) {
+        print "元素 : $item\n";
+    }
 }
 %hash = ('name' => 'youj', 'age' => 3);
 
@@ -1354,7 +1354,119 @@ $cref = \&PrintHash;
 
 1. `Perl`是一个非常强大的文本数据处理语言
 1. `Perl`中可以使用`format`来定义一个模板，然后使用`write`按指定模板输出数据
-1. `Perl`格式化定义语法格式如下
+
+`Perl`格式化定义语法格式如下
+
+```perl
+format FormatName =
+fieldline
+value_one, value_two, value_three
+fieldline
+value_one, value_two
+.
+```
+
+参数解析：
+
+* `FormatName`：格式化名称
+* `fieldline`：格式行，用来定义一个输出行的格式，类似`@`、`^`、`|`这样的字符
+* `value_one`、`value_two`、`...` ：数据行，用来向前面的格式行中插入值，都是`Perl`的变量。
+* `.`：结束符号
+
+```perl
+$text = "google youj taobao";
+format STDOUT =
+# 左边对齐，字符长度为6
+first: ^<<<<<
+    $text
+# 左边对齐，字符长度为6
+second: ^<<<<<
+    $text
+# 左边对齐，字符长度为5，taobao 最后一个 o 被截断
+third: ^<<<<
+    $text  
+.
+write
+```
+
+## 8.1 格式行
+
+**[格式行中涉及的符号](https://perldoc.perl.org/perlform)：**
+
+* `@`：格式行的起始符号
+* `^`：格式行的起始符号
+* `<`：左对齐
+* `|`：居中对齐
+* `>`：右对齐
+* `#`：右对齐数字字段的填充字符
+* `0`：数字字段的填充字符
+* `.`：数字字段中的小数点
+* `@*`：整个多行文本
+* `^*`：多行文本的下一行
+* `~`：禁止所有字段为空的行
+* `~~`：重复行，直到所有字段都用完
+
+```perl
+$text = "line 1\nline 2\nline 3";
+
+format MUTI_LINE_1 =
+Text: @*
+$text
+.
+$~ = "MUTI_LINE_1";
+write;
+
+format MUTI_LINE_2 =
+Text: ^*
+$text
+~~    ^*
+$text
+.
+$~ = "MUTI_LINE_2";
+write;
+```
+
+## 8.2 格式变量
+
+* `$~`：格式名称，默认是`STDOUT`
+* `$^`：顶层的格式名称，默认是`STDOUT_TOP`
+* `$%`：当前页号
+* `$=`：当前页中的行号
+* `$|`：是否自动刷新输出缓冲区存储
+* `$^L`
+
+```perl
+format EMPLOYEE =
+===================================
+@<<<<<<<<<<<<<<<<<<<<<< @<< 
+$name, $age
+@#####.##
+$salary
+===================================
+.
+
+format EMPLOYEE_TOP =
+===================================
+Name                    Age
+===================================
+.
+
+select(STDOUT);
+$~ = EMPLOYEE;
+$^ = EMPLOYEE_TOP;
+
+@n = ("Ali", "W3CSchool", "Jaffer");
+@a = (20,30, 40);
+@s = (2000.00, 2500.00, 4000.000);
+
+$i = 0;
+foreach (@n) {
+   $name = $_;
+   $age = $a[$i];
+   $salary = $s[$i++];
+   write;
+}
+```
 
 # 9 TODO
 
