@@ -392,12 +392,10 @@ print "$urls[2]\n";
 ```perl
 %data = ('google'=>'google.com', 'w3cschool'=>'w3cschool.cn', 'taobao'=>'taobao.com');
 
-if( exists($data{'facebook'} ) ){
-   print "facebook 的网址为 $data{'facebook'} \n";
-}
-else
-{
-   print "facebook 键不存在\n";
+if (exists($data{'facebook'})) {
+    print "facebook 的网址为 $data{'facebook'} \n";
+} else {
+    print "facebook 键不存在\n";
 }
 ```
 
@@ -462,15 +460,592 @@ print "名字为 : @copy\n";
 print "名字数为 : $size\n";
 ```
 
-# 4 高级特性
+# 4 控制流
 
-## 4.1 引号处理
+## 4.1 条件语句
 
-### 4.1.1 q
+### 4.1.1 if
 
-### 4.1.2 qq
+```perl
+if (boolean_expression) {
+    # 在布尔表达式 boolean_expression 为 true 执行
+}
+```
 
-### 4.1.3 qw
+### 4.1.2 if else
+
+```perl
+if (boolean_expression) {
+    # 在布尔表达式 boolean_expression 为 true 执行
+} else {
+    # 在布尔表达式 boolean_expression 为 false 执行
+}
+```
+
+### 4.1.3 if elsif
+
+```perl
+if (boolean_expression 1) {
+    # 在布尔表达式 boolean_expression 1 为 true 执行
+} elsif (boolean_expression 2) {
+    # 在布尔表达式 boolean_expression 2 为 true 执行
+} elsif (boolean_expression 3) {
+    # 在布尔表达式 boolean_expression 3 为 true 执行
+} else {
+    # 布尔表达式的条件都为 false 时执行
+}
+```
+
+### 4.1.4 unless
+
+```perl
+unless (boolean_expression) {
+    # 在布尔表达式 boolean_expression 为 false 执行
+}
+```
+
+### 4.1.5 unless else
+
+```perl
+unless (boolean_expression) {
+    # 在布尔表达式 boolean_expression 为 false 执行
+} else {
+    # 在布尔表达式 boolean_expression 为 true 执行
+}
+```
+
+### 4.1.6 unless elsif
+
+```perl
+unless (boolean_expression 1) {
+    # 在布尔表达式 boolean_expression 1 为 false 执行
+} elsif (boolean_expression 2) {
+    # 在布尔表达式 boolean_expression 2 为 true 执行
+} elsif (boolean_expression 3) {
+    # 在布尔表达式 boolean_expression 3 为 true 执行
+} else {
+    #  没有条件匹配时执行
+}
+```
+
+### 4.1.7 switch
+
+`switch case`执行是基于`Switch`模块，`Switch`模块使用`Filter::Util::Call`和`Text::Balanced`来执行，这两个模块都需要安装
+
+```perl
+use Switch;
+
+switch(argument){
+    case 1            { print "数字 1" }
+    case "a"          { print "字符串 a" }
+    case [1..10,42]   { print "数字在列表中" }
+    case (\@array)    { print "数字在数组中" }
+    case /\w+/        { print "正则匹配模式" }
+    case qr/\w+/      { print "正则匹配模式" }
+    case (\%hash)     { print "哈希" }
+    case (\&sub)      { print "子进程" }
+    else              { print "不匹配之前的条件" }
+}
+```
+
+## 4.2 循环
+
+### 4.2.1 while
+
+```perl
+while(condition) {
+    statement(s);
+}
+```
+
+### 4.2.2 until
+
+```perl
+until(condition) {
+    statement(s);
+}
+```
+
+### 4.2.3 for
+
+```perl
+for(init; condition; increment){
+    statement(s);
+}
+```
+
+### 4.2.4 foreach
+
+```perl
+foreach var (list) {
+    statement(s);
+}
+```
+
+### 4.2.5 do while
+
+```perl
+do
+{
+    statement(s);
+} while (condition);
+```
+
+## 4.3 循环控制语句
+
+### 4.3.1 next
+
+`Perl next`语句用于停止执行从`next`语句的下一语句开始到循环体结束标识符之间的语句，转去执行`continue`语句块，然后再返回到循环体的起始处开始执行下一次循环。语法为：`next [ LABEL ];`，其中`LABEL`是可选的
+
+```perl
+$a = 10;
+while ($a < 20) {
+    if ( $a == 15) {
+       # 跳出迭代
+       $a = $a + 1;
+       next;
+    }
+    print "a 的值为: $a\n";
+    $a = $a + 1;
+}
+```
+
+### 4.3.2 last
+
+`Pe`rl last`语句用于退出循环语句块，从而结束循环，`last`语句之后的语句不再执行，`continue`语句块也不再执行。语法为：`last [LABEL];`，其中`LABEL`是可选的
+
+```perl
+$a = 10;
+while ($a < 20) {
+    if ($a == 15) {
+       # 退出循环
+       $a = $a + 1;
+       last;
+    }
+    print "a 的值为: $a\n";
+    $a = $a + 1;
+}
+```
+
+### 4.3.3 continue
+
+`Perl continue`块通常在条件语句再次判断前执行。`continue`语句可用在`while`和`foreach`循环中，语法如下：
+
+```perl
+while (condition) {
+    statement(s);
+} continue {
+    statement(s);
+}
+
+foreach $a (@listA) {
+    statement(s);
+} continue {
+    statement(s);
+}
+```
+
+```perl
+$a = 0;
+while ($a < 3) {
+    print "a = $a\n";
+} continue {
+    $a = $a + 1;
+}
+```
+
+```perl
+@list = (1, 2, 3, 4, 5);
+foreach $a (@list) {
+    print "a = $a\n";
+} continue {
+    last if $a == 4;
+}
+```
+
+### 4.3.4 redo
+
+`Perl redo`语句直接转到循环体的第一行开始重复执行本次循环，`redo`语句之后的语句不再执行，`continue`语句块也不再执行。语法为：`redo [LABEL];`，其中`LABEL`是可选的
+
+```perl
+$a = 0;
+while ($a < 10) {
+    if($a == 5) {
+      $a = $a + 1;
+      redo;
+    }
+    print "a = $a\n";
+} continue {
+    $a = $a + 1;
+}
+```
+
+### 4.3.5 godo
+
+`Perl`有三种`goto`形式：
+
+1. `got LABLE`：找出标记为`LABEL`的语句并且从那里重新执行
+1. `goto EXPR`：`goto EXPR`形式只是`goto LABEL`的一般形式。它期待表达式生成一个标记名称，并跳到该标记处执行
+1. `goto &NAME`：它把正在运行着的子进程替换为一个已命名子进程的调用
+
+```perl
+$a = 10;
+LOOP:do
+{
+    if ($a == 15) {
+       # 跳过迭代
+       $a = $a + 1;
+       # 使用 goto LABEL 形式
+       goto LOOP;
+    }
+    print "a = $a\n";
+    $a = $a + 1;
+} while ($a < 20);
+```
+
+```perl
+$a = 10;
+$str1 = "LO";
+$str2 = "OP";
+
+LOOP:do
+{
+    if ($a == 15) {
+       # 跳过迭代
+       $a = $a + 1;
+       # 使用 goto EXPR 形式
+       goto $str1.$str2;    # 类似 goto LOOP
+    }
+    print "a = $a\n";
+    $a = $a + 1;
+} while ($a < 20);
+```
+
+# 5 运算符
+
+## 5.1 算数运算符
+
+1. `+`：加
+1. `-`：减
+1. `*`：乘
+1. `/`：除
+1. `%`：求余
+1. `**`：幂乘
+
+```perl
+$a = 10;
+$b = 20;
+
+print "\$a = $a , \$b = $b\n";
+
+$c = $a + $b;
+print '$a + $b = ' . $c . "\n";
+
+$c = $a - $b;
+print '$a - $b = ' . $c . "\n";
+
+$c = $a * $b;
+print '$a * $b = ' . $c . "\n";
+
+$c = $a / $b;
+print '$a / $b = ' . $c . "\n";
+
+$c = $a % $b;
+print '$a % $b = ' . $c. "\n";
+
+$a = 2;
+$b = 4;
+$c = $a ** $b;
+print '$a ** $b = ' . $c . "\n";
+```
+
+## 5.2 比较运算符
+
+1. `==`
+1. `!=`
+1. `<=>`：比较两个操作数是否相等
+    * 左边小于右边，返回`-1`
+    * 相等，返回`0`
+    * 左边大于右边，返回`1`
+1. `>`
+1. `<`
+1. `>=`
+1. `<=`
+
+```perl
+$a = 10;
+$b = 20;
+
+print "\$a = $a , \$b = $b\n";
+
+if ($a == $b) {
+    print "$a == \$b 结果 true\n";
+} else {
+    print "\$a == \$b 结果 false\n";
+}
+
+if ($a != $b) {
+    print "\$a != \$b 结果 true\n";
+} else {
+    print "\$a != \$b 结果 false\n";
+}
+
+$c = $a <=> $b;
+print "\$a <=> \$b 返回 $c\n";
+
+if ($a > $b) {
+    print "\$a > \$b 结果 true\n";
+} else {
+    print "\$a > \$b 结果 false\n";
+}
+
+if ($a >= $b){
+    print "\$a >= \$b 结果 true\n";
+} else {
+    print "\$a >= \$b 结果 false\n";
+}
+
+if ($a < $b) {
+    print "\$a < \$b 结果 true\n";
+} else {
+    print "\$a < \$b 结果 false\n";
+}
+
+if ($a <= $b) {
+    print "\$a <= \$b 结果 true\n";
+} else {
+    print "\$a <= \$b 结果 false\n";
+}
+```
+
+## 5.3 字符串比较运算符
+
+1. `lt`
+1. `gt`
+1. `le`
+1. `ge`
+1. `eq`
+1. `ne`
+1. `cmp`：比较两个字符串是否相等
+    * 左边小于右边，返回`-1`
+    * 相等，返回`0`
+    * 左边大于右边，返回`1`
+
+```perl
+$a = "abc";
+$b = "xyz";
+
+print "\$a = $a ，\$b = $b\n";
+
+if ($a lt $b) {
+    print "$a lt \$b 返回 true\n";
+} else {
+    print "\$a lt \$b 返回 false\n";
+}
+
+if ($a gt $b) {
+    print "\$a gt \$b 返回 true\n";
+} else {
+    print "\$a gt \$b 返回 false\n";
+}
+
+if ($a le $b) {
+    print "\$a le \$b 返回 true\n";
+} else {
+    print "\$a le \$b 返回 false\n";
+}
+
+if ($a ge $b) {
+    print "\$a ge \$b 返回 true\n";
+} else {
+    print "\$a ge \$b 返回 false\n";
+}
+
+if ($a ne $b) {
+    print "\$a ne \$b 返回 true\n";
+} else {
+    print "\$a ne \$b 返回 false\n";
+}
+
+$c = $a cmp $b;
+print "\$a cmp \$b 返回 $c\n";
+```
+
+## 5.4 赋值运算符
+
+1. `=`
+1. `+=`
+1. `-=`
+1. `*=`
+1. `/=`
+1. `%=`
+1. `%=`
+1. `**=`
+
+```perl
+$a = 10;
+$b = 20;
+
+print "\$a = $a ，\$b = $b\n";
+
+$c = $a + $b;
+print "赋值后 \$c = $c\n";
+
+$c += $a;
+print "\$c = $c ，运算语句 \$c += \$a\n";
+
+$c -= $a;
+print "\$c = $c ，运算语句 \$c -= \$a\n";
+
+$c *= $a;
+print "\$c = $c ，运算语句 \$c *= \$a\n";
+
+$c /= $a;
+print "\$c = $c ，运算语句 \$c /= \$a\n";
+
+$c %= $a;
+print "\$c = $c ，运算语句 \$c %= \$a\n";
+
+$c = 2;
+$a = 4;
+print "\$a = $a ， \$c = $c\n";
+$c **= $a;
+print "\$c = $c ，运算语句 \$c **= \$a\n";
+```
+
+## 5.5 位运算
+
+1. `&`
+1. `|`
+1. `^`
+1. `~`
+1. `<<`
+1. `>>`
+
+```perl
+use integer;
+ 
+$a = 60;
+$b = 13;
+
+print "\$a = $a , \$b = $b\n";
+
+$c = $a & $b;
+print "\$a & \$b = $c\n";
+
+$c = $a | $b;
+print "\$a | \$b = $c\n";
+
+$c = $a ^ $b;
+print "\$a ^ \$b = $c\n";
+
+$c = ~$a;
+print "~\$a = $c\n";
+
+$c = $a << 2;
+print "\$a << 2 = $c\n";
+
+$c = $a >> 2;
+print "\$a >> 2 = $c\n";
+```
+
+## 5.6 逻辑运算
+
+1. `and`
+1. `&&`
+1. `or`
+1. `||`
+1. `not`
+
+```perl
+$a = true;
+$b = false;
+
+print "\$a = $a , \$b = $b\n";
+
+$c = ($a and $b);
+print "\$a and \$b = $c\n";
+
+$c = ($a  && $b);
+print "\$a && \$b = $c\n";
+
+$c = ($a or $b);
+print "\$a or \$b = $c\n";
+
+$c = ($a || $b);
+print "\$a || \$b = $c\n";
+
+$a = 0;
+$c = not($a);
+print "not(\$a)= $c\n";
+```
+
+## 5.7 引号运算
+
+1. `q{}`：为字符串添加单引号，`q{abcd}`结果为`'abcd'`
+1. `qq{}`：为字符串添加双引号，`qq{abcd}`结果为`"abcd"`
+1. `qx{}`：为字符串添加反引号，`qx{abcd}`结果为`` `abcd` ``
+
+```perl
+$a = 10;
+ 
+$b = q{a = $a};
+print "q{a = \$a} = $b\n";
+
+$b = qq{a = $a};
+print "qq{a = \$a} = $b\n";
+
+# 使用 unix 的 date 命令执行
+$t = qx{date};
+print "qx{date} = $t\n";
+```
+
+## 5.8 其他运算符
+
+1. `.`：用于连接两个字符串
+1. `x`：将给定字符串重复给定次数
+1. `..`：范围运算符
+1. `++`：自增
+1. `--`：自减
+1. `->`：用于指定一个类的方法
+
+```perl
+$a = "run";
+$b = "oob";
+
+print "\$a  = $a ， \$b = $b\n";
+ 
+$c = $a . $b;
+print "\$a . \$b = $c\n";
+
+$c = "-" x 3;
+print "\"-\" x 3 = $c\n";
+
+@c = (2..5);
+print "(2..5) = @c\n";
+
+$a = 10;
+$b = 15;
+print "\$a  = $a ， \$b = $b\n";
+
+$a++;
+$c = $a ;
+print "\$a 执行 \$a++ = $c\n";
+
+$b--;
+$c = $b ;
+print "\$b 执行 \$b-- = $c\n";
+```
+
+# 6 高级特性
+
+## 6.1 引号处理
+
+### 6.1.1 q
+
+### 6.1.2 qq
+
+### 6.1.3 qw
 
 将字符串以空白作为分隔符进行拆分，并返回一个数组
 
@@ -491,7 +1066,7 @@ print "@String", "\n";
 print "@String", "\n";
 ```
 
-# 5 编码规范
+# 7 编码规范
 
 `Perl`允许我们以一种更易读的方式来写代码，例如
 
@@ -501,7 +1076,7 @@ open(FOO,$foo) || die "Can't open $foo: $!";
 print "Starting analysis\n" if $verbose;
 ```
 
-# 6 参考
+# 8 参考
 
 * [w3cschool-perl](https://www.w3cschool.cn/perl/)
 * [perl仓库-cpan](https://www.cpan.org/)
