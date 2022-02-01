@@ -437,11 +437,18 @@ print "3 - 哈希大小: $size\n";
 1. **上下文是由等号左边的变量类型决定的**，等号左边是标量，则是标量上下文，等号左边是列表，则是列表上下文
 1. `Perl`解释器会根据上下文来决定变量的类型
 1. 上下文种类
-    1. 标量上下文
+    1. 标量上下文，包括数字、`string`、布尔
     1. 列表上下文，包括数组和哈希
     1. 布尔上下文
     1. void上下文
     1. 插值上下文，仅发生在引号内
+
+**示例：**
+
+1. `my ($single_element) = find_chores();`：这里的`()`用于给解释器一个提示，虽然`single_element`是个标量，但是仍然要在列表上下文中进行处理。效果是将`find_chores()`返回的列表的第一个元素赋值给`single_element`
+1. `my $numeric_x = 0 + $x;`：显式使用数字上下文
+1. `my $stringy_x = '' . $x; # forces string context`：显式使用`string`上下文
+1. `my $boolean_x = !!$x;`：显式使用布尔上下文
 
 ```perl
 @names = ('google', 'youj', 'taobao');
@@ -452,6 +459,38 @@ $size = @names;   # 数组赋值给标量，返回数组元素个数
 print "名字为 : @copy\n";
 print "名字数为 : $size\n";
 ```
+
+## 3.5 默认变量
+
+### 3.5.1 默认标量变量
+
+`$_`又称为默认标量变量（这是`Perl`标志性的特征）。可以用在非常多的地方，包括许多内建的函数
+
+```perl
+$_ = 'My name is Paquito';
+
+# say 默认输出 $_
+say if /My name is/;
+
+# 默认对 $_ 进行替换操作
+s/Paquito/Paquita/;
+
+# 默认对 $_ 进行大小写转换操作
+tr/A-Z/a-z/;
+
+# say 默认输出 $_
+say;
+
+# 默认的循环变量是 $_
+say "#$_" for 1 .. 10
+```
+
+### 3.5.2 默认数组变量
+
+1. `Perl`将传给子程序的参数都存储在`@_`变量中
+1. `push`、`pop`、`shift`、`unshift`在缺省参数的情况下，默认都对`@_`进行操作
+1. `Perl`将命令函参数都存储在`@ARGV`中
+1. `@ARGV`还有另一个用途，当从空文件句柄`<>`中读取内容时，`Perl`默认会将`@ARGV`中存储的内容作为文件名进行依次读取，如果`@ARGV`为空，那么会读取标准输入
 
 # 4 控制流
 
@@ -975,9 +1014,12 @@ print "not(\$a)= $c\n";
 
 ## 5.7 引号运算
 
+有时候，需要在程序中定义一些复杂的字符串，比如包含引号本身，普通的写法会比较麻烦，例如`$name = "\"hello\"";`，这是，可以使用引号运算来处理
+
 1. `q{}/q()`：为字符串添加单引号，`q{abcd}`结果为`'abcd'`
 1. `qq{}/qq()`：为字符串添加双引号，`qq{abcd}`结果为`"abcd"`
 1. `qx{}/qx()`：为字符串添加反引号，`qx{abcd}`结果为`` `abcd` ``
+* 其中，分隔符可以成对，比如`{}`、`()`、`[]`；也可以相同，比如`^^`等
 
 ```perl
 $a = 10;
@@ -1531,16 +1573,43 @@ close MYFILE;
 }
 ```
 
-# 9 TODO
+# 9 Built-in
 
-```perl
-print "Starting analysis\n" if $verbose;
-```
+1. `say`：将给定字符串（默认为`$_`）输出到当前`select`的文件句柄中
+1. `chomp`：删除给定字符串（默认为`$_`）中尾部的换行符
 
-# 10 参考
+# 10 进阶
+
+[modern-perl.pdf](/resources/modern-perl.pdf)
+
+**工具：**
+
+1. `perldoc`
+    * `perldoc List::Util`
+    * `perldoc perltoc`
+    * `perldoc Moose::Manual`
+1. `cpan`
+    * `cpan Modern::Perl`
+1. `perlbrew`
+
+**站点：**
+
+* [homepage](https://www.perl.org)
+* [dev](https://dev.perl.org)
+* [cpan](https://www.cpan.org)
+* [community-perlmonks](https://perlmonks.org)
+* [blogs](https://blogs.perl.org)
+* [bestpractical](https://bestpractical.com)
+
+## 10.1 todo
+
+1. map
+
+# 11 参考
 
 * [w3cschool-perl](https://www.w3cschool.cn/perl/)
 * [perl仓库-cpan](https://www.cpan.org/)
+* [modern-perl.pdf](/resources/modern-perl.pdf)
 * [Perl Tutorial](https://www.tutorialspoint.com/perl/perl_function_references.htm)
 * [什么编程语言写脚本好？](https://www.zhihu.com/question/505203283/answer/2266164064)
 * [Perl | qw Operator](https://www.geeksforgeeks.org/perl-qw-operator/?ref=lbp)
