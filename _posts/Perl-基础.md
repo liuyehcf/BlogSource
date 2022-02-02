@@ -34,19 +34,23 @@ categories:
         * 不带引号/带双引号，会解释内嵌的变量和转义字符
         * 带单引号，不会解释内嵌的变量和转义字符
     ```perl
-    $a = 10;
-    $var = <<"EOF";
+    use strict;
+    use warnings;
+    use Modern::Perl;
+
+    my $a = 10;
+    my $var = <<"EOF";
     这是一个 Here 文档实例，使用双引号。
     可以在这输如字符串和变量。
     例如：a = $a
     EOF
-    print "$var\n";
+    say "$var";
 
     $var = <<'EOF';
     这是一个 Here 文档实例，使用单引号。
     例如：a = $a
     EOF
-    print "$var\n";
+    say "$var";
     ```
 
 1. 标识符格式为`[_a-zA-Z][_a-zA-Z0-9]*`，对大小写敏感
@@ -69,13 +73,17 @@ categories:
 1. 使用时在变量前面加上`$`符号，用于表示标量
 
 ```perl
-$age = 25;              # 整型
-$name = "youj";         # 字符串
-$salary = 1445.50;      # 浮点数
+use strict;
+use warnings;
+use Modern::Perl;
 
-print "Age = $age\n";
-print "Name = $name\n";
-print "Salary = $salary\n";
+my $age = 25;              # 整型
+my $name = "youj";         # 字符串
+my $salary = 1445.50;      # 浮点数
+
+say "Age = $age";
+say "Name = $name";
+say "Salary = $salary";
 ```
 
 ### 3.1.1 字面量
@@ -94,12 +102,16 @@ print "Salary = $salary\n";
 1. 特殊字符是单独的标记，不能写到字符串中
 
 ```perl
-print "文件名 ". __FILE__ . "\n";
-print "行号 " . __LINE__ ."\n";
-print "包名 " . __PACKAGE__ ."\n";
+use strict;
+use warnings;
+use Modern::Perl;
+
+say "文件名 ". __FILE__;
+say "行号 " . __LINE__;
+say "包名 " . __PACKAGE__;
 
 # 无法解析
-print "__FILE__ __LINE__ __PACKAGE__\n";
+say "__FILE__ __LINE__ __PACKAGE__";
 ```
 
 ### 3.1.3 undef
@@ -108,6 +120,10 @@ print "__FILE__ __LINE__ __PACKAGE__\n";
 1. 可以用`defined`来检查一个变量是否定义
 
 ```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
 my $num_def = 1;
 my $num_undef;
 
@@ -122,15 +138,19 @@ say defined $num_undef;
 1. 要访问数组的某个成员，可以使用`$变量名[索引值]`格式来访问
 
 ```perl
-@ages = (25, 30, 40);             
-@names = ("google", "youj", "taobao");
+use strict;
+use warnings;
+use Modern::Perl;
 
-print "\$ages[0] = $ages[0]\n";
-print "\$ages[1] = $ages[1]\n";
-print "\$ages[2] = $ages[2]\n";
-print "\$names[0] = $names[0]\n";
-print "\$names[1] = $names[1]\n";
-print "\$names[2] = $names[2]\n";
+my @ages = (25, 30, 40);             
+my @names = ("google", "youj", "taobao");
+
+say "\$ages[0] = $ages[0]";
+say "\$ages[1] = $ages[1]";
+say "\$ages[2] = $ages[2]";
+say "\$names[0] = $names[0]";
+say "\$names[1] = $names[1]";
+say "\$names[2] = $names[2]";
 ```
 
 ### 3.2.1 创建数组
@@ -140,9 +160,13 @@ print "\$names[2] = $names[2]\n";
 * 对于`@array1 = (1, 2, 'Hello');`，如果不加括号，即`@array1 = 1, 2, 'Hello';`，那么根据优先级关系，赋值运算符`=`的优先级大于逗号运算符`,`，因此数组`@array1`的大小是`1`，首元素是`1`
 
 ```perl
-@array1 = (1, 2, 'Hello');
-@array2 = qw/这是 一个 数组/;
-@array3 = qw/google
+use strict;
+use warnings;
+use Modern::Perl;
+
+my @array1 = (1, 2, 'Hello');
+my @array2 = qw/这是 一个 数组/;
+my @array3 = qw/google
 taobao
 alibaba
 youj/;
@@ -151,10 +175,16 @@ youj/;
 此外，数组的创建是贪婪的
 
 ```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
 my (@array1, @array2) = (1, 2, 3, 4, 5);
+my @array3;
 
 say "array1's size: $#array1";
 say "array2's size: $#array2";
+say "array3's size: $#array3";
 ```
 
 ### 3.2.2 添加删除元素
@@ -165,25 +195,29 @@ say "array2's size: $#array2";
 1. `unshift`：添加元素到头部
 
 ```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
 # create a simple array
-@coins = ("Quarter", "Dime", "Nickel");
-print "1. \@coins  = @coins\n";
+my @coins = ("Quarter", "Dime", "Nickel");
+say "1. \@coins  = @coins";
 
 # add one element at the end of the array
 push(@coins, "Penny");
-print "2. \@coins  = @coins\n";
+say "2. \@coins  = @coins";
 
 # add one element at the beginning of the array
 unshift(@coins, "Dollar");
-print "3. \@coins  = @coins\n";
+say "3. \@coins  = @coins";
 
 # remove one element from the last of the array.
 pop(@coins);
-print "4. \@coins  = @coins\n";
+say "4. \@coins  = @coins";
 
 # remove one element from the beginning of the array.
 shift(@coins);
-print "5. \@coins  = @coins\n";
+say "5. \@coins  = @coins";
 ```
 
 ### 3.2.3 数组序列号
@@ -191,29 +225,41 @@ print "5. \@coins  = @coins\n";
 `Perl`提供了可以按序列输出的数组形式，格式为：`起始值 + .. + 结束值`
 
 ```perl
-@array = (1..10);
-print "array = @array\n";
+use strict;
+use warnings;
+use Modern::Perl;
 
-@subarray = @array[3..6];
-print "subarray = @subarray\n";
+my @array = (1..10);
+say "array = @array";
+
+my @subarray = @array[3..6];
+say "subarray = @subarray";
 ```
 
 ### 3.2.4 数组大小
 
 ```perl
-@array = (1,2,3);
+use strict;
+use warnings;
+use Modern::Perl;
+
+my @array = (1,2,3);
 $array[50] = 4;
 
-$size = @array;
-$max_index = $#array;
+my $size = @array;
+my $max_index = $#array;
 
-print "数组大小: $size\n";
-print "最大索引: $max_index\n";
+say "数组大小: $size";
+say "最大索引: $max_index";
 ```
 
 若要访问倒数第一个元素，除了通过数组大小之外，还可以通过`[-1]`：
 
 ```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
 my @array = (1,2,3);
 say $array[-1];
 ```
@@ -221,13 +267,17 @@ say $array[-1];
 ### 3.2.5 切割数组
 
 ```perl
-@sites = qw/google taobao youj weibo qq facebook 网易/;
+use strict;
+use warnings;
+use Modern::Perl;
 
-@sites2 = @sites[3,4,5];
-@sites3 = @sites[3..5];
+my @sites = qw/google taobao youj weibo qq facebook 网易/;
 
-print "@sites2\n";
-print "@sites3\n";
+my @sites2 = @sites[3,4,5];
+my @sites3 = @sites[3..5];
+
+say "@sites2";
+say "@sites3";
 ```
 
 ### 3.2.6 替换数组元素
@@ -241,11 +291,15 @@ print "@sites3\n";
 * `LIST`：替换元素列表
 
 ```perl
-@nums = (1..20);
-print "替换前 - @nums\n";
+use strict;
+use warnings;
+use Modern::Perl;
+
+my @nums = (1..20);
+say "替换前 - @nums";
 
 splice(@nums, 5, 5, 21..25); 
-print "替换后 - @nums\n";
+say "替换后 - @nums";
 ```
 
 ### 3.2.7 将字符串转换为数组
@@ -258,19 +312,23 @@ print "替换后 - @nums\n";
 * `LIMIT`：如果指定该参数，则返回该数组的元素个数
 
 ```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
 # 定义字符串
-$var_test = "youj";
-$var_string = "www-youj-com";
-$var_names = "google,taobao,youj,weibo";
+my $var_test = "youj";
+my $var_string = "www-youj-com";
+my $var_names = "google,taobao,youj,weibo";
 
 # 字符串转为数组
-@test = split('', $var_test);
-@string = split('-', $var_string);
-@names  = split(',', $var_names);
+my @test = split('', $var_test);
+my @string = split('-', $var_string);
+my @names  = split(',', $var_names);
 
-print "$test[3]\n";  # 输出 j
-print "$string[2]\n";  # 输出 com
-print "$names[3]\n";   # 输出 weibo
+say "$test[3]";  # 输出 j
+say "$string[2]";  # 输出 com
+say "$names[3]";   # 输出 weibo
 ```
 
 ### 3.2.8 将数组转换为字符串
@@ -282,20 +340,24 @@ print "$names[3]\n";   # 输出 weibo
 * `LIST`：列表或数组
 
 ```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
 # 定义字符串
-$var_string = "www-youj-com";
-$var_names = "google,taobao,youj,weibo";
+my $var_string = "www-youj-com";
+my $var_names = "google,taobao,youj,weibo";
 
 # 字符串转为数组
-@string = split('-', $var_string);
-@names  = split(',', $var_names);
+my @string = split('-', $var_string);
+my @names  = split(',', $var_names);
 
 # 数组转为字符串
-$string1 = join( '-', @string );
-$string2 = join( ',', @names );
+my $string1 = join( '-', @string );
+my $string2 = join( ',', @names );
 
-print "$string1\n";
-print "$string2\n";
+say "$string1";
+say "$string2";
 ```
 
 ### 3.2.9 数组插值
@@ -303,6 +365,10 @@ print "$string2\n";
 数组插值`Array Interpolation`，在双引号中的数组，各个元素之间会插入全局变量`$"`，其默认值为空格
 
 ```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
 my @alphabet = 'a' .. 'z';
 say "[@alphabet]";
 
@@ -321,13 +387,17 @@ say "[@alphabet]";
 * `LIMIT`：列表或数组
 
 ```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
 # 定义数组
-@sites = qw(google taobao youj facebook);
-print "排序前: @sites\n";
+my @sites = qw(google taobao youj facebook);
+say "排序前: @sites";
 
 # 对数组进行排序
 @sites = sort(@sites);
-print "排序后: @sites\n";
+say "排序后: @sites";
 ```
 
 ### 3.2.11 合并数组
@@ -335,13 +405,17 @@ print "排序后: @sites\n";
 数组的元素是以逗号来分割，我们也可以使用逗号来合并数组
 
 ```perl
-@numbers1 = (1,3,(4,5,6));
-print "numbers1 = @numbers1\n";
+use strict;
+use warnings;
+use Modern::Perl;
 
-@odd = (1,3,5);
-@even = (2, 4, 6);
-@numbers2 = (@odd, @even);
-print "numbers2 = @numbers2\n";
+my @numbers1 = (1,3,(4,5,6));
+say "numbers1 = @numbers1";
+
+my @odd = (1,3,5);
+my @even = (2, 4, 6);
+my @numbers2 = (@odd, @even);
+say "numbers2 = @numbers2";
 ```
 
 ### 3.2.12 数组起始下标
@@ -367,6 +441,10 @@ print "\@sites[2]: $sites[2]\n";
 在`Perl 5.12`之后，可以用`each`循环数组
 
 ```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
 my @array = ('A', 'B', 'C');
 while (my ($index, $value) = each @array) {
     say "$index: $value";
@@ -385,11 +463,15 @@ while (my ($index, $value) = each @array) {
 1. 果要访问哈希值，可以使用`$变量名{键值}`格式来访问
 
 ```perl
-%data = ('google', 45, 'youj', 30, 'taobao', 40);
+use strict;
+use warnings;
+use Modern::Perl;
 
-print "\$data{'google'} = $data{'google'}\n";
-print "\$data{'youj'} = $data{'youj'}\n";
-print "\$data{'taobao'} = $data{'taobao'}\n";
+my %data = ('google', 45, 'youj', 30, 'taobao', 40);
+
+say "\$data{'google'} = $data{'google'}";
+say "\$data{'youj'} = $data{'youj'}";
+say "\$data{'taobao'} = $data{'taobao'}";
 ```
 
 ### 3.3.1 创建哈希
@@ -397,21 +479,25 @@ print "\$data{'taobao'} = $data{'taobao'}\n";
 创建哈希可以通过以下两种方式：
 
 1. 为每个`key`设置`value`
-    ```perl
-    $data{'google'} = 'google.com';
-    $data{'w3cschool'} = 'w3cschool.cn';
-    $data{'taobao'} = 'taobao.com';
-    ```
-
 1. 通过列表设置
-    ```perl
-    %data1 = ('google', 'google.com', 'w3cschool', 'w3cschool.cn', 'taobao', 'taobao.com');
-    %data2 = ('baidu' => 'baidu.com', 'aliyun' => 'aliyun.cn', 'douyu' => 'douyu.com');
 
-    print "\$data1{'google'} = $data1{'google'}\n";
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
 
-    print "\$data2{'baidu'} = $data2{'baidu'}\n";
-    ```
+my %data1;
+$data1{'google'} = 'google.com';
+$data1{'w3cschool'} = 'w3cschool.cn';
+$data1{'taobao'} = 'taobao.com';
+
+my %data2 = ('google', 'google.com', 'w3cschool', 'w3cschool.cn', 'taobao', 'taobao.com');
+my %data3 = ('baidu' => 'baidu.com', 'aliyun' => 'aliyun.cn', 'douyu' => 'douyu.com');
+
+say "\$data1{'taobao'} = $data1{'taobao'}";
+say "\$data2{'google'} = $data2{'google'}";
+say "\$data3{'baidu'} = $data3{'baidu'}";
+```
 
 ### 3.3.2 读取哈希的key和value
 
@@ -420,13 +506,17 @@ print "\$data{'taobao'} = $data{'taobao'}\n";
 * `keys %HASH`
 
 ```perl
-%data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com');
+use strict;
+use warnings;
+use Modern::Perl;
 
-@names = keys %data;
+my %data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com');
 
-print "$names[0]\n";
-print "$names[1]\n";
-print "$names[2]\n";
+my @names = keys %data;
+
+say "$names[0]";
+say "$names[1]";
+say "$names[2]";
 ```
 
 类似的我么可以使用`values`函数来读取哈希所有的值，语法格式如下：
@@ -434,13 +524,17 @@ print "$names[2]\n";
 * `values %HASH`
 
 ```perl
-%data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com');
+use strict;
+use warnings;
+use Modern::Perl;
 
-@urls = values %data;
+my %data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com');
 
-print "$urls[0]\n";
-print "$urls[1]\n";
-print "$urls[2]\n";
+my @urls = values %data;
+
+say "$urls[0]";
+say "$urls[1]";
+say "$urls[2]";
 ```
 
 ### 3.3.3 检测元素是否存在
@@ -448,6 +542,10 @@ print "$urls[2]\n";
 如果你在哈希中读取不存在的`key/value`对 ，会返回`undefined`值，且在执行时会有警告提醒。为了避免这种情况，我们可以使用`exists`函数来判断`key`是否存在，存在的时候读取。此外，`key`存在的情况下，`value`也可能是`undef`，我们可以使用`defined`来判断`value`是否赋值过
 
 ```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
 my %data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com', 'wtf' => undef);
 
 say "google exist" if exists $data{'google'};
@@ -463,15 +561,19 @@ say "wtf not defined" if not defined $data{'wtf'};
 哈希大小为元素的个数，我们可以通过先获取`key`或`value`的所有元素数组，再计算数组元素多少来获取哈希的大小
 
 ```perl
-%data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com');
+use strict;
+use warnings;
+use Modern::Perl;
 
-@keys = keys %data;
-$size = @keys;
-print "1 - 哈希大小: $size\n";
+my %data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com');
 
-@values = values %data;
-$size = @values;
-print "2 - 哈希大小: $size\n";
+my @keys = keys %data;
+my $key_size = @keys;
+say "1 - key size: $key_size";
+
+my @values = values %data;
+my $value_size = @values;
+say "2 - value size: $value_size";
 ```
 
 ### 3.3.5 哈希中添加或删除元素
@@ -479,22 +581,26 @@ print "2 - 哈希大小: $size\n";
 添加`key/value`对可以通过简单的赋值来完成。但是删除哈希元素你需要使用`delete`函数
 
 ```perl
-%data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com');
-@keys = keys %data;
-$size = @keys;
-print "1 - 哈希大小: $size\n";
+use strict;
+use warnings;
+use Modern::Perl;
+
+my %data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com');
+my @keys = keys %data;
+my $size = @keys;
+say "1 - 哈希大小: $size";
 
 # 添加元素
 $data{'facebook'} = 'facebook.com';
 @keys = keys %data;
 $size = @keys;
-print "2 - 哈希大小: $size\n";
+say "2 - 哈希大小: $size";
 
 # 删除哈希中的元素
 delete $data{'taobao'};
 @keys = keys %data;
 $size = @keys;
-print "3 - 哈希大小: $size\n";
+say "3 - 哈希大小: $size";
 ```
 
 ## 3.4 变量上下文
@@ -519,13 +625,17 @@ print "3 - 哈希大小: $size\n";
 1. `my $boolean_x = !!$x;`：显式使用布尔上下文
 
 ```perl
-@names = ('google', 'youj', 'taobao');
+use strict;
+use warnings;
+use Modern::Perl;
 
-@copy = @names;   # 复制数组
-$size = @names;   # 数组赋值给标量，返回数组元素个数
+my @names = ('google', 'youj', 'taobao');
 
-print "名字为 : @copy\n";
-print "名字数为 : $size\n";
+my @copy = @names;   # 复制数组
+my $size = @names;   # 数组赋值给标量，返回数组元素个数
+
+say "名字为 : @copy";
+say "名字数为 : $size";
 ```
 
 ## 3.5 默认变量
@@ -535,6 +645,10 @@ print "名字数为 : $size\n";
 `$_`又称为默认标量变量（这是`Perl`标志性的特征）。可以用在非常多的地方，包括许多内建的函数
 
 ```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
 $_ = 'My name is Paquito';
 
 # say 默认输出 $_
@@ -550,7 +664,7 @@ tr/A-Z/a-z/;
 say;
 
 # 默认的循环变量是 $_
-say "#$_" for 1 .. 10
+say "#$_" for 1 .. 10;
 ```
 
 ### 3.5.2 默认数组变量
@@ -685,10 +799,9 @@ foreach var (list) {
 ### 4.2.5 do while
 
 ```perl
-do
-{
+do {
     statement(s);
-} while (condition);
+} while(condition);
 ```
 
 ## 4.3 循环控制语句
@@ -698,14 +811,18 @@ do
 `Perl next`语句用于停止执行从`next`语句的下一语句开始到循环体结束标识符之间的语句，转去执行`continue`语句块，然后再返回到循环体的起始处开始执行下一次循环。语法为：`next [ LABEL ];`，其中`LABEL`是可选的
 
 ```perl
-$a = 10;
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $a = 10;
 while ($a < 20) {
     if ( $a == 15) {
        # 跳出迭代
        $a = $a + 1;
        next;
     }
-    print "a 的值为: $a\n";
+    say "a 的值为: $a";
     $a = $a + 1;
 }
 ```
@@ -715,14 +832,18 @@ while ($a < 20) {
 `Pe`rl last`语句用于退出循环语句块，从而结束循环，`last`语句之后的语句不再执行，`continue`语句块也不再执行。语法为：`last [LABEL];`，其中`LABEL`是可选的
 
 ```perl
-$a = 10;
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $a = 10;
 while ($a < 20) {
     if ($a == 15) {
        # 退出循环
        $a = $a + 1;
        last;
     }
-    print "a 的值为: $a\n";
+    say "a 的值为: $a";
     $a = $a + 1;
 }
 ```
@@ -746,18 +867,26 @@ foreach $a (@listA) {
 ```
 
 ```perl
-$a = 0;
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $a = 0;
 while ($a < 3) {
-    print "a = $a\n";
+    say "a = $a";
 } continue {
     $a = $a + 1;
 }
 ```
 
 ```perl
-@list = (1, 2, 3, 4, 5);
+use strict;
+use warnings;
+use Modern::Perl;
+
+my @list = (1, 2, 3, 4, 5);
 foreach $a (@list) {
-    print "a = $a\n";
+    say "a = $a";
 } continue {
     last if $a == 4;
 }
@@ -768,13 +897,17 @@ foreach $a (@list) {
 `Perl redo`语句直接转到循环体的第一行开始重复执行本次循环，`redo`语句之后的语句不再执行，`continue`语句块也不再执行。语法为：`redo [LABEL];`，其中`LABEL`是可选的
 
 ```perl
-$a = 0;
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $a = 0;
 while ($a < 10) {
     if($a == 5) {
       $a = $a + 1;
       redo;
     }
-    print "a = $a\n";
+    say "a = $a";
 } continue {
     $a = $a + 1;
 }
@@ -789,7 +922,11 @@ while ($a < 10) {
 1. `goto &NAME`：它把正在运行着的子进程替换为一个已命名子进程的调用
 
 ```perl
-$a = 10;
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $a = 10;
 LOOP:do
 {
     if ($a == 15) {
@@ -798,15 +935,19 @@ LOOP:do
        # 使用 goto LABEL 形式
        goto LOOP;
     }
-    print "a = $a\n";
+    say "a = $a";
     $a = $a + 1;
 } while ($a < 20);
 ```
 
 ```perl
-$a = 10;
-$str1 = "LO";
-$str2 = "OP";
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $a = 10;
+my $str1 = "LO";
+my $str2 = "OP";
 
 LOOP:do
 {
@@ -816,7 +957,7 @@ LOOP:do
        # 使用 goto EXPR 形式
        goto $str1.$str2;    # 类似 goto LOOP
     }
-    print "a = $a\n";
+    say "a = $a";
     $a = $a + 1;
 } while ($a < 20);
 ```
@@ -826,6 +967,10 @@ LOOP:do
 ## 5.1 循环指令
 
 ```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
 say "$_ * $_ = ", $_ * $_ for 1 .. 10;
 ```
 
@@ -841,30 +986,34 @@ say "$_ * $_ = ", $_ * $_ for 1 .. 10;
 1. `**`：幂乘
 
 ```perl
-$a = 10;
-$b = 20;
+use strict;
+use warnings;
+use Modern::Perl;
 
-print "\$a = $a , \$b = $b\n";
+my $a = 10;
+my $b = 20;
 
-$c = $a + $b;
-print '$a + $b = ' . $c . "\n";
+say "\$a = $a , \$b = $b";
+
+my $c = $a + $b;
+say '$a + $b = ' . $c;
 
 $c = $a - $b;
-print '$a - $b = ' . $c . "\n";
+say '$a - $b = ' . $c;
 
 $c = $a * $b;
-print '$a * $b = ' . $c . "\n";
+say '$a * $b = ' . $c;
 
 $c = $a / $b;
-print '$a / $b = ' . $c . "\n";
+say '$a / $b = ' . $c;
 
 $c = $a % $b;
-print '$a % $b = ' . $c. "\n";
+say '$a % $b = ' . $c;
 
 $a = 2;
 $b = 4;
 $c = $a ** $b;
-print '$a ** $b = ' . $c . "\n";
+say '$a ** $b = ' . $c;
 ```
 
 ## 6.2 比较运算符
@@ -881,48 +1030,52 @@ print '$a ** $b = ' . $c . "\n";
 1. `<=`
 
 ```perl
-$a = 10;
-$b = 20;
+use strict;
+use warnings;
+use Modern::Perl;
 
-print "\$a = $a , \$b = $b\n";
+my $a = 10;
+my $b = 20;
+
+say "\$a = $a , \$b = $b";
 
 if ($a == $b) {
-    print "$a == \$b 结果 true\n";
+    say "$a == \$b 结果 true";
 } else {
-    print "\$a == \$b 结果 false\n";
+    say "\$a == \$b 结果 false";
 }
 
 if ($a != $b) {
-    print "\$a != \$b 结果 true\n";
+    say "\$a != \$b 结果 true";
 } else {
-    print "\$a != \$b 结果 false\n";
+    say "\$a != \$b 结果 false";
 }
 
-$c = $a <=> $b;
-print "\$a <=> \$b 返回 $c\n";
+my $c = $a <=> $b;
+say "\$a <=> \$b 返回 $c";
 
 if ($a > $b) {
-    print "\$a > \$b 结果 true\n";
+    say "\$a > \$b 结果 true";
 } else {
-    print "\$a > \$b 结果 false\n";
+    say "\$a > \$b 结果 false";
 }
 
 if ($a >= $b){
-    print "\$a >= \$b 结果 true\n";
+    say "\$a >= \$b 结果 true";
 } else {
-    print "\$a >= \$b 结果 false\n";
+    say "\$a >= \$b 结果 false";
 }
 
 if ($a < $b) {
-    print "\$a < \$b 结果 true\n";
+    say "\$a < \$b 结果 true";
 } else {
-    print "\$a < \$b 结果 false\n";
+    say "\$a < \$b 结果 false";
 }
 
 if ($a <= $b) {
-    print "\$a <= \$b 结果 true\n";
+    say "\$a <= \$b 结果 true";
 } else {
-    print "\$a <= \$b 结果 false\n";
+    say "\$a <= \$b 结果 false";
 }
 ```
 
@@ -940,43 +1093,47 @@ if ($a <= $b) {
     * 左边大于右边，返回`1`
 
 ```perl
-$a = "abc";
-$b = "xyz";
+use strict;
+use warnings;
+use Modern::Perl;
 
-print "\$a = $a ，\$b = $b\n";
+my $a = "abc";
+my $b = "xyz";
+
+say "\$a = $a ，\$b = $b";
 
 if ($a lt $b) {
-    print "$a lt \$b 返回 true\n";
+    say "\$a lt \$b 返回 true";
 } else {
-    print "\$a lt \$b 返回 false\n";
+    say "\$a lt \$b 返回 false";
 }
 
 if ($a gt $b) {
-    print "\$a gt \$b 返回 true\n";
+    say "\$a gt \$b 返回 true";
 } else {
-    print "\$a gt \$b 返回 false\n";
+    say "\$a gt \$b 返回 false";
 }
 
 if ($a le $b) {
-    print "\$a le \$b 返回 true\n";
+    say "\$a le \$b 返回 true";
 } else {
-    print "\$a le \$b 返回 false\n";
+    say "\$a le \$b 返回 false";
 }
 
 if ($a ge $b) {
-    print "\$a ge \$b 返回 true\n";
+    say "\$a ge \$b 返回 true";
 } else {
-    print "\$a ge \$b 返回 false\n";
+    say "\$a ge \$b 返回 false";
 }
 
 if ($a ne $b) {
-    print "\$a ne \$b 返回 true\n";
+    say "\$a ne \$b 返回 true";
 } else {
-    print "\$a ne \$b 返回 false\n";
+    say "\$a ne \$b 返回 false";
 }
 
-$c = $a cmp $b;
-print "\$a cmp \$b 返回 $c\n";
+my $c = $a cmp $b;
+say "\$a cmp \$b 返回 $c";
 ```
 
 ## 6.4 赋值运算符
@@ -991,34 +1148,38 @@ print "\$a cmp \$b 返回 $c\n";
 1. `**=`
 
 ```perl
-$a = 10;
-$b = 20;
+use strict;
+use warnings;
+use Modern::Perl;
 
-print "\$a = $a ，\$b = $b\n";
+my $a = 10;
+my $b = 20;
 
-$c = $a + $b;
-print "赋值后 \$c = $c\n";
+say "\$a = $a ，\$b = $b";
+
+my $c = $a + $b;
+say "赋值后 \$c = $c";
 
 $c += $a;
-print "\$c = $c ，运算语句 \$c += \$a\n";
+say "\$c = $c ，运算语句 \$c += \$a";
 
 $c -= $a;
-print "\$c = $c ，运算语句 \$c -= \$a\n";
+say "\$c = $c ，运算语句 \$c -= \$a";
 
 $c *= $a;
-print "\$c = $c ，运算语句 \$c *= \$a\n";
+say "\$c = $c ，运算语句 \$c *= \$a";
 
 $c /= $a;
-print "\$c = $c ，运算语句 \$c /= \$a\n";
+say "\$c = $c ，运算语句 \$c /= \$a";
 
 $c %= $a;
-print "\$c = $c ，运算语句 \$c %= \$a\n";
+say "\$c = $c ，运算语句 \$c %= \$a";
 
 $c = 2;
 $a = 4;
-print "\$a = $a ， \$c = $c\n";
+say "\$a = $a ， \$c = $c";
 $c **= $a;
-print "\$c = $c ，运算语句 \$c **= \$a\n";
+say "\$c = $c ，运算语句 \$c **= \$a";
 ```
 
 ## 6.5 位运算
@@ -1032,29 +1193,32 @@ print "\$c = $c ，运算语句 \$c **= \$a\n";
 
 ```perl
 use integer;
- 
-$a = 60;
-$b = 13;
+use strict;
+use warnings;
+use Modern::Perl;
 
-print "\$a = $a , \$b = $b\n";
+my $a = 60;
+my $b = 13;
 
-$c = $a & $b;
-print "\$a & \$b = $c\n";
+say "\$a = $a , \$b = $b";
+
+my $c = $a & $b;
+say "\$a & \$b = $c";
 
 $c = $a | $b;
-print "\$a | \$b = $c\n";
+say "\$a | \$b = $c";
 
 $c = $a ^ $b;
-print "\$a ^ \$b = $c\n";
+say "\$a ^ \$b = $c";
 
 $c = ~$a;
-print "~\$a = $c\n";
+say "~\$a = $c";
 
 $c = $a << 2;
-print "\$a << 2 = $c\n";
+say "\$a << 2 = $c";
 
 $c = $a >> 2;
-print "\$a >> 2 = $c\n";
+say "\$a >> 2 = $c";
 ```
 
 ## 6.6 逻辑运算
@@ -1066,26 +1230,30 @@ print "\$a >> 2 = $c\n";
 1. `not`
 
 ```perl
-$a = true;
-$b = false;
+use strict;
+use warnings;
+use Modern::Perl;
 
-print "\$a = $a , \$b = $b\n";
+my $a = 1;
+my $b = 0;
 
-$c = ($a and $b);
-print "\$a and \$b = $c\n";
+say "\$a = $a , \$b = $b";
+
+my $c = ($a and $b);
+say "\$a and \$b = $c";
 
 $c = ($a  && $b);
-print "\$a && \$b = $c\n";
+say "\$a && \$b = $c";
 
 $c = ($a or $b);
-print "\$a or \$b = $c\n";
+say "\$a or \$b = $c";
 
 $c = ($a || $b);
-print "\$a || \$b = $c\n";
+say "\$a || \$b = $c";
 
 $a = 0;
 $c = not($a);
-print "not(\$a)= $c\n";
+say "not(\$a)= $c";
 ```
 
 ## 6.7 引号运算
@@ -1098,17 +1266,21 @@ print "not(\$a)= $c\n";
 * 其中，起始分隔符和结束分隔符可以成对，比如`{}`、`()`、`[]`；起始分隔符和结束分隔符也可以相同，比如`^^`等
 
 ```perl
-$a = 10;
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $a = 10;
  
-$b = q{a = $a};
-print "q{a = \$a} = $b\n";
+my $b = q{a = $a};
+say "q{a = \$a} = $b";
 
 $b = qq{a = $a};
-print "qq{a = \$a} = $b\n";
+say "qq{a = \$a} = $b";
 
 # 使用 unix 的 date 命令执行
-$t = qx{date};
-print "qx{date} = $t\n";
+my $t = qx{date};
+say "qx{date} = $t";
 ```
 
 ## 6.8 qw
@@ -1116,20 +1288,24 @@ print "qx{date} = $t\n";
 将字符串以空白作为分隔符进行拆分，并返回一个数组
 
 ```perl
-@String = qw/Ram is a boy/;
-print "@String", "\n";
-@String = qw{Geeks for Geeks};
-print "@String", "\n";
-@String = qw[Geeks for Geeks];
-print "@String", "\n";
-@String = qw'Geeks for Geeks';
-print "@String", "\n";
-@String = qw"Geeks for Geeks";
-print "@String", "\n";
-@String = qw!Geeks for Geeks!;
-print "@String", "\n";
-@String = qw@Geeks for Geeks@;
-print "@String", "\n";
+use strict;
+use warnings;
+use Modern::Perl;
+
+my @str = qw/Ram is a boy/;
+say "@str";
+@str = qw{Geeks for Geeks};
+say "@str";
+@str = qw[Geeks for Geeks];
+say "@str";
+@str = qw'Geeks for Geeks';
+say "@str";
+@str = qw"Geeks for Geeks";
+say "@str";
+@str = qw!Geeks for Geeks!;
+say "@str";
+@str = qw@Geeks for Geeks@;
+say "@str";
 ```
 
 ## 6.9 其他运算符
@@ -1142,31 +1318,35 @@ print "@String", "\n";
 1. `->`：用于指定一个类的方法
 
 ```perl
-$a = "run";
-$b = "oob";
+use strict;
+use warnings;
+use Modern::Perl;
 
-print "\$a  = $a ， \$b = $b\n";
+my $a = "run";
+my $b = "oob";
+
+say "\$a  = $a ， \$b = $b";
  
-$c = $a . $b;
-print "\$a . \$b = $c\n";
+my $c = $a . $b;
+say "\$a . \$b = $c";
 
 $c = "-" x 3;
-print "\"-\" x 3 = $c\n";
+say "\"-\" x 3 = $c";
 
-@c = (2..5);
-print "(2..5) = @c\n";
+my @c = (2..5);
+say "(2..5) = @c";
 
 $a = 10;
 $b = 15;
-print "\$a  = $a ， \$b = $b\n";
+say "\$a  = $a ， \$b = $b";
 
 $a++;
 $c = $a ;
-print "\$a 执行 \$a++ = $c\n";
+say "\$a 执行 \$a++ = $c";
 
 $b--;
 $c = $b ;
-print "\$b 执行 \$b-- = $c\n";
+say "\$b 执行 \$b-- = $c";
 ```
 
 # 7 子程序
@@ -1188,19 +1368,23 @@ sub subroutine {
 1. 不论参数是标量型还是数组型的，用户把参数传给子程序时，`Perl`默认按引用的方式调用它们
 
 ```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
 # 定义求平均值函数
 sub Average{
     # 获取所有传入的参数
-    $n = scalar(@_);
-    $sum = 0;
+    my $n = scalar(@_);
+    my $sum = 0;
 
-    foreach $item (@_) {
+    foreach my $item (@_) {
        $sum += $item;
     }
-    $average = $sum / $n;
-    print '传入的参数为 : ',"@_\n";           # 打印整个数组
-    print "第一个参数值为 : $_[0]\n";         # 打印第一个参数
-    print "传入参数的平均值为 : $average\n";  # 打印平均值
+    my $average = $sum / $n;
+    say '传入的参数为 : ',"@_";           # 打印整个数组
+    say "第一个参数值为 : $_[0]";         # 打印第一个参数
+    say "传入参数的平均值为 : $average";  # 打印平均值
 }
 
 # 调用函数
@@ -1213,13 +1397,17 @@ Average(10, 20, 30);
 1. 但如果我们需要传入标量和数组参数时，需要把列表放在最后一个参数上
 
 ```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
 # 定义函数
 sub PrintList {
     my @list = @_;
-    print "列表为 : @list\n";
+    say "列表为 : @list";
 }
-$a = 10;
-@b = (1, 2, 3, 4);
+my $a = 10;
+my @b = (1, 2, 3, 4);
 
 # 列表参数
 PrintList($a, @b);
@@ -1230,16 +1418,20 @@ PrintList($a, @b);
 当向子程序传递哈希表时，它将复制到`@_`中，哈希表将被展开为键/值组合的列表
 
 ```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
 # 方法定义
 sub PrintHash {
     my (%hash) = @_;
 
     foreach my $key (keys %hash) {
         my $value = $hash{$key};
-        print "$key : $value\n";
+        say "$key : $value";
     }
 }
-%hash = ('name' => 'youj', 'age' => 3);
+my %hash = ('name' => 'youj', 'age' => 3);
 
 # 传递哈希
 PrintHash(%hash);
@@ -1251,6 +1443,10 @@ PrintHash(%hash);
 1. 如果没有使用`return`语句，则子程序的最后一行语句将作为返回值
 
 ```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
 # 方法定义1
 sub add_a_b_1 {
     # 不使用 return
@@ -1263,8 +1459,8 @@ sub add_a_b_2 {
     return $_[0]+$_[1];  
 }
 
-print add_a_b_1(1, 2), "\n";
-print add_a_b_2(1, 2), "\n";
+say add_a_b_1(1, 2);
+say add_a_b_2(1, 2);
 ```
 
 ## 7.3 子程序的私有变量
@@ -1275,20 +1471,23 @@ print add_a_b_2(1, 2), "\n";
 1. 闭合作用域指的可以是一对花括号中的区域，可以是一个文件，也可以是一个`if`、`while`、`for`、`foreach`、`eval`字符串
 
 ```perl
-# 全局变量
-$string = "Hello, World!";
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $string = "Hello, World!";
 
 # 函数定义
 sub PrintHello {
     # PrintHello 函数的私有变量
     my $string;
     $string = "Hello, W3Cschool!";
-    print "函数内字符串：$string\n";
+    say "函数内字符串：$string";
 }
 
 # 调用函数
 PrintHello();
-print "函数外字符串：$string\n";
+say "函数外字符串：$string";
 ```
 
 ## 7.4 变量的临时赋值
@@ -1329,12 +1528,15 @@ print "函数外部字符串值：$string\n";
 1. `state`也是词法变量，所以只在定义该变量的词法作用域中有效
 
 ```perl
+use strict;
+use warnings;
+use Modern::Perl;
 use feature 'state';
 
 sub PrintCount {
     state $count = 0; # 初始化变量
 
-    print "counter 值为：$count\n";
+    say "counter 值为：$count";
     $count++;
 }
 
@@ -1348,17 +1550,17 @@ for (1..5) {
 子程序调用过程中，会根据上下文来返回不同类型的值，比如以下`localtime()`子程序，在标量上下文返回字符串，在列表上下文返回列表
 
 ```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
 # 标量上下文
 my $datestring = localtime(time);
-print $datestring;
-
-print "\n";
+say $datestring;
 
 # 列表上下文
-($sec,$min,$hour,$mday,$mon, $year,$wday,$yday,$isdst) = localtime(time);
+my ($sec,$min,$hour,$mday,$mon, $year,$wday,$yday,$isdst) = localtime(time);
 printf("%d-%d-%d %d:%d:%d", $year+1990, $mon+1, $mday, $hour, $min, $sec);
-
-print "\n";
 ```
 
 # 8 引用
@@ -1380,58 +1582,70 @@ $globref   = \*foo;     # GLOB句柄引用
 此外，还可以创建匿名数组的引用、匿名哈希的引用、匿名子程序的引用
 
 ```perl
-$aref1= [ 1,"foo",undef,13 ];
-$aref2 = [
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $aref1= [ 1,"foo",undef,13 ];
+my $aref2 = [
         [1, 2, 3],
         [4, 5, 6],
         [7, 8, 9],
 ];
 
-$href= { APR => 4, AUG => 8 };
+my $href= { APR => 4, AUG => 8 };
 
-$coderef = sub { print "W3CSchool!\n" };
+my $coderef = sub { say "W3CSchool!" };
 ```
 
-## 8.2 使用引用
+## 8.2 解引用
 
-使用引用可以根据不同的类型使用`$`、`@`或`%`
+解引用可以根据不同的类型使用`$`、`@`或`%`
 
 ```perl
-$var = 10;
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $var = 10;
 
 # $r 引用 $var 标量
-$r = \$var;
+my $r = \$var;
 
 # 输出本地存储的 $r 的变量值
-print "$var 为 : ", $$r, "\n";
+say "$var 为 : ", $$r;
 
-@var = (1, 2, 3);
+my @var = (1, 2, 3);
 # $r 引用  @var 数组
 $r = \@var;
 # 输出本地存储的 $r 的变量值
-print "@var 为: ",  @$r, "\n";
+say "@var 为: ",  @$r;
 
-%var = ('key1' => 10, 'key2' => 20);
+my %var = ('key1' => 10, 'key2' => 20);
 # $r 引用  %var 数组
 $r = \%var;
 # 输出本地存储的 $r 的变量值
-print "%var 为 : ", %$r, "\n";
+say "%var 为 : ", %$r;
 ```
 
 如果你不能确定变量类型，你可以使用`ref`来判断，返回值列表如下，如果没有以下的值返回`false`
 
 ```perl
-$var = 10;
-$r = \$var;
-print "r 的引用类型 : ", ref($r), "\n";
+use strict;
+use warnings;
+use Modern::Perl;
 
-@var = (1, 2, 3);
+my $var = 10;
+my $r = \$var;
+say "r 的引用类型 : ", ref($r);
+
+my @var = (1, 2, 3);
 $r = \@var;
-print "r 的引用类型 : ", ref($r), "\n";
+say "r 的引用类型 : ", ref($r);
 
-%var = ('key1' => 10, 'key2' => 20);
+my %var = ('key1' => 10, 'key2' => 20);
 $r = \%var;
-print "r 的引用类型 : ", ref($r), "\n";
+say "r 的引用类型 : ", ref($r);
 ```
 
 ## 8.3 循环引用
@@ -1439,33 +1653,44 @@ print "r 的引用类型 : ", ref($r), "\n";
 循环引用在两个引用相互包含时出现。你需要小心使用，不然会导致内存泄露
 
 ```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
 my $foo = 100;
 $foo = \$foo;
 
-print "Value of foo is : ", $$foo, "\n";
+say "Value of foo is : ", $$foo;
 ```
 
 ## 8.4 引用函数
 
 1. 函数引用格式：`\&`
-1. 调用引用函数格式：`& + 创建的引用名`
+1. 调用引用函数格式：`& + 创建的引用名`或者使用`->`运算符
 
 ```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
 # 函数定义
 sub PrintHash {
     my (%hash) = @_;
    
-    foreach $item (%hash) {
-        print "元素 : $item\n";
+    foreach my $item (%hash) {
+        say "元素 : $item";
     }
 }
-%hash = ('name' => 'youj', 'age' => 3);
+my %hash = ('name' => 'youj', 'age' => 3);
 
 # 创建函数的引用
-$cref = \&PrintHash;
+my $cref = \&PrintHash;
 
-# 使用引用调用函数
+# 使用引用调用函数，方式1
 &$cref(%hash);
+
+# 使用引用调用函数，方式2
+$cref->(%hash);
 ```
 
 # 9 Perl 格式化输出
@@ -1492,7 +1717,11 @@ value_one, value_two
 * `.`：结束符号
 
 ```perl
-$text = "google youj taobao";
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $text = "google youj taobao";
 format STDOUT =
 # 左边对齐，字符长度为6
 first: ^<<<<<
@@ -1527,7 +1756,11 @@ write
 * `~~`：重复行，直到所有字段都用完，放最前最后都可以。放最前面的话，`~~`同时还起到两个空格的作用，若要顶格输出，那么将`~~`放到最后即可
 
 ```perl
-$text = "line 1\nline 2\nline 3";
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $text = "line 1\nline 2\nline 3";
 
 format MUTI_LINE_1 =
 Text: @*
@@ -1558,14 +1791,18 @@ write;
 ```
 
 ```perl
-@nums = (1, 123.456, 0.78999);
+use strict;
+use warnings;
+use Modern::Perl;
+
+my @nums = (1, 123.456, 0.78999);
 format STDOUT = 
 @##
-@nums[0]
+$nums[0]
 @###.####
-@nums[1]
+$nums[1]
 @.###
-@nums[2]
+$nums[2]
 .
 write
 ```
@@ -1619,6 +1856,10 @@ foreach (@n) {
 默认情况下函数`write`将结果输出到标准输出文件`STDOUT`，我们也可以使它将结果输出到任意其它的文件中。最简单的方法就是把文件变量作为参数传递给`write`。例如，`write(MYFILE);`，`write`就用缺省的名为`MYFILE`的打印格式输出到文件`MYFILE`中。但是这样就不能用`$~`变量来改变所使用的打印格式，因为系统变量`$~`只对默认文件变量起作用
 
 ```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
 if (open(MYFILE, ">tmp")) {
 $~ = "MYFORMAT";
 write MYFILE; # 含文件变量的输出，此时会打印与变量同名的格式，即MYFILE。$~里指定的值被忽略。
@@ -1635,6 +1876,10 @@ close MYFILE;
 我们可以使用`select`改变默认文件变量时，它返回当前默认文件变量的内部表示，这样我们就可以创建子程序，按自己的想法输出，又不影响程序的其它部分
 
 ```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
 if (open(MYFILE, ">>tmp")) {
 select (MYFILE); # 使得默认文件变量的打印输出到MYFILE中
 $~ = "OTHER";
@@ -1722,6 +1967,9 @@ use Test::More 'no_plan';
 1. `You do not need parentheses to create lists; the comma operator creates lists` - P22
 1. `Lists and arrays are not interchangeable in Perl. Lists are values and arrays are containers.` - P22
     ```perl
+    use strict;
+    use warnings;
+    use Modern::Perl;
     sub context {
         my $context = wantarray();
         say defined $context
