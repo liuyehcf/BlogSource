@@ -59,3 +59,7 @@
 1. every feature rolled out，推出的每个功能
 1. A DBMS’s process model defines how the system is architected to support concurrent requests from a multi-user application
 1. novice/adept/experienced
+1. exhaust a filehandle
+1. match ... against
+1. Parentheses/square brackets/curly braces
+1. prepend/append

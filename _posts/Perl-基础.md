@@ -59,7 +59,13 @@ categories:
 
 ## 3.1 标量
 
-1. 标量是一个单一的数据单元。 数据可以是整数，浮点数，字符，字符串，段落等。简单的说它可以是任何东西，对具体类型不做进一步区分
+1. 标量是一个单一的数据单元
+1. 标量可能是：
+    * 字符串
+    * 整数
+    * 浮点数
+    * 文件句柄
+    * 引用
 1. 使用时在变量前面加上`$`符号，用于表示标量
 
 ```perl
@@ -96,6 +102,19 @@ print "包名 " . __PACKAGE__ ."\n";
 print "__FILE__ __LINE__ __PACKAGE__\n";
 ```
 
+### 3.1.3 undef
+
+1. `undef`表示变量的值已被声明但是尚未赋值
+1. 可以用`defined`来检查一个变量是否定义
+
+```perl
+my $num_def = 1;
+my $num_undef;
+
+say defined $num_def;
+say defined $num_undef;
+```
+
 ## 3.2 数组
 
 1. 数组是用于存储一个有序的标量值的变量
@@ -116,6 +135,10 @@ print "\$names[2] = $names[2]\n";
 
 ### 3.2.1 创建数组
 
+**强调：我们通过`,`操作符来创建数组，而不是`()`，`()`仅为了改变运算符的优先级**
+
+* 对于`@array1 = (1, 2, 'Hello');`，如果不加括号，即`@array1 = 1, 2, 'Hello';`，那么根据优先级关系，赋值运算符`=`的优先级大于逗号运算符`,`，因此数组`@array1`的大小是`1`，首元素是`1`
+
 ```perl
 @array1 = (1, 2, 'Hello');
 @array2 = qw/这是 一个 数组/;
@@ -123,6 +146,15 @@ print "\$names[2] = $names[2]\n";
 taobao
 alibaba
 youj/;
+```
+
+此外，数组的创建是贪婪的
+
+```perl
+my (@array1, @array2) = (1, 2, 3, 4, 5);
+
+say "array1's size: $#array1";
+say "array2's size: $#array2";
 ```
 
 ### 3.2.2 添加删除元素
@@ -177,6 +209,13 @@ $max_index = $#array;
 
 print "数组大小: $size\n";
 print "最大索引: $max_index\n";
+```
+
+若要访问倒数第一个元素，除了通过数组大小之外，还可以通过`[-1]`：
+
+```perl
+my @array = (1,2,3);
+say $array[-1];
 ```
 
 ### 3.2.5 切割数组
@@ -259,7 +298,21 @@ print "$string1\n";
 print "$string2\n";
 ```
 
-### 3.2.9 数组排序
+### 3.2.9 数组插值
+
+数组插值`Array Interpolation`，在双引号中的数组，各个元素之间会插入全局变量`$"`，其默认值为空格
+
+```perl
+my @alphabet = 'a' .. 'z';
+say "[@alphabet]";
+
+{
+    local $" = ')(';
+    say "[@alphabet]";
+}
+```
+
+### 3.2.10 数组排序
 
 `Perl`中数组排序使用`sort()`函数，语法格式如下：
 
@@ -277,7 +330,7 @@ print "排序前: @sites\n";
 print "排序后: @sites\n";
 ```
 
-### 3.2.10 合并数组
+### 3.2.11 合并数组
 
 数组的元素是以逗号来分割，我们也可以使用逗号来合并数组
 
@@ -291,7 +344,7 @@ print "numbers1 = @numbers1\n";
 print "numbers2 = @numbers2\n";
 ```
 
-### 3.2.11 数组起始下标
+### 3.2.12 数组起始下标
 
 特殊变量`$[`表示数组的第一索引值，一般都为`0`，如果我们将`$[`设置为`1`，则数组的第一个索引值即为`1`，第二个为`2`，以此类推
 
@@ -309,13 +362,25 @@ print "\@sites[1]: $sites[1]\n";
 print "\@sites[2]: $sites[2]\n";
 ```
 
-### 3.2.12 Tips
+### 3.2.13 用each循环数组
+
+在`Perl 5.12`之后，可以用`each`循环数组
+
+```perl
+my @array = ('A', 'B', 'C');
+while (my ($index, $value) = each @array) {
+    say "$index: $value";
+}
+```
+
+### 3.2.14 Tips
 
 1. 用`print`打印数组时，最好放在引号里面，否则输出的时候，数组各元素就直接贴在一起了。而放在引号里面的话，各元素之间会用空格分隔
 
 ## 3.3 哈希
 
 1. 哈希是一个`key/value`对的集合
+1. 哈希的键值只能是字符串。显然我们能将整数作为哈希键值，这是因为做了隐式转换
 1. 哈希变量以字符`%`开头
 1. 果要访问哈希值，可以使用`$变量名{键值}`格式来访问
 
@@ -380,16 +445,17 @@ print "$urls[2]\n";
 
 ### 3.3.3 检测元素是否存在
 
-如果你在哈希中读取不存在的`key/value`对 ，会返回`undefined`值，且在执行时会有警告提醒。为了避免这种情况，我们可以使用`exists`函数来判断`key`是否存在，存在的时候读取
+如果你在哈希中读取不存在的`key/value`对 ，会返回`undefined`值，且在执行时会有警告提醒。为了避免这种情况，我们可以使用`exists`函数来判断`key`是否存在，存在的时候读取。此外，`key`存在的情况下，`value`也可能是`undef`，我们可以使用`defined`来判断`value`是否赋值过
 
 ```perl
-%data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com');
+my %data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com', 'wtf' => undef);
 
-if (exists($data{'facebook'})) {
-    print "facebook 的网址为 $data{'facebook'} \n";
-} else {
-    print "facebook 键不存在\n";
-}
+say "google exist" if exists $data{'google'};
+say "google defined" if defined $data{'google'};
+say "amazon not exist" if not exists $data{'amazon'};
+say "amazon not defined" if not defined $data{'amazon'};
+say "wtf exist" if exists $data{'wtf'};
+say "wtf not defined" if not defined $data{'wtf'};
 ```
 
 ### 3.3.4 获取哈希大小
@@ -435,13 +501,15 @@ print "3 - 哈希大小: $size\n";
 
 1. 所谓上下文：指的是表达式所在的位置
 1. **上下文是由等号左边的变量类型决定的**，等号左边是标量，则是标量上下文，等号左边是列表，则是列表上下文
-1. `Perl`解释器会根据上下文来决定变量的类型
+1. `Perl`解释器会根据上下文来决定表达式的类型
 1. 上下文种类
     1. 标量上下文，包括数字、`string`、布尔
     1. 列表上下文，包括数组和哈希
     1. 布尔上下文
     1. void上下文
     1. 插值上下文，仅发生在引号内
+1. 数组在标量上下文中返回的是数组元素的个数
+1. 哈希在标量上下文中返回的是哈希键值对的个数
 
 **示例：**
 
@@ -753,9 +821,17 @@ LOOP:do
 } while ($a < 20);
 ```
 
-# 5 运算符
+# 5 指令
 
-## 5.1 算数运算符
+## 5.1 循环指令
+
+```perl
+say "$_ * $_ = ", $_ * $_ for 1 .. 10;
+```
+
+# 6 运算符
+
+## 6.1 算数运算符
 
 1. `+`：加
 1. `-`：减
@@ -791,7 +867,7 @@ $c = $a ** $b;
 print '$a ** $b = ' . $c . "\n";
 ```
 
-## 5.2 比较运算符
+## 6.2 比较运算符
 
 1. `==`
 1. `!=`
@@ -850,7 +926,7 @@ if ($a <= $b) {
 }
 ```
 
-## 5.3 字符串比较运算符
+## 6.3 字符串比较运算符
 
 1. `lt`
 1. `gt`
@@ -903,7 +979,7 @@ $c = $a cmp $b;
 print "\$a cmp \$b 返回 $c\n";
 ```
 
-## 5.4 赋值运算符
+## 6.4 赋值运算符
 
 1. `=`
 1. `+=`
@@ -945,7 +1021,7 @@ $c **= $a;
 print "\$c = $c ，运算语句 \$c **= \$a\n";
 ```
 
-## 5.5 位运算
+## 6.5 位运算
 
 1. `&`
 1. `|`
@@ -981,7 +1057,7 @@ $c = $a >> 2;
 print "\$a >> 2 = $c\n";
 ```
 
-## 5.6 逻辑运算
+## 6.6 逻辑运算
 
 1. `and`
 1. `&&`
@@ -1012,14 +1088,14 @@ $c = not($a);
 print "not(\$a)= $c\n";
 ```
 
-## 5.7 引号运算
+## 6.7 引号运算
 
-有时候，需要在程序中定义一些复杂的字符串，比如包含引号本身，普通的写法会比较麻烦，例如`$name = "\"hello\"";`，这是，可以使用引号运算来处理
+有时候，需要在程序中定义一些复杂的字符串，比如包含引号本身，普通的写法会比较麻烦，例如`$name = "\"hello\"";`。可以使用引号运算来处理
 
 1. `q{}/q()`：为字符串添加单引号，`q{abcd}`结果为`'abcd'`
 1. `qq{}/qq()`：为字符串添加双引号，`qq{abcd}`结果为`"abcd"`
 1. `qx{}/qx()`：为字符串添加反引号，`qx{abcd}`结果为`` `abcd` ``
-* 其中，分隔符可以成对，比如`{}`、`()`、`[]`；也可以相同，比如`^^`等
+* 其中，起始分隔符和结束分隔符可以成对，比如`{}`、`()`、`[]`；起始分隔符和结束分隔符也可以相同，比如`^^`等
 
 ```perl
 $a = 10;
@@ -1035,7 +1111,7 @@ $t = qx{date};
 print "qx{date} = $t\n";
 ```
 
-## 5.8 qw
+## 6.8 qw
 
 将字符串以空白作为分隔符进行拆分，并返回一个数组
 
@@ -1056,7 +1132,7 @@ print "@String", "\n";
 print "@String", "\n";
 ```
 
-## 5.9 其他运算符
+## 6.9 其他运算符
 
 1. `.`：用于连接两个字符串
 1. `x`：将给定字符串重复给定次数
@@ -1093,7 +1169,7 @@ $c = $b ;
 print "\$b 执行 \$b-- = $c\n";
 ```
 
-# 6 子程序
+# 7 子程序
 
 1. `Perl`子程序也就是用户定义的函数
 1. `Perl`子程序即执行一个特殊任务的一段分离的代码，它可以使减少重复代码且使程序易读。
@@ -1105,7 +1181,7 @@ sub subroutine {
 }
 ```
 
-## 6.1 向子程序传递参数
+## 7.1 向子程序传递参数
 
 1. `Perl`子程序可以和其他编程一样接受多个参数，子程序参数使用特殊数组`@_`标明
 1. 因此子程序第一个参数为`$_[0]`，第二个参数为`$_[1]`，以此类推
@@ -1131,7 +1207,7 @@ sub Average{
 Average(10, 20, 30);
 ```
 
-### 6.1.1 向子程序传递列表
+### 7.1.1 向子程序传递列表
 
 1. 由于`@_`变量是一个数组，所以它可以向子程序中传递列表
 1. 但如果我们需要传入标量和数组参数时，需要把列表放在最后一个参数上
@@ -1149,7 +1225,7 @@ $a = 10;
 PrintList($a, @b);
 ```
 
-### 6.1.2 向子程序传递哈希
+### 7.1.2 向子程序传递哈希
 
 当向子程序传递哈希表时，它将复制到`@_`中，哈希表将被展开为键/值组合的列表
 
@@ -1169,7 +1245,7 @@ sub PrintHash {
 PrintHash(%hash);
 ```
 
-## 6.2 子程序返回值
+## 7.2 子程序返回值
 
 1. 子程序可以向其他编程语言一样使用`return`语句来返回函数值
 1. 如果没有使用`return`语句，则子程序的最后一行语句将作为返回值
@@ -1191,7 +1267,7 @@ print add_a_b_1(1, 2), "\n";
 print add_a_b_2(1, 2), "\n";
 ```
 
-## 6.3 子程序的私有变量
+## 7.3 子程序的私有变量
 
 1. 默认情况下，`Perl`中所有的变量都是全局变量，这就是说变量在程序的任何地方都可以调用
 1. 如果我们需要设置私有变量，可以使用`my`操作符来设置
@@ -1215,7 +1291,7 @@ PrintHello();
 print "函数外字符串：$string\n";
 ```
 
-## 6.4 变量的临时赋值
+## 7.4 变量的临时赋值
 
 1. 我们可以使用`local`为全局变量提供临时的值，在退出作用域后将原来的值还回去
 1. `local`定义的变量不存在于主程序中，但存在于该子程序和该子程序调用的子程序中。定义时可以给其赋值
@@ -1247,7 +1323,7 @@ PrintHello();
 print "函数外部字符串值：$string\n";
 ```
 
-## 6.5 静态变量
+## 7.5 静态变量
 
 1. `state`操作符功能类似于`C`里面的`static`修饰符，`state`关键字将局部变量变得持久
 1. `state`也是词法变量，所以只在定义该变量的词法作用域中有效
@@ -1267,7 +1343,7 @@ for (1..5) {
 }
 ```
 
-## 6.6 子程序调用上下文
+## 7.6 子程序调用上下文
 
 子程序调用过程中，会根据上下文来返回不同类型的值，比如以下`localtime()`子程序，在标量上下文返回字符串，在列表上下文返回列表
 
@@ -1285,11 +1361,11 @@ printf("%d-%d-%d %d:%d:%d", $year+1990, $mon+1, $mday, $hour, $min, $sec);
 print "\n";
 ```
 
-# 7 引用
+# 8 引用
 
 引用就是指针，`Perl`引用是一个标量类型，可以指向变量、数组、哈希表（也叫关联数组）甚至子程序，可以应用在程序的任何地方
 
-## 7.1 创建引用
+## 8.1 创建引用
 
 定义变量的时候，在变量名前面加个`\`，就得到了这个变量的一个引用
 
@@ -1316,7 +1392,7 @@ $href= { APR => 4, AUG => 8 };
 $coderef = sub { print "W3CSchool!\n" };
 ```
 
-## 7.2 使用引用
+## 8.2 使用引用
 
 使用引用可以根据不同的类型使用`$`、`@`或`%`
 
@@ -1358,7 +1434,7 @@ $r = \%var;
 print "r 的引用类型 : ", ref($r), "\n";
 ```
 
-## 7.3 循环引用
+## 8.3 循环引用
 
 循环引用在两个引用相互包含时出现。你需要小心使用，不然会导致内存泄露
 
@@ -1369,7 +1445,7 @@ $foo = \$foo;
 print "Value of foo is : ", $$foo, "\n";
 ```
 
-## 7.4 引用函数
+## 8.4 引用函数
 
 1. 函数引用格式：`\&`
 1. 调用引用函数格式：`& + 创建的引用名`
@@ -1392,7 +1468,7 @@ $cref = \&PrintHash;
 &$cref(%hash);
 ```
 
-# 8 Perl 格式化输出
+# 9 Perl 格式化输出
 
 1. `Perl`是一个非常强大的文本数据处理语言
 1. `Perl`中可以使用`format`来定义一个模板，然后使用`write`按指定模板输出数据
@@ -1431,7 +1507,7 @@ third: ^<<<<
 write
 ```
 
-## 8.1 格式行
+## 9.1 格式行
 
 **[格式行中涉及的符号](https://perldoc.perl.org/perlform)：**
 
@@ -1494,7 +1570,7 @@ format STDOUT =
 write
 ```
 
-## 8.2 格式变量
+## 9.2 格式变量
 
 * `$~`：格式名称，默认是`STDOUT`
 * `$^`：每页的页头格式，默认是`STDOUT_TOP`
@@ -1538,7 +1614,7 @@ foreach (@n) {
 }
 ```
 
-## 8.3 输出到其他文件
+## 9.3 输出到其他文件
 
 默认情况下函数`write`将结果输出到标准输出文件`STDOUT`，我们也可以使它将结果输出到任意其它的文件中。最简单的方法就是把文件变量作为参数传递给`write`。例如，`write(MYFILE);`，`write`就用缺省的名为`MYFILE`的打印格式输出到文件`MYFILE`中。但是这样就不能用`$~`变量来改变所使用的打印格式，因为系统变量`$~`只对默认文件变量起作用
 
@@ -1573,12 +1649,34 @@ close MYFILE;
 }
 ```
 
-# 9 Built-in
+# 10 文件
+
+从文件中迭代读取内容的经典`while`循环如下：
+
+```perl
+use autodie;
+
+open my $fh, '<', $file;
+while (<$fh>) {
+    ...
+}
+```
+
+`Perl`在解析上面这段代码时，等效于处理下面这段逻辑。如果没有这个隐式的`defined`，那么碰到空行就会结束循环了（空行在布尔上下文中会转换成`false`）。在迭代到文件尾时，会返回`undef`
+
+```
+while (defined($_ = <$fh>)) {
+    ...
+}
+```
+
+# 11 Built-in
 
 1. `say`：将给定字符串（默认为`$_`）输出到当前`select`的文件句柄中
 1. `chomp`：删除给定字符串（默认为`$_`）中尾部的换行符
+1. `defined`：判断给定变量是否已定义（是否赋值过）
 
-# 10 进阶
+# 12 进阶
 
 [modern-perl.pdf](/resources/modern-perl.pdf)
 
@@ -1588,6 +1686,7 @@ close MYFILE;
     * `perldoc List::Util`
     * `perldoc perltoc`
     * `perldoc Moose::Manual`
+    * `perldoc -f wantarray`
 1. `cpan`
     * `cpan Modern::Perl`
 1. `perlbrew`
@@ -1601,11 +1700,51 @@ close MYFILE;
 * [blogs](https://blogs.perl.org)
 * [bestpractical](https://bestpractical.com)
 
-## 10.1 todo
+**模块：**
+
+* `Test::More`
+    * `ok`
+    * `is`
+    * `isnt`
+
+```perl
+use strict;
+use warnings;
+use autodie;
+use Modern::Perl;
+use Test::More 'no_plan';
+```
+
+## 12.1 todo
 
 1. map
+1. `To count the number of elements returned from an expression in list context without using a temporary variable, you use the idiom` - P21
+1. `You do not need parentheses to create lists; the comma operator creates lists` - P22
+1. `Lists and arrays are not interchangeable in Perl. Lists are values and arrays are containers.` - P22
+    ```perl
+    sub context {
+        my $context = wantarray();
+        say defined $context
+            ? $context
+                ? 'list'
+                : 'scalar'
+            : 'void';
+        return 0;
+    }
+    my @list_slice = (1, 2, 3)[context()];
+    my @array_slice = @list_slice[context()];
+    my $array_index = $array_slice[context()];
+    # say imposes list context
+    say context();
+    # void context is obvious
+    context()
+    ```
 
-# 11 参考
+1. `If you must use $_ rather than a named variable, make the topic variable lexical with my $_:` - P29
+1. `Given/When` - P33
+1. `Scalars may be lexical, package, or global (see Global Variables, page 153) variables.` - P35
+
+# 13 参考
 
 * [w3cschool-perl](https://www.w3cschool.cn/perl/)
 * [perl仓库-cpan](https://www.cpan.org/)
