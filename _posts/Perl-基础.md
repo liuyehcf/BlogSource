@@ -717,7 +717,7 @@ say "#$_" for 1 .. 10;
 
 ### 3.5.2 默认数组变量
 
-1. `Perl`将传给子程序的参数都存储在`@_`变量中
+1. `Perl`将传给函数的参数都存储在`@_`变量中
 1. `push`、`pop`、`shift`、`unshift`在缺省参数的情况下，默认都对`@_`进行操作
 1. `Perl`将命令函参数都存储在`@ARGV`中
 1. `@ARGV`还有另一个用途，当从空文件句柄`<>`中读取内容时，`Perl`默认会将`@ARGV`中存储的内容作为文件名进行依次读取，如果`@ARGV`为空，那么会读取标准输入
@@ -1401,11 +1401,11 @@ $c = $b ;
 say "\$b 执行 \$b-- = $c";
 ```
 
-# 7 子程序
+# 7 函数
 
-1. `Perl`子程序也就是用户定义的函数
-1. `Perl`子程序即执行一个特殊任务的一段分离的代码，它可以使减少重复代码且使程序易读。
-1. `Perl`子程序可以出现在程序的任何地方，语法格式如下
+1. `Perl`函数也就是用户定义的函数
+1. `Perl`函数即执行一个特殊任务的一段分离的代码，它可以使减少重复代码且使程序易读。
+1. `Perl`函数可以出现在程序的任何地方，语法格式如下
 
 ```perl
 sub subroutine {
@@ -1413,11 +1413,11 @@ sub subroutine {
 }
 ```
 
-## 7.1 向子程序传递参数
+## 7.1 向函数传递参数
 
-1. `Perl`子程序可以和其他编程一样接受多个参数，子程序参数使用特殊数组`@_`标明
-1. 因此子程序第一个参数为`$_[0]`，第二个参数为`$_[1]`，以此类推
-1. 不论参数是标量型还是数组型的，用户把参数传给子程序时，`Perl`默认按引用的方式调用它们
+1. `Perl`函数可以和其他编程一样接受多个参数，函数参数使用特殊数组`@_`标明
+1. 因此函数第一个参数为`$_[0]`，第二个参数为`$_[1]`，以此类推
+1. 不论参数是标量型还是数组型的，用户把参数传给函数时，`Perl`默认按引用的方式调用它们
 
 ```perl
 use strict;
@@ -1443,9 +1443,9 @@ sub Average{
 Average(10, 20, 30);
 ```
 
-### 7.1.1 向子程序传递列表
+### 7.1.1 向函数传递列表
 
-1. 由于`@_`变量是一个数组，所以它可以向子程序中传递列表
+1. 由于`@_`变量是一个数组，所以它可以向函数中传递列表
 1. 但如果我们需要传入标量和数组参数时，需要把列表放在最后一个参数上
 
 ```perl
@@ -1465,9 +1465,9 @@ my @b = (1, 2, 3, 4);
 PrintList($a, @b);
 ```
 
-### 7.1.2 向子程序传递哈希
+### 7.1.2 向函数传递哈希
 
-当向子程序传递哈希表时，它将复制到`@_`中，哈希表将被展开为键/值组合的列表
+当向函数传递哈希表时，它将复制到`@_`中，哈希表将被展开为键/值组合的列表
 
 ```perl
 use strict;
@@ -1518,10 +1518,10 @@ sub make_sundae {
 }
 ```
 
-## 7.2 子程序返回值
+## 7.2 函数返回值
 
-1. 子程序可以向其他编程语言一样使用`return`语句来返回函数值
-1. 如果没有使用`return`语句，则子程序的最后一行语句将作为返回值
+1. 函数可以向其他编程语言一样使用`return`语句来返回函数值
+1. 如果没有使用`return`语句，则函数的最后一行语句将作为返回值
 
 ```perl
 use strict;
@@ -1544,7 +1544,7 @@ say add_a_b_1(1, 2);
 say add_a_b_2(1, 2);
 ```
 
-## 7.3 子程序的私有变量
+## 7.3 函数的私有变量
 
 1. 默认情况下，`Perl`中所有的变量都是全局变量，这就是说变量在程序的任何地方都可以调用
 1. 如果我们需要设置私有变量，可以使用`my`操作符来设置
@@ -1574,7 +1574,7 @@ say "函数外字符串：$string";
 ## 7.4 变量的临时赋值
 
 1. 我们可以使用`local`为全局变量提供临时的值，在退出作用域后将原来的值还回去
-1. `local`定义的变量不存在于主程序中，但存在于该子程序和该子程序调用的子程序中。定义时可以给其赋值
+1. `local`定义的变量不存在于主程序中，但存在于该函数和该函数调用的函数中。定义时可以给其赋值
 
 ```perl
 # 全局变量
@@ -1584,7 +1584,7 @@ sub PrintW3CSchool {
     # PrintHello 函数私有变量
     local $string;
     $string = "Hello, W3Cschool!";
-    # 子程序调用的子程序
+    # 函数调用的函数
     PrintMe();
     print "PrintW3CSchool 函数内字符串值：$string\n";
 }
@@ -1626,9 +1626,9 @@ for (1..5) {
 }
 ```
 
-## 7.6 子程序调用上下文
+## 7.6 函数调用上下文
 
-子程序调用过程中，会根据上下文来返回不同类型的值，比如以下`localtime()`子程序，在标量上下文返回字符串，在列表上下文返回列表
+函数调用过程中，会根据上下文来返回不同类型的值，比如以下`localtime()`函数，在标量上下文返回字符串，在列表上下文返回列表
 
 ```perl
 use strict;
@@ -1644,9 +1644,131 @@ my ($sec,$min,$hour,$mday,$mon, $year,$wday,$yday,$isdst) = localtime(time);
 printf("%d-%d-%d %d:%d:%d", $year+1990, $mon+1, $mday, $hour, $min, $sec);
 ```
 
+### 7.6.1 上下文感知
+
+`wantarray`用于判断上下文信息
+
+* 处于`void`上下文时，返回`undef`
+* 处于标量上下文时，返回`false`
+* 处于列表上下文时，返回`true`
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+sub context {
+    my $context = wantarray();
+    say defined $context
+        ? $context
+            ? 'list'
+            : 'scalar'
+        : 'void';
+    return 0;
+}
+my @list_slice = (1, 2, 3)[context()];
+my @array_slice = @list_slice[context()];
+my $array_index = $array_slice[context()];
+# say imposes list context
+say context();
+# void context is obvious
+context()
+```
+
+## 7.7 命名空间
+
+命名空间（`namespace`）即包（`package`）。默认情况下，函数定义在`main`包中，我们可以显式指定包。同一个命名空间中，某个函数名只能定义一次，重复定义会覆盖前一个定义。编译器会发出警告，可以通过`no warnings 'redefine';`禁止警告
+
+```perl
+sub Extensions::Math::add {
+    ...
+}
+```
+
+函数对内部、外部均可见，在同一个命名空间中，可以通过函数名来直接访问；在外部的命名空间中，必须通过全限定名来访问，除非将函数导入（`importing`）到当前命名空间中
+
+### 7.7.1 导入
+
+当使用`use`加载模块时，`Perl`会自动调用该模块的`import()`函数，模块中的接口可以提供自己的`import()`方法来向外部导出符号
+
+模块后跟的名字都会作为`import()`函数的方法，例如
+
+```perl
+use strict 'refs';
+use strict qw( subs vars );
+```
+
+上面这两句等价于
+
+```perl
+BEGIN {
+    require strict;
+    strict->import( 'refs' );
+    strict->import( qw( subs vars ) );
+}
+```
+
+## 7.8 报告错误
+
+在函数中，我们可以通过`caller`获取调用者的相关信息
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+package main;
+main();
+
+sub main {
+    show_call_information();
+}
+
+sub show_call_information {
+    my ($package, $file, $line) = caller();
+    say "Called from $package in $file at $line";
+}
+```
+
+此外，我们可以向`caller`传递一个参数，用于表示沿着当前调用栈往前追溯的深度，且会额外返回调用者的信息
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+package main;
+main();
+
+sub main {
+    show_call_information();
+}
+
+sub show_call_information {
+    my ($package, $file, $line, $func) = caller(0);
+    say "Called $func from $package in $file at $line";
+}
+```
+
+此外，我们还可以使用`Carp`模块来方便地报告错误
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+use Carp 'croak';
+
+sub add_two_numbers {
+    croak 'add_two_numbers() takes two and only two arguments' unless @_ == 2;
+}
+
+add_two_numbers();
+```
+
+`Params::Validate`模块还可以进行参数类型的校验，这里不再赘述
+
 # 8 引用
 
-引用就是指针，`Perl`引用是一个标量类型，可以指向变量、数组、哈希表（也叫关联数组）甚至子程序，可以应用在程序的任何地方
+引用就是指针，`Perl`引用是一个标量类型，可以指向变量、数组、哈希表（也叫关联数组）甚至函数，可以应用在程序的任何地方
 
 ## 8.1 创建引用
 
@@ -1660,7 +1782,7 @@ $coderef   = \&handler; # 子过程引用
 $globref   = \*foo;     # GLOB句柄引用
 ```
 
-此外，还可以创建匿名数组的引用（`[]`运算符）、匿名哈希的引用（`{}`运算符）、匿名子程序的引用
+此外，还可以创建匿名数组的引用（`[]`运算符）、匿名哈希的引用（`{}`运算符）、匿名函数的引用
 
 ```perl
 use strict;
@@ -1722,15 +1844,15 @@ use Modern::Perl;
 
 my $var = 10;
 my $r = \$var;
-say "r 的引用类型 : ", ref($r);
+say "r's ref type: ", ref($r);
 
 my @var = (1, 2, 3);
 $r = \@var;
-say "r 的引用类型 : ", ref($r);
+say "r's ref type: ", ref($r);
 
 my %var = ('key1' => 10, 'key2' => 20);
 $r = \%var;
-say "r 的引用类型 : ", ref($r);
+say "r's ref type: ", ref($r);
 ```
 
 ## 8.3 循环引用
@@ -2030,7 +2152,7 @@ close MYFILE;
 }
 ```
 
-我们可以使用`select`改变默认文件变量时，它返回当前默认文件变量的内部表示，这样我们就可以创建子程序，按自己的想法输出，又不影响程序的其它部分
+我们可以使用`select`改变默认文件变量时，它返回当前默认文件变量的内部表示，这样我们就可以创建函数，按自己的想法输出，又不影响程序的其它部分
 
 ```perl
 use strict;
@@ -2080,13 +2202,13 @@ while (defined($_ = <$fh>)) {
 package mypack;
 ```
 
-此语句定义一个名为`mypack`的包，在此后定义的所有变量和子程序的名字都存贮在该包关联的符号表中，直到遇到另一个`package`语句为止
+此语句定义一个名为`mypack`的包，在此后定义的所有变量和函数的名字都存贮在该包关联的符号表中，直到遇到另一个`package`语句为止
 
-每个符号表有其自己的一组变量、子程序名，各组名字是不相关的，因此可以在不同的包中使用相同的变量名，而代表的是不同的变量。
+每个符号表有其自己的一组变量、函数名，各组名字是不相关的，因此可以在不同的包中使用相同的变量名，而代表的是不同的变量。
 
 从一个包中访问另外一个包的变量，可通过`package_name::variable_name`的方式指定
 
-存贮变量和子程序的名字的默认符号表是与名为`main`的包相关联的。如果在程序里定义了其它的包，当你想切换回去使用默认的符号表，可以重新指定`main`包
+存贮变量和函数的名字的默认符号表是与名为`main`的包相关联的。如果在程序里定义了其它的包，当你想切换回去使用默认的符号表，可以重新指定`main`包
 
 每个包包含三个默认的函数：
 
@@ -2107,8 +2229,10 @@ package mypack;
 **工具：**
 
 1. `perldoc`
-    * `perldoc List::Util`
+    * `perldoc perlop`
+    * `perldoc perlsyn`
     * `perldoc perltoc`
+    * `perldoc List::Util`
     * `perldoc Moose::Manual`
     * `perldoc -f wantarray`
 1. `cpan`
@@ -2145,37 +2269,15 @@ use Test::More 'no_plan';
 1. `To count the number of elements returned from an expression in list context without using a temporary variable, you use the idiom` - P21
 1. `You do not need parentheses to create lists; the comma operator creates lists` - P22
 1. `Lists and arrays are not interchangeable in Perl. Lists are values and arrays are containers.` - P22
-    ```perl
-    use strict;
-    use warnings;
-    use Modern::Perl;
-    sub context {
-        my $context = wantarray();
-        say defined $context
-            ? $context
-                ? 'list'
-                : 'scalar'
-            : 'void';
-        return 0;
-    }
-    my @list_slice = (1, 2, 3)[context()];
-    my @array_slice = @list_slice[context()];
-    my $array_index = $array_slice[context()];
-    # say imposes list context
-    say context();
-    # void context is obvious
-    context()
-    ```
-
 1. `If you must use $_ rather than a named variable, make the topic variable lexical with my $_:` - P29
 1. `Given/When` - P33
 1. `Scalars may be lexical, package, or global (see Global Variables, page 153) variables.` - P35
 1. `Reset a hash’s iterator with the use of keys or values in void context` - P43
-1. `if your cached value evaluates to false in
-a boolean context, use the defined-or assignment operator (//=) instead` - P46
-
+1. `if your cached value evaluates to false in a boolean context, use the defined-or assignment operator (//=) instead` - P46
 1. `Filehandle References` - P54
-1. Dualvars - P48
+1. `Dualvars` - P48
+1. `Aliasing` - P66
+1. `use Carp 'cluck';` - P70
 
 # 14 参考
 
