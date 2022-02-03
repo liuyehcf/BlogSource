@@ -499,6 +499,12 @@ say "\$data2{'google'} = $data2{'google'}";
 say "\$data3{'baidu'} = $data3{'baidu'}";
 ```
 
+访问哈希的格式：`$ + hash_name + { + key + }`，其中`key`如果是`bareword`，那么可以不加引号，`Perl`会自动加引号
+
+* `%data{name}`：`Perl`会自动给`name`加引号
+* `%data{'name-1'}`：`name-1`不是`bareword`，必须手动加引号
+* `%data{func()}`：若通过函数获取`key`，若函数不需要参数，也必须加上`()`，消除歧义
+
 ### 3.3.2 读取哈希的key和value
 
 我们可以使用`keys`函数读取哈希所有的键，语法格式如下：
@@ -603,6 +609,52 @@ $size = @keys;
 say "3 - 哈希大小: $size";
 ```
 
+### 3.3.6 用each循环数组
+
+在`Perl 5.12`之后，可以用`each`循环数组
+
+```Perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my %data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com');
+
+while (my ($key, $value) = each %data) {
+    say "$key: $value";
+}
+```
+
+### 3.3.7 迭代顺序
+
+由于不同版本的`Perl`实现哈希的方式不同，因此哈希的遍历顺序是不固定的。但是对于同一个哈希的`keys`、`values`、`each`，它们的顺序是一致的
+
+### 3.3.8 锁定
+
+1. `lock_hash/unlock_hash`：锁定/解锁整个`hash`。锁定时，不能新增或删除`key`，不能修改已有的`value`
+1. `lock_keys/unlock_keys`：锁定`key`。锁定时，不能新增或删除`key`
+1. `lock_value/unlock_value`：锁定`value`。锁定时，不能修改`value`
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+use Hash::Util qw[lock_hash lock_keys unlock_keys];
+
+my %data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com');
+lock_keys(%data);
+# 下面这句会报错
+# $data{'wtf'} = 'wtf.com';
+
+unlock_keys(%data);
+$data{'wtf'} = 'wtf.com';
+
+foreach my $key (keys %data) {
+    my $value = $data{$key};
+    say "$key : $value";
+}
+```
+
 ## 3.4 变量上下文
 
 1. 所谓上下文：指的是表达式所在的位置
@@ -616,6 +668,9 @@ say "3 - 哈希大小: $size";
     1. 插值上下文，仅发生在引号内
 1. 数组在标量上下文中返回的是数组元素的个数
 1. 哈希在标量上下文中返回的是哈希键值对的个数
+1. 未定义的标量在字符串上下文中返回的是空字符串
+1. 未定义的标量在数字上下文中返回的是`0`
+1. 不以数字开头的字符串在数字上下文中返回的是`0`
 
 **示例：**
 
@@ -1146,6 +1201,7 @@ say "\$a cmp \$b 返回 $c";
 1. `%=`
 1. `%=`
 1. `**=`
+1. `//=`：定义或赋值
 
 ```perl
 use strict;
@@ -1154,32 +1210,35 @@ use Modern::Perl;
 
 my $a = 10;
 my $b = 20;
-
-say "\$a = $a ，\$b = $b";
-
 my $c = $a + $b;
-say "赋值后 \$c = $c";
+
+say "\$a: $a, \$b: $b, \$c: $c";
 
 $c += $a;
-say "\$c = $c ，运算语句 \$c += \$a";
+say "\$c: $c, st: '\$c += \$a'";
 
 $c -= $a;
-say "\$c = $c ，运算语句 \$c -= \$a";
+say "\$c: $c, st: '\$c -= \$a'";
 
 $c *= $a;
-say "\$c = $c ，运算语句 \$c *= \$a";
+say "\$c: $c, st: '\$c *= \$a'";
 
 $c /= $a;
-say "\$c = $c ，运算语句 \$c /= \$a";
+say "\$c: $c, st: '\$c /= \$a'";
 
 $c %= $a;
-say "\$c = $c ，运算语句 \$c %= \$a";
+say "\$c: $c, st: '\$c %= \$a'";
 
 $c = 2;
 $a = 4;
-say "\$a = $a ， \$c = $c";
+say "\$a: $a, \$c = $c";
 $c **= $a;
-say "\$c = $c ，运算语句 \$c **= \$a";
+say "\$c: $c, st: '\$c **= \$a'";
+
+my %data;
+$data{'first'} = $a;
+$data{'first'} //= $b;
+say "\$data{'first'}: $data{'first'}, st: '\$data{'first'} //= \$b'";
 ```
 
 ## 6.5 位运算
@@ -1437,6 +1496,35 @@ my %hash = ('name' => 'youj', 'age' => 3);
 PrintHash(%hash);
 ```
 
+### 7.1.3 设置参数默认值
+
+方式一：使用`//=`运算符，只有在变量未定义的时候才会赋值
+
+```perl
+sub make_sundae {
+    my %parameters = @_;
+    $parameters{flavor} //= 'Vanilla';
+    $parameters{topping} //= 'fudge';
+    $parameters{sprinkles} //= 100;
+    ...
+}
+```
+
+方式二：
+
+```perl
+sub make_sundae {
+    my %parameters =
+    (
+        flavor => 'Vanilla',
+        topping => 'fudge',
+        sprinkles => 100,
+        @_,
+    );
+    ...
+}
+```
+
 ## 7.2 子程序返回值
 
 1. 子程序可以向其他编程语言一样使用`return`语句来返回函数值
@@ -1579,7 +1667,7 @@ $coderef   = \&handler; # 子过程引用
 $globref   = \*foo;     # GLOB句柄引用
 ```
 
-此外，还可以创建匿名数组的引用、匿名哈希的引用、匿名子程序的引用
+此外，还可以创建匿名数组的引用（`[]`运算符）、匿名哈希的引用（`{}`运算符）、匿名子程序的引用
 
 ```perl
 use strict;
@@ -1600,7 +1688,7 @@ my $coderef = sub { say "W3CSchool!" };
 
 ## 8.2 解引用
 
-解引用可以根据不同的类型使用`$`、`@`或`%`
+解引用可以根据不同的类型使用`$`、`@`、`%`以及`->`
 
 ```perl
 use strict;
@@ -1613,19 +1701,23 @@ my $var = 10;
 my $r = \$var;
 
 # 输出本地存储的 $r 的变量值
-say "$var 为 : ", $$r;
+say '$$r: ', $$r;
 
 my @var = (1, 2, 3);
 # $r 引用  @var 数组
 $r = \@var;
 # 输出本地存储的 $r 的变量值
-say "@var 为: ",  @$r;
+say '@$r: ', @$r;
+say '$$r[0]: ', $$r[0];
+say '$r->[0]: ', $r->[0];
+say '@{ $r }[0, 1, 2]: ', @{ $r }[0, 1, 2];
 
 my %var = ('key1' => 10, 'key2' => 20);
 # $r 引用  %var 数组
 $r = \%var;
 # 输出本地存储的 $r 的变量值
-say "%var 为 : ", %$r;
+say '%$r: ', %$r;
+say '$r->{\'key1\'}: ', $r->{'key1'};
 ```
 
 如果你不能确定变量类型，你可以使用`ref`来判断，返回值列表如下，如果没有以下的值返回`false`
@@ -1656,17 +1748,23 @@ say "r 的引用类型 : ", ref($r);
 use strict;
 use warnings;
 use Modern::Perl;
+use Scalar::Util 'weaken';
 
-my $foo = 100;
-$foo = \$foo;
+my $alice = { mother => '', father => '', children => [] };
+my $robert = { mother => '', father => '', children => [] };
+my $cianne = { mother => $alice, father => $robert, children => [] };
 
-say "Value of foo is : ", $$foo;
+push @{ $alice->{children} }, $cianne;
+push @{ $robert->{children} }, $cianne;
+
+weaken( $cianne->{mother} );
+weaken( $cianne->{father} );
 ```
 
 ## 8.4 引用函数
 
 1. 函数引用格式：`\&`
-1. 调用引用函数格式：`& + 创建的引用名`或者使用`->`运算符
+1. 调用引用函数格式：`&$func_ref(params)`或者`$func_ref->(params)`
 
 ```perl
 use strict;
@@ -1691,6 +1789,72 @@ my $cref = \&PrintHash;
 
 # 使用引用调用函数，方式2
 $cref->(%hash);
+```
+
+## 8.5 级联数据结构
+
+由于数组、哈希都只能存储标量，而引用正好也是标量。因此借助引用，可以创建多级数据结构
+
+```perl
+my @famous_triplets = (
+    [qw( eenie miney moe )],
+    [qw( huey dewey louie )],
+    [qw( duck duck goose )],
+);
+
+my %meals = (
+    breakfast => { entree => 'eggs', side => 'hash browns' },
+    lunch => { entree => 'panini', side => 'apple' },
+    dinner => { entree => 'steak', side => 'avocado salad' },
+);
+```
+
+### 8.5.1 访问
+
+我们使用歧义消除块（`disambiguation blocks`）
+
+```perl
+my $nephew_count = @{ $famous_triplets[1] };
+my $dinner_courses = keys %{ $meals{dinner} };
+my ($entree, $side) = @{ $meals{breakfast} }{qw( entree side )};
+```
+
+更好更清晰的写法，自然是使用中间变量
+
+```perl
+my $breakfast_ref = $meals{breakfast};
+my ($entree, $side) = @$breakfast_ref{qw( entree side )};
+```
+
+### 8.5.2 Autovivificatio
+
+当我们对一个多级数据结构进行赋值时，无需按层级一层层依次创建，`Perl`会自动帮我们完成这项工作，这个过程就称为`Autovivificatio`
+
+```perl
+my @aoaoaoa;
+$aoaoaoa[0][0][0][0] = 'nested deeply';
+
+my %hohoh;
+$hohoh{Robot}{Santa}{Claus} = 'mostly harmful';
+```
+
+### 8.5.3 调试
+
+`Data::Dumper`可以帮助我们打印一个复杂的多级数据结构
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+use Data::Dumper;
+
+my @aoaoaoa;
+$aoaoaoa[0][0][0][0] = 'nested deeply';
+
+my %hohoh;
+$hohoh{Robot}{Santa}{Claus} = 'mostly harmful';
+say Dumper( @aoaoaoa );
+say Dumper( %hohoh );
 ```
 
 # 9 Perl 格式化输出
@@ -1915,13 +2079,35 @@ while (defined($_ = <$fh>)) {
 }
 ```
 
-# 11 Built-in
+# 11 Package
+
+`Perl`中每个包有一个单独的符号表，定义语法为：
+
+```perl
+package mypack;
+```
+
+此语句定义一个名为`mypack`的包，在此后定义的所有变量和子程序的名字都存贮在该包关联的符号表中，直到遇到另一个`package`语句为止
+
+每个符号表有其自己的一组变量、子程序名，各组名字是不相关的，因此可以在不同的包中使用相同的变量名，而代表的是不同的变量。
+
+从一个包中访问另外一个包的变量，可通过`package_name::variable_name`的方式指定
+
+存贮变量和子程序的名字的默认符号表是与名为`main`的包相关联的。如果在程序里定义了其它的包，当你想切换回去使用默认的符号表，可以重新指定`main`包
+
+每个包包含三个默认的函数：
+
+1. `VERSION()`
+1. `import()`
+1. `unimport()`
+
+# 12 Builtin
 
 1. `say`：将给定字符串（默认为`$_`）输出到当前`select`的文件句柄中
 1. `chomp`：删除给定字符串（默认为`$_`）中尾部的换行符
 1. `defined`：判断给定变量是否已定义（是否赋值过）
 
-# 12 进阶
+# 13 进阶
 
 [modern-perl.pdf](/resources/modern-perl.pdf)
 
@@ -1960,7 +2146,7 @@ use Modern::Perl;
 use Test::More 'no_plan';
 ```
 
-## 12.1 todo
+## 13.1 todo
 
 1. map
 1. `To count the number of elements returned from an expression in list context without using a temporary variable, you use the idiom` - P21
@@ -1991,8 +2177,14 @@ use Test::More 'no_plan';
 1. `If you must use $_ rather than a named variable, make the topic variable lexical with my $_:` - P29
 1. `Given/When` - P33
 1. `Scalars may be lexical, package, or global (see Global Variables, page 153) variables.` - P35
+1. `Reset a hash’s iterator with the use of keys or values in void context` - P43
+1. `if your cached value evaluates to false in
+a boolean context, use the defined-or assignment operator (//=) instead` - P46
 
-# 13 参考
+1. `Filehandle References` - P54
+1. Dualvars - P48
+
+# 14 参考
 
 * [w3cschool-perl](https://www.w3cschool.cn/perl/)
 * [perl仓库-cpan](https://www.cpan.org/)
