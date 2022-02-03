@@ -2317,15 +2317,15 @@ use warnings;
 use Modern::Perl;
 
 if (open(MYFILE, ">tmp")) {
-$~ = "MYFORMAT";
-write MYFILE;
+    $~ = "MYFORMAT";
+    write MYFILE;
 
-format MYFILE =
+    format MYFILE =
 =================================
       输入到文件中
 =================================
 .
-close MYFILE;
+    close MYFILE;
 }
 ```
 
@@ -2337,16 +2337,16 @@ use warnings;
 use Modern::Perl;
 
 if (open(MYFILE, ">>tmp")) {
-select (MYFILE);
-$~ = "OTHER";
-write;
+    select (MYFILE);
+    $~ = "OTHER";
+    write;
 
-format OTHER =
+    format OTHER =
 =================================
   使用定义的格式输入到文件中
 =================================
 . 
-close MYFILE;
+    close MYFILE;
 }
 ```
 
