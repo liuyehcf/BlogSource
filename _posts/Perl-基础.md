@@ -77,9 +77,9 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my $age = 25;              # 整型
-my $name = "youj";         # 字符串
-my $salary = 1445.50;      # 浮点数
+my $age = 25;
+my $name = "youj";
+my $salary = 1445.50;
 
 say "Age = $age";
 say "Name = $name";
@@ -106,9 +106,9 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-say "文件名 ". __FILE__;
-say "行号 " . __LINE__;
-say "包名 " . __PACKAGE__;
+say "filename: ". __FILE__;
+say "linenum: " . __LINE__;
+say "packagename: " . __PACKAGE__;
 
 # 无法解析
 say "__FILE__ __LINE__ __PACKAGE__";
@@ -165,7 +165,7 @@ use warnings;
 use Modern::Perl;
 
 my @array1 = (1, 2, 'Hello');
-my @array2 = qw/这是 一个 数组/;
+my @array2 = qw/this is an array/;
 my @array3 = qw/google
 taobao
 alibaba
@@ -249,8 +249,8 @@ $array[50] = 4;
 my $size = @array;
 my $max_index = $#array;
 
-say "数组大小: $size";
-say "最大索引: $max_index";
+say "size: $size";
+say "max index: $max_index";
 ```
 
 若要访问倒数第一个元素，除了通过数组大小之外，还可以通过`[-1]`：
@@ -271,7 +271,7 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my @sites = qw/google taobao youj weibo qq facebook 网易/;
+my @sites = qw/google taobao youj weibo qq facebook netease/;
 
 my @sites2 = @sites[3,4,5];
 my @sites3 = @sites[3..5];
@@ -296,10 +296,10 @@ use warnings;
 use Modern::Perl;
 
 my @nums = (1..20);
-say "替换前 - @nums";
+say "before: @nums";
 
 splice(@nums, 5, 5, 21..25); 
-say "替换后 - @nums";
+say "after: @nums";
 ```
 
 ### 3.2.7 将字符串转换为数组
@@ -316,19 +316,17 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-# 定义字符串
 my $var_test = "youj";
 my $var_string = "www-youj-com";
 my $var_names = "google,taobao,youj,weibo";
 
-# 字符串转为数组
 my @test = split('', $var_test);
 my @string = split('-', $var_string);
 my @names  = split(',', $var_names);
 
-say "$test[3]";  # 输出 j
-say "$string[2]";  # 输出 com
-say "$names[3]";   # 输出 weibo
+say "$test[3]";  # j
+say "$string[2]";  # com
+say "$names[3]";   # weibo
 ```
 
 ### 3.2.8 将数组转换为字符串
@@ -344,15 +342,12 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-# 定义字符串
 my $var_string = "www-youj-com";
 my $var_names = "google,taobao,youj,weibo";
 
-# 字符串转为数组
 my @string = split('-', $var_string);
 my @names  = split(',', $var_names);
 
-# 数组转为字符串
 my $string1 = join( '-', @string );
 my $string2 = join( ',', @names );
 
@@ -391,13 +386,11 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-# 定义数组
 my @sites = qw(google taobao youj facebook);
-say "排序前: @sites";
+say "before: @sites";
 
-# 对数组进行排序
 @sites = sort(@sites);
-say "排序后: @sites";
+say "after: @sites";
 ```
 
 ### 3.2.11 合并数组
@@ -410,12 +403,12 @@ use warnings;
 use Modern::Perl;
 
 my @numbers1 = (1,3,(4,5,6));
-say "numbers1 = @numbers1";
+say "numbers1: @numbers1";
 
 my @odd = (1,3,5);
 my @even = (2, 4, 6);
 my @numbers2 = (@odd, @even);
-say "numbers2 = @numbers2";
+say "numbers2: @numbers2";
 ```
 
 ### 3.2.12 数组起始下标
@@ -575,11 +568,11 @@ my %data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' =>
 
 my @keys = keys %data;
 my $key_size = @keys;
-say "1 - key size: $key_size";
+say "key size: $key_size";
 
 my @values = values %data;
 my $value_size = @values;
-say "2 - value size: $value_size";
+say "value size: $value_size";
 ```
 
 ### 3.3.5 哈希中添加或删除元素
@@ -594,19 +587,19 @@ use Modern::Perl;
 my %data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com');
 my @keys = keys %data;
 my $size = @keys;
-say "1 - 哈希大小: $size";
+say "key size: $size";
 
 # 添加元素
 $data{'facebook'} = 'facebook.com';
 @keys = keys %data;
 $size = @keys;
-say "2 - 哈希大小: $size";
+say "key size: $size";
 
 # 删除哈希中的元素
 delete $data{'taobao'};
 @keys = keys %data;
 $size = @keys;
-say "3 - 哈希大小: $size";
+say "key size: $size";
 ```
 
 ### 3.3.6 用each循环数组
@@ -686,11 +679,11 @@ use Modern::Perl;
 
 my @names = ('google', 'youj', 'taobao');
 
-my @copy = @names;   # 复制数组
-my $size = @names;   # 数组赋值给标量，返回数组元素个数
+my @copy = @names;
+my $size = @names;
 
-say "名字为 : @copy";
-say "名字数为 : $size";
+say "name: @copy";
+say "count: $size";
 ```
 
 ## 3.5 默认变量
@@ -1095,42 +1088,42 @@ my $b = 20;
 say "\$a = $a , \$b = $b";
 
 if ($a == $b) {
-    say "$a == \$b 结果 true";
+    say "$a == \$b => true";
 } else {
-    say "\$a == \$b 结果 false";
+    say "\$a == \$b => false";
 }
 
 if ($a != $b) {
-    say "\$a != \$b 结果 true";
+    say "\$a != \$b => true";
 } else {
-    say "\$a != \$b 结果 false";
+    say "\$a != \$b => false";
 }
 
 my $c = $a <=> $b;
-say "\$a <=> \$b 返回 $c";
+say "\$a <=> \$b => $c";
 
 if ($a > $b) {
-    say "\$a > \$b 结果 true";
+    say "\$a > \$b => true";
 } else {
-    say "\$a > \$b 结果 false";
+    say "\$a > \$b => false";
 }
 
 if ($a >= $b){
-    say "\$a >= \$b 结果 true";
+    say "\$a >= \$b => true";
 } else {
-    say "\$a >= \$b 结果 false";
+    say "\$a >= \$b => false";
 }
 
 if ($a < $b) {
-    say "\$a < \$b 结果 true";
+    say "\$a < \$b => true";
 } else {
-    say "\$a < \$b 结果 false";
+    say "\$a < \$b => false";
 }
 
 if ($a <= $b) {
-    say "\$a <= \$b 结果 true";
+    say "\$a <= \$b => true";
 } else {
-    say "\$a <= \$b 结果 false";
+    say "\$a <= \$b => false";
 }
 ```
 
@@ -1158,37 +1151,37 @@ my $b = "xyz";
 say "\$a = $a ，\$b = $b";
 
 if ($a lt $b) {
-    say "\$a lt \$b 返回 true";
+    say "\$a lt \$b => true";
 } else {
-    say "\$a lt \$b 返回 false";
+    say "\$a lt \$b => false";
 }
 
 if ($a gt $b) {
-    say "\$a gt \$b 返回 true";
+    say "\$a gt \$b => true";
 } else {
-    say "\$a gt \$b 返回 false";
+    say "\$a gt \$b => false";
 }
 
 if ($a le $b) {
-    say "\$a le \$b 返回 true";
+    say "\$a le \$b => true";
 } else {
-    say "\$a le \$b 返回 false";
+    say "\$a le \$b => false";
 }
 
 if ($a ge $b) {
-    say "\$a ge \$b 返回 true";
+    say "\$a ge \$b => true";
 } else {
-    say "\$a ge \$b 返回 false";
+    say "\$a ge \$b => false";
 }
 
 if ($a ne $b) {
-    say "\$a ne \$b 返回 true";
+    say "\$a ne \$b => true";
 } else {
-    say "\$a ne \$b 返回 false";
+    say "\$a ne \$b => false";
 }
 
 my $c = $a cmp $b;
-say "\$a cmp \$b 返回 $c";
+say "\$a cmp \$b => $c";
 ```
 
 ## 6.4 赋值运算符
@@ -1312,7 +1305,7 @@ say "\$a || \$b = $c";
 
 $a = 0;
 $c = not($a);
-say "not(\$a)= $c";
+say "not(\$a) = $c";
 ```
 
 ## 6.7 引号运算
@@ -1441,9 +1434,9 @@ sub Average{
        $sum += $item;
     }
     my $average = $sum / $n;
-    say '传入的参数为 : ',"@_";           # 打印整个数组
-    say "第一个参数值为 : $_[0]";         # 打印第一个参数
-    say "传入参数的平均值为 : $average";  # 打印平均值
+    say 'params : ',"@_";
+    say "first param : $_[0]";
+    say "average : $average";
 }
 
 # 调用函数
