@@ -648,7 +648,213 @@ foreach my $key (keys %data) {
 }
 ```
 
-## 3.4 变量上下文
+## 3.4 引用
+
+引用就是指针，`Perl`引用是一个标量类型，可以指向变量、数组、哈希表（也叫关联数组）甚至函数，可以应用在程序的任何地方
+
+### 3.4.1 创建引用
+
+定义变量的时候，在变量名前面加个`\`，就得到了这个变量的一个引用
+
+```perl
+$scalarref = \$foo;     # 标量变量引用
+$arrayref  = \@ARGV;    # 列表的引用
+$hashref   = \%ENV;     # 哈希的引用
+$coderef   = \&handler; # 子过程引用
+$globref   = \*foo;     # GLOB句柄引用
+```
+
+此外，还可以创建匿名数组的引用（`[]`运算符）、匿名哈希的引用（`{}`运算符）、匿名函数的引用
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $aref1= [ 1,"foo",undef,13 ];
+my $aref2 = [
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9],
+];
+
+my $href= { APR => 4, AUG => 8 };
+
+my $coderef = sub { say "W3CSchool!" };
+```
+
+### 3.4.2 解引用
+
+解引用可以根据不同的类型使用`$`、`@`、`%`以及`->`
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $var = 10;
+
+# $r 引用 $var 标量
+my $r = \$var;
+
+# 输出本地存储的 $r 的变量值
+say '$$r: ', $$r;
+
+my @var = (1, 2, 3);
+# $r 引用  @var 数组
+$r = \@var;
+# 输出本地存储的 $r 的变量值
+say '@$r: ', @$r;
+say '$$r[0]: ', $$r[0];
+say '$r->[0]: ', $r->[0];
+say '@{ $r }[0, 1, 2]: ', @{ $r }[0, 1, 2];
+
+my %var = ('key1' => 10, 'key2' => 20);
+# $r 引用  %var 数组
+$r = \%var;
+# 输出本地存储的 $r 的变量值
+say '%$r: ', %$r;
+say '$r->{\'key1\'}: ', $r->{'key1'};
+```
+
+如果你不能确定变量类型，你可以使用`ref`来判断，返回值列表如下，如果没有以下的值返回`false`
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $var = 10;
+my $r = \$var;
+say "r's ref type: ", ref($r);
+
+my @var = (1, 2, 3);
+$r = \@var;
+say "r's ref type: ", ref($r);
+
+my %var = ('key1' => 10, 'key2' => 20);
+$r = \%var;
+say "r's ref type: ", ref($r);
+```
+
+### 3.4.3 循环引用
+
+循环引用在两个引用相互包含时出现。你需要小心使用，不然会导致内存泄露
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+use Scalar::Util 'weaken';
+
+my $alice = { mother => '', father => '', children => [] };
+my $robert = { mother => '', father => '', children => [] };
+my $cianne = { mother => $alice, father => $robert, children => [] };
+
+push @{ $alice->{children} }, $cianne;
+push @{ $robert->{children} }, $cianne;
+
+weaken( $cianne->{mother} );
+weaken( $cianne->{father} );
+```
+
+### 3.4.4 引用函数
+
+1. 函数引用格式：`\&`
+1. 调用引用函数格式：`&$func_ref(params)`或者`$func_ref->(params)`
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+# 函数定义
+sub PrintHash {
+    my (%hash) = @_;
+   
+    foreach my $item (%hash) {
+        say "元素 : $item";
+    }
+}
+my %hash = ('name' => 'youj', 'age' => 3);
+
+# 创建函数的引用
+my $cref = \&PrintHash;
+
+# 使用引用调用函数，方式1
+&$cref(%hash);
+
+# 使用引用调用函数，方式2
+$cref->(%hash);
+```
+
+### 3.4.5 级联数据结构
+
+由于数组、哈希都只能存储标量，而引用正好也是标量。因此借助引用，可以创建多级数据结构
+
+```perl
+my @famous_triplets = (
+    [qw( eenie miney moe )],
+    [qw( huey dewey louie )],
+    [qw( duck duck goose )],
+);
+
+my %meals = (
+    breakfast => { entree => 'eggs', side => 'hash browns' },
+    lunch => { entree => 'panini', side => 'apple' },
+    dinner => { entree => 'steak', side => 'avocado salad' },
+);
+```
+
+#### 3.4.5.1 访问
+
+我们使用歧义消除块（`disambiguation blocks`）
+
+```perl
+my $nephew_count = @{ $famous_triplets[1] };
+my $dinner_courses = keys %{ $meals{dinner} };
+my ($entree, $side) = @{ $meals{breakfast} }{qw( entree side )};
+```
+
+更好更清晰的写法，自然是使用中间变量
+
+```perl
+my $breakfast_ref = $meals{breakfast};
+my ($entree, $side) = @$breakfast_ref{qw( entree side )};
+```
+
+#### 3.4.5.2 Autovivificatio
+
+当我们对一个多级数据结构进行赋值时，无需按层级一层层依次创建，`Perl`会自动帮我们完成这项工作，这个过程就称为`Autovivificatio`
+
+```perl
+my @aoaoaoa;
+$aoaoaoa[0][0][0][0] = 'nested deeply';
+
+my %hohoh;
+$hohoh{Robot}{Santa}{Claus} = 'mostly harmful';
+```
+
+#### 3.4.5.3 调试
+
+`Data::Dumper`可以帮助我们打印一个复杂的多级数据结构
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+use Data::Dumper;
+
+my @aoaoaoa;
+$aoaoaoa[0][0][0][0] = 'nested deeply';
+
+my %hohoh;
+$hohoh{Robot}{Santa}{Claus} = 'mostly harmful';
+say Dumper( @aoaoaoa );
+say Dumper( %hohoh );
+```
+
+## 3.5 变量上下文
 
 1. 所谓上下文：指的是表达式所在的位置
 1. **上下文是由等号左边的变量类型决定的**，等号左边是标量，则是标量上下文，等号左边是列表，则是列表上下文
@@ -686,9 +892,9 @@ say "name: @copy";
 say "count: $size";
 ```
 
-## 3.5 默认变量
+## 3.6 默认变量
 
-### 3.5.1 默认标量变量
+### 3.6.1 默认标量变量
 
 `$_`又称为默认标量变量（这是`Perl`标志性的特征）。可以用在非常多的地方，包括许多内建的函数
 
@@ -715,14 +921,14 @@ say;
 say "#$_" for 1 .. 10;
 ```
 
-### 3.5.2 默认数组变量
+### 3.6.2 默认数组变量
 
 1. `Perl`将传给函数的参数都存储在`@_`变量中
 1. `push`、`pop`、`shift`、`unshift`在缺省参数的情况下，默认都对`@_`进行操作
 1. `Perl`将命令函参数都存储在`@ARGV`中
 1. `@ARGV`还有另一个用途，当从空文件句柄`<>`中读取内容时，`Perl`默认会将`@ARGV`中存储的内容作为文件名进行依次读取，如果`@ARGV`为空，那么会读取标准输入
 
-## 3.6 特殊变量
+## 3.7 特殊变量
 
 1. `$/`
 1. `$!`
@@ -1019,7 +1225,14 @@ LOOP:do
 
 # 5 指令
 
-## 5.1 循环指令
+## 5.1 分支指令
+
+```perl
+say 'Hello, Bob!' if $name eq 'Bob';
+say "You're no Bob!" unless $name eq 'Bob';
+```
+
+## 5.2 循环指令
 
 ```perl
 use strict;
@@ -1892,211 +2105,57 @@ say $fiber->(3);
 say $fiber->(10);
 ```
 
-# 9 引用
+## 8.3 参数绑定
 
-引用就是指针，`Perl`引用是一个标量类型，可以指向变量、数组、哈希表（也叫关联数组）甚至函数，可以应用在程序的任何地方
-
-## 9.1 创建引用
-
-定义变量的时候，在变量名前面加个`\`，就得到了这个变量的一个引用
+通过闭包，我们能够固定函数的部分参数
 
 ```perl
-$scalarref = \$foo;     # 标量变量引用
-$arrayref  = \@ARGV;    # 列表的引用
-$hashref   = \%ENV;     # 哈希的引用
-$coderef   = \&handler; # 子过程引用
-$globref   = \*foo;     # GLOB句柄引用
+sub make_sundae {
+    my %args = @_;
+    my $ice_cream = get_ice_cream( $args{ice_cream} );
+    my $banana = get_banana( $args{banana} );
+    my $syrup = get_syrup( $args{syrup} );
+    ...
+}
+
+my $make_cart_sundae = sub {
+    return make_sundae( @_,
+        ice_cream => 'French Vanilla',
+        banana => 'Cavendish',
+    );
+};
 ```
 
-此外，还可以创建匿名数组的引用（`[]`运算符）、匿名哈希的引用（`{}`运算符）、匿名函数的引用
+## 8.4 闭包与state
+
+闭包是一种能够在函数调用中持久化数据（不用全局变量）的简单、高效且安全的方式。如果我们想在普通函数中共享某些变量，我们需要引入额外的作用域
 
 ```perl
-use strict;
-use warnings;
-use Modern::Perl;
-
-my $aref1= [ 1,"foo",undef,13 ];
-my $aref2 = [
-        [1, 2, 3],
-        [4, 5, 6],
-        [7, 8, 9],
-];
-
-my $href= { APR => 4, AUG => 8 };
-
-my $coderef = sub { say "W3CSchool!" };
-```
-
-## 9.2 解引用
-
-解引用可以根据不同的类型使用`$`、`@`、`%`以及`->`
-
-```perl
-use strict;
-use warnings;
-use Modern::Perl;
-
-my $var = 10;
-
-# $r 引用 $var 标量
-my $r = \$var;
-
-# 输出本地存储的 $r 的变量值
-say '$$r: ', $$r;
-
-my @var = (1, 2, 3);
-# $r 引用  @var 数组
-$r = \@var;
-# 输出本地存储的 $r 的变量值
-say '@$r: ', @$r;
-say '$$r[0]: ', $$r[0];
-say '$r->[0]: ', $r->[0];
-say '@{ $r }[0, 1, 2]: ', @{ $r }[0, 1, 2];
-
-my %var = ('key1' => 10, 'key2' => 20);
-# $r 引用  %var 数组
-$r = \%var;
-# 输出本地存储的 $r 的变量值
-say '%$r: ', %$r;
-say '$r->{\'key1\'}: ', $r->{'key1'};
-```
-
-如果你不能确定变量类型，你可以使用`ref`来判断，返回值列表如下，如果没有以下的值返回`false`
-
-```perl
-use strict;
-use warnings;
-use Modern::Perl;
-
-my $var = 10;
-my $r = \$var;
-say "r's ref type: ", ref($r);
-
-my @var = (1, 2, 3);
-$r = \@var;
-say "r's ref type: ", ref($r);
-
-my %var = ('key1' => 10, 'key2' => 20);
-$r = \%var;
-say "r's ref type: ", ref($r);
-```
-
-## 9.3 循环引用
-
-循环引用在两个引用相互包含时出现。你需要小心使用，不然会导致内存泄露
-
-```perl
-use strict;
-use warnings;
-use Modern::Perl;
-use Scalar::Util 'weaken';
-
-my $alice = { mother => '', father => '', children => [] };
-my $robert = { mother => '', father => '', children => [] };
-my $cianne = { mother => $alice, father => $robert, children => [] };
-
-push @{ $alice->{children} }, $cianne;
-push @{ $robert->{children} }, $cianne;
-
-weaken( $cianne->{mother} );
-weaken( $cianne->{father} );
-```
-
-## 9.4 引用函数
-
-1. 函数引用格式：`\&`
-1. 调用引用函数格式：`&$func_ref(params)`或者`$func_ref->(params)`
-
-```perl
-use strict;
-use warnings;
-use Modern::Perl;
-
-# 函数定义
-sub PrintHash {
-    my (%hash) = @_;
-   
-    foreach my $item (%hash) {
-        say "元素 : $item";
+{
+    my $safety = 0;
+    sub enable_safety { $safety = 1 }
+    sub disable_safety { $safety = 0 }
+    sub do_something_awesome {
+        return if $safety;
+        ...
     }
 }
-my %hash = ('name' => 'youj', 'age' => 3);
-
-# 创建函数的引用
-my $cref = \&PrintHash;
-
-# 使用引用调用函数，方式1
-&$cref(%hash);
-
-# 使用引用调用函数，方式2
-$cref->(%hash);
 ```
 
-## 9.5 级联数据结构
+# 9 属性
 
-由于数组、哈希都只能存储标量，而引用正好也是标量。因此借助引用，可以创建多级数据结构
+具名实体，包括变量以及函数都可以拥有属性，语法如下
 
 ```perl
-my @famous_triplets = (
-    [qw( eenie miney moe )],
-    [qw( huey dewey louie )],
-    [qw( duck duck goose )],
-);
-
-my %meals = (
-    breakfast => { entree => 'eggs', side => 'hash browns' },
-    lunch => { entree => 'panini', side => 'apple' },
-    dinner => { entree => 'steak', side => 'avocado salad' },
-);
+my $fortress :hidden;
+sub erupt_volcano :ScienceProject { ... }
 ```
 
-### 9.5.1 访问
+上述定义会触发名为`hidden`以及`ScienceProject`的属性处理过程（` Attribute Handlers`)。如果对应的`Handler`不存在，则会报错
 
-我们使用歧义消除块（`disambiguation blocks`）
+属性可以包含一系列参数，`Perl`会将其视为一组常量字符串
 
-```perl
-my $nephew_count = @{ $famous_triplets[1] };
-my $dinner_courses = keys %{ $meals{dinner} };
-my ($entree, $side) = @{ $meals{breakfast} }{qw( entree side )};
-```
-
-更好更清晰的写法，自然是使用中间变量
-
-```perl
-my $breakfast_ref = $meals{breakfast};
-my ($entree, $side) = @$breakfast_ref{qw( entree side )};
-```
-
-### 9.5.2 Autovivificatio
-
-当我们对一个多级数据结构进行赋值时，无需按层级一层层依次创建，`Perl`会自动帮我们完成这项工作，这个过程就称为`Autovivificatio`
-
-```perl
-my @aoaoaoa;
-$aoaoaoa[0][0][0][0] = 'nested deeply';
-
-my %hohoh;
-$hohoh{Robot}{Santa}{Claus} = 'mostly harmful';
-```
-
-### 9.5.3 调试
-
-`Data::Dumper`可以帮助我们打印一个复杂的多级数据结构
-
-```perl
-use strict;
-use warnings;
-use Modern::Perl;
-use Data::Dumper;
-
-my @aoaoaoa;
-$aoaoaoa[0][0][0][0] = 'nested deeply';
-
-my %hohoh;
-$hohoh{Robot}{Santa}{Claus} = 'mostly harmful';
-say Dumper( @aoaoaoa );
-say Dumper( %hohoh );
-```
+**大部分时候，你不需要使用属性**
 
 # 10 Perl 格式化输出
 
@@ -2424,6 +2483,8 @@ while (defined($_ = <$fh>)) {
 
 # 14 Builtin
 
+参考[perlfunc](https://perldoc.perl.org/perlfunc)。此外可以通过`perldoc perlfunc`查看
+
 1. `say`：将给定字符串（默认为`$_`）输出到当前`select`的文件句柄中
 1. `chomp`：删除给定字符串（默认为`$_`）中尾部的换行符
 1. `defined`：判断给定变量是否已定义（是否赋值过）
@@ -2445,6 +2506,7 @@ while (defined($_ = <$fh>)) {
     * `perldoc perlop`
     * `perldoc perlsyn`
     * `perldoc perltoc`
+    * `perldoc perlfunc`
     * `perldoc List::Util`
     * `perldoc Moose::Manual`
     * `perldoc -f wantarray`
@@ -2468,15 +2530,7 @@ while (defined($_ = <$fh>)) {
     * `is`
     * `isnt`
 
-```perl
-use strict;
-use warnings;
-use autodie;
-use Modern::Perl;
-use Test::More 'no_plan';
-```
-
-## 15.1 todo
+**TODO：**
 
 1. map
 1. `To count the number of elements returned from an expression in list context without using a temporary variable, you use the idiom` - P21
@@ -2492,6 +2546,7 @@ use Test::More 'no_plan';
 1. `Aliasing` - P66
 1. `use Carp 'cluck';` - P70
 1. `qr`
+1. `AUTOLOAD` - P85
 
 # 16 参考
 
