@@ -110,7 +110,7 @@ say "filename: ". __FILE__;
 say "linenum: " . __LINE__;
 say "packagename: " . __PACKAGE__;
 
-# 无法解析
+# output literal content
 say "__FILE__ __LINE__ __PACKAGE__";
 ```
 
@@ -418,11 +418,10 @@ say "numbers2: @numbers2";
 **该功能在未来版本可能被废弃，不建议使用**
 
 ```perl
-# 定义数组
 @sites = qw(google taobao youj facebook);
 print "网站: @sites\n";
 
-# 设置数组的第一个索引为 1
+# set array's first index to 1
 $[ = 1;
 
 print "\@sites[1]: $sites[1]\n";
@@ -585,13 +584,13 @@ my @keys = keys %data;
 my $size = @keys;
 say "key size: $size";
 
-# 添加元素
+# add
 $data{'facebook'} = 'facebook.com';
 @keys = keys %data;
 $size = @keys;
 say "key size: $size";
 
-# 删除哈希中的元素
+# delete
 delete $data{'taobao'};
 @keys = keys %data;
 $size = @keys;
@@ -632,7 +631,7 @@ use Hash::Util qw[lock_hash lock_keys unlock_keys];
 
 my %data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com');
 lock_keys(%data);
-# 下面这句会报错
+# compile error
 # $data{'wtf'} = 'wtf.com';
 
 unlock_keys(%data);
@@ -653,11 +652,11 @@ foreach my $key (keys %data) {
 定义变量的时候，在变量名前面加个`\`，就得到了这个变量的一个引用
 
 ```perl
-$scalarref = \$foo;     # 标量变量引用
-$arrayref  = \@ARGV;    # 列表的引用
-$hashref   = \%ENV;     # 哈希的引用
-$coderef   = \&handler; # 子过程引用
-$globref   = \*foo;     # GLOB句柄引用
+$scalarref = \$foo;
+$arrayref  = \@ARGV;
+$hashref   = \%ENV;
+$coderef   = \&handler;
+$globref   = \*foo;
 ```
 
 此外，还可以创建匿名数组的引用（`[]`运算符）、匿名哈希的引用（`{}`运算符）、匿名函数的引用
@@ -688,27 +687,22 @@ use strict;
 use warnings;
 use Modern::Perl;
 
+# scarlar
 my $var = 10;
-
-# $r 引用 $var 标量
 my $r = \$var;
-
-# 输出本地存储的 $r 的变量值
 say '$$r: ', $$r;
 
+# array
 my @var = (1, 2, 3);
-# $r 引用  @var 数组
 $r = \@var;
-# 输出本地存储的 $r 的变量值
 say '@$r: ', @$r;
 say '$$r[0]: ', $$r[0];
 say '$r->[0]: ', $r->[0];
 say '@{ $r }[0, 1, 2]: ', @{ $r }[0, 1, 2];
 
+# hash
 my %var = ('key1' => 10, 'key2' => 20);
-# $r 引用  %var 数组
 $r = \%var;
-# 输出本地存储的 $r 的变量值
 say '%$r: ', %$r;
 say '$r->{\'key1\'}: ', $r->{'key1'};
 ```
@@ -764,7 +758,6 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-# 函数定义
 sub PrintHash {
     my (%hash) = @_;
    
@@ -774,13 +767,12 @@ sub PrintHash {
 }
 my %hash = ('name' => 'youj', 'age' => 3);
 
-# 创建函数的引用
 my $cref = \&PrintHash;
 
-# 使用引用调用函数，方式1
+# form 1
 &$cref(%hash);
 
-# 使用引用调用函数，方式2
+# form 2
 $cref->(%hash);
 ```
 
@@ -869,11 +861,6 @@ say Dumper( %hohoh );
 
 **示例：**
 
-1. `my ($single_element) = find_chores();`：这里的`()`用于给解释器一个提示，虽然`single_element`是个标量，但是仍然要在列表上下文中进行处理。效果是将`find_chores()`返回的列表的第一个元素赋值给`single_element`
-1. `my $numeric_x = 0 + $x;`：显式使用数字上下文
-1. `my $stringy_x = '' . $x; # forces string context`：显式使用`string`上下文
-1. `my $boolean_x = !!$x;`：显式使用布尔上下文
-
 ```perl
 use strict;
 use warnings;
@@ -886,6 +873,34 @@ my $size = @names;
 
 say "name: @copy";
 say "count: $size";
+```
+
+### 3.5.1 显式标量上下文
+
+```perl
+# numerical context
+my $numeric_x = 0 + $x;
+
+# string context
+my $stringy_x = '' . $x;
+
+# boolean context
+my $boolean_x = !!$x;
+
+# scarlar context
+# anonymous hash can contain nested struct
+my $results = {
+    cheap_operation => $cheap_operation_results,
+    expensive_operation => scalar find_chores(),
+};
+```
+
+### 3.5.2 显式列表上下文
+
+```perl
+# It’s semantically equivalent to assigning the first item in 
+# the list to a scalar and assigning the rest of the list to a temporary array, and then throwing away the array
+my ($single_element) = find_chores();
 ```
 
 ## 3.6 默认变量
@@ -901,19 +916,20 @@ use Modern::Perl;
 
 $_ = 'My name is Paquito';
 
-# say 默认输出 $_
+# say working on $_
+# matching working on $_
 say if /My name is/;
 
-# 默认对 $_ 进行替换操作
+# replacing working on $_
 s/Paquito/Paquita/;
 
-# 默认对 $_ 进行大小写转换操作
+# tr working on $_
 tr/A-Z/a-z/;
 
-# say 默认输出 $_
+# say working on $_
 say;
 
-# 默认的循环变量是 $_
+# for loop working on $_
 say "#$_" for 1 .. 10;
 ```
 
@@ -939,7 +955,7 @@ say "#$_" for 1 .. 10;
 
 ```perl
 if (boolean_expression) {
-    # 在布尔表达式 boolean_expression 为 true 执行
+    ...
 }
 ```
 
@@ -947,9 +963,9 @@ if (boolean_expression) {
 
 ```perl
 if (boolean_expression) {
-    # 在布尔表达式 boolean_expression 为 true 执行
+    ...
 } else {
-    # 在布尔表达式 boolean_expression 为 false 执行
+    ...
 }
 ```
 
@@ -957,13 +973,13 @@ if (boolean_expression) {
 
 ```perl
 if (boolean_expression 1) {
-    # 在布尔表达式 boolean_expression 1 为 true 执行
+    ...
 } elsif (boolean_expression 2) {
-    # 在布尔表达式 boolean_expression 2 为 true 执行
+    ...
 } elsif (boolean_expression 3) {
-    # 在布尔表达式 boolean_expression 3 为 true 执行
+    ...
 } else {
-    # 布尔表达式的条件都为 false 时执行
+    ...
 }
 ```
 
@@ -971,7 +987,7 @@ if (boolean_expression 1) {
 
 ```perl
 unless (boolean_expression) {
-    # 在布尔表达式 boolean_expression 为 false 执行
+    ...
 }
 ```
 
@@ -979,9 +995,9 @@ unless (boolean_expression) {
 
 ```perl
 unless (boolean_expression) {
-    # 在布尔表达式 boolean_expression 为 false 执行
+    ...
 } else {
-    # 在布尔表达式 boolean_expression 为 true 执行
+    ...
 }
 ```
 
@@ -989,13 +1005,13 @@ unless (boolean_expression) {
 
 ```perl
 unless (boolean_expression 1) {
-    # 在布尔表达式 boolean_expression 1 为 false 执行
+    ...
 } elsif (boolean_expression 2) {
-    # 在布尔表达式 boolean_expression 2 为 true 执行
+    ...
 } elsif (boolean_expression 3) {
-    # 在布尔表达式 boolean_expression 3 为 true 执行
+    ...
 } else {
-    #  没有条件匹配时执行
+    ...
 }
 ```
 
@@ -1075,11 +1091,10 @@ use Modern::Perl;
 my $a = 10;
 while ($a < 20) {
     if ( $a == 15) {
-       # 跳出迭代
        $a = $a + 1;
        next;
     }
-    say "a 的值为: $a";
+    say "a: $a";
     $a = $a + 1;
 }
 ```
@@ -1096,11 +1111,10 @@ use Modern::Perl;
 my $a = 10;
 while ($a < 20) {
     if ($a == 15) {
-       # 退出循环
        $a = $a + 1;
        last;
     }
-    say "a 的值为: $a";
+    say "a: $a";
     $a = $a + 1;
 }
 ```
@@ -1130,7 +1144,7 @@ use Modern::Perl;
 
 my $a = 0;
 while ($a < 3) {
-    say "a = $a";
+    say "a: $a";
 } continue {
     $a = $a + 1;
 }
@@ -1143,7 +1157,7 @@ use Modern::Perl;
 
 my @list = (1, 2, 3, 4, 5);
 foreach $a (@list) {
-    say "a = $a";
+    say "a: $a";
 } continue {
     last if $a == 4;
 }
@@ -1164,7 +1178,7 @@ while ($a < 10) {
       $a = $a + 1;
       redo;
     }
-    say "a = $a";
+    say "a: $a";
 } continue {
     $a = $a + 1;
 }
@@ -1187,9 +1201,7 @@ my $a = 10;
 LOOP:do
 {
     if ($a == 15) {
-       # 跳过迭代
        $a = $a + 1;
-       # 使用 goto LABEL 形式
        goto LOOP;
     }
     say "a = $a";
@@ -1209,10 +1221,9 @@ my $str2 = "OP";
 LOOP:do
 {
     if ($a == 15) {
-       # 跳过迭代
        $a = $a + 1;
-       # 使用 goto EXPR 形式
-       goto $str1.$str2;    # 类似 goto LOOP
+       # equal with goto LOOP;
+       goto $str1.$str2;
     }
     say "a = $a";
     $a = $a + 1;
@@ -1546,7 +1557,6 @@ say "q{a = \$a} = $b";
 $b = qq{a = $a};
 say "qq{a = \$a} = $b";
 
-# 使用 unix 的 date 命令执行
 my $t = qx{date};
 say "qx{date} = $t";
 ```
@@ -1640,9 +1650,7 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-# 定义求平均值函数
 sub Average{
-    # 获取所有传入的参数
     my $n = scalar(@_);
     my $sum = 0;
 
@@ -1655,7 +1663,6 @@ sub Average{
     say "average : $average";
 }
 
-# 调用函数
 Average(10, 20, 30);
 ```
 
@@ -1669,7 +1676,6 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-# 定义函数
 sub PrintList {
     my @list = @_;
     say "列表为 : @list";
@@ -1677,7 +1683,6 @@ sub PrintList {
 my $a = 10;
 my @b = (1, 2, 3, 4);
 
-# 列表参数
 PrintList($a, @b);
 ```
 
@@ -1690,7 +1695,6 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-# 方法定义
 sub PrintHash {
     my (%hash) = @_;
 
@@ -1701,7 +1705,6 @@ sub PrintHash {
 }
 my %hash = ('name' => 'youj', 'age' => 3);
 
-# 传递哈希
 PrintHash(%hash);
 ```
 
@@ -1773,13 +1776,11 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-# 方法定义1
 sub add_a_b_1 {
     # 不使用 return
     $_[0]+$_[1];   
 }
 
-# 方法定义2
 sub add_a_b_2 {
     # 使用 return
     return $_[0]+$_[1];  
@@ -1803,17 +1804,14 @@ use Modern::Perl;
 
 my $string = "Hello, World!";
 
-# 函数定义
 sub PrintHello {
-    # PrintHello 函数的私有变量
     my $string;
     $string = "Hello, W3Cschool!";
-    say "函数内字符串：$string";
+    say "inside: $string";
 }
 
-# 调用函数
 PrintHello();
-say "函数外字符串：$string";
+say "outside: $string";
 ```
 
 ## 7.5 变量的临时赋值
@@ -1833,20 +1831,20 @@ sub PrintW3CSchool {
     $string = "Hello, W3Cschool!";
 
     PrintMe();
-    say "Within PrintW3CSchool: $string";
+    say "within PrintW3CSchool: $string";
 }
 
 sub PrintMe {
-    say "Within PrintMe: $string";
+    say "within PrintMe: $string";
 }
 
 sub PrintHello {
-    say "Within PrintHello: $string";
+    say "within PrintHello: $string";
 }
 
 PrintW3CSchool();
 PrintHello();
-say "Outside: $string";
+say "outside: $string";
 ```
 
 ## 7.6 静态变量
@@ -1861,7 +1859,7 @@ use Modern::Perl;
 use feature 'state';
 
 sub PrintCount {
-    state $count = 0; # 初始化变量
+    state $count = 0;
 
     say "counter 值为：$count";
     $count++;
@@ -1881,11 +1879,9 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-# 标量上下文
 my $datestring = localtime(time);
 say $datestring;
 
-# 列表上下文
 my ($sec,$min,$hour,$mday,$mon, $year,$wday,$yday,$isdst) = localtime(time);
 printf("%d-%d-%d %d:%d:%d", $year+1990, $mon+1, $mday, $hour, $min, $sec);
 ```
@@ -2183,13 +2179,13 @@ use Modern::Perl;
 
 my $text = "google youj taobao";
 format STDOUT =
-# 左边对齐，字符长度为6
+# left align, length is 6
 first: ^<<<<<
     $text
-# 左边对齐，字符长度为6
+# left align, length is 6
 second: ^<<<<<
     $text
-# 左边对齐，字符长度为5，taobao 最后一个 o 被截断
+# left align, length is 5
 third: ^<<<<
     $text  
 .
@@ -2238,7 +2234,7 @@ $text
 $~ = "MUTI_LINE_2";
 write;
 
-# 重置text
+# reset text
 $text = "line 1\nline 2\nline 3";
 format MUTI_LINE_3 =
 Text: ^*
@@ -2286,7 +2282,7 @@ $salary
 ===================================
 .
 
-# 添加分页 $% 
+# add paging $% 
 format EMPLOYEE_TOP =
 ===================================
 Name                    Age Page @<
@@ -2322,9 +2318,9 @@ use Modern::Perl;
 
 if (open(MYFILE, ">tmp")) {
 $~ = "MYFORMAT";
-write MYFILE; # 含文件变量的输出，此时会打印与变量同名的格式，即MYFILE。$~里指定的值被忽略。
+write MYFILE;
 
-format MYFILE = # 与文件变量同名 
+format MYFILE =
 =================================
       输入到文件中
 =================================
@@ -2341,9 +2337,9 @@ use warnings;
 use Modern::Perl;
 
 if (open(MYFILE, ">>tmp")) {
-select (MYFILE); # 使得默认文件变量的打印输出到MYFILE中
+select (MYFILE);
 $~ = "OTHER";
-write;           # 默认文件变量，打印到select指定的文件中，必使用$~指定的格式 OTHER
+write;
 
 format OTHER =
 =================================
@@ -2584,6 +2580,7 @@ say "$string";
 1. `map`
 1. `grep`
 1. `sort`
+1. `scalar`：显式声明标量上下文
 
 # 16 进阶
 
