@@ -444,10 +444,6 @@ while (my ($index, $value) = each @array) {
 }
 ```
 
-### 3.2.14 Tips
-
-1. 用`print`打印数组时，最好放在引号里面，否则输出的时候，数组各元素就直接贴在一起了。而放在引号里面的话，各元素之间会用空格分隔
-
 ## 3.3 哈希
 
 1. 哈希是一个`key/value`对的集合
@@ -2481,7 +2477,100 @@ while (defined($_ = <$fh>)) {
 }
 ```
 
-# 14 Builtin
+# 14 正则表达式
+
+正则表达式（`regular expression`）描述了一种字符串匹配的模式，可以用来检查一个串是否含有某种子串、将匹配的子串做替换或者从某个串中取出符合某个条件的子串等
+
+`Perl`语言的正则表达式功能非常强大，基本上是常用语言中最强大的，很多语言设计正则式支持的时候都参考`Perl`的正则表达式
+
+`Perl`的正则表达式的三种形式，分别是匹配，替换和转化：
+
+* 匹配：`m//`（还可以简写为`//`，略去`m`）
+* 替换：`s///`
+* 转化：`tr///`
+
+这三种形式一般都和`=~`或`!~`搭配使用，`=~`表示相匹配，`!~`表示不匹配
+
+## 14.1 匹配操作符
+
+匹配操作符`m//`用于匹配一个字符串语句或者一个正则表达式。模式匹配常用的修饰符，如下：
+
+* `i`：如果在修饰符中加上`i`，则正则将会取消大小写敏感性，即`a`和`A`是一样的
+* `m`：多行模式。默认情况下，开始`^`和结束`$`只是对于正则字符串。如果在修饰符中加上`m`，那么开始和结束将会指字符串的每一行：每一行的开头就是`^`，结尾就是`$`
+* `o`：仅赋值一次
+* `s`：单行模式，`.`匹配`\n`（默认不匹配）
+* `x`：忽略模式中的空白
+* `g`：全局匹配
+* `cg`：全局匹配失败后，允许再次查找匹配串
+
+`Perl`处理完后会给匹配到的值存在三个特殊变量名：
+
+* ``$` ``：匹配部分的前一部分字符串
+* `$&`：匹配的字符串
+* `$'`：还没有匹配的剩余字符串
+* 如果将这三个变量放在一起，将得到原始字符串
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $string = "welcome to w3cschool site.";
+$string =~ m/w3c/;
+say "before matched: $`";
+say "matched: $&";
+say "after matched: $'";
+```
+
+## 14.2 替换操作符
+
+替换操作符`s///`是匹配操作符的扩展，使用新的字符串替换指定的字符串。基本格式如下：
+
+```perl
+s/PATTERN/REPLACEMENT/;
+```
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $string = "welcome to google site.";
+$string =~ s/google/w3cschool/;
+
+say "$string";
+```
+
+模式替换常用的修饰符，如下：
+
+* `i`：如果在修饰符中加上`i`，则正则将会取消大小写敏感性，即`a`和`A`是一样的
+* `m`：多行模式。默认情况下，开始`^`和结束`$`只是对于正则字符串。如果在修饰符中加上`m`，那么开始和结束将会指字符串的每一行：每一行的开头就是`^`，结尾就是`$`
+* `o`：表达式只执行一次
+* `s`：单行模式，`.`匹配`\n`（默认不匹配）
+* `x`：忽略模式中的空白
+* `g`：替换所有匹配的字符串
+* `e`：替换字符串作为表达式
+
+## 14.3 转化操作符
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $string = 'welcome to w3cschool site.';
+$string =~ tr/a-z/A-Z/;
+
+say "$string";
+```
+
+模式替换常用的修饰符，如下：
+
+* `c`：转化所有未指定字符
+* `d`：删除所有指定字符
+* `s`：把多个相同的输出字符缩成一个
+
+# 15 Builtin
 
 参考[perlfunc](https://perldoc.perl.org/perlfunc)。此外可以通过`perldoc perlfunc`查看
 
@@ -2496,7 +2585,7 @@ while (defined($_ = <$fh>)) {
 1. `grep`
 1. `sort`
 
-# 15 进阶
+# 16 进阶
 
 [modern-perl.pdf](/resources/modern-perl.pdf)
 
@@ -2548,7 +2637,7 @@ while (defined($_ = <$fh>)) {
 1. `qr`
 1. `AUTOLOAD` - P85
 
-# 16 参考
+# 17 参考
 
 * [w3cschool-perl](https://www.w3cschool.cn/perl/)
 * [perl仓库-cpan](https://www.cpan.org/)
