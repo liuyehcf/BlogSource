@@ -722,6 +722,13 @@ say "#$_" for 1 .. 10;
 1. `Perl`将命令函参数都存储在`@ARGV`中
 1. `@ARGV`还有另一个用途，当从空文件句柄`<>`中读取内容时，`Perl`默认会将`@ARGV`中存储的内容作为文件名进行依次读取，如果`@ARGV`为空，那么会读取标准输入
 
+## 3.6 特殊变量
+
+1. `$/`
+1. `$!`
+1. `$@`
+1. `$|`
+
 # 4 控制流
 
 ## 4.1 条件语句
@@ -1518,7 +1525,36 @@ sub make_sundae {
 }
 ```
 
-## 7.2 函数返回值
+## 7.2 匿名函数
+
+匿名函数与普通函数的唯一差别就是匿名函数没有名字，且仅能通过引用对其进行操作。格式如下：
+
+```perl
+my $anon_sub = sub { ... };
+```
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my %dispatch = (
+    plus => sub { $_[0] + $_[1] },
+    minus => sub { $_[0] - $_[1] },
+    times => sub { $_[0] * $_[1] },
+    goesinto => sub { $_[0] / $_[1] },
+    raisedto => sub { $_[0] ** $_[1] },
+);
+sub dispatch {
+    my ($left, $op, $right) = @_;
+    die "Unknown operation!" unless exists $dispatch{ $op };
+    return $dispatch{ $op }->( $left, $right );
+}
+
+say dispatch ( 2, "times", 4 );
+```
+
+## 7.3 函数返回值
 
 1. 函数可以向其他编程语言一样使用`return`语句来返回函数值
 1. 如果没有使用`return`语句，则函数的最后一行语句将作为返回值
@@ -1544,7 +1580,7 @@ say add_a_b_1(1, 2);
 say add_a_b_2(1, 2);
 ```
 
-## 7.3 函数的私有变量
+## 7.4 函数的私有变量
 
 1. 默认情况下，`Perl`中所有的变量都是全局变量，这就是说变量在程序的任何地方都可以调用
 1. 如果我们需要设置私有变量，可以使用`my`操作符来设置
@@ -1571,39 +1607,40 @@ PrintHello();
 say "函数外字符串：$string";
 ```
 
-## 7.4 变量的临时赋值
+## 7.5 变量的临时赋值
 
 1. 我们可以使用`local`为全局变量提供临时的值，在退出作用域后将原来的值还回去
 1. `local`定义的变量不存在于主程序中，但存在于该函数和该函数调用的函数中。定义时可以给其赋值
 
 ```perl
-# 全局变量
-$string = "Hello, World!";
+use strict;
+use warnings;
+use Modern::Perl;
+
+our $string = "Hello, World!";
 
 sub PrintW3CSchool {
-    # PrintHello 函数私有变量
     local $string;
     $string = "Hello, W3Cschool!";
-    # 函数调用的函数
+
     PrintMe();
-    print "PrintW3CSchool 函数内字符串值：$string\n";
+    say "Within PrintW3CSchool: $string";
 }
 
 sub PrintMe {
-    print "PrintMe 函数内字符串值：$string\n";
+    say "Within PrintMe: $string";
 }
 
 sub PrintHello {
-    print "PrintHello 函数内字符串值：$string\n";
+    say "Within PrintHello: $string";
 }
 
-# 函数调用
 PrintW3CSchool();
 PrintHello();
-print "函数外部字符串值：$string\n";
+say "Outside: $string";
 ```
 
-## 7.5 静态变量
+## 7.6 静态变量
 
 1. `state`操作符功能类似于`C`里面的`static`修饰符，`state`关键字将局部变量变得持久
 1. `state`也是词法变量，所以只在定义该变量的词法作用域中有效
@@ -1626,7 +1663,7 @@ for (1..5) {
 }
 ```
 
-## 7.6 函数调用上下文
+## 7.7 函数调用上下文
 
 函数调用过程中，会根据上下文来返回不同类型的值，比如以下`localtime()`函数，在标量上下文返回字符串，在列表上下文返回列表
 
@@ -1644,7 +1681,7 @@ my ($sec,$min,$hour,$mday,$mon, $year,$wday,$yday,$isdst) = localtime(time);
 printf("%d-%d-%d %d:%d:%d", $year+1990, $mon+1, $mday, $hour, $min, $sec);
 ```
 
-### 7.6.1 上下文感知
+### 7.7.1 上下文感知
 
 `wantarray`用于判断上下文信息
 
@@ -1674,7 +1711,7 @@ say context();
 context()
 ```
 
-## 7.7 命名空间
+## 7.8 函数与命名空间
 
 命名空间（`namespace`）即包（`package`）。默认情况下，函数定义在`main`包中，我们可以显式指定包。同一个命名空间中，某个函数名只能定义一次，重复定义会覆盖前一个定义。编译器会发出警告，可以通过`no warnings 'redefine';`禁止警告
 
@@ -1686,7 +1723,7 @@ sub Extensions::Math::add {
 
 函数对内部、外部均可见，在同一个命名空间中，可以通过函数名来直接访问；在外部的命名空间中，必须通过全限定名来访问，除非将函数导入（`importing`）到当前命名空间中
 
-### 7.7.1 导入
+### 7.8.1 导入
 
 当使用`use`加载模块时，`Perl`会自动调用该模块的`import()`函数，模块中的接口可以提供自己的`import()`方法来向外部导出符号
 
@@ -1707,7 +1744,7 @@ BEGIN {
 }
 ```
 
-## 7.8 报告错误
+## 7.9 报告错误
 
 在函数中，我们可以通过`caller`获取调用者的相关信息
 
@@ -1766,11 +1803,100 @@ add_two_numbers();
 
 `Params::Validate`模块还可以进行参数类型的校验，这里不再赘述
 
-# 8 引用
+# 8 闭包
+
+## 8.1 创建闭包
+
+什么是闭包（`Closure`），闭包是包含了一个外部环境的函数。看下面这个例子，当`make_iterator`函数结束调用时，`return`语句返回的函数仍然指向`@items`、`$count`这两个变量，因此这两个变量的生命周期延长了（与`$cousins`的生命周期相同）。同时由于`@items`、`$count`这两个变量是拷贝出来的，因此，在`make_iterator`函数结束后，除了闭包本身，没有其他方式访问到这两个变量
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+sub make_iterator {
+    my @items = @_;
+    my $count = 0;
+    return sub {
+        return if $count == @items;
+        return $items[ $count++ ];
+    }
+}
+my $cousins = make_iterator(qw( Rick Alex Kaycee Eric Corey ));
+
+say $cousins->() for 1 .. 5;
+```
+
+## 8.2 何时使用闭包
+
+闭包可以在固定大小的列表上生成有效的迭代器。当迭代一个过于昂贵而无法直接引用的项目列表时，它们表现出更大的优势，要么是因为它代表的数据一次计算的成本很高，要么它太大而无法直接进入载入内存
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+sub gen_fib {
+    my @fibs = (0, 1, 1);
+    return sub {
+        my $item = shift;
+        if ($item >= @fibs) {
+            for my $calc ((@fibs - 1) .. $item) {
+                $fibs[$calc] = $fibs[$calc - 2] + $fibs[$calc - 1];
+            }
+        }
+        return $fibs[$item];
+    }
+}
+
+my $fiber = gen_fib();
+say $fiber->(3);
+say $fiber->(10);
+```
+
+上面这个例子可以进一步抽象（用于生成一些其他数列）：
+
+1. 一个数组来存储计算后的值
+1. 一个用于计算的方法
+1. 返回计算或者缓存的结果
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+sub gen_caching_closure {
+    my ($calc_element, @cache) = @_;
+    return sub {
+        my $item = shift;
+        $calc_element->($item, \@cache) unless $item < @cache;
+        return $cache[$item];
+    };
+}
+
+sub gen_fib {
+    my @fibs = (0, 1, 1);
+    return gen_caching_closure(
+        sub {
+            my ($item, $fibs) = @_;
+            for my $calc ((@$fibs - 1) .. $item) {
+                $fibs->[$calc] = $fibs->[$calc - 2] + $fibs->[$calc - 1];
+            }
+        },
+        @fibs
+    );
+}
+
+my $fiber = gen_fib();
+say $fiber->(3);
+say $fiber->(10);
+```
+
+# 9 引用
 
 引用就是指针，`Perl`引用是一个标量类型，可以指向变量、数组、哈希表（也叫关联数组）甚至函数，可以应用在程序的任何地方
 
-## 8.1 创建引用
+## 9.1 创建引用
 
 定义变量的时候，在变量名前面加个`\`，就得到了这个变量的一个引用
 
@@ -1801,7 +1927,7 @@ my $href= { APR => 4, AUG => 8 };
 my $coderef = sub { say "W3CSchool!" };
 ```
 
-## 8.2 解引用
+## 9.2 解引用
 
 解引用可以根据不同的类型使用`$`、`@`、`%`以及`->`
 
@@ -1855,7 +1981,7 @@ $r = \%var;
 say "r's ref type: ", ref($r);
 ```
 
-## 8.3 循环引用
+## 9.3 循环引用
 
 循环引用在两个引用相互包含时出现。你需要小心使用，不然会导致内存泄露
 
@@ -1876,7 +2002,7 @@ weaken( $cianne->{mother} );
 weaken( $cianne->{father} );
 ```
 
-## 8.4 引用函数
+## 9.4 引用函数
 
 1. 函数引用格式：`\&`
 1. 调用引用函数格式：`&$func_ref(params)`或者`$func_ref->(params)`
@@ -1906,7 +2032,7 @@ my $cref = \&PrintHash;
 $cref->(%hash);
 ```
 
-## 8.5 级联数据结构
+## 9.5 级联数据结构
 
 由于数组、哈希都只能存储标量，而引用正好也是标量。因此借助引用，可以创建多级数据结构
 
@@ -1924,7 +2050,7 @@ my %meals = (
 );
 ```
 
-### 8.5.1 访问
+### 9.5.1 访问
 
 我们使用歧义消除块（`disambiguation blocks`）
 
@@ -1941,7 +2067,7 @@ my $breakfast_ref = $meals{breakfast};
 my ($entree, $side) = @$breakfast_ref{qw( entree side )};
 ```
 
-### 8.5.2 Autovivificatio
+### 9.5.2 Autovivificatio
 
 当我们对一个多级数据结构进行赋值时，无需按层级一层层依次创建，`Perl`会自动帮我们完成这项工作，这个过程就称为`Autovivificatio`
 
@@ -1953,7 +2079,7 @@ my %hohoh;
 $hohoh{Robot}{Santa}{Claus} = 'mostly harmful';
 ```
 
-### 8.5.3 调试
+### 9.5.3 调试
 
 `Data::Dumper`可以帮助我们打印一个复杂的多级数据结构
 
@@ -1972,7 +2098,7 @@ say Dumper( @aoaoaoa );
 say Dumper( %hohoh );
 ```
 
-# 9 Perl 格式化输出
+# 10 Perl 格式化输出
 
 1. `Perl`是一个非常强大的文本数据处理语言
 1. `Perl`中可以使用`format`来定义一个模板，然后使用`write`按指定模板输出数据
@@ -2015,7 +2141,7 @@ third: ^<<<<
 write
 ```
 
-## 9.1 格式行
+## 10.1 格式行
 
 **[格式行中涉及的符号](https://perldoc.perl.org/perlform)：**
 
@@ -2086,7 +2212,7 @@ $nums[2]
 write
 ```
 
-## 9.2 格式变量
+## 10.2 格式变量
 
 * `$~`：格式名称，默认是`STDOUT`
 * `$^`：每页的页头格式，默认是`STDOUT_TOP`
@@ -2130,7 +2256,7 @@ foreach (@n) {
 }
 ```
 
-## 9.3 输出到其他文件
+## 10.3 输出到其他文件
 
 默认情况下函数`write`将结果输出到标准输出文件`STDOUT`，我们也可以使它将结果输出到任意其它的文件中。最简单的方法就是把文件变量作为参数传递给`write`。例如，`write(MYFILE);`，`write`就用缺省的名为`MYFILE`的打印格式输出到文件`MYFILE`中。但是这样就不能用`$~`变量来改变所使用的打印格式，因为系统变量`$~`只对默认文件变量起作用
 
@@ -2173,7 +2299,109 @@ close MYFILE;
 }
 ```
 
-# 10 文件
+# 11 作用域
+
+`Perl`中的所有符号都存在作用域（`Scope`）
+
+## 11.1 词法作用域
+
+什么是词法作用域（`Lexical Scope`），由大括号`{}`包围的范围就是一个词法作用域。可以是一个普通的`{}`；可以是一个循环语句；可以是函数定义；`given`语句；可以是其他语法构成的`{}`
+
+```perl
+# outer lexical scope
+{
+    package My::Class;
+    my $outer;
+    sub awesome_method {
+        my $inner;
+        do {
+            my $do_scope;
+            ...
+        } while (@_);
+        # sibling inner lexical scope
+        for (@_) {
+            my $for_scope;
+            ...
+        }
+    }
+}
+```
+
+## 11.2 包作用域
+
+每个包都有一个符号表，该符号表中包含了所有包作用域下的变量。我们可以检查和修改该符号表，这就是导入（`importing`）的工作原理，也是只有全局变量或者包全局变量能够本地化（`local`）的原因
+
+## 11.3 动态作用域
+
+我们可以通过`local`来调整全局变量（或者包全局变量）的作用域，在当前作用域内修改该全局变量的值，不会影响在当前作用域之外的该全局变量的值。通常在处理一些特殊变量时，比较有用
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+{
+    our $scope;
+    sub inner {
+        say $scope;
+    }
+    sub main {
+        say $scope;
+        local $scope = 'main() scope';
+        middle();
+    }
+    sub middle {
+        say $scope;
+        inner();
+    }
+    $scope = 'outer scope';
+    main();
+    say $scope;
+}
+```
+
+## 11.4 静态作用域
+
+我们可以通过`state`来创建具有静态作用域的变量，该变量的生命周期延长至整个程序，但是该变量的可见性依然没有变
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+sub counter {
+    state $count = 1;
+    return $count++;
+}
+
+say counter();
+say counter();
+say counter();
+```
+
+# 12 包
+
+`Perl`中每个包（`Package`）有一个单独的符号表，定义语法为：
+
+```perl
+package mypack;
+```
+
+此语句定义一个名为`mypack`的包，在此后定义的所有变量和函数的名字都存贮在该包关联的符号表中，直到遇到另一个`package`语句为止
+
+每个符号表有其自己的一组变量、函数名，各组名字是不相关的，因此可以在不同的包中使用相同的变量名，而代表的是不同的变量。
+
+从一个包中访问另外一个包的变量，可通过`package_name::variable_name`的方式指定
+
+存贮变量和函数的名字的默认符号表是与名为`main`的包相关联的。如果在程序里定义了其它的包，当你想切换回去使用默认的符号表，可以重新指定`main`包
+
+每个包包含三个默认的函数：
+
+1. `VERSION()`
+1. `import()`
+1. `unimport()`
+
+# 13 文件
 
 从文件中迭代读取内容的经典`while`循环如下：
 
@@ -2194,35 +2422,20 @@ while (defined($_ = <$fh>)) {
 }
 ```
 
-# 11 Package
-
-`Perl`中每个包有一个单独的符号表，定义语法为：
-
-```perl
-package mypack;
-```
-
-此语句定义一个名为`mypack`的包，在此后定义的所有变量和函数的名字都存贮在该包关联的符号表中，直到遇到另一个`package`语句为止
-
-每个符号表有其自己的一组变量、函数名，各组名字是不相关的，因此可以在不同的包中使用相同的变量名，而代表的是不同的变量。
-
-从一个包中访问另外一个包的变量，可通过`package_name::variable_name`的方式指定
-
-存贮变量和函数的名字的默认符号表是与名为`main`的包相关联的。如果在程序里定义了其它的包，当你想切换回去使用默认的符号表，可以重新指定`main`包
-
-每个包包含三个默认的函数：
-
-1. `VERSION()`
-1. `import()`
-1. `unimport()`
-
-# 12 Builtin
+# 14 Builtin
 
 1. `say`：将给定字符串（默认为`$_`）输出到当前`select`的文件句柄中
 1. `chomp`：删除给定字符串（默认为`$_`）中尾部的换行符
 1. `defined`：判断给定变量是否已定义（是否赋值过）
+1. `use`
+1. `our`：为`package`变量创建别名
+1. `my`
+1. `state`：声明静态变量
+1. `map`
+1. `grep`
+1. `sort`
 
-# 13 进阶
+# 15 进阶
 
 [modern-perl.pdf](/resources/modern-perl.pdf)
 
@@ -2263,7 +2476,7 @@ use Modern::Perl;
 use Test::More 'no_plan';
 ```
 
-## 13.1 todo
+## 15.1 todo
 
 1. map
 1. `To count the number of elements returned from an expression in list context without using a temporary variable, you use the idiom` - P21
@@ -2278,8 +2491,9 @@ use Test::More 'no_plan';
 1. `Dualvars` - P48
 1. `Aliasing` - P66
 1. `use Carp 'cluck';` - P70
+1. `qr`
 
-# 14 参考
+# 16 参考
 
 * [w3cschool-perl](https://www.w3cschool.cn/perl/)
 * [perl仓库-cpan](https://www.cpan.org/)
