@@ -1230,16 +1230,16 @@ LOOP:do
 } while ($a < 20);
 ```
 
-# 5 指令
+## 4.4 指令
 
-## 5.1 分支指令
+### 4.4.1 分支指令
 
 ```perl
 say 'Hello, Bob!' if $name eq 'Bob';
 say "You're no Bob!" unless $name eq 'Bob';
 ```
 
-## 5.2 循环指令
+### 4.4.2 循环指令
 
 ```perl
 use strict;
@@ -1249,9 +1249,9 @@ use Modern::Perl;
 say "$_ * $_ = ", $_ * $_ for 1 .. 10;
 ```
 
-# 6 运算符
+# 5 运算符
 
-## 6.1 算数运算符
+## 5.1 算数运算符
 
 1. `+`：加
 1. `-`：减
@@ -1291,7 +1291,7 @@ $c = $a ** $b;
 say '$a ** $b = ' . $c;
 ```
 
-## 6.2 比较运算符
+## 5.2 比较运算符
 
 1. `==`
 1. `!=`
@@ -1354,7 +1354,7 @@ if ($a <= $b) {
 }
 ```
 
-## 6.3 字符串比较运算符
+## 5.3 字符串比较运算符
 
 1. `lt`
 1. `gt`
@@ -1411,7 +1411,7 @@ my $c = $a cmp $b;
 say "\$a cmp \$b => $c";
 ```
 
-## 6.4 赋值运算符
+## 5.4 赋值运算符
 
 1. `=`
 1. `+=`
@@ -1461,7 +1461,7 @@ $data{'first'} //= $b;
 say "\$data{'first'}: $data{'first'}, st: '\$data{'first'} //= \$b'";
 ```
 
-## 6.5 位运算
+## 5.5 位运算
 
 1. `&`
 1. `|`
@@ -1500,7 +1500,7 @@ $c = $a >> 2;
 say "\$a >> 2 = $c";
 ```
 
-## 6.6 逻辑运算
+## 5.6 逻辑运算
 
 1. `and`
 1. `&&`
@@ -1535,7 +1535,7 @@ $c = not($a);
 say "not(\$a) = $c";
 ```
 
-## 6.7 引号运算
+## 5.7 引号运算
 
 有时候，需要在程序中定义一些复杂的字符串，比如包含引号本身，普通的写法会比较麻烦，例如`$name = "\"hello\"";`。可以使用引号运算来处理
 
@@ -1561,7 +1561,7 @@ my $t = qx{date};
 say "qx{date} = $t";
 ```
 
-## 6.8 qw
+## 5.8 qw
 
 将字符串以空白作为分隔符进行拆分，并返回一个数组
 
@@ -1586,7 +1586,7 @@ say "@str";
 say "@str";
 ```
 
-## 6.9 其他运算符
+## 5.9 其他运算符
 
 1. `.`：用于连接两个字符串
 1. `x`：将给定字符串重复给定次数
@@ -1627,7 +1627,7 @@ $c = $b ;
 say "\$b 执行 \$b-- = $c";
 ```
 
-# 7 函数
+# 6 函数
 
 1. `Perl`函数也就是用户定义的函数
 1. `Perl`函数即执行一个特殊任务的一段分离的代码，它可以使减少重复代码且使程序易读。
@@ -1639,7 +1639,7 @@ sub subroutine {
 }
 ```
 
-## 7.1 向函数传递参数
+## 6.1 向函数传递参数
 
 1. `Perl`函数可以和其他编程一样接受多个参数，函数参数使用特殊数组`@_`标明
 1. 因此函数第一个参数为`$_[0]`，第二个参数为`$_[1]`，以此类推
@@ -1666,7 +1666,7 @@ sub Average{
 Average(10, 20, 30);
 ```
 
-### 7.1.1 向函数传递列表
+### 6.1.1 向函数传递列表
 
 1. 由于`@_`变量是一个数组，所以它可以向函数中传递列表
 1. 但如果我们需要传入标量和数组参数时，需要把列表放在最后一个参数上
@@ -1686,7 +1686,7 @@ my @b = (1, 2, 3, 4);
 PrintList($a, @b);
 ```
 
-### 7.1.2 向函数传递哈希
+### 6.1.2 向函数传递哈希
 
 当向函数传递哈希表时，它将复制到`@_`中，哈希表将被展开为键/值组合的列表
 
@@ -1708,7 +1708,7 @@ my %hash = ('name' => 'youj', 'age' => 3);
 PrintHash(%hash);
 ```
 
-### 7.1.3 设置参数默认值
+### 6.1.3 设置参数默认值
 
 方式一：使用`//=`运算符，只有在变量未定义的时候才会赋值
 
@@ -1737,7 +1737,7 @@ sub make_sundae {
 }
 ```
 
-## 7.2 匿名函数
+## 6.2 匿名函数
 
 匿名函数与普通函数的唯一差别就是匿名函数没有名字，且仅能通过引用对其进行操作。格式如下：
 
@@ -1766,7 +1766,7 @@ sub dispatch {
 say dispatch ( 2, "times", 4 );
 ```
 
-## 7.3 函数返回值
+## 6.3 函数返回值
 
 1. 函数可以向其他编程语言一样使用`return`语句来返回函数值
 1. 如果没有使用`return`语句，则函数的最后一行语句将作为返回值
@@ -1790,7 +1790,7 @@ say add_a_b_1(1, 2);
 say add_a_b_2(1, 2);
 ```
 
-## 7.4 函数的私有变量
+## 6.4 函数的私有变量
 
 1. 默认情况下，`Perl`中所有的变量都是全局变量，这就是说变量在程序的任何地方都可以调用
 1. 如果我们需要设置私有变量，可以使用`my`操作符来设置
@@ -1814,7 +1814,7 @@ PrintHello();
 say "outside: $string";
 ```
 
-## 7.5 变量的临时赋值
+## 6.5 变量的临时赋值
 
 1. 我们可以使用`local`为全局变量提供临时的值，在退出作用域后将原来的值还回去
 1. `local`定义的变量不存在于主程序中，但存在于该函数和该函数调用的函数中。定义时可以给其赋值
@@ -1847,7 +1847,7 @@ PrintHello();
 say "outside: $string";
 ```
 
-## 7.6 静态变量
+## 6.6 静态变量
 
 1. `state`操作符功能类似于`C`里面的`static`修饰符，`state`关键字将局部变量变得持久
 1. `state`也是词法变量，所以只在定义该变量的词法作用域中有效
@@ -1870,7 +1870,7 @@ for (1..5) {
 }
 ```
 
-## 7.7 函数调用上下文
+## 6.7 函数调用上下文
 
 函数调用过程中，会根据上下文来返回不同类型的值，比如以下`localtime()`函数，在标量上下文返回字符串，在列表上下文返回列表
 
@@ -1886,7 +1886,7 @@ my ($sec,$min,$hour,$mday,$mon, $year,$wday,$yday,$isdst) = localtime(time);
 printf("%d-%d-%d %d:%d:%d", $year+1990, $mon+1, $mday, $hour, $min, $sec);
 ```
 
-### 7.7.1 上下文感知
+### 6.7.1 上下文感知
 
 `wantarray`用于判断上下文信息
 
@@ -1916,7 +1916,7 @@ say context();
 context()
 ```
 
-## 7.8 函数与命名空间
+## 6.8 函数与命名空间
 
 命名空间（`namespace`）即包（`package`）。默认情况下，函数定义在`main`包中，我们可以显式指定包。同一个命名空间中，某个函数名只能定义一次，重复定义会覆盖前一个定义。编译器会发出警告，可以通过`no warnings 'redefine';`禁止警告
 
@@ -1928,7 +1928,7 @@ sub Extensions::Math::add {
 
 函数对内部、外部均可见，在同一个命名空间中，可以通过函数名来直接访问；在外部的命名空间中，必须通过全限定名来访问，除非将函数导入（`importing`）到当前命名空间中
 
-### 7.8.1 导入
+### 6.8.1 导入
 
 当使用`use`加载模块时，`Perl`会自动调用该模块的`import()`函数，模块中的接口可以提供自己的`import()`方法来向外部导出符号
 
@@ -1949,7 +1949,7 @@ BEGIN {
 }
 ```
 
-## 7.9 报告错误
+## 6.9 报告错误
 
 在函数中，我们可以通过`caller`获取调用者的相关信息
 
@@ -2008,9 +2008,9 @@ add_two_numbers();
 
 `Params::Validate`模块还可以进行参数类型的校验，这里不再赘述
 
-# 8 闭包
+## 6.10 闭包
 
-## 8.1 创建闭包
+### 6.10.1 创建闭包
 
 什么是闭包（`Closure`），闭包是包含了一个外部环境的函数。看下面这个例子，当`make_iterator`函数结束调用时，`return`语句返回的函数仍然指向`@items`、`$count`这两个变量，因此这两个变量的生命周期延长了（与`$cousins`的生命周期相同）。同时由于`@items`、`$count`这两个变量是拷贝出来的，因此，在`make_iterator`函数结束后，除了闭包本身，没有其他方式访问到这两个变量
 
@@ -2032,7 +2032,7 @@ my $cousins = make_iterator(qw( Rick Alex Kaycee Eric Corey ));
 say $cousins->() for 1 .. 5;
 ```
 
-## 8.2 何时使用闭包
+### 6.10.2 何时使用闭包
 
 闭包可以在固定大小的列表上生成有效的迭代器。当迭代一个过于昂贵而无法直接引用的项目列表时，它们表现出更大的优势，要么是因为它代表的数据一次计算的成本很高，要么它太大而无法直接进入载入内存
 
@@ -2097,7 +2097,7 @@ say $fiber->(3);
 say $fiber->(10);
 ```
 
-## 8.3 参数绑定
+### 6.10.3 参数绑定
 
 通过闭包，我们能够固定函数的部分参数
 
@@ -2118,7 +2118,7 @@ my $make_cart_sundae = sub {
 };
 ```
 
-## 8.4 闭包与state
+### 6.10.4 闭包与state
 
 闭包是一种能够在函数调用中持久化数据（不用全局变量）的简单、高效且安全的方式。如果我们想在普通函数中共享某些变量，我们需要引入额外的作用域
 
@@ -2134,20 +2134,404 @@ my $make_cart_sundae = sub {
 }
 ```
 
-# 9 属性
+# 7 正则表达式
 
-具名实体，包括变量以及函数都可以拥有属性，语法如下
+正则表达式（`regular expression`）描述了一种字符串匹配的模式，可以用来检查一个串是否含有某种子串、将匹配的子串做替换或者从某个串中取出符合某个条件的子串等
+
+`Perl`语言的正则表达式功能非常强大，基本上是常用语言中最强大的，很多语言设计正则式支持的时候都参考`Perl`的正则表达式，详情参考：
+
+* `perldoc perlretut`
+* `perldoc perlre`
+* `perldoc perlreref`
+
+`Perl`的正则表达式的三种形式，分别是匹配，替换和转化：
+
+* 匹配：`m//`（还可以简写为`//`，略去`m`）
+* 替换：`s///`
+* 转化：`tr///`
+
+这三种形式一般都和`=~`或`!~`搭配使用，`=~`表示相匹配，`!~`表示不匹配
+
+## 7.1 匹配操作符
+
+匹配操作符`m//`用于匹配一个字符串语句或者一个正则表达式。模式匹配常用的修饰符，如下：
+
+* `i`：如果在修饰符中加上`i`，则正则将会取消大小写敏感性，即`a`和`A`是一样的
+* `m`：多行模式。默认情况下，开始`^`和结束`$`只是对于正则字符串。如果在修饰符中加上`m`，那么开始和结束将会指字符串的每一行：每一行的开头就是`^`，结尾就是`$`
+* `o`：仅赋值一次
+* `s`：单行模式，`.`匹配`\n`（默认不匹配）
+* `x`：忽略模式中的空白以及`#`符号及其后面的字符，通常用于写出更易读的正则表达式
+* `g`：全局匹配
+* `cg`：全局匹配失败后，允许再次查找匹配串
+
+`Perl`处理完后会给匹配到的值存在三个特殊变量名：
+
+* ``$` ``：匹配部分的前一部分字符串
+* `$&`：匹配的字符串
+* `$'`：还没有匹配的剩余字符串
+* 如果将这三个变量放在一起，将得到原始字符串
 
 ```perl
-my $fortress :hidden;
-sub erupt_volcano :ScienceProject { ... }
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $string = "welcome to w3cschool site.";
+$string =~ m/w3c/;
+say "before matched: $`";
+say "matched: $&";
+say "after matched: $'";
 ```
 
-上述定义会触发名为`hidden`以及`ScienceProject`的属性处理过程（` Attribute Handlers`)。如果对应的`Handler`不存在，则会报错
+## 7.2 替换操作符
 
-属性可以包含一系列参数，`Perl`会将其视为一组常量字符串
+替换操作符`s///`是匹配操作符的扩展，使用新的字符串替换指定的字符串。基本格式如下：
 
-**大部分时候，你不需要使用属性**
+```perl
+s/PATTERN/REPLACEMENT/;
+```
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $string = "welcome to google site.";
+$string =~ s/google/w3cschool/;
+
+say "$string";
+```
+
+模式替换常用的修饰符，如下：
+
+* `i`：如果在修饰符中加上`i`，则正则将会取消大小写敏感性，即`a`和`A`是一样的
+* `m`：多行模式。默认情况下，开始`^`和结束`$`只是对于正则字符串。如果在修饰符中加上`m`，那么开始和结束将会指字符串的每一行：每一行的开头就是`^`，结尾就是`$`
+* `o`：表达式只执行一次
+* `s`：单行模式，`.`匹配`\n`（默认不匹配）
+* `x`：忽略模式中的空白以及`#`符号及其后面的字符，通常用于写出更易读的正则表达式
+* `g`：替换所有匹配的字符串
+* `e`：替换字符串作为表达式
+
+## 7.3 转化操作符
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $string = 'welcome to w3cschool site.';
+$string =~ tr/a-z/A-Z/;
+
+say "$string";
+```
+
+模式替换常用的修饰符，如下：
+
+* `c`：转化所有未指定字符
+* `d`：删除所有指定字符
+* `s`：把多个相同的输出字符缩成一个
+
+## 7.4 qr操作符
+
+`qr`用于创建正则表达式。相比于普通变量，`qr`还可以额外存储修饰符
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $hat = qr/hat/;
+my $name = "I have a hat!";
+say 'Found a hat!' if $name =~ /$hat/;
+
+my $hat_i = qr/hat/i;
+$name = "I have a Hat!";
+say 'Found a hat!' if $name =~ /$hat_i/;
+```
+
+## 7.5 具名捕获
+
+具名捕获格式如下：
+
+```perl
+(?<name> ... )
+```
+
+其中，`?<name>`是正则表达式的名称，其右边是常规的正则表达式，整个部分用`()`包围起来。当字符串匹配时，匹配部分会被存储在`$+`中（`$+`是一个哈希），其中，`key`是正则表达式的名称
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $phone_number = qr/[0-9]{8}/;
+my $contact_info = 'CN-88888888';
+
+if ($contact_info =~ /(?<phone>$phone_number)/) {
+    say "Found a number $+{phone}";
+}
+```
+
+## 7.6 非具名捕获
+
+非具名捕获的格式如下：
+
+```perl
+(...)
+```
+
+我们可以通过数字来引用被捕获的部分，比如`$1`、`$2`等。编号由什么决定？由`(`出现的顺序决定，即第一个`(`出现的分区用`$1`，第二个用`$2`，以此类推
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $phone_number = qr/[0-9]{8}/;
+my $contact_info = 'CN-88888888';
+
+if ($contact_info =~ /($phone_number)/) {
+    say "Found a number $1";
+}
+```
+
+此外，在列表上下文中，`Perl`会按照捕获组的顺序，依次给列表中的变量赋值
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $country = qr/[a-zA-Z]+/;
+my $phone_number = qr/[0-9]{8}/;
+my $contact_info = 'CN-88888888';
+
+if (my ($c, $p) = $contact_info =~ /($country)-($phone_number)/) {
+    say "$c: $p";
+}
+```
+
+## 7.7 交替
+
+交替元字符（`Alternation Metacharacter`）`|`，表示前面的任何一个片段都可能匹配
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+use Test::More tests => 3;
+
+my $r = qr/^rice|beans$/;
+
+like('rice', $r, 'Match rice');
+like('beans', $r, 'Match beans');
+like('ricbeans', $r, 'Match weird hybrid');
+```
+
+注意到，`rice|beans`也可以表示`ric + e|b + eans`。为了避免混淆，可以加上括号
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+use Test::More tests => 3;
+
+my $r = qr/^(rice|beans)$/;
+
+like('rice', $r, 'Match rice');
+like('beans', $r, 'Match beans');
+unlike('ricbeans', $r, 'Unmatch weird hybrid');
+```
+
+或者，使用`(?:...)`，如下：
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+use Test::More tests => 3;
+
+my $r = qr/^(?:rice|beans)$/;
+
+like('rice', $r, 'Match rice');
+like('beans', $r, 'Match beans');
+unlike('ricbeans', $r, 'Unmatch weird hybrid');
+```
+
+## 7.8 断言
+
+断言都是零长度的，它不消耗匹配字符串中的字符，仅表示一些位置信息
+
+* `\A`：整个匹配串的起始位置
+* `\Z`：整个匹配串的结束位置
+* `^`：行的起始位置
+* `$`：行的结束位置
+* `\b`：它的前一个字符和后一个字符不全是(一个是，一个不是或不存在)`\w`
+* `\B`：它的前一个字符和后一个字符不全是(一个是，一个不是或不存在)`\W`
+* `(?!...)`：表示前面的模式后面不能紧跟`...`表示的模式。`zero-width negative look-ahead assertion`
+* `(?=...)`：表示前面的模式后面必须紧跟`...`表示的模式。`zero-width positive look-ahead assertion`
+* `(?<!...)`：表示后面的模式，其前面不能紧跟`...`表示的模式。`zero-width negative look-behind assertion`
+* `(?<=...)`：表示后面的模式，其前面必须紧跟`...`表示的模式。`zero-width positive look-behind assertion`
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+use Test::More tests => 4;
+
+my $r1 = qr/\Asome(?!thing)\Z/;
+my $r2 = qr/\Asome(?=thing)\Z/;
+my $r3 = qr/\A(?<!some)thing\Z/;
+my $r4 = qr/\A(?<=some)thing\Z/;
+
+unlike('something', $r1, 'some is immediately followed by thing');
+like('something', $r2, 'some is immediately followed by thing');
+unlike('something', $r3, 'some is immediately before thing');
+like('something', $r4, 'some is immediately before thing');
+```
+
+## 7.9 循环匹配
+
+`\G`用于表示最近一次匹配的位置，一般用于循环处理一个长文本，每次处理一小块（下面这个例子，不加`\G`效果也一样）
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $contents = '
+010-99991111
+0571-88888888
+021-11117789
+';
+
+while ($contents =~ /\G.*?(\d{3, 4})-(\d{8}).*?/gs) {
+    say "area num: $1, number: $2";
+}
+```
+
+# 8 作用域
+
+`Perl`中的所有符号都存在作用域（`Scope`）
+
+## 8.1 词法作用域
+
+什么是词法作用域（`Lexical Scope`），由大括号`{}`包围的范围就是一个词法作用域。可以是一个普通的`{}`；可以是一个循环语句；可以是函数定义；`given`语句；可以是其他语法构成的`{}`
+
+```perl
+# outer lexical scope
+{
+    package My::Class;
+    my $outer;
+    sub awesome_method {
+        my $inner;
+        do {
+            my $do_scope;
+            ...
+        } while (@_);
+        # sibling inner lexical scope
+        for (@_) {
+            my $for_scope;
+            ...
+        }
+    }
+}
+```
+
+## 8.2 包作用域
+
+每个包都有一个符号表，该符号表中包含了所有包作用域下的变量。我们可以检查和修改该符号表，这就是导入（`importing`）的工作原理，也是只有全局变量或者包全局变量能够本地化（`local`）的原因
+
+## 8.3 动态作用域
+
+我们可以通过`local`来调整全局变量（或者包全局变量）的作用域，在当前作用域内修改该全局变量的值，不会影响在当前作用域之外的该全局变量的值。通常在处理一些特殊变量时，比较有用
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+{
+    our $scope;
+    sub inner {
+        say $scope;
+    }
+    sub main {
+        say $scope;
+        local $scope = 'main() scope';
+        middle();
+    }
+    sub middle {
+        say $scope;
+        inner();
+    }
+    $scope = 'outer scope';
+    main();
+    say $scope;
+}
+```
+
+## 8.4 静态作用域
+
+我们可以通过`state`来创建具有静态作用域的变量，该变量的生命周期延长至整个程序，但是该变量的可见性依然没有变
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+sub counter {
+    state $count = 1;
+    return $count++;
+}
+
+say counter();
+say counter();
+say counter();
+```
+
+# 9 包和模块
+
+`Perl`中每个包（`Package`）有一个单独的符号表，定义语法为：
+
+```perl
+package mypack;
+```
+
+此语句定义一个名为`mypack`的包，在此后定义的所有变量和函数的名字都存贮在该包关联的符号表中，直到遇到另一个`package`语句为止
+
+每个符号表有其自己的一组变量、函数名，各组名字是不相关的，因此可以在不同的包中使用相同的变量名，而代表的是不同的变量。
+
+从一个包中访问另外一个包的变量，可通过`package_name::variable_name`的方式指定
+
+存贮变量和函数的名字的默认符号表是与名为`main`的包相关联的。如果在程序里定义了其它的包，当你想切换回去使用默认的符号表，可以重新指定`main`包
+
+每个包包含三个默认的函数：
+
+1. `VERSION()`
+1. `import()`
+1. `unimport()`
+
+## 9.1 模块
+
+`Perl5`中用`Perl`包来创建模块。
+
+`Perl`模块是一个可重复使用的包，模块的名字与包名相同，定义的文件后缀为`.pm`
+
+`Perl`中关于模块需要注意以下几点：
+
+* 函数`require`和`use`将载入一个模块
+* `@INC`是`Perl`内置的一个特殊数组，它包含指向库例程所在位置的目录路径。
+* `require`和`use`函数调用`eval`函数来执行代码
+* 末尾`1;`执行返回`TRUE`，这是必须的，否则返回错误
+
+**`use`和`require`的区别：**
+
+1. `require`用于载入`module`或`perl`程序（`.pm`后缀可以省略，但`.pl`必须有）
+1. `use`语句是编译时引入，`require`是运行时引入
+1. `use`引入模块的同时，也引入了模块的子模块。而`require`则不能引入子模块
+1. `use`是在当前默认的`@INC`里面去寻找，一旦模块不在`@INC`中的话,用`use`是不可以引入的，但是`require`可以指定路径
+1. `use`引用模块时，如果模块名称中包含`::`双冒号，该双冒号将作为路径分隔符，相当于`Unix`下的`/`或者`Windows`下的`\`
 
 # 10 Perl 格式化输出
 
@@ -2350,109 +2734,7 @@ if (open(MYFILE, ">>tmp")) {
 }
 ```
 
-# 11 作用域
-
-`Perl`中的所有符号都存在作用域（`Scope`）
-
-## 11.1 词法作用域
-
-什么是词法作用域（`Lexical Scope`），由大括号`{}`包围的范围就是一个词法作用域。可以是一个普通的`{}`；可以是一个循环语句；可以是函数定义；`given`语句；可以是其他语法构成的`{}`
-
-```perl
-# outer lexical scope
-{
-    package My::Class;
-    my $outer;
-    sub awesome_method {
-        my $inner;
-        do {
-            my $do_scope;
-            ...
-        } while (@_);
-        # sibling inner lexical scope
-        for (@_) {
-            my $for_scope;
-            ...
-        }
-    }
-}
-```
-
-## 11.2 包作用域
-
-每个包都有一个符号表，该符号表中包含了所有包作用域下的变量。我们可以检查和修改该符号表，这就是导入（`importing`）的工作原理，也是只有全局变量或者包全局变量能够本地化（`local`）的原因
-
-## 11.3 动态作用域
-
-我们可以通过`local`来调整全局变量（或者包全局变量）的作用域，在当前作用域内修改该全局变量的值，不会影响在当前作用域之外的该全局变量的值。通常在处理一些特殊变量时，比较有用
-
-```perl
-use strict;
-use warnings;
-use Modern::Perl;
-
-{
-    our $scope;
-    sub inner {
-        say $scope;
-    }
-    sub main {
-        say $scope;
-        local $scope = 'main() scope';
-        middle();
-    }
-    sub middle {
-        say $scope;
-        inner();
-    }
-    $scope = 'outer scope';
-    main();
-    say $scope;
-}
-```
-
-## 11.4 静态作用域
-
-我们可以通过`state`来创建具有静态作用域的变量，该变量的生命周期延长至整个程序，但是该变量的可见性依然没有变
-
-```perl
-use strict;
-use warnings;
-use Modern::Perl;
-
-sub counter {
-    state $count = 1;
-    return $count++;
-}
-
-say counter();
-say counter();
-say counter();
-```
-
-# 12 包
-
-`Perl`中每个包（`Package`）有一个单独的符号表，定义语法为：
-
-```perl
-package mypack;
-```
-
-此语句定义一个名为`mypack`的包，在此后定义的所有变量和函数的名字都存贮在该包关联的符号表中，直到遇到另一个`package`语句为止
-
-每个符号表有其自己的一组变量、函数名，各组名字是不相关的，因此可以在不同的包中使用相同的变量名，而代表的是不同的变量。
-
-从一个包中访问另外一个包的变量，可通过`package_name::variable_name`的方式指定
-
-存贮变量和函数的名字的默认符号表是与名为`main`的包相关联的。如果在程序里定义了其它的包，当你想切换回去使用默认的符号表，可以重新指定`main`包
-
-每个包包含三个默认的函数：
-
-1. `VERSION()`
-1. `import()`
-1. `unimport()`
-
-# 13 文件
+# 11 文件
 
 从文件中迭代读取内容的经典`while`循环如下：
 
@@ -2473,268 +2755,24 @@ while (defined($_ = <$fh>)) {
 }
 ```
 
-# 14 正则表达式
+# 12 高级特性
 
-正则表达式（`regular expression`）描述了一种字符串匹配的模式，可以用来检查一个串是否含有某种子串、将匹配的子串做替换或者从某个串中取出符合某个条件的子串等
+## 12.1 属性
 
-`Perl`语言的正则表达式功能非常强大，基本上是常用语言中最强大的，很多语言设计正则式支持的时候都参考`Perl`的正则表达式，详情参考：
-
-* `perldoc perlretut`
-* `perldoc perlre`
-* `perldoc perlreref`
-
-`Perl`的正则表达式的三种形式，分别是匹配，替换和转化：
-
-* 匹配：`m//`（还可以简写为`//`，略去`m`）
-* 替换：`s///`
-* 转化：`tr///`
-
-这三种形式一般都和`=~`或`!~`搭配使用，`=~`表示相匹配，`!~`表示不匹配
-
-## 14.1 匹配操作符
-
-匹配操作符`m//`用于匹配一个字符串语句或者一个正则表达式。模式匹配常用的修饰符，如下：
-
-* `i`：如果在修饰符中加上`i`，则正则将会取消大小写敏感性，即`a`和`A`是一样的
-* `m`：多行模式。默认情况下，开始`^`和结束`$`只是对于正则字符串。如果在修饰符中加上`m`，那么开始和结束将会指字符串的每一行：每一行的开头就是`^`，结尾就是`$`
-* `o`：仅赋值一次
-* `s`：单行模式，`.`匹配`\n`（默认不匹配）
-* `x`：忽略模式中的空白以及`#`符号及其后面的字符，通常用于写出更易读的正则表达式
-* `g`：全局匹配
-* `cg`：全局匹配失败后，允许再次查找匹配串
-
-`Perl`处理完后会给匹配到的值存在三个特殊变量名：
-
-* ``$` ``：匹配部分的前一部分字符串
-* `$&`：匹配的字符串
-* `$'`：还没有匹配的剩余字符串
-* 如果将这三个变量放在一起，将得到原始字符串
+具名实体，包括变量以及函数都可以拥有属性，语法如下
 
 ```perl
-use strict;
-use warnings;
-use Modern::Perl;
-
-my $string = "welcome to w3cschool site.";
-$string =~ m/w3c/;
-say "before matched: $`";
-say "matched: $&";
-say "after matched: $'";
+my $fortress :hidden;
+sub erupt_volcano :ScienceProject { ... }
 ```
 
-## 14.2 替换操作符
+上述定义会触发名为`hidden`以及`ScienceProject`的属性处理过程（` Attribute Handlers`)。如果对应的`Handler`不存在，则会报错
 
-替换操作符`s///`是匹配操作符的扩展，使用新的字符串替换指定的字符串。基本格式如下：
+属性可以包含一系列参数，`Perl`会将其视为一组常量字符串
 
-```perl
-s/PATTERN/REPLACEMENT/;
-```
+**大部分时候，你不需要使用属性**
 
-```perl
-use strict;
-use warnings;
-use Modern::Perl;
-
-my $string = "welcome to google site.";
-$string =~ s/google/w3cschool/;
-
-say "$string";
-```
-
-模式替换常用的修饰符，如下：
-
-* `i`：如果在修饰符中加上`i`，则正则将会取消大小写敏感性，即`a`和`A`是一样的
-* `m`：多行模式。默认情况下，开始`^`和结束`$`只是对于正则字符串。如果在修饰符中加上`m`，那么开始和结束将会指字符串的每一行：每一行的开头就是`^`，结尾就是`$`
-* `o`：表达式只执行一次
-* `s`：单行模式，`.`匹配`\n`（默认不匹配）
-* `x`：忽略模式中的空白以及`#`符号及其后面的字符，通常用于写出更易读的正则表达式
-* `g`：替换所有匹配的字符串
-* `e`：替换字符串作为表达式
-
-## 14.3 转化操作符
-
-```perl
-use strict;
-use warnings;
-use Modern::Perl;
-
-my $string = 'welcome to w3cschool site.';
-$string =~ tr/a-z/A-Z/;
-
-say "$string";
-```
-
-模式替换常用的修饰符，如下：
-
-* `c`：转化所有未指定字符
-* `d`：删除所有指定字符
-* `s`：把多个相同的输出字符缩成一个
-
-## 14.4 qr操作符
-
-`qr`用于创建正则表达式。相比于普通变量，`qr`还可以额外存储修饰符
-
-```perl
-use strict;
-use warnings;
-use Modern::Perl;
-
-my $hat = qr/hat/;
-my $name = "I have a hat!";
-say 'Found a hat!' if $name =~ /$hat/;
-
-my $hat_i = qr/hat/i;
-$name = "I have a Hat!";
-say 'Found a hat!' if $name =~ /$hat_i/;
-```
-
-## 14.5 具名捕获
-
-具名捕获格式如下：
-
-```perl
-(?<name> ... )
-```
-
-其中，`?<name>`是正则表达式的名称，其右边是常规的正则表达式，整个部分用`()`包围起来。当字符串匹配时，匹配部分会被存储在`$+`中（`$+`是一个哈希），其中，`key`是正则表达式的名称
-
-```perl
-use strict;
-use warnings;
-use Modern::Perl;
-
-my $phone_number = qr/[0-9]{8}/;
-my $contact_info = 'CN-88888888';
-
-if ($contact_info =~ /(?<phone>$phone_number)/) {
-    say "Found a number $+{phone}";
-}
-```
-
-## 14.6 非具名捕获
-
-非具名捕获的格式如下：
-
-```perl
-(...)
-```
-
-我们可以通过数字来引用被捕获的部分，比如`$1`、`$2`等。编号由什么决定？由`(`出现的顺序决定，即第一个`(`出现的分区用`$1`，第二个用`$2`，以此类推
-
-```perl
-use strict;
-use warnings;
-use Modern::Perl;
-
-my $phone_number = qr/[0-9]{8}/;
-my $contact_info = 'CN-88888888';
-
-if ($contact_info =~ /($phone_number)/) {
-    say "Found a number $1";
-}
-```
-
-此外，在列表上下文中，`Perl`会按照捕获组的顺序，依次给列表中的变量赋值
-
-```perl
-use strict;
-use warnings;
-use Modern::Perl;
-
-my $country = qr/[a-zA-Z]+/;
-my $phone_number = qr/[0-9]{8}/;
-my $contact_info = 'CN-88888888';
-
-if (my ($c, $p) = $contact_info =~ /($country)-($phone_number)/) {
-    say "$c: $p";
-}
-```
-
-## 14.7 交替
-
-交替元字符（`Alternation Metacharacter`）`|`，表示前面的任何一个片段都可能匹配
-
-```perl
-use strict;
-use warnings;
-use Modern::Perl;
-use Test::More tests => 3;
-
-my $r = qr/^rice|beans$/;
-
-like('rice', $r, 'Match rice');
-like('beans', $r, 'Match beans');
-like('ricbeans', $r, 'Match weird hybrid');
-```
-
-注意到，`rice|beans`也可以表示`ric + e|b + eans`。为了避免混淆，可以加上括号
-
-```perl
-use strict;
-use warnings;
-use Modern::Perl;
-use Test::More tests => 3;
-
-my $r = qr/^(rice|beans)$/;
-
-like('rice', $r, 'Match rice');
-like('beans', $r, 'Match beans');
-unlike('ricbeans', $r, 'Unmatch weird hybrid');
-```
-
-## 14.8 断言
-
-断言都是零长度的，它不消耗匹配字符串中的字符，仅表示一些位置信息
-
-* `\A`：整个匹配串的起始位置
-* `\Z`：整个匹配串的结束位置
-* `^`：行的起始位置
-* `$`：行的结束位置
-* `\b`：它的前一个字符和后一个字符不全是(一个是，一个不是或不存在)`\w`
-* `\B`：它的前一个字符和后一个字符不全是(一个是，一个不是或不存在)`\W`
-* `(?!...)`：表示前面的模式后面不能紧跟`...`表示的模式。`zero-width negative look-ahead assertion`
-* `(?=...)`：表示前面的模式后面必须紧跟`...`表示的模式。`zero-width positive look-ahead assertion`
-* `(?<!...)`：表示后面的模式，其前面不能紧跟`...`表示的模式。`zero-width negative look-behind assertion`
-* `(?<=...)`：表示后面的模式，其前面必须紧跟`...`表示的模式。`zero-width positive look-behind assertion`
-
-```perl
-use strict;
-use warnings;
-use Modern::Perl;
-use Test::More tests => 4;
-
-my $r1 = qr/\Asome(?!thing)\Z/;
-my $r2 = qr/\Asome(?=thing)\Z/;
-my $r3 = qr/\A(?<!some)thing\Z/;
-my $r4 = qr/\A(?<=some)thing\Z/;
-
-unlike('something', $r1, 'some is immediately followed by thing');
-like('something', $r2, 'some is immediately followed by thing');
-unlike('something', $r3, 'some is immediately before thing');
-like('something', $r4, 'some is immediately before thing');
-```
-
-## 14.9 循环匹配
-
-`\G`用于表示最近一次匹配的位置，一般用于循环处理一个长文本，每次处理一小块
-
-```perl
-use strict;
-use warnings;
-use Modern::Perl;
-
-my $contents = '
-010-99991111
-0571-88888888
-021-11117789
-';
-
-while ($contents =~ /\G(\d{3, 4})-(\d{8})/g) {
-    say "area num: $1, number: $2";
-}
-```
-
-# 15 Builtin
+# 13 Builtin
 
 参考[perlfunc](https://perldoc.perl.org/perlfunc)。此外可以通过`perldoc perlfunc`查看
 
@@ -2750,7 +2788,7 @@ while ($contents =~ /\G(\d{3, 4})-(\d{8})/g) {
 1. `sort`
 1. `scalar`：显式声明标量上下文
 
-# 16 进阶
+# 14 进阶
 
 [modern-perl.pdf](/resources/modern-perl.pdf)
 
@@ -2807,9 +2845,8 @@ while ($contents =~ /\G(\d{3, 4})-(\d{8})/g) {
 1. `Named Captures` - P94
 1. `abc|def` 和 `(abc|def)`的差异
 1. `(?=`的示例有问题
-1. 循环匹配例子
 
-# 17 参考
+# 15 参考
 
 * [w3cschool-perl](https://www.w3cschool.cn/perl/)
 * [perl仓库-cpan](https://www.cpan.org/)
