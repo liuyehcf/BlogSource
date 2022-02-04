@@ -2850,7 +2850,6 @@ sub erupt_volcano :ScienceProject { ... }
 1. `AUTOLOAD` - P85
 1. `Named Captures` - P94
 1. `abc|def` 和 `(abc|def)`的差异
-1. `(?=`的示例有问题
 
 # 15 参考
 
