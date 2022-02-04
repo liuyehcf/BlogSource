@@ -15,9 +15,9 @@ categories:
 
 **我们已经有`shell`，有`python`了，有什么必要再学一门脚本语言么？**
 
-* 和`shell`杂交非常亲和，`shell`脚本里用`perl`可替换`sed,awk,grep`
-* 字符串处理。`q,qq,qx,qw,qr`
-* 丰富且顺手的正则方言
+* 和`shell`杂交非常亲和，`shell`脚本里用`Perl`可替换`sed,awk,grep`
+* 字符串处理。`q/qq/qx/qw/qr`
+* 正则是`Perl`语法的一部分，功能非常强大，且方言顺手
 
 # 2 基础语法
 
@@ -2477,7 +2477,11 @@ while (defined($_ = <$fh>)) {
 
 正则表达式（`regular expression`）描述了一种字符串匹配的模式，可以用来检查一个串是否含有某种子串、将匹配的子串做替换或者从某个串中取出符合某个条件的子串等
 
-`Perl`语言的正则表达式功能非常强大，基本上是常用语言中最强大的，很多语言设计正则式支持的时候都参考`Perl`的正则表达式
+`Perl`语言的正则表达式功能非常强大，基本上是常用语言中最强大的，很多语言设计正则式支持的时候都参考`Perl`的正则表达式，详情参考：
+
+* `perldoc perlretut`
+* `perldoc perlre`
+* `perldoc perlreref`
 
 `Perl`的正则表达式的三种形式，分别是匹配，替换和转化：
 
@@ -2495,7 +2499,7 @@ while (defined($_ = <$fh>)) {
 * `m`：多行模式。默认情况下，开始`^`和结束`$`只是对于正则字符串。如果在修饰符中加上`m`，那么开始和结束将会指字符串的每一行：每一行的开头就是`^`，结尾就是`$`
 * `o`：仅赋值一次
 * `s`：单行模式，`.`匹配`\n`（默认不匹配）
-* `x`：忽略模式中的空白
+* `x`：忽略模式中的空白以及`#`符号及其后面的字符，通常用于写出更易读的正则表达式
 * `g`：全局匹配
 * `cg`：全局匹配失败后，允许再次查找匹配串
 
@@ -2543,7 +2547,7 @@ say "$string";
 * `m`：多行模式。默认情况下，开始`^`和结束`$`只是对于正则字符串。如果在修饰符中加上`m`，那么开始和结束将会指字符串的每一行：每一行的开头就是`^`，结尾就是`$`
 * `o`：表达式只执行一次
 * `s`：单行模式，`.`匹配`\n`（默认不匹配）
-* `x`：忽略模式中的空白
+* `x`：忽略模式中的空白以及`#`符号及其后面的字符，通常用于写出更易读的正则表达式
 * `g`：替换所有匹配的字符串
 * `e`：替换字符串作为表达式
 
@@ -2565,6 +2569,170 @@ say "$string";
 * `c`：转化所有未指定字符
 * `d`：删除所有指定字符
 * `s`：把多个相同的输出字符缩成一个
+
+## 14.4 qr操作符
+
+`qr`用于创建正则表达式。相比于普通变量，`qr`还可以额外存储修饰符
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $hat = qr/hat/;
+my $name = "I have a hat!";
+say 'Found a hat!' if $name =~ /$hat/;
+
+my $hat_i = qr/hat/i;
+$name = "I have a Hat!";
+say 'Found a hat!' if $name =~ /$hat_i/;
+```
+
+## 14.5 具名捕获
+
+具名捕获格式如下：
+
+```perl
+(?<name> ... )
+```
+
+其中，`?<name>`是正则表达式的名称，其右边是常规的正则表达式，整个部分用`()`包围起来。当字符串匹配时，匹配部分会被存储在`$+`中（`$+`是一个哈希），其中，`key`是正则表达式的名称
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $phone_number = qr/[0-9]{8}/;
+my $contact_info = 'CN-88888888';
+
+if ($contact_info =~ /(?<phone>$phone_number)/) {
+    say "Found a number $+{phone}";
+}
+```
+
+## 14.6 非具名捕获
+
+非具名捕获的格式如下：
+
+```perl
+(...)
+```
+
+我们可以通过数字来引用被捕获的部分，比如`$1`、`$2`等。编号由什么决定？由`(`出现的顺序决定，即第一个`(`出现的分区用`$1`，第二个用`$2`，以此类推
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $phone_number = qr/[0-9]{8}/;
+my $contact_info = 'CN-88888888';
+
+if ($contact_info =~ /($phone_number)/) {
+    say "Found a number $1";
+}
+```
+
+此外，在列表上下文中，`Perl`会按照捕获组的顺序，依次给列表中的变量赋值
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $country = qr/[a-zA-Z]+/;
+my $phone_number = qr/[0-9]{8}/;
+my $contact_info = 'CN-88888888';
+
+if (my ($c, $p) = $contact_info =~ /($country)-($phone_number)/) {
+    say "$c: $p";
+}
+```
+
+## 14.7 交替
+
+交替元字符（`Alternation Metacharacter`）`|`，表示前面的任何一个片段都可能匹配
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+use Test::More tests => 3;
+
+my $r = qr/^rice|beans$/;
+
+like('rice', $r, 'Match rice');
+like('beans', $r, 'Match beans');
+like('ricbeans', $r, 'Match weird hybrid');
+```
+
+注意到，`rice|beans`也可以表示`ric + e|b + eans`。为了避免混淆，可以加上括号
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+use Test::More tests => 3;
+
+my $r = qr/^(rice|beans)$/;
+
+like('rice', $r, 'Match rice');
+like('beans', $r, 'Match beans');
+unlike('ricbeans', $r, 'Unmatch weird hybrid');
+```
+
+## 14.8 断言
+
+断言都是零长度的，它不消耗匹配字符串中的字符，仅表示一些位置信息
+
+* `\A`：整个匹配串的起始位置
+* `\Z`：整个匹配串的结束位置
+* `^`：行的起始位置
+* `$`：行的结束位置
+* `\b`：它的前一个字符和后一个字符不全是(一个是，一个不是或不存在)`\w`
+* `\B`：它的前一个字符和后一个字符不全是(一个是，一个不是或不存在)`\W`
+* `(?!...)`：表示前面的模式后面不能紧跟`...`表示的模式。`zero-width negative look-ahead assertion`
+* `(?=...)`：表示前面的模式后面必须紧跟`...`表示的模式。`zero-width positive look-ahead assertion`
+* `(?<!...)`：表示后面的模式，其前面不能紧跟`...`表示的模式。`zero-width negative look-behind assertion`
+* `(?<=...)`：表示后面的模式，其前面必须紧跟`...`表示的模式。`zero-width positive look-behind assertion`
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+use Test::More tests => 4;
+
+my $r1 = qr/\Asome(?!thing)\Z/;
+my $r2 = qr/\Asome(?=thing)\Z/;
+my $r3 = qr/\A(?<!some)thing\Z/;
+my $r4 = qr/\A(?<=some)thing\Z/;
+
+unlike('something', $r1, 'some is immediately followed by thing');
+like('something', $r2, 'some is immediately followed by thing');
+unlike('something', $r3, 'some is immediately before thing');
+like('something', $r4, 'some is immediately before thing');
+```
+
+## 14.9 循环匹配
+
+`\G`用于表示最近一次匹配的位置，一般用于循环处理一个长文本，每次处理一小块
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $contents = '
+010-99991111
+0571-88888888
+021-11117789
+';
+
+while ($contents =~ /\G(\d{3, 4})-(\d{8})/g) {
+    say "area num: $1, number: $2";
+}
+```
 
 # 15 Builtin
 
@@ -2589,13 +2757,16 @@ say "$string";
 **工具：**
 
 1. `perldoc`
-    * `perldoc perlop`
-    * `perldoc perlsyn`
-    * `perldoc perltoc`
-    * `perldoc perlfunc`
+    * `perldoc perltoc`：文档内容表
+    * `perldoc perlsyn`：语法
+    * `perldoc perlop`：运算符
+    * `perldoc perlfunc`：`builtin`函数
+        * `perldoc -f wantarray`
+    * `perldoc perlretut`：正则表达式教程
+    * `perldoc perlre`：正则表达式详细文档
+    * `perldoc perlreref`：正则表达式指导
     * `perldoc List::Util`
     * `perldoc Moose::Manual`
-    * `perldoc -f wantarray`
 1. `cpan`
     * `cpan Modern::Perl`
 1. `perlbrew`
@@ -2633,6 +2804,10 @@ say "$string";
 1. `use Carp 'cluck';` - P70
 1. `qr`
 1. `AUTOLOAD` - P85
+1. `Named Captures` - P94
+1. `abc|def` 和 `(abc|def)`的差异
+1. `(?=`的示例有问题
+1. 循环匹配例子
 
 # 17 参考
 
