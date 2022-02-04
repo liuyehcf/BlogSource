@@ -2377,17 +2377,20 @@ unlike('ricbeans', $r, 'Unmatch weird hybrid');
 use strict;
 use warnings;
 use Modern::Perl;
-use Test::More tests => 4;
+use Test::More tests => 6;
 
-my $r1 = qr/\Asome(?!thing)\Z/;
-my $r2 = qr/\Asome(?=thing)\Z/;
-my $r3 = qr/\A(?<!some)thing\Z/;
-my $r4 = qr/\A(?<=some)thing\Z/;
+my $r1 = qr/\Aabcd\Z/;
+my $r2 = qr/some(?!thing)/;
+my $r3 = qr/some(?=thing)/;
+my $r4 = qr/(?<!some)thing/;
+my $r5 = qr/(?<=some)thing/;
 
-unlike('something', $r1, 'some is immediately followed by thing');
-like('something', $r2, 'some is immediately followed by thing');
-unlike('something', $r3, 'some is immediately before thing');
-like('something', $r4, 'some is immediately before thing');
+like('abcd', $r1, 'exactly abcd');
+unlike('abcde', $r1, 'not exactly abcd');
+unlike('something', $r2, 'some is immediately followed by thing');
+like('something', $r3, 'some is immediately followed by thing');
+unlike('something', $r4, 'some is immediately before thing');
+like('something', $r5, 'some is immediately before thing');
 ```
 
 ## 7.9 循环匹配
