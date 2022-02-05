@@ -2539,7 +2539,549 @@ package mypack;
 1. `use`是在当前默认的`@INC`里面去寻找，一旦模块不在`@INC`中的话,用`use`是不可以引入的，但是`require`可以指定路径
 1. `use`引用模块时，如果模块名称中包含`::`双冒号，该双冒号将作为路径分隔符，相当于`Unix`下的`/`或者`Windows`下的`\`
 
-# 10 格式化输出
+# 10 面向对象
+
+`Perl 5`中用`package`来为类提供命名空间。（`Moose`模块可以用`cpan Moose`来安装）
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+{
+    package Cat;
+    use Moose;
+}
+
+my $brad = Cat->new();
+my $jack = Cat->new();
+```
+
+这里，箭头运算符`->`用于调用类或对象的方法
+
+## 10.1 方法
+
+1. 方法的调用总是有一个`invocant`，该方法在该`invocant`上运行。方法调用者可以是类名，也可以是类的一个实例
+1. `invocant`会作为方法的第一个参数。这里存在一个普遍的约定，就是会将该参数保存到`$self`变量中
+1. 方法调用会涉及到分发策略，就是决定调用方法的哪一个具体的实现（多态）
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+{
+    package Cat;
+    use Moose;
+    sub meow {
+        my $self = shift;
+        say 'Meow!';
+    }
+}
+
+my $alarm = Cat->new();
+$alarm->meow();
+$alarm->meow();
+$alarm->meow();
+
+Cat->meow() for 1 .. 3;
+```
+
+## 10.2 属性
+
+我们通过`has`来定义属性（`perldoc Moose`），其中
+
+* `is`：声明属性的读写属性，即是否可读，是否可写
+    * `ro`：表示只读
+    * `rw`：表示读写
+* `isa`：声明属性的类型
+* `writer`：提供私有的，类内部使用的写入器
+* **特别地，该行定义会根据读写属性创建相应的访问属性的方法和修改属性的方法。比如下面这个例子，就会创建一个访问属性的方法`name()`，且允许在构造函数里传入一个`name`参数用于初始化该属性**
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+{
+    package Cat;
+    use Moose;
+    has 'name' => (is => 'ro', isa => 'Str');
+}
+
+for my $name (qw( Tuxie Petunia Daisy )) {
+    my $cat = Cat->new( name => $name );
+    say "Created a cat for ", $cat->name();
+}
+```
+
+此外，`has`还可以有多种不同的书写方式：
+
+```perl
+has 'name', is => 'ro', isa => 'Str';
+has( 'name', 'is', 'ro', 'isa', 'Str' );
+has( qw( name is ro isa Str ) );
+has 'name' => (
+    is => 'ro',
+    isa => 'Str',
+    # advanced Moose options; perldoc Moose
+    init_arg => undef,
+    lazy_build => 1,
+);
+```
+
+### 10.2.1 属性默认值
+
+通过`default`关键词，可以将一个函数引用关联到属性上，当构造函数未提供该属性的初始值时，会通过该函数应用来创建初始值
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+{
+    package Cat;
+    use Moose;
+    has 'name' => (is => 'ro', isa => 'Str');
+    has 'diet' => (is => 'rw', isa => 'Str');
+    has 'birth_year' => (is => 'ro', isa => 'Int', default => sub { (localtime)[5] + 1900 });
+}
+
+my $cat = Cat->new( name => "Tuxie", diet => "Junk Food");
+say $cat->birth_year();
+```
+
+## 10.3 多态
+
+多态（`polymorphism`）是`OOP`中的一个重要属性。在`Perl`中，只要两个对象提供了相同的外部接口，就可以将一个类的对象替换为另一个类的对象。某些语言（比如Java/C++）可能会要求额外的信息，比如类的继承关系，接口的实现关系等等，然后才允许多态发生
+
+## 10.4 角色
+
+角色（`Role`）是一组行为和状态的具名集合。一个类就是一个角色，类和角色之间的重要区别就是，类可以实例化成对象，而角色不行（感觉，角色这个概念，就类似于其他语言中的接口）
+
+* `requires`关键词声明角色需要包含哪些方法
+* `with`关键词声明类扮演了哪些角色。通常`with`会写在属性定义后面，这样`Moose`为属性生成的访问方法或者修改方法也可以作为扮演角色所必须实现的方法
+* `DOES`用于检查实例是否扮演了某个角色
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+{
+    package LivingBeing;
+    use Moose::Role;
+    requires qw( name age diet );
+}
+
+{
+    package Cat;
+    use Moose;
+    has 'name' => (is => 'ro', isa => 'Str');
+    has 'diet' => (is => 'rw', isa => 'Str');
+    has 'birth_year' => (is => 'ro', isa => 'Int', default => (localtime)[5] + 1900);
+    
+    with 'LivingBeing';
+
+    sub age {
+        my $self = shift;
+        my $year = (localtime)[5] + 1900;
+        return $year - $self->birth_year();
+    }
+}
+
+my $fluffy = Cat->new( name => "Fluffy", diet => "Junk Food");
+my $cheese = Cat->new( name => "Cheese", diet => "Junk Food");
+
+say 'Alive!' if $fluffy->DOES('LivingBeing');
+say 'Moldy!' if $cheese->DOES('LivingBeing');
+```
+
+此外，我们还可以将公共的部分抽取出来放到一个角色中，进一步复用代码
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+{
+    package LivingBeing;
+    use Moose::Role;
+    requires qw( name age diet );
+}
+
+{
+    package CalculateAge::From::BirthYear;
+    use Moose::Role;
+    has 'birth_year' => (is => 'ro', isa => 'Int', default => sub { (localtime)[5] + 1900 });
+    sub age {
+        my $self = shift;
+        my $year = (localtime)[5] + 1900;
+        return $year - $self->birth_year();
+    }
+}
+
+{
+    package Cat;
+    use Moose;
+    has 'name' => (is => 'ro', isa => 'Str');
+    has 'diet' => (is => 'rw', isa => 'Str');
+    
+    with 'LivingBeing', 'CalculateAge::From::BirthYear';
+}
+
+my $fluffy = Cat->new( name => "Fluffy", diet => "Junk Food");
+my $cheese = Cat->new( name => "Cheese", diet => "Junk Food");
+
+say 'Alive!' if $fluffy->DOES('LivingBeing');
+say 'Moldy!' if $cheese->DOES('LivingBeing');
+```
+
+可以看到，我们将通过`birth_year`计算`age`的这部分代码单独移到了角色`CalculateAge::From::BirthYear`中，且`Cat`继承了该角色的`age`方法，且正好满足`LivingBeing`的要求（提供`age`方法）。`Cat`可以选择自己提供`age`方法或者从其他`Role`中直接继承，只要有就可以，这就叫做同构（`Allomorphism`）
+
+## 10.5 继承
+
+`Perl 5`提供的另一个特性就是继承（`Inheritance`）。继承在两个类之间建立关联，子类可以继承父类的属性和方法以及角色。**事实上，实践表明，我们可以在所有需要继承的地方将其替换为角色，因为角色具有更好的安全性、类型检查、更少的代码耦合**
+
+* `extends`关键词来声明继承的父类列表
+* `has '+candle_power', default => 100;`中的`+`表示显式覆盖父类中的属性
+* `override`关键词用于显式声明方法重写，并且提供调用父类方法的方式，即`super()`
+* `isa`用于检查实例是否继承自某个类
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+{
+    package LightSource;
+    use Moose;
+    has 'candle_power' => (is => 'ro', isa => 'Int', default => 1);
+    has 'enabled' => (is => 'ro', isa => 'Bool', default => 0, writer => '_set_enabled');
+    sub light {
+        my $self = shift;
+        $self->_set_enabled(1);
+    }
+    sub extinguish {
+        my $self = shift;
+        $self->_set_enabled(0);
+    }
+}
+
+{
+    package LightSource::SuperCandle;
+    use Moose;
+    extends 'LightSource';
+    has '+candle_power' => (default => 100);
+}
+
+{
+    package LightSource::Glowstick;
+    use Moose;
+    extends 'LightSource';
+    sub extinguish {}
+}
+
+{
+    package LightSource::Cranky;
+    use Carp;
+    use Moose;
+    extends 'LightSource';
+    override light => sub {
+        my $self = shift;
+        Carp::carp( "Can't light a lit light source!" ) if $self->enabled;
+        super();
+    };
+    override extinguish => sub {
+        my $self = shift;
+        Carp::carp( "Can't extinguish an unlit light source!" ) unless $self->enabled;
+        super();
+    };
+}
+
+my $sconce = LightSource::Glowstick->new();
+say 'Looks like a LightSource' if $sconce->isa( 'LightSource' );
+```
+
+当有多个父类都提供了同一个方法时，`Perl`的分派策略（`perldoc mro`）：查找第一个父类（递归查找父类的父类）的方法，再查找第二个父类，直到找到方法
+
+## 10.6 原生OOP
+
+**上面介绍的都是基于`Moose`的`OOP`，下面再介绍一下`Perl 5`原生的`OOP`**
+
+`Perl`中有两种不同地面向对象编程的实现：
+
+1. 一是基于匿名哈希表的方式，每个对象实例的实质就是一个指向匿名哈希表的引用。在这个匿名哈希表中，存储来所有的实例属性
+1. 二是基于数组的方式，在定义一个类的时候，我们将为每一个实例属性创建一个数组，而每一个对象实例的实质就是一个指向这些数组中某一行索引的引用。在这些数组中，存储着所有的实例属性
+
+### 10.6.1 基本概念
+
+面向对象有很多基础概念，最核心的就是下面三个：
+
+* 对象：对象是对类中数据项的引用
+* 类：类是个`Perl`包，其中含提供对象方法的类（`Perl`对类和包没有明确的区分）
+* 方法：方法是个`Perl`子程序，类名是其第一个参数。
+
+`Perl`提供了`bless()`函数，`bless`是用来构造对象的，通过`bless`把一个引用和这个类名相关联，返回这个引用就构造出一个对象
+
+### 10.6.2 类的定义
+
+1. 一个类只是一个简单的包
+1. 可以把一个包当作一个类用，并且把包里的函数当作类的方法来用
+1. `Perl`的包提供了独立的命名空间，所以不同包的方法与变量名不会冲突
+1. `Perl`类的文件后缀为`.pm`
+
+### 10.6.3 创建和使用对象
+
+1. 创建一个类的实例 (对象) 我们需要定义一个构造函数，大多数程序使用类名作为构造函数，`Perl`中可以使用任何名字，通常来说，用`new`（这个`new`不是关键词，而是个普通的函数名）
+1. 你可以使用多种`Perl`的变量作为`Perl`的对象。大多数情况下我们会使用数组或哈希的引用
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+{
+    package Person;
+    sub new {
+        my $class = shift;
+        my $self = {
+            _firstName => shift,
+            _lastName  => shift,
+            _ssn       => shift,
+        };
+
+        say "First name: $self->{_firstName}";
+        say "Last name: $self->{_lastName}";
+        say "Num: $self->{_ssn}";
+        bless $self, $class;
+        return $self;
+    }
+}
+
+my $object = new Person( "Bruce", "Lee", 23234345);
+```
+
+### 10.6.4 定义方法
+
+1. `Perl`类的方法只但是是个`Perl`子程序而已，也即通常所说的成员函数
+1. `Perl`面向对象中`Perl`的方法定义不提供任何特别语法，但规定方法的第一个参数为对象或其被引用的包
+1. `Perl`没有提供私有变量，但我们可以通过辅助的方式来管理对象数据
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+{
+    package Person;
+    sub new {
+        my $class = shift;
+        my $self = {
+            _firstName => shift,
+            _lastName  => shift,
+            _ssn       => shift,
+        };
+
+        say "First name: $self->{_firstName}";
+        say "Last name: $self->{_lastName}";
+        say "Num: $self->{_ssn}";
+        bless $self, $class;
+        return $self;
+    }
+
+    sub setFirstName {
+        my ( $self, $firstName ) = @_;
+        $self->{_firstName} = $firstName if defined($firstName);
+        return $self->{_firstName};
+    }
+
+    sub getFirstName {
+        my( $self ) = @_;
+        return $self->{_firstName};
+    }
+}
+
+my $object = new Person( "Bruce", "Lee", 23234345);
+my $firstName = $object->getFirstName();
+say "firstName: $firstName";
+
+$object->setFirstName("John");
+
+$firstName = $object->getFirstName();
+say "firstName: $firstName";
+```
+
+### 10.6.5 继承
+
+1. `Perl`里类方法通过`@ISA`数组继承，这个数组里面包含其他包（类）的名字，变量的继承必须明确设定
+1. 多继承就是这个`@ISA`数组包含多个类（包）名字
+1. 通过`@ISA`能继承方法和数据
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+{
+    package Person;
+    sub new {
+        my $class = shift;
+        my $self = {
+            _firstName => shift,
+            _lastName  => shift,
+            _ssn       => shift,
+        };
+
+        say "First name: $self->{_firstName}";
+        say "Last name: $self->{_lastName}";
+        say "Num: $self->{_ssn}";
+        bless $self, $class;
+        return $self;
+    }
+
+    sub setFirstName {
+        my ( $self, $firstName ) = @_;
+        $self->{_firstName} = $firstName if defined($firstName);
+        return $self->{_firstName};
+    }
+
+    sub getFirstName {
+        my( $self ) = @_;
+        return $self->{_firstName};
+    }
+}
+
+{
+    package Employee;
+    our @ISA = qw(Person);
+}
+
+my $object = new Employee( "Bruce", "Lee", 23234345);
+my $firstName = $object->getFirstName();
+say "firstName: $firstName";
+
+$object->setFirstName("John");
+
+$firstName = $object->getFirstName();
+say "firstName: $firstName";
+```
+
+### 10.6.6 方法重写
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+{
+    package Person;
+    sub new {
+        my $class = shift;
+        my $self = {
+            _firstName => shift,
+            _lastName  => shift,
+            _ssn       => shift,
+        };
+
+        say "First name: $self->{_firstName}";
+        say "Last name: $self->{_lastName}";
+        say "Num: $self->{_ssn}";
+        bless $self, $class;
+        return $self;
+    }
+
+    sub setFirstName {
+        my ( $self, $firstName ) = @_;
+        $self->{_firstName} = $firstName if defined($firstName);
+        return $self->{_firstName};
+    }
+
+    sub getFirstName {
+        my( $self ) = @_;
+        return $self->{_firstName};
+    }
+}
+
+{
+    package Employee;
+    our @ISA = qw(Person);
+
+    sub new {
+        my ($class) = @_;
+
+        my $self = $class->SUPER::new( $_[1], $_[2], $_[3] );
+
+        $self->{_id}   = undef;
+        $self->{_title} = undef;
+        bless $self, $class;
+        return $self;
+    }
+
+    sub getFirstName {
+        my( $self ) = @_;
+        say "Employee::getFirstName";
+        return $self->{_firstName};
+    }
+
+    sub setLastName {
+        my ( $self, $lastName ) = @_;
+        $self->{_lastName} = $lastName if defined($lastName);
+        return $self->{_lastName};
+    }
+
+    sub getLastName {
+        my( $self ) = @_;
+        return $self->{_lastName};
+    }
+}
+
+my $object = new Employee( "Bruce", "Lee", 23234345);
+my $firstName = $object->getFirstName();
+say "firstName: $firstName";
+
+$object->setFirstName("John");
+
+$firstName = $object->getFirstName();
+say "firstName: $firstName";
+
+my $lastName = $object->getLastName();
+say "lastName: $lastName";
+
+$object->setLastName("Chen");
+
+$lastName = $object->getLastName();
+say "lastName: $lastName";
+```
+
+### 10.6.7 默认载入
+
+1. 如果在当前类、当前类所有的基类、还有`UNIVERSAL`类中都找不到请求的方法，这时会再次查找名为`AUTOLOAD()`的一个方法。如果找到了`AUTOLOAD`，那么就会调用，同时设定全局变量`$AUTOLOAD`的值为缺失的方法的全限定名称
+1. 如果还不行，那么`Perl`就宣告失败并出错
+
+如果你不想继承基类的`AUTOLOAD`，很简单，只需要一句：
+
+```perl
+sub AUTOLOAD;
+```
+
+### 10.6.8 析构函数及垃圾回收
+
+1. 当对象的最后一个引用释放时，对象会自动析构
+1. 如果你想在析构的时候做些什么，那么你可以在类中定义一个名为`DESTROY`的方法。它将在适合的时机自动调用，并且按照你的意思执行额外的清理动作
+1. `Perl`会把对象的引用作为 唯一的参数传递给`DESTROY`。注意这个引用是只读的，也就是说你不能通过访问`$_[0]`来修改它。但是对象自身（比如`${$_[0]`或者`@{$_[0]}`还有`%{$_[0]}`等等）还是可写的
+1. 如果你在析构器返回之前重新`bless`了对象引用，那么`Perl`会在析构器返回之后接着调用你重新`bless`的那个对象的`DESTROY`方法
+1. 在当前对象释放后，包含在当前对象中的其它对象会自动释放
+
+```perl
+package MyClass;
+...
+sub DESTROY {
+    print "MyClass::DESTROY called\n";
+}
+```
+
+# 11 格式化输出
 
 1. `Perl`是一个非常强大的文本数据处理语言
 1. `Perl`中可以使用`format`来定义一个模板，然后使用`write`按指定模板输出数据
@@ -2582,7 +3124,7 @@ third: ^<<<<
 write
 ```
 
-## 10.1 格式行
+## 11.1 格式行
 
 **[格式行中涉及的符号](https://perldoc.perl.org/perlform)：**
 
@@ -2653,7 +3195,7 @@ $nums[2]
 write
 ```
 
-## 10.2 格式变量
+## 11.2 格式变量
 
 * `$~`：格式名称，默认是`STDOUT`
 * `$^`：每页的页头格式，默认是`STDOUT_TOP`
@@ -2697,7 +3239,7 @@ foreach (@n) {
 }
 ```
 
-## 10.3 输出到其他文件
+## 11.3 输出到其他文件
 
 默认情况下函数`write`将结果输出到标准输出文件`STDOUT`，我们也可以使它将结果输出到任意其它的文件中。最简单的方法就是把文件变量作为参数传递给`write`。例如，`write(MYFILE);`，`write`就用缺省的名为`MYFILE`的打印格式输出到文件`MYFILE`中。但是这样就不能用`$~`变量来改变所使用的打印格式，因为系统变量`$~`只对默认文件变量起作用
 
@@ -2740,7 +3282,7 @@ if (open(MYFILE, ">>tmp")) {
 }
 ```
 
-# 11 文件
+# 12 文件
 
 从文件中迭代读取内容的经典`while`循环如下：
 
@@ -2761,9 +3303,9 @@ while (defined($_ = <$fh>)) {
 }
 ```
 
-# 12 高级特性
+# 13 高级特性
 
-## 12.1 属性
+## 13.1 属性
 
 具名实体，包括变量以及函数都可以拥有属性，语法如下
 
@@ -2778,23 +3320,23 @@ sub erupt_volcano :ScienceProject { ... }
 
 **大部分时候，你不需要使用属性**
 
-# 13 Builtin
+# 14 Builtin
 
 参考[perlfunc](https://perldoc.perl.org/perlfunc)。此外可以通过`perldoc perlfunc`查看
 
 1. `say`：将给定字符串（默认为`$_`）输出到当前`select`的文件句柄中
 1. `chomp`：删除给定字符串（默认为`$_`）中尾部的换行符
 1. `defined`：判断给定变量是否已定义（是否赋值过）
-1. `use`
+1. `use`：引入包
 1. `our`：为`package`变量创建别名
-1. `my`
+1. `my`：声明局部变量
 1. `state`：声明静态变量
-1. `map`
-1. `grep`
-1. `sort`
+1. `map`：映射
+1. `grep`：过滤
+1. `sort`：排序
 1. `scalar`：显式声明标量上下文
 
-# 14 进阶
+# 15 进阶
 
 [modern-perl.pdf](/resources/modern-perl.pdf)
 
@@ -2809,6 +3351,7 @@ sub erupt_volcano :ScienceProject { ... }
     * `perldoc perlretut`：正则表达式教程
     * `perldoc perlre`：正则表达式详细文档
     * `perldoc perlreref`：正则表达式指导
+    * `perldoc perlmod`
     * `perldoc List::Util`
     * `perldoc Moose::Manual`
 1. `cpan`
@@ -2846,12 +3389,11 @@ sub erupt_volcano :ScienceProject { ... }
 1. `Dualvars` - P48
 1. `Aliasing` - P66
 1. `use Carp 'cluck';` - P70
-1. `qr`
 1. `AUTOLOAD` - P85
 1. `Named Captures` - P94
 1. `abc|def` 和 `(abc|def)`的差异
 
-# 15 参考
+# 16 参考
 
 * [w3cschool-perl](https://www.w3cschool.cn/perl/)
 * [perl仓库-cpan](https://www.cpan.org/)
