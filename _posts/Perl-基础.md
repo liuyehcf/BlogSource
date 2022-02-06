@@ -643,6 +643,70 @@ foreach my $key (keys %data) {
 }
 ```
 
+### 3.3.9 排序
+
+`sort`仅能排序数组，而无法直接排序`hash`（`hash`的顺序是由其内部的具体实现确定的），我们可以通过如下方式进行排序
+
+1. 将`hash`映射成一个数组，数组的元素是一个数组引用，分别存放`key`和`value`
+1. 对这个数组进行排序
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my %extensions = (
+    4 => 'Jerryd',
+    5 => 'Rudy',
+    6 => 'Juwan',
+    7 => 'Brandon',
+    10 => 'Joel',
+    21 => 'Marcus',
+    24 => 'Andre',
+    23 => 'Martell',
+    52 => 'Greg',
+    88 => 'Nic',
+);
+
+# [] here to create anonymous array
+my @pairs = map { [ $_, $extensions{$_} ] } keys %extensions;
+
+# sort by the second element of the array ref
+my @sorted_pairs = sort { $a->[1] cmp $b->[1] } @pairs;
+
+# map array ref to readable string
+my @formatted_exts = map { "$_->[1]: $_->[0]" } @sorted_pairs;
+
+say for (@formatted_exts);
+```
+
+更神奇的是，还能将这些操作组合在一起
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my %extensions = (
+    4 => 'Jerryd',
+    5 => 'Rudy',
+    6 => 'Juwan',
+    7 => 'Brandon',
+    10 => 'Joel',
+    21 => 'Marcus',
+    24 => 'Andre',
+    23 => 'Martell',
+    52 => 'Greg',
+    88 => 'Nic',
+);
+
+say for (
+    map { "$_->[1]: $_->[0]" }
+    sort { $a->[1] cmp $b->[1] }
+    map { [ $_, $extensions{$_} ] } keys %extensions
+);
+```
+
 ## 3.4 引用
 
 引用就是指针，`Perl`引用是一个标量类型，可以指向变量、数组、哈希表（也叫关联数组）甚至函数，可以应用在程序的任何地方
@@ -1247,6 +1311,9 @@ use warnings;
 use Modern::Perl;
 
 say "$_ * $_ = ", $_ * $_ for 1 .. 10;
+
+my @letters = 'a' .. 'z';
+say for (@letters);
 ```
 
 # 5 运算符
@@ -3534,6 +3601,8 @@ sub erupt_volcano :ScienceProject { ... }
     * `perldoc List::Util`
     * `perldoc Moose::Manual`
     * `perldoc -D <keyword>`：搜索包含关键字的文档
+    * `perldoc -v <variable>`
+        * `perldoc -v $/`
 1. `cpan`
     * `cpan Modern::Perl`
     * `cpan Moose`
