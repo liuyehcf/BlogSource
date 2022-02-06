@@ -1928,27 +1928,6 @@ sub Extensions::Math::add {
 
 函数对内部、外部均可见，在同一个命名空间中，可以通过函数名来直接访问；在外部的命名空间中，必须通过全限定名来访问，除非将函数导入（`importing`）到当前命名空间中
 
-### 6.8.1 导入
-
-当使用`use`加载模块时，`Perl`会自动调用该模块的`import()`函数，模块中的接口可以提供自己的`import()`方法来向外部导出符号
-
-模块后跟的名字都会作为`import()`函数的方法，例如
-
-```perl
-use strict 'refs';
-use strict qw( subs vars );
-```
-
-上面这两句等价于
-
-```perl
-BEGIN {
-    require strict;
-    strict->import( 'refs' );
-    strict->import( qw( subs vars ) );
-}
-```
-
 ## 6.9 报告错误
 
 在函数中，我们可以通过`caller`获取调用者的相关信息
@@ -2498,6 +2477,8 @@ say counter();
 
 # 9 包和模块
 
+## 9.1 包
+
 `Perl`中每个包（`Package`）有一个单独的符号表，定义语法为：
 
 ```perl
@@ -2518,7 +2499,16 @@ package mypack;
 1. `import()`
 1. `unimport()`
 
-## 9.1 模块
+### 9.1.1 UNIVERSAL
+
+`Perl`提供了一个特殊的包，叫做`UNIVERSAL`，它是所有包的祖先，提供了一些方法，包括
+
+* `isa()`：类方法，用于判断是否继承自某个类
+* `can()`：类方法，用于判断是否包含某个方法
+* `VERSION()`：类方法，返回包的版本。该方法还能传入一个版本参数，若版本小于该参数，则会抛异常
+* ` DOES()`：类方法，用于判断是否扮演了某个角色
+
+## 9.2 模块
 
 `Perl5`中用`Perl`包来创建模块。
 
@@ -2538,6 +2528,29 @@ package mypack;
 1. `use`引入模块的同时，也引入了模块的子模块。而`require`则不能引入子模块
 1. `use`是在当前默认的`@INC`里面去寻找，一旦模块不在`@INC`中的话,用`use`是不可以引入的，但是`require`可以指定路径
 1. `use`引用模块时，如果模块名称中包含`::`双冒号，该双冒号将作为路径分隔符，相当于`Unix`下的`/`或者`Windows`下的`\`
+
+### 9.2.1 导入
+
+当使用`use`加载模块时，`Perl`会自动调用该模块的`import()`函数，模块中的接口可以提供自己的`import()`方法来向外部导出符号
+
+模块后跟的名字都会作为`import()`方法的参数，例如
+
+```perl
+use strict 'refs';
+use strict qw( subs vars );
+```
+
+上面这两句等价于
+
+```perl
+BEGIN {
+    require strict;
+    strict->import( 'refs' );
+    strict->import( qw( subs vars ) );
+}
+```
+
+`no`函数会调用模块的`unimport`方法
 
 # 10 面向对象
 
@@ -3284,6 +3297,25 @@ if (open(MYFILE, ">>tmp")) {
 
 # 12 文件
 
+`Perl 5`包含三个标准的文件句柄（文件句柄表示一个用于输入或者输出的通道）
+
+1. `STDIN`：标准输入
+1. `STDOUT`：标准输出
+1. `STDERR`：标准错误
+
+## 12.1 读文件
+
+默认情况下，`say`或者`print`会将内容输出到`STDOUT`中，`warn`会将内容输出到`STDERR`中
+
+我们可以通过`open`打开一个外部文件
+
+* 第一个参数：文件描述符
+* 第二个参数：读写方式
+    * `<`：读
+    * `>`：覆盖写
+    * `>>`：追加写
+    * `+<`：读写
+
 从文件中迭代读取内容的经典`while`循环如下：
 
 ```perl
@@ -3303,9 +3335,156 @@ while (defined($_ = <$fh>)) {
 }
 ```
 
-# 13 高级特性
+特别地，`<>`表示空文件句柄，`Perl`默认会将`@ARGV`中存储的内容作为文件名进行依次读取，如果`@ARGV`为空，那么会读取标准输入
 
-## 13.1 属性
+```
+while (<>) {
+    ...
+}
+```
+
+## 12.2 写文件
+
+注意到`$out_fh`和要输出的内容之间没有逗号
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+open my $out_fh, '>', 'output_file.txt';
+print $out_fh "Here's a line of text\n";
+say $out_fh "... and here's another";
+
+close $out_fh;
+```
+
+默认情况下，`Perl`会将内容先缓存起来，直到超过缓存大小时，才会将其真正写入到磁盘。我们可以通过修改`$|`来实现实时刷新，或者直接调用`autoflush`方法
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+use FileHandle;
+
+open my $fh, '>', 'pecan.log';
+$fh->autoflush( 1 );
+```
+
+## 12.3 目录
+
+1. `opendir`函数用于获取指定目录的句柄
+1. `readdir`函数用于读取目录下的文件或者子目录
+1. `closedir`函数用于关闭目录句柄
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+# iteration
+opendir my $dirh, '.';
+while (my $file = readdir $dirh) {
+    say "filename: $file";
+}
+closedir $dirh;
+
+# flattening into a list
+opendir my $otherdirh, '.';
+my @files = readdir $otherdirh;
+say "files: @files";
+closedir $otherdirh;
+```
+
+## 12.4 文件运算符
+
+1. `-e`：判断文件或目录是否存在
+1. `-f`：判断是否为文件
+1. `-d`：判断是否为目录
+1. `-r`：判断当前用户对该文件是否有读权限
+1. `-w`：判断当前用户对该文件是否有写权限
+1. `-z`：判断是否为空文件
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $filename = "notexist";
+say 'Present!' if -e $filename;
+```
+
+## 12.5 文件操作
+
+1. `rename`：用于重命名
+1. `chdir`：用于切换当前工作目录
+1. `File::Copy`：文件拷贝和移动
+
+# 13 常用库
+
+## 13.1 Test
+
+`Test::More`提供了测试相关的能力
+
+* `tests`可选参数，用于指定测试的数量
+* `ok`：断言，布尔上下文
+* `is`：断言，标量上下文，用`eq`判断两个参数是否相同
+* `isnt`：断言，与`is`含义相反
+* `cmp_ok`：断言，用于指定操作符来判断两个参数是否相同
+* `isa_ok`：断言，类型判断
+* `can_ok`：断言，判断是否包含指定的方法（或方法列表）
+* `is_deeply`：断言，比较两个对象的内容是否相同
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+use Test::More tests => 7;
+
+ok( 1, 'the number one should be true' );
+ok( ! 0, '... and the number zero should not' );
+ok( ! '', 'the empty string should be false' );
+ok( '!', '... and a non-empty string should not' );
+
+is( 4, 2 + 2, 'addition should hold steady across the universe' );
+isnt( 'pancake', 100, 'pancakes should have a delicious numeric value' );
+
+{
+    use Clone;
+    my $numbers = [ 4, 8, 15, 16, 23, 42 ];
+    my $clonenums = Clone::clone( $numbers );
+    is_deeply( $numbers, $clonenums, 'Clone::clone() should produce identical structures' );
+}
+
+done_testing();
+```
+
+## 13.2 Carp
+
+`Carp`用于输出告警信息，包括代码上下文等
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+use Carp;
+
+sub only_two_arguments {
+    my ($lop, $rop) = @_;
+    Carp::carp( 'Too many arguments provided' ) if @_ > 2;
+}
+
+my ($first, $second, $third) = (1, 2, 3);
+only_two_arguments($first, $second, $third);
+```
+
+## 13.3 Path
+
+`Path::Class`提供了跨平台的路径操作方式（不必关系路径分隔符是`/`还是`\`诸如此类的问题）
+
+# 14 高级特性
+
+## 14.1 属性
 
 具名实体，包括变量以及函数都可以拥有属性，语法如下
 
@@ -3320,7 +3499,7 @@ sub erupt_volcano :ScienceProject { ... }
 
 **大部分时候，你不需要使用属性**
 
-# 14 Builtin
+# 15 Builtin
 
 参考[perlfunc](https://perldoc.perl.org/perlfunc)。此外可以通过`perldoc perlfunc`查看
 
@@ -3336,7 +3515,7 @@ sub erupt_volcano :ScienceProject { ... }
 1. `sort`：排序
 1. `scalar`：显式声明标量上下文
 
-# 15 进阶
+# 16 进阶
 
 [modern-perl.pdf](/resources/modern-perl.pdf)
 
@@ -3354,8 +3533,10 @@ sub erupt_volcano :ScienceProject { ... }
     * `perldoc perlmod`
     * `perldoc List::Util`
     * `perldoc Moose::Manual`
+    * `perldoc -D <keyword>`：搜索包含关键字的文档
 1. `cpan`
     * `cpan Modern::Perl`
+    * `cpan Moose`
 1. `perlbrew`
 
 **站点：**
@@ -3366,13 +3547,6 @@ sub erupt_volcano :ScienceProject { ... }
 * [community-perlmonks](https://perlmonks.org)
 * [blogs](https://blogs.perl.org)
 * [bestpractical](https://bestpractical.com)
-
-**模块：**
-
-* `Test::More`
-    * `ok`
-    * `is`
-    * `isnt`
 
 **TODO：**
 
@@ -3393,7 +3567,7 @@ sub erupt_volcano :ScienceProject { ... }
 1. `Named Captures` - P94
 1. `abc|def` 和 `(abc|def)`的差异
 
-# 16 参考
+# 17 参考
 
 * [w3cschool-perl](https://www.w3cschool.cn/perl/)
 * [perl仓库-cpan](https://www.cpan.org/)

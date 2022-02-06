@@ -63,10 +63,10 @@
 1. match ... against
 1. Parentheses/square brackets/curly braces
 1. prepend/append
-1. coercion：强制转型
-1. Pitfalls：陷阱
-1. Subtle：微妙的
-1. By pervasive convention：普遍的约定
-1. Allomorphism：同构
-1. Polymorphism：多态
-1. Canonical：典范
+1. coercion，强制转型
+1. Pitfalls，陷阱
+1. Subtle，微妙的
+1. By pervasive convention，普遍的约定
+1. Allomorphism，同构
+1. Polymorphism，多态
+1. Canonical，典范
