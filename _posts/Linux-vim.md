@@ -2300,6 +2300,7 @@ nnoremap <silent> <cr> :nohlsearch<cr><cr>
 nnoremap <leader>qc :cclose<cr>
 
 " 其他配置
+set hlsearch
 set number
 set tabstop=4
 set softtabstop=4

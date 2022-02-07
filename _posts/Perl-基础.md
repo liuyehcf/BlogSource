@@ -1004,12 +1004,21 @@ say "#$_" for 1 .. 10;
 1. `Perl`将命令函参数都存储在`@ARGV`中
 1. `@ARGV`还有另一个用途，当从空文件句柄`<>`中读取内容时，`Perl`默认会将`@ARGV`中存储的内容作为文件名进行依次读取，如果`@ARGV`为空，那么会读取标准输入
 
-## 3.7 特殊变量
+## 3.7 特殊全局变量
 
-1. `$/`
-1. `$!`
-1. `$@`
-1. `$|`
+详细内容，参考`perldoc perlvar`
+
+1. `$/`：行分隔符
+1. `$.`：最近读取的文件句柄的行号
+1. `$|`：控制是否自动flush缓存
+1. `@ARGV`：命令行参数数组
+1. `$!`：最近一次系统调用的错误码
+1. `$"`：列表分隔符
+1. `%+`：哈希，用于存储具名捕获的结果
+1. `$@`：最近一次异常抛出的值
+1. `$$`：进程id
+1. `@INC`：`use`或者`require`函数查找模块的路径列表
+1. `%SIG`：哈希，用于存储信号处理的函数引用
 
 # 4 控制流
 
@@ -2054,9 +2063,29 @@ add_two_numbers();
 
 `Params::Validate`模块还可以进行参数类型的校验，这里不再赘述
 
-## 6.10 闭包
+## 6.10 原型
 
-### 6.10.1 创建闭包
+原型（`prototype`）用于给函数增加一些额外的元信息，用于提示编译器参数的类型。具体参考`perldoc perlsub`
+
+* `$`：标量
+* `@`：数组
+* `%`：哈希
+* `&`：代码块
+* `\$`：标量引用
+* `\@`：数组引用
+* `\%`：哈希引用
+* ...
+
+```perl
+sub mypush (\@@) {
+    my ($array, @rest) = @_;
+    push @$array, @rest;
+}
+```
+
+## 6.11 闭包
+
+### 6.11.1 创建闭包
 
 什么是闭包（`Closure`），闭包是包含了一个外部环境的函数。看下面这个例子，当`make_iterator`函数结束调用时，`return`语句返回的函数仍然指向`@items`、`$count`这两个变量，因此这两个变量的生命周期延长了（与`$cousins`的生命周期相同）。同时由于`@items`、`$count`这两个变量是拷贝出来的，因此，在`make_iterator`函数结束后，除了闭包本身，没有其他方式访问到这两个变量
 
@@ -2078,7 +2107,7 @@ my $cousins = make_iterator(qw( Rick Alex Kaycee Eric Corey ));
 say $cousins->() for 1 .. 5;
 ```
 
-### 6.10.2 何时使用闭包
+### 6.11.2 何时使用闭包
 
 闭包可以在固定大小的列表上生成有效的迭代器。当迭代一个过于昂贵而无法直接引用的项目列表时，它们表现出更大的优势，要么是因为它代表的数据一次计算的成本很高，要么它太大而无法直接进入载入内存
 
@@ -2143,7 +2172,7 @@ say $fiber->(3);
 say $fiber->(10);
 ```
 
-### 6.10.3 参数绑定
+### 6.11.3 参数绑定
 
 通过闭包，我们能够固定函数的部分参数
 
@@ -2164,7 +2193,7 @@ my $make_cart_sundae = sub {
 };
 ```
 
-### 6.10.4 闭包与state
+### 6.11.4 闭包与state
 
 闭包是一种能够在函数调用中持久化数据（不用全局变量）的简单、高效且安全的方式。如果我们想在普通函数中共享某些变量，我们需要引入额外的作用域
 
@@ -3410,9 +3439,55 @@ while (<>) {
 }
 ```
 
+### 12.1.1 一次性读取全部内容
+
+特殊变量`$/`表示行分隔符。在不同平台中，行分隔符可能是`\n`、`\r`或者`\r\n`等等。默认情况下，`<filehandler>`每次读取一行
+
+我们可以将`$/`设置为`undef`，这样一来，我们就能一次性读取到整行内容
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+open my $fh, '<', 'data.txt' or die;
+undef $/;
+my $content = <$fh>;
+say $content;
+```
+
+由于`$/`是全局变量，上述写法可能会造成一些干扰，我们可以采用如下写法
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+open my $fh, '<', 'data.txt' or die;
+my $content = do { local $/; <$fh>; };
+say $content;
+```
+
+或者下面这种写法。该写法稍具迷惑性，由于`localization`优先于文件读取，`local $/ = <$fh>;`这个语句的顺序是：
+
+1. `localization $/`
+1. 读取文件内容，由于此时`$/`是`undef`，因此会读取全部内容
+1. 将文件内容赋值给`$/`
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+open my $fh, '<', 'data.txt' or die;
+my $content = do { local $/ = <$fh>; };
+say $content;
+```
+
 ## 12.2 写文件
 
-注意到`$out_fh`和要输出的内容之间没有逗号
+1. `$out_fh`和要输出的内容之间没有逗号
+1. 若指定的文件描述符是个复杂的表达式，要用`{}`来消除歧义，否则解释器会把`$config`当成文件描述符
 
 ```perl
 use strict;
@@ -3422,6 +3497,10 @@ use Modern::Perl;
 open my $out_fh, '>', 'output_file.txt';
 print $out_fh "Here's a line of text\n";
 say $out_fh "... and here's another";
+my $config = {
+    output => $out_fh
+};
+say {$config->{output}} "... and here's another2";
 
 close $out_fh;
 ```
@@ -3481,7 +3560,7 @@ my $filename = "notexist";
 say 'Present!' if -e $filename;
 ```
 
-## 12.5 文件操作
+## 12.5 其他文件操作
 
 1. `rename`：用于重命名
 1. `chdir`：用于切换当前工作目录
@@ -3586,6 +3665,10 @@ sub erupt_volcano :ScienceProject { ... }
 
 [modern-perl.pdf](/resources/modern-perl.pdf)
 
+**语言设计哲学：**
+
+1. `TIMTOWTDI`：There’s more than one way to do it!
+
 **工具：**
 
 1. `perldoc`
@@ -3594,10 +3677,12 @@ sub erupt_volcano :ScienceProject { ... }
     * `perldoc perlop`：运算符
     * `perldoc perlfunc`：`builtin`函数
         * `perldoc -f wantarray`
+    * `perldoc perlsub`：函数
     * `perldoc perlretut`：正则表达式教程
     * `perldoc perlre`：正则表达式详细文档
     * `perldoc perlreref`：正则表达式指导
     * `perldoc perlmod`
+    * `perldoc perlvar`：预定义的全局变量
     * `perldoc List::Util`
     * `perldoc Moose::Manual`
     * `perldoc -D <keyword>`：搜索包含关键字的文档
@@ -3617,9 +3702,14 @@ sub erupt_volcano :ScienceProject { ... }
 * [blogs](https://blogs.perl.org)
 * [bestpractical](https://bestpractical.com)
 
+**一些概念：**
+
+* `Bareword`：A bareword is an identifier without a sigil or other attached disambiguation as to its intended syntactical function.
+* `prototype`：A prototype is a piece of optional metadata attached to a function declaration
+
 **TODO：**
 
-1. map
+1. `map`
 1. `To count the number of elements returned from an expression in list context without using a temporary variable, you use the idiom` - P21
 1. `You do not need parentheses to create lists; the comma operator creates lists` - P22
 1. `Lists and arrays are not interchangeable in Perl. Lists are values and arrays are containers.` - P22
@@ -3635,6 +3725,7 @@ sub erupt_volcano :ScienceProject { ... }
 1. `AUTOLOAD` - P85
 1. `Named Captures` - P94
 1. `abc|def` 和 `(abc|def)`的差异
+1. `use autodie;` - P167
 
 # 17 参考
 

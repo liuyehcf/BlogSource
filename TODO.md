@@ -35,5 +35,6 @@
     * 内存分配，伙伴算法
     * rpc框架，thrift
     * codegen原理
+    * [什么是图灵完备？](https://www.zhihu.com/question/20115374/answer/288346717)
     * [调度系统设计精要](https://draveness.me/system-design-scheduler/)
     * [构建工具bazel](https://github.com/bazelbuild/bazel)
