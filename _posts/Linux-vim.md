@@ -115,6 +115,7 @@ categories:
 * **`gj`：光标下移一行（忽略自动换行）**
 * **`gk`：光标上移一行（忽略自动换行）**
 * **`%`：跳转到`{} () []`的匹配**
+    * 可以通过`:set matchpairs+=<:>`增加对尖括号`<>`的识别。可能会误识别，因为文本中可能包含单个`>`或`<`
 
 ## 2.3 文本编辑
 
@@ -472,7 +473,7 @@ set autoindent
 ## 2.16 其他
 
 * **`:set <config>?`：可以查看`<config>`的值**
-    * `:set ft?`：查看文件类型
+    * `:set filetype?`：查看文件类型
 * **`:echo <variable>`：可以查看`<variable>`的值**
 * **`:echom xxx`：信息会保留在message中，可以通过`:message`查看**
 * `[Shift] + 3`：以暗黄色为底色显示所有指定的字符串
@@ -2309,6 +2310,7 @@ set shiftwidth=4
 set expandtab
 set autoindent
 set cursorline
+set matchpairs+=<:>
 
 " 设置头文件搜索路径，可以在项目的 .workspace.vim 文件中通过 set path+= 追加搜索路径
 set path=.,/usr/include,/usr/local/include,/usr/local/lib/gcc/x86_64-pc-linux-gnu/10.3.0/include,/usr/local/include/c++/10.3.0
