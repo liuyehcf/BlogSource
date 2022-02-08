@@ -1638,8 +1638,8 @@ struct LessEqualFilter
 /**
  * 递归终止状态
  */
-template <int target>
-struct LessEqualFilter<EmptyArray, target> : EmptyArray {};
+template <int TARGET_VALUE>
+struct LessEqualFilter<EmptyArray, TARGET_VALUE> : EmptyArray {};
 
 /*==============================================================*/
 
@@ -1672,24 +1672,27 @@ struct GreaterThanAdvisor<Array<FIRST_VALUE, VALUES...>, TARGET_VALUE, false>
 /**
  * 当 CONDITION = true 时的递归终止状态
  */
-template <int target, int I>
-struct GreaterThanAdvisor<Array<I>, target, true> : Array<I> {};
+template <int TARGET_VALUE, int FIRST_VALUE>
+struct GreaterThanAdvisor<Array<FIRST_VALUE>, TARGET_VALUE, true>
+    : Array<FIRST_VALUE> {};
 /**
  * 当 CONDITION = false 时的递归终止状态
  */
-template <int target, int I>
-struct GreaterThanAdvisor<Array<I>, target, false> : EmptyArray {};
+template <int TARGET_VALUE, int FIRST_VALUE>
+struct GreaterThanAdvisor<Array<FIRST_VALUE>, TARGET_VALUE, false>
+    : EmptyArray {};
 /**
  * 接口模板，外部不直接使用 GreaterThanAdvisor，而是使用 GreaterThan
  */
-template <typename L, int target>
+template <typename TARGET_ARRAY, int TARGET_VALUE>
 struct GreaterThan
-    : GreaterThanAdvisor<L, target, (FirstOf<L>::value > target)> {};
+    : GreaterThanAdvisor<TARGET_ARRAY, TARGET_VALUE,
+                         (FirstOf<TARGET_ARRAY>::value > TARGET_VALUE)> {};
 /**
  * 递归终止状态
  */
-template <int target>
-struct GreaterThan<EmptyArray, target> : EmptyArray {};
+template <int TARGET_VALUE>
+struct GreaterThan<EmptyArray, TARGET_VALUE> : EmptyArray {};
 
 /*==============================================================*/
 
