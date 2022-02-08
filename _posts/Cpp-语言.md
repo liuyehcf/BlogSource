@@ -705,7 +705,18 @@ gcc -o main main.cpp extern.cpp -lstdc++ -Wall
 ./main
 ```
 
-## 3.5 volatile
+## 3.5 virtual
+
+`virtual`关键词修饰的就是虚函数，虚函数的分派发生在运行时
+
+1. 有虚函数的每个类，维护一个虚函数表
+1. 有虚函数的类的对象，会包含一个指向该类的虚函数表的指针
+
+![virtual-method-table](/images/Cpp-语言/virtual-method-table.jpeg)
+
+* 图片出处：[c++虚指针和虚函数表](https://zhuanlan.zhihu.com/p/110144589)
+
+## 3.6 volatile
 
 `volatile`关键字是一种类型修饰符，用它声明的类型变量表示可以被某些编译器未知的因素更改，比如：操作系统、硬件或者其它线程等。遇到这个关键字声明的变量，编译器对访问该变量的代码就不再进行优化，从而可以提供对特殊地址的稳定访问
 
@@ -755,7 +766,7 @@ Disassembly of section .text:
   14:	c3                   	retq
 ```
 
-## 3.6 throw与异常
+## 3.7 throw与异常
 
 throw关键字可以抛出任何对象，例如可以抛出一个整数
 
