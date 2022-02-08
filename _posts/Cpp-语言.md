@@ -1503,108 +1503,248 @@ int main() {
 ```cpp
 #include <iostream>
 
-namespace li {
-template <int n>
-struct int32 {
-    using type = int32;
-    static constexpr int value = n;
+namespace quicksort {
+/**
+ * 1. 通过 ::type 获取自身类型
+ * 2. 通过 ::value 获取模板实参
+ */
+template <int VALUE>
+struct Value {
+    using type = Value;
+    static constexpr int value = VALUE;
 };
 
-template <int... In>
-struct list {
-    using type = list;
-    static constexpr size_t size = sizeof...(In);
+/*==============================================================*/
+
+/**
+ * 1. 通过 ::type 获取自身类型
+ */
+template <int... VALUES>
+struct Array {
+    using type = Array;
 };
-using null = list<>;
+using EmptyArray = Array<>;
 
-template <int, typename>
-struct cons;
+/*==============================================================*/
 
-template <int I, int... In>
-struct cons<I, list<In...>> : list<I, In...> {};
+/**
+ * 从 TARGET_ARRAY 的模板参数中，提取第一个模板参数
+ */
+template <typename TARGET_ARRAY>
+struct FirstOf;
+/**
+ * 定义了如何实现 FirstOf
+ */
+template <int FIRST_VALUE, int... VALUES>
+struct FirstOf<Array<FIRST_VALUE, VALUES...>> : Value<FIRST_VALUE> {};
 
-template <typename>
-struct first;
-template <int I, int... In>
-struct first<list<I, In...>> : int32<I> {};
+/*==============================================================*/
 
-template <typename, int>
-struct push;
-template <int I, int... In>
-struct push<list<In...>, I> : list<In..., I> {};
+/**
+ * 将 VALUE 添加到 TARGET_ARRAY 的模板参数列表中，并作为第一个模板参数
+ */
+template <typename TARGET_ARRAY, int VALUE>
+struct PrependTo;
+/**
+ * 定义了如何实现 PrependTo
+ */
+template <int FIRST_VALUE, int... VALUES>
+struct PrependTo<Array<VALUES...>, FIRST_VALUE>
+    : Array<FIRST_VALUE, VALUES...> {};
 
-template <typename, typename>
-struct append;
-template <typename L1>
-struct append<L1, null> : L1 {};
-template <typename L1, int I, int... In>
-struct append<L1, list<I, In...>> : append<typename push<L1, I>::type, typename list<In...>::type> {};
+/*==============================================================*/
 
-#define FILTER_GEN(NAME, _OP_)                                                                                \
-    template <typename, int, bool>                                                                            \
-    struct _##NAME##_h;                                                                                       \
-    template <int target, int I>                                                                              \
-    struct _##NAME##_h<list<I>, target, true> : list<I> {};                                                   \
-    template <int target, int I>                                                                              \
-    struct _##NAME##_h<list<I>, target, false> : null {};                                                     \
-    template <int target, int I, int... In>                                                                   \
-    struct _##NAME##_h<list<I, In...>, target, true>                                                          \
-            : cons<I, typename _##NAME##_h<typename list<In...>::type, target,                                \
-                                           (first<typename list<In...>::type>::value _OP_ target)>::type> {}; \
-    template <int target, int I, int... In>                                                                   \
-    struct _##NAME##_h<list<I, In...>, target, false>                                                         \
-            : _##NAME##_h<typename list<In...>::type, target,                                                 \
-                          (first<typename list<In...>::type>::value _OP_ target)> {};                         \
-                                                                                                              \
-    template <typename L, int target>                                                                         \
-    struct NAME : _##NAME##_h<L, target, (first<L>::value _OP_ target)> {};                                   \
-    template <int target>                                                                                     \
-    struct NAME<null, target> : null {};
+/**
+ * 将 VALUE 添加到 TARGET_ARRAY 的模板参数列表中，并作为最后一个模板参数
+ */
+template <typename TARGET_ARRAY, int VALUE>
+struct AppendValueTo;
+/**
+ * 定义了如何实现 AppendValueTo
+ */
+template <int LAST_VALUE, int... VALUES>
+struct AppendValueTo<Array<VALUES...>, LAST_VALUE>
+    : Array<VALUES..., LAST_VALUE> {};
 
-FILTER_GEN(less_eq, <=)
-FILTER_GEN(greater, >)
-#undef FILTER_GEN
+/*==============================================================*/
 
-template <typename>
-struct qsort;
+/**
+ * 将 SOURCE_ARRAY 的模板参数列表依次添加到 TARGET_ARRAY 的模板参数列表中
+ */
+template <typename TARGET_ARRAY, typename SOURCE_ARRAY>
+struct AppendArrayTo;
+/**
+ * 定义了如何实现 AppendArrayTo
+ * 实现方式：模板递归
+ */
+template <typename TARGET_ARRAY, int FIRST_VALUE, int... VALUES>
+struct AppendArrayTo<TARGET_ARRAY, Array<FIRST_VALUE, VALUES...>>
+    : AppendArrayTo<typename AppendValueTo<TARGET_ARRAY, FIRST_VALUE>::type,
+                    typename Array<VALUES...>::type> {};
+/**
+ * 递归终止状态
+ */
+template <typename TARGET_ARRAY>
+struct AppendArrayTo<TARGET_ARRAY, EmptyArray> : TARGET_ARRAY {};
+
+/*==============================================================*/
+
+/**
+ * 提取 TARGET_ARRAY 的模板参数中，与 TARGET_VALUE 相比，所有符合 CONDITION
+ * 条件的模板参数列表
+ */
+template <typename TARGET_ARRAY, int TARGET_VALUE, bool CONDITION>
+struct LessEqualFilterAdviser;
+/**
+ * 定义了当 CONDITION = true 时，如何实现 LessEqualFilterAdviser
+ * 实现方式：模板递归
+ */
+template <int TARGET_VALUE, int FIRST_VALUE, int... VALUES>
+struct LessEqualFilterAdviser<Array<FIRST_VALUE, VALUES...>, TARGET_VALUE, true>
+    : PrependTo<typename LessEqualFilterAdviser<
+                    typename Array<VALUES...>::type, TARGET_VALUE,
+                    (FirstOf<typename Array<VALUES...>::type>::value <=
+                     TARGET_VALUE)>::type,
+                FIRST_VALUE> {};
+/**
+ * 定义了当 CONDITION = false 时，如何实现 LessEqualFilterAdviser
+ * 实现方式：模板递归
+ */
+template <int TARGET_VALUE, int FIRST_VALUE, int... VALUES>
+struct LessEqualFilterAdviser<Array<FIRST_VALUE, VALUES...>, TARGET_VALUE,
+                              false>
+    : LessEqualFilterAdviser<typename Array<VALUES...>::type, TARGET_VALUE,
+                             (FirstOf<typename Array<VALUES...>::type>::value <=
+                              TARGET_VALUE)> {};
+/**
+ * 当 CONDITION = true 时的递归终止状态
+ */
+template <int TARGET_VALUE, int FIRST_VALUE>
+struct LessEqualFilterAdviser<Array<FIRST_VALUE>, TARGET_VALUE, true>
+    : Array<FIRST_VALUE> {};
+/**
+ * 当 CONDITION = false 时的递归终止状态
+ */
+template <int TARGET_VALUE, int FIRST_VALUE>
+struct LessEqualFilterAdviser<Array<FIRST_VALUE>, TARGET_VALUE, false>
+    : EmptyArray {};
+/**
+ * 接口模板，外部不直接使用 LessEqualFilterAdviser，而是使用 LessEqualFilter
+ */
+template <typename TARGET_ARRAY, int TARGET_VALUE>
+struct LessEqualFilter
+    : LessEqualFilterAdviser<TARGET_ARRAY, TARGET_VALUE,
+                             (FirstOf<TARGET_ARRAY>::value <= TARGET_VALUE)> {};
+/**
+ * 递归终止状态
+ */
+template <int target>
+struct LessEqualFilter<EmptyArray, target> : EmptyArray {};
+
+/*==============================================================*/
+
+/**
+ * 提取 TARGET_ARRAY 的模板参数中，与 TARGET_VALUE 相比，所有符合 CONDITION
+ * 条件的模板参数列表
+ */
+template <typename TARGET_ARRAY, int TARGET_VALUE, bool CONDITION>
+struct GreaterThanAdvisor;
+/**
+ * 定义了当 CONDITION = true 时，如何实现 GreaterThanAdvisor
+ * 实现方式：模板递归
+ */
+template <int TARGET_VALUE, int FIRST_VALUE, int... VALUES>
+struct GreaterThanAdvisor<Array<FIRST_VALUE, VALUES...>, TARGET_VALUE, true>
+    : PrependTo<typename GreaterThanAdvisor<
+                    typename Array<VALUES...>::type, TARGET_VALUE,
+                    (FirstOf<typename Array<VALUES...>::type>::value >
+                     TARGET_VALUE)>::type,
+                FIRST_VALUE> {};
+/**
+ * 定义了当 CONDITION = false 时，如何实现 GreaterThanAdvisor
+ * 实现方式：模板递归
+ */
+template <int TARGET_VALUE, int FIRST_VALUE, int... VALUES>
+struct GreaterThanAdvisor<Array<FIRST_VALUE, VALUES...>, TARGET_VALUE, false>
+    : GreaterThanAdvisor<typename Array<VALUES...>::type, TARGET_VALUE,
+                         (FirstOf<typename Array<VALUES...>::type>::value >
+                          TARGET_VALUE)> {};
+/**
+ * 当 CONDITION = true 时的递归终止状态
+ */
+template <int target, int I>
+struct GreaterThanAdvisor<Array<I>, target, true> : Array<I> {};
+/**
+ * 当 CONDITION = false 时的递归终止状态
+ */
+template <int target, int I>
+struct GreaterThanAdvisor<Array<I>, target, false> : EmptyArray {};
+/**
+ * 接口模板，外部不直接使用 GreaterThanAdvisor，而是使用 GreaterThan
+ */
+template <typename L, int target>
+struct GreaterThan
+    : GreaterThanAdvisor<L, target, (FirstOf<L>::value > target)> {};
+/**
+ * 递归终止状态
+ */
+template <int target>
+struct GreaterThan<EmptyArray, target> : EmptyArray {};
+
+/*==============================================================*/
+
+/**
+ * 对 TARGET_ARRAY 进行快速排序
+ */
+template <typename TARGET_ARRAY>
+struct QuickSort;
+/**
+ * 定义了如何实现 QuickSort
+ */
+template <int FIRST_VALUE, int... VALUES>
+struct QuickSort<Array<FIRST_VALUE, VALUES...>>
+    : AppendArrayTo<
+          typename QuickSort<typename LessEqualFilter<
+              typename Array<VALUES...>::type, FIRST_VALUE>::type>::type,
+          typename PrependTo<
+              typename QuickSort<typename GreaterThan<
+                  typename Array<VALUES...>::type, FIRST_VALUE>::type>::type,
+              FIRST_VALUE>::type> {};
+/**
+ * 递归终止状态
+ */
 template <>
-struct qsort<null> : null {};
-template <int I, int... In>
-struct qsort<list<I, In...>>
-        : append<typename qsort<typename less_eq<typename list<In...>::type, I>::type>::type,
-                 typename cons<I, typename qsort<typename greater<typename list<In...>::type, I>::type>::type>::type> {
-};
+struct QuickSort<EmptyArray> : EmptyArray {};
 
-} // namespace li
+}  // namespace quicksort
 
-template <int I, int... In>
-static void print_list(li::list<I, In...>) {
-    std::cout << '(' << I;
-    int _[] = {0, ((void)(std::cout << ", " << In), 0)...};
+template <int FIRST_VALUE, int... VALUES>
+static void print(quicksort::Array<FIRST_VALUE, VALUES...>) {
+    std::cout << '(' << FIRST_VALUE;
+    int _[] = {0, ((void)(std::cout << ", " << VALUES), 0)...};
     std::cout << ")\n";
 }
 
-static void print_list(li::null) {
-    std::cout << "()\n";
-}
+static void print(quicksort::EmptyArray) { std::cout << "()\n"; }
 
-template <int... In>
-static void test() {
-    using original = li::list<In...>;
-    using sorted = li::qsort<original>;
+template <int... VALUES>
+static void test_quick_sort() {
+    using original = quicksort::Array<VALUES...>;
+    using sorted = quicksort::QuickSort<original>;
     std::cout << "before: ";
-    print_list(original());
+    print(original());
     std::cout << "after : ";
-    print_list(sorted());
+    print(sorted());
     std::cout << '\n';
 }
 
 int main() {
-    test<>();
-    test<1>();
-    test<8, 1>();
-    test<1, 2, 5, 8, -3, 2, 100, 4, 9, 3, -8, 33, 21, 3, -4, -4, -4, -7, 2, 5, 1, 8, 2, 88, 42, 956, 21, 27, 39, 55, 1,
-         4, -5, -31, 9>();
+    test_quick_sort<>();
+    test_quick_sort<1>();
+    test_quick_sort<8, 1>();
+    test_quick_sort<1, 2, 5, 8, -3, 2, 100, 4, 9, 3, -8, 33, 21, 3, -4, -4, -4,
+                    -7, 2, 5, 1, 8, 2, 88, 42, 956, 21, 27, 39, 55, 1, 4, -5,
+                    -31, 9>();
 }
 ```
 
