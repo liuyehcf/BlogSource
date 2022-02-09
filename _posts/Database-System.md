@@ -220,6 +220,10 @@ WHERE table_catalog = '<db name>';
 
 SELECT * FROM INFORMATION_SCHEMA.TABLES
 WHERE table_name = '<table name>';
+
+SELECT table_name, table_rows
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_SCHEMA = '<your database name>' ORDER BY table_rows DESC
 ```
 
 **关系模型并不要求我们将一个`Tuple`的所有属性都存储在同一个`Page`中，不同的存储布局适用于不同的工作负载：**
@@ -1348,6 +1352,106 @@ WHERE S.value > 100
 
 # 14 Optimization 1
 
+由于`SQL`是声明式的语言，只表达想要获取什么数据，而没有指定如何获取。不同的执行计划的效率千差万别
+
+**查询优化包含如下两种方式：**
+
+* `Heuristics/Rules`：即启发式的
+    * 重写SQL，去除冗余部分，精简表达式
+    * 可能需要检查`Catalog`
+* `Cost-based Search`
+    * 使用模型来评估给定查询计划的开销
+    * 在多种不同的等价查询计划中，找出开销最小的那个
+
+![14-1](/images/Database-System/14-1.png)
+
+**查询优化是`NP-Hard`问题，也是构建`DBMS`中最重要的部分**
+
+## 14.1 Relational Algebra Equivalences
+
+如果两个代数表达式（`Algebra Expression`）能产生相同的结果，那么就认为它俩是等价的
+
+即便`DBMS`不借助`Cost Model`也可以识别哪个查询计划更优，这种方式叫做`Query Rewriting`
+
+### 14.1.1 Predicate Pushdown
+
+谓词下推（`Predicate Pushdown`）的核心思想是，尽可能地让数据过滤在更下层的算子中执行，这样在算子之间流转的数据量就可能大大减小
+
+![14-2](/images/Database-System/14-2.png)
+
+此时，以下两个代数表达式就是等价的
+
+* {% raw %}$\pi_{name,cid}(\sigma_{grade='A'}(student \bowtie enrolled))${% endraw %}
+* {% raw %}$\pi_{name,cid}(student \bowtie (\sigma_{grade='A'}(enrolled))${% endraw %}
+
+### 14.1.2 Projections
+
+尽可能早的进行物化操作（`Projection`），这样可以减少中间结果的产生。同时仅物化必须的列。对于列存系统，这种方式没有太大的意义
+
+![14-3](/images/Database-System/14-3.png)
+
+### 14.1.3 Join
+
+对于`Join`算子，左右表的顺序可以任何兑换，例如：
+
+* {% raw %}$R \bowtie S = S \bowtie R${% endraw %}
+* {% raw %}$(R \bowtie S ) \bowtie T = R \bowtie (S \bowtie T)${% endraw %}
+
+当`join`算子很多时，查询计划的空间会变得异常的庞大，遍历并计算每一种可能的查询计划的开销也非常耗时，因此，我们必须在有限的空间中找出相对最优的查询计划
+
+### 14.1.4 More Examples
+
+示例1：谓词恒为真或恒为假
+
+```sql
+SELECT * FROM A 
+    WHERE 1 = 0;
+
+-- 可以优化成
+
+SELECT NULL;
+```
+
+示例2：`Join`可以消除
+
+```sql
+SELECT A1.* FROM A AS A1 
+    JOIN A AS A2 ON A1.id = A2.id;
+
+-- 可以优化成
+
+SELECT * FROM A;
+```
+
+示例3：谓词恒为真
+
+```sql
+SELECT * FROM A AS A1
+    WHERE EXISTS (
+        SELECT val FROM A AS A2
+        WHERE A1.id = A2.id
+    );
+
+-- 可以优化成
+
+SELECT * FROM A;
+```
+
+示例4：谓词合并
+
+```sql
+SELECT * FROM A
+    WHERE val BETWEEN 1 AND 100
+        OR val BETWEEN 50 AND 150;
+
+-- 可以优化成
+
+SELECT * FROM A
+    WHERE val BETWEEN 1 AND 150;
+```
+
+## 14.2 Static Rules
+
 # 15 Optimization 2
 
 # 16 Concurrency Control
@@ -1416,3 +1520,7 @@ WHERE S.value > 100
 1. [24-distributedolap](/resources/Database-System/24-distributedolap.pdf)
 1. [25-oracle](/resources/Database-System/25-oracle.pdf)
 1. [26-potpourri](/resources/Database-System/26-potpourri.pdf)
+
+# 29 进阶
+
+* [Advanced Database Systems](https://15721.courses.cs.cmu.edu/spring2020/)

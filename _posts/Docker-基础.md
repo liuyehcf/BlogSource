@@ -252,7 +252,39 @@ RUN apk add -U tzdata
 1. 查看img的详情：`docker inspect <img>`
 1. 查看容器资源占用情况：`docker stats <container>`
 
-## 7.1 跨平台运行容器
+## 7.1 修改存储路径
+
+默认情况下，docker相关的数据会存储在`/var/lib/docker`。编辑配置文件`/etc/docker/daemon.json`（没有就新建），增加如下配置项：
+
+```json
+{
+    "data-root": "<some path>"
+}
+```
+
+然后通过`systemctl restart docker`重启docker即可
+
+## 7.2 修改镜像源
+
+编辑配置文件`/etc/docker/daemon.json`（没有就新建），增加如下配置项：
+
+```json
+{
+    "registry-mirrors": [
+        "http://registry.docker-cn.com",
+        "http://docker.mirrors.ustc.edu.cn",
+        "http://hub-mirror.c.163.com"
+    ],
+    "insecure-registries": [
+        "registry.docker-cn.com",
+        "docker.mirrors.ustc.edu.cn"
+    ]
+}
+```
+
+然后通过`systemctl restart docker`重启docker即可
+
+## 7.3 跨平台运行容器
 
 默认情况下，docker是不支持`--platform`参数的，可以通过修改`/etc/docker/daemon.json`，添加如下配置项后，重启docker，开启该功能
 
@@ -333,7 +365,7 @@ Linux c3fb58ea543c 4.14.134 #1 SMP Tue Dec 29 21:27:58 EST 2020 aarch64 aarch64 
 
 * `docker run --rm --privileged multiarch/qemu-user-static:register`是向内核注册了各异构平台的`binfmt handler`，包括`aarch64`等等，这些注册信息就包括了`binfmt handler`的路径，比如`/usr/bin/qemu-aarch64-static`等等，注册信息都在`/proc/sys/fs/binfmt_misc`目录下，每个注册项都是该目录下的一个文件。**实际的`qemu-xxx-static`文件还得手动放置到对应目录中才能生效**
 
-## 7.2 镜像裁剪工具-dockerslim
+## 7.4 镜像裁剪工具-dockerslim
 
 ```sh
 docker-slim build --http-probe=false centos:7.6.1810
@@ -341,7 +373,7 @@ docker-slim build --http-probe=false centos:7.6.1810
 
 裁剪之后，镜像的体积从`202MB`变为`3.55MB`。但是裁剪之后，大部分的命令都被裁剪了（包括`ls`这种最基础的命令）
 
-## 7.3 异常排查
+## 7.5 异常排查
 
 在k8s环境中，若容器运行时用的是`docker`，那么该`docker`会依赖`containerd`，当`containerd`不正常的时候，`docker`也就不正常了。恢复`containerd`的办法：将`/var/lib/containerd/io.containerd.metadata.v1.bolt`这个文件删掉
 
