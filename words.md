@@ -70,3 +70,4 @@
 1. Allomorphism，同构
 1. Polymorphism，多态
 1. Canonical，典范
+1. Heuristics，启发式

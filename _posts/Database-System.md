@@ -1399,7 +1399,9 @@ WHERE S.value > 100
 
 当`join`算子很多时，查询计划的空间会变得异常的庞大，遍历并计算每一种可能的查询计划的开销也非常耗时，因此，我们必须在有限的空间中找出相对最优的查询计划
 
-### 14.1.4 More Examples
+## 14.2 Static Rules
+
+**我们可以对原始SQL按照某些既定的规则进行重写，以达到去除冗余部分或者简化SQL的目的**
 
 示例1：谓词恒为真或恒为假
 
@@ -1450,9 +1452,99 @@ SELECT * FROM A
     WHERE val BETWEEN 1 AND 150;
 ```
 
-## 14.2 Static Rules
-
 # 15 Optimization 2
+
+## 15.1 Plan Cost Estimation
+
+**可能影响执行效率的因素：**
+
+* CPU
+* 磁盘
+* 内存
+* 网络
+
+**对于给定数据表`R`，`DBMS`通常会存储如下元数据：**
+
+1. {% raw %}$N_{R}${% endraw %}：表的行数
+1. {% raw %}$V(A, R)${% endraw %}：属性`A`的不同取值的个数（基数）
+
+### 15.1.1 Selectivity
+
+**于是`Selection Cardinality`就表示了某个属性的每个不同值的平均行数，即{% raw %}$SC(A, R) = \frac{N_R}{V(A, R)}${% endraw %}。即包含一个假设：分布是均匀的**
+
+**谓词（`Predicate`）`P`的选择性（`Selectivity, sel`）可以表示为：符合条件的元组所占的比例。且不同的谓词有不同的计算方式**
+
+* `Equality Predicate`：例如，`A = constant`
+    * {% raw %}$sel(A=constant) = \frac{SC(P)}{N_R}${% endraw %}
+* `Range Predicate`：例如，`A >= a`
+    * {% raw %}$sel(A \ge a) = \frac{A_{max} - a}{A_{max} - A_{min}}${% endraw %}
+* `Negation Predicate`：例如，`not P`
+    * {% raw %}$sel(not\ P) = 1 - sel(P)${% endraw %}
+* `Conjunction`：例如，`P1 ∩ P2`
+    * {% raw %}$sel(P1 \cap P2) = sel(P1) * sel(P2）${% endraw %}
+    * 包含假设：2个谓词是相互独立的
+* `Disjunction`：例如，`P1 ∪ P2`
+    * {% raw %}$sel(P1 \cup P2) = sel(P1) + sel(P2）- sel(P1 \cap P2)${% endraw %}
+    * 包含假设：2个谓词是相互独立的
+
+### 15.1.2 Sampling
+
+现代的`DBMS`会存储一个表结构的采样数据集（在数据表发生重大变更时，会更新该采样数据级）。`DBMS`会利用采样数据来对`Selectivity`进行预测
+
+例如，对于`Range Predicate`，借助采样就可以比较准确地进行预估
+
+![15-1](/images/Database-System/15-1.png)
+
+## 15.2 Plan Enumeration
+
+`DBMS`在根据既定规则对原始SQL进行重写后，就会列举出一系列的等价查询计划，并且计算这些查询计划的开销，并从中选出最优的查询计划
+
+### 15.2.1 Single-Relation Query Planning
+
+**首先，选择最优的访问方式：**
+
+1. 顺序扫描
+1. 二分查找
+1. 索引查找
+
+**其次，计算各个谓词的选择性，并对其进行排序**
+
+**对`OLTP`而言，启发式方法已经足够了（`OLTP`的查询一般来说非常简单）**
+
+* 选择最优的索引
+* join一般会建立在`foreign key`上
+* 几个启发式的可选`plan`
+
+### 15.2.2 Multi-Relation Query Planning
+
+**当`join`的数量上升时，查询计划空间会迅速膨胀。为了简化这一问题，通常只考虑左深树（现代的`DBMS`可能不再使用这一假设）**
+
+* 基于这一假设，更容易生成全流水化的查询计划
+
+![15-2](/images/Database-System/15-2.png)
+
+![15-3](/images/Database-System/15-3.png)
+
+**列出所有可能的查询计划，维度包括：**
+
+* 枚举左深树的顺序。比如是`T1 -> T2 -> T3`还是`T2 -> T1 -> T3`等等
+* 枚举`Join`的实现方式。比如用`Hash`还是`Merge Sort`还是`Nested Loop`
+* 枚举数据表的访问方式。比如用索引（哪个索引？）还是顺序访问
+
+**这样会得到一个非常庞大的查询计划集，我们通常使用动态规划（`Dynamic Programming`）来选择最优解。示意图参考课件中的`40 ~ 44`页**
+
+### 15.2.3 Postgre Optimizer
+
+**`Postgre`的优化器会评估所有可能的`Join`树，包括左深树、右深树以及`bushy`**
+
+**`Postgre`包含了2个优化器：**
+
+1. 使用动态规划的传统的优化器（当表的数量小于12时，用这个优化器）
+1. 使用遗传查询优化器`Genetic Query Optimizer, GEQO`（当表的数量大于等于12时，用这个优化器）
+
+示意图参考课件中的`52 ~ 57`页
+
+## 15.3 Nested Sub-queries
 
 # 16 Concurrency Control
 
