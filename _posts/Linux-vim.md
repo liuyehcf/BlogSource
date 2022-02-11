@@ -66,6 +66,7 @@ categories:
 * **`r,R`：进入替换模式，r只会替换光标所在的那一个字符一次，R会一直替换光标所在行的文字，直到按下Esc**
 * **`Esc`：退回一般模式**
 * **`[Ctrl] + [`：退回一般模式**
+* **`[Ctrl] + d/t`：光标所在的整行减少/增加缩进**
 * **`[Shift] + [Left]`：向左移动一个单词**
 * **`[Shift] + [Right]`：向右移动一个单词**
 * **`[Shift] + [Up]`：向上翻页**
@@ -139,6 +140,8 @@ categories:
 * **`ci(`：改写小括号中的内容**
 * **`ci[`：改写中括号中的内容**
 * **`ci{`：改写大括号中的内容**
+* **`<`：减少缩进**
+* **`>`：增加缩进**
 * **`u`：复原（撤销）前一个操作**
 * **`[Ctrl] + r`：重做上一个操作**
 * **`.`：重做上一个操作**
@@ -374,70 +377,7 @@ categories:
 * `:cprev`：跳到`quickfix`中上一个错误信息
 * `:set modifiable`，将`quickfix`改成可写，可以用`dd`等删除某个条目
 
-## 2.15 vim配置文件
-
-vim会主动将你曾经做过的行为记录下来，好让你下次可以轻松作业，记录操作的文件就是`~/.viminfo`
-
-整体vim的设置值一般放置在`/etc/vimrc`这个文件中，不过不建议修改它，但是可以修改`~/.vimrc`这个文件（默认不存在，手动创建）
-
-**在运行vim的时候，如果修改了`~/.vimrc`文件的内容，可以通过执行`:source ~/.vimrc`来重新加载`~/.vimrc`，立即生效配置**
-
-**常用配置项：**
-
-```vim
-:set nocompatible       设置不兼容原始 vi 模式（必须设置在最开头）
-:set bs=?               设置BS键模式，现代编辑器为 :set bs=eol,start,indent
-:set sw=4               设置缩进宽度为 4
-:set ts=4               设置制表符宽度为 4
-:set noet               设置不展开 tab 成空格
-:set et                 设置展开 tab 成空格
-:set winaltkeys=no      设置 GVim 下正常捕获 ALT 键
-:set nowrap             关闭自动换行
-:set ttimeout           允许终端按键检测超时（终端下功能键为一串ESC开头的扫描码）
-:set ttm=100            设置终端按键检测超时为100毫秒
-:set term=?             设置终端类型，比如常见的 xterm
-:set ignorecase         设置搜索忽略大小写（可缩写为 :set ic）
-:set noignorecase       设置搜索不忽略大小写（可缩写为 :set noic）
-:set smartcase          智能大小写，默认忽略大小写，除非搜索内容里包含大写字母
-:set list               设置显示制表符和换行符
-:set number             设置显示行号，禁止显示行号可以用 :set nonumber
-:set relativenumber     设置显示相对行号（其他行与当前行的距离）
-:set paste              进入粘贴模式（粘贴时禁用缩进等影响格式的东西）
-:set nopaste            结束粘贴模式
-:set spell              允许拼写检查
-:set hlsearch           设置高亮查找
-:set ruler              总是显示光标位置
-:set incsearch          查找输入时动态增量显示查找结果
-:set insertmode         vim 始终处于插入模式下，使用 [Ctrl] + o 临时执行命令
-:set all                列出所有选项设置情况
-:set cursorcolumn       高亮当前列
-:set cursorline         高亮当前行
-:set fileencoding       查看当前文件的编码格式
-:set showtabline=0/1/2  0：不显示标签页；1：默认值，只有在新建新的tab时才显式标签页；2：总是显式标签页
-:syntax on              允许语法高亮
-:syntax off             禁止语法高亮
-```
-
-### 2.15.1 修改tab的行为
-
-修改`~/.vimrc`，追加如下内容
-
-```vim
-" 表示打开文件自动显示行号
-set number
-" 表示一个Tab键显示出来多少个空格的长度，默认是8，这里设置为4
-set tabstop=4
-" 表示在编辑模式下按退格键时候退回缩进的长度，设置为4
-set softtabstop=4
-" 表示每一级缩进的长度，一般设置成和softtabstop长度一样
-set shiftwidth=4
-" 当设置成expandtab时表示缩进用空格来表示，noexpandtab则用制表符表示一个缩进
-set expandtab
-" 表示自动缩进
-set autoindent
-```
-
-### 2.15.2 键位映射
+## 2.15 键位映射
 
 1. **`map`：递归映射**
 1. **`noremap`：非递归映射**
@@ -470,27 +410,74 @@ set autoindent
 1. `:silent verbose map`
 1. `:redir END`
 
-## 2.16 其他
+## 2.16 配置
 
 * **`:set <config>?`：可以查看`<config>`的值**
     * `:set filetype?`：查看文件类型
-* **`:echo <variable>`：可以查看`<variable>`的值**
-* **`:echom xxx`：信息会保留在message中，可以通过`:message`查看**
-* `[Shift] + 3`：以暗黄色为底色显示所有指定的字符串
-* **`[Shift] + >`：向右移动**
-* **`[Shift] + <`：向左移动**
-* **`:nohlsearch`：取消高亮（no hightlight search）**
-* **`q:`：进入命令历史编辑**
-* **`q/`：进入搜索历史编辑**
-* **`q[a-z`]：q后接任意字母，进入命令记录**
-* 针对以上三个：
+
+### 2.16.1 常用配置项
+
+```vim
+:set nocompatible       " 设置不兼容原始 vi 模式（必须设置在最开头）
+:set bs=?               " 设置BS键模式，现代编辑器为 :set bs=eol,start,indent
+:set softtabstop=4      " 表示在编辑模式下按退格键时候退回缩进的宽度，建议设置为4
+:set shiftwidth=4       " 表示缩进的宽度，一般设置成和softtabstop一样
+:set autoindent         " 表示自动缩进
+:set tabstop=4          " 表示一个Tab键的宽度，默认是8，建议设置为4
+:set expandtab          " 表示缩进用空格来表示
+:set noexpandtab        " 表示缩进用制表符来表示
+:set winaltkeys=no      " 设置 GVim 下正常捕获 ALT 键
+:set nowrap             " 关闭自动换行
+:set ttimeout           " 允许终端按键检测超时（终端下功能键为一串ESC开头的扫描码）
+:set ttm=100            " 设置终端按键检测超时为100毫秒
+:set term=?             " 设置终端类型，比如常见的 xterm
+:set ignorecase         " 设置搜索忽略大小写（可缩写为 :set ic）
+:set noignorecase       " 设置搜索不忽略大小写（可缩写为 :set noic）
+:set smartcase          " 智能大小写，默认忽略大小写，除非搜索内容里包含大写字母
+:set list               " 设置显示制表符和换行符
+:set number             " 设置显示行号，禁止显示行号可以用 :set nonumber
+:set relativenumber     " 设置显示相对行号（其他行与当前行的距离）
+:set paste              " 进入粘贴模式（粘贴时禁用缩进等影响格式的东西）
+:set nopaste            " 结束粘贴模式
+:set spell              " 允许拼写检查
+:set hlsearch           " 设置高亮查找
+:set nohlsearch         " 取消高亮
+:set ruler              " 总是显示光标位置
+:set incsearch          " 查找输入时动态增量显示查找结果
+:set insertmode         " vim 始终处于插入模式下，使用 [Ctrl] + o 临时执行命令
+:set all                " 列出所有选项设置情况
+:set cursorcolumn       " 高亮当前列
+:set cursorline         " 高亮当前行
+:set fileencoding       " 查看当前文件的编码格式
+:set showtabline=0/1/2  " 0：不显示标签页；1：默认值，只有在新建新的tab时才显式标签页；2：总是显式标签页
+:syntax on              " 允许语法高亮
+:syntax off             " 禁止语法高亮
+```
+
+### 2.16.2 配置文件
+
+vim会主动将你曾经做过的行为记录下来，好让你下次可以轻松作业，记录操作的文件就是`~/.viminfo`
+
+整体vim的设置值一般放置在`/etc/vimrc`这个文件中，不过不建议修改它，但是可以修改`~/.vimrc`这个文件（默认不存在，手动创建）
+
+**在运行vim的时候，如果修改了`~/.vimrc`文件的内容，可以通过执行`:source ~/.vimrc`来重新加载`~/.vimrc`，立即生效配置**
+
+## 2.17 其他
+
+* **`echo`**
+    * **`:echo <variable>`：可以查看`<variable>`的值**
+    * **`:echom xxx`：信息会保留在message中，可以通过`:message`查看**
+* **命令历史**
+    * **`q:`：进入命令历史编辑**
+    * **`q/`：进入搜索历史编辑**
+    * **`q[a-z`]：q后接任意字母，进入命令记录**
     * 可以像编辑缓冲区一样编辑某个命令，然后回车执行
     * 可以用`[Ctrl] + c`退出历史编辑回到编辑缓冲区，但此时历史编辑窗口不关闭，可以参照之前的命令再自己输入
     * **输入`:x`关闭历史编辑并放弃编辑结果回到编辑缓冲区**
     * 可以在空命令上回车相当于退出历史编辑区回到编辑缓冲区
 * **`q`：出现「记录中」或者「recording」字样时，按`q`可以取消**
-
-## 2.17 Tips
+* **`[Ctrl] + g`：统计信息**
+* **`g + [Ctrl] + g`：字节统计信息**
 
 ### 2.17.1 多行更新
 
