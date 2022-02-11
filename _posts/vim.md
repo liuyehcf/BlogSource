@@ -1,12 +1,11 @@
 ---
-title: Linux-vim
+title: vim
 date: 2018-01-16 22:58:45
 top: true
 tags: 
-- 摘录
+- 原创
 categories: 
-- Operating System
-- Linux
+- Editor
 ---
 
 **阅读更多**
@@ -57,7 +56,7 @@ categories:
 
 # 2 操作手册
 
-![vi-vim-cheat-sheet](/images/Linux-vim/vi-vim-cheat-sheet.gif)
+![vi-vim-cheat-sheet](/images/vim/vi-vim-cheat-sheet.gif)
 
 * [图片出处](http://www.viemu.com/a_vi_vim_graphical_cheat_sheet_tutorial.html)
 
