@@ -60,6 +60,11 @@ categories:
 
 kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及查看信息，可利用`dmesg`来查看。开机信息亦保存在`/var/log`目录中，名称为dmesg的文件里
 
+**示例：**
+
+* `dmesg -TL`
+* `dmesg --level=warn,err`
+
 ## 1.5 chsh
 
 **格式：**

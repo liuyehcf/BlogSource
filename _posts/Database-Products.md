@@ -349,7 +349,25 @@ categories:
 * [home](https://pinot.apache.org/)
 * [github](https://github.com/apache/pinot)
 
-# 17 Presto
+# 17 PostgreSQL
+
+**类型：`OLAP`**
+
+**特性：**
+
+**架构：**
+
+**主页：**
+
+* [home](https://www.postgresql.org/)
+* [github](https://github.com/postgres/postgres)
+
+**其他：**
+
+* [PostgreSQL衍生产品](https://wiki.postgresql.org/wiki/PostgreSQL_derived_databases)
+* [PostgreSQL 与 MySQL 相比，优势何在？](https://www.zhihu.com/question/20010554/answer/94999834)
+
+# 18 Presto
 
 **类型：`OLAP`**
 
@@ -368,20 +386,31 @@ categories:
 * [home](https://prestodb.io/)
 * [github](https://github.com/prestodb/presto)
 
-# 18 Starrocks
+# 19 Starrocks
 
 **类型：`OLAP`**
 
 **特性：**
 
+1. `MPP`架构
+1. 架构精简，不依赖外部系统
+1. 全面向量化引擎
+1. 只能查询分析
+1. 联邦查询
+1. 物化视图
+1. 兼容mysql协议
+
 **架构：**
+
+* [StarRocks的系统架构](https://docs.starrocks.com/zh-cn/main/quick_start/Architecture)
+* ![starrocks_architecture](/images/Database-Products/starrocks_architecture.png)
 
 **主页：**
 
 * [home](https://www.starrocks.com/zh-CN/index)
 * [github](https://github.com/StarRocks/starrocks)
 
-# 19 Snowflake
+# 20 Snowflake
 
 **类型：`OLAP`**
 
@@ -401,7 +430,7 @@ categories:
 
 * [home](https://www.snowflake.com/)
 
-# 20 Spark
+# 21 Spark
 
 **类型：`Analytics Engine`（`Alternative to MapReduce`）**
 
@@ -419,7 +448,7 @@ categories:
 * [home](https://spark.apache.org/)
 * [github](https://github.com/apache/spark)
 
-# 21 TiDB
+# 22 TiDB
 
 **类型：`OLTP`**
 
@@ -441,7 +470,7 @@ categories:
 * [home](https://docs.pingcap.com/zh/tidb/stable/)
 * [github](https://github.com/pingcap/tidb)
 
-# 22 Trino
+# 23 Trino
 
 **类型：**
 
@@ -465,7 +494,7 @@ categories:
 * [home](https://trino.io/)
 * [github](https://github.com/trinodb/trino)
 
-# 23 Vertica
+# 24 Vertica
 
 **类型：`OLAP`**
 
@@ -477,7 +506,7 @@ categories:
 
 * [home](https://www.vertica.com/)
 
-# 24 参考
+# 25 参考
 
 * [你需要的不是实时数仓 | 你需要的是一款合适且强大的OLAP数据库(上)](https://segmentfault.com/a/1190000020385432)
 * [你需要的不是实时数仓 | 你需要的是一款强大的OLAP数据库(下)](https://segmentfault.com/a/1190000020385389)

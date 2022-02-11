@@ -1544,7 +1544,18 @@ SELECT * FROM A
 
 示意图参考课件中的`52 ~ 57`页
 
-## 15.3 Nested Sub-queries
+## 15.3 Nested Sub-Queries
+
+`DBMS`处理子查询（`Sub-Queries`），通常有两种处理方式：
+
+1. 重写：将查询改写成普通查询
+    * ![15-4](/images/Database-System/15-4.png)
+1. 解耦：将子查询的结果存储到临时表中，临时表在查询结束后就会丢弃
+    * ![15-5](/images/Database-System/15-5.png)
+
+对于复杂查询，优化器通常会将查询拆分成多个逻辑块，每次只关注一个逻辑块
+
+**示意图参考课件中的`59 ~ 66`页**
 
 # 16 Concurrency Control
 
