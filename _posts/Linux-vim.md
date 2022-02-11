@@ -57,6 +57,10 @@ categories:
 
 # 2 操作手册
 
+![vi-vim-cheat-sheet](/images/Linux-vim/vi-vim-cheat-sheet.gif)
+
+* [图片出处](http://www.viemu.com/a_vi_vim_graphical_cheat_sheet_tutorial.html)
+
 ## 2.1 编辑模式
 
 * **`i,I`：进入插入模式，i为从光标所在处插入，I为在目前所在行的第一个非空格处开始插入**
