@@ -430,40 +430,40 @@ categories:
 ### 2.16.1 常用配置项
 
 ```vim
-:set nocompatible       " 设置不兼容原始 vi 模式（必须设置在最开头）
-:set bs=?               " 设置BS键模式，现代编辑器为 :set bs=eol,start,indent
-:set softtabstop=4      " 表示在编辑模式下按退格键时候退回缩进的宽度，建议设置为4
-:set shiftwidth=4       " 表示缩进的宽度，一般设置成和softtabstop一样
-:set autoindent         " 表示自动缩进
-:set tabstop=4          " 表示一个Tab键的宽度，默认是8，建议设置为4
-:set expandtab          " 表示缩进用空格来表示
-:set noexpandtab        " 表示缩进用制表符来表示
-:set winaltkeys=no      " 设置 GVim 下正常捕获 ALT 键
-:set nowrap             " 关闭自动换行
-:set ttimeout           " 允许终端按键检测超时（终端下功能键为一串ESC开头的扫描码）
-:set ttm=100            " 设置终端按键检测超时为100毫秒
-:set term=?             " 设置终端类型，比如常见的 xterm
-:set ignorecase         " 设置搜索忽略大小写（可缩写为 :set ic）
-:set noignorecase       " 设置搜索不忽略大小写（可缩写为 :set noic）
-:set smartcase          " 智能大小写，默认忽略大小写，除非搜索内容里包含大写字母
-:set list               " 设置显示制表符和换行符
-:set number             " 设置显示行号，禁止显示行号可以用 :set nonumber
-:set relativenumber     " 设置显示相对行号（其他行与当前行的距离）
-:set paste              " 进入粘贴模式（粘贴时禁用缩进等影响格式的东西）
-:set nopaste            " 结束粘贴模式
-:set spell              " 允许拼写检查
-:set hlsearch           " 设置高亮查找
-:set nohlsearch         " 取消高亮
-:set ruler              " 总是显示光标位置
-:set incsearch          " 查找输入时动态增量显示查找结果
-:set insertmode         " vim 始终处于插入模式下，使用 [Ctrl] + o 临时执行命令
-:set all                " 列出所有选项设置情况
-:set cursorcolumn       " 高亮当前列
-:set cursorline         " 高亮当前行
-:set fileencoding       " 查看当前文件的编码格式
-:set showtabline=0/1/2  " 0：不显示标签页；1：默认值，只有在新建新的tab时才显式标签页；2：总是显式标签页
-:syntax on              " 允许语法高亮
-:syntax off             " 禁止语法高亮
+:set nocompatible                   " 设置不兼容原始 vi 模式（必须设置在最开头）
+:set backspace=indent,eol,start     " 设置BS键模式
+:set softtabstop=4                  " 表示在编辑模式下按退格键时候退回缩进的宽度，建议设置为4
+:set shiftwidth=4                   " 表示缩进的宽度，一般设置成和softtabstop一样
+:set autoindent                     " 表示自动缩进
+:set tabstop=4                      " 表示一个Tab键的宽度，默认是8，建议设置为4
+:set expandtab                      " 表示缩进用空格来表示
+:set noexpandtab                    " 表示缩进用制表符来表示
+:set winaltkeys=no                  " 设置 GVim 下正常捕获 ALT 键
+:set nowrap                         " 关闭自动换行
+:set ttimeout                       " 允许终端按键检测超时（终端下功能键为一串ESC开头的扫描码）
+:set ttm=100                        " 设置终端按键检测超时为100毫秒
+:set term=?                         " 设置终端类型，比如常见的 xterm
+:set ignorecase                     " 设置搜索忽略大小写（可缩写为 :set ic）
+:set noignorecase                   " 设置搜索不忽略大小写（可缩写为 :set noic）
+:set smartcase                      " 智能大小写，默认忽略大小写，除非搜索内容里包含大写字母
+:set list                           " 设置显示制表符和换行符
+:set number                         " 设置显示行号，禁止显示行号可以用 :set nonumber
+:set relativenumber                 " 设置显示相对行号（其他行与当前行的距离）
+:set paste                          " 进入粘贴模式（粘贴时禁用缩进等影响格式的东西）
+:set nopaste                        " 结束粘贴模式
+:set spell                          " 允许拼写检查
+:set hlsearch                       " 设置高亮查找
+:set nohlsearch                     " 结束高亮
+:set ruler                          " 总是显示光标位置
+:set incsearch                      " 查找输入时动态增量显示查找结果
+:set insertmode                     " vim 始终处于插入模式下，使用 [Ctrl] + o 临时执行命令
+:set all                            " 列出所有选项设置情况
+:set cursorcolumn                   " 高亮当前列
+:set cursorline                     " 高亮当前行
+:set fileencoding                   " 查看当前文件的编码格式
+:set showtabline=0/1/2              " 0：不显示标签页；1：默认值，只有在新建新的tab时才显式标签页；2：总是显式标签页
+:syntax on                          " 允许语法高亮
+:syntax off                         " 禁止语法高亮
 ```
 
 ### 2.16.2 配置文件
@@ -971,12 +971,6 @@ let fmt = get(g:, 'plug_url_format', 'https://git::@github.com.cnpmjs.org/%s.git
 \ '^https://git::@github\.com', 'https://github.com', '')
 // 修改为
 \ '^https://git::@github\.com\.cnpmjs\.org', 'https://github.com.cnpmjs.org', '')
-```
-
-**退格失效，编辑`~/.vimrc`，追加如下内容**
-
-```vim
-set backspace=indent,eol,start
 ```
 
 ## 3.3 配色方案
@@ -2277,19 +2271,9 @@ if filereadable(expand('~/.vim/gtags-cscope.vim'))
     source ~/.vim/gtags-cscope.vim
 endif
 
-" 搜索和替换的快捷键配置
-" 搜索和替换分别映射到 [Option] + f 和 [Option] + r，即「ƒ」和「®」
+" 替换映射到 [Option] + r，即「®」
 " 其中，<c-r><c-w> 表示 [Ctrl] + r 以及 [Ctrl] + w，用于将光标所在的单词填入搜索/替换项中
-nnoremap ƒ :/<c-r><c-w>
 nnoremap ® :%s/<c-r><c-w>
-
-" 退格失效的配置
-set backspace=indent,eol,start
-
-" 折叠，默认不启用
-set nofoldenable
-set foldmethod=indent
-set foldlevel=0
 
 " tab 切换
 nnoremap ¬ :tabnext<cr>
@@ -2300,14 +2284,19 @@ nnoremap <silent> <cr> :nohlsearch<cr><cr>
 " \qc 关闭 quickfix
 nnoremap <leader>qc :cclose<cr>
 
-" 其他配置
-set hlsearch
-set number
+" 折叠，默认不启用
+set nofoldenable
+set foldmethod=indent
+set foldlevel=0
+" 其他常用
+set backspace=indent,eol,start
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
 set expandtab
 set autoindent
+set hlsearch
+set number
 set cursorline
 set matchpairs+=<:>
 
