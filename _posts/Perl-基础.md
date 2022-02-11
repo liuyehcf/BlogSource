@@ -3628,6 +3628,39 @@ only_two_arguments($first, $second, $third);
 
 `Path::Class`提供了跨平台的路径操作方式（不必关系路径分隔符是`/`还是`\`诸如此类的问题）
 
+## 13.4 Time
+
+`Perl`提供了`localtime`函数用于获取时间信息
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my @months = qw( 一月 二月 三月 四月 五月 六月 七月 八月 九月 十月 十一月 十二月 );
+my @days = qw(星期天 星期一 星期二 星期三 星期四 星期五 星期六);
+
+my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime();
+say "$mday $months[$mon] $days[$wday]";
+```
+
+如果只想获取年份的话可以使用`Time`模块，详细请参考`perldoc Time::Piece`
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+use Time::Piece;
+
+my $now = Time::Piece->new();
+say "year:", $now->year;
+say "mon:", $now->month;
+say "day_of_month:", $now->day_of_month;
+say "hour:", $now->hour;
+say "minute:", $now->minute;
+say "second:", $now->second;
+```
+
 # 14 高级特性
 
 ## 14.1 属性

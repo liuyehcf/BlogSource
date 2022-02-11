@@ -44,3 +44,4 @@ map {[ $_, $urls{$_} ]} keys %urls; # map hash to array
 
 open my $out_fh, '>', '../url.list';
 say $out_fh $_ for (@sorted_urls);
+say "generated finished, filepath: '../url.list'";
