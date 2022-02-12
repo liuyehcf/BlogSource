@@ -1,57 +1,24 @@
 #!/bin/bash
 
-function getJobIds() {
-    jobIds=()
-    i=1
+URL_FILE="/root/url.list"
+if [ -n "$1" ]; then
+    URL_FILE=$1
+fi
 
-    jobs > tmp.txt
+VISIT_TIMES=20
+if [ -n "$2" ]; then
+    VISIT_TIMES=$2;
+fi
 
-    while read line
-    do
-        jobId=${line}
-        jobId=${jobId#*\[}
-        jobId=${jobId%\]*}
-        jobIds[${i}]=${jobId}
-        ((i++))
-    done < tmp.txt
+URLS=( $(cat ${URL_FILE}) )
 
-    rm -f tmp.txt
-
-    echo ${jobIds[*]}
-}
-
-URLS=$(cat /root/url.list)
-TOTAL=$(cat /root/url.list | wc -l)
-JOB_COUNT=0
-URL_COUNT=0
-rm -f log.log
-
-for URL in $URLS
+for ((i=0;i<VISIT_TIMES;i++)) 
 do
-    ((URL_COUNT++))
-    echo "------------------------------------------------------"
-    echo "Total: ${TOTAL}, Current: ${URL_COUNT}"
-    echo "Url: ${URL}"
-    for i in $(seq 1 $(($RANDOM%20)));
+    URL_COUNT=0
+    for URL in ${URLS[@]}
     do
-            echo "times: ${i}"
-            google-chrome --headless --disable-gpu --no-sandbox $URL >> log.log 2>&1 &
-            ((JOB_COUNT++))
-
-            # 当后台进程多余10个时，全部杀掉，等待3秒，然后杀掉
-            if [ $JOB_COUNT -ge 10 ];
-            then
-                sleep 3
-
-                jobIds=$(getJobIds)
-                echo "jobIds: $jobIds"
-
-                for jobId in ${jobIds}
-                do
-                    kill -9 %${jobId}
-                done
-
-                JOB_COUNT=0
-            fi
+        echo "total_visit_times: ${VISIT_TIMES}, visit_count: ${i}, total_urls=${#URLS[@]}, url_count=${URL_COUNT}"
+        google-chrome --headless --disable-gpu --no-sandbox ${URL} >> log.log 2>&1
+        ((URL_COUNT++))
     done
 done
