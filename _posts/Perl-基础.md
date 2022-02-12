@@ -3628,7 +3628,28 @@ only_two_arguments($first, $second, $third);
 
 `Path::Class`提供了跨平台的路径操作方式（不必关系路径分隔符是`/`还是`\`诸如此类的问题）
 
-# 14 Cwd
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+use Path::Class;
+
+my $dir  = dir('foo', 'bar');       # Path::Class::Dir object
+my $file = file('bob', 'file.txt'); # Path::Class::File object
+
+say "dir: $dir";
+say "file: $file";
+
+my $subdir  = $dir->subdir('baz');  # foo/bar/baz
+my $parent  = $subdir->parent;      # foo/bar
+my $parent2 = $parent->parent;      # foo
+
+say "subdir: $subdir";
+say "parent: $parent";
+say "parent2: $parent2";
+```
+
+## 13.4 Cwd
 
 `Cwd`主要用于计算真实路径，例如`/tmp/././a`就返回`/tmp/a`。详细用法参考`perldoc Cwd`
 
@@ -3641,7 +3662,7 @@ use Cwd;
 say "abs path of '/tmp/a/b/..':", Cwd::abs_path("/tmp/a/b/..");
 ```
 
-## 14.1 File
+## 13.5 File
 
 详细用法参考`perldoc File::Spec`、`perldoc File::Basename`
 
@@ -3664,7 +3685,7 @@ my $rel_dir = dirname(__FILE__);
 say "rel_dir: $rel_dir";
 ```
 
-## 14.2 Time
+## 13.6 Time
 
 `Perl`提供了`localtime`函数用于获取时间信息
 
@@ -3697,9 +3718,9 @@ say "minute:", $now->minute;
 say "second:", $now->second;
 ```
 
-# 15 高级特性
+# 14 高级特性
 
-## 15.1 属性
+## 14.1 属性
 
 具名实体，包括变量以及函数都可以拥有属性，语法如下
 
@@ -3714,7 +3735,7 @@ sub erupt_volcano :ScienceProject { ... }
 
 **大部分时候，你不需要使用属性**
 
-# 16 Builtin
+# 15 Builtin
 
 参考[perlfunc](https://perldoc.perl.org/perlfunc)。此外可以通过`perldoc perlfunc`查看
 
@@ -3730,7 +3751,7 @@ sub erupt_volcano :ScienceProject { ... }
 1. `sort`：排序
 1. `scalar`：显式声明标量上下文
 
-# 17 进阶
+# 16 进阶
 
 [modern-perl.pdf](/resources/modern-perl.pdf)
 
@@ -3796,7 +3817,7 @@ sub erupt_volcano :ScienceProject { ... }
 1. `abc|def` 和 `(abc|def)`的差异
 1. `use autodie;` - P167
 
-# 18 参考
+# 17 参考
 
 * [w3cschool-perl](https://www.w3cschool.cn/perl/)
 * [perl仓库-cpan](https://www.cpan.org/)
