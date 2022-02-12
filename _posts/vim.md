@@ -1199,8 +1199,8 @@ let g:gutentags_cache_dir = s:vim_tags
 let g:gutentags_ctags_extra_args = ['--fields=+ailnSz']
 autocmd FileType c,cpp,objc let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
 autocmd FileType c,cpp,objc let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
-autocmd FileType python g:gutentags_ctags_extra_args += ['--languages=python']
-autocmd FileType python g:gutentags_ctags_extra_args += ['--python-kinds=-iv']
+autocmd FileType python let g:gutentags_ctags_extra_args += ['--languages=python']
+autocmd FileType python let g:gutentags_ctags_extra_args += ['--python-kinds=-iv']
 
 " 配置 universal ctags 特有参数
 let g:ctags_version = system('ctags --version')[0:8]
@@ -2022,8 +2022,8 @@ let g:gutentags_cache_dir = s:vim_tags
 let g:gutentags_ctags_extra_args = ['--fields=+ailnSz']
 autocmd FileType c,cpp,objc let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
 autocmd FileType c,cpp,objc let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
-autocmd FileType python g:gutentags_ctags_extra_args += ['--languages=python']
-autocmd FileType python g:gutentags_ctags_extra_args += ['--python-kinds=-iv']
+autocmd FileType python let g:gutentags_ctags_extra_args += ['--languages=python']
+autocmd FileType python let g:gutentags_ctags_extra_args += ['--python-kinds=-iv']
 
 " 配置 universal ctags 特有参数
 let g:ctags_version = system('ctags --version')[0:8]
