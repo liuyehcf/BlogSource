@@ -1523,10 +1523,10 @@ call plug#end()
 **配置`~/.ycm_extra_conf.py`，内容如下（仅针对c/c++，对大部分简单的工程均适用），仅供参考**
 
 ```python
-def Settings( **kwargs ):
-    if kwargs[ 'language' ] == 'cfamily':
+def Settings(**kwargs):
+    if kwargs['language'] == 'cfamily':
         return {
-            'flags': [ '-x', 'c++', '-Wall', '-Wextra', '-Werror' ],
+            'flags': ['-x', 'c++', '-Wall', '-Wextra', '-Werror'],
         }
 ```
 
