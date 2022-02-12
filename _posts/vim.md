@@ -120,6 +120,8 @@ categories:
 * **`gk`：光标上移一行（忽略自动换行）**
 * **`%`：跳转到`{} () []`的匹配**
     * 可以通过`:set matchpairs+=<:>`增加对尖括号`<>`的识别。可能会误识别，因为文本中可能包含单个`>`或`<`
+* **`=`：按照类型自动调整缩进**
+    * `gg=G`
 
 ## 2.3 文本编辑
 
@@ -680,11 +682,13 @@ make install # may require extra privileges depending on where to install
 **`ctags`参数：**
 
 * `--c++-kinds=+px`：`ctags`记录c++文件中的函数声明，各种外部和前向声明
-* `--fields=+ialS`：`ctags`要求描述的信息，其中：
-    * `i`：表示如果有继承，则表示出父类
-    * `a`：表示如果元素是类成员的话，要标明其调用权限(即public或者private)
-    * `l`：表示包含标记源文件的语言
-    * `S`：表示函数的签名(即函数原型或者参数列表)
+* `--fields=+ailnSz`：`ctags`要求描述的信息，其中：
+    * `a`：如果元素是类成员的话，要标明其调用权限(即public或者private)
+    * `i`：如果有继承，则标明父类
+    * `l`：标明标记源文件的语言
+    * `n`：标明行号
+    * `S`：标明函数的签名（即函数原型或者参数列表）
+    * `z`：标明`kind`
 * `--extras=+q`：强制要求ctags做如下操作，如果某个语法元素是类的一个成员，ctags默认会给其记录一行，以要求ctags对同一个语法元素再记一行，这样可以保证在VIM中多个同名函数可以通过路径不同来区分
 * `-R`：`ctags`递归生成子目录的tags（在项目的根目录下很有意义）  
 
@@ -692,28 +696,34 @@ make install # may require extra privileges depending on where to install
 
 ```sh
 # 与上面的~/.vimrc中的配置对应，需要将tag文件名指定为.tags
-ctags --c++-kinds=+px --fields=+ialS --extras=+q -R -f .tags *
+ctags --c++-kinds=+px --fields=+ailnSz --extras=+q -R -f .tags *
 ```
 
-**如何为系统库生成`ctags`，这里生成的系统库对应的`ctags`文件是`~/.vim/systags`**
+**如何为`C/C++`标准库生成`ctags`，这里生成的标准库对应的`ctags`文件是`~/.vim/.cfamily_systags`**
 
 ```sh
 mkdir -p ~/.vim
 # 下面2种选一个即可
 
 # 1. 通过yum install -y gcc安装的gcc是4.8.5版本
-ctags --c++-kinds=+px --fields=+ialS --extras=+q -R -f ~/.vim/systags \
+ctags --c++-kinds=+px --fields=+ailnSz --extras=+q -R -f ~/.vim/.cfamily_systags \
 /usr/include \
 /usr/local/include \
 /usr/lib/gcc/x86_64-redhat-linux/4.8.5/include/ \
 /usr/include/c++/4.8.5/
 
 # 2. 通过上面编译安装的gcc是10.3.0版本
-ctags --c++-kinds=+px --fields=+ialS --extras=+q -R -f ~/.vim/systags \
+ctags --c++-kinds=+px --fields=+ailnSz --extras=+q -R -f ~/.vim/.cfamily_systags \
 /usr/include \
 /usr/local/include \
 /usr/local/lib/gcc/x86_64-pc-linux-gnu/10.3.0/include \
 /usr/local/include/c++/10.3.0
+```
+
+**如何为`Python`标准库生成`ctags`，这里生成的标准库对应的`ctags`文件是`~/.vim/.python_systags`（[ctags, vim and python code](https://stackoverflow.com/questions/47948545/ctags-vim-and-python-code)）**
+
+```sh
+ctags --languages=python --python-kinds=-iv --fields=+ailnSz --extras=+q -R -f ~/.vim/.python_systags /usr/lib64/python3.6
 ```
 
 **使用：**
@@ -737,8 +747,10 @@ nnoremap ∆ :tn<cr>
 nnoremap ˚ :tp<cr>
 " tags搜索模式
 set tags=./.tags;,.tags
-" 系统库的ctags
-set tags+=~/.vim/systags
+" c/c++ 标准库的ctags
+autocmd FileType c,cpp,objc set tags+=~/.vim/.cfamily_systags
+" python 标准库的ctags
+autocmd FileType python set tags+=~/.vim/.python_systags
 ```
 
 ### 3.2.7 符号索引-[cscope](http://cscope.sourceforge.net/)
@@ -1183,15 +1195,17 @@ endif
 let s:vim_tags = expand('~/.cache/tags')
 let g:gutentags_cache_dir = s:vim_tags
 
-" 配置 ctags 的参数
-let g:gutentags_ctags_extra_args = ['--fields=+niazSl']
-let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
-let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+" 按文件类型分别配置 ctags 的参数
+let g:gutentags_ctags_extra_args = ['--fields=+ailnSz']
+autocmd FileType c,cpp,objc let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+autocmd FileType c,cpp,objc let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+autocmd FileType python g:gutentags_ctags_extra_args += ['--languages=python']
+autocmd FileType python g:gutentags_ctags_extra_args += ['--python-kinds=-iv']
 
 " 配置 universal ctags 特有参数
 let g:ctags_version = system('ctags --version')[0:8]
 if g:ctags_version == "Universal"
-  let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
+    let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
 endif
 
 " 禁用 gutentags 自动加载 gtags 数据库的行为
@@ -1510,10 +1524,10 @@ call plug#end()
 
 ```python
 def Settings( **kwargs ):
-  if kwargs[ 'language' ] == 'cfamily':
-    return {
-      'flags': [ '-x', 'c++', '-Wall', '-Wextra', '-Werror' ],
-    }
+    if kwargs[ 'language' ] == 'cfamily':
+        return {
+            'flags': [ '-x', 'c++', '-Wall', '-Wextra', '-Werror' ],
+        }
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
@@ -1752,9 +1766,9 @@ nnoremap <leader>rg :Rg<cr>
 " 配置快捷键[Ctrl] + a，[Ctrl] + q，将结果导入quickfix
 " https://github.com/junegunn/fzf.vim/issues/185
 function! s:build_quickfix_list(lines)
-  call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
-  copen
-  cc
+    call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
+    copen
+    cc
 endfunction
 let g:fzf_action = { 'ctrl-q': function('s:build_quickfix_list') }
 let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
@@ -1762,6 +1776,7 @@ let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
 " https://github.com/junegunn/fzf.vim/issues/346
 command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
 command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
+
 call plug#end()
 ```
 
@@ -2003,15 +2018,17 @@ endif
 let s:vim_tags = expand('~/.cache/tags')
 let g:gutentags_cache_dir = s:vim_tags
 
-" 配置 ctags 的参数
-let g:gutentags_ctags_extra_args = ['--fields=+niazSl']
-let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
-let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+" 按文件类型分别配置 ctags 的参数
+let g:gutentags_ctags_extra_args = ['--fields=+ailnSz']
+autocmd FileType c,cpp,objc let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+autocmd FileType c,cpp,objc let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+autocmd FileType python g:gutentags_ctags_extra_args += ['--languages=python']
+autocmd FileType python g:gutentags_ctags_extra_args += ['--python-kinds=-iv']
 
 " 配置 universal ctags 特有参数
 let g:ctags_version = system('ctags --version')[0:8]
 if g:ctags_version == "Universal"
-  let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
+    let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
 endif
 
 " 禁用 gutentags 自动加载 gtags 数据库的行为
@@ -2200,9 +2217,9 @@ nnoremap <leader>rg :Rg<cr>
 " 配置快捷键[Ctrl] + a，[Ctrl] + q，将结果导入quickfix
 " https://github.com/junegunn/fzf.vim/issues/185
 function! s:build_quickfix_list(lines)
-  call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
-  copen
-  cc
+    call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
+    copen
+    cc
 endfunction
 let g:fzf_action = { 'ctrl-q': function('s:build_quickfix_list') }
 let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
@@ -2255,8 +2272,10 @@ nnoremap ∆ :tn<cr>
 nnoremap ˚ :tp<cr>
 " tags搜索模式
 set tags=./.tags;,.tags
-" 系统库的ctags
-set tags+=~/.vim/systags
+" c/c++ 标准库的ctags
+autocmd FileType c,cpp,objc set tags+=~/.vim/.cfamily_systags
+" python 标准库的ctags
+autocmd FileType python set tags+=~/.vim/.python_systags
 
 " gtags的配置
 " native-pygments 设置后会出现「gutentags: gtags-cscope job failed, returned: 1」，所以我把它换成了 native
