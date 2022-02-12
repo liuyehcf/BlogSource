@@ -1196,17 +1196,28 @@ let s:vim_tags = expand('~/.cache/tags')
 let g:gutentags_cache_dir = s:vim_tags
 
 " 按文件类型分别配置 ctags 的参数
-let g:gutentags_ctags_extra_args = ['--fields=+ailnSz']
-autocmd FileType c,cpp,objc let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
-autocmd FileType c,cpp,objc let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
-autocmd FileType python let g:gutentags_ctags_extra_args += ['--languages=python']
-autocmd FileType python let g:gutentags_ctags_extra_args += ['--python-kinds=-iv']
-
-" 配置 universal ctags 特有参数
-let g:ctags_version = system('ctags --version')[0:8]
-if g:ctags_version == "Universal"
-    let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
-endif
+function s:set_cfamily_configs()
+    let g:gutentags_ctags_extra_args = ['--fields=+ailnSz']
+    let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+    let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+    " 配置 universal ctags 特有参数
+    let g:ctags_version = system('ctags --version')[0:8]
+    if g:ctags_version == "Universal"
+        let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
+    endif
+endfunction
+function s:set_python_configs()
+    let g:gutentags_ctags_extra_args = ['--fields=+ailnSz']
+    let g:gutentags_ctags_extra_args += ['--languages=python']
+    let g:gutentags_ctags_extra_args += ['--python-kinds=-iv']
+    " 配置 universal ctags 特有参数
+    let g:ctags_version = system('ctags --version')[0:8]
+    if g:ctags_version == "Universal"
+        let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
+    endif
+endfunction
+autocmd FileType c,cpp,objc call s:set_cfamily_configs()
+autocmd FileType c,cpp,objc call s:set_python_configs()
 
 " 禁用 gutentags 自动加载 gtags 数据库的行为
 let g:gutentags_auto_add_gtags_cscope = 0
@@ -2019,17 +2030,28 @@ let s:vim_tags = expand('~/.cache/tags')
 let g:gutentags_cache_dir = s:vim_tags
 
 " 按文件类型分别配置 ctags 的参数
-let g:gutentags_ctags_extra_args = ['--fields=+ailnSz']
-autocmd FileType c,cpp,objc let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
-autocmd FileType c,cpp,objc let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
-autocmd FileType python let g:gutentags_ctags_extra_args += ['--languages=python']
-autocmd FileType python let g:gutentags_ctags_extra_args += ['--python-kinds=-iv']
-
-" 配置 universal ctags 特有参数
-let g:ctags_version = system('ctags --version')[0:8]
-if g:ctags_version == "Universal"
-    let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
-endif
+function s:set_cfamily_configs()
+    let g:gutentags_ctags_extra_args = ['--fields=+ailnSz']
+    let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+    let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+    " 配置 universal ctags 特有参数
+    let g:ctags_version = system('ctags --version')[0:8]
+    if g:ctags_version == "Universal"
+        let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
+    endif
+endfunction
+function s:set_python_configs()
+    let g:gutentags_ctags_extra_args = ['--fields=+ailnSz']
+    let g:gutentags_ctags_extra_args += ['--languages=python']
+    let g:gutentags_ctags_extra_args += ['--python-kinds=-iv']
+    " 配置 universal ctags 特有参数
+    let g:ctags_version = system('ctags --version')[0:8]
+    if g:ctags_version == "Universal"
+        let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
+    endif
+endfunction
+autocmd FileType c,cpp,objc call s:set_cfamily_configs()
+autocmd FileType c,cpp,objc call s:set_python_configs()
 
 " 禁用 gutentags 自动加载 gtags 数据库的行为
 let g:gutentags_auto_add_gtags_cscope = 0
