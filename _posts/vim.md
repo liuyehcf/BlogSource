@@ -558,6 +558,7 @@ endif
 | `echodoc` | 参数提示 | https://github.com/Shougo/echodoc.vim |
 | `nerdcommenter` | 添加注释 | https://github.com/preservim/nerdcommenter |
 | `vim-clang-format` | 代码格式化 | https://github.com/rhysd/vim-clang-format |
+| `vim-surround` | 文本环绕 | `https://github.com/tpope/vim-surround` |
 
 ## 3.2 环境准备
 
@@ -1952,7 +1953,59 @@ call plug#end()
 * **`:Autoformat`：格式化当前文件**
 * **`:AutoformatLine`：格式化当前行**
 
-## 3.22 个人完整配置
+## 3.22 文本环绕-[vim-surround](https://github.com/tpope/vim-surround)
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'tpope/vim-surround'
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**用法：**
+
+* 完整用法参考`:help surround`
+* `cs`：`cs, change surroundings`，用于替换当前文本的环绕符号
+    * `cs([`
+    * `cs[{`
+    * `cs{<q>`
+* `ds`：`ds, delete surroundings`，用于删除当前文本的环绕符号
+    * `ds{`
+    * `ds<`
+    * `ds<q>`
+* `ys`：`you surround`，用于给指定文本加上环绕符号。文本指定通常需要配合文本对象一起使用
+    * `ysiw[`：`iw`是文本对象
+    * `ysa"fprint`：其中`a"`是文本对象，`f`表示用函数调用的方式环绕起来，`print`是函数名。形式为`print(<text>)`
+    * `ysa"Fprint`：类似`ysa"fprint`，`F`表示会在参数列表前后多加额外的空格。形式为`print( <text> )`
+    * `ysa"<c-f>print`：类似`ysa"fprint`，`<c-f>`表示环绕符号加到最外侧。形式为`(print <text>)`
+* `yss`：给当前行加上环绕符号（不包含`leading whitespace`和`trailing whitespace`）
+    * `yss(`
+    * `yssb`
+    * `yss{`
+    * `yssB`
+* `yS`：类似`ys`，但会在选中文本的前一行和后一行加上环绕符号
+    * `ySiw[`：`iw`是文本对象
+* `ySS`：类似`yes`，但会在选中文本的前一行和后一行加上环绕符号
+    * `ySS(`
+    * `ySSb`
+    * `ySS{`
+    * `ySSB`
+* `[visual]S`：用于给`visual mode`选中的文本加上环绕符号
+    * `vllllS'`：其中，`v`表示进入`visual`模式，`llll`表示向右移动4个字符
+    * `vllllSfprint`：其中，`v`表示进入`visual`模式，`llll`表示向右移动4个字符，`f`表示用函数调用的方式环绕起来，`print`是函数名。形式为`print(<text>)`
+    * `vllllSFprint`：类似`vllllSfprint`，`F`表示会在参数列表前后多加额外的空格。形式为`print( <text> )`
+    * `vllllS<c-f>print`：类似`vllllSfprint`，`<c-f>`表示环绕符号加到最外侧。形式为`(print <text>)`
+
+## 3.23 个人完整配置
 
 **初学vim，水平有限，仅供参考，`~/.vimrc`完整配置如下**
 
@@ -2285,6 +2338,10 @@ Plug 'Chiel92/vim-autoformat'
 
 " 将 :ClangFormat 映射到快捷键 [Ctrl] + l
 autocmd FileType python nnoremap <buffer> <c-l> :Autoformat<cr>
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'tpope/vim-surround'
 
 call plug#end()
 
