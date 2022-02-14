@@ -73,3 +73,6 @@
 1. Canonical，典范
 1. Heuristics，启发式
 1. on going segments
+1. net effect，净效应
+1. credits both accounts with 6% interest
+1. intuitive，直觉的

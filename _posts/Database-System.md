@@ -1559,6 +1559,86 @@ SELECT * FROM A
 
 # 16 Concurrency Control
 
+并发控制和恢复渗透到了整个`DBMS`的架构中
+
+![16-1](/images/Database-System/16-1.png)
+
+## 16.1 Transactions
+
+事务是`DBMS`中变更的最小单元
+
+从用户程序的视角来看，`Database`和`Transaction`的定义分别为：
+
+* `Database`：一组固定的命名数据对象
+* `Transaction`：一系列的读写操作
+
+**正确性标准：`ACID`**
+
+* `Atomicity`：整个事务要么整体生效，要么整体不生效
+* `Consistency`：如果事务本身满足一致性，且开始事务前`DB`满足一致性，那么事务结束后（提交或者终止）`DB`也满足一致性（一致性的具体含义是由业务定义的）
+* `Isolation`：不同事务之间相互隔离
+* `Durability`：如果事务提交了，那么所有改动均已持久化
+
+## 16.2 Atomicity
+
+**通常来说，有如下机制可以实现`Atomicity`**
+
+* `Logging`：`DBMS`将所有操作以日志的形式保存下来，这样在事务终止后可以通过日志进行回滚
+    * 内存和磁盘均会存储`undo records`
+    * 大多数系统都会采用这种做法，因为它便于进行审计追踪、且效率较高
+* `Shadow Paging`：`DBMS`会将事务涉及到的`Page`进行拷贝，然后对拷贝进行修改操作。当事务提交后，这些拷贝才对外可见
+    * 由`System R`率先采用。`CouchDB`以及`LMDB`也采用
+
+## 16.3 Consistency
+
+**一致性（`Consistency`）具体是指`DB`是否在逻辑上正确（业务定义），具体可分为：**
+
+* `Database Consistency`：数据库模型准确地描述了现实世界，且遵循了完整性约束
+    * 只要应用保证`Transaction Consistency`，那么`DBMS`会保证`Database Consistency`
+* `Transaction Consistency`：未来的事务会看到过去在数据库内部提交的事务所造成的影响
+    * `Transaction Consistency`是上层应用的责任。举个例子，A给B转钱100，包含两个操作：若A减少100，B只增加50，这就不满足一致性（钱的总数变少了）
+
+## 16.4 Isolation of Transactions
+
+**通常来说，`DBMS`会将多个事务的操作交织在一起执行，但是从每个事务各自的视角来看，它会认为整个事务的执行是独立的，不受其他事务影响的。并发控制模型（`Concurrency Model`）定义了`DMBS`以何种方式，来交织这些操作**
+
+* `Pessimistic`：悲观的做法是，把问题扼杀在摇篮中
+* `Optimistic`：乐观的做法是，假设冲突不发生
+
+**两个操作冲突的条件：**
+
+1. 两个操作属于不同的事务
+1. 两个操作都针对同一个对象，且至少有一个写操作
+
+**冲突的种类包括：**
+
+1. `Read-Write Conflicts (R-W)`
+    * `Unrepeatable Reads`
+    * ![16-2](/images/Database-System/16-2.png)
+1. `Write-Read Conflicts (W-R)`
+    * `Reading Uncommitted Data ("Dirty Reads")`
+    * ![16-3](/images/Database-System/16-3.png)
+1. `Write-Write Conflicts (W-W)`
+    * `Overwriting Uncommitted Data`
+    * ![16-4](/images/Database-System/16-4.png)
+
+**可串行化（`Serializability`）也存在两种维度：**
+
+* `Conflict Serializability`：大多数`DBMS`支持
+* `View Serializability`：大多数`DBMS`不支持
+
+### 16.4.1 Conflict Serializable Schedules
+
+**如果两个`Schedule`是`Conflict Equivalent`的 ，意味着：**
+
+* 它们包含了相同的操作
+* 任意两个冲突操作之间的顺序是相同的
+
+**如果`Schedule S`与其中一个`Serial Schedule`是`Conflict Equivalent`的，那么我们就称`Schedule S`是`Conflict Serializable`**
+
+* 我们可以通过交换`Schedule S`中相邻的非冲突操作，来将其转换成`Serial Schedule`
+* **示意图参考课件中的`51 ~ 60`页**
+
 # 17 Two Phase Locking
 
 # 18 Timestamp Ordering
@@ -1612,7 +1692,7 @@ SELECT * FROM A
 1. [13-queryexecution2](/resources/Database-System/13-queryexecution2.pdf)
 1. [14-optimization1](/resources/Database-System/14-optimization1.pdf)
 1. [15-optimization2](/resources/Database-System/15-optimization2.pdf)
-1. [16concurrencycontrol](/resources/Database-System/16concurrencycontrol.pdf)
+1. [16-concurrencycontrol](/resources/Database-System/16-concurrencycontrol.pdf)
 1. [17-twophaselocking](/resources/Database-System/17-twophaselocking.pdf)
 1. [18-timestampordering](/resources/Database-System/18-timestampordering.pdf)
 1. [19-multiversioning](/resources/Database-System/19-multiversioning.pdf)
