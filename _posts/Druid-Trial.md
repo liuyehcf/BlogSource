@@ -6643,12 +6643,18 @@ class AtomicInt(object):
         self.value = value
         self.lock = threading.Lock()
 
-    def getAndIncrement(self):
+    def get(self):
         self.lock.acquire()
-        returnValue = self.value
+        return_value = self.value
+        self.lock.release()
+        return return_value
+
+    def get_and_increment(self):
+        self.lock.acquire()
+        return_value = self.value
         self.value += 1
         self.lock.release()
-        return returnValue
+        return return_value
 
     def set(self, value):
         self.lock.acquire()
@@ -6682,20 +6688,21 @@ class TaskThread (threading.Thread):
             iterations,
             number_of_queries,
             queries,
-            iterationUseTimes,
-            queryCounter,
-            cycleBarrier):
+            iteration_use_times,
+            query_counter,
+            cycle_barrier):
         threading.Thread.__init__(self)
         self.queries = queries
         self.host = host
         self.port = port
         self.iterations = iterations
         self.number_of_queries = number_of_queries
-        self.iterationUseTimes = iterationUseTimes
-        self.queryCounter = queryCounter
-        self.cycleBarrier = cycleBarrier
-        self.successCount = 0
-        self.errorCount = 0
+        self.iteration_use_times = iteration_use_times
+        self.query_counter = query_counter
+        self.cycle_barrier = cycle_barrier
+        self.success_count = 0
+        self.error_count = 0
+        self.iteration = 0
 
     def doRequest(self, query):
         conn = http.client.HTTPConnection(
@@ -6708,27 +6715,31 @@ class TaskThread (threading.Thread):
         response = conn.getresponse()
         return response
 
+    def get_iteration(self):
+        return self.iteration
+
     def run(self):
-        for _ in range(self.iterations):
+        for iteration in range(self.iterations):
+            self.iteration = iteration
             start = time.time()
 
             if self.number_of_queries > 0:
                 # if --number-of-queries is set, all the threads of one iteration should run as many as
                 # shell_args.number_of_queries
-                numQueriesOfSqlFile = len(self.queries)
-                num = self.queryCounter.getAndIncrement()
+                num_queries_of_sql_file = len(self.queries)
+                num = self.query_counter.get_and_increment()
                 while num < self.number_of_queries:
-                    queryIdx = num % numQueriesOfSqlFile
-                    query = self.queries[queryIdx]
+                    query_idx = num % num_queries_of_sql_file
+                    query = self.queries[query_idx]
 
                     response = self.doRequest(query)
 
                     if(response.status == 200):
-                        self.successCount += 1
+                        self.success_count += 1
                     else:
-                        self.errorCount += 1
+                        self.error_count += 1
 
-                    num = self.queryCounter.getAndIncrement()
+                    num = self.query_counter.get_and_increment()
             else:
                 # otherwise, each thread of one iteration should run all the
                 # sqls of the shell_args.sql_file
@@ -6736,27 +6747,48 @@ class TaskThread (threading.Thread):
                     response = self.doRequest(query)
 
                     if(response.status == 200):
-                        self.successCount += 1
+                        self.success_count += 1
                     else:
-                        self.errorCount += 1
+                        self.error_count += 1
 
             # wait for other threads with same iteration batch to be finished
-            iterationUseTime = time.time() - start
+            iteration_use_time = time.time() - start
 
             def callback():
-                self.queryCounter.set(0)
-                self.iterationUseTimes.append(iterationUseTime)
-            self.cycleBarrier.await(callback)
+                self.query_counter.set(0)
+                self.iteration_use_times.append(iteration_use_time)
+            self.cycle_barrier.await(callback)
+
+class ProgressReport(threading.Thread):
+    def __init__(
+            self,
+            task,
+            start_time,
+            query_counter):
+        threading.Thread.__init__(self)
+        self.task = task
+        self.start_time = start_time
+        self.query_counter = query_counter
+        self.is_finished = False
+
+    def run(self):
+        while not self.is_finished:
+            print("\r" + "iteration: {}, number of queries: {}, use time: {}s".format(
+                self.task.get_iteration(), self.query_counter.get(), format(time.time() - self.start_time, '.1f')), end="", flush=True)
+            time.sleep(0.1)
+        print("\r", end="", flush=True)
+
+    def stop(self):
+        self.is_finished = True
 
 def main():
-    start = time.time()
 
     shell_args = parse_args()
     queries = parse_sqls(shell_args)
 
     print("Warmup start...")
-    warmStart = time.time()
-    warmupTask = TaskThread(
+    warm_start = time.time()
+    warmup_task = TaskThread(
         shell_args.host,
         shell_args.port,
         1,
@@ -6765,16 +6797,17 @@ def main():
         [],
         AtomicInt(0),
         CycleBarrier(1))
-    warmupTask.start()
-    warmupTask.join()
-    warmEnd = time.time()
-    print("Warmup end")
+    warmup_task.start()
+    warmup_task.join()
+    print("Warmup finished, use time: {}s".format(
+        format(time.time() - warm_start, '.3f')))
 
     print("Benchmark start...")
+    benchmark_start = time.time()
     tasks = []
-    iterationUseTimes = []
-    queryCounter = AtomicInt(0)
-    cycleBarrier = CycleBarrier(shell_args.concurrency)
+    iteration_use_times = []
+    query_counter = AtomicInt(0)
+    cycle_barrier = CycleBarrier(shell_args.concurrency)
     for i in range(shell_args.concurrency):
         task = TaskThread(
             shell_args.host,
@@ -6782,57 +6815,49 @@ def main():
             shell_args.iterations,
             shell_args.number_of_queries,
             queries,
-            iterationUseTimes,
-            queryCounter,
-            cycleBarrier)
+            iteration_use_times,
+            query_counter,
+            cycle_barrier)
         task.start()
         tasks.append(task)
 
-    overallSuccessCount = 0
-    overallErrorCount = 0
+    progress_report = ProgressReport(
+        # The iteration of all tasks is synchronous
+        # So pick any of them here
+        tasks[0],
+        benchmark_start,
+        query_counter)
+    progress_report.start()
+
+    overall_success_count = 0
+    overall_error_count = 0
     for task in tasks:
         task.join()
-        overallSuccessCount += task.successCount
-        overallErrorCount += task.errorCount
+        overall_success_count += task.success_count
+        overall_error_count += task.error_count
 
-    totalUseTime = 0
-    totalUseTime += sum(iterationUseTimes)
-    overallMinUseTime = min(iterationUseTimes)
-    overallMaxUseTime = max(iterationUseTimes)
-    print("Benchmark end")
+    progress_report.stop()
+    progress_report.join()
 
-    end = time.time()
+    total_use_time = 0
+    total_use_time += sum(iteration_use_times)
+    overall_min_time = min(iteration_use_times)
+    overall_max_use_time = max(iteration_use_times)
 
-    overallAvgUseTime = totalUseTime / max(1, shell_args.iterations)
-    print("Benchmark statistics")
-    print(
-        "\tOverall time: {}s, warmup time: {}s, success queries: {}, failure queries: {}".format(
-            format(
-                end -
-                start,
-                '.3f'),
-            format(
-                warmEnd -
-                warmStart,
-                '.3f'),
-            overallSuccessCount,
-            overallErrorCount))
+    overall_avg_use_time = total_use_time / max(1, shell_args.iterations)
+    print("Benchmark finished, use time: {}s. Statistics are list as follows: ".format(
+        format(time.time() - benchmark_start, '.3f')))
+    print("\tTotal number of success queries: {}, total number of failure queries: {}".format(
+        overall_success_count, overall_error_count))
     print("\tAverage number of seconds to run all queries: {}s".format(
-        format(overallAvgUseTime, '.3f')))
+        format(overall_avg_use_time, '.3f')))
     print("\tMinimum number of seconds to run all queries: {}s".format(
-        format(overallMinUseTime, '.3f')))
+        format(overall_min_time, '.3f')))
     print("\tMaximum number of seconds to run all queries: {}s".format(
-        format(overallMaxUseTime, '.3f')))
-    print(
-        "\tNumber of clients running queries: {}".format(
-            shell_args.concurrency))
-    print(
-        "\tAverage number of queries per client: {}".format(
-            format(
-                (overallSuccessCount +
-                 overallErrorCount) /
-                shell_args.concurrency,
-                '.2f')))
+        format(overall_max_use_time, '.3f')))
+    print("\tNumber of clients running queries: {}".format(shell_args.concurrency))
+    print("\tAverage number of queries per client: {}".format(format(
+        (overall_success_count + overall_error_count) / shell_args.concurrency, '.2f')))
 
 if __name__ == "__main__":
     main()
