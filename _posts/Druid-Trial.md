@@ -621,37 +621,37 @@ create table ship_mode
                         "type": "long",
                         "name": "lo_orderkey",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "long",
                         "name": "lo_linenumber",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "long",
                         "name": "lo_custkey",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "long",
                         "name": "lo_partkey",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "long",
                         "name": "lo_suppkey",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "long",
                         "name": "lo_orderdate",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "string",
@@ -663,55 +663,55 @@ create table ship_mode
                         "type": "long",
                         "name": "lo_shippriority",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "long",
                         "name": "lo_quantity",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "long",
                         "name": "lo_extendedprice",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "long",
                         "name": "lo_ordtotalprice",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "long",
                         "name": "lo_discount",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "long",
                         "name": "lo_revenue",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "long",
                         "name": "lo_supplycost",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "long",
                         "name": "lo_tax",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "string",
                         "name": "lo_commitdate",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "string",
@@ -1015,37 +1015,37 @@ create table ship_mode
                         "type": "string",
                         "name": "lo_orderdate",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "long",
                         "name": "lo_orderkey",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "long",
                         "name": "lo_linenumber",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "long",
                         "name": "lo_custkey",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "long",
                         "name": "lo_partkey",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "long",
                         "name": "lo_suppkey",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "string",
@@ -1057,55 +1057,55 @@ create table ship_mode
                         "type": "long",
                         "name": "lo_shippriority",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "long",
                         "name": "lo_quantity",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "long",
                         "name": "lo_extendedprice",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "long",
                         "name": "lo_ordtotalprice",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "long",
                         "name": "lo_discount",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "long",
                         "name": "lo_revenue",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "long",
                         "name": "lo_supplycost",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "long",
                         "name": "lo_tax",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "string",
                         "name": "lo_commitdate",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "string",
@@ -1231,7 +1231,7 @@ create table ship_mode
                         "type": "long",
                         "name": "p_size",
                         "multiValueHandling": "SORTED_ARRAY",
-                        "createBitmapIndex": false
+                        "createBitmapIndex": true
                     },
                     {
                         "type": "string",

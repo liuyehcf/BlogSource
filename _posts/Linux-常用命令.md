@@ -1703,6 +1703,16 @@ test	ALL=(ALL)	ALL
     1. 方法1：`tmux set-option -g default-shell /usr/bin/zsh`，仅对当前登录有效
     1. 方法2：在配置文件`~/.tmux.conf`中添加如下配置`set -g default-shell /usr/bin/zsh`即可
 
+## 4.17 reptyr
+
+[reptyr](https://github.com/nelhage/reptyr)用于将当前终端的`pid`作为指定进程的父进程。有时候，我们会ssh到远程机器执行命令，但是后来发现这个命令会持续执行很长时间，但是又不得不断开ssh，此时我们就可以另开一个`screen`或者`tmux`，将目标进程挂到新开的终端上
+
+注：`reptyr`依赖`ptrace`这一系统调用，可以通过`echo 0 > /proc/sys/kernel/yama/ptrace_scope`开启
+
+**示例：**
+
+* `reptyr <pid>`
+
 # 5 网络管理
 
 ## 5.1 netstat

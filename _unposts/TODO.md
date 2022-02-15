@@ -34,6 +34,7 @@
     * `static_assert`
 1. 其他
     * `github.com.cnpmjs.org`不可用
+    * [Is Raft more modular than MultiPaxos?](https://maheshba.bitbucket.io/blog/2021/12/14/Modularity.html)
     * 内存分配，伙伴算法
     * rpc框架，thrift
     * codegen原理

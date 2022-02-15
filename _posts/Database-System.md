@@ -1624,8 +1624,14 @@ SELECT * FROM A
 
 **可串行化（`Serializability`）也存在两种维度：**
 
-* `Conflict Serializability`：大多数`DBMS`支持
-* `View Serializability`：大多数`DBMS`不支持
+* `Conflict Serializability`
+    * 大多数`DBMS`支持
+    * 效率高
+* `View Serializability`
+    * 大多数`DBMS`不支持
+    * 效率低
+
+![16-5](/images/Database-System/16-5.png)
 
 ### 16.4.1 Conflict Serializable Schedules
 
@@ -1638,6 +1644,28 @@ SELECT * FROM A
 
 * 我们可以通过交换`Schedule S`中相邻的非冲突操作，来将其转换成`Serial Schedule`
 * **示意图参考课件中的`51 ~ 60`页**
+
+当只有两个事务时，交换相邻的非冲突操作还是比较容易的，当事务变多时，这种方法的可行性就变差了。此时我们可以采用另一种算法，叫做优先图（`precedence graph`），当`Schedule S`对应的优先图不包含循环时，就称`Schedule S`是`Conflict Serializable`
+
+* **示意图参考课件中的`63 ~ 76`页**
+
+### 16.4.2 View Serializability
+
+**视图可串行化（`View Serializability`）是可串行化的替代（较弱）概念**
+
+**如果`Schedule S1`和`Schedule S2`满足如下条件，我们就称它们是`View Serializability`的：**
+
+* 在`S1`中，`T1`读取到了初始值`A`；在`S2`中，`T1`读取到的初始值也是`A`
+* 在`S1`中，`T1`读取到了由`T2`写入的值；在`S2`中，`T1`读取到的同样是由`T2`写入的值
+* 在`S1`中，`T1`写入的最终值是`A`；在`S2`中，`T1`写入的最终值也是`A`
+
+**示意图参考课件中的`78 ~ 84`页**
+
+## 16.5 Durability
+
+**`DBMS`需要保证所有提交的事务的改动都要被持久化，所有取消的事务的改动都不会持久化**
+
+`DBMS`可以采用日志或者`Shadow Paging`来实现这一约束
 
 # 17 Two Phase Locking
 
