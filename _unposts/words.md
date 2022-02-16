@@ -69,6 +69,7 @@
 1. Subtle，微妙的
 1. By pervasive convention，普遍的约定
 1. Allomorphism，同构
+1. Isomorphism，同构
 1. Polymorphism，多态
 1. Canonical，典范
 1. Heuristics，启发式
@@ -76,3 +77,4 @@
 1. net effect，净效应
 1. credits both accounts with 6% interest
 1. intuitive，直觉的
+1. subject to，受到影响

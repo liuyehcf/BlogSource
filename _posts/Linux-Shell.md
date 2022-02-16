@@ -1210,7 +1210,7 @@ func
 echo $?
 ```
 
-# 7 built-in函数
+# 7 builtin
 
 `bash shell`的命令分为两类：外部命令和内部命令。外部命令是通过系统调用或独立的程序实现的，如`sed`、`awk`等等。内部命令是由特殊的文件格式（`.def`）所实现，如`cd`、`history`、`exec`等等
 
@@ -1811,6 +1811,16 @@ echo "outside function: '${arr[@]}'"
 ## 7.13 typeset
 
 **功能属于`declare`的子集，不推荐使用**
+
+## 7.14 alias
+
+**`alias`用于设置别名**
+
+**示例：**
+
+* `alias lh='ls -alt'`
+* `alias xxx="${BASE_DIR}/xxx.sh"`，`${BASE_DIR}`的解析发生在配置时，在`zsh`等shell中，`xxx`会高亮
+* `alias xxx='${BASE_DIR}/xxx.sh'`，`${BASE_DIR}`的解析发生在执行时，在`zsh`等shell中，`xxx`不会高亮
 
 # 8 Tips
 

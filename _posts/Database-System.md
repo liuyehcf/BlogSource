@@ -1669,6 +1669,108 @@ SELECT * FROM A
 
 # 17 Two Phase Locking
 
+## 17.1 Lock Types
+
+**我们必须在无法得知整体`Schedule`的情况下，确保所有的`Schedule`都能正确执行（可串行化）。因此，最直接的解决方式就是加锁**
+
+|  | Locks | Latches |
+|:--|:--|:--|
+| **Separate** | User Transactions | Threads |
+| **Protect** | Database Contents | In-Memory Data Structures |
+| **During** | Entire Transactions | Critical Sections |
+| **Modes** | Shared, Exclusive, Update, Intention | Read, Write |
+| **Deadlock** | Detection & Resolution | Avoidance |
+| **Avoid Deadlock By** | Waits-for, Timeout, Aborts | Coding Discipline |
+| **Kept In** | Lock Manager | Protected Data Structure |
+
+**简单来说，`Lock Type`可以分为如下两种：**
+
+* `S-Lock`：共享锁，用于实现共享读
+* `X-Lock`：独占锁，用于实现排他写
+
+**事务的执行过程:**
+
+1. 事务获取或更新锁，向`Lock Manager`发起请求
+1. `Lock Manager`批准或者阻塞请求
+1. 事务释放锁
+* `Lock Manager`维护了一个`Lock Table`，用于记录事务获取了哪些锁，以及哪些事务阻塞在哪些锁上
+
+**示意图参考课件中的`14 ~ 18`页**
+
+## 17.2 Two Phase Locking
+
+**`Two-phase locking, 2PL`是一种并发控制协议，用于决定当前事务是否可以访问数据库中的某个对象。该协议无需知道事务包含的所有操作**
+
+* `阶段1：Growing`
+    * 事务向`Lock Manager`请求获取锁
+    * `Lock Manager`批准或者拒绝请求
+* `阶段2：Shrinking`
+    * 事务释放锁（前提是必须成功获取）
+* 一旦`Growing`阶段完成（或者说进入到`Shrinking`阶段），在已获取的锁全部释放完之后，不允许再次请求获取锁
+* ![17-1](/images/Database-System/17-1.png)
+* ![17-2](/images/Database-System/17-2.png)
+
+**示意图参考课件中的`23 ~ 26`页**
+
+**`2PL`本身能够有效地保证`Conflict Serializability`，但是它也容易受到`Cascading Aborts`的影响**
+
+![17-3](/images/Database-System/17-3.png)
+
+**`2PL`的限制：**
+
+* **`2PL`会限制并发性，因为部分`Schedule`不满足`2PL`的约束**
+* **仍然会出现`Dirty Read`，解决方式：`Strong Strict 2PL, aka Rigorous 2PL`**
+* **仍然会出现死锁，解决方式：检测或预防**
+
+**`Strong Strict 2PL`：**
+
+* `阶段1：Growing`
+    * 同`2PL`
+* `阶段2：Shrinking`
+    * 仅在在事务结束时释放锁
+* ![17-4](/images/Database-System/17-4.png)
+
+**如果`Schedule`是`strict`，意味着：当前事务写的值不能被其他事务读取或者重写**
+
+* 可以避免`Cascading Aborts`
+* `Aborts`实现简单，只需恢复修改前的值即可
+
+**示意图参考课件中的`34 ~ 42`页**
+
+![17-5](/images/Database-System/17-5.png)
+
+## 17.3 Deaklock Detection
+
+**简单来说，死锁就是存在相互持有锁，并相互等待对方的锁，形成一个环形结构**
+
+**`DBMS`会使用`Wait-for Graph`来跟踪锁的状态**
+
+* 每个事务都是图中的一个节点
+* {% raw %}$T_i${% endraw %}指向{% raw %}$T_j${% endraw %}的有向线段表示{% raw %}$T_i${% endraw %}在等待{% raw %}$T_j${% endraw %}释放锁
+* 周期性的检查图中是否存在环形结构，并试图破坏它
+
+**示意图参考课件中的`52 ~ 54`页**
+
+**当`DBMS`发现死锁时，它会选择一个事务（`Victim Txn`），并让其回滚，以此来破坏环形结构。该事务可能会重新执行或者直接终止，这取决于触发方式**
+
+**如何选择`Victim Txn`，需要考虑许多因素，包括：**
+
+1. 事务存活时间
+1. 事务执行频率
+1. 事务已经获取的锁的数量
+1. 需要回滚的事务数量，以及事务被回滚的次数（避免被饿死）
+
+**当选定了需要回滚的事务，回滚的幅度是什么：**
+
+* 方案1：整体回滚
+* 方案2：部分回滚
+
+## 17.4 Deaklock Prevention
+
+## 17.5 Hierarchical Locking
+
+## 17.6 Isolation Levels
+
 # 18 Timestamp Ordering
 
 # 19 Multiversoning
