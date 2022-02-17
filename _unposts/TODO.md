@@ -21,6 +21,28 @@
         * [sqlite-window-function](https://www.sqlite.org/windowfunctions.html)
     * ssb测试集
         * https://www.cnblogs.com/tgzhu/p/9083092.html
+    * rewrite
+        * 各种表达式的重写和化简
+        * 列裁剪
+        * 谓词下推
+        * Limit Merge, Limit 下推
+        * 聚合 Merge
+        * 等价谓词推导（常量传播）
+        * Outer Join 转 Inner Join
+        * 常量折叠
+        * 公共表达式复用
+        * 子查询重写
+        * Lateral Join 化简
+        * 分区分桶裁剪
+        * Empty Node 优化
+        * Empty Union, Intersect, Except 裁剪
+        * Intersect Reorder
+        * Count Distinct 相关聚合函数重写
+    * 优化器相关论文
+        * The Cascades Framework for Query Optimization
+        * Orca-A-Modular-Query-Optimizer-Architecture-For-Big-Data
+        * Efficiency-In-The-Columbia-Database-Query-Optimizer
+        * How-Good-Are-Query-Optimizers
 1. license
     * [主流开源协议之间有何异同？](https://www.zhihu.com/question/19568896)
     * apache license

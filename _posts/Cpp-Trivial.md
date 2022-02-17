@@ -455,6 +455,10 @@ SortUsingDeclarations: false
 SpacesBeforeTrailingComments: 1
 ```
 
+**注意：**
+
+* 即便`.clang-format`相同，不同版本的`clang-format`格式化的结果也有差异
+
 # 7 其他
 
 ## 7.1 头文件搜索路径
