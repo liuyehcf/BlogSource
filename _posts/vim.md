@@ -971,19 +971,36 @@ curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 * `:PlugInstall`：安装插件
 * `:PlugClean`：清除插件
 
-**修改下载源：默认从`github`上下载，稳定性较差，可以按照如下方式修改`~/.vim/autoload/plug.vim`**
+**修改下载源：默认从`github.com`上下载，稳定性较差，可以按照如下方式修改`~/.vim/autoload/plug.vim`**
 
-```js
-// 将
+```vim
+" 将
 let fmt = get(g:, 'plug_url_format', 'https://git::@github.com/%s.git')
-// 修改为
+" 修改为
 let fmt = get(g:, 'plug_url_format', 'https://git::@github.com.cnpmjs.org/%s.git')
 
-// 将
+" 将
 \ '^https://git::@github\.com', 'https://github.com', '')
-// 修改为
+" 修改为
 \ '^https://git::@github\.com\.cnpmjs\.org', 'https://github.com.cnpmjs.org', '')
 ```
+
+**如何安装来自不同源的插件：**
+
+* 方案1：指定插件的完整地址，比如`Plug 'morhetz/gruvbox'`需要改成`Plug 'https://github.com/morhetz/gruvbox'`
+* 方案2：禁用`URI`校验。默认情况下，`Plug`不允许插件来自不同源，若要关闭此功能，可以按照如下方式修改`~/.vim/autoload/plug.vim`
+    ```vim
+    " 删掉如下代码片段
+                elsif !compare_git_uri(current_uri, uri)
+                    [false, ["Invalid URI: #{current_uri}",
+                            "Expected:    #{uri}",
+                            "PlugClean required."].join($/)]
+    " 删掉如下代码片段
+        elseif !s:compare_git_uri(remote, a:spec.uri)
+        let err = join(['Invalid URI: '.remote,
+                        \ 'Expected:    '.a:spec.uri,
+                        \ 'PlugClean required.'], "\n")
+    ```
 
 ## 3.3 配色方案
 
