@@ -43,6 +43,8 @@
         * Orca-A-Modular-Query-Optimizer-Architecture-For-Big-Data
         * Efficiency-In-The-Columbia-Database-Query-Optimizer
         * How-Good-Are-Query-Optimizers
+    * serverless论文
+        * Cloud-Programming-Simplified-A-Berkeley-View-on-Serverless-Computing
     * 执行器
         * pull vs. push
             * pull：对limit友好，对filter不友好
@@ -58,12 +60,15 @@
     * 虚函数如何实现
     * `constexpr`
     * `static_assert`
+    * gtest
+        * PARALLEL_TEST
 1. 其他
     * `github.com.cnpmjs.org`不可用
     * [Is Raft more modular than MultiPaxos?](https://maheshba.bitbucket.io/blog/2021/12/14/Modularity.html)
     * 内存分配，伙伴算法
     * rpc框架，thrift
     * codegen原理
+    * [lxcfs](https://github.com/lxc/lxcfs)
     * [什么是图灵完备？](https://www.zhihu.com/question/20115374/answer/288346717)
     * [调度系统设计精要](https://draveness.me/system-design-scheduler/)
     * [构建工具bazel](https://github.com/bazelbuild/bazel)
