@@ -1808,6 +1808,50 @@ SELECT * FROM A
 
 # 18 Timestamp Ordering
 
+**解决并发冲突的另一种方式是，使用时间戳来决定事务执行的顺序**
+
+* 时间戳必须是单调递增的
+* 如果`TS(Ti) < TS(Tj)`，那么`DBMS`会保证执行计划与先执行`Ti`再执行`Tj`等价
+
+## 18.1 Basic Timestamp Ordering Protocol
+
+**`Basic T/O`的具体过程如下：**
+
+* 事务读写对象时，不需要加锁
+* 每个对象（`X`）会记录最近一次成功读写的时间戳，分别记为`W-TS(X)`和`R-TS(X)`
+* 事务执行操作时，若发现对象`X`的读写时间比当前事务的时间戳要更大，那么终止并重启当前事务。具体来说
+    * 读
+        * 若`TS(Ti) < W-TS(X)`，那么终止并重启事务`Ti`
+        * 否则
+            * 允许事务`Ti`读取对象`X`
+            * 将`R-TS(X)`更新为`max(R-TS(X), TS(Ti)`
+            * 备份对象`X`，来保证当前事物的`repeatable`性质
+    * 写
+        * 若`TS(Ti) < R-TS(X)`或`TS(Ti) < W-TS(X)`，那么终止并重启事务`Ti`
+        * 否则
+            * 允许事务`Ti`跟新对象`X`，并更新`W-TS(X)`
+            * 备份对象`X`，来保证当前事物的`repeatable`性质
+
+**`Thomas Write Rule`在`Basic T/O`协议的基础之上做了调整，差异如下：**
+
+* 写
+    * 若`TS(Ti) < R-TS(X)`，那么终止并重启事务`Ti`
+    * 若`TS(Ti) < W-TS(X)`，那么忽略写操作，并继续事务
+
+**示意图参考课件中的`9 ~ 28`页**
+
+**`Basic T/O`小结：**
+
+* 可以生成`Conflict Serializable`的计划（前提是不用`Thomas Write Rule`）
+* 无死锁，因为根本没有锁
+* 小事务可能会持续冲突（为啥可能会一直冲突？重启事务后，事务获取的时间戳应该是更大的）
+
+## 18.2 Optimistic Concurrency Control
+
+## 18.3 Partition-based Timestamp Ordering
+
+## 18.4 Isolation Levels
+
 # 19 Multiversoning
 
 # 20 Logging

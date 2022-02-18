@@ -43,6 +43,10 @@
         * Orca-A-Modular-Query-Optimizer-Architecture-For-Big-Data
         * Efficiency-In-The-Columbia-Database-Query-Optimizer
         * How-Good-Are-Query-Optimizers
+    * 执行器
+        * pull vs. push
+            * pull：对limit友好，对filter不友好
+            * push：对filter友好，对limit不友好
 1. license
     * [主流开源协议之间有何异同？](https://www.zhihu.com/question/19568896)
     * apache license
@@ -63,3 +67,8 @@
     * [什么是图灵完备？](https://www.zhihu.com/question/20115374/answer/288346717)
     * [调度系统设计精要](https://draveness.me/system-design-scheduler/)
     * [构建工具bazel](https://github.com/bazelbuild/bazel)
+    * 设计需要考虑的因素
+        * 工程实现难度
+        * 易用性
+        * 隔离性
+        * 性能
