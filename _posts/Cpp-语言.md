@@ -766,7 +766,48 @@ Disassembly of section .text:
   14:	c3                   	retq
 ```
 
-## 3.7 throw与异常
+## 3.7 if constexpr
+
+编译期分支判断，一般用于泛型。如果在分支中使用的是不同类型的不同特性，那么普通的`if`是没法通过编译的，如下：
+
+```cpp
+#include <iostream>
+#include <type_traits>
+
+template <typename T>
+struct Condition1 {
+    static T append(T left, T right) {
+        if (std::is_integral<T>::value) {
+            return left + right;
+        } else if (std::is_pointer<T>::value) {
+            return (*left) + (*right);
+        }
+        return T();
+    }
+};
+
+template <typename T>
+struct Condition2 {
+    static T append(T left, T right) {
+        if constexpr (std::is_integral<T>::value) {
+            return left + right;
+        } else if constexpr (std::is_pointer<T>::value) {
+            return (*left) + (*right);
+        }
+        return T();
+    }
+};
+int main() {
+    // Condition1<int32_t>::append(1, 2);
+    Condition2<int32_t>::append(1, 2);
+}
+```
+
+## 3.8 static_assert
+
+编译期断言
+
+## 3.9 throw与异常
 
 throw关键字可以抛出任何对象，例如可以抛出一个整数
 

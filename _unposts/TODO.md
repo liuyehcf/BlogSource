@@ -57,9 +57,6 @@
     * mit
     * gpl
 1. cpp
-    * 虚函数如何实现
-    * `constexpr`
-    * `static_assert`
     * gtest
         * PARALLEL_TEST
 1. 其他
