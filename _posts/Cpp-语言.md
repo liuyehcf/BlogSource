@@ -1762,6 +1762,79 @@ int main() {
 }
 ```
 
+### 5.6.3 静态代理
+
+不确定这个是否属于元编程的范畴。更多示例可以参考[binary_function.h](https://github.com/liuyehcf/starrocks/blob/main/be/src/exprs/vectorized/binary_function.h)
+
+```cpp
+#include <iostream>
+
+struct OP1 {
+    static double apply(int32_t l, int32_t r) {
+        std::cout << "OP1(l, r)" << std::endl;
+        return l + r;
+    }
+};
+
+struct OP2 {
+    static double apply(int32_t l, int32_t r) {
+        std::cout << "OP2(l, r)" << std::endl;
+        return l - r;
+    }
+};
+
+struct OP3 {
+    static double apply(int32_t l, int32_t r) {
+        std::cout << "OP3(l, r)" << std::endl;
+        return l * r;
+    }
+};
+
+struct OP4 {
+    static double apply(int32_t l, int32_t r) {
+        std::cout << "OP4(l, r)" << std::endl;
+        return r == 0 ? 0 : l / r;
+    }
+};
+
+template <typename OP>
+struct Wrapper1 {
+    static double apply(int32_t l, int32_t r) {
+        std::cout << "Wrapper1 start" << std::endl;
+        double res = OP::apply(l, r);
+        std::cout << "Wrapper1 end" << std::endl;
+        return res;
+    }
+};
+
+template <typename OP>
+struct Wrapper2 {
+    static double apply(int32_t l, int32_t r) {
+        std::cout << "Wrapper2 start" << std::endl;
+        double res = OP::apply(l, r);
+        std::cout << "Wrapper2 end" << std::endl;
+        return res;
+    }
+};
+
+template <typename OP>
+struct Wrapper3 {
+    static double apply(int32_t l, int32_t r) {
+        std::cout << "Wrapper3 start" << std::endl;
+        double res = OP::apply(l, r);
+        std::cout << "Wrapper3 end" << std::endl;
+        return res;
+    }
+};
+
+int main() {
+    Wrapper3<Wrapper2<Wrapper1<OP1>>>::apply(1, 2);
+    std::cout << std::endl;
+    Wrapper1<Wrapper2<Wrapper3<OP2>>>::apply(1, 2);
+    return 0;
+}
+```
+
 ## 5.7 参考
 
 * [ClickHouse](https://github.com/ClickHouse/ClickHouse/blob/master/base/base/constexpr_helpers.h)

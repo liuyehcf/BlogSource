@@ -1843,10 +1843,25 @@ SELECT * FROM A
 **`Basic T/O`小结：**
 
 * 可以生成`Conflict Serializable`的计划（前提是不用`Thomas Write Rule`）
-* 无死锁，因为根本没有锁
-* 小事务可能会持续冲突（为啥可能会一直冲突？重启事务后，事务获取的时间戳应该是更大的）
+    * 无死锁，因为根本没有锁
+* 允许`Not Recoverable`的`Schedule`
+    * `Recoverable`：若某个事务`Ti`读取了某些事务`Tj, Tk, Tl ...`修改的值，那么该事务`Ti`在`Tj, Tk, Tl ...`提交之后再提交，那么就称该`Schedule`是`Recoverable`的
+* 大事务可能会被饿死（假设大事务会读取很多内容，但是同时系统又通过一些小事务不断更新这些内容）
+* 对于那些很少产生冲突，且事务通常较小的系统更友好
 
 ## 18.2 Optimistic Concurrency Control
+
+**并发控制的主要流程如下：**
+
+* `Read Phase`：`DBMS`会为每个事务创建一个私有的空间
+    * 读取的内容会以副本的形式放到这个空间中
+    * 修改后的内容也会存在于这个空间中
+* `Validation Phase`：当事务提交后，`DBMS`会比较修改的内容是否与其他事务产生了冲突
+* `Write Phase`
+    * 若`Validation Phase`没有冲突，则会写入全局空间
+    * 若`Validation Phase`有冲突，则终止并重启事务
+
+**示意图参考课件中的`38 ~ 50`页**
 
 ## 18.3 Partition-based Timestamp Ordering
 
