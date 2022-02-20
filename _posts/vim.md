@@ -547,6 +547,7 @@ endif
 | `LanguageClient-neovim` | 语义索引 | https://github.com/autozimu/LanguageClient-neovim |
 | `vim-auto-popmenu` | 轻量补全 | https://github.com/skywind3000/vim-auto-popmenu |
 | `YouCompleteMe` | 代码补全 | https://github.com/ycm-core/YouCompleteMe |
+| `vim-javacomplete2` | Java代码补全 | https://github.com/artur-shaik/vim-javacomplete2 |
 | `AsyncRun` | 编译运行 | https://github.com/skywind3000/asyncrun.vim |
 | `ALE` | 动态检查 | https://github.com/dense-analysis/ale |
 | `vim-signify` | 修改比较 | https://github.com/mhinz/vim-signify |
@@ -622,6 +623,13 @@ ln -s /usr/local/lib/cmake-3.21.2-linux-x86_64/bin/cmake /usr/local/bin/cmake
 ### 3.2.4 安装llvm
 
 **根据[官网安装说明](https://clang.llvm.org/get_started.html)进行安装，其代码托管在[github-llvm-project](https://github.com/llvm/llvm-project)**
+
+* [Extra Clang Tools](https://clang.llvm.org/extra/)子项目包括如下工具：
+    * `clang-tidy`
+    * `clang-include-fixer`
+    * `clang-rename`
+    * `clangd`
+    * `clang-doc`
 
 ```sh
 # 编译过程会非常耗时，非常占内存，如果内存不足的话请分配足够的swap内存
@@ -910,9 +918,15 @@ endif
     1. **final修饰的类，`gtags`找不到其定义，坑爹的bug，害我折腾了很久**
 1. `global -d`无法查找成员变量的定义
 
-### 3.2.9 语义索引-ccls
+### 3.2.9 语义索引-clangd
 
-**`ccls`是`Language Server Protocol（LSP）`的一种实现，主要用于`C/C++/Objective-C`等语言**
+**`clangd`是`LSP, Language Server Protocol`的一种实现，主要用于`C/C++/Objective-C`等语言**
+
+**安装：前面的[安装llvm](#324-%E5%AE%89%E8%A3%85llvm)小节完成后，`clangd`就已经安装好了**
+
+### 3.2.10 语义索引-ccls
+
+**`ccls`是`LSP, Language Server Protocol`的一种实现，主要用于`C/C++/Objective-C`等语言**
 
 **安装：参照[github官网文档](https://github.com/MaskRay/ccls)进行编译安装即可**
 
@@ -948,7 +962,21 @@ cmake --build Release --target install
 1. 配置`LSP-client`插件，我用的是`LanguageClient-neovim`
 1. vim打开工程，便开始自动创建索引
 
-### 3.2.10 安装vim-plug
+### 3.2.11 语义索引-jdtls
+
+**`jdtls`是`LSP, Language Server Protocol`的一种实现，主要用于`Java`语言**
+
+**安装：参照[github官网文档](https://github.com/eclipse/eclipse.jdt.ls)进行编译安装即可**
+
+```sh
+git clone https://github.com/eclipse/eclipse.jdt.ls.git --depth 1
+cd eclipse.jdt.ls
+
+# 要求java 11及以上的版本
+JAVA_HOME=/path/to/java/11 ./mvnw clean verify
+```
+
+### 3.2.12 安装vim-plug
 
 按照[vim-plug](https://github.com/junegunn/vim-plug)官网文档，通过一个命令直接安装即可
 
@@ -1356,13 +1384,9 @@ call plug#end()
 
 ## 3.10 语义索引-[LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim)
 
-**该插件是作为`LSP`的客户端，这里我们选用的`LSP`的实现是`clangd`以及`ccls`**
+**该插件是作为`LSP Client`，可以支持多种不同的`LSP Server`**
 
-**编辑`~/.vimrc`，添加Plug相关配置（`clangd`版本）**
-
-* **`clangd`。相关配置参考[LanguageClient-neovim/wiki/Clangd](https://github.com/autozimu/LanguageClient-neovim/wiki/Clangd)**
-* `clangd`无法更改缓存的存储路径，默认会使用`${project}/.cache`作为缓存目录
-* **`clangd`会根据`--compile-commands-dir`参数指定的路径查找`compile_commands.json`，若查找不到，则在当前目录，以及每个源文件所在目录递归向上寻找`compile_commands.json`**
+**编辑`~/.vimrc`，添加Plug相关配置（公共配置）**
 
 ```vim
 call plug#begin()
@@ -1376,7 +1400,7 @@ Plug 'autozimu/LanguageClient-neovim', {
     \ 'do': 'bash install.sh',
     \ }
 
-" 默认关闭
+" 默认关闭，对于一些大型项目来说，ccls初始化有点慢，需要用的时候再通过 :LanguageClientStart 启动即可
 let g:LanguageClient_autoStart = 0
 let g:LanguageClient_loadSettings = 1
 let g:LanguageClient_diagnosticsEnable = 0
@@ -1384,8 +1408,6 @@ let g:LanguageClient_selectionUI = 'quickfix'
 let g:LanguageClient_diagnosticsList = v:null
 let g:LanguageClient_hoverPreview = 'Never'
 let g:LanguageClient_serverCommands = {}
-let g:LanguageClient_serverCommands.c = ['clangd']
-let g:LanguageClient_serverCommands.cpp = ['clangd']
 
 nnoremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
 nnoremap <leader>rr :call LanguageClient#textDocument_references()<cr>
@@ -1393,59 +1415,6 @@ nnoremap <leader>rv :call LanguageClient#textDocument_hover()<cr>
 nnoremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
 
 call plug#end()
-```
-
-**编辑`~/.vimrc`，添加Plug相关配置（`ccls`版本）**
-
-* **`ccls`。相关配置参考[ccls-project-setup](https://github.com/MaskRay/ccls/wiki/Project-Setup)**
-* **`ccls`会在工程的根目录寻找`compile_commands.json`**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....其他插件及配置.....
-" ......................
-
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
-
-" 默认关闭，对于一些大型项目来说，初始化有点慢，需要用的时候再通过 :LanguageClientStart 启动即可
-let g:LanguageClient_autoStart = 0
-let g:LanguageClient_loadSettings = 1
-let g:LanguageClient_diagnosticsEnable = 0
-let g:LanguageClient_settingsPath = expand('~/.vim/languageclient.json')
-let g:LanguageClient_selectionUI = 'quickfix'
-let g:LanguageClient_diagnosticsList = v:null
-let g:LanguageClient_hoverPreview = 'Never'
-let g:LanguageClient_serverCommands = {}
-let g:LanguageClient_serverCommands.c = ['ccls']
-let g:LanguageClient_serverCommands.cpp = ['ccls']
-
-nnoremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
-nnoremap <leader>rr :call LanguageClient#textDocument_references()<cr>
-nnoremap <leader>rv :call LanguageClient#textDocument_hover()<cr>
-nnoremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
-nnoremap <leader>hb :call LanguageClient#findLocations({'method':'$ccls/inheritance'})<cr>
-nnoremap <leader>hd :call LanguageClient#findLocations({'method':'$ccls/inheritance','derived':v:true})<cr>
-
-call plug#end()
-```
-
-**其中，`~/.vim/languageclient.json`的内容示例如下（必须是决定路径，不能用`~`）**
-
-* `ccls`可以通过如下配置更改缓存的存储路径
-
-```json
-{
-    "ccls": {
-        "cache": {
-            "directory": "/root/.cache/LanguageClient"
-        }
-    }
-}
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可。由于安装时，还需执行一个脚本`install.sh`，该脚本要从github下载一个二进制，在国内容易超时失败，可以用如下方式进行手动安装**
@@ -1477,7 +1446,94 @@ sed -i 's|github.com/|github.com.cnpmjs.org/|' install.sh
 | **`\hb`** | **查找光标下符号的父类（ccls独有）** |
 | **`\hd`** | **查找光标下符号的子类（ccls独有）** |
 
-## 3.11 代码补全-[YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
+### 3.10.1 C-Family
+
+#### 3.10.1.1 clangd
+
+**这里我们选用的`LSP-Server`的实现是`clangd`（推荐）**
+
+**编辑`~/.vimrc`，添加Plug相关配置（`clangd`的特殊配置）**
+
+* **`clangd`。相关配置参考[LanguageClient-neovim/wiki/Clangd](https://github.com/autozimu/LanguageClient-neovim/wiki/Clangd)**
+* `clangd`无法更改缓存的存储路径，默认会使用`${project}/.cache`作为缓存目录
+* **`clangd`会根据`--compile-commands-dir`参数指定的路径查找`compile_commands.json`，若查找不到，则在当前目录，以及每个源文件所在目录递归向上寻找`compile_commands.json`**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+" 省略公共配置
+let g:LanguageClient_serverCommands.c = ['clangd']
+let g:LanguageClient_serverCommands.cpp = ['clangd']
+
+call plug#end()
+```
+
+#### 3.10.1.2 ccls
+
+**这里我们选用的`LSP-Server`的实现是`ccls`（不推荐，大型工程资源占用太高，且经常性卡死）**
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+* **`ccls`。相关配置参考[ccls-project-setup](https://github.com/MaskRay/ccls/wiki/Project-Setup)**
+* **`ccls`会在工程的根目录寻找`compile_commands.json`**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+" 省略公共配置
+let g:LanguageClient_settingsPath = expand('~/.vim/languageclient.json')
+let g:LanguageClient_serverCommands.c = ['ccls']
+let g:LanguageClient_serverCommands.cpp = ['ccls']
+nnoremap <leader>hb :call LanguageClient#findLocations({'method':'$ccls/inheritance'})<cr>
+nnoremap <leader>hd :call LanguageClient#findLocations({'method':'$ccls/inheritance','derived':v:true})<cr>
+
+call plug#end()
+```
+
+**其中，`~/.vim/languageclient.json`的内容示例如下（必须是决定路径，不能用`~`）**
+
+* `ccls`可以通过如下配置更改缓存的存储路径
+
+```json
+{
+    "ccls": {
+        "cache": {
+            "directory": "/root/.cache/LanguageClient"
+        }
+    }
+}
+```
+
+### 3.10.2 Java
+
+**这里我们选用的`LSP-Server`的实现是`jdtls, Eclipse JDT Language Server`**
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+" 省略公共配置
+let g:LanguageClient_serverCommands.java = ['/usr/local/bin/jdtls', '-data', getcwd()]
+
+call plug#end()
+```
+
+## 3.11 代码补全
+
+### 3.11.1 [YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
 
 **这个插件比较复杂，建议手工安装**
 
@@ -1567,6 +1623,50 @@ def Settings(**kwargs):
 * **如果要进行语义补全，可以结合`compile_commands.json`，通过`cmake`等构建工具生成`compile_commands.json`，并将该文件至于工程根目录下。再用vim打开工程便可进行语义补全**
 * `[Ctrl] + n`：下一个条目
 * `[Ctrl] + p`：上一个条目
+
+### 3.11.2 [vim-javacomplete2](https://github.com/artur-shaik/vim-javacomplete2)
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'artur-shaik/vim-javacomplete2'
+
+" 关闭默认的配置项
+let g:JavaComplete_EnableDefaultMappings = 0
+" 开启代码补全
+autocmd FileType java setlocal omnifunc=javacomplete#Complete
+" import相关
+autocmd FileType java nmap <leader>jI <Plug>(JavaComplete-Imports-AddMissing)
+autocmd FileType java nmap <leader>jR <Plug>(JavaComplete-Imports-RemoveUnused)
+autocmd FileType java nmap <leader>ji <Plug>(JavaComplete-Imports-AddSmart)
+autocmd FileType java nmap <leader>jii <Plug>(JavaComplete-Imports-Add)
+" 代码生成相关
+autocmd FileType java nmap <leader>jM <Plug>(JavaComplete-Generate-AbstractMethods)
+autocmd FileType java nmap <leader>jA <Plug>(JavaComplete-Generate-Accessors)
+autocmd FileType java nmap <leader>js <Plug>(JavaComplete-Generate-AccessorSetter)
+autocmd FileType java nmap <leader>jg <Plug>(JavaComplete-Generate-AccessorGetter)
+autocmd FileType java nmap <leader>ja <Plug>(JavaComplete-Generate-AccessorSetterGetter)
+autocmd FileType java nmap <leader>jts <Plug>(JavaComplete-Generate-ToString)
+autocmd FileType java nmap <leader>jeq <Plug>(JavaComplete-Generate-EqualsAndHashCode)
+autocmd FileType java nmap <leader>jc <Plug>(JavaComplete-Generate-Constructor)
+autocmd FileType java nmap <leader>jcc <Plug>(JavaComplete-Generate-DefaultConstructor)
+autocmd FileType java vmap <leader>js <Plug>(JavaComplete-Generate-AccessorSetter)
+autocmd FileType java vmap <leader>jg <Plug>(JavaComplete-Generate-AccessorGetter)
+autocmd FileType java vmap <leader>ja <Plug>(JavaComplete-Generate-AccessorSetterGetter)
+" 其他
+autocmd FileType java nmap <silent> <buffer> <leader>jn <Plug>(JavaComplete-Generate-NewClass)
+autocmd FileType java nmap <silent> <buffer> <leader>jN <Plug>(JavaComplete-Generate-ClassInFile)
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
 
 ## 3.12 编译运行-[AsyncRun](https://github.com/skywind3000/asyncrun.vim)
 
@@ -2170,7 +2270,7 @@ Plug 'autozimu/LanguageClient-neovim', {
     \ 'do': 'bash install.sh',
     \ }
 
-" 默认关闭
+" 默认关闭，对于一些大型项目来说，ccls初始化有点慢，需要用的时候再通过 :LanguageClientStart 启动即可
 let g:LanguageClient_autoStart = 0
 let g:LanguageClient_loadSettings = 1
 let g:LanguageClient_diagnosticsEnable = 0
@@ -2439,6 +2539,7 @@ endif
 * **[CentOS Software Repo](https://www.softwarecollections.org/en/scls/user/rhscl/)**
 * **[《Vim 中文版入门到精通》](https://github.com/wsdjeg/vim-galore-zh_cn)**
 * **[VimScript 五分钟入门（翻译）](https://zhuanlan.zhihu.com/p/37352209)**
+* **[使用 Vim 搭建 Java 开发环境](https://spacevim.org/cn/use-vim-as-a-java-ide/)**
 * [如何优雅的使用 Vim（二）：插件介绍](https://segmentfault.com/a/1190000014560645)
 * [打造 vim 编辑 C/C++ 环境](https://carecraft.github.io/language-instrument/2018/06/config_vim/)
 * [Vim2021：超轻量级代码补全系统](https://zhuanlan.zhihu.com/p/349271041)
