@@ -544,7 +544,9 @@ endif
 | `rainbow` | 彩虹括号2 | https://github.com/luochen1990/rainbow |
 | `ctags` | 符号索引 | https://ctags.io/ |
 | `vim-gutentags` | 自动索引 | https://github.com/ludovicchabant/vim-gutentags |
-| `LanguageClient-neovim` | 语义索引 | https://github.com/autozimu/LanguageClient-neovim |
+| `LanguageClient-neovim` | LSP-Client | https://github.com/autozimu/LanguageClient-neovim |
+| `coc.nvim` | LCP-Client | https://github.com/neoclide/coc.nvim |
+| `coc-java` | coc扩展 | https://github.com/neoclide/coc-java |
 | `vim-auto-popmenu` | 轻量补全 | https://github.com/skywind3000/vim-auto-popmenu |
 | `YouCompleteMe` | 代码补全 | https://github.com/ycm-core/YouCompleteMe |
 | `vim-javacomplete2` | Java代码补全 | https://github.com/artur-shaik/vim-javacomplete2 |
@@ -975,6 +977,10 @@ cd eclipse.jdt.ls
 # 要求java 11及以上的版本
 JAVA_HOME=/path/to/java/11 ./mvnw clean verify
 ```
+
+**安装后的配置文件以及二进制都在`./org.eclipse.jdt.ls.product/target/repository`目录中**
+
+* 运行日志默认在config目录中，例如`./org.eclipse.jdt.ls.product/target/repository/config_linux/`目录下
 
 ### 3.2.12 安装vim-plug
 
@@ -1434,6 +1440,7 @@ sed -i 's|github.com/|github.com.cnpmjs.org/|' install.sh
 
 * **`:LanguageClientStart`：由于在上面的配置中取消了自启动，因此需要手动开启**
 * **`:LanguageClientStop`：关闭**
+* **`:call LanguageClient_contextMenu()`：操作菜单**
 
 **键位映射说明：**
 
@@ -1529,6 +1536,27 @@ call plug#begin()
 let g:LanguageClient_serverCommands.java = ['/usr/local/bin/jdtls', '-data', getcwd()]
 
 call plug#end()
+```
+
+**创建完整路径为`/usr/local/bin/jdtls`的脚本，内容如下：**
+
+```sh
+#!/usr/bin/env sh
+
+server={{ your server installation location }}
+
+java \
+    -Declipse.application=org.eclipse.jdt.ls.core.id1 \
+    -Dosgi.bundles.defaultStartLevel=4 \
+    -Declipse.product=org.eclipse.jdt.ls.core.product \
+    -noverify \
+    -Xms1G \
+    -jar $server/eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/plugins/org.eclipse.equinox.launcher_1.*.jar \
+    -configuration $server/eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/config_linux/ \
+    --add-modules=ALL-SYSTEM \
+    --add-opens java.base/java.util=ALL-UNNAMED \
+    --add-opens java.base/java.lang=ALL-UNNAMED \
+    "$@"
 ```
 
 ## 3.11 代码补全
@@ -1911,11 +1939,13 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
+* 安装会额外执行`~/.vim/plugged/fzf/install`这个脚本，来下载`fzf`的二进制，如果长时间下载不下来的话，可以改成代理地址后，再手动下载
+
 **用法（搜索相关的语法可以参考[junegunn/fzf-search-syntax](https://github.com/junegunn/fzf#search-syntax)）：**
 
-1. `:Ag`：进行全局搜索（依赖命令行工具`ag`，安装方式参考该插件github主页）
+1. `:Ag`：进行全局搜索（依赖命令行工具`ag`，安装方式参考该插件[github主页](https://github.com/ggreer/the_silver_searcher)）
     * `[Ctrl] + j/k`可以在条目中上下移动
-1. `:Rg`：进行全局搜索（依赖命令行工具`rg`，安装方式参考该插件github主页）
+1. `:Rg`：进行全局搜索（依赖命令行工具`rg`，安装方式参考该插件[github主页](https://github.com/BurntSushi/ripgrep)）
     * `[Ctrl] + j/k`可以在条目中上下移动
 * **匹配规则**
     * **`xxx`：模糊匹配（可能被分词）**
@@ -2280,6 +2310,7 @@ let g:LanguageClient_hoverPreview = 'Never'
 let g:LanguageClient_serverCommands = {}
 let g:LanguageClient_serverCommands.c = ['clangd']
 let g:LanguageClient_serverCommands.cpp = ['clangd']
+let g:LanguageClient_serverCommands.java = ['/usr/local/bin/jdtls', '-data', getcwd()]
 
 nnoremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
 nnoremap <leader>rr :call LanguageClient#textDocument_references()<cr>
@@ -2310,6 +2341,36 @@ let g:ycm_semantic_triggers =  {
            \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
            \ 'cs,lua,javascript': ['re!\w{2}'],
            \ }
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'artur-shaik/vim-javacomplete2'
+
+" 关闭默认的配置项
+let g:JavaComplete_EnableDefaultMappings = 0
+" 开启代码补全
+autocmd FileType java setlocal omnifunc=javacomplete#Complete
+" import相关
+autocmd FileType java nmap <leader>jI <Plug>(JavaComplete-Imports-AddMissing)
+autocmd FileType java nmap <leader>jR <Plug>(JavaComplete-Imports-RemoveUnused)
+autocmd FileType java nmap <leader>ji <Plug>(JavaComplete-Imports-AddSmart)
+autocmd FileType java nmap <leader>jii <Plug>(JavaComplete-Imports-Add)
+" 代码生成相关
+autocmd FileType java nmap <leader>jM <Plug>(JavaComplete-Generate-AbstractMethods)
+autocmd FileType java nmap <leader>jA <Plug>(JavaComplete-Generate-Accessors)
+autocmd FileType java nmap <leader>js <Plug>(JavaComplete-Generate-AccessorSetter)
+autocmd FileType java nmap <leader>jg <Plug>(JavaComplete-Generate-AccessorGetter)
+autocmd FileType java nmap <leader>ja <Plug>(JavaComplete-Generate-AccessorSetterGetter)
+autocmd FileType java nmap <leader>jts <Plug>(JavaComplete-Generate-ToString)
+autocmd FileType java nmap <leader>jeq <Plug>(JavaComplete-Generate-EqualsAndHashCode)
+autocmd FileType java nmap <leader>jc <Plug>(JavaComplete-Generate-Constructor)
+autocmd FileType java nmap <leader>jcc <Plug>(JavaComplete-Generate-DefaultConstructor)
+autocmd FileType java vmap <leader>js <Plug>(JavaComplete-Generate-AccessorSetter)
+autocmd FileType java vmap <leader>jg <Plug>(JavaComplete-Generate-AccessorGetter)
+autocmd FileType java vmap <leader>ja <Plug>(JavaComplete-Generate-AccessorSetterGetter)
+" 其他
+autocmd FileType java nmap <silent> <buffer> <leader>jn <Plug>(JavaComplete-Generate-NewClass)
+autocmd FileType java nmap <silent> <buffer> <leader>jN <Plug>(JavaComplete-Generate-ClassInFile)
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

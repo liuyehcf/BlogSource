@@ -3623,7 +3623,14 @@ CONFIG_KVM_MMU_AUDIT=y
 
 # 10 包管理工具
 
-## 10.1 yum
+## 10.1 rpm
+
+**示例：**
+
+* `rpm -qa | grep openjdk`
+* `rpm -ql java-11-openjdk-devel-11.0.8.10-1.el7.x86_64`：查看软件安装路径
+
+## 10.2 yum
 
 **源管理（`/etc/yum.repos.d`）：**
 
@@ -3651,7 +3658,7 @@ CONFIG_KVM_MMU_AUDIT=y
 * `yum list`：列出所有可安装的软件
     * `yum list docker-ce --showduplicates | sort -r`：查询软件的版本信息
 
-## 10.2 dnf
+## 10.3 dnf
 
 **示例：**
 
