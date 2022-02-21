@@ -1390,7 +1390,76 @@ call plug#end()
 * **`D`：预览页向下滚动半页**
 * **`U`：预览页向上滚动半页**
 
-## 3.10 语义索引-[LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim)
+## 3.10 LSP Client
+
+### 3.10.1 [coc.nvim](https://github.com/neoclide/coc.nvim)
+
+**该插件是作为`LSP Client`，可以支持多种不同的`LSP Server`**
+
+**编辑`~/.vimrc`，添加Plug相关配置（公共配置）**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+" 默认关闭coc
+let g:coc_start_at_startup=0
+
+" K 查看文档
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  elseif (coc#rpc#ready())
+    call CocActionAsync('doHover')
+  else
+    execute '!' . &keywordprg . " " . expand('<cword>')
+  endif
+endfunction
+
+" 代码导航的相关映射
+nmap <leader>rd <Plug>(coc-definition)
+nmap <leader>ry <Plug>(coc-type-definition)
+nmap <leader>ri <Plug>(coc-implementation)
+nmap <leader>rr <Plug>(coc-references)
+nmap <leader>rn <Plug>(coc-rename)
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**用法：**
+
+* **`:CocStart`：由于在上面的配置中取消了自启动，因此需要手动开启**
+* **`:CocConfig`：编辑配置文件，其路径为`~/.vim/coc-settings.json`**
+* **`:CocCommand <插件命令>`**
+    * `:CocCommand java.open.serverLog`
+
+**相关目录：`~/.config/coc`**
+
+* `~/.config/coc/extensions`：插件目录
+
+**配置文件`~/.vim/coc-settings.json`的内容如下：**
+
+```json
+{
+	"languageserver": {
+		"clangd": {
+			"command": "clangd",
+			"rootPatterns": ["compile_flags.txt", "compile_commands.json"],
+			"filetypes": ["c", "cc", "cpp", "c++", "objc", "objcpp"]
+		}
+	}
+}
+```
+
+### 3.10.2 [LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim)
 
 **该插件是作为`LSP Client`，可以支持多种不同的`LSP Server`**
 
@@ -1455,9 +1524,9 @@ sed -i 's|github.com/|github.com.cnpmjs.org/|' install.sh
 | **`\hb`** | **查找光标下符号的父类（ccls独有）** |
 | **`\hd`** | **查找光标下符号的子类（ccls独有）** |
 
-### 3.10.1 C-Family
+#### 3.10.2.1 C-Family
 
-#### 3.10.1.1 clangd
+##### 3.10.2.1.1 clangd
 
 **这里我们选用的`LSP-Server`的实现是`clangd`（推荐）**
 
@@ -1481,7 +1550,7 @@ let g:LanguageClient_serverCommands.cpp = ['clangd']
 call plug#end()
 ```
 
-#### 3.10.1.2 ccls
+##### 3.10.2.1.2 ccls
 
 **这里我们选用的`LSP-Server`的实现是`ccls`（不推荐，大型工程资源占用太高，且经常性卡死）**
 
@@ -1521,7 +1590,7 @@ call plug#end()
 }
 ```
 
-### 3.10.2 Java
+#### 3.10.2.2 Java
 
 **这里我们选用的`LSP-Server`的实现是`jdtls, Eclipse JDT Language Server`**
 
