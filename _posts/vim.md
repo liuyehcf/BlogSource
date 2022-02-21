@@ -1385,8 +1385,8 @@ call plug#end()
 
 * **在`quickfix`中，按`p`打开预览**
 * **在`quickfix`中，按`P`关闭预览**
-* **`\wd`：预览页向下滚动半页**
-* **`\wu`：预览页向上滚动半页**
+* **`D`：预览页向下滚动半页**
+* **`U`：预览页向上滚动半页**
 
 ## 3.10 语义索引-[LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim)
 
@@ -1558,6 +1558,11 @@ java \
     --add-opens java.base/java.lang=ALL-UNNAMED \
     "$@"
 ```
+
+**问题：**
+
+* 无法访问JDK以及三方库中的类
+* 对于Maven项目，若在标准的目录结构中有额外的目录，例如`<project-name>/src/main/<extra_dir>/com`，那么`jdt.ls`无法自动扫描整个工程，除非手动打开文件，才会把该文件加入解析列表中
 
 ## 3.11 代码补全
 

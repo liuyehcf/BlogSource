@@ -1851,7 +1851,7 @@ SELECT * FROM A
 
 ## 18.2 Optimistic Concurrency Control
 
-**并发控制的主要流程如下：**
+**`OCC`的主要流程如下：**
 
 * `Read Phase`：`DBMS`会为每个事务创建一个私有的空间
     * 读取的内容会以副本的形式放到这个空间中
@@ -1863,9 +1863,69 @@ SELECT * FROM A
 
 **示意图参考课件中的`38 ~ 50`页**
 
+**`OCC`的性能：**
+
+* 数据拷贝的开销较大
+* `Validation/Write Phase`是瓶颈
+* 频繁终止事务相比于`2PL`而言浪费更多资源，因为终止必定发生在事务执行后，而`2PL`可以在事执行前终止
+
 ## 18.3 Partition-based Timestamp Ordering
 
+将数据库分成多个不相交的子集，子集称为`Horizontal Partitions`或者`Shards`。这样一来，冲突校验只需要在各自分区内完成即可
+
+* 每个分区都由一个队列，所有依赖于这个分区的事务会在该队列中排队
+* 每个分区都有一把锁，队列中时间戳最小的事务将会获取分区的锁
+* 当一个事务获取了所有依赖分区的锁之后，才会开始执行
+* 所有的更新在原地发生，因此内存中维护了一个`buffer`，用于记录`undo`日志，以便于事务终止后的回滚（事务执行到一半，改动已经发生，然后断电怎么办？）
+
+**`Partition-based T/O`的性能：**
+
+* 在满足以下条件时，`Partition-based T/O`性能较好
+    * `DBMS`在事务开始前，就可以知道事务需要读写哪些分区的数据
+    * 大部分事务只访问单个分区的数据
+* 多分区事务在执行时会导致部分分区空闲（锁占用着）
+
 ## 18.4 Isolation Levels
+
+**到目前为止，我们讨论的事务仅限于读写数据，但是还有其他操作例如插入、删除等，因此还会出现新的问题，比如幻读（`The Phantom Problem`）：**
+
+* 为何产生幻读？事务仅对已有数据加锁，而无法阻止新数据的插入
+
+**如何解决幻读？使用谓词锁（`Predicate Locking`）**
+
+* 例如对满足`status='lit'`的所有记录加锁（包括可能新插入的）
+* 通常来说，谓词锁的开销非常大
+* 索引锁（`Index Locking`）是一种特殊的谓词锁，它的开销较小
+    * 或者称为间隙锁（`Gap Locking`）、范围锁？
+
+**有索引时，解决幻读问题：**
+
+* 对满足`status='lit'`这一条件的数据所在的`Page`加锁
+* 若没有满足`status='lit'`这一条件的数据，那么需要将这些记录可能会存在的`Page`加锁
+
+**无索引时，解决幻读问题（方法1）：**
+
+* 锁住表中的所有`Page`，避免满足`status='lit'`这一条件的数据被修改
+* 锁住表本身，避免插入或删除数据
+
+**无索引时，解决幻读问题（方法2）：**
+
+* 在提交事务前，重新扫描一遍数据表看结果是否相同（效率太低了）
+* 除了`Silo`之外，没有其他`DBMS`使用这个方案
+
+**我们可以通过降低一致性来提高`DBMS`处理事务的并发性能，通常可以分为如下几个等级：**
+
+* `Serializable`：加所有的锁
+* `Repeatable Reads`：加除了索引锁之外的所有锁
+* `Read Committed`：读加`S`锁
+* `Read Uncommitted`：读不加锁
+
+|  | Dirty Read | Unrepeatable Read | Phantom |
+|:--|:--|:--|:--|
+| **Serializable** | No | No | No |
+| **Repeatable Reads** | No | No | Maybe |
+| **Read Committed** | No | Maybe | Maybe |
+| **Read Uncommitted** | Maybe | Maybe | Maybe |
 
 # 19 Multiversoning
 
