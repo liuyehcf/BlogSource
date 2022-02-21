@@ -560,8 +560,10 @@ endif
 | `tpope/vim-fugitive` | git扩展 | https://github.com/tpope/vim-fugitive |
 | `echodoc` | 参数提示 | https://github.com/Shougo/echodoc.vim |
 | `nerdcommenter` | 添加注释 | https://github.com/preservim/nerdcommenter |
-| `vim-clang-format` | 代码格式化 | https://github.com/rhysd/vim-clang-format |
-| `vim-surround` | 文本环绕 | `https://github.com/tpope/vim-surround` |
+| `vim-codefmt` | 代码格式化 | https://github.com/google/vim-codefmt |
+| `vim-autoformat` | 代码格式化 | https://github.com/vim-autoformat/vim-autoformat |
+| `vim-clang-format` | 代码格式化（仅限clang-format） | https://github.com/rhysd/vim-clang-format |
+| `vim-surround` | 文本环绕 | https://github.com/tpope/vim-surround |
 
 ## 3.2 环境准备
 
@@ -2042,9 +2044,15 @@ call plug#end()
 * **`\cu`：取消注释**
 * **`\c<space>`：如果被选区域有部分被注释，则对被选区域执行取消注释操作，其它情况执行反转注释操作**
 
-## 3.21 代码格式化
+## 3.21 代码格式化-[vim-codefmt](https://github.com/google/vim-codefmt)
 
-### 3.21.1 [vim-clang-format](https://github.com/rhysd/vim-clang-format)
+**支持各种格式化工具：**
+
+1. `clang-format`
+    * 会使用工程目录下的`.clang-format`或者用户目录下的`~/.clang-format`来对代码进行格式化
+1. [autopep8](https://pypi.org/project/autopep8/)
+1. [google-java-format](https://github.com/google/google-java-format)
+    * 无法通过配置文件指定格式化方式
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2055,23 +2063,47 @@ call plug#begin()
 " .....其他插件及配置.....
 " ......................
 
-Plug 'rhysd/vim-clang-format'
+Plug 'google/vim-maktaba'
+Plug 'google/vim-codefmt'
+Plug 'google/vim-glaive'
 
+" 给不同的语言配置不同的格式化工具
+augroup autoformat_settings
+  autocmd FileType bzl AutoFormatBuffer buildifier
+  autocmd FileType c,cpp,proto,javascript,arduino AutoFormatBuffer clang-format
+  autocmd FileType dart AutoFormatBuffer dartfmt
+  autocmd FileType go AutoFormatBuffer gofmt
+  autocmd FileType gn AutoFormatBuffer gn
+  autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
+  autocmd FileType java AutoFormatBuffer google-java-format
+  autocmd FileType python AutoFormatBuffer autopep8
+  autocmd FileType rust AutoFormatBuffer rustfmt
+  autocmd FileType vue AutoFormatBuffer prettier
+augroup END
 " 将 :ClangFormat 映射到快捷键 [Ctrl] + l
-autocmd FileType c,cpp,objc nnoremap <buffer> <c-l> :ClangFormat<cr>
+nnoremap <buffer> <c-l> :FormatCode<cr>
 
 call plug#end()
+
+" ......................
+" 以下配置放在plug#end()之后
+" ......................
+
+call glaive#Install()
+" 设置google-java-format的启动命令，其中
+" /usr/local/share/google-java-format-1.14.0-all-deps.jar 是我的安装路径
+" --aosp 采用aosp风格，缩进为4个空格
+Glaive codefmt google_java_executable="java -jar /usr/local/share/google-java-format-1.14.0-all-deps.jar --aosp"
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
 **用法：**
 
-* **`:ClangFormat`：会使用工程目录下的`.clang-format`或者用户目录下的`~/.clang-format`来对代码进行格式化**
+* `:FormatCode`：格式化
+* `:Glaive codefmt`：查看配置
 
-### 3.21.2 [vim-autoformat](https://github.com/vim-autoformat/vim-autoformat)
-
-**安装`Python`的格式化工具[autopep8](https://pypi.org/project/autopep8/)**
+**安装`Python`的格式化工具`autopep8`**
 
 ```sh
 pip install --upgrade autopep8
@@ -2080,30 +2112,6 @@ pip install --upgrade autopep8
 sudo chmod a+x /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.py
 sudo ln /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.py /usr/local/bin/autopep8
 ```
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....其他插件及配置.....
-" ......................
-
-Plug 'Chiel92/vim-autoformat'
-
-" 将 :ClangFormat 映射到快捷键 [Ctrl] + l
-autocmd FileType python nnoremap <buffer> <c-l> :Autoformat<cr>
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**用法：**
-
-* **`:Autoformat`：格式化当前文件**
-* **`:AutoformatLine`：格式化当前行**
 
 ## 3.22 文本环绕-[vim-surround](https://github.com/tpope/vim-surround)
 
@@ -2510,23 +2518,38 @@ let g:NERDToggleCheckAllLines = 1
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-Plug 'rhysd/vim-clang-format'
+Plug 'google/vim-maktaba'
+Plug 'google/vim-codefmt'
+Plug 'google/vim-glaive'
 
+" 给不同的语言配置不同的格式化工具
+augroup autoformat_settings
+  autocmd FileType bzl AutoFormatBuffer buildifier
+  autocmd FileType c,cpp,proto,javascript,arduino AutoFormatBuffer clang-format
+  autocmd FileType dart AutoFormatBuffer dartfmt
+  autocmd FileType go AutoFormatBuffer gofmt
+  autocmd FileType gn AutoFormatBuffer gn
+  autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
+  autocmd FileType java AutoFormatBuffer google-java-format
+  autocmd FileType python AutoFormatBuffer autopep8
+  autocmd FileType rust AutoFormatBuffer rustfmt
+  autocmd FileType vue AutoFormatBuffer prettier
+augroup END
 " 将 :ClangFormat 映射到快捷键 [Ctrl] + l
-autocmd FileType c,cpp,objc nnoremap <buffer> <c-l> :ClangFormat<cr>
-
-" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-Plug 'Chiel92/vim-autoformat'
-
-" 将 :ClangFormat 映射到快捷键 [Ctrl] + l
-autocmd FileType python nnoremap <buffer> <c-l> :Autoformat<cr>
+nnoremap <buffer> <c-l> :FormatCode<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 Plug 'tpope/vim-surround'
 
 call plug#end()
+
+" vim-codefmt的额外配置
+call glaive#Install()
+" 设置google-java-format的启动命令，其中
+" /usr/local/share/google-java-format-1.14.0-all-deps.jar 是我的安装路径
+" --aosp 采用aosp风格，缩进为4个空格
+Glaive codefmt google_java_executable="java -jar /usr/local/share/google-java-format-1.14.0-all-deps.jar --aosp"
 
 " ctags的配置
 " 将 :tn 和 :tp 分别映射到 [Option] + j 和 [Option] + k，即「∆」和「˚」
