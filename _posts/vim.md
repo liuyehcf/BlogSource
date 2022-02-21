@@ -2069,19 +2069,12 @@ Plug 'google/vim-glaive'
 
 " 给不同的语言配置不同的格式化工具
 augroup autoformat_settings
-  autocmd FileType bzl AutoFormatBuffer buildifier
-  autocmd FileType c,cpp,proto,javascript,arduino AutoFormatBuffer clang-format
-  autocmd FileType dart AutoFormatBuffer dartfmt
-  autocmd FileType go AutoFormatBuffer gofmt
-  autocmd FileType gn AutoFormatBuffer gn
-  autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
+  autocmd FileType c,cpp,objc AutoFormatBuffer clang-format
   autocmd FileType java AutoFormatBuffer google-java-format
   autocmd FileType python AutoFormatBuffer autopep8
-  autocmd FileType rust AutoFormatBuffer rustfmt
-  autocmd FileType vue AutoFormatBuffer prettier
 augroup END
 " 将 :ClangFormat 映射到快捷键 [Ctrl] + l
-nnoremap <buffer> <c-l> :FormatCode<cr>
+autocmd FileType c,cpp,objc,java,python nnoremap <buffer> <c-l> :FormatCode<cr>
 
 call plug#end()
 
@@ -2524,19 +2517,12 @@ Plug 'google/vim-glaive'
 
 " 给不同的语言配置不同的格式化工具
 augroup autoformat_settings
-  autocmd FileType bzl AutoFormatBuffer buildifier
-  autocmd FileType c,cpp,proto,javascript,arduino AutoFormatBuffer clang-format
-  autocmd FileType dart AutoFormatBuffer dartfmt
-  autocmd FileType go AutoFormatBuffer gofmt
-  autocmd FileType gn AutoFormatBuffer gn
-  autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
+  autocmd FileType c,cpp,objc AutoFormatBuffer clang-format
   autocmd FileType java AutoFormatBuffer google-java-format
   autocmd FileType python AutoFormatBuffer autopep8
-  autocmd FileType rust AutoFormatBuffer rustfmt
-  autocmd FileType vue AutoFormatBuffer prettier
 augroup END
 " 将 :ClangFormat 映射到快捷键 [Ctrl] + l
-nnoremap <buffer> <c-l> :FormatCode<cr>
+autocmd FileType c,cpp,objc,java,python nnoremap <buffer> <c-l> :FormatCode<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
