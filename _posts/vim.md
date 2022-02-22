@@ -1453,13 +1453,16 @@ call plug#end()
 
 ```json
 {
-	"languageserver": {
-		"clangd": {
-			"command": "clangd",
-			"rootPatterns": ["compile_flags.txt", "compile_commands.json"],
-			"filetypes": ["c", "cc", "cpp", "c++", "objc", "objcpp"]
-		}
-	}
+    "languageserver": {
+        "clangd": {
+            "command": "clangd",
+            "rootPatterns": ["compile_flags.txt", "compile_commands.json"],
+            "filetypes": ["c", "cc", "cpp", "c++", "objc", "objcpp"]
+        }
+    },
+    "java.format.enable": false,
+    "java.maven.downloadSources": true,
+    "java.saveActions.organizeImports": false
 }
 ```
 
