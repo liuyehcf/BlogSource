@@ -1422,6 +1422,10 @@ function! s:show_documentation()
   endif
 endfunction
 
+" 诊断快捷键
+nmap <silent> <c-k> <Plug>(coc-diagnostic-prev)
+nmap <silent> <c-j> <Plug>(coc-diagnostic-next)
+
 " 代码导航的相关映射
 nmap <leader>rd <Plug>(coc-definition)
 nmap <leader>ry <Plug>(coc-type-definition)
@@ -2370,27 +2374,33 @@ autocmd FileType qf nnoremap <buffer> U :PreviewScroll -1<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
-" 默认关闭，对于一些大型项目来说，ccls初始化有点慢，需要用的时候再通过 :LanguageClientStart 启动即可
-let g:LanguageClient_autoStart = 0
-let g:LanguageClient_loadSettings = 1
-let g:LanguageClient_diagnosticsEnable = 0
-let g:LanguageClient_selectionUI = 'quickfix'
-let g:LanguageClient_diagnosticsList = v:null
-let g:LanguageClient_hoverPreview = 'Never'
-let g:LanguageClient_serverCommands = {}
-let g:LanguageClient_serverCommands.c = ['clangd']
-let g:LanguageClient_serverCommands.cpp = ['clangd']
-let g:LanguageClient_serverCommands.java = ['/usr/local/bin/jdtls', '-data', getcwd()]
+" 默认关闭coc
+let g:coc_start_at_startup=0
 
-nnoremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
-nnoremap <leader>rr :call LanguageClient#textDocument_references()<cr>
-nnoremap <leader>rv :call LanguageClient#textDocument_hover()<cr>
-nnoremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
+" K 查看文档
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  elseif (coc#rpc#ready())
+    call CocActionAsync('doHover')
+  else
+    execute '!' . &keywordprg . " " . expand('<cword>')
+  endif
+endfunction
+
+" 诊断快捷键
+nmap <silent> <c-k> <Plug>(coc-diagnostic-prev)
+nmap <silent> <c-j> <Plug>(coc-diagnostic-next)
+
+" 代码导航的相关映射
+nmap <leader>rd <Plug>(coc-definition)
+nmap <leader>ry <Plug>(coc-type-definition)
+nmap <leader>ri <Plug>(coc-implementation)
+nmap <leader>rr <Plug>(coc-references)
+nmap <leader>rn <Plug>(coc-rename)
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2459,49 +2469,6 @@ let g:asyncrun_bell = 1
 
 " 设置 F10 打开/关闭 quickfix 窗口
 nnoremap <F10> :call asyncrun#quickfix_toggle(6)<cr>
-
-" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-Plug 'dense-analysis/ale'
-
-" 不显示状态栏+不需要高亮行
-let g:ale_sign_column_always = 0
-let g:ale_set_highlights = 0
-
-" 错误和警告标志
-let g:ale_sign_error = '✗'
-let g:ale_sign_warning = '⚡'
-
-" 设置linters，并且仅用指定的linters
-" 由于在我的环境中，Available Linters中并没有gcc和g++，但是有cc（Linter Aliases）。cc包含clang、clang++、gcc、g++
-" 于是，下面两个配置会使得最终ALE生效的Linter是cc
-let g:ale_linters_explicit = 1
-let g:ale_linters = {
-  \   'c': ['gcc'],
-  \   'cpp': ['g++'],
-  \}
-
-" 上面的配置使得linter是cc，cc是个alias，包含了clang、clang++、gcc、g++，且默认会用clang和clang++
-" 这边我改成gcc、g++
-let g:ale_c_cc_executable = 'gcc'
-let g:ale_cpp_cc_executable = 'g++'
-" -std=c17 和 -std=c++17 会有很多奇怪的问题，因此改用 gnu17 和 gnu++17
-let g:ale_c_cc_options = '-std=gnu17 -Wall'
-let g:ale_cpp_cc_options = '-std=gnu++17 -Wall'
-
-let g:ale_completion_delay = 500
-let g:ale_echo_delay = 20
-let g:ale_lint_delay = 500
-let g:ale_echo_msg_format = '[%linter%] %code: %%s'
-let g:ale_lint_on_text_changed = 'normal'
-let g:ale_lint_on_insert_leave = 1
-let g:airline#extensions#ale#enabled = 1
-
-" 配置快捷键用于在warnings/errors之间跳转
-" [Ctrl] + j: 下一个warning/error
-" [Ctrl] + k: 上一个warning/error
-nmap <silent> <c-k> <plug>(ale_previous_wrap)
-nmap <silent> <c-j> <plug>(ale_next_wrap)
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
