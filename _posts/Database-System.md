@@ -1929,6 +1929,126 @@ SELECT * FROM A
 
 # 19 Multiversoning
 
+## 19.1 Multi-version Concurrency Control
+
+**`Multi-version Concurrency Control, MVCC`：`DBMS`会给逻辑对象维护多个物理版本**
+
+* 当事务更新对象时，`DBMS`会创建一个新的版本
+* 当事务读取对象时，它读取到的是，事物开始时就已经存在的所有版本中，最新的那个版本
+* 写操作不会阻塞读操作
+* 读操作不会阻塞写操作
+
+**示意图参考课件中的`6 ~ 22`页**
+
+## 19.2 MVCC Design Decisions
+
+**`MVCC`不仅仅只是一个并发控制协议，它深刻影响到`DBMS`如何管理事务以及`Database`，包含如下几个方面：**
+
+* `Concurrency Control Protocol`，实现方式有如下三种：
+    * `Timestamp Ordering`
+    * `Optimistic Concurrency Control`
+    * `Two-Phase Locking`
+* `Version Storage`
+* `Garbage Collection`
+* `Index Management`
+
+### 19.2.1 Version Storage
+
+`Version Storage`的特点
+
+* 每个`Logical Tuple`都存储这一个指向`Version Chain`的指针
+* `DBMS`通过`Version Chain`来确定哪些版本对当前事务可见，哪些不可见
+* 索引包含一个指向`Version Chain`的头部的指针
+
+**不同的存储方案决定了如何存储同一记录的多个版本，通常来说有如下三种存储方案：**
+
+* `Append-Only Storage`
+    * 同一记录的所有版本都存在同一个数据表中，当更新时，在数据表的空闲位置插入一条新的记录
+    * ![19-1](/images/Database-System/19-1.png)
+    * 此外，`Version Chain`是个单链表，链接的方向也有两种
+        * `Oldest-to-Newest, O2N`
+            * 插入开销低，加入到链表尾部即可
+            * 查找开销高，需要反转链表
+        * `Newest-to-Oldest, N2O`
+            * 插入开销高，每加入一个新版本，索引就需要更新指针（索引永远指向链表头）
+            * 查找开销低，无需反转链表
+* `Time-Travel Storage`
+    * 维护两个数据表，一个叫做`Main Table`，另一个叫做`Time-Travel Table`
+    * 每次更新时，将`Main Table`中的数据拷贝到`Time-Travel Table`
+    * ![19-2](/images/Database-System/19-2.png)
+* `Delta Storage`
+    * 维护两个数据表，一个叫做`Main Table`，另一个叫做`Delta Storage Segment`
+    * 每次更新时，将数值的变化表达式记录到`Delta Storage Segment`中
+    * 可以通过重放`Delta Storage Segment`来重建老的版本
+    * ![19-3](/images/Database-System/19-3.png)
+
+## 19.3 Garbage Collection
+
+**`DBMS`需要移除那些失效的物理版本**
+
+* 存活的事务中，任何事务都不再会读取这个版本（一定有比该版本新的版本存在）
+* 这个版本是由一个已经被终止的事务创建的
+
+这里又引入了两个额外的设计点：
+
+* 如何查找失效版本
+* 如何安全的回收内存
+
+**`Garbage Collection`有如下两种实现方式：**
+
+1. `Tuple Level`：需要通过检查`Tuple`来查找失效版本
+    * `Background Vacuuming`
+        * 独立的后台线程，周期性地扫描数据表，来查找失效版本
+    * `Cooperative Cleaning`
+        * 工作线程，在查找可见版本时，如果遇到了失效版本，那就地清理（只能用于`O2N`）
+    * **示意图参考课件中的`46 ~ 57`页**
+1. `Transaction-level`：每个事务独立记录其读写数据的版本信息，当事务完成后，`DBMS`将会决定由该事务创建的所有版本何时不可见
+
+## 19.4 Index Management
+
+**对于`Primary Key Index`**
+
+* 存储指向`Version Chain`的指针
+* 索引是否更新取决于更新时是否创建新的版本
+* 数据更新会用先`DELETE`再`INSERT`的方式来实现
+
+**对于`Secondary indexe`，有如下两种实现方式：**
+
+* `Logical Pointers`
+    * 每个`Tuple`存储一个固定的标识符，存储的是`Tuple Id`或者是`Primary Key`
+    * 需要一个额外的间接层
+* `Physical Pointers`
+    * 存储指向`Version Chain`的指针
+
+**示意图参考课件中的`61 ~ 66`页**
+
+## 19.5 MVCC Deletes
+
+**删除存在两个阶段，逻辑删除（`Logical Delete`）以及物理删除（`Physical Delete`）**
+
+* 删除数据时，首先将该记录标记为逻辑删除
+    * 标记为逻辑删除后，不能再创建新的版本
+* 当且仅当被标记为逻辑删除的记录的所有版本都不可见时，才会执行物理删除
+
+**如何表示逻辑删除？有如下两种方式：**
+
+1. `Deleted Flag`
+    * 在最新的版本后面增加一个标志位，用于表示逻辑删除
+1. `Tombstone Tuple`
+    * 创建一个空的物理版本来表示逻辑删除
+    * 用一个独立的`Pool`来存储这些`Tombstone Tuple`，每个`Tombstone Tuple`只需要`1-bit`的存储空间
+
+## 19.6 MVCC Indexs
+
+**`MVCC Indexs`的特点如下：**
+
+* 通常不存储元组的版本信息
+* 每个索引都需要支持不同的快照
+
+![19-4](/images/Database-System/19-4.png)
+
+**示意图参考课件中的`73 ~ 81`页**
+
 # 20 Logging
 
 # 21 Recovery
