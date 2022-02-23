@@ -2051,6 +2051,139 @@ SELECT * FROM A
 
 # 20 Logging
 
+**恢复算法（`Recovery Algorithms`）是保证数据库一致性、事务原子性以及持久性的关键因素。包含两大块内容：**
+
+* 在事务正常执行时需要执行的操作，这些操作用于协助`DBMS`从错误中恢复
+* 在数据库从错误中进行恢复时需要执行的动作
+
+## 20.1 Failure Classification
+
+**错误可以分为如下几类：**
+
+1. `Transaction Failure`
+    * `Logical Errors`：逻辑错误，例如违反完整性约束
+    * `Internal State Errors`：内部状态错误，例如死锁
+1. `System Failure`
+    * `Software Failure`：`DBMS`是实现上的漏洞，例如没有捕获除零异常
+    * `Hardware Failure`：计算机宕机（电源被拔了）
+1. `Storage Media Failures`：无法恢复
+    * `Non-Repairable Hardware Failure`：硬盘故障
+
+## 20.2 Buffer Pool Policies
+
+**`Undo vs. Redo`**
+
+* `Undo`：用于回滚未正常提交的事务
+* `Redo`：用于从某个点重放已提交事务的操作，以实现持久性
+
+`DBMS`如何实现`Undo`以及`Redo`取决于其如何管理`Buffer Pool`
+
+![20-1](/images/Database-System/20-1.png)
+
+**`Buffer Pool`存在如下几种策略（策略之间可以相互组合）：**
+
+* `Steal Policy`：`Steal`是指`DBMS`是否允许未提交的事务覆盖非易失性存储中对象的最新提交值
+* `Force Policy`：`Force`是指`DBMS`是否要求在事务提交前，该事务所有的变更已经写入到非易失性存储
+
+**`No-Steal + Force`：**
+
+* 这种策略组合方式，易于实现
+    * 无需实现`Undo`，因为未提交的事务没有写入到磁盘中
+    * 无需实现`Redo`，因为已提交的事务的数据一定已经写入到磁盘中
+* 无法支持超过物理内存大小的写入集（比如一个大事务，持续写100G数据）
+* ![20-2](/images/Database-System/20-2.png)
+
+![20-3](/images/Database-System/20-3.png)
+
+## 20.3 Shadow Paging
+
+**`Shadow Paging`维护了两份数据：**
+
+* `Master`：包含所有已提交事务的变更
+* `Shadow`：`Master`的副本，存储所有未提交事务的变更
+    * 当事务提交时，`Shadow`替换原有的`Master`成为新的`Master`
+
+**示意图参考课件中的`21 ~ 23`页**
+
+**`Shadow Paging`使用的`Buffer Pool Policy`是`No-Steal + Force`**
+
+**`Shadow Paging`的缺点：**
+
+* 拷贝整个`Page Table`代价昂贵
+    * 使用`B+ Truee`
+    * 无需拷贝整棵树，只需要拷贝涉及到变更的路径集合（从根到叶）
+* 提交的开销很高
+    * 刷新每个更新的`Page`、`Page Table`以及`Root`
+    * 造成数据分区
+    * 需要垃圾回收
+    * 同一时间只支持一个事务进行写操作
+
+## 20.4 Write-Ahead Log
+
+**维护一个与数据文件独立的日志文件，用于保存事务的变更**
+
+* 日志需要存储在非易失性存储上
+* 日志需要保存足够多的信息，用于执行`Undo`以及`Redo`动作来进行数据恢复
+
+**`Write-Ahead Log`使用的`Buffer Pool Policy`是`Steal + No-Force`**
+
+**`WAL Protocol`：**
+
+* `DBMS`在内存中存储事务的日志
+* 在`Data Page`本身被覆盖到非易失性存储之前，与更新页面有关的所有日志记录都被写入非易失性存储
+* 在事务的所有日志被写入到非易失性存储之前，事务不能提交
+* `BEGIN`和`COMMIT`需要记录日志
+* 日志至少包含如下内容
+    * `Transaction Id`：事务id
+    * `Object Id`：对象id
+    * `Before Value`：旧值，用于`Undo`
+    * `After Value`：新值，用于`Redo`
+
+**`WAL-Implementation`需要考虑的设计点：**
+
+* `DBMS`何时将日志写入磁盘
+    * 事务提交时
+    * 可以使用组提交将多个日志刷新批处理在一起以分摊开销
+* `DBMS`何时将未提交的脏数据写入磁盘
+    * 每次事务更新数据时
+    * 事务提交时
+
+## 20.5 Logging Schemes
+
+**`Physical Logging`：记录的是数据本身**
+
+* 记录数据量大
+* 恢复时间短
+
+**`Logical Logging`：记录的是造成数据变化的操作**
+
+* 记录数据量小
+* 恢复时间长，因为需要重放操作来重建数据
+* 实现复杂，特别是并发场景下的数据恢复
+    * 很难确定数据库的哪些部分在崩溃之前可能已被查询修改
+
+**`Physiological Logging`：**
+
+* `Physical Logging`以及`Logical Logging`的结合
+* 日志记录针对单个页面但不指定页面的数据组织
+* 这是最常用的策略
+
+![20-4](/images/Database-System/20-4.png)
+
+## 20.6 Checkpoints
+
+**`WAL`会随着时间不断膨胀。当从异常汇总进行恢复时，重放的时间会非常久。因此`DBMS`会周期性地构建`Checkpoint`，其流程如下：**
+
+* 将当前驻留在主内存中的所有日志记录输出到稳定存储
+* 将所有修改的块输出到磁盘
+* 将`Checkpoint`条目写入日志并刷新到稳定存储
+
+**`Checkpoints`面临的挑战：**
+
+* 当进行`Checkpoint`时，需要阻塞所有的事务，来获取一个满足一致性的快照
+* 通过扫描日志来查询所有未提交的事务，会花费很长时间
+* 每过多久进行一次`Checkpoint`目前没有定论
+
 # 21 Recovery
 
 # 22 Distributed

@@ -80,3 +80,4 @@
 1. subject to，受到影响
 1. Is there a better way to tell if，是否有更好的方式来判断
 1. It's pretty much the size of it，大概就是这样
+1. non-volatile storage, 非易失性存储

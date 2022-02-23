@@ -1466,6 +1466,25 @@ call plug#end()
 }
 ```
 
+#### 3.10.1.1 [coc-java](https://github.com/search?q=coc-java)
+
+**`Java`语言的`LSP-Server`的实现是[jdt.ls](https://github.com/eclipse/eclipse.jdt.ls)。而`coc-java`是`coc.nvim`的扩展，对`jdt.ls`进行进一步的封装**
+
+**安装：进入vim界面后执行`:CocInstall coc-java`即可**
+
+* 安装目录：`~/.config/coc/extensions/coc-java-data`
+
+**Tips：**
+
+* 若项目用到了`thrift`或者`protobuf`这些会创建源码的三方库。需要将这部分源码以及源码编译生成的`.class`文件打包成`.jar`文件，然后通过配置，告知`jdt.ls`
+    * 通过配置`java.project.referencedLibraries`，传入额外的jar路径。该配置好像无法起作用。[Doesn't recognize imports in classpath on a simple project](https://github.com/neoclide/coc-java/issues/93)提到将`vim`换成`neovim`可以解决，其他相关的`issue`如下：
+        * [java.project.referencedLibraries](https://github.com/redhat-developer/vscode-java/pull/1196#issuecomment-568192224)
+        * [Add multiple folders to src path](https://github.com/microsoft/vscode-java-dependency/issues/412)
+        * [Managing Java Projects in VS Code](https://code.visualstudio.com/docs/java/java-project)
+        * [referencedLibraries / classpath additions not working](https://github.com/neoclide/coc-java/issues/146)
+    * 通过配置`.classpath`，参考配置[eclipse.jdt.ls/org.eclipse.jdt.ls.core/.classpath](https://github.com/eclipse/eclipse.jdt.ls/blob/master/org.eclipse.jdt.ls.core/.classpath)
+        * 假设子模块用到了`thrift`，那么需要在子模块的目录下放置`.classpath`，而不是在工程根目录放置`.classpath`
+
 ### 3.10.2 [LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim)
 
 **该插件是作为`LSP Client`，可以支持多种不同的`LSP Server`**
