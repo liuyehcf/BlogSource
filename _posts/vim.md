@@ -1459,10 +1459,7 @@ call plug#end()
             "rootPatterns": ["compile_flags.txt", "compile_commands.json"],
             "filetypes": ["c", "cc", "cpp", "c++", "objc", "objcpp"]
         }
-    },
-    "java.format.enable": false,
-    "java.maven.downloadSources": true,
-    "java.saveActions.organizeImports": false
+    }
 }
 ```
 
@@ -1474,6 +1471,22 @@ call plug#end()
 
 * 安装目录：`~/.config/coc/extensions/coc-java-data`
 
+**配置：`:CocConfig`，增加如下内容**
+
+```json
+{
+    "java.format.enable": false,
+    "java.maven.downloadSources": true,
+    "java.saveActions.organizeImports": false,
+    "java.trace.server": "verbose"
+}
+```
+
+**使用：**
+
+* `:CocCommand workspace.showOutput java`：查看`jdt.ls`日志
+    * `"java.trace.server": "verbose"`：更详细的日志
+
 **Tips：**
 
 * 若项目用到了`thrift`或者`protobuf`这些会创建源码的三方库。需要将这部分源码以及源码编译生成的`.class`文件打包成`.jar`文件，然后通过配置，告知`jdt.ls`
@@ -1483,7 +1496,15 @@ call plug#end()
         * [Managing Java Projects in VS Code](https://code.visualstudio.com/docs/java/java-project)
         * [referencedLibraries / classpath additions not working](https://github.com/neoclide/coc-java/issues/146)
     * 通过配置`.classpath`，参考配置[eclipse.jdt.ls/org.eclipse.jdt.ls.core/.classpath](https://github.com/eclipse/eclipse.jdt.ls/blob/master/org.eclipse.jdt.ls.core/.classpath)
+        ```xml
+        <?xml version="1.0" encoding="UTF-8"?>
+        <classpath>
+            <classpathentry kind="lib" path="xxx.jar" sourcepath="xxx-source"/>
+        </classpath>
+        ```
+
         * 假设子模块用到了`thrift`，那么需要在子模块的目录下放置`.classpath`，而不是在工程根目录放置`.classpath`
+* 有插件`org.eclipse.m2e:lifecycle-mapping`的时候，`jdt.ls`没法正常工作，目前暂未解决
 
 ### 3.10.2 [LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim)
 

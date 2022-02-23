@@ -42,6 +42,25 @@
         * The Cascades Framework for Query Optimization
         * Orca-A-Modular-Query-Optimizer-Architecture-For-Big-Data
         * Efficiency-In-The-Columbia-Database-Query-Optimizer
+            * multi-expressions/group
+            * pattern/substitute/transformation rule/implementation rule
+            * catalogs(cardinality, number of pages, indexes)
+            * Starburst
+                * QGM, Query Graph Model, namely, re-write
+                * plan optimizer, determine join orders
+            * Exodus Optimizer
+            * Volcano Optimizer
+            * Cascades Optimizer Framework
+                * task, tasks are collected by stack
+                * memo(inherited from Volcano), search space
+            * Cascades derives on demand while Volcano always derives
+            * Columbia Optimizer(Based on the Cascades framework)
+                * item operator vs. bulk operators
+                * catalog, cost model, text file + parser vs. hard code
+                * search engine
+                    * rule set
+                    * search space
+                    * tasks
         * How-Good-Are-Query-Optimizers
     * serverless论文
         * Cloud-Programming-Simplified-A-Berkeley-View-on-Serverless-Computing
