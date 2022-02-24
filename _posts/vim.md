@@ -544,12 +544,14 @@ endif
 | `rainbow` | 彩虹括号2 | https://github.com/luochen1990/rainbow |
 | `ctags` | 符号索引 | https://ctags.io/ |
 | `vim-gutentags` | 自动索引 | https://github.com/ludovicchabant/vim-gutentags |
-| `LanguageClient-neovim` | LSP-Client | https://github.com/autozimu/LanguageClient-neovim |
-| `coc.nvim` | LCP-Client | https://github.com/neoclide/coc.nvim |
-| `coc-java` | coc扩展 | https://github.com/neoclide/coc-java |
+| `LanguageClient-neovim` | `LSP-Client` | https://github.com/autozimu/LanguageClient-neovim |
+| `coc.nvim` | `LCP-Client` | https://github.com/neoclide/coc.nvim |
+| `coc-java` | `coc-java`扩展 | https://github.com/neoclide/coc-java |
+| `coc-snippets` | `coc-snippet`扩展 | https://github.com/neoclide/coc-snippets |
+| `vim-snippets` | 提供了大量`snippet`的定义 | https://github.com/honza/vim-snippets |
 | `vim-auto-popmenu` | 轻量补全 | https://github.com/skywind3000/vim-auto-popmenu |
 | `YouCompleteMe` | 代码补全 | https://github.com/ycm-core/YouCompleteMe |
-| `vim-javacomplete2` | Java代码补全 | https://github.com/artur-shaik/vim-javacomplete2 |
+| `vim-javacomplete2` | `Java`代码补全 | https://github.com/artur-shaik/vim-javacomplete2 |
 | `AsyncRun` | 编译运行 | https://github.com/skywind3000/asyncrun.vim |
 | `ALE` | 动态检查 | https://github.com/dense-analysis/ale |
 | `vim-signify` | 修改比较 | https://github.com/mhinz/vim-signify |
@@ -557,7 +559,7 @@ endif
 | `LeaderF` | 函数列表 | https://github.com/Yggdroot/LeaderF |
 | `fzf.vim` | 全局模糊搜索 | https://github.com/junegunn/fzf.vim |
 | `mhinz/vim-grepper` | 全局搜索 | https://github.com/mhinz/vim-grepper |
-| `tpope/vim-fugitive` | git扩展 | https://github.com/tpope/vim-fugitive |
+| `tpope/vim-fugitive` | `git`扩展 | https://github.com/tpope/vim-fugitive |
 | `echodoc` | 参数提示 | https://github.com/Shougo/echodoc.vim |
 | `nerdcommenter` | 添加注释 | https://github.com/preservim/nerdcommenter |
 | `vim-codefmt` | 代码格式化 | https://github.com/google/vim-codefmt |
@@ -1547,6 +1549,28 @@ call plug#end()
 * 在编辑模式下，输入片段后，按`<c-l>`触发片段扩展
 * `:CocList snippets`：查看所有可用的`snippet`
 
+##### 3.10.1.2.1 [vim-snippets](https://github.com/honza/vim-snippets)
+
+`vim-snippets`插件提供了一系列`snippet`的定义
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'honza/vim-snippets'
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**使用：与`coc-snippets`自带`snippet`的用法一致**
+
 ### 3.10.2 [LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim)
 
 **该插件是作为`LSP Client`，可以支持多种不同的`LSP Server`**
@@ -2498,6 +2522,10 @@ vmap <c-j> <Plug>(coc-snippets-select)
 " 将 跳转到下一个/上一个占位符 分别映射到 [Ctrl] + j 和 [Ctrl] + k
 let g:coc_snippet_next = '<c-j>'
 let g:coc_snippet_prev = '<c-k>'
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'honza/vim-snippets'
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
