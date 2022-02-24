@@ -2053,7 +2053,7 @@ SELECT * FROM A
 
 **恢复算法（`Recovery Algorithms`）是保证数据库一致性、事务原子性以及持久性的关键因素。包含两大块内容：**
 
-* 在事务正常执行时需要执行的操作，这些操作用于协助`DBMS`从错误中恢复
+* 在事务正常执行时需要执行的操作，这些操作用于协助`DBMS`从错误中恢复（本小节）
 * 在数据库从错误中进行恢复时需要执行的动作
 
 ## 20.1 Failure Classification
@@ -2185,6 +2185,155 @@ SELECT * FROM A
 * 每过多久进行一次`Checkpoint`目前没有定论
 
 # 21 Recovery
+
+**恢复算法（`Recovery Algorithms`）是保证数据库一致性、事务原子性以及持久性的关键因素。包含两大块内容：**
+
+* 在事务正常执行时需要执行的操作，这些操作用于协助`DBMS`从错误中恢复
+* 在数据库从错误中进行恢复时需要执行的动作（本小节）
+
+## 21.1 Aries
+
+[ARIES: a transaction recovery method supporting fine-granularity locking and partial rollbacks using write-ahead logging](https://web.stanford.edu/class/cs345d-01/rl/aries.pdf)
+
+**`Aries`是一种利用语义来进行恢复和隔离的算法，其主要思想如下：**
+
+* `Write-Ahead Logging`
+    * 任何变更都是先写日志再写数据
+    * 必须使用`Steal + No-Force`的策略
+* `Repeating History During Redo`
+    * 重启时，通过`Redo`来将数据库恢复到崩溃前的状态
+* `Logging Changes During Undo`
+    * 将撤消操作记录到日志中，以确保在重复失败的情况下不会重复操作
+
+## 21.2 Log Sequence Numbers
+
+**每条日志都包含了一个全局唯一的`Log Sequence Number, LSN`，并且系统中的其他组件都会使用到`LSN`**
+
+| Name | Where | Definition |
+|:--|:--|:--|
+| `flushedLSN` | `Memory` | 最近一次写入磁盘的日志的`LSN` |
+| `pageLSN` | `Pagex` | `Pagex`中最近一次的更新日志 |
+| `recLSN` | `Pagex` | 第一条未刷写入磁盘的日志 |
+| `lastLSN` | `Ti` | 事务`Ti`的最近一条日志 |
+| `MasterRecord` | `Disk` | 最近一次`CheckPoint`的日志 |
+
+* **在`Pagex`允许被写入磁盘前，我们必须保证`flushedLSN >= pageLSN(x)`**
+* **每当事务更新某个`Page`中的记录时，就需要更新该`Page`的`pageLSN`**
+* **`DBMS`将`WAL Buffer`刷写入磁盘后，需要更新`flushedLSN`**
+
+![21-1](/images/Database-System/21-1.png)
+
+## 21.3 Normal Commit & Abort Operations
+
+**本小节的讨论基于以下前提：**
+
+1. 所有日志的大小总和小于一个`Page`
+1. 写磁盘是原子的
+1. 使用`Strict 2PL`的加锁策略
+1. 使用`Steal + No-Force`的缓存策略
+
+**事务正常提交的流程：**
+
+1. 增加一条`COMMIT`日志
+1. 将当前事务中，所有`LSN`小于`Commit LSN`的日志刷入磁盘
+    * 日志的写入是批量的、顺序的
+1. 增加一条`TXN-END`日志
+    * 这个日志不需要立刻写入磁盘
+* ![21-2](/images/Database-System/21-2.png)
+
+**为了实现事务的异常终止，需要对日志进行调整：**
+
+* 需要在日志记录中额外增加一个字段`prevLSN`，方便从后往前遍历
+* 需要在日志中记录`CLR, Compensation Log Records`
+    * `CLR`记录的是回滚需要执行的动作
+    * `CLR`记录额外包含了`undoNext`字段，该字段存储了下一个需要被`Undo`的日志
+* ![21-3](/images/Database-System/21-3.png)
+* **示意图参考课件中的`17 ~ 19`页**
+
+**事务异常终止：**
+
+1. 增加一条`ABORT`日志
+1. 从后往前遍历当前事务的所有日志，对于每条`Update`日志
+    * 增加一条`CLR`日志
+    * 恢复原始值
+    * `CLR`日志和包含恢复数据的`Page`，其写入磁盘的顺序是？
+1. 增加一条`TXN-END`日志
+* 注意，`CLR`本身不需要`Undo`
+
+## 21.4 Fuzzy Checkpointing
+
+**`Non-Fuzzy Checkpoints`：`DBMS`在进行`Checkpoint`的时候，会停止所有事务的操作，以此来得到一个一致性的快照（这种方式显然是低效的）**
+
+* 阻塞新事物的启动
+* 等待所有活跃事务结束
+* 将脏页刷新到磁盘
+
+**`Slightly Better Checkpoints`：**
+
+* `DMBS`在进行`Checkpoint`的时候，停止更新事务
+    * 阻止查询获取`Table/Index Page`的`Write Latch`
+    * 不需要等待所有事务结束
+* 必须记录额外的状态，包括
+    * `Active Transaction Table, ATT`
+        * 每个事务对应一条记录，包括如下字段：
+            * `txnId`：事务id
+            * `status`：事务的状态，所有可能的状态如下：
+                * `R, Running`
+                * `C, Committing`
+                * `U, Candidate for Undo`
+            * `lastLSN`：最新的日志的`LSN`
+        * 事务结束（提交或终止）后，该记录被移除
+    * `Dirty Page Table, DPT`
+        * 用于记录哪些`Page`中包含未提交事务的变更
+        * `Buffer Pool`中的每个`Page`对应一条记录，包括如下字段：
+            * `recLSN`：第一条未刷写入磁盘的日志的`LSN`
+
+**`Fuzzy Checkpoints`：**
+
+* `DMBS`在进行`Checkpoint`的时候，允许事务继续执行
+* 需要引入额外的日志来描述`Checkpoint`的边界
+    * `CHECKPOINT-BEGIN`
+    * `CHECKPOINT-END`：包含`ATT`和`DPT`
+* 当`Checkpoint`成功执行后，`CHECKPOINT-BEGIN`日志将会被写入到`MasterRecord`中
+* 所有在`CHECKPOINT-BEGIN`之后开始的事务被记录在`CHECKPOINT-END`日志的`DTP`中
+* ![21-4](/images/Database-System/21-4.png)
+
+## 21.5 Recovery Algorithm
+
+**`Aries Recovery`算法包含如下步骤：**
+
+1. `Analysis`：读取从上一个`Checkpoint`之后的所有`WAL`来获取崩溃时的脏页以及活跃事务信息
+    * 从上一个成功的`Checkpoint`开始往后遍历日志
+        * 如果找到了`TXN-END`日志，那么将其从`ATT`中移除
+        * 否则，将其放入`ATT`中，并设置状态`UNDO`
+            * 若找到`COMMIT`日志，则将状态修改为`COMMIT`
+        * 对于`UPDATE`日志
+            * 如果`Page p`不在`DPT`中，那么将`Page p`加入到`DPT`中，并设置`recLSN=LSN`
+            * 如果`Page p`在`DPT`中，无操作
+    * 遍历结束后
+        * `ATT`包含了崩溃时的所有活跃事务
+        * `DTP`包含了崩溃时所有脏页
+1. `Redo`：重放所有操作（包括提交和终止的事务），以及`CLRs`
+    * 从`DTP`中最小的`recLSN`开始，往后遍历日志
+        * 对于每个`Update`日志或者`CLR`，递归执行`Redo`操作，直至：
+            * 相关的`Page`不在`DPT`中
+            * 或者，相关的`Page`在`DPT`中，但是日志的`LSN`小于`Page`的 `recLSN`
+        * `Redo`操作如下：
+            * 重放日志记录的动作
+            * 将`pageLSN`作为日志的`LSN`
+            * 无新增的日志，不需要刷新磁盘
+    * 遍历结束后，对所有状态是`COMMIT`的事务，增加一条`TXN-END`日志，并将其从`ATT`中移除
+1. `Undo`：回滚未提交的事务的操作
+    * 其操作的对象是，`ATT`中所有状态是`UNDO`的事务
+    * 从`lastLSN`开始，往前遍历日志
+        * 对于每个修改，增加一条`CLR`日志
+* **示意图参考课件中的`38 ~ 40`页**
+
+**恢复时发生崩溃：**
+
+* 如果在`Analysis`阶段崩溃了，那么重新开始恢复即可，无其他额外操作
+* 如果在`Redo`阶段崩溃了，那么重新开始恢复即可，无其他额外操作
+* 如果在`Undo`阶段崩溃了，由于每次执行`Undo`操作会记录`CLR`日志，因此只需要执行那些没有`CLR`日志的操作
 
 # 22 Distributed
 

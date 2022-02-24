@@ -42,7 +42,8 @@
         * The Cascades Framework for Query Optimization
         * Orca-A-Modular-Query-Optimizer-Architecture-For-Big-Data
         * Efficiency-In-The-Columbia-Database-Query-Optimizer
-            * multi-expressions/group
+            * multi-expressions: A Multi-expression consists of a logical or physical operator and takes groups as inputs
+            * group：A Group is a set of logically equivalent expressions
             * pattern/substitute/transformation rule/implementation rule
             * catalogs(cardinality, number of pages, indexes)
             * Starburst
@@ -61,6 +62,7 @@
                     * rule set
                     * search space
                     * tasks
+                * calculation of the lower bound? P52
         * How-Good-Are-Query-Optimizers
     * serverless论文
         * Cloud-Programming-Simplified-A-Berkeley-View-on-Serverless-Computing
