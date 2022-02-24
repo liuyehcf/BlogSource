@@ -1375,8 +1375,8 @@ Plug 'skywind3000/vim-preview'
 autocmd FileType qf nnoremap <buffer> p :PreviewQuickfix<cr>
 autocmd FileType qf nnoremap <buffer> P :PreviewClose<cr>
 " 将 :PreviewScroll +1 和 :PreviewScroll -1 分别映射到 D 和 U
-autocmd FileType qf nnoremap <buffer> D :PreviewScroll +1<cr>
-autocmd FileType qf nnoremap <buffer> U :PreviewScroll -1<cr>
+autocmd FileType qf nnoremap <buffer> <c-e> :PreviewScroll +1<cr>
+autocmd FileType qf nnoremap <buffer> <c-y> :PreviewScroll -1<cr>
 
 call plug#end()
 ```
@@ -1407,8 +1407,8 @@ call plug#begin()
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
-" 默认关闭coc
-let g:coc_start_at_startup=0
+" 设置默认开启或者关闭，1表示启动（默认值），0表示不启动
+" let g:coc_start_at_startup=0
 
 " K 查看文档
 nnoremap <silent> K :call <SID>show_documentation()<CR>
@@ -1442,10 +1442,17 @@ call plug#end()
 
 * **`:CocStart`：由于在上面的配置中取消了自启动，因此需要手动开启**
 * **`:CocConfig`：编辑配置文件，其路径为`~/.vim/coc-settings.json`**
+* **`:CocList [options] [args]`**
+    * 编辑模式
+        * `[Ctrl] + o`：切换到一般模式
+    * 一般模式，与`vim`的一般模式差不多。比如，`i/a/s/o`进入编辑模式，`j/k/l/h`光标移动，等等
+        * `p`：开启或关闭预览窗口
+        * `[Ctrl] + e`：向下滚动预览窗口中的内容
+        * `[Ctrl] + y`：向上滚动预览窗口中的内容
 * **`:CocCommand <插件命令>`**
     * `:CocCommand java.open.serverLog`
 
-**相关目录：`~/.config/coc`**
+**相关路径：**
 
 * `~/.config/coc/extensions`：插件目录
 
@@ -1469,7 +1476,8 @@ call plug#end()
 
 **安装：进入vim界面后执行`:CocInstall coc-java`即可**
 
-* 安装目录：`~/.config/coc/extensions/coc-java-data`
+* 安装路径：`~/.config/coc/extensions/node_modules/coc-java`
+* 数据路径：`~/.config/coc/extensions/coc-java-data`
 
 **配置：`:CocConfig`，增加如下内容**
 
@@ -1505,6 +1513,32 @@ call plug#end()
 
         * 假设子模块用到了`thrift`，那么需要在子模块的目录下放置`.classpath`，而不是在工程根目录放置`.classpath`
 * 有插件`org.eclipse.m2e:lifecycle-mapping`的时候，`jdt.ls`没法正常工作，目前暂未解决
+
+#### 3.10.1.2 [coc-snippets](https://github.com/neoclide/coc-snippets)
+
+**`coc-snippets`用于为`Java`提供片段扩展功能（类似于`IDEA`中的`sout`、`psvm`、`.var`等等）**
+
+**安装：进入vim界面后执行`:CocInstall coc-snippets`即可**
+
+* 安装路径：`~/.config/coc/extensions/node_modules/coc-snippets`
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+" 将 触发代码片段扩展 映射到快捷键 [Ctrl] + l
+imap <c-l> <Plug>(coc-snippets-expand)
+
+call plug#end()
+```
+
+**使用：**
+
+* 在编辑模式下，输入片段后，按`<c-l>`触发片段扩展
+* `:CocList snippets`：查看所有可用的`snippet`
 
 ### 3.10.2 [LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim)
 
@@ -2417,15 +2451,15 @@ Plug 'skywind3000/vim-preview'
 autocmd FileType qf nnoremap <buffer> p :PreviewQuickfix<cr>
 autocmd FileType qf nnoremap <buffer> P :PreviewClose<cr>
 " 将 :PreviewScroll +1 和 :PreviewScroll -1 分别映射到 D 和 U
-autocmd FileType qf nnoremap <buffer> D :PreviewScroll +1<cr>
-autocmd FileType qf nnoremap <buffer> U :PreviewScroll -1<cr>
+autocmd FileType qf nnoremap <buffer> <c-e> :PreviewScroll +1<cr>
+autocmd FileType qf nnoremap <buffer> <c-y> :PreviewScroll -1<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
-" 默认关闭coc
-let g:coc_start_at_startup=0
+" 设置默认开启或者关闭，1表示启动（默认值），0表示不启动
+" let g:coc_start_at_startup=0
 
 " K 查看文档
 nnoremap <silent> K :call <SID>show_documentation()<CR>
@@ -2449,6 +2483,9 @@ nmap <leader>ry <Plug>(coc-type-definition)
 nmap <leader>ri <Plug>(coc-implementation)
 nmap <leader>rr <Plug>(coc-references)
 nmap <leader>rn <Plug>(coc-rename)
+
+" 将 触发代码片段扩展 映射到快捷键 [Ctrl] + l
+imap <c-l> <Plug>(coc-snippets-expand)
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

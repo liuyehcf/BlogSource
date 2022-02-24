@@ -62,7 +62,23 @@
                     * rule set
                     * search space
                     * tasks
-                * calculation of the lower bound? P52
+                * group lower bound: minimal cost of copying out tuples of the group and fetching tuples from the tables of the group (see details in section 4.1.2.3).
+                * Calculation of the lower bound? P52
+                * Bindery, bind logical operators only
+                    * Expression binderies
+                    * Group binderies
+                * Enforcer Rule: inserts physical operators
+                * Enforcer: The physical operator inserted by an enforcer rule is called an enforcer
+                * physical property?
+                * Task
+                    * O_GROUP, group optimization
+                    * E_GROUP, group exploration
+                    * O_EXPR, expression optimization
+                    * O_INPUTS, input optimization, altorhtim complicated P81
+                    * APPLY_RULE, rule application
+                * prune 
+                    * Lower Bound Group Pruning
+                    * Global Epsilon Pruning
         * How-Good-Are-Query-Optimizers
     * serverless论文
         * Cloud-Programming-Simplified-A-Berkeley-View-on-Serverless-Computing
