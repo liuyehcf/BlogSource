@@ -1535,9 +1535,9 @@ call plug#begin()
 " 省略公共配置
 " 将 触发代码片段扩展 映射到快捷键 [Ctrl] + l
 imap <c-l> <Plug>(coc-snippets-expand)
-" 在 visual 模式下将 跳转到下一个占位符 映射到快捷键 [Ctrl] + j
+" 在 visual 模式下，将 跳转到下一个占位符 映射到快捷键 [Ctrl] + j
 vmap <c-j> <Plug>(coc-snippets-select)
-" 将 跳转到下一个/上一个占位符 分别映射到 [Ctrl] + j 和 [Ctrl] + k
+" 在编辑模式下，将 跳转到下一个/上一个占位符 分别映射到 [Ctrl] + j 和 [Ctrl] + k
 let g:coc_snippet_next = '<c-j>'
 let g:coc_snippet_prev = '<c-k>'
 
@@ -2517,9 +2517,9 @@ nmap <leader>rn <Plug>(coc-rename)
 
 " 将 触发代码片段扩展 映射到快捷键 [Ctrl] + l
 imap <c-l> <Plug>(coc-snippets-expand)
-" 在 visual 模式下将 跳转到下一个占位符 映射到快捷键 [Ctrl] + j
+" 在 visual 模式下，将 跳转到下一个占位符 映射到快捷键 [Ctrl] + j
 vmap <c-j> <Plug>(coc-snippets-select)
-" 将 跳转到下一个/上一个占位符 分别映射到 [Ctrl] + j 和 [Ctrl] + k
+" 在编辑模式下，将 跳转到下一个/上一个占位符 分别映射到 [Ctrl] + j 和 [Ctrl] + k
 let g:coc_snippet_next = '<c-j>'
 let g:coc_snippet_prev = '<c-k>'
 
