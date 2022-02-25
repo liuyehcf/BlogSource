@@ -1412,8 +1412,23 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " 设置默认开启或者关闭，1表示启动（默认值），0表示不启动
 " let g:coc_start_at_startup=0
 
+" 在编辑模式下，触发自动补全时，将 <tab> 映射成移动到下一个补全选项
+inoremap <silent><expr> <tab>
+      \ pumvisible() ? "\<c-n>" :
+      \ <SID>check_back_space() ? "\<tab>" :
+      \ coc#refresh()
+inoremap <expr><s-tab> pumvisible() ? "\<c-p>" : "\c-h>"
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" 在编辑模式下，将 <cr> 配置成选中当前补全选项
+inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+                              \: "\<c-g>u\<cr>\<c-r>=coc#on_enter()\<cr>"
+
 " K 查看文档
-nnoremap <silent> K :call <SID>show_documentation()<CR>
+nnoremap <silent> K :call <SID>show_documentation()<cr>
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
     execute 'h '.expand('<cword>')
@@ -1749,6 +1764,8 @@ java \
 
 ## 3.11 代码补全
 
+**前言：`coc.nvim`插件提供了大部分语言的代码补全功能，如果使用了`coc.nvim`插件，就不需要使用下面的这些补全插件了**
+
 ### 3.11.1 [YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
 
 **这个插件比较复杂，建议手工安装**
@@ -1923,6 +1940,8 @@ call plug#end()
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
 ## 3.13 动态检查-[ALE](https://github.com/dense-analysis/ale)
+
+**前言：`coc.nvim`插件提供了大部分语言的错误诊断功能，如果使用了`coc.nvim`插件，就不需要使用其他的错误诊断插件了**
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2492,8 +2511,23 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " 设置默认开启或者关闭，1表示启动（默认值），0表示不启动
 " let g:coc_start_at_startup=0
 
+" 在编辑模式下，触发自动补全时，将 <tab> 映射成移动到下一个补全选项
+inoremap <silent><expr> <tab>
+      \ pumvisible() ? "\<c-n>" :
+      \ <SID>check_back_space() ? "\<tab>" :
+      \ coc#refresh()
+inoremap <expr><s-tab> pumvisible() ? "\<c-p>" : "\c-h>"
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" 在编辑模式下，将 <cr> 配置成选中当前补全选项
+inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+                              \: "\<c-g>u\<cr>\<c-r>=coc#on_enter()\<cr>"
+
 " K 查看文档
-nnoremap <silent> K :call <SID>show_documentation()<CR>
+nnoremap <silent> K :call <SID>show_documentation()<cr>
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
     execute 'h '.expand('<cword>')
@@ -2526,61 +2560,6 @@ let g:coc_snippet_prev = '<c-k>'
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 Plug 'honza/vim-snippets'
-
-" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-Plug 'ycm-core/YouCompleteMe'
-
-" ycm全局的配置文件，当没有 compile_commands.json 文件时，这个配置会起作用
-let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
-" 禁止ycm在每次打开文件时都询问是否要使用全局的配置
-let g:ycm_confirm_extra_conf = 0
-
-let g:ycm_add_preview_to_completeopt = 0
-let g:ycm_show_diagnostics_ui = 0
-let g:ycm_server_log_level = 'info'
-let g:ycm_min_num_identifier_candidate_chars = 2
-let g:ycm_collect_identifiers_from_comments_and_strings = 1
-let g:ycm_complete_in_strings=1
-let g:ycm_key_invoke_completion = '<c-z>'
-set completeopt=menu,menuone
-
-noremap <c-z> <nop>
-
-let g:ycm_semantic_triggers =  {
-           \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
-           \ 'cs,lua,javascript': ['re!\w{2}'],
-           \ }
-
-" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-Plug 'artur-shaik/vim-javacomplete2'
-
-" 关闭默认的配置项
-let g:JavaComplete_EnableDefaultMappings = 0
-" 开启代码补全
-autocmd FileType java setlocal omnifunc=javacomplete#Complete
-" import相关
-autocmd FileType java nmap <leader>jI <Plug>(JavaComplete-Imports-AddMissing)
-autocmd FileType java nmap <leader>jR <Plug>(JavaComplete-Imports-RemoveUnused)
-autocmd FileType java nmap <leader>ji <Plug>(JavaComplete-Imports-AddSmart)
-autocmd FileType java nmap <leader>jii <Plug>(JavaComplete-Imports-Add)
-" 代码生成相关
-autocmd FileType java nmap <leader>jM <Plug>(JavaComplete-Generate-AbstractMethods)
-autocmd FileType java nmap <leader>jA <Plug>(JavaComplete-Generate-Accessors)
-autocmd FileType java nmap <leader>js <Plug>(JavaComplete-Generate-AccessorSetter)
-autocmd FileType java nmap <leader>jg <Plug>(JavaComplete-Generate-AccessorGetter)
-autocmd FileType java nmap <leader>ja <Plug>(JavaComplete-Generate-AccessorSetterGetter)
-autocmd FileType java nmap <leader>jts <Plug>(JavaComplete-Generate-ToString)
-autocmd FileType java nmap <leader>jeq <Plug>(JavaComplete-Generate-EqualsAndHashCode)
-autocmd FileType java nmap <leader>jc <Plug>(JavaComplete-Generate-Constructor)
-autocmd FileType java nmap <leader>jcc <Plug>(JavaComplete-Generate-DefaultConstructor)
-autocmd FileType java vmap <leader>js <Plug>(JavaComplete-Generate-AccessorSetter)
-autocmd FileType java vmap <leader>jg <Plug>(JavaComplete-Generate-AccessorGetter)
-autocmd FileType java vmap <leader>ja <Plug>(JavaComplete-Generate-AccessorSetterGetter)
-" 其他
-autocmd FileType java nmap <silent> <buffer> <leader>jn <Plug>(JavaComplete-Generate-NewClass)
-autocmd FileType java nmap <silent> <buffer> <leader>jN <Plug>(JavaComplete-Generate-ClassInFile)
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

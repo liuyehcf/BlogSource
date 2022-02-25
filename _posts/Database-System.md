@@ -2337,6 +2337,93 @@ SELECT * FROM A
 
 # 22 Distributed
 
+## 22.1 System Architectures
+
+`DMBS`的系统架构明确了，哪些共享资源是`CPU`可以直接访问的。这决定了`CPU`如何与其他`CPU`协作，以及如何存储和获取对象
+
+![22-1](/images/Database-System/22-1.png)
+
+* 注意，图中标注的`Network`，在不同架构下，其通信方式是不同的
+
+**`Shared Memory`：单进程多线程？**
+
+* 多个`CPU`共享一个内存空间
+* `CPU`之间可以通过内存直接通信
+
+**`Shared Disk`：单机多进程，或者多机共享存储？**
+
+* 每个`CPU`独享一个内存空间
+* 多个`CPU`共享一块逻辑磁盘
+* 执行层和存储层可以各自扩缩容
+* `CPU`之间需要通过消息来进行沟通
+* ![22-2](/images/Database-System/22-2.png)
+
+**`Shared Nothing`：多副本，主从模式？**
+
+* 每个实例独享`CPU`、内存、磁盘
+* 各个实例只能通过网络通信
+* 难以提升容量（每个机器都包含全量数据）
+* 难以保证一致性（如果多台机器同时更新数据的话，就会很复杂，需要一致性协议来保证）
+* 更好的性能和效率
+
+## 22.2 Design Issues
+
+**设计需要考虑的问题：**
+
+* 应用如何查询数据
+* 如何在分布的节点上执行查询计划
+* 如何保证正确性
+
+**`Homogenous vs. Heterogenous`**
+
+* `Homogenous Nodes`
+    * 集群中每个节点都可以执行相同的任务（同一套代码）
+    * 配置和故障恢复更简单
+* `Heterogenous Nodes`
+    * 集群中每个节点执行不同的任务（大概率是多套代码）
+
+**`Data Transparency`：**
+
+* 不应该要求用户感知数据存放在哪里，以及数据是如何存储、如何分区、副本数量
+* 在单机`DBMS`上能够正常执行的查询也应该在分布式的`DBMS`中正常获取结果
+
+## 22.3 Partitioning Schemes
+
+### 22.3.1 Naive Table Partitioning
+
+**`Naive Table Partitioning`是指每个节点存储部分数据表，每个数据表包含了完整的内容**
+
+![22-3](/images/Database-System/22-3.png)
+
+### 22.3.2 Horizontal Partitioning
+
+**`Horizontal Partitioning`是指将每个数据表水平拆分成多个部分，分别放置到不同的节点上**
+
+**常见的拆分手段包括：**
+
+* `Hash Partitioning`：会用到一致性`Hash`
+* `Rage Partitioning`
+
+![22-4](/images/Database-System/22-4.png)
+
+## 22.4 Transaction Coordination
+
+**`Single Node Transaction`只会访问本地分区中的数据**
+
+**`Distributed Transaction`会访问不同机器上的多个分区中的数据，需要额外的通信，通信方式主要有以下两种：**
+
+1. `Centralized`：中心化的
+1. `Decentralized`：非中心化的
+
+## 22.5 Distributed Concurrency Control
+
+**为了允许在不同节点上同时执行多个事务，许多工作在单节点上的事务并发控制协议可以应用在分布式的场景中，但同时，这是极具挑战的：**
+
+1. 副本
+1. 网络开销
+1. 节点异常
+1. 时钟偏差
+
 # 23 Distributed OLTP
 
 # 24 Distributed OLAP
