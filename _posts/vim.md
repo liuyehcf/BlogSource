@@ -75,6 +75,8 @@ categories:
     * `[Ctrl] + r + "`：插入默认寄存器的内容
 * **`[Ctrl] + r + =`：插入表达式计算结果，等号后面跟表达式**
 * **`[Ctrl] + r + /`：插入上一次搜索的关键字**
+* **`[Ctrl] + o + [cmd]`：临时退出插入模式，执行单条命令又返回插入模式**
+    * `[Ctrl] + o + 0`：光标移动到行首，等效于一般模式下的`0`
 * **`[Ctrl] + d/t/f`：光标所在的整行减少/增加缩进/自动调整缩进**
 * **`[Shift] + [Left]`：向左移动一个单词**
 * **`[Shift] + [Right]`：向右移动一个单词**
@@ -400,16 +402,36 @@ categories:
 
 1. **`map`：递归映射**
 1. **`noremap`：非递归映射**
-1. 映射的作用域包含如下几种：
-    * `normal`：如果想要映射仅在这个作用域中生效，那么在前面加上`n`，例如`nmap`以及`nnoremap`
-    * `insert`：同上。例如`imap`以及`inoremap`
-    * `visual`：同上。例如`vmap`以及`vnoremap`
-    * `select`：同上。例如`smap`以及`snoremap`
-    * `operator`：同上。例如`omap`以及`onoremap`
-1. `unmap`
+1. **`unmap`：将指定按键重置成默认行为**
 1. `mapclear`：消所有`map`配置，慎用
 
-**键位表示**
+| COMMANDS | MODES |
+|:--|:--|
+| `map`、`noremap`、`unmap` | Normal, Visual, Select, Operator-pending |
+| `nmap`、`nnoremap`、`nunmap` | Normal |
+| `vmap`、`vnoremap`、`vunmap` | Visual and Select |
+| `smap`、`snoremap`、`sunmap` | Select |
+| `xmap`、`xnoremap`、`xunmap` | Visual |
+| `omap`、`onoremap`、`ounmap` | Operator-pending |
+| `map!`、`noremap!`、`unmap!` | Insert and Command-line |
+| `imap`、`inoremap`、`iunmap` | Insert |
+| `lmap`、`lnoremap`、`lunmap` | Insert, Command-line, Lang-Arg |
+| `cmap`、`cnoremap`、`cunmap` | Command-line |
+| `tmap`、`tnoremap`、`tunmap` | Terminal-Job |
+
+**查看所有`map`：**
+
+* `:map`
+* `:noremap`
+* `:nnoremap`
+
+**重定向所有`map`到文件中：**
+
+1. `:redir! > vim_keys.txt`
+1. `:silent verbose map`
+1. `:redir END`
+
+## 2.16 键位表示
 
 * **`<F-num>`：例如`<F1>`、`<F2>`**
 * **`<c-key>`：表示`[Ctrl]`加另一个字母**
@@ -417,24 +439,12 @@ categories:
 * **对于mac上的`[Option]`，并没有`<p-key>`这样的表示方法。而是用`[Option]`加另一个字母实际输出的结果作为映射键值，例如：**
     * `[Option] + a`：`å`
 
-**查看所有map**
-
-* `:map`
-* `:noremap`
-* `:nnoremap`
-
-**重定向所有`map`到文件中**
-
-1. `:redir! > vim_keys.txt`
-1. `:silent verbose map`
-1. `:redir END`
-
-## 2.16 配置
+## 2.17 配置
 
 * **`:set <config>?`：可以查看`<config>`的值**
     * `:set filetype?`：查看文件类型
 
-### 2.16.1 常用配置项
+### 2.17.1 常用配置项
 
 ```vim
 :set nocompatible                   " 设置不兼容原始 vi 模式（必须设置在最开头）
@@ -473,7 +483,7 @@ categories:
 :syntax off                         " 禁止语法高亮
 ```
 
-### 2.16.2 配置文件
+### 2.17.2 配置文件
 
 vim会主动将你曾经做过的行为记录下来，好让你下次可以轻松作业，记录操作的文件就是`~/.viminfo`
 
@@ -481,7 +491,7 @@ vim会主动将你曾经做过的行为记录下来，好让你下次可以轻�
 
 **在运行vim的时候，如果修改了`~/.vimrc`文件的内容，可以通过执行`:source ~/.vimrc`来重新加载`~/.vimrc`，立即生效配置**
 
-## 2.17 其他
+## 2.18 其他
 
 * **`echo`**
     * **`:echo <variable>`：可以查看`<variable>`的值**
@@ -498,7 +508,7 @@ vim会主动将你曾经做过的行为记录下来，好让你下次可以轻�
 * **`[Ctrl] + g`：统计信息**
 * **`g + [Ctrl] + g`：字节统计信息**
 
-### 2.17.1 多行更新
+### 2.18.1 多行更新
 
 **示例：多行同时插入相同内容**
 
@@ -513,7 +523,7 @@ vim会主动将你曾经做过的行为记录下来，好让你下次可以轻�
 1. 选中需要同时修改的列
 1. 按`d`即可同时删除
 
-### 2.17.2 中文乱码
+### 2.18.2 中文乱码
 
 **编辑`/etc/vimrc`，追加如下内容**
 
@@ -523,7 +533,7 @@ set termencoding=utf-8
 set encoding=utf-8
 ```
 
-### 2.17.3 为每个项目配置vim
+### 2.18.3 为每个项目配置vim
 
 同一份`~./vimrc`无法适用于所有的项目，不同的项目可能需要一些特化的配置项，可以采用如下的设置方式
 
@@ -1449,6 +1459,10 @@ endfunction
 " 诊断快捷键
 nmap <silent> <c-k> <Plug>(coc-diagnostic-prev)
 nmap <silent> <c-j> <Plug>(coc-diagnostic-next)
+
+" 自动根据语义进行范围选择
+nmap <silent> <c-s> <Plug>(coc-range-select)
+xmap <silent> <c-s> <Plug>(coc-range-select)
 
 " 代码导航的相关映射
 nmap <leader>rd <Plug>(coc-definition)
@@ -2548,6 +2562,10 @@ endfunction
 " 诊断快捷键
 nmap <silent> <c-k> <Plug>(coc-diagnostic-prev)
 nmap <silent> <c-j> <Plug>(coc-diagnostic-next)
+
+" 自动根据语义进行范围选择
+nmap <silent> <c-s> <Plug>(coc-range-select)
+xmap <silent> <c-s> <Plug>(coc-range-select)
 
 " 代码导航的相关映射
 nmap <leader>rd <Plug>(coc-definition)
