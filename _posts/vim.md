@@ -69,7 +69,13 @@ categories:
 * **`r,R`：进入替换模式，r只会替换光标所在的那一个字符一次，R会一直替换光标所在行的文字，直到按下Esc**
 * **`Esc`：退回一般模式**
 * **`[Ctrl] + [`：退回一般模式**
-* **`[Ctrl] + d/t`：光标所在的整行减少/增加缩进**
+* **`[Ctrl] + w`：向前删除单词**
+* **`[Ctrl] + r + [reg]`：插入寄存器中的内容，例如**
+    * `[Ctrl] + r + 0`：插入`0`号寄存器的内容
+    * `[Ctrl] + r + "`：插入默认寄存器的内容
+* **`[Ctrl] + r + =`：插入表达式计算结果，等号后面跟表达式**
+* **`[Ctrl] + r + /`：插入上一次搜索的关键字**
+* **`[Ctrl] + d/t/f`：光标所在的整行减少/增加缩进/自动调整缩进**
 * **`[Shift] + [Left]`：向左移动一个单词**
 * **`[Shift] + [Right]`：向右移动一个单词**
 * **`[Shift] + [Up]`：向上翻页**
@@ -552,6 +558,7 @@ endif
 | `vim-auto-popmenu` | 轻量补全 | https://github.com/skywind3000/vim-auto-popmenu |
 | `YouCompleteMe` | 代码补全 | https://github.com/ycm-core/YouCompleteMe |
 | `vim-javacomplete2` | `Java`代码补全 | https://github.com/artur-shaik/vim-javacomplete2 |
+| `vimspector` | `Debug` | https://github.com/puremourning/vimspector |
 | `AsyncRun` | 编译运行 | https://github.com/skywind3000/asyncrun.vim |
 | `ALE` | 动态检查 | https://github.com/dense-analysis/ale |
 | `vim-signify` | 修改比较 | https://github.com/mhinz/vim-signify |

@@ -157,3 +157,17 @@ node.environment=production
 node.id=ffffffff-ffff-ffff-ffff-ffffffffffff
 node.data-dir=/var/presto/data
 ```
+
+## 2.4 控制台
+
+直接浏览器访问`<coordinator.ip>:<http-server.http.port>`即可
+
+## 2.5 命令行客户端
+
+参考[Command Line Interface](https://prestodb.io/docs/current/installation/cli.html)
+
+* 下载最新的`presto-cli-x.xxx-executable.jar`，该`jar`包可以直接运行
+* 将其重命名为`presto`：`mv presto-cli-x.xxx-executable.jar presto`
+* `./presto --server <coordinator.ip>:<http-server.http.port> --catalog mysql --schema tpch`
+    * `--catalog`指定`connector`类型
+    * `--schema`指定`database`

@@ -506,7 +506,12 @@ categories:
 
 * [home](https://www.vertica.com/)
 
-# 25 参考
+# 25 TODO
+
+1. mysql
+1. duckdb
+
+# 26 参考
 
 * [你需要的不是实时数仓 | 你需要的是一款合适且强大的OLAP数据库(上)](https://segmentfault.com/a/1190000020385432)
 * [你需要的不是实时数仓 | 你需要的是一款强大的OLAP数据库(下)](https://segmentfault.com/a/1190000020385389)

@@ -82,6 +82,7 @@ date: 2018-02-05 09:25:59
   <tr> <td>PPMC</td> <td>Podling Project Management Committee</td> <td><a href="https://incubator.apache.org/guides/ppmc.html">ppmc</a></td> </tr>
   <tr> <td>POSIX</td> <td>The Portable Operating System Interface</td> <td></td> </tr>
   <tr> <td>OSI</td> <td>Open Systems Interconnection</td> <td></td> </tr>
+  <tr> <td>POC</td> <td>Proof of Concept</td> <td></td> </tr>
   <tr> <td></td> <td></td> <td></td> </tr>
   <tr> <th colspan="3" align="center">职位</th> </tr>
   <tr> <td>SA</td> <td>Solution Architect</td> <td></td> </tr>

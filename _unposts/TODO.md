@@ -96,6 +96,8 @@
 1. cpp
     * gtest
         * PARALLEL_TEST
+    * std::guard(be/src/runtime/decimalv3.h)
+    * std::enable_if_t(be/src/util/decimal_types.h)，用来设置类型边界
 1. 其他
     * `github.com.cnpmjs.org`不可用
     * [Is Raft more modular than MultiPaxos?](https://maheshba.bitbucket.io/blog/2021/12/14/Modularity.html)
