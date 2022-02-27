@@ -2729,6 +2729,12 @@ if filereadable(expand('~/.vim/gtags-cscope.vim'))
     source ~/.vim/gtags-cscope.vim
 endif
 
+" 编辑模式，光标移动快捷键
+" 将移动到行首（同一般模式下的 ^）映射到 [Ctrl] + a
+" 将移动到行尾（同一般模式下的 $）映射到 [Ctrl] + e
+inoremap <silent> <c-a> <c-o>^
+inoremap <silent> <c-e> <c-o>$
+
 " 替换映射到 [Option] + r，即「®」
 " 其中，<c-r><c-w> 表示 [Ctrl] + r 以及 [Ctrl] + w，用于将光标所在的单词填入搜索/替换项中
 nnoremap ® :%s/<c-r><c-w>
