@@ -2306,12 +2306,14 @@ call plug#end()
 
 **支持各种格式化工具：**
 
-* `clang-format`
-    * 会使用工程目录下的`.clang-format`或者用户目录下的`~/.clang-format`来对代码进行格式化
-* [js-beautify](https://github.com/beautify-web/js-beautify)
-* [autopep8](https://pypi.org/project/autopep8/)
-* [google-java-format](https://github.com/google/google-java-format)
-    * 无法通过配置文件指定格式化方式
+* `C-Family`：`clang-format`
+* `CSS`/`Sass`/`SCSS`/`Less`：`js-beautify`
+* `JSON`：`js-beautify`
+* `HTML`：`js-beautify`
+* `Go`：`gofmt`
+* `Java`：`google-java-format`/`clang-format`
+* `Python`：`Autopep8`/`Black`/`YAPF`
+* `Shell`：`shfmt`
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2326,18 +2328,8 @@ Plug 'google/vim-maktaba'
 Plug 'google/vim-codefmt'
 Plug 'google/vim-glaive'
 
-" 给不同的语言配置不同的格式化工具
-augroup autoformat_settings
-  autocmd FileType c,cpp,objc AutoFormatBuffer clang-format
-  autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
-  autocmd FileType java AutoFormatBuffer google-java-format
-  autocmd FileType python AutoFormatBuffer autopep8
-augroup END
 " 将 :FormatCode 映射到快捷键 [Ctrl] + l
-autocmd FileType c,cpp,objc nnoremap <buffer> <c-l> :FormatCode<cr>
-autocmd FileType html,css,sass,scss,less,json nnoremap <buffer> <c-l> :FormatCode<cr>
-autocmd FileType java nnoremap <buffer> <c-l> :FormatCode<cr>
-autocmd FileType python nnoremap <buffer> <c-l> :FormatCode<cr>
+nnoremap <buffer> <c-l> :FormatCode<cr>
 
 call plug#end()
 
@@ -2711,18 +2703,8 @@ Plug 'google/vim-maktaba'
 Plug 'google/vim-codefmt'
 Plug 'google/vim-glaive'
 
-" 给不同的语言配置不同的格式化工具
-augroup autoformat_settings
-  autocmd FileType c,cpp,objc AutoFormatBuffer clang-format
-  autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
-  autocmd FileType java AutoFormatBuffer google-java-format
-  autocmd FileType python AutoFormatBuffer autopep8
-augroup END
 " 将 :FormatCode 映射到快捷键 [Ctrl] + l
-autocmd FileType c,cpp,objc nnoremap <buffer> <c-l> :FormatCode<cr>
-autocmd FileType html,css,sass,scss,less,json nnoremap <buffer> <c-l> :FormatCode<cr>
-autocmd FileType java nnoremap <buffer> <c-l> :FormatCode<cr>
-autocmd FileType python nnoremap <buffer> <c-l> :FormatCode<cr>
+nnoremap <buffer> <c-l> :FormatCode<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
