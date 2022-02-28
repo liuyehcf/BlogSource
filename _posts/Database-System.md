@@ -1825,12 +1825,12 @@ SELECT * FROM A
         * 否则
             * 允许事务`Ti`读取对象`X`
             * 将`R-TS(X)`更新为`max(R-TS(X), TS(Ti)`
-            * 备份对象`X`，来保证当前事物的`repeatable`性质
+            * 备份对象`X`，来保证当前事务的`repeatable`性质
     * 写
         * 若`TS(Ti) < R-TS(X)`或`TS(Ti) < W-TS(X)`，那么终止并重启事务`Ti`
         * 否则
             * 允许事务`Ti`跟新对象`X`，并更新`W-TS(X)`
-            * 备份对象`X`，来保证当前事物的`repeatable`性质
+            * 备份对象`X`，来保证当前事务的`repeatable`性质
 
 **`Thomas Write Rule`在`Basic T/O`协议的基础之上做了调整，差异如下：**
 
@@ -1934,7 +1934,7 @@ SELECT * FROM A
 **`Multi-version Concurrency Control, MVCC`：`DBMS`会给逻辑对象维护多个物理版本**
 
 * 当事务更新对象时，`DBMS`会创建一个新的版本
-* 当事务读取对象时，它读取到的是，事物开始时就已经存在的所有版本中，最新的那个版本
+* 当事务读取对象时，它读取到的是，事务开始时就已经存在的所有版本中，最新的那个版本
 * 写操作不会阻塞读操作
 * 读操作不会阻塞写操作
 
@@ -2264,7 +2264,7 @@ SELECT * FROM A
 
 **`Non-Fuzzy Checkpoints`：`DBMS`在进行`Checkpoint`的时候，会停止所有事务的操作，以此来得到一个一致性的快照（这种方式显然是低效的）**
 
-* 阻塞新事物的启动
+* 阻塞新事务的启动
 * 等待所有活跃事务结束
 * 将脏页刷新到磁盘
 
@@ -2425,6 +2425,86 @@ SELECT * FROM A
 1. 时钟偏差
 
 # 23 Distributed OLTP
+
+## 23.1 Atomic Commit Protocols
+
+当一个分布式的事务完成时，`DBMS`需要询问事务相关的所有节点是否可以提交
+
+可以用于支持分布式事务的协议包括：
+
+* `Two-Phase Commit`
+    * **示意图参考课件中的`12 ~ 30`页**
+    * 优化手段：
+        * `Prepare Voting`：如果`Coordinator`知道某个节点是最后执行的，那么该节点可以在返回结果的时候同时带上`Prepare`阶段的投票
+        * `Early Acknowledgement After Prepare`：如果`prepare`阶段已经通过/或否决了，此时`Coordinator`可以提前告知客户端事务已经成功/或失败了
+            * 如何处理在`commit`阶段节点宕机的问题
+* `Three-Phase Commit`
+* `Paxos`
+    * **示意图参考课件中的`33 ~ 48`页**
+* `Raft`
+* `ZAB`
+* `Viewstamped Replication`
+
+## 23.2 Replication
+
+`DBMS`可以通过增加冗余数据来提高整体的可用性
+
+**设计时需要考虑以下几个维度：**
+
+* `Replica Configuration`
+* `Propagation Scheme`
+* `Propagation Timing`
+* `Update Method`
+
+**`Replica Configuration`：**
+
+* `Master-Replica`
+    * 每个对象存储多份
+    * `Master`将更新传播到其副本上，无需一致性协议
+    * `Master`可以支持读写事务，副本可以支持只读事务
+    * 如果`Master`宕机了，需要选举出一个新的`Master`
+* `Multi-Master`
+    * 每个对象存储多份
+    * 任意副本都支持读写事务
+    * 副本之间需要通过一致性协议来同步数据
+* ![23-1](/images/Database-System/23-1.png)
+
+**`Propagation Scheme`：**
+
+* `Synchronous (Strong Consistency)`
+    * `Master`将更新发送给其他节点，并阻塞等待副本的回复。最后再通知应用更新成功
+* `Asynchronous (Eventual Consistency)`
+    * `Master`将更新发送给其他节点的同时，立即通知应用更新成功
+
+**`Propagation Timing`：**
+
+* `Continuous`
+    * 在生成`WAL`的时候，立即将日志同步给副本节点
+* `On Commit`
+    * 只有在事务提交时，才将该事务的所有`WAL`日志同步给其他副本节点
+    * 如果事务终止的话，就不同步任何信息了
+
+## 23.3 Consistency Issues (CAP)
+
+`Eric Brewer`提出，对于一个分布式系统，不可能同时满足以下三点
+
+1. `Consistent`
+1. `Always Available`
+1. `Network Partition Tolerant`
+
+**示意图参考课件中的`63 ~ 80`页**
+
+![23-2](/images/Database-System/23-2.png)
+
+## 23.4 Federated Databases
+
+**`Federated`是一种分布式架构，允许`DBMS`通过`Connector`连接不同的数据源。这种方式非常复杂，且目前做的并不理想，主要有以下挑战：**
+
+* 需要兼容不同的数据模型、查询语言，以及相关限制
+* 不易进行优化
+* 大量的数据拷贝
+
+![23-3](/images/Database-System/23-3.png)
 
 # 24 Distributed OLAP
 

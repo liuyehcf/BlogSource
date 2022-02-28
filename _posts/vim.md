@@ -562,8 +562,9 @@ endif
 | `vim-gutentags` | 自动索引 | https://github.com/ludovicchabant/vim-gutentags |
 | `LanguageClient-neovim` | `LSP-Client` | https://github.com/autozimu/LanguageClient-neovim |
 | `coc.nvim` | `LCP-Client` | https://github.com/neoclide/coc.nvim |
-| `coc-java` | `coc-java`扩展 | https://github.com/neoclide/coc-java |
-| `coc-snippets` | `coc-snippet`扩展 | https://github.com/neoclide/coc-snippets |
+| `coc-explorer` | `coc`插件，文件管理器 | https://github.com/weirongxu/coc-explorer |
+| `coc-java` | `coc`插件，`LSP Client For Java` | https://github.com/neoclide/coc-java |
+| `coc-snippets` | `coc`插件，代码片段 | https://github.com/neoclide/coc-snippets |
 | `vim-snippets` | 提供了大量`snippet`的定义 | https://github.com/honza/vim-snippets |
 | `vim-auto-popmenu` | 轻量补全 | https://github.com/skywind3000/vim-auto-popmenu |
 | `YouCompleteMe` | 代码补全 | https://github.com/ycm-core/YouCompleteMe |
@@ -1166,6 +1167,8 @@ call plug#end()
 
 ## 3.6 文件管理器-[nerdtree](https://github.com/preservim/nerdtree)
 
+**前言：`coc.nvim`插件体系提供了`coc-explore`，如果使用了`coc.nvim`插件，就不需要其他的文件管理器了**
+
 **编辑`~/.vimrc`，添加Plug相关配置**
 
 ```vim
@@ -1509,7 +1512,39 @@ call plug#end()
 }
 ```
 
-#### 3.10.1.1 [coc-java](https://github.com/search?q=coc-java)
+#### 3.10.1.1 [coc-explorer](https://github.com/weirongxu/coc-explorer)
+
+**`coc-explorer`提供了类似于`nerdtree`的文件管理器的功能，结构更清晰也更易用**
+
+**安装：进入vim界面后执行`:CocInstall coc-explorer`即可**
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+" 省略公共配置
+" 将 打开文件管理器 映射到快捷键 [Space] + e
+nmap <space>e <cmd>CocCommand explorer<cr>
+
+call plug#end()
+```
+
+**配置：`:CocConfig`，增加如下内容**
+
+* `explorer.file.reveal.auto`：使用在文件管理器中高亮当前`buffer`的所对应的文件
+
+```json
+{
+    "explorer.file.reveal.auto": true
+}
+```
+
+#### 3.10.1.2 [coc-java](https://github.com/search?q=coc-java)
 
 **`Java`语言的`LSP-Server`的实现是[jdt.ls](https://github.com/eclipse/eclipse.jdt.ls)。而`coc-java`是`coc.nvim`的扩展，对`jdt.ls`进行进一步的封装**
 
@@ -1553,13 +1588,15 @@ call plug#end()
         * 假设子模块用到了`thrift`，那么需要在子模块的目录下放置`.classpath`，而不是在工程根目录放置`.classpath`
 * 有插件`org.eclipse.m2e:lifecycle-mapping`的时候，`jdt.ls`没法正常工作，目前暂未解决
 
-#### 3.10.1.2 [coc-snippets](https://github.com/neoclide/coc-snippets)
+#### 3.10.1.3 [coc-snippets](https://github.com/neoclide/coc-snippets)
 
-**`coc-snippets`用于为`Java`提供片段扩展功能（类似于`IDEA`中的`sout`、`psvm`、`.var`等等）**
+**`coc-snippets`用于提供片段扩展功能（类似于`IDEA`中的`sout`、`psvm`、`.var`等等）**
 
 **安装：进入vim界面后执行`:CocInstall coc-snippets`即可**
 
 * 安装路径：`~/.config/coc/extensions/node_modules/coc-snippets`
+
+**编辑`~/.vimrc`，添加Plug相关配置**
 
 ```vim
 call plug#begin()
@@ -1585,7 +1622,7 @@ call plug#end()
 * 在编辑模式下，输入片段后，按`<c-l>`触发片段扩展
 * `:CocList snippets`：查看所有可用的`snippet`
 
-##### 3.10.1.2.1 [vim-snippets](https://github.com/honza/vim-snippets)
+##### 3.10.1.3.1 [vim-snippets](https://github.com/honza/vim-snippets)
 
 `vim-snippets`插件提供了一系列`snippet`的定义
 
@@ -1785,7 +1822,7 @@ java \
 
 ## 3.11 代码补全
 
-**前言：`coc.nvim`插件提供了大部分语言的代码补全功能，如果使用了`coc.nvim`插件，就不需要使用下面的这些补全插件了**
+**前言：`coc.nvim`插件体系提供了大部分语言的代码补全功能，如果使用了`coc.nvim`插件，就不需要使用下面的这些补全插件了**
 
 ### 3.11.1 [YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
 
@@ -1962,7 +1999,7 @@ call plug#end()
 
 ## 3.13 动态检查-[ALE](https://github.com/dense-analysis/ale)
 
-**前言：`coc.nvim`插件提供了大部分语言的错误诊断功能，如果使用了`coc.nvim`插件，就不需要使用其他的错误诊断插件了**
+**前言：`coc.nvim`插件体系提供了大部分语言的错误诊断功能，如果使用了`coc.nvim`插件，就不需要使用其他的错误诊断插件了**
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2415,15 +2452,6 @@ let g:indentLine_char = '|'
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-Plug 'scrooloose/nerdtree'
-
-" 配置 F2 打开文件管理器 
-nmap <F2> :NERDTreeToggle<cr>
-" 配置 F3 定位当前文件
-nmap <F3> :NERDTreeFind<cr>
-
-" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 Plug 'octol/vim-cpp-enhanced-highlight'
 
 let g:cpp_class_scope_highlight = 1
@@ -2573,6 +2601,9 @@ nmap <leader>ry <Plug>(coc-type-definition)
 nmap <leader>ri <Plug>(coc-implementation)
 nmap <leader>rr <Plug>(coc-references)
 nmap <leader>rn <Plug>(coc-rename)
+
+" 将 打开文件管理器 映射到快捷键 [Space] + e
+nmap <space>e <cmd>CocCommand explorer<cr>
 
 " 将 触发代码片段扩展 映射到快捷键 [Ctrl] + l
 imap <c-l> <Plug>(coc-snippets-expand)
