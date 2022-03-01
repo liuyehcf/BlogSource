@@ -2508,6 +2508,80 @@ SELECT * FROM A
 
 # 24 Distributed OLAP
 
+## 24.1 Execution Models
+
+**执行模型主要有两种：**
+
+* `Push`
+    * 对`filter`友好
+    * 对`limit`不友好，需要增加短路操作提前结束执行
+* `Pull`
+    * 对`filter`不友好
+    * 对`limit`友好
+
+## 24.2 Query Planning
+
+**查询计划的生成方式有如下两种：**
+
+* `Physical Operator`：生成一个查询计划，将其拆分成多个不同的分区相关的`Fragment`，分发到对应的机器上执行
+    * 大部分系统使用这种方式
+* `SQL`：将原`SQL`重写成多个分区相关的子查询，然后每个子查询在对应机器上分别执行
+    * 只有`MemSQL`使用这种方式
+
+## 24.3 Distributed Join Algorithms
+
+```sql
+SELECT * FROM R JOIN S 
+ON R.id = S.id
+```
+
+**场景1：**
+
+* 其中有一张表在所有节点上都存在副本（图中的表`S`）
+* 于是可以在每台机器独立进行`Join`操作，然后进行汇总
+* **示意图参考课件中的`28 ~ 29`页**
+* ![24-1](/images/Database-System/24-1.png)
+
+**场景2：**
+
+* 两张表正好按照`Join`列进行分区
+* 于是可以在每台机器独立进行`Join`操作，然后进行汇总
+* ![24-2](/images/Database-System/24-2.png)
+* **示意图参考课件中的`30 ~ 31`页**
+
+**场景3：**
+
+* 两张表按照不同的列进行分区，且有一种表较小
+* 每个节点将小表`Broadcast`到其他节点，这样一来每个节点都会拥有小表的所有数据，转换成了场景1
+* **示意图参考课件中的`37 ~ 43`页**
+
+**场景4：**
+
+* 两张表按照不同的列进行分区，且两张表都比较大
+* 两张表需要进行`Shuffle`操作，把`Join`列相同的数据重新分发到同一台机器上
+
+## 24.4 Cloud Systems
+
+**`Managed DBMSs`：**
+
+* 不需要太多改动，只是把`DBMS`跑在云上，`DBMS`自身并不感知自己运行在云上
+* 大多数数据库厂商的做法
+
+**`Cloud-Native DBMS`：**
+
+* 数据库就是面向云来设计的
+* 通常使用`Shared-Disk`架构
+* 相关产品包括：`Snowflake`、`Goog BigQuery`、`Amazon Redshift`、`Microsoft SQL Azure`
+
+**大多数数据库都有自己的存储格式，但是要实现在不同数据库之间进行数据交换，那么必须使用一种通用的数据格式：**
+
+* `Apache Parquet`：压缩式列存储（`Cloudera/Twitter`）
+* `Apache ORC`：压缩式列存储（`Apache Hive`）
+* `Apache CarbonData`：压缩式列存储（华为）
+* `Apache Iceberg`：一种灵活的数据结构，用于支撑`Netflix`的模式演进
+* `HDF5`：多维数组，常用语科学领域
+* `Apache Arrow`：内存的压缩式列存储（`Pandas/Dremio`）
+
 # 25 Oracle
 
 # 26 Potpourri
