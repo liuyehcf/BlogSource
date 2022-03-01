@@ -2329,7 +2329,7 @@ Plug 'google/vim-codefmt'
 Plug 'google/vim-glaive'
 
 " 将 :FormatCode 映射到快捷键 [Ctrl] + l
-nnoremap <buffer> <c-l> :FormatCode<cr>
+nnoremap <c-l> :FormatCode<cr>
 
 call plug#end()
 
@@ -2414,8 +2414,6 @@ call plug#end()
     * `vllllS<c-f>print`：类似`vllllSfprint`，`<c-f>`表示环绕符号加到最外侧。形式为`(print <text>)`
 
 ## 3.23 个人完整配置
-
-**初学vim，水平有限，仅供参考，`~/.vimrc`完整配置如下**
 
 ```vim
 call plug#begin()
@@ -2677,10 +2675,6 @@ command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-hea
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-Plug 'mhinz/vim-grepper'
-
-" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 Plug 'tpope/vim-fugitive'
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -2704,7 +2698,7 @@ Plug 'google/vim-codefmt'
 Plug 'google/vim-glaive'
 
 " 将 :FormatCode 映射到快捷键 [Ctrl] + l
-nnoremap <buffer> <c-l> :FormatCode<cr>
+nnoremap <c-l> :FormatCode<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
