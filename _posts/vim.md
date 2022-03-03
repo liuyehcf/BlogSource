@@ -1463,7 +1463,7 @@ endfunction
 " 诊断快捷键
 nmap <c-k> <Plug>(coc-diagnostic-prev)
 nmap <c-j> <Plug>(coc-diagnostic-next)
-nmap <leader>qf <Plug>(coc-fix-current)
+nmap <leader>rf <Plug>(coc-fix-current)
 
 " 自动根据语义进行范围选择
 nmap <c-s> <Plug>(coc-range-select)
@@ -2612,7 +2612,7 @@ endfunction
 " 诊断快捷键
 nmap <c-k> <Plug>(coc-diagnostic-prev)
 nmap <c-j> <Plug>(coc-diagnostic-next)
-nmap <leader>qf <Plug>(coc-fix-current)
+nmap <leader>rf <Plug>(coc-fix-current)
 
 " 自动根据语义进行范围选择
 nmap <c-s> <Plug>(coc-range-select)
