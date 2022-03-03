@@ -241,6 +241,7 @@ categories:
     * **`:[n1],[n2]s/\<[word1]\>/[word2]/g`：在n1与n2行之间寻找word1这个字符串（全词匹配），并将该字符串替换为word2，支持正则表达式**
     * **`:1,$s/[word1]/[word2]/g`或者`:%s/[word1]/[word2]/g`：从第一行到最后一行查找word1字符串，并将该字符串替换为word2，支持正则表达式**
     * **`:1,$s/[word1]/[word2]/gc`或者`:%s/[word1]/[word2]/gc`：从第一行到最后一行查找word1字符串，并将该字符串替换为word2，且在替换前显示提示字符给用户确认是否替换，支持正则表达式**
+    * **可视模式选中范围，输入`:s/[word1]/[word2]/gc`进行替换**
 * **`[Ctrl]+r`以及`[Ctrl]+w`：将光标下的字符串添加到搜索或者替换表达式中**
 
 ## 2.7 文件操作
@@ -566,10 +567,10 @@ endif
 | `coc-java` | `coc`插件，`LSP Client For Java` | https://github.com/neoclide/coc-java |
 | `coc-snippets` | `coc`插件，代码片段 | https://github.com/neoclide/coc-snippets |
 | `vim-snippets` | 提供了大量`snippet`的定义 | https://github.com/honza/vim-snippets |
+| `vimspector` | `Debug` | https://github.com/puremourning/vimspector |
 | `vim-auto-popmenu` | 轻量补全 | https://github.com/skywind3000/vim-auto-popmenu |
 | `YouCompleteMe` | 代码补全 | https://github.com/ycm-core/YouCompleteMe |
 | `vim-javacomplete2` | `Java`代码补全 | https://github.com/artur-shaik/vim-javacomplete2 |
-| `vimspector` | `Debug` | https://github.com/puremourning/vimspector |
 | `AsyncRun` | 编译运行 | https://github.com/skywind3000/asyncrun.vim |
 | `ALE` | 动态检查 | https://github.com/dense-analysis/ale |
 | `vim-signify` | 修改比较 | https://github.com/mhinz/vim-signify |
@@ -1460,12 +1461,13 @@ function! s:show_documentation()
 endfunction
 
 " 诊断快捷键
-nmap <silent> <c-k> <Plug>(coc-diagnostic-prev)
-nmap <silent> <c-j> <Plug>(coc-diagnostic-next)
+nmap <c-k> <Plug>(coc-diagnostic-prev)
+nmap <c-j> <Plug>(coc-diagnostic-next)
+nmap <leader>qf <Plug>(coc-fix-current)
 
 " 自动根据语义进行范围选择
-nmap <silent> <c-s> <Plug>(coc-range-select)
-xmap <silent> <c-s> <Plug>(coc-range-select)
+nmap <c-s> <Plug>(coc-range-select)
+xmap <c-s> <Plug>(coc-range-select)
 
 " 代码导航的相关映射
 nmap <leader>rd <Plug>(coc-definition)
@@ -1820,11 +1822,41 @@ java \
 * 无法访问JDK以及三方库中的类
 * 对于Maven项目，若在标准的目录结构中有额外的目录，例如`<project-name>/src/main/<extra_dir>/com`，那么`jdt.ls`无法自动扫描整个工程，除非手动打开文件，才会把该文件加入解析列表中
 
-## 3.11 代码补全
+## 3.11 Debug-[vimspector](https://github.com/puremourning/vimspector)
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'puremourning/vimspector'
+
+nnoremap <leader>vl :call vimspector#Launch()<cr>
+nnoremap <leader>vtb :call vimspector#ToggleBreakpoint()<cr>
+nnoremap <leader>vcb :call vimspector#ClearBreakpoints()<cr>
+nnoremap <leader>vuf :call vimspector#UpFrame()<cr>
+nnoremap <leader>vdf :call vimspector#DownFrame()<cr>
+nnoremap <leader>vr :call vimspector#Reset()<cr>
+
+nnoremap <F4> :call vimspector#Stop()<cr>
+nnoremap <F5> :call vimspector#Restart()<cr>
+nnoremap <F6> :call vimspector#Continue()<cr>
+nnoremap <F7> :call vimspector#StepInto()<cr>
+nnoremap <F8> :call vimspector#StepOver()<cr>
+nnoremap <S-F8> :call vimspector#StepOut()<cr>
+
+call plug#end()
+```
+
+## 3.12 代码补全
 
 **前言：`coc.nvim`插件体系提供了大部分语言的代码补全功能，如果使用了`coc.nvim`插件，就不需要使用下面的这些补全插件了**
 
-### 3.11.1 [YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
+### 3.12.1 [YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
 
 **这个插件比较复杂，建议手工安装**
 
@@ -1915,7 +1947,7 @@ def Settings(**kwargs):
 * `[Ctrl] + n`：下一个条目
 * `[Ctrl] + p`：上一个条目
 
-### 3.11.2 [vim-javacomplete2](https://github.com/artur-shaik/vim-javacomplete2)
+### 3.12.2 [vim-javacomplete2](https://github.com/artur-shaik/vim-javacomplete2)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1959,7 +1991,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 3.12 编译运行-[AsyncRun](https://github.com/skywind3000/asyncrun.vim)
+## 3.13 编译运行-[AsyncRun](https://github.com/skywind3000/asyncrun.vim)
 
 本质上，`AsyncRun`插件就是提供了异步执行命令的机制，我们可以利用这个机制定义一些动作，比如`编译`、`构建`、`运行`、`测试`等，提供类似于`IDE`的体验
 
@@ -1997,7 +2029,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 3.13 动态检查-[ALE](https://github.com/dense-analysis/ale)
+## 3.14 动态检查-[ALE](https://github.com/dense-analysis/ale)
 
 **前言：`coc.nvim`插件体系提供了大部分语言的错误诊断功能，如果使用了`coc.nvim`插件，就不需要使用其他的错误诊断插件了**
 
@@ -2071,7 +2103,7 @@ call plug#end()
     1. `mv /usr/local/share/locale/zh_CN/LC_MESSAGES/gcc.mo /usr/local/share/locale/zh_CN/LC_MESSAGES/gcc.mo.bak`
     * 如果找不到`gcc.mo`文件的话，可以用`locate`命令搜索一下
 
-## 3.14 修改比较-[vim-signify](https://github.com/mhinz/vim-signify)
+## 3.15 修改比较-[vim-signify](https://github.com/mhinz/vim-signify)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2094,7 +2126,7 @@ call plug#end()
 * `set signcolumn=yes`，有改动的行会标出
 * `:SignifyDiff`：以左右分屏的方式对比当前文件的差异
 
-## 3.15 文本对象-[textobj-user](https://github.com/kana/vim-textobj-user)
+## 3.16 文本对象-[textobj-user](https://github.com/kana/vim-textobj-user)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2123,7 +2155,7 @@ call plug#end()
 * **`ii/ai`：缩进对象。可以用`vii`/`dii`/`cii`来选中/删除/改写同一缩进层次的内容**
 * **`if/af`：函数对象。可以用`vif`/`dif`/`cif`来选中/删除/改写当前函数的内容**
 
-## 3.16 函数列表-[LeaderF](https://github.com/Yggdroot/LeaderF)
+## 3.17 函数列表-[LeaderF](https://github.com/Yggdroot/LeaderF)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2168,7 +2200,7 @@ call plug#end()
 1. `:LeaderfMru`：查找最近访问的文件，通过上面的配置映射到快捷键`[Ctrl] + n`
 1. 通过上面的配置，将文件模糊搜索映射到快捷键`[Ctrl] + p`
 
-## 3.17 全局模糊搜索-[fzf.vim](https://github.com/junegunn/fzf.vim)
+## 3.18 全局模糊搜索-[fzf.vim](https://github.com/junegunn/fzf.vim)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2221,7 +2253,7 @@ call plug#end()
     * **上述规则均可自由组合**
     * **如何精确匹配一个包含空格的字符串：`'Hello\ world`。由于常规的空格被用作分词符，因此空格前要用`\`进行转义**
 
-## 3.18 全局搜索-[vim-grepper](https://github.com/mhinz/vim-grepper)
+## 3.19 全局搜索-[vim-grepper](https://github.com/mhinz/vim-grepper)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2243,7 +2275,7 @@ call plug#end()
 
 * `:Grepper`：进行全局搜索（依赖grep命令）
 
-## 3.19 git扩展-[vim-fugitive](https://github.com/tpope/vim-fugitive)
+## 3.20 git扩展-[vim-fugitive](https://github.com/tpope/vim-fugitive)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2265,7 +2297,7 @@ call plug#end()
 
 * `:Git`：作为`git`的替代，后跟`git`命令行工具的正常参数即可
 
-## 3.20 添加注释-[nerdcommenter](https://github.com/preservim/nerdcommenter)
+## 3.21 添加注释-[nerdcommenter](https://github.com/preservim/nerdcommenter)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2302,7 +2334,7 @@ call plug#end()
 * **`\cu`：取消注释**
 * **`\c<space>`：如果被选区域有部分被注释，则对被选区域执行取消注释操作，其它情况执行反转注释操作**
 
-## 3.21 代码格式化-[vim-codefmt](https://github.com/google/vim-codefmt)
+## 3.22 代码格式化-[vim-codefmt](https://github.com/google/vim-codefmt)
 
 **支持各种格式化工具：**
 
@@ -2361,7 +2393,7 @@ sudo chmod a+x /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.p
 sudo ln /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.py /usr/local/bin/autopep8
 ```
 
-## 3.22 文本环绕-[vim-surround](https://github.com/tpope/vim-surround)
+## 3.23 文本环绕-[vim-surround](https://github.com/tpope/vim-surround)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2413,7 +2445,7 @@ call plug#end()
     * `vllllSFprint`：类似`vllllSfprint`，`F`表示会在参数列表前后多加额外的空格。形式为`print( <text> )`
     * `vllllS<c-f>print`：类似`vllllSfprint`，`<c-f>`表示环绕符号加到最外侧。形式为`(print <text>)`
 
-## 3.23 个人完整配置
+## 3.24 个人完整配置
 
 ```vim
 call plug#begin()
@@ -2578,12 +2610,13 @@ function! s:show_documentation()
 endfunction
 
 " 诊断快捷键
-nmap <silent> <c-k> <Plug>(coc-diagnostic-prev)
-nmap <silent> <c-j> <Plug>(coc-diagnostic-next)
+nmap <c-k> <Plug>(coc-diagnostic-prev)
+nmap <c-j> <Plug>(coc-diagnostic-next)
+nmap <leader>qf <Plug>(coc-fix-current)
 
 " 自动根据语义进行范围选择
-nmap <silent> <c-s> <Plug>(coc-range-select)
-xmap <silent> <c-s> <Plug>(coc-range-select)
+nmap <c-s> <Plug>(coc-range-select)
+xmap <c-s> <Plug>(coc-range-select)
 
 " 代码导航的相关映射
 nmap <leader>rd <Plug>(coc-definition)
@@ -2616,9 +2649,6 @@ let g:asyncrun_open = 6
 
 " 任务结束时候响铃提醒
 let g:asyncrun_bell = 1
-
-" 设置 F10 打开/关闭 quickfix 窗口
-nnoremap <F10> :call asyncrun#quickfix_toggle(6)<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

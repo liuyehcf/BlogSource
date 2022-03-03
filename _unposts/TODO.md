@@ -86,6 +86,8 @@
         * pull vs. push
             * pull：对limit友好，对filter不友好
             * push：对filter友好，对limit不友好
+    * postgre
+        * 算数相关的函数：src/backend/utils/adt/numeric.c
 1. license
     * [主流开源协议之间有何异同？](https://www.zhihu.com/question/19568896)
     * apache license
