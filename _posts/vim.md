@@ -1835,6 +1835,8 @@ call plug#begin()
 
 Plug 'puremourning/vimspector'
 
+let g:vimspector_variables_display_mode = 'full'
+
 nnoremap <leader>vl :call vimspector#Launch()<cr>
 nnoremap <leader>vb :call vimspector#ToggleBreakpoint()<cr>
 nnoremap <leader>vc :call vimspector#ClearBreakpoints()<cr>
@@ -1853,45 +1855,53 @@ nnoremap <s-f8> :call vimspector#StepOut()<cr>
 call plug#end()
 ```
 
-**对于每个项目，我们都需要在项目的根目录提供一个`.vimspector.json`，来配置项目相关的`debug`参数**
+**安装：进入vim界面后执行`:PlugInstall`即可**
 
-* `C-Family`示例：
-    ```json
-    {
-        "configurations": {
-            "Launch": {
-                "adapter": {
-                    "extends": "vscode-cpptools",
-                    "sync_timeout": 100000,
-                    "async_timeout": 100000
+**使用：**
+
+* **页面布局**
+    * `Variables and scopes`：左上角。回车用于展开和收起
+    * `Watches`：左中。进入编辑模式，输入表达式按回车可新增`Watch`；删除键可删除`Watch`
+    * `StackTrace`：左下角。按回车可展开线程堆栈
+    * `Console`：标准输出，标准错误
+* **对于每个项目，我们都需要在项目的根目录提供一个`.vimspector.json`，来配置项目相关的`debug`参数**
+    * `C-Family`示例：
+        ```json
+        {
+            "configurations": {
+                "Launch": {
+                    "adapter": {
+                        "extends": "vscode-cpptools",
+                        "sync_timeout": 100000,
+                        "async_timeout": 100000
+                    },
+                    "filetypes": ["cpp", "c", "objc", "rust"],
+                    "configuration": {
+                        "request": "launch",
+                        "program": "<path to binary>",
+                        "args": [],
+                        "cwd": "<working directory>",
+                        "environment": [],
+                        "externalConsole": true,
+                        "MIMode": "gdb"
+                    }
                 },
-                "filetypes": ["cpp", "c", "objc", "rust"],
-                "configuration": {
-                    "request": "launch",
-                    "program": "<path to binary>",
-                    "args": [],
-                    "cwd": "<working directory>",
-                    "environment": [],
-                    "externalConsole": true,
-                    "MIMode": "gdb"
-                }
-            },
-            "Attach": {
-                "adapter": {
-                    "extends": "vscode-cpptools",
-                    "sync_timeout": 100000,
-                    "async_timeout": 100000
-                },
-                "filetypes": ["cpp", "c", "objc", "rust"],
-                "configuration": {
-                    "request": "attach",
-                    "program": "<path to binary>",
-                    "MIMode": "gdb"
+                "Attach": {
+                    "adapter": {
+                        "extends": "vscode-cpptools",
+                        "sync_timeout": 100000,
+                        "async_timeout": 100000
+                    },
+                    "filetypes": ["cpp", "c", "objc", "rust"],
+                    "configuration": {
+                        "request": "attach",
+                        "program": "<path to binary>",
+                        "MIMode": "gdb"
+                    }
                 }
             }
         }
-    }
-    ```
+        ```
 
 ## 3.12 代码补全
 
@@ -2684,6 +2694,8 @@ Plug 'honza/vim-snippets'
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 Plug 'puremourning/vimspector'
+
+let g:vimspector_variables_display_mode = 'full'
 
 nnoremap <leader>vl :call vimspector#Launch()<cr>
 nnoremap <leader>vb :call vimspector#ToggleBreakpoint()<cr>
