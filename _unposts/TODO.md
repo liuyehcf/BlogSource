@@ -1,5 +1,7 @@
 1. Linux-常用命令
 1. 性能分析
+    * bcc
+    * bpftrace
 1. 数据库
     * product
         * postgreSQL
@@ -55,7 +57,6 @@
     * gtest
         * PARALLEL_TEST
     * std::guard(be/src/runtime/decimalv3.h)
-    * std::enable_if_t(be/src/util/decimal_types.h)，用来设置类型边界
 1. java
     * antlr4，语法解析框架
 1. 其他

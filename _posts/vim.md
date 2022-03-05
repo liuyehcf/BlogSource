@@ -782,9 +782,9 @@ nnoremap ˚ :tp<cr>
 " tags搜索模式
 set tags=./.tags;,.tags
 " c/c++ 标准库的ctags
-autocmd FileType c,cpp,objc set tags+=~/.vim/.cfamily_systags
+set tags+=~/.vim/.cfamily_systags
 " python 标准库的ctags
-autocmd FileType python set tags+=~/.vim/.python_systags
+set tags+=~/.vim/.python_systags
 ```
 
 ### 3.2.7 符号索引-[cscope](http://cscope.sourceforge.net/)
@@ -1294,7 +1294,7 @@ function s:set_python_configs()
     endif
 endfunction
 autocmd FileType c,cpp,objc call s:set_cfamily_configs()
-autocmd FileType c,cpp,objc call s:set_python_configs()
+autocmd FileType python call s:set_python_configs()
 
 " 禁用 gutentags 自动加载 gtags 数据库的行为
 let g:gutentags_auto_add_gtags_cscope = 0
@@ -2523,6 +2523,83 @@ let g:rainbow_active = 1
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+Plug 'ludovicchabant/vim-gutentags'
+
+" gutentags 搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归
+let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
+
+" 所生成的数据文件的名称
+let g:gutentags_ctags_tagfile = '.tags'
+
+" 同时开启 ctags 和 gtags 支持：
+let g:gutentags_modules = []
+if executable('ctags')
+    let g:gutentags_modules += ['ctags']
+endif
+if executable('gtags-cscope') && executable('gtags')
+    let g:gutentags_modules += ['gtags_cscope']
+endif
+
+" 将自动生成的 ctags/gtags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
+let s:vim_tags = expand('~/.cache/tags')
+let g:gutentags_cache_dir = s:vim_tags
+
+" 按文件类型分别配置 ctags 的参数
+function s:set_cfamily_configs()
+    let g:gutentags_ctags_extra_args = ['--fields=+ailnSz']
+    let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+    let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+    " 配置 universal ctags 特有参数
+    let g:ctags_version = system('ctags --version')[0:8]
+    if g:ctags_version == "Universal"
+        let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
+    endif
+endfunction
+function s:set_python_configs()
+    let g:gutentags_ctags_extra_args = ['--fields=+ailnSz']
+    let g:gutentags_ctags_extra_args += ['--languages=python']
+    let g:gutentags_ctags_extra_args += ['--python-kinds=-iv']
+    " 配置 universal ctags 特有参数
+    let g:ctags_version = system('ctags --version')[0:8]
+    if g:ctags_version == "Universal"
+        let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
+    endif
+endfunction
+autocmd FileType c,cpp,objc call s:set_cfamily_configs()
+autocmd FileType python call s:set_python_configs()
+
+" 禁用 gutentags 自动加载 gtags 数据库的行为
+let g:gutentags_auto_add_gtags_cscope = 0
+
+" 启用高级命令，比如 :GutentagsToggleTrace 等
+let g:gutentags_define_advanced_commands = 1
+
+" 检测 ~/.cache/tags 不存在就新建
+if !isdirectory(s:vim_tags)
+   silent! call mkdir(s:vim_tags, 'p')
+endif
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'skywind3000/gutentags_plus'
+
+" 在查询后，光标切换到 quickfix 窗口
+let g:gutentags_plus_switch = 1
+
+" 禁用默认的映射，默认的映射会与 nerdcommenter 插件冲突
+let g:gutentags_plus_nomap = 1
+
+" 定义新的映射
+nnoremap <leader>gd :GscopeFind g <c-r><c-w><cr>
+nnoremap <leader>gr :GscopeFind s <c-r><c-w><cr>
+nnoremap <leader>ga :GscopeFind a <c-r><c-w><cr>
+nnoremap <leader>gt :GscopeFind t <c-r><c-w><cr>
+nnoremap <leader>ge :GscopeFind e <c-r><c-w><cr>
+nnoremap <leader>gf :GscopeFind f <c-r>=expand("<cfile>")<cr><cr>
+nnoremap <leader>gi :GscopeFind i <c-r>=expand("<cfile>")<cr><cr>
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
 Plug 'skywind3000/vim-preview'
 
 autocmd FileType qf nnoremap <buffer> p :PreviewQuickfix<cr>
@@ -2725,9 +2802,9 @@ nnoremap ˚ :tp<cr>
 " tags搜索模式
 set tags=./.tags;,.tags
 " c/c++ 标准库的ctags
-autocmd FileType c,cpp,objc set tags+=~/.vim/.cfamily_systags
+set tags+=~/.vim/.cfamily_systags
 " python 标准库的ctags
-autocmd FileType python set tags+=~/.vim/.python_systags
+set tags+=~/.vim/.python_systags
 
 " gtags的配置
 " native-pygments 设置后会出现「gutentags: gtags-cscope job failed, returned: 1」，所以我把它换成了 native
