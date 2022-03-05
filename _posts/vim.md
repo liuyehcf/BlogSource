@@ -1860,7 +1860,11 @@ call plug#end()
     {
         "configurations": {
             "Launch": {
-                "adapter": "vscode-cpptools",
+                "adapter": {
+                    "extends": "vscode-cpptools",
+                    "sync_timeout": 100000,
+                    "async_timeout": 100000
+                },
                 "filetypes": ["cpp", "c", "objc", "rust"],
                 "configuration": {
                     "request": "launch",
@@ -1873,7 +1877,11 @@ call plug#end()
                 }
             },
             "Attach": {
-                "adapter": "vscode-cpptools",
+                "adapter": {
+                    "extends": "vscode-cpptools",
+                    "sync_timeout": 100000,
+                    "async_timeout": 100000
+                },
                 "filetypes": ["cpp", "c", "objc", "rust"],
                 "configuration": {
                     "request": "attach",
