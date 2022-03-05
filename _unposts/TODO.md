@@ -19,8 +19,6 @@
         * [sqlsmith](https://github.com/anse1/sqlsmith)
     * doc
         * [sqlite-window-function](https://www.sqlite.org/windowfunctions.html)
-    * ssb测试集
-        * https://www.cnblogs.com/tgzhu/p/9083092.html
     * rewrite
         * 各种表达式的重写和化简
         * 列裁剪
@@ -38,48 +36,6 @@
         * Empty Union, Intersect, Except 裁剪
         * Intersect Reorder
         * Count Distinct 相关聚合函数重写
-    * 优化器相关论文
-        * The Cascades Framework for Query Optimization
-        * Orca-A-Modular-Query-Optimizer-Architecture-For-Big-Data
-        * Efficiency-In-The-Columbia-Database-Query-Optimizer
-            * multi-expressions: A Multi-expression consists of a logical or physical operator and takes groups as inputs
-            * group：A Group is a set of logically equivalent expressions
-            * pattern/substitute/transformation rule/implementation rule
-            * catalogs(cardinality, number of pages, indexes)
-            * Starburst
-                * QGM, Query Graph Model, namely, re-write
-                * plan optimizer, determine join orders
-            * Exodus Optimizer
-            * Volcano Optimizer
-            * Cascades Optimizer Framework
-                * task, tasks are collected by stack
-                * memo(inherited from Volcano), search space
-            * Cascades derives on demand while Volcano always derives
-            * Columbia Optimizer(Based on the Cascades framework)
-                * item operator vs. bulk operators
-                * catalog, cost model, text file + parser vs. hard code
-                * search engine
-                    * rule set
-                    * search space
-                    * tasks
-                * group lower bound: minimal cost of copying out tuples of the group and fetching tuples from the tables of the group (see details in section 4.1.2.3).
-                * Calculation of the lower bound? P52
-                * Bindery, bind logical operators only
-                    * Expression binderies
-                    * Group binderies
-                * Enforcer Rule: inserts physical operators
-                * Enforcer: The physical operator inserted by an enforcer rule is called an enforcer
-                * physical property?
-                * Task
-                    * O_GROUP, group optimization
-                    * E_GROUP, group exploration
-                    * O_EXPR, expression optimization
-                    * O_INPUTS, input optimization, altorhtim complicated P81
-                    * APPLY_RULE, rule application
-                * prune 
-                    * Lower Bound Group Pruning
-                    * Global Epsilon Pruning
-        * How-Good-Are-Query-Optimizers
     * serverless论文
         * Cloud-Programming-Simplified-A-Berkeley-View-on-Serverless-Computing
     * 执行器
@@ -103,7 +59,6 @@
 1. java
     * antlr4，语法解析框架
 1. 其他
-    * `github.com.cnpmjs.org`不可用
     * [Is Raft more modular than MultiPaxos?](https://maheshba.bitbucket.io/blog/2021/12/14/Modularity.html)
     * 内存分配，伙伴算法
     * rpc框架，thrift

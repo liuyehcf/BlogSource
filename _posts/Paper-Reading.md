@@ -361,9 +361,49 @@ categories:
 
 * [浅析 Bigtable 和 LevelDB 的实现](https://www.cnblogs.com/jpfss/p/10721384.html)
 
-# 5 Efficiency in the Columbia Database Query Optimizer
+# 5 [Efficiency-In-The-Columbia-Database-Query-Optimizer](/resources/Efficiency-In-The-Columbia-Database-Query-Optimizer.pdf)
 
-# 6 Fast Selection and Aggregation on Encoded Data using Operator Specialization
+* multi-expressions: A Multi-expression consists of a logical or physical operator and takes groups as inputs
+* group：A Group is a set of logically equivalent expressions
+* pattern/substitute/transformation rule/implementation rule
+* catalogs(cardinality, number of pages, indexes)
+* Starburst
+    * QGM, Query Graph Model, namely, re-write
+    * plan optimizer, determine join orders
+* Exodus Optimizer
+* Volcano Optimizer
+* Cascades Optimizer Framework
+    * task, tasks are collected by stack
+    * memo(inherited from Volcano), search space
+* Cascades derives on demand while Volcano always derives
+* Columbia Optimizer(Based on the Cascades framework)
+    * item operator vs. bulk operators
+    * catalog, cost model, text file + parser vs. hard code
+    * search engine
+        * rule set
+        * search space
+        * tasks
+    * group lower bound: minimal cost of copying out tuples of the group and fetching tuples from the tables of the group (see details in section 4.1.2.3).
+    * Calculation of the lower bound? P52
+    * Bindery, bind logical operators only
+        * Expression binderies
+        * Group binderies
+    * Enforcer Rule: inserts physical operators
+    * Enforcer: The physical operator inserted by an enforcer rule is called an enforcer
+    * physical property?
+    * Task
+        * O_GROUP, group optimization
+        * E_GROUP, group exploration
+        * O_EXPR, expression optimization
+        * O_INPUTS, input optimization, altorhtim complicated P81
+        * APPLY_RULE, rule application
+    * prune 
+        * Lower Bound Group Pruning
+        * Global Epsilon Pruning
 
-# 7 Shared memory consistency models - A tutorial
+# 6 Efficiency in the Columbia Database Query Optimizer
+
+# 7 Fast Selection and Aggregation on Encoded Data using Operator Specialization
+
+# 8 Shared memory consistency models - A tutorial
 

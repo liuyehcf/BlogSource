@@ -1523,7 +1523,68 @@ constexpr bool is_same_v<T, T> = true;
 
 ## 5.6 元编程的应用
 
-### 5.6.1 遍历tuple
+### 5.6.1 类型推导
+
+**`using template`：当我们使用`Traits`萃取类型时，通常需要加上`typename`来消除歧义。因此，`using`模板可以进一步消除多余的`typename`**
+**`static member template`：静态成员模板**
+
+```cpp
+#include <stddef.h>
+#include <stdint.h>
+
+#include <iostream>
+#include <string>
+
+enum Type {
+    INT = 0,
+    LONG,  /* 1 */
+    FLOAT, /* 2 */
+    DOUBLE /* 3 */
+};
+
+template <Type type>
+struct TypeTraits {};
+
+template <>
+struct TypeTraits<Type::INT> {
+    using type = int32_t;
+    static constexpr int32_t default_value = 1;
+};
+
+template <>
+struct TypeTraits<Type::LONG> {
+    using type = int64_t;
+    static constexpr int64_t default_value = 2;
+};
+
+template <>
+struct TypeTraits<Type::FLOAT> {
+    using type = float;
+    static constexpr float default_value = 2.2;
+};
+
+template <>
+struct TypeTraits<Type::DOUBLE> {
+    using type = double;
+    static constexpr double default_value = 3.3;
+};
+
+template <Type type>
+using CppType = typename TypeTraits<type>::type;
+
+int main() {
+    typename TypeTraits<Type::INT>::type value1 = TypeTraits<Type::INT>::default_value;
+    CppType<Type::LONG> value2 = TypeTraits<Type::LONG>::default_value;
+    CppType<Type::FLOAT> value3 = TypeTraits<Type::FLOAT>::default_value;
+    CppType<Type::DOUBLE> value4 = TypeTraits<Type::DOUBLE>::default_value;
+    std::cout << "value1=" << value1 << std::endl;
+    std::cout << "value2=" << value2 << std::endl;
+    std::cout << "value3=" << value3 << std::endl;
+    std::cout << "value4=" << value4 << std::endl;
+}
+```
+
+### 5.6.2 遍历tuple
 
 ```cpp
 #include <stddef.h>
@@ -1548,7 +1609,7 @@ int main() {
 }
 ```
 
-### 5.6.2 快速排序
+### 5.6.3 快速排序
 
 **源码出处：[quicksort in C++ template metaprogramming](https://gist.github.com/cleoold/c26d4e2b4ff56985c42f212a1c76deb9)**
 
@@ -1803,7 +1864,7 @@ int main() {
 }
 ```
 
-### 5.6.3 静态代理
+### 5.6.4 静态代理
 
 不确定这个是否属于元编程的范畴。更多示例可以参考[binary_function.h](https://github.com/liuyehcf/starrocks/blob/main/be/src/exprs/vectorized/binary_function.h)
 

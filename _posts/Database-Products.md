@@ -509,6 +509,7 @@ categories:
 # 25 TODO
 
 1. mysql
+1. sqlite
 1. duckdb
 
 # 26 参考

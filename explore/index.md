@@ -51,6 +51,12 @@ date: 2018-02-05 09:25:59
     * [数据库学习资料（持续更新中）](https://blog.bcmeng.com/post/database-learning.html)
 * [ClickHouse Blog](https://clickhouse.com/docs/zh/whats-new/changelog/)
 * [Develop your own Database](https://hpi.de/plattner/teaching/archive/winter-term-201819/develop-your-own-database.html)
+* Papers
+    * Optimizer
+        * [Efficiency-In-The-Columbia-Database-Query-Optimizer](/resources/Efficiency-In-The-Columbia-Database-Query-Optimizer.pdf) - ★★★★★
+        * [The-Cascades-Framework-For-Query-Optimization](/resources/The-Cascades-Framework-For-Query-Optimization.pdf)
+        * [Orca-A-Modular-Query-Optimizer-Architecture-For-Big-Data](/resources/Orca-A-Modular-Query-Optimizer-Architecture-For-Big-Data.pdf)
+        * [How-Good-Are-Query-Optimizers](/resources/How-Good-Are-Query-Optimizers.pdf)
 * Celebrity
     * `Andy Pavlo`：顶尖的数据库领域专家，执教CMU数据库系统相关课程
 * [db-fiddle](https://www.db-fiddle.com/)
