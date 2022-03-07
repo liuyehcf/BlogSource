@@ -314,9 +314,47 @@ categories:
 1. **查看所有的`action`：`:actionlist`**
 1. **目前不支持vim插件管理器，例如`Plug`等**
 
+**为了保持{% post_link vim %}中的按键习惯，以下是`~/.ideavimrc`的内容**
+
 ```vim
+nnoremap <c-o> :action Back<cr>
+nnoremap <c-h> :action TypeHierarchy<cr>
+
+" keep keymap with Plug 'neoclide/coc.nvim'
+nnoremap <leader>rd :action GotoDeclaration<cr>
+nnoremap <leader>ri :action GotoImplementation<cr>
+nnoremap <leader>rr :action ShowUsages<cr>
+nnoremap <leader>rn :action RenameElement<cr>
+
+" keep keymap with Plug 'Yggdroot/LeaderF'
+nnoremap <c-p> :action SearchEverywhere<cr>
+nnoremap <c-n> :action RecentFiles<cr>
+nnoremap π :action FileStructurePopup<cr>
+
+" keep keymap with Plug 'junegunn/fzf'
+nnoremap <leader>rg :action FindInPath<cr>
+
+" keep keymap with Plug 'preservim/nerdcommenter'
+nnoremap <leader>c<space> :action CommentByLineComment<cr>
+
+" keep keymap with Plug 'google/vim-codefmt'
+nnoremap <c-l> :action ReformatCode<cr>
+
 " embedded vim-surround
 set surround
-nnoremap <c-l> :action ReformatCode<cr>
-nnoremap <leader>rn :action RenameElement<cr>
+
+" 编辑模式，光标移动快捷键
+" 将移动到行首（同一般模式下的 ^）映射到 [Ctrl] + a
+" 将移动到行尾（同一般模式下的 $）映射到 [Ctrl] + e
+inoremap <silent> <c-a> <c-o>^
+inoremap <silent> <c-e> <c-o>$
+
+" 替换映射到 [Option] + r，即「®」
+" 其中，<c-r><c-w> 表示 [Ctrl] + r 以及 [Ctrl] + w，用于将光标所在的单词填入搜索/替换项中
+nnoremap ® :%s/<c-r><c-w>
+
+" 回车时，默认取消搜索高亮
+nnoremap <silent> <cr> :nohlsearch<cr><cr>
+" \qc 关闭 quickfix
+nnoremap <leader>qc :cclose<cr>
 ```
