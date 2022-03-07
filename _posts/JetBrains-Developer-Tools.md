@@ -335,7 +335,7 @@ nnoremap π :action FileStructurePopup<cr>
 nnoremap <leader>rg :action FindInPath<cr>
 
 " keep keymap with Plug 'preservim/nerdcommenter'
-nnoremap <leader>c<space> :action CommentByLineComment<cr>
+noremap <leader>c<space> :action CommentByLineComment<cr>
 
 " keep keymap with Plug 'google/vim-codefmt'
 nnoremap <c-l> :action ReformatCode<cr>
