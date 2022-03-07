@@ -307,3 +307,16 @@ categories:
 ## 3.1 插件
 
 1. `thrift`
+
+# 4 IdeaVim
+
+1. **配置文件路径：`~/.ideavimrc`**
+1. **查看所有的`action`：`:actionlist`**
+1. **目前不支持vim插件管理器，例如`Plug`等**
+
+```vim
+" embedded vim-surround
+set surround
+nnoremap <c-l> :action ReformatCode<cr>
+nnoremap <leader>rn :action RenameElement<cr>
+```
