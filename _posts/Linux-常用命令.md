@@ -1287,7 +1287,16 @@ free
 * `du -sh`：当前文件夹的总大小
 * `du -h -d 1`：列出深度为1的所有文件/文件夹大小
 
-## 3.8 lsblk
+## 3.8 ncdu
+
+可视化的空间分析程序
+
+**示例：**
+
+* `ncdu`
+* `ncdu /`
+
+## 3.9 lsblk
 
 `lsblk`命令用于列出所有可用块设备的信息
 
@@ -1322,15 +1331,15 @@ free
 * `lsblk -fp`
 * `lsblk -o name,mountpoint,label,size,uuid`
 
-## 3.9 lsusb
+## 3.10 lsusb
 
 `lsusb`命令用于列出所有usb接口的设备
 
-## 3.10 lspci
+## 3.11 lspci
 
 `lspci`命令用于列出所有pci接口的设备
 
-## 3.11 sync
+## 3.12 sync
 
 `sync`指令会将存于`buffer`中的资料强制写入硬盘中
 
