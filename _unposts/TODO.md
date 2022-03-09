@@ -16,6 +16,8 @@
         * [数据库内核杂谈](https://www.infoq.cn/theme/46)
         * [Develop your own Database](https://hpi.de/plattner/teaching/archive/winter-term-201819/develop-your-own-database.html)
         * [DorisDB doc](http://doc.dorisdb.com)
+        * segment
+            * SegmentsReadCount
     * 相关工具
         * [sqlancer](https://github.com/sqlancer/sqlancer)
         * [sqlsmith](https://github.com/anse1/sqlsmith)
@@ -57,6 +59,7 @@
     * gtest
         * PARALLEL_TEST
     * std::guard(be/src/runtime/decimalv3.h)
+    * std::bind 如何实现
 1. java
     * antlr4，语法解析框架
 1. 其他
