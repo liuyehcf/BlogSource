@@ -82,3 +82,4 @@
 1. It's pretty much the size of it，大概就是这样
 1. non-volatile storage, 非易失性存储
 1. branch-and-bound, 分支界定
+1. fine-grained, 细粒度

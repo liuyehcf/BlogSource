@@ -2,6 +2,11 @@
 1. 性能分析
     * bcc
     * bpftrace
+    * valgrind (by andy pavlo)
+        * [The Valgrind Quick Start Guide](http://valgrind.org/docs/manual/quick-start.html)
+        * [Callgrind: a call-graph generating cache and branch prediction profiler](https://valgrind.org/docs/manual/cl-manual.html)
+        * [kcachegrind](https://kcachegrind.github.io/html/Usage.html)
+        * [Tips for the Profiling/Optimization process](https://kcachegrind.github.io/html/Tips.html)
 1. 数据库
     * product
         * postgreSQL
@@ -60,6 +65,7 @@
         * PARALLEL_TEST
     * std::guard(be/src/runtime/decimalv3.h)
     * std::bind 如何实现
+    * std::any_cast
 1. java
     * antlr4，语法解析框架
 1. 其他
@@ -76,3 +82,5 @@
         * 易用性
         * 隔离性
         * 性能
+        * 正确性、准确性
+        * 开销

@@ -3339,10 +3339,20 @@ mount      –t debugfs    debugfs /sys/kernel/debug
 * `-e`：指定跟踪的事件
     * `perf top -e branch-misses,cycles`
     * `perf top -e branch-misses:u,cycles`：事件可以指定后缀，只跟踪发生在用户态时产生的分支预测失败
-    * `perf top -e ‘{branch-misses,cycles}:u'`：全部事件都只关注用户态部分
+    * `perf top -e '{branch-misses,cycles}:u'`：全部事件都只关注用户态部分
 * `-s`：指定按什么参数来进行分类
     * `perf top -e 'cycles' -s comm,pid,dso`
 * `-p`：指定跟踪的`pid`
+
+**常用事件：**
+
+* `branch-misses`
+* `cycles`
+* `context-switches`
+* `cache-misses`
+* `cache-references`
+* `LLC-loads`
+* `LLC-load-misses`
 
 **示例：**
 
