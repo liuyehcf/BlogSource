@@ -1356,6 +1356,9 @@ call plug#end()
 * `gutentags: gtags-cscope job failed, returned: 1`
     * **原因1：由于`git`仓库切换分支，可能会导致`gtagsdb`乱掉。而`gutentags`会用`gtags --incremental <gtagsdb-path>`这样的命令来更新`gtagsdb`，这样可能会导致`segment fault`，表象就是`gutentags: gtags-cscope job failed, returned: 1`**
         * **解决方式：修改`gutentags`源码，将`--incremental`参数去掉即可。一键修改命令：`sed -ri "s|'--incremental', *||g" ~/.vim/plugged/vim-gutentags/autoload/gutentags/gtags_cscope.vim`**
+* 如何禁用：
+    * `let g:gutentags_enabled = 0`
+    * `let g:gutentags_dont_load = 1`
 
 ### 3.9.1 gtags查询快捷键-[gutentags_plus](https://github.com/skywind3000/gutentags_plus)
 

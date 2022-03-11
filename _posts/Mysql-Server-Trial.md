@@ -28,8 +28,8 @@ mkdir build
 cd build
 
 cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-    -DCMAKE_C_COMPILER=/usr/lib64/ccache/gcc \
-    -DCMAKE_CXX_COMPILER=/usr/lib64/ccache/g++ \
+    -DCMAKE_C_COMPILER=/usr/local/bin/gcc \
+    -DCMAKE_CXX_COMPILER=/usr/local/bin/g++ \
     -DWITH_BOOST=/usr/local/boost \
     ..
 
