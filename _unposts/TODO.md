@@ -8,8 +8,6 @@
         * [kcachegrind](https://kcachegrind.github.io/html/Usage.html)
         * [Tips for the Profiling/Optimization process](https://kcachegrind.github.io/html/Tips.html)
 1. 数据库
-    * product
-        * postgreSQL
     * 相关概念
         * 确定性事务
         * 2pc
@@ -62,7 +60,6 @@
     * gpl
 1. cpp
     * gtest
-        * PARALLEL_TEST
     * std::guard(be/src/runtime/decimalv3.h)
     * std::bind 如何实现
 1. java
