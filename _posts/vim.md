@@ -977,6 +977,11 @@ endif
 
 **安装：前面的[安装llvm](#324-%E5%AE%89%E8%A3%85llvm)小节完成后，`clangd`就已经安装好了**
 
+[JSON Compilation Database Format Specification](https://clang.llvm.org/docs/JSONCompilationDatabase.html)
+
+* 对于复杂工程，可以用`cmake`等工具生成`compile_commands.json`
+* 对于简单工程，可以直接配置`compile_flags.txt`
+
 ### 3.2.10 语义索引-ccls
 
 **`ccls`是`LSP, Language Server Protocol`的一种实现，主要用于`C/C++/Objective-C`等语言**

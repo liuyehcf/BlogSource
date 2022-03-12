@@ -65,7 +65,6 @@
         * PARALLEL_TEST
     * std::guard(be/src/runtime/decimalv3.h)
     * std::bind 如何实现
-    * std::any_cast
 1. java
     * antlr4，语法解析框架
 1. 其他
@@ -77,10 +76,4 @@
     * [什么是图灵完备？](https://www.zhihu.com/question/20115374/answer/288346717)
     * [调度系统设计精要](https://draveness.me/system-design-scheduler/)
     * [构建工具bazel](https://github.com/bazelbuild/bazel)
-    * 设计需要考虑的因素
-        * 工程实现难度
-        * 易用性
-        * 隔离性
-        * 性能
-        * 正确性、准确性
-        * 开销
+   

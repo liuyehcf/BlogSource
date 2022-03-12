@@ -13,7 +13,9 @@ categories:
 
 # 1 any
 
-1. `std::any_cast`
+**`std::any`用于持有任意类型的对象，类似于Java中的`java.lang.Object`**
+
+* `std::any_cast`用于将`any`对象转换成对应的类型。若类型错误则会抛出`std::bad_any_cast`
 
 # 2 atomic
 

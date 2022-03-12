@@ -269,13 +269,206 @@ int main() {
 };
 ```
 
-## 3.2 类型推断
+## 3.2 类型长度
 
-### 3.2.1 auto
+### 3.2.1 内存对齐
+
+**内存对齐最最底层的原因是内存的IO是以`8`个字节`64bit`为单位进行的**
+
+假如你指定要获取的是`0x0001-0x0008`，也是8字节，但是不是0开头的，内存需要怎么工作呢？没有好办法，内存只好先工作一次把`0x0000-0x0007`取出来，然后再把`0x0008-0x0015`取出来，把两次的结果都返回给你。CPU和内存IO的硬件限制导致没办法一次跨在两个数据宽度中间进行IO。这样你的应用程序就会变慢，算是计算机因为你不懂内存对齐而给你的一点点惩罚
+
+**内存对齐规则**
+
+1. **结构体第一个成员的偏移量`offset`为`0`，以后每个成员相对于结构体首地址的`offset`都是该成员大小与`有效对齐值`中较小那个的整数倍，如有需要编译器会在成员之间加上填充字节**
+1. **结构体的总大小为`有效对齐值`的整数倍，如有需要编译器会在最末一个成员之后加上填充字节**
+* **有效对齐值：是给定值`#pragma pack(n)`和结构体中最长数据类型长度中较小的那个。有效对齐值也叫对齐单位。gcc中默认`#pragma pack(4)`，可以通过预编译命令`#pragma pack(n)，n = 1,2,4,8,16`来改变这一系数**
+
+**下面以一个例子来说明**
+
+```sh
+# 创建源文件
+cat > main.cpp << 'EOF'
+#include <iostream>
+
+struct Align1 {
+    int8_t f1;
+};
+
+struct Align2 {
+    int8_t f1;
+    int16_t f2;
+};
+
+struct Align3 {
+    int8_t f1;
+    int16_t f2;
+    int32_t f3;
+};
+
+struct Align4 {
+    int8_t f1;
+    int16_t f2;
+    int32_t f3;
+    int64_t f4;
+};
+
+int main() {
+    std::cout << "Align1's size = " << sizeof(Align1) << std::endl;
+    std::cout << "\tf1's offset = " << offsetof(Align1, f1) << ", f1's size = " << sizeof(Align1::f1) << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "Align2's size = " << sizeof(Align2) << std::endl;
+    std::cout << "\tf1's offset = " << offsetof(Align2, f1) << ", f1's size = " << sizeof(Align2::f1) << std::endl;
+    std::cout << "\tf2's offset = " << offsetof(Align2, f2) << ", f2's size = " << sizeof(Align2::f2) << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "Align3's size = " << sizeof(Align3) << std::endl;
+    std::cout << "\tf1's offset = " << offsetof(Align3, f1) << ", f1's size = " << sizeof(Align3::f1) << std::endl;
+    std::cout << "\tf2's offset = " << offsetof(Align3, f2) << ", f2's size = " << sizeof(Align3::f2) << std::endl;
+    std::cout << "\tf3's offset = " << offsetof(Align3, f3) << ", f3's size = " << sizeof(Align3::f3) << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "Align4's size = " << sizeof(Align4) << std::endl;
+    std::cout << "\tf1's offset = " << offsetof(Align4, f1) << ", f1's size = " << sizeof(Align4::f1) << std::endl;
+    std::cout << "\tf2's offset = " << offsetof(Align4, f2) << ", f2's size = " << sizeof(Align4::f2) << std::endl;
+    std::cout << "\tf3's offset = " << offsetof(Align4, f3) << ", f3's size = " << sizeof(Align4::f3) << std::endl;
+    std::cout << "\tf4's offset = " << offsetof(Align4, f4) << ", f4's size = " << sizeof(Align4::f4) << std::endl;
+    std::cout << std::endl;
+    return 0;
+}
+EOF
+
+# 编译
+gcc -o main main.cpp -lstdc++
+
+# 执行
+./main
+```
+
+**执行结果如下**
+
+* 由于每个成员的offset必须是该成员与`有效对齐值`中较小的那个值的整数倍，下面称较小的这个值为`成员有效对齐值`
+* `Align1`：最长数据类型的长度是`1`，pack=`4`，因此，`有效对齐值`是`min(1, 4) = 1`
+    * 规则1：
+        * `f1`，第一个成员的`offset = 0`
+    * 规则2：
+        * 类型总长度为`1`，是`有效对齐值（1）`的整数倍
+* `Align2`：最长数据类型的长度是`2`，pack=`4`，因此，`有效对齐值`是`min(2, 4) = 2`
+    * 规则1：
+        * `f1`，第一个成员的`offset = 0`
+        * `f2`，类型长度为`2`，因此，`成员有效对齐值`是`min(2, 2) = 2`。`offset = 2`是`成员有效对齐值（2)`的整数倍
+    * 规则2：
+        * 类型总长度为`4`，是`有效对齐值（2）`的整数倍
+* `Align3`：最长数据类型的长度是`4`，pack=`4`，因此，`有效对齐值`是`min(4, 4) = 4`
+    * 规则1：
+        * `f1`，第一个成员的`offset = 0`
+        * `f2`，类型长度为`2`，因此，`成员有效对齐值`是`min(2, 4) = 2`。`offset = 2`是`成员有效对齐值（2)`的整数倍
+        * `f3`，类型长度为`4`，因此，`成员有效对齐值`是`min(4, 4) = 4`。`offset = 4`是`成员有效对齐值（4)`的整数倍
+    * 规则2：
+        * 类型总长度为`8`，是`有效对齐值（4）`的整数倍
+* `Align4`：最长数据类型的长度是`8`，pack=`4`，因此，`有效对齐值`是`min(8, 4) = 4`
+    * 规则1：
+        * `f1`，第一个成员的`offset = 0`
+        * `f2`，类型长度为`2`，因此，`成员有效对齐值`是`min(2, 4) = 2`。`offset = 2`是`成员有效对齐值（2)`的整数倍
+        * `f3`，类型长度为`4`，因此，`成员有效对齐值`是`min(4, 4) = 4`。`offset = 4`是`成员有效对齐值（4)`的整数倍
+        * `f4`，类型长度为`8`，因此，`成员有效对齐值`是`min(8, 4) = 4`。`offset = 8`是`成员有效对齐值（4)`的整数倍
+    * 规则2：
+        * 类型总长度为`16`，是`有效对齐值（4）`的整数倍
+
+```
+Align1's size = 1
+    f1's offset = 0, f1's size = 1
+
+Align2's size = 4
+    f1's offset = 0, f1's size = 1
+    f2's offset = 2, f2's size = 2
+
+Align3's size = 8
+    f1's offset = 0, f1's size = 1
+    f2's offset = 2, f2's size = 2
+    f3's offset = 4, f3's size = 4
+
+Align4's size = 16
+    f1's offset = 0, f1's size = 1
+    f2's offset = 2, f2's size = 2
+    f3's offset = 4, f3's size = 4
+    f4's offset = 8, f4's size = 8
+```
+
+### 3.2.2 sizeof
+
+**`sizeof`用于获取对象的内存大小**
+
+### 3.2.3 alignof
+
+**`alignof`用于获取对象的有效对齐值。`alignas`用于设置有效对其值（不允许小于默认的有效对齐值）**
+
+```cpp
+#include <iostream>
+
+struct Foo1 {
+    char c;
+    int32_t i32;
+};
+
+// Compile error
+// Requested alignment is less than minimum int alignment of 4 for type 'Foo2'
+// struct alignas(1) Foo2 {
+//     char c;
+//     int32_t i32;
+// };
+
+// Compile error
+// Requested alignment is less than minimum int alignment of 4 for type 'Foo3'
+// struct alignas(2) Foo3 {
+//     char c;
+//     int32_t i32;
+// };
+
+struct alignas(4) Foo4 {
+    char c;
+    int32_t i32;
+};
+
+struct alignas(8) Foo5 {
+    char c;
+    int32_t i32;
+};
+
+struct alignas(16) Foo6 {
+    char c;
+    int32_t i32;
+};
+
+#define PRINT_SIZE(name)                                                                                      \
+    std::cout << "sizeof(" << #name << ")=" << sizeof(name) << ", alignof(" << #name << ")=" << alignof(name) \
+              << std::endl;
+
+int main() {
+    PRINT_SIZE(Foo1);
+    PRINT_SIZE(Foo4);
+    PRINT_SIZE(Foo5);
+    PRINT_SIZE(Foo6);
+    return 0;
+}
+```
+
+输出如下：
+
+```
+sizeof(Foo1)=8, alignof(Foo1)=4
+sizeof(Foo4)=8, alignof(Foo4)=4
+sizeof(Foo5)=8, alignof(Foo5)=8
+sizeof(Foo6)=16, alignof(Foo6)=16
+```
+
+## 3.3 类型推断
+
+### 3.3.1 auto
 
 **`auto`会忽略顶层`const`，保留底层的`const`，但是当设置一个类型为`auto`的引用时，初始值中的顶层常量属性仍然保留**
 
-### 3.2.2 decltype
+### 3.3.2 decltype
 
 * **`decltype`会保留变量的所有类型信息（包括顶层`const`和引用在内）**
 * 如果表达式的内容是解引用操作，得到的将是引用类型
@@ -333,102 +526,102 @@ int main() {
 
 ```
 decltype(0):
-	is_reference_v=0
-	is_lvalue_reference_v=0
-	is_rvalue_reference_v=0
-	is_const_v=0
-	is_pointer_v=0
+    is_reference_v=0
+    is_lvalue_reference_v=0
+    is_rvalue_reference_v=0
+    is_const_v=0
+    is_pointer_v=0
 
 decltype((0)):
-	is_reference_v=0
-	is_lvalue_reference_v=0
-	is_rvalue_reference_v=0
-	is_const_v=0
-	is_pointer_v=0
+    is_reference_v=0
+    is_lvalue_reference_v=0
+    is_rvalue_reference_v=0
+    is_const_v=0
+    is_pointer_v=0
 
 decltype(num1):
-	is_reference_v=0
-	is_lvalue_reference_v=0
-	is_rvalue_reference_v=0
-	is_const_v=0
-	is_pointer_v=0
+    is_reference_v=0
+    is_lvalue_reference_v=0
+    is_rvalue_reference_v=0
+    is_const_v=0
+    is_pointer_v=0
 
 decltype((num1)):
-	is_reference_v=1
-	is_lvalue_reference_v=1
-	is_rvalue_reference_v=0
-	is_const_v=0
-	is_pointer_v=0
+    is_reference_v=1
+    is_lvalue_reference_v=1
+    is_rvalue_reference_v=0
+    is_const_v=0
+    is_pointer_v=0
 
 decltype(num2):
-	is_reference_v=1
-	is_lvalue_reference_v=1
-	is_rvalue_reference_v=0
-	is_const_v=0
-	is_pointer_v=0
+    is_reference_v=1
+    is_lvalue_reference_v=1
+    is_rvalue_reference_v=0
+    is_const_v=0
+    is_pointer_v=0
 
 decltype(num3):
-	is_reference_v=1
-	is_lvalue_reference_v=1
-	is_rvalue_reference_v=0
-	is_const_v=0
-	is_pointer_v=0
+    is_reference_v=1
+    is_lvalue_reference_v=1
+    is_rvalue_reference_v=0
+    is_const_v=0
+    is_pointer_v=0
 
 decltype(num4):
-	is_reference_v=1
-	is_lvalue_reference_v=0
-	is_rvalue_reference_v=1
-	is_const_v=0
-	is_pointer_v=0
+    is_reference_v=1
+    is_lvalue_reference_v=0
+    is_rvalue_reference_v=1
+    is_const_v=0
+    is_pointer_v=0
 
 decltype(ptr1):
-	is_reference_v=0
-	is_lvalue_reference_v=0
-	is_rvalue_reference_v=0
-	is_const_v=0
-	is_pointer_v=1
+    is_reference_v=0
+    is_lvalue_reference_v=0
+    is_rvalue_reference_v=0
+    is_const_v=0
+    is_pointer_v=1
 
 decltype(*ptr1):
-	is_reference_v=1
-	is_lvalue_reference_v=1
-	is_rvalue_reference_v=0
-	is_const_v=0
-	is_pointer_v=0
+    is_reference_v=1
+    is_lvalue_reference_v=1
+    is_rvalue_reference_v=0
+    is_const_v=0
+    is_pointer_v=0
 
 decltype(ptr2):
-	is_reference_v=0
-	is_lvalue_reference_v=0
-	is_rvalue_reference_v=0
-	is_const_v=1
-	is_pointer_v=1
+    is_reference_v=0
+    is_lvalue_reference_v=0
+    is_rvalue_reference_v=0
+    is_const_v=1
+    is_pointer_v=1
 
 decltype(*ptr2):
-	is_reference_v=1
-	is_lvalue_reference_v=1
-	is_rvalue_reference_v=0
-	is_const_v=0
-	is_pointer_v=0
+    is_reference_v=1
+    is_lvalue_reference_v=1
+    is_rvalue_reference_v=0
+    is_const_v=0
+    is_pointer_v=0
 
 decltype(ptr3):
-	is_reference_v=0
-	is_lvalue_reference_v=0
-	is_rvalue_reference_v=0
-	is_const_v=0
-	is_pointer_v=1
+    is_reference_v=0
+    is_lvalue_reference_v=0
+    is_rvalue_reference_v=0
+    is_const_v=0
+    is_pointer_v=1
 
 decltype(*ptr3):
-	is_reference_v=1
-	is_lvalue_reference_v=1
-	is_rvalue_reference_v=0
-	is_const_v=0
-	is_pointer_v=0
+    is_reference_v=1
+    is_lvalue_reference_v=1
+    is_rvalue_reference_v=0
+    is_const_v=0
+    is_pointer_v=0
 ```
 
-### 3.2.3 typeof
+### 3.3.3 typeof
 
 **非`C++`标准**
 
-### 3.2.4 typeid
+### 3.3.4 typeid
 
 **`typeid`运算符允许在运行时确定对象的类型。若要判断是父类还是子类的话，那么父类必须包含虚函数**
 
@@ -532,9 +725,9 @@ dynamic_cast<Base*>(ptr3) != nullptr: true
 dynamic_cast<Derive*>(ptr3) != nullptr: true
 ```
 
-## 3.3 类型转换
+## 3.4 类型转换
 
-### 3.3.1 static_cast
+### 3.4.1 static_cast
 
 **用法：`static_cast<type> (expr)`**
 
@@ -554,7 +747,7 @@ int main() {
 }
 ```
 
-### 3.3.2 dynamic_cast
+### 3.4.2 dynamic_cast
 
 **用法：`dynamic_cast<type> (expr)`**
 
@@ -596,7 +789,7 @@ int main() {
 }
 ```
 
-### 3.3.3 const_cast
+### 3.4.3 const_cast
 
 **用法：`const_cast<type> (expr)`**
 
@@ -633,7 +826,7 @@ int main() {
 }
 ```
 
-### 3.3.4 reinterpret_cast
+### 3.4.4 reinterpret_cast
 
 **用法：`reinterpret_cast<type> (expr)`**
 
@@ -656,13 +849,13 @@ int main() {
 }
 ```
 
-## 3.4 extern/static
+## 3.5 extern/static
 
 **`extern`：告诉编译器，这个符号在别的编译单元里定义，也就是要把这个符号放到未解决符号表里去（外部链接）**
 
 **`static`：如果该关键字位于全局函数或者变量声明的前面，表示该编译单元不 导出这个函数/变量的符号，因此无法再别的编译单元里使用。(内部链接)。如果 `static`是局部变量，则该变量的存储方式和全局变量一样，但仍然不导出符号**
 
-### 3.4.1 共享全局变量
+### 3.5.1 共享全局变量
 
 **每个源文件中都得有该变量的声明，但是只有一个源文件中可以包含该变量的定义，通常可以采用如下做法**
 
@@ -705,7 +898,7 @@ gcc -o main main.cpp extern.cpp -lstdc++ -Wall
 ./main
 ```
 
-## 3.5 virtual
+## 3.6 virtual
 
 `virtual`关键词修饰的就是虚函数，虚函数的分派发生在运行时
 
@@ -716,7 +909,7 @@ gcc -o main main.cpp extern.cpp -lstdc++ -Wall
 
 * 图片出处：[c++虚指针和虚函数表](https://zhuanlan.zhihu.com/p/110144589)
 
-## 3.6 volatile
+## 3.7 volatile
 
 `volatile`关键字是一种类型修饰符，用它声明的类型变量表示可以被某些编译器未知的因素更改，比如：操作系统、硬件或者其它线程等。遇到这个关键字声明的变量，编译器对访问该变量的代码就不再进行优化，从而可以提供对特殊地址的稳定访问
 
@@ -751,22 +944,24 @@ volatile.o：     文件格式 elf64-x86-64
 Disassembly of section .text:
 
 0000000000000000 <with_volatile(int volatile*, int*)>:
-   0:	8b 07                	mov    (%rdi),%eax
-   2:	89 06                	mov    %eax,(%rsi)
-   4:	8b 07                	mov    (%rdi),%eax
-   6:	89 06                	mov    %eax,(%rsi)
-   8:	8b 07                	mov    (%rdi),%eax
-   a:	89 06                	mov    %eax,(%rsi)
-   c:	c3                   	retq
-   d:	0f 1f 00             	nopl   (%rax)
+   0:   8b 07                   mov    (%rdi),%eax
+   2:   89 06                   mov    %eax,(%rsi)
+   4:   8b 07                   mov    (%rdi),%eax
+   6:   89 06                   mov    %eax,(%rsi)
+   8:   8b 07                   mov    (%rdi),%eax
+   a:   89 06                   mov    %eax,(%rsi)
+   c:   c3                      retq
+   d:   0f 1f 00                nopl   (%rax)
 
 0000000000000010 <without_volatile(int*, int*)>:
-  10:	8b 07                	mov    (%rdi),%eax
-  12:	89 06                	mov    %eax,(%rsi)
-  14:	c3                   	retq
+  10:   8b 07                   mov    (%rdi),%eax
+  12:   89 06                   mov    %eax,(%rsi)
+  14:   c3                      retq
 ```
 
-## 3.7 if constexpr
+## 3.8 constexpr
+
+### 3.8.1 if constexpr
 
 编译期分支判断，一般用于泛型。如果在分支中使用的是不同类型的不同特性，那么普通的`if`是没法通过编译的，如下：
 
@@ -803,11 +998,11 @@ int main() {
 }
 ```
 
-## 3.8 static_assert
+## 3.9 static_assert
 
 编译期断言
 
-## 3.9 throw与异常
+## 3.10 throw与异常
 
 throw关键字可以抛出任何对象，例如可以抛出一个整数
 
@@ -823,6 +1018,15 @@ throw关键字可以抛出任何对象，例如可以抛出一个整数
     } catch (...) {
         // 能处理任何异常的代码
     }
+```
+
+## 3.11 placement new
+
+`placement new`的功能就是在一个已经分配好的空间上，调用构造函数，创建一个对象
+
+```c++
+void *buf = // 在这里为buf分配内存
+Class *pc = new (buf) Class();  
 ```
 
 # 4 模板
@@ -2528,140 +2732,7 @@ b=2
 ref=2
 ```
 
-## 9.5 placement new
-
-`placement new`的功能就是在一个已经分配好的空间上，调用构造函数，创建一个对象
-
-```c++
-void *buf = // 在这里为buf分配内存
-Class *pc = new (buf) Class();  
-```
-
-## 9.6 内存对齐
-
-**内存对齐最最底层的原因是内存的IO是以`8`个字节`64bit`为单位进行的**
-
-假如你指定要获取的是`0x0001-0x0008`，也是8字节，但是不是0开头的，内存需要怎么工作呢？没有好办法，内存只好先工作一次把`0x0000-0x0007`取出来，然后再把`0x0008-0x0015`取出来，把两次的结果都返回给你。CPU和内存IO的硬件限制导致没办法一次跨在两个数据宽度中间进行IO。这样你的应用程序就会变慢，算是计算机因为你不懂内存对齐而给你的一点点惩罚
-
-**内存对齐规则**
-
-1. **结构体第一个成员的偏移量`offset`为`0`，以后每个成员相对于结构体首地址的`offset`都是该成员大小与`有效对齐值`中较小那个的整数倍，如有需要编译器会在成员之间加上填充字节**
-1. **结构体的总大小为`有效对齐值`的整数倍，如有需要编译器会在最末一个成员之后加上填充字节**
-* **有效对齐值：是给定值`#pragma pack(n)`和结构体中最长数据类型长度中较小的那个。有效对齐值也叫对齐单位。gcc中默认`#pragma pack(4)`，可以通过预编译命令`#pragma pack(n)，n = 1,2,4,8,16`来改变这一系数**
-
-**下面以一个例子来说明**
-
-```sh
-# 创建源文件
-cat > main.cpp << 'EOF'
-#include <iostream>
-
-struct Align1 {
-    int8_t f1;
-};
-
-struct Align2 {
-    int8_t f1;
-    int16_t f2;
-};
-
-struct Align3 {
-    int8_t f1;
-    int16_t f2;
-    int32_t f3;
-};
-
-struct Align4 {
-    int8_t f1;
-    int16_t f2;
-    int32_t f3;
-    int64_t f4;
-};
-
-int main() {
-    std::cout << "Align1's size = " << sizeof(Align1) << std::endl;
-    std::cout << "\tf1's offset = " << offsetof(Align1, f1) << ", f1's size = " << sizeof(Align1::f1) << std::endl;
-    std::cout << std::endl;
-
-    std::cout << "Align2's size = " << sizeof(Align2) << std::endl;
-    std::cout << "\tf1's offset = " << offsetof(Align2, f1) << ", f1's size = " << sizeof(Align2::f1) << std::endl;
-    std::cout << "\tf2's offset = " << offsetof(Align2, f2) << ", f2's size = " << sizeof(Align2::f2) << std::endl;
-    std::cout << std::endl;
-
-    std::cout << "Align3's size = " << sizeof(Align3) << std::endl;
-    std::cout << "\tf1's offset = " << offsetof(Align3, f1) << ", f1's size = " << sizeof(Align3::f1) << std::endl;
-    std::cout << "\tf2's offset = " << offsetof(Align3, f2) << ", f2's size = " << sizeof(Align3::f2) << std::endl;
-    std::cout << "\tf3's offset = " << offsetof(Align3, f3) << ", f3's size = " << sizeof(Align3::f3) << std::endl;
-    std::cout << std::endl;
-
-    std::cout << "Align4's size = " << sizeof(Align4) << std::endl;
-    std::cout << "\tf1's offset = " << offsetof(Align4, f1) << ", f1's size = " << sizeof(Align4::f1) << std::endl;
-    std::cout << "\tf2's offset = " << offsetof(Align4, f2) << ", f2's size = " << sizeof(Align4::f2) << std::endl;
-    std::cout << "\tf3's offset = " << offsetof(Align4, f3) << ", f3's size = " << sizeof(Align4::f3) << std::endl;
-    std::cout << "\tf4's offset = " << offsetof(Align4, f4) << ", f4's size = " << sizeof(Align4::f4) << std::endl;
-    std::cout << std::endl;
-    return 0;
-}
-EOF
-
-# 编译
-gcc -o main main.cpp -lstdc++
-
-# 执行
-./main
-```
-
-**执行结果如下**
-
-* 由于每个成员的offset必须是该成员与`有效对齐值`中较小的那个值的整数倍，下面称较小的这个值为`成员有效对齐值`
-* `Align1`：最长数据类型的长度是`1`，pack=`4`，因此，`有效对齐值`是`min(1, 4) = 1`
-    * 规则1：
-        * `f1`，第一个成员的`offset = 0`
-    * 规则2：
-        * 类型总长度为`1`，是`有效对齐值（1）`的整数倍
-* `Align2`：最长数据类型的长度是`2`，pack=`4`，因此，`有效对齐值`是`min(2, 4) = 2`
-    * 规则1：
-        * `f1`，第一个成员的`offset = 0`
-        * `f2`，类型长度为`2`，因此，`成员有效对齐值`是`min(2, 2) = 2`。`offset = 2`是`成员有效对齐值（2)`的整数倍
-    * 规则2：
-        * 类型总长度为`4`，是`有效对齐值（2）`的整数倍
-* `Align3`：最长数据类型的长度是`4`，pack=`4`，因此，`有效对齐值`是`min(4, 4) = 4`
-    * 规则1：
-        * `f1`，第一个成员的`offset = 0`
-        * `f2`，类型长度为`2`，因此，`成员有效对齐值`是`min(2, 4) = 2`。`offset = 2`是`成员有效对齐值（2)`的整数倍
-        * `f3`，类型长度为`4`，因此，`成员有效对齐值`是`min(4, 4) = 4`。`offset = 4`是`成员有效对齐值（4)`的整数倍
-    * 规则2：
-        * 类型总长度为`8`，是`有效对齐值（4）`的整数倍
-* `Align4`：最长数据类型的长度是`8`，pack=`4`，因此，`有效对齐值`是`min(8, 4) = 4`
-    * 规则1：
-        * `f1`，第一个成员的`offset = 0`
-        * `f2`，类型长度为`2`，因此，`成员有效对齐值`是`min(2, 4) = 2`。`offset = 2`是`成员有效对齐值（2)`的整数倍
-        * `f3`，类型长度为`4`，因此，`成员有效对齐值`是`min(4, 4) = 4`。`offset = 4`是`成员有效对齐值（4)`的整数倍
-        * `f4`，类型长度为`8`，因此，`成员有效对齐值`是`min(8, 4) = 4`。`offset = 8`是`成员有效对齐值（4)`的整数倍
-    * 规则2：
-        * 类型总长度为`16`，是`有效对齐值（4）`的整数倍
-
-```
-Align1's size = 1
-	f1's offset = 0, f1's size = 1
-
-Align2's size = 4
-	f1's offset = 0, f1's size = 1
-	f2's offset = 2, f2's size = 2
-
-Align3's size = 8
-	f1's offset = 0, f1's size = 1
-	f2's offset = 2, f2's size = 2
-	f3's offset = 4, f3's size = 4
-
-Align4's size = 16
-	f1's offset = 0, f1's size = 1
-	f2's offset = 2, f2's size = 2
-	f3's offset = 4, f3's size = 4
-	f4's offset = 8, f4's size = 8
-```
-
-## 9.7 mock class
+## 9.5 mock class
 
 有时在测试的时候，我们需要mock一个类的实现，我们可以在测试的cpp文件中实现这个类的所有方法（**注意，必须是所有方法**），就能够覆盖原有库文件中的实现。下面以一个例子来说明
 
@@ -2838,7 +2909,7 @@ person.cpp:(.text+0x2a): Person::sleep() 的多重定义
 collect2: 错误：ld 返回 1
 ```
 
-### 9.7.1 demo using cmake
+### 9.5.1 demo using cmake
 
 # 10 参考
 
