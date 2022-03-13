@@ -401,9 +401,30 @@ categories:
         * Lower Bound Group Pruning
         * Global Epsilon Pruning
 
-# 6 Efficiency in the Columbia Database Query Optimizer
+# 6 Cloud Programming Simplified: A Berkeley View on Serverless Computing
 
-# 7 Fast Selection and Aggregation on Encoded Data using Operator Specialization
+* there are three critical distinctions between serverless and serverful computing
+    1. Decoupled computation and storage
+    1. Executing code without managing resource allocation
+    1. Paying in proportion to resources used instead of for resources allocated
+* 如何提高响应速度？
+    * 对于`VM`这种重量级资源，资源创建过程难以加速，可以提供`warm pool`、`active pool`等
+    * 使用轻量级资源，例如`container`、`language vm`、`sandbox`等
+* `Serverless`与`Kuberentes`的关系
+    * Kubernetes is a technology that simplifies management of serverful computing
+    * different billing model
+        * k8s: charges per reserved resources
+        * servleress: per function execution duration
+* five challenges
+    1. abstractions
+    1. systems
+    1. networking
+    1. security
+    1. architecture
 
-# 8 Shared memory consistency models - A tutorial
+# 7 Efficiency in the Columbia Database Query Optimizer
+
+# 8 Fast Selection and Aggregation on Encoded Data using Operator Specialization
+
+# 9 Shared memory consistency models - A tutorial
 
