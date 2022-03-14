@@ -358,3 +358,8 @@ nnoremap <silent> <cr> :nohlsearch<cr><cr>
 " \qc 关闭 quickfix
 nnoremap <leader>qc :cclose<cr>
 ```
+
+# 5 其他
+
+1. 开启长按表示重复
+    * `defaults write com.jetbrains.intellij ApplePressAndHoldEnabled -bool false`

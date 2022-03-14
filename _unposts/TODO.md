@@ -51,6 +51,8 @@
             * push：对filter友好，对limit不友好
     * postgre
         * 算数相关的函数：src/backend/utils/adt/numeric.c
+    * clickhouse
+        * [COW.h](https://github.com/ClickHouse/ClickHouse/blob/master/src/Common/COW.h)
 1. license
     * [主流开源协议之间有何异同？](https://www.zhihu.com/question/19568896)
     * apache license
@@ -62,6 +64,7 @@
     * gtest
     * std::guard(be/src/runtime/decimalv3.h)
     * std::bind 如何实现
+    * [apache-arrow](https://github.com/apache/arrow)
 1. java
     * antlr4，语法解析框架
 1. 其他
@@ -69,6 +72,7 @@
     * 内存分配，伙伴算法
     * rpc框架，thrift
     * codegen原理
+    * git worktree
     * [lxcfs](https://github.com/lxc/lxcfs)
     * [什么是图灵完备？](https://www.zhihu.com/question/20115374/answer/288346717)
     * [调度系统设计精要](https://draveness.me/system-design-scheduler/)
