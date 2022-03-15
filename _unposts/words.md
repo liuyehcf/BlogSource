@@ -43,6 +43,7 @@
 1. 演进（表达当前方案可能不是最完善的）
 1. 裁剪
 1. 原型开发
+1. 结构性问题
 
 # 方法论
 
@@ -57,37 +58,22 @@
     * 隔离性
     * 工程实现难易程度
 
+# 云计算
+
+1. 第一代云计算
+    * 运维，虚拟化，超卖
+    * 资源池化，更易实现弹性
+1. 第二代云计算
+    * serverless
+        * 按量收费
+        * 自动伸缩
+        * 存算分离
+        * 云原生
+        * FaaS + BaaS
+
 # 英文表述
 
 1. Data Cache misses per 1000 instructions comparing LRU, Random, FIFO replacement for several sizes and associativities.
-1. World-class，世界级
-1. Divide-and-conquer，分而治之
 1. In order to accomplish this, a series of trade-offs have to be balanced.
-1. get hands dirty，刚上手
-1. cutting edge，前言
-1. every feature rolled out，推出的每个功能
 1. A DBMS’s process model defines how the system is architected to support concurrent requests from a multi-user application
-1. novice/adept/experienced
-1. exhaust a filehandle
-1. match ... against
-1. Parentheses/square brackets/curly braces
-1. prepend/append
-1. coercion，强制转型
-1. Pitfalls，陷阱
-1. Subtle，微妙的
-1. By pervasive convention，普遍的约定
-1. Allomorphism，同构
-1. Isomorphism，同构
-1. Polymorphism，多态
-1. Canonical，典范
-1. Heuristics，启发式
-1. on going segments
-1. net effect，净效应
 1. credits both accounts with 6% interest
-1. intuitive，直觉的
-1. subject to，受到影响
-1. Is there a better way to tell if，是否有更好的方式来判断
-1. It's pretty much the size of it，大概就是这样
-1. non-volatile storage, 非易失性存储
-1. branch-and-bound, 分支界定
-1. fine-grained, 细粒度
