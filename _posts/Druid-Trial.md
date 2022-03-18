@@ -6879,7 +6879,43 @@ if __name__ == "__main__":
 * `python3 druidslap.py --host=127.0.0.1 --port=8888 --concurrency=16 --iterations=10 --sql_file=test.sql`
 * `python3 druidslap.py --host=127.0.0.1 --port=8888 --concurrency=16 --number-of-queries=1000 --sql_file=test.sql`
 
-# 5 使用体验
+# 5 Tips
+
+## 5.1 [时间处理函数](https://druid.apache.org/docs/latest/querying/sql.html#time-functions)
+
+在导入数据的时候，通过`timestampSpec`指定分区列，示例如下。在查询的时候可以直接用`__time`。`__time`的类型是`timestamp`，如果直接使用具体的列名，例如`wp_rec_start_date`，那么其类型还是`date`，若要进行提取年份这样的操作，需要多一次`TIME_PARSE`操作，将其转成`timestamp`
+
+```json
+            ...
+            "timestampSpec": {
+                "column": "wp_rec_start_date",
+                "format": "yyyy-MM-dd",
+                "missingValue": "2000-01-01"
+            }
+            ...
+```
+
+## 5.2 Group By不支持列别名
+
+```sql
+SELECT sum(lo_revenue), TIME_EXTRACT(__time, 'year') AS p_year, p_brand
+FROM lineorder_flat
+WHERE p_category = 'MFGR#12' AND s_region = 'AMERICA'
+GROUP BY p_year, p_brand
+ORDER BY p_year, p_brand
+```
+
+每个输出列对应一个引用编号，编号从1开始（从左到右）。于是，上面的SQL可以改写成
+
+```sql
+SELECT sum(lo_revenue), TIME_EXTRACT(__time, 'year') AS p_year, p_brand
+FROM lineorder_flat
+WHERE p_category = 'MFGR#12' AND s_region = 'AMERICA'
+GROUP BY 2, 3
+ORDER BY 2, 3;
+```
+
+# 6 使用体验
 
 1. 提供quick-start模式，能够快速体验
 1. 集群部署不友好，[Clustered deployment](https://druid.apache.org/docs/latest/tutorials/cluster.html)没有说明哪些配置项是必须修改的，比如`druid.host`、`druid.zk.service.host`这俩配置项
