@@ -804,9 +804,6 @@ ctags --languages=python --python-kinds=-iv --fields=+ailnSz --extras=+q -R -f ~
 * **`.tags`是指在vim的当前目录（在vim中执行`:pwd`）下查找`.tags`文件**
 
 ```vim
-" 将 :tn 和 :tp 分别映射到 [Option] + j 和 [Option] + k，即「∆」和「˚」
-nnoremap ∆ :tn<cr>
-nnoremap ˚ :tp<cr>
 " tags搜索模式
 set tags=./.tags;,.tags
 " c/c++ 标准库的ctags
@@ -2852,9 +2849,6 @@ call glaive#Install()
 Glaive codefmt google_java_executable="java -jar /usr/local/share/google-java-format-1.14.0-all-deps.jar --aosp"
 
 " ctags的配置
-" 将 :tn 和 :tp 分别映射到 [Option] + j 和 [Option] + k，即「∆」和「˚」
-nnoremap ∆ :tn<cr>
-nnoremap ˚ :tp<cr>
 " tags搜索模式
 set tags=./.tags;,.tags
 " c/c++ 标准库的ctags
@@ -2880,16 +2874,23 @@ endif
 inoremap <silent> <c-a> <c-o>^
 inoremap <silent> <c-e> <c-o>$
 
-" 替换映射到 [Option] + r，即「®」
+" 将「替换」映射到 [Option] + r，即「®」
 " 其中，<c-r><c-w> 表示 [Ctrl] + r 以及 [Ctrl] + w，用于将光标所在的单词填入搜索/替换项中
 nnoremap ® :%s/<c-r><c-w>
 
+" window 切换
+nnoremap ˙ :wincmd h<cr>
+nnoremap ∆ :wincmd j<cr>
+nnoremap ˚ :wincmd k<cr>
+nnoremap ¬ :wincmd l<cr>
+
 " tab 切换
-nnoremap ¬ :tabnext<cr>
-nnoremap ˙ :tabprev<cr>
+nnoremap <s-left> :tabprev<cr>
+nnoremap <s-right> :tabnext<cr>
 
 " 回车时，默认取消搜索高亮
 nnoremap <silent> <cr> :nohlsearch<cr><cr>
+
 " \qc 关闭 quickfix
 nnoremap <leader>qc :cclose<cr>
 
