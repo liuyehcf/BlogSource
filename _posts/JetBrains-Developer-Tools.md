@@ -318,6 +318,7 @@ categories:
 
 ```vim
 nnoremap <c-o> :action Back<cr>
+nnoremap <c-i> :action Forward<cr>
 nnoremap <c-h> :action TypeHierarchy<cr>
 
 " keep keymap with Plug 'neoclide/coc.nvim'
@@ -353,8 +354,19 @@ inoremap <silent> <c-e> <c-o>$
 " 其中，<c-r><c-w> 表示 [Ctrl] + r 以及 [Ctrl] + w，用于将光标所在的单词填入搜索/替换项中
 nnoremap ® :%s/<c-r><c-w>
 
+" window 切换
+nnoremap ˙ :wincmd h<cr>
+nnoremap ∆ :wincmd j<cr>
+nnoremap ˚ :wincmd k<cr>
+nnoremap ¬ :wincmd l<cr>
+
+" tab 切换
+nnoremap <s-left> :action PreviousTab<cr>
+nnoremap <s-right> :action NextTab<cr>
+
 " 回车时，默认取消搜索高亮
 nnoremap <silent> <cr> :nohlsearch<cr><cr>
+
 " \qc 关闭 quickfix
 nnoremap <leader>qc :cclose<cr>
 ```
