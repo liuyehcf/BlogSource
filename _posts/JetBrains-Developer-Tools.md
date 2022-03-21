@@ -319,7 +319,6 @@ categories:
 ```vim
 nnoremap <c-o> :action Back<cr>
 nnoremap <c-i> :action Forward<cr>
-nnoremap <c-h> :action TypeHierarchy<cr>
 
 " keep keymap with Plug 'neoclide/coc.nvim'
 nnoremap <leader>rd :action GotoDeclaration<cr>

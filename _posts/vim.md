@@ -1518,6 +1518,7 @@ call plug#end()
 
 * **`:CocStart`：若在配置中取消了自启动，则需要手动开启**
 * **`:CocConfig`：编辑配置文件，其路径为`~/.vim/coc-settings.json`**
+* **`:CocAction`：代码生成**
 * **`:CocList [options] [args]`**
     * 编辑模式
         * `[Ctrl] + o`：切换到一般模式
