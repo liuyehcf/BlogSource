@@ -2879,14 +2879,20 @@ inoremap <silent> <c-e> <c-o>$
 nnoremap ® :%s/<c-r><c-w>
 
 " window 切换
+" [Option] + h，即「˙」
+" [Option] + j，即「∆」
+" [Option] + k，即「˚」
+" [Option] + l，即「¬」
 nnoremap ˙ :wincmd h<cr>
 nnoremap ∆ :wincmd j<cr>
 nnoremap ˚ :wincmd k<cr>
 nnoremap ¬ :wincmd l<cr>
 
 " tab 切换
-nnoremap <s-left> :tabprev<cr>
-nnoremap <s-right> :tabnext<cr>
+" [Option] + h，即「Ó」
+" [Option] + l，即「Ò」
+nnoremap Ó :tabprev<cr>
+nnoremap Ò :tabnext<cr>
 
 " 回车时，默认取消搜索高亮
 nnoremap <silent> <cr> :nohlsearch<cr><cr>
