@@ -171,7 +171,11 @@ categories:
 **HotKey In Mac**：`⌃⌥O`
 **HotKey In Windows**：`Ctrl+Alt+O`
 
-### 1.5.3 定义格式化风格
+### 1.5.3 Google Style
+
+[intellij-java-google-style.xml](https://github.com/google/styleguide/blob/gh-pages/intellij-java-google-style.xml)
+
+### 1.5.4 定义格式化风格
 
 **如何导入自定义格式化`schema`：`Perference -> Editor -> Code Style`**
 
@@ -227,7 +231,7 @@ categories:
 </code_scheme>
 ```
 
-### 1.5.4 如何用命令行工具格式化
+### 1.5.5 如何用命令行工具格式化
 
 参考[command-line-formatter](https://www.jetbrains.com/help/idea/command-line-formatter.html)
 
@@ -317,6 +321,11 @@ categories:
 **为了保持{% post_link vim %}中的按键习惯，以下是`~/.ideavimrc`的内容**
 
 ```vim
+" embedded vim-surround
+set surround
+set argtextobj
+
+" Edit position
 nnoremap <c-o> :action Back<cr>
 nnoremap <c-i> :action Forward<cr>
 
@@ -339,9 +348,6 @@ noremap <leader>c<space> :action CommentByLineComment<cr>
 
 " keep keymap with Plug 'google/vim-codefmt'
 nnoremap <c-l> :action ReformatCode<cr>
-
-" embedded vim-surround
-set surround
 
 " 编辑模式，光标移动快捷键
 " 将移动到行首（同一般模式下的 ^）映射到 [Ctrl] + a
