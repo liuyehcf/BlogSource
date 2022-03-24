@@ -334,6 +334,8 @@ nnoremap <leader>rd :action GotoDeclaration<cr>
 nnoremap <leader>ri :action GotoImplementation<cr>
 nnoremap <leader>rr :action ShowUsages<cr>
 nnoremap <leader>rn :action RenameElement<cr>
+nnoremap <c-j> :action GotoNextError<cr>
+nnoremap <c-k> :action GotoPreviousError<cr>
 
 " keep keymap with Plug 'Yggdroot/LeaderF'
 nnoremap <c-p> :action SearchEverywhere<cr>
