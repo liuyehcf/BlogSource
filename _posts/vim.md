@@ -2229,6 +2229,9 @@ Plug 'kana/vim-textobj-syntax'
 Plug 'kana/vim-textobj-function', { 'for':['c', 'cpp', 'vim', 'java'] }
 Plug 'sgur/vim-textobj-parameter'
 
+" 修改参数文本对象的符号，默认是逗号
+let g:vim_textobj_parameter_mapping = 'a'
+
 call plug#end()
 ```
 
@@ -2236,9 +2239,9 @@ call plug#end()
 
 **使用：**
 
-* **`i,/a,`：函数对象。可以用`vi,`/`di,`/`ci,`来选中/删除/改写当前参数**
-* **`ii/ai`：缩进对象。可以用`vii`/`dii`/`cii`来选中/删除/改写同一缩进层次的内容**
-* **`if/af`：函数对象。可以用`vif`/`dif`/`cif`来选中/删除/改写当前函数的内容**
+* **`ia/aa`：参数对象。可以用`via/vaa`/`dia/daa`/`cia/caa`来选中/删除/改写当前参数**
+* **`ii/ai`：缩进对象。可以用`vii/vai`/`dii/dai`/`cii/cai`来选中/删除/改写同一缩进层次的内容**
+* **`if/af`：函数对象。可以用`vif/vaf`/`dif/daf`/`cif/caf`来选中/删除/改写当前函数的内容**
 
 ## 3.17 函数列表-[LeaderF](https://github.com/Yggdroot/LeaderF)
 
@@ -2764,6 +2767,9 @@ Plug 'kana/vim-textobj-indent'
 Plug 'kana/vim-textobj-syntax'
 Plug 'kana/vim-textobj-function', { 'for':['c', 'cpp', 'vim', 'java'] }
 Plug 'sgur/vim-textobj-parameter'
+
+" 修改参数文本对象的符号，默认是逗号
+let g:vim_textobj_parameter_mapping = 'a'
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
