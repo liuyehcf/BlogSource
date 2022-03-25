@@ -28,7 +28,14 @@ categories:
 
 效果：`` ` ``、`` `something` ``
 
-## 1.2 标题跳转
+## 1.2 代码diff
+
+```diff
+- before
++ after
+```
+
+## 1.3 标题跳转
 
 **语法**
 
