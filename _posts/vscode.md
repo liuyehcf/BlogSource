@@ -50,6 +50,8 @@ categories:
 
 # 5 vim
 
+`Commands`可以参考[keybindings](https://code.visualstudio.com/docs/getstarted/keybindings)
+
 ```json
     "vim.normalModeKeyBindingsNonRecursive": [
         {

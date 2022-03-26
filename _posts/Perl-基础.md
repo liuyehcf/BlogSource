@@ -355,9 +355,10 @@ say "$string1";
 say "$string2";
 ```
 
-### 3.2.9 数组插值
+### 3.2.9 数组打印
 
-数组插值`Array Interpolation`，在双引号中的数组，各个元素之间会插入全局变量`$"`，其默认值为空格
+* 若数组不在双引号中，那么使用`say`输出后，各元素会紧贴在一起
+* 若数组在双引号中，各个元素之间会插入全局变量`$"`，其默认值为空格，称为数组插值`Array Interpolation`
 
 ```perl
 use strict;
@@ -365,11 +366,12 @@ use warnings;
 use Modern::Perl;
 
 my @alphabet = 'a' .. 'z';
-say "[@alphabet]";
+say "beyound quote, [", @alphabet, "]";
+say "within quote, [@alphabet]";
 
 {
     local $" = ')(';
-    say "[@alphabet]";
+    say "winthin quite and local \$\", [@alphabet]";
 }
 ```
 
@@ -1000,7 +1002,9 @@ say "#$_" for 1 .. 10;
 ### 3.6.2 默认数组变量
 
 1. `Perl`将传给函数的参数都存储在`@_`变量中
-1. `push`、`pop`、`shift`、`unshift`在缺省参数的情况下，默认都对`@_`进行操作
+1. `push`、`pop`、`shift`、`unshift`
+    * 在函数上下文中，在缺省参数的情况下，默认对`@_`进行操作
+    * 在非函数上下文中，在缺省参数的情况下，默认对`@ARGV`进行操作
 1. `Perl`将命令函参数都存储在`@ARGV`中
 1. `@ARGV`还有另一个用途，当从空文件句柄`<>`中读取内容时，`Perl`默认会将`@ARGV`中存储的内容作为文件名进行依次读取，如果`@ARGV`为空，那么会读取标准输入
 
@@ -3817,7 +3821,53 @@ sub erupt_volcano :ScienceProject { ... }
 1. `abc|def` 和 `(abc|def)`的差异
 1. `use autodie;` - P167
 
-# 17 参考
+# 17 Best Practice
+
+## 17.1 文本处理
+
+```perl
+use warnings;
+use strict;
+use Modern::Perl;
+use List::Util qw(min max sum);
+use Data::Dumper;
+
+my $fileName=shift or die "missing 'fileName'";
+my $indexName=shift or die "missing 'indexName'";
+
+open my $fh, "< $fileName" or die "$!";
+my $indexNamePat0=qr/\b$indexName\b/;
+my $indexNamePat1=qr/\b$indexName\b\s*:\s*(\d+(?:\.\d+)?)(ns|us|ms)/;
+my $indexNamePat2=qr/\b$indexName\b\s*:\s*(\d+)s(\d+)ms/;
+sub norm_time1($$){
+    my ($n,$u)=@_;
+    if ($u eq "ns") {
+        return $n/1000000000.0;
+    } elsif ($u eq "us") {
+        return $n/1000000.0;
+    } elsif ($u eq "ms") {
+        return $n;
+    } else {
+        return $n*1000.0;
+    }
+}
+sub norm_time2($$) {
+    my ($sec, $ms)=@_;
+    return $sec*1000.0+$ms;
+}
+
+my @lines0=map {chomp;$_} <$fh>;
+my @lines=grep {/$indexNamePat0/} map {$_.":".$lines0[$_-1]} 1..scalar(@lines0);
+my @norm_lines1=map {/$indexNamePat1/;[norm_time1($1, $2), $_]} grep {/$indexNamePat1/} @lines;
+my @norm_lines2=map {/$indexNamePat2/;[norm_time2($1, $2), $_]} grep {/$indexNamePat2/} @lines;
+my @norm_lines=(@norm_lines1, @norm_lines2);
+my @sorted_lines = sort {$a->[0] <=> $b->[0]} @norm_lines;
+for my $line (@sorted_lines) {
+    printf "cost=%d, %s\n", $line->[0], $line->[1];
+}
+```
+
+# 18 参考
 
 * [w3cschool-perl](https://www.w3cschool.cn/perl/)
 * [perl仓库-cpan](https://www.cpan.org/)

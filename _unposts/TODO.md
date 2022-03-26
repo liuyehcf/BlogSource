@@ -61,12 +61,10 @@
     * mit
     * gpl
 1. cpp
-    * gtest
     * std::guard(be/src/runtime/decimalv3.h)
     * std::bind 如何实现
     * [apache-arrow](https://github.com/apache/arrow)
 1. java
-    * antlr4，语法解析框架
 1. 其他
     * [Is Raft more modular than MultiPaxos?](https://maheshba.bitbucket.io/blog/2021/12/14/Modularity.html)
     * 内存分配，伙伴算法
