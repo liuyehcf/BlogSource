@@ -283,7 +283,7 @@ int main() {
 
 **如何设置或修改线程名：**
 
-1. `pthread_setname_np/pthread_getname_np`，需要引入头文件`<pthread.h>`
+1. `pthread_setname_np/pthread_getname_np`，需要引入头文件`<pthread.h>`，`np`表示`non-portable`，即平台相关
 1. `prctl(PR_GET_NAME, name)/prctl(PR_SET_NAME, name)`，需要引入头文件`<sys/prctl.h>`
 
 ```cpp
