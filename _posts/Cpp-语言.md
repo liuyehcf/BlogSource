@@ -913,6 +913,8 @@ gcc -o main main.cpp extern.cpp -lstdc++ -Wall
 
 `volatile`关键字是一种类型修饰符，用它声明的类型变量表示可以被某些编译器未知的因素更改，比如：操作系统、硬件或者其它线程等。遇到这个关键字声明的变量，编译器对访问该变量的代码就不再进行优化，从而可以提供对特殊地址的稳定访问
 
+参考[Volatile and cache behaviour](https://stackoverflow.com/questions/18695120/volatile-and-cache-behaviour)。简单来说，如果不加`volatile`，那么变量可能会先被存到寄存器中，然后后续直接从寄存器中读取。如果加了`volatile`，那么每次触发`load`操作，都会从内存地址中读取（`Cache`中的数据可能仍然有效，因此，未必会触发`Cache-Miss`。`Cache`由硬件管理，对程序以及编译器都完全透明）
+
 **示例如下：**
 
 ```sh
