@@ -2943,7 +2943,12 @@ endif
 
 1. `filereadable`无法识别`~`，需要用`expand`，例如`filereadable(expand('~/.vim/gtags.vim'))`
 
-# 5 参考
+# 5 Tips
+
+1. 打开大文件非常卡顿
+    * `vim -u NONE <big file>`：禁止加载所有插件
+
+# 6 参考
 
 * **[《Vim 中文速查表》](https://github.com/skywind3000/awesome-cheatsheets/blob/master/editors/vim.txt)**
 * **[如何在 Linux 下利用 Vim 搭建 C/C++ 开发环境?](https://www.zhihu.com/question/47691414)**

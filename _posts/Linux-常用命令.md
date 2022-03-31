@@ -3126,9 +3126,9 @@ yum install -y sysstat
     * `act`（`active`）
 * **`-f, --full`**：显示详情，例如cpu会按每个cpu分别展示，network会按网卡分别展示
 * **`--top-cpu`：显示最耗cpu资源的进程**
-* **`--top-cpu-adv`：显示最耗cpu资源的进程，以及进程的其他信息**
+* **`--top-cpu-adv`：显示最耗cpu资源的进程，以及进程的其他信息（`advanced`）**
 * **`--top-io`：显示最耗io资源的进程**
-* **`--top-io-adv`：显示最耗io资源的进程，以及进程的其他信息**
+* **`--top-io-adv`：显示最耗io资源的进程，以及进程的其他信息（`advanced`）**
 * **`--top-mem`：显示最耗mem资源的进程**
 
 **示例：**
@@ -3141,6 +3141,24 @@ yum install -y sysstat
 该命令用于查看网卡的流量状况，包括成功接收/发送，以及错误接收/发送的数据包，看到的东西基本上和`ifconfig`类似
 
 ## 6.14 pidstat
+
+`pidstat`是`sysstat`工具的一个命令，用于监控全部或指定进程的cpu、内存、线程、设备IO等系统资源的占用情况。首次运行`pidstat`时，显示自系统启动开始的各项统计信息；之后运行`pidstat`，将显示自上次运行该命令以后的统计信息。用户可以通过指定统计的次数和时间来获得所需的统计信息
+
+**格式：**
+
+* `dstat [options] [ interval [ count ] ]`
+
+**参数说明：**
+
+* `-d`：显示`I/O`使用情况
+* `-r`：显示内存使用情况
+* `-s`：显示栈使用情况
+* `-u`：显示CPU使用情况，默认
+* `-p <pid>`：指定进程
+
+**示例：**
+
+* `pidstat -d 5`
 
 ## 6.15 nethogs
 
@@ -3704,7 +3722,23 @@ CONFIG_KVM_MMU_AUDIT=y
 
 -->
 
-# 11 参考
+# 11 FAQ
+
+1. 实时监控系统各项指标
+    * `dstat -vnl`
+1. 找出占用CPU资源最多的进程
+    * `dstat --top-cpu-adv`
+1. 找出占用内存资源最多的进程
+    * `dstat --top-mem`
+1. 找出占用io最多的线程
+    * `dstat --top-io-adv`
+    * `iotop -oP`
+1. 找出占用带宽最多的连接
+    * `iftop`
+1. 找出占用带宽最多的进程
+    * `nethogs`
+
+# 12 参考
 
 * 《鸟哥的Linux私房菜》
 * [Linux Tools Quick Tutorial](https://linuxtools-rst.readthedocs.io/zh_CN/latest/tool/index.html)

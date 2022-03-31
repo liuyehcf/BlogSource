@@ -911,9 +911,21 @@ gcc -o main main.cpp extern.cpp -lstdc++ -Wall
 
 ## 3.7 volatile
 
-`volatile`关键字是一种类型修饰符，用它声明的类型变量表示可以被某些编译器未知的因素更改，比如：操作系统、硬件或者其它线程等。遇到这个关键字声明的变量，编译器对访问该变量的代码就不再进行优化，从而可以提供对特殊地址的稳定访问
+`volatile`关键字是一种类型修饰符，用它声明的类型变量表示可以被某些编译器未知的因素更改（程序之外的因素），比如：操作系统、硬件等。遇到这个关键字声明的变量，编译器对访问该变量的代码就不再进行优化，从而可以提供对特殊地址的稳定访问
 
-参考[Volatile and cache behaviour](https://stackoverflow.com/questions/18695120/volatile-and-cache-behaviour)。简单来说，如果不加`volatile`，那么变量可能会先被存到寄存器中，然后后续直接从寄存器中读取。如果加了`volatile`，那么每次触发`load`操作，都会从内存地址中读取（`Cache`中的数据可能仍然有效，因此，未必会触发`Cache-Miss`。`Cache`由硬件管理，对程序以及编译器都完全透明）
+* **仅从`C/C++`标准的角度来说（不考虑平台以及编译器扩展），`volatile`并不保证线程间的可见性**。在实际场景中，例如`x86`平台，在`MESI`协议的支持下，`volatile`是可以保证可见性的，这可以理解为一个巧合，利用了平台相关性，因此不具备平台可移植性
+
+`Java`中也有`volatile`关键字，但作用完全不同，`Java`在语言层面就保证了`volatile`具有线程可见性
+
+* `x86`
+    * 仅依赖`MESI`协议，可能也无法实现可见性。举个例子，当`CPU1`执行写操作时，要等到其他`CPU`将对应的缓存行设置成`I`状态后，写入才能完成，性能较差，于是`CPU`又引入了`Store Buffer`（`MESI`协议不感知`Store Buffer`），`CPU1`只需要将数据写入`Store Buffer`而不用等待其他`CPU`将缓存行设置成`I`状态就可以干其他事了
+    * 为了解决上述问题，`JVM`使用了`lock`前缀的汇编指令，将当前`Store Buffer`中的所有数据（不仅仅是`volatile`修饰的变量）都通过`MESI`写入
+* 其他架构，采用其他方式来保证线程可见性这一承诺
+
+**参考：**
+
+* [Volatile and cache behaviour](https://stackoverflow.com/questions/18695120/volatile-and-cache-behaviour)
+* [你不认识的cc++ volatile](https://www.hitzhangjie.pro/blog/2019-01-07-%E4%BD%A0%E4%B8%8D%E8%AE%A4%E8%AF%86%E7%9A%84cc++-volatile/)
 
 **示例如下：**
 
