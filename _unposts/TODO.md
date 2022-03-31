@@ -65,6 +65,9 @@
     * std::bind 如何实现
     * [apache-arrow](https://github.com/apache/arrow)
 1. java
+1. llvm
+    * [llvm-doc](https://llvm.org/docs/)
+    * [2008-10-04-ACAT-LLVM-Intro.pdf](https://llvm.org/pubs/2008-10-04-ACAT-LLVM-Intro.pdf)
 1. 其他
     * [Is Raft more modular than MultiPaxos?](https://maheshba.bitbucket.io/blog/2021/12/14/Modularity.html)
     * 内存分配，伙伴算法
