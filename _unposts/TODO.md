@@ -63,6 +63,7 @@
 1. cpp
     * std::guard(be/src/runtime/decimalv3.h)
     * std::bind 如何实现
+    * std::remove_if
     * [apache-arrow](https://github.com/apache/arrow)
 1. java
 1. llvm
