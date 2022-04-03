@@ -924,6 +924,8 @@ gcc -o main main.cpp extern.cpp -lstdc++ -Wall
 
 **参考：**
 
+* [Is volatile useful with threads?](https://isocpp.org/blog/2018/06/is-volatile-useful-with-threads-isvolatileusefulwiththreads.com)
+    * [isvolatileusefulwiththreads](http://isvolatileusefulwiththreads.com/)
 * [Volatile and cache behaviour](https://stackoverflow.com/questions/18695120/volatile-and-cache-behaviour)
 * [你不认识的cc++ volatile](https://www.hitzhangjie.pro/blog/2019-01-07-%E4%BD%A0%E4%B8%8D%E8%AE%A4%E8%AF%86%E7%9A%84cc++-volatile/)
 
@@ -971,6 +973,141 @@ Disassembly of section .text:
   10:   8b 07                   mov    (%rdi),%eax
   12:   89 06                   mov    %eax,(%rsi)
   14:   c3                      retq
+```
+
+### 3.7.1 如何验证volatile不具备可见性
+
+这个问题比较难直接验证，我们打算用一种间接的方式来验证。假设写操作和读操作的性能开销之比为`w/r = α`。开两个线程，分别循环执行读操作和写操作，读写分别执行`n`次。统计读线程，相邻两次读操作，读取数值不同的次数为`m`，`m/r=β`。
+
+* 若满足可见性，那么`β`应该大致接近`1/α`
+
+首先，测试`atomic`与`volatile`的读写性能
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#include <atomic>
+
+std::atomic<uint64_t> atomic_value{0};
+uint64_t volatile volatile_value = 0;
+
+static void atomic_read(benchmark::State& state) {
+    uint64_t tmp = 0;
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(tmp = atomic_value);
+    }
+}
+
+static void atomic_write(benchmark::State& state) {
+    uint64_t tmp = 0;
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(atomic_value = tmp);
+    }
+}
+
+static void volatile_read(benchmark::State& state) {
+    uint64_t tmp = 0;
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(tmp = volatile_value);
+    }
+}
+
+static void volatile_write(benchmark::State& state) {
+    uint64_t tmp = 0;
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(volatile_value = tmp);
+    }
+}
+
+BENCHMARK(atomic_read);
+BENCHMARK(atomic_write);
+BENCHMARK(volatile_read);
+BENCHMARK(volatile_write);
+
+BENCHMARK_MAIN();
+```
+
+结果如下：
+
+* 对于`atomic<uint64_t>`，`α = 5.76/0.314 = 18.34`
+* 对于`volatile`，`α = 0.631/0.314 = 2.00`
+
+```
+---------------------------------------------------------
+Benchmark               Time             CPU   Iterations
+---------------------------------------------------------
+atomic_read         0.314 ns        0.314 ns   1000000000
+atomic_write         5.76 ns         5.76 ns    123933179
+volatile_read       0.314 ns        0.314 ns   1000000000
+volatile_write      0.631 ns        0.631 ns   1000000000
+```
+
+测试程序如下：
+
+```cpp
+#include <atomic>
+#include <iostream>
+#include <thread>
+
+constexpr uint64_t size = 1000000000;
+
+template <class Tp>
+inline void DoNotOptimize(Tp const& value) {
+    asm volatile("" : : "r,m"(value) : "memory");
+}
+
+template <typename T>
+void test(T& value, const std::string& description) {
+    std::thread write_thread([&]() {
+        uint64_t prev_value = 0;
+        uint64_t non_diff_cnt = 0;
+        uint64_t diff_cnt = 0;
+        uint64_t cur_value;
+        for (uint64_t i = 0; i < size; i++) {
+            cur_value = i;
+            DoNotOptimize(value = cur_value);
+            DoNotOptimize(cur_value == prev_value ? non_diff_cnt++ : diff_cnt++);
+            DoNotOptimize(prev_value = cur_value);
+        }
+    });
+
+    std::thread read_thread([&]() {
+        uint64_t prev_value = 0;
+        uint64_t non_diff_cnt = 0;
+        uint64_t diff_cnt = 0;
+        uint64_t cur_value;
+        for (uint64_t i = 0; i < size; i++) {
+            DoNotOptimize(cur_value = value);
+            DoNotOptimize(cur_value == prev_value ? non_diff_cnt++ : diff_cnt++);
+            DoNotOptimize(prev_value = cur_value);
+        }
+        std::cout << description << ", β=" << static_cast<double>(diff_cnt) / size << std::endl;
+    });
+    write_thread.join();
+    read_thread.join();
+}
+
+int main() {
+    {
+        std::atomic<uint64_t> value = 0;
+        test(value, "atomic");
+    }
+    {
+        uint64_t volatile value = 0;
+        test(value, "volatile");
+    }
+    return 0;
+}
+```
+
+结果如下：
+
+* 对于`atomic`而言，预测结果是`1/α = 1/18.34 ≈ 0.05`，实际为`0.03`，符合预测
+* 对于`volatile`而言，预测结果是`1/α = 1/2.00 ≈ 0.5`，实际为`0.009`，相距甚远。也就是说，写操作写的值，读操作大概率读不到，即不满足可见性
+
+```
+atomic, β=0.0306718
+volatile, β=0.00896861
 ```
 
 ## 3.8 constexpr
