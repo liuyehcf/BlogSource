@@ -2162,7 +2162,11 @@ rm -f bar.o
 
 但就目前而言，你还是应该不要尽量不要使用`-j`参数
 
-# 10 参考
+# 10 Tips
+
+1. 输出而不执行`Makefile`：`make -qp`
+
+# 11 参考
 
 * [跟我一起写 Makefile（一）](https://blog.csdn.net/haoel/article/details/2886)
 * [跟我一起写 Makefile（二）](https://blog.csdn.net/haoel/article/details/2887)
