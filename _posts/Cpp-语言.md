@@ -995,6 +995,7 @@ static void atomic_read(benchmark::State& state) {
     uint64_t tmp = 0;
     for (auto _ : state) {
         benchmark::DoNotOptimize(tmp = atomic_value);
+        benchmark::DoNotOptimize(tmp++);
     }
 }
 
@@ -1002,6 +1003,7 @@ static void atomic_write(benchmark::State& state) {
     uint64_t tmp = 0;
     for (auto _ : state) {
         benchmark::DoNotOptimize(atomic_value = tmp);
+        benchmark::DoNotOptimize(tmp++);
     }
 }
 
@@ -1009,6 +1011,7 @@ static void volatile_read(benchmark::State& state) {
     uint64_t tmp = 0;
     for (auto _ : state) {
         benchmark::DoNotOptimize(tmp = volatile_value);
+        benchmark::DoNotOptimize(tmp++);
     }
 }
 
@@ -1016,6 +1019,7 @@ static void volatile_write(benchmark::State& state) {
     uint64_t tmp = 0;
     for (auto _ : state) {
         benchmark::DoNotOptimize(volatile_value = tmp);
+        benchmark::DoNotOptimize(tmp++);
     }
 }
 
@@ -2307,13 +2311,18 @@ int main() {
 
 ## 7.1 Basic Asm
 
-## 7.2 Extended Asm
+## 7.2 [Extended Asm](https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html)
 
 GCC设计了一种特有的嵌入方式，它规定了汇编代码嵌入的形式和嵌入汇编代码需要由哪几个部分组成，格式如下：
 
 * 汇编语句模板是必须的，其余三部分是可选的
 
 ```cpp
+asm asm-qualifiers ( AssemblerTemplate 
+                 : OutputOperands 
+                 [ : InputOperands
+                 [ : Clobbers ] ])
+
 asm asm-qualifiers ( AssemblerTemplate 
                       : OutputOperands
                       : InputOperands
