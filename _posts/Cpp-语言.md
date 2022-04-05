@@ -983,44 +983,78 @@ Disassembly of section .text:
 
 首先，测试`atomic`与`volatile`的读写性能
 
+* 测试时，会有一个额外的线程对`atomic`或`volatile`变量进行持续的读写操作
+
 ```cpp
 #include <benchmark/benchmark.h>
 
 #include <atomic>
+#include <thread>
 
 std::atomic<uint64_t> atomic_value{0};
 uint64_t volatile volatile_value = 0;
 
+template <typename T>
+static void random_write(T& value, std::atomic<bool>& stop) {
+    uint32_t tmp = 1;
+    while (!stop) {
+        value = tmp;
+        tmp++;
+    }
+}
+
+template <typename T>
+static void random_read(T& value, std::atomic<bool>& stop) {
+    uint64_t tmp;
+    while (!stop) {
+        benchmark::DoNotOptimize(tmp = value);
+    }
+}
+
 static void atomic_read(benchmark::State& state) {
     uint64_t tmp = 0;
+    std::atomic<bool> stop{false};
+    std::thread t([&]() { random_write(atomic_value, stop); });
     for (auto _ : state) {
         benchmark::DoNotOptimize(tmp = atomic_value);
-        benchmark::DoNotOptimize(tmp++);
     }
+    stop = true;
+    t.join();
 }
 
 static void atomic_write(benchmark::State& state) {
     uint64_t tmp = 0;
+    std::atomic<bool> stop{false};
+    std::thread t([&]() { random_read(atomic_value, stop); });
     for (auto _ : state) {
         benchmark::DoNotOptimize(atomic_value = tmp);
-        benchmark::DoNotOptimize(tmp++);
+        tmp++;
     }
+    stop = true;
+    t.join();
 }
 
 static void volatile_read(benchmark::State& state) {
     uint64_t tmp = 0;
+    std::atomic<bool> stop{false};
+    std::thread t([&]() { random_write(volatile_value, stop); });
     for (auto _ : state) {
         benchmark::DoNotOptimize(tmp = volatile_value);
-        benchmark::DoNotOptimize(tmp++);
     }
+    stop = true;
+    t.join();
 }
 
 static void volatile_write(benchmark::State& state) {
     uint64_t tmp = 0;
+    std::atomic<bool> stop{false};
+    std::thread t([&]() { random_read(volatile_value, stop); });
     for (auto _ : state) {
         benchmark::DoNotOptimize(volatile_value = tmp);
-        benchmark::DoNotOptimize(tmp++);
+        tmp++;
     }
+    stop = true;
+    t.join();
 }
 
 BENCHMARK(atomic_read);
@@ -1033,17 +1067,17 @@ BENCHMARK_MAIN();
 
 结果如下：
 
-* 对于`atomic<uint64_t>`，`α = 5.76/0.314 = 18.34`
-* 对于`volatile`，`α = 0.631/0.314 = 2.00`
+* 对于`atomic<uint64_t>`，`α = 31.8/1.01 = 31.49`
+* 对于`volatile`，`α = 0.794/0.622 = 1.28`
 
 ```
 ---------------------------------------------------------
 Benchmark               Time             CPU   Iterations
 ---------------------------------------------------------
-atomic_read         0.314 ns        0.314 ns   1000000000
-atomic_write         5.76 ns         5.76 ns    123933179
-volatile_read       0.314 ns        0.314 ns   1000000000
-volatile_write      0.631 ns        0.631 ns   1000000000
+atomic_read          1.01 ns         1.01 ns    617176522
+atomic_write         31.8 ns         31.8 ns     22684714
+volatile_read       0.622 ns        0.622 ns   1000000000
+volatile_write      0.794 ns        0.793 ns    990971682
 ```
 
 测试程序如下：
@@ -1063,15 +1097,8 @@ inline void DoNotOptimize(Tp const& value) {
 template <typename T>
 void test(T& value, const std::string& description) {
     std::thread write_thread([&]() {
-        uint64_t prev_value = 0;
-        uint64_t non_diff_cnt = 0;
-        uint64_t diff_cnt = 0;
-        uint64_t cur_value;
         for (uint64_t i = 0; i < size; i++) {
-            cur_value = i;
-            DoNotOptimize(value = cur_value);
-            DoNotOptimize(cur_value == prev_value ? non_diff_cnt++ : diff_cnt++);
-            DoNotOptimize(prev_value = cur_value);
+            DoNotOptimize(value = i);
         }
     });
 
@@ -1082,8 +1109,10 @@ void test(T& value, const std::string& description) {
         uint64_t cur_value;
         for (uint64_t i = 0; i < size; i++) {
             DoNotOptimize(cur_value = value);
-            DoNotOptimize(cur_value == prev_value ? non_diff_cnt++ : diff_cnt++);
-            DoNotOptimize(prev_value = cur_value);
+
+            // These two statements have little overhead which can be ignored if enable -03
+            cur_value == prev_value ? non_diff_cnt++ : diff_cnt++;
+            prev_value = cur_value;
         }
         std::cout << description << ", β=" << static_cast<double>(diff_cnt) / size << std::endl;
     });
@@ -1106,13 +1135,15 @@ int main() {
 
 结果如下：
 
-* 对于`atomic`而言，预测结果是`1/α = 1/18.34 ≈ 0.05`，实际为`0.03`，符合预测
-* 对于`volatile`而言，预测结果是`1/α = 1/2.00 ≈ 0.5`，实际为`0.009`，相距甚远。也就是说，写操作写的值，读操作大概率读不到，即不满足可见性
+* 对于`atomic`而言，预测结果是`1/α = 1/31.49 ≈ 0.032`，实际为`0.025`，符合预测
+* 对于`volatile`而言，预测结果是`1/α = 1/1.28 ≈ 0.781`，实际为`0.006`，相距甚远。也就是说，写操作写的值，读操作大概率读不到，即不满足可见性
 
 ```
-atomic, β=0.0306718
-volatile, β=0.00896861
+atomic, β=0.0246502
+volatile, β=0.00602403
 ```
+
+**如果用Java进行上述等价验证，会发现实际结果与预期吻合，这里不再赘述**
 
 ## 3.8 constexpr
 
