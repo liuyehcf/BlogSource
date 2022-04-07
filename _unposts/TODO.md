@@ -73,6 +73,13 @@
     * [Is Raft more modular than MultiPaxos?](https://maheshba.bitbucket.io/blog/2021/12/14/Modularity.html)
     * 内存分配，伙伴算法
     * rpc框架，thrift
+    * 性能对比可以关注的指标
+        * cycles
+        * ipc
+        * instructions
+        * L1 Miss
+        * LLC Miss
+        * Branch Miss
     * codegen原理
     * git worktree
     * [lxcfs](https://github.com/lxc/lxcfs)
