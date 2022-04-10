@@ -1,4 +1,17 @@
-# 中文摘录
+---
+title: words
+date: 2021-09-08 17:03:18
+tags: 
+- 原创
+categories: 
+- Words
+---
+
+**阅读更多**
+
+<!--more-->
+
+# 1 中文摘录
 
 1. 这些微乎微乎，至于无形。神乎神乎，至于无声
 1. 阿里云解决的是技术问题而不是用户体验问题；创业公司解决的是用户体验问题而不是技术问题
@@ -39,14 +52,14 @@
 1. 术的极值就是道。对术的性能渴求并加以真正专注的实践，自然而然就会触摸到对道的感悟
 1. 如果测试能解决问题，世界上就没有bug了
 
-# 话术
+# 2 话术
 
 1. 演进（表达当前方案可能不是最完善的）
 1. 裁剪
 1. 原型开发
 1. 结构性问题
 
-# 方法论
+# 3 方法论
 
 1. Kiss原则
 1. 向上编排理论
@@ -59,7 +72,7 @@
     * 隔离性
     * 工程实现难易程度
 
-# 云计算
+# 4 云计算
 
 1. 第一代云计算
     * 运维，虚拟化，超卖
@@ -72,7 +85,7 @@
         * 云原生
         * FaaS + BaaS
 
-# 英文表述
+# 5 英文表述
 
 1. Data Cache misses per 1000 instructions comparing LRU, Random, FIFO replacement for several sizes and associativities.
 1. In order to accomplish this, a series of trade-offs have to be balanced.

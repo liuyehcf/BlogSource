@@ -1,3 +1,15 @@
+---
+title: thinking
+date: 2021-09-08 17:03:18
+tags: 
+- 原创
+categories: 
+- Thinking
+---
+
+**阅读更多**
+
+<!--more-->
 
 1. 什么是互联网
     * 协助、促进人进行信息交换
