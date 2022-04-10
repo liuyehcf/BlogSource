@@ -422,9 +422,31 @@ categories:
     1. security
     1. architecture
 
-# 7 Efficiency in the Columbia Database Query Optimizer
+# 7 [How-Good-Are-Query-Optimizers](/resources/How-Good-Are-Query-Optimizers.pdf)
 
-# 8 Fast Selection and Aggregation on Encoded Data using Operator Specialization
+1. `TPC-H`、`TPC-DS`、`SSB`可以用来测试数据库的性能。但是，这些`Benchmark`，并不能有效地测试基数估计（`Cardinality Estimation`）。因为，这些测试集的数据生成器，生成的大多数都是均匀分布，且独立的数据，而现实世界中的数据，大多是非均匀分布，且存在非常大的数据相关信息
+1. Cardinality Estimation
+    * `q-error`，基数估计的正确性因子，假设真正的基数是100，那么10或1000的因子都是10
+    * The results do, however, demonstrate that the state-of-the-art in cardinality estimation is far from perfect.
+    * 错误的估计不一定导致糟糕的查询计划，two wrongs that make a right
+    * Join-Crossing Correlations
+    * 只依赖估计的算法通常来说更容易导致糟糕的查询计划，因为太依赖估计的准确性了，因此，鲁棒性较差
+1. Cost Model
+    * CPU + I/O cost
+    * 每种Cost都有一个因子用于调整其比例，通常来说，默认的比例对于某些场景下可能不是最优的
+    * Cost Model的准确性所带来的收益要小于基数估计的准确性所带来的收益。对于内存数据库来说，一个非常简单的Cost Model的性能接近一个更加复杂的Cost Model
+1. Plan Space
+    * 算法包括：
+        * 动态规划
+        * 启发式
+            * Quickpick-1000
+            * Greedy Operator Ordering, GOO
+    * 在基数估计准确性较差的情况下，动态规划容易选出糟糕的计划
+    * 启发式的算法不感知索引，因此，在索引较少的情况下，启发式的算法也能选出较好的计划
 
-# 9 Shared memory consistency models - A tutorial
+# 8 Efficiency in the Columbia Database Query Optimizer
+
+# 9 Fast Selection and Aggregation on Encoded Data using Operator Specialization
+
+# 10 Shared memory consistency models - A tutorial
 
