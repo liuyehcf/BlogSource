@@ -103,4 +103,5 @@ date: 2018-02-05 09:25:59
   <tr> <td>TBR</td> <td>To Be Reviewed</td> <td>提示维护者进行 review</td> </tr>
   <tr> <td>TL;DR</td> <td>Too Long; Didn't Read</td> <td>太长懒得看。也有很多文档在做简略描述之前会写这么一句</td> </tr>
   <tr> <td>TBD</td> <td>To Be Done(or Defined/Discussed/Decided/Determined)</td> <td>根据语境不同意义有所区别，但一般都是还没搞定的意思</td> </tr>
+  <tr> <td>RC</td> <td>Release Candidate</td> <td>有可能成为稳定版本的版本</td> </tr>
 </table>
