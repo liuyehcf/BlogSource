@@ -363,6 +363,9 @@ inoremap <silent> <c-e> <c-o>$
 " 其中，<c-r><c-w> 表示 [Ctrl] + r 以及 [Ctrl] + w，用于将光标所在的单词填入搜索/替换项中
 nnoremap ® :%s/<c-r><c-w>
 
+" 选中当前行
+nnoremap <leader>sl ^vg_
+
 " window 切换
 " [Option] + h，即「˙」
 " [Option] + j，即「∆」

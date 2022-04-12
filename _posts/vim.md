@@ -2887,7 +2887,7 @@ inoremap <silent> <c-e> <c-o>$
 nnoremap ® :%s/<c-r><c-w>
 
 " 选中当前行
-nnoremap <leader>sl ^vg_<c-w>
+nnoremap <leader>sl ^vg_
 
 " window 切换
 " [Option] + h，即「˙」
