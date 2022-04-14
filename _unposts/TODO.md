@@ -56,6 +56,24 @@ categories:
         * Empty Union, Intersect, Except 裁剪
         * Intersect Reorder
         * Count Distinct 相关聚合函数重写
+    * 统计
+        * 伯努利采样
+        * 皮尔逊系数
+        * 泊松分布
+        * Kernel Density Estimation
+        * [Learning to Sample: Counting with Complex Queries](https://vldb.org/pvldb/vol13/p390-walenz.pdf) - ref 6
+        * [SetSketch: Filling the Gap between MinHash and HyperLogLog](https://vldb.org/pvldb/vol14/p2244-ertl.pdf) - ref 2
+        * [Learning to be a Statistician: Learned Estimator for Number of Distinct Values](https://vldb.org/pvldb/vol15/p272-wu.pdf) - ref 0
+        * [NeuroCard: One Cardinality Estimator for All Tables](https://vldb.org/pvldb/vol14/p61-yang.pdf) - ref 42
+        * [Are We Ready For Learned Cardinality Estimation?](https://vldb.org/pvldb/vol14/p1640-wang.pdf) - ref 20
+        * [Flow-Loss: Learning Cardinality Estimates That Mater](https://vldb.org/pvldb/vol14/p2019-negi.pdf) - ref 8
+        * [Fauce: Fast and Accurate Deep Ensembles with Uncertainty for Cardinality Estimation](https://vldb.org/pvldb/vol14/p1950-liu.pdf) - ref 2
+        * [Weighted Distinct Sampling: Cardinality Estimation for SPJ Queries](https://www.cse.ust.hk/~yike/spj-full.pdf) - ref 0
+        * [Count-distinct problem](https://en.wikipedia.org/wiki/Count-distinct_problem)
+        * 影响Cardinality Estimation准确性的因素
+            * 数据倾斜
+            * 数据相关信息
+            * 值域范围
     * serverless论文
         * Cloud-Programming-Simplified-A-Berkeley-View-on-Serverless-Computing
     * 执行器
