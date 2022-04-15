@@ -97,6 +97,7 @@ categories:
     * std::remove_if
     * [apache-arrow](https://github.com/apache/arrow)
 1. java
+    * containsKey结果不对。若Key改变过值，导致hashCode变化之后，就会出现这个问题
 1. llvm
     * [llvm-doc](https://llvm.org/docs/)
     * [2008-10-04-ACAT-LLVM-Intro.pdf](https://llvm.org/pubs/2008-10-04-ACAT-LLVM-Intro.pdf)
