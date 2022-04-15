@@ -62,6 +62,7 @@ date: 2018-02-05 09:25:59
         * [NeuroCard-One-Cardinality-Estimator-for-All-Tables](/resources/NeuroCard-One-Cardinality-Estimator-for-All-Tables.pdf)
 * Celebrity
     * `Andy Pavlo`：顶尖的数据库领域专家，执教CMU数据库系统相关课程
+* [Compare Projects](https://ossinsight.io/compare/)
 * [db-fiddle](https://www.db-fiddle.com/)
 
 # Cloud Native
