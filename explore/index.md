@@ -52,14 +52,26 @@ date: 2018-02-05 09:25:59
 * [ClickHouse Blog](https://clickhouse.com/docs/zh/whats-new/changelog/)
 * [Develop your own Database](https://hpi.de/plattner/teaching/archive/winter-term-201819/develop-your-own-database.html)
 * Papers
+    * Execution
+        * [Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age](/resources/Morsel-Driven-Parallelism-A-NUMA-Aware-Query-Evaluation-Framework-for-the-Many-CoreAge.pdf) - ★★★★★
+        * [Push vs. Pull-Based Loop Fusion in Query Engines](/resources/Push-vs-Pull-Based-Loop-Fusion-in-Query-Engines.pdf)
+
+    * Sort
+        * [Design and Evaluation of Main Memory Hash Join Algorithms for Multi-core CPUs](/resources/Design-and-Evaluation-of-Main-Memory-Hash-Join-Algorithms-for-Multi-core-CPUs.pdf)
+        * [Sort vs. Hash Revisited Fast Join Implementation on Modern Multi-Core CPUs](/resources/Sort-vs.-Hash-Revisited-Fast-Join-Implementation-on-Modern-Multi-Core-CPUs.pdf)
+        * [Massively Parallel Sort-Merge Joins in Main Memory Multi-Core Database Systems](/resources/Massively-Parallel-Sort-Merge-Joins-in-Main-Memory-Multi-Core-Database-Systems.pdf)
+        * [Main-Memory Hash Joins on Multi-Core CPUs Tuning to the Underlying Hardware](/resources/Main-Memory-Hash-Joins-on-Multi-Core-CPUs-Tuning-to-the-Underlying-Hardware.pdf)
+        * [Efficient Implementation of Sorting on Multi-Core SIMD CPU Architecture](/resources/Efficient-Implementation-of-Sorting-on-Multi-Core-SIMD-CPU-Architecture.pdf)
+        * [Massively Parallel NUMA-aware Hash Joins](/resources/Massively-Parallel-NUMA-aware-Hash-Joins.pdf)
+        * [An Experimental Comparison of Thirteen Relational Equi-Joins in Main Memory](/resources/An-Experimental-Comparison-of-Thirteen-Relational-Equi-Joins-in-Main-Memory.pdf)
     * Optimizer
-        * [Efficiency-In-The-Columbia-Database-Query-Optimizer](/resources/Efficiency-In-The-Columbia-Database-Query-Optimizer.pdf) - ★★★★★
-        * [How-Good-Are-Query-Optimizers](/resources/How-Good-Are-Query-Optimizers.pdf) - ★★★★★
-        * [The-Cascades-Framework-For-Query-Optimization](/resources/The-Cascades-Framework-For-Query-Optimization.pdf)
-        * [Orca-A-Modular-Query-Optimizer-Architecture-For-Big-Data](/resources/Orca-A-Modular-Query-Optimizer-Architecture-For-Big-Data.pdf)
+        * [Efficiency in the Columbia Database Query Optimizer](/resources/Efficiency-In-The-Columbia-Database-Query-Optimizer.pdf) - ★★★★★
+        * [How Good Are Query Optimizers, Really?](/resources/How-Good-Are-Query-Optimizers.pdf) - ★★★★★
+        * [The Cascades Framework for Query Optimization](/resources/The-Cascades-Framework-For-Query-Optimization.pdf)
+        * [Orca: A Modular Query Optimizer Architecture for Big Data](/resources/Orca-A-Modular-Query-Optimizer-Architecture-For-Big-Data.pdf)
     * Cardinality Estimation
-        * [Are-We-Ready-For-Learned-Cardinality-Estimation](/resources/Are-We-Ready-For-Learned-Cardinality-Estimation.pdf)
-        * [NeuroCard-One-Cardinality-Estimator-for-All-Tables](/resources/NeuroCard-One-Cardinality-Estimator-for-All-Tables.pdf)
+        * [Are We Ready For Learned Cardinality Estimation?](/resources/Are-We-Ready-For-Learned-Cardinality-Estimation.pdf)
+        * [NeuroCard: One Cardinality Estimator for All Tables](/resources/NeuroCard-One-Cardinality-Estimator-for-All-Tables.pdf)
 * Celebrity
     * `Andy Pavlo`：顶尖的数据库领域专家，执教CMU数据库系统相关课程
 * [Compare Projects](https://ossinsight.io/compare/)

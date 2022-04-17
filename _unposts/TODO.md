@@ -95,6 +95,8 @@ categories:
     * std::guard(be/src/runtime/decimalv3.h)
     * std::bind 如何实现
     * std::remove_if
+    * std::any 如何实现
+    * futex
     * [apache-arrow](https://github.com/apache/arrow)
 1. java
     * containsKey结果不对。若Key改变过值，导致hashCode变化之后，就会出现这个问题
@@ -105,7 +107,12 @@ categories:
 1. 其他
     * [Is Raft more modular than MultiPaxos?](https://maheshba.bitbucket.io/blog/2021/12/14/Modularity.html)
     * 内存分配，伙伴算法
-    * rpc框架，thrift
+    * brpc框架
+        * [BRPC的精华全在bthread上啦（一）：Work Stealing以及任务的执行与切换](https://zhuanlan.zhihu.com/p/294129746)
+        * [BRPC的精华全在bthread上啦（二）：ParkingLot 与Worker同步任务状态](https://zhuanlan.zhihu.com/p/346081659)
+        * [BRPC的精华全在bthread上啦（三）：bthread上下文的创建](https://zhuanlan.zhihu.com/p/347499412)
+        * [BRPC的精华都在bthread上啦（四）：尾声](https://zhuanlan.zhihu.com/p/350582218)
+    * thrift
     * 性能对比可以关注的指标
         * cycles
         * ipc
