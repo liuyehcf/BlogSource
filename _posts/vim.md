@@ -1537,17 +1537,19 @@ call plug#end()
 
 **配置文件`~/.vim/coc-settings.json`的内容如下：**
 
-```json
-{
-    "languageserver": {
-        "clangd": {
-            "command": "clangd",
-            "rootPatterns": ["compile_flags.txt", "compile_commands.json"],
-            "filetypes": ["c", "cc", "cpp", "c++", "objc", "objcpp"]
+* `c/c++`
+    * 如何修改头文件搜索路径？在`compile_commands.json`中指定即可
+    ```json
+    {
+        "languageserver": {
+            "clangd": {
+                "command": "clangd",
+                "rootPatterns": ["compile_flags.txt", "compile_commands.json"],
+                "filetypes": ["c", "cc", "cpp", "c++", "objc", "objcpp"]
+            }
         }
     }
-}
-```
+    ```
 
 #### 3.10.1.1 [coc-explorer](https://github.com/weirongxu/coc-explorer)
 

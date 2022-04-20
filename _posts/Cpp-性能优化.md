@@ -404,6 +404,7 @@ BENCHMARK(BM_mutex);
 
 BENCHMARK_MAIN();
 ```
+
 **输出如下：**
 
 ```
@@ -413,6 +414,56 @@ Benchmark           Time             CPU   Iterations
 BM_normal       0.314 ns        0.314 ns   1000000000
 BM_atomic        5.65 ns         5.65 ns    124013879
 BM_mutex         16.6 ns         16.6 ns     42082466
+```
+
+## 1.6 `std::function` or template
+
+### 1.6.1 benchmark
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#include <functional>
+
+void invoke_by_function(const std::function<void()>& func) {
+    func();
+}
+
+template <typename F>
+void invoke_by_template(F&& func) {
+    func();
+}
+
+static void BM_function(benchmark::State& state) {
+    int64_t cnt = 0;
+
+    for (auto _ : state) {
+        invoke_by_function([&]() { benchmark::DoNotOptimize(cnt++); });
+    }
+}
+
+static void BM_template(benchmark::State& state) {
+    int64_t cnt = 0;
+
+    for (auto _ : state) {
+        invoke_by_template([&]() { benchmark::DoNotOptimize(cnt++); });
+    }
+}
+
+BENCHMARK(BM_function);
+BENCHMARK(BM_template);
+
+BENCHMARK_MAIN();
+```
+
+**输出如下：**
+
+```
+------------------------------------------------------
+Benchmark            Time             CPU   Iterations
+------------------------------------------------------
+BM_function       1.89 ns         1.89 ns    371459322
+BM_template      0.314 ns        0.314 ns   1000000000
 ```
 
 # 2 pointer aliasing
