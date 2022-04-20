@@ -126,4 +126,5 @@ categories:
     * [什么是图灵完备？](https://www.zhihu.com/question/20115374/answer/288346717)
     * [调度系统设计精要](https://draveness.me/system-design-scheduler/)
     * [构建工具bazel](https://github.com/bazelbuild/bazel)
-   
+1. Abbrevation
+    * `SMT, Simultaneous multithreading`

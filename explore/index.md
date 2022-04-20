@@ -59,6 +59,8 @@ date: 2018-02-05 09:25:59
     * Sort
         * [Design and Evaluation of Main Memory Hash Join Algorithms for Multi-core CPUs](/resources/Design-and-Evaluation-of-Main-Memory-Hash-Join-Algorithms-for-Multi-core-CPUs.pdf)
         * [Sort vs. Hash Revisited Fast Join Implementation on Modern Multi-Core CPUs](/resources/Sort-vs.-Hash-Revisited-Fast-Join-Implementation-on-Modern-Multi-Core-CPUs.pdf)
+        * [Optimizing main-memory join on modern hardware](https://ieeexplore.ieee.org/abstract/document/1019210/)
+            * radix-cluster algorithm
         * [Massively Parallel Sort-Merge Joins in Main Memory Multi-Core Database Systems](/resources/Massively-Parallel-Sort-Merge-Joins-in-Main-Memory-Multi-Core-Database-Systems.pdf)
         * [Main-Memory Hash Joins on Multi-Core CPUs Tuning to the Underlying Hardware](/resources/Main-Memory-Hash-Joins-on-Multi-Core-CPUs-Tuning-to-the-Underlying-Hardware.pdf)
         * [Efficient Implementation of Sorting on Multi-Core SIMD CPU Architecture](/resources/Efficient-Implementation-of-Sorting-on-Multi-Core-SIMD-CPU-Architecture.pdf)

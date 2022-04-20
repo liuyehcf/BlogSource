@@ -303,7 +303,11 @@ pprof --svg ./main /tmp/test-profile.0001.heap > heap.svg
 
 ## 3.3 [mimalloc](https://github.com/microsoft/mimalloc)
 
-## 3.4 参考
+## 3.4 对比
+
+[What are the differences between (and reasons to choose) tcmalloc/jemalloc and memory pools?](https://stackoverflow.com/questions/9866145/what-are-the-differences-between-and-reasons-to-choose-tcmalloc-jemalloc-and-m)
+
+## 3.5 参考
 
 * [heapprofile.html](https://gperftools.github.io/gperftools/heapprofile.html)
 * [Apache Doris-调试工具](https://doris.apache.org/developer-guide/debug-tool.html)
