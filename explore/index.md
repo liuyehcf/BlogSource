@@ -66,6 +66,9 @@ date: 2018-02-05 09:25:59
         * [Efficient Implementation of Sorting on Multi-Core SIMD CPU Architecture](/resources/Efficient-Implementation-of-Sorting-on-Multi-Core-SIMD-CPU-Architecture.pdf)
         * [Massively Parallel NUMA-aware Hash Joins](/resources/Massively-Parallel-NUMA-aware-Hash-Joins.pdf)
         * [An Experimental Comparison of Thirteen Relational Equi-Joins in Main Memory](/resources/An-Experimental-Comparison-of-Thirteen-Relational-Equi-Joins-in-Main-Memory.pdf)
+    * window functions
+        * [Optimization of Analytic Window Functions](http://vldb.org/pvldb/vol5/p1244_yucao_vldb2012.pdf)
+        * [Efficient Processing of Window Functions in Analytical SQL Queries](https://www.vldb.org/2015/program/http://www.vldb.org/pvldb/vol8/p1058-leis.pdf)
     * Optimizer
         * [Efficiency in the Columbia Database Query Optimizer](/resources/Efficiency-In-The-Columbia-Database-Query-Optimizer.pdf) - ★★★★★
         * [How Good Are Query Optimizers, Really?](/resources/How-Good-Are-Query-Optimizers.pdf) - ★★★★★
