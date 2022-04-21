@@ -444,9 +444,15 @@ categories:
     * 在基数估计准确性较差的情况下，动态规划容易选出糟糕的计划
     * 启发式的算法不感知索引，因此，在索引较少的情况下，启发式的算法也能选出较好的计划
 
-# 8 Efficiency in the Columbia Database Query Optimizer
+# 8 Sort vs. Hash Revisited: Fast Join Implementation on Modern Multi-Core CPUs
 
-# 9 Fast Selection and Aggregation on Encoded Data using Operator Specialization
+1. Bitonic Sequence
+    * 先增后降
+    * 单调递增或者单调递减也可以视为是`Bitonic Sequence`
 
-# 10 Shared memory consistency models - A tutorial
+# 9 Efficiency in the Columbia Database Query Optimizer
+
+# 10 Fast Selection and Aggregation on Encoded Data using Operator Specialization
+
+# 11 Shared memory consistency models - A tutorial
 
