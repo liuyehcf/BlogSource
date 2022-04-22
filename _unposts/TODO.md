@@ -39,6 +39,7 @@ categories:
         * [sqlsmith](https://github.com/anse1/sqlsmith)
     * doc
         * [sqlite-window-function](https://www.sqlite.org/windowfunctions.html)
+        * [trino-subquery](https://docs.google.com/document/d/18HN7peS2eR8lZsErqcmnoWyMEPb6p4OQeidH1JP_EkA)
     * rewrite
         * 各种表达式的重写和化简
         * 列裁剪
@@ -122,6 +123,11 @@ categories:
         * Branch Miss
     * codegen原理
     * git worktree
+    * 向量化
+        * 无法向量化的场景
+            * 复杂的表达式
+            * 分支
+            * data alignment
     * [lxcfs](https://github.com/lxc/lxcfs)
     * [什么是图灵完备？](https://www.zhihu.com/question/20115374/answer/288346717)
     * [调度系统设计精要](https://draveness.me/system-design-scheduler/)

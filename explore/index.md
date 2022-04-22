@@ -49,13 +49,15 @@ date: 2018-02-05 09:25:59
 
 * [编程小梦](https://blog.bcmeng.com/) - ★★★★★
     * [数据库学习资料（持续更新中）](https://blog.bcmeng.com/post/database-learning.html)
+* [satanson](https://www.zhihu.com/people/grakra)
+    * [有什么好的数据库学习路径推荐？](https://www.zhihu.com/question/451898647/answer/1813178673)
 * [ClickHouse Blog](https://clickhouse.com/docs/zh/whats-new/changelog/)
 * [Develop your own Database](https://hpi.de/plattner/teaching/archive/winter-term-201819/develop-your-own-database.html)
 * Papers
     * Execution
         * [Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age](/resources/Morsel-Driven-Parallelism-A-NUMA-Aware-Query-Evaluation-Framework-for-the-Many-CoreAge.pdf) - ★★★★★
         * [Push vs. Pull-Based Loop Fusion in Query Engines](/resources/Push-vs-Pull-Based-Loop-Fusion-in-Query-Engines.pdf)
-
+        * [Implementing Database Operations Using SIMD Instructions](http://www.cs.columbia.edu/~kar/pubsk/simd.pdf)
     * Sort
         * [Design and Evaluation of Main Memory Hash Join Algorithms for Multi-core CPUs](/resources/Design-and-Evaluation-of-Main-Memory-Hash-Join-Algorithms-for-Multi-core-CPUs.pdf)
         * [Sort vs. Hash Revisited Fast Join Implementation on Modern Multi-Core CPUs](/resources/Sort-vs.-Hash-Revisited-Fast-Join-Implementation-on-Modern-Multi-Core-CPUs.pdf)

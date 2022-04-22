@@ -89,6 +89,9 @@ categories:
 1. `/proc/cmdline`：系统启动时输入给内核的命令行参数
 1. `/proc/version`：内核版本
 1. `/proc/cpuinfo`：cpu硬件信息
+    * `physical id`：一个物理CPU一个id
+    * `cpu cores`：一个物理CPU对应几个物理核
+    * `siblings`：一个物理CPU对应几个逻辑核
 1. `/proc/meminfo`：内存信息
     * `MemTotal`：物理内存的大小
     * `MemFree`：未使用的内存

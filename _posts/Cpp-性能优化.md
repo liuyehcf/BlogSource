@@ -1503,7 +1503,7 @@ BM_loop_with_float         97.3 ns         97.3 ns      7197218
 * [Auto-vectorization in GCC](https://gcc.gnu.org/projects/tree-ssa/vectorization.html)
 * [Type-Based Alias Analysis](https://www.drdobbs.com/cpp/type-based-alias-analysis/184404273)
 
-# 4 cache
+# 4 prefetch
 
 **内置函数`__builtin_prefetch(const void* addr, [rw], [locality])`用于将可能在将来被访问的数据提前加载到缓存中来，以提高命中率**
 
@@ -1753,3 +1753,156 @@ BM_binary_search_with_prefetch_locality_3     272844 ns       272819 ns         
 ## 4.2 参考
 
 * [Other Built-in Functions Provided by GCC](https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html)
+
+# 5 branch prediction
+
+分支预测的成功率对于执行效率的影响非常大，对于如下代码
+
+```cpp
+    for (auto i = 0; i < SIZE; i++) {
+        if (data[i] > 128) {
+            sum += data[i];
+        }
+    }
+```
+
+如果条件`data[i] > 128`恒成立，即分支预测的正确率为100%，其效率等效于
+
+```cpp
+    for (auto i = 0; i < SIZE; i++) {
+        sum += data[i];
+    }
+```
+
+若分支预测正确率较低，那么CPU流水线会产生非常多的停顿，导致整体的CPI下降
+
+## 5.1 benchmark
+
+**注意，优化参数为`-O0`，否则经过编译器优化之后，性能相差不大**
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#include <algorithm>
+#include <iostream>
+#include <random>
+
+const constexpr int32_t SIZE = 32768;
+
+bool is_init = false;
+int32_t unsorted_array[SIZE];
+int32_t sorted_array[SIZE];
+
+void init() {
+    if (is_init) {
+        return;
+    }
+    std::default_random_engine e;
+    std::uniform_int_distribution<int32_t> u(0, 256);
+    for (auto i = 0; i < SIZE; i++) {
+        int32_t value = u(e);
+        unsorted_array[i] = value;
+        sorted_array[i] = value;
+    }
+
+    std::sort(sorted_array, sorted_array + SIZE);
+}
+
+void traverse_unsorted_array(int32_t& sum) {
+    for (auto i = 0; i < SIZE; i++) {
+        if (unsorted_array[i] > 128) {
+            sum += unsorted_array[i];
+        }
+    }
+}
+
+void traverse_sorted_array(int32_t& sum) {
+    for (auto i = 0; i < SIZE; i++) {
+        if (sorted_array[i] > 128) {
+            sum += sorted_array[i];
+        }
+    }
+}
+
+void traverse_unsorted_array_branchless(int32_t& sum) {
+    for (auto i = 0; i < SIZE; i++) {
+        int32_t tmp = (unsorted_array[i] - 128) >> 31;
+        sum += ~tmp & unsorted_array[i];
+    }
+}
+
+void traverse_sorted_array_branchless(int32_t& sum) {
+    for (auto i = 0; i < SIZE; i++) {
+        int32_t tmp = (sorted_array[i] - 128) >> 31;
+        sum += ~tmp & sorted_array[i];
+    }
+}
+
+static void BM_traverse_unsorted_array(benchmark::State& state) {
+    init();
+    int32_t sum = 0;
+
+    for (auto _ : state) {
+        traverse_unsorted_array(sum);
+    }
+
+    benchmark::DoNotOptimize(sum);
+}
+
+static void BM_traverse_sorted_array(benchmark::State& state) {
+    init();
+    int32_t sum = 0;
+
+    for (auto _ : state) {
+        traverse_sorted_array(sum);
+    }
+
+    benchmark::DoNotOptimize(sum);
+}
+
+static void BM_traverse_unsorted_array_branchless(benchmark::State& state) {
+    init();
+    int32_t sum = 0;
+
+    for (auto _ : state) {
+        traverse_unsorted_array_branchless(sum);
+    }
+
+    benchmark::DoNotOptimize(sum);
+}
+
+static void BM_traverse_sorted_array_branchless(benchmark::State& state) {
+    init();
+    int32_t sum = 0;
+
+    for (auto _ : state) {
+        traverse_sorted_array_branchless(sum);
+    }
+
+    benchmark::DoNotOptimize(sum);
+}
+
+BENCHMARK(BM_traverse_unsorted_array);
+BENCHMARK(BM_traverse_sorted_array);
+BENCHMARK(BM_traverse_unsorted_array_branchless);
+BENCHMARK(BM_traverse_sorted_array_branchless);
+
+BENCHMARK_MAIN();
+```
+
+**输出如下：**
+
+```
+--------------------------------------------------------------------------------
+Benchmark                                      Time             CPU   Iterations
+--------------------------------------------------------------------------------
+BM_traverse_unsorted_array                229909 ns       229886 ns         3046
+BM_traverse_sorted_array                   87657 ns        87648 ns         7977
+BM_traverse_unsorted_array_branchless      81263 ns        81253 ns         8604
+BM_traverse_sorted_array_branchless        81282 ns        81274 ns         8620
+```
+
+## 5.2 参考
+
+* [Branch-aware programming](https://stackoverflow.com/questions/32581644/branch-aware-programming)
+* [Why is processing a sorted array faster than processing an unsorted array?](https://stackoverflow.com/questions/11227809/why-is-processing-a-sorted-array-faster-than-processing-an-unsorted-array)
