@@ -53,6 +53,10 @@ date: 2018-02-05 09:25:59
     * [有什么好的数据库学习路径推荐？](https://www.zhihu.com/question/451898647/answer/1813178673)
 * [ClickHouse Blog](https://clickhouse.com/docs/zh/whats-new/changelog/)
 * [Develop your own Database](https://hpi.de/plattner/teaching/archive/winter-term-201819/develop-your-own-database.html)
+* Celebrity
+    * `Andy Pavlo`：顶尖的数据库领域专家，执教CMU数据库系统相关课程
+* [Compare Projects](https://ossinsight.io/compare/)
+* [db-fiddle](https://www.db-fiddle.com/)
 * Papers
     * Execution
         * [Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age](/resources/Morsel-Driven-Parallelism-A-NUMA-Aware-Query-Evaluation-Framework-for-the-Many-CoreAge.pdf) - ★★★★★
@@ -71,6 +75,9 @@ date: 2018-02-05 09:25:59
     * window functions
         * [Optimization of Analytic Window Functions](http://vldb.org/pvldb/vol5/p1244_yucao_vldb2012.pdf)
         * [Efficient Processing of Window Functions in Analytical SQL Queries](https://www.vldb.org/2015/program/http://www.vldb.org/pvldb/vol8/p1058-leis.pdf)
+        * [Analytic Functions in Oracle 8i](/resources/Analytic-Functions-in-Oracle-8i.pdf) - ★★★★★
+            * Minimization of number of sorts
+            * Predicate Pushdown
     * Optimizer
         * [Efficiency in the Columbia Database Query Optimizer](/resources/Efficiency-In-The-Columbia-Database-Query-Optimizer.pdf) - ★★★★★
         * [How Good Are Query Optimizers, Really?](/resources/How-Good-Are-Query-Optimizers.pdf) - ★★★★★
@@ -79,10 +86,7 @@ date: 2018-02-05 09:25:59
     * Cardinality Estimation
         * [Are We Ready For Learned Cardinality Estimation?](/resources/Are-We-Ready-For-Learned-Cardinality-Estimation.pdf)
         * [NeuroCard: One Cardinality Estimator for All Tables](/resources/NeuroCard-One-Cardinality-Estimator-for-All-Tables.pdf)
-* Celebrity
-    * `Andy Pavlo`：顶尖的数据库领域专家，执教CMU数据库系统相关课程
-* [Compare Projects](https://ossinsight.io/compare/)
-* [db-fiddle](https://www.db-fiddle.com/)
+
 
 # Cloud Native
 
