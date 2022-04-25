@@ -99,7 +99,7 @@ date: 2018-02-05 09:25:59
 
 # 9 Else
 
-* [HowtoReadPaper.pdf](/resources/paper/HowtoReadPaper.pdf) - ★★★★★
+* [How to Read a Paper.pdf](/resources/paper/How-to-Read-a-Paper.pdf) - ★★★★★
 * [陈皓-耗子哥](https://coolshell.cn/articles/author/haoel)
 * [美团技术博客](https://tech.meituan.com/)
 * [Richard Stallman-Make作者](https://www.stallman.org/)
