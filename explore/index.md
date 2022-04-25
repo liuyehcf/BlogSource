@@ -3,7 +3,7 @@ title: explore
 date: 2018-02-05 09:25:59
 ---
 
-# GNU
+# 1 GNU
 
 * [Free the Software](https://sourceware.org/) - ★★★★★
     * [GNU Binutils](https://sourceware.org/binutils/)
@@ -11,7 +11,7 @@ date: 2018-02-05 09:25:59
 * [GNU Manuals Online](https://www.gnu.org/manual/manual.html)
     * [Using the GNU Compiler Collection (GCC)](https://gcc.gnu.org/onlinedocs/gcc/)
 
-# Cpp
+# 2 Cpp
 
 * [News, Status & Discussion about Standard C++](https://isocpp.org/) - ★★★★★
     * [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines)
@@ -27,25 +27,25 @@ date: 2018-02-05 09:25:59
 * [Online Benchmark](https://quick-bench.com/)
 * 《A Tour of C++》
 
-# Code Standard
+# 3 Code Standard
 
 * [Google 开源项目风格指南](https://zh-google-styleguide.readthedocs.io/en/latest/google-cpp-styleguide/)
 * [LLVM Coding Standards](https://llvm.org/docs/CodingStandards.html)
 * [The Standard of Code Review](https://google.github.io/eng-practices/review/reviewer/standard.html)
 
-# Performance Analysis
+# 4 Performance Analysis
 
 * [Brendan Gregg's Homepage](https://www.brendangregg.com/) - ★★★★★
 * [Denis Bakhvalov](https://easyperf.net/)
     * 《Performance Analysis and Tuning on Modern CPUs》
 * [Julia Evans](https://jvns.ca/)
 
-# Schedule
+# 5 Schedule
 
 * [Linux-进程的管理与调度](https://github.com/gatieme/LDD-LinuxDeviceDrivers)
 * [调度系统设计精要](https://draveness.me/system-design-scheduler/)
 
-# DMBS
+# 6 DMBS
 
 * [编程小梦](https://blog.bcmeng.com/) - ★★★★★
     * [数据库学习资料（持续更新中）](https://blog.bcmeng.com/post/database-learning.html)
@@ -87,18 +87,17 @@ date: 2018-02-05 09:25:59
         * [Are We Ready For Learned Cardinality Estimation?](/resources/paper/Are-We-Ready-For-Learned-Cardinality-Estimation.pdf)
         * [NeuroCard: One Cardinality Estimator for All Tables](/resources/paper/NeuroCard-One-Cardinality-Estimator-for-All-Tables.pdf)
 
-
-# Cloud Native
+# 7 Cloud Native
 
 * [CloudNative 架构](http://team.jiunile.com/)
 * [敖小剑的博客](https://skyao.io/)
 * [米开朗基杨](https://fuckcloudnative.io/posts/)
 
-# Tutorial
+# 8 Tutorial
 
 * [Tutorials for Software Developers and Technopreneurs](http://tutorials.jenkov.com/)
 
-# Else
+# 9 Else
 
 * [HowtoReadPaper.pdf](/resources/paper/HowtoReadPaper.pdf) - ★★★★★
 * [陈皓-耗子哥](https://coolshell.cn/articles/author/haoel)
@@ -106,7 +105,7 @@ date: 2018-02-05 09:25:59
 * [Richard Stallman-Make作者](https://www.stallman.org/)
 * [BOT Man | John Lee](https://bot-man-jl.github.io/articles/)
 
-# 缩写表
+# 10 缩写表
 
 <table>
   <tr> <th width="80px" align="center">缩写</th> <th width="240px" align="center">全称</th> <th width="200px" align="center">其他</th> </tr>
