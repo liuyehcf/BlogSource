@@ -489,7 +489,7 @@ PAX（`Partition Attributes Across`）采用混合`NSM/DSM`方法，其中每个
 
 # 6 参考
 
-* [The Design and Implementation of Modern Column-Oriented Database Systems.pdf](/resources/The-Design-and-Implementation-of-Modern-Column-Oriented-Database-Systems.pdf)
+* [The Design and Implementation of Modern Column-Oriented Database Systems.pdf](/resources/paper/The-Design-and-Implementation-of-Modern-Column-Oriented-Database-Systems.pdf)
 
 # 7 todo
 

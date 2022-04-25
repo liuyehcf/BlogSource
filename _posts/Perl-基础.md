@@ -3757,7 +3757,7 @@ sub erupt_volcano :ScienceProject { ... }
 
 # 16 进阶
 
-[modern-perl.pdf](/resources/modern-perl.pdf)
+[modern-perl.pdf](/resources/book/modern-perl.pdf)
 
 **语言设计哲学：**
 
@@ -3871,7 +3871,7 @@ for my $line (@sorted_lines) {
 
 * [w3cschool-perl](https://www.w3cschool.cn/perl/)
 * [perl仓库-cpan](https://www.cpan.org/)
-* [modern-perl.pdf](/resources/modern-perl.pdf)
+* [modern-perl.pdf](/resources/book/modern-perl.pdf)
 * [Perl Tutorial](https://www.tutorialspoint.com/perl/perl_function_references.htm)
 * [什么编程语言写脚本好？](https://www.zhihu.com/question/505203283/answer/2266164064)
 * [Perl | qw Operator](https://www.geeksforgeeks.org/perl-qw-operator/?ref=lbp)
