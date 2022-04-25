@@ -72,6 +72,7 @@ date: 2018-02-05 09:25:59
         * [Efficient Implementation of Sorting on Multi-Core SIMD CPU Architecture](/resources/paper/Efficient-Implementation-of-Sorting-on-Multi-Core-SIMD-CPU-Architecture.pdf)
         * [Massively Parallel NUMA-aware Hash Joins](/resources/paper/Massively-Parallel-NUMA-aware-Hash-Joins.pdf)
         * [An Experimental Comparison of Thirteen Relational Equi-Joins in Main Memory](/resources/paper/An-Experimental-Comparison-of-Thirteen-Relational-Equi-Joins-in-Main-Memory.pdf)
+        * [Distributed Top-k Query Processing by Exploiting Skyline Summaries](/resources/paper/Distributed-Top-k-Query-Processing-by-Exploiting-Skyline-Summaries.pdf)
     * window functions
         * [Optimization of Analytic Window Functions](http://vldb.org/pvldb/vol5/p1244_yucao_vldb2012.pdf)
         * [Efficient Processing of Window Functions in Analytical SQL Queries](https://www.vldb.org/2015/program/http://www.vldb.org/pvldb/vol8/p1058-leis.pdf)
@@ -116,10 +117,14 @@ date: 2018-02-05 09:25:59
   <tr> <td>POSIX</td> <td>The Portable Operating System Interface</td> <td></td> </tr>
   <tr> <td>OSI</td> <td>Open Systems Interconnection</td> <td></td> </tr>
   <tr> <td>POC</td> <td>Proof of Concept</td> <td></td> </tr>
+  <tr> <td>ROI</td> <td>Return On Investment</td> <td></td> </tr>
   <tr> <td></td> <td></td> <td></td> </tr>
   <tr> <th colspan="3" align="center">职位</th> </tr>
+  <tr> <td>R&D</td> <td>Research and Development</td> <td></td> </tr>
   <tr> <td>SA</td> <td>Solution Architect</td> <td></td> </tr>
   <tr> <td>SRE</td> <td>Site Reliability Engineering </br> (Server Restart Engineer😁)</td> <td></td> </tr>
+  <tr> <td>DBA</td> <td>Database Administration</td> <td></td> </tr>
+  <tr> <td>QA</td> <td>Quality Assurance</td> <td></td> </tr>
   <tr> <th colspan="3" align="center">Github</th> </tr>
   <tr> <td>PR</td> <td>Pull Request</td> <td></td> </tr>
   <tr> <td>LGTM</td> <td>Looks Good To Me</td> <td>代码已经过 review，可以合并</td> </tr>
