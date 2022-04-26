@@ -1504,6 +1504,8 @@ nmap <leader>rf <Plug>(coc-fix-current)
 " 自动根据语义进行范围选择
 nmap <c-s> <Plug>(coc-range-select)
 xmap <c-s> <Plug>(coc-range-select)
+nmap <c-b> <Plug>(coc-range-select-backward)
+xmap <c-b> <Plug>(coc-range-select-backward)
 
 " 代码导航的相关映射
 nmap <leader>rd <Plug>(coc-definition)
@@ -2710,6 +2712,8 @@ nmap <leader>rf <Plug>(coc-fix-current)
 " 自动根据语义进行范围选择
 nmap <c-s> <Plug>(coc-range-select)
 xmap <c-s> <Plug>(coc-range-select)
+nmap <c-b> <Plug>(coc-range-select-backward)
+xmap <c-b> <Plug>(coc-range-select-backward)
 
 " 代码导航的相关映射
 nmap <leader>rd <Plug>(coc-definition)
