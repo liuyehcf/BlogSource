@@ -27,7 +27,7 @@ categories:
 | [Massively Parallel NUMA-aware Hash Joins](/resources/paper/Massively-Parallel-NUMA-aware-Hash-Joins.pdf) | <li>`Execution`</li><li>`Sort`</li> |  |  |  |
 | [An Experimental Comparison of Thirteen Relational Equi-Joins in Main Memory](/resources/paper/An-Experimental-Comparison-of-Thirteen-Relational-Equi-Joins-in-Main-Memory.pdf) | <li>`Execution`</li><li>`Sort`</li> |  |  |  |
 | [Distributed Top-k Query Processing by Exploiting Skyline Summaries](/resources/paper/Distributed-Top-k-Query-Processing-by-Exploiting-Skyline-Summaries.pdf) | <li>`Execution`</li><li>`Sort`</li> |  | ✅ | ★★★ |
-| [Optimization of Analytic Window Functions](http://vldb.org/pvldb/vol5/p1244_yucao_vldb2012.pdf) | <li>`Execution`</li><li>`Window`</li> |  |  |  |
+| [Optimization of Analytic Window Functions](/resources/paper/Optimization-of-Analytic-Window-Functions.pdf) | <li>`Execution`</li><li>`Window`</li> |  |  |  |
 | [Efficient Processing of Window Functions in Analytical SQL Queries](https://www.vldb.org/2015/program/http://www.vldb.org/pvldb/vol8/p1058-leis.pdf) | <li>`Execution`</li><li>`Window`</li> |  |  |  |
 | [Analytic Functions in Oracle 8i](/resources/paper/Analytic-Functions-in-Oracle-8i.pdf) | <li>`Execution`</li><li>`Window`</li> | <li>Minimization of number of sorts</li><li>Predicate Pushdown</li> | ✅ | ★★★★★ |
 | [Efficiency in the Columbia Database Query Optimizer](/resources/paper/Efficiency-In-The-Columbia-Database-Query-Optimizer.pdf) | <li>`Optimizer`</li> |  | ✅ | ★★★★★ |
