@@ -49,7 +49,7 @@ date: 2018-02-05 09:25:59
 
 * [编程小梦](https://blog.bcmeng.com/) - ★★★★★
     * [数据库学习资料（持续更新中）](https://blog.bcmeng.com/post/database-learning.html)
-* [satanson](https://www.zhihu.com/people/grakra)
+* [satanson](https://www.zhihu.com/people/grakra) - ★★★★★
     * [有什么好的数据库学习路径推荐？](https://www.zhihu.com/question/451898647/answer/1813178673)
 * [ClickHouse Blog](https://clickhouse.com/docs/zh/whats-new/changelog/)
 * [Develop your own Database](https://hpi.de/plattner/teaching/archive/winter-term-201819/develop-your-own-database.html)
@@ -57,36 +57,6 @@ date: 2018-02-05 09:25:59
     * `Andy Pavlo`：顶尖的数据库领域专家，执教CMU数据库系统相关课程
 * [Compare Projects](https://ossinsight.io/compare/)
 * [db-fiddle](https://www.db-fiddle.com/)
-* Papers
-    * Execution
-        * [Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age](/resources/paper/Morsel-Driven-Parallelism-A-NUMA-Aware-Query-Evaluation-Framework-for-the-Many-CoreAge.pdf) - ★★★★★
-        * [Push vs. Pull-Based Loop Fusion in Query Engines](/resources/paper/Push-vs-Pull-Based-Loop-Fusion-in-Query-Engines.pdf)
-        * [Implementing Database Operations Using SIMD Instructions](http://www.cs.columbia.edu/~kar/pubsk/simd.pdf)
-    * Sort
-        * [Design and Evaluation of Main Memory Hash Join Algorithms for Multi-core CPUs](/resources/paper/Design-and-Evaluation-of-Main-Memory-Hash-Join-Algorithms-for-Multi-core-CPUs.pdf)
-        * [Sort vs. Hash Revisited Fast Join Implementation on Modern Multi-Core CPUs](/resources/paper/Sort-vs.-Hash-Revisited-Fast-Join-Implementation-on-Modern-Multi-Core-CPUs.pdf)
-        * [Optimizing main-memory join on modern hardware](https://ieeexplore.ieee.org/abstract/document/1019210/)
-            * radix-cluster algorithm
-        * [Massively Parallel Sort-Merge Joins in Main Memory Multi-Core Database Systems](/resources/paper/Massively-Parallel-Sort-Merge-Joins-in-Main-Memory-Multi-Core-Database-Systems.pdf)
-        * [Main-Memory Hash Joins on Multi-Core CPUs Tuning to the Underlying Hardware](/resources/paper/Main-Memory-Hash-Joins-on-Multi-Core-CPUs-Tuning-to-the-Underlying-Hardware.pdf)
-        * [Efficient Implementation of Sorting on Multi-Core SIMD CPU Architecture](/resources/paper/Efficient-Implementation-of-Sorting-on-Multi-Core-SIMD-CPU-Architecture.pdf)
-        * [Massively Parallel NUMA-aware Hash Joins](/resources/paper/Massively-Parallel-NUMA-aware-Hash-Joins.pdf)
-        * [An Experimental Comparison of Thirteen Relational Equi-Joins in Main Memory](/resources/paper/An-Experimental-Comparison-of-Thirteen-Relational-Equi-Joins-in-Main-Memory.pdf)
-        * [Distributed Top-k Query Processing by Exploiting Skyline Summaries](/resources/paper/Distributed-Top-k-Query-Processing-by-Exploiting-Skyline-Summaries.pdf)
-    * window functions
-        * [Optimization of Analytic Window Functions](http://vldb.org/pvldb/vol5/p1244_yucao_vldb2012.pdf)
-        * [Efficient Processing of Window Functions in Analytical SQL Queries](https://www.vldb.org/2015/program/http://www.vldb.org/pvldb/vol8/p1058-leis.pdf)
-        * [Analytic Functions in Oracle 8i](/resources/paper/Analytic-Functions-in-Oracle-8i.pdf) - ★★★★★
-            * Minimization of number of sorts
-            * Predicate Pushdown
-    * Optimizer
-        * [Efficiency in the Columbia Database Query Optimizer](/resources/paper/Efficiency-In-The-Columbia-Database-Query-Optimizer.pdf) - ★★★★★
-        * [How Good Are Query Optimizers, Really?](/resources/paper/How-Good-Are-Query-Optimizers.pdf) - ★★★★★
-        * [The Cascades Framework for Query Optimization](/resources/paper/The-Cascades-Framework-For-Query-Optimization.pdf)
-        * [Orca: A Modular Query Optimizer Architecture for Big Data](/resources/paper/Orca-A-Modular-Query-Optimizer-Architecture-For-Big-Data.pdf)
-    * Cardinality Estimation
-        * [Are We Ready For Learned Cardinality Estimation?](/resources/paper/Are-We-Ready-For-Learned-Cardinality-Estimation.pdf)
-        * [NeuroCard: One Cardinality Estimator for All Tables](/resources/paper/NeuroCard-One-Cardinality-Estimator-for-All-Tables.pdf)
 
 # 7 Cloud Native
 

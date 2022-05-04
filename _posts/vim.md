@@ -1587,6 +1587,13 @@ call plug#end()
 }
 ```
 
+**使用：**
+
+* `?`：帮助文档
+* `q`：退出
+* `a`：新建文件
+* `A`：新建目录
+
 #### 3.10.1.2 [coc-java](https://github.com/search?q=coc-java)
 
 **`Java`语言的`LSP-Server`的实现是[jdt.ls](https://github.com/eclipse/eclipse.jdt.ls)。而`coc-java`是`coc.nvim`的扩展，对`jdt.ls`进行进一步的封装**
