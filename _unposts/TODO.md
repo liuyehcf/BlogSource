@@ -12,6 +12,7 @@ categories:
 <!--more-->
 
 1. Linux-常用命令
+    * numactl --hardware
 1. 性能分析
     * bcc
     * bpftrace
