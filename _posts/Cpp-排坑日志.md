@@ -184,7 +184,7 @@ gcc -o main main.cpp -O3 -lstdc++ -std=gnu++17 -Wall
 ./main
 ```
 
-**错误原因：编译上述代码时，编译器已经提示了，就是`_fetch_from_hash_map`和`_fetch_from_null_key_value`这两个函数，缺少返回值。导致在内联的时候出现了逻辑性的问题**
+**错误原因：编译上述代码时，编译器已经提示了，就是`_fetch_from_hash_map`和`_fetch_from_null_key_value`这两个函数，缺少返回值。导致在内联的时候出现了逻辑性的问题（`consumer`和这两个函数的返回值都是`bool`）**
 
 * 同样逻辑的代码在项目中并未提示缺少返回值（项目中用到了模板，逻辑更复杂，编译器并未分析出来）
 * core的堆栈也十分奇怪，要么是挂在`std::function`上，要么挂在`std::any::has_value`上，十分具有迷惑性
