@@ -101,6 +101,7 @@ categories:
     * std::bind 如何实现
     * std::remove_if
     * std::any 如何实现
+    * 模板类继承自另一个模板类，如何引用父类中的成员
     * futex
     * [apache-arrow](https://github.com/apache/arrow)
 1. java

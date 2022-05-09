@@ -1462,6 +1462,18 @@ void bar() {
 }
 ```
 
+## 4.7 template参数列表中定义类型别名
+
+语法上，我们是无法在template的参数列表中定义别名的（无法使用`using`）。但是我们可以通过定义有默认值的类型形参来实现类似类型别名的功能，如下：
+
+```cpp
+template <typename HashMap, typename KeyType = typename HashMap::key_type,
+          typename ValueType = typename HashMap::mapped_type>
+ValueType& get(HashMap& map, const KeyType& key) {
+    return map[key];
+}
+```
+
 # 5 元编程
 
 **本章节转载摘录自[浅谈 C++ 元编程](https://bot-man-jl.github.io/articles/?post=2017/Cpp-Metaprogramming#%E4%BB%80%E4%B9%88%E6%98%AF%E5%85%83%E7%BC%96%E7%A8%8B)**
