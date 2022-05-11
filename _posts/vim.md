@@ -1593,6 +1593,8 @@ call plug#end()
 * `q`：退出
 * `a`：新建文件
 * `A`：新建目录
+* `r`：重命名
+* `df/dF`：删除文件，`df`放入回收站，`dF`永久删除
 
 #### 3.10.1.2 [coc-java](https://github.com/search?q=coc-java)
 

@@ -30,9 +30,9 @@ categories:
 | [Optimization of Analytic Window Functions](/resources/paper/Optimization-of-Analytic-Window-Functions.pdf) | <li>`Execution`</li><li>`Window`</li> | <li>SS-reorderable</li><li>Cover Set-based Evaluation</li> | ✅ | ★★★★★ |
 | [Efficient Processing of Window Functions in Analytical SQL Queries](/resources/paper/Efficient-Processing-of-Window-Functions-in-Analytical-SQL-Queries.pdf) | <li>`Execution`</li><li>`Window`</li> | <li>**Concepts**</li><li>Hash Groups</li><li>Segment Tree</li> | ✅ | ★★★★★ |
 | [Analytic Functions in Oracle 8i](/resources/paper/Analytic-Functions-in-Oracle-8i.pdf) | <li>`Execution`</li><li>`Window`</li> | <li>Minimization of number of sorts</li><li>Predicate Pushdown</li> | ✅ | ★★★★★ |
-| [Efficiency in the Columbia Database Query Optimizer](/resources/paper/Efficiency-In-The-Columbia-Database-Query-Optimizer.pdf) | <li>`Optimizer`</li> |  | ✅ | ★★★★★ |
-| [How Good Are Query Optimizers, Really?](/resources/paper/How-Good-Are-Query-Optimizers.pdf) | <li>`Optimizer`</li> |  | ✅ | ★★★★★ |
-| [The Cascades Framework for Query Optimization](/resources/paper/The-Cascades-Framework-For-Query-Optimization.pdf) | <li>`Optimizer`</li> |  |  |  |
+| [The Cascades Framework for Query Optimization](/resources/paper/The-Cascades-Framework-For-Query-Optimization.pdf) | <li>`Optimizer`</li> | <li>Framework Concepts and Components</li><li>Sketchily</li> | ✅ | ★★★ |
+| [Efficiency in the Columbia Database Query Optimizer](/resources/paper/Efficiency-In-The-Columbia-Database-Query-Optimizer.pdf) | <li>`Optimizer`</li> | <li>Framework Concepts and Components</li><li>Detailedly</li> | ✅ | ★★★★★ |
+| [How Good Are Query Optimizers, Really?](/resources/paper/How-Good-Are-Query-Optimizers.pdf) | <li>`Optimizer`</li> | <li>Cardinality Estimation is more important than Cost Model</li> | ✅ | ★★★★★ |
 | [Orca: A Modular Query Optimizer Architecture for Big Data](/resources/paper/Orca-A-Modular-Query-Optimizer-Architecture-For-Big-Data.pdf) | <li>`Optimizer`</li> |  |  |  |
 | [Are We Ready For Learned Cardinality Estimation?](/resources/paper/Are-We-Ready-For-Learned-Cardinality-Estimation.pdf) | <li>`Optimizer`</li><li>`Cardinality Estimator`</li> | <li>Cardinality Estimator</li><li>Cost Model</li> | ✅ | ★★★★★ |
 | [NeuroCard: One Cardinality Estimator for All Tables](/resources/paper/NeuroCard-One-Cardinality-Estimator-for-All-Tables.pdf) | <li>`Optimizer`</li><li>`Cardinality Estimator`</li> |  |  |  |
