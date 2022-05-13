@@ -1514,6 +1514,9 @@ nmap <leader>ri <Plug>(coc-implementation)
 nmap <leader>rr <Plug>(coc-references)
 nmap <leader>rn <Plug>(coc-rename)
 
+" CocList相关映射
+nnoremap <silent> <leader>cr :CocListResume<CR>
+
 call plug#end()
 ```
 
@@ -2730,6 +2733,9 @@ nmap <leader>ry <Plug>(coc-type-definition)
 nmap <leader>ri <Plug>(coc-implementation)
 nmap <leader>rr <Plug>(coc-references)
 nmap <leader>rn <Plug>(coc-rename)
+
+" CocList相关映射
+nnoremap <silent> <leader>cr :CocListResume<CR>
 
 " 将 打开文件管理器 映射到快捷键 [Space] + e
 nmap <space>e <cmd>CocCommand explorer<cr>

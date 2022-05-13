@@ -33,6 +33,6 @@ categories:
 | [The Cascades Framework for Query Optimization](/resources/paper/The-Cascades-Framework-For-Query-Optimization.pdf) | <li>`Optimizer`</li> | <li>Framework Concepts and Components</li><li>Sketchily</li> | ✅ | ★★★ |
 | [Efficiency in the Columbia Database Query Optimizer](/resources/paper/Efficiency-In-The-Columbia-Database-Query-Optimizer.pdf) | <li>`Optimizer`</li> | <li>Framework Concepts and Components</li><li>Detailedly</li> | ✅ | ★★★★★ |
 | [How Good Are Query Optimizers, Really?](/resources/paper/How-Good-Are-Query-Optimizers.pdf) | <li>`Optimizer`</li> | <li>Cardinality Estimation is more important than Cost Model</li> | ✅ | ★★★★★ |
-| [Orca: A Modular Query Optimizer Architecture for Big Data](/resources/paper/Orca-A-Modular-Query-Optimizer-Architecture-For-Big-Data.pdf) | <li>`Optimizer`</li> |  |  |  |
+| [Orca: A Modular Query Optimizer Architecture for Big Data](/resources/paper/Orca-A-Modular-Query-Optimizer-Architecture-For-Big-Data.pdf) | <li>`Optimizer`</li> | <li>Easy to integrate into other systems</li><li>Parallel Optimization</li> |  | ★★★ |
 | [Are We Ready For Learned Cardinality Estimation?](/resources/paper/Are-We-Ready-For-Learned-Cardinality-Estimation.pdf) | <li>`Optimizer`</li><li>`Cardinality Estimator`</li> | <li>Cardinality Estimator</li><li>Cost Model</li> | ✅ | ★★★★★ |
 | [NeuroCard: One Cardinality Estimator for All Tables](/resources/paper/NeuroCard-One-Cardinality-Estimator-for-All-Tables.pdf) | <li>`Optimizer`</li><li>`Cardinality Estimator`</li> |  |  |  |
