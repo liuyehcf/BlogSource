@@ -36,3 +36,12 @@ categories:
 | [Orca: A Modular Query Optimizer Architecture for Big Data](/resources/paper/Orca-A-Modular-Query-Optimizer-Architecture-For-Big-Data.pdf) | <li>`Optimizer`</li> | <li>Easy to integrate into other systems</li><li>Parallel Optimization</li> |  | ★★★ |
 | [Are We Ready For Learned Cardinality Estimation?](/resources/paper/Are-We-Ready-For-Learned-Cardinality-Estimation.pdf) | <li>`Optimizer`</li><li>`Cardinality Estimator`</li> | <li>Cardinality Estimator</li><li>Cost Model</li> | ✅ | ★★★★★ |
 | [NeuroCard: One Cardinality Estimator for All Tables](/resources/paper/NeuroCard-One-Cardinality-Estimator-for-All-Tables.pdf) | <li>`Optimizer`</li><li>`Cardinality Estimator`</li> |  |  |  |
+| [Sampling-Based Estimation of the Number of Distinct Values of an Attribute](/resources/paper/Sampling-Based-Estimation-of-the-Number-of-Distinct-Values-of-an-Attribute.pdf) | <li>`Optimizer`</li><li>`Sampling`</li> | <li>Introduce Many Estimators</li><li>Data Skewness</li> | ✅ | ★★★★★ |
+| [Towards Estimation Error Guarantees for Distinct Values](https://dl.acm.org/doi/pdf/10.1145/335168.335230) | <li>`Optimizer`</li><li>`Sampling`</li> |  |  |  |
+
+# 2 Serverless
+
+| 题目 | 分类 | 概要 | 状态 | 推荐级别 |
+|:--|:--|:--|:--|:--|
+| [Cloud Programming Simplified: A Berkeley View on Serverless Computing](/resources/paper/Cloud-Programming-Simplified-A-Berkeley-View-on-Serverless-Computing.pdf) | <li>`Survey`</li> |  | ✅ | ★★★★★ |
+| [Amazon Redshift Re-invented](/resources/paper/Amazon-Redshit-Re-invented.pdf) | <li>`Amazon`</li> |  |  |  |
