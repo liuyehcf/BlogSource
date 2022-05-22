@@ -1481,8 +1481,8 @@ function! s:check_back_space() abort
 endfunction
 
 " 在编辑模式下，将 <cr> 配置成选中当前补全选项
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
-                              \: "\<c-g>u\<cr>\<c-r>=coc#on_enter()\<cr>"
+" inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+"                               \: "\<c-g>u\<cr>\<c-r>=coc#on_enter()\<cr>"
 
 " K 查看文档
 nnoremap <silent> K :call <SID>show_documentation()<cr>
@@ -1502,9 +1502,9 @@ nmap <c-j> <Plug>(coc-diagnostic-next)
 nmap <leader>rf <Plug>(coc-fix-current)
 
 " 自动根据语义进行范围选择
-nmap <c-s> <Plug>(coc-range-select)
+smap <c-s> <Plug>(coc-range-select)
 xmap <c-s> <Plug>(coc-range-select)
-nmap <c-b> <Plug>(coc-range-select-backward)
+smap <c-b> <Plug>(coc-range-select-backward)
 xmap <c-b> <Plug>(coc-range-select-backward)
 
 " 代码导航的相关映射
@@ -1515,9 +1515,9 @@ nmap <leader>rr <Plug>(coc-references)
 nmap <leader>rn <Plug>(coc-rename)
 
 " CocList相关映射
-nnoremap <silent> <leader>cr :CocListResume<CR>
-nnoremap <silent> <leader>cn :CocNext<CR>
-nnoremap <silent> <leader>cp :CocPrev<CR>
+nnoremap <silent> <leader>cr :CocListResume<cr>
+nnoremap <silent> <leader>cn :CocNext<cr>
+nnoremap <silent> <leader>cp :CocPrev<cr>
 
 call plug#end()
 ```
@@ -2703,8 +2703,8 @@ function! s:check_back_space() abort
 endfunction
 
 " 在编辑模式下，将 <cr> 配置成选中当前补全选项
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
-                              \: "\<c-g>u\<cr>\<c-r>=coc#on_enter()\<cr>"
+" inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+"                               \: "\<c-g>u\<cr>\<c-r>=coc#on_enter()\<cr>"
 
 " K 查看文档
 nnoremap <silent> K :call <SID>show_documentation()<cr>
@@ -2724,9 +2724,9 @@ nmap <c-j> <Plug>(coc-diagnostic-next)
 nmap <leader>rf <Plug>(coc-fix-current)
 
 " 自动根据语义进行范围选择
-nmap <c-s> <Plug>(coc-range-select)
+smap <c-s> <Plug>(coc-range-select)
 xmap <c-s> <Plug>(coc-range-select)
-nmap <c-b> <Plug>(coc-range-select-backward)
+smap <c-b> <Plug>(coc-range-select-backward)
 xmap <c-b> <Plug>(coc-range-select-backward)
 
 " 代码导航的相关映射
@@ -2737,9 +2737,9 @@ nmap <leader>rr <Plug>(coc-references)
 nmap <leader>rn <Plug>(coc-rename)
 
 " CocList相关映射
-nnoremap <silent> <leader>cr :CocListResume<CR>
-nnoremap <silent> <leader>cn :CocNext<CR>
-nnoremap <silent> <leader>cp :CocPrev<CR>
+nnoremap <silent> <leader>cr :CocListResume<cr>
+nnoremap <silent> <leader>cn :CocNext<cr>
+nnoremap <silent> <leader>cp :CocPrev<cr>
 
 " 将 打开文件管理器 映射到快捷键 [Space] + e
 nmap <space>e <cmd>CocCommand explorer<cr>
