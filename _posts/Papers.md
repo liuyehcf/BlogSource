@@ -44,4 +44,4 @@ categories:
 | 题目 | 分类 | 概要 | 状态 | 推荐级别 |
 |:--|:--|:--|:--|:--|
 | [Cloud Programming Simplified: A Berkeley View on Serverless Computing](/resources/paper/Cloud-Programming-Simplified-A-Berkeley-View-on-Serverless-Computing.pdf) | <li>`Survey`</li> |  | ✅ | ★★★★★ |
-| [Amazon Redshift Re-invented](/resources/paper/Amazon-Redshit-Re-invented.pdf) | <li>`Amazon`</li> |  |  |  |
+| [Amazon Redshift Re-invented](/resources/paper/Amazon-Redshit-Re-invented.pdf) | <li>`Execution`</li><li>`Amazon`</li> | <li>Architecture</li><li>MPP</li><li>Code Generation & Compilation Service</li><li>Prefetching</li><li>AZ64 Enconding</li><li>AQUA & Computational Storage, do simple computation at the storage</li><li>Automatic Table Optimization(for a given workloads)</li><li>support SUPER value, typeless, can hold anything(int, double, array, json, etc.)</li> | ✅ | ★★★★★ |
