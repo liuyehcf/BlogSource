@@ -101,6 +101,13 @@ categories:
     * `Slab`：slab内存
         * `SReclaimable`：slab中可回收的部分，与`MemAvailable`相关
         * `SUnreclaim`：slab中不可回收的部分
+1. `/proc/zoneinfo`
+    * `Linux 2.6`开始支持`NUMA, Non-Uniform Memory Access`内存管理模式。在多个CPU的系统中，内存按CPU划分为不同的`Node`，每个CPU挂一个`Node`，其访问本地`Node`比访问其他CPU上的`Node`速度要快很多
+    * `numactl -H`可以查看`NUMA`硬件信息
+    * `Node`下面划分为一个或多个`Zone`，为啥要有`Zone`，两个原因：
+        1. `DMA`设备能够访问的内存范围有限（`ISA`设备只能访问`16MB`）
+        1. `x86-32bit`系统地址空间有限（32位最多只能4GB），为了使用更大内存，需要使用`HIGHMEM`机制
+    * `cat /proc/zoneinfo | grep -E "zone|free |managed"`
 1. `/proc/slabinfo`：slab内存的详细分配信息
 1. `/proc/cgroups`：当前内核支持的cgroup子系统
 1. `/proc/filesystems`：当前内核支持的文件系统列表

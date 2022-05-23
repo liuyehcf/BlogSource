@@ -26,6 +26,8 @@ date: 2018-02-05 09:25:59
 * [Online Compiler](https://godbolt.org/)
 * [Online Benchmark](https://quick-bench.com/)
 * 《A Tour of C++》
+* Celebrity
+    * `Bjarne Stroustrup`：C++之父
 
 # 3 Code Standard
 
@@ -75,6 +77,7 @@ date: 2018-02-05 09:25:59
 * [美团技术博客](https://tech.meituan.com/)
 * [Richard Stallman-Make作者](https://www.stallman.org/)
 * [BOT Man | John Lee](https://bot-man-jl.github.io/articles/)
+* `Jeff Dean`：Google Research Scientists and Engineers
 
 # 10 缩写表
 
