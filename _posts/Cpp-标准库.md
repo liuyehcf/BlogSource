@@ -481,6 +481,7 @@ int main() {
 
 1. `std::map`和`std::unordered_map`的`value`是`Pointer Stability`，即地址在容器自身容量调整前后是不会变的
 1. `std::map`或者`std::set`用下标访问后，即便访问前元素不存在，也会插入一个默认值。因此下标访问是非`const`的
+1. 容器在扩容时，调用的是元素的拷贝构造函数
 
 # 16 C标准库
 

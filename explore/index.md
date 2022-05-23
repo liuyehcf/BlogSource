@@ -92,6 +92,7 @@ date: 2018-02-05 09:25:59
   <tr> <td>POC</td> <td>Proof of Concept</td> <td></td> </tr>
   <tr> <td>ROI</td> <td>Return On Investment</td> <td></td> </tr>
   <tr> <td>SLA</td> <td>Service Level Agreement</td> <td></td> </tr>
+  <tr> <td>FWD</td> <td>Forward Declaration</td> <td></td> </tr>
   <tr> <td></td> <td></td> <td></td> </tr>
   <tr> <th colspan="3" align="center">职位</th> </tr>
   <tr> <td>R&D</td> <td>Research and Development</td> <td></td> </tr>
