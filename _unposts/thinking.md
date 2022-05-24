@@ -46,6 +46,7 @@ categories:
         * `pull`：内核态。整个执行，从root算子的视角来看，就一次函数调用，通过`next`方法从孩子节点拉去全量数据。并发查询时，会使用大量线程，线程切换开销较大
         * `push`：用户态。`pipeline`在用户态实现了调度，数据从`source`算子到`sink`算子的一次流转称为一次执行，每次调度可以进行一次或者多次执行。线程数量基本与核数相关，不会随着并发上升而提执行线程数量，线程切换开销较小
             * work stealing
+            * thread affinity, [C++11 threads, affinity and hyperthreading](https://eli.thegreenplace.net/2016/c11-threads-affinity-and-hyperthreading/)
     * `limit`
         * `pull`：
             * 对limit算子友好。`source`算子没有输入的时候，提前结束方法即可，无需额外控制流

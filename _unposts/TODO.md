@@ -104,9 +104,7 @@ categories:
     * std::guard(be/src/runtime/decimalv3.h,be/src/util/guard.h)
     * std::bind 如何实现
     * std::remove_if
-    * std::any 如何实现
     * struct alising
-    * static_pointer_cast
     * 模板类继承自另一个模板类，如何引用父类中的成员
     * 如何消除虚函数的调用（down_cast）
     * futex
@@ -133,7 +131,7 @@ categories:
         * L1 Miss
         * LLC Miss
         * Branch Miss
-    * codegen原理
+    * codegen
     * git worktree
     * 向量化
         * 无法向量化的场景

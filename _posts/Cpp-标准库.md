@@ -13,7 +13,7 @@ categories:
 
 # 1 any
 
-**`std::any`用于持有任意类型的对象，类似于Java中的`java.lang.Object`**
+**`std::any`用于持有任意类型的对象，类似于Java中的`java.lang.Object`。其实现方式也很直观，存储了指定对象的地址**
 
 * `std::any_cast`用于将`any`对象转换成对应的类型。若类型错误则会抛出`std::bad_any_cast`
 
@@ -169,6 +169,13 @@ auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).c
 # 7 memory
 
 ## 7.1 std::shared_ptr
+
+**类型转换**
+
+* `std::static_pointer_cast`
+* `std::dynamic_pointer_cast`
+* `std::const_pointer_cast`
+* `std::reinterpret_pointer_cast`
 
 **只在函数使用指针，但并不保存对象内容**
 
@@ -479,7 +486,6 @@ int main() {
 
 ## 15.1 Tips
 
-1. `std::map`和`std::unordered_map`的`value`是`Pointer Stability`，即地址在容器自身容量调整前后是不会变的
 1. `std::map`或者`std::set`用下标访问后，即便访问前元素不存在，也会插入一个默认值。因此下标访问是非`const`的
 1. 容器在扩容时，调用的是元素的拷贝构造函数
 

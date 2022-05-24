@@ -17,7 +17,7 @@ categories:
 |:--|:--|:--|:--|:--|
 | [Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age](/resources/paper/Morsel-Driven-Parallelism-A-NUMA-Aware-Query-Evaluation-Framework-for-the-Many-CoreAge.pdf) | <li>`Execution`</li><li>`Parallel`</li> |  | ✅ | ★★★★★ |
 | [Push vs. Pull-Based Loop Fusion in Query Engines](/resources/paper/Push-vs-Pull-Based-Loop-Fusion-in-Query-Engines.pdf) | <li>`Execution`</li> |  | ✅ | ★★★ |
-| [Implementing Database Operations Using SIMD Instructions](http://www.cs.columbia.edu/~kar/pubsk/simd.pdf) | <li>`Execution`</li> |  |  |  |
+| [Implementing Database Operations Using SIMD Instructions](http://www.cs.columbia.edu/~kar/pubsk/simd.pdf) | <li>`Execution`</li> | <li>Branch Misprediction</li> |  | ★★★★★ |
 | [Design and Evaluation of Main Memory Hash Join Algorithms for Multi-core CPUs](/resources/paper/Design-and-Evaluation-of-Main-Memory-Hash-Join-Algorithms-for-Multi-core-CPUs.pdf) | <li>`Execution`</li><li>`Sort`</li> |  |  |  |
 | [Sort vs. Hash Revisited Fast Join Implementation on Modern Multi-Core CPUs](/resources/paper/Sort-vs.-Hash-Revisited-Fast-Join-Implementation-on-Modern-Multi-Core-CPUs.pdf) | <li>`Execution`</li><li>`Sort`</li> |  |  |  |
 | [Optimizing main-memory join on modern hardware](https://ieeexplore.ieee.org/abstract/document/1019210/) | <li>`Execution`</li><li>`Sort`</li> | <li>radix-cluster algorithm</li> |  |  |
