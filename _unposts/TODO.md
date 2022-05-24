@@ -79,12 +79,6 @@ categories:
     * 测试集
         * tsbs
         * taxi
-    * serverless论文
-        * Cloud-Programming-Simplified-A-Berkeley-View-on-Serverless-Computing
-    * 执行器
-        * pull vs. push
-            * pull：对limit友好，对filter不友好
-            * push：对filter友好，对limit不友好
     * postgre
         * 算数相关的函数：src/backend/utils/adt/numeric.c
     * clickhouse
@@ -103,7 +97,6 @@ categories:
 1. cpp
     * std::guard(be/src/runtime/decimalv3.h,be/src/util/guard.h)
     * std::bind 如何实现
-    * std::remove_if
     * struct alising
     * 模板类继承自另一个模板类，如何引用父类中的成员
     * 如何消除虚函数的调用（down_cast）
@@ -123,6 +116,7 @@ categories:
         * [BRPC的精华全在bthread上啦（二）：ParkingLot 与Worker同步任务状态](https://zhuanlan.zhihu.com/p/346081659)
         * [BRPC的精华全在bthread上啦（三）：bthread上下文的创建](https://zhuanlan.zhihu.com/p/347499412)
         * [BRPC的精华都在bthread上啦（四）：尾声](https://zhuanlan.zhihu.com/p/350582218)
+        * 在brpc内使用`std::mutex`会有问题
     * thrift
     * 性能对比可以关注的指标
         * cycles

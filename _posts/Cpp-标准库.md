@@ -11,17 +11,60 @@ categories:
 
 <!--more-->
 
-# 1 any
+# 1 algorithm
 
-**`std::any`用于持有任意类型的对象，类似于Java中的`java.lang.Object`。其实现方式也很直观，存储了指定对象的地址**
+## 1.1 std::remove_if
+
+`std::remove_if`用于将容器中满足条件的元素挪到最后，并返回指向这部分元素的起始迭代器，一般配合`erase`一起用
+
+```cpp
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
+int main() {
+    std::vector<int> container{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    container.erase(std::remove_if(container.begin(), container.end(), [](int v) { return v % 2 != 0; }),
+                    container.end());
+    for (const auto& v : container) {
+        std::cout << v << std::endl;
+    }
+    return 0;
+}
+```
+
+# 2 any
+
+**`std::any`用于持有任意类型的对象，类似于Java中的`java.lang.Object`**
 
 * `std::any_cast`用于将`any`对象转换成对应的类型。若类型错误则会抛出`std::bad_any_cast`
 
-# 2 atomic
+**其实现方式也很直观，在堆上分配内存，用该分配的内存存储拷贝后的对象**
 
-## 2.1 内存一致性模型
+```cpp
+#include <any>
+#include <iostream>
 
-### 2.1.1 Sequential consistency model
+struct Object {
+    Object() { std::cout << "Object()" << std::endl; }
+    Object(const Object& obj) { std::cout << "Object(const Object& obj)" << std::endl; }
+    Object(Object&& obj) { std::cout << "Object(Object&& obj)" << std::endl; }
+};
+
+int main() {
+    Object obj1;
+    Object obj2;
+    std::any a1 = obj1;
+    std::any a2 = std::move(obj2);
+    return 0;
+}
+```
+
+# 3 atomic
+
+## 3.1 内存一致性模型
+
+### 3.1.1 Sequential consistency model
 
 > the result of any execution is the same as if the operations of all the processors were executed in some sequential order, and the operations of each individual processor appear in this sequence in the order specified by its program
 
@@ -31,14 +74,14 @@ categories:
 1. **线程执行的交错顺序可以是任意的，但是所有线程所看见的整个程序的总体执行顺序都是一样的（整个程序的视角）**
     * 即不能存在这样一种情况，对于写操作`W1`和`W2`，处理器1看来，顺序是：`W1 -> W2`；而处理器2看来，顺序是：`W2 -> W1`
 
-### 2.1.2 Relaxed consistency model
+### 3.1.2 Relaxed consistency model
 
 **`Relaxed consistency model`也称为宽松内存一致性模型，它的特点是：**
 
 1. **唯一的要求是在同一线程中，对同一原子变量的访问不可以被重排（单个线程的视角）**
 1. **除了保证操作的原子性之外，没有限定前后指令的顺序，其他线程看到数据的变化顺序也可能不一样（整个程序的视角）**
 
-## 2.2 std::atomic
+## 3.2 std::atomic
 
 `compare_exchange_strong(T& expected_value, T new_value)`方法的第一个参数是个左值
 
@@ -62,7 +105,7 @@ result: 0, flag: 1, expected: 1
 
 **`compare_exchange_weak(T& expected_value, T new_value)`方法与`strong`版本基本相同，唯一的区别是`weak`版本允许偶然出乎意料的返回（相等时却返回了false），在大部分场景中，这种意外是可以接受的，通常比`strong`版本有更高的性能**
 
-## 2.3 std::memory_order
+## 3.3 std::memory_order
 
 这是个枚举类型，包含6个枚举值
 
@@ -73,7 +116,7 @@ result: 0, flag: 1, expected: 1
 * `memory_order_acq_rel`
 * `memory_order_seq_cst`
 
-### 2.3.1 顺序一致次序（sequential consisten ordering）
+### 3.3.1 顺序一致次序（sequential consisten ordering）
 
 `memory_order_seq_cst`属于这种内存模型
 
@@ -81,7 +124,7 @@ result: 0, flag: 1, expected: 1
 
 **该原子操作前后的读写（包括非原子的读写操作）不能跨过该操作乱序；该原子操作之前的写操作（包括非原子的写操作）都能被所有线程观察到**
 
-### 2.3.2 松弛次序（relaxed ordering）
+### 3.3.2 松弛次序（relaxed ordering）
 
 `memory_order_relaxed`属于这种内存模型
 
@@ -89,7 +132,7 @@ result: 0, flag: 1, expected: 1
 
 在`relaxed ordering`中唯一的要求是在同一线程中，对同一原子变量的访问不可以被重排
 
-### 2.3.3 获取-释放次序（acquire-release ordering）
+### 3.3.3 获取-释放次序（acquire-release ordering）
 
 `memory_order_release`、`memory_order_acquire`、`memory_order_acq_rel`属于这种内存模型
 
@@ -122,7 +165,7 @@ result: 0, flag: 1, expected: 1
 * 线程2的断言会成功，因为线程1对`n`和`m`在store之前修改；线程2在`load`之后，可以观察到`m`的修改
 * 但线程3的断言不一定会成功，因为`m`是和`load/store`操作不相关的变量，线程3不一定能观察看到
 
-## 2.4 参考
+## 3.4 参考
 
 * [C++11 - atomic类型和内存模型](https://zhuanlan.zhihu.com/p/107092432)
 * [doc-std::memory_order](https://www.apiref.com/cpp-zh/cpp/atomic/memory_order.html)
@@ -130,9 +173,9 @@ result: 0, flag: 1, expected: 1
 * [并行编程——内存模型之顺序一致性](https://www.cnblogs.com/jiayy/p/3246157.html)
 * [漫谈内存一致性模型](https://zhuanlan.zhihu.com/p/91406250)
 
-# 3 chrono
+# 4 chrono
 
-## 3.1 clock
+## 4.1 clock
 
 **三种时钟：**
 
@@ -146,29 +189,29 @@ auto end = std::chrono::steady_clock::now();
 auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
 ```
 
-# 4 functional
+# 5 functional
 
 1. `std::function`：其功能类似于函数指针，在需要函数指针的地方，可以传入`std::function`类型的对象（不是指针）
 1. `std::bind`
 1. `std::mem_fn`
 
-## 4.1 参考
+## 5.1 参考
 
 * [C++11 中的std::function和std::bind](https://www.jianshu.com/p/f191e88dcc80)
 
-# 5 future
+# 6 future
 
 1. `std::promise`
 1. `std::future`
 
-# 6 limits
+# 7 limits
 
 1. `std::numeric_limits`
     * `std::numeric_limits<int32_t>::max()`
 
-# 7 memory
+# 8 memory
 
-## 7.1 std::shared_ptr
+## 8.1 std::shared_ptr
 
 **类型转换**
 
@@ -198,7 +241,7 @@ void func(std::shared_ptr<Widget> ptr);
 
 这样的话，外部传过来值的时候，可以选择`move`或者赋值。函数内部直接把这个对象通过`move`的方式保存起来
 
-## 7.2 std::enable_shared_from_this
+## 8.2 std::enable_shared_from_this
 
 **`std::enable_shared_from_this`能让一个由`std::shared_ptr`管理的对象，安全地生成其他额外的`std::shared_ptr`实例，原实例和新生成的示例共享所有权**
 
@@ -222,13 +265,13 @@ int main() {
 }
 ```
 
-## 7.3 std::unique_ptr
+## 8.3 std::unique_ptr
 
-## 7.4 参考
+## 8.4 参考
 
 * [C++ 智能指针的正确使用方式](https://www.cyhone.com/articles/right-way-to-use-cpp-smart-pointer/)
 
-# 8 mutex
+# 9 mutex
 
 1. `std::mutex`
 1. `std::lock_guard`
@@ -254,11 +297,11 @@ int main() {
 1. `std::condition_variable`
     * 调用`wait`方法时，必须获取监视器。而调用`notify`方法时，无需获取监视器
 
-## 8.1 参考
+## 9.1 参考
 
 * [Do I have to acquire lock before calling condition_variable.notify_one()?](https://stackoverflow.com/questions/17101922/do-i-have-to-acquire-lock-before-calling-condition-variable-notify-one)
 
-# 9 numeric
+# 10 numeric
 
 1. `std::accumulate`
     ```cpp
@@ -277,16 +320,16 @@ int main() {
     }
     ```
 
-# 10 optional
+# 11 optional
 
 1. `std::optional`
 
-# 11 string
+# 12 string
 
 1. `std::string`
 1. `std::to_string`
 
-# 12 thread
+# 13 thread
 
 **如何设置或修改线程名：**
 
@@ -355,11 +398,11 @@ int main() {
 }
 ```
 
-# 13 type_traits
+# 14 type_traits
 
 **具体分类可以参考`<type_traits>`头文件的注释**
 
-## 13.1 谓词模板
+## 14.1 谓词模板
 
 用于判断类型
 
@@ -367,7 +410,7 @@ int main() {
 1. `std::is_array`
 1. ...
 
-## 13.2 属性模板
+## 14.2 属性模板
 
 用于调整类型信息
 
@@ -375,7 +418,7 @@ int main() {
 1. `std::add_lvalue_reference_t`
 1. `std::add_rvalue_reference_t`
 
-## 13.3 别名模板
+## 14.3 别名模板
 
 只是一种简写，例如`std::enable_if_t`等价于`typename enable_if<b,T>::type`
 
@@ -386,7 +429,7 @@ int main() {
 1. `std::invoke_result_t`
 1. ...
 
-## 13.4 std::move
+## 14.4 std::move
 
 标准库的实现如下：
 
@@ -399,7 +442,7 @@ int main() {
 
 本质上，就是做了一次类型转换，返回的一定是个右值
 
-## 13.5 std::forward
+## 14.5 std::forward
 
 `std::forward`主要用于实现模板的完美转发：因为对于一个变量而言，无论该变量的类型是左值引用还是右值引用，变量本身都是左值，如果直接将变量传递到下一个方法中，那么一定是按照左值来匹配重载函数的，而`std::forward`就是为了解决这个问题。请看下面这个例子：
 
@@ -468,11 +511,11 @@ int main() {
 * 如果模板实参是左值或右值，那么匹配的是第二个方法
     * 右值：`_Tp&&`得到的是个右值
 
-# 14 utility
+# 15 utility
 
 1. `std::pair`
 
-# 15 容器
+# 16 容器
 
 1. `<vector>`
 1. `<array>`
@@ -484,12 +527,12 @@ int main() {
 1. `<set>`
 1. `<unordered_set>`
 
-## 15.1 Tips
+## 16.1 Tips
 
 1. `std::map`或者`std::set`用下标访问后，即便访问前元素不存在，也会插入一个默认值。因此下标访问是非`const`的
 1. 容器在扩容时，调用的是元素的拷贝构造函数
 
-# 16 C标准库
+# 17 C标准库
 
 1. `stdio.h`
 1. `stddef.h`

@@ -460,7 +460,28 @@ constexpr bool is_same_v<T, T> = true;
 
 # 6 元编程的应用
 
-## 6.1 类型推导
+## 6.1 编译期判断
+
+```cpp
+#include <iostream>
+#include <type_traits>
+
+template <typename T, typename... Args>
+constexpr bool type_in = (std::is_same_v<T, Args> || ...);
+
+template <typename T, T v, T... args>
+constexpr bool value_in = ((v == args) || ...);
+
+int main() {
+    std::cout << type_in<double, double, float, long> << std::endl;
+    std::cout << type_in<bool, double, float, long> << std::endl;
+    std::cout << value_in<int, 1, 1, 2, 3, 4, 5> << std::endl;
+    std::cout << value_in<int, 10, 1, 2, 3, 4, 5> << std::endl;
+    return 0;
+}
+```
+
+## 6.2 类型推导
 
 **`using template`：当我们使用`Traits`萃取类型时，通常需要加上`typename`来消除歧义。因此，`using`模板可以进一步消除多余的`typename`**
 **`static member template`：静态成员模板**
@@ -521,7 +542,7 @@ int main() {
 }
 ```
 
-## 6.2 遍历tuple
+## 6.3 遍历tuple
 
 ```cpp
 #include <stddef.h>
@@ -546,7 +567,7 @@ int main() {
 }
 ```
 
-## 6.3 快速排序
+## 6.4 快速排序
 
 **源码出处：[quicksort in C++ template metaprogramming](https://gist.github.com/cleoold/c26d4e2b4ff56985c42f212a1c76deb9)**
 
@@ -801,7 +822,7 @@ int main() {
 }
 ```
 
-## 6.4 静态代理
+## 6.5 静态代理
 
 不确定这个是否属于元编程的范畴。更多示例可以参考[binary_function.h](https://github.com/liuyehcf/starrocks/blob/main/be/src/exprs/vectorized/binary_function.h)
 
