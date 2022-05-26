@@ -508,6 +508,11 @@ plugins=(<原有插件> zsh-autosuggestions)
         * `Shortcut`：`⌥→`
         * `Action`：选择`Send Escape Sequence`，填`f`
 
+## 5.3 常用配置
+
+1. 光标形状
+    * `Preferences`->`Profile`->`Text`->`Cursor`
+
 # 6 参考
 
 * [Mac 下利用 Launchctl 自启动 mysql](http://squll369.iteye.com/blog/1965185)
