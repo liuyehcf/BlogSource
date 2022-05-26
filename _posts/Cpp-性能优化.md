@@ -1620,7 +1620,176 @@ BM_loop_with_integer       64.0 ns         64.0 ns     10942085
 BM_loop_with_float         97.3 ns         97.3 ns      7197218
 ```
 
-## 3.4 参考
+## 3.4 manual vs. auto
+
+对比手动实现`simd`和编译器自动优化产生的`simd`之间的性能差异
+
+### 3.4.1 benchmark
+
+下面的代码，用三种不同的方式分别计算`d = 3 * a + 4 * b + 5 * c`
+
+* `BM_auto_simd`：最直观的方式写循环
+* `BM_fusion_simd`：手动写`simd`，在每个循环内进行处理
+* `BM_compose_simd`：手动写`simd`，在循环外进行处理
+
+```cpp
+#include <benchmark/benchmark.h>
+#include <immintrin.h>
+
+#include <random>
+
+std::vector<int32_t> create_random_vector(int64_t size, int32_t seed) {
+    std::vector<int32_t> v;
+    v.reserve(size);
+    std::default_random_engine e(seed);
+    std::uniform_int_distribution<int32_t> u;
+    for (size_t i = 0; i < size; ++i) {
+        v.emplace_back(u(e));
+    }
+    return v;
+}
+
+void auto_simd(int32_t* __restrict a, int32_t* __restrict b, int32_t* __restrict c, int32_t* __restrict d, int n) {
+    for (int i = 0; i < n; i++) {
+        d[i] = 3 * a[i] + 4 * b[i] + 5 * c[i];
+    }
+}
+
+void fusion_simd(int32_t* a, int32_t* b, int32_t* c, int32_t* d, int n) {
+    __m512i c0 = _mm512_set1_epi32(3);
+    __m512i c1 = _mm512_set1_epi32(4);
+    __m512i c2 = _mm512_set1_epi32(5);
+
+    int i = 0;
+    for (i = 0; (i + 16) < n; i += 16) {
+        __m512i x = _mm512_loadu_epi32(a + i);
+        __m512i y = _mm512_loadu_epi32(b + i);
+        __m512i z = _mm512_loadu_epi32(c + i);
+        x = _mm512_mul_epi32(x, c0);
+        y = _mm512_mul_epi32(y, c1);
+        x = _mm512_add_epi32(x, y);
+        z = _mm512_mul_epi32(z, c2);
+        x = _mm512_add_epi32(x, z);
+        _mm512_storeu_epi32(d + i, x);
+    }
+
+    while (i < n) {
+        d[i] = 3 * a[i] + 4 * b[i] + 5 * c[i];
+        i += 1;
+    }
+}
+
+void simd_add(int32_t* a, int32_t* b, int32_t* c, int n) {
+    int i = 0;
+    for (i = 0; (i + 16) < n; i += 16) {
+        __m512i x = _mm512_loadu_epi32(a + i);
+        __m512i y = _mm512_loadu_epi32(b + i);
+        x = _mm512_add_epi32(x, y);
+        _mm512_storeu_epi32(c + i, x);
+    }
+
+    while (i < n) {
+        c[i] = a[i] + b[i];
+        i += 1;
+    }
+}
+
+void simd_mul(int32_t* a, int32_t b, int32_t* c, int n) {
+    int i = 0;
+    __m512i c0 = _mm512_set1_epi32(b);
+    for (i = 0; (i + 16) < n; i += 16) {
+        __m512i x = _mm512_loadu_epi32(a + i);
+        x = _mm512_mul_epi32(x, c0);
+        _mm512_storeu_epi32(c + i, x);
+    }
+
+    while (i < n) {
+        c[i] = a[i] * b;
+        i += 1;
+    }
+}
+
+static void BM_auto_simd(benchmark::State& state) {
+    size_t n = state.range(0);
+    auto a = create_random_vector(n, 10);
+    auto b = create_random_vector(n, 20);
+    auto c = create_random_vector(n, 30);
+    std::vector<int32_t> d(n);
+
+    for (auto _ : state) {
+        state.PauseTiming();
+        d.assign(n, 0);
+        state.ResumeTiming();
+        auto_simd(a.data(), b.data(), c.data(), d.data(), n);
+    }
+}
+
+static void BM_fusion_simd(benchmark::State& state) {
+    size_t n = state.range(0);
+    auto a = create_random_vector(n, 10);
+    auto b = create_random_vector(n, 20);
+    auto c = create_random_vector(n, 30);
+    std::vector<int32_t> d(n);
+
+    for (auto _ : state) {
+        state.PauseTiming();
+        d.assign(n, 0);
+        state.ResumeTiming();
+        fusion_simd(a.data(), b.data(), c.data(), d.data(), n);
+    }
+}
+
+static void BM_compose_simd(benchmark::State& state) {
+    size_t n = state.range(0);
+    auto a = create_random_vector(n, 10);
+    auto b = create_random_vector(n, 20);
+    auto c = create_random_vector(n, 30);
+    std::vector<int32_t> d(n);
+
+    for (auto _ : state) {
+        state.PauseTiming();
+        d.assign(n, 0);
+        std::vector<int32_t> t0(n), t1(n), t2(n), t3(n), t4(n);
+        state.ResumeTiming();
+        simd_mul(a.data(), 3, t0.data(), n);
+        simd_mul(b.data(), 4, t1.data(), n);
+        simd_mul(c.data(), 5, t2.data(), n);
+        simd_add(t0.data(), t1.data(), t3.data(), n);
+        simd_add(t2.data(), t3.data(), d.data(), n);
+    }
+}
+
+static const int N0 = 4096;
+static const int N1 = 40960;
+static const int N2 = 409600;
+
+BENCHMARK(BM_auto_simd)->Arg(N0)->Arg(N1)->Arg(N2);
+BENCHMARK(BM_fusion_simd)->Arg(N0)->Arg(N1)->Arg(N2);
+BENCHMARK(BM_compose_simd)->Arg(N0)->Arg(N1)->Arg(N2);
+
+BENCHMARK_MAIN();
+```
+
+**输出如下：**
+
+```
+-----------------------------------------------------------------
+Benchmark                       Time             CPU   Iterations
+-----------------------------------------------------------------
+BM_auto_simd/4096            1788 ns         1806 ns       387113
+BM_auto_simd/40960          13218 ns        13219 ns        53342
+BM_auto_simd/409600        262020 ns       262027 ns         2667
+BM_fusion_simd/4096          1637 ns         1662 ns       421221
+BM_fusion_simd/40960        11190 ns        11184 ns        62686
+BM_fusion_simd/409600      266659 ns       266668 ns         2614
+BM_compose_simd/4096         4094 ns         4097 ns       171206
+BM_compose_simd/40960       45822 ns        45874 ns        15676
+BM_compose_simd/409600    1395080 ns      1394972 ns          517
+```
+
+可以发现，`BM_auto_simd`与`BM_fusion_simd`性能相当，且明显优于`BM_compose_simd`，这是因为`BM_compose_simd`有物化操作，需要保存全量的中间结果，而`BM_fusion_simd`只需要保留`simd`指令长度大小的中间结果
+
+## 3.5 参考
 
 * [Auto-vectorization in GCC](https://gcc.gnu.org/projects/tree-ssa/vectorization.html)
 * [Type-Based Alias Analysis](https://www.drdobbs.com/cpp/type-based-alias-analysis/184404273)
