@@ -532,7 +532,47 @@ int main() {
 1. `std::map`或者`std::set`用下标访问后，即便访问前元素不存在，也会插入一个默认值。因此下标访问是非`const`的
 1. 容器在扩容时，调用的是元素的拷贝构造函数
 
-# 17 C标准库
+# 17 向量化
+
+[Header files for x86 SIMD intrinsics](https://stackoverflow.com/questions/11228855/header-files-for-x86-simd-intrinsics)
+
+1. `<mmintrin.h>`：MMX
+1. `<xmmintrin.h>`：SSE
+1. `<emmintrin.h>`：SSE2
+1. `<pmmintrin.h>`：SSE3
+1. `<tmmintrin.h>`：SSSE3
+1. `<smmintrin.h>`：SSE4.1
+1. `<nmmintrin.h>`：SSE4.2
+1. `<ammintrin.h>`：SSE4A
+1. `<wmmintrin.h>`：AES
+1. **`<immintrin.h>`**：AVX, AVX2, FMA
+    * 一般用这个即可，包含上述其他的头文件
+
+**注意，`gcc`、`clang`默认禁止使用向量化相关的类型以及操作，在使用上述头文件时，需要指定对应的编译参数：**
+
+* `-mmmx`
+* `-msse`
+* `-msse2`
+* `-msse3`
+* `-mssse3`
+* `-msse4`
+* `-msse4a`
+* `-msse4.1`
+* `-msse4.2`
+* `-mavx`
+* `-mavx2`
+* `-mavx512f`
+* `-mavx512pf`
+* `-mavx512er`
+* `-mavx512cd`
+* `-mavx512vl`
+* `-mavx512bw`
+* `-mavx512dq`
+* `-mavx512ifma`
+* `-mavx512vbmi`
+* ...
+
+# 18 C标准库
 
 1. `stdio.h`
 1. `stddef.h`

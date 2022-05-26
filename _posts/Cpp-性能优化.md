@@ -358,11 +358,133 @@ BENCHMARK_MAIN();
 | 128 | 33.9 ns | 6.51 ns | 8.52 ns |
 | 16384 | 2641 ns | 54.7 ns | 8.51 ns |
 
-## 1.5 `atomic` or `mutex`
+## 1.5 integer vs. float with branch
+
+对比整型运算、浮点运算在有无分支情况下的性能差异
+
+### 1.5.1 benchmark
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#include <algorithm>
+#include <iostream>
+#include <numeric>
+#include <random>
+
+const constexpr int32_t SIZE = 32768;
+
+bool is_init = false;
+int32_t data[SIZE];
+
+void init() {
+    if (is_init) {
+        return;
+    }
+    std::default_random_engine e;
+    std::uniform_int_distribution<int32_t> u(0, 256);
+    for (auto i = 0; i < SIZE; i++) {
+        int32_t value = u(e);
+        data[i] = value;
+    }
+}
+
+double sum_int() {
+    int32_t sum = 0;
+    for (auto i = 0; i < SIZE; i++) {
+        sum += data[i];
+    }
+
+    return static_cast<double>(sum);
+}
+
+double sum_double() {
+    double sum = 0;
+    for (auto i = 0; i < SIZE; i++) {
+        sum += data[i];
+    }
+    return sum;
+}
+
+double sum_int_with_branch() {
+    int32_t sum = 0;
+    for (auto i = 0; i < SIZE; i++) {
+        if (data[i] > 128) [[likely]] {
+            sum += data[i];
+        }
+    }
+    return sum;
+}
+
+double sum_double_with_branch() {
+    double sum = 0;
+    for (auto i = 0; i < SIZE; i++) {
+        sum += data[i];
+    }
+    return sum;
+}
+
+static void BM_sum_int(benchmark::State& state) {
+    init();
+
+    for (auto _ : state) {
+        double sum = sum_int();
+        benchmark::DoNotOptimize(sum);
+    }
+}
+
+static void BM_sum_double(benchmark::State& state) {
+    init();
+
+    for (auto _ : state) {
+        double sum = sum_double();
+        benchmark::DoNotOptimize(sum);
+    }
+}
+
+static void BM_sum_int_with_branch(benchmark::State& state) {
+    init();
+
+    for (auto _ : state) {
+        double sum = sum_int_with_branch();
+        benchmark::DoNotOptimize(sum);
+    }
+}
+
+static void BM_sum_double_with_branch(benchmark::State& state) {
+    init();
+
+    for (auto _ : state) {
+        double sum = sum_double_with_branch();
+        benchmark::DoNotOptimize(sum);
+    }
+}
+
+BENCHMARK(BM_sum_int);
+BENCHMARK(BM_sum_double);
+BENCHMARK(BM_sum_int_with_branch);
+BENCHMARK(BM_sum_double_with_branch);
+
+BENCHMARK_MAIN();
+```
+
+**输出如下：**
+
+```
+--------------------------------------------------------------------
+Benchmark                          Time             CPU   Iterations
+--------------------------------------------------------------------
+BM_sum_int                      3343 ns         3342 ns       209531
+BM_sum_double                  41125 ns        41121 ns        17026
+BM_sum_int_with_branch          5581 ns         5581 ns       125473
+BM_sum_double_with_branch      41075 ns        41071 ns        17027
+```
+
+## 1.6 `atomic` or `mutex`
 
 非原子变量、原子变量、`mutex`之间的性能差距
 
-### 1.5.1 benchmark
+### 1.6.1 benchmark
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -416,9 +538,9 @@ BM_atomic        5.65 ns         5.65 ns    124013879
 BM_mutex         16.6 ns         16.6 ns     42082466
 ```
 
-## 1.6 `std::function` or template
+## 1.7 `std::function` or template
 
-### 1.6.1 benchmark
+### 1.7.1 benchmark
 
 ```cpp
 #include <benchmark/benchmark.h>
