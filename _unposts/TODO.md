@@ -83,6 +83,7 @@ categories:
         * 算数相关的函数：src/backend/utils/adt/numeric.c
     * clickhouse
         * [COW.h](https://github.com/ClickHouse/ClickHouse/blob/master/src/Common/COW.h)
+    * https://cloud.google.com/blog/products/databases/alloydb-for-postgresql-intelligent-scalable-storage
 1. license
     * [主流开源协议之间有何异同？](https://www.zhihu.com/question/19568896)
     * apache license
@@ -128,6 +129,13 @@ categories:
     * codegen
     * git worktree
     * 向量化
+        * 如何消除分支
+            * [程序的分支消除](https://leetcode.cn/circle/article/GSJ5XS/)
+            * [只会写 if 的菜炸了，手动分支消除，带你装〇带你飞！](https://www.bilibili.com/video/BV1L7411f7g3?t=2&p=2)
+            * 恒等式：
+                * `-x  = ~x + 1`
+                * `~x = x ^ -1`
+            * `sign = x >> (<size> -1)`
         * 无法向量化的场景
             * 复杂的表达式
             * 分支
@@ -136,5 +144,6 @@ categories:
     * [什么是图灵完备？](https://www.zhihu.com/question/20115374/answer/288346717)
     * [调度系统设计精要](https://draveness.me/system-design-scheduler/)
     * [构建工具bazel](https://github.com/bazelbuild/bazel)
+    * Quad Trees and R-Trees
 1. Abbrevation
     * `SMT, Simultaneous multithreading`
