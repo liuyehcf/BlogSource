@@ -71,6 +71,20 @@ Page UP：`Fn+↑`
 Page DOWN：`Fn+↓`
 向前Delete：`Fn+delete`
  
+## 1.11 缩放窗口
+
+[Maximize window shortcut](https://apple.stackexchange.com/questions/372719/maximize-window-shortcut)
+
+窗口缩放功能的配置路径是：`System Preferences`->`Dock`->`Double-click a window's title bar to zoom`
+
+默认情况下，该功能是没有对应的快捷键的，但是我们可以手动设置
+
+1. `System Preferences`->`Keyboard`->`Shortcuts`->`App Shortcuts`
+1. 新增快捷键
+    * `Application`：所有类型
+    * `Menu Title`：`Zoom`
+    * `Keyboard Shortcut`：自定义，我设置的是`⌃ + ⌘ + M`
+
 # 2 Homebrew
 
 ## 2.1 常用操作
