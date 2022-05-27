@@ -214,6 +214,51 @@ const int i = 1;
 const int *const pi = &i;
 ```
 
+* 顶层`const`可以访问`const`和非`const`的成员
+* 底层`const`只能访问`const`的成员
+
+示例如下，可以发现：
+
+* `const Container* container`以及`const Container& container`都只能访问`const`成员，而无法访问非`const`成员
+* `Container* const container`可以访问`const`成员以及非`const`成员
+* 特别地，`const ContainerPtr& container`可以访问非`const`成员，这是因为`container->push_back(num)`是一个两级调用
+    * 第一级：访问的是`std::shared_ptr::operator->`运算符，该运算符是`const`的，且返回类型为`element_type*`
+    * 第二级：通过返回的`element_type*`访问`std::vector::push_back`，因此与上述结论并不矛盾
+
+```cpp
+#include <stddef.h>
+
+#include <memory>
+#include <vector>
+
+using Container = std::vector<int32_t>;
+using ContainerPtr = std::shared_ptr<Container>;
+
+void append_by_const_reference_shared_ptr(const ContainerPtr& container, const int num) {
+    // can calling non-const member function
+    container->push_back(num);
+}
+
+void append_by_const_reference(const Container& container, const int num) {
+    // cannot calling non-const member function
+    // container.push_back(num);
+}
+
+void append_by_bottom_const_pointer(const Container* container, const int num) {
+    // cannot calling non-const member function
+    // container->push_back(num);
+}
+
+void append_by_top_const_pointer(Container* const container, const int num) {
+    // can calling non-const member function
+    container->push_back(num);
+}
+
+int main() {
+    return 0;
+}
+```
+
 ### 3.1.2 const实参和形参
 
 实参初始化形参时会自动忽略掉顶层`const`属性
