@@ -2912,6 +2912,15 @@ if filereadable(expand('~/.vim/gtags-cscope.vim'))
     source ~/.vim/gtags-cscope.vim
 endif
 
+" 重置寄存器
+function! Clean_up_registers()
+    let regs=split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/-"', '\zs')
+    for r in regs
+        call setreg(r, [])
+    endfor
+endfunction
+noremap <leader>rc :call Clean_up_registers()<cr>
+
 " 编辑模式，光标移动快捷键
 " 将移动到行首（同一般模式下的 ^）映射到 [Ctrl] + a
 " 将移动到行尾（同一般模式下的 $）映射到 [Ctrl] + e
@@ -2982,6 +2991,7 @@ endif
 ## 4.1 Tips
 
 1. `filereadable`无法识别`~`，需要用`expand`，例如`filereadable(expand('~/.vim/gtags.vim'))`
+1. 函数名要用大写字母开头，或者`s:`开头。大写字母开头表示全局可见，`s:`开头表示当前脚本可见
 
 # 5 Tips
 
