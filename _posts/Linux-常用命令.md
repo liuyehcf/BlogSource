@@ -490,7 +490,7 @@ sed '/<tag>/ r file2.txt' file1.txt
     * 接着匹配第一个条件，`n`存储的是卷组名称，假设是`root`，此时`d`的内容还是`dm-1`
     * 最后匹配第二个条件，`d`存储的是磁盘名称，假设是`253:0`，经过`sub`函数，将`253:`替换成`dm-`，因此此时d为`dm-0`，打印`d`和`n`
 * 
-```shell
+```sh
 awk 
 'BEGIN {FS=":";print "统计销售金额";total=0} 
 {print $3;total=total+$3;} 
