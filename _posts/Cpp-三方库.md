@@ -266,7 +266,17 @@ BM_StringCopy           21.0 ns         21.0 ns     33441350
 
 ### 4.2.1 benchmark::DoNotOptimize
 
-避免优化本不应该优化的代码
+避免优化本不应该优化的代码，其源码如下：
+
+```cpp
+inline BENCHMARK_ALWAYS_INLINE void DoNotOptimize(Tp& value) {
+#if defined(__clang__)
+  asm volatile("" : "+r,m"(value) : : "memory");
+#else
+  asm volatile("" : "+m,r"(value) : : "memory");
+#endif
+}
+```
 
 ## 4.3 参考
 

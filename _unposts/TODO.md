@@ -140,10 +140,12 @@ categories:
             * 复杂的表达式
             * 分支
             * data alignment
+    * 如何挖掘并行
+        * `Instruction level`：`VLIW`和`OOO Execution`
+        * `Data level`：SIMD，向量化
+        * `Thread level`：SMP
     * [lxcfs](https://github.com/lxc/lxcfs)
     * [什么是图灵完备？](https://www.zhihu.com/question/20115374/answer/288346717)
     * [调度系统设计精要](https://draveness.me/system-design-scheduler/)
     * [构建工具bazel](https://github.com/bazelbuild/bazel)
     * Quad Trees and R-Trees
-1. Abbrevation
-    * `SMT, Simultaneous multithreading`
