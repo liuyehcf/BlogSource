@@ -85,14 +85,13 @@ date: 2018-02-05 09:25:59
   <tr> <th width="80px" align="center">缩写</th> <th width="240px" align="center">全称</th> <th width="200px" align="center">其他</th> </tr>
   <tr> <td>BSD</td> <td>Berkeley Software Distribution</td> <td></td> </tr>
   <tr> <td>GPL</td> <td>GNU General Public License</td> <td></td> </tr>
-  <tr> <td>PMC</td> <td>Project Management Committee</td> <td> 1. <a href="https://www.apache.org/dev/pmc.html#what-is-a-pmc">what-is-a-pmc</a> </br> 2. <a href="https://www.gridgain.com/resources/blog/how-become-open-source-committer-and-why-youd-want">how-become-open-source-committer-and-why-youd-want</a> </td> </tr>
-  <tr> <td>PPMC</td> <td>Podling Project Management Committee</td> <td><a href="https://incubator.apache.org/guides/ppmc.html">ppmc</a></td> </tr>
   <tr> <td>POSIX</td> <td>The Portable Operating System Interface</td> <td></td> </tr>
   <tr> <td>OSI</td> <td>Open Systems Interconnection</td> <td></td> </tr>
   <tr> <td>POC</td> <td>Proof of Concept</td> <td></td> </tr>
   <tr> <td>ROI</td> <td>Return On Investment</td> <td></td> </tr>
   <tr> <td>SLA</td> <td>Service Level Agreement</td> <td></td> </tr>
   <tr> <td>FWD</td> <td>Forward Declaration</td> <td></td> </tr>
+  <tr> <td>SMT</td> <td>Simultaneous Multithreading</td> <td></td> </tr>
   <tr> <td></td> <td></td> <td></td> </tr>
   <tr> <th colspan="3" align="center">职位</th> </tr>
   <tr> <td>R&D</td> <td>Research and Development</td> <td></td> </tr>
@@ -101,6 +100,8 @@ date: 2018-02-05 09:25:59
   <tr> <td>DBA</td> <td>Database Administration</td> <td></td> </tr>
   <tr> <td>QA</td> <td>Quality Assurance</td> <td></td> </tr>
   <tr> <th colspan="3" align="center">Github</th> </tr>
+  <tr> <td>PMC</td> <td>Project Management Committee</td> <td> 1. <a href="https://www.apache.org/dev/pmc.html#what-is-a-pmc">what-is-a-pmc</a> </br> 2. <a href="https://www.gridgain.com/resources/blog/how-become-open-source-committer-and-why-youd-want">how-become-open-source-committer-and-why-youd-want</a> </td> </tr>
+  <tr> <td>PPMC</td> <td>Podling Project Management Committee</td> <td><a href="https://incubator.apache.org/guides/ppmc.html">ppmc</a></td> </tr>
   <tr> <td>PR</td> <td>Pull Request</td> <td></td> </tr>
   <tr> <td>LGTM</td> <td>Looks Good To Me</td> <td>代码已经过 review，可以合并</td> </tr>
   <tr> <td>SGTM</td> <td>Sounds Good To Me</td> <td>代码已经过 review，可以合并</td> </tr>
