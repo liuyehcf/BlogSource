@@ -353,13 +353,35 @@ noremap <leader>c<space> :action CommentByLineComment<cr>
 " keep keymap with Plug 'google/vim-codefmt'
 nnoremap <c-l> :action ReformatCode<cr>
 
+" 重置寄存器
+function! Clean_up_registers()
+    let regs=split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/-"', '\zs')
+    for r in regs
+        call setreg(r, [])
+    endfor
+endfunction
+noremap <leader>rc :call Clean_up_registers()<cr>
+
 " 编辑模式，光标移动快捷键
 " 将移动到行首（同一般模式下的 ^）映射到 [Ctrl] + a
 " 将移动到行尾（同一般模式下的 $）映射到 [Ctrl] + e
+" 映射光标移动，包括h、j、k、l、w、b
+" [Option] + h，即「˙」
+" [Option] + j，即「∆」
+" [Option] + k，即「˚」
+" [Option] + l，即「¬」
+" [Option] + w，即「∑」
+" [Option] + b，即「∫」
 inoremap <silent> <c-a> <c-o>^
 inoremap <silent> <c-e> <c-o>$
+inoremap ˙ <c-o>h
+inoremap ∆ <c-o>j
+inoremap ˚ <c-o>k
+inoremap ¬ <c-o>l
+inoremap ∑ <c-o>w
+inoremap ∫ <c-o>b
 
-" 替换映射到 [Option] + r，即「®」
+" 将「替换」映射到 [Option] + r，即「®」
 " 其中，<c-r><c-w> 表示 [Ctrl] + r 以及 [Ctrl] + w，用于将光标所在的单词填入搜索/替换项中
 nnoremap ® :%s/<c-r><c-w>
 

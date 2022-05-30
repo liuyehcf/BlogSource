@@ -2925,6 +2925,7 @@ noremap <leader>rc :call Clean_up_registers()<cr>
 " 编辑模式，光标移动快捷键
 " 将移动到行首（同一般模式下的 ^）映射到 [Ctrl] + a
 " 将移动到行尾（同一般模式下的 $）映射到 [Ctrl] + e
+" 映射光标移动，包括h、j、k、l、w、b
 " [Option] + h，即「˙」
 " [Option] + j，即「∆」
 " [Option] + k，即「˚」
