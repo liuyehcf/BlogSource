@@ -35,7 +35,7 @@ categories:
 | [Efficiency in the Columbia Database Query Optimizer](/resources/paper/Efficiency-In-The-Columbia-Database-Query-Optimizer.pdf) | <li>`Optimizer`</li> | <li>Framework Concepts and Components</li><li>Detailedly</li> | ✅ | ★★★★★ |
 | [How Good Are Query Optimizers, Really?](/resources/paper/How-Good-Are-Query-Optimizers.pdf) | <li>`Optimizer`</li> | <li>Cardinality Estimation is more important than Cost Model</li> | ✅ | ★★★★★ |
 | [Orca: A Modular Query Optimizer Architecture for Big Data](/resources/paper/Orca-A-Modular-Query-Optimizer-Architecture-For-Big-Data.pdf) | <li>`Optimizer`</li> | <li>Easy to integrate into other systems</li><li>Parallel Optimization</li> |  | ★★★ |
-| [Orthogonal Optimization of Subqueries and Aggregation](/resources/paper/Orthogonal-Optimization-of-Subqueries-and-Aggregation.pdf) | <li>`Optimizer`</li><li>`Sub Query`</li> |  |  |  |
+| [Orthogonal Optimization of Subqueries and Aggregation](/resources/paper/Orthogonal-Optimization-of-Subqueries-and-Aggregation.pdf) | <li>`Optimizer`</li><li>`Sub Query`</li> | <li>Correlated Sub Query</li><li>Remove Correlations</li> |  |  |
 | [Are We Ready For Learned Cardinality Estimation?](/resources/paper/Are-We-Ready-For-Learned-Cardinality-Estimation.pdf) | <li>`Optimizer`</li><li>`Cardinality Estimator`</li> | <li>Cardinality Estimator</li><li>Cost Model</li> | ✅ | ★★★★★ |
 | [NeuroCard: One Cardinality Estimator for All Tables](/resources/paper/NeuroCard-One-Cardinality-Estimator-for-All-Tables.pdf) | <li>`Optimizer`</li><li>`Cardinality Estimator`</li> |  |  |  |
 | [Sampling-Based Estimation of the Number of Distinct Values of an Attribute](/resources/paper/Sampling-Based-Estimation-of-the-Number-of-Distinct-Values-of-an-Attribute.pdf) | <li>`Optimizer`</li><li>`Sampling`</li> | <li>Introduce Many Estimators</li><li>Data Skewness</li> | ✅ | ★★★★★ |
@@ -47,3 +47,7 @@ categories:
 |:--|:--|:--|:--|:--|
 | [Cloud Programming Simplified: A Berkeley View on Serverless Computing](/resources/paper/Cloud-Programming-Simplified-A-Berkeley-View-on-Serverless-Computing.pdf) | <li>`Survey`</li> |  | ✅ | ★★★★★ |
 | [Amazon Redshift Re-invented](/resources/paper/Amazon-Redshit-Re-invented.pdf) | <li>`Execution`</li><li>`Amazon`</li> | <li>Architecture</li><li>MPP</li><li>Code Generation & Compilation Service</li><li>Prefetching</li><li>AZ64 Enconding</li><li>AQUA & Computational Storage, do simple computation at the storage</li><li>Automatic Table Optimization(for a given workloads)</li><li>support SUPER value, typeless, can hold anything(int, double, array, json, etc.)</li> | ✅ | ★★★★★ |
+
+# 3 Less Reference
+
+1. [Filter Representation in Vectorized Query Execution](https://dl.acm.org/doi/abs/10.1145/3465998.3466009)
