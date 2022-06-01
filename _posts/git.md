@@ -327,6 +327,9 @@ git log [tag] HEAD --grep feature
 # 显示某个文件的版本历史，包括文件改名
 git log --follow [file]
 
+# 显示指定文件相关的修改记录
+git log [file]
+
 # 显示指定文件相关的每一次diff
 git log -p [file]
 

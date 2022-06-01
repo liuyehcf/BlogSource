@@ -2287,9 +2287,31 @@ person.cpp:(.text+0x2a): Person::sleep() 的多重定义
 collect2: 错误：ld 返回 1
 ```
 
-### 8.5.1 demo using cmake
+# 9 FAQ
 
-# 9 参考
+## 9.1 为什么free和delete释放内存时不用指定大小
+
+[How does free know how much to free?](https://stackoverflow.com/questions/1518711/how-does-free-know-how-much-to-free)
+
+分配内存时，除了分配指定的内存之外，还会分配一个`header`，用于存储一些信息，例如
+
+* **`size`**
+* `special marker`
+* `checksum`
+* `pointers to next/previous block`
+
+```
+____ The allocated block ____
+/                             \
++--------+--------------------+
+| Header | Your data area ... |
++--------+--------------------+
+          ^
+          |
+          +-- The address you are given
+```
+
+# 10 参考
 
 * [C++11\14\17\20 特性介绍](https://www.jianshu.com/p/8c4952e9edec)
 * [关于C++：静态常量字符串(类成员)](https://www.codenong.com/1563897/)

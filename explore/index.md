@@ -25,9 +25,12 @@ date: 2018-02-05 09:25:59
 * [Google-Abseil](https://abseil.io/)
 * [Online Compiler](https://godbolt.org/)
 * [Online Benchmark](https://quick-bench.com/)
+* [Where do I find the current C or C++ standard documents?](https://stackoverflow.com/questions/81656/where-do-i-find-the-current-c-or-c-standard-documents)
+    * **[cplusplus/draft](https://github.com/cplusplus/draft)**：草稿版本，相对于发行版可能会有错误，但是免费
 * 《A Tour of C++》
 * Celebrity
     * `Bjarne Stroustrup`：C++之父
+    * `Walter E. Brown`：2000年开始参与C++标准制定工作，引入了`cbegin/cend`、`common_type`等特性，以及负责`<random>`、`<ratio>`等头文件的开发
 
 # 3 Code Standard
 

@@ -895,6 +895,28 @@ int main() {
 }
 ```
 
+## 6.6 编译期计算数组维度
+
+```cpp
+#include <iostream>
+
+template <class T>
+struct rank {
+    static size_t const value = 0u;
+};
+
+template <class U, size_t N>
+struct rank<U[N]> {
+    static size_t const value = 1u + rank<U>::value;
+};
+
+int main() {
+    using array_t = int[10][20][30];
+    std::cout << "rank=" << rank<array_t>::value << std::endl;
+    return 0;
+}
+```
+
 # 7 参考
 
 * [ClickHouse](https://github.com/ClickHouse/ClickHouse/blob/master/base/base/constexpr_helpers.h)

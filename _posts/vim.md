@@ -1558,6 +1558,7 @@ call plug#end()
 
 * `c/c++`
     * 如何修改头文件搜索路径？在`compile_commands.json`中指定即可
+    * 索引文件路径：`<project path>/.cache/clangd`
     ```json
     {
         "languageserver": {

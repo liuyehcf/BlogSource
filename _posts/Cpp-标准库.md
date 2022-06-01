@@ -415,12 +415,13 @@ int main() {
 用于调整类型信息
 
 1. `std::remove_reference`
-1. `std::add_lvalue_reference_t`
-1. `std::add_rvalue_reference_t`
+1. `std::add_lvalue_reference`
+1. `std::add_rvalue_reference`
+1. ...
 
 ## 14.3 别名模板
 
-只是一种简写，例如`std::enable_if_t`等价于`typename enable_if<b,T>::type`
+`using template`，用于简化上述模板。例如`std::enable_if_t`等价于`typename enable_if<b,T>::type`
 
 1. `std::enable_if_t`
 1. `std::conditional_t`

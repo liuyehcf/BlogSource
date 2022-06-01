@@ -2916,6 +2916,7 @@ yum install -y sysstat
 * `-q`：查看cpu负载
 * `-r`：查看内存使用情况
 * `-b`：I/O 和传输速率信息状况
+* `-B`：查看paging使用情况
 * `-f <filename>`：指定sa日志文件
 * `-P <cpu num>|ALL`：查看某个cpu的统计信息，`ALL`表示所有CPU
 * `-n [关键词]`：查看网络相关的情况，其中关键词可以是
@@ -2931,6 +2932,7 @@ yum install -y sysstat
 * `sar -u 1 10`：输出cpu的相关信息（聚合了所有核）
 * `sar -P ALL -u 1 10`：输出每个核的cpu的相关信息
 * `sar -n DEV 1`：查看网卡实时流量
+* `sar -B 1`：每秒输出一次paging信息
 
 ## 6.8 tsar
 
