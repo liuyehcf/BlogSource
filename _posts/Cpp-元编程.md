@@ -608,7 +608,48 @@ int main() {
 }
 ```
 
-## 6.4 类型推导
+## 6.4 has_type_member
+
+我们实现一个`has_type_member`，用于判断某个类型是否有类型成员，且其名字为`type`，即对于类型`T`是否存在`typename T::type`
+
+* `has_type_member`的`primitive`版本包含两个类型参数，其中第二个参数存在默认值，其值为`void`
+* `std::void_t<T>`对任意`T`都会返回`void`。任何存在类型成员`type`的类型，对于该特化版本而言都是`well-formed`，因此会匹配该版本
+    * 该示例也是`std::void_t`的应用之一
+
+```cpp
+#include <iostream>
+#include <type_traits>
+
+template <typename, typename = void>
+struct has_type_member : std::false_type {};
+
+template <typename T>
+struct has_type_member<T, std::void_t<typename T::type>> : std::true_type {};
+
+struct WithNonVoidMemberType {
+    using type = int;
+};
+
+struct WithVoidMemberType {
+    using type = void;
+};
+
+struct WithNonTypeMemberType {
+    static constexpr int type = 1;
+};
+
+struct WithoutMemberType {};
+
+int main() {
+    std::cout << has_type_member<WithNonVoidMemberType>::value << std::endl;
+    std::cout << has_type_member<WithVoidMemberType>::value << std::endl;
+    std::cout << has_type_member<WithNonTypeMemberType>::value << std::endl;
+    std::cout << has_type_member<WithoutMemberType>::value << std::endl;
+    return 0;
+}
+```
+
+## 6.5 类型推导
 
 **`using template`：当我们使用`Traits`萃取类型时，通常需要加上`typename`来消除歧义。因此，`using`模板可以进一步消除多余的`typename`**
 **`static member template`：静态成员模板**
@@ -669,7 +710,7 @@ int main() {
 }
 ```
 
-## 6.5 遍历tuple
+## 6.6 遍历tuple
 
 ```cpp
 #include <stddef.h>
@@ -694,7 +735,7 @@ int main() {
 }
 ```
 
-## 6.6 快速排序
+## 6.7 快速排序
 
 **源码出处：[quicksort in C++ template metaprogramming](https://gist.github.com/cleoold/c26d4e2b4ff56985c42f212a1c76deb9)**
 
@@ -949,7 +990,7 @@ int main() {
 }
 ```
 
-## 6.7 静态代理
+## 6.8 静态代理
 
 不确定这个是否属于元编程的范畴。更多示例可以参考[binary_function.h](https://github.com/liuyehcf/starrocks/blob/main/be/src/exprs/vectorized/binary_function.h)
 
@@ -1028,3 +1069,4 @@ int main() {
 * [C++雾中风景16:std::make_index_sequence, 来试一试新的黑魔法吧](https://www.cnblogs.com/happenlee/p/14219925.html)
 * [CppCon 2014: Walter E. Brown "Modern Template Metaprogramming: A Compendium, Part I"](https://www.youtube.com/watch?v=Am2is2QCvxY)
 * [CppCon 2014: Walter E. Brown "Modern Template Metaprogramming: A Compendium, Part II"](https://www.youtube.com/watch?v=a0FliKwcwXE)
+    * Unevaluated operands(sizeof, typeid, decltype, noexcept), 12:30
