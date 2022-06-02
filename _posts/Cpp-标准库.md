@@ -11,6 +11,8 @@ categories:
 
 <!--more-->
 
+[C++ Standard Library headers](https://en.cppreference.com/w/cpp/header)
+
 # 1 algorithm
 
 ## 1.1 std::remove_if
@@ -400,26 +402,100 @@ int main() {
 
 # 14 type_traits
 
-**具体分类可以参考`<type_traits>`头文件的注释**
+[Standard library header <type_traits>](https://en.cppreference.com/w/cpp/header/type_traits)
 
-## 14.1 谓词模板
+## 14.1 Helper Class
 
-用于判断类型
+1. `std::integral_constant`
+1. `std::bool_constant`
+1. `std::true_type`
+1. `std::false_type`
+
+## 14.2 Primary type categories
 
 1. `std::is_void`
+1. `std::is_null_pointer`
+1. `std::is_integral`
 1. `std::is_array`
+1. `std::is_pointer`
 1. ...
 
-## 14.2 属性模板
+## 14.3 Composite type categories
 
-用于调整类型信息
+1. `std::is_fundamental`
+1. `std::is_arithmetic`
+1. `std::is_scalar`
+1. `std::is_reference`
+1. `std::is_member_pointer`
+1. ...
+
+## 14.4 Type properties
+
+1. `std::is_const`
+1. `std::is_volatile`
+1. `std::is_final`
+1. `std::is_empty`
+1. `std::is_abstract`
+1. ...
+
+## 14.5 Supported operations
+
+1. `std::is_constructible`
+1. `std::is_copy_constructible`
+1. `std::is_assignable`
+1. `std::is_copy_assignable`
+1. `std::is_destructible`
+1. ...
+
+## 14.6 Property queries
+
+1. `std::alignment_of`
+1. `std::rank`
+1. `std::extent`
+
+## 14.7 Type relationships
+
+1. `std::is_same`
+1. `std::is_base_of`
+1. ...
+
+## 14.8 Const-volatility specifiers
+
+1. `std::remove_cv`
+1. `std::remove_const`
+1. `std::remove_volatile`
+1. `std::add_cv`
+1. `std::add_const`
+1. `std::add_volatile`
+
+## 14.9 References
 
 1. `std::remove_reference`
 1. `std::add_lvalue_reference`
 1. `std::add_rvalue_reference`
-1. ...
+  
+## 14.10 Pointers
 
-## 14.3 别名模板
+1. `std::remove_pointer`
+1. `std::add_pointer`
+  
+## 14.11 Sign modifiers
+
+1. `std::make_signed`
+1. `std::make_unsigned`
+
+## 14.12 Arrays
+
+1. `std::remove_extent`
+1. `std::remove_all_extents`
+
+## 14.13 Miscellaneous transformations
+
+1. `std::enable_if`
+1. `std::conditional`
+1. `std::void_t`
+
+## 14.14 Alias
 
 `using template`，用于简化上述模板。例如`std::enable_if_t`等价于`typename enable_if<b,T>::type`
 
@@ -430,7 +506,7 @@ int main() {
 1. `std::invoke_result_t`
 1. ...
 
-## 14.4 std::move
+## 14.15 std::move
 
 标准库的实现如下：
 
@@ -443,7 +519,7 @@ int main() {
 
 本质上，就是做了一次类型转换，返回的一定是个右值
 
-## 14.5 std::forward
+## 14.16 std::forward
 
 `std::forward`主要用于实现模板的完美转发：因为对于一个变量而言，无论该变量的类型是左值引用还是右值引用，变量本身都是左值，如果直接将变量传递到下一个方法中，那么一定是按照左值来匹配重载函数的，而`std::forward`就是为了解决这个问题。请看下面这个例子：
 
