@@ -559,7 +559,56 @@ int main() {
 }
 ```
 
-## 6.3 类型推导
+## 6.3 is_copy_assignable
+
+我们手动来实现一下`<type_traits>`头文件中的`std::is_copy_assignable`，该模板用于判断一个类是否支持了拷贝赋值运算符
+
+示例如下，这个实现比较复杂，我们一一解释
+
+* 其中`std::declval`用于返回指定类型的右值版本
+* 函数模板`try_assignment(U&&)`包含两个类型参数，其中第二个类型参数并未用到（省略了参数名），且存在一个默认值`typename = decltype(std::declval<U&>() = std::declval<U const&>())`，这一段其实就是用于测试指定类型是否支持拷贝赋值操作。如果不支持，那么`try_assignment(U&&)`模板的实例化将会失败，转而匹配默认版本`try_assignment(...)`
+    * 如果要实现`is_copy_constructible`、`is_move_constructible`以及`is_move_assignable`，其实是类似的，替换这一串表达式即可
+* `try_assignment(...)`该重载版本可以匹配任意数量任意类型的参数
+
+```cpp
+#include <iostream>
+
+template <typename T>
+struct is_copy_assignable {
+private:
+    template <typename U, typename = decltype(std::declval<U&>() = std::declval<U const&>())>
+    static std::true_type try_assignment(U&&);
+
+    static std::false_type try_assignment(...);
+
+public:
+    using type = decltype(try_assignment(std::declval<T>()));
+};
+
+struct SupportCopyAssignment {
+    SupportCopyAssignment() = delete;
+    SupportCopyAssignment(const SupportCopyAssignment&) = delete;
+    SupportCopyAssignment(SupportCopyAssignment&&) = delete;
+    SupportCopyAssignment& operator=(const SupportCopyAssignment&) = default;
+    SupportCopyAssignment& operator=(SupportCopyAssignment&&) = delete;
+};
+
+struct NoSupportCopyAssignment {
+    NoSupportCopyAssignment() = delete;
+    NoSupportCopyAssignment(const NoSupportCopyAssignment&) = delete;
+    NoSupportCopyAssignment(NoSupportCopyAssignment&&) = delete;
+    NoSupportCopyAssignment& operator=(const NoSupportCopyAssignment&) = delete;
+    NoSupportCopyAssignment& operator=(NoSupportCopyAssignment&&) = delete;
+};
+
+int main() {
+    std::cout << is_copy_assignable<SupportCopyAssignment>::type::value << std::endl;
+    std::cout << is_copy_assignable<NoSupportCopyAssignment>::type::value << std::endl;
+    return 0;
+}
+```
+
+## 6.4 类型推导
 
 **`using template`：当我们使用`Traits`萃取类型时，通常需要加上`typename`来消除歧义。因此，`using`模板可以进一步消除多余的`typename`**
 **`static member template`：静态成员模板**
@@ -620,7 +669,7 @@ int main() {
 }
 ```
 
-## 6.4 遍历tuple
+## 6.5 遍历tuple
 
 ```cpp
 #include <stddef.h>
@@ -645,7 +694,7 @@ int main() {
 }
 ```
 
-## 6.5 快速排序
+## 6.6 快速排序
 
 **源码出处：[quicksort in C++ template metaprogramming](https://gist.github.com/cleoold/c26d4e2b4ff56985c42f212a1c76deb9)**
 
@@ -900,7 +949,7 @@ int main() {
 }
 ```
 
-## 6.6 静态代理
+## 6.7 静态代理
 
 不确定这个是否属于元编程的范畴。更多示例可以参考[binary_function.h](https://github.com/liuyehcf/starrocks/blob/main/be/src/exprs/vectorized/binary_function.h)
 

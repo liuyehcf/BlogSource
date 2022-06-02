@@ -692,6 +692,22 @@ decltype(*ptr3):
     is_pointer_v=0
 ```
 
+此外，`decltype`发生在编译期，即它不会产生任何运行时的代码。示例如下，编译执行后，可以发现`say_hello`并未执行
+
+```cpp
+#include <iostream>
+
+int say_hello() {
+    std::cout << "hello" << std::endl;
+    return 0;
+}
+
+int main() {
+    decltype(say_hello()) a;
+    return 0;
+}
+```
+
 ### 3.3.3 typeof
 
 **非`C++`标准**
