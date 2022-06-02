@@ -1008,6 +1008,7 @@ locate stl_vector.h
 * `-X`：指定`Http Method`，例如`POST`
 * `-H`：增加`Http Header`
 * `-d`：指定`Http Body`
+* `-u <username>:<password>`：对于需要鉴权的服务，需要指定用户名或密码，`:<password>`可以省略，以交互的方式输入
 
 **示例：**
 

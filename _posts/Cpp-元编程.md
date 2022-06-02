@@ -460,7 +460,85 @@ constexpr bool is_same_v<T, T> = true;
 
 # 6 元编程的应用
 
-## 6.1 编译期判断
+## 6.1 rank
+
+```cpp
+#include <iostream>
+
+template <class T>
+struct rank {
+    static size_t const value = 0u;
+};
+
+template <class U, size_t N>
+struct rank<U[N]> {
+    static size_t const value = 1u + rank<U>::value;
+};
+
+int main() {
+    using array_t = int[10][20][30];
+    std::cout << "rank=" << rank<array_t>::value << std::endl;
+    return 0;
+}
+```
+
+我们也可以利用`std::integral_constant`来实现上述功能
+
+```cpp
+#include <iostream>
+#include <type_traits>
+
+// Default version
+template <typename T>
+struct rank : std::integral_constant<size_t, 0> {};
+
+template <typename U, size_t N>
+struct rank<U[N]> : std::integral_constant<size_t, 1 + rank<U>::value> {};
+
+int main() {
+    using array_t = int[10][20][30];
+    std::cout << "rank=" << rank<array_t>::value << std::endl;
+    return 0;
+}
+```
+
+## 6.2 one_of/type_in/value_in
+
+下面是`is_one_of`的实现方式
+
+* 首先，定义模板
+* base1，定义单个参数的实例化版本，即递归的终止状态
+* base2，定义首个元素相同的实例化版本，即递归的终止状态
+* 定义首个元素不同的实例化版本，并通过继承实现递归实例化（递归时，要注意，每次减少一个参数）
+
+```cpp
+#include <iostream>
+#include <type_traits>
+
+// declare the interface only
+template <typename T, typename... P0toN>
+struct is_one_of;
+
+// base #1: specialization recognizes empty list of types:
+template <typename T>
+struct is_one_of<T> : std::false_type {};
+
+// base #2: specialization recognizes match at head of list of types:
+template <typename T, typename... P1toN>
+struct is_one_of<T, T, P1toN...> : std::true_type {};
+
+// specialization recognizes mismatch at head of list of types:
+template <typename T, typename P0, typename... P1toN>
+struct is_one_of<T, P0, P1toN...> : is_one_of<T, P1toN...> {};
+
+int main() {
+    std::cout << is_one_of<double, double, float, long>::value << std::endl;
+    std::cout << is_one_of<bool, double, float, long>::value << std::endl;
+    return 0;
+}
+```
+
+我们也可以利用[折叠表达式](https://www.bookstack.cn/read/cppreference-language/62e23cda3198622e.md)来实现递归展开
 
 ```cpp
 #include <iostream>
@@ -481,7 +559,7 @@ int main() {
 }
 ```
 
-## 6.2 类型推导
+## 6.3 类型推导
 
 **`using template`：当我们使用`Traits`萃取类型时，通常需要加上`typename`来消除歧义。因此，`using`模板可以进一步消除多余的`typename`**
 **`static member template`：静态成员模板**
@@ -542,7 +620,7 @@ int main() {
 }
 ```
 
-## 6.3 遍历tuple
+## 6.4 遍历tuple
 
 ```cpp
 #include <stddef.h>
@@ -567,7 +645,7 @@ int main() {
 }
 ```
 
-## 6.4 快速排序
+## 6.5 快速排序
 
 **源码出处：[quicksort in C++ template metaprogramming](https://gist.github.com/cleoold/c26d4e2b4ff56985c42f212a1c76deb9)**
 
@@ -822,7 +900,7 @@ int main() {
 }
 ```
 
-## 6.5 静态代理
+## 6.6 静态代理
 
 不确定这个是否属于元编程的范畴。更多示例可以参考[binary_function.h](https://github.com/liuyehcf/starrocks/blob/main/be/src/exprs/vectorized/binary_function.h)
 
@@ -895,30 +973,9 @@ int main() {
 }
 ```
 
-## 6.6 编译期计算数组维度
-
-```cpp
-#include <iostream>
-
-template <class T>
-struct rank {
-    static size_t const value = 0u;
-};
-
-template <class U, size_t N>
-struct rank<U[N]> {
-    static size_t const value = 1u + rank<U>::value;
-};
-
-int main() {
-    using array_t = int[10][20][30];
-    std::cout << "rank=" << rank<array_t>::value << std::endl;
-    return 0;
-}
-```
-
 # 7 参考
 
 * [ClickHouse](https://github.com/ClickHouse/ClickHouse/blob/master/base/base/constexpr_helpers.h)
 * [C++雾中风景16:std::make_index_sequence, 来试一试新的黑魔法吧](https://www.cnblogs.com/happenlee/p/14219925.html)
-
+* [CppCon 2014: Walter E. Brown "Modern Template Metaprogramming: A Compendium, Part I"](https://www.youtube.com/watch?v=Am2is2QCvxY)
+* [CppCon 2014: Walter E. Brown "Modern Template Metaprogramming: A Compendium, Part II"](https://www.youtube.com/watch?v=a0FliKwcwXE)

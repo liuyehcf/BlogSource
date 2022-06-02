@@ -413,6 +413,9 @@ git fetch --depth 1 origin '<需要获取的分支名>'
 # 下载远程仓库的所有变动
 git fetch [remote]
 
+# 下载远程仓库的指定分支
+git fetch [remote] [branch]
+
 # 显示所有远程仓库
 git remote -v
 

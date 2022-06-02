@@ -205,14 +205,44 @@ else
 
 ### 3.1.1 顶层/底层const
 
-顶层的`const`可以表示任意的对象是常量（包括指针，不包括引用，因为引用本身不是对象，没法指定顶层的`const`属性）
+**只有指针和引用才有顶层底层之分**
 
-只有指针的`const`属性既可以是顶层又可以是底层，例如：
+* 顶层`const`属性表示对象本身不可变
+* 底层`const`属性表示指向的对象不可变
+* 引用的`const`属性只能是底层。因为引用本身不是对象，没法指定顶层的`const`属性
+* 指针的`const`属性既可以是顶层又可以是底层
+    * 注意，只有`const`与`变量名`相邻时（中间不能有`*`），才算顶层`const`。例如下面例子中的`p1`和`p2`都是顶层`const`
+* 指针的底层`const`是可以重新绑定的，例如下面例子中的`p1`和`p2`
+* 引用的底层`const`是无法重新绑定的，这是因为引用本身就不支持重新绑定，而非`const`的限制
 
 ```cpp
-const int i = 1;
-const int *const pi = &i;
+int main() {
+    int a = 0, b = 1, c = 2;
+
+    // top level const
+    const int* p1 = &a;
+    p1 = &c;
+    // *p1 += 1; // compile error
+
+    // top level const
+    int const* p2 = &b;
+    p2 = &c;
+    // *p2 += 1; // compile error
+
+    // bottom level const
+    int* const p3 = &c;
+    // p3 = &a; // compile error
+    *p3 += 1;
+
+    const int& r1 = a;
+    // r1 = b; // compile error
+    // r1 += 1; // compile error
+
+    return 0;
+}
 ```
+
+**`const`遵循如下规则：**
 
 * 顶层`const`可以访问`const`和非`const`的成员
 * 底层`const`只能访问`const`的成员
