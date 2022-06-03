@@ -1565,6 +1565,28 @@ ValueType& get(HashMap& map, const KeyType& key) {
 }
 ```
 
+## 4.8 模板子类访问模板父类中的成员
+
+访问方式：`ParentClass<Template Args...>::MemberName`
+
+```cpp
+template <typename T>
+struct Base {
+    T data;
+};
+
+template <typename T>
+struct Derive : Base<T> {
+    void init(const T& data) { Base<T>::data = data; }
+};
+
+int main() {
+    Derive<int> t;
+    t.init(5);
+    return 0;
+}
+```
+
 # 5 `__attribute__`
 
 [Compiler-specific Features](https://www.keil.com/support/man/docs/armcc/armcc_chr1359124965789.htm)

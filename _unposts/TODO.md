@@ -84,27 +84,17 @@ categories:
     * clickhouse
         * [COW.h](https://github.com/ClickHouse/ClickHouse/blob/master/src/Common/COW.h)
     * https://cloud.google.com/blog/products/databases/alloydb-for-postgresql-intelligent-scalable-storage
-1. license
-    * [主流开源协议之间有何异同？](https://www.zhihu.com/question/19568896)
-    * apache license
-    * elastic license
-    * bsd
-    * mit
-    * gpl
 1. 体系结构
-    * cpu南北桥
     * 内存屏障在汇编层面的表示
     * 《Residency-Aware Virtual Machine Communication Optimization: Design Choices and Techniques》
 1. cpp
     * std::guard(be/src/runtime/decimalv3.h,be/src/util/guard.h)
     * std::bind 如何实现
     * struct alising
-    * 模板类继承自另一个模板类，如何引用父类中的成员
     * 如何消除虚函数的调用（down_cast）
-    * futex
     * [apache-arrow](https://github.com/apache/arrow)
 1. java
-    * containsKey结果不对。若Key改变过值，导致hashCode变化之后，就会出现这个问题
+    * 
 1. llvm
     * [llvm-doc](https://llvm.org/docs/)
     * [2008-10-04-ACAT-LLVM-Intro.pdf](https://llvm.org/pubs/2008-10-04-ACAT-LLVM-Intro.pdf)
@@ -140,12 +130,9 @@ categories:
             * 复杂的表达式
             * 分支
             * data alignment
-    * 如何挖掘并行
-        * `Instruction level`：`VLIW`和`OOO Execution`
-        * `Data level`：SIMD，向量化
-        * `Thread level`：SMP
     * [lxcfs](https://github.com/lxc/lxcfs)
     * [什么是图灵完备？](https://www.zhihu.com/question/20115374/answer/288346717)
     * [调度系统设计精要](https://draveness.me/system-design-scheduler/)
     * [构建工具bazel](https://github.com/bazelbuild/bazel)
     * Quad Trees and R-Trees
+    * futex
