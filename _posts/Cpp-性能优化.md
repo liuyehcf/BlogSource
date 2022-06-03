@@ -142,9 +142,84 @@ BM_normal       0.314 ns        0.313 ns   1000000000
 BM_virtual       1.88 ns         1.88 ns    372088713
 ```
 
-## 1.2 move smart pointer
+## 1.2 eliminate virtual function
+
+如何消除virtual function
 
 ### 1.2.1 benchmark
+
+```cpp
+#include <benchmark/benchmark.h>
+
+struct Base {
+    virtual void op() { data += 1; }
+
+protected:
+    int data = 0;
+};
+
+struct Derive : public Base {
+    virtual void op() override { data -= 1; }
+};
+
+static void BM_invoke_by_base_prt(benchmark::State& state) {
+    Base* base_prt = new Derive();
+    for (auto _ : state) {
+        base_prt->op();
+        benchmark::DoNotOptimize(base_prt);
+    }
+}
+
+static void BM_invoke_by_derive_ptr(benchmark::State& state) {
+    Base* base_prt = new Derive();
+    Derive* derive_ptr = static_cast<Derive*>(base_prt);
+    for (auto _ : state) {
+        derive_ptr->op();
+        benchmark::DoNotOptimize(base_prt);
+    }
+}
+
+static void BM_invoke_by_derive_ref(benchmark::State& state) {
+    Base* base_ptr = new Derive();
+    Derive& derive_ref = static_cast<Derive&>(*base_ptr);
+    for (auto _ : state) {
+        derive_ref.op();
+        benchmark::DoNotOptimize(base_ptr);
+    }
+}
+
+static void BM_invoke_by_derive_obj(benchmark::State& state) {
+    Base* base_ptr = new Derive();
+    Derive derive_obj = *static_cast<Derive*>(base_ptr);
+    for (auto _ : state) {
+        derive_obj.op();
+        benchmark::DoNotOptimize(base_ptr);
+    }
+}
+
+BENCHMARK(BM_invoke_by_base_prt);
+BENCHMARK(BM_invoke_by_derive_ptr);
+BENCHMARK(BM_invoke_by_derive_ref);
+BENCHMARK(BM_invoke_by_derive_obj);
+
+BENCHMARK_MAIN();
+```
+
+**输出如下：**
+
+```
+------------------------------------------------------------------
+Benchmark                        Time             CPU   Iterations
+------------------------------------------------------------------
+BM_invoke_by_base_prt         1.71 ns         1.71 ns    410323428
+BM_invoke_by_derive_ptr       1.47 ns         1.47 ns    440241267
+BM_invoke_by_derive_ref       1.43 ns         1.43 ns    488886332
+BM_invoke_by_derive_obj      0.326 ns        0.326 ns   1000000000
+```
+
+## 1.3 move smart pointer
+
+### 1.3.1 benchmark
 
 在下面这个例子中
 
@@ -207,11 +282,11 @@ BM_add_with_move       15.4 ns         15.4 ns     44609411
 BM_add_with_copy       31.4 ns         31.4 ns     21773464
 ```
 
-## 1.3 `++i` or `i++`
+## 1.4 `++i` or `i++`
 
 一般情况下，单独的`++i`或者`i++`都会被编译器优化成相同的指令集。除非`i++`赋值后的变量无法被优化掉，那么`++i`的性能会略优于`i++`
 
-### 1.3.1 benchmark
+### 1.4.1 benchmark
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -265,11 +340,11 @@ BM_increment_and_assign       2.75 ns         2.75 ns    254502792
 BM_assign_and_increment       2.88 ns         2.88 ns    239756481
 ```
 
-## 1.4 container lookup
+## 1.5 container lookup
 
 在`vector`查找某个元素只能遍历，查找性能是`O(n)`，但是`set`提供了`O(1)`的查找性能
 
-### 1.4.1 benchmark
+### 1.5.1 benchmark
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -358,11 +433,11 @@ BENCHMARK_MAIN();
 | 128 | 33.9 ns | 6.51 ns | 8.52 ns |
 | 16384 | 2641 ns | 54.7 ns | 8.51 ns |
 
-## 1.5 integer vs. float with branch
+## 1.6 integer vs. float with branch
 
 对比整型运算、浮点运算在有无分支情况下的性能差异
 
-### 1.5.1 benchmark
+### 1.6.1 benchmark
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -480,11 +555,11 @@ BM_sum_int_with_branch          5581 ns         5581 ns       125473
 BM_sum_double_with_branch      41075 ns        41071 ns        17027
 ```
 
-## 1.6 `atomic` or `mutex`
+## 1.7 `atomic` or `mutex`
 
 非原子变量、原子变量、`mutex`之间的性能差距
 
-### 1.6.1 benchmark
+### 1.7.1 benchmark
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -538,9 +613,9 @@ BM_atomic        5.65 ns         5.65 ns    124013879
 BM_mutex         16.6 ns         16.6 ns     42082466
 ```
 
-## 1.7 `std::function` or template
+## 1.8 `std::function` or template
 
-### 1.7.1 benchmark
+### 1.8.1 benchmark
 
 ```cpp
 #include <benchmark/benchmark.h>
