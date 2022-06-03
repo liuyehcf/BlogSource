@@ -67,7 +67,6 @@ categories:
         * [SetSketch: Filling the Gap between MinHash and HyperLogLog](https://vldb.org/pvldb/vol14/p2244-ertl.pdf) - ref 2
         * [Learning to be a Statistician: Learned Estimator for Number of Distinct Values](https://vldb.org/pvldb/vol15/p272-wu.pdf) - ref 0
         * [NeuroCard: One Cardinality Estimator for All Tables](https://vldb.org/pvldb/vol14/p61-yang.pdf) - ref 42
-        * [Are We Ready For Learned Cardinality Estimation?](https://vldb.org/pvldb/vol14/p1640-wang.pdf) - ref 20
         * [Flow-Loss: Learning Cardinality Estimates That Mater](https://vldb.org/pvldb/vol14/p2019-negi.pdf) - ref 8
         * [Fauce: Fast and Accurate Deep Ensembles with Uncertainty for Cardinality Estimation](https://vldb.org/pvldb/vol14/p1950-liu.pdf) - ref 2
         * [Weighted Distinct Sampling: Cardinality Estimation for SPJ Queries](https://www.cse.ust.hk/~yike/spj-full.pdf) - ref 0
@@ -94,7 +93,6 @@ categories:
     * 如何消除虚函数的调用（down_cast）
     * [apache-arrow](https://github.com/apache/arrow)
 1. java
-    * 
 1. llvm
     * [llvm-doc](https://llvm.org/docs/)
     * [2008-10-04-ACAT-LLVM-Intro.pdf](https://llvm.org/pubs/2008-10-04-ACAT-LLVM-Intro.pdf)
