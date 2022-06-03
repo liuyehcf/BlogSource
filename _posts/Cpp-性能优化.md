@@ -144,12 +144,14 @@ BM_virtual       1.88 ns         1.88 ns    372088713
 
 ## 1.2 eliminate virtual function
 
-如何消除virtual function
+有时候，当子类型确定时，我们希望能够消除虚函数的开销
 
 ### 1.2.1 benchmark
 
 ```cpp
 #include <benchmark/benchmark.h>
+
+#include <type_traits>
 
 struct Base {
     virtual void op() { data += 1; }
@@ -188,7 +190,17 @@ static void BM_invoke_by_derive_ref(benchmark::State& state) {
     }
 }
 
-static void BM_invoke_by_derive_obj(benchmark::State& state) {
+static void BM_invoke_by_derive_obj_1(benchmark::State& state) {
+    Base* base_ptr = new Derive();
+    Derive& derive_ref = static_cast<Derive&>(*base_ptr);
+    for (auto _ : state) {
+        // Remove reference property
+        static_cast<Derive>(derive_ref).op();
+        benchmark::DoNotOptimize(base_ptr);
+    }
+}
+
+static void BM_invoke_by_derive_obj_2(benchmark::State& state) {
     Base* base_ptr = new Derive();
     Derive derive_obj = *static_cast<Derive*>(base_ptr);
     for (auto _ : state) {
@@ -200,7 +212,8 @@ static void BM_invoke_by_derive_obj(benchmark::State& state) {
 BENCHMARK(BM_invoke_by_base_prt);
 BENCHMARK(BM_invoke_by_derive_ptr);
 BENCHMARK(BM_invoke_by_derive_ref);
-BENCHMARK(BM_invoke_by_derive_obj);
+BENCHMARK(BM_invoke_by_derive_obj_1);
+BENCHMARK(BM_invoke_by_derive_obj_2);
 
 BENCHMARK_MAIN();
 ```
@@ -208,14 +221,17 @@ BENCHMARK_MAIN();
 **输出如下：**
 
 ```
-------------------------------------------------------------------
-Benchmark                        Time             CPU   Iterations
-------------------------------------------------------------------
-BM_invoke_by_base_prt         1.71 ns         1.71 ns    410323428
-BM_invoke_by_derive_ptr       1.47 ns         1.47 ns    440241267
-BM_invoke_by_derive_ref       1.43 ns         1.43 ns    488886332
-BM_invoke_by_derive_obj      0.326 ns        0.326 ns   1000000000
+--------------------------------------------------------------------
+Benchmark                          Time             CPU   Iterations
+--------------------------------------------------------------------
+BM_invoke_by_base_prt           1.71 ns         1.71 ns    414362787
+BM_invoke_by_derive_ptr         1.64 ns         1.64 ns    426661973
+BM_invoke_by_derive_ref         1.65 ns         1.64 ns    425877401
+BM_invoke_by_derive_obj_1      0.314 ns        0.314 ns   1000000000
+BM_invoke_by_derive_obj_2      0.314 ns        0.314 ns   1000000000
 ```
+
+可以看到，即便指针或者引用的类型已经是子类的类型了，仍然会作为虚函数进行调用。只有通过普通对象调用时，才能消除虚函数的开销
 
 ## 1.3 move smart pointer
 
