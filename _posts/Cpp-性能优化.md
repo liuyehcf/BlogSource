@@ -151,8 +151,6 @@ BM_virtual       1.88 ns         1.88 ns    372088713
 ```cpp
 #include <benchmark/benchmark.h>
 
-#include <type_traits>
-
 struct Base {
     virtual void op() { data += 1; }
 
@@ -2136,7 +2134,9 @@ BM_binary_search_with_prefetch_locality_3     272844 ns       272819 ns         
 
 * [Other Built-in Functions Provided by GCC](https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html)
 
-# 5 branch prediction
+# 5 branch
+
+## 5.1 branch prediction
 
 分支预测的成功率对于执行效率的影响非常大，对于如下代码
 
@@ -2158,7 +2158,7 @@ BM_binary_search_with_prefetch_locality_3     272844 ns       272819 ns         
 
 若分支预测正确率较低，那么CPU流水线会产生非常多的停顿，导致整体的CPI下降
 
-## 5.1 benchmark
+### 5.1.1 benchmark
 
 **注意，优化参数为`-O0`，否则经过编译器优化之后，性能相差不大**
 
@@ -2284,7 +2284,44 @@ BM_traverse_unsorted_array_branchless      81263 ns        81253 ns         8604
 BM_traverse_sorted_array_branchless        81282 ns        81274 ns         8620
 ```
 
-## 5.2 参考
+## 5.2 branch elimination
+
+我们可以通过一些技术手段消除特定类型的分支
+
+我们知道，整型在计算机中是用补码表示的，由补码的性质可以推导出一些恒等式
+
+```cpp
+-x = ~x + 1
+~x = x ^ -1
+x = x & -1
+```
+
+**三元表达式恒等变形，其中，`C`为条件，`X`和`Y`均为整型表达式**
+
+* `C ? X : Y`等价于`Y - (C ? (Y - X): 0))`
+* 借助位运算，`Y - (C ? (Y - X): 0))`又可进一步简化为`Y - ((true / false) & (Y - X))`，其中
+    * `true`对应的值为`-1`，`-1`的补码为`1111...1`，任何数与`-1`进行与运算都恒等于该数本身
+    * `false`对应的值为`0`，`0`的补码为`000...0`，任何数与`0`进行与运算都恒等于0
+
+**整型相等性判断**。例如`x == y`，等价于`x - y == 0`
+
+1. 首先判断`x - y`的正负性，即符号位，若为`1`，则说明`x < y`，判断结束
+1. 若`x - y`的符号位为`0`，则说明`x >= y`
+1. 进一步判断`x - y - 1`的符号位，若符号位为`1`，则说明`x - y < 1`，于是`x == y`成立
+1.  若`x - y - 1`的符号位为`0`，则说明`x >= y + 1`
+* 简单来说，就是判断`x - y`、`x - y - 1`这两个表达式的符号位，将这两个符号位进行异或运算，当结果为`1`时，`x == y`成立
+    * `(0, 0)`：`0 ^ 0 = 0` ==> `x > y`
+    * `(0, 1)`：`0 ^ 1 = 1` ==> `x ==y `
+    * `(1, 0)`：这种符号位结果不可能，因为`x < y`和`x >= y + 1`是矛盾的
+    * `(1, 1)`：`1 ^ 1 = 1` ==> `x < y`
+* **符号为计算公式如下：**
+    * `(exp >> (size - 1)) & 1`
+
+### 5.2.1 benchmark
+
+## 5.3 参考
 
 * [Branch-aware programming](https://stackoverflow.com/questions/32581644/branch-aware-programming)
 * [Why is processing a sorted array faster than processing an unsorted array?](https://stackoverflow.com/questions/11227809/why-is-processing-a-sorted-array-faster-than-processing-an-unsorted-array)
+* [程序的分支消除](https://leetcode.cn/circle/article/GSJ5XS/)
+* [只会写 if 的菜炸了，手动分支消除，带你装〇带你飞！](https://www.bilibili.com/video/BV1L7411f7g3?t=2&p=2)

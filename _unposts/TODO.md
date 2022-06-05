@@ -117,13 +117,6 @@ categories:
     * codegen
     * git worktree
     * 向量化
-        * 如何消除分支
-            * [程序的分支消除](https://leetcode.cn/circle/article/GSJ5XS/)
-            * [只会写 if 的菜炸了，手动分支消除，带你装〇带你飞！](https://www.bilibili.com/video/BV1L7411f7g3?t=2&p=2)
-            * 恒等式：
-                * `-x  = ~x + 1`
-                * `~x = x ^ -1`
-            * `sign = x >> (<size> -1)`
         * 无法向量化的场景
             * 复杂的表达式
             * 分支
