@@ -959,6 +959,7 @@ BM_sum_with_restrict          2.85 ns         2.85 ns    243455429
 * `-fopt-info-vec-missed`：Detailed info about loops not being vectorized, and a lot of other detailed information.
 * `-fopt-info-vec-note`：Detailed info about all loops and optimizations being done.
 * `-fopt-info-vec-all`：All previous options together.
+* `-fno-tree-vectorize`：Disable vectorization.
 
 ## 3.2 pointer aliasing
 
@@ -2288,7 +2289,7 @@ BM_traverse_sorted_array_branchless        81282 ns        81274 ns         8620
 
 我们可以通过一些技术手段消除特定类型的分支
 
-我们知道，整型在计算机中是用补码表示的，由补码的性质可以推导出一些恒等式
+**我们知道，整型在计算机中是用补码表示的，由补码的性质可以推导出一些恒等式**
 
 ```cpp
 -x = ~x + 1
@@ -2308,16 +2309,151 @@ x = x & -1
 1. 首先判断`x - y`的正负性，即符号位，若为`1`，则说明`x < y`，判断结束
 1. 若`x - y`的符号位为`0`，则说明`x >= y`
 1. 进一步判断`x - y - 1`的符号位，若符号位为`1`，则说明`x - y < 1`，于是`x == y`成立
-1.  若`x - y - 1`的符号位为`0`，则说明`x >= y + 1`
-* 简单来说，就是判断`x - y`、`x - y - 1`这两个表达式的符号位，将这两个符号位进行异或运算，当结果为`1`时，`x == y`成立
+1. 若`x - y - 1`的符号位为`0`，则说明`x >= y + 1`
+* **简单来说，就是判断`x - y`、`x - y - 1`这两个表达式的符号位，将这两个符号位进行异或运算，当结果为`1`时，`x == y`成立**
     * `(0, 0)`：`0 ^ 0 = 0` ==> `x > y`
-    * `(0, 1)`：`0 ^ 1 = 1` ==> `x ==y `
+    * `(0, 1)`：`0 ^ 1 = 1` ==> `x == y `
     * `(1, 0)`：这种符号位结果不可能，因为`x < y`和`x >= y + 1`是矛盾的
     * `(1, 1)`：`1 ^ 1 = 1` ==> `x < y`
 * **符号为计算公式如下：**
-    * `(exp >> (size - 1)) & 1`
+    * `(exp >> (bit_wides - 1)) & 1`
 
 ### 5.2.1 benchmark
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#include <iostream>
+#include <random>
+
+static const int SIZE = 16384;
+
+static int data[SIZE];
+static std::default_random_engine e;
+static std::uniform_int_distribution<int> u(0, 1);
+
+void fill(int* data) {
+    for (int i = 0; i < SIZE; ++i) {
+        data[i] = u(e);
+    }
+}
+
+void count_eq(int* data, int* eq_times, int target) {
+    for (int i = 0; i < SIZE; ++i) {
+        if (data[i] == target) {
+            (*eq_times)++;
+        }
+    }
+}
+
+void count_ge(int* data, int* eq_times, int target) {
+    for (int i = 0; i < SIZE; ++i) {
+        if (data[i] >= target) {
+            (*eq_times)++;
+        }
+    }
+}
+
+void count_eq_branch_elimination(int* data, int* eq_times, int target) {
+    for (int i = 0; i < SIZE; ++i) {
+        int diff = data[i] - target;
+        int diff_minus_1 = diff - 1;
+        int sign_diff = (diff >> 31) & 1;
+        int sign_diff_minus_1 = (diff_minus_1 >> 31) & 1;
+        int sign_xor = sign_diff ^ sign_diff_minus_1;
+        *eq_times += (-sign_xor) & 1;
+    }
+}
+
+void count_ge_branch_elimination(int* data, int* eq_times, int target) {
+    for (int i = 0; i < SIZE; ++i) {
+        int diff = data[i] - target;
+        int sign_diff = (diff >> 31) & 1;
+        *eq_times += (sign_diff - 1) & 1;
+    }
+}
+
+static void BM_count_eq(benchmark::State& state) {
+    int eq_times = 0;
+    fill(data);
+    for (auto _ : state) {
+        count_eq(data, &eq_times, 1);
+        benchmark::DoNotOptimize(eq_times);
+    }
+}
+
+static void BM_count_eq_branch_elimination(benchmark::State& state) {
+    int eq_times = 0;
+    fill(data);
+    for (auto _ : state) {
+        count_eq_branch_elimination(data, &eq_times, 1);
+        benchmark::DoNotOptimize(eq_times);
+    }
+}
+
+static void BM_count_ge(benchmark::State& state) {
+    int eq_times = 0;
+    fill(data);
+    for (auto _ : state) {
+        count_ge(data, &eq_times, 1);
+        benchmark::DoNotOptimize(eq_times);
+    }
+}
+
+static void BM_count_ge_branch_elimination(benchmark::State& state) {
+    int eq_times = 0;
+    fill(data);
+    for (auto _ : state) {
+        count_ge_branch_elimination(data, &eq_times, 1);
+        benchmark::DoNotOptimize(eq_times);
+    }
+}
+
+BENCHMARK(BM_count_eq);
+BENCHMARK(BM_count_eq_branch_elimination);
+BENCHMARK(BM_count_ge);
+BENCHMARK(BM_count_ge_branch_elimination);
+
+BENCHMARK_MAIN();
+```
+
+优化级别为`-O0`时，输出如下：
+
+```
+-------------------------------------------------------------------------
+Benchmark                               Time             CPU   Iterations
+-------------------------------------------------------------------------
+BM_count_eq                        117660 ns       117645 ns         5952
+BM_count_eq_branch_elimination      72826 ns        72816 ns         9400
+BM_count_ge                        113074 ns       113063 ns         6123
+BM_count_ge_branch_elimination      53712 ns        53702 ns        15270
+```
+
+优化级别为`-O1`时，输出如下：
+
+```
+-------------------------------------------------------------------------
+Benchmark                               Time             CPU   Iterations
+-------------------------------------------------------------------------
+BM_count_eq                         69159 ns        68591 ns        10194
+BM_count_eq_branch_elimination      28016 ns        28014 ns        24993
+BM_count_ge                         70391 ns        70287 ns        10186
+BM_count_ge_branch_elimination      27706 ns        27701 ns        25078
+```
+
+优化级别为`-O2`时，输出如下：
+
+```
+-------------------------------------------------------------------------
+Benchmark                               Time             CPU   Iterations
+-------------------------------------------------------------------------
+BM_count_eq                         12175 ns        12174 ns        63584
+BM_count_eq_branch_elimination      15399 ns        15397 ns        51654
+BM_count_ge                         13201 ns        13200 ns        48040
+BM_count_ge_branch_elimination      12381 ns        12380 ns        50465
+```
+
+可以看到，在优化级别为`-O0`和`-O1`时，手动编写的分支消除逻辑可以提高执行效率。当优化级别为`-O2`及以上时，手动编写的分支消除逻辑的性能比不上编译器优化
 
 ## 5.3 参考
 

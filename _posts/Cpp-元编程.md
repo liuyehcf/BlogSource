@@ -566,7 +566,7 @@ int main() {
 示例如下，这个实现比较复杂，我们一一解释
 
 * 其中`std::declval`用于返回指定类型的右值版本
-* 函数模板`try_assignment(U&&)`包含两个类型参数，其中第二个类型参数并未用到（省略了参数名），且存在一个默认值`typename = decltype(std::declval<U&>() = std::declval<U const&>())`，这一段其实就是用于测试指定类型是否支持拷贝赋值操作。如果不支持，那么`try_assignment(U&&)`模板的实例化将会失败，转而匹配默认版本`try_assignment(...)`
+* 函数模板`try_assignment(U&&)`包含两个类型参数，其中第二个类型参数并未用到（省略了参数名），且存在一个默认值`typename = decltype(std::declval<U&>() = std::declval<U const&>())`，这一段其实就是用于测试指定类型是否支持拷贝赋值操作。如果不支持，那么`try_assignment(U&&)`模板的实例化将会失败，转而匹配默认版本`try_assignment(...)`。**这就是著名的`SFINAE, Substitution failure is not an error`**
     * 如果要实现`is_copy_constructible`、`is_move_constructible`以及`is_move_assignable`，其实是类似的，替换这一串表达式即可
 * `try_assignment(...)`该重载版本可以匹配任意数量任意类型的参数
 
@@ -613,7 +613,7 @@ int main() {
 我们实现一个`has_type_member`，用于判断某个类型是否有类型成员，且其名字为`type`，即对于类型`T`是否存在`typename T::type`
 
 * `has_type_member`的`primitive`版本包含两个类型参数，其中第二个参数存在默认值，其值为`void`
-* `std::void_t<T>`对任意`T`都会返回`void`。任何存在类型成员`type`的类型，对于该特化版本而言都是`well-formed`，因此会匹配该版本
+* `std::void_t<T>`对任意`T`都会返回`void`。任何存在类型成员`type`的类型，对于该特化版本而言都是`well-formed`，因此会匹配该版本；而对于没有类型成员`type`的类型，第二个模板参数的推导会失败，转而匹配其他版本。这里也用到了`SFINAE`
     * 该示例也是`std::void_t`的应用之一
 
 ```cpp
