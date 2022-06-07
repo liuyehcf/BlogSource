@@ -119,6 +119,9 @@ categories:
         * LLC Miss
         * Branch Miss
     * codegen
+        * 复杂表达式计算，例如a+b+c，正常需要先计算a+b，其结果再加c。而利用codegen可以生成定制的处理过程，直接处理a+b+c，避免物化中间结果
+        * 算子的内敛。例如scan + filter + aggregate，正常是三个算子，利用codegen可以把三个逻辑放一起，用一个大循环搞定，同样避免物化中间结果
+        * 实现方式：生成中间代码，再利用LLVM编译成二进制
     * git worktree
     * 向量化
         * 无法向量化的场景
