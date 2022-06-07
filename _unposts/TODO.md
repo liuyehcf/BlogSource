@@ -15,6 +15,9 @@ categories:
     * numactl --hardware
 1. 性能分析
     * bcc
+    * perf
+        * perf lock
+        * [How to find expensive locks in multithreaded application.](https://easyperf.net/blog/2019/10/12/MT-Perf-Analysis-part2)
     * bpftrace
     * valgrind (by andy pavlo)
         * [The Valgrind Quick Start Guide](http://valgrind.org/docs/manual/quick-start.html)
@@ -106,6 +109,7 @@ categories:
         * [BRPC的精华全在bthread上啦（三）：bthread上下文的创建](https://zhuanlan.zhihu.com/p/347499412)
         * [BRPC的精华都在bthread上啦（四）：尾声](https://zhuanlan.zhihu.com/p/350582218)
         * 在brpc内使用`std::mutex`会有问题
+        * [contention_profiler.md](https://github.com/apache/incubator-brpc/blob/master/docs/cn/contention_profiler.md)
     * thrift
     * 性能对比可以关注的指标
         * cycles
