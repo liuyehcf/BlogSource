@@ -103,21 +103,7 @@ categories:
 1. 其他
     * [Is Raft more modular than MultiPaxos?](https://maheshba.bitbucket.io/blog/2021/12/14/Modularity.html)
     * 内存分配，伙伴算法
-    * brpc框架
-        * [BRPC的精华全在bthread上啦（一）：Work Stealing以及任务的执行与切换](https://zhuanlan.zhihu.com/p/294129746)
-        * [BRPC的精华全在bthread上啦（二）：ParkingLot 与Worker同步任务状态](https://zhuanlan.zhihu.com/p/346081659)
-        * [BRPC的精华全在bthread上啦（三）：bthread上下文的创建](https://zhuanlan.zhihu.com/p/347499412)
-        * [BRPC的精华都在bthread上啦（四）：尾声](https://zhuanlan.zhihu.com/p/350582218)
-        * 在brpc内使用`std::mutex`会有问题
-        * [contention_profiler.md](https://github.com/apache/incubator-brpc/blob/master/docs/cn/contention_profiler.md)
     * thrift
-    * 性能对比可以关注的指标
-        * cycles
-        * ipc
-        * instructions
-        * L1 Miss
-        * LLC Miss
-        * Branch Miss
     * codegen
         * 复杂表达式计算，例如a+b+c，正常需要先计算a+b，其结果再加c。而利用codegen可以生成定制的处理过程，直接处理a+b+c，避免物化中间结果
         * 算子的内敛。例如scan + filter + aggregate，正常是三个算子，利用codegen可以把三个逻辑放一起，用一个大循环搞定，同样避免物化中间结果
