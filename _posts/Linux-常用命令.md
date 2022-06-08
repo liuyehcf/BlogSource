@@ -1124,7 +1124,17 @@ ROOT=$(cd "$ROOT"; pwd)
 
 * `ldd main`
 
-## 2.31 objdump
+## 2.31 ldconfig
+
+**生成动态库缓存或从缓存读取动态库信息**
+
+**示例：**
+
+* `ldconfig`：重新生成`/etc/ld.so.cache`
+* `ldconfig -v`：重新生成`/etc/ld.so.cache`，并输出详细信息
+* `ldconfig -p`：从`/etc/ld.so.cache`中读取并展示动态库信息
+
+## 2.32 objdump
 
 该工具用于反汇编
 
@@ -1133,7 +1143,7 @@ ROOT=$(cd "$ROOT"; pwd)
 * `objdump -drwCS main.o`
 * `objdump -drwCS -M intel main.o`
 
-## 2.32 iconf
+## 2.33 iconf
 
 **参数说明：**
 
@@ -1149,7 +1159,7 @@ ROOT=$(cd "$ROOT"; pwd)
 
 * `iconv -f gbk -t utf-8 s.txt > t.txt`
 
-## 2.33 expect
+## 2.34 expect
 
 expect是一个自动交互的工具，通过编写自定义的配置，就可以实现自动填充数据的功能
 

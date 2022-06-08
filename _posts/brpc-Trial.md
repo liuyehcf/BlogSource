@@ -58,6 +58,8 @@ cd build
 make -j 6
 ```
 
+此时，发现编译失败，原因是`protobuf`版本太新了
+
 # 3 FAQ
 
 1. `brpc会使用协程，在协程内使用`std::mutex`可能会产生死锁的问题，需要使用`bthread::Mutex`
