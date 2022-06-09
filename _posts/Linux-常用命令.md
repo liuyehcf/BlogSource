@@ -1375,7 +1375,11 @@ free
 
 `lspci`命令用于列出所有pci接口的设备
 
-## 3.12 sync
+## 3.12 lscpu
+
+`lscpu`命令用于列出cpu设备
+
+## 3.13 sync
 
 `sync`指令会将存于`buffer`中的资料强制写入硬盘中
 
