@@ -2164,7 +2164,31 @@ rm -f bar.o
 
 # 10 Tips
 
-1. 输出而不执行`Makefile`：`make -qp`
+## 10.1 打印完整Makefile
+
+输出而不执行`Makefile`：`make -qp`
+
+## 10.2 打印make会执行的命令
+
+打印而不执行命令：`make -n`
+
+## 10.3 增加编译参数
+
+如何在不修改`Makefile`的情况下增加编译参数：`./configure CXXFLAGS="-fPIC" CFLAGS="-fPIC"`
+
+## 10.4 指定安装路径
+
+指定`lib/bin`安装路径（[Changing the Install Directory with make install](https://www.baeldung.com/linux/change-install-dir-make-install)），路径相关的参数有如下三个：
+
+1. `prefix=<dir>`：通常用作其他参数的前缀，默认值是`/usr`或`/usr/local`
+1. `libdir=<dir>`：lib安装目录，默认值是`${prefix}/lib`或`${prefix}/lib64`
+1. `bindir=<dir>`：bin安装目录，默认值是`${prefix}/bin`
+
+```
+make clean
+make prefix=/usr/local libdir=/usr/local/lib64 bindir=/usr/local/bin -j 4
+make prefix=/usr/local libdir=/usr/local/lib64 bindir=/usr/local/bin install
+```
 
 # 11 参考
 

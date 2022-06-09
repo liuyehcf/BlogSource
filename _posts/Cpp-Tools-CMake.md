@@ -722,7 +722,13 @@ set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O1 -Wall")
 1. `RelWithDebInfo`
 1. `MinSizeRel`
 
-## 5.5 开启debug模式
+## 5.5 传递额外编译参数给cmake
+
+```sh
+cmake -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -O3" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -O3" ..
+```
+
+## 5.6 开启debug模式
 
 ```sh
 # If you want to build for debug (including source information, i.e. -g) when compiling, use
@@ -732,7 +738,7 @@ cmake -DCMAKE_BUILD_TYPE=Debug <path>
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo <path>
 ```
 
-## 5.6 同一目录，多个源文件
+## 5.7 同一目录，多个源文件
 
 如果同一个目录下有多个源文件，那么在使用`add_executable`命令的时候，如果要一个个填写，那么将会非常麻烦，并且后续维护的代价也很大
 
@@ -751,11 +757,11 @@ aux_source_directory(. DIR_SRCS)
 add_executable(Demo ${DIR_SRCS})
 ```
 
-## 5.7 打印所有编译指令
+## 5.8 打印所有编译指令
 
 `cmake`指定参数`-DCMAKE_VERBOSE_MAKEFILE=ON`即可
 
-## 5.8 生成`compile_commands.json`文件
+## 5.9 生成`compile_commands.json`文件
 
 `cmake`指定参数`-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`即可。构建完成后，会在构建目录生成`compile_commands.json`，里面包含了每个源文件的编译命令
 

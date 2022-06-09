@@ -15,37 +15,48 @@ categories:
 
 **安装`gflag`**
 
+* 需要额外指定编译参数`-fPIC`，否则`brpc`链接的时候会报错
+
 ```sh
 git clone https://github.com/gflags/gflags.git --depth 1
 cd gflags
-cmake -B build
+cmake -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC" -B build
 cd build
 make -j 6
 sudo make install
+sudo ldconfig
 ```
 
 **安装`protobuf`**
+
+* 需要额外指定编译参数`-fPIC`，否则`brpc`链接的时候会报错
+* `brpc`对`protobuf`的版本有要求，这里我们选择`v3.14.0`版本，该版本只能用`make`安装
+* 默认情况下，`make install`会安装到`/usr/local/lib`目录。`brpc`会优先从`/usr/local/lib64`目录中搜索（我的环境中，该目录正好有一个其他版本的`protobuf.a`），因此我需要修改一下安装路径，覆盖掉原有的lib文件
 
 ```sh
 git clone https://github.com/protocolbuffers/protobuf.git
 cd protobuf
 git submodule update --init --recursive
-cmake -B build
-cd build
-make -j 6
-sudo make install
+git checkout v3.14.0
+./configure CXXFLAGS="-fPIC" CFLAGS="-fPIC"
+sudo make prefix=/usr/local libdir=/usr/local/lib64 bindir=/usr/local/bin -j 6
+sudo make prefix=/usr/local libdir=/usr/local/lib64 bindir=/usr/local/bin install
+sudo ldconfig
 ```
 
 **安装`leveldb`**
+
+* 需要额外指定编译参数`-fPIC`，否则`brpc`链接的时候会报错
 
 ```sh
 git clone https://github.com/google/leveldb.git
 cd leveldb
 git submodule update --init --recursive
-cmake -B build
+cmake -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC" -B build
 cd build
 make -j 6
 sudo make install
+sudo ldconfig
 ```
 
 # 2 Build
@@ -56,9 +67,9 @@ cd incubator-brpc
 cmake -B build
 cd build
 make -j 6
+sudo make install
+sudo ldconfig
 ```
-
-此时，发现编译失败，原因是`protobuf`版本太新了
 
 # 3 FAQ
 
