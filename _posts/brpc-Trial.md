@@ -73,7 +73,7 @@ sudo ldconfig
 
 # 3 FAQ
 
-1. `brpc会使用协程，在协程内使用`std::mutex`可能会产生死锁的问题，需要使用`bthread::Mutex`
+1. `brpc`会使用协程，在协程内使用`std::mutex`可能会产生死锁的问题，需要使用`bthread::Mutex`
 
 # 4 参考
 
