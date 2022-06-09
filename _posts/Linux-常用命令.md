@@ -3403,8 +3403,9 @@ mount      –t debugfs    debugfs /sys/kernel/debug
 
 **常用事件：**
 
+* `cycles/cpu-cycles`
+* `instructions`
 * `branch-misses`
-* `cycles`
 * `context-switches`
 * `cache-misses`
 * `cache-references`
