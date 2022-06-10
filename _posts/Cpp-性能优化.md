@@ -962,7 +962,8 @@ BM_sum_with_restrict          2.85 ns         2.85 ns    243455429
 * `-fno-tree-vectorize`：Disable vectorization.
 * **一般来说，需要指定参数后才能使用更大宽度的向量化寄存器**
     * `-mmmx`
-    * `-msse`、`-msse2`、`-msse3`、`-mssse3`、`-msse4`、`-msse4a`、`-msse4.1`、`-msse4.2`、`-mavx`、`-mavx2`、`-mavx512f`、`-mavx512pf`、`-mavx512er`、`-mavx512cd`、`-mavx512vl`、`-mavx512bw`、`-mavx512dq`、`-mavx512ifma`、`-mavx512vbmi`
+    * `-msse`、`-msse2`、`-msse3`、`-mssse3`、`-msse4`、`-msse4a`、`-msse4.1`、`-msse4.2`
+    * `-mavx`、`-mavx2`、`-mavx512f`、`-mavx512pf`、`-mavx512er`、`-mavx512cd`、`-mavx512vl`、`-mavx512bw`、`-mavx512dq`、`-mavx512ifma`、`-mavx512vbmi`
     * ...
 
 ## 3.2 pointer aliasing

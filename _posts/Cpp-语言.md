@@ -1813,6 +1813,23 @@ int main() {
 1. `Basic exception safety`：可能会抛出异常，操作失败的部分可能会导致副作用，但所有不变量都会被保留。任何存储的数据都将包含可能与原始值不同的有效值。资源泄漏（包括内存泄漏）通常通过一个声明所有资源都被考虑和管理的不变量来排除
 1. `No exception safety`：不承诺异常安全
 
+## 7.3 RAII
+
+`RAII, Resource Acquisition is initialization`，即资源获取即初始化。典型示例包括：`std::lock_guard`、`defer`。简单来说，就是在对象的构造方法中初始化资源，在析构函数中销毁资源。而构造函数与析构函数的调用是由编译器自动插入的，减轻了开发者的心智负担
+
+```cpp
+template <class DeferFunction>
+class DeferOp {
+public:
+    explicit DeferOp(DeferFunction func) : _func(std::move(func)) {}
+
+    ~DeferOp() { _func(); };
+
+private:
+    DeferFunction _func;
+};
+```
+
 # 8 Tips
 
 ## 8.1 如何在类中定义静态成员
