@@ -75,7 +75,11 @@ sudo ldconfig
 
 1. `brpc`会使用协程，在协程内使用`std::mutex`可能会产生死锁的问题，需要使用`bthread::Mutex`
 
-# 4 参考
+# 4 TODO
+
+1. `bvar`
+
+# 5 参考
 
 * [BRPC的精华全在bthread上啦（一）：Work Stealing以及任务的执行与切换](https://zhuanlan.zhihu.com/p/294129746)
 * [BRPC的精华全在bthread上啦（二）：ParkingLot 与Worker同步任务状态](https://zhuanlan.zhihu.com/p/346081659)
