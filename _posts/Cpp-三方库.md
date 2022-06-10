@@ -278,6 +278,10 @@ inline BENCHMARK_ALWAYS_INLINE void DoNotOptimize(Tp& value) {
 }
 ```
 
+### 4.2.2 运行指定的case
+
+使用参数`--benchmark_filter=<regexp>`，此外可以使用`--help`查看所有参数
+
 ## 4.3 参考
 
 * [benchmark/docs/user_guide.md](https://github.com/google/benchmark/blob/main/docs/user_guide.md)

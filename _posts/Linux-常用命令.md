@@ -3407,14 +3407,11 @@ mount      –t debugfs    debugfs /sys/kernel/debug
 
 **常用事件：**
 
-* `cycles/cpu-cycles`
-* `instructions`
-* `branch-misses`
+* `cycles/cpu-cycles` & `instructions`
+* `branch-instructions` & `branch-misses`
+* `cache-references` & `cache-misses`
+* `LLC-loads` & `LLC-load-misses`
 * `context-switches`
-* `cache-misses`
-* `cache-references`
-* `LLC-loads`
-* `LLC-load-misses`
 
 **示例：**
 

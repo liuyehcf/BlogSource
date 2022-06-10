@@ -953,13 +953,17 @@ BM_sum_with_restrict          2.85 ns         2.85 ns    243455429
 * `ymm`：256-bit
 * `zmm`：512-bit
 
-**gcc中与向量化有关的参数**
+**`gcc`中与向量化有关的参数**
 
 * `-fopt-info-vec`/`-fopt-info-vec-optimized`：The compiler will log which loops (by line N°) are being vector optimized.
 * `-fopt-info-vec-missed`：Detailed info about loops not being vectorized, and a lot of other detailed information.
 * `-fopt-info-vec-note`：Detailed info about all loops and optimizations being done.
 * `-fopt-info-vec-all`：All previous options together.
 * `-fno-tree-vectorize`：Disable vectorization.
+* **一般来说，需要指定参数后才能使用更大宽度的向量化寄存器**
+    * `-mmmx`
+    * `-msse`、`-msse2`、`-msse3`、`-mssse3`、`-msse4`、`-msse4a`、`-msse4.1`、`-msse4.2`、`-mavx`、`-mavx2`、`-mavx512f`、`-mavx512pf`、`-mavx512er`、`-mavx512cd`、`-mavx512vl`、`-mavx512bw`、`-mavx512dq`、`-mavx512ifma`、`-mavx512vbmi`
+    * ...
 
 ## 3.2 pointer aliasing
 
@@ -1879,7 +1883,113 @@ BM_compose_simd/409600    1395080 ns      1394972 ns          517
 
 可以发现，`BM_auto_simd`与`BM_fusion_simd`性能相当，且明显优于`BM_compose_simd`，这是因为`BM_compose_simd`有物化操作，需要保存全量的中间结果，而`BM_fusion_simd`只需要保留`simd`指令长度大小的中间结果
 
-## 3.5 参考
+## 3.5 data size & CACHE_LINESIZE
+
+对比不同的数据宽度对于向量化的影响，以及对比不同的数据宽度对于cache性能的影响
+
+### 3.5.1 benchmark
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#include <iostream>
+#include <random>
+
+static const int SIZE = 1024;
+static const int CACHE_LINE_SIZE = 64;
+
+static std::default_random_engine e;
+static std::uniform_int_distribution<int> u(0, 1);
+
+template <size_t size>
+struct Obj {
+    int data[size];
+};
+
+template <size_t size>
+void init(Obj<size>& obj) {
+    obj.data[0] = u(e);
+}
+
+#define BENCHMARK_OBJ_WITH_SIZE(size)                     \
+    static void BM_size_##size(benchmark::State& state) { \
+        Obj<size> objs[SIZE];                             \
+        for (auto& obj : objs) {                          \
+            init(obj);                                    \
+        }                                                 \
+        int sum = 0;                                      \
+        for (auto _ : state) {                            \
+            for (auto& obj : objs) {                      \
+                sum += obj.data[0];                       \
+            }                                             \
+            benchmark::DoNotOptimize(sum);                \
+        }                                                 \
+    }                                                     \
+    BENCHMARK(BM_size_##size);
+
+BENCHMARK_OBJ_WITH_SIZE(1);
+BENCHMARK_OBJ_WITH_SIZE(2);
+BENCHMARK_OBJ_WITH_SIZE(4);
+BENCHMARK_OBJ_WITH_SIZE(8);
+BENCHMARK_OBJ_WITH_SIZE(16);
+BENCHMARK_OBJ_WITH_SIZE(32);
+BENCHMARK_OBJ_WITH_SIZE(64);
+BENCHMARK_OBJ_WITH_SIZE(128);
+BENCHMARK_OBJ_WITH_SIZE(256);
+
+BENCHMARK_MAIN();
+```
+
+首先，对比不同的数据宽度对于向量化的影响，编译参数为：`-O3 -Wall -fopt-info-vec -mavx512f`。编译输出信息如下：
+
+```
+[ 50%] Building CXX object CMakeFiles/benchmark_demo.dir/main.cpp.o
+/home/disk3/hcf/cpp/benchmark/main.cpp:38:1: optimized: loop vectorized using 64 byte vectors
+/home/disk3/hcf/cpp/benchmark/main.cpp:39:1: optimized: loop vectorized using 64 byte vectors
+/home/disk3/hcf/cpp/benchmark/main.cpp:40:1: optimized: loop vectorized using 64 byte vectors
+/home/disk3/hcf/cpp/benchmark/main.cpp:41:1: optimized: loop vectorized using 64 byte vectors
+/home/disk3/hcf/cpp/benchmark/main.cpp:38:1: optimized: basic block part vectorized using 64 byte vectors
+[100%] Linking CXX executable benchmark_demo
+[100%] Built target benchmark_demo
+```
+
+我们可以看到`size=1/2/4/8`时会进行向量化的优化，而当`size=16/32/64/128/256`时，无法进行向量化的优化，因为当`Obj`的占用内存比向量化寄存器更大时，就没法利用向量化了
+
+输出如下：
+
+```
+------------------------------------------------------
+Benchmark            Time             CPU   Iterations
+------------------------------------------------------
+BM_size_1         44.7 ns         44.7 ns     15662513
+BM_size_2         31.4 ns         31.4 ns     22260941
+BM_size_4         67.9 ns         67.9 ns     10305525
+BM_size_8          157 ns          157 ns      4468198
+BM_size_16         443 ns          443 ns      1580283
+BM_size_32         535 ns          535 ns      1366307
+BM_size_64         752 ns          752 ns       947927
+BM_size_128        695 ns          695 ns      1007176
+BM_size_256       1305 ns         1305 ns       538811
+```
+
+然后，对比不同的数据宽度对于cache性能的影响，编译参数为：`-O3 -Wall -fno-tree-vectorize`。输出如下：
+
+```
+------------------------------------------------------
+Benchmark            Time             CPU   Iterations
+------------------------------------------------------
+BM_size_1          419 ns          419 ns      1670454
+BM_size_2          649 ns          649 ns      1078816
+BM_size_4          421 ns          421 ns      1664212
+BM_size_8          422 ns          422 ns      1658692
+BM_size_16         461 ns          461 ns      1487259
+BM_size_32         650 ns          650 ns      1077057
+BM_size_64         730 ns          730 ns       939691
+BM_size_128        692 ns          692 ns      1008379
+BM_size_256       1190 ns         1190 ns       587838
+```
+
+## 3.6 参考
 
 * [Auto-vectorization in GCC](https://gcc.gnu.org/projects/tree-ssa/vectorization.html)
 * [Type-Based Alias Analysis](https://www.drdobbs.com/cpp/type-based-alias-analysis/184404273)
