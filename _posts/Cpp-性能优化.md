@@ -1884,9 +1884,9 @@ BM_compose_simd/409600    1395080 ns      1394972 ns          517
 
 可以发现，`BM_auto_simd`与`BM_fusion_simd`性能相当，且明显优于`BM_compose_simd`，这是因为`BM_compose_simd`有物化操作，需要保存全量的中间结果，而`BM_fusion_simd`只需要保留`simd`指令长度大小的中间结果
 
-## 3.5 data size & CACHE_LINESIZE
+## 3.5 cache line size
 
-对比不同的数据宽度对于向量化的影响，以及对比不同的数据宽度对于cache性能的影响
+对比不同的数据宽度对于向量化的影响
 
 ### 3.5.1 benchmark
 
@@ -1897,7 +1897,6 @@ BM_compose_simd/409600    1395080 ns      1394972 ns          517
 #include <random>
 
 static const int SIZE = 1024;
-static const int CACHE_LINE_SIZE = 64;
 
 static std::default_random_engine e;
 static std::uniform_int_distribution<int> u(0, 1);
@@ -1941,7 +1940,7 @@ BENCHMARK_OBJ_WITH_SIZE(256);
 BENCHMARK_MAIN();
 ```
 
-首先，对比不同的数据宽度对于向量化的影响，编译参数为：`-O3 -Wall -fopt-info-vec -mavx512f`。编译输出信息如下：
+编译参数为：`-O3 -Wall -fopt-info-vec -mavx512f`。编译输出信息如下：
 
 ```
 [ 50%] Building CXX object CMakeFiles/benchmark_demo.dir/main.cpp.o
@@ -1973,36 +1972,144 @@ BM_size_128        695 ns          695 ns      1007176
 BM_size_256       1305 ns         1305 ns       538811
 ```
 
-然后，对比不同的数据宽度对于cache性能的影响，编译参数为：`-O3 -Wall -fno-tree-vectorize`。输出如下：
-
-```
-------------------------------------------------------
-Benchmark            Time             CPU   Iterations
-------------------------------------------------------
-BM_size_1          419 ns          419 ns      1670454
-BM_size_2          649 ns          649 ns      1078816
-BM_size_4          421 ns          421 ns      1664212
-BM_size_8          422 ns          422 ns      1658692
-BM_size_16         461 ns          461 ns      1487259
-BM_size_32         650 ns          650 ns      1077057
-BM_size_64         730 ns          730 ns       939691
-BM_size_128        692 ns          692 ns      1008379
-BM_size_256       1190 ns         1190 ns       587838
-```
-
 ## 3.6 参考
 
 * [Auto-vectorization in GCC](https://gcc.gnu.org/projects/tree-ssa/vectorization.html)
 * [Type-Based Alias Analysis](https://www.drdobbs.com/cpp/type-based-alias-analysis/184404273)
 
-# 4 prefetch
+# 4 cache locality
+
+缓存局部性对于程序的性能起着至关重要的作用，下面我们探究当`L1`、`L2`、`L3`分别无法命中时，程序的性能的变化规律
+
+* 每次循环时，读取的数据，其内存间隔是`CACHE_LINESIZE`，这样能避免一个`cache`包含多个数据
+
+## 4.1 benchmark
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#include <iostream>
+#include <random>
+
+// You can get these cache info by `getconf -a | grep -i cache`
+#define CACHE_LINESIZE 64
+#define LEVEL1_DCACHE_SIZE 32768
+#define LEVEL2_CACHE_SIZE 1048576
+#define LEVEL3_CACHE_SIZE 37486592
+
+// Suppose that 90% of capacity of cache is used by this program
+#define FACTOR 0.9
+
+constexpr size_t MAX_ARRAY_SIZE_L1 = FACTOR * LEVEL1_DCACHE_SIZE / CACHE_LINESIZE;
+constexpr size_t MAX_ARRAY_SIZE_L2 = FACTOR * LEVEL2_CACHE_SIZE / CACHE_LINESIZE;
+constexpr size_t MAX_ARRAY_SIZE_L3 = FACTOR * LEVEL3_CACHE_SIZE / CACHE_LINESIZE;
+constexpr size_t MAX_ARRAY_SIZE_MEMORY = LEVEL3_CACHE_SIZE * 16 / CACHE_LINESIZE;
+
+constexpr const size_t ITERATOR_TIMES =
+        std::max(MAX_ARRAY_SIZE_L1, std::max(MAX_ARRAY_SIZE_L2, std::max(MAX_ARRAY_SIZE_L3, MAX_ARRAY_SIZE_MEMORY)));
+
+// Size of Item equals to CACHE_LINESIZE
+struct Item {
+    int value;
+
+private:
+    int pad[CACHE_LINESIZE / 4 - 1];
+};
+
+static_assert(sizeof(Item) == CACHE_LINESIZE, "Item size is not equals to CACHE_LINESIZE");
+
+template <size_t size>
+struct Obj {
+    Item data[size];
+};
+
+static Obj<MAX_ARRAY_SIZE_L1> obj_L1;
+static Obj<MAX_ARRAY_SIZE_L2> obj_L2;
+static Obj<MAX_ARRAY_SIZE_L3> obj_L3;
+static Obj<MAX_ARRAY_SIZE_MEMORY> obj_MEMORY;
+
+template <size_t size>
+void init(Obj<size>& obj) {
+    static std::default_random_engine e;
+    static std::uniform_int_distribution<int> u(0, 1);
+    for (size_t i = 0; i < size; ++i) {
+        obj.data[i].value = u(e);
+    }
+}
+
+#define BM_cache(level)                               \
+    static void BM_##level(benchmark::State& state) { \
+        init(obj_##level);                            \
+        int sum = 0;                                  \
+        for (auto _ : state) {                        \
+            int count = ITERATOR_TIMES;               \
+            size_t i = 0;                             \
+            while (count-- > 0) {                     \
+                sum += obj_##level.data[i].value;     \
+                i++;                                  \
+                if (i >= MAX_ARRAY_SIZE_##level) {    \
+                    i = 0;                            \
+                }                                     \
+                benchmark::DoNotOptimize(sum);        \
+            }                                         \
+        }                                             \
+    }                                                 \
+    BENCHMARK(BM_##level);
+
+BM_cache(L1);
+BM_cache(L2);
+BM_cache(L3);
+BM_cache(MEMORY);
+
+BENCHMARK_MAIN();
+```
+
+输出如下：
+
+```
+-----------------------------------------------------
+Benchmark           Time             CPU   Iterations
+-----------------------------------------------------
+BM_L1         9580669 ns      9579618 ns           73
+BM_L2        10879559 ns     10878353 ns           64
+BM_L3        29881167 ns     29878105 ns           22
+BM_MEMORY    71274681 ns     71265860 ns           12
+```
+
+**用如下指令，分别运行每个case（`--benchmark_filter=<case_name>`），并统计`cache`的相关信息。注意，一定要分别运行，否则没法统计对应case的`cache`信息**
+
+```sh
+perf stat -e cycles,instructions,cache-references,cache-misses,LLC-loads,LLC-load-misses,L1-dcache-loads,L1-dcache-load-misses,mem_load_retired.l1_hit,mem_load_retired.l1_miss,mem_load_retired.l2_hit,mem_load_retired.l2_miss,mem_load_retired.l3_hit,mem_load_retired.l3_miss ./benchmark_demo --benchmark_filter=BM_L1$
+
+perf stat -e cycles,instructions,cache-references,cache-misses,LLC-loads,LLC-load-misses,L1-dcache-loads,L1-dcache-load-misses,mem_load_retired.l1_hit,mem_load_retired.l1_miss,mem_load_retired.l2_hit,mem_load_retired.l2_miss,mem_load_retired.l3_hit,mem_load_retired.l3_miss ./benchmark_demo --benchmark_filter=BM_L2$
+
+perf stat -e cycles,instructions,cache-references,cache-misses,LLC-loads,LLC-load-misses,L1-dcache-loads,L1-dcache-load-misses,mem_load_retired.l1_hit,mem_load_retired.l1_miss,mem_load_retired.l2_hit,mem_load_retired.l2_miss,mem_load_retired.l3_hit,mem_load_retired.l3_miss ./benchmark_demo --benchmark_filter=BM_L3$
+
+perf stat -e cycles,instructions,cache-references,cache-misses,LLC-loads,LLC-load-misses,L1-dcache-loads,L1-dcache-load-misses,mem_load_retired.l1_hit,mem_load_retired.l1_miss,mem_load_retired.l2_hit,mem_load_retired.l2_miss,mem_load_retired.l3_hit,mem_load_retired.l3_miss ./benchmark_demo --benchmark_filter=BM_MEMORY$
+```
+
+| case | cycles | instructions | cache-references | cache-misses | LLC-loads | LLC-load-misses | L1-dcache-loads | L1-dcache-load-misses | mem_load_retired.l1_hit | mem_load_retired.l1_miss | mem_load_retired.l2_hit | mem_load_retired.l2_miss | mem_load_retired.l3_hit | mem_load_retired.l3_miss |
+|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|:--|
+| BM_L1 | 2,580,899,770 | 6,316,558,424 | 67,075 | 54,708 | 19,069 | 14,247 | 783,076,486 | 1,281,746 | 787,627,200 | 1,153,236 | 1,142,573 | 53 | 42 | 4 |
+| BM_L2 | 2,644,677,790 | 5,270,199,361 | 149,121,104 | 58,763 | 114,711,770 | 12,800 | 654,805,999 | 654,277,742 | 10,215,078 | 635,440,716 | 520,463,254 | 116,147,170 | 116,264,593 | 27,948 |
+| BM_L3 | 3,488,153,900 | 2,586,195,616 | 316,924,200 | 56,031,272 | 145,189,756 | 46,160,920 | 328,373,676 | 324,813,866 | 11,230,993 | 295,707,789 | 147,271,877 | 144,866,927 | 99,777,364 | 43,817,659 |
+| BM_MEMORY | 3,488,254,228 | 1,566,040,554 | 129,917,307 | 129,303,556 | 76,093,050 | 76,158,704 | 143,625,462 | 133,384,322 | 21,427,515 | 119,363,616 | 41,484,680 | 77,617,805 | 206,262 | 76,375,636 |
+
+**可以发现：**
+
+* `BM_L1`：由于循环所需的数据正好能存放在`L1`中，所以`L1`的命中率非常高，且`L2`和`L3`的`miss`率很低
+* `BM_L2`：由于循环所需的数据无法全部放在`L1`中，所以`L1`的`miss`率非常高。但同时，数据能全部放在`L2`中，所以`L2`的命中率非常高，`L3`的`miss`率很低
+* `BM_L3`：由于循环所需的数据无法全部放在`L2`中，所以`L1`和`L2`的`miss`率非常高。但同时，数据能全部放在`L3`中，所以`L3`的命中率较高
+* `BM_MEMORY`：由于循环所需的数据无法全部放在`L3`中，所以`L1`、`L2`、`L3`的`miss`率都较高
+
+# 5 prefetch
 
 **内置函数`__builtin_prefetch(const void* addr, [rw], [locality])`用于将可能在将来被访问的数据提前加载到缓存中来，以提高命中率**
 
 * **`rw`：可选参数，编译期常量，可选值`0`或`1`。`0`（默认值）表示预取的数据用于`read`。`1`表示预取的数据用于`write`**
 * **`locality`：可选参数，编译期常量，可选值`0`、`1`、`2`、`3`。其中`0`表示数据没有局部性，在数据访问后无需放在cache的左边。`3`（默认值）表示数据具有很高的局部性，尽可能将数据放在cache的左边。`1`和`2`介于两者之间**
 
-## 4.1 benchmark
+## 5.1 benchmark
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -2242,13 +2349,13 @@ BM_binary_search_with_prefetch_locality_2     274237 ns       274204 ns         
 BM_binary_search_with_prefetch_locality_3     272844 ns       272819 ns         2560
 ```
 
-## 4.2 参考
+## 5.2 参考
 
 * [Other Built-in Functions Provided by GCC](https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html)
 
-# 5 branch
+# 6 branch
 
-## 5.1 branch prediction
+## 6.1 branch prediction
 
 分支预测的成功率对于执行效率的影响非常大，对于如下代码
 
@@ -2270,7 +2377,7 @@ BM_binary_search_with_prefetch_locality_3     272844 ns       272819 ns         
 
 若分支预测正确率较低，那么CPU流水线会产生非常多的停顿，导致整体的CPI下降
 
-### 5.1.1 benchmark
+### 6.1.1 benchmark
 
 **注意，优化参数为`-O0`，否则经过编译器优化之后，性能相差不大**
 
@@ -2396,7 +2503,7 @@ BM_traverse_unsorted_array_branchless      81263 ns        81253 ns         8604
 BM_traverse_sorted_array_branchless        81282 ns        81274 ns         8620
 ```
 
-## 5.2 branch elimination
+## 6.2 branch elimination
 
 我们可以通过一些技术手段消除特定类型的分支
 
@@ -2429,7 +2536,7 @@ x = x & -1
 * **符号为计算公式如下：**
     * `(exp >> (bit_wides - 1)) & 1`
 
-### 5.2.1 benchmark
+### 6.2.1 benchmark
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -2566,7 +2673,7 @@ BM_count_ge_branch_elimination      12381 ns        12380 ns        50465
 
 可以看到，在优化级别为`-O0`和`-O1`时，手动编写的分支消除逻辑可以提高执行效率。当优化级别为`-O2`及以上时，手动编写的分支消除逻辑的性能比不上编译器优化
 
-## 5.3 参考
+## 6.3 参考
 
 * [Branch-aware programming](https://stackoverflow.com/questions/32581644/branch-aware-programming)
 * [Why is processing a sorted array faster than processing an unsorted array?](https://stackoverflow.com/questions/11227809/why-is-processing-a-sorted-array-faster-than-processing-an-unsorted-array)

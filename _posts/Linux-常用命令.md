@@ -3407,12 +3407,23 @@ mount      –t debugfs    debugfs /sys/kernel/debug
 
 **常用事件：**
 
-* `cycles/cpu-cycles` & `instructions`
-* `branch-instructions` & `branch-misses`
-* `cache-references` & `cache-misses`
-* `LLC-loads` & `LLC-load-misses`
+* `cycles/cpu-cycles & instructions`
+* `branch-instructions & branch-misses`
+* `cache-references & cache-misses`
+* `LLC, last level cache`：
+    * `LLC-loads & LLC-load-misses`
+    * `LLC-stores & LLC-store-misses`
+* `L1`：
+    * `L1-dcache-loads & L1-dcache-load-misses`
+    * `L1-dcache-stores`
+    * `L1-icache-load-misses`
+    * `mem_load_retired.l1_hit & mem_load_retired.l1_miss`
+* `L2`：
+    * `mem_load_retired.l2_hit & mem_load_retired.l2_miss`
+* `L3`：
+    * `mem_load_retired.l3_hit & mem_load_retired.l3_miss`
 * `context-switches`
-* `page-faults`
+* `page-faults & major-faults & minor-faults`
 
 **示例：**
 
