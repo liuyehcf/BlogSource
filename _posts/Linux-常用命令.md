@@ -3412,6 +3412,7 @@ mount      –t debugfs    debugfs /sys/kernel/debug
 * `cache-references` & `cache-misses`
 * `LLC-loads` & `LLC-load-misses`
 * `context-switches`
+* `page-faults`
 
 **示例：**
 
