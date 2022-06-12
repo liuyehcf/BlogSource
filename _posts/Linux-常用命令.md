@@ -3410,6 +3410,9 @@ mount      –t debugfs    debugfs /sys/kernel/debug
 * `cycles/cpu-cycles & instructions`
 * `branch-instructions & branch-misses`
 * `cache-references & cache-misses`
+    * `cache-misses`表示无法命中任何一级缓存，而需要访问主存的次数。对于`L1-miss, L2-hit`这种情况，不包含在内
+    * [What are perf cache events meaning?](https://stackoverflow.com/questions/12601474/what-are-perf-cache-events-meaning)
+    * [How does Linux perf calculate the cache-references and cache-misses events](https://stackoverflow.com/questions/55035313/how-does-linux-perf-calculate-the-cache-references-and-cache-misses-events)
 * `LLC, last level cache`：
     * `LLC-loads & LLC-load-misses`
     * `LLC-stores & LLC-store-misses`
