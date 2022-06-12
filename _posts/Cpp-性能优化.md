@@ -146,8 +146,6 @@ BM_virtual       1.88 ns         1.88 ns    372088713
 
 有时候，当子类型确定时，我们希望能够消除虚函数的开销
 
-### 1.2.1 benchmark
-
 ```cpp
 #include <benchmark/benchmark.h>
 
@@ -233,8 +231,6 @@ BM_invoke_by_derive_obj_2      0.314 ns        0.314 ns   1000000000
 
 ## 1.3 move smart pointer
 
-### 1.3.1 benchmark
-
 在下面这个例子中
 
 * 在函数`add_with_move`的生命周期中
@@ -300,8 +296,6 @@ BM_add_with_copy       31.4 ns         31.4 ns     21773464
 
 一般情况下，单独的`++i`或者`i++`都会被编译器优化成相同的指令集。除非`i++`赋值后的变量无法被优化掉，那么`++i`的性能会略优于`i++`
 
-### 1.4.1 benchmark
-
 ```cpp
 #include <benchmark/benchmark.h>
 
@@ -357,8 +351,6 @@ BM_assign_and_increment       2.88 ns         2.88 ns    239756481
 ## 1.5 container lookup
 
 在`vector`查找某个元素只能遍历，查找性能是`O(n)`，但是`set`提供了`O(1)`的查找性能
-
-### 1.5.1 benchmark
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -450,8 +442,6 @@ BENCHMARK_MAIN();
 ## 1.6 integer vs. float with branch
 
 对比整型运算、浮点运算在有无分支情况下的性能差异
-
-### 1.6.1 benchmark
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -573,8 +563,6 @@ BM_sum_double_with_branch      41075 ns        41071 ns        17027
 
 非原子变量、原子变量、`mutex`之间的性能差距
 
-### 1.7.1 benchmark
-
 ```cpp
 #include <benchmark/benchmark.h>
 
@@ -628,8 +616,6 @@ BM_mutex         16.6 ns         16.6 ns     42082466
 ```
 
 ## 1.8 `std::function` or template
-
-### 1.8.1 benchmark
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -968,9 +954,7 @@ BM_sum_with_restrict          2.85 ns         2.85 ns    243455429
 
 ## 3.2 pointer aliasing
 
-### 3.2.1 benchmark
-
-#### 3.2.1.1 case1
+### 3.2.1 case1
 
 **在这个`case`中，`sum`和`nums`都是`uint32_t`类型的指针，它们之间是存在`pointer aliasing`的。在不加`__restrict`的情况下，编译器无法对其进行向量化（这与`pointer aliasing`的`benchmark`结果不一致！！！）**
 
@@ -1056,7 +1040,7 @@ BM_loop_with_local_sum         9.69 ns         9.69 ns     72266654
 BM_loop_with_restrict          9.79 ns         9.79 ns     70959645
 ```
 
-#### 3.2.1.2 case2
+### 3.2.2 case2
 
 **在`case1`的基础之上，将`sum`放到一个结构体内，且将sum改成非指针类型**
 
@@ -1157,7 +1141,7 @@ BM_loop_with_restrict          10.2 ns         10.2 ns     69550202
 
 **如果把`uint32_t* nums`换成`std::vector<unt32_t>& nums`或者`std::vector<unt32_t>* nums`。都无法得到上述的结果，因为在这种情况下gcc不会认为`Aggregator::_sum`存在`pointer aliasing`，因此可以直接进行优化**
 
-#### 3.2.1.3 case3
+### 3.2.3 case3
 
 **在`case2`的基础之上，`nums`放到另一个结构体中**
 
@@ -1321,7 +1305,7 @@ BM_loop_with_restrict                        11.6 ns         11.6 ns     6079494
 
 1. 由`loop_without_optimize`与`loop_with_local_array`对比可以看出，是否直接使用数组对性能无影响
 
-#### 3.2.1.4 case4
+### 3.2.4 case4
 
 **在`case3`的基础之上，将`sum`和`nums`放到同一个结构体中，这个case非常奇怪，`sum`和`nums`都是Aggregator的成员，编译器在没有`__restrict`的情况下，居然没法进行优化**
 
@@ -1477,7 +1461,7 @@ BM_loop_without_optimize       52.1 ns         52.1 ns     13445879
 BM_loop_with_restrict          17.9 ns         17.9 ns     38901664
 ```
 
-#### 3.2.1.5 case5
+### 3.2.5 case5
 
 **在`case4`的基础之上，将`sum`的类型改成指针类型。一个`object`参数，内部的多个成员变量的关系，函数是无法判断的，所以传入单个 `object`指针，如果有对多个成员变量的访问（并且还是指针），那gcc也没法判断**
 
@@ -1567,7 +1551,7 @@ BM_loop_without_optimize       54.9 ns         54.9 ns     12764430
 BM_loop_with_restrict          52.5 ns         52.4 ns     13384598
 ```
 
-#### 3.2.1.6 case6: versioned for vectorization
+### 3.2.6 case6: versioned for vectorization
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -1641,8 +1625,6 @@ BM_loop_with_restrict          2379 ns         2378 ns       294599
     * 这个函数的主要作用就是在`dest`的每个元素上都增加`value`。由于`value`和`dest`可能存在`pointer aliasing`的关系。那么编译器可以假定存在`pointer aliasing`，那么`&value == &dest[k]`，那么此时循环可以分割成两部分：`0, 1, ..., k-1`以及`k+1, k+2, ..., n`，那么此时，这两部分一定不存在`pointer aliasing`的关系，可以分别向量化
 
 ## 3.3 integer vs floating
-
-### 3.3.1 benchmark
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -1718,8 +1700,6 @@ BM_loop_with_float         97.3 ns         97.3 ns      7197218
 ## 3.4 manual vs. auto
 
 对比手动实现`simd`和编译器自动优化产生的`simd`之间的性能差异
-
-### 3.4.1 benchmark
 
 下面的代码，用三种不同的方式分别计算`d = 3 * a + 4 * b + 5 * c`
 
@@ -1888,8 +1868,6 @@ BM_compose_simd/409600    1395080 ns      1394972 ns          517
 
 对比不同的数据宽度对于向量化的影响
 
-### 3.5.1 benchmark
-
 ```cpp
 #include <benchmark/benchmark.h>
 
@@ -1977,13 +1955,13 @@ BM_size_256       1305 ns         1305 ns       538811
 * [Auto-vectorization in GCC](https://gcc.gnu.org/projects/tree-ssa/vectorization.html)
 * [Type-Based Alias Analysis](https://www.drdobbs.com/cpp/type-based-alias-analysis/184404273)
 
-# 4 cache locality
+# 4 cache
 
 缓存局部性对于程序的性能起着至关重要的作用，下面我们探究当`L1`、`L2`、`L3`分别无法命中时，程序的性能的变化规律
 
 * 每次循环时，读取的数据，其内存间隔是`CACHE_LINESIZE`，这样能避免一个`cache`包含多个数据
 
-## 4.1 benchmark
+## 4.1 cache miss
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -2102,14 +2080,12 @@ perf stat -e cycles,instructions,cache-references,cache-misses,LLC-loads,LLC-loa
 * `BM_L3`：由于循环所需的数据无法全部放在`L2`中，所以`L1`和`L2`的`miss`率非常高。但同时，数据能全部放在`L3`中，所以`L3`的命中率较高
 * `BM_MEMORY`：由于循环所需的数据无法全部放在`L3`中，所以`L1`、`L2`、`L3`的`miss`率都较高
 
-# 5 prefetch
+## 4.2 prefetch
 
 **内置函数`__builtin_prefetch(const void* addr, [rw], [locality])`用于将可能在将来被访问的数据提前加载到缓存中来，以提高命中率**
 
 * **`rw`：可选参数，编译期常量，可选值`0`或`1`。`0`（默认值）表示预取的数据用于`read`。`1`表示预取的数据用于`write`**
 * **`locality`：可选参数，编译期常量，可选值`0`、`1`、`2`、`3`。其中`0`表示数据没有局部性，在数据访问后无需放在cache的左边。`3`（默认值）表示数据具有很高的局部性，尽可能将数据放在cache的左边。`1`和`2`介于两者之间**
-
-## 5.1 benchmark
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -2349,13 +2325,7 @@ BM_binary_search_with_prefetch_locality_2     274237 ns       274204 ns         
 BM_binary_search_with_prefetch_locality_3     272844 ns       272819 ns         2560
 ```
 
-## 5.2 参考
-
-* [Other Built-in Functions Provided by GCC](https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html)
-
-# 6 branch
-
-## 6.1 branch prediction
+## 4.3 branch prediction
 
 分支预测的成功率对于执行效率的影响非常大，对于如下代码
 
@@ -2376,8 +2346,6 @@ BM_binary_search_with_prefetch_locality_3     272844 ns       272819 ns         
 ```
 
 若分支预测正确率较低，那么CPU流水线会产生非常多的停顿，导致整体的CPI下降
-
-### 6.1.1 benchmark
 
 **注意，优化参数为`-O0`，否则经过编译器优化之后，性能相差不大**
 
@@ -2503,7 +2471,7 @@ BM_traverse_unsorted_array_branchless      81263 ns        81253 ns         8604
 BM_traverse_sorted_array_branchless        81282 ns        81274 ns         8620
 ```
 
-## 6.2 branch elimination
+## 4.4 branch elimination
 
 我们可以通过一些技术手段消除特定类型的分支
 
@@ -2535,8 +2503,6 @@ x = x & -1
     * `(1, 1)`：`1 ^ 1 = 1` ==> `x < y`
 * **符号为计算公式如下：**
     * `(exp >> (bit_wides - 1)) & 1`
-
-### 6.2.1 benchmark
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -2673,8 +2639,9 @@ BM_count_ge_branch_elimination      12381 ns        12380 ns        50465
 
 可以看到，在优化级别为`-O0`和`-O1`时，手动编写的分支消除逻辑可以提高执行效率。当优化级别为`-O2`及以上时，手动编写的分支消除逻辑的性能比不上编译器优化
 
-## 6.3 参考
+## 4.5 参考
 
+* [Other Built-in Functions Provided by GCC](https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html)
 * [Branch-aware programming](https://stackoverflow.com/questions/32581644/branch-aware-programming)
 * [Why is processing a sorted array faster than processing an unsorted array?](https://stackoverflow.com/questions/11227809/why-is-processing-a-sorted-array-faster-than-processing-an-unsorted-array)
 * [程序的分支消除](https://leetcode.cn/circle/article/GSJ5XS/)
