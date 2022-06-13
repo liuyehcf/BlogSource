@@ -206,14 +206,22 @@ auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).c
 1. `std::promise`
 1. `std::future`
 
-# 7 limits
+# 7 iostream
+
+1. `std::cout`
+1. `std::cin`
+1. `std::endl`
+1. `std::boolalpha`
+1. `std::noboolalpha`
+
+# 8 limits
 
 1. `std::numeric_limits`
     * `std::numeric_limits<int32_t>::max()`
 
-# 8 memory
+# 9 memory
 
-## 8.1 std::shared_ptr
+## 9.1 std::shared_ptr
 
 **类型转换**
 
@@ -243,7 +251,7 @@ void func(std::shared_ptr<Widget> ptr);
 
 这样的话，外部传过来值的时候，可以选择`move`或者赋值。函数内部直接把这个对象通过`move`的方式保存起来
 
-## 8.2 std::enable_shared_from_this
+## 9.2 std::enable_shared_from_this
 
 **`std::enable_shared_from_this`能让一个由`std::shared_ptr`管理的对象，安全地生成其他额外的`std::shared_ptr`实例，原实例和新生成的示例共享所有权**
 
@@ -267,13 +275,13 @@ int main() {
 }
 ```
 
-## 8.3 std::unique_ptr
+## 9.3 std::unique_ptr
 
-## 8.4 参考
+## 9.4 参考
 
 * [C++ 智能指针的正确使用方式](https://www.cyhone.com/articles/right-way-to-use-cpp-smart-pointer/)
 
-# 9 mutex
+# 10 mutex
 
 1. `std::mutex`
 1. `std::lock_guard`
@@ -299,11 +307,11 @@ int main() {
 1. `std::condition_variable`
     * 调用`wait`方法时，必须获取监视器。而调用`notify`方法时，无需获取监视器
 
-## 9.1 参考
+## 10.1 参考
 
 * [Do I have to acquire lock before calling condition_variable.notify_one()?](https://stackoverflow.com/questions/17101922/do-i-have-to-acquire-lock-before-calling-condition-variable-notify-one)
 
-# 10 numeric
+# 11 numeric
 
 1. `std::accumulate`
     ```cpp
@@ -322,16 +330,16 @@ int main() {
     }
     ```
 
-# 11 optional
+# 12 optional
 
 1. `std::optional`
 
-# 12 string
+# 13 string
 
 1. `std::string`
 1. `std::to_string`
 
-# 13 thread
+# 14 thread
 
 **如何设置或修改线程名：**
 
@@ -400,18 +408,18 @@ int main() {
 }
 ```
 
-# 14 type_traits
+# 15 type_traits
 
 [Standard library header <type_traits>](https://en.cppreference.com/w/cpp/header/type_traits)
 
-## 14.1 Helper Class
+## 15.1 Helper Class
 
 1. `std::integral_constant`
 1. `std::bool_constant`
 1. `std::true_type`
 1. `std::false_type`
 
-## 14.2 Primary type categories
+## 15.2 Primary type categories
 
 1. `std::is_void`
 1. `std::is_null_pointer`
@@ -420,7 +428,7 @@ int main() {
 1. `std::is_pointer`
 1. ...
 
-## 14.3 Composite type categories
+## 15.3 Composite type categories
 
 1. `std::is_fundamental`
 1. `std::is_arithmetic`
@@ -429,7 +437,7 @@ int main() {
 1. `std::is_member_pointer`
 1. ...
 
-## 14.4 Type properties
+## 15.4 Type properties
 
 1. `std::is_const`
 1. `std::is_volatile`
@@ -438,7 +446,7 @@ int main() {
 1. `std::is_abstract`
 1. ...
 
-## 14.5 Supported operations
+## 15.5 Supported operations
 
 1. `std::is_constructible`
 1. `std::is_copy_constructible`
@@ -447,19 +455,19 @@ int main() {
 1. `std::is_destructible`
 1. ...
 
-## 14.6 Property queries
+## 15.6 Property queries
 
 1. `std::alignment_of`
 1. `std::rank`
 1. `std::extent`
 
-## 14.7 Type relationships
+## 15.7 Type relationships
 
 1. `std::is_same`
 1. `std::is_base_of`
 1. ...
 
-## 14.8 Const-volatility specifiers
+## 15.8 Const-volatility specifiers
 
 1. `std::remove_cv`
 1. `std::remove_const`
@@ -468,34 +476,34 @@ int main() {
 1. `std::add_const`
 1. `std::add_volatile`
 
-## 14.9 References
+## 15.9 References
 
 1. `std::remove_reference`
 1. `std::add_lvalue_reference`
 1. `std::add_rvalue_reference`
   
-## 14.10 Pointers
+## 15.10 Pointers
 
 1. `std::remove_pointer`
 1. `std::add_pointer`
   
-## 14.11 Sign modifiers
+## 15.11 Sign modifiers
 
 1. `std::make_signed`
 1. `std::make_unsigned`
 
-## 14.12 Arrays
+## 15.12 Arrays
 
 1. `std::remove_extent`
 1. `std::remove_all_extents`
 
-## 14.13 Miscellaneous transformations
+## 15.13 Miscellaneous transformations
 
 1. `std::enable_if`
 1. `std::conditional`
 1. `std::void_t`
 
-## 14.14 Alias
+## 15.14 Alias
 
 `using template`，用于简化上述模板。例如`std::enable_if_t`等价于`typename enable_if<b,T>::type`
 
@@ -506,7 +514,7 @@ int main() {
 1. `std::invoke_result_t`
 1. ...
 
-## 14.15 std::move
+## 15.15 std::move
 
 标准库的实现如下：
 
@@ -519,7 +527,7 @@ int main() {
 
 本质上，就是做了一次类型转换，返回的一定是个右值
 
-## 14.16 std::forward
+## 15.16 std::forward
 
 `std::forward`主要用于实现模板的完美转发：因为对于一个变量而言，无论该变量的类型是左值引用还是右值引用，变量本身都是左值，如果直接将变量传递到下一个方法中，那么一定是按照左值来匹配重载函数的，而`std::forward`就是为了解决这个问题。请看下面这个例子：
 
@@ -588,11 +596,11 @@ int main() {
 * 如果模板实参是左值或右值，那么匹配的是第二个方法
     * 右值：`_Tp&&`得到的是个右值
 
-# 15 utility
+# 16 utility
 
 1. `std::pair`
 
-# 16 容器
+# 17 容器
 
 1. `<vector>`
 1. `<array>`
@@ -604,12 +612,12 @@ int main() {
 1. `<set>`
 1. `<unordered_set>`
 
-## 16.1 Tips
+## 17.1 Tips
 
 1. `std::map`或者`std::set`用下标访问后，即便访问前元素不存在，也会插入一个默认值。因此下标访问是非`const`的
 1. 容器在扩容时，调用的是元素的拷贝构造函数
 
-# 17 向量化
+# 18 向量化
 
 [Header files for x86 SIMD intrinsics](https://stackoverflow.com/questions/11228855/header-files-for-x86-simd-intrinsics)
 
@@ -649,7 +657,7 @@ int main() {
 * `-mavx512vbmi`
 * ...
 
-# 18 C标准库
+# 19 C标准库
 
 1. `stdio.h`
 1. `stddef.h`

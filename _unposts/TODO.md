@@ -86,6 +86,10 @@ categories:
     * clickhouse
         * [COW.h](https://github.com/ClickHouse/ClickHouse/blob/master/src/Common/COW.h)
     * https://cloud.google.com/blog/products/databases/alloydb-for-postgresql-intelligent-scalable-storage
+    * window functions
+        * aggregate
+        * ranking
+        * values
 1. 体系结构
     * 内存屏障在汇编层面的表示
     * 《Residency-Aware Virtual Machine Communication Optimization: Design Choices and Techniques》
