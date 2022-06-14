@@ -11,7 +11,7 @@ categories:
 
 <!--more-->
 
-# 1 [Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age](/resources/paper/Morsel-Driven-Parallelism-A-NUMA-Aware-Query-Evaluation-Framework-for-the-Many-CoreAge.pdf)
+# 1 [Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age](/resources/paper/Morsel-Driven-Parallelism-A-NUMA-Aware-Query-Evaluation-Framework-for-the-Many-Core-Age.pdf)
 
 1. 为什么现在开始关注`many-core`架构：随着内存带宽的增长，出现了一些内存级的数据库（广义或者狭义，狭义指的是所有数据完全存在于内存中；广义指的是部分数据以某种形式存在于内存中，比如缓存），对于这些数据库系统，I/O不再是性能瓶颈，能否高效利用好计算机的多个`core`决定了系统整体的性能
 1. 核心是调度机制：（称为`dispatcher`），能够灵活的调整pipeline的并发度
