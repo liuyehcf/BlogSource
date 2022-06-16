@@ -396,27 +396,39 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
 
 ## 5.1 gcc
 
-### 5.1.1 编译选项
+**常用参数说明：**
 
-1. `-E`：生成预处理文件（`.i`）
-1. `-S`：生成汇编文件（`.s`）
-    * `-fverbose-asm`：带上一些注释信息
-1. `-c`：生成目标文件（`.o`）
-1. 默认生成可执行文件
-
-### 5.1.2 编译优化
-
-1. **`-O0`（默认）：不做任何优化**
-1. **`-O/-O1`：在不影响编译速度的前提下，尽量采用一些优化算法降低代码大小和可执行代码的运行速度**
-1. **`-O2`：该优化选项会牺牲部分编译速度，除了执行`-O1`所执行的所有优化之外，还会采用几乎所有的目标配置支持的优化算法，用以提高目标代码的运行速度**
-1. **`-O3`：该选项除了执行-O2所有的优化选项之外，一般都是采取很多向量化算法，提高代码的并行执行程度，利用现代CPU中的流水线，Cache等**
-* **不同优化等级对应开启的优化参数参考`man page`**
-
-### 5.1.3 其他参数
-
-1. `-fsized-deallocation`：启用接收`size`参数的`delete`运算符。[C++ Sized Deallocation](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3778.html)。现代内存分配器在给对象分配内存时，需要指定大小，出于空间利用率的考虑，不会在对象内存周围存储对象的大小信息。因此在释放对象时，需要查找对象占用的内存大小，查找的开销很大，因为通常不在缓存中。因此，编译器允许提供接受一个`size`参数的`global delete operator`，并用这个版本来对对象进行析构
-1. `-fno-access-control`：关闭访问控制，例如在类外可以直接访问某类的私有字段和方法，一般用于单元测试
-1. 向量化相关参数
+1. **文件类型**
+    *  `-E`：生成预处理文件（`.i`）
+    *  `-S`：生成汇编文件（`.s`）
+        * `-fverbose-asm`：带上一些注释信息
+    *  `-c`：生成目标文件（`.o`）
+    *  默认生成可执行文件
+1. **优化级别**
+    1. `-O0`（默认）：不做任何优化
+    1. `-O/-O1`：在不影响编译速度的前提下，尽量采用一些优化算法降低代码大小和可执行代码的运行速度
+    1. `-O2`：该优化选项会牺牲部分编译速度，除了执行`-O1`所执行的所有优化之外，还会采用几乎所有的目标配置支持的优化算法，用以提高目标代码的运行速度
+    1. `-O3`：该选项除了执行`-O2`所有的优化选项之外，一般都是采取很多向量化算法，提高代码的并行执行程度，利用现代CPU中的流水线，`Cache`等
+    * 不同优化等级对应开启的优化参数参考`man page`
+1. **调试**
+    * `-gz[=type]`：对于`DWARF`格式的文件中的调试部分按照指定的压缩方式进行压缩
+    * `-g`：生成调试信息
+    * `-ggdb`：生成`gdb`专用的调试信息
+    * `-gdwarf`/`-gdwarf-version`：生成`DWARF`格式的调试信息，`version`的可选值有`2/3/4/5`，默认是4
+1. **`-I <path>`：增加头文件搜索路径**
+    * 可以并列使用多个`-I`参数，例如`-I path1 -I path2`
+1. **`-l<dynamic_lib>`：增加动态链接库**
+    * 例如`-lstdc++`、`-lpthread`
+1. **`-std=<std_version>`：指定标注库类型以及版本信息**
+    * 例如`-std=gnu++17`
+1. **`-W<xxx>`：warning提示**
+    * `-Wall`：开启所有warning提示
+    * `-Wno<xxx>`：关闭指定种类的warning提示
+1. **`-D <macro_name>[=<macro_definition>]`：定义宏**
+    * 例如`-D MY_DEMO_MACRO`、`-D MY_DEMO_MACRO=2`、`-D 'MY_DEMO_MACRO="hello"'`、`-D 'ECHO(a)=(a)'`
+1. **`-U <macro_name>`：取消宏定义**
+1. **`-fno-access-control`：关闭访问控制，例如在类外可以直接访问某类的私有字段和方法，一般用于单元测试**
+1. **向量化相关参数**
     * `-fopt-info-vec`/`-fopt-info-vec-optimized`：当循环进行向量化优化时，输出详细信息
     * `-fopt-info-vec-missed`：当循环无法向量化时，输出详细信息
     * `-fopt-info-vec-note`：输出循环向量化优化的所有详细信息
@@ -427,6 +439,10 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
         * `-msse`、`-msse2`、`-msse3`、`-mssse3`、`-msse4`、`-msse4a`、`-msse4.1`、`-msse4.2`
         * `-mavx`、`-mavx2`、`-mavx512f`、`-mavx512pf`、`-mavx512er`、`-mavx512cd`、`-mavx512vl`、`-mavx512bw`、`-mavx512dq`、`-mavx512ifma`、`-mavx512vbmi`
         * ...
+1. **`-fPIC`：如果目标机器支持，则生成与位置无关的代码，适用于动态链接并避免对全局偏移表大小的任何限制**
+1. **`-fno-omit-frame-pointer`：允许部分函数没有栈指针**
+1. `-faligned-new`
+1. `-fsized-deallocation`：启用接收`size`参数的`delete`运算符。[C++ Sized Deallocation](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3778.html)。现代内存分配器在给对象分配内存时，需要指定大小，出于空间利用率的考虑，不会在对象内存周围存储对象的大小信息。因此在释放对象时，需要查找对象占用的内存大小，查找的开销很大，因为通常不在缓存中。因此，编译器允许提供接受一个`size`参数的`global delete operator`，并用这个版本来对对象进行析构
 
 ## 5.2 ld
 
