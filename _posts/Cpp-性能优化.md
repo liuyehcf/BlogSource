@@ -663,6 +663,103 @@ BM_function       1.89 ns         1.89 ns    371459322
 BM_template      0.314 ns        0.314 ns   1000000000
 ```
 
+## 1.9 duff's device
+
+`duff's device`是指一种用于减少循环条件判断次数的特殊优化手段
+
+* 循环中是不包含`switch`的，只包含了一些`label`（即`case`），因此`switch`条件跳转只执行了一次，循环判断执行的次数大约是原始次数的`1/8`
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#include <random>
+
+#define SIZE (1024 * 1024)
+
+int src_data[SIZE];
+int dst_data[SIZE];
+
+void send(int* dst, int* src, int count) {
+    for (int i = 0; i < count; i++) {
+        *dst++ = *src++;
+    }
+}
+
+void send_duff(int* dst, int* src, int count) {
+    int n = (count + 7) / 8;
+    switch (count % 8) {
+    case 0:
+        do {
+            *dst++ = *src++;
+        case 7:
+            *dst++ = *src++;
+        case 6:
+            *dst++ = *src++;
+        case 5:
+            *dst++ = *src++;
+        case 4:
+            *dst++ = *src++;
+        case 3:
+            *dst++ = *src++;
+        case 2:
+            *dst++ = *src++;
+        case 1:
+            *dst++ = *src++;
+        } while (--n > 0);
+    }
+}
+
+static void BM_send(benchmark::State& state) {
+    std::default_random_engine e;
+    std::uniform_int_distribution<int> u;
+    for (int i = 0; i < SIZE; ++i) {
+        src_data[i] = u(e);
+    }
+    for (auto _ : state) {
+        send(dst_data, src_data, SIZE);
+        benchmark::DoNotOptimize(dst_data);
+    }
+}
+
+static void BM_send_duff(benchmark::State& state) {
+    std::default_random_engine e;
+    std::uniform_int_distribution<int> u;
+    for (int i = 0; i < SIZE; ++i) {
+        src_data[i] = u(e);
+    }
+    for (auto _ : state) {
+        send_duff(dst_data, src_data, SIZE);
+        benchmark::DoNotOptimize(dst_data);
+    }
+}
+
+BENCHMARK(BM_send);
+BENCHMARK(BM_send_duff);
+BENCHMARK_MAIN();
+```
+
+**优化级别为`-O0`时，输出如下：**
+
+```
+-------------------------------------------------------
+Benchmark             Time             CPU   Iterations
+-------------------------------------------------------
+BM_send         2421895 ns      2421629 ns          246
+BM_send_duff    2285804 ns      2285575 ns          308
+```
+
+**优化级别为`-O3`时，输出如下：**
+
+```
+-------------------------------------------------------
+Benchmark             Time             CPU   Iterations
+-------------------------------------------------------
+BM_send         1101873 ns      1101771 ns          635
+BM_send_duff    1106143 ns      1106032 ns          636
+```
+
+可见，经过编译器优化后，两者的性能相差无几，因此，我们无需手动做这类优化
+
 # 2 pointer aliasing
 
 **`pointer aliasing`指的是两个指针（在作用域内）指向了同一个物理地址，或者说指向的物理地址有重叠。`__restrict`关键词用于给编译器一个提示：确保被标记的指针是独占物理地址的**
@@ -938,19 +1035,6 @@ BM_sum_with_restrict          2.85 ns         2.85 ns    243455429
 * `xmm`：128-bit
 * `ymm`：256-bit
 * `zmm`：512-bit
-
-**`gcc`中与向量化有关的参数**
-
-* `-fopt-info-vec`/`-fopt-info-vec-optimized`：The compiler will log which loops (by line N°) are being vector optimized.
-* `-fopt-info-vec-missed`：Detailed info about loops not being vectorized, and a lot of other detailed information.
-* `-fopt-info-vec-note`：Detailed info about all loops and optimizations being done.
-* `-fopt-info-vec-all`：All previous options together.
-* `-fno-tree-vectorize`：Disable vectorization.
-* **一般来说，需要指定参数后才能使用更大宽度的向量化寄存器**
-    * `-mmmx`
-    * `-msse`、`-msse2`、`-msse3`、`-mssse3`、`-msse4`、`-msse4a`、`-msse4.1`、`-msse4.2`
-    * `-mavx`、`-mavx2`、`-mavx512f`、`-mavx512pf`、`-mavx512er`、`-mavx512cd`、`-mavx512vl`、`-mavx512bw`、`-mavx512dq`、`-mavx512ifma`、`-mavx512vbmi`
-    * ...
 
 ## 3.2 pointer aliasing
 
@@ -1933,7 +2017,7 @@ BENCHMARK_MAIN();
 
 我们可以看到`size=1/2/4/8`时会进行向量化的优化，而当`size=16/32/64/128/256`时，无法进行向量化的优化。因为测试机器的`CACHE_LINE_SIZE=64Byte`，对于`size=1/2/4/8`时，对应的`Obj`对象的大小是`4/8/16/32`，一次`load`操作可以加载2个以上的对象；而对于`size=16/32/64/128/256`时，对应的`Obj`对象的大小是`64/128/256/512/1024`，一次`load`操作无法加载更多的数据时，向量化就无法获得增益了，因此编译器不再使用向量化
 
-输出如下：
+**输出如下：**
 
 ```
 ------------------------------------------------------
@@ -2042,7 +2126,7 @@ BM_cache(MEMORY);
 BENCHMARK_MAIN();
 ```
 
-输出如下：
+**输出如下：**
 
 ```
 -----------------------------------------------------
@@ -2601,7 +2685,7 @@ BENCHMARK(BM_count_ge_branch_elimination);
 BENCHMARK_MAIN();
 ```
 
-优化级别为`-O0`时，输出如下：
+**优化级别为`-O0`时，输出如下：**
 
 ```
 -------------------------------------------------------------------------
@@ -2613,7 +2697,7 @@ BM_count_ge                        113074 ns       113063 ns         6123
 BM_count_ge_branch_elimination      53712 ns        53702 ns        15270
 ```
 
-优化级别为`-O1`时，输出如下：
+**优化级别为`-O1`时，输出如下：**
 
 ```
 -------------------------------------------------------------------------
@@ -2625,7 +2709,7 @@ BM_count_ge                         70391 ns        70287 ns        10186
 BM_count_ge_branch_elimination      27706 ns        27701 ns        25078
 ```
 
-优化级别为`-O2`时，输出如下：
+**优化级别为`-O2`时，输出如下：**
 
 ```
 -------------------------------------------------------------------------

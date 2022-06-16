@@ -415,6 +415,18 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
 ### 5.1.3 其他参数
 
 1. `-fsized-deallocation`：启用接收`size`参数的`delete`运算符。[C++ Sized Deallocation](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3778.html)。现代内存分配器在给对象分配内存时，需要指定大小，出于空间利用率的考虑，不会在对象内存周围存储对象的大小信息。因此在释放对象时，需要查找对象占用的内存大小，查找的开销很大，因为通常不在缓存中。因此，编译器允许提供接受一个`size`参数的`global delete operator`，并用这个版本来对对象进行析构
+1. `-fno-access-control`：关闭访问控制，例如在类外可以直接访问某类的私有字段和方法，一般用于单元测试
+1. 向量化相关参数
+    * `-fopt-info-vec`/`-fopt-info-vec-optimized`：当循环进行向量化优化时，输出详细信息
+    * `-fopt-info-vec-missed`：当循环无法向量化时，输出详细信息
+    * `-fopt-info-vec-note`：输出循环向量化优化的所有详细信息
+    * `-fopt-info-vec-all`：开启所有输出向量化详细信息的参数
+    * `-fno-tree-vectorize`：关闭向量化
+    * **一般来说，需要指定参数后才能使用更大宽度的向量化寄存器**
+        * `-mmmx`
+        * `-msse`、`-msse2`、`-msse3`、`-mssse3`、`-msse4`、`-msse4a`、`-msse4.1`、`-msse4.2`
+        * `-mavx`、`-mavx2`、`-mavx512f`、`-mavx512pf`、`-mavx512er`、`-mavx512cd`、`-mavx512vl`、`-mavx512bw`、`-mavx512dq`、`-mavx512ifma`、`-mavx512vbmi`
+        * ...
 
 ## 5.2 ld
 
