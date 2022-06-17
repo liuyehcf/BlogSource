@@ -88,11 +88,21 @@ categories:
 1. 设计需要考虑的问题
     * 正确性
     * 准确性
+    * 成本
+    * 简洁性
     * 性能
     * 开销
     * 易用性
     * 隔离性
     * 工程实现难易程度
+1. 指令级架构应具备的特征（七个衡量指标）
+    1. 成本（`cost`）
+    1. 简洁性（`simplicity`）
+    1. 性能（`performance`）
+    1. 架构和具体实现分离（`isolation of architecture from implementation`）
+    1. 可扩展空间（`room for growth`）
+    1. 程序大小（`program size`）
+    1. 易于编程/编译/链接（`ease of programming/compiling/linking`）
 1. 产品
     * 性能
     * 稳定性
