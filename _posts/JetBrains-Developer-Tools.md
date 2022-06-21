@@ -338,6 +338,10 @@ nnoremap <c-j> :action GotoNextError<cr>
 nnoremap <c-k> :action GotoPreviousError<cr>
 nnoremap <leader>rgo :action OverrideMethods<cr>
 nnoremap <leader>rgi :action ImplementMethods<cr>
+smap <c-s> :action EditorSelectWord<cr>
+xmap <c-s> :action EditorSelectWord<cr>
+smap <c-b> :action EditorUnSelectWord<cr>
+xmap <c-b> :action EditorUnSelectWord<cr>
 
 " keep keymap with Plug 'Yggdroot/LeaderF'
 nnoremap <c-p> :action SearchEverywhere<cr>

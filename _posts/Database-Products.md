@@ -511,6 +511,8 @@ categories:
 1. mysql
 1. sqlite
 1. duckdb
+1. Zilliz
+    * 向量数据库
 
 # 26 参考
 
