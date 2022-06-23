@@ -2730,3 +2730,7 @@ BM_count_ge_branch_elimination      12381 ns        12380 ns        50465
 * [Why is processing a sorted array faster than processing an unsorted array?](https://stackoverflow.com/questions/11227809/why-is-processing-a-sorted-array-faster-than-processing-an-unsorted-array)
 * [程序的分支消除](https://leetcode.cn/circle/article/GSJ5XS/)
 * [只会写 if 的菜炸了，手动分支消除，带你装〇带你飞！](https://www.bilibili.com/video/BV1L7411f7g3?t=2&p=2)
+
+# 5 Others
+
+1. [slide window frame, vectorization agg & removable cumulative agg](https://quick-bench.com/q/i6djVQKTZcaLGK9sDLfv2h1IYto)

@@ -502,7 +502,7 @@ var='http://www.aaa.com/123.htm'
 echo ${var%%/*}
 ```
 
-**从左边第几个字符开始，截取若干个字符**
+**从左边第几个字符开始，从左往右截取若干个字符**
 
 * 其中`var`是变量名，`0`表示从左边第`1`个字符开始，`5`表示截取`5`个字符，结果是`http:`
 
@@ -511,7 +511,7 @@ var='http://www.aaa.com/123.htm'
 echo ${var:0:5}
 ```
 
-**从左边第几个字符开始，一直到结束**
+**从左边第几个字符开始，从左往右截取，一直到结束**
 
 * 其中`var`是变量名，`7`表示从左边第`8`个字符开始，结果是`www.aaa.com/123.htm`
 
@@ -520,24 +520,18 @@ var='http://www.aaa.com/123.htm'
 echo ${var:7}
 ```
 
-**从右边第几个字符开始，及字符的个数**
+**从右边第几个字符开始，从左往右截取若干个字符**
 
 * 其中`var`是变量名，`0-7`表示从右边第`7`字符开始，`3`表示截取`3`个字符，结果是`123`
-* 注：
-    * `k`表示从左边开始第`k+1`个字符
-    * `0-k`表示从右边开始第`k`个字符
 
 ```sh
 var='http://www.aaa.com/123.htm'
 echo ${var:0-7:3}
 ```
 
-**从右边第几个字符开始，一直到结束**
+**从右边第几个字符开始，从左往右截取，一直到结束**
 
 * 其中`var`是变量名，`0-7`表示从右边第`7`字符开始，结果是`123.htm`
-* 注：
-    * `k`表示从左边开始第`k+1`个字符
-    * `0-k`表示从右边开始第`k`个字符
 
 ```sh
 var='http://www.aaa.com/123.htm'
@@ -703,6 +697,15 @@ echo 'hello' | tr 'a-z' 'A-Z'
 echo 'HELLO' | tr 'A-Z' 'a-z'
 ```
 
+### 3.2.9 提取`[]`、`''`、`<>`、`()`中的内容
+
+```sh
+var='[hello]'
+var=${var#\[}
+var=${var%\]}
+echo ${var}
+```
+
 ## 3.3 数组
 
 Shell 数组用括号来表示，元素用`空格`符号分割开，语法格式如下：
@@ -799,7 +802,7 @@ done
 1. `sh/bash`：数组下标从0开始
 1. `zsh`：数组下标从1开始
 
-**要始终获得一致的行为，请使用：${array[@]:offset:length}**
+**要始终获得一致的行为，请使用：`${array[@]:offset:length}`，例如`${array[@]:0:1}`**
 
 ### 3.3.2 集合运算
 
@@ -827,6 +830,55 @@ echo ${F1[@]} ${F2[@]} | tr ' ' '\n' | sort | uniq
 F1=( 1 2 3 )
 F2=( 2 3 4 )
 echo ${F1[@]} ${F2[@]} | tr ' ' '\n' | sort | uniq -u
+```
+
+### 3.3.3 循环访问数组
+
+```sh
+array=(1 2 3 4 5)
+for v in ${array[@]}
+do
+    echo ${v}
+done
+```
+
+```sh
+array=(1 2 3 4 5)
+for ((i=0;i<${#array[@]};i++))
+do
+    v=${array[@]:i:1}
+    echo ${v}
+done
+```
+
+**如果数组中的内容包含空白，`foreach`默认会以空格作为分隔符，这就有可能破坏数组元素原有的结构，例如**
+
+```sh
+array=("Hello Foo" "I'm Bar!")
+for v in ${array[@]}
+do
+    echo ${v}
+done
+
+# this one works fine
+for ((i=0;i<${#array[@]};i++))
+do
+    v=${array[@]:i:1}
+    echo ${v}
+done
+```
+
+**我们可以通过修改`IFS`来修改`foreach`的默认行为**
+
+```sh
+array=("Hello Foo！" "I'm Bar!")
+ifs_bak="${IFS}"
+IFS=$'\n'
+for v in ${array[@]}
+do
+    echo ${v}
+done
+IFS="${ifs_bak}"
 ```
 
 ## 3.4 字典

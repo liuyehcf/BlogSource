@@ -184,6 +184,7 @@ usermod -d <new_dir> <username>
 * `id`：查看当前用户的信息
 * `id <username>`：查看指定用户的信息
 * `id -u`：查看当前用户的uid
+* `id -nu <uid>`：查看指定uid对应的用户名
 
 ## 1.15 readelf
 
