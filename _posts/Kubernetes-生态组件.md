@@ -33,3 +33,10 @@ Kafka的服务露出有点问题，如果简单地把`Service`从`ClusterIP`修�
 # 5 OAM
 
 * [5分钟带你快速入门和了解 OAM Kubernetes](https://www.cnblogs.com/ants/p/13300407.html)
+
+# 6 [sealos](https://github.com/labring/sealos)
+
+一个超级便捷的k8s安装工具
+
+[doc](https://www.sealyun.com/instructions/1st)
+

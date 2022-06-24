@@ -3426,8 +3426,13 @@ mount      –t debugfs    debugfs /sys/kernel/debug
     * `mem_load_retired.l2_hit & mem_load_retired.l2_miss`
 * `L3`：
     * `mem_load_retired.l3_hit & mem_load_retired.l3_miss`
-* `context-switches`
+* `context-switches & sched:sched_switch`
 * `page-faults & major-faults & minor-faults`
+* `block`
+    * `block:block_rq_issue`：发出`device I/O request`触发该事件。`rq`是`request`的缩写
+* `kmem`
+    * `kmem:kmalloc`
+    * `kmem:kfree`
 
 **示例：**
 

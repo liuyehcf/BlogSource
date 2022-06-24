@@ -325,6 +325,8 @@ Events:                   <none>
 ```sh
 # 列出所有资源类型
 kubectl api-resources
+kubectl api-resources --namespaced=true
+kubectl api-resources --namespaced=false
 
 # 查看node概要信息
 kubectl get nodes

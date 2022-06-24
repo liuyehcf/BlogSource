@@ -24,17 +24,6 @@ categories:
 * `Software event`：需要采样的`event`。比如需要通过`perf record -F 99`指定采样频率
 * `Tracepoint event`：不需要采样的`event`，有其固定的埋点，执行到了就会统计。`Tracepoint event`又可细分为许多类别
 
-**下面仅列出常用的一小部分`event`**
-
-1. `context-switches`：线程上下文切换
-1. `block`
-    * `block:block_rq_issue`：发出`device I/O request`触发该事件。`rq`是`request`的缩写
-1. `kmem`
-    * `kmem:kmalloc`
-    * `kmem:kfree`
-1. `sched`
-    * `sched:sched_switch`：线程上下文切换
-
 ## 1.2 cpu火焰图
 
 **相关git项目**
@@ -89,7 +78,9 @@ sudo perf script > out.perf
 * [Java 火焰图](https://www.jianshu.com/p/bea2b6a1eb6e)
 * [Linux 性能诊断 perf使用指南](https://developer.aliyun.com/article/65255#slide-17)
 
-# 2 VTune
+# 2 [Off-CPU Analysis](https://www.brendangregg.com/offcpuanalysis.html)
+
+# 3 VTune
 
 **大致步骤：**
 
@@ -107,7 +98,7 @@ vtune -collect hotspots -knob sampling-mode=hw -knob sampling-interval=0.5 -d 60
 vtune -collect hotspots -knob sampling-mode=hw -knob sampling-interval=0.5 -target-pid=123 -d 60
 ```
 
-## 2.1 参考
+## 3.1 参考
 
 * [Intel® VTune™ Profiler User Guide](https://www.intel.com/content/www/us/en/develop/documentation/vtune-help/top.html)
 * [Intel® VTune™ Profiler User Guide - Run Command Line Analysis](https://www.intel.com/content/www/us/en/develop/documentation/vtune-help/top/command-line-interface/running-command-line-analysis.html)
@@ -116,7 +107,22 @@ vtune -collect hotspots -knob sampling-mode=hw -knob sampling-interval=0.5 -targ
 * [Intel® VTune™ Profiler Performance Analysis Cookbook](https://software.intel.com/content/www/us/en/develop/documentation/vtune-cookbook/top/methodologies/top-down-microarchitecture-analysis-method.html)
 * [《A Top-Down Method for Performance Analysis and Counters Architecture》阅读笔记](https://andrewei1316.github.io/2020/12/20/top-down-performance-analysis/)
 
-# 3 参考
+# 4 Chrome tracing view
+
+https://github.com/StarRocks/starrocks/pull/7649
+
+# 5 Tips
+
+1. **性能分析需要重点关注的指标**
+    * `Cycles`
+    * `IPC`
+    * `Instructions`
+    * `L1 Miss`
+    * `LLC Miss, Last Level Cache`
+    * `Branch Miss`
+    * `Contention`
+
+# 6 参考
 
 * [perf Examples](https://www.brendangregg.com/perf.html)
 * [在Linux下做性能分析1：基本模型](https://zhuanlan.zhihu.com/p/22124514)

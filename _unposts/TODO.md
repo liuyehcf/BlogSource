@@ -107,5 +107,3 @@ categories:
     * [构建工具bazel](https://github.com/bazelbuild/bazel)
     * Quad Trees and R-Trees
     * futex
-    * chrome trace view
-        * https://github.com/StarRocks/starrocks/pull/7649
