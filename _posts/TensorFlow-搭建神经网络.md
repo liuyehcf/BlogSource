@@ -125,9 +125,7 @@ with tf.Session() as sess:
 
 该神经网络可表示成如下形式
 
-{% raw %}$$
-\vec{Y} = \vec{X} \cdot \vec{W^{1}} \cdot \vec{W^{2}}
-$${% endraw %}
+{% raw %}$$\vec{Y} = \vec{X} \cdot \vec{W^{1}} \cdot \vec{W^{2}}$${% endraw %}
 
 1. {% raw %}$\vec{X}${% endraw %}是输入向量
 1. {% raw %}$\vec{W^{1}}${% endraw %}是2行3列的参数矩阵
@@ -220,9 +218,7 @@ with tf.Session() as sess:
 
 损失函数的计算有很多方法，均方误差MSE是比较常用的方法之一
 
-{% raw %}$$
-MSE(y\_, y)=\frac{\sum_{i=1}^{n}{(y-y\_)^2}}{n}
-$${% endraw %}
+{% raw %}$$MSE(y\_, y)=\frac{\sum_{i=1}^{n}{(y-y\_)^2}}{n}$${% endraw %}
 
 在TensorFlow中可以表示为`loss_mse = tf.reduce_mean(tf.square(y_ - y))`
 
@@ -242,9 +238,7 @@ $${% endraw %}
 
 随机梯度下降算法，使参数沿着梯度的反方向，即总损失减小的方向移动，实现更新参数
 
-{% raw %}$$
-\theta_{n+1} = \theta_{n} - \alpha \frac{\partial{J(\theta_{n})}}{\theta_{n}}
-$${% endraw %}
+{% raw %}$$\theta_{n+1} = \theta_{n} - \alpha \frac{\partial{J(\theta_{n})}}{\theta_{n}}$${% endraw %}
 
 * {% raw %}$J(\theta_{n})${% endraw %}表示损失函数
 * {% raw %}$\theta${% endraw %}表示参数，其下标表示迭代次数

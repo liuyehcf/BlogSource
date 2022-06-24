@@ -73,4 +73,8 @@ categories:
         * backups
         * encryption
     * automatic table optimizations
-
+1. k8s
+    * 容器编排
+    * 资源管理、资源调度
+    * 运维能力，包括部署、扩缩容、异常恢复
+    * 应用生命周期管理

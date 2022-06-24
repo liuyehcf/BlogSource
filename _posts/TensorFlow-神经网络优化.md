@@ -65,9 +65,7 @@ loss_mse = tf.reduce_mean(tf.square(y_ - y))
 
 交叉熵计算公式如下：
 
-{% raw %}$$
-H(y\_, y) = - \sum{y\_} * \log{y}
-$${% endraw %}
+{% raw %}$$H(y\_, y) = - \sum{y\_} * \log{y}$${% endraw %}
 
 在TensorFlow中表示为
 
@@ -99,9 +97,7 @@ cem = tf.reduce_mean(ce)
 
 指数衰减学习率是指，学习率随着训练轮数变化而动态更新。其学习率计算公式如下：
 
-{% raw %}$$
-learning\_rate = LEARNING\_RATE\_BASE \;\;*\;\; LEARNING\_RATE\_DECAY^{\frac{global\_step}{LEARNING\_RATE\_STEP}}
-$${% endraw %}
+{% raw %}$$learning\_rate = LEARNING\_RATE\_BASE \;\;*\;\; LEARNING\_RATE\_DECAY^{\frac{global\_step}{LEARNING\_RATE\_STEP}}$${% endraw %}
 
 * `LEARNING_RATE_BASE`：学习率初始值
 * `LEARNING_RATE_DECAY`：学习率衰减率
@@ -150,9 +146,7 @@ with tf.control_dependencies([train_step, ema_op]):
 
 正则化是指，在损失函数中给每个参数{% raw %}$w${% endraw %}加上权重，引入模型复杂度指标，从而抑制模型噪声，减小过拟合。使用正则化后，损失函数{% raw %}$loss${% endraw %}变为两项之和
 
-{% raw %}$$
-loss = loss(y \;与\; y\_) + REGULARIZER \;*\; loss(w)
-$${% endraw %}
+{% raw %}$$loss = loss(y \;与\; y\_) + REGULARIZER \;*\; loss(w)$${% endraw %}
 
 **正则化的两种方式**
 

@@ -44,23 +44,6 @@ categories:
     * doc
         * [sqlite-window-function](https://www.sqlite.org/windowfunctions.html)
         * [trino-subquery](https://docs.google.com/document/d/18HN7peS2eR8lZsErqcmnoWyMEPb6p4OQeidH1JP_EkA)
-    * rewrite
-        * 各种表达式的重写和化简
-        * 列裁剪
-        * 谓词下推
-        * Limit Merge, Limit 下推
-        * 聚合 Merge
-        * 等价谓词推导（常量传播）
-        * Outer Join 转 Inner Join
-        * 常量折叠
-        * 公共表达式复用
-        * 子查询重写
-        * Lateral Join 化简
-        * 分区分桶裁剪
-        * Empty Node 优化
-        * Empty Union, Intersect, Except 裁剪
-        * Intersect Reorder
-        * Count Distinct 相关聚合函数重写
     * 统计
         * 伯努利采样
         * 皮尔逊系数

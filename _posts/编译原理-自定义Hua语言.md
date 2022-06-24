@@ -39,9 +39,7 @@ categories:
 
 产生式描述了不同文法符号串之间的**转换关系**，这种关系是单向的。例如
 
-{% raw %}$$
-\alpha \to \beta
-$${% endraw %}
+{% raw %}$$\alpha \to \beta$${% endraw %}
 
 ## 1.4 文法
 

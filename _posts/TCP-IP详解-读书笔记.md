@@ -493,9 +493,7 @@ RTO &= srtt + 4(rttvar)
 
 1. 时钟粒度会影响`RTT`的测量以及`RTO`的设置。在[RFC6298]中，粒度用于优化`RTO`的更新情况，并给`RTO`设置一个下界
     * 这里G为计时器粒度，1000ms为`RTO`的下界值。因此`RTO`至少为1s
-{% raw %}$$
-RTO = max(srtt + max(G, 4(rttvar)), 1000)
-$${% endraw %}
+{% raw %}$$RTO = max(srtt + max(G, 4(rttvar)), 1000)$${% endraw %}
 
 #### 10.3.2.2 初始值
 

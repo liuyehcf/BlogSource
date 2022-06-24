@@ -55,12 +55,10 @@ $$
 
 效果如下
 
-{% raw %}$$
-\begin{split}
+{% raw %}$$\begin{split}
 &first \\
 &second
-\end{split}
-$${% endraw %}
+\end{split}$${% endraw %}
 
 # 3 Math
 
@@ -93,6 +91,10 @@ em: /^\b_((?:[^_]|**)+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
 ```
 em: /^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
 ```
+
+## 3.1 Latex
+
+[LaTeX 格式、字母、符号、公式 （总结）](https://blog.csdn.net/CareChere/article/details/115939268)
 
 # 4 来必力评论系统
 
