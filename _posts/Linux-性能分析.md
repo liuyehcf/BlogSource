@@ -80,6 +80,19 @@ sudo perf script > out.perf
 
 # 2 [Off-CPU Analysis](https://www.brendangregg.com/offcpuanalysis.html)
 
+**分析工具：**
+
+* `>= Linux 4.8`：`eBPF`
+    * 要求`Linux`版本至少是`4.8`
+    * 开销更小，因为它只捕获和转换独特的堆栈
+    * [Linux eBPF Off-CPU Flame Graph](https://www.brendangregg.com/blog/2016-01-20/ebpf-offcpu-flame-graph.html)
+* `< Linux 4.8`：针对不同的`blocking`类型（`I/O`，`scheduler`，`lock`），需要使用不同的分析工具，例如`SystemTap`、`perf event logging`
+    * [Linux perf_events Off-CPU Time Flame Graph](https://www.brendangregg.com/blog/2015-02-26/linux-perf-off-cpu-flame-graph.html)
+
+**其他参考：**
+
+* [Off-CPU Flame Graphs](https://www.brendangregg.com/FlameGraphs/offcpuflamegraphs.html)
+
 # 3 VTune
 
 **大致步骤：**
