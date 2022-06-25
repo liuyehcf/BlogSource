@@ -421,7 +421,30 @@ print(os.__file__)
 * [vim-autopep8](https://github.com/tell-k/vim-autopep8)
 * [vim-autoformat](https://github.com/vim-autoformat/vim-autoformat)
 
-# 10 参考
+# 10 pip
+
+`pip`是`python`的包管理工具
+
+```sh
+pip install xxx
+```
+
+## 10.1 Tips
+
+1. `ModuleNotFoundError: No module named 'pip._vendor.certifi.core'`
+    * 重新安装`pip`，参考[pip3 install not working - No module named 'pip._vendor.pkg_resources'](https://stackoverflow.com/questions/49478573/pip3-install-not-working-no-module-named-pip-vendor-pkg-resources)
+    ```sh
+    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+    python3 get-pip.py --force-reinstall
+    ```
+
+1. `CryptographyDeprecationWarning: Python 3.6 is no longer supported by the Python core team. Therefore, support for it is deprecated in cryptography and will be removed in a future release.`
+    * 安装的`cry`版本太新了，重新安装个老版本即可，参考[netmiko安装报错解决](https://zhuanlan.zhihu.com/p/509547714)
+    ```sh
+    pip3 install cryptography==3.4.8
+    ```
+
+# 11 参考
 
 * [廖雪峰-Python教程](https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000)
 * [Python 3 教程](https://www.runoob.com/python3/python3-tutorial.html)

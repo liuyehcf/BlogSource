@@ -22,11 +22,11 @@ categories:
 | `[command] > [file]` | 重定向命令的`stdout`到文件`file` |
 | `[command] < [file]` | 重定向命令的`stdin`到文件`file` |
 | `[command] >> [file]` | 重定向并追加命令的`stdout`到文件`file` |
-| `0< [file]` | 重定向`stdin`到文件`file` |
-| `1> [file]` | 重定向`stdout`到文件`file` |
+| `0< [file]` | 重定向`stdin`到文件`file`，`0`可以省略 |
+| `1> [file]` | 重定向`stdout`到文件`file`，`1`可以省略 |
 | `1>> [file]` | 重定向并追加`stdout`到文件`file` |
 | `2> [file]` | 重定向`stderr`到文件`file` |
-| `2>> [file]` | 重定向并追加`stderr`到文件`file` |
+| `2>> [file]` | 重定向并追加`stderr`到文件`file`，`2`可以省略 |
 | `&> [file]` | 重定向`stdout`和`stderr`到文件`file` |
 | `&>> [file]` | 重定向并追加`stdout`和`stderr`到文件`file` |
 | `[fd_m]> [file]` | 重定向文件描述符`fd_m`到文件`file`，`fd_m`可以省略，默认为`1` |
@@ -105,8 +105,25 @@ echo $(ls)
 * **注意`<`、`>`与`(`之间不能有空格**
 
 ```sh
-cat <(ls)   #把 <(ls) 当一个临时文件，文件内容是ls的结果，cat这个临时文件
-ls > >(cat) #把 >(cat) 当成临时文件，ls的结果重定向到这个文件，最后这个文件被cat
+# 将 <(ls) 当做临时文件，文件内容是ls的结果，cat这个临时文件
+cat <(ls)
+# 将 >(cat) 当做临时文件，ls的结果重定向到这个文件，最后这个文件被cat
+ls > >(cat)
+
+# 将 <(date) 作为参数传递给cat，会显式日期
+cat <(date)
+# 将 <(date) 作为参数传递给echo，会显式fd
+echo <(date)
+
+# 将多个 <(date) 作为参数传递给cat，会显式日期
+cat <(date) <(date) <(date)
+# 将多个 <(date) 作为参数传递给echo，会显式fd
+echo <(date) <(date) <(date)
+
+# 将 <(date) 重定向到cat的标准输入，会显示日期
+cat < <(date)
+# 将 <(date) 重定向到echo的标准输入，由于echo不从标准输入读取内容，因此输出空白
+echo < <(date)
 ```
 
 **典型示例，统计文件个数**
@@ -129,84 +146,33 @@ done
 echo ${count} # 永远是0
 ```
 
-**简单读取**
+**进程替换和管道的差异，[Process substitution and pipe](https://unix.stackexchange.com/questions/17107/process-substitution-and-pipe)：**
 
-```sh
-#!/bin/bash
+1. `Multiple process inputs`：进程替换可以同时处理多路输入，而管道不行。例如：
+    ```sh
+    diff <(cd /foo/bar/; ls) <(cd /foo/baz; ls)
+    ```
 
-#这里默认会换行  
-echo "输入网站名: "  
-#读取从键盘的输入  
-read website  
-echo "你输入的网站名是 $website"  
-exit 0  #退出
-```
+1. `Preserving stdin`：进程替换可以保留标准输入，而管道不行。例如：
+    ```sh
+    cat > script.sh << 'EOF'
+    #/bin/bash
+    read LINE
+    echo "You said ${LINE}!"
+    EOF
 
-**`-p`参数，允许在`read`命令行中直接指定一个提示**
+    # wrong way
+    cat script.sh | bash
 
-```sh
-#!/bin/bash
+    # right way
+    bash <(cat script.sh)
+    ```
 
-read -p "输入网站名:" website
-echo "你输入的网站名是 $website" 
-exit 0
-```
-
-**`-t`参数指定`read`命令等待输入的秒数，当计时满时，`read`命令返回一个非零退出状态**
-
-```sh
-#!/bin/bash
-
-if read -t 5 -p "输入网站名:" website
-then
-    echo "你输入的网站名是 $website"
-else
-    echo "\n抱歉，你输入超时了。"
-fi
-exit 0
-```
-
-**`-n`参数设置`read`命令计数输入的字符。当输入的字符数目达到预定数目时，自动退出，并将输入的数据赋值给变量**
-
-```sh
-#!/bin/bash
-
-read -n1 -p "Do you want to continue [Y/N]?" answer
-case $answer in
-    Y|y)
-      echo "fine ,continue";;
-    N|n)
-      echo "ok,good bye";;
-    *)
-     echo "error choice";;
-esac
-exit 0
-```
-
-**`-s`选项能够使`read`命令中输入的数据不显示在命令终端上（实际上，数据是显示的，只是`read`命令将文本颜色设置成与背景相同的颜色）。输入密码常用这个选项**
-
-```sh
-#!/bin/bash
-
-read  -s  -p "请输入您的密码:" pass
-echo "\n您输入的密码是 $pass"
-exit 0
-```
-
-**按行读取文件**
-
-```sh
-#!/bin/bash
-  
-count=1    # 赋值语句，不加空格
-cat test.txt | while read line      # cat 命令的输出作为read命令的输入,read读到>的值放在line中
-do
-   echo "Line $count:$line"
-   count=$[ $count + 1 ]          # 注意中括号中的空格。
-done
-echo "finish"
-exit 0
-```
+1. `Outbound process substitution`：进程替换可以同时控制标准输出和标准异常，而管道不行。例如：
+    * 这个例子比较复杂。`ls`的标准输出重定向到了`/dev/null`，标准异常重定向到了`sed`，即标准异常会作为`sed`的标准输入。`sed`的输出重定向到了`denied.txt`文件
+    ```sh
+    (ls /proc/*/exe > /dev/null) 2> >(sed -n '/Permission denied/ s/.*\(\/proc.*\):.*/\1/p' > denied.txt)
+    ```
 
 ## 1.5 环境变量
 
@@ -1533,6 +1499,85 @@ echo "done"
 `-s`：安静模式，在输入字符时不再屏幕上显示，例如login时输入密码
 `-t`：后面跟秒数，定义输入字符的等待时间
 `-u`：后面跟fd，从文件描述符中读入，该文件描述符可以是exec新开启的
+
+**简单读取**
+
+```sh
+#!/bin/bash
+
+#这里默认会换行  
+echo "输入网站名: "  
+#读取从键盘的输入  
+read website  
+echo "你输入的网站名是 $website"  
+exit 0  #退出
+```
+
+**`-p`参数，允许在`read`命令行中直接指定一个提示**
+
+```sh
+#!/bin/bash
+
+read -p "输入网站名:" website
+echo "你输入的网站名是 $website" 
+exit 0
+```
+
+**`-t`参数指定`read`命令等待输入的秒数，当计时满时，`read`命令返回一个非零退出状态**
+
+```sh
+#!/bin/bash
+
+if read -t 5 -p "输入网站名:" website
+then
+    echo "你输入的网站名是 $website"
+else
+    echo "\n抱歉，你输入超时了。"
+fi
+exit 0
+```
+
+**`-n`参数设置`read`命令计数输入的字符。当输入的字符数目达到预定数目时，自动退出，并将输入的数据赋值给变量**
+
+```sh
+#!/bin/bash
+
+read -n1 -p "Do you want to continue [Y/N]?" answer
+case $answer in
+    Y|y)
+      echo "fine ,continue";;
+    N|n)
+      echo "ok,good bye";;
+    *)
+     echo "error choice";;
+esac
+exit 0
+```
+
+**`-s`选项能够使`read`命令中输入的数据不显示在命令终端上（实际上，数据是显示的，只是`read`命令将文本颜色设置成与背景相同的颜色）。输入密码常用这个选项**
+
+```sh
+#!/bin/bash
+
+read  -s  -p "请输入您的密码:" pass
+echo "\n您输入的密码是 $pass"
+exit 0
+```
+
+**按行读取文件**
+
+```sh
+#!/bin/bash
+  
+count=1    # 赋值语句，不加空格
+cat test.txt | while read line      # cat 命令的输出作为read命令的输入,read读到>的值放在line中
+do
+   echo "Line $count:$line"
+   count=$[ $count + 1 ]          # 注意中括号中的空格。
+done
+echo "finish"
+exit 0
+```
 
 ## 7.8 getopts
 
