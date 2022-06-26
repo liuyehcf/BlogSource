@@ -2104,7 +2104,29 @@ nmcli conn down <id>/<uuid>/<path>
 * 目录是：`/etc/NetworkManager/system-connections`
 * 文件名：以`<conn name>`作为文件名
 
-## 7.3 参考
+## 7.3 netplan
+
+`Ubuntu`从17.10版本之后，开始用`netplan`进行网络配置。取代了之前的`ifup/down`命令和`/etc/network/interfaces`配置文件
+
+**`netplan`相关文件路径**：
+
+* `/etc/netplan/*.yaml`。一个简单的示例如下：
+	```yaml
+	network:
+    ethernets:
+        enp0s3:
+            addresses: []
+            dhcp4: true
+            optional: true
+    ethernets:
+        enp0s8:
+            addresses: []
+            dhcp4: true
+            optional: true
+    version: 2
+	```
+
+## 7.4 参考
 
 * [NetworkManager官方文档](https://wiki.archlinux.org/index.php/NetworkManager)
 * [为 Red Hat Enterprise Linux 7 配置和管理联网](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/7/html/networking_guide/index)
@@ -2112,3 +2134,4 @@ nmcli conn down <id>/<uuid>/<path>
 * [Connecting to a Network Using nmcli](https://docs.fedoraproject.org/en-US/Fedora/25/html/Networking_Guide/sec-Connecting_to_a_Network_Using_nmcli.html)
 * [Linux DNS 查询剖析（第三部分）](https://zhuanlan.zhihu.com/p/43556975)
 * [一台主机上只能保持最多 65535 个 TCP 连接吗？](https://www.zhihu.com/question/361111920/answer/1861488526)
+* [Ubuntu20.04网络配置](https://www.360blogs.top/ubuntu20-04-netplan/)

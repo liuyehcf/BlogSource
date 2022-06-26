@@ -224,7 +224,7 @@ partition
 
 **selector配置格式**
 
-```yml
+```yaml
 selector:
   matchLabels:
     component: redis
@@ -538,7 +538,7 @@ kubectl get statefulsets,services --field-selector metadata.namespace!=default
 
 **`Pod Template`是`Pod`的一份声明（如下），可以被其他`Kubernetes Object`（包括`Replication Controllers`、`Job`等）引用**
 
-```yml
+```yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -675,7 +675,7 @@ kubectl get pod -n <namespace> <pod-name> -o yaml
 
 为了织入一些回调逻辑或者信号到`PodStatsu`中来增强`Pod readiness`的可扩展性，`Kubernetes`在`1.11`版本之后引入了一个性特性，称为`Pod ready++`，我们可以在`PodSpec`中使用`ReadinessGate`来增加一些额外的用于判断`Pod readiness`的条件。如果`Kubernetes`在`status.conditions`中没有找到对应于`ReadinessGate`中声明的条件类型，那么检测结果默认是`Flase`
 
-```yml
+```yaml
 Kind: Pod
 ...
 spec:
@@ -818,7 +818,7 @@ status:
 
 **示例**
 
-```yml
+```yaml
 apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
@@ -890,7 +890,7 @@ spec:
 
 `ReplicaSet`也可以是`Horizontal Pod Autoscalers（HPA）`的目标。也就是说，`HPA`可以自动缩放`ReplicaSet`
 
-```yml
+```yaml
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
@@ -938,7 +938,7 @@ spec:
 
 #### 3.2.2.2 Writing a ReplicationController Spec
 
-```yml
+```yaml
 apiVersion: v1
 kind: ReplicationController
 metadata:
@@ -1055,7 +1055,7 @@ spec:
 
 #### 3.2.3.1 Creating a Deployment
 
-```yml
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1265,7 +1265,7 @@ kubectl rollout resume deployment.v1.apps/nginx-deployment
 
 与`Pod`类似，`Service`也是一个`Rest Object`，可以通过`Api Server`来创建实例，例如
 
-```yml
+```yaml
 kind: Service
 apiVersion: v1
 metadata:
@@ -1297,7 +1297,7 @@ spec:
 
 在以上这些情况中，我们可以定义一个没有`Label Selector`的`Service`，如下
 
-```yml
+```yaml
 kind: Service
 apiVersion: v1
 metadata:
@@ -1311,7 +1311,7 @@ spec:
 
 由于这个`Service`没有配置`Label Selector`，因此不会有`Endpoint`对象生成。但是，我们可以手动配置`Endpoint`，如下
 
-```yml
+```yaml
 kind: Endpoints
 apiVersion: v1
 metadata:
@@ -1439,7 +1439,7 @@ iptable->remotePod: traffic to remotePod
 
 很多`Service`需要暴露多个端口。`Kubernetes`支持一个`Service`暴露多个端口，在这种方式下，我们必须为每个端口定义一个端口名（端口名只允许包含数字、小写字母以及`-`，且必须以数字或小写字母开头和记为）
 
-```yml
+```yaml
 kind: Service
 apiVersion: v1
 metadata:
@@ -1516,7 +1516,7 @@ spec:
 
 对于提供负载均衡服务的云环境，我们可以将`Service`指定为`LoadBalancer`类型，`Kubernetes`会为`Service`创建`LoadBalancer`，事实上，`LoadBalancer`的创建过程与`Service`的创建过程是异步的。当`LoadBalancer`发布后，会更新`Service`的`.status.loadBalancer`字段
 
-```yml
+```yaml
 kind: Service
 apiVersion: v1
 metadata:
@@ -1576,7 +1576,7 @@ status:
 1. `Pod`还可以指定`spec.hostname`，若`spec.hostname`与`metadata.name`同时存在时，以`spec.hostname`为准
 1. `Pod`还可以指定`spec.subdomain`。例如，若一个`Pod`，其`spec.hostname`为`foo`，`spec.subdomain`为`bar`，`Namespace`为`my-namespace`，则对应的`FQDN`为`foo.bar.my-namespace.pod.cluster.local`
 
-```yml
+```yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -1632,7 +1632,7 @@ spec:
 1. `ClusterFirstWithHostNet`: 若`Pod`以`hostNetwork`模式运行，那么`DNS`必须设置为`ClusterFirstWithHostNet`
 1. `None`: 忽略`Kubernetes`的`DNS Policy`，同时依赖`spec.dnsConfig`提供更细粒度的配置
 
-```yml
+```yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -1661,7 +1661,7 @@ spec:
 1. `searches`: `DNS Search Domain`列表，最多支持6个
 1. `options`: 一些键值对的列表，每个键值对必须包含`Key`，但是`Value`可以没有
 
-```yml
+```yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -1696,7 +1696,7 @@ spec:
 
 下面，我们用一个`Nginx Pod`作为例子，进行介绍
 
-```yml
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1824,7 +1824,7 @@ my-nginx   10.244.1.8:80,10.244.2.5:80   11m
 
 `kubectl expose`等价于`kubectl create -f <如下配置文件>`
 
-```yml
+```yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -1939,7 +1939,7 @@ cat /tmp/nginx.key | base64
 
 下面创建一个`Secret`，配置如下
 
-```yml
+```yaml
 apiVersion: "v1"
 kind: "Secret"
 metadata:
@@ -1968,7 +1968,7 @@ nginxsecret           Opaque                                2         14s
 
 现在需要替换掉之前的`nginx`服务，配置如下
 
-```yml
+```yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -2064,7 +2064,7 @@ curl -k http://10.102.252.181:8080
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-```yml
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -2182,7 +2182,7 @@ kubectl get nodes -o yaml | grep ExternalIP -C 1
 
 ### 4.4.4 The Ingress Resource
 
-```yml
+```yaml
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -2217,7 +2217,7 @@ spec:
 
 一个`Ingress`只对应了一个后端的`Service`
 
-```yml
+```yaml
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -2237,7 +2237,7 @@ foo.bar.com -> 178.91.123.132 -> / foo    service1:4200
                                  / bar    service2:8080
 ```
 
-```yml
+```yaml
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -2269,7 +2269,7 @@ foo.bar.com --|                 |-> foo.bar.com s1:80
 bar.foo.com --|                 |-> bar.foo.com s2:80
 ```
 
-```yml
+```yaml
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -2294,7 +2294,7 @@ spec:
 
 我们可以在`Ingress`之上增加`TSL/SSL`协议
 
-```yml
+```yaml
 apiVersion: v1
 data:
   tls.crt: base64 encoded cert
@@ -2306,7 +2306,7 @@ metadata:
 type: kubernetes.io/tls
 ```
 
-```yml
+```yaml
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -2368,7 +2368,7 @@ kubectl edit ingress test
 
 ### 4.6.2 The NetworkPolicy Resource
 
-```yml
+```yaml
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -2423,7 +2423,7 @@ spec:
 
 **区分以下两种配置的区别**
 
-```yml
+```yaml
 ...
   ingress:
   - from:
@@ -2438,7 +2438,7 @@ spec:
 
 这种配置包含一个规则: `podSelector`和`namespaceSelector`
 
-```yml
+```yaml
 ...
   ingress:
   - from:
@@ -2459,7 +2459,7 @@ spec:
 
 #### 4.6.4.1 Default deny all ingress traffic
 
-```yml
+```yaml
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -2472,7 +2472,7 @@ spec:
 
 #### 4.6.4.2 Default allow all ingress traffic
 
-```yml
+```yaml
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -2487,7 +2487,7 @@ spec:
 
 #### 4.6.4.3 Default deny all egress traffic
 
-```yml
+```yaml
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -2500,7 +2500,7 @@ spec:
 
 #### 4.6.4.4 Default allow all egress traffic
 
-```yml
+```yaml
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -2515,7 +2515,7 @@ spec:
 
 #### 4.6.4.5 Default deny all ingress and all egress traffic
 
-```yml
+```yaml
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:

@@ -1540,7 +1540,7 @@ free
 * `%CPU`：该进程使用掉的CPU资源百分比
 * `%MEN`：该进程占用的物理内存百分比
 * `VSZ`：该进程使用掉的虚拟内存量
-* `RSS`：该进程占用的固定内存量
+* `RSS`：该进程占用的未被`swap`的内存量
 * `TTY`：该进程是所属终端机，tty1~tty6是本地，pts/0是网络连接主机的进程(GNOME上的bash)
 * `STAT`：该进程目前的状态，状态显示与ps -l的S标志相同
 * `START`：该进程被触发的启动时间
@@ -3067,6 +3067,7 @@ yum install -y sysstat
 * `-m`：以`MB`的方式显示io速率（默认是`Blk`，即文件系统中的`block`）
 * `-t`：打印日期信息
 * `-x`：打印扩展信息
+* `-z`：省略在采样期间没有产生任何事件的设备
 * `interval`: 打印间隔
 * `count`: 打印几次，不填一直打印
 
@@ -3091,6 +3092,8 @@ yum install -y sysstat
 * `iostat -d -t -x 1`
 
 ## 6.12 dstat
+
+`dstat`是用于生成系统资源统计信息的通用工具
 
 **格式：**
 
@@ -3195,14 +3198,24 @@ yum install -y sysstat
 **参数说明：**
 
 * `-d`：显示`I/O`使用情况
+    * `kB_rd/s`：磁盘的读速率，单位`KB`
+    * `kB_wr/s`：磁盘的写速率，单位`KB`
+    * `kB_ccwr/s`：本应写入，但是取消的写速率，单位`KB`。任务丢弃`dirty pagecache`时可能会触发`cancel`
 * `-r`：显示内存使用情况
+    * `minflt/s`：`minor faults per second`
+    * `majflt/s`：`major faults per second`
 * `-s`：显示栈使用情况
+    * `StkSize`：系统为该任务保留的栈空间大小，单位`KB`
+    * `StkRef`：该任务当前实际使用的栈空间大小，单位`KB`
 * `-u`：显示CPU使用情况，默认
 * `-p <pid>`：指定进程
 
 **示例：**
 
-* `pidstat -d 5`
+* `pidstat -d -p <pid> 5`
+* `pidstat -r -p <pid> 5`
+* `pidstat -s -p <pid> 5`
+* `pidstat -u -p <pid> 5`
 
 ## 6.15 nethogs
 

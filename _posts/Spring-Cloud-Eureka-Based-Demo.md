@@ -188,7 +188,7 @@ public class EurekaServerApplication {
 
 ## 3.3 application.yml
 
-```yml
+```yaml
 server:
   port: 1100
 
@@ -365,7 +365,7 @@ public class ProviderGreetController {
 1. `Spring Cloud`默认将`spring.application.name`作为`serviceId`
 1. 必须知道注册中心的地址
 
-```yml
+```yaml
 server:
   port: 1110
 
@@ -581,7 +581,7 @@ public class RibbonConsumerApplication {
 1. `Spring Cloud`默认将`spring.application.name`作为`serviceId`
 1. 必须知道注册中心的地址
 
-```yml
+```yaml
 server:
   port: 1120
 
@@ -796,7 +796,7 @@ public class FeignConsumerApplication {
 1. `Spring Cloud`默认将`spring.application.name`作为`serviceId`
 1. 必须知道注册中心的地址
 
-```yml
+```yaml
 server:
   port: 1130
 
@@ -940,7 +940,7 @@ public class ConfigServerApplication {
 1. 必须知道注册中心的地址
 1. 由于需要从远程git仓库获取配置信息，因此需要配置git仓库的相关元数据
 
-```yml
+```yaml
 server:
   port: 1140
 
@@ -1138,7 +1138,7 @@ public class ConfigClientApplication {
 
 ## 8.3 application.yml
 
-```yml
+```yaml
 server:
   port: 1150
 
@@ -1160,7 +1160,7 @@ eureka:
 * `spring.application.name`：它应该配置在`bootstrap.yml`，它的名字应该等于配置中心的配置文件的`{application}`。**所以配置中心在给配置文件取名字时，最好让它等于对应的应用服务名**
 * **配置中心与注册中心联合使用：若应用通过`serviceId`而非`url`来指定配置中心**，则`eureka.client.serviceUrl.defaultZone`也要配置在`bootstrap.yml`，要不启动的时候，应用会找不到注册中心，自然也就找不到配置中心了
 
-```yml
+```yaml
 spring:
   application:
     name: cloud.config.demo         # 指定配置中心配置文件的{application}

@@ -257,7 +257,7 @@ nginx-59578f7988-chlch   1/1     Running   0          31m
 
 **由于我们这个nginx应用服务在80端口，但是上面的`nginx-deployment.yml`文件中配置的是容器端口，我们仍然不能在外界访问这个服务。我们还需要增加一个`nginx-service`，`nginx-service.yml`文件内容如下**
 
-```yml
+```yaml
 apiVersion: v1
 kind: Service
 metadata:

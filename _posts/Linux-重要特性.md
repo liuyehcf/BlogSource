@@ -1665,8 +1665,17 @@ systemctl stop demo-service.service
 
 # 5 eBPF
 
+**`Tools`：**
+
+* `bcc`
+    * [bcc/INSTALL.md](https://github.com/iovisor/bcc/blob/master/INSTALL.md)
+    * [bcc/docs/tutorial.md](https://github.com/iovisor/bcc/blob/master/docs/tutorial.md)
+* `bpftrace`
+
 ## 5.1 参考
 
+* [Linux Extended BPF (eBPF) Tracing Tools](https://www.brendangregg.com/ebpf.html)
+* [Learn eBPF Tracing: Tutorial and Examples](https://www.brendangregg.com/blog/2019-01-01/learn-ebpf-tracing.html)
 * [socket tracer](https://mp.weixin.qq.com/s/0w5t_KkHRLXkEY1_qbdTtw)
 
 # 6 中断

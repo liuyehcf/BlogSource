@@ -246,7 +246,7 @@ public class ZookeeperProviderApplication {
 1. `Spring Cloud`默认将`spring.application.name`作为`serviceId`
 1. 必须知道注册中心的地址
 
-```yml
+```yaml
 server:
   port: 1110
 
@@ -564,7 +564,7 @@ public class RibbonConsumerApplication {
 1. `Spring Cloud`默认将`spring.application.name`作为`serviceId`
 1. 必须知道注册中心的地址
 
-```yml
+```yaml
 server:
   port: 1120
 
@@ -801,7 +801,7 @@ public class FeignConsumerApplication {
 1. `Spring Cloud`默认将`spring.application.name`作为`serviceId`
 1. 必须知道注册中心的地址
 
-```yml
+```yaml
 server:
   port: 1130
 
@@ -967,7 +967,7 @@ public class ConfigServerApplication {
 1. 必须知道注册中心的地址
 1. 由于需要从远程git仓库获取配置信息，因此需要配置git仓库的相关元数据
 
-```yml
+```yaml
 server:
   port: 1140
 
@@ -1188,7 +1188,7 @@ public class ConfigClientApplication {
 
 ## 8.3 application.yml
 
-```yml
+```yaml
 server:
   port: 1150
 ```
@@ -1201,7 +1201,7 @@ server:
 * **配置中心与注册中心联合使用：若应用通过`serviceId`而非`url`来指定配置中心**，则`spring.cloud.zookeeper.connect-string`也要配置在`bootstrap.yml`，要不启动的时候，应用会找不到注册中心，自然也就找不到配置中心了
 * **此外还必须配置`spring.cloud.zookeeper.discovery.register`属性。按照Spring-Cloud的官方文档，该属性默认是true，但是配置了`spring.cloud.config`相关配置项后，必须手动将`spring.cloud.zookeeper.discovery.register`属性设置为true，否则将不会注册到Zookeeper中**
 
-```yml
+```yaml
 spring:
   application:
     name: cloud.config.demo         # 指定配置中心配置文件的{application}
