@@ -19,22 +19,20 @@ categories:
 
 | 命令（可以加空格地方都加了空格，否则就是不能加空格） | 说明 |
 |:--|:--|
-| `[command] > [file]` | 重定向命令的`stdout`到文件`file` |
-| `[command] < [file]` | 重定向命令的`stdin`到文件`file` |
-| `[command] >> [file]` | 重定向并追加命令的`stdout`到文件`file` |
-| `0< [file]` | 重定向`stdin`到文件`file`，`0`可以省略 |
-| `1> [file]` | 重定向`stdout`到文件`file`，`1`可以省略 |
-| `1>> [file]` | 重定向并追加`stdout`到文件`file` |
-| `2> [file]` | 重定向`stderr`到文件`file` |
-| `2>> [file]` | 重定向并追加`stderr`到文件`file`，`2`可以省略 |
+| `[command] 0< [file]` | 重定向命令的`stdin`到文件`file`，其中`0`可以省略 |
+| `[command] 1> [file]` | 重定向命令的`stdout`到文件`file`，其中`1`可以省略 |
+| `[command] 1>> [file]` | 重定向并追加命令的`stdout`到文件`file`，其中`1`可以省略 |
+| `[command] 2> [file]` | 重定向命令的`stderr`到文件`file` |
+| `[command] 2>> [file]` | 重定向并追加命令的`stderr`到文件`file` |
 | `&> [file]` | 重定向`stdout`和`stderr`到文件`file` |
 | `&>> [file]` | 重定向并追加`stdout`和`stderr`到文件`file` |
 | `[fd_m]> [file]` | 重定向文件描述符`fd_m`到文件`file`，`fd_m`可以省略，默认为`1` |
 | `[fd_m]>&[fd_n]` | 重定向文件描述符`fd_m`到文件描述符`fd_n`，`fd_m`可以省略，默认为`1` |
+| `[fd_m]>>&[fd_n]` | 重定向并追加文件描述符`fd_m`到文件描述符`fd_n`，`fd_m`可以省略，默认为`1` |
 | `[fd_m]<> [file]` | 把文件`file`打开, 并且将文件描述符`fd_m`分配给它，`fd_m`可以省略，默认为`0` |
-| `0<&-`、`<&-` | 关闭`stdin` |
+| `0<&-` | 关闭`stdin`，其中`0`可以省略 |
 | `[fd_in]<&-` | 关闭输入文件描述符`fd_in` |
-| `1>&-`、`>&-` | 关闭`stdout` |
+| `1>&-` | 关闭`stdout`，其中`1`可以省略 |
 | `[fd_out]>&-` | 关闭输出文件描述符`fd_out` |
 | `<< tag` | 将开始标记 tag 和结束标记 tag 之间的内容作为输入 |
 
@@ -168,10 +166,21 @@ echo ${count} # 永远是0
     bash <(cat script.sh)
     ```
 
-1. `Outbound process substitution`：进程替换可以同时控制标准输出和标准异常，而管道不行。例如：
-    * 这个例子比较复杂。`ls`的标准输出重定向到了`/dev/null`，标准异常重定向到了`sed`，即标准异常会作为`sed`的标准输入。`sed`的输出重定向到了`denied.txt`文件
+1. `Outbound process substitution`：进程替换可以将标准输出和标准异常导向不同的程序，而管道不行。例如：
     ```sh
-    (ls /proc/*/exe > /dev/null) 2> >(sed -n '/Permission denied/ s/.*\(\/proc.*\):.*/\1/p' > denied.txt)
+    cat > main.cp << 'EOF'
+    #include <iostream>
+
+    int main() {
+        std::cout << "This is normal output" << std::endl;
+        std::cerr << "This is error output" << std::endl;
+        return 0;
+    }
+    EOF
+
+    gcc -o main -lstdc++ -std=gnu++11 main.cpp
+
+    ./main 1> >(sed -n '/output/s/^.*$/Find stdout/p') 2> >(sed -n '/output/s/^.*$/Find stderr/p')
     ```
 
 ## 1.5 环境变量
@@ -317,6 +326,10 @@ shell中的特殊符号包括如下几种
     * 在测试结构中，可以用这两个操作符来进行连接两个逻辑值
 1. **`&`：与号（Run job in background[ampersand]）**
     * 如果命令后面跟上一个&符号，这个命令将会在后台运行
+1. **`-`：命令中的单个`-`表示标准输入或输出。具体代表标准输入还是标准输出取决于程序本身**
+    * `cat -`：此时，`-`代表标准输入
+    * `echo "This is Test" | socat - /tmp/hello.html`：此时，`-`代表标准输出
+    * `socat - /tmp/hello.html`：此时，`-`代表标准输入
 
 # 3 数据类型
 
@@ -663,7 +676,7 @@ echo 'hello' | tr 'a-z' 'A-Z'
 echo 'HELLO' | tr 'A-Z' 'a-z'
 ```
 
-### 3.2.9 提取`[]`、`''`、`<>`、`()`中的内容
+### 3.2.9 提取括号中的内容
 
 ```sh
 var='[hello]'
@@ -768,7 +781,25 @@ done
 1. `sh/bash`：数组下标从0开始
 1. `zsh`：数组下标从1开始
 
-**要始终获得一致的行为，请使用：`${array[@]:offset:length}`，例如`${array[@]:0:1}`**
+**要始终获得一致的行为，请使用：`${array[@]:offset:length}`**
+
+* `offset`：起始索引，`sh/bash/zsh`都是从`0`开始
+* `length`：取多少个元素。若`length = 1`，那么只取某个元素；若`length > 1`，那么取的是一个子集
+
+```sh
+array=(1 2 3 4 5 6 7 8 9 10)
+# output 1
+echo ${array[@]:0:1}
+
+# output 1 2
+echo ${array[@]:0:2}
+
+# output 1 2 3
+echo ${array[@]:0:3}
+
+# output 4 5 6
+echo ${array[@]:3:3}
+```
 
 ### 3.3.2 集合运算
 
