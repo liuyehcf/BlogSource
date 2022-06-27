@@ -1560,8 +1560,9 @@ free
 
 **参数说明：**
 
-* `-f`：匹配完整的`command line`，默认情况下只能匹配15个字符
-* `-l`：列出pid以及进程名
+* `-a`：列出pid以及完整的程序名
+* `-l`：列出pid以及程序名
+* `-f`：匹配完整的进程名
 * `-o`：列出oldest的进程
 * `-n`：列出newest的进程
 
@@ -1572,6 +1573,7 @@ free
 * `pgrep -lo sshd`
 * `pgrep -ln sshd`
 * `pgrep -l ssh*`
+* `pgrep -a sshd`
 
 ## 4.8 pstree
 
