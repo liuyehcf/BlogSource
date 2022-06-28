@@ -13,49 +13,598 @@ categories:
 
 # 1 Database
 
-| 题目 | 分类 | 概要 | 状态 | 推荐级别 |
-|:--|:--|:--|:--|:--|
-| [Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age](/resources/paper/Morsel-Driven-Parallelism-A-NUMA-Aware-Query-Evaluation-Framework-for-the-Many-Core-Age.pdf) | <li>`#Execution`</li><li>`#Parallel`</li> | <li>Mosel is a small fragments of input data</li><li>Many-Core archtecture should take NUMA local processing into account, i.e. NUMA locality</li><li>Machine-dependent number of threads</li><li>Threads are pinned to the cores, avoid thread moving across different cores</li><li>Keep pipeline with homogeneously sized morsels (exchange between to adjacent pipelines) to avoid skewed data distribution</li><li>Scheduling goals<ul><li>Preserving (NUMA-)locality by assigning data morsels to cores on which the morsels are allocated</li><li>Full elasticity concerning the level of parallelism of a particular query</li><li>Load balancing requires that all cores participating in a query pipeline finish their work at the same time in order to prevent (fast) cores from waiting for other (slow) cores</li></ul></li><li>Work stealing</li><li>The morsel size is not very critical for performance, it only needs to be large enough to amortize scheduling overhead while providing good response times</li> | ✅ | ★★★★★ |
-| [Push vs. Pull-Based Loop Fusion in Query Engines](/resources/paper/Push-vs-Pull-Based-Loop-Fusion-in-Query-Engines.pdf) | <li>`#Execution`</li> |  | ✅ | ★★★ |
-| [Everything You Always Wanted to Know About Compiled and Vectorized Queries But Were Afraid to Ask](/resources/paper/Everything-You-Always-Wanted-to-Know-About-Compiled-and-Vectorized-Queries-But-Were-Afraid-to-Ask.pdf) | <li>`#Execution`</li> | <li>Vectorization(pull base) and data-centric code generation(push base) are both good</li><li>Data-centric code generation is better when executing calculation-heavy queries, while vectorization is good at hiding cache miss latency</li><li>Two constraints of vectorization: It can (i) only work on one data type2 and it (ii) must process multiple tuples</li><li>Data-centric code generation can avoid materialize intermediate result in some degree</li><li>Data-centric code generation perform more complex loop, which leads to more expensive penalty of branch miss and cache miss</li><li>Observation: SIMD is only beneficial when all data fits into the cache</li> | ✅ | ★★★★★ |
-| [Implementing Database Operations Using SIMD Instructions](/resources/paper/Implementing-Database-Operations-Using-SIMD-Instructions.pdf) | <li>`#Execution`</li> | <li>Branch Misprediction</li><li>Tres struct with SIMD</li><li>B+ Tree's leaf node do not need to be stored in order if sequential search is choosed</li><li>Fully use of SIMD by mapping non-fixed size datatype to fixed size datatype</li><li>Fully speed up SIMD by mapping large size to smaller size which means more data in one instruction, and need a second check by the original datatype due to false positive</li> | ✅ | ★★★★★ |
-| [MonetDB/X100: Hyper-Pipelining Query Execution](/resources/paper/MonetDB-X100-Hyper-Pipelining-Query-Execution.pdf) | <li>`#Execution`</li><li>`#Vector Processing`</li> |  |  |  |
-| [Design and Evaluation of Main Memory Hash Join Algorithms for Multi-core CPUs](/resources/paper/Design-and-Evaluation-of-Main-Memory-Hash-Join-Algorithms-for-Multi-core-CPUs.pdf) | <li>`#Execution`</li><li>`#Sort`</li> |  |  |  |
-| [Sort vs. Hash Revisited Fast Join Implementation on Modern Multi-Core CPUs](/resources/paper/Sort-vs.-Hash-Revisited-Fast-Join-Implementation-on-Modern-Multi-Core-CPUs.pdf) | <li>`#Execution`</li><li>`#Sort`</li> |  |  |  |
-| [Optimizing main-memory join on modern hardware](https://ieeexplore.ieee.org/abstract/document/1019210/) | <li>`#Execution`</li><li>`#Sort`</li> | <li>radix-cluster algorithm</li> |  |  |
-| [Massively Parallel Sort-Merge Joins in Main Memory Multi-Core Database Systems](/resources/paper/Massively-Parallel-Sort-Merge-Joins-in-Main-Memory-Multi-Core-Database-Systems.pdf) | <li>`#Execution`</li><li>`#Sort`</li> |  |  |  |
-| [Main-Memory Hash Joins on Multi-Core CPUs Tuning to the Underlying Hardware](/resources/paper/Main-Memory-Hash-Joins-on-Multi-Core-CPUs-Tuning-to-the-Underlying-Hardware.pdf) | <li>`#Execution`</li><li>`#Sort`</li> |  |  |  |
-| [Efficient Implementation of Sorting on Multi-Core SIMD CPU Architecture](/resources/paper/Efficient-Implementation-of-Sorting-on-Multi-Core-SIMD-CPU-Architecture.pdf) | <li>`#Execution`</li><li>`#Sort`</li> |  |  |  |
-| [Massively Parallel NUMA-aware Hash Joins](/resources/paper/Massively-Parallel-NUMA-aware-Hash-Joins.pdf) | <li>`#Execution`</li><li>`#Sort`</li> |  |  |  |
-| [An Experimental Comparison of Thirteen Relational Equi-Joins in Main Memory](/resources/paper/An-Experimental-Comparison-of-Thirteen-Relational-Equi-Joins-in-Main-Memory.pdf) | <li>`#Execution`</li><li>`#Sort`</li> |  |  |  |
-| [Distributed Top-k Query Processing by Exploiting Skyline Summaries](/resources/paper/Distributed-Top-k-Query-Processing-by-Exploiting-Skyline-Summaries.pdf) | <li>`#Execution`</li><li>`#Sort`</li> | <li>Optimize TopN when N is large</li> | ✅ | ★★★ |
-| [Optimization of Analytic Window Functions](/resources/paper/Optimization-of-Analytic-Window-Functions.pdf) | <li>`#Execution`</li><li>`#Window Function`</li> | <li>Full Sort, Hashed Sort, Segmented Sort</li><li>Segment Relation</li><li>Reorderable</li><li>SS-reorderable, only reorder in segment level to match expected order property, which not degenerating to full sort</li><li>Cover Set-based Evaluation</li> | ✅ | ★★★★★ |
-| [Efficient Processing of Window Functions in Analytical SQL Queries](/resources/paper/Efficient-Processing-of-Window-Functions-in-Analytical-SQL-Queries.pdf) | <li>`#Execution`</li><li>`#Window Function`</li> | <li>Basic Concepts:<ul><li>Partitioning</li><li>Ordering</li><li>Framing</li><li>Window Expression</li></ul></li><li>Pre-Partitioning into Hash Groups</li><li>Aggregation Algorithms:<ul><li>Naive Aggregation</li><li>Cumulative Aggregation</li><li>Removable Cumulative Aggregation</li><li>Segment Tree Aggregation</li></ul></li> | ✅ | ★★★★★ |
-| [Analytic Functions in Oracle 8i](/resources/paper/Analytic-Functions-in-Oracle-8i.pdf) | <li>`#Execution`</li><li>`#Window Function`</li> | <li>Minimization of number of sorts</li><li>Predicate Pushdown</li> | ✅ | ★★★★★ |
-| [Incremental Computation of Common Windowed Holistic Aggregates](/resources/paper/Incremental-Computation-of-Common-Windowed-Holistic-Aggregates.pdf) | <li>`#Execution`</li><li>`#Window Function`</li> | <li>Function classification, including tuple-functions, aggregate-functions, window functions</li><li>Aggregate-functions can be subdivided into distributive aggregates, algebraic aggregates, holistic aggregates</li> | 👀 |  |
-| [The Cascades Framework for Query Optimization](/resources/paper/The-Cascades-Framework-For-Query-Optimization.pdf) | <li>`#Optimizer`</li> | <li>Framework Concepts and Components</li><li>Sketchily</li> | ✅ | ★★★ |
-| [Efficiency in the Columbia Database Query Optimizer](/resources/paper/Efficiency-In-The-Columbia-Database-Query-Optimizer.pdf) | <li>`#Optimizer`</li> | <li>Framework Concepts and Components</li><li>Detailedly</li> | ✅ | ★★★★★ |
-| [How Good Are Query Optimizers, Really?](/resources/paper/How-Good-Are-Query-Optimizers.pdf) | <li>`#Optimizer`</li> | <li>Cardinality Estimation is more important than Cost Model</li> | ✅ | ★★★★★ |
-| [Orca: A Modular Query Optimizer Architecture for Big Data](/resources/paper/Orca-A-Modular-Query-Optimizer-Architecture-For-Big-Data.pdf) | <li>`#Optimizer`</li> | <li>Easy to integrate into other systems</li><li>Parallel Optimization</li> |  | ★★★ |
-| [Orthogonal Optimization of Subqueries and Aggregation](/resources/paper/Orthogonal-Optimization-of-Subqueries-and-Aggregation.pdf) | <li>`#Optimizer`</li><li>`#Subquery`</li> | <li>Scalar Aggregate means without group by colums, which always returns one row</li><li>Subquery classification: <ul><li>boolean-valued subquery, including exist/in/quantified comparisons</li><li>scalar subquery, which need `Max1row` operator</li></ul></li><li>Correlated subquery have three execution strategies: <ul><li>correlated execution</li><li>outerjoin then aggregate</li><li>aggregate then join</li></ul></li><li>Algebraic representation</li><li>Remove Correlations, which means the recursive calls between scalar and relational execution are removed, and typically results in outerjoins</li><li>Pushing down Apply</li><li>For `(not) exist/in` subquery, semijoin for exists, antisemijoin for not exist</li><li>Subquery classes based on different processing strategies: <ul><li>Class 1. Subqueries that can be removed with no ad- ditional common subexpressions</li><li>Class 2. Subqueries that are removed by introducing additional common subexpressions</li><li>Class 3. Exception subqueries</li></ul></li><li>GroupBy reorder conditions: <ul><li>case groupBy with filter</li><li>case groupBy with join/outerjoin</li></ul></li><li>Local Aggregate, Local GroupBy</li><li>SegmentApply, dividing table to indenpendent parts, and perform `Apply` operator on each parts indenpendently</li> | ✅ | ★★★★★ |
-| [Of Nests aud Trees: A Untied Approach to Processing Queries That Contain Nested Subqueries, Aggregates, and Quantifiers](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.96.5353&rep=rep1&type=pdf) | <li>`#Optimizer`</li><li>`#Subquery`</li> |  |  |  |
-| [Complex Query Decorrelation](/resources/paper/Complex-Query-Decorrelation.pdf) | <li>`#Optimizer`</li><li>`#Subquery`</li> |  |  |  |
-| [Enhanced-Subquery-Optimizations-in-Oracle](/resources/paper/Enhanced-Subquery-Optimizations-in-Oracle.pdf) | <li>`#Optimizer`</li><li>`#Subquery`</li> | <li>Subquery coalesce</li><li>Subquery removal using window functions</li><li>Null-aware anti join, NAAJ</li> | 👀 |  |
-| [Outerjoin Simplification and Reordering for Query Optimization](/resources/paper/Outerjoin-Simplification-and-Reordering-for-Query-Optimization.pdf) | <li>`#Optimizer`</li><li>`#Join`</li> |  |  |  |
-| [Including Group-By in Query Optimization](/resources/paper/Including-Group-By-in-Query-Optimization.pdf) | <li>`#Optimizer`</li><li>`#Join`</li><li>`#Aggregate`</li> |  |  |  |
-| [Groupwise Processing of Relational Queries](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.102.1517&rep=rep1&type=pdf) | <li>`#Optimizer`</li><li>`#Join`</li><li>`#Aggregate`</li> |  |  |  |
-| [Are We Ready For Learned Cardinality Estimation?](/resources/paper/Are-We-Ready-For-Learned-Cardinality-Estimation.pdf) | <li>`#Optimizer`</li><li>`#Cardinality Estimator`</li> | <li>Cardinality Estimator</li><li>Cost Model</li> | ✅ | ★★★★★ |
-| [NeuroCard: One Cardinality Estimator for All Tables](/resources/paper/NeuroCard-One-Cardinality-Estimator-for-All-Tables.pdf) | <li>`#Optimizer`</li><li>`#Cardinality Estimator`</li> |  |  |  |
-| [Sampling-Based Estimation of the Number of Distinct Values of an Attribute](/resources/paper/Sampling-Based-Estimation-of-the-Number-of-Distinct-Values-of-an-Attribute.pdf) | <li>`#Optimizer`</li><li>`#Sampling`</li> | <li>Introduce Many Estimators</li><li>Data Skewness</li> | ✅ | ★★★★★ |
-| [Towards Estimation Error Guarantees for Distinct Values](https://dl.acm.org/doi/pdf/10.1145/335168.335230) | <li>`#Optimizer`</li><li>`#Sampling`</li> |  |  |  |
-| [An Overview of Data Warehousing and OLAP Technology](/resources/paper/An-Overview-of-Data-Warehousing-and-OLAP-Technology.pdf) | <li>`#Overview`</li><li>`#Warehousing`</li> |  |  | ★★★★★ |
+<table>
+    <thead>
+        <tr>
+            <th style="text-align:left">题目</th>
+            <th style="text-align:left">分类</th>
+            <th style="text-align:left">概要</th>
+            <th style="text-align:left">状态</th>
+            <th style="text-align:left">推荐级别</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Morsel-Driven-Parallelism-A-NUMA-Aware-Query-Evaluation-Framework-for-the-Many-Core-Age.pdf">Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Parallel</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Mosel is a small fragments of input data</li>
+                <li>Many-Core archtecture should take NUMA local processing into account, i.e. NUMA locality</li>
+                <li>Machine-dependent number of threads</li>
+                <li>Threads are pinned to the cores, avoid thread moving across different cores</li>
+                <li>Keep pipeline with homogeneously sized morsels (exchange between to adjacent pipelines) to avoid skewed data distribution</li>
+                <li>Scheduling goals
+                    <ul>
+                        <li>Preserving (NUMA-)locality by assigning data morsels to cores on which the morsels are allocated</li>
+                        <li>Full elasticity concerning the level of parallelism of a particular query</li>
+                        <li>Load balancing requires that all cores participating in a query pipeline finish their work at the same time in order to prevent (fast) cores from waiting for other (slow) cores</li>
+                    </ul>
+                </li>
+                <li>Work stealing</li>
+                <li>The morsel size is not very critical for performance, it only needs to be large enough to amortize scheduling overhead while providing good response times</li>
+            </td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Push-vs-Pull-Based-Loop-Fusion-in-Query-Engines.pdf">Push vs. Pull-Based Loop Fusion in Query Engines</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+            </td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Everything-You-Always-Wanted-to-Know-About-Compiled-and-Vectorized-Queries-But-Were-Afraid-to-Ask.pdf">Everything You Always Wanted to Know About Compiled and Vectorized Queries But Were Afraid to Ask</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Vectorization(pull base) and data-centric code generation(push base) are both good</li>
+                <li>Data-centric code generation is better when executing calculation-heavy queries, while vectorization is good at hiding cache miss latency</li>
+                <li>Two constraints of vectorization: It can (i) only work on one data type2 and it (ii) must process multiple tuples</li>
+                <li>Data-centric code generation can avoid materialize intermediate result in some degree</li>
+                <li>Data-centric code generation perform more complex loop, which leads to more expensive penalty of branch miss and cache miss</li>
+                <li>Observation: SIMD is only beneficial when all data fits into the cache</li>
+            </td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Implementing-Database-Operations-Using-SIMD-Instructions.pdf">Implementing Database Operations Using SIMD Instructions</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Branch Misprediction</li>
+                <li>Tres struct with SIMD</li>
+                <li>B+ Tree’s leaf node do not need to be stored in order if sequential search is choosed</li>
+                <li>Fully use of SIMD by mapping non-fixed size datatype to fixed size datatype</li>
+                <li>Fully speed up SIMD by mapping large size to smaller size which means more data in one instruction, and need a second check by the original datatype due to false positive</li>
+            </td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/MonetDB-X100-Hyper-Pipelining-Query-Execution.pdf">MonetDB/X100: Hyper-Pipelining Query Execution</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Vector Processing</code></li>
+            </td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Managing-Intra-operator-Parallelism-in-Parallel-Database-Systems.pdf">Managing Intra-operator Parallelism in Parallel Database Systems</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Parallelism</code></li>
+            </td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Design-and-Evaluation-of-Main-Memory-Hash-Join-Algorithms-for-Multi-core-CPUs.pdf">Design and Evaluation of Main Memory Hash Join Algorithms for Multi-core CPUs</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Sort</code></li>
+            </td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Sort-vs.-Hash-Revisited-Fast-Join-Implementation-on-Modern-Multi-Core-CPUs.pdf">Sort vs. Hash Revisited Fast Join Implementation on Modern Multi-Core CPUs</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Sort</code></li>
+            </td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a target="_blank" rel="noopener" href="https://ieeexplore.ieee.org/abstract/document/1019210/">Optimizing main-memory join on modern hardware</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Sort</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>radix-cluster algorithm</li>
+            </td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Massively-Parallel-Sort-Merge-Joins-in-Main-Memory-Multi-Core-Database-Systems.pdf">Massively Parallel Sort-Merge Joins in Main Memory Multi-Core Database Systems</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Sort</code></li>
+            </td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Main-Memory-Hash-Joins-on-Multi-Core-CPUs-Tuning-to-the-Underlying-Hardware.pdf">Main-Memory Hash Joins on Multi-Core CPUs Tuning to the Underlying Hardware</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Sort</code></li>
+            </td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Efficient-Implementation-of-Sorting-on-Multi-Core-SIMD-CPU-Architecture.pdf">Efficient Implementation of Sorting on Multi-Core SIMD CPU Architecture</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Sort</code></li>
+            </td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Massively-Parallel-NUMA-aware-Hash-Joins.pdf">Massively Parallel NUMA-aware Hash Joins</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Sort</code></li>
+            </td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/An-Experimental-Comparison-of-Thirteen-Relational-Equi-Joins-in-Main-Memory.pdf">An Experimental Comparison of Thirteen Relational Equi-Joins in Main Memory</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Sort</code></li>
+            </td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Distributed-Top-k-Query-Processing-by-Exploiting-Skyline-Summaries.pdf">Distributed Top-k Query Processing by Exploiting Skyline Summaries</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Sort</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Optimize TopN when N is large</li>
+            </td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Optimization-of-Analytic-Window-Functions.pdf">Optimization of Analytic Window Functions</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Window Function</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Full Sort, Hashed Sort, Segmented Sort</li>
+                <li>Segment Relation</li>
+                <li>Reorderable</li>
+                <li>SS-reorderable, only reorder in segment level to match expected order property, which not degenerating to full sort</li>
+                <li>Cover Set-based Evaluation</li>
+            </td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Efficient-Processing-of-Window-Functions-in-Analytical-SQL-Queries.pdf">Efficient Processing of Window Functions in Analytical SQL Queries</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Window Function</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Basic Concepts:
+                    <ul>
+                        <li>Partitioning</li>
+                        <li>Ordering</li>
+                        <li>Framing</li>
+                        <li>Window Expression</li>
+                    </ul>
+                </li>
+                    <li>Pre-Partitioning into Hash Groups</li>
+                    <li>Aggregation Algorithms:
+                        <ul>
+                            <li>Naive Aggregation</li>
+                            <li>Cumulative Aggregation</li>
+                            <li>Removable Cumulative Aggregation</li>
+                            <li>Segment Tree Aggregation</li>
+                        </ul>
+                    </li>
+                </td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Analytic-Functions-in-Oracle-8i.pdf">Analytic Functions in Oracle 8i</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Window Function</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Minimization of number of sorts</li>
+                <li>Predicate Pushdown</li>
+            </td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Incremental-Computation-of-Common-Windowed-Holistic-Aggregates.pdf">Incremental Computation of Common Windowed Holistic Aggregates</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Window Function</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Function classification, including tuple-functions, aggregate-functions, window functions</li>
+                <li>Aggregate-functions can be subdivided into distributive aggregates, algebraic aggregates, holistic aggregates</li>
+            </td>
+            <td style="text-align:left">👀</td>
+            <td style="text-align:left"></td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/The-Cascades-Framework-For-Query-Optimization.pdf">The Cascades Framework for Query Optimization</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Optimizer</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Framework Concepts and Components</li>
+                <li>Sketchily</li>
+            </td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Efficiency-In-The-Columbia-Database-Query-Optimizer.pdf">Efficiency in the Columbia Database Query Optimizer</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Optimizer</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Framework Concepts and Components</li>
+                <li>Detailedly</li>
+            </td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/How-Good-Are-Query-Optimizers.pdf">How Good Are Query Optimizers, Really?</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Optimizer</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Cardinality Estimation is more important than Cost Model</li>
+            </td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Orca-A-Modular-Query-Optimizer-Architecture-For-Big-Data.pdf">Orca: A Modular Query Optimizer Architecture for Big Data</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Optimizer</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Easy to integrate into other systems</li>
+                <li>Parallel Optimization</li>
+            </td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left">★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Orthogonal-Optimization-of-Subqueries-and-Aggregation.pdf">Orthogonal Optimization of Subqueries and Aggregation</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Optimizer</code></li>
+                <li><code>#Subquery</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Scalar Aggregate means without group by colums, which always returns one row</li>
+                <li>Subquery classification: 
+                    <ul>
+                        <li>boolean-valued subquery, including exist/in/quantified comparisons</li>
+                        <li>scalar subquery, which need <code>Max1row</code> operator</li>
+                    </ul>
+                </li>
+                <li>Correlated subquery have three execution strategies: 
+                    <ul>
+                        <li>correlated execution</li>
+                        <li>outerjoin then aggregate</li>
+                        <li>aggregate then join</li>
+                    </ul>
+                </li>
+                <li>Algebraic representation</li>
+                <li>Remove Correlations, which means the recursive calls between scalar and relational execution are removed, and typically results in outerjoins</li>
+                <li>Pushing down Apply</li>
+                <li>For <code>(not) exist/in</code> subquery, semijoin for exists, antisemijoin for not exist</li>
+                <li>Subquery classes based on different processing strategies: 
+                    <ul>
+                        <li>Class 1. Subqueries that can be removed with no ad- ditional common subexpressions</li>
+                        <li>Class 2. Subqueries that are removed by introducing additional common subexpressions</li>
+                        <li>Class 3. Exception subqueries</li>
+                    </ul>
+                </li>
+                <li>GroupBy reorder conditions: 
+                    <ul>
+                        <li>case groupBy with filter</li>
+                        <li>case groupBy with join/outerjoin</li>
+                    </ul>
+                </li>
+                <li>Local Aggregate, Local GroupBy</li>
+                <li>SegmentApply, dividing table to indenpendent parts, and perform <code>Apply</code> operator on each parts indenpendently</li>
+            </td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a target="_blank" rel="noopener" href="https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.96.5353&amp;rep=rep1&amp;type=pdf">Of Nests aud Trees: A Untied Approach to Processing Queries That Contain Nested Subqueries, Aggregates, and Quantifiers</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Optimizer</code></li>
+                <li><code>#Subquery</code></li>
+            </td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Complex-Query-Decorrelation.pdf">Complex Query Decorrelation</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Optimizer</code></li>
+                <li><code>#Subquery</code></li>
+            </td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Enhanced-Subquery-Optimizations-in-Oracle.pdf">Enhanced-Subquery-Optimizations-in-Oracle</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Optimizer</code></li>
+                <li><code>#Subquery</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Subquery coalesce</li>
+                <li>Subquery removal using window functions</li>
+                <li>Null-aware anti join, NAAJ</li>
+            </td>
+            <td style="text-align:left">👀</td>
+            <td style="text-align:left"></td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Outerjoin-Simplification-and-Reordering-for-Query-Optimization.pdf">Outerjoin Simplification and Reordering for Query Optimization</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Optimizer</code></li>
+                <li><code>#Join</code></li>
+            </td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Including-Group-By-in-Query-Optimization.pdf">Including Group-By in Query Optimization</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Optimizer</code></li>
+                <li><code>#Join</code></li>
+                <li><code>#Aggregate</code></li>
+            </td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a target="_blank" rel="noopener" href="http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.102.1517&amp;rep=rep1&amp;type=pdf">Groupwise Processing of Relational Queries</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Optimizer</code></li>
+                <li><code>#Join</code></li>
+                <li><code>#Aggregate</code></li>
+            </td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Are-We-Ready-For-Learned-Cardinality-Estimation.pdf">Are We Ready For Learned Cardinality Estimation?</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Optimizer</code></li>
+                <li><code>#Cardinality Estimator</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Cardinality Estimator</li>
+                <li>Cost Model</li>
+            </td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/NeuroCard-One-Cardinality-Estimator-for-All-Tables.pdf">NeuroCard: One Cardinality Estimator for All Tables</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Optimizer</code></li>
+                <li><code>#Cardinality Estimator</code></li>
+            </td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Sampling-Based-Estimation-of-the-Number-of-Distinct-Values-of-an-Attribute.pdf">Sampling-Based Estimation of the Number of Distinct Values of an Attribute</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Optimizer</code></li>
+                <li><code>#Sampling</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Introduce Many Estimators</li>
+                <li>Data Skewness</li>
+            </td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a target="_blank" rel="noopener" href="https://dl.acm.org/doi/pdf/10.1145/335168.335230">Towards Estimation Error Guarantees for Distinct Values</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Optimizer</code></li>
+                <li><code>#Sampling</code></li>
+            </td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/An-Overview-of-Data-Warehousing-and-OLAP-Technology.pdf">An Overview of Data Warehousing and OLAP Technology</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Overview</code></li>
+                <li><code>#Warehousing</code></li>
+            </td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left">★★★★★</td>
+        </tr>
+    </tbody>
+</table>
 
 # 2 Serverless
 
-| 题目 | 分类 | 概要 | 状态 | 推荐级别 |
-|:--|:--|:--|:--|:--|
-| [Cloud Programming Simplified: A Berkeley View on Serverless Computing](/resources/paper/Cloud-Programming-Simplified-A-Berkeley-View-on-Serverless-Computing.pdf) | <li>`#Survey`</li> |  | ✅ | ★★★★★ |
-| [Amazon Redshift Re-invented](/resources/paper/Amazon-Redshit-Re-invented.pdf) | <li>`#Execution`</li><li>`#Amazon`</li> | <li>Architecture</li><li>MPP</li><li>Code Generation & Compilation Service</li><li>Prefetching</li><li>AZ64 Enconding</li><li>AQUA & Computational Storage, do simple computation at the storage</li><li>Automatic Table Optimization(for a given workloads)</li><li>support SUPER value, typeless, can hold anything(int, double, array, json, etc.)</li> | ✅ | ★★★★★ |
+<table>
+    <thead>
+        <tr>
+            <th style="text-align:left">题目</th>
+            <th style="text-align:left">分类</th>
+            <th style="text-align:left">概要</th>
+            <th style="text-align:left">状态</th>
+            <th style="text-align:left">推荐级别</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Cloud-Programming-Simplified-A-Berkeley-View-on-Serverless-Computing.pdf">Cloud Programming Simplified: A Berkeley View on Serverless Computing</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Survey</code></li>
+            </td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Amazon-Redshit-Re-invented.pdf">Amazon Redshift Re-invented</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Amazon</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Architecture</li>
+                <li>MPP</li>
+                <li>Code Generation &amp; Compilation Service</li>
+                <li>Prefetching</li>
+                <li>AZ64 Enconding</li>
+                <li>AQUA &amp; Computational Storage, do simple computation at the storage</li>
+                <li>Automatic Table Optimization(for a given workloads)</li>
+                <li>support SUPER value, typeless, can hold anything(int, double, array, json, etc.)</li></td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★★★</td>
+        </tr>
+    </tbody>
+</table>
 
 # 3 Less Reference
 
