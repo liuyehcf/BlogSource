@@ -24,7 +24,15 @@ categories:
 * `Software event`：需要采样的`event`。比如需要通过`perf record -F 99`指定采样频率
 * `Tracepoint event`：不需要采样的`event`，有其固定的埋点，执行到了就会统计。`Tracepoint event`又可细分为许多类别
 
-## 1.2 cpu火焰图
+## 1.2 参考
+
+* [perf Examples](https://www.brendangregg.com/perf.html)
+
+# 2 Flame Graph
+
+## 2.1 CPU Flame Graph
+
+[Flame Graphs](https://www.brendangregg.com/flamegraphs.html)
 
 **相关git项目**
 
@@ -44,7 +52,9 @@ perf script > out.perf
 /opt/FlameGraph/flamegraph.pl out.folded > out.svg
 ```
 
-### 1.2.1 java-cpu火焰图
+## 2.2 CPU Flame Graph for Java
+
+[Java Flame Graphs](https://www.brendangregg.com/blog/2014-06-12/java-flame-graphs.html)
 
 **相关git项目**
 
@@ -71,14 +81,20 @@ sudo perf script > out.perf
 /opt/FlameGraph/flamegraph.pl out.folded > out.svg
 ```
 
-## 1.3 参考
+## 2.3 Cache Miss Flame Graph
+
+## 2.4 CPI Flame Graph
+
+[CPI Flame Graphs: Catching Your CPUs Napping](https://www.brendangregg.com/blog/2014-10-31/cpi-flame-graphs.html)
+
+## 2.5 参考
 
 * [工欲性能调优，必先利其器（2）- 火焰图](https://pingcap.com/zh/blog/flame-graph)
 * [CPU Flame Graphs](https://www.brendangregg.com/FlameGraphs/cpuflamegraphs.html)
 * [Java 火焰图](https://www.jianshu.com/p/bea2b6a1eb6e)
 * [Linux 性能诊断 perf使用指南](https://developer.aliyun.com/article/65255#slide-17)
 
-# 2 [Off-CPU Analysis](https://www.brendangregg.com/offcpuanalysis.html)
+# 3 [Off-CPU Analysis](https://www.brendangregg.com/offcpuanalysis.html)
 
 **分析工具：**
 
@@ -89,13 +105,18 @@ sudo perf script > out.perf
 * `< Linux 4.8`：针对不同的`blocking`类型（`I/O`，`scheduler`，`lock`），需要使用不同的分析工具，例如`SystemTap`、`perf event logging`
     * [Linux perf_events Off-CPU Time Flame Graph](https://www.brendangregg.com/blog/2015-02-26/linux-perf-off-cpu-flame-graph.html)
 * 其他工具
+    * `time`：一个非常简单的统计工具
+        * `real`：整体耗时
+        * `user`：用户态的`CPU`时间
+        * `sys`：内核态的`CPU`时间
+        * `real - user - sys`：`off-CPU`时间
     * `brpc`
 
 **其他参考：**
 
 * [Off-CPU Flame Graphs](https://www.brendangregg.com/FlameGraphs/offcpuflamegraphs.html)
 
-# 3 VTune
+# 4 VTune
 
 **大致步骤：**
 
@@ -113,7 +134,7 @@ vtune -collect hotspots -knob sampling-mode=hw -knob sampling-interval=0.5 -d 60
 vtune -collect hotspots -knob sampling-mode=hw -knob sampling-interval=0.5 -target-pid=123 -d 60
 ```
 
-## 3.1 参考
+## 4.1 参考
 
 * [Intel® VTune™ Profiler User Guide](https://www.intel.com/content/www/us/en/develop/documentation/vtune-help/top.html)
 * [Intel® VTune™ Profiler User Guide - Run Command Line Analysis](https://www.intel.com/content/www/us/en/develop/documentation/vtune-help/top/command-line-interface/running-command-line-analysis.html)
@@ -122,11 +143,28 @@ vtune -collect hotspots -knob sampling-mode=hw -knob sampling-interval=0.5 -targ
 * [Intel® VTune™ Profiler Performance Analysis Cookbook](https://software.intel.com/content/www/us/en/develop/documentation/vtune-cookbook/top/methodologies/top-down-microarchitecture-analysis-method.html)
 * [《A Top-Down Method for Performance Analysis and Counters Architecture》阅读笔记](https://andrewei1316.github.io/2020/12/20/top-down-performance-analysis/)
 
-# 4 Chrome tracing view
+# 5 Chrome tracing view
 
 https://github.com/StarRocks/starrocks/pull/7649
 
-# 5 Tips
+# 6 [pcm](https://github.com/opcm/pcm)
+
+`Processor Counter Monitor, pmc`包含如下工具：
+
+* `pcm`
+* `pcm-sensor-server`
+* `pcm-memory`
+* `pcm-latency`
+* `pcm-pcie`
+* `pcm-iio`
+* `pcm-numa`
+* `pcm-power`
+* `pcm-tsx`
+* `pcm-core/pmu-query`
+* `pcm-raw`
+* `pcm-bw-histogram`
+
+# 7 Tips
 
 1. **性能分析需要重点关注的指标**
     * `Cycles`
@@ -137,7 +175,7 @@ https://github.com/StarRocks/starrocks/pull/7649
     * `Branch Miss`
     * `Contention`
 
-# 6 参考
+# 8 参考
 
 * [perf Examples](https://www.brendangregg.com/perf.html)
 * [在Linux下做性能分析1：基本模型](https://zhuanlan.zhihu.com/p/22124514)
