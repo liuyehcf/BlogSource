@@ -116,6 +116,34 @@ sudo perf script > out.perf
 
 * [Off-CPU Flame Graphs](https://www.brendangregg.com/FlameGraphs/offcpuflamegraphs.html)
 
+## 3.1 Using perf
+
+```sh
+# 启用调度的tracepoint，需要在root账号下执行，一般账号sudo可能执行不了
+echo 1 > /proc/sys/kernel/sched_schedstats
+
+sudo perf record \
+    -e sched:sched_stat_sleep \
+    -e sched:sched_switch \
+    -e sched:sched_process_exit \
+    -a -g \
+    -o perf.data.raw \
+    sleep 1
+
+sudo perf inject -v -s \
+    -i perf.data.raw \
+    -o perf.data
+
+sudo perf script -F comm,pid,tid,cpu,time,period,event,ip,sym,dso | \
+    sudo awk '
+    NF > 4 { exec = $1; period_ms = int($5 / 1000000) } 
+    NF > 1 && NF <= 4 && period_ms > 0 { print $2 } 
+    NF < 2 && period_ms > 0 { printf "%s\n%d\n\n", exec, period_ms }
+    ' | \
+    sudo /opt/FlameGraph/stackcollapse.pl | \
+    sudo /opt/FlameGraph/flamegraph.pl --countname=ms --title="Off-CPU Time Flame Graph" --colors=io > offcpu.svg
+```
+
 # 4 VTune
 
 **大致步骤：**
@@ -151,13 +179,13 @@ https://github.com/StarRocks/starrocks/pull/7649
 
 `Processor Counter Monitor, pmc`包含如下工具：
 
-* `pcm`
-* `pcm-sensor-server`
-* `pcm-memory`
-* `pcm-latency`
-* `pcm-pcie`
-* `pcm-iio`
-* `pcm-numa`
+* `pcm`：最基础监控工具
+* `pcm-sensor-server`：在本地提供一个`Http`服务，以`JSON`的格式返回`metrics`
+* `pcm-memory`：用于监控内存带宽
+* `pcm-latency`：用于监控`L1 cache miss`以及`DDR/PMM memory latency`
+* `pcm-pcie`：用于监控每个插槽的`PCIe`带宽
+* `pcm-iio`：用于监控每个`PCIe`设备的`PCIe`带宽
+* `pcm-numa`：用于监控本地以及远程的内存访问
 * `pcm-power`
 * `pcm-tsx`
 * `pcm-core/pmu-query`

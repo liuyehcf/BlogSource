@@ -14,3 +14,7 @@ categories:
 # 1 表达技巧
 
 1. 做某件事，可以用特定的地方来代替。比如说，我正要去健身，可以说`I'm going to the gym.`
+
+# 2 一些摘录
+
+1. The remainder requiring walking the thread wakeups to find root cause
