@@ -354,7 +354,7 @@ codesign --remove-signature /Applications/Visual\ Studio\ Code.app/Contents/Fram
 **设置语言**
 
 * `export LANG=en_US.UTF-8`
-* `export zh_CN.UTF-8`
+* `export LANG=zh_CN.UTF-8`
 
 ## 5.1 更换主题
 

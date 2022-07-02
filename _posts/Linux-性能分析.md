@@ -88,6 +88,8 @@ sudo perf script > out.perf
     * [Linux eBPF Off-CPU Flame Graph](https://www.brendangregg.com/blog/2016-01-20/ebpf-offcpu-flame-graph.html)
 * `< Linux 4.8`：针对不同的`blocking`类型（`I/O`，`scheduler`，`lock`），需要使用不同的分析工具，例如`SystemTap`、`perf event logging`
     * [Linux perf_events Off-CPU Time Flame Graph](https://www.brendangregg.com/blog/2015-02-26/linux-perf-off-cpu-flame-graph.html)
+* 其他工具
+    * `brpc`
 
 **其他参考：**
 

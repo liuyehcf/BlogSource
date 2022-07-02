@@ -13,6 +13,20 @@ categories:
 
 # 1 Database
 
+<!--
+        <tr>
+            <td style="text-align:left">
+                <a href=""></a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#</code></li>
+            </td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★</td>
+        </tr> 
+-->
+
 <table>
     <thead>
         <tr>
@@ -628,3 +642,6 @@ categories:
 1. [Reusing Invariants: A New Strategy for Correlated Queries](https://dl.acm.org/doi/pdf/10.1145/276304.276309)
 1. [On Optimizing an SQL-like Nested Query](https://dl.acm.org/doi/pdf/10.1145/319732.319745)
 1. [Implementation of Two Semantic Query Optimization Techniques in DB2 Universal Database](https://www.researchgate.net/profile/Jarek-Gryz/publication/221309776_Implementation_of_Two_Semantic_Query_Optimization_Techniques_in_DB2_Universal_Database/links/0912f51279e7662532000000/Implementation-of-Two-Semantic-Query-Optimization-Techniques-in-DB2-Universal-Database.pdf)
+1. [An Overview of Query Optimization in Relational Systems](https://dl.acm.org/doi/pdf/10.1145/275487.275492)
+1. [Efficient Use of Memory Bandwidth to Improve Network Processor Throughput](http://www.cs.ucr.edu/~bhuyan/cs162/LECTURE12b.pdf)
+1. [Interleaved Multi-Vectorizing](https://www.vldb.org/pvldb/vol13/p226-fang.pdf)

@@ -18,6 +18,7 @@ categories:
     * perf
         * perf lock
         * [How to find expensive locks in multithreaded application.](https://easyperf.net/blog/2019/10/12/MT-Perf-Analysis-part2)
+    * [pcm-内存带宽](https://github.com/opcm/pcm)
     * bpftrace
     * valgrind (by andy pavlo)
         * [The Valgrind Quick Start Guide](http://valgrind.org/docs/manual/quick-start.html)
@@ -107,3 +108,4 @@ categories:
     * [构建工具bazel](https://github.com/bazelbuild/bazel)
     * Quad Trees and R-Trees
     * futex
+    * perf cache miss profile
