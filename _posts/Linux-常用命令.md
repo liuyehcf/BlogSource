@@ -2996,24 +2996,24 @@ yum install -y sysstat
 * `memory`
     * `swpd`：虚拟内存总量
     * `free`：空闲内存总量
-    * `buff`：被用作buffer的内存总量
-    * `cache`：被用作cache的内存总量
+    * `buff`：被用作`Buffer`的内存总量
+    * `cache`：被用作`Cache`的内存总量
     * `inact`：无效内存总量（需要加`-a`参数）
     * `active`：有效内存总量（需要加`-a`参数）
 * `swap`
     * `si`：每秒从磁盘交换的内存总量
     * `so`：每秒交换到磁盘的内存总量
 * `io`
-    * `bi`：每秒从块设备接收的block数量
-    * `bo`：每秒写入块设备的block数量
+    * `bi`：每秒从块设备接收的`Block`数量
+    * `bo`：每秒写入块设备的`Block`数量
 * `system`
     * `in`：每秒中断次数，包括时钟中断
     * `cs`：每秒上下文切换的次数
 * `cpu`
-    * `us`：用户cpu时间
-    * `sy`：系统（内核）cpu时间
-    * `id`：空闲cpu时间
-    * `wa`：等待IO的cpu时间
+    * `us`：用户`CPU`时间
+    * `sy`：系统（内核）`CPU`时间
+    * `id`：空闲`CPU`时间
+    * `wa`：等待`IO`的`CPU`时间
     * `st`：从虚拟机窃取的时间
 
 **示例：**
@@ -3176,8 +3176,8 @@ yum install -y sysstat
 * **`-f, --full`**：显示详情，例如`CPU`会按每个`CPU`分别展示，network会按网卡分别展示
 * **`--top-cpu`：显示最耗`CPU`资源的进程**
 * **`--top-cpu-adv`：显示最耗`CPU`资源的进程，以及进程的其他信息（`advanced`）**
-* **`--top-io`：显示最耗io资源的进程**
-* **`--top-io-adv`：显示最耗io资源的进程，以及进程的其他信息（`advanced`）**
+* **`--top-io`：显示最耗`IO`资源的进程**
+* **`--top-io-adv`：显示最耗`IO`资源的进程，以及进程的其他信息（`advanced`）**
 * **`--top-mem`：显示最耗mem资源的进程**
 
 **示例：**

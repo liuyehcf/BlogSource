@@ -1052,9 +1052,9 @@ rmdir /btrfs/
 
 **以下是12种`cgroup`子系统**
 
-1. `blkio`：限制`cgroup`访问块设备的IO速度
-1. **`cpu`：用来限制`cgroup`的CPU使用率**
-1. `cpuacct`：统计`cgroup`的CPU的使用率
+1. `blkio`：限制`cgroup`访问块设备的`IO`速度
+1. **`cpu`：用来限制`cgroup`的`CPU`使用率**
+1. `cpuacct`：统计`cgroup`的`CPU`的使用率
 1. `cpuset`：绑定`cgroup`到指定`CPUs`和`NUMA`节点
 1. `devices`：限制`cgroup`创建（`mknod`）和访问设备的权限
 1. `freezer`：`suspend`和`restore`一个`cgroup`中的所有进程
