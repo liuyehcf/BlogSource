@@ -125,6 +125,40 @@ categories:
         </tr>
         <tr>
             <td style="text-align:left">
+                <a href="/resources/paper/Interleaved-Multi-Vectorizing.pdf">Interleaved Multi-Vectorizing</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Vector Processing</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Pointer chasing applications:
+                    <ul>
+                        <li>traversing skip lists</li>
+                        <li>lookup hash table</li>
+                        <li>searching trees</li>
+                    </ul>
+                </li>
+                <li>SIMD eliminate branches by compressing and expanding vector</li>
+                <li>Miss Status Holding Registers, MSHR, and Line Fill Buffers, LFB</li>
+                <li>Prefetching
+                    <ul>
+                        <li>prefetching distance</li>
+                        <li>prefetching-optimized techniques:
+                            <ul>
+                                <li>Group Prefetching, GP</li>
+                                <li>Software Pipelined Prefetching， SPP</li>
+                                <li>Memory Access Chaining, AMAC</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </td>
+            <td style="text-align:left">👀</td>
+            <td style="text-align:left">★★★★★</td>
+        </tr> 
+        <tr>
+            <td style="text-align:left">
                 <a href="/resources/paper/Managing-Intra-operator-Parallelism-in-Parallel-Database-Systems.pdf">Managing Intra-operator Parallelism in Parallel Database Systems</a>
             </td>
             <td style="text-align:left">
@@ -644,4 +678,3 @@ categories:
 1. [Implementation of Two Semantic Query Optimization Techniques in DB2 Universal Database](https://www.researchgate.net/profile/Jarek-Gryz/publication/221309776_Implementation_of_Two_Semantic_Query_Optimization_Techniques_in_DB2_Universal_Database/links/0912f51279e7662532000000/Implementation-of-Two-Semantic-Query-Optimization-Techniques-in-DB2-Universal-Database.pdf)
 1. [An Overview of Query Optimization in Relational Systems](https://dl.acm.org/doi/pdf/10.1145/275487.275492)
 1. [Efficient Use of Memory Bandwidth to Improve Network Processor Throughput](http://www.cs.ucr.edu/~bhuyan/cs162/LECTURE12b.pdf)
-1. [Interleaved Multi-Vectorizing](https://www.vldb.org/pvldb/vol13/p226-fang.pdf)
