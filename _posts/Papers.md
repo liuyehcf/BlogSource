@@ -153,6 +153,13 @@ categories:
                         </li>
                     </ul>
                 </li>
+                <li>Interleaved Multi-Vectorizing, IMV
+                    <ul>
+                        <li>Coroutine</li>
+                        <li>Splitting states for a vectorized program</li>
+                        <li>Residual vectorized states, RVS, with divergent vectorized states, DVS</li>
+                    </ul>
+                </li>
             </td>
             <td style="text-align:left">👀</td>
             <td style="text-align:left">★★★★★</td>

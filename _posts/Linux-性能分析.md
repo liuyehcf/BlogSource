@@ -87,7 +87,12 @@ sudo perf script > out.perf
 
 [CPI Flame Graphs: Catching Your CPUs Napping](https://www.brendangregg.com/blog/2014-10-31/cpi-flame-graphs.html)
 
-## 2.5 参考
+## 2.5 小结
+
+* `perf record`默认采集的`event`是`cycles`，因此这种方式做出来的就是`CPU`火焰图
+* `perf record`配合`-e`参数，指定`event`类型，可以做出任意事件的火焰图
+
+## 2.6 参考
 
 * [工欲性能调优，必先利其器（2）- 火焰图](https://pingcap.com/zh/blog/flame-graph)
 * [CPU Flame Graphs](https://www.brendangregg.com/FlameGraphs/cpuflamegraphs.html)
@@ -130,6 +135,7 @@ sudo perf record \
     -o perf.data.raw \
     sleep 1
 
+# 其中，-s 参数主要用于合并 sched_stat 以及 sched_switch 这两个事件，用于生成对应的睡眠时间
 sudo perf inject -v -s \
     -i perf.data.raw \
     -o perf.data

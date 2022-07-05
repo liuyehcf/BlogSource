@@ -107,4 +107,4 @@ categories:
     * [构建工具bazel](https://github.com/bazelbuild/bazel)
     * Quad Trees and R-Trees
     * futex
-    * perf cache miss profile
+    * [Zipf Distribution](https://www.sciencedirect.com/topics/computer-science/zipf-distribution)
