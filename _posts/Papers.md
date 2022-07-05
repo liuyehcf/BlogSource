@@ -161,7 +161,7 @@ categories:
                     </ul>
                 </li>
             </td>
-            <td style="text-align:left">👀</td>
+            <td style="text-align:left">✅</td>
             <td style="text-align:left">★★★★★</td>
         </tr> 
         <tr>
@@ -209,7 +209,7 @@ categories:
                 <li><code>#Sort</code></li>
             </td>
             <td style="text-align:left">
-                <li>radix-cluster algorithm</li>
+                <li>Radix-cluster algorithm</li>
             </td>
             <td style="text-align:left"></td>
             <td style="text-align:left"></td>
@@ -487,7 +487,10 @@ categories:
                 <li><code>#Optimizer</code></li>
                 <li><code>#Subquery</code></li>
             </td>
-            <td style="text-align:left"></td>
+            <td style="text-align:left">
+                <li>The concept of correlation in SQL is similar to the use of non-local variables in block-structured programming languages</li>
+                <li>Set-oriented</li>
+            </td>
             <td style="text-align:left"></td>
             <td style="text-align:left"></td>
         </tr>
