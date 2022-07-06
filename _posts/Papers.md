@@ -21,10 +21,12 @@ categories:
             <td style="text-align:left">
                 <li><code>#</code></li>
             </td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left">✅</td>
+            <td style="text-align:left">
+                <li></li>
+            </td>
+            <td style="text-align:left">✅/👀</td>
             <td style="text-align:left">★★★</td>
-        </tr> 
+        </tr>
 -->
 
 <table>
@@ -163,7 +165,7 @@ categories:
             </td>
             <td style="text-align:left">✅</td>
             <td style="text-align:left">★★★★★</td>
-        </tr> 
+        </tr>
         <tr>
             <td style="text-align:left">
                 <a href="/resources/paper/Managing-Intra-operator-Parallelism-in-Parallel-Database-Systems.pdf">Managing Intra-operator Parallelism in Parallel Database Systems</a>
@@ -490,9 +492,10 @@ categories:
             <td style="text-align:left">
                 <li>The concept of correlation in SQL is similar to the use of non-local variables in block-structured programming languages</li>
                 <li>Set-oriented</li>
+                <li>Count bug, every missing groupBy key is expected to have a zero output</li>
             </td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
+            <td style="text-align:left">👀</td>
+            <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>
             <td style="text-align:left">
