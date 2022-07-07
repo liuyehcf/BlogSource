@@ -493,6 +493,16 @@ categories:
                 <li>The concept of correlation in SQL is similar to the use of non-local variables in block-structured programming languages</li>
                 <li>Set-oriented</li>
                 <li>Count bug, every missing groupBy key is expected to have a zero output</li>
+                <li>Magic Decorrelation:
+                    <ul>
+                        <li>FEED Stage, during which feeding the correlation to its children</li>
+                        <li>ABSORB Stage, during which absorbing the correlation and resulting in a decorrelated query</li>
+                        <ul>
+                            <li>non-SPJ Box, SPJ is the abbreviation of Select-Project-Join</li>
+                            <li>SPJ Box</li>
+                        </ul>
+                    </ul>
+                </li>
             </td>
             <td style="text-align:left">👀</td>
             <td style="text-align:left">★★★★★</td>
