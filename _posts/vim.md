@@ -2333,11 +2333,19 @@ call plug#end()
 **用法：**
 
 1. `:LeaderfFunction!`：弹出函数列表
-    * `tab`可以在搜索和移动两种模式之间进行切换
-    * 移动模式下：`j/k`：上下移动
-    * 搜索模式下：输入即可进行模糊搜索
 1. `:LeaderfMru`：查找最近访问的文件，通过上面的配置映射到快捷键`[Ctrl] + n`
 1. 通过上面的配置，将文件模糊搜索映射到快捷键`[Ctrl] + p`
+* 搜索模式，输入即可进行模糊搜索
+    * `tab`：切换到普通模式，普通模式下，可以通过`j/k`上下移动
+    * `<c-r>`：在`fuzzy search mode`以及`regex mode`之间进行切换
+    * `<c-f>`：在`full path search mode`以及`name only search mode`之间进行切换
+    * `<c-u>`：清空搜索内容
+    * `<c-j>/<c-k>`：上下移动
+    * `<c-a>`：选中所有
+    * `<c-l>`：清除选中
+    * `<c-s>`：选中当前文件
+    * `<c-t>`：在新的`tab`中打开选中的文件
+    * `<c-p>`：预览
 
 ## 3.18 全局模糊搜索-[fzf.vim](https://github.com/junegunn/fzf.vim)
 
