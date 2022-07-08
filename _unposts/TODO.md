@@ -108,3 +108,7 @@ categories:
     * Quad Trees and R-Trees
     * futex
     * [Zipf Distribution](https://www.sciencedirect.com/topics/computer-science/zipf-distribution)
+1. 工具
+    * mycli
+        * `PageUp/PageDown`：以命令为单位前进或者后退
+        * `Up/Down`：以行为单位前进或者后退
