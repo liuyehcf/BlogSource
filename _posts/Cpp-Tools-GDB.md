@@ -455,6 +455,10 @@ xxx/gdb_tutorial
 
 `gdb-dashboard`在`gdb`的基础之上，提供了一个更加友好的格式化界面
 
+* `help dashboard`：查看帮助手册
+* `dashboard thread`：启用/禁用线程信息（大型工程，线程比较多的话，一般会禁用）
+* `dashboard`：刷新，通常在`print`查看一些变量信息后，需要刷新一下重新显示详情
+
 # 5 参考
 
 * [GDB Tutorial - A Walkthrough with Examples](https://www.cs.umd.edu/~srhuang/teaching/cmsc212/gdb-tutorial-handout.pdf)
