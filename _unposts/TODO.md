@@ -108,6 +108,7 @@ categories:
     * Quad Trees and R-Trees
     * futex
     * [Zipf Distribution](https://www.sciencedirect.com/topics/computer-science/zipf-distribution)
+    * [Meaning of ‘i’,‘g’ and ‘c’ in Oracle Database Version](https://www.linkedin.com/pulse/meaning-ig-c-oracle-database-version-piyush-prakash)
 1. 工具
     * mycli
         * `PageUp/PageDown`：以命令为单位前进或者后退

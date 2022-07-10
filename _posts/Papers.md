@@ -503,8 +503,16 @@ categories:
                         </ul>
                     </ul>
                 </li>
+                <li>Experiment Comparisons:
+                    <ul>
+                        <li>Nested Iteratio, NI</li>
+                        <li>Kim's method</li>
+                        <li>Dayal's method</li>
+                        <li>Magic Decorrelation</li>
+                    </ul>
+                </li>
             </td>
-            <td style="text-align:left">👀</td>
+            <td style="text-align:left">✅</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>
