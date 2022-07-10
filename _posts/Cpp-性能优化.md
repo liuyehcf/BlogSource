@@ -2034,7 +2034,63 @@ BM_size_128        695 ns          695 ns      1007176
 BM_size_256       1305 ns         1305 ns       538811
 ```
 
-## 3.6 参考
+## 3.6 data alignment
+
+```cpp
+#include <benchmark/benchmark.h>
+
+// In my env, size of L1 is 32768 and the maximum alignment is 256,
+// so in order to keep all the data in the L1, the maximum array len
+// must be less than 32768 / 256 = 128, and be conservative, I choose 64
+#define ARRAY_LEN 64
+
+#define BENCHMARK_WITH_ALIGN(SIZE)                                  \
+    struct Foo_##SIZE {                                             \
+        int v;                                                      \
+    } __attribute__((aligned(SIZE)));                               \
+    Foo_##SIZE foo_##SIZE[ARRAY_LEN];                               \
+    static void BM_foo_with_align_##SIZE(benchmark::State& state) { \
+        for (auto _ : state) {                                      \
+            int sum = 0;                                            \
+            for (auto& foo : foo_##SIZE) {                          \
+                sum += foo.v;                                       \
+            }                                                       \
+            benchmark::DoNotOptimize(sum);                          \
+        }                                                           \
+    }                                                               \
+    BENCHMARK(BM_foo_with_align_##SIZE)
+
+BENCHMARK_WITH_ALIGN(1);
+BENCHMARK_WITH_ALIGN(2);
+BENCHMARK_WITH_ALIGN(4);
+BENCHMARK_WITH_ALIGN(8);
+BENCHMARK_WITH_ALIGN(16);
+BENCHMARK_WITH_ALIGN(32);
+BENCHMARK_WITH_ALIGN(64);
+BENCHMARK_WITH_ALIGN(128);
+BENCHMARK_WITH_ALIGN(256);
+
+BENCHMARK_MAIN();
+```
+
+**输出如下：**
+
+```
+----------------------------------------------------------------
+Benchmark                      Time             CPU   Iterations
+----------------------------------------------------------------
+BM_foo_with_align_1         2.18 ns         2.17 ns    322062971
+BM_foo_with_align_2         2.17 ns         2.17 ns    322256756
+BM_foo_with_align_4         2.17 ns         2.17 ns    324490230
+BM_foo_with_align_8         3.14 ns         3.14 ns    222560332
+BM_foo_with_align_16        5.55 ns         5.55 ns    126288497
+BM_foo_with_align_32        11.1 ns         11.1 ns     63154730
+BM_foo_with_align_64        23.6 ns         23.6 ns     25750233
+BM_foo_with_align_128       23.5 ns         23.5 ns     29785503
+BM_foo_with_align_256       23.5 ns         23.5 ns     29786540
+```
+
+## 3.7 参考
 
 * [Auto-vectorization in GCC](https://gcc.gnu.org/projects/tree-ssa/vectorization.html)
 * [Type-Based Alias Analysis](https://www.drdobbs.com/cpp/type-based-alias-analysis/184404273)

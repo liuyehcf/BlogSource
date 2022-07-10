@@ -647,7 +647,7 @@ int main() {
 * `-mavx`
 * `-mavx2`
 * `-mavx512f`
-* `-mavx512pf`
+* `-mavx512pf`, supports prefetching for gather/scatter, mentioned by [Interleaved Multi-Vectorizing](/resources/paper/Interleaved-Multi-Vectorizing.pdf)
 * `-mavx512er`
 * `-mavx512cd`
 * `-mavx512vl`

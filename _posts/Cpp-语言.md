@@ -1591,6 +1591,42 @@ int main() {
 
 [Compiler-specific Features](https://www.keil.com/support/man/docs/armcc/armcc_chr1359124965789.htm)
 
+## 5.1 aligned
+
+```cpp
+#include <iostream>
+
+#define FOO_WITH_ALIGN(SIZE) \
+    struct Foo_##SIZE {      \
+        int v;               \
+    } __attribute__((aligned(SIZE)))
+
+#define PRINT_SIZEOF_FOO(SIZE) std::cout << "Foo_##SIZE's size=" << sizeof(Foo_##SIZE) << std::endl;
+
+FOO_WITH_ALIGN(1);
+FOO_WITH_ALIGN(2);
+FOO_WITH_ALIGN(4);
+FOO_WITH_ALIGN(8);
+FOO_WITH_ALIGN(16);
+FOO_WITH_ALIGN(32);
+FOO_WITH_ALIGN(64);
+FOO_WITH_ALIGN(128);
+FOO_WITH_ALIGN(256);
+
+int main() {
+    PRINT_SIZEOF_FOO(1);
+    PRINT_SIZEOF_FOO(2);
+    PRINT_SIZEOF_FOO(4);
+    PRINT_SIZEOF_FOO(8);
+    PRINT_SIZEOF_FOO(16);
+    PRINT_SIZEOF_FOO(32);
+    PRINT_SIZEOF_FOO(64);
+    PRINT_SIZEOF_FOO(128);
+    PRINT_SIZEOF_FOO(256);
+    return 1;
+}
+```
+
 # 6 ASM
 
 [gcc-online-docs](https://gcc.gnu.org/onlinedocs/gcc/)
