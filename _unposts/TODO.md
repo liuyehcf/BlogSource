@@ -35,52 +35,20 @@ categories:
         * [query-schedule](https://15445.courses.cs.cmu.edu/fall2020/schedule.html)
         * [数据库内核杂谈](https://www.infoq.cn/theme/46)
         * [Develop your own Database](https://hpi.de/plattner/teaching/archive/winter-term-201819/develop-your-own-database.html)
-        * [DorisDB doc](http://doc.dorisdb.com)
-        * segment
-            * SegmentsReadCount
     * 相关工具
-        * [sqlancer](https://github.com/sqlancer/sqlancer)
-        * [sqlsmith](https://github.com/anse1/sqlsmith)
     * doc
         * [sqlite-window-function](https://www.sqlite.org/windowfunctions.html)
         * [trino-subquery](https://docs.google.com/document/d/18HN7peS2eR8lZsErqcmnoWyMEPb6p4OQeidH1JP_EkA)
-    * 统计
-        * 伯努利采样
-        * 皮尔逊系数
-        * 泊松分布
-        * Kernel Density Estimation
-        * [Learning to Sample: Counting with Complex Queries](https://vldb.org/pvldb/vol13/p390-walenz.pdf) - ref 6
-        * [SetSketch: Filling the Gap between MinHash and HyperLogLog](https://vldb.org/pvldb/vol14/p2244-ertl.pdf) - ref 2
-        * [Learning to be a Statistician: Learned Estimator for Number of Distinct Values](https://vldb.org/pvldb/vol15/p272-wu.pdf) - ref 0
-        * [NeuroCard: One Cardinality Estimator for All Tables](https://vldb.org/pvldb/vol14/p61-yang.pdf) - ref 42
-        * [Flow-Loss: Learning Cardinality Estimates That Mater](https://vldb.org/pvldb/vol14/p2019-negi.pdf) - ref 8
-        * [Fauce: Fast and Accurate Deep Ensembles with Uncertainty for Cardinality Estimation](https://vldb.org/pvldb/vol14/p1950-liu.pdf) - ref 2
-        * [Weighted Distinct Sampling: Cardinality Estimation for SPJ Queries](https://www.cse.ust.hk/~yike/spj-full.pdf) - ref 0
-        * [Count-distinct problem](https://en.wikipedia.org/wiki/Count-distinct_problem)
-        * 影响Cardinality Estimation准确性的因素
-            * 数据倾斜
-            * 数据相关信息
-            * 值域范围
     * 测试集
         * tsbs
         * taxi
-    * postgre
-        * 算数相关的函数：src/backend/utils/adt/numeric.c
-    * clickhouse
-        * [COW.h](https://github.com/ClickHouse/ClickHouse/blob/master/src/Common/COW.h)
     * https://cloud.google.com/blog/products/databases/alloydb-for-postgresql-intelligent-scalable-storage
-    * window functions
-        * aggregate
-        * ranking
-        * values
 1. 体系结构
     * 内存屏障在汇编层面的表示
-    * 《Residency-Aware Virtual Machine Communication Optimization: Design Choices and Techniques》
 1. cpp
     * std::guard(be/src/runtime/decimalv3.h,be/src/util/guard.h)
     * std::bind 如何实现
     * struct alising
-    * 如何消除虚函数的调用（down_cast）
     * [apache-arrow](https://github.com/apache/arrow)
 1. java
 1. llvm
@@ -109,7 +77,4 @@ categories:
     * futex
     * [Zipf Distribution](https://www.sciencedirect.com/topics/computer-science/zipf-distribution)
     * [Meaning of ‘i’,‘g’ and ‘c’ in Oracle Database Version](https://www.linkedin.com/pulse/meaning-ig-c-oracle-database-version-piyush-prakash)
-1. 工具
-    * mycli
-        * `PageUp/PageDown`：以命令为单位前进或者后退
-        * `Up/Down`：以行为单位前进或者后退
+
