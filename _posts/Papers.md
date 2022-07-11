@@ -646,6 +646,33 @@ categories:
         </tr>
         <tr>
             <td style="text-align:left">
+                <a href="/resources/paper/SQL-Memory-Management-in-Oracle-9i.pdf">SQL Memory Management in Oracle 9i</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Memory</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Ways of memory management:
+                    <ul>
+                        <li>Static configuation</li>
+                        <li>Based on estimation</li>
+                        <li>Taking into account the used memory</li>
+                        <li>Based on demand</li>
+                    </ul>
+                </li>
+                <li>Oracle Memory Architecture:
+                    <ul>
+                        <li>System Global Area, SGA, is shared by all the server processes</li>
+                        <li>Process Global Area, PGA, is indenpendently hold by each server process</li>
+                    </ul>
+                </li>
+            </td>
+            <td style="text-align:left">👀</td>
+            <td style="text-align:left"></td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
                 <a href="/resources/paper/An-Overview-of-Data-Warehousing-and-OLAP-Technology.pdf">An Overview of Data Warehousing and OLAP Technology</a>
             </td>
             <td style="text-align:left">

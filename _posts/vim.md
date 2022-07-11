@@ -1567,7 +1567,7 @@ call plug#end()
         * `[Ctrl] + e`：向下滚动预览窗口中的内容
         * `[Ctrl] + y`：向上滚动预览窗口中的内容
 * **`:CocCommand <插件命令>`**
-    * `:CocCommand java.open.serverLog`
+    * `:CocCommand workspace.showOutput`：查看日志
 
 **相关路径：**
 
@@ -1576,13 +1576,14 @@ call plug#end()
 **配置文件`~/.vim/coc-settings.json`的内容如下：**
 
 * `c/c++`
-    * 如何修改头文件搜索路径？在`compile_commands.json`中指定即可
+    * 如何修改头文件搜索路径？在`compile_commands.json`中通过`-I`参数指定即可
     * 索引文件路径：`<project path>/.cache/clangd`
     ```json
     {
         "languageserver": {
             "clangd": {
                 "command": "clangd",
+                "args": ["--log=verbose"],
                 "rootPatterns": ["compile_flags.txt", "compile_commands.json"],
                 "filetypes": ["c", "cc", "cpp", "c++", "objc", "objcpp"]
             }
@@ -1655,6 +1656,7 @@ call plug#end()
 
 * `:CocCommand workspace.showOutput java`：查看`jdt.ls`日志
     * `"java.trace.server": "verbose"`：更详细的日志
+* `:CocCommand java.open.serverLog`：查看`jdt.ls`原始日志
 
 **Tips：**
 
@@ -2942,6 +2944,10 @@ endif
 if filereadable(expand('~/.vim/gtags-cscope.vim'))
     source ~/.vim/gtags-cscope.vim
 endif
+
+" 特定文件类型的配置
+" json文件不隐藏双引号，等价于 set conceallevel=0
+let g:vim_json_conceal=0
 
 " 重置寄存器
 function! Clean_up_registers()
