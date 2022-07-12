@@ -78,4 +78,5 @@ categories:
     * futex
     * [Zipf Distribution](https://www.sciencedirect.com/topics/computer-science/zipf-distribution)
     * [Meaning of ‘i’,‘g’ and ‘c’ in Oracle Database Version](https://www.linkedin.com/pulse/meaning-ig-c-oracle-database-version-piyush-prakash)
-
+    * [How to view the output of a running process in another bash session?](https://unix.stackexchange.com/questions/58550/how-to-view-the-output-of-a-running-process-in-another-bash-session)
+    * [Speed up random memory access using prefetch](https://stackoverflow.com/questions/40950254/speed-up-random-memory-access-using-prefetch)

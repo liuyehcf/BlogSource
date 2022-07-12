@@ -1117,6 +1117,37 @@ int main() {
 }
 ```
 
+## 6.10 条件成员
+
+有时候，我们希望模板类某些特化版本包含额外的字段，而默认情况下不包含这些额外字段
+
+```cpp
+#include <type_traits>
+
+struct Empty {};
+
+template <typename T>
+struct Extra {
+    T extra_value;
+};
+
+template <typename T>
+struct Node : public std::conditional_t<std::is_integral<T>::value, Extra<T>, Empty> {
+    T value;
+};
+
+int main() {
+    Node<int> n1;
+    n1.value = 1;
+    n1.extra_value = 2;
+
+    Node<double> n2;
+    n2.value = 3.14;
+    // n2.extra_value = 2.71;
+    return 0;
+}
+```
+
 # 7 参考
 
 * [ClickHouse](https://github.com/ClickHouse/ClickHouse/blob/master/base/base/constexpr_helpers.h)

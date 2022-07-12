@@ -1565,9 +1565,34 @@ ValueType& get(HashMap& map, const KeyType& key) {
 }
 ```
 
-## 4.8 模板子类访问模板父类中的成员
+## 4.8 非模板子类访问模板父类中的成员
 
-访问方式：`ParentClass<Template Args...>::MemberName`
+* 方式1：`MemberName`
+* 方式2：`this->MemberName`
+
+```cpp
+template <typename T>
+struct Base {
+    T data;
+};
+
+struct Derive : Base<int> {
+    void set_data_1(const int& other) { data = other; }
+    void set_data_2(const int& other) { this->data = other; }
+};
+
+int main() {
+    Derive t;
+    t.set_data_1(1);
+    t.set_data_2(2);
+    return 0;
+}
+```
+
+## 4.9 模板子类访问模板父类中的成员
+
+* 访问方式1：`ParentClass<Template Args...>::MemberName`
+* 访问方式2：`this->MemberName`
 
 ```cpp
 template <typename T>
@@ -1577,12 +1602,14 @@ struct Base {
 
 template <typename T>
 struct Derive : Base<T> {
-    void init(const T& data) { Base<T>::data = data; }
+    void set_data_1(const T& data) { Base<T>::data = data; }
+    void set_data_2(const T& data) { this->data = data; }
 };
 
 int main() {
     Derive<int> t;
-    t.init(5);
+    t.set_data_1(5);
+    t.set_data_2(6);
     return 0;
 }
 ```
