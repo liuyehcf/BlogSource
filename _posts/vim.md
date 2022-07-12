@@ -2390,9 +2390,9 @@ call plug#end()
 **用法（搜索相关的语法可以参考[junegunn/fzf-search-syntax](https://github.com/junegunn/fzf#search-syntax)）：**
 
 1. `:Ag`：进行全局搜索（依赖命令行工具`ag`，安装方式参考该插件[github主页](https://github.com/ggreer/the_silver_searcher)）
-    * `[Ctrl] + j/k`可以在条目中上下移动
 1. `:Rg`：进行全局搜索（依赖命令行工具`rg`，安装方式参考该插件[github主页](https://github.com/BurntSushi/ripgrep)）
-    * `[Ctrl] + j/k`可以在条目中上下移动
+* `[Ctrl] + j/k`/`[Ctrl] + n/p`：以行为单位上下移动
+* `PageUp/PageDown`：以页为单位上下移动
 * **匹配规则**
     * **`xxx`：模糊匹配（可能被分词）**
     * **`'xxx`：非模糊匹配（不会被分词）**

@@ -667,6 +667,12 @@ categories:
                         <li>Process Global Area, PGA, is indenpendently hold by each server process</li>
                     </ul>
                 </li>
+                <li>Automatic PGA Memory Management
+                    <ul>
+                        <li>Feedback</li>
+                        <li>Memory Bound is published by a background daemon which indirectly determines the size of each active work</li>
+                    </ul>
+                </li>
             </td>
             <td style="text-align:left">👀</td>
             <td style="text-align:left"></td>

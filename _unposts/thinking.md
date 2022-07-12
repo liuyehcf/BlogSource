@@ -64,6 +64,11 @@ categories:
         * `push`：对filter算子友好
             * 同样，相邻算子的逻辑会被内联成一个大函数，而对于`push`模型来说，分支更少，分支预测失败的概率小
         * [filter](/images/thinking/filter.png)
+1. Parallelism
+    * Instruction-Level Parallelism, ILP
+    * Memory-Level Parallelism, MLP
+    * Thread-Level Parallelism, TLP
+    * Data-Level Parallelism, DLP
 1. DBMS serverless
     * traditional automated tuning
         * cluster maintenance
