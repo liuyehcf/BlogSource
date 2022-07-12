@@ -1063,6 +1063,60 @@ int main() {
 }
 ```
 
+## 6.9 编译期分支
+
+有时候，我们想为不同的类型编写不同的分支代码，而这些分支代码在不同类型中是不兼容的，例如，我要实现加法，对于`int`来说，用操作符`+`即可完成加法运算；对于`Foo`类型来说，要调用`add`方法才能实现加法运算。这个时候，普通的分支是无法实现的，实例化的时候会报错。这时候，我们可以使用`if constexpr`来实现编译期的分支
+
+```cpp
+#include <type_traits>
+
+struct Foo {
+    int val;
+};
+
+Foo add_foo(const Foo& left, const Foo& right) {
+    return Foo{left.val + right.val};
+}
+
+template <typename T>
+T add(const T& left, const T& right) {
+    if constexpr (std::is_same<T, int>::value) {
+        return left + right;
+    } else if constexpr (std::is_same<T, Foo>::value) {
+        return add_foo(left, right);
+    }
+}
+
+int main() {
+    Foo left, right;
+    add(left, right);
+    add(1, 2);
+    return 0;
+}
+```
+
+**类型相关的代码必须包含在`if constexpr/else if constexpr`的代码块中，错误示例如下，其本意是，当不为算数类型时，直接返回，但由于`left + right`不在上述静态分支内，因此实例化`Foo`的时候就会报错**
+
+```cpp
+#include <type_traits>
+
+template <typename T>
+T add(const T& left, const T& right) {
+    if constexpr (!std::is_arithmetic<T>::value) {
+        return {};
+    }
+    return left + right;
+}
+
+struct Foo {};
+
+int main() {
+    Foo left, right;
+    add(left, right);
+    return 0;
+}
+```
+
 # 7 参考
 
 * [ClickHouse](https://github.com/ClickHouse/ClickHouse/blob/master/base/base/constexpr_helpers.h)
