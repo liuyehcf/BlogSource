@@ -1008,6 +1008,8 @@ endif
 
 * 对于复杂工程，可以用`cmake`等工具生成`compile_commands.json`
 * 对于简单工程，可以直接配置`compile_flags.txt`
+    * 首先会在工程目录下查找`compile_flags.txt`
+    * 若找不到，则递归在上级目录中查找，直至找到`compile_flags.txt`或者到根目录
 
 ### 3.2.10 语义索引-ccls
 
@@ -1576,7 +1578,7 @@ call plug#end()
 **配置文件`~/.vim/coc-settings.json`的内容如下：**
 
 * `c/c++`
-    * 如何修改头文件搜索路径？在`compile_commands.json`中通过`-I`参数指定即可
+    * 如何修改头文件搜索路径？在`compile_commands.json`或`compile_flags.txt`中通过`-I`参数指定即可
     * 索引文件路径：`<project path>/.cache/clangd`
     ```json
     {
