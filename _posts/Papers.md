@@ -674,7 +674,7 @@ categories:
                     </ul>
                 </li>
             </td>
-            <td style="text-align:left">👀</td>
+            <td style="text-align:left">👀/4</td>
             <td style="text-align:left"></td>
         </tr>
         <tr>
@@ -687,6 +687,42 @@ categories:
             </td>
             <td style="text-align:left"></td>
             <td style="text-align:left"></td>
+            <td style="text-align:left">★★★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Optimizing-Queries-Using-Materialized-Views-A-Practical-Scalable-Solution.pdf">Optimizing Queries Using Materialized Views:A Practical, Scalable Solution</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Materialized View</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Three issues:
+                    <ul>
+                        <li>View design, about how to store and index</li>
+                        <li>View maintenance, about how to update</li>
+                        <li>View exploitation, about when to use</li>
+                    </ul>
+                </li>
+                <li>An indexable view must be defined by the following conditions:
+                    <ul>
+                        <li>A single-level SQL statement containing selections, (inner) joins, and an optional group-by</li>
+                        <li>The from clause cannot contain derived tables, i.e. must reference base tables, and subqueries are not allowed</li>
+                        <li>The output of an aggregation view must include all groupping columns as output columns and a count column</li>
+                        <li>Aggregation functions are limited to sum and count</li>
+                    </ul>
+                </li>
+                <li>View matching is a transformation rule that is invoked on select-project-join-group-by expression, SPJG</li>
+                <li>For a SPJ query expression to be computable from a view, the view must satisfy the following requirement:
+                    <ul>
+                        <li>The view contains all rows needed by the query expression</li>
+                        <li>All required rows can be selected from the view</li>
+                        <li>All output expressions can be computed from the output of the view</li>
+                        <li>All output rows occur with the correct duplication factor</li>
+                    </ul>
+                </li>
+            </td>
+            <td style="text-align:left">👀/3.1.2</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
     </tbody>
@@ -756,8 +792,6 @@ categories:
     * [Automatic SQL Tuning in Oracle 10g](/resources/paper/Automatic-SQL-Tuning-in-Oracle-10g.pdf)
     * [Optimizer Plan Change Management: Improved Stability and Performance in Oracle 11g](/resources/paper/Optimizer-Plan-Change-Management-Improved-Stability-and-Performance-in-Oracle-11g.pdf)
     * [Query Optimization in Oracle 12c Database In-Memory](/resources/paper/Query-Optimization-in-Oracle-12c-Database-In-Memory.pdf)
-* Materialized View
-    * [Optimizing Queries Using Materialized Views:A Practical, Scalable Solution](/resources/paper/Optimizing-Queries-Using-Materialized-Views-A-Practical-Scalable-Solution.pdf)
 * Statistics/Sample
     * [NeuroCard: One Cardinality Estimator for All Tables](https://vldb.org/pvldb/vol14/p61-yang.pdf)
     * [Flow-Loss: Learning Cardinality Estimates That Mater](https://vldb.org/pvldb/vol14/p2019-negi.pdf)
