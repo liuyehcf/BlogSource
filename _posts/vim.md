@@ -1007,8 +1007,10 @@ endif
 [JSON Compilation Database Format Specification](https://clang.llvm.org/docs/JSONCompilationDatabase.html)
 
 * 对于复杂工程，可以用`cmake`等工具生成`compile_commands.json`
+    * 首先会在当前目录（或者`--compile-commands-dir`指定的目录）下查找`compile_commands.json`
+    * 若找不到，则递归在上级目录中查找，直至找到`compile_commands.json`或者到根目录
 * 对于简单工程，可以直接配置`compile_flags.txt`
-    * 首先会在工程目录下查找`compile_flags.txt`
+    * 首先会在当前目录下查找`compile_flags.txt`
     * 若找不到，则递归在上级目录中查找，直至找到`compile_flags.txt`或者到根目录
 
 ### 3.2.10 语义索引-ccls

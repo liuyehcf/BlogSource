@@ -716,8 +716,18 @@ categories:
                 <li>For a SPJ query expression to be computable from a view, the view must satisfy the following requirement:
                     <ul>
                         <li>The view contains all rows needed by the query expression</li>
-                        <li>All required rows can be selected from the view</li>
-                        <li>All output expressions can be computed from the output of the view</li>
+                            <ul>
+                                <li>Check compability of euiqvalent predicates</li>
+                                <li>Check compability of range predicates</li>
+                                <li>Check compability of residual predicates</li>
+                            </ul>
+                        <li>All required rows can be selected from the view, i.e. whether columns of compensating predicates exist</li>
+                            <ul>
+                                <li>Check whether columns of the compensating equality predicates exist</li>
+                                <li>Check whether columns of the compensating range predicates exist</li>
+                                <li>Check whether columns of the compensating residual predicates exist</li>
+                            </ul>
+                        <li>All output expressions can be computed from the output of the view, i.e. whether columns of output expressions exist</li>
                         <li>All output rows occur with the correct duplication factor</li>
                     </ul>
                 </li>

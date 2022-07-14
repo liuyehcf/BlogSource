@@ -35,6 +35,11 @@ categories:
         * [query-schedule](https://15445.courses.cs.cmu.edu/fall2020/schedule.html)
         * [数据库内核杂谈](https://www.infoq.cn/theme/46)
         * [Develop your own Database](https://hpi.de/plattner/teaching/archive/winter-term-201819/develop-your-own-database.html)
+    * snowflake
+        * [ALTER SESSION](https://docs.snowflake.com/en/sql-reference/sql/alter-session.html)
+            * `ALTER ACCOUNT SET USE_CACHED_RESULT = FALSE`
+            * `ALTER SESSION SET USE_CACHED_RESULT = FALSE`
+        * [Overview of Warehouses](https://docs.snowflake.com/en/user-guide/warehouses-overview.html#warehouse-size)
     * 相关工具
     * doc
         * [sqlite-window-function](https://www.sqlite.org/windowfunctions.html)
