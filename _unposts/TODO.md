@@ -47,6 +47,7 @@ categories:
     * 测试集
         * tsbs
         * taxi
+    * [ClickHouse/ClickBench](https://github.com/ClickHouse/ClickBench)
     * https://cloud.google.com/blog/products/databases/alloydb-for-postgresql-intelligent-scalable-storage
 1. 体系结构
     * 内存屏障在汇编层面的表示
