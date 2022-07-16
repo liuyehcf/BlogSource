@@ -731,6 +731,11 @@ categories:
                         <li>All output rows occur with the correct duplication factor</li>
                     </ul>
                 </li>
+                <li>Views with extra table
+                    <ul>
+                        <li>Cardinality-preserving Join, a join between tables T and S is cardinality preserving if every row in T joins with exactly one row in S</li>
+                    </ul>
+                </li>
             </td>
             <td style="text-align:left">👀/3.1.2</td>
             <td style="text-align:left">★★★★★</td>
