@@ -715,18 +715,8 @@ categories:
                 <li>View matching is a transformation rule that is invoked on select-project-join-group-by expression, SPJG</li>
                 <li>For a SPJ query expression to be computable from a view, the view must satisfy the following requirement:
                     <ul>
-                        <li>The view contains all rows needed by the query expression</li>
-                            <ul>
-                                <li>Check compability of euiqvalent predicates</li>
-                                <li>Check compability of range predicates</li>
-                                <li>Check compability of residual predicates</li>
-                            </ul>
-                        <li>All required rows can be selected from the view, i.e. whether columns of compensating predicates exist</li>
-                            <ul>
-                                <li>Check whether columns of the compensating equality predicates exist</li>
-                                <li>Check whether columns of the compensating range predicates exist</li>
-                                <li>Check whether columns of the compensating residual predicates exist</li>
-                            </ul>
+                        <li>The view contains all rows needed by the query expression, i.e. checking compability of equality/range/residual predicates</li>
+                        <li>All required rows can be selected from the view, i.e. whether columns of compensating equality/range/residual predicates exist</li>
                         <li>All output expressions can be computed from the output of the view, i.e. whether columns of output expressions exist</li>
                         <li>All output rows occur with the correct duplication factor</li>
                     </ul>
@@ -736,8 +726,23 @@ categories:
                         <li>Cardinality-preserving Join, a join between tables T and S is cardinality preserving if every row in T joins with exactly one row in S</li>
                     </ul>
                 </li>
+                <li>Aggregation queries and view, which can be treated as SPJ query followed by a group-by operation. The following requirements should be satisfied
+                    <ul>
+                        <li>The SPJ part required requirements</li>
+                        <li>All columns required by compensating predicates (if any) are available in the view output</li>
+                        <li>The view contains no aggregation or is less aggregated thanthe query</li>
+                        <li>All columns required to perform further grouping (if necessary) are available in the view output</li>
+                        <li>All columns required to compute output expressions are available in the view output</li>
+                    </ul>
+                </li>
+                <li>Fast filtering of views:
+                    <ul>
+                        <li>Filter tree</li>
+                        <li>Lattice index</li>
+                    </ul>
+                </li>
             </td>
-            <td style="text-align:left">👀/3.1.2</td>
+            <td style="text-align:left">👀/4</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
     </tbody>
