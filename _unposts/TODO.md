@@ -53,7 +53,9 @@ categories:
     * 内存屏障在汇编层面的表示
 1. cpp
     * std::guard(be/src/runtime/decimalv3.h,be/src/util/guard.h)
-    * std::bind 如何实现
+    * std::declval
+    * std::decay
+    * std::reference_wrapper
     * struct alising
     * [apache-arrow](https://github.com/apache/arrow)
 1. java

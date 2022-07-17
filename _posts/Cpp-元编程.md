@@ -649,7 +649,145 @@ int main() {
 }
 ```
 
-## 6.5 类型推导
+## 6.5 bind
+
+下面的示例用于展示`std::bind`的实现原理，其中各模板的含义如下
+
+* `invoke`：用于触发方法调用
+* `seq/gen_seq/gen_seq_t`：用于生成整型序列
+* `placeholder`：占位符
+* `bind_return_type`：用于萃取函数的返回类型
+* `select`：用于提取类型
+* `bind_t`：封装重载了`operator()`运算符的类
+* `bind`：接口
+
+```cpp
+#include <iostream>
+#include <string>
+#include <tuple>
+#include <type_traits>
+
+// invoke
+template <typename F, typename... Args>
+auto invoke(F&& f, Args&&... args) -> decltype(std::forward<F>(f)(std::forward<Args>(args)...)) {
+    return std::forward<F>(f)(std::forward<Args>(args)...);
+}
+
+template <typename F, typename... Args>
+struct invoke_return_type {
+    using type = decltype(invoke(std::declval<F>(), std::declval<Args>()...));
+};
+
+// seq
+template <int... N>
+struct seq {};
+
+// seq_gen
+template <unsigned N, unsigned... S>
+struct gen_seq;
+
+template <unsigned N, unsigned... S>
+struct gen_seq : gen_seq<N - 1, N - 1, S...> {};
+
+template <unsigned... S>
+struct gen_seq<0, S...> {
+    using type = seq<S...>;
+};
+
+template <unsigned... S>
+using gen_seq_t = typename gen_seq<S...>::type;
+
+// placeholder
+template <int Num>
+struct placeholder {};
+
+static constexpr placeholder<1> _1;
+static constexpr placeholder<2> _2;
+static constexpr placeholder<3> _3;
+static constexpr placeholder<4> _4;
+static constexpr placeholder<5> _5;
+static constexpr placeholder<6> _6;
+
+// select
+template <typename B, typename C>
+auto select(B&& b, C&& c) -> B&& {
+    return std::forward<B>(b);
+}
+
+// select N-th element from Tuple C
+template <int N, typename C>
+auto select(placeholder<N> b, C&& c)
+        -> std::conditional_t<std::is_rvalue_reference<std::tuple_element_t<N - 1, std::decay_t<C>>>::value,
+                              std::tuple_element_t<N - 1, std::decay_t<C>>, decltype(std::get<N - 1>(c))> {
+    return static_cast<std::conditional_t<std::is_rvalue_reference<std::tuple_element_t<N - 1, std::decay_t<C>>>::value,
+                                          std::tuple_element_t<N - 1, std::decay_t<C>>,
+                                          decltype(std::get<N - 1>(std::forward<C>(c)))>>(
+            std::get<N - 1>(std::forward<C>(c)));
+}
+
+// bind_return_type
+template <typename F, typename BindArgs, typename CallArgs, typename Gen = gen_seq_t<std::tuple_size<BindArgs>::value>>
+struct bind_return_type;
+
+template <typename F, typename... BindArgs, typename... CallArgs, int... S>
+struct bind_return_type<F, std::tuple<BindArgs...>, std::tuple<CallArgs...>, seq<S...>> {
+    using type = decltype(invoke(std::declval<F>(), select(std::get<S>(std::declval<std::tuple<BindArgs...>>()),
+                                                           std::declval<std::tuple<CallArgs...>&>())...));
+};
+
+template <typename F, typename BindArgs, typename CallArgs, typename Gen = gen_seq_t<std::tuple_size<BindArgs>::value>>
+using bind_return_type_t = typename bind_return_type<F, BindArgs, CallArgs, Gen>::type;
+
+// bind_t
+template <typename F, typename... Args>
+class bind_t {
+    using BindArgs = std::tuple<std::decay_t<Args>...>;
+    using CallFun = std::decay_t<F>;
+
+public:
+    bind_t(F fun, Args... args) : _fun(fun), _bindArgs(args...) {}
+
+    template <typename... CArgs>
+    bind_return_type_t<CallFun, BindArgs, std::tuple<CArgs&&...>> operator()(CArgs&&... c) {
+        std::tuple<CArgs&&...> cargs(std::forward<CArgs>(c)...);
+        return _call(cargs, gen_seq_t<std::tuple_size<BindArgs>::value>());
+    }
+
+private:
+    template <typename T, int... S>
+    bind_return_type_t<CallFun, BindArgs, std::decay_t<T>> _call(T&& t, seq<S...>) {
+        return invoke(_fun, select(std::get<S>(_bindArgs), std::forward<T>(t))...);
+    }
+
+    CallFun _fun;
+    BindArgs _bindArgs;
+};
+
+// bind
+template <typename F, typename... Args>
+bind_t<std::decay_t<F>, std::decay_t<Args>...> bind(F&& f, Args&&... args) {
+    return bind_t<std::decay_t<F>, std::decay_t<Args>...>(std::forward<F>(f), std::forward<Args>(args)...);
+}
+
+void print(const std::string& s, int i, double d) {
+    std::cout << "str=" << s << ", int=" << i << ", double=" << d << std::endl;
+}
+
+int main() {
+    auto f1 = bind(print, _1, 1, 1.1);
+    auto f2 = bind(print, "fixed_str_2", _1, 2.2);
+    auto f3 = bind(print, "fixed_str_3", 3, _1);
+    auto f5 = bind(print, _1, _2, _3);
+
+    f1("str_1");
+    f2(2);
+    f3(3.3);
+    f5("str_5", 5, 5.5);
+    return 0;
+}
+```
+
+## 6.6 类型推导
 
 **`using template`：当我们使用`Traits`萃取类型时，通常需要加上`typename`来消除歧义。因此，`using`模板可以进一步消除多余的`typename`**
 **`static member template`：静态成员模板**
@@ -710,7 +848,7 @@ int main() {
 }
 ```
 
-## 6.6 遍历tuple
+## 6.7 遍历tuple
 
 ```cpp
 #include <stddef.h>
@@ -735,7 +873,7 @@ int main() {
 }
 ```
 
-## 6.7 快速排序
+## 6.8 快速排序
 
 **源码出处：[quicksort in C++ template metaprogramming](https://gist.github.com/cleoold/c26d4e2b4ff56985c42f212a1c76deb9)**
 
@@ -990,7 +1128,7 @@ int main() {
 }
 ```
 
-## 6.8 静态代理
+## 6.9 静态代理
 
 不确定这个是否属于元编程的范畴。更多示例可以参考[binary_function.h](https://github.com/liuyehcf/starrocks/blob/main/be/src/exprs/vectorized/binary_function.h)
 
@@ -1063,7 +1201,7 @@ int main() {
 }
 ```
 
-## 6.9 编译期分支
+## 6.10 编译期分支
 
 有时候，我们想为不同的类型编写不同的分支代码，而这些分支代码在不同类型中是不兼容的，例如，我要实现加法，对于`int`来说，用操作符`+`即可完成加法运算；对于`Foo`类型来说，要调用`add`方法才能实现加法运算。这个时候，普通的分支是无法实现的，实例化的时候会报错。这时候，我们可以使用`if constexpr`来实现编译期的分支
 
@@ -1117,7 +1255,7 @@ int main() {
 }
 ```
 
-## 6.10 条件成员
+## 6.11 条件成员
 
 有时候，我们希望模板类某些特化版本包含额外的字段，而默认情况下不包含这些额外字段
 
@@ -1155,3 +1293,5 @@ int main() {
 * [CppCon 2014: Walter E. Brown "Modern Template Metaprogramming: A Compendium, Part I"](https://www.youtube.com/watch?v=Am2is2QCvxY)
 * [CppCon 2014: Walter E. Brown "Modern Template Metaprogramming: A Compendium, Part II"](https://www.youtube.com/watch?v=a0FliKwcwXE)
     * Unevaluated operands(sizeof, typeid, decltype, noexcept), 12:30
+* [fork_stl](https://github.com/cplusplus-study/fork_stl)
+    * [bind.hpp](https://github.com/cplusplus-study/fork_stl/blob/master/include/bind.hpp)
