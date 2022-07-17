@@ -649,7 +649,45 @@ int main() {
 }
 ```
 
-## 6.5 bind
+## 6.5 sequence
+
+**核心思路如下：**
+
+* `gen_seq<N>`：期望生成`seq<0, 2, 3, ..., N-1>`
+* 通过递推式`gen_seq<size_t N, size_t... S>`展开，其中`N`表示还需生成`1, 2, 3, ..., N-1`，`S...`表示已经生成的序列。每次递推时，把`N-1`放入右边已生成的序列中。当`N = 0`时，递推结束
+
+```cpp
+#include <iostream>
+#include <tuple>
+
+// seq
+template <size_t... N>
+struct seq {
+    static constexpr size_t size = sizeof...(N);
+};
+
+// seq_gen
+template <size_t N, size_t... S>
+struct gen_seq;
+
+template <size_t N, size_t... S>
+struct gen_seq : gen_seq<N - 1, N - 1, S...> {};
+
+template <size_t... S>
+struct gen_seq<0, S...> {
+    using type = seq<S...>;
+};
+
+template <size_t... S>
+using gen_seq_t = typename gen_seq<S...>::type;
+
+int main() {
+    std::cout << "size=" << gen_seq_t<100>::size << std::endl;
+    return 0;
+}
+```
+
+## 6.6 bind
 
 **下面的示例用于揭示`std::bind`的实现原理，其中各工具模板的含义如下：**
 
@@ -812,7 +850,7 @@ int main() {
 }
 ```
 
-## 6.6 类型推导
+## 6.7 类型推导
 
 **`using template`：当我们使用`Traits`萃取类型时，通常需要加上`typename`来消除歧义。因此，`using`模板可以进一步消除多余的`typename`**
 **`static member template`：静态成员模板**
@@ -873,7 +911,7 @@ int main() {
 }
 ```
 
-## 6.7 遍历tuple
+## 6.8 遍历tuple
 
 ```cpp
 #include <stddef.h>
@@ -898,7 +936,7 @@ int main() {
 }
 ```
 
-## 6.8 快速排序
+## 6.9 快速排序
 
 **源码出处：[quicksort in C++ template metaprogramming](https://gist.github.com/cleoold/c26d4e2b4ff56985c42f212a1c76deb9)**
 
@@ -1153,7 +1191,7 @@ int main() {
 }
 ```
 
-## 6.9 静态代理
+## 6.10 静态代理
 
 不确定这个是否属于元编程的范畴。更多示例可以参考[binary_function.h](https://github.com/liuyehcf/starrocks/blob/main/be/src/exprs/vectorized/binary_function.h)
 
@@ -1226,7 +1264,7 @@ int main() {
 }
 ```
 
-## 6.10 编译期分支
+## 6.11 编译期分支
 
 有时候，我们想为不同的类型编写不同的分支代码，而这些分支代码在不同类型中是不兼容的，例如，我要实现加法，对于`int`来说，用操作符`+`即可完成加法运算；对于`Foo`类型来说，要调用`add`方法才能实现加法运算。这个时候，普通的分支是无法实现的，实例化的时候会报错。这时候，我们可以使用`if constexpr`来实现编译期的分支
 
@@ -1280,7 +1318,7 @@ int main() {
 }
 ```
 
-## 6.11 条件成员
+## 6.12 条件成员
 
 有时候，我们希望模板类某些特化版本包含额外的字段，而默认情况下不包含这些额外字段
 
