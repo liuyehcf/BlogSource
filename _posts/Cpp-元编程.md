@@ -651,15 +651,23 @@ int main() {
 
 ## 6.5 bind
 
-下面的示例用于展示`std::bind`的实现原理，其中各模板的含义如下
+**下面的示例用于揭示`std::bind`的实现原理，其中各工具模板的含义如下：**
 
 * `invoke`：用于触发方法调用
 * `seq/gen_seq/gen_seq_t`：用于生成整型序列
 * `placeholder`：占位符
+* `placeholder_num`：给定的参数列表中，占位符的个数
 * `bind_return_type`：用于萃取函数的返回类型
 * `select`：用于提取类型
 * `bind_t`：封装重载了`operator()`运算符的类
 * `bind`：接口
+
+**核心思路：**
+
+* 首先，`bind`需要返回一个类型，记为`biner_type`，该类型重载了`operator()`运算符
+* `biner_type`的`operator()`运算符的形参列表是一个形参包，即`Arg...`，这样才能起到动态适配不同绑定对象的作用
+    * 需要通过`static_assert`来限制参数数量，要与`bind`指定的占位符数量相等
+* 用`std::tuple`分别存储`bind`时的参数列表，以及`operator()`的形参列表。使用`std::tuple`是为了便于通过参数下标取对应的参数
 
 ```cpp
 #include <iostream>
@@ -679,26 +687,26 @@ struct invoke_return_type {
 };
 
 // seq
-template <int... N>
+template <size_t... N>
 struct seq {};
 
 // seq_gen
-template <unsigned N, unsigned... S>
+template <size_t N, size_t... S>
 struct gen_seq;
 
-template <unsigned N, unsigned... S>
+template <size_t N, size_t... S>
 struct gen_seq : gen_seq<N - 1, N - 1, S...> {};
 
-template <unsigned... S>
+template <size_t... S>
 struct gen_seq<0, S...> {
     using type = seq<S...>;
 };
 
-template <unsigned... S>
+template <size_t... S>
 using gen_seq_t = typename gen_seq<S...>::type;
 
 // placeholder
-template <int Num>
+template <size_t Num>
 struct placeholder {};
 
 static constexpr placeholder<1> _1;
@@ -718,7 +726,7 @@ struct placeholder_num<T, Args...> {
     static constexpr size_t value = placeholder_num<Args...>::value;
 };
 
-template <int Num, typename... Args>
+template <size_t Num, typename... Args>
 struct placeholder_num<placeholder<Num>, Args...> {
     static constexpr size_t value = 1 + placeholder_num<Args...>::value;
 };
@@ -730,7 +738,7 @@ auto select(B&& b, C&& c) -> B&& {
 }
 
 // select N-th element from Tuple C
-template <int N, typename C>
+template <size_t N, typename C>
 auto select(placeholder<N> b, C&& c)
         -> std::conditional_t<std::is_rvalue_reference<std::tuple_element_t<N - 1, std::decay_t<C>>>::value,
                               std::tuple_element_t<N - 1, std::decay_t<C>>, decltype(std::get<N - 1>(c))> {
@@ -744,7 +752,7 @@ auto select(placeholder<N> b, C&& c)
 template <typename F, typename BindArgs, typename CallArgs, typename Gen = gen_seq_t<std::tuple_size<BindArgs>::value>>
 struct bind_return_type;
 
-template <typename F, typename... BindArgs, typename... CallArgs, int... S>
+template <typename F, typename... BindArgs, typename... CallArgs, size_t... S>
 struct bind_return_type<F, std::tuple<BindArgs...>, std::tuple<CallArgs...>, seq<S...>> {
     using type = decltype(invoke(std::declval<F>(), select(std::get<S>(std::declval<std::tuple<BindArgs...>>()),
                                                            std::declval<std::tuple<CallArgs...>&>())...));
@@ -771,7 +779,7 @@ public:
     }
 
 private:
-    template <typename T, int... S>
+    template <typename T, size_t... S>
     bind_return_type_t<CallFun, BindArgs, std::decay_t<T>> _call(T&& t, seq<S...>) {
         return invoke(_fun, select(std::get<S>(_bindArgs), std::forward<T>(t))...);
     }
