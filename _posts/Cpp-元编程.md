@@ -658,12 +658,31 @@ int main() {
 
 ```cpp
 #include <iostream>
-#include <tuple>
+
+// get_first
+template <size_t First, size_t... Others>
+struct get_first {
+    static constexpr size_t value = First;
+};
+
+// get_last
+template <size_t First, size_t... Nums>
+struct get_last;
+
+template <size_t First, size_t... Nums>
+struct get_last : get_last<Nums...> {};
+
+template <size_t First>
+struct get_last<First> {
+    static constexpr size_t value = First;
+};
 
 // seq
 template <size_t... N>
 struct seq {
     static constexpr size_t size = sizeof...(N);
+    static constexpr size_t first = get_first<N...>::value;
+    static constexpr size_t last = get_last<N...>::value;
 };
 
 // seq_gen
@@ -683,6 +702,8 @@ using gen_seq_t = typename gen_seq<S...>::type;
 
 int main() {
     std::cout << "size=" << gen_seq_t<100>::size << std::endl;
+    std::cout << "first=" << gen_seq_t<100>::first << std::endl;
+    std::cout << "last=" << gen_seq_t<100>::last << std::endl;
     return 0;
 }
 ```
