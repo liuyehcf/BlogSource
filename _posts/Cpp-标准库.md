@@ -502,6 +502,9 @@ int main() {
 1. `std::enable_if`
 1. `std::conditional`
 1. `std::void_t`
+1. `std::decay`
+    * [What is std::decay and when it should be used?](https://stackoverflow.com/questions/25732386/what-is-stddecay-and-when-it-should-be-used)
+    * [N2609](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2006/n2069.html)
 
 ## 15.14 Alias
 

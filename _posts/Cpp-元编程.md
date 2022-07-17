@@ -708,6 +708,21 @@ static constexpr placeholder<4> _4;
 static constexpr placeholder<5> _5;
 static constexpr placeholder<6> _6;
 
+template <typename... Args>
+struct placeholder_num {
+    static constexpr size_t value = 0;
+};
+
+template <typename T, typename... Args>
+struct placeholder_num<T, Args...> {
+    static constexpr size_t value = placeholder_num<Args...>::value;
+};
+
+template <int Num, typename... Args>
+struct placeholder_num<placeholder<Num>, Args...> {
+    static constexpr size_t value = 1 + placeholder_num<Args...>::value;
+};
+
 // select
 template <typename B, typename C>
 auto select(B&& b, C&& c) -> B&& {
@@ -749,6 +764,8 @@ public:
 
     template <typename... CArgs>
     bind_return_type_t<CallFun, BindArgs, std::tuple<CArgs&&...>> operator()(CArgs&&... c) {
+        static_assert(placeholder_num<Args...>::value == sizeof...(CArgs),
+                      "number of placeholder must be equal with the number of operator()'s parameter");
         std::tuple<CArgs&&...> cargs(std::forward<CArgs>(c)...);
         return _call(cargs, gen_seq_t<std::tuple_size<BindArgs>::value>());
     }
