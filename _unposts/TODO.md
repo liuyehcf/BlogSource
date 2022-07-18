@@ -49,6 +49,9 @@ categories:
         * taxi
     * [ClickHouse/ClickBench](https://github.com/ClickHouse/ClickBench)
     * https://cloud.google.com/blog/products/databases/alloydb-for-postgresql-intelligent-scalable-storage
+    * segment tree
+        * https://www.geeksforgeeks.org/segment-tree-set-1-sum-of-given-range/
+        * https://www.geeksforgeeks.org/segment-tree-set-1-range-minimum-query/
 1. 体系结构
     * 内存屏障在汇编层面的表示
 1. cpp
