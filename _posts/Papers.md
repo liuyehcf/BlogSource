@@ -739,10 +739,11 @@ categories:
                     <ul>
                         <li>Filter tree</li>
                         <li>Lattice index</li>
+                        <li>Filter conditions including source tables, hubs, output columns, output expressions, range constraints, residual constraints, grouping columns, grouping expressions</li>
                     </ul>
                 </li>
             </td>
-            <td style="text-align:left">👀/4</td>
+            <td style="text-align:left">✅</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
     </tbody>
