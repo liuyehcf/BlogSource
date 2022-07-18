@@ -1614,6 +1614,26 @@ int main() {
 }
 ```
 
+## 4.10 模板作为模板形参
+
+[What are some uses of template template parameters?](https://stackoverflow.com/questions/213761/what-are-some-uses-of-template-template-parameters)
+
+```cpp
+#include <iostream>
+#include <vector>
+
+template <template <typename> typename T, typename F>
+void foo(const T<F>& value) {
+    std::cout << "T<F>'s type=" << typeid(T<F>).name() << std::endl;
+}
+
+int main() {
+    std::vector<int> v;
+    foo(v);
+    return 0;
+}
+```
+
 # 5 `__attribute__`
 
 [Compiler-specific Features](https://www.keil.com/support/man/docs/armcc/armcc_chr1359124965789.htm)
