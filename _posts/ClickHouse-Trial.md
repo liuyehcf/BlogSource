@@ -41,3 +41,10 @@ select * from system.settings;
 
 [TRUNCATE Statement](https://clickhouse.com/docs/en/sql-reference/statements/truncate/)
 
+## 1.4 clickhouse-client
+
+* `-m`：多行模式，以`;`作为`SQL`结束标识符，默认以换行作为结束标识符
+
+```sh
+clickhouse-client -h 172.26.194.221 --password sr -m
+```

@@ -832,4 +832,7 @@ categories:
         * 值域范围
 * Computer Architecture
     * [Residency-Aware Virtual Machine Communication Optimization: Design Choices and Techniques](/resources/paper/Residency-Aware-Virtual-Machine-Communication-Optimization-Design-Choices-and-Techniques.pdf)
+* Sort
+    * [PARALLEL MERGE SORT](http://www.cs.cmu.edu/~guyb/paralg/papers/Cole88.pdf)
+    * [On the Nature of Merge: External Merge, Internal Merge, and Parallel Merge](/resources/paper/On-the-Nature-of-Merge-External-Merge-Internal-Merge-and-Parallel-Merge.pdf)
 * [Implementation of Two Semantic Query Optimization Techniques in DB2 Universal Database](https://www.researchgate.net/profile/Jarek-Gryz/publication/221309776_Implementation_of_Two_Semantic_Query_Optimization_Techniques_in_DB2_Universal_Database/links/0912f51279e7662532000000/Implementation-of-Two-Semantic-Query-Optimization-Techniques-in-DB2-Universal-Database.pdf)
