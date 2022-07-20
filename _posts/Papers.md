@@ -180,6 +180,21 @@ categories:
         </tr>
         <tr>
             <td style="text-align:left">
+                <a href="http://www.cs.cmu.edu/~guyb/paralg/papers/Cole88.pdf">Parallel Merge Sort</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Sort</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>CRCW, concurrent read and concurrent write. EREW, exclusive read and exclusive write. PRAM, parallel random access memory</li>
+                <li>Tree-based merge sort, CREW algorighm</li>
+            </td>
+            <td style="text-align:left">👀</td>
+            <td style="text-align:left">★★★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
                 <a href="/resources/paper/Design-and-Evaluation-of-Main-Memory-Hash-Join-Algorithms-for-Multi-core-CPUs.pdf">Design and Evaluation of Main Memory Hash Join Algorithms for Multi-core CPUs</a>
             </td>
             <td style="text-align:left">
@@ -833,6 +848,5 @@ categories:
 * Computer Architecture
     * [Residency-Aware Virtual Machine Communication Optimization: Design Choices and Techniques](/resources/paper/Residency-Aware-Virtual-Machine-Communication-Optimization-Design-Choices-and-Techniques.pdf)
 * Sort
-    * [PARALLEL MERGE SORT](http://www.cs.cmu.edu/~guyb/paralg/papers/Cole88.pdf)
     * [On the Nature of Merge: External Merge, Internal Merge, and Parallel Merge](/resources/paper/On-the-Nature-of-Merge-External-Merge-Internal-Merge-and-Parallel-Merge.pdf)
 * [Implementation of Two Semantic Query Optimization Techniques in DB2 Universal Database](https://www.researchgate.net/profile/Jarek-Gryz/publication/221309776_Implementation_of_Two_Semantic_Query_Optimization_Techniques_in_DB2_Universal_Database/links/0912f51279e7662532000000/Implementation-of-Two-Semantic-Query-Optimization-Techniques-in-DB2-Universal-Database.pdf)

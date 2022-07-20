@@ -368,8 +368,8 @@ dep ensure
 可以通过配置`build tags`，将OS配置成linux，配置方式：
 
 * `Preferences`
-   * `Go`
-      * `Vendoring & Build Tags`，然后将`OS`改成`linux`即可
+    * `Go`
+        * `Vendoring & Build Tags`，然后将`OS`改成`linux`即可
 
 # 7 参考
 
