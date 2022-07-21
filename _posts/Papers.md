@@ -180,7 +180,7 @@ categories:
         </tr>
         <tr>
             <td style="text-align:left">
-                <a href="http://www.cs.cmu.edu/~guyb/paralg/papers/Cole88.pdf">Parallel Merge Sort</a>
+                <a href="/resources/paper/Parallel-Merge-Sort.pdf">Parallel Merge Sort</a>
             </td>
             <td style="text-align:left">
                 <li><code>#Execution</code></li>
@@ -188,7 +188,20 @@ categories:
             </td>
             <td style="text-align:left">
                 <li>CRCW, concurrent read and concurrent write. EREW, exclusive read and exclusive write. PRAM, parallel random access memory</li>
-                <li>Tree-based merge sort, CREW algorighm</li>
+                <li>Tree-based merge sort, CREW algorighm
+                    <ul>
+                        <li>3-cover property</li>
+                        <li><code>NEWUP(u) = SUP(v) ∪ SUP(w)</code>, v and w are child nodes of node u</li>
+                        <li>Rules for <code>SUP</code>
+                            <ul>
+                                <li><code>SUP(i) = every forth item of UP(i)</code>, for inside node or first stage of external node</li>
+                                <li><code>SUP(i) = every second item of UP(i)</code>, for second stage of external node</li>
+                                <li><code>SUP(i) = every item of UP(i)</code>, for third stage of external node</li>
+                            </ul>
+                        </li>
+                        <li><code>|NEWUP(i)| = 2|UP(i)| when 0 < |UP(i)| < |L(i)|</code></li>
+                    </ul>
+                </li>
             </td>
             <td style="text-align:left">👀</td>
             <td style="text-align:left">★★★★★</td>
