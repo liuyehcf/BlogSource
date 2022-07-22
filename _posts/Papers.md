@@ -191,7 +191,18 @@ categories:
                 <li>Tree-based merge sort, CREW algorighm
                     <ul>
                         <li>3-cover property</li>
-                        <li><code>NEWUP(u) = SUP(v) ∪ SUP(w)</code>, v and w are child nodes of node u</li>
+                        <li>Node classification:
+                            <ul>
+                                <li><code>0 < |UP(i)| < |L(i)|</code>, then node <code>i</code> is inside node</li>
+                                <li><code>|UP(i)| = |L(i)|</code>, then node <code>i</code> is external node</li>
+                            </ul>
+                        </li>
+                        <li>Goal: for inside node, let <code>|NEWUP(i)| = 2|UP(i)|</code></li>
+                        <li>Rules for <code>UP</code>
+                            <ul>
+                                <li><code>NEWUP(u) = SUP(v) ∪ SUP(w)</code>, <code>v</code> and <code>w</code> are child nodes of node <code>u</code></li>
+                            </ul>
+                        </li>
                         <li>Rules for <code>SUP</code>
                             <ul>
                                 <li><code>SUP(i) = every forth item of UP(i)</code>, for inside node or first stage of external node</li>
@@ -199,7 +210,6 @@ categories:
                                 <li><code>SUP(i) = every item of UP(i)</code>, for third stage of external node</li>
                             </ul>
                         </li>
-                        <li><code>|NEWUP(i)| = 2|UP(i)| when 0 < |UP(i)| < |L(i)|</code></li>
                     </ul>
                 </li>
             </td>
@@ -863,3 +873,29 @@ categories:
 * Sort
     * [On the Nature of Merge: External Merge, Internal Merge, and Parallel Merge](/resources/paper/On-the-Nature-of-Merge-External-Merge-Internal-Merge-and-Parallel-Merge.pdf)
 * [Implementation of Two Semantic Query Optimization Techniques in DB2 Universal Database](https://www.researchgate.net/profile/Jarek-Gryz/publication/221309776_Implementation_of_Two_Semantic_Query_Optimization_Techniques_in_DB2_Universal_Database/links/0912f51279e7662532000000/Implementation-of-Two-Semantic-Query-Optimization-Techniques-in-DB2-Universal-Database.pdf)
+
+<!--
+items=("table" tbody "thead" "tr" "th" "td" "a" "li" "ul" "code")
+
+declare -A left_count=()
+declare -A right_count=()
+
+for item in ${items[@]}
+do
+    left_count[${item}]=0
+    right_count[${item}]=0
+done
+
+for item in ${items[@]}
+do
+    ((left_count[${item}]=$(cat _posts/Papers.md | grep -o -E "(<${item}>)|(<${item} )" | wc -l)))
+    ((right_count[${item}]=$(cat _posts/Papers.md | grep -o "</${item}>" | wc -l)))
+done
+
+for item in ${items[@]}
+do
+    if [ ${left_count[${item}]} -ne ${right_count[${item}]} ]; then
+        echo "'${item}' not match, ${left_count[${item}]}/${right_count[${item}]}"
+    fi
+done
+-->
