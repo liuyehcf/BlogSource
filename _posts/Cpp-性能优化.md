@@ -17,9 +17,7 @@ categories:
 
 ### 1.1.1 assembly
 
-```sh
-# 创建源文件
-cat > main.cpp << 'EOF'
+```cpp
 #include <iostream>
 
 class Base {
@@ -44,8 +42,9 @@ void invoke_normal(Base* base) {
 int main() {
     return 0;
 }
-EOF
+```
 
+```sh
 # 编译
 gcc -o main.c main.cpp -c -Wall -O3 -g
 
@@ -152,64 +151,77 @@ BM_virtual       1.88 ns         1.88 ns    372088713
 struct Base {
     virtual void op() { data += 1; }
 
-protected:
-    int data = 0;
+    int64_t data = 0;
 };
 
-struct Derive : public Base {
-    virtual void op() override { data -= 1; }
+struct Derive final : public Base {
+    virtual void op() override { data += 2; }
 };
 
-static void BM_invoke_by_base_prt(benchmark::State& state) {
-    Base* base_prt = new Derive();
-    for (auto _ : state) {
-        base_prt->op();
-        benchmark::DoNotOptimize(base_prt);
+static constexpr size_t TIMES = 1 << 20;
+
+__attribute__((noinline)) void invoke_by_base_ptr(Base* base_ptr) {
+    for (size_t i = 0; i < TIMES; ++i) {
+        base_ptr->op();
     }
+}
+
+__attribute__((noinline)) void invoke_by_derive_ptr(Derive* derive_ptr) {
+    for (size_t i = 0; i < TIMES; ++i) {
+        derive_ptr->op();
+    }
+}
+
+__attribute__((noinline)) void invoke_by_base_ref(Base& base_ref) {
+    for (size_t i = 0; i < TIMES; ++i) {
+        base_ref.op();
+    }
+}
+
+__attribute__((noinline)) void invoke_by_derive_ref(Derive& derive_ref) {
+    for (size_t i = 0; i < TIMES; ++i) {
+        derive_ref.op();
+    }
+}
+
+static void BM_invoke_by_base_ptr(benchmark::State& state) {
+    Base* base_ptr = new Derive();
+    for (auto _ : state) {
+        invoke_by_base_ptr(base_ptr);
+    }
+    benchmark::DoNotOptimize(base_ptr->data);
 }
 
 static void BM_invoke_by_derive_ptr(benchmark::State& state) {
-    Base* base_prt = new Derive();
-    Derive* derive_ptr = static_cast<Derive*>(base_prt);
+    Base* base_ptr = new Derive();
+    Derive* derive_ptr = static_cast<Derive*>(base_ptr);
     for (auto _ : state) {
-        derive_ptr->op();
-        benchmark::DoNotOptimize(base_prt);
+        invoke_by_derive_ptr(derive_ptr);
     }
+    benchmark::DoNotOptimize(derive_ptr->data);
+}
+
+static void BM_invoke_by_base_ref(benchmark::State& state) {
+    Base* base_ptr = new Derive();
+    Base& base_ref = static_cast<Base&>(*base_ptr);
+    for (auto _ : state) {
+        invoke_by_base_ref(base_ref);
+    }
+    benchmark::DoNotOptimize(base_ref.data);
 }
 
 static void BM_invoke_by_derive_ref(benchmark::State& state) {
-    Base* base_ptr = new Derive();
-    Derive& derive_ref = static_cast<Derive&>(*base_ptr);
+    Derive& derive_ref = *new Derive();
     for (auto _ : state) {
-        derive_ref.op();
-        benchmark::DoNotOptimize(base_ptr);
+        invoke_by_derive_ref(derive_ref);
     }
+    benchmark::DoNotOptimize(derive_ref.data);
 }
 
-static void BM_invoke_by_derive_obj_1(benchmark::State& state) {
-    Base* base_ptr = new Derive();
-    Derive& derive_ref = static_cast<Derive&>(*base_ptr);
-    for (auto _ : state) {
-        // Remove reference property
-        static_cast<Derive>(derive_ref).op();
-        benchmark::DoNotOptimize(base_ptr);
-    }
-}
-
-static void BM_invoke_by_derive_obj_2(benchmark::State& state) {
-    Base* base_ptr = new Derive();
-    Derive derive_obj = *static_cast<Derive*>(base_ptr);
-    for (auto _ : state) {
-        derive_obj.op();
-        benchmark::DoNotOptimize(base_ptr);
-    }
-}
-
-BENCHMARK(BM_invoke_by_base_prt);
+BENCHMARK(BM_invoke_by_base_ptr);
 BENCHMARK(BM_invoke_by_derive_ptr);
+BENCHMARK(BM_invoke_by_base_ref);
 BENCHMARK(BM_invoke_by_derive_ref);
-BENCHMARK(BM_invoke_by_derive_obj_1);
-BENCHMARK(BM_invoke_by_derive_obj_2);
 
 BENCHMARK_MAIN();
 ```
@@ -217,17 +229,16 @@ BENCHMARK_MAIN();
 **输出如下：**
 
 ```
---------------------------------------------------------------------
-Benchmark                          Time             CPU   Iterations
---------------------------------------------------------------------
-BM_invoke_by_base_prt           1.71 ns         1.71 ns    414362787
-BM_invoke_by_derive_ptr         1.64 ns         1.64 ns    426661973
-BM_invoke_by_derive_ref         1.65 ns         1.64 ns    425877401
-BM_invoke_by_derive_obj_1      0.314 ns        0.314 ns   1000000000
-BM_invoke_by_derive_obj_2      0.314 ns        0.314 ns   1000000000
+------------------------------------------------------------------
+Benchmark                        Time             CPU   Iterations
+------------------------------------------------------------------
+BM_invoke_by_base_ptr       329071 ns       329033 ns         2123
+BM_invoke_by_derive_ptr       1.35 ns         1.35 ns    517728335
+BM_invoke_by_base_ref       329435 ns       329374 ns         2127
+BM_invoke_by_derive_ref       1.57 ns         1.57 ns    446385012
 ```
 
-可以看到，即便指针或者引用的类型已经是子类的类型了，仍然会作为虚函数进行调用。只有通过普通对象调用时，才能消除虚函数的开销
+可以看到，用超类的指针或者引用调用虚函数，可以直接消除虚函数的开销。**注意，这里有一个关键点，我们给`Derive`加上了`final`关键字，否则编译器也不敢直接消除虚函数**
 
 ## 1.3 move smart pointer
 

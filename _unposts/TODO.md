@@ -13,6 +13,7 @@ categories:
 
 1. Linux-常用命令
     * numactl --hardware
+    * nm -C
 1. 性能分析
     * bcc
     * perf

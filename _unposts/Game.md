@@ -1035,3 +1035,4 @@ categories:
 
 * [生涯赛各章节关卡名称 第一章](https://www.taptap.com/topic/18943347)
 * [生涯赛各章节关卡名称 第二章 1-9](https://www.taptap.com/topic/18978111)
+* [狂野飙车9 竞速传奇/生涯列表](https://mzh.moegirl.org.cn/zh-hans/狂野飙车9_竞速传奇/生涯列表)
