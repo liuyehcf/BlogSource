@@ -219,17 +219,17 @@ else
 int main() {
     int a = 0, b = 1, c = 2;
 
-    // top level const
+    // bottom level const
     const int* p1 = &a;
     p1 = &c;
     // *p1 += 1; // compile error
 
-    // top level const
+    // bottom level const
     int const* p2 = &b;
     p2 = &c;
     // *p2 += 1; // compile error
 
-    // bottom level const
+    // top level const
     int* const p3 = &c;
     // p3 = &a; // compile error
     *p3 += 1;
@@ -835,6 +835,24 @@ int main() {
 
     // compile error
     // auto i = static_cast<int>(cc);
+}
+```
+
+**注意，若待转换类型既不是引用类型，也不是指针类型时，会调用该类型的拷贝构造函数**
+
+```cpp
+#include <iostream>
+class Foo {
+public:
+    Foo() { std::cout << "Foo's default ctor" << std::endl; }
+    Foo(const Foo& foo) { std::cout << "Foo's copy ctor" << std::endl; }
+
+    void something() {}
+};
+
+int main() {
+    Foo* f = new Foo();
+    static_cast<Foo>(*f).something();
 }
 ```
 
