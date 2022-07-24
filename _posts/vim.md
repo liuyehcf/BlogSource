@@ -626,6 +626,7 @@ endif
 | `coc-snippets` | `coc`插件，代码片段 | https://github.com/neoclide/coc-snippets |
 | `vim-snippets` | 提供了大量`snippet`的定义 | https://github.com/honza/vim-snippets |
 | `vimspector` | `Debug` | https://github.com/puremourning/vimspector |
+| `coc-java-debug` | `Debug` | https://github.com/dansomething/coc-java-debug |
 | `vim-auto-popmenu` | 轻量补全 | https://github.com/skywind3000/vim-auto-popmenu |
 | `YouCompleteMe` | 代码补全 | https://github.com/ycm-core/YouCompleteMe |
 | `vim-javacomplete2` | `Java`代码补全 | https://github.com/artur-shaik/vim-javacomplete2 |
@@ -1480,9 +1481,7 @@ call plug#end()
 * **`D`：预览页向下滚动半页**
 * **`U`：预览页向上滚动半页**
 
-## 3.10 LSP Client
-
-### 3.10.1 [coc.nvim](https://github.com/neoclide/coc.nvim)
+## 3.10 [coc.nvim](https://github.com/neoclide/coc.nvim)
 
 **该插件是作为`LSP Client`，可以支持多种不同的`LSP Server`**
 
@@ -1595,7 +1594,7 @@ call plug#end()
     }
     ```
 
-#### 3.10.1.1 [coc-explorer](https://github.com/weirongxu/coc-explorer)
+### 3.10.1 [coc-explorer](https://github.com/weirongxu/coc-explorer)
 
 **`coc-explorer`提供了类似于`nerdtree`的文件管理器的功能，结构更清晰也更易用**
 
@@ -1636,7 +1635,7 @@ call plug#end()
 * `r`：重命名
 * `df/dF`：删除文件，`df`放入回收站，`dF`永久删除
 
-#### 3.10.1.2 [coc-java](https://github.com/search?q=coc-java)
+### 3.10.2 [coc-java](https://github.com/search?q=coc-java)
 
 **`Java`语言的`LSP-Server`的实现是[jdt.ls](https://github.com/eclipse/eclipse.jdt.ls)。而`coc-java`是`coc.nvim`的扩展，对`jdt.ls`进行进一步的封装**
 
@@ -1681,7 +1680,7 @@ call plug#end()
         * 假设子模块用到了`thrift`，那么需要在子模块的目录下放置`.classpath`，而不是在工程根目录放置`.classpath`
 * 有插件`org.eclipse.m2e:lifecycle-mapping`的时候，`jdt.ls`没法正常工作，目前暂未解决
 
-#### 3.10.1.3 [coc-snippets](https://github.com/neoclide/coc-snippets)
+### 3.10.3 [coc-snippets](https://github.com/neoclide/coc-snippets)
 
 **`coc-snippets`用于提供片段扩展功能（类似于`IDEA`中的`sout`、`psvm`、`.var`等等）**
 
@@ -1715,7 +1714,7 @@ call plug#end()
 * 在编辑模式下，输入片段后，按`<c-l>`触发片段扩展
 * `:CocList snippets`：查看所有可用的`snippet`
 
-##### 3.10.1.3.1 [vim-snippets](https://github.com/honza/vim-snippets)
+#### 3.10.3.1 [vim-snippets](https://github.com/honza/vim-snippets)
 
 `vim-snippets`插件提供了一系列`snippet`的定义
 
@@ -1737,7 +1736,7 @@ call plug#end()
 
 **使用：与`coc-snippets`自带`snippet`的用法一致**
 
-### 3.10.2 [LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim)
+## 3.11 [LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim)
 
 **该插件是作为`LSP Client`，可以支持多种不同的`LSP Server`**
 
@@ -1802,9 +1801,9 @@ sed -i 's|github.com/|github.com.cnpmjs.org/|' install.sh
 | **`\hb`** | **查找光标下符号的父类（ccls独有）** |
 | **`\hd`** | **查找光标下符号的子类（ccls独有）** |
 
-#### 3.10.2.1 C-Family
+### 3.11.1 C-Family
 
-##### 3.10.2.1.1 clangd
+#### 3.11.1.1 clangd
 
 **这里我们选用的`LSP-Server`的实现是`clangd`（推荐）**
 
@@ -1828,7 +1827,7 @@ let g:LanguageClient_serverCommands.cpp = ['clangd']
 call plug#end()
 ```
 
-##### 3.10.2.1.2 ccls
+#### 3.11.1.2 ccls
 
 **这里我们选用的`LSP-Server`的实现是`ccls`（不推荐，大型工程资源占用太高，且经常性卡死）**
 
@@ -1868,7 +1867,7 @@ call plug#end()
 }
 ```
 
-#### 3.10.2.2 Java
+### 3.11.2 Java
 
 **这里我们选用的`LSP-Server`的实现是`jdtls, Eclipse JDT Language Server`**
 
@@ -1913,7 +1912,7 @@ java \
 * 无法访问JDK以及三方库中的类
 * 对于Maven项目，若在标准的目录结构中有额外的目录，例如`<project-name>/src/main/<extra_dir>/com`，那么`jdt.ls`无法自动扫描整个工程，除非手动打开文件，才会把该文件加入解析列表中
 
-## 3.11 Debug-[vimspector](https://github.com/puremourning/vimspector)
+## 3.12 [vimspector](https://github.com/puremourning/vimspector)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1994,11 +1993,58 @@ call plug#end()
         }
         ```
 
-## 3.12 代码补全
+### 3.12.1 [coc-java-debug](https://github.com/dansomething/coc-java-debug)
+
+`coc-java-debug`依赖`coc.nvim`、`coc-java`以及`vimspector`
+
+* 通过`coc.nvim`来安装、卸载插件，其接口通过`CocCommand`对外露出
+* `coc-java-debug`是`vimspector`的`adapter`
+
+**安装：进入vim界面后执行`:CocInstall coc-java-debug`即可**
+
+**使用：**
+
+* **`:CocCommand java.debug.vimspector.start`**
+* **对于每个项目，我们都需要在项目的根目录提供一个`.vimspector.json`，来配置项目相关的`debug`参数**
+    * `adapters.java-debug-server.port`：是`java-debug-server`启动时需要占用的端口号，这里填占位符，在启动时会自动为其分配一个可用的端口号
+    * `configurations.configuration.port`：对应`Java`程序的`debug`端口号
+    ```json
+    {
+        "adapters": {
+            "java-debug-server": {
+                "name": "vscode-java",
+                "port": "${AdapterPort}"
+            }
+        },
+        "configurations": {
+            "Java Attach": {
+                "default": true,
+                "adapter": {
+                    "extends": "java-debug-server",
+                    "sync_timeout": 100000,
+                    "async_timeout": 100000
+                },
+                "configuration": {
+                    "request": "attach",
+                    "host": "127.0.0.1",
+                    "port": "5005"
+                },
+                "breakpoints": {
+                    "exception": {
+                        "caught": "N",
+                        "uncaught": "N"
+                    }
+                }
+            }
+        }
+    }
+    ```
+
+## 3.13 代码补全
 
 **前言：`coc.nvim`插件体系提供了大部分语言的代码补全功能，如果使用了`coc.nvim`插件，就不需要使用下面的这些补全插件了**
 
-### 3.12.1 [YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
+### 3.13.1 [YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
 
 **这个插件比较复杂，建议手工安装**
 
@@ -2089,7 +2135,7 @@ def Settings(**kwargs):
 * `[Ctrl] + n`：下一个条目
 * `[Ctrl] + p`：上一个条目
 
-### 3.12.2 [vim-javacomplete2](https://github.com/artur-shaik/vim-javacomplete2)
+### 3.13.2 [vim-javacomplete2](https://github.com/artur-shaik/vim-javacomplete2)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2133,7 +2179,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 3.13 编译运行-[AsyncRun](https://github.com/skywind3000/asyncrun.vim)
+## 3.14 编译运行-[AsyncRun](https://github.com/skywind3000/asyncrun.vim)
 
 本质上，`AsyncRun`插件就是提供了异步执行命令的机制，我们可以利用这个机制定义一些动作，比如`编译`、`构建`、`运行`、`测试`等，提供类似于`IDE`的体验
 
@@ -2171,7 +2217,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 3.14 动态检查-[ALE](https://github.com/dense-analysis/ale)
+## 3.15 动态检查-[ALE](https://github.com/dense-analysis/ale)
 
 **前言：`coc.nvim`插件体系提供了大部分语言的错误诊断功能，如果使用了`coc.nvim`插件，就不需要使用其他的错误诊断插件了**
 
@@ -2245,7 +2291,7 @@ call plug#end()
     1. `mv /usr/local/share/locale/zh_CN/LC_MESSAGES/gcc.mo /usr/local/share/locale/zh_CN/LC_MESSAGES/gcc.mo.bak`
     * 如果找不到`gcc.mo`文件的话，可以用`locate`命令搜索一下
 
-## 3.15 修改比较-[vim-signify](https://github.com/mhinz/vim-signify)
+## 3.16 修改比较-[vim-signify](https://github.com/mhinz/vim-signify)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2268,7 +2314,7 @@ call plug#end()
 * `set signcolumn=yes`，有改动的行会标出
 * `:SignifyDiff`：以左右分屏的方式对比当前文件的差异
 
-## 3.16 文本对象-[textobj-user](https://github.com/kana/vim-textobj-user)
+## 3.17 文本对象-[textobj-user](https://github.com/kana/vim-textobj-user)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2300,7 +2346,7 @@ call plug#end()
 * **`ii/ai`：缩进对象。可以用`vii/vai`/`dii/dai`/`cii/cai`来选中/删除/改写同一缩进层次的内容**
 * **`if/af`：函数对象。可以用`vif/vaf`/`dif/daf`/`cif/caf`来选中/删除/改写当前函数的内容**
 
-## 3.17 函数列表-[LeaderF](https://github.com/Yggdroot/LeaderF)
+## 3.18 函数列表-[LeaderF](https://github.com/Yggdroot/LeaderF)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2353,7 +2399,7 @@ call plug#end()
     * `<c-t>`：在新的`tab`中打开选中的文件
     * `<c-p>`：预览
 
-## 3.18 全局模糊搜索-[fzf.vim](https://github.com/junegunn/fzf.vim)
+## 3.19 全局模糊搜索-[fzf.vim](https://github.com/junegunn/fzf.vim)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2406,7 +2452,7 @@ call plug#end()
     * **上述规则均可自由组合**
     * **如何精确匹配一个包含空格的字符串：`'Hello\ world`。由于常规的空格被用作分词符，因此空格前要用`\`进行转义**
 
-## 3.19 全局搜索-[vim-grepper](https://github.com/mhinz/vim-grepper)
+## 3.20 全局搜索-[vim-grepper](https://github.com/mhinz/vim-grepper)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2428,7 +2474,7 @@ call plug#end()
 
 * `:Grepper`：进行全局搜索（依赖grep命令）
 
-## 3.20 git扩展-[vim-fugitive](https://github.com/tpope/vim-fugitive)
+## 3.21 git扩展-[vim-fugitive](https://github.com/tpope/vim-fugitive)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2450,7 +2496,7 @@ call plug#end()
 
 * `:Git`：作为`git`的替代，后跟`git`命令行工具的正常参数即可
 
-## 3.21 添加注释-[nerdcommenter](https://github.com/preservim/nerdcommenter)
+## 3.22 添加注释-[nerdcommenter](https://github.com/preservim/nerdcommenter)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2487,7 +2533,7 @@ call plug#end()
 * **`\cu`：取消注释**
 * **`\c<space>`：如果被选区域有部分被注释，则对被选区域执行取消注释操作，其它情况执行反转注释操作**
 
-## 3.22 代码格式化-[vim-codefmt](https://github.com/google/vim-codefmt)
+## 3.23 代码格式化-[vim-codefmt](https://github.com/google/vim-codefmt)
 
 **支持各种格式化工具：**
 
@@ -2546,7 +2592,7 @@ sudo chmod a+x /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.p
 sudo ln /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.py /usr/local/bin/autopep8
 ```
 
-## 3.23 文本环绕-[vim-surround](https://github.com/tpope/vim-surround)
+## 3.24 文本环绕-[vim-surround](https://github.com/tpope/vim-surround)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2598,7 +2644,7 @@ call plug#end()
     * `vllllSFprint`：类似`vllllSfprint`，`F`表示会在参数列表前后多加额外的空格。形式为`print( <text> )`
     * `vllllS<c-f>print`：类似`vllllSfprint`，`<c-f>`表示环绕符号加到最外侧。形式为`(print <text>)`
 
-## 3.24 个人完整配置
+## 3.25 个人完整配置
 
 ```vim
 call plug#begin()
