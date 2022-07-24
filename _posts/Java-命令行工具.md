@@ -189,7 +189,22 @@ Java反编译工具，[下载地址](http://www.javadecompilers.com/jad)
 
 **`/usr/libexec/java_home -V`：用于查看本机上所有版本java的安装目录**
 
-# 10 参考
+# 10 jar
+
+**制作归档文件：：`jar cvf xxx.jar -C ${target_dir1} ${dir_or_file1} -C ${target_dir2} ${dir_or_file2} ...`**
+
+* **注意`-C`只对后面一个参数有效**
+* `jar cvf xxx.jar .`
+* `jar cvf xxx.jar org com/test/A.class`
+* `jar cvf xxx.jar -C classes org -C classes com`
+
+**解压归档文件：`jar xvf xxx.jar`**
+
+* 不支持解压到指定目录
+
+**查看归档文件：`jar tf xxx.jar`**
+
+# 11 参考
 
 * [JVM性能调优监控工具jps、jstack、jmap、jhat、jstat、hprof使用详解](https://my.oschina.net/feichexia/blog/196575)
 * [Java应用打开debug端口](https://www.cnblogs.com/lzmrex/articles/12579862.html)
