@@ -570,12 +570,17 @@ categories:
                 <li><code>#Subquery</code></li>
             </td>
             <td style="text-align:left">
-                <li>Subquery coalesce</li>
+                <li>Subquery coalesce
+                    <ul>
+                        <li>Of same type, e.g. two exist subqueries</li>
+                        <li>Of different type, e.g. exist and not exist subqueries</li>
+                    </ul>
+                </li>
                 <li>Subquery removal using window functions</li>
                 <li>Null-aware anti join, NAAJ</li>
             </td>
-            <td style="text-align:left">👀</td>
-            <td style="text-align:left"></td>
+            <td style="text-align:left">👀/Page 5</td>
+            <td style="text-align:left">★★★★★</td>
         </tr>
             <tr>
             <td style="text-align:left">
@@ -626,6 +631,20 @@ categories:
             </td>
             <td style="text-align:left"></td>
             <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="https://www.vldb.org/2015/program/http://www.vldb.org/pvldb/vol8/p1704-elhelw.pdf">Optimization of Common Table Expressions in MPP Database Systems</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Optimizer</code></li>
+                <li><code>#CTE</code></li>
+            </td>
+            <td style="text-align:left">
+                <li></li>
+            </td>
+            <td style="text-align:left">👀</td>
             <td style="text-align:left"></td>
         </tr>
         <tr>
@@ -845,6 +864,9 @@ categories:
 * SubQuery
     * [Reusing Invariants: A New Strategy for Correlated Queries](https://dl.acm.org/doi/pdf/10.1145/276304.276309)
     * [On Optimizing an SQL-like Nested Query](https://dl.acm.org/doi/pdf/10.1145/319732.319745)
+* Join
+    * [The Complete Story of Joins (in HyPer)](https://www.btw2017.informatik.uni-stuttgart.de/slidesandpapers/F1-10-37/paper_web.pdf)
+    * [Adaptive Optimization of Very Large Join Queries](https://dsl.cds.iisc.ac.in/~course/TIDS/papers/hugejoins_SIGMOD2018.pdf)
 * Memory
     * [Efficient Use of Memory Bandwidth to Improve Network Processor Throughput](http://www.cs.ucr.edu/~bhuyan/cs162/LECTURE12b.pdf)
 * Oracle
