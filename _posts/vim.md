@@ -623,6 +623,7 @@ endif
 | `coc.nvim` | `LCP-Client` | https://github.com/neoclide/coc.nvim |
 | `coc-explorer` | `coc`插件，文件管理器 | https://github.com/weirongxu/coc-explorer |
 | `coc-java` | `coc`插件，`LSP Client For Java` | https://github.com/neoclide/coc-java |
+| `coc-pyright` | `coc`插件，`LSP Client For Python` | https://github.com/fannheyward/coc-pyright |
 | `coc-snippets` | `coc`插件，代码片段 | https://github.com/neoclide/coc-snippets |
 | `vim-snippets` | 提供了大量`snippet`的定义 | https://github.com/honza/vim-snippets |
 | `vimspector` | `Debug` | https://github.com/puremourning/vimspector |
@@ -1680,7 +1681,13 @@ call plug#end()
         * 假设子模块用到了`thrift`，那么需要在子模块的目录下放置`.classpath`，而不是在工程根目录放置`.classpath`
 * 有插件`org.eclipse.m2e:lifecycle-mapping`的时候，`jdt.ls`没法正常工作，目前暂未解决
 
-### 3.10.3 [coc-snippets](https://github.com/neoclide/coc-snippets)
+### 3.10.3 [coc-pyright](https://github.com/fannheyward/coc-pyright)
+
+**安装：进入vim界面后执行`:CocInstall coc-pyright`即可**
+
+**配置：默认的配置即可正常使用**
+
+### 3.10.4 [coc-snippets](https://github.com/neoclide/coc-snippets)
 
 **`coc-snippets`用于提供片段扩展功能（类似于`IDEA`中的`sout`、`psvm`、`.var`等等）**
 
@@ -1714,7 +1721,7 @@ call plug#end()
 * 在编辑模式下，输入片段后，按`<c-l>`触发片段扩展
 * `:CocList snippets`：查看所有可用的`snippet`
 
-#### 3.10.3.1 [vim-snippets](https://github.com/honza/vim-snippets)
+#### 3.10.4.1 [vim-snippets](https://github.com/honza/vim-snippets)
 
 `vim-snippets`插件提供了一系列`snippet`的定义
 
