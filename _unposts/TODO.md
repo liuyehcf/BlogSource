@@ -92,5 +92,4 @@ categories:
     * [Meaning of ‘i’,‘g’ and ‘c’ in Oracle Database Version](https://www.linkedin.com/pulse/meaning-ig-c-oracle-database-version-piyush-prakash)
     * [How to view the output of a running process in another bash session?](https://unix.stackexchange.com/questions/58550/how-to-view-the-output-of-a-running-process-in-another-bash-session)
     * [Speed up random memory access using prefetch](https://stackoverflow.com/questions/40950254/speed-up-random-memory-access-using-prefetch)
-    * 并行归并。假设有4路输入，先统计这4路输入的数据分布，找到3个分界点（切3刀变4块），每路输入按照这三个分界点filter数据，分别送入4路输入中。这样4路输入就不想交了，每路再进行归并，最后直接合并即可
     * 为什么min、max的最小复杂度就是NlogM，因为min、max需要维护有序性

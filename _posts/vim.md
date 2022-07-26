@@ -1962,11 +1962,12 @@ call plug#end()
     * `StackTrace`：左下角。按回车可展开线程堆栈
     * `Console`：标准输出，标准错误
 * **对于每个项目，我们都需要在项目的根目录提供一个`.vimspector.json`，来配置项目相关的`debug`参数**
+    * `configurations.<config_name>.default: true`，是否默认使用该配置。如果有多个配置项的话，不要设置这个
     * `C-Family`示例：
         ```json
         {
             "configurations": {
-                "Launch": {
+                "C-Family Launch": {
                     "adapter": {
                         "extends": "vscode-cpptools",
                         "sync_timeout": 100000,
@@ -1983,7 +1984,7 @@ call plug#end()
                         "MIMode": "gdb"
                     }
                 },
-                "Attach": {
+                "C-Family Attach": {
                     "adapter": {
                         "extends": "vscode-cpptools",
                         "sync_timeout": 100000,
@@ -2025,7 +2026,6 @@ call plug#end()
         },
         "configurations": {
             "Java Attach": {
-                "default": true,
                 "adapter": {
                     "extends": "java-debug-server",
                     "sync_timeout": 100000,
