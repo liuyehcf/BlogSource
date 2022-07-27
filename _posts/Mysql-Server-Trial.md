@@ -53,3 +53,4 @@ cd mysql-server/build/runtime_output_directory
 # 2 Tips
 
 1. `truncate`函数：`sql/my_decimal.h`中的`my_decimal_round`函数
+1. 如何用docker运行：`sudo docker run -dit -p 3306:3306 -e MYSQL_ROOT_PASSWORD='Abcd1234' -v <local_path>:/var/lib/mysql mysql:5.7.37 mysqld --lower_case_table_names=1`

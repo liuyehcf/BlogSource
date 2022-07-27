@@ -1630,6 +1630,17 @@ call plug#end()
 **使用：**
 
 * `?`：帮助文档
+* `j`：下移光标
+* `k`：上移光标
+* `h`：收起目录
+* `l`：展开目录或打开文件
+* `gh`：递归收起（全部收起）
+* `gl`：递归展开（全部展开)
+* `*`：选择/取消选择
+* `J`：选择/取消选择，并下移光标
+* `K`：选择/取消选择，并上移光标
+* `Il`：启用/关闭文件`label`预览
+* `Ic`：启用/关闭文件内容预览
 * `q`：退出
 * `a`：新建文件
 * `A`：新建目录
@@ -2019,6 +2030,8 @@ call plug#end()
     * `configurations.<config_name>.configuration.projectName`：对应`pom.xml`的项目名称。[Debugging Java with JDB or Vim](https://urfoex.blogspot.com/2020/08/debugging-java-with-jdb-or-vim.html)。如果这个参数对不上的话，那么在`Watches`页面添加`Watch`时，会报如下的错误
         * 未设置该参数时：`Result: Cannot evaluate because of java.lang.IllegalStateException: Cannot evaluate, please specify projectName in launch.json`
         * 填写错误的项目名称时：`Result: Cannot evaluate because of java.lang.IllegalStateException: Project <wrong name> cannot be found`
+        * [Visual Studio Code projectName](https://stackoverflow.com/questions/48490671/visual-studio-code-projectname)
+        * [Debugger for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-debug)
     ```json
     {
         "adapters": {
