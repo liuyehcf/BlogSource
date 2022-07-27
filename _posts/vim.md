@@ -2015,7 +2015,10 @@ call plug#end()
 * **`:CocCommand java.debug.vimspector.start`**
 * **对于每个项目，我们都需要在项目的根目录提供一个`.vimspector.json`，来配置项目相关的`debug`参数**
     * `adapters.java-debug-server.port`：是`java-debug-server`启动时需要占用的端口号，这里填占位符，在启动时会自动为其分配一个可用的端口号
-    * `configurations.configuration.port`：对应`Java`程序的`debug`端口号
+    * `configurations.<config_name>.configuration.port`：对应`Java`程序的`debug`端口号
+    * `configurations.<config_name>.configuration.projectName`：对应`pom.xml`的项目名称。[Debugging Java with JDB or Vim](https://urfoex.blogspot.com/2020/08/debugging-java-with-jdb-or-vim.html)。如果这个参数对不上的话，那么在`Watches`页面添加`Watch`时，会报如下的错误
+        * 未设置该参数时：`Result: Cannot evaluate because of java.lang.IllegalStateException: Cannot evaluate, please specify projectName in launch.json`
+        * 填写错误的项目名称时：`Result: Cannot evaluate because of java.lang.IllegalStateException: Project <wrong name> cannot be found`
     ```json
     {
         "adapters": {
@@ -2034,7 +2037,8 @@ call plug#end()
                 "configuration": {
                     "request": "attach",
                     "host": "127.0.0.1",
-                    "port": "5005"
+                    "port": "5005",
+                    "projectName": "${projectName}"
                 },
                 "breakpoints": {
                     "exception": {

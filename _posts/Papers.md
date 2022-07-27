@@ -576,10 +576,22 @@ categories:
                         <li>Of different type, e.g. exist and not exist subqueries</li>
                     </ul>
                 </li>
-                <li>Subquery removal using window functions</li>
+                <li>Execution enhancements:
+                    <ul>
+                        <li>Cost-based parallel group-by pushdown, GPD. Short circuit by HAVING clause</li>
+                    </ul>
+                </li>
+                <li>Subquery removal using window functions:
+                    <ul>
+                        <li>Correlated subsumed subquery, TPCH-Q2/Q17</li>
+                        <li>Uncorrelated subsumed subquery, TPCH-Q15</li>
+                        <li>Subsumed subquery in HAVING clause, TPCH-Q11</li>
+                        <li>Subquery Producing a Multi-Set, MAX(MAX), MIN(MIN)</li>
+                    </ul>
+                </li>
                 <li>Null-aware anti join, NAAJ</li>
             </td>
-            <td style="text-align:left">👀/Page 5</td>
+            <td style="text-align:left">👀/Chap 5 </td>
             <td style="text-align:left">★★★★★</td>
         </tr>
             <tr>
