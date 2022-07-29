@@ -589,9 +589,14 @@ categories:
                         <li>Subquery Producing a Multi-Set, MAX(MAX), MIN(MIN)</li>
                     </ul>
                 </li>
+                <li>Scalable parallel execution:
+                    <ul>
+                        <li>Grand-total window function optimization, which can be extended to low cardinality partition-by keys</li>
+                    </ul>
+                </li>
                 <li>Null-aware anti join, NAAJ</li>
             </td>
-            <td style="text-align:left">👀/Chap 5 </td>
+            <td style="text-align:left">✅</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
             <tr>
@@ -615,8 +620,17 @@ categories:
                 <li><code>#Optimizer</code></li>
                 <li><code>#Join</code></li>
             </td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
+            <td style="text-align:left">
+                <li>Outerjoin workloads:
+                    <ul>
+                        <li>Database merging, two-sided outerjoin</li>
+                        <li>Hierarchical views</li>
+                        <li>Nested queries</li>
+                        <li>Universal quantifiers</li>
+                    </ul>
+                </li>
+            </td>
+            <td style="text-align:left">👀</td>
             <td style="text-align:left"></td>
         </tr>
         <tr>

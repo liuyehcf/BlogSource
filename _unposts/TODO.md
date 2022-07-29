@@ -53,6 +53,8 @@ categories:
     * segment tree
         * https://www.geeksforgeeks.org/segment-tree-set-1-sum-of-given-range/
         * https://www.geeksforgeeks.org/segment-tree-set-1-range-minimum-query/
+    * 统计信息
+        * mcv, topn
 1. 体系结构
     * 内存屏障在汇编层面的表示
 1. cpp
