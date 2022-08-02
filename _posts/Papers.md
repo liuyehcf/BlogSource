@@ -416,10 +416,31 @@ categories:
         </tr>
         <tr>
             <td style="text-align:left">
+                <a href="/resources/paper/An-Overview-of-Query-Optimization-in-Relational-Systems.pdf">An Overview of Query Optimization in Relational Systems</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Optimizer</code></li>
+                <li><code>#Overview</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>query optimization can be viewed as a difficult search problem:
+                    <ul>
+                        <li>A space of plans</li>
+                        <li>A cost estimation technique</li>
+                        <li>An enumeration algorithm</li>
+                    </ul>
+                </li>
+            </td>
+            <td style="text-align:left">👀/Chap 3</td>
+            <td style="text-align:left">★★★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
                 <a href="/resources/paper/The-Cascades-Framework-For-Query-Optimization.pdf">The Cascades Framework for Query Optimization</a>
             </td>
             <td style="text-align:left">
                 <li><code>#Optimizer</code></li>
+                <li><code>#Framework</code></li>
             </td>
             <td style="text-align:left">
                 <li>Framework Concepts and Components</li>
@@ -434,6 +455,7 @@ categories:
             </td>
             <td style="text-align:left">
                 <li><code>#Optimizer</code></li>
+                <li><code>#Framework</code></li>
             </td>
             <td style="text-align:left">
                 <li>Framework Concepts and Components</li>
@@ -629,9 +651,16 @@ categories:
                         <li>Universal quantifiers</li>
                     </ul>
                 </li>
+                <li>Outerjoin optimizations:
+                    <ul>
+                        <li>Outerjoin simplification: LOJ can be rewritten as regular join if later operator discards the null-padded tuples. And this can be extended to ROJ and FOJ</li>
+                        <li>Join/Outerjoin associativity</li>
+                        <li>Generalized outerjoin</li>
+                    </ul>
+                </li>
             </td>
-            <td style="text-align:left">👀</td>
-            <td style="text-align:left"></td>
+            <td style="text-align:left">🤷🏻</td>
+            <td style="text-align:left">★★★</td>
         </tr>
         <tr>
             <td style="text-align:left">
@@ -886,7 +915,7 @@ categories:
 # 4 TODO
 
 * Survey
-    * [An Overview of Query Optimization in Relational Systems](https://dl.acm.org/doi/pdf/10.1145/275487.275492)
+    * [Query Evaluation Techniques for Large Databases](https://cgi.cse.unsw.edu.au/~cs9315/20T1/readings/query.pdf)
 * SubQuery
     * [Reusing Invariants: A New Strategy for Correlated Queries](https://dl.acm.org/doi/pdf/10.1145/276304.276309)
     * [On Optimizing an SQL-like Nested Query](https://dl.acm.org/doi/pdf/10.1145/319732.319745)
