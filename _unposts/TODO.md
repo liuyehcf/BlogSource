@@ -55,6 +55,9 @@ categories:
         * https://www.geeksforgeeks.org/segment-tree-set-1-range-minimum-query/
     * 统计信息
         * mcv, topn
+    * 物化视图
+        * [Understanding Materialized Views — Part 1](https://medium.com/event-driven-utopia/understanding-materialized-views-bb18206f1782)
+        * [Understanding Materialized Views — Part 2](https://medium.com/event-driven-utopia/understanding-materialized-views-part-2-ae957d40a403)
     * 其他
         * [Teradata中QUALIFY函数](https://zhuanlan.zhihu.com/p/53599236)
 1. 体系结构
@@ -97,3 +100,4 @@ categories:
     * [How to view the output of a running process in another bash session?](https://unix.stackexchange.com/questions/58550/how-to-view-the-output-of-a-running-process-in-another-bash-session)
     * [Speed up random memory access using prefetch](https://stackoverflow.com/questions/40950254/speed-up-random-memory-access-using-prefetch)
     * 为什么min、max的最小复杂度就是NlogM，因为min、max需要维护有序性
+    * https://github.com/scylladb/seastar

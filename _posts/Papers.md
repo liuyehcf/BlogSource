@@ -430,8 +430,20 @@ categories:
                         <li>An enumeration algorithm</li>
                     </ul>
                 </li>
+                <li>System R's enumeration algorithm comprises two important parts:
+                    <ul>
+                        <li>Dynamic programming to produce the optimal plan</li>
+                        <li>Interesting orders, the idea of which is later generalized to physical properties</li>
+                    </ul>
+                </li>
+                <li>Search space
+                    <ul>
+                        <li>Join sequences, including outerjoin and join, while outerjoin has more limitations</li>
+                        <li>SPJ with group-by, group-by push down</li>
+                    </ul>
+                </li>
             </td>
-            <td style="text-align:left">👀/Chap 3</td>
+            <td style="text-align:left">👀/4.2</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>
