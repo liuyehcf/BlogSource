@@ -440,8 +440,16 @@ categories:
                     <ul>
                         <li>Join sequences, including outerjoin and join, while outerjoin has more limitations</li>
                         <li>SPJ with group-by, group-by push down</li>
+                        <li>Reducing multi-block queries to single-block:
+                            <ul>
+                                <li>Merging views, <code>{Q=R⋈V|V=S⋈T} -> {Q=R⋈S⋈T}</code>, then may be freely reordered</li>
+                                <li>Merging nested subqueries, the generic way to process the correlated subqueries</li>
+                                <li>Using semijoin like techniques for optimizating multi-block queries</li>
+                            </ul>
+                        </li>
                     </ul>
                 </li>
+                <li>Statistics and cost estimation</li>
             </td>
             <td style="text-align:left">👀/4.2</td>
             <td style="text-align:left">★★★★★</td>
