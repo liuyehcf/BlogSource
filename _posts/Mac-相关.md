@@ -35,7 +35,15 @@ categories:
 
 `^ + ↑`
 
-## 1.6 显示隐藏文件夹
+## 1.6 启动台
+
+`F10`
+
+## 1.7 露出桌面
+
+`F11`
+
+## 1.8 显示隐藏文件夹
 
 `⌘ + ⇧ + .`
 
@@ -51,19 +59,19 @@ defaults write com.apple.finder AppleShowAllFiles -boolean false
 killall Finder//重启Finder
 ```
 
-## 1.7 微粒度音量调节
+## 1.9 微粒度音量调节
 
 `⌥ + ⇧ + 音量调节按键`
 
-## 1.8 应用图标抖动
+## 1.10 应用图标抖动
 
 在launchpad界面中，`⌃ + ⌥ + ⌘ + B`
 
-## 1.9 emoji
+## 1.11 emoji
 
 `⌃ ＋ ⌘ ＋ space`
 
-## 1.10 Page Up/Down
+## 1.12 Page Up/Down
 
 Home键：`Fn+←`
 End键：`Fn+→`
@@ -71,7 +79,7 @@ Page UP：`Fn+↑`
 Page DOWN：`Fn+↓`
 向前Delete：`Fn+delete`
  
-## 1.11 缩放窗口
+## 1.13 缩放窗口
 
 [Maximize window shortcut](https://apple.stackexchange.com/questions/372719/maximize-window-shortcut)
 
@@ -527,7 +535,15 @@ plugins=(<原有插件> zsh-autosuggestions)
 1. 光标形状
     * `Preferences`->`Profile`->`Text`->`Cursor`
 
-# 6 参考
+# 6 Karabiner-elements
+
+外接如`Filco`的键盘，需要将`win`以及`alt`这两个键位进行交换。其中`win`对应`command`键，`alt`对应`option`键
+
+* `Keys in pc keyboards - application` -> `Modifier keys - fn`
+* `Modifier keys left_command` -> `Modifier keys left_option`
+* `Modifier keys left_option` -> `Modifier keys left_command`
+
+# 7 参考
 
 * [Mac 下利用 Launchctl 自启动 mysql](http://squll369.iteye.com/blog/1965185)
 * [Mac 有哪些鲜为人知的使用技巧？](https://www.zhihu.com/question/26379660)
