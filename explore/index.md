@@ -63,6 +63,10 @@ date: 2018-02-05 09:25:59
 * [Compare Projects](https://ossinsight.io/compare/)
 * [db-fiddle](https://www.db-fiddle.com/)
 
+## 6.1 Blog
+
+* [Alex DeBrie](https://www.alexdebrie.com/)
+
 # 7 Cloud Native
 
 * [CloudNative 架构](http://team.jiunile.com/)

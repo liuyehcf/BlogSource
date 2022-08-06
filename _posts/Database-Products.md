@@ -513,6 +513,7 @@ categories:
 1. duckdb
 1. Zilliz
     * 向量数据库
+1. ksqlDB
 
 # 26 参考
 
