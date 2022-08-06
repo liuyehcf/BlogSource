@@ -101,3 +101,4 @@ categories:
     * [Speed up random memory access using prefetch](https://stackoverflow.com/questions/40950254/speed-up-random-memory-access-using-prefetch)
     * 为什么min、max的最小复杂度就是NlogM，因为min、max需要维护有序性
     * https://github.com/scylladb/seastar
+    * OEM/ODM/OBM
