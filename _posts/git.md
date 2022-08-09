@@ -526,3 +526,4 @@ git config --global core.quotepath false
 * [git 合并历史提交](https://www.cnblogs.com/woshimrf/p/git-rebase.html)
 * [Configuring diff tool with .gitconfig](https://stackoverflow.com/questions/6412516/configuring-diff-tool-with-gitconfig)
 * [寻找并删除 Git 记录中的大文件](https://harttle.land/2016/03/22/purge-large-files-in-gitrepo.html)
+* [Mergify](https://docs.mergify.com/)

@@ -21,8 +21,26 @@ categories:
 
 # 3 StarRocks
 
-## 3.1 优化器相关概念
+## 3.1 优化器
 
+1. `Scope`：类似于命名空间namespace
+1. `Relation`
+    * `ViewRelation`
+    * `TableRelation`
+    * `JoinRelation`
+    * `CTERelation`
+    * `SubqueryRelation`
+    * `QueryRelation`
+        * `SelectRelation`
+1. `Expr`
+1. `ScalarOperator`
+    * `ColumnRefOperator`
+1. `Operator`
+1. `Transformer`
+    * `QueryTransformer`
+    * `RelationTransformer`
+    * `SubqueryTransformer`
+1. `SqlToScalarOperatorTranslator`
 1. `DistributionType`
     * `ANY`
     * `BROADCAST`
