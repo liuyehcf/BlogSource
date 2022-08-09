@@ -66,6 +66,8 @@ date: 2018-02-05 09:25:59
 ## 6.1 Blog
 
 * [Alex DeBrie](https://www.alexdebrie.com/)
+* [Trino blog](https://trino.io/blog/)
+* [Clickhouse blog](https://clickhouse.com/blog)
 
 # 7 Cloud Native
 

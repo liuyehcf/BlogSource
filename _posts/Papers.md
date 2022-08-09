@@ -449,9 +449,46 @@ categories:
                         </li>
                     </ul>
                 </li>
-                <li>Statistics and cost estimation</li>
+                <li>Statistics and cost estimatio
+                    <ul>
+                        <li>Statistical summary is a logical property but the cost of a plan is a physical property</li>
+                        <li>Histogram
+                            <ul>
+                                <li>Equi-depth(height) is effective for either high or low skew data</li>
+                                <li>Histogram is working on single column, do not provide information on the correlations among columns. One option is to consider 2-dimensional histograms, which will cost much more space</li>
+                            </ul>
+                        </li>
+                        <li>Sampling
+                            <ul>
+                                <li>Sampling is estimation of statistics, the key challenge is to limit the error in estimation</li>
+                                <li>The task of estimating distinct values is provably error prone</li>
+                            </ul>
+                        </li>
+                        <li>Propagation of statistical information through operators</li>
+                        <li>Cost computation, CPU/Memory/IO/Paralleliasm</li>
+                    </ul>
+                </li>
+                <li>Enumeration architectures
+                    <ul>
+                        <li>Starburst
+                            <ul>
+                                <li>Query Graph Model(QGM)</li>
+                                <li>query rewrite phase, without cost info</li>
+                                <li>plan optimization phase, with estimated cost and physical properties, properties are propagated as plans are built bottom-up</li>
+                            </ul>
+                        </li>
+                        <li>Colcano/Cascades
+                            <ul>
+                                <li>Including two kinds of rules, transformation rules and implementation rules. And there is no clearly boundary between the two kinds of rules</li>
+                                <li>Logical properties, physical properties and cost are used during enumeration</li>
+                                <li>Use dynamic programming in a top-down way, memorization</li>
+                                <li>Goal-driven</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
             </td>
-            <td style="text-align:left">👀/4.2</td>
+            <td style="text-align:left">👀/7</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>
@@ -975,29 +1012,3 @@ categories:
     * [BlockQuicksort: Avoiding Branch Mispredictions in Quicksort](https://kclpure.kcl.ac.uk/portal/files/123577916/BlockQuicksort_Avoiding_Branch_Mispredictions_EDELKAMP_PublishedAugust2016_VoR_CC_BY_.pdf)
     * [Merge Path - A Visually Intuitive Approach to Parallel Merging](https://arxiv.org/pdf/1406.2628.pdf)
 * [Implementation of Two Semantic Query Optimization Techniques in DB2 Universal Database](https://www.researchgate.net/profile/Jarek-Gryz/publication/221309776_Implementation_of_Two_Semantic_Query_Optimization_Techniques_in_DB2_Universal_Database/links/0912f51279e7662532000000/Implementation-of-Two-Semantic-Query-Optimization-Techniques-in-DB2-Universal-Database.pdf)
-
-<!--
-items=("table" tbody "thead" "tr" "th" "td" "a" "li" "ul" "code")
-
-declare -A left_count=()
-declare -A right_count=()
-
-for item in ${items[@]}
-do
-    left_count[${item}]=0
-    right_count[${item}]=0
-done
-
-for item in ${items[@]}
-do
-    ((left_count[${item}]=$(cat _posts/Papers.md | grep -o -E "(<${item}>)|(<${item} )" | wc -l)))
-    ((right_count[${item}]=$(cat _posts/Papers.md | grep -o "</${item}>" | wc -l)))
-done
-
-for item in ${items[@]}
-do
-    if [ ${left_count[${item}]} -ne ${right_count[${item}]} ]; then
-        echo "'${item}' not match, ${left_count[${item}]}/${right_count[${item}]}"
-    fi
-done
--->
