@@ -220,6 +220,8 @@ categories:
         * `push`：对filter算子友好
             * 同样，相邻算子的逻辑会被内联成一个大函数，而对于`push`模型来说，分支更少，分支预测失败的概率小
         * [filter](/images/thinking/filter.png)
+1. Pipeline的含义
+    * 其初始含义是，CPU将指令执行拆成多个步骤，在预热后，CPU的每个部件（每个步骤对应一个物理部件）都可以并行执行，就像流水线的工人一样
 1. Parallelism
     * Instruction-Level Parallelism, ILP
     * Memory-Level Parallelism, MLP

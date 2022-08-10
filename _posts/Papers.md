@@ -24,7 +24,7 @@ categories:
             <td style="text-align:left">
                 <li></li>
             </td>
-            <td style="text-align:left">✅/👀</td>
+            <td style="text-align:left">✅/👀/🤷🏻</td>
             <td style="text-align:left">★★★</td>
         </tr>
 -->
@@ -121,9 +121,17 @@ categories:
                 <li><code>#Execution</code></li>
                 <li><code>#Vector Processing</code></li>
             </td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
+            <td style="text-align:left">
+                <li>How CPU works
+                    <ul>
+                        <li>Pipelining, branch, cache, memory access</li>
+                        <li>Super-scalar CPU can take multiple instructions into execution in parallel if they are independent, because CPU have more than one pipeline</li>
+                        <li>Radix-partitioned hash-join has cache-friendly memory access pattern</li>
+                    </ul>
+                </li>
+            </td>
+            <td style="text-align:left">👀/3</td>
+            <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>
             <td style="text-align:left">
@@ -487,8 +495,16 @@ categories:
                         </li>
                     </ul>
                 </li>
+                <li>Beyound the fundamentals
+                    <ul>
+                        <li>Distributed and parallel databases, replication for physical distribution and parallelism for scale-up</li>
+                        <li>User defined functions, UDF. Bring problems to cost estimation</li>
+                        <li>Materialized Views</li>
+                        <li>Defer generation of complete plans subject to availability of runtime information</li>
+                    </ul>
+                </li>
             </td>
-            <td style="text-align:left">👀/7</td>
+            <td style="text-align:left">✅</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>
