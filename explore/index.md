@@ -102,7 +102,7 @@ date: 2018-02-05 09:25:59
   <tr> <td>FWD</td> <td>Forward Declaration</td> <td></td> </tr>
   <tr> <td>SMT</td> <td>Simultaneous Multithreading</td> <td></td> </tr>
   <tr> <td></td> <td></td> <td></td> </tr>
-  <tr> <th colspan="3" align="center">职位</th> </tr>
+  <tr> <th colspan="3" align="center">Position</th> </tr>
   <tr> <td>R&D</td> <td>Research and Development</td> <td></td> </tr>
   <tr> <td>SA</td> <td>Solution Architect</td> <td></td> </tr>
   <tr> <td>SRE</td> <td>Site Reliability Engineering </br> (Server Restart Engineer😁)</td> <td></td> </tr>

@@ -13,7 +13,7 @@ categories:
 
 1. Linux-常用命令
     * numactl --hardware
-    * nm -C
+    * gprof
 1. 性能分析
     * bcc
     * perf
@@ -60,6 +60,7 @@ categories:
         * [Understanding Materialized Views — Part 2](https://medium.com/event-driven-utopia/understanding-materialized-views-part-2-ae957d40a403)
     * 其他
         * [Teradata中QUALIFY函数](https://zhuanlan.zhihu.com/p/53599236)
+        * [Streaming Data Warehouse 存储：需求与架构](https://mp.weixin.qq.com/s/ptRJY4jAmZrDmwMYCd9mjA)
 1. 体系结构
     * 内存屏障在汇编层面的表示
 1. cpp

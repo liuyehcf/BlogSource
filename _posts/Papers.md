@@ -129,6 +129,11 @@ categories:
                         <li>Radix-partitioned hash-join has cache-friendly memory access pattern</li>
                     </ul>
                 </li>
+                <li>Microbenchmark: TPC-H Query 1
+                    <ul>
+                        <li>Full materialization may offset the benefit from the vectorization, because memory access becomes a bottleneck when bandwidth is full</li>
+                    </ul>
+                </li>
             </td>
             <td style="text-align:left">👀/3</td>
             <td style="text-align:left">★★★★★</td>
@@ -561,7 +566,7 @@ categories:
                 <li>Easy to integrate into other systems</li>
                 <li>Parallel Optimization</li>
             </td>
-            <td style="text-align:left"></td>
+            <td style="text-align:left">👀</td>
             <td style="text-align:left">★★★</td>
         </tr>
         <tr>

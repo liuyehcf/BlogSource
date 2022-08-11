@@ -1148,7 +1148,23 @@ ROOT=$(cd "$ROOT"; pwd)
 * `objdump -drwCS main.o`
 * `objdump -drwCS -M intel main.o`
 
-## 2.33 iconf
+## 2.33 nm
+
+该工具用于查看符号表
+
+**示例：**
+
+* `nm -C main`
+
+## 2.34 strings
+
+该工具用于查看二进制文件包含的所有字符串信息
+
+**示例：**
+
+* `strings main`
+
+## 2.35 iconf
 
 **参数说明：**
 
@@ -1164,7 +1180,7 @@ ROOT=$(cd "$ROOT"; pwd)
 
 * `iconv -f gbk -t utf-8 s.txt > t.txt`
 
-## 2.34 expect
+## 2.36 expect
 
 expect是一个自动交互的工具，通过编写自定义的配置，就可以实现自动填充数据的功能
 
