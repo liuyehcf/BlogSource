@@ -131,11 +131,17 @@ categories:
                 </li>
                 <li>Microbenchmark: TPC-H Query 1
                     <ul>
+                        <li>Binary Association Table, BAT</li>
                         <li>Full materialization may offset the benefit from the vectorization, because memory access becomes a bottleneck when bandwidth is full</li>
                     </ul>
                 </li>
+                <li>Vectorized Query Processor
+                    <ul>
+                        <li>Chunk at a time, cache-resident data</li>
+                    </ul>
+                </li>
             </td>
-            <td style="text-align:left">👀/3</td>
+            <td style="text-align:left">👀/4.1.2</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>
@@ -567,7 +573,7 @@ categories:
                 <li>Parallel Optimization</li>
             </td>
             <td style="text-align:left">👀</td>
-            <td style="text-align:left">★★★</td>
+            <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>
             <td style="text-align:left">

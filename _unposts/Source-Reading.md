@@ -41,10 +41,16 @@ categories:
     * `RelationTransformer`
     * `SubqueryTransformer`
 1. `SqlToScalarOperatorTranslator`
+1. `OptimizerTask`
+    * `OptimizeExpressionTask`
+    * `EnforceAndCostTask`：基于物理`Plan`，计算`Cost`、裁剪`Cost`，以及根据`Property`插入`Enforence`节点
+    * `OptimizeGroupTask`：空间探索
+    * `DeriveStatsTask`：基于逻辑`Plan`，自底向上计算统计信息
+    * `ApplyRuleTask`：执行Rule
 1. `DistributionType`
     * `ANY`
     * `BROADCAST`
-    * `SHUFFLE`：Hash
+    * `SHUFFLE`：`Hash`
     * `GATHER`：例如无`Partition-By`的窗口函数
 1. `HashDistributionDesc.SourceType`
     * `LOCAL`，来自`Scan`节点的`Hash`属性
@@ -52,11 +58,12 @@ categories:
     * `SHUFFLE_JOIN`，来自`Join Predicate`的`Hash`属性
     * `BUCKET`，来自`Non-Scan`节点的`Hash`属性，采用了与存储层相同的`Hash`算法
     * `SHUFFLE_ENFORCE`，由于前后算子`Hash`属性不匹配，而插入的`Hash`属性
+    * 为什么要用2种不同的hash算法？因为需要获得更好的散列度
 1. `JoinNode.DistributionMode`
     * `NONE`
     * `BROADCAST`
     * `PARTITIONED`
-    * `LOCAL_HASH_BUCKET`
+    * `LOCAL_HASH_BUCKET`：以存储层的`Hash`算法得到的分布来进行散列
     * `SHUFFLE_HASH_BUCKET`
     * `COLOCATE`
     * `REPLICATED`

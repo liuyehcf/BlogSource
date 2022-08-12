@@ -96,6 +96,7 @@ categories:
 1. 围绕这几个方面做的调研
 1. scale方面的问题（规模上去后，是否会出现一些性能瓶颈）
 1. 解释成本
+1. 端到端测试，单元测试，集成测试
 
 # 3 方法论
 
@@ -226,6 +227,7 @@ categories:
         * [filter](/images/thinking/filter.png)
 1. Pipeline的含义
     * 其初始含义是，CPU将指令执行拆成多个步骤，在预热后，CPU的每个部件（每个步骤对应一个物理部件）都可以并行执行，就像流水线的工人一样
+    * 对于数据库执行器来说，如果每个算子要计算全量的数据（物化）后再吐给后续算子的话，那效率是极低的，因为每个时刻只有一个算子在工作。如果将数据改成流式传输，那么算子可以并行执行，就跟CPU流水线一样
 1. Parallelism
     * Instruction-Level Parallelism, ILP
     * Memory-Level Parallelism, MLP
