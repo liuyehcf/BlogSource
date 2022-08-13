@@ -56,8 +56,6 @@ date: 2018-02-05 09:25:59
     * [数据库学习资料（持续更新中）](https://blog.bcmeng.com/post/database-learning.html)
 * [satanson](https://www.zhihu.com/people/grakra) - ★★★★★
     * [有什么好的数据库学习路径推荐？](https://www.zhihu.com/question/451898647/answer/1813178673)
-* [ClickHouse Blog](https://clickhouse.com/docs/zh/whats-new/changelog/)
-* [Develop your own Database](https://hpi.de/plattner/teaching/archive/winter-term-201819/develop-your-own-database.html)
 * Celebrity
     * `Andy Pavlo`：顶尖的数据库领域专家，执教CMU数据库系统相关课程
 * [Compare Projects](https://ossinsight.io/compare/)
@@ -68,6 +66,24 @@ date: 2018-02-05 09:25:59
 * [Alex DeBrie](https://www.alexdebrie.com/)
 * [Trino blog](https://trino.io/blog/)
 * [Clickhouse blog](https://clickhouse.com/blog)
+
+## 6.2 其他
+
+* [Meaning of ‘i’,‘g’ and ‘c’ in Oracle Database Version](https://www.linkedin.com/pulse/meaning-ig-c-oracle-database-version-piyush-prakash)
+* [数据库内核杂谈](https://www.infoq.cn/theme/46)
+* [Develop your own Database](https://hpi.de/plattner/teaching/archive/winter-term-201819/develop-your-own-database.html)
+* [ClickHouse/ClickBench](https://github.com/ClickHouse/ClickBench)
+* [AlloyDB for PostgreSQL under the hood: Intelligent, database-aware storage](https://cloud.google.com/blog/products/databases/alloydb-for-postgresql-intelligent-scalable-storage)
+* Segment Tree
+    * [Segment Tree | Set 1 (Sum of given range)](https://www.geeksforgeeks.org/segment-tree-set-1-sum-of-given-range/)
+    * [Segment Tree | Set 2 (Range Minimum Query)](https://www.geeksforgeeks.org/segment-tree-set-1-range-minimum-query/)
+    * 为什么`min`、`max`的最小复杂度就是`NlogM`，因为`min`、`max`需要维护有序性
+* Materialized Views
+    * [Understanding Materialized Views — Part 1](https://medium.com/event-driven-utopia/understanding-materialized-views-bb18206f1782)
+    * [Understanding Materialized Views — Part 2](https://medium.com/event-driven-utopia/understanding-materialized-views-part-2-ae957d40a403)
+* [Streaming Data Warehouse 存储：需求与架构](https://mp.weixin.qq.com/s/ptRJY4jAmZrDmwMYCd9mjA)
+* [Teradata中QUALIFY函数](https://zhuanlan.zhihu.com/p/53599236)
+* [LSM树详解](https://zhuanlan.zhihu.com/p/181498475)
 
 # 7 Cloud Native
 
@@ -101,6 +117,7 @@ date: 2018-02-05 09:25:59
   <tr> <td>SLA</td> <td>Service Level Agreement</td> <td></td> </tr>
   <tr> <td>FWD</td> <td>Forward Declaration</td> <td></td> </tr>
   <tr> <td>SMT</td> <td>Simultaneous Multithreading</td> <td></td> </tr>
+  <tr> <td>OEM/ODM/OBM</td> <td>Original Equipment/Design/Brand Manufacturer</td> <td></td> </tr>
   <tr> <td></td> <td></td> <td></td> </tr>
   <tr> <th colspan="3" align="center">Position</th> </tr>
   <tr> <td>R&D</td> <td>Research and Development</td> <td></td> </tr>

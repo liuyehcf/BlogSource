@@ -482,9 +482,13 @@ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Crese
 
 [Git Large File Storage](https://git-lfs.github.com/)
 
-# 16 Tips
+# 16 git-worktree
 
-## 16.1 修改diff工具
+[git-worktree](https://git-scm.com/docs/git-worktree)
+
+# 17 Tips
+
+## 17.1 修改diff工具
 
 **项目地址：[github-icdiff](https://github.com/jeffkaufman/icdiff)**
 
@@ -504,7 +508,7 @@ git config --global icdiff.options '--highlight --line-numbers'
 
 * 用`git icdiff`代替`git diff`即可
 
-## 16.2 中文显示为8进制形式的问题
+## 17.2 中文显示为8进制形式的问题
 
 在Windows中，git bash打印的中文可能表示成`\+三个数字`的形式，即八进制表示
 
@@ -514,7 +518,7 @@ git config --global icdiff.options '--highlight --line-numbers'
 git config --global core.quotepath false
 ```
 
-# 17 参考
+# 18 参考
 
 * [git官方文档](https://git-scm.com/docs/gitignore)
 * [git教程](https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/)

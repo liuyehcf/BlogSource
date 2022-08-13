@@ -231,6 +231,16 @@ categories:
 1. Pipeline的含义
     * 其初始含义是，CPU将指令执行拆成多个步骤，在预热后，CPU的每个部件（每个步骤对应一个物理部件）都可以并行执行，就像流水线的工人一样
     * 对于数据库执行器来说，如果每个算子要计算全量的数据（物化）后再吐给后续算子的话，那效率是极低的，因为每个时刻只有一个算子在工作。如果将数据改成流式传输，那么算子可以并行执行，就跟CPU流水线一样
+1. Vectorization vs. Codegen
+    * codegen
+        * 复杂表达式计算，例如`a+b+c`，正常需要先计算`a+b`，其结果再加`c`。而利用`codegen`可以生成定制的处理过程，直接处理`a+b+c`，避免物化中间结果
+        * 算子的内敛。例如`scan`、`filter`、`aggregate`，正常是三个算子，利用`codegen`可以把三个逻辑放一起，用一个大循环搞定，同样避免物化中间结果
+        * 实现方式：生成中间代码，再利用LLVM编译成二进制
+    * Vectorization
+        * 无法向量化的场景
+            * 复杂的表达式
+            * 复杂的分支
+            * data alignment
 1. Parallelism
     * Instruction-Level Parallelism, ILP
     * Memory-Level Parallelism, MLP
