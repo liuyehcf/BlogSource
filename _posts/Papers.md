@@ -137,11 +137,13 @@ categories:
                 </li>
                 <li>Vectorized Query Processor
                     <ul>
-                        <li>Chunk at a time, cache-resident data</li>
+                        <li>Chunk at a time, cache-resident data, vector size, range from 1k to 8k, works well</li>
+                        <li>Data in vertically fragmented form</li>
+                        <li>MonetDB Instruction Language, MIL</li>
                     </ul>
                 </li>
             </td>
-            <td style="text-align:left">👀/4.1.2</td>
+            <td style="text-align:left">✅</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>
