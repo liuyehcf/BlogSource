@@ -571,10 +571,28 @@ categories:
                 <li><code>#Optimizer</code></li>
             </td>
             <td style="text-align:left">
-                <li>Easy to integrate into other systems</li>
-                <li>Parallel Optimization</li>
+                <li>Orca Architecture
+                    <ul>
+                        <li>Ability to run outside the database system as a stand-alone optimizer through Data eXchange Language(DXL)</li>
+                        <li>Memo</li>
+                        <li>Search and Job Scheduler, including three main steps: exploration, implementation, optimization</li>
+                        <li>Transformations</li>
+                        <li>Property Enforcement, including logical property(output columns) and physical property(sort order, distribution)</li>
+                        <li>Metadata Cache</li>
+                        <li>GPOS</li>
+                    </ul>
+                </li>
+                <li>Optimization workflow
+                    <ul>
+                        <li>Exploration, possibly creating new group expressions and new groups into memo, such as Join Commutativity Rule/</li>
+                        <li>Statistics Derivation, used to derive estimates for cardinality and data skew</li>
+                        <li>Implementation, shifting from logical to physical</li>
+                        <li>Optimization, properties enforcement and cost computation</li>
+                    </ul>
+                </li>
+                <li>Parallel query optimization</li>
             </td>
-            <td style="text-align:left">👀</td>
+            <td style="text-align:left">👀/5</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>

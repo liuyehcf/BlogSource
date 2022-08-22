@@ -85,6 +85,10 @@ date: 2018-02-05 09:25:59
 * [Teradata中QUALIFY函数](https://zhuanlan.zhihu.com/p/53599236)
 * [LSM树详解](https://zhuanlan.zhihu.com/p/181498475)
 
+| Abbrevation | Explanation |
+|:--|:--|
+| ETL | ETL, which stands for extract, transform and load |
+
 # 7 Cloud Native
 
 * [CloudNative 架构](http://team.jiunile.com/)
