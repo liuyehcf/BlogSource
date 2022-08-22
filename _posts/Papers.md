@@ -794,7 +794,7 @@ categories:
         </tr>
         <tr>
             <td style="text-align:left">
-                <a href="https://www.vldb.org/2015/program/http://www.vldb.org/pvldb/vol8/p1704-elhelw.pdf">Optimization of Common Table Expressions in MPP Database Systems</a>
+                <a href="/resources/paper/Optimization-of-Common-Table-Expressions-in-MPP-Database-Systems.pdf">Optimization of Common Table Expressions in MPP Database Systems</a>
             </td>
             <td style="text-align:left">
                 <li><code>#Optimizer</code></li>
