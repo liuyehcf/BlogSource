@@ -590,9 +590,9 @@ categories:
                         <li>Optimization, properties enforcement and cost computation</li>
                     </ul>
                 </li>
-                <li>Parallel query optimization</li>
+                <li>Parallel query optimization, task dependency</li>
             </td>
-            <td style="text-align:left">👀/5</td>
+            <td style="text-align:left">✅</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>

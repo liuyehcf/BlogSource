@@ -422,8 +422,10 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
 1. **`-std=<std_version>`：指定标注库类型以及版本信息**
     * 例如`-std=gnu++17`
 1. **`-W<xxx>`：warning提示**
-    * `-Wall`：开启所有warning提示
+    * `-Wall`：启用大部分warning提示（部分warning无法通过该参数默认启用）
     * `-Wno<xxx>`：关闭指定种类的warning提示
+    * `-Werror`：所有warning变为error（会导致编译失败）
+    * `-Werror=<xxx>`：指定某个warning变为error（会导致编译失败）
 1. **`-D <macro_name>[=<macro_definition>]`：定义宏**
     * 例如`-D MY_DEMO_MACRO`、`-D MY_DEMO_MACRO=2`、`-D 'MY_DEMO_MACRO="hello"'`、`-D 'ECHO(a)=(a)'`
 1. **`-U <macro_name>`：取消宏定义**
