@@ -67,7 +67,7 @@ date: 2018-02-05 09:25:59
 * [Trino blog](https://trino.io/blog/)
 * [Clickhouse blog](https://clickhouse.com/blog)
 
-## 6.2 其他
+## 6.2 Other
 
 * [Meaning of ‘i’,‘g’ and ‘c’ in Oracle Database Version](https://www.linkedin.com/pulse/meaning-ig-c-oracle-database-version-piyush-prakash)
 * [数据库内核杂谈](https://www.infoq.cn/theme/46)
@@ -85,10 +85,6 @@ date: 2018-02-05 09:25:59
 * [Teradata中QUALIFY函数](https://zhuanlan.zhihu.com/p/53599236)
 * [LSM树详解](https://zhuanlan.zhihu.com/p/181498475)
 
-| Abbrevation | Explanation |
-|:--|:--|
-| ETL | ETL, which stands for extract, transform and load |
-
 # 7 Cloud Native
 
 * [CloudNative 架构](http://team.jiunile.com/)
@@ -99,7 +95,7 @@ date: 2018-02-05 09:25:59
 
 * [Tutorials for Software Developers and Technopreneurs](http://tutorials.jenkov.com/)
 
-# 9 Else
+# 9 Uncategorized
 
 * [How to Read a Paper.pdf](/resources/paper/How-to-Read-a-Paper.pdf) - ★★★★★
 * [陈皓-耗子哥](https://coolshell.cn/articles/author/haoel)
@@ -107,8 +103,9 @@ date: 2018-02-05 09:25:59
 * [Richard Stallman-Make作者](https://www.stallman.org/)
 * [BOT Man | John Lee](https://bot-man-jl.github.io/articles/)
 * `Jeff Dean`：Google Research Scientists and Engineers
+* `Fabrice Bellard`：A legend programmer, author of FFmpeg, QEMU
 
-# 10 缩写表
+# 10 Abbreviation
 
 <table>
   <tr> <th width="80px" align="center">缩写</th> <th width="240px" align="center">全称</th> <th width="200px" align="center">其他</th> </tr>
@@ -141,4 +138,6 @@ date: 2018-02-05 09:25:59
   <tr> <td>TL;DR</td> <td>Too Long; Didn't Read</td> <td>太长懒得看。也有很多文档在做简略描述之前会写这么一句</td> </tr>
   <tr> <td>TBD</td> <td>To Be Done(or Defined/Discussed/Decided/Determined)</td> <td>根据语境不同意义有所区别，但一般都是还没搞定的意思</td> </tr>
   <tr> <td>RC</td> <td>Release Candidate</td> <td>有可能成为稳定版本的版本</td> </tr>
+  <tr> <th colspan="3" align="center">Uncategorized</th> </tr>
+  <tr> <td>ETL</td> <td>Extract, Transform and Load</td> <td></td> </tr>
 </table>

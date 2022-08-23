@@ -801,10 +801,19 @@ categories:
                 <li><code>#CTE</code></li>
             </td>
             <td style="text-align:left">
-                <li></li>
+                <li>The purpose of CTEs is to avoid re-execution of expressions referenced more than once within a query</li>
+                <li>CTEs achieve two goals, making query more readable, making execution more efficient</li>
+                <li>CTEs follow a producer/consumer model</li>
+                <li>Chanllenges
+                    <ul>
+                        <li>Deadlock hazard, the optimizer needs to guarantee that no two or more processes could be waiting on each other during query execution</li>
+                        <li>Enumerating inlining alternatives, determining which ones need to be inline (for example, inline to utilize index) and which ones don't</li>
+                        <li>Contextualized Optimization</li>
+                    </ul>
+                </li>
             </td>
-            <td style="text-align:left">👀</td>
-            <td style="text-align:left"></td>
+            <td style="text-align:left">👀/3</td>
+            <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>
             <td style="text-align:left">
