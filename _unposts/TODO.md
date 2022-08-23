@@ -26,6 +26,9 @@ categories:
         * [kcachegrind](https://kcachegrind.github.io/html/Usage.html)
         * [Tips for the Profiling/Optimization process](https://kcachegrind.github.io/html/Tips.html)
 1. 数据库
+    * 模型
+        * 星星模型
+        * 雪花模型
     * 相关概念
         * 确定性事务
         * 2pc
@@ -52,6 +55,18 @@ categories:
     * struct alising
     * futex
     * [apache-arrow](https://github.com/apache/arrow)
+    * strage case
+        ```cpp
+        #include <random>
+
+        int main() {
+            std::default_random_engine e;
+            std::normal_distribution<> n{10, 10};
+            int32_t width = n(e);
+            return n(e);
+        }
+        ```
+
 1. java
 1. llvm
     * [llvm-doc](https://llvm.org/docs/)
