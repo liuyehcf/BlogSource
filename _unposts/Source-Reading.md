@@ -40,7 +40,7 @@ categories:
     * `QueryTransformer`
     * `RelationTransformer`
     * `SubqueryTransformer`
-1. `SqlToScalarOperatorTranslator`
+1. `SqlToScalarOperatorTranslator`：将`Expr`转换成`ScalarOperator`
 1. `OptimizerTask`
     * `OptimizeExpressionTask`
     * `EnforceAndCostTask`：基于物理`Plan`，计算`Cost`、裁剪`Cost`，以及根据`Property`插入`Enforence`节点

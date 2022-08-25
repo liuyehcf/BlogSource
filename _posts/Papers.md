@@ -811,8 +811,18 @@ categories:
                         <li>Contextualized Optimization</li>
                     </ul>
                 </li>
+                <li>CTE representation
+                    <ul>
+                        <li>CTEProducer</li>
+                        <li>CTEConsumer</li>
+                        <li>CTEAnchor</li>
+                        <li>Sequence</li>
+                        <li>For case of CTE inline, CTEAnchor is removed and CTEConsumer is replaced with the whole CTE definition</li>
+                        <li>For case of CTE no-inline, CTEAnchor is replaced by Sequence operator which has the CTEProducer as its left child and the original child of the CTEAnchor as its second child</li>
+                    </ul>
+                </li>
             </td>
-            <td style="text-align:left">👀/3</td>
+            <td style="text-align:left">👀/5</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>
@@ -1021,11 +1031,38 @@ categories:
     </tbody>
 </table>
 
-# 3 Less Reference
+# 3 Compile Tech
+
+<table>
+    <thead>
+        <tr>
+            <th style="text-align:left">题目</th>
+            <th style="text-align:left">分类</th>
+            <th style="text-align:left">概要</th>
+            <th style="text-align:left">状态</th>
+            <th style="text-align:left">推荐级别</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="text-align:left">
+                <a href="https://www.researchgate.net/profile/Terence-Parr/publication/273188534_Adaptive_LL_Parsing_The_Power_of_Dynamic_Analysis/links/58b85f9745851591c5d7fd18/Adaptive-LL-Parsing-The-Power-of-Dynamic-Analysis.pdf">Adaptive LL (*) parsing: the power of dynamic analysis</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#LL</code></li>
+            </td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+        </tr>
+    </tbody>
+</table>
+
+# 4 Less Reference
 
 1. [Filter Representation in Vectorized Query Execution](https://dl.acm.org/doi/abs/10.1145/3465998.3466009)
 
-# 4 TODO
+# 5 TODO
 
 * Survey
     * [Query Evaluation Techniques for Large Databases](https://cgi.cse.unsw.edu.au/~cs9315/20T1/readings/query.pdf)
