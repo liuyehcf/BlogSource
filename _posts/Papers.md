@@ -806,7 +806,7 @@ categories:
                 <li>CTEs follow a producer/consumer model</li>
                 <li>Chanllenges
                     <ul>
-                        <li>Deadlock hazard, the optimizer needs to guarantee that no two or more processes could be waiting on each other during query execution</li>
+                        <li>Deadlock hazard, operator's execution order conflicts with the CTE's execution order</li>
                         <li>Enumerating inlining alternatives, determining which ones need to be inline (for example, inline to utilize index) and which ones don't</li>
                         <li>Contextualized Optimization</li>
                     </ul>
@@ -821,8 +821,15 @@ categories:
                         <li>For case of CTE no-inline, CTEAnchor is replaced by Sequence operator which has the CTEProducer as its left child and the original child of the CTEAnchor as its second child</li>
                     </ul>
                 </li>
+                <li>Plan enumeration
+                    <ul>
+                        <li>Transformation rules, CTEAnchor/Sequence/NoOp in one group, CTEConsumer/CopyOfCTEDefinition in one group</li>
+                        <li>Avoid invalid plans, such as CTEProducer without CTEConsumer, Sequence without CTEConsumer, NoOp with CTEConsumer(inlined)</li>
+                        <li>Optimization, predicate push down, always inline single-use CTEs, elimination of unused CTEs</li>
+                    </ul>
+                </li>
             </td>
-            <td style="text-align:left">👀/5</td>
+            <td style="text-align:left">👀/7</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>

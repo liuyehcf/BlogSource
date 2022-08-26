@@ -45,6 +45,9 @@ categories:
         * taxi
     * 统计信息
         * mcv, most common value, topn
+    * Join
+        * RuntimeFilter
+        * 左表输出了0行数据，那么可以提前结束。这种可以通过统计信息估算，将小表尽可能放在右边，避免这种情况出现
 1. 体系结构
     * 内存屏障在汇编层面的表示
 1. cpp

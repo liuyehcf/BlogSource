@@ -32,15 +32,16 @@ categories:
     * `SubqueryRelation`
     * `QueryRelation`
         * `SelectRelation`
-1. `Expr`
-1. `ScalarOperator`
+1. `Expr`：表达式的基类
+1. `ScalarOperator`：与`Expr`类似，由新`Analyzer`引入的一套对象系统
     * `ColumnRefOperator`
 1. `Operator`
 1. `Transformer`
     * `QueryTransformer`
     * `RelationTransformer`
     * `SubqueryTransformer`
-1. `SqlToScalarOperatorTranslator`：将`Expr`转换成`ScalarOperator`
+    * `WindowTransformer`
+    * `SqlToScalarOperatorTranslator`：将`Expr`转换成`ScalarOperator`
 1. `OptimizerTask`
     * `OptimizeExpressionTask`
     * `EnforceAndCostTask`：基于物理`Plan`，计算`Cost`、裁剪`Cost`，以及根据`Property`插入`Enforence`节点
@@ -59,11 +60,11 @@ categories:
     * `BUCKET`，来自`Non-Scan`节点的`Hash`属性，采用了与存储层相同的`Hash`算法
     * `SHUFFLE_ENFORCE`，由于前后算子`Hash`属性不匹配，而插入的`Hash`属性
     * 为什么要用2种不同的hash算法？因为需要获得更好的散列度
-1. `JoinNode.DistributionMode`
+1. `JoinNode.DistributionMode`：描述数据的分布模式
     * `NONE`
     * `BROADCAST`
     * `PARTITIONED`
-    * `LOCAL_HASH_BUCKET`：以存储层的`Hash`算法得到的分布来进行散列
-    * `SHUFFLE_HASH_BUCKET`
-    * `COLOCATE`
+    * `LOCAL_HASH_BUCKET`：以存储层的`Hash`算法散列得到的数据分布
+    * `SHUFFLE_HASH_BUCKET`：以Shuffle的`Hash`算法散列后得到的数据分布
+    * `COLOCATE`：互为colocate的表，相同的key对应的数据一定在同一个机器上
     * `REPLICATED`
