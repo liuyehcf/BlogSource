@@ -828,8 +828,21 @@ categories:
                         <li>Optimization, predicate push down, always inline single-use CTEs, elimination of unused CTEs</li>
                     </ul>
                 </li>
+                <li>Contextualized optimization
+                    <ul>
+                        <li>In ORCA, CTEs are considered later after regular optimization is done</li>
+                        <li>Enforcing physical properties, pushing the CTEConsumer's distribution requirement to the CTEProducer</li>
+                        <li>Cost Estimation</li>
+                    </ul>
+                </li>
+                <li>CTE based optimizations
+                    <ul>
+                        <li>CTE-Generating transformations, such as two count(distinct)</li>
+                        <li>Common subexpression elimination</li>
+                    </ul>
+                </li>
             </td>
-            <td style="text-align:left">👀/7</td>
+            <td style="text-align:left">✅</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>

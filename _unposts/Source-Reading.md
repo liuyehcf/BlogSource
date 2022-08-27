@@ -35,13 +35,16 @@ categories:
 1. `Expr`：表达式的基类
 1. `ScalarOperator`：与`Expr`类似，由新`Analyzer`引入的一套对象系统
     * `ColumnRefOperator`
-1. `Operator`
+1. `ScalarOperatorEvaluator`：常量计算
 1. `Transformer`
     * `QueryTransformer`
     * `RelationTransformer`
     * `SubqueryTransformer`
     * `WindowTransformer`
     * `SqlToScalarOperatorTranslator`：将`Expr`转换成`ScalarOperator`
+1. `Operator`
+    * `PhysicalOperator`
+    * `LogicalOperator`
 1. `OptimizerTask`
     * `OptimizeExpressionTask`
     * `EnforceAndCostTask`：基于物理`Plan`，计算`Cost`、裁剪`Cost`，以及根据`Property`插入`Enforence`节点
