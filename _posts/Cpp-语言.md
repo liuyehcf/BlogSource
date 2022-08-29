@@ -1638,16 +1638,26 @@ int main() {
 
 ```cpp
 #include <iostream>
+#include <random>
+#include <typeinfo>
 #include <vector>
 
-template <template <typename> typename T, typename F>
-void foo(const T<F>& value) {
-    std::cout << "T<F>'s type=" << typeid(T<F>).name() << std::endl;
+template <template <typename, typename> typename V, typename T, typename A>
+void print_last_value(V<T, A>& v) {
+    const T& value = v.back();
+    std::cout << value << std::endl;
+}
+
+template <template <typename> typename V, typename T>
+void print_type(const V<T>& value) {
+    std::cout << "V<T>'s type=" << typeid(V<T>).name() << std::endl;
+    std::cout << "T's type=" << typeid(T).name() << std::endl;
 }
 
 int main() {
-    std::vector<int> v;
-    foo(v);
+    std::vector<int> v{1, 2, 3};
+    print_last_value(v);
+    print_type(v);
     return 0;
 }
 ```

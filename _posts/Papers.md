@@ -775,9 +775,11 @@ categories:
                 <li><code>#Join</code></li>
                 <li><code>#Aggregate</code></li>
             </td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
+            <td style="text-align:left">
+                <li>A single group-by(with multi group by columns) is replaced by multi group-by in stages, interleaved with join</li>
+            </td>
+            <td style="text-align:left">👀/2</td>
+            <td style="text-align:left">★★★</td>
         </tr>
         <tr>
             <td style="text-align:left">
