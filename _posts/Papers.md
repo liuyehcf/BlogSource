@@ -544,8 +544,24 @@ categories:
                 <li><code>#Framework</code></li>
             </td>
             <td style="text-align:left">
-                <li>Framework Concepts and Components</li>
-                <li>Detailedly</li>
+                <li>Framework Concepts and Components
+                    <ul>
+                        <li>Logical/Physical operators</li>
+                        <li>Expression/ExpressionGroup</li>
+                        <li>Search space</li>
+                        <li>Rules</li>
+                        <li>Tasks</li>
+                    </ul>
+                </li>
+                <li>Optimize tasks
+                    <ul>
+                        <li>Group optimization task is for finding the cheapest plan in this group</li>
+                        <li>Group exploration task is for expanding the search space</li>
+                        <li>Expression optimization task</li>
+                        <li>Rule application task</li>
+                        <li>Input optimization task is for property enforcing, cost calculating and pruning</li>
+                    </ul>
+                </li>
             </td>
             <td style="text-align:left">✅</td>
             <td style="text-align:left">★★★★★</td>
