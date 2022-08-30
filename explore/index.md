@@ -57,10 +57,11 @@ date: 2018-02-05 09:25:59
 * [satanson](https://www.zhihu.com/people/grakra) - ★★★★★
     * [有什么好的数据库学习路径推荐？](https://www.zhihu.com/question/451898647/answer/1813178673)
 * Celebrity
-    * `Edgar F. Codd`：关系型数据库之父
+    * `Edgar F. Codd/Ted Codd`：关系型数据库之父
     * `Andy Pavlo`：顶尖的数据库领域专家，执教CMU数据库系统相关课程
 * [Compare Projects](https://ossinsight.io/compare/)
 * [DB Fiddle](https://www.db-fiddle.com/)
+* [Database of Databases](https://dbdb.io/)
 * [DB-Engines Ranking](https://db-engines.com/en/ranking)
 * [database-startups](https://www.crunchbase.com/hub/database-startups)
 * [35 of the Most Successful Database Startups](https://www.failory.com/startups/database)
@@ -70,6 +71,7 @@ date: 2018-02-05 09:25:59
 * [Alex DeBrie](https://www.alexdebrie.com/)
 * [Trino blog](https://trino.io/blog/)
 * [Clickhouse blog](https://clickhouse.com/blog)
+* [Ottertune](https://ottertune.com/blog/)
 
 ## 6.2 Other
 

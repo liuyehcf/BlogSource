@@ -520,4 +520,4 @@ categories:
 * [你需要的不是实时数仓 | 你需要的是一款合适且强大的OLAP数据库(上)](https://segmentfault.com/a/1190000020385432)
 * [你需要的不是实时数仓 | 你需要的是一款强大的OLAP数据库(下)](https://segmentfault.com/a/1190000020385389)
 * [开源OLAP引擎测评报告(SparkSql、Presto、Impala、HAWQ、ClickHouse、GreenPlum)](https://blog.csdn.net/oDaiLiDong/article/details/86570211)
-* [2021数据库年度回顾，PostgreSQL占主导，Cloudera面临破产](https://blog.csdn.net/csdndevelopers/article/details/122257001)
+* [Databases in 2021: A Year in Review](https://ottertune.com/blog/2021-databases-retrospective/)
