@@ -777,9 +777,10 @@ categories:
             </td>
             <td style="text-align:left">
                 <li>A single group-by(with multi group by columns) is replaced by multi group-by in stages, interleaved with join</li>
+                <li>Too few pictures to understand</li>
             </td>
-            <td style="text-align:left">👀/2</td>
-            <td style="text-align:left">★★★</td>
+            <td style="text-align:left">🤷🏻/2</td>
+            <td style="text-align:left">★★</td>
         </tr>
         <tr>
             <td style="text-align:left">
@@ -942,8 +943,19 @@ categories:
                 <li><code>#Overview</code></li>
                 <li><code>#Warehousing</code></li>
             </td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
+            <td style="text-align:left">
+                <li>Maximizing transaction throughput is the key performance metric to OLTP</li>
+                <li>Query throughput and response times of ad hoc/complex queries is the key performance metric to OLAP</li>
+                <li>Features
+                    <ul>
+                        <li>Multi dimensions</li>
+                        <li>Multi sources might contains data of varying quality, or use inconsistent representations, codes and formats</li>
+                        <li>Rollup, increasing the level of aggregation</li>
+                        <li>Drill-down, decreasing the level of aggregation or increasing detail</li>
+                    </ul>
+                </li>
+            </td>
+            <td style="text-align:left">👀/2</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>
