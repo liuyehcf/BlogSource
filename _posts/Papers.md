@@ -970,8 +970,25 @@ categories:
                         <li>Drill-down, decreasing the level of aggregation or increasing detail</li>
                     </ul>
                 </li>
+                <li>Extracting/Cleaning/Transforming/Loading</li>
+                <li>Refresh through replication techniques, including data shipping and transaction shipping</li>
+                <li>Database design methodology
+                    <ul>
+                        <li>Star schema, consists of a single fact table and a single table for each dimension</li>
+                        <li>Snowfalke schema, based on the star schema, where the dimensional hierarchy is explicitly represented by normalizing the dimension tables</li>
+                    </ul>
+                </li>
+                <li>Warehouse server
+                    <ul>
+                        <li>Index structures</li>
+                        <li>Materialized views</li>
+                        <li>Transformation of complex queries</li>
+                        <li>Parallel processing</li>
+                    </ul>
+                </li>
+                <li>Metadata and warehouse management</li>
             </td>
-            <td style="text-align:left">👀/2</td>
+            <td style="text-align:left">✅</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>

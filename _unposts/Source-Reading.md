@@ -36,6 +36,7 @@ categories:
 1. `ScalarOperator`：与`Expr`类似，由新`Analyzer`引入的一套对象系统
     * `ColumnRefOperator`
 1. `ScalarOperatorEvaluator`：常量计算
+1. `ScalarOperatorRewriter`：重写`ScalarOperator`
 1. `Transformer`
     * `QueryTransformer`
     * `RelationTransformer`

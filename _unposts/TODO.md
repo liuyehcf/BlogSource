@@ -88,3 +88,4 @@ categories:
     * [Zipf Distribution](https://www.sciencedirect.com/topics/computer-science/zipf-distribution)
     * [Speed up random memory access using prefetch](https://stackoverflow.com/questions/40950254/speed-up-random-memory-access-using-prefetch)
     * https://github.com/scylladb/seastar
+    * 加盐
