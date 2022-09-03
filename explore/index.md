@@ -146,4 +146,5 @@ date: 2018-02-05 09:25:59
   <tr> <td>RC</td> <td>Release Candidate</td> <td>有可能成为稳定版本的版本</td> </tr>
   <tr> <th colspan="3" align="center">Uncategorized</th> </tr>
   <tr> <td>ETL</td> <td>Extract, Transform and Load</td> <td></td> </tr>
+  <tr> <td>RFC</td> <td>Request for Comments</td> <td></td> </tr>
 </table>

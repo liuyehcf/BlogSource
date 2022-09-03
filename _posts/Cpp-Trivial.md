@@ -210,11 +210,20 @@ fopen() returned NULL
 
 # 3 内存管理
 
+[brk和sbrk所指的program break到底是什么？](https://www.zhihu.com/question/21098367/answer/1698482825)
+
+![memory_allocate](/images/Cpp-Trivial/memory_allocate.jpeg)
+
+> 进程可以通过增加堆的大小来分配内存，堆是一段长度可变的连续**虚拟内存**，始于进程的未初始化数据段末尾，随着内存的分配和释放而增减。通常将堆的当前内存边界称为`program break`
+
+> 改变堆的大小（即分配或释放内存），其实就是命令内核改变进程的`program break`位置。最初，`program break`正好位于未初始化数据段末尾之后（如图所示，与`&end`位置相同）
+
+> 在`program break`的位置抬升后，程序可以访问新分配区域内的任何内存地址，而此时物理内存页尚未分配。内核会在进程首次试图访问这些虚拟内存地址时自动分配新的物理内存页
+
 **涉及的系统调用（只涉及虚拟内存，物理内存只能通过缺页异常来分配）**
 
-* `brk`：详见`man brk`
-* `sbrk`：详见`man sbrk`
-* `mmap/munmap`：详见`man mmap/munmap`
+* `brk/sbrk`：详见`man brk/sbrk`，用于调整堆顶位置，内存释放存在先后顺序。通常用于分配小于`128k`的内存
+* `mmap/munmap`：详见`man mmap/munmap`，在栈和堆之间的空间找一块独立内存空间，可以独立释放。通常用于分配大于`128k`的内存
 
 而内存管理的`lib`工作在用户态，底层还是通过上述系统调用来分配虚拟内存，不同的`lib`管理内存的算法可能有差异
 

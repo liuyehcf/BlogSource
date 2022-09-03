@@ -235,7 +235,22 @@ categories:
                 </li>
             </td>
             <td style="text-align:left">🤷🏻</td>
-            <td style="text-align:left">★★★★★</td>
+            <td style="text-align:left">★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/On-the-Nature-of-Merge-External-Merge-Internal-Merge-and-Parallel-Merge.pdf">On the Nature of Merge: External Merge, Internal Merge, and Parallel Merge</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Sort</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>External merge, the canonical type of Merge, takes two distinct rooted structures and joins them into one</li>
+                <li>Internal merge</li>
+            </td>
+            <td style="text-align:left">🤷🏻</td>
+            <td style="text-align:left">★★★</td>
         </tr>
         <tr>
             <td style="text-align:left">
@@ -1145,6 +1160,8 @@ categories:
     * [Automatic SQL Tuning in Oracle 10g](/resources/paper/Automatic-SQL-Tuning-in-Oracle-10g.pdf)
     * [Optimizer Plan Change Management: Improved Stability and Performance in Oracle 11g](/resources/paper/Optimizer-Plan-Change-Management-Improved-Stability-and-Performance-in-Oracle-11g.pdf)
     * [Query Optimization in Oracle 12c Database In-Memory](/resources/paper/Query-Optimization-in-Oracle-12c-Database-In-Memory.pdf)
+* facebook
+    * [Velox: Meta’s Unified Execution Engine](https://scontent-hkg4-2.xx.fbcdn.net/v/t39.8562-6/302757195_3033291893628871_4556621853780203235_n.pdf?_nc_cat=109&ccb=1-7&_nc_sid=ad8a9d&_nc_ohc=hY-ITB_TXPQAX8Ylsh_&_nc_ht=scontent-hkg4-2.xx&oh=00_AT9PVOmf5doA__7E1n_itQFL30Ri-4TTXQbVqhmSEMUjDA&oe=6314D2A7)
 * Statistics/Sample
     * [NeuroCard: One Cardinality Estimator for All Tables](https://vldb.org/pvldb/vol14/p61-yang.pdf)
     * [Flow-Loss: Learning Cardinality Estimates That Mater](https://vldb.org/pvldb/vol14/p2019-negi.pdf)
@@ -1165,7 +1182,7 @@ categories:
 * Computer Architecture
     * [Residency-Aware Virtual Machine Communication Optimization: Design Choices and Techniques](/resources/paper/Residency-Aware-Virtual-Machine-Communication-Optimization-Design-Choices-and-Techniques.pdf)
 * Sort
-    * [On the Nature of Merge: External Merge, Internal Merge, and Parallel Merge](/resources/paper/On-the-Nature-of-Merge-External-Merge-Internal-Merge-and-Parallel-Merge.pdf)
+    * [Efficient-External-Sorting-in-DuckDB](/resources/paper/Efficient-External-Sorting-in-DuckDB.pdf)
     * [Implementing Sorting in Database Systems](http://lgis.informatik.uni-kl.de/archiv/wwwdvs.informatik.uni-kl.de/courses/DBSREAL/SS2005/Vorlesungsunterlagen/Implementing_Sorting.pdf)
     * [Sort vs. Hash Revisited: Fast Join Implementation on Modern Multi-Core CPUs](http://www.kaldewey.com/pubs/Sort_vs_Hash__VLDB09.pdf)
     * 《Fast multi-column sorting in main-memory column-stores》
