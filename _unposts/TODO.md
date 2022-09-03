@@ -89,3 +89,5 @@ categories:
     * [Speed up random memory access using prefetch](https://stackoverflow.com/questions/40950254/speed-up-random-memory-access-using-prefetch)
     * https://github.com/scylladb/seastar
     * 加盐
+    * duckdb parallel merge sort
+        * https://github.com/duckdb/duckdb/pull/1666

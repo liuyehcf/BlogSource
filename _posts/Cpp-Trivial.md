@@ -229,6 +229,18 @@ fopen() returned NULL
 
 ## 3.1 [tcmalloc](https://github.com/google/tcmalloc)
 
+![tcmalloc](/images/Cpp-Trivial/tcmalloc.png)
+
+**特点：**
+
+* `Small object allocation`
+    * 每个线程都会有个`ThreadCache`，用于为当前线程分配小对象
+    * 当其容量不足时，会从`CentralCache`获取额外的存储空间
+* `CentralCache allocation management`
+    * 用于分配大对象，大对象通常指`>32K`
+    * 当内存空间用完后，用`sbrk/mmap`从操作系统中分配内存
+* `Recycle`
+
 **如何安装：**
 
 ```sh
@@ -313,6 +325,15 @@ pprof --svg ./main /tmp/test-profile.0001.heap > heap.svg
 ```
 
 ## 3.2 [jemalloc](https://github.com/jemalloc/jemalloc)
+
+![jemalloc](/images/Cpp-Trivial/jemalloc.png)
+
+**特点：**
+
+* 在多核、多线程场景下，跨线程分配/释放的性能比较好
+* 大量分配小对象时，所占空间会比`tcmalloc`稍多一些
+* 对于大对象分配，所造成的的内存碎片会比`tcmalloc`少一些
+* 内存分类粒度更细，锁比`tcmalloc`更少
 
 ## 3.3 [mimalloc](https://github.com/microsoft/mimalloc)
 
