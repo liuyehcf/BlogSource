@@ -1,5 +1,5 @@
 ---
-title: 数据库-索引
+title: DBMS-Index
 date: 2017-09-23 12:09:08
 tags: 
 - 摘录
@@ -23,9 +23,9 @@ categories:
 1. 聚簇索引：叶节点就是数据节点
 1. 非聚簇索引：叶节点仍然是索引节点，只不过有一个指针指向对应的数据块
 
-![fig1](/images/数据库-索引/fig1.jpg)
+![fig1](/images/DBMS-Index/fig1.jpg)
 
-![fig2](/images/数据库-索引/fig2.jpg)
+![fig2](/images/DBMS-Index/fig2.jpg)
 
 MySQL的聚簇索引是指InnoDB引擎的特性，MYISAM并没有，如果需要该索引，只要将索引指定为主键
 

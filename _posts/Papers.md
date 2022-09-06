@@ -256,6 +256,35 @@ categories:
         </tr>
         <tr>
             <td style="text-align:left">
+                <a href="/resources/paper/Efficient-External-Sorting-in-DuckDB.pdf">[Efficient-External-Sorting-in-DuckDB]</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Sort</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>The cost of sorting is dominated by comparing values and moving data around</li>
+                <li>Two main ways of implementing merge sort: K-way merge and cascade merge<li>
+            </td>
+            <td style="text-align:left">👀</td>
+            <td style="text-align:left">★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Merge-Path-A-Visually-Intuitive-Approach-to-Parallel-Merging.pdf">Merge Path - A Visually Intuitive Approach to Parallel Merging</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Sort</code></li>
+            </td>
+            <td style="text-align:left">
+                <li></li>
+            </td>
+            <td style="text-align:left">👀/3</td>
+            <td style="text-align:left">★★★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
                 <a href="/resources/paper/Optimization-of-Analytic-Window-Functions.pdf">Optimization of Analytic Window Functions</a>
             </td>
             <td style="text-align:left">
@@ -1053,7 +1082,7 @@ categories:
         * [Massively Parallel NUMA-aware Hash Joins](/resources/paper/Massively-Parallel-NUMA-aware-Hash-Joins.pdf)
         * [An Experimental Comparison of Thirteen Relational Equi-Joins in Main Memory](/resources/paper/An-Experimental-Comparison-of-Thirteen-Relational-Equi-Joins-in-Main-Memory.pdf)
     * Sort
-        * [Efficient-External-Sorting-in-DuckDB](/resources/paper/Efficient-External-Sorting-in-DuckDB.pdf)
+        * [Merge Path - Parallel Merging Made Simple](/resources/paper/Merge-Path-Parallel-Merging-Made-Simple.pdf)
         * [Design and Evaluation of Main Memory Hash Join Algorithms for Multi-core CPUs](/resources/paper/Design-and-Evaluation-of-Main-Memory-Hash-Join-Algorithms-for-Multi-core-CPUs.pdf)
         * [Sort vs. Hash Revisited Fast Join Implementation on Modern Multi-Core CPUs]/resources/paper/Sort-vs.-Hash-Revisited-Fast-Join-Implementation-on-Modern-Multi-Core-CPUs.pdf)
         * [Implementing Sorting in Database Systems](http://lgis.informatik.uni-kl.de/archiv/wwwdvs.informatik.uni-kl.de/courses/DBSREAL/SS2005/Vorlesungsunterlagen/Implementing_Sorting.pdf)

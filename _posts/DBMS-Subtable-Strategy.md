@@ -1,5 +1,5 @@
 ---
-title: 数据库-分表策略
+title: DBMS-Subtable-Strategy
 date: 2017-08-22 13:28:29
 tags: 
 - 摘录
@@ -24,7 +24,7 @@ categories:
 
 一个数据库由很多表的构成，每个表对应着不同的业务，**垂直切分是指按照业务将表进行分类，分布到不同的数据库上面（注意，并不是将一张表拆分成多张表，这叫做数据表的垂直拆分）**，这样也就将数据或者说压力分担到不同的库上面，如下图：
 
-![fig1](/images/数据库-分表策略/fig1.png)
+![fig1](/images/DBMS-Subtable-Strategy/fig1.png)
 
 **优点：**
 
@@ -44,9 +44,9 @@ categories:
 
 **相对于垂直拆分，水平拆分不是将表的数据做分类，而是按照某个字段的某种规则来分散到多个库之中，每个表中包含一部分数据**。简单来说，我们可以将数据的水平切分理解为是按照数据行的切分，就是将表中的某些行切分到一个数据库，而另外的某些行又切分到其他的数据库中，主要有分表，分库两种模式，如图：
 
-![fig2](/images/数据库-分表策略/fig2.png)
+![fig2](/images/DBMS-Subtable-Strategy/fig2.png)
 
-![fig3](/images/数据库-分表策略/fig3.png)
+![fig3](/images/DBMS-Subtable-Strategy/fig3.png)
 
 **优点：**
 

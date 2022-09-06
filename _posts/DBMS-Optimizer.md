@@ -1,5 +1,5 @@
 ---
-title: 数据库-优化器
+title: DBMS-Optimizer
 date: 2022-06-24 08:32:09
 mathjax: true
 tags: 
@@ -60,7 +60,7 @@ categories:
     * `Quantified Comparation Subquery`，特指`ANY/SOME/ALL`子查询
         * `x = SOME(statement) -> IN (statement)`
         * `x <> ALL(statement) -> NOT IN (statement)`
-        * ![quantified_comparisons](/images/数据库-优化器/quantified_comparisons.png)
+        * ![quantified_comparisons](/images/DBMS-Optimizer/quantified_comparisons.png)
 
 **上述不同分类均可自由组合**
 

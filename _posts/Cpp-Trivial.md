@@ -239,6 +239,7 @@ fopen() returned NULL
 * `CentralCache allocation management`
     * 用于分配大对象，大对象通常指`>32K`
     * 当内存空间用完后，用`sbrk/mmap`从操作系统中分配内存
+    * 在多线程高并发的场景中，`CentralCache`中的锁竞争很容易成为瓶颈
 * `Recycle`
 
 **如何安装：**

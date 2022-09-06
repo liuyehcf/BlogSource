@@ -1,5 +1,5 @@
 ---
-title: 数据库-锁
+title: DBMS-Lock
 date: 2017-07-04 14:10:26
 tags: 
 - 摘录

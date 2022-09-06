@@ -1,5 +1,5 @@
 ---
-title: 数据库-常用命令
+title: DBMS-Commands
 date: 2018-04-22 19:55:17
 tags: 
 - 原创

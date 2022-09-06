@@ -1,5 +1,5 @@
 ---
-title: 数据库-事务隔离级别
+title: DBMS-Isolation
 date: 2017-09-02 14:13:31
 tags: 
 - 摘录
@@ -625,17 +625,17 @@ mysql> SELECT name FROM test.user WHERE id = 1 LOCK IN SHARE MODE; -- 查询数�
 **行的更新过程**
 
 1. 初始数据行
-    * ![fig1](/images/数据库-事务隔离级别/fig1.jpeg)
+    * ![fig1](/images/DBMS-Isolation/fig1.jpeg)
     * F1～F6是某行列的名字，1～6是其对应的数据。后面三个隐含字段分别对应该行的事务号和回滚指针，假如这条数据是刚INSERT的，可以认为ID为1，其他两个字段为空
 1. 事务1更改该行的各字段的值
-    * ![fig2](/images/数据库-事务隔离级别/fig2.jpeg)
+    * ![fig2](/images/DBMS-Isolation/fig2.jpeg)
     * 当事务1更改该行的值时，会进行如下操作：
         * 用排他锁锁定该行
         * 记录redo log
         * 把该行修改前的值Copy到`undo log`，即上图中下面的行
         * 修改当前行的值，填写事务编号，使回滚指针指向`undo log`中的修改前的行
 1. 事务2修改该行的值
-    * ![fig3](/images/数据库-事务隔离级别/fig3.jpeg)
+    * ![fig3](/images/DBMS-Isolation/fig3.jpeg)
     * 与事务1相同，此时`undo log`，中有有两行记录，并且通过回滚指针连在一起
 
 **`read view`判断当前版本数据项是否可见**：在innodb中，创建一个新事务的时候，innodb会将当前系统中的活跃事务列表创建一个副本（`read view`），副本中保存的是系统**当前不应该被本事务看到的其他事务id列表**。当用户在这个事务中要读取该行记录的时候，innodb会将该行当前的版本号与该`read view`进行比较。主要的概念如下
