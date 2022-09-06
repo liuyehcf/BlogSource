@@ -189,18 +189,6 @@ categories:
         </tr>
         <tr>
             <td style="text-align:left">
-                <a href="/resources/paper/Managing-Intra-operator-Parallelism-in-Parallel-Database-Systems.pdf">Managing Intra-operator Parallelism in Parallel Database Systems</a>
-            </td>
-            <td style="text-align:left">
-                <li><code>#Execution</code></li>
-                <li><code>#Parallelism</code></li>
-            </td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
-        </tr>
-        <tr>
-            <td style="text-align:left">
                 <a href="/resources/paper/Parallel-Merge-Sort.pdf">Parallel Merge Sort</a>
             </td>
             <td style="text-align:left">
@@ -251,104 +239,6 @@ categories:
             </td>
             <td style="text-align:left">🤷🏻</td>
             <td style="text-align:left">★★★</td>
-        </tr>
-        <tr>
-            <td style="text-align:left">
-                <a href="/resources/paper/Design-and-Evaluation-of-Main-Memory-Hash-Join-Algorithms-for-Multi-core-CPUs.pdf">Design and Evaluation of Main Memory Hash Join Algorithms for Multi-core CPUs</a>
-            </td>
-            <td style="text-align:left">
-                <li><code>#Execution</code></li>
-                <li><code>#Sort</code></li>
-            </td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
-        </tr>
-        <tr>
-            <td style="text-align:left">
-                <a href="/resources/paper/Sort-vs.-Hash-Revisited-Fast-Join-Implementation-on-Modern-Multi-Core-CPUs.pdf">Sort vs. Hash Revisited Fast Join Implementation on Modern Multi-Core CPUs</a>
-            </td>
-            <td style="text-align:left">
-                <li><code>#Execution</code></li>
-                <li><code>#Sort</code></li>
-            </td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
-        </tr>
-        <tr>
-            <td style="text-align:left">
-                <a target="_blank" rel="noopener" href="https://ieeexplore.ieee.org/abstract/document/1019210/">Optimizing main-memory join on modern hardware</a>
-            </td>
-            <td style="text-align:left">
-                <li><code>#Execution</code></li>
-                <li><code>#Sort</code></li>
-            </td>
-            <td style="text-align:left">
-                <li>Radix-cluster algorithm</li>
-            </td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
-        </tr>
-        <tr>
-            <td style="text-align:left">
-                <a href="/resources/paper/Massively-Parallel-Sort-Merge-Joins-in-Main-Memory-Multi-Core-Database-Systems.pdf">Massively Parallel Sort-Merge Joins in Main Memory Multi-Core Database Systems</a>
-            </td>
-            <td style="text-align:left">
-                <li><code>#Execution</code></li>
-                <li><code>#Sort</code></li>
-            </td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
-        </tr>
-        <tr>
-            <td style="text-align:left">
-                <a href="/resources/paper/Main-Memory-Hash-Joins-on-Multi-Core-CPUs-Tuning-to-the-Underlying-Hardware.pdf">Main-Memory Hash Joins on Multi-Core CPUs Tuning to the Underlying Hardware</a>
-            </td>
-            <td style="text-align:left">
-                <li><code>#Execution</code></li>
-                <li><code>#Sort</code></li>
-            </td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
-        </tr>
-        <tr>
-            <td style="text-align:left">
-                <a href="/resources/paper/Efficient-Implementation-of-Sorting-on-Multi-Core-SIMD-CPU-Architecture.pdf">Efficient Implementation of Sorting on Multi-Core SIMD CPU Architecture</a>
-            </td>
-            <td style="text-align:left">
-                <li><code>#Execution</code></li>
-                <li><code>#Sort</code></li>
-            </td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
-        </tr>
-        <tr>
-            <td style="text-align:left">
-                <a href="/resources/paper/Massively-Parallel-NUMA-aware-Hash-Joins.pdf">Massively Parallel NUMA-aware Hash Joins</a>
-            </td>
-            <td style="text-align:left">
-                <li><code>#Execution</code></li>
-                <li><code>#Sort</code></li>
-            </td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
-        </tr>
-        <tr>
-            <td style="text-align:left">
-                <a href="/resources/paper/An-Experimental-Comparison-of-Thirteen-Relational-Equi-Joins-in-Main-Memory.pdf">An Experimental Comparison of Thirteen Relational Equi-Joins in Main Memory</a>
-            </td>
-            <td style="text-align:left">
-                <li><code>#Execution</code></li>
-                <li><code>#Sort</code></li>
-            </td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
         </tr>
         <tr>
             <td style="text-align:left">
@@ -1140,28 +1030,40 @@ categories:
     </tbody>
 </table>
 
-# 4 Less Reference
-
-1. [Filter Representation in Vectorized Query Execution](https://dl.acm.org/doi/abs/10.1145/3465998.3466009)
-
-# 5 TODO
+# 4 TODO
 
 * Survey
     * [Query Evaluation Techniques for Large Databases](https://cgi.cse.unsw.edu.au/~cs9315/20T1/readings/query.pdf)
-* SubQuery
-    * [Reusing Invariants: A New Strategy for Correlated Queries](https://dl.acm.org/doi/pdf/10.1145/276304.276309)
-    * [On Optimizing an SQL-like Nested Query](https://dl.acm.org/doi/pdf/10.1145/319732.319745)
-* Join
-    * [The Complete Story of Joins (in HyPer)](https://www.btw2017.informatik.uni-stuttgart.de/slidesandpapers/F1-10-37/paper_web.pdf)
-    * [Adaptive Optimization of Very Large Join Queries](https://dsl.cds.iisc.ac.in/~course/TIDS/papers/hugejoins_SIGMOD2018.pdf)
+* Optimization
+    * SubQuery
+        * [Reusing Invariants: A New Strategy for Correlated Queries](https://dl.acm.org/doi/pdf/10.1145/276304.276309)
+        * [On Optimizing an SQL-like Nested Query](https://dl.acm.org/doi/pdf/10.1145/319732.319745)
+    * [Implementation of Two Semantic Query Optimization Techniques in DB2 Universal Database](https://www.researchgate.net/profile/Jarek-Gryz/publication/221309776_Implementation_of_Two_Semantic_Query_Optimization_Techniques_in_DB2_Universal_Database/links/0912f51279e7662532000000/Implementation-of-Two-Semantic-Query-Optimization-Techniques-in-DB2-Universal-Database.pdf)
+* Execution
+    * Vectorization
+        * [Filter Representation in Vectorized Query Execution](https://dl.acm.org/doi/abs/10.1145/3465998.3466009)
+    * Parallel
+        * [Managing Intra-operator Parallelism in Parallel Database Systems](/resources/paper/Managing-Intra-operator-Parallelism-in-Parallel-Database-Systems.pdf)
+    * Join
+        * [The Complete Story of Joins (in HyPer)](https://www.btw2017.informatik.uni-stuttgart.de/slidesandpapers/F1-10-37/paper_web.pdf)
+        * [Adaptive Optimization of Very Large Join Queries](https://dsl.cds.iisc.ac.in/~course/TIDS/papers/hugejoins_SIGMOD2018.pdf)
+        * [Optimizing main-memory join on modern hardware](https://ieeexplore.ieee.org/abstract/document/1019210/)
+        * [Massively Parallel Sort-Merge Joins in Main Memory Multi-Core Database Systems](/resources/paper/Massively-Parallel-Sort-Merge-Joins-in-Main-Memory-Multi-Core-Database-Systems.pdf)
+        * [Main-Memory Hash Joins on Multi-Core CPUs Tuning to the Underlying Hardware](/resources/paper/Main-Memory-Hash-Joins-on-Multi-Core-CPUs-Tuning-to-the-Underlying-Hardware.pdf)
+        * [Massively Parallel NUMA-aware Hash Joins](/resources/paper/Massively-Parallel-NUMA-aware-Hash-Joins.pdf)
+        * [An Experimental Comparison of Thirteen Relational Equi-Joins in Main Memory](/resources/paper/An-Experimental-Comparison-of-Thirteen-Relational-Equi-Joins-in-Main-Memory.pdf)
+    * Sort
+        * [Efficient-External-Sorting-in-DuckDB](/resources/paper/Efficient-External-Sorting-in-DuckDB.pdf)
+        * [Design and Evaluation of Main Memory Hash Join Algorithms for Multi-core CPUs](/resources/paper/Design-and-Evaluation-of-Main-Memory-Hash-Join-Algorithms-for-Multi-core-CPUs.pdf)
+        * [Sort vs. Hash Revisited Fast Join Implementation on Modern Multi-Core CPUs]/resources/paper/Sort-vs.-Hash-Revisited-Fast-Join-Implementation-on-Modern-Multi-Core-CPUs.pdf)
+        * [Implementing Sorting in Database Systems](http://lgis.informatik.uni-kl.de/archiv/wwwdvs.informatik.uni-kl.de/courses/DBSREAL/SS2005/Vorlesungsunterlagen/Implementing_Sorting.pdf)
+        * [Sort vs. Hash Revisited: Fast Join Implementation on Modern Multi-Core CPUs](http://www.kaldewey.com/pubs/Sort_vs_Hash__VLDB09.pdf)
+        * 《Fast multi-column sorting in main-memory column-stores》
+        * [BlockQuicksort: Avoiding Branch Mispredictions in Quicksort](https://kclpure.kcl.ac.uk/portal/files/123577916/BlockQuicksort_Avoiding_Branch_Mispredictions_EDELKAMP_PublishedAugust2016_VoR_CC_BY_.pdf)
+        * [Merge Path - A Visually Intuitive Approach to Parallel Merging](https://arxiv.org/pdf/1406.2628.pdf)
+        * [Efficient Implementation of Sorting on Multi-Core SIMD CPU Architecture](/resources/paper/Efficient-Implementation-of-Sorting-on-Multi-Core-SIMD-CPU-Architecture.pdf)
 * Memory
     * [Efficient Use of Memory Bandwidth to Improve Network Processor Throughput](http://www.cs.ucr.edu/~bhuyan/cs162/LECTURE12b.pdf)
-* Oracle
-    * [Automatic SQL Tuning in Oracle 10g](/resources/paper/Automatic-SQL-Tuning-in-Oracle-10g.pdf)
-    * [Optimizer Plan Change Management: Improved Stability and Performance in Oracle 11g](/resources/paper/Optimizer-Plan-Change-Management-Improved-Stability-and-Performance-in-Oracle-11g.pdf)
-    * [Query Optimization in Oracle 12c Database In-Memory](/resources/paper/Query-Optimization-in-Oracle-12c-Database-In-Memory.pdf)
-* facebook
-    * [Velox: Meta’s Unified Execution Engine](https://scontent-hkg4-2.xx.fbcdn.net/v/t39.8562-6/302757195_3033291893628871_4556621853780203235_n.pdf?_nc_cat=109&ccb=1-7&_nc_sid=ad8a9d&_nc_ohc=hY-ITB_TXPQAX8Ylsh_&_nc_ht=scontent-hkg4-2.xx&oh=00_AT9PVOmf5doA__7E1n_itQFL30Ri-4TTXQbVqhmSEMUjDA&oe=6314D2A7)
 * Statistics/Sample
     * [NeuroCard: One Cardinality Estimator for All Tables](https://vldb.org/pvldb/vol14/p61-yang.pdf)
     * [Flow-Loss: Learning Cardinality Estimates That Mater](https://vldb.org/pvldb/vol14/p2019-negi.pdf)
@@ -1179,13 +1081,12 @@ categories:
         * 数据倾斜
         * 数据相关信息
         * 值域范围
+* Other DBMS
+    * Oracle
+        * [Automatic SQL Tuning in Oracle 10g](/resources/paper/Automatic-SQL-Tuning-in-Oracle-10g.pdf)
+        * [Optimizer Plan Change Management: Improved Stability and Performance in Oracle 11g](/resources/paper/Optimizer-Plan-Change-Management-Improved-Stability-and-Performance-in-Oracle-11g.pdf)
+        * [Query Optimization in Oracle 12c Database In-Memory](/resources/paper/Query-Optimization-in-Oracle-12c-Database-In-Memory.pdf)
+    * facebook
+        * [Velox: Meta’s Unified Execution Engine](https://scontent-hkg4-2.xx.fbcdn.net/v/t39.8562-6/302757195_3033291893628871_4556621853780203235_n.pdf?_nc_cat=109&ccb=1-7&_nc_sid=ad8a9d&_nc_ohc=hY-ITB_TXPQAX8Ylsh_&_nc_ht=scontent-hkg4-2.xx&oh=00_AT9PVOmf5doA__7E1n_itQFL30Ri-4TTXQbVqhmSEMUjDA&oe=6314D2A7)
 * Computer Architecture
     * [Residency-Aware Virtual Machine Communication Optimization: Design Choices and Techniques](/resources/paper/Residency-Aware-Virtual-Machine-Communication-Optimization-Design-Choices-and-Techniques.pdf)
-* Sort
-    * [Efficient-External-Sorting-in-DuckDB](/resources/paper/Efficient-External-Sorting-in-DuckDB.pdf)
-    * [Implementing Sorting in Database Systems](http://lgis.informatik.uni-kl.de/archiv/wwwdvs.informatik.uni-kl.de/courses/DBSREAL/SS2005/Vorlesungsunterlagen/Implementing_Sorting.pdf)
-    * [Sort vs. Hash Revisited: Fast Join Implementation on Modern Multi-Core CPUs](http://www.kaldewey.com/pubs/Sort_vs_Hash__VLDB09.pdf)
-    * 《Fast multi-column sorting in main-memory column-stores》
-    * [BlockQuicksort: Avoiding Branch Mispredictions in Quicksort](https://kclpure.kcl.ac.uk/portal/files/123577916/BlockQuicksort_Avoiding_Branch_Mispredictions_EDELKAMP_PublishedAugust2016_VoR_CC_BY_.pdf)
-    * [Merge Path - A Visually Intuitive Approach to Parallel Merging](https://arxiv.org/pdf/1406.2628.pdf)
-* [Implementation of Two Semantic Query Optimization Techniques in DB2 Universal Database](https://www.researchgate.net/profile/Jarek-Gryz/publication/221309776_Implementation_of_Two_Semantic_Query_Optimization_Techniques_in_DB2_Universal_Database/links/0912f51279e7662532000000/Implementation-of-Two-Semantic-Query-Optimization-Techniques-in-DB2-Universal-Database.pdf)

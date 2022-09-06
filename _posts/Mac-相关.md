@@ -245,75 +245,7 @@ defaults delete com.apple.desktopservices DSDontWriteNetworkStores
 * `System Preferences` -> `Keyboard` -> `Keyboard`
 * 取消`Use all F1,F2,etc. keys as standard function keys`选项的勾选
 
-# 4 常见问题
-
-## 4.1 VirtualBox(rc=-1908)
-
-**解决方式如下（请挨个尝试）：**
-
-**方法1：**
-
-```sh
-sudo "/Library/Application Support/VirtualBox/LaunchDaemons/VirtualBoxStartup.sh" restart
-```
-
-**方法2：**
-
-```sh
-sudo kextload -b org.virtualbox.kext.VBoxDrv
-sudo kextload -b org.virtualbox.kext.VBoxNetFlt
-sudo kextload -b org.virtualbox.kext.VBoxNetAdp
-sudo kextload -b org.virtualbox.kext.VBoxUSB
-```
-
-**方法3：**
-
-```
-1. 进入恢复模式：重启，然后按住 ⌘ + R
-2. 恢复模式中，上面菜单栏->实用工具->启动安全性实用工具，选择无安全性
-3. 恢复模式中，上面菜单栏->实用工具->终端，在terminal中输入 csrutil disable
-4. 恢复模式中，上面菜单栏->实用工具->终端，在terminal中输入 spctl kext-consent add VB5E2TV963，其中 VB5E2TV963 是 Oracle 的 Developer ID
-5. 重启
-6. 在系统偏好设置->安全与隐私->允许Virtual Box
-7. 重启
-```
-
-## 4.2 VirtualBox cannot enable nested VT-x/AMD-V
-
-`nested VT-x/AMD-V`这个特性不开的话，如果在虚拟机里面安装了`VirtualBox`，那么这个`VirtualBox`只能安装32位的系统
-
-[Virtualbox enable nested vtx/amd-v greyed out](https://stackoverflow.com/questions/54251855/virtualbox-enable-nested-vtx-amd-v-greyed-out)
-
-```sh
-VBoxManage modifyvm <vm-name> --nested-hw-virt on
-```
-
-## 4.3 您没有权限来打开应用程序
-
-```sh
-sudo xattr -r -d com.apple.quarantine <app path>
-```
-
-## 4.4 中文输入法卡顿
-
-**以下步骤可以解决`Chrome`中的卡顿问题（通用问题）**
-
-1. 系统偏好设置->键盘
-    * 键盘：按键重复调到最快，重复前延迟调到最短
-    * 文本：所有的功能都关了，什么联想、提示之类的功能
-
-**以下步骤可以解决`Chrome`中的卡顿问题，参考[How To Fix Input Lag And Slow Performance In Google Chrome](https://www.alphr.com/how-to-fix-input-lag-and-slow-performance-in-google-chrome/)**
-
-* `Chrome` -> `Settings` -> `Advanced` -> `System` -> Disable `Use hardware acceleration when available`
-    * 开启或关闭可能都会有问题，重新切换一下开关状态可以恢复
-
-**以下步骤可以解决`VSCode`中的卡顿问题，参考[Lagging/freezing using VSCode Insiders in Big Sur](https://github.com/microsoft/vscode/issues/107103#issuecomment-731664821)**
-
-```sh
-codesign --remove-signature /Applications/Visual\ Studio\ Code.app/Contents/Frameworks/Code\ Helper\ \(Renderer\).app
-```
-
-# 5 Iterm2
+# 4 Iterm2
 
 **智能选中**
 
@@ -364,7 +296,7 @@ codesign --remove-signature /Applications/Visual\ Studio\ Code.app/Contents/Fram
 * `export LANG=en_US.UTF-8`
 * `export LANG=zh_CN.UTF-8`
 
-## 5.1 更换主题
+## 4.1 更换主题
 
 **本小节转载摘录自[iTerm 2 && Oh My Zsh【DIY教程——亲身体验过程】](https://www.jianshu.com/p/7de00c73a2bb)**
 
@@ -514,11 +446,11 @@ plugins=(<原有插件> zsh-autosuggestions)
 * **步骤8**
 * **步骤9**
 
-### 5.1.1 Tips
+### 4.1.1 Tips
 
 1. **登录时，命令行提示符显式的是`~`，但是执行`cd`后，显示的目录是用户目录的绝对路径，比如`/home/test`。这是因为`HOME`变量设置有问题，该变量最后不能有`/`符号，否则在将主目录替换成`~`的时候就会替换失败**
 
-## 5.2 `Alt + f/b`在ssh场景下失效
+## 4.2 `Alt + f/b`在ssh场景下失效
 
 **bash默认使用`emacs`模式，在该模式下，光标按单词移动的快捷键是`Alt + b`以及`Alt + f`，但是`mac`是没有这两个快捷键的，可以通过设置`profile`来解决这个问题，步骤如下：**
 
@@ -530,18 +462,90 @@ plugins=(<原有插件> zsh-autosuggestions)
         * `Shortcut`：`⌥→`
         * `Action`：选择`Send Escape Sequence`，填`f`
 
-## 5.3 常用配置
+## 4.3 常用配置
 
 1. 光标形状
     * `Preferences`->`Profile`->`Text`->`Cursor`
 
-# 6 Karabiner-elements
+# 5 Karabiner-elements
 
 外接如`Filco`的键盘，需要将`win`以及`alt`这两个键位进行交换。其中`win`对应`command`键，`alt`对应`option`键
 
 * `Keys in pc keyboards - application` -> `Modifier keys - fn`
 * `Modifier keys left_command` -> `Modifier keys left_option`
 * `Modifier keys left_option` -> `Modifier keys left_command`
+
+# 6 常见问题
+
+## 6.1 VirtualBox(rc=-1908)
+
+**解决方式如下（请挨个尝试）：**
+
+**方法1：**
+
+```sh
+sudo "/Library/Application Support/VirtualBox/LaunchDaemons/VirtualBoxStartup.sh" restart
+```
+
+**方法2：**
+
+```sh
+sudo kextload -b org.virtualbox.kext.VBoxDrv
+sudo kextload -b org.virtualbox.kext.VBoxNetFlt
+sudo kextload -b org.virtualbox.kext.VBoxNetAdp
+sudo kextload -b org.virtualbox.kext.VBoxUSB
+```
+
+**方法3：**
+
+```
+1. 进入恢复模式：重启，然后按住 ⌘ + R
+2. 恢复模式中，上面菜单栏->实用工具->启动安全性实用工具，选择无安全性
+3. 恢复模式中，上面菜单栏->实用工具->终端，在terminal中输入 csrutil disable
+4. 恢复模式中，上面菜单栏->实用工具->终端，在terminal中输入 spctl kext-consent add VB5E2TV963，其中 VB5E2TV963 是 Oracle 的 Developer ID
+5. 重启
+6. 在系统偏好设置->安全与隐私->允许Virtual Box
+7. 重启
+```
+
+## 6.2 VirtualBox cannot enable nested VT-x/AMD-V
+
+`nested VT-x/AMD-V`这个特性不开的话，如果在虚拟机里面安装了`VirtualBox`，那么这个`VirtualBox`只能安装32位的系统
+
+[Virtualbox enable nested vtx/amd-v greyed out](https://stackoverflow.com/questions/54251855/virtualbox-enable-nested-vtx-amd-v-greyed-out)
+
+```sh
+VBoxManage modifyvm <vm-name> --nested-hw-virt on
+```
+
+## 6.3 您没有权限来打开应用程序
+
+```sh
+sudo xattr -r -d com.apple.quarantine <app path>
+```
+
+## 6.4 中文输入法卡顿
+
+**以下步骤可以解决`Chrome`中的卡顿问题（通用问题）**
+
+1. 系统偏好设置->键盘
+    * 键盘：按键重复调到最快，重复前延迟调到最短
+    * 文本：所有的功能都关了，什么联想、提示之类的功能
+
+**以下步骤可以解决`Chrome`中的卡顿问题，参考[How To Fix Input Lag And Slow Performance In Google Chrome](https://www.alphr.com/how-to-fix-input-lag-and-slow-performance-in-google-chrome/)**
+
+* `Chrome` -> `Settings` -> `Advanced` -> `System` -> Disable `Use hardware acceleration when available`
+    * 开启或关闭可能都会有问题，重新切换一下开关状态可以恢复
+
+**以下步骤可以解决`VSCode`中的卡顿问题，参考[Lagging/freezing using VSCode Insiders in Big Sur](https://github.com/microsoft/vscode/issues/107103#issuecomment-731664821)**
+
+```sh
+codesign --remove-signature /Applications/Visual\ Studio\ Code.app/Contents/Frameworks/Code\ Helper\ \(Renderer\).app
+```
+
+## 6.5 滚动条总是自动隐藏
+
+`系统偏好设置` -> `通用` -> 选择始终显示滚动条
 
 # 7 参考
 

@@ -62,6 +62,7 @@ date: 2018-02-05 09:25:59
 * [Compare Projects](https://ossinsight.io/compare/)
 * [DB Fiddle](https://www.db-fiddle.com/)
 * [Database of Databases](https://dbdb.io/)
+* [Sort Benchmark Home Page](https://sortbenchmark.org/)
 * [DB-Engines Ranking](https://db-engines.com/en/ranking)
 * [database-startups](https://www.crunchbase.com/hub/database-startups)
 * [35 of the Most Successful Database Startups](https://www.failory.com/startups/database)
@@ -71,6 +72,8 @@ date: 2018-02-05 09:25:59
 * [Alex DeBrie](https://www.alexdebrie.com/)
 * [Trino blog](https://trino.io/blog/)
 * [Clickhouse blog](https://clickhouse.com/blog)
+* [DuckDB News](https://duckdb.org/news/)
+    * [Fastest table sort in the West - Redesigning DuckDB’s sort](https://duckdb.org/2021/08/27/external-sorting.html)
 * [Ottertune](https://ottertune.com/blog/)
 
 ## 6.2 Other
