@@ -12,13 +12,35 @@ tags:
 # 1 Company
 
 1. Microsoft
+    * [careers](https://careers.microsoft.com/us/en)
 1. Amazon
+    * [jobs](https://www.amazon.jobs/us/jobs/)
 1. Google
-1. Oracle
-1. DataBricks
+    * [careers](https://careers.google.com/jobs/results/)
 1. Airbnb
+    * [careers](https://careers.airbnb.com/)
+1. Oracle
+    * [careers](https://www.oracle.com/corporate/careers/)
+1. DataBricks
+    * [careers](https://www.databricks.com/company/careers)
 1. SnowFlake
+    * [careers](https://careers.snowflake.com/us/en)
 
-# 2 润美途径
+# 2 Transform
 
-1. 欧/日/澳/英/加 -> 呆一年再拿L1B签证去美国
+Country/City:
+
+1. Singapore
+1. Canada
+1. Zurich
+
+# 3 Education
+
+1. [Online Master of Science Computer Science (OMS CS)](https://omscs.gatech.edu/)
+
+# 4 Agency
+
+# 5 Interview
+
+1. System Design
+

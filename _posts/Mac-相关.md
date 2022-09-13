@@ -543,6 +543,8 @@ sudo xattr -r -d com.apple.quarantine <app path>
 codesign --remove-signature /Applications/Visual\ Studio\ Code.app/Contents/Frameworks/Code\ Helper\ \(Renderer\).app
 ```
 
+[macOS 输入法卡顿问题解决方法：永久解决，一劳永逸](https://www.jianshu.com/p/ec2729d485a8)
+
 ## 6.5 滚动条总是自动隐藏
 
 `系统偏好设置` -> `通用` -> 选择始终显示滚动条
