@@ -684,6 +684,15 @@ categories:
                 <li><code>#Subquery</code></li>
             </td>
             <td style="text-align:left">
+                <li>Conditions that are required to meet
+                    <ul>
+                        <li>Scalar correlated aggregation subquery with only equal predicate</li>
+                        <li>Aggregate function has a corresponding version of window function</li>
+                        <li>Aggregate function DO NOT contains DISTINCT</li>
+                        <li>The predicate of subquery is a subset of the outer block's</li>
+                    </ul>
+                </li>
+                <li>TPCH-Q2, TPCH-Q17</li>
             </td>
             <td style="text-align:left">✅</td>
             <td style="text-align:left">★★★★★</td>
