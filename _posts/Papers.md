@@ -278,7 +278,14 @@ categories:
                 <li><code>#Sort</code></li>
             </td>
             <td style="text-align:left">
-                <li></li>
+                <li>Key idea: use diagonal to cut the merge path</li>
+                <li>Cache Efficiency
+                    <ul>
+                        <li>Three types of cache miss, compulsory, capacity, contention</li>
+                        <li>Three types of associativity, full associative, direct-mapped, group-mapped</li>
+                    </ul>
+                </li>
+                <li>Cache-efficient parallel merge, processing cache-size of data at one iteration</li>
             </td>
             <td style="text-align:left">👀/3</td>
             <td style="text-align:left">★★★★★</td>
@@ -684,12 +691,14 @@ categories:
                 <li><code>#Subquery</code></li>
             </td>
             <td style="text-align:left">
+                <li>Key idea: for every distinct value of correlated column, if the row set of the subquery and the outer block are exactly the same, then the aggregate of subquery can be replaced with a corresponding window function of outer block</li>
                 <li>Conditions that are required to meet
                     <ul>
                         <li>Scalar correlated aggregation subquery with only equal predicate</li>
                         <li>Aggregate function has a corresponding version of window function</li>
                         <li>Aggregate function DO NOT contains DISTINCT</li>
-                        <li>The predicate of subquery is a subset of the outer block's</li>
+                        <li>Tables of subquery and outer block are exactly the same, taking correlated outer table into account for subquery</li>
+                        <li>Predicates of subquery and outer block are exactly the same, except the correlated outer table only related predicates</li>
                     </ul>
                 </li>
                 <li>TPCH-Q2, TPCH-Q17</li>
@@ -1098,7 +1107,6 @@ categories:
         * [Sort vs. Hash Revisited: Fast Join Implementation on Modern Multi-Core CPUs](http://www.kaldewey.com/pubs/Sort_vs_Hash__VLDB09.pdf)
         * 《Fast multi-column sorting in main-memory column-stores》
         * [BlockQuicksort: Avoiding Branch Mispredictions in Quicksort](https://kclpure.kcl.ac.uk/portal/files/123577916/BlockQuicksort_Avoiding_Branch_Mispredictions_EDELKAMP_PublishedAugust2016_VoR_CC_BY_.pdf)
-        * [Merge Path - A Visually Intuitive Approach to Parallel Merging](https://arxiv.org/pdf/1406.2628.pdf)
         * [Efficient Implementation of Sorting on Multi-Core SIMD CPU Architecture](/resources/paper/Efficient-Implementation-of-Sorting-on-Multi-Core-SIMD-CPU-Architecture.pdf)
 * Memory
     * [Efficient Use of Memory Bandwidth to Improve Network Processor Throughput](http://www.cs.ucr.edu/~bhuyan/cs162/LECTURE12b.pdf)
