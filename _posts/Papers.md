@@ -292,6 +292,25 @@ categories:
         </tr>
         <tr>
             <td style="text-align:left">
+                <a href="/resources/paper/Efficient-Parallel-Merge-Sort-for-Fixed-and-Variable-Length-Keys.pdf">Efficient Parallel Merge Sort for Fixed and Variable Length Keys</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Sort</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Sort algorithm classification:
+                    <ul>
+                        <li>Radix sort, rely on a binary representation of the sort key</li>
+                        <li>Comparison sort, allow user-specified comparison function. Including quick sort, merge sort</li>
+                    </ul>
+                </li>
+            </td>
+            <td style="text-align:left">👀</td>
+            <td style="text-align:left">★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
                 <a href="/resources/paper/Optimization-of-Analytic-Window-Functions.pdf">Optimization of Analytic Window Functions</a>
             </td>
             <td style="text-align:left">
@@ -1108,6 +1127,7 @@ categories:
         * 《Fast multi-column sorting in main-memory column-stores》
         * [BlockQuicksort: Avoiding Branch Mispredictions in Quicksort](https://kclpure.kcl.ac.uk/portal/files/123577916/BlockQuicksort_Avoiding_Branch_Mispredictions_EDELKAMP_PublishedAugust2016_VoR_CC_BY_.pdf)
         * [Efficient Implementation of Sorting on Multi-Core SIMD CPU Architecture](/resources/paper/Efficient-Implementation-of-Sorting-on-Multi-Core-SIMD-CPU-Architecture.pdf)
+        * [Parallel Merge Sort with Load Balancing](/resources/paper/Parallel-Merge-Sort-with-Load-Balancing.pdf)
 * Memory
     * [Efficient Use of Memory Bandwidth to Improve Network Processor Throughput](http://www.cs.ucr.edu/~bhuyan/cs162/LECTURE12b.pdf)
 * Statistics/Sample

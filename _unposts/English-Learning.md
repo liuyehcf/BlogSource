@@ -17,4 +17,7 @@ categories:
 
 # 2 一些摘录
 
-1. The remainder requiring walking the thread wakeups to find root cause
+1. The remainder requiring walking the thread wakeups to find root cause.
+
+> Ladies and gentlemen, it's my great honor to be the host for this online meeting themed on joint efforts to deal with the climate changes.
+> At the very beginning, I'd like to inform you some of the important housekeeping rules for this virtual meeting. Please mute your microphone when you are not speaking, and unmute yourself when you want to take the floor.

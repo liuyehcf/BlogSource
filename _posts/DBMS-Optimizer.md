@@ -56,8 +56,8 @@ categories:
     * `Scalar Subquery`，即标量子查询
         * 聚合子查询
         * 非聚合子查询
-    * `Existential Test Subquery`，特指`EXISTS`子查询
-    * `Quantified Comparation Subquery`，特指`ANY/SOME/ALL`子查询
+    * `Existential Test Subquery`，存在性检测子查询，如`EXISTS`子查询
+    * `Quantified Comparation Subquery`，集合比较子查询，如`ANY/SOME/ALL`子查询
         * `x = SOME(statement) -> IN (statement)`
         * `x <> ALL(statement) -> NOT IN (statement)`
         * ![quantified_comparisons](/images/DBMS-Optimizer/quantified_comparisons.png)
@@ -475,6 +475,10 @@ SELECT Q10.building, Q3.*
 FROM Magic_2 Q10, Emp Q3 
 WHERE Q10.building = Q3.building;
 ```
+
+## 2.5 参考
+
+* [子查询漫谈](https://mp.weixin.qq.com/s/5jRt9R1G7lPMC1nB3ekw7A)
 
 # 3 GroupBy Reordering
 
