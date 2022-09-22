@@ -264,7 +264,7 @@ categories:
             </td>
             <td style="text-align:left">
                 <li>The cost of sorting is dominated by comparing values and moving data around</li>
-                <li>Two main ways of implementing merge sort: K-way merge and cascade merge<li>
+                <li>Two main ways of implementing merge sort: K-way merge and cascade merge</li>
             </td>
             <td style="text-align:left">👀</td>
             <td style="text-align:left">★★★</td>
@@ -305,8 +305,15 @@ categories:
                         <li>Comparison sort, allow user-specified comparison function. Including quick sort, merge sort</li>
                     </ul>
                 </li>
+                <li>Three stages merge sort with GPU
+                    <ul>
+                        <li>Block sort, which can be further divided into two stages. First, each thread loads eight elements in registers and sorts them using bitonic sort. Second, merge these 8-element segments together</li>
+                        <li>Merge sort-simple, two moving windows, one in register and the other in memory</li>
+                        <li>Merge sort-multiple, allow CUDA blocks to cooperate in merging two sequences</li>
+                    </ul>
+                </li>
             </td>
-            <td style="text-align:left">👀</td>
+            <td style="text-align:left">✅</td>
             <td style="text-align:left">★★★</td>
         </tr>
         <tr>
