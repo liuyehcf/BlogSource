@@ -199,7 +199,14 @@ categories:
                 <li>CRCW, concurrent read and concurrent write. EREW, exclusive read and exclusive write. PRAM, parallel random access memory</li>
                 <li>Tree-based merge sort, CREW algorighm
                     <ul>
-                        <li>3-cover property</li>
+                        <li>The merges at the different levels of the tree can be pipelined</li>
+                        <li>Definitions:
+                            <ul>
+                                <li><code>L(u)</code> denotes the final sorted array of the subtree rooted at node <code>u</code></li>
+                                <li><code>UP(u)</code> denotes the subset of <code>L(u)</code>, which will become a more accurate approximation of <code>L(u)</code> as stage goes forward</li>
+                                <li><code>SUP(u)</code> denotes a sorted array comprising every fourth item in <code>UP(u)</code></code>
+                            </ul>
+                        </li>
                         <li>Node classification:
                             <ul>
                                 <li><code>0 < |UP(i)| < |L(i)|</code>, then node <code>i</code> is inside node</li>
