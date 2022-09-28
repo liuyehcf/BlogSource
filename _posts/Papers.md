@@ -204,7 +204,13 @@ categories:
                             <ul>
                                 <li><code>L(u)</code> denotes the final sorted array of the subtree rooted at node <code>u</code></li>
                                 <li><code>UP(u)</code> denotes the subset of <code>L(u)</code>, which will become a more accurate approximation of <code>L(u)</code> as stage goes forward</li>
-                                <li><code>SUP(u)</code> denotes a sorted array comprising every fourth item in <code>UP(u)</code></code>
+                                <li><code>SUP(u)</code> denotes a sorted array comprising every fourth item in <code>UP(u)</code></li>
+                                <li><code>L</code> is a c-cover of <code>J</code> if each interval induced by an item in <code>L</code>(<code>[e, g]</code>, where <code>e</code> and <code>g</code> are two adjacent items in <code>L</code>) contains at most c items from <code>J</code>. And, usually <code>|L| < |J|</code>
+                                    <ul>
+                                        <li><code>OLDSUP(v)</code> is a 3-cover of <code>SUP(v)</code>, why???</li>
+                                        <li>As <code>UP(u) = OLDSUP(v) ∪ OLDSUP(w)</code>, we can deduce that <code>UP(v)</code> is a 3-cover of <code>SUP(v)</code> and <code>UP(v)</code> is a 3-cover of <code>SUP(w)</code></li>
+                                    </ul>
+                                </li>
                             </ul>
                         </li>
                         <li>Node classification:
@@ -224,6 +230,13 @@ categories:
                                 <li><code>SUP(i) = every forth item of UP(i)</code>, for inside node or first stage of external node</li>
                                 <li><code>SUP(i) = every second item of UP(i)</code>, for second stage of external node</li>
                                 <li><code>SUP(i) = every item of UP(i)</code>, for third stage of external node</li>
+                            </ul>
+                        </li>
+                        <li>Merge process:
+                            <ul>
+                                <li>Assume <code>UP(u) -> SUP(v)</code>, <code>UP(u) -> SUP(w)</code></li>
+                                <li>Step1: compute <code>NEWUP(u)</code>. If <code>SUP(v) <--> SUP(w)</code>, then we can know rank of any item in <code>SUP(v)</code> or <code>SUP(w)</code> in <code>NEWUP(u)</code> by adding its ranks in <code>SUP(v)</code> and <code>SUP(w)</code></li>
+                                <li>Step2: compute <code>NEWUP(u) -> NEWSUP(v)</code>, <code>NEWUP(U) -> NEWSUP(w)</code></li>
                             </ul>
                         </li>
                     </ul>
