@@ -1135,6 +1135,11 @@ categories:
     * SubQuery
         * [Reusing Invariants: A New Strategy for Correlated Queries](https://dl.acm.org/doi/pdf/10.1145/276304.276309)
         * [On Optimizing an SQL-like Nested Query](https://dl.acm.org/doi/pdf/10.1145/319732.319745)
+    * Group-by
+        * [Including group-by in query optimization](https://www.vldb.org/conf/1994/P354.PDF)
+        * [Eager aggregation and lazy aggregation](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.50.7294&rep=rep1&type=pdf)
+        * [Aggregate-query processing in data warehousing environments](http://ilpubs.stanford.edu:8090/101/1/1995-33.pdf)
+        * [Optimizing queries with aggregate views](https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.28.8212&rep=rep1&type=pdf)
     * [Implementation of Two Semantic Query Optimization Techniques in DB2 Universal Database](https://www.researchgate.net/profile/Jarek-Gryz/publication/221309776_Implementation_of_Two_Semantic_Query_Optimization_Techniques_in_DB2_Universal_Database/links/0912f51279e7662532000000/Implementation-of-Two-Semantic-Query-Optimization-Techniques-in-DB2-Universal-Database.pdf)
 * Execution
     * Vectorization
