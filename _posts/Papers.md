@@ -208,7 +208,7 @@ categories:
                                 <li><code>L</code> is a c-cover of <code>J</code> if each interval induced by an item in <code>L</code>(<code>[e, g]</code>, where <code>e</code> and <code>g</code> are two adjacent items in <code>L</code>) contains at most c items from <code>J</code>. And, usually <code>|L| < |J|</code>
                                     <ul>
                                         <li><code>OLDSUP(v)</code> is a 3-cover of <code>SUP(v)</code>, why???</li>
-                                        <li>As <code>UP(u) = OLDSUP(v) ∪ OLDSUP(w)</code>, we can deduce that <code>UP(v)</code> is a 3-cover of <code>SUP(v)</code> and <code>UP(v)</code> is a 3-cover of <code>SUP(w)</code></li>
+                                        <li>As <code>UP(u) = OLDSUP(v) ∪ OLDSUP(w)</code>, we can deduce that <code>UP(v)</code> is a 3-cover of <code>SUP(v)</code> and <code>UP(v)</code> is a 3-cover of <code>SUP(w)</code>, why???</li>
                                     </ul>
                                 </li>
                             </ul>
@@ -237,8 +237,8 @@ categories:
                                 <li>Assume <code>UP(u) -> SUP(v)</code>, <code>UP(u) -> SUP(w)</code></li>
                                 <li>Step1: compute <code>NEWUP(u)</code>. If <code>SUP(v) <--> SUP(w)</code>, then we can know rank of any item of <code>SUP(v)</code> or <code>SUP(w)</code> in <code>NEWUP(u)</code> by adding its ranks in <code>SUP(v)</code> and <code>SUP(w)</code></li>
                                     <ul>
-                                        <li>Substep1: For each item in <code>SUP(v)</code> we compute its rank in <code>UP(u)</code>, <code>SUP(v) <--> UP(u), SUP(w) <--> UP(u)</code></li>
-                                        <li>Substep2: For each item in <code>SUP(v)</code> we compute its rank in <code>SUP(w)</code> by <code>SUP(v) <--> UP(u), SUP(w) <--> UP(u)</code></li>
+                                        <li>Substep1: For each item in <code>SUP(v)</code> we compute its rank in <code>UP(u)</code>, <code>SUP(v) <--> UP(u)</code>, <code>SUP(w) <--> UP(u)</code></li>
+                                        <li>Substep2: For each item in <code>SUP(v)</code> we compute its rank in <code>SUP(w)</code> by making use of <code>SUP(v) <--> UP(u)</code>, <code>SUP(w) <--> UP(u)</code></li>
                                     </ul>
                                 <li>Step2: compute <code>NEWUP(u) -> NEWSUP(v)</code>, <code>NEWUP(u) -> NEWSUP(w)</code></li>
                             </ul>
