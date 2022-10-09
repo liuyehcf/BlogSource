@@ -85,6 +85,8 @@ categories:
 
 # 3 /proc目录
 
+可以通过`man proc`查看说明文档
+
 1. `/proc/buddyinfo`：内存碎片信息
 1. `/proc/cmdline`：系统启动时输入给内核的命令行参数
 1. `/proc/version`：内核版本
@@ -153,6 +155,10 @@ categories:
         * `11 -> TCP_CLOSING`
 1. `/proc/<pid>`：进程相关的信息
     * `/proc/<pid>/status`：查看进程相关的一些概要信息
+        * `VmPeak`：峰值虚拟内存
+        * `VmSize`：目前占用的虚拟内存
+        * `VmHWM`：峰值物理内存
+        * `VmRSS`：目前占用的物理内存
         * `Threads`：线程数量
     * `/proc/<pid>/maps`：展示了一个进程的内存消耗
     * `/proc/<pid>/smaps`：展示了一个进程的内存消耗，内容比`/proc/<pid>/maps`更为详细
