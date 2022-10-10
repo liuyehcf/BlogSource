@@ -11,8 +11,6 @@ categories:
 
 <!--more-->
 
-# 1 Database
-
 <!--
         <tr>
             <td style="text-align:left">
@@ -28,6 +26,8 @@ categories:
             <td style="text-align:left">★★★</td>
         </tr>
 -->
+
+# 1 OLAP
 
 <table>
     <thead>
@@ -1053,7 +1053,42 @@ categories:
     </tbody>
 </table>
 
-# 2 Serverless
+# 2 DSPS
+
+Data Stream Processing System, DSPS
+
+<table>
+    <thead>
+        <tr>
+            <th style="text-align:left">题目</th>
+            <th style="text-align:left">分类</th>
+            <th style="text-align:left">概要</th>
+            <th style="text-align:left">状态</th>
+            <th style="text-align:left">推荐级别</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/A-Survey-of-Distributed-Data-Stream-Processing-Frameworks.pdf">A Survey of Distributed Data Stream Processing Frameworks</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Survey</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Batch Processing
+                    <ul>
+                        <li>Latency, cannot process until all data is loaded</li>
+                    </ul>
+                </li>
+            </td>
+            <td style="text-align:left">👀</td>
+            <td style="text-align:left"></td>
+        </tr>
+    </tbody>
+</table>
+
+# 3 Serverless
 
 <table>
     <thead>
@@ -1100,7 +1135,7 @@ categories:
     </tbody>
 </table>
 
-# 3 Compile Tech
+# 4 Compile Tech
 
 <table>
     <thead>
@@ -1127,7 +1162,7 @@ categories:
     </tbody>
 </table>
 
-# 4 TODO
+# 5 TODO
 
 * Survey
     * [Query Evaluation Techniques for Large Databases](https://cgi.cse.unsw.edu.au/~cs9315/20T1/readings/query.pdf)
@@ -1193,5 +1228,6 @@ categories:
     * Stream processing
         * [Apache Flink™: Stream and Batch Processing in a Single Engine](/resources/paper/Apache-Flink-Stream-and-Batch-Processing-in-a-Single-Engine.pdf)
         * [A Survey Of Stream Processing](/resources/paper/A-Survey-Of-Stream-Processing.pdf)
+        * [Scalable Distributed Stream Processing](/resources/paper/Scalable-Distributed-Stream-Processing.pdf)
 * Computer Architecture
     * [Residency-Aware Virtual Machine Communication Optimization: Design Choices and Techniques](/resources/paper/Residency-Aware-Virtual-Machine-Communication-Optimization-Design-Choices-and-Techniques.pdf)
