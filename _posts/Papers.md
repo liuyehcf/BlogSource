@@ -309,9 +309,14 @@ categories:
                         <li>Three types of associativity, full associative, direct-mapped, group-mapped</li>
                     </ul>
                 </li>
-                <li>Cache-efficient parallel merge, processing cache-size of data at one iteration</li>
+                <li>Cache-efficient parallel merge
+                    <ul>
+                        <li>Key idea: ensure that all elements that may be active at any given time can co-reside in cache</li>
+                        <li>Multi-processors process cache-size data at one iteration</li>
+                    </ul>
+                </li>
             </td>
-            <td style="text-align:left">👀/3</td>
+            <td style="text-align:left">✅</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>
@@ -1192,7 +1197,7 @@ Data Stream Processing System, DSPS
     * Sort
         * [Merge Path - Parallel Merging Made Simple](/resources/paper/Merge-Path-Parallel-Merging-Made-Simple.pdf)
         * [Design and Evaluation of Main Memory Hash Join Algorithms for Multi-core CPUs](/resources/paper/Design-and-Evaluation-of-Main-Memory-Hash-Join-Algorithms-for-Multi-core-CPUs.pdf)
-        * [Sort vs. Hash Revisited Fast Join Implementation on Modern Multi-Core CPUs]/resources/paper/Sort-vs.-Hash-Revisited-Fast-Join-Implementation-on-Modern-Multi-Core-CPUs.pdf)
+        * [Sort vs. Hash Revisited Fast Join Implementation on Modern Multi-Core CPUs](/resources/paper/Sort-vs.-Hash-Revisited-Fast-Join-Implementation-on-Modern-Multi-Core-CPUs.pdf)
         * [Implementing Sorting in Database Systems](http://lgis.informatik.uni-kl.de/archiv/wwwdvs.informatik.uni-kl.de/courses/DBSREAL/SS2005/Vorlesungsunterlagen/Implementing_Sorting.pdf)
         * [Sort vs. Hash Revisited: Fast Join Implementation on Modern Multi-Core CPUs](http://www.kaldewey.com/pubs/Sort_vs_Hash__VLDB09.pdf)
         * 《Fast multi-column sorting in main-memory column-stores》

@@ -1326,7 +1326,42 @@ Class *pc = new (buf) Class();
 
 # 4 模板
 
-## 4.1 形参包
+## 4.1 模板类型
+
+1. `template`模板
+1. `typename`模板
+1. `enum`模板
+1. 非类型模板，通常是整型、布尔等可以枚举的类型
+
+```cpp
+#include <iostream>
+#include <vector>
+
+template <template <typename> typename V, typename E>
+const E& get_back_1(const V<E>& c) {
+    return c.back();
+}
+
+template <typename T>
+const typename T::value_type& get_back_2(const T& c) {
+    return c.back();
+}
+
+template <size_t I>
+const int& get(const std::vector<int>& c) {
+    return c[I];
+}
+
+int main() {
+    std::vector<int> v{1, 2, 3};
+    std::cout << get_back_1(v) << std::endl;
+    std::cout << get_back_2(v) << std::endl;
+    std::cout << get<2>(v) << std::endl;
+    return 0;
+}
+```
+
+## 4.2 形参包
 
 [C++ 语言构造参考手册-形参包](https://www.bookstack.cn/read/cppreference-language/5c04935094badaf1.md)
 
@@ -1348,7 +1383,7 @@ Class *pc = new (buf) Class();
 
 * `模式 ...`
 
-## 4.2 折叠表达式
+## 4.3 折叠表达式
 
 [C++ 语言构造参考手册-折叠表达式](https://www.bookstack.cn/read/cppreference-language/62e23cda3198622e.md)
 
@@ -1395,7 +1430,7 @@ Class *pc = new (buf) Class();
 1. `.`
 1. `->`
 
-## 4.3 非类型模板参数
+## 4.4 非类型模板参数
 
 我们还可以在模板中定义非类型参数，一个非类型参数表示一个值而非一个类型。当一个模板被实例化时，非类型参数被编译器推断出的值所代替，这些值必须是常量表达式，从而允许编译器在编译时实例化模板。一个非类型参数可以是一个整型（枚举可以理解为整型），或是一个指向对象或函数类型的指针或引用
 
@@ -1431,7 +1466,7 @@ int main() {
 }
 ```
 
-## 4.4 模板形参无法推断
+## 4.5 模板形参无法推断
 
 **通常，在`::`左边的模板形参是无法进行推断的（这里的`::`特指用于连接两个类型），例如下面这个例子**
 
@@ -1456,7 +1491,7 @@ int main() {
 }
 ```
 
-## 4.5 typename消除歧义
+## 4.6 typename消除歧义
 
 **什么情况下会有歧义？。例如`foo* ptr;`**
 
@@ -1498,7 +1533,7 @@ typename T::value_type sum(const T &container) {
 }
 ```
 
-## 4.6 template消除歧义
+## 4.7 template消除歧义
 
 **什么情况下会有歧义？。例如`container.emplace<int>(1);`**
 
@@ -1571,7 +1606,7 @@ void bar() {
 }
 ```
 
-## 4.7 template参数列表中定义类型别名
+## 4.8 template参数列表中定义类型别名
 
 语法上，我们是无法在template的参数列表中定义别名的（无法使用`using`）。但是我们可以通过定义有默认值的类型形参来实现类似类型别名的功能，如下：
 
@@ -1583,7 +1618,7 @@ ValueType& get(HashMap& map, const KeyType& key) {
 }
 ```
 
-## 4.8 非模板子类访问模板父类中的成员
+## 4.9 非模板子类访问模板父类中的成员
 
 * 方式1：`MemberName`
 * 方式2：`this->MemberName`
@@ -1607,7 +1642,7 @@ int main() {
 }
 ```
 
-## 4.9 模板子类访问模板父类中的成员
+## 4.10 模板子类访问模板父类中的成员
 
 * 访问方式1：`ParentClass<Template Args...>::MemberName`
 * 访问方式2：`this->MemberName`
@@ -1632,7 +1667,7 @@ int main() {
 }
 ```
 
-## 4.10 模板作为模板形参
+## 4.11 模板作为模板形参
 
 [What are some uses of template template parameters?](https://stackoverflow.com/questions/213761/what-are-some-uses-of-template-template-parameters)
 
