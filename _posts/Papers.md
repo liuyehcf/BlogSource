@@ -196,10 +196,17 @@ categories:
                 <li><code>#Sort</code></li>
             </td>
             <td style="text-align:left">
-                <li>CRCW, concurrent read and concurrent write. EREW, exclusive read and exclusive write. PRAM, parallel random access memory</li>
+                <li>Sort models, circuits and PRAM(parallel random access memory)
+                    <ul>
+                        <li>CRCW(concurrent read and concurrent write) PRAM</li>
+                        <li>CREW(concurrent read and exclusive write) PRAM</li>
+                        <li>EREW(exclusive read and exclusive write) PRAM</li>
+                    </ul>
+                </li>
                 <li>Tree-based merge sort, CREW algorighm
                     <ul>
-                        <li>The merges at the different levels of the tree can be pipelined</li>
+                        <li><b>Think about the tree-based merge sort, items are merged level by level from bottom up. For merge operation, different level processes different amount of items, and we use <code>log(N)</code> stages to merge <code>N</code> items. And here comes the key observation that the merges at the different levels of the tree can be pipelined</b></li>
+                        <li>Runs in <code>O(log(N))</code> time on <code>N</code> processors</li>
                         <li>Definitions:
                             <ul>
                                 <li><code>L(u)</code> denotes the final sorted array of the subtree rooted at node <code>u</code></li>
@@ -246,8 +253,8 @@ categories:
                     </ul>
                 </li>
             </td>
-            <td style="text-align:left">🤷🏻</td>
-            <td style="text-align:left">★★★</td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>
             <td style="text-align:left">
@@ -263,6 +270,39 @@ categories:
             </td>
             <td style="text-align:left">🤷🏻</td>
             <td style="text-align:left">★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Optimizing-parallel-bitonic-sort.pdf">Optimizing parallel bitonic sort</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Sort</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Most of the research on parallel algorithm design in the 70s and 80s has focused on fine-grain models of parallel computation, such as PRAM or network-based models</li>
+                <li><code>N</code> keys will be sorted in <code>log(N)</code> stages, for each bitonic sequence of <code>i-th</code> stage contains <code>2^i</code> items, and it can be Butterfly merged in <code>i</code> steps</li>
+                <li>Naive and improved data layouts
+                    <ul>
+                        <li>Blocked layout: mapping <code>N</code> items on <code>P</code> processors, with <code>n = N / P</code>. The first <code>log(n)</code> stages can be exected locally. For the subsequent stages <code>log(n) + k</code>, the first <code>k</code> steps require remote communication whil the last <code>log(n)</code> steps are completely local</li>
+                        <li>Cyclic layout: mapping <code>N</code> items on <code>P</code> processors by assigning the <code>i-th</code> item to the <code>i % P</code> processor, with <code>n = N / P</code>. The first <code>log(n)</code> stages require remote communication. For the subsequent stages <code>log(n) + k</code>, the first <code>k</code> steps are completely local while last <code>log(n)</code> steps require remote communication</li>
+                        <li>Cyclic-blocked layout: by periodically remapping the data from a blocked layout to a cyclic layout and vice verse can reduce the communication overhead</li>
+                    </ul>
+                </li>
+                <li>Optimization communication
+                    <ul>
+                        <li>Absolute address(<code>log(N)</code> bits long): represents the row number of the node in the bitonic storing network</li>
+                        <li>Relative address: the first <code>log(P)</code> bits represent the processor number, and the last <code>log(n)</code> bits represent the local address of the node after the remap</li>
+                        <li><b>Key observation: After the first <code>log(n)</code> stages (which can be entirely executed locally under a blocked layout) the maximum number of successive steps of the bitonic sorting network that can be executed locally, under any data layout, is <code>log(n)</code> (where <code>n = N / P</code>, <code>N</code> is data size, <code>P</code> is number of processors)</b></li>
+                        <li>We can thus reformulate the problem as: Given the tuple (stage, step), which uniquely identifies a column of the bitonic sorting network, how to remap the elements at this point in such a way that the next <code>log(n)</code> steps of the bitonic sorting network are executed locally</li>
+                        <li><code>log(n)</code> successive steps may cross stage</li>
+                        <li>The purpose of the first <code>log(n)</code> stages is to form a monotonically increasing or decreasing sequence of n keys on each processor, thus we can replace all these stages with a single, highly optimized local sort</li>
+                        <li><b>My question is: why are all processors not sharing the same data array, so there is no remote communication problem</b></li>
+                    </ul>
+                </li>
+            </td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>
             <td style="text-align:left">

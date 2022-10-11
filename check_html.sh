@@ -3,7 +3,7 @@
 ROOT=$(dirname "$0")
 ROOT=$(cd "$ROOT"; pwd)
 file="${ROOT}/_posts/Papers.md"
-items=("table" tbody "thead" "tr" "th" "td" "a" "li" "ul" "code")
+items=("table" tbody "thead" "tr" "th" "td" "a" "b" "li" "ul" "code")
 
 function echo_red() {
     tput setaf 1; tput bold; echo "$@"; tput sgr0
