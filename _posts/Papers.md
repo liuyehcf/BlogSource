@@ -306,6 +306,20 @@ categories:
         </tr>
         <tr>
             <td style="text-align:left">
+                <a href="/resources/paper/Parallel-Merge-Sort-with-Load-Balancing.pdf">Parallel Merge Sort with Load Balancing</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Sort</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Main contribution: find a way to merge two lists, each of which is distributed in multiple processors, rather than store them on a single processor</li>
+            </td>
+            <td style="text-align:left">👀</td>
+            <td style="text-align:left"></td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
                 <a href="/resources/paper/Distributed-Top-k-Query-Processing-by-Exploiting-Skyline-Summaries.pdf">Distributed Top-k Query Processing by Exploiting Skyline Summaries</a>
             </td>
             <td style="text-align:left">
@@ -1243,7 +1257,7 @@ Data Stream Processing System, DSPS
         * 《Fast multi-column sorting in main-memory column-stores》
         * [BlockQuicksort: Avoiding Branch Mispredictions in Quicksort](https://kclpure.kcl.ac.uk/portal/files/123577916/BlockQuicksort_Avoiding_Branch_Mispredictions_EDELKAMP_PublishedAugust2016_VoR_CC_BY_.pdf)
         * [Efficient Implementation of Sorting on Multi-Core SIMD CPU Architecture](/resources/paper/Efficient-Implementation-of-Sorting-on-Multi-Core-SIMD-CPU-Architecture.pdf)
-        * [Parallel Merge Sort with Load Balancing](/resources/paper/Parallel-Merge-Sort-with-Load-Balancing.pdf)
+        * [Parallelization of Modified Merge Sort Algorithm](/resources/paper/Parallelization-of-Modified-Merge-Sort-Algorithm.pdf)
 * Memory
     * [Efficient Use of Memory Bandwidth to Improve Network Processor Throughput](http://www.cs.ucr.edu/~bhuyan/cs162/LECTURE12b.pdf)
 * Statistics/Sample
