@@ -314,9 +314,23 @@ categories:
             </td>
             <td style="text-align:left">
                 <li>Main contribution: find a way to merge two lists, each of which is distributed in multiple processors, rather than store them on a single processor</li>
+                <li>Items are merged level by level from bottom up:
+                    <ul>
+                        <li>Group is a set of processors that are in charge of one sorted list, the higher level, the more processors there will be</li>
+                        <li>Each merge comprises two groups(partner groups), each group will maintain a histogram</li>
+                        <li>Before merging, each group exchanges histograms to form a new one to cover both, and each processor then divideds the intervals of the merged histogram into <code>2 * |group|</code> parts so that the lower indexed processors will keep the smaller half, and the higher will keep the larger half. And each processor sends out the half intervals that belongs to the other processors for further merge</li>
+                        <li>Key observation: for each non-overlap interval, which means amoung all the processors only one at most data set exists, no merge operation required. And for each overlap interval, k-merge or cascaded merge is required to merge the 2 or more data sets</li>
+                        <li>Questions: 
+                            <ul>
+                                <li>How to form a histogram if there are mutilply sort keys?</li>
+                                <li>How is the balance when there is data skew?</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
             </td>
-            <td style="text-align:left">👀</td>
-            <td style="text-align:left"></td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>
             <td style="text-align:left">
