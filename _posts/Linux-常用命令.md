@@ -361,6 +361,12 @@ echo -e "a\nb\nc" | sed -n '/b/,$p'
 # 输出如下
 b
 c
+
+# 利用正则表达式输出指定内容
+echo -e '<a href="https://www.baidu.com">BaiDu</a>' | sed -rn 's/^.*<a href="(.*)">.*$/\1/p'
+
+# 输出如下
+https://www.baidu.com
 ```
 
 * **`s`**：

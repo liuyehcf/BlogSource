@@ -326,10 +326,28 @@ categories:
                             <ul>
                                 <li>How to form a histogram if there are mutilply sort keys?</li>
                                 <li>How is the balance when there is data skew?</li>
+                                <li>How to make sure that each processor maintain a histogram with same intervals</li>
                             </ul>
                         </li>
                     </ul>
                 </li>
+            </td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Parallelizing-fundamental-algorithms-such-as-sorting-on-multi-core-processors-for-EDA-acceleration.pdf">Parallelizing Fundamental Algorithms such as Sorting on Multi-core Processors for EDA Acceleration</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution</code></li>
+                <li><code>#Sort</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Granularity vs. Load Balancing. Fine grain has better load balancing while coarse grain has smaller overhead</li>
+                <li>Parallel quick sort</li>
+                <li>Parallel merge sort</li>
+                <li>Parallel map sort</li>
             </td>
             <td style="text-align:left">✅</td>
             <td style="text-align:left">★★★★★</td>
@@ -1288,7 +1306,6 @@ Data Stream Processing System, DSPS
         * [BlockQuicksort: Avoiding Branch Mispredictions in Quicksort](https://kclpure.kcl.ac.uk/portal/files/123577916/BlockQuicksort_Avoiding_Branch_Mispredictions_EDELKAMP_PublishedAugust2016_VoR_CC_BY_.pdf)
         * [Efficient Implementation of Sorting on Multi-Core SIMD CPU Architecture](/resources/paper/Efficient-Implementation-of-Sorting-on-Multi-Core-SIMD-CPU-Architecture.pdf)
         * [A Comparative Study of Parallel Sort Algorithms](/resources/paper/A-Comparative-Study-of-Parallel-Sort-Algorithms.pdf)
-        * [Parallelizing Fundamental Algorithms such as Sorting on Multi-core Processors for EDA Acceleration](/resources/paper/Parallelizing-fundamental-algorithms-such-as-sorting-on-multi-core-processors-for-EDA-acceleration.pdf)
         * [A Simple, Fast Parallel Implementation of Quicksort and its Performance Evaluation on SUN Enterprise 10000](/resources/paper/A-Simple-Fast-Parallel-Implementation-of-Quicksort-and-its-Performance-Evaluation-on-SUN-Enterprise-10000.pdf)
 * Memory
     * [Efficient Use of Memory Bandwidth to Improve Network Processor Throughput](http://www.cs.ucr.edu/~bhuyan/cs162/LECTURE12b.pdf)
