@@ -1,5 +1,5 @@
 ---
-title: Cpp-语言
+title: Cpp-Language
 date: 2021-09-06 10:53:48
 tags: 
 - 原创
@@ -1014,7 +1014,7 @@ gcc -o main main.cpp extern.cpp -lstdc++ -Wall
 1. 有虚函数的每个类，维护一个虚函数表
 1. 有虚函数的类的对象，会包含一个指向该类的虚函数表的指针
 
-![virtual-method-table](/images/Cpp-语言/virtual-method-table.jpeg)
+![virtual-method-table](/images/Cpp-Language/virtual-method-table.jpeg)
 
 * 图片出处：[c++虚指针和虚函数表](https://zhuanlan.zhihu.com/p/110144589)
 
