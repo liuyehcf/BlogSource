@@ -88,6 +88,14 @@ categories:
 可以通过`man proc`查看说明文档
 
 1. `/proc/buddyinfo`：内存碎片信息
+    * 示例如下，对于DMA，有90个大小为`2^(0*PAGE_SIZE)`的内存块；6个大小为`2^(1*PAGE_SIZE)`的内存块；2个大小为`2^(2*PAGE_SIZE)`的内存块
+    ```
+    Node 0, zone      DMA     90      6      2      1      1      ...
+    Node 0, zone   Normal   1650    310      5      0      0      ...
+    Node 0, zone  HighMem      2      0      0      1      1      ...
+    ```
+
+    * 整理内存碎片相关的配置有：`/proc/sys/vm/compact_memory`、`/proc/sys/vm/drop_caches`
 1. `/proc/cmdline`：系统启动时输入给内核的命令行参数
 1. `/proc/version`：内核版本
 1. `/proc/cpuinfo`：cpu硬件信息
@@ -103,6 +111,7 @@ categories:
     * `Slab`：slab内存
         * `SReclaimable`：slab中可回收的部分，与`MemAvailable`相关
         * `SUnreclaim`：slab中不可回收的部分
+    * `Hugepage{xxx}`：与`Hugepage`相关的配置
 1. `/proc/zoneinfo`
     * `Linux 2.6`开始支持`NUMA, Non-Uniform Memory Access`内存管理模式。在多个CPU的系统中，内存按CPU划分为不同的`Node`，每个CPU挂一个`Node`，其访问本地`Node`比访问其他CPU上的`Node`速度要快很多
     * `numactl -H`可以查看`NUMA`硬件信息
