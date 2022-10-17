@@ -2121,13 +2121,13 @@ BM_foo_with_align_256       23.5 ns         23.5 ns     29786540
 #include <random>
 
 // You can get these cache info by `getconf -a | grep -i cache`
-#define CACHE_LINESIZE 64
-#define LEVEL1_DCACHE_SIZE 32768
-#define LEVEL2_CACHE_SIZE 1048576
-#define LEVEL3_CACHE_SIZE 37486592
+constexpr size_t CACHE_LINESIZE = 64;
+constexpr size_t LEVEL1_DCACHE_SIZE = 32768;
+constexpr size_t LEVEL2_CACHE_SIZE = 1048576;
+constexpr size_t LEVEL3_CACHE_SIZE = 37486592;
 
 // Suppose that 90% of capacity of cache is used by this program
-#define FACTOR 0.9
+constexpr double FACTOR = 0.9;
 
 constexpr size_t MAX_ARRAY_SIZE_L1 = FACTOR * LEVEL1_DCACHE_SIZE / CACHE_LINESIZE;
 constexpr size_t MAX_ARRAY_SIZE_L2 = FACTOR * LEVEL2_CACHE_SIZE / CACHE_LINESIZE;
