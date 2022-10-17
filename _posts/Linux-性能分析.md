@@ -198,7 +198,13 @@ https://github.com/StarRocks/starrocks/pull/7649
 * `pcm-raw`
 * `pcm-bw-histogram`
 
-# 7 Tips
+# 7 [sysbench](https://github.com/akopytov/sysbench)
+
+**示例：**
+
+* 测试内存性能：`sysbench --test=memory --memory-block-size=1M --memory-total-size=10G --num-threads=1 run`
+
+# 8 Tips
 
 1. **性能分析需要重点关注的指标**
     * `Cycles`
@@ -209,7 +215,7 @@ https://github.com/StarRocks/starrocks/pull/7649
     * `Branch Miss`
     * `Contention`
 
-# 8 参考
+# 9 参考
 
 * [perf Examples](https://www.brendangregg.com/perf.html)
 * [在Linux下做性能分析1：基本模型](https://zhuanlan.zhihu.com/p/22124514)

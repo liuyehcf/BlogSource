@@ -363,15 +363,31 @@ categories:
             <td style="text-align:left">
                 <li>Parallel quick sort has four phases:
                     <ul>
-                        <li>The parallel partition of the data phase</li>
-                        <li>The sequential partition of the data phase</li>
-                        <li>The process partition phase</li>
+                        <li>The parallel partition of the data phase
+                            <ul>
+                                <li>The primary operation unit is a block, which holds a consecutive of keys</li>
+                                <li>Pivot(a key) is selected by one of the processors, assuming <code>P0</code> is the selected processor</li>
+                                <li>Each processor indenpendly partition its local data with the above pivot using a function called <code>neutralize</code> which takes two blocks from left and and right end as input, the process is similiar to the generic quick sort's partition in the high level. But there may be at most one block remains after partition, because <code>neutralize</code> always requires two blocks as input</li>
+                            </ul>
+                        </li>
+                        <li>The sequential partition of the data phase
+                            <ul>
+                                <li><code>P0</code> works on the remaing blocks of all the processors in the similar way(<code>neutralize</code>)</li>
+                                <li>Finally, we get two subarray stride across the pivot with left side small or equal to pivot, right side large or equal to pivot</li>
+                            </ul>
+                        </li>
+                        <li>The process partition phase
+                            <ul>
+                                <li>Partition all processors into two groups base on the size of the subarray</li>
+                                <li>Repeat the process from phase one to phase three, until every group contains only one processor</li>
+                            </ul>
+                        </li>
                         <li>The sequential sorting in parallel with helping phase</li>
                     </ul>
                 </li>
             </td>
-            <td style="text-align:left">👀/P4</td>
-            <td style="text-align:left"></td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>
             <td style="text-align:left">
