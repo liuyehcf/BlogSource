@@ -202,7 +202,11 @@ https://github.com/StarRocks/starrocks/pull/7649
 
 **示例：**
 
-* 测试内存性能：`sysbench --test=memory --memory-block-size=1M --memory-total-size=10G --num-threads=1 run`
+* `sysbench --test=memory --memory-block-size=1M --memory-total-size=10G --num-threads=1 run`
+* `sysbench --test=cpu run`
+* `sysbench --test=fileio --file-test-mode=seqwr run`
+* `sysbench --test=threads run`
+* `sysbench --test=mutex run`
 
 # 8 Tips
 
