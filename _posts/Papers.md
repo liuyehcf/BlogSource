@@ -1225,8 +1225,35 @@ Data Stream Processing System, DSPS
                         <li>Latency, cannot process until all data is loaded</li>
                     </ul>
                 </li>
+                <li>Architecture of Data Stream Processing System(DSPS)
+                    <ul>
+                        <li>Data stream ingestion layer, responsible for accepting streams of data into the DSPS</li>
+                        <li>Data stream processing layer, which pre-processes and analyses data in one or more steps
+                            <ul>
+                                <li>Data stream management engines, DSME
+                                    <ul>
+                                        <li>Process continuous data on-the-fly without any requirement to store them</li>
+                                        <li>Support high-level languages such as SQL</li>
+                                        <li>Handle imperfections such as delayed, missing and out-of-order data</li>
+                                        <li>Guarantee predictable and repeatable outcomes</li>
+                                        <li>Efficiently store, access, modify, and combine (with live streaming data) state information</li>
+                                        <li>Ensure that the integrity of the data is maintained at all times and relevant applications are up and available despite failures</li>
+                                        <li>Automatically and transparently distribute the data processing load across multiple processors and machines</li>
+                                        <li>Respond to high-volume data processing applications in real-time using a highly optimized execution path</li>
+                                    </ul>
+                                </li>
+                                <li>Complex event processing engines, CEPE</li>
+                                <li>General-purpose DSPEs, GDSPE</li>
+                                <li></li>
+                            </ul>
+                        </li>
+                        <li>Storage layer, which stores, indexes and manages the data and the generated knowledge</li>
+                        <li>Resource management layer, which manages and coordinates the functions of distributed compute and storage resources</li>
+                        <li>Output layer, which directs the output data stream and knowledge to other systems or visualization tools</li>
+                    </ul>
+                </li>
             </td>
-            <td style="text-align:left">👀</td>
+            <td style="text-align:left">👀/Page4</td>
             <td style="text-align:left"></td>
         </tr>
     </tbody>
