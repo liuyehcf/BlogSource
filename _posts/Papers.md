@@ -1227,10 +1227,16 @@ Data Stream Processing System, DSPS
                 </li>
                 <li>Architecture of Data Stream Processing System(DSPS)
                     <ul>
-                        <li>Data stream ingestion layer, responsible for accepting streams of data into the DSPS</li>
-                        <li>Data stream processing layer, which pre-processes and analyses data in one or more steps
+                        <li>Data stream ingestion layer, responsible for accepting streams of data into the DSPS
                             <ul>
-                                <li>Data stream management engines, DSME
+                                <li>Scalable</li>
+                                <li>Resilient</li>
+                                <li>Fault-tolerant</li>
+                            </ul>
+                        </li>
+                        <li>Data stream processing layer, data stream processing engine (DSPE),which pre-processes and analyses data in one or more steps,
+                            <ul>
+                                <li>Data stream management engines, DSME, and the followings are the requirements that should be met
                                     <ul>
                                         <li>Process continuous data on-the-fly without any requirement to store them</li>
                                         <li>Support high-level languages such as SQL</li>
@@ -1244,12 +1250,41 @@ Data Stream Processing System, DSPS
                                 </li>
                                 <li>Complex event processing engines, CEPE</li>
                                 <li>General-purpose DSPEs, GDSPE</li>
-                                <li></li>
                             </ul>
                         </li>
-                        <li>Storage layer, which stores, indexes and manages the data and the generated knowledge</li>
-                        <li>Resource management layer, which manages and coordinates the functions of distributed compute and storage resources</li>
+                        <li>Storage layer, which stores, indexes and manages the data and the generated knowledge
+                            <ul>
+                                <li>Organized</li>
+                                <li>Indexed</li>
+                                <li>Metadata</li>
+                            </ul>
+                        </li>
+                        <li>Resource management layer, which manages and coordinates the functions of distributed compute and storage resources
+                            <ul>
+                                <li>Resource allocation</li>
+                                <li>Resource scheduling</li>
+                                <li>Server as a coordinator</li>
+                            </ul>
+                        </li>
                         <li>Output layer, which directs the output data stream and knowledge to other systems or visualization tools</li>
+                    </ul>
+                </li>
+                <li>Key features of DSPEs
+                    <ul>
+                        <li>Programming models, given the unbounded nature of streaming data
+                            <ul>
+                                <li>A window is usually defined by either a time duration or a record count. There are many window types: Fixed/Sliding/Session Window</li>
+                                <li>Stateless transformations: Map, Filter, FlatMap</li>
+                                <li>Stateful transformations: Aggregation, Group-and-aggregate, Join, Sort</li>
+                            </ul>
+                        </li>
+                        <li>Data source interaction model
+                            <ul>
+                                <li>Push model where a daemon process of a data stream engine keeps listening to an input channel</li>
+                                <li>Pull model, A challenge here is that the frequency of pulling and the speed of processing the data by the DSPEs should match the rate of data generation at the source to avoid data loss</li>
+                            </ul>
+                        </li>
+                        <li>Data partitioning strategy</li>
                     </ul>
                 </li>
             </td>
