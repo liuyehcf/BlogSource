@@ -295,6 +295,7 @@ usermod -d <new_dir> <username>
     * **分隔符若为`/`，那么普通的`|`不需要转义，`/`需要转义**
     * **分隔符若为`|`，那么普通的`/`不需要转义，`|`需要转义**
     * `g`：表示每行全部替换，否则只替换每行第一个
+    * `I`：大小写不敏感
 * **`r`**：插入另一个文本的所有内容
 
 **示例：**
@@ -348,6 +349,14 @@ echo -e "a\nb\nc" | sed '1,2inewLine'
 newLine
 a
 newLine
+b
+c
+
+echo -e "a\nb\nc" | sed '1inewLine'
+
+# 输出如下
+newLine
+a
 b
 c
 ```
