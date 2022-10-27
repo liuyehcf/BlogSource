@@ -1284,11 +1284,42 @@ Data Stream Processing System, DSPS
                                 <li>Pull model, A challenge here is that the frequency of pulling and the speed of processing the data by the DSPEs should match the rate of data generation at the source to avoid data loss</li>
                             </ul>
                         </li>
-                        <li>Data partitioning strategy</li>
+                        <li>Data partitioning strategy
+                            <ul>
+                                <li>Horizontal method divides data into disjoint sets of rows
+                                    <ul>
+                                        <li>Round-robin</li>
+                                        <li>Range, which is the most popular approach especially when there is a periodic loading of a new data</li>
+                                        <li>Hash</li>
+                                    </ul>
+                                </li>
+                                <li>The vertical method divides data into vertical and disjoint sets of columns and can be categorized further into cost-based and procedural approaches</li>
+                            </ul>
+                        </li>
+                        <li>State management
+                            <ul>
+                                <li>Operators can be stateless or stateful</li>
+                                <li>In traditional DSPEs, the state information was stored in a centralized database management system to be shared among applications</li>  
+                                <li>The state management facilities in various DSPEs naturally fall along a complexity continuum from naive in-memory-only choice to a persistent state that can be queried and replicated</li>                              
+                            </ul>
+                        </li>
+                        <li>Message processing guarantee, at-most-once, at-least-once, exactly once</li>
+                        <li>Fault tolerance and recovery
+                            <ul>
+                                <li>Passive, such as checkpoint, upstream buffer, source replay</li>
+                                <li>Active, such as replicas</li>
+                            </ul>
+                        </li>
+                        <li>Deployment</li>
+                        <li>Community support</li>
+                        <li>Support for high level languages, such as java, scala, python, r, sql</li>
+                        <li>Support for advanced input sources, such as local file systems, socket connections, databases, queuing tools</li>
+                        <li>Support for storage systems</li>
+                        <li>Support for analytics</li>
                     </ul>
                 </li>
             </td>
-            <td style="text-align:left">👀/Page4</td>
+            <td style="text-align:left">👀/IV</td>
             <td style="text-align:left"></td>
         </tr>
     </tbody>
