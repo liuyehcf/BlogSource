@@ -1303,19 +1303,33 @@ Data Stream Processing System, DSPS
                                 <li>The state management facilities in various DSPEs naturally fall along a complexity continuum from naive in-memory-only choice to a persistent state that can be queried and replicated</li>                              
                             </ul>
                         </li>
-                        <li>Message processing guarantee, at-most-once, at-least-once, exactly once</li>
+                        <li>Message processing guarantee, such as at-most-once, at-least-once, exactly once</li>
                         <li>Fault tolerance and recovery
                             <ul>
                                 <li>Passive, such as checkpoint, upstream buffer, source replay</li>
                                 <li>Active, such as replicas</li>
                             </ul>
                         </li>
-                        <li>Deployment</li>
-                        <li>Community support</li>
+                        <li>Deployment, such as local, cluster, cloud</li>
+                        <li>Community support, such as forums, meetups and others</li>
                         <li>Support for high level languages, such as java, scala, python, r, sql</li>
                         <li>Support for advanced input sources, such as local file systems, socket connections, databases, queuing tools</li>
                         <li>Support for storage systems</li>
                         <li>Support for analytics</li>
+                    </ul>
+                </li>
+                <li>Popular products:
+                    <ul>
+                        <li>Flink</li>
+                        <li>Samza</li>
+                        <li>Apex</li>
+                        <li>Storm</li>
+                        <li>Spark Streaming</li>
+                        <li>StreamBase</li>
+                        <li>IBM Streams</li>
+                        <li>Kafka Streams</li>
+                        <li>Google Dataflow</li>
+                        <li>Beam</li>                        
                     </ul>
                 </li>
             </td>
