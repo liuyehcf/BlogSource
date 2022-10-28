@@ -94,7 +94,16 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 
 * `last -x`
 
-## 1.8 w
+## 1.8 who
+
+该命令用于查看当前谁登录了系统，并且正在做什么事情
+
+**示例：**
+
+* `who`
+* `who -u`
+
+## 1.9 w
 
 该命令用于查看当前谁登录了系统，并且正在做什么事情，比`who`更强大一点
 
@@ -102,7 +111,7 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 
 * `w`
 
-## 1.9 useradd
+## 1.10 useradd
 
 **参数说明：**
 
@@ -126,7 +135,7 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 1. 新建用户主文件夹：`cp -a /etc/sekl /home/<name>`
 1. 更改用户文件夹的属性：`chown -R <group>/home/<name>`
 
-### 1.9.1 迁移用户目录
+### 1.10.1 迁移用户目录
 
 ```sh
 # 拷贝数据
@@ -139,7 +148,7 @@ sudo su
 usermod -d <new_dir> <username>
 ```
 
-## 1.10 userdel
+## 1.11 userdel
 
 **参数说明：**
 
@@ -149,7 +158,7 @@ usermod -d <new_dir> <username>
 
 * `userdel -r test`
 
-## 1.11 usermod
+## 1.12 usermod
 
 **参数说明：**
 
@@ -162,20 +171,20 @@ usermod -d <new_dir> <username>
 * `usermod -d /opt/home/admin admin`：修改指定账号的用户目录
     * 注意，新的路径最后不要加`/`，例如，不要写成`/opt/home/admin/`，这样会导致`zsh`无法将用户目录替换成`~`符号，这样命令行提示符中的路径就会是绝对路径，而不是`~`了
 
-## 1.12 chown
+## 1.13 chown
 
 **示例：**
 
 * `chown [-R] 账号名称 文件或目录`
 * `chown [-R] 账号名称:用户组名称 文件或目录`
 
-## 1.13 passwd
+## 1.14 passwd
 
 **示例：**
 
 * `echo '123456' | passwd --stdin root`
 
-## 1.14 id
+## 1.15 id
 
 用于查看用户信息，包括`uid`，`gid`等
 
@@ -186,11 +195,11 @@ usermod -d <new_dir> <username>
 * `id -u`：查看当前用户的uid
 * `id -nu <uid>`：查看指定uid对应的用户名
 
-## 1.15 readelf
+## 1.16 readelf
 
 用于读取、解析可执行程序
 
-## 1.16 getconf
+## 1.17 getconf
 
 查看系统相关的信息
 
@@ -200,7 +209,21 @@ usermod -d <new_dir> <username>
 
 # 2 常用处理工具
 
-## 2.1 echo
+## 2.1 ls
+
+**参数说明：**
+
+* `-a`：显式所有项目，包括隐藏的文件或者目录
+* `-l`：显式项目详情
+* `-t`：根据项目修改时间排序，最近修改的排在最前面
+* `-I`：排除指定pattern的项目
+
+**示例：**
+
+* `ls -alt | head -n 5`
+* `ls -I "*.txt" -I "*.cpp"`
+
+## 2.2 echo
 
 **格式：**
 
@@ -255,7 +278,7 @@ usermod -d <new_dir> <username>
     * `content="*"; echo ${content}`：`*`会被`sh/bash`（`zsh`不会）替换为当前路径下的所有文件和目录
     * `content="*"; echo "${content}"`：加引号后，正常输出字符`*`
 
-## 2.2 sed
+## 2.3 sed
 
 **格式：**
 
@@ -434,7 +457,7 @@ sed '/<tag>/ r file2.txt' file1.txt
 * `sed -i ".back" "s/a/b/g" example`：备份文件为`example.back`
 * `sed -i "" "s/a/b/g" example`：不备份
 
-## 2.3 awk
+## 2.4 awk
 
 相比于sed(管道命令)常常作用于一整行的处理，awk(管道命令)则比较倾向于将一行分成数个"字段"来处理，因此awk相当适合处理小型的数据处理
 
@@ -517,7 +540,7 @@ awk
 END {print "销售金额总计：",total}' sx
 ```
 
-### 2.3.1 使用shell变量
+### 2.4.1 使用shell变量
 
 **方式1：**
 
@@ -564,7 +587,7 @@ var="this a test"
 awk -v awkVar="$var" 'BEGIN{print awkVar}'
 ```
 
-### 2.3.2 控制语句
+### 2.4.2 控制语句
 
 **以下的示例都在`BEGIN`中，只执行一次，不需要指定文件或者输入流**
 
@@ -638,13 +661,13 @@ print total;
 }'
 ```
 
-### 2.3.3 正则表达式
+### 2.4.3 正则表达式
 
 ```sh
 echo "123" | awk '{if($0 ~ /^[0-9]+$/) print $0;}'
 ```
 
-## 2.4 cut
+## 2.5 cut
 
 **格式：**
 
@@ -670,7 +693,7 @@ echo "123" | awk '{if($0 ~ /^[0-9]+$/) print $0;}'
 * `echo "a:b:c:d:e" | cut -d ":" -f3`：输出c
 * `ll | cut -c 1-10`：显示查询结果的 1-10个字符
 
-## 2.5 grep
+## 2.6 grep
 
 grep分析一行信息，若当前有我们所需要的信息，就将该行拿出来
 
@@ -699,7 +722,7 @@ grep分析一行信息，若当前有我们所需要的信息，就将该行拿�
 
 * `grep -r [--color=auto] '查找的字符串' [目录名]`
 
-## 2.6 ag
+## 2.7 ag
 
 `ack`是`grep`的升级版，`ag`是`ack`的升级版。`ag`默认使用扩展的正则表达式，并且在当前目录递归搜索
 
@@ -723,7 +746,7 @@ grep分析一行信息，若当前有我们所需要的信息，就将该行拿�
 
 * `ag printf`
 
-## 2.7 sort
+## 2.8 sort
 
 **格式：**
 
@@ -745,7 +768,7 @@ grep分析一行信息，若当前有我们所需要的信息，就将该行拿�
 * `cat /etc/passwd | sort`
 * `cat /etc/passwd | sort -t ':' -k 3`
 
-## 2.8 uniq
+## 2.9 uniq
 
 **格式：**
 
@@ -764,7 +787,7 @@ grep分析一行信息，若当前有我们所需要的信息，就将该行拿�
 * `echo -e 'a\na\nb' | uniq -d`
 * `echo -e 'a\na\nb' | uniq -u`
 
-## 2.9 tr
+## 2.10 tr
 
 `tr`指令从标准输入设备读取数据，经过字符串转译后，将结果输出到标准输出设备
 
@@ -816,7 +839,7 @@ grep分析一行信息，若当前有我们所需要的信息，就将该行拿�
 * `echo "thissss is      a text linnnnnnne." | tr -s ' sn'`：删除多余的空格、`s`和`n`
 * `head /dev/urandom | tr -dc A-Za-z0-9 | head -c 20`：生成随机串
 
-## 2.10 xargs
+## 2.11 xargs
 
 **参数说明：**
 
@@ -830,7 +853,7 @@ grep分析一行信息，若当前有我们所需要的信息，就将该行拿�
 * `echo "   a  b  c  " | xargs`：实现`trim`
 * `ls | xargs -I {} rm -f {}`
 
-## 2.11 tee
+## 2.12 tee
 
 `>`、`>>`等会将数据流传送给文件或设备，因此除非去读取该文件或设备，否则就无法继续利用这个数据流，如果我们想要将这个数据流的处理过程中将某段信息存下来，可以利用`tee`（`tee`本质上，就是将`stdout`复制一份）
 
@@ -848,7 +871,7 @@ grep分析一行信息，若当前有我们所需要的信息，就将该行拿�
 
 * `command | tee <文件名> | command`
 
-## 2.12 cat
+## 2.13 cat
 
 **格式：**
 
@@ -875,14 +898,14 @@ cat /tmp/test
 echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
 ```
 
-## 2.13 tail
+## 2.14 tail
 
 **示例：**
 
 * `tail -f xxx.txt`
 * `tail -n +2 xxx.txt`：输出第二行到最后一行
 
-## 2.14 find
+## 2.15 find
 
 **格式：**
 
@@ -913,7 +936,7 @@ echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
     * `find ./ -regex '.*\.cfg\|.*\.conf'`
     * `find ./ -regextype posix-extended -regex '.*\.(cfg|conf)'`
 
-## 2.15 locate
+## 2.16 locate
 
 **`locate`是在已创建的数据库`/var/lib/mlocate`里面的数据所查找到的，所以不用直接在硬盘当中去访问，因此，相比于`find`，速度更快**
 
@@ -932,7 +955,7 @@ updatedb
 locate stl_vector.h
 ```
 
-## 2.16 cp
+## 2.17 cp
 
 **示例：**
 
@@ -940,7 +963,7 @@ locate stl_vector.h
 * `cp -vrf /a/* /b`：递归拷贝目录`/a`下的所有文件、目录，但不包括隐藏文件和隐藏目录
 * `cp -vrf /a/. /b`：递归拷贝目录`/a`中所有的文件、目录、隐藏文件和隐藏目录到目录`/b`中
 
-## 2.17 rsync
+## 2.18 rsync
 
 [rsync 用法教程](https://www.ruanyifeng.com/blog/2020/08/rsync.html)
 
@@ -971,7 +994,7 @@ locate stl_vector.h
 * `rsync -a --exclude log/ dir1/* dir2`：将`dir1`中的内容拷贝到`dir2`目录中（如果`dir2`不存在的话就创建），且排除所有名字为`log`的子目录
 * `rsync -a --exclude log/ dir1 dir2`：将`dir1`拷贝到`dir2`目录中（如果`dir2`不存在的话就创建），且排除所有名字为`log`的子目录。拷贝结束后，`dir2`中的一级子目录是`dir1`
 
-## 2.18 rm
+## 2.19 rm
 
 **示例：**
 
@@ -980,7 +1003,7 @@ locate stl_vector.h
 * `rm -rf /path/!(a.txt|b.txt)`：递归删除目录`path`下的除了`a.txt`以及`b.txt`之外的所有文件、目录，但不包括隐藏文件和隐藏目录
     * 需要通过命令`shopt -s extglob`开启`extglob`
 
-## 2.19 tar
+## 2.20 tar
 
 **格式：**
 
@@ -1014,7 +1037,7 @@ locate stl_vector.h
 * `tar -zxvf /test.tar.gz -C /home/liuye`
 * `tar cvf - /home/liuye | sha1sum`：`-`表示标准输入输出，这里表示标准出
 
-## 2.20 curl
+## 2.21 curl
 
 **格式：**
 
@@ -1034,7 +1057,7 @@ locate stl_vector.h
 
 * `curl -L -o <filename> '<url>'`
 
-## 2.21 wget
+## 2.22 wget
 
 **格式：**
 
@@ -1055,7 +1078,7 @@ locate stl_vector.h
 * `wget -r -np -nH -P /root/test -R "index.html*" 'http://192.168.66.1/stuff'`
 * `wget -r -np -nH -P /root/test 'ftp://192.168.66.1/stuff'`
 
-## 2.22 tree
+## 2.23 tree
 
 **格式：**
 
@@ -1065,14 +1088,14 @@ locate stl_vector.h
 
 * `-N`：显示非ASCII字符，可以显示中文
 
-## 2.23 split
+## 2.24 split
 
 **示例：**
 
 * `split -b 2048M bigfile bigfile-slice-`：按大小切分文件，切分后的文件最大为`2048M`，文件的前缀是`bigfile-slice-`
 * `split -l 10000 bigfile bigfile-slice-`：按行切分文件，切分后的文件最大行数为`10000`，文件的前缀是`bigfile-slice-`
 
-## 2.24 base64
+## 2.25 base64
 
 用于对输入进行`base64`编码以及解码
 
@@ -1081,7 +1104,7 @@ locate stl_vector.h
 * `echo "hello" | base64`
 * `echo "hello" | base64 | base64 -d`
 
-## 2.25 md5sum
+## 2.26 md5sum
 
 计算输入或文件的MD5值
 
@@ -1089,7 +1112,7 @@ locate stl_vector.h
 
 * `echo "hello" | md5sum`
 
-## 2.26 openssl
+## 2.27 openssl
 
 openssl可以对文件，以指定算法进行加密或者解密
 
@@ -1099,7 +1122,7 @@ openssl可以对文件，以指定算法进行加密或者解密
 * `openssl aes-256-cbc -a -salt -in blob.txt -out cipher`
 * `openssl aes-256-cbc -a -d -in cipher -out blob-rebuild.txt`
 
-## 2.27 bc
+## 2.28 bc
 
 bc可以用于进制转换
 
@@ -1110,7 +1133,7 @@ bc可以用于进制转换
 * `((num=8#77)); echo ${num}`：8进制转十进制
 * `((num=16#FF)); echo ${num}`：16进制转十进制
 
-## 2.28 dirname
+## 2.29 dirname
 
 `dirname`用于返回文件路径的目录部分，该命令不会检查路径所对应的目录或文件是否真实存在
 
@@ -1128,7 +1151,7 @@ ROOT=$(dirname "$0")
 ROOT=$(cd "$ROOT"; pwd)
 ```
 
-## 2.29 addr2line
+## 2.30 addr2line
 
 该工具用于查看二进制的偏移量与源码的对应关系
 
@@ -1136,7 +1159,7 @@ ROOT=$(cd "$ROOT"; pwd)
 
 * `addr2line 4005f5 -e test`：查看二进制`test`中位置为`4005f5`指令对应的源码
 
-## 2.30 ldd
+## 2.31 ldd
 
 该工具用于查看可执行文件链接了哪些动态库
 
@@ -1144,7 +1167,7 @@ ROOT=$(cd "$ROOT"; pwd)
 
 * `ldd main`
 
-## 2.31 ldconfig
+## 2.32 ldconfig
 
 **生成动态库缓存或从缓存读取动态库信息**
 
@@ -1154,7 +1177,7 @@ ROOT=$(cd "$ROOT"; pwd)
 * `ldconfig -v`：重新生成`/etc/ld.so.cache`，并输出详细信息
 * `ldconfig -p`：从`/etc/ld.so.cache`中读取并展示动态库信息
 
-## 2.32 objdump
+## 2.33 objdump
 
 该工具用于反汇编
 
@@ -1163,7 +1186,7 @@ ROOT=$(cd "$ROOT"; pwd)
 * `objdump -drwCS main.o`
 * `objdump -drwCS -M intel main.o`
 
-## 2.33 nm
+## 2.34 nm
 
 该工具用于查看符号表
 
@@ -1171,7 +1194,7 @@ ROOT=$(cd "$ROOT"; pwd)
 
 * `nm -C main`
 
-## 2.34 strings
+## 2.35 strings
 
 该工具用于查看二进制文件包含的所有字符串信息
 
@@ -1179,7 +1202,7 @@ ROOT=$(cd "$ROOT"; pwd)
 
 * `strings main`
 
-## 2.35 iconf
+## 2.36 iconf
 
 **参数说明：**
 
@@ -1195,7 +1218,7 @@ ROOT=$(cd "$ROOT"; pwd)
 
 * `iconv -f gbk -t utf-8 s.txt > t.txt`
 
-## 2.36 expect
+## 2.37 expect
 
 expect是一个自动交互的工具，通过编写自定义的配置，就可以实现自动填充数据的功能
 
@@ -1622,6 +1645,11 @@ free
 * `-U`：各进程树之间的连接以utf8码的字符来连接，在某些终端接口下可能会有错误(连接符号是utf8字符，比较圆滑好看)
 * `-p`：同时列出每个进程的PID
 * `-u`：同时列出每个进程所属账号名称
+
+**示例：**
+
+* `pstree`：整个进程树
+* `pstree <pid>`：以该进程为根节点的进程树
 
 ## 4.9 pstack
 
