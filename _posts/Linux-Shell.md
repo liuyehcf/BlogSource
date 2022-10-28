@@ -858,6 +858,8 @@ do
 done
 ```
 
+#### 3.3.3.1 修改数组分隔符
+
 **如果数组中的内容包含空白，`foreach`默认会以空格作为分隔符，这就有可能破坏数组元素原有的结构，例如**
 
 ```sh
@@ -886,6 +888,18 @@ do
     echo ${v}
 done
 IFS="${ifs_bak}"
+```
+
+### 3.3.4 echo输出数组指定分隔符
+
+```sh
+# echo not respect IFS
+array=(1 2 3 4 5 6)
+IFS=/ echo ${array[@]}
+
+# works fine
+IFS=/ output=${array[@]}
+echo ${output}
 ```
 
 ## 3.4 字典
