@@ -388,40 +388,85 @@ print(lst)
 
 为了编写可维护的代码，我们把很多函数分组，分别放到不同的文件里，这样，每个文件包含的代码就相对较少，很多编程语言都采用这种组织代码的方式。**在Python中，一个.py文件就称之为一个模块（Module）**
 
-# 8 常用库
+为了避免模块名冲突，Python又引入了按目录来组织模块的方法，称为包（Package）
 
-**常用库请参考[library](https://docs.python.org/zh-cn/3/library)**
-
-* [http.client](https://docs.python.org/zh-cn/3/library/http.client.html)
-* [json](https://docs.python.org/zh-cn/3/library/json.html)
-
-# 9 Tips
-
-## 9.1 查看系统库的路径
-
-**方式1：**
-
-```py
-import inspect
-import os
-inspect.getfile(os)
+```
+mycompany
+├─ __init__.py
+├─ abc.py
+└─ xyz.py
 ```
 
-**方式2：**
+引入了包以后，只要顶层的包名不与别人冲突，那所有模块都不会与别人冲突。现在，`abc.py`模块的名字就变成了`mycompany.abc`，类似的，`xyz.py`的模块名变成了`mycompany.xyz`
 
-```py
-import inspect
-import os
-print(os.__file__)
+请注意，每一个包目录下面都会有一个`__init__.py`的文件，这个文件是必须存在的，否则，Python就把这个目录当成普通目录，而不是一个包。`__init__.py`可以是空文件，也可以有Python代码，因为`__init__.py`本身就是一个模块，而它的模块名就是`mycompany`
+
+类似的，可以有多级目录，组成多级层次的包结构。比如如下的目录结构：
+
+```
+mycompany
+ ├─ web
+ │  ├─ __init__.py
+ │  ├─ utils.py
+ │  └─ www.py
+ ├─ __init__.py
+ ├─ abc.py
+ └─ utils.py
 ```
 
-## 9.2 代码格式化
+## 7.1 模块搜索路径
 
-* [autopep8](https://pypi.org/project/autopep8/)
-* [vim-autopep8](https://github.com/tell-k/vim-autopep8)
-* [vim-autoformat](https://github.com/vim-autoformat/vim-autoformat)
+当我们试图加载一个模块时，Python会在指定的路径下搜索对应的`.py`文件，如果找不到，就会报错
 
-# 10 pip
+默认情况下，Python解释器会搜索当前目录、所有已安装的内置模块和第三方模块，搜索路径存放在`sys`模块的`sys.path`变量中
+
+```py
+>>> import sys
+>>> print(sys.path)
+['', '/usr/lib64/python36.zip', '/usr/lib64/python3.6', '/usr/lib64/python3.6/lib-dynload', '/home/disk3/hcf/.local/lib/python3.6/site-packages', '/usr/local/lib64/python3.6/site-packages', '/usr/local/lib/python3.6/site-packages', '/usr/local/lib/python3.6/site-packages/cloud_init-19.1.6-py3.6.egg', '/usr/local/lib/python3.6/site-packages/listCase-1.0.0.0-py3.6.egg', '/usr/lib64/python3.6/site-packages', '/usr/lib/python3.6/site-packages']
+```
+
+如果我们要添加自己的搜索目录，有两种方法：
+
+1. 直接修改`sys.path`，添加要搜索的目录（这种方法是在运行时修改，运行结束后失效）：
+    ```
+    >>> import sys
+    >>> sys.path.append('/xxx/yyy/my_py_scripts')
+    ```
+
+1. 第二种方法是设置环境变量`PYTHONPATH`，该环境变量的内容会被自动添加到模块搜索路径中。设置方式与设置`Path`环境变量类似
+
+## 7.2 常用内建模块
+
+**[Python 标准库](https://docs.python.org/zh-cn/3/library)**
+
+1. `http`
+    * `python3 -m http.server 80`：启动一个`http server`，执行命令的目录会作为`http`资源的根目录
+1. `json`
+1. `venv`：用来为一个应用创建一套隔离的Python运行环境
+
+## 7.3 Tips
+
+1. 查看所有模块：`sys.modules.keys()`
+1. 查看模块的文档：`help("<module_name>")`
+1. 查看库的路径
+    * 方法1：
+    ```py
+    import inspect
+    import os
+    inspect.getfile(os)
+    ```
+
+    * 方法2：
+    ```py
+    import inspect
+    import os
+    print(os.__file__)
+    ```
+
+    * 方法3：用help
+
+# 8 pip
 
 `pip`是`python`的包管理工具
 
@@ -429,7 +474,7 @@ print(os.__file__)
 pip install xxx
 ```
 
-## 10.1 Tips
+## 8.1 Tips
 
 1. `ModuleNotFoundError: No module named 'pip._vendor.certifi.core'`
     * 重新安装`pip`，参考[pip3 install not working - No module named 'pip._vendor.pkg_resources'](https://stackoverflow.com/questions/49478573/pip3-install-not-working-no-module-named-pip-vendor-pkg-resources)
@@ -444,7 +489,15 @@ pip install xxx
     pip3 install cryptography==3.4.8
     ```
 
-# 11 参考
+# 9 其他
+
+## 9.1 代码格式化
+
+* [autopep8](https://pypi.org/project/autopep8/)
+* [vim-autopep8](https://github.com/tell-k/vim-autopep8)
+* [vim-autoformat](https://github.com/vim-autoformat/vim-autoformat)
+
+# 10 参考
 
 * [廖雪峰-Python教程](https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000)
 * [Python 3 教程](https://www.runoob.com/python3/python3-tutorial.html)
