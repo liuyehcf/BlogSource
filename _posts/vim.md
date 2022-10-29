@@ -1714,6 +1714,17 @@ call plug#end()
 
 **配置：默认的配置即可正常使用**
 
+**Tips：**
+
+* 用pip安装的三方库，pyright找不到
+    * 可以使用[venv](https://www.liaoxuefeng.com/wiki/1016959663602400/1019273143120480)模块来构建隔离的python环境，步骤如下（`coc-pyright`官网）
+    ```sh
+    python3 -m venv .venv
+    source .venv/bin/activate
+    <install modules with pip and work with Pyright>
+    deactivate
+    ```
+
 ### 3.10.4 [coc-snippets](https://github.com/neoclide/coc-snippets)
 
 **`coc-snippets`用于提供片段扩展功能（类似于`IDEA`中的`sout`、`psvm`、`.var`等等）**
