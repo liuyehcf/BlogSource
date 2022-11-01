@@ -282,12 +282,13 @@ categories:
                 <li><code>#Sort</code></li>
             </td>
             <td style="text-align:left">
+                <li><b>Given that this article was published in 1997 when CPU had only one core in most cases, so parallel algorithm need to take network communication into consideration, which no longer exists in the multi-core parallelism</b></li>
                 <li>Most of the research on parallel algorithm design in the 70s and 80s has focused on fine-grain models of parallel computation, such as PRAM or network-based models</li>
                 <li><code>N</code> keys will be sorted in <code>log(N)</code> stages, for each bitonic sequence of <code>i-th</code> stage contains <code>2^i</code> items, and it can be Butterfly merged in <code>i</code> steps</li>
                 <li>Naive and improved data layouts
                     <ul>
                         <li>Blocked layout: mapping <code>N</code> items on <code>P</code> processors, with <code>n = N / P</code>. The first <code>log(n)</code> stages can be exected locally. For the subsequent stages <code>log(n) + k</code>, the first <code>k</code> steps require remote communication whil the last <code>log(n)</code> steps are completely local</li>
-                        <li>Cyclic layout: mapping <code>N</code> items on <code>P</code> processors by assigning the <code>i-th</code> item to the <code>i % P</code> processor, with <code>n = N / P</code>. The first <code>log(n)</code> stages require remote communication. For the subsequent stages <code>log(n) + k</code>, the first <code>k</code> steps are completely local while last <code>log(n)</code> steps require remote communication</li>
+                        <li>Cyclic layout: mapping <code>N</code> items on <code>P</code> processors by assigning the <code>i-th</code> item to the <code>(i % n) % P</code> processor, with <code>n = N / P</code>. The first <code>log(n)</code> stages require remote communication. For the subsequent stages <code>log(n) + k</code>, the first <code>k</code> steps are completely local while last <code>log(n)</code> steps require remote communication</li>
                         <li>Cyclic-blocked layout: by periodically remapping the data from a blocked layout to a cyclic layout and vice verse can reduce the communication overhead</li>
                     </ul>
                 </li>
@@ -299,7 +300,6 @@ categories:
                         <li>We can thus reformulate the problem as: Given the tuple (stage, step), which uniquely identifies a column of the bitonic sorting network, how to remap the elements at this point in such a way that the next <code>log(n)</code> steps of the bitonic sorting network are executed locally</li>
                         <li><code>log(n)</code> successive steps may cross stage</li>
                         <li>The purpose of the first <code>log(n)</code> stages is to form a monotonically increasing or decreasing sequence of n keys on each processor, thus we can replace all these stages with a single, highly optimized local sort</li>
-                        <li><b>My question is: why are all processors not sharing the same data array, so there is no remote communication problem</b></li>
                     </ul>
                 </li>
             </td>
@@ -1333,7 +1333,33 @@ Data Stream Processing System, DSPS
                     </ul>
                 </li>
             </td>
-            <td style="text-align:left">👀/IV</td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/A-Survey-of-State-Management-in-Big-Data-Processing-Systems.pdf">A Survey of State Management in Big Data Processing Systems</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Survey</code></li>
+            </td>
+            <td style="text-align:left">
+                <li></li>
+            </td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/A–Survey-on–the-Evolution-of-Stream-Processing-Systems.pdf">A Survey on the Evolution of Stream Processing Systems</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Survey</code></li>
+            </td>
+            <td style="text-align:left">
+                <li></li>
+            </td>
+            <td style="text-align:left"></td>
             <td style="text-align:left"></td>
         </tr>
     </tbody>
