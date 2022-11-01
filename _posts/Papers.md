@@ -1344,10 +1344,85 @@ Data Stream Processing System, DSPS
                 <li><code>#Survey</code></li>
             </td>
             <td style="text-align:left">
-                <li></li>
+                <li>First proposals for parallel batch-oriented data processing, BDP, was MapReduce
+                    <ul>
+                        <li>Advantages: flexibility, fault-tolerance, programming ease, scalability</li>
+                        <li>Disadvantages: a low-level programming model, a lack of support for iterations, inability to deal with data streams</li>
+                    </ul>
+                </li>
+                <li>State: a sequence of values in time that contain the intermediate results of a desired computation</li>
+                <li>Concepts of State Management
+                    <ul>
+                        <li>Operations
+                            <ul>
+                                <li>Purge</li>
+                                <li>Update</li>
+                                <li>Store
+                                    <ul>
+                                        <li>On disk</li>
+                                        <li>In-memory</li>
+                                    </ul>
+                                </li>
+                                <li>Migrate</li>
+                                <li>Expose</li>
+                            </ul>
+                        </li>
+                        <li>Incremental Maintenance
+                            <ul>
+                                <li>Transformation</li>
+                                <li>Differential Computation</li>
+                                <li>View Maintenance</li>
+                            </ul>
+                        </li>
+                        <li>State Sharing
+                            <ul>
+                                <li>Shared Operator State</li>
+                                <li>Shared Window</li>
+                                <li>Shared Queue</li>
+                            </ul>
+                        </li>
+                        <li>Load Balancing & Elasticity
+                            <ul>
+                                <li>Scalability</li>
+                                <li>Load Balancing</li>
+                                <li>Elasticity</li>
+                            </ul>
+                        </li>
+                        <li>Performance
+                            <ul>
+                                <li>Optimal Placement</li>
+                                <li>Optimal Assignment</li>
+                                <li>Checkpoint Interval</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>Applications of State
+                    <ul>
+                        <li>Stateful Computation
+                            <ul>
+                                <li>Operator Level</li>
+                                <li>Application Level</li>
+                            </ul>
+                        </li>
+                        <li>Iterative Processing
+                            <ul>
+                                <li>Incremental Iteration</li>
+                                <li>Bulk Iteration</li>
+                            </ul>
+                        </li>
+                        <li>Fault Tolerance
+                            <ul>
+                                <li>Correlated Checkpoint</li>
+                                <li>Incremental Checkpoint</li>
+                                <li>Indenpendent Checkpoint</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
             </td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
+            <td style="text-align:left">👀</td>
+            <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>
             <td style="text-align:left">
