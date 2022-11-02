@@ -1557,6 +1557,7 @@ Data Stream Processing System, DSPS
         * [BlockQuicksort: Avoiding Branch Mispredictions in Quicksort](https://kclpure.kcl.ac.uk/portal/files/123577916/BlockQuicksort_Avoiding_Branch_Mispredictions_EDELKAMP_PublishedAugust2016_VoR_CC_BY_.pdf)
         * [Efficient Implementation of Sorting on Multi-Core SIMD CPU Architecture](/resources/paper/Efficient-Implementation-of-Sorting-on-Multi-Core-SIMD-CPU-Architecture.pdf)
         * [A Comparative Study of Parallel Sort Algorithms](/resources/paper/A-Comparative-Study-of-Parallel-Sort-Algorithms.pdf)
+        * [Fast Segmented Sort on GPUs](https://dl.acm.org/doi/pdf/10.1145/3079079.3079105)
 * Memory
     * [Efficient Use of Memory Bandwidth to Improve Network Processor Throughput](http://www.cs.ucr.edu/~bhuyan/cs162/LECTURE12b.pdf)
 * Statistics/Sample
