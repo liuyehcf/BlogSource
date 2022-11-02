@@ -2848,6 +2848,17 @@ ClientAliveCountMax 3
 * `ssh -L "*:5901:127.0.0.1:5901" -N -f user@remote_host`：监听在所有ip上
     * 同`ssh -g -L 5901:127.0.0.1:5901 -N -f user@remote_host`
 
+### 6.1.5 WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED
+
+远端机器的RSA指纹发生变化后，再次ssh登录就会出现上述错误信息。有两种修复方式：
+
+1. 删除`.ssh/known_hosts`中与指定`hostname or IP`相关的记录
+1. 使用`ssh-keygen`删除`.ssh/known_hosts`中与指定`hostname or IP`相关的记录
+    ```sh
+    # 不加 -f 参数，则会默认修改当前用户对应的 .ssh/known_hosts 文件
+    ssh-keygen -f "/Users/hechenfeng/.ssh/known_hosts" -R "<hostname or IP>"
+    ```
+
 ## 6.2 scp
 
 **格式：**

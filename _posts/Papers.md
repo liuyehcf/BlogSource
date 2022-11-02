@@ -211,32 +211,38 @@ categories:
                             <ul>
                                 <li><code>L(u)</code> denotes the final sorted array of the subtree rooted at node <code>u</code></li>
                                 <li><code>UP(u)</code> denotes the subset of <code>L(u)</code>, which will become a more accurate approximation of <code>L(u)</code> as stage goes forward</li>
-                                <li><code>SUP(u)</code> denotes a sorted array comprising every fourth item in <code>UP(u)</code></li>
-                                <li><code>L</code> is a c-cover of <code>J</code> if each interval induced by an item in <code>L</code>(<code>[e, g]</code>, where <code>e</code> and <code>g</code> are two adjacent items in <code>L</code>) contains at most c items from <code>J</code>. And, usually <code>|L| < |J|</code>
+                                <li><code>SUP(u)</code> denotes the subset of <code>UP(u)</code>, which is also sorted</li>
+                                <li><code>0 < |UP(u)| < |L(u)|</code>, then node <code>u</code> is inside node</li>
+                                <li><code>|UP(u)| = |L(u)|</code>, then node <code>u</code> is external node</li>
+                                <li><code>L</code> is a <code>c</code>-cover of <code>J</code> if each interval induced by an item in <code>L</code>(<code>[e, g]</code>, where <code>e</code> and <code>g</code> are two adjacent items in <code>L</code>) contains at most <code>c</code> items from <code>J</code>. And, usually <code>|L| < |J|</code>
                                     <ul>
-                                        <li><code>OLDSUP(v)</code> is a 3-cover of <code>SUP(v)</code>, why???</li>
+                                        <li><code>OLDSUP(v)</code> is a 3-cover of <code>SUP(v)</code></li>
                                         <li>As <code>UP(u) = OLDSUP(v) ∪ OLDSUP(w)</code>, we can deduce that <code>UP(v)</code> is a 3-cover of <code>SUP(v)</code> and <code>UP(v)</code> is a 3-cover of <code>SUP(w)</code>, why???</li>
                                     </ul>
                                 </li>
                             </ul>
                         </li>
-                        <li>Node classification:
+                        <li>For every node <code>u</code> at every stage, we do the following two steps:
                             <ul>
-                                <li><code>0 < |UP(i)| < |L(i)|</code>, then node <code>i</code> is inside node</li>
-                                <li><code>|UP(i)| = |L(i)|</code>, then node <code>i</code> is external node</li>
-                            </ul>
-                        </li>
-                        <li>Goal: for inside node, let <code>|NEWUP(i)| = 2|UP(i)|</code></li>
-                        <li>Rules for <code>UP</code>
-                            <ul>
-                                <li><code>NEWUP(u) = SUP(v) ∪ SUP(w)</code>, <code>v</code> and <code>w</code> are child nodes of node <code>u</code></li>
-                            </ul>
-                        </li>
-                        <li>Rules for <code>SUP</code>
-                            <ul>
-                                <li><code>SUP(i) = every forth item of UP(i)</code>, for inside node or first stage of external node</li>
-                                <li><code>SUP(i) = every second item of UP(i)</code>, for second stage of external node</li>
-                                <li><code>SUP(i) = every item of UP(i)</code>, for third stage of external node</li>
+                                <li>Formulate <code>SUP(u)</code>
+                                    <ul>
+                                        <li>For inside node: <code>SUP(u) = every forth item of UP(u)</code></li>
+                                        <li>For external node:
+                                            <ul>
+                                                <li>First stage as it becomes an external node: <code>SUP(u) = every forth item of UP(u)</code></li>
+                                                <li>Second stage as it becomes an external node: <code>SUP(u) = every second item of UP(u)</code></li>
+                                                <li>Third or later stage as it becomes an external node: <code>SUP(u) = UP(u)</code></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>Formulate <code>NEWUP(u)</code>
+                                    <ul>
+                                        <li>For inside node: <code>NEWUP(u) = SUP(v) ∪ SUP(w)</code>, <code>v</code> and <code>w</code> are child nodes of node <code>u</code>
+                                        </li>
+                                        <li>For external node: <code>NEWUP(u) = UP(u)</code></li>
+                                    </ul>
+                                </li>
                             </ul>
                         </li>
                         <li>Merge process:
