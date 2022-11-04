@@ -514,7 +514,9 @@ vim常用的三种模式：**一般模式、编辑模式与命令模式**。`:he
 :set ignorecase                     " 设置搜索忽略大小写（可缩写为 :set ic）
 :set noignorecase                   " 设置搜索不忽略大小写（可缩写为 :set noic）
 :set smartcase                      " 智能大小写，默认忽略大小写，除非搜索内容里包含大写字母
-:set list                           " 设置显示制表符和换行符
+:set list                           " 显式隐藏字符
+:set nolist                         " 隐藏隐藏字符
+:set listchars?                     " 查看有哪些隐藏字符
 :set number                         " 设置显示行号，禁止显示行号可以用 :set nonumber
 :set relativenumber                 " 设置显示相对行号（其他行与当前行的距离）
 :set paste                          " 进入粘贴模式（粘贴时禁用缩进等影响格式的东西）
