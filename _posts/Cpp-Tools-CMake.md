@@ -407,9 +407,30 @@ make
 
 `cmake`可以使用`add_executable`、`add_library`或`add_custom_target`等命令来定义目标`target`。与变量不同，目标在每个作用域都可见，且可以使用`get_property`和`set_property`获取或设置其属性
 
-# 3 property
+# 3 variables
 
-## 3.1 INCLUDE_DIRECTORIES
+常用变量（[cmake-variables](https://cmake.org/cmake/help/latest/manual/cmake-variables.7.html)）：
+
+* `CMAKE_BINARY_DIR`、`PROJECT_BINARY_DIR`、`<PROJECT-NAME>_BINARY_DIR`：指的是工程编译发生的目录
+* `CMAKE_SOURCE_DIR`、`PROJECT_SOURCE_DIR`、`<PROJECT-NAME>_SOURCE_DIR`：指的是工程顶层目录
+* `CMAKE_CURRENT_SOURCE_DIR`：指的是当前处理的`CMakeLists.txt`所在路径
+* `CMAKE_CURRENT_BINARY_DIR`：指的是工程编译结果存放的目标目录，可以通过`set`命令或`ADD_SUBDIRECTORY(src bin)`改变这个变量的值，但是`set(EXECUTABLE_OUTPUT_PATH <new_paht>)`并不改变这个变量的值，只会影响最终的保存路径
+* `CMAKE_MODULE_PATH`：`include()`、`find_package()`命令的模块搜索路径
+* `EXECUTABLE_OUTPUT_PATH`、`LIBRARY_OUTPUT_PATH`：定义最终编译结果的二进制执行文件和库文件的存放目录
+* `PROJECT_NAME`：指的是通过`set`设置的`PROJECT`的名称
+* `CMAKE_INCLUDE_PATH`、`CMAKE_LIBRARY_PATH`：这两个是系统变量而不是`cmake`变量，需要在`bash`中用`export`设置
+* `CMAKE_MAJOR_VERSION`、`CMAKE_MINOR_VERSION`、`CMAKE_PATCH_VERSION`：主版本号、次版本号，补丁版本号，`2.4.6`中的`2`、`4`、`6`
+* `CMAKE_SYSTEM`：系统名称，比如`Linux-2.6.22`
+* `CMAKE_SYSTEM_NAME`：不包含版本的系统名，比如`Linux`
+* `CMAKE_SYSTEM_VERSION`：系统版本，比如`2.6.22`
+* `CMAKE_SYSTEM_PROCESSOR`：处理器名称，比如`i686`
+* `UNIX`：在所有的类`UNIX`平台为`TRUE`，包括`OS X`和`cygwin`
+* `WIN32`：在所有的`win32`平台为`TRUE`，包括`cygwin`
+* `ENV{NAME}`：环境变量，通过`set(ENV{NAME} value)`设置，通过`$ENV{NAME}`引用
+
+# 4 property
+
+## 4.1 INCLUDE_DIRECTORIES
 
 **去哪找头文件`.h`，`-I（GCC）`**
 
@@ -430,17 +451,17 @@ foreach(target_dir ${target_dirs})
 endforeach()
 ```
 
-## 3.2 LINK_DIRECTORIES
+## 4.2 LINK_DIRECTORIES
 
 **去哪找库文件`.so/.dll/.lib/.dylib/...`，`-L（GCC）`**
 
-## 3.3 LINK_LIBRARIES
+## 4.3 LINK_LIBRARIES
 
 **需要链接的库文件的名字：`-l（GCC）`**
 
-# 4 command
+# 5 command
 
-## 4.1 message
+## 5.1 message
 
 用于打印信息
 
@@ -459,7 +480,7 @@ endforeach()
 * `DEBUG`：项目调试需要关注的信息
 * `TRACE`：最低级别的信息
 
-## 4.2 set
+## 5.2 set
 
 `set`用于设置：`cmake`变量或环境变量
 
@@ -473,7 +494,7 @@ endforeach()
 * `cmake`变量：`${<variable>}`
 * 环境变量：`$ENV{<variable>}`
 
-## 4.3 option
+## 5.3 option
 
 `option`用于设置构建选项
 
@@ -481,7 +502,7 @@ endforeach()
 
 * 其中`value`的可选值就是`ON`和`OFF`，其中`OFF`是默认值
 
-## 4.4 file
+## 5.4 file
 
 `file`用于文件操作
 
@@ -496,31 +517,57 @@ endforeach()
 * `WRITE`：覆盖写，文件不存在就创建
 * `APPEND`：追加写，文件不存在就创建
 
-## 4.5 add_executable
+## 5.5 add_executable
 
-`add_executable`用于添加可执行文件
+`add_executable`用于添加可执行文件，示例如下：
 
-## 4.6 add_library
+```cmake
+add_executable(<name> [WIN32] [MACOSX_BUNDLE]
+               [EXCLUDE_FROM_ALL]
+               [source1] [source2 ...])
 
-`add_library`用于添加链接文件
+# client.cpp ${PROTO_SRC} ${PROTO_HEADER} 都是源文件
+add_executable(echo_client client.cpp ${PROTO_SRC} ${PROTO_HEADER})
+```
 
-## 4.7 target_link_libraries
+## 5.6 add_library
 
-`target_link_libraries`指定链接给定目标时要使用的库或标志
+`add_library`用于添加链接文件，格式和示例如下：
 
-## 4.8 include_directories
+```cmake
+add_library(<name> [STATIC | SHARED | MODULE]
+            [EXCLUDE_FROM_ALL]
+            [<source>...])
+
+add_library(Exec STATIC ${EXEC_FILES})
+```
+
+## 5.7 target_link_libraries
+
+`target_link_libraries`指定链接给定目标时要使用的库或标志，格式和示例如下：
+
+```cmake
+# 其中，item可以是
+# 1. A library target name
+# 2. A full path to a library file
+target_link_libraries(<target> ... <item>... ...)
+
+target_link_libraries(echo_client ${BRPC_LIB} ${DYNAMIC_LIB})
+```
+
+## 5.8 include_directories
 
 `include_directories`：该方法会在全局维度添加`include`的搜索路径。这些搜索路径会被添加到所有`target`中去（包括所有`sub target`），会追加到所有`target`的`INCLUDE_DIRECTORIES`属性中去
 
-## 4.9 target_include_directories
+## 5.9 target_include_directories
 
 `target_include_directories`：该方法为指定`target`添加`include`的搜索路径，会追加到该`target`的`INCLUDE_DIRECTORIES`属性中去
 
-## 4.10 include
+## 5.10 include
 
 `include`用于加载模块
 
-## 4.11 find_package
+## 5.11 find_package
 
 **本小节转载摘录自[Cmake之深入理解find_package()的用法](https://zhuanlan.zhihu.com/p/97369704)**
 
@@ -548,7 +595,7 @@ endif(CURL_FOUND)
 
 你可以通过`<LibaryName>_FOUND`来判断模块是否被找到，如果没有找到，按照工程的需要关闭某些特性、给出提醒或者中止编译，上面的例子就是报出致命错误并终止构建。如果`<LibaryName>_FOUND`为真，则将`<LibaryName>_INCLUDE_DIR`加入`INCLUDE_DIRECTORIES`
 
-### 4.11.1 引入非官方的库
+### 5.11.1 引入非官方的库
 
 **通过`find_package`引入非官方的库，该方式只对支持cmake编译安装的库有效**
 
@@ -594,7 +641,7 @@ else(GLOG_FOUND)
 endif(GLOG_FOUND)
 ```
 
-### 4.11.2 Module模式与Config模式
+### 5.11.2 Module模式与Config模式
 
 通过上文我们了解了通过`cmake`引入依赖库的基本用法。知其然也要知其所以然，`find_package`对我们来说是一个黑盒子，那么它是具体通过什么方式来查找到我们依赖的库文件的路径的呢。到这里我们就不得不聊到`find_package`的两种模式，一种是`Module`模式，也就是我们引入`curl`库的方式。另一种叫做`Config`模式，也就是引入`glog`库的模式。下面我们来详细介绍着两种方式的运行机制
 
@@ -602,7 +649,7 @@ endif(GLOG_FOUND)
 
 如果`Module`模式搜索失败，没有找到对应的`Find<LibraryName>.cmake`文件，则转入`Config`模式进行搜索。它主要通过`<LibraryName>Config.cmake`或`<lower-case-package-name>-config.cmake`这两个文件来引入我们需要的库。以我们刚刚安装的`glog`库为例，在我们安装之后，它在`/usr/local/lib/cmake/glog/`目录下生成了`glog-config.cmake`文件，而`/usr/local/lib/cmake/<LibraryName>/`正是`find_package`函数的搜索路径之一
 
-### 4.11.3 编写自己的`Find<LibraryName>.cmake`模块
+### 5.11.3 编写自己的`Find<LibraryName>.cmake`模块
 
 假设我们编写了一个新的函数库，我们希望别的项目可以通过`find_package`对它进行引用我们应该怎么办呢。
 
@@ -674,13 +721,31 @@ else(ADD_FOUND)
 endif(ADD_FOUND)
 ```
 
-## 4.12 aux_source_directory
+## 5.12 find_library
+
+`find_library`用于查找库文件，示例如下：
+
+```cmake
+# NAMES 后可接多个可能的别名，结果保存到变量 THRIFT_LIB 中
+find_library(THRIFT_LIB NAMES thrift)
+```
+
+## 5.13 find_path
+
+`find_path`用于查找包含给定文件的目录，示例如下：
+
+```cmake
+# NAMES 后可接多个可能的别名，结果保存到变量 BRPC_INCLUDE_PATH 中
+find_path(BRPC_INCLUDE_PATH NAMES brpc/server.h)
+```
+
+## 5.14 aux_source_directory
 
 Find all source files in a directory
 
-# 5 Tips
+# 6 Tips
 
-## 5.1 打印cmake中所有的变量
+## 6.1 打印cmake中所有的变量
 
 ```cmake
 get_cmake_property(_variableNames VARIABLES)
@@ -689,19 +754,19 @@ foreach (_variableName ${_variableNames})
 endforeach()
 ```
 
-## 5.2 打印cmake中所有环境变量
+## 6.2 打印cmake中所有环境变量
 
 ```cmake
 execute_process(COMMAND "${CMAKE_COMMAND}" "-E" "environment")
 ```
 
-## 5.3 指定编译器
+## 6.3 指定编译器
 
 ```sh
 cmake -DCMAKE_CXX_COMPILER=/usr/local/bin/g++ -DCMAKE_C_COMPILER=/usr/local/bin/gcc ..
 ```
 
-## 5.4 设置编译器参数
+## 6.4 设置编译器参数
 
 **示例如下：**
 
@@ -722,13 +787,13 @@ set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O1 -Wall")
 1. `RelWithDebInfo`
 1. `MinSizeRel`
 
-## 5.5 传递额外编译参数给cmake
+## 6.5 传递额外编译参数给cmake
 
 ```sh
 cmake -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -O3" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -O3" ..
 ```
 
-## 5.6 开启debug模式
+## 6.6 开启debug模式
 
 ```sh
 # If you want to build for debug (including source information, i.e. -g) when compiling, use
@@ -738,7 +803,7 @@ cmake -DCMAKE_BUILD_TYPE=Debug <path>
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo <path>
 ```
 
-## 5.7 同一目录，多个源文件
+## 6.7 同一目录，多个源文件
 
 如果同一个目录下有多个源文件，那么在使用`add_executable`命令的时候，如果要一个个填写，那么将会非常麻烦，并且后续维护的代价也很大
 
@@ -757,15 +822,15 @@ aux_source_directory(. DIR_SRCS)
 add_executable(Demo ${DIR_SRCS})
 ```
 
-## 5.8 打印所有编译指令
+## 6.8 打印所有编译指令
 
 `cmake`指定参数`-DCMAKE_VERBOSE_MAKEFILE=ON`即可
 
-## 5.9 生成`compile_commands.json`文件
+## 6.9 生成`compile_commands.json`文件
 
 `cmake`指定参数`-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`即可。构建完成后，会在构建目录生成`compile_commands.json`，里面包含了每个源文件的编译命令
 
-# 6 参考
+# 7 参考
 
 * [CMake Tutorial](https://cmake.org/cmake/help/latest/guide/tutorial/index.html)
     * [CMake Tutorial对应的source code](https://github.com/Kitware/CMake/tree/master/Help/guide/tutorial)
