@@ -978,6 +978,8 @@ locate stl_vector.h
 * `rsync [options] [src1] [src2] ... [dest]`
 * `rsync [options] [user@host:src1] ... [dest]`
 * `rsync [options] [src1] [src2] ... [user@host:dest]`
+* `src`目录最后加`/`表示只拷贝目录中的内容，不加`/`表示拷贝整个目录
+* `dest`目录最后加不加`/`不影响含义。有一个例外，若要表示远端机器的用户目录，要写成`user@host:~/`，否则`~`会被当成一个普通目录名
 
 **参数说明：**
 
@@ -986,18 +988,19 @@ locate stl_vector.h
 * `-n`：模拟命令结果
 * `--delete`：默认情况下，`rsync`只确保源目录的所有内容（明确排除的文件除外）都复制到目标目录。它不会使两个目录保持相同，并且不会删除文件。如果要使得目标目录成为源目录的镜像副本，则必须使用`--delete`参数，这将删除只存在于目标目录、不存在于源目录的文件
 * `--exclude`：指定排除模式
-    * `--exclude '.*'`：排除隐藏文件
-    * `--exclude 'dir1/'`排除某个目录
-    * `--exclude 'dir1/*'`排除某个目录里面的所有文件，但不希望排除目录本身
+    * `--exclude='.*'`：排除隐藏文件
+    * `--exclude='dir1/'`排除某个目录
+    * `--exclude='dir1/*'`排除某个目录里面的所有文件，但不希望排除目录本身
 * `--include`：指定必须同步的文件模式，往往与`--exclude`结合使用
 
 **示例：**
 
-* `rsync -a --exclude log/ dir1/* dir2`：将`dir1`中的内容拷贝到`dir2`目录中（如果`dir2`不存在的话就创建），且排除所有名字为`log`的子目录
-* `rsync -a --exclude log/ dir1 dir2`：将`dir1`拷贝到`dir2`目录中（如果`dir2`不存在的话就创建），且排除所有名字为`log`的子目录。拷贝结束后，`dir2`中的一级子目录是`dir1`
-* `rsync -a dir1 user1@192.168.0.1:~`：将`dir1`拷贝到`192.168.0.1`机器的`user1`的用户目录下的一个名为`~`的目录中，即`~/\~/dir1`（**巨坑的一个问题**）
-* `rsync -a dir1 user1@192.168.0.1:~/`：将`dir1`拷贝到`192.168.0.1`机器的`user1`的用户目录，即`~/dir1`
-* **表达目录的时候，最好在最后补个`/`，例如`dir1/`、`~/`**
+* `rsync -av /src/foo /dest`：将整个目录`/src/foo`拷贝到目录`/dest`中
+* `rsync -av /src/foo/ /dest`：将目录`/src/foo`中的内容拷贝到目录`/dest`中
+* `rsync -a --exclude=log/ dir1/ dir2`：将`dir1`中的内容拷贝到目录`dir2`中，且排除所有名字为`log`的子目录
+* `rsync -a --exclude=log/ dir1 dir2`：将整个目录`dir1`拷贝到目录`dir2`中，且排除所有名字为`log`的子目录
+* `rsync -a dir1 user1@192.168.0.1:~`：将整个目录`dir1`拷贝到`192.168.0.1`机器的`user1`的用户目录下的一个名为`~`的目录中，即`~/\~/dir1`（**巨坑的一个问题**）
+* `rsync -a dir1 user1@192.168.0.1:~/`：将整个目录`dir1`拷贝到`192.168.0.1`机器的`user1`的用户目录，即`~/dir1`
 
 ## 2.19 rm
 
