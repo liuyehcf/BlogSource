@@ -978,8 +978,16 @@ locate stl_vector.h
 * `rsync [options] [src1] [src2] ... [dest]`
 * `rsync [options] [user@host:src1] ... [dest]`
 * `rsync [options] [src1] [src2] ... [user@host:dest]`
-* `src`目录最后加`/`表示只拷贝目录中的内容，不加`/`表示拷贝整个目录
-* `dest`目录最后加不加`/`不影响含义。有一个例外，若要表示远端机器的用户目录，要写成`user@host:~/`，否则`~`会被当成一个普通目录名
+* 关于`/`
+    * `src`
+        * 如果`src1`是文件，那只有一种写法，那就是`src1`
+        * 如果`src1`是目录，那有两种写法
+            * `src1`：拷贝整个目录，包括`src1`本身
+            * `src1/`：拷贝目录中的内容，不包括`src1`本身
+    * `dest`
+        * `dest`：如果拷贝的是单个文件，那么`dest`表示的就是目标文件。如果拷贝的不是单个文件，那么`dest`表示目录
+        * `dest/`：只能表示目录
+        * 有一个例外，若要表示远端机器的用户目录，要写成`user@host:~/`，否则`~`会被当成一个普通目录名
 
 **参数说明：**
 
@@ -3295,6 +3303,9 @@ yum install -y sysstat
     * `StkSize`：系统为该任务保留的栈空间大小，单位`KB`
     * `StkRef`：该任务当前实际使用的栈空间大小，单位`KB`
 * `-u`：显示`CPU`使用情况，默认
+    * `-I`：在`SMP, Symmetric Multi-Processing`环境下，`CPU`使用率需要考虑处理器的数量，这样得到的`%CPU`指标才是符合实际的。但是`%usr`、`%system`、`%guest`这三个指标仍然有问题
+* `-w`：显式上下文切换（不包含线程，通常与`-t`一起用）
+* `-t`：显式所有线程
 * `-p <pid>`：指定进程
 
 **示例：**
@@ -3302,7 +3313,9 @@ yum install -y sysstat
 * `pidstat -d -p <pid> 5`
 * `pidstat -r -p <pid> 5`
 * `pidstat -s -p <pid> 5`
-* `pidstat -u -p <pid> 5`
+* `pidstat -uI -p <pid> 5`
+* `pidstat -ut -p <pid> 5`
+* `pidstat -wt -p <pid> 5`
 
 ## 6.15 nethogs
 
