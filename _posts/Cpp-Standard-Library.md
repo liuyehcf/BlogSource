@@ -189,6 +189,8 @@ result: 0, flag: 1, expected: 1
 auto start = std::chrono::steady_clock::now();
 auto end = std::chrono::steady_clock::now();
 auto nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+auto now_nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(
+        std::chrono::steady_clock::now().time_since_epoch()).count();
 ```
 
 # 5 functional
@@ -297,9 +299,9 @@ int main() {
 
     ```c++
     {
-    std::mutex m,
-    std::lock_guard<std::mutex> lockGuard(m);
-    sharedVariable= getVar();
+        std::mutex m,
+        std::lock_guard<std::mutex> lockGuard(m);
+        sharedVariable= getVar();
     }
     ```
 
