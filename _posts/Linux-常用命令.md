@@ -1564,67 +1564,45 @@ free
 
 ## 4.6 ps
 
-**格式：**
-
-* `ps -ef`：查看系统所有进程数据
-* `ps aux`：查看系统所有进程数据
-* `ps -lA`：查看所有系统的数据
-* `ps axjf`：连同部分进程数状态
-
 **参数说明：**
 
-* `-A`：所有的进程均显示出来
-* `-a`：不与terminal有关的所有进程
-* `-u`：有效用户相关进程
-* `x`：通常与a这个参数一起使用，可列出较完整的信息
-* `l`：较长、较详细地将该PID的信息列出
-* `j`：工作的格式(job format)
-* `-f`：做一个更为完整的输出
-* `-T`：列出线程信息
-* `ps -l`：查阅自己的bash中的程序
-* `ps aux`：查阅系统所有运行的程序
-* `ps aux -Z`：-Z参数可以让我们查阅进程的安全上下文
-
-**`ps -l`打印参数说明：**
-
-* `F`：代表这个进程标志(process flags)
-    * 若为4：表示此进程的权限为root
-    * 若为1：表示此子进程尽可进行复制，而无法实际执行
-* `S`：代表这个进程的状态(STAT)
-    * R(Running)：该进程正在运行中
-    * S(Sleep)：该进程目前正在睡眠状态(idle)，但可以被唤醒(signal)
-    * D：不可被唤醒的睡眠状态，通常这个进程可能在等待I/O的情况
-    * T：停止状态(stop)
-    * Z(Zombie)：僵尸状态，进程已经终止但无法被删除至内存外
-* `UIP/PID/PPID`：用户标识号/进程PID号码/父进程的PID号码
-* `C`：CPU使用率，单位为百分比
-* `PRI/NI`：Prority/Nice的缩写，代表此进程被CPU所执行的优先级，数值越小代表越快被CPU执行
-* `ADDR/SZ/WCHAN`：都与内存有关
-    * ADDR是kernel function，指出该进程在内存的哪个部分，如果是个running的进程，一般就会显示"-"
-    * SZ表示此进程用掉多少内存
-    * WCHAN表示目前进程是否运行中，'-'表示正在运行中，'wait'表示等待中
-* `TTY`：登陆者的终端机位置，若为远程登录则使用动态终端机接口(pts/n)
-* `TIME`：使用掉的CPU时间，是此进程实际花费CPU运行的时间
-* `CMD`：造成此程序的出发进程的命令为何
-
-**`ps aux`打印参数说明：**
-
-* `USER`：该进程所属的用户名
-* `PID`：该进程的PID
-* `%CPU`：该进程使用掉的CPU资源百分比
-* `%MEN`：该进程占用的物理内存百分比
-* `VSZ`：该进程使用掉的虚拟内存量
-* `RSS`：该进程占用的未被`swap`的内存量
-* `TTY`：该进程是所属终端机，tty1~tty6是本地，pts/0是网络连接主机的进程(GNOME上的bash)
-* `STAT`：该进程目前的状态，状态显示与ps -l的S标志相同
-* `START`：该进程被触发的启动时间
-* `TIME`：该进程实际使用CPU的时间
-* `COMMAND`：该进程的实际命令
-* 一般来说ps aux会按照PID的顺序来排序显示
+* `a`：不与terminal有关的所有进程
+* `u`：有效用户相关进程
+* `x`：通常与`a`这个参数一起使用，可列出较完整的信息
+* `A/e`：所有的进程均显示出来
+* `-f/-l`：详细信息，内容有所差别
+* `-T/-L`：线程信息，结合`-f/-l`参数时，显式的信息有所不同
+* `-o`：后接以逗号分隔的列名，指定需要输出的信息
+    * `%cpu`
+    * `%mem`
+    * `args`
+    * `uid`
+    * `pid`
+    * `ppid`
+    * `lwp/tid/spid`：线程`TID`，`lwp, light weight process, i.e. thread`
+    * `comm/ucomm/ucmd`：线程名
+    * `time`
+    * `tty`
+    * `flags`：进程标识
+        * `1`：forked but didn't exec
+        * `4`：used super-user privileges
+    * `stat`：进程状态
+        * `D`：uninterruptible sleep (usually IO)
+        * `R`：running or runnable (on run queue)
+        * `S`：interruptible sleep (waiting for an event to complete)
+        * `T`：stopped by job control signal
+        * `t`：stopped by debugger during the tracing
+        * `W`：paging (not valid since the 2.6.xx kernel)
+        * `X`：dead (should never be seen)
+        * `Z`：defunct ("zombie") process, terminated but not reaped by its parent
 
 **示例：**
 
+* `ps aux`
+* `ps -ef`
+* `ps -el`
 * `ps -e -o pid,ppid,stat | grep Z`：查找僵尸进程
+* `ps -T -o tid,ucmd -p 212381`：查看指定进程的所有的线程id以及线程名
 
 ## 4.7 pgrep
 
@@ -3303,7 +3281,8 @@ yum install -y sysstat
     * `StkSize`：系统为该任务保留的栈空间大小，单位`KB`
     * `StkRef`：该任务当前实际使用的栈空间大小，单位`KB`
 * `-u`：显示`CPU`使用情况，默认
-    * `-I`：在`SMP, Symmetric Multi-Processing`环境下，`CPU`使用率需要考虑处理器的数量，这样得到的`%CPU`指标才是符合实际的。但是`%usr`、`%system`、`%guest`这三个指标仍然有问题
+    * `-I`：在`SMP, Symmetric Multi-Processing`环境下，`CPU`使用率需要考虑处理器的数量，这样得到的`%CPU`指标才是符合实际的
+    * `%usr`、`%system`、`%guest`这三个指标无论加不加`-I`都不会超过100%，[Bug 1763579 - 'pidstat -I' do not report %usr correctly with multithread program](https://bugzilla.redhat.com/show_bug.cgi?id=1763579)
 * `-w`：显式上下文切换（不包含线程，通常与`-t`一起用）
 * `-t`：显式所有线程
 * `-p <pid>`：指定进程
