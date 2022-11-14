@@ -207,6 +207,14 @@ usermod -d <new_dir> <username>
 
 * `getconf -a | grep CACHE`：查看CPU cache相关的配置项
 
+## 1.18 hostnamectl
+
+**示例：**
+
+```sh
+hostnamectl set-hostname <name>
+```
+
 # 2 常用处理工具
 
 ## 2.1 ls
