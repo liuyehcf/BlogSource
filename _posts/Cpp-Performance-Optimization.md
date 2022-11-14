@@ -2790,7 +2790,71 @@ BM_count_ge_branch_elimination      12381 ns        12380 ns        50465
 
 可以看到，在优化级别为`-O0`和`-O1`时，手动编写的分支消除逻辑可以提高执行效率。当优化级别为`-O2`及以上时，手动编写的分支消除逻辑的性能比不上编译器优化
 
-## 4.5 参考
+## 4.5 false sharing
+
+2个线程，独自修改一个变量，逻辑上互不干扰，但如果这两个变量的地址比较接近，位于一个cacheline中，那么会导致cache频繁失效，性能急剧下降
+
+```cpp
+#include <atomic>
+#include <chrono>
+#include <iostream>
+#include <thread>
+
+constexpr int32_t TIMES = 10000000;
+constexpr int32_t CACHE_LINE_SIZE = 64;
+std::atomic<int8_t> atoms[128];
+
+static_assert(sizeof(atoms) > CACHE_LINE_SIZE, "atoms smaller than cache line");
+
+template <int32_t distance>
+void test_false_sharing() {
+    auto start = std::chrono::steady_clock::now();
+
+    std::thread t1([]() {
+        int32_t cnt = 0;
+        while (++cnt <= TIMES) {
+            atoms[0]++;
+        }
+    });
+    std::thread t2([]() {
+        int32_t cnt = 0;
+        while (++cnt <= TIMES) {
+            atoms[distance]++;
+        }
+    });
+
+    t1.join();
+    t2.join();
+
+    auto end = std::chrono::steady_clock::now();
+    std::cout << "distinct=" << distance
+              << ", time=" << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms"
+              << std::endl;
+}
+
+int main(int argc, char* argv[]) {
+    test_false_sharing<1>();
+    test_false_sharing<2>();
+    test_false_sharing<4>();
+    test_false_sharing<8>();
+    test_false_sharing<16>();
+    test_false_sharing<32>();
+    test_false_sharing<64>();
+    return 0;
+}
+```
+
+```
+distinct=1, time=295ms
+distinct=2, time=304ms
+distinct=4, time=307ms
+distinct=8, time=343ms
+distinct=16, time=307ms
+distinct=32, time=56ms
+distinct=64, time=56ms
+```
+
+## 4.6 参考
 
 * [Other Built-in Functions Provided by GCC](https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html)
 * [Branch-aware programming](https://stackoverflow.com/questions/32581644/branch-aware-programming)

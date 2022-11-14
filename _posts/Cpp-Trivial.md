@@ -49,6 +49,11 @@ linker --> result_lib
 
 **后缀：`*.a`**
 
+**如何查看二进制的静态链接库：由于链接器在链接时，就会丢弃静态库的名字信息，因此，一般是看不到的**
+
+* `-Xlinker -Map=a.map`：将链接时的信息记录到`a.map`中
+* `nm/objdump/readelf/strings`或许可以找到一些静态库相关的`hint`
+
 ## 2.2 动态链接库
 
 **后缀：`*.so`**
@@ -184,13 +189,23 @@ fopen() returned NULL
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-## 2.4 libc、glic、libm、libz以及其他常用动态库
+## 2.4 常用动态库
 
-`libc`实现了C的标准库函数（例如`strcpy()`），以及`POSIX`函数（例如系统调用`getpid()`）。此外，不是所有的C标准库函数都包含在`libc`中，比如大多数`math`相关的库函数都封装在`libm`中，大多数压缩相关的库函数都封装在`libz`中
+**`libc/glibc/glib`**
 
-系统调用有别于普通函数，它无法被链接器解析。实现系统调用必须引入平台相关的汇编指令。我们可以通过手动实现这些汇编指令来完成系统调用，或者直接使用`libc`（它已经为我们封装好了）
+* `libc`实现了C的标准库函数，例如`strcpy()`，以及`POSIX`函数，例如系统调用`getpid()`。此外，不是所有的C标准库函数都包含在`libc`中，比如大多数`math`相关的库函数都封装在`libm`中，大多数压缩相关的库函数都封装在`libz`中
+    * 系统调用有别于普通函数，它无法被链接器解析。实现系统调用必须引入平台相关的汇编指令。我们可以通过手动实现这些汇编指令来完成系统调用，或者直接使用`libc`（它已经为我们封装好了）
+* **`glibc, GNU C Library`可以看做是`libc`的另一种实现，它不仅包含`libc`的所有功能还包含`libm`以及其他核心库，比如`libpthread`**
+    * **`glibc`对应的动态库的名字是`libc.so`**
+    * **Linux主流的发行版用的都是这个**
+* `glib`是Linux下C的一些工具库，和`glibc`没有关系
 
-`glibc, GNU C Library`可以看做是`libc`的另一种实现，它不仅包含`libc`的所有功能还包含`libm`以及其他核心库，比如`libpthread`
+**查看`glibc`的版本**
+
+* `ldd --version`：`ldd`隶属于`glibc`，因此`ldd`的版本就是`glibc`的版本
+* `getconf GNU_LIBC_VERSION`
+* `gcc -print-file-name=libc.so`
+* `strings /lib64/libc.so.6 | grep GLIBC`：查看`glibc`的API的版本
 
 **其他常用动态库可以参考[Library Interfaces and Headers](https://docs.oracle.com/cd/E86824_01/html/E54772/makehtml-id-7.html#scrolltoc)中的介绍**
 
@@ -207,6 +222,7 @@ fopen() returned NULL
 * [Linux hook：Ring3下动态链接库.so函数劫持](https://www.cnblogs.com/reuodut/articles/13723437.html)
 * [What is the difference between LD_PRELOAD_PATH and LD_LIBRARY_PATH?](https://stackoverflow.com/questions/14715175/what-is-the-difference-between-ld-preload-path-and-ld-library-path)
 * [What is libstdc++.so.6 and GLIBCXX_3.4.20?](https://unix.stackexchange.com/questions/557919/what-is-libstdc-so-6-and-glibcxx-3-4-20)
+* [多个gcc/glibc版本的共存及指定gcc版本的编译](https://blog.csdn.net/mo4776/article/details/119837501)
 
 # 3 内存管理
 
