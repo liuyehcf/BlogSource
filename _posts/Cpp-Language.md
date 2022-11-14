@@ -537,13 +537,56 @@ sizeof(Foo5)=8, alignof(Foo5)=8
 sizeof(Foo6)=16, alignof(Foo6)=16
 ```
 
-## 3.3 类型推断
+## 3.3 alignas
 
-### 3.3.1 auto
+`alignas`类型说明符是一种可移植的`C++`标准方法，用于指定变量和自定义类型的对齐方式，可以在定义 `class`、`struct`、`union`或声明变量时使用。如果遇到多个`alignas`说明符，编译器会选择最严格的那个（最大对齐值）
+
+内存对齐可以使处理器更好地利用`cache`，包括减少`cache line`访问，以及避免多核一致性问题引发的 `cache miss`。具体来说，在多线程程序中，一种常用的优化手段是将需要高频并发访问的数据按`cache line`大小（通常为`64`字节）对齐。一方面，对于小于`64`字节的数据可以做到只触及一个`cache line`，减少访存次数；另一方面，相当于独占了整个`cache line`，避免其他数据可能修改同一`cache line`导致其他核`cache miss`的开销
+
+**数组：对数组使用`alignas`，对齐的是数组的首地址，而不是每个数组元素。也就是说，下面这个数组并不是每个`int`都占`64`字节。如果一定要让每个元素都对齐，可以定义一个`struct`，如`int_align_64`**
+
+```cpp
+#include <iostream>
+
+int array1[10];
+
+struct alignas(64) int_align_64 {
+    int a;
+};
+int_align_64 array2[10];
+
+#define PRINT_SIZEOF(element) std::cout << "sizeof(" << #element << ")=" << sizeof(element) << std::endl
+#define PRINT_ALIGNOF(element) std::cout << "alignof(" << #element << ")=" << alignof(element) << std::endl
+
+int main(int argc, char* argv[]) {
+    PRINT_SIZEOF(array1[1]);
+    PRINT_SIZEOF(array2[1]);
+
+    PRINT_ALIGNOF(decltype(array1));
+    PRINT_ALIGNOF(decltype(array2));
+
+    PRINT_ALIGNOF(decltype(array1[1]));
+    PRINT_ALIGNOF(decltype(array2[1]));
+    return 0;
+}
+```
+
+```
+sizeof(array1[1])=4
+sizeof(array2[1])=64
+alignof(decltype(array1))=4
+alignof(decltype(array2))=64
+alignof(decltype(array1[1]))=4
+alignof(decltype(array2[1]))=64
+```
+
+## 3.4 类型推断
+
+### 3.4.1 auto
 
 **`auto`会忽略顶层`const`，保留底层的`const`，但是当设置一个类型为`auto`的引用时，初始值中的顶层常量属性仍然保留**
 
-### 3.3.2 decltype
+### 3.4.2 decltype
 
 * **`decltype`会保留变量的所有类型信息（包括顶层`const`和引用在内）**
 * 如果表达式的内容是解引用操作，得到的将是引用类型
@@ -708,11 +751,11 @@ int main() {
 }
 ```
 
-### 3.3.3 typeof
+### 3.4.3 typeof
 
 **非`C++`标准**
 
-### 3.3.4 typeid
+### 3.4.4 typeid
 
 **`typeid`运算符允许在运行时确定对象的类型。若要判断是父类还是子类的话，那么父类必须包含虚函数**
 
@@ -816,9 +859,9 @@ dynamic_cast<Base*>(ptr3) != nullptr: true
 dynamic_cast<Derive*>(ptr3) != nullptr: true
 ```
 
-## 3.4 类型转换
+## 3.5 类型转换
 
-### 3.4.1 static_cast
+### 3.5.1 static_cast
 
 **用法：`static_cast<type> (expr)`**
 
@@ -856,7 +899,7 @@ int main() {
 }
 ```
 
-### 3.4.2 dynamic_cast
+### 3.5.2 dynamic_cast
 
 **用法：`dynamic_cast<type> (expr)`**
 
@@ -898,7 +941,7 @@ int main() {
 }
 ```
 
-### 3.4.3 const_cast
+### 3.5.3 const_cast
 
 **用法：`const_cast<type> (expr)`**
 
@@ -935,7 +978,7 @@ int main() {
 }
 ```
 
-### 3.4.4 reinterpret_cast
+### 3.5.4 reinterpret_cast
 
 **用法：`reinterpret_cast<type> (expr)`**
 
@@ -958,13 +1001,13 @@ int main() {
 }
 ```
 
-## 3.5 extern/static
+## 3.6 extern/static
 
 **`extern`：告诉编译器，这个符号在别的编译单元里定义，也就是要把这个符号放到未解决符号表里去（外部链接）**
 
 **`static`：如果该关键字位于全局函数或者变量声明的前面，表示该编译单元不 导出这个函数/变量的符号，因此无法再别的编译单元里使用。(内部链接)。如果 `static`是局部变量，则该变量的存储方式和全局变量一样，但仍然不导出符号**
 
-### 3.5.1 共享全局变量
+### 3.6.1 共享全局变量
 
 **每个源文件中都得有该变量的声明，但是只有一个源文件中可以包含该变量的定义，通常可以采用如下做法**
 
@@ -1007,7 +1050,7 @@ gcc -o main main.cpp extern.cpp -lstdc++ -Wall
 ./main
 ```
 
-## 3.6 virtual
+## 3.7 virtual
 
 `virtual`关键词修饰的就是虚函数，虚函数的分派发生在运行时
 
@@ -1018,7 +1061,7 @@ gcc -o main main.cpp extern.cpp -lstdc++ -Wall
 
 * 图片出处：[c++虚指针和虚函数表](https://zhuanlan.zhihu.com/p/110144589)
 
-## 3.7 volatile
+## 3.8 volatile
 
 `volatile`关键字是一种类型修饰符，用它声明的类型变量表示可以被某些编译器未知的因素更改（程序之外的因素），比如：操作系统、硬件等。遇到这个关键字声明的变量，编译器对访问该变量的代码就不再进行优化，从而可以提供对特殊地址的稳定访问
 
@@ -1084,7 +1127,7 @@ Disassembly of section .text:
   14:   c3                      retq
 ```
 
-### 3.7.1 如何验证volatile不具备可见性
+### 3.8.1 如何验证volatile不具备可见性
 
 这个问题比较难直接验证，我们打算用一种间接的方式来验证。假设写操作和读操作的性能开销之比为`w/r = α`。开两个线程，分别循环执行读操作和写操作，读写分别执行`n`次。统计读线程，相邻两次读操作，读取数值不同的次数为`m`，`m/r=β`。
 
@@ -1254,9 +1297,9 @@ volatile, β=0.00602403
 
 **如果用Java进行上述等价验证，会发现实际结果与预期吻合，这里不再赘述**
 
-## 3.8 constexpr
+## 3.9 constexpr
 
-### 3.8.1 if constexpr
+### 3.9.1 if constexpr
 
 编译期分支判断，一般用于泛型。如果在分支中使用的是不同类型的不同特性，那么普通的`if`是没法通过编译的，如下：
 
@@ -1293,11 +1336,11 @@ int main() {
 }
 ```
 
-## 3.9 static_assert
+## 3.10 static_assert
 
 编译期断言
 
-## 3.10 throw与异常
+## 3.11 throw与异常
 
 throw关键字可以抛出任何对象，例如可以抛出一个整数
 
@@ -1315,7 +1358,7 @@ throw关键字可以抛出任何对象，例如可以抛出一个整数
     }
 ```
 
-## 3.11 placement new
+## 3.12 placement new
 
 `placement new`的功能就是在一个已经分配好的空间上，调用构造函数，创建一个对象
 

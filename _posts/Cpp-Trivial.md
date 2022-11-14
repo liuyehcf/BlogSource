@@ -66,7 +66,7 @@ linker --> result_lib
 
 **搜索如下：详见`man ld.so`**
 
-1. 在环境变量`LD_LIBRARY_PATH`指定的目录下搜索
+1. 在环境变量`LD_LIBRARY_PATH`指定的目录下搜索，以`:`分隔
 1. 在`/etc/ld.so.cache`指定的目录中搜索
 1. 在`/lib`、`/lib64`中搜索（系统发行版安装的）
 1. 在`/usr/lib`、`/usr/lib64`中搜索（其他软件安装的）
@@ -191,7 +191,7 @@ fopen() returned NULL
 
 ## 2.4 常用动态库
 
-**`libc/glibc/glib`**
+**`libc/glibc/glib`（`man libc/glibc`）**
 
 * `libc`实现了C的标准库函数，例如`strcpy()`，以及`POSIX`函数，例如系统调用`getpid()`。此外，不是所有的C标准库函数都包含在`libc`中，比如大多数`math`相关的库函数都封装在`libm`中，大多数压缩相关的库函数都封装在`libz`中
     * 系统调用有别于普通函数，它无法被链接器解析。实现系统调用必须引入平台相关的汇编指令。我们可以通过手动实现这些汇编指令来完成系统调用，或者直接使用`libc`（它已经为我们封装好了）

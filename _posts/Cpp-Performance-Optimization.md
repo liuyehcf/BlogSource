@@ -2802,7 +2802,7 @@ BM_count_ge_branch_elimination      12381 ns        12380 ns        50465
 
 constexpr int32_t TIMES = 10000000;
 constexpr int32_t CACHE_LINE_SIZE = 64;
-std::atomic<int8_t> atoms[128];
+alignas(64) std::atomic<int8_t> atoms[128];
 
 static_assert(sizeof(atoms) > CACHE_LINE_SIZE, "atoms smaller than cache line");
 
@@ -2839,18 +2839,22 @@ int main(int argc, char* argv[]) {
     test_false_sharing<8>();
     test_false_sharing<16>();
     test_false_sharing<32>();
+    test_false_sharing<63>();
     test_false_sharing<64>();
     return 0;
 }
 ```
 
+**输出如下：**
+
 ```
-distinct=1, time=295ms
-distinct=2, time=304ms
-distinct=4, time=307ms
-distinct=8, time=343ms
-distinct=16, time=307ms
-distinct=32, time=56ms
+distinct=1, time=267ms
+distinct=2, time=279ms
+distinct=4, time=294ms
+distinct=8, time=271ms
+distinct=16, time=316ms
+distinct=32, time=297ms
+distinct=63, time=277ms
 distinct=64, time=56ms
 ```
 
