@@ -39,16 +39,16 @@ categories:
 * [FlameGraph](https://github.com/brendangregg/FlameGraph)
 
 ```sh
-# 以99Hz的频率捕获指定进程的 cpu-clock 事件，捕获时长60s，该命令会在当前目录生成 perf.data 文件
-# -F：指定频率，不指定时默认以最大频率采样，对应内核参数为：kernel.perf_event_max_sample_rate, path=/proc/sys/kernel/perf_event_max_sample_rate
-# -g：开启gragh模式
+# 以 99Hz 的频率捕获指定进程的 cpu-clock 事件，捕获时长 60s，该命令会在当前目录生成 perf.data 文件
+# -F：指定频率，若不指定，默认以 4000Hz 采样。最大采样频率对应内核参数为：kernel.perf_event_max_sample_rate（/proc/sys/kernel/perf_event_max_sample_rate）
+# -g：开启 gragh 模式
 perf record -F 99 -g -p <pid> -- sleep 60
 
 # 解析当前目录下的 perf.data 文件
 perf script > out.perf
 
 # 生成火焰图
-# 下面这两个脚本来自FlameGraph项目
+# 下面这两个脚本来自 FlameGraph 项目
 FlameGraph_path=xxx
 ${FlameGraph_path}/stackcollapse-perf.pl out.perf > out.folded
 ${FlameGraph_path}/flamegraph.pl out.folded > out.svg
@@ -64,19 +64,19 @@ ${FlameGraph_path}/flamegraph.pl out.folded > out.svg
 * [FlameGraph](https://github.com/brendangregg/FlameGraph)
 
 ```sh
-# 以99Hz的频率捕获所有进程的 cpu-clock 事件，捕获时长300s，该命令会在当前目录生成 perf.data 文件
-# -a：统计所有进程的cpu使用情况
+# 以 99Hz 的频率捕获所有进程的 cpu-clock 事件，捕获时长 300s，该命令会在当前目录生成 perf.data 文件
+# -a：统计所有进程
 sudo perf record -F 99 -g -a -- sleep 300
 
-# 下载并安装perf-map-agent
-# 安装依赖cmake，openjdk（只有jre是不够的）
+# 下载并安装 perf-map-agent
+# 安装依赖 cmake，openjdk（只有 jre 是不够的）
 perf-map-agent/bin/create-java-perf-map.sh <pid>
 
 # 解析当前目录下的 perf.data 文件
 sudo perf script > out.perf
 
 # 生成火焰图
-# 下面这两个脚本来自FlameGraph项目
+# 下面这两个脚本来自 FlameGraph 项目
 FlameGraph_path=xxx
 ${FlameGraph_path}/stackcollapse-perf.pl out.perf > out.folded
 ${FlameGraph_path}/flamegraph.pl out.folded > out.svg
