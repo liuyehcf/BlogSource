@@ -39,17 +39,19 @@ categories:
 * [FlameGraph](https://github.com/brendangregg/FlameGraph)
 
 ```sh
-# 以99Hz的频率捕获指定进程的堆栈信息，捕获时长60s
-# 该命令会在当前目录生成 perf.data 文件
-perf record -F 99 -p <pid> -g -- sleep 60
+# 以99Hz的频率捕获指定进程的 cpu-clock 事件，捕获时长60s，该命令会在当前目录生成 perf.data 文件
+# -F：指定频率，不指定时默认以最大频率采样，对应内核参数为：kernel.perf_event_max_sample_rate, path=/proc/sys/kernel/perf_event_max_sample_rate
+# -g：开启gragh模式
+perf record -F 99 -g -p <pid> -- sleep 60
 
-# 解析 perf.data 文件
+# 解析当前目录下的 perf.data 文件
 perf script > out.perf
 
 # 生成火焰图
-# 下面这两个脚本来自FlameGraph项目，我的安装目录是/opt/FlameGraph
-/opt/FlameGraph/stackcollapse-perf.pl out.perf > out.folded
-/opt/FlameGraph/flamegraph.pl out.folded > out.svg
+# 下面这两个脚本来自FlameGraph项目
+FlameGraph_path=xxx
+${FlameGraph_path}/stackcollapse-perf.pl out.perf > out.folded
+${FlameGraph_path}/flamegraph.pl out.folded > out.svg
 ```
 
 ## 2.2 CPU Flame Graph for Java
@@ -62,23 +64,22 @@ perf script > out.perf
 * [FlameGraph](https://github.com/brendangregg/FlameGraph)
 
 ```sh
-# perf record 统计cpu使用情况，执行后会生成文件 perf.data
-# -F: 指定频率
-# -a: 统计所有进程的cpu使用情况
-# -g: 开启gragh模式
-sudo perf record -F 90 -a -g -- sleep 300
+# 以99Hz的频率捕获所有进程的 cpu-clock 事件，捕获时长300s，该命令会在当前目录生成 perf.data 文件
+# -a：统计所有进程的cpu使用情况
+sudo perf record -F 99 -g -a -- sleep 300
 
 # 下载并安装perf-map-agent
 # 安装依赖cmake，openjdk（只有jre是不够的）
 perf-map-agent/bin/create-java-perf-map.sh <pid>
 
-# 解析 perf.data 文件
+# 解析当前目录下的 perf.data 文件
 sudo perf script > out.perf
 
 # 生成火焰图
-# 下面这两个脚本来自FlameGraph项目，我的安装目录是/opt/FlameGraph
-/opt/FlameGraph/stackcollapse-perf.pl out.perf > out.folded
-/opt/FlameGraph/flamegraph.pl out.folded > out.svg
+# 下面这两个脚本来自FlameGraph项目
+FlameGraph_path=xxx
+${FlameGraph_path}/stackcollapse-perf.pl out.perf > out.folded
+${FlameGraph_path}/flamegraph.pl out.folded > out.svg
 ```
 
 ## 2.3 Cache Miss Flame Graph
@@ -89,7 +90,7 @@ sudo perf script > out.perf
 
 ## 2.5 小结
 
-* `perf record`默认采集的`event`是`cycles`，因此这种方式做出来的就是`CPU`火焰图
+* `perf record`默认采集的`event`是`cpu-clock`，因此这种方式做出来的就是`CPU`火焰图
 * `perf record`配合`-e`参数，指定`event`类型，可以做出任意事件的火焰图
 
 ## 2.6 参考
