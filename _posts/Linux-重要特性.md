@@ -1663,8 +1663,14 @@ systemctl stop demo-service.service
 * [INTRODUCTION TO SELINUX](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/5/html/deployment_guide/ch-selinux)
 * [sVIrt概述](https://www.cnblogs.com/ck1020/p/5901662.html)
 
-# 5 eBPF
+# 5 cBPF vs. eBPF
 
+**概念：**
+
+* `cBPF, classic BPF, Berkeley Packet Filter`：`seccomp/tcpdump`仍然在使用`cBPF`，但是在更新的版本上，通常会被转换成`eBPF`字节码再执行
+* `eBPF, extended BPF`：具有更好的扩展性，更好的性能
+    * 一般来说，`BPF`就是指`eBPF`
+    
 **`Tools`：**
 
 * `bcc`

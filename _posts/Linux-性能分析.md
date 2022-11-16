@@ -104,12 +104,13 @@ ${FlameGraph_path}/flamegraph.pl out.folded > out.svg
 
 **分析工具：**
 
-* `>= Linux 4.8`：`eBPF`
+* `>= Linux 4.8`：`eBPF, extended BPF`
     * 要求`Linux`版本至少是`4.8`
     * 开销更小，因为它只捕获和转换独特的堆栈
     * [Linux eBPF Off-CPU Flame Graph](https://www.brendangregg.com/blog/2016-01-20/ebpf-offcpu-flame-graph.html)
-* `< Linux 4.8`：针对不同的`blocking`类型（`I/O`，`scheduler`，`lock`），需要使用不同的分析工具，例如`SystemTap`、`perf event logging`
+* `< Linux 4.8`：针对不同的`blocking`类型（`I/O`，`scheduler`，`lock`），需要使用不同的分析工具，例如`SystemTap`、`perf event logging`、`BPF`
     * [Linux perf_events Off-CPU Time Flame Graph](https://www.brendangregg.com/blog/2015-02-26/linux-perf-off-cpu-flame-graph.html)
+    * [Linux eBPF Off-CPU Flame Graph](https://www.brendangregg.com/blog/2016-01-20/ebpf-offcpu-flame-graph.html)
 * 其他工具
     * `time`：一个非常简单的统计工具
         * `real`：整体耗时
@@ -151,6 +152,37 @@ sudo perf script -F comm,pid,tid,cpu,time,period,event,ip,sym,dso | \
     sudo /opt/FlameGraph/flamegraph.pl --countname=ms --title="Off-CPU Time Flame Graph" --colors=io > offcpu.svg
 ```
 
+## 3.2 Using BPF
+
+**安装：**
+
+* `yum install bcc`
+* 工具目录：`/usr/share/bcc/tools/`
+    * `/usr/share/bcc/tools/offcputime`
+
+**制作`offcpu`火焰图：**
+
+* 占比很小的堆栈会被忽略
+
+```sh
+# 采样指定进程 30s
+/usr/share/bcc/tools/offcputime -df -p <pid> 30 > out.bcc
+
+# 生成火焰图
+# 下面这两个脚本来自 FlameGraph 项目
+FlameGraph_path=xxx
+${FlameGraph_path}/flamegraph.pl --color=io --title="Off-CPU Time Flame Graph" --countname=us out.bcc > out.svg
+```
+
+**看单个线程的`offcpu`堆栈：**
+
+* 会输出所有的堆栈，以及出现的次数，越后面的出现频率越高
+
+```sh
+# 采样指定线程 30s
+sudo /usr/share/bcc/tools/offcputime -d -t <tid> 30
+```
+
 # 4 VTune
 
 **大致步骤：**
@@ -159,8 +191,9 @@ sudo perf script -F comm,pid,tid,cpu,time,period,event,ip,sym,dso | \
     * 我的`MacOS`系统版本是`Monterey 12.0.1`，这个版本无法远程Linux机器。如何解决？在目标Linux系统上安装`X Window System`、`Vtune-Profile`，通过`vnc`或者`nx`等远程桌面软件登录目标Linux机器，再通过`vtune-gui`打开`Vtune-Profile`，并分析本地的程序
 1. 在目标Linux机器上安装`Vtune-Profile-Target`（采集数据所需的软件包）：
     * 自动安装：`Configure Analysis` -> `Remote Linux(ssh)` -> `Deploy`
-    * 手动安装：假设`Vtune-Profile`安装目录是`/opt/intel/oneapi`，将`/opt/intel/oneapi/vtune/2021.8.0/target/linux`下的压缩包拷贝到目标机器上并解压
-* `Vtune-Profile`和`Vtune-Profile-Target`可以在同一台机器，也可以在不同机器
+    * 手动安装：假设`Vtune-Profile`安装目录是`/opt`，将`/opt/intel/oneapi/vtune/latest/target/linux`下的压缩包拷贝到目标机器上并解压
+    * `Vtune-Profile`和`Vtune-Profile-Target`可以在同一台机器，也可以在不同机器
+1. 假设`Vtune-Profile`安装目录是`/opt`，使用`/opt/intel/oneapi/vtune/latest/bin64/vtune-gui`，启动图形客户端（需要`X Window System`）
 
 **如何通过命令行采集数据：**
 
@@ -177,6 +210,8 @@ vtune -collect hotspots -knob sampling-mode=hw -knob sampling-interval=0.5 -targ
 * [Intel® VTune™ Profiler User Guide - Window: Caller/Callee](https://www.intel.com/content/www/us/en/develop/documentation/vtune-help/top/reference/user-interface-reference/window-caller-callee.html)
 * [Intel® VTune™ Profiler Performance Analysis Cookbook](https://software.intel.com/content/www/us/en/develop/documentation/vtune-cookbook/top/methodologies/top-down-microarchitecture-analysis-method.html)
 * [《A Top-Down Method for Performance Analysis and Counters Architecture》阅读笔记](https://andrewei1316.github.io/2020/12/20/top-down-performance-analysis/)
+* [Targets in Virtualized Environments](https://www.intel.com/content/www/us/en/develop/documentation/vtune-help/top/set-up-analysis-target/on-virtual-machine.html)
+* [Supported Architectures and Terminology](https://www.intel.com/content/www/us/en/developer/articles/system-requirements/vtune-profiler-system-requirements.html)
 
 # 5 Chrome tracing view
 
@@ -211,14 +246,24 @@ https://github.com/StarRocks/starrocks/pull/7649
 
 # 8 Tips
 
-1. **性能分析需要重点关注的指标**
-    * `Cycles`
-    * `IPC`
-    * `Instructions`
-    * `L1 Miss`
-    * `LLC Miss, Last Level Cache`
-    * `Branch Miss`
-    * `Contention`
+## 8.1 性能分析需要重点关注的指标
+
+* `Cycles`
+* `IPC`
+* `Instructions`
+* `L1 Miss`
+* `LLC Miss, Last Level Cache`
+* `Branch Miss`
+* `Contention`
+* `%usr`、`%sys`
+* `bandwidth`、`packet rate`、`irq`
+
+## 8.2 性能瓶颈分析思路
+
+1. `CPU`无法打满，可能原因包括：
+    * 没有充分并行
+    * 存在串行点（`std::mutex`）
+    * 其他资源是否已经打满，导致CPU无法进一步提高，比如网卡、磁盘等
 
 # 9 参考
 
