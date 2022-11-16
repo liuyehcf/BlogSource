@@ -1670,15 +1670,21 @@ systemctl stop demo-service.service
 * `cBPF, classic BPF, Berkeley Packet Filter`：`seccomp/tcpdump`仍然在使用`cBPF`，但是在更新的版本上，通常会被转换成`eBPF`字节码再执行
 * `eBPF, extended BPF`：具有更好的扩展性，更好的性能
     * 一般来说，`BPF`就是指`eBPF`
-    
-**`Tools`：**
 
-* `bcc`
-    * [bcc/INSTALL.md](https://github.com/iovisor/bcc/blob/master/INSTALL.md)
-    * [bcc/docs/tutorial.md](https://github.com/iovisor/bcc/blob/master/docs/tutorial.md)
-* `bpftrace`
+## 5.1 [bcc](https://github.com/iovisor/bcc)
 
-## 5.1 参考
+`bcc, BPF Compiler Collection`
+
+* [bcc/INSTALL.md](https://github.com/iovisor/bcc/blob/master/INSTALL.md)
+* [bcc/docs/tutorial.md](https://github.com/iovisor/bcc/blob/master/docs/tutorial.md)
+
+**下图是所有`bcc`包含的工具**
+
+![bcc](/images/Linux-重要特性/bcc.png)
+
+## 5.2 [bpftrace](https://github.com/iovisor/bpftrace)
+
+## 5.3 参考
 
 * [Linux Extended BPF (eBPF) Tracing Tools](https://www.brendangregg.com/ebpf.html)
 * [Learn eBPF Tracing: Tutorial and Examples](https://www.brendangregg.com/blog/2019-01-01/learn-ebpf-tracing.html)

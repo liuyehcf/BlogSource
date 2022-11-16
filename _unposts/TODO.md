@@ -15,11 +15,11 @@ categories:
     * numactl --hardware
     * gprof
 1. 性能分析
-    * bcc
     * perf
         * perf lock
         * [How to find expensive locks in multithreaded application.](https://easyperf.net/blog/2019/10/12/MT-Perf-Analysis-part2)
     * bpftrace
+    * vtune如何在虚拟机上进行user-mode sampling
     * valgrind (by andy pavlo)
         * [The Valgrind Quick Start Guide](http://valgrind.org/docs/manual/quick-start.html)
         * [Callgrind: a call-graph generating cache and branch prediction profiler](https://valgrind.org/docs/manual/cl-manual.html)
@@ -72,6 +72,7 @@ categories:
         }
         ```
 
+    * 如何用老的glibc跑二进制
 1. java
 1. llvm
     * [llvm-doc](https://llvm.org/docs/)
