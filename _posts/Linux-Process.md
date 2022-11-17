@@ -1,5 +1,5 @@
 ---
-title: Linux-进程
+title: Linux-Process
 date: 2020-08-27 14:24:08
 tags: 
 - 摘录
