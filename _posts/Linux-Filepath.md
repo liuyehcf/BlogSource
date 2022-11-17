@@ -1,5 +1,5 @@
 ---
-title: Linux-重要文件路径
+title: Linux-Filepath
 date: 2020-08-27 14:11:21
 tags: 
 - 摘录
