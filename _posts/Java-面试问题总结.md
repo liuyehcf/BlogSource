@@ -949,10 +949,10 @@ categories:
 # 6 操作系统
 
 1. 操作系统内存管理
-    > 1. {% post_link Linux-内存管理 %}
+    > 1. {% post_link Linux-Memory-Management %}
 
 1. 虚拟内存和物理内存是怎样一个关系
-    > 呵呵，一言难尽。{% post_link Linux-内存管理 %}
+    > 呵呵，一言难尽。{% post_link Linux-Memory-Management %}
 
 1. 一个二进制的程序跑起来的它各个段在内存中的分布是什么样的
     > 代码段、数据段、堆、共享内存、栈、内核

@@ -118,7 +118,7 @@ categories:
 
 # 4 内存虚拟化
 
-**内存管理相关知识点参考{% post_link Linux-内存管理 %}**
+**内存管理相关知识点参考{% post_link Linux-Memory-Management %}**
 
 **本小节转载摘录自[虚拟化技术 - 内存虚拟化 [一]](https://zhuanlan.zhihu.com/p/69828213)**
 

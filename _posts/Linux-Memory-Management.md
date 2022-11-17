@@ -1,5 +1,5 @@
 ---
-title: Linux-内存管理
+title: Linux-Memory-Management
 date: 2020-04-11 22:07:59
 tags: 
 - 摘录
@@ -18,7 +18,7 @@ categories:
 
 **单片机的CPU是直接操作内存的「物理地址」**
 
-![mcu](/images/Linux-内存管理/mcu.png)
+![mcu](/images/Linux-Memory-Management/mcu.png)
 
 在这种情况下，要想在内存中同时运行两个程序是不可能的。如果第一个程序在`2000`的位置写入一个新的值，将会擦掉第二个程序存放在相同位置上的所有内容，所以同时运行两个程序是根本行不通的，这两个程序会立刻崩溃
 
@@ -28,7 +28,7 @@ categories:
 
 我们可以把进程所使用的地址「隔离」开来，即让操作系统为每个进程分配独立的一套「虚拟地址」，人人都有，大家自己玩自己的地址就行，互不干涉。但是有个前提每个进程都不能访问物理地址，至于虚拟地址最终怎么落到物理内存里，对进程来说是透明的，操作系统已经把这些都安排的明明白白了
 
-![virtual](/images/Linux-内存管理/virtual.png)
+![virtual](/images/Linux-Memory-Management/virtual.png)
 
 **操作系统会提供一种机制，将不同进程的虚拟地址和不同内存的物理地址映射起来**
 
@@ -40,7 +40,7 @@ categories:
 实际存在硬件里面的空间地址叫**物理内存地址（Physical Memory Address）**
 操作系统引入了虚拟内存，进程持有的虚拟地址会通过 CPU 芯片中的内存管理单元（MMU）的映射关系，来转换变成物理地址，然后再通过物理地址访问内存，如下图所示：
 
-![virtual_mmu](/images/Linux-内存管理/virtual_mmu.jpg)
+![virtual_mmu](/images/Linux-Memory-Management/virtual_mmu.jpg)
 
 > 操作系统是如何管理虚拟地址与物理地址之间的关系？
 
@@ -56,14 +56,14 @@ categories:
 
 分段机制下的虚拟地址由两部分组成，**段选择子**和**段内偏移量**
 
-![segment_1](/images/Linux-内存管理/segment_1.jpg)
+![segment_1](/images/Linux-Memory-Management/segment_1.jpg)
 
 * `段选择子`就保存在段寄存器里面。段选择子里面最重要的是`段号`，用作段表的索引。`段表`里面保存的是这个`段的基地址`、`段的界限`和`特权等级`等
 * 虚拟地址中的`段内偏移量`应该位于0和段界限之间，如果段内偏移量是合法的，就将段基地址加上段内偏移量得到物理内存地址
 
 在上面，知道了虚拟地址是通过段表与物理地址进行映射的，分段机制会把程序的虚拟地址分成4个段，每个段在段表中有一个项，在这一项找到段的基地址，再加上偏移量，于是就能找到物理内存中的地址，如下图：
 
-![segment_2](/images/Linux-内存管理/segment_2.jpg)
+![segment_2](/images/Linux-Memory-Management/segment_2.jpg)
 
 如果要访问段`3`中偏移量`500`的虚拟地址，我们可以计算出物理地址为，段`3`基地址`700` + 偏移量`500` = `7500`
 
@@ -84,7 +84,7 @@ categories:
 
 如果这个`256MB`不是连续的，被分成了两段`128MB`内存，这就会导致没有空间再打开一个`200MB`的程序
 
-![segment_fragment](/images/Linux-内存管理/segment_fragment.jpg)
+![segment_fragment](/images/Linux-Memory-Management/segment_fragment.jpg)
 
 这里的内存碎片的问题共有两处地方：
 
@@ -121,7 +121,7 @@ categories:
 
 虚拟地址与物理地址之间通过页表来映射，如下图：
 
-![paging_1](/images/Linux-内存管理/paging_1.jpg)
+![paging_1](/images/Linux-Memory-Management/paging_1.jpg)
 
 页表实际上存储在CPU的内存管理单元（MMU）中，于是CPU就可以直接通过MMU，找出要实际要访问的物理内存地址
 
@@ -133,7 +133,7 @@ categories:
 
 如果内存空间不够，操作系统会把其他正在运行的进程中的「最近没被使用」的内存页面给释放掉，也就是暂时写在硬盘上，称为**换出**（Swap Out）。一旦需要的时候，再加载进来，称为**换入**（Swap In）。所以，一次性写入磁盘的也只有少数的一个页或者几个页，不会花太多时间，**内存交换的效率就相对比较高**
 
-![paging_2](/images/Linux-内存管理/paging_2.jpg)
+![paging_2](/images/Linux-Memory-Management/paging_2.jpg)
 
 更进一步地，分页的方式使得我们在加载程序的时候，不再需要一次性都把程序加载到物理内存中。我们完全可以在进行虚拟内存和物理内存的页之间的映射之后，并不真的把页加载到物理内存里，**而是只有在程序运行中，需要用到对应虚拟内存页里面的指令和数据时，再加载到物理内存里面去**
 
@@ -141,7 +141,7 @@ categories:
 
 在分页机制下，虚拟地址分为两部分，**页号**和**页内偏移**。页号作为页表的索引，**页表**包含物理页每页所在**物理内存的基地址**，这个基地址与页内偏移的组合就形成了物理内存地址，见下图
 
-![paging_3](/images/Linux-内存管理/paging_3.jpg)
+![paging_3](/images/Linux-Memory-Management/paging_3.jpg)
 
 总结一下，对于一个内存地址转换，其实就是这样三个步骤：
 
@@ -151,7 +151,7 @@ categories:
 
 下面举个例子，虚拟内存中的页通过页表映射为了物理内存中的页，如下图：
 
-![paging_4](/images/Linux-内存管理/paging_4.jpg)
+![paging_4](/images/Linux-Memory-Management/paging_4.jpg)
 
 这看起来似乎没什么毛病，但是放到实际中操作系统，这种简单的分页是肯定是会有问题的
 
@@ -173,7 +173,7 @@ categories:
 
 我们把这个`100`多万个「页表项」的单级页表再分页，将页表（一级页表）分为`1024`个页表（二级页表），每个表（二级页表）中包含`1024`个「页表项」，**形成二级分页**。如下图所示：
 
-![paging_5](/images/Linux-内存管理/paging_5.jpg)
+![paging_5](/images/Linux-Memory-Management/paging_5.jpg)
 
 > 你可能会问，分了二级表，映射`4GB`地址空间就需要`4KB`（一级页表）+ `4MB`（二级页表）的内存，这样占用空间不是更大了吗？
 
@@ -196,17 +196,17 @@ categories:
 * 中间页目录项 PMD（Page Middle Directory）；
 * 页表项 PTE（Page Table Entry）；
 
-![paging_6](/images/Linux-内存管理/paging_6.jpg)
+![paging_6](/images/Linux-Memory-Management/paging_6.jpg)
 
 多级页表虽然解决了空间上的问题，但是虚拟地址到物理地址的转换就多了几道转换的工序，这显然就降低了这俩地址转换的速度，也就是带来了时间上的开销。
 
 程序是有局部性的，即在一段时间内，整个程序的执行仅限于程序中的某一部分。相应地，执行所访问的存储空间也局限于某个内存区域
 
-![paging_tlb_1](/images/Linux-内存管理/paging_tlb_1.png)
+![paging_tlb_1](/images/Linux-Memory-Management/paging_tlb_1.png)
 
 **我们就可以利用这一特性，把最常访问的几个页表项存储到访问速度更快的硬件，于是计算机科学家们，就在CPU芯片中，加入了一个专门存放程序最常访问的页表项的Cache，这个Cache 就是 TLB（Translation Lookaside Buffer），通常称为页表缓存、转址旁路缓存、快表等**
 
-![paging_tlb_2](/images/Linux-内存管理/paging_tlb_2.png)
+![paging_tlb_2](/images/Linux-Memory-Management/paging_tlb_2.png)
 
 在CPU芯片里面，封装了内存管理单元（Memory Management Unit）芯片，它用来完成地址转换和`TLB`的访问与交互
 
@@ -220,7 +220,7 @@ categories:
 
 内存分段和内存分页并不是对立的，它们是可以组合起来在同一个系统中使用的，那么组合起来后，通常称为**段页式内存管理**
 
-![segment_paging_1](/images/Linux-内存管理/segment_paging_1.png)
+![segment_paging_1](/images/Linux-Memory-Management/segment_paging_1.png)
 
 段页式内存管理实现的方式：
 
@@ -231,7 +231,7 @@ categories:
 
 用于段页式地址变换的数据结构是每一个程序一张段表，每个段又建立一张页表，段表中的地址是页表的起始地址，而页表中的地址则为某页的物理页号，如图所示：
 
-![segment_paging_2](/images/Linux-内存管理/segment_paging_2.jpg)
+![segment_paging_2](/images/Linux-Memory-Management/segment_paging_2.jpg)
 
 段页式地址变换中要得到物理地址须经过三次内存访问：
 
@@ -255,7 +255,7 @@ categories:
 
 由于此时由段式内存管理映射而成的地址不再是「物理地址」了，Intel就称之为「线性地址」（也称虚拟地址）。于是，段式内存管理先将逻辑地址映射成线性地址，然后再由页式内存管理将线性地址映射成物理地址
 
-![linux_1](/images/Linux-内存管理/linux_1.png)
+![linux_1](/images/Linux-Memory-Management/linux_1.png)
 
 这里说明下逻辑地址和线性地址：
 
@@ -278,7 +278,7 @@ categories:
 
 在Linux操作系统中，虚拟地址空间的内部又被分为**内核空间和用户空间**两部分，不同位数的系统，地址空间的范围也不同。比如最常见的32位和64位系统，如下所示：
 
-![linux_2](/images/Linux-内存管理/linux_2.jpg)
+![linux_2](/images/Linux-Memory-Management/linux_2.jpg)
 
 通过这里可以看出：
 
@@ -292,13 +292,13 @@ categories:
 
 虽然每个进程都各自有独立的虚拟内存，但是**每个虚拟内存中的内核地址**，其实关联的都是相同的物理内存。这样，进程切换到内核态后，就可以很方便地访问内核空间内存
 
-![linux_3](/images/Linux-内存管理/linux_3.jpg)
+![linux_3](/images/Linux-Memory-Management/linux_3.jpg)
 
 接下来，进一步了解虚拟空间的划分情况，用户空间和内核空间划分的方式是不同的，内核空间的分布情况就不多说了
 
 我们看看用户空间分布的情况，以32位系统为例，我画了一张图来表示它们的关系：
 
-![linux_4](/images/Linux-内存管理/linux_4.jpg)
+![linux_4](/images/Linux-Memory-Management/linux_4.jpg)
 
 通过这张图你可以看到，用户空间内存，从低到高分别是`7`种不同的内存段：
 
@@ -330,7 +330,7 @@ mov 0x80495b0, %eax
 
 从上面可以看到，Linux在x86的分段机制上运行，却通过一个巧妙的方式绕开了分段。Linux主要以分页的方式实现内存管理
 
-![linux_5](/images/Linux-内存管理/linux_5.jpg)
+![linux_5](/images/Linux-Memory-Management/linux_5.jpg)
 
 前面说了Linux中逻辑地址等于线性地址，那么线性地址怎么对应到物理地址呢？这个大家都知道，那就是通过分页机制，具体的说，就是通过页表查找来对应物理地址
 
@@ -360,7 +360,7 @@ mov 0x80495b0, %eax
 
 我们知道Linux中用户进程线性地址能寻址的范围是`0~3G`，那么是不是需要提前先把这3G虚拟内存的页表都建立好呢？一般情况下，物理内存是远远小于3G的，加上同时有很多进程都在运行，根本无法给每个进程提前建立3G的线性地址页表。Linux利用CPU的一个机制解决了这个问题。**进程创建后我们可以给页目录表的表项值都填0，CPU在查找页表时，如果表项的内容为0，则会引发一个缺页异常，进程暂停执行，Linux内核这时候可以通过一系列复杂的算法给分配一个物理页，并把物理页的地址填入表项中，进程再恢复执行**。当然进程在这个过程中是被蒙蔽的，它自己的感觉还是正常访问到了物理内存。
 
-![linux_6](/images/Linux-内存管理/linux_6.gif)
+![linux_6](/images/Linux-Memory-Management/linux_6.gif)
 
 # 6 总结
 
