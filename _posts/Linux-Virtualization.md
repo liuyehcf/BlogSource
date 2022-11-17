@@ -1,5 +1,5 @@
 ---
-title: Linux-虚拟化
+title: Linux-Virtualization
 date: 2021-02-22 13:55:07
 tags: 
 - 摘录
@@ -24,7 +24,7 @@ categories:
 
 计算虚拟化发展有几个关键节点。虚拟化技术最早60年代中期年在IBM大型机上实现，当时主流大型虚拟化有`IBM Z/VM`与`KVM for Z Systems`。80年代IBM与HP开始研究面向UNIX小型机虚拟化，当时主流的有`IBM PowerVM`与`HP vPar`，`IVM`等。1999年VMware推出针对x86服务器虚拟化，当时主流x86虚拟化有`VMware ESXi`、`Microsoft Hyper-V`，以及开源的`KVM`和`Xen`。2006年Intel和AMD推出硬件辅助虚拟化技术`Intel-VT`，`AMD-V`将部分需要通过软件来实现的虚拟化功能进行硬件化，大幅提升虚拟化的性能。容器作为一种更加轻量的应用级虚拟化技术，最早于1979年提出，不过2013年推出docker解决了标准化与可移植等问题，目前已成为最流行的容器技术。基于x86服务器的虚拟化技术对云计算发展发挥了重要作用，接下来将重点介绍
 
-![milestone](/images/Linux-虚拟化/milestone.jpg)
+![milestone](/images/Linux-Virtualization/milestone.jpg)
 
 ## 1.3 参考
 
@@ -49,7 +49,7 @@ categories:
 操作系统（内核）需要直接访问硬件和内存，因此它的代码需要运行在最高运行级别`Ring0`上，这样它可以使用特权指令，控制中断、修改页表、访问设备等等。 
 应用程序的代码运行在最低运行级别上`Ring 3`上，不能做受控操作。如果要做，比如要访问磁盘，写文件，那就要通过执行系统调用（函数），执行系统调用的时候，CPU的运行级别会发生从`Ring 3`到`Ring 0`的切换，并跳转到系统调用对应的内核代码位置执行，这样内核就为你完成了设备访问，完成之后再从`Ring 0`返回`Ring 3`。这个过程也称作用户态和内核态的切换
 
-![cpu_normal](/images/Linux-虚拟化/cpu_normal.jpg)
+![cpu_normal](/images/Linux-Virtualization/cpu_normal.jpg)
 
 **那么，虚拟化在这里就遇到了一个难题，因为宿主操作系统是工作在`Ring 0`的，客户操作系统就不能也在`Ring 0`了，但是它不知道这一点，以前执行什么指令，现在还是执行什么指令，但是没有执行权限是会出错的。所以这时候虚拟机管理程序（`VMM`）需要避免这件事情发生。 虚机怎么通过`VMM`实现 `Guest CPU`对硬件的访问，根据其原理不同有三种实现技术：**
 
@@ -59,13 +59,13 @@ categories:
 
 ## 3.1 基于二进制翻译的全虚拟化（Full Virtualization with Binary Translation）
 
-![cpu_full](/images/Linux-虚拟化/cpu_full.jpg)
+![cpu_full](/images/Linux-Virtualization/cpu_full.jpg)
 
 客户操作系统运行在`Ring 1`，它在执行特权指令时，会触发异常（CPU的机制，没权限的指令会触发异常），然后`VMM`捕获这个异常，在异常里面做翻译，模拟，最后返回到客户操作系统内，客户操作系统认为自己的特权指令工作正常，继续运行。但是这个性能损耗，就非常的大，简单的一条指令，执行完，了事，现在却要通过复杂的异常处理过程。
 
 异常「捕获（trap）-翻译（handle）-模拟（emulate）」过程：
 
-![cpu_full_progress](/images/Linux-虚拟化/cpu_full_progress.jpg)
+![cpu_full_progress](/images/Linux-Virtualization/cpu_full_progress.jpg)
 
 **为什么`VMM`可以捕获到`Guest OS`执行特权指令时触发的异常？**
 
@@ -77,13 +77,13 @@ categories:
 
 这种做法省去了全虚拟化中的捕获和模拟，大大提高了效率。所以像XEN这种半虚拟化技术，客户机操作系统都是有一个专门的定制内核版本，和x86、mips、arm这些内核版本等价。这样以来，就不会有捕获异常、翻译、模拟的过程了，性能损耗非常低。这就是XEN这种半虚拟化架构的优势。这也是为什么XEN只支持虚拟化Linux，无法虚拟化windows原因，微软不改代码啊
 
-![cpu_half](/images/Linux-虚拟化/cpu_half.jpg)
+![cpu_half](/images/Linux-Virtualization/cpu_half.jpg)
 
 ## 3.3 硬件辅助的全虚拟化 
 
 2005年后，CPU厂商Intel和AMD开始支持虚拟化了。Intel引入了`Intel-VT （Virtualization Technology）`技术。 这种CPU，有`VMX root operation`和`VMX non-root operation`两种模式，两种模式都支持`Ring 0` ~ `Ring 3`共 4 个运行级别。这样，`VMM`可以运行在`VMX root operation`模式下，客户`OS`运行在VMX `non-root operation`模式下
 
-![cpu_full_with_hardware](/images/Linux-虚拟化/cpu_full_with_hardware.jpg)
+![cpu_full_with_hardware](/images/Linux-Virtualization/cpu_full_with_hardware.jpg)
 
 而且两种操作模式可以互相转换。运行在`VMX root operation`模式下的`VMM`通过显式调用`VMLAUNCH`或`VMRESUME`指令切换到`VMX non-root operation`模式，硬件自动加载`Guest OS`的上下文，于是`Guest OS`获得运行，这种转换称为`VM entry`。`Guest OS`运行过程中遇到需要`VMM`处理的事件，例如外部中断或缺页异常，或者主动调用`VMCALL`指令调用`VMM`的服务的时候（与系统调用类似），硬件自动挂起`Guest OS`，切换到`VMX root operation`模式，恢复`VMM`的运行，这种转换称为`VM exit`。`VMX root operation`模式下软件的行为与在没有`VT-x`技术的处理器上的行为基本一致；而`VMX non-root operation`模式则有很大不同，最主要的区别是此时运行某些指令或遇到某些事件时，发生`VM exit`
  
@@ -126,15 +126,15 @@ categories:
 
 在Linux这种使用虚拟地址的OS中，虚拟地址经过`page table`转换可得到物理地址
 
-![memory_1](/images/Linux-虚拟化/memory_1.jpg)
+![memory_1](/images/Linux-Virtualization/memory_1.jpg)
 
 如果这个操作系统是运行在虚拟机上的，那么这只是一个中间的物理地址（`Intermediate Phyical Address - IPA`），需要经过`VMM/hypervisor`的转换，才能得到最终的物理地址（`Host Phyical Address - HPA`）。从`VMM`的角度，`guest VM`中的虚拟地址就成了`GVA（Guest Virtual Address）`，`IPA`就成了`GPA（Guest Phyical Address）`
 
-![memory_2](/images/Linux-虚拟化/memory_2.jpg)
+![memory_2](/images/Linux-Virtualization/memory_2.jpg)
 
 可见，如果使用VMM，并且`guest VM`中的程序使用虚拟地址（如果`guest VM`中运行的是不支持虚拟地址的`RTOS（real time OS）`，则在虚拟机层面不需要地址转换），那么就需要两次地址转换
 
-![memory_3](/images/Linux-虚拟化/memory_3.jpg)
+![memory_3](/images/Linux-Virtualization/memory_3.jpg)
 
 **但是传统的`IA32`架构从硬件上只支持一次地址转换，即由`CR3`寄存器指向进程第一级页表的首地址，通过MMU查询进程的各级页表，获得物理地址**
 
@@ -156,23 +156,23 @@ categories:
 1. VMM使用的截获方法增多了`page fault`和`trap/vm-exit`的数量，加重了CPU的负担
    * 在一些场景下，这种影子页表机制造成的开销可以占到整个VMM软件负载的75%
 
-![memory_4](/images/Linux-虚拟化/memory_4.jpg)
+![memory_4](/images/Linux-Virtualization/memory_4.jpg)
 
 **在「影子页表」的方案中，CPU还是按照传统的方式来进行内存的寻址（一次转换），因此CPU并不感知**，为了更好的支持虚拟化，各大CPU厂商相继推出了硬件辅助的内存虚拟化技术，比如Intel的`EPT（Extended Page Table）`和AMD的`NPT（Nested Page Table）`，它们都能够从硬件上同时支持`GVA->GPA`和`GPA->HPA`的地址转换的技术
 
 `GVA->GPA`的转换依然是通过查找`gPT`页表完成的，而`GPA->HPA`的转换则通过查找`nPT`页表来实现，每个`guest VM`有一个由VMM维护的`nPT`。其实，`EPT/NPT`就是一种扩展的MMU（以下称`EPT/NPT MMU`），它可以交叉地查找`gPT`和`nPT`两个页表。在这种方案下，**CPU是明确感知这是虚拟机的寻址过程**
 
-![memory_5](/images/Linux-虚拟化/memory_5.jpg)
+![memory_5](/images/Linux-Virtualization/memory_5.jpg)
 
 假设`gPT`和`nPT`都是4级页表，那么`EPT/NPT MMU`完成一次地址转换的过程是这样的（不考虑TLB）：
 
 首先它会查找`guest VM`中`CR3`寄存器（`gCR3`）指向的`PML4`页表，由于`gCR3`中存储的地址是`GPA`，因此CPU需要查找`nPT`来获取`gCR3`的`GPA`对应的`HPA`。`nPT`的查找和前面文章讲的页表查找方法是一样的，这里我们称一次`nPT`的查找过程为一次`nested walk`
 
-![memory_6](/images/Linux-虚拟化/memory_6.jpg)
+![memory_6](/images/Linux-Virtualization/memory_6.jpg)
 
 如果在`nPT`中没有找到，则产生`EPT violation`异常（可理解为VMM层的`page fault`）。如果找到了，也就是获得了`PML4`页表的物理地址后，就可以用`GVA`中的bit位子集作为`PML4`页表的索引，得到`PDPE`页表的`GPA`。接下来又是通过一次`nested walk`进行`PDPE`页表的`GPA->HPA`转换，然后重复上述过程，依次查找PD和PE页表，最终获得该`GVA`对应的`HPA`
 
-![memory_7](/images/Linux-虚拟化/memory_7.jpg)
+![memory_7](/images/Linux-Virtualization/memory_7.jpg)
 
 不同于影子页表是一个进程需要一个`sPT`，`EPT/NPT MMU`解耦了`GVA->GPA`转换和`GPA->HPA`转换之间的依赖关系，一个VM只需要一个`nPT`，减少了内存开销。如果`guest VM`中发生了`page fault`，可直接由`guest OS`处理，不会产生`vm-exit`，减少了CPU的开销。可以说，`EPT/NPT MMU`这种硬件辅助的内存虚拟化技术解决了纯软件实现存在的两个问题
 
@@ -182,11 +182,11 @@ categories:
 
 不同的进程可能会有相同的虚拟地址，为了避免进程切换的时候flush所有的TLB，可通过给`TLB entry`加上一个标识进程的`PCID/ASID`的`tag`来区分（参考[这篇文章](https://zhuanlan.zhihu.com/p/66971714)）。同样地，不同的`guest VM`也会有相同的`GVA`，为了flush的时候有所区分，需要再加上一个标识虚拟机的`tag`，这个`tag`在ARM体系中被叫做`VMID`，在Intel体系中则被叫做`VPID`
 
-![memory_8](/images/Linux-虚拟化/memory_8.jpg)
+![memory_8](/images/Linux-Virtualization/memory_8.jpg)
 
 在最坏的情况下（也就是`TLB`完全没有命中），`gPT`中的每一级转换都需要一次`nested walk`，而每次`nested walk`需要`4`次内存访问，因此`5`次`nested walk`总共需要`(4 + 1) * 5 - 1 =24`次内存访问（就像一个5x5的二维矩阵一样）：
 
-![memory_9](/images/Linux-虚拟化/memory_9.jpg)
+![memory_9](/images/Linux-Virtualization/memory_9.jpg)
 
 虽然这24次内存访问都是由硬件自动完成的，不需要软件的参与，但是内存访问的速度毕竟不能与CPU的运行速度同日而语，而且内存访问还涉及到对总线的争夺，次数自然是越少越好。
 
