@@ -17,8 +17,6 @@ categories:
 1. 性能分析
     * perf
         * perf lock
-        * [How to find expensive locks in multithreaded application.](https://easyperf.net/blog/2019/10/12/MT-Perf-Analysis-part2)
-    * bpftrace
     * vtune如何在虚拟机上进行user-mode sampling
     * valgrind (by andy pavlo)
         * [The Valgrind Quick Start Guide](http://valgrind.org/docs/manual/quick-start.html)

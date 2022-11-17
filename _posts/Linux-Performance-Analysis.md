@@ -1,5 +1,5 @@
 ---
-title: Linux-性能分析
+title: Linux-Performance-Analysis
 date: 2019-10-27 18:44:58
 tags: 
 - 摘录
@@ -17,7 +17,7 @@ categories:
 
 ## 1.1 event
 
-![perf_events_map](/images/Linux-性能分析/perf_events_map.png)
+![perf_events_map](/images/Linux-Performance-Analysis/perf_events_map.png)
 
 **`perf list`可以查看当前环境支持的所有`event`。`event`可以分为`Software event`以及`Tracepoint event`两大类**
 
@@ -176,7 +176,7 @@ ${FlameGraph_path}/flamegraph.pl --color=io --title="Off-CPU Time Flame Graph" -
 
 **看单个线程的`offcpu`堆栈：**
 
-* 会输出所有的堆栈，以及出现的次数，越后面的出现频率越高
+* 会输出所有的堆栈，以及出现的时间（单位微秒），越后面的出现频率越高
 
 ```sh
 # 采样指定线程 30s
