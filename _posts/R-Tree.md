@@ -1,5 +1,5 @@
 ---
-title: R-tree-详解
+title: R-Tree
 date: 2017-08-16 15:12:30
 tags: 
 - 摘录

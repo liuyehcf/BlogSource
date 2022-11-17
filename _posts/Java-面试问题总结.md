@@ -1282,8 +1282,8 @@ categories:
     > {% post_link 单源最短路径 %}
 
 1. BTree
-    > 1. {% post_link B-tree-详解 %}
-    > 1. {% post_link BPlus-tree-详解 %}
+    > 1. {% post_link B-Tree %}
+    > 1. {% post_link BPlus-Tree %}
 
 1. 大根堆
     > 就是最大堆
@@ -1350,7 +1350,7 @@ categories:
     > https://www.zhihu.com/question/30736334
 
 1. 红黑树
-    > {% post_link RB-tree-详解 %}
+    > {% post_link RB-Tree %}
 
 1. 实现bitmap数据结构，包括数据的存储与插入方式
     > 要确定`数据与bit位的映射关系`

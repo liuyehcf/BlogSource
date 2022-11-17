@@ -1,5 +1,5 @@
 ---
-title: B-tree-详解
+title: B-Tree
 date: 2017-07-14 18:45:53
 tags: 
 - 原创
