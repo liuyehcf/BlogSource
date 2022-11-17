@@ -1165,7 +1165,7 @@ categories:
     > seq按行进行处理
 
 1. 对文件系统的了解
-    > {% post_link Linux-文件系统 %}
+    > {% post_link Linux-File-System %}
 
 1. hard link与symbolic link的区别
     > 目录的block存放的是文件名与inode的关联记录
