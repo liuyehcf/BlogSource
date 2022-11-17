@@ -1,5 +1,5 @@
 ---
-title: Linux-常用命令
+title: Linux-Common-Command
 date: 2017-08-15 20:17:57
 top: true
 tags: 
@@ -2732,12 +2732,12 @@ make install
     * 机器B，ip为：`192.168.2.2/24`，mac地址为`68:ed:a4:39:91:e6`
     * 路由器，ip为：`192.168.2.1/24`，mac地址为`c8:94:bb:af:bd:8c`
 * 在机器A执行`arping -c 1 -w 1 -I eno1 -b 192.168.2.2`，分别在机器A、机器B上抓包，抓包结果如下
-    * ![arping-1](/images/Linux-常用命令/arping-1.png)
-    * ![arping-2](/images/Linux-常用命令/arping-2.png)
+    * ![arping-1](/images/Linux-Common-Command/arping-1.png)
+    * ![arping-2](/images/Linux-Common-Command/arping-2.png)
     * arp-reply发送到路由器后，路由器不知道将数据包转发给谁，就直接丢弃了
 * 在机器A执行`arping -c 1 -w 1 -I eno1 -D -b 192.168.2.2`，分别在机器A、机器B上抓包，抓包结果如下
-    * ![arping-3](/images/Linux-常用命令/arping-3.png)
-    * ![arping-3](/images/Linux-常用命令/arping-4.png)
+    * ![arping-3](/images/Linux-Common-Command/arping-3.png)
+    * ![arping-3](/images/Linux-Common-Command/arping-4.png)
     * arp-reply直接指定了目标机器的mac地址，因此直接送达机器A
 
 ## 5.18 hping3
@@ -3384,7 +3384,7 @@ yum install -y iotop
 
 **一个I/O请求的处理过程，可以梳理为这样一张简单的图：**
 
-![blktrace_1](/images/Linux-常用命令/blktrace_1.png)
+![blktrace_1](/images/Linux-Common-Command/blktrace_1.png)
 
 **`blktrace`用于采集`I/O`数据，采集得到的数据一般无法直接分析，通常需要经过一些分析工具进行分析，这些工具包括：**
 
@@ -3570,7 +3570,7 @@ mount      –t debugfs    debugfs /sys/kernel/debug
 * **`X Client`：是应用程序的核心部分，它与硬件无关，每个应用程序就是一个`X Client`。`X Client`可以是终端仿真器（`Xterm`）或图形界面程序，它不直接对显示器绘制或者操作图形，而是与`X Server`通信，由`X Server`控制显示**
 * **`X Server`和`X Client`可以在同一台机器上，也可以在不同机器上。两种通过`xlib`进行通信**
 
-![X-Window-System](/images/Linux-常用命令/X-Window-System.awebp)
+![X-Window-System](/images/Linux-Common-Command/X-Window-System.awebp)
 
 ## 8.1 xquartz（不推荐）
 
@@ -3719,7 +3719,7 @@ X_VNC <--> X_Client: X Protocol
 
 ## 9.1 架构
 
-![audit_architecture](/images/Linux-常用命令/audit_architecture.png)
+![audit_architecture](/images/Linux-Common-Command/audit_architecture.png)
 
 审核系统包含两个主要部分：用户空间的应用程序、实用程序，以及`kernel-side`系统调用处理。Kernel的组件从用户空间的应用程序接受系统调用，并且通过三个过滤器中的一个过滤器来进行筛选：`user`、`task`或者`exit`。一旦系统调用通过其中的一个过滤器，就将通过`exclude`过滤器进行传送，这是基于审核规则的配置，并把它传送给审核的守护程序做进一步的处理
 

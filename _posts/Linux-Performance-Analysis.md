@@ -13,7 +13,7 @@ categories:
 
 # 1 perf
 
-`perf`命令具体用法参考{% post_link Linux-常用命令 %}
+`perf`命令具体用法参考{% post_link Linux-Common-Command %}
 
 ## 1.1 event
 
