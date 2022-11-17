@@ -185,22 +185,41 @@ sudo /usr/share/bcc/tools/offcputime -d -t <tid> 30
 
 # 4 VTune
 
-**大致步骤：**
+**安装`Vtune-Profile`：**
 
-1. 在个人电脑上（`MacOS`、`Windows`、`Linux`均可）安装`Vtune-Profile`
-    * 我的`MacOS`系统版本是`Monterey 12.0.1`，这个版本无法远程Linux机器。如何解决？在目标Linux系统上安装`X Window System`、`Vtune-Profile`，通过`vnc`或者`nx`等远程桌面软件登录目标Linux机器，再通过`vtune-gui`打开`Vtune-Profile`，并分析本地的程序
-1. 在目标Linux机器上安装`Vtune-Profile-Target`（采集数据所需的软件包）：
-    * 自动安装：`Configure Analysis` -> `Remote Linux(ssh)` -> `Deploy`
-    * 手动安装：假设`Vtune-Profile`安装目录是`/opt`，将`/opt/intel/oneapi/vtune/latest/target/linux`下的压缩包拷贝到目标机器上并解压
-    * `Vtune-Profile`和`Vtune-Profile-Target`可以在同一台机器，也可以在不同机器
-1. 假设`Vtune-Profile`安装目录是`/opt`，使用`/opt/intel/oneapi/vtune/latest/bin64/vtune-gui`，启动图形客户端（需要`X Window System`）
+* [Offline Installer](https://www.intel.com/content/www/us/en/developer/tools/oneapi/vtune-profiler-download.html?operatingsystem=linux&distributions=offline)下载并安装，默认安装路径是`~/intel/oneapi/vtune`
+* **二进制工具的目录：`${install_dir}/intel/oneapi/vtune/latest/bin64`，记为`vtune_bin_dir`**
+    * `vtune-gui`：可视化程序，需要`X Window System`
+        * `Menu`
+        * `Project Navigator`
+            * 默认项目路径：`~/intel/vtune/projects`，在其他机器采集到的数据，拷贝到这个目录下，即可打开
+            * `Open project`貌似有问题
+        * `Config Analysis`
+            * 右下角`>_`可获取与可视化配置等价的`vtune`采集命令
+        * `Compare results`
+        * `Open Results`
+            * 貌似有问题
+    * `vtune`：命令行工具，不需要`X Window System`
+        * `${vtune_bin_dir}/vtune -collect hotspots --duration 30 --target-pid <pid>`：会在当前目录下生成类似`r000hs`名称的目录，采集的数据会保存到该目录中
+        * `${vtune_bin_dir}/vtune -collect hotspots --duration 30 --target-pid <pid> -r <target_dir>`：采集的数据会保存到指定的目录中
+    * `vtune-self-checker.sh`：环境自检
+* **通常来说，使用`vtune-gui`的机器，和目标机器（服务器一般不会装`X Window System`）不是同一台，有如下两种处理方式：**
+    * **在目标机器上，安装`Vtune-Profile`（✅推荐）**
+    * **在目标机器上，安装`Vtune-Profile-Target`（仅包含采集数据所需的软件包），但是会有坑（❌不推荐）**：
+        * 自动安装：`Configure Analysis` -> `Remote Linux(ssh)` -> `Deploy`
+        * 手动安装：将`${install_dir}/intel/oneapi/vtune/latest/target/linux`下的压缩包拷贝到目标机器上并解压
+* 我的`MacOS`系统版本是`Monterey 12.0.1`，这个版本无法远程Linux机器。如何解决？在目标Linux系统上安装`X Window System`、`Vtune-Profile`，通过`vnc`或者`nx`等远程桌面软件登录目标Linux机器，再通过`vtune-gui`打开`Vtune-Profile`，并分析本地的程序
 
-**如何通过命令行采集数据：**
+**大致流程：**
 
-```sh
-vtune -collect hotspots -knob sampling-mode=hw -knob sampling-interval=0.5 -d 60 a.out
-vtune -collect hotspots -knob sampling-mode=hw -knob sampling-interval=0.5 -target-pid=123 -d 60
-```
+1. 假设有2台机器，`A`和`B`
+    * `A`：需要`X Window System`
+    * `B`：无需`X Window System`
+    * `A`和`B`可以是同一台机器
+1. 分别在`A`和`B`安装`Vtune-Profile`
+1. 在`B`机器上，使用`vtune`进行采样，假设生成的数据存放在`r000hs`目录中
+1. 将`B`机器上的`r000hs`目录拷贝到`A`机器的`~/intel/vtune/projects`目录下
+1. 打开`A`机器上的`vtune-gui`对项目`r000hs`进行分析
 
 ## 4.1 参考
 
