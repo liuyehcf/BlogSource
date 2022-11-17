@@ -1,5 +1,5 @@
 ---
-title: Linux-网络
+title: Linux-Network
 date: 2018-07-20 15:00:52
 tags: 
 - 摘录
@@ -31,7 +31,7 @@ categories:
 
 ## 2.1 bridge
 
-![bridge](/images/Linux-网络/bridge.png)
+![bridge](/images/Linux-Network/bridge.png)
 
 Linux虚拟网桥类似于一个交换机，它在与其连接的接口之间转发数据包。通常用于在路由器、网关、VM以及网络命名空间之间转发数据包
 
@@ -183,7 +183,7 @@ cleanup
 
 ## 2.2 bonded interface
 
-![bond](/images/Linux-网络/bond.png)
+![bond](/images/Linux-Network/bond.png)
 
 `bond`可以将多张网卡组织成一张逻辑网卡，存在多种组织方式（`mode`），包括
 
@@ -356,7 +356,7 @@ ip -d link show dev ${bond_name}
 
 ## 2.3 team device
 
-![team](/images/Linux-网络/team.png)
+![team](/images/Linux-Network/team.png)
 
 与`bond`类似，`team`也提供了将两个网络接口组合成一个逻辑网络接口的方法，它工作在二层。`bond`与`team`之间的差异可以参考[Bonding vs. Team features](https://github.com/jpirko/libteam/wiki/Bonding-vs.-Team-features)
 
@@ -515,7 +515,7 @@ cleanup
 
 **macvlan的技术实现：**
 
-![macvlan_principle](/images/Linux-网络/macvlan_principle.jpg)
+![macvlan_principle](/images/Linux-Network/macvlan_principle.jpg)
 
 **`macvlan`有以下特点：**
 
@@ -597,13 +597,13 @@ EOF
 
 ### 2.6.1 private mode
 
-![macvlan_private](/images/Linux-网络/macvlan_private.jpg)
+![macvlan_private](/images/Linux-Network/macvlan_private.jpg)
 
 此种模式相当于`vepa`模式的增强模式，其完全阻止共享同一父接口的`macvlan`虚拟网卡之间的通讯，即使配置了`Hairpin`让从父接口发出的流量返回到宿主机，相应的通讯流量依然被丢弃。**具体实现方式是丢弃广播/多播数据，这就意味着以太网地址解析`arp`将不可运行，除非手工探测`MAC`地址，否则通信将无法在同一宿主机下的多个`macvlan`网卡间展开**。之所以隔离广播流量，是因为以太网是基于广播的，隔离了广播，以太网将失去了依托
 
 ### 2.6.2 bridge mode
 
-![macvlan_bridge](/images/Linux-网络/macvlan_bridge.jpg)
+![macvlan_bridge](/images/Linux-Network/macvlan_bridge.jpg)
 
 **验证1：macvlan接口与宿主机同一个网段**
 
@@ -792,7 +792,7 @@ bridge link set dev eth0 hairpin on
 echo 1 >/sys/class/net/br0/brif/eth1/hairpin_mode
 ```
 
-![macvlan_vepa](/images/Linux-网络/macvlan_vepa.jpg)
+![macvlan_vepa](/images/Linux-Network/macvlan_vepa.jpg)
 
 **验证1：macvlan接口与宿主机同一个网段**
 
@@ -948,7 +948,7 @@ cleanup
 
 ### 2.6.4 passthru mode
 
-![macvlan_passthru](/images/Linux-网络/macvlan_passthru.jpg)
+![macvlan_passthru](/images/Linux-Network/macvlan_passthru.jpg)
 
 ## 2.7 ipvlan
 
@@ -1043,7 +1043,7 @@ EOF
 
 ### 2.7.1 l2 mode
 
-![ipvlan_l2](/images/Linux-网络/ipvlan_l2.png)
+![ipvlan_l2](/images/Linux-Network/ipvlan_l2.png)
 
 **验证1：ipvlan接口与宿主机同一个网段**
 
@@ -1212,7 +1212,7 @@ cleanup
 
 ### 2.7.2 l3 mode
 
-![ipvlan_l3](/images/Linux-网络/ipvlan_l3.png)
+![ipvlan_l3](/images/Linux-Network/ipvlan_l3.png)
 
 **验证1：ipvlan接口与宿主机同一个网段**
 
@@ -1619,7 +1619,7 @@ Linux中最常用的基本防火墙软件称为`iptables`。`iptables`防火墙�
 
 只有五个`netfilter`内核`hook`，因此，每个`hook`注册了多个来自不同`table`的`chian`。例如，三个`table`具有`PREROUTING chain`。当这些`chain`在相关的`NF_IP_PRE_ROUTING hook`处注册时，它们指定一个优先级，该优先级指示每个`table`的`PREROUTING chain`被调用的顺序。在进入下一个`PREROUTING`链之前，将按顺序评估最高优先级`PREROUTING chain`中的每个`rule`
 
-![netfilter_hook](/images/Linux-网络/netfilter_hook.jpg)
+![netfilter_hook](/images/Linux-Network/netfilter_hook.jpg)
 
 ## 3.3 Which Tables are Available?
 
@@ -1917,7 +1917,7 @@ tcpdump是通过libpcap来抓取报文的，libpcap在不同平台有不同的�
 
 逻辑上，网络看起来像下面这样
 
-![vm_nat](/images/Linux-网络/vm_nat.png)
+![vm_nat](/images/Linux-Network/vm_nat.png)
 
 总结一下，NAT包含如下特征
 
@@ -1935,7 +1935,7 @@ tcpdump是通过libpcap来抓取报文的，libpcap在不同平台有不同的�
 
 逻辑上，网络看起来像下面这样
 
-![vm_bridge](/images/Linux-网络/vm_bridge.png)
+![vm_bridge](/images/Linux-Network/vm_bridge.png)
 
 总结一下，`Bridged Networking`网络包含如下特征
 
@@ -1949,7 +1949,7 @@ tcpdump是通过libpcap来抓取报文的，libpcap在不同平台有不同的�
 
 逻辑上，网络看起来像下面这样
 
-![vm_internel](/images/Linux-网络/vm_internel.png)
+![vm_internel](/images/Linux-Network/vm_internel.png)
 
 请注意，在此模式下，`VirtualBox`不提供`DHCP`等“便利”服务，因此必须静态配置您的计算机，或者VM需要提供`DHCP`/名称服务
 
@@ -1965,7 +1965,7 @@ tcpdump是通过libpcap来抓取报文的，libpcap在不同平台有不同的�
 
 逻辑上，网络看起来像下面这样
 
-![vm_host_only](/images/Linux-网络/vm_host_only.png)
+![vm_host_only](/images/Linux-Network/vm_host_only.png)
 
 这看起来非常类似于`Internal Networking`，但主机现在位于“vboxnet0”并且可以提供`DHCP`服务
 
@@ -1989,7 +1989,7 @@ tcpdump是通过libpcap来抓取报文的，libpcap在不同平台有不同的�
 
 逻辑上，网络看起来像下面这样（forward并没有在这张图体现出来，所以这幅图与NAT很像）
 
-![vm_nat_forwarding](/images/Linux-网络/vm_nat_forwarding.png)
+![vm_nat_forwarding](/images/Linux-Network/vm_nat_forwarding.png)
 
 ## 6.6 参考
 
