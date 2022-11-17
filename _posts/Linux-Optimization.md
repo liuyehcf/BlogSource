@@ -1,5 +1,5 @@
 ---
-title: Linux-调优
+title: Linux-Optimization
 date: 2018-11-09 11:25:12
 tags: 
 - 摘录
