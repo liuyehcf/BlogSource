@@ -1,5 +1,5 @@
 ---
-title: Linux-程序执行
+title: Linux-Exec-Program
 date: 2021-02-09 10:07:03
 tags: 
 - 摘录
