@@ -1173,7 +1173,7 @@ categories:
     > **symbolic link**：创建一个独立的文件，这个文件会让数据的读取指向它**连接的文件名。注意这里连接到文件名而不是inode号码**
 
 1. cgroup实现原理
-    > {% post_link Linux-重要特性 %}
+    > {% post_link Linux-Mechanism %}
 
 # 8 分布式相关
 

@@ -1,5 +1,5 @@
 ---
-title: Linux-重要特性
+title: Linux-Mechanism
 date: 2019-10-13 16:56:57
 tags: 
 - 摘录
@@ -1141,7 +1141,7 @@ cgdelete cpu:test_cpu_subsystem
 
 ## 2.3 内核实现
 
-![cgroup_struct](/images/Linux-重要特性/cgroup_struct.png)
+![cgroup_struct](/images/Linux-Mechanism/cgroup_struct.png)
 
 上面这个图从整体结构上描述了进程与`cgroup`之间的关系。最下面的`P`代表一个进程。每一个进程的描述符中有一个指针指向了一个辅助数据结构`css_set`（`cgroups subsystem set`）。指向某一个`css_set`的进程会被加入到当前`css_set`的进程链表中。一个进程只能隶属于一个`css_set`，一个`css_set`可以包含多个进程，隶属于同一`css_set`的进程受到同一个`css_set`所关联的资源限制
 
@@ -1630,7 +1630,7 @@ systemctl stop demo-service.service
 
 **安全性本文(security context)**：我们刚刚谈到了主体、目标与政策面，但是主体能不能存取目标除了政策指定之外，主体与目标的安全性本文必须一致才能够顺利存取。这个安全性本文(security context)有点类似文件系统的`rwx`。安全性本文的内容与配置是非常重要的。如果配置错误，你的某些服务(主体程序)就无法存取文件系统(目标资源)，当然就会一直出现『权限不符』的错误信息了
 
-![fig1](/images/Linux-重要特性/selinux.jpg)
+![fig1](/images/Linux-Mechanism/selinux.jpg)
 
 上图的重点在『主体』如何取得『目标』的资源存取权限。由上图我们可以发现，主体程序必须要通过`SELinux`政策内的守则放行后，就可以与目标资源进行安全性本文的比对，若比对失败则无法存取目标，若比对成功则可以开始存取目标。问题是，最终能否存取目标还是与文件系统的`rwx`权限配置有关
 
@@ -1680,7 +1680,7 @@ systemctl stop demo-service.service
 
 **下图是所有`bcc`包含的工具**
 
-![bcc](/images/Linux-重要特性/bcc.png)
+![bcc](/images/Linux-Mechanism/bcc.png)
 
 ## 5.2 [bpftrace](https://github.com/iovisor/bpftrace)
 
