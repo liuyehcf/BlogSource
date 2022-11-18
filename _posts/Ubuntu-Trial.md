@@ -93,6 +93,10 @@ update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 9
 update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-9 9
 update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 10
 update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 10
+
+# gcc-11 and g++11 are already installed in ubuntu-22.04
+update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 11
+update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 11
 ```
 
 **切换不同的gcc版本：**
