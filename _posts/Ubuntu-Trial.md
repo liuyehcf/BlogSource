@@ -76,6 +76,7 @@ deb [trusted=yes] http://dk.archive.ubuntu.com/ubuntu/ focal main universe
 ```sh
 apt update
 
+apt install -y gcc-4.8 g++-4.8
 apt install -y gcc-5 g++-5
 apt install -y gcc-6 g++-6
 apt install -y gcc-7 g++-7
@@ -83,6 +84,8 @@ apt install -y gcc-8 g++-8
 apt install -y gcc-9 g++-9
 apt install -y gcc-10 g++-10
 
+update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 4
+update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 4
 update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 5
 update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 5
 update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 6
