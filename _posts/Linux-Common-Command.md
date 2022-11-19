@@ -239,6 +239,7 @@ hostnamectl set-hostname <name>
 
 * `ls -alt | head -n 5`
 * `ls -I "*.txt" -I "*.cpp"`
+* `ls -d */`：当前目录下的所有子目录
 
 ## 2.2 echo
 

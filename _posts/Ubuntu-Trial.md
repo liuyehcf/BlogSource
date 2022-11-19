@@ -42,6 +42,8 @@ managed=true
 
 # 2 Multiple compiling environments
 
+## 2.1 gcc
+
 编辑`/etc/apt/sources.list`，添加如下源：
 
 ```conf
@@ -106,10 +108,52 @@ update-alternatives --config gcc
 update-alternatives --config g++
 ```
 
-## 2.1 参考
+## 2.2 make
 
-* [Ubuntu 20.04 - gcc version lower than gcc-7](https://askubuntu.com/questions/1235819/ubuntu-20-04-gcc-version-lower-than-gcc-7)
+从[gnu-make](https://ftp.gnu.org/gnu/make/)下载`make-3.81.tar.gz`
+
+```sh
+tar -zxf make-3.81.tar.gz
+cd make-3.81
+
+./configure --prefix=/usr/local/make-3.81
+make -j 4
+```
+
+会出现如下错误：
+
+```
+undefined reference to `__alloca'
+```
+
+修改`make-3.81/glob/glob.c`
+
+```cpp
+// 将
+# if _GNU_GLOB_INTERFACE_VERSION == GLOB_INTERFACE_VERSION
+// 改为
+# if _GNU_GLOB_INTERFACE_VERSION >= GLOB_INTERFACE_VERSION
+```
+
+再次编译安装即可：
+
+```sh
+make -j 4
+
+# make-3.81将会被安装到 /usr/local/make-3.81
+make install
+```
+
+```sh
+update-alternatives --install /usr/bin/make make /usr/bin/make 4
+update-alternatives --install /usr/bin/make make /usr/local/make-3.81/bin 3
+```
+
+## 2.3 参考
+
 * [ubuntu-install-gcc-6](https://gist.github.com/zuyu/7d5682a5c75282c596449758d21db5ed)
+* [Ubuntu 20.04 - gcc version lower than gcc-7](https://askubuntu.com/questions/1235819/ubuntu-20-04-gcc-version-lower-than-gcc-7)
+* [安裝 make 3.81 on Ubuntu 18](https://noiseyou99.medium.com/%E5%AE%89%E8%A3%9D-make-3-81-on-ubuntu-18-71350c1569e0)
 
 # 3 Apt
 
