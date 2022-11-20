@@ -1145,12 +1145,12 @@ curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 " 将
 let fmt = get(g:, 'plug_url_format', 'https://git::@github.com/%s.git')
 " 修改为
-let fmt = get(g:, 'plug_url_format', 'https://git::@github.com.cnpmjs.org/%s.git')
+let fmt = get(g:, 'plug_url_format', 'https://git::@github.91chi.fun//https://github.com/%s.git')
 
 " 将
 \ '^https://git::@github\.com', 'https://github.com', '')
 " 修改为
-\ '^https://git::@github\.com\.cnpmjs\.org', 'https://github.com.cnpmjs.org', '')
+\ '^https://git::@github\.91chi\.fun//https://github\.com', 'https://github.91chi.fun//https://github.com', '')
 ```
 
 **如何安装来自不同源的插件：**
