@@ -18,7 +18,7 @@ categories:
 ## 1.1 编译安装
 
 ```sh
-git clone https://github.com.cnpmjs.org/electrum/ssb-dbgen.git --depth 1
+git clone https://github.com/electrum/ssb-dbgen.git --depth 1
 cd ssb-dbgen
 make
 

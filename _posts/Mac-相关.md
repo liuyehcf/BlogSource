@@ -309,7 +309,7 @@ defaults delete com.apple.desktopservices DSDontWriteNetworkStores
 **步骤2：[安装ohmyzsh](https://github.com/ohmyzsh/ohmyzsh)，不赘述。有时国内下载不下来，可以参考下面的步骤安装**
 
 ```sh
-git clone https://github.com.cnpmjs.org/ohmyzsh/ohmyzsh.git --depth 1
+git clone https://github.com/ohmyzsh/ohmyzsh.git --depth 1
 mv ohmyzsh ~/.oh-my-zsh
 
 cd ~/.oh-my-zsh/tools
@@ -350,7 +350,7 @@ sudo pip install powerline-status
 **步骤4：[安装Powerline的字体库](https://github.com/powerline/fonts)**
 
 ```
-git clone https://github.com.cnpmjs.org/powerline/fonts.git --depth 1
+git clone https://github.com/powerline/fonts.git --depth 1
 cd fonts
 ./install.sh
 cd ..
@@ -368,7 +368,7 @@ rm -rf fonts
 **步骤6：[安装配色方案solarized](https://github.com/altercation/solarized)**
 
 ```sh
-git clone https://github.com.cnpmjs.org/altercation/solarized.git --depth 1
+git clone https://github.com/altercation/solarized.git --depth 1
 open solarized/iterm2-colors-solarized
 ```
 
@@ -381,7 +381,7 @@ open solarized/iterm2-colors-solarized
 **步骤7：[安装agnoster主题](https://github.com/fcamblor/oh-my-zsh-agnoster-fcamblor)**
 
 ```sh
-git clone  https://github.com.cnpmjs.org/fcamblor/oh-my-zsh-agnoster-fcamblor.git --depth 1
+git clone  https://github.com/fcamblor/oh-my-zsh-agnoster-fcamblor.git --depth 1
 cd oh-my-zsh-agnoster-fcamblor
 ./install
 cd ..
@@ -417,7 +417,7 @@ rm -rf oh-my-zsh-agnoster-fcamblor
 **步骤8：[安装zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)用于高亮指令**
 
 ```sh
-git clone https://github.com.cnpmjs.org/zsh-users/zsh-syntax-highlighting.git --depth 1 ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git --depth 1 ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 ```
 
 然后修改`~/.zshrc`文件，修改配置项`plugins`，添加`zsh-syntax-highlighting`
@@ -429,7 +429,7 @@ plugins=(<原有插件> zsh-syntax-highlighting)
 **步骤9：[安装zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)用于指令提示**
 
 ```sh
-git clone https://github.com.cnpmjs.org/zsh-users/zsh-autosuggestions.git --depth 1 ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+git clone https://github.com/zsh-users/zsh-autosuggestions.git --depth 1 ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
 ```
 
 然后修改`~/.zshrc`文件，修改配置项`plugins`，添加`zsh-autosuggestions`
