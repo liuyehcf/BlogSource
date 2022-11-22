@@ -653,44 +653,79 @@ func(std::forward<int&&>(1)) -> right reference version
     }
 ```
 
-### 15.16.1 std::forward的模板参数
+### 15.16.1 forwarding reference
 
-`std::forward`的模板实参不能写成包含模板的表达式，比如不能是`std::forward<std::vector<T>>`，否则是无效的，例如：
+**若`T`是一个类型模板形参，只有`T&&`才能称为`forwarding reference`，而其他任何形式，都不是`forwarding reference`。例如`std::vector<T>&&`就不是`forwarding reference`**
 
 ```cpp
-#include <iostream>
-#include <string>
 #include <type_traits>
+#include <vector>
+
+class S {};
 
 template <typename T>
-struct Item {};
+void g(const T& t);
+template <typename T>
+void g(T&& t);
 
-void func(Item<int>& value) {
-    std::cout << "left reference version" << std::endl;
+template <typename T>
+void gt(T&& t) {
+    g(std::move(t)); // Noncompliant : std::move applied to a forwarding reference
 }
 
-void func(Item<int>&& value) {
-    std::cout << "right reference version" << std::endl;
+void use_g() {
+    S s;
+    g(s);
+    g(std::forward<S>(s)); // Noncompliant : S isn't a forwarding reference.
 }
 
 template <typename T>
-void dispatch_with_forward(Item<T>&& v) {
-    func(std::forward<Item<T>>(v));
+void foo(std::vector<T>&& t) {
+    std::forward<T>(t); // Noncompliant : std::vector<T>&& isn't a forwarding reference.
 }
 
-int main() {
-    Item<int> v1;
-    Item<int>&& v2 = {};
-    Item<int>& v3 = v1;
+template <typename T>
+struct C {
+    // In class template argument deduction, template parameter of a class template is never a forwarding reference.
+    C(T&& t) {
+        g(std::forward<T>(t)); // Noncompliant : T&& isn't a forwarding reference. It is an r-value reference.
+    }
+};
+```
 
-    // Compile error
-    // dispatch_with_forward(v1);
-    // dispatch_with_forward(v2);
-    // dispatch_with_forward(v3);
-    
-    dispatch_with_forward(Item<int>());
-    return 0;
+**上述程序正确的写法是：**
+
+```cpp
+#include <type_traits>
+#include <vector>
+
+class S {};
+
+template <typename T>
+void g(const T& t);
+template <typename T>
+void g(T&& t);
+
+template <typename T>
+void gt(T&& t) {
+    g(std::forward(t));
 }
+
+void use_g() {
+    S s;
+    g(s);
+    g(std::move(s));
+}
+
+template <typename T>
+void foo(std::vector<T>&& t) {
+    std::move(t);
+}
+
+template <typename T>
+struct C {
+    C(T&& t) { g(std::move(t)); }
+};
 ```
 
 # 16 utility
