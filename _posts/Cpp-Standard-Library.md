@@ -539,43 +539,104 @@ int main() {
 ```cpp
 #include <iostream>
 
-void func(int &value) {
-    std::cout << "left reference version, value=" << value << std::endl;
+std::string func(int& value) {
+    return "left reference version";
 }
 
-void func(int &&value) {
-    std::cout << "right reference version, value=" << value << std::endl;
+std::string func(int&& value) {
+    return "right reference version";
 }
 
-template<typename T>
-void dispatch_without_forward(T &&t) {
-    func(t);
+template <typename T>
+std::string dispatch_without_forward(T&& t) {
+    return func(t);
 }
 
-template<typename T>
-void dispatch_with_forward(T &&t) {
-    func(std::forward<T>(t));
+template <typename T>
+std::string dispatch_with_forward(T&& t) {
+    return func(std::forward<T>(t));
 }
+
+#define TEST(expr) std::cout << #expr << " -> " << expr << std::endl;
 
 int main() {
     int value = 0;
-    dispatch_without_forward(value); // left reference version, value=0
-    dispatch_without_forward(1); // left reference version, value=1
+    int& value_l_ref = value;
+    int&& value_r_ref = 1;
 
-    value = 2;
-    dispatch_with_forward(value); // left reference version, value=2
-    dispatch_with_forward(3); // right reference version, value=3
+    TEST(dispatch_without_forward(value));
+    TEST(dispatch_without_forward(value_l_ref));
+    TEST(dispatch_without_forward(value_r_ref));
+    TEST(dispatch_without_forward(1));
+    std::cout << std::endl;
 
-    value = 4;
-    func(std::forward<int>(value)); // right reference version, value=4 (!!! very strange !!!)
-    value = 5;
-    func(std::forward<int &>(value)); // left reference version, value=5
-    func(std::forward<int &&>(6)); // right reference version, value=6
+    TEST(dispatch_with_forward(value));
+    TEST(dispatch_with_forward(value_l_ref));
+    TEST(dispatch_with_forward(value_r_ref));
+    TEST(dispatch_with_forward(1));
+    std::cout << std::endl;
+
+    TEST(func(std::forward<int>(value)));
+    TEST(func(std::forward<int&>(value)));
+    TEST(func(std::forward<int&&>(value)));
+    std::cout << std::endl;
+
+    TEST(func(std::forward<int>(value_l_ref)));
+    TEST(func(std::forward<int&>(value_l_ref)));
+    TEST(func(std::forward<int&&>(value_l_ref)));
+    std::cout << std::endl;
+
+    TEST(func(std::forward<int>(value_r_ref)));
+    TEST(func(std::forward<int&>(value_r_ref)));
+    TEST(func(std::forward<int&&>(value_r_ref)));
+    std::cout << std::endl;
+
+    TEST(func(std::forward<int>(1)));
+    TEST(func(std::forward<int&&>(1)));
+
+    return 0;
 }
 ```
 
-标准库的实现如下：
+**输出如下：**
 
+```
+dispatch_without_forward(value) -> left reference version
+dispatch_without_forward(value_l_ref) -> left reference version
+dispatch_without_forward(value_r_ref) -> left reference version
+dispatch_without_forward(1) -> left reference version
+
+dispatch_with_forward(value) -> left reference version
+dispatch_with_forward(value_l_ref) -> left reference version
+dispatch_with_forward(value_r_ref) -> left reference version
+dispatch_with_forward(1) -> right reference version
+
+func(std::forward<int>(value)) -> right reference version
+func(std::forward<int&>(value)) -> left reference version
+func(std::forward<int&&>(value)) -> right reference version
+
+func(std::forward<int>(value_l_ref)) -> right reference version
+func(std::forward<int&>(value_l_ref)) -> left reference version
+func(std::forward<int&&>(value_l_ref)) -> right reference version
+
+func(std::forward<int>(value_r_ref)) -> right reference version
+func(std::forward<int&>(value_r_ref)) -> left reference version
+func(std::forward<int&&>(value_r_ref)) -> right reference version
+
+func(std::forward<int>(1)) -> right reference version
+func(std::forward<int&&>(1)) -> right reference version
+```
+
+**在使用`std::forward`时，模板实参都是需要显式指定的，而不是推断出来的**
+
+**`std::forward`标准库的实现如下：**
+
+* 如果模板实参是左值、左值引用或右值引用，那么匹配第一个方法
+    * 左值：`_Tp&&`得到的是个右值（很奇怪吧，因为一般都不是这么用的）
+    * **左值引用：`_Tp&&`得到的是个左值引用（完美转发会用到）**
+    * **右值应用：`_Tp&&`得到的是个右值引用（完美转发会用到）**
+* 如果模板实参是左值或右值，那么匹配的是第二个方法
+    * 右值：`_Tp&&`得到的是个右值
 ```cpp
   template<typename _Tp>
     constexpr _Tp&&
@@ -592,14 +653,45 @@ int main() {
     }
 ```
 
-**在使用`std::forward`时，模板实参都是需要显式指定的，而不是推断出来的**
+### 15.16.1 std::forward的模板参数
 
-* 如果模板实参是左值、左值引用或右值引用，那么匹配第一个方法
-    * 左值：`_Tp&&`得到的是个右值（很奇怪吧，因为一般都不是这么用的）
-    * **左值引用：`_Tp&&`得到的是个左值引用（完美转发会用到）**
-    * **右值应用：`_Tp&&`得到的是个右值引用（完美转发会用到）**
-* 如果模板实参是左值或右值，那么匹配的是第二个方法
-    * 右值：`_Tp&&`得到的是个右值
+`std::forward`的模板实参不能写成包含模板的表达式，比如不能是`std::forward<std::vector<T>>`，否则是无效的，例如：
+
+```cpp
+#include <iostream>
+#include <string>
+#include <type_traits>
+
+template <typename T>
+struct Item {};
+
+void func(Item<int>& value) {
+    std::cout << "left reference version" << std::endl;
+}
+
+void func(Item<int>&& value) {
+    std::cout << "right reference version" << std::endl;
+}
+
+template <typename T>
+void dispatch_with_forward(Item<T>&& v) {
+    func(std::forward<Item<T>>(v));
+}
+
+int main() {
+    Item<int> v1;
+    Item<int>&& v2 = {};
+    Item<int>& v3 = v1;
+
+    // Compile error
+    // dispatch_with_forward(v1);
+    // dispatch_with_forward(v2);
+    // dispatch_with_forward(v3);
+    
+    dispatch_with_forward(Item<int>());
+    return 0;
+}
+```
 
 # 16 utility
 
