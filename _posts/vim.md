@@ -2511,6 +2511,7 @@ let g:fzf_action = { 'ctrl-q': function('s:build_quickfix_list') }
 let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
 " 排除 :Ag 和 :Rg 搜索结果中仅匹配文件名的条目
 " https://github.com/junegunn/fzf.vim/issues/346
+" --smart-case 表示大小写不敏感，去掉该参数可以实现大小写敏感的匹配
 command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
 command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
 
@@ -3016,6 +3017,7 @@ let g:fzf_action = { 'ctrl-q': function('s:build_quickfix_list') }
 let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
 " 排除 :Ag 和 :Rg 搜索结果中仅匹配文件名的条目
 " https://github.com/junegunn/fzf.vim/issues/346
+" --smart-case 表示大小写不敏感，去掉该参数可以实现大小写敏感的匹配
 command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
 command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
 

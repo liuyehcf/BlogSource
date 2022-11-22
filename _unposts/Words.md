@@ -257,6 +257,14 @@ categories:
     * Memory-Level Parallelism, MLP
     * Thread-Level Parallelism, TLP
     * Data-Level Parallelism, DLP
+1. DBMS core metrics
+    * Consistency
+    * Durability
+    * Concurrency
+    * Availability
+    * Fault tolerance
+    * Failover
+    * Stability
 1. DBMS serverless
     * traditional automated tuning
         * cluster maintenance

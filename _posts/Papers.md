@@ -1426,8 +1426,16 @@ Data Stream Processing System, DSPS
                         </li>
                     </ul>
                 </li>
+                <li>State in different views
+                    <ul>
+                        <li>System View: Configguration State, Conputation State</li>
+                        <li>Application View: Query State, Program State</li>
+                        <li>Programming View: Window State, Variable State</li>
+                        <li>Operator View: Processing State, Routing State, Buffer State</li>
+                    </ul>
+                </li>
             </td>
-            <td style="text-align:left">👀</td>
+            <td style="text-align:left">👀/Chap 3</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>
