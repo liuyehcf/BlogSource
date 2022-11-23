@@ -562,17 +562,17 @@ std::string dispatch_with_forward(T&& t) {
 int main() {
     int value = 0;
     int& value_l_ref = value;
-    int&& value_r_ref = 1;
+    auto get_r_value = []() { return 2; };
 
     TEST(dispatch_without_forward(value));
     TEST(dispatch_without_forward(value_l_ref));
-    TEST(dispatch_without_forward(value_r_ref));
+    TEST(dispatch_without_forward(get_r_value()));
     TEST(dispatch_without_forward(1));
     std::cout << std::endl;
 
     TEST(dispatch_with_forward(value));
     TEST(dispatch_with_forward(value_l_ref));
-    TEST(dispatch_with_forward(value_r_ref));
+    TEST(dispatch_with_forward(get_r_value()));
     TEST(dispatch_with_forward(1));
     std::cout << std::endl;
 
@@ -586,9 +586,8 @@ int main() {
     TEST(func(std::forward<int&&>(value_l_ref)));
     std::cout << std::endl;
 
-    TEST(func(std::forward<int>(value_r_ref)));
-    TEST(func(std::forward<int&>(value_r_ref)));
-    TEST(func(std::forward<int&&>(value_r_ref)));
+    TEST(func(std::forward<int>(get_r_value())));
+    TEST(func(std::forward<int&&>(get_r_value())));
     std::cout << std::endl;
 
     TEST(func(std::forward<int>(1)));
@@ -603,12 +602,12 @@ int main() {
 ```
 dispatch_without_forward(value) -> left reference version
 dispatch_without_forward(value_l_ref) -> left reference version
-dispatch_without_forward(value_r_ref) -> left reference version
+dispatch_without_forward(get_r_value()) -> left reference version
 dispatch_without_forward(1) -> left reference version
 
 dispatch_with_forward(value) -> left reference version
 dispatch_with_forward(value_l_ref) -> left reference version
-dispatch_with_forward(value_r_ref) -> left reference version
+dispatch_with_forward(get_r_value()) -> right reference version
 dispatch_with_forward(1) -> right reference version
 
 func(std::forward<int>(value)) -> right reference version
@@ -619,9 +618,8 @@ func(std::forward<int>(value_l_ref)) -> right reference version
 func(std::forward<int&>(value_l_ref)) -> left reference version
 func(std::forward<int&&>(value_l_ref)) -> right reference version
 
-func(std::forward<int>(value_r_ref)) -> right reference version
-func(std::forward<int&>(value_r_ref)) -> left reference version
-func(std::forward<int&&>(value_r_ref)) -> right reference version
+func(std::forward<int>(get_r_value())) -> right reference version
+func(std::forward<int&&>(get_r_value())) -> right reference version
 
 func(std::forward<int>(1)) -> right reference version
 func(std::forward<int&&>(1)) -> right reference version
@@ -655,7 +653,10 @@ func(std::forward<int&&>(1)) -> right reference version
 
 ### 15.16.1 forwarding reference
 
-**若`T`是一个类型模板形参，只有`T&&`才能称为`forwarding reference`，而其他任何形式，都不是`forwarding reference`。例如`std::vector<T>&&`就不是`forwarding reference`**
+**当且仅当`T`是函数模板的模板类型形参时，`T&&`才能称为`forwarding reference`，而其他任何形式，都不是`forwarding reference`。例如如下示例代码：**
+
+* **`std::vector<T>&&`就不是`forwarding reference`，而只是一个`r-value reference`**
+* **`C(T&& t)`中的`T&&`也不是`forwarding reference`，因为类型`T`在实例化`C`时，已经可以确定了，无需推导**
 
 ```cpp
 #include <type_traits>

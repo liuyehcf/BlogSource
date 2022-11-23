@@ -1435,7 +1435,7 @@ Data Stream Processing System, DSPS
                     </ul>
                 </li>
             </td>
-            <td style="text-align:left">👀/Chap 3</td>
+            <td style="text-align:left">👀/3.1.2</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>
