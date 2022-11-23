@@ -1340,9 +1340,30 @@ int main() {
 
 编译期断言
 
-## 3.11 throw与异常
+```cpp
+int main() {
+    static_assert(sizeof(int) == 4, "test1");
+    static_assert(sizeof(long) > 8, "test2");
+    return 0;
+}
+```
 
-throw关键字可以抛出任何对象，例如可以抛出一个整数
+## 3.11 noexcept
+
+用于声明函数不会抛异常，声明和实现都必须同时包含
+
+```cpp
+class A {
+public:
+    void func() noexcept;
+};
+
+void A::func() noexcept {}
+```
+
+## 3.12 throw与异常
+
+`throw`关键字可以抛出任何对象，例如可以抛出一个整数
 
 ```c++
     try {
@@ -1358,7 +1379,7 @@ throw关键字可以抛出任何对象，例如可以抛出一个整数
     }
 ```
 
-## 3.12 placement new
+## 3.13 placement new
 
 `placement new`的功能就是在一个已经分配好的空间上，调用构造函数，创建一个对象
 

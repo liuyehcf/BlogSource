@@ -21,6 +21,7 @@ date: 2018-02-05 09:25:59
 * [CppCon](https://cppcon.org/)
     * [CppCon-Download](https://github.com/CppCon)
     * [Branchless Programming in C++ - Fedor Pikus - CppCon 2021](https://www.youtube.com/watch?v=g-WPhYREFjk)
+* [C++ static code analysis rules](https://rules.sonarsource.com/cpp)
 * [C++ 语言构造参考手册](https://www.bookstack.cn/books/cppreference-language)
 * [C++ Notes for Professionals book](https://goalkicker.com/CPlusPlusBook/)
 * [Google-Abseil](https://abseil.io/)

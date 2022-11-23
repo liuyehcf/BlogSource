@@ -1,5 +1,5 @@
 ---
-title: Cpp-排坑日志
+title: Cpp-Issue-Logs
 date: 2021-09-06 10:59:52
 tags: 
 - 原创
@@ -187,3 +187,35 @@ gcc -o main main.cpp -O3 -lstdc++ -std=gnu++17 -Wall
 **错误原因：编译上述代码时，编译器已经提示了，就是`_fetch_from_hash_map`和`_fetch_from_null_key_value`这两个函数，缺少返回值，导致在内联的时候出现了逻辑性的问题**
 
 * 同样逻辑的代码在项目中并未提示缺少返回值（项目中用到了模板，逻辑更复杂，编译器并未分析出来）。`core`堆栈也十分奇怪，要么是挂在`std::function`上，要么挂在`std::any::has_value`上，十分具有迷惑性
+
+# 2 带有默认值的函数匹配的问题
+
+示例代码如下：
+
+```cpp
+#include <stdint.h>
+
+#include <iostream>
+
+void func(const std::string& s = "", bool b = false) {
+    std::cout << "func(const std::string& s = "
+                 ", bool b = false)"
+              << std::endl;
+}
+void func(bool b = false) {
+    std::cout << "func(bool b = false)" << std::endl;
+}
+
+int main() {
+    func("hello");
+    return 0;
+}
+```
+
+输出如下：
+
+```
+func(bool b = false)
+```
+
+`func("hello")`匹配的是单个参数的版本，其中`"hello"`自动转型为`bool`
