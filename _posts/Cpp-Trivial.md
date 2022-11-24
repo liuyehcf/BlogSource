@@ -53,7 +53,7 @@ linker --> result_lib
 
 * `-L`：指定静态链接库的搜索路径
 * `-l <static_lib_name>`：
-    * 假设静态链接库的名称是`libgflags.a`，那么`<static_lib_name>`既不需要`lib`前缀，也不需要`.a`后缀，即`flags`
+    * 假设静态链接库的名称是`libgflags.a`，那么`<static_lib_name>`既不需要`lib`前缀，也不需要`.a`后缀，即`gflags`
 
 **如何查看二进制的静态链接库：由于链接器在链接时，就会丢弃静态库的名字信息，因此，一般是看不到的**
 
