@@ -802,9 +802,65 @@ struct C {
     * `std::atol`
     * `std::atoll`
 
-## 19.1 pthread.h
+## 19.1 csignal
 
-绑核，优化级别用`O0`，否则while循环会被优化掉
+各种信号都定义在`signum.h`这个头文件中
+
+下面的示例代码用于捕获`OOM`并输出当时的进程状态信息
+
+* 化级别用`O0`，否则`v.reserve`会被优化掉
+* `ulimit -v 1000000`：设置进程最大内存
+* `./main <size>`：不断增大`size`，可以发现`VmPeak`和`VmSize`不断增大。继续增大`size`，当触发`OOM`时，`VmPeak`和`VmSize`这两个值都很小，不会包含那个造成`OOM`的对象的内存
+
+```cpp
+#include <csignal>
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
+#include <vector>
+
+void display_self_status() {
+    std::ifstream in("/proc/self/status");
+    constexpr size_t BUFFER_SIZE = 512;
+    char buf[BUFFER_SIZE];
+
+    while (!in.eof()) {
+        in.getline(buf, BUFFER_SIZE);
+        std::cout << buf << std::endl;
+    }
+
+    in.close();
+}
+
+void func(int sig) {
+    std::cout << "Cath a signal, sig=" << sig << std::endl;
+    display_self_status();
+    exit(sig);
+}
+
+int main(int argc, char* argv[]) {
+    for (int sig = SIGHUP; sig <= SIGSYS; sig++) {
+        signal(sig, func);
+    }
+
+    display_self_status();
+
+    // trigger OOM
+    std::vector<int64_t> v;
+    v.reserve(std::atoi(argv[1]));
+
+    display_self_status();
+
+    return 0;
+}
+```
+
+## 19.2 pthread.h
+
+下面示例代码用于测试各个CPU的性能
+
+* 用`pthread_setaffinity_np`进行绑核
+* 化级别用`O0`，否则循环会被优化掉
 
 ```cpp
 #include <pthread.h>

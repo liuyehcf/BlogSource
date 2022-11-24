@@ -1993,6 +1993,15 @@ echo "outside function: '${arr[@]}'"
 * `export <name>`：导出变量
 * `export -f <func_name>`：导出函数
 
+## 7.16 ulimit
+
+设置或查看各类限制
+
+**示例：**
+
+* `ulimit -a`
+* `ulimit -v 1000000`：将进程的最大内存设置为`1000000`字节，仅在当前`shell`以及`shell`的子进程中生效
+
 # 8 Tips
 
 ## 8.1 选项分隔符
