@@ -632,10 +632,10 @@ cmake --build build --target install
 
 ```cmake
 find_package(GLOG)
-add_executable(glogtest glogtest.cc)
+add_executable(myexec glogtest.cc)
 if(GLOG_FOUND)
     # 由于glog在连接时将头文件直接链接到了库里面，所以这里不用显示调用target_include_directories
-    target_link_libraries(glogtest glog::glog)
+    target_link_libraries(myexec glog::glog)
 else(GLOG_FOUND)
     message(FATAL_ERROR ”GLOG library not found”)
 endif(GLOG_FOUND)
