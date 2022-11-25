@@ -73,9 +73,36 @@ gcc -o main main.cpp -lstdc++ -std=gnu++17 -ldl -g
 * [How to print current call stack](https://www.boost.org/doc/libs/1_66_0/doc/html/stacktrace/getting_started.html)
 * [print call stack in C or C++](https://stackoverflow.com/Questions/3899870/print-call-stack-in-c-or-c)
 
-# 2 glog
+# 2 gflag
 
-[github-glog](https://github.com/google/glog)
+**安装`gflag`：**
+
+```sh
+git clone git@github.com:gflags/gflags.git
+cd gflags
+
+mkdir build
+cd build
+
+# BUILD_SHARED_LIBS用于控制生成动态库还是静态库，默认是动态库，这里我们选择静态库
+cmake -DBUILD_SHARED_LIBS=OFF ..
+make -j 4
+make install
+```
+
+**在`cmake`中添加`gflags`依赖**
+
+```cmake
+find_package(gflags REQUIRED)
+message(STATUS "GFLAGS_INCLUDE_DIRS: ${GFLAGS_INCLUDE_DIRS}")
+message(STATUS "GFLAGS_BOTH_LIBRARIES: ${GFLAGS_BOTH_LIBRARIES}")
+message(STATUS "GFLAGS_LIBRARIES: ${GFLAGS_LIBRARIES}")
+message(STATUS "GFLAGS_MAIN_LIBRARIES: ${GFLAGS_MAIN_LIBRARIES}")
+
+target_link_libraries(xxx ${GFLAGS_LIBRARIES})
+```
+
+# 3 [glog](https://github.com/google/glog)
 
 **安装`glog`：**
 
@@ -83,39 +110,41 @@ gcc -o main main.cpp -lstdc++ -std=gnu++17 -ldl -g
 git clone https://github.com/google/glog.git 
 cd glog
 
-cmake -H. -Bbuild -G "Unix Makefiles"
-cmake --build build
-cmake --build build --target install
+mkdir build
+cd build
+
+# BUILD_SHARED_LIBS用于控制生成动态库还是静态库，默认是动态库，这里我们选择静态库
+cmake -DBUILD_SHARED_LIBS=OFF ..
+make -j 4
+make install
 ```
 
 **在`cmake`中添加`glog`依赖**
 
 ```cmake
 find_package(GLOG)
-add_executable(myexec glogtest.cc)
-if(GLOG_FOUND)
-    # 由于glog在连接时将头文件直接链接到了库里面，所以这里不用显示调用target_include_directories
-    target_link_libraries(myexec glog::glog)
-else(GLOG_FOUND)
-    message(FATAL_ERROR ”GLOG library not found”)
-endif(GLOG_FOUND)
+
+target_link_libraries(xxx glog::glog)
 ```
 
-# 3 gtest
+## 3.1 如何打印堆栈
 
-[github-googletest](https://github.com/google/googletest)
+[[Enhancement] wrap libc's __cxa_throw to print stack trace when throw exceptions](https://github.com/StarRocks/starrocks/pull/13410)
+
+# 4 [gtest](https://github.com/google/googletest)
 
 **安装`googletest`：**
 
 ```sh
-git clone https://github.com/google/googletest.git --depth 1
+git clone https://github.com/google/googletest.git
 cd googletest
 
 mkdir build
 cd build
 
-cmake ..
-make
+# BUILD_SHARED_LIBS用于控制生成动态库还是静态库，默认是动态库，这里我们选择静态库
+cmake -DBUILD_SHARED_LIBS=OFF ..
+make -j 4
 make install
 ```
 
@@ -182,19 +211,15 @@ make
 ./gtest_demo
 ```
 
-## 3.1 Tips
+## 4.1 Tips
 
 1. 假设编译得到的二进制是`test`，通过执行`./test --help`就可以看到所有gtest支持的参数，包括执行特定case等等
 
-# 4 phmap
+# 5 [parallel-hashmap](https://github.com/greg7mdp/parallel-hashmap)
 
 全称：`parallel-hashmap`，提供了一组高性能、并发安全的map，用于替换`std`以及`boost`中的map
 
-[parallel-hashmap](https://github.com/greg7mdp/parallel-hashmap)
-
-# 5 benchmark
-
-[google-benchmark](https://github.com/google/benchmark)
+# 6 [benchmark](https://github.com/google/benchmark)
 
 **安装benchmark**
 
@@ -286,13 +311,13 @@ BM_StringCreation       5.12 ns         5.12 ns    136772962
 BM_StringCopy           21.0 ns         21.0 ns     33441350
 ```
 
-## 5.1 quick-benchmark
+## 6.1 quick-benchmark
 
 [quick-bench（在线）](https://quick-bench.com/)
 
-## 5.2 Tips
+## 6.2 Tips
 
-### 5.2.1 benchmark::DoNotOptimize
+### 6.2.1 benchmark::DoNotOptimize
 
 避免优化本不应该优化的代码，其源码如下：
 
@@ -306,11 +331,11 @@ inline BENCHMARK_ALWAYS_INLINE void DoNotOptimize(Tp& value) {
 }
 ```
 
-### 5.2.2 运行指定的case
+### 6.2.2 运行指定的case
 
 使用参数`--benchmark_filter=<regexp>`，此外可以使用`--help`查看所有参数
 
-## 5.3 参考
+## 6.3 参考
 
 * [benchmark/docs/user_guide.md](https://github.com/google/benchmark/blob/main/docs/user_guide.md)
 * [c++性能测试工具：google benchmark入门（一）](https://www.cnblogs.com/apocelipes/p/10348925.html)

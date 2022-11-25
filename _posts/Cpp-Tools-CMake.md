@@ -409,7 +409,9 @@ make
 
 # 3 variables
 
-常用变量（[cmake-variables](https://cmake.org/cmake/help/latest/manual/cmake-variables.7.html)）：
+## 3.1 常用变量
+
+参考（[cmake-variables](https://cmake.org/cmake/help/latest/manual/cmake-variables.7.html)）：
 
 * `CMAKE_BINARY_DIR`、`PROJECT_BINARY_DIR`、`<PROJECT-NAME>_BINARY_DIR`：指的是工程编译发生的目录
 * `CMAKE_SOURCE_DIR`、`PROJECT_SOURCE_DIR`、`<PROJECT-NAME>_SOURCE_DIR`：指的是工程顶层目录
@@ -427,6 +429,10 @@ make
 * `UNIX`：在所有的类`UNIX`平台为`TRUE`，包括`OS X`和`cygwin`
 * `WIN32`：在所有的`win32`平台为`TRUE`，包括`cygwin`
 * `ENV{NAME}`：环境变量，通过`set(ENV{NAME} value)`设置，通过`$ENV{NAME}`引用
+
+## 3.2 BUILD_SHARED_LIBS
+
+该参数用于控制`add_library`指令，在缺省类型参数的情况下，生成静态还是动态库
 
 # 4 property
 
@@ -532,7 +538,12 @@ add_executable(echo_client client.cpp ${PROTO_SRC} ${PROTO_HEADER})
 
 ## 5.6 add_library
 
-`add_library`用于添加链接文件，格式和示例如下：
+`add_library`用于生成库文件，格式和示例如下：
+
+* `<name>`：`target`名称
+* 第二个参数用于指定库文件类型，可以省略，由`BUILD_SHARED_LIBS`变量控制
+  * `STATIC`：静态库
+  * `SHARED`：动态库
 
 ```cmake
 add_library(<name> [STATIC | SHARED | MODULE]
@@ -618,14 +629,13 @@ make install
 ```sh
 # clone该项目
 git clone https://github.com/google/glog.git 
-# 切换到需要的版本 
 cd glog
-git checkout v0.40  
 
-# 根据官网的指南进行安装
-cmake -H. -Bbuild -G "Unix Makefiles"
-cmake --build build
-cmake --build build --target install
+mkdir build
+cd build
+cmake ..
+make -j 4
+make install
 ```
 
 此时我们便可以通过与引入`curl`库一样的方式引入`glog`库了

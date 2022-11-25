@@ -551,17 +551,13 @@ SpacesBeforeTrailingComments: 1
 
 * 即便`.clang-format`相同，不同版本的`clang-format`格式化的结果也有差异
 
-# 7 Log stack
+# 7 其他
 
-[[Enhancement] wrap libc's __cxa_throw to print stack trace when throw exceptions](https://github.com/StarRocks/starrocks/pull/13410)
-
-# 8 其他
-
-## 8.1 动态分析
+## 7.1 动态分析
 
 ![analysis-tools](/images/Cpp-Trivial/analysis-tools.png)
 
-## 8.2 头文件搜索路径
+## 7.2 头文件搜索路径
 
 **头文件`#include "xxx.h"`的搜索顺序**
 
@@ -582,13 +578,13 @@ SpacesBeforeTrailingComments: 1
     * `/usr/local/include`
     * `/usr/lib/gcc/x86_64-redhat-linux/<gcc version>/include`（C头文件）或者`/usr/include/c++/<gcc version>`（C++头文件）
 
-## 8.3 doc
+## 7.3 doc
 
 1. [cpp reference](https://en.cppreference.com/w/)
 1. [cppman](https://github.com/aitjcize/cppman/)
     * 安装：`pip install cppman`
     * 示例：`cppman vector::begin`
 
-## 8.4 参考
+## 7.4 参考
 
 * [C/C++ 头文件以及库的搜索路径](https://blog.csdn.net/crylearner/article/details/17013187)
