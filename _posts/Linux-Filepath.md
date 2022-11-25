@@ -25,6 +25,7 @@ categories:
 1. `/etc/redhat-release`：redhat发行版信息
 1. `/etc/issue`：ubuntu发行版信息
 1. `/etc/motd`：登录成功后显示的欢迎界面
+1. `/etc/update-motd.d`：ubuntu下，与登录成功后显示的欢迎界面相关的一些脚本
 1. `/etc/ssl/certs`：根证书存放位置
 1. `/etc/security/limits.conf`：`ulimit -a`对应的配置文件
     * `echo "* soft core unlimited" >> /etc/security/limits.conf`
