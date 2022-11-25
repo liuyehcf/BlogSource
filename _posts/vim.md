@@ -1640,6 +1640,11 @@ call plug#end()
     }
     ```
 
+**`Tips`：**
+
+* `client coc abnormal exit with: 1`：大概率是`node`有问题
+* `node`版本别太新也别太旧，`v16`比较好
+
 ### 3.10.1 [coc-explorer](https://github.com/weirongxu/coc-explorer)
 
 **`coc-explorer`提供了类似于`nerdtree`的文件管理器的功能，结构更清晰也更易用**

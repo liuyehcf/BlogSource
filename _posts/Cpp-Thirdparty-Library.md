@@ -73,7 +73,44 @@ gcc -o main main.cpp -lstdc++ -std=gnu++17 -ldl -g
 * [How to print current call stack](https://www.boost.org/doc/libs/1_66_0/doc/html/stacktrace/getting_started.html)
 * [print call stack in C or C++](https://stackoverflow.com/Questions/3899870/print-call-stack-in-c-or-c)
 
-# 2 [gflag](https://github.com/gflags/gflags)
+# 2 [fmt](https://github.com/fmtlib/fmt)
+
+**安装`fmt`：**
+
+```sh
+git clone git@github.com:fmtlib/fmt.git
+cd fmt
+
+mkdir build
+cd build
+
+make -j 4
+make install
+```
+
+**在`cmake`中添加`fmt`依赖：**
+```
+find_package(fmt)
+
+target_link_libraries(xxx fmt::fmt)
+```
+
+**示例：**
+
+```cpp
+#include <fmt/core.h>
+
+#include <iostream>
+
+int main() {
+    std::cout << fmt::format("hello {}", "Liuye") << std::endl;
+    return 0;
+}
+```
+
+* `gcc -o main main.cpp -lstdc++ -std=gnu++17 -lfmt`
+
+# 3 [gflag](https://github.com/gflags/gflags)
 
 **安装`gflag`：**
 
@@ -84,8 +121,6 @@ cd gflags
 mkdir build
 cd build
 
-# BUILD_SHARED_LIBS用于控制生成动态库还是静态库，默认是动态库，这里我们选择静态库
-cmake -DBUILD_SHARED_LIBS=OFF ..
 make -j 4
 make install
 ```
@@ -102,7 +137,38 @@ message(STATUS "GFLAGS_MAIN_LIBRARIES: ${GFLAGS_MAIN_LIBRARIES}")
 target_link_libraries(xxx ${GFLAGS_LIBRARIES})
 ```
 
-# 3 [glog](https://github.com/google/glog)
+**示例：**
+
+```cpp
+#include <gflags/gflags.h>
+
+#include <iostream>
+
+DEFINE_bool(test_bool, false, "test bool");
+DEFINE_int32(test_int32, 5, "test int32");
+DEFINE_double(test_double, 1.1, "test double");
+DEFINE_string(test_str, "default str", "test str");
+
+#define DISPLAY(name) std::cout << #name << ": " << name << std::endl
+
+int main(int argc, char* argv[]) {
+    gflags::SetUsageMessage("some message");
+    gflags::SetVersionString("1.0.0");
+    gflags::ParseCommandLineFlags(&argc, &argv, true);
+
+    DISPLAY(FLAGS_test_bool);
+    DISPLAY(FLAGS_test_int32);
+    DISPLAY(FLAGS_test_double);
+    DISPLAY(FLAGS_test_str);
+
+    return 0;
+}
+```
+
+* `gcc -o main main.cpp -lstdc++ -std=gnu++17 -lgflags`
+* `./main --test_bool true --test_int32 100 --test_double 6.666 --test_str hello`
+
+# 4 [glog](https://github.com/google/glog)
 
 **安装`glog`：**
 
@@ -127,7 +193,7 @@ find_package(GLOG)
 target_link_libraries(xxx glog::glog)
 ```
 
-## 3.1 打印堆栈
+## 4.1 打印堆栈
 
 [[Enhancement] wrap libc's __cxa_throw to print stack trace when throw exceptions](https://github.com/StarRocks/starrocks/pull/13410)
 
@@ -185,7 +251,7 @@ int main(int argc, char* argv[]) {
 gcc -o main main.cpp -Wl,-wrap=__cxa_throw -lstdc++ -std=gnu++17 -Wl,-Bstatic -lglog -lgflags -Wl,-Bdynamic -lunwind -lpthread
 ```
 
-# 4 [gtest](https://github.com/google/googletest)
+# 5 [gtest](https://github.com/google/googletest)
 
 **安装`googletest`：**
 
@@ -265,11 +331,11 @@ make
 ./gtest_demo
 ```
 
-## 4.1 Tips
+## 5.1 Tips
 
 1. 假设编译得到的二进制是`test`，通过执行`./test --help`就可以看到所有gtest支持的参数，包括执行特定case等等
 
-# 5 [benchmark](https://github.com/google/benchmark)
+# 6 [benchmark](https://github.com/google/benchmark)
 
 **安装`benchmark`：**
 
@@ -361,13 +427,13 @@ BM_StringCreation       5.12 ns         5.12 ns    136772962
 BM_StringCopy           21.0 ns         21.0 ns     33441350
 ```
 
-## 5.1 quick-benchmark
+## 6.1 quick-benchmark
 
 [quick-bench（在线）](https://quick-bench.com/)
 
-## 5.2 Tips
+## 6.2 Tips
 
-### 5.2.1 benchmark::DoNotOptimize
+### 6.2.1 benchmark::DoNotOptimize
 
 避免优化本不应该优化的代码，其源码如下：
 
@@ -381,15 +447,15 @@ inline BENCHMARK_ALWAYS_INLINE void DoNotOptimize(Tp& value) {
 }
 ```
 
-### 5.2.2 运行指定的case
+### 6.2.2 运行指定的case
 
 使用参数`--benchmark_filter=<regexp>`，此外可以使用`--help`查看所有参数
 
-## 5.3 参考
+## 6.3 参考
 
 * [benchmark/docs/user_guide.md](https://github.com/google/benchmark/blob/main/docs/user_guide.md)
 * [c++性能测试工具：google benchmark入门（一）](https://www.cnblogs.com/apocelipes/p/10348925.html)
 
-# 6 [parallel-hashmap](https://github.com/greg7mdp/parallel-hashmap)
+# 7 [parallel-hashmap](https://github.com/greg7mdp/parallel-hashmap)
 
 `parallel-hashmap`提供了一组高性能、并发安全的`map`，用于替换`std`以及`boost`中的`map`
