@@ -264,6 +264,9 @@ fopen() returned NULL
 1. `libdl`：dynamic linking library
     * **`libdl`主要作用是将那些早已存在于`libc`中的`private dl functions`对外露出，便于用户实现一些特殊的需求。[dlopen in libc and libdl](https://stackoverflow.com/questions/31155824/dlopen-in-libc-and-libdl)**
     * 可以通过`readelf -s /lib64/ld-linux-x86-64.so.2 | grep PRIVATE`查看露出的这些方法
+1. `libm`：c math library
+1. `libz`：compression/decompression library
+1. `libpthread`：POSIX threads library
 
 ## 2.6 参考
 
