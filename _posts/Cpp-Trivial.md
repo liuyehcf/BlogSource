@@ -563,7 +563,7 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
     * 任何指向`__real_<symbol>`的未定义的符号都会被解析为`<symbol>`
     * 于是，我们就可以在`__wrap_<symbol>`增加额外的逻辑，并最终调用`__real_<symbol>`来实现代理
     ```sh
-    cat > malloc.c << 'EOF'
+    cat > proxy_malloc.c << 'EOF'
     #include <stddef.h>
     #include <stdio.h>
     #include <stdlib.h>
@@ -581,9 +581,9 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
     }
     EOF
 
-    gcc -o malloc malloc.c -Wl,-wrap=malloc
+    gcc -o proxy_malloc proxy_malloc.c -Wl,-wrap=malloc
 
-    ./malloc
+    ./proxy_malloc
     ```
 
 ## 5.3 参考

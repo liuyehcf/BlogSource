@@ -797,6 +797,8 @@ struct C {
 1. `stdio.h`
 1. `stddef.h`
 1. `stdint.h`
+1. `stdlib.h`
+    * `malloc`
 1. `cstdlib`
     * `std::atoi`
     * `std::atol`
