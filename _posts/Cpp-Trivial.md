@@ -142,11 +142,52 @@ libbar.so.x  ->  libbar.so.x.y
 * 编译器从软链接指向的文件里找到其`SONAME`，并将`SONAME`写入到生成的可执行文件中
 * 通过改变`linker name`软连接的指向，可以将不同主版本号的`SONAME`写入到生成的可执行文件中
 
-## 2.3 LD_PRELOAD
+## 2.3 链接顺序
+
+[Why does the order in which libraries are linked sometimes cause errors in GCC?](https://stackoverflow.com/questions/45135/why-does-the-order-in-which-libraries-are-linked-sometimes-cause-errors-in-gcc)
+
+**示例：**
+
+```sh
+cat > a.cpp << 'EOF'
+extern int a;
+int main() {
+    return a;
+}
+EOF
+
+cat > b.cpp << 'EOF'
+extern int b;
+int a = b;
+EOF
+
+cat > d.cpp << 'EOF'
+int b;
+EOF
+
+g++ -c b.cpp -o b.o
+ar cr libb.a b.o
+g++ -c d.cpp -o d.o
+ar cr libd.a d.o
+
+g++ -L. -ld -lb a.cpp # wrong order
+g++ -L. -lb -ld a.cpp # wrong order
+g++ a.cpp -L. -ld -lb # wrong order
+g++ a.cpp -L. -lb -ld # right order
+```
+
+**链接器解析过程如下：从左到右扫描目标文件、库文件**
+
+* 记录未解析的符号
+* 若发现某个库文件可以解决「未解析符号表」中的某个符号，则将该符号从「未解析符号表」中删除
+
+**因此，假设`libA`依赖`libB`，那么需要将`libA`写前面，`libB`写后面**
+
+## 2.4 LD_PRELOAD
 
 **环境变量`LD_PRELOAD`指定的目录拥有最高优先级**
 
-### 2.3.1 demo
+### 2.4.1 demo
 
 ```sh
 cat > sample.c << 'EOF'
@@ -195,7 +236,7 @@ fopen() returned NULL
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-## 2.4 常用动态库
+## 2.5 常用动态库
 
 **`libc/glibc/glib`（`man libc/glibc`）**
 
@@ -219,7 +260,7 @@ fopen() returned NULL
     * **`libdl`主要作用是将那些早已存在于`libc`中的`private dl functions`对外露出，便于用户实现一些特殊的需求。[dlopen in libc and libdl](https://stackoverflow.com/questions/31155824/dlopen-in-libc-and-libdl)**
     * 可以通过`readelf -s /lib64/ld-linux-x86-64.so.2 | grep PRIVATE`查看露出的这些方法
 
-## 2.5 参考
+## 2.6 参考
 
 * [Program Library HOWTO](https://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html)
 * [Shared Libraries: Understanding Dynamic Loading](https://amir.rachum.com/blog/2016/09/17/shared-libraries/)
@@ -470,7 +511,9 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
     * `-gdwarf`/`-gdwarf-version`：生成`DWARF`格式的调试信息，`version`的可选值有`2/3/4/5`，默认是4
 1. **`-I <path>`：增加头文件搜索路径**
     * 可以并列使用多个`-I`参数，例如`-I path1 -I path2`
-1. **`-l<dynamic_lib>`：增加动态链接库**
+1. **`-L <path>`：增加库文件搜索路径**
+1. **`-l<lib_name>`：增加库文件**
+    * 搜索指定名称的静态或者动态库，如果同时存在，默认选择动态库
     * 例如`-lstdc++`、`-lpthread`
 1. **`-std=<std_version>`：指定标注库类型以及版本信息**
     * 例如`-std=gnu++17`
@@ -508,10 +551,40 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
 * `LLVM lld`
 * [mold](https://github.com/rui314/mold)
 
-**`Flags`**
+**`gcc`如何指定`linker`**
 
 * -fuse-ld=gold
 * -B/usr/local/bin/gcc-mold
+
+**常用参数说明：**
+
+* `--wrap=<symbol>`
+    * 任何指向`<symbol>`的未定义的符号都会被解析为`__wrap_<symbol>`
+    * 任何指向`__real_<symbol>`的未定义的符号都会被解析为`<symbol>`
+    * 于是，我们就可以在`__wrap_<symbol>`增加额外的逻辑，并最终调用`__real_<symbol>`来实现代理
+    ```sh
+    cat > malloc.c << 'EOF'
+    #include <stddef.h>
+    #include <stdio.h>
+    #include <stdlib.h>
+
+    void* __real_malloc(size_t c);
+
+    void* __wrap_malloc(size_t c) {
+        printf("malloc called with %zu\n", c);
+        return __real_malloc(c);
+    }
+
+    int main() {
+        int* num = (int*)malloc(sizeof(int));
+        return *num;
+    }
+    EOF
+
+    gcc -o malloc malloc.c -Wl,-wrap=malloc
+
+    ./malloc
+    ```
 
 ## 5.3 参考
 

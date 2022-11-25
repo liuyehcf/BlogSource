@@ -627,13 +627,14 @@ make install
 假设此时我们需要引入`glog`库来进行日志的记录，我们在`Module`目录下并没有找到`FindGlog.cmake`。所以我们需要自行安装`glog`库，再进行引用
 
 ```sh
-# clone该项目
 git clone https://github.com/google/glog.git 
 cd glog
 
 mkdir build
 cd build
-cmake ..
+
+# BUILD_SHARED_LIBS用于控制生成动态库还是静态库，默认是动态库，这里我们选择静态库
+cmake -DBUILD_SHARED_LIBS=OFF ..
 make -j 4
 make install
 ```

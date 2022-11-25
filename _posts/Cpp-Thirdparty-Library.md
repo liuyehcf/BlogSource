@@ -73,7 +73,7 @@ gcc -o main main.cpp -lstdc++ -std=gnu++17 -ldl -g
 * [How to print current call stack](https://www.boost.org/doc/libs/1_66_0/doc/html/stacktrace/getting_started.html)
 * [print call stack in C or C++](https://stackoverflow.com/Questions/3899870/print-call-stack-in-c-or-c)
 
-# 2 gflag
+# 2 [gflag](https://github.com/gflags/gflags)
 
 **安装`gflag`：**
 
@@ -90,7 +90,7 @@ make -j 4
 make install
 ```
 
-**在`cmake`中添加`gflags`依赖**
+**在`cmake`中添加`gflags`依赖：**
 
 ```cmake
 find_package(gflags REQUIRED)
@@ -119,7 +119,7 @@ make -j 4
 make install
 ```
 
-**在`cmake`中添加`glog`依赖**
+**在`cmake`中添加`glog`依赖：**
 
 ```cmake
 find_package(GLOG)
@@ -127,9 +127,63 @@ find_package(GLOG)
 target_link_libraries(xxx glog::glog)
 ```
 
-## 3.1 如何打印堆栈
+## 3.1 打印堆栈
 
 [[Enhancement] wrap libc's __cxa_throw to print stack trace when throw exceptions](https://github.com/StarRocks/starrocks/pull/13410)
+
+```cpp
+#include <glog/logging.h>
+
+#include <iostream>
+#include <string>
+
+namespace google {
+namespace glog_internal_namespace_ {
+void DumpStackTraceToString(std::string* stacktrace);
+}
+} // namespace google
+
+std::string get_stack_trace() {
+    std::string s;
+    google::glog_internal_namespace_::DumpStackTraceToString(&s);
+    return s;
+}
+
+#if defined(__GNUC__)
+// wrap libc's _cxa_throw to print stack trace of exceptions
+extern "C" {
+void __real___cxa_throw(void* thrown_exception, void* infov, void (*dest)(void*));
+
+void __wrap___cxa_throw(void* thrown_exception, void* infov, void (*dest)(void*));
+}
+// wrap libc's _cxa_throw that must not throw exceptions again, otherwise causing crash.
+void __wrap___cxa_throw(void* thrown_exception, void* info, void (*dest)(void*)) {
+    auto stack = get_stack_trace();
+
+    std::cerr << stack << std::endl;
+
+    // call the real __cxa_throw():
+    __real___cxa_throw(thrown_exception, info, dest);
+}
+#endif
+
+int main(int argc, char* argv[]) {
+    try {
+        throw 1;
+    } catch (...) {
+        std::cout << "catch exception" << std::endl;
+    }
+    return 0;
+}
+```
+
+**编译：**
+
+* `glog`和`gflags`需要使用静态库版本，动态库会找不到`DumpStackTraceToString`这个符号
+
+```sh
+gcc -o main main.cpp -Wl,-wrap=__cxa_throw -lstdc++ -std=gnu++11 -lglog -lgflags -lunwind -lpthread
+```
 
 # 4 [gtest](https://github.com/google/googletest)
 
@@ -148,7 +202,7 @@ make -j 4
 make install
 ```
 
-**在`cmake`中添加`gtest`依赖**
+**在`cmake`中添加`gtest`依赖：**
 
 ```cmake
 find_package(GTest REQUIRED)
@@ -215,13 +269,9 @@ make
 
 1. 假设编译得到的二进制是`test`，通过执行`./test --help`就可以看到所有gtest支持的参数，包括执行特定case等等
 
-# 5 [parallel-hashmap](https://github.com/greg7mdp/parallel-hashmap)
+# 5 [benchmark](https://github.com/google/benchmark)
 
-全称：`parallel-hashmap`，提供了一组高性能、并发安全的map，用于替换`std`以及`boost`中的map
-
-# 6 [benchmark](https://github.com/google/benchmark)
-
-**安装benchmark**
+**安装`benchmark`：**
 
 ```sh
 git clone https://github.com/google/benchmark.git --depth 1
@@ -236,7 +286,7 @@ make
 make install
 ```
 
-**在`cmake`中添加`benchmark`依赖**
+**在`cmake`中添加`benchmark`依赖：**
 
 ```cmake
 find_package(benchmark REQUIRED)
@@ -311,13 +361,13 @@ BM_StringCreation       5.12 ns         5.12 ns    136772962
 BM_StringCopy           21.0 ns         21.0 ns     33441350
 ```
 
-## 6.1 quick-benchmark
+## 5.1 quick-benchmark
 
 [quick-bench（在线）](https://quick-bench.com/)
 
-## 6.2 Tips
+## 5.2 Tips
 
-### 6.2.1 benchmark::DoNotOptimize
+### 5.2.1 benchmark::DoNotOptimize
 
 避免优化本不应该优化的代码，其源码如下：
 
@@ -331,11 +381,15 @@ inline BENCHMARK_ALWAYS_INLINE void DoNotOptimize(Tp& value) {
 }
 ```
 
-### 6.2.2 运行指定的case
+### 5.2.2 运行指定的case
 
 使用参数`--benchmark_filter=<regexp>`，此外可以使用`--help`查看所有参数
 
-## 6.3 参考
+## 5.3 参考
 
 * [benchmark/docs/user_guide.md](https://github.com/google/benchmark/blob/main/docs/user_guide.md)
 * [c++性能测试工具：google benchmark入门（一）](https://www.cnblogs.com/apocelipes/p/10348925.html)
+
+# 6 [parallel-hashmap](https://github.com/greg7mdp/parallel-hashmap)
+
+`parallel-hashmap`提供了一组高性能、并发安全的`map`，用于替换`std`以及`boost`中的`map`
