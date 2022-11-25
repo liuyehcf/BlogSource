@@ -60,6 +60,11 @@ linker --> result_lib
 * `-Xlinker -Map=a.map`：将链接时的信息记录到`a.map`中
 * `nm/objdump/readelf/strings`或许可以找到一些静态库相关的`hint`
 
+**静态库的路径：**
+
+* `/usr/local/lib`
+* `/usr/local/lib64`
+
 ## 2.2 动态链接库
 
 **后缀：`*.so`**
@@ -558,6 +563,10 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
 
 **常用参数说明：**
 
+* `-l <name>`：增加库文件，查找`lib<name>.a`或者`lib<name>.so`，如果都存在，默认使用`so`版本
+* `-L <dir>`：增加库文件搜索路径，其优先级会高于默认的搜索路径。允许指定多个，搜索顺序与其指定的顺序相同
+* `-Bstatic`：修改默认行为，强制使用静态链接库，只对该参数之后出现的库有效。如果找不到对应的静态库会报错（即便有动态库）
+* `-Bdynamic`：修改默认行为，强制使用动态链接库，只对该参数之后出现的库有效。如果找不到对应的动态库会报错（即便有静态库）
 * `--wrap=<symbol>`
     * 任何指向`<symbol>`的未定义的符号都会被解析为`__wrap_<symbol>`
     * 任何指向`__real_<symbol>`的未定义的符号都会被解析为`<symbol>`
