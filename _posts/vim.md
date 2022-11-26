@@ -1547,17 +1547,17 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " 在编辑模式下，触发自动补全时，将 <tab> 映射成移动到下一个补全选项
 inoremap <silent><expr> <tab>
-      \ pumvisible() ? "\<c-n>" :
-      \ <SID>check_back_space() ? "\<tab>" :
+      \ coc#pum#visible() ? coc#pum#next(1) :
+      \ CheckBackspace() ? "\<tab>" :
       \ coc#refresh()
-inoremap <expr><s-tab> pumvisible() ? "\<c-p>" : "\c-h>"
-function! s:check_back_space() abort
+inoremap <expr><s-tab> coc#pum#visible() ? coc#pum#prev(1) : "\<c-h>"
+function! CheckBackspace() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
 " 在编辑模式下，将 <cr> 配置成选中当前补全选项
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+inoremap <silent><expr> <cr> coc#pum#visible() ? coc#pum#confirm()
                               \: "\<c-g>u\<cr>\<c-r>=coc#on_enter()\<cr>"
 
 " K 查看文档
@@ -2873,17 +2873,17 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " 在编辑模式下，触发自动补全时，将 <tab> 映射成移动到下一个补全选项
 inoremap <silent><expr> <tab>
-      \ pumvisible() ? "\<c-n>" :
-      \ <SID>check_back_space() ? "\<tab>" :
+      \ coc#pum#visible() ? coc#pum#next(1) :
+      \ CheckBackspace() ? "\<tab>" :
       \ coc#refresh()
-inoremap <expr><s-tab> pumvisible() ? "\<c-p>" : "\c-h>"
-function! s:check_back_space() abort
+inoremap <expr><s-tab> coc#pum#visible() ? coc#pum#prev(1) : "\<c-h>"
+function! CheckBackspace() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
 " 在编辑模式下，将 <cr> 配置成选中当前补全选项
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+inoremap <silent><expr> <cr> coc#pum#visible() ? coc#pum#confirm()
                               \: "\<c-g>u\<cr>\<c-r>=coc#on_enter()\<cr>"
 
 " K 查看文档
