@@ -2525,7 +2525,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-* 安装会额外执行`~/.vim/plugged/fzf/install`这个脚本，来下载`fzf`的二进制，如果长时间下载不下来的话，可以改成代理地址后，再手动下载
+* 安装会额外执行`~/.vim/plugged/fzf/install`这个脚本，来下载`fzf`的二进制，如果长时间下载不下来的话，可以改成代理地址后（在脚本中搜索`github`关键词），再手动执行脚本进行下载安装
 
 **用法（搜索相关的语法可以参考[junegunn/fzf-search-syntax](https://github.com/junegunn/fzf#search-syntax)）：**
 
