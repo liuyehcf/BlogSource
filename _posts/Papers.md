@@ -1598,3 +1598,4 @@ Data Stream Processing System, DSPS
         * [Scalable Distributed Stream Processing](/resources/paper/Scalable-Distributed-Stream-Processing.pdf)
 * Computer Architecture
     * [Residency-Aware Virtual Machine Communication Optimization: Design Choices and Techniques](/resources/paper/Residency-Aware-Virtual-Machine-Communication-Optimization-Design-Choices-and-Techniques.pdf)
+    * [GPU Computing](/resources/paper/GPU-Computing.pdf)

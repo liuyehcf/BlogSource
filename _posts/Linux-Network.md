@@ -1834,7 +1834,7 @@ NAT Gateway A   |  src port: 443           |                   internet         
 
 ## 3.9 iptable命令使用
 
-参见{% post_link Linux-Common-Command %}
+参见{% post_link Linux-Frequently-Used-Commands %}
 
 ## 3.10 参考
 
