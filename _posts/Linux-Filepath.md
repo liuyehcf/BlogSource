@@ -141,7 +141,12 @@ categories:
 1. `/proc/self`：我们可以通过`/proc/${pid}`目录来获取指定进程的信息。当pid可能发生变化时，我们还可以通过`/proc/self`来访问当前进程的信息，不同的进程访问该目录下的文件得到的结果是不同的
 1. `/proc/sys/net`：网络相关配置
 1. `/proc/sys/kernel`：内核相关的配置
-    * `/proc/sys/kernel/core_pattern`：`core dump`的存储格式
+    * `/proc/sys/kernel/core_pattern`：`core dump`的存储格式，通常其内容是`core`
+    * `/proc/sys/kernel/yama/ptrace_scope`：
+        * `0 - classic ptrace permissions`：任何进程可以`PTRACE_ATTACH`到任意其他相同`uid`的进程
+        * `1 - restricted ptrace`
+        * `2 - admin-only attach`
+        * `3 - no attach`
 1. `/proc/sys/fs`：文件系统相关配置
     * `/proc/sys/fs/file-nr`：系统文件描述符的使用情况
         * 第一列：已分配文件句柄的数目（包括socket）

@@ -370,7 +370,7 @@ crash /lib/debug/lib/modules/`uname -r`/vmlinux /var/crash/127.0.0.1-2021-07-24-
     * `echo "* soft core unlimited" >> /etc/security/limits.conf`
     * `echo "* hard core unlimited" >> /etc/security/limits.conf`
 * `/proc/sys/kernel/core_pattern`：`core dump`的存储路径
-    * 默认是`core`，若程序产生`core dump`，那么其存放路径位于当前路径
+    * `echo "core" > /proc/sys/kernel/core_pattern`：默认是`core`，若程序产生`core dump`，那么其存放路径位于当前路径
     * `echo "/data/coredump/core.%e.%p" >/proc/sys/kernel/core_pattern`：可以通过类似的语句修改存储路径，其中`%e`表示二进制名称，`%p`表示进程id
 * `/proc/sys/kernel/core_pipe_limit`
 * `/proc/sys/kernel/core_uses_pid`：如果这个文件的内容被配置成`1`，那么即使`core_pattern`中没有设置`%p`，最后生成的`core dump`文件名仍会加上进程id
