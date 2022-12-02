@@ -1624,6 +1624,8 @@ call plug#end()
 
 **配置文件`~/.vim/coc-settings.json`的内容如下：**
 
+* `common`
+    * `suggest.noselect`：`true/false`，表示自动补全时，是否自动选中第一个。默认为`false`，即自动选中第一个，如果再按`tab`则会跳转到第二个。[Ability to tab to first option](https://github.com/neoclide/coc.nvim/issues/1339)
 * `c/c++`
     * 如何修改头文件搜索路径？在`compile_commands.json`或`compile_flags.txt`中通过`-I`参数指定即可
     * 索引文件路径：`<project path>/.cache/clangd`

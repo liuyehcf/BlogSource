@@ -129,13 +129,15 @@ ${FlameGraph_path}/flamegraph.pl out.folded > out.svg
 # 启用调度的tracepoint，需要在root账号下执行，一般账号sudo可能执行不了
 echo 1 > /proc/sys/kernel/sched_schedstats
 
+# 数据采集，若要采集某个进程，将 -a 换成 -p <pid>
 sudo perf record \
     -e sched:sched_stat_sleep \
     -e sched:sched_switch \
     -e sched:sched_process_exit \
-    -a -g \
+    -a \
+    -g \
     -o perf.data.raw \
-    sleep 1
+    sleep 30
 
 # 其中，-s 参数主要用于合并 sched_stat 以及 sched_switch 这两个事件，用于生成对应的睡眠时间
 sudo perf inject -v -s \
@@ -148,8 +150,8 @@ sudo perf script -F comm,pid,tid,cpu,time,period,event,ip,sym,dso | \
     NF > 1 && NF <= 4 && period_ms > 0 { print $2 } 
     NF < 2 && period_ms > 0 { printf "%s\n%d\n\n", exec, period_ms }
     ' | \
-    sudo /opt/FlameGraph/stackcollapse.pl | \
-    sudo /opt/FlameGraph/flamegraph.pl --countname=ms --title="Off-CPU Time Flame Graph" --colors=io > offcpu.svg
+    sudo ${FlameGraph_path}/stackcollapse.pl | \
+    sudo ${FlameGraph_path}/flamegraph.pl --countname=ms --title="Off-CPU Time Flame Graph" --colors=io > offcpu.svg
 ```
 
 ## 3.2 Using BPF
