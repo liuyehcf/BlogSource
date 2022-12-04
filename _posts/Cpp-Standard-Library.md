@@ -336,12 +336,16 @@ int main() {
 
 1. `std::optional`
 
-# 13 string
+# 13 stdexcept
+
+1. `std::logic_error`
+
+# 14 string
 
 1. `std::string`
 1. `std::to_string`
 
-# 14 thread
+# 15 thread
 
 **如何设置或修改线程名：**
 
@@ -410,18 +414,18 @@ int main() {
 }
 ```
 
-# 15 type_traits
+# 16 type_traits
 
 [Standard library header <type_traits>](https://en.cppreference.com/w/cpp/header/type_traits)
 
-## 15.1 Helper Class
+## 16.1 Helper Class
 
 1. `std::integral_constant`
 1. `std::bool_constant`
 1. `std::true_type`
 1. `std::false_type`
 
-## 15.2 Primary type categories
+## 16.2 Primary type categories
 
 1. `std::is_void`
 1. `std::is_null_pointer`
@@ -430,7 +434,7 @@ int main() {
 1. `std::is_pointer`
 1. ...
 
-## 15.3 Composite type categories
+## 16.3 Composite type categories
 
 1. `std::is_fundamental`
 1. `std::is_arithmetic`
@@ -439,7 +443,7 @@ int main() {
 1. `std::is_member_pointer`
 1. ...
 
-## 15.4 Type properties
+## 16.4 Type properties
 
 1. `std::is_const`
 1. `std::is_volatile`
@@ -448,7 +452,7 @@ int main() {
 1. `std::is_abstract`
 1. ...
 
-## 15.5 Supported operations
+## 16.5 Supported operations
 
 1. `std::is_constructible`
 1. `std::is_copy_constructible`
@@ -457,19 +461,19 @@ int main() {
 1. `std::is_destructible`
 1. ...
 
-## 15.6 Property queries
+## 16.6 Property queries
 
 1. `std::alignment_of`
 1. `std::rank`
 1. `std::extent`
 
-## 15.7 Type relationships
+## 16.7 Type relationships
 
 1. `std::is_same`
 1. `std::is_base_of`
 1. ...
 
-## 15.8 Const-volatility specifiers
+## 16.8 Const-volatility specifiers
 
 1. `std::remove_cv`
 1. `std::remove_const`
@@ -478,28 +482,28 @@ int main() {
 1. `std::add_const`
 1. `std::add_volatile`
 
-## 15.9 References
+## 16.9 References
 
 1. `std::remove_reference`
 1. `std::add_lvalue_reference`
 1. `std::add_rvalue_reference`
   
-## 15.10 Pointers
+## 16.10 Pointers
 
 1. `std::remove_pointer`
 1. `std::add_pointer`
   
-## 15.11 Sign modifiers
+## 16.11 Sign modifiers
 
 1. `std::make_signed`
 1. `std::make_unsigned`
 
-## 15.12 Arrays
+## 16.12 Arrays
 
 1. `std::remove_extent`
 1. `std::remove_all_extents`
 
-## 15.13 Miscellaneous transformations
+## 16.13 Miscellaneous transformations
 
 1. `std::enable_if`
 1. `std::conditional`
@@ -508,7 +512,7 @@ int main() {
     * [What is std::decay and when it should be used?](https://stackoverflow.com/questions/25732386/what-is-stddecay-and-when-it-should-be-used)
     * [N2609](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2006/n2069.html)
 
-## 15.14 Alias
+## 16.14 Alias
 
 `using template`，用于简化上述模板。例如`std::enable_if_t`等价于`typename enable_if<b,T>::type`
 
@@ -519,7 +523,7 @@ int main() {
 1. `std::invoke_result_t`
 1. ...
 
-## 15.15 std::move
+## 16.15 std::move
 
 标准库的实现如下：
 
@@ -532,7 +536,7 @@ int main() {
 
 本质上，就是做了一次类型转换，返回的一定是个右值
 
-## 15.16 std::forward
+## 16.16 std::forward
 
 `std::forward`主要用于实现模板的完美转发：因为对于一个变量而言，无论该变量的类型是左值引用还是右值引用，变量本身都是左值，如果直接将变量传递到下一个方法中，那么一定是按照左值来匹配重载函数的，而`std::forward`就是为了解决这个问题。请看下面这个例子：
 
@@ -651,7 +655,7 @@ func(std::forward<int&&>(1)) -> right reference version
     }
 ```
 
-### 15.16.1 forwarding reference
+### 16.16.1 forwarding reference
 
 **当且仅当`T`是函数模板的模板类型形参时，`T&&`才能称为`forwarding reference`，而其他任何形式，都不是`forwarding reference`。例如如下示例代码：**
 
@@ -729,11 +733,11 @@ struct C {
 };
 ```
 
-# 16 utility
+# 17 utility
 
 1. `std::pair`
 
-# 17 容器
+# 18 容器
 
 1. `<vector>`
 1. `<array>`
@@ -745,14 +749,14 @@ struct C {
 1. `<set>`
 1. `<unordered_set>`
 
-## 17.1 Tips
+## 18.1 Tips
 
 1. `std::map`或者`std::set`用下标访问后，即便访问前元素不存在，也会插入一个默认值。因此下标访问是非`const`的
 1. 容器在扩容时，调用的是元素的拷贝构造函数
 1. `std::vector<T> v(n)`会生成`n`个对应元素的默认值，而不是起到预留`n`个元素的空间的作用
 1. 不要将`end`方法返回的迭代器传入`erase`方法
 
-# 18 向量化
+# 19 向量化
 
 [Header files for x86 SIMD intrinsics](https://stackoverflow.com/questions/11228855/header-files-for-x86-simd-intrinsics)
 
@@ -792,7 +796,7 @@ struct C {
 * `-mavx512vbmi`
 * ...
 
-# 19 C标准库
+# 20 C标准库
 
 1. `stdio.h`
 1. `stddef.h`
@@ -804,7 +808,7 @@ struct C {
     * `std::atol`
     * `std::atoll`
 
-## 19.1 csignal
+## 20.1 csignal
 
 各种信号都定义在`signum.h`这个头文件中
 
@@ -857,7 +861,7 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-## 19.2 pthread.h
+## 20.2 pthread.h
 
 下面示例代码用于测试各个CPU的性能
 

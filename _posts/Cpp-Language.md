@@ -1050,7 +1050,9 @@ gcc -o main main.cpp extern.cpp -lstdc++ -Wall
 ./main
 ```
 
-## 3.7 virtual
+## 3.7 继承与多态
+
+### 3.7.1 virtual
 
 `virtual`关键词修饰的就是虚函数，虚函数的分派发生在运行时
 
@@ -1060,6 +1062,10 @@ gcc -o main main.cpp extern.cpp -lstdc++ -Wall
 ![virtual-method-table](/images/Cpp-Language/virtual-method-table.jpeg)
 
 * 图片出处：[c++虚指针和虚函数表](https://zhuanlan.zhihu.com/p/110144589)
+
+### 3.7.2 final
+
+### 3.7.3 override
 
 ## 3.8 volatile
 
