@@ -770,7 +770,7 @@ mkswap swapfile
 chmod 600 swapfile
 swapon swapfile
 
-git clone -b release/13.x https://github.com.cnpmjs.org/llvm/llvm-project.git --depth 1
+git clone -b release/13.x https://github.com/llvm/llvm-project.git --depth 1
 cd llvm-project
 mkdir build
 cd build
@@ -806,7 +806,7 @@ vim --version | head -1
 **安装：参照[github官网文档](https://github.com/universal-ctags/ctags)进行编译安装即可**
 
 ```sh
-git clone https://github.com.cnpmjs.org/universal-ctags/ctags.git --depth 1
+git clone https://github.com/universal-ctags/ctags.git --depth 1
 cd ctags
 
 # 安装依赖工具
