@@ -149,13 +149,20 @@ BM_virtual       1.88 ns         1.88 ns    372088713
 #include <benchmark/benchmark.h>
 
 struct Base {
+    virtual ~Base() = default;
     virtual void op() { data += 1; }
 
     int64_t data = 0;
 };
 
-struct Derive final : public Base {
+struct ClassFinal final : public Base {
+    virtual ~ClassFinal() = default;
     virtual void op() override { data += 2; }
+};
+
+struct FunctionFinal : public Base {
+    virtual ~FunctionFinal() = default;
+    virtual void op() final override { data += 3; }
 };
 
 static constexpr size_t TIMES = 1 << 20;
@@ -166,7 +173,13 @@ __attribute__((noinline)) void invoke_by_base_ptr(Base* base_ptr) {
     }
 }
 
-__attribute__((noinline)) void invoke_by_derive_ptr(Derive* derive_ptr) {
+__attribute__((noinline)) void invoke_by_class_final_derive_ptr(ClassFinal* derive_ptr) {
+    for (size_t i = 0; i < TIMES; ++i) {
+        derive_ptr->op();
+    }
+}
+
+__attribute__((noinline)) void invoke_by_function_final_derive_ptr(FunctionFinal* derive_ptr) {
     for (size_t i = 0; i < TIMES; ++i) {
         derive_ptr->op();
     }
@@ -178,50 +191,83 @@ __attribute__((noinline)) void invoke_by_base_ref(Base& base_ref) {
     }
 }
 
-__attribute__((noinline)) void invoke_by_derive_ref(Derive& derive_ref) {
+__attribute__((noinline)) void invoke_by_class_final_derive_ref(ClassFinal& derive_ref) {
+    for (size_t i = 0; i < TIMES; ++i) {
+        derive_ref.op();
+    }
+}
+
+__attribute__((noinline)) void invoke_by_function_final_derive_ref(FunctionFinal& derive_ref) {
     for (size_t i = 0; i < TIMES; ++i) {
         derive_ref.op();
     }
 }
 
 static void BM_invoke_by_base_ptr(benchmark::State& state) {
-    Base* base_ptr = new Derive();
+    Base* base_ptr = new ClassFinal();
     for (auto _ : state) {
         invoke_by_base_ptr(base_ptr);
     }
     benchmark::DoNotOptimize(base_ptr->data);
+    delete base_ptr;
 }
 
-static void BM_invoke_by_derive_ptr(benchmark::State& state) {
-    Base* base_ptr = new Derive();
-    Derive* derive_ptr = static_cast<Derive*>(base_ptr);
+static void BM_invoke_by_class_final_derive_ptr(benchmark::State& state) {
+    Base* base_ptr = new ClassFinal();
+    ClassFinal* derive_ptr = static_cast<ClassFinal*>(base_ptr);
     for (auto _ : state) {
-        invoke_by_derive_ptr(derive_ptr);
+        invoke_by_class_final_derive_ptr(derive_ptr);
     }
     benchmark::DoNotOptimize(derive_ptr->data);
+    delete base_ptr;
+}
+
+static void BM_invoke_by_function_final_derive_ptr(benchmark::State& state) {
+    Base* base_ptr = new FunctionFinal();
+    FunctionFinal* derive_ptr = static_cast<FunctionFinal*>(base_ptr);
+    for (auto _ : state) {
+        invoke_by_function_final_derive_ptr(derive_ptr);
+    }
+    benchmark::DoNotOptimize(derive_ptr->data);
+    delete base_ptr;
 }
 
 static void BM_invoke_by_base_ref(benchmark::State& state) {
-    Base* base_ptr = new Derive();
+    Base* base_ptr = new ClassFinal();
     Base& base_ref = static_cast<Base&>(*base_ptr);
     for (auto _ : state) {
         invoke_by_base_ref(base_ref);
     }
     benchmark::DoNotOptimize(base_ref.data);
+    delete base_ptr;
 }
 
-static void BM_invoke_by_derive_ref(benchmark::State& state) {
-    Derive& derive_ref = *new Derive();
+static void BM_invoke_by_class_final_derive_ref(benchmark::State& state) {
+    ClassFinal* derive_ptr = new ClassFinal();
+    ClassFinal& derive_ref = *derive_ptr;
     for (auto _ : state) {
-        invoke_by_derive_ref(derive_ref);
+        invoke_by_class_final_derive_ref(derive_ref);
     }
     benchmark::DoNotOptimize(derive_ref.data);
+    delete derive_ptr;
+}
+
+static void BM_invoke_by_function_final_derive_ref(benchmark::State& state) {
+    FunctionFinal* derive_ptr = new FunctionFinal();
+    FunctionFinal& derive_ref = *derive_ptr;
+    for (auto _ : state) {
+        invoke_by_function_final_derive_ref(derive_ref);
+    }
+    benchmark::DoNotOptimize(derive_ref.data);
+    delete derive_ptr;
 }
 
 BENCHMARK(BM_invoke_by_base_ptr);
-BENCHMARK(BM_invoke_by_derive_ptr);
+BENCHMARK(BM_invoke_by_class_final_derive_ptr);
+BENCHMARK(BM_invoke_by_function_final_derive_ptr);
 BENCHMARK(BM_invoke_by_base_ref);
-BENCHMARK(BM_invoke_by_derive_ref);
+BENCHMARK(BM_invoke_by_class_final_derive_ref);
+BENCHMARK(BM_invoke_by_function_final_derive_ref);
 
 BENCHMARK_MAIN();
 ```
@@ -229,13 +275,15 @@ BENCHMARK_MAIN();
 **输出如下：**
 
 ```
-------------------------------------------------------------------
-Benchmark                        Time             CPU   Iterations
-------------------------------------------------------------------
-BM_invoke_by_base_ptr       329071 ns       329033 ns         2123
-BM_invoke_by_derive_ptr       1.35 ns         1.35 ns    517728335
-BM_invoke_by_base_ref       329435 ns       329374 ns         2127
-BM_invoke_by_derive_ref       1.57 ns         1.57 ns    446385012
+---------------------------------------------------------------------------------
+Benchmark                                       Time             CPU   Iterations
+---------------------------------------------------------------------------------
+BM_invoke_by_base_ptr                      328065 ns       328053 ns         2133
+BM_invoke_by_class_final_derive_ptr          1.56 ns         1.56 ns    447363138
+BM_invoke_by_function_final_derive_ptr       1.25 ns         1.25 ns    559434318
+BM_invoke_by_base_ref                      328087 ns       328078 ns         2133
+BM_invoke_by_class_final_derive_ref          1.56 ns         1.56 ns    447476177
+BM_invoke_by_function_final_derive_ref       1.25 ns         1.25 ns    559455878
 ```
 
 可以看到，用超类的指针或者引用调用虚函数，可以直接消除虚函数的开销。**注意，这里有一个关键点，我们给`Derive`加上了`final`关键字，否则编译器也不敢直接消除虚函数**
