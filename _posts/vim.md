@@ -1067,15 +1067,15 @@ endif
 **安装：参照[github官网文档](https://github.com/MaskRay/ccls)进行编译安装即可**
 
 ```sh
-git clone https://github.com.cnpmjs.org/MaskRay/ccls.git --depth 1
+git clone https://github.91chi.fun/https://github.com/MaskRay/ccls.git
 cd ccls
 
 function setup_github_repo() {
-    CONFIGS=( $(grep -rnl 'https://github.com' .git) )
-    for CONFIG in ${CONFIGS[@]}
+    gitmodules=( $(find . -name '.gitmodules' -type f) )
+    for gitmodule in ${gitmodules[@]}
     do
-        echo "setup github repo for '${CONFIG}'"
-        sed -i 's|https://github.com/|https://github.com.cnpmjs.org/|g' ${CONFIG}
+        echo "setup github repo for '${gitmodule}'"
+        sed -i -r 's|([^/]?)https://github.com/|\1https://github.91chi.fun/https://github.com/|g' ${gitmodule}
     done
 }
 # 初始化子模块
@@ -1863,7 +1863,7 @@ call plug#end()
 cd ~/.vim/plugged/LanguageClient-neovim
 
 # 修改地址
-sed -i 's|github.com/|github.com.cnpmjs.org/|' install.sh
+sed -i -r 's|([^/]?)https://github.com/|\1https://github.91chi.fun/https://github.com/|g' install.sh
 
 # 手动执行安装脚本
 ./install.sh
@@ -2146,14 +2146,14 @@ function setup_github_repo() {
     for gitmodule in ${gitmodules[@]}
     do
         echo "setup github repo for '${gitmodule}'"
-        sed -i 's|//github.com/|//github.com.cnpmjs.org/|g' ${gitmodule}
+        sed -i -r 's|([^/]?)https://github.com/|\1https://github.91chi.fun/https://github.com/|g' ${gitmodule}
     done
 
     git submodule sync --recursive
 }
 
 cd ~/.vim/plugged
-git clone https://github.com.cnpmjs.org/ycm-core/YouCompleteMe.git --depth 1
+git clone https://github.91chi.fun/https://github.com/ycm-core/YouCompleteMe.git --depth 1
 cd YouCompleteMe
 
 # 递归下载ycm的子模块
