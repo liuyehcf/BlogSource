@@ -1780,6 +1780,195 @@ int main() {
 }
 ```
 
+## 4.12 [CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern)
+
+`CRTP`的全称是`Curious Recurring Template Pattern`
+
+### 4.12.1 Static Polymorphism
+
+```cpp
+#include <iostream>
+
+template <class T>
+struct Base {
+    void interface() { static_cast<T*>(this)->implementation(); }
+    static void static_func() { T::static_sub_func(); }
+};
+
+struct Derived : Base<Derived> {
+    void implementation() { std::cout << "Derived::implementation" << std::endl; }
+    static void static_sub_func() { std::cout << "Dericed::static_sub_func" << std::endl; }
+};
+
+int main() {
+    Derived d;
+    d.interface();
+    Derived::static_func();
+    return 0;
+}
+```
+
+### 4.12.2 Object Counter
+
+```cpp
+#include <iostream>
+
+template <typename T>
+struct counter {
+    static inline int objects_created = 0;
+    static inline int objects_alive = 0;
+
+    counter() {
+        ++objects_created;
+        ++objects_alive;
+    }
+
+    counter(const counter&) {
+        ++objects_created;
+        ++objects_alive;
+    }
+
+protected:
+    ~counter() // objects should never be removed through pointers of this type
+    {
+        --objects_alive;
+    }
+};
+
+class X : public counter<X> {
+    // ...
+};
+
+#define PRINT(expr) std::cout << #expr << ": " << expr << std::endl;
+
+int main() {
+    {
+        X x;
+        PRINT(X::objects_created);
+        PRINT(X::objects_alive);
+    }
+    PRINT(X::objects_created);
+    PRINT(X::objects_alive);
+    return 0;
+}
+```
+
+### 4.12.3 Polymorphic Chaining
+
+```cpp
+#include <iostream>
+
+enum Color { red, green, yello, blue, white, black };
+
+class PlainPrinter {
+public:
+    PlainPrinter(std::ostream& pstream) : m_stream(pstream) {}
+
+    template <typename T>
+    PlainPrinter& print(T&& t) {
+        m_stream << t;
+        return *this;
+    }
+
+    template <typename T>
+    PlainPrinter& println(T&& t) {
+        m_stream << t << std::endl;
+        return *this;
+    }
+
+private:
+    std::ostream& m_stream;
+};
+class PlainCoutPrinter : public PlainPrinter {
+public:
+    PlainCoutPrinter() : PlainPrinter(std::cout) {}
+
+    PlainCoutPrinter& SetConsoleColor(Color c) {
+        // do something to change color
+        return *this;
+    }
+};
+
+template <typename ConcretePrinter>
+class Printer {
+public:
+    Printer(std::ostream& pstream) : m_stream(pstream) {}
+
+    template <typename T>
+    ConcretePrinter& print(T&& t) {
+        m_stream << t;
+        return static_cast<ConcretePrinter&>(*this);
+    }
+
+    template <typename T>
+    ConcretePrinter& println(T&& t) {
+        m_stream << t << std::endl;
+        return static_cast<ConcretePrinter&>(*this);
+    }
+
+private:
+    std::ostream& m_stream;
+};
+
+class CoutPrinter : public Printer<CoutPrinter> {
+public:
+    CoutPrinter() : Printer(std::cout) {}
+
+    CoutPrinter& SetConsoleColor(Color c) {
+        // ...
+        return *this;
+    }
+};
+
+int main() {
+    // PlainCoutPrinter().print("Hello ").SetConsoleColor(Color::red).println("Printer!"); // compile error
+    CoutPrinter().print("Hello ").SetConsoleColor(Color::red).println("Printer!");
+    return 0;
+}
+```
+
+* `PlainCoutPrinter().print("Hello ")`的返回类型是`PlainPrinter`，丢失了具体的`PlainCoutPrinter`类型信息，于是再调用`SetConsoleColor`就报错了
+* 而使用`CRTP`就可以避免这个问题，基类的方法返回类型永远是具体的子类
+
+### 4.12.4 Polymorphic Copy Construction
+
+```cpp
+#include <memory>
+
+// Base class has a pure virtual function for cloning
+class AbstractShape {
+public:
+    virtual ~AbstractShape() = default;
+    virtual std::unique_ptr<AbstractShape> clone() const = 0;
+};
+
+// This CRTP class implements clone() for Derived
+template <typename Derived>
+class Shape : public AbstractShape {
+public:
+    std::unique_ptr<AbstractShape> clone() const override {
+        return std::make_unique<Derived>(static_cast<Derived const&>(*this));
+    }
+
+protected:
+    // We make clear Shape class needs to be inherited
+    Shape() = default;
+    Shape(const Shape&) = default;
+    Shape(Shape&&) = default;
+};
+
+// Every derived class inherits from CRTP class instead of abstract class
+class Square : public Shape<Square> {};
+
+class Circle : public Shape<Circle> {};
+
+int main() {
+    Square s;
+    auto clone = s.clone();
+    return 0;
+}
+```
+
 # 5 `__attribute__`
 
 [Compiler-specific Features](https://www.keil.com/support/man/docs/armcc/armcc_chr1359124965789.htm)
