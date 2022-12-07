@@ -413,7 +413,7 @@ make
 
 参考（[cmake-variables](https://cmake.org/cmake/help/latest/manual/cmake-variables.7.html)）：
 
-* `CMAKE_BINARY_DIR`、`PROJECT_BINARY_DIR`、`<PROJECT-NAME>_BINARY_DIR`：指的是工程编译发生的目录
+* `CMAKE_BINARY_DIR`、`PROJECT_BINARY_DIR`、`<PROJECT-NAME>_BINARY_DIR`：指的是工程编译发生的目录。在递归处理子项目时，该变量不会发生改变
   * 若指定了`-B`参数，即`-B`参数指定的目录
   * 若没有指定`-B`参数，即执行`cmake`命令时所在的目录
 * `CMAKE_SOURCE_DIR`、`PROJECT_SOURCE_DIR`、`<PROJECT-NAME>_SOURCE_DIR`：指的是工程顶层目录。在递归处理子项目时，该变量不会发生改变
