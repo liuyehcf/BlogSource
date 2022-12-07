@@ -414,9 +414,11 @@ make
 参考（[cmake-variables](https://cmake.org/cmake/help/latest/manual/cmake-variables.7.html)）：
 
 * `CMAKE_BINARY_DIR`、`PROJECT_BINARY_DIR`、`<PROJECT-NAME>_BINARY_DIR`：指的是工程编译发生的目录
-* `CMAKE_SOURCE_DIR`、`PROJECT_SOURCE_DIR`、`<PROJECT-NAME>_SOURCE_DIR`：指的是工程顶层目录
-* `CMAKE_CURRENT_SOURCE_DIR`：指的是当前处理的`CMakeLists.txt`所在路径
-* `CMAKE_CURRENT_BINARY_DIR`：指的是工程编译结果存放的目标目录，可以通过`set`命令或`ADD_SUBDIRECTORY(src bin)`改变这个变量的值，但是`set(EXECUTABLE_OUTPUT_PATH <new_paht>)`并不改变这个变量的值，只会影响最终的保存路径
+  * 若指定了`-B`参数，即`-B`参数指定的目录
+  * 若没有指定`-B`参数，即执行`cmake`命令时所在的目录
+* `CMAKE_SOURCE_DIR`、`PROJECT_SOURCE_DIR`、`<PROJECT-NAME>_SOURCE_DIR`：指的是工程顶层目录。在递归处理子项目时，该变量不会发生改变
+* `CMAKE_CURRENT_SOURCE_DIR`：指的是当前处理的`CMakeLists.txt`所在路径。在递归处理子项目时，该变量会发生改变
+* `CMAKE_CURRENT_BINARY_DIR`：指的是工程编译结果存放的目标目录。在递归处理子项目时，该变量会发生改变。可以通过`set`命令或`ADD_SUBDIRECTORY(src bin)`改变这个变量的值，但是`set(EXECUTABLE_OUTPUT_PATH <new_paht>)`并不改变这个变量的值，只会影响最终的保存路径
 * `CMAKE_MODULE_PATH`：`include()`、`find_package()`命令的模块搜索路径
 * `EXECUTABLE_OUTPUT_PATH`、`LIBRARY_OUTPUT_PATH`：定义最终编译结果的二进制执行文件和库文件的存放目录
 * `PROJECT_NAME`：指的是通过`set`设置的`PROJECT`的名称
@@ -769,7 +771,18 @@ Find all source files in a directory
 
 # 6 Tips
 
-## 6.1 打印cmake中所有的变量
+## 6.1 Command Line
+
+* `build`
+  * `cmake <path-to-source>`：当前目录作为`<build_path>`
+  * `cmake -S <path-to-source>`：当前目录作为`<build_path>`
+  * `cmake -B <build_path>`：当前目录作为`<path-to-source>`
+  * `cmake -B <build_path> <path-to-source>`
+  * `cmake -B <build_path> -S <path-to-source>`
+* `cmake --build <build_path>`
+* `cmake --install <build_path>`
+
+## 6.2 打印cmake中所有的变量
 
 ```cmake
 get_cmake_property(_variableNames VARIABLES)
@@ -778,19 +791,19 @@ foreach (_variableName ${_variableNames})
 endforeach()
 ```
 
-## 6.2 打印cmake中所有环境变量
+## 6.3 打印cmake中所有环境变量
 
 ```cmake
 execute_process(COMMAND "${CMAKE_COMMAND}" "-E" "environment")
 ```
 
-## 6.3 指定编译器
+## 6.4 指定编译器
 
 ```sh
 cmake -DCMAKE_CXX_COMPILER=/usr/local/bin/g++ -DCMAKE_C_COMPILER=/usr/local/bin/gcc ..
 ```
 
-## 6.4 设置编译器参数
+## 6.5 设置编译器参数
 
 **示例如下：**
 
@@ -811,13 +824,13 @@ set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O1 -Wall")
 1. `RelWithDebInfo`
 1. `MinSizeRel`
 
-## 6.5 传递额外编译参数给cmake
+## 6.6 传递额外编译参数给cmake
 
 ```sh
 cmake -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -O3" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -O3" ..
 ```
 
-## 6.6 开启debug模式
+## 6.7 开启debug模式
 
 ```sh
 # If you want to build for debug (including source information, i.e. -g) when compiling, use
@@ -827,7 +840,7 @@ cmake -DCMAKE_BUILD_TYPE=Debug <path>
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo <path>
 ```
 
-## 6.7 同一目录，多个源文件
+## 6.8 同一目录，多个源文件
 
 如果同一个目录下有多个源文件，那么在使用`add_executable`命令的时候，如果要一个个填写，那么将会非常麻烦，并且后续维护的代价也很大
 
@@ -846,11 +859,11 @@ aux_source_directory(. DIR_SRCS)
 add_executable(Demo ${DIR_SRCS})
 ```
 
-## 6.8 打印所有编译指令
+## 6.9 打印所有编译指令
 
 `cmake`指定参数`-DCMAKE_VERBOSE_MAKEFILE=ON`即可
 
-## 6.9 生成`compile_commands.json`文件
+## 6.10 生成`compile_commands.json`文件
 
 `cmake`指定参数`-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`即可。构建完成后，会在构建目录生成`compile_commands.json`，里面包含了每个源文件的编译命令
 
