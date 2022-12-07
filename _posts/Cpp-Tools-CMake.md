@@ -555,30 +555,43 @@ add_library(Exec STATIC ${EXEC_FILES})
 
 ## 5.7 target_link_libraries
 
-`target_link_libraries`指定链接给定目标时要使用的库或标志，格式和示例如下：
+`target_link_libraries`指定链接给定目标时要使用的库或标志，格式和示例如下，其中`<item>`可以是：
+
+1. `library`类型的`target`的名称。例如通过`add_subdirectory`引入的`library`子项目
+1. `library`的完整路径
 
 ```cmake
-# 其中，item可以是
-# 1. A library target name
-# 2. A full path to a library file
 target_link_libraries(<target> ... <item>... ...)
 
+# example
 target_link_libraries(echo_client ${BRPC_LIB} ${DYNAMIC_LIB})
 ```
 
-## 5.8 include_directories
-
-`include_directories`：该方法会在全局维度添加`include`的搜索路径。这些搜索路径会被添加到所有`target`中去（包括所有`sub target`），会追加到所有`target`的`INCLUDE_DIRECTORIES`属性中去
-
-## 5.9 target_include_directories
+## 5.8 target_include_directories
 
 `target_include_directories`：该方法为指定`target`添加`include`的搜索路径，会追加到该`target`的`INCLUDE_DIRECTORIES`属性中去
 
-## 5.10 include
+## 5.9 include_directories
+
+`include_directories`：该方法会在全局维度添加`include`的搜索路径。这些搜索路径会被添加到所有`target`中去（包括所有`sub target`），会追加到所有`target`的`INCLUDE_DIRECTORIES`属性中去
+
+## 5.10 add_subdirectory
+
+`add_subdirectory`：用于引入一个`sub-cmake`项目
+
+* `source_dir`：子项目路径，该路径下必须包含`CMakeLists.txt`文件。且必须是子目录，不能是外层目录
+* `binary_dir`：二进制路径，生成的可执行文件或者库文件的放置路径
+* `EXCLUDE_FROM_ALL`：当指定该参数时，构建父项目时，若无明确依赖子项目（例如通过`target_link_libraries`添加依赖），那么子项目不会被自动构建。若有明确依赖，那么仍然会构建
+
+```cmake
+add_subdirectory(source_dir [binary_dir] [EXCLUDE_FROM_ALL] [SYSTEM])
+```
+
+## 5.11 include
 
 `include`用于加载模块
 
-## 5.11 find_package
+## 5.12 find_package
 
 **本小节转载摘录自[Cmake之深入理解find_package()的用法](https://zhuanlan.zhihu.com/p/97369704)**
 
@@ -606,7 +619,7 @@ endif(CURL_FOUND)
 
 你可以通过`<LibaryName>_FOUND`来判断模块是否被找到，如果没有找到，按照工程的需要关闭某些特性、给出提醒或者中止编译，上面的例子就是报出致命错误并终止构建。如果`<LibaryName>_FOUND`为真，则将`<LibaryName>_INCLUDE_DIR`加入`INCLUDE_DIRECTORIES`
 
-### 5.11.1 引入非官方的库
+### 5.12.1 引入非官方的库
 
 **通过`find_package`引入非官方的库，该方式只对支持cmake编译安装的库有效**
 
@@ -652,7 +665,7 @@ else(GLOG_FOUND)
 endif(GLOG_FOUND)
 ```
 
-### 5.11.2 Module模式与Config模式
+### 5.12.2 Module模式与Config模式
 
 通过上文我们了解了通过`cmake`引入依赖库的基本用法。知其然也要知其所以然，`find_package`对我们来说是一个黑盒子，那么它是具体通过什么方式来查找到我们依赖的库文件的路径的呢。到这里我们就不得不聊到`find_package`的两种模式，一种是`Module`模式，也就是我们引入`curl`库的方式。另一种叫做`Config`模式，也就是引入`glog`库的模式。下面我们来详细介绍着两种方式的运行机制
 
@@ -660,7 +673,7 @@ endif(GLOG_FOUND)
 
 如果`Module`模式搜索失败，没有找到对应的`Find<LibraryName>.cmake`文件，则转入`Config`模式进行搜索。它主要通过`<LibraryName>Config.cmake`或`<lower-case-package-name>-config.cmake`这两个文件来引入我们需要的库。以我们刚刚安装的`glog`库为例，在我们安装之后，它在`/usr/local/lib/cmake/glog/`目录下生成了`glog-config.cmake`文件，而`/usr/local/lib/cmake/glog/`正是`find_package`函数的搜索路径之一
 
-### 5.11.3 编写自己的`Find<LibraryName>.cmake`模块
+### 5.12.3 编写自己的`Find<LibraryName>.cmake`模块
 
 假设我们编写了一个新的函数库，我们希望别的项目可以通过`find_package`对它进行引用我们应该怎么办呢。
 
@@ -732,7 +745,7 @@ else(ADD_FOUND)
 endif(ADD_FOUND)
 ```
 
-## 5.12 find_library
+## 5.13 find_library
 
 `find_library`用于查找库文件，示例如下：
 
@@ -741,7 +754,7 @@ endif(ADD_FOUND)
 find_library(THRIFT_LIB NAMES thrift)
 ```
 
-## 5.13 find_path
+## 5.14 find_path
 
 `find_path`用于查找包含给定文件的目录，示例如下：
 
@@ -750,7 +763,7 @@ find_library(THRIFT_LIB NAMES thrift)
 find_path(BRPC_INCLUDE_PATH NAMES brpc/server.h)
 ```
 
-## 5.14 aux_source_directory
+## 5.15 aux_source_directory
 
 Find all source files in a directory
 
