@@ -669,6 +669,7 @@ SpacesBeforeTrailingComments: 1
 1. [cppman](https://github.com/aitjcize/cppman/)
     * 安装：`pip install cppman`
     * 示例：`cppman vector::begin`
+    * 重建索引：`cppman -r`
 
 ## 7.4 参考
 

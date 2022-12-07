@@ -15,7 +15,139 @@ categories:
 
 # 1 algorithm
 
-## 1.1 std::remove_if
+## 1.1 std::sort
+
+```cpp
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
+void print(const std::vector<int32_t>& nums) {
+    for (int i = 0; i < nums.size(); ++i) {
+        if (i == 0) {
+            std::cout << nums[i];
+        } else {
+            std::cout << ", " << nums[i];
+        }
+    }
+    std::cout << std::endl;
+}
+
+int main() {
+    std::vector<int32_t> nums{1, 4, 2, 5, 7};
+
+    std::sort(nums.begin(), nums.end());
+    print(nums);
+
+    std::sort(nums.begin(), nums.end(), [](int32_t i, int32_t j) { return j - i; });
+    print(nums);
+
+    return 0;
+}
+```
+
+## 1.2 std::merge
+
+```cpp
+#include <stdint.h>
+
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
+void print(const std::vector<int32_t>& nums) {
+    for (int i = 0; i < nums.size(); ++i) {
+        if (i == 0) {
+            std::cout << nums[i];
+        } else {
+            std::cout << ", " << nums[i];
+        }
+    }
+    std::cout << std::endl;
+}
+
+int main() {
+    std::vector<int32_t> left{1, 3, 5, 7, 9};
+    std::vector<int32_t> right{2, 4, 6, 8, 10};
+
+    std::vector<int32_t> dest1;
+    std::merge(left.begin(), left.end(), right.begin(), right.end(), std::back_inserter(dest1));
+    print(dest1);
+
+    std::vector<int32_t> dest2;
+    dest2.resize(left.size() + right.size());
+    std::merge(left.begin(), left.end(), right.begin(), right.end(), dest2.begin());
+    print(dest2);
+    return 0;
+}
+```
+
+## 1.3 std::inplace_merge
+
+```cpp
+#include <stdint.h>
+
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
+void print(const std::vector<int32_t>& nums) {
+    for (int i = 0; i < nums.size(); ++i) {
+        if (i == 0) {
+            std::cout << nums[i];
+        } else {
+            std::cout << ", " << nums[i];
+        }
+    }
+    std::cout << std::endl;
+}
+
+int main() {
+    std::vector<int32_t> nums{2, 4, 6, 8, 10, 1, 3, 5, 7, 9};
+
+    std::vector<int32_t> dest;
+    std::inplace_merge(nums.begin(), nums.begin() + 5, nums.end());
+    print(nums);
+    return 0;
+}
+```
+
+## 1.4 std::copy
+
+```cpp
+#include <stdint.h>
+
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
+void print(const std::vector<int32_t>& nums) {
+    for (int i = 0; i < nums.size(); ++i) {
+        if (i == 0) {
+            std::cout << nums[i];
+        } else {
+            std::cout << ", " << nums[i];
+        }
+    }
+    std::cout << std::endl;
+}
+
+int main() {
+    std::vector<int32_t> source{1, 3, 5, 7, 9};
+
+    std::vector<int32_t> dest1;
+    std::copy(source.begin(), source.end(), std::back_inserter(dest1));
+    print(dest1);
+
+    std::vector<int32_t> dest2;
+    dest2.resize(source.size());
+    std::copy(source.begin(), source.end(), dest2.begin());
+    print(dest2);
+    return 0;
+}
+```
+
+## 1.5 std::remove_if
 
 `std::remove_if`用于将容器中满足条件的元素挪到最后，并返回指向这部分元素的起始迭代器，一般配合`erase`一起用
 
@@ -344,16 +476,21 @@ int main() {
 
 1. `std::optional`
 
-# 13 stdexcept
+# 13 random
+
+1. `std::default_random_engine`
+1. `std::uniform_int_distribution`：左闭右闭区间
+
+# 14 stdexcept
 
 1. `std::logic_error`
 
-# 14 string
+# 15 string
 
 1. `std::string`
 1. `std::to_string`
 
-# 15 thread
+# 16 thread
 
 **如何设置或修改线程名：**
 
@@ -422,18 +559,18 @@ int main() {
 }
 ```
 
-# 16 type_traits
+# 17 type_traits
 
 [Standard library header <type_traits>](https://en.cppreference.com/w/cpp/header/type_traits)
 
-## 16.1 Helper Class
+## 17.1 Helper Class
 
 1. `std::integral_constant`
 1. `std::bool_constant`
 1. `std::true_type`
 1. `std::false_type`
 
-## 16.2 Primary type categories
+## 17.2 Primary type categories
 
 1. `std::is_void`
 1. `std::is_null_pointer`
@@ -442,7 +579,7 @@ int main() {
 1. `std::is_pointer`
 1. ...
 
-## 16.3 Composite type categories
+## 17.3 Composite type categories
 
 1. `std::is_fundamental`
 1. `std::is_arithmetic`
@@ -451,7 +588,7 @@ int main() {
 1. `std::is_member_pointer`
 1. ...
 
-## 16.4 Type properties
+## 17.4 Type properties
 
 1. `std::is_const`
 1. `std::is_volatile`
@@ -460,7 +597,7 @@ int main() {
 1. `std::is_abstract`
 1. ...
 
-## 16.5 Supported operations
+## 17.5 Supported operations
 
 1. `std::is_constructible`
 1. `std::is_copy_constructible`
@@ -469,19 +606,19 @@ int main() {
 1. `std::is_destructible`
 1. ...
 
-## 16.6 Property queries
+## 17.6 Property queries
 
 1. `std::alignment_of`
 1. `std::rank`
 1. `std::extent`
 
-## 16.7 Type relationships
+## 17.7 Type relationships
 
 1. `std::is_same`
 1. `std::is_base_of`
 1. ...
 
-## 16.8 Const-volatility specifiers
+## 17.8 Const-volatility specifiers
 
 1. `std::remove_cv`
 1. `std::remove_const`
@@ -490,28 +627,28 @@ int main() {
 1. `std::add_const`
 1. `std::add_volatile`
 
-## 16.9 References
+## 17.9 References
 
 1. `std::remove_reference`
 1. `std::add_lvalue_reference`
 1. `std::add_rvalue_reference`
   
-## 16.10 Pointers
+## 17.10 Pointers
 
 1. `std::remove_pointer`
 1. `std::add_pointer`
   
-## 16.11 Sign modifiers
+## 17.11 Sign modifiers
 
 1. `std::make_signed`
 1. `std::make_unsigned`
 
-## 16.12 Arrays
+## 17.12 Arrays
 
 1. `std::remove_extent`
 1. `std::remove_all_extents`
 
-## 16.13 Miscellaneous transformations
+## 17.13 Miscellaneous transformations
 
 1. `std::enable_if`
 1. `std::conditional`
@@ -520,7 +657,7 @@ int main() {
     * [What is std::decay and when it should be used?](https://stackoverflow.com/questions/25732386/what-is-stddecay-and-when-it-should-be-used)
     * [N2609](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2006/n2069.html)
 
-## 16.14 Alias
+## 17.14 Alias
 
 `using template`，用于简化上述模板。例如`std::enable_if_t`等价于`typename enable_if<b,T>::type`
 
@@ -531,7 +668,7 @@ int main() {
 1. `std::invoke_result_t`
 1. ...
 
-## 16.15 std::move
+## 17.15 std::move
 
 标准库的实现如下：
 
@@ -544,7 +681,7 @@ int main() {
 
 本质上，就是做了一次类型转换，返回的一定是个右值
 
-## 16.16 std::forward
+## 17.16 std::forward
 
 `std::forward`主要用于实现模板的完美转发：因为对于一个变量而言，无论该变量的类型是左值引用还是右值引用，变量本身都是左值，如果直接将变量传递到下一个方法中，那么一定是按照左值来匹配重载函数的，而`std::forward`就是为了解决这个问题。请看下面这个例子：
 
@@ -663,7 +800,7 @@ func(std::forward<int&&>(1)) -> right reference version
     }
 ```
 
-### 16.16.1 forwarding reference
+### 17.16.1 forwarding reference
 
 **当且仅当`T`是函数模板的模板类型形参时，`T&&`才能称为`forwarding reference`，而其他任何形式，都不是`forwarding reference`。例如如下示例代码：**
 
@@ -741,11 +878,11 @@ struct C {
 };
 ```
 
-# 17 utility
+# 18 utility
 
 1. `std::pair`
 
-# 18 容器
+# 19 Containers
 
 1. `<vector>`
 1. `<array>`
@@ -757,14 +894,14 @@ struct C {
 1. `<set>`
 1. `<unordered_set>`
 
-## 18.1 Tips
+## 19.1 Tips
 
 1. `std::map`或者`std::set`用下标访问后，即便访问前元素不存在，也会插入一个默认值。因此下标访问是非`const`的
 1. 容器在扩容时，调用的是元素的拷贝构造函数
 1. `std::vector<T> v(n)`会生成`n`个对应元素的默认值，而不是起到预留`n`个元素的空间的作用
 1. 不要将`end`方法返回的迭代器传入`erase`方法
 
-# 19 向量化
+# 20 SIMD
 
 [Header files for x86 SIMD intrinsics](https://stackoverflow.com/questions/11228855/header-files-for-x86-simd-intrinsics)
 
@@ -804,7 +941,7 @@ struct C {
 * `-mavx512vbmi`
 * ...
 
-# 20 C标准库
+# 21 C标准库
 
 1. `stdio.h`
 1. `stddef.h`
@@ -816,7 +953,7 @@ struct C {
     * `std::atol`
     * `std::atoll`
 
-## 20.1 csignal
+## 21.1 csignal
 
 各种信号都定义在`signum.h`这个头文件中
 
@@ -869,7 +1006,7 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-## 20.2 pthread.h
+## 21.2 pthread.h
 
 下面示例代码用于测试各个CPU的性能
 
