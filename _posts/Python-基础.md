@@ -445,7 +445,32 @@ mycompany
 1. `json`
 1. `venv`：用来为一个应用创建一套隔离的Python运行环境
 
-## 7.3 Tips
+## 7.3 Matplotlib
+
+```sh
+pip install matplotlib
+```
+
+示例：
+
+```py
+import numpy as np
+import matplotlib.pyplot as plt
+x = np.linspace(0, 10, 1000)
+y = np.sin(x)+1
+z = np.cos(x**2)+1
+plt.figure(figsize=(8, 4))
+plt.plot(x, y, label='$\sin x+1$', color='red', linewidth=2)
+plt.plot(x, z, 'b--', label='$\cos x^2+1$')
+plt.xlabel('times(s)')
+plt.ylabel('volt')
+plt.title('a simple example')
+plt.ylim(0, 2.2)
+plt.legend()
+plt.show()
+```
+
+## 7.4 Tips
 
 1. 查看所有模块：`sys.modules.keys()`
 1. 查看模块的文档：`help("<module_name>")`
@@ -470,9 +495,20 @@ mycompany
 
 `pip`是`python`的包管理工具
 
+* 安装路径：`~/.local/lib/python3.10/site-packages`
+
 ```sh
 pip install xxx
+
+# 指定源
+pip install xxx -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
+
+**常用国内源：**
+
+* `https://pypi.tuna.tsinghua.edu.cn/simple`：清华
+* `https://pypi.mirrors.ustc.edu.cn/simple`：中科大
+* `https://mirrors.aliyun.com/pypi/simple`：阿里云
 
 ## 8.1 Tips
 
