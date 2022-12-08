@@ -155,7 +155,8 @@ int main(int argc, char* argv[]) {
     gflags::SetUsageMessage("some message");
     gflags::SetVersionString("1.0.0");
     gflags::ParseCommandLineFlags(&argc, &argv, true);
-
+    std::cout << gflags::CommandlineFlagsIntoString() << std::endl;
+    
     DISPLAY(FLAGS_test_bool);
     DISPLAY(FLAGS_test_int32);
     DISPLAY(FLAGS_test_double);

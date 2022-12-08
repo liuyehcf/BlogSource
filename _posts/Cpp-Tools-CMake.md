@@ -417,8 +417,11 @@ make
   * 若指定了`-B`参数，即`-B`参数指定的目录
   * 若没有指定`-B`参数，即执行`cmake`命令时所在的目录
 * `CMAKE_SOURCE_DIR`、`PROJECT_SOURCE_DIR`、`<PROJECT-NAME>_SOURCE_DIR`：指的是工程顶层目录。在递归处理子项目时，该变量不会发生改变
-* `CMAKE_CURRENT_SOURCE_DIR`：指的是当前处理的`CMakeLists.txt`所在路径。在递归处理子项目时，该变量会发生改变
+* `CMAKE_CURRENT_SOURCE_DIR`：指的是当前处理的`cmake`项目的工程目录，一般来说是`CMakeLists.txt`所在路径。在递归处理子项目时，该变量会发生改变
+  * [Difference between CMAKE_CURRENT_SOURCE_DIR and CMAKE_CURRENT_LIST_DIR](https://stackoverflow.com/questions/15662497/difference-between-cmake-current-source-dir-and-cmake-current-list-dir)
+  * 若通过`include(src/CMakeLists.txt)`引入子项目，假设工程根目录是`project`，那么该子项目在处理的时候，`CMAKE_CURRENT_SOURCE_DIR`是`project`，而`CMAKE_CURRENT_LIST_DIR`是`project/src`
 * `CMAKE_CURRENT_BINARY_DIR`：指的是工程编译结果存放的目标目录。在递归处理子项目时，该变量会发生改变。可以通过`set`命令或`ADD_SUBDIRECTORY(src bin)`改变这个变量的值，但是`set(EXECUTABLE_OUTPUT_PATH <new_paht>)`并不改变这个变量的值，只会影响最终的保存路径
+* `CMAKE_CURRENT_LIST_DIR`：指的是当前处理的`CMakeLists.txt`所在路径。在递归处理子项目时，该变量会发生改变
 * `CMAKE_MODULE_PATH`：`include()`、`find_package()`命令的模块搜索路径
 * `EXECUTABLE_OUTPUT_PATH`、`LIBRARY_OUTPUT_PATH`：定义最终编译结果的二进制执行文件和库文件的存放目录
 * `PROJECT_NAME`：指的是通过`set`设置的`PROJECT`的名称
@@ -866,6 +869,19 @@ add_executable(Demo ${DIR_SRCS})
 ## 6.10 生成`compile_commands.json`文件
 
 `cmake`指定参数`-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`即可。构建完成后，会在构建目录生成`compile_commands.json`，里面包含了每个源文件的编译命令
+
+## 6.11 自动生成`compile_commands.json`文件并拷贝到工程根目录
+
+参考[Copy compile_commands.json to project root folder](https://stackoverflow.com/questions/57464766/copy-compile-commands-json-to-project-root-folder)
+
+```cmake
+add_custom_target(
+    copy-compile-commands ALL
+    ${CMAKE_COMMAND} -E copy_if_different
+        ${CMAKE_BINARY_DIR}/compile_commands.json
+        ${CMAKE_SOURCE_DIR}
+    )
+```
 
 # 7 参考
 
