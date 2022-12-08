@@ -417,11 +417,12 @@ make
   * 若指定了`-B`参数，即`-B`参数指定的目录
   * 若没有指定`-B`参数，即执行`cmake`命令时所在的目录
 * `CMAKE_SOURCE_DIR`、`PROJECT_SOURCE_DIR`、`<PROJECT-NAME>_SOURCE_DIR`：指的是工程顶层目录。在递归处理子项目时，该变量不会发生改变
-* `CMAKE_CURRENT_SOURCE_DIR`：指的是当前处理的`cmake`项目的工程目录，一般来说是`CMakeLists.txt`所在路径。在递归处理子项目时，该变量会发生改变
+* `CMAKE_CURRENT_SOURCE_DIR`：指的是当前处理的`cmake`项目的工程目录，一般来说是`CMakeLists.txt`所在目录。在递归处理子项目时，该变量会发生改变
   * [Difference between CMAKE_CURRENT_SOURCE_DIR and CMAKE_CURRENT_LIST_DIR](https://stackoverflow.com/questions/15662497/difference-between-cmake-current-source-dir-and-cmake-current-list-dir)
   * 若通过`include(src/CMakeLists.txt)`引入子项目，假设工程根目录是`project`，那么该子项目在处理的时候，`CMAKE_CURRENT_SOURCE_DIR`是`project`，而`CMAKE_CURRENT_LIST_DIR`是`project/src`
 * `CMAKE_CURRENT_BINARY_DIR`：指的是工程编译结果存放的目标目录。在递归处理子项目时，该变量会发生改变。可以通过`set`命令或`ADD_SUBDIRECTORY(src bin)`改变这个变量的值，但是`set(EXECUTABLE_OUTPUT_PATH <new_paht>)`并不改变这个变量的值，只会影响最终的保存路径
-* `CMAKE_CURRENT_LIST_DIR`：指的是当前处理的`CMakeLists.txt`所在路径。在递归处理子项目时，该变量会发生改变
+* `CMAKE_CURRENT_LIST_DIR`：指的是当前处理的`CMakeLists.txt`所在目录。在递归处理子项目时，该变量会发生改变
+* `CMAKE_CURRENT_LIST_FILE`：指的是当前处理的`CMakeLists.txt`的路径。在递归处理子项目时，该变量会发生改变
 * `CMAKE_MODULE_PATH`：`include()`、`find_package()`命令的模块搜索路径
 * `EXECUTABLE_OUTPUT_PATH`、`LIBRARY_OUTPUT_PATH`：定义最终编译结果的二进制执行文件和库文件的存放目录
 * `PROJECT_NAME`：指的是通过`set`设置的`PROJECT`的名称
@@ -582,7 +583,7 @@ target_link_libraries(echo_client ${BRPC_LIB} ${DYNAMIC_LIB})
 
 ## 5.10 add_subdirectory
 
-`add_subdirectory`：用于引入一个`sub-cmake`项目
+`add_subdirectory`：用于引入一个`cmake`子项目
 
 * `source_dir`：子项目路径，该路径下必须包含`CMakeLists.txt`文件。且必须是子目录，不能是外层目录
 * `binary_dir`：二进制路径，生成的可执行文件或者库文件的放置路径
@@ -594,7 +595,12 @@ add_subdirectory(source_dir [binary_dir] [EXCLUDE_FROM_ALL] [SYSTEM])
 
 ## 5.11 include
 
-`include`用于加载模块
+`include`：用于引入一个`cmake`子项目。例如`include(src/merger/CMakeLists.txt)`
+
+**`include`和`add_subdirectory`这两个命令都可以用来引入一个`cmake`子项目，它们的区别在于：**
+
+* `add_subdirectory`：该子项目会作为一个独立的`cmake`项目进行处理。所有`CURRENT`相关的变量都会进行切换。此外，`CMakeLists.txt`文件中涉及的所有相对路径，其`base`路径也会切换成`add_subdirectory`指定的目录
+* `include`：该子项目不会作为一个独立的`cmake`项目进行处理。只有`CMAKE_CURRENT_LIST_DIR`、`CMAKE_CURRENT_LIST_FILE`这两个`CURRENT`变量会进行切换，而`CMAKE_CURRENT_BINARY_DIR`和`CMAKE_CURRENT_SOURCE_DIR`不会进行切换。此外，`CMakeLists.txt`文件中涉及的所有相对路径，其`base`路径保持不变
 
 ## 5.12 find_package
 
