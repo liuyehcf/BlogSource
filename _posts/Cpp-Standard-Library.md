@@ -623,7 +623,7 @@ int main() {
 1. `std::enable_if`
 1. `std::conditional`
 1. `std::void_t`
-1. `std::decay`
+1. `std::decay`：Applies lvalue-to-rvalue, array-to-pointer, and function-to-pointer implicit conversions to the type T
     * [What is std::decay and when it should be used?](https://stackoverflow.com/questions/25732386/what-is-stddecay-and-when-it-should-be-used)
     * [N2609](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2006/n2069.html)
 
