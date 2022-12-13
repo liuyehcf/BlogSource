@@ -20,27 +20,19 @@ categories:
 ```cpp
 #include <algorithm>
 #include <iostream>
+#include <iterator>
 #include <vector>
-
-void print(const std::vector<int32_t>& nums) {
-    for (int i = 0; i < nums.size(); ++i) {
-        if (i == 0) {
-            std::cout << nums[i];
-        } else {
-            std::cout << ", " << nums[i];
-        }
-    }
-    std::cout << std::endl;
-}
 
 int main() {
     std::vector<int32_t> nums{1, 4, 2, 5, 7};
 
     std::sort(nums.begin(), nums.end());
-    print(nums);
+    std::copy(nums.begin(), nums.end(), std::ostream_iterator<int32_t>(std::cout, ","));
+    std::cout << std::endl;
 
     std::sort(nums.begin(), nums.end(), [](int32_t i, int32_t j) { return j - i; });
-    print(nums);
+    std::copy(nums.begin(), nums.end(), std::ostream_iterator<int32_t>(std::cout, ","));
+    std::cout << std::endl;
 
     return 0;
 }
@@ -53,18 +45,8 @@ int main() {
 
 #include <algorithm>
 #include <iostream>
+#include <iterator>
 #include <vector>
-
-void print(const std::vector<int32_t>& nums) {
-    for (int i = 0; i < nums.size(); ++i) {
-        if (i == 0) {
-            std::cout << nums[i];
-        } else {
-            std::cout << ", " << nums[i];
-        }
-    }
-    std::cout << std::endl;
-}
 
 int main() {
     std::vector<int32_t> left{1, 3, 5, 7, 9};
@@ -72,12 +54,15 @@ int main() {
 
     std::vector<int32_t> dest1;
     std::merge(left.begin(), left.end(), right.begin(), right.end(), std::back_inserter(dest1));
-    print(dest1);
+    std::copy(dest1.begin(), dest1.end(), std::ostream_iterator<int32_t>(std::cout, ","));
+    std::cout << std::endl;
 
     std::vector<int32_t> dest2;
     dest2.resize(left.size() + right.size());
     std::merge(left.begin(), left.end(), right.begin(), right.end(), dest2.begin());
-    print(dest2);
+    std::copy(dest2.begin(), dest2.end(), std::ostream_iterator<int32_t>(std::cout, ","));
+    std::cout << std::endl;
+
     return 0;
 }
 ```
@@ -89,25 +74,17 @@ int main() {
 
 #include <algorithm>
 #include <iostream>
+#include <iterator>
 #include <vector>
-
-void print(const std::vector<int32_t>& nums) {
-    for (int i = 0; i < nums.size(); ++i) {
-        if (i == 0) {
-            std::cout << nums[i];
-        } else {
-            std::cout << ", " << nums[i];
-        }
-    }
-    std::cout << std::endl;
-}
 
 int main() {
     std::vector<int32_t> nums{2, 4, 6, 8, 10, 1, 3, 5, 7, 9};
 
     std::vector<int32_t> dest;
     std::inplace_merge(nums.begin(), nums.begin() + 5, nums.end());
-    print(nums);
+    std::copy(nums.begin(), nums.end(), std::ostream_iterator<int32_t>(std::cout, ","));
+    std::cout << std::endl;
+
     return 0;
 }
 ```
@@ -119,30 +96,23 @@ int main() {
 
 #include <algorithm>
 #include <iostream>
+#include <iterator>
 #include <vector>
-
-void print(const std::vector<int32_t>& nums) {
-    for (int i = 0; i < nums.size(); ++i) {
-        if (i == 0) {
-            std::cout << nums[i];
-        } else {
-            std::cout << ", " << nums[i];
-        }
-    }
-    std::cout << std::endl;
-}
 
 int main() {
     std::vector<int32_t> source{1, 3, 5, 7, 9};
 
     std::vector<int32_t> dest1;
     std::copy(source.begin(), source.end(), std::back_inserter(dest1));
-    print(dest1);
+    std::copy(dest1.begin(), dest1.end(), std::ostream_iterator<int32_t>(std::cout, ","));
+    std::cout << std::endl;
 
     std::vector<int32_t> dest2;
     dest2.resize(source.size());
     std::copy(source.begin(), source.end(), dest2.begin());
-    print(dest2);
+    std::copy(dest2.begin(), dest2.end(), std::ostream_iterator<int32_t>(std::cout, ","));
+    std::cout << std::endl;
+
     return 0;
 }
 ```
