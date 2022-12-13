@@ -61,6 +61,10 @@ date: 2018-02-05 09:25:59
 * Celebrity
     * `Edgar F. Codd/Ted Codd`：关系型数据库之父
     * `Andy Pavlo`：顶尖的数据库领域专家，执教CMU数据库系统相关课程
+* Top conferences
+    * [ACM SIGMOD, Special Interest Group On Management Of Data](https://sigmod.org/)
+    * [VLDB, Very Large Data Base](https://vldb.org/)
+    * [ICDE, International Conference On Data Engineering](https://www.icde.org/)
 * [Compare Projects](https://ossinsight.io/compare/)
 * [DB Fiddle](https://www.db-fiddle.com/)
 * [Database of Databases](https://dbdb.io/)
