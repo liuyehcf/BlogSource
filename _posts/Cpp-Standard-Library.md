@@ -484,7 +484,7 @@ int main() {
     }
     ```
 
-1. `std::itoa`
+1. `std::iota`：给指定区间以递增的方式赋值
     ```cpp
     #include <algorithm>
     #include <iostream>
