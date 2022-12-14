@@ -310,6 +310,38 @@ auto now_nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(
 1. `std::function`：其功能类似于函数指针，在需要函数指针的地方，可以传入`std::function`类型的对象（不是指针）
 1. `std::bind`
 1. `std::mem_fn`
+1. `std::reference_wrapper`
+    ```cpp
+    #include <algorithm>
+    #include <functional>
+    #include <iostream>
+    #include <iterator>
+    #include <list>
+    #include <numeric>
+    #include <random>
+    #include <vector>
+
+    void print(auto const rem, const auto& c) {
+        std::cout << rem;
+        std::ranges::copy(c, std::ostream_iterator<int32_t>(std::cout, ","));
+        std::cout << std::endl;
+    }
+
+    int main() {
+        std::list<int> l(10);
+        std::iota(l.begin(), l.end(), -4);
+        // can't use shuffle on a list (requires random access), but can use it on a vector
+        std::vector<std::reference_wrapper<int>> v(l.begin(), l.end());
+        std::ranges::shuffle(v, std::mt19937{std::random_device{}()});
+        print("Contents of the list: ", l);
+        print("Contents of the list, as seen through a shuffled vector: ", v);
+        std::cout << "Doubling the values in the initial list...\n";
+        std::ranges::for_each(l, [](int& i) { i *= 2; });
+        print("Contents of the list, as seen through a shuffled vector: ", v);
+
+        return 0;
+    }
+    ```
 
 ## 5.1 参考
 
@@ -452,6 +484,24 @@ int main() {
     }
     ```
 
+1. `std::itoa`
+    ```cpp
+    #include <algorithm>
+    #include <iostream>
+    #include <numeric>
+    #include <ranges>
+    #include <vector>
+
+    int main() {
+        std::vector<int> nums(10);
+        std::iota(nums.begin(), nums.end(), 1);
+        std::ranges::copy(nums, std::ostream_iterator<int32_t>(std::cout, ","));
+        std::cout << std::endl;
+
+        return 0;
+    }
+    ```
+
 # 12 optional
 
 1. `std::optional`
@@ -470,15 +520,20 @@ int main() {
 
 #include <algorithm>
 #include <iostream>
+#include <iterator>
 #include <ranges>
 #include <vector>
 
 int main() {
     std::vector<int32_t> nums{1, 3, 5, 7, 9};
 
-    std::for_each(nums.begin(), nums.end(), [](int32_t num) { std::cout << num << ", "; });
+    std::for_each(nums.begin(), nums.end(), [](int32_t num) { std::cout << num << ","; });
     std::cout << std::endl;
-    std::ranges::for_each(nums, [](int32_t num) { std::cout << num << ", "; });
+
+    std::ranges::for_each(nums, [](int32_t num) { std::cout << num << ","; });
+    std::cout << std::endl;
+
+    std::ranges::copy(nums, std::ostream_iterator<int32_t>(std::cout, ","));
 
     return 0;
 }
