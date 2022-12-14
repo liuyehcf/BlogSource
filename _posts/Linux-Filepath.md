@@ -26,6 +26,7 @@ categories:
 1. `/etc/issue`：ubuntu发行版信息
 1. `/etc/motd`：登录成功后显示的欢迎界面
 1. `/etc/update-motd.d`：ubuntu下，与登录成功后显示的欢迎界面相关的一些脚本
+1. `/etc/localtime`：时区配置文件的软连接，实际生效的时区配置
 1. `/etc/ssl/certs`：根证书存放位置
 1. `/etc/security/limits.conf`：`ulimit -a`对应的配置文件
     * `echo "* soft core unlimited" >> /etc/security/limits.conf`

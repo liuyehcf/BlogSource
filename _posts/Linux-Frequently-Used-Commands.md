@@ -224,6 +224,21 @@ usermod -d <new_dir> <username>
 hostnamectl set-hostname <name>
 ```
 
+## 1.19 date
+
+**示例：**
+
+* `date`：查看当前时间
+* `date "+%Y-%m-%d %H:%M:%S"`：指定时间格式
+* `date -s '2014-12-25 12:34:56'`：修改系统时间
+
+## 1.20 ntpdate
+
+**示例：**
+
+* `ntpdate ntp.aliyun.com`
+* `ntpdate ntp.cloud.aliyuncs.com`：阿里云ecs同步时间需要指定内网的ntp服务
+
 # 2 常用处理工具
 
 ## 2.1 ls
