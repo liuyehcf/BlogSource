@@ -1695,11 +1695,77 @@ int main() {
 }
 ```
 
-## 4.12 [CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern)
+## 4.12 模板的定义与实现分离
+
+我们可以将模板的声明和定义分别放在两个文件中，这样可以使得代码结构更加清晰。例如，假设有两个文件`test.h`和`test.tpp`，其内容分别如下：
+
+* `test.h`
+    ```cpp
+    #pragma once
+
+    template <typename T>
+    class Demo {
+    public:
+        void func();
+    };
+
+    #include "test.tpp"
+    ```
+
+* `test.tpp`
+    ```cpp
+    template <typename T>
+    void Demo<T>::func() {
+        // do something
+    }
+    ```
+
+可以看到，`test.h`在追后引用了`test.tpp`，这样其他模块只需要引用`test.h`即可，整个模板的定义也可以通过`test.h`一个文件清晰地看到。但是，这里存在一个问题，如果我们用`vscode`或者`vim`的`lsp`插件来阅读编辑`test.tpp`文件时，会发现存在语法问题，因为`test.tpp`本身并不完整，无法进行编译
+
+参考[[BugFix] Fix the problem of null aware anti join](https://github.com/StarRocks/starrocks/pull/15330)我们可以通过一个小技巧来解决这个问题，我们将`test.h`和`test.tpp`进行如下修改：
+
+* `test.h`
+    ```cpp
+    #pragma once
+
+    #define TEST_H
+
+    template <typename T>
+    class Demo {
+    public:
+        void func();
+    };
+
+    #ifndef TEST_TPP
+    #include "test.tpp"
+    #endif
+
+    #undef TEST_H
+    ```
+
+* `test.tpp`
+    ```cpp
+    #define TEST_TPP
+
+    #ifndef TEST_H
+    #include "test.h"
+    #endif
+
+    template <typename T>
+    void Demo<T>::func() {
+        // do something
+    }
+
+    #undef TEST_TPP
+    ```
+
+这样，在独立编辑这两个文件时，`lsp`都可以正常工作，也不会造成循环引用的问题
+
+## 4.13 [CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern)
 
 `CRTP`的全称是`Curious Recurring Template Pattern`
 
-### 4.12.1 Static Polymorphism
+### 4.13.1 Static Polymorphism
 
 ```cpp
 #include <iostream>
@@ -1723,7 +1789,7 @@ int main() {
 }
 ```
 
-### 4.12.2 Object Counter
+### 4.13.2 Object Counter
 
 ```cpp
 #include <iostream>
@@ -1768,7 +1834,7 @@ int main() {
 }
 ```
 
-### 4.12.3 Polymorphic Chaining
+### 4.13.3 Polymorphic Chaining
 
 ```cpp
 #include <iostream>
@@ -1845,7 +1911,7 @@ int main() {
 * `PlainCoutPrinter().print("Hello ")`的返回类型是`PlainPrinter`，丢失了具体的`PlainCoutPrinter`类型信息，于是再调用`SetConsoleColor`就报错了
 * 而使用`CRTP`就可以避免这个问题，基类的方法返回类型永远是具体的子类
 
-### 4.12.4 Polymorphic Copy Construction
+### 4.13.4 Polymorphic Copy Construction
 
 ```cpp
 #include <memory>
