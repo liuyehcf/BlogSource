@@ -3168,6 +3168,9 @@ set encoding=utf-8
 " 设置头文件搜索路径，可以在项目的 .workspace.vim 文件中通过 set path+= 追加搜索路径
 set path=.,/usr/include,/usr/local/include,/usr/local/lib/gcc/x86_64-pc-linux-gnu/10.3.0/include,/usr/local/include/c++/10.3.0
 
+" 将 .tpp 后缀的文件视为 cpp 文件，这样，针对 cpp 的插件就可以对 .tpp 文件生效了
+autocmd BufRead,BufNewFile *.tpp set filetype=cpp
+
 " 加载额外的配置
 if filereadable(expand("~/.vimrc_extra"))
     source ~/.vimrc_extra
