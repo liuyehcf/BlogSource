@@ -1761,6 +1761,8 @@ int main() {
 
 这样，在独立编辑这两个文件时，`lsp`都可以正常工作，也不会造成循环引用的问题
 
+`clangd`在没有`compile_commands.json`文件时，处理单独的`tpp`文件会报错，错误信息是：`Unable to handle compilation, expected exactly one compiler job in ''`
+
 ## 4.13 [CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern)
 
 `CRTP`的全称是`Curious Recurring Template Pattern`

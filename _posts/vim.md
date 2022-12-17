@@ -1060,6 +1060,11 @@ endif
     * 首先会在当前目录下查找`compile_flags.txt`
     * 若找不到，则递归在上级目录中查找，直至找到`compile_flags.txt`或者到根目录
 
+`clangd`的一些选项：
+
+* `--query-driver=`：设置一个或多个`glob`，会从匹配这些`glob`的路径中搜索头文件
+    * `--query-driver=/usr/bin/**/clang-*,/path/to/repo/**/g++-*`
+
 ### 3.2.10 语义索引-ccls
 
 **`ccls`是`LSP, Language Server Protocol`的一种实现，主要用于`C/C++/Objective-C`等语言**
