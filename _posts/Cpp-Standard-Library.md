@@ -305,7 +305,9 @@ auto now_nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(
         std::chrono::steady_clock::now().time_since_epoch()).count();
 ```
 
-# 5 functional
+# 5 filesystem
+
+# 6 functional
 
 1. `std::function`：其功能类似于函数指针，在需要函数指针的地方，可以传入`std::function`类型的对象（不是指针）
 1. `std::bind`
@@ -343,16 +345,16 @@ auto now_nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(
     }
     ```
 
-## 5.1 参考
+## 6.1 参考
 
 * [C++11 中的std::function和std::bind](https://www.jianshu.com/p/f191e88dcc80)
 
-# 6 future
+# 7 future
 
 1. `std::promise`
 1. `std::future`
 
-# 7 iostream
+# 8 iostream
 
 1. `std::cout`
 1. `std::cin`
@@ -360,14 +362,14 @@ auto now_nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(
 1. `std::boolalpha`
 1. `std::noboolalpha`
 
-# 8 limits
+# 9 limits
 
 1. `std::numeric_limits`
     * `std::numeric_limits<int32_t>::max()`
 
-# 9 memory
+# 10 memory
 
-## 9.1 std::shared_ptr
+## 10.1 std::shared_ptr
 
 **类型转换**
 
@@ -397,7 +399,7 @@ void func(std::shared_ptr<Widget> ptr);
 
 这样的话，外部传过来值的时候，可以选择`move`或者赋值。函数内部直接把这个对象通过`move`的方式保存起来
 
-## 9.2 std::enable_shared_from_this
+## 10.2 std::enable_shared_from_this
 
 **`std::enable_shared_from_this`能让一个由`std::shared_ptr`管理的对象，安全地生成其他额外的`std::shared_ptr`实例，原实例和新生成的示例共享所有权**
 
@@ -421,13 +423,13 @@ int main() {
 }
 ```
 
-## 9.3 std::unique_ptr
+## 10.3 std::unique_ptr
 
-## 9.4 参考
+## 10.4 参考
 
 * [C++ 智能指针的正确使用方式](https://www.cyhone.com/articles/right-way-to-use-cpp-smart-pointer/)
 
-# 10 mutex
+# 11 mutex
 
 1. `std::mutex`
 1. `std::lock_guard`
@@ -461,11 +463,11 @@ int main() {
     // wake up here, and still under lock
     ```
 
-## 10.1 参考
+## 11.1 参考
 
 * [Do I have to acquire lock before calling condition_variable.notify_one()?](https://stackoverflow.com/questions/17101922/do-i-have-to-acquire-lock-before-calling-condition-variable-notify-one)
 
-# 11 numeric
+# 12 numeric
 
 1. `std::accumulate`
     ```cpp
@@ -502,16 +504,16 @@ int main() {
     }
     ```
 
-# 12 optional
+# 13 optional
 
 1. `std::optional`
 
-# 13 random
+# 14 random
 
 1. `std::default_random_engine`
 1. `std::uniform_int_distribution`：左闭右闭区间
 
-# 14 ranges
+# 15 ranges
 
 `ranges`可以看做是对于`algorithm`中算法的封装，可以省去`begin()`、`end()`等调用，如下
 
@@ -539,18 +541,21 @@ int main() {
 }
 ```
 
-# 15 stdexcept
+# 16 stdexcept
 
 1. `std::logic_error`
 
-# 16 string
+# 17 string
 
 1. `std::string`
 1. `std::to_string`
 
-# 17 thread
+# 18 thread
 
-**如何设置或修改线程名：**
+1. `std::thread::hardware_concurrency`
+1. `std::this_thread`
+
+## 18.1 如何设置或修改线程名
 
 1. `pthread_setname_np/pthread_getname_np`，需要引入头文件`<pthread.h>`，`np`表示`non-portable`，即平台相关
 1. `prctl(PR_GET_NAME, name)/prctl(PR_SET_NAME, name)`，需要引入头文件`<sys/prctl.h>`
@@ -617,18 +622,18 @@ int main() {
 }
 ```
 
-# 18 type_traits
+# 19 type_traits
 
 [Standard library header <type_traits>](https://en.cppreference.com/w/cpp/header/type_traits)
 
-## 18.1 Helper Class
+## 19.1 Helper Class
 
 1. `std::integral_constant`
 1. `std::bool_constant`
 1. `std::true_type`
 1. `std::false_type`
 
-## 18.2 Primary type categories
+## 19.2 Primary type categories
 
 1. `std::is_void`
 1. `std::is_null_pointer`
@@ -637,7 +642,7 @@ int main() {
 1. `std::is_pointer`
 1. ...
 
-## 18.3 Composite type categories
+## 19.3 Composite type categories
 
 1. `std::is_fundamental`
 1. `std::is_arithmetic`
@@ -646,7 +651,7 @@ int main() {
 1. `std::is_member_pointer`
 1. ...
 
-## 18.4 Type properties
+## 19.4 Type properties
 
 1. `std::is_const`
 1. `std::is_volatile`
@@ -655,7 +660,7 @@ int main() {
 1. `std::is_abstract`
 1. ...
 
-## 18.5 Supported operations
+## 19.5 Supported operations
 
 1. `std::is_constructible`
 1. `std::is_copy_constructible`
@@ -664,19 +669,19 @@ int main() {
 1. `std::is_destructible`
 1. ...
 
-## 18.6 Property queries
+## 19.6 Property queries
 
 1. `std::alignment_of`
 1. `std::rank`
 1. `std::extent`
 
-## 18.7 Type relationships
+## 19.7 Type relationships
 
 1. `std::is_same`
 1. `std::is_base_of`
 1. ...
 
-## 18.8 Const-volatility specifiers
+## 19.8 Const-volatility specifiers
 
 1. `std::remove_cv`
 1. `std::remove_const`
@@ -685,28 +690,28 @@ int main() {
 1. `std::add_const`
 1. `std::add_volatile`
 
-## 18.9 References
+## 19.9 References
 
 1. `std::remove_reference`
 1. `std::add_lvalue_reference`
 1. `std::add_rvalue_reference`
   
-## 18.10 Pointers
+## 19.10 Pointers
 
 1. `std::remove_pointer`
 1. `std::add_pointer`
   
-## 18.11 Sign modifiers
+## 19.11 Sign modifiers
 
 1. `std::make_signed`
 1. `std::make_unsigned`
 
-## 18.12 Arrays
+## 19.12 Arrays
 
 1. `std::remove_extent`
 1. `std::remove_all_extents`
 
-## 18.13 Miscellaneous transformations
+## 19.13 Miscellaneous transformations
 
 1. `std::enable_if`
 1. `std::conditional`
@@ -715,7 +720,7 @@ int main() {
     * [What is std::decay and when it should be used?](https://stackoverflow.com/questions/25732386/what-is-stddecay-and-when-it-should-be-used)
     * [N2609](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2006/n2069.html)
 
-## 18.14 Alias
+## 19.14 Alias
 
 `using template`，用于简化上述模板。例如`std::enable_if_t`等价于`typename enable_if<b,T>::type`
 
@@ -726,7 +731,7 @@ int main() {
 1. `std::invoke_result_t`
 1. ...
 
-## 18.15 std::move
+## 19.15 std::move
 
 标准库的实现如下：
 
@@ -739,7 +744,7 @@ int main() {
 
 本质上，就是做了一次类型转换，返回的一定是个右值
 
-## 18.16 std::forward
+## 19.16 std::forward
 
 `std::forward`主要用于实现模板的完美转发：因为对于一个变量而言，无论该变量的类型是左值引用还是右值引用，变量本身都是左值，如果直接将变量传递到下一个方法中，那么一定是按照左值来匹配重载函数的，而`std::forward`就是为了解决这个问题。请看下面这个例子：
 
@@ -858,7 +863,7 @@ func(std::forward<int&&>(1)) -> right reference version
     }
 ```
 
-### 18.16.1 forwarding reference
+### 19.16.1 forwarding reference
 
 **当且仅当`T`是函数模板的模板类型形参时，`T&&`才能称为`forwarding reference`，而其他任何形式，都不是`forwarding reference`。例如如下示例代码：**
 
@@ -936,11 +941,11 @@ struct C {
 };
 ```
 
-# 19 utility
+# 20 utility
 
 1. `std::pair`
 
-# 20 Containers
+# 21 Containers
 
 1. `<vector>`
 1. `<array>`
@@ -952,14 +957,14 @@ struct C {
 1. `<set>`
 1. `<unordered_set>`
 
-## 20.1 Tips
+## 21.1 Tips
 
 1. `std::map`或者`std::set`用下标访问后，即便访问前元素不存在，也会插入一个默认值。因此下标访问是非`const`的
 1. 容器在扩容时，调用的是元素的拷贝构造函数
 1. `std::vector<T> v(n)`会生成`n`个对应元素的默认值，而不是起到预留`n`个元素的空间的作用
 1. 不要将`end`方法返回的迭代器传入`erase`方法
 
-# 21 SIMD
+# 22 SIMD
 
 [Header files for x86 SIMD intrinsics](https://stackoverflow.com/questions/11228855/header-files-for-x86-simd-intrinsics)
 
@@ -999,7 +1004,7 @@ struct C {
 * `-mavx512vbmi`
 * ...
 
-# 22 C标准库
+# 23 C标准库
 
 1. `stdio.h`
 1. `stddef.h`
@@ -1011,7 +1016,7 @@ struct C {
     * `std::atol`
     * `std::atoll`
 
-## 22.1 csignal
+## 23.1 csignal
 
 各种信号都定义在`signum.h`这个头文件中
 
@@ -1064,7 +1069,7 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-## 22.2 pthread.h
+## 23.2 pthread.h
 
 下面示例代码用于测试各个CPU的性能
 

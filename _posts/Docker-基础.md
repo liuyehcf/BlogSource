@@ -373,7 +373,11 @@ docker-slim build --http-probe=false centos:7.6.1810
 
 裁剪之后，镜像的体积从`202MB`变为`3.55MB`。但是裁剪之后，大部分的命令都被裁剪了（包括`ls`这种最基础的命令）
 
-## 7.5 异常排查
+## 7.5 如何感知程序是否运行在容器中
+
+一般来说，如果运行环境是容器，那么会存在`/.dockerenv`这个文件
+
+## 7.6 异常排查
 
 在k8s环境中，若容器运行时用的是`docker`，那么该`docker`会依赖`containerd`，当`containerd`不正常的时候，`docker`也就不正常了。恢复`containerd`的办法：将`/var/lib/containerd/io.containerd.metadata.v1.bolt`这个文件删掉
 

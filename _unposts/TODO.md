@@ -92,3 +92,4 @@ categories:
     * 加盐
     * duckdb parallel merge sort
         * https://github.com/duckdb/duckdb/pull/1666
+    * cgroup_v2
