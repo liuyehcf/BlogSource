@@ -1428,6 +1428,45 @@ int main() {
 1. `.`
 1. `->`
 
+形参包折叠的示例：
+
+```cpp
+#include <fstream>
+#include <iostream>
+#include <string>
+
+template <typename... Args>
+void read_contents(const std::string& path, Args&... args) {
+    std::ifstream ifs;
+    ifs.open(path);
+    if (!ifs.good()) {
+        return;
+    }
+
+    (ifs >> ... >> args);
+
+    ifs.close();
+}
+
+int main() {
+    std::ofstream ofs;
+    ofs.open("/tmp/test.txt");
+    ofs << "1 2.3 5";
+    ofs.close();
+
+    int first;
+    double second;
+    int third;
+
+    read_contents("/tmp/test.txt", first, second, third);
+
+    std::cout << first << std::endl;
+    std::cout << second << std::endl;
+    std::cout << third << std::endl;
+    return 0;
+}
+```
+
 ## 4.4 非类型模板参数
 
 我们还可以在模板中定义非类型参数，一个非类型参数表示一个值而非一个类型。当一个模板被实例化时，非类型参数被编译器推断出的值所代替，这些值必须是常量表达式，从而允许编译器在编译时实例化模板。一个非类型参数可以是一个整型（枚举可以理解为整型），或是一个指向对象或函数类型的指针或引用

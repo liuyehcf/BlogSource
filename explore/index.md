@@ -34,23 +34,25 @@ date: 2018-02-05 09:25:59
     * `Bjarne Stroustrup`：C++之父
     * `Walter E. Brown`：2000年开始参与C++标准制定工作，引入了`cbegin/cend`、`common_type`等特性，以及负责`<random>`、`<ratio>`等头文件的开发
 
-# 3 Code Standard
+# 3 Kernel
+
+* [Doc](https://www.kernel.org/doc/Documentation/)
+    * [cgroup-v2](https://www.kernel.org/doc/Documentation/admin-guide/cgroup-v2.rst)
+* [Linux-进程的管理与调度](https://github.com/gatieme/LDD-LinuxDeviceDrivers)
+* [调度系统设计精要](https://draveness.me/system-design-scheduler/)
+
+# 4 Code Standard
 
 * [Google 开源项目风格指南](https://zh-google-styleguide.readthedocs.io/en/latest/google-cpp-styleguide/)
 * [LLVM Coding Standards](https://llvm.org/docs/CodingStandards.html)
 * [The Standard of Code Review](https://google.github.io/eng-practices/review/reviewer/standard.html)
 
-# 4 Performance Analysis
+# 5 Performance Analysis
 
 * [Brendan Gregg's Homepage](https://www.brendangregg.com/) - ★★★★★
 * [Denis Bakhvalov](https://easyperf.net/)
     * 《Performance Analysis and Tuning on Modern CPUs》
 * [Julia Evans](https://jvns.ca/)
-
-# 5 Schedule
-
-* [Linux-进程的管理与调度](https://github.com/gatieme/LDD-LinuxDeviceDrivers)
-* [调度系统设计精要](https://draveness.me/system-design-scheduler/)
 
 # 6 DMBS
 
@@ -100,27 +102,21 @@ date: 2018-02-05 09:25:59
 * [Teradata中QUALIFY函数](https://zhuanlan.zhihu.com/p/53599236)
 * [LSM树详解](https://zhuanlan.zhihu.com/p/181498475)
 
-# 7 Cloud Native
-
-* [CloudNative 架构](http://team.jiunile.com/)
-* [敖小剑的博客](https://skyao.io/)
-* [米开朗基杨](https://fuckcloudnative.io/posts/)
-
-# 8 Tutorial
-
-* [Tutorials for Software Developers and Technopreneurs](http://tutorials.jenkov.com/)
-
-# 9 Uncategorized
+# 7 Uncategorized
 
 * [How to Read a Paper.pdf](/resources/paper/How-to-Read-a-Paper.pdf) - ★★★★★
 * [陈皓-耗子哥](https://coolshell.cn/articles/author/haoel)
 * [美团技术博客](https://tech.meituan.com/)
 * [Richard Stallman-Make作者](https://www.stallman.org/)
 * [BOT Man | John Lee](https://bot-man-jl.github.io/articles/)
+* [CloudNative 架构](http://team.jiunile.com/)
+* [敖小剑的博客](https://skyao.io/)
+* [米开朗基杨](https://fuckcloudnative.io/posts/)
 * `Jeff Dean`：Google Research Scientists and Engineers
 * `Fabrice Bellard`：A legend programmer, author of FFmpeg, QEMU
+* [Tutorials for Software Developers and Technopreneurs](http://tutorials.jenkov.com/)
 
-# 10 Abbreviation
+# 8 Abbreviation
 
 <table>
   <tr> <th width="80px" align="center">缩写</th> <th width="240px" align="center">全称</th> <th width="200px" align="center">其他</th> </tr>
