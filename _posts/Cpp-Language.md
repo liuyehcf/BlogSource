@@ -1482,28 +1482,24 @@ constexpr void constexpr_for(F&& f) {
     }
 }
 
-template <typename... Args>
-bool read_contents(const std::string& path, Args&... args) {
+template <typename... Values>
+bool read_contents(const std::string& path, Values&... values) {
     std::ifstream ifs;
     ifs.open(path);
-    if (!ifs.good()) {
-        return false;
-    }
 
-    auto targs = std::forward_as_tuple(args...);
-    bool ok = true;
-    constexpr_for<0, sizeof...(args), 1>([&ifs, &targs, &ok](auto i) {
+    auto tvalues = std::forward_as_tuple(values...);
+    bool ok = ifs.good();
+    constexpr_for<0, sizeof...(values), 1>([&ifs, &tvalues, &ok](auto i) {
+        ok &= ifs.good();
         if (!ok) {
             return;
         }
-        if (!ifs.good()) {
-            ok = false;
-            return;
-        }
-        ifs >> std::get<i>(targs);
+        ifs >> std::get<i>(tvalues);
     });
 
-    ifs.close();
+    if (ifs.is_open()) {
+        ifs.close();
+    }
     return ok;
 }
 
@@ -1521,7 +1517,15 @@ int main() {
     std::cout << "is_good: " << std::boolalpha << read_contents("/tmp/test.txt", first, second, third)
               << ", first: " << first << ", second: " << second << ", third: " << third << std::endl;
 
+    first = second = third = forth = -1;
+
     std::cout << "is_good: " << std::boolalpha << read_contents("/tmp/test.txt", first, second, third, forth)
+              << ", first: " << first << ", second: " << second << ", third: " << third << ", forth=" << forth
+              << std::endl;
+
+    first = second = third = forth = -1;
+
+    std::cout << "is_good: " << std::boolalpha << read_contents("/tmp/test_wrong.txt", first, second, third, forth)
               << ", first: " << first << ", second: " << second << ", third: " << third << ", forth=" << forth
               << std::endl;
     return 0;
