@@ -1439,12 +1439,7 @@ template <typename... Args>
 void read_contents(const std::string& path, Args&... args) {
     std::ifstream ifs;
     ifs.open(path);
-    if (!ifs.good()) {
-        return;
-    }
-
     (ifs >> ... >> args);
-
     ifs.close();
 }
 
@@ -1467,7 +1462,73 @@ int main() {
 }
 ```
 
-## 4.4 非类型模板参数
+## 4.4 如何遍历形参包
+
+有时候，无法通过折叠表达式处理一些复杂的场景，我们希望能通过循环来挨个处理形参，示例如下：
+
+* 由于需要在函数内用迭代变量进行形参包的提取，因此这个变量必须是编译期的常量，这里用`std::integral_constant`进行转换，这样在函数内，就可以用`std::get<i>`来提取第`i`个参数了
+
+```cpp
+#include <fstream>
+#include <iostream>
+#include <tuple>
+#include <type_traits>
+
+template <auto Start, auto End, auto Inc, typename F>
+constexpr void constexpr_for(F&& f) {
+    if constexpr (Start < End) {
+        f(std::integral_constant<decltype(Start), Start>());
+        constexpr_for<Start + Inc, End, Inc>(f);
+    }
+}
+
+template <typename... Args>
+bool read_contents(const std::string& path, Args&... args) {
+    std::ifstream ifs;
+    ifs.open(path);
+    if (!ifs.good()) {
+        return false;
+    }
+
+    auto targs = std::forward_as_tuple(args...);
+    bool ok = true;
+    constexpr_for<0, sizeof...(args), 1>([&ifs, &targs, &ok](auto i) {
+        if (!ok) {
+            return;
+        }
+        if (!ifs.good()) {
+            ok = false;
+            return;
+        }
+        ifs >> std::get<i>(targs);
+    });
+
+    ifs.close();
+    return ok;
+}
+
+int main() {
+    std::ofstream ofs;
+    ofs.open("/tmp/test.txt");
+    ofs << "1 2.3 5";
+    ofs.close();
+
+    int first = -1;
+    double second = -1;
+    int third = -1;
+    double forth = -1;
+
+    std::cout << "is_good: " << std::boolalpha << read_contents("/tmp/test.txt", first, second, third)
+              << ", first: " << first << ", second: " << second << ", third: " << third << std::endl;
+
+    std::cout << "is_good: " << std::boolalpha << read_contents("/tmp/test.txt", first, second, third, forth)
+              << ", first: " << first << ", second: " << second << ", third: " << third << ", forth=" << forth
+              << std::endl;
+    return 0;
+}
+```
+
+## 4.5 非类型模板参数
 
 我们还可以在模板中定义非类型参数，一个非类型参数表示一个值而非一个类型。当一个模板被实例化时，非类型参数被编译器推断出的值所代替，这些值必须是常量表达式，从而允许编译器在编译时实例化模板。一个非类型参数可以是一个整型（枚举可以理解为整型），或是一个指向对象或函数类型的指针或引用
 
@@ -1503,7 +1564,7 @@ int main() {
 }
 ```
 
-## 4.5 模板形参无法推断
+## 4.6 模板形参无法推断
 
 **通常，在`::`左边的模板形参是无法进行推断的（这里的`::`特指用于连接两个类型），例如下面这个例子**
 
@@ -1528,7 +1589,7 @@ int main() {
 }
 ```
 
-## 4.6 typename消除歧义
+## 4.7 typename消除歧义
 
 **什么情况下会有歧义？。例如`foo* ptr;`**
 
@@ -1570,7 +1631,7 @@ typename T::value_type sum(const T &container) {
 }
 ```
 
-## 4.7 template消除歧义
+## 4.8 template消除歧义
 
 **什么情况下会有歧义？。例如`container.emplace<int>(1);`**
 
@@ -1643,7 +1704,7 @@ void bar() {
 }
 ```
 
-## 4.8 template参数列表中定义类型别名
+## 4.9 template参数列表中定义类型别名
 
 语法上，我们是无法在template的参数列表中定义别名的（无法使用`using`）。但是我们可以通过定义有默认值的类型形参来实现类似类型别名的功能，如下：
 
@@ -1655,7 +1716,7 @@ ValueType& get(HashMap& map, const KeyType& key) {
 }
 ```
 
-## 4.9 非模板子类访问模板父类中的成员
+## 4.10 非模板子类访问模板父类中的成员
 
 * 方式1：`MemberName`
 * 方式2：`this->MemberName`
@@ -1679,7 +1740,7 @@ int main() {
 }
 ```
 
-## 4.10 模板子类访问模板父类中的成员
+## 4.11 模板子类访问模板父类中的成员
 
 * 访问方式1：`ParentClass<Template Args...>::MemberName`
 * 访问方式2：`this->MemberName`
@@ -1704,7 +1765,7 @@ int main() {
 }
 ```
 
-## 4.11 模板作为模板形参
+## 4.12 模板作为模板形参
 
 [What are some uses of template template parameters?](https://stackoverflow.com/questions/213761/what-are-some-uses-of-template-template-parameters)
 
@@ -1734,7 +1795,7 @@ int main() {
 }
 ```
 
-## 4.12 模板的定义与实现分离
+## 4.13 模板的定义与实现分离
 
 我们可以将模板的声明和定义分别放在两个文件中，这样可以使得代码结构更加清晰。例如，假设有两个文件`test.h`和`test.tpp`，其内容分别如下：
 
@@ -1802,11 +1863,11 @@ int main() {
 
 `clangd`在没有`compile_commands.json`文件时，处理单独的`tpp`文件会报错，错误信息是：`Unable to handle compilation, expected exactly one compiler job in ''`
 
-## 4.13 [CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern)
+## 4.14 [CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern)
 
 `CRTP`的全称是`Curious Recurring Template Pattern`
 
-### 4.13.1 Static Polymorphism
+### 4.14.1 Static Polymorphism
 
 ```cpp
 #include <iostream>
@@ -1830,7 +1891,7 @@ int main() {
 }
 ```
 
-### 4.13.2 Object Counter
+### 4.14.2 Object Counter
 
 ```cpp
 #include <iostream>
@@ -1875,7 +1936,7 @@ int main() {
 }
 ```
 
-### 4.13.3 Polymorphic Chaining
+### 4.14.3 Polymorphic Chaining
 
 ```cpp
 #include <iostream>
@@ -1952,7 +2013,7 @@ int main() {
 * `PlainCoutPrinter().print("Hello ")`的返回类型是`PlainPrinter`，丢失了具体的`PlainCoutPrinter`类型信息，于是再调用`SetConsoleColor`就报错了
 * 而使用`CRTP`就可以避免这个问题，基类的方法返回类型永远是具体的子类
 
-### 4.13.4 Polymorphic Copy Construction
+### 4.14.4 Polymorphic Copy Construction
 
 ```cpp
 #include <memory>
