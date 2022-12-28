@@ -307,6 +307,14 @@ auto now_nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(
 
 # 5 filesystem
 
+1. `std::filesystem::copy`
+1. `std::filesystem::copy_file`
+1. `std::filesystem::exist`
+1. `std::filesystem::is_directory`
+1. `std::filesystem::is_regular_file`
+1. `std::filesystem::remove`
+1. `std::filesystem::rename`
+
 # 6 fstream
 
 1. `std::ifstream`
@@ -1027,13 +1035,18 @@ struct C {
 
 # 24 C标准库
 
-1. `stdio.h`
-1. `stddef.h`
-1. `stdint.h`
-1. `errno.h`：系统调用以及一些库函数的错误码都会写入到`errno`这个全局变量中
-1. `stdlib.h`
-    * `malloc`
+由于`C++`是`C`的超集，`C`的标准库也被添加到`std`命名空间中了，但是头文件有所区别：`xxx.h -> cxxx`。其中，`xxx.h`是原始的`C`标准库头文件，其符号不在任何命名空间中；`cxxx`是对应的`C++`版本的头文件，其符号在`std`命名空间中
+
+1. `cstddef`
+    * `size_t`
+1. `cstdint`
+    * `int8_t/int16_t/int32_t/int64_t`
+1. `cerrno`：系统调用以及一些库函数的错误码都会写入到`errno`这个全局变量中
+1. `cstdio`
+    * `std::tmpnam`
+    * `std::printf`
 1. `cstdlib`
+    * `std::malloc`
     * `std::atoi`
     * `std::atol`
     * `std::atoll`
