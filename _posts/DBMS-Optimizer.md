@@ -476,7 +476,11 @@ FROM Magic_2 Q10, Emp Q3
 WHERE Q10.building = Q3.building;
 ```
 
-## 2.5 参考
+## 2.5 Subquery Elimination by Window Function
+
+[[Enhancement] Subquery elimination by window function](https://github.com/StarRocks/starrocks/issues/11694)
+
+## 2.6 参考
 
 * [子查询漫谈](https://mp.weixin.qq.com/s/5jRt9R1G7lPMC1nB3ekw7A)
 
