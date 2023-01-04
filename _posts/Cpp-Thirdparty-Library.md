@@ -246,7 +246,7 @@ int main(int argc, char* argv[]) {
 
 **编译：**
 
-* `glog`需要使用静态库版本，因为动态库版本选择隐藏`DumpStackTraceToString`这个符号
+* `glog`需要使用静态库版本，因为动态库版本选择隐藏`DumpStackTraceToString`这个符号（`readelf -s --wide /usr/lib64/libglog.so.0.7.0 | rg DumpStackTraceToString`）
 
 ```sh
 gcc -o main main.cpp -Wl,-wrap=__cxa_throw -lstdc++ -std=gnu++17 -Wl,-Bstatic -lglog -lgflags -Wl,-Bdynamic -lunwind -lpthread
