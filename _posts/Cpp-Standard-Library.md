@@ -651,18 +651,39 @@ int main() {
 }
 ```
 
-# 20 type_traits
+# 20 tuple
+
+1. `std::tuple`
+1. `std::apply`：触发方法调用，其中，参数被分装在一个`tuple`中
+
+```cpp
+#include <iostream>
+#include <tuple>
+#include <utility>
+
+int add(int a, int b) {
+    return a + b;
+}
+
+int main() {
+    std::cout << std::apply(add, std::make_tuple(1, 2)) << std::endl;
+    std::cout << std::apply(add, std::make_pair(1, 2)) << std::endl;
+    return 0;
+}
+```
+
+# 21 type_traits
 
 [Standard library header <type_traits>](https://en.cppreference.com/w/cpp/header/type_traits)
 
-## 20.1 Helper Class
+## 21.1 Helper Class
 
 1. `std::integral_constant`
 1. `std::bool_constant`
 1. `std::true_type`
 1. `std::false_type`
 
-## 20.2 Primary type categories
+## 21.2 Primary type categories
 
 1. `std::is_void`
 1. `std::is_null_pointer`
@@ -671,7 +692,7 @@ int main() {
 1. `std::is_pointer`
 1. ...
 
-## 20.3 Composite type categories
+## 21.3 Composite type categories
 
 1. `std::is_fundamental`
 1. `std::is_arithmetic`
@@ -680,7 +701,7 @@ int main() {
 1. `std::is_member_pointer`
 1. ...
 
-## 20.4 Type properties
+## 21.4 Type properties
 
 1. `std::is_const`
 1. `std::is_volatile`
@@ -689,7 +710,7 @@ int main() {
 1. `std::is_abstract`
 1. ...
 
-## 20.5 Supported operations
+## 21.5 Supported operations
 
 1. `std::is_constructible`
 1. `std::is_copy_constructible`
@@ -698,19 +719,19 @@ int main() {
 1. `std::is_destructible`
 1. ...
 
-## 20.6 Property queries
+## 21.6 Property queries
 
 1. `std::alignment_of`
 1. `std::rank`
 1. `std::extent`
 
-## 20.7 Type relationships
+## 21.7 Type relationships
 
 1. `std::is_same`
 1. `std::is_base_of`
 1. ...
 
-## 20.8 Const-volatility specifiers
+## 21.8 Const-volatility specifiers
 
 1. `std::remove_cv`
 1. `std::remove_const`
@@ -719,28 +740,28 @@ int main() {
 1. `std::add_const`
 1. `std::add_volatile`
 
-## 20.9 References
+## 21.9 References
 
 1. `std::remove_reference`
 1. `std::add_lvalue_reference`
 1. `std::add_rvalue_reference`
   
-## 20.10 Pointers
+## 21.10 Pointers
 
 1. `std::remove_pointer`
 1. `std::add_pointer`
   
-## 20.11 Sign modifiers
+## 21.11 Sign modifiers
 
 1. `std::make_signed`
 1. `std::make_unsigned`
 
-## 20.12 Arrays
+## 21.12 Arrays
 
 1. `std::remove_extent`
 1. `std::remove_all_extents`
 
-## 20.13 Miscellaneous transformations
+## 21.13 Miscellaneous transformations
 
 1. `std::enable_if`
 1. `std::conditional`
@@ -749,7 +770,7 @@ int main() {
     * [What is std::decay and when it should be used?](https://stackoverflow.com/questions/25732386/what-is-stddecay-and-when-it-should-be-used)
     * [N2609](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2006/n2069.html)
 
-## 20.14 Alias
+## 21.14 Alias
 
 `using template`，用于简化上述模板。例如`std::enable_if_t`等价于`typename enable_if<b,T>::type`
 
@@ -760,7 +781,7 @@ int main() {
 1. `std::invoke_result_t`
 1. ...
 
-## 20.15 std::move
+## 21.15 std::move
 
 标准库的实现如下：
 
@@ -773,7 +794,7 @@ int main() {
 
 本质上，就是做了一次类型转换，返回的一定是个右值
 
-## 20.16 std::forward
+## 21.16 std::forward
 
 `std::forward`主要用于实现模板的完美转发：因为对于一个变量而言，无论该变量的类型是左值引用还是右值引用，变量本身都是左值，如果直接将变量传递到下一个方法中，那么一定是按照左值来匹配重载函数的，而`std::forward`就是为了解决这个问题。请看下面这个例子：
 
@@ -892,7 +913,7 @@ func(std::forward<int&&>(1)) -> right reference version
     }
 ```
 
-### 20.16.1 forwarding reference
+### 21.16.1 forwarding reference
 
 **当且仅当`T`是函数模板的模板类型形参时，`T&&`才能称为`forwarding reference`，而其他任何形式，都不是`forwarding reference`。例如如下示例代码：**
 
@@ -970,11 +991,46 @@ struct C {
 };
 ```
 
-# 21 utility
+# 22 utility
 
-1. `std::pair`
+1. `std::pair`：本质上，它是`std::tuple`的一个特例
 
-# 22 Containers
+# 23 variant
+
+1. `std::visit`
+1. `std::variant`：类型安全的union。只允许以正确的类型进行访问
+    * `std::get<{type}>`
+    * `std::get<{index}>`
+    * 结合`std::visit`实现静态分派的原理
+
+```cpp
+#include <iostream>
+#include <type_traits>
+#include <variant>
+
+void visit(std::variant<int, double>& v) {
+    auto visitor = [](auto& item) {
+        using type = std::remove_reference_t<decltype(item)>;
+        if constexpr (std::is_integral_v<type>) {
+            std::cout << "is integral" << std::endl;
+        } else if constexpr (std::is_floating_point_v<type>) {
+            std::cout << "is floating_point" << std::endl;
+        }
+    };
+    std::visit(visitor, v);
+}
+
+int main() {
+    std::variant<int, double> v;
+    v = 1;
+    visit(v);
+    v = 1.2;
+    visit(v);
+    return 0;
+}
+```
+
+# 24 Containers
 
 1. `<vector>`
 1. `<array>`
@@ -986,14 +1042,14 @@ struct C {
 1. `<set>`
 1. `<unordered_set>`
 
-## 22.1 Tips
+## 24.1 Tips
 
 1. `std::map`或者`std::set`用下标访问后，即便访问前元素不存在，也会插入一个默认值。因此下标访问是非`const`的
 1. 容器在扩容时，调用的是元素的拷贝构造函数
 1. `std::vector<T> v(n)`会生成`n`个对应元素的默认值，而不是起到预留`n`个元素的空间的作用
 1. 不要将`end`方法返回的迭代器传入`erase`方法
 
-# 23 SIMD
+# 25 SIMD
 
 [Header files for x86 SIMD intrinsics](https://stackoverflow.com/questions/11228855/header-files-for-x86-simd-intrinsics)
 
@@ -1033,7 +1089,7 @@ struct C {
 * `-mavx512vbmi`
 * ...
 
-# 24 C标准库
+# 26 C标准库
 
 由于`C++`是`C`的超集，`C`的标准库也被添加到`std`命名空间中了，但是头文件有所区别：`xxx.h -> cxxx`。其中，`xxx.h`是原始的`C`标准库头文件，其符号不在任何命名空间中；`cxxx`是对应的`C++`版本的头文件，其符号在`std`命名空间中
 
@@ -1054,7 +1110,7 @@ struct C {
     * `std::isblank`：仅对空格和水平制表符返回 true
     * `std::isspace`：空格、表单换行符、换行符、回车符、水平制表符和垂直制表符都返回true
 
-## 24.1 csignal
+## 26.1 csignal
 
 各种信号都定义在`signum.h`这个头文件中
 
@@ -1107,7 +1163,7 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-## 24.2 pthread.h
+## 26.2 pthread.h
 
 下面示例代码用于测试各个CPU的性能
 
