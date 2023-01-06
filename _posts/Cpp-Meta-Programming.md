@@ -1010,8 +1010,7 @@ struct PrependTo;
  * 定义了如何实现 PrependTo
  */
 template <int FIRST_VALUE, int... VALUES>
-struct PrependTo<Array<VALUES...>, FIRST_VALUE>
-    : Array<FIRST_VALUE, VALUES...> {};
+struct PrependTo<Array<VALUES...>, FIRST_VALUE> : Array<FIRST_VALUE, VALUES...> {};
 
 /*==============================================================*/
 
@@ -1024,8 +1023,7 @@ struct AppendValueTo;
  * 定义了如何实现 AppendValueTo
  */
 template <int LAST_VALUE, int... VALUES>
-struct AppendValueTo<Array<VALUES...>, LAST_VALUE>
-    : Array<VALUES..., LAST_VALUE> {};
+struct AppendValueTo<Array<VALUES...>, LAST_VALUE> : Array<VALUES..., LAST_VALUE> {};
 
 /*==============================================================*/
 
@@ -1040,8 +1038,7 @@ struct AppendArrayTo;
  */
 template <typename TARGET_ARRAY, int FIRST_VALUE, int... VALUES>
 struct AppendArrayTo<TARGET_ARRAY, Array<FIRST_VALUE, VALUES...>>
-    : AppendArrayTo<typename AppendValueTo<TARGET_ARRAY, FIRST_VALUE>::type,
-                    typename Array<VALUES...>::type> {};
+        : AppendArrayTo<typename AppendValueTo<TARGET_ARRAY, FIRST_VALUE>::type, typename Array<VALUES...>::type> {};
 /**
  * 递归终止状态
  */
@@ -1062,40 +1059,34 @@ struct LessEqualFilterAdviser;
  */
 template <int TARGET_VALUE, int FIRST_VALUE, int... VALUES>
 struct LessEqualFilterAdviser<Array<FIRST_VALUE, VALUES...>, TARGET_VALUE, true>
-    : PrependTo<typename LessEqualFilterAdviser<
-                    typename Array<VALUES...>::type, TARGET_VALUE,
-                    (FirstOf<typename Array<VALUES...>::type>::value <=
-                     TARGET_VALUE)>::type,
-                FIRST_VALUE> {};
+        : PrependTo<typename LessEqualFilterAdviser<typename Array<VALUES...>::type, TARGET_VALUE,
+                                                    (FirstOf<typename Array<VALUES...>::type>::value <=
+                                                     TARGET_VALUE)>::type,
+                    FIRST_VALUE> {};
 /**
  * 定义了当 CONDITION = false 时，如何实现 LessEqualFilterAdviser
  * 实现方式：模板递归
  */
 template <int TARGET_VALUE, int FIRST_VALUE, int... VALUES>
-struct LessEqualFilterAdviser<Array<FIRST_VALUE, VALUES...>, TARGET_VALUE,
-                              false>
-    : LessEqualFilterAdviser<typename Array<VALUES...>::type, TARGET_VALUE,
-                             (FirstOf<typename Array<VALUES...>::type>::value <=
-                              TARGET_VALUE)> {};
+struct LessEqualFilterAdviser<Array<FIRST_VALUE, VALUES...>, TARGET_VALUE, false>
+        : LessEqualFilterAdviser<typename Array<VALUES...>::type, TARGET_VALUE,
+                                 (FirstOf<typename Array<VALUES...>::type>::value <= TARGET_VALUE)> {};
 /**
  * 当 CONDITION = true 时的递归终止状态
  */
 template <int TARGET_VALUE, int FIRST_VALUE>
-struct LessEqualFilterAdviser<Array<FIRST_VALUE>, TARGET_VALUE, true>
-    : Array<FIRST_VALUE> {};
+struct LessEqualFilterAdviser<Array<FIRST_VALUE>, TARGET_VALUE, true> : Array<FIRST_VALUE> {};
 /**
  * 当 CONDITION = false 时的递归终止状态
  */
 template <int TARGET_VALUE, int FIRST_VALUE>
-struct LessEqualFilterAdviser<Array<FIRST_VALUE>, TARGET_VALUE, false>
-    : EmptyArray {};
+struct LessEqualFilterAdviser<Array<FIRST_VALUE>, TARGET_VALUE, false> : EmptyArray {};
 /**
  * 接口模板，外部不直接使用 LessEqualFilterAdviser，而是使用 LessEqualFilter
  */
 template <typename TARGET_ARRAY, int TARGET_VALUE>
 struct LessEqualFilter
-    : LessEqualFilterAdviser<TARGET_ARRAY, TARGET_VALUE,
-                             (FirstOf<TARGET_ARRAY>::value <= TARGET_VALUE)> {};
+        : LessEqualFilterAdviser<TARGET_ARRAY, TARGET_VALUE, (FirstOf<TARGET_ARRAY>::value <= TARGET_VALUE)> {};
 /**
  * 递归终止状态
  */
@@ -1116,39 +1107,32 @@ struct GreaterThanAdvisor;
  */
 template <int TARGET_VALUE, int FIRST_VALUE, int... VALUES>
 struct GreaterThanAdvisor<Array<FIRST_VALUE, VALUES...>, TARGET_VALUE, true>
-    : PrependTo<typename GreaterThanAdvisor<
-                    typename Array<VALUES...>::type, TARGET_VALUE,
-                    (FirstOf<typename Array<VALUES...>::type>::value >
-                     TARGET_VALUE)>::type,
-                FIRST_VALUE> {};
+        : PrependTo<typename GreaterThanAdvisor<typename Array<VALUES...>::type, TARGET_VALUE,
+                                                (FirstOf<typename Array<VALUES...>::type>::value > TARGET_VALUE)>::type,
+                    FIRST_VALUE> {};
 /**
  * 定义了当 CONDITION = false 时，如何实现 GreaterThanAdvisor
  * 实现方式：模板递归
  */
 template <int TARGET_VALUE, int FIRST_VALUE, int... VALUES>
 struct GreaterThanAdvisor<Array<FIRST_VALUE, VALUES...>, TARGET_VALUE, false>
-    : GreaterThanAdvisor<typename Array<VALUES...>::type, TARGET_VALUE,
-                         (FirstOf<typename Array<VALUES...>::type>::value >
-                          TARGET_VALUE)> {};
+        : GreaterThanAdvisor<typename Array<VALUES...>::type, TARGET_VALUE,
+                             (FirstOf<typename Array<VALUES...>::type>::value > TARGET_VALUE)> {};
 /**
  * 当 CONDITION = true 时的递归终止状态
  */
 template <int TARGET_VALUE, int FIRST_VALUE>
-struct GreaterThanAdvisor<Array<FIRST_VALUE>, TARGET_VALUE, true>
-    : Array<FIRST_VALUE> {};
+struct GreaterThanAdvisor<Array<FIRST_VALUE>, TARGET_VALUE, true> : Array<FIRST_VALUE> {};
 /**
  * 当 CONDITION = false 时的递归终止状态
  */
 template <int TARGET_VALUE, int FIRST_VALUE>
-struct GreaterThanAdvisor<Array<FIRST_VALUE>, TARGET_VALUE, false>
-    : EmptyArray {};
+struct GreaterThanAdvisor<Array<FIRST_VALUE>, TARGET_VALUE, false> : EmptyArray {};
 /**
  * 接口模板，外部不直接使用 GreaterThanAdvisor，而是使用 GreaterThan
  */
 template <typename TARGET_ARRAY, int TARGET_VALUE>
-struct GreaterThan
-    : GreaterThanAdvisor<TARGET_ARRAY, TARGET_VALUE,
-                         (FirstOf<TARGET_ARRAY>::value > TARGET_VALUE)> {};
+struct GreaterThan : GreaterThanAdvisor<TARGET_ARRAY, TARGET_VALUE, (FirstOf<TARGET_ARRAY>::value > TARGET_VALUE)> {};
 /**
  * 递归终止状态
  */
@@ -1167,29 +1151,29 @@ struct QuickSort;
  */
 template <int FIRST_VALUE, int... VALUES>
 struct QuickSort<Array<FIRST_VALUE, VALUES...>>
-    : AppendArrayTo<
-          typename QuickSort<typename LessEqualFilter<
-              typename Array<VALUES...>::type, FIRST_VALUE>::type>::type,
-          typename PrependTo<
-              typename QuickSort<typename GreaterThan<
-                  typename Array<VALUES...>::type, FIRST_VALUE>::type>::type,
-              FIRST_VALUE>::type> {};
+        : AppendArrayTo<typename QuickSort<
+                                typename LessEqualFilter<typename Array<VALUES...>::type, FIRST_VALUE>::type>::type,
+                        typename PrependTo<typename QuickSort<typename GreaterThan<typename Array<VALUES...>::type,
+                                                                                   FIRST_VALUE>::type>::type,
+                                           FIRST_VALUE>::type> {};
 /**
  * 递归终止状态
  */
 template <>
 struct QuickSort<EmptyArray> : EmptyArray {};
 
-}  // namespace quicksort
+} // namespace quicksort
 
 template <int FIRST_VALUE, int... VALUES>
 static void print(quicksort::Array<FIRST_VALUE, VALUES...>) {
     std::cout << '(' << FIRST_VALUE;
-    int _[] = {0, ((void)(std::cout << ", " << VALUES), 0)...};
+    [[maybe_unused]] int _[] = {0, ((void)(std::cout << ", " << VALUES), 0)...};
     std::cout << ")\n";
 }
 
-static void print(quicksort::EmptyArray) { std::cout << "()\n"; }
+static void print(quicksort::EmptyArray) {
+    std::cout << "()\n";
+}
 
 template <int... VALUES>
 static void test_quick_sort() {
@@ -1206,9 +1190,8 @@ int main() {
     test_quick_sort<>();
     test_quick_sort<1>();
     test_quick_sort<8, 1>();
-    test_quick_sort<1, 2, 5, 8, -3, 2, 100, 4, 9, 3, -8, 33, 21, 3, -4, -4, -4,
-                    -7, 2, 5, 1, 8, 2, 88, 42, 956, 21, 27, 39, 55, 1, 4, -5,
-                    -31, 9>();
+    test_quick_sort<1, 2, 5, 8, -3, 2, 100, 4, 9, 3, -8, 33, 21, 3, -4, -4, -4, -7, 2, 5, 1, 8, 2, 88, 42, 956, 21, 27,
+                    39, 55, 1, 4, -5, -31, 9>();
 }
 ```
 
