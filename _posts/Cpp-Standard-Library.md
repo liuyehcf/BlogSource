@@ -999,9 +999,26 @@ struct C {
 
 1. `std::visit`
 1. `std::variant`：类型安全的union。只允许以正确的类型进行访问
-    * `std::get<{type}>`
-    * `std::get<{index}>`
-    * 结合`std::visit`实现静态分派的原理
+    * `std::get<{type}>`：通过指定类型访问
+    * `std::get<{index}>`：通过指定序号访问
+
+```cpp
+#include <iostream>
+#include <variant>
+
+int main() {
+    std::variant<int, double> v;
+    v = 1;
+    std::cout << std::get<int>(v) << std::endl;
+    v = 1.2;
+    std::cout << std::get<1>(v) << std::endl;
+    return 0;
+}
+```
+
+## 23.1 动态分派原理
+
+`std::variant`结合`std::visitor`可以实现动态分派，示例代码如下：
 
 ```cpp
 #include <iostream>
@@ -1029,6 +1046,12 @@ int main() {
     return 0;
 }
 ```
+
+**大致实现原理如下：**
+
+* 赋值时，会维护`std::variant::index`属性
+* 每个`Visitor,variant`对会生成一个`vtable`，里面记录了所有的函数指针，并按照`std::variant`各个类型声明的顺序排序
+* 在用`std::visit`进行访问时，会用`std::variant::index`找到`vtable`中的函数指针，并进行调用
 
 # 24 Containers
 
