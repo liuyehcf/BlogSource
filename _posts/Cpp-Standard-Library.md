@@ -536,6 +536,36 @@ int main() {
 
 1. `std::optional`
 
+```cpp
+#include <iostream>
+#include <optional>
+
+std::optional<std::string> create(bool flag) {
+    if (flag) {
+        return "Godzilla";
+    } else {
+        return {};
+    }
+}
+
+int main() {
+    create(false).value_or("empty"); // == "empty"
+    create(true).value();            // == "Godzilla"
+    // optional-returning factory functions are usable as conditions of while and if
+    if (auto str = create(true)) {
+        std::cout << "create(true) is true, str=" << str.value() << std::endl;
+    } else {
+        std::cout << "create(true) is false" << std::endl;
+    }
+
+    if (auto str = create(false)) {
+        std::cout << "create(false) is true, str=" << str.value() << std::endl;
+    } else {
+        std::cout << "create(false) is false" << std::endl;
+    }
+}
+```
+
 # 15 random
 
 1. `std::default_random_engine`
