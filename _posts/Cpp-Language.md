@@ -967,7 +967,88 @@ gcc -o main main.cpp extern.cpp -lstdc++ -Wall
 
 ## 3.7 继承与多态
 
-### 3.7.1 virtual
+### 3.7.1 继承方式
+
+| 继承方式\成员的权限 | public | protected | private |
+|:--|:--|:--|:--|
+| **public inherit** | public | protected | invisible |
+| **protected inherit** | protected | protected | invisible |
+| **private inherit** | private | private | invisible |
+
+无论哪种继承方式，都可以访问父类的`public`成员以及`protected`成员，但是会根据继承方式修改其访问权限，从而影响到派生类的访问权限
+
+```cpp
+#include <iostream>
+
+class Base {
+public:
+    void public_op() { std::cout << "public_op" << std::endl; }
+
+protected:
+    void protected_op() { std::cout << "protected_op" << std::endl; }
+
+private:
+    void private_op() { std::cout << "private_op" << std::endl; }
+};
+
+class PublicDerive : public Base {
+    void test() {
+        public_op();
+        protected_op();
+        // private_op();
+    }
+};
+
+class SecondaryPublicDerive : public PublicDerive {
+    void test() {
+        public_op();
+        protected_op();
+        // private_op();
+    }
+};
+
+class ProtectedDerive : protected Base {
+    void test() {
+        public_op();
+        protected_op();
+        // private_op();
+    }
+};
+
+class SecondaryProtectedDerive : public ProtectedDerive {
+    void test() {
+        public_op();
+        protected_op();
+        // private_op();
+    }
+};
+
+class PrivateDerive : private Base {
+    void test() {
+        public_op();
+        protected_op();
+        // private_op();
+    }
+};
+
+class SecondaryPrivateDerive : public PrivateDerive {
+    void test() {
+        // public_op();
+        // protected_op();
+        // private_op();
+    }
+};
+
+int main() {
+    SecondaryPublicDerive obj_public;
+    obj_public.public_op();
+
+    SecondaryProtectedDerive obj_protected;
+    // obj_protected.public_op();
+}
+```
+
+### 3.7.2 virtual
 
 `virtual`关键词修饰的就是虚函数，虚函数的分派发生在运行时
 
@@ -978,7 +1059,7 @@ gcc -o main main.cpp extern.cpp -lstdc++ -Wall
 
 * 图片出处：[c++虚指针和虚函数表](https://zhuanlan.zhihu.com/p/110144589)
 
-### 3.7.2 final
+### 3.7.3 final
 
 `final`可以修饰类或者虚函数
 
@@ -988,7 +1069,7 @@ gcc -o main main.cpp extern.cpp -lstdc++ -Wall
 
 当用具体类型的指针或者引用调用`final`修饰的虚函数时，虚函数的调用可以被编译器直接优化掉
 
-### 3.7.3 override
+### 3.7.4 override
 
 `override`可以修饰虚函数，表示对虚函数进行覆盖
 
