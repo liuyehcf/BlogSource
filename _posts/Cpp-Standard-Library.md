@@ -799,6 +799,22 @@ int main() {
 1. `std::decay`：Applies lvalue-to-rvalue, array-to-pointer, and function-to-pointer implicit conversions to the type T
     * [What is std::decay and when it should be used?](https://stackoverflow.com/questions/25732386/what-is-stddecay-and-when-it-should-be-used)
     * [N2609](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2006/n2069.html)
+    ```cpp
+    #include <type_traits>
+
+    template <typename T, typename U>
+    constexpr bool is_decay_equ = std::is_same_v<std::decay_t<T>, U>;
+
+    int main() {
+        static_assert(is_decay_equ<int&, int>);
+        static_assert(is_decay_equ<int&&, int>);
+        static_assert(is_decay_equ<const int&, int>);
+        static_assert(is_decay_equ<int[2], int*>);
+        static_assert(is_decay_equ<int[2][3], int(*)[3]>);
+        static_assert(is_decay_equ<void(int, int), void (*)(int, int)>);
+        return 0;
+    }    
+    ```
 
 ## 21.14 Alias
 
