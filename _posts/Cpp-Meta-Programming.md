@@ -736,8 +736,8 @@ int main() {
 
 // invoke
 template <typename F, typename... Args>
-auto invoke(F&& f, Args&&... args) -> decltype(std::forward<F>(f)(std::forward<Args>(args)...)) {
-    return std::forward<F>(f)(std::forward<Args>(args)...);
+auto invoke(F&& func, Args&&... args) -> decltype(std::forward<F>(func)(std::forward<Args>(args)...)) {
+    return std::forward<F>(func)(std::forward<Args>(args)...);
 }
 
 template <typename F, typename... Args>
@@ -821,36 +821,37 @@ template <typename F, typename BindArgs, typename CallArgs, typename Gen = gen_s
 using bind_return_type_t = typename bind_return_type<F, BindArgs, CallArgs, Gen>::type;
 
 // bind_t
-template <typename F, typename... Args>
+template <typename F, typename... BindArgs>
 class bind_t {
-    using BindArgs = std::tuple<std::decay_t<Args>...>;
+    using TBindArgs = std::tuple<std::decay_t<BindArgs>...>;
     using CallFun = std::decay_t<F>;
 
 public:
-    bind_t(F fun, Args... args) : _fun(fun), _bindArgs(args...) {}
+    bind_t(F func, BindArgs... bind_args) : _func(func), _t_bind_args(bind_args...) {}
 
-    template <typename... CArgs>
-    bind_return_type_t<CallFun, BindArgs, std::tuple<CArgs&&...>> operator()(CArgs&&... c) {
-        static_assert(placeholder_num<Args...>::value == sizeof...(CArgs),
+    template <typename... CallArgs>
+    bind_return_type_t<CallFun, TBindArgs, std::tuple<CallArgs&&...>> operator()(CallArgs&&... call_args) {
+        static_assert(placeholder_num<BindArgs...>::value == sizeof...(CallArgs),
                       "number of placeholder must be equal with the number of operator()'s parameter");
-        std::tuple<CArgs&&...> cargs(std::forward<CArgs>(c)...);
-        return _call(cargs, gen_seq_t<std::tuple_size<BindArgs>::value>());
+        std::tuple<CallArgs&&...> t_call_args(std::forward<CallArgs>(call_args)...);
+        return _call(t_call_args, gen_seq_t<std::tuple_size<TBindArgs>::value>());
     }
 
 private:
     template <typename T, size_t... S>
-    bind_return_type_t<CallFun, BindArgs, std::decay_t<T>> _call(T&& t, seq<S...>) {
-        return invoke(_fun, select(std::get<S>(_bindArgs), std::forward<T>(t))...);
+    bind_return_type_t<CallFun, TBindArgs, std::decay_t<T>> _call(T&& t, seq<S...>) {
+        return invoke(_func, select(std::get<S>(_t_bind_args), std::forward<T>(t))...);
     }
 
-    CallFun _fun;
-    BindArgs _bindArgs;
+    CallFun _func;
+    TBindArgs _t_bind_args;
 };
 
 // bind
-template <typename F, typename... Args>
-bind_t<std::decay_t<F>, std::decay_t<Args>...> bind(F&& f, Args&&... args) {
-    return bind_t<std::decay_t<F>, std::decay_t<Args>...>(std::forward<F>(f), std::forward<Args>(args)...);
+template <typename F, typename... BindArgs>
+bind_t<std::decay_t<F>, std::decay_t<BindArgs>...> bind(F&& func, BindArgs&&... bind_args) {
+    return bind_t<std::decay_t<F>, std::decay_t<BindArgs>...>(std::forward<F>(func),
+                                                              std::forward<BindArgs>(bind_args)...);
 }
 
 void print(const std::string& s, int i, double d) {
