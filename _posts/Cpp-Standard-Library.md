@@ -1084,6 +1084,70 @@ struct C {
     }
     ```
 
+## 22.1 如何正确返回包含引用的pair类型
+
+示例如下：
+
+* 首先，我们先看一下`std::make_pair`的源码，如下：
+    * `__decay_and_strip`：对于`std::reference_wrapper`，会除去`std::reference_wrapper`的封装，并返回引用类型；对于其他类型，则返回非引用类型
+    ```cpp
+    template<typename _T1, typename _T2>
+    constexpr pair<typename __decay_and_strip<_T1>::__type,
+                    typename __decay_and_strip<_T2>::__type>
+    make_pair(_T1&& __x, _T2&& __y)
+    {
+        typedef typename __decay_and_strip<_T1>::__type __ds_type1;
+        typedef typename __decay_and_strip<_T2>::__type __ds_type2;
+        typedef pair<__ds_type1, __ds_type2> 	      __pair_type;
+        return __pair_type(std::forward<_T1>(__x), std::forward<_T2>(__y));
+    }
+    ```
+
+* `get_data_1`：错误方式。因为`std::make_pair`会创建类型为`std::pair<std::vector<int>, int>`的对象，然后再转型成`std::pair<const std::vector<int>&, int>`，于是引用会错误初始化（绑定到了临时对象），导致后续错误
+* `get_data_2`：正确方式。由于`std::ref`（返回类型是`std::reference_wrapper`）的存在，`std::make_pair`会创建类型为`std::pair<const std::vector<int>&, int>`的对象，此时引用会正确初始化
+* `get_data_3`：正确方式，不用`std::make_pair`，引用会正确初始化
+
+```cpp
+#include <algorithm>
+#include <functional>
+#include <iostream>
+#include <iterator>
+#include <type_traits>
+#include <utility>
+#include <vector>
+
+class Thing {
+public:
+    std::pair<const std::vector<int>&, int> get_data_1() { return std::make_pair(_data, _data.size()); }
+    std::pair<const std::vector<int>&, int> get_data_2() { return std::make_pair(std::ref(_data), _data.size()); }
+    std::pair<const std::vector<int>&, int> get_data_3() {
+        return std::pair<const std::vector<int>&, int>(_data, _data.size());
+    }
+
+private:
+    std::vector<int> _data{1, 2, 3, 4, 5};
+};
+
+int main() {
+    Thing t;
+
+    auto printer = [](auto& pair) {
+        std::ranges::copy(pair.first, std::ostream_iterator<int>(std::cout, ", "));
+        std::cout << std::endl;
+    };
+
+    auto pair1 = t.get_data_1();
+    // printer(pair1); // crash
+
+    auto pair2 = t.get_data_2();
+    printer(pair2);
+
+    auto pair3 = t.get_data_3();
+    printer(pair3);
+    return 0;
+}
+```
+
 # 23 variant
 
 1. `std::visit`

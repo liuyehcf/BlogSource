@@ -152,8 +152,15 @@ jhat内置了一个微型的HTTP/HTML服务器，生成dump文件的分析结果
     * 文件相对路径为`dump.bin`
     * `vmid`为1874
 1. `jhat dump.bin`
-1. 在接下来的输出中会指定端口7000
-1. 在浏览器中键入`http://localhost:7000/`就可以看到分析结果
+1. 在接下来的输出中会指定端口`7000`
+1. 在浏览器中键入`http://localhost:7000/`就可以看到分析结果，拉到最下面，包含如下导航：
+    * All classes including platform
+    * Show all members of the rootset
+    * Show instance counts for all classes (including platform)
+    * Show instance counts for all classes (excluding platform)
+    * Show heap histogram
+    * Show finalizer summary
+    * Execute Object Query Language (OQL) query
 
 # 7 jstack
 
@@ -204,7 +211,9 @@ Java反编译工具，[下载地址](http://www.javadecompilers.com/jad)
 
 **查看归档文件：`jar tf xxx.jar`**
 
-# 11 参考
+# 11 [Arthas](https://github.com/alibaba/arthas)
+
+# 12 参考
 
 * [JVM性能调优监控工具jps、jstack、jmap、jhat、jstat、hprof使用详解](https://my.oschina.net/feichexia/blog/196575)
 * [Java应用打开debug端口](https://www.cnblogs.com/lzmrex/articles/12579862.html)
