@@ -791,20 +791,22 @@ struct placeholder_num<placeholder<Num>, Args...> {
 };
 
 // select
-template <typename B, typename C>
-auto select(B&& b, C&& c) -> B&& {
-    return std::forward<B>(b);
+template <typename BindArg, typename TCallArg>
+auto select(BindArg&& bind_arg, TCallArg&& t_call_arg) -> BindArg&& {
+    return std::forward<BindArg>(bind_arg);
 }
 
-// select N-th element from Tuple C
-template <size_t N, typename C>
-auto select(placeholder<N> b, C&& c)
-        -> std::conditional_t<std::is_rvalue_reference<std::tuple_element_t<N - 1, std::decay_t<C>>>::value,
-                              std::tuple_element_t<N - 1, std::decay_t<C>>, decltype(std::get<N - 1>(c))> {
-    return static_cast<std::conditional_t<std::is_rvalue_reference<std::tuple_element_t<N - 1, std::decay_t<C>>>::value,
-                                          std::tuple_element_t<N - 1, std::decay_t<C>>,
-                                          decltype(std::get<N - 1>(std::forward<C>(c)))>>(
-            std::get<N - 1>(std::forward<C>(c)));
+// select N-th element from Tuple
+template <size_t N, typename TCallArg>
+auto select(placeholder<N> place_holder, TCallArg&& t_call_arg)
+        -> std::conditional_t<std::is_rvalue_reference<std::tuple_element_t<N - 1, std::decay_t<TCallArg>>>::value,
+                              std::tuple_element_t<N - 1, std::decay_t<TCallArg>>,
+                              decltype(std::get<N - 1>(t_call_arg))> {
+    return static_cast<
+            std::conditional_t<std::is_rvalue_reference<std::tuple_element_t<N - 1, std::decay_t<TCallArg>>>::value,
+                               std::tuple_element_t<N - 1, std::decay_t<TCallArg>>,
+                               decltype(std::get<N - 1>(std::forward<TCallArg>(t_call_arg)))>>(
+            std::get<N - 1>(std::forward<TCallArg>(t_call_arg)));
 }
 
 // bind_return_type
