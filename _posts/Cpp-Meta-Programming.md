@@ -717,7 +717,7 @@ int main() {
 * `placeholder`：占位符
 * `placeholder_num`：给定的参数列表中，占位符的个数
 * `bind_return_type`：用于萃取函数的返回类型
-* `select`：用于提取类型
+* `select`：用于从`bindArgs`和`callArgs`中提取参数。若是占位符，那么从`callArgs`中提取，否则从`bindArgs`中提取
 * `bind_t`：封装重载了`operator()`运算符的类
 * `bind`：接口
 
@@ -725,6 +725,7 @@ int main() {
 
 * 首先，`bind`需要返回一个类型，记为`biner_type`，该类型重载了`operator()`运算符
 * `biner_type`的`operator()`运算符的形参列表是一个形参包，即`Arg...`，这样才能起到动态适配不同绑定对象的作用
+    * 该形参包的长度和占位符的数量是一样的
     * 需要通过`static_assert`来限制参数数量，要与`bind`指定的占位符数量相等
 * 用`std::tuple`分别存储`bind`时的参数列表，以及`operator()`的形参列表。使用`std::tuple`是为了便于通过参数下标取对应的参数
 

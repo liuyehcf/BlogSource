@@ -1040,6 +1040,49 @@ struct C {
 # 22 utility
 
 1. `std::pair`：本质上，它是`std::tuple`的一个特例
+1. `std::declval`：用来配合`decltype`进行类型推导，其实现原理如下：
+    * `__declval`是一个用于返回指定类型的方法（只有定义无实现，因为只用于类型推导）
+    ```cpp
+    /// @cond undocumented
+    template <typename _Tp, typename _Up = _Tp&&>
+    _Up __declval(int);
+
+    template <typename _Tp>
+    _Tp __declval(long);
+    /// @endcond
+
+    template <typename _Tp>
+    auto declval() noexcept -> decltype(__declval<_Tp>(0));
+    ```
+
+    * 示例如下：
+    ```cpp
+    #include <iostream>
+    #include <type_traits>
+    #include <utility>
+
+    struct Default {
+        int foo() const { return 1; }
+    };
+
+    struct NonDefault {
+        NonDefault(const NonDefault&) {}
+        int foo() const { return 1; }
+    };
+
+    NonDefault get_non_default();
+
+    int main() {
+        decltype(Default().foo()) n1 = 1;
+        // decltype(NonDefault().foo()) n2 = n1;               // will not compile
+        decltype(std::declval<NonDefault>().foo()) n2 = 2;
+        decltype(get_non_default().foo()) n3 = 3;
+        std::cout << "n1 = " << n1 << std::endl;
+        std::cout << "n2 = " << n2 << std::endl;
+        std::cout << "n3 = " << n3 << std::endl;
+        return 0;
+    }
+    ```
 
 # 23 variant
 
