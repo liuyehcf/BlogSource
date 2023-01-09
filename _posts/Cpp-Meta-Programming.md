@@ -775,52 +775,54 @@ static constexpr placeholder<4> _4;
 static constexpr placeholder<5> _5;
 static constexpr placeholder<6> _6;
 
-template <typename... Args>
+template <typename... BindArgs>
 struct placeholder_num {
     static constexpr size_t value = 0;
 };
 
-template <typename T, typename... Args>
-struct placeholder_num<T, Args...> {
-    static constexpr size_t value = placeholder_num<Args...>::value;
+template <typename NonPlaceHolderBindArg, typename... BindArgs>
+struct placeholder_num<NonPlaceHolderBindArg, BindArgs...> {
+    static constexpr size_t value = placeholder_num<BindArgs...>::value;
 };
 
-template <size_t Num, typename... Args>
-struct placeholder_num<placeholder<Num>, Args...> {
-    static constexpr size_t value = 1 + placeholder_num<Args...>::value;
+template <size_t Num, typename... BindArgs>
+struct placeholder_num<placeholder<Num>, BindArgs...> {
+    static constexpr size_t value = 1 + placeholder_num<BindArgs...>::value;
 };
 
 // select
-template <typename BindArg, typename TCallArg>
-auto select(BindArg&& bind_arg, TCallArg&& t_call_arg) -> BindArg&& {
-    return std::forward<BindArg>(bind_arg);
+template <typename BindArg, typename TCallArgs>
+auto select(BindArg&& non_place_holder_bind_arg, TCallArgs&& t_call_args) -> BindArg&& {
+    return std::forward<BindArg>(non_place_holder_bind_arg);
 }
 
 // select N-th element from Tuple
-template <size_t N, typename TCallArg>
-auto select(placeholder<N> place_holder, TCallArg&& t_call_arg)
-        -> std::conditional_t<std::is_rvalue_reference<std::tuple_element_t<N - 1, std::decay_t<TCallArg>>>::value,
-                              std::tuple_element_t<N - 1, std::decay_t<TCallArg>>,
-                              decltype(std::get<N - 1>(t_call_arg))> {
+template <size_t N, typename TCallArgs>
+auto select(placeholder<N> place_holder_bind_arg, TCallArgs&& t_call_args)
+        -> std::conditional_t<std::is_rvalue_reference<std::tuple_element_t<N - 1, std::decay_t<TCallArgs>>>::value,
+                              std::tuple_element_t<N - 1, std::decay_t<TCallArgs>>,
+                              decltype(std::get<N - 1>(t_call_args))> {
     return static_cast<
-            std::conditional_t<std::is_rvalue_reference<std::tuple_element_t<N - 1, std::decay_t<TCallArg>>>::value,
-                               std::tuple_element_t<N - 1, std::decay_t<TCallArg>>,
-                               decltype(std::get<N - 1>(std::forward<TCallArg>(t_call_arg)))>>(
-            std::get<N - 1>(std::forward<TCallArg>(t_call_arg)));
+            std::conditional_t<std::is_rvalue_reference<std::tuple_element_t<N - 1, std::decay_t<TCallArgs>>>::value,
+                               std::tuple_element_t<N - 1, std::decay_t<TCallArgs>>,
+                               decltype(std::get<N - 1>(std::forward<TCallArgs>(t_call_args)))>>(
+            std::get<N - 1>(std::forward<TCallArgs>(t_call_args)));
 }
 
 // bind_return_type
-template <typename F, typename BindArgs, typename CallArgs, typename Gen = gen_seq_t<std::tuple_size<BindArgs>::value>>
+template <typename F, typename TBindArgs, typename TCallArgs, typename Seq>
 struct bind_return_type;
 
-template <typename F, typename... BindArgs, typename... CallArgs, size_t... S>
-struct bind_return_type<F, std::tuple<BindArgs...>, std::tuple<CallArgs...>, seq<S...>> {
-    using type = decltype(invoke(std::declval<F>(), select(std::get<S>(std::declval<std::tuple<BindArgs...>>()),
-                                                           std::declval<std::tuple<CallArgs...>&>())...));
+// represent Seq by form seq<S...>, so we can use S... to generate folding expression
+template <typename F, typename TBindArgs, typename TCallArgs, size_t... S>
+struct bind_return_type<F, TBindArgs, TCallArgs, seq<S...>> {
+    using type = decltype(
+            invoke(std::declval<F>(), select(std::get<S>(std::declval<TBindArgs>()), std::declval<TCallArgs>())...));
 };
 
-template <typename F, typename BindArgs, typename CallArgs, typename Gen = gen_seq_t<std::tuple_size<BindArgs>::value>>
-using bind_return_type_t = typename bind_return_type<F, BindArgs, CallArgs, Gen>::type;
+template <typename F, typename TBindArgs, typename TCallArgs,
+          typename Seq = gen_seq_t<std::tuple_size<TBindArgs>::value>>
+using bind_return_type_t = typename bind_return_type<F, TBindArgs, TCallArgs, Seq>::type;
 
 // bind_t
 template <typename F, typename... BindArgs>
@@ -831,18 +833,18 @@ class bind_t {
 public:
     bind_t(F func, BindArgs... bind_args) : _func(func), _t_bind_args(bind_args...) {}
 
-    template <typename... CallArgs>
-    bind_return_type_t<CallFun, TBindArgs, std::tuple<CallArgs&&...>> operator()(CallArgs&&... call_args) {
+    template <typename... CallArgs, typename TCallArgs = std::tuple<CallArgs&&...>>
+    bind_return_type_t<CallFun, TBindArgs, TCallArgs> operator()(CallArgs&&... call_args) {
         static_assert(placeholder_num<BindArgs...>::value == sizeof...(CallArgs),
                       "number of placeholder must be equal with the number of operator()'s parameter");
-        std::tuple<CallArgs&&...> t_call_args(std::forward<CallArgs>(call_args)...);
+        TCallArgs t_call_args(std::forward<CallArgs>(call_args)...);
         return _call(t_call_args, gen_seq_t<std::tuple_size<TBindArgs>::value>());
     }
 
 private:
-    template <typename T, size_t... S>
-    bind_return_type_t<CallFun, TBindArgs, std::decay_t<T>> _call(T&& t, seq<S...>) {
-        return invoke(_func, select(std::get<S>(_t_bind_args), std::forward<T>(t))...);
+    template <typename TCallArgs, size_t... S>
+    bind_return_type_t<CallFun, TBindArgs, std::decay_t<TCallArgs>> _call(TCallArgs&& t_call_args, seq<S...>) {
+        return invoke(_func, select(std::get<S>(_t_bind_args), std::forward<TCallArgs>(t_call_args))...);
     }
 
     CallFun _func;
