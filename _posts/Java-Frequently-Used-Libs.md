@@ -1,18 +1,18 @@
 ---
-title: Java-JMH
+title: Java-Frequently-Used-Libs
 date: 2019-04-20 20:15:29
 tags: 
 - 原创
 categories: 
 - Java
-- JMH
+- Library
 ---
 
 **阅读更多**
 
 <!--more-->
 
-# 1 测试序列化框架的性能
+# 1 JMH
 
 比较的序列化框架如下
 
@@ -225,7 +225,12 @@ SerializerCmp.kryo_size_10      avgt    5   5426.511 ±   264.606  ns/op
 SerializerCmp.kryo_size_100     avgt    5  48886.075 ± 13722.655  ns/op
 ```
 
-# 2 参考
+## 1.1 参考
 
 * [JMH: 最装逼，最牛逼的基准测试工具套件](https://www.jianshu.com/p/0da2988b9846)
 * [使用JMH做Java微基准测试](https://www.jianshu.com/p/09837e2b4408)
+
+# 2 Guava
+
+1. `com.google.common.cache.Cache`
+1. `com.google.common.collect.Range`
