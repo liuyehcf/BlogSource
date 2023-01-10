@@ -432,6 +432,14 @@ echo -e '<a href="https://www.baidu.com">BaiDu</a>' | sed -rn 's/^.*<a href="(.*
 
 # 输出如下
 https://www.baidu.com
+
+# 输出指定行
+echo -e "a\nb\nc\nd" | sed -n '1,3p'
+
+# 输出如下
+a
+b
+c
 ```
 
 * **`s`**：

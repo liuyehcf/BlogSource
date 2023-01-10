@@ -1275,10 +1275,13 @@ int main() {
     * `int8_t/int16_t/int32_t/int64_t`
 1. `cerrno`：系统调用以及一些库函数的错误码都会写入到`errno`这个全局变量中
 1. `cstdio`
-    * `std::tmpnam`
+    * `std::tmpnam`：慎用，原因如下：
+        * The tmpnam() function generates a different string each time it is called, up to TMP_MAX times. If it is called more than TMP_MAX times, the behavior is implementation defined.
     * `std::printf`
 1. `cstdlib`
+    * `std::system`：用于执行命令
     * `std::malloc`
+    * `std::mkstemp`：创建临时文件，传入一个文件名模板，其最后留个字符为`XXXXXX`，这部分会替换为随机字符
     * `std::atoi`
     * `std::atol`
     * `std::atoll`
@@ -1385,6 +1388,23 @@ int main(int argc, char* argv[]) {
         std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << std::endl;
     }
 
+    return 0;
+}
+```
+
+## 26.3 执行命令
+
+```cpp
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
+
+int main() {
+    char file_name[] = "/tmp/fileXXXXXX";
+    mkstemp(file_name);
+    std::cout << "tmp_file=" << file_name << std::endl;
+    std::system(("ls -l > " + std::string(file_name)).c_str());
+    std::cout << std::ifstream(file_name).rdbuf();
     return 0;
 }
 ```
