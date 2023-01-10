@@ -1,5 +1,5 @@
 ---
-title: Java-命令行工具
+title: Java-Tools
 date: 2018-01-17 09:30:44
 tags: 
 - 摘录
@@ -211,9 +211,15 @@ Java反编译工具，[下载地址](http://www.javadecompilers.com/jad)
 
 **查看归档文件：`jar tf xxx.jar`**
 
-# 11 [Arthas](https://github.com/alibaba/arthas)
+# 11 Arthas
 
-# 12 参考
+[Arthas](https://github.com/alibaba/arthas)
+
+# 12 VisualVM
+
+[All-in-One Java Troubleshooting Tool](https://visualvm.github.io/)
+
+# 13 参考
 
 * [JVM性能调优监控工具jps、jstack、jmap、jhat、jstat、hprof使用详解](https://my.oschina.net/feichexia/blog/196575)
 * [Java应用打开debug端口](https://www.cnblogs.com/lzmrex/articles/12579862.html)
