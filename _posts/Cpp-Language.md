@@ -2375,6 +2375,7 @@ int main() {
 |:--|:--|
 | `std::vector` | ❎ |
 | `std::list` | ✅ |
+| `std::deque` | ✅ |
 | `std::map` | ✅ |
 | `std::unordered_map` | ✅ |
 | `std::set` | ✅ |
