@@ -338,6 +338,11 @@ int main() {
 
 ### 3.4.2 Case-2
 
+* `std::memory_order_seq_cst`：由于不同的线程看到的顺序只有一种，因此`z`必然大于0
+* `std::memory_order_relaxed`：不同的线程看到的顺序可能是不同的，因此`z`可能是0（实际跑下来，跑不出这种情况，可能与编译器的实现由关系）
+    * `t3`：`write-x`->`write-y`
+    * `t4`：`write-y`->`write-x`
+
 ```cpp
 #include <atomic>
 #include <cassert>
