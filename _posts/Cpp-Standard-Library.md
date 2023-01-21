@@ -279,7 +279,110 @@ result: 0, flag: 1, expected: 1
 * 线程2的断言会成功，因为线程1对`n`和`m`在store之前修改；线程2在`load`之后，可以观察到`m`的修改
 * 但线程3的断言不一定会成功，因为`m`是和`load/store`操作不相关的变量，线程3不一定能观察看到
 
-## 3.4 参考
+## 3.4 一些示例
+
+### 3.4.1 Case-1
+
+```cpp
+#include <atomic>
+#include <cassert>
+#include <thread>
+
+std::atomic<bool> x, y;
+std::atomic<int> z;
+
+template <std::memory_order order>
+void test() {
+    auto write_x = []() { x.store(true, order); };
+    auto write_y = []() { y.store(true, order); };
+    auto read_x_then_y = []() {
+        while (!x.load(order))
+            ;
+        if (y.load(order)) {
+            ++z;
+        }
+    };
+    auto read_y_then_x = []() {
+        while (!y.load(order))
+            ;
+        if (x.load(order)) {
+            ++z;
+        }
+    };
+
+    for (int i = 0; i < 10000; i++) {
+        x = false;
+        y = false;
+        z = 0;
+        std::thread t1(write_x);
+        std::thread t2(write_y);
+        std::thread t3(read_x_then_y);
+        std::thread t4(read_y_then_x);
+        t1.join();
+        t2.join();
+        t3.join();
+        t4.join();
+        assert(z.load() >= 0);
+    }
+}
+
+int main() {
+    test<std::memory_order_seq_cst>();
+    test<std::memory_order_relaxed>();
+    return 0;
+}
+```
+
+### 3.4.2 Case-2
+
+happens-before在不同`std::memory_order`下的规则
+
+* normal-write happens before atomic-write
+* atomic-read happens before normal-read
+* atomic-write happens before atomic-read
+* 可以推导出：normal-write happens before normal-read
+
+```cpp
+#include <atomic>
+#include <cassert>
+#include <thread>
+
+int data;
+std::atomic<bool> data_ready(false);
+constexpr int VALUE = 99;
+
+template <std::memory_order order>
+void test_visibility() {
+    auto reader_thread = []() {
+        while (!data_ready.load(order))
+            ;
+        assert(data == VALUE);
+    };
+    auto writer_thread = []() {
+        data = VALUE;
+        data_ready.store(true, order);
+    };
+
+    for (int i = 0; i < 10000; i++) {
+        data = -1;
+        data_ready = false;
+
+        std::thread t1(reader_thread);
+        std::thread t2(writer_thread);
+
+        t1.join();
+        t2.join();
+    }
+}
+
+int main() {
+    test_visibility<std::memory_order_seq_cst>();
+    test_visibility<std::memory_order_relaxed>();
+    return 0;
+}
+```
+
+## 3.5 参考
 
 * [C++11 - atomic类型和内存模型](https://zhuanlan.zhihu.com/p/107092432)
 * [doc-std::memory_order](https://www.apiref.com/cpp-zh/cpp/atomic/memory_order.html)
