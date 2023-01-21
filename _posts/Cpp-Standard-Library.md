@@ -279,9 +279,64 @@ result: 0, flag: 1, expected: 1
 * 线程2的断言会成功，因为线程1对`n`和`m`在store之前修改；线程2在`load`之后，可以观察到`m`的修改
 * 但线程3的断言不一定会成功，因为`m`是和`load/store`操作不相关的变量，线程3不一定能观察看到
 
-## 3.4 一些示例
+## 3.4 Cases
 
 ### 3.4.1 Case-1
+
+happens-before在不同`std::memory_order`下的规则
+
+* `std::memory_order_seq_cst`
+    * normal-write happens before atomic-write
+    * atomic-read happens before normal-read
+    * atomic-write happens before atomic-read
+    * 可以推导出：normal-write happens before normal-read
+* `std::memory_order_relaxed`
+    * normal-write and atomic-write can be reordered
+    * atomic-read and normal-read can be reordered
+    * atomic-write happens before atomic-read
+    * 无法推导出：normal-write happens before normal-read（但实际运行后，发现还是可以保证的，可能跟编译器的实现有关系）
+
+```cpp
+#include <atomic>
+#include <cassert>
+#include <thread>
+
+int data;
+std::atomic<bool> data_ready(false);
+constexpr int VALUE = 99;
+
+template <std::memory_order order>
+void test_visibility() {
+    auto reader_thread = []() {
+        while (!data_ready.load(order))
+            ;
+        assert(data == VALUE);
+    };
+    auto writer_thread = []() {
+        data = VALUE;
+        data_ready.store(true, order);
+    };
+
+    for (int i = 0; i < 10000; i++) {
+        data = -1;
+        data_ready = false;
+
+        std::thread t1(reader_thread);
+        std::thread t2(writer_thread);
+
+        t1.join();
+        t2.join();
+    }
+}
+
+int main() {
+    test_visibility<std::memory_order_seq_cst>();
+    test_visibility<std::memory_order_relaxed>();
+    return 0;
+}
+```
+
+### 3.4.2 Case-2
 
 ```cpp
 #include <atomic>
@@ -329,55 +384,6 @@ void test() {
 int main() {
     test<std::memory_order_seq_cst>();
     test<std::memory_order_relaxed>();
-    return 0;
-}
-```
-
-### 3.4.2 Case-2
-
-happens-before在不同`std::memory_order`下的规则
-
-* normal-write happens before atomic-write
-* atomic-read happens before normal-read
-* atomic-write happens before atomic-read
-* 可以推导出：normal-write happens before normal-read
-
-```cpp
-#include <atomic>
-#include <cassert>
-#include <thread>
-
-int data;
-std::atomic<bool> data_ready(false);
-constexpr int VALUE = 99;
-
-template <std::memory_order order>
-void test_visibility() {
-    auto reader_thread = []() {
-        while (!data_ready.load(order))
-            ;
-        assert(data == VALUE);
-    };
-    auto writer_thread = []() {
-        data = VALUE;
-        data_ready.store(true, order);
-    };
-
-    for (int i = 0; i < 10000; i++) {
-        data = -1;
-        data_ready = false;
-
-        std::thread t1(reader_thread);
-        std::thread t2(writer_thread);
-
-        t1.join();
-        t2.join();
-    }
-}
-
-int main() {
-    test_visibility<std::memory_order_seq_cst>();
-    test_visibility<std::memory_order_relaxed>();
     return 0;
 }
 ```
