@@ -1100,18 +1100,42 @@ int main() {
 
 ```sh
 cat > volatile.cpp << 'EOF'
-#include <stdint.h>
+#include <atomic>
 
-void with_volatile(volatile int32_t* src, int32_t* target) {
-    *target = *(src);
-    *target = *(src);
-    *target = *(src);
+void read_from_normal(int32_t& src, int32_t& target) {
+    target = src;
+    target = src;
+    target = src;
 }
 
-void without_volatile(int32_t* src, int32_t* target) {
-    *target = *(src);
-    *target = *(src);
-    *target = *(src);
+void read_from_volatile(volatile int32_t& src, int32_t& target) {
+    target = src;
+    target = src;
+    target = src;
+}
+
+void read_from_atomic(std::atomic<int32_t>& src, int32_t& target) {
+    target = src;
+    target = src;
+    target = src;
+}
+
+void write_to_normal(int32_t& src, int32_t& target) {
+    target = src;
+    target = src;
+    target = src;
+}
+
+void write_to_volatile(int32_t& src, volatile int32_t& target) {
+    target = src;
+    target = src;
+    target = src;
+}
+
+void write_to_atomic(int32_t& src, std::atomic<int32_t>& target) {
+    target = src;
+    target = src;
+    target = src;
 }
 EOF
 
@@ -1121,25 +1145,70 @@ objdump -drwCS volatile.o
 
 **输出如下：**
 
-```
-volatile.o：     文件格式 elf64-x86-64
+* `read_from_normal`的三次操作被优化成了一次
+* `write_to_normal`的三次操作被优化成了一次
+* `write_to_atomic`使用的是[`xchg`指令](https://www.felixcloutier.com/x86/xchg)，当有一个操作数是内存地址时，会自动启用`locking protocol`，确保写操作的串行化
 
+```
 Disassembly of section .text:
 
-0000000000000000 <with_volatile(int volatile*, int*)>:
-   0:   8b 07                   mov    (%rdi),%eax
-   2:   89 06                   mov    %eax,(%rsi)
-   4:   8b 07                   mov    (%rdi),%eax
-   6:   89 06                   mov    %eax,(%rsi)
-   8:   8b 07                   mov    (%rdi),%eax
-   a:   89 06                   mov    %eax,(%rsi)
-   c:   c3                      retq
-   d:   0f 1f 00                nopl   (%rax)
+0000000000000000 <read_from_normal(int&, int&)>:
+   0:	f3 0f 1e fa          	endbr64
+   4:	8b 07                	mov    (%rdi),%eax
+   6:	89 06                	mov    %eax,(%rsi)
+   8:	c3                   	ret
+   9:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
 
-0000000000000010 <without_volatile(int*, int*)>:
-  10:   8b 07                   mov    (%rdi),%eax
-  12:   89 06                   mov    %eax,(%rsi)
-  14:   c3                      retq
+0000000000000010 <read_from_volatile(int volatile&, int&)>:
+  10:	f3 0f 1e fa          	endbr64
+  14:	8b 07                	mov    (%rdi),%eax
+  16:	89 06                	mov    %eax,(%rsi)
+  18:	8b 07                	mov    (%rdi),%eax
+  1a:	89 06                	mov    %eax,(%rsi)
+  1c:	8b 07                	mov    (%rdi),%eax
+  1e:	89 06                	mov    %eax,(%rsi)
+  20:	c3                   	ret
+  21:	66 66 2e 0f 1f 84 00 00 00 00 00 	data16 cs nopw 0x0(%rax,%rax,1)
+  2c:	0f 1f 40 00          	nopl   0x0(%rax)
+
+0000000000000030 <read_from_atomic(std::atomic<int>&, int&)>:
+  30:	f3 0f 1e fa          	endbr64
+  34:	8b 07                	mov    (%rdi),%eax
+  36:	89 06                	mov    %eax,(%rsi)
+  38:	8b 07                	mov    (%rdi),%eax
+  3a:	89 06                	mov    %eax,(%rsi)
+  3c:	8b 07                	mov    (%rdi),%eax
+  3e:	89 06                	mov    %eax,(%rsi)
+  40:	c3                   	ret
+  41:	66 66 2e 0f 1f 84 00 00 00 00 00 	data16 cs nopw 0x0(%rax,%rax,1)
+  4c:	0f 1f 40 00          	nopl   0x0(%rax)
+
+0000000000000050 <write_to_normal(int&, int&)>:
+  50:	f3 0f 1e fa          	endbr64
+  54:	8b 07                	mov    (%rdi),%eax
+  56:	89 06                	mov    %eax,(%rsi)
+  58:	c3                   	ret
+  59:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+
+0000000000000060 <write_to_volatile(int&, int volatile&)>:
+  60:	f3 0f 1e fa          	endbr64
+  64:	8b 07                	mov    (%rdi),%eax
+  66:	89 06                	mov    %eax,(%rsi)
+  68:	89 06                	mov    %eax,(%rsi)
+  6a:	8b 07                	mov    (%rdi),%eax
+  6c:	89 06                	mov    %eax,(%rsi)
+  6e:	c3                   	ret
+  6f:	90                   	nop
+
+0000000000000070 <write_to_atomic(int&, std::atomic<int>&)>:
+  70:	f3 0f 1e fa          	endbr64
+  74:	8b 07                	mov    (%rdi),%eax
+  76:	87 06                	xchg   %eax,(%rsi)
+  78:	8b 07                	mov    (%rdi),%eax
+  7a:	87 06                	xchg   %eax,(%rsi)
+  7c:	8b 07                	mov    (%rdi),%eax
+  7e:	87 06                	xchg   %eax,(%rsi)
+  80:	c3                   	ret
 ```
 
 ### 3.8.1 如何验证volatile不具备可见性
