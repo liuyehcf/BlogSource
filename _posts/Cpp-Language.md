@@ -1115,9 +1115,9 @@ void read_from_volatile(volatile int32_t& src, int32_t& target) {
 }
 
 void read_from_atomic(std::atomic<int32_t>& src, int32_t& target) {
-    target = src;
-    target = src;
-    target = src;
+    target = src.load(std::memory_order_seq_cst);
+    target = src.load(std::memory_order_relaxed);
+    target = src.load(std::memory_order_release);
 }
 
 void write_to_normal(int32_t& src, int32_t& target) {
@@ -1133,9 +1133,9 @@ void write_to_volatile(int32_t& src, volatile int32_t& target) {
 }
 
 void write_to_atomic(int32_t& src, std::atomic<int32_t>& target) {
-    target = src;
-    target = src;
-    target = src;
+    target.store(src, std::memory_order_seq_cst);
+    target.store(src, std::memory_order_relaxed);
+    target.store(src, std::memory_order_release);
 }
 EOF
 
@@ -1147,9 +1147,11 @@ objdump -drwCS volatile.o
 
 * `read_from_normal`的三次操作被优化成了一次
 * `write_to_normal`的三次操作被优化成了一次
-* `write_to_atomic`使用的是[`xchg`指令](https://www.felixcloutier.com/x86/xchg)，当有一个操作数是内存地址时，会自动启用`locking protocol`，确保写操作的串行化
+* `write_to_atomic`中，`std::memory_order_seq_cst`使用的是[`xchg`指令](https://www.felixcloutier.com/x86/xchg)，当有一个操作数是内存地址时，会自动启用`locking protocol`，确保写操作的串行化
 
 ```
+volatile.o:     file format elf64-x86-64
+
 Disassembly of section .text:
 
 0000000000000000 <read_from_normal(int&, int&)>:
@@ -1205,9 +1207,9 @@ Disassembly of section .text:
   74:	8b 07                	mov    (%rdi),%eax
   76:	87 06                	xchg   %eax,(%rsi)
   78:	8b 07                	mov    (%rdi),%eax
-  7a:	87 06                	xchg   %eax,(%rsi)
+  7a:	89 06                	mov    %eax,(%rsi)
   7c:	8b 07                	mov    (%rdi),%eax
-  7e:	87 06                	xchg   %eax,(%rsi)
+  7e:	89 06                	mov    %eax,(%rsi)
   80:	c3                   	ret
 ```
 

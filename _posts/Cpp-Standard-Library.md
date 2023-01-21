@@ -242,9 +242,12 @@ result: 0, flag: 1, expected: 1
 
 `memory_order_relaxed`属于这种内存模型
 
-在原子变量上采用`relaxed ordering`的操作不参与`synchronized-with`关系。在同一线程内对同一变量的操作仍保持`happens-before`关系，但这与别的线程无关
-
-在`relaxed ordering`中唯一的要求是在同一线程中，对同一原子变量的访问不可以被重排
+* 仍满足`atomic-write happens-before atomic-read`的规则
+* 同一个线程内，同一个原子变量的多个操作不可重排
+* 同一个线程内，不同原子变量之间的操作可以重排（很少有编译器会这么做）
+* 同一个线程内，`normal write`和`atomic write`允许重排（很少有编译器会这么做）
+* 同一个线程内，`normal read`和`atomic read`允许重排（很少有编译器会怎么做）
+* 唯一能保证的是，不同线程看到的该变量的修改顺序是一致的
 
 ### 3.3.3 获取-释放次序（acquire-release ordering）
 
@@ -286,15 +289,15 @@ result: 0, flag: 1, expected: 1
 happens-before在不同`std::memory_order`下的规则
 
 * `std::memory_order_seq_cst`
-    * normal-write happens before atomic-write
-    * atomic-read happens before normal-read
-    * atomic-write happens before atomic-read
-    * 可以推导出：normal-write happens before normal-read
+    * normal-write happens-before atomic-write
+    * atomic-read happens-before normal-read
+    * atomic-write happens-before atomic-read
+    * 可以推导出：normal-write happens-before normal-read
 * `std::memory_order_relaxed`
     * normal-write and atomic-write can be reordered
     * atomic-read and normal-read can be reordered
-    * atomic-write happens before atomic-read
-    * 无法推导出：normal-write happens before normal-read（但实际运行后，发现还是可以保证的，可能跟编译器的实现有关系）
+    * atomic-write happens-before atomic-read
+    * 无法推导出：normal-write happens-before normal-read（但实际运行后，发现还是可以保证的，可能跟编译器的实现有关系）
 
 ```cpp
 #include <atomic>
@@ -339,7 +342,7 @@ int main() {
 ### 3.4.2 Case-2
 
 * `std::memory_order_seq_cst`：由于不同的线程看到的顺序只有一种，因此`z`必然大于0
-* `std::memory_order_relaxed`：不同的线程看到的顺序可能是不同的，因此`z`可能是0（实际跑下来，跑不出这种情况，可能与编译器的实现由关系）
+* `std::memory_order_relaxed`：不同的线程看到的顺序可能是不同的，因此`z`可能是0（实际测试中，无法跑出`z=0`的结果，可能与编译器的实现有关系）
     * `t3`：`write-x`->`write-y`
     * `t4`：`write-y`->`write-x`
 
@@ -391,6 +394,88 @@ int main() {
     test<std::memory_order_relaxed>();
     return 0;
 }
+```
+
+### 3.4.3 Case-3
+
+```cpp
+#include <atomic>
+#include <iostream>
+#include <thread>
+
+std::atomic<int> x(0), y(0), z(0);
+std::atomic<bool> go(false);
+constexpr size_t LOOP_COUNT = 10;
+
+struct triple {
+    int x, y, z;
+};
+
+triple values1[LOOP_COUNT];
+triple values2[LOOP_COUNT];
+triple values3[LOOP_COUNT];
+triple values4[LOOP_COUNT];
+triple values5[LOOP_COUNT];
+
+void increment(std::atomic<int>* var_to_inc, triple* values) {
+    while (!go) std::this_thread::yield();
+    for (size_t i = 0; i < LOOP_COUNT; ++i) {
+        values[i].x = x.load(std::memory_order_relaxed);
+        values[i].y = y.load(std::memory_order_relaxed);
+        values[i].z = z.load(std::memory_order_relaxed);
+        var_to_inc->store(i + 1, std::memory_order_relaxed);
+        std::this_thread::yield();
+    }
+}
+
+void read_vals(triple* values) {
+    while (!go) std::this_thread::yield();
+    for (size_t i = 0; i < LOOP_COUNT; ++i) {
+        values[i].x = x.load(std::memory_order_relaxed);
+        values[i].y = y.load(std::memory_order_relaxed);
+        values[i].z = z.load(std::memory_order_relaxed);
+        std::this_thread::yield();
+    }
+}
+
+void print(triple* v) {
+    for (size_t i = 0; i < LOOP_COUNT; ++i) {
+        if (i) std::cout << ",";
+        std::cout << "(" << v[i].x << "," << v[i].y << "," << v[i].z << ")";
+    }
+    std::cout << std::endl;
+}
+
+int main() {
+    std::thread t1(increment, &x, values1);
+    std::thread t2(increment, &y, values2);
+    std::thread t3(increment, &z, values3);
+    std::thread t4(read_vals, values4);
+    std::thread t5(read_vals, values5);
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    go = true;
+    t5.join();
+    t4.join();
+    t3.join();
+    t2.join();
+    t1.join();
+    print(values1);
+    print(values2);
+    print(values3);
+    print(values4);
+    print(values5);
+    return 0;
+}
+```
+
+其中一种可能输出如下：
+
+```cpp
+(0,0,0),(1,2,2),(2,3,2),(3,4,3),(4,5,4),(5,6,5),(6,7,7),(7,8,8),(8,9,8),(9,10,9)
+(0,0,0),(1,1,1),(2,2,2),(3,3,3),(4,4,4),(5,5,5),(5,6,6),(6,7,7),(7,8,8),(9,9,9)
+(0,0,0),(1,1,1),(2,2,2),(3,4,3),(4,5,4),(5,6,5),(6,7,6),(7,8,7),(8,9,8),(9,10,9)
+(0,1,1),(1,2,2),(2,3,2),(3,3,3),(4,4,4),(4,5,5),(5,6,6),(6,7,6),(7,8,7),(8,8,8)
+(0,1,1),(1,2,2),(2,3,2),(3,4,3),(4,4,4),(5,5,5),(5,6,6),(6,7,6),(7,8,7),(8,8,8)
 ```
 
 ## 3.5 参考
