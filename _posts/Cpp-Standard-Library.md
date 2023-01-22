@@ -556,7 +556,13 @@ int main() {
 (0,1,1),(1,2,2),(2,3,2),(3,4,3),(4,4,4),(5,5,5),(5,6,6),(6,7,6),(7,8,7),(8,8,8)
 ```
 
-## 3.6 参考
+## 3.6 x86 Memory Model
+
+x86属于`strong hardware memory model`，因此在这类硬件之上，`std::memory_order_relaxed`其实是不起作用的，其效果跟`std::memory_order_seq_cst`是一样的
+
+[x86-TSO : 适用于x86体系架构并发编程的内存模型](https://www.cnblogs.com/lqlqlq/p/13693876.html)
+
+## 3.7 参考
 
 * [C++11 - atomic类型和内存模型](https://zhuanlan.zhihu.com/p/107092432)
 * [cppreference.com-std::memory_order](https://en.cppreference.com/w/cpp/atomic/memory_order)
