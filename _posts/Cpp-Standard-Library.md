@@ -446,6 +446,8 @@ int main() {
 #include <cassert>
 #include <thread>
 
+constexpr int32_t TIMES = 100;
+
 std::atomic<bool> x, y;
 std::atomic<int> z;
 
@@ -468,7 +470,7 @@ void test() {
         }
     };
 
-    for (int i = 0; i < 10000; i++) {
+    for (auto i = 0; i < TIMES; i++) {
         x = false;
         y = false;
         z = 0;
@@ -476,6 +478,7 @@ void test() {
         std::thread t2(write_y);
         std::thread t3(read_x_then_y);
         std::thread t4(read_y_then_x);
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
         t1.join();
         t2.join();
         t3.join();
