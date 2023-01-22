@@ -195,7 +195,85 @@ int main() {
 1. **唯一的要求是在同一线程中，对同一原子变量的访问不可以被重排（单个线程的视角）**
 1. **除了保证操作的原子性之外，没有限定前后指令的顺序，其他线程看到数据的变化顺序也可能不一样（整个程序的视角）**
 
-## 3.2 std::atomic
+## 3.2 Concepts
+
+* [doc std::memory_order](https://en.cppreference.com/w/cpp/atomic/memory_order)
+
+### 3.2.1 Sequenced-before
+
+同一个线程内，两个表达式的执行满足先后顺序
+
+[doc Order of evaluation](https://en.cppreference.com/w/cpp/language/eval_order)
+
+Evaluation of each expression includes:
+
+* Value computations: calculation of the value that is returned by the expression. This may involve determination of the identity of the object (glvalue evaluation, e.g. if the expression returns a reference to some object) or reading the value previously assigned to an object (prvalue evaluation, e.g. if the expression returns a number, or some other value)
+* Initiation of side effects: access (read or write) to an object designated by a volatile glvalue, modification (writing) to an object, calling a library I/O function, or calling a function that does any of those operations.
+
+Ordering: 
+
+* If A is sequenced before B (or, equivalently, B is sequenced after A), then evaluation of A will be complete before evaluation of B begins.
+* If A is not sequenced before B and B is sequenced before A, then evaluation of B will be complete before evaluation of A begins.
+* If A is not sequenced before B and B is not sequenced before A, then two possibilities exist:
+    1. Evaluations of A and B are unsequenced: they may be performed in any order and may overlap (within a single thread of execution, the compiler may interleave the CPU instructions that comprise A and B)
+    1. Evaluations of A and B are indeterminately sequenced: they may be performed in any order but may not overlap: either A will be complete before B, or B will be complete before A. The order may be the opposite the next time the same expression is evaluated.
+
+### 3.2.2 Carries dependency
+
+两个满足`Sequenced-before`关系的表达式，可能也存在依赖关系
+
+### 3.2.3 Modification order
+
+原子变量的修改顺序
+
+### 3.2.4 Release sequence
+
+在`A`对原子变量`M`完成一个`release operation`之后，以该次修改为起点，最长的连续修改序列称为`release sequence headed by A`，序列包括：
+
+1. 同一个线程在做完`A`之后的其他对`M`的写操作
+1. 其他线程对`M`做的`read-modify-write`操作
+
+### 3.2.5 Synchronizes with
+
+线程`A`对原子变量`M`完成一个`release operation`之后，另一个线程`B`对`M`完成一个`acquire operation`，并读取到了`A`线程写入的值，就称`the store in thread A synchronizes-with the load in thread B`
+
+### 3.2.6 Dependency-ordered before
+
+Between threads, evaluation A is dependency-ordered before evaluation B if any of the following is true
+
+1. A performs a release operation on some atomic M, and, in a different thread, B performs a consume operation on the same atomic M, and B reads a value written by any part of the release sequence headed (until C++20) by A.
+1. A is dependency-ordered before X and X carries a dependency into B.
+
+### 3.2.7 Inter-thread happens-before
+
+Between threads, evaluation A inter-thread happens before evaluation B if any of the following is true
+
+1. A synchronizes-with B
+1. A is dependency-ordered before B
+1. A synchronizes-with some evaluation X, and X is sequenced-before B
+1. A is sequenced-before some evaluation X, and X inter-thread happens-before B
+1. A inter-thread happens-before some evaluation X, and X inter-thread happens-before B
+
+### 3.2.8 Happens-before
+
+Regardless of threads, evaluation A happens-before evaluation B if any of the following is true:
+
+1. A is sequenced-before B
+1. A inter-thread happens before B
+
+### 3.2.9 Consume operation
+
+Atomic load with memory_order_consume or stronger is a consume operation
+
+### 3.2.10 Acquire operation
+
+Atomic load with memory_order_acquire or stronger is an acquire operation
+
+### 3.2.11 Release operation
+
+Atomic store with memory_order_release or stronger is a release operation
+
+## 3.3 std::atomic
 
 `compare_exchange_strong(T& expected_value, T new_value)`方法的第一个参数是个左值
 
@@ -219,7 +297,7 @@ result: 0, flag: 1, expected: 1
 
 **`compare_exchange_weak(T& expected_value, T new_value)`方法与`strong`版本基本相同，唯一的区别是`weak`版本允许偶然出乎意料的返回（相等时却返回了false），在大部分场景中，这种意外是可以接受的，通常比`strong`版本有更高的性能**
 
-## 3.3 std::memory_order
+## 3.4 std::memory_order
 
 这是个枚举类型，包含6个枚举值
 
@@ -230,7 +308,7 @@ result: 0, flag: 1, expected: 1
 * `memory_order_acq_rel`
 * `memory_order_seq_cst`
 
-### 3.3.1 顺序一致次序（sequential consisten ordering）
+### 3.4.1 顺序一致次序（sequential consisten ordering）
 
 `memory_order_seq_cst`属于这种内存模型
 
@@ -238,18 +316,18 @@ result: 0, flag: 1, expected: 1
 
 **该原子操作前后的读写（包括非原子的读写操作）不能跨过该操作乱序；该原子操作之前的写操作（包括非原子的写操作）都能被所有线程观察到**
 
-### 3.3.2 松弛次序（relaxed ordering）
+### 3.4.2 松弛次序（relaxed ordering）
 
 `memory_order_relaxed`属于这种内存模型
 
-* 仍满足`atomic-write happens-before atomic-read`的规则
+* 不满足`atomic-write happens-before atomic-read`的规则
 * 同一个线程内，同一个原子变量的多个操作不可重排
 * 同一个线程内，不同原子变量之间的操作可以重排（很少有编译器会这么做）
 * 同一个线程内，`normal write`和`atomic write`允许重排（很少有编译器会这么做）
 * 同一个线程内，`normal read`和`atomic read`允许重排（很少有编译器会怎么做）
-* 唯一能保证的是，不同线程看到的该变量的修改顺序是一致的
+* **唯一能保证的是，不同线程看到的该变量的修改顺序是一致的**
 
-### 3.3.3 获取-释放次序（acquire-release ordering）
+### 3.4.3 获取-释放次序（acquire-release ordering）
 
 `memory_order_release`、`memory_order_acquire`、`memory_order_acq_rel`属于这种内存模型
 
@@ -282,9 +360,9 @@ result: 0, flag: 1, expected: 1
 * 线程2的断言会成功，因为线程1对`n`和`m`在store之前修改；线程2在`load`之后，可以观察到`m`的修改
 * 但线程3的断言不一定会成功，因为`m`是和`load/store`操作不相关的变量，线程3不一定能观察看到
 
-## 3.4 Cases
+## 3.5 Cases
 
-### 3.4.1 Case-1
+### 3.5.1 Case-1
 
 happens-before在不同`std::memory_order`下的规则
 
@@ -339,7 +417,7 @@ int main() {
 }
 ```
 
-### 3.4.2 Case-2
+### 3.5.2 Case-2
 
 * `std::memory_order_seq_cst`：由于不同的线程看到的顺序只有一种，因此`z`必然大于0
 * `std::memory_order_relaxed`：不同的线程看到的顺序可能是不同的，因此`z`可能是0（实际测试中，无法跑出`z=0`的结果，可能与编译器的实现有关系）
@@ -396,7 +474,7 @@ int main() {
 }
 ```
 
-### 3.4.3 Case-3
+### 3.5.3 Case-3
 
 ```cpp
 #include <atomic>
@@ -478,9 +556,10 @@ int main() {
 (0,1,1),(1,2,2),(2,3,2),(3,4,3),(4,4,4),(5,5,5),(5,6,6),(6,7,6),(7,8,7),(8,8,8)
 ```
 
-## 3.5 参考
+## 3.6 参考
 
 * [C++11 - atomic类型和内存模型](https://zhuanlan.zhihu.com/p/107092432)
+* [cppreference.com-std::memory_order](https://en.cppreference.com/w/cpp/atomic/memory_order)
 * [doc-std::memory_order](https://www.apiref.com/cpp-zh/cpp/atomic/memory_order.html)
 * [如何理解 C++11 的六种 memory order？](https://www.zhihu.com/question/24301047)
 * [并行编程——内存模型之顺序一致性](https://www.cnblogs.com/jiayy/p/3246157.html)

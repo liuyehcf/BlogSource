@@ -1528,7 +1528,34 @@ Data Stream Processing System, DSPS
     </tbody>
 </table>
 
-# 5 TODO
+# 5 Cpp
+
+<table>
+    <thead>
+        <tr>
+            <th style="text-align:left">题目</th>
+            <th style="text-align:left">分类</th>
+            <th style="text-align:left">概要</th>
+            <th style="text-align:left">状态</th>
+            <th style="text-align:left">推荐级别</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Shared-Memory-Consistency-Models-A-Tutorial.pdf">Shared Memory Consistency Models: A Tutorial</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Memory Model</code></li>
+            </td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+            <td style="text-align:left"></td>
+        </tr>
+    </tbody>
+</table>
+
+# 6 TODO
 
 * Survey
     * [Query Evaluation Techniques for Large Databases](https://cgi.cse.unsw.edu.au/~cs9315/20T1/readings/query.pdf)
