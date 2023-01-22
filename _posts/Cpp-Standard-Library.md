@@ -322,9 +322,9 @@ result: 0, flag: 1, expected: 1
 
 * 不满足`atomic-write happens-before atomic-read`的规则
 * 同一个线程内，同一个原子变量的多个操作不可重排
-* 同一个线程内，不同原子变量之间的操作可以重排（很少有编译器会这么做）
-* 同一个线程内，`normal write`和`atomic write`允许重排（很少有编译器会这么做）
-* 同一个线程内，`normal read`和`atomic read`允许重排（很少有编译器会怎么做）
+* 同一个线程内，不同原子变量之间的操作可以重排（x86不允许这么做）
+* 同一个线程内，`normal write`和`atomic write`允许重排（x86不允许这么做）
+* 同一个线程内，`normal read`和`atomic read`允许重排（x86不允许这么做）
 * **唯一能保证的是，不同线程看到的该变量的修改顺序是一致的**
 
 ### 3.4.3 获取-释放次序（acquire-release ordering）
@@ -375,39 +375,55 @@ happens-before在不同`std::memory_order`下的规则
     * normal-write and atomic-write can be reordered
     * atomic-read and normal-read can be reordered
     * atomic-write happens-before atomic-read
-    * 无法推导出：normal-write happens-before normal-read（但实际运行后，发现还是可以保证的，可能跟编译器的实现有关系）
+    * 无法推导出：normal-write happens-before normal-read
+* 下面的程序，在x86上是不会报错的，因为x86是强内存模型，`std::memory_order_relaxed`是不起作用的
 
 ```cpp
 #include <atomic>
 #include <cassert>
+#include <iostream>
 #include <thread>
 
-int data;
+constexpr int32_t INVALID_VALUE = -1;
+constexpr int32_t EXPECTED_VALUE = 99;
+constexpr int32_t TIMES = 1000000;
+
+int32_t data;
 std::atomic<bool> data_ready(false);
-constexpr int VALUE = 99;
 
 template <std::memory_order order>
 void test_visibility() {
     auto reader_thread = []() {
-        while (!data_ready.load(order))
-            ;
-        assert(data == VALUE);
+        for (auto i = 0; i < TIMES; i++) {
+            while (!data_ready.load(order))
+                ;
+
+            assert(data == EXPECTED_VALUE);
+
+            data = INVALID_VALUE;
+            data_ready.store(false, order);
+        }
     };
     auto writer_thread = []() {
-        data = VALUE;
-        data_ready.store(true, order);
+        for (auto i = 0; i < TIMES; i++) {
+            while (data_ready.load(order))
+                ;
+
+            data = EXPECTED_VALUE;
+
+            data_ready.store(true, order);
+        }
     };
 
-    for (int i = 0; i < 10000; i++) {
-        data = -1;
-        data_ready = false;
+    data = INVALID_VALUE;
+    data_ready = false;
 
-        std::thread t1(reader_thread);
-        std::thread t2(writer_thread);
+    std::thread t1(reader_thread);
+    std::thread t2(writer_thread);
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-        t1.join();
-        t2.join();
-    }
+    t1.join();
+    t2.join();
 }
 
 int main() {
@@ -420,9 +436,10 @@ int main() {
 ### 3.5.2 Case-2
 
 * `std::memory_order_seq_cst`：由于不同的线程看到的顺序只有一种，因此`z`必然大于0
-* `std::memory_order_relaxed`：不同的线程看到的顺序可能是不同的，因此`z`可能是0（实际测试中，无法跑出`z=0`的结果，可能与编译器的实现有关系）
+* `std::memory_order_relaxed`：不同的线程看到的顺序可能是不同的，因此`z`可能是0
     * `t3`：`write-x`->`write-y`
     * `t4`：`write-y`->`write-x`
+* 下面的程序，在x86上是不会报错的，因为x86是强内存模型，`std::memory_order_relaxed`是不起作用的
 
 ```cpp
 #include <atomic>
