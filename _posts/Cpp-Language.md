@@ -2208,11 +2208,364 @@ int main() {
 }
 ```
 
-# 5 `__attribute__`
+# 5 Memory Model
+
+## 5.1 Concepts
+
+### 5.1.1 Cache coherence & Memory consistency
+
+[Difference between Cache Coherence and Memory Consistency](https://www.geeksforgeeks.org/difference-between-cache-coherence-and-memory-consistency/)
+
+**Cache coherence:**
+
+* Cache coherence in computer architecture refers to the consistency of shared resource data that is stored in multiple local caches. When clients in a system maintain caches of a shared memory resource, problems with incoherent data can arise, which is especially true for CPUs in a multiprocessing system.
+* In a shared memory multiprocessor with a separate cache memory for each processor, any one instruction operand can have multiple copies: one in main memory and one in each cache memory. When one copy of an operand is modified, the other copies must be modified as well. Cache coherence is the discipline that ensures that changes in the values of shared operands are propagated throughout the system in a timely manner.
+
+**Memory consistency:**
+
+* Memory consistency defines the order in which memory operations (from any process) appear to execute with respect to one another.
+
+**Differences:**
+
+| Difference No | Cache coherence | Memory consistency |
+|:--|:--|:--|
+| 1 | Cache Coherence describes the behavior of reads and writes to the same memory location. | Memory consistency describes the behavior of reads and writes in relation to other locations. |
+| 2 | Cache coherence required for cache-equipped systems. | Memory consistency required in systems that have or do not have caches. |
+| 3 | Coherence is the guarantee that caches will never affect the observable functionality of a program | Consistency is the specification of correctness for memory accesses |
+
+其他见解：
+
+* `Coherence`定义了一个读操作能获得什么样的值（最近一次写入的值）
+* `Consitency`定义了何时一个写操作的值会被读操作获得（可见性）
+
+### 5.1.2 Sequenced-before
+
+同一个线程内，两个表达式的执行满足先后顺序
+
+[doc Order of evaluation](https://en.cppreference.com/w/cpp/language/eval_order)
+
+Evaluation of each expression includes:
+
+* Value computations: calculation of the value that is returned by the expression. This may involve determination of the identity of the object (glvalue evaluation, e.g. if the expression returns a reference to some object) or reading the value previously assigned to an object (prvalue evaluation, e.g. if the expression returns a number, or some other value)
+* Initiation of side effects: access (read or write) to an object designated by a volatile glvalue, modification (writing) to an object, calling a library I/O function, or calling a function that does any of those operations.
+
+Ordering: 
+
+* If A is sequenced before B (or, equivalently, B is sequenced after A), then evaluation of A will be complete before evaluation of B begins.
+* If A is not sequenced before B and B is sequenced before A, then evaluation of B will be complete before evaluation of A begins.
+* If A is not sequenced before B and B is not sequenced before A, then two possibilities exist:
+    1. Evaluations of A and B are unsequenced: they may be performed in any order and may overlap (within a single thread of execution, the compiler may interleave the CPU instructions that comprise A and B)
+    1. Evaluations of A and B are indeterminately sequenced: they may be performed in any order but may not overlap: either A will be complete before B, or B will be complete before A. The order may be the opposite the next time the same expression is evaluated.
+
+### 5.1.3 Carries dependency
+
+两个满足`Sequenced-before`关系的表达式，可能也存在依赖关系
+
+### 5.1.4 Modification order
+
+原子变量的修改顺序
+
+### 5.1.5 Release sequence
+
+在`A`对原子变量`M`完成一个`release operation`之后，以该次修改为起点，最长的连续修改序列称为`release sequence headed by A`，序列包括：
+
+1. 同一个线程在做完`A`之后的其他对`M`的写操作
+1. 其他线程对`M`做的`read-modify-write`操作
+
+### 5.1.6 Synchronizes with
+
+线程`A`对原子变量`M`完成一个`release operation`之后，另一个线程`B`对`M`完成一个`acquire operation`，并读取到了`A`线程写入的值，就称`the store in thread A synchronizes-with the load in thread B`
+
+### 5.1.7 Dependency-ordered before
+
+Between threads, evaluation A is dependency-ordered before evaluation B if any of the following is true
+
+1. A performs a release operation on some atomic M, and, in a different thread, B performs a consume operation on the same atomic M, and B reads a value written by any part of the release sequence headed (until C++20) by A.
+1. A is dependency-ordered before X and X carries a dependency into B.
+
+### 5.1.8 Inter-thread happens-before
+
+Between threads, evaluation A inter-thread happens before evaluation B if any of the following is true
+
+1. A synchronizes-with B
+1. A is dependency-ordered before B
+1. A synchronizes-with some evaluation X, and X is sequenced-before B
+1. A is sequenced-before some evaluation X, and X inter-thread happens-before B
+1. A inter-thread happens-before some evaluation X, and X inter-thread happens-before B
+
+### 5.1.9 Happens-before
+
+Regardless of threads, evaluation A happens-before evaluation B if any of the following is true:
+
+1. A is sequenced-before B
+1. A inter-thread happens before B
+
+### 5.1.10 Consume operation
+
+Atomic load with memory_order_consume or stronger is a consume operation
+
+### 5.1.11 Acquire operation
+
+Atomic load with memory_order_acquire or stronger is an acquire operation
+
+### 5.1.12 Release operation
+
+Atomic store with memory_order_release or stronger is a release operation
+
+## 5.2 Memory consistency model
+
+### 5.2.1 Sequential consistency model
+
+> the result of any execution is the same as if the operations of all the processors were executed in some sequential order, and the operations of each individual processor appear in this sequence in the order specified by its program
+
+**`Sequential consistency model（SC）`，也称为顺序一致性模型，其实就是规定了两件事情：**
+
+1. **每个线程内部的指令都是按照程序规定的顺序（program order）执行的（单个线程的视角）**
+1. **线程执行的交错顺序可以是任意的，但是所有线程所看见的整个程序的总体执行顺序都是一样的（整个程序的视角）**
+    * 即不能存在这样一种情况，对于写操作`W1`和`W2`，处理器1看来，顺序是：`W1 -> W2`；而处理器2看来，顺序是：`W2 -> W1`
+
+### 5.2.2 Relaxed consistency model
+
+**`Relaxed consistency model`也称为宽松内存一致性模型，它的特点是：**
+
+1. **在同一线程中，对同一原子变量的访问不可以被重排（单个线程的视角）**
+1. **除了保证操作的原子性之外，没有限定前后指令的顺序，其他线程看到数据的变化顺序也可能不一样（整个程序的视角）**
+
+## 5.3 Cases
+
+### 5.3.1 Case-1
+
+happens-before在不同`std::memory_order`下的规则
+
+* `std::memory_order_seq_cst`
+    * normal-write happens-before atomic-write
+    * atomic-read happens-before normal-read
+    * atomic-write happens-before atomic-read
+    * 可以推导出：normal-write happens-before normal-read
+* `std::memory_order_relaxed`
+    * normal-write and atomic-write can be reordered
+    * atomic-read and normal-read can be reordered
+    * atomic-write happens-before atomic-read
+    * 无法推导出：normal-write happens-before normal-read
+* 下面的程序，在x86上是不会报错的，因为x86是强内存模型，`std::memory_order_relaxed`是不起作用的
+
+```cpp
+#include <atomic>
+#include <cassert>
+#include <iostream>
+#include <thread>
+
+constexpr int32_t INVALID_VALUE = -1;
+constexpr int32_t EXPECTED_VALUE = 99;
+constexpr int32_t TIMES = 1000000;
+
+int32_t data;
+std::atomic<bool> data_ready(false);
+
+template <std::memory_order order>
+void test_visibility() {
+    auto reader_thread = []() {
+        for (auto i = 0; i < TIMES; i++) {
+            while (!data_ready.load(order))
+                ;
+
+            assert(data == EXPECTED_VALUE);
+
+            data = INVALID_VALUE;
+            data_ready.store(false, order);
+        }
+    };
+    auto writer_thread = []() {
+        for (auto i = 0; i < TIMES; i++) {
+            while (data_ready.load(order))
+                ;
+
+            data = EXPECTED_VALUE;
+
+            data_ready.store(true, order);
+        }
+    };
+
+    data = INVALID_VALUE;
+    data_ready = false;
+
+    std::thread t1(reader_thread);
+    std::thread t2(writer_thread);
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+    t1.join();
+    t2.join();
+}
+
+int main() {
+    test_visibility<std::memory_order_seq_cst>();
+    test_visibility<std::memory_order_relaxed>();
+    return 0;
+}
+```
+
+### 5.3.2 Case-2
+
+* `std::memory_order_seq_cst`：由于不同的线程看到的顺序只有一种，因此`z`必然大于0
+* `std::memory_order_relaxed`：不同的线程看到的顺序可能是不同的，因此`z`可能是0
+    * `t3`：`write-x`->`write-y`
+    * `t4`：`write-y`->`write-x`
+* 下面的程序，在x86上是不会报错的，因为x86是强内存模型，`std::memory_order_relaxed`是不起作用的
+
+```cpp
+#include <atomic>
+#include <cassert>
+#include <thread>
+
+constexpr int32_t TIMES = 100;
+
+std::atomic<bool> x, y;
+std::atomic<int> z;
+
+template <std::memory_order order>
+void test() {
+    auto write_x = []() { x.store(true, order); };
+    auto write_y = []() { y.store(true, order); };
+    auto read_x_then_y = []() {
+        while (!x.load(order))
+            ;
+        if (y.load(order)) {
+            ++z;
+        }
+    };
+    auto read_y_then_x = []() {
+        while (!y.load(order))
+            ;
+        if (x.load(order)) {
+            ++z;
+        }
+    };
+
+    for (auto i = 0; i < TIMES; i++) {
+        x = false;
+        y = false;
+        z = 0;
+        std::thread t1(write_x);
+        std::thread t2(write_y);
+        std::thread t3(read_x_then_y);
+        std::thread t4(read_y_then_x);
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        t1.join();
+        t2.join();
+        t3.join();
+        t4.join();
+        assert(z.load() >= 0);
+    }
+}
+
+int main() {
+    test<std::memory_order_seq_cst>();
+    test<std::memory_order_relaxed>();
+    return 0;
+}
+```
+
+### 5.3.3 Case-3
+
+```cpp
+#include <atomic>
+#include <iostream>
+#include <thread>
+
+std::atomic<int> x(0), y(0), z(0);
+std::atomic<bool> go(false);
+constexpr size_t LOOP_COUNT = 10;
+
+struct triple {
+    int x, y, z;
+};
+
+triple values1[LOOP_COUNT];
+triple values2[LOOP_COUNT];
+triple values3[LOOP_COUNT];
+triple values4[LOOP_COUNT];
+triple values5[LOOP_COUNT];
+
+void increment(std::atomic<int>* var_to_inc, triple* values) {
+    while (!go) std::this_thread::yield();
+    for (size_t i = 0; i < LOOP_COUNT; ++i) {
+        values[i].x = x.load(std::memory_order_relaxed);
+        values[i].y = y.load(std::memory_order_relaxed);
+        values[i].z = z.load(std::memory_order_relaxed);
+        var_to_inc->store(i + 1, std::memory_order_relaxed);
+        std::this_thread::yield();
+    }
+}
+
+void read_vals(triple* values) {
+    while (!go) std::this_thread::yield();
+    for (size_t i = 0; i < LOOP_COUNT; ++i) {
+        values[i].x = x.load(std::memory_order_relaxed);
+        values[i].y = y.load(std::memory_order_relaxed);
+        values[i].z = z.load(std::memory_order_relaxed);
+        std::this_thread::yield();
+    }
+}
+
+void print(triple* v) {
+    for (size_t i = 0; i < LOOP_COUNT; ++i) {
+        if (i) std::cout << ",";
+        std::cout << "(" << v[i].x << "," << v[i].y << "," << v[i].z << ")";
+    }
+    std::cout << std::endl;
+}
+
+int main() {
+    std::thread t1(increment, &x, values1);
+    std::thread t2(increment, &y, values2);
+    std::thread t3(increment, &z, values3);
+    std::thread t4(read_vals, values4);
+    std::thread t5(read_vals, values5);
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    go = true;
+    t5.join();
+    t4.join();
+    t3.join();
+    t2.join();
+    t1.join();
+    print(values1);
+    print(values2);
+    print(values3);
+    print(values4);
+    print(values5);
+    return 0;
+}
+```
+
+其中一种可能输出如下：
+
+```cpp
+(0,0,0),(1,2,2),(2,3,2),(3,4,3),(4,5,4),(5,6,5),(6,7,7),(7,8,8),(8,9,8),(9,10,9)
+(0,0,0),(1,1,1),(2,2,2),(3,3,3),(4,4,4),(5,5,5),(5,6,6),(6,7,7),(7,8,8),(9,9,9)
+(0,0,0),(1,1,1),(2,2,2),(3,4,3),(4,5,4),(5,6,5),(6,7,6),(7,8,7),(8,9,8),(9,10,9)
+(0,1,1),(1,2,2),(2,3,2),(3,3,3),(4,4,4),(4,5,5),(5,6,6),(6,7,6),(7,8,7),(8,8,8)
+(0,1,1),(1,2,2),(2,3,2),(3,4,3),(4,4,4),(5,5,5),(5,6,6),(6,7,6),(7,8,7),(8,8,8)
+```
+
+## 5.4 x86 Memory Model
+
+x86属于`strong hardware memory model`，因此在这类硬件之上，`std::memory_order_relaxed`其实是不起作用的，其效果跟`std::memory_order_seq_cst`是一样的
+
+[x86-TSO : 适用于x86体系架构并发编程的内存模型](https://www.cnblogs.com/lqlqlq/p/13693876.html)
+
+## 5.5 参考
+
+* [C++11 - atomic类型和内存模型](https://zhuanlan.zhihu.com/p/107092432)
+* [cppreference.com-std::memory_order](https://en.cppreference.com/w/cpp/atomic/memory_order)
+* [如何理解 C++11 的六种 memory order？](https://www.zhihu.com/question/24301047)
+* [并行编程——内存模型之顺序一致性](https://www.cnblogs.com/jiayy/p/3246157.html)
+* [漫谈内存一致性模型](https://zhuanlan.zhihu.com/p/91406250)
+
+# 6 `__attribute__`
 
 [Compiler-specific Features](https://www.keil.com/support/man/docs/armcc/armcc_chr1359124965789.htm)
 
-## 5.1 aligned
+## 6.1 aligned
 
 ```cpp
 #include <iostream>
@@ -2248,13 +2601,13 @@ int main() {
 }
 ```
 
-# 6 ASM
+# 7 ASM
 
 [gcc-online-docs](https://gcc.gnu.org/onlinedocs/gcc/)
 
-## 6.1 Basic Asm
+## 7.1 Basic Asm
 
-## 6.2 [Extended Asm](https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html)
+## 7.2 [Extended Asm](https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html)
 
 GCC设计了一种特有的嵌入方式，它规定了汇编代码嵌入的形式和嵌入汇编代码需要由哪几个部分组成，格式如下：
 
@@ -2434,9 +2787,9 @@ int main() {
 
 **示例3：linux内核大量用到了`asm`，具体可以参考[linux-asm](https://github.com/torvalds/linux/blob/master/arch/x86/include/asm)**
 
-# 7 Policy
+# 8 Policy
 
-## 7.1 Pointer Stability
+## 8.1 Pointer Stability
 
 **`pointer stability`通常用于描述容器。当我们说一个容器是`pointer stability`时，是指，当某个元素添加到容器之后、从容器删除之前，该元素的内存地址不变，也就是说，该元素的内存地址，不会受到容器的添加删除元素、扩缩容、或者其他操作影响**
 
@@ -2460,7 +2813,7 @@ int main() {
 | `phmap::node_hash_map` | ✅ |
 | `phmap::node_hash_set` | ✅ |
 
-## 7.2 Exception Safe
+## 8.2 Exception Safe
 
 [Wiki-Exception safety](https://en.wikipedia.org/wiki/Exception_safety)
 
@@ -2471,7 +2824,7 @@ int main() {
 1. `Basic exception safety`：可能会抛出异常，操作失败的部分可能会导致副作用，但所有不变量都会被保留。任何存储的数据都将包含可能与原始值不同的有效值。资源泄漏（包括内存泄漏）通常通过一个声明所有资源都被考虑和管理的不变量来排除
 1. `No exception safety`：不承诺异常安全
 
-## 7.3 RAII
+## 8.3 RAII
 
 `RAII, Resource Acquisition is initialization`，即资源获取即初始化。典型示例包括：`std::lock_guard`、`defer`。简单来说，就是在对象的构造方法中初始化资源，在析构函数中销毁资源。而构造函数与析构函数的调用是由编译器自动插入的，减轻了开发者的心智负担
 
@@ -2488,9 +2841,9 @@ private:
 };
 ```
 
-# 8 Tips
+# 9 Tips
 
-## 8.1 如何在类中定义静态成员
+## 9.1 如何在类中定义静态成员
 
 **在类中声明静态成员，在类外定义（赋值）静态成员，示例如下：**
 
@@ -2518,9 +2871,9 @@ gcc -o main main.cpp -lstdc++ -Wall
 ./main
 ```
 
-## 8.2 初始化
+## 9.2 初始化
 
-### 8.2.1 初始化列表
+### 9.2.1 初始化列表
 
 1. 对于内置类型，直接进行值拷贝。使用初始化列表还是在构造函数体中进行初始化没有差别
 1. 对于类类型
@@ -2631,7 +2984,7 @@ A's default constructor
 A's move assign operator
 ```
 
-### 8.2.2 各种初始化类型
+### 9.2.2 各种初始化类型
 
 1. 默认初始化：`type variableName;`
 1. 直接初始化/构造初始化（至少有1个参数）：`type variableName(args);`
@@ -2764,9 +3117,9 @@ A's (int, int) constructor
 ============(值初始化 a11)============
 ```
 
-## 8.3 指针
+## 9.3 指针
 
-### 8.3.1 成员函数指针
+### 9.3.1 成员函数指针
 
 成员函数指针需要通过`.*`或者`->*`运算符进行调用
 
@@ -2825,9 +3178,9 @@ int main() {
 }
 ```
 
-## 8.4 引用
+## 9.4 引用
 
-### 8.4.1 引用赋值
+### 9.4.1 引用赋值
 
 **引用只能在定义处初始化**
 
@@ -2853,7 +3206,7 @@ b=2
 ref=2
 ```
 
-## 8.5 mock class
+## 9.5 mock class
 
 有时在测试的时候，我们需要mock一个类的实现，我们可以在测试的cpp文件中实现这个类的所有方法（**注意，必须是所有方法**），就能够覆盖原有库文件中的实现。下面以一个例子来说明
 
@@ -3030,9 +3383,9 @@ person.cpp:(.text+0x2a): Person::sleep() 的多重定义
 collect2: 错误：ld 返回 1
 ```
 
-# 9 FAQ
+# 10 FAQ
 
-## 9.1 为什么free和delete释放内存时不用指定大小
+## 10.1 为什么free和delete释放内存时不用指定大小
 
 [How does free know how much to free?](https://stackoverflow.com/questions/1518711/how-does-free-know-how-much-to-free)
 
@@ -3054,11 +3407,11 @@ ____ The allocated block ____
           +-- The address you are given
 ```
 
-## 9.2 形参类型是否需要左右值引用
+## 10.2 形参类型是否需要左右值引用
 
-## 9.3 返回类型是否需要左右值引用
+## 10.3 返回类型是否需要左右值引用
 
-# 10 参考
+# 11 参考
 
 * [C++11\14\17\20 特性介绍](https://www.jianshu.com/p/8c4952e9edec)
 * [关于C++：静态常量字符串(类成员)](https://www.codenong.com/1563897/)
