@@ -1494,7 +1494,8 @@ Data Stream Processing System, DSPS
                 <li>AZ64 Enconding</li>
                 <li>AQUA &amp; Computational Storage, do simple computation at the storage</li>
                 <li>Automatic Table Optimization(for a given workloads)</li>
-                <li>support SUPER value, typeless, can hold anything(int, double, array, json, etc.)</li></td>
+                <li>support SUPER value, typeless, can hold anything(int, double, array, json, etc.)</li>
+            </td>
             <td style="text-align:left">✅</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
@@ -1548,9 +1549,11 @@ Data Stream Processing System, DSPS
             <td style="text-align:left">
                 <li><code>#Memory Model</code></li>
             </td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
-            <td style="text-align:left"></td>
+            <td style="text-align:left">
+                <li>Effectively, the consistency model places restrictions on the values that can be returned by a read in a shared-memory program execution</li>
+            </td>
+            <td style="text-align:left">Chap2</td>
+            <td style="text-align:left">★★★★★</td>
         </tr>
     </tbody>
 </table>
