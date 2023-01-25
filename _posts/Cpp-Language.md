@@ -1487,6 +1487,45 @@ int main() {
 }
 ```
 
+以`-O3`优化级别进行编译，查看其汇编指令，可以发现：
+
+* `volatile_writer`中，`data`的赋值被优化到了循环外，`volatile_data_ready`每次循环都会进行一次赋值（这种优化破坏了程序的本意）
+* `atomic_writer`中，由于内存屏障的存在（`std::atomic`的写操作），`data`的赋值并未被优化到循环外。`data`和`atomic_data_ready`每次循环都会被赋值（符合程序本意）
+
+```
+00000000000013c0 <volatile_writer()>:
+    13c0:	f3 0f 1e fa          	endbr64
+    13c4:	ba 40 42 0f 00       	mov    $0xf4240,%edx
+    13c9:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+    13d0:	0f b6 05 45 2c 00 00 	movzbl 0x2c45(%rip),%eax        # 401c <volatile_data_ready>
+    13d7:	84 c0                	test   %al,%al
+    13d9:	75 f5                	jne    13d0 <volatile_writer()+0x10>
+    13db:	c6 05 3a 2c 00 00 01 	movb   $0x1,0x2c3a(%rip)        # 401c <volatile_data_ready>
+    13e2:	83 ea 01             	sub    $0x1,%edx
+    13e5:	75 e9                	jne    13d0 <volatile_writer()+0x10>
+    13e7:	c7 05 2f 2c 00 00 63 00 00 00 	movl   $0x63,0x2c2f(%rip)        # 4020 <data>
+    13f1:	c6 05 24 2c 00 00 01 	movb   $0x1,0x2c24(%rip)        # 401c <volatile_data_ready>
+    13f8:	c3                   	ret
+    13f9:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+
+0000000000001400 <atomic_writer()>:
+    1400:	f3 0f 1e fa          	endbr64
+    1404:	ba 40 42 0f 00       	mov    $0xf4240,%edx
+    1409:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+    1410:	0f b6 05 06 2c 00 00 	movzbl 0x2c06(%rip),%eax        # 401d <atomic_data_ready>
+    1417:	84 c0                	test   %al,%al
+    1419:	75 f5                	jne    1410 <atomic_writer()+0x10>
+    141b:	c7 05 fb 2b 00 00 63 00 00 00 	movl   $0x63,0x2bfb(%rip)        # 4020 <data>
+    1425:	c6 05 f1 2b 00 00 01 	movb   $0x1,0x2bf1(%rip)        # 401d <atomic_data_ready>
+    142c:	83 ea 01             	sub    $0x1,%edx
+    142f:	75 df                	jne    1410 <atomic_writer()+0x10>
+    1431:	c3                   	ret
+    1432:	66 66 2e 0f 1f 84 00 00 00 00 00 	data16 cs nopw 0x0(%rax,%rax,1)
+    143d:	0f 1f 00             	nopl   (%rax)
+```
+
+如果以`-O0`优化级别进行编译，则上述程序中的断言不会报错
+
 ## 3.9 constexpr
 
 ### 3.9.1 if constexpr
