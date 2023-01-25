@@ -1215,6 +1215,8 @@ Disassembly of section .text:
 
 ### 3.8.1 如何验证volatile不具备可见性
 
+#### 3.8.1.1 方法1
+
 这个问题比较难直接验证，我们打算用一种间接的方式来验证。假设写操作和读操作的性能开销之比为`w/r = α`。开两个线程，分别循环执行读操作和写操作，读写分别执行`n`次。统计读线程，相邻两次读操作，读取数值不同的次数为`m`，`m/r=β`。
 
 * 若满足可见性，那么`β`应该大致接近`1/α`
@@ -1382,6 +1384,108 @@ volatile, β=0.00602403
 ```
 
 **如果用Java进行上述等价验证，会发现实际结果与预期吻合，这里不再赘述**
+
+#### 3.8.1.2 方法2
+
+`std::atomic`可以为其他非原子变量提供`happens-before`关系
+
+* `normal-write happens-before atomic-write`
+* `atomic-write happens-before atomic-read`
+* `atomic-read happens-before normal-read`
+* 推导出`normal-write happens-before normal-read`
+
+此外，由于测试机器是x86的，x86使用的是强内存一致性模型，`std::memory_order_relaxed`的效果与`std::memory_order_seq_cst`其实是一样的（同样满足`atomic-write happens-before atomic-read`规则），只不过生成的指令更接近`volatile`，因此这里使用`std::memory_order_relaxed`，便于对比两者指令的差异
+
+```cpp
+#include <atomic>
+#include <cassert>
+#include <iostream>
+#include <thread>
+
+constexpr int32_t INVALID_VALUE = -1;
+constexpr int32_t EXPECTED_VALUE = 99;
+constexpr int32_t TIMES = 1000000;
+
+int32_t data;
+std::atomic<bool> atomic_data_ready(false);
+volatile bool volatile_data_ready(false);
+
+void atomic_reader() {
+    for (auto i = 0; i < TIMES; i++) {
+        while (!atomic_data_ready.load(std::memory_order_relaxed))
+            ;
+
+        assert(data == EXPECTED_VALUE);
+
+        data = INVALID_VALUE;
+        atomic_data_ready.store(false, std::memory_order_relaxed);
+    }
+}
+
+void atomic_writer() {
+    for (auto i = 0; i < TIMES; i++) {
+        while (atomic_data_ready.load(std::memory_order_relaxed))
+            ;
+
+        data = EXPECTED_VALUE;
+
+        atomic_data_ready.store(true, std::memory_order_relaxed);
+    }
+}
+
+void test_atomic_visibility() {
+    data = INVALID_VALUE;
+    atomic_data_ready = false;
+
+    std::thread t1(atomic_reader);
+    std::thread t2(atomic_writer);
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+    t1.join();
+    t2.join();
+}
+
+void volatile_reader() {
+    for (auto i = 0; i < TIMES; i++) {
+        while (!volatile_data_ready)
+            ;
+
+        assert(data == EXPECTED_VALUE);
+
+        data = INVALID_VALUE;
+        volatile_data_ready = false;
+    }
+}
+
+void volatile_writer() {
+    for (auto i = 0; i < TIMES; i++) {
+        while (volatile_data_ready)
+            ;
+
+        data = EXPECTED_VALUE;
+
+        volatile_data_ready = true;
+    }
+}
+
+void test_volatile_visibility() {
+    data = INVALID_VALUE;
+    volatile_data_ready = false;
+
+    std::thread t1(volatile_reader);
+    std::thread t2(volatile_writer);
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+    t1.join();
+    t2.join();
+}
+
+int main() {
+    test_atomic_visibility();
+    test_volatile_visibility();
+    return 0;
+}
+```
 
 ## 3.9 constexpr
 
