@@ -2360,34 +2360,69 @@ constexpr int32_t EXPECTED_VALUE = 99;
 constexpr int32_t TIMES = 1000000;
 
 int32_t data;
-std::atomic<bool> data_ready(false);
+std::atomic<bool> atomic_data_ready(false);
+volatile bool volatile_data_ready(false);
 
 template <std::memory_order order>
-void test_visibility() {
+void test_atomic_visibility() {
     auto reader_thread = []() {
         for (auto i = 0; i < TIMES; i++) {
-            while (!data_ready.load(order))
+            while (!atomic_data_ready.load(order))
                 ;
 
             assert(data == EXPECTED_VALUE);
 
             data = INVALID_VALUE;
-            data_ready.store(false, order);
+            atomic_data_ready.store(false, order);
         }
     };
     auto writer_thread = []() {
         for (auto i = 0; i < TIMES; i++) {
-            while (data_ready.load(order))
+            while (atomic_data_ready.load(order))
                 ;
 
             data = EXPECTED_VALUE;
 
-            data_ready.store(true, order);
+            atomic_data_ready.store(true, order);
         }
     };
 
     data = INVALID_VALUE;
-    data_ready = false;
+    atomic_data_ready = false;
+
+    std::thread t1(reader_thread);
+    std::thread t2(writer_thread);
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+    t1.join();
+    t2.join();
+}
+
+void test_volatile_visibility() {
+    auto reader_thread = []() {
+        for (auto i = 0; i < TIMES; i++) {
+            while (!volatile_data_ready)
+                ;
+
+            assert(data == EXPECTED_VALUE);
+
+            data = INVALID_VALUE;
+            volatile_data_ready = false;
+        }
+    };
+    auto writer_thread = []() {
+        for (auto i = 0; i < TIMES; i++) {
+            while (volatile_data_ready)
+                ;
+
+            data = EXPECTED_VALUE;
+
+            volatile_data_ready = true;
+        }
+    };
+
+    data = INVALID_VALUE;
+    volatile_data_ready = false;
 
     std::thread t1(reader_thread);
     std::thread t2(writer_thread);
@@ -2398,8 +2433,9 @@ void test_visibility() {
 }
 
 int main() {
-    test_visibility<std::memory_order_seq_cst>();
-    test_visibility<std::memory_order_relaxed>();
+    test_atomic_visibility<std::memory_order_seq_cst>();
+    test_atomic_visibility<std::memory_order_relaxed>();
+    test_volatile_visibility();
     return 0;
 }
 ```

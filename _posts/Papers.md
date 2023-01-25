@@ -1551,8 +1551,25 @@ Data Stream Processing System, DSPS
             </td>
             <td style="text-align:left">
                 <li>Effectively, the consistency model places restrictions on the values that can be returned by a read in a shared-memory program execution</li>
+                <li>Memory consistency model will affect programmability, performance, and portability at several different levels</li>
+                <li>Sequential consistency
+                    <ul>
+                        <li>A multiprocessor system is sequentially consistent if the result of any execution is the same as if the operations of all the processors were executed in some sequential order, and the operations of each individual processor appear in this sequence in the order specified by its program</li>
+                        <li>Seems like each processor issues memory operations in program order and the switch provides the global serialization among all memory operations</li>
+                    </ul>
+                </li>
+                <li>Implementing sequential consistency
+                    <ul>
+                        <li>Architectures without caches
+                            <ul>
+                                <li>Write buffers with bypassing capability(hardware optimization), which used in uniprocessors to effectively hide the latency of write operations, but this hardware optimization may violate sequential consistency</li>
+                                <li>Overlapping Write Operations(hardware optimization), which allows multiple write operations issued by the same processor may be simultaneously serviced by different memory modules</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
             </td>
-            <td style="text-align:left">Chap2</td>
+            <td style="text-align:left">5.1.2</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
     </tbody>
