@@ -2791,24 +2791,24 @@ bool test_reorder() {
     };
 
     // main vars
-    std::atomic<int32_t> x, y;
+    std::atomic<int32_t> flag1, flag2;
     std::atomic<int32_t> critical_num;
 
-    auto a_process = [&x, &y, &critical_num]() {
-        x.store(1, write_order);
-        if (y.load(read_order) == 0) {
+    auto a_process = [&flag1, &flag2, &critical_num]() {
+        flag1.store(1, write_order);
+        if (flag2.load(read_order) == 0) {
             critical_num++;
         }
     };
-    auto b_process = [&x, &y, &critical_num]() {
-        y.store(1, write_order);
-        if (x.load(read_order) == 0) {
+    auto b_process = [&flag1, &flag2, &critical_num]() {
+        flag2.store(1, write_order);
+        if (flag1.load(read_order) == 0) {
             critical_num++;
         }
     };
-    auto clean_process = [&x, &y, &critical_num]() {
-        x = 0;
-        y = 0;
+    auto clean_process = [&flag1, &flag2, &critical_num]() {
+        flag1 = 0;
+        flag2 = 0;
         critical_num = 0;
     };
     auto check_process = [&critical_num]() { return critical_num <= 1; };
