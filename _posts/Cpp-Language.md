@@ -2794,13 +2794,13 @@ bool test_reorder() {
     std::atomic<int32_t> flag1, flag2;
     std::atomic<int32_t> critical_num;
 
-    auto a_process = [&flag1, &flag2, &critical_num]() {
+    auto process_1 = [&flag1, &flag2, &critical_num]() {
         flag1.store(1, write_order);
         if (flag2.load(read_order) == 0) {
             critical_num++;
         }
     };
-    auto b_process = [&flag1, &flag2, &critical_num]() {
+    auto process_2 = [&flag1, &flag2, &critical_num]() {
         flag2.store(1, write_order);
         if (flag1.load(read_order) == 0) {
             critical_num++;
@@ -2813,14 +2813,14 @@ bool test_reorder() {
     };
     auto check_process = [&critical_num]() { return critical_num <= 1; };
 
-    std::thread t_a(round_process, a_process);
-    std::thread t_b(round_process, b_process);
+    std::thread t_1(round_process, process_1);
+    std::thread t_2(round_process, process_2);
     std::thread t_control(control_process, clean_process, check_process);
 
     t_control.join();
     stop = true;
-    t_a.join();
-    t_b.join();
+    t_1.join();
+    t_2.join();
 
     return success;
 }
@@ -2916,11 +2916,11 @@ bool test_reorder() {
     std::atomic<int32_t> head;
     std::atomic<int32_t> read_val;
 
-    auto a_process = [&data, &head]() {
+    auto process_1 = [&data, &head]() {
         data.store(2000, write_order);
         head.store(1, write_order);
     };
-    auto b_process = [&data, &head, &read_val]() {
+    auto process_2 = [&data, &head, &read_val]() {
         while (head.load(read_order) == 0)
             ;
         read_val = data.load(read_order);
@@ -2932,14 +2932,14 @@ bool test_reorder() {
     };
     auto check_process = [&read_val]() { return read_val == 2000; };
 
-    std::thread t_a(round_process, a_process);
-    std::thread t_b(round_process, b_process);
+    std::thread t_1(round_process, process_1);
+    std::thread t_2(round_process, process_2);
     std::thread t_control(control_process, clean_process, check_process);
 
     t_control.join();
     stop = true;
-    t_a.join();
-    t_b.join();
+    t_1.join();
+    t_2.join();
 
     return success;
 }
