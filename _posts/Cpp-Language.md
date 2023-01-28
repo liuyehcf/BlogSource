@@ -1213,7 +1213,9 @@ Disassembly of section .text:
   80:	c3                   	ret
 ```
 
-### 3.8.1 volatile验证
+### 3.8.1 visibility验证
+
+首先明确一下`visibility`的概念，这里我对它的定义是：当`A`和`B`两个线程，`A`对变量`x`进行写操作，`B`对变量`x`进行读操作，若时间上写操作先发生于读操作时，读操作能够读取到写操作写入的值
 
 这个问题比较难直接验证，我们打算用一种间接的方式来验证：
 
@@ -1445,12 +1447,20 @@ int main() {
 }
 ```
 
-结果如下：
+结果如下（`volatile`以及`std::memory_order_relaxed`的行为是平台相关的，测试环境是x86，实验结果不具备平台扩展性）：
+
+* `std::memory_order_seq_cst`符合预期
+* `std::memory_order_relaxed`、`volatile`都不符合预期。这两者都不具备`visibility`
+* 导致这一现象的原因，我的猜想如下：
+    * x86会用到一种硬件优化，`Store Buffer`用于加速写操作
+    * `std::memory_order_seq_cst`的写操作，会立即将`Store Buffer`刷入内存
+    * `std::memory_order_relaxed`、`volatile`的写操作，会写入`Store Buffer`，当容量满了之后，刷入内存
+    * 将`Store Buffer`填充满所需的时间很短。于是上述代码等价于`std::memory_order_seq_cst`每次写操作写一次内存，`std::memory_order_relaxed`、`volatile`的一批写操作写一次内存。写内存的频率接近。于是这三种情况下，`β`相近
 
 ```
-atomic<uint64_t>, std::memory_order_seq_cst, β=0.0283726 # 接近预期值
-atomic<uint64_t>, std::memory_order_relaxed, β=0.0276697 # 与预期值相距甚远
-volatile, β=0.0271394 # 与预期值相聚深远
+atomic<uint64_t>, std::memory_order_seq_cst, β=0.0283726
+atomic<uint64_t>, std::memory_order_relaxed, β=0.0276697
+volatile, β=0.0271394
 ```
 
 **如果用Java进行上述等价验证，会发现实际结果与预期吻合，这里不再赘述**
@@ -2489,6 +2499,8 @@ Ordering:
 
 线程`A`对原子变量`M`完成一个`release operation`之后，另一个线程`B`对`M`完成一个`acquire operation`，并读取到了`A`线程写入的值，就称`the store in thread A synchronizes-with the load in thread B`
 
+强烈推荐：[The Synchronizes-With Relation](https://preshing.com/20130823/the-synchronizes-with-relation/)
+
 ### 5.1.7 Dependency-ordered before
 
 Between threads, evaluation A is dependency-ordered before evaluation B if any of the following is true
@@ -2512,6 +2524,8 @@ Regardless of threads, evaluation A happens-before evaluation B if any of the fo
 
 1. A is sequenced-before B
 1. A inter-thread happens before B
+
+![happens-before](/images/Cpp-Language/happens-before.png)
 
 ### 5.1.10 Consume operation
 
@@ -2798,7 +2812,7 @@ int main() {
 
 ## 5.4 x86 Memory Model
 
-x86属于`strong hardware memory model`，因此在这类硬件之上，`std::memory_order_relaxed`其实是不起作用的，其效果跟`std::memory_order_seq_cst`是一样的
+对于`std::memory_order_relaxed`，在不同的硬件平台上，其效果是不同的。x86属于`TSO`
 
 [x86-TSO : 适用于x86体系架构并发编程的内存模型](https://www.cnblogs.com/lqlqlq/p/13693876.html)
 
