@@ -1213,11 +1213,14 @@ Disassembly of section .text:
   80:	c3                   	ret
 ```
 
-### 3.8.1 volatile验证（不对）
+### 3.8.1 volatile验证
 
-这个问题比较难直接验证，我们打算用一种间接的方式来验证。假设写操作和读操作的性能开销之比为`w/r = α`。开两个线程，分别循环执行读操作和写操作，读写分别执行`n`次。统计读线程，相邻两次读操作，读取数值不同的次数为`m`，`m/r=β`。
+这个问题比较难直接验证，我们打算用一种间接的方式来验证：
 
-* 若满足可见性，那么`β`应该大致接近`1/α`
+* 假设读操作和写操作的性能开销之比为`α`
+* 开两个线程，分别循环执行读操作和写操作，读执行`n`次（期间持续进行写操作）。统计读线程，相邻两次读操作，读取数值不同的次数为`m`，`β=m/n`。
+    * 若`α > 1`，即读比写更高效。如果满足可见性，那么`β`应该大致接近`1/α`
+    * 若`α <= 1`，即读比写更低效。如果满足可见性，那么`β`应该接近1（写的值大概率被看见）
 
 首先，测试`atomic`与`volatile`的读写性能
 
@@ -1232,40 +1235,70 @@ Disassembly of section .text:
 std::atomic<uint64_t> atomic_value{0};
 uint64_t volatile volatile_value = 0;
 
-template <typename T>
-static void random_write(T& value, std::atomic<bool>& stop) {
+constexpr size_t RAND_ROUND_SIZE = 1000000;
+
+static void volatile_random_write(volatile uint64_t& value, std::atomic<bool>& stop) {
     uint32_t tmp = 1;
-    while (!stop) {
-        value = tmp;
-        tmp++;
+    while (!stop.load(std::memory_order_relaxed)) {
+        for (size_t i = 0; i < RAND_ROUND_SIZE; i++) {
+            value = tmp;
+            tmp++;
+        }
     }
 }
 
-template <typename T>
-static void random_read(T& value, std::atomic<bool>& stop) {
+static void volatile_random_read(volatile uint64_t& value, std::atomic<bool>& stop) {
     uint64_t tmp;
-    while (!stop) {
-        benchmark::DoNotOptimize(tmp = value);
+    while (!stop.load(std::memory_order_relaxed)) {
+        for (size_t i = 0; i < RAND_ROUND_SIZE; i++) {
+            tmp = value;
+        }
+    }
+    benchmark::DoNotOptimize(tmp);
+}
+
+template <std::memory_order order>
+static void atomic_random_write(std::atomic<uint64_t>& value, std::atomic<bool>& stop) {
+    uint32_t tmp = 1;
+    while (!stop.load(std::memory_order_relaxed)) {
+        for (size_t i = 0; i < RAND_ROUND_SIZE; i++) {
+            value.store(tmp, order);
+            tmp++;
+        }
     }
 }
 
+template <std::memory_order order>
+static void atomic_random_read(std::atomic<uint64_t>& value, std::atomic<bool>& stop) {
+    uint64_t tmp;
+    while (!stop.load(std::memory_order_relaxed)) {
+        for (size_t i = 0; i < RAND_ROUND_SIZE; i++) {
+            tmp = value.load(order);
+        }
+    }
+    benchmark::DoNotOptimize(tmp);
+}
+
+template <std::memory_order order>
 static void atomic_read(benchmark::State& state) {
     uint64_t tmp = 0;
     std::atomic<bool> stop{false};
-    std::thread t([&]() { random_write(atomic_value, stop); });
+    std::thread t([&]() { atomic_random_write<order>(atomic_value, stop); });
     for (auto _ : state) {
-        benchmark::DoNotOptimize(tmp = atomic_value);
+        tmp = atomic_value.load(order);
     }
+    benchmark::DoNotOptimize(tmp);
     stop = true;
     t.join();
 }
 
+template <std::memory_order order>
 static void atomic_write(benchmark::State& state) {
     uint64_t tmp = 0;
     std::atomic<bool> stop{false};
-    std::thread t([&]() { random_read(atomic_value, stop); });
+    std::thread t([&]() { atomic_random_read<order>(atomic_value, stop); });
     for (auto _ : state) {
-        benchmark::DoNotOptimize(atomic_value = tmp);
+        atomic_value.store(tmp, order);
         tmp++;
     }
     stop = true;
@@ -1275,10 +1308,11 @@ static void atomic_write(benchmark::State& state) {
 static void volatile_read(benchmark::State& state) {
     uint64_t tmp = 0;
     std::atomic<bool> stop{false};
-    std::thread t([&]() { random_write(volatile_value, stop); });
+    std::thread t([&]() { volatile_random_write(volatile_value, stop); });
     for (auto _ : state) {
-        benchmark::DoNotOptimize(tmp = volatile_value);
+        tmp = volatile_value;
     }
+    benchmark::DoNotOptimize(tmp);
     stop = true;
     t.join();
 }
@@ -1286,17 +1320,19 @@ static void volatile_read(benchmark::State& state) {
 static void volatile_write(benchmark::State& state) {
     uint64_t tmp = 0;
     std::atomic<bool> stop{false};
-    std::thread t([&]() { random_read(volatile_value, stop); });
+    std::thread t([&]() { volatile_random_read(volatile_value, stop); });
     for (auto _ : state) {
-        benchmark::DoNotOptimize(volatile_value = tmp);
+        volatile_value = tmp;
         tmp++;
     }
     stop = true;
     t.join();
 }
 
-BENCHMARK(atomic_read);
-BENCHMARK(atomic_write);
+BENCHMARK(atomic_read<std::memory_order_seq_cst>);
+BENCHMARK(atomic_write<std::memory_order_seq_cst>);
+BENCHMARK(atomic_read<std::memory_order_relaxed>);
+BENCHMARK(atomic_write<std::memory_order_relaxed>);
 BENCHMARK(volatile_read);
 BENCHMARK(volatile_write);
 
@@ -1305,38 +1341,44 @@ BENCHMARK_MAIN();
 
 结果如下：
 
-* 对于`atomic<uint64_t>`，`α = 31.8/1.01 = 31.49`
-* 对于`volatile`，`α = 0.794/0.622 = 1.28`
+* 对于`atomic<uint64_t>, std::memory_order_seq_cst`
+    * `α = 28.9/1.24 = 23.30 > 1`
+    * `β`的预期值为`1/α = 0.043`
+* 对于`atomic<uint64_t>, std::memory_order_relaxed`
+    * `α = 0.391/1.38 = 0.28 < 1`
+    * `β`的预期值为`1`
+* 对于`volatile`
+    * `α = 0.331/1.33 = 0.25 < 1`
+    * `β`的预期值为`1`
 
 ```
----------------------------------------------------------
-Benchmark               Time             CPU   Iterations
----------------------------------------------------------
-atomic_read          1.01 ns         1.01 ns    617176522
-atomic_write         31.8 ns         31.8 ns     22684714
-volatile_read       0.622 ns        0.622 ns   1000000000
-volatile_write      0.794 ns        0.793 ns    990971682
+----------------------------------------------------------------------------------
+Benchmark                                        Time             CPU   Iterations
+----------------------------------------------------------------------------------
+atomic_read<std::memory_order_seq_cst>        1.24 ns         1.24 ns    577159059
+atomic_write<std::memory_order_seq_cst>       28.9 ns         28.9 ns     23973114
+atomic_read<std::memory_order_relaxed>        1.38 ns         1.38 ns    595494132
+atomic_write<std::memory_order_relaxed>      0.391 ns        0.391 ns   1000000000
+volatile_read                                 1.33 ns         1.33 ns    551154517
+volatile_write                               0.331 ns        0.331 ns   1000000000
 ```
 
-测试程序如下：
+同一个环境，测试程序如下：
 
 ```cpp
 #include <atomic>
 #include <iostream>
 #include <thread>
 
-constexpr uint64_t size = 1000000000;
+constexpr uint64_t SIZE = 1000000000;
 
-template <class Tp>
-inline void DoNotOptimize(Tp const& value) {
-    asm volatile("" : : "r,m"(value) : "memory");
-}
-
-template <typename T>
-void test(T& value, const std::string& description) {
+void test_volatile(volatile uint64_t& value, const std::string& description) {
+    std::atomic<bool> stop{false};
     std::thread write_thread([&]() {
-        for (uint64_t i = 0; i < size; i++) {
-            DoNotOptimize(value = i);
+        while (!stop.load(std::memory_order_relaxed)) {
+            for (uint64_t i = 0; i < SIZE; i++) {
+                value = i;
+            }
         }
     });
 
@@ -1345,27 +1387,59 @@ void test(T& value, const std::string& description) {
         uint64_t non_diff_cnt = 0;
         uint64_t diff_cnt = 0;
         uint64_t cur_value;
-        for (uint64_t i = 0; i < size; i++) {
-            DoNotOptimize(cur_value = value);
+        for (uint64_t i = 0; i < SIZE; i++) {
+            cur_value = value;
 
             // These two statements have little overhead which can be ignored if enable -03
             cur_value == prev_value ? non_diff_cnt++ : diff_cnt++;
             prev_value = cur_value;
         }
-        std::cout << description << ", β=" << static_cast<double>(diff_cnt) / size << std::endl;
+        std::cout << description << ", β=" << static_cast<double>(diff_cnt) / SIZE << std::endl;
     });
-    write_thread.join();
     read_thread.join();
+    stop = true;
+    write_thread.join();
+}
+
+template <std::memory_order order>
+void test_atomic(std::atomic<uint64_t>& value, const std::string& description) {
+    std::atomic<bool> stop{false};
+    std::thread write_thread([&]() {
+        while (!stop.load(std::memory_order_relaxed)) {
+            for (uint64_t i = 0; i < SIZE; i++) {
+                value.store(i, order);
+            }
+        }
+    });
+
+    std::thread read_thread([&]() {
+        uint64_t prev_value = 0;
+        uint64_t non_diff_cnt = 0;
+        uint64_t diff_cnt = 0;
+        uint64_t cur_value;
+        for (uint64_t i = 0; i < SIZE; i++) {
+            cur_value = value.load(order);
+
+            // These two statements have little overhead which can be ignored if enable -03
+            cur_value == prev_value ? non_diff_cnt++ : diff_cnt++;
+            prev_value = cur_value;
+        }
+        std::cout << description << ", β=" << static_cast<double>(diff_cnt) / SIZE << std::endl;
+    });
+    read_thread.join();
+    stop = true;
+    write_thread.join();
 }
 
 int main() {
     {
         std::atomic<uint64_t> value = 0;
-        test(value, "atomic");
+        test_atomic<std::memory_order_seq_cst>(value, "atomic<uint64_t>, std::memory_order_seq_cst");
+        test_atomic<std::memory_order_relaxed>(value, "atomic<uint64_t>, std::memory_order_relaxed");
     }
     {
         uint64_t volatile value = 0;
-        test(value, "volatile");
+        test_volatile(value, "volatile");
     }
     return 0;
 }
@@ -1373,12 +1447,10 @@ int main() {
 
 结果如下：
 
-* 对于`atomic`而言，预测结果是`1/α = 1/31.49 ≈ 0.032`，实际为`0.025`，符合预测
-* 对于`volatile`而言，预测结果是`1/α = 1/1.28 ≈ 0.781`，实际为`0.006`，相距甚远。也就是说，写操作写的值，读操作大概率读不到，即不满足可见性
-
 ```
-atomic, β=0.0246502
-volatile, β=0.00602403
+atomic<uint64_t>, std::memory_order_seq_cst, β=0.0283726 # 接近预期值
+atomic<uint64_t>, std::memory_order_relaxed, β=0.0276697 # 与预期值相距甚远
+volatile, β=0.0271394 # 与预期值相聚深远
 ```
 
 **如果用Java进行上述等价验证，会发现实际结果与预期吻合，这里不再赘述**
