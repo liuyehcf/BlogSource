@@ -1474,7 +1474,7 @@ volatile, β=0.0271394
 * `atomic-read happens-before normal-read`
 * 推导出`normal-write happens-before normal-read`
 
-此外，由于测试机器是x86的，x86使用的是强内存一致性模型，`std::memory_order_relaxed`的效果与`std::memory_order_seq_cst`其实是一样的（同样满足`atomic-write happens-before atomic-read`规则），只不过生成的指令更接近`volatile`，因此这里使用`std::memory_order_relaxed`，便于对比两者指令的差异
+此外，由于测试机器是x86的，x86是`TSO`模型，`std::memory_order_relaxed`同样满足`atomic-write happens-before atomic-read`规则，只不过生成的指令更接近`volatile`，因此这里使用`std::memory_order_relaxed`，便于对比两者指令的差异
 
 ```cpp
 #include <atomic>
@@ -2570,11 +2570,10 @@ happens-before在不同`std::memory_order`下的规则
     * atomic-write happens-before atomic-read
     * 可以推导出：normal-write happens-before normal-read
 * `std::memory_order_relaxed`
-    * normal-write and atomic-write can be reordered
-    * atomic-read and normal-read can be reordered
-    * atomic-write happens-before atomic-read
+    * normal-write happens-before atomic-write
+    * atomic-read happens-before normal-read
     * 无法推导出：normal-write happens-before normal-read
-* 下面的程序，在x86上是不会报错的，因为x86是强内存模型，`std::memory_order_relaxed`是不起作用的
+* 下面的程序，在x86上是不会报错的，因为x86是`TSO`模型，`std::memory_order_relaxed`同样满足`atomic-write happens-before atomic-read`规则
 
 ```cpp
 #include <atomic>
@@ -2673,7 +2672,7 @@ int main() {
 * `std::memory_order_relaxed`：不同的线程看到的顺序可能是不同的，因此`z`可能是0
     * `t3`：`write-x`->`write-y`
     * `t4`：`write-y`->`write-x`
-* 下面的程序，在x86上是不会报错的，因为x86是强内存模型，`std::memory_order_relaxed`是不起作用的
+* 下面的程序，在x86上是不会报错的，因为x86是`TSO`模型，`std::memory_order_relaxed`同样满足`atomic-write happens-before atomic-read`规则
 
 ```cpp
 #include <atomic>
