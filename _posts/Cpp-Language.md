@@ -2729,84 +2729,123 @@ int main() {
 
 ### 5.3.3 Case-3
 
+来自[Shared Memory Consistency Models: A Tutorial](resources/paper/Shared-Memory-Consistency-Models-A-Tutorial.pdf)中的`Figure-5(a)`
+
 ```cpp
 #include <atomic>
+#include <cassert>
 #include <iostream>
 #include <thread>
 
-std::atomic<int> x(0), y(0), z(0);
-std::atomic<bool> go(false);
-constexpr size_t LOOP_COUNT = 10;
+constexpr size_t TIMES = 1000000;
 
-struct triple {
-    int x, y, z;
-};
+template <std::memory_order read_order, std::memory_order write_order>
+bool test_reorder() {
+    // control vars
+    std::atomic<bool> control(false);
+    std::atomic<bool> stop(false);
+    std::atomic<bool> success(true);
+    std::atomic<int32_t> finished_num;
 
-triple values1[LOOP_COUNT];
-triple values2[LOOP_COUNT];
-triple values3[LOOP_COUNT];
-triple values4[LOOP_COUNT];
-triple values5[LOOP_COUNT];
+    auto round_process = [&control, &stop, &finished_num](auto&& process) {
+        while (!stop) {
+            // make t1 and t2 go through synchronously
+            finished_num++;
+            while (!stop && !control)
+                ;
 
-void increment(std::atomic<int>* var_to_inc, triple* values) {
-    while (!go) std::this_thread::yield();
-    for (size_t i = 0; i < LOOP_COUNT; ++i) {
-        values[i].x = x.load(std::memory_order_relaxed);
-        values[i].y = y.load(std::memory_order_relaxed);
-        values[i].z = z.load(std::memory_order_relaxed);
-        var_to_inc->store(i + 1, std::memory_order_relaxed);
-        std::this_thread::yield();
-    }
-}
+            process();
 
-void read_vals(triple* values) {
-    while (!go) std::this_thread::yield();
-    for (size_t i = 0; i < LOOP_COUNT; ++i) {
-        values[i].x = x.load(std::memory_order_relaxed);
-        values[i].y = y.load(std::memory_order_relaxed);
-        values[i].z = z.load(std::memory_order_relaxed);
-        std::this_thread::yield();
-    }
-}
+            // wait for next round
+            finished_num++;
+            while (!stop && control)
+                ;
+        }
+    };
 
-void print(triple* v) {
-    for (size_t i = 0; i < LOOP_COUNT; ++i) {
-        if (i) std::cout << ",";
-        std::cout << "(" << v[i].x << "," << v[i].y << "," << v[i].z << ")";
-    }
-    std::cout << std::endl;
+    auto control_process = [&control, &success, &finished_num](auto&& clean_process, auto&& check_process) {
+        for (size_t i = 0; i < TIMES; i++) {
+            // wait t1 and t2 at the top of the loop
+            while (finished_num != 2)
+                ;
+
+            // clean up data
+            finished_num = 0;
+            clean_process();
+
+            // let t1 and t2 go start
+            control = true;
+
+            // wait t1 and t2 finishing write operation
+            while (finished_num != 2)
+                ;
+
+            // check assumption
+            if (!check_process()) {
+                success = false;
+            }
+
+            finished_num = 0;
+            control = false;
+        }
+    };
+
+    // main vars
+    std::atomic<int32_t> x, y;
+    std::atomic<int32_t> critical_num;
+
+    auto a_process = [&x, &y, &critical_num]() {
+        x.store(1, write_order);
+        if (y.load(read_order) == 0) {
+            critical_num++;
+        }
+    };
+    auto b_process = [&x, &y, &critical_num]() {
+        y.store(1, write_order);
+        if (x.load(read_order) == 0) {
+            critical_num++;
+        }
+    };
+    auto clean_process = [&x, &y, &critical_num]() {
+        x = 0;
+        y = 0;
+        critical_num = 0;
+    };
+    auto check_process = [&critical_num]() { return critical_num <= 1; };
+
+    std::thread t_a(round_process, a_process);
+    std::thread t_b(round_process, b_process);
+    std::thread t_control(control_process, clean_process, check_process);
+
+    t_control.join();
+    stop = true;
+    t_a.join();
+    t_b.join();
+
+    return success;
 }
 
 int main() {
-    std::thread t1(increment, &x, values1);
-    std::thread t2(increment, &y, values2);
-    std::thread t3(increment, &z, values3);
-    std::thread t4(read_vals, values4);
-    std::thread t5(read_vals, values5);
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-    go = true;
-    t5.join();
-    t4.join();
-    t3.join();
-    t2.join();
-    t1.join();
-    print(values1);
-    print(values2);
-    print(values3);
-    print(values4);
-    print(values5);
+    bool res;
+    res = test_reorder<std::memory_order_seq_cst, std::memory_order_seq_cst>();
+    std::cout << "test std::memory_order_seq_cst, std::memory_order_seq_cst"
+              << ", res=" << std::boolalpha << res << std::endl;
+    res = test_reorder<std::memory_order_acquire, std::memory_order_release>();
+    std::cout << "test std::memory_order_acquire, std::memory_order_release"
+              << ", res=" << std::boolalpha << res << std::endl;
+    res = test_reorder<std::memory_order_relaxed, std::memory_order_relaxed>();
+    std::cout << "test std::memory_order_relaxed, std::memory_order_relaxed"
+              << ", res=" << std::boolalpha << res << std::endl;
     return 0;
 }
 ```
 
-其中一种可能输出如下：
+结果如下，只有`memory_order_seq_cst`能保证一致性，而`memory_order_acquire/memory_order_release`仅针对同一变量，不同变量的`Write-Read`仍然可能重排
 
-```cpp
-(0,0,0),(1,2,2),(2,3,2),(3,4,3),(4,5,4),(5,6,5),(6,7,7),(7,8,8),(8,9,8),(9,10,9)
-(0,0,0),(1,1,1),(2,2,2),(3,3,3),(4,4,4),(5,5,5),(5,6,6),(6,7,7),(7,8,8),(9,9,9)
-(0,0,0),(1,1,1),(2,2,2),(3,4,3),(4,5,4),(5,6,5),(6,7,6),(7,8,7),(8,9,8),(9,10,9)
-(0,1,1),(1,2,2),(2,3,2),(3,3,3),(4,4,4),(4,5,5),(5,6,6),(6,7,6),(7,8,7),(8,8,8)
-(0,1,1),(1,2,2),(2,3,2),(3,4,3),(4,4,4),(5,5,5),(5,6,6),(6,7,6),(7,8,7),(8,8,8)
+```
+test std::memory_order_seq_cst, std::memory_order_seq_cst, res=true
+test std::memory_order_acquire, std::memory_order_release, res=false
+test std::memory_order_relaxed, std::memory_order_relaxed, res=false
 ```
 
 ## 5.4 x86 Memory Model
