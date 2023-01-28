@@ -2840,12 +2840,131 @@ int main() {
 }
 ```
 
-结果如下，只有`memory_order_seq_cst`能保证一致性，而`memory_order_acquire/memory_order_release`仅针对同一变量，不同变量的`Write-Read`仍然可能重排
+在`x86`平台，结果如下，只有`memory_order_seq_cst`能保证一致性，而`memory_order_acquire/memory_order_release`仅针对同一变量，不同变量的`Write-Read`仍然可能重排
 
 ```
 test std::memory_order_seq_cst, std::memory_order_seq_cst, res=true
 test std::memory_order_acquire, std::memory_order_release, res=false
 test std::memory_order_relaxed, std::memory_order_relaxed, res=false
+```
+
+### 5.3.4 Case-4
+
+来自[Shared Memory Consistency Models: A Tutorial](resources/paper/Shared-Memory-Consistency-Models-A-Tutorial.pdf)中的`Figure-5(b)`
+
+```cpp
+#include <atomic>
+#include <cassert>
+#include <iostream>
+#include <thread>
+
+constexpr size_t TIMES = 1000000;
+
+template <std::memory_order read_order, std::memory_order write_order>
+bool test_reorder() {
+    // control vars
+    std::atomic<bool> control(false);
+    std::atomic<bool> stop(false);
+    std::atomic<bool> success(true);
+    std::atomic<int32_t> finished_num;
+
+    auto round_process = [&control, &stop, &finished_num](auto&& process) {
+        while (!stop) {
+            // make t1 and t2 go through synchronously
+            finished_num++;
+            while (!stop && !control)
+                ;
+
+            process();
+
+            // wait for next round
+            finished_num++;
+            while (!stop && control)
+                ;
+        }
+    };
+
+    auto control_process = [&control, &success, &finished_num](auto&& clean_process, auto&& check_process) {
+        for (size_t i = 0; i < TIMES; i++) {
+            // wait t1 and t2 at the top of the loop
+            while (finished_num != 2)
+                ;
+
+            // clean up data
+            finished_num = 0;
+            clean_process();
+
+            // let t1 and t2 go start
+            control = true;
+
+            // wait t1 and t2 finishing write operation
+            while (finished_num != 2)
+                ;
+
+            // check assumption
+            if (!check_process()) {
+                success = false;
+            }
+
+            finished_num = 0;
+            control = false;
+        }
+    };
+
+    // main vars
+    std::atomic<int32_t> data;
+    std::atomic<int32_t> head;
+    std::atomic<int32_t> read_val;
+
+    auto a_process = [&data, &head]() {
+        data.store(2000, write_order);
+        head.store(1, write_order);
+    };
+    auto b_process = [&data, &head, &read_val]() {
+        while (head.load(read_order) == 0)
+            ;
+        read_val = data.load(read_order);
+    };
+    auto clean_process = [&data, &head, &read_val]() {
+        data = 0;
+        head = 0;
+        read_val = 0;
+    };
+    auto check_process = [&read_val]() { return read_val == 2000; };
+
+    std::thread t_a(round_process, a_process);
+    std::thread t_b(round_process, b_process);
+    std::thread t_control(control_process, clean_process, check_process);
+
+    t_control.join();
+    stop = true;
+    t_a.join();
+    t_b.join();
+
+    return success;
+}
+
+int main() {
+    bool res;
+    res = test_reorder<std::memory_order_seq_cst, std::memory_order_seq_cst>();
+    std::cout << "test std::memory_order_seq_cst, std::memory_order_seq_cst"
+              << ", res=" << std::boolalpha << res << std::endl;
+    res = test_reorder<std::memory_order_acquire, std::memory_order_release>();
+    std::cout << "test std::memory_order_acquire, std::memory_order_release"
+              << ", res=" << std::boolalpha << res << std::endl;
+    res = test_reorder<std::memory_order_relaxed, std::memory_order_relaxed>();
+    std::cout << "test std::memory_order_relaxed, std::memory_order_relaxed"
+              << ", res=" << std::boolalpha << res << std::endl;
+    return 0;
+}
+```
+
+在`x86`平台，`Relaxed Consistency Model`不允许`Write-Write`以及`Read-Read`重排，结果如下（对于其他具有不同内存模型的硬件平台，由于对`Relaxed`的支持程度不同，可能会有不同的结果）：
+
+```
+test std::memory_order_seq_cst, std::memory_order_seq_cst, res=true
+test std::memory_order_acquire, std::memory_order_release, res=true
+test std::memory_order_relaxed, std::memory_order_relaxed, res=true
 ```
 
 ## 5.4 x86 Memory Model
