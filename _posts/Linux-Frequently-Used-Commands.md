@@ -3932,6 +3932,9 @@ CONFIG_KVM_MMU_AUDIT=y
     * `iftop`
 1. 找出占用带宽最多的进程
     * `nethogs`
+1. 找出占用指定端口的进程
+    * `lsof -n -i :80`
+    * `ss -npl | grep 80`
 
 # 12 参考
 
