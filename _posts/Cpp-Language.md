@@ -2668,67 +2668,6 @@ int main() {
 
 ### 5.3.2 Case-2
 
-* `std::memory_order_seq_cst`：由于不同的线程看到的顺序只有一种，因此`z`必然大于0
-* `std::memory_order_relaxed`：不同的线程看到的顺序可能是不同的，因此`z`可能是0
-    * `t3`：`write-x`->`write-y`
-    * `t4`：`write-y`->`write-x`
-* 下面的程序，在x86上是不会报错的，因为x86是`TSO`模型，`std::memory_order_relaxed`同样满足`atomic-write happens-before atomic-read`规则
-
-```cpp
-#include <atomic>
-#include <cassert>
-#include <thread>
-
-constexpr int32_t TIMES = 100;
-
-std::atomic<bool> x, y;
-std::atomic<int> z;
-
-template <std::memory_order order>
-void test() {
-    auto write_x = []() { x.store(true, order); };
-    auto write_y = []() { y.store(true, order); };
-    auto read_x_then_y = []() {
-        while (!x.load(order))
-            ;
-        if (y.load(order)) {
-            ++z;
-        }
-    };
-    auto read_y_then_x = []() {
-        while (!y.load(order))
-            ;
-        if (x.load(order)) {
-            ++z;
-        }
-    };
-
-    for (auto i = 0; i < TIMES; i++) {
-        x = false;
-        y = false;
-        z = 0;
-        std::thread t1(write_x);
-        std::thread t2(write_y);
-        std::thread t3(read_x_then_y);
-        std::thread t4(read_y_then_x);
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        t1.join();
-        t2.join();
-        t3.join();
-        t4.join();
-        assert(z.load() >= 0);
-    }
-}
-
-int main() {
-    test<std::memory_order_seq_cst>();
-    test<std::memory_order_relaxed>();
-    return 0;
-}
-```
-
-### 5.3.3 Case-3
-
 来自[Shared Memory Consistency Models: A Tutorial](resources/paper/Shared-Memory-Consistency-Models-A-Tutorial.pdf)中的`Figure-5(a)`
 
 ```cpp
@@ -2848,7 +2787,7 @@ test std::memory_order_acquire, std::memory_order_release, res=false
 test std::memory_order_relaxed, std::memory_order_relaxed, res=false
 ```
 
-### 5.3.4 Case-4
+### 5.3.3 Case-3
 
 来自[Shared Memory Consistency Models: A Tutorial](resources/paper/Shared-Memory-Consistency-Models-A-Tutorial.pdf)中的`Figure-5(b)`
 
@@ -2967,7 +2906,7 @@ test std::memory_order_acquire, std::memory_order_release, res=true
 test std::memory_order_relaxed, std::memory_order_relaxed, res=true
 ```
 
-### 5.3.5 Case-5
+### 5.3.4 Case-4
 
 来自[Shared Memory Consistency Models: A Tutorial](resources/paper/Shared-Memory-Consistency-Models-A-Tutorial.pdf)中的`Figure-10(b)`
 
