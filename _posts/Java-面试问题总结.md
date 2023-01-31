@@ -1299,7 +1299,7 @@ categories:
     > 回溯
 
 1. 并查集
-    > {% post_link 并查集 %}
+    > {% post_link DataStructure-Disjoint-Set %}
 
 1. 海量url去重类问题
     > {% post_link DataStructure-Bloom-Filter %}

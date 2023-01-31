@@ -1,5 +1,5 @@
 ---
-title: 并查集
+title: DataStructure-Disjoint-Set
 date: 2017-08-09 20:11:02
 tags: 
 - 原创
