@@ -1,5 +1,5 @@
 ---
-title: 故障排查分析汇总
+title: System-Issue-Logs
 date: 2020-11-05 09:58:52
 tags: 
 - 原创
@@ -15,7 +15,7 @@ categories:
 
 抓包结果如下
 
-![1-1](/images/故障排查分析汇总/1-1.png)
+![1-1](/images/System-Issue-Logs/1-1.png)
 
 我们可以发现如下信息
 
@@ -43,7 +43,7 @@ echo 1500 > /sys/class/net/${IF_NAME}/mtu
 
 **场景复现：用wget下载一个大文件，使用`top`命令查看每个cpu的使用详情，可以发现cpu1的软中断（si）数值特别高，而其他cpu的该数值基本为0，如下图**
 
-![2-1](/images/故障排查分析汇总/2-1.png)
+![2-1](/images/System-Issue-Logs/2-1.png)
 
 机器的外网网卡为`enp0s3`，可以通过`/proc/interrupts`找到该网卡设备对应的软中断号
 
@@ -102,7 +102,7 @@ echo f > /proc/irq/19/smp_affinity
 
 **再次用top命令观察，发现cpu0的si数值特别高，而其他的cpu基本为0。这并不符合我们的预期。可能原因：对于网卡设备的某个队列而言，即便配置了多个亲和cpu，但是只有序号最小的cpu会生效**
 
-![2-2](/images/故障排查分析汇总/2-2.png)
+![2-2](/images/System-Issue-Logs/2-2.png)
 
 **验证刚才这个猜想，将亲和性配置为cpu2和cpu3，预期结果为：只有cpu2的si值特别高，而其他cpu基本为0**
 
@@ -113,7 +113,7 @@ echo c > /proc/irq/19/smp_affinity
 
 **用top命令观察，发现cpu2的si数值特别高，而其他的cpu基本为0，符合我们的猜想**
 
-![2-3](/images/故障排查分析汇总/2-3.png)
+![2-3](/images/System-Issue-Logs/2-3.png)
 
 **结论：**
 
@@ -282,7 +282,7 @@ done
 
 **由于通过`k8s-service`进行服务的访问，那么势必会存在`DNAT/SNAT`规则，因为需要将`service-name`对应的`clusterIp`通过`DNAT`规则转换成指定的`podIp`。问题由此产生，生产环境中使用的k8s版本较低，还为支持`NF_NAT_RANGE_PROTO_RANDOM_FULLY`参数，当存在大量NAT转换的场景下，可能会出现冲突，一旦出现冲突，那么表象就是`insert failed`，如下图：**
 
-![7-1](/images/故障排查分析汇总/7-1.png)
+![7-1](/images/System-Issue-Logs/7-1.png)
 
 **解决方式：将k8s升级到支持`NF_NAT_RANGE_PROTO_RANDOM_FULLY`参数的版本**
 
