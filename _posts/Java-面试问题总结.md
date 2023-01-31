@@ -1317,7 +1317,7 @@ categories:
     > map-reduce
 
 1. 二叉树遍历
-    > {% post_link 树的遍历 %}
+    > {% post_link Algorithm-Tree %}
 
 1. 经典排序总结
     > {% post_link Algorithm-Sort %}
