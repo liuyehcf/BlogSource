@@ -192,7 +192,7 @@ private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
     private volatile int maximumPoolSize;
 ```
 
-* **workQueue**：任务队列，Blocking相关源码分析可以参考{% post_link Java-concurrent-ArrayBlockingQueue-源码剖析 %}
+* **workQueue**：任务队列，Blocking相关源码分析可以参考{% post_link Java-ArrayBlockingQueue-SourceAnalysis %}
 * **mainLock**：重入锁，在访问或者修改workers时，需要该重入锁来保证线程安全。ReentrantLock相关源码分析可以参考{% post_link Java-concurrent-ReentrantLock-源码剖析 %}
 * **workers**：用于存放Worker的集合，采用非线程安全的HashSet，因此该字段的访问和修改必须配合mainLock
 * **termination**：ConditionObject相关源码分析可以参考{% post_link Java-AQS-ConditionObject-SourceAnalysis %}

@@ -1,5 +1,5 @@
 ---
-title: Java-concurrent-ArrayBlockingQueue-源码剖析
+title: Java-ArrayBlockingQueue-SourceAnalysis
 date: 2017-07-02 22:56:52
 tags: 
 - 原创

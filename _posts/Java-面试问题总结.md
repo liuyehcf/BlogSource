@@ -549,11 +549,11 @@ categories:
     > 1. {% post_link Java-AQS-ConditionObject-SourceAnalysis %}
     > 1. {% post_link Java-concurrent-ReentrantLock-源码剖析 %}
     > 1. {% post_link Java-concurrent-ReentrantReadWriteLock-源码剖析 %}
-    > 1. {% post_link Java-concurrent-ArrayBlockingQueue-源码剖析 %}
+    > 1. {% post_link Java-ArrayBlockingQueue-SourceAnalysis %}
     > 1. {% post_link Java-concurrent-ThreadPoolExecutor-源码剖析 %}
     > 1. {% post_link Java-concurrent-FutureTask-源码剖析 %}
-    > 1. {% post_link Java-concurrent-ConcurrentHashMap-源码剖析 %}
-    > 1. {% post_link Java-concurrent-CountDownLatch-源码剖析 %}
+    > 1. {% post_link Java-ConcurrentHashMap-SourceAnalysis %}
+    > 1. {% post_link Java-CountDownLatch-SourceAnalysis %}
     > 1. {% post_link Java-concurrent-CyclicBarrier-源码剖析 %}
     > 1. {% post_link Java-concurrent-Exchanger-源码剖析 %}
     > 1. {% post_link Java-concurrent-Semaphore-源码剖析 %}
@@ -587,7 +587,7 @@ categories:
     > 1. 链表、红黑树
     > 1. table大小为2的幂次，这样做可以实现一个扩张单调性，类似于一致性hash
     > 1. hash值的改造
-    > 详细源码剖析请参考{% post_link Java-concurrent-ConcurrentHashMap-源码剖析 %}
+    > 详细源码剖析请参考{% post_link Java-ConcurrentHashMap-SourceAnalysis %}
     > 1. 1.8把锁粒度降低有没有坏处
 
 1. 原子类实现原理
