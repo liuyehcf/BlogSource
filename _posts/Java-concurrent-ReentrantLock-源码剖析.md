@@ -242,7 +242,7 @@ ReentrantLock的一系列lock以及unlock方法仅仅转调用sync的相应方�
     }
 ```
 
-获取条件对象的方法，关于ConditionObject的内部机制以及源码分析可参考 {% post_link Java-concurrent-AQS-ConditionObject-源码剖析 %}
+获取条件对象的方法，关于ConditionObject的内部机制以及源码分析可参考 {% post_link Java-AQS-ConditionObject-SourceAnalysis %}
 
 ```java
     public Condition newCondition() {

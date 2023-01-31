@@ -546,7 +546,7 @@ categories:
 
 1. 源码相关
     > 1. {% post_link Java-AQS-SourceAnalysis %}
-    > 1. {% post_link Java-concurrent-AQS-ConditionObject-源码剖析 %}
+    > 1. {% post_link Java-AQS-ConditionObject-SourceAnalysis %}
     > 1. {% post_link Java-concurrent-ReentrantLock-源码剖析 %}
     > 1. {% post_link Java-concurrent-ReentrantReadWriteLock-源码剖析 %}
     > 1. {% post_link Java-concurrent-ArrayBlockingQueue-源码剖析 %}
@@ -631,7 +631,7 @@ categories:
     > 1. signal/signalAll
 
     > 与Object提供的wait/notify的机制不同，await/signal可以提供多个不同的等待队列
-    > 有关ConditionObject源码剖析请参考{% post_link Java-concurrent-AQS-ConditionObject-源码剖析 %}
+    > 有关ConditionObject源码剖析请参考{% post_link Java-AQS-ConditionObject-SourceAnalysis %}
 
 1. Fork/Join
     > 从宏观上来说就是一个类似于归并的过程，将问题拆分成子问题，最终合并结果

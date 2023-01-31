@@ -195,7 +195,7 @@ private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
 * **workQueue**：任务队列，Blocking相关源码分析可以参考{% post_link Java-concurrent-ArrayBlockingQueue-源码剖析 %}
 * **mainLock**：重入锁，在访问或者修改workers时，需要该重入锁来保证线程安全。ReentrantLock相关源码分析可以参考{% post_link Java-concurrent-ReentrantLock-源码剖析 %}
 * **workers**：用于存放Worker的集合，采用非线程安全的HashSet，因此该字段的访问和修改必须配合mainLock
-* **termination**：ConditionObject相关源码分析可以参考{% post_link Java-concurrent-AQS-ConditionObject-源码剖析 %}
+* **termination**：ConditionObject相关源码分析可以参考{% post_link Java-AQS-ConditionObject-SourceAnalysis %}
 * **corePoolSize**：核心线程数量，所谓核心线是指即便空闲也不会终止的线程(allowCoreThreadTimeOut必须是false)
 * **maximumPoolSize**：最大线程数量，核心线程+非核心线程的总数不能超过这个数值
 * **largestPoolSize**：在线程池的生命周期中，线程池持有线程数量的最大值
