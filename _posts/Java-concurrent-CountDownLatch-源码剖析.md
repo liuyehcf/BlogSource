@@ -19,7 +19,7 @@ CountDownLatch是通过一个计数器来实现的，计数器的初始值为线
 
 # 2 内部类Sync
 
-CountDownLatch会阻塞调用await的线程，而concurrent包下最基础的类就是AbstractQueuedSynchronizer(AQS)，CountDownLatch包含一个Sync内部类，该内部类继承了AQS框架，实现了锁的一个原语。由于CountDownLatch只是在AQS基础上增加了一些额外的语义，而CountDownLatch本身的源码并不多，要想深入理解CountDownLatch还是要先了解AQS的机制以及源码 {% post_link Java-concurrent-AQS-源码剖析 %}
+CountDownLatch会阻塞调用await的线程，而concurrent包下最基础的类就是AbstractQueuedSynchronizer(AQS)，CountDownLatch包含一个Sync内部类，该内部类继承了AQS框架，实现了锁的一个原语。由于CountDownLatch只是在AQS基础上增加了一些额外的语义，而CountDownLatch本身的源码并不多，要想深入理解CountDownLatch还是要先了解AQS的机制以及源码 {% post_link Java-AQS-SourceAnalysis %}
 
 * Sync内部类使用的是AQS中的共享模式
 

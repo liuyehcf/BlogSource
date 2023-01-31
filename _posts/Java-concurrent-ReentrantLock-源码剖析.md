@@ -15,7 +15,7 @@ categories:
 
 # 1 前言
 
-本篇博客主要分析ReentrantLock的源码，ReentrantLock的实现基于AbstractQeueudSynchronizer(AQS)，AQS源码剖析请参见：{% post_link Java-concurrent-AQS-源码剖析 %}
+本篇博客主要分析ReentrantLock的源码，ReentrantLock的实现基于AbstractQeueudSynchronizer(AQS)，AQS源码剖析请参见：{% post_link Java-AQS-SourceAnalysis %}
 
 # 2 内部类Sync
 

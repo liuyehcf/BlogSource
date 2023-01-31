@@ -68,7 +68,7 @@ categories:
 
 1. Arrays.sort实现原理
     > 针对对象类型和基本类型，Arrays.sort会采用不同的排序算法
-    > 1. 对象类型必须保证稳定性，因此采用的是插入排序以及归并排序的优化版本TimSort，具体详见{% post_link Java-ComparableTimSort-源码剖析 %} 
+    > 1. 对象类型必须保证稳定性，因此采用的是插入排序以及归并排序的优化版本TimSort，具体详见{% post_link Java-ComparableTimSort-SourceAnalysis %} 
     > 1. 基本类型的稳定性是不必要的，因此根据数组的长度以及分布规律选择特定的排序算法，包括插入排序，快速排序(3-way-quicksort以及2-pivot-quicksort)，具体详见{% post_link Java-DualPivotQuickSort-源码剖析 %}
 
 1. Collection.sort实现原理
@@ -545,7 +545,7 @@ categories:
 # 3 JUC
 
 1. 源码相关
-    > 1. {% post_link Java-concurrent-AQS-源码剖析 %}
+    > 1. {% post_link Java-AQS-SourceAnalysis %}
     > 1. {% post_link Java-concurrent-AQS-ConditionObject-源码剖析 %}
     > 1. {% post_link Java-concurrent-ReentrantLock-源码剖析 %}
     > 1. {% post_link Java-concurrent-ReentrantReadWriteLock-源码剖析 %}

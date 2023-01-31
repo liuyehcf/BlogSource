@@ -205,7 +205,7 @@ private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
 
 **Worker封装了Thread，因此Worker可以理解为一个线程。Worker实现了Runnable，负责从任务队列中获取任务并执行**
 
-**同时Worker还继承了AQS，（{% post_link Java-concurrent-AQS-源码剖析 %}）也就是说Work对象本身可以作为Lock来使用，但这是为什么呢?**
+**同时Worker还继承了AQS，（{% post_link Java-AQS-SourceAnalysis %}）也就是说Work对象本身可以作为Lock来使用，但这是为什么呢?**
 
 * 在ThreadPoolExecutor#runWorker方法中，在成功获取到任务后，会将自己锁定，这个锁定状态用于表示当前work处于工作状态(在执行任务)，当一个任务处理完毕之后，又会解除锁定状态
 * 在ThreadPoolExecutor#interruptIdleWorkers方法中会调用Worker#tryLock()方法，该方法就是尝试获取锁，如果获取失败，则表明worker处于工作状态
