@@ -157,7 +157,7 @@ categories:
     > {% post_link Java-NIO %}
 
 1. 动态代理源码
-    > {% post_link JDK-动态代理-源码剖析 %}
+    > {% post_link Java-SourceAnalysis-DynamicProxy %}
 
 1. 线程池的目的
     > 目的是为了减少程序并发执行所付出的时空开销，使操作系统具有更好的并发性
@@ -558,7 +558,7 @@ categories:
     > 1. {% post_link Java-SourceAnalysis-Exchanger %}
     > 1. {% post_link Java-SourceAnalysis-Semaphore %}
     > 1. {% post_link Java-SourceAnalysis-ForkJoin %}
-    > 1. {% post_link Java-ThreadLocal-源码剖析 %}
+    > 1. {% post_link Java-SourceAnalysis-ThreadLocal %}
 
 1. ThreadLocal原理是什么
     > ThreadLocal的实现需要Thread的配合，Thread内部为ThreadLocal增加了一个字段`threadLocals`，该字段是一个Map<ThreadLocal,T>，也就是说，不同的ThreadLocal对于同一个线程的值将会存放在这个Thread#threadLocals字段中
@@ -617,7 +617,7 @@ categories:
 
 1. Unsafe
     > Unsafe是JDK实现所依赖的一个非公开的类，用于提供一些内存操作以及CAS操作等等。不具有跨平台性质，不同平台的实现可能有差异
-    > Unsafe详细源码请参考{% post_link Java-sun-Unsafe-源码剖析 %}
+    > Unsafe详细源码请参考{% post_link Java-SourceAnalysis-Unsafe %}
 
 1. LockSupport
     > 1. LockSupport.park
