@@ -1,5 +1,5 @@
 ---
-title: Netty-ChannelHandler源码剖析
+title: Java-SourceAnalysis-Netty-ChannelHandler
 date: 2017-12-07 16:10:14
 tags: 
 - 原创
@@ -21,19 +21,19 @@ categories:
 
 ## 2.1 继承结构
 
-![ChannelInboundHandlerAdapter](/images/Netty-ChannelHandler源码剖析/ChannelInboundHandlerAdapter.png)
+![ChannelInboundHandlerAdapter](/images/Java-SourceAnalysis-Netty-ChannelHandler/ChannelInboundHandlerAdapter.png)
 
 ## 2.2 ChannelHandler
 
 ChannelHandler定义了最近本的Handler的功能，即添加或删除Handler
 
-![ChannelHandler](/images/Netty-ChannelHandler源码剖析/ChannelHandler.png)
+![ChannelHandler](/images/Java-SourceAnalysis-Netty-ChannelHandler/ChannelHandler.png)
 
 ## 2.3 ChannelInboundHandler
 
 ChannelInboundHandler接口定义了与Inbound operations相关的一些方法
 
-![ChannelInboundHandler](/images/Netty-ChannelHandler源码剖析/ChannelInboundHandler.png)
+![ChannelInboundHandler](/images/Java-SourceAnalysis-Netty-ChannelHandler/ChannelInboundHandler.png)
 
 ## 2.4 ChannelHandlerAdapter
 
@@ -41,7 +41,7 @@ ChannelHandlerAdapter为ChannelHandler接口提供的方法提供了一个**空�
 
 由于添加或删除Handler的方法仅仅在非常特定的时刻会被触发（例如第一次register的时候），因此这里提供了一个空的实现。常见的实现该方法的类有ChannelInitializer
 
-![ChannelHandlerAdapter](/images/Netty-ChannelHandler源码剖析/ChannelHandlerAdapter.png)
+![ChannelHandlerAdapter](/images/Java-SourceAnalysis-Netty-ChannelHandler/ChannelHandlerAdapter.png)
 
 ## 2.5 ChannelInboundHandlerAdapter的实现
 
@@ -106,13 +106,13 @@ public class ChannelInboundHandlerAdapter extends ChannelHandlerAdapter implemen
 
 ## 3.1 继承结构
 
-![ChannelOutboundHandlerAdapter](/images/Netty-ChannelHandler源码剖析/ChannelOutboundHandlerAdapter.png)
+![ChannelOutboundHandlerAdapter](/images/Java-SourceAnalysis-Netty-ChannelHandler/ChannelOutboundHandlerAdapter.png)
 
 ## 3.2 ChannelOutboundHandler
 
 ChannelOutboundHandler接口定义了与Outbound operations相关的一些方法
 
-![ChannelOutboundHandler](/images/Netty-ChannelHandler源码剖析/ChannelOutboundHandler.png)
+![ChannelOutboundHandler](/images/Java-SourceAnalysis-Netty-ChannelHandler/ChannelOutboundHandler.png)
 
 ## 3.3 ChannelOutboundHandlerAdapter的实现
 
