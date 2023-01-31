@@ -69,7 +69,7 @@ categories:
 1. Arrays.sort实现原理
     > 针对对象类型和基本类型，Arrays.sort会采用不同的排序算法
     > 1. 对象类型必须保证稳定性，因此采用的是插入排序以及归并排序的优化版本TimSort，具体详见{% post_link Java-SourceAnalysis-ComparableTimSort %} 
-    > 1. 基本类型的稳定性是不必要的，因此根据数组的长度以及分布规律选择特定的排序算法，包括插入排序，快速排序(3-way-quicksort以及2-pivot-quicksort)，具体详见{% post_link Java-DualPivotQuickSort-源码剖析 %}
+    > 1. 基本类型的稳定性是不必要的，因此根据数组的长度以及分布规律选择特定的排序算法，包括插入排序，快速排序(3-way-quicksort以及2-pivot-quicksort)，具体详见{% post_link Java-SourceAnalysis-DualPivotQuickSort %}
 
 1. Collection.sort实现原理
     > Collection.sort在内部会转调用Arrays.sort
@@ -548,15 +548,15 @@ categories:
     > 1. {% post_link Java-SourceAnalysis-AQS %}
     > 1. {% post_link Java-SourceAnalysis-AQS-ConditionObject %}
     > 1. {% post_link Java-SourceAnalysis-ReentrantLock %}
-    > 1. {% post_link Java-concurrent-ReentrantReadWriteLock-源码剖析 %}
+    > 1. {% post_link Java-SourceAnalysis-ReentrantReadWriteLock %}
     > 1. {% post_link Java-SourceAnalysis-ArrayBlockingQueue %}
-    > 1. {% post_link Java-concurrent-ThreadPoolExecutor-源码剖析 %}
+    > 1. {% post_link Java-SourceAnalysis-ThreadPoolExecutor %}
     > 1. {% post_link Java-SourceAnalysis-FutureTask %}
     > 1. {% post_link Java-SourceAnalysis-ConcurrentHashMap %}
     > 1. {% post_link Java-SourceAnalysis-CountDownLatch %}
     > 1. {% post_link Java-SourceAnalysis-CyclicBarrier %}
     > 1. {% post_link Java-SourceAnalysis-Exchanger %}
-    > 1. {% post_link Java-concurrent-Semaphore-源码剖析 %}
+    > 1. {% post_link Java-SourceAnalysis-Semaphore %}
     > 1. {% post_link Java-SourceAnalysis-ForkJoin %}
     > 1. {% post_link Java-ThreadLocal-源码剖析 %}
 
@@ -1323,7 +1323,7 @@ categories:
     > {% post_link Algorithm-Sort %}
 
 1. 快速排序
-    > {% post_link Java-DualPivotQuickSort-源码剖析 %}
+    > {% post_link Java-SourceAnalysis-DualPivotQuickSort %}
 
 1. hash算法的有哪几种，优缺点，使用场景
     > 链表法，Java中Map的实现都用这个

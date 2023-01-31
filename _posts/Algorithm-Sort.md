@@ -681,7 +681,7 @@ public class DualPivotQuickSort {
 }
 ```
 
-关于双轴快排的更多实现可以参考JDK Arrays.sort的源码 {% post_link Java-DualPivotQuickSort-源码剖析 %}
+关于双轴快排的更多实现可以参考JDK Arrays.sort的源码 {% post_link Java-SourceAnalysis-DualPivotQuickSort %}
 
 # 6 计数排序
 
