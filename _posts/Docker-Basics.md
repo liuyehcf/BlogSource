@@ -1,5 +1,5 @@
 ---
-title: Docker-基础
+title: Docker-Basics
 date: 2018-01-19 13:18:39
 tags: 
 - 摘录
@@ -34,7 +34,7 @@ systemctl start docker
 
 # 2 容器的生命周期
 
-![container_lifecycle](/images/Docker-基础/container_lifecycle.webp)
+![container_lifecycle](/images/Docker-Basics/container_lifecycle.webp)
 
 # 3 文件系统
 
