@@ -68,7 +68,7 @@ categories:
 * **items**：用于存放元素的数组，注意到该字段是final修饰的，因此ArrayBlockingQueue是不能扩容的，其容量在初始化时就已经确定    
 * **takeIndex**：队列头元素的下标，指向take/poll/peek/remove方法操作的元素
 * **putIndex**：队列尾元素的下标，指向put/offer/add方法方法操作的元素
-* **lock**：重复锁，关于ReentrantLock源码，可以参考另一篇博客 {% post_link Java-concurrent-ReentrantLock-源码剖析 %}
+* **lock**：重复锁，关于ReentrantLock源码，可以参考另一篇博客 {% post_link Java-SourceAnalysis-ReentrantLock %}
 * **notEmpty**：条件对象(Condition)，关于ConditionObject源码分析，可以参考另一篇博客 {% post_link Java-AQS-ConditionObject-SourceAnalysis %}
 * **notFull**：条件对象(Condition)
 * **itrs**：迭代器

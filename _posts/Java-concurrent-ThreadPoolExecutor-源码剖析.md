@@ -193,7 +193,7 @@ private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
 ```
 
 * **workQueue**：任务队列，Blocking相关源码分析可以参考{% post_link Java-ArrayBlockingQueue-SourceAnalysis %}
-* **mainLock**：重入锁，在访问或者修改workers时，需要该重入锁来保证线程安全。ReentrantLock相关源码分析可以参考{% post_link Java-concurrent-ReentrantLock-源码剖析 %}
+* **mainLock**：重入锁，在访问或者修改workers时，需要该重入锁来保证线程安全。ReentrantLock相关源码分析可以参考{% post_link Java-SourceAnalysis-ReentrantLock %}
 * **workers**：用于存放Worker的集合，采用非线程安全的HashSet，因此该字段的访问和修改必须配合mainLock
 * **termination**：ConditionObject相关源码分析可以参考{% post_link Java-AQS-ConditionObject-SourceAnalysis %}
 * **corePoolSize**：核心线程数量，所谓核心线是指即便空闲也不会终止的线程(allowCoreThreadTimeOut必须是false)
@@ -1040,7 +1040,7 @@ private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
     }
 ```
 
-**Future源码分析请参见 {% post_link Java-concurrent-FutureTask-源码剖析 %}**
+**Future源码分析请参见 {% post_link Java-FutureTask-SourceAnalysis %}**
 
 ### 5.7.1 newTaskFor
 

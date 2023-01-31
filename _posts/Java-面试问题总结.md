@@ -547,11 +547,11 @@ categories:
 1. 源码相关
     > 1. {% post_link Java-AQS-SourceAnalysis %}
     > 1. {% post_link Java-AQS-ConditionObject-SourceAnalysis %}
-    > 1. {% post_link Java-concurrent-ReentrantLock-源码剖析 %}
+    > 1. {% post_link Java-SourceAnalysis-ReentrantLock %}
     > 1. {% post_link Java-concurrent-ReentrantReadWriteLock-源码剖析 %}
     > 1. {% post_link Java-ArrayBlockingQueue-SourceAnalysis %}
     > 1. {% post_link Java-concurrent-ThreadPoolExecutor-源码剖析 %}
-    > 1. {% post_link Java-concurrent-FutureTask-源码剖析 %}
+    > 1. {% post_link Java-FutureTask-SourceAnalysis %}
     > 1. {% post_link Java-ConcurrentHashMap-SourceAnalysis %}
     > 1. {% post_link Java-CountDownLatch-SourceAnalysis %}
     > 1. {% post_link Java-CyclicBarrier-SourceAnalysis %}
