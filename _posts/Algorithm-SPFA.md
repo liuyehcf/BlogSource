@@ -1,5 +1,5 @@
 ---
-title: 单源最短路径
+title: Algorithm-SPFA
 date: 2017-08-04 22:16:36
 tags: 
 - 摘录
@@ -331,7 +331,7 @@ Bellman-Ford算法不仅可以求出最短路径，也可以检测负权回路�
 
 * 对于每条有向边`(u,v)`，执行`dist[v] = min(dist[v], dist[u] + w(u,v))`。其含义就是对于某条有向边`(u,v)`，从源节点`source`到节点`v`的最短距离只有两种可能：一种是不经过有向边`(u,v)`；另一种是经过有向边`(u,v)`。如下图所示
 
-![fig1](/images/单源最短路径/fig1.png)
+![fig1](/images/Algorithm-SPFA/fig1.png)
 
 n-1次循环，Bellman-Ford算法就是利用已经找到的最短路径去更新其它点的dist[]。**每次循环能确定一个顶点的最短路径，因此n-1此循环后，`dist[]`保存的就是源节点到所有顶点的最短路径**
 

@@ -1279,7 +1279,7 @@ categories:
     > hash+双向链表
 
 1. 单源最短路径
-    > {% post_link 单源最短路径 %}
+    > {% post_link Algorithm-SPFA %}
 
 1. BTree
     > 1. {% post_link B-Tree %}
@@ -1341,7 +1341,7 @@ categories:
     > DFS就可以貌似
 
 1. 01背包问题的详细解释，空间复杂度的优化
-    > {% post_link 单源最短路径 %}中的Foly算法中有提到01背包的优化
+    > {% post_link Algorithm-SPFA %}中的Foly算法中有提到01背包的优化
 
 1. 字典树与其在统计词频上的应用
     > 待补充
