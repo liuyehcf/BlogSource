@@ -37,13 +37,13 @@ ChannelInboundInvoker接口定义了与ChannelInboundHandler相似的方法
 
 AttributeMap接口定义了一种用于添加关键字以及判断关键字是否存在的Map
 
-![AttributeMap](/images/Netty-Channel源码剖析/AttributeMap.png)
+![AttributeMap](/images/Java-SourceAnalysis-Netty-Channel/AttributeMap.png)
 
 ## 2.4 DefaultAttributeMap
 
 DefaultAttributeMap抽象类对AttributeMap接口提供了基本的实现
 
-![DefaultAttributeMap](/images/Netty-Channel源码剖析/DefaultAttributeMap.png)
+![DefaultAttributeMap](/images/Java-SourceAnalysis-Netty-Channel/DefaultAttributeMap.png)
 
 ## 2.5 ChannelHandlerContext
 

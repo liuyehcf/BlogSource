@@ -1,5 +1,5 @@
 ---
-title: Netty-Channel源码剖析
+title: Java-SourceAnalysis-Netty-Channel
 date: 2017-12-07 13:49:51
 tags: 
 - 原创
@@ -21,13 +21,13 @@ categories:
 
 ## 2.1 继承结构图
 
-![NioSocketChannel](/images/Netty-Channel源码剖析/NioSocketChannel.png)
+![NioSocketChannel](/images/Java-SourceAnalysis-Netty-Channel/NioSocketChannel.png)
 
 ## 2.2 ChannelOutboundInvoker
 
 ChannelOutboundInvoker接口定义了一些与outbound operation相关的方法，类似的方法也在ChannelOutboundHandler接口中有定义
 
-![ChannelOutboundInvoker](/images/Netty-Channel源码剖析/ChannelOutboundInvoker.png)
+![ChannelOutboundInvoker](/images/Java-SourceAnalysis-Netty-Channel/ChannelOutboundInvoker.png)
 
 ## 2.3 Channel
 
@@ -37,37 +37,37 @@ Channel接口非常重要，从该接口中可以看出Netty中Channel的基本�
 1. 每个Channel关联一个Unsafe，该Unsafe对象负责完成所有底层的IO操作
 1. 每个Channel关联一个PipeLine，PipeLine用于织入一些Netty内置的Handler以及用户自定义的Handler，通过Unsafe、Channel以及PipeLine的相互配合从而触发这些Handler的调用
 
-![Channel](/images/Netty-Channel源码剖析/Channel.png)
+![Channel](/images/Java-SourceAnalysis-Netty-Channel/Channel.png)
 
 ## 2.4 DuplexChannel
 
 DuplexChannel进一步将Channel抽象成双向的，包含In方向和Out方向
 
-![DuplexChannel](/images/Netty-Channel源码剖析/DuplexChannel.png)
+![DuplexChannel](/images/Java-SourceAnalysis-Netty-Channel/DuplexChannel.png)
 
 ## 2.5 SocketChannel
 
 SocketChannel进一步引入Socket的相关概念，比如InetSocketAddress，即IP和端口号
 
-![SocketChannel](/images/Netty-Channel源码剖析/SocketChannel.png)
+![SocketChannel](/images/Java-SourceAnalysis-Netty-Channel/SocketChannel.png)
 
 ## 2.6 AttributeMap
 
 AttributeMap定义了一种用于添加关键字以及判断关键字是否存在的Map
 
-![AttributeMap](/images/Netty-Channel源码剖析/AttributeMap.png)
+![AttributeMap](/images/Java-SourceAnalysis-Netty-Channel/AttributeMap.png)
 
 ## 2.7 DefaultAttributeMap
 
 DefaultAttributeMap抽象类对AttributeMap接口提供了基本的实现
 
-![DefaultAttributeMap](/images/Netty-Channel源码剖析/DefaultAttributeMap.png)
+![DefaultAttributeMap](/images/Java-SourceAnalysis-Netty-Channel/DefaultAttributeMap.png)
 
 ## 2.8 AbstractChannel
 
 AbstractChannel抽象类对Channel接口（包括Channel的父接口）提供了基本的实现，包含了底层的IO操作
 
-![AbstractChannel](/images/Netty-Channel源码剖析/AbstractChannel.png)
+![AbstractChannel](/images/Java-SourceAnalysis-Netty-Channel/AbstractChannel.png)
 
 **AbstractChannel包含如下关键字段**
 
@@ -84,7 +84,7 @@ AbstractChannel抽象类对Channel接口（包括Channel的父接口）提供了
 
 AbstractNioChannel抽象类实现了Channel的isOpen方法，重写了AbstractChannel的几个方法（修改返回类型）
 
-![AbstractNioChannel](/images/Netty-Channel源码剖析/AbstractNioChannel.png)
+![AbstractNioChannel](/images/Java-SourceAnalysis-Netty-Channel/AbstractNioChannel.png)
 
 **AbstractNioChannel包含如下关键字段**
 
@@ -99,7 +99,7 @@ AbstractNioChannel抽象类实现了Channel的isOpen方法，重写了AbstractCh
 
 AbstractNioByteChannel抽象类实现了Channel接口的metadata方法
 
-![AbstractNioByteChannel](/images/Netty-Channel源码剖析/AbstractNioByteChannel.png)
+![AbstractNioByteChannel](/images/Java-SourceAnalysis-Netty-Channel/AbstractNioByteChannel.png)
 
 此外，AbstractNioByteChannel抽象类实现了**非静态**内部类NioByteUnsafe（实现read方法）
 
@@ -107,7 +107,7 @@ AbstractNioByteChannel抽象类实现了Channel接口的metadata方法
 
 NioSocketChannel类实现了DuplexChannel接口以及SocketChannel提供的方法
 
-![NioSocketChannelMethod](/images/Netty-Channel源码剖析/NioSocketChannelMethod.png)
+![NioSocketChannelMethod](/images/Java-SourceAnalysis-Netty-Channel/NioSocketChannelMethod.png)
 
 # 3 NioServerSocketChannel
 
@@ -119,7 +119,7 @@ NioServerSocketChannel的继承关系与NioSocketChannel类似，但有以下区
 * DuplexChannel被替换成了ServerChannel
 * SocketChannel被替换成了ServerSocketChannel
 
-![NioServerSocketChannel](/images/Netty-Channel源码剖析/NioServerSocketChannel.png)
+![NioServerSocketChannel](/images/Java-SourceAnalysis-Netty-Channel/NioServerSocketChannel.png)
 
 ## 3.2 ServerChannel
 
@@ -129,7 +129,7 @@ ServerChannel是一个空接口
 
 ServerSocketChannel接口修改了Channel接口中的3个方法的返回值
 
-![ServerSocketChannel](/images/Netty-Channel源码剖析/ServerSocketChannel.png)
+![ServerSocketChannel](/images/Java-SourceAnalysis-Netty-Channel/ServerSocketChannel.png)
 
 ## 3.4 AbstractNioMessageChannel
 
