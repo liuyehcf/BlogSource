@@ -554,10 +554,10 @@ categories:
     > 1. {% post_link Java-concurrent-FutureTask-源码剖析 %}
     > 1. {% post_link Java-ConcurrentHashMap-SourceAnalysis %}
     > 1. {% post_link Java-CountDownLatch-SourceAnalysis %}
-    > 1. {% post_link Java-concurrent-CyclicBarrier-源码剖析 %}
-    > 1. {% post_link Java-concurrent-Exchanger-源码剖析 %}
+    > 1. {% post_link Java-CyclicBarrier-SourceAnalysis %}
+    > 1. {% post_link Java-Exchanger-SourceAnalysis %}
     > 1. {% post_link Java-concurrent-Semaphore-源码剖析 %}
-    > 1. {% post_link Java-concurrent-Fork-Join-源码剖析 %}
+    > 1. {% post_link Java-ForkJoin-SourceAnalysis %}
     > 1. {% post_link Java-ThreadLocal-源码剖析 %}
 
 1. ThreadLocal原理是什么
@@ -635,7 +635,7 @@ categories:
 
 1. Fork/Join
     > 从宏观上来说就是一个类似于归并的过程，将问题拆分成子问题，最终合并结果
-    > 关于Fork/Join的源码请参考{% post_link Java-concurrent-Fork-Join-源码剖析 %}
+    > 关于Fork/Join的源码请参考{% post_link Java-ForkJoin-SourceAnalysis %}
 
 1. parallelStream
     > parallelStream其实就是一个并行执行的流。它通过默认的ForkJoinPool，可能提高你的多线程任务的速度
