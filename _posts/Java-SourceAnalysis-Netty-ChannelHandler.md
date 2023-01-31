@@ -259,5 +259,5 @@ public abstract class ChannelInitializer<C extends Channel> extends ChannelInbou
 
 # 5 传递性的实现
 
-关于这部分内容，请参考{% post_link Netty-ChannelHandlerContext源码剖析 %}
+关于这部分内容，请参考{% post_link Java-SourceAnalysis-Netty-ChannelHandlerContext %}
 

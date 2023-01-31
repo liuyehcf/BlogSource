@@ -1,5 +1,5 @@
 ---
-title: Netty-ChannelHandlerContext源码剖析
+title: Java-SourceAnalysis-Netty-ChannelHandlerContext
 date: 2017-12-07 13:50:34
 tags: 
 - 原创
@@ -19,7 +19,7 @@ categories:
 
 # 2 继承结构
 
-![DefaultChannelHandlerContext](/images/Netty-ChannelHandlerContext源码剖析/DefaultChannelHandlerContext.png)
+![DefaultChannelHandlerContext](/images/Java-SourceAnalysis-Netty-ChannelHandlerContext/DefaultChannelHandlerContext.png)
 
 ## 2.1 ChannelOutboundInvoker
 
@@ -56,13 +56,13 @@ DefaultAttributeMap抽象类对AttributeMap接口提供了基本的实现
 1. 与Handler一一对应
 1. 与Pipeline一一对应
 
-![ChannelHandlerContext](/images/Netty-ChannelHandlerContext源码剖析/ChannelHandlerContext.png)
+![ChannelHandlerContext](/images/Java-SourceAnalysis-Netty-ChannelHandlerContext/ChannelHandlerContext.png)
 
 # 3 AbstractChannelHandlerContext
 
 AbstractChannelHandlerContext抽象类为ChannelHandlerContext接口提供了基础实现
 
-![AbstractChannelHandlerContext](/images/Netty-ChannelHandlerContext源码剖析/AbstractChannelHandlerContext.png)
+![AbstractChannelHandlerContext](/images/Java-SourceAnalysis-Netty-ChannelHandlerContext/AbstractChannelHandlerContext.png)
 
 **AbstractChannelHandlerContext包含如下重要字段**
 
