@@ -199,7 +199,7 @@ Maven提供的`<dependencyManagement>`元素既能让子模块继承到父模块
 * 父POM中使用`<dependencyManagement>`声明依赖能够**统一**项目范围中**依赖的版本**
 * 当依赖版本在父POM中声明之后，子模块在使用依赖的时候就无需声明版本，也就不会发生多个子模块使用依赖版本不一致的情况，这可以帮助降低依赖冲突的概率
 
-此外，{% post_link Maven-基本概念 %}中提到了名为import的依赖范围，该范围的依赖只在`<dependencyManagement>`元素下才有效果，使用该范围的依赖通常指向一个POM，作用是：将目标POM中的`<dependencyManagement>`配置导入并合并到当前POM的`<dependencyManagement>`元素中
+此外，{% post_link Maven-Basics %}中提到了名为import的依赖范围，该范围的依赖只在`<dependencyManagement>`元素下才有效果，使用该范围的依赖通常指向一个POM，作用是：将目标POM中的`<dependencyManagement>`配置导入并合并到当前POM的`<dependencyManagement>`元素中
 
 ## 2.3 插件管理
 
