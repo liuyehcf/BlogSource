@@ -1,5 +1,5 @@
 ---
-title: Gossip协议
+title: Protocol-Gossip
 date: 2019-10-13 16:31:58
 tags: 
 - 摘录
