@@ -1,5 +1,5 @@
 ---
-title: Maven-聚合与继承
+title: Maven-Composition
 date: 2017-11-27 08:29:34
 tags: 
 - 摘录

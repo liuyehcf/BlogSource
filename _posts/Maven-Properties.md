@@ -1,5 +1,5 @@
 ---
-title: Maven-属性
+title: Maven-Properties
 date: 2017-11-27 14:32:21
 tags: 
 - 摘录

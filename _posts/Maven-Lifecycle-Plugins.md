@@ -1,5 +1,5 @@
 ---
-title: Maven-生命周期和插件
+title: Maven-Lifecycle-Plugins
 date: 2017-11-27 07:32:21
 tags: 
 - 摘录
