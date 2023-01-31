@@ -1320,7 +1320,7 @@ categories:
     > {% post_link 树的遍历 %}
 
 1. 经典排序总结
-    > {% post_link 经典排序算法 %}
+    > {% post_link Algorithm-Sort %}
 
 1. 快速排序
     > {% post_link Java-DualPivotQuickSort-源码剖析 %}

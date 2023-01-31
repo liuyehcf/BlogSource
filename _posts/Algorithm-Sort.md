@@ -1,5 +1,5 @@
 ---
-title: 经典排序算法
+title: Algorithm-Sort
 date: 2017-07-26 21:10:17
 tags: 
 - 原创
