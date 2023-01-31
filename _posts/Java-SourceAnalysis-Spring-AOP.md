@@ -1,5 +1,5 @@
 ---
-title: Spring-AOP-源码剖析
+title: Java-SourceAnalysis-Spring-AOP
 date: 2017-07-10 18:47:23
 tags: 
 - 原创
@@ -295,9 +295,9 @@ public interface PointcutAdvisor extends Advisor {
 
 Advice、Joinpoint、Pointcut、Advisor之间的关系可以用下面这些图表示
 
-* ![fig1](/images/Spring-AOP-源码剖析/fig1.png)
-* ![fig2](/images/Spring-AOP-源码剖析/fig2.jpg)
-* ![fig3](/images/Spring-AOP-源码剖析/fig3.jpg)
+* ![fig1](/images/Java-SourceAnalysis-Spring-AOP/fig1.png)
+* ![fig2](/images/Java-SourceAnalysis-Spring-AOP/fig2.jpg)
+* ![fig3](/images/Java-SourceAnalysis-Spring-AOP/fig3.jpg)
 
 # 2 源码剖析
 

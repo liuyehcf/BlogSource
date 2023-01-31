@@ -656,7 +656,7 @@ UNIQUE KEY(name)
 
 # 7 源码剖析
 
-**`Spring-tx`利用了`Spring-aop`，在目标方法上织入了一系列事务相关的逻辑。相关织入逻辑可以参考{% post_link Spring-AOP-源码剖析 %}。这里仅介绍事务相关的增强逻辑**
+**`Spring-tx`利用了`Spring-aop`，在目标方法上织入了一系列事务相关的逻辑。相关织入逻辑可以参考{% post_link Java-SourceAnalysis-Spring-AOP %}。这里仅介绍事务相关的增强逻辑**
 
 **分析的起点是`TransactionInterceptor.invoke`，该类是事务对应的增强类，或者说拦截器（Spring AOP的本质就是一系列的拦截器）**
 
