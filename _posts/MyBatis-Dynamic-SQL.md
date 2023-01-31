@@ -1,5 +1,5 @@
 ---
-title: MyBatis-动态SQL
+title: MyBatis-Dynamic-SQL
 date: 2018-02-05 19:45:41
 tags: 
 - 摘录

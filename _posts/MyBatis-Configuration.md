@@ -1,5 +1,5 @@
 ---
-title: MyBatis-配置
+title: MyBatis-Configuration
 date: 2018-02-05 11:15:29
 tags: 
 - 摘录

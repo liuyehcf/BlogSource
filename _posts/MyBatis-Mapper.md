@@ -1,5 +1,5 @@
 ---
-title: MyBatis-映射器
+title: MyBatis-Mapper
 date: 2018-01-23 18:52:55
 tags: 
 - 摘录
