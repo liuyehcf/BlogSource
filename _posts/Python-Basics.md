@@ -1,5 +1,5 @@
 ---
-title: Python-基础
+title: Python-Basics
 date: 2018-04-23 19:44:12
 tags: 
 - 原创
