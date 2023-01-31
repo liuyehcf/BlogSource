@@ -965,9 +965,11 @@ gcc -o main main.cpp extern.cpp -lstdc++ -Wall
 ./main
 ```
 
-## 3.7 继承与多态
+## 3.7 thread_local
 
-### 3.7.1 继承方式
+## 3.8 继承与多态
+
+### 3.8.1 继承方式
 
 | 继承方式\成员的权限 | public | protected | private |
 |:--|:--|:--|:--|
@@ -1048,7 +1050,7 @@ int main() {
 }
 ```
 
-### 3.7.2 virtual
+### 3.8.2 virtual
 
 `virtual`关键词修饰的就是虚函数，虚函数的分派发生在运行时
 
@@ -1059,7 +1061,7 @@ int main() {
 
 * 图片出处：[c++虚指针和虚函数表](https://zhuanlan.zhihu.com/p/110144589)
 
-### 3.7.3 final
+### 3.8.3 final
 
 `final`可以修饰类或者虚函数
 
@@ -1069,14 +1071,14 @@ int main() {
 
 当用具体类型的指针或者引用调用`final`修饰的虚函数时，虚函数的调用可以被编译器直接优化掉
 
-### 3.7.4 override
+### 3.8.4 override
 
 `override`可以修饰虚函数，表示对虚函数进行覆盖
 
 * 只能在虚函数的声明处进行修饰
 * 加不加`override`其实没有影响
 
-## 3.8 volatile
+## 3.9 volatile
 
 `volatile`关键字是一种类型修饰符，用它声明的类型变量表示可以被某些编译器未知的因素更改（程序之外的因素），比如：操作系统、硬件等。遇到这个关键字声明的变量，编译器对访问该变量的代码就不再进行优化，从而可以提供对特殊地址的稳定访问
 
@@ -1213,7 +1215,7 @@ Disassembly of section .text:
   80:	c3                   	ret
 ```
 
-### 3.8.1 visibility验证
+### 3.9.1 visibility验证
 
 首先明确一下`visibility`的概念，这里我对它的定义是：当`A`和`B`两个线程，`A`对变量`x`进行写操作，`B`对变量`x`进行读操作，若时间上写操作先发生于读操作时，读操作能够读取到写操作写入的值
 
@@ -1465,7 +1467,7 @@ volatile, β=0.0271394
 
 **如果用Java进行上述等价验证，会发现实际结果与预期吻合，这里不再赘述**
 
-### 3.8.2 atomicity验证
+### 3.9.2 atomicity验证
 
 `std::atomic`可以为其他非原子变量提供`happens-before`关系
 
@@ -1606,9 +1608,9 @@ int main() {
 
 如果以`-O0`优化级别进行编译，则上述程序中的断言不会报错
 
-## 3.9 constexpr
+## 3.10 constexpr
 
-### 3.9.1 if constexpr
+### 3.10.1 if constexpr
 
 编译期分支判断，一般用于泛型。如果在分支中使用的是不同类型的不同特性，那么普通的`if`是没法通过编译的，如下：
 
@@ -1645,7 +1647,7 @@ int main() {
 }
 ```
 
-## 3.10 static_assert
+## 3.11 static_assert
 
 编译期断言
 
@@ -1657,7 +1659,7 @@ int main() {
 }
 ```
 
-## 3.11 noexcept
+## 3.12 noexcept
 
 用于声明函数不会抛异常，声明和实现都必须同时包含
 
@@ -1670,7 +1672,7 @@ public:
 void A::func() noexcept {}
 ```
 
-## 3.12 throw与异常
+## 3.13 throw与异常
 
 `throw`关键字可以抛出任何对象，例如可以抛出一个整数
 
@@ -1688,7 +1690,7 @@ void A::func() noexcept {}
     }
 ```
 
-## 3.13 placement new
+## 3.14 placement new
 
 `placement new`的功能就是在一个已经分配好的空间上，调用构造函数，创建一个对象
 

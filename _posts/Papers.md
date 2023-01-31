@@ -1678,7 +1678,7 @@ Data Stream Processing System, DSPS
                     </ul>
                 </li>
             </td>
-            <td style="text-align:left">6</td>
+            <td style="text-align:left">✅</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
     </tbody>
@@ -1724,6 +1724,7 @@ Data Stream Processing System, DSPS
         * [Fast Segmented Sort on GPUs](https://dl.acm.org/doi/pdf/10.1145/3079079.3079105)
 * Memory
     * [Efficient Use of Memory Bandwidth to Improve Network Processor Throughput](http://www.cs.ucr.edu/~bhuyan/cs162/LECTURE12b.pdf)
+    * [Robust and efficient memory management in Apache AsterixDB](resources/paper/Robust-and-efficient-memory-management-in-Apache-AsterixDB.pdf)
 * Statistics/Sample
     * [NeuroCard: One Cardinality Estimator for All Tables](https://vldb.org/pvldb/vol14/p61-yang.pdf)
     * [Flow-Loss: Learning Cardinality Estimates That Mater](https://vldb.org/pvldb/vol14/p2019-negi.pdf)
