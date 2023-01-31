@@ -1180,7 +1180,7 @@ categories:
 1. 说说分布式计算
 1. 分布式存储
 1. Zookeeper
-    > 1. {% post_link Paxos协议 %}
+    > 1. {% post_link Protocol-Paxos %}
 
 1. Zookeeper watch机制
     > http://blog.csdn.net/z69183787/article/details/53023578
@@ -1190,7 +1190,7 @@ categories:
     > http://blog.csdn.net/tycoon1988/article/details/38866395
 
 1. Zookeeper选举原理
-    > ZAB协议，paxox算法{% post_link Paxos协议 %}
+    > ZAB协议，paxox算法{% post_link Protocol-Paxos %}
 
 1. redis/Zookeeper节点宕机如何处理
     > 利用一致性协议进行一次master的选举
@@ -1335,7 +1335,7 @@ categories:
 
 1. [一致性哈希和哈希槽对比](https://www.jianshu.com/p/4163916a2a8a)
 1. paxos算法
-    > {% post_link Paxos协议 %}
+    > {% post_link Protocol-Paxos %}
 
 1. 二叉树的最大搜索子树
     > DFS就可以貌似

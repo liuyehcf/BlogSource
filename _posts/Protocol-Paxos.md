@@ -1,5 +1,5 @@
 ---
-title: Paxos协议
+title: Protocol-Paxos
 date: 2017-07-12 09:32:34
 tags: 
 - 摘录
