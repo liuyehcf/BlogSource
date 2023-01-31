@@ -68,7 +68,7 @@ categories:
 
 1. Arrays.sort实现原理
     > 针对对象类型和基本类型，Arrays.sort会采用不同的排序算法
-    > 1. 对象类型必须保证稳定性，因此采用的是插入排序以及归并排序的优化版本TimSort，具体详见{% post_link Java-ComparableTimSort-SourceAnalysis %} 
+    > 1. 对象类型必须保证稳定性，因此采用的是插入排序以及归并排序的优化版本TimSort，具体详见{% post_link Java-SourceAnalysis-ComparableTimSort %} 
     > 1. 基本类型的稳定性是不必要的，因此根据数组的长度以及分布规律选择特定的排序算法，包括插入排序，快速排序(3-way-quicksort以及2-pivot-quicksort)，具体详见{% post_link Java-DualPivotQuickSort-源码剖析 %}
 
 1. Collection.sort实现原理
@@ -545,19 +545,19 @@ categories:
 # 3 JUC
 
 1. 源码相关
-    > 1. {% post_link Java-AQS-SourceAnalysis %}
-    > 1. {% post_link Java-AQS-ConditionObject-SourceAnalysis %}
+    > 1. {% post_link Java-SourceAnalysis-AQS %}
+    > 1. {% post_link Java-SourceAnalysis-AQS-ConditionObject %}
     > 1. {% post_link Java-SourceAnalysis-ReentrantLock %}
     > 1. {% post_link Java-concurrent-ReentrantReadWriteLock-源码剖析 %}
-    > 1. {% post_link Java-ArrayBlockingQueue-SourceAnalysis %}
+    > 1. {% post_link Java-SourceAnalysis-ArrayBlockingQueue %}
     > 1. {% post_link Java-concurrent-ThreadPoolExecutor-源码剖析 %}
-    > 1. {% post_link Java-FutureTask-SourceAnalysis %}
-    > 1. {% post_link Java-ConcurrentHashMap-SourceAnalysis %}
-    > 1. {% post_link Java-CountDownLatch-SourceAnalysis %}
-    > 1. {% post_link Java-CyclicBarrier-SourceAnalysis %}
-    > 1. {% post_link Java-Exchanger-SourceAnalysis %}
+    > 1. {% post_link Java-SourceAnalysis-FutureTask %}
+    > 1. {% post_link Java-SourceAnalysis-ConcurrentHashMap %}
+    > 1. {% post_link Java-SourceAnalysis-CountDownLatch %}
+    > 1. {% post_link Java-SourceAnalysis-CyclicBarrier %}
+    > 1. {% post_link Java-SourceAnalysis-Exchanger %}
     > 1. {% post_link Java-concurrent-Semaphore-源码剖析 %}
-    > 1. {% post_link Java-ForkJoin-SourceAnalysis %}
+    > 1. {% post_link Java-SourceAnalysis-ForkJoin %}
     > 1. {% post_link Java-ThreadLocal-源码剖析 %}
 
 1. ThreadLocal原理是什么
@@ -587,7 +587,7 @@ categories:
     > 1. 链表、红黑树
     > 1. table大小为2的幂次，这样做可以实现一个扩张单调性，类似于一致性hash
     > 1. hash值的改造
-    > 详细源码剖析请参考{% post_link Java-ConcurrentHashMap-SourceAnalysis %}
+    > 详细源码剖析请参考{% post_link Java-SourceAnalysis-ConcurrentHashMap %}
     > 1. 1.8把锁粒度降低有没有坏处
 
 1. 原子类实现原理
@@ -631,11 +631,11 @@ categories:
     > 1. signal/signalAll
 
     > 与Object提供的wait/notify的机制不同，await/signal可以提供多个不同的等待队列
-    > 有关ConditionObject源码剖析请参考{% post_link Java-AQS-ConditionObject-SourceAnalysis %}
+    > 有关ConditionObject源码剖析请参考{% post_link Java-SourceAnalysis-AQS-ConditionObject %}
 
 1. Fork/Join
     > 从宏观上来说就是一个类似于归并的过程，将问题拆分成子问题，最终合并结果
-    > 关于Fork/Join的源码请参考{% post_link Java-ForkJoin-SourceAnalysis %}
+    > 关于Fork/Join的源码请参考{% post_link Java-SourceAnalysis-ForkJoin %}
 
 1. parallelStream
     > parallelStream其实就是一个并行执行的流。它通过默认的ForkJoinPool，可能提高你的多线程任务的速度

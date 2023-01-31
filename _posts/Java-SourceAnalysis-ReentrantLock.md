@@ -15,7 +15,7 @@ categories:
 
 # 1 前言
 
-本篇博客主要分析ReentrantLock的源码，ReentrantLock的实现基于AbstractQeueudSynchronizer(AQS)，AQS源码剖析请参见：{% post_link Java-AQS-SourceAnalysis %}
+本篇博客主要分析ReentrantLock的源码，ReentrantLock的实现基于AbstractQeueudSynchronizer(AQS)，AQS源码剖析请参见：{% post_link Java-SourceAnalysis-AQS %}
 
 # 2 内部类Sync
 
@@ -242,7 +242,7 @@ ReentrantLock的一系列lock以及unlock方法仅仅转调用sync的相应方�
     }
 ```
 
-获取条件对象的方法，关于ConditionObject的内部机制以及源码分析可参考 {% post_link Java-AQS-ConditionObject-SourceAnalysis %}
+获取条件对象的方法，关于ConditionObject的内部机制以及源码分析可参考 {% post_link Java-SourceAnalysis-AQS-ConditionObject %}
 
 ```java
     public Condition newCondition() {

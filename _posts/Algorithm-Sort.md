@@ -148,7 +148,7 @@ public class MergeSort {
 }
 ```
 
-归并排序还有一个优化版本TimSort，关于TimSort的实现可以参考JDK Arrays.sort的源码 {% post_link Java-ComparableTimSort-SourceAnalysis %}
+归并排序还有一个优化版本TimSort，关于TimSort的实现可以参考JDK Arrays.sort的源码 {% post_link Java-SourceAnalysis-ComparableTimSort %}
 
 ## 3.1 Paralle Merge
 

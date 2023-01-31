@@ -192,10 +192,10 @@ private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
     private volatile int maximumPoolSize;
 ```
 
-* **workQueue**：任务队列，Blocking相关源码分析可以参考{% post_link Java-ArrayBlockingQueue-SourceAnalysis %}
+* **workQueue**：任务队列，Blocking相关源码分析可以参考{% post_link Java-SourceAnalysis-ArrayBlockingQueue %}
 * **mainLock**：重入锁，在访问或者修改workers时，需要该重入锁来保证线程安全。ReentrantLock相关源码分析可以参考{% post_link Java-SourceAnalysis-ReentrantLock %}
 * **workers**：用于存放Worker的集合，采用非线程安全的HashSet，因此该字段的访问和修改必须配合mainLock
-* **termination**：ConditionObject相关源码分析可以参考{% post_link Java-AQS-ConditionObject-SourceAnalysis %}
+* **termination**：ConditionObject相关源码分析可以参考{% post_link Java-SourceAnalysis-AQS-ConditionObject %}
 * **corePoolSize**：核心线程数量，所谓核心线是指即便空闲也不会终止的线程(allowCoreThreadTimeOut必须是false)
 * **maximumPoolSize**：最大线程数量，核心线程+非核心线程的总数不能超过这个数值
 * **largestPoolSize**：在线程池的生命周期中，线程池持有线程数量的最大值
@@ -205,7 +205,7 @@ private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
 
 **Worker封装了Thread，因此Worker可以理解为一个线程。Worker实现了Runnable，负责从任务队列中获取任务并执行**
 
-**同时Worker还继承了AQS，（{% post_link Java-AQS-SourceAnalysis %}）也就是说Work对象本身可以作为Lock来使用，但这是为什么呢?**
+**同时Worker还继承了AQS，（{% post_link Java-SourceAnalysis-AQS %}）也就是说Work对象本身可以作为Lock来使用，但这是为什么呢?**
 
 * 在ThreadPoolExecutor#runWorker方法中，在成功获取到任务后，会将自己锁定，这个锁定状态用于表示当前work处于工作状态(在执行任务)，当一个任务处理完毕之后，又会解除锁定状态
 * 在ThreadPoolExecutor#interruptIdleWorkers方法中会调用Worker#tryLock()方法，该方法就是尝试获取锁，如果获取失败，则表明worker处于工作状态
@@ -1040,7 +1040,7 @@ private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
     }
 ```
 
-**Future源码分析请参见 {% post_link Java-FutureTask-SourceAnalysis %}**
+**Future源码分析请参见 {% post_link Java-SourceAnalysis-FutureTask %}**
 
 ### 5.7.1 newTaskFor
 

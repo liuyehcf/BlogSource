@@ -21,7 +21,7 @@ categories:
 
 ## 2.1 内部类Sync
 
-Sync继承了AbstractQueuedSynchronizer(AQS)，并使用的是AQS中的共享模式。要想深入理解Semaphore还是要先了解AQS的机制以及源码 {% post_link Java-AQS-SourceAnalysis %}
+Sync继承了AbstractQueuedSynchronizer(AQS)，并使用的是AQS中的共享模式。要想深入理解Semaphore还是要先了解AQS的机制以及源码 {% post_link Java-SourceAnalysis-AQS %}
 
 > 为什么是共享模式呢？很好理解，因为是许可嘛，假设有多个许可可用，那么肯定同时可能有多个线程来取用这个许可，因此需要的是共享模式
 

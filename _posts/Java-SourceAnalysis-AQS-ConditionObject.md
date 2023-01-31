@@ -1,5 +1,5 @@
 ---
-title: Java-AQS-ConditionObject-SourceAnalysis
+title: Java-SourceAnalysis-AQS-ConditionObject
 date: 2017-07-02 22:51:51
 tags: 
 - 原创
@@ -16,7 +16,7 @@ categories:
 # 1 前言
 
 Java语言本身提供了基于Object的wait/notify机制，任何Java Object都可以进行加锁/解锁，并且可以作为一个Monitor进行wait/notify操作，AQS框架也提供类机制，通过AQS内部类ConditionObject来实现
-本篇博文针对ConditionObject的源码进行分析，有关AQS的源码分析请参考另一篇博客 {% post_link Java-AQS-SourceAnalysis %}
+本篇博文针对ConditionObject的源码进行分析，有关AQS的源码分析请参考另一篇博客 {% post_link Java-SourceAnalysis-AQS %}
 所有的分析仅基于个人的理解，若有不正之处，请谅解和批评指正，不胜感激！！！
 
 # 2 Condition接口
