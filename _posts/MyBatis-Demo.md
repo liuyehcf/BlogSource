@@ -540,7 +540,7 @@ public class TestWithoutParam {
 1. 对于**含有**@Param注解的方法（假设注解配置的值是`myParam`）
     * 对于JavaBean参数：`${}`与`#{}`以及test属性只能以@Param注解配置的值或者`param1、param2、...`作为前缀，再加上JavaBean属性名。例如，`#{param1.id}`以及`#{myParam.id}`
     * 对于非JavaBean参数：`${}`与`#{}`以及test属性只能填写@Param注解配置的值或者`param1、param2、...`
-* **产生上述规则的原因，请参考{% post_link MyBatis-源码剖析 %}**
+* **产生上述规则的原因，请参考{% post_link Java-SourceAnalysis-MyBatis %}**
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>

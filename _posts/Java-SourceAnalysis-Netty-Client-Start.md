@@ -1,5 +1,5 @@
 ---
-title: Netty-客户端启动源码剖析
+title: Java-SourceAnalysis-Netty-Client-Start
 date: 2018-11-18 12:01:42
 tags: 
 - 原创
@@ -164,7 +164,7 @@ public class EchoClient {
     }
     ```
 
-    * `initAndRegister`方法位于`AbstractBootstrap`，用于创建并注册Channel，其详细过程参见{% post_link Netty-服务端启动源码剖析 %}，这里不再赘述
+    * `initAndRegister`方法位于`AbstractBootstrap`，用于创建并注册Channel，其详细过程参见{% post_link Java-SourceAnalysis-Netty-Server-Start %}，这里不再赘述
     ```java
     final ChannelFuture initAndRegister() {
         Channel channel = null;
@@ -229,7 +229,7 @@ public class EchoClient {
 
 # 7 注册Channel
 
-channel注册的详细过程，其详细过程参见{% post_link Netty-服务端启动源码剖析 %}，这里不再赘述
+channel注册的详细过程，其详细过程参见{% post_link Java-SourceAnalysis-Netty-Server-Start %}，这里不再赘述
 
 特别地，我们再来回顾一下注册过程中的重要一环，即位于`AbstractChannel`的`register0`方法
 

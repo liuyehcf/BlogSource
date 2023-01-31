@@ -1,5 +1,5 @@
 ---
-title: Netty-重要组件源码剖析
+title: Java-SourceAnalysis-Netty-Component
 date: 2017-12-05 10:55:31
 tags: 
 - 原创
@@ -131,7 +131,7 @@ public class EchoServer {
 
 ServerBootstrap的继承关系如下
 
-![ServerBootstrap](/images/Netty-重要组件源码剖析/ServerBootstrap.png)
+![ServerBootstrap](/images/Java-SourceAnalysis-Netty-Component/ServerBootstrap.png)
 
 其中ServerBootstrap包含如下字段
 
@@ -152,7 +152,7 @@ ServerBootstrapConfig用于获取ServerBootstrap的各项参数，即使ServerBo
 
 ServerBootstrapConfig的继承结构图如下
 
-![ServerBootstrapConfig](/images/Netty-重要组件源码剖析/ServerBootstrapConfig.png)
+![ServerBootstrapConfig](/images/Java-SourceAnalysis-Netty-Component/ServerBootstrapConfig.png)
 
 * `AbstractBootstrapConfig`
     * 用于返回AbstractBootstrap的各项参数
@@ -165,7 +165,7 @@ NioEventLoopGroup管理了一组线程池，而其本身又可以被抽象成一
 
 NioEventLoopGroup的继承结构图如下
 
-![NioEventLoopGroup](/images/Netty-重要组件源码剖析/NioEventLoopGroup.png)
+![NioEventLoopGroup](/images/Java-SourceAnalysis-Netty-Component/NioEventLoopGroup.png)
 
 * `EventExecutorGroup`
     * 管理了一组Executor（一个Executor可以理解为一个线程池）
@@ -188,7 +188,7 @@ NioEventLoop本质上就是一个线程池，被NioEventLoopGroup管理
 
 NioEventLoop的继承结构图如下
 
-![NioEventLoop](/images/Netty-重要组件源码剖析/NioEventLoop.png)
+![NioEventLoop](/images/Java-SourceAnalysis-Netty-Component/NioEventLoop.png)
 
 * `EventExecutor`
     * 增加了几个新的方法，包括`parent`、`inEventLoop`、以及创建Future和Promise的方法
@@ -210,7 +210,7 @@ NioEventLoop的继承结构图如下
 
 ChannelInitializer的继承结构图如下
 
-![ChannelInitializer](/images/Netty-重要组件源码剖析/ChannelInitializer.png)
+![ChannelInitializer](/images/Java-SourceAnalysis-Netty-Component/ChannelInitializer.png)
 
 * `ChannelHandler`
     * 提供了添加和移除Handler的方法
@@ -225,7 +225,7 @@ ChannelInitializer的继承结构图如下
 
 DefaultChannelPipeline继承结构图如下
 
-![DefaultChannelPipeline](/images/Netty-重要组件源码剖析/DefaultChannelPipeline.png)
+![DefaultChannelPipeline](/images/Java-SourceAnalysis-Netty-Component/DefaultChannelPipeline.png)
 
 * `ChannelInboundInvoker`
     * 将接收数据这一个过程抽象出多个生命周期，用于用户自定义处理逻辑
@@ -241,7 +241,7 @@ DefaultChannelPipeline继承结构图如下
 
 NioServerSocketChannel继承结构图如下
 
-![NioServerSocketChannel](/images/Netty-重要组件源码剖析/NioServerSocketChannel.png)
+![NioServerSocketChannel](/images/Java-SourceAnalysis-Netty-Component/NioServerSocketChannel.png)
 
 * `AttributeMap`
     * 用于存放属性值的Map
@@ -266,7 +266,7 @@ NioServerSocketChannel继承结构图如下
 
 DefaultChannelPromise继承结构图如下
 
-![DefaultChannelPromise](/images/Netty-重要组件源码剖析/DefaultChannelPromise.png)
+![DefaultChannelPromise](/images/Java-SourceAnalysis-Netty-Component/DefaultChannelPromise.png)
 
 * `Future`
     * 该Future继承自JUC中的同名Future接口

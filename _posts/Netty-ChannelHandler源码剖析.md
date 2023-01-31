@@ -177,7 +177,7 @@ ChannelInitializer是一个非常特殊的ChannelInboundHandlerAdapter，它通�
 
 由于Pipeline与Channel是一一对应的关系，而在Channel被创建出来之前，比如我们在配置参数的时候，是无法添加到Pipeline中的，因为这时候连Channel都没有创建，何来Pipeline。于是，我们需要有一个“容器”来搜集我们自定义的Handler，然后在“适当”的时候，帮助我们将自定义的Handler添加到相应Channel的Pipeline中。ChannelInitializer就起到这样一个作用
 
-通常，Handler注入的起点是在Netty处理逻辑的某处显式调用handlerAdded方法，具体的位置在`DefaultChannelPipeline#callHandlerAdded0`方法中。具体的调用流程可以参考{% post_link Netty-服务端启动源码剖析 %}以及{% post_link Netty-服务端响应源码剖析 %}中的Channel注册部分。handlerAdded方法具体逻辑如下
+通常，Handler注入的起点是在Netty处理逻辑的某处显式调用handlerAdded方法，具体的位置在`DefaultChannelPipeline#callHandlerAdded0`方法中。具体的调用流程可以参考{% post_link Java-SourceAnalysis-Netty-Server-Start %}以及{% post_link Java-SourceAnalysis-Netty-Server-Response %}中的Channel注册部分。handlerAdded方法具体逻辑如下
 
 1. 如果当前Channel已经完成了注册，则调用initChannel方法
 1. initChannel方法作为一个模板，调用同名的initChannel方法执行子类处理逻辑（通常逻辑就是添加Handler）后，从当前Pipeline中移除该ChannelHandlerContext

@@ -1,5 +1,5 @@
 ---
-title: Netty-服务端响应源码剖析
+title: Java-SourceAnalysis-Netty-Server-Response
 date: 2017-12-05 18:58:30
 tags: 
 - 原创
@@ -90,7 +90,7 @@ public class EchoServer {
 
 # 3 服务端启动回顾
 
-有关服务端的代码清单，以及服务端启动流程，可以参考{% post_link Netty-服务端启动源码剖析 %}
+有关服务端的代码清单，以及服务端启动流程，可以参考{% post_link Java-SourceAnalysis-Netty-Server-Start %}
 
 现在我们知道，当服务端启动之后，ServerSocketChannel就被封装到NioServerSocketChannel中了，并且注册到指定关注ACCEPT事件的Selector当中。而Selector的非阻塞响应过程由NioEventLoop来实现，因此服务端监听过程的起始地点就在NioEventLoop的run方法当中
 
@@ -563,7 +563,7 @@ public class EchoServer {
     ```
 
 1. 接下来，回到位于`AbstractNioMessageChannel`的**非静态**内部类`NioMessageUnsafe`的`read`方法中，于是触发了一些生命周期，例如fireChannelRead以及fireChannelReadComplete等
-    * 注意到，在服务端启动过程中，在NioServerSocketChannel中绑定了一个`ServerBootstrapAcceptor`，绑定的地方：**位于`ServerBootstrap`的`init`方法**，详见{% post_link Netty-服务端启动源码剖析 %}
+    * 注意到，在服务端启动过程中，在NioServerSocketChannel中绑定了一个`ServerBootstrapAcceptor`，绑定的地方：**位于`ServerBootstrap`的`init`方法**，详见{% post_link Java-SourceAnalysis-Netty-Server-Start %}
     ```java
     @Override
     void init(Channel channel) throws Exception {
@@ -705,7 +705,7 @@ public class EchoServer {
 
 # 6 注册Channel
 
-**这之后的执行过程与{% post_link Netty-服务端启动源码剖析 %}中的register过程完全一致**
+**这之后的执行过程与{% post_link Java-SourceAnalysis-Netty-Server-Start %}中的register过程完全一致**
 
 1. 我们接着回到位于`ServerBootstrap`的**静态**内部来`ServerBootstrapAcceptor`的`channelRead`方法中来，继续register方法的分析
     * `register`方法位于`MultithreadEventLoopGroup`，调用next方法获取EventLoop来执行register方法
