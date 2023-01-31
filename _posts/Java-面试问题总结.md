@@ -1282,8 +1282,8 @@ categories:
     > {% post_link Algorithm-SPFA %}
 
 1. BTree
-    > 1. {% post_link B-Tree %}
-    > 1. {% post_link BPlus-Tree %}
+    > 1. {% post_link DataStructure-B-Tree %}
+    > 1. {% post_link DataStructure-BPlus-Tree %}
 
 1. 大根堆
     > 就是最大堆

@@ -1,5 +1,5 @@
 ---
-title: AVL-Tree
+title: DataStructure-AVL-Tree
 date: 2017-07-14 18:45:40
 tags: 
 - 原创
