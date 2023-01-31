@@ -223,7 +223,7 @@ public class EchoServer {
 
 1. 接下来，回到位于`NioEventLoop`中的`run`方法，我们关注一下switch语句，目前来看，要么返回SELECT，要么返回值不小于0（selectNow返回值），为什么会返回CONTINUE（其值-2）？
 1. 如果返回值是SELECT，那么执行select方法
-    * `select`方法位于`NioEventLoop`，该方法的主要逻辑就是执行select，其结果会保存在关联的selectedKeys字段当中（该字段已通过反射替换掉`sun.nio.ch.SelectorImpl`中原有的selectedKeys字段了，详见{% post_link Netty-NioEventLoop源码剖析 %}）
+    * `select`方法位于`NioEventLoop`，该方法的主要逻辑就是执行select，其结果会保存在关联的selectedKeys字段当中（该字段已通过反射替换掉`sun.nio.ch.SelectorImpl`中原有的selectedKeys字段了，详见{% post_link Java-SourceAnalysis-Netty-NioEventLoop %}）
     * 会根据不同的逻辑调用阻塞的select或者非阻塞的selectNow，具体细节在此不深究
     ```java
     private void select(boolean oldWakenUp) throws IOException {

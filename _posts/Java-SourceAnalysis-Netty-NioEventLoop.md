@@ -1,5 +1,5 @@
 ---
-title: Netty-NioEventLoop源码剖析
+title: Java-SourceAnalysis-Netty-NioEventLoop
 date: 2017-12-05 11:55:31
 tags: 
 - 原创
@@ -15,7 +15,7 @@ categories:
 
 # 1 继承体系
 
-![NioEventLoop](/images/Netty-NioEventLoop源码剖析/NioEventLoop.png)
+![NioEventLoop](/images/Java-SourceAnalysis-Netty-NioEventLoop/NioEventLoop.png)
 
 # 2 构造方法
 
