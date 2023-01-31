@@ -1,5 +1,5 @@
 ---
-title: Netty-ChannelPipeline源码剖析
+title: Java-SourceAnalysis-Netty-ChannelPipeline
 date: 2017-12-07 13:50:27
 tags: 
 - 原创
@@ -21,25 +21,25 @@ categories:
 
 DefaultChannelPipeline继承关系比较简单，如下图
 
-![DefaultChannelPipeline](/images/Netty-ChannelPipeline源码剖析/DefaultChannelPipeline.png)
+![DefaultChannelPipeline](/images/Java-SourceAnalysis-Netty-ChannelPipeline/DefaultChannelPipeline.png)
 
 ## 2.1 ChannelOutboundInvoker
 
 ChannelOutboundInvoker接口定义了与ChannelOutboundHandler相似的方法
 
-![ChannelOutboundInvoker](/images/Netty-ChannelPipeline源码剖析/ChannelOutboundInvoker.png)
+![ChannelOutboundInvoker](/images/Java-SourceAnalysis-Netty-ChannelPipeline/ChannelOutboundInvoker.png)
 
 ## 2.2 ChannelInboundInvoker
 
 ChannelInboundInvoker接口定义了与ChannelInboundHandler相似的方法
 
-![ChannelInboundInvoker](/images/Netty-ChannelPipeline源码剖析/ChannelInboundInvoker.png)
+![ChannelInboundInvoker](/images/Java-SourceAnalysis-Netty-ChannelPipeline/ChannelInboundInvoker.png)
 
 ## 2.3 ChannelPipeline
 
 ChannelPipeline增加了一些用于添加和删除Handler的方法。ChannelPipeline的作用就是管理Handler，以及在特定位置触发相应的Handler，从而织入Netty内置的Handler或者用户自定义的Handler
 
-![ChannelPipeline](/images/Netty-ChannelPipeline源码剖析/ChannelPipeline.png)
+![ChannelPipeline](/images/Java-SourceAnalysis-Netty-ChannelPipeline/ChannelPipeline.png)
 
 # 3 DefaultChannelPipeline
 

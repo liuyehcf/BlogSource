@@ -25,13 +25,13 @@ categories:
 
 ChannelOutboundInvoker接口定义了与ChannelOutboundHandler相似的方法
 
-![ChannelOutboundInvoker](/images/Netty-ChannelPipeline源码剖析/ChannelOutboundInvoker.png)
+![ChannelOutboundInvoker](/images/Java-SourceAnalysis-Netty-ChannelPipeline/ChannelOutboundInvoker.png)
 
 ## 2.2 ChannelInboundInvoker
 
 ChannelInboundInvoker接口定义了与ChannelInboundHandler相似的方法
 
-![ChannelInboundInvoker](/images/Netty-ChannelPipeline源码剖析/ChannelInboundInvoker.png)
+![ChannelInboundInvoker](/images/Java-SourceAnalysis-Netty-ChannelPipeline/ChannelInboundInvoker.png)
 
 ## 2.3 AttributeMap
 
