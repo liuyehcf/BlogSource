@@ -15,7 +15,7 @@ categories:
 
 # 1 WebSocket
 
-下面给的示例中，涉及到SSL，其`keySotre`与`cert`的生成请参考{% post_link SSL协议 %}
+下面给的示例中，涉及到SSL，其`keySotre`与`cert`的生成请参考{% post_link Protocol-SSL %}
 
 ## 1.1 AbstractWebSocketHandler
 

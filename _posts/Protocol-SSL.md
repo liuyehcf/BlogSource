@@ -1,5 +1,5 @@
 ---
-title: SSL协议
+title: Protocol-SSL
 date: 2018-12-02 18:41:43
 tags: 
 - 摘录
@@ -111,7 +111,7 @@ X.509是公钥证书的标准格式，通常一个证书包含如下信息
 
 证书链的示意图如下，简洁起见，只保留了一级中间证书
 
-![fig1](/images/SSL协议/fig1.jpg)
+![fig1](/images/Protocol-SSL/fig1.jpg)
 
 **要获得中间证书，一般有两种方式**
 
