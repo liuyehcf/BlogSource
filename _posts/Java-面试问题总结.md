@@ -1302,7 +1302,7 @@ categories:
     > {% post_link 并查集 %}
 
 1. 海量url去重类问题
-    > {% post_link Bloom-Filter %}
+    > {% post_link DataStructure-Bloom-Filter %}
 
 1. 海量整数去重问题
     > bitmap
