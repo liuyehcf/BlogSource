@@ -1385,7 +1385,7 @@ categories:
     > 2. sha
 
 1. 银行家算法
-    > {% post_link 银行家算法 %}
+    > {% post_link Algorithm-Bank %}
 
 1. 解决哲学家进餐问题
     > 避免死锁

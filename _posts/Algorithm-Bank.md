@@ -1,5 +1,5 @@
 ---
-title: 银行家算法
+title: Algorithm-Bank
 date: 2017-08-16 21:20:29
 tags: 
 - 摘录
