@@ -1,5 +1,5 @@
 ---
-title: Mac-相关
+title: Mac
 date: 2018-01-12 20:53:24
 tags: 
 - 摘录
@@ -276,7 +276,7 @@ defaults delete com.apple.desktopservices DSDontWriteNetworkStores
 **设置`⌥+←`、`⌥+→`以单词为单位移动光标**
 
 1. 首先打开iTerm2的preferences-->profile-->Keys，将常用的左Alt键设置为换码符（escape character）。如下图所示
-    * ![fig1](/images/Mac-相关/fig1)
+    * ![fig1](/images/Mac/fig1)
 1. 接下来在Key mappings中找到已经存在的`⌥←`及`⌥→`，如果没有的话，就新建这两个快捷键
 1. 将`⌥←`的设置修改为如下内容
     * Keyboard Shortcut: `⌥←`
@@ -302,7 +302,7 @@ defaults delete com.apple.desktopservices DSDontWriteNetworkStores
 
 **先上效果**
 
-![iterm2-theme](/images/Mac-相关/iterm2-theme.png)
+![iterm2-theme](/images/Mac/iterm2-theme.png)
 
 **步骤1：[安装iterm2](https://iterm2.com/)，不赘述**
 
@@ -361,7 +361,7 @@ rm -rf fonts
 
 **步骤5：将iterm2的字体设置为Powerline的字体**
 
-![step5](/images/Mac-相关/step5.png)
+![step5](/images/Mac/step5.png)
 
 在iterm2中使用Powerline字体：`Preferences` -> `Profiles` -> `Text`
 
@@ -376,7 +376,7 @@ open solarized/iterm2-colors-solarized
 
 然后在iterm2中选择该配色方案即可：`Preferences` -> `Profiles` -> `Colors`
 
-![step6](/images/Mac-相关/step6.png)
+![step6](/images/Mac/step6.png)
 
 **步骤7：[安装agnoster主题](https://github.com/fcamblor/oh-my-zsh-agnoster-fcamblor)**
 
