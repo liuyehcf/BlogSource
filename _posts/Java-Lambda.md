@@ -1,5 +1,5 @@
 ---
-title: Java-Lambda表达式
+title: Java-Lambda
 date: 2018-02-02 19:10:24
 tags: 
 - 原创

@@ -1,5 +1,5 @@
 ---
-title: Kubernetes-网络
+title: Kubernetes-Network
 date: 2019-12-23 14:43:11
 tags: 
 - 原创
@@ -13,7 +13,7 @@ categories:
 
 # 1 综述
 
-![overall](/images/Kubernetes-网络/overall.png)
+![overall](/images/Kubernetes-Network/overall.png)
 
 **pod的网络类型可以是容器网络也可以是主机网络，这里仅讨论容器网络这一类型的pod**
 
@@ -131,7 +131,7 @@ iptables->endpoint: traffic to remotePod
 
 ## 2.2 自定义chain介绍
 
-![iptables_chains](/images/Kubernetes-网络/iptables-chains.svg)
+![iptables_chains](/images/Kubernetes-Network/iptables-chains.svg)
 
 定义可以参考源码[proxier.go ](https://github.com/kubernetes/kubernetes/blob/master/pkg/proxy/iptables/proxier.go)
 

@@ -268,7 +268,7 @@ categories:
     > JDK 8
     > 1. Lambdas表达式与Function接口
     > 1. parallel
-    > 具体内容请参考{% post_link JDK-新特性 %}
+    > 具体内容请参考{% post_link JDK-Features %}
 
 1. 单例模式
     > 1. {% post_link 设计模式-单例模式 %}
@@ -343,7 +343,7 @@ categories:
     > {% post_link Java-垃圾收集器 %}
 
 1. JVM参数
-    > {% post_link JVM-常用参数 %}
+    > {% post_link JVM-Options %}
 
 1. Java方法区存了什么
     > 静态字段
