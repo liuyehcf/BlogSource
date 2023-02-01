@@ -47,7 +47,7 @@ AVL-tree是一种平衡二叉树，搜索的平均复杂度是O(log n)。本篇�
 
 首先分析左旋，见如下示意图
 
-![fig1](/images/AVL-tree-详解/1.png)
+![fig1](/images/DataStructure-AVL-Tree/1.png)
 
 **问题1：何时我们会进行左旋操作**
 
@@ -72,7 +72,7 @@ AVL-tree是一种平衡二叉树，搜索的平均复杂度是O(log n)。本篇�
 
 然后分析右旋，见如下示意图
 
-![fig2](/images/AVL-tree-详解/2.png)
+![fig2](/images/DataStructure-AVL-Tree/2.png)
 
 **问题1：何时我们会进行右旋操作**
 
@@ -103,7 +103,7 @@ AVL-tree是一种平衡二叉树，搜索的平均复杂度是O(log n)。本篇�
 
 当C为平衡被破坏的节点，且C的左子树比右子树的高度大2，示意图如下
 
-![fig3](/images/AVL-tree-详解/3.png)
+![fig3](/images/DataStructure-AVL-Tree/3.png)
 
 * 需要对C进行一次右旋
 * 右旋的前提是H<sub>B</sub> >= H<sub>D</sub>
@@ -118,7 +118,7 @@ AVL-tree是一种平衡二叉树，搜索的平均复杂度是O(log n)。本篇�
 
 当A为平衡被破坏的节点，且A的右子树比左子树的高度大2，示意图如下
 
-![fig4](/images/AVL-tree-详解/4.png)
+![fig4](/images/DataStructure-AVL-Tree/4.png)
 
 * 需要对A进行一次左旋
 * 左旋的前提是H<sub>E</sub> >= H<sub>D</sub>
@@ -323,7 +323,7 @@ AVL-TREE-FIXUP(T,x)
 
 插入点位于A的左子节点的左子树--左左，见如下示意图
 
-![fig5](/images/AVL-tree-详解/5.png)
+![fig5](/images/DataStructure-AVL-Tree/5.png)
 
 **调整前，各节点的高度如下**
 
@@ -352,7 +352,7 @@ AVL-TREE-FIXUP(T,x)
 
 插入点位于A的左子节点的右子树--左右，见如下示意图
 
-![fig6](/images/AVL-tree-详解/6.png)
+![fig6](/images/DataStructure-AVL-Tree/6.png)
 
 **调整前，各节点的高度如下**
 

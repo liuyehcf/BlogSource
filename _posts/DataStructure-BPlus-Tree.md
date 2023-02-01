@@ -50,7 +50,7 @@ categories:
 
 B+-tree示意图如下
 
-![fig1](/images/BPlus-tree-详解/1.png)
+![fig1](/images/DataStructure-BPlus-Tree/1.png)
 
 # 2 伪代码
 
