@@ -1330,7 +1330,7 @@ categories:
     > 开放寻址法，空间利用率不高，对hash函数的性能要求非常高
 
 1. 什么是一致性hash
-    > * {% post_link 一致性hash %}
+    > * {% post_link Consistency-Hash %}
     > * 普通hash --> 一致性hash，本质上就是固定模的长度，在增加或删除节点后hash求模的值不变
 
 1. [一致性哈希和哈希槽对比](https://www.jianshu.com/p/4163916a2a8a)
@@ -1681,7 +1681,7 @@ categories:
     > {% post_link Redis-Interview-Summary %}
 
 1. 缓存机器增删如何对系统影响最小，一致性哈希的实现
-    > {% post_link 一致性hash %}
+    > {% post_link Consistency-Hash %}
 
 1. Redis持久化的几种方式，优缺点是什么，怎么实现的
     > {% post_link Redis-Persistence-Mechanism %}

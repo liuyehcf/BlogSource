@@ -1,5 +1,5 @@
 ---
-title: 脚本语言的概念
+title: Scripting-Language
 date: 2017-12-02 15:45:01
 tags: 
 - 摘录
