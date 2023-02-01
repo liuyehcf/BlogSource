@@ -68,8 +68,8 @@ categories:
 
 1. Arrays.sort实现原理
     > 针对对象类型和基本类型，Arrays.sort会采用不同的排序算法
-    > 1. 对象类型必须保证稳定性，因此采用的是插入排序以及归并排序的优化版本TimSort，具体详见{% post_link Java-SourceAnalysis-ComparableTimSort %} 
-    > 1. 基本类型的稳定性是不必要的，因此根据数组的长度以及分布规律选择特定的排序算法，包括插入排序，快速排序(3-way-quicksort以及2-pivot-quicksort)，具体详见{% post_link Java-SourceAnalysis-DualPivotQuickSort %}
+    > 1. 对象类型必须保证稳定性，因此采用的是插入排序以及归并排序的优化版本TimSort，具体详见{% post_link SourceAnalysis-ComparableTimSort %} 
+    > 1. 基本类型的稳定性是不必要的，因此根据数组的长度以及分布规律选择特定的排序算法，包括插入排序，快速排序(3-way-quicksort以及2-pivot-quicksort)，具体详见{% post_link SourceAnalysis-DualPivotQuickSort %}
 
 1. Collection.sort实现原理
     > Collection.sort在内部会转调用Arrays.sort
@@ -157,7 +157,7 @@ categories:
     > {% post_link Java-NIO %}
 
 1. 动态代理源码
-    > {% post_link Java-SourceAnalysis-DynamicProxy %}
+    > {% post_link SourceAnalysis-DynamicProxy %}
 
 1. 线程池的目的
     > 目的是为了减少程序并发执行所付出的时空开销，使操作系统具有更好的并发性
@@ -545,20 +545,20 @@ categories:
 # 3 JUC
 
 1. 源码相关
-    > 1. {% post_link Java-SourceAnalysis-AQS %}
-    > 1. {% post_link Java-SourceAnalysis-AQS-ConditionObject %}
-    > 1. {% post_link Java-SourceAnalysis-ReentrantLock %}
-    > 1. {% post_link Java-SourceAnalysis-ReentrantReadWriteLock %}
-    > 1. {% post_link Java-SourceAnalysis-ArrayBlockingQueue %}
-    > 1. {% post_link Java-SourceAnalysis-ThreadPoolExecutor %}
-    > 1. {% post_link Java-SourceAnalysis-FutureTask %}
-    > 1. {% post_link Java-SourceAnalysis-ConcurrentHashMap %}
-    > 1. {% post_link Java-SourceAnalysis-CountDownLatch %}
-    > 1. {% post_link Java-SourceAnalysis-CyclicBarrier %}
-    > 1. {% post_link Java-SourceAnalysis-Exchanger %}
-    > 1. {% post_link Java-SourceAnalysis-Semaphore %}
-    > 1. {% post_link Java-SourceAnalysis-ForkJoin %}
-    > 1. {% post_link Java-SourceAnalysis-ThreadLocal %}
+    > 1. {% post_link SourceAnalysis-AQS %}
+    > 1. {% post_link SourceAnalysis-AQS-ConditionObject %}
+    > 1. {% post_link SourceAnalysis-ReentrantLock %}
+    > 1. {% post_link SourceAnalysis-ReentrantReadWriteLock %}
+    > 1. {% post_link SourceAnalysis-ArrayBlockingQueue %}
+    > 1. {% post_link SourceAnalysis-ThreadPoolExecutor %}
+    > 1. {% post_link SourceAnalysis-FutureTask %}
+    > 1. {% post_link SourceAnalysis-ConcurrentHashMap %}
+    > 1. {% post_link SourceAnalysis-CountDownLatch %}
+    > 1. {% post_link SourceAnalysis-CyclicBarrier %}
+    > 1. {% post_link SourceAnalysis-Exchanger %}
+    > 1. {% post_link SourceAnalysis-Semaphore %}
+    > 1. {% post_link SourceAnalysis-ForkJoin %}
+    > 1. {% post_link SourceAnalysis-ThreadLocal %}
 
 1. ThreadLocal原理是什么
     > ThreadLocal的实现需要Thread的配合，Thread内部为ThreadLocal增加了一个字段`threadLocals`，该字段是一个Map<ThreadLocal,T>，也就是说，不同的ThreadLocal对于同一个线程的值将会存放在这个Thread#threadLocals字段中
@@ -587,7 +587,7 @@ categories:
     > 1. 链表、红黑树
     > 1. table大小为2的幂次，这样做可以实现一个扩张单调性，类似于一致性hash
     > 1. hash值的改造
-    > 详细源码剖析请参考{% post_link Java-SourceAnalysis-ConcurrentHashMap %}
+    > 详细源码剖析请参考{% post_link SourceAnalysis-ConcurrentHashMap %}
     > 1. 1.8把锁粒度降低有没有坏处
 
 1. 原子类实现原理
@@ -617,7 +617,7 @@ categories:
 
 1. Unsafe
     > Unsafe是JDK实现所依赖的一个非公开的类，用于提供一些内存操作以及CAS操作等等。不具有跨平台性质，不同平台的实现可能有差异
-    > Unsafe详细源码请参考{% post_link Java-SourceAnalysis-Unsafe %}
+    > Unsafe详细源码请参考{% post_link SourceAnalysis-Unsafe %}
 
 1. LockSupport
     > 1. LockSupport.park
@@ -631,11 +631,11 @@ categories:
     > 1. signal/signalAll
 
     > 与Object提供的wait/notify的机制不同，await/signal可以提供多个不同的等待队列
-    > 有关ConditionObject源码剖析请参考{% post_link Java-SourceAnalysis-AQS-ConditionObject %}
+    > 有关ConditionObject源码剖析请参考{% post_link SourceAnalysis-AQS-ConditionObject %}
 
 1. Fork/Join
     > 从宏观上来说就是一个类似于归并的过程，将问题拆分成子问题，最终合并结果
-    > 关于Fork/Join的源码请参考{% post_link Java-SourceAnalysis-ForkJoin %}
+    > 关于Fork/Join的源码请参考{% post_link SourceAnalysis-ForkJoin %}
 
 1. parallelStream
     > parallelStream其实就是一个并行执行的流。它通过默认的ForkJoinPool，可能提高你的多线程任务的速度
@@ -857,7 +857,7 @@ categories:
 
 1. Spring AOP实现原理
     > AOP=增强收集以及适配+拦截器机制+动态代理
-    > 详细源码分析请参考{% post_link Java-SourceAnalysis-Spring-AOP %}
+    > 详细源码分析请参考{% post_link SourceAnalysis-Spring-AOP %}
     > AOP中的术语
     > 1. 切点：匹配关系
     > 1. 增强：增强逻辑以及方位信息
@@ -1323,7 +1323,7 @@ categories:
     > {% post_link Algorithm-Sort %}
 
 1. 快速排序
-    > {% post_link Java-SourceAnalysis-DualPivotQuickSort %}
+    > {% post_link SourceAnalysis-DualPivotQuickSort %}
 
 1. hash算法的有哪几种，优缺点，使用场景
     > 链表法，Java中Map的实现都用这个
