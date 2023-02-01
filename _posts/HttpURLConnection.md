@@ -1,5 +1,5 @@
 ---
-title: HttpURLConnection-简介
+title: HttpURLConnection
 date: 2017-12-15 20:20:11
 tags: 
 - 原创
@@ -140,5 +140,5 @@ Default doOutput: false
 
 # 4 HttpURLConnection继承结构
 
-![HttpURLConnection](/images/HttpURLConnection-简介/HttpURLConnection.png)
+![HttpURLConnection](/images/HttpURLConnection/HttpURLConnection.png)
 

@@ -1,5 +1,5 @@
 ---
-title: hexo相关
+title: Hexo
 date: 2017-09-24 15:15:58
 mathjax: true
 tags: 

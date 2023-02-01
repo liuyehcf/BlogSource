@@ -1,5 +1,5 @@
 ---
-title: Redis-基础教程
+title: Redis-Basics
 date: 2017-08-17 19:54:16
 tags: 
 - 摘录
@@ -294,11 +294,11 @@ Redis客户端可以订阅任意数量的频道
 
 下图展示了频道channel1，以及订阅这个频道的三个客户端——client2、client5和client1之间的关系：
 
-![fig1](/images/Redis-基础教程/fig1.png)
+![fig1](/images/Redis-Basics/fig1.png)
 
 当有新消息通过PUBLISH命令发送给频道channel1时，这个消息就会被发送给订阅它的三个客户端：
 
-![fig2](/images/Redis-基础教程/fig2.png)
+![fig2](/images/Redis-Basics/fig2.png)
 
 **命令：**
 
