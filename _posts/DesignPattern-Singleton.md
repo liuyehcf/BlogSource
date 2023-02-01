@@ -1,5 +1,5 @@
 ---
-title: 设计模式-单例模式
+title: DesignPattern-Singleton
 date: 2017-07-02 23:01:51
 tags: 
 - 原创

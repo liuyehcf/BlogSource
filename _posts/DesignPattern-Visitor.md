@@ -1,5 +1,5 @@
 ---
-title: 设计模式-访问者模式
+title: DesignPattern-Visitor
 date: 2017-07-02 23:01:52
 tags: 
 - 原创
