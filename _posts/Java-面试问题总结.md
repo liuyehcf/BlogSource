@@ -101,10 +101,10 @@ categories:
     > 可以用红黑树来解决，这也是HashMap和ConcurrentHashmap的解决方式
 
 1. Class文件结构
-    > {% post_link Java-Class文件结构以及字节码阅读 %}
+    > {% post_link Java-ClassFile-Structure %}
 
 1. 字节码的种类
-    > {% post_link Java-Class文件结构以及字节码阅读 %}
+    > {% post_link Java-ClassFile-Structure %}
     > 1. 加载和存储指令
     > 1. 运算指令
     > 1. 类型转换指令
@@ -522,7 +522,7 @@ categories:
     > 1. 属性计数值
     > 1. 属性
 
-    > 详细请参考{% post_link Java-Class文件结构以及字节码阅读 %}
+    > 详细请参考{% post_link Java-ClassFile-Structure %}
 
 1. JMM
     > 1. {% post_link Java-内存模型基础 %}
@@ -1684,7 +1684,7 @@ categories:
     > {% post_link 一致性hash %}
 
 1. Redis持久化的几种方式，优缺点是什么，怎么实现的
-    > {% post_link Redis-持久化机制 %}
+    > {% post_link Redis-Persistence-Mechanism %}
 
 1. Redis的缓存失效策略
     > 1. volatile-lru：从已设置过期时间的数据集（server.db[i].expires）中挑选最近最少使用的数据淘汰

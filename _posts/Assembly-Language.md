@@ -1,5 +1,5 @@
 ---
-title: 汇编语言基础
+title: Assembly-Language
 date: 2021-10-15 16:17:52
 tags: 
 - 原创
@@ -127,7 +127,7 @@ categories:
 
 * [Advanced Vector Extensions](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions)
 * [一文读懂SIMD指令集 目前最全SSE/AVX介绍](https://blog.csdn.net/qq_32916805/article/details/117637192)
-* ![simd](/images/汇编语言基础/simd.png)
+* ![simd](/images/Assembly-Language/simd.png)
 * 指令级
 
 | 指令集 | 描述 |

@@ -1,5 +1,5 @@
 ---
-title: Java-安全模型
+title: Java-Security-Model
 date: 2018-01-19 19:03:38
 tags: 
 - 摘录

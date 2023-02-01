@@ -40,7 +40,7 @@ categories:
 
 计算机真正能够理解的是低级语言，它专门用来控制硬件。汇编语言就是低级语言，直接描述/控制CPU 的运行。如果你想了解CPU到底干了些什么，以及代码的运行步骤，就一定要学习汇编语言。另外，学习汇编语言也能帮助我们更好地理解虚拟化过程
 
-**这部分内容请参考{% post_link SystemArchitecture-Register %}以及{% post_link 汇编语言基础 %}**
+**这部分内容请参考{% post_link SystemArchitecture-Register %}以及{% post_link Assembly-Language %}**
 
 # 3 CPU虚拟化
 

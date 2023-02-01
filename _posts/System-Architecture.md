@@ -1,5 +1,5 @@
 ---
-title: 计算机体系结构
+title: System-Architecture
 date: 2021-11-16 09:19:25
 mathjax: true
 tags: 
@@ -512,7 +512,7 @@ categories:
 * 流水线执行模式是重叠执行模式
     * `k`个流水段并行执行`k`个不同任务
     * 每个单位时间进入/离开流水线一个任务
-    * ![3-1](/images/计算机体系结构/3-1)
+    * ![3-1](/images/System-Architecture/3-1)
 
 **流水线性能衡量：**
 
@@ -543,7 +543,7 @@ categories:
 * 指令按程序序从上到下排列
 * 图中展示了每一时钟周期资源的使用情况
 * 不同指令相邻阶段之间没有干扰
-* ![3-2](/images/计算机体系结构/3-2)
+* ![3-2](/images/System-Architecture/3-2)
 
 **流水线的技术要点：**
 
@@ -741,7 +741,7 @@ categories:
 
 **将部分执行部件流水化后的`MIPS`流水线如下图**
 
-![3-3](/images/计算机体系结构/3-3.png)
+![3-3](/images/System-Architecture/3-3.png)
 
 **新的相关和定向问题：**
 
@@ -1794,7 +1794,7 @@ categories:
 
 **向量处理机具有更高层次的操作，一条向量指令可以处理`N`个或`N`对操作数（处理对象是向量）**
 
-![6-1](/images/计算机体系结构/6-1)
+![6-1](/images/System-Architecture/6-1)
 
 **向量处理机的基本特性：**
 
@@ -1846,11 +1846,11 @@ categories:
 
 **不采用链接技术，必须处理完前一条指令的最后一个元素，才能启动下一条相关的指令**
 
-![6-2](/images/计算机体系结构/6-2.png)
+![6-2](/images/System-Architecture/6-2.png)
 
 **采用链接技术，前一条指令的第一个结果出来后，就可以启动下一条相关指令的执行**
 
-![6-3](/images/计算机体系结构/6-3.png)
+![6-3](/images/System-Architecture/6-3.png)
 
 ### 6.2.2 条件执行
 
@@ -1987,7 +1987,7 @@ for i from 1 to n
 
 ### 6.4.3 GPU存储模型
 
-![6-4](/images/计算机体系结构/6-4)
+![6-4](/images/System-Architecture/6-4)
 
 ## 6.5 GPU-2
 
@@ -1999,10 +1999,10 @@ for i from 1 to n
 
 **`CPU vs. GPU`：**
 
-* `CPU`：![6-5](/images/计算机体系结构/6-5.png)
+* `CPU`：![6-5](/images/System-Architecture/6-5.png)
 * `GPU`
-    * 架构1：将那些协助单处理器运行得更快的组件从CPU中移除：![6-6](/images/计算机体系结构/6-6.png)
-    * 架构2：添加`ALU`，用以分摊管理指令流的成本/复杂性：![6-7](/images/计算机体系结构/6-7.png)
+    * 架构1：将那些协助单处理器运行得更快的组件从CPU中移除：![6-6](/images/System-Architecture/6-6.png)
+    * 架构2：添加`ALU`，用以分摊管理指令流的成本/复杂性：![6-7](/images/System-Architecture/6-7.png)
 
 **`Warps are multithreaded on core`：**
 
@@ -2232,7 +2232,7 @@ for i from 1 to n
 
 **`State Transitions in the MSI Protocol`**
 
-* ![7-1](/images/计算机体系结构/7-1.png) 
+* ![7-1](/images/System-Architecture/7-1.png) 
 * `Processor Read`
     * `Cache miss`：产生BusRd事务
     * `Cache hit (S or M)`：无总线动作
@@ -2327,7 +2327,7 @@ for i from 1 to n
 
 **`MESI State Transition Diagram`：**
 
-* ![7-2](/images/计算机体系结构/7-2.png) 
+* ![7-2](/images/System-Architecture/7-2.png) 
 * `Processor Read`
     * 读失效时产生`BusRd`事务，进而有可能产生`replace`动作？
     * `BusRd(S) => shared line asserted`
@@ -2416,7 +2416,7 @@ for i from 1 to n
 * 目录协议
     * 目录：用于记录共享块相关信息的数据结构，它记录着可以进入`Cache`的每个数据块的访问状态、该块在各个处理器的共享状态以及是否修改过等信息
 
-![7-3](/images/计算机体系结构/7-3.png)
+![7-3](/images/System-Architecture/7-3.png)
 
 ### 7.2.2 基于目录的一致性协议
 
