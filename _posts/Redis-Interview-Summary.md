@@ -1,5 +1,5 @@
 ---
-title: Redis-面试总结
+title: Redis-Interview-Summary
 date: 2017-08-03 14:13:22
 tags: 
 - 摘录

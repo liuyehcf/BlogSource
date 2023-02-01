@@ -1,5 +1,5 @@
 ---
-title: Java-面试问题总结
+title: Java-Interview-Summary
 date: 2017-07-05 08:51:57
 tags: 
 - 原创
@@ -892,7 +892,7 @@ categories:
 
 1. MVC框架原理，他们都是怎么做url路由的
 
-    > ![fig6](/images/Java-面试问题总结/fig6.png)
+    > ![fig6](/images/Java-Interview-Summary/fig6.png)
 
 1. Spring boot特性、优势、适用场景等
     > http://www.cnblogs.com/larryzeal/p/5799195.html#c4
@@ -1007,7 +1007,7 @@ categories:
     > 就绪态：进程已经具备运行条件，但是CPU还没有分配过来
     > 阻塞态：进程因等待某件事发生而暂时不能运行
 
-    > ![fig7](/images/Java-面试问题总结/fig7.png)
+    > ![fig7](/images/Java-Interview-Summary/fig7.png)
 
 1. 一串int型整数存放磁盘上的压缩存储方式，包括写入与读取及内存无法一次性读取时的解决办法
     > 待补充
@@ -1209,7 +1209,7 @@ categories:
     > 所以，结合你自己的业务来选择用什么，nginx和dubbo在使用上说白了就是一个先后的关系而已(当然也是我个人感觉)
     > http://dubbo.io/developer-guide/%E6%A1%86%E6%9E%B6%E8%AE%BE%E8%AE%A1.html
 
-    > ![fig1](/images/Java-面试问题总结/fig1.jpg)
+    > ![fig1](/images/Java-Interview-Summary/fig1.jpg)
 
 1. Dubbo的服务请求失败怎么处理
     > dubbo启动时默认有重试机制和超时机制
@@ -1678,7 +1678,7 @@ categories:
     > * 单线程的好处：简单
 
 1. Redis的并发竞争问题如何解决，了解Redis事务的CAS操作吗
-    > {% post_link Redis-面试总结 %}
+    > {% post_link Redis-Interview-Summary %}
 
 1. 缓存机器增删如何对系统影响最小，一致性哈希的实现
     > {% post_link 一致性hash %}
@@ -1746,7 +1746,7 @@ categories:
 1. 一个IP包大概是多大呢，有限制没有？
     > IP数据包的最大长度是64K字节(65535)，因为在IP包头中用2个字节描述报文长度，2个字节所能表达的最大数字就是65535
 
-    > ![fig2](/images/Java-面试问题总结/fig2.png)
+    > ![fig2](/images/Java-Interview-Summary/fig2.png)
 
 1. 什么情况下会考虑UDP、什么情况下会考虑TCP
     > TCP一般用于文件传输(FTP、HTTP对数据准确性要求高，速度可以相对慢)，发送或接收邮件(POP、IMAP、SMTP对数据准确性要求高，非紧急应用)，远程登录(TELNET、SSH对数据准确性有一定要求，有连接的概念)等等
@@ -1776,7 +1776,7 @@ categories:
     > 流量控制是通过滑动窗口实现的，发送窗口在连接建立时由双方商定。但在通信的过程中，接收端可根据自己的资源情况，随时动态地调整对方的发送窗口上限值(可增大或减小)
     > 我们可以把窗口理解为缓冲区（但是有些窗口和缓冲区又不太一样）。如果没有这些"窗口"，那么TCP没发送一段数据后都必须等到接收端确认后才能发送下一段数据，这样做的话TCP传输的效率实在是太低了。解决的办法就是在发送端等待确认的时候继续发送数据，假设发送到第X个数据段是收到接收端的确认信息，如果X在可接受的范围内那么这样做也是可接受的。这就是窗口（缓冲区）引入的缘由
 
-    > ![fig9](/images/Java-面试问题总结/fig9.jpeg)
+    > ![fig9](/images/Java-Interview-Summary/fig9.jpeg)
 
     > http://www.cnblogs.com/gaopeng527/p/5255757.html
 
@@ -1810,7 +1810,7 @@ categories:
 
 1. TCP报文
 
-    > ![fig8](/images/Java-面试问题总结/fig8.jpg)
+    > ![fig8](/images/Java-Interview-Summary/fig8.jpg)
 
     > http://www.360doc.com/content/12/1218/10/3405077_254718387.shtml
 
@@ -1826,11 +1826,11 @@ categories:
 
     > 各层数据包关系
 
-    > ![fig3](/images/Java-面试问题总结/fig3.png)
+    > ![fig3](/images/Java-Interview-Summary/fig3.png)
 
-    > TCP数据包![fig4](/images/Java-面试问题总结/fig4.png)
+    > TCP数据包![fig4](/images/Java-Interview-Summary/fig4.png)
 
-    > DUP数据包![fig5](/images/Java-面试问题总结/fig5.png)
+    > DUP数据包![fig5](/images/Java-Interview-Summary/fig5.png)
 
 1. accept是在三次握手的哪个阶段？
     > accept指的是应用层的accept方法，用于获取一个Socket对象
