@@ -107,7 +107,9 @@ else
 
 # 3 关键字
 
-## 3.1 const
+## 3.1 类型限定符
+
+### 3.1.1 const
 
 默认状态下，`const`对象仅在文件内有效。编译器将在编译过程中把用到该变量的地方都替代成对应的值，也就是说，编译器会找到代码中所有用到该`const`变量的地方，然后将其替换成定义的值
 
@@ -118,7 +120,7 @@ else
 * `.h`文件中：`extern const int a;`
 * `.cpp`文件中：`extern const int a=f();`
 
-### 3.1.1 顶层/底层const
+#### 3.1.1.1 顶层/底层const
 
 **只有指针和引用才有顶层底层之分**
 
@@ -204,7 +206,7 @@ int main() {
 }
 ```
 
-### 3.1.2 const实参和形参
+#### 3.1.1.2 const实参和形参
 
 实参初始化形参时会自动忽略掉顶层`const`属性
 
@@ -221,11 +223,11 @@ int main() {
 }
 ```
 
-### 3.1.3 const成员
+#### 3.1.1.3 const成员
 
 构造函数中显式初始化：在初始化部分进行初始化，而不能在函数体内初始化；如果没有显式初始化，就调用定义时的初始值进行初始化
 
-### 3.1.4 const成员函数
+#### 3.1.1.4 const成员函数
 
 **`const`关键字修饰的成员函数，不能修改当前类的任何字段的值，如果字段是对象类型，也不能调用非`const`修饰的成员方法。（有一个特例，就是当持有的是某个类型的指针时，可以通过该指针调用非`const`方法）**
 
@@ -258,6 +260,536 @@ int main() {
     // cd.sayHello2();
 };
 ```
+
+### 3.1.2 volatile
+
+`volatile`关键字是一种类型修饰符，用它声明的类型变量表示可以被某些编译器未知的因素更改（程序之外的因素），比如：操作系统、硬件等。遇到这个关键字声明的变量，编译器对访问该变量的代码就不再进行优化，从而可以提供对特殊地址的稳定访问
+
+* **仅从`C/C++`标准的角度来说（不考虑平台以及编译器扩展），`volatile`并不保证线程间的可见性**。在实际场景中，例如`x86`平台，在`MESI`协议的支持下，`volatile`是可以保证可见性的，这可以理解为一个巧合，利用了平台相关性，因此不具备平台可移植性
+
+`Java`中也有`volatile`关键字，但作用完全不同，`Java`在语言层面就保证了`volatile`具有线程可见性
+
+* `x86`
+    * 仅依赖`MESI`协议，可能也无法实现可见性。举个例子，当`CPU1`执行写操作时，要等到其他`CPU`将对应的缓存行设置成`I`状态后，写入才能完成，性能较差，于是`CPU`又引入了`Store Buffer`（`MESI`协议不感知`Store Buffer`），`CPU1`只需要将数据写入`Store Buffer`而不用等待其他`CPU`将缓存行设置成`I`状态就可以干其他事了
+    * 为了解决上述问题，`JVM`使用了`lock`前缀的汇编指令，将当前`Store Buffer`中的所有数据（不仅仅是`volatile`修饰的变量）都通过`MESI`写入
+* 其他架构，采用其他方式来保证线程可见性这一承诺
+
+**参考：**
+
+* [Is volatile useful with threads?](https://isocpp.org/blog/2018/06/is-volatile-useful-with-threads-isvolatileusefulwiththreads.com)
+    * [isvolatileusefulwiththreads](http://isvolatileusefulwiththreads.com/)
+* [Volatile and cache behaviour](https://stackoverflow.com/questions/18695120/volatile-and-cache-behaviour)
+* [你不认识的cc++ volatile](https://www.hitzhangjie.pro/blog/2019-01-07-%E4%BD%A0%E4%B8%8D%E8%AE%A4%E8%AF%86%E7%9A%84cc++-volatile/)
+
+**示例如下：**
+
+```sh
+cat > volatile.cpp << 'EOF'
+#include <atomic>
+
+void read_from_normal(int32_t& src, int32_t& target) {
+    target = src;
+    target = src;
+    target = src;
+}
+
+void read_from_volatile(volatile int32_t& src, int32_t& target) {
+    target = src;
+    target = src;
+    target = src;
+}
+
+void read_from_atomic(std::atomic<int32_t>& src, int32_t& target) {
+    target = src.load(std::memory_order_seq_cst);
+    target = src.load(std::memory_order_relaxed);
+    target = src.load(std::memory_order_release);
+}
+
+void write_to_normal(int32_t& src, int32_t& target) {
+    target = src;
+    target = src;
+    target = src;
+}
+
+void write_to_volatile(int32_t& src, volatile int32_t& target) {
+    target = src;
+    target = src;
+    target = src;
+}
+
+void write_to_atomic(int32_t& src, std::atomic<int32_t>& target) {
+    target.store(src, std::memory_order_seq_cst);
+    target.store(src, std::memory_order_relaxed);
+    target.store(src, std::memory_order_release);
+}
+EOF
+
+gcc -o volatile.o -c volatile.cpp -O3 -lstdc++ -std=gnu++17
+objdump -drwCS volatile.o
+```
+
+**输出如下：**
+
+* `read_from_normal`的三次操作被优化成了一次
+* `write_to_normal`的三次操作被优化成了一次
+* `write_to_atomic`中，`std::memory_order_seq_cst`使用的是[`xchg`指令](https://www.felixcloutier.com/x86/xchg)，当有一个操作数是内存地址时，会自动启用`locking protocol`，确保写操作的串行化
+
+```
+volatile.o:     file format elf64-x86-64
+
+Disassembly of section .text:
+
+0000000000000000 <read_from_normal(int&, int&)>:
+   0:	f3 0f 1e fa          	endbr64
+   4:	8b 07                	mov    (%rdi),%eax
+   6:	89 06                	mov    %eax,(%rsi)
+   8:	c3                   	ret
+   9:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+
+0000000000000010 <read_from_volatile(int volatile&, int&)>:
+  10:	f3 0f 1e fa          	endbr64
+  14:	8b 07                	mov    (%rdi),%eax
+  16:	89 06                	mov    %eax,(%rsi)
+  18:	8b 07                	mov    (%rdi),%eax
+  1a:	89 06                	mov    %eax,(%rsi)
+  1c:	8b 07                	mov    (%rdi),%eax
+  1e:	89 06                	mov    %eax,(%rsi)
+  20:	c3                   	ret
+  21:	66 66 2e 0f 1f 84 00 00 00 00 00 	data16 cs nopw 0x0(%rax,%rax,1)
+  2c:	0f 1f 40 00          	nopl   0x0(%rax)
+
+0000000000000030 <read_from_atomic(std::atomic<int>&, int&)>:
+  30:	f3 0f 1e fa          	endbr64
+  34:	8b 07                	mov    (%rdi),%eax
+  36:	89 06                	mov    %eax,(%rsi)
+  38:	8b 07                	mov    (%rdi),%eax
+  3a:	89 06                	mov    %eax,(%rsi)
+  3c:	8b 07                	mov    (%rdi),%eax
+  3e:	89 06                	mov    %eax,(%rsi)
+  40:	c3                   	ret
+  41:	66 66 2e 0f 1f 84 00 00 00 00 00 	data16 cs nopw 0x0(%rax,%rax,1)
+  4c:	0f 1f 40 00          	nopl   0x0(%rax)
+
+0000000000000050 <write_to_normal(int&, int&)>:
+  50:	f3 0f 1e fa          	endbr64
+  54:	8b 07                	mov    (%rdi),%eax
+  56:	89 06                	mov    %eax,(%rsi)
+  58:	c3                   	ret
+  59:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+
+0000000000000060 <write_to_volatile(int&, int volatile&)>:
+  60:	f3 0f 1e fa          	endbr64
+  64:	8b 07                	mov    (%rdi),%eax
+  66:	89 06                	mov    %eax,(%rsi)
+  68:	89 06                	mov    %eax,(%rsi)
+  6a:	8b 07                	mov    (%rdi),%eax
+  6c:	89 06                	mov    %eax,(%rsi)
+  6e:	c3                   	ret
+  6f:	90                   	nop
+
+0000000000000070 <write_to_atomic(int&, std::atomic<int>&)>:
+  70:	f3 0f 1e fa          	endbr64
+  74:	8b 07                	mov    (%rdi),%eax
+  76:	87 06                	xchg   %eax,(%rsi)
+  78:	8b 07                	mov    (%rdi),%eax
+  7a:	89 06                	mov    %eax,(%rsi)
+  7c:	8b 07                	mov    (%rdi),%eax
+  7e:	89 06                	mov    %eax,(%rsi)
+  80:	c3                   	ret
+```
+
+#### 3.1.2.1 visibility验证
+
+首先明确一下`visibility`的概念，这里我对它的定义是：当`A`和`B`两个线程，`A`对变量`x`进行写操作，`B`对变量`x`进行读操作，若时间上写操作先发生于读操作时，读操作能够读取到写操作写入的值
+
+这个问题比较难直接验证，我们打算用一种间接的方式来验证：
+
+* 假设读操作和写操作的性能开销之比为`α`
+* 开两个线程，分别循环执行读操作和写操作，读执行`n`次（期间持续进行写操作）。统计读线程，相邻两次读操作，读取数值不同的次数为`m`，`β=m/n`。
+    * 若`α > 1`，即读比写更高效。如果满足可见性，那么`β`应该大致接近`1/α`
+    * 若`α <= 1`，即读比写更低效。如果满足可见性，那么`β`应该接近1（写的值大概率被看见）
+
+首先，测试`atomic`与`volatile`的读写性能
+
+* 测试时，会有一个额外的线程对`atomic`或`volatile`变量进行持续的读写操作
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#include <atomic>
+#include <thread>
+
+std::atomic<uint64_t> atomic_value{0};
+uint64_t volatile volatile_value = 0;
+
+constexpr size_t RAND_ROUND_SIZE = 1000000;
+
+static void volatile_random_write(volatile uint64_t& value, std::atomic<bool>& stop) {
+    uint32_t tmp = 1;
+    while (!stop.load(std::memory_order_relaxed)) {
+        for (size_t i = 0; i < RAND_ROUND_SIZE; i++) {
+            value = tmp;
+            tmp++;
+        }
+    }
+}
+
+static void volatile_random_read(volatile uint64_t& value, std::atomic<bool>& stop) {
+    uint64_t tmp;
+    while (!stop.load(std::memory_order_relaxed)) {
+        for (size_t i = 0; i < RAND_ROUND_SIZE; i++) {
+            tmp = value;
+        }
+    }
+    benchmark::DoNotOptimize(tmp);
+}
+
+template <std::memory_order order>
+static void atomic_random_write(std::atomic<uint64_t>& value, std::atomic<bool>& stop) {
+    uint32_t tmp = 1;
+    while (!stop.load(std::memory_order_relaxed)) {
+        for (size_t i = 0; i < RAND_ROUND_SIZE; i++) {
+            value.store(tmp, order);
+            tmp++;
+        }
+    }
+}
+
+template <std::memory_order order>
+static void atomic_random_read(std::atomic<uint64_t>& value, std::atomic<bool>& stop) {
+    uint64_t tmp;
+    while (!stop.load(std::memory_order_relaxed)) {
+        for (size_t i = 0; i < RAND_ROUND_SIZE; i++) {
+            tmp = value.load(order);
+        }
+    }
+    benchmark::DoNotOptimize(tmp);
+}
+
+template <std::memory_order order>
+static void atomic_read(benchmark::State& state) {
+    uint64_t tmp = 0;
+    std::atomic<bool> stop{false};
+    std::thread t([&]() { atomic_random_write<order>(atomic_value, stop); });
+    for (auto _ : state) {
+        tmp = atomic_value.load(order);
+    }
+    benchmark::DoNotOptimize(tmp);
+    stop = true;
+    t.join();
+}
+
+template <std::memory_order order>
+static void atomic_write(benchmark::State& state) {
+    uint64_t tmp = 0;
+    std::atomic<bool> stop{false};
+    std::thread t([&]() { atomic_random_read<order>(atomic_value, stop); });
+    for (auto _ : state) {
+        atomic_value.store(tmp, order);
+        tmp++;
+    }
+    stop = true;
+    t.join();
+}
+
+static void volatile_read(benchmark::State& state) {
+    uint64_t tmp = 0;
+    std::atomic<bool> stop{false};
+    std::thread t([&]() { volatile_random_write(volatile_value, stop); });
+    for (auto _ : state) {
+        tmp = volatile_value;
+    }
+    benchmark::DoNotOptimize(tmp);
+    stop = true;
+    t.join();
+}
+
+static void volatile_write(benchmark::State& state) {
+    uint64_t tmp = 0;
+    std::atomic<bool> stop{false};
+    std::thread t([&]() { volatile_random_read(volatile_value, stop); });
+    for (auto _ : state) {
+        volatile_value = tmp;
+        tmp++;
+    }
+    stop = true;
+    t.join();
+}
+
+BENCHMARK(atomic_read<std::memory_order_seq_cst>);
+BENCHMARK(atomic_write<std::memory_order_seq_cst>);
+BENCHMARK(atomic_read<std::memory_order_relaxed>);
+BENCHMARK(atomic_write<std::memory_order_relaxed>);
+BENCHMARK(volatile_read);
+BENCHMARK(volatile_write);
+
+BENCHMARK_MAIN();
+```
+
+结果如下：
+
+* 对于`atomic<uint64_t>, std::memory_order_seq_cst`
+    * `α = 28.9/1.24 = 23.30 > 1`
+    * `β`的预期值为`1/α = 0.043`
+* 对于`atomic<uint64_t>, std::memory_order_relaxed`
+    * `α = 0.391/1.38 = 0.28 < 1`
+    * `β`的预期值为`1`
+* 对于`volatile`
+    * `α = 0.331/1.33 = 0.25 < 1`
+    * `β`的预期值为`1`
+
+```
+----------------------------------------------------------------------------------
+Benchmark                                        Time             CPU   Iterations
+----------------------------------------------------------------------------------
+atomic_read<std::memory_order_seq_cst>        1.24 ns         1.24 ns    577159059
+atomic_write<std::memory_order_seq_cst>       28.9 ns         28.9 ns     23973114
+atomic_read<std::memory_order_relaxed>        1.38 ns         1.38 ns    595494132
+atomic_write<std::memory_order_relaxed>      0.391 ns        0.391 ns   1000000000
+volatile_read                                 1.33 ns         1.33 ns    551154517
+volatile_write                               0.331 ns        0.331 ns   1000000000
+```
+
+同一个环境，测试程序如下：
+
+```cpp
+#include <atomic>
+#include <iostream>
+#include <thread>
+
+constexpr uint64_t SIZE = 1000000000;
+
+void test_volatile(volatile uint64_t& value, const std::string& description) {
+    std::atomic<bool> stop{false};
+    std::thread write_thread([&]() {
+        while (!stop.load(std::memory_order_relaxed)) {
+            for (uint64_t i = 0; i < SIZE; i++) {
+                value = i;
+            }
+        }
+    });
+
+    std::thread read_thread([&]() {
+        uint64_t prev_value = 0;
+        uint64_t non_diff_cnt = 0;
+        uint64_t diff_cnt = 0;
+        uint64_t cur_value;
+        for (uint64_t i = 0; i < SIZE; i++) {
+            cur_value = value;
+
+            // These two statements have little overhead which can be ignored if enable -03
+            cur_value == prev_value ? non_diff_cnt++ : diff_cnt++;
+            prev_value = cur_value;
+        }
+        std::cout << description << ", β=" << static_cast<double>(diff_cnt) / SIZE << std::endl;
+    });
+    read_thread.join();
+    stop = true;
+    write_thread.join();
+}
+
+template <std::memory_order order>
+void test_atomic(std::atomic<uint64_t>& value, const std::string& description) {
+    std::atomic<bool> stop{false};
+    std::thread write_thread([&]() {
+        while (!stop.load(std::memory_order_relaxed)) {
+            for (uint64_t i = 0; i < SIZE; i++) {
+                value.store(i, order);
+            }
+        }
+    });
+
+    std::thread read_thread([&]() {
+        uint64_t prev_value = 0;
+        uint64_t non_diff_cnt = 0;
+        uint64_t diff_cnt = 0;
+        uint64_t cur_value;
+        for (uint64_t i = 0; i < SIZE; i++) {
+            cur_value = value.load(order);
+
+            // These two statements have little overhead which can be ignored if enable -03
+            cur_value == prev_value ? non_diff_cnt++ : diff_cnt++;
+            prev_value = cur_value;
+        }
+        std::cout << description << ", β=" << static_cast<double>(diff_cnt) / SIZE << std::endl;
+    });
+    read_thread.join();
+    stop = true;
+    write_thread.join();
+}
+
+int main() {
+    {
+        std::atomic<uint64_t> value = 0;
+        test_atomic<std::memory_order_seq_cst>(value, "atomic<uint64_t>, std::memory_order_seq_cst");
+        test_atomic<std::memory_order_relaxed>(value, "atomic<uint64_t>, std::memory_order_relaxed");
+    }
+    {
+        uint64_t volatile value = 0;
+        test_volatile(value, "volatile");
+    }
+    return 0;
+}
+```
+
+结果如下（`volatile`以及`std::memory_order_relaxed`的行为是平台相关的，测试环境是x86，实验结果不具备平台扩展性）：
+
+* `std::memory_order_seq_cst`符合预期
+* `std::memory_order_relaxed`、`volatile`都不符合预期。这两者都不具备`visibility`
+* 导致这一现象的原因，我的猜想如下：
+    * x86会用到一种硬件优化，`Store Buffer`用于加速写操作
+    * `std::memory_order_seq_cst`的写操作，会立即将`Store Buffer`刷入内存
+    * `std::memory_order_relaxed`、`volatile`的写操作，会写入`Store Buffer`，当容量满了之后，刷入内存
+    * 将`Store Buffer`填充满所需的时间很短。于是上述代码等价于`std::memory_order_seq_cst`每次写操作写一次内存，`std::memory_order_relaxed`、`volatile`的一批写操作写一次内存。写内存的频率接近。于是这三种情况下，`β`相近
+
+```
+atomic<uint64_t>, std::memory_order_seq_cst, β=0.0283726
+atomic<uint64_t>, std::memory_order_relaxed, β=0.0276697
+volatile, β=0.0271394
+```
+
+**如果用Java进行上述等价验证，会发现实际结果与预期吻合，这里不再赘述**
+
+#### 3.1.2.2 atomicity验证
+
+`std::atomic`可以为其他非原子变量提供`happens-before`关系
+
+* `normal-write happens-before atomic-write`
+* `atomic-write happens-before atomic-read`
+* `atomic-read happens-before normal-read`
+* 推导出`normal-write happens-before normal-read`
+
+此外，由于测试机器是x86的，x86是`TSO`模型，`std::memory_order_relaxed`同样满足`atomic-write happens-before atomic-read`规则，只不过生成的指令更接近`volatile`，因此这里使用`std::memory_order_relaxed`，便于对比两者指令的差异
+
+```cpp
+#include <atomic>
+#include <cassert>
+#include <iostream>
+#include <thread>
+
+constexpr int32_t INVALID_VALUE = -1;
+constexpr int32_t EXPECTED_VALUE = 99;
+constexpr int32_t TIMES = 1000000;
+
+int32_t data;
+std::atomic<bool> atomic_data_ready(false);
+volatile bool volatile_data_ready(false);
+
+void atomic_reader() {
+    for (auto i = 0; i < TIMES; i++) {
+        while (!atomic_data_ready.load(std::memory_order_relaxed))
+            ;
+
+        assert(data == EXPECTED_VALUE);
+
+        data = INVALID_VALUE;
+        atomic_data_ready.store(false, std::memory_order_relaxed);
+    }
+}
+
+void atomic_writer() {
+    for (auto i = 0; i < TIMES; i++) {
+        while (atomic_data_ready.load(std::memory_order_relaxed))
+            ;
+
+        data = EXPECTED_VALUE;
+
+        atomic_data_ready.store(true, std::memory_order_relaxed);
+    }
+}
+
+void test_atomic_visibility() {
+    data = INVALID_VALUE;
+    atomic_data_ready = false;
+
+    std::thread t1(atomic_reader);
+    std::thread t2(atomic_writer);
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+    t1.join();
+    t2.join();
+}
+
+void volatile_reader() {
+    for (auto i = 0; i < TIMES; i++) {
+        while (!volatile_data_ready)
+            ;
+
+        assert(data == EXPECTED_VALUE);
+
+        data = INVALID_VALUE;
+        volatile_data_ready = false;
+    }
+}
+
+void volatile_writer() {
+    for (auto i = 0; i < TIMES; i++) {
+        while (volatile_data_ready)
+            ;
+
+        data = EXPECTED_VALUE;
+
+        volatile_data_ready = true;
+    }
+}
+
+void test_volatile_visibility() {
+    data = INVALID_VALUE;
+    volatile_data_ready = false;
+
+    std::thread t1(volatile_reader);
+    std::thread t2(volatile_writer);
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+    t1.join();
+    t2.join();
+}
+
+int main() {
+    test_atomic_visibility();
+    test_volatile_visibility();
+    return 0;
+}
+```
+
+以`-O3`优化级别进行编译，查看其汇编指令，可以发现：
+
+* `volatile_writer`中，`data`的赋值被优化到了循环外，`volatile_data_ready`每次循环都会进行一次赋值（这种优化破坏了程序的本意）
+* `atomic_writer`中，由于内存屏障的存在（`std::atomic`的写操作），`data`的赋值并未被优化到循环外。`data`和`atomic_data_ready`每次循环都会被赋值（符合程序本意）
+
+```
+00000000000013c0 <volatile_writer()>:
+    13c0:	f3 0f 1e fa          	endbr64
+    13c4:	ba 40 42 0f 00       	mov    $0xf4240,%edx
+    13c9:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+    13d0:	0f b6 05 45 2c 00 00 	movzbl 0x2c45(%rip),%eax        # 401c <volatile_data_ready>
+    13d7:	84 c0                	test   %al,%al
+    13d9:	75 f5                	jne    13d0 <volatile_writer()+0x10>
+    13db:	c6 05 3a 2c 00 00 01 	movb   $0x1,0x2c3a(%rip)        # 401c <volatile_data_ready>
+    13e2:	83 ea 01             	sub    $0x1,%edx
+    13e5:	75 e9                	jne    13d0 <volatile_writer()+0x10>
+    13e7:	c7 05 2f 2c 00 00 63 00 00 00 	movl   $0x63,0x2c2f(%rip)        # 4020 <data>
+    13f1:	c6 05 24 2c 00 00 01 	movb   $0x1,0x2c24(%rip)        # 401c <volatile_data_ready>
+    13f8:	c3                   	ret
+    13f9:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+
+0000000000001400 <atomic_writer()>:
+    1400:	f3 0f 1e fa          	endbr64
+    1404:	ba 40 42 0f 00       	mov    $0xf4240,%edx
+    1409:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
+    1410:	0f b6 05 06 2c 00 00 	movzbl 0x2c06(%rip),%eax        # 401d <atomic_data_ready>
+    1417:	84 c0                	test   %al,%al
+    1419:	75 f5                	jne    1410 <atomic_writer()+0x10>
+    141b:	c7 05 fb 2b 00 00 63 00 00 00 	movl   $0x63,0x2bfb(%rip)        # 4020 <data>
+    1425:	c6 05 f1 2b 00 00 01 	movb   $0x1,0x2bf1(%rip)        # 401d <atomic_data_ready>
+    142c:	83 ea 01             	sub    $0x1,%edx
+    142f:	75 df                	jne    1410 <atomic_writer()+0x10>
+    1431:	c3                   	ret
+    1432:	66 66 2e 0f 1f 84 00 00 00 00 00 	data16 cs nopw 0x0(%rax,%rax,1)
+    143d:	0f 1f 00             	nopl   (%rax)
+```
+
+如果以`-O0`优化级别进行编译，则上述程序中的断言不会报错
 
 ## 3.2 类型长度
 
@@ -1170,539 +1702,9 @@ int main() {
 * 只能在虚函数的声明处进行修饰
 * 加不加`override`其实没有影响
 
-## 3.8 volatile
+## 3.8 constexpr
 
-`volatile`关键字是一种类型修饰符，用它声明的类型变量表示可以被某些编译器未知的因素更改（程序之外的因素），比如：操作系统、硬件等。遇到这个关键字声明的变量，编译器对访问该变量的代码就不再进行优化，从而可以提供对特殊地址的稳定访问
-
-* **仅从`C/C++`标准的角度来说（不考虑平台以及编译器扩展），`volatile`并不保证线程间的可见性**。在实际场景中，例如`x86`平台，在`MESI`协议的支持下，`volatile`是可以保证可见性的，这可以理解为一个巧合，利用了平台相关性，因此不具备平台可移植性
-
-`Java`中也有`volatile`关键字，但作用完全不同，`Java`在语言层面就保证了`volatile`具有线程可见性
-
-* `x86`
-    * 仅依赖`MESI`协议，可能也无法实现可见性。举个例子，当`CPU1`执行写操作时，要等到其他`CPU`将对应的缓存行设置成`I`状态后，写入才能完成，性能较差，于是`CPU`又引入了`Store Buffer`（`MESI`协议不感知`Store Buffer`），`CPU1`只需要将数据写入`Store Buffer`而不用等待其他`CPU`将缓存行设置成`I`状态就可以干其他事了
-    * 为了解决上述问题，`JVM`使用了`lock`前缀的汇编指令，将当前`Store Buffer`中的所有数据（不仅仅是`volatile`修饰的变量）都通过`MESI`写入
-* 其他架构，采用其他方式来保证线程可见性这一承诺
-
-**参考：**
-
-* [Is volatile useful with threads?](https://isocpp.org/blog/2018/06/is-volatile-useful-with-threads-isvolatileusefulwiththreads.com)
-    * [isvolatileusefulwiththreads](http://isvolatileusefulwiththreads.com/)
-* [Volatile and cache behaviour](https://stackoverflow.com/questions/18695120/volatile-and-cache-behaviour)
-* [你不认识的cc++ volatile](https://www.hitzhangjie.pro/blog/2019-01-07-%E4%BD%A0%E4%B8%8D%E8%AE%A4%E8%AF%86%E7%9A%84cc++-volatile/)
-
-**示例如下：**
-
-```sh
-cat > volatile.cpp << 'EOF'
-#include <atomic>
-
-void read_from_normal(int32_t& src, int32_t& target) {
-    target = src;
-    target = src;
-    target = src;
-}
-
-void read_from_volatile(volatile int32_t& src, int32_t& target) {
-    target = src;
-    target = src;
-    target = src;
-}
-
-void read_from_atomic(std::atomic<int32_t>& src, int32_t& target) {
-    target = src.load(std::memory_order_seq_cst);
-    target = src.load(std::memory_order_relaxed);
-    target = src.load(std::memory_order_release);
-}
-
-void write_to_normal(int32_t& src, int32_t& target) {
-    target = src;
-    target = src;
-    target = src;
-}
-
-void write_to_volatile(int32_t& src, volatile int32_t& target) {
-    target = src;
-    target = src;
-    target = src;
-}
-
-void write_to_atomic(int32_t& src, std::atomic<int32_t>& target) {
-    target.store(src, std::memory_order_seq_cst);
-    target.store(src, std::memory_order_relaxed);
-    target.store(src, std::memory_order_release);
-}
-EOF
-
-gcc -o volatile.o -c volatile.cpp -O3 -lstdc++ -std=gnu++17
-objdump -drwCS volatile.o
-```
-
-**输出如下：**
-
-* `read_from_normal`的三次操作被优化成了一次
-* `write_to_normal`的三次操作被优化成了一次
-* `write_to_atomic`中，`std::memory_order_seq_cst`使用的是[`xchg`指令](https://www.felixcloutier.com/x86/xchg)，当有一个操作数是内存地址时，会自动启用`locking protocol`，确保写操作的串行化
-
-```
-volatile.o:     file format elf64-x86-64
-
-Disassembly of section .text:
-
-0000000000000000 <read_from_normal(int&, int&)>:
-   0:	f3 0f 1e fa          	endbr64
-   4:	8b 07                	mov    (%rdi),%eax
-   6:	89 06                	mov    %eax,(%rsi)
-   8:	c3                   	ret
-   9:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
-
-0000000000000010 <read_from_volatile(int volatile&, int&)>:
-  10:	f3 0f 1e fa          	endbr64
-  14:	8b 07                	mov    (%rdi),%eax
-  16:	89 06                	mov    %eax,(%rsi)
-  18:	8b 07                	mov    (%rdi),%eax
-  1a:	89 06                	mov    %eax,(%rsi)
-  1c:	8b 07                	mov    (%rdi),%eax
-  1e:	89 06                	mov    %eax,(%rsi)
-  20:	c3                   	ret
-  21:	66 66 2e 0f 1f 84 00 00 00 00 00 	data16 cs nopw 0x0(%rax,%rax,1)
-  2c:	0f 1f 40 00          	nopl   0x0(%rax)
-
-0000000000000030 <read_from_atomic(std::atomic<int>&, int&)>:
-  30:	f3 0f 1e fa          	endbr64
-  34:	8b 07                	mov    (%rdi),%eax
-  36:	89 06                	mov    %eax,(%rsi)
-  38:	8b 07                	mov    (%rdi),%eax
-  3a:	89 06                	mov    %eax,(%rsi)
-  3c:	8b 07                	mov    (%rdi),%eax
-  3e:	89 06                	mov    %eax,(%rsi)
-  40:	c3                   	ret
-  41:	66 66 2e 0f 1f 84 00 00 00 00 00 	data16 cs nopw 0x0(%rax,%rax,1)
-  4c:	0f 1f 40 00          	nopl   0x0(%rax)
-
-0000000000000050 <write_to_normal(int&, int&)>:
-  50:	f3 0f 1e fa          	endbr64
-  54:	8b 07                	mov    (%rdi),%eax
-  56:	89 06                	mov    %eax,(%rsi)
-  58:	c3                   	ret
-  59:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
-
-0000000000000060 <write_to_volatile(int&, int volatile&)>:
-  60:	f3 0f 1e fa          	endbr64
-  64:	8b 07                	mov    (%rdi),%eax
-  66:	89 06                	mov    %eax,(%rsi)
-  68:	89 06                	mov    %eax,(%rsi)
-  6a:	8b 07                	mov    (%rdi),%eax
-  6c:	89 06                	mov    %eax,(%rsi)
-  6e:	c3                   	ret
-  6f:	90                   	nop
-
-0000000000000070 <write_to_atomic(int&, std::atomic<int>&)>:
-  70:	f3 0f 1e fa          	endbr64
-  74:	8b 07                	mov    (%rdi),%eax
-  76:	87 06                	xchg   %eax,(%rsi)
-  78:	8b 07                	mov    (%rdi),%eax
-  7a:	89 06                	mov    %eax,(%rsi)
-  7c:	8b 07                	mov    (%rdi),%eax
-  7e:	89 06                	mov    %eax,(%rsi)
-  80:	c3                   	ret
-```
-
-### 3.8.1 visibility验证
-
-首先明确一下`visibility`的概念，这里我对它的定义是：当`A`和`B`两个线程，`A`对变量`x`进行写操作，`B`对变量`x`进行读操作，若时间上写操作先发生于读操作时，读操作能够读取到写操作写入的值
-
-这个问题比较难直接验证，我们打算用一种间接的方式来验证：
-
-* 假设读操作和写操作的性能开销之比为`α`
-* 开两个线程，分别循环执行读操作和写操作，读执行`n`次（期间持续进行写操作）。统计读线程，相邻两次读操作，读取数值不同的次数为`m`，`β=m/n`。
-    * 若`α > 1`，即读比写更高效。如果满足可见性，那么`β`应该大致接近`1/α`
-    * 若`α <= 1`，即读比写更低效。如果满足可见性，那么`β`应该接近1（写的值大概率被看见）
-
-首先，测试`atomic`与`volatile`的读写性能
-
-* 测试时，会有一个额外的线程对`atomic`或`volatile`变量进行持续的读写操作
-
-```cpp
-#include <benchmark/benchmark.h>
-
-#include <atomic>
-#include <thread>
-
-std::atomic<uint64_t> atomic_value{0};
-uint64_t volatile volatile_value = 0;
-
-constexpr size_t RAND_ROUND_SIZE = 1000000;
-
-static void volatile_random_write(volatile uint64_t& value, std::atomic<bool>& stop) {
-    uint32_t tmp = 1;
-    while (!stop.load(std::memory_order_relaxed)) {
-        for (size_t i = 0; i < RAND_ROUND_SIZE; i++) {
-            value = tmp;
-            tmp++;
-        }
-    }
-}
-
-static void volatile_random_read(volatile uint64_t& value, std::atomic<bool>& stop) {
-    uint64_t tmp;
-    while (!stop.load(std::memory_order_relaxed)) {
-        for (size_t i = 0; i < RAND_ROUND_SIZE; i++) {
-            tmp = value;
-        }
-    }
-    benchmark::DoNotOptimize(tmp);
-}
-
-template <std::memory_order order>
-static void atomic_random_write(std::atomic<uint64_t>& value, std::atomic<bool>& stop) {
-    uint32_t tmp = 1;
-    while (!stop.load(std::memory_order_relaxed)) {
-        for (size_t i = 0; i < RAND_ROUND_SIZE; i++) {
-            value.store(tmp, order);
-            tmp++;
-        }
-    }
-}
-
-template <std::memory_order order>
-static void atomic_random_read(std::atomic<uint64_t>& value, std::atomic<bool>& stop) {
-    uint64_t tmp;
-    while (!stop.load(std::memory_order_relaxed)) {
-        for (size_t i = 0; i < RAND_ROUND_SIZE; i++) {
-            tmp = value.load(order);
-        }
-    }
-    benchmark::DoNotOptimize(tmp);
-}
-
-template <std::memory_order order>
-static void atomic_read(benchmark::State& state) {
-    uint64_t tmp = 0;
-    std::atomic<bool> stop{false};
-    std::thread t([&]() { atomic_random_write<order>(atomic_value, stop); });
-    for (auto _ : state) {
-        tmp = atomic_value.load(order);
-    }
-    benchmark::DoNotOptimize(tmp);
-    stop = true;
-    t.join();
-}
-
-template <std::memory_order order>
-static void atomic_write(benchmark::State& state) {
-    uint64_t tmp = 0;
-    std::atomic<bool> stop{false};
-    std::thread t([&]() { atomic_random_read<order>(atomic_value, stop); });
-    for (auto _ : state) {
-        atomic_value.store(tmp, order);
-        tmp++;
-    }
-    stop = true;
-    t.join();
-}
-
-static void volatile_read(benchmark::State& state) {
-    uint64_t tmp = 0;
-    std::atomic<bool> stop{false};
-    std::thread t([&]() { volatile_random_write(volatile_value, stop); });
-    for (auto _ : state) {
-        tmp = volatile_value;
-    }
-    benchmark::DoNotOptimize(tmp);
-    stop = true;
-    t.join();
-}
-
-static void volatile_write(benchmark::State& state) {
-    uint64_t tmp = 0;
-    std::atomic<bool> stop{false};
-    std::thread t([&]() { volatile_random_read(volatile_value, stop); });
-    for (auto _ : state) {
-        volatile_value = tmp;
-        tmp++;
-    }
-    stop = true;
-    t.join();
-}
-
-BENCHMARK(atomic_read<std::memory_order_seq_cst>);
-BENCHMARK(atomic_write<std::memory_order_seq_cst>);
-BENCHMARK(atomic_read<std::memory_order_relaxed>);
-BENCHMARK(atomic_write<std::memory_order_relaxed>);
-BENCHMARK(volatile_read);
-BENCHMARK(volatile_write);
-
-BENCHMARK_MAIN();
-```
-
-结果如下：
-
-* 对于`atomic<uint64_t>, std::memory_order_seq_cst`
-    * `α = 28.9/1.24 = 23.30 > 1`
-    * `β`的预期值为`1/α = 0.043`
-* 对于`atomic<uint64_t>, std::memory_order_relaxed`
-    * `α = 0.391/1.38 = 0.28 < 1`
-    * `β`的预期值为`1`
-* 对于`volatile`
-    * `α = 0.331/1.33 = 0.25 < 1`
-    * `β`的预期值为`1`
-
-```
-----------------------------------------------------------------------------------
-Benchmark                                        Time             CPU   Iterations
-----------------------------------------------------------------------------------
-atomic_read<std::memory_order_seq_cst>        1.24 ns         1.24 ns    577159059
-atomic_write<std::memory_order_seq_cst>       28.9 ns         28.9 ns     23973114
-atomic_read<std::memory_order_relaxed>        1.38 ns         1.38 ns    595494132
-atomic_write<std::memory_order_relaxed>      0.391 ns        0.391 ns   1000000000
-volatile_read                                 1.33 ns         1.33 ns    551154517
-volatile_write                               0.331 ns        0.331 ns   1000000000
-```
-
-同一个环境，测试程序如下：
-
-```cpp
-#include <atomic>
-#include <iostream>
-#include <thread>
-
-constexpr uint64_t SIZE = 1000000000;
-
-void test_volatile(volatile uint64_t& value, const std::string& description) {
-    std::atomic<bool> stop{false};
-    std::thread write_thread([&]() {
-        while (!stop.load(std::memory_order_relaxed)) {
-            for (uint64_t i = 0; i < SIZE; i++) {
-                value = i;
-            }
-        }
-    });
-
-    std::thread read_thread([&]() {
-        uint64_t prev_value = 0;
-        uint64_t non_diff_cnt = 0;
-        uint64_t diff_cnt = 0;
-        uint64_t cur_value;
-        for (uint64_t i = 0; i < SIZE; i++) {
-            cur_value = value;
-
-            // These two statements have little overhead which can be ignored if enable -03
-            cur_value == prev_value ? non_diff_cnt++ : diff_cnt++;
-            prev_value = cur_value;
-        }
-        std::cout << description << ", β=" << static_cast<double>(diff_cnt) / SIZE << std::endl;
-    });
-    read_thread.join();
-    stop = true;
-    write_thread.join();
-}
-
-template <std::memory_order order>
-void test_atomic(std::atomic<uint64_t>& value, const std::string& description) {
-    std::atomic<bool> stop{false};
-    std::thread write_thread([&]() {
-        while (!stop.load(std::memory_order_relaxed)) {
-            for (uint64_t i = 0; i < SIZE; i++) {
-                value.store(i, order);
-            }
-        }
-    });
-
-    std::thread read_thread([&]() {
-        uint64_t prev_value = 0;
-        uint64_t non_diff_cnt = 0;
-        uint64_t diff_cnt = 0;
-        uint64_t cur_value;
-        for (uint64_t i = 0; i < SIZE; i++) {
-            cur_value = value.load(order);
-
-            // These two statements have little overhead which can be ignored if enable -03
-            cur_value == prev_value ? non_diff_cnt++ : diff_cnt++;
-            prev_value = cur_value;
-        }
-        std::cout << description << ", β=" << static_cast<double>(diff_cnt) / SIZE << std::endl;
-    });
-    read_thread.join();
-    stop = true;
-    write_thread.join();
-}
-
-int main() {
-    {
-        std::atomic<uint64_t> value = 0;
-        test_atomic<std::memory_order_seq_cst>(value, "atomic<uint64_t>, std::memory_order_seq_cst");
-        test_atomic<std::memory_order_relaxed>(value, "atomic<uint64_t>, std::memory_order_relaxed");
-    }
-    {
-        uint64_t volatile value = 0;
-        test_volatile(value, "volatile");
-    }
-    return 0;
-}
-```
-
-结果如下（`volatile`以及`std::memory_order_relaxed`的行为是平台相关的，测试环境是x86，实验结果不具备平台扩展性）：
-
-* `std::memory_order_seq_cst`符合预期
-* `std::memory_order_relaxed`、`volatile`都不符合预期。这两者都不具备`visibility`
-* 导致这一现象的原因，我的猜想如下：
-    * x86会用到一种硬件优化，`Store Buffer`用于加速写操作
-    * `std::memory_order_seq_cst`的写操作，会立即将`Store Buffer`刷入内存
-    * `std::memory_order_relaxed`、`volatile`的写操作，会写入`Store Buffer`，当容量满了之后，刷入内存
-    * 将`Store Buffer`填充满所需的时间很短。于是上述代码等价于`std::memory_order_seq_cst`每次写操作写一次内存，`std::memory_order_relaxed`、`volatile`的一批写操作写一次内存。写内存的频率接近。于是这三种情况下，`β`相近
-
-```
-atomic<uint64_t>, std::memory_order_seq_cst, β=0.0283726
-atomic<uint64_t>, std::memory_order_relaxed, β=0.0276697
-volatile, β=0.0271394
-```
-
-**如果用Java进行上述等价验证，会发现实际结果与预期吻合，这里不再赘述**
-
-### 3.8.2 atomicity验证
-
-`std::atomic`可以为其他非原子变量提供`happens-before`关系
-
-* `normal-write happens-before atomic-write`
-* `atomic-write happens-before atomic-read`
-* `atomic-read happens-before normal-read`
-* 推导出`normal-write happens-before normal-read`
-
-此外，由于测试机器是x86的，x86是`TSO`模型，`std::memory_order_relaxed`同样满足`atomic-write happens-before atomic-read`规则，只不过生成的指令更接近`volatile`，因此这里使用`std::memory_order_relaxed`，便于对比两者指令的差异
-
-```cpp
-#include <atomic>
-#include <cassert>
-#include <iostream>
-#include <thread>
-
-constexpr int32_t INVALID_VALUE = -1;
-constexpr int32_t EXPECTED_VALUE = 99;
-constexpr int32_t TIMES = 1000000;
-
-int32_t data;
-std::atomic<bool> atomic_data_ready(false);
-volatile bool volatile_data_ready(false);
-
-void atomic_reader() {
-    for (auto i = 0; i < TIMES; i++) {
-        while (!atomic_data_ready.load(std::memory_order_relaxed))
-            ;
-
-        assert(data == EXPECTED_VALUE);
-
-        data = INVALID_VALUE;
-        atomic_data_ready.store(false, std::memory_order_relaxed);
-    }
-}
-
-void atomic_writer() {
-    for (auto i = 0; i < TIMES; i++) {
-        while (atomic_data_ready.load(std::memory_order_relaxed))
-            ;
-
-        data = EXPECTED_VALUE;
-
-        atomic_data_ready.store(true, std::memory_order_relaxed);
-    }
-}
-
-void test_atomic_visibility() {
-    data = INVALID_VALUE;
-    atomic_data_ready = false;
-
-    std::thread t1(atomic_reader);
-    std::thread t2(atomic_writer);
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-
-    t1.join();
-    t2.join();
-}
-
-void volatile_reader() {
-    for (auto i = 0; i < TIMES; i++) {
-        while (!volatile_data_ready)
-            ;
-
-        assert(data == EXPECTED_VALUE);
-
-        data = INVALID_VALUE;
-        volatile_data_ready = false;
-    }
-}
-
-void volatile_writer() {
-    for (auto i = 0; i < TIMES; i++) {
-        while (volatile_data_ready)
-            ;
-
-        data = EXPECTED_VALUE;
-
-        volatile_data_ready = true;
-    }
-}
-
-void test_volatile_visibility() {
-    data = INVALID_VALUE;
-    volatile_data_ready = false;
-
-    std::thread t1(volatile_reader);
-    std::thread t2(volatile_writer);
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-
-    t1.join();
-    t2.join();
-}
-
-int main() {
-    test_atomic_visibility();
-    test_volatile_visibility();
-    return 0;
-}
-```
-
-以`-O3`优化级别进行编译，查看其汇编指令，可以发现：
-
-* `volatile_writer`中，`data`的赋值被优化到了循环外，`volatile_data_ready`每次循环都会进行一次赋值（这种优化破坏了程序的本意）
-* `atomic_writer`中，由于内存屏障的存在（`std::atomic`的写操作），`data`的赋值并未被优化到循环外。`data`和`atomic_data_ready`每次循环都会被赋值（符合程序本意）
-
-```
-00000000000013c0 <volatile_writer()>:
-    13c0:	f3 0f 1e fa          	endbr64
-    13c4:	ba 40 42 0f 00       	mov    $0xf4240,%edx
-    13c9:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
-    13d0:	0f b6 05 45 2c 00 00 	movzbl 0x2c45(%rip),%eax        # 401c <volatile_data_ready>
-    13d7:	84 c0                	test   %al,%al
-    13d9:	75 f5                	jne    13d0 <volatile_writer()+0x10>
-    13db:	c6 05 3a 2c 00 00 01 	movb   $0x1,0x2c3a(%rip)        # 401c <volatile_data_ready>
-    13e2:	83 ea 01             	sub    $0x1,%edx
-    13e5:	75 e9                	jne    13d0 <volatile_writer()+0x10>
-    13e7:	c7 05 2f 2c 00 00 63 00 00 00 	movl   $0x63,0x2c2f(%rip)        # 4020 <data>
-    13f1:	c6 05 24 2c 00 00 01 	movb   $0x1,0x2c24(%rip)        # 401c <volatile_data_ready>
-    13f8:	c3                   	ret
-    13f9:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
-
-0000000000001400 <atomic_writer()>:
-    1400:	f3 0f 1e fa          	endbr64
-    1404:	ba 40 42 0f 00       	mov    $0xf4240,%edx
-    1409:	0f 1f 80 00 00 00 00 	nopl   0x0(%rax)
-    1410:	0f b6 05 06 2c 00 00 	movzbl 0x2c06(%rip),%eax        # 401d <atomic_data_ready>
-    1417:	84 c0                	test   %al,%al
-    1419:	75 f5                	jne    1410 <atomic_writer()+0x10>
-    141b:	c7 05 fb 2b 00 00 63 00 00 00 	movl   $0x63,0x2bfb(%rip)        # 4020 <data>
-    1425:	c6 05 f1 2b 00 00 01 	movb   $0x1,0x2bf1(%rip)        # 401d <atomic_data_ready>
-    142c:	83 ea 01             	sub    $0x1,%edx
-    142f:	75 df                	jne    1410 <atomic_writer()+0x10>
-    1431:	c3                   	ret
-    1432:	66 66 2e 0f 1f 84 00 00 00 00 00 	data16 cs nopw 0x0(%rax,%rax,1)
-    143d:	0f 1f 00             	nopl   (%rax)
-```
-
-如果以`-O0`优化级别进行编译，则上述程序中的断言不会报错
-
-## 3.9 constexpr
-
-### 3.9.1 if constexpr
+### 3.8.1 if constexpr
 
 编译期分支判断，一般用于泛型。如果在分支中使用的是不同类型的不同特性，那么普通的`if`是没法通过编译的，如下：
 
@@ -1739,7 +1741,7 @@ int main() {
 }
 ```
 
-## 3.10 static_assert
+## 3.9 static_assert
 
 编译期断言
 
@@ -1751,7 +1753,7 @@ int main() {
 }
 ```
 
-## 3.11 noexcept
+## 3.10 noexcept
 
 用于声明函数不会抛异常，声明和实现都必须同时包含
 
@@ -1764,7 +1766,7 @@ public:
 void A::func() noexcept {}
 ```
 
-## 3.12 throw与异常
+## 3.11 throw与异常
 
 `throw`关键字可以抛出任何对象，例如可以抛出一个整数
 
@@ -1782,7 +1784,7 @@ void A::func() noexcept {}
     }
 ```
 
-## 3.13 placement new
+## 3.12 placement new
 
 `placement new`的功能就是在一个已经分配好的空间上，调用构造函数，创建一个对象
 
