@@ -791,6 +791,22 @@ int main() {
 
 如果以`-O0`优化级别进行编译，则上述程序中的断言不会报错
 
+### 3.1.3 mutable
+
+容许常量类类型对象修改相应类成员
+
+```cpp
+#include <cstdint>
+
+class Foo {
+public:
+    void set(int32_t data) const { this->data = data; }
+
+private:
+    mutable int32_t data;
+};
+```
+
 ## 3.2 类型长度
 
 ### 3.2.1 内存对齐
