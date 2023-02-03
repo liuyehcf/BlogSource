@@ -983,7 +983,17 @@ gcc -o main main.cpp extern.cpp -lstdc++ -Wall
 ./main
 ```
 
-### 3.6.3 thread_local
+### 3.6.3 inline
+
+[C++ 关键词：inline](https://zh.cppreference.com/w/cpp/keyword/inline)
+
+* 在用于函数的 声明说明符序列时，将函数声明为一个内联函数
+    * 整个定义都在`class/struct/union`的定义内且被附着到全局模块 (C++20 起)的函数是隐式的内联函数，无论它是成员函数还是非成员`friend`函数
+    * 声明有`constexpr`的函数是隐式的内联函数
+* 在用于具有静态存储期的变量（静态类成员或命名空间作用域变量）的声明说明符序列时，将变量声明为内联变量
+    * 声明为`constexpr`的静态成员变量（但不是命名空间作用域变量）是隐式的内联变量
+
+### 3.6.4 thread_local
 
 [C++ 关键词：thread_local (C++11 起)](https://zh.cppreference.com/w/cpp/keyword/thread_local)
 
