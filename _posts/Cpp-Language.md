@@ -916,13 +916,31 @@ int main() {
 }
 ```
 
-## 3.6 extern/static
+## 3.6 存储类说明符
 
-**`extern`：告诉编译器，这个符号在别的编译单元里定义，也就是要把这个符号放到未解决符号表里去（外部链接）**
+### 3.6.1 static
 
-**`static`：如果该关键字位于全局函数或者变量声明的前面，表示该编译单元不 导出这个函数/变量的符号，因此无法再别的编译单元里使用。(内部链接)。如果 `static`是局部变量，则该变量的存储方式和全局变量一样，但仍然不导出符号**
+[C++ 关键词：static](https://zh.cppreference.com/w/cpp/keyword/static)
 
-### 3.6.1 共享全局变量
+1. 声明具有静态存储期和内部链接的命名空间成员（全局静态变量/函数，其他编译单元不可见）
+    * 表示该编译单元不导出这个函数/变量的符号，因此无法再别的编译单元里使用
+1. 定义具有静态存储期且仅初始化一次的块作用域变量（函数的静态变量）
+    * 变量的存储方式和全局变量一样，但仍然不导出符号
+1. 声明不绑定到特定实例的类成员（类的静态成员）
+
+### 3.6.2 extern
+
+[C++ 关键词：extern](https://zh.cppreference.com/w/cpp/keyword/extern)
+
+* 具有外部链接的静态存储期说明符
+    * 这个符号在别的编译单元里定义，也就是要把这个符号放到未解决符号表里去（外部链接）
+* 语言链接说明
+    * `extern "C" {}`
+* 显式模板实例化声明
+    * 对于类模板
+    * 对于函数模板
+
+#### 3.6.2.1 共享全局变量
 
 **每个源文件中都得有该变量的声明，但是只有一个源文件中可以包含该变量的定义，通常可以采用如下做法**
 
@@ -965,11 +983,75 @@ gcc -o main main.cpp extern.cpp -lstdc++ -Wall
 ./main
 ```
 
-## 3.7 thread_local
+### 3.6.3 thread_local
 
-## 3.8 继承与多态
+[C++ 关键词：thread_local (C++11 起)](https://zh.cppreference.com/w/cpp/keyword/thread_local)
 
-### 3.8.1 继承方式
+* 线程局域存储期指定符 
+
+实现原理（猜测）：在每个线程的栈空间起始位置（高位，栈是从上往下分配内存的）存储由`thread_local`修饰的变量。下面由一个程序来验证一下这个猜想：
+
+```cpp
+#include <cassert>
+#include <iostream>
+#include <string>
+#include <thread>
+
+thread_local int32_t value;
+
+void print_address(const std::string name, int32_t& value) {
+    static std::mutex m;
+    std::lock_guard<std::mutex> l(m);
+    std::cout << name << ": " << &value << std::endl;
+}
+
+int main() {
+    uint64_t addr_t1;
+    uint64_t addr_t2;
+
+    print_address("main_thread_local", value);
+    int i;
+    print_address("main_local", i);
+    std::thread t1([&addr_t1]() {
+        addr_t1 = reinterpret_cast<uint64_t>(&value);
+        print_address("t1_thread_local", value);
+        int i;
+        print_address("t1_local", i);
+        assert(&i < &value);
+    });
+    std::thread t2([&addr_t2]() {
+        addr_t2 = reinterpret_cast<uint64_t>(&value);
+        print_address("t2_thread_local", value);
+        int i;
+        print_address("t2_local", i);
+        assert(&i < &value);
+    });
+    t1.join();
+    t2.join();
+
+    auto distance = addr_t1 - addr_t2;
+    std::cout << "addr distance between t1 and t2 is: " << distance << std::endl;
+    return 0;
+}
+```
+
+在我的环境中，输出如下：
+
+```
+main_thread_local: 0x7f190e1a573c
+main_local: 0x7fff425e1dd4
+t1_thread_local: 0x7f190e1a463c
+t1_local: 0x7f190e1a3ddc
+t2_thread_local: 0x7f190d9a363c
+t2_local: 0x7f190d9a2ddc
+addr distance between t1 and t2 is: 8392704
+```
+
+可以发现，在不同的线程中，`value`的内存地址是不同的，且处于高位。相邻两个线程，`value`地址的差值差不多就是栈空间的大小（`ulimit -s`）
+
+## 3.7 继承与多态
+
+### 3.7.1 继承方式
 
 | 继承方式\成员的权限 | public | protected | private |
 |:--|:--|:--|:--|
@@ -1050,7 +1132,7 @@ int main() {
 }
 ```
 
-### 3.8.2 virtual
+### 3.7.2 virtual
 
 `virtual`关键词修饰的就是虚函数，虚函数的分派发生在运行时
 
@@ -1061,7 +1143,7 @@ int main() {
 
 * 图片出处：[c++虚指针和虚函数表](https://zhuanlan.zhihu.com/p/110144589)
 
-### 3.8.3 final
+### 3.7.3 final
 
 `final`可以修饰类或者虚函数
 
@@ -1071,14 +1153,14 @@ int main() {
 
 当用具体类型的指针或者引用调用`final`修饰的虚函数时，虚函数的调用可以被编译器直接优化掉
 
-### 3.8.4 override
+### 3.7.4 override
 
 `override`可以修饰虚函数，表示对虚函数进行覆盖
 
 * 只能在虚函数的声明处进行修饰
 * 加不加`override`其实没有影响
 
-## 3.9 volatile
+## 3.8 volatile
 
 `volatile`关键字是一种类型修饰符，用它声明的类型变量表示可以被某些编译器未知的因素更改（程序之外的因素），比如：操作系统、硬件等。遇到这个关键字声明的变量，编译器对访问该变量的代码就不再进行优化，从而可以提供对特殊地址的稳定访问
 
@@ -1215,7 +1297,7 @@ Disassembly of section .text:
   80:	c3                   	ret
 ```
 
-### 3.9.1 visibility验证
+### 3.8.1 visibility验证
 
 首先明确一下`visibility`的概念，这里我对它的定义是：当`A`和`B`两个线程，`A`对变量`x`进行写操作，`B`对变量`x`进行读操作，若时间上写操作先发生于读操作时，读操作能够读取到写操作写入的值
 
@@ -1467,7 +1549,7 @@ volatile, β=0.0271394
 
 **如果用Java进行上述等价验证，会发现实际结果与预期吻合，这里不再赘述**
 
-### 3.9.2 atomicity验证
+### 3.8.2 atomicity验证
 
 `std::atomic`可以为其他非原子变量提供`happens-before`关系
 
@@ -1608,9 +1690,9 @@ int main() {
 
 如果以`-O0`优化级别进行编译，则上述程序中的断言不会报错
 
-## 3.10 constexpr
+## 3.9 constexpr
 
-### 3.10.1 if constexpr
+### 3.9.1 if constexpr
 
 编译期分支判断，一般用于泛型。如果在分支中使用的是不同类型的不同特性，那么普通的`if`是没法通过编译的，如下：
 
@@ -1647,7 +1729,7 @@ int main() {
 }
 ```
 
-## 3.11 static_assert
+## 3.10 static_assert
 
 编译期断言
 
@@ -1659,7 +1741,7 @@ int main() {
 }
 ```
 
-## 3.12 noexcept
+## 3.11 noexcept
 
 用于声明函数不会抛异常，声明和实现都必须同时包含
 
@@ -1672,7 +1754,7 @@ public:
 void A::func() noexcept {}
 ```
 
-## 3.13 throw与异常
+## 3.12 throw与异常
 
 `throw`关键字可以抛出任何对象，例如可以抛出一个整数
 
@@ -1690,7 +1772,7 @@ void A::func() noexcept {}
     }
 ```
 
-## 3.14 placement new
+## 3.13 placement new
 
 `placement new`的功能就是在一个已经分配好的空间上，调用构造函数，创建一个对象
 
