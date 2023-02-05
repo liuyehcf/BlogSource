@@ -1953,6 +1953,80 @@ int main() {
 
 ## 4.4 如何遍历形参包
 
+### 4.4.1 花括号初始化器
+
+这里用到了一个技巧，[逗号运算符](https://www.bookstack.cn/read/cppreference-language/ae53223225119599.md#9bocdk)：对于逗号表达式`E1, E2`中，对`E1`求值并舍弃其结果（尽管当它具有类类型时，直到包含它的全表达式的结尾之前都不会销毁它），其副作用在表达式`E2`的求值开始前完成
+
+示例代码如下：
+
+```cpp
+#include <iostream>
+
+int main() {
+    int n = 1;
+    int m = (++n, std::cout << "n = " << n << '\n', ++n, 2 * n); // 2
+    std::cout << "m = " << (++m, m) << '\n';                     // 7
+}
+```
+
+```cpp
+#include <fstream>
+#include <iostream>
+#include <tuple>
+#include <type_traits>
+
+template <typename... Values>
+bool read_contents(const std::string& path, Values&... values) {
+    std::ifstream ifs;
+    ifs.open(path);
+
+    bool ok = ifs.good();
+    auto read_content = [&ifs, &ok](auto& value) {
+        ok &= ifs.good();
+        if (!ok) {
+            return;
+        }
+        ifs >> value;
+    };
+    [[maybe_unused]] int32_t _[] = {(read_content(values), 0)...};
+
+    if (ifs.is_open()) {
+        ifs.close();
+    }
+    return ok;
+}
+
+int main() {
+    std::ofstream ofs;
+    ofs.open("/tmp/test.txt");
+    ofs << "1 2.3 5";
+    ofs.close();
+
+    int first = -1;
+    double second = -1;
+    int third = -1;
+    double forth = -1;
+
+    std::cout << "is_good: " << std::boolalpha << read_contents("/tmp/test.txt", first, second, third)
+              << ", first: " << first << ", second: " << second << ", third: " << third << std::endl;
+
+    first = second = third = forth = -1;
+
+    std::cout << "is_good: " << std::boolalpha << read_contents("/tmp/test.txt", first, second, third, forth)
+              << ", first: " << first << ", second: " << second << ", third: " << third << ", forth=" << forth
+              << std::endl;
+
+    first = second = third = forth = -1;
+
+    std::cout << "is_good: " << std::boolalpha << read_contents("/tmp/test_wrong.txt", first, second, third, forth)
+              << ", first: " << first << ", second: " << second << ", third: " << third << ", forth=" << forth
+              << std::endl;
+    return 0;
+}
+```
+
+### 4.4.2 constexpr for
+
 有时候，无法通过折叠表达式处理一些复杂的场景，我们希望能通过循环来挨个处理形参，示例如下（参考[Approximating 'constexpr for'](https://artificial-mind.net/blog/2020/10/31/constexpr-for)）：
 
 * 由于需要在函数内用迭代变量进行形参包的提取，因此这个变量必须是编译期的常量，这里用`std::integral_constant`进行转换，这样在函数内，就可以用`std::get<i>`来提取第`i`个参数了
