@@ -261,6 +261,35 @@ fopen() returned NULL
 1. 如何发起系统调用
 1. `lib`、`object file`等的文件格式
 
+### 2.5.1 Language-Specific ABI
+
+摘自[What is C++ ABI?](https://www.quora.com/What-is-C-ABI)
+
+> Often, a platform will specify a “base ABI” that specifies how to use that platform’s basic services and that is often done in terms of C language capabilities. However, other programming languages like C++ may require support for additional mechanisms. That’s how you get to language-specific ABIs, including a variety of C++ ABIs. Among the concerns of a C++ ABI are the following:
+> * How are classes with virtual functions represented? A C++ ABI will just about always extend the C layout rules for this, and specify implicit pointers in the objects that point to static tables (“vtables”) that themselves point to virtual functions.
+> * How are base classes (including virtual base classes) laid out in class objects? Again, this usually starts with the C struct layout rules.
+> * How are closure classes (for lambdas) organized?
+> * How is RTTI information stored?
+> * How are exceptions implemented?
+> * How are overloaded functions and operators “named” in object files? This is where “name mangling” usually comes in: The type of the various functions is encoded in their object file names. That also handles the “overloading” that results from template instantiations.
+> * How are spilled inline functions and template instantiations handled? After all, different object files might use/spill the same instances, which could lead to collisions.
+
+### 2.5.2 Dual ABI
+
+[Dual ABI](https://gcc.gnu.org/onlinedocs/libstdc++/manual/using_dual_abi.html)
+
+> In the GCC 5.1 release libstdc++ introduced a new library ABI that includes new implementations of std::string and std::list. These changes were necessary to conform to the 2011 C++ standard which forbids Copy-On-Write strings and requires lists to keep track of their size.
+
+宏`_GLIBCXX_USE_CXX11_ABI`用于控制使用新版本还是老版本
+
+* `_GLIBCXX_USE_CXX11_ABI = 0`：老版本
+* `_GLIBCXX_USE_CXX11_ABI = 1`：新版本
+
+其他参考：
+
+* [ABI Policy and Guidelines](https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html)
+* [C/C++ ABI兼容那些事儿](https://zhuanlan.zhihu.com/p/556726543)
+
 ## 2.6 常用动态库
 
 **`libc/glibc/glib`（`man libc/glibc`）**
