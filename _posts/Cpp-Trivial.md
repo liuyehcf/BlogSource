@@ -241,7 +241,27 @@ fopen() returned NULL
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-## 2.5 常用动态库
+## 2.5 ABI
+
+`ABI`全称是`Application Binary Interface`，它是两个二进制模块间的接口，二进制模块可以是`lib`，可以是操作系统的基础设施，或者一个正在运行的用户程序
+
+> An ABI defines how data structures or computational routines are accessed in machine code, which is a low-level, hardware-dependent format
+
+![abi](/images/Cpp-Trivial/abi.png)
+
+具体来说，`ABI`定义了如下内容：
+
+1. 指令集、寄存器、栈组织结构，内存访问类型等等
+1. 基本数据类型的`size`、`layout`、`alignment`
+1. 调用约定，比如参数如何传递、结果如何传递
+    * 参数传递到栈中，还是传递到寄存器中
+    * 如果传递到寄存器中的话，哪个入参对应哪个寄存器
+    * 如果传递到栈中的话，第一个入参是先压栈还是后压栈
+    * 返回值使用哪个寄存器
+1. 如何发起系统调用
+1. `lib`、`object file`等的文件格式
+
+## 2.6 常用动态库
 
 **`libc/glibc/glib`（`man libc/glibc`）**
 
@@ -268,7 +288,7 @@ fopen() returned NULL
 1. `libz`：compression/decompression library
 1. `libpthread`：POSIX threads library
 
-## 2.6 参考
+## 2.7 参考
 
 * [Program Library HOWTO](https://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html)
 * [Shared Libraries: Understanding Dynamic Loading](https://amir.rachum.com/blog/2016/09/17/shared-libraries/)
