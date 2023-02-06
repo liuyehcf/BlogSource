@@ -1085,13 +1085,16 @@ locate stl_vector.h
 * `-v`：在压缩/解压缩过程中，将正在处理的文件名显示出来
 * `-f` filename：-f后面接要被处理的文件名，建议-f单独写一个参数
 * `-C`：用户切换工作目录，之后的文件名可以使用相对路径
+    * `tar -czvf test.tar.gz /home/liuye/data/volumn1`：打包后，压缩包内的文件路径是完整路径，即`/home/liuye/data/volumn1/xxx`
+    * `tar -czvf test.tar.gz data/volumn1`：执行该命令，压缩包内的文件路径是相对于当前目录的相对路径，即`data/volumn1/xxx`
+    * `tar -czvf test.tar.gz volumn1 -C /home/liuye/data`：压缩包内的文件路径是相对于`/home/liuye/data`的相对路径，即`volumn1/xxx`
 * `-p`：保留备份数据原本权限与属性，常用语备份(-c)重要的配置文件
 * `-P`：保留绝对路径，即允许备份数据中含有根目录存在之意
 
 **示例：**
 
-* `tar -czvf /test.tar.gz -C /home/liuye`
-* `tar -zxvf /test.tar.gz -C /home/liuye`
+* `tar -czvf /test.tar.gz -C /home/liuye aaa bbb ccc`
+* `tar -zxvf /test.tar.gz -C /home/liuye`：解压到`/home/liuye`目录中
 * `tar cvf - /home/liuye | sha1sum`：`-`表示标准输入输出，这里表示标准出
 
 ## 2.21 curl
