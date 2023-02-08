@@ -819,6 +819,106 @@ BM_send_duff    1106143 ns      1106032 ns          636
 
 可见，经过编译器优化后，两者的性能相差无几，因此，我们无需手动做这类优化
 
+## 1.10 hash vs. sort
+
+在数据库场景中，同一个算子的实现可以有多种，比如`Join`可以是`Sort Based Join`或者`Hash Based Join`，理论上来说，`Hash`的性能更高，因为它是`O(N)`复杂度，而`Sort`一般是`O(NlgN)`，但是在实际的场景中，常量也是一个重要的因素，因此下面的benchmark用于探究在不同场景下`Sort`和`Hash`的性能
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#include <random>
+#include <unordered_map>
+#include <vector>
+
+int32_t flow_through_map(const std::vector<int32_t>& values) {
+    std::unordered_map<int32_t, int32_t> map;
+    for (auto value : values) {
+        map[value] = value;
+    }
+    benchmark::DoNotOptimize(map);
+    int32_t sum = 0;
+    for (auto& [key, value] : map) {
+        sum += value;
+    }
+    return sum;
+}
+
+int32_t flow_through_sort(const std::vector<int32_t>& values) {
+    std::vector<int32_t> ordered(values.begin(), values.end());
+    std::sort(ordered.begin(), ordered.end());
+    benchmark::DoNotOptimize(ordered);
+    int32_t sum = 0;
+    for (auto& value : ordered) {
+        sum += value;
+    }
+    return sum;
+}
+
+static void flow_through_map(benchmark::State& state) {
+    static std::default_random_engine e;
+    const auto length = state.range(0);
+    const auto cardinality = state.range(1);
+    std::uniform_int_distribution<int32_t> u(0, cardinality);
+    std::vector<int32_t> values;
+    for (int i = 0; i < length; i++) {
+        values.push_back(u(e));
+    }
+    for (auto _ : state) {
+        flow_through_map(values);
+    }
+}
+
+static void flow_through_sort(benchmark::State& state) {
+    static std::default_random_engine e;
+    const auto length = state.range(0);
+    const auto cardinality = state.range(1);
+    std::vector<int32_t> values;
+    std::uniform_int_distribution<int32_t> u(0, cardinality);
+    for (int i = 0; i < length; i++) {
+        values.push_back(u(e));
+    }
+    for (auto _ : state) {
+        flow_through_sort(values);
+    }
+}
+
+BENCHMARK(flow_through_map)
+        ->Args({1000000, 16})
+        ->Args({1000000, 256})
+        ->Args({1000000, 4096})
+        ->Args({1000000, 262144})
+        ->Args({1000000, 1000000});
+BENCHMARK(flow_through_sort)
+        ->Args({1000000, 16})
+        ->Args({1000000, 256})
+        ->Args({1000000, 4096})
+        ->Args({1000000, 262144})
+        ->Args({1000000, 1000000});
+
+BENCHMARK_MAIN();
+```
+
+结果如下，可以发现：
+
+* 当基数较低时，`hash`性能更好
+* 当基数较高时，`sort`性能更好
+
+```
+----------------------------------------------------------------------------
+Benchmark                                  Time             CPU   Iterations
+----------------------------------------------------------------------------
+flow_through_map/1000000/16          8541229 ns      8540535 ns           82
+flow_through_map/1000000/256         8541396 ns      8541035 ns           82
+flow_through_map/1000000/4096        9141229 ns      9140876 ns           77
+flow_through_map/1000000/262144     58265978 ns     58263311 ns           11
+flow_through_map/1000000/1000000   143186230 ns    143182277 ns            5
+flow_through_sort/1000000/16        27675998 ns     27674960 ns           26
+flow_through_sort/1000000/256       37921170 ns     37920118 ns           18
+flow_through_sort/1000000/4096      51091308 ns     51087098 ns           14
+flow_through_sort/1000000/262144    70216801 ns     70212663 ns           10
+flow_through_sort/1000000/1000000   69765520 ns     69758543 ns           10
+```
+
 # 2 pointer aliasing
 
 **`pointer aliasing`指的是两个指针（在作用域内）指向了同一个物理地址，或者说指向的物理地址有重叠。`__restrict`关键词用于给编译器一个提示：确保被标记的指针是独占物理地址的**

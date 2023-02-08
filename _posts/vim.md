@@ -1632,21 +1632,24 @@ call plug#end()
 
 * `common`
     * `suggest.noselect`：`true/false`，表示自动补全时，是否自动选中第一个。默认为`false`，即自动选中第一个，如果再按`tab`则会跳转到第二个。[Ability to tab to first option](https://github.com/neoclide/coc.nvim/issues/1339)
-* `c/c++`
+* `c-family`
     * 如何修改头文件搜索路径？在`compile_commands.json`或`compile_flags.txt`中通过`-I`参数指定即可
     * 索引文件路径：`<project path>/.cache/clangd`
-    ```json
-    {
-        "languageserver": {
-            "clangd": {
-                "command": "clangd",
-                "args": ["--log=verbose"],
-                "rootPatterns": ["compile_flags.txt", "compile_commands.json"],
-                "filetypes": ["c", "cc", "cpp", "c++", "objc", "objcpp"]
+    * 在`cmake`中设置`set(CMAKE_CXX_STANDARD 17)`，其生成的`compile_commands.json`中包含的编译命令不会包含`-std=gnu++17`参数，于是`clangd`在处理代码中用到的`c++17`新特性时会报`warning`（例如`Decomposition declarations are a C++17 extension (clang -Wc++17-extensions)`）。通过设置`CMAKE_CXX_FLAGS`，加上编译参数`-std=gnu++17`可以解决该问题
+    * 在`cmake`中设置`set(CMAKE_CXX_COMPILER g++)`也不会对`clangd`起作用，例如`clang`没有`-fopt-info-vec`这个参数，仍然会`warning`
+    * 示例如下：
+        ```json
+        {
+            "languageserver": {
+                "clangd": {
+                    "command": "clangd",
+                    "args": ["--log=verbose"],
+                    "rootPatterns": ["compile_flags.txt", "compile_commands.json"],
+                    "filetypes": ["c", "cc", "cpp", "c++", "objc", "objcpp"]
+                }
             }
         }
-    }
-    ```
+        ```
 
 **`Tips`：**
 
