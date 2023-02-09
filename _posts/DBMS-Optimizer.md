@@ -64,21 +64,7 @@ categories:
 
 **上述不同分类均可自由组合**
 
-## 2.1 Scalar Subquery
-
-## 2.2 Exist Subquery
-
-### 2.2.1 Implement with Semi Join
-
-### 2.2.2 Implement with Outer Join
-
-## 2.3 In Subquery
-
-### 2.3.1 Implement with Semi Join
-
-### 2.3.2 Implement with Outer Join
-
-**对于在`SELECT Clause`中的`In Subquery`，一般用`Outer Join`来进行转换，下面用一个例子来说明**
+**下面的讨论都基于如下的数据集：**
 
 ```sql
 DROP TABLE IF EXISTS `S`;
@@ -97,9 +83,11 @@ INSERT INTO `S` (s1, s2, s3) values
     (1, 2, 3),
     (1, 2, 3),
     (4, 5, 6),
+    (4, 5, 6),
     (7, 8, 9),
     (10, NULL, 12),
-    (13, 14, 15);
+    (13, 14, 15),
+    (16, 17, 18);
 
 DROP TABLE IF EXISTS `R`;
 CREATE TABLE IF NOT EXISTS `R` (
@@ -115,17 +103,43 @@ PROPERTIES (
 
 INSERT INTO `R` (r1, r2, r3) values
     (1, 2, 3),
+    (1, 2, NULL),
     (4, 55, 6),
     (7, NULL, 9),
+    (7, 8, 9),
     (10, NULL, 12),
-    (13, 14, NULL);
+    (13, 14, NULL),
+    (19, 20, 21);
 ```
 
-**原`SQL`如下。其含义是，针对`S`表中的每一行，在`R`表中找出满足`S.s3 = R.r3`的所有行，并提取出`R.r2`作为结果集`A`，看`S.s2`是否在这个结果集`A`中**
+## 2.1 Scalar Subquery
 
-* 若`S.s2`为`NULL`，那么返回`NULL`
-* 若结果集`A`为空，那么返回`false`
-* 对于当前行（固定`S.s3`的值），若`R`表中不存在满足`R.r3 = S.s3`的行，那么返回`false`
+## 2.2 Exist Subquery
+
+### 2.2.1 Implement with Semi Join
+
+### 2.2.2 Implement with Outer Join
+
+## 2.3 In Subquery
+
+### 2.3.1 Implement with Semi Join
+
+**对于在`WHERE Clause`中的`In Subquery`，一般用`Semi Join`来进行转换。下面用一个例子来说明，原`SQL`如下，其含义是，针对`S`表中的每一行，在`R`表中找出满足`S.s3 = R.r3`的所有行，并提取出`R.r2`作为结果集`A`，看`S.s2`是否在这个结果集`A`中，并以此作为过滤条件，过滤`S`的数据**
+
+```sql
+SELECT S.s1, S.s2 
+FROM S
+WHERE S.s2 IN
+(
+  SELECT R.r2
+  FROM R
+  WHERE S.s3 = R.r3
+)
+```
+
+### 2.3.2 Implement with Outer Join
+
+**对于在`SELECT Clause`中的`In Subquery`，一般用`Outer Join`来进行转换。下面用一个例子来说明，原`SQL`如下，其含义是，针对`S`表中的每一行，在`R`表中找出满足`S.s3 = R.r3`的所有行，并提取出`R.r2`作为结果集`A`，看`S.s2`是否在这个结果集`A`中**
 
 ```sql
 SELECT S.s1, S.s2 IN
@@ -137,19 +151,11 @@ SELECT S.s1, S.s2 IN
 FROM S;
 ```
 
-**重写后的`SQL`如下：**
+* 若`S.s2`为`NULL`，那么返回`NULL`
+* 若结果集`A`为空，那么返回`false`
+* 对于当前行（固定`S.s3`的值），若`R`表中不存在满足`R.r3 = S.s3`的行，那么返回`false`
 
-* `R_GroupBy`：通过`Left Outer Join`将谓词`IN`调整谓词`==`
-* `R_CountRow`：用于统计`R`表中各分组（`by r3`）下的总行数以及`R.r2`非`NULL`的行数
-* **`CASE WHEN`语句分析：**
-    * `CASE WHEN 1`：若`R_CountRow.R_Rows IS NULL`，我们知道`count(*)`是不会产生空值的，因此该空值一定是`Left Outer Join`产生的，意味着对于当前行（固定`S.s3`的值），`R`表中不存在满足`R.r3 = S.s3`的行，即集合`A`为空。因此根据`ANY_OR_NULL IN (empty) -> false`，谓词`IN`的结果就是`false`
-    * 否则，意味着对于当前行（固定`S.s3`的值），`R`表中存在满足`R.r3 = S.s3`的行，即集合`A`不为空
-    * `CASE WHEN 2`：若`S.s2 IS NULL`。因此根据`NULL IN (ANY_OR_NULL...) -> NULL`，谓词`IN`的结果就是`NULL`
-    * 否则，意味着`S.s2 IS NOT NULL`
-    * `CASE WHEN 3`：若`R_GroupBy.r2 IS NOT NULL`，意味着对于当前行（固定`S.s3`的值），集合`A`中至少存在一个元素满足`S.s2 = R.r2`，因此根据`X IN (X, [ANY_OR_NULL...]) -> true`，谓词`IN`的结果就是`true`
-    * 否则，意味着`R_GroupBy.r2 IS NULL`
-    * `CASE WHEN 4`：若`R_CountRow.r2_NotNulls < R_CountRow.R_Rows`，意味着对于当前行（固定`S.s3`的值），集合`A`中一定存在`NULL`元素。因此根据`X IN (NULL, [NOT_X_OR_NULL...]) -> NULL`，谓词`IN`的结果就是`NULL`
-    * 否则，意味着`R_CountRow.r2_NotNulls = R_CountRow.R_Rows`，则集合`A`中不存在`NULL`元素，因此根据`X IN (NOT_X...) -> false`，谓词`IN`的结果就是`false`
+**重写后的`SQL`如下：**
 
 ```sql
 WITH R_CTE AS (SELECT R.r2, R.r3 FROM R)
@@ -180,6 +186,18 @@ LEFT OUTER JOIN
   ) AS R_CountRow 
   ON  S.s3 = R_CountRow.r3;
 ```
+
+* `R_GroupBy`：通过`Left Outer Join`将谓词`IN`调整谓词`==`
+* `R_CountRow`：用于统计`R`表中各分组（`by r3`）下的总行数以及`R.r2`非`NULL`的行数
+* **`CASE WHEN`语句分析：**
+    * `CASE WHEN 1`：若`R_CountRow.R_Rows IS NULL`，我们知道`count(*)`是不会产生空值的，因此该空值一定是`Left Outer Join`产生的，意味着对于当前行（固定`S.s3`的值），`R`表中不存在满足`R.r3 = S.s3`的行，即集合`A`为空。因此根据`ANY_OR_NULL IN (empty) -> false`，谓词`IN`的结果就是`false`
+    * 否则，意味着对于当前行（固定`S.s3`的值），`R`表中存在满足`R.r3 = S.s3`的行，即集合`A`不为空
+    * `CASE WHEN 2`：若`S.s2 IS NULL`。因此根据`NULL IN (ANY_OR_NULL...) -> NULL`，谓词`IN`的结果就是`NULL`
+    * 否则，意味着`S.s2 IS NOT NULL`
+    * `CASE WHEN 3`：若`R_GroupBy.r2 IS NOT NULL`，意味着对于当前行（固定`S.s3`的值），集合`A`中至少存在一个元素满足`S.s2 = R.r2`，因此根据`X IN (X, [ANY_OR_NULL...]) -> true`，谓词`IN`的结果就是`true`
+    * 否则，意味着`R_GroupBy.r2 IS NULL`
+    * `CASE WHEN 4`：若`R_CountRow.r2_NotNulls < R_CountRow.R_Rows`，意味着对于当前行（固定`S.s3`的值），集合`A`中一定存在`NULL`元素。因此根据`X IN (NULL, [NOT_X_OR_NULL...]) -> NULL`，谓词`IN`的结果就是`NULL`
+    * 否则，意味着`R_CountRow.r2_NotNulls = R_CountRow.R_Rows`，则集合`A`中不存在`NULL`元素，因此根据`X IN (NOT_X...) -> false`，谓词`IN`的结果就是`false`
 
 ## 2.4 Generic Decorrelation Algorithm
 

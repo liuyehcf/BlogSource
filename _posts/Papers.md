@@ -1110,9 +1110,10 @@ categories:
                 <li><code>#Memory</code></li>
             </td>
             <td style="text-align:left">
-                <li></li>
+                <li>AsterixDB has three main memory sections, including one for in-memory components, a buffer cache, and working memory</li>
+                <li>Each operator has three memory sections, including input buffer, execution memory, output buffer</li>
             </td>
-            <td style="text-align:left">👀/Chap2</td>
+            <td style="text-align:left">👀/Chap2.4.2</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>
