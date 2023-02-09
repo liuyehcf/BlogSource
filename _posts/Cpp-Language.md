@@ -3217,6 +3217,75 @@ test std::memory_order_acquire, std::memory_order_release, res=true
 test std::memory_order_relaxed, std::memory_order_relaxed, res=true
 ```
 
+### 5.3.5 Case-5
+
+进程调度也能保证可见性，我们可以让读写线程绑定到某个核上，那么读写线程会在调度的作用下交替执行
+
+```cpp
+#include <pthread.h>
+
+#include <atomic>
+#include <iostream>
+#include <thread>
+#include <type_traits>
+
+template <typename T, bool use_inc>
+void test_concurrent_visibility() {
+    constexpr size_t TIMES = 1000000;
+    T count = 0;
+    auto func = [&count]() {
+        pthread_t thread = pthread_self();
+
+        cpu_set_t cpuset;
+        CPU_ZERO(&cpuset);
+        CPU_SET(0, &cpuset);
+        if (pthread_setaffinity_np(thread, sizeof(cpu_set_t), &cpuset) != 0) {
+            return;
+        }
+
+        if (pthread_getaffinity_np(thread, sizeof(cpu_set_t), &cpuset) != 0) {
+            return;
+        }
+
+        for (size_t i = 0; i < TIMES; i++) {
+            if constexpr (use_inc) {
+                count++;
+            } else {
+                count = count + 1;
+            }
+        }
+    };
+
+    std::thread t1(func);
+    std::thread t2(func);
+
+    t1.join();
+    t2.join();
+    if constexpr (std::is_same_v<T, int32_t>) {
+        std::cout << "type=int32_t, count=" << count << std::endl;
+    } else if constexpr (std::is_same_v<T, volatile int32_t>) {
+        std::cout << "type=volatile int32_t, count=" << count << std::endl;
+    } else if constexpr (std::is_same_v<T, std::atomic<int32_t>>) {
+        std::cout << "type=std::atomic<int32_t>, count=" << count << std::endl;
+    }
+}
+
+int main() {
+    test_concurrent_visibility<int32_t, true>();
+    test_concurrent_visibility<volatile int32_t, false>();
+    test_concurrent_visibility<std::atomic<int32_t>, true>();
+    return 0;
+}
+```
+
+输出如下：
+
+```
+type=int32_t, count=2000000
+type=volatile int32_t, count=2000000
+type=std::atomic<int32_t>, count=2000000
+```
+
 ## 5.4 x86 Memory Model
 
 对于`std::memory_order_relaxed`，在不同的硬件平台上，其效果是不同的。x86属于`TSO`
