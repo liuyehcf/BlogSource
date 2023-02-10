@@ -158,7 +158,7 @@ update-alternatives --install /usr/bin/make make /usr/local/make-3.81/bin 3
 * [Ubuntu 20.04 - gcc version lower than gcc-7](https://askubuntu.com/questions/1235819/ubuntu-20-04-gcc-version-lower-than-gcc-7)
 * [安裝 make 3.81 on Ubuntu 18](https://noiseyou99.medium.com/%E5%AE%89%E8%A3%9D-make-3-81-on-ubuntu-18-71350c1569e0)
 
-# 3 Apt
+# 3 apt
 
 * 源配置文件：`/etc/apt/sources.list`
 * 格式：`deb http://site.example.com/debian distribution component1 component2 component3`
@@ -174,6 +174,30 @@ update-alternatives --install /usr/bin/make make /usr/local/make-3.81/bin 3
     deb [trusted=yes] http://dk.archive.ubuntu.com/ubuntu/ bionic main universe
     ```
 
-## 3.1 参考
+## 3.1 apt vs. apt-get
+
+The above explanation comes from chartGPT
+
+> apt and apt-get are both package management tools used in Debian-based Linux distributions like Ubuntu to manage packages and perform related tasks.
+
+> The main difference between the two is the way they are used and the level of user interaction.
+
+> apt-get is a low-level tool for package management, and is mainly used from the command line. It provides basic functionality for installing, upgrading, and removing packages, and is used in shell scripts and other automated systems.
+
+> apt, on the other hand, is a higher-level tool that builds on top of apt-get. It provides a more user-friendly interface and has additional features, such as the ability to perform multiple operations in a single command and to display more information about packages. apt also handles dependencies more automatically and can handle larger transactions than apt-get.
+
+> So, in general, apt is recommended for regular users, while apt-get is more suited for advanced users and automation. However, both apt and apt-get provide the same underlying functionality, and you can use either one to manage packages on your system.
+
+## 3.2 aptitude
+
+```sh
+sudo apt install aptitude
+
+aptitude search boost
+
+sudo aptitude install libboost1.74-dev
+```
+
+## 3.3 参考
 
 * [https://www.linuxfordevices.com/tutorials/linux/fix-updating-from-such-a-repository-cant-be-done-securely-error](https://www.linuxfordevices.com/tutorials/linux/fix-updating-from-such-a-repository-cant-be-done-securely-error)
