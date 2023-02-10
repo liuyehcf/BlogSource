@@ -1112,8 +1112,16 @@ categories:
             <td style="text-align:left">
                 <li>AsterixDB has three main memory sections, including one for in-memory components, a buffer cache, and working memory</li>
                 <li>Each operator has three memory sections, including input buffer, execution memory, output buffer</li>
+                <li>The budget for a memory-intensive operator is determined by operator-specific parameters (eg, 32 MB) and the system converts the budget into a number of pages (M) using the system's page size parameter. This means the memory-intensive operator can request M pages from the working memory at maximum and uses these pages as its execution memory</li>
+                <li>Sort operator
+                    <ul>
+                        <li>Since comparing normalized binary-representations of field values is more efficient than comparing the original values, the concept of normalized key has been widely used</li>
+                        <li>Also, rather than moving an actual record during a sort, normally an array of record pointers is used in most implementations to deal with variable-length records</li>
+                        <li>An external sort consists of two phases, build and merge. In build phase, the operator gradually allocates more pages to hold incoming records until the buget is exhausted, then sorts it and writes it to a temporary run file on disk, and then continute to process the follow-up incoming data. In merge phase, the operator recursively multiway merges run files and generates the final results</li>
+                    </ul>
+                </li>
             </td>
-            <td style="text-align:left">👀/Chap2.4.2</td>
+            <td style="text-align:left">👀/Chap3</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>
