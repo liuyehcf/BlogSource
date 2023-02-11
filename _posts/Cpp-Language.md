@@ -34,7 +34,9 @@ categories:
 * `##`：连接操作符
 * `\`：续行操作符
 
-## 2.3 do while(0) in macros
+## 2.3 Tips
+
+### 2.3.1 do while(0) in macros
 
 考虑下面的宏定义
 
@@ -99,6 +101,135 @@ else
 
 ```c++
 #define foo(x) do { bar(x); baz(x); } while (0)
+```
+
+### 2.3.2 visitor
+
+借助宏的嵌套，我们可以实现自动生成`else if`分支，示例代码如下：
+
+```cpp
+#include <iostream>
+#include <map>
+
+#define APPLY_FOR_PARTITION_VARIANT_ALL(M) \
+    M(_int)                                \
+    M(_long)                               \
+    M(_double)
+
+enum HashMapVariantType { _int, _long, _double };
+
+struct HashMapVariant {
+    std::map<int, int> _int;
+    std::map<long, long> _long;
+    std::map<double, double> _double;
+};
+
+HashMapVariant hash_map_variant;
+HashMapVariantType type;
+
+void handle_int_map(std::map<int, int>& map) {
+    std::cout << "handle int map" << std::endl;
+}
+void handle_long_map(std::map<long, long>& map) {
+    std::cout << "handle long map" << std::endl;
+}
+void handle_double_map(std::map<double, double>& map) {
+    std::cout << "handle double map" << std::endl;
+}
+
+void dispatch() {
+    if (false) {
+    }
+#define HASH_MAP_METHOD(NAME)                      \
+    else if (type == HashMapVariantType::NAME) {   \
+        handle##NAME##_map(hash_map_variant.NAME); \
+    }
+    APPLY_FOR_PARTITION_VARIANT_ALL(HASH_MAP_METHOD)
+#undef HASH_MAP_METHOD
+}
+
+int main() {
+    type = HashMapVariantType::_int;
+    dispatch();
+    type = HashMapVariantType::_long;
+    dispatch();
+    type = HashMapVariantType::_double;
+    dispatch();
+    return 0;
+}
+```
+
+上述功能完全可以由`std::variant`实现，如下：
+
+```cpp
+#include <iostream>
+#include <map>
+#include <variant>
+
+std::variant<std::map<int, int>, std::map<long, long>, std::map<double, double>> hash_map_variant;
+
+class Visitor {
+public:
+    void operator()(std::map<int, int>& map) { std::cout << "handle int map" << std::endl; }
+    void operator()(std::map<long, long>& map) { std::cout << "handle long map" << std::endl; }
+    void operator()(std::map<double, double>& map) { std::cout << "handle double map" << std::endl; }
+};
+
+int main() {
+    auto lambda_visitor = [](auto& map) {
+        if constexpr (std::is_same_v<std::decay_t<decltype(map)>, std::map<int, int>>) {
+            std::cout << "handle int map by lambda" << std::endl;
+        } else if constexpr (std::is_same_v<std::decay_t<decltype(map)>, std::map<long, long>>) {
+            std::cout << "handle long map by lambda" << std::endl;
+        } else if constexpr (std::is_same_v<std::decay_t<decltype(map)>, std::map<double, double>>) {
+            std::cout << "handle double map by lambda" << std::endl;
+        }
+    };
+    Visitor visitor;
+
+    hash_map_variant = std::map<int, int>{};
+    std::visit(visitor, hash_map_variant);
+    std::visit(lambda_visitor, hash_map_variant);
+
+    hash_map_variant = std::map<long, long>{};
+    std::visit(visitor, hash_map_variant);
+    std::visit(lambda_visitor, hash_map_variant);
+
+    hash_map_variant = std::map<double, double>{};
+    std::visit(visitor, hash_map_variant);
+    std::visit(lambda_visitor, hash_map_variant);
+    return 0;
+}
+```
+
+### 2.3.3 comma problem
+
+[pass method with template arguments to a macro](https://stackoverflow.com/questions/4496842/pass-method-with-template-arguments-to-a-macro)
+
+示例如下，我们定义了一个参数的宏`MY_MACRO`：
+
+* `MY_MACRO(func<flag1, flag2>())`：这个调用会报错，因为逗号会被认为用于分隔两个宏参数
+* `MY_MACRO((func<flag1, flag2>()))`：这个调用正常，因为用`()`将表达式包围后，会被认为是一个宏参数
+
+```cpp
+#define MY_MACRO(stmt) \
+    do {               \
+        { stmt; }      \
+    } while (0)
+
+template <bool flag1, bool flag2>
+void func() {}
+
+template <bool flag1, bool flag2>
+void call_func() {
+    // MY_MACRO(func<flag1, flag2>());
+    MY_MACRO((func<flag1, flag2>()));
+}
+
+int main() {
+    call_func<true, true>();
+    return 0;
+}
 ```
 
 ## 2.4 参考

@@ -1195,7 +1195,7 @@ int main() {
 
 ## 23.1 动态分派原理
 
-`std::variant`结合`std::visitor`可以实现动态分派，示例代码如下：
+`std::variant`结合`std::visit`可以实现动态分派，示例代码如下：
 
 ```cpp
 #include <iostream>
