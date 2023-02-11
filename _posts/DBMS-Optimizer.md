@@ -114,11 +114,53 @@ INSERT INTO `R` (r1, r2, r3) values
 
 ## 2.1 Scalar Subquery
 
-## 2.2 Exist Subquery
+## 2.2 Exists Subquery
 
 ### 2.2.1 Implement with Semi Join
 
+**对于在`WHERE Clause`中的`Exists Subquery`，一般用`Semi Join`来进行转换。下面用一个例子来说明，原`SQL`如下，其含义是，针对`S`表中的每一行，在`R`表中找出满足`S.s3 = R.r3`的所有行，并提取出`R.r2`作为结果集`A`，看结果集`A`是否存在非空元素，并以此作为过滤条件，过滤`S`的数据**
+
+```sql
+SELECT S.s1, S.s2
+FROM S
+WHERE EXISTS (
+  SELECT R.r2
+  FROM R
+  WHERE S.s3 = R.r3
+)
+```
+
+**重写后的`SQL`如下：**
+
+```sql
+SELECT S.s1, S.s2
+FROM S LEFT SEMI JOIN R
+ON S.s3 = R.r3
+```
+
 ### 2.2.2 Implement with Outer Join
+
+**对于在`SELECT Clause`中的`Exists Subquery`，一般用`Outer Join`来进行转换。下面用一个例子来说明，原`SQL`如下，其含义是，针对`S`表中的每一行，在`R`表中找出满足`S.s3 = R.r3`的所有行，并提取出`R.r2`作为结果集`A`，看这个结果集`A`是否存在非空元素**
+
+```sql
+SELECT S.s1, EXISTS (
+  SELECT R.r2
+  FROM R
+  WHERE S.s3 = R.r3
+)
+FROM S;
+```
+
+**重写后的`SQL`如下：**
+
+```sql
+SELECT S.s1, R_GroupBy.r3_Row IS NOT NULL FROM
+S LEFT JOIN (
+  SELECT R.r3, COUNT(1) AS r3_Row FROM
+  R GROUP BY R.r3
+) AS R_GroupBy
+ON S.s3 = R_GroupBy.r3;
+```
 
 ## 2.3 In Subquery
 
@@ -127,7 +169,7 @@ INSERT INTO `R` (r1, r2, r3) values
 **对于在`WHERE Clause`中的`In Subquery`，一般用`Semi Join`来进行转换。下面用一个例子来说明，原`SQL`如下，其含义是，针对`S`表中的每一行，在`R`表中找出满足`S.s3 = R.r3`的所有行，并提取出`R.r2`作为结果集`A`，看`S.s2`是否在这个结果集`A`中，并以此作为过滤条件，过滤`S`的数据**
 
 ```sql
-SELECT S.s1, S.s2 
+SELECT S.s1, S.s2
 FROM S
 WHERE S.s2 IN
 (
@@ -135,6 +177,14 @@ WHERE S.s2 IN
   FROM R
   WHERE S.s3 = R.r3
 )
+```
+
+**重写后的`SQL`如下：**
+
+```sql
+SELECT S.s1, S.s2
+FROM S LEFT SEMI JOIN R
+ON S.s2 = R.r2 AND S.s3 = R.r3
 ```
 
 ### 2.3.2 Implement with Outer Join
