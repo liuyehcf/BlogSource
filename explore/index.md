@@ -36,6 +36,8 @@ date: 2018-02-05 09:25:59
 * Celebrity
     * `Bjarne Stroustrup`：C++之父
     * `Walter E. Brown`：2000年开始参与C++标准制定工作，引入了`cbegin/cend`、`common_type`等特性，以及负责`<random>`、`<ratio>`等头文件的开发
+* Projects
+    * [Apache Calcite](https://github.com/apache/calcite)
 
 # 3 Kernel
 
