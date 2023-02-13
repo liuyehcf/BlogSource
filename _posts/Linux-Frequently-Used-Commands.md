@@ -3578,7 +3578,8 @@ mount      –t debugfs    debugfs /sys/kernel/debug
 1. `perf record -e 'cycles' -p xxx`：统计指定的进程
 1. `perf record -e 'cycles' -- myapplication arg1 arg2`：启动程序并进行统计
 1. `perf report`：查看分析报告
-1. **`perf top -p <pid>`：以交互式的方式分析一个程序的性能（神器）**
+1. **`perf top -p <pid> -g`：以交互式的方式分析一个程序的性能（神器）**
+    * `-g`可以展示某个函数自身的占比以及孩子的占比
     * 选中某个条目，然后选择`Anotate xxx`可以查看对应的汇编
 1. **`perf stat -p <pid> -e branch-instructions,branch-misses,cache-misses,cache-references,cpu-cycles,ref-cycles,instructions,mem_load_retired.l1_hit,mem_load_retired.l1_miss,mem_load_retired.l2_hit,mem_load_retired.l2_miss,cpu-migrations,context-switches,page-faults,major-faults,minor-faults`**
     * 该命令会在右边输出一个百分比，该百分比的含义是：`perf`统计指定`event`所花费的时间与`peft`统计总时间的比例

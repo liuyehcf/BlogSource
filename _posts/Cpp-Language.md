@@ -103,9 +103,9 @@ else
 #define foo(x) do { bar(x); baz(x); } while (0)
 ```
 
-### 2.3.2 visitor
+### 2.3.2 variant
 
-借助宏的嵌套，我们可以实现自动生成`else if`分支，示例代码如下：
+借助宏的嵌套，以及约定命名规则，我们可以实现自动生成`else if`分支，示例代码如下：
 
 ```cpp
 #include <iostream>
