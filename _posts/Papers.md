@@ -1118,10 +1118,16 @@ categories:
                         <li>Since comparing normalized binary-representations of field values is more efficient than comparing the original values, the concept of normalized key has been widely used</li>
                         <li>Also, rather than moving an actual record during a sort, normally an array of record pointers is used in most implementations to deal with variable-length records</li>
                         <li>An external sort consists of two phases, build and merge. In build phase, the operator gradually allocates more pages to hold incoming records until the buget is exhausted, then sorts it and writes it to a temporary run file on disk, and then continute to process the follow-up incoming data. In merge phase, the operator recursively multiway merges run files and generates the final results</li>
+                        <li>The sort operator also uses an additional data structure called the record pointer array that contains the location and the normalized key of each record in memory. This array is needed to avoid performing an in-place swap between two records during in-memory sorting since each record's length is generally different because of variable-length fields. Also, this array can improve the performance since comparing two normalized keys in the record pointer array using binary string comparison can be much faster than comparing the actual values between two records, which requires accessing the actual records in pages</li>
+                    </ul>
+                </li>
+                <li>Group-by operator
+                    <ul>
+                        <li>Group-by operator use both data partition table abd hash table. Data partition table holds the aggregate records. Hash table holds the localtion of the aggregate records in the data partition table(can be seen as index).</li>
                     </ul>
                 </li>
             </td>
-            <td style="text-align:left">👀/Chap3</td>
+            <td style="text-align:left">👀/Chap4.2</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>
