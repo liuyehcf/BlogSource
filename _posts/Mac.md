@@ -543,7 +543,10 @@ sudo xattr -r -d com.apple.quarantine <app path>
 codesign --remove-signature /Applications/Visual\ Studio\ Code.app/Contents/Frameworks/Code\ Helper\ \(Renderer\).app
 ```
 
-[macOS 输入法卡顿问题解决方法：永久解决，一劳永逸](https://www.jianshu.com/p/ec2729d485a8)
+**以下步骤可以解决中文输入法卡顿的问题，参考[程序开久了之后中文输入法卡顿，不知道怎么解决](https://discussionschinese.apple.com/thread/253846113)-Page2**
+
+1. 系统偏好设置->调度中心
+    * 显示器具有单独的空间（取消该选项）
 
 ## 6.5 滚动条总是自动隐藏
 
