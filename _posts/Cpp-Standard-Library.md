@@ -163,13 +163,24 @@ struct Object {
     Object() { std::cout << "Object()" << std::endl; }
     Object(const Object& obj) { std::cout << "Object(const Object& obj)" << std::endl; }
     Object(Object&& obj) { std::cout << "Object(Object&& obj)" << std::endl; }
+    Object operator=(const Object&) = delete;
+    Object operator=(Object&&) = delete;
 };
 
 int main() {
     Object obj1;
     Object obj2;
+
+    std::cout << "declare any" << std::endl;
     std::any a1 = obj1;
     std::any a2 = std::move(obj2);
+
+    std::cout << "any_cast" << std::endl;
+    [[maybe_unused]] Object obj3 = std::any_cast<Object>(a1);
+
+    std::cout << "any_cast reference" << std::endl;
+    [[maybe_unused]] Object& obj4 = std::any_cast<Object&>(a2);
+
     return 0;
 }
 ```

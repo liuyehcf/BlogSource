@@ -1126,6 +1126,11 @@ categories:
                         <li>Group-by operator use both data partition table abd hash table. Data partition table holds the aggregate records. Hash table holds the localtion of the aggregate records in the data partition table(can be seen as index).</li>
                     </ul>
                 </li>
+                <li>Hash join operator
+                    <ul>
+                        <li></li>
+                    </ul>
+                </li>
             </td>
             <td style="text-align:left">👀/Chap4.2</td>
             <td style="text-align:left">★★★★★</td>
