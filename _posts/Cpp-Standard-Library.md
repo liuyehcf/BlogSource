@@ -438,6 +438,38 @@ int main() {
 
 ## 11.3 std::unique_ptr
 
+* `release`是指让出控制权，不再管理生命周期，而不是释放。要释放的话可以用`reset`方法，或者直接赋值成`nullptr`
+
+```cpp
+#include <iostream>
+#include <memory>
+
+class Foo {
+public:
+    Foo() { std::cout << "ctor" << std::endl; }
+    ~Foo() { std::cout << "dctor" << std::endl; }
+};
+
+int main(void) {
+    {
+        std::unique_ptr<Foo> u_ptr = std::make_unique<Foo>();
+        u_ptr.release();
+        std::cout << "after calling unique_ptr::release\n" << std::endl;
+    }
+    {
+        std::unique_ptr<Foo> u_ptr = std::make_unique<Foo>();
+        u_ptr.reset();
+        std::cout << "after calling unique_ptr::reset\n" << std::endl;
+    }
+    {
+        std::unique_ptr<Foo> u_ptr = std::make_unique<Foo>();
+        u_ptr = nullptr;
+        std::cout << "after assigning to nullptr direcly\n" << std::endl;
+    }
+    return 0;
+}
+```
+
 ## 11.4 参考
 
 * [C++ 智能指针的正确使用方式](https://www.cyhone.com/articles/right-way-to-use-cpp-smart-pointer/)
