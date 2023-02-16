@@ -241,7 +241,36 @@ fopen() returned NULL
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-## 2.5 ABI
+## 2.5 如何制作动态库
+
+```sh
+cat > foo.cpp << 'EOF'
+#include <iostream>
+
+void foo() {
+    std::cout << "hello, this is foo" << std::endl;
+}
+EOF
+
+cat > main.cpp << 'EOF'
+void foo();
+
+int main() {
+    foo();
+    return 0;
+}
+EOF
+
+gcc -o foo.o -c foo.cpp -O3 -Wall -fPIC
+gcc -shared -o libfoo.so foo.o
+
+gcc -o main main.cpp -O3 -L . -lfoo -lstdc++
+./main # ./main: error while loading shared libraries: libfoo.so: cannot open shared object file: No such file or directory
+gcc -o main main.cpp -O3 -L . -Wl,-rpath=`pwd` -lfoo -lstdc++
+./main
+```
+
+## 2.6 ABI
 
 `ABI`全称是`Application Binary Interface`，它是两个二进制模块间的接口，二进制模块可以是`lib`，可以是操作系统的基础设施，或者一个正在运行的用户程序
 
@@ -261,7 +290,7 @@ fopen() returned NULL
 1. 如何发起系统调用
 1. `lib`、`object file`等的文件格式
 
-### 2.5.1 Language-Specific ABI
+### 2.6.1 Language-Specific ABI
 
 摘自[What is C++ ABI?](https://www.quora.com/What-is-C-ABI)
 
@@ -274,7 +303,7 @@ fopen() returned NULL
 > * How are overloaded functions and operators “named” in object files? This is where “name mangling” usually comes in: The type of the various functions is encoded in their object file names. That also handles the “overloading” that results from template instantiations.
 > * How are spilled inline functions and template instantiations handled? After all, different object files might use/spill the same instances, which could lead to collisions.
 
-### 2.5.2 Dual ABI
+### 2.6.2 Dual ABI
 
 [Dual ABI](https://gcc.gnu.org/onlinedocs/libstdc++/manual/using_dual_abi.html)
 
@@ -290,7 +319,7 @@ fopen() returned NULL
 * [ABI Policy and Guidelines](https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html)
 * [C/C++ ABI兼容那些事儿](https://zhuanlan.zhihu.com/p/556726543)
 
-## 2.6 常用动态库
+## 2.7 常用动态库
 
 **`libc/glibc/glib`（`man libc/glibc`）**
 
@@ -317,7 +346,7 @@ fopen() returned NULL
 1. `libz`：compression/decompression library
 1. `libpthread`：POSIX threads library
 
-## 2.7 参考
+## 2.8 参考
 
 * [Program Library HOWTO](https://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html)
 * [Shared Libraries: Understanding Dynamic Loading](https://amir.rachum.com/blog/2016/09/17/shared-libraries/)
@@ -697,7 +726,7 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
 
 * `-l <name>`：增加库文件，查找`lib<name>.a`或者`lib<name>.so`，如果都存在，默认使用`so`版本
 * `-L <dir>`：增加库文件搜索路径，其优先级会高于默认的搜索路径。允许指定多个，搜索顺序与其指定的顺序相同
-* `-rpath=<dir>`：增加运行时库文件搜索路径。举个例子，`main.c`直接依赖`foobar.so`，而`foobar.so`依赖`foo.so`以及`bar.so`，且`foo.so`以及`bar.so`放置在非默认搜索路径中，此时使用`-L`是没用的（编译、链接时期）`gcc -o main main.c -L . -lfoobar -lfoo -lbar`。于是需要这样写`gcc -o main main.c -L . -lfoobar -Wl,-rpath=. -lfoo -lbar`
+* `-rpath=<dir>`：增加运行时库文件搜索路径（务必用绝路径，否则二进制一旦换目录就无法运行了）。`-L`参数只在编译、链接期间生效，运行时仍然会找不到动态库文件，需要通过该参数指定。因此，对于位于非默认搜索路径下的动态库文件，`-L`与`-Wl,-rpath=`这两个参数通常是一起使用的
     * [What's the difference between `-rpath-link` and `-L`?](https://stackoverflow.com/questions/49138195/whats-the-difference-between-rpath-link-and-l)
 * `-Bstatic`：修改默认行为，强制使用静态链接库，只对该参数之后出现的库有效。如果找不到对应的静态库会报错（即便有动态库）
 * `-Bdynamic`：修改默认行为，强制使用动态链接库，只对该参数之后出现的库有效。如果找不到对应的动态库会报错（即便有静态库）
