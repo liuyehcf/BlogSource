@@ -368,7 +368,7 @@ fopen() returned NULL
 yum -y install gperftools gperftools-devel
 ```
 
-### 3.1.1 heapprofile
+### 3.1.1 Heap-profile
 
 **`main.cpp`：**
 
@@ -456,6 +456,84 @@ pprof --svg ./main /tmp/test-profile.0001.heap > heap.svg
 * 对于大对象分配，所造成的的内存碎片会比`tcmalloc`少一些
 * 内存分类粒度更细，锁比`tcmalloc`更少
 
+### 3.2.1 Install
+
+[jemalloc/INSTALL.md](https://github.com/jemalloc/jemalloc/blob/dev/INSTALL.md)
+
+```sh
+git clone git@github.com:jemalloc/jemalloc.git
+cd jemalloc
+git checkout 5.3.0
+
+./autogen.sh
+./configure --prefix=/usr/local --enable-prof
+make -j 16
+sudo make install
+```
+
+### 3.2.2 Heap-profile
+
+[Getting Started](https://github.com/jemalloc/jemalloc/wiki/Getting-Started)
+
+```cpp
+#include <cstdint>
+
+void alloc_1M() {
+    new uint8_t[1024 * 1024];
+}
+
+int main() {
+    for (int i = 0; i < 100; i++) {
+        alloc_1M();
+    }
+    return 0;
+}
+```
+
+**编译执行：**
+
+* 方式1：隐式链接，用`LD_PRELOAD`
+    ```sh
+    gcc -o main main.cpp -O0 -lstdc++ -std=gnu++17
+    MALLOC_CONF=prof_leak:true,lg_prof_sample:0,prof_final:true LD_PRELOAD=/usr/local/lib/libjemalloc.so.2 ./main
+    ```
+
+* 方式2：显示链接
+    ```
+    gcc -o main main.cpp -O0 -lstdc++ -std=gnu++17 -L`jemalloc-config --libdir` -Wl,-rpath,`jemalloc-config --libdir` -ljemalloc `jemalloc-config --libs`
+    MALLOC_CONF=prof_leak:true,lg_prof_sample:0,prof_final:true ./main
+    ```
+
+**查看：`jeprof --text main jeprof.145931.0.f.heap`**
+
+* 第一列：函数直接申请的内存大小，单位MB
+* 第二列：第一列占总内存的百分比
+* 第三列：第二列的累积值
+* 第四列：函数以及函数所有调用的函数申请的内存大小，单位MB
+* 第五列：第四列占总内存的百分比
+```
+Using local file main.
+Using local file jeprof.145931.0.f.heap.
+Total: 100.1 MB
+100.1 100.0% 100.0%    100.1 100.0% prof_backtrace_impl
+    0.0   0.0% 100.0%      0.1   0.1% _GLOBAL__sub_I_eh_alloc.cc
+    0.0   0.0% 100.0%    100.0  99.9% __libc_start_main
+    0.0   0.0% 100.0%      0.1   0.1% __static_initialization_and_destruction_0 (inline)
+    0.0   0.0% 100.0%      0.1   0.1% _dl_init_internal
+    0.0   0.0% 100.0%      0.1   0.1% _dl_start_user
+    0.0   0.0% 100.0%    100.0  99.9% _start
+    0.0   0.0% 100.0%    100.0  99.9% alloc_1M
+    0.0   0.0% 100.0%    100.1 100.0% imalloc (inline)
+    0.0   0.0% 100.0%    100.1 100.0% imalloc_body (inline)
+    0.0   0.0% 100.0%    100.1 100.0% je_malloc_default
+    0.0   0.0% 100.0%    100.1 100.0% je_prof_backtrace
+    0.0   0.0% 100.0%    100.1 100.0% je_prof_tctx_create
+    0.0   0.0% 100.0%    100.0  99.9% main
+    0.0   0.0% 100.0%      0.1   0.1% pool (inline)
+    0.0   0.0% 100.0%    100.1 100.0% prof_alloc_prep (inline)
+    0.0   0.0% 100.0%    100.0  99.9% void* fallback_impl
+```
+
 ## 3.3 [mimalloc](https://github.com/microsoft/mimalloc)
 
 ## 3.4 对比
@@ -466,6 +544,8 @@ pprof --svg ./main /tmp/test-profile.0001.heap > heap.svg
 
 * [heapprofile.html](https://gperftools.github.io/gperftools/heapprofile.html)
 * [Apache Doris-调试工具](https://doris.apache.org/developer-guide/debug-tool.html)
+* [调试工具](https://github.com/stdpain/doris-vectorized/blob/master/docs/zh-CN/developer-guide/debug-tool.md)
+* [jemalloc的heap profiling](https://www.yuanguohuo.com/2019/01/02/jemalloc-heap-profiling/)
 
 # 4 Address Sanitizer
 
@@ -617,6 +697,8 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
 
 * `-l <name>`：增加库文件，查找`lib<name>.a`或者`lib<name>.so`，如果都存在，默认使用`so`版本
 * `-L <dir>`：增加库文件搜索路径，其优先级会高于默认的搜索路径。允许指定多个，搜索顺序与其指定的顺序相同
+* `-rpath=<dir>`：
+    * [What's the difference between `-rpath-link` and `-L`?](https://stackoverflow.com/questions/49138195/whats-the-difference-between-rpath-link-and-l)
 * `-Bstatic`：修改默认行为，强制使用静态链接库，只对该参数之后出现的库有效。如果找不到对应的静态库会报错（即便有动态库）
 * `-Bdynamic`：修改默认行为，强制使用动态链接库，只对该参数之后出现的库有效。如果找不到对应的动态库会报错（即便有静态库）
 * `--wrap=<symbol>`
