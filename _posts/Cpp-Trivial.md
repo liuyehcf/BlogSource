@@ -697,7 +697,7 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
 
 * `-l <name>`：增加库文件，查找`lib<name>.a`或者`lib<name>.so`，如果都存在，默认使用`so`版本
 * `-L <dir>`：增加库文件搜索路径，其优先级会高于默认的搜索路径。允许指定多个，搜索顺序与其指定的顺序相同
-* `-rpath=<dir>`：
+* `-rpath=<dir>`：增加运行时库文件搜索路径。举个例子，`main.c`直接依赖`foobar.so`，而`foobar.so`依赖`foo.so`以及`bar.so`，且`foo.so`以及`bar.so`放置在非默认搜索路径中，此时使用`-L`是没用的（编译、链接时期）`gcc -o main main.c -L . -lfoobar -lfoo -lbar`。于是需要这样写`gcc -o main main.c -L . -lfoobar -Wl,-rpath=. -lfoo -lbar`
     * [What's the difference between `-rpath-link` and `-L`?](https://stackoverflow.com/questions/49138195/whats-the-difference-between-rpath-link-and-l)
 * `-Bstatic`：修改默认行为，强制使用静态链接库，只对该参数之后出现的库有效。如果找不到对应的静态库会报错（即便有动态库）
 * `-Bdynamic`：修改默认行为，强制使用动态链接库，只对该参数之后出现的库有效。如果找不到对应的动态库会报错（即便有静态库）
