@@ -94,6 +94,20 @@ say "Salary = $salary";
 1. `Perl`双引号和单引号的区别：双引号可以正常解析一些转义字符与变量，而单引号无法解析会原样输出
 1. 但是用单引号定义可以使用多行文本
 
+#### 3.1.1.1 设置浮点数精度
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my $number = 1.6852517985;
+# 保留两位小数，四舍五入
+my $rounded = sprintf("%.2f",$number);
+
+say $rounded;
+```
+
 ### 3.1.2 特殊字符
 
 1. `__FILE__`：当前脚本文件名
@@ -377,10 +391,10 @@ say "within quote, [@alphabet]";
 
 ### 3.2.10 数组排序
 
-`Perl`中数组排序使用`sort()`函数，语法格式如下：
+`Perl`中数组排序使用`sort`函数，语法格式如下：
 
 * `sort [ SUBROUTINE ] LIST`
-* `SUBROUTINE`：指定规则
+* `SUBROUTINE`：指定规则，默认是`cmp`，会把元素当成字符串处理
 * `LIMIT`：列表或数组
 
 ```perl
@@ -391,8 +405,15 @@ use Modern::Perl;
 my @sites = qw(google taobao youj facebook);
 say "before: @sites";
 
-@sites = sort(@sites);
+@sites = sort @sites;
 say "after: @sites";
+
+my @numbers = (9, 10, 11, 12);
+@numbers = sort @numbers;
+say "numbers(order by cmp): @numbers";
+
+@numbers = sort {$a <=> $b} @numbers;
+say "numbers(order by <=>): @numbers";
 ```
 
 ### 3.2.11 合并数组
@@ -445,10 +466,37 @@ while (my ($index, $value) = each @array) {
 }
 ```
 
+### 3.2.14 用foreach循环数组
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my @array = ('A', 'B', 'C');
+foreach my $value (@array) {
+    say "$value";
+}
+```
+
+### 3.2.15 检测是否包含某个元素
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my @array = ('A', 'B', 'C');
+if ('A' ~~ @array) {
+    say "contains";
+}
+```
+
 ## 3.3 哈希
 
 1. 哈希是一个`key/value`对的集合
-1. 哈希的键值只能是字符串。显然我们能将整数作为哈希键值，这是因为做了隐式转换
+1. 哈希的`key`只能是字符串。显然我们能将整数作为哈希键值，这是因为做了隐式转换
+1. 哈希的`value`只能是`scalar`，如果我们想存储更复杂的类型，可以使用引用
 1. 哈希变量以字符`%`开头
 1. 果要访问哈希值，可以使用`$变量名{键值}`格式来访问
 
@@ -548,8 +596,12 @@ say "google exist" if exists $data{'google'};
 say "google defined" if defined $data{'google'};
 say "amazon not exist" if not exists $data{'amazon'};
 say "amazon not defined" if not defined $data{'amazon'};
-say "wtf exist" if exists $data{'wtf'};
-say "wtf not defined" if not defined $data{'wtf'};
+if (exists $data{'wtf'}) {
+    say "wtf exist";
+}
+if (not defined $data{'wtf'}) {
+    say "wtf not defined";
+}
 ```
 
 ### 3.3.4 获取哈希大小
@@ -599,9 +651,9 @@ $size = @keys;
 say "key size: $size";
 ```
 
-### 3.3.6 用each循环数组
+### 3.3.6 用each循环哈希
 
-在`Perl 5.12`之后，可以用`each`循环数组
+在`Perl 5.12`之后，可以用`each`循环哈希
 
 ```Perl
 use strict;
@@ -746,7 +798,7 @@ my $coderef = sub { say "W3CSchool!" };
 
 ### 3.4.2 解引用
 
-解引用可以根据不同的类型使用`$`、`@`、`%`以及`->`
+解引用可以根据不同的类型使用`$`、`@`、`%`以及`->`，必要时可以用`{}`辅助（`${}`，`@{}`）
 
 ```perl
 use strict;
@@ -771,6 +823,10 @@ my %var = ('key1' => 10, 'key2' => 20);
 $r = \%var;
 say '%$r: ', %$r;
 say '$r->{\'key1\'}: ', $r->{'key1'};
+
+# hash stores array
+my %var = ('key1' => [1, 2, 3], 'key2' => [4, 5, 6]);
+say '@{$var{key1}}: ', @{$var{key2}};
 ```
 
 如果你不能确定变量类型，你可以使用`ref`来判断，返回值列表如下，如果没有以下的值返回`false`
