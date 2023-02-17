@@ -3188,8 +3188,9 @@ set path=.,/usr/include,/usr/local/include,/usr/local/lib/gcc/x86_64-pc-linux-gn
 " 将 .tpp 后缀的文件视为 cpp 文件，这样，针对 cpp 的插件就可以对 .tpp 文件生效了
 autocmd BufRead,BufNewFile *.tpp set filetype=cpp
 
-" 配置perl的格式化，需要用 gg=G 进行格式化
+" 配置 perl 的格式化，需要用 gg=G 进行格式化
 " https://superuser.com/questions/805695/autoformat-for-perl-in-vim
+" 通过 cpan Perl::Tidy 安装 perltidy
 autocmd FileType perl setlocal equalprg=perltidy\ -st
 
 " 加载额外的配置

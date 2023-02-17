@@ -3778,6 +3778,10 @@ say "minute:", $now->minute;
 say "second:", $now->second;
 ```
 
+## 13.7 Perl-Tidy
+
+[Perl-Tidy](https://metacpan.org/dist/Perl-Tidy)是代码格式化工具
+
 # 14 高级特性
 
 ## 14.1 属性
