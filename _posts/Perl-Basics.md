@@ -102,8 +102,9 @@ use warnings;
 use Modern::Perl;
 
 my $number = 1.6852517985;
+
 # 保留两位小数，四舍五入
-my $rounded = sprintf("%.2f",$number);
+my $rounded = sprintf( "%.2f", $number );
 
 say $rounded;
 ```
@@ -156,8 +157,8 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my @ages = (25, 30, 40);             
-my @names = ("google", "youj", "taobao");
+my @ages = ( 25, 30, 40 );             
+my @names = ( "google", "youj", "taobao" );
 
 say "\$ages[0] = $ages[0]";
 say "\$ages[1] = $ages[1]";
@@ -178,12 +179,12 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my @array1 = (1, 2, 'Hello');
+my @array1 = ( 1, 2, 'Hello' );
 my @array2 = qw/this is an array/;
 my @array3 = qw/google
-taobao
-alibaba
-youj/;
+  taobao
+  alibaba
+  youj/;
 ```
 
 此外，数组的创建是贪婪的
@@ -193,7 +194,7 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my (@array1, @array2) = (1, 2, 3, 4, 5);
+my ( @array1, @array2 ) = ( 1, 2, 3, 4, 5 );
 my @array3;
 
 say "array1's size: $#array1";
@@ -214,23 +215,23 @@ use warnings;
 use Modern::Perl;
 
 # create a simple array
-my @coins = ("Quarter", "Dime", "Nickel");
+my @coins = ( "Quarter", "Dime", "Nickel" );
 say "1. \@coins  = @coins";
 
 # add one element at the end of the array
-push(@coins, "Penny");
+push( @coins, "Penny" );
 say "2. \@coins  = @coins";
 
 # add one element at the beginning of the array
-unshift(@coins, "Dollar");
+unshift( @coins, "Dollar" );
 say "3. \@coins  = @coins";
 
 # remove one element from the last of the array.
-pop(@coins);
+pop @coins;
 say "4. \@coins  = @coins";
 
 # remove one element from the beginning of the array.
-shift(@coins);
+shift @coins;
 say "5. \@coins  = @coins";
 ```
 
