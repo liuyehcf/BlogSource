@@ -830,7 +830,7 @@ BM_send_duff    1106143 ns      1106032 ns          636
 #include <unordered_map>
 #include <vector>
 
-int32_t flow_through_map(const std::vector<int32_t>& values) {
+void walk_through_map(const std::vector<int32_t>& values) {
     std::unordered_map<int32_t, int32_t> map;
     for (auto value : values) {
         map[value] = value;
@@ -840,10 +840,10 @@ int32_t flow_through_map(const std::vector<int32_t>& values) {
     for (auto& [key, value] : map) {
         sum += value;
     }
-    return sum;
+    benchmark::DoNotOptimize(sum);
 }
 
-int32_t flow_through_sort(const std::vector<int32_t>& values) {
+void walk_through_sort(const std::vector<int32_t>& values) {
     std::vector<int32_t> ordered(values.begin(), values.end());
     std::sort(ordered.begin(), ordered.end());
     benchmark::DoNotOptimize(ordered);
@@ -851,10 +851,10 @@ int32_t flow_through_sort(const std::vector<int32_t>& values) {
     for (auto& value : ordered) {
         sum += value;
     }
-    return sum;
+    benchmark::DoNotOptimize(sum);
 }
 
-static void flow_through_map(benchmark::State& state) {
+static void walk_through_map(benchmark::State& state) {
     static std::default_random_engine e;
     const auto length = state.range(0);
     const auto cardinality = state.range(1);
@@ -864,11 +864,11 @@ static void flow_through_map(benchmark::State& state) {
         values.push_back(u(e));
     }
     for (auto _ : state) {
-        flow_through_map(values);
+        walk_through_map(values);
     }
 }
 
-static void flow_through_sort(benchmark::State& state) {
+static void walk_through_sort(benchmark::State& state) {
     static std::default_random_engine e;
     const auto length = state.range(0);
     const auto cardinality = state.range(1);
@@ -878,22 +878,33 @@ static void flow_through_sort(benchmark::State& state) {
         values.push_back(u(e));
     }
     for (auto _ : state) {
-        flow_through_sort(values);
+        walk_through_sort(values);
     }
 }
 
-BENCHMARK(flow_through_map)
-        ->Args({1000000, 16})
-        ->Args({1000000, 256})
-        ->Args({1000000, 4096})
-        ->Args({1000000, 262144})
-        ->Args({1000000, 1000000});
-BENCHMARK(flow_through_sort)
-        ->Args({1000000, 16})
-        ->Args({1000000, 256})
-        ->Args({1000000, 4096})
-        ->Args({1000000, 262144})
-        ->Args({1000000, 1000000});
+constexpr size_t length_100K = 100000;
+constexpr size_t length_1M = 1000000;
+constexpr size_t length_10M = 10000000;
+constexpr size_t length_100M = 100000000;
+
+#define BUILD_ARGS(length)                           \
+    ->Args({length, (long)(length * 1)})             \
+            ->Args({length, (long)(length * 0.5)})   \
+            ->Args({length, (long)(length * 0.1)})   \
+            ->Args({length, (long)(length * 0.05)})  \
+            ->Args({length, (long)(length * 0.01)})  \
+            ->Args({length, (long)(length * 0.005)}) \
+            ->Args({length, (long)(length * 0.001)})
+
+#define BUILD_BENCHMARK(name) \
+    BENCHMARK(name)           \
+    BUILD_ARGS(length_100K)   \
+    BUILD_ARGS(length_1M)     \
+    BUILD_ARGS(length_10M)    \
+    BUILD_ARGS(length_100M)
+
+BUILD_BENCHMARK(walk_through_map);
+BUILD_BENCHMARK(walk_through_sort);
 
 BENCHMARK_MAIN();
 ```
@@ -904,19 +915,65 @@ BENCHMARK_MAIN();
 * 当基数较高时，`sort`性能更好
 
 ```
-----------------------------------------------------------------------------
-Benchmark                                  Time             CPU   Iterations
-----------------------------------------------------------------------------
-flow_through_map/1000000/16          8541229 ns      8540535 ns           82
-flow_through_map/1000000/256         8541396 ns      8541035 ns           82
-flow_through_map/1000000/4096        9141229 ns      9140876 ns           77
-flow_through_map/1000000/262144     58265978 ns     58263311 ns           11
-flow_through_map/1000000/1000000   143186230 ns    143182277 ns            5
-flow_through_sort/1000000/16        27675998 ns     27674960 ns           26
-flow_through_sort/1000000/256       37921170 ns     37920118 ns           18
-flow_through_sort/1000000/4096      51091308 ns     51087098 ns           14
-flow_through_sort/1000000/262144    70216801 ns     70212663 ns           10
-flow_through_sort/1000000/1000000   69765520 ns     69758543 ns           10
+--------------------------------------------------------------------------------
+Benchmark                                      Time             CPU   Iterations
+--------------------------------------------------------------------------------
+walk_through_map/100000/100000           8636963 ns      8636513 ns           81
+walk_through_map/100000/50000            6366875 ns      6366535 ns          109
+walk_through_map/100000/10000            1673647 ns      1673538 ns          419
+walk_through_map/100000/5000             1250455 ns      1250342 ns          558
+walk_through_map/100000/1000              923048 ns       922904 ns          758
+walk_through_map/100000/500               882537 ns       882477 ns          792
+walk_through_map/100000/100               853013 ns       852950 ns          820
+walk_through_map/1000000/1000000       143390781 ns    143372481 ns            5
+walk_through_map/1000000/500000        103008123 ns    102991327 ns            7
+walk_through_map/1000000/100000         29208765 ns     29205713 ns           24
+walk_through_map/1000000/50000          20150060 ns     20148346 ns           35
+walk_through_map/1000000/10000           9287158 ns      9286203 ns           75
+walk_through_map/1000000/5000            8815741 ns      8814831 ns           79
+walk_through_map/1000000/1000            8375886 ns      8375070 ns           84
+walk_through_map/10000000/10000000    4002424030 ns   4001833235 ns            1
+walk_through_map/10000000/5000000     2693123212 ns   2692943252 ns            1
+walk_through_map/10000000/1000000     1076483581 ns   1076438325 ns            1
+walk_through_map/10000000/500000       630116707 ns    630089794 ns            1
+walk_through_map/10000000/100000       193023047 ns    192987351 ns            4
+walk_through_map/10000000/50000        157515867 ns    157498497 ns            4
+walk_through_map/10000000/10000         85139131 ns     85128214 ns            8
+walk_through_map/100000000/100000000  5.1183e+10 ns   5.1175e+10 ns            1
+walk_through_map/100000000/50000000   3.9879e+10 ns   3.9871e+10 ns            1
+walk_through_map/100000000/10000000   2.9220e+10 ns   2.9218e+10 ns            1
+walk_through_map/100000000/5000000    2.5468e+10 ns   2.5467e+10 ns            1
+walk_through_map/100000000/1000000    1.7363e+10 ns   1.7362e+10 ns            1
+walk_through_map/100000000/500000     1.3896e+10 ns   1.3894e+10 ns            1
+walk_through_map/100000000/100000     1921860931 ns   1921779584 ns            1
+walk_through_sort/100000/100000          6057105 ns      6056490 ns          118
+walk_through_sort/100000/50000           6036402 ns      6035855 ns          116
+walk_through_sort/100000/10000           5569400 ns      5569251 ns          125
+walk_through_sort/100000/5000            5246500 ns      5246360 ns          133
+walk_through_sort/100000/1000            4401430 ns      4401309 ns          158
+walk_through_sort/100000/500             4070692 ns      4070582 ns          171
+walk_through_sort/100000/100             3353855 ns      3353763 ns          211
+walk_through_sort/1000000/1000000       72202569 ns     72199515 ns           10
+walk_through_sort/1000000/500000        72882608 ns     72880609 ns           10
+walk_through_sort/1000000/100000        67659113 ns     67654984 ns           10
+walk_through_sort/1000000/50000         63923624 ns     63920953 ns           11
+walk_through_sort/1000000/10000         55889055 ns     55886778 ns           12
+walk_through_sort/1000000/5000          53487160 ns     53485651 ns           13
+walk_through_sort/1000000/1000          45948298 ns     45946604 ns           15
+walk_through_sort/10000000/10000000    850539566 ns    850505737 ns            1
+walk_through_sort/10000000/5000000     842845660 ns    842812567 ns            1
+walk_through_sort/10000000/1000000     806016938 ns    805984295 ns            1
+walk_through_sort/10000000/500000      769532280 ns    769496042 ns            1
+walk_through_sort/10000000/100000      688427730 ns    688391316 ns            1
+walk_through_sort/10000000/50000       656184024 ns    656154090 ns            1
+walk_through_sort/10000000/10000       580176790 ns    580159655 ns            1
+walk_through_sort/100000000/100000000 1.0196e+10 ns   1.0195e+10 ns            1
+walk_through_sort/100000000/50000000  9803249176 ns   9802624677 ns            1
+walk_through_sort/100000000/10000000  9383023476 ns   9382273047 ns            1
+walk_through_sort/100000000/5000000   9016790984 ns   9015835565 ns            1
+walk_through_sort/100000000/1000000   8154018906 ns   8153267525 ns            1
+walk_through_sort/100000000/500000    7797706457 ns   7796576221 ns            1
+walk_through_sort/100000000/100000    7080835898 ns   7079696031 ns            1
 ```
 
 # 2 pointer aliasing
