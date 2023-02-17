@@ -110,7 +110,9 @@ int main() {
 
 * `gcc -o main main.cpp -lstdc++ -std=gnu++17 -lfmt`
 
-# 3 [gflag](https://github.com/gflags/gflags)
+# 3 Google
+
+## 3.1 [gflag](https://github.com/gflags/gflags)
 
 **安装`gflag`：**
 
@@ -169,7 +171,7 @@ int main(int argc, char* argv[]) {
 * `gcc -o main main.cpp -lstdc++ -std=gnu++17 -lgflags`
 * `./main --test_bool true --test_int32 100 --test_double 6.666 --test_str hello`
 
-# 4 [glog](https://github.com/google/glog)
+## 3.2 [glog](https://github.com/google/glog)
 
 **安装`glog`：**
 
@@ -194,7 +196,7 @@ find_package(GLOG)
 target_link_libraries(xxx glog::glog)
 ```
 
-## 4.1 打印堆栈
+### 3.2.1 打印堆栈
 
 [[Enhancement] wrap libc's __cxa_throw to print stack trace when throw exceptions](https://github.com/StarRocks/starrocks/pull/13410)
 
@@ -252,7 +254,7 @@ int main(int argc, char* argv[]) {
 gcc -o main main.cpp -Wl,-wrap=__cxa_throw -lstdc++ -std=gnu++17 -Wl,-Bstatic -lglog -lgflags -Wl,-Bdynamic -lunwind -lpthread
 ```
 
-# 5 [gtest](https://github.com/google/googletest)
+## 3.3 [gtest](https://github.com/google/googletest)
 
 **安装`googletest`：**
 
@@ -332,11 +334,11 @@ make
 ./gtest_demo
 ```
 
-## 5.1 Tips
+### 3.3.1 Tips
 
 1. 假设编译得到的二进制是`test`，通过执行`./test --help`就可以看到所有gtest支持的参数，包括执行特定case等等
 
-# 6 [benchmark](https://github.com/google/benchmark)
+## 3.4 [benchmark](https://github.com/google/benchmark)
 
 **安装`benchmark`：**
 
@@ -428,13 +430,13 @@ BM_StringCreation       5.12 ns         5.12 ns    136772962
 BM_StringCopy           21.0 ns         21.0 ns     33441350
 ```
 
-## 6.1 quick-benchmark
+### 3.4.1 quick-benchmark
 
 [quick-bench（在线）](https://quick-bench.com/)
 
-## 6.2 Tips
+### 3.4.2 Tips
 
-### 6.2.1 benchmark::DoNotOptimize
+#### 3.4.2.1 benchmark::DoNotOptimize
 
 避免优化本不应该优化的代码，其源码如下：
 
@@ -448,15 +450,21 @@ inline BENCHMARK_ALWAYS_INLINE void DoNotOptimize(Tp& value) {
 }
 ```
 
-### 6.2.2 运行指定的case
+#### 3.4.2.2 运行指定的case
 
 使用参数`--benchmark_filter=<regexp>`，此外可以使用`--help`查看所有参数
 
-## 6.3 参考
+### 3.4.3 参考
 
 * [benchmark/docs/user_guide.md](https://github.com/google/benchmark/blob/main/docs/user_guide.md)
 * [c++性能测试工具：google benchmark入门（一）](https://www.cnblogs.com/apocelipes/p/10348925.html)
 
-# 7 [parallel-hashmap](https://github.com/greg7mdp/parallel-hashmap)
+## 3.5 [gperftools/gperftools](https://github.com/gperftools/gperftools)
+
+# 4 [parallel-hashmap](https://github.com/greg7mdp/parallel-hashmap)
 
 `parallel-hashmap`提供了一组高性能、并发安全的`map`，用于替换`std`以及`boost`中的`map`
+
+# 5 [cpp-httplib](https://github.com/yhirose/cpp-httplib)
+
+`cpp-httplib`以头文件的方式提供`http`协议的相关支持
