@@ -3879,7 +3879,7 @@ sub erupt_volcano :ScienceProject { ... }
 
 # 17 Best Practice
 
-## 17.1 文本处理
+## 17.1 文本处理-1
 
 ```perl
 use warnings;
@@ -3921,6 +3921,137 @@ my @sorted_lines = sort {$a->[0] <=> $b->[0]} @norm_lines;
 for my $line (@sorted_lines) {
     printf "cost=%d, %s\n", $line->[0], $line->[1];
 }
+```
+
+## 17.2 文本处理-2
+
+```perl
+use warnings;
+use strict;
+use Modern::Perl;
+
+my $fileName = shift or die "missing 'fileName'";
+
+open my $fh, "< $fileName" or die "$!";
+
+my %hash_time;
+my %sort_time;
+
+while (<$fh>) {
+    my @items = split( ' ', $_ );
+    my ( $method, $length, $cardinality ) = split( '/', $items[0] );
+
+    if ( $method eq "walk_through_map" ) {
+        $hash_time{"$length/$cardinality"} = $items[1];
+    }
+    else {
+        $sort_time{"$length/$cardinality"} = $items[1];
+    }
+}
+
+my @triples = sort { $a->[1] <=> $b->[1] || $a->[2] <=> $b->[2] }
+  map { [ $_, split( '/', $_ ) ] } keys %hash_time;
+
+foreach my $triple (@triples) {
+    my $key    = $triple->[0];
+    my $factor = $triple->[2] / $triple->[1];
+    my $ratio  = sprintf( "%.3f", $hash_time{$key} / $sort_time{$key} );
+    say "map/sort($key/$factor) = $ratio";
+}
+```
+
+待处理的文本如下：
+
+```
+walk_through_map/100000/100000           8636963 ns      8636513 ns           81
+walk_through_map/100000/50000            6366875 ns      6366535 ns          109
+walk_through_map/100000/10000            1673647 ns      1673538 ns          419
+walk_through_map/100000/5000             1250455 ns      1250342 ns          558
+walk_through_map/100000/1000              923048 ns       922904 ns          758
+walk_through_map/100000/500               882537 ns       882477 ns          792
+walk_through_map/100000/100               853013 ns       852950 ns          820
+walk_through_map/1000000/1000000       143390781 ns    143372481 ns            5
+walk_through_map/1000000/500000        103008123 ns    102991327 ns            7
+walk_through_map/1000000/100000         29208765 ns     29205713 ns           24
+walk_through_map/1000000/50000          20150060 ns     20148346 ns           35
+walk_through_map/1000000/10000           9287158 ns      9286203 ns           75
+walk_through_map/1000000/5000            8815741 ns      8814831 ns           79
+walk_through_map/1000000/1000            8375886 ns      8375070 ns           84
+walk_through_map/10000000/10000000    4002424030 ns   4001833235 ns            1
+walk_through_map/10000000/5000000     2693123212 ns   2692943252 ns            1
+walk_through_map/10000000/1000000     1076483581 ns   1076438325 ns            1
+walk_through_map/10000000/500000       630116707 ns    630089794 ns            1
+walk_through_map/10000000/100000       193023047 ns    192987351 ns            4
+walk_through_map/10000000/50000        157515867 ns    157498497 ns            4
+walk_through_map/10000000/10000         85139131 ns     85128214 ns            8
+walk_through_map/100000000/100000000  5.1183e+10 ns   5.1175e+10 ns            1
+walk_through_map/100000000/50000000   3.9879e+10 ns   3.9871e+10 ns            1
+walk_through_map/100000000/10000000   2.9220e+10 ns   2.9218e+10 ns            1
+walk_through_map/100000000/5000000    2.5468e+10 ns   2.5467e+10 ns            1
+walk_through_map/100000000/1000000    1.7363e+10 ns   1.7362e+10 ns            1
+walk_through_map/100000000/500000     1.3896e+10 ns   1.3894e+10 ns            1
+walk_through_map/100000000/100000     1921860931 ns   1921779584 ns            1
+walk_through_sort/100000/100000          6057105 ns      6056490 ns          118
+walk_through_sort/100000/50000           6036402 ns      6035855 ns          116
+walk_through_sort/100000/10000           5569400 ns      5569251 ns          125
+walk_through_sort/100000/5000            5246500 ns      5246360 ns          133
+walk_through_sort/100000/1000            4401430 ns      4401309 ns          158
+walk_through_sort/100000/500             4070692 ns      4070582 ns          171
+walk_through_sort/100000/100             3353855 ns      3353763 ns          211
+walk_through_sort/1000000/1000000       72202569 ns     72199515 ns           10
+walk_through_sort/1000000/500000        72882608 ns     72880609 ns           10
+walk_through_sort/1000000/100000        67659113 ns     67654984 ns           10
+walk_through_sort/1000000/50000         63923624 ns     63920953 ns           11
+walk_through_sort/1000000/10000         55889055 ns     55886778 ns           12
+walk_through_sort/1000000/5000          53487160 ns     53485651 ns           13
+walk_through_sort/1000000/1000          45948298 ns     45946604 ns           15
+walk_through_sort/10000000/10000000    850539566 ns    850505737 ns            1
+walk_through_sort/10000000/5000000     842845660 ns    842812567 ns            1
+walk_through_sort/10000000/1000000     806016938 ns    805984295 ns            1
+walk_through_sort/10000000/500000      769532280 ns    769496042 ns            1
+walk_through_sort/10000000/100000      688427730 ns    688391316 ns            1
+walk_through_sort/10000000/50000       656184024 ns    656154090 ns            1
+walk_through_sort/10000000/10000       580176790 ns    580159655 ns            1
+walk_through_sort/100000000/100000000 1.0196e+10 ns   1.0195e+10 ns            1
+walk_through_sort/100000000/50000000  9803249176 ns   9802624677 ns            1
+walk_through_sort/100000000/10000000  9383023476 ns   9382273047 ns            1
+walk_through_sort/100000000/5000000   9016790984 ns   9015835565 ns            1
+walk_through_sort/100000000/1000000   8154018906 ns   8153267525 ns            1
+walk_through_sort/100000000/500000    7797706457 ns   7796576221 ns            1
+walk_through_sort/100000000/100000    7080835898 ns   7079696031 ns            1
+```
+
+输出：
+
+```
+map/sort(100000/100/0.001) = 0.254
+map/sort(100000/500/0.005) = 0.217
+map/sort(100000/1000/0.01) = 0.210
+map/sort(100000/5000/0.05) = 0.238
+map/sort(100000/10000/0.1) = 0.301
+map/sort(100000/50000/0.5) = 1.055
+map/sort(100000/100000/1) = 1.426
+map/sort(1000000/1000/0.001) = 0.182
+map/sort(1000000/5000/0.005) = 0.165
+map/sort(1000000/10000/0.01) = 0.166
+map/sort(1000000/50000/0.05) = 0.315
+map/sort(1000000/100000/0.1) = 0.432
+map/sort(1000000/500000/0.5) = 1.413
+map/sort(1000000/1000000/1) = 1.986
+map/sort(10000000/10000/0.001) = 0.147
+map/sort(10000000/50000/0.005) = 0.240
+map/sort(10000000/100000/0.01) = 0.280
+map/sort(10000000/500000/0.05) = 0.819
+map/sort(10000000/1000000/0.1) = 1.336
+map/sort(10000000/5000000/0.5) = 3.195
+map/sort(10000000/10000000/1) = 4.706
+map/sort(100000000/100000/0.001) = 0.271
+map/sort(100000000/500000/0.005) = 1.782
+map/sort(100000000/1000000/0.01) = 2.129
+map/sort(100000000/5000000/0.05) = 2.825
+map/sort(100000000/10000000/0.1) = 3.114
+map/sort(100000000/50000000/0.5) = 4.068
+map/sort(100000000/100000000/1) = 5.020
 ```
 
 # 18 参考
