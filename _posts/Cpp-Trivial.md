@@ -563,6 +563,103 @@ Total: 100.1 MB
     0.0   0.0% 100.0%    100.0  99.9% void* fallback_impl
 ```
 
+### 3.2.3 Work with http
+
+源码如下：
+
+* [yhirose/cpp-httplib](https://github.com/yhirose/cpp-httplib)
+* `path`是固定，即`/pprof/heap`以及`/pprof/profile`
+    * `/pprof/profile`的实现估计有问题，拿不到预期的结果
+
+```cpp
+#include <gperftools/profiler.h>
+#include <jemalloc/jemalloc.h>
+#include <stdlib.h>
+
+#include <iterator>
+#include <sstream>
+#include <thread>
+
+#include "httplib.h"
+
+uint8_t* alloc_1M() {
+    return new uint8_t[1024 * 1024];
+}
+
+int main(int argc, char** argv) {
+    httplib::Server svr;
+
+    svr.Get("/pprof/heap", [](const httplib::Request&, httplib::Response& res) {
+        std::stringstream fname;
+        fname << "./heap." << getpid() << "." << rand();
+        auto fname_str = fname.str();
+        const char* fname_cstr = fname_str.c_str();
+
+        std::string content;
+        if (mallctl("prof.dump", nullptr, nullptr, &fname_cstr, sizeof(const char*)) == 0) {
+            std::ifstream f(fname_cstr);
+            content = std::string(std::istreambuf_iterator<char>(f), std::istreambuf_iterator<char>());
+        } else {
+            content = "dump jemalloc prof file failed";
+        }
+
+        res.set_content(content, "text/plain");
+    });
+
+    svr.Get("/pprof/profile", [](const httplib::Request& req, httplib::Response& res) {
+        int seconds = 30;
+        const std::string& seconds_str = req.get_param_value("seconds");
+        if (!seconds_str.empty()) {
+            seconds = std::atoi(seconds_str.c_str());
+        }
+
+        std::ostringstream fname;
+        fname << "./profile." << getpid() << "." << rand();
+        auto fname_str = fname.str();
+        const char* fname_cstr = fname_str.c_str();
+
+        ProfilerStart(fname_cstr);
+        sleep(seconds);
+        ProfilerStop();
+
+        std::ifstream f(fname_cstr, std::ios::in);
+        std::string content;
+        if (f.is_open()) {
+            content = std::string(std::istreambuf_iterator<char>(f), std::istreambuf_iterator<char>());
+        } else {
+            content = "dump jemalloc prof file failed";
+        }
+
+        res.set_content(content, "text/plain");
+    });
+
+    std::thread t_alloc([]() {
+        while (true) {
+            alloc_1M();
+            sleep(1);
+        }
+    });
+
+    svr.listen("0.0.0.0", 16691);
+
+    return 0;
+}
+```
+
+编译运行：
+
+```sh
+gcc -o main main.cpp -O0 -lstdc++ -std=gnu++17 -L`jemalloc-config --libdir` -Wl,-rpath,`jemalloc-config --libdir` -ljemalloc `jemalloc-config --libs` -lprofiler
+MALLOC_CONF=prof_leak:true,lg_prof_sample:0,prof_final:true ./main
+
+# 另一个终端中执行下面命令
+jeprof main localhost:16691/pprof/heap # 交互式
+jeprof main localhost:16691/pprof/heap --text #文本
+jeprof main localhost:16691/pprof/heap --svg > main.svg #图形
+
+jeprof main localhost:16691/pprof/profile --text --seconds=15
+```
+
 ## 3.3 [mimalloc](https://github.com/microsoft/mimalloc)
 
 ## 3.4 对比

@@ -665,3 +665,9 @@ FROM (SELECT * FROM S LEFT OUTER JOIN R ON s1 = r1)a GROUP BY r1;
 
 * `Q1.1`和`Q1.2`可以产生相同的输出，因为聚合函数`sum`对于`NULL`分组可以正常产生`NULL`值
 * `Q2.1`和`Q2.2`无法产生相同的输出，因为聚合函数`count`对于`NULL`分组会输出`0`或`1`。因此这里我们通过`case when`语句来对输出列进行改写`Q2.3`，以达到纠正的目的
+
+# 4 Property
+
+## 4.1 HashProperty
+
+`Shuffle by v1`可以满足`Shuffle by v1, v2`，只不过到了每个节点后，还需要再对`v2`进行一次shuffle
