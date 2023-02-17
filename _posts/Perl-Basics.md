@@ -416,6 +416,22 @@ say "numbers(order by cmp): @numbers";
 say "numbers(order by <=>): @numbers";
 ```
 
+更复杂的场景是，数组的元素是另一个复杂类型的引用，需要用多个字段进行排序，此时我们可以通过`||`来连接多个排序规则，示例如下：
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my @pairs = ( [ 1, 2 ], [ 5, 6 ], [ 5, 2 ], [ 2, 3 ], [ 1, 5 ] );
+
+my @ordered_pairs = sort { $a->[0] <=> $b->[0] || $a->[1] <=> $b->[1] } @pairs;
+
+foreach my $pair (@ordered_pairs) {
+    say "@{$pair}";
+}
+```
+
 ### 3.2.11 合并数组
 
 数组的元素是以逗号来分割，我们也可以使用逗号来合并数组
@@ -697,7 +713,7 @@ foreach my $key (keys %data) {
 }
 ```
 
-### 3.3.9 排序
+### 3.3.9 哈希间接排序
 
 `sort`仅能排序数组，而无法直接排序`hash`（`hash`的顺序是由其内部的具体实现确定的），我们可以通过如下方式进行排序
 
