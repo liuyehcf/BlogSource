@@ -2455,7 +2455,7 @@ use Modern::Perl;
 my $phone_number = qr/[0-9]{8}/;
 my $contact_info = 'CN-88888888';
 
-if ($contact_info =~ /(?<phone>$phone_number)/) {
+if ( $contact_info =~ /(?<phone>$phone_number)/ ) {
     say "Found a number $+{phone}";
 }
 ```
@@ -2478,7 +2478,7 @@ use Modern::Perl;
 my $phone_number = qr/[0-9]{8}/;
 my $contact_info = 'CN-88888888';
 
-if ($contact_info =~ /($phone_number)/) {
+if ( $contact_info =~ /($phone_number)/ ) {
     say "Found a number $1";
 }
 ```
@@ -2490,11 +2490,11 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my $country = qr/[a-zA-Z]+/;
+my $country      = qr/[a-zA-Z]+/;
 my $phone_number = qr/[0-9]{8}/;
 my $contact_info = 'CN-88888888';
 
-if (my ($c, $p) = $contact_info =~ /($country)-($phone_number)/) {
+if ( my ( $c, $p ) = $contact_info =~ /($country)-($phone_number)/ ) {
     say "$c: $p";
 }
 ```
@@ -2511,9 +2511,9 @@ use Test::More tests => 3;
 
 my $r = qr/^rice|beans$/;
 
-like('rice', $r, 'Match rice');
-like('beans', $r, 'Match beans');
-like('ricbeans', $r, 'Match weird hybrid');
+like( 'rice',     $r, 'Match rice' );
+like( 'beans',    $r, 'Match beans' );
+like( 'ricbeans', $r, 'Match weird hybrid' );
 ```
 
 注意到，`rice|beans`也可以表示`ric + e|b + eans`。为了避免混淆，可以加上括号
@@ -2526,9 +2526,9 @@ use Test::More tests => 3;
 
 my $r = qr/^(rice|beans)$/;
 
-like('rice', $r, 'Match rice');
-like('beans', $r, 'Match beans');
-unlike('ricbeans', $r, 'Unmatch weird hybrid');
+like( 'rice',  $r, 'Match rice' );
+like( 'beans', $r, 'Match beans' );
+unlike( 'ricbeans', $r, 'Unmatch weird hybrid' );
 ```
 
 或者，使用`(?:...)`，如下：
@@ -2541,9 +2541,9 @@ use Test::More tests => 3;
 
 my $r = qr/^(?:rice|beans)$/;
 
-like('rice', $r, 'Match rice');
-like('beans', $r, 'Match beans');
-unlike('ricbeans', $r, 'Unmatch weird hybrid');
+like( 'rice',  $r, 'Match rice' );
+like( 'beans', $r, 'Match beans' );
+unlike( 'ricbeans', $r, 'Unmatch weird hybrid' );
 ```
 
 ## 7.8 断言
@@ -2573,12 +2573,12 @@ my $r3 = qr/some(?=thing)/;
 my $r4 = qr/(?<!some)thing/;
 my $r5 = qr/(?<=some)thing/;
 
-like('abcd', $r1, 'exactly abcd');
-unlike('abcde', $r1, 'not exactly abcd');
-unlike('something', $r2, 'some is immediately followed by thing');
-like('something', $r3, 'some is immediately followed by thing');
-unlike('something', $r4, 'some is immediately before thing');
-like('something', $r5, 'some is immediately before thing');
+like( 'abcd', $r1, 'exactly abcd' );
+unlike( 'abcde',     $r1, 'not exactly abcd' );
+unlike( 'something', $r2, 'some is immediately followed by thing' );
+like( 'something', $r3, 'some is immediately followed by thing' );
+unlike( 'something', $r4, 'some is immediately before thing' );
+like( 'something', $r5, 'some is immediately before thing' );
 ```
 
 ## 7.9 循环匹配
@@ -2599,7 +2599,7 @@ my $contents = '
 021-11117789
 ';
 
-while ($contents =~ /\G.*?(\d{3, 4})-(\d{8}).*?/gs) {
+while ( $contents =~ /\G.*?(\d{3, 4})-(\d{8}).*?/gs ) {
     say "area num: $1, number: $2";
 }
 ```
@@ -2647,14 +2647,17 @@ use Modern::Perl;
 
 {
     our $scope;
+
     sub inner {
         say $scope;
     }
+
     sub main {
         say $scope;
         local $scope = 'main() scope';
         middle();
     }
+
     sub middle {
         say $scope;
         inner();
@@ -2754,8 +2757,8 @@ use strict qw( subs vars );
 ```perl
 BEGIN {
     require strict;
-    strict->import( 'refs' );
-    strict->import( qw( subs vars ) );
+    strict->import('refs');
+    strict->import(qw( subs vars ));
 }
 ```
 
@@ -2793,8 +2796,10 @@ use warnings;
 use Modern::Perl;
 
 {
+
     package Cat;
     use Moose;
+
     sub meow {
         my $self = shift;
         say 'Meow!';
@@ -2826,9 +2831,10 @@ use warnings;
 use Modern::Perl;
 
 {
+
     package Cat;
     use Moose;
-    has 'name' => (is => 'ro', isa => 'Str');
+    has 'name' => ( is => 'ro', isa => 'Str' );
 }
 
 for my $name (qw( Tuxie Petunia Daisy )) {
@@ -2862,14 +2868,16 @@ use warnings;
 use Modern::Perl;
 
 {
+
     package Cat;
     use Moose;
-    has 'name' => (is => 'ro', isa => 'Str');
-    has 'diet' => (is => 'rw', isa => 'Str');
-    has 'birth_year' => (is => 'ro', isa => 'Int', default => sub { (localtime)[5] + 1900 });
+    has 'name' => ( is => 'ro', isa => 'Str' );
+    has 'diet' => ( is => 'rw', isa => 'Str' );
+    has 'birth_year' =>
+      ( is => 'ro', isa => 'Int', default => sub { (localtime)[5] + 1900 } );
 }
 
-my $cat = Cat->new( name => "Tuxie", diet => "Junk Food");
+my $cat = Cat->new( name => "Tuxie", diet => "Junk Food" );
 say $cat->birth_year();
 ```
 
@@ -2891,18 +2899,21 @@ use warnings;
 use Modern::Perl;
 
 {
+
     package LivingBeing;
     use Moose::Role;
     requires qw( name age diet );
 }
 
 {
+
     package Cat;
     use Moose;
-    has 'name' => (is => 'ro', isa => 'Str');
-    has 'diet' => (is => 'rw', isa => 'Str');
-    has 'birth_year' => (is => 'ro', isa => 'Int', default => (localtime)[5] + 1900);
-    
+    has 'name' => ( is => 'ro', isa => 'Str' );
+    has 'diet' => ( is => 'rw', isa => 'Str' );
+    has 'birth_year' =>
+      ( is => 'ro', isa => 'Int', default => (localtime)[5] + 1900 );
+
     with 'LivingBeing';
 
     sub age {
@@ -2912,8 +2923,8 @@ use Modern::Perl;
     }
 }
 
-my $fluffy = Cat->new( name => "Fluffy", diet => "Junk Food");
-my $cheese = Cat->new( name => "Cheese", diet => "Junk Food");
+my $fluffy = Cat->new( name => "Fluffy", diet => "Junk Food" );
+my $cheese = Cat->new( name => "Cheese", diet => "Junk Food" );
 
 say 'Alive!' if $fluffy->DOES('LivingBeing');
 say 'Moldy!' if $cheese->DOES('LivingBeing');
@@ -2927,15 +2938,19 @@ use warnings;
 use Modern::Perl;
 
 {
+
     package LivingBeing;
     use Moose::Role;
     requires qw( name age diet );
 }
 
 {
+
     package CalculateAge::From::BirthYear;
     use Moose::Role;
-    has 'birth_year' => (is => 'ro', isa => 'Int', default => sub { (localtime)[5] + 1900 });
+    has 'birth_year' =>
+      ( is => 'ro', isa => 'Int', default => sub { (localtime)[5] + 1900 } );
+
     sub age {
         my $self = shift;
         my $year = (localtime)[5] + 1900;
@@ -2944,16 +2959,17 @@ use Modern::Perl;
 }
 
 {
+
     package Cat;
     use Moose;
-    has 'name' => (is => 'ro', isa => 'Str');
-    has 'diet' => (is => 'rw', isa => 'Str');
-    
+    has 'name' => ( is => 'ro', isa => 'Str' );
+    has 'diet' => ( is => 'rw', isa => 'Str' );
+
     with 'LivingBeing', 'CalculateAge::From::BirthYear';
 }
 
-my $fluffy = Cat->new( name => "Fluffy", diet => "Junk Food");
-my $cheese = Cat->new( name => "Cheese", diet => "Junk Food");
+my $fluffy = Cat->new( name => "Fluffy", diet => "Junk Food" );
+my $cheese = Cat->new( name => "Cheese", diet => "Junk Food" );
 
 say 'Alive!' if $fluffy->DOES('LivingBeing');
 say 'Moldy!' if $cheese->DOES('LivingBeing');
@@ -2976,14 +2992,18 @@ use warnings;
 use Modern::Perl;
 
 {
+
     package LightSource;
     use Moose;
-    has 'candle_power' => (is => 'ro', isa => 'Int', default => 1);
-    has 'enabled' => (is => 'ro', isa => 'Bool', default => 0, writer => '_set_enabled');
+    has 'candle_power' => ( is => 'ro', isa => 'Int', default => 1 );
+    has 'enabled' =>
+      ( is => 'ro', isa => 'Bool', default => 0, writer => '_set_enabled' );
+
     sub light {
         my $self = shift;
         $self->_set_enabled(1);
     }
+
     sub extinguish {
         my $self = shift;
         $self->_set_enabled(0);
@@ -2991,38 +3011,42 @@ use Modern::Perl;
 }
 
 {
+
     package LightSource::SuperCandle;
     use Moose;
     extends 'LightSource';
-    has '+candle_power' => (default => 100);
+    has '+candle_power' => ( default => 100 );
 }
 
 {
+
     package LightSource::Glowstick;
     use Moose;
     extends 'LightSource';
-    sub extinguish {}
+    sub extinguish { }
 }
 
 {
+
     package LightSource::Cranky;
     use Carp;
     use Moose;
     extends 'LightSource';
     override light => sub {
         my $self = shift;
-        Carp::carp( "Can't light a lit light source!" ) if $self->enabled;
+        Carp::carp("Can't light a lit light source!") if $self->enabled;
         super();
     };
     override extinguish => sub {
         my $self = shift;
-        Carp::carp( "Can't extinguish an unlit light source!" ) unless $self->enabled;
+        Carp::carp("Can't extinguish an unlit light source!")
+          unless $self->enabled;
         super();
     };
 }
 
 my $sconce = LightSource::Glowstick->new();
-say 'Looks like a LightSource' if $sconce->isa( 'LightSource' );
+say 'Looks like a LightSource' if $sconce->isa('LightSource');
 ```
 
 当有多个父类都提供了同一个方法时，`Perl`的分派策略（`perldoc mro`）：查找第一个父类（递归查找父类的父类）的方法，再查找第二个父类，直到找到方法
@@ -3064,10 +3088,12 @@ use warnings;
 use Modern::Perl;
 
 {
+
     package Person;
+
     sub new {
         my $class = shift;
-        my $self = {
+        my $self  = {
             _firstName => shift,
             _lastName  => shift,
             _ssn       => shift,
@@ -3081,7 +3107,7 @@ use Modern::Perl;
     }
 }
 
-my $object = new Person( "Bruce", "Lee", 23234345);
+my $object = new Person( "Bruce", "Lee", 23234345 );
 ```
 
 ### 10.6.4 定义方法
@@ -3096,10 +3122,12 @@ use warnings;
 use Modern::Perl;
 
 {
+
     package Person;
+
     sub new {
         my $class = shift;
-        my $self = {
+        my $self  = {
             _firstName => shift,
             _lastName  => shift,
             _ssn       => shift,
@@ -3119,12 +3147,12 @@ use Modern::Perl;
     }
 
     sub getFirstName {
-        my( $self ) = @_;
+        my ($self) = @_;
         return $self->{_firstName};
     }
 }
 
-my $object = new Person( "Bruce", "Lee", 23234345);
+my $object    = new Person( "Bruce", "Lee", 23234345 );
 my $firstName = $object->getFirstName();
 say "firstName: $firstName";
 
@@ -3146,10 +3174,12 @@ use warnings;
 use Modern::Perl;
 
 {
+
     package Person;
+
     sub new {
         my $class = shift;
-        my $self = {
+        my $self  = {
             _firstName => shift,
             _lastName  => shift,
             _ssn       => shift,
@@ -3169,17 +3199,18 @@ use Modern::Perl;
     }
 
     sub getFirstName {
-        my( $self ) = @_;
+        my ($self) = @_;
         return $self->{_firstName};
     }
 }
 
 {
+
     package Employee;
     our @ISA = qw(Person);
 }
 
-my $object = new Employee( "Bruce", "Lee", 23234345);
+my $object    = new Employee( "Bruce", "Lee", 23234345 );
 my $firstName = $object->getFirstName();
 say "firstName: $firstName";
 
@@ -3197,10 +3228,12 @@ use warnings;
 use Modern::Perl;
 
 {
+
     package Person;
+
     sub new {
         my $class = shift;
-        my $self = {
+        my $self  = {
             _firstName => shift,
             _lastName  => shift,
             _ssn       => shift,
@@ -3220,12 +3253,13 @@ use Modern::Perl;
     }
 
     sub getFirstName {
-        my( $self ) = @_;
+        my ($self) = @_;
         return $self->{_firstName};
     }
 }
 
 {
+
     package Employee;
     our @ISA = qw(Person);
 
@@ -3234,14 +3268,14 @@ use Modern::Perl;
 
         my $self = $class->SUPER::new( $_[1], $_[2], $_[3] );
 
-        $self->{_id}   = undef;
+        $self->{_id}    = undef;
         $self->{_title} = undef;
         bless $self, $class;
         return $self;
     }
 
     sub getFirstName {
-        my( $self ) = @_;
+        my ($self) = @_;
         say "Employee::getFirstName";
         return $self->{_firstName};
     }
@@ -3253,12 +3287,12 @@ use Modern::Perl;
     }
 
     sub getLastName {
-        my( $self ) = @_;
+        my ($self) = @_;
         return $self->{_lastName};
     }
 }
 
-my $object = new Employee( "Bruce", "Lee", 23234345);
+my $object    = new Employee( "Bruce", "Lee", 23234345 );
 my $firstName = $object->getFirstName();
 say "firstName: $firstName";
 
@@ -3341,7 +3375,7 @@ second: ^<<<<<
     $text
 # left align, length is 5
 third: ^<<<<
-    $text  
+    $text
 .
 write
 ```
@@ -3405,8 +3439,8 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my @nums = (1, 123.456, 0.78999);
-format STDOUT = 
+my @nums = ( 1, 123.456, 0.78999 );
+format STDOUT =
 @##
 $nums[0]
 @###.####
@@ -3429,35 +3463,35 @@ write
 ```perl
 format EMPLOYEE =
 ===================================
-@<<<<<<<<<<<<<<<<<<<<<< @<< 
+@<<<<<<<<<<<<<<<<<<<<<< @<<
 $name, $age
 @#####.##
 $salary
 ===================================
 .
 
-# add paging $% 
+# add paging $%
 format EMPLOYEE_TOP =
 ===================================
 Name                    Age Page @<
                                  $%
-=================================== 
+===================================
 .
 
 select(STDOUT);
 $~ = EMPLOYEE;
 $^ = EMPLOYEE_TOP;
 
-@n = ("Ali", "W3CSchool", "Jaffer");
-@a = (20,30, 40);
-@s = (2000.00, 2500.00, 4000.000);
+@n = ( "Ali",   "W3CSchool", "Jaffer" );
+@a = ( 20,      30,          40 );
+@s = ( 2000.00, 2500.00,     4000.000 );
 
 $i = 0;
 foreach (@n) {
-   $name = $_;
-   $age = $a[$i];
-   $salary = $s[$i++];
-   write;
+    $name   = $_;
+    $age    = $a[$i];
+    $salary = $s[ $i++ ];
+    write;
 }
 ```
 
@@ -3470,7 +3504,7 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-if (open(MYFILE, ">tmp")) {
+if ( open( MYFILE, ">tmp" ) ) {
     $~ = "MYFORMAT";
     write MYFILE;
 
@@ -3490,8 +3524,8 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-if (open(MYFILE, ">>tmp")) {
-    select (MYFILE);
+if ( open( MYFILE, ">>tmp" ) ) {
+    select(MYFILE);
     $~ = "OTHER";
     write;
 
@@ -3499,7 +3533,7 @@ if (open(MYFILE, ">>tmp")) {
 =================================
   使用定义的格式输入到文件中
 =================================
-. 
+.
     close MYFILE;
 }
 ```
@@ -3610,10 +3644,8 @@ use Modern::Perl;
 open my $out_fh, '>', 'output_file.txt';
 print $out_fh "Here's a line of text\n";
 say $out_fh "... and here's another";
-my $config = {
-    output => $out_fh
-};
-say {$config->{output}} "... and here's another2";
+my $config = { output => $out_fh };
+say { $config->{output} } "... and here's another2";
 
 close $out_fh;
 ```
@@ -3627,7 +3659,7 @@ use Modern::Perl;
 use FileHandle;
 
 open my $fh, '>', 'pecan.log';
-$fh->autoflush( 1 );
+$fh->autoflush(1);
 ```
 
 ## 12.3 目录
@@ -3643,7 +3675,7 @@ use Modern::Perl;
 
 # iteration
 opendir my $dirh, '.';
-while (my $file = readdir $dirh) {
+while ( my $file = readdir $dirh ) {
     say "filename: $file";
 }
 closedir $dirh;
@@ -3700,9 +3732,9 @@ use warnings;
 use Modern::Perl;
 use Test::More tests => 7;
 
-ok( 1, 'the number one should be true' );
-ok( ! 0, '... and the number zero should not' );
-ok( ! '', 'the empty string should be false' );
+ok( 1,   'the number one should be true' );
+ok( !0,  '... and the number zero should not' );
+ok( !'', 'the empty string should be false' );
 ok( '!', '... and a non-empty string should not' );
 
 is( 4, 2 + 2, 'addition should hold steady across the universe' );
@@ -3710,9 +3742,10 @@ isnt( 'pancake', 100, 'pancakes should have a delicious numeric value' );
 
 {
     use Clone;
-    my $numbers = [ 4, 8, 15, 16, 23, 42 ];
-    my $clonenums = Clone::clone( $numbers );
-    is_deeply( $numbers, $clonenums, 'Clone::clone() should produce identical structures' );
+    my $numbers   = [ 4, 8, 15, 16, 23, 42 ];
+    my $clonenums = Clone::clone($numbers);
+    is_deeply( $numbers, $clonenums,
+        'Clone::clone() should produce identical structures' );
 }
 
 done_testing();
@@ -3729,12 +3762,12 @@ use Modern::Perl;
 use Carp;
 
 sub only_two_arguments {
-    my ($lop, $rop) = @_;
-    Carp::carp( 'Too many arguments provided' ) if @_ > 2;
+    my ( $lop, $rop ) = @_;
+    Carp::carp('Too many arguments provided') if @_ > 2;
 }
 
-my ($first, $second, $third) = (1, 2, 3);
-only_two_arguments($first, $second, $third);
+my ( $first, $second, $third ) = ( 1, 2, 3 );
+only_two_arguments( $first, $second, $third );
 ```
 
 ## 13.3 Path
@@ -3747,15 +3780,15 @@ use warnings;
 use Modern::Perl;
 use Path::Class;
 
-my $dir  = dir('foo', 'bar');       # Path::Class::Dir object
-my $file = file('bob', 'file.txt'); # Path::Class::File object
+my $dir  = dir( 'foo', 'bar' );          # Path::Class::Dir object
+my $file = file( 'bob', 'file.txt' );    # Path::Class::File object
 
 say "dir: $dir";
 say "file: $file";
 
-my $subdir  = $dir->subdir('baz');  # foo/bar/baz
-my $parent  = $subdir->parent;      # foo/bar
-my $parent2 = $parent->parent;      # foo
+my $subdir  = $dir->subdir('baz');       # foo/bar/baz
+my $parent  = $subdir->parent;           # foo/bar
+my $parent2 = $parent->parent;           # foo
 
 say "subdir: $subdir";
 say "parent: $parent";
@@ -3787,7 +3820,7 @@ use File::Spec;
 use File::Basename;
 
 my $path = File::Spec->rel2abs(__FILE__);
-my ($vol, $dir, $file) = File::Spec->splitpath($path);
+my ( $vol, $dir, $file ) = File::Spec->splitpath($path);
 
 say "path: $path";
 say "vol: $vol";
@@ -3808,9 +3841,10 @@ use warnings;
 use Modern::Perl;
 
 my @months = qw( 一月 二月 三月 四月 五月 六月 七月 八月 九月 十月 十一月 十二月 );
-my @days = qw(星期天 星期一 星期二 星期三 星期四 星期五 星期六);
+my @days   = qw(星期天 星期一 星期二 星期三 星期四 星期五 星期六);
 
-my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime();
+my ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst ) =
+  localtime();
 say "$mday $months[$mon] $days[$wday]";
 ```
 
@@ -3823,12 +3857,12 @@ use Modern::Perl;
 use Time::Piece;
 
 my $now = Time::Piece->new();
-say "year:", $now->year;
-say "mon:", $now->month;
+say "year:",         $now->year;
+say "mon:",          $now->month;
 say "day_of_month:", $now->day_of_month;
-say "hour:", $now->hour;
-say "minute:", $now->minute;
-say "second:", $now->second;
+say "hour:",         $now->hour;
+say "minute:",       $now->minute;
+say "second:",       $now->second;
 ```
 
 ## 13.7 Perl-Tidy
@@ -3945,36 +3979,41 @@ use Modern::Perl;
 use List::Util qw(min max sum);
 use Data::Dumper;
 
-my $fileName=shift or die "missing 'fileName'";
-my $indexName=shift or die "missing 'indexName'";
+my $fileName  = shift or die "missing 'fileName'";
+my $indexName = shift or die "missing 'indexName'";
 
 open my $fh, "< $fileName" or die "$!";
-my $indexNamePat0=qr/\b$indexName\b/;
-my $indexNamePat1=qr/\b$indexName\b\s*:\s*(\d+(?:\.\d+)?)(ns|us|ms)/;
-my $indexNamePat2=qr/\b$indexName\b\s*:\s*(\d+)s(\d+)ms/;
-sub norm_time1($$){
-    my ($n,$u)=@_;
-    if ($u eq "ns") {
-        return $n/1000000000.0;
-    } elsif ($u eq "us") {
-        return $n/1000000.0;
-    } elsif ($u eq "ms") {
+my $indexNamePat0 = qr/\b$indexName\b/;
+my $indexNamePat1 = qr/\b$indexName\b\s*:\s*(\d+(?:\.\d+)?)(ns|us|ms)/;
+my $indexNamePat2 = qr/\b$indexName\b\s*:\s*(\d+)s(\d+)ms/;
+
+sub norm_time1($$) {
+    my ( $n, $u ) = @_;
+    if ( $u eq "ns" ) {
+        return $n / 1000000000.0;
+    } elsif ( $u eq "us" ) {
+        return $n / 1000000.0;
+    } elsif ( $u eq "ms" ) {
         return $n;
     } else {
-        return $n*1000.0;
+        return $n * 1000.0;
     }
 }
+
 sub norm_time2($$) {
-    my ($sec, $ms)=@_;
-    return $sec*1000.0+$ms;
+    my ( $sec, $ms ) = @_;
+    return $sec * 1000.0 + $ms;
 }
 
-my @lines0=map {chomp;$_} <$fh>;
-my @lines=grep {/$indexNamePat0/} map {$_.":".$lines0[$_-1]} 1..scalar(@lines0);
-my @norm_lines1=map {/$indexNamePat1/;[norm_time1($1, $2), $_]} grep {/$indexNamePat1/} @lines;
-my @norm_lines2=map {/$indexNamePat2/;[norm_time2($1, $2), $_]} grep {/$indexNamePat2/} @lines;
-my @norm_lines=(@norm_lines1, @norm_lines2);
-my @sorted_lines = sort {$a->[0] <=> $b->[0]} @norm_lines;
+my @lines0 = map  { chomp; $_ } <$fh>;
+my @lines  = grep { /$indexNamePat0/ }
+  map { $_ . ":" . $lines0[ $_ - 1 ] } 1 .. scalar(@lines0);
+my @norm_lines1 = map { /$indexNamePat1/; [ norm_time1( $1, $2 ), $_ ] }
+  grep { /$indexNamePat1/ } @lines;
+my @norm_lines2 = map { /$indexNamePat2/; [ norm_time2( $1, $2 ), $_ ] }
+  grep { /$indexNamePat2/ } @lines;
+my @norm_lines   = ( @norm_lines1, @norm_lines2 );
+my @sorted_lines = sort { $a->[0] <=> $b->[0] } @norm_lines;
 for my $line (@sorted_lines) {
     printf "cost=%d, %s\n", $line->[0], $line->[1];
 }
@@ -4000,8 +4039,7 @@ while (<$fh>) {
 
     if ( $method eq "walk_through_map" ) {
         $hash_time{"$length/$cardinality"} = $items[1];
-    }
-    else {
+    } else {
         $sort_time{"$length/$cardinality"} = $items[1];
     }
 }
