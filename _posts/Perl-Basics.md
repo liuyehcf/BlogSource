@@ -2051,7 +2051,7 @@ sub PrintCount {
 }
 
 for ( 1 .. 5 ) {
-    PrintCount;
+    PrintCount();
 }
 ```
 
