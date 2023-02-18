@@ -1223,7 +1223,7 @@ switch(argument){
 ### 4.2.1 while
 
 ```perl
-while(condition) {
+while (condition) {
     statement(s);
 }
 ```
@@ -1231,7 +1231,7 @@ while(condition) {
 ### 4.2.2 until
 
 ```perl
-until(condition) {
+until (condition) {
     statement(s);
 }
 ```
@@ -1239,7 +1239,7 @@ until(condition) {
 ### 4.2.3 for
 
 ```perl
-for(init; condition; increment){
+for (init; condition; increment) {
     statement(s);
 }
 ```
@@ -1257,7 +1257,7 @@ foreach var (list) {
 ```perl
 do {
     statement(s);
-} while(condition);
+} while (condition);
 ```
 
 ## 4.3 循环控制语句
@@ -1272,10 +1272,10 @@ use warnings;
 use Modern::Perl;
 
 my $a = 10;
-while ($a < 20) {
-    if ( $a == 15) {
-       $a = $a + 1;
-       next;
+while ( $a < 20 ) {
+    if ( $a == 15 ) {
+        $a = $a + 1;
+        next;
     }
     say "a: $a";
     $a = $a + 1;
@@ -1292,10 +1292,10 @@ use warnings;
 use Modern::Perl;
 
 my $a = 10;
-while ($a < 20) {
-    if ($a == 15) {
-       $a = $a + 1;
-       last;
+while ( $a < 20 ) {
+    if ( $a == 15 ) {
+        $a = $a + 1;
+        last;
     }
     say "a: $a";
     $a = $a + 1;
@@ -1313,7 +1313,7 @@ while (condition) {
     statement(s);
 }
 
-foreach $a (@listA) {
+foreach my $a (@listA) {
     statement(s);
 } continue {
     statement(s);
@@ -1326,7 +1326,7 @@ use warnings;
 use Modern::Perl;
 
 my $a = 0;
-while ($a < 3) {
+while ( $a < 3 ) {
     say "a: $a";
 } continue {
     $a = $a + 1;
@@ -1338,7 +1338,7 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my @list = (1, 2, 3, 4, 5);
+my @list = ( 1, 2, 3, 4, 5 );
 foreach $a (@list) {
     say "a: $a";
 } continue {
@@ -1356,10 +1356,10 @@ use warnings;
 use Modern::Perl;
 
 my $a = 0;
-while ($a < 10) {
-    if($a == 5) {
-      $a = $a + 1;
-      redo;
+while ( $a < 10 ) {
+    if ( $a == 5 ) {
+        $a = $a + 1;
+        redo;
     }
     say "a: $a";
 } continue {
@@ -1381,15 +1381,14 @@ use warnings;
 use Modern::Perl;
 
 my $a = 10;
-LOOP:do
-{
-    if ($a == 15) {
-       $a = $a + 1;
-       goto LOOP;
+LOOP: do {
+    if ( $a == 15 ) {
+        $a = $a + 1;
+        goto LOOP;
     }
     say "a = $a";
     $a = $a + 1;
-} while ($a < 20);
+} while ( $a < 20 );
 ```
 
 ```perl
@@ -1397,20 +1396,20 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my $a = 10;
+my $a    = 10;
 my $str1 = "LO";
 my $str2 = "OP";
 
-LOOP:do
-{
-    if ($a == 15) {
-       $a = $a + 1;
-       # equal with goto LOOP;
-       goto $str1.$str2;
+LOOP: do {
+    if ( $a == 15 ) {
+        $a = $a + 1;
+
+        # equal with goto LOOP;
+        goto $str1 . $str2;
     }
     say "a = $a";
     $a = $a + 1;
-} while ($a < 20);
+} while ( $a < 20 );
 ```
 
 ## 4.4 指令
@@ -1473,7 +1472,7 @@ say '$a % $b = ' . $c;
 
 $a = 2;
 $b = 4;
-$c = $a ** $b;
+$c = $a**$b;
 say '$a ** $b = ' . $c;
 ```
 
@@ -1500,13 +1499,13 @@ my $b = 20;
 
 say "\$a = $a , \$b = $b";
 
-if ($a == $b) {
+if ( $a == $b ) {
     say "$a == \$b => true";
 } else {
     say "\$a == \$b => false";
 }
 
-if ($a != $b) {
+if ( $a != $b ) {
     say "\$a != \$b => true";
 } else {
     say "\$a != \$b => false";
@@ -1515,25 +1514,25 @@ if ($a != $b) {
 my $c = $a <=> $b;
 say "\$a <=> \$b => $c";
 
-if ($a > $b) {
+if ( $a > $b ) {
     say "\$a > \$b => true";
 } else {
     say "\$a > \$b => false";
 }
 
-if ($a >= $b){
+if ( $a >= $b ) {
     say "\$a >= \$b => true";
 } else {
     say "\$a >= \$b => false";
 }
 
-if ($a < $b) {
+if ( $a < $b ) {
     say "\$a < \$b => true";
 } else {
     say "\$a < \$b => false";
 }
 
-if ($a <= $b) {
+if ( $a <= $b ) {
     say "\$a <= \$b => true";
 } else {
     say "\$a <= \$b => false";
@@ -1563,31 +1562,31 @@ my $b = "xyz";
 
 say "\$a = $a ，\$b = $b";
 
-if ($a lt $b) {
+if ( $a lt $b ) {
     say "\$a lt \$b => true";
 } else {
     say "\$a lt \$b => false";
 }
 
-if ($a gt $b) {
+if ( $a gt $b ) {
     say "\$a gt \$b => true";
 } else {
     say "\$a gt \$b => false";
 }
 
-if ($a le $b) {
+if ( $a le $b ) {
     say "\$a le \$b => true";
 } else {
     say "\$a le \$b => false";
 }
 
-if ($a ge $b) {
+if ( $a ge $b ) {
     say "\$a ge \$b => true";
 } else {
     say "\$a ge \$b => false";
 }
 
-if ($a ne $b) {
+if ( $a ne $b ) {
     say "\$a ne \$b => true";
 } else {
     say "\$a ne \$b => false";
@@ -1638,7 +1637,7 @@ say "\$c: $c, st: '\$c %= \$a'";
 $c = 2;
 $a = 4;
 say "\$a: $a, \$c = $c";
-$c **= $a;
+$c**= $a;
 say "\$c: $c, st: '\$c **= \$a'";
 
 my %data;
@@ -1704,16 +1703,16 @@ my $b = 0;
 
 say "\$a = $a , \$b = $b";
 
-my $c = ($a and $b);
+my $c = ( $a and $b );
 say "\$a and \$b = $c";
 
-$c = ($a  && $b);
+$c = ( $a && $b );
 say "\$a && \$b = $c";
 
-$c = ($a or $b);
+$c = ( $a or $b );
 say "\$a or \$b = $c";
 
-$c = ($a || $b);
+$c = ( $a || $b );
 say "\$a || \$b = $c";
 
 $a = 0;
@@ -1736,7 +1735,7 @@ use warnings;
 use Modern::Perl;
 
 my $a = 10;
- 
+
 my $b = q{a = $a};
 say "q{a = \$a} = $b";
 
@@ -1790,14 +1789,14 @@ my $a = "run";
 my $b = "oob";
 
 say "\$a  = $a ， \$b = $b";
- 
+
 my $c = $a . $b;
 say "\$a . \$b = $c";
 
 $c = "-" x 3;
 say "\"-\" x 3 = $c";
 
-my @c = (2..5);
+my @c = ( 2 .. 5 );
 say "(2..5) = @c";
 
 $a = 10;
@@ -1805,11 +1804,11 @@ $b = 15;
 say "\$a  = $a ， \$b = $b";
 
 $a++;
-$c = $a ;
+$c = $a;
 say "\$a 执行 \$a++ = $c";
 
 $b--;
-$c = $b ;
+$c = $b;
 say "\$b 执行 \$b-- = $c";
 ```
 
@@ -1836,20 +1835,20 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-sub Average{
-    my $n = scalar(@_);
+sub Average {
+    my $n   = scalar(@_);
     my $sum = 0;
 
     foreach my $item (@_) {
-       $sum += $item;
+        $sum += $item;
     }
     my $average = $sum / $n;
-    say 'params : ',"@_";
+    say 'params : ', "@_";
     say "first param : $_[0]";
     say "average : $average";
 }
 
-Average(10, 20, 30);
+Average( 10, 20, 30 );
 ```
 
 ### 6.1.1 向函数传递列表
@@ -1867,9 +1866,9 @@ sub PrintList {
     say "列表为 : @list";
 }
 my $a = 10;
-my @b = (1, 2, 3, 4);
+my @b = ( 1, 2, 3, 4 );
 
-PrintList($a, @b);
+PrintList( $a, @b );
 ```
 
 ### 6.1.2 向函数传递哈希
@@ -1884,12 +1883,12 @@ use Modern::Perl;
 sub PrintHash {
     my (%hash) = @_;
 
-    foreach my $key (keys %hash) {
+    foreach my $key ( keys %hash ) {
         my $value = $hash{$key};
         say "$key : $value";
     }
 }
-my %hash = ('name' => 'youj', 'age' => 3);
+my %hash = ( 'name' => 'youj', 'age' => 3 );
 
 PrintHash(%hash);
 ```
@@ -1901,10 +1900,9 @@ PrintHash(%hash);
 ```perl
 sub make_sundae {
     my %parameters = @_;
-    $parameters{flavor} //= 'Vanilla';
-    $parameters{topping} //= 'fudge';
+    $parameters{flavor}    //= 'Vanilla';
+    $parameters{topping}   //= 'fudge';
     $parameters{sprinkles} //= 100;
-    ...
 }
 ```
 
@@ -1912,14 +1910,12 @@ sub make_sundae {
 
 ```perl
 sub make_sundae {
-    my %parameters =
-    (
-        flavor => 'Vanilla',
-        topping => 'fudge',
+    my %parameters = (
+        flavor    => 'Vanilla',
+        topping   => 'fudge',
         sprinkles => 100,
         @_,
     );
-    ...
 }
 ```
 
@@ -1937,19 +1933,20 @@ use warnings;
 use Modern::Perl;
 
 my %dispatch = (
-    plus => sub { $_[0] + $_[1] },
-    minus => sub { $_[0] - $_[1] },
-    times => sub { $_[0] * $_[1] },
+    plus     => sub { $_[0] + $_[1] },
+    minus    => sub { $_[0] - $_[1] },
+    times    => sub { $_[0] * $_[1] },
     goesinto => sub { $_[0] / $_[1] },
-    raisedto => sub { $_[0] ** $_[1] },
+    raisedto => sub { $_[0]**$_[1] },
 );
+
 sub dispatch {
-    my ($left, $op, $right) = @_;
-    die "Unknown operation!" unless exists $dispatch{ $op };
-    return $dispatch{ $op }->( $left, $right );
+    my ( $left, $op, $right ) = @_;
+    die "Unknown operation!" unless exists $dispatch{$op};
+    return $dispatch{$op}->( $left, $right );
 }
 
-say dispatch ( 2, "times", 4 );
+say dispatch( 2, "times", 4 );
 ```
 
 ## 6.3 函数返回值
@@ -1963,17 +1960,19 @@ use warnings;
 use Modern::Perl;
 
 sub add_a_b_1 {
+
     # 不使用 return
-    $_[0]+$_[1];   
+    $_[0] + $_[1];
 }
 
 sub add_a_b_2 {
+
     # 使用 return
-    return $_[0]+$_[1];  
+    return $_[0] + $_[1];
 }
 
-say add_a_b_1(1, 2);
-say add_a_b_2(1, 2);
+say add_a_b_1( 1, 2 );
+say add_a_b_2( 1, 2 );
 ```
 
 ## 6.4 函数的私有变量
@@ -2051,8 +2050,8 @@ sub PrintCount {
     $count++;
 }
 
-for (1..5) {
-    PrintCount();
+for ( 1 .. 5 ) {
+    PrintCount;
 }
 ```
 
@@ -2068,8 +2067,9 @@ use Modern::Perl;
 my $datestring = localtime(time);
 say $datestring;
 
-my ($sec,$min,$hour,$mday,$mon, $year,$wday,$yday,$isdst) = localtime(time);
-printf("%d-%d-%d %d:%d:%d", $year+1990, $mon+1, $mday, $hour, $min, $sec);
+my ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst ) =
+  localtime(time);
+printf( "%d-%d-%d %d:%d:%d", $year + 1990, $mon + 1, $mday, $hour, $min, $sec );
 ```
 
 ### 6.7.1 上下文感知
@@ -2084,22 +2084,25 @@ printf("%d-%d-%d %d:%d:%d", $year+1990, $mon+1, $mday, $hour, $min, $sec);
 use strict;
 use warnings;
 use Modern::Perl;
+
 sub context {
     my $context = wantarray();
     say defined $context
-        ? $context
-            ? 'list'
-            : 'scalar'
-        : 'void';
+      ? $context
+          ? 'list'
+          : 'scalar'
+      : 'void';
     return 0;
 }
-my @list_slice = (1, 2, 3)[context()];
-my @array_slice = @list_slice[context()];
-my $array_index = $array_slice[context()];
+my @list_slice  = ( 1, 2, 3 )[ context() ];
+my @array_slice = @list_slice[ context() ];
+my $array_index = $array_slice[ context() ];
+
 # say imposes list context
 say context();
+
 # void context is obvious
-context()
+context();
 ```
 
 ## 6.8 函数与命名空间
@@ -2131,7 +2134,7 @@ sub main {
 }
 
 sub show_call_information {
-    my ($package, $file, $line) = caller();
+    my ( $package, $file, $line ) = caller();
     say "Called from $package in $file at $line";
 }
 ```
@@ -2151,7 +2154,7 @@ sub main {
 }
 
 sub show_call_information {
-    my ($package, $file, $line, $func) = caller(0);
+    my ( $package, $file, $line, $func ) = caller(0);
     say "Called $func from $package in $file at $line";
 }
 ```
@@ -2227,12 +2230,12 @@ use warnings;
 use Modern::Perl;
 
 sub gen_fib {
-    my @fibs = (0, 1, 1);
+    my @fibs = ( 0, 1, 1 );
     return sub {
         my $item = shift;
-        if ($item >= @fibs) {
-            for my $calc ((@fibs - 1) .. $item) {
-                $fibs[$calc] = $fibs[$calc - 2] + $fibs[$calc - 1];
+        if ( $item >= @fibs ) {
+            for my $calc ( ( @fibs - 1 ) .. $item ) {
+                $fibs[$calc] = $fibs[ $calc - 2 ] + $fibs[ $calc - 1 ];
             }
         }
         return $fibs[$item];
@@ -2256,21 +2259,21 @@ use warnings;
 use Modern::Perl;
 
 sub gen_caching_closure {
-    my ($calc_element, @cache) = @_;
+    my ( $calc_element, @cache ) = @_;
     return sub {
         my $item = shift;
-        $calc_element->($item, \@cache) unless $item < @cache;
+        $calc_element->( $item, \@cache ) unless $item < @cache;
         return $cache[$item];
     };
 }
 
 sub gen_fib {
-    my @fibs = (0, 1, 1);
+    my @fibs = ( 0, 1, 1 );
     return gen_caching_closure(
         sub {
-            my ($item, $fibs) = @_;
-            for my $calc ((@$fibs - 1) .. $item) {
-                $fibs->[$calc] = $fibs->[$calc - 2] + $fibs->[$calc - 1];
+            my ( $item, $fibs ) = @_;
+            for my $calc ( ( @$fibs - 1 ) .. $item ) {
+                $fibs->[$calc] = $fibs->[ $calc - 2 ] + $fibs->[ $calc - 1 ];
             }
         },
         @fibs
@@ -2288,17 +2291,17 @@ say $fiber->(10);
 
 ```perl
 sub make_sundae {
-    my %args = @_;
+    my %args      = @_;
     my $ice_cream = get_ice_cream( $args{ice_cream} );
-    my $banana = get_banana( $args{banana} );
-    my $syrup = get_syrup( $args{syrup} );
-    ...
+    my $banana    = get_banana( $args{banana} );
+    my $syrup     = get_syrup( $args{syrup} );
 }
 
 my $make_cart_sundae = sub {
-    return make_sundae( @_,
+    return make_sundae(
+        @_,
         ice_cream => 'French Vanilla',
-        banana => 'Cavendish',
+        banana    => 'Cavendish',
     );
 };
 ```
@@ -2425,7 +2428,7 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my $hat = qr/hat/;
+my $hat  = qr/hat/;
 my $name = "I have a hat!";
 say 'Found a hat!' if $name =~ /$hat/;
 
