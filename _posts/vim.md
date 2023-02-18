@@ -513,7 +513,15 @@ vim常用的三种模式：**一般模式、编辑模式与命令模式**。`:he
 1. `:silent verbose map`
 1. `:redir END`
 
-**`<buffer>`：表示映射仅对当前`<buffer>`生效**
+**特殊参数：**
+
+* `<buffer>`：表示映射仅对当前`<buffer>`生效
+* `<nowait>`
+* `<silent>`：禁止输出映射信息
+* `<special>`
+* `<script>`
+* `<expr>`
+* `<unique>`
 
 ## 2.17 键位表示
 
@@ -3194,7 +3202,7 @@ autocmd BufRead,BufNewFile *.tpp set filetype=cpp
 " https://superuser.com/questions/805695/autoformat-for-perl-in-vim
 " 通过 cpan Perl::Tidy 安装 perltidy
 autocmd FileType perl setlocal equalprg=perltidy\ -st
-autocmd FileType perl nnoremap <buffer> <c-l> gg=G<c-o><c-o>
+autocmd FileType perl nnoremap <silent><buffer> <c-l> gg=G<c-o><c-o>
 
 " 加载额外的配置
 if filereadable(expand("~/.vimrc_extra"))
