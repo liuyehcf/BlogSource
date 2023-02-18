@@ -3201,7 +3201,7 @@ autocmd BufRead,BufNewFile *.tpp set filetype=cpp
 " 配置 perl 的格式化，需要用 gg=G 进行格式化
 " https://superuser.com/questions/805695/autoformat-for-perl-in-vim
 " 通过 cpan Perl::Tidy 安装 perltidy
-autocmd FileType perl setlocal equalprg=perltidy\ -st
+autocmd FileType perl setlocal equalprg=perltidy\ -st\ -ce
 autocmd FileType perl nnoremap <silent><buffer> <c-l> gg=G<c-o><c-o>
 
 " 加载额外的配置
