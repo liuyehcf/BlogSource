@@ -244,10 +244,10 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my @array = (1..10);
+my @array = ( 1 .. 10 );
 say "array = @array";
 
-my @subarray = @array[3..6];
+my @subarray = @array[ 3 .. 6 ];
 say "subarray = @subarray";
 ```
 
@@ -258,10 +258,10 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my @array = (1,2,3);
+my @array = ( 1, 2, 3 );
 $array[50] = 4;
 
-my $size = @array;
+my $size      = @array;
 my $max_index = $#array;
 
 say "size: $size";
@@ -275,7 +275,7 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my @array = (1,2,3);
+my @array = ( 1, 2, 3 );
 say $array[-1];
 ```
 
@@ -288,8 +288,8 @@ use Modern::Perl;
 
 my @sites = qw/google taobao youj weibo qq facebook netease/;
 
-my @sites2 = @sites[3,4,5];
-my @sites3 = @sites[3..5];
+my @sites2 = @sites[ 3, 4, 5 ];
+my @sites3 = @sites[ 3 .. 5 ];
 
 say "@sites2";
 say "@sites3";
@@ -310,10 +310,10 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my @nums = (1..20);
+my @nums = ( 1 .. 20 );
 say "before: @nums";
 
-splice(@nums, 5, 5, 21..25); 
+splice( @nums, 5, 5, 21 .. 25 );
 say "after: @nums";
 ```
 
@@ -331,17 +331,17 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my $var_test = "youj";
+my $var_test   = "youj";
 my $var_string = "www-youj-com";
-my $var_names = "google,taobao,youj,weibo";
+my $var_names  = "google,taobao,youj,weibo";
 
-my @test = split('', $var_test);
-my @string = split('-', $var_string);
-my @names  = split(',', $var_names);
+my @test   = split( '',  $var_test );
+my @string = split( '-', $var_string );
+my @names  = split( ',', $var_names );
 
-say "$test[3]";  # j
-say "$string[2]";  # com
-say "$names[3]";   # weibo
+say "$test[3]";      # j
+say "$string[2]";    # com
+say "$names[3]";     # weibo
 ```
 
 ### 3.2.8 将数组转换为字符串
@@ -358,10 +358,10 @@ use warnings;
 use Modern::Perl;
 
 my $var_string = "www-youj-com";
-my $var_names = "google,taobao,youj,weibo";
+my $var_names  = "google,taobao,youj,weibo";
 
-my @string = split('-', $var_string);
-my @names  = split(',', $var_names);
+my @string = split( '-', $var_string );
+my @names  = split( ',', $var_names );
 
 my $string1 = join( '-', @string );
 my $string2 = join( ',', @names );
@@ -409,11 +409,11 @@ say "before: @sites";
 @sites = sort @sites;
 say "after: @sites";
 
-my @numbers = (9, 10, 11, 12);
+my @numbers = ( 9, 10, 11, 12 );
 @numbers = sort @numbers;
 say "numbers(order by cmp): @numbers";
 
-@numbers = sort {$a <=> $b} @numbers;
+@numbers = sort { $a <=> $b } @numbers;
 say "numbers(order by <=>): @numbers";
 ```
 
@@ -442,12 +442,12 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my @numbers1 = (1,3,(4,5,6));
+my @numbers1 = ( 1, 3, ( 4, 5, 6 ) );
 say "numbers1: @numbers1";
 
-my @odd = (1,3,5);
-my @even = (2, 4, 6);
-my @numbers2 = (@odd, @even);
+my @odd      = ( 1, 3, 5 );
+my @even     = ( 2, 4, 6 );
+my @numbers2 = ( @odd, @even );
 say "numbers2: @numbers2";
 ```
 
@@ -477,8 +477,8 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my @array = ('A', 'B', 'C');
-while (my ($index, $value) = each @array) {
+my @array = ( 'A', 'B', 'C' );
+while ( my ( $index, $value ) = each @array ) {
     say "$index: $value";
 }
 ```
@@ -490,7 +490,7 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my @array = ('A', 'B', 'C');
+my @array = ( 'A', 'B', 'C' );
 foreach my $value (@array) {
     say "$value";
 }
@@ -503,8 +503,8 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my @array = ('A', 'B', 'C');
-if ('A' ~~ @array) {
+my @array = ( 'A', 'B', 'C' );
+if ( 'A' ~~ @array ) {
     say "contains";
 }
 ```
@@ -522,7 +522,7 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my %data = ('google', 45, 'youj', 30, 'taobao', 40);
+my %data = ( 'google', 45, 'youj', 30, 'taobao', 40 );
 
 say "\$data{'google'} = $data{'google'}";
 say "\$data{'youj'} = $data{'youj'}";
@@ -542,12 +542,16 @@ use warnings;
 use Modern::Perl;
 
 my %data1;
-$data1{'google'} = 'google.com';
+$data1{'google'}    = 'google.com';
 $data1{'w3cschool'} = 'w3cschool.cn';
-$data1{'taobao'} = 'taobao.com';
+$data1{'taobao'}    = 'taobao.com';
 
-my %data2 = ('google', 'google.com', 'w3cschool', 'w3cschool.cn', 'taobao', 'taobao.com');
-my %data3 = ('baidu' => 'baidu.com', 'aliyun' => 'aliyun.cn', 'douyu' => 'douyu.com');
+my %data2 = (
+    'google', 'google.com', 'w3cschool', 'w3cschool.cn',
+    'taobao', 'taobao.com'
+);
+my %data3 =
+  ( 'baidu' => 'baidu.com', 'aliyun' => 'aliyun.cn', 'douyu' => 'douyu.com' );
 
 say "\$data1{'taobao'} = $data1{'taobao'}";
 say "\$data2{'google'} = $data2{'google'}";
@@ -571,7 +575,11 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my %data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com');
+my %data = (
+    'google'    => 'google.com',
+    'w3cschool' => 'w3cschool.cn',
+    'taobao'    => 'taobao.com'
+);
 
 my @names = keys %data;
 
@@ -589,7 +597,11 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my %data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com');
+my %data = (
+    'google'    => 'google.com',
+    'w3cschool' => 'w3cschool.cn',
+    'taobao'    => 'taobao.com'
+);
 
 my @urls = values %data;
 
@@ -607,16 +619,21 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my %data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com', 'wtf' => undef);
+my %data = (
+    'google'    => 'google.com',
+    'w3cschool' => 'w3cschool.cn',
+    'taobao'    => 'taobao.com',
+    'wtf'       => undef
+);
 
-say "google exist" if exists $data{'google'};
-say "google defined" if defined $data{'google'};
-say "amazon not exist" if not exists $data{'amazon'};
+say "google exist"       if exists $data{'google'};
+say "google defined"     if defined $data{'google'};
+say "amazon not exist"   if not exists $data{'amazon'};
 say "amazon not defined" if not defined $data{'amazon'};
-if (exists $data{'wtf'}) {
+if ( exists $data{'wtf'} ) {
     say "wtf exist";
 }
-if (not defined $data{'wtf'}) {
+if ( not defined $data{'wtf'} ) {
     say "wtf not defined";
 }
 ```
@@ -630,13 +647,17 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my %data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com');
+my %data = (
+    'google'    => 'google.com',
+    'w3cschool' => 'w3cschool.cn',
+    'taobao'    => 'taobao.com'
+);
 
-my @keys = keys %data;
+my @keys     = keys %data;
 my $key_size = @keys;
 say "key size: $key_size";
 
-my @values = values %data;
+my @values     = values %data;
 my $value_size = @values;
 say "value size: $value_size";
 ```
@@ -650,15 +671,19 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my %data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com');
+my %data = (
+    'google'    => 'google.com',
+    'w3cschool' => 'w3cschool.cn',
+    'taobao'    => 'taobao.com'
+);
 my @keys = keys %data;
 my $size = @keys;
 say "key size: $size";
 
 # add
 $data{'facebook'} = 'facebook.com';
-@keys = keys %data;
-$size = @keys;
+@keys             = keys %data;
+$size             = @keys;
 say "key size: $size";
 
 # delete
@@ -677,9 +702,13 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my %data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com');
+my %data = (
+    'google'    => 'google.com',
+    'w3cschool' => 'w3cschool.cn',
+    'taobao'    => 'taobao.com'
+);
 
-while (my ($key, $value) = each %data) {
+while ( my ( $key, $value ) = each %data ) {
     say "$key: $value";
 }
 ```
@@ -700,15 +729,20 @@ use warnings;
 use Modern::Perl;
 use Hash::Util qw[lock_hash lock_keys unlock_keys];
 
-my %data = ('google' => 'google.com', 'w3cschool' => 'w3cschool.cn', 'taobao' => 'taobao.com');
+my %data = (
+    'google'    => 'google.com',
+    'w3cschool' => 'w3cschool.cn',
+    'taobao'    => 'taobao.com'
+);
 lock_keys(%data);
+
 # compile error
 # $data{'wtf'} = 'wtf.com';
 
 unlock_keys(%data);
 $data{'wtf'} = 'wtf.com';
 
-foreach my $key (keys %data) {
+foreach my $key ( keys %data ) {
     my $value = $data{$key};
     say "$key : $value";
 }
@@ -727,10 +761,10 @@ use warnings;
 use Modern::Perl;
 
 my %extensions = (
-    4 => 'Jerryd',
-    5 => 'Rudy',
-    6 => 'Juwan',
-    7 => 'Brandon',
+    4  => 'Jerryd',
+    5  => 'Rudy',
+    6  => 'Juwan',
+    7  => 'Brandon',
     10 => 'Joel',
     21 => 'Marcus',
     24 => 'Andre',
@@ -759,10 +793,10 @@ use warnings;
 use Modern::Perl;
 
 my %extensions = (
-    4 => 'Jerryd',
-    5 => 'Rudy',
-    6 => 'Juwan',
-    7 => 'Brandon',
+    4  => 'Jerryd',
+    5  => 'Rudy',
+    6  => 'Juwan',
+    7  => 'Brandon',
     10 => 'Joel',
     21 => 'Marcus',
     24 => 'Andre',
@@ -771,11 +805,12 @@ my %extensions = (
     88 => 'Nic',
 );
 
-say for (
-    map { "$_->[1]: $_->[0]" }
+say
+  for (
+    map  { "$_->[1]: $_->[0]" }
     sort { $a->[1] cmp $b->[1] }
-    map { [ $_, $extensions{$_} ] } keys %extensions
-);
+    map  { [ $_, $extensions{$_} ] } keys %extensions
+  );
 ```
 
 ## 3.4 引用
@@ -801,14 +836,10 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my $aref1= [ 1,"foo",undef,13 ];
-my $aref2 = [
-        [1, 2, 3],
-        [4, 5, 6],
-        [7, 8, 9],
-];
+my $aref1 = [ 1, "foo", undef, 13 ];
+my $aref2 = [ [ 1, 2, 3 ], [ 4, 5, 6 ], [ 7, 8, 9 ], ];
 
-my $href= { APR => 4, AUG => 8 };
+my $href = { APR => 4, AUG => 8 };
 
 my $coderef = sub { say "W3CSchool!" };
 ```
@@ -824,26 +855,26 @@ use Modern::Perl;
 
 # scarlar
 my $var = 10;
-my $r = \$var;
+my $r   = \$var;
 say '$$r: ', $$r;
 
 # array
-my @var = (1, 2, 3);
+my @var = ( 1, 2, 3 );
 $r = \@var;
-say '@$r: ', @$r;
-say '$$r[0]: ', $$r[0];
-say '$r->[0]: ', $r->[0];
-say '@{ $r }[0, 1, 2]: ', @{ $r }[0, 1, 2];
+say '@$r: ',              @$r;
+say '$$r[0]: ',           $$r[0];
+say '$r->[0]: ',          $r->[0];
+say '@{ $r }[0, 1, 2]: ', @{$r}[ 0, 1, 2 ];
 
 # hash
-my %var = ('key1' => 10, 'key2' => 20);
+my %var = ( 'key1' => 10, 'key2' => 20 );
 $r = \%var;
-say '%$r: ', %$r;
+say '%$r: ',            %$r;
 say '$r->{\'key1\'}: ', $r->{'key1'};
 
 # hash stores array
-my %var = ('key1' => [1, 2, 3], 'key2' => [4, 5, 6]);
-say '@{$var{key1}}: ', @{$var{key2}};
+my %var = ( 'key1' => [ 1, 2, 3 ], 'key2' => [ 4, 5, 6 ] );
+say '@{$var{key1}}: ', @{ $var{key2} };
 ```
 
 如果你不能确定变量类型，你可以使用`ref`来判断，返回值列表如下，如果没有以下的值返回`false`
@@ -854,14 +885,14 @@ use warnings;
 use Modern::Perl;
 
 my $var = 10;
-my $r = \$var;
+my $r   = \$var;
 say "r's ref type: ", ref($r);
 
-my @var = (1, 2, 3);
+my @var = ( 1, 2, 3 );
 $r = \@var;
 say "r's ref type: ", ref($r);
 
-my %var = ('key1' => 10, 'key2' => 20);
+my %var = ( 'key1' => 10, 'key2' => 20 );
 $r = \%var;
 say "r's ref type: ", ref($r);
 ```
@@ -876,11 +907,11 @@ use warnings;
 use Modern::Perl;
 use Scalar::Util 'weaken';
 
-my $alice = { mother => '', father => '', children => [] };
+my $alice  = { mother => '', father => '', children => [] };
 my $robert = { mother => '', father => '', children => [] };
 my $cianne = { mother => $alice, father => $robert, children => [] };
 
-push @{ $alice->{children} }, $cianne;
+push @{ $alice->{children} },  $cianne;
 push @{ $robert->{children} }, $cianne;
 
 weaken( $cianne->{mother} );
@@ -899,12 +930,12 @@ use Modern::Perl;
 
 sub PrintHash {
     my (%hash) = @_;
-   
+
     foreach my $item (%hash) {
         say "元素 : $item";
     }
 }
-my %hash = ('name' => 'youj', 'age' => 3);
+my %hash = ( 'name' => 'youj', 'age' => 3 );
 
 my $cref = \&PrintHash;
 
@@ -920,16 +951,18 @@ $cref->(%hash);
 由于数组、哈希都只能存储标量，而引用正好也是标量。因此借助引用，可以创建多级数据结构
 
 ```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
 my @famous_triplets = (
-    [qw( eenie miney moe )],
-    [qw( huey dewey louie )],
-    [qw( duck duck goose )],
+    [qw( eenie miney moe )], [qw( huey dewey louie )], [qw( duck duck goose )],
 );
 
 my %meals = (
-    breakfast => { entree => 'eggs', side => 'hash browns' },
-    lunch => { entree => 'panini', side => 'apple' },
-    dinner => { entree => 'steak', side => 'avocado salad' },
+    breakfast => { entree => 'eggs',   side => 'hash browns' },
+    lunch     => { entree => 'panini', side => 'apple' },
+    dinner    => { entree => 'steak',  side => 'avocado salad' },
 );
 ```
 
@@ -938,16 +971,16 @@ my %meals = (
 我们使用歧义消除块（`disambiguation blocks`）
 
 ```perl
-my $nephew_count = @{ $famous_triplets[1] };
+my $nephew_count   = @{ $famous_triplets[1] };
 my $dinner_courses = keys %{ $meals{dinner} };
-my ($entree, $side) = @{ $meals{breakfast} }{qw( entree side )};
+my ( $entree, $side ) = @{ $meals{breakfast} }{qw( entree side )};
 ```
 
 更好更清晰的写法，自然是使用中间变量
 
 ```perl
 my $breakfast_ref = $meals{breakfast};
-my ($entree, $side) = @$breakfast_ref{qw( entree side )};
+my ( $entree, $side ) = @$breakfast_ref{qw( entree side )};
 ```
 
 #### 3.4.5.2 Autovivificatio
@@ -962,7 +995,7 @@ my %hohoh;
 $hohoh{Robot}{Santa}{Claus} = 'mostly harmful';
 ```
 
-#### 3.4.5.3 调试
+#### 3.4.5.3 打印复杂数据结构
 
 `Data::Dumper`可以帮助我们打印一个复杂的多级数据结构
 
@@ -977,8 +1010,8 @@ $aoaoaoa[0][0][0][0] = 'nested deeply';
 
 my %hohoh;
 $hohoh{Robot}{Santa}{Claus} = 'mostly harmful';
-say Dumper( @aoaoaoa );
-say Dumper( %hohoh );
+say Dumper @aoaoaoa;
+say Dumper %hohoh;
 ```
 
 ## 3.5 变量上下文
@@ -1005,7 +1038,7 @@ use strict;
 use warnings;
 use Modern::Perl;
 
-my @names = ('google', 'youj', 'taobao');
+my @names = ( 'google', 'youj', 'taobao' );
 
 my @copy = @names;
 my $size = @names;
@@ -1029,7 +1062,7 @@ my $boolean_x = !!$x;
 # scarlar context
 # anonymous hash can contain nested struct
 my $results = {
-    cheap_operation => $cheap_operation_results,
+    cheap_operation     => $cheap_operation_results,
     expensive_operation => scalar find_chores(),
 };
 ```
@@ -1039,7 +1072,7 @@ my $results = {
 ```perl
 # It’s semantically equivalent to assigning the first item in 
 # the list to a scalar and assigning the rest of the list to a temporary array, and then throwing away the array
-my ($single_element) = find_chores();
+my ( $single_element ) = find_chores();
 ```
 
 ## 3.6 默认变量
