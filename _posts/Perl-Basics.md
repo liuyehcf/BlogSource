@@ -582,6 +582,27 @@ say $users{'Tom'};
 say $users{'Jeff'};
 ```
 
+##### 3.2.9.7.1 用下标为奇数/偶数的元素构成一个数组
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+use warnings;
+use strict;
+use Modern::Perl;
+
+my @array = ( 0 .. 10 );
+
+my @odd =
+  @array[ grep { $_ <= $#array } map { $_ * 2 + 1 } ( 0 .. @array / 2 ) ];
+my @even = @array[ grep { $_ <= $#array } map { $_ * 2 } ( 0 .. @array / 2 ) ];
+
+say "@odd";
+say "@even";
+```
+
 ## 3.3 哈希
 
 1. 哈希是一个`key/value`对的集合
@@ -4129,15 +4150,9 @@ my @items =
   }    # [walk_through_sort/1000000/1000000, 72202569, ns, 72199515, ns, 10]
   <$fh>;
 
-my @map_items =
-  grep { $_->[0] =~ /map/ } @items;
-
-my @sort_items =
-  grep { $_->[0] =~ /sort/ } @items;
-
-foreach my $idx ( 0 .. $#map_items ) {
-    my $map_item  = $map_items[$idx];
-    my $sort_item = $sort_items[$idx];
+for ( 0 .. $#items / 2 ) {
+    my $map_item  = $items[$_];
+    my $sort_item = $items[ $_ + 1 ];
 
     my $factor = $map_item->[2] / $map_item->[1];
     my $ratio  = sprintf( "%.3f", $map_item->[3] / $sort_item->[3] );
