@@ -168,9 +168,14 @@ say "\$names[1] = $names[1]";
 say "\$names[2] = $names[2]";
 ```
 
-### 3.2.1 创建数组
+### 3.2.1 数组和列表
 
-#### 3.2.1.1 操作符：`,`
+数组：具名
+列表：不具名，例如字面值，`grep/sort/map`的返回值
+
+### 3.2.2 创建数组
+
+#### 3.2.2.1 操作符：`,`
 
 **强调：我们通过`,`操作符来创建数组，而不是`()`，`()`仅为了改变运算符的优先级**
 
@@ -215,7 +220,7 @@ my @numbers2 = ( @odd, @even );
 say "numbers2: @numbers2";
 ```
 
-#### 3.2.1.2 操作符：`qw`
+#### 3.2.2.2 操作符：`qw`
 
 操作符`qs`用于将字符串转为数组，分隔符为空白
 
@@ -233,7 +238,7 @@ say "@array2";
 say "@array3";
 ```
 
-### 3.2.2 数组序列号：`..`
+### 3.2.3 数组序列号：`..`
 
 `Perl`提供了可以按序列输出的数组形式，格式为：`起始值 + .. + 结束值`
 
@@ -249,7 +254,7 @@ my @subarray = @array[ 3 .. 6 ];
 say "subarray = @subarray";
 ```
 
-### 3.2.3 数组大小：`$#`
+### 3.2.4 数组大小：`$#`
 
 ```perl
 use strict;
@@ -277,7 +282,7 @@ my @array = ( 1, 2, 3 );
 say $array[-1];
 ```
 
-### 3.2.4 检测是否包含某个元素：`~~`
+### 3.2.5 检测是否包含某个元素：`~~`
 
 ```perl
 use strict;
@@ -290,7 +295,7 @@ if ( 'A' ~~ @array ) {
 }
 ```
 
-### 3.2.5 数组打印
+### 3.2.6 数组打印
 
 * 若数组不在双引号中，那么使用`say`输出后，各元素会紧贴在一起
 * 若数组在双引号中，各个元素之间会插入全局变量`$"`，其默认值为空格，称为数组插值`Array Interpolation`
@@ -310,7 +315,7 @@ say "within quote, [@alphabet]";
 }
 ```
 
-### 3.2.6 数组起始下标
+### 3.2.7 数组起始下标
 
 特殊变量`$[`表示数组的第一索引值，一般都为`0`，如果我们将`$[`设置为`1`，则数组的第一个索引值即为`1`，第二个为`2`，以此类推
 
@@ -327,9 +332,25 @@ print "\@sites[1]: $sites[1]\n";
 print "\@sites[2]: $sites[2]\n";
 ```
 
-### 3.2.7 数组循环
+### 3.2.8 数组循环
 
-#### 3.2.7.1 操作符：`each`
+#### 3.2.8.1 for
+
+```perl
+use warnings;
+use strict;
+use Modern::Perl;
+
+my @nums = ( 1 .. 10 );
+for (@nums) {
+    say $_;
+}
+
+@nums = ( 11 .. 20 );
+say for (@nums);
+```
+
+#### 3.2.8.2  each
 
 在`Perl 5.12`之后，可以用`each`循环数组
 
@@ -344,7 +365,7 @@ while ( my ( $index, $value ) = each @array ) {
 }
 ```
 
-#### 3.2.7.2 操作符`foreach`
+#### 3.2.8.3 foreach
 
 ```perl
 use strict;
@@ -357,11 +378,11 @@ foreach my $value (@array) {
 }
 ```
 
-### 3.2.8 数组相关的函数
+### 3.2.9 数组相关的函数
 
-#### 3.2.8.1 push/pop/shift/unshift
+#### 3.2.9.1 push/pop/shift/unshift
 
-**注意，下列函数只能用于数组（对象），而不能用于列表（非对象，比如字面量，函数返回值）**
+`push/pop/shift/unshift`添加或删除数组元素
 
 1. `push`：添加元素到尾部
 1. `pop`：删除尾部元素
@@ -394,7 +415,7 @@ shift @coins;
 say "5. \@coins  = @coins";
 ```
 
-#### 3.2.8.2 splice
+#### 3.2.9.2 splice
 
 `splice`用于替换数组元素，语法格式如下：
 
@@ -416,9 +437,9 @@ splice( @nums, 5, 5, 21 .. 25 );
 say "after: @nums";
 ```
 
-#### 3.2.8.3 split
+#### 3.2.9.3 split
 
-`split`用于切割字符串生成数组，语法格式如下：
+`split`用于切割字符串生成列表，语法格式如下：
 
 * `split [ PATTERN [ , EXPR [ , LIMIT ] ] ]`
 * `PATTERN`：分隔符，默认为空格
@@ -443,9 +464,9 @@ say "$string[2]";    # com
 say "$names[3]";     # weibo
 ```
 
-#### 3.2.8.4 join
+#### 3.2.9.4 join
 
-`join`用于将数组拼接成一个字符串，语法格式如下：
+`join`用于将列表拼接成一个字符串，语法格式如下：
 
 * `join EXPR, LIST`
 * `EXPR`：连接符
@@ -469,9 +490,9 @@ say "$string1";
 say "$string2";
 ```
 
-#### 3.2.8.5 grep
+#### 3.2.9.5 grep
 
-`grep`用于过滤数组，语法格式如下：
+`grep`用于过滤列表，返回一个列表，语法格式如下：
 
 * `grep BLOCK LIST`
 * `BLOCK`：代码块，最后一个表达式用于数组过滤
@@ -492,9 +513,9 @@ my @filtered_refs = grep { $_->[0] =~ /num/ } @refs;
 say Dumper @filtered_refs;
 ```
 
-#### 3.2.8.6 sort
+#### 3.2.9.6 sort
 
-`sort`用于数组排序，语法格式如下：
+`sort`用于排序列表，返回一个列表，语法格式如下：
 
 * `sort [ SUBROUTINE ] LIST`
 * `SUBROUTINE`：指定规则，默认是`cmp`，会把元素当成字符串处理
@@ -535,9 +556,9 @@ foreach my $pair (@ordered_pairs) {
 }
 ```
 
-#### 3.2.8.7 map
+#### 3.2.9.7 map
 
-`map`用于数组映射转换，语法格式如下：
+`map`用于数组映射转换，返回一个列表，语法格式如下：
 
 * map BLOCK LIST
 * `BLOCK`：代码块，最后一个表达式作为新`List`的元素
