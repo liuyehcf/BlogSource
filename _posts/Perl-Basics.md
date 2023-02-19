@@ -585,22 +585,22 @@ say $users{'Jeff'};
 ##### 3.2.9.7.1 用下标为奇数/偶数的元素构成一个数组
 
 ```perl
-use strict;
-use warnings;
-use Modern::Perl;
-
 use warnings;
 use strict;
 use Modern::Perl;
 
-my @array = ( 0 .. 10 );
+for ( 1 .. 20 ) {
+    my @array = ( 0 .. $_ );
+    my @odd =
+      @array[ map { $_ * 2 + 1 } ( 0 .. ( @array - 2 ) / 2 ) ];
+    my @even = @array[ map { $_ * 2 } ( 0 .. ( @array - 1 ) / 2 ) ];
 
-my @odd =
-  @array[ grep { $_ <= $#array } map { $_ * 2 + 1 } ( 0 .. @array / 2 ) ];
-my @even = @array[ grep { $_ <= $#array } map { $_ * 2 } ( 0 .. @array / 2 ) ];
+    die if ( @array != @odd + @even );
 
-say "@odd";
-say "@even";
+    say "odd = @odd";
+    say "even = @even";
+    say "";
+}
 ```
 
 ## 3.3 哈希
