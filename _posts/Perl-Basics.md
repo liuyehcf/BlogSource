@@ -170,6 +170,8 @@ say "\$names[2] = $names[2]";
 
 ### 3.2.1 创建数组
 
+#### 3.2.1.1 操作符：`,`
+
 **强调：我们通过`,`操作符来创建数组，而不是`()`，`()`仅为了改变运算符的优先级**
 
 * 对于`@array1 = (1, 2, 'Hello');`，如果不加括号，即`@array1 = 1, 2, 'Hello';`，那么根据优先级关系，赋值运算符`=`的优先级大于逗号运算符`,`，因此数组`@array1`的大小是`1`，首元素是`1`
@@ -180,11 +182,6 @@ use warnings;
 use Modern::Perl;
 
 my @array1 = ( 1, 2, 'Hello' );
-my @array2 = qw/this is an array/;
-my @array3 = qw/google
-  taobao
-  alibaba
-  youj/;
 ```
 
 此外，数组的创建是贪婪的
@@ -202,7 +199,169 @@ say "array2's size: $#array2";
 say "array3's size: $#array3";
 ```
 
-### 3.2.2 添加删除元素
+数组的元素是以逗号来分割，我们也可以使用逗号来合并数组
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my @numbers1 = ( 1, 3, ( 4, 5, 6 ) );
+say "numbers1: @numbers1";
+
+my @odd      = ( 1, 3, 5 );
+my @even     = ( 2, 4, 6 );
+my @numbers2 = ( @odd, @even );
+say "numbers2: @numbers2";
+```
+
+#### 3.2.1.2 操作符：`qw`
+
+操作符`qs`用于将字符串转为数组，分隔符为空白
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+my @array2 = qw/this is an array/;
+my @array3 = qw/google
+  taobao
+  alibaba
+  youj/;
+
+say "@array2";
+say "@array3";
+```
+
+### 3.2.2 数组序列号：`..`
+
+`Perl`提供了可以按序列输出的数组形式，格式为：`起始值 + .. + 结束值`
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my @array = ( 1 .. 10 );
+say "array = @array";
+
+my @subarray = @array[ 3 .. 6 ];
+say "subarray = @subarray";
+```
+
+### 3.2.3 数组大小：`$#`
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my @array = ( 1, 2, 3 );
+$array[50] = 4;
+
+my $size      = @array;
+my $max_index = $#array;
+
+say "size: $size";
+say "max index: $max_index";
+```
+
+若要访问倒数第一个元素，除了通过数组大小之外，还可以通过`[-1]`：
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my @array = ( 1, 2, 3 );
+say $array[-1];
+```
+
+### 3.2.4 检测是否包含某个元素：`~~`
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my @array = ( 'A', 'B', 'C' );
+if ( 'A' ~~ @array ) {
+    say "contains";
+}
+```
+
+### 3.2.5 数组打印
+
+* 若数组不在双引号中，那么使用`say`输出后，各元素会紧贴在一起
+* 若数组在双引号中，各个元素之间会插入全局变量`$"`，其默认值为空格，称为数组插值`Array Interpolation`
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my @alphabet = 'a' .. 'z';
+say "beyound quote, [", @alphabet, "]";
+say "within quote, [@alphabet]";
+
+{
+    local $" = ')(';
+    say "winthin quite and local \$\", [@alphabet]";
+}
+```
+
+### 3.2.6 数组起始下标
+
+特殊变量`$[`表示数组的第一索引值，一般都为`0`，如果我们将`$[`设置为`1`，则数组的第一个索引值即为`1`，第二个为`2`，以此类推
+
+**该功能在未来版本可能被废弃，不建议使用**
+
+```perl
+@sites = qw(google taobao youj facebook);
+print "网站: @sites\n";
+
+# set array's first index to 1
+$[ = 1;
+
+print "\@sites[1]: $sites[1]\n";
+print "\@sites[2]: $sites[2]\n";
+```
+
+### 3.2.7 数组循环
+
+#### 3.2.7.1 操作符：`each`
+
+在`Perl 5.12`之后，可以用`each`循环数组
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my @array = ( 'A', 'B', 'C' );
+while ( my ( $index, $value ) = each @array ) {
+    say "$index: $value";
+}
+```
+
+#### 3.2.7.2 操作符`foreach`
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my @array = ( 'A', 'B', 'C' );
+foreach my $value (@array) {
+    say "$value";
+}
+```
+
+### 3.2.8 数组相关的函数
+
+#### 3.2.8.1 push/pop/shift/unshift
+
+**注意，下列函数只能用于数组（对象），而不能用于列表（非对象，比如字面量，函数返回值）**
 
 1. `push`：添加元素到尾部
 1. `pop`：删除尾部元素
@@ -235,69 +394,9 @@ shift @coins;
 say "5. \@coins  = @coins";
 ```
 
-### 3.2.3 数组序列号
+#### 3.2.8.2 splice
 
-`Perl`提供了可以按序列输出的数组形式，格式为：`起始值 + .. + 结束值`
-
-```perl
-use strict;
-use warnings;
-use Modern::Perl;
-
-my @array = ( 1 .. 10 );
-say "array = @array";
-
-my @subarray = @array[ 3 .. 6 ];
-say "subarray = @subarray";
-```
-
-### 3.2.4 数组大小
-
-```perl
-use strict;
-use warnings;
-use Modern::Perl;
-
-my @array = ( 1, 2, 3 );
-$array[50] = 4;
-
-my $size      = @array;
-my $max_index = $#array;
-
-say "size: $size";
-say "max index: $max_index";
-```
-
-若要访问倒数第一个元素，除了通过数组大小之外，还可以通过`[-1]`：
-
-```perl
-use strict;
-use warnings;
-use Modern::Perl;
-
-my @array = ( 1, 2, 3 );
-say $array[-1];
-```
-
-### 3.2.5 切割数组
-
-```perl
-use strict;
-use warnings;
-use Modern::Perl;
-
-my @sites = qw/google taobao youj weibo qq facebook netease/;
-
-my @sites2 = @sites[ 3, 4, 5 ];
-my @sites3 = @sites[ 3 .. 5 ];
-
-say "@sites2";
-say "@sites3";
-```
-
-### 3.2.6 替换数组元素
-
-`Perl`中数组元素替换使用`splice()`函数，语法格式如下：
+`splice`用于替换数组元素，语法格式如下：
 
 * `splice @ARRAY, OFFSET [ , LENGTH [ , LIST ] ]`
 * `@ARRAY`：要替换的数组
@@ -317,9 +416,9 @@ splice( @nums, 5, 5, 21 .. 25 );
 say "after: @nums";
 ```
 
-### 3.2.7 将字符串转换为数组
+#### 3.2.8.3 split
 
-`Perl`中将字符串转换为数组使用`split()`函数，语法格式如下：
+`split`用于切割字符串生成数组，语法格式如下：
 
 * `split [ PATTERN [ , EXPR [ , LIMIT ] ] ]`
 * `PATTERN`：分隔符，默认为空格
@@ -344,9 +443,9 @@ say "$string[2]";    # com
 say "$names[3]";     # weibo
 ```
 
-### 3.2.8 将数组转换为字符串
+#### 3.2.8.4 join
 
-`Perl`中将数组转换为字符串使用`join()`函数，语法格式如下：
+`join`用于将数组拼接成一个字符串，语法格式如下：
 
 * `join EXPR, LIST`
 * `EXPR`：连接符
@@ -370,29 +469,32 @@ say "$string1";
 say "$string2";
 ```
 
-### 3.2.9 数组打印
+#### 3.2.8.5 grep
 
-* 若数组不在双引号中，那么使用`say`输出后，各元素会紧贴在一起
-* 若数组在双引号中，各个元素之间会插入全局变量`$"`，其默认值为空格，称为数组插值`Array Interpolation`
+`grep`用于过滤数组，语法格式如下：
+
+* `grep BLOCK LIST`
+* `BLOCK`：代码块，最后一个表达式用于数组过滤
 
 ```perl
 use strict;
 use warnings;
 use Modern::Perl;
+use Data::Dumper;
 
-my @alphabet = 'a' .. 'z';
-say "beyound quote, [", @alphabet, "]";
-say "within quote, [@alphabet]";
+my @strs = qw/num1 num2 str1 str2/;
 
-{
-    local $" = ')(';
-    say "winthin quite and local \$\", [@alphabet]";
-}
+my @filtered_strs = grep { /num/ } @strs;
+say "@filtered_strs";
+
+my @refs          = ( [ 'num1', 'num2' ], [ 'str1', 'str2' ] );
+my @filtered_refs = grep { $_->[0] =~ /num/ } @refs;
+say Dumper @filtered_refs;
 ```
 
-### 3.2.10 数组排序
+#### 3.2.8.6 sort
 
-`Perl`中数组排序使用`sort`函数，语法格式如下：
+`sort`用于数组排序，语法格式如下：
 
 * `sort [ SUBROUTINE ] LIST`
 * `SUBROUTINE`：指定规则，默认是`cmp`，会把元素当成字符串处理
@@ -433,80 +535,30 @@ foreach my $pair (@ordered_pairs) {
 }
 ```
 
-### 3.2.11 合并数组
+#### 3.2.8.7 map
 
-数组的元素是以逗号来分割，我们也可以使用逗号来合并数组
+`map`用于数组映射转换，语法格式如下：
 
-```perl
-use strict;
-use warnings;
-use Modern::Perl;
-
-my @numbers1 = ( 1, 3, ( 4, 5, 6 ) );
-say "numbers1: @numbers1";
-
-my @odd      = ( 1, 3, 5 );
-my @even     = ( 2, 4, 6 );
-my @numbers2 = ( @odd, @even );
-say "numbers2: @numbers2";
-```
-
-### 3.2.12 数组起始下标
-
-特殊变量`$[`表示数组的第一索引值，一般都为`0`，如果我们将`$[`设置为`1`，则数组的第一个索引值即为`1`，第二个为`2`，以此类推
-
-**该功能在未来版本可能被废弃，不建议使用**
-
-```perl
-@sites = qw(google taobao youj facebook);
-print "网站: @sites\n";
-
-# set array's first index to 1
-$[ = 1;
-
-print "\@sites[1]: $sites[1]\n";
-print "\@sites[2]: $sites[2]\n";
-```
-
-### 3.2.13 用each循环数组
-
-在`Perl 5.12`之后，可以用`each`循环数组
+* map BLOCK LIST
+* `BLOCK`：代码块，最后一个表达式作为新`List`的元素
 
 ```perl
 use strict;
 use warnings;
 use Modern::Perl;
 
-my @array = ( 'A', 'B', 'C' );
-while ( my ( $index, $value ) = each @array ) {
-    say "$index: $value";
-}
-```
+my @nums  = ( 1 .. 10 );
+my @evens = map { $_ * 2 } @nums;
+my @odds  = map { $_ + 1 } map { $_ * 2 } @nums;
 
-### 3.2.14 用foreach循环数组
+say "@evens";
+say "@odds";
 
-```perl
-use strict;
-use warnings;
-use Modern::Perl;
+my @strs  = ( [ 'Tom', 'Engineer' ], [ 'Jeff', 'Doctor' ] );
+my %users = map { $_->[0] => $_->[1] } @strs;
 
-my @array = ( 'A', 'B', 'C' );
-foreach my $value (@array) {
-    say "$value";
-}
-```
-
-### 3.2.15 检测是否包含某个元素
-
-```perl
-use strict;
-use warnings;
-use Modern::Perl;
-
-my @array = ( 'A', 'B', 'C' );
-if ( 'A' ~~ @array ) {
-    say "contains";
-}
+say $users{'Tom'};
+say $users{'Jeff'};
 ```
 
 ## 3.3 哈希
@@ -1720,7 +1772,7 @@ $c = not($a);
 say "not(\$a) = $c";
 ```
 
-## 5.7 引号运算
+## 5.7 引号运算：`q/qq/qx`
 
 有时候，需要在程序中定义一些复杂的字符串，比如包含引号本身，普通的写法会比较麻烦，例如`$name = "\"hello\"";`。可以使用引号运算来处理
 
@@ -1746,7 +1798,7 @@ my $t = qx{date};
 say "qx{date} = $t";
 ```
 
-## 5.8 qw
+## 5.8 操作符：`qw`
 
 将字符串以空白作为分隔符进行拆分，并返回一个数组
 
@@ -2332,7 +2384,7 @@ my $make_cart_sundae = sub {
 * `perldoc perlre`
 * `perldoc perlreref`
 
-`Perl`的正则表达式的三种形式，分别是匹配，替换和转化：
+**`Perl`的正则表达式的三种形式，分别是匹配，替换和转化：**
 
 * 匹配：`m//`（还可以简写为`//`，略去`m`）
 * 替换：`s///`
@@ -2340,9 +2392,15 @@ my $make_cart_sundae = sub {
 
 这三种形式一般都和`=~`或`!~`搭配使用，`=~`表示相匹配，`!~`表示不匹配
 
-## 7.1 匹配操作符
+## 7.1 匹配操作符：`m//`
 
-匹配操作符`m//`用于匹配一个字符串语句或者一个正则表达式。模式匹配常用的修饰符，如下：
+匹配操作符`m//`（还可以简写为`//`，略去`m`）用于匹配一个字符串语句或者一个正则表达式
+
+```perl
+m/PATTERN/QUALIFIER;
+```
+
+常用的修饰符，如下：
 
 * `i`：如果在修饰符中加上`i`，则正则将会取消大小写敏感性，即`a`和`A`是一样的
 * `m`：多行模式。默认情况下，开始`^`和结束`$`只是对于正则字符串。如果在修饰符中加上`m`，那么开始和结束将会指字符串的每一行：每一行的开头就是`^`，结尾就是`$`
@@ -2371,12 +2429,12 @@ say "matched: $&";
 say "after matched: $'";
 ```
 
-## 7.2 替换操作符
+## 7.2 替换操作符：`s///`
 
 替换操作符`s///`是匹配操作符的扩展，使用新的字符串替换指定的字符串。基本格式如下：
 
 ```perl
-s/PATTERN/REPLACEMENT/;
+s/PATTERN/REPLACEMENT/QUALIFIER;
 ```
 
 ```perl
@@ -2390,7 +2448,7 @@ $string =~ s/google/w3cschool/;
 say "$string";
 ```
 
-模式替换常用的修饰符，如下：
+常用的修饰符，如下：
 
 * `i`：如果在修饰符中加上`i`，则正则将会取消大小写敏感性，即`a`和`A`是一样的
 * `m`：多行模式。默认情况下，开始`^`和结束`$`只是对于正则字符串。如果在修饰符中加上`m`，那么开始和结束将会指字符串的每一行：每一行的开头就是`^`，结尾就是`$`
@@ -2400,7 +2458,13 @@ say "$string";
 * `g`：替换所有匹配的字符串
 * `e`：替换字符串作为表达式
 
-## 7.3 转化操作符
+## 7.3 转化操作符：`tr///`
+
+转化操作符`tr///`逐字符地扫描一个字符串，然后把每个在`SEARCHLIST`（不是正则表达式）里出现的字符替换成对应的来自`REPLACEMENTLIST`（也不是替换字符串）的字符
+
+```perl
+tr/SEARCHLIST/REPLACEMENTLIST/QUALIFIER;
+```
 
 ```perl
 use strict;
@@ -2413,13 +2477,13 @@ $string =~ tr/a-z/A-Z/;
 say "$string";
 ```
 
-模式替换常用的修饰符，如下：
+常用的修饰符，如下：
 
 * `c`：转化所有未指定字符
 * `d`：删除所有指定字符
 * `s`：把多个相同的输出字符缩成一个
 
-## 7.4 qr操作符
+## 7.4 操作符：`qr`
 
 `qr`用于创建正则表达式。相比于普通变量，`qr`还可以额外存储修饰符
 
@@ -3713,7 +3777,11 @@ say 'Present!' if -e $filename;
 
 # 13 常用库
 
-## 13.1 Test
+## 13.1 Data
+
+`Data::Dumper`提供了将复杂数据类型转换成可读字符串的功能
+
+## 13.2 Test
 
 `Test::More`提供了测试相关的能力
 
@@ -3751,7 +3819,7 @@ isnt( 'pancake', 100, 'pancakes should have a delicious numeric value' );
 done_testing();
 ```
 
-## 13.2 Carp
+## 13.3 Carp
 
 `Carp`用于输出告警信息，包括代码上下文等
 
@@ -3770,7 +3838,7 @@ my ( $first, $second, $third ) = ( 1, 2, 3 );
 only_two_arguments( $first, $second, $third );
 ```
 
-## 13.3 Path
+## 13.4 Path
 
 `Path::Class`提供了跨平台的路径操作方式（不必关系路径分隔符是`/`还是`\`诸如此类的问题）
 
@@ -3795,7 +3863,7 @@ say "parent: $parent";
 say "parent2: $parent2";
 ```
 
-## 13.4 Cwd
+## 13.5 Cwd
 
 `Cwd`主要用于计算真实路径，例如`/tmp/././a`就返回`/tmp/a`。详细用法参考`perldoc Cwd`
 
@@ -3808,7 +3876,7 @@ use Cwd;
 say "abs path of '/tmp/a/b/..':", Cwd::abs_path("/tmp/a/b/..");
 ```
 
-## 13.5 File
+## 13.6 File
 
 详细用法参考`perldoc File::Spec`、`perldoc File::Basename`
 
@@ -3831,7 +3899,7 @@ my $rel_dir = dirname(__FILE__);
 say "rel_dir: $rel_dir";
 ```
 
-## 13.6 Time
+## 13.7 Time
 
 `Perl`提供了`localtime`函数用于获取时间信息
 
@@ -3865,7 +3933,7 @@ say "minute:",       $now->minute;
 say "second:",       $now->second;
 ```
 
-## 13.7 Perl-Tidy
+## 13.8 Perl-Tidy
 
 [Perl-Tidy](https://metacpan.org/dist/Perl-Tidy)是代码格式化工具
 
@@ -4030,28 +4098,29 @@ my $fileName = shift or die "missing 'fileName'";
 
 open my $fh, "< $fileName" or die "$!";
 
-my %hash_time;
-my %sort_time;
+my @items =
+  sort { $a->[1] <=> $b->[1] || $a->[2] <=> $b->[2] || $a->[0] cmp $b->[0] }
+  map {
+    [ split( '/', $_->[0] ), $_->[1] ]
+  }    # [walk_through_sort, 1000000, 1000000, 72202569]
+  map {
+    [ split( ' ', $_ ) ]
+  }    # [walk_through_sort/1000000/1000000, 72202569, ns, 72199515, ns, 10]
+  <$fh>;
 
-while (<$fh>) {
-    my @items = split( ' ', $_ );
-    my ( $method, $length, $cardinality ) = split( '/', $items[0] );
+my @map_items =
+  grep { $_->[0] =~ /map/ } @items;
 
-    if ( $method eq "walk_through_map" ) {
-        $hash_time{"$length/$cardinality"} = $items[1];
-    } else {
-        $sort_time{"$length/$cardinality"} = $items[1];
-    }
-}
+my @sort_items =
+  grep { $_->[0] =~ /sort/ } @items;
 
-my @triples = sort { $a->[1] <=> $b->[1] || $a->[2] <=> $b->[2] }
-  map { [ $_, split( '/', $_ ) ] } keys %hash_time;
+foreach my $idx ( 0 .. $#map_items ) {
+    my $map_item  = $map_items[$idx];
+    my $sort_item = $sort_items[$idx];
 
-foreach my $triple (@triples) {
-    my $key    = $triple->[0];
-    my $factor = $triple->[2] / $triple->[1];
-    my $ratio  = sprintf( "%.3f", $hash_time{$key} / $sort_time{$key} );
-    say "map/sort($key/$factor) = $ratio";
+    my $factor = $map_item->[2] / $map_item->[1];
+    my $ratio  = sprintf( "%.3f", $map_item->[3] / $sort_item->[3] );
+    say "map/sort/$map_item->[1]/$map_item->[2]/$factor = $ratio;";
 }
 ```
 
