@@ -1128,11 +1128,16 @@ categories:
                 </li>
                 <li>Hash join operator
                     <ul>
-                        <li></li>
+                        <li>In AsterixDB, the hash join and the hash group-by operators use very similar table structures</li>
+                    </ul>
+                </li>
+                <li>Inverted-index search
+                    <ul>
+                        <li>In AsterixDB, inverted-index is used to perform key word search</li>
                     </ul>
                 </li>
             </td>
-            <td style="text-align:left">👀/Chap4.2</td>
+            <td style="text-align:left">👀/Chap6</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>
