@@ -202,12 +202,18 @@ categories:
                         <li>Performance should degrade as gracefully as possible</li>
                         <li>Database systems like PostgreSQL transfer scheduling responsibilities to the operating system (OS). They create individual OS threads or processes for every new connection and execute the incoming requests in an isolated fashion</li>
                         <li>Many modern database systems deviate from this classic approach. Their parallelization scheme closely resembles task-based parallelism. Each query is split into a set of independent tasks, which can be executed in parallel by different OS threads</li>
-                        <li>Other systems like HyPer and Umbra relieve the OS from almost all scheduling decisions. On startup, they spawn as many OS threads as there are CPU cores. Since these threads do not block when executing tasks, this maximizes performance. The system is not oversubscribed and context switches are kept to a minimum. The task-based parallelization scheme is realized through so-called morsels</li>
+                        <li>Other systems like HyPer and Umbra relieve the OS from almost all scheduling decisions. On startup, they spawn as many OS threads as there are CPU cores. Since these threads do not block when executing tasks, this maximizes performance. The system is not oversubscribed and context switches are kept to a minimum. The task-based parallelization scheme is realized through so-called morsels. A morsel represents a fixed set of tuples in the context of an executable pipeline and is the smallest unit of work during query execution</li>
                     </ul>
                 </li>
-                
+                <li>Scalable task scheduling
+                    <ul>
+                        <li>Stride scheduling gives smaller stride on bigger priority</li>
+                        <li>Tasks are executed by OS threads. On startup, Umbra creates as many OS threads as there are CPU cores. We also call these threads worker threads. The worker threads are only responsible for executing scheduler tasks. This design minimizes context switches and prevents oversubscription</li>
+                        <li>Worker threads should not block</li>
+                    </ul>
+                </li>
             </td>
-            <td style="text-align:left">👀/P2</td>
+            <td style="text-align:left">👀/Chap2.3</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
         <tr>
