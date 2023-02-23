@@ -139,7 +139,9 @@ echo ${count}
 count=0
 ls | while read line
 do
+    # 由于管道是在子进程中执行的，变量的更新在子进程结束后就丢失了
     ((count++))
+    echo "count=${count}"
 done
 echo ${count} # 永远是0
 ```
