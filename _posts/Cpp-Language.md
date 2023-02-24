@@ -1740,6 +1740,107 @@ addr distance between t1 and t2 is: 8392704
 
 可以发现，在不同的线程中，`value`的内存地址是不同的，且处于高位。相邻两个线程，`value`地址的差值差不多就是栈空间的大小（`ulimit -s`）
 
+#### 3.6.4.1 初始化
+
+```cpp
+#include <iostream>
+#include <mutex>
+#include <thread>
+
+void print(const std::string content) {
+    static std::mutex m;
+    std::lock_guard<std::mutex> l(m);
+    std::cout << content << std::endl;
+}
+
+class Foo {
+public:
+    Foo() { print("default ctor"); }
+    Foo(const Foo& foo) { print("copy ctor"); }
+    Foo(Foo&& foo) { print("move ctor"); }
+    ~Foo() { print("destroy"); }
+
+    int value = 0;
+};
+
+thread_local Foo foo;
+
+int main() {
+    foo.value = 1;
+    print("main: foo'address=" + std::to_string(reinterpret_cast<int64_t>(&foo)) +
+          ", value=" + std::to_string(foo.value));
+    std::thread t([&]() {
+        print("t1: foo'address=" + std::to_string(reinterpret_cast<int64_t>(&foo)) +
+              ", value=" + std::to_string(foo.value));
+    });
+    t.join();
+
+    return 0;
+}
+```
+
+输出如下：
+
+* 构造方法调用了2次，符合预期
+
+```
+default ctor
+main: foo'address=140670828566396, value=1
+default ctor
+t1: foo'address=140670810937084, value=0
+destroy
+destroy
+```
+
+修改一下，我们将`thread_local`移动到`main`函数内部
+
+```cpp
+#include <iostream>
+#include <mutex>
+#include <thread>
+
+void print(const std::string content) {
+    static std::mutex m;
+    std::lock_guard<std::mutex> l(m);
+    std::cout << content << std::endl;
+}
+
+class Foo {
+public:
+    Foo() { print("default ctor"); }
+    Foo(const Foo& foo) { print("copy ctor"); }
+    Foo(Foo&& foo) { print("move ctor"); }
+    ~Foo() { print("destroy"); }
+
+    int value = 0;
+};
+
+int main() {
+    thread_local Foo foo;
+    foo.value = 1;
+    print("main: foo'address=" + std::to_string(reinterpret_cast<int64_t>(&foo)) +
+          ", value=" + std::to_string(foo.value));
+    std::thread t([&]() {
+        print("t1: foo'address=" + std::to_string(reinterpret_cast<int64_t>(&foo)) +
+              ", value=" + std::to_string(foo.value));
+    });
+    t.join();
+
+    return 0;
+}
+```
+
+输出如下：
+
+* 构造方法调用了一次，但是地址确是不同的，这个怎么解释？
+
+```
+default ctor
+main: foo'address=140011601090424, value=1
+t1: foo'address=140011583461112, value=0
+destroy
+```
+
 ## 3.7 继承与多态
 
 ### 3.7.1 继承方式
@@ -3985,6 +4086,59 @@ A's (int) constructor
 A's (int, int) constructor
 
 ============(值初始化 a11)============
+```
+
+### 9.2.3 类成员的初始化顺序
+
+1. 初始化列表
+1. 成员定义处的列表初始化，当且仅当该成员未出现在初始化列表中时才会生效
+1. 构造函数的函数体中的初始化行为
+
+```cpp
+#include <iostream>
+
+int initialized_where_defined() {
+    std::cout << "initialized_where_defined" << std::endl;
+    return 0;
+}
+
+int initialized_at_initialization_list() {
+    std::cout << "initialized_at_initialization_list" << std::endl;
+    return 0;
+}
+
+int initialized_at_construct_block() {
+    std::cout << "initialized_at_construct_block" << std::endl;
+    return 0;
+}
+
+class Foo {
+public:
+    Foo() { _data = initialized_at_construct_block(); }
+    Foo(int) : _data(initialized_at_initialization_list()) { _data = initialized_at_construct_block(); }
+
+private:
+    int _data = initialized_where_defined();
+};
+
+int main(int argc, const char* argv[]) {
+    Foo f1;
+    std::cout << "\n---------------------------------------\n" << std::endl;
+    Foo f2(0);
+    return 0;
+}
+```
+
+输出：
+
+```
+initialized_where_defined
+initialized_at_construct_block
+
+---------------------------------------
+
+initialized_at_initialization_list
+initialized_at_construct_block
 ```
 
 ## 9.3 指针

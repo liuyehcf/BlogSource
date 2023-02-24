@@ -1747,6 +1747,19 @@ Data Stream Processing System, DSPS
             <td style="text-align:left">✅</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/What-Every-Programmer–Should-Know-About-Memory.pdf">What Every Programmer Should Know About Memory</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Memory Model</code></li>
+            </td>
+            <td style="text-align:left">
+                <li></li>
+            </td>
+            <td style="text-align:left">👀</td>
+            <td style="text-align:left">★★★★★</td>
+        </tr>
     </tbody>
 </table>
 
