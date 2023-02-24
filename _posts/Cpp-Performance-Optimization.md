@@ -674,7 +674,53 @@ BM_atomic        5.65 ns         5.65 ns    124013879
 BM_mutex         16.6 ns         16.6 ns     42082466
 ```
 
-## 1.8 `std::function` or template
+## 1.8 `std::atomic` write
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#include <atomic>
+
+static void write_normal(benchmark::State& state) {
+    int64_t cnt = 0;
+    int64_t date = 0;
+    for (auto _ : state) {
+        date = cnt++;
+        benchmark::DoNotOptimize(date);
+    }
+}
+
+template <std::memory_order order>
+static void write_atomic(benchmark::State& state) {
+    int64_t cnt = 0;
+    std::atomic<int64_t> date = 0;
+    for (auto _ : state) {
+        date.store(cnt++, order);
+        benchmark::DoNotOptimize(date);
+    }
+}
+
+BENCHMARK(write_normal);
+BENCHMARK(write_atomic<std::memory_order_relaxed>);
+BENCHMARK(write_atomic<std::memory_order_seq_cst>);
+
+BENCHMARK_MAIN();
+```
+
+**输出如下：**
+
+* 下面这个结果是在`x86`平台上运行得到的。不同平台对于`std::memory_order_relaxed`的实现是有差异的，`x86`采用了更为严格的策略，在这种情况下，和非原子变量的写性能一样，基本可以推断，其他平台上原子变量和非原子变量的写性能，在无竞争的情况下，基本接近
+
+```
+----------------------------------------------------------------------------------
+Benchmark                                        Time             CPU   Iterations
+----------------------------------------------------------------------------------
+write_normal                                 0.313 ns        0.313 ns   1000000000
+write_atomic<std::memory_order_relaxed>      0.391 ns        0.391 ns   1000000000
+write_atomic<std::memory_order_seq_cst>       5.63 ns         5.63 ns    124343398
+```
+
+## 1.9 `std::function` or template
 
 ```cpp
 #include <benchmark/benchmark.h>
@@ -722,7 +768,7 @@ BM_function       1.89 ns         1.89 ns    371459322
 BM_template      0.314 ns        0.314 ns   1000000000
 ```
 
-## 1.9 duff's device
+## 1.10 duff's device
 
 `duff's device`是指一种用于减少循环条件判断次数的特殊优化手段
 
@@ -819,7 +865,7 @@ BM_send_duff    1106143 ns      1106032 ns          636
 
 可见，经过编译器优化后，两者的性能相差无几，因此，我们无需手动做这类优化
 
-## 1.10 hash vs. sort
+## 1.11 hash vs. sort
 
 在数据库场景中，同一个算子的实现可以有多种，比如`Join`可以是`Sort Based Join`或者`Hash Based Join`，理论上来说，`Hash`的性能更高，因为它是`O(N)`复杂度，而`Sort`一般是`O(NlgN)`，但是在实际的场景中，常量也是一个重要的因素，因此下面的benchmark用于探究在不同场景下`Sort`和`Hash`的性能
 
