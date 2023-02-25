@@ -720,7 +720,7 @@ write_atomic<std::memory_order_relaxed>      0.391 ns        0.391 ns   10000000
 write_atomic<std::memory_order_seq_cst>       5.63 ns         5.63 ns    124343398
 ```
 
-## 1.9 `std::function` or template
+## 1.9 `std::function` or lambda
 
 ```cpp
 #include <benchmark/benchmark.h>

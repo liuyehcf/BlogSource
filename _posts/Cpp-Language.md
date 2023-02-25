@@ -3528,11 +3528,28 @@ type=std::atomic<int32_t>, count=2000000
 * [并行编程——内存模型之顺序一致性](https://www.cnblogs.com/jiayy/p/3246157.html)
 * [漫谈内存一致性模型](https://zhuanlan.zhihu.com/p/91406250)
 
-# 6 `__attribute__`
+# 6 Lambda表达式
+
+[Lambda expressions (since C++11)](https://en.cppreference.com/w/cpp/language/lambda)
+
+> The lambda expression is a prvalue expression of unique unnamed non-union non-aggregate class type, known as closure type, which is declared (for the purposes of ADL) in the smallest block scope, class scope, or namespace scope that contains the lambda expression. The closure type has the following members, they cannot be explicitly instantiated, explicitly specialized, or (since C++14) named in a friend declaration
+
+* 每个`Lambda`表达式都是独一无二的类型，且无法显式声明
+
+## 6.1 `std::function`与Lambda表达式
+
+在大多数场景下，`Lambda`和`std::function`可以相互替换使用，但它们之间存在一些差异（[What's the difference between a lambda expression and a function pointer (callback) in C++?](https://www.quora.com/Whats-the-difference-between-a-lambda-expression-and-a-function-pointer-callback-in-C++)）：
+
+* `Lambda`无法显式声明类型，而`std::function`可以
+* `Lambda`效率更高，参考{% post_link Cpp-Performance-Optimization %}
+    * `std::function`本质上是个函数指针的封装，当传递它时，编译器很难进行内联优化
+    * `Lambda`本质上是传递某个匿名类的实例，有确定的类型信息，编译器可以很容易地进行内联优化
+
+# 7 `__attribute__`
 
 [Compiler-specific Features](https://www.keil.com/support/man/docs/armcc/armcc_chr1359124965789.htm)
 
-## 6.1 aligned
+## 7.1 aligned
 
 ```cpp
 #include <iostream>
@@ -3568,13 +3585,13 @@ int main() {
 }
 ```
 
-# 7 ASM
+# 8 ASM
 
 [gcc-online-docs](https://gcc.gnu.org/onlinedocs/gcc/)
 
-## 7.1 Basic Asm
+## 8.1 Basic Asm
 
-## 7.2 [Extended Asm](https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html)
+## 8.2 [Extended Asm](https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html)
 
 GCC设计了一种特有的嵌入方式，它规定了汇编代码嵌入的形式和嵌入汇编代码需要由哪几个部分组成，格式如下：
 
@@ -3754,9 +3771,9 @@ int main() {
 
 **示例3：linux内核大量用到了`asm`，具体可以参考[linux-asm](https://github.com/torvalds/linux/blob/master/arch/x86/include/asm)**
 
-# 8 Policy
+# 9 Policy
 
-## 8.1 Pointer Stability
+## 9.1 Pointer Stability
 
 **`pointer stability`通常用于描述容器。当我们说一个容器是`pointer stability`时，是指，当某个元素添加到容器之后、从容器删除之前，该元素的内存地址不变，也就是说，该元素的内存地址，不会受到容器的添加删除元素、扩缩容、或者其他操作影响**
 
@@ -3780,7 +3797,7 @@ int main() {
 | `phmap::node_hash_map` | ✅ |
 | `phmap::node_hash_set` | ✅ |
 
-## 8.2 Exception Safe
+## 9.2 Exception Safe
 
 [Wiki-Exception safety](https://en.wikipedia.org/wiki/Exception_safety)
 
@@ -3791,7 +3808,7 @@ int main() {
 1. `Basic exception safety`：可能会抛出异常，操作失败的部分可能会导致副作用，但所有不变量都会被保留。任何存储的数据都将包含可能与原始值不同的有效值。资源泄漏（包括内存泄漏）通常通过一个声明所有资源都被考虑和管理的不变量来排除
 1. `No exception safety`：不承诺异常安全
 
-## 8.3 RAII
+## 9.3 RAII
 
 `RAII, Resource Acquisition is initialization`，即资源获取即初始化。典型示例包括：`std::lock_guard`、`defer`。简单来说，就是在对象的构造方法中初始化资源，在析构函数中销毁资源。而构造函数与析构函数的调用是由编译器自动插入的，减轻了开发者的心智负担
 
@@ -3808,9 +3825,11 @@ private:
 };
 ```
 
-# 9 Tips
+# 10 Tips
 
-## 9.1 如何在类中定义静态成员
+## 10.1 类相关
+
+### 10.1.1 如何在类中定义静态成员
 
 **在类中声明静态成员，在类外定义（赋值）静态成员，示例如下：**
 
@@ -3838,9 +3857,38 @@ gcc -o main main.cpp -lstdc++ -Wall
 ./main
 ```
 
-## 9.2 初始化
+### 10.1.2 类的非静态成员无法进行类型推导
 
-### 9.2.1 初始化列表
+类的非静态成员，无法进行类型推导，必须显式指定类型（因为类型信息必须是不可变的）；静态成员可以。例如下面示例就存在语法错误：
+
+```cpp
+#include <utility>
+
+template <typename Func>
+class Delegate {
+public:
+    Delegate(Func func) : _func(std::move(func)) { _func(); }
+
+private:
+    Func _func;
+};
+
+class Foo {
+public:
+    Foo() : _delegate(Foo::do_something) {}
+    inline static void do_something() {}
+
+private:
+    inline static Delegate _s_delegate{Foo::do_something};
+    // Use of class template 'Delegate' requires template arguments
+    // Argument deduction not allowed in non-static class member (clang auto_not_allowed
+    Delegate _delegate;
+};
+```
+
+## 10.2 初始化
+
+### 10.2.1 初始化列表
 
 1. 对于内置类型，直接进行值拷贝。使用初始化列表还是在构造函数体中进行初始化没有差别
 1. 对于类类型
@@ -3951,7 +3999,7 @@ A's default constructor
 A's move assign operator
 ```
 
-### 9.2.2 各种初始化类型
+### 10.2.2 各种初始化类型
 
 1. 默认初始化：`type variableName;`
 1. 直接初始化/构造初始化（至少有1个参数）：`type variableName(args);`
@@ -4084,7 +4132,7 @@ A's (int, int) constructor
 ============(值初始化 a11)============
 ```
 
-### 9.2.3 类成员的初始化顺序
+### 10.2.3 类成员的初始化顺序
 
 1. 初始化列表
 1. 成员定义处的列表初始化，当且仅当该成员未出现在初始化列表中时才会生效
@@ -4137,9 +4185,9 @@ initialized_at_initialization_list
 initialized_at_construct_block
 ```
 
-## 9.3 指针
+## 10.3 指针
 
-### 9.3.1 成员函数指针
+### 10.3.1 成员函数指针
 
 成员函数指针需要通过`.*`或者`->*`运算符进行调用
 
@@ -4198,9 +4246,9 @@ int main() {
 }
 ```
 
-## 9.4 引用
+## 10.4 引用
 
-### 9.4.1 引用赋值
+### 10.4.1 引用赋值
 
 **引用只能在定义处初始化**
 
@@ -4226,7 +4274,7 @@ b=2
 ref=2
 ```
 
-## 9.5 mock class
+## 10.5 mock class
 
 有时在测试的时候，我们需要mock一个类的实现，我们可以在测试的cpp文件中实现这个类的所有方法（**注意，必须是所有方法**），就能够覆盖原有库文件中的实现。下面以一个例子来说明
 
@@ -4403,9 +4451,9 @@ person.cpp:(.text+0x2a): Person::sleep() 的多重定义
 collect2: 错误：ld 返回 1
 ```
 
-# 10 FAQ
+# 11 FAQ
 
-## 10.1 为什么free和delete释放内存时不用指定大小
+## 11.1 为什么free和delete释放内存时不用指定大小
 
 [How does free know how much to free?](https://stackoverflow.com/questions/1518711/how-does-free-know-how-much-to-free)
 
@@ -4427,11 +4475,11 @@ ____ The allocated block ____
           +-- The address you are given
 ```
 
-## 10.2 形参类型是否需要左右值引用
+## 11.2 形参类型是否需要左右值引用
 
-## 10.3 返回类型是否需要左右值引用
+## 11.3 返回类型是否需要左右值引用
 
-# 11 参考
+# 12 参考
 
 * [C++11\14\17\20 特性介绍](https://www.jianshu.com/p/8c4952e9edec)
 * [关于C++：静态常量字符串(类成员)](https://www.codenong.com/1563897/)
