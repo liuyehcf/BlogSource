@@ -28,3 +28,4 @@ categories:
     * [introduce unplug mechanism to improve scalability](https://github.com/StarRocks/starrocks/pull/8979)
 1. 分区倾斜的场景下排序如何优化
     * 「每路同时独立排序」 -> 「依次对每路数据做并行排序」
+1. MemTracker中原子变量更新存在多线程竞争，频繁得更新会导致性能急剧下降。可以通过攒批的方式，将实时写入改成批次写入来降低竞争的概率
