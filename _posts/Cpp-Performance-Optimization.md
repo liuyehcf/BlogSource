@@ -744,7 +744,7 @@ static void BM_function(benchmark::State& state) {
     }
 }
 
-static void BM_template(benchmark::State& state) {
+static void BM_lambda(benchmark::State& state) {
     int64_t cnt = 0;
 
     for (auto _ : state) {
@@ -752,20 +752,33 @@ static void BM_template(benchmark::State& state) {
     }
 }
 
+static void BM_inline(benchmark::State& state) {
+    int64_t cnt = 0;
+
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(cnt++);
+    }
+}
+
 BENCHMARK(BM_function);
-BENCHMARK(BM_template);
+BENCHMARK(BM_lambda);
+BENCHMARK(BM_inline);
 
 BENCHMARK_MAIN();
 ```
 
 **输出如下：**
 
+* `std::function`本质上是个函数指针的封装，当传递它时，编译器很难进行内联优化
+* `Lambda`本质上是传递某个匿名类的实例，有确定的类型信息，编译器可以很容易地进行内联优化
+
 ```
 ------------------------------------------------------
 Benchmark            Time             CPU   Iterations
 ------------------------------------------------------
-BM_function       1.89 ns         1.89 ns    371459322
-BM_template      0.314 ns        0.314 ns   1000000000
+BM_function       1.88 ns         1.88 ns    372813677
+BM_lambda        0.313 ns        0.313 ns   1000000000
+BM_inline        0.313 ns        0.313 ns   1000000000
 ```
 
 ## 1.10 duff's device
