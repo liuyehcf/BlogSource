@@ -1747,10 +1747,12 @@ addr distance between t1 and t2 is: 8392704
 #include <mutex>
 #include <thread>
 
-void print(const std::string content) {
+template <typename... Args>
+void print(Args&&... args) {
     static std::mutex m;
     std::lock_guard<std::mutex> l(m);
-    std::cout << content << std::endl;
+    int _[] = {(std::cout << args, 0)...};
+    std::cout << std::endl;
 }
 
 class Foo {
@@ -1758,7 +1760,7 @@ public:
     Foo() { print("default ctor"); }
     Foo(const Foo& foo) { print("copy ctor"); }
     Foo(Foo&& foo) { print("move ctor"); }
-    ~Foo() { print("destroy"); }
+    ~Foo() { print("dtor"); }
 
     int value = 0;
 };
@@ -1767,12 +1769,8 @@ thread_local Foo foo;
 
 int main() {
     foo.value = 1;
-    print("main: foo'address=" + std::to_string(reinterpret_cast<int64_t>(&foo)) +
-          ", value=" + std::to_string(foo.value));
-    std::thread t([&]() {
-        print("t1: foo'address=" + std::to_string(reinterpret_cast<int64_t>(&foo)) +
-              ", value=" + std::to_string(foo.value));
-    });
+    print("main: foo'address=", &foo, ", value=", foo.value);
+    std::thread t([&]() { print("t1: foo'address=", &foo, ", value=", foo.value); });
     t.join();
 
     return 0;
@@ -1785,11 +1783,11 @@ int main() {
 
 ```
 default ctor
-main: foo'address=140670828566396, value=1
+main: foo'address=0x7f5fd6b0c77c, value=1
 default ctor
-t1: foo'address=140670810937084, value=0
-destroy
-destroy
+t1: foo'address=0x7f5fd5a3c6fc, value=0
+dtor
+dtor
 ```
 
 修改一下，我们将`thread_local`移动到`main`函数内部
@@ -1799,10 +1797,12 @@ destroy
 #include <mutex>
 #include <thread>
 
-void print(const std::string content) {
+template <typename... Args>
+void print(Args&&... args) {
     static std::mutex m;
     std::lock_guard<std::mutex> l(m);
-    std::cout << content << std::endl;
+    int _[] = {(std::cout << args, 0)...};
+    std::cout << std::endl;
 }
 
 class Foo {
@@ -1810,7 +1810,7 @@ public:
     Foo() { print("default ctor"); }
     Foo(const Foo& foo) { print("copy ctor"); }
     Foo(Foo&& foo) { print("move ctor"); }
-    ~Foo() { print("destroy"); }
+    ~Foo() { print("dtor"); }
 
     int value = 0;
 };
@@ -1818,12 +1818,8 @@ public:
 int main() {
     thread_local Foo foo;
     foo.value = 1;
-    print("main: foo'address=" + std::to_string(reinterpret_cast<int64_t>(&foo)) +
-          ", value=" + std::to_string(foo.value));
-    std::thread t([&]() {
-        print("t1: foo'address=" + std::to_string(reinterpret_cast<int64_t>(&foo)) +
-              ", value=" + std::to_string(foo.value));
-    });
+    print("main: foo'address=", &foo, ", value=", foo.value);
+    std::thread t([&]() { print("t1: foo'address=", &foo, ", value=", foo.value); });
     t.join();
 
     return 0;
@@ -1836,9 +1832,9 @@ int main() {
 
 ```
 default ctor
-main: foo'address=140011601090424, value=1
-t1: foo'address=140011583461112, value=0
-destroy
+main: foo'address=0x7f2d690e6778, value=1
+t1: foo'address=0x7f2d680166f8, value=0
+dtor
 ```
 
 ## 3.7 继承与多态
