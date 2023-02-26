@@ -1690,7 +1690,7 @@ systemctl stop demo-service.service
 * [Learn eBPF Tracing: Tutorial and Examples](https://www.brendangregg.com/blog/2019-01-01/learn-ebpf-tracing.html)
 * [socket tracer](https://mp.weixin.qq.com/s/0w5t_KkHRLXkEY1_qbdTtw)
 
-# 6 中断
+# 6 Interrupt
 
 ## 6.1 参考
 
@@ -1702,4 +1702,16 @@ systemctl stop demo-service.service
 * [Linux 内核中断内幕](https://www.ibm.com/developerworks/cn/linux/l-cn-linuxkernelint/index.html)
 * [彻底搞懂异常控制流](https://www.cnblogs.com/niuyourou/p/12097856.html)
 * [嵌入式杂谈之中断向量表](https://zhuanlan.zhihu.com/p/125480457)
+
+# 7 NUMA
+
+`NUMA`（`Non-Uniform Memory Access`，非一致性内存访问）是一种计算机系统体系结构，用于解决多处理器系统中共享内存的问题。在`NUMA`架构中，系统内存被划分为多个节点（`Node`），每个节点有自己的内存和处理器。节点之间通过互联网络进行通信，进程可以在不同的节点上运行，并访问不同节点的内存。
+
+`NUMA`相对于传统的`SMP`（`Symmetric Multi-Processing`，对称多处理）架构来说，可以提供更好的可扩展性和更高的性能。在`SMP`架构中，所有处理器共享一个全局内存，因此内存访问的延迟和带宽是一致的。但是在`NUMA`架构中，不同节点之间的内存访问延迟和带宽可能不同，这就需要程序员进行显式的内存分配和管理，以保证内存访问的局部性和性能
+
+在`NUMA`架构中，操作系统和编译器需要提供支持，以便程序员可以使用`NUMA`相关的`API`和指令来控制内存分配和访问。例如，`Linux`提供了`libnuma`库和`numactl`工具，可以用于控制进程和内存的亲和性和绑定性，以及使用`NUMA`相关的系统调用和环境变量来进行内存分配和管理。在编译器层面，一些编译器可以通过特定的编译选项来生成`NUMA`意识的代码，以优化内存访问的性能和局部性
+
+## 7.1 参考
+
+* [十年后数据库还是不敢拥抱NUMA？](https://zhuanlan.zhihu.com/p/387117470)
 

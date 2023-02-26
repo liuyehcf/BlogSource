@@ -191,6 +191,15 @@ categories:
     cgasm -f push
     ```
 
+## 2.2 内存屏障
+
+在`x86`架构中，有几个汇编指令可以用作内存屏障，它们的作用是确保内存访问的顺序不会被重排，从而保证程序的正确性和可靠性。这些指令包括：
+
+* `MFENCE`：在执行`MFENCE`指令之前的所有内存访问都必须在执行`MFENCE`指令之前完成，执行`MFENCE`指令之后的所有内存访问都必须在执行`MFENCE`指令之后开始。这个指令是一个全屏障，即它会阻止所有处理器上的内存访问
+* `SFENCE`：`SFENCE`保证在执行`SFENCE`指令之前的所有写操作都已经提交到内存，执行`SFENCE`指令之后的所有写操作都不能被重排到执行`SFENCE`指令之前
+* `LFENCE`：`LFENCE`保证在执行`LFENCE`指令之前的所有读操作都已经完成，执行`LFENCE`指令之后的所有读操作都不能被重排到执行`LFENCE`指令之前
+* `LOCK`指令前缀：`LOCK`前缀可以用于一些特定的指令，例如`LOCK ADD`、`LOCK DEC`、`LOCK XCHG`等，它们保证在执行带有`LOCK`前缀的指令时，对共享内存的访问会被序列化。
+
 # 3 寄存器
 
 **更多内容请参考{% post_link System-Architecture-Register %}**

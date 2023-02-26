@@ -49,7 +49,7 @@ categories:
     * 其他
         * [Spark性能优化指南——高级篇](https://tech.meituan.com/2016/05/12/spark-tuning-pro.html)
 1. 体系结构
-    * 内存屏障在汇编层面的表示
+    * numa
 1. cpp
     * std::guard(be/src/runtime/decimalv3.h,be/src/util/guard.h)
     * std::declval
