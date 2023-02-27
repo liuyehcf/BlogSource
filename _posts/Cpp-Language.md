@@ -245,6 +245,13 @@ int main() {
 不同的编译器可能支持不同的`#pragma`指令，以下是一些常用的`#pragma`指令及其作用
 
 * `#pragma once`：该指令用于避免头文件被多次包含，以解决头文件重复包含的问题。它告诉编译器只包含一次该头文件
+* `#pragma pack`：该`pragma`族控制后继定义的结构体、联合体、类的最大对齐
+    * `#pragma pack(<arg>)`：设置当前对齐为值`<arg>`
+    * `#pragma pack()`：设置当前对齐为默认值（由命令行选项指定）
+    * `#pragma pack(push)`：推入当前对齐的值到内部栈
+    * `#pragma pack(push, <arg>)`：推入当前对齐的值到内部栈然后设置当前对齐为值`<arg>`
+    * `#pragma pack(pop)`：从内部栈弹出顶条目然后设置（恢复）当前对齐为该值
+    * 其中`<arg>`实参是小的`2`的幂，指定以字节计的新对齐
 * `#pragma message`：该指令用于在编译时输出一条消息
     ```cpp
     #pragma message("Compiling " __FILE__)
