@@ -1757,7 +1757,7 @@ Data Stream Processing System, DSPS
             <td style="text-align:left">
                 <li></li>
             </td>
-            <td style="text-align:left">👀</td>
+            <td style="text-align:left">👀/P3</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
     </tbody>
