@@ -4269,6 +4269,39 @@ initialized_at_initialization_list
 initialized_at_construct_block
 ```
 
+### 10.2.4 静态局部变量的初始化
+
+```cpp
+void foo() {
+    static Bar bar;
+    // ...
+}
+```
+
+初始化过程等效于如下程序，其中：
+
+* `guard_for_bar`是一个用来保证线程安全和一次性初始化的整型变量，是编译器生成的，存储在`bss`段。它的最低的一个字节被用作相应静态变量是否已被初始化的标志，若为`0`表示还未被初始化，否则表示已被初始化
+* `__cxa_guard_acquire`实际上是一个加锁的过程， 相应的`__cxa_guard_abort`和 `__cxa_guard_release`释放锁
+* `__cxa_atexit`注册在调用`exit`时或动态链接库(或共享库) 被卸载时执行的函数，这里注册的是Bar的析构函数
+
+```cpp
+void foo() {
+    if ((guard_for_bar & 0xff) == 0) {
+        if (__cxa_guard_acquire(&guard_for_bar)) {
+            try {
+                Bar::Bar(&bar);
+            } catch (...) {
+                __cxa_guard_abort(&guard_for_bar);
+                throw;
+            }
+            __cxa_guard_release(&guard_for_bar);
+            __cxa_atexit(Bar::~Bar, &bar, &__dso_handle);
+        }
+    }
+    // ...
+}
+```
+
 ## 10.3 指针
 
 ### 10.3.1 成员函数指针

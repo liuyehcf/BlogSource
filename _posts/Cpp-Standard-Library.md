@@ -1346,8 +1346,17 @@ int main() {
         * The tmpnam() function generates a different string each time it is called, up to TMP_MAX times. If it is called more than TMP_MAX times, the behavior is implementation defined.
     * `std::printf`
 1. `cstdlib`
+    * **内存分配相关**
+        * `malloc/free`：`C`语言中的函数，在`C++`中也可以使用。`malloc`函数分配指定大小的内存，`free`函数释放该内存
+        * `calloc`：分配指定数量的连续内存空间，并将其初始化为0
+        * `realloc`：重新调整已经分配的内存空间的大小
+        * `aligned_alloc`：分配指定大小的内存，并确保其对齐到特定的字节边界
+        * `posix_memalign`：分配指定大小的内存，并确保其对齐到指定的字节边界
+        * `memalign`：分配指定大小的内存，并确保其对齐到特定的字节边界
+        * `valloc`：分配指定大小的内存，并确保其对齐到页的大小
+        * `pvalloc`：分配指定大小的内存，并确保其对齐到页的大小
+    * `std::atexit`：注册程序退出时的钩子方法
     * `std::system`：用于执行命令
-    * `std::malloc`
     * `std::mkstemp`：创建临时文件，传入一个文件名模板，其最后留个字符为`XXXXXX`，这部分会替换为随机字符
     * `std::atoi`
     * `std::atol`

@@ -222,6 +222,8 @@ func(bool b = false)
 
 # 3 Memory Hook引发的死锁
 
+[Fix Backend get stuck on startup](https://github.com/StarRocks/starrocks/pull/18664)
+
 ```cpp
 #include <iostream>
 
