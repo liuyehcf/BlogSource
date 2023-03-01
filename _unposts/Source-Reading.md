@@ -101,3 +101,12 @@ categories:
             * 如果两者对应的`Group`不等价，那么需要对`Group`进行进一步合并，这里记录到`needMergeGroup`中
 1. 合并`srcGroup`以及`destGroup`
 1. 合并`needMergeGroup`中记录的`Group`对
+
+## 3.3 Execution
+
+* `be/src/exprs/agg/factory/aggregate_resolver.hpp`
+    * `AggregateFuncResolver::get_aggregate_info`
+* `be/src/column/type_traits.h`
+    * `RunTimeTypeTraits`
+    * `RunTimeCppType`
+    * `RunTimeColumnType`

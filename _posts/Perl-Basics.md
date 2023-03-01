@@ -238,7 +238,7 @@ say "@array2";
 say "@array3";
 ```
 
-### 3.2.3 数组序列号：`..`
+### 3.2.3 数组切片：`..`
 
 `Perl`提供了可以按序列输出的数组形式，格式为：`起始值 + .. + 结束值`
 
@@ -3845,13 +3845,43 @@ say 'Present!' if -e $filename;
 1. `chdir`：用于切换当前工作目录
 1. `File::Copy`：文件拷贝和移动
 
-# 13 常用库
+# 13 进程管理
 
-## 13.1 Data
+## 13.1 操作符：`` ` ``
+
+像`shell`一样，我们可以在`` `<command>` ``中执行命令，并获取结果
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+my @items = `ls -al`;
+
+for (@items) {
+    print;
+}
+```
+
+## 13.2 system
+
+你也可以使用`system`函数执行`Unix`命令, 执行该命令将直接输出结果。默认情况下会送到目前`Perl`的`STDOUT`指向的地方，一般是屏幕。你也可以使用重定向运算符`>`输出到指定文件
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+system( "ls", "-al" );
+```
+
+# 14 常用库
+
+## 14.1 Data
 
 `Data::Dumper`提供了将复杂数据类型转换成可读字符串的功能
 
-## 13.2 Test
+## 14.2 Test
 
 `Test::More`提供了测试相关的能力
 
@@ -3889,7 +3919,7 @@ isnt( 'pancake', 100, 'pancakes should have a delicious numeric value' );
 done_testing();
 ```
 
-## 13.3 Carp
+## 14.3 Carp
 
 `Carp`用于输出告警信息，包括代码上下文等
 
@@ -3908,7 +3938,7 @@ my ( $first, $second, $third ) = ( 1, 2, 3 );
 only_two_arguments( $first, $second, $third );
 ```
 
-## 13.4 Path
+## 14.4 Path
 
 `Path::Class`提供了跨平台的路径操作方式（不必关系路径分隔符是`/`还是`\`诸如此类的问题）
 
@@ -3933,7 +3963,7 @@ say "parent: $parent";
 say "parent2: $parent2";
 ```
 
-## 13.5 Cwd
+## 14.5 Cwd
 
 `Cwd`主要用于计算真实路径，例如`/tmp/././a`就返回`/tmp/a`。详细用法参考`perldoc Cwd`
 
@@ -3946,7 +3976,7 @@ use Cwd;
 say "abs path of '/tmp/a/b/..':", Cwd::abs_path("/tmp/a/b/..");
 ```
 
-## 13.6 File
+## 14.6 File
 
 详细用法参考`perldoc File::Spec`、`perldoc File::Basename`
 
@@ -3969,7 +3999,7 @@ my $rel_dir = dirname(__FILE__);
 say "rel_dir: $rel_dir";
 ```
 
-## 13.7 Time
+## 14.7 Time
 
 `Perl`提供了`localtime`函数用于获取时间信息
 
@@ -4003,13 +4033,13 @@ say "minute:",       $now->minute;
 say "second:",       $now->second;
 ```
 
-## 13.8 Perl-Tidy
+## 14.8 Perl-Tidy
 
 [Perl-Tidy](https://metacpan.org/dist/Perl-Tidy)是代码格式化工具
 
-# 14 高级特性
+# 15 高级特性
 
-## 14.1 属性
+## 15.1 属性
 
 具名实体，包括变量以及函数都可以拥有属性，语法如下
 
@@ -4024,7 +4054,7 @@ sub erupt_volcano :ScienceProject { ... }
 
 **大部分时候，你不需要使用属性**
 
-# 15 Builtin
+# 16 Builtin
 
 参考[perlfunc](https://perldoc.perl.org/perlfunc)。此外可以通过`perldoc perlfunc`查看
 
@@ -4040,7 +4070,7 @@ sub erupt_volcano :ScienceProject { ... }
 1. `sort`：排序
 1. `scalar`：显式声明标量上下文
 
-# 16 进阶
+# 17 进阶
 
 [modern-perl.pdf](/resources/book/modern-perl.pdf)
 
@@ -4106,9 +4136,9 @@ sub erupt_volcano :ScienceProject { ... }
 1. `abc|def` 和 `(abc|def)`的差异
 1. `use autodie;` - P167
 
-# 17 Best Practice
+# 18 Best Practice
 
-## 17.1 文本处理-1
+## 18.1 文本处理-1
 
 ```perl
 use warnings;
@@ -4157,7 +4187,7 @@ for my $line (@sorted_lines) {
 }
 ```
 
-## 17.2 文本处理-2
+## 18.2 文本处理-2
 
 ```perl
 use warnings;
@@ -4282,7 +4312,7 @@ map/sort(100000000/50000000/0.5) = 4.068
 map/sort(100000000/100000000/1) = 5.020
 ```
 
-# 18 参考
+# 19 参考
 
 * [w3cschool-perl](https://www.w3cschool.cn/perl/)
 * [perl仓库-cpan](https://www.cpan.org/)

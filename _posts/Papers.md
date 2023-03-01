@@ -1755,9 +1755,28 @@ Data Stream Processing System, DSPS
                 <li><code>#Memory Model</code></li>
             </td>
             <td style="text-align:left">
-                <li></li>
+                <li>Commodity hardware
+                    <ul>
+                        <li>All CPUs are connected via a common bus (the Front Side Bus, FSB) to the Northbridge</li>
+                        <li>The Northbridge contains, among other things, the memory controller, and its implementation determines the type of RAM chips used for the computer</li>
+                        <li>To reach all other system devices, the Northbridge must communicate with the Southbridge. The Southbridge, often referred to as the I/O bridge, handles communication with devices through a variety of different buses(PCI/PCI Express, SATA, USB buses, etc.)</li>
+                        <li>Such a system structure has a number of noteworthy consequences
+                            <ul>
+                                <li>All data communication from one CPU to another must travel over the same bus used to communicate with the Northbridge</li>
+                                <li>All communication with RAM must pass through the Northbridge</li>
+                                <li>Communication between a CPU and a device attached to the Southbridge is routed through the Northbridge</li>
+                            </ul>
+                        </li>
+                        <li>A couple of bottlenecks are immediately apparent in this design
+                            <ul>
+                                <li>One such bottleneck involves access to RAM for devices. In the earliest days of the PC, all communication with devices on either bridge had to pass through the CPU, negatively impacting overall system performance. To work around this problem some devices became capable of direct memory access (DMA). DMA allows devices, with the help of the Northbridge, to store and receive data in RAM directly without the intervention of the CPU (and its inherent performance cost). Today all high-performance devices attached to any of the buses can utilize DMA</li>
+                                <li>A second bottleneck involves the bus from the Northbridge to the RAM. The exact details of the bus depend on the memory types deployed. On older systems there is only one bus to all the RAM chips, so parallel access is not possible. Recent RAM types require two separate buses (or channels as they are called for DDR2) which doubles the available bandwidth</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
             </td>
-            <td style="text-align:left">👀/P3</td>
+            <td style="text-align:left">👀/P4</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
     </tbody>

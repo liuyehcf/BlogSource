@@ -3596,6 +3596,28 @@ type=std::atomic<int32_t>, count=2000000
 * `__attribute__((noreturn))`：指示函数不会返回，用于告诉编译器在函数调用之后不需要进行任何清理操作
 * `__attribute__((unused))`：指示编译器不应发出未使用变量的警告。
 * `__attribute__((deprecated))`：指示函数或变量已经过时，编译器会在使用它们时发出警告
+* `__attribute__(alias)`：它允许你将一个函数或变量的名称指定为另一个已存在的函数或变量的别名。可以起到与链接器参数`--wrap=<symbol>`类似的作用
+    ```cpp
+    #include <stdio.h>
+
+    FILE* my_fopen(const char* path, const char* mode) {
+        printf("This is my fopen!\n");
+        return NULL;
+    }
+
+    FILE* fopen(const char* path, const char* mode) __attribute__((alias("my_fopen")));
+
+    int main() {
+        printf("Calling the fopen() function...\n");
+        FILE* fd = fopen("test.txt", "r");
+        if (!fd) {
+            printf("fopen() returned NULL\n");
+            return 1;
+        }
+        printf("fopen() succeeded\n");
+        return 0;
+    }
+    ```
 
 常用`attributes`清单：
 

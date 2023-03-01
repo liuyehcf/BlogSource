@@ -219,3 +219,45 @@ func(bool b = false)
 ```
 
 `func("hello")`匹配的是单个参数的版本，其中`"hello"`自动转型为`bool`
+
+# 3 Memory Hook引发的死锁
+
+```cpp
+#include <iostream>
+
+class MemTracker;
+
+class ExecEnv {
+public:
+    ExecEnv();
+    static ExecEnv* get_instance() {
+        static ExecEnv exec_env;
+        return &exec_env;
+    }
+    MemTracker* mem_tracker() { return _mem_tracker; }
+
+private:
+    MemTracker* _mem_tracker;
+};
+
+class MemTracker {
+public:
+    int64_t value = 0;
+    void update(size_t size) { value += size; }
+};
+
+void* operator new(size_t size) {
+    std::cout << "Allocating " << size << " bytes of memory." << std::endl;
+    ExecEnv::get_instance()->mem_tracker()->update(size);
+    return alloca(size);
+}
+
+ExecEnv::ExecEnv() : _mem_tracker(new MemTracker()) {}
+
+int64_t* data;
+
+int main() {
+    data = new int64_t[1];
+    return 0;
+}
+```
