@@ -798,6 +798,123 @@ find_path(BRPC_INCLUDE_PATH NAMES brpc/server.h)
 
 Find all source files in a directory
 
+## 5.18 PUBLIC vs. PRIVATE
+
+> In CMake, PUBLIC and PRIVATE are used to specify the visibility of target properties and dependencies. Here's what they mean:
+
+> PUBLIC: A property or dependency marked as PUBLIC is visible to all targets that depend on the current target. This means that the property or dependency will be propagated to any targets that link against the current target.
+> * For example, suppose you have a library target called "foo" that depends on another library called "bar". If you mark the dependency on "bar" as PUBLIC, any target that links against "foo" will also link against "bar".
+
+> PRIVATE: A property or dependency marked as PRIVATE is only visible to the current target. This means that the property or dependency will not be propagated to any targets that depend on the current target.
+> * For example, suppose you have a library target called "foo" that uses a header file called "bar.h". If you mark the header file as PRIVATE, any targets that depend on "foo" will not be able to access "bar.h".
+
+> To summarize, PUBLIC properties and dependencies are visible to all targets that depend on the current target, while PRIVATE properties and dependencies are only visible to the current target.
+
+示例如下：
+
+```
+.
+├── CMakeLists.txt
+├── bar
+│   ├── bar.cpp
+│   └── bar.h
+├── foo
+│   ├── foo.cpp
+│   └── foo.h
+└── main.cpp
+```
+
+```sh
+# CMakeLists.txt
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.10)
+
+# set the project name and version
+project(Visibility VERSION 1.0)
+
+# specify the C++ standard
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+# add library bar
+add_library(libbar bar/bar.cpp)
+target_include_directories(libbar PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/bar)
+
+# add library foo
+add_library(libfoo foo/foo.cpp)
+target_include_directories(libfoo PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/foo)
+target_link_libraries(libfoo PUBLIC libbar)
+
+# add the executable
+add_executable(main main.cpp)
+target_link_libraries(main PRIVATE libfoo)
+EOF
+
+mkdir -p foo
+
+# foo/foo.h
+cat > foo/foo.h << 'EOF'
+#pragma once
+
+#include <string>
+
+void greet_foo(const std::string& name);
+EOF
+
+# foo/foo.cpp
+cat > foo/foo.cpp << 'EOF'
+#include "foo.h"
+
+#include <iostream>
+
+#include "bar.h"
+
+void greet_foo(const std::string& name) {
+    std::cout << "Hello " << name << ", this is foo. And I'll take you to meet bar. ";
+    greet_bar("foo");
+}
+EOF
+
+mkdir -p bar
+
+# bar/bar.h
+cat > bar/bar.h << 'EOF'
+#pragma once
+
+#include <string>
+
+void greet_bar(const std::string& name);
+EOF
+
+# bar/bar.cpp
+cat > bar/bar.cpp << 'EOF'
+#include "bar.h"
+
+#include <iostream>
+
+void greet_bar(const std::string& name) {
+    std::cout << "Hello " << name << ", this is bar." << std::endl;
+}
+EOF
+
+# main.cpp
+cat > main.cpp << 'EOF'
+#include "bar.h"
+#include "foo.h"
+
+int main() {
+    greet_foo("main");
+    greet_bar("main");
+    return 0;
+}
+EOF
+
+cmake -B build && cmake --build build
+build/main
+```
+
+**如果将`target_link_libraries(libfoo PUBLIC libbar)`中的`PUBLIC`改成`PRIVATE`，那么编译将会无法通过，因为`main`没有显式依赖`libbar`，会找不到头文件`bar.h`**
+
 # 6 Tips
 
 ## 6.1 Command Line
