@@ -328,6 +328,7 @@ gcc -o main main.cpp -O3 -L . -Wl,-rpath=`pwd` -lfoo -lstdc++
 * **`glibc, GNU C Library`可以看做是`libc`的另一种实现，它不仅包含`libc`的所有功能还包含`libm`以及其他核心库，比如`libpthread`**
     * **`glibc`对应的动态库的名字是`libc.so`**
     * **Linux主流的发行版用的都是这个**
+    * [The GNU C Library (glibc)](https://www.gnu.org/software/libc/sources.html)
 * `glib`是Linux下C的一些工具库，和`glibc`没有关系
 
 **查看`glibc`的版本**

@@ -224,6 +224,26 @@ func(bool b = false)
 
 [Fix Backend get stuck on startup](https://github.com/StarRocks/starrocks/pull/18664)
 
+部分堆栈如下：
+
+* 第一次分配内存，触发`hook`，在记录内存时，会初始化`ExecEnv`的一个局部静态变量
+* 初始化`ExecEnv`的一个局部静态变量时，会调用`__cxa_atexit`以及`__new_exitfn`（代码可以参考`glibc-2.35/stdlib/cxa_atexit.c`），在`__new_exitfn`有分配内存的动作，导致又一次触发`hook`，又进入了`ExecEnv`局部静态变量初始化的过程，阻塞在锁的获取上
+
+```
+#1  0x00000000084a3594 in __cxxabiv1::__cxa_guard_acquire (g=g@entry=0x86b3a60 <guard variable for starrocks::ExecEnv::GetInstance()::s_exec_env>) at ../../../../libstdc++-v3/libsupc++/guard.cc:302
+#2  0x00000000055dc11e in starrocks::ExecEnv::GetInstance () at ../src/runtime/exec_env.h:115
+...
+#8  my_calloc (n=1, size=<optimized out>) at ../src/service/mem_hook.cpp:364
+#9  0x00007f53803e1ec4 in __new_exitfn () from /lib64/libc.so.6
+#10 0x00007f53803e1f49 in __cxa_atexit () from /lib64/libc.so.6
+#11 0x00000000055dc349 in starrocks::ExecEnv::GetInstance () at ../src/runtime/exec_env.h:115
+#12 starrocks::ExecEnv::GetInstance () at ../src/runtime/exec_env.h:114
+...
+#18 my_malloc (size=size@entry=57400) at ../src/service/mem_hook.cpp:297
+```
+
+下面用一个例子来还原，由于触发`__new_exitfn`分配内存的条件比较难模拟。我们用在`ExecEnv`的构造方法中通过`new`分配内存来代替
+
 ```cpp
 #include <iostream>
 
