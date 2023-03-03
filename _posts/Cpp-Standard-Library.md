@@ -508,6 +508,30 @@ int main(void) {
     // wake up here, and still under lock
     ```
 
+1. `std::call_once`、`std::once_flag`
+    ```cpp
+    #include <iostream>
+    #include <mutex>
+    #include <thread>
+    #include <vector>
+
+    void say_hello() {
+        std::cout << "hello world" << std::endl;
+    }
+
+    int main() {
+        std::once_flag flag;
+        std::vector<std::thread> threads;
+        for (int i = 0; i < 10; i++) {
+            threads.emplace_back([&]() { std::call_once(flag, say_hello); });
+        }
+        for (int i = 0; i < 10; i++) {
+            threads[i].join();
+        }
+        return 0;
+    }
+    ```
+
 ## 12.1 参考
 
 * [Do I have to acquire lock before calling condition_variable.notify_one()?](https://stackoverflow.com/questions/17101922/do-i-have-to-acquire-lock-before-calling-condition-variable-notify-one)

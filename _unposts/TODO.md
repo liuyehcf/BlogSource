@@ -51,25 +51,8 @@ categories:
 1. 体系结构
     * numa
 1. cpp
-    * std::guard(be/src/runtime/decimalv3.h,be/src/util/guard.h)
-    * std::declval
-    * std::decay
     * std::reference_wrapper
-    * struct alising
     * futex
-    * [apache-arrow](https://github.com/apache/arrow)
-    * strage case
-        ```cpp
-        #include <random>
-
-        int main() {
-            std::default_random_engine e;
-            std::normal_distribution<> n{10, 10};
-            int32_t width = n(e);
-            return n(e);
-        }
-        ```
-
     * 如何用老的glibc跑二进制
 1. java
     * commons-cli
