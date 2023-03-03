@@ -1359,6 +1359,62 @@ int main() {
 }
 ```
 
+## 6.13 type guard
+
+[StarRocks-guard.h](https://github.com/StarRocks/starrocks/blob/main/be/src/util/guard.h)
+
+```cpp
+#include <cstdint>
+#include <type_traits>
+
+using Guard = int;
+
+template <typename T, typename... Args>
+constexpr bool type_in = (std::is_same_v<T, Args> || ...);
+
+template <typename T, T v, T... args>
+constexpr bool value_in = ((v == args) || ...);
+
+template <typename T, typename... Args>
+using TypeGuard = std::enable_if_t<((std::is_same_v<T, Args>) || ...), Guard>;
+
+// TYPE_GUARD is used to define a type guard.
+// for an example:
+//
+// TYPE_GUARD(DecimalArithmeticOp, is_decimal_arithmetic_op, AddOp, SubOp, MulOp, DivOp);
+//
+// This macro define a guard and a compile-time conditional expression.
+//
+// guard: DecimalArithmeticOp<T>,  it is Guard(i.e. int) if T is AddOp|SubOp|MulOp|DivOp,
+//  it is nothing(i.e. cpp template specialization matching failure) otherwise.
+// conditional expression: is_decimal_arithmetic_op<T> return true if T is AddOp|SubOp|MulOp|DivOp,
+//  return false otherwise.
+
+#define TYPE_GUARD(guard_name, pred_name, ...)                   \
+    template <typename T>                                        \
+    struct pred_name##_struct {                                  \
+        static constexpr bool value = type_in<T, ##__VA_ARGS__>; \
+    };                                                           \
+    template <typename T>                                        \
+    constexpr bool pred_name = pred_name##_struct<T>::value;     \
+    template <typename T>                                        \
+    using guard_name = TypeGuard<T, ##__VA_ARGS__>;
+
+TYPE_GUARD(MyGuard, type_is_unsigned_int, uint8_t, uint16_t, uint32_t, uint64_t);
+
+template <typename T>
+void check(T& t) {
+    static_assert(type_is_unsigned_int<T>, "type must be ordinal");
+}
+
+int main() {
+    uint32_t u;
+    check(u);
+    // double d;
+    // check(d);
+}
+```
+
 # 7 参考
 
 * [ClickHouse](https://github.com/ClickHouse/ClickHouse/blob/master/base/base/constexpr_helpers.h)

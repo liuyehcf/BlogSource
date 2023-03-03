@@ -2209,7 +2209,25 @@ int main() {
 1. `.`
 1. `->`
 
-形参包折叠的示例：
+**形参包折叠的示例1：**
+
+```cpp
+#include <cstdint>
+#include <type_traits>
+
+template <typename T, typename... Args>
+void check_type() {
+    static_assert((std::is_same_v<T, Args> || ...), "check failed");
+}
+
+int main() {
+    check_type<int32_t, int32_t, int64_t>();
+    // check_type<int32_t, int8_t, int16_t>();
+    return 0;
+}
+```
+
+**形参包折叠的示例2：**
 
 ```cpp
 #include <fstream>
