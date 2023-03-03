@@ -236,7 +236,35 @@ int main() {
 }
 ```
 
-## 2.3 `#pragma`
+## 2.3 Variadic Macros
+
+宏也支持可变参数，通过`__VA_ARGS__`引用这些参数
+
+```cpp
+#include <iostream>
+
+#define SHOW_SUM_UP(...) std::cout << sum(__VA_ARGS__) << std::endl;
+
+template <typename... Args>
+int sum(Args&&... args) {
+    int sum = 0;
+    int nums[] = {args...};
+    int size = sizeof...(args);
+
+    for (int i = 0; i < size; i++) {
+        sum += nums[i];
+    }
+
+    return sum;
+}
+
+int main() {
+    SHOW_SUM_UP(1, 2, 3);
+    return 0;
+}
+```
+
+## 2.4 `#pragma`
 
 在`C++`中，`#pragma`是一个预处理器指令（`preprocessor directive`），它用于向编译器发出一些特定的命令或提示，从而控制编译器的行为。`#pragma`通常用于开启或关闭某些编译器的特性、设置编译器选项、指定链接库等
 
@@ -264,11 +292,11 @@ int main() {
 * `#pragma GCC diagnostic`：该指令用于控制编译器的警告和错误信息。可以用它来控制特定的警告或错误信息是否应该被忽略或显示
 * `#pragma omp`：该指令用于`OpenMP`并行编程，用于指定并行执行的方式
 
-## 2.4 `#error`
+## 2.5 `#error`
 
 显示给定的错误消息，并终止编译过程
 
-## 2.5 参考
+## 2.6 参考
 
 * [C/C++ 宏编程的艺术](https://bot-man-jl.github.io/articles/?post=2020/Macro-Programming-Art)
 
@@ -2217,7 +2245,7 @@ int main() {
 
 ## 4.4 如何遍历形参包
 
-### 4.4.1 花括号初始化器
+### 4.4.1 括号初始化器
 
 这里用到了一个技巧，[逗号运算符](https://www.bookstack.cn/read/cppreference-language/ae53223225119599.md#9bocdk)：对于逗号表达式`E1, E2`中，对`E1`求值并舍弃其结果（尽管当它具有类类型时，直到包含它的全表达式的结尾之前都不会销毁它），其副作用在表达式`E2`的求值开始前完成
 
@@ -2252,6 +2280,9 @@ bool read_contents(const std::string& path, Values&... values) {
         }
         ifs >> value;
     };
+
+    // Either of the following two methods will work
+    // ((read_content(values), ...));
     [[maybe_unused]] int32_t _[] = {(read_content(values), 0)...};
 
     if (ifs.is_open()) {
@@ -4566,6 +4597,35 @@ lib/libperson.a(person.o)：在函数‘Person::sleep()’中：
 person.cpp:(.text+0x2a): Person::sleep() 的多重定义
 /tmp/ccfhnlz4.o:main.cpp:(.text+0x2a)：第一次在此定义
 collect2: 错误：ld 返回 1
+```
+
+## 10.6 Non-template parameter pack
+
+**非模板参数包有如下几个特点：**
+
+* 只能独立出现。`int nums...`也是合法的，但是不是参数包
+* 无法知道其长度，只能显式传递其个数，比如`printf`通过占位符来隐式传递参数个数
+
+```cpp
+#include <cstdarg>
+#include <iostream>
+
+int sum(int count, ...) {
+    int result = 0;
+    va_list args;
+    va_start(args, count);
+    for (int i = 0; i < count; i++) {
+        result += va_arg(args, int);
+    }
+    va_end(args);
+    return result;
+}
+
+int main() {
+    std::cout << sum(3, 1, 2, 3) << std::endl;            // Output: 6
+    std::cout << sum(5, 10, 20, 30, 40, 50) << std::endl; // Output: 150
+    return 0;
+}
 ```
 
 # 11 FAQ

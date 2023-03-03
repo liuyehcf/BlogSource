@@ -1776,7 +1776,7 @@ Data Stream Processing System, DSPS
                     </ul>
                 </li>
             </td>
-            <td style="text-align:left">👀/P4</td>
+            <td style="text-align:left">👀/2.1</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
     </tbody>
