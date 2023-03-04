@@ -60,10 +60,15 @@ linker --> result_lib
 * `-Xlinker -Map=a.map`：将链接时的信息记录到`a.map`中
 * `nm/objdump/readelf/strings`或许可以找到一些静态库相关的`hint`
 
-**静态库的路径：**
+### 2.1.1 静态库搜索顺序
 
-* `/usr/local/lib`
-* `/usr/local/lib64`
+**搜索顺序如下：详见`ld --verbose | grep SEARCH_DIR`**
+
+* 首先在链接器命令行中指定的库目录中搜索，如果找到与指定的库名匹配的库文件，则使用该库文件
+* 如果在指定的库目录中没有找到匹配的库文件，则在系统默认的库目录中搜索，如`/lib`、`/usr/lib`、`/usr/local/lib`等
+    * `/usr/lib/x86_64-linux-gnu`
+* 如果在系统默认的库目录中也没有找到匹配的库文件，则按照编译器的默认顺序搜索一些特定的库目录，如`/lib64`、`/usr/lib64`、`/usr/local/lib64`等
+* 如果在所有指定的库目录中都没有找到匹配的库文件，则链接器会报错，指出无法找到指定的库文件
 
 ## 2.2 动态链接库
 
@@ -75,7 +80,7 @@ linker --> result_lib
 
 ### 2.2.1 动态库搜索顺序
 
-**搜索如下：详见`man ld.so`**
+**搜索顺序如下：详见`man ld.so`**
 
 1. 在环境变量`LD_LIBRARY_PATH`指定的目录下搜索，以`:`分隔
 1. 在`/etc/ld.so.cache`指定的目录中搜索

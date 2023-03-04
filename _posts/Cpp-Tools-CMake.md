@@ -559,6 +559,13 @@ add_library(<name> [STATIC | SHARED | MODULE]
 add_library(Exec STATIC ${EXEC_FILES})
 ```
 
+**通过绝对路径引入三方库**
+
+```cmake
+add_library(protobuf STATIC IMPORTED)
+set_target_properties(protobuf PROPERTIES IMPORTED_LOCATION ${THIRDPARTY_DIR}/lib/libprotobuf.a)
+```
+
 ## 5.7 set_target_properties
 
 为指定`target`设置属性
