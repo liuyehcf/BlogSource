@@ -12,7 +12,6 @@ categories:
 <!--more-->
 
 1. Linux-常用命令
-    * numactl --hardware
     * gprof
 1. 性能分析
     * perf
@@ -51,7 +50,6 @@ categories:
 1. 体系结构
     * numa
 1. cpp
-    * std::reference_wrapper
     * futex
     * 如何用老的glibc跑二进制
 1. java
