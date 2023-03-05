@@ -1035,6 +1035,108 @@ walk_through_sort/100000000/500000    7797706457 ns   7796576221 ns            1
 walk_through_sort/100000000/100000    7080835898 ns   7079696031 ns            1
 ```
 
+## 1.12 NUMA
+
+首先，我们将当前线程绑定到`CPU-0`上，一般来说说，`CPU-0`属于`node-0`，因此我们将内存分别分配在`node-0`和`node-1`来对比程序的性能
+
+```cpp
+#include <benchmark/benchmark.h>
+#include <numa.h>
+#include <numaif.h>
+
+#include <limits>
+#include <random>
+
+// One cache line only contains one instance
+struct alignas(64) Double {
+    double data;
+};
+
+static_assert(sizeof(Double) == 64);
+
+void matrix_multiply(Double* A, Double* B, Double* C, size_t size) {
+    for (size_t i = 0; i < size; i++) {
+        for (size_t j = 0; j < size; j++) {
+            double sum = 0.0;
+            for (size_t k = 0; k < size; k++) {
+                sum += A[i * size + k].data * B[k * size + j].data;
+            }
+            C[i * size + j].data = sum;
+        }
+    }
+}
+
+static void BM_base(benchmark::State& state, size_t node_id) {
+    pthread_t thread = pthread_self();
+    cpu_set_t cpuset;
+    CPU_ZERO(&cpuset);
+    CPU_SET(0, &cpuset);
+    pthread_setaffinity_np(thread, sizeof(cpu_set_t), &cpuset);
+
+    size_t size = state.range(0);
+
+    // Assume that cpu0 belongs node0, you can check by `numactl --hardware`
+    Double* A = (Double*)numa_alloc_onnode(sizeof(Double) * size * size, node_id);
+    Double* B = (Double*)numa_alloc_onnode(sizeof(Double) * size * size, node_id);
+    Double* C = (Double*)numa_alloc_onnode(sizeof(Double) * size * size, node_id);
+
+    static std::default_random_engine e;
+    static std::uniform_real_distribution<double> u(std::numeric_limits<double>::min(),
+                                                    std::numeric_limits<double>::max());
+    for (size_t i = 0; i < size * size; i++) {
+        A[i].data = u(e);
+        B[i].data = u(e);
+    }
+
+    for (auto _ : state) {
+        matrix_multiply(A, B, C, size);
+    }
+
+    numa_free(A, size * size);
+    numa_free(B, size * size);
+    numa_free(C, size * size);
+}
+
+static void BM_of_same_node(benchmark::State& state) {
+    BM_base(state, 0);
+}
+
+static void BM_of_differenct_node(benchmark::State& state) {
+    BM_base(state, 1);
+}
+
+BENCHMARK(BM_of_same_node)->Arg(8)->Arg(16)->Arg(32)->Arg(64)->Arg(128)->Arg(256)->Arg(512)->Arg(1024)->Arg(2048);
+BENCHMARK(BM_of_differenct_node)->Arg(8)->Arg(16)->Arg(32)->Arg(64)->Arg(128)->Arg(256)->Arg(512)->Arg(1024)->Arg(2048);
+
+BENCHMARK_MAIN();
+```
+
+**输出如下：**
+
+```
+---------------------------------------------------------------------
+Benchmark                           Time             CPU   Iterations
+---------------------------------------------------------------------
+BM_of_same_node/8                 311 ns          310 ns      2254997
+BM_of_same_node/16               2643 ns         2642 ns       264941
+BM_of_same_node/32              27342 ns        27331 ns        25599
+BM_of_same_node/64             301103 ns       300904 ns         2323
+BM_of_same_node/128           3766203 ns      3764507 ns          174
+BM_of_same_node/256          50045765 ns     50012669 ns           12
+BM_of_same_node/512         478258490 ns    477829744 ns            2
+BM_of_same_node/1024       7752174783 ns   7745304607 ns            1
+BM_of_same_node/2048       8.5503e+10 ns   8.5426e+10 ns            1
+BM_of_differenct_node/8           310 ns          310 ns      2255891
+BM_of_differenct_node/16         2641 ns         2640 ns       265112
+BM_of_differenct_node/32        27031 ns        27019 ns        25909
+BM_of_differenct_node/64       299999 ns       299872 ns         2324
+BM_of_differenct_node/128     3714475 ns      3712159 ns          184
+BM_of_differenct_node/256    54170223 ns     54113018 ns           12
+BM_of_differenct_node/512   475983551 ns    475561817 ns            2
+BM_of_differenct_node/1024 1.0282e+10 ns   1.0273e+10 ns            1
+BM_of_differenct_node/2048 1.1860e+11 ns   1.1849e+11 ns            1
+```
+
 # 2 pointer aliasing
 
 **`pointer aliasing`指的是两个指针（在作用域内）指向了同一个物理地址，或者说指向的物理地址有重叠。`__restrict`关键词用于给编译器一个提示：确保被标记的指针是独占物理地址的**

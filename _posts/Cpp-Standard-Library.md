@@ -726,7 +726,11 @@ int main() {
 
 下面示例代码用于测试各个CPU的性能
 
-* 用`pthread_setaffinity_np`进行绑核
+* `CPU_ZERO`：初始化
+* `CPU_SET`：添加与某个CPU的亲和性，可以多次设置不同的CPU
+* `CPU_ISSET`：判断是否与某个CPU存在亲和性
+* `pthread_setaffinity_np`：设置某个线程的CPU亲和性
+* `pthread_getaffinity_np`：获取某个线程的CPU亲和性
 * 化级别用`O0`，否则循环会被优化掉
 
 ```cpp
