@@ -1510,16 +1510,14 @@ free
 
 * `--hardware`：显示硬件信息，包括`NUMA-Node`数量、每个`Node`对应的CPU，内存大小，以及一个矩阵，用于表示`node[i][j]`的内存访问开销
 * `--show`：显示当前的`NUMA`设置
-* `--membind=<node>`：表示在`<node>`上进行内存分配
-* `--interleave=<nodes>`：表示在`<nodes>`上轮循分配内存。`<nodes>`可以是
-    * `all`
-    * `0,1,6`
-    * `0-3`
-* `--physcpubind=<cpus>`：表示绑定到`<cpus>`上执行。`<cpus>`是`/proc/cpuinfo`中的`processor`字段，其格式可以是：
-    * `all`
-    * `0,5,10`
-    * `2-8`
-* `--preferred=<node>`：表示优先从`<node>`上分配内存
+* `--physcpubind=<cpus>`：表示绑定到`<cpus>`上执行。`<cpus>`是`/proc/cpuinfo`中的`processor`字段。其中，`<cpus>`可以是：`all`、`0,5,10`、`2-8`
+* `--cpunodebind=<nodes>`：表示绑定到`<nodes>`上执行。其中，`<nodes>`可以是：`all`、`0,1,6`、`0-3`
+* `Memory Policy`
+    * `--interleave=<nodes>`：表示在`<nodes>`上轮循分配内存
+    * `--preferred=<node>`：表示优先从`<node>`上分配内存
+    * `--membind=<nodes>`：表示在`<nodes>`上进行内存分配
+    * `--localalloc`：表示在CPU所在的`node`上进行内存分配，需要配合绑核才能起到优化的效果
+    * 其中，`<nodes>`可以是：`all`、`0,1,6`、`0-3`
 
 **示例：**
 
