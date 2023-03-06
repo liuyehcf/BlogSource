@@ -1773,10 +1773,16 @@ Data Stream Processing System, DSPS
                                 <li>A second bottleneck involves the bus from the Northbridge to the RAM. The exact details of the bus depend on the memory types deployed. On older systems there is only one bus to all the RAM chips, so parallel access is not possible. Recent RAM types require two separate buses (or channels as they are called for DDR2) which doubles the available bandwidth</li>
                             </ul>
                         </li>
+                        <li>RAM types
+                            <ul>
+                                <li>Static RAM</li>
+                                <li>Dynamic RAM</li>
+                            </ul>
+                        </li>
                     </ul>
                 </li>
             </td>
-            <td style="text-align:left">👀/2.1</td>
+            <td style="text-align:left">👀/2.2</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
     </tbody>

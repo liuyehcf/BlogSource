@@ -1502,6 +1502,30 @@ free
 
 `sync`指令会将存于`buffer`中的资料强制写入硬盘中
 
+## 3.14 numactl
+
+`numactl`用于设置和查看`NUMA`信息
+
+**参数说明：**
+
+* `--hardware`：显示硬件信息，包括`NUMA-Node`数量、每个`Node`对应的CPU，内存大小，以及一个矩阵，用于表示`node[i][j]`的内存访问开销
+* `--show`：显示当前的`NUMA`设置
+* `--membind=<node>`：表示在`<node>`上进行内存分配
+* `--interleave=<nodes>`：表示在`<nodes>`上轮循分配内存。`<nodes>`可以是
+    * `all`
+    * `0,1,6`
+    * `0-3`
+* `--physcpubind=<cpus>`：表示绑定到`<cpus>`上执行。`<cpus>`是`/proc/cpuinfo`中的`processor`字段，其格式可以是：
+    * `all`
+    * `0,5,10`
+    * `2-8`
+* `--preferred=<node>`：表示优先从`<node>`上分配内存
+
+**示例：**
+
+* `numactl --hardware`：
+* `numactl --show`：显示当前的`NUMA`设置
+
 # 4 进程管理
 
 **后台进程（&）：**

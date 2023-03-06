@@ -15,7 +15,15 @@ categories:
 
 # 1 java
 
-## 1.1 开启调试端口
+## 1.1 执行代码
+
+* `java -cp /path/aaa.jar com.liuyehcf.demo.MyMain arg1 arg2`：将`/path/aaa.jar`添加到`classpath`中
+* `java -cp /path/aaa.jar:/path/bbb.jar com.liuyehcf.demo.MyMain arg1 arg2`：将`/path/aaa.jar`和`/path/bbb.jar`添加到`classpath`中
+* `java -cp "/path/*" com.liuyehcf.demo.MyMain arg1 arg2`：将`/path`目录下的所谓`class`文件以及`jar`文件都添加到`classpath`中。这里要用引号，否则`*`展开后，第二项会被作为`main`函数所在的类
+* `java -cp "/path/*":"/path2/*" com.liuyehcf.demo.MyMain arg1 arg2`：将`/path`以及`/path2`目录下的所谓`class`文件以及`jar`文件都添加到`classpath`中
+* `java -jar /path/aaa.jar arg1 arg2`：运行jar归档文件中指定的`main`函数
+
+## 1.2 开启调试端口
 
 **`java -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n [其他参数]`**
 

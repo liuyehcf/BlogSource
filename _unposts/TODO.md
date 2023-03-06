@@ -47,6 +47,10 @@ categories:
         * 左表输出了0行数据，那么可以提前结束。这种可以通过统计信息估算，将小表尽可能放在右边，避免这种情况出现
     * 其他
         * [Spark性能优化指南——高级篇](https://tech.meituan.com/2016/05/12/spark-tuning-pro.html)
+    * 稳定性问题：
+        * Bug
+        * Crash
+        * Performance
 1. 体系结构
     * numa
 1. cpp
