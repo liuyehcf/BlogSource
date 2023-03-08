@@ -42,6 +42,9 @@ git config -e [--global]
 # 设置提交代码时的用户信息
 git config [--global] user.name "[name]"
 git config [--global] user.email "[email address]"
+
+# 删除配置
+git config [--global] --unset http.proxy
 ```
 
 # 3 增加/删除文件

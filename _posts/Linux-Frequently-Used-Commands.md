@@ -253,6 +253,7 @@ hostnamectl set-hostname <name>
 **示例：**
 
 * `ls -alt | head -n 5`
+* `ls *.txt`：查找所有后缀为`.txt`的文件，注意不要用`ls "*.txt"`
 * `ls -I "*.txt" -I "*.cpp"`
 * `ls -d */`：当前目录下的所有子目录
 

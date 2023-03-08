@@ -21,7 +21,12 @@ categories:
 
 ## 2.1 [mycli](https://github.com/dbcli/mycli)
 
+**`Config`：`~/.myclirc`**
+
+* `enable_pager = False`：默认关闭`pager`，直接输出结果，而不是分页展示
+
 **`Tips`：**
 
 * `PageUp/PageDown`：以命令为单位前进或者后退
 * `Up/Down`：以行为单位前进或者后退
+
