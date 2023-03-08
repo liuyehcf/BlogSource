@@ -51,6 +51,8 @@ categories:
         * Bug
         * Crash
         * Performance
+    * product
+        * Snowflake、BigQuery、SingleStore、Firebolt、Pinot、Trino、Rockset 
 1. 体系结构
     * numa
 1. cpp

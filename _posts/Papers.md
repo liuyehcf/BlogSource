@@ -1781,8 +1781,15 @@ Data Stream Processing System, DSPS
                         </li>
                     </ul>
                 </li>
+                <li>CPU caches
+                    <ul>
+                        <li>So, instead of putting the SRAM under the control of the OS or user, it becomes a resource which is transparently used and administered by the processors</li>
+                        <li>In this mode, SRAM is used to make temporary copies of (to cache, in other words) data in main memory which is likely to be used soon by the processor. This is possible because program code and data has temporal and spatial locality. This means that, over short periods of time, there is a good chance that the same code or data gets reused.</li>
+                        <li>Realizing that locality exists is key to the concept of CPU caches as we use them today</li>
+                    </ul>
+                </li>
             </td>
-            <td style="text-align:left">👀/2.2</td>
+            <td style="text-align:left">👀/3.1</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
     </tbody>

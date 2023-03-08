@@ -26,7 +26,7 @@ categories:
 ### 3.1.1 Concepts
 
 1. `Scope`：类似于命名空间namespace
-1. `Relation`：关系实体
+1. `Relation`：关系实体，数据集
     * `ViewRelation`
     * `TableRelation`
     * `JoinRelation`
