@@ -1152,7 +1152,7 @@ categories:
                 </li>
                 <li>Group-by operator
                     <ul>
-                        <li>Group-by operator use both data partition table abd hash table. Data partition table holds the aggregate records. Hash table holds the localtion of the aggregate records in the data partition table(can be seen as index).</li>
+                        <li>Group-by operator use both data partition table abd hash table. Data partition table holds the aggregate records. Hash table holds the localtion of the aggregate records in the data partition table(can be seen as index)</li>
                     </ul>
                 </li>
                 <li>Hash join operator
@@ -1784,8 +1784,18 @@ Data Stream Processing System, DSPS
                 <li>CPU caches
                     <ul>
                         <li>So, instead of putting the SRAM under the control of the OS or user, it becomes a resource which is transparently used and administered by the processors</li>
-                        <li>In this mode, SRAM is used to make temporary copies of (to cache, in other words) data in main memory which is likely to be used soon by the processor. This is possible because program code and data has temporal and spatial locality. This means that, over short periods of time, there is a good chance that the same code or data gets reused.</li>
+                        <li>In this mode, SRAM is used to make temporary copies of (to cache, in other words) data in main memory which is likely to be used soon by the processor. This is possible because program code and data has temporal and spatial locality. This means that, over short periods of time, there is a good chance that the same code or data gets reused</li>
                         <li>Realizing that locality exists is key to the concept of CPU caches as we use them today</li>
+                        <li>CPU caches in the big picture
+                            <ul>
+                                <li>The CPU core is no longer directly connected to the main memory if cache system is deployed. All loads and stores have to go through the cache</li>
+                                <li>It is of advantage to separate the caches used for code and for data. In recent years another advantage emerged: the instruction decoding step for the most common processors is slow; caching decoded instructions can speed up the execution</li>
+                            </ul>
+                        </li>
+                        <li>Cache operation at high level
+                            <ul>
+                            </ul>
+                        </li>
                     </ul>
                 </li>
             </td>

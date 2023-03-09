@@ -2616,6 +2616,17 @@ for i from 1 to n
 
 # 8 FAQ
 
+1. Cache架构
+    * ![Cache in Bit Picture](/images/System-Architecture/cache-arch-1.jpeg)
+        * `L1d`：level 1 data cache
+        * `L1i`：level 1 instruction cache
+    * ![Cache in Bit Picture](/images/System-Architecture/cache-arch-2.jpeg)
+        * 橙色：`Thread`：共享`L1 Cache`
+        * 深灰阴影：`Core`：独占`L1 Cache`，共享`L2/L3 Cache`
+        * 浅灰阴影：`Processor`：不共享任意一级的`Cache`（这个其实取决于硬件设计）
+        * 亮绿色：`L1 Cache`
+        * 绿色：`L2 Cache`
+        * 深绿色：`L3 Cache`
 1. 在现代CPU中，访存缓存/内存时，一般需要多少指令周期。
     * [How many machine cycles does it take a CPU to fetch a value from the SRAM cache?](https://www.quora.com/How-many-machine-cycles-does-it-take-a-CPU-to-fetch-a-value-from-the-SRAM-cache)
     * [Approximate cost to access various caches and main memory?](https://stackoverflow.com/questions/4087280/approximate-cost-to-access-various-caches-and-main-memory)
