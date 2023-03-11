@@ -889,7 +889,315 @@ docker run -d --name sonarqube -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true -p 9000
 mvn clean verify sonar:sonar -DskipTests -Dsonar.login=admin -Dsonar.password=xxxx
 ```
 
-# 4 dom4j
+# 4 Swagger
+
+下面给一个示例
+
+## 4.1 环境
+
+1. `IDEA`
+1. `Maven3.3.9`
+1. `Spring Boot`
+1. `Swagger`
+
+## 4.2 Demo工程目录结构
+
+```
+.
+├── pom.xml
+├── src
+│   └── main
+│       └── java
+│           └── org
+│               └── liuyehcf
+│                   └── swagger
+│                       ├── UserApplication.java
+│                       ├── config
+│                       │   └── SwaggerConfig.java
+│                       ├── controller
+│                       │   └── UserController.java
+│                       └── entity
+│                           └── User.java
+```
+
+## 4.3 pom文件
+
+引入`Spring-boot`以及`Swagger`的依赖即可，完整内容如下
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <groupId>org.liuyehcf</groupId>
+    <artifactId>swagger</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <modelVersion>4.0.0</modelVersion>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.6.1</version>
+        </dependency>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>1.5.9.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>1.5.9.RELEASE</version>
+                <configuration>
+                    <fork>true</fork>
+                    <mainClass>org.liuyehcf.swagger.UserApplication</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+```
+
+## 4.4 Swagger Config Bean
+
+```java
+package org.liuyehcf.swagger.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+@Configuration
+@EnableSwagger2
+public class SwaggerConfig {
+
+    @Bean
+    public Docket createRestApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(apiInfo())
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("org.liuyehcf.swagger")) //包路径
+                .paths(PathSelectors.any())
+                .build();
+    }
+
+    private ApiInfo apiInfo() {
+        return new ApiInfoBuilder()
+                .title("Spring Boot - Swagger - Demo")
+                .description("THIS IS A SWAGGER DEMO")
+                .termsOfServiceUrl("http://liuyehcf.github.io") //这个不知道干嘛的
+                .contact("liuye")
+                .version("1.0.0")
+                .build();
+    }
+
+}
+```
+
+1. `@Configuration`：让`Spring`来加载该类配置
+1. `@EnableSwagger2`：启用`Swagger2`
+* 注意替换`.apis(RequestHandlerSelectors.basePackage("org.liuyehcf.swagger"))`这句中的包路径
+
+## 4.5 Controller
+
+```java
+package org.liuyehcf.swagger.controller;
+
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.liuyehcf.swagger.entity.User;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Controller
+@RequestMapping("/user")
+public class UserController {
+
+    private static Map<Integer, User> userMap = new HashMap<>();
+
+    @ApiOperation(value = "GET_USER_API_1", notes = "获取User方式1")
+    @RequestMapping(value = "getApi1/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public User getUserByIdAndName1(
+            @ApiParam(name = "id", value = "用户id", required = true) @PathVariable int id,
+            @ApiParam(name = "name", value = "用户名字", required = true) @RequestParam String name) {
+        if (userMap.containsKey(id)) {
+            User user = userMap.get(id);
+            if (user.getName().equals(name)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    @ApiOperation(value = "GET_USER_API_2", notes = "获取User方式2")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "用户id", required = true, paramType = "path", dataType = "int"),
+            @ApiImplicitParam(name = "name", value = "用户名字", required = true, paramType = "query", dataType = "String")
+    })
+    @RequestMapping(value = "getApi2/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public User getUserByIdAndName2(
+            @PathVariable int id,
+            @RequestParam String name) {
+        if (userMap.containsKey(id)) {
+            User user = userMap.get(id);
+            if (user.getName().equals(name)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    @ApiOperation(value = "ADD_USER_API_1", notes = "增加User方式1")
+    @RequestMapping(value = "/addUser1", method = RequestMethod.POST)
+    @ResponseBody
+    public String addUser1(
+            @ApiParam(name = "user", value = "用户User", required = true) @RequestBody User user) {
+        if (userMap.containsKey(user.getId())) {
+            return "failure";
+        }
+        userMap.put(user.getId(), user);
+        return "success";
+    }
+
+    @ApiOperation(value = "ADD_USER_API_2", notes = "增加User方式2")
+    @ApiImplicitParam(name = "user", value = "用户User", required = true, paramType = "body", dataType = "User")
+    @RequestMapping(value = "/addUser2", method = RequestMethod.POST)
+    @ResponseBody
+    public String addUser2(@RequestBody User user) {
+        if (userMap.containsKey(user.getId())) {
+            return "failure";
+        }
+        userMap.put(user.getId(), user);
+        return "success";
+    }
+
+}
+```
+
+我们通过`@ApiOperation`注解来给`API`增加说明、通过`@ApiParam`、`@ApiImplicitParams`、`@ApiImplicitParam`注解来给参数增加说明（**其实不加这些注解，`API`文档也能生成，只不过描述主要来源于函数等命名产生，对用户并不友好，我们通常需要自己增加一些说明来丰富文档内容**）
+
+* `@ApiImplicitParam`最好指明`paramType`与`dataType`属性。`paramType`可以是`path`、`query`、`body`
+* `@ApiParam`没有`paramType`与`dataType`属性，因为该注解可以从参数（参数类型及其`Spring MVC`注解）中获取这些信息
+
+### 4.5.1 User
+
+`Controller`中用到的实体类
+
+```java
+package org.liuyehcf.swagger.entity;
+
+public class User {
+    private int id;
+
+    private String name;
+
+    private String address;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+}
+```
+
+## 4.6 Application
+
+```java
+package org.liuyehcf.swagger;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
+
+@EnableAutoConfiguration
+@ComponentScan("org.liuyehcf.swagger.*")
+public class UserApplication {
+
+    public static void main(String[] args) throws Exception {
+        SpringApplication.run(UserApplication.class, args);
+    }
+}
+```
+
+成功启动后，即可访问`http://localhost:8080/swagger-ui.html`
+
+## 4.7 参考
+
+* [Spring Boot中使用Swagger2构建强大的RESTful API文档](https://www.jianshu.com/p/8033ef83a8ed)
+* [Spring4集成Swagger：真的只需要四步，五分钟速成](http://blog.csdn.net/blackmambaprogrammer/article/details/72354007)
+* [Swagger](https://swagger.io/)
+
+# 5 dom4j
 
 这里以一个`Spring`的配置文件为例，通过一个示例来展示`Dom4j`如何写和读取`xml`文件
 
@@ -1037,7 +1345,7 @@ public class Dom4jDemo {
 4
 ```
 
-## 4.1 基本数据结构
+## 5.1 基本数据结构
 
 dom4j几乎所有的数据类型都继承自Node接口，下面介绍几个常用的数据类型
 
@@ -1045,7 +1353,7 @@ dom4j几乎所有的数据类型都继承自Node接口，下面介绍几个常�
 1. **`Element`**：元素
 1. **`Attribute`**：元素的属性
 
-## 4.2 Node.selectNodes
+## 5.2 Node.selectNodes
 
 该方法根据`xPathExpress`来选取节点，`xPathExpress`的语法规则如下
 
@@ -1064,7 +1372,7 @@ dom4j几乎所有的数据类型都继承自Node接口，下面介绍几个常�
 
 **注意，如果`xml`文件带有`xmlns`，那么在写`xPathExpress`时需要带上`xmlns`前缀，例如示例中那样的写法**
 
-## 4.3 参考
+## 5.3 参考
 
 * [Dom4J解析XML](https://www.jianshu.com/p/53ee5835d997)
 * [dom4j简单实例](https://www.cnblogs.com/ikuman/archive/2012/12/04/2800872.html)
