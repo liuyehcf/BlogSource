@@ -1116,7 +1116,299 @@ public final class MockInvocationHandler implements InvocationHandler, Serializa
 
 `EasyMock`的源码就分析到这里，日后再细究`ReplayState`与`RecordState`的源码
 
-# 4 SonarQube
+# 4 Mina
+
+`Mina`是一个`Java`版本的`ssh-lib`
+
+## 4.1 Maven依赖
+
+```xml
+        <!-- mina -->
+        <dependency>
+            <groupId>org.apache.sshd</groupId>
+            <artifactId>sshd-core</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.sshd</groupId>
+            <artifactId>sshd-sftp</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+
+        <!-- jsch -->
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.55</version>
+        </dependency>
+
+        <!-- java native hook -->
+        <dependency>
+            <groupId>com.1stleg</groupId>
+            <artifactId>jnativehook</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+```
+
+**其中**
+
+1. `jsch`是另一个`ssh-client`库
+1. `jnativehook`用于捕获键盘的输入，如果仅用`Java`标准输入，则无法捕获类似`ctrl + c`这样的按键组合
+
+## 4.2 Demo
+
+### 4.2.1 BaseDemo
+
+```java
+package org.liuyehcf.mina;
+
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.keyboard.NativeKeyEvent;
+import org.jnativehook.keyboard.NativeKeyListener;
+
+import java.io.IOException;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.nio.charset.Charset;
+import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ * @author hechenfeng
+ * @date 2018/12/20
+ */
+class BaseDemo {
+
+    private static final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
+
+    private static final int PIPE_STREAM_BUFFER_SIZE = 1024 * 100;
+    final PipedInputStream sshClientInputStream = new PipedInputStream(PIPE_STREAM_BUFFER_SIZE);
+    final PipedOutputStream sshClientOutputStream = new PipedOutputStream();
+    private final PipedInputStream bizInputStream = new PipedInputStream(PIPE_STREAM_BUFFER_SIZE);
+    private final PipedOutputStream bizOutputStream = new PipedOutputStream();
+
+    BaseDemo() throws IOException {
+        sshClientInputStream.connect(bizOutputStream);
+        sshClientOutputStream.connect(bizInputStream);
+    }
+
+    void beginRead() {
+        EXECUTOR.execute(() -> {
+            final byte[] buffer = new byte[10240];
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    int readNum = bizInputStream.read(buffer);
+
+                    final byte[] actualBytes = new byte[readNum];
+                    System.arraycopy(buffer, 0, actualBytes, 0, readNum);
+
+                    writeAndFlush(actualBytes);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    void beginWriteJnativehook() {
+        EXECUTOR.execute(() -> {
+            try {
+                Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
+                logger.setLevel(Level.OFF);
+                GlobalScreen.registerNativeHook();
+                GlobalScreen.addNativeKeyListener(new NativeKeyListener() {
+                    @Override
+                    public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
+                        byte keyCode = (byte) nativeKeyEvent.getKeyChar();
+
+                        try {
+                            bizOutputStream.write(keyCode);
+                            bizOutputStream.flush();
+                        } catch (Throwable e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
+                        // default
+                    }
+
+                    @Override
+                    public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
+                        // default
+                    }
+                });
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    void beginWriteStd() {
+        EXECUTOR.execute(() -> {
+            try {
+                final Scanner scanner = new Scanner(System.in);
+                while (!Thread.currentThread().isInterrupted()) {
+                    final String command = scanner.nextLine();
+
+                    bizOutputStream.write((command + "\n").getBytes());
+                    bizOutputStream.flush();
+                }
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void writeAndFlush(byte[] bytes) throws IOException {
+        synchronized (System.out) {
+            System.out.write(bytes);
+            System.out.flush();
+        }
+    }
+}
+```
+
+### 4.2.2 MinaSshDemo
+
+```java
+package org.liuyehcf.mina;
+
+import org.apache.sshd.client.SshClient;
+import org.apache.sshd.client.channel.ChannelShell;
+import org.apache.sshd.client.channel.ClientChannelEvent;
+import org.apache.sshd.client.future.ConnectFuture;
+import org.apache.sshd.client.session.ClientSession;
+import org.apache.sshd.common.util.io.NoCloseInputStream;
+import org.apache.sshd.common.util.io.NoCloseOutputStream;
+
+import java.io.IOException;
+import java.util.Collections;
+
+/**
+ * @author hechenfeng
+ * @date 2018/12/20
+ */
+public class MinaSshDemo extends BaseDemo {
+
+    private MinaSshDemo() throws IOException {
+
+    }
+
+    public static void main(String[] args) throws Exception {
+        new MinaSshDemo().boot();
+    }
+
+    private void boot() throws Exception {
+        final SshClient client = SshClient.setUpDefaultClient();
+        client.start();
+        final ConnectFuture connect = client.connect("HCF", "localhost", 22);
+        connect.await(5000L);
+        final ClientSession session = connect.getSession();
+        session.addPasswordIdentity("???");
+        session.auth().verify(5000L);
+
+        final ChannelShell channel = session.createShellChannel();
+        channel.setIn(new NoCloseInputStream(sshClientInputStream));
+        channel.setOut(new NoCloseOutputStream(sshClientOutputStream));
+        channel.setErr(new NoCloseOutputStream(sshClientOutputStream));
+
+        // 解决颜色显示以及中文乱码的问题
+        channel.setPtyType("xterm-256color");
+        channel.setEnv("LANG", "zh_CN.UTF-8");
+        channel.open();
+
+        beginRead();
+//        beginWriteJnativehook();
+        beginWriteStd();
+
+        channel.waitFor(Collections.singleton(ClientChannelEvent.CLOSED), 0);
+    }
+}
+```
+
+### 4.2.3 JschSshDemo
+
+```java
+package org.liuyehcf.mina;
+
+import com.jcraft.jsch.ChannelShell;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
+
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * @author hechenfeng
+ * @date 2018/12/20
+ */
+public class JschSshDemo extends BaseDemo {
+
+    private JschSshDemo() throws IOException {
+
+    }
+
+    public static void main(final String[] args) throws Exception {
+        new JschSshDemo().boot();
+    }
+
+    private void boot() throws Exception {
+        JSch jsch = new JSch();
+
+        Session session = jsch.getSession("HCF", "localhost", 22);
+        java.util.Properties config = new java.util.Properties();
+        config.put("StrictHostKeyChecking", "no");
+        session.setConfig(config);
+        session.setPassword("???");
+        session.connect();
+
+        ChannelShell channel = (ChannelShell) session.openChannel("shell");
+        channel.setInputStream(sshClientInputStream);
+        channel.setOutputStream(sshClientOutputStream);
+        channel.connect();
+
+        beginRead();
+        beginWriteJnativehook();
+//        beginWriteStd();
+
+        TimeUnit.SECONDS.sleep(1000000);
+    }
+}
+```
+
+## 4.3 修改IdleTimeOut
+
+```java
+        Class<FactoryManager> factoryManagerClass = FactoryManager.class;
+
+        Field field = factoryManagerClass.getField("DEFAULT_IDLE_TIMEOUT");
+        Field modifiersField = Field.class.getDeclaredField("modifiers");
+        modifiersField.setAccessible(true);
+        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+        field.setAccessible(true);
+
+        field.set(null, TimeUnit.SECONDS.toMillis(config.getIdleIntervalFrontend()));
+```
+
+## 4.4 修复显示异常的问题
+
+```sh
+stty cols 190 && stty rows 21 && export TERM=xterm-256color && bash
+```
+
+## 4.5 参考
+
+* [mina-sshd](https://github.com/apache/mina-sshd)
+* [jnativehook](https://github.com/kwhat/jnativehook)
+* [Java 反射修改 final 属性值](https://blog.csdn.net/tabactivity/article/details/50726353)
+
+# 5 SonarQube
 
 [Quick-Start](https://docs.sonarqube.org/latest/setup/get-started-2-minutes/)
 
@@ -1130,18 +1422,18 @@ docker run -d --name sonarqube -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true -p 9000
 mvn clean verify sonar:sonar -DskipTests -Dsonar.login=admin -Dsonar.password=xxxx
 ```
 
-# 5 Swagger
+# 6 Swagger
 
 下面给一个示例
 
-## 5.1 环境
+## 6.1 环境
 
 1. `IDEA`
 1. `Maven3.3.9`
 1. `Spring Boot`
 1. `Swagger`
 
-## 5.2 Demo工程目录结构
+## 6.2 Demo工程目录结构
 
 ```
 .
@@ -1161,7 +1453,7 @@ mvn clean verify sonar:sonar -DskipTests -Dsonar.login=admin -Dsonar.password=xx
 │                           └── User.java
 ```
 
-## 5.3 pom文件
+## 6.3 pom文件
 
 引入`Spring-boot`以及`Swagger`的依赖即可，完整内容如下
 
@@ -1237,7 +1529,7 @@ mvn clean verify sonar:sonar -DskipTests -Dsonar.login=admin -Dsonar.password=xx
 </project>
 ```
 
-## 5.4 Swagger Config Bean
+## 6.4 Swagger Config Bean
 
 ```java
 package org.liuyehcf.swagger.config;
@@ -1283,7 +1575,7 @@ public class SwaggerConfig {
 1. `@EnableSwagger2`：启用`Swagger2`
 * 注意替换`.apis(RequestHandlerSelectors.basePackage("org.liuyehcf.swagger"))`这句中的包路径
 
-## 5.5 Controller
+## 6.5 Controller
 
 ```java
 package org.liuyehcf.swagger.controller;
@@ -1371,7 +1663,7 @@ public class UserController {
 * `@ApiImplicitParam`最好指明`paramType`与`dataType`属性。`paramType`可以是`path`、`query`、`body`
 * `@ApiParam`没有`paramType`与`dataType`属性，因为该注解可以从参数（参数类型及其`Spring MVC`注解）中获取这些信息
 
-### 5.5.1 User
+### 6.5.1 User
 
 `Controller`中用到的实体类
 
@@ -1411,7 +1703,7 @@ public class User {
 }
 ```
 
-## 5.6 Application
+## 6.6 Application
 
 ```java
 package org.liuyehcf.swagger;
@@ -1432,13 +1724,13 @@ public class UserApplication {
 
 成功启动后，即可访问`http://localhost:8080/swagger-ui.html`
 
-## 5.7 参考
+## 6.7 参考
 
 * [Spring Boot中使用Swagger2构建强大的RESTful API文档](https://www.jianshu.com/p/8033ef83a8ed)
 * [Spring4集成Swagger：真的只需要四步，五分钟速成](http://blog.csdn.net/blackmambaprogrammer/article/details/72354007)
 * [Swagger](https://swagger.io/)
 
-# 6 dom4j
+# 7 dom4j
 
 这里以一个`Spring`的配置文件为例，通过一个示例来展示`Dom4j`如何写和读取`xml`文件
 
@@ -1586,7 +1878,7 @@ public class Dom4jDemo {
 4
 ```
 
-## 6.1 基本数据结构
+## 7.1 基本数据结构
 
 dom4j几乎所有的数据类型都继承自Node接口，下面介绍几个常用的数据类型
 
@@ -1594,7 +1886,7 @@ dom4j几乎所有的数据类型都继承自Node接口，下面介绍几个常�
 1. **`Element`**：元素
 1. **`Attribute`**：元素的属性
 
-## 6.2 Node.selectNodes
+## 7.2 Node.selectNodes
 
 该方法根据`xPathExpress`来选取节点，`xPathExpress`的语法规则如下
 
@@ -1613,7 +1905,7 @@ dom4j几乎所有的数据类型都继承自Node接口，下面介绍几个常�
 
 **注意，如果`xml`文件带有`xmlns`，那么在写`xPathExpress`时需要带上`xmlns`前缀，例如示例中那样的写法**
 
-## 6.3 参考
+## 7.3 参考
 
 * [Dom4J解析XML](https://www.jianshu.com/p/53ee5835d997)
 * [dom4j简单实例](https://www.cnblogs.com/ikuman/archive/2012/12/04/2800872.html)
