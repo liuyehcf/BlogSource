@@ -3147,47 +3147,47 @@ noremap <silent> <leader>rc :call Clean_up_registers()<cr>
 " [Option] + j，即「∆」
 " [Option] + k，即「˚」
 " [Option] + l，即「¬」
-inoremap <silent> ˙ <c-o>h
-inoremap <silent> ∆ <c-o>j
-inoremap <silent> ˚ <c-o>k
-inoremap <silent> ¬ <c-o>l
-inoremap <silent> <c-w> <c-o>w
-inoremap <silent> <c-e> <c-o>e
-inoremap <silent> <c-b> <c-o>b
-inoremap <silent> <c-x> <c-o>x
+inoremap ˙ <c-o>h
+inoremap ∆ <c-o>j
+inoremap ˚ <c-o>k
+inoremap ¬ <c-o>l
+inoremap <c-w> <c-o>w
+inoremap <c-e> <c-o>e
+inoremap <c-b> <c-o>b
+inoremap <c-x> <c-o>x
 
 " 将「替换」映射到 [Option] + r，即「®」
 " 其中，<c-r><c-w> 表示 [Ctrl] + r 以及 [Ctrl] + w，用于将光标所在的单词填入搜索/替换项中
-nnoremap <silent> ® :%s/<c-r><c-w>
+nnoremap ® :%s/<c-r><c-w>
 
 " 在 Visual 模式下进行粘贴时，默认情况下，会将被删除的内容放到默认寄存器中
 " gvy 可以将粘贴的内容重新放到默认寄存器中
-xnoremap <silent> p pgvy
+xnoremap p pgvy
 
 " 选中当前行
-nnoremap <silent> <leader>sl ^vg_
+nnoremap <leader>sl ^vg_
 
 " 回车时，默认取消搜索高亮
-nnoremap <silent> <cr> :nohlsearch<cr><cr>
+nnoremap <cr> :nohlsearch<cr><cr>
 
 " window 切换
 " [Option] + h，即「˙」
 " [Option] + j，即「∆」
 " [Option] + k，即「˚」
 " [Option] + l，即「¬」
-nnoremap <silent> ˙ :wincmd h<cr>
-nnoremap <silent> ∆ :wincmd j<cr>
-nnoremap <silent> ˚ :wincmd k<cr>
-nnoremap <silent> ¬ :wincmd l<cr>
+nnoremap ˙ :wincmd h<cr>
+nnoremap ∆ :wincmd j<cr>
+nnoremap ˚ :wincmd k<cr>
+nnoremap ¬ :wincmd l<cr>
 
 " tab 切换
 " [Option] + h，即「Ó」
 " [Option] + l，即「Ò」
-nnoremap <silent> Ó :tabprev<cr>
-nnoremap <silent> Ò :tabnext<cr>
+nnoremap Ó :tabprev<cr>
+nnoremap Ò :tabnext<cr>
 
 " \qc 关闭 quickfix
-nnoremap <silent> <leader>qc :cclose<cr>
+nnoremap <leader>qc :cclose<cr>
 
 " 一些常规配置
 " 折叠，默认不启用
