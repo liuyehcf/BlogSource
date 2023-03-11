@@ -1116,11 +1116,593 @@ public final class MockInvocationHandler implements InvocationHandler, Serializa
 
 `EasyMock`的源码就分析到这里，日后再细究`ReplayState`与`RecordState`的源码
 
-# 4 Mina
+# 4 Lombok
+
+## 4.1 Overview
+
+**lombok中常用的注解**
+
+1. `@AllArgsConstructor`
+1. `@NoArgsConstructor`
+1. `@RequiredArgsConstructor`
+1. `@Builder`
+1. `@Getter`
+1. `@Setter`
+1. `@Data`
+1. `@ToString`
+1. `@EqualsAndHashCode`
+1. `@Singular`
+1. `@Slf4j`
+
+**原理：`lombok`注解都是`编译期`注解，`编译期`注解最大的魅力就是能够干预编译器的行为，相关技术就是`JSR-269`**。我在另一篇博客中详细介绍了`JSR-269`的相关原理以及接口的使用方式，并且实现了类似`lombok`的`@Builder`注解。**对原理部分感兴趣的话，请移步{% post_link Java-JSR-269-插入式注解处理器 %}**
+
+## 4.2 构造方法
+
+`lombok`提供了3个注解，用于创建构造方法，它们分别是
+
+1. **`@AllArgsConstructor`**：`@AllArgsConstructor`会生成一个全量的构造方法，包括所有的字段（非`final`字段以及未在定义处初始化的`final`字段）
+1. **`@NoArgsConstructor`**：`@NoArgsConstructor`会生成一个无参构造方法（当然，不允许类中含有未在定义处初始化的`final`字段）
+1. **`@RequiredArgsConstructor`**：`@RequiredArgsConstructor`会生成一个仅包含必要参数的构造方法，什么是必要参数呢？就是那些未在定义处初始化的`final`字段
+
+## 4.3 @Builder
+
+**`@Builder`是我最爱的lombok注解，没有之一**。通常我们在业务代码中，时时刻刻都会用到数据传输对象（`DTO`），例如，我们调用一个`RPC`接口，需要传入一个`DTO`，代码通常是这样的
+
+```java
+// 首先构造DTO对象
+XxxDTO xxxDTO = new XxxDTO();
+xxxDTO.setPro1(...);
+xxxDTO.setPro2(...);
+...
+xxxDTO.setPron(...);
+
+// 然后调用接口
+rpcService.doSomething(xxxDTO);
+```
+
+其实，上述代码中的`xxxDTO`对象的创建以及赋值的过程，仅与`rpcService`有关，但是从肉眼来看，这确确实实又是两部分，我们无法快速确定`xxxDTO`对象只在`rpcService.doSomething`方法中用到。显然，这个代码片段最核心的部分就是`rpcService.doSomething`方法调用，**而上面这种写法使得核心代码淹没在非核心代码中**
+
+借助`lombok`的`@Builder`注解，我们便可以这样重构上面这段代码
+
+```java
+rpcService.doSomething(
+    XxxDTO.builder()
+        .setPro1(...)
+        .setPro2(...)
+        ...
+        .setPron(...)
+        .build()
+);
+```
+
+这样一来，由于`XxxDTO`的实例仅在`rpcService.doSomething`方法中用到，我们就把创建的步骤放到方法参数里面去完成，代码更内聚了。**通过这种方式，业务流程的脉络将会更清晰地展现出来，而不至于淹没在一大堆`set`方法的调用之中**
+
+### 4.3.1 使用方式
+
+如果是一个简单的`DTO`，**那么直接在类上方标记`@Builder`注解，同时需要提供一个全参构造方法**，`lombok`就会在编译期为该类创建一个`建造者模式`的静态内部类
+
+```java
+@Builder
+public class BaseCarDTO {
+    private Double width;
+
+    private Double length;
+
+    private Double weight;
+
+    public BaseCarDTO() {
+    }
+
+    public BaseCarDTO(Double width, Double length, Double weight) {
+        this.width = width;
+        this.length = length;
+        this.weight = weight;
+    }
+
+    public Double getWidth() {
+        return width;
+    }
+
+    public void setWidth(Double width) {
+        this.width = width;
+    }
+
+    public Double getLength() {
+        return length;
+    }
+
+    public void setLength(Double length) {
+        this.length = length;
+    }
+
+    public Double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
+    }
+}
+```
+
+将编译后的`.class`文件反编译得到的`.java`文件如下。可以很清楚的看到，多了一个静态内部类，且采用了建造者模式，这也是`@Builder`注解名称的由来
+
+```java
+public class BaseCarDTO {
+    private Double width;
+    private Double length;
+    private Double weight;
+
+    public BaseCarDTO() {
+    }
+
+    public BaseCarDTO(Double width, Double length, Double weight) {
+        this.width = width;
+        this.length = length;
+        this.weight = weight;
+    }
+
+    public Double getWidth() {
+        return this.width;
+    }
+
+    public void setWidth(Double width) {
+        this.width = width;
+    }
+
+    public Double getLength() {
+        return this.length;
+    }
+
+    public void setLength(Double length) {
+        this.length = length;
+    }
+
+    public Double getWeight() {
+        return this.weight;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
+    }
+
+    public static BaseCarDTO.BaseCarDTOBuilder builder() {
+        return new BaseCarDTO.BaseCarDTOBuilder();
+    }
+
+    public static class BaseCarDTOBuilder {
+        private Double width;
+        private Double length;
+        private Double weight;
+
+        BaseCarDTOBuilder() {
+        }
+
+        public BaseCarDTO.BaseCarDTOBuilder width(Double width) {
+            this.width = width;
+            return this;
+        }
+
+        public BaseCarDTO.BaseCarDTOBuilder length(Double length) {
+            this.length = length;
+            return this;
+        }
+
+        public BaseCarDTO.BaseCarDTOBuilder weight(Double weight) {
+            this.weight = weight;
+            return this;
+        }
+
+        public BaseCarDTO build() {
+            return new BaseCarDTO(this.width, this.length, this.weight);
+        }
+
+        public String toString() {
+            return "BaseCarDTO.BaseCarDTOBuilder(width=" + this.width + ", length=" + this.length + ", weight=" + this.weight + ")";
+        }
+    }
+}
+```
+
+### 4.3.2 具有继承关系的DTO
+
+我们来考虑一种更特殊的情况，假设有两个`DTO`，一个是`TruckDTO`，另一个是`BaseCarDTO`。`TruckDTO`继承了`BaseCarDTO`。其中`BaseCarDTO`与`TruckDTO`如下
+
+* 我们需要在`@Builder`注解指定`builderMethodName`属性，区分一下两个静态方法
+
+```java
+@Builder
+public class BaseCarDTO {
+    private Double width;
+
+    private Double length;
+
+    private Double weight;
+
+    public BaseCarDTO() {
+    }
+
+    public BaseCarDTO(Double width, Double length, Double weight) {
+        this.width = width;
+        this.length = length;
+        this.weight = weight;
+    }
+
+    public Double getWidth() {
+        return width;
+    }
+
+    public void setWidth(Double width) {
+        this.width = width;
+    }
+
+    public Double getLength() {
+        return length;
+    }
+
+    public void setLength(Double length) {
+        this.length = length;
+    }
+
+    public Double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
+    }
+}
+
+@Builder(builderMethodName = "trunkBuilder")
+public class TrunkDTO extends BaseCarDTO {
+    private Double volume;
+
+    public TrunkDTO(Double volume) {
+        this.volume = volume;
+    }
+
+    public Double getVolume() {
+        return volume;
+    }
+
+    public void setVolume(Double volume) {
+        this.volume = volume;
+    }
+}
+```
+
+我们来看一下`TrunkDTO`编译得到的`.class`文件经过反编译得到的`.java`文件的样子，如下
+
+```java
+public class TrunkDTO extends BaseCarDTO {
+    private Double volume;
+
+    public TrunkDTO(Double volume) {
+        this.volume = volume;
+    }
+
+    public Double getVolume() {
+        return this.volume;
+    }
+
+    public void setVolume(Double volume) {
+        this.volume = volume;
+    }
+
+    public static TrunkDTO.TrunkDTOBuilder trunkBuilder() {
+        return new TrunkDTO.TrunkDTOBuilder();
+    }
+
+    public static class TrunkDTOBuilder {
+        private Double volume;
+
+        TrunkDTOBuilder() {
+        }
+
+        public TrunkDTO.TrunkDTOBuilder volume(Double volume) {
+            this.volume = volume;
+            return this;
+        }
+
+        public TrunkDTO build() {
+            return new TrunkDTO(this.volume);
+        }
+
+        public String toString() {
+            return "TrunkDTO.TrunkDTOBuilder(volume=" + this.volume + ")";
+        }
+    }
+}
+```
+
+可以看到，这个内部类`TrunkDTOBuilder`仅包含了子类`TrunkDTO`的字段，而不包含父类`BaseCarDTO`的字段
+
+那么，我们如何让`TrunkDTOBuilder`也包含父类的字段呢？答案就是，我们需要将`@Builder`注解标记在构造方法处，构造方法包含多少字段，那么这个静态内部类就包含多少个字段，如下
+
+```java
+public class TrunkDTO extends BaseCarDTO {
+    private Double volume;
+
+    @Builder(builderMethodName = "trunkBuilder")
+    public TrunkDTO(Double width, Double length, Double weight, Double volume) {
+        super(width, length, weight);
+        this.volume = volume;
+    }
+
+    public Double getVolume() {
+        return volume;
+    }
+
+    public void setVolume(Double volume) {
+        this.volume = volume;
+    }
+}
+```
+
+上述`TrunkDTO`编译得到的`.class`文件经过反编译得到的`.java`文件如下
+
+```java
+public class TrunkDTO extends BaseCarDTO {
+    private Double volume;
+
+    public TrunkDTO(Double width, Double length, Double weight, Double volume) {
+        super(width, length, weight);
+        this.volume = volume;
+    }
+
+    public Double getVolume() {
+        return this.volume;
+    }
+
+    public void setVolume(Double volume) {
+        this.volume = volume;
+    }
+
+    public static TrunkDTO.TrunkDTOBuilder trunkBuilder() {
+        return new TrunkDTO.TrunkDTOBuilder();
+    }
+
+    public static class TrunkDTOBuilder {
+        private Double width;
+        private Double length;
+        private Double weight;
+        private Double volume;
+
+        TrunkDTOBuilder() {
+        }
+
+        public TrunkDTO.TrunkDTOBuilder width(Double width) {
+            this.width = width;
+            return this;
+        }
+
+        public TrunkDTO.TrunkDTOBuilder length(Double length) {
+            this.length = length;
+            return this;
+        }
+
+        public TrunkDTO.TrunkDTOBuilder weight(Double weight) {
+            this.weight = weight;
+            return this;
+        }
+
+        public TrunkDTO.TrunkDTOBuilder volume(Double volume) {
+            this.volume = volume;
+            return this;
+        }
+
+        public TrunkDTO build() {
+            return new TrunkDTO(this.width, this.length, this.weight, this.volume);
+        }
+
+        public String toString() {
+            return "TrunkDTO.TrunkDTOBuilder(width=" + this.width + ", length=" + this.length + ", weight=" + this.weight + ", volume=" + this.volume + ")";
+        }
+    }
+}
+```
+
+### 4.3.3 初始值
+
+仅靠`@Builder`注解，那么生成的静态内部类是不会处理初始值的，如果我们要让静态内部类处理初始值，那么就需要在相关的字段上标记`@Builder.Default`注解
+
+```java
+@Builder
+public class BaseCarDTO {
+    @Builder.Default
+    private Double width = 5.0;
+
+    private Double length;
+
+    private Double weight;
+
+    public BaseCarDTO() {
+    }
+
+    public BaseCarDTO(Double width, Double length, Double weight) {
+        this.width = width;
+        this.length = length;
+        this.weight = weight;
+    }
+
+    public Double getWidth() {
+        return width;
+    }
+
+    public void setWidth(Double width) {
+        this.width = width;
+    }
+
+    public Double getLength() {
+        return length;
+    }
+
+    public void setLength(Double length) {
+        this.length = length;
+    }
+
+    public Double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
+    }
+}
+```
+
+**注意，字段在被`@Builder.Default`修饰后，生成class文件中是没有初始值的，这是个大坑！**
+
+### 4.3.4 @EqualsAndHashCode
+
+`@EqualsAndHashCode`注解用于创建`Object`的`hashCode`方法以及`equals`方法，同样地，如果一个`DTO`包含父类，那么最平凡的`@EqualsAndHashCode`注解不会考虑父类包含的字段。**因此如果子类的`hashCode`方法以及`equals`方法需要考虑父类的字段，那么需要将`@EqualsAndHashCode`注解的`callSuper`属性设置为`true`，这样就会调用父类的同名方法**
+
+```java
+public class BaseCarDTO {
+
+    private Double width = 5.0;
+
+    private Double length;
+
+    private Double weight;
+
+    public Double getWidth() {
+        return width;
+    }
+
+    public void setWidth(Double width) {
+        this.width = width;
+    }
+
+    public Double getLength() {
+        return length;
+    }
+
+    public void setLength(Double length) {
+        this.length = length;
+    }
+
+    public Double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
+    }
+}
+
+@EqualsAndHashCode(callSuper = true)
+public class TrunkDTO extends BaseCarDTO {
+    private Double volume;
+
+    public Double getVolume() {
+        return volume;
+    }
+
+    public void setVolume(Double volume) {
+        this.volume = volume;
+    }
+}
+```
+
+上述`TrunkDTO`编译得到的`.class`文件经过反编译得到的`.java`文件如下
+
+```java
+public class TrunkDTO extends BaseCarDTO {
+    private Double volume;
+
+    public TrunkDTO() {
+    }
+
+    public Double getVolume() {
+        return this.volume;
+    }
+
+    public void setVolume(Double volume) {
+        this.volume = volume;
+    }
+
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        } else if (!(o instanceof TrunkDTO)) {
+            return false;
+        } else {
+            TrunkDTO other = (TrunkDTO)o;
+            if (!other.canEqual(this)) {
+                return false;
+            } else if (!super.equals(o)) {
+                return false;
+            } else {
+                Object this$volume = this.getVolume();
+                Object other$volume = other.getVolume();
+                if (this$volume == null) {
+                    if (other$volume != null) {
+                        return false;
+                    }
+                } else if (!this$volume.equals(other$volume)) {
+                    return false;
+                }
+
+                return true;
+            }
+        }
+    }
+
+    protected boolean canEqual(Object other) {
+        return other instanceof TrunkDTO;
+    }
+
+    public int hashCode() {
+        int PRIME = true;
+        int result = 1;
+        int result = result * 59 + super.hashCode();
+        Object $volume = this.getVolume();
+        result = result * 59 + ($volume == null ? 43 : $volume.hashCode());
+        return result;
+    }
+}
+```
+
+## 4.4 @Getter/@Setter
+
+`@Getter`以及`@Setter`注解用于为字段创建`getter`方法以及`setter`方法
+
+## 4.5 @ToString
+
+`@ToString`注解用于创建`Object`的`toString`方法
+
+## 4.6 @Data
+
+`Data`注解包含了`@Getter`、`@Setter`、`@RequiredArgsConstructor`、`@ToString`以及`@EqualsAndHashCode`、的功能
+
+## 4.7 @Slf4j
+
+`@Slf4j`注解用于生成一个`log`字段，可以指定参数`topic`的值，其值代表`loggerName`
+
+`@Slf4j(topic = "error")`等效于下面这段代码
+
+```java
+  private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger("error");
+```
+
+## 4.8 Tips
+
+### 4.8.1 java16编译失败
+
+若编译器版本是`java16`的话，编译使用了`lombok`的项目会出现如下的错误
+
+```
+Fatal error compiling: java.lang.ExceptionInInitializerError: Unable to make field private com.sun.tools.javac.processing.JavacProcessingEnvironment$DiscoveredProcessors com.sun.tools.javac.processing.JavacProcessingEnvironment.discoveredProcs accessible: module jdk.compiler does not "opens com.sun.tools.javac.processing" to unnamed module
+```
+
+解决方式：安装低版本的`java`，比如`java8`，设置`JAVA_HOME`环境变量用于指定`java`版本
+
+# 5 Mina
 
 `Mina`是一个`Java`版本的`ssh-lib`
 
-## 4.1 Maven依赖
+## 5.1 Maven依赖
 
 ```xml
         <!-- mina -->
@@ -1155,9 +1737,9 @@ public final class MockInvocationHandler implements InvocationHandler, Serializa
 1. `jsch`是另一个`ssh-client`库
 1. `jnativehook`用于捕获键盘的输入，如果仅用`Java`标准输入，则无法捕获类似`ctrl + c`这样的按键组合
 
-## 4.2 Demo
+## 5.2 Demo
 
-### 4.2.1 BaseDemo
+### 5.2.1 BaseDemo
 
 ```java
 package org.liuyehcf.mina;
@@ -1273,7 +1855,7 @@ class BaseDemo {
 }
 ```
 
-### 4.2.2 MinaSshDemo
+### 5.2.2 MinaSshDemo
 
 ```java
 package org.liuyehcf.mina;
@@ -1331,7 +1913,7 @@ public class MinaSshDemo extends BaseDemo {
 }
 ```
 
-### 4.2.3 JschSshDemo
+### 5.2.3 JschSshDemo
 
 ```java
 package org.liuyehcf.mina;
@@ -1381,7 +1963,7 @@ public class JschSshDemo extends BaseDemo {
 }
 ```
 
-## 4.3 修改IdleTimeOut
+## 5.3 修改IdleTimeOut
 
 ```java
         Class<FactoryManager> factoryManagerClass = FactoryManager.class;
@@ -1396,19 +1978,19 @@ public class JschSshDemo extends BaseDemo {
         field.set(null, TimeUnit.SECONDS.toMillis(config.getIdleIntervalFrontend()));
 ```
 
-## 4.4 修复显示异常的问题
+## 5.4 修复显示异常的问题
 
 ```sh
 stty cols 190 && stty rows 21 && export TERM=xterm-256color && bash
 ```
 
-## 4.5 参考
+## 5.5 参考
 
 * [mina-sshd](https://github.com/apache/mina-sshd)
 * [jnativehook](https://github.com/kwhat/jnativehook)
 * [Java 反射修改 final 属性值](https://blog.csdn.net/tabactivity/article/details/50726353)
 
-# 5 SonarQube
+# 6 SonarQube
 
 [Quick-Start](https://docs.sonarqube.org/latest/setup/get-started-2-minutes/)
 
@@ -1422,18 +2004,18 @@ docker run -d --name sonarqube -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true -p 9000
 mvn clean verify sonar:sonar -DskipTests -Dsonar.login=admin -Dsonar.password=xxxx
 ```
 
-# 6 Swagger
+# 7 Swagger
 
 下面给一个示例
 
-## 6.1 环境
+## 7.1 环境
 
 1. `IDEA`
 1. `Maven3.3.9`
 1. `Spring Boot`
 1. `Swagger`
 
-## 6.2 Demo工程目录结构
+## 7.2 Demo工程目录结构
 
 ```
 .
@@ -1453,7 +2035,7 @@ mvn clean verify sonar:sonar -DskipTests -Dsonar.login=admin -Dsonar.password=xx
 │                           └── User.java
 ```
 
-## 6.3 pom文件
+## 7.3 pom文件
 
 引入`Spring-boot`以及`Swagger`的依赖即可，完整内容如下
 
@@ -1529,7 +2111,7 @@ mvn clean verify sonar:sonar -DskipTests -Dsonar.login=admin -Dsonar.password=xx
 </project>
 ```
 
-## 6.4 Swagger Config Bean
+## 7.4 Swagger Config Bean
 
 ```java
 package org.liuyehcf.swagger.config;
@@ -1575,7 +2157,7 @@ public class SwaggerConfig {
 1. `@EnableSwagger2`：启用`Swagger2`
 * 注意替换`.apis(RequestHandlerSelectors.basePackage("org.liuyehcf.swagger"))`这句中的包路径
 
-## 6.5 Controller
+## 7.5 Controller
 
 ```java
 package org.liuyehcf.swagger.controller;
@@ -1663,7 +2245,7 @@ public class UserController {
 * `@ApiImplicitParam`最好指明`paramType`与`dataType`属性。`paramType`可以是`path`、`query`、`body`
 * `@ApiParam`没有`paramType`与`dataType`属性，因为该注解可以从参数（参数类型及其`Spring MVC`注解）中获取这些信息
 
-### 6.5.1 User
+### 7.5.1 User
 
 `Controller`中用到的实体类
 
@@ -1703,7 +2285,7 @@ public class User {
 }
 ```
 
-## 6.6 Application
+## 7.6 Application
 
 ```java
 package org.liuyehcf.swagger;
@@ -1724,13 +2306,13 @@ public class UserApplication {
 
 成功启动后，即可访问`http://localhost:8080/swagger-ui.html`
 
-## 6.7 参考
+## 7.7 参考
 
 * [Spring Boot中使用Swagger2构建强大的RESTful API文档](https://www.jianshu.com/p/8033ef83a8ed)
 * [Spring4集成Swagger：真的只需要四步，五分钟速成](http://blog.csdn.net/blackmambaprogrammer/article/details/72354007)
 * [Swagger](https://swagger.io/)
 
-# 7 dom4j
+# 8 dom4j
 
 这里以一个`Spring`的配置文件为例，通过一个示例来展示`Dom4j`如何写和读取`xml`文件
 
@@ -1878,7 +2460,7 @@ public class Dom4jDemo {
 4
 ```
 
-## 7.1 基本数据结构
+## 8.1 基本数据结构
 
 dom4j几乎所有的数据类型都继承自Node接口，下面介绍几个常用的数据类型
 
@@ -1886,7 +2468,7 @@ dom4j几乎所有的数据类型都继承自Node接口，下面介绍几个常�
 1. **`Element`**：元素
 1. **`Attribute`**：元素的属性
 
-## 7.2 Node.selectNodes
+## 8.2 Node.selectNodes
 
 该方法根据`xPathExpress`来选取节点，`xPathExpress`的语法规则如下
 
@@ -1905,7 +2487,7 @@ dom4j几乎所有的数据类型都继承自Node接口，下面介绍几个常�
 
 **注意，如果`xml`文件带有`xmlns`，那么在写`xPathExpress`时需要带上`xmlns`前缀，例如示例中那样的写法**
 
-## 7.3 参考
+## 8.3 参考
 
 * [Dom4J解析XML](https://www.jianshu.com/p/53ee5835d997)
 * [dom4j简单实例](https://www.cnblogs.com/ikuman/archive/2012/12/04/2800872.html)
