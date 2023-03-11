@@ -12,55 +12,59 @@ categories:
 
 <!--more-->
 
-# 1 基本概念
+# 1 Basic Concept
 
-## 1.1 模式
+## 1.1 Mode
 
 vim常用的三种模式：**一般模式、编辑模式与命令模式**。`:help mode`查看详情
 
 一般模式与编辑模式以及命令行模式可以相互切换，但是编辑模式与命令行模式之间不可相互切换
 
-### 1.1.1 一般模式
+### 1.1.1 Normal Mode
 
 以vim打开一个文件就进入一般模式了（这是默认模式）
 
 在这个模式中，你可以使用上下左右按键来移动光标，可以删除字符或删除整行，也可以复制粘贴你的文件数据
 
-### 1.1.2 编辑模式
+### 1.1.2 Insert Mode
 
 在一般模式中，可以进行删除，复制，粘贴等操作，但是却无法编辑文件内容。要等到你按下`i(I),o(O),a(A),r(R)`等任何一个字母后才会进入编辑模式
 
 如果要回到一般模式，必须按下`Esc`这个按键即可退出编辑器
 
-### 1.1.3 命令行模式
+### 1.1.3 Visual Mode
+
+This mode is used for selecting and manipulating text visually.
+
+### 1.1.4 Command-line Mode
 
 在一般模式中，输入`:`、`/`、`?`这三个钟的任何一个按钮，就可以将光标移动到最下面一行，在这个模式中，可以提供你查找数据的操作，而读取、保存、大量替换字符、离开vim、显示行号等操作则是在此模式中完成的
 
-## 1.2 buffer
+### 1.1.5 Ex Mode
+
+This is an even more powerful mode than command-line mode, used for advanced editing and automation.
+
+Ex mode, on the other hand, is a more powerful command-line mode that is entered by typing `Q` or `q:` from normal mode or insert mode
+
+## 1.2 Buffer
 
 **每个打开的文件都对应一个buffer。buffer可以显示或者不显示**
 
-## 1.3 window
+## 1.3 Window
 
 **window就是我们看到的并且可以操作的那个界面。一个window可以包含一个或多个buffer，总是会显示其中一个buffer（文件或者空）。允许同时开启多个窗口**
 
-## 1.4 tab
+## 1.4 Tab
 
 **tab可以包含一个或多个window。如果存在多个tab，那么会在最上方显示这些tab，就像一个现代的编辑器一样（vscode）**
 
-## 1.5 ex命令
-
-`ex`是`Unix`下的一个文本编辑器。vim就是`ex`的`visual mode`。vim中的`:w`、`:q!`就是来自于`ex`命令
-
-`ex`命令远不止这些，实际上所有`:`开头的命令，也就是你在vim最下面看到的命令行，都属于`ex`命令。
-
-# 2 操作手册
+# 2 Operation Manual
 
 ![vi-vim-cheat-sheet](/images/vim/vi-vim-cheat-sheet.gif)
 
 * [图片出处](http://www.viemu.com/a_vi_vim_graphical_cheat_sheet_tutorial.html)
 
-## 2.1 编辑模式
+## 2.1 Insert Mode
 
 * **`i,I`：进入插入模式，i为从光标所在处插入，I为在目前所在行的第一个非空格处开始插入**
 * **`a,A`：进入插入模式，a为从目前光标所在的下一个字符处开始插入，A为从光标所在行的最后一个字符处开始插入**
@@ -83,7 +87,7 @@ vim常用的三种模式：**一般模式、编辑模式与命令模式**。`:he
 * **`[Shift] + [Up]`：向上翻页**
 * **`[Shift] + [Down]`：向下翻页**
 
-## 2.2 光标移动
+## 2.2 Moving Cursor
 
 * **`j或↓`：光标向下移动一个字符**
 * **`k或↑`：光标向上移动一个字符**
@@ -169,7 +173,7 @@ vim常用的三种模式：**一般模式、编辑模式与命令模式**。`:he
 * **`g,`：回到`change list`的下一个位置**
 * **`:changes`：输出`change list`**
 
-## 2.3 文本编辑
+## 2.3 Text Editing
 
 **`c`、`d`等命令可以配合「光标移动」中的操作一起使用**
 
@@ -217,7 +221,7 @@ vim常用的三种模式：**一般模式、编辑模式与命令模式**。`:he
 * **`[Ctrl] + r`：重做上一个操作**
 * **`.`：重做上一个操作**
 
-## 2.4 复制粘贴
+## 2.4 Copy & Paste
 
 * **`yy`：复制光标所在那一行**
 * **`[n]yy`：复制光标所在的向下n行（包括当前这一行）**
@@ -228,7 +232,7 @@ vim常用的三种模式：**一般模式、编辑模式与命令模式**。`:he
 * **`p`：将已复制的数据粘贴到光标之前**
 * **`P`：将已复制的数据粘贴到光标之后**
 
-### 2.4.1 寄存器
+### 2.4.1 Register
 
 **vim中有许多寄存器（该寄存器并不是cpu中的寄存器），分别是：**
 
@@ -265,7 +269,7 @@ vim常用的三种模式：**一般模式、编辑模式与命令模式**。`:he
 * 如果系统是CentOS，需要安装图形化界面，比如`GNOME`，然后再安装`vim-X11`，然后用`vimx`代替`vim`。`vimx --version | grep clipboard`可以发现已经支持了`clipboard`。至此，已经可以在ssh终端中通过`vimx`使用远程主机的`clipboard`了
 * 未完待续，目前还没搞定本机和远程的`clipboard`的共享
 
-## 2.5 范围选择
+## 2.5 Visual Selection
 
 * **`v`：字符选择：会将光标经过的地方反白选择**
 * **`vw`：选择光标开始处的当前单词（若光标在单词中间，不会选择整个单词）**
@@ -290,7 +294,7 @@ vim常用的三种模式：**一般模式、编辑模式与命令模式**。`:he
 * **`gn`：选中下一个查找的内容**
 * **`gN`：选中上一个查找的内容**
 
-## 2.6 查找替换
+## 2.6 Search & Replace
 
 * **查找**
     * **`/[word]`：向下寻找一个名为word的字符串，支持正则表达式**
@@ -323,8 +327,10 @@ vim常用的三种模式：**一般模式、编辑模式与命令模式**。`:he
     * **`:1,$s/[word1]/[word2]/gc`或者`:%s/[word1]/[word2]/gc`：从第一行到最后一行查找word1字符串，并将该字符串替换为word2，且在替换前显示提示字符给用户确认是否替换，支持正则表达式**
     * **可视模式选中范围，输入`:s/[word1]/[word2]/gc`进行替换**
 * **`[Ctrl]+r`以及`[Ctrl]+w`：将光标下的字符串添加到搜索或者替换表达式中**
+* **`gn`：选中下一个查找的内容**
+* **`gN`：选中上一个查找的内容**
 
-## 2.7 文件操作
+## 2.7 File
 
 * **`:w`：保存文件**
 * **`:wa`：保存所有文件**
@@ -344,15 +350,7 @@ vim常用的三种模式：**一般模式、编辑模式与命令模式**。`:he
 * `:files`：列出这个vim打开的所有文件
 * **`:Vex`：打开目录**
 
-## 2.8 文件跳转
-
-* **`[Ctrl] + ]`：跳转到光标指向的符号的定义处**
-* **`gf`：跳转光标指向的头文件**
-    * 通过`set path=`或`set path+=`设置或增加头文件搜索路径
-    * 通过`set path?`可以查看该变量的内容
-* **`[Ctrl] + ^`：在前后两个文件之间跳转**
-
-## 2.9 文本对象
+## 2.8 Text Object
 
 **文本对象：`c`、`d`、`v`、`y`、`g~`、`gu`、`gU`等命令后接文本对象，一般格式为：`<范围><类型>`**
 
@@ -379,7 +377,7 @@ vim常用的三种模式：**一般模式、编辑模式与命令模式**。`:he
 * `i"`：双引号内
 * `a"`：双引号内（包含双引号本身）
 
-## 2.10 代码折叠
+## 2.9 Text Fold
 
 **按照折叠所依据的规则，可以分为如下4种：**
 
@@ -411,7 +409,7 @@ vim常用的三种模式：**一般模式、编辑模式与命令模式**。`:he
 * **`zj`：移动到下一个折叠**
 * **`zk`：移动到上一个折叠**
 
-## 2.11 buffer
+## 2.10 Buffer
 
 * **`:buffers`：列出所有buffer**
 * **`:buffer [n]`：显示指定buffer**
@@ -424,7 +422,7 @@ vim常用的三种模式：**一般模式、编辑模式与命令模式**。`:he
 * **`:bufdo <cmd>`：对所有buffer执行操作**
     * **`:bufdo e`：重新载入所有buffer对应的文件**
 
-## 2.12 window
+## 2.11 Window
 
 * **`[Ctrl] + w + <xxx>`：先`[Ctrl]`再`w`，放掉`[Ctrl]`和`w`再按`<xxx>`，以下操作以此为基准**
 1. `vim -On file1 file2...`：垂直分屏
@@ -455,7 +453,7 @@ vim常用的三种模式：**一般模式、编辑模式与命令模式**。`:he
 1. `[Ctrl] + w + <`：宽度减小1
 1. `[Ctrl] + w + [n] + <`：宽度减小n
 
-## 2.13 tab
+## 2.12 Tab
 
 * **`:tabnew [filename]`：在一个新的tab中打开文件**
 * **`:tabm [n]`：将当前标签页移动到位置`n`（`n`从0开始），若不指定`n`，则移动到最后**
@@ -465,7 +463,7 @@ vim常用的三种模式：**一般模式、编辑模式与命令模式**。`:he
 * **`:tabdo <cmd>`：对所有tab执行操作**
     * **`:tabdo e`：重新载入所有tab对应的文件**
 
-## 2.14 quickfix
+## 2.13 Quickfix
 
 * `:copen`：打开`quickfix`窗口（查看编译，grep等信息）
 * `:copen 10`：打开`quickfix`窗口，并且设置高度为`10`
@@ -477,14 +475,14 @@ vim常用的三种模式：**一般模式、编辑模式与命令模式**。`:he
 * `:cprev`：跳到`quickfix`中上一个错误信息
 * `:set modifiable`，将`quickfix`改成可写，可以用`dd`等删除某个条目
 
-## 2.15 terminal
+## 2.14 Terminal
 
 **vim中可以内嵌终端**
 
 * `:terminal`：打开终端
 * `[Ctrl] + \ + [Ctrl] + n`：退出终端
 
-## 2.16 键位映射
+## 2.15 Mapping
 
 1. **`map`：递归映射**
 1. **`noremap`：非递归映射**
@@ -527,7 +525,7 @@ vim常用的三种模式：**一般模式、编辑模式与命令模式**。`:he
 * `<expr>`
 * `<unique>`
 
-## 2.17 键位表示
+## 2.16 Key Representation
 
 * **`<f-num>`：例如`<f1>`、`<f2>`**
 * **`<c-key>`：表示`[Ctrl]`加另一个字母**
@@ -535,12 +533,12 @@ vim常用的三种模式：**一般模式、编辑模式与命令模式**。`:he
 * **对于mac上的`[Option]`，并没有`<p-key>`这样的表示方法。而是用`[Option]`加另一个字母实际输出的结果作为映射键值，例如：**
     * `[Option] + a`：`å`
 
-## 2.18 配置
+## 2.17 Config
 
 * **`:set <config>?`：可以查看`<config>`的值**
     * `:set filetype?`：查看文件类型
 
-### 2.18.1 常用配置项
+### 2.17.1 Frequently-used Configs
 
 ```vim
 :set nocompatible                   " 设置不兼容原始 vi 模式（必须设置在最开头）
@@ -582,7 +580,7 @@ vim常用的三种模式：**一般模式、编辑模式与命令模式**。`:he
 :syntax off                         " 禁止语法高亮
 ```
 
-### 2.18.2 配置文件
+### 2.17.2 Config File
 
 vim会主动将你曾经做过的行为记录下来，好让你下次可以轻松作业，记录操作的文件就是`~/.viminfo`
 
@@ -590,11 +588,17 @@ vim会主动将你曾经做过的行为记录下来，好让你下次可以轻�
 
 **在运行vim的时候，如果修改了`~/.vimrc`文件的内容，可以通过执行`:source ~/.vimrc`来重新加载`~/.vimrc`，立即生效配置**
 
-## 2.19 help
+## 2.18 Help Doc
 
 1. `:help i_ctrl-v`，其中`i_`表示`insert mode`
 
-## 2.20 其他
+**文档路径：`/usr/share/vim/vim82/doc`**
+
+* `/usr/share/vim/vim82/doc/help.txt`：主目录文档
+
+**`vimtutor`：提供一个简易的教程**
+
+## 2.19 Else
 
 * **`echo`**
     * **`:echo <variable>`：可以查看`<variable>`的值**
@@ -611,14 +615,22 @@ vim会主动将你曾经做过的行为记录下来，好让你下次可以轻�
 * **`[Ctrl] + g`：统计信息**
 * **`g + [Ctrl] + g`：字节统计信息**
 
-### 2.20.1 插入制表符tab
+### 2.19.1 Symbol Index
+
+* **`[Ctrl] + ]`：跳转到光标指向的符号的定义处**
+* **`gf`：跳转光标指向的头文件**
+    * 通过`set path=`或`set path+=`设置或增加头文件搜索路径
+    * 通过`set path?`可以查看该变量的内容
+* **`[Ctrl] + ^`：在前后两个文件之间跳转**
+
+### 2.19.2 Insert Form Feed(tab)
 
 参考[How can I insert a real tab character in Vim?](https://stackoverflow.com/questions/6951672/how-can-i-insert-a-real-tab-character-in-vim)，在我们设置了`tabstop`、`softtabstop`、`expandtab`等参数后，`tab`会被替换成空格，如果要输入原始的`\t`字符，可以在`insert`模式下，按`[Ctrl] + v + i`，其中：
 
 * `[Ctrl] + v`表示输入原始的字面值
 * `i`表示`\t`
 
-### 2.20.2 多行更新
+### 2.19.3 Multiply-line Editing
 
 **示例：多行同时插入相同内容**
 
@@ -641,7 +653,7 @@ vim会主动将你曾经做过的行为记录下来，好让你下次可以轻�
 1. 选中需要同时修改的列
 1. 按`d`即可同时删除
 
-### 2.20.3 中文乱码
+### 2.19.4 中文乱码
 
 **编辑`/etc/vimrc`，追加如下内容**
 
@@ -651,7 +663,7 @@ set termencoding=utf-8
 set encoding=utf-8
 ```
 
-### 2.20.4 为每个项目配置vim
+### 2.19.5 Project Customized Config
 
 同一份`~./vimrc`无法适用于所有的项目，不同的项目可能需要一些特化的配置项，可以采用如下的设置方式
 
