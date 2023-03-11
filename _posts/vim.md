@@ -228,21 +228,22 @@ vim常用的三种模式：**一般模式、编辑模式与命令模式**。`:he
 * **`p`：将已复制的数据粘贴到光标之前**
 * **`P`：将已复制的数据粘贴到光标之后**
 
-### 2.4.1 剪切板
+### 2.4.1 寄存器
 
-**vim中有许多寄存器（该寄存器并不是cpu中的寄存器），或者称为剪切板，分别是：**
+**vim中有许多寄存器（该寄存器并不是cpu中的寄存器），分别是：**
 
 * `0-9`：vim用来保存最近复制、删除等操作的内容
     * `0`：保存的是最近一次拷贝的内容
     * `1-9`：保存最近几次删除的内容，最近一次放在`1`，若有新的内容被删除，那么原来的`i`中的内容会存放到`i+1`中，由于`9`编号最大，因此该寄存器中原来的内容被丢弃
 * `a-zA-Z`：用户寄存器，vim不会读写这部分寄存器
 * **`"`：未命名的寄存器。所有删除和拷贝操作默认都会到匿名寄存器**
-* `*`：系统剪切板
+* `*`：系统寄存器
     * `Mac`/`Windows`：同`+`
     * `Linux-X11`：代表鼠标选中的区域，桌面系统中可按鼠标中键粘贴
-* `+`：系统剪切板
+* `+`：系统寄存器
     * `Mac`/`Windows`：同`*`
     * `Linux-X11`：在桌面系统中可按`Ctrl+V`粘贴
+* `_`：`Black hole register`，类似于文件系统中的`/dev/null`
 
 **如何使用这些寄存器：`"<reg name><operator>`**
 
@@ -255,10 +256,10 @@ vim常用的三种模式：**一般模式、编辑模式与命令模式**。`:he
 
 * `:reg`：查看寄存器的信息
 * `:reg <reg name>`：查看某个寄存器的内容
-* `"+yy`：将当前行拷贝到系统剪切板
-* `"+p`：将系统剪切板中的内容粘贴到光标之后
+* `"+yy`：将当前行拷贝到系统寄存器
+* `"+p`：将系统寄存器中的内容粘贴到光标之后
 
-**ssh到远程主机后，如何将本机系统剪切板的内容粘贴到远程主机的vim中？**
+**ssh到远程主机后，如何将本机系统寄存器的内容粘贴到远程主机的vim中？**
 
 * 首先确认远程主机的vim是否支持`clipboard`，通过`vim --version | grep clipboard`。`-clipboard`说明不支持，`+clipboard`说明支持。`clipboard`需要在`X`环境下才能工作
 * 如果系统是CentOS，需要安装图形化界面，比如`GNOME`，然后再安装`vim-X11`，然后用`vimx`代替`vim`。`vimx --version | grep clipboard`可以发现已经支持了`clipboard`。至此，已经可以在ssh终端中通过`vimx`使用远程主机的`clipboard`了
@@ -3119,6 +3120,15 @@ if filereadable(expand('~/.vim/gtags-cscope.vim'))
     source ~/.vim/gtags-cscope.vim
 endif
 
+" 将 .tpp 后缀的文件视为 cpp 文件，这样，针对 cpp 的插件就可以对 .tpp 文件生效了
+autocmd BufRead,BufNewFile *.tpp set filetype=cpp
+
+" 配置 perl 的格式化，需要用 gg=G 进行格式化
+" https://superuser.com/questions/805695/autoformat-for-perl-in-vim
+" 通过 cpan Perl::Tidy 安装 perltidy
+autocmd FileType perl setlocal equalprg=perltidy\ -st\ -ce
+autocmd FileType perl nnoremap <silent><buffer> <c-l> gg=G<c-o><c-o>
+
 " 特定文件类型的配置
 " json文件不隐藏双引号，等价于 set conceallevel=0
 let g:vim_json_conceal=0
@@ -3130,7 +3140,7 @@ function! Clean_up_registers()
         call setreg(r, [])
     endfor
 endfunction
-noremap <leader>rc :call Clean_up_registers()<cr>
+noremap <silent> <leader>rc :call Clean_up_registers()<cr>
 
 " 编辑模式，光标移动快捷键
 " [Option] + h，即「˙」
@@ -3148,37 +3158,46 @@ inoremap <silent> <c-x> <c-o>x
 
 " 将「替换」映射到 [Option] + r，即「®」
 " 其中，<c-r><c-w> 表示 [Ctrl] + r 以及 [Ctrl] + w，用于将光标所在的单词填入搜索/替换项中
-nnoremap ® :%s/<c-r><c-w>
+nnoremap <silent> ® :%s/<c-r><c-w>
+
+" 在 Visual 模式下进行粘贴时，默认情况下，会将被删除的内容放到默认寄存器中
+" gvy 可以将粘贴的内容重新放到默认寄存器中
+xnoremap <silent> p pgvy
 
 " 选中当前行
-nnoremap <leader>sl ^vg_
+nnoremap <silent> <leader>sl ^vg_
+
+" 回车时，默认取消搜索高亮
+nnoremap <silent> <cr> :nohlsearch<cr><cr>
 
 " window 切换
 " [Option] + h，即「˙」
 " [Option] + j，即「∆」
 " [Option] + k，即「˚」
 " [Option] + l，即「¬」
-nnoremap ˙ :wincmd h<cr>
-nnoremap ∆ :wincmd j<cr>
-nnoremap ˚ :wincmd k<cr>
-nnoremap ¬ :wincmd l<cr>
+nnoremap <silent> ˙ :wincmd h<cr>
+nnoremap <silent> ∆ :wincmd j<cr>
+nnoremap <silent> ˚ :wincmd k<cr>
+nnoremap <silent> ¬ :wincmd l<cr>
 
 " tab 切换
 " [Option] + h，即「Ó」
 " [Option] + l，即「Ò」
-nnoremap Ó :tabprev<cr>
-nnoremap Ò :tabnext<cr>
-
-" 回车时，默认取消搜索高亮
-nnoremap <silent> <cr> :nohlsearch<cr><cr>
+nnoremap <silent> Ó :tabprev<cr>
+nnoremap <silent> Ò :tabnext<cr>
 
 " \qc 关闭 quickfix
-nnoremap <leader>qc :cclose<cr>
+nnoremap <silent> <leader>qc :cclose<cr>
 
+" 一些常规配置
 " 折叠，默认不启用
 set nofoldenable
 set foldmethod=indent
 set foldlevel=0
+" 设置文件编码格式
+set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
+set termencoding=utf-8
+set encoding=utf-8
 " 其他常用
 set backspace=indent,eol,start
 set tabstop=4
@@ -3190,23 +3209,6 @@ set hlsearch
 set number
 set cursorline
 set matchpairs+=<:>
-
-" 设置文件编码格式
-set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
-set termencoding=utf-8
-set encoding=utf-8
-
-" 设置头文件搜索路径，可以在项目的 .workspace.vim 文件中通过 set path+= 追加搜索路径
-set path=.,/usr/include,/usr/local/include,/usr/local/lib/gcc/x86_64-pc-linux-gnu/10.3.0/include,/usr/local/include/c++/10.3.0
-
-" 将 .tpp 后缀的文件视为 cpp 文件，这样，针对 cpp 的插件就可以对 .tpp 文件生效了
-autocmd BufRead,BufNewFile *.tpp set filetype=cpp
-
-" 配置 perl 的格式化，需要用 gg=G 进行格式化
-" https://superuser.com/questions/805695/autoformat-for-perl-in-vim
-" 通过 cpan Perl::Tidy 安装 perltidy
-autocmd FileType perl setlocal equalprg=perltidy\ -st\ -ce
-autocmd FileType perl nnoremap <silent><buffer> <c-l> gg=G<c-o><c-o>
 
 " 加载额外的配置
 if filereadable(expand("~/.vimrc_extra"))
