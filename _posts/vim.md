@@ -146,7 +146,7 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
 * **`=`：按照类型自动调整缩进**
     * `gg=G`
 
-### 2.2.1 jump-list
+### 2.2.1 Jump List
 
 **帮助文档：`:help jump-motions`**
 
@@ -163,7 +163,7 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
 * **`:jumps`：输出`jump list`**
 * **`:clearjumps`：清除`jump list`**
 
-### 2.2.2 change-list
+### 2.2.2 Change List
 
 **帮助文档：`:help changelist`**
 
@@ -175,7 +175,7 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
 
 ## 2.3 Text Editing
 
-**`c`、`d`等命令可以配合「光标移动」中的操作一起使用**
+**`c`、`d`等命令可以配合「Moving Cursor」中的操作一起使用**
 
 * **`dd`：删除光标所在一整行**
 * **`dw`：删除光标所在的字符到光标所在单词的最后一个字符**
