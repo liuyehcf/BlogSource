@@ -666,8 +666,30 @@ FROM (SELECT * FROM S LEFT OUTER JOIN R ON s1 = r1)a GROUP BY r1;
 * `Q1.1`和`Q1.2`可以产生相同的输出，因为聚合函数`sum`对于`NULL`分组可以正常产生`NULL`值
 * `Q2.1`和`Q2.2`无法产生相同的输出，因为聚合函数`count`对于`NULL`分组会输出`0`或`1`。因此这里我们通过`case when`语句来对输出列进行改写`Q2.3`，以达到纠正的目的
 
-# 4 Property
+# 4 Data Skew
 
-## 4.1 HashProperty
+[[Enhancement] Add GroupByCountDistinctDataSkewEliminateRule](https://github.com/StarRocks/starrocks/pull/17643)
+
+Given the following case, where column `v1` has very limited cardinality, and column `v2` has very large cardinality and severely skewed. For example, for `v1 = 'x'`, a great number of distinct values of `v2` within this group, but for other values of `v1`, the number of `v2`'s distinct value is much more smaller, this kind of data distribution will lead to poor execution performance.
+
+```sql
+SELECT v1, COUNT(DISTINCT v2) FROM t0 GROUP BY v1
+```
+
+This query can be optimized, as down below, by introducing another group by dimension(hash of `v2`) to make sure the processing of count distinct can be fully paralleled.
+
+```sql
+SELECT v1, SUM(CNT_IN_BUCKET) 
+FROM (
+     SELECT v1, (MURMUR_HASH3_32(v2)%1024) AS BUCKET, COUNT(DISTINCT v1) AS CNT_IN_BUCKET 
+     FROM t0
+     GROUP BY v1, BUCKET
+) a
+GROUP BY v1
+```
+
+# 5 Property
+
+## 5.1 HashProperty
 
 `Shuffle by v1`可以满足`Shuffle by v1, v2`，只不过到了每个节点后，还需要再对`v2`进行一次shuffle
