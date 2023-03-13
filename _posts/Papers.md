@@ -1794,12 +1794,15 @@ Data Stream Processing System, DSPS
                         </li>
                         <li>Cache operation at high level
                             <ul>
+                                <li>Exclusive cache(AMD/VIA), where each line in L1d may not present in L2. Inclusive cache(Intel), where each line in L1d also present in L2, makes evicting from L1d is much faster.</li>
+                                <li>In symmetric multi-processor (SMP) systems the caches of the CPUs cannot work independently from each other. All processors are supposed to see the same memory content at all times. The maintenance of this uniform view of memory is called “cache coherency”</li>
+                                <li>Today’s processors all use internal pipelines of different lengths where the instructions are decoded and prepared for execution. Part of the preparation is loading values from memory (or cache) if they are transferred to a register. If the memory load operation can be started early enough in the pipeline, it may happen in parallel with other operations and the entire cost of the load might be hidden</li>
                             </ul>
                         </li>
                     </ul>
                 </li>
             </td>
-            <td style="text-align:left">👀/3.1</td>
+            <td style="text-align:left">👀/3.3</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
     </tbody>
