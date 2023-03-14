@@ -1794,15 +1794,31 @@ Data Stream Processing System, DSPS
                         </li>
                         <li>Cache operation at high level
                             <ul>
-                                <li>Exclusive cache(AMD/VIA), where each line in L1d may not present in L2. Inclusive cache(Intel), where each line in L1d also present in L2, makes evicting from L1d is much faster.</li>
+                                <li>Exclusive cache(AMD/VIA), where each line in L1d may not present in L2. Inclusive cache(Intel), where each line in L1d also present in L2, makes evicting from L1d is much faster</li>
                                 <li>In symmetric multi-processor (SMP) systems the caches of the CPUs cannot work independently from each other. All processors are supposed to see the same memory content at all times. The maintenance of this uniform view of memory is called “cache coherency”</li>
                                 <li>Today’s processors all use internal pipelines of different lengths where the instructions are decoded and prepared for execution. Part of the preparation is loading values from memory (or cache) if they are transferred to a register. If the memory load operation can be started early enough in the pipeline, it may happen in parallel with other operations and the entire cost of the load might be hidden</li>
+                            </ul>
+                        </li>
+                        <li>CPU cache implementation details
+                            <ul>
+                                <li>Cache implementers have the problem that each cell in the huge main memory potentially has to be cached</li>
+                                <li>
+                                    <ul>
+                                        <li>Associativity
+                                            <ul>
+                                                <li>It would be possible to implement a cache where each cache line can hold a copy of any memory location. This is called a fully associative cache. To access a cache line the processor core would have to compare the tags of each and every cache line with the tag for the requested address. Fully associative caches are practical for small caches(for instance, the TLB caches on some Intel processors are fully associative)</li>
+                                                <li>A direct-mapped cache is fast and relatively easy to implement. But it has a drawback: it only works well if the addresses used by the program are evenly distributed with respect to the bits used for the direct mapping, some cache entries are heavily used and therefore repeated evicted while others are hardly used at all or remain empty</li>
+                                                <li>A set-associative cache combines the good features of the full associative and direct-mapped caches to largely avoid the weaknesses of those designs</li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
                             </ul>
                         </li>
                     </ul>
                 </li>
             </td>
-            <td style="text-align:left">👀/3.3</td>
+            <td style="text-align:left">👀/P20</td>
             <td style="text-align:left">★★★★★</td>
         </tr>
     </tbody>

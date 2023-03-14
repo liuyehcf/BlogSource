@@ -227,7 +227,13 @@ Java反编译工具，[下载地址](http://www.javadecompilers.com/jad)
 
 [All-in-One Java Troubleshooting Tool](https://visualvm.github.io/)
 
-# 13 参考
+# 13 Else
+
+## 13.1 JVM Install Path
+
+可以通过`readlink -f $(which java)`查看绝对路径，一般来说是`/usr/lib/jvm`
+
+# 14 参考
 
 * [JVM性能调优监控工具jps、jstack、jmap、jhat、jstat、hprof使用详解](https://my.oschina.net/feichexia/blog/196575)
 * [Java应用打开debug端口](https://www.cnblogs.com/lzmrex/articles/12579862.html)
