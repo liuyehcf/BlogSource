@@ -972,7 +972,9 @@ done
 
 ## 4.1 test
 
-**关于某个文件名的“文件类型”判断，如`test -e filename`**
+### 4.1.1 Filetype
+
+**关于某个文件名的文件类型判断，如`test -e filename`**
 
 * **`-e`：该名字对应的文件或目录是否存在**
 * **`-f`：该名字对应的文件是否存在**
@@ -986,6 +988,8 @@ done
 * `-S`：该文件名是否存在且为一个Socket文件
 * `-p`：该文件名是否存在且为以FIFO（pipe）文件
 * `-L`：该文件名是否存在且为一个链接文件
+
+### 4.1.2 Permission
 
 **关于文件的权限检测，如`test -r filename`**
 
@@ -1003,6 +1007,8 @@ done
 * `-ot`：（older than） 判断file1是否比file2旧
 * `-ef`：判断file1与file2是否为同一文件，可用在判断hard link的判断上，主要意义在于判断两个文件是否均指向同一个inode
 
+### 4.1.3 Number
+
 **数值比较，如`test n1 -eq n2`**
 
 * **`-eq`：两数值相等（equal）**
@@ -1011,6 +1017,8 @@ done
 * **`-lt`：n1小于n2（less than）**
 * **`-ge`：n1大于等于n2（greater than or equal）**
 * **`-le`：n1小于n2（less than or equal）**
+
+### 4.1.4 String
 
 **字符串比较，例如`test n1 = n2`**
 
@@ -1023,6 +1031,8 @@ done
 * **`=`：判断str1是否等于str2**
 * **`!=`：判断str1是否等于str2**
 * **字符串变量的引用方式：`"${var_name}"`，即必须加上双引号`""`**
+
+### 4.1.5 Logical
 
 **逻辑与/或/非**
 
@@ -1119,6 +1129,24 @@ then
     echo "yes"
 else
     echo "no"
+fi
+```
+
+## 4.4 Command
+
+我们可以用如下方式来判断命令执行是否成功：
+
+```sh
+if <cmd> [<options>]; then
+    ...
+fi
+```
+
+例如：
+
+```sh
+if ls ~ > /dev/null; then
+    echo "success"
 fi
 ```
 
