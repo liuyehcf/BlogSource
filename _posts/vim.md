@@ -3145,6 +3145,12 @@ autocmd FileType perl nnoremap <silent><buffer> <c-l> gg=G<c-o><c-o>
 " json文件不隐藏双引号，等价于 set conceallevel=0
 let g:vim_json_conceal=0
 
+" Return to last edit position when opening files (You want this!), https://stackoverflow.com/questions/7894330/preserve-last-editing-position-in-vim
+autocmd BufReadPost *
+     \ if line("'\"") > 0 && line("'\"") <= line("$") |
+     \   exe "normal! g`\"" |
+     \ endif
+
 " 重置寄存器
 function! Clean_up_registers()
     let regs=split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/-"', '\zs')
