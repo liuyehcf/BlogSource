@@ -110,3 +110,64 @@ categories:
     * `RunTimeTypeTraits`
     * `RunTimeCppType`
     * `RunTimeColumnType`
+
+## 3.4 Storage
+
+### 3.4.1 partition vs. tablet vs. bucket
+
+In StarRocks, partition, tablet, and bucket are related concepts that are used to manage data storage and processing in a distributed environment.
+
+A partition refers to a logical division of data based on a partition key. When a table is created in StarRocks, it can be partitioned based on one or more columns. Each partition contains a subset of the data in the table, and partitions can be processed in parallel to improve query performance.
+
+A tablet in StarRocks is a unit of data storage and processing that is served by a single replica on a single node in the cluster. A tablet is created for each partition and contains a subset of the data in the partition. Tablets can be split or merged based on data size or resource availability.
+
+A bucket in StarRocks is a physical unit of storage that is used to store data within a tablet. Buckets are created based on the hash value of the data distribution key and are stored on separate disks to allow for parallel I/O operations. Each bucket contains a subset of the rows in the tablet and is processed in parallel with other buckets to improve query performance.
+
+In summary, partitions are used to logically divide data based on a partition key, tablets are created for each partition to manage data storage and processing, and buckets are used to physically store and process data within each tablet. The use of partitions, tablets, and buckets helps to improve scalability, fault tolerance, and query performance in distributed data processing environments.
+
+Here is a diagram that illustrates the relationship between partitions, tablets, and buckets in StarRocks:
+
+```
+                           +------------+
+                           |    Node    |
+                           | 1.1.1.1    |
+                           +------------+
+                             |     |
+               +-------------+     +--------------+
+               |                                  |
++--------------v--------------+   +--------------v--------------+
+|           Tablet            |   |           Tablet            |
+| Partition 1, Tablet 1, Buckets |   | Partition 1, Tablet 2, Buckets |
+|   +-------------+            |   |            +-------------+   |
+|   |   Bucket 1  |            |   |            |   Bucket 1  |   |
+|   |   Bucket 2  |            |   |            |   Bucket 2  |   |
+|   |   Bucket 3  |            |   |            |   Bucket 3  |   |
+|   |   Bucket 4  |            |   |            |   Bucket 4  |   |
+|   +-------------+            |   |            +-------------+   |
++--------------+---------------+---+--------------+-------------+
+               |                                  |
++--------------v--------------+   +--------------v--------------+
+|           Tablet            |   |           Tablet            |
+| Partition 2, Tablet 3, Buckets |   | Partition 2, Tablet 4, Buckets |
+|            +-------------+   |   |   +-------------+            |
+|            |   Bucket 1  |   |   |   |   Bucket 1  |            |
+|            |   Bucket 2  |   |   |   |   Bucket 2  |            |
+|            |   Bucket 3  |   |   |   |   Bucket 3  |            |
+|            |   Bucket 4  |   |   |   |   Bucket 4  |            |
+|            +-------------+   |   |   +-------------+            |
++-------------------------------+---+----------------------------+
+```
+
+### 3.4.2 How many tablets that a partition should have
+
+The number of tablets that a partition should have in StarRocks depends on several factors, including the size of the data, the available resources, and the desired query performance. Here are some general guidelines to consider when determining the number of tablets:
+
+Size of the data: The size of the data in the partition can impact the number of tablets. Generally, a larger partition may require more tablets to distribute the data across the cluster and improve parallel processing.
+
+Available resources: The number of tablets in a partition should be based on the available resources, including disk space and memory, on the nodes in the cluster. If the number of tablets is too high, it may lead to resource contention and affect the system's performance.
+
+Desired query performance: The number of tablets can impact query performance in StarRocks. More tablets can allow for better parallel processing and faster query performance, but too many tablets can lead to performance issues due to resource contention.
+
+Based on these factors, a common practice is to use the number of CPU cores on each node as a guideline to determine the number of tablets for a partition. For example, if a node has 8 CPU cores, the partition can be divided into 8 tablets. However, this is just a rough guideline, and the number of tablets should be adjusted based on the actual data size and available resources in the cluster.
+
+In summary, the number of tablets that a partition should have in StarRocks should be determined based on the size of the data, the available resources, and the desired query performance. It is a balancing act between distributing the data across the cluster, ensuring optimal resource utilization, and achieving fast query performance.
