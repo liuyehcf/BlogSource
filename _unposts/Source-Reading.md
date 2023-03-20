@@ -111,6 +111,20 @@ categories:
     * `RunTimeCppType`
     * `RunTimeColumnType`
 
+### 3.3.1 Agg
+
+In StarRocks, `update`, `merge`, `serialize`, and `finalize` are four steps in the aggregate operation that are used to compute aggregated values.
+
+`update`: The update step takes a new input row and updates the intermediate results for the corresponding aggregate functions. For example, if we are computing the sum of a column, the update step would add the value of the new input row to the current intermediate sum.
+
+`merge`: The merge step is used to combine intermediate results from multiple parallel execution threads or nodes. In distributed systems, the aggregation computation may be executed on different nodes, so the intermediate results from each node must be merged together to produce the final result.
+
+`serialize`: The serialize step is used to convert the intermediate results into a binary format for efficient storage or transmission. This is typically done by packing the intermediate results into a byte array.
+
+`finalize`: The finalize step computes the final result of the aggregation function from the intermediate results. This is typically the last step in the aggregation computation, and it involves performing any final calculations or transformations to produce the desired output.
+
+In summary, `update` is used to update intermediate results for an aggregate function for each input row, `merge` is used to combine intermediate results from multiple execution threads or nodes, `serialize` is used to convert intermediate results into a binary format, and `finalize` is used to compute the final result of the aggregate function.
+
 ## 3.4 Storage
 
 ### 3.4.1 partition vs. tablet vs. bucket
