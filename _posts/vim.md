@@ -1098,7 +1098,7 @@ endif
 **安装：参照[github官网文档](https://github.com/MaskRay/ccls)进行编译安装即可**
 
 ```sh
-git clone https://github.91chi.fun/https://github.com/MaskRay/ccls.git
+git clone https://ghproxy.com/https://github.com/MaskRay/ccls.git
 cd ccls
 
 function setup_github_repo() {
@@ -1106,7 +1106,7 @@ function setup_github_repo() {
     for gitmodule in ${gitmodules[@]}
     do
         echo "setup github repo for '${gitmodule}'"
-        sed -i -r 's|([^/]?)https://github.com/|\1https://github.91chi.fun/https://github.com/|g' ${gitmodule}
+        sed -i -r 's|([^/]?)https://github.com/|\1https://ghproxy.com/https://github.com/|g' ${gitmodule}
     done
 }
 # 初始化子模块
@@ -1176,12 +1176,12 @@ curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 " 将
 let fmt = get(g:, 'plug_url_format', 'https://git::@github.com/%s.git')
 " 修改为
-let fmt = get(g:, 'plug_url_format', 'https://git::@github.91chi.fun//https://github.com/%s.git')
+let fmt = get(g:, 'plug_url_format', 'https://git::@ghproxy.com/https://github.com/%s.git')
 
 " 将
 \ '^https://git::@github\.com', 'https://github.com', '')
 " 修改为
-\ '^https://git::@github\.91chi\.fun//https://github\.com', 'https://github.91chi.fun//https://github.com', '')
+\ '^https://git::@ghproxy\.com/https://github\.com', 'https://ghproxy.com/https://github.com', '')
 ```
 
 **如何安装来自不同源的插件：**
@@ -1907,7 +1907,7 @@ call plug#end()
 cd ~/.vim/plugged/LanguageClient-neovim
 
 # 修改地址
-sed -i -r 's|([^/]?)https://github.com/|\1https://github.91chi.fun/https://github.com/|g' install.sh
+sed -i -r 's|([^/]?)https://github.com/|\1https://ghproxy.com/https://github.com/|g' install.sh
 
 # 手动执行安装脚本
 ./install.sh
@@ -2190,14 +2190,14 @@ function setup_github_repo() {
     for gitmodule in ${gitmodules[@]}
     do
         echo "setup github repo for '${gitmodule}'"
-        sed -i -r 's|([^/]?)https://github.com/|\1https://github.91chi.fun/https://github.com/|g' ${gitmodule}
+        sed -i -r 's|([^/]?)https://github.com/|\1https://ghproxy.com/https://github.com/|g' ${gitmodule}
     done
 
     git submodule sync --recursive
 }
 
 cd ~/.vim/plugged
-git clone https://github.91chi.fun/https://github.com/ycm-core/YouCompleteMe.git --depth 1
+git clone https://ghproxy.com/https://github.com/ycm-core/YouCompleteMe.git --depth 1
 cd YouCompleteMe
 
 # 递归下载ycm的子模块
@@ -2571,7 +2571,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-* 安装会额外执行`~/.vim/plugged/fzf/install`这个脚本，来下载`fzf`的二进制，如果长时间下载不下来的话，可以改成代理地址后（在脚本中搜索`github`关键词），再手动执行脚本进行下载安装
+* 安装会额外执行`~/.vim/plugged/fzf/install`这个脚本，来下载`fzf`的二进制，如果长时间下载不下来的话，可以改成代理地址后（在脚本中搜索`github`关键词，加上`https://ghproxy.com/`前缀），再手动执行脚本进行下载安装
 
 **用法（搜索相关的语法可以参考[junegunn/fzf-search-syntax](https://github.com/junegunn/fzf#search-syntax)）：**
 
