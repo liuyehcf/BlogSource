@@ -101,6 +101,22 @@ categories:
 1. 这种观点本身的立场，姿态都是令人作呕的
 1. 一群连街边小偷都不敢呵斥的人，却勇于高呼灭了岛国。一帮连活着的人民的痛苦都漠不关心的人，却有脸说不忘死去的同胞
 1. 改革开放，分享了经济权利，人民迈入小康社会。现在又来到了另一个十字路口，迫切地需要分享社会权力，政治权力
+1. 西方普遍是基于正和博弈的价值观下出于自身利益的一种理智思考
+1. 理性之人不愿太过笃定自己站在对的一边
+1. 马克思理论的根本在于：财富都是劳动者生产的，所以生产的财富都应该归劳动者
+    * 要证明这个需要证明如下两点：
+        1. 要证明财富的生产需要劳动，这个大家都承认
+        1. 要证明财富换得的货币数量等于劳动量
+    * 同样的定义也可以得出生产的财富都应该归资本
+1. 共产主义的理论基础
+    * 辩证唯物主义，这个名词本身就是矛盾的。辩证是指看待问题一分为二地看，而唯物是指唯一性
+        * 辩证唯物主义也好，唯物主义也好，只是哲学体系中的一种，但是在中国，确是真理
+    * 流氓性
+        * 中国的一切权力来自人民，而人民需要依附于党的领导。就好比说，这个钱都是你的，但是怎么用必须听我的，那这个钱到底是谁的？很矛盾
+        * 集中民主制，也是矛盾的
+        * 人民民主专政的社会主义国家，民主和专政也是矛盾的
+    * 物质决定意识
+        * 一个社会如果片面地偏激地追求物质，那么是很可怕的。人的价值完全由财富来衡量
 
 # 2 话术
 
@@ -193,6 +209,12 @@ categories:
 1. ppt
     * 背景、动机
     * 原理、组要流程
+1. English Learning
+    1. Use an Equal Ratio: Speak for the exact amount of time about listen to or watch an English program. You need to speak for the same amount in order to improve your speaking skills. This will help your speaking skills match your ability to understand English.
+    1. Lean & Use One New Word: Try to lean and use one new word, expression, or concept every single day. Simple words are also okay. The key is that you must learn and use them every single day. This will help you get in the habit of learning new words that you can use when you speak in English.
+    1. Summarize Your Day: At the end of the day, even if you are alone, summarize the 3-5 main things you did that day. You need to start reviewing what you did each day and organize your thoughts in English. Remember that you need to speak out loud.
+    1. Take Notes & Read Them: You need to start reviewing your English notes by reading them out load. This needs to become a routine because it will help you remember important words and also use them in real life.
+    1. Reading Out Loud & Shadowing: You need to start reading the words out loud and/or shadowing what you hear as you watch various videos. This will also help you improve your pronunciation skills.
 
 # 4 其他
 
