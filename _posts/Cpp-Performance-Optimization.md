@@ -1035,7 +1035,136 @@ walk_through_sort/100000000/500000    7797706457 ns   7796576221 ns            1
 walk_through_sort/100000000/100000    7080835898 ns   7079696031 ns            1
 ```
 
-## 1.12 NUMA
+## 1.12 scheduling conflict
+
+探究一个类似于`while(true)`的线程，对于系统整体的性能的影响
+
+```cpp
+#include <pthread.h>
+
+#include <algorithm>
+#include <atomic>
+#include <iostream>
+#include <thread>
+#include <vector>
+
+void start_disturb_task(std::atomic<bool>& start, std::atomic<bool>& stop, int32_t cpu_num) {
+    while (!start.load(std::memory_order_relaxed))
+        ;
+
+    pthread_t thread = pthread_self();
+    cpu_set_t cpuset;
+    CPU_ZERO(&cpuset);
+    for (int32_t i = 0; i < cpu_num; i++) {
+        CPU_SET(i, &cpuset);
+    }
+    pthread_setaffinity_np(thread, sizeof(cpu_set_t), &cpuset);
+
+    while (!stop.load(std::memory_order_relaxed))
+        ;
+}
+
+void start_task(std::atomic<bool>& start, std::atomic<bool>& stop, std::vector<size_t>& counts, int32_t cpu_num,
+                int32_t task_id) {
+    while (!start.load(std::memory_order_relaxed))
+        ;
+
+    pthread_t thread = pthread_self();
+    cpu_set_t cpuset;
+    CPU_ZERO(&cpuset);
+    for (int32_t i = 0; i < cpu_num; i++) {
+        CPU_SET(i, &cpuset);
+    }
+    pthread_setaffinity_np(thread, sizeof(cpu_set_t), &cpuset);
+
+    int32_t cnt = 0;
+    while (!stop.load(std::memory_order_relaxed)) {
+        ++cnt;
+    };
+
+    counts[task_id] = cnt;
+}
+
+int main(int argc, char* argv[]) {
+    if (argc != 4) {
+        std::cerr << "required 3 parameters" << std::endl;
+        return 1;
+    }
+    const bool has_disturb_task = std::atoi(argv[1]);
+    const int32_t cpu_num = std::atoi(argv[2]);
+    const int32_t task_num = std::atoi(argv[3]);
+    if (cpu_num >= std::thread::hardware_concurrency()) {
+        std::cerr << "the maximum cpu_num is " << std::thread::hardware_concurrency() << std::endl;
+        return 1;
+    }
+    if (cpu_num < task_num) {
+        std::cerr << "cpu_num must greater than or equal to task_num" << std::endl;
+        return 1;
+    }
+
+    std::atomic<bool> start(false);
+    std::atomic<bool> stop(false);
+    std::vector<std::thread> threads;
+    std::vector<size_t> counts(task_num);
+    for (int32_t task_id = 0; task_id < task_num; task_id++) {
+        threads.emplace_back(
+                [&start, &stop, &counts, cpu_num, task_id]() { start_task(start, stop, counts, cpu_num, task_id); });
+    }
+    if (has_disturb_task) {
+        threads.emplace_back([&start, &stop, cpu_num]() { start_disturb_task(start, stop, cpu_num); });
+    }
+
+    start.store(true, std::memory_order_relaxed);
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    stop.store(true, std::memory_order_relaxed);
+
+    std::for_each(threads.begin(), threads.end(), [](auto& t) { t.join(); });
+
+    std::sort(counts.begin(), counts.end());
+    size_t sum = 0;
+    for (int32_t task_id = 0; task_id < task_num; task_id++) {
+        sum += counts[task_id];
+        std::cout << "count=" << counts[task_id] << std::endl;
+    }
+    std::cout << "min=" << counts[0] << ", max=" << counts[task_num - 1] << ", avg=" << sum / task_num
+              << ", distance=" << counts[task_num - 1] - counts[0] << std::endl;
+    return 0;
+}
+```
+
+**输出如下：**
+
+* 当不启动干扰线程时，各个任务的效率相近
+* 当启动干扰线程时
+    * 当任务数与使用cpu数相同时，各个任务的性能会有较大的差异
+    * 当任务数比使用的cpu数少一个时，任务的性能不受干扰线程的影响
+
+```sh
+# 不启动干扰线程
+$ ./main 0 4 4
+count=176590694
+count=178906990
+count=179064952
+count=181966916
+min=176590694, max=181966916, avg=179132388, distance=5376222
+
+# 启动干扰线程，任务数与使用的cpu数保持一致
+$ ./main 1 4 4
+count=88486608
+count=124760286
+count=146485876
+count=178888590
+min=88486608, max=178888590, avg=134655340, distance=90401982
+
+# 启动干扰线程，任务数比使用的cpu数少一个
+./main 1 4 3
+count=178964358
+count=181935171
+count=182038314
+min=178964358, max=182038314, avg=180979281, distance=3073956
+```
+
+## 1.13 NUMA
 
 首先，我们将当前线程绑定到`CPU-0`上，一般来说说，`CPU-0`属于`node-0`，因此我们将内存分别分配在`node-0`和`node-1`来对比程序的性能
 
