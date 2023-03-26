@@ -3599,6 +3599,104 @@ type=volatile int32_t, count=2000000
 type=std::atomic<int32_t>, count=2000000
 ```
 
+### 5.3.6 Case-6
+
+不同的原子操作，虽然无法保证同步语义，但是可以保证变量的最终一致性
+
+* 无原子操作时，`write`线程的写操作无法被`read`线程的读操作看到（`-O3`优化级别）
+    ```cpp
+    #include <iostream>
+    #include <thread>
+
+    int main() {
+        size_t data = 0;
+        std::thread read([&data]() {
+            int64_t prev = -1;
+            while (true) {
+                if (prev != -1 && prev != data) {
+                    std::cout << "see changes, prev=" << prev << ", data=" << data << std::endl;
+                }
+                prev = data;
+            }
+        });
+        std::thread write([&data]() {
+            while (true) {
+                data++;
+            }
+        });
+
+        read.join();
+        write.join();
+        return 0;
+    }
+    ```
+
+* 用不同的`std::mutex`可以保证变量的最终一致性
+    ```cpp
+    #include <iostream>
+    #include <mutex>
+    #include <thread>
+
+    int main() {
+        size_t data = 0;
+        std::thread read([&data]() {
+            std::mutex m_read;
+            int64_t prev = -1;
+            while (true) {
+                std::lock_guard<std::mutex> l(m_read);
+                if (prev != -1 && prev != data) {
+                    std::cout << "see changes, prev=" << prev << ", data=" << data << std::endl;
+                }
+                prev = data;
+            }
+        });
+        std::thread write([&data]() {
+            std::mutex m_write;
+            while (true) {
+                std::lock_guard<std::mutex> l(m_write);
+                data++;
+            }
+        });
+
+        read.join();
+        write.join();
+        return 0;
+    }
+    ```
+
+* 用不同的`std::atomic`可以保证变量的最终一致性
+    ```cpp
+    #include <atomic>
+    #include <iostream>
+    #include <thread>
+
+    int main() {
+        size_t data = 0;
+        std::thread read([&data]() {
+            std::atomic<int32_t> atom_read;
+            int64_t prev = -1;
+            while (true) {
+                atom_read.load();
+                if (prev != -1 && prev != data) {
+                    std::cout << "see changes, prev=" << prev << ", data=" << data << std::endl;
+                }
+                prev = data;
+            }
+        });
+        std::thread write([&data]() {
+            std::atomic<int32_t> atom_write;
+            while (true) {
+                data++;
+                atom_write.store(1);
+            }
+        });
+
+        read.join();
+        write.join();
+        return 0;
+    }
+    ```
+
 ## 5.4 x86 Memory Model
 
 对于`std::memory_order_relaxed`，在不同的硬件平台上，其效果是不同的。x86属于`TSO`
