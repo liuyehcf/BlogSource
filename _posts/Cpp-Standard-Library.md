@@ -476,7 +476,8 @@ int main(void) {
 
 # 12 mutex
 
-1. `std::mutex`
+1. `std::mutex`：不可重入的互斥量
+1. `std::recursive_mutex`：可重入的互斥量
 1. `std::lock_guard`
     * 直接使用`std::mutex`，如下面的例子。如果`getVar`方法抛出异常了，那么就会导致`m.unlock()`方法无法执行，可能会造成死锁
     ```c++
@@ -496,7 +497,7 @@ int main(void) {
     }
     ```
 
-1. `std::unique_lock`
+1. `std::unique_lock`：比`std::lock_guard`提供更多的操作，允许手动加锁解锁
 1. `std::condition_variable`
     * 调用`wait`方法时，必须获取监视器。而调用`notify`方法时，无需获取监视器
     * `wait`方法被唤醒后，仍然处于获取监视器的状态

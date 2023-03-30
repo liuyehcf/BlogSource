@@ -21,3 +21,11 @@ categories:
 
 > Ladies and gentlemen, it's my great honor to be the host for this online meeting themed on joint efforts to deal with the climate changes.
 > At the very beginning, I'd like to inform you some of the important housekeeping rules for this virtual meeting. Please mute your microphone when you are not speaking, and unmute yourself when you want to take the floor.
+
+# 3 Books
+
+## 3.1 History of Western Philosophy - Russell
+
+1. philosophy is between theology and science
+
+P13

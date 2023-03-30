@@ -514,6 +514,8 @@ categories:
 1. Zilliz
     * 向量数据库
 1. ksqlDB
+1. Rockset
+    * [StarRocks vs Rockset](https://rockset.com/comparison/starrocks-vs-rockset/)
 
 # 26 参考
 

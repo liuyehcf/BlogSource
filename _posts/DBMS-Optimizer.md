@@ -668,7 +668,8 @@ FROM (SELECT * FROM S LEFT OUTER JOIN R ON s1 = r1)a GROUP BY r1;
 
 # 4 Data Skew
 
-[[Enhancement] Add GroupByCountDistinctDataSkewEliminateRule](https://github.com/StarRocks/starrocks/pull/17643)
+* [[Enhancement] Add GroupByCountDistinctDataSkewEliminateRule](https://github.com/StarRocks/starrocks/pull/17643)
+* [[Enhancement] Support [skew] hints in group-by-multi-column-count-distinct-one-column](https://github.com/StarRocks/starrocks/pull/20219)
 
 Given the following case, where column `v1` has very limited cardinality, and column `v2` has very large cardinality and severely skewed. For example, for `v1 = 'x'`, a great number of distinct values of `v2` within this group, but for other values of `v1`, the number of `v2`'s distinct value is much more smaller, this kind of data distribution will lead to poor execution performance.
 
