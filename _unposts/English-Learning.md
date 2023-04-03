@@ -29,3 +29,8 @@ categories:
 1. philosophy is between theology and science
 
 P13
+
+# 4 Podcast
+
+* [National Public Radio, NPR](https://www.npr.org/)
+    * [NPR News Now](https://www.npr.org/podcasts/500005/npr-news-now)
