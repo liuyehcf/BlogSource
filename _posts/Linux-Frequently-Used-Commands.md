@@ -111,7 +111,19 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 
 * `w`
 
-## 1.10 useradd
+## 1.10 which
+
+**示例：**
+
+* `which -a ls`
+
+## 1.11 whereis
+
+**示例：**
+
+* `whereis ls`
+
+## 1.12 useradd
 
 **参数说明：**
 
@@ -135,7 +147,7 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 1. 新建用户主文件夹：`cp -a /etc/sekl /home/<name>`
 1. 更改用户文件夹的属性：`chown -R <group>/home/<name>`
 
-### 1.10.1 迁移用户目录
+### 1.12.1 迁移用户目录
 
 ```sh
 # 拷贝数据
@@ -148,7 +160,7 @@ sudo su
 usermod -d <new_dir> <username>
 ```
 
-## 1.11 userdel
+## 1.13 userdel
 
 **参数说明：**
 
@@ -158,7 +170,7 @@ usermod -d <new_dir> <username>
 
 * `userdel -r test`
 
-## 1.12 usermod
+## 1.14 usermod
 
 **参数说明：**
 
@@ -171,20 +183,20 @@ usermod -d <new_dir> <username>
 * `usermod -d /opt/home/admin admin`：修改指定账号的用户目录
     * 注意，新的路径最后不要加`/`，例如，不要写成`/opt/home/admin/`，这样会导致`zsh`无法将用户目录替换成`~`符号，这样命令行提示符中的路径就会是绝对路径，而不是`~`了
 
-## 1.13 chown
+## 1.15 chown
 
 **示例：**
 
 * `chown [-R] 账号名称 文件或目录`
 * `chown [-R] 账号名称:用户组名称 文件或目录`
 
-## 1.14 passwd
+## 1.16 passwd
 
 **示例：**
 
 * `echo '123456' | passwd --stdin root`
 
-## 1.15 id
+## 1.17 id
 
 用于查看用户信息，包括`uid`，`gid`等
 
@@ -195,7 +207,7 @@ usermod -d <new_dir> <username>
 * `id -u`：查看当前用户的uid
 * `id -nu <uid>`：查看指定uid对应的用户名
 
-## 1.16 readelf
+## 1.18 readelf
 
 用于读取、解析可执行程序
 
@@ -208,7 +220,7 @@ usermod -d <new_dir> <username>
 
 * `readelf -d libc.so.6`
 
-## 1.17 getconf
+## 1.19 getconf
 
 查看系统相关的信息
 
@@ -216,7 +228,7 @@ usermod -d <new_dir> <username>
 
 * `getconf -a | grep CACHE`：查看CPU cache相关的配置项
 
-## 1.18 hostnamectl
+## 1.20 hostnamectl
 
 **示例：**
 
@@ -224,7 +236,7 @@ usermod -d <new_dir> <username>
 hostnamectl set-hostname <name>
 ```
 
-## 1.19 date
+## 1.21 date
 
 **示例：**
 
@@ -232,7 +244,7 @@ hostnamectl set-hostname <name>
 * `date "+%Y-%m-%d %H:%M:%S"`：指定时间格式
 * `date -s '2014-12-25 12:34:56'`：修改系统时间
 
-## 1.20 ntpdate
+## 1.22 ntpdate
 
 **示例：**
 
