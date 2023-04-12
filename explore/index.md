@@ -162,4 +162,5 @@ date: 2018-02-05 09:25:59
   <tr> <td>RFC</td> <td>Request for Comments</td> <td></td> </tr>
   <tr> <td>EMR</td> <td>Elastic MapReduce</td> <td></td> </tr>
   <tr> <td>EA</td> <td>Electronic Arts(company name)</td> <td></td> </tr>
+  <tr> <td>LSM</td> <td>Log Structured Merge Tree</td> <td></td> </tr>
 </table>

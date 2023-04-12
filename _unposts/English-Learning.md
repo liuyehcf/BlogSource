@@ -34,3 +34,5 @@ P13
 
 * [National Public Radio, NPR](https://www.npr.org/)
     * [NPR News Now](https://www.npr.org/podcasts/500005/npr-news-now)
+* [csubtitle-free for 3 minutes](https://www.csubtitle.com/)
+* [阿里云-智能语音交互](https://nls-portal.console.aliyun.com/overview)
