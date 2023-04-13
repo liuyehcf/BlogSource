@@ -4046,6 +4046,8 @@ int main() {
 
 **`pointer stability`通常用于描述容器。当我们说一个容器是`pointer stability`时，是指，当某个元素添加到容器之后、从容器删除之前，该元素的内存地址不变，也就是说，该元素的内存地址，不会受到容器的添加删除元素、扩缩容、或者其他操作影响**
 
+* 引用也会受到这个性质的影响，因为引用就是指针的语法糖
+
 **[absl](https://abseil.io/docs/cpp/guides/container)**
 
 | 容器 | 是否`pointer stability` |

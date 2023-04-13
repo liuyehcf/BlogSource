@@ -52,7 +52,9 @@ categories:
         * Crash
         * Performance
     * product
-        * Snowflake、BigQuery、SingleStore、Firebolt、Pinot、Trino、Rockset 
+        * Snowflake、BigQuery、SingleStore、Firebolt、Pinot、Trino、Rockset
+        * [chroma](https://www.trychroma.com/)
+        * [milvus](https://milvus.io/blog)
 1. 体系结构
     * numa
 1. cpp
