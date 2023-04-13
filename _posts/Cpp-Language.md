@@ -3107,7 +3107,12 @@ happens-before在不同`std::memory_order`下的规则
     * normal-write happens-before atomic-write
     * atomic-read happens-before normal-read
     * 无法推导出：normal-write happens-before normal-read
-* 下面的程序，在x86上是不会报错的，因为x86是`TSO`模型，`std::memory_order_relaxed`同样满足`atomic-write happens-before atomic-read`规则
+
+下面的程序：
+
+* `test_atomic_visibility<std::memory_order_seq_cst>();`可以正确执行
+* `test_atomic_visibility<std::memory_order_relaxed>();`也可以正确执行。因为x86是`TSO`模型，`std::memory_order_relaxed`同样满足`atomic-write happens-before atomic-read`规则
+* `test_volatile_visibility`会报错，因为`volatile`不提供同步语义，对重排没有限制
 
 ```cpp
 #include <atomic>
@@ -3195,14 +3200,14 @@ void test_volatile_visibility() {
 int main() {
     test_atomic_visibility<std::memory_order_seq_cst>();
     test_atomic_visibility<std::memory_order_relaxed>();
-    test_volatile_visibility();
+    test_volatile_visibility(); // Failed assertion
     return 0;
 }
 ```
 
 ### 5.3.2 Case-2
 
-来自[Shared Memory Consistency Models: A Tutorial](resources/paper/Shared-Memory-Consistency-Models-A-Tutorial.pdf)中的`Figure-5(a)`
+来自[Shared Memory Consistency Models: A Tutorial](/resources/paper/Shared-Memory-Consistency-Models-A-Tutorial.pdf)中的`Figure-5(a)`
 
 ```cpp
 #include <atomic>
@@ -3218,7 +3223,7 @@ bool test_reorder() {
     std::atomic<bool> control(false);
     std::atomic<bool> stop(false);
     std::atomic<bool> success(true);
-    std::atomic<int32_t> finished_num;
+    std::atomic<int32_t> finished_num = 0;
 
     auto round_process = [&control, &stop, &finished_num](auto&& process) {
         while (!stop) {
@@ -3323,7 +3328,7 @@ test std::memory_order_relaxed, std::memory_order_relaxed, res=false
 
 ### 5.3.3 Case-3
 
-来自[Shared Memory Consistency Models: A Tutorial](resources/paper/Shared-Memory-Consistency-Models-A-Tutorial.pdf)中的`Figure-5(b)`
+来自[Shared Memory Consistency Models: A Tutorial](/resources/paper/Shared-Memory-Consistency-Models-A-Tutorial.pdf)中的`Figure-5(b)`
 
 ```cpp
 #include <atomic>
@@ -3339,7 +3344,7 @@ bool test_reorder() {
     std::atomic<bool> control(false);
     std::atomic<bool> stop(false);
     std::atomic<bool> success(true);
-    std::atomic<int32_t> finished_num;
+    std::atomic<int32_t> finished_num = 0;
 
     auto round_process = [&control, &stop, &finished_num](auto&& process) {
         while (!stop) {
@@ -3442,7 +3447,7 @@ test std::memory_order_relaxed, std::memory_order_relaxed, res=true
 
 ### 5.3.4 Case-4
 
-来自[Shared Memory Consistency Models: A Tutorial](resources/paper/Shared-Memory-Consistency-Models-A-Tutorial.pdf)中的`Figure-10(b)`
+来自[Shared Memory Consistency Models: A Tutorial](/resources/paper/Shared-Memory-Consistency-Models-A-Tutorial.pdf)中的`Figure-10(b)`
 
 ```cpp
 #include <atomic>
@@ -3458,7 +3463,7 @@ bool test_reorder() {
     std::atomic<bool> control(false);
     std::atomic<bool> stop(false);
     std::atomic<bool> success(true);
-    std::atomic<int32_t> finished_num;
+    std::atomic<int32_t> finished_num = 0;
 
     auto round_process = [&control, &stop, &finished_num](auto&& process) {
         while (!stop) {
