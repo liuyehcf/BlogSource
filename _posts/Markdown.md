@@ -42,6 +42,49 @@ categories:
 * `[跳转](#标题名)`
 * 其中，如果标题名中间有空格，那么将空格替换为`-`
 
+## 1.4 表格进阶
+
+```
+<table>
+  <tr>
+    <th rowspan="2" width="80px">锁状态</th>
+    <th colspan="2" width="160px">25bit</th>
+    <th rowspan="2" width="160px">4bit</th>
+    <th width="80px">1bit</th>
+    <th width="80px">2bit</th>
+  </tr>
+  <tr>
+    <th>23bit</th>
+    <th>2bit</th>
+    <th>是否偏向锁</th>
+    <th>锁标志位</th>
+  </tr>
+  <tr>
+    <td>轻量级锁</td>
+    <td colspan="4">指向栈中锁记录的指针</td>
+    <td>00</td>
+  </tr>
+  <tr>
+    <td>重量级锁</td>
+    <td colspan="4">指向互斥量(重量级锁)的指针</td>
+    <td>10</td>
+  </tr>
+  <tr>
+    <td>GC标记</td>
+    <td colspan="4">空</td>
+    <td>11</td>
+  </tr>
+  <tr>
+    <td>偏向锁</td>
+    <td>线程ID</td>
+    <td>Epoch</td>
+    <td>对象分代年龄</td>
+    <td>1</td>
+    <td>01</td>
+  </tr>
+</table>
+```
+
 # 2 mermaid
 
 * [mermaid-github](https://github.com/mermaid-js/mermaid)
