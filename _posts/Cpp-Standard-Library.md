@@ -891,6 +891,7 @@ int main() {
 
 1. `std::enable_if`
 1. `std::conditional`
+1. `std::underlying_type`：提取`enum`所继承的具体的`int`类型
 1. `std::void_t`
 1. `std::decay`：Applies lvalue-to-rvalue, array-to-pointer, and function-to-pointer implicit conversions to the type T
     * [What is std::decay and when it should be used?](https://stackoverflow.com/questions/25732386/what-is-stddecay-and-when-it-should-be-used)

@@ -183,6 +183,7 @@ categories:
         * `socket`类型，例如`/proc/6497/fd/1018 -> socket:[42446535]`
             * 如何判断socket建立时间，看`/proc/6497/fd/1018`的创建时间即可
             * 中括号中数字的含义？表示`inode`号，可以通过`ss -nap -e | grep 42446535`查看对应的`socket`的详细信息
+    * `/proc/<pid>/limits`：各种资源的限制
 
 ## 3.1 参考
 
