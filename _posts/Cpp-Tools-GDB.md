@@ -316,7 +316,8 @@ Breakpoint 1, main () at set_break.cpp:8
     * `print <variable>`
     * `print <variable>.<field>`
     * `print (<type>)(*<address>)`：查看地址指向的对象，需要转型
-    * `p *((std::vector<uint32_t>*) <address>)`：查看智能指针
+    * `print *((<type>*)<address>)`：查看地址指向的对象，需要转型
+    * `print <array>[0]@5`：查看从下标`0`开始，长度为`5`的子集
     * 查看、设置属性：`show print <property>`、`set print <property> on/off`，下面列出几个常用的属性名
         * `address`：当程序显式函数信息时，显示函数地址，默认开启
         * `array`：当显示数组时，每个元素占一行，默认关闭
