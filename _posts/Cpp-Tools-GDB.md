@@ -318,12 +318,12 @@ Breakpoint 1, main () at set_break.cpp:8
     * `print (<type>)*<address>`：查看地址指向的对象，需要转型
     * `print *(<type>*)<address>`：查看地址指向的对象，需要转型
     * `print <array>[0]@5`：查看从下标`0`开始，长度为`5`的子集
-    * 查看、设置属性：`show print <property>`、`set print <property> on/off`，下面列出几个常用的属性名
+    * 查看、设置属性：`show print <property>`、`set print <property> on/off`，下面列出几个常用的属性名（全部属性可以通过`show print [tab][tab]`或者`help show print`来查看）
         * `address`：当程序显式函数信息时，显示函数地址，默认开启
         * `array`：当显示数组时，每个元素占一行，默认关闭
         * `elements`：数组的最大长度，超过该长度的元素就不再显示了，0表示无限制
+        * `raw-values`：打印原始内容。在`GNU gdb (Ubuntu 12.1-0ubuntu1~22.04) 12.1`上，打印标准库对象时，默认会打印优化后的内容（容器元素详情），而非容器本身的详细字段
         * **`pretty`：是否以优雅的方式显式（分行、缩进等等，便于人阅读），默认关闭**
-        * 其他属性可以通过`show print [tab][tab]`或者`help show print`来查看
 * `x/<n/f/u>  <addr>`：以指定格式打印内存信息
     * `n`：正整数，表示需要显示的内存单元的个数，即从当前地址向后显示n个内存单元的内容，一个内存单元的大小由第三个参数`u`定义
     * `f`：表示`addr`指向的内存内容的输出格式
