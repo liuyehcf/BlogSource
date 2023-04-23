@@ -451,14 +451,18 @@ mycompany
 pip install matplotlib
 ```
 
-示例：
+示例1：
 
 ```py
 import numpy as np
 import matplotlib.pyplot as plt
+
+# Create some data
 x = np.linspace(0, 10, 1000)
 y = np.sin(x)+1
 z = np.cos(x**2)+1
+
+# Create a figure
 plt.figure(figsize=(8, 4))
 plt.plot(x, y, label='$\sin x+1$', color='red', linewidth=2)
 plt.plot(x, z, 'b--', label='$\cos x^2+1$')
@@ -467,6 +471,44 @@ plt.ylabel('volt')
 plt.title('a simple example')
 plt.ylim(0, 2.2)
 plt.legend()
+
+# Show the plot
+plt.show()
+```
+
+示例2：
+
+```py
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Create some data
+x = np.linspace(0, 10, 100)
+y1 = np.sin(x)
+y2 = np.cos(x)
+
+# Create a figure with two subplots
+fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1)
+fig.suptitle('Some graphs')
+
+# Plot the first subplot (line plot)
+ax1.plot(x, y1)
+ax1.set_title('Sine Plot')
+ax1.set_xlabel('x')
+ax1.set_ylabel('y1')
+ax1.legend('sin')
+
+# Plot the second subplot (scatter plot)
+ax2.scatter(x, y2)
+ax2.set_title('Cosine Plot')
+ax2.set_xlabel('x')
+ax2.set_ylabel('y2')
+ax2.legend('cos')
+
+# Adjust the layout of the subplots
+plt.tight_layout()
+
+# Show the plot
 plt.show()
 ```
 
