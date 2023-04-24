@@ -2933,6 +2933,12 @@ ClientAliveCountMax 3
     ssh-keygen -f "/Users/hechenfeng/.ssh/known_hosts" -R "<hostname or IP>"
     ```
 
+### 6.1.6 脚本配置密码
+
+```sh
+sshpass -p 'xxxxx' ssh -o StrictHostKeyChecking=no test@1.2.3.4
+```
+
 ## 6.2 scp
 
 **格式：**
