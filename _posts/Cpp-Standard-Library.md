@@ -937,6 +937,28 @@ int main() {
 
 本质上，就是做了一次类型转换，返回的一定是个右值
 
+对于非引用类型的形参，传参时使用`std::move`，会调用移动构造函数来创建实参，示例如下：
+
+```cpp
+#include <iostream>
+
+class Foo {
+public:
+    Foo() { std::cout << "Default ctor" << std::endl; }
+    Foo(const Foo&) { std::cout << "Copy ctor" << std::endl; }
+    Foo(Foo&&) { std::cout << "Move ctor" << std::endl; }
+};
+
+void test_foo(Foo foo) {
+    std::cout << "test_foo" << std::endl;
+}
+
+int main() {
+    Foo foo;
+    test_foo(std::move(foo));
+}
+```
+
 ## 21.16 std::forward
 
 `std::forward`主要用于实现模板的完美转发：因为对于一个变量而言，无论该变量的类型是左值引用还是右值引用，变量本身都是左值，如果直接将变量传递到下一个方法中，那么一定是按照左值来匹配重载函数的，而`std::forward`就是为了解决这个问题。请看下面这个例子：

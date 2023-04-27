@@ -516,6 +516,7 @@ categories:
 1. ksqlDB
 1. Rockset
     * [StarRocks vs Rockset](https://rockset.com/comparison/starrocks-vs-rockset/)
+1. [Databend](https://databend.rs/)
 
 # 26 参考
 
