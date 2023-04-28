@@ -1744,7 +1744,16 @@ yum install -y gdb
 pstack 12345
 ```
 
-## 4.10 taskset
+## 4.10 prlimit
+
+用于获取或者设置资源限制
+
+**示例：**
+
+* `prlimit --pid=<PID> --core=<soft_limit>:<hard_limit>`
+* `prlimit --pid=<PID> --core=unlimited:unlimited`
+
+## 4.11 taskset
 
 查看或者设置进程的cpu亲和性
 
@@ -1778,7 +1787,7 @@ pstack 12345
     * `0,1,2,3,4,5 ==> 1 + 2 + 4 + 8 + 16 + 32 = 0x3f`
     * `2,3 ==> 4 + 8 = 12 = 0xc`
 
-## 4.11 su
+## 4.12 su
 
 su命令用于切换用户
 
@@ -1786,7 +1795,7 @@ su命令用于切换用户
 * `su -`：以`login-shell`的方式（更换目录，环境变量等等），切换到root用户
 * `su test`：以`non-loign-shell`的方式，切换到test用户
 
-## 4.12 sudo
+## 4.13 sudo
 
 **注意，sudo本身是一个进程。比如用`sudo tail -f xxx`，在另一个会话中`ps aux | grep tail`会发现两个进程**
 
@@ -1802,7 +1811,7 @@ test	ALL=(ALL)	NOPASSWD: ALL
 test	ALL=(ALL)	ALL
 ```
 
-## 4.13 pkexec
+## 4.14 pkexec
 
 允许授权用户以其他身份执行程序
 
@@ -1810,7 +1819,7 @@ test	ALL=(ALL)	ALL
 
 * `pkexec [command]`
 
-## 4.14 nohup
+## 4.15 nohup
 
 **`nohup`会忽略所有挂断（SIGHUP）信号**。比如通过`ssh`登录到远程服务器上，然后启动一个程序，当`ssh`登出时，这个程序就会随即终止。如果用`nohup`方式启动，那么当`ssh`登出时，这个程序仍然会继续运行
 
@@ -1828,7 +1837,7 @@ test	ALL=(ALL)	ALL
 
 * `nohup java -jar xxx.jar &`
 
-## 4.15 screen
+## 4.16 screen
 
 **如果想在关闭`ssh`连接后继续运行启动的程序，可以使用`nohup`。如果要求下次`ssh`登录时，还能查看到上一次`ssh`登录时运行的程序的状态，那么就需要使用`screen`**
 
@@ -1865,7 +1874,7 @@ test	ALL=(ALL)	ALL
 1. `Ctrl a + d`：暂时断开screen会话
 1. `Ctrl a + k`：杀掉当前窗口
 
-## 4.16 tmux
+## 4.17 tmux
 
 **`tmux`相当于`screen`的进阶版本，例如可以实现结对编程等功能（允许两个终端进入同一个`tmux`会话中，而`screen`是不允许的）**
 
@@ -1901,7 +1910,7 @@ test	ALL=(ALL)	ALL
     1. 方法1：`tmux set-option -g default-shell /usr/bin/zsh`，仅对当前登录有效
     1. 方法2：在配置文件`~/.tmux.conf`中添加如下配置`set -g default-shell /usr/bin/zsh`即可
 
-## 4.17 reptyr
+## 4.18 reptyr
 
 [reptyr](https://github.com/nelhage/reptyr)用于将当前终端的`pid`作为指定进程的父进程。有时候，我们会ssh到远程机器执行命令，但是后来发现这个命令会持续执行很长时间，但是又不得不断开ssh，此时我们就可以另开一个`screen`或者`tmux`，将目标进程挂到新开的终端上
 
