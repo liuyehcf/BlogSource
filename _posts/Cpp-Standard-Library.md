@@ -15,137 +15,202 @@ categories:
 
 # 1 algorithm
 
-1. `std::sort`
-    ```cpp
-    #include <algorithm>
-    #include <iostream>
-    #include <iterator>
-    #include <vector>
+[Standard library header <algorithm>](https://en.cppreference.com/w/cpp/header/algorithm)
 
-    int main() {
-        std::vector<int32_t> nums{1, 4, 2, 5, 7};
-
-        std::sort(nums.begin(), nums.end());
-        std::copy(nums.begin(), nums.end(), std::ostream_iterator<int32_t>(std::cout, ","));
-        std::cout << std::endl;
-
-        std::sort(nums.begin(), nums.end(), [](int32_t i, int32_t j) { return j - i; });
-        std::copy(nums.begin(), nums.end(), std::ostream_iterator<int32_t>(std::cout, ","));
-        std::cout << std::endl;
-
-        return 0;
-    }
-    ```
-
-1. `std::merge`
-    ```cpp
-    #include <stdint.h>
-
-    #include <algorithm>
-    #include <iostream>
-    #include <iterator>
-    #include <vector>
-
-    int main() {
-        std::vector<int32_t> left{1, 3, 5, 7, 9};
-        std::vector<int32_t> right{2, 4, 6, 8, 10};
-
-        std::vector<int32_t> dest1;
-        std::merge(left.begin(), left.end(), right.begin(), right.end(), std::back_inserter(dest1));
-        std::copy(dest1.begin(), dest1.end(), std::ostream_iterator<int32_t>(std::cout, ","));
-        std::cout << std::endl;
-
-        std::vector<int32_t> dest2;
-        dest2.resize(left.size() + right.size());
-        std::merge(left.begin(), left.end(), right.begin(), right.end(), dest2.begin());
-        std::copy(dest2.begin(), dest2.end(), std::ostream_iterator<int32_t>(std::cout, ","));
-        std::cout << std::endl;
-
-        return 0;
-    }
-    ```
-
-1. `std::inplace_merge`
-    ```cpp
-    #include <stdint.h>
-
-    #include <algorithm>
-    #include <iostream>
-    #include <iterator>
-    #include <vector>
-
-    int main() {
-        std::vector<int32_t> nums{2, 4, 6, 8, 10, 1, 3, 5, 7, 9};
-
-        std::vector<int32_t> dest;
-        std::inplace_merge(nums.begin(), nums.begin() + 5, nums.end());
-        std::copy(nums.begin(), nums.end(), std::ostream_iterator<int32_t>(std::cout, ","));
-        std::cout << std::endl;
-
-        return 0;
-    }
-    ```
+## 1.1 Modifying Sequence Operations
 
 1. `std::copy`
-    ```cpp
-    #include <stdint.h>
+1. `std::copy_if`
+1. `std::copy_n`
+1. `std::copy_backward`
+1. `std::move`
+1. `std::move_backward`
+1. `std::fill`
+1. `std::fill_n`
+1. `std::transform`
+1. `std::generate`
+1. `std::generate_n`
+1. `std::remove`
+1. `std::remove_if`
+1. `std::remove_copy`
+1. `std::remove_copy_if`
+1. `std::replace`
+1. `std::replace_if`
+1. `std::replace_copy`
+1. `std::replace_copy_if`
+1. `std::swap`
+1. `std::swap_ranges`
+1. `std::iter_swap`
+1. `std::reverse`
+1. `std::reverse_copy`
+1. `std::rotate`
+1. `std::rotate_copy`
+1. `std::shift_left`
+1. `std::shift_right`
+1. `std::random_shuffle`
+1. `std::shuffle`
+1. `std::sample`
+1. `std::unique`
+1. `std::unique_copy`
 
-    #include <algorithm>
-    #include <iostream>
-    #include <iterator>
-    #include <vector>
+### 1.1.1 std::sort
 
-    int main() {
-        std::vector<int32_t> source{1, 3, 5, 7, 9};
+```cpp
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <vector>
 
-        std::vector<int32_t> dest1;
-        std::copy(source.begin(), source.end(), std::back_inserter(dest1));
-        std::copy(dest1.begin(), dest1.end(), std::ostream_iterator<int32_t>(std::cout, ","));
-        std::cout << std::endl;
+int main() {
+    std::vector<int32_t> nums{1, 4, 2, 5, 7};
 
-        std::vector<int32_t> dest2;
-        dest2.resize(source.size());
-        std::copy(source.begin(), source.end(), dest2.begin());
-        std::copy(dest2.begin(), dest2.end(), std::ostream_iterator<int32_t>(std::cout, ","));
-        std::cout << std::endl;
+    std::sort(nums.begin(), nums.end());
+    std::copy(nums.begin(), nums.end(), std::ostream_iterator<int32_t>(std::cout, ","));
+    std::cout << std::endl;
 
-        return 0;
+    std::sort(nums.begin(), nums.end(), [](int32_t i, int32_t j) { return j - i; });
+    std::copy(nums.begin(), nums.end(), std::ostream_iterator<int32_t>(std::cout, ","));
+    std::cout << std::endl;
+
+    return 0;
+}
+```
+
+### 1.1.2 std::merge
+
+```cpp
+#include <stdint.h>
+
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <vector>
+
+int main() {
+    std::vector<int32_t> left{1, 3, 5, 7, 9};
+    std::vector<int32_t> right{2, 4, 6, 8, 10};
+
+    std::vector<int32_t> dest1;
+    std::merge(left.begin(), left.end(), right.begin(), right.end(), std::back_inserter(dest1));
+    std::copy(dest1.begin(), dest1.end(), std::ostream_iterator<int32_t>(std::cout, ","));
+    std::cout << std::endl;
+
+    std::vector<int32_t> dest2;
+    dest2.resize(left.size() + right.size());
+    std::merge(left.begin(), left.end(), right.begin(), right.end(), dest2.begin());
+    std::copy(dest2.begin(), dest2.end(), std::ostream_iterator<int32_t>(std::cout, ","));
+    std::cout << std::endl;
+
+    return 0;
+}
+```
+
+### 1.1.3 std::inplace_merge
+
+```cpp
+#include <stdint.h>
+
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <vector>
+
+int main() {
+    std::vector<int32_t> nums{2, 4, 6, 8, 10, 1, 3, 5, 7, 9};
+
+    std::vector<int32_t> dest;
+    std::inplace_merge(nums.begin(), nums.begin() + 5, nums.end());
+    std::copy(nums.begin(), nums.end(), std::ostream_iterator<int32_t>(std::cout, ","));
+    std::cout << std::endl;
+
+    return 0;
+}
+```
+
+### 1.1.4 std::copy
+
+```cpp
+#include <stdint.h>
+
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <vector>
+
+int main() {
+    std::vector<int32_t> source{1, 3, 5, 7, 9};
+
+    std::vector<int32_t> dest1;
+    std::copy(source.begin(), source.end(), std::back_inserter(dest1));
+    std::copy(dest1.begin(), dest1.end(), std::ostream_iterator<int32_t>(std::cout, ","));
+    std::cout << std::endl;
+
+    std::vector<int32_t> dest2;
+    dest2.resize(source.size());
+    std::copy(source.begin(), source.end(), dest2.begin());
+    std::copy(dest2.begin(), dest2.end(), std::ostream_iterator<int32_t>(std::cout, ","));
+    std::cout << std::endl;
+
+    return 0;
+}
+```
+
+### 1.1.5 std::remove_if
+
+用于将容器中满足条件的元素挪到最后，并返回指向这部分元素的起始迭代器，一般配合`erase`一起用
+
+```cpp
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
+int main() {
+    std::vector<int> container{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    container.erase(std::remove_if(container.begin(), container.end(), [](int v) { return v % 2 != 0; }),
+                    container.end());
+    for (const auto& v : container) {
+        std::cout << v << std::endl;
     }
-    ```
+    return 0;
+}
+```
 
+## 1.2 Non-modifying Sequence Operations
+
+1. `std::all_of`
+1. `std::any_of`
+1. `std::none_of`
 1. `std::for_each`
-    ```cpp
-    #include <stdint.h>
+1. `std::for_each_n`
+1. `std::count`
+1. `std::count_if`
+1. `std::mismatch`
+1. `std::find`
+1. `std::find_if`
+1. `std::find_if_not`
+1. `std::find_end`
+1. `std::find_first_of`
+1. `std::adjacent_find`
+1. `std::search`
+1. `std::search_n`
+ 
+### 1.2.1 std::for_each
 
-    #include <algorithm>
-    #include <iostream>
-    #include <vector>
+```cpp
+#include <stdint.h>
 
-    int main() {
-        std::vector<int32_t> nums{1, 3, 5, 7, 9};
+#include <algorithm>
+#include <iostream>
+#include <vector>
 
-        std::for_each(nums.begin(), nums.end(), [](int32_t num) { std::cout << num << ", "; });
+int main() {
+    std::vector<int32_t> nums{1, 3, 5, 7, 9};
 
-        return 0;
-    }
-    ```
+    std::for_each(nums.begin(), nums.end(), [](int32_t num) { std::cout << num << ", "; });
 
-1. `std::remove_if`：用于将容器中满足条件的元素挪到最后，并返回指向这部分元素的起始迭代器，一般配合`erase`一起用
-    ```cpp
-    #include <algorithm>
-    #include <iostream>
-    #include <vector>
-
-    int main() {
-        std::vector<int> container{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        container.erase(std::remove_if(container.begin(), container.end(), [](int v) { return v % 2 != 0; }),
-                        container.end());
-        for (const auto& v : container) {
-            std::cout << v << std::endl;
-        }
-        return 0;
-    }
-    ```
+    return 0;
+}
+```
 
 # 2 any
 
