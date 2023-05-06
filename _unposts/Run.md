@@ -48,3 +48,13 @@ Country/City:
 
 1. Database Internals
 1. Database Engine Internals
+
+To choose keywords based on your experience, analyze your skills, roles, and responsibilities to identify the most relevant and significant terms. Here are some suggestions for a database engineer focusing on execution engine and query optimizer:
+
+* Job Titles: Database Engineer, Database Developer, SQL Developer, Query Optimizer Engineer, Execution Engine Developer, Backend Engineer, Data Engineer, Data Infrastructure Engineer.
+* Technologies: StarRocks, MySQL, PostgreSQL, Oracle, SQL Server, NoSQL, BigQuery, Redshift, Snowflake, MongoDB.
+* Skills: Query Optimization, Execution Engine, Database Design, Database Tuning, SQL, Performance Analysis, Data Warehousing, Distributed Systems, Data Modeling, Database Administration, Data Integration.
+* Concepts and Techniques: Cost-based optimization, Rule-based optimization, Query processing, Indexing, Partitioning, Parallel processing, Joins, Aggregation, Materialized views, Data compression, Caching.
+* Programming Languages: C++, Java, Python, Scala, Golang, JavaScript, PHP, Ruby, Swift.
+* To increase the chances of finding relevant job opportunities, use a combination of these keywords while searching on LinkedIn or any other job platform. You can also customize your LinkedIn profile headline and summary to include the most important keywords, making it easier for recruiters and potential employers to find you.
+

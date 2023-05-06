@@ -3950,6 +3950,18 @@ CONFIG_KVM_MMU_AUDIT=y
 * `yum list`：列出所有可安装的软件
     * `yum list docker-ce --showduplicates | sort -r`：查询软件的版本信息
 
+**`CentOS`安装高版本的gcc**
+
+```sh
+yum install centos-release-scl
+
+yum list devtoolset* --showduplicates | sort -r
+
+yum install devtoolset-9
+
+scl enable devtoolset-9 bash
+```
+
 ## 10.3 dnf
 
 **示例：**
