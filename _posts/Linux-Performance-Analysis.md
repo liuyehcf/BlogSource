@@ -42,10 +42,10 @@ categories:
 # 以 99Hz 的频率捕获指定进程的 cpu-clock 事件，捕获时长 60s，该命令会在当前目录生成 perf.data 文件
 # -F：指定频率，若不指定，默认以 4000Hz 采样。最大采样频率对应内核参数为：kernel.perf_event_max_sample_rate（/proc/sys/kernel/perf_event_max_sample_rate）
 # -g：开启 gragh 模式
-perf record -F 99 -g -p <pid> -- sleep 60
+sudo perf record -F 99 -g -p <pid> -- sleep 60
 
 # 解析当前目录下的 perf.data 文件
-perf script > out.perf
+sudo perf script > out.perf
 
 # 生成火焰图
 # 下面这两个脚本来自 FlameGraph 项目
@@ -58,19 +58,24 @@ ${FlameGraph_path}/flamegraph.pl out.folded > out.svg
 
 [Java Flame Graphs](https://www.brendangregg.com/blog/2014-06-12/java-flame-graphs.html)
 
-**相关git项目**
+**相关git项目：**
 
 * [perf-map-agent](https://github.com/jvm-profiling-tools/perf-map-agent)
 * [FlameGraph](https://github.com/brendangregg/FlameGraph)
 
+**Java进程相关配置：**
+
+* `-XX:+PreserveFramePointer`
+
 ```sh
 # 以 99Hz 的频率捕获所有进程的 cpu-clock 事件，捕获时长 300s，该命令会在当前目录生成 perf.data 文件
-# -a：统计所有进程
-sudo perf record -F 99 -g -a -- sleep 300
+# -g：开启 gragh 模式
+sudo perf record -F 99 -g -p <pid> -- sleep 300
 
 # 下载并安装 perf-map-agent
 # 安装依赖 cmake，openjdk（只有 jre 是不够的）
-perf-map-agent/bin/create-java-perf-map.sh <pid>
+PerfMapAgent_path=xxx
+sudo ${PerfMapAgent_path}/bin/create-java-perf-map.sh <pid>
 
 # 解析当前目录下的 perf.data 文件
 sudo perf script > out.perf
