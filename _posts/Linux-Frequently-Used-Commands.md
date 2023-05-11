@@ -2870,6 +2870,15 @@ yum install -y hping3
 * `ssh student@127.0.0.1 find / &> ~/find1.log`
 * `ssh -f student@127.0.0.1 find / &> ~/find1.log`：会立即注销127.0.0.1，find在远程服务器运行
 * `ssh demo@1.2.3.4 '/bin/bash -l -c "xxx.sh"'`：以`login shell`登录远端，并执行脚本，其中`bash`的参数`-l`就是指定以`login shell`的方式
+    * 整个命令最好用引号包围起来，否则复杂命令的参数可能会解析失败，例如
+        ```sh
+        # -al 参数会丢失
+        ssh -o StrictHostKeyChecking=no test@1.2.3.4 /bin/bash -l -c 'ls -al'
+        # -al 参数正常传递
+        ssh -o StrictHostKeyChecking=no test@1.2.3.4 "/bin/bash -l -c 'ls -al'"
+        # 用 eval 时，也需要加上引号，注意需要转义
+        eval "ssh -o StrictHostKeyChecking=no test@1.2.3.4 \"/bin/bash -l -c 'ls -al'\""
+        ```
 
 ### 6.1.1 免密登录
 

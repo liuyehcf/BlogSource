@@ -1364,7 +1364,7 @@ echo $1 # 输出d
 ```sh
 foo=10 x=foo
 y='$'$x
-echo $y # 输出foo
+echo $y # 输出$foo
 eval y='$'$x
 echo $y # 输出10
 ```
