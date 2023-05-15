@@ -283,3 +283,8 @@ int main() {
     return 0;
 }
 ```
+
+# 4 Inline performance deduction
+
+[[Enhancement] Optimize a subtle inline performance problem](https://github.com/StarRocks/starrocks/pull/23300)
+

@@ -22,7 +22,7 @@ categories:
 | 寄存器 | `eax`、`ebx`等等 | `%eax`、`%ebx`等等 |
 | 立即数 | `0x100` | `$0x100` |
 | 直接寻址 | `[eax]` | `(%eax)` |
-| 间接寻址 | `[base + reg + reg * scale + displacement]` | `displacement(reg, reg, scale)` |
+| 间接寻址 | `[base + reg + reg * scale + displacement]` | `displacement(base, reg, scale)` |
 
 ## 1.1 内存引用
 
