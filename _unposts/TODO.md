@@ -57,9 +57,13 @@ categories:
         * [milvus](https://milvus.io/blog)
 1. 体系结构
     * numa
+1. nodejs
+    * `npm install -g n`
+    * `n 16`
 1. cpp
     * futex
     * 如何用老的glibc跑二进制
+    * fault injection: https://github.com/StarRocks/starrocks/pull/23378/files
 1. java
     * commons-cli
 1. llvm
