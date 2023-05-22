@@ -535,7 +535,41 @@ int main(void) {
 }
 ```
 
-## 11.4 参考
+## 11.4 std::weak_ptr
+
+用于指向由`std::shared_ptr`管理的对象，但不负责管理改对象的生命周期。也就是说，它指向的对象可能已经被析构了
+
+```cpp
+#include <iostream>
+#include <memory>
+
+int main() {
+    auto print = [](auto& w_ptr) {
+        if (auto ptr = w_ptr.lock()) {
+            std::cout << "active" << std::endl;
+        } else {
+            std::cout << "inactive" << std::endl;
+        }
+    };
+    std::shared_ptr<int32_t> s_ptr;
+    std::weak_ptr<int32_t> w_ptr = s_ptr;
+
+    print(w_ptr);
+
+    s_ptr = std::make_shared<int32_t>(1);
+    print(w_ptr);
+
+    w_ptr = s_ptr;
+    print(w_ptr);
+
+    s_ptr.reset();
+    print(w_ptr);
+
+    return 0;
+}
+```
+
+## 11.5 参考
 
 * [C++ 智能指针的正确使用方式](https://www.cyhone.com/articles/right-way-to-use-cpp-smart-pointer/)
 
