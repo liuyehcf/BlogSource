@@ -440,3 +440,4 @@ set matchpairs+=<:>
 
 1. 开启长按表示重复
     * `defaults write com.jetbrains.intellij ApplePressAndHoldEnabled -bool false`
+1. [Writing classes when compiling is suddenly very, very slow](https://youtrack.jetbrains.com/issue/IDEA-162091/Writing-classes-when-compiling-is-suddenly-very-very-slow)
