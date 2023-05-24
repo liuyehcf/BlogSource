@@ -2782,7 +2782,13 @@ call plug#end()
     * `vllllSFprint`：类似`vllllSfprint`，`F`表示会在参数列表前后多加额外的空格。形式为`print( <text> )`
     * `vllllS<c-f>print`：类似`vllllSfprint`，`<c-f>`表示环绕符号加到最外侧。形式为`(print <text>)`
 
-## 3.25 个人完整配置
+## 3.25 Copilot
+
+[Getting started with GitHub Copilot](https://docs.github.com/en/copilot/getting-started-with-github-copilot?tool=neovim)
+
+让AI帮你写代码，输入函数名称，如果是常规的工具类函数，会自动帮你编写代码，超级牛逼。仅支持`neovim >= 0.6`
+
+## 3.26 个人完整配置
 
 ```vim
 call plug#begin()
@@ -3229,6 +3235,7 @@ set autoindent
 set hlsearch
 set number
 set cursorline
+set guicursor=n-v-c:block-Cursor/lCursor
 set matchpairs+=<:>
 
 " 加载额外的配置
@@ -3249,23 +3256,37 @@ endif
 1. `filereadable`无法识别`~`，需要用`expand`，例如`filereadable(expand('~/.vim/gtags.vim'))`
 1. 函数名要用大写字母开头，或者`s:`开头。大写字母开头表示全局可见，`s:`开头表示当前脚本可见
 
-# 5 Tips
+# 5 nvim
 
-1. 打开大文件非常卡顿
-    * `vim -u NONE <big file>`：禁止加载所有插件
+## 5.1 config path
 
-## 5.1 nvim share configuration of vim
+```vim
+:echo stdpath('config')
+:echo stdpath('data')
+:echo stdpath('cache')
+:echo stdpath('config_dirs')
+:echo stdpath('data_dirs')
+```
+
+## 5.2 nvim share configuration of vim
 
 `nvim`和`vim`使用不同的目录来管理配置文件，通过软连接就可以实现共享配置，如下：
 
 ```sh
+ln -s ~/.vimrc ~/.vim/init.vim
+
+# nvim's config file is ~/.config/nvim/init.vim
 ln -s ~/.vim ~/.config/nvim
-ln -s ~/.vimrc ~/.config/nvim/init.vim
 ln -s ~/.vim/autoload/plug.vim ~/.local/share/nvim/site/autoload/plug.vim
 ln -s ~/.vim/plugged ~/.local/share/nvim/plugged
 ```
 
-# 6 参考
+# 6 Tips
+
+1. 打开大文件非常卡顿
+    * `vim -u NONE <big file>`：禁止加载所有插件
+
+# 7 参考
 
 * **[《Vim 中文速查表》](https://github.com/skywind3000/awesome-cheatsheets/blob/master/editors/vim.txt)**
 * **[如何在 Linux 下利用 Vim 搭建 C/C++ 开发环境?](https://www.zhihu.com/question/47691414)**
