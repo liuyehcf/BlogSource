@@ -521,6 +521,10 @@ git config --global icdiff.options '--highlight --line-numbers'
 git config --global core.quotepath false
 ```
 
+## 17.3 copilot
+
+[copilot](https://github.com/features/copilot)
+
 # 18 参考
 
 * [git官方文档](https://git-scm.com/docs/gitignore)

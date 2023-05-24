@@ -3254,6 +3254,17 @@ endif
 1. 打开大文件非常卡顿
     * `vim -u NONE <big file>`：禁止加载所有插件
 
+## 5.1 nvim share configuration of vim
+
+`nvim`和`vim`使用不同的目录来管理配置文件，通过软连接就可以实现共享配置，如下：
+
+```sh
+ln -s ~/.vim ~/.config/nvim
+ln -s ~/.vimrc ~/.config/nvim/init.vim
+ln -s ~/.vim/autoload/plug.vim ~/.local/share/nvim/site/autoload/plug.vim
+ln -s ~/.vim/plugged ~/.local/share/nvim/plugged
+```
+
 # 6 参考
 
 * **[《Vim 中文速查表》](https://github.com/skywind3000/awesome-cheatsheets/blob/master/editors/vim.txt)**
