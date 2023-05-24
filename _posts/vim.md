@@ -3255,6 +3255,7 @@ endif
 
 1. `filereadable`无法识别`~`，需要用`expand`，例如`filereadable(expand('~/.vim/gtags.vim'))`
 1. 函数名要用大写字母开头，或者`s:`开头。大写字母开头表示全局可见，`s:`开头表示当前脚本可见
+1. `exists('&cscopequickfix')`：判断是否存在参数`cscopequickfix`
 
 # 5 nvim
 
