@@ -81,7 +81,7 @@ categories:
     * `COLOCATE`：互为colocate的表，相同的`key`对应的数据一定在同一个机器上
     * `REPLICATED`
 
-## 3.2 Merge Group
+### 3.1.2 Merge Group
 
 位置：`Memo::mergeGroup`
 
@@ -101,6 +101,18 @@ categories:
             * 如果两者对应的`Group`不等价，那么需要对`Group`进行进一步合并，这里记录到`needMergeGroup`中
 1. 合并`srcGroup`以及`destGroup`
 1. 合并`needMergeGroup`中记录的`Group`对
+
+## 3.2 RPC
+
+Frontend-Service
+
+* `QeProcessorImpl`：server
+* `FrontendServiceConnection`：client
+
+Backend-Service
+
+* `PInternalServiceImplBase`：server
+* `BackendServiceClient`：client
 
 ## 3.3 Execution
 

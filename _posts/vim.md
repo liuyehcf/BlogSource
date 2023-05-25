@@ -458,6 +458,8 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
 ## 2.12 Tab
 
 * **`:tabnew [filename]`：在一个新的tab中打开文件**
+    * **`:tabnew %`：在另一个`tab`中打开当前文件**
+* **`:tabedit`：同`tabnew`**
 * **`:tabm [n]`：将当前标签页移动到位置`n`（`n`从0开始），若不指定`n`，则移动到最后**
 * **`gt`/`:tabnext`：下一个tab**
 * **`gT`/`:tabprev`：上一个tab**
@@ -2782,11 +2784,29 @@ call plug#end()
     * `vllllSFprint`：类似`vllllSfprint`，`F`表示会在参数列表前后多加额外的空格。形式为`print( <text> )`
     * `vllllS<c-f>print`：类似`vllllSfprint`，`<c-f>`表示环绕符号加到最外侧。形式为`(print <text>)`
 
-## 3.25 Copilot
+## 3.25 AI补全-Copilot
 
 [Getting started with GitHub Copilot](https://docs.github.com/en/copilot/getting-started-with-github-copilot?tool=neovim)
 
 让AI帮你写代码，输入函数名称，如果是常规的工具类函数，会自动帮你编写代码，超级牛逼。仅支持`neovim >= 0.6`
+
+**安装：**
+
+* Step1
+    ```sh
+    git clone https://github.com/github/copilot.vim \
+        ~/.config/nvim/pack/github/start/copilot.vim
+    ```
+
+* Step2
+    ```vim
+    :Copilot setup
+    :Copilot enable
+    ```
+
+**用法：**
+
+* `:help copilot`
 
 ## 3.26 个人完整配置
 
@@ -3225,6 +3245,9 @@ set foldlevel=0
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 set termencoding=utf-8
 set encoding=utf-8
+" 设置鼠标选中进入何种模式（normal/visual/...），详情参考 :help mouse
+" 下面的配置表示不进入任何模式
+set mouse=
 " 其他常用
 set backspace=indent,eol,start
 set tabstop=4
