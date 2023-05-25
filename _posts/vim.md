@@ -3309,6 +3309,20 @@ ln -s ~/.vim/plugged ~/.local/share/nvim/plugged
 
 1. 打开大文件非常卡顿
     * `vim -u NONE <big file>`：禁止加载所有插件
+1. 查看并导出配置到文件中
+    * 示例1
+    ```vim
+    :redir! > vim_keys.txt
+    :silent verbose map
+    :redir END
+    ```
+
+    * 示例2
+    ```vim
+    :redir! > vim_settings.txt
+    :silent set all
+    :redir END
+    ```
 
 # 7 参考
 
