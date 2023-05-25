@@ -2789,7 +2789,14 @@ call plug#end()
 
 [Getting started with GitHub Copilot](https://docs.github.com/en/copilot/getting-started-with-github-copilot?tool=neovim)
 
-让AI帮你写代码，输入函数名称，如果是常规的工具类函数，会自动帮你编写代码，超级牛逼。仅支持`neovim >= 0.6`
+[Copilot.vim](https://github.com/github/copilot.vim)
+
+`OpenAI`加持的自动补全，可以根据函数名补全实现
+
+**版本要求：**
+
+* `Neovim`
+* `Vim >= 9.0.0185`
 
 **安装：**
 
