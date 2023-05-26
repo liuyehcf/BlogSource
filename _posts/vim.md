@@ -2199,17 +2199,19 @@ call plug#begin()
 " .....其他插件及配置.....
 " ......................
 
-Plug 'github/copilot.vim'
+if has('nvim')
+    Plug 'github/copilot.vim'
 
-" 将 触发代码片段扩展 映射到快捷键 [Ctrl] + i
-inoremap <script><expr> <c-i> copilot#Accept("\<cr>")
-let g:copilot_no_tab_map = v:true
-" 将 跳转到下一条建议 映射到快捷键 [Option] + ]，即「‘」
-inoremap ‘ <Plug>(copilot-next)
-" 将 跳转到上一条建议 映射到快捷键 [Option] + [，即「“」
-inoremap “ <Plug>(copilot-previous)
-" 将 启用代码片段建议 映射到快捷键 [Option] + \，即「«」
-inoremap « <Plug>(copilot-suggest)
+    " 将 触发代码片段扩展 映射到快捷键 [Ctrl] + i
+    inoremap <script><expr> <c-i> copilot#Accept("\<cr>")
+    let g:copilot_no_tab_map = v:true
+    " 将 跳转到下一条建议 映射到快捷键 [Option] + ]，即「‘」
+    inoremap ‘ <Plug>(copilot-next)
+    " 将 跳转到上一条建议 映射到快捷键 [Option] + [，即「“」
+    inoremap “ <Plug>(copilot-previous)
+    " 将 启用代码片段建议 映射到快捷键 [Option] + \，即「«」
+    inoremap « <Plug>(copilot-suggest)
+endif
 
 call plug#end()
 ```
@@ -3036,17 +3038,19 @@ Plug 'honza/vim-snippets'
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-Plug 'github/copilot.vim'
+if has('nvim')
+    Plug 'github/copilot.vim'
 
-" 将 触发代码片段扩展 映射到快捷键 [Ctrl] + i
-inoremap <script><expr> <c-i> copilot#Accept("\<cr>")
-let g:copilot_no_tab_map = v:true
-" 将 跳转到下一条建议 映射到快捷键 [Option] + ]，即「‘」
-inoremap ‘ <Plug>(copilot-next)
-" 将 跳转到上一条建议 映射到快捷键 [Option] + [，即「“」
-inoremap “ <Plug>(copilot-previous)
-" 将 启用代码片段建议 映射到快捷键 [Option] + \，即「«」
-inoremap « <Plug>(copilot-suggest)
+    " 将 触发代码片段扩展 映射到快捷键 [Ctrl] + i
+    inoremap <script><expr> <c-i> copilot#Accept("\<cr>")
+    let g:copilot_no_tab_map = v:true
+    " 将 跳转到下一条建议 映射到快捷键 [Option] + ]，即「‘」
+    inoremap ‘ <Plug>(copilot-next)
+    " 将 跳转到上一条建议 映射到快捷键 [Option] + [，即「“」
+    inoremap “ <Plug>(copilot-previous)
+    " 将 启用代码片段建议 映射到快捷键 [Option] + \，即「«」
+    inoremap « <Plug>(copilot-suggest)
+endif
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3316,6 +3320,7 @@ endif
 1. `filereadable`无法识别`~`，需要用`expand`，例如`filereadable(expand('~/.vim/gtags.vim'))`
 1. 函数名要用大写字母开头，或者`s:`开头。大写字母开头表示全局可见，`s:`开头表示当前脚本可见
 1. `exists('&cscopequickfix')`：判断是否存在参数`cscopequickfix`
+1. `has('nvim')`：判断是否启用了某功能
 
 # 5 nvim
 
