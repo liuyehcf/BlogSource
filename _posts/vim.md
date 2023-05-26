@@ -2179,11 +2179,56 @@ call plug#end()
     }
     ```
 
-## 3.13 代码补全
+## 3.13 智能补全-[Copilot.vim](https://github.com/github/copilot.vim)
+
+[Getting started with GitHub Copilot](https://docs.github.com/en/copilot/getting-started-with-github-copilot?tool=neovim)
+
+`OpenAI`加持的自动补全，可以根据函数名补全实现
+
+**版本要求：**
+
+* `Neovim`
+* `Vim >= 9.0.0185`
+
+**编辑`~/.vimrc`，添加Plug相关配置（公共配置）**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'github/copilot.vim'
+
+" 将 触发代码片段扩展 映射到快捷键 [Ctrl] + i
+imap <script><expr> <c-i> copilot#Accept("\<cr>")
+let g:copilot_no_tab_map = v:true
+" 将 跳转到下一条建议 映射到快捷键 [Option] + ]，即「‘」
+imap ‘ <Plug>(copilot-next)
+" 将 跳转到上一条建议 映射到快捷键 [Option] + [，即「“」
+imap “ <Plug>(copilot-previous)
+" 将 启用代码片段建议 映射到快捷键 [Option] + \，即「«」
+imap « <Plug>(copilot-suggest)
+
+call plug#end()
+```
+
+**用法：**
+
+* Login & Enable
+    ```vim
+    :Copilot setup
+    :Copilot enable
+    ```
+
+* `:help copilot`
+
+## 3.14 代码补全
 
 **前言：`coc.nvim`插件体系提供了大部分语言的代码补全功能，如果使用了`coc.nvim`插件，就不需要使用下面的这些补全插件了**
 
-### 3.13.1 [YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
+### 3.14.1 [YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
 
 **这个插件比较复杂，建议手工安装**
 
@@ -2274,7 +2319,7 @@ def Settings(**kwargs):
 * `[Ctrl] + n`：下一个条目
 * `[Ctrl] + p`：上一个条目
 
-### 3.13.2 [vim-javacomplete2](https://github.com/artur-shaik/vim-javacomplete2)
+### 3.14.2 [vim-javacomplete2](https://github.com/artur-shaik/vim-javacomplete2)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2318,7 +2363,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 3.14 编译运行-[AsyncRun](https://github.com/skywind3000/asyncrun.vim)
+## 3.15 编译运行-[AsyncRun](https://github.com/skywind3000/asyncrun.vim)
 
 本质上，`AsyncRun`插件就是提供了异步执行命令的机制，我们可以利用这个机制定义一些动作，比如`编译`、`构建`、`运行`、`测试`等，提供类似于`IDE`的体验
 
@@ -2356,7 +2401,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 3.15 动态检查-[ALE](https://github.com/dense-analysis/ale)
+## 3.16 动态检查-[ALE](https://github.com/dense-analysis/ale)
 
 **前言：`coc.nvim`插件体系提供了大部分语言的错误诊断功能，如果使用了`coc.nvim`插件，就不需要使用其他的错误诊断插件了**
 
@@ -2430,7 +2475,7 @@ call plug#end()
     1. `mv /usr/local/share/locale/zh_CN/LC_MESSAGES/gcc.mo /usr/local/share/locale/zh_CN/LC_MESSAGES/gcc.mo.bak`
     * 如果找不到`gcc.mo`文件的话，可以用`locate`命令搜索一下
 
-## 3.16 修改比较-[vim-signify](https://github.com/mhinz/vim-signify)
+## 3.17 修改比较-[vim-signify](https://github.com/mhinz/vim-signify)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2453,7 +2498,7 @@ call plug#end()
 * `set signcolumn=yes`，有改动的行会标出
 * `:SignifyDiff`：以左右分屏的方式对比当前文件的差异
 
-## 3.17 文本对象-[textobj-user](https://github.com/kana/vim-textobj-user)
+## 3.18 文本对象-[textobj-user](https://github.com/kana/vim-textobj-user)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2485,7 +2530,7 @@ call plug#end()
 * **`ii/ai`：缩进对象。可以用`vii/vai`/`dii/dai`/`cii/cai`来选中/删除/改写同一缩进层次的内容**
 * **`if/af`：函数对象。可以用`vif/vaf`/`dif/daf`/`cif/caf`来选中/删除/改写当前函数的内容**
 
-## 3.18 函数列表-[LeaderF](https://github.com/Yggdroot/LeaderF)
+## 3.19 函数列表-[LeaderF](https://github.com/Yggdroot/LeaderF)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2539,7 +2584,7 @@ call plug#end()
     * `<c-t>`：在新的`tab`中打开选中的文件
     * `<c-p>`：预览
 
-## 3.19 全局模糊搜索-[fzf.vim](https://github.com/junegunn/fzf.vim)
+## 3.20 全局模糊搜索-[fzf.vim](https://github.com/junegunn/fzf.vim)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2593,7 +2638,7 @@ call plug#end()
     * **上述规则均可自由组合**
     * **如何精确匹配一个包含空格的字符串：`'Hello\ world`。由于常规的空格被用作分词符，因此空格前要用`\`进行转义**
 
-## 3.20 全局搜索-[vim-grepper](https://github.com/mhinz/vim-grepper)
+## 3.21 全局搜索-[vim-grepper](https://github.com/mhinz/vim-grepper)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2615,7 +2660,7 @@ call plug#end()
 
 * `:Grepper`：进行全局搜索（依赖grep命令）
 
-## 3.21 git扩展-[vim-fugitive](https://github.com/tpope/vim-fugitive)
+## 3.22 git扩展-[vim-fugitive](https://github.com/tpope/vim-fugitive)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2637,7 +2682,7 @@ call plug#end()
 
 * `:Git`：作为`git`的替代，后跟`git`命令行工具的正常参数即可
 
-## 3.22 添加注释-[nerdcommenter](https://github.com/preservim/nerdcommenter)
+## 3.23 添加注释-[nerdcommenter](https://github.com/preservim/nerdcommenter)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2674,7 +2719,7 @@ call plug#end()
 * **`\cu`：取消注释**
 * **`\c<space>`：如果被选区域有部分被注释，则对被选区域执行取消注释操作，其它情况执行反转注释操作**
 
-## 3.23 代码格式化-[vim-codefmt](https://github.com/google/vim-codefmt)
+## 3.24 代码格式化-[vim-codefmt](https://github.com/google/vim-codefmt)
 
 **支持各种格式化工具：**
 
@@ -2733,7 +2778,7 @@ sudo chmod a+x /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.p
 sudo ln /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.py /usr/local/bin/autopep8
 ```
 
-## 3.24 文本环绕-[vim-surround](https://github.com/tpope/vim-surround)
+## 3.25 文本环绕-[vim-surround](https://github.com/tpope/vim-surround)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2784,37 +2829,6 @@ call plug#end()
     * `vllllSfprint`：其中，`v`表示进入`visual`模式，`llll`表示向右移动4个字符，`f`表示用函数调用的方式环绕起来，`print`是函数名。形式为`print(<text>)`
     * `vllllSFprint`：类似`vllllSfprint`，`F`表示会在参数列表前后多加额外的空格。形式为`print( <text> )`
     * `vllllS<c-f>print`：类似`vllllSfprint`，`<c-f>`表示环绕符号加到最外侧。形式为`(print <text>)`
-
-## 3.25 AI补全-Copilot
-
-[Getting started with GitHub Copilot](https://docs.github.com/en/copilot/getting-started-with-github-copilot?tool=neovim)
-
-[Copilot.vim](https://github.com/github/copilot.vim)
-
-`OpenAI`加持的自动补全，可以根据函数名补全实现
-
-**版本要求：**
-
-* `Neovim`
-* `Vim >= 9.0.0185`
-
-**安装：**
-
-* Step1
-    ```sh
-    git clone https://github.com/github/copilot.vim \
-        ~/.config/nvim/pack/github/start/copilot.vim
-    ```
-
-* Step2
-    ```vim
-    :Copilot setup
-    :Copilot enable
-    ```
-
-**用法：**
-
-* `:help copilot`
 
 ## 3.26 个人完整配置
 
@@ -3019,6 +3033,20 @@ let g:coc_snippet_prev = '<c-k>'
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 Plug 'honza/vim-snippets'
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'github/copilot.vim'
+
+" 将 触发代码片段扩展 映射到快捷键 [Ctrl] + i
+imap <script><expr> <c-i> copilot#Accept("\<cr>")
+let g:copilot_no_tab_map = v:true
+" 将 跳转到下一条建议 映射到快捷键 [Option] + ]，即「‘」
+imap ‘ <Plug>(copilot-next)
+" 将 跳转到上一条建议 映射到快捷键 [Option] + [，即「“」
+imap “ <Plug>(copilot-previous)
+" 将 启用代码片段建议 映射到快捷键 [Option] + \，即「«」
+imap « <Plug>(copilot-suggest)
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
