@@ -2202,14 +2202,14 @@ call plug#begin()
 Plug 'github/copilot.vim'
 
 " 将 触发代码片段扩展 映射到快捷键 [Ctrl] + i
-imap <script><expr> <c-i> copilot#Accept("\<cr>")
+inoremap <script><expr> <c-i> copilot#Accept("\<cr>")
 let g:copilot_no_tab_map = v:true
 " 将 跳转到下一条建议 映射到快捷键 [Option] + ]，即「‘」
-imap ‘ <Plug>(copilot-next)
+inoremap ‘ <Plug>(copilot-next)
 " 将 跳转到上一条建议 映射到快捷键 [Option] + [，即「“」
-imap “ <Plug>(copilot-previous)
+inoremap “ <Plug>(copilot-previous)
 " 将 启用代码片段建议 映射到快捷键 [Option] + \，即「«」
-imap « <Plug>(copilot-suggest)
+inoremap « <Plug>(copilot-suggest)
 
 call plug#end()
 ```
@@ -3039,14 +3039,14 @@ Plug 'honza/vim-snippets'
 Plug 'github/copilot.vim'
 
 " 将 触发代码片段扩展 映射到快捷键 [Ctrl] + i
-imap <script><expr> <c-i> copilot#Accept("\<cr>")
+inoremap <script><expr> <c-i> copilot#Accept("\<cr>")
 let g:copilot_no_tab_map = v:true
 " 将 跳转到下一条建议 映射到快捷键 [Option] + ]，即「‘」
-imap ‘ <Plug>(copilot-next)
+inoremap ‘ <Plug>(copilot-next)
 " 将 跳转到上一条建议 映射到快捷键 [Option] + [，即「“」
-imap “ <Plug>(copilot-previous)
+inoremap “ <Plug>(copilot-previous)
 " 将 启用代码片段建议 映射到快捷键 [Option] + \，即「«」
-imap « <Plug>(copilot-suggest)
+inoremap « <Plug>(copilot-suggest)
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
