@@ -1821,6 +1821,9 @@ call plug#end()
     deactivate
     ```
 
+* 在`venv`环境中打开`nvim`，可能会提示`Vimspector unavailable: Requires Vim compiled with +python3`之类的问题
+    * `:checkhealth`进行自检，这里会提示使用`pip install pynvim --upgrade`进行修复
+
 ### 3.10.4 [coc-snippets](https://github.com/neoclide/coc-snippets)
 
 **`coc-snippets`用于提供片段扩展功能（类似于`IDEA`中的`sout`、`psvm`、`.var`等等）**
@@ -3354,6 +3357,10 @@ ln -s ~/.vim ~/.config/nvim
 ln -s ~/.vim/autoload/plug.vim ~/.local/share/nvim/site/autoload/plug.vim
 ln -s ~/.vim/plugged ~/.local/share/nvim/plugged
 ```
+
+## 5.3 Tips
+
+* `:checkhealth`：自检
 
 # 6 Tips
 
