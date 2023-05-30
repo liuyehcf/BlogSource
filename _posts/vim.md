@@ -1800,7 +1800,15 @@ call plug#end()
 
 **安装：进入vim界面后执行`:CocInstall coc-pyright`即可**
 
-**配置：默认的配置即可正常使用**
+**配置：`:CocConfig`，增加如下内容**
+
+* `python.analysis.typeCheckingMode`：禁用`reportGeneralTypeIssues`等错误信息。python是动态类型的语言，静态类型推导的错误信息可以忽略
+
+```json
+{
+    "python.analysis.typeCheckingMode": "off"
+}
+```
 
 **Tips：**
 
