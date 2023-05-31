@@ -613,6 +613,14 @@ pip install xxx -i https://pypi.tuna.tsinghua.edu.cn/simple
 * [vim-autopep8](https://github.com/tell-k/vim-autopep8)
 * [vim-autoformat](https://github.com/vim-autoformat/vim-autoformat)
 
+## 9.2 Debug
+
+`pdb`的用法与`gdb`类似，这里不赘述
+
+```sh
+python3 -m pdb xxx.py
+```
+
 # 10 参考
 
 * [廖雪峰-Python教程](https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000)

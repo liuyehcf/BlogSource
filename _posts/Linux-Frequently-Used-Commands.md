@@ -1083,6 +1083,21 @@ locate stl_vector.h
 * `rm -rf /path/{..?*,.[!.]*,*}`：递归删除目录`/path`下的所有文件、目录、隐藏文件和隐藏目录
 * `rm -rf /path/!(a.txt|b.txt)`：递归删除目录`path`下的除了`a.txt`以及`b.txt`之外的所有文件、目录，但不包括隐藏文件和隐藏目录
     * 需要通过命令`shopt -s extglob`开启`extglob`
+    * 如何在`/bin/bash -c`中使用`extglob`
+        ```sh
+        mkdir -p rmtest
+        touch rmtest/keep
+        touch rmtest/text1
+        touch rmtest/text2
+        mkdir -p rmtest/sub
+        touch rmtest/sub/keep
+        touch rmtest/sub/text3
+
+        tree -N rmtest
+        /bin/bash -O extglob -c 'rm -rf rmtest/!(keep)'
+        # rmtest/sub/keep cannot be preserve
+        tree -N rmtest
+        ```
 
 ## 2.20 tar
 
