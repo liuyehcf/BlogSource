@@ -46,7 +46,8 @@ A brief summary highlighting your key skills, experience, and career objectives.
 ### 1.3.2 Alibaba group
 
 * **Software Engineer** | 2018.4 - 2021.8
-   * Key Responsibility/Task
+   * Tunnel Service
+      * multiplexing
    * Key Responsibility/Task
    * Key Responsibility/Task
 

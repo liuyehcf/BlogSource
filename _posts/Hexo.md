@@ -162,6 +162,8 @@ A[方形] --> B(圆角)
 
 # 6 plantuml时序图
 
+**Doc：[plantuml doc](http://plantuml.com/sequence-diagram)**
+
 **步骤1：安装插件**
 
 ```sh
@@ -612,6 +614,5 @@ npm install hexo-deployer-git --save
 * [Leancloud访客统计插件重大安全漏洞修复指南](https://leaferx.online/2018/02/11/lc-security/)
 * [hexo的next主题个性化教程:打造炫酷网站](http://shenzekun.cn/hexo%E7%9A%84next%E4%B8%BB%E9%A2%98%E4%B8%AA%E6%80%A7%E5%8C%96%E9%85%8D%E7%BD%AE%E6%95%99%E7%A8%8B.html)
 * [hexo-filter-plantuml](https://github.com/wafer-li/hexo-filter-plantuml)
-* [时序图](http://plantuml.com/sequence-diagram)
 * [Hexo中引入Mermaid流程图](https://tyloafer.github.io/posts/7790/)
 * [如何解决next5主题目录无法跳转的问题](https://www.cnblogs.com/Createsequence/p/14150758.html)
