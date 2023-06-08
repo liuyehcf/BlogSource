@@ -2660,14 +2660,14 @@ fe00::2	ip6-allrouters
 1. configMap
 1. csi
 1. downwardAPI
-1. emptyDir
+1. **emptyDir**：由容器运行时管理，容器退出就销毁了
 1. fc (fibre channel)
 1. flexVolume
 1. flocker
 1. gcePersistentDisk
 1. gitRepo (deprecated)
 1. glusterfs
-1. hostPath
+1. **hostPath**
 1. iscsi
 1. local
 1. nfs

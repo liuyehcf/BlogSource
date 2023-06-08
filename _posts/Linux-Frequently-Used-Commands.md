@@ -1285,7 +1285,17 @@ ROOT=$(cd "$ROOT"; pwd)
 * `objdump -drwCS main.o`
 * `objdump -drwCS -M intel main.o`
 
-## 2.34 nm
+## 2.34 objcopy & strip
+
+该工具用于将debug信息从二进制中提取出来，示例：[[Enhancement] strip debug symbol in release mode](https://github.com/StarRocks/starrocks/pull/24442)
+
+```sh
+objcopy --only-keep-debug main main_debug
+strip --strip-debug main
+objcopy --add-gnu-debuglink=main_debug main
+```
+
+## 2.35 nm
 
 该工具用于查看符号表
 
@@ -1293,7 +1303,7 @@ ROOT=$(cd "$ROOT"; pwd)
 
 * `nm -C main`
 
-## 2.35 strings
+## 2.36 strings
 
 该工具用于查看二进制文件包含的所有字符串信息
 
@@ -1301,7 +1311,7 @@ ROOT=$(cd "$ROOT"; pwd)
 
 * `strings main`
 
-## 2.36 iconf
+## 2.37 iconf
 
 **参数说明：**
 
@@ -1317,7 +1327,7 @@ ROOT=$(cd "$ROOT"; pwd)
 
 * `iconv -f gbk -t utf-8 s.txt > t.txt`
 
-## 2.37 expect
+## 2.38 expect
 
 expect是一个自动交互的工具，通过编写自定义的配置，就可以实现自动填充数据的功能
 
