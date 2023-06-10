@@ -3350,6 +3350,7 @@ endif
 ln -s ~/.vimrc ~/.vim/init.vim
 
 # nvim's config file is ~/.config/nvim/init.vim
+mkdir -p ~/.config ~/.local/share/nvim/site/autoload
 ln -s ~/.vim ~/.config/nvim
 ln -s ~/.vim/autoload/plug.vim ~/.local/share/nvim/site/autoload/plug.vim
 ln -s ~/.vim/plugged ~/.local/share/nvim/plugged
@@ -3358,7 +3359,7 @@ ln -s ~/.vim/plugged ~/.local/share/nvim/plugged
 ## 5.3 Tips
 
 * 可能会提示`Vimspector unavailable: Requires Vim compiled with +python3`之类的问题：
-    * `:checkhealth`进行自检，这里会提示使用`pip install pynvim --upgrade`进行修复
+    * `:checkhealth`进行自检，这里会提示安装`pynvim`
     * `let g:python3_host_prog = '/path/to/your/python3'`
 
 # 6 Tips
