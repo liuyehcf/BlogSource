@@ -382,6 +382,9 @@ categories:
     * 否定对孔子的妖化，将其从地狱救出
 1. 独立思考
     * 必须在自己擅长的领域，并且在这个领域内有充分的知识储备。同时具备一定的逻辑思维能力和人生经验的积累。这是一个长期且艰辛的过程
+1. 经济
+    * PPI, Producer Price Index
+    * CPI, Consumer Price Index
 
 # 5 英文表述
 
