@@ -214,6 +214,14 @@ env | grep FOO
 * `SHELL`：当前使用的shell
 * `TERM`
 * `LANG`：语言
+* `Locale Category`
+    * `LC_ALL`: Overrides all other individual locale-related variables and sets a specific locale for all aspects of the system.
+    * `LC_COLLATE`: Specifies the collation order used for sorting and comparison of strings.
+    * `LC_CTYPE`: Defines the character classification and case conversion rules.
+    * `LC_MESSAGES`: Sets the language used for system messages and the output of certain programs.
+    * `LC_MONETARY`: Determines the formatting of monetary values (currency symbols, decimal separators, etc.).
+    * `LC_NUMERIC`: Defines the formatting of numeric values (decimal point, thousands separator, etc.).
+    * `LC_TIME`: Specifies the format used for date and time representation.
 
 # 2 特殊符号
 
