@@ -3216,7 +3216,11 @@ autocmd BufRead,BufNewFile *.tpp set filetype=cpp
 " https://superuser.com/questions/805695/autoformat-for-perl-in-vim
 " 通过 cpan Perl::Tidy 安装 perltidy
 autocmd FileType perl setlocal equalprg=perltidy\ -st\ -ce
-autocmd FileType perl nnoremap <silent><buffer> <c-l> gg=G<c-o><c-o>
+if has('nvim')
+    autocmd FileType perl nnoremap <silent><buffer> <c-l> gg=G<c-o>
+else
+    autocmd FileType perl nnoremap <silent><buffer> <c-l> gg=G<c-o><c-o>
+endif
 
 " 特定文件类型的配置
 " json文件不隐藏双引号，等价于 set conceallevel=0

@@ -2013,6 +2013,32 @@ sub make_sundae {
 }
 ```
 
+### 6.1.4 限制参数类型
+
+我们可以将函数接受的参数类型写在函数名后面
+
+```perl
+use strict;
+use warnings;
+use Modern::Perl;
+
+sub add($$) {
+    my ( $arg1, $arg2 ) = @_;
+    return $arg1 + $arg2;
+}
+
+sub append(\@$) {
+    my ( $list, $element ) = @_;
+    push( @$list, $element );
+    say @$list;
+}
+
+say add( 1, 2 );
+
+my @list = ( 1, 2, 3 );
+append( @list, 4 );
+```
+
 ## 6.2 匿名函数
 
 匿名函数与普通函数的唯一差别就是匿名函数没有名字，且仅能通过引用对其进行操作。格式如下：
