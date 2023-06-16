@@ -191,7 +191,80 @@ public class Solution {
 }
 ```
 
-# 5 Question-32[★★★★]
+# 5 Question-28[★★★★]
+
+这题可以由KMP算法解决
+
+> The algorithm is designed to improve upon the performance of traditional pattern-matching algorithms, such as the naïve approach or the brute-force method. The key idea behind the KMP algorithm is to avoid unnecessary character comparisons by utilizing information about the pattern itself.
+> 
+> Here's a high-level overview of how the KMP algorithm works:
+> 
+> 1. Preprocessing (Building the "Partial Match" Table):
+>   * The algorithm analyzes the pattern and constructs a "partial match" table, also known as the "failure function" or "pi function."
+>   * This table helps determine the number of characters to shift the pattern when a mismatch occurs during the search.
+> 2. Searching:
+>   * The algorithm starts matching characters of the pattern against the text from left to right.
+>   * If a character in the pattern matches the corresponding character in the text, both pointers are advanced.
+>   * If a mismatch occurs:
+>       * The algorithm uses the partial match table to determine the maximum number of characters it can safely skip in the pattern.
+>       * It shifts the pattern by that amount and resumes matching from the new position, avoiding redundant comparisons.
+> 
+> By utilizing the partial match table, the KMP algorithm achieves a linear time complexity for pattern matching, specifically O(n + m), where n is the length of the text and m is the length of the pattern. This improvement makes it more efficient than the brute-force method, which has a time complexity of O(n * m).
+> 
+> The KMP algorithm is widely used in various applications that involve pattern matching, such as text editors, search engines, bioinformatics, and data mining, where efficient string searching is required.
+> 
+> It's worth noting that while the KMP algorithm provides an efficient solution for pattern matching, it may not always be the optimal choice depending on the specific requirements and characteristics of the problem at hand. Other algorithms, such as Boyer-Moore or Rabin-Karp, may be more suitable in certain scenarios.
+
+```cpp
+class Solution {
+public:
+    int strStr(std::string text, std::string pattern) {
+        if (pattern.length() == 0) {
+            return 0;
+        }
+
+        // pi[i] represents the length of the longest proper suffix, which is also a prefix,
+        // of the pattern's substring ending at position i, [0, i]
+        std::vector<int> pi(pattern.length(), 0);
+
+        // Empty string's longest suffix is empty itself, the lenght is zero
+        int j = 0;
+
+        for (int i = 1; i < pattern.size(); i++) {
+            while (j > 0 && pattern[i] != pattern[j]) {
+                // pi[j - 1] means the legnth of the longest pre-suffix of range [0, i - 1]
+                // so the next position to be checked is at pi[j - 1], we can continue to search at pattern[pi[j - 1]]
+                j = pi[j - 1];
+            }
+
+            if (pattern[i] == pattern[j]) {
+                // j is the index, so (index + 1) means the length
+                pi[i] = ++j;
+            }
+        }
+
+        j = 0;
+
+        for (int i = 0; i < text.length(); i++) {
+            while (j > 0 && text[i] != pattern[j]) {
+                j = pi[j - 1];
+            }
+
+            if (text[i] == pattern[j]) {
+                if (j == pattern.length() - 1) {
+                    return i - j;
+                } else {
+                    j++;
+                }
+            }
+        }
+
+        return -1;
+    }
+};
+```
+
+# 6 Question-32[★★★★]
 
 **Longest Valid Parentheses**
 
@@ -268,7 +341,7 @@ public class Solution {
 }
 ```
 
-# 6 Question-49[★★★★]
+# 7 Question-49[★★★★]
 
 **Group Anagrams**
 
@@ -324,7 +397,7 @@ public class Solution {
 
 <!--
 
-# 7 Question-000[★]
+# 8 Question-000[★]
 
 ____
 
