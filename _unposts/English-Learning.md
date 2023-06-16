@@ -37,6 +37,3 @@ P13
 * [csubtitle-free for 3 minutes](https://www.csubtitle.com/)
 * [阿里云-智能语音交互](https://nls-portal.console.aliyun.com/overview)
 
-# 5 CS Concept
-
-1. 存算一体；存算分离
