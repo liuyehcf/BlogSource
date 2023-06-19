@@ -63,7 +63,7 @@ table th:nth-of-type(5) {
 | 29 | ~~Divide Two Integers~~ | \ | \ | 垃圾题目 |
 | 30 | Substring with Concatenation of All Words | String | ★★★★★ | 无思路 |
 | 31 | Next Permutation | Array | ★★★ | 从右往左找逆序对（先高位循环，再低位循环，都是递减），然后以此为边界进行排序即可，若未找到，排序整个数组即可 |
-| 32 | Longest Valid Parentheses | Stack | ★★★★★ | 同20（进栈逻辑略有不同），当遍历结束后，栈中存的是无法匹配的索引，但是两两之间是匹配的，需要依次出栈然后计算长度并取最大值 |
+| 32 | Longest Valid Parentheses | Stack | ★★★★★ | 同20（进栈逻辑略有不同），当遍历结束后，栈中存的是无法匹配的索引，但是两两之间是匹配的，需要依次出栈然后计算长度并取最大值。也可以用dp，`dp[i]`表示的是以`s[i-1]`为结尾的最大有效括号的长度 |
 | 33 | Search in Rotated Sorted Array | BinarySearch | ★★★★ | 循环条件用`left < right`，这样能保证`mid`与`right`永远不相等 |
 | 34 | Find First and Last Position of Element in Sorted Array | BinarySearch | ★★★ | `nums[mid]`与`target`在何种条件下取等号，可以控制左边界还是右边界 |
 | 35 | Search Insert Position | BinarySearch | ★★★ | 先判断边界条件，再用二分法，最后left就是插入位置 |

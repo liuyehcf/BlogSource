@@ -53,7 +53,67 @@ categories:
 1. `std::unique`
 1. `std::unique_copy`
 
-### 1.1.1 std::sort
+### 1.1.1 std::copy
+
+```cpp
+#include <stdint.h>
+
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <vector>
+
+int main() {
+    std::vector<int32_t> source{1, 3, 5, 7, 9};
+
+    std::vector<int32_t> dest1;
+    std::copy(source.begin(), source.end(), std::back_inserter(dest1));
+    std::copy(dest1.begin(), dest1.end(), std::ostream_iterator<int32_t>(std::cout, ","));
+    std::cout << std::endl;
+
+    std::vector<int32_t> dest2;
+    dest2.resize(source.size());
+    std::copy(source.begin(), source.end(), dest2.begin());
+    std::copy(dest2.begin(), dest2.end(), std::ostream_iterator<int32_t>(std::cout, ","));
+    std::cout << std::endl;
+
+    return 0;
+}
+```
+
+### 1.1.2 std::remove_if
+
+用于将容器中满足条件的元素挪到最后，并返回指向这部分元素的起始迭代器，一般配合`erase`一起用
+
+```cpp
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
+int main() {
+    std::vector<int> container{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    container.erase(std::remove_if(container.begin(), container.end(), [](int v) { return v % 2 != 0; }),
+                    container.end());
+    for (const auto& v : container) {
+        std::cout << v << std::endl;
+    }
+    return 0;
+}
+```
+
+## 1.2 Sorting operations
+
+1. `std::is_sorted`
+1. `std::is_sorted_until`
+1. `std::sort`
+1. `std::partial_sort`
+1. `std::partial_sort_copy`
+1. `std::stable_sort`
+1. `std::nth_element`
+1. `std::merge`
+1. `std::inplace_merge`
+
+### 1.2.1 std::sort
 
 ```cpp
 #include <algorithm>
@@ -76,7 +136,7 @@ int main() {
 }
 ```
 
-### 1.1.2 std::merge
+### 1.2.2 std::merge
 
 ```cpp
 #include <stdint.h>
@@ -105,7 +165,7 @@ int main() {
 }
 ```
 
-### 1.1.3 std::inplace_merge
+### 1.2.3 std::inplace_merge
 
 ```cpp
 #include <stdint.h>
@@ -127,55 +187,7 @@ int main() {
 }
 ```
 
-### 1.1.4 std::copy
-
-```cpp
-#include <stdint.h>
-
-#include <algorithm>
-#include <iostream>
-#include <iterator>
-#include <vector>
-
-int main() {
-    std::vector<int32_t> source{1, 3, 5, 7, 9};
-
-    std::vector<int32_t> dest1;
-    std::copy(source.begin(), source.end(), std::back_inserter(dest1));
-    std::copy(dest1.begin(), dest1.end(), std::ostream_iterator<int32_t>(std::cout, ","));
-    std::cout << std::endl;
-
-    std::vector<int32_t> dest2;
-    dest2.resize(source.size());
-    std::copy(source.begin(), source.end(), dest2.begin());
-    std::copy(dest2.begin(), dest2.end(), std::ostream_iterator<int32_t>(std::cout, ","));
-    std::cout << std::endl;
-
-    return 0;
-}
-```
-
-### 1.1.5 std::remove_if
-
-用于将容器中满足条件的元素挪到最后，并返回指向这部分元素的起始迭代器，一般配合`erase`一起用
-
-```cpp
-#include <algorithm>
-#include <iostream>
-#include <vector>
-
-int main() {
-    std::vector<int> container{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    container.erase(std::remove_if(container.begin(), container.end(), [](int v) { return v % 2 != 0; }),
-                    container.end());
-    for (const auto& v : container) {
-        std::cout << v << std::endl;
-    }
-    return 0;
-}
-```
-
-## 1.2 Non-modifying Sequence Operations
+## 1.3 Non-modifying Sequence Operations
 
 1. `std::all_of`
 1. `std::any_of`
@@ -193,8 +205,10 @@ int main() {
 1. `std::adjacent_find`
 1. `std::search`
 1. `std::search_n`
+1. `std::max_element`：return iterator of the max element
+1. `std::min_element`：return iterator of the min element
  
-### 1.2.1 std::for_each
+### 1.3.1 std::for_each
 
 ```cpp
 #include <stdint.h>
