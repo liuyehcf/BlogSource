@@ -3001,11 +3001,6 @@ If an operation A "happens-before" another operation B, it means that A is guara
 
 ![happens-before](/images/Cpp-Language/happens-before.png)
 
-When used together, `std::memory_order_acquire` and `std::memory_order_release can establish a happens-before relationship between threads, allowing for proper synchronization and communication between them
-
-1. `std::memory_order_acquire` is a memory ordering constraint that provides acquire semantics. It ensures that any memory operations that occur before the acquire operation in the program order will be visible to the thread performing the acquire operation.
-1. `std::memory_order_release` is a memory ordering constraint that provides release semantics. It ensures that any memory operations that occur after the release operation in the program order will be visible to other threads that perform subsequent acquire operations.
-
 ## 5.2 Memory consistency model
 
 ### 5.2.1 Sequential consistency model
@@ -3025,9 +3020,35 @@ When used together, `std::memory_order_acquire` and `std::memory_order_release c
 1. **在同一线程中，对同一原子变量的访问不可以被重排（单个线程的视角）**
 1. **除了保证操作的原子性之外，没有限定前后指令的顺序，其他线程看到数据的变化顺序也可能不一样（整个程序的视角）**
 
-## 5.3 Cases
+**宽松可以通过如下两个维度来衡量：**
 
-### 5.3.1 Case-1
+* 如何放宽程序顺序要求。通常来说，这里指的是不同变量的读写操作，对于同一个变量读写操作是没法重排的。程序顺序要求包括：
+    * `read-read`
+    * `read-write`
+    * `write-read`
+    * `write-write`
+* 他们如何放宽写入原子性要求。根据是否允许读操作在所有缓存副本接收到写入所产生的失效或更新消息之前返回另一个处理器的写入值来区分模型；换句话说，在写入对所有其他处理器可见之前，允许某个处理器读到写入的值
+
+**通过这两个维度，引入了如下几种宽松策略**
+
+* 宽松`write-read`程序顺序。`TSO`支持
+* 宽松`write-write`程序顺序
+* 宽松`read-read`以及`read-write`程序顺序
+* 允许提前读到其他处理器写入的值
+* 允许提前读取到当前处理器写入的值
+
+## 5.3 std::memory_order
+
+1. `std::memory_order_seq_cst`：严一致模型
+1. `std::memory_order_relaxed`：宽松模型，具体采取哪些宽松策略，需要根据硬件平台才能确定
+1. `std::memory_order_acquire` and `std::memory_order_release`：
+    * When used together, `std::memory_order_acquire` and `std::memory_order_release` can establish a happens-before relationship between threads, allowing for proper synchronization and communication between them
+        1. `std::memory_order_acquire` is a memory ordering constraint that provides acquire semantics. It ensures that any memory operations that occur before the acquire operation in the program order will be visible to the thread performing the acquire operation.
+        1. `std::memory_order_release` is a memory ordering constraint that provides release semantics. It ensures that any memory operations that occur after the release operation in the program order will be visible to other threads that perform subsequent acquire operations.
+
+## 5.4 Cases
+
+### 5.4.1 Case-1-happens-before
 
 happens-before在不同`std::memory_order`下的规则
 
@@ -3138,7 +3159,7 @@ int main() {
 }
 ```
 
-### 5.3.2 Case-2
+### 5.4.2 Case-2-write-read-reorder
 
 来自[Shared Memory Consistency Models: A Tutorial](/resources/paper/Shared-Memory-Consistency-Models-A-Tutorial.pdf)中的`Figure-5(a)`
 
@@ -3259,7 +3280,7 @@ test std::memory_order_acquire, std::memory_order_release, res=false
 test std::memory_order_relaxed, std::memory_order_relaxed, res=false
 ```
 
-### 5.3.3 Case-3
+### 5.4.3 Case-3-write-write-read-read-reorder
 
 来自[Shared Memory Consistency Models: A Tutorial](/resources/paper/Shared-Memory-Consistency-Models-A-Tutorial.pdf)中的`Figure-5(b)`
 
@@ -3378,7 +3399,7 @@ test std::memory_order_acquire, std::memory_order_release, res=true
 test std::memory_order_relaxed, std::memory_order_relaxed, res=true
 ```
 
-### 5.3.4 Case-4
+### 5.4.4 Case-4-write-order-consistency
 
 来自[Shared Memory Consistency Models: A Tutorial](/resources/paper/Shared-Memory-Consistency-Models-A-Tutorial.pdf)中的`Figure-10(b)`
 
@@ -3501,7 +3522,7 @@ test std::memory_order_acquire, std::memory_order_release, res=true
 test std::memory_order_relaxed, std::memory_order_relaxed, res=true
 ```
 
-### 5.3.5 Case-5
+### 5.4.5 Case-5-visibility
 
 进程调度也能保证可见性，我们可以让读写线程绑定到某个核上，那么读写线程会在调度的作用下交替执行
 
@@ -3570,7 +3591,7 @@ type=volatile int32_t, count=2000000
 type=std::atomic<int32_t>, count=2000000
 ```
 
-### 5.3.6 Case-6
+### 5.4.6 Case-6-eventual-consistency
 
 不同的原子操作，虽然无法保证同步语义，但是可以保证变量的最终一致性
 
@@ -3668,13 +3689,13 @@ type=std::atomic<int32_t>, count=2000000
     }
     ```
 
-## 5.4 x86 Memory Model
+## 5.5 x86 Memory Model
 
 对于`std::memory_order_relaxed`，在不同的硬件平台上，其效果是不同的。x86属于`TSO`
 
 [x86-TSO : 适用于x86体系架构并发编程的内存模型](https://www.cnblogs.com/lqlqlq/p/13693876.html)
 
-## 5.5 参考
+## 5.6 参考
 
 * [C++11 - atomic类型和内存模型](https://zhuanlan.zhihu.com/p/107092432)
 * [cppreference.com-std::memory_order](https://en.cppreference.com/w/cpp/atomic/memory_order)
