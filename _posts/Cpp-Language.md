@@ -3082,27 +3082,31 @@ int32_t data;
 std::atomic<bool> atomic_data_ready(false);
 volatile bool volatile_data_ready(false);
 
-template <std::memory_order order>
-void test_atomic_visibility() {
+template <std::memory_order read_order, std::memory_order write_order>
+void test_atomic_happens_before() {
     auto reader_thread = []() {
         for (auto i = 0; i < TIMES; i++) {
-            while (!atomic_data_ready.load(order))
+            // atomic read
+            while (!atomic_data_ready.load(read_order))
                 ;
 
+            // normal read: atomic read happens-before normal read
             assert(data == EXPECTED_VALUE);
 
             data = INVALID_VALUE;
-            atomic_data_ready.store(false, order);
+            atomic_data_ready.store(false, write_order);
         }
     };
     auto writer_thread = []() {
         for (auto i = 0; i < TIMES; i++) {
-            while (atomic_data_ready.load(order))
+            while (atomic_data_ready.load(read_order))
                 ;
 
+            // normal write
             data = EXPECTED_VALUE;
 
-            atomic_data_ready.store(true, order);
+            // atomic write: normal write happens-before atomic write
+            atomic_data_ready.store(true, write_order);
         }
     };
 
@@ -3117,7 +3121,7 @@ void test_atomic_visibility() {
     t2.join();
 }
 
-void test_volatile_visibility() {
+void test_volatile_happens_before() {
     auto reader_thread = []() {
         for (auto i = 0; i < TIMES; i++) {
             while (!volatile_data_ready)
@@ -3152,9 +3156,10 @@ void test_volatile_visibility() {
 }
 
 int main() {
-    test_atomic_visibility<std::memory_order_seq_cst>();
-    test_atomic_visibility<std::memory_order_relaxed>();
-    test_volatile_visibility(); // Failed assertion
+    test_atomic_happens_before<std::memory_order_seq_cst, std::memory_order_seq_cst>();
+    test_atomic_happens_before<std::memory_order_acquire, std::memory_order_release>();
+    test_atomic_happens_before<std::memory_order_relaxed, std::memory_order_relaxed>();
+    test_volatile_happens_before(); // Failed assertion
     return 0;
 }
 ```
