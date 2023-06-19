@@ -2995,83 +2995,16 @@ int main() {
 * `Coherence`定义了一个读操作能获得什么样的值（最近一次写入的值）
 * `Consitency`定义了何时一个写操作的值会被读操作获得（可见性）
 
-### 5.1.2 Sequenced-before
+### 5.1.2 Happens-before
 
-同一个线程内，两个表达式的执行满足先后顺序
-
-[doc Order of evaluation](https://en.cppreference.com/w/cpp/language/eval_order)
-
-Evaluation of each expression includes:
-
-* Value computations: calculation of the value that is returned by the expression. This may involve determination of the identity of the object (glvalue evaluation, e.g. if the expression returns a reference to some object) or reading the value previously assigned to an object (prvalue evaluation, e.g. if the expression returns a number, or some other value)
-* Initiation of side effects: access (read or write) to an object designated by a volatile glvalue, modification (writing) to an object, calling a library I/O function, or calling a function that does any of those operations.
-
-Ordering: 
-
-* If A is sequenced before B (or, equivalently, B is sequenced after A), then evaluation of A will be complete before evaluation of B begins.
-* If A is not sequenced before B and B is sequenced before A, then evaluation of B will be complete before evaluation of A begins.
-* If A is not sequenced before B and B is not sequenced before A, then two possibilities exist:
-    1. Evaluations of A and B are unsequenced: they may be performed in any order and may overlap (within a single thread of execution, the compiler may interleave the CPU instructions that comprise A and B)
-    1. Evaluations of A and B are indeterminately sequenced: they may be performed in any order but may not overlap: either A will be complete before B, or B will be complete before A. The order may be the opposite the next time the same expression is evaluated.
-
-### 5.1.3 Carries dependency
-
-两个满足`Sequenced-before`关系的表达式，可能也存在依赖关系
-
-### 5.1.4 Modification order
-
-原子变量的修改顺序
-
-### 5.1.5 Release sequence
-
-在`A`对原子变量`M`完成一个`release operation`之后，以该次修改为起点，最长的连续修改序列称为`release sequence headed by A`，序列包括：
-
-1. 同一个线程在做完`A`之后的其他对`M`的写操作
-1. 其他线程对`M`做的`read-modify-write`操作
-
-### 5.1.6 Synchronizes with
-
-线程`A`对原子变量`M`完成一个`release operation`之后，另一个线程`B`对`M`完成一个`acquire operation`，并读取到了`A`线程写入的值，就称`the store in thread A synchronizes-with the load in thread B`
-
-强烈推荐：[The Synchronizes-With Relation](https://preshing.com/20130823/the-synchronizes-with-relation/)
-
-### 5.1.7 Dependency-ordered before
-
-Between threads, evaluation A is dependency-ordered before evaluation B if any of the following is true
-
-1. A performs a release operation on some atomic M, and, in a different thread, B performs a consume operation on the same atomic M, and B reads a value written by any part of the release sequence headed (until C++20) by A.
-1. A is dependency-ordered before X and X carries a dependency into B.
-
-### 5.1.8 Inter-thread happens-before
-
-Between threads, evaluation A inter-thread happens before evaluation B if any of the following is true
-
-1. A synchronizes-with B
-1. A is dependency-ordered before B
-1. A synchronizes-with some evaluation X, and X is sequenced-before B
-1. A is sequenced-before some evaluation X, and X inter-thread happens-before B
-1. A inter-thread happens-before some evaluation X, and X inter-thread happens-before B
-
-### 5.1.9 Happens-before
-
-Regardless of threads, evaluation A happens-before evaluation B if any of the following is true:
-
-1. A is sequenced-before B
-1. A inter-thread happens before B
+If an operation A "happens-before" another operation B, it means that A is guaranteed to be observed by B. In other words, any data or side effects produced by A will be visible to B when it executes.
 
 ![happens-before](/images/Cpp-Language/happens-before.png)
 
-### 5.1.10 Consume operation
+When used together, `std::memory_order_acquire` and `std::memory_order_release can establish a happens-before relationship between threads, allowing for proper synchronization and communication between them
 
-Atomic load with memory_order_consume or stronger is a consume operation
-
-### 5.1.11 Acquire operation
-
-Atomic load with memory_order_acquire or stronger is an acquire operation
-
-### 5.1.12 Release operation
-
-Atomic store with memory_order_release or stronger is a release operation
+1. `std::memory_order_acquire` is a memory ordering constraint that provides acquire semantics. It ensures that any memory operations that occur before the acquire operation in the program order will be visible to the thread performing the acquire operation.
+1. `std::memory_order_release` is a memory ordering constraint that provides release semantics. It ensures that any memory operations that occur after the release operation in the program order will be visible to other threads that perform subsequent acquire operations.
 
 ## 5.2 Memory consistency model
 
