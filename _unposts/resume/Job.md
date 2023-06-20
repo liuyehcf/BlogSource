@@ -161,6 +161,7 @@
 1. C++20 concepts
 1. C++ standard library extensions (filesystem, coroutines, networking, etc.)
 1. Memory models and memory ordering
+    * Cache coherence & Memory consistency
 1. C++ debugging techniques (GDB, memory debugging tools)
 1. C++ build systems (Make, CMake, Bazel)
 1. C++ code profiling and optimization

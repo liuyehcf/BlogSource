@@ -3041,6 +3041,10 @@ If an operation A "happens-before" another operation B, it means that A is guara
 
 1. `std::memory_order_seq_cst`：严一致模型
 1. `std::memory_order_relaxed`：宽松模型，具体采取哪些宽松策略，需要根据硬件平台才能确定
+    * When you use `std::memory_order_relaxed`, it guarantees the following:
+        1. Sequential consistency for atomic operations on a single variable: If you perform multiple atomic operations on the same atomic variable using `std::memory_order_relaxed`, the result will be as if those operations were executed in some sequential order. This means that the final value observed by any thread will be a valid result based on the ordering of the operations.
+        1. Coherence: All threads will eventually observe the most recent value written to an atomic variable. However, the timing of when each thread observes the value may differ due to the relaxed ordering.
+        1. Atomicity: Atomic operations performed with `std::memory_order_relaxed` are indivisible. They are guaranteed to be performed without interruption or interference from other threads.
 1. `std::memory_order_acquire` and `std::memory_order_release`：
     * When used together, `std::memory_order_acquire` and `std::memory_order_release` can establish a happens-before relationship between threads, allowing for proper synchronization and communication between them
         1. `std::memory_order_acquire` is a memory ordering constraint that provides acquire semantics. It ensures that any memory operations that occur before the acquire operation in the program order will be visible to the thread performing the acquire operation.
