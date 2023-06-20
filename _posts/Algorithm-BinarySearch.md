@@ -148,31 +148,29 @@ class Solution {
 
 > 由于循环条件是`left < right`，当`right = left + 1`时，`left == mid`，而`mid < right`一定成立，为了避免讨论特殊情况，可以用`nums[mid]`与`nums[right]`的大小关系作为分类条件
 
-**版本1（需要讨论特殊情况，即left==mid）**
-
-```java
+```cpp
 class Solution {
-    public int search(int[] nums, int target) {
-        int left = 0, right = nums.length - 1;
-
+public:
+    int search(std::vector<int>& nums, int target) {
+        int left = 0;
+        int right = nums.size() - 1;
         while (left < right) {
-            int mid = left + (right - left >> 1);
-
+            int mid = left + ((right - left) >> 1);
             if (nums[mid] == target) {
                 return mid;
             }
-            // [left, mid] 这个区间是有序的
-            // 等号一定要在这，因为，若mid==left时，一定要取右半边
-            else if (nums[mid] >= nums[left]) {
-                if (nums[left] <= target && target < nums[mid]) {
+            if (nums[mid] == nums[left]) {
+                left++;
+            } else if (nums[mid] > nums[left]) {
+                // left part is strictly ascending
+                if (nums[left] <= target && target <= nums[mid]) {
                     right = mid;
                 } else {
                     left = mid + 1;
                 }
-            }
-            // [left, mid] 这个区间是无序的，那么[mid, right]就一定是有序的
-            else {
-                if (nums[mid] < target && target <= nums[right]) {
+            } else {
+                // right part is strictly ascending
+                if (nums[mid] <= target && target <= nums[right]) {
                     left = mid + 1;
                 } else {
                     right = mid;
@@ -180,45 +178,14 @@ class Solution {
             }
         }
 
-        return nums[left] == target ? left : -1;
-    }
-}
-```
-
-**版本2（无须讨论特殊情况）**
-
-```java
-class Solution {
-    public int search(int[] nums, int target) {
-        int left = 0, right = nums.length - 1;
-
-        while (left < right) {
-            int mid = left + (right - left >> 1);
-
-            if (nums[mid] == target) {
-                return mid;
-            }
-            // [mid, right] 这个区间是有序的
-            else if (nums[mid] < nums[right]) {
-                if (nums[mid] < target && target <= nums[right]) {
-                    left = mid + 1;
-                } else {
-                    right = mid;
-                }
-            }
-            // [mid, right] 这个区间是无序的，那么[left, mid]就一定是有序的
-            else {
-                if (nums[left] <= target && target < nums[mid]) {
-                    right = mid;
-                } else {
-                    left = mid + 1;
-                }
-            }
+        // left == right
+        if (nums[left] == target) {
+            return left;
         }
 
-        return nums[left] == target ? left : -1;
+        return -1;
     }
-}
+};
 ```
 
 # 4 Question-34[★★★]
