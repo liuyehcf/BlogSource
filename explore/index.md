@@ -71,6 +71,7 @@ date: 2018-02-05 09:25:59
         * [Databases in 2021: A Year in Review](https://ottertune.com/blog/2021-databases-retrospective/#big-data-big-money)
         * [Databases in 2022: A Year in Review](https://ottertune.com/blog/2022-databases-retrospective/)
 * Top conferences
+    * [MOD](https://dl.acm.org/conference/mod/)
     * [ACM SIGMOD, Special Interest Group On Management Of Data](https://sigmod.org/)
     * [VLDB, Very Large Data Base](https://vldb.org/)
     * [ICDE, International Conference On Data Engineering](https://www.icde.org/)
