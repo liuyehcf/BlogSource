@@ -1,109 +1,136 @@
-# 5 CS Concept
+---
+title: Recap-of-Key-Points
+date: 2018-01-19 13:18:39
+tags: 
+- 原创
+categories: 
+- Job
+---
 
-## 5.1 Java
+**阅读更多**
 
-1. Object-oriented programming (OOP)
-1. Class and object
-1. Inheritance
-1. Polymorphism
-1. Abstraction
-1. Encapsulation
-1. Interface
-1. Packages
-1. Exception handling
-1. Generics
-1. Multithreading
-1. Synchronization
-1. Java collections (List, Set, Map, etc.)
-1. String manipulation
-1. File handling
-1. JDBC (Java Database Connectivity)
-1. Serialization
-1. Reflection
-1. Garbage collection
-1. Design patterns
-1. Lambda expressions
-1. Stream API
-1. Functional interfaces
-1. Annotation
-1. Java Virtual Machine (JVM)
-1. Concurrency utilities (Locks, Semaphores, CountDownLatch, etc.)
-1. Networking (Socket programming, HTTP, etc.)
-1. Remote Method Invocation (RMI)
-1. Java Servlets
-1. JavaServer Pages (JSP)
-1. Java Persistence API (JPA)
-1. Java Message Service (JMS)
-1. JavaFX
-1. Java Native Interface (JNI)
-1. Unit testing frameworks (JUnit, TestNG)
-1. Build tools (Maven, Gradle)
-1. Application servers (Tomcat, JBoss, WebSphere)
-1. Security (Authentication, Authorization, Encryption)
-1. Web services (RESTful, SOAP)
-1. Design principles (SOLID, DRY, KISS)
-1. Design patterns (Singleton, Factory, Observer, Builder, etc.)
-1. Java Memory Model (JMM)
-1. Concurrency frameworks (Executor framework, Fork/Join framework)
-1. Java 8 features (Streams, Optional, Functional interfaces)
-1. Asynchronous programming (CompletableFuture, java.util.concurrent)
-1. Annotations (Custom annotations, built-in annotations like @Override)
-1. Internationalization and localization (java.util.Locale, ResourceBundles)
-1. Enumerations and EnumSet/EnumMap
-1. Inner classes and anonymous classes
-1. JVM tuning and performance optimization
-1. Java Security (Security Manager, Permissions, KeyStore)
-1. Annotations (Retention policies, custom annotations)
-1. Remote Procedure Calls (RPC)
-1. XML processing (DOM, SAX, JAXB)
-1. JSON processing (Jackson, Gson)
-1. Java Naming and Directory Interface (JNDI)
-1. Java Message Service (JMS) providers (ActiveMQ, RabbitMQ)
-1. Java Transaction API (JTA)
-1. Servlet containers (Jetty, Undertow)
-1. Java Performance tuning and optimization
-1. Reflection API
-1. Remote method invocation frameworks (e.g., Spring Remoting)
-1. Web frameworks (e.g., Spring MVC, JavaServer Faces)
-1. Dependency injection frameworks (e.g., Spring, Guice)
-1. Java Memory Model (happens-before relationship, volatile keyword)
-1. Java performance monitoring and profiling (e.g., Java Flight Recorder, VisualVM)
-1. Java Authentication and Authorization Service (JAAS)
-1. Java cryptography and secure coding practices
-1. Asynchronous programming frameworks (e.g., CompletableFuture, Reactive Streams)
-1. Java microservices frameworks (e.g., Spring Boot, Micronaut)
-1. JavaServer Faces (JSF) framework
-1. Enterprise JavaBeans (EJB) framework
-1. Java Persistence API (JPA) providers (Hibernate, EclipseLink)
-1. Java Message-Oriented Middleware (MOM) (Apache Kafka, IBM MQ)
-1. Java Security frameworks (Spring Security, Apache Shiro)
-1. Java caching frameworks (Ehcache, Hazelcast)
-1. Java testing frameworks (TestNG, Mockito)
-1. Java monitoring and logging frameworks (Log4j, SLF4J)
-1. Java batch processing frameworks (Spring Batch, Apache Camel)
-1. Java web services frameworks (Apache CXF, JAX-WS)
-1. Java memory management (Heap, Stack, PermGen, Metaspace)
-1. Java Virtual Machine (JVM) tuning and garbage collection algorithms
-1. Java application servers (WebLogic, WebSphere, JBoss)
-1. Java batch processing frameworks (Spring Batch, Quartz)
-1. Java message-driven beans (MDB) and Java Message Service (JMS)
-1. Java concurrency patterns (Producer-Consumer, Read-Write Lock, Thread Pool)
-1. Java performance optimization techniques (caching, lazy loading)
-1. Java transaction management (Java Transaction API, distributed transactions)
-1. Java web frameworks (Play Framework, Struts)
-1. Java caching frameworks (Spring Cache, Caffeine)
-1. Java frameworks for web services (Apache CXF, Jersey)
-1. Java data access frameworks (MyBatis, jOOQ)
-1. Java reactive programming (Reactor, RxJava)
-1. Java distributed caching (Hazelcast, Coherence)
-1. Java messaging frameworks (RabbitMQ, ActiveMQ)
-1. Java testing frameworks for integration and end-to-end testing (Cucumber, Selenium)
-1. Java build tools and dependency management (Ant, Ivy)
-1. Java web application security (OWASP Top 10 vulnerabilities, CSRF, XSS)
-1. Java performance profiling and optimization tools (VisualVM, JProfiler)
-1. Java cloud platforms and services (AWS, Azure, Google Cloud Platform)
+<!--more-->
 
-## 5.2 Cpp
+{% markmap %}
+- Language
+    - Java
+        - Key Features
+            - Object-Oriented
+                - Encapsulation
+                - Polymorphism
+                - Inheritance
+                - Abstraction
+            - Platform Independence
+        - Collections
+            - Array
+            - List
+            - Set
+            - Map
+        - Functional Programming
+            - Stream API
+                - flatMap
+            - Functional API
+            - Lambda Expressions
+        - Generics
+        - Reflection
+            - Reflection API
+            - Dynamic Proxy
+        - Serialization
+        - Annotation
+            - Source
+                - JSR-269
+                - Lombok
+            - Runtime
+        - Concurrent
+            - Multithreading
+            - Concurrency-Safe Containers
+            - Component
+                - AbstractQueuedSynchronizer
+                - ReentrantLock
+                - BlockingQueue
+                - CountDownLatch
+            - Concurrency Frameworks
+                - Executor Framework
+                - Fork/Join Framework
+        - Design Principle
+            - SOLID
+                - S: Single Responsibility Principle (SRP)
+                - O: Open-Closed Principle (OCP)
+                - L: Liskov Substitution Principle (LSP)
+                - I: Interface Segregation Principle
+                - D: Dependency Inversion Principle (DIP)
+            - DRY(Don't Repeat Yourself)
+            - KISS
+        - Design Pattern
+            - Singleton Pattern
+            - Factory Pattern
+            - Observer Pattern
+            - Builder Pattern
+            - Adapter Pattern
+            - Strategy Pattern
+            - Decorator Pattern
+            - Iterator Pattern
+            - Proxy Pattern
+            - Template Method Pattern
+            - Command Pattern
+            - Composite Pattern
+            - Abstract Factory Pattern
+            - State Pattern
+            - Prototype Pattern
+            - Facade Pattern
+            - Bridge Pattern
+            - Visitor Pattern
+            - Chain of Responsibility Pattern
+            - Mediator Pattern
+        - JMM(Java Memory Model)
+            - Happens-before Relationship
+            - Volatile Keyword
+            - Synchronization
+            - Lock Optimization
+                - Object Head
+        - JVM(Java Virtual Machine)
+            - Garbage Collection Algorithms
+                - Mark-Sweep (Serial GC, Parallel GC)
+                - Mark-Copy (Young Generation in Serial GC, Parallel GC):
+                - Mark-Sweep-Compact (Parallel Old GC)
+                - Mark and Concurrent Sweep (CMS GC)
+                - Generational Algorithm (Most JVM GCs)
+                - Mark-Region (G1 GC)
+            - Garbage Collectors
+                - Serial GC
+                - Parallel GC
+                - Concurrent Mark Sweep, CMS
+                - G1 Garbage Collector
+            - Java Memory Management
+                - Heap
+                - Stack
+                - PermGen
+                - Metaspace
+            - JVM Tuning and Performance Optimization
+        - JNI(Java Native Interface)
+        - JDBC(Java Database Connectivity)
+        - JNDI(Java Naming and Directory Interface)
+        - Tools
+            - Build Tools
+                - Ant
+                - Maven
+                - Gradle
+            - Performance Tuning
+                - VisualVM
+                - JProfiler
+        - Frameworks
+            - Sprint
+            - Mybatis
+            - Netty
+            - JUnit & TestNG & Mockito & PowerMock
+            - SLF4J & Log4j & Logback
+    - Cpp
+- Database
+{% endmarkmap %}
+
+# 1 CS Concept
+
+## 1.1 Cpp
 
 1. Object-oriented programming (OOP)
 1. Classes and objects
@@ -207,7 +234,7 @@
 1. C++ scientific computing frameworks (PETSc, Trilinos)
 1. C++ natural language processing libraries (NLTK, Stanford CoreNLP)
 
-## 5.3 Database
+## 1.2 Database
 
 1. Database: 数据库
 1. Relational Database Management System (RDBMS): 关系型数据库管理系统
@@ -312,9 +339,10 @@
 1. unified storage and computation: 存算一体
 1. separation of storage and computation: 存算分离
 
-## Event-driven model & Polling Model
+## 1.3 Event-driven model & Polling Model
 
 Event-Driven Model:
+
 * Pros:
     1. Efficiency: In the event-driven model, the program only consumes resources when an event occurs. This leads to efficient resource utilization as the program is not constantly checking for events.
     1. Real-time responsiveness: The event-driven model is well-suited for real-time applications as it can quickly respond to events as they occur, allowing for immediate updates or actions.
@@ -325,6 +353,7 @@ Event-Driven Model:
     * Difficulty in debugging: Debugging event-driven programs can be more challenging due to their asynchronous nature. Tracking the flow of events and identifying the cause of issues can be trickier compared to sequential programs.
 
 Polling Model:
+
 * Pros:
     1. Simplicity: The polling model is straightforward to implement as it involves periodic checking for events. The program follows a sequential flow and is easy to understand.
     1. Control over event checking frequency: With polling, you have control over how frequently events are checked. This can be useful when events are expected to occur at predictable intervals.
