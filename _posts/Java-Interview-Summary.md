@@ -271,7 +271,7 @@ categories:
     > 具体内容请参考{% post_link JDK-Features %}
 
 1. 单例模式
-    > 1. {% post_link DesignPattern-Singleton %}
+    > 1. {% post_link Design-Pattern %}
     > 1. {% post_link Java-单例双重检测正确性分析 %}
 
 1. 在装饰器模式和代理模式之间，你如何抉择，请结合自身实际情况聊聊
