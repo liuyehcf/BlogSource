@@ -684,17 +684,190 @@ The Composite Pattern is useful in scenarios where you need to represent part-wh
 
 ## 3.4 Decorator Pattern
 
+The Decorator Pattern is a structural design pattern that allows adding new behaviors or responsibilities to objects dynamically by wrapping them with decorator objects. It provides an alternative to subclassing for extending functionality.
+
 **Examples:**
 
 ```java
+// Component interface
+interface Pizza {
+    String getDescription();
+    double getCost();
+}
+
+// Concrete component class
+class Margherita implements Pizza {
+    @Override
+    public String getDescription() {
+        return "Margherita Pizza";
+    }
+
+    @Override
+    public double getCost() {
+        return 5.99;
+    }
+}
+
+// Decorator abstract class
+abstract class PizzaDecorator implements Pizza {
+    private final Pizza pizza;
+
+    PizzaDecorator(Pizza pizza) {
+        this.pizza = pizza;
+    }
+
+    @Override
+    public String getDescription() {
+        return pizza.getDescription();
+    }
+
+    @Override
+    public double getCost() {
+        return pizza.getCost();
+    }
+}
+
+// Concrete decorator classes
+class CheeseDecorator extends PizzaDecorator {
+    CheeseDecorator(Pizza pizza) {
+        super(pizza);
+    }
+
+    @Override
+    public String getDescription() {
+        return super.getDescription() + ", Extra Cheese";
+    }
+
+    @Override
+    public double getCost() {
+        return super.getCost() + 1.50;
+    }
+}
+
+class MushroomDecorator extends PizzaDecorator {
+    MushroomDecorator(Pizza pizza) {
+        super(pizza);
+    }
+
+    @Override
+    public String getDescription() {
+        return super.getDescription() + ", Mushrooms";
+    }
+
+    @Override
+    public double getCost() {
+        return super.getCost() + 1.75;
+    }
+}
+
+// Usage
+public class Main {
+    public static void main(String[] args) {
+        // Create a Margherita pizza
+        Pizza margherita = new Margherita();
+        System.out.println(margherita.getDescription());  // Output: Margherita Pizza
+        System.out.println(margherita.getCost());  // Output: 5.99
+
+        // Add extra cheese to the Margherita pizza
+        Pizza decoratedPizza = new CheeseDecorator(margherita);
+        System.out.println(decoratedPizza.getDescription());  // Output: Margherita Pizza, Extra Cheese
+        System.out.println(decoratedPizza.getCost());  // Output: 7.49
+
+        // Add mushrooms to the decorated pizza
+        decoratedPizza = new MushroomDecorator(decoratedPizza);
+        System.out.println(decoratedPizza.getDescription());  // Output: Margherita Pizza, Extra Cheese, Mushrooms
+        System.out.println(decoratedPizza.getCost());  // Output: 9.24
+    }
+}
 ```
+
+In this example, we have a `Pizza` interface that defines the basic operations of a pizza, such as `getDescription()` and `getCost()`. The `Margherita` class is a concrete implementation of the `Pizza` interface.
+
+The `PizzaDecorator` class is an abstract class that acts as the base decorator. It implements the same interface (`Pizza`) and holds a reference to a `Pizza` object. It delegates the calls to the wrapped pizza object, effectively adding functionality or modifying behavior.
+
+The `CheeseDecorator` and `MushroomDecorator` classes are concrete decorators that extend the `PizzaDecorator` class. They add specific behaviors (extra cheese or mushrooms) to the decorated pizza by modifying the description and cost.
+
+In the `Main` class, we create a `Margherita` pizza instance. We then wrap it with decorators (`CheeseDecorator` and `MushroomDecorator`) to add extra cheese and mushrooms to the pizza dynamically. The decorators modify the description and cost of the pizza, allowing for the dynamic addition of new features without modifying the original pizza class.
+
+The Decorator Pattern provides a flexible and dynamic way to extend the functionality of objects without relying on subclassing. It promotes the principle of open-closed design, as new behaviors can be added by creating new decorator classes rather than modifying existing classes. It allows for the composition of objects with different behaviors at runtime.
 
 ## 3.5 Proxy Pattern
 
+The Proxy Pattern is a structural design pattern that provides a surrogate or placeholder object, controlling access to another object. It allows for the creation of a representative object that can control the access, perform additional operations, or act as a protective layer for the underlying object.
+
 **Examples:**
 
 ```java
+// Subject interface
+interface Image {
+    void display();
+}
+
+// Real subject class
+class RealImage implements Image {
+    private final String filename;
+
+    RealImage(String filename) {
+        this.filename = filename;
+        loadFromDisk();
+    }
+
+    private void loadFromDisk() {
+        System.out.println("Loading image: " + filename);
+    }
+
+    @Override
+    public void display() {
+        System.out.println("Displaying image: " + filename);
+    }
+}
+
+// Proxy class
+class ImageProxy implements Image {
+    private RealImage realImage;
+    private final String filename;
+
+    ImageProxy(String filename) {
+        this.filename = filename;
+    }
+
+    @Override
+    public void display() {
+        if (realImage == null) {
+            realImage = new RealImage(filename);
+        }
+        realImage.display();
+    }
+}
+
+// Usage
+public class Main {
+    public static void main(String[] args) {
+        Image image1 = new ImageProxy("image1.jpg");
+        image1.display();  // Image is loaded and displayed
+
+        Image image2 = new ImageProxy("image2.jpg");
+        image2.display();  // Image is loaded and displayed
+
+        // Image is not loaded until display() is called
+        Image image3 = new ImageProxy("image3.jpg");
+        // ...
+        // Other operations
+        // ...
+        image3.display();  // Image is loaded and displayed
+    }
+}
 ```
+
+In this example, we have an `Image` interface that represents the subject. The `RealImage` class is the real subject that performs the actual loading and displaying of an image.
+
+The `ImageProxy` class acts as a proxy for the `RealImage`. It implements the `Image` interface and has a reference to a `RealImage` object. When the `display()` method is called on the proxy, it checks if the real image has been loaded. If not, it creates a `RealImage` instance and then calls the `display()` method on it.
+
+In the `Main` class, we use the proxy to control access to the real image objects. When we call the `display()` method on the proxy, it dynamically creates the real image if necessary and delegates the display operation to it.
+
+The Proxy Pattern is useful in various scenarios, such as lazy loading of resources, access control, caching, or adding additional functionality around an object. It allows for transparent access to the underlying object by providing a surrogate with the same interface.
+
+In the example, the proxy delays the creation of the real image until it is actually needed, improving performance by loading images on demand. It acts as a protective layer, allowing the client to work with the proxy without directly interacting with the real image until necessary.
 
 # 4 Behavioral Patterns
 
