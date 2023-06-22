@@ -2971,29 +2971,19 @@ int main() {
 
 ### 5.1.1 Cache coherence & Memory consistency
 
-[Difference between Cache Coherence and Memory Consistency](https://www.geeksforgeeks.org/difference-between-cache-coherence-and-memory-consistency/)
+Cache coherence and memory consistency are two fundamental concepts in parallel computing systems, but they address different issues:
 
-**Cache coherence:**
+**Cache Coherence**:
 
-* Cache coherence in computer architecture refers to the consistency of shared resource data that is stored in multiple local caches. When clients in a system maintain caches of a shared memory resource, problems with incoherent data can arise, which is especially true for CPUs in a multiprocessing system.
-* In a shared memory multiprocessor with a separate cache memory for each processor, any one instruction operand can have multiple copies: one in main memory and one in each cache memory. When one copy of an operand is modified, the other copies must be modified as well. Cache coherence is the discipline that ensures that changes in the values of shared operands are propagated throughout the system in a timely manner.
+* This concept is primarily concerned with the values of copies of a single memory location that are cached at several caches (typically, in a multiprocessor system). When multiple processors with separate caches are in a system, it's possible for those caches to hold copies of the same memory location. Cache coherence ensures that all processors in the system observe a single, consistent value for the memory location. It focuses on maintaining a global order in which writes to each individual memory location occur.
+* For example, suppose we have two processors P1 and P2, each with its own cache. If P1 changes the value of a memory location X that's also stored in P2's cache, the cache coherence protocols will ensure that P2 sees the updated value if it tries to read X.
 
-**Memory consistency:**
+**Memory Consistency**: 
 
-* Memory consistency defines the order in which memory operations (from any process) appear to execute with respect to one another.
+* While cache coherence is concerned with the view of a single memory location, memory consistency is about the ordering of updates to different memory locations from different processors. It determines when a write by one processor to a shared memory location becomes visible to all other processors.
+* A memory consistency model defines the architecturally visible behavior of a memory system. Different consistency models make different guarantees about the order and visibility of memory operations across different threads or processors. For example, sequential consistency, a strict type of memory consistency model, says that all memory operations must appear to execute in some sequential order that's consistent with the program order of each individual processor.
 
-**Differences:**
-
-| Difference No | Cache coherence | Memory consistency |
-|:--|:--|:--|
-| 1 | Cache Coherence describes the behavior of reads and writes to the same memory location. | Memory consistency describes the behavior of reads and writes in relation to other locations. |
-| 2 | Cache coherence required for cache-equipped systems. | Memory consistency required in systems that have or do not have caches. |
-| 3 | Coherence is the guarantee that caches will never affect the observable functionality of a program | Consistency is the specification of correctness for memory accesses |
-
-其他见解：
-
-* `Coherence`定义了一个读操作能获得什么样的值（最近一次写入的值）
-* `Consitency`定义了何时一个写操作的值会被读操作获得（可见性）
+In summary, while both are essential for correctness in multiprocessor systems, cache coherence deals with maintaining a consistent view of a single memory location, while memory consistency is concerned with the order and visibility of updates to different memory locations.
 
 ### 5.1.2 Happens-before
 

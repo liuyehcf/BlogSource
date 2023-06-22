@@ -219,25 +219,7 @@ categories:
 - Database
 {% endmarkmap %}
 
-# 1 Cpp
-
-## 1.1 Cache Coherence and Memory Consistency
-
-Cache coherence and memory consistency are two fundamental concepts in parallel computing systems, but they address different issues:
-
-**Cache Coherence**:
-
-* This concept is primarily concerned with the values of copies of a single memory location that are cached at several caches (typically, in a multiprocessor system). When multiple processors with separate caches are in a system, it's possible for those caches to hold copies of the same memory location. Cache coherence ensures that all processors in the system observe a single, consistent value for the memory location. It focuses on maintaining a global order in which writes to each individual memory location occur.
-* For example, suppose we have two processors P1 and P2, each with its own cache. If P1 changes the value of a memory location X that's also stored in P2's cache, the cache coherence protocols will ensure that P2 sees the updated value if it tries to read X.
-
-**Memory Consistency**: 
-
-* While cache coherence is concerned with the view of a single memory location, memory consistency is about the ordering of updates to different memory locations from different processors. It determines when a write by one processor to a shared memory location becomes visible to all other processors.
-* A memory consistency model defines the architecturally visible behavior of a memory system. Different consistency models make different guarantees about the order and visibility of memory operations across different threads or processors. For example, sequential consistency, a strict type of memory consistency model, says that all memory operations must appear to execute in some sequential order that's consistent with the program order of each individual processor.
-
-In summary, while both are essential for correctness in multiprocessor systems, cache coherence deals with maintaining a consistent view of a single memory location, while memory consistency is concerned with the order and visibility of updates to different memory locations.
-
-# 2 Database
+# 1 Database
 
 1. Database: 数据库
 1. Relational Database Management System (RDBMS): 关系型数据库管理系统
@@ -342,7 +324,7 @@ In summary, while both are essential for correctness in multiprocessor systems, 
 1. unified storage and computation: 存算一体
 1. separation of storage and computation: 存算分离
 
-## 2.1 Event-driven model & Polling Model
+## 1.1 Event-driven model & Polling Model
 
 Event-Driven Model:
 
