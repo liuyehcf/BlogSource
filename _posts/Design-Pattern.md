@@ -873,70 +873,977 @@ In the example, the proxy delays the creation of the real image until it is actu
 
 ## 4.1 Observer Pattern
 
+The Observer Pattern is a behavioral design pattern that establishes a one-to-many dependency between objects, so that when one object changes its state, all its dependents (observers) are automatically notified and updated.
+
 **Examples:**
 
 ```java
+import java.util.ArrayList;
+import java.util.List;
+
+// Subject interface
+interface Subject {
+    void registerObserver(Observer observer);
+    void removeObserver(Observer observer);
+    void notifyObservers();
+}
+
+// Concrete subject class
+class WeatherStation implements Subject {
+    private double temperature;
+    private List<Observer> observers;
+
+    WeatherStation() {
+        observers = new ArrayList<>();
+    }
+
+    @Override
+    public void registerObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (Observer observer : observers) {
+            observer.update(temperature);
+        }
+    }
+
+    void setTemperature(double temperature) {
+        this.temperature = temperature;
+        notifyObservers();
+    }
+}
+
+// Observer interface
+interface Observer {
+    void update(double temperature);
+}
+
+// Concrete observer classes
+class Display implements Observer {
+    @Override
+    public void update(double temperature) {
+        System.out.println("Display: Temperature changed to " + temperature);
+    }
+}
+
+class Log implements Observer {
+    @Override
+    public void update(double temperature) {
+        System.out.println("Log: Temperature changed to " + temperature);
+    }
+}
+
+// Usage
+public class Main {
+    public static void main(String[] args) {
+        WeatherStation weatherStation = new WeatherStation();
+
+        Observer display = new Display();
+        Observer log = new Log();
+
+        weatherStation.registerObserver(display);
+        weatherStation.registerObserver(log);
+
+        weatherStation.setTemperature(25.5);
+        // Output:
+        // Display: Temperature changed to 25.5
+        // Log: Temperature changed to 25.5
+
+        weatherStation.setTemperature(30.0);
+        // Output:
+        // Display: Temperature changed to 30.0
+        // Log: Temperature changed to 30.0
+
+        weatherStation.removeObserver(log);
+
+        weatherStation.setTemperature(27.8);
+        // Output:
+        // Display: Temperature changed to 27.8
+    }
+}
 ```
+
+In this example, we have a `Subject` interface that defines the methods to register, remove, and notify observers. The `WeatherStation` class is the concrete subject that maintains the temperature and manages the list of observers.
+
+The `Observer` interface declares the `update()` method that is called by the subject to notify the observers. The `Display` and `Log` classes are concrete observers that implement the `Observer` interface and define their own behavior when the temperature changes.
+
+In the `Main` class, we create a `WeatherStation` object and instances of the `Display` and `Log` classes as observers. We register the observers with the weather station. When the temperature changes, the weather station calls the `update()` method on each registered observer, passing the new temperature as a parameter.
+
+By using the Observer Pattern, we achieve loose coupling between the subject and its observers. The subject doesn't need to know the specific details of its observers, allowing for flexibility in adding, removing, or modifying observers without affecting the subject or other observers.
+
+In the example, the weather station notifies the display and log observers about temperature changes, and each observer can perform its specific actions based on the updated temperature.
+
+The Observer Pattern is commonly used in scenarios where there is a one-to-many relationship between objects, and changes in one object should be propagated to multiple dependent objects. It promotes modularity, extensibility, and maintainability in the design of systems.
 
 ## 4.2 Strategy Pattern
 
+The Strategy Pattern is a behavioral design pattern that enables selecting an algorithm or strategy dynamically at runtime. It allows encapsulating interchangeable behaviors and provides a way to vary the behavior of an object by encapsulating it within separate classes.
+
 **Examples:**
 
 ```java
+// Strategy interface
+interface PaymentStrategy {
+    void pay(double amount);
+}
+
+// Concrete strategy classes
+class CreditCardStrategy implements PaymentStrategy {
+    private final String cardNumber;
+    private final String expirationDate;
+    private final String cvv;
+
+    CreditCardStrategy(String cardNumber, String expirationDate, String cvv) {
+        this.cardNumber = cardNumber;
+        this.expirationDate = expirationDate;
+        this.cvv = cvv;
+    }
+
+    @Override
+    public void pay(double amount) {
+        System.out.println("Paying " + amount + " using Credit Card.");
+        // Logic for processing credit card payment
+    }
+}
+
+class PayPalStrategy implements PaymentStrategy {
+    private final String email;
+    private final String password;
+
+    PayPalStrategy(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
+
+    @Override
+    public void pay(double amount) {
+        System.out.println("Paying " + amount + " using PayPal.");
+        // Logic for processing PayPal payment
+    }
+}
+
+// Context class
+class ShoppingCart {
+    private final PaymentStrategy paymentStrategy;
+
+    ShoppingCart(PaymentStrategy paymentStrategy) {
+        this.paymentStrategy = paymentStrategy;
+    }
+
+    void checkout(double amount) {
+        // Perform checkout logic
+        paymentStrategy.pay(amount);
+    }
+}
+
+// Usage
+public class Main {
+    public static void main(String[] args) {
+        // Create a shopping cart with a payment strategy
+        ShoppingCart cart = new ShoppingCart(new CreditCardStrategy("1234567890123456", "12/2023", "123"));
+        
+        // Add items to the cart and calculate the total amount
+        
+        double totalAmount = 100.0;
+        
+        // Checkout using the selected payment strategy
+        cart.checkout(totalAmount);
+        // Output: Paying 100.0 using Credit Card.
+
+        // Change the payment strategy dynamically
+        cart = new ShoppingCart(new PayPalStrategy("john.doe@example.com", "password"));
+
+        // Checkout using the new payment strategy
+        cart.checkout(totalAmount);
+        // Output: Paying 100.0 using PayPal.
+    }
+}
 ```
+
+In this example, we have a `PaymentStrategy` interface that defines the contract for different payment strategies. The `CreditCardStrategy` and `PayPalStrategy` classes are concrete implementations of the payment strategy interface.
+
+The `ShoppingCart` class acts as the context that utilizes the selected payment strategy. It has a reference to the payment strategy and uses it for the checkout process.
+
+In the `Main` class, we create a shopping cart with a specific payment strategy, such as a credit card. We add items to the cart and calculate the total amount. Then, we call the `checkout()` method on the cart, which internally invokes the `pay()` method of the selected payment strategy.
+
+By using the Strategy Pattern, we decouple the payment strategy from the shopping cart. The shopping cart only needs to know the `PaymentStrategy` interface and can switch between different strategies at runtime without modifying its code.
+
+The Strategy Pattern provides flexibility in selecting and switching algorithms or behaviors dynamically. It allows for easy addition of new strategies and enhances code reuse, modularity, and maintainability.
+
+In the example, we can easily add more payment strategies by implementing the `PaymentStrategy` interface and using them with the shopping cart without impacting existing code.
 
 ## 4.3 Template Method Pattern
 
+The Template Method Pattern is a behavioral design pattern that defines the skeleton of an algorithm in a base class, allowing subclasses to provide specific implementations of certain steps of the algorithm. It promotes code reuse and provides a way to define the overall structure of an algorithm while allowing subclasses to customize certain steps.
+
 **Examples:**
 
 ```java
+// Abstract class with template method
+abstract class Pizza {
+    // Template method
+    public final void makePizza() {
+        prepareDough();
+        addIngredients();
+        bakePizza();
+        if (shouldAddCheese()) {
+            addCheese();
+        }
+        servePizza();
+    }
+
+    // Concrete steps
+    private void prepareDough() {
+        System.out.println("Preparing dough...");
+    }
+
+    protected abstract void addIngredients();
+
+    private void bakePizza() {
+        System.out.println("Baking pizza...");
+    }
+
+    protected boolean shouldAddCheese() {
+        return true;
+    }
+
+    protected void addCheese() {
+        System.out.println("Adding cheese...");
+    }
+
+    private void servePizza() {
+        System.out.println("Serving pizza!");
+    }
+}
+
+// Concrete subclass
+class MargheritaPizza extends Pizza {
+    @Override
+    protected void addIngredients() {
+        System.out.println("Adding tomato sauce, mozzarella cheese, and basil leaves.");
+    }
+
+    @Override
+    protected boolean shouldAddCheese() {
+        return false;
+    }
+}
+
+// Concrete subclass
+class PepperoniPizza extends Pizza {
+    @Override
+    protected void addIngredients() {
+        System.out.println("Adding tomato sauce, mozzarella cheese, and pepperoni.");
+    }
+}
+
+// Usage
+public class Main {
+    public static void main(String[] args) {
+        Pizza margheritaPizza = new MargheritaPizza();
+        margheritaPizza.makePizza();
+        // Output:
+        // Preparing dough...
+        // Adding tomato sauce, mozzarella cheese, and basil leaves.
+        // Baking pizza...
+        // Serving pizza!
+
+        System.out.println();
+
+        Pizza pepperoniPizza = new PepperoniPizza();
+        pepperoniPizza.makePizza();
+        // Output:
+        // Preparing dough...
+        // Adding tomato sauce, mozzarella cheese, and pepperoni.
+        // Baking pizza...
+        // Adding cheese...
+        // Serving pizza!
+    }
+}
 ```
+
+In this example, we have an abstract class `Pizza` that represents the template for making a pizza. It defines the overall structure of the pizza-making process using a template method called `makePizza()`. The template method consists of several steps that are common to all pizzas.
+
+The abstract class provides default implementations for some steps, such as preparing the dough, baking the pizza, and serving the pizza. It also defines abstract methods, such as `addIngredients()`, which must be implemented by concrete subclasses.
+
+The concrete subclasses, `MargheritaPizza` and `PepperoniPizza`, extend the `Pizza` class and provide their specific implementations for adding ingredients. They can also override certain steps if needed, such as the decision to add cheese in the `shouldAddCheese()` method.
+
+In the `Main` class, we create instances of the concrete pizza subclasses and call the `makePizza()` method on them. The template method (`makePizza()`) is responsible for executing the overall pizza-making process by invoking the defined steps and allowing subclasses to provide specific implementations where required.
+
+The Template Method Pattern enables the creation of a common algorithm structure while allowing subclasses to customize certain steps. It promotes code reuse and provides a way to define the skeleton of an algorithm in a base class while delegating the implementation details to subclasses.
+
+In the example, the `Pizza` class defines the common structure for making a pizza, and the concrete subclasses provide their specific ingredient additions. The template method ensures that the overall pizza-making process follows the defined steps, while allowing subclasses to have flexibility in ingredient selection and other customizations.
 
 ## 4.4 Iterator Pattern
 
+The Iterator Pattern is a behavioral design pattern that provides a way to access the elements of an aggregate object sequentially without exposing its underlying representation. It separates the traversal logic from the underlying collection, making it easier to iterate over the elements of a collection in a consistent manner.
+
 **Examples:**
 
 ```java
+import java.util.ArrayList;
+import java.util.List;
+
+// Iterator interface
+interface Iterator<T> {
+    boolean hasNext();
+    T next();
+}
+
+// Aggregate interface
+interface Aggregate<T> {
+    Iterator<T> createIterator();
+}
+
+// Concrete iterator class
+class ListIterator<T> implements Iterator<T> {
+    private final List<T> items;
+    private int position;
+
+    ListIterator(List<T> items) {
+        this.items = items;
+        this.position = 0;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return position < items.size();
+    }
+
+    @Override
+    public T next() {
+        if (!hasNext()) {
+            throw new IndexOutOfBoundsException("No more elements in the collection.");
+        }
+        T item = items.get(position);
+        position++;
+        return item;
+    }
+}
+
+// Concrete aggregate class
+class MyList<T> implements Aggregate<T> {
+    private final List<T> items;
+
+    MyList() {
+        this.items = new ArrayList<>();
+    }
+
+    void add(T item) {
+        items.add(item);
+    }
+
+    @Override
+    public Iterator<T> createIterator() {
+        return new ListIterator<>(items);
+    }
+}
+
+// Usage
+public class Main {
+    public static void main(String[] args) {
+        MyList<String> myList = new MyList<>();
+        myList.add("Item 1");
+        myList.add("Item 2");
+        myList.add("Item 3");
+
+        Iterator<String> iterator = myList.createIterator();
+        while (iterator.hasNext()) {
+            String item = iterator.next();
+            System.out.println(item);
+        }
+        // Output:
+        // Item 1
+        // Item 2
+        // Item 3
+    }
+}
 ```
+
+In this example, we have an `Iterator` interface that defines the methods for iterating over a collection, including `hasNext()` to check if there are more elements and `next()` to retrieve the next element.
+
+The `Aggregate` interface defines the method `createIterator()` to create an iterator for the collection.
+
+The `ListIterator` class is a concrete iterator implementation that iterates over a list of items. It keeps track of the current position and provides the implementation for the iterator methods.
+
+The `MyList` class is a concrete aggregate implementation that holds a list of items. It implements the `createIterator()` method, which creates a `ListIterator` and returns it as an `Iterator`.
+
+In the `Main` class, we create an instance of `MyList` and add some items to it. We then obtain an iterator by calling `createIterator()` on the list. We can use the iterator to iterate over the elements using `hasNext()` and `next()` until all elements have been traversed.
+
+The Iterator Pattern provides a standardized way to traverse the elements of a collection without exposing its internal structure. It decouples the collection from its iteration logic, making it easier to change the iteration algorithm or use different types of iterators.
+
+In the example, the `MyList` class encapsulates the list of items, and the `ListIterator` provides a way to iterate over the items without exposing the list itself. This allows for a flexible and uniform way to iterate over different collections and provides a consistent interface for accessing elements regardless of the underlying data structure.
 
 ## 4.5 State Pattern
 
+The State Pattern is a behavioral design pattern that allows an object to alter its behavior when its internal state changes. It encapsulates state-specific logic into separate state classes and enables an object to transition between different states at runtime.
+
 **Examples:**
 
 ```java
+// Context class
+class Context {
+    private State state;
+
+    void setState(State state) {
+        this.state = state;
+    }
+
+    void performOperation() {
+        state.handleOperation(this);
+    }
+}
+
+// State interface
+interface State {
+    void handleOperation(Context context);
+}
+
+// Concrete state classes
+class ConcreteStateA implements State {
+    @Override
+    public void handleOperation(Context context) {
+        System.out.println("Handling operation in State A.");
+        // Change the state or perform operations based on the current state
+        context.setState(new ConcreteStateB());
+    }
+}
+
+class ConcreteStateB implements State {
+    @Override
+    public void handleOperation(Context context) {
+        System.out.println("Handling operation in State B.");
+        // Change the state or perform operations based on the current state
+        context.setState(new ConcreteStateA());
+    }
+}
+
+// Usage
+public class Main {
+    public static void main(String[] args) {
+        Context context = new Context();
+
+        // Set the initial state
+        context.setState(new ConcreteStateA());
+
+        // Perform operations on the context
+        context.performOperation();
+        // Output: Handling operation in State A.
+
+        context.performOperation();
+        // Output: Handling operation in State B.
+
+        context.performOperation();
+        // Output: Handling operation in State A.
+    }
+}
 ```
+
+In this example, we have a `Context` class that represents the object whose behavior changes based on its internal state. It has a reference to the current state and delegates the handling of operations to the state object.
+
+The `State` interface defines the methods that handle operations based on the current state. Each concrete state class implements the `State` interface and provides its own implementation of the `handleOperation()` method. The state classes can also modify the state of the context object as needed.
+
+In the `Main` class, we create an instance of the `Context` class and set the initial state to `ConcreteStateA`. We then call the `performOperation()` method on the context object, which delegates the operation handling to the current state object.
+
+By using the State Pattern, we can encapsulate the behavior associated with each state into separate state classes. This promotes better organization and maintainability of the code as each state can be treated as an independent object.
+
+In the example, the context object can transition between `ConcreteStateA` and `ConcreteStateB` by calling the `handleOperation()` method. The state classes handle the operations differently based on the current state and can modify the state of the context as needed.
+
+The State Pattern is useful when an object's behavior depends on its internal state and needs to change dynamically at runtime. It helps in eliminating conditional statements and promotes cleaner code by separating state-specific behavior into individual state classes.
 
 ## 4.6 Chain of Responsibility Pattern
 
+The Chain of Responsibility Pattern is a behavioral design pattern that allows an object to pass a request along a chain of potential handlers until the request is handled or reaches the end of the chain. It decouples the sender of a request from its receivers and provides a way to handle the request dynamically.
+
 **Examples:**
 
 ```java
+// Handler interface
+interface Handler {
+    void setNextHandler(Handler nextHandler);
+    void handleRequest(Request request);
+}
+
+// Concrete handler classes
+class ConcreteHandlerA implements Handler {
+    private Handler nextHandler;
+
+    @Override
+    public void setNextHandler(Handler nextHandler) {
+        this.nextHandler = nextHandler;
+    }
+
+    @Override
+    public void handleRequest(Request request) {
+        if (request.getType().equals(RequestType.TYPE_A)) {
+            System.out.println("Request handled by ConcreteHandlerA.");
+        } else if (nextHandler != null) {
+            nextHandler.handleRequest(request);
+        } else {
+            System.out.println("Request cannot be handled.");
+        }
+    }
+}
+
+class ConcreteHandlerB implements Handler {
+    private Handler nextHandler;
+
+    @Override
+    public void setNextHandler(Handler nextHandler) {
+        this.nextHandler = nextHandler;
+    }
+
+    @Override
+    public void handleRequest(Request request) {
+        if (request.getType().equals(RequestType.TYPE_B)) {
+            System.out.println("Request handled by ConcreteHandlerB.");
+        } else if (nextHandler != null) {
+            nextHandler.handleRequest(request);
+        } else {
+            System.out.println("Request cannot be handled.");
+        }
+    }
+}
+
+// Request class
+class Request {
+    private final RequestType type;
+
+    Request(RequestType type) {
+        this.type = type;
+    }
+
+    RequestType getType() {
+        return type;
+    }
+}
+
+// Enumeration of request types
+enum RequestType {
+    TYPE_A,
+    TYPE_B
+}
+
+// Usage
+public class Main {
+    public static void main(String[] args) {
+        // Create the chain of responsibility
+        Handler handlerA = new ConcreteHandlerA();
+        Handler handlerB = new ConcreteHandlerB();
+        handlerA.setNextHandler(handlerB);
+
+        // Create requests
+        Request request1 = new Request(RequestType.TYPE_A);
+        Request request2 = new Request(RequestType.TYPE_B);
+        Request request3 = new Request(RequestType.TYPE_A);
+
+        // Process requests
+        handlerA.handleRequest(request1);
+        // Output: Request handled by ConcreteHandlerA.
+
+        handlerA.handleRequest(request2);
+        // Output: Request handled by ConcreteHandlerB.
+
+        handlerA.handleRequest(request3);
+        // Output: Request handled by ConcreteHandlerA.
+    }
+}
 ```
+
+In this example, we have a `Handler` interface that defines the methods for setting the next handler in the chain and handling requests. The concrete handler classes, `ConcreteHandlerA` and `ConcreteHandlerB`, implement the `Handler` interface.
+
+Each concrete handler class has a reference to the next handler in the chain, and they handle requests based on their specific criteria. If a request cannot be handled by a handler, it is passed to the next handler in the chain until it reaches the end of the chain.
+
+The `Request` class represents a request with a specific type. The `RequestType` enumeration defines the types of requests.
+
+In the `Main` class, we create a chain of responsibility by setting the next handler for each handler in the chain. We then create requests with different types and pass them to the first handler in the chain using the `handleRequest()` method.
+
+By using the Chain of Responsibility Pattern, we can dynamically build a chain of handlers and pass a request through the chain until it is handled or reaches the end. It provides flexibility in handling requests and allows for easy extension or modification of the chain without impacting the client code.
+
+In the example, the requests are handled by `ConcreteHandlerA` if the request type matches `RequestType.TYPE_A` and by `ConcreteHandlerB` if the request type matches `RequestType.TYPE_B`. If a request type does not match any handler's criteria or the chain ends, a message is displayed indicating that the request cannot be handled.
+
+The Chain of Responsibility Pattern is useful in scenarios where there are multiple objects that can handle a request, and the handler needs to be determined dynamically at runtime. It promotes loose coupling between the sender of a request and its receivers, allowing for flexible and customizable handling of requests in a chain-like structure.
 
 ## 4.7 Command Pattern
 
+The Command Pattern is a behavioral design pattern that encapsulates a request or operation as an object, allowing parameterization of clients with different requests, queueing or logging requests, and supporting undoable operations. It decouples the sender of a request from the object that performs the action, providing a way to issue requests without knowing the receiver's details.
+
 **Examples:**
 
 ```java
+// Command interface
+interface Command {
+    void execute();
+}
+
+// Receiver class
+class Light {
+    void turnOn() {
+        System.out.println("Light is on.");
+    }
+
+    void turnOff() {
+        System.out.println("Light is off.");
+    }
+}
+
+// Concrete command classes
+class TurnOnCommand implements Command {
+    private final Light light;
+
+    TurnOnCommand(Light light) {
+        this.light = light;
+    }
+
+    @Override
+    public void execute() {
+        light.turnOn();
+    }
+}
+
+class TurnOffCommand implements Command {
+    private final Light light;
+
+    TurnOffCommand(Light light) {
+        this.light = light;
+    }
+
+    @Override
+    public void execute() {
+        light.turnOff();
+    }
+}
+
+// Invoker class
+class RemoteControl {
+    private Command command;
+
+    void setCommand(Command command) {
+        this.command = command;
+    }
+
+    void pressButton() {
+        command.execute();
+    }
+}
+
+// Usage
+public class Main {
+    public static void main(String[] args) {
+        RemoteControl remoteControl = new RemoteControl();
+        Light light = new Light();
+
+        // Create commands
+        Command turnOnCommand = new TurnOnCommand(light);
+        Command turnOffCommand = new TurnOffCommand(light);
+
+        // Set commands to the remote control
+        remoteControl.setCommand(turnOnCommand);
+        remoteControl.pressButton();  // Output: Light is on.
+
+        remoteControl.setCommand(turnOffCommand);
+        remoteControl.pressButton();  // Output: Light is off.
+    }
+}
 ```
+
+In this example, we have a `Command` interface that defines the `execute()` method, which encapsulates an operation. The `Light` class acts as the receiver and defines the actions that can be performed on the light, such as turning it on or off.
+
+The concrete command classes, `TurnOnCommand` and `TurnOffCommand`, implement the `Command` interface and encapsulate the corresponding operations. They hold a reference to the receiver object (`Light`) and invoke the appropriate methods on it when the `execute()` method is called.
+
+The `RemoteControl` class serves as the invoker. It has a `Command` field and provides methods to set the command and execute it by calling the `execute()` method on the command object.
+
+In the `Main` class, we create an instance of the `RemoteControl` and the `Light` objects. We then create concrete commands (`TurnOnCommand` and `TurnOffCommand`) and associate them with the remote control using the `setCommand()` method. Finally, we press the button on the remote control, which triggers the execution of the associated command.
+
+By using the Command Pattern, we decouple the sender (invoker) of a request from the receiver (command) that performs the action. This allows for the parameterization of clients with different requests, queueing or logging of requests, and support for undoable operations.
+
+In the example, the remote control acts as the invoker, and the light object acts as the receiver. The commands encapsulate the operations (`turnOn()` and `turnOff()`) and can be executed by the remote control without knowing the details of the receiver.
+
+The Command Pattern is useful in various scenarios, such as implementing menu systems, queuing requests, implementing undo/redo functionality, or supporting transactional operations. It provides flexibility, extensibility, and allows for better separation of concerns by encapsulating requests as objects.
 
 ## 4.8 Interpreter Pattern
 
+The Interpreter Pattern is a behavioral design pattern that defines a language or grammar and provides a way to interpret and evaluate sentences or expressions in that language. It allows for the creation of a language interpreter by defining classes for different elements of the grammar and their behavior.
+
 **Examples:**
 
 ```java
+// Abstract expression interface
+interface Expression {
+    boolean interpret(String context);
+}
+
+// Terminal expression class
+class TerminalExpression implements Expression {
+    private final String data;
+
+    TerminalExpression(String data) {
+        this.data = data;
+    }
+
+    @Override
+    public boolean interpret(String context) {
+        return context.contains(data);
+    }
+}
+
+// Non-terminal expression class
+class AndExpression implements Expression {
+    private final Expression expression1;
+    private final Expression expression2;
+
+    AndExpression(Expression expression1, Expression expression2) {
+        this.expression1 = expression1;
+        this.expression2 = expression2;
+    }
+
+    @Override
+    public boolean interpret(String context) {
+        return expression1.interpret(context) && expression2.interpret(context);
+    }
+}
+
+// Non-terminal expression class
+class OrExpression implements Expression {
+    private final Expression expression1;
+    private final Expression expression2;
+
+    OrExpression(Expression expression1, Expression expression2) {
+        this.expression1 = expression1;
+        this.expression2 = expression2;
+    }
+
+    @Override
+    public boolean interpret(String context) {
+        return expression1.interpret(context) || expression2.interpret(context);
+    }
+}
+
+// Usage
+public class Main {
+    public static void main(String[] args) {
+        Expression john = new TerminalExpression("John");
+        Expression married = new TerminalExpression("married");
+        Expression marriedJohn = new AndExpression(john, married);
+
+        Expression jane = new TerminalExpression("Jane");
+        Expression single = new TerminalExpression("single");
+        Expression singleJane = new AndExpression(jane, single);
+
+        Expression orExpression = new OrExpression(marriedJohn, singleJane);
+
+        // Interpretation
+        System.out.println(orExpression.interpret("John is married"));  // Output: true
+        System.out.println(orExpression.interpret("Jane is single"));   // Output: true
+        System.out.println(orExpression.interpret("John is single"));   // Output: false
+        System.out.println(orExpression.interpret("Jane is married"));  // Output: false
+    }
+}
 ```
+
+In this example, we have an `Expression` interface that represents the abstract expression. The `TerminalExpression` class is a concrete implementation of the terminal expression, which evaluates a specific part of the grammar. The `AndExpression` and `OrExpression` classes are concrete implementations of non-terminal expressions that combine multiple expressions.
+
+The expressions can interpret a given context (sentence or expression) and evaluate to true or false based on the interpretation. The `AndExpression` class evaluates to true only if both expressions it contains evaluate to true, while the `OrExpression` class evaluates to true if either of its expressions evaluates to true.
+
+In the `Main` class, we create expressions for various conditions, such as "John is married" and "Jane is single," using the terminal expressions and combine them using non-terminal expressions. We can then interpret these expressions using different contexts to evaluate whether the expressions hold true or false.
+
+The Interpreter Pattern is useful when there is a need to interpret and evaluate sentences or expressions in a specific language or grammar. It enables the creation of a language interpreter by defining classes for different elements of the grammar and their behavior.
+
+In the example, the expressions represent conditions or rules that can be interpreted and evaluated based on the given context. By combining different expressions using non-terminal expressions, complex conditions can be built and interpreted to determine their truth value.
 
 ## 4.9 Mediator Pattern
 
+The Mediator Pattern is a behavioral design pattern that promotes loose coupling between components by encapsulating their interaction within a mediator object. It centralizes communication and coordination between objects, reducing their direct dependencies and simplifying their interactions.
+
 **Examples:**
 
 ```java
+// Mediator interface
+interface Mediator {
+    void sendMessage(String message, Colleague colleague);
+}
+
+// Concrete mediator class
+class ConcreteMediator implements Mediator {
+    private Colleague colleague1;
+    private Colleague colleague2;
+
+    void setColleague1(Colleague colleague) {
+        this.colleague1 = colleague;
+    }
+
+    void setColleague2(Colleague colleague) {
+        this.colleague2 = colleague;
+    }
+
+    @Override
+    public void sendMessage(String message, Colleague colleague) {
+        if (colleague == colleague1) {
+            colleague2.receiveMessage(message);
+        } else if (colleague == colleague2) {
+            colleague1.receiveMessage(message);
+        }
+    }
+}
+
+// Colleague interface
+interface Colleague {
+    void sendMessage(String message);
+    void receiveMessage(String message);
+}
+
+// Concrete colleague class
+class ConcreteColleague implements Colleague {
+    private final Mediator mediator;
+
+    ConcreteColleague(Mediator mediator) {
+        this.mediator = mediator;
+    }
+
+    @Override
+    public void sendMessage(String message) {
+        mediator.sendMessage(message, this);
+    }
+
+    @Override
+    public void receiveMessage(String message) {
+        System.out.println("Received message: " + message);
+    }
+}
+
+// Usage
+public class Main {
+    public static void main(String[] args) {
+        ConcreteMediator mediator = new ConcreteMediator();
+
+        ConcreteColleague colleague1 = new ConcreteColleague(mediator);
+        ConcreteColleague colleague2 = new ConcreteColleague(mediator);
+
+        mediator.setColleague1(colleague1);
+        mediator.setColleague2(colleague2);
+
+        colleague1.sendMessage("Hello from colleague1!");
+        // Output: Received message: Hello from colleague1!
+
+        colleague2.sendMessage("Hi from colleague2!");
+        // Output: Received message: Hi from colleague2!
+    }
+}
 ```
+
+In this example, we have a `Mediator` interface that defines the communication protocol between colleagues. The `ConcreteMediator` class is a concrete implementation of the mediator that manages the communication between colleagues.
+
+The `Colleague` interface represents the individual components that interact with each other through the mediator. The `ConcreteColleague` class is a concrete implementation of a colleague that sends and receives messages.
+
+In the `Main` class, we create a mediator object (`ConcreteMediator`) and two colleague objects (`ConcreteColleague`). We set the colleagues in the mediator using the mediator's setter methods. When a colleague sends a message, it calls the mediator's `sendMessage()` method, passing the message and itself as the sender. The mediator then relays the message to the other colleague.
+
+By using the Mediator Pattern, the communication between colleagues is encapsulated within the mediator object. Colleagues are decoupled from each other and have no direct knowledge of other colleagues. They interact solely through the mediator, which reduces dependencies and simplifies their interactions.
+
+In the example, the `ConcreteMediator` acts as the central communication hub, relaying messages between the colleagues (`ConcreteColleague`). The colleagues can send messages to each other by calling the `sendMessage()` method on themselves, and the mediator ensures that the messages reach the intended recipients.
+
+The Mediator Pattern is beneficial in scenarios where a set of objects need to communicate with each other in a loosely coupled manner. It promotes modularity, simplifies interactions, and allows for easy addition or removal of components without affecting others.
 
 ## 4.10 Visitor Pattern
 
+The Visitor Pattern is a behavioral design pattern that allows adding new operations or behaviors to a set of related classes without modifying their code. It achieves this by separating the implementation of the operations into separate visitor classes. The visitor classes can visit and operate on the elements of the object structure, enabling new behaviors to be added without modifying the classes themselves.
+
 **Examples:**
 
 ```java
+// Element interface
+interface Element {
+    void accept(Visitor visitor);
+}
+
+// Concrete element classes
+class ConcreteElementA implements Element {
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+
+    void operationA() {
+        System.out.println("Operation A on ConcreteElementA.");
+    }
+}
+
+class ConcreteElementB implements Element {
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+
+    void operationB() {
+        System.out.println("Operation B on ConcreteElementB.");
+    }
+}
+
+// Visitor interface
+interface Visitor {
+    void visit(ConcreteElementA elementA);
+    void visit(ConcreteElementB elementB);
+}
+
+// Concrete visitor classes
+class ConcreteVisitor implements Visitor {
+    @Override
+    public void visit(ConcreteElementA elementA) {
+        System.out.println("Visitor visits and operates on ConcreteElementA.");
+        elementA.operationA();
+    }
+
+    @Override
+    public void visit(ConcreteElementB elementB) {
+        System.out.println("Visitor visits and operates on ConcreteElementB.");
+        elementB.operationB();
+    }
+}
+
+// Object structure class
+class ObjectStructure {
+    private final List<Element> elements = new ArrayList<>();
+
+    void addElement(Element element) {
+        elements.add(element);
+    }
+
+    void accept(Visitor visitor) {
+        for (Element element : elements) {
+            element.accept(visitor);
+        }
+    }
+}
+
+// Usage
+public class Main {
+    public static void main(String[] args) {
+        ObjectStructure objectStructure = new ObjectStructure();
+        objectStructure.addElement(new ConcreteElementA());
+        objectStructure.addElement(new ConcreteElementB());
+
+        Visitor visitor = new ConcreteVisitor();
+        objectStructure.accept(visitor);
+    }
+}
 ```
+
+In this example, we have an `Element` interface that represents the elements of an object structure. The concrete element classes (`ConcreteElementA` and `ConcreteElementB`) implement the `Element` interface and provide their specific implementation of the `accept()` method.
+
+The `Visitor` interface defines the visitor's contract and declares the visit methods for each concrete element class. The concrete visitor class (`ConcreteVisitor`) implements the `Visitor` interface and provides the implementation for each visit method.
+
+The `ObjectStructure` class represents the object structure that contains the elements. It provides methods to add elements to the structure and accepts a visitor by iterating over the elements and calling their `accept()` method.
+
+In the `Main` class, we create an instance of the `ObjectStructure` and add some concrete elements to it. We also create an instance of the `ConcreteVisitor`. Finally, we call the `accept()` method on the object structure, passing the visitor as an argument. This triggers the visiting and operation on each element.
+
+By using the Visitor Pattern, we can add new operations or behaviors to the elements without modifying their code. The elements accept a visitor, which visits and operates on them based on the specific visit method implementation in the visitor class.
+
+In the example, the `ConcreteVisitor` visits and operates on each concrete element class. The visitor can perform additional operations or logic on the elements while maintaining separation between the elements and their specific behaviors.
+
+The Visitor Pattern is useful when there is a need to add new behaviors or operations to a set of related classes without modifying their code. It enables a flexible and extensible way to operate on elements in an object structure while keeping the code modular and maintainable.
