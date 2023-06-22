@@ -32,6 +32,7 @@ categories:
             - Functional API
             - Lambda Expressions
         - Generics
+            - Type Erasure
         - Reflection
             - Reflection API
             - Dynamic Proxy
@@ -125,116 +126,118 @@ categories:
             - JUnit & TestNG & Mockito & PowerMock
             - SLF4J & Log4j & Logback
     - Cpp
+        - Key Features
+            - Object-Oriented
+                - Encapsulation
+                - Polymorphism
+                - Inheritance
+                - Abstraction
+        - Cpp Features
+            - C++11
+            - C++14
+            - C++17
+            - C++20
+        - Preprocessor Directives
+            - #include
+            - #define & #undef
+            - #ifdef & #ifndef & #else & #endif
+            - #pragma
+        - Pointers and References
+            - Pointer Stability
+        - Virtual Functions
+            - override & final
+        - Overloading
+            - Operator Overloading
+            - Function Overloading
+        - Move Semantics
+            - Perfect Forwarding
+        - Containers
+            - vector
+            - list
+            - map
+            - array
+            - queue
+            - deque
+            - stack
+        - Templates
+            - Standard Template Library (STL)
+            - Templates Specialization
+            - Variadic templates
+            - Code Generation
+            - Meta Programming
+                - Type Traits
+                - Type Deduction
+                - Compile-time Programming
+                    - constexpr
+                - SFINAE(Substitution Failure Is Not An Error)
+        - Functional Programming
+            - Type Erasure(std::function <- Lambda)
+            - Function Objects
+            - Lambda Expression
+            - Higher-Order Functions(Treats Functions as First-Class Citizens)
+        - Memory Management
+            - new/delete
+            - Smart Pointers
+            - Memory Allocators and Custom Memory Management
+        - RAII(Resource Acquisition Is Initialization)
+            - Smart Pointers
+            - STL Containers
+            - File Stream Objects
+            - Mutex Locks
+            - std::thread
+        - Cpp Memory Model
+            - Cache Coherence
+            - Memory Consistency
+            - Memory Ordering
+        - Performance Optimization
+            - Cache
+                - Cache Locality
+                - Memory Access Pattern
+                - Branch
+                - Inline & Not-Inline(Code Cache)
+            - Vectorization
+        - CLI(Common Language Infrastructure)
+            - JNI
+        - Frameworks
+            - Google Test & Boost.Test
+            - TCMalloc & JeMalloc
+            - Boost
+        - Tools
+            - Build Tools
+                - Makefile
+                - Cmake
+                - Bazel
+            - Troubleshooting
+                - GDB
+                - AddressSanitizer
+                - Valgrind
+                - Memory Profiling
+            - Performance Tuning
+                - Perf
+                - Bcc
+                - Vtune
 - Database
 {% endmarkmap %}
 
-# 1 CS Concept
+# 1 Cpp
 
-## 1.1 Cpp
+## 1.1 Cache Coherence and Memory Consistency
 
-1. Object-oriented programming (OOP)
-1. Classes and objects
-1. Inheritance
-1. Polymorphism
-1. Abstraction
-1. Encapsulation
-1. Templates
-1. Exception handling
-1. Standard Template Library (STL)
-1. Memory management (new/delete, smart pointers)
-1. Namespaces
-1. Operator overloading
-1. Function overloading
-1. Virtual functions
-1. File handling
-1. Multithreading
-1. Synchronization
-1. C++ containers (vector, list, map, etc.)
-1. String manipulation
-1. Pointers and references
-1. Standard Library algorithms
-1. Standard Library containers (array, deque, queue, stack, etc.)
-1. Preprocessor directives
-1. Function pointers
-1. Inline functions
-1. Templates specialization
-1. Move semantics
-1. RAII (Resource Acquisition Is Initialization)
-1. Exception specifications
-1. C++11, C++14, C++17, and C++20 features
-1. Lambda expressions
-1. User-defined literals
-1. Type traits and type deduction
-1. Compile-time programming (constexpr, templates)
-1. Boost libraries
-1. Standard Template Library (STL) algorithms
-1. C++ unit testing frameworks (Google Test, Boost.Test)
-1. Makefile and build systems (CMake)
-1. Multithreading libraries (OpenMP, pthreads)
-1. C++ coding guidelines (Google C++ Style Guide, MISRA C++)
-1. Function objects (Functors)
-1. Variadic templates
-1. Type erasure
-1. Move semantics and perfect forwarding
-1. Memory management (RAII, smart pointers, garbage collection)
-1. Object slicing and polymorphism
-1. C++/CLI (Common Language Infrastructure)
-1. C++ attributes ([[deprecated]], [[noreturn]], etc.)
-1. C++ Standard Library extensions (Concurrency, Filesystem, etc.)
-1. Debugging techniques (GDB, Valgrind, memory profiling)
-1. Template metaprogramming
-1. SFINAE (Substitution Failure Is Not An Error)
-1. Type traits and type manipulation
-1. C++20 concepts
-1. C++ standard library extensions (filesystem, coroutines, networking, etc.)
-1. Memory models and memory ordering
-    * Cache coherence & Memory consistency
-1. C++ debugging techniques (GDB, memory debugging tools)
-1. C++ build systems (Make, CMake, Bazel)
-1. C++ code profiling and optimization
-1. C++ coding best practices and idioms
-1. C++ metaprogramming techniques (template metaprogramming, constexpr)
-1. C++ libraries and frameworks (e.g., Boost, Qt)
-1. C++ GUI programming (e.g., Qt, wxWidgets)
-1. C++ graphics programming (e.g., OpenGL, DirectX)
-1. C++ game development (e.g., Unity, Unreal Engine)
-1. C++ interop with other languages (e.g., C++/CLI, JNI)
-1. C++ network programming (e.g., sockets, libcurl)
-1. C++ code optimization techniques (e.g., loop unrolling, inline assembly)
-1. C++ debugging tools and techniques (e.g., GDB, AddressSanitizer)
-1. C++ memory management (custom allocators, memory pools)
-1. C++ concurrency libraries (Intel Threading Building Blocks, OpenMP)
-1. C++ template libraries (STLSoft, Loki)
-1. C++ database access frameworks (ODB, SOCI)
-1. C++ GUI frameworks (FLTK, GTK)
-1. C++ unit testing frameworks (CppUnit, Catch2)
-1. C++ web frameworks (cpp-netlib, Pistache)
-1. C++ build systems and package managers (Meson, Conan)
-1. C++ data serialization libraries (Protocol Buffers, MessagePack)
-1. C++ numerical computing libraries (Eigen, Armadillo)
-1. C++ code analysis and linting tools (Cppcheck, Clang-Tidy)
-1. C++ parallel programming (OpenMP, CUDA)
-1. C++ networking libraries (Boost.Asio, POCO)
-1. C++ code generation and metaprogramming techniques
-1. C++ code obfuscation and security practices
-1. C++ memory allocators and custom memory management
-1. C++ game engine development (Unity, Unreal Engine)
-1. C++ scientific computing libraries (Armadillo, GSL)
-1. C++ embedded systems development
-1. C++ interprocess communication (IPC) mechanisms (shared memory, pipes)
-1. C++ real-time systems development
-1. C++ code documentation tools (Doxygen, DocFX)
-1. C++ software design principles (SOLID, Design by Contract)
-1. C++ static analysis tools (Cppcheck, Clang Analyzer)
-1. C++ concurrent data structures and synchronization primitives
-1. C++ functional programming techniques (lambdas, higher-order functions)
-1. C++ memory management libraries (Boost.Pool, TCMalloc)
-1. C++ robotics and embedded systems development
-1. C++ software performance analysis and tuning
-1. C++ scientific computing frameworks (PETSc, Trilinos)
-1. C++ natural language processing libraries (NLTK, Stanford CoreNLP)
+Cache coherence and memory consistency are two fundamental concepts in parallel computing systems, but they address different issues:
 
-## 1.2 Database
+**Cache Coherence**:
+
+* This concept is primarily concerned with the values of copies of a single memory location that are cached at several caches (typically, in a multiprocessor system). When multiple processors with separate caches are in a system, it's possible for those caches to hold copies of the same memory location. Cache coherence ensures that all processors in the system observe a single, consistent value for the memory location. It focuses on maintaining a global order in which writes to each individual memory location occur.
+* For example, suppose we have two processors P1 and P2, each with its own cache. If P1 changes the value of a memory location X that's also stored in P2's cache, the cache coherence protocols will ensure that P2 sees the updated value if it tries to read X.
+
+**Memory Consistency**: 
+
+* While cache coherence is concerned with the view of a single memory location, memory consistency is about the ordering of updates to different memory locations from different processors. It determines when a write by one processor to a shared memory location becomes visible to all other processors.
+* A memory consistency model defines the architecturally visible behavior of a memory system. Different consistency models make different guarantees about the order and visibility of memory operations across different threads or processors. For example, sequential consistency, a strict type of memory consistency model, says that all memory operations must appear to execute in some sequential order that's consistent with the program order of each individual processor.
+
+In summary, while both are essential for correctness in multiprocessor systems, cache coherence deals with maintaining a consistent view of a single memory location, while memory consistency is concerned with the order and visibility of updates to different memory locations.
+
+# 2 Database
 
 1. Database: 数据库
 1. Relational Database Management System (RDBMS): 关系型数据库管理系统
@@ -339,7 +342,7 @@ categories:
 1. unified storage and computation: 存算一体
 1. separation of storage and computation: 存算分离
 
-## 1.3 Event-driven model & Polling Model
+## 2.1 Event-driven model & Polling Model
 
 Event-Driven Model:
 
