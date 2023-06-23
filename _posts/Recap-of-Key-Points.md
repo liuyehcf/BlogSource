@@ -254,8 +254,19 @@ categories:
     - Database Administration
 - SQL Standard
     - Join
+        - Inner Join
+        - Full Outer Join
+        - Left/Right Outer Join
+        - Left/Right Semi Join
     - Aggregate
     - Window Function
+        - Function
+        - Partition By Clause
+        - Order By Clause
+        - Window Clause
+            - Unbounded Window
+            - Half Unbounded Window
+            - Bounded Window
     - Predicate
     - View
     - Materialized View
@@ -294,16 +305,59 @@ categories:
             - Kernel Space Scheduling
 - Database Optimization
     - Plan Stage Optimization
+        - Parser
+            - Grammar Checking
+        - Analyzer
+            - Type Processing
         - CBO Optimizer
+            - Basic Concept
+                - Expression
+                - ExpressionGroup
+                - Optimization Tasks
+                    - Group Optimization Task
+                        - Find Cheapest Plan
+                    - Group Exploration Task
+                        - Join Reorder
+                        - CTE Enumeration
+                    - Expression Optimization Task
+                    - Rule Application Task
+                    - Input Optimization Task
+                        - Property Enforcing
+                        - Cost Calculating & Pruning
+                - Memo
             - Statistics
                 - Basic Statistics
                 - Histogram Statistics
             - Transformation Rules
             - Implementation Rules
+        - Subquery
+            - Position
+                - WHERE Clause
+                - SELECT Clause
+                - GRUOP BY Clause
+                - ORDER BY Clause
+                - HAVING Clause
+            - Whether Correlated
+                - Correlated Subquery
+                    - Left Outer Join(SELECT Clause)
+                    - Left Semi Join(WHERE Clause)
+                - Non-correlated Subquery
+            - Characteristics of Generated Data
+                - Scalar Subquery
+                - Existential Test Subquery
+                - Quantified Comparation Subquery
+                    - ANY
+                    - SOME
+                    - ALL
+        - CTE(Common Table Expressions)
+            - CTEProducer & CTEConsumer & CTEAnchor
+            - Plan Enumeration
     - Execution Stage Optimization
         - Parallelism
         - Code Generation
         - Vectorization
+        - Runtime Filter
+            - Join
 - Architecture
     - Shared Nothing Architecture
     - Shared Disk Architecture
