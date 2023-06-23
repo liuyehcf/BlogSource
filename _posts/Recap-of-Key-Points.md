@@ -11,306 +11,323 @@ categories:
 
 <!--more-->
 
+# 1 Java
+
 {% markmap %}
-- Language
-    - Java
-        - Key Features
-            - Object-Oriented
-                - Encapsulation
-                - Polymorphism
-                - Inheritance
-                - Abstraction
-            - Platform Independence
-        - Collections
-            - Array
-            - List
-            - Set
-            - Map
-        - Functional Programming
-            - Stream API
-                - flatMap
-            - Functional API
-            - Lambda Expressions
-        - Generics
-            - Type Erasure
-        - Reflection
-            - Reflection API
-            - Dynamic Proxy
-        - Serialization
-        - Annotation
-            - Source
-                - JSR-269
-                - Lombok
-            - Runtime
-        - Concurrent
-            - Multithreading
-            - Concurrency-Safe Containers
-            - Component
-                - AbstractQueuedSynchronizer
-                - ReentrantLock
-                - BlockingQueue
-                - CountDownLatch
-            - Concurrency Frameworks
-                - Executor Framework
-                - Fork/Join Framework
-        - Design Principle
-            - SOLID
-                - S: Single Responsibility Principle (SRP)
-                - O: Open-Closed Principle (OCP)
-                - L: Liskov Substitution Principle (LSP)
-                - I: Interface Segregation Principle
-                - D: Dependency Inversion Principle (DIP)
-            - DRY(Don't Repeat Yourself)
-            - KISS
-        - Design Pattern
-            - Creational Patterns
-                - Singleton Pattern
-                - Factory Pattern
-                - Abstract Factory Pattern
-                - Builder Pattern
-                - Prototype Pattern
-            - Structural Patterns
-                - Adapter Pattern
-                - Bridge Pattern
-                - Composite Pattern
-                - Decorator Pattern
-                - Proxy Pattern
-            - Behavioral Patterns
-                - Observer Pattern
-                - Strategy Pattern
-                - Template Method Pattern
-                - Iterator Pattern
-                - State Pattern
-                - Chain of Responsibility Pattern
-                - Command Pattern
-                - Interpreter Pattern
-                - Mediator Pattern
-                - Visitor Pattern
-        - JMM(Java Memory Model)
-            - Happens-before Relationship
-            - Volatile Keyword
-            - Synchronization
-            - Lock Optimization
-                - Object Head
-        - JVM(Java Virtual Machine)
-            - Garbage Collection Algorithms
-                - Mark-Sweep (Serial GC, Parallel GC)
-                - Mark-Copy (Young Generation in Serial GC, Parallel GC):
-                - Mark-Sweep-Compact (Parallel Old GC)
-                - Mark and Concurrent Sweep (CMS GC)
-                - Generational Algorithm (Most JVM GCs)
-                - Mark-Region (G1 GC)
-            - Garbage Collectors
-                - Serial GC
-                - Parallel GC
-                - Concurrent Mark Sweep, CMS
-                - G1 Garbage Collector
-            - Java Memory Management
-                - Heap
-                - Stack
-                - PermGen
-                - Metaspace
-            - JVM Tuning and Performance Optimization
-        - JNI(Java Native Interface)
-        - JDBC(Java Database Connectivity)
-        - JNDI(Java Naming and Directory Interface)
-        - Tools
-            - Build Tools
-                - Ant
-                - Maven
-                - Gradle
-            - Performance Tuning
-                - VisualVM
-                - JProfiler
-        - Frameworks
-            - Sprint
-            - Mybatis
-            - Netty
-            - JUnit & TestNG & Mockito & PowerMock
-            - SLF4J & Log4j & Logback
-    - Cpp
-        - Key Features
-            - Object-Oriented
-                - Encapsulation
-                - Polymorphism
-                - Inheritance
-                - Abstraction
-        - Cpp Features
-            - C++11
-            - C++14
-            - C++17
-            - C++20
-        - Preprocessor Directives
-            - #include
-            - #define & #undef
-            - #ifdef & #ifndef & #else & #endif
-            - #pragma
-        - Pointers and References
-            - Pointer Stability
-        - Virtual Functions
-            - override & final
-        - Overloading
-            - Operator Overloading
-            - Function Overloading
-        - Move Semantics
-            - Perfect Forwarding
-        - Containers
-            - vector
-            - list
-            - map
-            - array
-            - queue
-            - deque
-            - stack
-        - Templates
-            - Standard Template Library (STL)
-            - Templates Specialization
-            - Variadic templates
-            - Code Generation
-            - Meta Programming
-                - Type Traits
-                - Type Deduction
-                - Compile-time Programming
-                    - constexpr
-                - SFINAE(Substitution Failure Is Not An Error)
-        - Functional Programming
-            - Type Erasure(std::function <- Lambda)
-            - Function Objects
-            - Lambda Expression
-            - Higher-Order Functions(Treats Functions as First-Class Citizens)
-        - Memory Management
-            - new/delete
-            - Smart Pointers
-            - Memory Allocators and Custom Memory Management
-        - RAII(Resource Acquisition Is Initialization)
-            - Smart Pointers
-            - STL Containers
-            - File Stream Objects
-            - Mutex Locks
-            - std::thread
-        - Cpp Memory Model
-            - Cache Coherence
-            - Memory Consistency
-            - Memory Ordering
-        - Performance Optimization
-            - Cache
-                - Cache Locality
-                - Memory Access Pattern
-                - Branch
-                - Inline & Not-Inline(Code Cache)
-            - Vectorization
-        - CLI(Common Language Infrastructure)
-            - JNI
-        - Frameworks
-            - Google Test & Boost.Test
-            - TCMalloc & JeMalloc
-            - Boost
-        - Tools
-            - Build Tools
-                - Makefile
-                - Cmake
-                - Bazel
-            - Troubleshooting
-                - GDB
-                - AddressSanitizer
-                - Valgrind
-                - Memory Profiling
-            - Performance Tuning
-                - Perf
-                - Bcc
-                - Vtune
-- Database
-    - Basic Concept
-        - Database
-        - Schema
-            - Star Schema
-            - Snowflake Schema
-        - Table
-            - Fact Table
-            - Dimension Table
-        - Column
-        - Row
-        - Key
-            - Primary Key
-            - Foreign Key
-        - Constraints
-            - Primary Key Constraint
-            - Foreign Key Constraint
-            - Unique Constraint
-            - Not Null Constraint
-            - Check Constraint
-        - OLAP & OLTP
-        - Database Auditing
-        - Database Security
-        - Database Access Control
-        - Database Administration
-    - SQL Standard
-        - Join
-        - Aggregate
-        - Window Function
-        - Predicate
-        - View
-        - Materialized View
-        - Trigger
-        - Stored Procedure
-        - DML(Data Manipulation Language)
-        - DDL(Data Definition Language)
-        - DCL(Data Control Language)
-    - Index
-        - B-Tree Index
-        - Hash Index
-        - Bitmap Index
-        - Clustered Index
-        - Non-Clustered Index
-        - Full-Text Index
-    - Transaction
-        - ACID (Atomicity, Consistency, Isolation, Durability)
-    - Storage
-        - Backup and Recovery
-        - Replication
-        - Sharding
-        - Partitioning
-        - Disaster Recovery
-        - Compression
-        - Encryption
-        - Consistency
-        - High Availability
-        - Scalability
-    - Execution
-        - Execution Model
-            - Task-Based Parallelization
-                - User Space Scheduling
-                    - Event-Driven Model
-                    - Polling-Driven Model
-            - Volcano Model
-    - Database Optimization
-        - Performance Tuning
-    - Architecture
-        - Shared Nothing Architecture
-        - Shared Disk Architecture
-        - Shared Memory Architecture
-        - Shared Everything Architecture
-        - Hybrid Architectures
-        - Unified Storage and Computation
-        - Separated Storage and Computation
-    - Big Data
-        - Data Mining
-        - Data Warehousing
-        - Data Mart
-        - Data Cleansing
-        - Data Profiling
-        - Data Governance
-        - Data Migration
-        - Data Masking
-        - Data Modeling
-        - Data Integration
-        - Data Archiving
-        - ETL(Extract, Transform, Load)
+- Key Features
+    - Object-Oriented
+        - Encapsulation
+        - Polymorphism
+        - Inheritance
+        - Abstraction
+    - Platform Independence
+- Collections
+    - Array
+    - List
+    - Set
+    - Map
+- Functional Programming
+    - Stream API
+        - flatMap
+    - Functional API
+    - Lambda Expressions
+- Generics
+    - Type Erasure
+- Reflection
+    - Reflection API
+    - Dynamic Proxy
+- Serialization
+- Annotation
+    - Source
+        - JSR-269
+        - Lombok
+    - Runtime
+- Concurrent
+    - Multithreading
+    - Concurrency-Safe Containers
+    - Component
+        - AbstractQueuedSynchronizer
+        - ReentrantLock
+        - BlockingQueue
+        - CountDownLatch
+    - Concurrency Frameworks
+        - Executor Framework
+        - Fork/Join Framework
+- Design Principle
+    - SOLID
+        - S: Single Responsibility Principle (SRP)
+        - O: Open-Closed Principle (OCP)
+        - L: Liskov Substitution Principle (LSP)
+        - I: Interface Segregation Principle
+        - D: Dependency Inversion Principle (DIP)
+    - DRY(Don't Repeat Yourself)
+    - KISS
+- Design Pattern
+    - Creational Patterns
+        - Singleton Pattern
+        - Factory Pattern
+        - Abstract Factory Pattern
+        - Builder Pattern
+        - Prototype Pattern
+    - Structural Patterns
+        - Adapter Pattern
+        - Bridge Pattern
+        - Composite Pattern
+        - Decorator Pattern
+        - Proxy Pattern
+    - Behavioral Patterns
+        - Observer Pattern
+        - Strategy Pattern
+        - Template Method Pattern
+        - Iterator Pattern
+        - State Pattern
+        - Chain of Responsibility Pattern
+        - Command Pattern
+        - Interpreter Pattern
+        - Mediator Pattern
+        - Visitor Pattern
+- JMM(Java Memory Model)
+    - Happens-before Relationship
+    - Volatile Keyword
+    - Synchronization
+    - Lock Optimization
+        - Object Head
+- JVM(Java Virtual Machine)
+    - Garbage Collection Algorithms
+        - Mark-Sweep (Serial GC, Parallel GC)
+        - Mark-Copy (Young Generation in Serial GC, Parallel GC):
+        - Mark-Sweep-Compact (Parallel Old GC)
+        - Mark and Concurrent Sweep (CMS GC)
+        - Generational Algorithm (Most JVM GCs)
+        - Mark-Region (G1 GC)
+    - Garbage Collectors
+        - Serial GC
+        - Parallel GC
+        - Concurrent Mark Sweep, CMS
+        - G1 Garbage Collector
+    - Java Memory Management
+        - Heap
+        - Stack
+        - PermGen
+        - Metaspace
+    - JVM Tuning and Performance Optimization
+- JNI(Java Native Interface)
+- JDBC(Java Database Connectivity)
+- JNDI(Java Naming and Directory Interface)
+- Tools
+    - Build Tools
+        - Ant
+        - Maven
+        - Gradle
+    - Performance Tuning
+        - VisualVM
+        - JProfiler
+- Frameworks
+    - Sprint
+    - Mybatis
+    - Netty
+    - JUnit & TestNG & Mockito & PowerMock
+    - SLF4J & Log4j & Logback
 {% endmarkmap %}
 
-# 1 Database
+# 2 Cpp
 
-## 1.1 Event-driven model & Polling Model
+{% markmap %}
+- Key Features
+    - Object-Oriented
+        - Encapsulation
+        - Polymorphism
+        - Inheritance
+        - Abstraction
+- Cpp Features
+    - C++11
+    - C++14
+    - C++17
+    - C++20
+- Preprocessor Directives
+    - #include
+    - #define & #undef
+    - #ifdef & #ifndef & #else & #endif
+    - #pragma
+- Pointers and References
+    - Pointer Stability
+- Virtual Functions
+    - override & final
+- Overloading
+    - Operator Overloading
+    - Function Overloading
+- Move Semantics
+    - Perfect Forwarding
+- Containers
+    - vector
+    - list
+    - map
+    - array
+    - queue
+    - deque
+    - stack
+- Templates
+    - Standard Template Library (STL)
+    - Templates Specialization
+    - Variadic templates
+    - Code Generation
+    - Meta Programming
+        - Type Traits
+        - Type Deduction
+        - Compile-time Programming
+            - constexpr
+        - SFINAE(Substitution Failure Is Not An Error)
+- Functional Programming
+    - Type Erasure(std::function <- Lambda)
+    - Function Objects
+    - Lambda Expression
+    - Higher-Order Functions(Treats Functions as First-Class Citizens)
+- Memory Management
+    - new/delete
+    - Smart Pointers
+    - Memory Allocators and Custom Memory Management
+- RAII(Resource Acquisition Is Initialization)
+    - Smart Pointers
+    - STL Containers
+    - File Stream Objects
+    - Mutex Locks
+    - std::thread
+- Cpp Memory Model
+    - Cache Coherence
+    - Memory Consistency
+    - Memory Ordering
+- Performance Optimization
+    - Cache
+        - Cache Locality
+        - Memory Access Pattern
+        - Branch
+        - Inline & Not-Inline(Code Cache)
+    - Vectorization
+- CLI(Common Language Infrastructure)
+    - JNI
+- Frameworks
+    - Google Test & Boost.Test
+    - TCMalloc & JeMalloc
+    - Boost
+- Tools
+    - Build Tools
+        - Makefile
+        - Cmake
+        - Bazel
+    - Troubleshooting
+        - GDB
+        - AddressSanitizer
+        - Valgrind
+        - Memory Profiling
+    - Performance Tuning
+        - Perf
+        - Bcc
+        - Vtune
+{% endmarkmap %}
+
+# 3 Database
+
+{% markmap %} 
+- Basic Concept
+    - Database
+    - Schema
+        - Star Schema
+        - Snowflake Schema
+    - Table
+        - Fact Table
+        - Dimension Table
+    - Column
+    - Row
+    - Key
+        - Primary Key
+        - Foreign Key
+    - Constraints
+        - Primary Key Constraint
+        - Foreign Key Constraint
+        - Unique Constraint
+        - Not Null Constraint
+        - Check Constraint
+    - OLAP & OLTP
+    - Database Auditing
+    - Database Security
+    - Database Access Control
+    - Database Administration
+- SQL Standard
+    - Join
+    - Aggregate
+    - Window Function
+    - Predicate
+    - View
+    - Materialized View
+    - Trigger
+    - Stored Procedure
+    - DML(Data Manipulation Language)
+    - DDL(Data Definition Language)
+    - DCL(Data Control Language)
+- Index
+    - B-Tree Index
+    - Hash Index
+    - Bitmap Index
+    - Clustered Index
+    - Non-Clustered Index
+    - Full-Text Index
+- Transaction
+    - ACID (Atomicity, Consistency, Isolation, Durability)
+- Storage
+    - Backup and Recovery
+    - Replication
+    - Sharding
+    - Partitioning
+    - Disaster Recovery
+    - Compression
+    - Encryption
+    - Consistency
+    - High Availability
+    - Scalability
+- Execution
+    - Execution Model
+        - Task-Based Parallelization
+            - User Space Scheduling
+                - Event-Driven Model
+                - Polling-Driven Model
+        - Volcano Model
+            - Kernel Space Scheduling
+- Database Optimization
+    - Plan Stage Optimization
+        - CBO Optimizer
+            - Statistics
+                - Basic Statistics
+                - Histogram Statistics
+            - Transformation Rules
+            - Implementation Rules
+    - Execution Stage Optimization
+        - Parallelism
+        - Code Generation
+        - Vectorization
+- Architecture
+    - Shared Nothing Architecture
+    - Shared Disk Architecture
+    - Shared Memory Architecture
+    - Shared Everything Architecture
+    - Hybrid Architectures
+    - Unified Storage and Computation
+    - Separated Storage and Computation
+- Big Data Related Concepts
+    - Data Integration
+    - Data Extraction, Transformation, and Loading(ETL)
+    - Data Cleansing
+    - Data Profiling
+    - Data Modeling
+    - Data Warehousing
+    - Data Mart
+    - Data Mining
+    - Data Governance
+    - Data Migration
+    - Data Masking
+    - Data Archiving
+{% endmarkmap %}
+
+## 3.1 Event-driven model & Polling Model
 
 Event-Driven Model:
 
