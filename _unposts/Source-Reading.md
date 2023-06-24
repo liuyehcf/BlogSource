@@ -50,8 +50,8 @@ categories:
     * `PhysicalOperator`：物理算子
 1. `OptimizerTask`
     * `ApplyRuleTask`：执行`Rule`，若`Rule`产生了新的`Expression`：
-        * 驱动`OptimizeExpressionTask`（logical阶段）
-        * 驱动`EnforceAndCostTask`（physical阶段）
+        * 若生成了`PhysicalOperator`，则驱动`OptimizeExpressionTask`
+        * 若生成了`PhysicalOperator`，则驱动`EnforceAndCostTask`
     * `DeriveStatsTask`：基于逻辑`Plan`，自底向上计算统计信息
     * `EnforceAndCostTask`：基于物理`Plan`
         * 计算`Cost`、裁剪`Cost`
@@ -61,7 +61,7 @@ categories:
     * `ExploreGroupTask`：空间探索
         * 驱动`OptimizeExpressionTask`
     * `OptimizeExpressionTask`
-        * 驱动`ApplyRuleTask`
+        * 收集所有的`Rule`，驱动`ApplyRuleTask`执行
         * 驱动`DeriveStatsTask`
         * 驱动`ExploreGroupTask`
     * `OptimizeGroupTask`：入口
