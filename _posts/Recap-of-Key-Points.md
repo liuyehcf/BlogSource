@@ -352,12 +352,16 @@ categories:
         - CTE(Common Table Expressions)
             - CTEProducer & CTEConsumer & CTEAnchor
             - Plan Enumeration
+        - Multiply Stage Aggregate
+            - 3 Stage Aggregate(COUNT(DISTINCT) + GROUP BY)
+            - 4 Stage Aggregate(COUNT(DISTINCT))
     - Execution Stage Optimization
         - Parallelism
         - Code Generation
         - Vectorization
         - Runtime Filter
             - Join
+            - TopN
 - Architecture
     - Shared Nothing Architecture
     - Shared Disk Architecture

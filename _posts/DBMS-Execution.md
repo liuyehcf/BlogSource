@@ -22,7 +22,11 @@ categories:
 * 需要等到所有数据都到达后，才能进行处理。在这种定义下，`Agg`算子、`Sort`算子、`Join`算子等等都属于物化算子
 * 数据在处理的过程中，脱离寄存器，比如写到另一个内存区域，或者落盘，可以算作物化。在这种定义下，`Project`算子中的表达式计算也属于物化
 
-# 2 优化点
+# 2 Runtime Filter
+
+[[Enhancement] Support RuntimeFilter build in TopN Node](https://github.com/StarRocks/starrocks/pull/15949)
+
+# 3 优化点
 
 1. IO线程和执行线程速率的匹配。IO线程产生chunk的速率，和算子消费chunk的速率不对等。在push模型下，会增加调度次数，每次调度只处理了几个chunk
     * [introduce unplug mechanism to improve scalability](https://github.com/StarRocks/starrocks/pull/8979)

@@ -49,12 +49,24 @@ categories:
     * `LogicalOperator`：逻辑算子
     * `PhysicalOperator`：物理算子
 1. `OptimizerTask`
-    * `ApplyRuleTask`：执行Rule
+    * `ApplyRuleTask`：执行`Rule`，若`Rule`产生了新的`Expression`：
+        * 驱动`OptimizeExpressionTask`（logical阶段）
+        * 驱动`EnforceAndCostTask`（physical阶段）
     * `DeriveStatsTask`：基于逻辑`Plan`，自底向上计算统计信息
-    * `EnforceAndCostTask`：基于物理`Plan`，计算`Cost`、裁剪`Cost`，以及根据`Property`插入`Enforence`节点
-    * `ExploreGroupTask`
-    * `OptimizeExpressionTask`：空间探索
-    * `OptimizeGroupTask`：空间探索
+    * `EnforceAndCostTask`：基于物理`Plan`
+        * 计算`Cost`、裁剪`Cost`
+        * 根据`Property`插入`Enforence`节点
+        * 驱动孩子节点进行`OptimizeGroupTask`
+        * 可重入
+    * `ExploreGroupTask`：空间探索
+        * 驱动`OptimizeExpressionTask`
+    * `OptimizeExpressionTask`
+        * 驱动`ApplyRuleTask`
+        * 驱动`DeriveStatsTask`
+        * 驱动`ExploreGroupTask`
+    * `OptimizeGroupTask`：入口
+        * 驱动`OptimizeExpressionTask`
+        * 驱动`EnforceAndCostTask`
     * `RewriteTreeTask`：执行Transformation Rule
 1. `PropertyDeriver`
     * `RequiredPropertyDeriver`：当前节点对于孩子节点的所要求的属性，无需依赖孩子节点，可根据算子类型以及参数直接得到。可以有多组，比如join算子，不同的实现方式下（`broadcast/colocate/shuffle/bucket_shuffle`），对孩子节点的属性要求也是不一样的
