@@ -32,20 +32,20 @@ Dijkstra 算法（中文名：迪杰斯特拉算法）是由荷兰计算机科�
 为了方便理解，给出以下流程图
 
 ```mermaid
-graph TD
-st(["开始"])
-op1["将源节点v加入S集合<br>并初始化D"]
-op2["从集合U中找到D(i∈U)<br>最小的顶点i，将其从集<br>合U中删除，并添加到集<br>合S中"]
-op3["更新集合U中顶点j的距离<br>D(j)=min(D(j),D(i)+path(i,j))"]
-cond1{"集合U为空 ?"}
-en(["结束"])
+flowchart TD
+    st(["开始"])
+    op1["将源节点v加入S集合<br>并初始化D"]
+    op2["从集合U中找到D(i∈U)<br>最小的顶点i，将其从集<br>合U中删除，并添加到集<br>合S中"]
+    op3["更新集合U中顶点j的距离<br>D(j)=min(D(j),D(i)+path(i,j))"]
+    cond1{"集合U为空 ?"}
+    en(["结束"])
 
-st --> op1
-op1 --> op2
-op2 --> op3
-op3 --> cond1
-cond1 --> |yes| en
-cond1 --> |no| op2
+    st --> op1
+    op1 --> op2
+    op2 --> op3
+    op3 --> cond1
+    cond1 --> |yes| en
+    cond1 --> |no| op2
 ```
 
 ## 1.3 Java源码

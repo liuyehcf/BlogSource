@@ -96,16 +96,16 @@ categories:
 1. 如何换行？用`<br>`，例如`item2("first line<br>second line")`
 
 ```mermaid
-graph TD
-item1("user@target")
-item2("first line<br>second line")
+flowchart TD
+    item1("user@target")
+    item2("first line<br>second line")
 ```
 
 ## 2.2 横向流程图
 
 ```
-graph LR
-A[方形] -->B(圆角)
+flowchart LR
+    A[方形] -->B(圆角)
     B --> C{条件a}
     C -->|a=1| D[结果1]
     C -->|a=2| E[结果2]
@@ -113,8 +113,8 @@ A[方形] -->B(圆角)
 ```
 
 ```mermaid
-graph LR
-A[方形] -->B(圆角)
+flowchart LR
+    A[方形] -->B(圆角)
     B --> C{条件a}
     C -->|a=1| D[结果1]
     C -->|a=2| E[结果2]
@@ -124,8 +124,8 @@ A[方形] -->B(圆角)
 ## 2.3 竖向流程图
 
 ```
-graph TD
-A[方形] --> B(圆角)
+flowchart TD
+    A[方形] --> B(圆角)
     B --> C{条件a}
     C --> |a=1| D[结果1]
     C --> |a=2| E[结果2]
@@ -133,8 +133,8 @@ A[方形] --> B(圆角)
 ```
 
 ```mermaid
-graph TD
-A[方形] --> B(圆角)
+flowchart TD
+    A[方形] --> B(圆角)
     B --> C{条件a}
     C --> |a=1| D[结果1]
     C --> |a=2| E[结果2]
@@ -175,64 +175,64 @@ sequenceDiagram
 
 ```
 gantt
-dateFormat  YYYY-MM-DD
-title Adding GANTT diagram to mermaid
-excludes weekdays 2014-01-10
+    dateFormat  YYYY-MM-DD
+    title Adding GANTT diagram to mermaid
+    excludes weekdays 2014-01-10
 
-section A section
-Completed task            :done,    des1, 2014-01-06,2014-01-08
-Active task               :active,  des2, 2014-01-09, 3d
-Future task               :         des3, after des2, 5d
-Future task2               :         des4, after des3, 5d
+    section A section
+    Completed task            :done,    des1, 2014-01-06,2014-01-08
+    Active task               :active,  des2, 2014-01-09, 3d
+    Future task               :         des3, after des2, 5d
+    Future task2               :         des4, after des3, 5d
 ```
 
 ```mermaid
 gantt
-dateFormat  YYYY-MM-DD
-title Adding GANTT diagram to mermaid
-excludes weekdays 2014-01-10
+    dateFormat  YYYY-MM-DD
+    title Adding GANTT diagram to mermaid
+    excludes weekdays 2014-01-10
 
-section A section
-Completed task            :done,    des1, 2014-01-06,2014-01-08
-Active task               :active,  des2, 2014-01-09, 3d
-Future task               :         des3, after des2, 5d
-Future task2               :         des4, after des3, 5d
+    section A section
+    Completed task            :done,    des1, 2014-01-06,2014-01-08
+    Active task               :active,  des2, 2014-01-09, 3d
+    Future task               :         des3, after des2, 5d
+    Future task2               :         des4, after des3, 5d
 ```
 
 ## 2.6 类图
 
 ```
 classDiagram
-Class01 <|-- AveryLongClass : Cool
-Class03 *-- Class04
-Class05 o-- Class06
-Class07 .. Class08
-Class09 --> C2 : Where am i?
-Class09 --* C3
-Class09 --|> Class07
-Class07 : equals()
-Class07 : Object[] elementData
-Class01 : size()
-Class01 : int chimp
-Class01 : int gorilla
-Class08 <--> C2: Cool label
+    Class01 <|-- AveryLongClass : Cool
+    Class03 *-- Class04
+    Class05 o-- Class06
+    Class07 .. Class08
+    Class09 --> C2 : Where am i?
+    Class09 --* C3
+    Class09 --|> Class07
+    Class07 : equals()
+    Class07 : Object[] elementData
+    Class01 : size()
+    Class01 : int chimp
+    Class01 : int gorilla
+    Class08 <--> C2: Cool label
 ```
 
 ```mermaid
 classDiagram
-Class01 <|-- AveryLongClass : Cool
-Class03 *-- Class04
-Class05 o-- Class06
-Class07 .. Class08
-Class09 --> C2 : Where am i?
-Class09 --* C3
-Class09 --|> Class07
-Class07 : equals()
-Class07 : Object[] elementData
-Class01 : size()
-Class01 : int chimp
-Class01 : int gorilla
-Class08 <--> C2: Cool label
+    Class01 <|-- AveryLongClass : Cool
+    Class03 *-- Class04
+    Class05 o-- Class06
+    Class07 .. Class08
+    Class09 --> C2 : Where am i?
+    Class09 --* C3
+    Class09 --|> Class07
+    Class07 : equals()
+    Class07 : Object[] elementData
+    Class01 : size()
+    Class01 : int chimp
+    Class01 : int gorilla
+    Class08 <--> C2: Cool label
 ```
 
 # 3 plantuml

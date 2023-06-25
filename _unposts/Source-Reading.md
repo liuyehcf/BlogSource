@@ -23,7 +23,7 @@ categories:
 
 ## 3.1 Optimizer
 
-### 3.1.1 Concepts
+### 3.1.1 Uncategory
 
 1. `Scope`：类似于命名空间namespace
 1. `Relation`：关系实体，数据集
@@ -48,27 +48,7 @@ categories:
 1. `Operator`
     * `LogicalOperator`：逻辑算子
     * `PhysicalOperator`：物理算子
-1. `OptimizerTask`
-    * `ApplyRuleTask`：执行`Rule`，若`Rule`产生了新的`Expression`：
-        * 若生成了`PhysicalOperator`，则驱动`OptimizeExpressionTask`
-        * 若生成了`PhysicalOperator`，则驱动`EnforceAndCostTask`
-    * `DeriveStatsTask`：基于逻辑`Plan`，自底向上计算统计信息
-    * `EnforceAndCostTask`：基于物理`Plan`
-        * 计算`Cost`、裁剪`Cost`
-        * 根据`Property`插入`Enforence`节点
-        * 驱动孩子节点进行`OptimizeGroupTask`
-        * 可重入
-    * `ExploreGroupTask`：空间探索
-        * 驱动`OptimizeExpressionTask`
-    * `OptimizeExpressionTask`
-        * 收集所有的`Rule`，驱动`ApplyRuleTask`执行
-        * 驱动`DeriveStatsTask`
-        * 驱动`ExploreGroupTask`
-    * `OptimizeGroupTask`：入口
-        * 驱动`OptimizeExpressionTask`
-        * 驱动`EnforceAndCostTask`
-    * `RewriteTreeTask`：执行Transformation Rule
-1. `PropertyDeriver`
+1. `PropertyDeriver`：被`EnforceAndCostTask`调用
     * `RequiredPropertyDeriver`：当前节点对于孩子节点的所要求的属性，无需依赖孩子节点，可根据算子类型以及参数直接得到。可以有多组，比如join算子，不同的实现方式下（`broadcast/colocate/shuffle/bucket_shuffle`），对孩子节点的属性要求也是不一样的
     * `OutputPropertyDeriver`：计算当前节点的实际输出的属性，依赖孩子节点，因此整体计算是自底向上的
     * `ChildOutputPropertyGuarantor`：主要针对Join
@@ -93,7 +73,44 @@ categories:
     * `COLOCATE`：互为colocate的表，相同的`key`对应的数据一定在同一个机器上
     * `REPLICATED`
 
-### 3.1.2 Merge Group
+### 3.1.2 OptimizerTask
+
+与论文[Efficiency-In-The-Columbia-Database-Query-Optimizer](/resources/paper/Efficiency-In-The-Columbia-Database-Query-Optimizer.pdf)中`P63-Figure 17`的概念一一对应
+
+* **`OptimizeGroupTask(O_GROUP)`**：入口
+    * 驱动`OptimizeExpressionTask`
+    * 驱动`EnforceAndCostTask`
+* **`OptimizeExpressionTask(O_EXPR)`**
+    * 收集所有的`Rule`，驱动`ApplyRuleTask`执行
+    * 驱动`DeriveStatsTask`
+    * 驱动`ExploreGroupTask`
+* **`EnforceAndCostTask(O_INPUTS)`**：基于物理`Plan`
+    * 计算`Cost`、裁剪`Cost`
+    * 根据`Property`插入`Enforence`节点
+    * 驱动孩子节点进行`OptimizeGroupTask`
+    * 可重入
+* **`ExploreGroupTask(E_GROUP)`**：空间探索
+    * 驱动`OptimizeExpressionTask`
+* **`ApplyRuleTask(APPLY_RULE)`**：执行`Rule`，若`Rule`产生了新的`Expression`：
+    * 若生成了`PhysicalOperator`，则驱动`OptimizeExpressionTask`
+    * 若生成了`PhysicalOperator`，则驱动`EnforceAndCostTask`
+* `RewriteTreeTask`：执行Transformation Rule
+* `DeriveStatsTask`：基于逻辑`Plan`，自底向上计算统计信息
+
+```mermaid
+stateDiagram
+    [*] --> OptimizeGroupTask
+    OptimizeGroupTask --> EnforceAndCostTask
+    OptimizeGroupTask --> OptimizeExpressionTask
+    EnforceAndCostTask --> OptimizeGroupTask
+    ApplyRuleTask --> OptimizeExpressionTask
+    ApplyRuleTask --> EnforceAndCostTask
+    OptimizeExpressionTask --> ExploreGroupTask
+    OptimizeExpressionTask --> ApplyRuleTask
+    ExploreGroupTask --> OptimizeExpressionTask
+```
+
+### 3.1.3 Merge Group
 
 位置：`Memo::mergeGroup`
 

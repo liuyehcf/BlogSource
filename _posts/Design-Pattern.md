@@ -1852,54 +1852,54 @@ The Visitor Pattern is useful when there is a need to add new behaviors or opera
 
 ```mermaid
 classDiagram
-Visitor --* Client
-ObjectStructure --* Client
-Element --* ObjectStructure
-ElementA ..|> Element
-ElementB ..|> Element
-VisitorA ..|> Visitor
-VisitorB ..|> Visitor
+    Visitor --* Client
+    ObjectStructure --* Client
+    Element --* ObjectStructure
+    ElementA ..|> Element
+    ElementB ..|> Element
+    VisitorA ..|> Visitor
+    VisitorB ..|> Visitor
 
-class Visitor {
-    +visit(ElementA) void
-    +visit(ElementB) void
-}
+    class Visitor {
+        +visit(ElementA) void
+        +visit(ElementB) void
+    }
 
-class VisitorA {
-    +visit(ElementA) void
-    +visit(ElementB) void
-}
+    class VisitorA {
+        +visit(ElementA) void
+        +visit(ElementB) void
+    }
 
-class VisitorB {
-    +visit(ElementA) void
-    +visit(ElementB) void
-}
+    class VisitorB {
+        +visit(ElementA) void
+        +visit(ElementB) void
+    }
 
-class Element {
-    +accept(Visitor) void
-}
+    class Element {
+        +accept(Visitor) void
+    }
 
-class ElementA {
-    +accept(Visitor) void
-    +operateA() void
-}
+    class ElementA {
+        +accept(Visitor) void
+        +operateA() void
+    }
 
-class ElementB {
-    +accept(Visitor) void
-    +operateB() void
-}
+    class ElementB {
+        +accept(Visitor) void
+        +operateB() void
+    }
 
-class Client {
-    +Visitor visitor
-    +ObjectStructure objectStructure
-}
+    class Client {
+        +Visitor visitor
+        +ObjectStructure objectStructure
+    }
 
-class ObjectStructure {
-    +ArrayList~Element~ elements
-    +accept(Visitor) void
-    +addElement(Element) void
-    +removeElement(Element) void
-}
+    class ObjectStructure {
+        +ArrayList~Element~ elements
+        +accept(Visitor) void
+        +addElement(Element) void
+        +removeElement(Element) void
+    }
 ```
 
 **访问者模式包含如下角色：**

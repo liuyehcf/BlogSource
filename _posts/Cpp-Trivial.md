@@ -14,33 +14,33 @@ categories:
 # 1 编译过程
 
 ```mermaid
-graph TD
-other_target(["其他目标代码"])
-linker[["链接器"]]
-source(["源代码"])
-compiler[["编译器"]]
-assembly(["汇编代码"])
-assembler[["汇编器"]]
-target(["目标代码"])
-lib(["库文件"])
-result_target(["目标代码"])
-exec(["可执行程序"])
-result_lib(["库文件"])
+flowchart TD
+    other_target(["其他目标代码"])
+    linker[["链接器"]]
+    source(["源代码"])
+    compiler[["编译器"]]
+    assembly(["汇编代码"])
+    assembler[["汇编器"]]
+    target(["目标代码"])
+    lib(["库文件"])
+    result_target(["目标代码"])
+    exec(["可执行程序"])
+    result_lib(["库文件"])
 
-other_target --> linker
+    other_target --> linker
 
-subgraph 编译过程
-source --> compiler
-compiler --> assembly
-assembly --> assembler
-assembler --> target
-end
-target --> linker
-lib --> linker
+    subgraph 编译过程
+        source --> compiler
+        compiler --> assembly
+        assembly --> assembler
+        assembler --> target
+        end
+        target --> linker
+        lib --> linker
 
-linker --> result_target
-linker --> exec
-linker --> result_lib
+    linker --> result_target
+    linker --> exec
+    linker --> result_lib
 ```
 
 # 2 lib
