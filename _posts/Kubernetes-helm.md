@@ -17,7 +17,19 @@ categories:
 
 # 2 Tips
 
-从运行时提取信息，并注入到环境变量中
+## 2.1 仅下载chart package
+
+```sh
+helm pull --destination /path/to/save/my-chart-1.0.0.tgz <repository-url>/<chart-name>
+```
+
+## 2.2 仅渲染chart package
+
+```sh
+helm template <chart-directory>
+```
+
+## 2.3 从运行时提取信息，并注入到环境变量中
 
 ```yaml
 containers:
@@ -28,7 +40,7 @@ containers:
         fieldPath: status.hostIP
 ```
 
-环境变量相互引用
+## 2.4 环境变量相互引用
 
 ```yaml
 containers:
