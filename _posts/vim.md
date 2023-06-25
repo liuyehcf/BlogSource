@@ -1660,27 +1660,24 @@ call plug#end()
 
 **配置文件`~/.vim/coc-settings.json`的内容如下：**
 
-* `common`
-    * `suggest.noselect`：`true/false`，表示自动补全时，是否自动选中第一个。默认为`false`，即自动选中第一个，如果再按`tab`则会跳转到第二个。[Ability to tab to first option](https://github.com/neoclide/coc.nvim/issues/1339)
-* `c-family`
-    * 如何修改头文件搜索路径？在`compile_commands.json`或`compile_flags.txt`中通过`-I`参数指定即可
-    * 索引文件路径：`<project path>/.cache/clangd`
-    * 在`cmake`中设置`set(CMAKE_CXX_STANDARD 17)`，其生成的`compile_commands.json`中包含的编译命令不会包含`-std=gnu++17`参数，于是`clangd`在处理代码中用到的`c++17`新特性时会报`warning`（例如`Decomposition declarations are a C++17 extension (clang -Wc++17-extensions)`）。通过设置`CMAKE_CXX_FLAGS`，加上编译参数`-std=gnu++17`可以解决该问题
-        * 仅仅设置`CMAKE_CXX_STANDARD`是不够的，还需要设置`CMAKE_CXX_STANDARD_REQUIRED`，参考[CMake's set(CMAKE_CXX_STANDARD 11) does not work](https://github.com/OSGeo/PROJ/issues/1924)
-    * 在`cmake`中设置`set(CMAKE_CXX_COMPILER g++)`也不会对`clangd`起作用，例如`clang`没有`-fopt-info-vec`这个参数，仍然会`warning`
-    * 示例如下：
-        ```json
-        {
-            "languageserver": {
-                "clangd": {
-                    "command": "clangd",
-                    "args": ["--log=verbose"],
-                    "rootPatterns": ["compile_flags.txt", "compile_commands.json"],
-                    "filetypes": ["c", "cc", "cpp", "c++", "objc", "objcpp"]
-                }
+* 如何修改头文件搜索路径？在`compile_commands.json`或`compile_flags.txt`中通过`-I`参数指定即可
+* 索引文件路径：`<project path>/.cache/clangd`
+* 在`cmake`中设置`set(CMAKE_CXX_STANDARD 17)`，其生成的`compile_commands.json`中包含的编译命令不会包含`-std=gnu++17`参数，于是`clangd`在处理代码中用到的`c++17`新特性时会报`warning`（例如`Decomposition declarations are a C++17 extension (clang -Wc++17-extensions)`）。通过设置`CMAKE_CXX_FLAGS`，加上编译参数`-std=gnu++17`可以解决该问题
+    * 仅仅设置`CMAKE_CXX_STANDARD`是不够的，还需要设置`CMAKE_CXX_STANDARD_REQUIRED`，参考[CMake's set(CMAKE_CXX_STANDARD 11) does not work](https://github.com/OSGeo/PROJ/issues/1924)
+* 在`cmake`中设置`set(CMAKE_CXX_COMPILER g++)`也不会对`clangd`起作用，例如`clang`没有`-fopt-info-vec`这个参数，仍然会`warning`
+* 示例如下：
+    ```json
+    {
+        "languageserver": {
+            "clangd": {
+                "command": "clangd",
+                "args": ["--log=verbose"],
+                "rootPatterns": ["compile_flags.txt", "compile_commands.json"],
+                "filetypes": ["c", "cc", "cpp", "c++", "objc", "objcpp"]
             }
         }
-        ```
+    }
+    ```
 
 **`Tips`：**
 
@@ -1707,16 +1704,6 @@ call plug#begin()
 nmap <space>e <cmd>CocCommand explorer<cr>
 
 call plug#end()
-```
-
-**配置：`:CocConfig`，增加如下内容**
-
-* `explorer.file.reveal.auto`：使用在文件管理器中高亮当前`buffer`的所对应的文件
-
-```json
-{
-    "explorer.file.reveal.auto": true
-}
 ```
 
 **使用：**
@@ -1876,6 +1863,44 @@ call plug#end()
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
 **使用：与`coc-snippets`自带`snippet`的用法一致**
+
+### 3.10.5 coc-settings.json
+
+```json
+{
+    "languageserver": {
+        "clangd": {
+            "command": "clangd",
+            "args": ["--log=verbose", "--all-scopes-completion", "--query-driver=g++"],
+            "rootPatterns": ["compile_flags.txt", "compile_commands.json"],
+            "filetypes": ["c", "cc", "cpp", "c++", "objc", "objcpp", "tpp"]
+        }
+    },
+    "coc.preferences.diagnostic.displayByAle": false,
+    "diagnostic.virtualText": true,
+    "diagnostic.virtualTextPrefix": "◉ ",
+    "diagnostic.virtualTextCurrentLineOnly": false,
+    "explorer.file.reveal.auto": true,
+    "suggest.noselect": true,
+    "snippets.ultisnips.pythonPrompt": false,
+    "java.format.enable": false,
+    "java.maven.downloadSources": true,
+    "java.saveActions.organizeImports": false,
+    "java.trace.server": "verbose",
+    "java.home": "/usr/lib/jvm/java-17-oracle",
+    "java.debug.vimspector.profile": null,
+    "python.formatting.enabled": false,
+    "pyright.reportGeneralTypeIssues": false,
+    "python.analysis.typeCheckingMode": "off"
+}
+```
+
+* `coc.preferences.diagnostic.displayByAle`：是否以`ALE`插件的模式进行显示
+* `diagnostic.virtualText`：是否显式诊断信息
+* `diagnostic.virtualTextPrefix`：诊断信息的前缀
+* `diagnostic.virtualTextCurrentLineOnly`：是否只显示光标所在行的诊断信息
+* `explorer.file.reveal.auto`：使用在文件管理器中高亮当前`buffer`的所对应的文件
+* `suggest.noselect`：`true/false`，表示自动补全时，是否自动选中第一个。默认为`false`，即自动选中第一个，如果再按`tab`则会跳转到第二个。[Ability to tab to first option](https://github.com/neoclide/coc.nvim/issues/1339)
 
 ## 3.11 [LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim)
 
