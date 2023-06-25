@@ -88,7 +88,7 @@ categories:
 # 2 mermaid
 
 * [mermaid-github](https://github.com/mermaid-js/mermaid)
-* [mermaid-doc](https://mermaid-js.github.io/mermaid/#/)
+* [mermaid-doc](https://mermaid.js.org/intro/)
 
 ## 2.1 Tips
 
@@ -101,7 +101,17 @@ flowchart TD
     item2("first line<br>second line")
 ```
 
-## 2.2 横向流程图
+## 2.2 流程图
+
+Possible FlowChart orientations are:
+
+* `TB` - Top to bottom
+* `TD` - Top-down/ same as top to bottom
+* `BT` - Bottom to top
+* `RL` - Right to left
+* `LR` - Left to right
+
+### 2.2.1 横向
 
 ```
 flowchart LR
@@ -121,10 +131,10 @@ flowchart LR
     F[横向流程图]
 ```
 
-## 2.3 竖向流程图
+### 2.2.2 纵向
 
 ```
-flowchart TD
+flowchart TB
     A[方形] --> B(圆角)
     B --> C{条件a}
     C --> |a=1| D[结果1]
@@ -133,7 +143,7 @@ flowchart TD
 ```
 
 ```mermaid
-flowchart TD
+flowchart TB
     A[方形] --> B(圆角)
     B --> C{条件a}
     C --> |a=1| D[结果1]
@@ -141,7 +151,7 @@ flowchart TD
     F[竖向流程图]
 ```
 
-## 2.4 时序图
+## 2.3 时序图
 
 ```
 sequenceDiagram
@@ -171,7 +181,7 @@ sequenceDiagram
     Bob-->>John: Jolly good!
 ```
 
-## 2.5 甘地图
+## 2.4 甘地图
 
 ```
 gantt
@@ -199,7 +209,7 @@ gantt
     Future task2               :         des4, after des3, 5d
 ```
 
-## 2.6 类图
+## 2.5 类图
 
 ```
 classDiagram

@@ -102,10 +102,7 @@ em: /^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
 
 # 5 mermaid
 
-* [mermaid](https://mermaid.js.org/)
-    * [github](https://github.com/mermaid-js/mermaid)
-    * [doc](https://mermaid.js.org/intro/)
-* [hexo-filter-mermaid-diagrams](https://github.com/webappdevelp/hexo-filter-mermaid-diagrams)
+[hexo-filter-mermaid-diagrams](https://github.com/webappdevelp/hexo-filter-mermaid-diagrams)
 
 **步骤1：安装插件**
 
@@ -115,63 +112,7 @@ npm install hexo-filter-mermaid-diagrams --save
 
 **步骤2：修改主题配置文件`themes/next/_config.yml`，找到`mermaid`的配置项，将`enable`改为true即可**
 
-## 5.1 FlowChart
-
-Possible FlowChart orientations are:
-
-* `TB` - Top to bottom
-* `TD` - Top-down/ same as top to bottom
-* `BT` - Bottom to top
-* `RL` - Right to left
-* `LR` - Left to right
-
-### 5.1.1 Left to Right
-
-**Source：**
-
-```
-flowchart LR
-    A[方形] -->B(圆角)
-    B --> C{条件a}
-    C -->|a=1| D[结果1]
-    C -->|a=2| E[结果2]
-    F[横向流程图]
-```
-
-**Render：**
-
-```mermaid
-flowchart LR
-    A[方形] -->B(圆角)
-    B --> C{条件a}
-    C -->|a=1| D[结果1]
-    C -->|a=2| E[结果2]
-    F[横向流程图]
-```
-
-### 5.1.2 Top to Bottom
-
-**Source：**
-
-```
-flowchart TB
-    A[方形] --> B(圆角)
-    B --> C{条件a}
-    C --> |a=1| D[结果1]
-    C --> |a=2| E[结果2]
-    F[竖向流程图]
-```
-
-**Render：**
-
-```mermaid
-flowchart TB
-    A[方形] --> B(圆角)
-    B --> C{条件a}
-    C --> |a=1| D[结果1]
-    C --> |a=2| E[结果2]
-    F[竖向流程图]
-```
+用法参考{% post_link Markdown %}
 
 # 6 plantuml时序图
 
