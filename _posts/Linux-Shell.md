@@ -326,7 +326,7 @@ shell中的特殊符号包括如下几种
     * 在正表达式中，方括号表示该位置可以匹配的字符集范围
 1. **`[[]]`：双中括号（double brackets）**
     * **`[[`是 bash 程序语言的关键字**（注意与`[`的区别）
-    * 作为test用途。`[[]]`比`[]`支持更多的运算符，比如：`&&,||,<,>`操作符。同时，支持正则，例如`[[ hello == hell? ]]`
+    * 作为test用途。`[[]]`比`[]`支持更多的运算符，比如：`&&,||,<,>`操作符。同时，支持正则，例如`[[ hello = hell? ]]`
     * bash把双中括号中的表达式看作一个单独的元素，并返回一个退出状态码
 1. **`$[...]`：表示整数扩展（integer expansion）**
     * 详见[数值运算](#数值运算)
@@ -618,7 +618,7 @@ fi
 ```sh
 str1="abcd"
 str2="bc"
-if [[ "${str1}" == *"${str2}"* ]]; then
+if [[ "${str1}" = *"${str2}"* ]]; then
     echo "contains"
 else
     echo "not contains"
@@ -647,11 +647,11 @@ function trim() {
     local trimmed="$1"
 
     # Strip leading spaces.
-    while [[ "${trimmed}" == " "* ]]; do
+    while [[ "${trimmed}" = " "* ]]; do
        trimmed="${trimmed## }"
     done
     # Strip trailing spaces.
-    while [[ "${trimmed}" == *" " ]]; do
+    while [[ "${trimmed}" = *" " ]]; do
         trimmed="${trimmed%% }"
     done
 
