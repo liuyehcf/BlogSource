@@ -206,7 +206,13 @@ usermod -d <new_dir> <username>
 
 * `echo '123456' | passwd --stdin root`
 
-## 1.18 id
+## 1.18 chpasswd
+
+**示例：**
+
+* `echo 'username:password' | sudo chpasswd`
+
+## 1.19 id
 
 用于查看用户信息，包括`uid`，`gid`等
 
@@ -217,7 +223,7 @@ usermod -d <new_dir> <username>
 * `id -u`：查看当前用户的uid
 * `id -nu <uid>`：查看指定uid对应的用户名
 
-## 1.19 readelf
+## 1.20 readelf
 
 用于读取、解析可执行程序
 
@@ -230,7 +236,7 @@ usermod -d <new_dir> <username>
 
 * `readelf -d libc.so.6`
 
-## 1.20 getconf
+## 1.21 getconf
 
 查看系统相关的信息
 
@@ -238,7 +244,7 @@ usermod -d <new_dir> <username>
 
 * `getconf -a | grep CACHE`：查看CPU cache相关的配置项
 
-## 1.21 hostnamectl
+## 1.22 hostnamectl
 
 **示例：**
 
@@ -246,7 +252,7 @@ usermod -d <new_dir> <username>
 hostnamectl set-hostname <name>
 ```
 
-## 1.22 date
+## 1.23 date
 
 **示例：**
 
@@ -254,7 +260,7 @@ hostnamectl set-hostname <name>
 * `date "+%Y-%m-%d %H:%M:%S"`：指定时间格式
 * `date -s '2014-12-25 12:34:56'`：修改系统时间
 
-## 1.23 ntpdate
+## 1.24 ntpdate
 
 **示例：**
 
