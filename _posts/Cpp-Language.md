@@ -1132,6 +1132,9 @@ Align4's size = 16
 
 **`sizeof`用于获取对象的内存大小**
 
+* `sizeof(int32_t)`：4
+* `sizeof(char[2][2][2])`：8
+
 ### 3.2.3 alignof
 
 **`alignof`用于获取对象的有效对齐值。`alignas`用于设置有效对其值（不允许小于默认的有效对齐值）**
