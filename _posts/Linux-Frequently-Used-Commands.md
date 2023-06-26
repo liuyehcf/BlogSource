@@ -2130,8 +2130,10 @@ netstat的功能就是查看网络的连接状态，而网络连接状态中，�
 * `ip link`：查看所有网卡
 * `ip link up`：查看up状态的网卡
 * `ip -d link`：查看详细的信息
+    * `ip -d link show lo`
 * `ip link set eth0 up`：开启网卡
 * `ip link set eth0 down`：关闭网卡
+* `ip link delete tunl0`：删除网卡
 * `cat /sys/class/net/xxx/carrier`：查看网卡是否插了网线（对应于`ip link`的`state UP`或`state DOWN`
 
 ### 5.5.3 ip route
