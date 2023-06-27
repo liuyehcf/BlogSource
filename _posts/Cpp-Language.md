@@ -11,11 +11,11 @@ categories:
 
 <!--more-->
 
-# 1 版本新特性
+# 1 Features
 
 [modern-cpp-features](https://github.com/AnthonyCalandra/modern-cpp-features)
 
-# 2 预处理
+# 2 Preprocessor Directives
 
 ## 2.1 Conditions
 
@@ -107,7 +107,7 @@ else
 #define foo(x) do { bar(x); baz(x); } while (0)
 ```
 
-#### 2.2.1.2 variant
+#### 2.2.1.2 Variant
 
 借助宏的嵌套，以及约定命名规则，我们可以实现自动生成`else if`分支，示例代码如下：
 
@@ -206,7 +206,7 @@ int main() {
 }
 ```
 
-#### 2.2.1.3 comma problem
+#### 2.2.1.3 Comma Problem
 
 [pass method with template arguments to a macro](https://stackoverflow.com/questions/4496842/pass-method-with-template-arguments-to-a-macro)
 
@@ -300,9 +300,9 @@ int main() {
 
 * [C/C++ 宏编程的艺术](https://bot-man-jl.github.io/articles/?post=2020/Macro-Programming-Art)
 
-# 3 关键字
+# 3 Key Word
 
-## 3.1 类型限定符
+## 3.1 Type Qualifier
 
 ### 3.1.1 const
 
@@ -315,7 +315,7 @@ int main() {
 * `.h`文件中：`extern const int a;`
 * `.cpp`文件中：`extern const int a=f();`
 
-#### 3.1.1.1 顶层/底层const
+#### 3.1.1.1 Top/Bottom Level const
 
 **只有指针和引用才有顶层底层之分**
 
@@ -401,7 +401,7 @@ int main() {
 }
 ```
 
-#### 3.1.1.2 const实参和形参
+#### 3.1.1.2 const Actual and Formal Parameters
 
 实参初始化形参时会自动忽略掉顶层`const`属性
 
@@ -418,11 +418,11 @@ int main() {
 }
 ```
 
-#### 3.1.1.3 const成员
+#### 3.1.1.3 const Member
 
 构造函数中显式初始化：在初始化部分进行初始化，而不能在函数体内初始化；如果没有显式初始化，就调用定义时的初始值进行初始化
 
-#### 3.1.1.4 const成员函数
+#### 3.1.1.4 const Member Function
 
 **`const`关键字修饰的成员函数，不能修改当前类的任何字段的值，如果字段是对象类型，也不能调用非`const`修饰的成员方法。（有一个特例，就是当持有的是某个类型的指针时，可以通过该指针调用非`const`方法）**
 
@@ -593,7 +593,7 @@ Disassembly of section .text:
   80:	c3                   	ret
 ```
 
-#### 3.1.2.1 visibility验证
+#### 3.1.2.1 Visibility Verification
 
 首先明确一下`visibility`的概念，这里我对它的定义是：当`A`和`B`两个线程，`A`对变量`x`进行写操作，`B`对变量`x`进行读操作，若时间上写操作先发生于读操作时，读操作能够读取到写操作写入的值
 
@@ -845,7 +845,7 @@ volatile, β=0.0271394
 
 **如果用Java进行上述等价验证，会发现实际结果与预期吻合，这里不再赘述**
 
-#### 3.1.2.2 atomicity验证
+#### 3.1.2.2 Atomicity Verification
 
 `std::atomic`可以为其他非原子变量提供`happens-before`关系
 
@@ -1002,9 +1002,9 @@ private:
 };
 ```
 
-## 3.2 类型长度
+## 3.2 Type Length
 
-### 3.2.1 内存对齐
+### 3.2.1 Memory Alignment
 
 **内存对齐最最底层的原因是内存的IO是以`8`个字节`64bit`为单位进行的**
 
@@ -1241,7 +1241,7 @@ alignof(decltype(array1[1]))=4
 alignof(decltype(array2[1]))=64
 ```
 
-## 3.4 类型推断
+## 3.4 Type Inference
 
 ### 3.4.1 auto
 
@@ -1520,7 +1520,7 @@ dynamic_cast<Base*>(ptr3) != nullptr: true
 dynamic_cast<Derive*>(ptr3) != nullptr: true
 ```
 
-## 3.5 类型转换
+## 3.5 Type Conversion
 
 ### 3.5.1 static_cast
 
@@ -1662,7 +1662,7 @@ int main() {
 }
 ```
 
-## 3.6 存储类说明符
+## 3.6 Storage Type Qualifier
 
 ### 3.6.1 static
 
@@ -1686,7 +1686,7 @@ int main() {
     * 对于类模板
     * 对于函数模板
 
-#### 3.6.2.1 共享全局变量
+#### 3.6.2.1 Shared Global Variable
 
 **每个源文件中都得有该变量的声明，但是只有一个源文件中可以包含该变量的定义，通常可以采用如下做法**
 
@@ -1807,7 +1807,7 @@ addr distance between t1 and t2 is: 8392704
 
 可以发现，在不同的线程中，`value`的内存地址是不同的，且处于高位。相邻两个线程，`value`地址的差值差不多就是栈空间的大小（`ulimit -s`）
 
-#### 3.6.4.1 初始化
+#### 3.6.4.1 Initialization
 
 ```cpp
 #include <iostream>
@@ -1904,9 +1904,9 @@ t1: foo'address=0x7f2d680166f8, value=0
 dtor
 ```
 
-## 3.7 继承与多态
+## 3.7 Inheritance and Polymorphism
 
-### 3.7.1 继承方式
+### 3.7.1 Inheritance Modes
 
 | 继承方式\成员的权限 | public | protected | private |
 |:--|:--|:--|:--|
@@ -2112,7 +2112,7 @@ public:
 void A::func() noexcept {}
 ```
 
-## 3.11 throw与异常
+## 3.11 throw and error
 
 `throw`关键字可以抛出任何对象，例如可以抛出一个整数
 
@@ -2139,9 +2139,9 @@ void *buf = // 在这里为buf分配内存
 Class *pc = new (buf) Class();  
 ```
 
-# 4 模板
+# 4 template
 
-## 4.1 模板类型
+## 4.1 template Type
 
 1. `template`模板
 1. `typename`模板
@@ -2176,7 +2176,7 @@ int main() {
 }
 ```
 
-## 4.2 形参包
+## 4.2 template Parameter Pack
 
 [C++ 语言构造参考手册-形参包](https://www.bookstack.cn/read/cppreference-language/5c04935094badaf1.md)
 
@@ -2198,7 +2198,7 @@ int main() {
 
 * `模式 ...`
 
-## 4.3 折叠表达式
+## 4.3 Fold Expressions
 
 [C++ 语言构造参考手册-折叠表达式](https://www.bookstack.cn/read/cppreference-language/62e23cda3198622e.md)
 
@@ -2297,9 +2297,9 @@ int main() {
 }
 ```
 
-## 4.4 如何遍历形参包
+## 4.4 Traverse Parameter Pack
 
-### 4.4.1 括号初始化器
+### 4.4.1 Parenthesis Initializer
 
 这里用到了一个技巧，[逗号运算符](https://www.bookstack.cn/read/cppreference-language/ae53223225119599.md#9bocdk)：对于逗号表达式`E1, E2`中，对`E1`求值并舍弃其结果（尽管当它具有类类型时，直到包含它的全表达式的结尾之前都不会销毁它），其副作用在表达式`E2`的求值开始前完成
 
@@ -2444,7 +2444,7 @@ int main() {
 }
 ```
 
-## 4.5 非类型模板参数
+## 4.5 Non-Type template Parameter
 
 我们还可以在模板中定义非类型参数，一个非类型参数表示一个值而非一个类型。当一个模板被实例化时，非类型参数被编译器推断出的值所代替，这些值必须是常量表达式，从而允许编译器在编译时实例化模板。一个非类型参数可以是一个整型（枚举可以理解为整型），或是一个指向对象或函数类型的指针或引用
 
@@ -2480,7 +2480,7 @@ int main() {
 }
 ```
 
-## 4.6 模板形参无法推断
+## 4.6 When template parameters cannot be inferred
 
 **通常，在`::`左边的模板形参是无法进行推断的（这里的`::`特指用于连接两个类型），例如下面这个例子**
 
@@ -2505,7 +2505,7 @@ int main() {
 }
 ```
 
-## 4.7 typename消除歧义
+## 4.7 Using typename to Disambiguate
 
 **什么情况下会有歧义？。例如`foo* ptr;`**
 
@@ -2547,7 +2547,7 @@ typename T::value_type sum(const T &container) {
 }
 ```
 
-## 4.8 template消除歧义
+## 4.8 Using template to Disambiguate
 
 **什么情况下会有歧义？。例如`container.emplace<int>(1);`**
 
@@ -2620,7 +2620,7 @@ void bar() {
 }
 ```
 
-## 4.9 template参数列表中定义类型别名
+## 4.9 Defining a type alias in a template parameter list
 
 语法上，我们是无法在template的参数列表中定义别名的（无法使用`using`）。但是我们可以通过定义有默认值的类型形参来实现类似类型别名的功能，如下：
 
@@ -2632,7 +2632,7 @@ ValueType& get(HashMap& map, const KeyType& key) {
 }
 ```
 
-## 4.10 非模板子类访问模板父类中的成员
+## 4.10 Accessing members of a template parent class from a non-template derived class
 
 * 方式1：`MemberName`
 * 方式2：`this->MemberName`
@@ -2656,7 +2656,7 @@ int main() {
 }
 ```
 
-## 4.11 模板子类访问模板父类中的成员
+## 4.11 Accessing members of a template parent class from a template derived class
 
 * 访问方式1：`ParentClass<Template Args...>::MemberName`
 * 访问方式2：`this->MemberName`
@@ -2681,7 +2681,7 @@ int main() {
 }
 ```
 
-## 4.12 模板作为模板形参
+## 4.12 template as a template Parameter
 
 [What are some uses of template template parameters?](https://stackoverflow.com/questions/213761/what-are-some-uses-of-template-template-parameters)
 
@@ -2711,7 +2711,7 @@ int main() {
 }
 ```
 
-## 4.13 模板的定义与实现分离
+## 4.13 Separating the definition and implementation of a template
 
 我们可以将模板的声明和定义分别放在两个文件中，这样可以使得代码结构更加清晰。例如，假设有两个文件`test.h`和`test.tpp`，其内容分别如下：
 
@@ -3705,7 +3705,7 @@ type=std::atomic<int32_t>, count=2000000
 * [并行编程——内存模型之顺序一致性](https://www.cnblogs.com/jiayy/p/3246157.html)
 * [漫谈内存一致性模型](https://zhuanlan.zhihu.com/p/91406250)
 
-# 6 Lambda表达式
+# 6 Lambda
 
 [Lambda expressions (since C++11)](https://en.cppreference.com/w/cpp/language/lambda)
 
@@ -3713,7 +3713,7 @@ type=std::atomic<int32_t>, count=2000000
 
 * 每个`Lambda`表达式都是独一无二的类型，且无法显式声明
 
-## 6.1 `std::function`与Lambda表达式
+## 6.1 `std::function` and Lambda
 
 在大多数场景下，`Lambda`和`std::function`可以相互替换使用，但它们之间存在一些差异（[What's the difference between a lambda expression and a function pointer (callback) in C++?](https://www.quora.com/Whats-the-difference-between-a-lambda-expression-and-a-function-pointer-callback-in-C++)）：
 
@@ -4054,9 +4054,9 @@ private:
 
 # 10 Tips
 
-## 10.1 类相关
+## 10.1 Class Related
 
-### 10.1.1 如何在类中定义静态成员
+### 10.1.1 How to define static members in a class
 
 **在类中声明静态成员，在类外定义（赋值）静态成员，示例如下：**
 
@@ -4084,7 +4084,7 @@ gcc -o main main.cpp -lstdc++ -Wall
 ./main
 ```
 
-### 10.1.2 类的非静态成员无法进行类型推导
+### 10.1.2 Non-static members of a class cannot undergo type deduction
 
 类的非静态成员，无法进行类型推导，必须显式指定类型（因为类型信息必须是不可变的）；静态成员可以。例如下面示例就存在语法错误：
 
@@ -4113,9 +4113,9 @@ private:
 };
 ```
 
-## 10.2 初始化
+## 10.2 Initialization
 
-### 10.2.1 初始化列表
+### 10.2.1 Initializer List
 
 1. 对于内置类型，直接进行值拷贝。使用初始化列表还是在构造函数体中进行初始化没有差别
 1. 对于类类型
@@ -4226,7 +4226,7 @@ A's default constructor
 A's move assign operator
 ```
 
-### 10.2.2 各种初始化类型
+### 10.2.2 Various Initialization Types
 
 1. 默认初始化：`type variableName;`
 1. 直接初始化/构造初始化（至少有1个参数）：`type variableName(args);`
@@ -4359,7 +4359,7 @@ A's (int, int) constructor
 ============(值初始化 a11)============
 ```
 
-### 10.2.3 类成员的初始化顺序
+### 10.2.3 Initialization Order of class Members
 
 1. 初始化列表
 1. 成员定义处的列表初始化，当且仅当该成员未出现在初始化列表中时才会生效
@@ -4412,7 +4412,7 @@ initialized_at_initialization_list
 initialized_at_construct_block
 ```
 
-### 10.2.4 静态局部变量的初始化
+### 10.2.4 Initialization of static Local Variables
 
 ```cpp
 void foo() {
@@ -4445,9 +4445,9 @@ void foo() {
 }
 ```
 
-## 10.3 指针
+## 10.3 Pointer
 
-### 10.3.1 成员函数指针
+### 10.3.1 Member Function Pointer
 
 成员函数指针需要通过`.*`或者`->*`运算符进行调用
 
@@ -4506,7 +4506,7 @@ int main() {
 }
 ```
 
-### 10.3.2 如何传递多维指针参数
+### 10.3.2 How to pass multi-dimensional pointer parameters
 
 ```cpp
 #include <iostream>
@@ -4546,9 +4546,9 @@ int main() {
 }
 ```
 
-## 10.4 引用
+## 10.4 Reference
 
-### 10.4.1 引用赋值
+### 10.4.1 Reference Initialization
 
 **引用只能在定义处初始化**
 
@@ -4574,7 +4574,7 @@ b=2
 ref=2
 ```
 
-## 10.5 mock class
+## 10.5 Mock class
 
 有时在测试的时候，我们需要mock一个类的实现，我们可以在测试的cpp文件中实现这个类的所有方法（**注意，必须是所有方法**），就能够覆盖原有库文件中的实现。下面以一个例子来说明
 
@@ -4782,7 +4782,7 @@ int main() {
 
 # 11 FAQ
 
-## 11.1 为什么free和delete释放内存时不用指定大小
+## 11.1 Why is it unnecessary to specify the size when releasing memory with free and delete
 
 [How does free know how much to free?](https://stackoverflow.com/questions/1518711/how-does-free-know-how-much-to-free)
 
@@ -4804,9 +4804,9 @@ ____ The allocated block ____
           +-- The address you are given
 ```
 
-## 11.2 形参类型是否需要左右值引用
+## 11.2 Do parameter types require lvalue or rvalue references
 
-## 11.3 返回类型是否需要左右值引用
+## 11.3 Does the return type require lvalue or rvalue references
 
 # 12 参考
 
