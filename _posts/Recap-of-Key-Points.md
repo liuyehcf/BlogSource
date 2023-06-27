@@ -295,20 +295,12 @@ categories:
     - Consistency
     - High Availability
     - Scalability
-- Execution
-    - Execution Model
-        - Task-Based Parallelization
-            - User Space Scheduling
-                - Event-Driven Model
-                - Polling-Driven Model
-        - Volcano Model
-            - Kernel Space Scheduling
-- Database Optimization
-    - Plan Stage Optimization
-        - Parser
-            - Grammar Checking
-        - Analyzer
-            - Type Processing
+- Database Framework
+    - Parser
+        - Grammar Checking
+    - Analyzer
+        - Type Processing
+    - Optimizer
         - CBO Optimizer
             - Basic Concept
                 - Expression
@@ -330,38 +322,53 @@ categories:
                 - Histogram Statistics
             - Transformation Rules
             - Implementation Rules
-        - Subquery
-            - Position
-                - WHERE Clause
-                - SELECT Clause
-                - GRUOP BY Clause
-                - ORDER BY Clause
-                - HAVING Clause
-            - Whether Correlated
-                - Correlated Subquery
-                    - Left Outer Join(SELECT Clause)
-                    - Left Semi Join(WHERE Clause)
-                - Non-correlated Subquery
-            - Characteristics of Generated Data
-                - Scalar Subquery
-                - Existential Test Subquery
-                - Quantified Comparation Subquery
-                    - ANY
-                    - SOME
-                    - ALL
-        - CTE(Common Table Expressions)
-            - CTEProducer & CTEConsumer & CTEAnchor
-            - Plan Enumeration
-        - Multiply Stage Aggregate
-            - 3 Stage Aggregate(COUNT(DISTINCT) + GROUP BY)
-            - 4 Stage Aggregate(COUNT(DISTINCT))
-    - Execution Stage Optimization
-        - Parallelism
-        - Code Generation
-        - Vectorization
-        - Runtime Filter
-            - Join
-            - TopN
+        - Heuristic Optimization
+            - Subquery
+                - Position
+                    - WHERE Clause
+                    - SELECT Clause
+                    - GRUOP BY Clause
+                    - ORDER BY Clause
+                    - HAVING Clause
+                - Whether Correlated
+                    - Correlated Subquery
+                        - Left Outer Join(SELECT Clause)
+                        - Left Semi Join(WHERE Clause)
+                    - Non-correlated Subquery
+                - Characteristics of Generated Data
+                    - Scalar Subquery
+                    - Existential Test Subquery
+                    - Quantified Comparation Subquery
+                        - ANY
+                        - SOME
+                        - ALL
+            - CTE(Common Table Expressions)
+                - CTEProducer & CTEConsumer & CTEAnchor
+                - Plan Enumeration
+            - Multiply Stage Aggregate
+                - 3 Stage Aggregate(COUNT(DISTINCT) + GROUP BY)
+                - 4 Stage Aggregate(COUNT(DISTINCT))
+    - Execution
+        - Morsel-Driven Parallelism(Task-Based Parallelism)
+            - Morsel is a small fragments of input data
+            - User Space Scheduling
+            - Task Readiness Analysis
+                - Polling
+                - Event-Driven
+                - Task Dependency Tracking
+                - Task Queues
+            - Flexible Resource Control
+            - Flexible Priority Control
+        - Volcano Parallelism
+            - Kernel Space Scheduling
+            - Easy of Implementation
+        - Optimization
+            - Parallelism
+            - Code Generation
+            - Vectorization
+            - Runtime Filter
+                - Join
+                - TopN
 - Architecture
     - Shared Nothing Architecture
     - Shared Disk Architecture
@@ -409,13 +416,26 @@ Polling Model:
     1. Delayed responsiveness: The polling model may introduce latency in event handling since events are not immediately processed but rather checked at regular intervals. Real-time responsiveness can be compromised.
     1. Inefficient resource utilization: Continuous polling can consume unnecessary resources, especially in scenarios where events are infrequent or rare. This can impact system performance and scalability.
 
-## 3.2 Cache vs. Materialized View
+In StarRocks' pipeline execution engine, opting for a polling model can offer significant advantages. This preference arises from the fact that the evaluation of driver status lacks strict constraints, necessitating the introduction of event-driven logic in various other common components. As a result, this proliferation of event-driven logic significantly amplifies the overall complexity.
+
+## 3.2 Task Readiness Analysis
+
+In the context of task-based parallelism and scheduling, the specific mechanism for determining task readiness is often referred to as task dependency analysis or task readiness analysis. It involves analyzing the dependencies and conditions that need to be met for a task to be considered ready for execution.
+
+Here are a few common approaches:
+
+1. Task Dependency Tracking: The scheduler may utilize a task dependency graph or other data structures to track dependencies between tasks. It checks whether all the dependencies of a task have been satisfied, indicating that the task is ready for execution.
+1. Task Queues: Tasks waiting for execution are typically organized in queues or other data structures. The scheduler checks the task queues to identify tasks that are ready for execution based on certain conditions, such as all prerequisites being met or resources becoming available.
+1. Event-Based Signaling: The system may employ event-driven mechanisms to notify the scheduler when a task becomes ready. Tasks or other components of the system can send signals or notifications to the scheduler, indicating that a task is ready to be executed.
+1. Polling or Periodic Checks: In some cases, the scheduler may periodically poll or check the state of tasks to determine their readiness. It can iterate over the task list and evaluate their readiness based on certain criteria
+
+## 3.3 Cache vs. Materialized View
 
 A cache is filled on demand when there is a cache miss (so the first request for a given object is always slow, and you have the cold-start problem mentioned in Figure 5-10). By contrast, a materialized view is precomputed; that is, its entire contents are computed before anyone asks for it—just like an index. This means there is no such thing as a cache miss: if an item doesn’t exist in the materialized view, it doesn’t exist in the database. There is no need to fall back to some other underlying database. (This doesn’t mean the entire view has to be in memory: just like an index, it can be written to disk, and the hot parts will automatically be kept in memory in the operating system’s page cache.)
 
 With a materialized view there is a well-defined translation process that takes the write-optimized events in the log and transforms them into the read-optimized representation in the view. By contrast, in the typical read-through caching approach, the cache management logic is deeply interwoven with the rest of the application, making it prone to bugs and difficult to reason about
 
-## 3.3 Uncategory
+## 3.4 Uncategory
 
 1. Raft协议过程
 1. LSM-tree原理

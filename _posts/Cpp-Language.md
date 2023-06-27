@@ -4506,6 +4506,46 @@ int main() {
 }
 ```
 
+### 10.3.2 如何传递多维指针参数
+
+```cpp
+#include <iostream>
+
+// Using a pointer to a 2D array
+void yourFunction1(bool (*rows)[9]) {
+    // Access elements of the 2D array
+    for (int i = 0; i < 9; i++) {
+        for (int j = 0; j < 9; j++) {
+            std::cout << rows[i][j] << " ";
+        }
+        std::cout << std::endl;
+    }
+}
+
+// Using a reference to a 2D array
+void yourFunction2(bool (&rows)[9][9]) {
+    // Access elements of the 2D array
+    for (int i = 0; i < 9; i++) {
+        for (int j = 0; j < 9; j++) {
+            std::cout << rows[i][j] << " ";
+        }
+        std::cout << std::endl;
+    }
+}
+
+int main() {
+    bool rows[9][9] = {
+            // Initialize the array as needed
+    };
+
+    // Pass the local variable to the functions
+    yourFunction1(rows);
+    yourFunction2(rows);
+
+    return 0;
+}
+```
+
 ## 10.4 引用
 
 ### 10.4.1 引用赋值
