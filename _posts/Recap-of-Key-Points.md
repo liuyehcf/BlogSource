@@ -350,17 +350,25 @@ categories:
                 - 4 Stage Aggregate(COUNT(DISTINCT))
     - Execution
         - Morsel-Driven Parallelism(Task-Based Parallelism)
-            - Morsel is a small fragments of input data
-            - User Space Scheduling
-            - Task Readiness Analysis
-                - Polling
-                - Event-Driven
-                - Task Dependency Tracking
-                - Task Queues
+            - Morsel
+            - Tasks
+                - Independent or Loosely Coupled
+            - Execution Link
+            - Scheduling
+                - Fine-Grained Scheduling
+                - Load Balancing
+                - Work Stealing
+                - Task Readiness Analysis
+                    - Polling
+                    - Event-Driven
+                    - Task Dependency Tracking
+                    - Task Queues
             - Flexible Resource Control
             - Flexible Priority Control
         - Volcano Parallelism
-            - Kernel Space Scheduling
+            - Execution Tree
+            - Scheduling
+                - Kernel Space Scheduling
             - Easy of Implementation
         - Optimization
             - Parallelism
