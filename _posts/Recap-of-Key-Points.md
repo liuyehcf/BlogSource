@@ -353,23 +353,29 @@ categories:
             - Morsel
             - Tasks
                 - Independent or Loosely Coupled
-            - Execution Link
+            - Worker
             - Scheduling
-                - Fine-Grained Scheduling
-                - Load Balancing
+                - Unit: Execution Link
+                - Global Balance
+                    - Local Queue and Global Queue
+                    - Precise Wake-Up to Prevent False Wake-Ups
                 - Work Stealing
+                    - Local Queue
+                    - False Wake-Ups(Can't steal a task)
                 - Task Readiness Analysis
                     - Polling
+                        - Separate Thread
+                        - Worker Thread
                     - Event-Driven
-                    - Task Dependency Tracking
-                    - Task Queues
-            - Flexible Resource Control
-            - Flexible Priority Control
+            - Pros:
+                - Fine-Grained Scheduling
+                - Flexible Resource Control
+                - Flexible Priority Control
         - Volcano Parallelism
-            - Execution Tree
-            - Scheduling
-                - Kernel Space Scheduling
-            - Easy of Implementation
+            - Kernel Space Scheduling
+                - Unit: Execution Tree
+            - Pros:
+                - Easy of Implementation
         - Optimization
             - Parallelism
             - Code Generation
@@ -400,9 +406,16 @@ categories:
     - Data Archiving
 {% endmarkmap %}
 
-## 3.1 Event-driven model & Polling Model
+## 3.1 Task Readiness Analysis
 
-Event-Driven Model:
+In the context of task-based parallelism and scheduling, the specific mechanism for determining task readiness is often referred to as task dependency analysis or task readiness analysis. It involves analyzing the dependencies and conditions that need to be met for a task to be considered ready for execution.
+
+Here are a few common approaches:
+
+1. Event-Driven Model: The system may employ event-driven mechanisms to notify the scheduler when a task becomes ready. Tasks or other components of the system can send signals or notifications to the scheduler, indicating that a task is ready to be executed.
+1. Polling Model: In some cases, the scheduler may periodically poll or check the state of tasks to determine their readiness. It can iterate over the task list and evaluate their readiness based on certain criteria
+
+**Event-Driven Model:**
 
 * Pros:
     1. Efficiency: In the event-driven model, the program only consumes resources when an event occurs. This leads to efficient resource utilization as the program is not constantly checking for events.
@@ -413,7 +426,7 @@ Event-Driven Model:
     * Potential event ordering issues: The order in which events occur and are processed can sometimes introduce subtle bugs or race conditions, requiring careful design and synchronization mechanisms.
     * Difficulty in debugging: Debugging event-driven programs can be more challenging due to their asynchronous nature. Tracking the flow of events and identifying the cause of issues can be trickier compared to sequential programs.
 
-Polling Model:
+**Polling Model:**
 
 * Pros:
     1. Simplicity: The polling model is straightforward to implement as it involves periodic checking for events. The program follows a sequential flow and is easy to understand.
@@ -426,28 +439,24 @@ Polling Model:
 
 In StarRocks' pipeline execution engine, opting for a polling model can offer significant advantages. This preference arises from the fact that the evaluation of driver status lacks strict constraints, necessitating the introduction of event-driven logic in various other common components. As a result, this proliferation of event-driven logic significantly amplifies the overall complexity.
 
-## 3.2 Task Readiness Analysis
-
-In the context of task-based parallelism and scheduling, the specific mechanism for determining task readiness is often referred to as task dependency analysis or task readiness analysis. It involves analyzing the dependencies and conditions that need to be met for a task to be considered ready for execution.
-
-Here are a few common approaches:
-
-1. Task Dependency Tracking: The scheduler may utilize a task dependency graph or other data structures to track dependencies between tasks. It checks whether all the dependencies of a task have been satisfied, indicating that the task is ready for execution.
-1. Task Queues: Tasks waiting for execution are typically organized in queues or other data structures. The scheduler checks the task queues to identify tasks that are ready for execution based on certain conditions, such as all prerequisites being met or resources becoming available.
-1. Event-Based Signaling: The system may employ event-driven mechanisms to notify the scheduler when a task becomes ready. Tasks or other components of the system can send signals or notifications to the scheduler, indicating that a task is ready to be executed.
-1. Polling or Periodic Checks: In some cases, the scheduler may periodically poll or check the state of tasks to determine their readiness. It can iterate over the task list and evaluate their readiness based on certain criteria
-
-## 3.3 Cache vs. Materialized View
+## 3.2 Cache vs. Materialized View
 
 A cache is filled on demand when there is a cache miss (so the first request for a given object is always slow, and you have the cold-start problem mentioned in Figure 5-10). By contrast, a materialized view is precomputed; that is, its entire contents are computed before anyone asks for it—just like an index. This means there is no such thing as a cache miss: if an item doesn’t exist in the materialized view, it doesn’t exist in the database. There is no need to fall back to some other underlying database. (This doesn’t mean the entire view has to be in memory: just like an index, it can be written to disk, and the hot parts will automatically be kept in memory in the operating system’s page cache.)
 
 With a materialized view there is a well-defined translation process that takes the write-optimized events in the log and transforms them into the read-optimized representation in the view. By contrast, in the typical read-through caching approach, the cache management logic is deeply interwoven with the rest of the application, making it prone to bugs and difficult to reason about
 
-## 3.4 Uncategory
+## 3.3 Uncategory
 
 1. Raft协议过程
 1. LSM-tree原理
 1. Bloom-filter原理
 1. WAL设计
 1. 异步schema变更原理
+1. 调度算法
+    1. First-Come, First-Served，FCFS
+    1. Shortest Job Next，SJN
+    1. Priority Scheduling
+    1. Round Robin Scheduling
+    1. Multilevel Feedback Queue Scheduling
+    1. Highest Response Ratio Next，HRRN
 
