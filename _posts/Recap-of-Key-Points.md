@@ -459,4 +459,12 @@ With a materialized view there is a well-defined translation process that takes 
     1. Round Robin Scheduling
     1. Multilevel Feedback Queue Scheduling
     1. Highest Response Ratio Next，HRRN
-
+1. 调度算法衡量指标
+    1. 延迟（Latency）：衡量任务从提交到执行的时间间隔。较低的延迟意味着任务能够快速得到响应和执行，从而提供更好的用户体验。
+    1. 吞吐量（Throughput）：指在一定时间内完成的任务数量或工作量。较高的吞吐量表示系统能够有效地处理更多的任务，提高资源利用率。
+    1. 响应时间（Response Time）：任务从提交到完成所经历的总时间。较低的响应时间表示任务能够迅速完成，提供快速的响应。
+    1. 公平性（Fairness）：确保任务能够在合理的时间内得到公平的处理。公平性指标可以通过衡量任务等待时间的均衡性或任务优先级的处理情况来评估。
+    1. 资源利用率（Resource Utilization）：衡量系统中资源（如 CPU、内存、存储等）的有效利用程度。高资源利用率表示系统能够充分利用可用资源，提高整体效率。
+    1. 饥饿（Starvation）：衡量任务是否因其他任务优先级较高或调度策略不合理而被长时间忽视。避免饥饿是确保所有任务得到公平处理的重要指标。
+    1. 调度算法开销（Scheduling Overhead）：衡量调度算法本身引入的额外开销，例如上下文切换的次数、任务迁移的频率等。较低的开销有助于提高系统的效率和性能。
+    1. 资源满足率（Resource Satisfaction）：衡量系统对任务资源需求的满足程度。高资源满足率意味着系统能够满足任务对资源的需求，减少任务因资源不足而等待的时间。
