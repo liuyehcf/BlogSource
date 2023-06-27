@@ -1044,6 +1044,7 @@ walk_through_sort/100000000/100000    7080835898 ns   7079696031 ns            1
 
 #include <algorithm>
 #include <atomic>
+#include <iomanip>
 #include <iostream>
 #include <thread>
 #include <vector>
@@ -1126,8 +1127,12 @@ int main(int argc, char* argv[]) {
         sum += counts[task_id];
         std::cout << "count=" << counts[task_id] << std::endl;
     }
-    std::cout << "min=" << counts[0] << ", max=" << counts[task_num - 1] << ", avg=" << sum / task_num
-              << ", distance=" << counts[task_num - 1] - counts[0] << std::endl;
+    const size_t min = counts[0];
+    const size_t max = counts[task_num - 1];
+    const size_t avg = sum / task_num;
+    const size_t distance = max - min;
+    std::cout << "min=" << min << ", max=" << max << ", avg=" << avg << ", distance=" << max - min << ", " << std::fixed
+              << std::setprecision(2) << distance * 100 / avg << "%" << std::endl;
     return 0;
 }
 ```
@@ -1142,26 +1147,26 @@ int main(int argc, char* argv[]) {
 ```sh
 # 不启动干扰线程
 $ ./main 0 4 4
-count=176590694
-count=178906990
-count=179064952
-count=181966916
-min=176590694, max=181966916, avg=179132388, distance=5376222
+count=1558923686
+count=1561655749
+count=1561677472
+count=1574325894
+min=1558923686, max=1574325894, avg=1564145700, distance=15402208, 0%
 
 # 启动干扰线程，任务数与使用的cpu数保持一致
 $ ./main 1 4 4
-count=88486608
-count=124760286
-count=146485876
-count=178888590
-min=88486608, max=178888590, avg=134655340, distance=90401982
+count=784345272
+count=795504369
+count=1555650488
+count=1566268580
+min=784345272, max=1566268580, avg=1175442177, distance=781923308, 66%
 
 # 启动干扰线程，任务数比使用的cpu数少一个
-./main 1 4 3
-count=178964358
-count=181935171
-count=182038314
-min=178964358, max=182038314, avg=180979281, distance=3073956
+$ ./main 1 4 3
+count=1541029371
+count=1541571957
+count=1550834469
+min=1541029371, max=1550834469, avg=1544478599, distance=9805098, 0%
 ```
 
 ## 1.13 NUMA
