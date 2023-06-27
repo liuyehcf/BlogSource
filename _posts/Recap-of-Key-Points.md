@@ -468,3 +468,4 @@ With a materialized view there is a well-defined translation process that takes 
     1. 饥饿（Starvation）：衡量任务是否因其他任务优先级较高或调度策略不合理而被长时间忽视。避免饥饿是确保所有任务得到公平处理的重要指标。
     1. 调度算法开销（Scheduling Overhead）：衡量调度算法本身引入的额外开销，例如上下文切换的次数、任务迁移的频率等。较低的开销有助于提高系统的效率和性能。
     1. 资源满足率（Resource Satisfaction）：衡量系统对任务资源需求的满足程度。高资源满足率意味着系统能够满足任务对资源的需求，减少任务因资源不足而等待的时间。
+1. reactive programming
