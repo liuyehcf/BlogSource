@@ -298,6 +298,7 @@ categories:
     - Consensus Protocol
         - Paxos
         - Raft
+    - LSM-Tree
     - WAL
 - Database Framework
     - Parser
@@ -390,11 +391,18 @@ categories:
                 - Easy of Implementation
         - Optimization
             - Parallelism
+                - Resource Utilization
             - Code Generation
+                - Better Inline
             - Vectorization
+                - Column Oriented
+                - Loop
             - Runtime Filter
-                - Join
-                - TopN
+                - Bloom-Filter 
+                - In-Filter
+                - Scenarios
+                    - Join
+                    - TopN
 - Architecture
     - Shared Nothing Architecture
     - Shared Disk Architecture
@@ -457,35 +465,97 @@ A cache is filled on demand when there is a cache miss (so the first request for
 
 With a materialized view there is a well-defined translation process that takes the write-optimized events in the log and transforms them into the read-optimized representation in the view. By contrast, in the typical read-through caching approach, the cache management logic is deeply interwoven with the rest of the application, making it prone to bugs and difficult to reason about
 
-## 3.3 Uncategory
+## 3.3 Consensus Protocol
 
-1. Raft协议过程
-1. LSM-tree原理
-1. Bloom-filter原理
-1. WAL设计
+## 3.4 Unclassified
+
 1. 异步schema变更原理
-1. 调度算法
-    1. First-Come, First-Served，FCFS
-    1. Shortest Job Next，SJN
-    1. Priority Scheduling
-    1. Round Robin Scheduling
-    1. Multilevel Feedback Queue Scheduling
-    1. Highest Response Ratio Next，HRRN
-1. 调度算法衡量指标
-    1. 延迟（Latency）：衡量任务从提交到执行的时间间隔。较低的延迟意味着任务能够快速得到响应和执行，从而提供更好的用户体验。
-    1. 吞吐量（Throughput）：指在一定时间内完成的任务数量或工作量。较高的吞吐量表示系统能够有效地处理更多的任务，提高资源利用率。
-    1. 响应时间（Response Time）：任务从提交到完成所经历的总时间。较低的响应时间表示任务能够迅速完成，提供快速的响应。
-    1. 公平性（Fairness）：确保任务能够在合理的时间内得到公平的处理。公平性指标可以通过衡量任务等待时间的均衡性或任务优先级的处理情况来评估。
-    1. 资源利用率（Resource Utilization）：衡量系统中资源（如 CPU、内存、存储等）的有效利用程度。高资源利用率表示系统能够充分利用可用资源，提高整体效率。
-    1. 饥饿（Starvation）：衡量任务是否因其他任务优先级较高或调度策略不合理而被长时间忽视。避免饥饿是确保所有任务得到公平处理的重要指标。
-    1. 调度算法开销（Scheduling Overhead）：衡量调度算法本身引入的额外开销，例如上下文切换的次数、任务迁移的频率等。较低的开销有助于提高系统的效率和性能。
-    1. 资源满足率（Resource Satisfaction）：衡量系统对任务资源需求的满足程度。高资源满足率意味着系统能够满足任务对资源的需求，减少任务因资源不足而等待的时间。
-1. 协程线程调度和任务调度的区别
-    1. 调度对象的状态变化方式不同
-        * 协程、线程受限，同步的
-        * 任务不受限，且可能是异步的
-1. reactive programming
-1. 内核调度、brpc中btreahd调度
-    * 被调度对象是线程或者说协程，线程或者协程的状态变化通常是受限的，即由线程/协程本身控制，比如使用mutx或者ftex挂起，或唤醒另一个线程、协程。状态感知是很容易的
-    * 在数据库系统中，任务（或查询执行计划中的操作）的状态变化通常更加丰富，因为它们需要考虑诸多因素，如依赖关系、缓冲区容量、特定算子的行为（物化，异步操作）等。这些状态变化通常是异步发生的，因此很难通过同步感知（即事件）来捕捉所有的状态变化。相反，通常需要通过调用函数或方法来主动查询或检查任务的当前状态
 
+# 4 Scheduler
+
+{% markmap %}
+- Key Metrics
+    - Latency
+    - Response Time
+    - Throughput
+    - Fairness
+    - Resource Utilization
+    - Scheduling Overhead
+- CPU Scheduling
+    - Algorithm
+        - First-Come, First-Served (FCFS)
+        - Round Robin (RR)
+        - Shortest Job Next (SJN)
+        - Highest Response Ratio Next，HRRN
+        - Priority Scheduling
+        - Multilevel Feedback Queue Scheduling
+- Task Scheduling
+    - Algorithm
+        - List Scheduling
+        - Heterogeneous Earliest Finish Time, HEFT
+        - Min-Min Scheduling
+- Real-Time Scheduling
+    - Algorithm
+        - Rate-Monotonic Scheduling (RMS)
+        - Earliest Deadline First (EDF)
+- Disk Scheduling
+    - Algorithm
+        - First-Come, First-Served (FCFS)
+        - Shortest Seek Time First (SSTF)
+- Network Packet Scheduling
+    - Priority Factors
+        - Quality of Service (QoS)
+        - Fairness
+        - Congestion Control
+        - Traffic Control
+    - Algorithm
+        - Weighted Fair Queuing (WFQ)
+        - Deficit Round Robin (DRR)
+        - Stochastic Fairness Queuing (SFQ)
+- Task Parallelism
+    - Scenarios
+        - Fork-Join
+        - MapReduce
+        - OpenMP
+        - Morsel-Driven
+            - Task Readiness Analysis
+                - Event-Driven
+                - Polling
+- Job Scheduling
+    - Algorithm
+        - Backfilling
+        - Genetic Algorithms
+        - Simulated Annealing
+{% endmarkmap %}
+
+## 4.1 Which scenarios are suitable for an event-driven model
+
+In both Linux thread scheduling and brpc's bthread coroutine scheduling, the smallest unit of scheduling is respectively a pthread and a bthread.
+
+They share a common characteristic: the state changes of pthread or bthread can only occur through a few limited ways, such as:
+
+* Exhaustion of time slice
+* Explicit suspension or wake-up through Mutex/Futex
+* Execution of kernel-mode operations, such as system calls, in pthread
+* Execution of IO operations in bthread
+* Other limited ways
+
+This ensures that the scheduling of pthreads and bthreads is controlled and managed in a controlled manner, and their state transitions adhere to specific mechanisms and events.
+
+## 4.2 Which scenarios are not suitable for event-driven model
+
+In a database system, the state changes of tasks (or operations in query execution plans) are typically more intricate, as they need to consider various factors such as dependencies, buffer capacity, and specific behaviors of operators (materialization, asynchronous operations), among others. These state changes often occur asynchronously, making it challenging to capture all the state transitions through synchronous events. Instead, it is usually necessary to actively query or examine the current state of tasks through function calls or methods.
+
+In scenarios where the state changes of tasks or operations are complex and asynchronous, polling can be a more suitable approach. Polling involves actively querying or checking the current state of tasks or operations at regular intervals to determine if any changes have occurred.
+
+In situations where events are not naturally generated or it is challenging to capture all state transitions through synchronous events, polling allows the system or application to actively monitor and track the status or progress of tasks. It provides a way to continuously check for updates or changes in the state and take appropriate actions based on the observed results.
+
+By regularly polling the status of tasks or operations, applications can adapt dynamically to the changing state, make informed decisions, and trigger subsequent actions or processes accordingly. However, it's important to strike a balance in terms of polling frequency to avoid excessive resource consumption.
+
+Overall, polling can be a practical approach when dealing with complex and asynchronous state changes, allowing systems and applications to proactively monitor and respond to evolving conditions.
+
+# 5 Other
+
+## 5.1 Unclassified
+
+1. Reactive Programming
