@@ -295,6 +295,10 @@ categories:
     - Consistency
     - High Availability
     - Scalability
+    - Consensus Protocol
+        - Paxos
+        - Raft
+    - WAL
 - Database Framework
     - Parser
         - Grammar Checking
@@ -356,17 +360,25 @@ categories:
             - Worker
             - Scheduling
                 - Unit: Execution Link
-                - Global Balance
-                    - Local Queue and Global Queue
-                    - Precise Wake-Up to Prevent False Wake-Ups
-                - Work Stealing
-                    - Local Queue
-                    - False Wake-Ups(Can't steal a task)
+                - Task Scheduling
+                    - Global Balance
+                        - Local Queue and Global Queue
+                        - Precise Wake-Up to Prevent False Wake-Ups
+                    - Work Stealing
+                        - Local Queue
+                        - False Wake-Ups(Can't steal a task)
                 - Task Readiness Analysis
                     - Polling
+                        - Unrestricted State Changes
+                            - Async Operations
+                            - Dependency Relations
+                            - Certain Behavior(Materialization)
                         - Separate Thread
                         - Worker Thread
                     - Event-Driven
+                        - Restricted State Changes
+                            - Message
+                            - Mutex/Futex
             - Pros:
                 - Fine-Grained Scheduling
                 - Flexible Resource Control
@@ -468,4 +480,12 @@ With a materialized view there is a well-defined translation process that takes 
     1. 饥饿（Starvation）：衡量任务是否因其他任务优先级较高或调度策略不合理而被长时间忽视。避免饥饿是确保所有任务得到公平处理的重要指标。
     1. 调度算法开销（Scheduling Overhead）：衡量调度算法本身引入的额外开销，例如上下文切换的次数、任务迁移的频率等。较低的开销有助于提高系统的效率和性能。
     1. 资源满足率（Resource Satisfaction）：衡量系统对任务资源需求的满足程度。高资源满足率意味着系统能够满足任务对资源的需求，减少任务因资源不足而等待的时间。
+1. 协程线程调度和任务调度的区别
+    1. 调度对象的状态变化方式不同
+        * 协程、线程受限，同步的
+        * 任务不受限，且可能是异步的
 1. reactive programming
+1. 内核调度、brpc中btreahd调度
+    * 被调度对象是线程或者说协程，线程或者协程的状态变化通常是受限的，即由线程/协程本身控制，比如使用mutx或者ftex挂起，或唤醒另一个线程、协程。状态感知是很容易的
+    * 在数据库系统中，任务（或查询执行计划中的操作）的状态变化通常更加丰富，因为它们需要考虑诸多因素，如依赖关系、缓冲区容量、特定算子的行为（物化，异步操作）等。这些状态变化通常是异步发生的，因此很难通过同步感知（即事件）来捕捉所有的状态变化。相反，通常需要通过调用函数或方法来主动查询或检查任务的当前状态
+
