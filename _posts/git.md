@@ -209,6 +209,9 @@ git restore --staged [file]
 # 列出所有本地分支
 git branch
 
+# 列出所有本地分支以及详情
+git branch -vv
+
 # 列出所有远程分支
 git branch -r
 

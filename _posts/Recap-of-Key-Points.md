@@ -282,6 +282,8 @@ categories:
     - Clustered Index
     - Non-Clustered Index
     - Full-Text Index
+    - Zone Map Index
+    - Bloom Fiter Index
 - Transaction
     - ACID (Atomicity, Consistency, Isolation, Durability)
 - Storage
@@ -465,9 +467,35 @@ A cache is filled on demand when there is a cache miss (so the first request for
 
 With a materialized view there is a well-defined translation process that takes the write-optimized events in the log and transforms them into the read-optimized representation in the view. By contrast, in the typical read-through caching approach, the cache management logic is deeply interwoven with the rest of the application, making it prone to bugs and difficult to reason about
 
-## 3.3 Consensus Protocol
+## 3.3 Not yet mastered
 
-## 3.4 Unclassified
+1. runtimeFilter
+    * 原理：`A JOIN B = (A LEFT SEMI-JOIN B) JOIN B`
+    * filter type
+        * in filter: siezof(keyset) < 1024
+            * no false positive
+        * bloom filter: sizeof(keyset) < 1024000
+            * has false positive
+        * min-max filter: bloom filter with min-max filter
+            * has false positive
+    * in which scenario it can be pushed down?(any join type as long as satisfied the algebraic identity)
+        * innert join
+        * right outer join
+        * left semi join
+        * right semi join
+        * right anti join
+    * in which scenario cannot use runtime filter
+        * full join
+        * left outer join
+        * left anti join
+    * RuntimeFilterBuildDescriptor::_build_expr_ctx 是指什么
+    * SimdBlockFilter
+1. algebraic identities
+    * `A JOIN B = (A LEFT SEMI-JOIN B) JOIN B`
+
+## 3.4 Consensus Protocol
+
+## 3.5 Unclassified
 
 1. 异步schema变更原理
 
