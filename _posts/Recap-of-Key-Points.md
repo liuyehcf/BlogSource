@@ -295,21 +295,22 @@ categories:
 - Transaction
     - ACID (Atomicity, Consistency, Isolation, Durability)
 - Storage
-    - Backup and Recovery
-    - Replication
-    - Sharding
-    - Partitioning
-    - Disaster Recovery
-    - Compression
-    - Encryption
-    - Consistency
-    - High Availability
-    - Scalability
-    - Consensus Protocol
+    - High Availability and Scalability
+        - Replication
+        - Sharding
+        - Partitioning
+        - Consistency
+            - Consensus Protocol
         - Paxos
         - Raft
-    - LSM-Tree
-    - WAL
+    - Data Protection
+        - Backup and Recovery
+        - Disaster Recovery
+        - Compression
+        - Encryption
+        - Write-Ahead Logging (WAL)
+    - Performance Optimization
+        - LSM-Tree (Log-Structured Merge Tree)
 - Database Framework
     - Parser
         - Grammar Checking
@@ -491,7 +492,8 @@ With a materialized view there is a well-defined translation process that takes 
 
 ## 3.4 Not yet mastered
 
-1. 异步schema变更原理
+1. WAL Structure
+1. Consensus Protocol
 
 # 4 Scheduler
 
