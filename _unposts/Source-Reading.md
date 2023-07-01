@@ -151,6 +151,15 @@ Backend-Service
     * `RunTimeTypeTraits`
     * `RunTimeCppType`
     * `RunTimeColumnType`
+* `RuntimerFilter`
+    * `RuntimeFilterWorker`
+    * `RuntimeFilterPort`
+    * `RuntimeFilterMerger`
+    * `RuntimeFilterBuildDescriptor`
+    * `RuntimeFilterProbeDescriptor`
+    * `RuntimeFilterHub`
+    * `PartialRuntimeFilterMerger`
+    * `SimdBlockFilter`
 
 ### 3.3.1 Agg
 

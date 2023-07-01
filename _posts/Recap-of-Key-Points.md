@@ -491,11 +491,6 @@ With a materialized view there is a well-defined translation process that takes 
 
 ## 3.4 Not yet mastered
 
-1. runtimeFilter
-    * RuntimeFilterBuildDescriptor::_build_expr_ctx 是指什么
-    * SimdBlockFilter
-1. algebraic identities
-    * `A JOIN B = (A LEFT SEMI-JOIN B) JOIN B`
 1. 异步schema变更原理
 
 # 4 Scheduler
