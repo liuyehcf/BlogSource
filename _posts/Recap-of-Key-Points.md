@@ -253,11 +253,19 @@ categories:
     - Database Access Control
     - Database Administration
 - SQL Standard
+    - Algebraic Identities
     - Join
         - Inner Join
         - Full Outer Join
         - Left/Right Outer Join
         - Left/Right Semi Join
+            - Correlated Exist Or In Subquery
+            - Existence Predicate
+            - Multiply matchs make no differences
+        - Left/Right Anti Join
+            - Correlated Not Exist Or Not In Subquery
+            - Not Existence Predicate
+            - Multiply mismatchs make no differences
     - Aggregate
     - Window Function
         - Function
@@ -400,8 +408,20 @@ categories:
                 - Column Oriented
                 - Loop
             - Runtime Filter
-                - Bloom-Filter 
-                - In-Filter
+                - Principle
+                    - A JOIN B = (A LEFT SEMI JOIN B) JOIN B
+                    - Suitable Scenarios
+                        - Inner Join
+                        - Left Semi Join
+                        - Right Outer/Semi/Anti Join
+                    - Unsuitable Scenarios
+                        - Full Join
+                        - Left Outer/Anti Join
+                - Bloom-Filter(Rows < 100w)
+                    - Has False Positive
+                    - MinMax Filter
+                - In-Filter(Rows < 1000)
+                    - No False Positive
                 - Scenarios
                     - Join
                     - TopN
@@ -467,36 +487,15 @@ A cache is filled on demand when there is a cache miss (so the first request for
 
 With a materialized view there is a well-defined translation process that takes the write-optimized events in the log and transforms them into the read-optimized representation in the view. By contrast, in the typical read-through caching approach, the cache management logic is deeply interwoven with the rest of the application, making it prone to bugs and difficult to reason about
 
-## 3.3 Not yet mastered
+## 3.3 Consensus Protocol
+
+## 3.4 Not yet mastered
 
 1. runtimeFilter
-    * 原理：`A JOIN B = (A LEFT SEMI-JOIN B) JOIN B`
-    * filter type
-        * in filter: siezof(keyset) < 1024
-            * no false positive
-        * bloom filter: sizeof(keyset) < 1024000
-            * has false positive
-        * min-max filter: bloom filter with min-max filter
-            * has false positive
-    * in which scenario it can be pushed down?(any join type as long as satisfied the algebraic identity)
-        * innert join
-        * right outer join
-        * left semi join
-        * right semi join
-        * right anti join
-    * in which scenario cannot use runtime filter
-        * full join
-        * left outer join
-        * left anti join
     * RuntimeFilterBuildDescriptor::_build_expr_ctx 是指什么
     * SimdBlockFilter
 1. algebraic identities
     * `A JOIN B = (A LEFT SEMI-JOIN B) JOIN B`
-
-## 3.4 Consensus Protocol
-
-## 3.5 Unclassified
-
 1. 异步schema变更原理
 
 # 4 Scheduler
