@@ -34,3 +34,13 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
 ## Edge Gateway Device
 
 ## Database
+
+## Java
+
+## Cpp
+
+## Network
+
+# References
+
+* [cpp-interview](https://github.com/huihut/interview)

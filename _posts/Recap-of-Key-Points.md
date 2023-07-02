@@ -578,8 +578,130 @@ By regularly polling the status of tasks or operations, applications can adapt d
 
 Overall, polling can be a practical approach when dealing with complex and asynchronous state changes, allowing systems and applications to proactively monitor and respond to evolving conditions.
 
-# 5 Other
+# 5 Network
 
-## 5.1 Unclassified
+{% markmap %}
+- Network Concepts
+    - Network Topologies
+        - Bus Topology
+        - Star Topology
+        - Ring Topology
+        - Mesh Topology
+        - Hybrid Topology
+    - Network Protocols
+        - IP
+        - TCP
+            - Connection-Oriented Communication
+            - Three-Way Handshake
+                - SYN (Synchronize) Segment
+                    - Initiates a connection request
+                    - Contains initial sequence number
+                - SYN-ACK (Synchronize-Acknowledgment) Segment
+                    - Acknowledges the connection request
+                    - Contains initial sequence number and acknowledgement number
+                - ACK (Acknowledgment) Segment
+                    - Confirms the establishment of the connection
+                    - Contains the next sequence number to be expected
+            - Four-Way Handshake (Connection Termination)
+                - FIN (Finish) Segment
+                    - Initiates the connection termination process by the sender
+                - ACK (Acknowledgment) Segment
+                    - Acknowledges the receipt of the FIN segment
+                - FIN-ACK (Finish-Acknowledgment) Segment
+                    - Confirms the termination request by the receiver
+                - ACK (Acknowledgment) Segment
+                    - Acknowledges the receipt of the FIN-ACK segment
+            - Status
+                - SYN_SENT
+                - SYN_RCVD
+                - ESTABLISHED
+                - FIN_WAIT_1
+                - CLOSE_WAIT
+                - FIN_WAIT_2
+                - LAST_ACK
+                - TIME_WAIT
+                - CLOSED
+            - Reliable Data Transfer
+                - Sequence Numbers
+                    - Identifies each byte of data in a TCP segment
+                    - Used for reassembling and ordering received segments
+                - Positive Acknowledgment with Retransmission (PAR)
+                    - Receiver sends an acknowledgment for successfully received data
+                    - Sender retransmits unacknowledged data after a timeout
+                - Sliding Window
+                    - Allows a sender to transmit multiple segments without waiting for individual acknowledgments
+                    - Window size determines the number of unacknowledged segments allowed
+            - Flow Control
+                - Window Size
+                    - Specifies the number of bytes a receiver is willing to accept
+                    - Prevents overwhelming the receiver with too much data
+                    - Sliding Window mechanism used to manage the window size
+                - Receiver Window Advertisement
+                    - Receiver advertises its current window size to the sender
+                    - Allows the sender to adjust the rate of data transmission
+            - Congestion Control
+                - Congestion Window
+                    - Limits the amount of data a sender can transmit before receiving acknowledgments
+                    - Adjusted dynamically based on network conditions
+                - Slow Start
+                    - Initial phase of congestion control
+                    - Gradually increases the congestion window size to probe the network's capacity
+                - Congestion Avoidance
+                    - After reaching a congestion threshold, sender increases the congestion window size more cautiously
+                    - Uses additive increase and multiplicative decrease mechanisms
+                - Fast Retransmit and Fast Recovery
+                    - Detects and recovers from packet loss without waiting for timeout
+                    - Resends segments upon receiving duplicate acknowledgments
+            - TCP Header
+                - Source and Destination Ports
+                - Sequence and Acknowledgment Numbers
+                - Window Size
+                - Checksum
+                - Flags (SYN, ACK, FIN, RST, etc.)
+            - TCP Options
+                - Maximum Segment Size (MSS)
+                - Window Scaling
+                - Selective Acknowledgment (SACK)
+                - Timestamps
+        - HTTP
+        - FTP
+        - DNS
+        - SMTP
+    - OSI Model
+        - Physical Layer
+        - Data Link Layer
+        - Network Layer
+        - Transport Layer
+        - Session Layer
+        - Presentation Layer
+        - Application Layer
+    - IP Addressing
+        - IPv4
+        - IPv6
+        - Subnetting
+        - DHCP
+        - NAT
+    - Routing
+        - Routing Tables
+        - Routing Protocols
+        - Static Routing
+        - Dynamic Routing
+    - Network Security
+        - Firewalls
+        - VPN
+        - IDS/IPS
+        - Encryption
+        - Authentication
+    - Network Devices
+        - Router
+        - Switch
+        - Hub
+        - Modem
+        - Access Point
+{% endmarkmap %}
+
+# 6 Other
+
+## 6.1 Unclassified
 
 1. Reactive Programming
