@@ -1,15 +1,3 @@
----
-title: Paper-Reading
-date: 2021-09-08 17:03:18
-tags: 
-- 原创
-categories: 
-- Paper
----
-
-**阅读更多**
-
-<!--more-->
 
 # 1 [Morsel-Driven Parallelism: A NUMA-Aware Query Evaluation Framework for the Many-Core Age](/resources/paper/Morsel-Driven-Parallelism-A-NUMA-Aware-Query-Evaluation-Framework-for-the-Many-Core-Age.pdf)
 

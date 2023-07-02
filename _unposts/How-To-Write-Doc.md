@@ -1,15 +1,3 @@
----
-title: How-To-Write-Doc
-date: 2023-06-26 16:42:43
-tags: 
-- 原创
-categories: 
-- Doc
----
-
-**阅读更多**
-
-<!--more-->
 
 # 1 背景
 

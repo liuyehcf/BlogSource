@@ -1,0 +1,312 @@
+
+# 1 Self Introduction
+
+Nice to meet you! Thank you for taking the time to interview me. My name is Calvin, and I am from China. I obtained both my bachelor's and master's degrees from BUPT (Beijing University of Posts and Telecommunications), where I specialized in communication engineering. During my postgraduate studies, I began self-learning computer science to further broaden my skills.
+
+Throughout my professional journey, I have had the privilege of working for two distinguished companies. The first company is Alibaba Group. During my time there, I was part of the IoT department, where our team focused on developing a platform for managing and controlling various devices, such as smart home security systems and industrial sensors. Additionally, we aimed to facilitate industrial upgrading for diverse industries.
+
+Following my experience at Alibaba Group, I joined a startup called Starrocks, which is widely recognized for its exceptional OALP (Open Analytics and Log Processing) database product in China. This product stands out for its outstanding performance.
+
+Once again, I'm delighted to meet you, and I am eager to discuss more during this interview.
+
+# 2 Experience Questions
+
+## 2.1 Tunnel Service
+
+### 2.1.1 Introduction
+
+The Tunnel Service is specifically designed to meet the demand for accessing private network devices through SSH and HTTP protocols. At our platform, we have seamlessly integrated these capabilities into our platform console, available at aliyun.com.
+
+### 2.1.2 Basic architecture
+
+The entire service consists of three main components: the tunnel server, user-side agent, and device-side agent. The tunnel server acts as a central hub, facilitating the communication between the user-side agent and the device-side agent. The device-side agent connects to the server and routes messages between the actual local service such as sshd and the server. On the other hand, the user-side agent connects to the server and handles message routing between the user and the server.
+
+For ease of implementation, we have adopted WebSocket as the underlying protocol on both the user-side and device-side. This choice allows for seamless communication and simplifies the integration process.
+
+In the case of SSH proxy, the user-side agent is the SSH component embedded in our console, providing the necessary functionality. On the other hand, for HTTP proxy, any standard web browser can act as the agent, which is truly magical in terms of versatility and convenience.
+
+### 2.1.3 Details of the ssh proxy
+
+### 2.1.4 Details of the http proxy
+
+## 2.2 Flow Execution Framework
+
+## 2.3 Edge Gateway Device
+
+# 3 Database
+
+# 4 Java
+
+1. What is Java? Explain its key features.
+1. What are the differences between JDK, JRE, and JVM?
+1. Explain the different types of memory in Java.
+1. What are the main principles of object-oriented programming (OOP)?
+1. What is the difference between an abstract class and an interface in Java?
+1. Explain the concept of method overloading and method overriding.
+1. What is the difference between checked and unchecked exceptions in Java?
+1. What are the access modifiers in Java? Explain their visibility levels.
+1. What is the difference between ArrayList and LinkedList?
+1. What is the difference between a constructor and a method?
+1. What is the purpose of the "final" keyword in Java?
+1. How does garbage collection work in Java?
+1. What is the difference between the "==" operator and the "equals()" method?
+1. Explain the concept of multithreading in Java.
+1. What is the purpose of the "synchronized" keyword in Java?
+1. What is the difference between the "StringBuilder" and "StringBuffer" classes?
+1. How does exception handling work in Java?
+1. What are the different types of loops in Java? Explain their differences.
+1. What is the purpose of the "static" keyword in Java?
+1. How can you achieve multiple inheritance in Java using interfaces?
+1. Explain the concept of method overriding in Java.
+1. What are the access modifiers for methods and variables in Java?
+1. What is the difference between a shallow copy and a deep copy in Java?
+1. Explain the concept of polymorphism in Java.
+1. What is the difference between a static method and an instance method in Java?
+1. What is the purpose of the "this" keyword in Java?
+1. Explain the "try-catch-finally" block in exception handling.
+1. What is the difference between a HashSet and a TreeSet in Java?
+1. Explain the concept of autoboxing and unboxing in Java.
+1. What is the purpose of the "transient" keyword in Java?
+1. What is the difference between method overloading and method overriding?
+1. Explain the concept of lambda expressions in Java.
+1. What are the SOLID principles in object-oriented programming?
+1. What is the purpose of the "super" keyword in Java?
+1. Explain the concept of anonymous classes in Java.
+1. What is the difference between a static variable and an instance variable in Java?
+1. What is the purpose of the "volatile" keyword in Java?
+1. Explain the concept of inheritance in Java.
+1. What is the difference between equals() and hashCode() methods?
+1. Explain the concept of generics in Java.
+1. What is the purpose of the "throws" keyword in Java?
+1. What are the different types of inner classes in Java?
+1. Explain the concept of method references in Java 8.
+1. What is the purpose of the "final" keyword for variables and methods in Java?
+1. What is the difference between composition and inheritance in Java?
+1. Explain the concept of functional interfaces in Java 8.
+1. What is the purpose of the "default" keyword in interface methods in Java 8?
+1. What is the difference between a checked exception and an unchecked exception in Java?
+1. Explain the concept of the Java Memory Model.
+1. What are the different types of collections in Java?
+1. What is the purpose of the "assert" keyword in Java?
+1. Explain the concept of the "finally" block in exception handling.
+1. What is the difference between the "compareTo()" and "equals()" methods?
+1. Explain the concept of type erasure in Java generics.
+1. What is the purpose of the "break" and "continue" statements in Java?
+1. How does serialization work in Java?
+1. What is the difference between a HashMap and a Hashtable in Java?
+1. Explain the concept of the ternary operator in Java.
+1. What is the purpose of the "instanceof" operator in Java?
+1. How can you handle concurrent modifications in Java collections?
+1. What is the difference between an interface and an abstract class in Java?
+1. What is the purpose of the "finalize()" method in Java? Is it recommended to use it?
+1. Explain the concept of method chaining in Java.
+1. What is the difference between a stack and a heap in Java?
+1. Explain the concept of anonymous functions in Java 8.
+1. What is the purpose of the "strictfp" keyword in Java?
+1. How does the "substring()" method work in Java? What are its parameters?
+1. Explain the concept of the diamond operator in Java generics.
+1. What is the purpose of the "NaN" value in Java?
+1. What are the different types of file I/O operations in Java?
+1. Explain the concept of static initialization blocks in Java.
+1. What is the purpose of the "ThreadLocal" class in Java?
+1. How can you handle concurrent access in Java collections?
+1. Explain the concept of the "compareTo()" method in the Comparable interface.
+1. What is the purpose of the "getClass()" method in Java?
+1. What are the different ways to create and start a thread in Java?
+1. Explain the concept of method references in Java 8.
+1. What is the purpose of the "Thread.sleep()" method in Java?
+1. How does the "StringBuilder" class differ from the "String" class in Java?
+1. Explain the concept of functional programming in Java.
+1. What is the purpose of the "System.arraycopy()" method in Java?
+
+# 5 Cpp
+
+1. What is C++? Explain its key features.
+1. What are the differences between C and C++?
+1. Explain the object-oriented programming (OOP) concepts in C++.
+1. What is the difference between class and struct in C++?
+1. Explain the concept of inheritance in C++.
+1. What is the difference between function overloading and function overriding in C++?
+1. What are the access specifiers in C++? Explain their visibility levels.
+1. What is the difference between new and malloc in C++?
+1. Explain the concept of constructors and destructors in C++.
+1. What are virtual functions in C++? How are they different from normal functions?
+1. What is the difference between shallow copy and deep copy in C++?
+1. Explain the concept of templates in C++.
+1. What is the purpose of the "const" keyword in C++?
+1. What is the difference between pass by value and pass by reference in C++?
+1. Explain the concept of exception handling in C++.
+1. What is the difference between function overloading and default arguments in C++?
+1. What is the purpose of the "static" keyword in C++?
+1. Explain the concept of namespaces in C++.
+1. What is the difference between an abstract class and an interface in C++?
+1. What are the different types of storage classes in C++?
+1. What is the difference between reference and pointer in C++?
+1. Explain the concept of function pointers in C++.
+1. What are the different types of inheritance in C++?
+1. Explain the concept of operator overloading in C++.
+1. What is the difference between static binding and dynamic binding in C++?
+1. What are the different types of polymorphism in C++?
+1. What is the purpose of the "this" pointer in C++?
+1. Explain the concept of smart pointers in C++.
+1. What are the different types of STL containers in C++?
+1. What is the difference between vectors and arrays in C++?
+1. Explain the concept of move semantics and rvalue references in C++.
+1. What is the difference between const reference and rvalue reference in C++?
+1. What is the purpose of the "friend" keyword in C++?
+1. Explain the concept of exception handling in C++.
+1. What is the difference between stack memory and heap memory in C++?
+1. Explain the concept of templates in C++.
+1. What is the purpose of the "auto" keyword in C++11?
+1. What are the differences between function templates and class templates in C++?
+1. Explain the concept of lambda expressions in C++11.
+1. What is the purpose of the "constexpr" keyword in C++?
+1. What is the difference between C++ constructors and destructors?
+1. Explain the concept of copy constructors in C++.
+1. What is the purpose of the "override" keyword in C++11?
+1. What is the difference between runtime polymorphism and compile-time polymorphism in C++?
+1. Explain the concept of function objects (functors) in C++.
+1. What is the difference between the "new" operator and the "malloc" function in C++?
+1. Explain the concept of virtual destructors in C++.
+1. What are the differences between class templates and function templates in C++?
+1. What is the purpose of the "explicit" keyword in C++?
+1. Explain the concept of type casting in C++.
+1. What is the difference between "const" and "constexpr" in C++?
+1. Explain the concept of multithreading in C++.
+1. What is the purpose of the "volatile" keyword in C++?
+1. What are the different ways to handle exceptions in C++?
+1. Explain the concept of the Rule of Three (or Five) in C++.
+1. What is the difference between a shallow copy and a deep copy in C++?
+1. Explain the concept of function binding in C++.
+1. What is the purpose of the "typeid" operator in C++?
+1. Explain the concept of friend classes in C++.
+1. What is the difference between "nullptr" and "NULL" in C++11?
+1. Explain the concept of move semantics and move constructors in C++.
+1. What is the purpose of the "static_assert" keyword in C++11?
+1. What are the differences between the stack and the heap in C++ memory management?
+1. Explain the concept of CRTP (Curiously Recurring Template Pattern) in C++.
+1. What is the purpose of the "decltype" keyword in C++?
+1. Explain the concept of function overloading resolution in C++.
+1. What is the difference between a shallow copy and a deep copy of an object in C++?
+1. Explain the concept of the Pimpl idiom in C++.
+1. What is the purpose of the "constexpr" keyword in C++11?
+1. Explain the concept of variadic templates in C++.
+1. What is the difference between lvalue and rvalue in C++?
+1. Explain the concept of perfect forwarding in C++.
+1. What is the purpose of the "explicit" keyword for constructors in C++?
+1. Explain the concept of the CRTP (Curiously Recurring Template Pattern) in C++.
+1. What is the difference between the pre-increment and post-increment operators in C++?
+1. Explain the concept of the stack unwinding in C++ exception handling.
+1. What is the purpose of the "noexcept" specifier in C++?
+1. Explain the concept of the RAII (Resource Acquisition Is Initialization) idiom in C++.
+1. What is the difference between the "emplace_back" and "push_back" methods in C++ vector?
+1. Explain the concept of the C++ Standard Library algorithms and iterators.
+
+# 6 Network
+
+1. What is a network? Explain the basic components of a network.
+1. What is the difference between a LAN and a WAN?
+1. What are the layers of the OSI model? Briefly explain each layer.
+1. What is the difference between TCP and UDP? When would you use each one?
+1. Explain the concept of IP addressing and subnetting.
+1. What is a router? How does it work in a network?
+1. What is the purpose of ARP (Address Resolution Protocol)?
+1. Explain the difference between a hub, switch, and a router.
+1. What is the purpose of DNS (Domain Name System)?
+1. What is DHCP (Dynamic Host Configuration Protocol)? How does it work?
+1. What is NAT (Network Address Translation)?
+1. What is the difference between a firewall and an IDS (Intrusion Detection System)?
+1. What is the purpose of SSL (Secure Sockets Layer) and TLS (Transport Layer Security)?
+1. Explain the concept of port forwarding and port triggering.
+1. What is a VLAN (Virtual Local Area Network)?
+1. Explain the difference between IPv4 and IPv6.
+1. What is the purpose of ICMP (Internet Control Message Protocol)?
+1. What are the common network topologies? Explain each one.
+1. What is the purpose of a proxy server?
+1. Explain the concept of Quality of Service (QoS) in networking.
+1. What is the purpose of a subnet mask? How is it used in IP addressing?
+1. Explain the concept of MAC address and how it is used in networking.
+1. What is the difference between a unicast, multicast, and broadcast address?
+1. What is the purpose of a default gateway in a network?
+1. What is the difference between a static IP address and a dynamic IP address?
+1. Explain the concept of port numbers and their significance in networking.
+1. What is the difference between a stateful firewall and a stateless firewall?
+1. Explain the concept of network latency and how it affects network performance.
+1. What is the purpose of ICMP (Internet Control Message Protocol) and its common message types?
+1. What is the difference between HTTP and HTTPS?
+1. Explain the concept of DNS (Domain Name System) caching and its benefits.
+1. What is the purpose of a proxy server? How does it work?
+1. Explain the difference between symmetric encryption and asymmetric encryption.
+1. What is a VLAN (Virtual Local Area Network)? How does it provide network segmentation?
+1. Explain the concept of routing protocols and their role in network routing.
+1. What is the purpose of a VPN (Virtual Private Network)?
+1. Explain the concept of IPsec (Internet Protocol Security) and its components.
+1. What is the difference between half-duplex and full-duplex communication?
+1. What is a DDoS (Distributed Denial of Service) attack? How can it be mitigated?
+1. Explain the concept of subnetting and how it helps in network management.
+1. What is the purpose of a MAC address table in a switch?
+1. Explain the concept of IP routing and how it determines the path of network packets.
+1. What is the difference between a public IP address and a private IP address?
+1. What is the purpose of a DHCP relay agent?
+1. Explain the concept of network congestion and its impact on network performance.
+1. What is the purpose of a network gateway and how does it facilitate communication between networks?
+1. What is the difference between TCP and UDP port numbers?
+1. Explain the concept of network load balancing and its benefits.
+1. What is the purpose of an IPsec VPN tunnel and how does it provide secure communication?
+1. Explain the concept of network address translation (NAT) and its different types.
+1. What is the difference between a hub, a switch, and a router?
+1. Explain the concept of network sniffing and its implications on network security.
+1. What is the purpose of a network proxy and how does it enhance security and privacy?
+1. Explain the concept of network encapsulation and decapsulation.
+1. What is the purpose of the Domain Name System Security Extensions (DNSSEC)?
+1. Explain the concept of network segmentation and its benefits.
+1. What is the difference between IPv4 and IPv6 headers?
+1. What is the purpose of a network gateway in a virtualized environment?
+1. Explain the concept of network bandwidth and its measurement units.
+1. What is the difference between an intranet and an extranet?
+1. What is TCP? How does it differ from UDP?
+1. Explain the three-way handshake process in TCP.
+1. What are the different TCP header fields? Briefly explain their significance.
+1. How does TCP ensure reliable data delivery?
+1. What is flow control in TCP? How is it achieved?
+1. What is congestion control in TCP? How does TCP handle network congestion?
+1. Explain the concept of sliding window protocol in TCP.
+1. What is the purpose of sequence numbers and acknowledgment numbers in TCP?
+1. How does TCP handle out-of-order packets and packet loss?
+1. What is the difference between the "push" and "urgent" flags in TCP?
+1. Explain the concept of TCP window size and its impact on performance.
+1. What is the maximum segment size (MSS) in TCP?
+1. How does TCP handle retransmission of lost or corrupted packets?
+1. What is the purpose of the TCP timeout and retransmission mechanism?
+1. Explain the concept of selective acknowledgment (SACK) in TCP.
+1. What is the difference between TCP congestion control and flow control?
+1. How does TCP handle the reordering of received packets?
+1. What is the purpose of the TCP urgent pointer?
+1. How does TCP handle the fragmentation and reassembly of data segments?
+1. What is the role of the TCP checksum in error detection?
+1. What is the purpose of the TCP header flags? Explain the significance of SYN, ACK, FIN, and RST.
+1. What is the role of the sequence number and acknowledgment number in TCP?
+1. Explain the concept of TCP window scaling and its benefits.
+1. What is the TCP Maximum Segment Lifetime (MSL)?
+1. How does TCP handle data retransmission in the case of lost or corrupted packets?
+1. What is the purpose of the TCP receive and send buffers?
+1. Explain the concept of TCP Fast Retransmit and Fast Recovery.
+1. How does TCP handle out-of-order packet delivery and packet reordering?
+1. What is the Nagle's algorithm in TCP? How does it affect the transmission of small packets?
+1. Explain the concept of TCP round-trip time (RTT) estimation and its significance in congestion control.
+1. What is the TCP selective acknowledgment (SACK) option? How does it improve performance?
+1. What is the role of the TCP urgent pointer? How is urgent data handled in TCP?
+1. Explain the concept of TCP timestamp option and its role in congestion control.
+1. What is the TCP maximum segment size (MSS)? How is it negotiated during the TCP handshake?
+1. How does TCP handle flow control in the presence of different receive window sizes?
+1. What is the purpose of the TCP Maximum Segment Lifetime (MSL) and TIME_WAIT state?
+1. Explain the concept of TCP sliding window protocol and its impact on data transmission.
+1. How does TCP handle congestion control in the network?
+1. What is the purpose of the TCP window size? How is it adjusted during the data transfer?
+1. Explain the concept of TCP connection termination using the FIN flag.
+
+# 7 References
+
+* [cpp-interview](https://github.com/huihut/interview)
+* [interview](https://github.com/Olshansk/interview)
+* [Interview](https://github.com/apachecn/Interview)
