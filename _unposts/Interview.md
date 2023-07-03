@@ -33,6 +33,21 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
 
 ## 2.3 Edge Gateway Device
 
+## 2.4 Starrocks
+
+**Killing Features:**
+
+1. MPP (Massively Parallel Processing) Distributed Execution
+    * Performance & Resource Utilization
+    * Scalability
+1. Pipeline Parallel Execution Framework
+1. Vectorized Execution
+1. CBO (Cost-Based Optimizer) Optimization
+1. Global Runtime Filter
+1. Metadata Cache
+1. Local Data Cache
+1. Materialized View
+
 # 3 Database
 
 # 4 Java

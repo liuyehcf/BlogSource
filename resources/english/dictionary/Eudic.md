@@ -1,7 +1,23 @@
+1. there's no room for complacence if you want to win this game; this is not a time to be complacent; you have no real grounds for complaint
+1. the situation has now been de-escalated; the situation has now been escalated
+1. the overwhelming support was inspiring
+1. plural form
+1. a door like this is going to cost way more than $100
+1. consist of; comprised of
+1. when you stop trying, it happens
+1. What are the advantages of the MPP architecture manifested in
+1. data can be evenly shuffled
+1. nothing worthwhile can be achieved easily; everything worthwhile requires a long period of hard work with many failures along the way
+1. the second thing that holds people back is what is called learned helplessness
+1. even if the change can be positive and beneficial
+1. comfort zone
+1. weak blood vessel; high blood presure
+1. it's a joke, it can't be happening
+1. could you pay me in advance
+1. truth matters
 1. you'll do what's convenient
 1. I saw myself in you
 1. a 17-year-old boy was fatally shot by a police officer during a traffic stop early this week
-1. there's no room for complacence if you want to win this game; this is not a time to be complacent
 1. he often boasts; he often brags; he often exaggerates; he's only bluffing
 1. early 20s; middle 20s; late 20s
 1. race discrimination; workplace discrimination
@@ -36,7 +52,6 @@
 1. my primary goal is to prevent a similar occurrence by making the necessary recommendations to enhance the safety of the maritime domain worldwide
 1. failed mutiny attempt
 1. a crucial conversation is going to be held
-1. the situation has now been de-escalated; The situation has now been escalated
 1. obvious thing
 1. moonlight sonata 3rd movement
 1. I don't understand how that's a language barrier
@@ -45,7 +60,6 @@
 1. army of mercenaries
 1. a huge moment is playing out in Russia
 1. I was making a right turn
-1. When you stop trying, it happens
 1. when you get married, there's a different set of priorities
 1. long standing problem; long term solution
 1. used cars; second-hand car
@@ -193,7 +207,6 @@
 1. this dish is superb; this dish is excellent; this dish is fantastic; this dish is outstanding
 1. a person of high intelligence; a person of average intelligence; a person of low intelligence
 1. army; navy; air force
-1. he often boasts; he often brags; he often exaggerates
 1. life insurance; car insurance; travel insurance; household insurance
 1. concrete evidence; concrete proposal; concrete proof; concrete wall; concrete road
 1. polymorphic; isomorphic
@@ -1573,7 +1586,6 @@
 1. fishing can be highly addictive
 1. economical price
 1. he has been talking about things that have no relevance to this meeting
-1. there's no room for complacence if you want to win this game
 1. self-content/complacence
 1. dispose/depose
 1. babies often crawl on the floor before they learn to walk
@@ -2456,7 +2468,6 @@
 1. I'm totally behind this experiment
 1. look for it
 1. furbish
-1. you have no real grounds for complaint
 1. mediate/meditate
 1. gleam/glare
 1. swindle/deceive/fraud
@@ -2772,7 +2783,6 @@
 1. critic
 1. philosophy
 1. geoprapher
-1. bearing upon the case
 1. clippings and extracts
 1. applause
 1. decoration
@@ -2896,7 +2906,6 @@
 1. contiguous
 1. yield
 1. 绳子
-1. in a situation like this
 1. profession
 1. I have to meet my wife
 1. she is very pretty
@@ -2941,7 +2950,6 @@
 1. Mars
 1. silt
 1. clay
-1. sand dune
 1. ingredient
 1. form
 1. formation
@@ -3024,7 +3032,6 @@
 1. 易用性
 1. latter
 1. former
-1. consist of
 1. converse
 1. 观众
 1. 出发
@@ -3108,10 +3115,8 @@
 1. nominee
 1. full of dark secrets
 1. prescription
-1. roots are so deeply embedded into wall street
 1. 体验不一样的生活
 1. layoff
-1. comprised of
 1. 方法
 1. source of complexity with this approach comes from
 1. 低门槛
@@ -3133,7 +3138,6 @@
 1. 穷举
 1. corporation
 1. that systems are required to meet
-1. the overwhelming
 1. the distributed nature of query processing
 1. 耗尽资源
 1. exhaust the available memory
