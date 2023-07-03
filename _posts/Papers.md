@@ -1883,6 +1883,8 @@ Data Stream Processing System, DSPS
         * 值域范围
 * MV
     * [Incremental Processing with Change Queries in Snowflake](/resources/paper/Incremental-Processing-with-Change-Queries-in-Snowflake.pdf)
+* Consensus Algorithm
+    * [In Search of an Understandable Consensus Algorithm](/resources/paper/In-Search-of-an-Understandable-Consensus-Algorithm.pdf)
 * Other DBMS
     * Oracle
         * [Automatic SQL Tuning in Oracle 10g](/resources/paper/Automatic-SQL-Tuning-in-Oracle-10g.pdf)
