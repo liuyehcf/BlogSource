@@ -546,7 +546,7 @@ codesign --remove-signature /Applications/Visual\ Studio\ Code.app/Contents/Fram
 **以下步骤可以解决中文输入法卡顿的问题，参考[程序开久了之后中文输入法卡顿，不知道怎么解决](https://discussionschinese.apple.com/thread/253846113)-Page2**
 
 1. 系统偏好设置->调度中心
-    * 显示器具有单独的空间（取消该选项）
+    * 显示器具有单独的空间（取消该选项，取消后会导致其他问题，比如Dock无法跟随鼠标在两个屏幕之间切换）
 
 ## 6.5 滚动条总是自动隐藏
 

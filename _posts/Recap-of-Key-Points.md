@@ -362,8 +362,14 @@ categories:
                 - CTEProducer & CTEConsumer & CTEAnchor
                 - Plan Enumeration
             - Multiply Stage Aggregate
-                - 3 Stage Aggregate(COUNT(DISTINCT) + GROUP BY)
-                - 4 Stage Aggregate(COUNT(DISTINCT))
+                - 2 Stage Aggregate
+                    - AGG
+                    - AGG + GROUP BY
+                - 3 Stage Aggregate
+                    - AGG(DISTINCT) + GROUP BY
+                - 4 Stage Aggregate
+                    - AGG(DISTINCT)
+                    - AGG(DISTINCT) + GROUP BY(SKEW)
     - Execution
         - Morsel-Driven Parallelism(Task-Based Parallelism)
             - Morsel
@@ -434,6 +440,22 @@ categories:
     - Hybrid Architectures
     - Unified Storage and Computation
     - Separated Storage and Computation
+- Types Of Database
+    - Relational Database
+        - MySQL
+        - Oracle
+        - SQL Server
+        - PostgreSQL
+    - NoSQL Database
+        - MongoDB
+        - Redis
+    - Time-Series Database
+        - InfluxDB
+        - Prometheus
+        - TimescaleDB
+    - Graph Database
+    - Object-Oriented Database
+        - ObjectDB
 - Big Data Related Concepts
     - Data Integration
     - Data Extraction, Transformation, and Loading(ETL)

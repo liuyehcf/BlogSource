@@ -38,10 +38,20 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
 # 4 Java
 
 1. What is Java? Explain its key features.
+    > Java is a versatile and secure programming language known for its platform independence, object-oriented approach, automatic memory management, and strong typing. It has a rich standard library, supports multithreading, and has robust security features. Java is widely used for diverse applications, including desktop software, web development, mobile apps, and enterprise systems.
+
 1. What are the differences between JDK, JRE, and JVM?
+    > In summary, JDK is used for Java application development, JRE is used for running Java applications, and JVM is responsible for executing Java bytecode on different platforms.
+
 1. Explain the different types of memory in Java.
+    > Java has different memory types: stack memory (for local variables and method calls), heap memory (for objects and dynamically allocated data), method area (for class-level information), program counter register (stores the address of the currently executing instruction), and native method stacks (for executing native code).
+
 1. What are the main principles of object-oriented programming (OOP)?
+    > The main principles of object-oriented programming (OOP) are encapsulation, inheritance, and polymorphism. In another words, for better organizing the codebase.
+
 1. What is the difference between an abstract class and an interface in Java?
+    > In Java, an abstract class can have defined methods, while an interface can only have undefined methods. A class can inherit from only one abstract class but implement multiple interfaces.
+
 1. Explain the concept of method overloading and method overriding.
 1. What is the difference between checked and unchecked exceptions in Java?
 1. What are the access modifiers in Java? Explain their visibility levels.

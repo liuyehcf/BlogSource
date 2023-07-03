@@ -52,6 +52,11 @@
     * `BUCKET`：来自`Bucket Shuffle Join`，其采用的哈希算法与`LOCAL`一致
     * `SHUFFLE_ENFORCE`：来自`Enforce`
     * 为什么要用2种不同的hash算法？因为需要获得更好的散列度
+1. `AggType`：名字起的很奇怪，目的是为了达到Local和Global交替的效果
+    * `LOCAL`
+    * `GLOBAL`
+    * `DISTINCT_GLOBAL`
+    * `DISTINCT_LOCAL`
 1. `JoinNode.DistributionMode`：描述数据的分布模式
     * `NONE`
     * `BROADCAST`
@@ -98,7 +103,23 @@ stateDiagram
     ExploreGroupTask --> OptimizeExpressionTask
 ```
 
-### 3.1.3 Merge Group
+### 3.1.3 Transformation Rules
+
+#### 3.1.3.1 SplitAggregateRule
+
+1. 默认情况下，所有`LogicalAggregationOperator`的聚合类型都是`AggType::GLOBAL`
+1. `LogicalAggregationOperator::isSplit = false`且`AggType::GLOBAL`可以应用`SplitAggregateRule`
+    * `isSplit`用于标记是否已应用过`SplitAggregateRule`
+
+通常来说：
+
+* 普通聚合函数：2阶段聚合
+* `distinct`：2阶段聚合
+* `agg(distinct) +  group by`：3阶段聚合
+* `agg(distinct)`：4阶段聚合
+* `agg(distinct) +  group by`（其中`group by`列低基数倾斜）：4阶段聚合
+
+### 3.1.4 Merge Group
 
 位置：`Memo::mergeGroup`
 
