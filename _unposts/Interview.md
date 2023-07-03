@@ -147,10 +147,20 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
 # 5 Cpp
 
 1. What is C++? Explain its key features.
+    > C++ is an advanced programming language that combines the features of C with added capabilities for object-oriented programming. It offers high performance, a rich library, and strong compatibility with other languages.
+
 1. What are the differences between C and C++?
+    > C is procedural, while C++ supports procedural and object-oriented programming. C++ has features like classes, objects, and inheritance, along with the Standard Template Library. It also allows explicit memory management and has additional language features.
+
 1. Explain the object-oriented programming (OOP) concepts in C++.
+    > OOP in C++ uses classes and objects to encapsulate data and behavior. It involves inheritance, polymorphism, and abstraction, enabling modular and reusable code.
+
 1. What is the difference between class and struct in C++?
+    > In C++, the main difference between a class and a struct is that members are private by default in a class, while they are public by default in a struct.
+
 1. Explain the concept of inheritance in C++.
+    > In C++, inheritance allows a class to inherit properties and behaviors from another class, promoting code reuse and hierarchy among classes.
+
 1. What is the difference between function overloading and function overriding in C++?
 1. What are the access specifiers in C++? Explain their visibility levels.
 1. What is the difference between new and malloc in C++?
