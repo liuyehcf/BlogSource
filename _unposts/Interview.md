@@ -240,10 +240,10 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
 # 6 Network
 
 1. What is a network? Explain the basic components of a network.
-    > A network is a system of interconnected devices that enables communication and sharing of resources, consisting of nodes, links, and protocols
+    > A network is a system of interconnected devices that enables communication and sharing of resources, consisting of nodes, links, and protocols.
 
 1. What is the difference between a LAN and a WAN?
-    > LANs are smaller networks that cover a limited area, like a building or campus, while WANs are larger networks that connect multiple LANs over larger geographical distances
+    > LANs are smaller networks that cover a limited area, like a building or campus, while WANs are larger networks that connect multiple LANs over larger geographical distances.
 
 1. What are the layers of the OSI model? Briefly explain each layer.
     > The OSI model consists of the Physical, Data Link, Network, Transport, Session, Presentation, and Application layers, which respectively handle physical transmission, error-free data framing, logical addressing and routing, reliable data delivery, connection management, data translation and formatting, and network service access.
