@@ -319,6 +319,9 @@ categories:
     - Optimizer
         - RBO Optimizer
             - Transformation Rules
+                - Predicate Push Down
+                - Limit Push Down
+                - TopN Push Down
             - Implementation Rules
         - CBO Optimizer
             - Basic Concept
@@ -422,6 +425,7 @@ categories:
                         - Inner Join
                         - Left Semi Join
                         - Right Outer/Semi/Anti Join
+                        - TopN
                     - Unsuitable Scenarios
                         - Full Join
                         - Left Outer/Anti Join
@@ -430,9 +434,6 @@ categories:
                     - MinMax Filter
                 - In-Filter(Rows < 1000)
                     - No False Positive
-                - Scenarios
-                    - Join
-                    - TopN
 - Architecture
     - Shared Nothing Architecture
     - Shared Disk Architecture
