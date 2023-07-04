@@ -56,7 +56,7 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > Java is a versatile and secure programming language known for its platform independence, object-oriented approach, automatic memory management, and strong typing. It has a rich standard library, supports multithreading, and has robust security features. Java is widely used for diverse applications, including desktop software, web development, mobile apps, and enterprise systems.
 
 1. What are the differences between JDK, JRE, and JVM?
-    > In summary, JDK is used for Java application development, JRE is used for running Java applications, and JVM is responsible for executing Java bytecode on different platforms.
+    > In summary, JDK is a software package that provides tools for developing Java applications, JRE is a software package that provides the necessary runtime environment to execute Java applications, and JVM is a virtual machine that executes Java bytecode, allowing Java programs to run on any platform.
 
 1. Explain the different types of memory in Java.
     > Java has different memory types: stack memory (for local variables and method calls), heap memory (for objects and dynamically allocated data), method area (for class-level information), program counter register (stores the address of the currently executing instruction), and native method stacks (for executing native code).

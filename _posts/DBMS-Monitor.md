@@ -12,9 +12,11 @@ categories:
 
 <!--more-->
 
-# 1 系统参数
+# 1 Mysql
 
-## 1.1 查看所有系统参数
+## 1.1 系统参数
+
+### 1.1.1 查看所有系统参数
 
 ```sql
 SHOW VARIABLES -- 以数据表形式输出
@@ -22,7 +24,7 @@ SHOW VARIABLES\G -- 以行形式输出
 SHOW VARIABLES LIKE '%isolation%';
 ```
 
-## 1.2 查看指定系统参数的值
+### 1.1.2 查看指定系统参数的值
 
 以系统参数`tx_isolation`为例
 
@@ -36,7 +38,7 @@ SHOW SESSION VARIABLES LIKE 'tx_isolation'; -- 当前会话
 SHOW VARIABLES LIKE 'tx_isolation'; -- 默认当前会话
 ```
 
-## 1.3 修改系统参数的值
+### 1.1.3 修改系统参数的值
 
 以系统参数`profiling_history_size`为例
 
@@ -58,19 +60,19 @@ SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
 ```
 
-# 2 查看版本号
+## 1.2 查看版本号
 
 ```sql
 SELECT VERSION();
 ```
 
-# 3 执行状态分析
+## 1.3 执行状态分析
 
 ```sql
 SHOW PROCESSLIST;
 ```
 
-# 4 profile工具
+## 1.4 profile工具
 
 **查看profile相关的系统变量**
 
@@ -171,7 +173,7 @@ mysql> SHOW PROFILE FOR QUERY 13;
 1. 以上参数可以组合使用
     * `SHOW PROFILE BLOCK IO, CPU FOR QUERY 13;`
 
-# 5 EXPLAIN-分析执行计划
+## 1.5 EXPLAIN-分析执行计划
 
 **语法**
 
@@ -205,10 +207,23 @@ mysql> EXPLAIN SELECT * FROM test WHERE id = 1;
 1. **filtered**：
 1. **Extra**：关于MYSQL如何解析查询的额外信息。将在表4.3中讨论，但这里可以看到的坏的例子是Using temporary和Using filesort，意思MYSQL根本不能使用索引，结果是检索会很慢
 
-# 6 参考
+## 1.6 参考
 
 * [MYSQL的用户变量(@)和系统变量(@@)](http://www.cnblogs.com/awishfullyway/p/6485070.html)
 * [MySQL优化 profile工具](https://jingyan.baidu.com/article/c35dbcb085eb688916fcbc01.html)
 * [MySQL常用性能分析方法-profile，explain，索引](http://blog.csdn.net/21aspnet/article/details/52938346)
 * [详解MySQL中EXPLAIN解释命令](http://database.51cto.com/art/200912/168453.htm)
 * [MYSQL 用 explain 语句判断select查询是否使用了索引](http://blog.csdn.net/u014453898/article/details/55004193)
+
+# 2 TiDB
+
+[Performance Analysis and Tuning](https://docs.pingcap.com/tidb/dev/performance-tuning-methods)
+
+# 3 Trino
+
+[EXPLAIN ANALYZE](https://trino.io/docs/current/sql/explain-analyze.html)
+
+# 4 Other
+
+[profile_example.txt](https://gist.github.com/alexey-milovidov/92758583dd41c24c360fdb8d6a4da194)
+
