@@ -90,17 +90,26 @@
 * `RewriteTreeTask`：执行Transformation Rule
 * `DeriveStatsTask`：基于逻辑`Plan`，自底向上计算统计信息
 
-```mermaid
-stateDiagram
-    [*] --> OptimizeGroupTask
-    OptimizeGroupTask --> EnforceAndCostTask
-    OptimizeGroupTask --> OptimizeExpressionTask
-    EnforceAndCostTask --> OptimizeGroupTask
-    ApplyRuleTask --> OptimizeExpressionTask
-    ApplyRuleTask --> EnforceAndCostTask
-    OptimizeExpressionTask --> ExploreGroupTask
-    OptimizeExpressionTask --> ApplyRuleTask
-    ExploreGroupTask --> OptimizeExpressionTask
+```
+        Optimize()
+            │
+            │
+            ▼
+  ┌───────────────────┐                  ┌────────────────────┐
+  │ OptimizeGroupTask │ ◄──────────────► │ EnforceAndCostTask │
+  └───────────────────┘                  └────────────────────┘
+            │                                      ▲
+            │                                      │
+            ▼                                      │
+┌────────────────────────┐                 ┌───────────────┐
+│ OptimizeExpressionTask │ ◄─────────────► │ ApplyRuleTask │
+└────────────────────────┘                 └───────────────┘
+            ▲
+            │
+            ▼
+  ┌──────────────────┐
+  │ ExploreGroupTask │
+  └──────────────────┘
 ```
 
 ### 3.1.3 Transformation Rules

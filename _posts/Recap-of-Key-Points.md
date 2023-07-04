@@ -317,6 +317,9 @@ categories:
     - Analyzer
         - Type Processing
     - Optimizer
+        - RBO Optimizer
+            - Transformation Rules
+            - Implementation Rules
         - CBO Optimizer
             - Basic Concept
                 - Expression
@@ -336,8 +339,6 @@ categories:
             - Statistics
                 - Basic Statistics
                 - Histogram Statistics
-            - Transformation Rules
-            - Implementation Rules
         - Heuristic Optimization
             - Subquery
                 - Position
