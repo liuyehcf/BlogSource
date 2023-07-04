@@ -59,7 +59,7 @@ table th:nth-of-type(5) {
 | 25 | Reverse Nodes in k-Group | LinkList | ★★★ | 用pseudoHead避免head讨论。每段的reverse操作用函数来进行，入参是pseudoHead以及tail |
 | 26 | Remove Duplicates from Sorted Array | Array | ★★ | 维护left、right两个索引，跳过重复的值，将right的值放入left位置中即可 |
 | 27 | Remove Element | Array | ★★ | 维护left、right两个索引，跳过指定的值，将right的值放入left位置中即可 |
-| 28 | Implement strStr() | Array | ★★★★★ | KMP算法，`next[i]`表示，`[0, i)`这个区间内的最大前后缀长度，计算next时，j从-1开始，因为不能计算本身的前后缀，但是在后续匹配时，j从0开始 |
+| 28 | Implement strStr() | Array | ★★★★★ | KMP算法 |
 | 29 | ~~Divide Two Integers~~ | \ | \ | 垃圾题目 |
 | 30 | Substring with Concatenation of All Words | String | ★★★★★ | 无思路 |
 | 31 | Next Permutation | Array | ★★★ | 从右往左找逆序对（先高位循环，再低位循环，都是递减），然后以此为边界进行排序即可，若未找到，排序整个数组即可 |
