@@ -68,10 +68,20 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > In Java, an abstract class can have defined methods, while an interface can only have undefined methods. A class can inherit from only one abstract class but implement multiple interfaces.
 
 1. Explain the concept of method overloading and method overriding.
+    > Method overloading refers to having multiple methods with the same name but different parameters within a class. Method overriding, on the other hand, occurs when a subclass modifies or extends a method inherited from its superclass.
+
 1. What is the difference between checked and unchecked exceptions in Java?
+    > Checked exceptions must be declared or handled, while unchecked exceptions can occur without explicit handling or declaration.
+
 1. What are the access modifiers in Java? Explain their visibility levels.
+    > Access modifiers in Java control visibility. "public" allows access anywhere, "protected" within the package and subclasses, "default" (no modifier) within the package, and "private" within the class.
+
 1. What is the difference between ArrayList and LinkedList?
+    > ArrayList provides fast random access using a dynamic array, while LinkedList offers efficient insertion and deletion using a doubly-linked list.
+
 1. What is the difference between a constructor and a method?
+    > Constructor initializes objects, called automatically when created, while a method performs actions, called explicitly by name
+
 1. What is the purpose of the "final" keyword in Java?
 1. How does garbage collection work in Java?
 1. What is the difference between the "==" operator and the "equals()" method?
@@ -162,10 +172,20 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > In C++, inheritance allows a class to inherit properties and behaviors from another class, promoting code reuse and hierarchy among classes.
 
 1. What is the difference between function overloading and function overriding in C++?
+    > Same as Java
+
 1. What are the access specifiers in C++? Explain their visibility levels.
+    > Same as Java
+
 1. What is the difference between new and malloc in C++?
+    > new is an operator in C++ that invokes constructors, performs type checking, and returns a typed pointer, while malloc is a function in C that allocates raw memory and returns a void pointer.
+
 1. Explain the concept of constructors and destructors in C++.
+    > Constructors initialize objects during creation, while destructors clean up resources before object destruction in C++.
+
 1. What are virtual functions in C++? How are they different from normal functions?
+    > Virtual functions in C++ allow for dynamic binding and polymorphic behavior, enabling overridden versions in derived classes, while normal functions are resolved based on the static type at compile-time.
+
 1. What is the difference between shallow copy and deep copy in C++?
 1. Explain the concept of templates in C++.
 1. What is the purpose of the "const" keyword in C++?
