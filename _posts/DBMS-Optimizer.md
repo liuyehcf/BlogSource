@@ -666,7 +666,18 @@ FROM (SELECT * FROM S LEFT OUTER JOIN R ON s1 = r1)a GROUP BY r1;
 * `Q1.1`和`Q1.2`可以产生相同的输出，因为聚合函数`sum`对于`NULL`分组可以正常产生`NULL`值
 * `Q2.1`和`Q2.2`无法产生相同的输出，因为聚合函数`count`对于`NULL`分组会输出`0`或`1`。因此这里我们通过`case when`语句来对输出列进行改写`Q2.3`，以达到纠正的目的
 
-# 4 Data Skew
+# 4 Table Prune
+
+[[Feature] Pruning tables in cardinality-preserving joins](https://github.com/StarRocks/starrocks/pull/26504)
+
+For cardinality-preserving joins:
+
+* A inner join B on A.fk = B.pk: each row in A matches B exactly once;
+* A left join B on A.fk = B.pk: each row in A matches B at most once;
+
+So the number of this join's output rows is equivalent to A's. if B's columns is unused or it can be substituted by A's column that equivalent to B's column, then B can be pruned from this join.
+
+# 5 Data Skew
 
 * [[Enhancement] Add GroupByCountDistinctDataSkewEliminateRule](https://github.com/StarRocks/starrocks/pull/17643)
 * [[Enhancement] optimize distinct agg](https://github.com/StarRocks/starrocks/pull/26023)
@@ -690,8 +701,8 @@ FROM (
 GROUP BY v1
 ```
 
-# 5 Property
+# 6 Property
 
-## 5.1 HashProperty
+## 6.1 HashProperty
 
 `Shuffle by v1`可以满足`Shuffle by v1, v2`，只不过到了每个节点后，还需要再对`v2`进行一次shuffle

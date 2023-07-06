@@ -62,7 +62,7 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > Java has different memory types: stack memory (for local variables and method calls), heap memory (for objects and dynamically allocated data), method area (for class-level information), program counter register (stores the address of the currently executing instruction), and native method stacks (for executing native code).
 
 1. What are the main principles of object-oriented programming (OOP)?
-    > The main principles of object-oriented programming (OOP) are encapsulation, inheritance, and polymorphism. In another words, for better organizing the codebase.
+    > OOP in Java uses classes and objects to encapsulate data and behavior. The main principles of object-oriented programming (OOP) are encapsulation, inheritance, and polymorphism, enabling modular and reusable code.
 
 1. What is the difference between an abstract class and an interface in Java?
     > In Java, an abstract class can have defined methods, while an interface can only have undefined methods. A class can inherit from only one abstract class but implement multiple interfaces.
@@ -83,10 +83,20 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > Constructor initializes objects, called automatically when created, while a method performs actions, called explicitly by name
 
 1. What is the purpose of the "final" keyword in Java?
+    > The "final" keyword in Java is used to indicate that a variable, method, or class cannot be modified or overridden, ensuring its immutability or preventing further extension.
+
 1. How does garbage collection work in Java?
+    > Garbage collection in Java automatically manages memory by identifying and reclaiming objects that are no longer referenced, freeing up resources and ensuring efficient memory usage without manual memory deallocation.
+
 1. What is the difference between the "==" operator and the "equals()" method?
+    > The "==" operator in Java compares the memory addresses of objects or the values of primitive types, while the "equals()" method compares the content or values of objects to determine if they are equivalent.
+
 1. Explain the concept of multithreading in Java.
+    > Multithreading in Java refers to the concurrent execution of multiple threads within a single program, allowing for improved efficiency by executing multiple tasks simultaneously and making effective use of available CPU resources.
+
 1. What is the purpose of the "synchronized" keyword in Java?
+    > The "synchronized" keyword in Java is used to ensure that only one thread at a time can access a critical section of code or an object, preventing concurrent access and maintaining thread safety in multi-threaded environments.
+
 1. What is the difference between the "StringBuilder" and "StringBuffer" classes?
 1. How does exception handling work in Java?
 1. What are the different types of loops in Java? Explain their differences.
@@ -163,7 +173,7 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > C is procedural, while C++ supports procedural and object-oriented programming. C++ has features like classes, objects, and inheritance, along with the Standard Template Library. It also allows explicit memory management and has additional language features.
 
 1. Explain the object-oriented programming (OOP) concepts in C++.
-    > OOP in C++ uses classes and objects to encapsulate data and behavior. It involves inheritance, polymorphism, and abstraction, enabling modular and reusable code.
+    > Same as Java
 
 1. What is the difference between class and struct in C++?
     > In C++, the main difference between a class and a struct is that members are private by default in a class, while they are public by default in a struct.
@@ -187,10 +197,20 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > Virtual functions in C++ allow for dynamic binding and polymorphic behavior, enabling overridden versions in derived classes, while normal functions are resolved based on the static type at compile-time.
 
 1. What is the difference between shallow copy and deep copy in C++?
+    > In C++, a shallow copy creates a new object that references the same memory as the original, while a deep copy creates a new object with its own separate memory, duplicating the content of the original object to avoid shared references.
+
 1. Explain the concept of templates in C++.
+    > Templates in C++ allow for generic programming by defining functions or classes with placeholder types that can be instantiated with different actual types at compile time, enabling code reuse and flexibility in handling different data types without sacrificing performance.
+
 1. What is the purpose of the "const" keyword in C++?
+    > The "const" keyword in C++ declares read-only variables, parameters, or member functions, preventing modifications and ensuring code clarity and const-correctness.
+
 1. What is the difference between pass by value and pass by reference in C++?
+    > Pass by value in C++ creates a copy of the parameter, while pass by reference allows direct access to the original parameter, enabling modifications and avoiding unnecessary copies.
+
 1. Explain the concept of exception handling in C++.
+    > Exception handling in C++ enables the detection and graceful handling of runtime errors, ensuring program stability by catching and managing exceptional situations through try-catch blocks.
+
 1. What is the difference between function overloading and default arguments in C++?
 1. What is the purpose of the "static" keyword in C++?
 1. Explain the concept of namespaces in C++.
