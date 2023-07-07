@@ -98,21 +98,26 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > The "synchronized" keyword in Java is used to ensure that only one thread at a time can access a critical section of code or an object, preventing concurrent access and maintaining thread safety in multi-threaded environments.
 
 1. What is the difference between the "StringBuilder" and "StringBuffer" classes?
+    > The main difference between the "StringBuilder" and "StringBuffer" classes is that "StringBuilder" is not thread-safe, while "StringBuffer" is thread-safe.
+
 1. How does exception handling work in Java?
-1. What are the different types of loops in Java? Explain their differences.
+    > In Java, exceptions are handled using try-catch-finally blocks. Exceptions are caught in catch blocks, and finally blocks are used for code that should always execute, regardless of whether an exception occurs.
+
 1. What is the purpose of the "static" keyword in Java?
-1. How can you achieve multiple inheritance in Java using interfaces?
-1. Explain the concept of method overriding in Java.
-1. What are the access modifiers for methods and variables in Java?
+    > In Java, the "static" keyword is used to create class-level variables and methods that can be accessed without instantiating the class.
+
 1. What is the difference between a shallow copy and a deep copy in Java?
+    > Same as C++
+
 1. Explain the concept of polymorphism in Java.
+    > Polymorphism in Java allows objects of different classes to be treated as objects of a common superclass or interface, providing flexibility through method overriding and code reusability.
+
 1. What is the difference between a static method and an instance method in Java?
 1. What is the purpose of the "this" keyword in Java?
 1. Explain the "try-catch-finally" block in exception handling.
 1. What is the difference between a HashSet and a TreeSet in Java?
 1. Explain the concept of autoboxing and unboxing in Java.
 1. What is the purpose of the "transient" keyword in Java?
-1. What is the difference between method overloading and method overriding?
 1. Explain the concept of lambda expressions in Java.
 1. What are the SOLID principles in object-oriented programming?
 1. What is the purpose of the "super" keyword in Java?
@@ -211,12 +216,21 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
 1. Explain the concept of exception handling in C++.
     > Exception handling in C++ enables the detection and graceful handling of runtime errors, ensuring program stability by catching and managing exceptional situations through try-catch blocks.
 
-1. What is the difference between function overloading and default arguments in C++?
 1. What is the purpose of the "static" keyword in C++?
+    > The "static" keyword in C++ is used for static storage duration, defining class-level members, and limiting scope for global variables/functions.
+
 1. Explain the concept of namespaces in C++.
+    > Namespaces in C++ organize code elements to prevent naming conflicts by providing named scopes for variables, functions, and classes.
+
 1. What is the difference between an abstract class and an interface in C++?
+    > In C++, an abstract class can have both regular and pure virtual functions with member variables, while an interface contains only pure virtual functions and allows multiple inheritance.
+
 1. What are the different types of storage classes in C++?
+    > The different storage classes in C++ are "auto," "register," "static," and "extern." Additionally, there is the "mutable" specifier.
+
 1. What is the difference between reference and pointer in C++?
+    > Pointers offer flexibility and direct memory address access, while references provide simplicity and intuitive syntax by acting as aliases. References are implemented as constant pointers, abstracting away pointer operations.
+
 1. Explain the concept of function pointers in C++.
 1. What are the different types of inheritance in C++?
 1. Explain the concept of operator overloading in C++.
