@@ -1664,7 +1664,46 @@ int main() {
 
 ## 3.6 Storage Type Qualifier
 
-### 3.6.1 static
+### 3.6.1 Storage Classes
+
+In C++, storage classes determine the scope, visibility, and lifetime of variables. There are four storage classes in C++:
+
+1. **Automatic Storage Class (default)**: Variables declared within a block or function without specifying a storage class are considered to have automatic storage class. These variables are created when the block or function is entered and destroyed when the block or function is exited. The keyword "auto" can also be used explicitly, although it is optional.
+1. **Static Storage Class**: Variables with static storage class are created and initialized only once, and their values persist across function calls. They are initialized to zero by default. Static variables can be declared within a block or function, but their scope is limited to that block or function. The keyword "static" is used to specify static storage class.
+1. **Register Storage Class**: The register storage class is used to suggest that a variable be stored in a register instead of memory. The keyword "register" is used to specify register storage class. However, the compiler is free to ignore this suggestion.
+1. **Extern Storage Class**: The extern storage class is used to declare a variable that is defined in another translation unit (source file). It is often used to provide a global variable declaration that can be accessed from multiple files. When using extern, the variable is not allocated any storage, as it is assumed to be defined elsewhere. The keyword "extern" is used to specify extern storage class.
+
+Here's an example illustrating the usage of different storage classes:
+
+```cpp
+#include <iostream>
+
+int globalVariable; // extern storage class by default
+
+void function() {
+    static int staticVariable; // static storage class
+
+    for (auto i = 0; i < 5; ++i) {
+        int autoVariable;              // automatic storage class
+        register int registerVariable; // register storage class
+
+        std::cout << "Auto: " << autoVariable << ", Static: " << staticVariable << ", Register: " << registerVariable
+                  << std::endl;
+
+        ++autoVariable;
+        ++staticVariable;
+        ++registerVariable;
+    }
+}
+
+int main() {
+    globalVariable = 10;
+    function();
+    return 0;
+}
+```
+
+### 3.6.2 static
 
 [C++ 关键词：static](https://zh.cppreference.com/w/cpp/keyword/static)
 
@@ -1674,7 +1713,7 @@ int main() {
     * 变量的存储方式和全局变量一样，但仍然不导出符号
 1. 声明不绑定到特定实例的类成员（类的静态成员）
 
-### 3.6.2 extern
+### 3.6.3 extern
 
 [C++ 关键词：extern](https://zh.cppreference.com/w/cpp/keyword/extern)
 
@@ -1686,7 +1725,7 @@ int main() {
     * 对于类模板
     * 对于函数模板
 
-#### 3.6.2.1 Shared Global Variable
+#### 3.6.3.1 Shared Global Variable
 
 **每个源文件中都得有该变量的声明，但是只有一个源文件中可以包含该变量的定义，通常可以采用如下做法**
 
@@ -1729,7 +1768,7 @@ gcc -o main main.cpp extern.cpp -lstdc++ -Wall
 ./main
 ```
 
-### 3.6.3 inline
+### 3.6.4 inline
 
 [C++ 关键词：inline](https://zh.cppreference.com/w/cpp/keyword/inline)
 
@@ -1741,7 +1780,7 @@ gcc -o main main.cpp extern.cpp -lstdc++ -Wall
 * 在用于具有静态存储期的变量（静态类成员或命名空间作用域变量）的声明说明符序列时，将变量声明为内联变量
     * 声明为`constexpr`的静态成员变量（但不是命名空间作用域变量）是隐式的内联变量
 
-### 3.6.4 thread_local
+### 3.6.5 thread_local
 
 [C++ 关键词：thread_local (C++11 起)](https://zh.cppreference.com/w/cpp/keyword/thread_local)
 
@@ -1807,7 +1846,7 @@ addr distance between t1 and t2 is: 8392704
 
 可以发现，在不同的线程中，`value`的内存地址是不同的，且处于高位。相邻两个线程，`value`地址的差值差不多就是栈空间的大小（`ulimit -s`）
 
-#### 3.6.4.1 Initialization
+#### 3.6.5.1 Initialization
 
 ```cpp
 #include <iostream>
