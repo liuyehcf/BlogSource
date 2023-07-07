@@ -65,7 +65,7 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > OOP in Java uses classes and objects to encapsulate data and behavior. The main principles of object-oriented programming (OOP) are encapsulation, inheritance, and polymorphism, enabling modular and reusable code.
 
 1. What is the difference between an abstract class and an interface in Java?
-    > In Java, an abstract class can have defined methods, while an interface can only have undefined methods. A class can inherit from only one abstract class but implement multiple interfaces.
+    > Same as C++
 
 1. Explain the concept of method overloading and method overriding.
     > Method overloading refers to having multiple methods with the same name but different parameters within a class. Method overriding, on the other hand, occurs when a subclass modifies or extends a method inherited from its superclass.
@@ -229,7 +229,7 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > The different storage classes in C++ are "auto," "register," "static," and "extern." Additionally, there is the "mutable" specifier.
 
 1. What is the difference between reference and pointer in C++?
-    > Pointers offer flexibility and direct memory address access, while references provide simplicity and intuitive syntax by acting as aliases. References are implemented as constant pointers, abstracting away pointer operations.
+    > Pointers offer flexibility and direct memory access, while references provide simplicity and intuitive syntax by acting as aliases. References are implemented as constant pointers, abstracting away pointer operations.
 
 1. Explain the concept of function pointers in C++.
 1. What are the different types of inheritance in C++?
