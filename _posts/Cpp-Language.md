@@ -1002,9 +1002,23 @@ private:
 };
 ```
 
-## 3.2 Type Length
+## 3.2 Other Specifiers
 
-### 3.2.1 Memory Alignment
+### 3.2.1 inline
+
+[C++ 关键词：inline](https://zh.cppreference.com/w/cpp/keyword/inline)
+
+* 在用于函数的声明说明符序列时，将函数声明为一个内联函数
+    * 整个定义都在`class/struct/union`的定义内且被附着到全局模块（C++20 起）的函数是隐式的内联函数，无论它是成员函数还是非成员`friend`函数
+    * `inline`关键词的本意是作为给优化器的指示器，以指示优先采用函数的内联替换而非进行函数调用，即并不执行将控制转移到函数体内的函数调用CPU指令，而是代之以执行函数体的一份副本而无需生成调用。这会避免函数调用的开销（传递实参及返回结果），但它可能导致更大的可执行文件，因为函数体必须被复制多次
+    * 因为关键词`inline`的含义是非强制的，编译器拥有对任何未标记为`inline`的函数使用内联替换的自由，和对任何标记为`inline`的函数生成函数调用的自由。这些优化选择不改变上述关于多个定义和共享静态变量的规则
+    * 声明有`constexpr`的函数是隐式的内联函数
+* 在用于具有静态存储期的变量（静态类成员或命名空间作用域变量）的声明说明符序列时，将变量声明为内联变量
+    * 声明为`constexpr`的静态成员变量（但不是命名空间作用域变量）是隐式的内联变量
+
+## 3.3 Type Length
+
+### 3.3.1 Memory Alignment
 
 **内存对齐最最底层的原因是内存的IO是以`8`个字节`64bit`为单位进行的**
 
@@ -1128,14 +1142,14 @@ Align4's size = 16
     f4's offset = 8, f4's size = 8
 ```
 
-### 3.2.2 sizeof
+### 3.3.2 sizeof
 
 **`sizeof`用于获取对象的内存大小**
 
 * `sizeof(int32_t)`：4
 * `sizeof(char[2][2][2])`：8
 
-### 3.2.3 alignof
+### 3.3.3 alignof
 
 **`alignof`用于获取对象的有效对齐值。`alignas`用于设置有效对其值（不允许小于默认的有效对齐值）**
 
@@ -1198,7 +1212,7 @@ sizeof(Foo5)=8, alignof(Foo5)=8
 sizeof(Foo6)=16, alignof(Foo6)=16
 ```
 
-## 3.3 alignas
+### 3.3.4 alignas
 
 `alignas`类型说明符是一种可移植的`C++`标准方法，用于指定变量和自定义类型的对齐方式，可以在定义 `class`、`struct`、`union`或声明变量时使用。如果遇到多个`alignas`说明符，编译器会选择最严格的那个（最大对齐值）
 
@@ -1662,15 +1676,15 @@ int main() {
 }
 ```
 
-## 3.6 Storage Type Qualifier
+## 3.6 Storage Class Specifiers
 
-### 3.6.1 Storage Classes
+[Storage class specifiers](https://en.cppreference.com/w/cpp/language/storage_duration)
 
 In C++, storage classes determine the scope, visibility, and lifetime of variables. There are four storage classes in C++:
 
 1. **Automatic Storage Class (default)**: Variables declared within a block or function without specifying a storage class are considered to have automatic storage class. These variables are created when the block or function is entered and destroyed when the block or function is exited. The keyword "auto" can also be used explicitly, although it is optional.
 1. **Static Storage Class**: Variables with static storage class are created and initialized only once, and their values persist across function calls. They are initialized to zero by default. Static variables can be declared within a block or function, but their scope is limited to that block or function. The keyword "static" is used to specify static storage class.
-1. **Register Storage Class**: The register storage class is used to suggest that a variable be stored in a register instead of memory. The keyword "register" is used to specify register storage class. However, the compiler is free to ignore this suggestion.
+1. **Register Storage Class (deprecated)**: The register storage class is used to suggest that a variable be stored in a register instead of memory. The keyword "register" is used to specify register storage class. However, the compiler is free to ignore this suggestion.
 1. **Extern Storage Class**: The extern storage class is used to declare a variable that is defined in another translation unit (source file). It is often used to provide a global variable declaration that can be accessed from multiple files. When using extern, the variable is not allocated any storage, as it is assumed to be defined elsewhere. The keyword "extern" is used to specify extern storage class.
 
 Here's an example illustrating the usage of different storage classes:
@@ -1703,7 +1717,7 @@ int main() {
 }
 ```
 
-### 3.6.2 static
+### 3.6.1 static
 
 [C++ 关键词：static](https://zh.cppreference.com/w/cpp/keyword/static)
 
@@ -1713,7 +1727,7 @@ int main() {
     * 变量的存储方式和全局变量一样，但仍然不导出符号
 1. 声明不绑定到特定实例的类成员（类的静态成员）
 
-### 3.6.3 extern
+### 3.6.2 extern
 
 [C++ 关键词：extern](https://zh.cppreference.com/w/cpp/keyword/extern)
 
@@ -1725,7 +1739,7 @@ int main() {
     * 对于类模板
     * 对于函数模板
 
-#### 3.6.3.1 Shared Global Variable
+#### 3.6.2.1 Shared Global Variable
 
 **每个源文件中都得有该变量的声明，但是只有一个源文件中可以包含该变量的定义，通常可以采用如下做法**
 
@@ -1768,19 +1782,7 @@ gcc -o main main.cpp extern.cpp -lstdc++ -Wall
 ./main
 ```
 
-### 3.6.4 inline
-
-[C++ 关键词：inline](https://zh.cppreference.com/w/cpp/keyword/inline)
-
-* 在用于函数的声明说明符序列时，将函数声明为一个内联函数
-    * 整个定义都在`class/struct/union`的定义内且被附着到全局模块（C++20 起）的函数是隐式的内联函数，无论它是成员函数还是非成员`friend`函数
-    * `inline`关键词的本意是作为给优化器的指示器，以指示优先采用函数的内联替换而非进行函数调用，即并不执行将控制转移到函数体内的函数调用CPU指令，而是代之以执行函数体的一份副本而无需生成调用。这会避免函数调用的开销（传递实参及返回结果），但它可能导致更大的可执行文件，因为函数体必须被复制多次
-    * 因为关键词`inline`的含义是非强制的，编译器拥有对任何未标记为`inline`的函数使用内联替换的自由，和对任何标记为`inline`的函数生成函数调用的自由。这些优化选择不改变上述关于多个定义和共享静态变量的规则
-    * 声明有`constexpr`的函数是隐式的内联函数
-* 在用于具有静态存储期的变量（静态类成员或命名空间作用域变量）的声明说明符序列时，将变量声明为内联变量
-    * 声明为`constexpr`的静态成员变量（但不是命名空间作用域变量）是隐式的内联变量
-
-### 3.6.5 thread_local
+### 3.6.3 thread_local
 
 [C++ 关键词：thread_local (C++11 起)](https://zh.cppreference.com/w/cpp/keyword/thread_local)
 
@@ -1846,7 +1848,7 @@ addr distance between t1 and t2 is: 8392704
 
 可以发现，在不同的线程中，`value`的内存地址是不同的，且处于高位。相邻两个线程，`value`地址的差值差不多就是栈空间的大小（`ulimit -s`）
 
-#### 3.6.5.1 Initialization
+#### 3.6.3.1 Initialization
 
 ```cpp
 #include <iostream>
