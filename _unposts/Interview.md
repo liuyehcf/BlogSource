@@ -160,11 +160,20 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > Polymorphism in Java allows objects of different classes to be treated as objects of a common superclass or interface, providing flexibility through method overriding and code reusability.
 
 1. What is the difference between a static method and an instance method in Java?
+    > Static methods belong to the class itself and can be accessed without creating an instance, while instance methods require an object instance to be called.
+
 1. What is the purpose of the "this" keyword in Java?
-1. Explain the "try-catch-finally" block in exception handling.
+    > The "this" keyword in Java refers to the current instance of a class, distinguishing variables and accessing instance members.
+
 1. What is the difference between a HashSet and a TreeSet in Java?
+    > HashSet is an unordered collection using hashing, while TreeSet is a sorted collection with slower insertion and removal but efficient retrieval.
+
 1. Explain the concept of autoboxing and unboxing in Java.
+    > Autoboxing is the automatic conversion of primitive types to their corresponding wrapper classes, while unboxing is the automatic conversion of wrapper class objects back to primitive types in Java
+
 1. What is the purpose of the "transient" keyword in Java?
+    > The "transient" keyword in Java is used to indicate that a variable should not be serialized when an object is being converted into a stream of bytes, allowing for selective exclusion of variables from the serialization process.
+
 1. Explain the concept of lambda expressions in Java.
 1. What are the SOLID principles in object-oriented programming?
 1. What is the purpose of the "super" keyword in Java?
@@ -279,10 +288,20 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > Pointers offer flexibility and direct memory access, while references provide simplicity and intuitive syntax by acting as aliases. References are implemented as constant pointers, abstracting away pointer operations.
 
 1. Explain the concept of function pointers in C++.
+    > Function pointers in C++ are variables that store the memory address of a function, providing a way to call functions dynamically and enabling callback mechanisms.
+
 1. What are the different types of inheritance in C++?
+    > C++ supports single, multiple, multilevel, hierarchical, and hybrid inheritance, allowing classes to inherit from one or more base classes.
+
 1. Explain the concept of operator overloading in C++.
+    > Operator overloading in C++ redefines operators for user-defined types, enabling custom behavior and allowing objects to be used with operators like + or <<.
+
 1. What is the difference between static binding and dynamic binding in C++?
+    > Static binding happens at compile-time, resolving function calls based on static types. Dynamic binding occurs at runtime, selecting functions based on dynamic types.
+
 1. What are the different types of polymorphism in C++?
+    > In C++, polymorphism can be achieved through compile-time polymorphism, which includes function overloading and template specialization, as well as runtime polymorphism, achieved through inheritance and virtual functions.
+
 1. What is the purpose of the "this" pointer in C++?
 1. Explain the concept of smart pointers in C++.
 1. What are the different types of STL containers in C++?
