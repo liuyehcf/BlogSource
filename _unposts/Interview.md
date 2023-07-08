@@ -166,7 +166,7 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > The "this" keyword in Java refers to the current instance of a class, distinguishing variables and accessing instance members.
 
 1. What is the difference between a HashSet and a TreeSet in Java?
-    > HashSet is an unordered collection using hashing, while TreeSet is a sorted collection with slower insertion and removal but efficient retrieval.
+    > HashSet is an unordered collection using hashing, while TreeSet is a sorted collection with slower insertion and removal but ordered traversal.
 
 1. Explain the concept of autoboxing and unboxing in Java.
     > Autoboxing is the automatic conversion of primitive types to their corresponding wrapper classes, while unboxing is the automatic conversion of wrapper class objects back to primitive types in Java
