@@ -50,6 +50,49 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
 
 # 3 Database
 
+1. What is OLAP (Online Analytical Processing) and how does it differ from OLTP (Online Transaction Processing)?
+1. Explain the concept of a data cube in OLAP and its role in multidimensional analysis.
+1. What are the key differences between a relational database and an OLAP database?
+1. Describe the process of building an OLAP database model from a relational database.
+1. What are the major types of OLAP operations? Explain each type briefly.
+1. How do you optimize query performance in an OLAP database?
+1. What is the purpose of dimension hierarchies in OLAP systems? Provide an example.
+1. How would you handle slowly changing dimensions in an OLAP database?
+1. What are the advantages and disadvantages of using a star schema in an OLAP database?
+1. Explain the concept of data aggregation in OLAP and provide an example.
+1. What is the role of measures in OLAP databases? How are they different from dimensions?
+1. How do you handle data quality and consistency in an OLAP database?
+1. Describe the process of data refreshing and incremental updates in an OLAP database.
+1. What are some common challenges you might encounter when designing and implementing an OLAP database system?
+1. Can you explain the concept of drill-down and roll-up operations in OLAP? How are they useful in data analysis?
+1. How do you handle security and access control in an OLAP database system?
+1. What is the role of data aggregation functions (e.g., SUM, COUNT, AVG) in OLAP queries?
+1. Can you explain the concept of data slicing and dicing in OLAP? Provide an example.
+1. How do you handle data integration from multiple data sources in an OLAP database?
+1. Describe your experience with OLAP tools and technologies, and highlight any specific tools you have used in the past.
+1. What is the role of a fact table in an OLAP database? How is it different from a dimension table?
+1. Explain the concept of data drill-through in OLAP and its significance.
+1. How do you handle data partitioning and indexing in an OLAP database to improve performance?
+1. What are some key considerations when designing the schema for an OLAP database?
+1. Describe the process of data aggregation in OLAP and discuss the challenges associated with it.
+1. What are the advantages and disadvantages of using a snowflake schema in an OLAP database?
+1. How would you handle data updates and deletions in an OLAP database?
+1. Can you explain the concept of data mining in the context of OLAP databases?
+1. What are some best practices for designing and implementing an OLAP database system?
+1. How do you handle concurrency and data consistency in an OLAP database environment?
+1. What are the differences between a star schema and a constellation schema in an OLAP database?
+1. Can you discuss the role of metadata in an OLAP database system?
+1. How do you handle dimension tables with high cardinality in an OLAP database?
+1. Explain the concept of drill-across in OLAP and provide an example.
+1. Can you discuss the role of OLAP in business intelligence (BI) applications?
+1. How do you handle data aggregation over time periods (e.g., daily, weekly, monthly) in an OLAP database?
+1. What are the considerations for designing an effective OLAP cube structure?
+1. How do you handle complex calculations and derived measures in an OLAP database?
+1. Can you discuss the differences between a relational database management system (RDBMS) and an OLAP server?
+1. Describe your experience with performance tuning and optimization in an OLAP database environment.
+
+## 3.1 Uncategorized
+
 1. why mapp fast?
 1. why there are multiply fragments in a query?
 1. the difference between bitmap column and bitmap index?
