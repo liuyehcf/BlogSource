@@ -160,13 +160,13 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > Polymorphism in Java allows objects of different classes to be treated as objects of a common superclass or interface, providing flexibility through method overriding and code reusability.
 
 1. What is the difference between a static method and an instance method in Java?
-    > Static methods belong to the class itself and can be accessed without creating an instance, while instance methods require an object instance to be called.
+    > Static methods belong to the class itself and can be accessed without creating an instance, while instance methods must be called through an instance.
 
 1. What is the purpose of the "this" keyword in Java?
     > The "this" keyword in Java refers to the current instance of a class, distinguishing variables and accessing instance members.
 
 1. What is the difference between a HashSet and a TreeSet in Java?
-    > HashSet is an unordered collection using hashing, while TreeSet is a sorted collection with slower insertion and removal but ordered traversal.
+    > HashSet is an unordered collection using hashing, while TreeSet is a sorted collection with slower insertion and removal but providing ordered traversal.
 
 1. Explain the concept of autoboxing and unboxing in Java.
     > Autoboxing is the automatic conversion of primitive types to their corresponding wrapper classes, while unboxing is the automatic conversion of wrapper class objects back to primitive types in Java
