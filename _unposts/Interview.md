@@ -50,6 +50,10 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
 
 # 3 Database
 
+1. why mapp fast?
+1. why there are multiply fragments in a query?
+1. the difference between bitmap column and bitmap index?
+
 # 4 Java
 
 1. What is Java? Explain its key features.
