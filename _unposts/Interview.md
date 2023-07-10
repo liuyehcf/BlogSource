@@ -175,10 +175,26 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > The "transient" keyword in Java is used to indicate that a variable should not be serialized when an object is being converted into a stream of bytes, allowing for selective exclusion of variables from the serialization process.
 
 1. Explain the concept of lambda expressions in Java.
+    > Lambda expressions in Java are concise blocks of code that represent a functional interface and enable the use of functional programming paradigms.
+
 1. What are the SOLID principles in object-oriented programming?
+    > The SOLID principles are a set of five design principles in object-oriented programming:
+    > 1. Single Responsibility Principle (SRP): A class should have only one reason to change.
+    > 1. Open/Closed Principle (OCP): Software entities (classes, modules, functions, etc.) should be open for extension but closed for modification.
+    > 1. Liskov Substitution Principle (LSP): Subtypes must be substitutable for their base types.
+    > 1. Interface Segregation Principle (ISP): Clients should not be forced to depend on interfaces they do not use.
+    > 1. Dependency Inversion Principle (DIP): High-level modules should not depend on low-level modules; both should depend on abstractions.
+    > These principles collectively promote modular, extensible, and maintainable software design.
+
 1. What is the purpose of the "super" keyword in Java?
+    > The "super" keyword in Java is used to refer to the instance of parent class or superclass, allowing access to its instance members (methods, fields, constructors) and enabling method overriding and constructor chaining.
+
 1. Explain the concept of anonymous classes in Java.
+    > Anonymous classes in Java are unnamed local classes that are defined and instantiated simultaneously, often used for one-time implementations of interfaces or abstract classes.
+
 1. What is the difference between a static variable and an instance variable in Java?
+    > Static variables are shared among all instances of a class and belong to the class itself, while instance variables are unique to each object and belong to individual instances.
+
 1. What is the purpose of the "volatile" keyword in Java?
 1. Explain the concept of inheritance in Java.
 1. What is the difference between equals() and hashCode() methods?
@@ -303,10 +319,20 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > In C++, polymorphism can be achieved through compile-time polymorphism, which includes function overloading and template specialization, as well as runtime polymorphism, achieved through inheritance and virtual functions.
 
 1. What is the purpose of the "this" pointer in C++?
+    > Same as Java
+
 1. Explain the concept of smart pointers in C++.
+    > Smart pointers in C++ are objects that automatically manage memory through reference counters, preventing issues like memory leaks and dangling pointers. They include unique pointers, shared pointers, and weak pointers.
+
 1. What are the different types of STL containers in C++?
+    > The different types of STL containers in C++ include sequence containers (vector, list, deque, array, forward_list), ordered associative containers (set, multiset, map, multimap), and unordered associative containers (unordered_set, unordered_multiset, unordered_map, unordered_multimap).
+
 1. What is the difference between vectors and arrays in C++?
+    > Vectors in C++ provide dynamic size, automatic memory management, and bounds checking, while arrays have a fixed size, require manual memory management, and lack built-in bounds checking.
+
 1. Explain the concept of move semantics and rvalue references in C++.
+    > Move semantics and rvalue references in C++ allow the efficient transfer of resources (like memory ownership) from one object to another, reducing unnecessary copying and improving performance, through the use of move constructors and move assignment operators.
+
 1. What is the difference between const reference and rvalue reference in C++?
 1. What is the purpose of the "friend" keyword in C++?
 1. Explain the concept of exception handling in C++.
@@ -470,7 +496,11 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
 1. What is the purpose of the TCP window size? How is it adjusted during the data transfer?
 1. Explain the concept of TCP connection termination using the FIN flag.
 
-# 7 References
+# 7 Others
+
+1. serverless
+
+# 8 References
 
 * [cpp-interview](https://github.com/huihut/interview)
 * [interview](https://github.com/Olshansk/interview)
