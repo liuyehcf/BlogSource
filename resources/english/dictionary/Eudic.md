@@ -1,7 +1,79 @@
+1. he is highly intelligent and obedient; he is highly commended for his intelligence
+1. first class; business class; economy class
+1. simple past tense; past perfect tense
+1. head of the family; head of state
+1. reject the offer; refuse the offer; decline the offer
+1. What are the different types of polymorphism in C++?
+1. What is the difference between static binding and dynamic binding in C++?
+1. Explain the concept of operator overloading in C++
+1. What are the different types of inheritance in C++?
+1. Explain the concept of function pointers in C++
+1. What is the purpose of the "transient" keyword in Java?
+1. Explain the concept of autoboxing and unboxing in Java
+1. What is the difference between a HashSet and a TreeSet in Java?
+1. What is the purpose of the "this" keyword in Java?
+1. What is the difference between a static method and an instance method in Java?
+1. social unity and social stability
+1. exchange rate
+1. What is the difference between reference and pointer in C++?
+1. What are the different types of storage classes in C++?
+1. What is the difference between an abstract class and an interface in C++?
+1. Explain the concept of namespaces in C++
+1. What is the purpose of the "static" keyword in C++?
+1. Explain the concept of exception handling in C++
+1. What is the difference between pass by value and pass by reference in C++?
+1. What is the purpose of the "const" keyword in C++?
+1. Explain the concept of templates in C++
+1. What is the difference between shallow copy and deep copy in C++?
+1. What are virtual functions in C++? How are they different from normal functions?
+1. Explain the concept of constructors and destructors in C++
+1. What is the difference between new and malloc in C++?
+1. What are the access specifiers in C++? Explain their visibility levels
+1. What is the difference between function overloading and function overriding in C++
+1. Explain the concept of inheritance in C++
+1. What is the difference between class and struct in C++?
+1. Explain the object-oriented programming (OOP) concepts in C++
+1. What are the differences between C and C++?
+1. What is C++? Explain its key features
+1. Explain the concept of polymorphism in Java
+1. What is the difference between a shallow copy and a deep copy in Java?
+1. What is the purpose of the "static" keyword in Java?
+1. How does exception handling work in Java?
+1. What is the difference between the "StringBuilder" and "StringBuffer" classes?
+1. What is the purpose of the "synchronized" keyword in Java?
+1. Explain the concept of multithreading in Java
+1. What is the difference between the "==" operator and the "equals()" method?
+1. How does garbage collection work in Java?
+1. What is the purpose of the "final" keyword in Java?
+1. What is the difference between a constructor and a method?
+1. What is the difference between ArrayList and LinkedList?
+1. What are the access modifiers in Java? Explain their visibility levels
+1. What is the difference between checked and unchecked exceptions in Java?
+1. Explain the concept of method overloading and method overriding
+1. What is the difference between an abstract class and an interface in Java?
+1. What are the main principles of object-oriented programming (OOP)?
+1. Explain the different types of memory in Java
+1. What are the differences between JDK, JRE, and JVM?
+1. What is Java? Explain its key features
+1. unilateral edge; directed edge; bilateral edge; undirected edge
+1. this feature is under development
+1. what do you make of that; what do you think of that; what's your assessment of the rebellion
+1. singular form; plural form
+1. issue a statement; issue a warning; release a statement; make an announcement
+1. deceive; deceit; fraud; dupe
+1. professional terminology; professional vocabulary
+1. scrub my face
+1. sustainable delivery
+1. the strike may last for days
+1. far-left political leaders; far-right political leaders
+1. Israel has carried out military raids in the area for more than a year
+1. a counter terrorism effort
+1. the military is currently conducting a large offsensive; the military is currently conducting a large defense
+1. I was pulled over by a police officier
+1. the system can continue to function even if some servers fail or become unreachable
 1. there's no room for complacence if you want to win this game; this is not a time to be complacent; you have no real grounds for complaint
 1. the situation has now been de-escalated; the situation has now been escalated
 1. the overwhelming support was inspiring
-1. plural form
 1. a door like this is going to cost way more than $100
 1. consist of; comprised of
 1. when you stop trying, it happens
@@ -35,7 +107,6 @@
 1. what is the fundamental difference
 1. slaughter people
 1. he has an invulnerable image; he has an invincible image; his image is untouchable
-1. what's your assessment of the rebellion
 1. the scheduler in DuckDB employs techniques such as work-stealing to balance the workload among threads and minimize idle time
 1. this approach can provide good resource utilization
 1. gravely injured; seriously injured; critically injured
@@ -56,7 +127,6 @@
 1. moonlight sonata 3rd movement
 1. I don't understand how that's a language barrier
 1. unparalleled natural resources
-1. what do you make of that
 1. army of mercenaries
 1. a huge moment is playing out in Russia
 1. I was making a right turn
@@ -83,7 +153,6 @@
 1. front matter; back matter
 1. do not approach me
 1. I can make a dish under 30 seconds
-1. he is highly intelligent and obedient
 1. seize the opportunity
 1. prominent; dominant; predominant; prevalent
 1. recurrence relation; state transition equation
@@ -92,7 +161,6 @@
 1. I really enjoy exercising! I usually go to the gym to work out and do some anaerobic weightlifting
 1. this feature will not perform additional state reporting
 1. here's a high-level overview of how the KMP algorithm works
-1. issue a statement; issue a warning
 1. these two words are often used interchangeably
 1. disparage; criticize; humiliate; mock; denigrate; insult
 1. disparage means making derogatory remarks or expressing a lack of respect or value towards someone or something
@@ -1345,7 +1413,6 @@
 1. He's a sensitive and caring man
 1. you should walk on the stripes of the crosswalk
 1. walking on the stripes of the crosswalk
-1. he is highly commended for his intelligence
 1. my family provide, protect and care about me
 1. the experienced captain make an emergency landing
 1. this course beyond the capability of a second-year pupil
@@ -2112,7 +2179,6 @@
 1. cloth mask/medical mask/surgical mask/N95 mask
 1. plaque
 1. contaminated
-1. plural/single
 1. cough
 1. sneeze
 1. booster shot
@@ -2121,7 +2187,6 @@
 1. compelled to resign
 1. they confronted the prisoner with his accusers
 1. please reserve a seat for me
-1. decline the offer
 1. put best efforts into everything you do
 1. meet your goals
 1. stay on track
@@ -2442,7 +2507,6 @@
 1. coorperate/corporate
 1. raise the excise to 10%
 1. the beauty of the plan consists in its simplicity
-1. race discrimination
 1. the curtains had faded in the sun
 1. come to an agreement
 1. on the verge of teers
@@ -3389,7 +3453,6 @@
 1. enhance one's physical strength
 1. phony
 1. personal hero
-1. get cheated on
 1. get back
 1. stimulate
 1. headquarter
@@ -3452,7 +3515,6 @@
 1. one more slide
 1. obstruct
 1. delineate
-1. united country
 1. money up front
 1. overload
 1. protest
@@ -3500,14 +3562,12 @@
 1. see each other
 1. debut
 1. succinct
-1. head of state
 1. compare against
 1. surrender
 1. magnify
 1. public hospital
 1. drawer
 1. rhetorical question
-1. past tense
 1. slim
 1. full-figured
 1. colorado
@@ -3595,7 +3655,6 @@
 1. a full figure
 1. draw from
 1. spread out over 10 years
-1. head of the family
 1. both ok
 1. strong desire
 1. cravings
@@ -3677,7 +3736,6 @@
 1. handcrafted
 1. moderately
 1. repetitive
-1. Breaking Bad
 1. RV
 1. free-range chicken
 1. countryside
