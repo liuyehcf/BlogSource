@@ -148,7 +148,7 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > The main difference between the "StringBuilder" and "StringBuffer" classes is that "StringBuilder" is not thread-safe, while "StringBuffer" is thread-safe.
 
 1. How does exception handling work in Java?
-    > In Java, exceptions are handled using try-catch-finally blocks. Exceptions are caught in catch blocks, and finally blocks are used for code that should always execute, regardless of whether an exception occurs.
+    > In Java, exceptions are handled using try-catch-finally blocks. Exceptions are caught and handled in catch blocks, and finally blocks are used for code that should always execute, regardless of whether an exception occurs, providing program stability.
 
 1. What is the purpose of the "static" keyword in Java?
     > In Java, the "static" keyword is used to create class-level variables and methods that can be accessed without instantiating the class.
