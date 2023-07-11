@@ -266,6 +266,9 @@ categories:
             - Correlated Not Exist Or Not In Subquery
             - Not Existence Predicate
             - Multiply mismatchs make no differences
+        - Related Concepts
+            - Cardinality Preserved Join
+            - Duplication Factor
     - Aggregate
     - Window Function
         - Function
