@@ -350,7 +350,7 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > The "friend" keyword in C++ grants non-member functions or classes privileged access to private and protected members of a class.
 
 1. What is the difference between stack memory and heap memory in C++?
-    > Stack memory is used for local variables and has automatic management, while heap memory is used for dynamic memory allocation and requires manual management using new and delete.
+    > Stack memory is used for local variables and funciton calls and has automatic management, while heap memory is used for dynamic memory allocation and requires manual management using new and delete.
 
 1. What is the purpose of the "auto" keyword in C++11?
     > The "auto" keyword in C++11 enables automatic type deduction for variables based on their initializer, enhancing code readability and reducing the need for explicit type declarations.
