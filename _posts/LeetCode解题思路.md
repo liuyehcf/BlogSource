@@ -79,7 +79,7 @@ table th:nth-of-type(5) {
 | 45 | Jump Game II | Greedy | ★★★★★ | 不用关注具体跳到哪个位置，维护3个变量，iter、curFar、curFarest，当`iter<=curFar`时，更新`curFarest` |
 | 46 | Permutations | Recursion | ★★★ | 经典递归，记录某个索引是否被使用过 |
 | 47 | Permutations II | Recursion | ★★★ | 同46，跳过相同的元素 |
-| 48 | Rotate Image | Array | ★★★ | 如何拆分正方形。用两条对角线拆分，这样坐标好计算，更直观 |
+| 48 | Rotate Image | Array | ★★★ | 以正方形为操作单元，从外层到内层依次旋转，每层计算时，通过`boundary`和`offset`计算坐标点 |
 | 49 | Group Anagrams | String | ★★★ | 将字符串按字典序排序得到key，然后进行分组 |
 | 50 | Pow(x, n) | Numerical |  | 太数学了 |
 | 51 | N-Queens | Recursion | ★★★ | 经典递归，横纵、对角线都不能冲突 |
