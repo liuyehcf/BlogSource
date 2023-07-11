@@ -1,5 +1,5 @@
 ---
-title: Maven-Sundry
+title: Maven-Trivial
 date: 2017-11-27 23:39:21
 tags: 
 - 原创
@@ -104,6 +104,21 @@ mvn test -Pcode-generator
 1. 其次，**依赖声明顺序（在同一个pom中）**，先声明的依赖优先加载
 1. 最后，**依赖覆盖**，子POM文件中的依赖优先加载
 
-# 3 参考
+# 3 国内源
+
+```xml
+<settings>
+    <mirrors>
+        <mirror>
+            <id>alimaven</id>
+            <name>aliyun maven</name>
+            <mirrorOf>central</mirrorOf>
+            <url>https://maven.aliyun.com/repository/central</url>
+        </mirror>
+    </mirrors>
+</settings>
+```
+
+# 4 参考
 
 * [使用Maven运行Java main的3种方式](https://www.jianshu.com/p/76abe7d04053)
