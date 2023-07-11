@@ -196,10 +196,20 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > Static variables are shared among all instances of a class and belong to the class itself, while instance variables are unique to each object and belong to individual instances.
 
 1. What is the purpose of the "volatile" keyword in Java?
+    > The "volatile" keyword in Java ensures that a variable is always read from and written to the main memory, rather than a thread's local cache.
+
 1. Explain the concept of inheritance in Java.
+    > Same as Cpp
+
 1. What is the difference between equals() and hashCode() methods?
+    > equals() compares object contents for equality, while hashCode() returns an unique identifier for efficient hashing and storage in data structures.
+
 1. Explain the concept of generics in Java.
+    > Generics in Java enable the creation of classes and methods that can operate on different data types while providing type safety and code reusability through type parameters.
+
 1. What is the purpose of the "throws" keyword in Java?
+    > The "throws" keyword in Java indicates that a method may throw specific exceptions, requiring callers to handle or propagate them.
+
 1. What are the different types of inner classes in Java?
 1. Explain the concept of method references in Java 8.
 1. What is the purpose of the "final" keyword for variables and methods in Java?
@@ -334,12 +344,20 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > Move semantics and rvalue references in C++ allow the efficient transfer of resources (like memory ownership) from one object to another, reducing unnecessary copying and improving performance, through the use of move constructors and move assignment operators.
 
 1. What is the difference between const reference and rvalue reference in C++?
+    > Const reference is a reference to a constant value used for read-only scenario without copying parameters, while an rvalue reference is used for efficient resource transfer, typically in move semantics.
+
 1. What is the purpose of the "friend" keyword in C++?
-1. Explain the concept of exception handling in C++.
+    > The "friend" keyword in C++ grants non-member functions or classes privileged access to private and protected members of a class.
+
 1. What is the difference between stack memory and heap memory in C++?
-1. Explain the concept of templates in C++.
+    > Stack memory is used for local variables and has automatic management, while heap memory is used for dynamic memory allocation and requires manual management using new and delete.
+
 1. What is the purpose of the "auto" keyword in C++11?
+    > The "auto" keyword in C++11 enables automatic type deduction for variables based on their initializer, enhancing code readability and reducing the need for explicit type declarations.
+
 1. What are the differences between function templates and class templates in C++?
+    > Function templates in C++ enable generic functions for different data types, while class templates allow the creation of generic classes for various data types.
+
 1. Explain the concept of lambda expressions in C++11.
 1. What is the purpose of the "constexpr" keyword in C++?
 1. What is the difference between C++ constructors and destructors?
