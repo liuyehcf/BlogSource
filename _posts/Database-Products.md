@@ -35,6 +35,11 @@ categories:
 * [home](https://clickhouse.com/)
 * [github](https://github.com/ClickHouse/ClickHouse)
 
+**博客&文章：**
+
+* [Clickhouse blog](https://clickhouse.com/blog)
+    * [Building ClickHouse Cloud From Scratch in a Year](https://clickhouse.com/blog/building-clickhouse-cloud-from-scratch-in-a-year)
+
 # 2 Delta
 
 **类型：`Data Lake`**
@@ -410,6 +415,10 @@ categories:
 * [home](https://www.starrocks.com/zh-CN/index)
 * [github](https://github.com/StarRocks/starrocks)
 
+**博客&文章：**
+
+* [Introduction to StarRocks: a New Modern Analytical Database](https://itnext.io/introduction-to-starrocks-a-new-modern-analytical-database-1db2177d26e1)
+
 # 20 Snowflake
 
 **类型：`OLAP`**
@@ -493,6 +502,10 @@ categories:
 
 * [home](https://trino.io/)
 * [github](https://github.com/trinodb/trino)
+
+**博客&文章：**
+
+* [Trino blog](https://trino.io/blog/)
 
 # 24 Vertica
 
