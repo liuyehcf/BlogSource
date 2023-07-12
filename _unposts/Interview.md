@@ -366,14 +366,20 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > Function templates in C++ enable generic functions for different data types, while class templates allow the creation of generic classes for various data types.
 
 1. Explain the concept of lambda expressions in C++11.
+    > Same as Java
+
 1. What is the purpose of the "constexpr" keyword in C++?
-1. What is the difference between C++ constructors and destructors?
+    > The "constexpr" keyword in C++ allows compile-time evaluation, improving performance and enabling the use of compile-time constants.
+
 1. Explain the concept of copy constructors in C++.
-1. What is the purpose of the "override" keyword in C++11?
-1. What is the difference between runtime polymorphism and compile-time polymorphism in C++?
+    > A copy constructor in C++ creates a new object by initializing it with the values of an existing object of the same class.
+
 1. Explain the concept of function objects (functors) in C++.
-1. What is the difference between the "new" operator and the "malloc" function in C++?
+    > In C++, function objects, also known as functors, are objects that can be invoked as if they were functions, allowing customization for flexible behavior.
+
 1. Explain the concept of virtual destructors in C++.
+    > A virtual destructor in C++ ensures that the destructor of the most derived class is called first when deleting an object through a base class pointer, allowing proper cleanup and preventing memory leaks.
+
 1. What are the differences between class templates and function templates in C++?
 1. What is the purpose of the "explicit" keyword in C++?
 1. Explain the concept of type casting in C++.
