@@ -100,7 +100,33 @@ categories:
 * [home](https://druid.apache.org/)
 * [github](https://github.com/apache/druid/)
 
-# 5 Gbase
+# 5 DuckDB
+
+**类型：`OLAP`**
+
+**特性：**
+
+* High Speed
+* Columnar Storage
+* Compatibility
+* Embeddable
+* Low Memory Footprint
+* Analytical Capabilities
+* Open Source
+
+**架构：**
+
+**主页：**
+
+* [home](https://duckdb.org/)
+* [github](https://github.com/duckdb/duckdb)
+
+**博客&文章：**
+
+* [DuckDB News](https://duckdb.org/news/)
+    * [Fastest table sort in the West - Redesigning DuckDB’s sort](https://duckdb.org/2021/08/27/external-sorting.html)
+
+# 6 Gbase
 
 **类型：`OLAP`**
 
@@ -110,7 +136,7 @@ categories:
 
 **主页：**
 
-# 6 GreenPlum
+# 7 GreenPlum
 
 **类型：`OLAP`**
 
@@ -133,7 +159,7 @@ categories:
 * [home](https://greenplum.org/)
 * [github](https://github.com/greenplum-db/gpdb)
 
-# 7 Hadoop
+# 8 Hadoop
 
 **包含三大组件：**
 
@@ -152,7 +178,7 @@ categories:
 * [home](https://hadoop.apache.org/)
 * [github](https://github.com/apache/hadoop)
 
-# 8 Hawq
+# 9 Hawq
 
 **类型：`OLAP`**
 
@@ -182,7 +208,7 @@ categories:
 * [home](https://hawq.apache.org/)
 * [github](https://github.com/apache/hawq)
 
-# 9 HBase
+# 10 HBase
 
 **类型：`NoSQL`/`Storage`**
 
@@ -205,7 +231,7 @@ categories:
 * [home](https://hbase.apache.org/)
 * [github](https://github.com/apache/hbase)
 
-# 10 Hive
+# 11 Hive
 
 **类型：`OLAP`**
 
@@ -227,7 +253,7 @@ categories:
 * [home](https://hive.apache.org/)
 * [github](https://github.com/apache/hive)
 
-# 11 Hudi
+# 12 Hudi
 
 **类型：`Data Lake`**
 
@@ -250,7 +276,7 @@ categories:
 * [home](https://hudi.apache.org/)
 * [github](https://github.com/apache/hudi)
 
-# 12 Iceberg
+# 13 Iceberg
 
 **类型：`Data Lake`**
 
@@ -263,7 +289,7 @@ categories:
 * [home](https://iceberg.apache.org/)
 * [github](https://github.com/apache/iceberg)
 
-# 13 Impala
+# 14 Impala
 
 **类型：`OLAP`**
 
@@ -285,7 +311,7 @@ categories:
 * [impala-home](https://impala.apache.org/)
 * [impala-github](https://github.com/apache/impala)
 
-# 14 Kudu
+# 15 Kudu
 
 **类型：`Columnar Storage`**
 
@@ -310,7 +336,7 @@ categories:
 * [kudu-home](https://kudu.apache.org/)
 * [kudu-github](https://github.com/apache/kudu)
 
-# 15 Kylin
+# 16 Kylin
 
 **类型：`OLAP`**
 
@@ -330,7 +356,7 @@ categories:
 * [home](https://kylin.apache.org/cn/)
 * [github](https://github.com/apache/kylin)
 
-# 16 Pinot
+# 17 Pinot
 
 **类型：`OLAP`**
 
@@ -354,7 +380,7 @@ categories:
 * [home](https://pinot.apache.org/)
 * [github](https://github.com/apache/pinot)
 
-# 17 PostgreSQL
+# 18 PostgreSQL
 
 **类型：`OLAP`**
 
@@ -372,7 +398,7 @@ categories:
 * [PostgreSQL衍生产品](https://wiki.postgresql.org/wiki/PostgreSQL_derived_databases)
 * [PostgreSQL 与 MySQL 相比，优势何在？](https://www.zhihu.com/question/20010554/answer/94999834)
 
-# 18 Presto
+# 19 Presto
 
 **类型：`OLAP`**
 
@@ -391,7 +417,7 @@ categories:
 * [home](https://prestodb.io/)
 * [github](https://github.com/prestodb/presto)
 
-# 19 Starrocks
+# 20 Starrocks
 
 **类型：`OLAP`**
 
@@ -419,7 +445,7 @@ categories:
 
 * [Introduction to StarRocks: a New Modern Analytical Database](https://itnext.io/introduction-to-starrocks-a-new-modern-analytical-database-1db2177d26e1)
 
-# 20 Snowflake
+# 21 Snowflake
 
 **类型：`OLAP`**
 
@@ -439,7 +465,7 @@ categories:
 
 * [home](https://www.snowflake.com/)
 
-# 21 Spark
+# 22 Spark
 
 **类型：`Analytics Engine`（`Alternative to MapReduce`）**
 
@@ -457,7 +483,7 @@ categories:
 * [home](https://spark.apache.org/)
 * [github](https://github.com/apache/spark)
 
-# 22 TiDB
+# 23 TiDB
 
 **类型：`OLTP`**
 
@@ -479,7 +505,7 @@ categories:
 * [home](https://docs.pingcap.com/zh/tidb/stable/)
 * [github](https://github.com/pingcap/tidb)
 
-# 23 Trino
+# 24 Trino
 
 **类型：**
 
@@ -507,7 +533,7 @@ categories:
 
 * [Trino blog](https://trino.io/blog/)
 
-# 24 Vertica
+# 25 Vertica
 
 **类型：`OLAP`**
 
@@ -519,11 +545,10 @@ categories:
 
 * [home](https://www.vertica.com/)
 
-# 25 TODO
+# 26 TODO
 
 1. mysql
 1. sqlite
-1. duckdb
 1. Zilliz
     * 向量数据库
 1. ksqlDB
@@ -531,7 +556,7 @@ categories:
     * [StarRocks vs Rockset](https://rockset.com/comparison/starrocks-vs-rockset/)
 1. [Databend](https://databend.rs/)
 
-# 26 参考
+# 27 参考
 
 * [你需要的不是实时数仓 | 你需要的是一款合适且强大的OLAP数据库(上)](https://segmentfault.com/a/1190000020385432)
 * [你需要的不是实时数仓 | 你需要的是一款强大的OLAP数据库(下)](https://segmentfault.com/a/1190000020385389)

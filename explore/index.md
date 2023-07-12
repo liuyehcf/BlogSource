@@ -86,8 +86,6 @@ date: 2018-02-05 09:25:59
 ## 6.1 Blog
 
 * [Alex DeBrie](https://www.alexdebrie.com/)
-* [DuckDB News](https://duckdb.org/news/)
-    * [Fastest table sort in the West - Redesigning DuckDB’s sort](https://duckdb.org/2021/08/27/external-sorting.html)
 * [Ottertune](https://ottertune.com/blog/)
 
 ## 6.2 Other
