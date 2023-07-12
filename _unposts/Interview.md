@@ -211,13 +211,20 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > The "throws" keyword in Java indicates that a method may throw specific exceptions, requiring callers to handle or propagate them.
 
 1. What are the different types of inner classes in Java?
+    > The different types of inner classes in Java are static inner classes, non-static inner classes, local inner classes, and anonymous inner classes.
+
 1. Explain the concept of method references in Java 8.
-1. What is the purpose of the "final" keyword for variables and methods in Java?
+    > Method references in Java 8 provide a shorthand notation to refer to existing methods as lambda expressions, making code more concise and readable.
+
 1. What is the difference between composition and inheritance in Java?
+    > Composition emphasizes object collaboration through containment, while inheritance establishes a hierarchical "is-a" relationship for code reuse and specialization.
+
 1. Explain the concept of functional interfaces in Java 8.
-1. What is the purpose of the "default" keyword in interface methods in Java 8?
-1. What is the difference between a checked exception and an unchecked exception in Java?
+    > Functional interfaces in Java 8 are interfaces with a single abstract method, allowing lambda expressions and method references for concise expression of behavior.
+
 1. Explain the concept of the Java Memory Model.
+    > The Java Memory Model (JMM) defines how threads interact and access shared data, ensuring visibility and consistency through rules and synchronization mechanisms like locks and volatile variables.
+
 1. What are the different types of collections in Java?
 1. What is the purpose of the "assert" keyword in Java?
 1. Explain the concept of the "finally" block in exception handling.
