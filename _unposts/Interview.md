@@ -226,15 +226,20 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > The Java Memory Model (JMM) defines how threads interact and access shared data, ensuring visibility and consistency through rules and synchronization mechanisms like locks and volatile variables.
 
 1. What are the different types of collections in Java?
-1. What is the purpose of the "assert" keyword in Java?
-1. Explain the concept of the "finally" block in exception handling.
+    > The different types of collections in Java include ArrayList, LinkedList, HashSet, TreeSet, HashMap, TreeMap, and more.
+
 1. What is the difference between the "compareTo()" and "equals()" methods?
+    > "compareTo()" is used for ordering objects based on their natural or customized order, while "equals()" is used to check for equality between objects based on their content.
+
 1. Explain the concept of type erasure in Java generics.
-1. What is the purpose of the "break" and "continue" statements in Java?
+    > Type erasure in Java generics is the process of removing type parameters and replacing them with their upper bounds or Object during compilation to maintain backward compatibility with pre-generic code.
+
 1. How does serialization work in Java?
-1. What is the difference between a HashMap and a Hashtable in Java?
-1. Explain the concept of the ternary operator in Java.
+    > Serialization in Java converts objects into a byte stream for storage or transmission, while deserialization reconstructs objects from the byte stream.
+
 1. What is the purpose of the "instanceof" operator in Java?
+    > The "instanceof" operator in Java checks the type of an object, determining if it belongs to a specific class or implements a particular interface.
+
 1. How can you handle concurrent modifications in Java collections?
 1. What is the difference between an interface and an abstract class in Java?
 1. What is the purpose of the "finalize()" method in Java? Is it recommended to use it?
@@ -380,14 +385,21 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
 1. Explain the concept of virtual destructors in C++.
     > A virtual destructor in C++ ensures that the destructor of the most derived class is called first when deleting an object through a base class pointer, allowing proper cleanup and preventing memory leaks.
 
-1. What are the differences between class templates and function templates in C++?
 1. What is the purpose of the "explicit" keyword in C++?
-1. Explain the concept of type casting in C++.
+    > The "explicit" keyword in C++ is used to prevent implicit type conversions by specifying that a constructor or conversion function should only be used for explicit, direct initialization.
+
 1. What is the difference between "const" and "constexpr" in C++?
+    > "const" is used to specify read-only variables or functions, while "constexpr" is used to declare values that can be evaluated at compile-time, enabling optimization and use in constant expressions.
+
 1. Explain the concept of multithreading in C++.
+    > Same as Java
+
 1. What is the purpose of the "volatile" keyword in C++?
-1. What are the different ways to handle exceptions in C++?
+    > The "volatile" keyword in C++ is used to indicate that a variable can be modified by external sources and prevents certain optimizations by the compiler, ensuring direct memory access.
+
 1. Explain the concept of the Rule of Three (or Five) in C++.
+    > The Rule of Three (or Five) in C++ suggests that if a class needs to define one of the special member functions (copy constructor, copy assignment operator, or destructor), it often needs to define all three (Rule of Three) or the additional two (move constructor and move assignment operator) for proper resource management and copying semantics.
+
 1. What is the difference between a shallow copy and a deep copy in C++?
 1. Explain the concept of function binding in C++.
 1. What is the purpose of the "typeid" operator in C++?
