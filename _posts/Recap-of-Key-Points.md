@@ -248,6 +248,9 @@ categories:
         - Not Null Constraint
         - Check Constraint
     - OLAP & OLTP
+    - Lakehouse
+        - Low Cost Storage
+        - Performance
     - Database Auditing
     - Database Security
     - Database Access Control
@@ -281,6 +284,14 @@ categories:
     - Predicate
     - View
     - Materialized View
+        - Features
+            - Partition
+            - Refresh
+            - Rewrite
+        - Scenarios
+            - Real-time Incremental Aggregation
+            - Delcarative Modeling(without maintain the ETL workflow)
+            - Lake Speed Up
     - Trigger
     - Stored Procedure
     - DML(Data Manipulation Language)
