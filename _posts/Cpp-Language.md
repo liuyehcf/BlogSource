@@ -2039,30 +2039,23 @@ int main() {
 
 * 图片出处：[c++虚指针和虚函数表](https://zhuanlan.zhihu.com/p/110144589)
 
-#### 3.7.2.1 Memory Leak
+#### 3.7.2.1 virtual destructor
 
 通常，我们需要将有虚函数的类的析构函数定义为`virtual`，否则很容易造成内存泄露，如下：
 
 ```cpp
 #include <iostream>
 
-class Foo {
-public:
-    Foo() { std::cout << "Foo::constructor" << std::endl; }
-    ~Foo() { std::cout << "Foo::destructor" << std::endl; }
-};
-
 class Base {
 public:
     virtual void func() = 0;
+    ~Base() { std::cout << "~Base" << std::endl; }
 };
 
 class Derive : public Base {
 public:
+    ~Derive() { std::cout << "~Derive" << std::endl; }
     virtual void func() override { std::cout << "Derive::func" << std::endl; }
-
-private:
-    Foo foo;
 };
 
 int main() {
