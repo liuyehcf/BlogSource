@@ -397,19 +397,27 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
 1. Explain the concept of the Rule of Three (or Five) in C++.
     > The Rule of Three (or Five) in C++ suggests that if a class needs to define one of the special member functions (copy constructor, copy assignment operator, or destructor), it often needs to define all three (Rule of Three) or the additional two (move constructor and move assignment operator) for proper resource management and copying semantics.
 
-1. What is the difference between a shallow copy and a deep copy in C++?
 1. Explain the concept of function binding in C++.
+    > Function binding in C++ refers to the process of associating a function call with a specific function implementation or object, allowing it to be invoked at a later time.
+
 1. What is the purpose of the "typeid" operator in C++?
-1. Explain the concept of friend classes in C++.
-1. What is the difference between "nullptr" and "NULL" in C++11?
-1. Explain the concept of move semantics and move constructors in C++.
+    > The "typeid" operator retrieves the runtime type information of an object in C++.
+
 1. What is the purpose of the "static_assert" keyword in C++11?
-1. What are the differences between the stack and the heap in C++ memory management?
+    > "static_assert" in C++11 performs compile-time checks, generating errors if conditions are not met.
+
 1. Explain the concept of CRTP (Curiously Recurring Template Pattern) in C++.
+    > CRTP (Curiously Recurring Template Pattern) in C++ is a design pattern where a base class template is derived from by a derived class, enabling the base class to access and manipulate properties and behavior of the derived class.
+
 1. What is the purpose of the "decltype" keyword in C++?
+    > The "decltype" keyword in C++ determines the type of an expression at compile time, useful for template metaprogramming and type deduction.
+
 1. Explain the concept of function overloading resolution in C++.
-1. What is the difference between a shallow copy and a deep copy of an object in C++?
+    > Function overloading resolution in C++ selects the best-matching function based on argument types, allowing multiple functions with the same name but different parameters.
+
 1. Explain the concept of the Pimpl idiom in C++.
+    > The Pimpl idiom in C++ separates the interface and implementation of a class, enhancing encapsulation and code modularity.
+
 1. What is the purpose of the "constexpr" keyword in C++11?
 1. Explain the concept of variadic templates in C++.
 1. What is the difference between lvalue and rvalue in C++?
