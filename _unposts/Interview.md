@@ -410,7 +410,7 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > CRTP (Curiously Recurring Template Pattern) in C++ is a design pattern where a base class template is derived from by a derived class, enabling the base class to access and manipulate properties and behavior of the derived class.
 
 1. What is the purpose of the "decltype" keyword in C++?
-    > The "decltype" keyword in C++ determines the type of an expression at compile time, useful for template metaprogramming and type deduction.
+    > The "decltype" keyword in C++ determines the type of an expression at compile time, used for template metaprogramming and type deduction.
 
 1. Explain the concept of function overloading resolution in C++.
     > Function overloading resolution in C++ selects the best-matching function based on argument types, allowing multiple functions with the same name but different parameters.
