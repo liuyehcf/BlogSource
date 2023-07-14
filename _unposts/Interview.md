@@ -241,17 +241,20 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > The "instanceof" operator in Java checks the type of an object, determining if it belongs to a specific class or implements a particular interface.
 
 1. How can you handle concurrent modifications in Java collections?
-1. What is the difference between an interface and an abstract class in Java?
+    > Use synchronized collections or concurrent collections such as ConcurrentHashMap to handle concurrent modifications in Java.
+
 1. What is the purpose of the "finalize()" method in Java? Is it recommended to use it?
+    > "finalize()" is a method in Java used for object cleanup before destruction. It is not recommended for use due to its unreliable execution.
+
 1. Explain the concept of method chaining in Java.
-1. What is the difference between a stack and a heap in Java?
-1. Explain the concept of anonymous functions in Java 8.
-1. What is the purpose of the "strictfp" keyword in Java?
-1. How does the "substring()" method work in Java? What are its parameters?
-1. Explain the concept of the diamond operator in Java generics.
-1. What is the purpose of the "NaN" value in Java?
+    > Method chaining in Java allows multiple methods to be invoked on an object in a single line, improving code readability and conciseness.
+
 1. What are the different types of file I/O operations in Java?
+    > The different types of file I/O operations in Java include character-based, byte-based, object-based, and random access I/O, catering to various data formats and manipulation requirements.
+
 1. Explain the concept of static initialization blocks in Java.
+    > Static initialization blocks in Java are used to initialize static variables or perform one-time setup tasks when a class is loaded into memory.
+
 1. What is the purpose of the "ThreadLocal" class in Java?
 1. How can you handle concurrent access in Java collections?
 1. Explain the concept of the "compareTo()" method in the Comparable interface.
