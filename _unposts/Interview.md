@@ -350,7 +350,7 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > The different types of STL containers in C++ include sequence containers (vector, list, deque, array, forward_list), ordered associative containers (set, multiset, map, multimap), and unordered associative containers (unordered_set, unordered_multiset, unordered_map, unordered_multimap).
 
 1. What is the difference between vectors and arrays in C++?
-    > Vectors in C++ provide dynamic size, automatic memory management, and bounds checking, while arrays have a fixed size, require manual memory management, and lack built-in bounds checking.
+    > Vectors in C++ provide dynamic size, automatic memory management, while arrays have a fixed size, require manual memory management.
 
 1. Explain the concept of move semantics and rvalue references in C++.
     > Move semantics and rvalue references in C++ allow the efficient transfer of resources (like memory ownership) from one object to another, reducing unnecessary copying and improving performance, through the use of move constructors and move assignment operators.
@@ -366,9 +366,6 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
 
 1. What is the purpose of the "auto" keyword in C++11?
     > The "auto" keyword in C++11 enables automatic type deduction for variables based on their initializer, enhancing code readability and reducing the need for explicit type declarations.
-
-1. What are the differences between function templates and class templates in C++?
-    > Function templates in C++ enable generic functions for different data types, while class templates allow the creation of generic classes for various data types.
 
 1. Explain the concept of lambda expressions in C++11.
     > Same as Java
@@ -387,9 +384,6 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
 
 1. What is the purpose of the "explicit" keyword in C++?
     > The "explicit" keyword in C++ is used to prevent implicit type conversions by specifying that a constructor or conversion function should only be used for explicit, direct initialization.
-
-1. What is the difference between "const" and "constexpr" in C++?
-    > "const" is used to specify read-only variables or functions, while "constexpr" is used to declare values that can be evaluated at compile-time, enabling optimization and use in constant expressions.
 
 1. Explain the concept of multithreading in C++.
     > Same as Java
