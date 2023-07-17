@@ -380,14 +380,16 @@ categories:
                 - CTEProducer & CTEConsumer & CTEAnchor
                 - Plan Enumeration
             - Multiply Stage Aggregate
+                - 1 Stage Aggregate
+                    - Agg + GROUP BY distribution column
                 - 2 Stage Aggregate
                     - AGG
-                    - AGG + GROUP BY
+                    - AGG + GROUP BY regular column
                 - 3 Stage Aggregate
-                    - AGG(DISTINCT) + GROUP BY
+                    - AGG(DISTINCT) + GROUP BY distribution column
                 - 4 Stage Aggregate
                     - AGG(DISTINCT)
-                    - AGG(DISTINCT) + GROUP BY(SKEW)
+                    - AGG(DISTINCT) + GROUP BY regular column
     - Execution
         - Morsel-Driven Parallelism(Task-Based Parallelism)
             - Morsel
