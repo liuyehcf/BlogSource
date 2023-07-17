@@ -449,10 +449,20 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > IP addressing assigns unique numerical identifiers (IP addresses) to network devices, enabling communication, while subnetting divides a network into smaller subnetworks for better efficiency and IP address management.
 
 1. What is a router? How does it work in a network?
+    > A router is a network device that connects multiple devices within a network and forwards data packets between them based on their IP addresses, enabling communication between different networks.
+
 1. What is the purpose of ARP (Address Resolution Protocol)?
+    > ARP maps IP addresses to MAC addresses on a local network, enabling devices to communicate by finding the MAC address associated with a specific IP address.
+
 1. Explain the difference between a hub, switch, and a router.
+    > A hub broadcasts data to all devices, a switch selectively sends data to the intended recipient, and a router connects networks and directs traffic based on IP addresses.
+
 1. What is the purpose of DNS (Domain Name System)?
+    > DNS translates domain names to IP addresses, enabling users to access websites using human-readable names rather than numerical IP addresses.
+
 1. What is DHCP (Dynamic Host Configuration Protocol)? How does it work?
+    > DHCP assigns IP addresses automatically. Devices request an address, and the DHCP server provides one for configuration.
+
 1. What is NAT (Network Address Translation)?
 1. What is the difference between a firewall and an IDS (Intrusion Detection System)?
 1. What is the purpose of SSL (Secure Sockets Layer) and TLS (Transport Layer Security)?
