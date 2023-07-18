@@ -464,16 +464,35 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > DHCP assigns IP addresses automatically. Devices request an address, and the DHCP server provides one for configuration.
 
 1. What is NAT (Network Address Translation)?
-1. What is the difference between a firewall and an IDS (Intrusion Detection System)?
+    > NAT (Network Address Translation) is a technique that allows multiple devices on a private network to share a single public IP address for internet communication, by translating their private IP addresses to the public IP address.
+
 1. What is the purpose of SSL (Secure Sockets Layer) and TLS (Transport Layer Security)?
+    > SSL and TLS are used to secure internet communication by encrypting data, ensuring confidentiality, integrity, and authentication, protecting against eavesdropping and unauthorized access.
+
 1. Explain the concept of port forwarding and port triggering.
+    > Port forwarding directs incoming internet traffic to a device/service, while port triggering dynamically opens ports based on outbound traffic. Both allow external access to devices/services on a local network.
+
 1. What is a VLAN (Virtual Local Area Network)?
+    > A VLAN is a virtual network that enables logical segmentation of a physical network, providing isolation, security, and flexibility by separating network traffic into distinct groups.
+
 1. Explain the difference between IPv4 and IPv6.
+    > IPv4 has 32-bit addresses, limited availability, and lacks built-in security. IPv6 has 128-bit addresses, abundant availability, improved security features, and simplified address configuration.
+
 1. What is the purpose of ICMP (Internet Control Message Protocol)?
+    > ICMP (Internet Control Message Protocol) is used for error reporting, diagnostic messages, and network troubleshooting, including tasks like ping requests and detecting network congestion.
+
 1. What are the common network topologies? Explain each one.
+    > Common network topologies include bus, star, ring, mesh, tree, and hybrid. Each has unique characteristics in terms of connectivity, fault tolerance, and scalability.
+
 1. What is the purpose of a proxy server?
+    > A proxy server acts as an intermediary between clients and the internet, providing benefits such as privacy, caching, filtering, load balancing, monitoring, and bypassing restrictions.
+
 1. Explain the concept of Quality of Service (QoS) in networking.
+    > QoS (Quality of Service) in networking prioritizes and manages network traffic to meet performance requirements. It involves traffic classification, bandwidth allocation, and congestion management to ensure optimal delivery of important data packets.
+
 1. What is the purpose of a subnet mask? How is it used in IP addressing?
+    > A subnet mask is used to determine the network and host portions of an IP address. It helps divide a network into subnets and is used in conjunction with IP addressing for network communication and routing.
+
 1. Explain the concept of MAC address and how it is used in networking.
 1. What is the difference between a unicast, multicast, and broadcast address?
 1. What is the purpose of a default gateway in a network?
