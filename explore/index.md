@@ -106,7 +106,15 @@ date: 2018-02-05 09:25:59
 * [Teradata中QUALIFY函数](https://zhuanlan.zhihu.com/p/53599236)
 * [LSM树详解](https://zhuanlan.zhihu.com/p/181498475)
 
-# 7 Uncategorized
+# 7 ChatGpt
+
+* [awesome-chatgpt-prompts](https://github.com/f/awesome-chatgpt-prompts)
+* Derivative Products
+    * Jasper
+    * Midjourney
+    * Copilot
+
+# 8 Uncategorized
 
 * [How to Read a Paper.pdf](/resources/paper/How-to-Read-a-Paper.pdf) - ★★★★★
 * [陈皓-耗子哥](https://coolshell.cn/articles/author/haoel)
@@ -120,7 +128,7 @@ date: 2018-02-05 09:25:59
 * `Fabrice Bellard`：A legend programmer, author of FFmpeg, QEMU
 * [Tutorials for Software Developers and Technopreneurs](http://tutorials.jenkov.com/)
 
-# 8 Abbreviation
+# 9 Abbreviation
 
 <table>
   <tr> <th width="80px" align="center">缩写</th> <th width="240px" align="center">全称</th> <th width="200px" align="center">其他</th> </tr>
