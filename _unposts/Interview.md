@@ -469,9 +469,6 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
 1. What is the purpose of SSL (Secure Sockets Layer) and TLS (Transport Layer Security)?
     > SSL and TLS are used to secure internet communication by encrypting data, ensuring confidentiality, integrity, and authentication, protecting against eavesdropping and unauthorized access.
 
-1. Explain the concept of port forwarding and port triggering.
-    > Port forwarding directs incoming internet traffic to a device/service, while port triggering dynamically opens ports based on outbound traffic. Both allow external access to devices/services on a local network.
-
 1. What is a VLAN (Virtual Local Area Network)?
     > A VLAN is a virtual network that enables logical segmentation of a physical network, providing isolation, security, and flexibility by separating network traffic into distinct groups.
 
@@ -480,9 +477,6 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
 
 1. What is the purpose of ICMP (Internet Control Message Protocol)?
     > ICMP (Internet Control Message Protocol) is used for error reporting, diagnostic messages, and network troubleshooting, including tasks like ping requests and detecting network congestion.
-
-1. What are the common network topologies? Explain each one.
-    > Common network topologies include bus, star, ring, mesh, tree, and hybrid. Each has unique characteristics in terms of connectivity, fault tolerance, and scalability.
 
 1. What is the purpose of a proxy server?
     > A proxy server acts as an intermediary between clients and the internet, providing benefits such as privacy, caching, filtering, load balancing, monitoring, and bypassing restrictions.
@@ -494,20 +488,35 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > A subnet mask is used to determine the network and host portions of an IP address. It helps divide a network into subnets and is used in conjunction with IP addressing for network communication and routing.
 
 1. Explain the concept of MAC address and how it is used in networking.
+    > A MAC address is a unique identifier assigned to a network interface card (NIC) and is used for data communication at the link layer of the OSI model, enabling devices to identify and communicate with each other on a local network.
+
 1. What is the difference between a unicast, multicast, and broadcast address?
+    > A unicast address is used to send data from one sender to one specific recipient, a multicast address is used to send data from one sender to a select group of recipients, and a broadcast address is used to send data from one sender to all devices on the network.
+
 1. What is the purpose of a default gateway in a network?
+    > The default gateway in a network serves as the access point or router that connects a local network to external networks, enabling devices within the network to communicate with devices outside the local network, such as devices on the internet.
+
 1. What is the difference between a static IP address and a dynamic IP address?
+    > Static IP addresses are manually assigned and remain fixed, while dynamic IP addresses are automatically assigned and can change over time.
+
 1. Explain the concept of port numbers and their significance in networking.
-1. What is the difference between a stateful firewall and a stateless firewall?
+    > Port numbers are identifiers used in networking to direct data to specific applications or services on a device, allowing multiple services to run concurrently.
+
 1. Explain the concept of network latency and how it affects network performance.
-1. What is the purpose of ICMP (Internet Control Message Protocol) and its common message types?
+    > Network latency is the delay in data transmission within a network, impacting performance and responsiveness.
+
 1. What is the difference between HTTP and HTTPS?
+    > HTTP is unsecured, while HTTPS is secured with encryption for safer data transmission.
+
 1. Explain the concept of DNS (Domain Name System) caching and its benefits.
-1. What is the purpose of a proxy server? How does it work?
+    > DNS caching stores recently accessed DNS information locally, improving network performance and website loading times.
+
 1. Explain the difference between symmetric encryption and asymmetric encryption.
-1. What is a VLAN (Virtual Local Area Network)? How does it provide network segmentation?
-1. Explain the concept of routing protocols and their role in network routing.
+    > Symmetric encryption uses a single key for encryption and decryption, while asymmetric encryption uses a pair of keys (public and private) for enhanced security.
+
 1. What is the purpose of a VPN (Virtual Private Network)?
+    > A VPN (Virtual Private Network) provides secure and encrypted remote access to private networks over the internet.
+
 1. Explain the concept of IPsec (Internet Protocol Security) and its components.
 1. What is the difference between half-duplex and full-duplex communication?
 1. What is a DDoS (Distributed Denial of Service) attack? How can it be mitigated?
