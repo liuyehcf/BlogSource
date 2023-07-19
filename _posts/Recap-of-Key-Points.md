@@ -130,6 +130,23 @@ categories:
     - SLF4J & Log4j & Logback
 {% endmarkmap %}
 
+## 1.1 Netty
+
+**Components:**
+
+* `Channel`: Represents a network socket and provides an abstraction for I/O operations. Channels are used for sending and receiving data.
+    * `Write`：adds the message to the outbound buffer but does not trigger an immediate flush of the buffer. The data remains in the buffer until a flush operation occurs.
+    * `WriteAndFlush`：combines two operations: writing the message to the outbound buffer and immediately triggering a flush operation. The message is added to the buffer and flushed to the network without delay.
+* `EventLoop`: Handles I/O events and executes tasks associated with those events. Each Channel has an associated EventLoop for event processing.
+* `ChannelHandler`: Handles inbound and outbound events related to a Channel. ChannelHandlers are responsible for protocol-specific logic, such as encoding, decoding, and processing incoming and outgoing data.
+* `ChannelPipeline`: Represents a chain of ChannelHandlers for processing inbound and outbound events in a Channel. It provides an organized way to handle data processing and transformation.
+* `ByteBuf`: An efficient data container in Netty that represents a flexible and resizable byte buffer. ByteBuf provides various read and write operations for efficient data manipulation.
+* `Codec`: A combination of an encoder and a decoder, used for transforming data between byte streams and Java objects. Codecs are commonly used in ChannelHandlers for protocol-specific encoding and decoding.
+* `ChannelFuture`: Represents the result of an asynchronous operation on a Channel. It provides a way to register listeners and handle completion or failure of the operation.
+* `Bootstrap`: A helper class for setting up a Channel and its associated resources, such as EventLoopGroup, ChannelHandlers, and options.
+* `EventLoopGroup`: Manages one or more EventLoops and their associated Channels. EventLoopGroups handle I/O event processing for multiple Channels efficiently.
+* `NIO and Epoll`: Netty provides different transport implementations based on the underlying I/O mechanism. NIO (Non-blocking I/O) and Epoll (Linux-specific event notification) are commonly used for efficient event-driven I/O operations.
+
 # 2 Cpp
 
 {% markmap %}
