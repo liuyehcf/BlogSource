@@ -756,7 +756,7 @@ Created at:
 
 ## 2.5 Sync
 
-`write(xxx).sync();`可能会导致死锁，因为没有`flush`，则消息并不会发送。而应该使用`writeAndFlush(xxx).sync()`。可能的问题堆栈如下：
+在`EventLoop`中调用`write(xxx).sync()`、`writeAndFlush(xxx).sync()`会导致死锁，可能的问题堆栈如下：
 
 ```
 io.netty.util.concurrent.BlockingOperationException: DefaultChannelPromise@74669c9b(incomplete)
@@ -769,6 +769,8 @@ io.netty.util.concurrent.BlockingOperationException: DefaultChannelPromise@74669
 	at io.netty.channel.DefaultChannelPromise.sync(DefaultChannelPromise.java:119)
 	at io.netty.channel.DefaultChannelPromise.sync(DefaultChannelPromise.java:30)
 ```
+
+正确的做法是，在自定义的线程池中用`sync`逻辑
 
 ## 2.6 参考
 
