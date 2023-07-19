@@ -754,7 +754,23 @@ Created at:
 
 正确的做法是，调用`EmbeddedChannel#finishAndReleaseAll()`方法来清理资源，该方法会负责清理所有暂未处理的消息
 
-## 2.5 参考
+## 2.5 Sync
+
+`write(xxx).sync();`可能会导致死锁，因为没有`flush`，则消息并不会发送。而应该使用`writeAndFlush(xxx).sync()`。可能的问题堆栈如下：
+
+```
+io.netty.util.concurrent.BlockingOperationException: DefaultChannelPromise@74669c9b(incomplete)
+	at io.netty.util.concurrent.DefaultPromise.checkDeadLock(DefaultPromise.java:462)
+	at io.netty.channel.DefaultChannelPromise.checkDeadLock(DefaultChannelPromise.java:159)
+	at io.netty.util.concurrent.DefaultPromise.await(DefaultPromise.java:247)
+	at io.netty.channel.DefaultChannelPromise.await(DefaultChannelPromise.java:131)
+	at io.netty.channel.DefaultChannelPromise.await(DefaultChannelPromise.java:30)
+	at io.netty.util.concurrent.DefaultPromise.sync(DefaultPromise.java:404)
+	at io.netty.channel.DefaultChannelPromise.sync(DefaultChannelPromise.java:119)
+	at io.netty.channel.DefaultChannelPromise.sync(DefaultChannelPromise.java:30)
+```
+
+## 2.6 参考
 
 * [Correctly close EmbeddedChannel and release buffers](https://github.com/netty/netty/pull/9851)
 
