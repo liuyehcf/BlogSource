@@ -806,11 +806,12 @@ mkdir build
 cd build
 # DLLVM_ENABLE_PROJECTS: 选择 clang 以及 clang-tools-extra 这两个子项目
 # DCMAKE_BUILD_TYPE: 构建类型指定为MinSizeRel。可选值有 Debug, Release, RelWithDebInfo, and MinSizeRel。其中 Debug 是默认值
-cmake -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
--DCMAKE_BUILD_TYPE=MinSizeRel \
--G "Unix Makefiles" ../llvm
-make -j 4
-make install
+cmake -B build -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
+    -DCMAKE_BUILD_TYPE=MinSizeRel \
+    -G "Unix Makefiles" \
+    llvm
+cmake --build build -j 4
+sudo cmake --install build
 ```
 
 ### 3.2.5 centos安装vim8
