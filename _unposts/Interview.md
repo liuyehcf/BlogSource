@@ -311,7 +311,7 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > Pass by value in C++ creates a copy of the parameter, while pass by reference allows direct access to the original parameter, enabling modifications and avoiding unnecessary copies.
 
 1. Explain the concept of exception handling in C++.
-    > Exception handling in C++ enables the detection and graceful handling of runtime errors, ensuring program stability by catching and managing exceptional situations through try-catch blocks.
+    > Same as Java
 
 1. What is the purpose of the "static" keyword in C++?
     > The "static" keyword in C++ is used for static storage duration, defining class-level members, and limiting scope for global variables/functions.
@@ -323,7 +323,7 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > In C++, an abstract class can have both regular and pure virtual functions with member variables, while an interface contains only pure virtual functions and allows multiple inheritance.
 
 1. What are the different types of storage classes in C++?
-    > The different storage classes in C++ are "auto," "register," "static," and "extern." Additionally, there is the "mutable" specifier.
+    > The different storage classes in C++ are "auto", "register", "static", "extern" and "thread_local".
 
 1. What is the difference between reference and pointer in C++?
     > Pointers offer flexibility and direct memory access, while references provide simplicity and intuitive syntax by acting as aliases. References are implemented as constant pointers, abstracting away pointer operations.
