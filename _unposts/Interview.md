@@ -518,20 +518,32 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > A VPN (Virtual Private Network) provides secure and encrypted remote access to private networks over the internet.
 
 1. Explain the concept of IPsec (Internet Protocol Security) and its components.
+    > IPsec (Internet Protocol Security) is a network protocol suite that ensures secure communication by providing authentication, encryption, and key management for IP packets.
+
 1. What is the difference between half-duplex and full-duplex communication?
+    > Half-duplex communication allows data transmission in both directions but not simultaneously, while full-duplex communication enables simultaneous data transmission in both directions.
+
 1. What is a DDoS (Distributed Denial of Service) attack? How can it be mitigated?
-1. Explain the concept of subnetting and how it helps in network management.
+    > A DDoS (Distributed Denial of Service) attack aims to disrupt a network by overwhelming it with illegitimate traffic, and it can be mitigated through traffic filtering, rate limiting, and deploying DDoS protection measures.
+
 1. What is the purpose of a MAC address table in a switch?
+    > A MAC address table in a switch tracks MAC addresses to facilitate accurate forwarding of network traffic to the correct destinations.
+
 1. Explain the concept of IP routing and how it determines the path of network packets.
+    > IP routing determines the path of network packets by analyzing the destination IP address and using a routing table to select the best path for efficient packet forwarding across interconnected networks.
+
 1. What is the difference between a public IP address and a private IP address?
-1. What is the purpose of a DHCP relay agent?
+    > Public IP addresses are unique and used to identify devices on the internet, while private IP addresses are used within private networks for local communication and require NAT to access the internet.
+
 1. Explain the concept of network congestion and its impact on network performance.
-1. What is the purpose of a network gateway and how does it facilitate communication between networks?
-1. What is the difference between TCP and UDP port numbers?
+    > Network congestion happens when excessive data overwhelms the network, causing performance issues such as increased latency, packet loss, and reduced throughput.
+
 1. Explain the concept of network load balancing and its benefits.
+    > Network load balancing distributes traffic across multiple servers or resources to optimize performance, improve scalability, and enhance availability.
+
 1. What is the purpose of an IPsec VPN tunnel and how does it provide secure communication?
-1. Explain the concept of network address translation (NAT) and its different types.
-1. What is the difference between a hub, a switch, and a router?
+    > An IPsec VPN tunnel provides secure communication by encrypting data packets, ensuring confidentiality, integrity, and authentication during transmission over untrusted networks.
+
 1. Explain the concept of network sniffing and its implications on network security.
 1. What is the purpose of a network proxy and how does it enhance security and privacy?
 1. Explain the concept of network encapsulation and decapsulation.
