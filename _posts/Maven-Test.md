@@ -99,11 +99,13 @@ Maven本身并不是一个单元测试框架，Java世界中主流的单元测�
 反复运行单个测试用例是日常开发中很常见的行为。`maven-surefire-plugin`提供了一个test参数让Maven用户能够在命令行指定要运行的测试用例
 
 * 指定测试类运行
-    * `$mvn test -Dtest=SampleTest`：只有SampleTest这一个测试类得到运行
+    * `$mvn test -Dtest=SampleTest`：只有`SampleTest`这一个测试类得到运行
+* 指定测试方法
+    * `$mvn test -Dtest=SampleTest#case1`：只有`SampleTest`这一个测试类的`case1`方法得到运行
 * 使用通配符`*`
-    * `$mvn test -Dtest=*Test`：所有类名以Test结尾的类得到运行
+    * `$mvn test -Dtest=*Test`：所有类名以`Test`结尾的类得到运行
 * 使用逗号分隔符`,`
-    * `$mvn test -Dtest=SampleTest1,SampleTest2`：SampleTest1与SampleTest2这两个测试类得到执行
+    * `$mvn test -Dtest=SampleTest1,SampleTest2`：`SampleTest1`与`SampleTest2`这两个测试类得到执行
 * 结合多种特殊符号
     * `$mvn test -Dtest=*Test,SampleTest1,SampleTest2`
 * **注意，匹配的是简单类名，既不需要包名以及后缀`.java`**
