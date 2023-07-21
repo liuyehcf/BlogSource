@@ -115,6 +115,8 @@ int main() {
 
 ### 1.2.1 std::sort
 
+**注意：`comparator`要返回的是`bool`，而非整型**
+
 ```cpp
 #include <algorithm>
 #include <iostream>
@@ -128,9 +130,20 @@ int main() {
     std::copy(nums.begin(), nums.end(), std::ostream_iterator<int32_t>(std::cout, ","));
     std::cout << std::endl;
 
-    std::sort(nums.begin(), nums.end(), [](int32_t i, int32_t j) { return j - i; });
+    std::sort(nums.begin(), nums.end(), [](int32_t i, int32_t j) { return j < i; });
     std::copy(nums.begin(), nums.end(), std::ostream_iterator<int32_t>(std::cout, ","));
     std::cout << std::endl;
+
+    std::vector<std::vector<int>> intervals;
+    intervals.emplace_back(std::vector<int>{1, 3});
+    intervals.emplace_back(std::vector<int>{2, 6});
+    intervals.emplace_back(std::vector<int>{8, 10});
+    intervals.emplace_back(std::vector<int>{15, 18});
+
+    // Get wrong order if using i1[0] - i2[0], should be i1[0] < i2[0] here
+    std::sort(intervals.begin(), intervals.end(), [](auto& i1, auto& i2) { return i1[0] - i2[0]; });
+
+    std::cout << intervals[0][0] << std::endl;
 
     return 0;
 }
