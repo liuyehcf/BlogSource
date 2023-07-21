@@ -549,6 +549,7 @@ categories:
 
 1. mysql
     * [Blog](https://blogs.oracle.com/mysql/)
+    * [HeatWave](https://www.oracle.com/sg/mysql/heatwave/)
 1. sqlite
 1. Zilliz
     * 向量数据库

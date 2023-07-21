@@ -475,6 +475,7 @@ categories:
     - Hybrid Architectures
     - Unified Storage and Computation
     - Separated Storage and Computation
+    - HTAP + S3
 - Types Of Database
     - Relational Database
         - MySQL
