@@ -127,7 +127,7 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > ArrayList provides fast random access using a dynamic array, while LinkedList offers efficient insertion and deletion using a doubly-linked list.
 
 1. What is the difference between a constructor and a method?
-    > Constructor initializes objects, called automatically when created, while a method performs actions, called explicitly by name
+    > Constructor initializes objects, called automatically when created, while a method performs actions, called explicitly by name.
 
 1. What is the purpose of the "final" keyword in Java?
     > The "final" keyword in Java is used to indicate that a variable, method, or class cannot be modified or overridden, ensuring its immutability or preventing further extension.
@@ -169,7 +169,7 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > HashSet is an unordered collection using hashing, while TreeSet is a sorted collection with slower insertion and removal but providing ordered traversal.
 
 1. Explain the concept of autoboxing and unboxing in Java.
-    > Autoboxing is the automatic conversion of primitive types to their corresponding wrapper classes, while unboxing is the automatic conversion of wrapper class objects back to primitive types in Java
+    > Autoboxing is the automatic conversion of primitive types to their corresponding wrapper classes, while unboxing is the automatic conversion of wrapper class objects back to primitive types in Java.
 
 1. What is the purpose of the "transient" keyword in Java?
     > The "transient" keyword in Java is used to indicate that a variable should not be serialized when an object is being converted into a stream of bytes, allowing for selective exclusion of variables from the serialization process.
