@@ -544,24 +544,30 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
 1. What is the purpose of an IPsec VPN tunnel and how does it provide secure communication?
     > An IPsec VPN tunnel provides secure communication by encrypting data packets, ensuring confidentiality, integrity, and authentication during transmission over untrusted networks.
 
-1. Explain the concept of network sniffing and its implications on network security.
-1. What is the purpose of a network proxy and how does it enhance security and privacy?
-1. Explain the concept of network encapsulation and decapsulation.
-1. What is the purpose of the Domain Name System Security Extensions (DNSSEC)?
-1. Explain the concept of network segmentation and its benefits.
-1. What is the difference between IPv4 and IPv6 headers?
-1. What is the purpose of a network gateway in a virtualized environment?
-1. Explain the concept of network bandwidth and its measurement units.
-1. What is the difference between an intranet and an extranet?
-1. What is TCP? How does it differ from UDP?
 1. Explain the three-way handshake process in TCP.
+    > Three-way handshake in TCP: SYN, SYN-ACK, ACK. Client sends SYN to server, server responds with SYN-ACK, client acknowledges with ACK. Connection established.
+
 1. What are the different TCP header fields? Briefly explain their significance.
+    > TCP header fields, such as Source/Destination Port, Sequence/Acknowledgment Number, Control Bits, Window Size, Checksum, Urgent Pointer, and Options, provide essential information for establishing and managing connections, sequencing data, controlling flow, and ensuring data integrity in reliable data transmission.
+
 1. How does TCP ensure reliable data delivery?
+    > TCP ensures reliable data delivery through acknowledgment, retransmission, sequence numbers, sliding window, checksum, and flow control.
+
 1. What is flow control in TCP? How is it achieved?
+    > Flow control in TCP manages data transmission rates by using the "Window Size" field in the header, preventing data overflow in the receiver's buffer and ensuring reliable data delivery.
+
 1. What is congestion control in TCP? How does TCP handle network congestion?
+    > Congestion control in TCP manages data flow to prevent network congestion. It uses techniques like slow start, congestion avoidance, fast retransmit, and recovery to regulate data transmission and ensure fair network resource utilization.
+
 1. Explain the concept of sliding window protocol in TCP.
+    > The sliding window protocol in TCP allows the sender to transmit multiple data packets before waiting for acknowledgment from the receiver, optimizing data flow and ensuring reliable transmission.
+
 1. What is the purpose of sequence numbers and acknowledgment numbers in TCP?
+    > Sequence numbers in TCP ensure the correct ordering of data segments, while acknowledgment numbers acknowledge the successful receipt of these segments, enabling reliable data transmission.
+
 1. How does TCP handle out-of-order packets and packet loss?
+    > TCP handles out-of-order packets by buffering them until missing packets arrive, then delivers them in order; for packet loss, TCP initiates retransmission through timeout mechanisms and selective acknowledgment (SACK) to recover lost data.
+
 1. What is the difference between the "push" and "urgent" flags in TCP?
 1. Explain the concept of TCP window size and its impact on performance.
 1. What is the maximum segment size (MSS) in TCP?
@@ -593,6 +599,12 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
 1. How does TCP handle congestion control in the network?
 1. What is the purpose of the TCP window size? How is it adjusted during the data transfer?
 1. Explain the concept of TCP connection termination using the FIN flag.
+1. Explain the concept of network sniffing and its implications on network security.
+1. What is the purpose of a network proxy and how does it enhance security and privacy?
+1. Explain the concept of network encapsulation and decapsulation.
+1. Explain the concept of network segmentation and its benefits.
+1. What is the purpose of a network gateway in a virtualized environment?
+1. Explain the concept of network bandwidth and its measurement units.
 
 # 7 Others
 
