@@ -548,6 +548,7 @@ categories:
 # 26 TODO
 
 1. mysql
+    * [Blog](https://blogs.oracle.com/mysql/)
 1. sqlite
 1. Zilliz
     * 向量数据库
