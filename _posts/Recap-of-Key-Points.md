@@ -712,14 +712,16 @@ Overall, polling can be a practical approach when dealing with complex and async
             - TCP Header
                 - Source and Destination Ports
                 - Sequence and Acknowledgment Numbers
+                - Control Bits(Control Flags)
+                    - SYN, ACK, FIN, RST, etc.
                 - Window Size
                 - Checksum
-                - Flags (SYN, ACK, FIN, RST, etc.)
-            - TCP Options
-                - Maximum Segment Size (MSS)
-                - Window Scaling
-                - Selective Acknowledgment (SACK)
-                - Timestamps
+                - Urgent Pointer
+                - Options
+                    - Maximum Segment Size (MSS)
+                    - Window Scaling
+                    - Selective Acknowledgment (SACK)
+                    - Timestamps
         - HTTP
         - FTP
         - DNS

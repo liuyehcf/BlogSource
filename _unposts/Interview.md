@@ -551,7 +551,7 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
     > TCP header fields, such as Source/Destination Port, Sequence/Acknowledgment Number, Control Bits, Window Size, Checksum, Urgent Pointer, and Options, provide essential information for establishing and managing connections, sequencing data, controlling flow, and ensuring data integrity in reliable data transmission.
 
 1. How does TCP ensure reliable data delivery?
-    > TCP ensures reliable data delivery through acknowledgment, retransmission, sequence numbers, sliding window, checksum, and flow control.
+    > TCP ensures reliable data delivery through sequence numbers, acknowledgment, checksum, retransmission, sliding window, flow control and congestion control.
 
 1. What is flow control in TCP? How is it achieved?
     > Flow control in TCP manages data transmission rates by using the "Window Size" field in the header, preventing data overflow in the receiver's buffer and ensuring reliable data delivery.
