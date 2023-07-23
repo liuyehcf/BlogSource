@@ -2494,3 +2494,6 @@ dom4j几乎所有的数据类型都继承自Node接口，下面介绍几个常�
 * [Dom4j为XML文件要结点添加xmlns属性](http://blog.csdn.net/larry_lv/article/details/6613379)
 * [Dom4j中SelectNodes使用方法](http://blog.csdn.net/hekaihaw/article/details/54376656)
 * [dom4j通过 xpath 处理xmlns](https://www.cnblogs.com/zxcgy/p/6697557.html)
+
+# 9 Cglib
+
