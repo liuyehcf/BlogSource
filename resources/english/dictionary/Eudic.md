@@ -1,3 +1,135 @@
+1. affect; impact; influence
+1. individual freedom is at the core of democracy
+1. I attach great importance to this relationship; I deeply value this relationship
+1. I often have a lovely stroll at night
+1. I got stabbed
+1. when did he return to duties
+1. How does TCP handle out-of-order packets and packet loss?
+1. What is the purpose of sequence numbers and acknowledgment numbers in TCP?
+1. Explain the concept of sliding window protocol in TCP
+1. What is congestion control in TCP? How does TCP handle network congestion?
+1. What is flow control in TCP? How is it achieved?
+1. How does TCP ensure reliable data delivery?
+1. What are the different TCP header fields? Briefly explain their significance
+1. Explain the three-way handshake process in TCP
+1. your behavior is totally against the regulations
+1. I'll pay my share
+1. What is the purpose of an IPsec VPN tunnel and how does it provide secure communication?
+1. Explain the concept of network load balancing and its benefits
+1. Explain the concept of network congestion and its impact on network performance
+1. What is the difference between a public IP address and a private IP address?
+1. Explain the concept of IP routing and how it determines the path of network packets
+1. What is the purpose of a MAC address table in a switch?
+1. What is a DDoS (Distributed Denial of Service) attack? How can it be mitigated?
+1. What is the difference between half-duplex and full-duplex communication?
+1. Explain the concept of IPsec (Internet Protocol Security) and its components
+1. an abortion ban
+1. What is the purpose of a VPN (Virtual Private Network)?
+1. Explain the difference between symmetric encryption and asymmetric encryption
+1. Explain the concept of DNS (Domain Name System) caching and its benefits
+1. What is the difference between HTTP and HTTPS?
+1. Explain the concept of network latency and how it affects network performance
+1. Explain the concept of port numbers and their significance in networking
+1. What is the difference between a static IP address and a dynamic IP address?
+1. What is the purpose of a default gateway in a network?
+1. What is the difference between a unicast, multicast, and broadcast address?
+1. Explain the concept of MAC address and how it is used in networking
+1. two children were swept away by flash flooding
+1. derivative products
+1. What is the purpose of a subnet mask? How is it used in IP addressing?
+1. Explain the concept of Quality of Service (QoS) in networking
+1. What is the purpose of a proxy server?
+1. What is the purpose of ICMP (Internet Control Message Protocol)?
+1. Explain the difference between IPv4 and IPv6
+1. What is a VLAN (Virtual Local Area Network)?
+1. What is the purpose of SSL (Secure Sockets Layer) and TLS (Transport Layer Security)?
+1. What is NAT (Network Address Translation)?
+1. the deal brokered by turkey and US
+1. grain; corn; wheat; rice
+1. 2 children are still missing
+1. there is an urgent need for a tool that can provide a concise and comprehensible analysis of the runtime execution
+1. What is DHCP (Dynamic Host Configuration Protocol)? How does it work?
+1. What is the purpose of DNS (Domain Name System)?
+1. Explain the difference between a hub, switch, and a router
+1. What is the purpose of ARP (Address Resolution Protocol)?
+1. What is a router? How does it work in a network?
+1. Explain the concept of IP addressing and subnetting
+1. What is the difference between TCP and UDP? When would you use each one?
+1. What are the layers of the OSI model? Briefly explain each layer
+1. What is the difference between a LAN and a WAN?
+1. What is a network? Explain the basic components of a network
+1. dedicated money
+1. I'm picking up litter at the beach
+1. I didn't do it, no matter how bad things look
+1. segregate; separate
+1. Explain the concept of the Pimpl idiom in C++
+1. Explain the concept of function overloading resolution in C++
+1. What is the purpose of the "decltype" keyword in C++?
+1. Explain the concept of CRTP (Curiously Recurring Template Pattern) in C++
+1. What is the purpose of the "static_assert" keyword in C++11?
+1. What is the purpose of the "typeid" operator in C++?
+1. Explain the concept of function binding in C++
+1. variable
+1. atomicity; consistency; visibility
+1. Explain the concept of static initialization blocks in Java
+1. What are the different types of file I/O operations in Java?
+1. Explain the concept of method chaining in Java
+1. What is the purpose of the "finalize()" method in Java? Is it recommended to use it?
+1. How can you handle concurrent modifications in Java collections?
+1. Explain the concept of the Rule of Three (or Five) in C++
+1. What is the purpose of the "volatile" keyword in C++?
+1. Explain the concept of multithreading in C++
+1. What is the purpose of the "explicit" keyword in C++?
+1. What is the purpose of the "instanceof" operator in Java?
+1. How does serialization work in Java?
+1. Explain the concept of type erasure in Java generics
+1. What is the difference between the "compareTo()" and "equals()" methods?
+1. What are the different types of collections in Java?
+1. ternary operator
+1. honesty is always the best policy
+1. the case is dismissed
+1. Explain the concept of virtual destructors in C++
+1. Explain the concept of function objects (functors) in C++
+1. Explain the concept of copy constructors in C++
+1. What is the purpose of the "constexpr" keyword in C++?
+1. Explain the concept of lambda expressions in C++11
+1. Explain the concept of the Java Memory Model
+1. Explain the concept of functional interfaces in Java 8
+1. What is the difference between composition and inheritance in Java?
+1. Explain the concept of method references in Java 8
+1. What are the different types of inner classes in Java?
+1. when the data fits into standard disk; when the data doesn't fit into disk
+1. our team has worked hard to meet the client's requirements
+1. they kept changing the date
+1. What is the purpose of the "auto" keyword in C++11?
+1. What is the difference between stack memory and heap memory in C++?
+1. What is the purpose of the "friend" keyword in C++?
+1. What is the difference between const reference and rvalue reference in C++?
+1. What is the purpose of the "throws" keyword in Java?
+1. Explain the concept of generics in Java
+1. What is the difference between equals() and hashCode() methods?
+1. Explain the concept of inheritance in Java
+1. What is the purpose of the "volatile" keyword in Java?
+1. I can't characterize how close, how far
+1. NATO
+1. we've never exported starvation, war, or ideology
+1. these countries are the top donors of military aid to Ukraine
+1. when I get home, I like to chill out; when I get home, I like to unwind; when I get home, I like to relax
+1. Explain the concept of move semantics and rvalue references in C++
+1. What is the difference between vectors and arrays in C++?
+1. What are the different types of STL containers in C++?
+1. Explain the concept of smart pointers in C++
+1. What is the purpose of the "this" pointer in C++?
+1. What is the difference between a static variable and an instance variable in Java?
+1. Explain the concept of anonymous classes in Java
+1. What is the purpose of the "super" keyword in Java?
+1. What are the SOLID principles in object-oriented programming?
+1. Explain the concept of lambda expressions in Java
+1. It's malicious; It's intentional
+1. to cause people to suffer injustice
+1. this automotive company has engaged in shoddy workmanship and cost-cutting measures, compromising the structural integrity of the vehicle and posing a threat to the safety of its users' lives
+1. I do not agree with this quality inspection report
+1. although I have been working out for a long time, there are not many visible signs of my fitness efforts
 1. he is highly intelligent and obedient; he is highly commended for his intelligence
 1. first class; business class; economy class
 1. simple past tense; past perfect tense
@@ -1872,7 +2004,6 @@
 1. Law has two important functions
 1. Miscarriages of Justice
 1. how old you think I am
-1. dual purpose
 1. the politician was held in contempt
 1. a punctual start at 9 o'clock
 1. the article was intended to provoke discussion
@@ -1890,7 +2021,6 @@
 1. a tough childhood
 1. we are flying at an altitude of 6000 meters
 1. home run
-1. defining moment
 1. given the unbounded nature of streaming data
 1. vocalize the feelings of shame
 1. take on a job
@@ -3320,7 +3450,6 @@
 1. make ideas go further
 1. make up some ideas
 1. look the world differently
-1. ternary
 1. 嵌套
 1. intrinsically
 1. observe that
