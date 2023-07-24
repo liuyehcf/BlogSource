@@ -568,43 +568,23 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
 1. How does TCP handle out-of-order packets and packet loss?
     > TCP handles out-of-order packets by buffering them until missing packets arrive, then delivers them in order; for packet loss, TCP initiates retransmission through timeout mechanisms and selective acknowledgment (SACK) to recover lost data.
 
-1. What is the difference between the "push" and "urgent" flags in TCP?
-1. Explain the concept of TCP window size and its impact on performance.
-1. What is the maximum segment size (MSS) in TCP?
-1. How does TCP handle retransmission of lost or corrupted packets?
-1. What is the purpose of the TCP timeout and retransmission mechanism?
-1. Explain the concept of selective acknowledgment (SACK) in TCP.
-1. What is the difference between TCP congestion control and flow control?
-1. How does TCP handle the reordering of received packets?
-1. What is the purpose of the TCP urgent pointer?
-1. How does TCP handle the fragmentation and reassembly of data segments?
-1. What is the role of the TCP checksum in error detection?
-1. What is the purpose of the TCP header flags? Explain the significance of SYN, ACK, FIN, and RST.
-1. What is the role of the sequence number and acknowledgment number in TCP?
-1. Explain the concept of TCP window scaling and its benefits.
 1. What is the TCP Maximum Segment Lifetime (MSL)?
-1. How does TCP handle data retransmission in the case of lost or corrupted packets?
-1. What is the purpose of the TCP receive and send buffers?
-1. Explain the concept of TCP Fast Retransmit and Fast Recovery.
-1. How does TCP handle out-of-order packet delivery and packet reordering?
+    > The TCP Maximum Segment Lifetime (MSL) is the maximum time a TCP segment can exist in the network without being acknowledged, typically set to 2 minutes.
+
+1. What is the maximum segment size (MSS) in TCP?
+    > The Maximum Segment Size (MSS) in TCP is the maximum amount of data that can be carried in the payload of a single TCP segment.
+
+1. Explain the concept of selective acknowledgment (SACK) in TCP.
+    > SACK in TCP acknowledges specific out-of-order data, helping sender retransmit only missing segments, enhancing reliability and performance.
+
 1. What is the Nagle's algorithm in TCP? How does it affect the transmission of small packets?
+    > Nagle's algorithm in TCP delays small packet transmission by buffering them, reducing overhead and avoiding "silly window syndrome," but it may cause slight delays in transmitting small packets.
+
 1. Explain the concept of TCP round-trip time (RTT) estimation and its significance in congestion control.
-1. What is the TCP selective acknowledgment (SACK) option? How does it improve performance?
-1. What is the role of the TCP urgent pointer? How is urgent data handled in TCP?
+    > TCP Round-Trip Time (RTT) estimation measures packet travel time for acknowledgment, vital for TCP's timeout calculation, congestion control, and fast retransmission.
+
 1. Explain the concept of TCP timestamp option and its role in congestion control.
-1. What is the TCP maximum segment size (MSS)? How is it negotiated during the TCP handshake?
-1. How does TCP handle flow control in the presence of different receive window sizes?
-1. What is the purpose of the TCP Maximum Segment Lifetime (MSL) and TIME_WAIT state?
-1. Explain the concept of TCP sliding window protocol and its impact on data transmission.
-1. How does TCP handle congestion control in the network?
-1. What is the purpose of the TCP window size? How is it adjusted during the data transfer?
-1. Explain the concept of TCP connection termination using the FIN flag.
 1. Explain the concept of network sniffing and its implications on network security.
-1. What is the purpose of a network proxy and how does it enhance security and privacy?
-1. Explain the concept of network encapsulation and decapsulation.
-1. Explain the concept of network segmentation and its benefits.
-1. What is the purpose of a network gateway in a virtualized environment?
-1. Explain the concept of network bandwidth and its measurement units.
 
 # 7 Others
 
