@@ -266,51 +266,41 @@ public static byte[] packageFiles(ZipEntity... entities) {
 ## 1.4 颜色输出
 
 ```java
+class Color {
     public static void main(String[] args) {
-        System.out.println("\033[30;4m" + "我滴个颜什" + "\033[0m");
-        System.out.println("\033[31;4m" + "我滴个颜什" + "\033[0m");
-        System.out.println("\033[32;4m" + "我滴个颜什" + "\033[0m");
-        System.out.println("\033[33;4m" + "我滴个颜什" + "\033[0m");
-        System.out.println("\033[34;4m" + "我滴个颜什" + "\033[0m");
-        System.out.println("\033[35;4m" + "我滴个颜什" + "\033[0m");
-        System.out.println("\033[36;4m" + "我滴个颜什" + "\033[0m");
-        System.out.println("\033[37;4m" + "我滴个颜什" + "\033[0m");
-        System.out.println("\033[40;31;4m" + "我滴个颜什" + "\033[0m");
-        System.out.println("\033[41;32;4m" + "我滴个颜什" + "\033[0m");
-        System.out.println("\033[42;33;4m" + "我滴个颜什" + "\033[0m");
-        System.out.println("\033[43;34;4m" + "我滴个颜什" + "\033[0m");
-        System.out.println("\033[44;35;4m" + "我滴个颜什" + "\033[0m");
-        System.out.println("\033[45;36;4m" + "我滴个颜什" + "\033[0m");
-        System.out.println("\033[46;37;4m" + "我滴个颜什" + "\033[0m");
-        System.out.println("\033[47;4m" + "我滴个颜什" + "\033[0m");
+        System.out.println("Text with different colors:");
+
+        System.out.println("\u001B[30mBlack Text\u001B[0m");
+        System.out.println("\u001B[31mRed Text\u001B[0m");
+        System.out.println("\u001B[32mGreen Text\u001B[0m");
+        System.out.println("\u001B[33mYellow Text\u001B[0m");
+        System.out.println("\u001B[93mBright Yellow Text\u001B[0m");
+        System.out.println("\u001B[33mLight Yellow Text\u001B[0m");
+        System.out.println("\u001B[34mBlue Text\u001B[0m");
+        System.out.println("\u001B[35mMagenta Text\u001B[0m");
+        System.out.println("\u001B[36mCyan Text\u001B[0m");
+        System.out.println("\u001B[37mWhite Text\u001B[0m");
+        System.out.println("\u001B[38;5;214mGold Text\u001B[0m");
+        System.out.println("\u001B[38;5;202mOrange Text\u001B[0m");
+        System.out.println("\u001B[38;2;250;128;114mLight Coral Text\u001B[0m");
+        System.out.println("\u001B[35mPurple Text\u001B[0m");
+
+        System.out.println("\u001B[41;30mRed Background\u001B[0m");
+        System.out.println("\u001B[42;30mGreen Background\u001B[0m");
+        System.out.println("\u001B[43;30mYellow Background\u001B[0m");
+        System.out.println("\u001B[93m\u001B[48;5;220mBright Yellow Background\u001B[0m");
+        System.out.println("\u001B[33m\u001B[48;5;220mLight Yellow Background\u001B[0m");
+        System.out.println("\u001B[44;30mBlue Background\u001B[0m");
+        System.out.println("\u001B[45;30mMagenta Background\u001B[0m");
+        System.out.println("\u001B[46;30mCyan Background\u001B[0m");
+        System.out.println("\u001B[47;30mWhite Background\u001B[0m");
+        System.out.println("\u001B[48;5;220mGolden Background\u001B[0m");
+        System.out.println("\u001B[48;5;202mOrange Background\u001B[0m");
+        System.out.println(
+                "\u001B[38;2;250;128;114m\u001B[48;2;250;128;114mLight Coral Background\u001B[0m");
+        System.out.println("\u001B[45mPurple Background\u001B[0m");
     }
-```
-
-```java
-public static final String ANSI_RESET = "\u001B[0m";
-public static final String ANSI_BLACK = "\u001B[30m";
-public static final String ANSI_RED = "\u001B[31m";
-public static final String ANSI_GREEN = "\u001B[32m";
-public static final String ANSI_YELLOW = "\u001B[33m";
-public static final String ANSI_BLUE = "\u001B[34m";
-public static final String ANSI_PURPLE = "\u001B[35m";
-public static final String ANSI_CYAN = "\u001B[36m";
-public static final String ANSI_WHITE = "\u001B[37m";
-
-System.out.println(ANSI_RED + "This text is red!" + ANSI_RESET);
-
-public static final String ANSI_BLACK_BACKGROUND = "\u001B[40m";
-public static final String ANSI_RED_BACKGROUND = "\u001B[41m";
-public static final String ANSI_GREEN_BACKGROUND = "\u001B[42m";
-public static final String ANSI_YELLOW_BACKGROUND = "\u001B[43m";
-public static final String ANSI_BLUE_BACKGROUND = "\u001B[44m";
-public static final String ANSI_PURPLE_BACKGROUND = "\u001B[45m";
-public static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
-public static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
-
-System.out.println(ANSI_GREEN_BACKGROUND + "This text has a green background but default text!" + ANSI_RESET);
-System.out.println(ANSI_RED + "This text has red text but a default background!" + ANSI_RESET);
-System.out.println(ANSI_GREEN_BACKGROUND + ANSI_RED + "This text has a green background and red text!" + ANSI_RESET);
+}
 ```
 
 ## 1.5 Process死锁问题

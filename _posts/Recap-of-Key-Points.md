@@ -30,6 +30,10 @@ categories:
     - Stream API
         - flatMap
     - Functional API
+        - Consumer/BiConsumer
+        - Predicate/BiPredicate
+        - UnaryOperator/BinaryOperator
+        - Supplier
     - Lambda Expressions
 - Generics
     - Type Erasure
