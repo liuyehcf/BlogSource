@@ -3,7 +3,7 @@
 
 Nice to meet you! Thank you for taking the time to interview me. My name is Calvin, and I am from China. I obtained both my bachelor's and master's degrees from BUPT (Beijing University of Posts and Telecommunications), where I specialized in communication engineering. During my postgraduate studies, I began self-learning computer science to further broaden my skills.
 
-Throughout my professional journey, I have had the privilege of working for two distinguished companies. The first company is Alibaba Group. During my time there, I was part of the IoT department, where our team focused on developing a platform for managing and controlling various devices, such as smart home security systems and industrial sensors. Additionally, we aimed to facilitate industrial upgrading for diverse industries.
+Throughout my professional journey, I have had the privilege of working for two distinguished companies. The first company is Alibaba Group. During my time there, I was part of the IoT department, where our team focused on developing a platform for managing and facilitating various devices, such as smart home security systems and industrial sensors. Additionally, we aimed to facilitate industrial upgrading for diverse industries.
 
 Following my experience at Alibaba Group, I joined a startup called Starrocks, which is widely recognized for its exceptional OALP (Open Analytics and Log Processing) database product in China. This product stands out for its outstanding performance.
 
@@ -93,7 +93,7 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
 
 ## 3.1 Uncategorized
 
-1. why mapp fast?
+1. why map fast?
 1. why there are multiply fragments in a query?
 1. the difference between bitmap column and bitmap index?
 
