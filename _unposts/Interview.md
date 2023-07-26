@@ -51,12 +51,20 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
 # 3 Database
 
 1. What is OLAP (Online Analytical Processing) and how does it differ from OLTP (Online Transaction Processing)?
-1. Explain the concept of a data cube in OLAP and its role in multidimensional analysis.
+    > OLAP is a technology for data analysis, providing multidimensional views and complex queries. OLTP handles real-time transactional data processing for day-to-day operations.
+
 1. What are the key differences between a relational database and an OLAP database?
+    > Relational databases are designed for transactional processing, while OLAP databases are optimized for complex analytical queries and reporting.
+
 1. Describe the process of building an OLAP database model from a relational database.
-1. What are the major types of OLAP operations? Explain each type briefly.
+    > The process involves identifying requirements, extracting and transforming data, designing a multidimensional schema, building OLAP cubes, optimizing performance, and connecting with frontend tools for analysis.
+
 1. How do you optimize query performance in an OLAP database?
+    > Optimize query performance in an OLAP database by creating appropriate indexes, aggregating data, implementing efficient data storage strategies, partitioning large tables, using data compression, caching query results, and leveraging parallel processing capabilities.
+
 1. What is the purpose of dimension hierarchies in OLAP systems? Provide an example.
+    > The purpose of dimension hierarchies in OLAP systems is to organize data in a structured, hierarchical manner, allowing users to drill-down or roll-up data to various levels of granularity for in-depth analysis.
+
 1. How would you handle slowly changing dimensions in an OLAP database?
 1. What are the advantages and disadvantages of using a star schema in an OLAP database?
 1. Explain the concept of data aggregation in OLAP and provide an example.
