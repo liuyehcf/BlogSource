@@ -92,7 +92,7 @@ table th:nth-of-type(5) {
 | 58 | Length of Last Word | String | ★ | 毫无意义 |
 | 59 |  |  |  |  |
 | 60 | Permutation Sequence | Array | ★★★★ | 首先计算出total数组，`total[i]`表示i个整数有多少种排列方式。首位取第几个数？`int index = (k - 1) / total[i - 1]`，将该数从`candidates`中取出，并更新`k -= index * total[i - 1]` |
-| 61 | Rotate List | LinkList | ★★★ | 循环位移等价于3次反转。注意，左半部分反转会导致边界更新 |
+| 61 | Rotate List | LinkList | ★★★ | 循环位移等价于3次反转。注意，左半部分反转会导致边界更新；找到left head/tail和right head/tail |
 | 62 | Unique Paths | Dp | ★★ | 经典dp，递推式：`dp[i][j] = dp[i - 1][j] + dp[i][j - 1`，注意边界初始化 |
 | 63 | Unique Paths II | Dp | ★★ | 同62，经典dp，注意有障碍物的位置直接将`dp[i][j]`设置为0，边界初始化也是如此 |
 | 64 | Minimum Path Sum | Dp | ★★ | 经典dp，递推式：`dp[i][j] = Math.min(dp[i - 1][j], dp[i][j - 1]) + grid[i][j]` |
