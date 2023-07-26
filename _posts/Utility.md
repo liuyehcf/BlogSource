@@ -1,5 +1,5 @@
 ---
-title: 实用工具
+title: Utility
 date: 2020-07-25 10:47:33
 tags: 
 - 原创
@@ -11,7 +11,7 @@ categories:
 
 <!--more-->
 
-# 1 作图
+# 1 Graph
 
 1. [excalidraw](https://excalidraw.com/)
    * [github-excalidraw](https://github.com/excalidraw/excalidraw)
@@ -19,14 +19,53 @@ categories:
 1. [textik](https://textik.com/)
    * 同样是ascii作图，但是比`asciiflow`好用很多
 
-## 1.1 参考
+## 1.1 Ascii
+
+Unicode Box Drawing character set, which includes a variety of horizontal, vertical, and corner elements for creating box-like structures and tables. Here are some symbols from the Box Drawing character set:
+
+* `┌ (U+250C)`: Box Drawings Light Down and Right (corner)
+* `┐ (U+2510)`: Box Drawings Light Down and Left (corner)
+* `┘ (U+2518)`: Box Drawings Light Up and Left (corner)
+* `┤ (U+2524)`: Box Drawings Light Vertical and Left (T-junction)
+* `├ (U+251C)`: Box Drawings Light Vertical and Right (T-junction)
+* `┴ (U+2534)`: Box Drawings Light Up and Horizontal (T-junction)
+* `┬ (U+252C)`: Box Drawings Light Down and Horizontal (T-junction)
+* `─ (U+2500)`: Box Drawings Light Horizontal (horizontal line)
+* `│ (U+2502)`: Box Drawings Light Vertical (vertical line)
+* `━ (U+2501)`: Box Drawings Heavy Horizontal (thicker horizontal line)
+* `┃ (U+2503)`: Box Drawings Heavy Vertical (thicker vertical line)
+* `┼ (U+253C)`: Box Drawings Light Vertical and Horizontal (cross)
+* `╔ (U+2554)`: Box Drawings Double Down and Right (double line corner)
+* `╗ (U+2557)`: Box Drawings Double Down and Left (double line corner)
+* `╚ (U+255A)`: Box Drawings Double Up and Right (double line corner)
+* `╝ (U+255D)`: Box Drawings Double Up and Left (double line corner)
+* `→ (U+2192)`: Rightwards Arrow
+* `← (U+2190)`: Leftwards Arrow
+* `↑ (U+2191)`: Upwards Arrow
+* `↓ (U+2193)`: Downwards Arrow
+* `↔ (U+2194)`: Left Right Arrow (horizontal bidirectional arrow)
+* `↕ (U+2195)`: Up Down Arrow (vertical bidirectional arrow)
+* `↖ (U+2196)`: Northwest Arrow (diagonal arrow pointing to the upper-left)
+* `↗ (U+2197)`: Northeast Arrow (diagonal arrow pointing to the upper-right)
+* `↘ (U+2198)`: Southeast Arrow (diagonal arrow pointing to the lower-right)
+* `↙ (U+2199)`: Southwest Arrow (diagonal arrow pointing to the lower-left)
+* `↞ (U+219E)`: Leftwards Two Headed Arrow (double-headed arrow pointing left)
+* `↠ (U+21A0)`: Rightwards Two Headed Arrow (double-headed arrow pointing right)
+* `↢ (U+21A2)`: Leftwards Arrow with Tail (arrow with a curved tail pointing left)
+* `↣ (U+21A3)`: Rightwards Arrow with Tail (arrow with a curved tail pointing right)
+* `↦ (U+21A6)`: Rightwards Arrow from Bar (arrow with a horizontal line through the shaft pointing right)
+* `↧ (U+21A7)`: Downwards Arrow from Bar (arrow with a horizontal line through the shaft pointing down)
+* `↩ (U+21A9)`: Leftwards Arrow with Hook (arrow with a hook tail pointing left)
+* `↪ (U+21AA)`: Rightwards Arrow with Hook (arrow with a hook tail pointing right)
+
+## 1.2 Reference
 
 * [一个好用的画图工具 excalidraw](https://learnku.com/articles/47662)
 * [纯文本作图-asciiflow.com](http://asciiflow.com/)
 
-# 2 chrome插件
+# 2 Chrome Plugin
 
-## 2.1 GitHub加速
+## 2.1 GitHub Speed Up
 
 国内github下载速度较慢，可以安装chrome扩展程序「GitHub加速」
 
@@ -75,7 +114,7 @@ categories:
 
 工作在应用层，只能代理特定流量（当然利用特定工具还是可以实现全局代理的，比如`SSTAP`、`tun2socks`等）
 
-### 3.2.1 协议
+### 3.2.1 Protocol
 
 [SS、SSR、V2ray、Trojan、Xray 这五种翻墙协议与 VPN 对比有何不同？](https://topvpn.wiki/vpn-ssr-v2ray-trojan-xray/)
 
@@ -88,7 +127,7 @@ categories:
 | [Trojan-go](https://github.com/p4gefau1t/trojan-go) | 2020.8 | <li>`Trojan`</li> | ★★★ | ★★★ | <li>速度次于`Xray`</li><li>隐秘性更强</li><li>客户端单一</li> |
 | [Xray](https://github.com/XTLS/Xray-core) | 2020.11 | <li>`Shadowsocks`</li><li>`VMess`</li><li>`VLess`</li> | ★★★★ | ★★★ | <li>性能好、速度快，隐秘方面也是很不错</li><li>客户端丰富</li><li>有团队长期维护</li> |
 
-### 3.2.2 机场
+### 3.2.2 Airport
 
 [机场推荐](https://2022vpn.net/ss-v2ray-trojan-providers/)
 
@@ -101,7 +140,7 @@ categories:
 | [GLaDOS](https://glados.rocks/) | <li>`Shadowsocks`</li><li>`V2Ray`</li><li>`Xray`</li> | <li>`Clash`</li><li>`V2Ray`客户端</li> | ★★★★★ | `GLaDOS`是一家技术流翻墙机场，网站面板完全自主开发，除了支持常见的`Vmess`、`Trojan`翻墙协议，还支持 `Vless`协议和`Wire Guard VPN`协议。新用户可免费试用 |
 | [fastlink](https://fastlink.pro/) | <li>`Shadowsocks`</li><li>`V2Ray`</li> | <li>`Clash`</li><li>`V2Ray`客户端</li> | ★★★★★ | 便宜稳定 |
 
-### 3.2.3 客户端
+### 3.2.3 Client
 
 [神一样的工具们](https://www.v2ray.com/awesome/tools.html)
 
@@ -115,38 +154,38 @@ categories:
 
 [ghproxy](https://ghproxy.com/)
 
-## 3.3 参考
+## 3.3 Reference
 
 * [Project V/V2Ray](https://www.v2ray.com/awesome/tools.html)
 * [Project X/X2Ray](https://xtls.github.io/)
 
-# 4 如何搜索
+# 4 How to search
 
-## 4.1 排除
+## 4.1 Exclusion
 
 可以用关键词`-`来起到排除的作用，例如：`王刚 -百科`，就会搜到非百科的一些信息
 
-## 4.2 指定站点
+## 4.2 Specific Site
 
 可以用`site:xxx.yyy`来内容来自哪个站点，例如：`王刚 site:zhihu.com`，搜到的内容全部来自知乎
 
-## 4.3 指定格式
+## 4.3 Specific Format
 
 可以用`filetype:xxx`来指定内容的格式，例如：`王刚 filetype:pdf`，搜到的内容全部都是`pdf`格式
 
-## 4.4 搜索内容在文本中
+## 4.4 Content Containment
 
 可以用`intext:<content>`来指定要搜索的内容必须出现在内容中，例如：`intext:王刚`
 
-## 4.5 搜索内容在标题中
+## 4.5 Title Containment
 
 可以用`intitle:<content>`来指定要搜索的内容必须出现在标题中，例如：`intitle:王刚`
 
-## 4.6 禁止分词
+## 4.6 Word Segmentation Prohibition
 
 可以用`"<content>"`来禁止搜索引擎对搜索内容进行分词，例如：`"美食家王刚"`
 
-# 5 隧道
+# 5 Tunnel
 
 ```sh
 curl -s https://edge-tunnel.oss-cn-shanghai.aliyuncs.com/enableTunnel.sh | sudo bash -s <pk> <dn> <ds>

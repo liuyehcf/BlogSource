@@ -196,6 +196,32 @@ In StarRocks, `update`, `merge`, `serialize`, and `finalize` are four steps in t
 
 In summary, `update` is used to update intermediate results for an aggregate function for each input row, `merge` is used to combine intermediate results from multiple execution threads or nodes, `serialize` is used to convert intermediate results into a binary format, and `finalize` is used to compute the final result of the aggregate function.
 
+### 3.3.2 Join
+
+```
+             +-------------------+
+             | HashJoinOperator  |
+             +---------+---------+
+                       |
+                       |
+                       v
+             +---------+----------+
+             |     HashJoiner     |
+             +---------+----------+
+                       |
+           +-----------+-----------+
+           |                       |
+           v                       v
+ +---------+----------+  +-------- +---------+
+ |   HashJoinProber   |  |  HashJoinBuilder  |
+ +---------+----------+  +---------+---------+
+           |                       |
+           v                       v
+         +--------------+------------+
+         |        JoinHashTable      |
+         +---------------------------+
+```
+
 ## 3.4 Storage
 
 ### 3.4.1 partition vs. tablet vs. bucket
