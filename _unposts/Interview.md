@@ -65,39 +65,22 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
 1. What is the purpose of dimension hierarchies in OLAP systems? Provide an example.
     > The purpose of dimension hierarchies in OLAP systems is to organize data in a structured, hierarchical manner, allowing users to drill-down or roll-up data to various levels of granularity for in-depth analysis.
 
-1. How would you handle slowly changing dimensions in an OLAP database?
+1. How many types of schema in an OLAP database?
+    > Star Schema: Consists of a central fact table connected to multiple dimension tables in a single hierarchy, forming a star-like structure.
+    > Snowflake Schema: Similar to the star schema, but dimension tables are normalized into multiple related tables, reducing data redundancy.
+    > Constellation Schema (also known as Galaxy Schema): Contains multiple fact tables sharing dimension tables, offering more flexibility and support for diverse data models.
+
 1. What are the advantages and disadvantages of using a star schema in an OLAP database?
-1. Explain the concept of data aggregation in OLAP and provide an example.
-1. What is the role of measures in OLAP databases? How are they different from dimensions?
-1. How do you handle data quality and consistency in an OLAP database?
-1. Describe the process of data refreshing and incremental updates in an OLAP database.
-1. What are some common challenges you might encounter when designing and implementing an OLAP database system?
-1. Can you explain the concept of drill-down and roll-up operations in OLAP? How are they useful in data analysis?
-1. How do you handle security and access control in an OLAP database system?
-1. What is the role of data aggregation functions (e.g., SUM, COUNT, AVG) in OLAP queries?
-1. Can you explain the concept of data slicing and dicing in OLAP? Provide an example.
-1. How do you handle data integration from multiple data sources in an OLAP database?
-1. Describe your experience with OLAP tools and technologies, and highlight any specific tools you have used in the past.
-1. What is the role of a fact table in an OLAP database? How is it different from a dimension table?
-1. Explain the concept of data drill-through in OLAP and its significance.
-1. How do you handle data partitioning and indexing in an OLAP database to improve performance?
-1. What are some key considerations when designing the schema for an OLAP database?
-1. Describe the process of data aggregation in OLAP and discuss the challenges associated with it.
+    > Star schema provides simplified queries and faster performance in OLAP databases, but it may lead to higher storage requirements and data redundancy.
+
 1. What are the advantages and disadvantages of using a snowflake schema in an OLAP database?
-1. How would you handle data updates and deletions in an OLAP database?
-1. Can you explain the concept of data mining in the context of OLAP databases?
-1. What are some best practices for designing and implementing an OLAP database system?
-1. How do you handle concurrency and data consistency in an OLAP database environment?
+    > The advantages of using a snowflake schema in an OLAP database include reduced data redundancy, improved data integrity, and better space efficiency, but it may lead to more complex queries and potentially slower performance due to multiple joins.
+
 1. What are the differences between a star schema and a constellation schema in an OLAP database?
+    > In a star schema, there is a central fact table connected to dimension tables in a single hierarchy, whereas in a constellation schema, multiple fact tables share dimension tables, offering greater flexibility but possibly leading to increased complexity and performance trade-offs.
+
 1. Can you discuss the role of metadata in an OLAP database system?
-1. How do you handle dimension tables with high cardinality in an OLAP database?
-1. Explain the concept of drill-across in OLAP and provide an example.
-1. Can you discuss the role of OLAP in business intelligence (BI) applications?
-1. How do you handle data aggregation over time periods (e.g., daily, weekly, monthly) in an OLAP database?
-1. What are the considerations for designing an effective OLAP cube structure?
-1. How do you handle complex calculations and derived measures in an OLAP database?
-1. Can you discuss the differences between a relational database management system (RDBMS) and an OLAP server?
-1. Describe your experience with performance tuning and optimization in an OLAP database environment.
+    > Metadata in an OLAP database system serves as essential data about data, facilitating data organization, query optimization, data understanding, security, ETL processes, versioning, and system administration.
 
 ## 3.1 Uncategorized
 
