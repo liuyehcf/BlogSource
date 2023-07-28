@@ -1,5 +1,5 @@
 ---
-title: LeetCode解题思路
+title: LC
 date: 2018-10-24 06:36:36
 tags: 
 - 原创
