@@ -1,3 +1,95 @@
+1. why is it taking so long?
+1. don't be mad at me
+1. could you please hand me the book?
+1. I have not announced my arrival in Hangzhou
+1. food products have to undergo product grading
+1. the government is more effective than we tend to think
+1. the effect of the medicine is noticeable
+1. he has to cater to his boss
+1. what's that thing for?
+1. the powers of a judge are defined by law
+1. you better prioritize your work
+1. sorry, I made a mistake
+1. you should now be targeting the richest clients
+1. I'm incredibly moved
+1. we need to consider the ethics when making this decision
+1. discipline means the ability to control yourself or other people, even in difficult situations
+1. you are the only one who saw this coming
+1. how late do they serve?
+1. I was just pulling into the wrong driveway
+1. when did he return to his duties?
+1. the failed reform gave rise to social anomie, desperation, and poverty
+1. I don't like the flavor of onion
+1. time's up
+1. he isn't pressing charges
+1. we never have to go back to where we were a year ago
+1. China lacks everything except people
+1. If this is the way you feel
+1. she received a bunch of roses
+1. humorous conversation is an ingredient of comedy
+1. he takes two steps forward
+1. the powers of the judge are defined by law
+1. what would it be like to kiss you?
+1. I'm not skilled in the language
+1. It varies from person to person
+1. I'm not the one in possession of it
+1. I am in possession of some information
+1. he got shot before your arrival
+1. I never thought that anything like this could happen in America
+1. Here's one thing that comes to my mind
+1. How is the food?
+1. I am implementing my ideas
+1. the mild weather makes it a great place to visit
+1. It's gonna be punishment for you
+1. you understand the enormity of the task that lies ahead
+1. I bumped into her in the corridor
+1. thanks to whom the victory truly belongs
+1. the younger children often show great enthusiasm for computer games
+1. I think there is a subliminal message in the sentence
+1. the company specializes in customized computer software
+1. this instrument can detect a small amount of radiation
+1. don't overcomplicate your English
+1. I didn't lie to anybody
+1. I'll get back to my work
+1. you ain't gonna make it
+1. could this be another thing?
+1. I've been lucky, and I always will be
+1. I usually use a lot of new expressions and idioms from natural conversation
+1. it's maybe the first grade or kindergarten level
+1. he has just graduated from the police academy
+1. their duties overlapped
+1. you can receive a tax rebate
+1. the issue will be deferred until next year
+1. I would never be a toady to the boss
+1. she shifted to fourth gear to drive faster
+1. the difference between knowing the name of the thing and knowing the thing
+1. in many sports, physical fitness is not as important as skills
+1. do you think the new prime minister can turn things back
+1. how old do you think I am
+1. frequent participation in competitions hindered the athlete's recovery from his back injury
+1. bacteria are invisible to the naked eye
+1. this area are suffering from scarce supplies of water
+1. do not always listen to the pundits
+1. you should bandage the wound to reduce the risk of infection
+1. the most difficult part of a fight is training
+1. he ascribes his failure to bad luck
+1. teenagers in the rebellious period are always disobedient to their parents
+1. education is a long term investment
+1. I got a mortgage loan from the bank
+1. what doesn't kill you makes you stronger
+1. he swallowed his dinner so quickly that he got indigestion
+1. raw meat must be kept separate from cooked meat
+1. he goes jogging every night
+1. this kind of work will take its toll on the family
+1. I deserve an answer
+1. I'm impulsive sometimes
+1. don't criticize people too directly, but in a subtle way
+1. how much do you make?
+1. I will do everything in my power to make it better
+1. the youngsters must perceive the relationship between success and effort
+1. I can make a dish in under 30 seconds
+1. I was pulled over by a police officer
+1. we are short-handed; we are understaffed
 1. quantum mechanics theory suggests a world constantly changing
 1. all men are created equal
 1. I can eat a lot of food without gaining any weight
@@ -52,7 +144,6 @@
 1. it's kind of even-steven
 1. move on strongly and hopefully
 1. underway; undergoing
-1. we never have to go back where we were a year ago
 1. the abortion ban was on hold now
 1. constitutional amendments require a 60% threshold instead of a simple majority
 1. allow a certain range of deviation
@@ -75,7 +166,6 @@
 1. I attach great importance to this relationship; I deeply value this relationship
 1. I often have a lovely stroll at night
 1. I got stabbed
-1. when did he return to duties
 1. How does TCP handle out-of-order packets and packet loss?
 1. What is the purpose of sequence numbers and acknowledgment numbers in TCP?
 1. Explain the concept of sliding window protocol in TCP
@@ -273,7 +363,6 @@
 1. Israel has carried out military raids in the area for more than a year
 1. a counter terrorism effort
 1. the military is currently conducting a large offsensive; the military is currently conducting a large defense
-1. I was pulled over by a police officier
 1. the system can continue to function even if some servers fail or become unreachable
 1. there's no room for complacence if you want to win this game; this is not a time to be complacent; you have no real grounds for complaint
 1. the situation has now been de-escalated; the situation has now been escalated
@@ -348,14 +437,12 @@
 1. they were descending to view the wreckage of the Titanic
 1. stay out of this
 1. the wound discharge pus
-1. I was just pulling to the wrong driveway
 1. a receding hairline
 1. seamless
 1. this program is a bit slow
 1. I’ll give you a lift to the supermarket; I’ll drop you off at the airport
 1. front matter; back matter
 1. do not approach me
-1. I can make a dish under 30 seconds
 1. seize the opportunity
 1. prominent; dominant; predominant; prevalent
 1. recurrence relation; state transition equation
@@ -373,7 +460,6 @@
 1. to register a company; to register a trademark
 1. lean meat; fatty meat
 1. she took some time to reason out the solution to the puzzle; she took some time to figure out the solution to the puzzle
-1. the youngters must perceive the relationship between success and effort
 1. high levels of radiation that damage cells; high doses of radiation that damage cells
 1. get in the car; come in the house
 1. the government is promising to help with highway repairs
@@ -690,7 +776,6 @@
 1. Federal Appeal Court
 1. sectarian violence
 1. commemorate
-1. he was just graduated from the police academy
 1. I will lend you my car on condition that you bring it back by tomorrow
 1. he was in critical condition today
 1. It's important to take a stance on important issues
@@ -788,7 +873,6 @@
 1. it looks like some nerve function is returning
 1. tinkle
 1. someone told me to expect it
-1. you are the only one saw this coming
 1. please buckle up
 1. thank you for the update
 1. courtesy phone
@@ -799,7 +883,6 @@
 1. most popular anchor
 1. do you have any baggage to check in
 1. does that count as being subliminal
-1. he isn’t pressing charge
 1. turn down the offer
 1. car trouble
 1. drop the charge
@@ -841,14 +924,12 @@
 1. alpha males
 1. no spoilers
 1. in political wise, this decision was a disaster
-1. we need to consider the ethical wise when making this decision
 1. the possibilities are endless
 1. intensify
 1. fixable
 1. what’s bothering you
 1. I need more space to spread out my documents
 1. it is what it is
-1. is the food to your satisfaction?
 1. treason
 1. make so many innocent people die for no reason
 1. self acceptance
@@ -881,7 +962,6 @@
 1. secretary
 1. are you still with me
 1. farewell
-1. here’s one thing comes to my mind
 1. roaming drains the battery
 1. we are way ahead of schedule
 1. I didn't study much for the test, so I expect my grade to be bad
@@ -909,7 +989,6 @@
 1. hazardous materials
 1. it's just stories to be forgotten in a week or month from now
 1. honor the lifes of three students
-1. I will do everything in my power make it better
 1. it's really honored to work with team
 1. lighten up
 1. money order
@@ -934,10 +1013,8 @@
 1. the time for talking has passed
 1. that sounds tight
 1. I’m gonna get going
-1. I’ve never thought about anything like this could happen in america
 1. chief prosecuting officer
 1. Nashville
-1. it's maybe the fist grade or kindergarten level
 1. thank you everyone for having me in the team
 1. I'm really excited to be part of the team
 1. mass murder
@@ -969,8 +1046,6 @@
 1. deliver a torrent of political and legal grievances
 1. I’m buying
 1. he's been with us ever since
-1. do not always listene to the pundits
-1. how much you make
 1. persecute uyghur population
 1. he was lashing out in an email
 1. I think they've gotten a bad rap
@@ -984,13 +1059,11 @@
 1. hush money payment
 1. arraign/accuse/prosecute
 1. I came across John
-1. he got shot previous to your arrival
 1. curriculum
 1. field work
 1. undocumented immigrants
 1. a horde of children ran over the office building
 1. by the time she’s my age
-1. how late does they serve
 1. you cannot take it out on me
 1. he’s supposed to be coming by
 1. well, you got me there
@@ -1043,14 +1116,12 @@
 1. It's kind of like you won't really know it until you use the words you already know
 1. so what you need to do is to have a plan that you can remain consistent with
 1. because what's happening is you are learning a lot of words currently from this video
-1. I usually use a lot of new expressions and idioms from nature conversation
 1. watch an english program
 1. how come I can understand you perfectly
 1. her style of dress was never conservative
 1. a rational man will not be too sure that he's right
 1. before diving into technical details of the implementation of CPU caches some readers might find it useful to first see in some more details how caches fit into the big picture of a modern computer system
 1. the operating system provides a unified interface to hardware regardless of their differences
-1. don’t criticize people overly direct, but in a sutle way
 1. hugging is not so common here
 1. most people would consider that rather impolite
 1. it's considered quite rude here for pointing at people
@@ -1073,7 +1144,6 @@
 1. where do you like to hang out
 1. hang out means to spend time relaxing or socializing informally, to spend a lot of time in a place or with someone
 1. the bathroom is down the hall from the conference room
-1. descipline means the ability to control yourself or other people, even in difficult situations
 1. consistency means the quality of always behaving or performing in a similar way, or of always happening in a similar way
 1. I usually work out hard at 7 pm three times a week, at a large gym not too far from my office. People always say my consistency is impressive, and I've been trying to stay in both healthy and shape through years of regular exercise
 1. people always say my consistency is impressive
@@ -1128,7 +1198,6 @@
 1. have you ever been to any other country?
 1. what are you studying?
 1. I’m setting off
-1. I’m lucky, and I always will be
 1. I don’t think you have any idea how hard we have worked to try and give you
 1. the L1, L2, and L3 caches can be either shared or dedicated
 1. It is of advantage to separate the caches used for code and for data
@@ -1139,7 +1208,6 @@
 1. doctors usually have to work in shifts
 1. she was on the night shift
 1. see the word in the context
-1. she shifted to forth gear to drive faster
 1. because one word in English language can have several meanings and different uses
 1. the cache size has always been around 1/1000th of the size of the main memory
 1. The size of the SRAM used for caches is many times smaller than the main memory
@@ -1152,7 +1220,6 @@
 1. working set size
 1. the performance of RAM chips did not increase proportionally
 1. CPUs are today much more sophisticated than they were only 25 years ago
-1. the most difficult part of fight is training
 1. nodes is a comma delimited list of node numbers or A-B ranges or all
 1. I normally exercise Monday through Friday, in order to get it in before work, I wake up at the crack of dawn and head to the gym, and while I'm running on the treadmil, I'm able to clear my mind
 1. how often do you exercise
@@ -1181,7 +1248,6 @@
 1. It is important to understand commodity hardware because specialized hardware is in retreat
 1. commodity hardware/specialized hardware
 1. some communication is required to keep the different threads in sync
-1. I'm impulsive sometime
 1. through years of trying
 1. I hope I can utilize my talents
 1. it’s no barrier to success
@@ -1283,7 +1349,6 @@
 1. there’s no cell reception out there
 1. gut feeling
 1. The number of maximum concurrent queries is based on a heuristic calculation that factors in system hardware attributes such as the number of CPU sockets, CPU cores, and threads per core
-1. you should now be targeting at the richest clients
 1. open-source and commercial DBMS
 1. how much is my commission
 1. I'm looking for the movie theater
@@ -1335,7 +1400,6 @@
 1. I can’t argue with that
 1. you are my inspiration
 1. kick him when he‘s down
-1. I derserve an answer
 1. thanks for your time
 1. legal system
 1. diploma
@@ -1346,7 +1410,6 @@
 1. what’s on your mind
 1. that’s how it’s done
 1. the smartest student happens to be the best one
-1. I'm incrediblely moved
 1. contempt of court
 1. it’s unfeasible
 1. are you working late?
@@ -1354,7 +1417,6 @@
 1. I’ll deal all of these issues in turn
 1. I’ll stick around for a while
 1. thanks for your hospitality
-1. you ain’t gona make it
 1. my boyfriend and I are getting pretty serious
 1. she‘s very blessed
 1. rest and relaxation
@@ -1385,7 +1447,6 @@
 1. the statement is lack of remorse
 1. law-abiding citizen
 1. would you care to know why I didn’t let you kill him
-1. I’ll back to my work
 1. I’m not going to defend his actions
 1. free up your minds
 1. breaking and entering
@@ -1436,7 +1497,6 @@
 1. people tend to put things off
 1. the flip side of this is
 1. an aggresive lane change
-1. I'm not skilled about the language
 1. think about the bright side
 1. human right
 1. not exactly what I had in mind
@@ -1455,14 +1515,11 @@
 1. you can’t tell one defendant from another?
 1. what is your kiss count
 1. I don't like the way you looking at me right now
-1. the legislation will be enforced in six month
 1. what are you gona do to make things right
 1. I can’t be like it was before
 1. it was good knowing you
 1. I literally don’t even know what to say to you
-1. I’m in possessing of some information
 1. 降薪
-1. the time is up
 1. are you out of your mind
 1. poorly educated person
 1. the emperor had secret life about which his people knew nothing
@@ -1470,7 +1527,6 @@
 1. dictatorship
 1. reduce product competitiveness
 1. I am the last generation of my family
-1. I didn’t lie to nobody
 1. we’re entitled to a phone call
 1. time will tell
 1. come to an understanding
@@ -1481,7 +1537,6 @@
 1. that kind of fear is more than one man can bear
 1. out of nowhere
 1. make sure to leave a like on this video
-1. this kind of work will take its toll to family
 1. there is where we part ways
 1. drop to your knees
 1. get a full tank
@@ -1498,7 +1553,6 @@
 1. you set me up
 1. it is an ongoing investigation
 1. thanks though
-1. I’m not the one in possessing of it
 1. loading-carry capacity
 1. what's the theory of the algorithm
 1. project justice
@@ -1541,7 +1595,6 @@
 1. low key
 1. this is a video on how to wash your hands scientifically
 1. this is a follow-up to give you 5 more examples
-1. don’t over complicated your english
 1. I can’t see it, can’t touch it, can’t feel it
 1. keen observation
 1. you cannot let the naysayers get in the way of your dreams
@@ -1554,7 +1607,6 @@
 1. the ball hit me in the head really hard, and now I'm seeing stars
 1. I'm not following
 1. we should embrace what comes hard
-1. this area are suffering from scarce supplies of water
 1. english is a compulsory subject
 1. I've never heard of that
 1. I would like to remind everyone that the US team will be out of the office from 12/24 thru 1/2 to celebrate all of the upcoming holidays
@@ -1823,7 +1875,6 @@
 1. she felt eternal gratitude to him for saving her life
 1. most people give only if they want something in return
 1. are you open to other view points
-1. education is a long term investmemt
 1. he has to work overtime to meet the deadline
 1. he was regarded as a righteous lawyer
 1. can you enlighten me on this subject
@@ -1847,7 +1898,6 @@
 1. I have to catch up with my colleagues because I have no prior experience
 1. curl/bend/warp
 1. instinct/intuition/intrinsic
-1. we are deficient in hands
 1. Newton's law of gravity
 1. do the problems
 1. huge baby boom
@@ -1861,7 +1911,6 @@
 1. prospect/prospector
 1. question/investigate/interrogate
 1. the school is famous for high standards of discipline
-1. teenaters in the rebellious period are always disobedient to their parents
 1. cram/cramped
 1. put up with/endure
 1. the government has taken a series of measures to appease the protesters
@@ -1873,7 +1922,6 @@
 1. the writer is one of the leading proponents of this view
 1. my weight has reverted to normal
 1. the naive young girl believes what others say easily
-1. he ascribe his failure to bad luck
 1. memory/recollection
 1. sea lane
 1. sea line
@@ -1908,8 +1956,6 @@
 1. his team is at the forefront of scientific research into cancers
 1. is there always a conflict between science and religion
 1. drawback/shortcoming/imperfection/downside
-1. he gose jogging every night
-1. raw meet must be kept separate from cooked meat
 1. segregate/separate
 1. many idioms in Chinese have their roots in ancient Chinese legends
 1. make a conservative choice
@@ -1931,10 +1977,8 @@
 1. the reporter was accused of being deliberately provocative
 1. this is a brief outline of the events
 1. the material can dissolve in water
-1. you must bandage the wound to reduce the risk of infection
 1. the teacher gave me enlightenment on science
 1. commerce between China and Africa reached a historic high last year
-1. he swallowded his dinner so quickly that he got indigestion
 1. teachers must have high ethical standards
 1. he's good at motivating students to work hard
 1. the precious painting survived the fire intact
@@ -1988,14 +2032,12 @@
 1. disaster/trauma/catastrophe
 1. the public transport system should not be judged by financial criteria alone
 1. the video was duplicated illegally
-1. bacteria is invisible to naked eye
 1. appalling/crippling/astounding/astonished/shocked/startling
 1. I'm going to transfer some money to your account
 1. life is like an arena
 1. have a miscarriage
 1. when and how did it all go wrong
 1. devote/dedicate
-1. frequent participation in competitions hindered the athelete's recovery from his back injury
 1. I need to take three optional courses to get enough credits
 1. intake
 1. his irreverent sense of humour offended her
@@ -2021,7 +2063,6 @@
 1. charming/fascinating/engaging/intriguing/inviting
 1. mistakes are bound to happen when you are dealing with so many issues
 1. I have no prior experience
-1. do you think the new primier minister can turn things back
 1. 判定某人有罪
 1. impose a punishment
 1. forensic
@@ -2034,7 +2075,6 @@
 1. 一切会好起来吗
 1. Law has two important functions
 1. Miscarriages of Justice
-1. how old you think I am
 1. the politician was held in contempt
 1. a punctual start at 9 o'clock
 1. the article was intended to provoke discussion
@@ -2093,14 +2133,12 @@
 1. the democrat lost to republican in the election
 1. no detail was too small to warrant his attention
 1. the character has a really intriguing personality
-1. running can relieves stress to some degree
 1. you will do as I command
 1. her happiness is not my concern
 1. falsehood
 1. a war that should have never been waged
 1. peril
 1. ballot
-1. in many sports, physical fitness is not important as skills
 1. subsequent/sequence
 1. it's awful to see him in such pain
 1. ferment/foment
@@ -2149,9 +2187,7 @@
 1. 嘲笑
 1. he is now on medication for his liver
 1. the volume of traffic on the road hit the peak at seven o'clock
-1. I never be a toady to the boss
 1. ridiculous/absurd/bizarre/wierd
-1. you can enjoy tax rebate
 1. Duty Free Shop
 1. having profound professional knowledge is a prerequisite of passing an interview
 1. dogs have a keen sense of smell
@@ -2181,14 +2217,12 @@
 1. depose/dispose/despise
 1. you should not be governed by the opinions of others
 1. you can tell if they're just biased or if they're actually open to discussion
-1. could this be other thing？
 1. I'm open to discussion
 1. toss aside
 1. burp
 1. conservative party
 1. conservative
 1. I was elected to deliver for this country
-1. this instrument can detect small amount of radiation
 1. hereditary diseases
 1. water purfier
 1. harsh/sharp/hard/severe
@@ -2226,7 +2260,6 @@
 1. he felt a real sense of kinship with his old classmates
 1. the government appeals to strengthen the peace and unity of the nation
 1. give us a call if you have any queries
-1. the company specializes in customized computer softwares
 1. we have a large stock of toys on sale
 1. a loud noise diverted my attention
 1. the curtain has an intricate pattern on it
@@ -2270,7 +2303,6 @@
 1. troop/troupe
 1. his back was beaded with sweat
 1. you bet
-1. I think there is a subliminal message in the sentance
 1. subliminal/subconcious
 1. you need to apply balm to your lips to keep it moist
 1. she preached economy as the best means of solving the crisis
@@ -2284,7 +2316,6 @@
 1. bill is the chairman of the executive committee
 1. a bottle of perfume
 1. the job is at last nearing completion
-1. the younger children often show great enghusiasm for computer games
 1. skilled manual workers are high in demand
 1. my presence on this stage is pretty unlikely
 1. let me express the deep gratitude for the privilige of addressing the convention
@@ -2316,9 +2347,6 @@
 1. amino acids
 1. rebellion/riot
 1. The road ahead will be long. Our climb will be steep
-1. you understand the enomity of the task that lies ahead
-1. thank to who the victory truely belongs to
-1. I knocked into her in the corridor
 1. exterior/external
 1. white-collar workers
 1. 命运
@@ -2333,7 +2361,6 @@
 1. irrigate/irritate
 1. wipe the mud off her boots
 1. 正例反例
-1. it's vary from person to person
 1. literally
 1. just in case that you didn't know it
 1. cloth mask/medical mask/surgical mask/N95 mask
@@ -2352,14 +2379,12 @@
 1. stay on track
 1. I would question the validity of that assumption
 1. the college is very selective
-1. I don't like the flavor of onioin
 1. he has no sense of shame
 1. these two ideas are quite distinct from each other
 1. 阻碍
 1. he is only a vulnerable child in need of protection from the police
 1. the wall had gone from brown to a soft grey through years of weathering
 1. air disaster
-1. the failed reform gave rise to social anomie desperation and proverty
 1. 呼吁
 1. beethoven was a musician of world stature
 1. statue/stature
@@ -2367,7 +2392,6 @@
 1. clarify my position
 1. mess it up
 1. you want this from a male perspective
-1. their duty overlapped
 1. end up in prison
 1. the negotiation is still ongoing since no agreement has been reached
 1. There are several reasons underlying the increase in employee absenteeism
@@ -2417,12 +2441,10 @@
 1. walk with a slow stiff gait
 1. the small town is showing signs of revival
 1. his insult was intentional
-1. the power of the judge are defined by law
 1. his prime concern is to protect his daughter
 1. the experiment result concurs with the theory
 1. the sun emerged from the clouds
 1. vehicles should yield to pedestrians
-1. what it'd be like to kiss you
 1. don't be so hard on yourself
 1. how much you mean to me
 1. she stormed out of the room
@@ -2489,7 +2511,6 @@
 1. he is trying to trivialize the problem
 1. the present law makes no provision for this
 1. she has the full support of her constituents
-1. he takes two step forward
 1. sprain/strain
 1. a judge must remain neutral
 1. his analysis of the problem shows great perception
@@ -2498,13 +2519,10 @@
 1. out of blue
 1. don't piss me off
 1. maybe you should take it
-1. If this is the way how you feel
 1. would you let it go
 1. jury reached a unanimous verdict of not guilty
 1. watch the ripples spread out
 1. please refrain from smoking
-1. humorous conversation is ingredient of comedy
-1. she receive a bunch of roses
 1. I have a family reunion every month
 1. bracelet
 1. fold clothes
@@ -2516,12 +2534,10 @@
 1. you can tell it
 1. subtitle
 1. there's gotta be a reason
-1. don't mad at me
 1. does it end well
 1. let me get this straight
 1. I am over you
 1. butt
-1. sorry, I got mistake
 1. chat box
 1. It keeps me focused and relaxed
 1. very good tastes in music
@@ -2533,7 +2549,6 @@
 1. I attach a copy of my notes for your information
 1. I was granted permission to visit the palace
 1. The country has exhausted its food reserves
-1. you better to prioritize your work
 1. credit card fraud
 1. average weekly earnings
 1. the roads are congested with cars
@@ -2544,7 +2559,6 @@
 1. tissue
 1. get started to save up
 1. what have you been up to
-1. what that things for
 1. I don't want to mess it up
 1. 我很满足
 1. end up alone
@@ -2555,7 +2569,6 @@
 1. civil war
 1. never interfere in what doesn't concern you
 1. the lease runs out next year
-1. he has to cater for his boss
 1. we are requested to vacate our room by noon
 1. Hang up the phone
 1. can I get some coffee
@@ -2570,7 +2583,6 @@
 1. the look of reproach on his mother's face
 1. he is reduced to almost a skeleton
 1. my best subject is math
-1. the power of judge are defined by law
 1. sometimes things don't work out
 1. I do not perfoem these kind of services
 1. do you know what this is in reference to
@@ -2587,7 +2599,6 @@
 1. we've got a spare bedroom if you'd like to stay
 1. peace was the dominant theme of the conference
 1. the plot of the novel was perspicuous
-1. the effect of the medicine is noticable
 1. I was on the verge of tears
 1. my lifelong passion for coding
 1. this work demands intense concentration
@@ -2601,7 +2612,6 @@
 1. a jar of coffee
 1. remarkable work
 1. a slice of bread
-1. the government is more effective than we incline to think
 1. the coastal regions
 1. has increased dramatically over the past decade
 1. a lack of zinc in the body
@@ -2662,7 +2672,6 @@
 1. give consent to his marriage
 1. analytical reasoning from effects to causes
 1. diverge/diverse
-1. food product has to undergo the product-grading
 1. coorperate/corporate
 1. raise the excise to 10%
 1. the beauty of the plan consists in its simplicity
@@ -2673,7 +2682,6 @@
 1. a cut on her leg
 1. 伤口
 1. 意识到
-1. I had not announced my arrival to Hangzhou
 1. confederal
 1. criminal plot
 1. nappy-changing
@@ -2710,7 +2718,6 @@
 1. the human natural instincts
 1. splash/splatter
 1. that's how it works
-1. could you please hand me the
 1. 气质
 1. get the baby into a routine
 1. not content with
@@ -2865,7 +2872,6 @@
 1. colossal
 1. commission
 1. temper
-1. the issue will be defered until next year
 1. fund raising
 1. money ceases to be a problem
 1. orientation video
@@ -3241,10 +3247,8 @@
 1. you name a price
 1. edge cases
 1. 棍子
-1. what doesn't kill you that makes you stronger
 1. 吹牛
 1. online gaming
-1. what’s taking so long
 1. drive
 1. neutral
 1. reverse
@@ -3487,7 +3491,6 @@
 1. 搬家公司
 1. plumbing
 1. title deed
-1. I got a mortgage loan from bank
 1. mortgage
 1. expense
 1. asset
@@ -3553,7 +3556,6 @@
 1. there is no ideal static configuration
 1. make heavy use of
 1. not in the sense that
-1. the difference between knwoing the name of the thing and knowing the thing
 1. hair tie
 1. operating the game
 1. folk art
@@ -3821,7 +3823,6 @@
 1. freelance
 1. This provides a huge boost in performance.
 1. meme
-1. China lacks everything excep people
 1. humilate
 1. carry somebody
 1. for the sake of simplicity
@@ -3976,7 +3977,6 @@
 1. premium
 1. take your trousers to fart
 1. sequencer
-1. It's gona be punishment for you
 1. feature
 1. adverb
 1. requirement
@@ -3994,7 +3994,6 @@
 1. integration
 1. embedded programming
 1. speculatively
-1. The mild wether make it a greate place to visit
 1. take a boat to tour the whole lake
 1. resource to boast
 1. in my circle
@@ -4013,7 +4012,6 @@
 1. lossless
 1. job hopping
 1. pros and cons
-1. I implement my ideas
 1. I put my idea into implementation
 1. I have a 2 hour commute every day
 1. exhaust a filehandle
