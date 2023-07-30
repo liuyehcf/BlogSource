@@ -1,3 +1,75 @@
+1. quantum mechanics theory suggests a world constantly changing
+1. all men are created equal
+1. I can eat a lot of food without gaining any weight
+1. I did lousy in school; I did poorly in school
+1. you don't deserve to be yelled at
+1. I'll be happy to call you if the situation changes
+1. my knee hurts, but it didn't used to
+1. don't judge a book by its cover
+1. what do you do for a living?
+1. do me the courtesy of closing the door
+1. your behavior does not accord with your principles; your behavior does not align with your principles
+1. I'm adjusting to the new environment
+1. It's worth a shot
+1. Climate change results in a significant reduction in the number of species
+1. I'm looking to build a life in Canada
+1. the bad weather ruined our trip
+1. I'm kind of hard of hearing
+1. I was gonna to work, but I got a phone call
+1. the first time I came here, there were a lot of possibilities out there
+1. I failed to live up to my parents' expectations
+1. my friend turned their back on me
+1. this course is beyond the capability of a second-year pupil
+1. you should walk on the stripes of the crosswalk
+1. I'll sell goods to a large segment of the market
+1. we need to keep ourselves informed about the situation
+1. I'm engaged both mentally and visually
+1. A country struggling with famine has already exhausted its food reserves
+1. what do you mean by 'cohabitation'?
+1. this video could help make you sound more natural like a native English speaker
+1. How long is it going to be before we get there?
+1. CNN should be ashamed of itself for having you working for them
+1. everyone only has one shot, and you've missed yours
+1. I'm in the middle, mom and dad on either side
+1. he simply bears up, does what he has to do
+1. we'd better agree to disagree
+1. What choices are there?
+1. there were four of us
+1. she has an innate ability to dance; she has a natural affinity for music
+1. it's against my principles
+1. the parade quickly grew in size
+1. what's sad is how old we've become
+1. this animal is hard to tame; this subject is not easy to master
+1. I'm fueled by bitterness; bitterness feeds me
+1. It's pretty much even; It's fairly balanced
+1. storms in the U.S. have caused at least $35 billion worth of damage so far this year
+1. hold on to yourself
+1. Can you discuss the role of metadata in an OLAP database system?
+1. What are the differences between a star schema and a constellation schema in an OLAP database?
+1. What are the advantages and disadvantages of using a snowflake schema in an OLAP database?
+1. What are the advantages and disadvantages of using a star schema in an OLAP database?
+1. How many types of schema in an OLAP database?
+1. it's kind of even-steven
+1. move on strongly and hopefully
+1. underway; undergoing
+1. we never have to go back where we were a year ago
+1. the abortion ban was on hold now
+1. constitutional amendments require a 60% threshold instead of a simple majority
+1. allow a certain range of deviation
+1. the company has gone bankrupt
+1. What is the purpose of dimension hierarchies in OLAP systems? Provide an example
+1. How do you optimize query performance in an OLAP database?
+1. Describe the process of building an OLAP database model from a relational database
+1. What are the key differences between a relational database and an OLAP database?
+1. What is OLAP (Online Analytical Processing) and how does it differ from OLTP (Online Transaction Processing)?
+1. I was wrong about you
+1. what did I do wrong
+1. Explain the concept of TCP round-trip time (RTT) estimation and its significance in congestion control
+1. What is the Nagle's algorithm in TCP? How does it affect the transmission of small packets?
+1. Explain the concept of selective acknowledgment (SACK) in TCP
+1. What is the maximum segment size (MSS) in TCP?
+1. What is the TCP Maximum Segment Lifetime (MSL)?
+1. struct a deal
 1. affect; impact; influence
 1. individual freedom is at the core of democracy
 1. I attach great importance to this relationship; I deeply value this relationship
@@ -242,7 +314,6 @@
 1. the scheduler in DuckDB employs techniques such as work-stealing to balance the workload among threads and minimize idle time
 1. this approach can provide good resource utilization
 1. gravely injured; seriously injured; critically injured
-1. she has an innate ability to dance; she has a nature affinity for music
 1. I'm out of my money; I'm out of my time; I'm out of my floss picks
 1. refer fee; finder's fee; rush fee
 1. repress; oppress; suppress; persecute
@@ -451,7 +522,6 @@
 1. I need to fast for 12 hours before my physical
 1. thank you for coming
 1. no further questions, thank you
-1. it was 4 of us
 1. the trial is over - lies that Fox aired about the 2020 presidential elections
 1. the democrat was hospitalized for six weeks with depression
 1. cycle to the previous suggestion
@@ -498,7 +568,6 @@
 1. the order placement process on the website was quick and user-friendly
 1. Minnesota is the latest state to legalize recreational marijuana
 1. Minnesotans would be able to legally grow and possess limited quantities of marijuana
-1. we better to agree to disagree
 1. sometimes compromises have to be made
 1. associate
 1. no half measures
@@ -639,7 +708,6 @@
 1. exponential
 1. do not worry if the details in this section are a bit overwhelming, the important things to take away from this section are
 1. when I get on the treadmill, I'm able to clear my mind and stop worrying or thinking about things that cause a lot of stress for me
-1. don't judge a book by it's cover
 1. I have chills when I'm listening to this song; I get chills when I'm listening to this song
 1. protesters packed in the Tennessee state Capitol as lawmakers debated expelling three democratic house members
 1. peninsula
@@ -659,7 +727,6 @@
 1. How can I identify which operator corresponds to which part of the query?
 1. the enterprise version provides a visualized profile feature that allows for more intuitive analysis
 1. this is one of the challenges we are facing, this is one of the issues we're encountering, this is one of the problems we are experiencing
-1. I'm seeking to build life in Canada
 1. the verdicts mark a significant victory for the Justice Department which has now secured more than 600 convictions tied to the siege on the U.S capitol
 1. he was acquitted of sedition but faces punishment on robbery
 1. boost gun control throughout the country
@@ -750,13 +817,11 @@
 1. impeachment
 1. it's just a media thing
 1. it’s only a matter of time before they find you
-1. it worth a shot
 1. I was wondering how I ended up here
 1. you would choose your own hours as long as the quota is met
 1. make it economically viable
 1. arrest the sixth person in connection with last weekend's deadly shooting
 1. escalate
-1. he simply bears up, does what he have to do
 1. facing death changes a person
 1. cloud my mind
 1. the supreme court has delayed a decision on the availability of the abortion drug
@@ -798,10 +863,8 @@
 1. grand jury
 1. assault weapons
 1. first language
-1. do me the courtesy
 1. you were never there
 1. use your best judgement
-1. I’m in the middle, mom and dad on the either side
 1. lingering on things doesn’t help
 1. long sleeves
 1. drop the ball
@@ -810,7 +873,6 @@
 1. high end computer
 1. mortgage and pension
 1. I think you’re confusing me for someone else
-1. everyone only has one shot, and you’ve missed that
 1. I’m amazed you’ve got this far
 1. money has been a bit tight lately
 1. I'm a little tight on cash recently
@@ -1094,7 +1156,6 @@
 1. nodes is a comma delimited list of node numbers or A-B ranges or all
 1. I normally exercise Monday through Friday, in order to get it in before work, I wake up at the crack of dawn and head to the gym, and while I'm running on the treadmil, I'm able to clear my mind
 1. how often do you exercise
-1. I can eat a lot of food without ganing any weight
 1. we're just spending time together
 1. the foundation of this ability lies in years of dedicated practice and hard work
 1. kill time
@@ -1188,8 +1249,6 @@
 1. I'm not used to waking up this early
 1. to be accustomed to something or someone
 1. I think we should explore some solutions
-1. I have my knee hurt but it didn't used to hurt
-1. I'll be happy to call you if situation changes
 1. I'm just here for a tour
 1. he wasn't given a choice
 1. we can do it quiet
@@ -1245,7 +1304,6 @@
 1. it did have a happy ending
 1. he misappropriated my intellectual property
 1. hit and run
-1. you dont’ deserve to be yelled at
 1. you’ve been nothing but generous to me
 1. I don’t understand where this is coming from
 1. you need to focus on specifics
@@ -1269,7 +1327,6 @@
 1. abuse of process
 1. you're going into the question deeper and deeper in various directions
 1. how fresh the ingredients are
-1. I did lousy in school
 1. I was moved
 1. I’m with you
 1. you’re not gona play by rules
@@ -1344,7 +1401,6 @@
 1. you got stale
 1. I’ll make it through
 1. onward and upward
-1. I’m under the adjustment of the new environment
 1. I’m stressed out
 1. he had an attack in the morning
 1. issue memory operation
@@ -1463,7 +1519,6 @@
 1. having been subjected
 1. up and coming athlete
 1. the way you treat other people is horrible
-1. CNN should be shamed of itself for having you working for them
 1. lets put it this way
 1. an electric motor
 1. parents tend to boast about children's achievements to each other
@@ -1475,13 +1530,11 @@
 1. It's up to you
 1. space, form feed, line feed, carriage return, horizontal tab, and vertical tab
 1. I have always strictly abided by the policies
-1. how long it's gona to be before we get there
 1. don’t chase money
 1. that person is really showing his age
 1. he looks good for his age
 1. he’s aged well
 1. you can talk about something that started in the past and has continue to the present
-1. this video could help make you sound more nature like a native english speaker
 1. how long have you been here
 1. big shots
 1. the system of theocracy has forever become bygones
@@ -1508,15 +1561,10 @@
 1. please reach out this week if you have any questions or need any assistance from the team
 1. the floor was covered by a thick layer of dust
 1. what first attracted me to her was her kindness
-1. climate change result in a significant reduction in the number of species
 1. you should be generous with your time
 1. we need to discuss later since no agreement has been reached
-1. what do you mean by 'cohabition'
 1. I'm looking forward to life-long happiness and fulfillment
 1. I need to improve the capacity to handle things
-1. I'm nourished on bitterness
-1. a country struggling with famine has already exhausted it's food reserves
-1. I'm engaged both the mind and the eyes
 1. I have a strong preference for the original plan
 1. the teacher is good at cultivating student's creative thinking
 1. I'm trying to apply modern techniques to this traditional craft
@@ -1540,14 +1588,10 @@
 1. the politician calls for equitable distribution of social resource
 1. please have my hair cut short
 1. please water flowers twice a week
-1. we need to keep up informed about the situation
-1. I'll sell goods to a large scale of the market
 1. He's a sensitive and caring man
-1. you should walk on the stripes of the crosswalk
 1. walking on the stripes of the crosswalk
 1. my family provide, protect and care about me
 1. the experienced captain make an emergency landing
-1. this course beyond the capability of a second-year pupil
 1. I'd like to live my life with happiness
 1. improvement of the public transportation and public utilities
 1. he always gives disinterested advice no matter his standpoint
@@ -1557,9 +1601,7 @@
 1. we need to draw him out
 1. I have quotas to meet
 1. you brought shame to this family
-1. this animal is not easy to master
 1. I need you kids on your best behaviors
-1. my friend turns back on me
 1. patriarch
 1. I lost my concentration during the long and dull lecture
 1. she is devastated by the news of his death
@@ -1577,13 +1619,10 @@
 1. sidewalk/crosswalk
 1. an endless treadmill of feeding, washing and nappy-changing
 1. the pronunciation is more attractive than the meaning it carries out
-1. I failed to live up to my parent's expectation
 1. you are young and eager to get started
-1. First time I came here, there are a lot of possibilities out there
 1. how do you feel now comparing to when you were here before
 1. family tree
 1. I come from a diverse background
-1. I was gona to work, but I got a phone call
 1. I have no comments
 1. put down roots
 1. the decline in profit is causing disquiet aomng shareholders
@@ -1599,13 +1638,11 @@
 1. the fans are asking for a refund after cancellation of the pop start's concert
 1. what have you tried
 1. put the country's economy into crisis
-1. that not nature english
 1. can you pass me the book
 1. they don't think of science the same way I do
 1. he's the one that I look up to
 1. function normally
 1. I haven't heard those words in a long time, thank you
-1. I'm kind of hard hearing
 1. how much for a magazine
 1. a puff of smoke
 1. under certain circumstances
@@ -1617,14 +1654,11 @@
 1. destructive earthquakes
 1. he has nobody else to blame
 1. the storm with thunder and lightning scared the little boy
-1. they will condunct a survey to know the consumer buying service
 1. put on weight
 1. the unjust judgement has generated public outrage in this country
 1. the size of the country, the size of the people make it a great economy
-1. what sad is how old we come
 1. a blank sheet of paper
 1. vocalize/verbalize
-1. parade spread like wildfire
 1. step down
 1. the most important recent trend has been exposing that computation to the programmer
 1. position GPU as a compelling alternative to traditional microprocessors
@@ -1646,7 +1680,6 @@
 1. the cream is easily absorbed into the skin
 1. you never know when it's going to happen
 1. a relatively high level of crime
-1. your behavior does not accord with your principle
 1. farming is now highly mechanized
 1. lack of care from parents may give rise to juvenile crime
 1. national security has now become a matter of the utmost importance after recent terrorist attacks
@@ -1683,7 +1716,6 @@
 1. I was suspicious of his motives
 1. seasoning/spice/condiment
 1. the rise in unemployment was a manifestation of the economic crisis
-1. quantum mechanics theory suggests a world constantly in changing
 1. I'm sure he won't betray your trust
 1. I need to pay off all my debts before I leave the country
 1. frustration/setback
@@ -1710,7 +1742,6 @@
 1. play cards
 1. work overtime
 1. passion/compassion/compatible/impassive
-1. what do you do for living
 1. the refugees were deported back to their own country
 1. back/rear
 1. he's very superstitious and doesn't believe science
@@ -2181,7 +2212,6 @@
 1. the Pentagon
 1. without fear of retribution
 1. our pride is based on a very simple premise summed up in a declaration made over two hundred years ago
-1. all man are created equal
 1. abiding faith
 1. march across europe
 1. Pearl Harbor
@@ -2360,7 +2390,6 @@
 1. resilience/reliance
 1. the intrinsic value of education is to maintain a nation's forward momentum
 1. tomb/comb/bomb
-1. state of mind
 1. nothing is being done to tackle the problem
 1. periodic checks are carried out on the equipment
 1. he suffered cranial bleeding in the car crash
@@ -2861,7 +2890,6 @@
 1. wayward
 1. practical matters
 1. resilience towards failures
-1. it's against my principle
 1. never-ceasing
 1. sustainable use of nature resources
 1. stick in my mind
@@ -2922,7 +2950,6 @@
 1. the tower overlooks the sea
 1. tug
 1. be mortified to look for help
-1. the bad weather ruin our trip
 1. innovative
 1. trade fairs
 1. precious
@@ -3735,8 +3762,6 @@
 1. empirical
 1. alleviate
 1. commitment
-1. world class
-1. come up with
 1. passionate
 1. struggle
 1. world's leading
