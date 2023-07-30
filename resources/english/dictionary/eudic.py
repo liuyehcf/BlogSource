@@ -5,7 +5,10 @@ import os
 source_csv_file_path = sys.argv[1]
 directory = os.path.dirname(os.path.abspath(__file__))
 
-target_csv_file_path = "%s/Eudic.md" % directory
+source_csv_file_name = os.path.basename(source_csv_file_path)
+source_csv_file_name_without_suffix = os.path.splitext(source_csv_file_name)[0]
+
+target_csv_file_path = "%s/%s.md" % (directory, source_csv_file_name_without_suffix)
 
 # Open the CSV file in read mode
 with open(source_csv_file_path, "r") as in_file:
