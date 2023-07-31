@@ -251,6 +251,7 @@ RUN apk add -U tzdata
 1. 查看img的构建记录：`docker history <img>`
 1. 查看img的详情：`docker inspect <img>`
 1. 查看容器资源占用情况：`docker stats <container>`
+1. 清理无用镜像：`docker system prune -a`
 
 ## 7.1 修改存储路径
 

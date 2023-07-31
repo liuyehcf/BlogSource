@@ -116,6 +116,10 @@ Here are some commonly used methods provided by the Collectors class:
 * `groupingBy(Function classifier)`: Groups the stream's elements according to a classifier function, and returns a Map.
 * `partitioningBy(Predicate predicate)`: Partitions the stream's elements into two groups according to a predicate.
 
+## 4.1 Examples
+
+**`flatMap`**
+
 ```java
 import java.util.Arrays;
 import java.util.List;
@@ -133,6 +137,50 @@ class Main {
                         .collect(Collectors.toList());
 
         System.out.println(allIntegers); // prints [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    }
+}
+```
+
+**`Collectors.groupingBy`**
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+class KV {
+    public KV(int key, int value) {
+        this.key = key;
+        this.value = value;
+    }
+
+    public int key;
+    public int value;
+
+    public int key() {
+        return key;
+    }
+
+    public int value() {
+        return value;
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        List<KV> pairs = new ArrayList<>();
+        pairs.add(new KV(1, 1));
+        pairs.add(new KV(1, 2));
+        pairs.add(new KV(1, 3));
+        pairs.add(new KV(2, 2));
+        pairs.add(new KV(2, 3));
+
+        Map<Integer, Integer> sums =
+                pairs.stream()
+                        .collect(Collectors.groupingBy(KV::key, Collectors.summingInt(KV::value)));
+
+        System.out.println(sums); // {1=6, 2=5}
     }
 }
 ```
