@@ -4479,6 +4479,33 @@ void foo() {
 }
 ```
 
+### 10.2.5 Initialization of non-static class Members
+
+非静态成员不允许使用构造初始化，但是允许使用列表初始化（本质上还是调用了对应的构造函数）
+
+```cpp
+#include <iostream>
+
+class Foo {
+public:
+    Foo() { std::cout << "Foo()" << std::endl; }
+    Foo(int val) : val(val) { std::cout << "Foo(int)" << std::endl; }
+
+private:
+    int val;
+};
+
+class Bar {
+private:
+    Foo foo{5};
+};
+
+int main() {
+    Bar bar;
+    return 0;
+}
+```
+
 ## 10.3 Pointer
 
 ### 10.3.1 Member Function Pointer
