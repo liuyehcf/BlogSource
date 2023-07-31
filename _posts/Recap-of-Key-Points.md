@@ -359,13 +359,15 @@ categories:
                 - TopN Push Down
             - Implementation Rules
                 - Join Implementations
-                    - Nest-Loop Join
-                    - Sort-Merge Join
-                    - Hash Join
-                    - Shuffle Join
-                    - Broadcast Join
-                    - Replication Join
-                    - Colocate Join
+                    - Algorithm
+                        - Nest-Loop Join
+                        - Sort-Merge Join
+                        - Hash Join
+                    - Distribution
+                        - Shuffle Join
+                        - Broadcast Join
+                        - Replication Join
+                        - Colocate Join
         - CBO Optimizer
             - Basic Concept
                 - Expression
