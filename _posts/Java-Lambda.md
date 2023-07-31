@@ -12,250 +12,132 @@ categories:
 
 <!--more-->
 
-# 1 编程范式简介
+# 1 Programming Paradigm
 
-**编程范型**或**编程范式**（英语：Programming paradigm），（范即模范之意，范式即模式、方法），是一类典型的编程风格，是指从事软件工程的一类典型的风格（可以对照方法学）。如：**函数式编程、程序编程、面向对象编程、指令式编程**等等为不同的编程范型
+A programming paradigm is a fundamental style or approach to programming that is characterized by distinct features and methodologies. It influences the structure and elements of the programs we write. Different paradigms offer different perspectives on the way problems should be solved and code should be organized. Here are some of the most common programming paradigms:
 
-编程范型提供了（同时决定了）程序员对程序执行的看法。例如，在面向对象编程中，程序员认为程序是一系列相互作用的对象，而在函数式编程中一个程序会被看作是一个无状态的函数计算的序列
+1. `Procedural Programming`: This paradigm is based on the concept of "procedure calls" where programs are a series of computational steps to be carried out. Each procedure contains a series of computational steps to be carried out. Procedural programming languages include C, Go, and Rust.
+1. `Object-oriented Programming (OOP)`: In OOP, programs are designed using objects that interact with each other. An object is an instance of a class, which can contain data and methods. The main principles of OOP are encapsulation, inheritance, and polymorphism. Examples of OOP languages include Java, C++, and Python.
+1. `Functional Programming`: In functional programming, computation is treated as the evaluation of mathematical functions and avoids changing-state and mutable data. It promotes code that is more predictable and easier to test. Some examples of functional languages are Haskell, Erlang, and Lisp. However, many modern languages like Python, JavaScript, and C# support functional programming to a certain degree.
+1. `Declarative Programming`: In declarative programming, developers write code to describe what the program should accomplish, rather than how to achieve it. SQL and HTML are examples of declarative languages. The declarative paradigm also includes functional programming as a subset.
+1. `Logic Programming`: This paradigm is primarily used in artificial intelligence. Programs are written in the form of logic statements, and the system finds the solution that satisfies these statements. Prolog is a well-known logic programming language.
+1. `Event-Driven Programming`: In this paradigm, the flow of the program is determined by events such as user actions, sensor outputs, or messages from other programs. JavaScript, used for front-end web development, is an example of an event-driven programming language.
+1. `Concurrent Programming`: This paradigm deals with constructing software systems that are capable of running multiple computations and processes concurrently. This is different from parallel programming where multiple computations are literally running at the same time on different cores or machines. Some languages designed with concurrency in mind are Erlang and Go.
 
-## 1.1 函数式编程
+Each of these paradigms have their own strengths and weaknesses and are used in different contexts. It's also important to note that many programming languages support multiple paradigms. For instance, Python supports both procedural and object-oriented programming.
+ 
+# 2 Lambda Expression
 
-函数式编程作为一种编程范式，在科学领域，是一种编写计算机程序数据结构和元素的方式，它把计算过程当做是数学函数的求值，而避免更改状态和可变数据
+A lambda expression is a small anonymous function that is defined using the keyword lambda. It is a feature in many programming languages including Python, Java, C# and others, and is a concept derived from lambda calculus, a framework developed in the 1930s to study functions and their evaluation.
 
-函数式编程并非近几年的新技术或新思维，距离它诞生已有大概50多年的时间了。它一直不是主流的编程思维，但在众多的所谓顶级编程高手的科学工作者间，函数式编程是十分盛行的
+A lambda expression can take any number of arguments, but can only have one expression. The lambda function can be used wherever function objects are required. Because it's limited to an expression, a lambda is less general than a function - you can only squeeze so much logic into a single expression.
 
-什么是函数式编程？简单的回答：一切都是数学函数。函数式编程语言里也可以有对象，但通常这些对象都是恒定不变的：要么是函数参数，要什么是函数返回值。函数式编程语言里没有 for/next 循环，因为这些逻辑意味着有状态的改变。相替代的是，这种循环逻辑在函数式编程语言里是通过递归、把函数当成参数传递的方式实现的
+## 2.1 Grammar
 
-# 2 Lambda表达式
+In Java, lambda expressions were introduced in Java 8. They are used to implement methods in functional interfaces without creating a separate class. The general syntax of a lambda expression in Java is:
 
-## 2.1 Lambda表达式的定义
-
-什么是Lambda表达式？在计算机编程中，**Lambda表达式，又称匿名函数**（anonymous function）是指**一类无需定义标识符（函数名）的`函数或子程序`，普遍存在于多种编程语言中**
-
-## 2.2 Lambda表达式在Java中的表现形式
-
-Java 中 Lambda 表达式一共有五种基本形式，具体如下：
-
-①
-
-```java
-Runnable noArguments = () -> System.out.println("Hello World");
+```
+(parameter1, parameter2, ...) -> expression
 ```
 
-②
+or 
 
-```java
-ActionListener oneArgument = event -> System.out.println("button clicked");
+```
+(parameter1, parameter2, ...) -> { statements; }
 ```
 
-③
+## 2.2 Functional Interface
+
+Functional interfaces in Java are a key concept related to lambda expressions. A functional interface is an interface that contains just one abstract method. They are used as the basis for lambda expressions in functional programming.
+
+In Java 8, a special annotation @FunctionalInterface has been introduced which can be used for indicating that an interface is intended to be a functional interface. This annotation is optional but it's a good practice to use it. The Java compiler will generate an error message if a type annotated with @FunctionalInterface is not a valid functional interface.
+
+Here is a simple example of a functional interface:
 
 ```java
-Runnable multiStatement = () -> {
-    System.out.print("Hello");
-    System.out.println(" World");
-};
+@FunctionalInterface
+public interface SimpleInterface {
+    void doSomething();
+}
 ```
 
-④
+# 3 Stream
+
+In Java, the Stream API was introduced in Java 8 to support functional-style operations on streams of elements. The Stream API is in the java.util.stream package. It provides a high-level abstraction for performing complex data processing operations, such as filtering, mapping, reducing, finding, matching, etc.
+
+A Stream in Java is a sequence of elements from a source that supports data processing operations. Sources can be collections, lists, sets, ints, longs, doubles, arrays, lines of a file, etc.
+
+Here are some key characteristics of Java Stream:
+
+* `Stream Operations Are Lazy`: Many stream operations, such as filtering and mapping, are implemented lazily, meaning they only process the elements of the stream when it's absolutely necessary.
+* `Streams Are Consumable`: The elements of a stream are only visited once during the life of a stream. Like an Iterator, a new stream must be generated to revisit the same elements of the source.
+* `Stream Can Be Parallel`: The data processing operations can either be executed sequentially or parallely which can significantly reduce the processing time.
+
+There are several commonly used interfaces in the Java Stream API, including:
+
+* `Stream<T>`: This is the most commonly used Stream interface, representing a sequence of objects. The `"<T>"` is a type parameter that represents the type of object in the stream. It has methods like filter, map, reduce, collect, forEach, and many others.
+* `IntStream, LongStream, DoubleStream`: These are primitive specializations of the Stream interface for working with streams of ints, longs and doubles respectively, to avoid the overhead of boxing and unboxing. They have methods like sum, average, range, etc.
+* `Function<T,R>`: A functional interface used for lambda expressions that take an object of one type and return an object of another type. It's often used with the map function to transform a stream of objects.
+* `Predicate<T>`: This functional interface is used for lambda expressions that take an object and return a boolean. It's often used with the filter function to filter a stream of objects.
+* `Consumer<T>`: This functional interface represents an operation that takes an input and returns no result. It's often used with the forEach method to consume (or process) a stream of objects.
+* `Supplier<T>`: Represents a function that supplies values. It takes no arguments but returns a value. It can be used in the generate method of a stream to provide new values for a stream.
+* `Comparator<T>`: Used for defining the logic for sorting elements of a stream.
+
+The Java Stream API offers a rich set of methods for processing sequences of elements. Here are some commonly used ones:
+
+* `map(Function mapper)`: Returns a stream consisting of the results of applying the given function to the elements of this stream.
+* `filter(Predicate predicate)`: Returns a stream consisting of the elements of this stream that match the given predicate.
+* `forEach(Consumer action)`: Performs an action for each element of this stream.
+* `collect(Collector collector)`: Performs a mutable reduction operation on the elements of this stream using a Collector.
+* `reduce(BinaryOperator accumulator)`: Performs a reduction on the elements of this stream, using an associative accumulation function, and returns an Optional describing the reduced value, if any.
+* `sorted() and sorted(Comparator comparator)`: Returns a stream consisting of the elements of the original stream, sorted according to natural order or by a provided Comparator.
+* `limit(long maxSize)`: Returns a stream consisting of the elements of this stream, truncated to be no longer than maxSize in length.
+* `skip(long n)`: Returns a stream consisting of the remaining elements of this stream after discarding the first n elements of the stream.
+* `anyMatch(Predicate predicate), allMatch(Predicate predicate), noneMatch(Predicate predicate)`: These methods return a boolean and are used to test whether a certain property holds for elements of the stream.
+* `findFirst() and findAny()`: Return an Optional describing the first or any element of this stream, respectively.
+* `toArray()`: Returns an array containing the elements of this stream.
+* `count()`: Returns the count of elements in the stream.
+* `flatMap(Function mapper)`: Returns a stream consisting of the results of replacing each element of this stream with the contents of a mapped stream produced by applying the provided mapping function to each element.
+
+# 4 Collectors
+
+Java's Collectors class provides a number of methods that can be used in conjunction with the collect method of the Stream API to reduce the stream's elements into a summary result.
+
+Here are some commonly used methods provided by the Collectors class:
+
+* `toList()`: Collects the stream's elements into a new List.
+* `toSet()`: Collects the stream's elements into a new Set.
+* `toMap(Function keyMapper, Function valueMapper)`: Collects the stream's elements into a Map. The keyMapper function generates the map's keys, and the valueMapper function generates the map's values.
+* `joining(CharSequence delimiter)`: Concatenates the stream's CharSequence elements into a single CharSequence separated by the specified delimiter.
+* `counting()`: Counts the number of elements in the stream.
+* `summingInt(ToIntFunction mapper), summingLong(ToLongFunction mapper), summingDouble(ToDoubleFunction mapper)`: Sums the results of applying a mapping function to the stream's elements.
+* `averagingInt(ToIntFunction mapper), averagingLong(ToLongFunction mapper), averagingDouble(ToDoubleFunction mapper)`: Computes the average of the results of applying a mapping function to the stream's elements.
+* `minBy(Comparator comparator) and maxBy(Comparator comparator)`: Find the minimum or maximum element of the stream according to a comparator.
+* `groupingBy(Function classifier)`: Groups the stream's elements according to a classifier function, and returns a Map.
+* `partitioningBy(Predicate predicate)`: Partitions the stream's elements into two groups according to a predicate.
 
 ```java
-BinaryOperator<Long> add = (x, y) -> x + y;
-```
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
-⑤
+class Main {
+    public static void main(String[] args) {
+        List<List<Integer>> listOfLists =
+                Arrays.asList(
+                        Arrays.asList(1, 2, 3), Arrays.asList(4, 5, 6), Arrays.asList(7, 8, 9));
 
-```java
-BinaryOperator<Long> addExplicit = (Long x, Long y) -> x + y;
-```
+        List<Integer> allIntegers =
+                listOfLists.stream()
+                        .flatMap(List::stream) // replaces each list with the stream of its integers
+                        .collect(Collectors.toList());
 
-其语法可以总结如下：
-
-* `left -> right`
-1. 对于**形参列表为空**的接口方法，`left`写成`()`即可（例如①和③）
-1. 对于**仅有一个形参**的接口方法，`left`可以只写参数名，不需要`()`包裹，当然用`()`包裹自然是对的（例如②）
-1. 对于**含有多个形参**的接口方法，`left`必须用`()`包裹（例如④和⑤）
-1. 对于**形参列表不为空**的接口方法，`left`可以只写参数名，也可以带上类型（例如②、④和⑤）
-1. 对于**仅包含一条语句**的函数体，`right`**可以不**用`{}`包裹，当然用`{}`包裹自然是对的（例如①、②、④和⑤）
-    * 如果该条语句是return语句，且**不用**`{}`包裹，那么return关键字**不能写**
-1. 对于**包含多条语句**的函数体，`right`必须用`{}`包裹（例如③）
-    * 此时的语法与正常方法中的语法一致
-
-## 2.3 函数式接口
-
-**函数式接口必须满足以下条件**
-
-* 有且仅有一个抽象方法
-* 接口中的静态方法和默认方法，都**不算**是抽象方法
-* 接口默认继承java.lang.Object，所以如果接口显示声明覆盖了Object中方法，那么也**不算**抽象方法
-
-**对于函数式接口，其实例可以通过Lambda表达式、方法引用或者构造器引用创建**
-
-JDK 1.8中新增了@FunctionalInterface注解用于标记函数式接口。该注解**不是必须**的，如果一个接口符合“函数式接口”定义，那么加不加该注解都没有影响。加上该注解能够更好地让编译器进行检查。如果编写的不是函数式接口，但是加上了@FunctionInterface，那么编译器会报错。事实上，每个用作函数接口的接口都**应该**添加这个注解。**该注解会强制`javac`检查一个接口是否符合函数接口的标准。如果该注解添加给一个枚举类型、类或另一个注解，或者接口包含不止一个抽象方法，javac就会报错。重构代码时，使用它能很容易发现问题**
-
-# 3 Stream简介
-
-JDK 1.8中，引入了流（Stream）的概念，这个流和以前我们使用的IO中的流并不太相同
-
-**所有继承自`Collection`的接口都可以转换为`Stream`**
-
-我们来看一下Stream接口的源码
-
-```java
-public interface Stream<T> extends BaseStream<T, Stream<T>> {
-
-    Stream<T> filter(Predicate<? super T> predicate);
-
-    <R> Stream<R> map(Function<? super T, ? extends R> mapper);
-
-    IntStream mapToInt(ToIntFunction<? super T> mapper);
-
-    LongStream mapToLong(ToLongFunction<? super T> mapper);
-
-    DoubleStream mapToDouble(ToDoubleFunction<? super T> mapper);
-
-    <R> Stream<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper);
-
-    LongStream flatMapToLong(Function<? super T, ? extends LongStream> mapper);
-
-    DoubleStream flatMapToDouble(Function<? super T, ? extends DoubleStream> mapper);
-
-    Stream<T> distinct();
-
-    Stream<T> sorted();
-
-    Stream<T> sorted(Comparator<? super T> comparator);
-
-    Stream<T> peek(Consumer<? super T> action);
-
-    Stream<T> limit(long maxSize);
-
-    Stream<T> skip(long n);
-
-    void forEach(Consumer<? super T> action);
-
-    void forEachOrdered(Consumer<? super T> action);
-
-    Object[] toArray();
-
-    <A> A[] toArray(IntFunction<A[]> generator);
-
-    T reduce(T identity, BinaryOperator<T> accumulator);
-
-    Optional<T> reduce(BinaryOperator<T> accumulator);
-
-    <U> U reduce(U identity,
-                 BiFunction<U, ? super T, U> accumulator,
-                 BinaryOperator<U> combiner);
-
-    <R> R collect(Supplier<R> supplier,
-                  BiConsumer<R, ? super T> accumulator,
-                  BiConsumer<R, R> combiner);
-
-    <R, A> R collect(Collector<? super T, A, R> collector);
-
-    Optional<T> min(Comparator<? super T> comparator);
-
-    Optional<T> max(Comparator<? super T> comparator);
-
-    long count();
-
-    boolean anyMatch(Predicate<? super T> predicate);
-
-    boolean allMatch(Predicate<? super T> predicate);
-
-    boolean noneMatch(Predicate<? super T> predicate);
-
-    Optional<T> findFirst();
-
-    Optional<T> findAny();
-
-    //Static factories
-    public static<T> Builder<T> builder() {
-        return new Streams.StreamBuilderImpl<>();
-    }
-
-    public static<T> Stream<T> empty() {
-        return StreamSupport.stream(Spliterators.<T>emptySpliterator(), false);
-    }
-
-    public static<T> Stream<T> of(T t) {
-        return StreamSupport.stream(new Streams.StreamBuilderImpl<>(t), false);
-    }
-
-    @SafeVarargs
-    @SuppressWarnings("varargs") //Creating a stream from an array is safe
-    public static<T> Stream<T> of(T... values) {
-        return Arrays.stream(values);
-    }
-
-    public static<T> Stream<T> iterate(final T seed, final UnaryOperator<T> f) {
-        Objects.requireNonNull(f);
-        final Iterator<T> iterator = new Iterator<T>() {
-            @SuppressWarnings("unchecked")
-            T t = (T) Streams.NONE;
-
-            @Override
-            public boolean hasNext() {
-                return true;
-            }
-
-            @Override
-            public T next() {
-                return t = (t == Streams.NONE) ? seed : f.apply(t);
-            }
-        };
-        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(
-                iterator,
-                Spliterator.ORDERED | Spliterator.IMMUTABLE), false);
-    }
-
-    public static<T> Stream<T> generate(Supplier<T> s) {
-        Objects.requireNonNull(s);
-        return StreamSupport.stream(
-                new StreamSpliterators.InfiniteSupplyingSpliterator.OfRef<>(Long.MAX_VALUE, s), false);
-    }
-
-    public static <T> Stream<T> concat(Stream<? extends T> a, Stream<? extends T> b) {
-        Objects.requireNonNull(a);
-        Objects.requireNonNull(b);
-
-        @SuppressWarnings("unchecked")
-        Spliterator<T> split = new Streams.ConcatSpliterator.OfRef<>(
-                (Spliterator<T>) a.spliterator(), (Spliterator<T>) b.spliterator());
-        Stream<T> stream = StreamSupport.stream(split, a.isParallel() || b.isParallel());
-        return stream.onClose(Streams.composedClose(a, b));
-    }
-
-    public interface Builder<T> extends Consumer<T> {
-
-        @Override
-        void accept(T t);
-
-        default Builder<T> add(T t) {
-            accept(t);
-            return this;
-        }
-
-        Stream<T> build();
-
+        System.out.println(allIntegers); // prints [1, 2, 3, 4, 5, 6, 7, 8, 9]
     }
 }
-
 ```
 
-Stream接口本身并不是函数式接口（废话），但是Stream的许多方法的参数都是函数式接口，支持Lambda表达式。以下是常用的函数式接口
-
-| 接口 | 参数 | 返回类型 | 描述 |
-|:--|:--|:--|:--|
-| Predicate<T> | T | boolean | 用于判别一个对象。比如求一个人是否为男性 |
-| Consumer<T> | T | void | 用于接收一个对象进行处理但没有返回，比如接收一个人并打印他的名字 |
-| Function<T, R> | T | R | 转换一个对象为不同类型的对象 |
-| Supplier<T> | None | T | 提供一个对象 |
-| UnaryOperator<T> | T | T | 接收对象并返回同类型的对象 |
-| BinaryOperator<T> | (T, T) | T | 接收两个同类型的对象，并返回一个原类型对象 |
-
-# 4 参考
+# 5 参考
 
 * [JDK 8 函数式编程入门](https://www.cnblogs.com/snowInPluto/p/5981400.html)
 * [Lambda expression](https://en.wikipedia.org/wiki/Lambda_expression)
