@@ -3429,7 +3429,7 @@ yum install -y sysstat
     * `StkRef`：该任务当前实际使用的栈空间大小，单位`KB`
 * `-u`：显示`CPU`使用情况，默认
     * `-I`：在`SMP, Symmetric Multi-Processing`环境下，`CPU`使用率需要考虑处理器的数量，这样得到的`%CPU`指标才是符合实际的
-    * `%usr`、`%system`、`%guest`这三个指标无论加不加`-I`都不会超过100%，[Bug 1763579 - 'pidstat -I' do not report %usr correctly with multithread program](https://bugzilla.redhat.com/show_bug.cgi?id=1763579)
+    * `%usr`、`%system`、`%guest`这三个指标无论加不加`-I`都不会超过100%，[pidstat do not report %usr %system correctly in SMP environment](https://github.com/sysstat/sysstat/issues/344)
 * `-w`：显式上下文切换（不包含线程，通常与`-t`一起用）
 * `-t`：显式所有线程
 * `-p <pid>`：指定进程

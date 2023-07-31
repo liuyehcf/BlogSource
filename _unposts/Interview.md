@@ -29,11 +29,22 @@ In the case of SSH proxy, the user-side agent is the SSH component embedded in o
 
 ### 2.1.4 Details of the http proxy
 
+This approach relies on a premise that the majority of standard browsers include the original domain name in the HTTP header as `Host`. As a result, the server can extract tunnel information from the `Host` property and accurately direct traffic to the appropriate destinations.
+
 ## 2.2 Flow Execution Framework
+
+The flow execution framework provides two crucial functions. Firstly, the flow DSL is implemented using my own project's compiler-engine. Secondly, an event-driven execution engine is employed, where each task carries out its designated jobs and generates further tasks to advance the flow. Additionally, I offer another expression engine that simplifies calculations, enabling easy evaluation of expressions, such as performing mathematical calculations and extracting data from JSON objects.
 
 ## 2.3 Edge Gateway Device
 
-## 2.4 Starrocks
+In this project, I have built a pipeline for creating a customized system installation image. This image includes the original CentOS/Ubuntu system packages as well as all the necessary software and configurations required by our business. Additionally, I have designed and developed a troubleshooting tool, primarily focused on addressing network and Kubernetes (k8s) runtime environment issues.
+
+## 2.4 Questions
+
+1. Compile-engine, LR1
+1. What problems does the tool address?
+
+## 2.5 Starrocks
 
 **Killing Features:**
 
