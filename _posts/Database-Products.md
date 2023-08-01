@@ -507,7 +507,9 @@ categories:
 
 # 24 Trino
 
-**类型：**
+Trino is forked from Presto
+
+**类型：`OLAP`**
 
 **特性：**
 
