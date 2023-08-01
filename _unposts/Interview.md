@@ -19,30 +19,38 @@ The Tunnel Service is specifically designed to meet the demand for accessing pri
 
 ### 2.1.2 Basic architecture
 
-The entire service consists of three main components: the tunnel server, user-side agent, and device-side agent. The tunnel server acts as a central hub, facilitating the communication between the user-side agent and the device-side agent. The device-side agent connects to the server and routes messages between the actual local service such as sshd and the server. On the other hand, the user-side agent connects to the server and handles message routing between the user and the server.
+The entire service consists of three main components: the tunnel server, user-side agent, and device-side agent. The tunnel server acts as a central hub, facilitating the communication between the user-side agent and the device-side agent. The device-side agent connects to the server and routes messages between the actual local service such as sshd and the server. On the other hand, the user-side agent connects to the server and handles message routing between the user and the server. For SSH protocol, the user-side agent can be a terminal component embedded in our platform, providing the necessary functionality. And for HTTP protocol, any standard web browser can act as the agent, which is truly magical in terms of versatility and convenience. And for other protocol that based on tcp, user must run additional agent at his computer to listen and forward traffic.
 
 For ease of implementation, we have adopted WebSocket as the underlying protocol on both the user-side and device-side. This choice allows for seamless communication and simplifies the integration process.
 
-In the case of SSH proxy, the user-side agent is the SSH component embedded in our console, providing the necessary functionality. On the other hand, for HTTP proxy, any standard web browser can act as the agent, which is truly magical in terms of versatility and convenience.
-
 ### 2.1.3 Details of the ssh proxy
+
+The platform provides a convenient web terminal component for SSH/SFTP protocol, ensuring ease of use. This component transfers plain text to the server, which then wraps it using the SSH protocol and directs it to the device's 22 port within a private network.
 
 ### 2.1.4 Details of the http proxy
 
-This approach relies on a premise that the majority of standard browsers include the original domain name in the HTTP header as `Host`. As a result, the server can extract tunnel information from the `Host` property and accurately direct traffic to the appropriate destinations.
+This approach relies on a premise that the majority of standard browsers include the original domain name in the HTTP header as `Host`. Whenever the user enables this feature, a temporary domain name is generated, consisting of an UUID as the first segment, which maps to a specific device information. As a result, the server can extract tunnel information from the Host property and precisely direct traffic to the corresponding destinations.
 
 ## 2.2 Flow Execution Framework
 
-The flow execution framework provides two crucial functions. Firstly, the flow DSL is implemented using my own project's compiler-engine. Secondly, an event-driven execution engine is employed, where each task carries out its designated jobs and generates further tasks to advance the flow. Additionally, I offer another expression engine that simplifies calculations, enabling easy evaluation of expressions, such as performing mathematical calculations and extracting data from JSON objects.
+The flow execution framework is an integral part of the device rule center, enabling efficient management of device linkage rules, such as automatically turning on the lights after the door is opened, and facilitating the generation of device warnings as well as message routing. This framework serves two critical functions. Firstly, it incorporates a flow DSL implemented using my owner compiler project, which supports actions, conditions, various types of gateways, and subflows. Secondly, it features an event-driven execution engine, where each task executes its designated functions and generates subsequent tasks to progress the flow. Additionally, I have implemented an expression engine that simplifies calculations, supporting all types of literals, operators, user-defined functions (both fixed-parameter and variable-parameter functions), and operator overloading. This makes expression evaluation effortless.
 
 ## 2.3 Edge Gateway Device
 
-In this project, I have built a pipeline for creating a customized system installation image. This image includes the original CentOS/Ubuntu system packages as well as all the necessary software and configurations required by our business. Additionally, I have designed and developed a troubleshooting tool, primarily focused on addressing network and Kubernetes (k8s) runtime environment issues.
+In this project, I have built a pipeline for creating a customized system installation image(can be an iso file or just a rootfs). This image includes the original CentOS/Ubuntu system packages as well as all the necessary software and configurations required by our business. Additionally, I have designed and developed a troubleshooting tool, primarily focused on addressing network and Kubernetes (k8s) runtime environment issues.
 
 ## 2.4 Questions
 
-1. Compile-engine, LR1
+1. Device warnings
+    * Device online/offline
+    * Cpu/Memory/Disk
+1. Message Routing
+    * Offer more flexibility in routing message than the message middleware like kafka or rocketmq
+1. Compile-engine
+    * Lexical Analyzer
+    * Support several types of grammar analysis algorithm, like, LL1, LALR, LR1
 1. What problems does the tool address?
+1. Autoboxing
 
 ## 2.5 Starrocks
 
