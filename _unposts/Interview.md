@@ -54,6 +54,18 @@ In this project, I have built a pipeline for creating a customized system instal
 
 ## 2.5 Starrocks
 
+I have been employed at Starrocks for the past two years. I was luckily involved in the fundamental re-design and re-implementation of the execution engine right after I joined the company. This transformation involved transitioning from a volcano model to a more efficient morsel-driven execution engine, I was responsible for implementing several operators like aggregator, window function and table function. 
+
+My contributions at Starrocks have spanned both the execution engine and plan optimization, resulting in significant improvements to the system's performance and observability.
+
+In terms of plan optimization, I enhanced the system's capabilities by incorporating various types of subqueries and efficiently refactored the subquery transformation process. Additionally, I introduced a plan enumeration mechanism that allowed for thorough testing of the efficiency of cost-based calculations, ensuring optimal query execution plans.
+
+Regarding execution, my focus was on optimizing the ranking window function, leading to an impressive 10x performance improvement. To further enhance efficiency, I successfully eliminated redundant local shuffle operators through innovative driver-level shuffle enhancements. Furthermore, I designed and implemented a parallel merge algorithm(based on Merge Path algorithm) that delivered a remarkable 10x performance boost, effectively overcoming the bottlenecks associated with single-parallel merges.
+
+For better observability and query analysis, I introduced support for runtime profiling. This feature enables users to easily understand query bottlenecks and identify opportunities for optimization.
+
+Overall, my work at Starrocks has contributed significantly to the system's performance, optimization capabilities, and observability, ultimately enhancing the overall user experience and efficiency of the platform.
+
 **Killing Features:**
 
 1. MPP (Massively Parallel Processing) Distributed Execution
@@ -66,6 +78,10 @@ In this project, I have built a pipeline for creating a customized system instal
 1. Metadata Cache
 1. Local Data Cache
 1. Materialized View
+
+## 2.6 Questions
+
+1. Why are you refactoring the subquery transformation process?
 
 # 3 Database
 

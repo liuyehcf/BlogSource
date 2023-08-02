@@ -127,6 +127,7 @@ date: 2018-02-05 09:25:59
 * `Jeff Dean`：Google Research Scientists and Engineers
 * `Fabrice Bellard`：A legend programmer, author of FFmpeg, QEMU
 * [Tutorials for Software Developers and Technopreneurs](http://tutorials.jenkov.com/)
+* [The-Art-of-Linear-Algebra](https://github.com/kenjihiranabe/The-Art-of-Linear-Algebra)
 
 # 9 Abbreviation
 
