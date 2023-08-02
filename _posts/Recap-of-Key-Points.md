@@ -258,6 +258,15 @@ categories:
         - Fact Table
         - Dimension Table
     - Column
+        - Integer
+        - String
+        - Date
+        - Array
+        - Map
+        - Json
+        - Struct
+        - Bitmap
+        - HyperLogLog
     - Row
     - Key
         - Primary Key
