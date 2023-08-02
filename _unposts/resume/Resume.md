@@ -29,6 +29,7 @@ StarRocks is a next-gen, high-performance analytical data warehouse that enables
 * **Sort merge optimization**, aimed to eliminate the bottleneck caused by serial merging and improve the performance of the overall sorting process.
    * Design and implement parallelized merge algorithm, achieving a performance improvement of an order of magnitude.
 * **Support certain types of subquery**, aimed to enhance the functionality of subqueries.
+* **Support query profiling**, aimed to enhance intuitive query analysis.
 
 ### Alibaba group | Software engineer | 2018.4 - 2021.8
 
@@ -62,5 +63,8 @@ StarRocks is a next-gen, high-performance analytical data warehouse that enables
 ## References
 
 * All pull requests of starrocks, [liuyehcf contributions to starrocks](https://github.com/StarRocks/starrocks/pulls?q=is%3Apr+is%3Aclosed+author%3Aliuyehcf). All the work details of my work experience at Starrocks can be found here.
+   * [parallel merge algorithm](https://github.com/StarRocks/starrocks/pulls?q=is%3Apr+is%3Aclosed+author%3Aliuyehcf+parallel+merge)
+   * [rank window function optimization](https://github.com/StarRocks/starrocks/pulls?q=is%3Apr+is%3Aclosed+author%3Aliuyehcf+rank+window+function)
+   * [subquery related](https://github.com/StarRocks/starrocks/pulls?q=is%3Apr+is%3Aclosed+author%3Aliuyehcf+subquery)
 * My personal projects, [liuyehcf-framework](https://github.com/liuyehcf/liuyehcf-framework/tree/master), including compilation framework, expression framework, flow framework.
 
