@@ -305,14 +305,15 @@ categories:
     - Predicate
     - View
     - Materialized View
+        - Goal
+            - Transparent Acceleration
+            - Lake Speed Up
+            - Real-time Incremental Aggregation
+            - Delcarative Modeling(without maintain the ETL workflow)
         - Features
             - Partition
             - Refresh
             - Rewrite
-        - Scenarios
-            - Real-time Incremental Aggregation
-            - Delcarative Modeling(without maintain the ETL workflow)
-            - Lake Speed Up
     - Trigger
     - Stored Procedure
     - DML(Data Manipulation Language)
