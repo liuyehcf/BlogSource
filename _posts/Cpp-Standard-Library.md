@@ -1524,8 +1524,8 @@ int main() {
         * The tmpnam() function generates a different string each time it is called, up to TMP_MAX times. If it is called more than TMP_MAX times, the behavior is implementation defined.
     * `std::printf`
 1. `cstring`
-    * `std::memset`
-    * `std::memcpy`
+    * `std::memset`：用`<num> * sizeof(<type>)`来获取长度
+    * `std::memcpy`：用`<num> * sizeof(<type>)`来获取长度
 1. `cstdlib`
     * **内存分配相关**
         * `malloc/free`：`C`语言中的函数，在`C++`中也可以使用。`malloc`函数分配指定大小的内存，`free`函数释放该内存
