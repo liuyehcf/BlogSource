@@ -1853,6 +1853,7 @@ Data Stream Processing System, DSPS
         * [An Experimental Comparison of Thirteen Relational Equi-Joins in Main Memory](/resources/paper/An-Experimental-Comparison-of-Thirteen-Relational-Equi-Joins-in-Main-Memory.pdf)
     * Sort
         * [Merge Path - Parallel Merging Made Simple](/resources/paper/Merge-Path-Parallel-Merging-Made-Simple.pdf)
+        * [Efficient Computation of Frequent and Top-k Elements in Data Streams](/resources/paper/Efficient-Computation-of-Frequent-and-Top-k-Elements-in-Data-Streams.pdf)
         * [Design and Evaluation of Main Memory Hash Join Algorithms for Multi-core CPUs](/resources/paper/Design-and-Evaluation-of-Main-Memory-Hash-Join-Algorithms-for-Multi-core-CPUs.pdf)
         * [Sort vs. Hash Revisited Fast Join Implementation on Modern Multi-Core CPUs](/resources/paper/Sort-vs.-Hash-Revisited-Fast-Join-Implementation-on-Modern-Multi-Core-CPUs.pdf)
         * [Implementing Sorting in Database Systems](http://lgis.informatik.uni-kl.de/archiv/wwwdvs.informatik.uni-kl.de/courses/DBSREAL/SS2005/Vorlesungsunterlagen/Implementing_Sorting.pdf)
