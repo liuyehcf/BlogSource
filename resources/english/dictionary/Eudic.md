@@ -1,3 +1,131 @@
+1. double-edged sword
+1. Baseball Hall of Fame
+1. Formula One
+1. look at the world differently; see the world differently
+1. from the perspective of a Chinese person
+1. the survivor wins
+1. the Aegean Sea
+1. skydiving
+1. self-sufficient
+1. defend my decision to you
+1. little-to-no effort
+1. cultural heritage
+1. protect its interest
+1. up-and-coming athlete
+1. load-carrying capacity
+1. high-quality man
+1. referral fee; finder's fee; rush fee
+1. long-standing problem; long-term solution
+1. high-fat food
+1. the texture of the canvas was rough
+1. one capsule with a meal; one capsule with meals
+1. sounds fair enough
+1. replaced by
+1. trade relations
+1. 8 times more expensive
+1. articles and journals
+1. group elements into categories
+1. a company that manufactures parts for cars
+1. an area of outstanding natural beauty
+1. sustainable use of natural resources
+1. an aggressive lane change
+1. high-end computer
+1. strike a deal
+1. standard production process
+1. reference letter
+1. law firms
+1. let me refresh the page
+1. travel around the world; travel around the city
+1. resource to boast about
+1. open up the topic
+1. flat bench press
+1. lift weights
+1. get the same problem
+1. place with fewer distractions
+1. takes on several part-time jobs
+1. make an effort to change this
+1. the wound discharges pus
+1. a string instrument
+1. high-quality goods; goods of a high quality
+1. they pay well
+1. carbon emissions; emission of carbon
+1. be longing for something; be craving something
+1. women-only classes
+1. still involved in mystery; still shrouded in mystery
+1. are available to the public
+1. straightforward and to the point
+1. make it into the cliché
+1. full of possibilities
+1. follow a career as an engineer
+1. give a command
+1. human right
+1. in the comments down below
+1. the key ingredients need for getting good at something
+1. watch an English program
+1. practical advice; practical help; practical support
+1. compare with; compare to
+1. fall back on; fall back to a previous state
+1. threaten the lives of marine creatures
+1. 22-game streak; 22-win streak
+1. runny nose
+1. got congested in traffic; nose got congested
+1. the natural way
+1. in case of an asthma attack
+1. on the verge of tears
+1. get started saving up
+1. strengthen the peace and unity of the nation
+1. very good taste in music
+1. out of the blue
+1. my stock goes up
+1. make way to a location; make way for something
+1. see the word in context; see the word in the context of
+1. point somebody in the right direction
+1. persecute the Uyghur population
+1. 4 days straight
+1. crave attention
+1. release one's emotions
+1. increase protein intake
+1. equipped with the insights mentioned above
+1. consist of; composed of; comprised of
+1. give oneself up; yield oneself  to
+1. water purifier
+1. a coherent view of the natural world
+1. passion and commitment
+1. formulate a sentence in my mind
+1. honor the lives of three students
+1. watch videos or listen to podcasts
+1. the man has been sentenced to life in prison by a federal court, without the possibility of parole
+1. rollback
+1. miscarriages of justice
+1. peel a banana
+1. economic price; low price
+1. elaborate computing system
+1. degree celsius
+1. turning point in the war in Ukraine
+1. rules-based order
+1. weak blood vessel; high blood pressure
+1. king crab
+1. the word "alleged" is often used in legal and journalistic contexts to indicate that something is claimed to have happened but has not yet been proven
+1. this command provides deeper insights and facilitates a comprehensive examination of the query's performance characteristics and optimizations
+1. Donald Trump has been indicted over his alleged efforts to overturn the results of the 2020 presidential election
+1. the word 'knowledge' is gaining a bit of a negative reputation, it's referring to people who know a lot of stuff but can't do anything with it
+1. I want to deepen my understanding of finance; I want to learn more about economics; I want to gain insight into math
+1. searing heat is sticking around the central U.S. today
+1. these symptoms are associated with irregular heartbeat, dizziness, and fatigue
+1. the school opened enrollment in various new directions
+1. southern suburbs
+1. what do you make of that; what do you think of that; what are your thoughts on that idea; what's your assessment of the rebellion
+1. thank you for your efforts
+1. charge; sue; indict; accuse; prosecute
+1. yuou could press charges
+1. those thunderstorms could lower the temperature
+1. complacence; complaint; compliance
+1. he escaped legal sanctions
+1. I'm not quite accustomed to this flavor; I'm not very adapted to this job
+1. drive the development of the project; promote the progress of the project; advance the progress of the project
+1. Should B be classified as a subclass of A, or should it be considered at the same level as A?
+1. these two things are independent; these two things are unrelated; these two things are not connected; these two things are orthogonal
+1. those thunderstorm could lower the temperature
 1. why is it taking so long?
 1. don't be mad at me
 1. could you please hand me the book?
@@ -141,7 +269,6 @@
 1. What are the advantages and disadvantages of using a snowflake schema in an OLAP database?
 1. What are the advantages and disadvantages of using a star schema in an OLAP database?
 1. How many types of schema in an OLAP database?
-1. it's kind of even-steven
 1. move on strongly and hopefully
 1. underway; undergoing
 1. the abortion ban was on hold now
@@ -160,7 +287,6 @@
 1. Explain the concept of selective acknowledgment (SACK) in TCP
 1. What is the maximum segment size (MSS) in TCP?
 1. What is the TCP Maximum Segment Lifetime (MSL)?
-1. struct a deal
 1. affect; impact; influence
 1. individual freedom is at the core of democracy
 1. I attach great importance to this relationship; I deeply value this relationship
@@ -351,7 +477,6 @@
 1. What is Java? Explain its key features
 1. unilateral edge; directed edge; bilateral edge; undirected edge
 1. this feature is under development
-1. what do you make of that; what do you think of that; what's your assessment of the rebellion
 1. singular form; plural form
 1. issue a statement; issue a warning; release a statement; make an announcement
 1. deceive; deceit; fraud; dupe
@@ -368,7 +493,6 @@
 1. the situation has now been de-escalated; the situation has now been escalated
 1. the overwhelming support was inspiring
 1. a door like this is going to cost way more than $100
-1. consist of; comprised of
 1. when you stop trying, it happens
 1. What are the advantages of the MPP architecture manifested in
 1. data can be evenly shuffled
@@ -376,7 +500,6 @@
 1. the second thing that holds people back is what is called learned helplessness
 1. even if the change can be positive and beneficial
 1. comfort zone
-1. weak blood vessel; high blood presure
 1. it's a joke, it can't be happening
 1. could you pay me in advance
 1. truth matters
@@ -404,14 +527,11 @@
 1. this approach can provide good resource utilization
 1. gravely injured; seriously injured; critically injured
 1. I'm out of my money; I'm out of my time; I'm out of my floss picks
-1. refer fee; finder's fee; rush fee
 1. repress; oppress; suppress; persecute
 1. file a lawsuit; file a dismissal; file an appeal
 1. study for a master's
-1. equipped with the above insights
 1. grocery store magnate; media mogul; real estate mogul
 1. intriguing; fascinating; charming; captivating; compelling
-1. without the possiblity of parole
 1. my primary goal is to prevent a similar occurrence by making the necessary recommendations to enhance the safety of the maritime domain worldwide
 1. failed mutiny attempt
 1. a crucial conversation is going to be held
@@ -423,10 +543,8 @@
 1. a huge moment is playing out in Russia
 1. I was making a right turn
 1. when you get married, there's a different set of priorities
-1. long standing problem; long term solution
 1. used cars; second-hand car
 1. green development; sustainable development; eco-friendly development
-1. be longing for something; be craving for something
 1. he's overqualified; he's less qualified; he lacks qualification; he lacks experience
 1. I have a trick; may I offer a thought
 1. forecasters say it's going to be extremely hot again today in Texas
@@ -436,7 +554,6 @@
 1. the U.S. Coast Guard
 1. they were descending to view the wreckage of the Titanic
 1. stay out of this
-1. the wound discharge pus
 1. a receding hairline
 1. seamless
 1. this program is a bit slow
@@ -481,7 +598,6 @@
 1. unilaterally or bilaterally
 1. this political career ended in ignominy; this political career ended in disgrace; this political career ended in shame; this political career ended in dishonor
 1. secretary general
-1. rules based order
 1. this approach reduces the complexity to a great extent
 1. get out of the taxi; get off the bus; get off the plane
 1. leopard tank
@@ -500,7 +616,6 @@
 1. a plume of smoke; plumes of smoke
 1. I'll see to it
 1. after all these, I realize that you no longer have to prove yourself so much to people
-1. make effort to change this
 1. something is taking place; something is happening
 1. stay afloat; keep afloat
 1. make a living; make a fortune
@@ -555,7 +670,6 @@
 1. alarm went off
 1. thanks for taking the time tonight
 1. IELTS
-1. what are your thoughts on that idea
 1. you’re pulling out?
 1. whichever; I am easy; I’m good with whatever; any of them work for me; whichever you prefer, it’s your call
 1. the attacks came from both the air and the ground
@@ -570,7 +684,6 @@
 1. first degree murder; second degree murder
 1. he's hitting the gym to bulk up for the competition
 1. be careful not to trip up on that step
-1. practical advise; practical help; practical support
 1. a sharp frost; a hard frost; a severe frost
 1. she set out to write a book about her travels
 1. a block of ice; a block of concrete; a block of stone
@@ -670,7 +783,6 @@
 1. the judge hoped he would one day feel remorse
 1. loved ones of the deceased
 1. bike path
-1. the man has been sentenced to life in prison by a federal court
 1. at the top of the agenda is the debt ceiling and the potential consequences of a federal government default
 1. president Biden has to oversee negotiations with Republicans on the debt ceiling crisis
 1. president Biden already had a bilateral meeting with the Japanese Prime Minister
@@ -820,7 +932,6 @@
 1. seditious conspiracy
 1. I have been bullied
 1. go lighter and do the full range
-1. Law Firms
 1. coughs and sneezes
 1. how long does coronavirus last in the air
 1. human-to-human transmission
@@ -951,7 +1062,6 @@
 1. drop the ball
 1. I like to be comfortable
 1. you get handcuffed
-1. high end computer
 1. mortgage and pension
 1. I think you’re confusing me for someone else
 1. I’m amazed you’ve got this far
@@ -976,11 +1086,9 @@
 1. a gunman killed three students and critically injured five others
 1. shelter materials like blankets, carpets, mattresses
 1. the earthquake death toll in Syria and Turkey has now soared above 39,000 people
-1. 4 day straight
 1. I hope the rest of your day goes well
 1. enjoy the rest of your day
 1. out of kindness
-1. watch videos or listern to podcasts
 1. I personally side with them
 1. the success of the project relies on the premise that there is a market demand for the product
 1. the premise of the argument was that all humans have the right to basic healthcare
@@ -988,7 +1096,6 @@
 1. mandatory evacuation
 1. hazardous materials
 1. it's just stories to be forgotten in a week or month from now
-1. honor the lifes of three students
 1. it's really honored to work with team
 1. lighten up
 1. money order
@@ -1046,7 +1153,6 @@
 1. deliver a torrent of political and legal grievances
 1. I’m buying
 1. he's been with us ever since
-1. persecute uyghur population
 1. he was lashing out in an email
 1. I think they've gotten a bad rap
 1. pundit
@@ -1092,7 +1198,6 @@
 1. I propose to use the concept 'philosophy' in a very wide sense
 1. it felt like that someone was about to hurt you
 1. that's not my thing
-1. formulate sentence in my mind
 1. I had a long day at work
 1. I’m feeling a little under the weather
 1. this kind of work doesn’t suit you
@@ -1116,7 +1221,6 @@
 1. It's kind of like you won't really know it until you use the words you already know
 1. so what you need to do is to have a plan that you can remain consistent with
 1. because what's happening is you are learning a lot of words currently from this video
-1. watch an english program
 1. how come I can understand you perfectly
 1. her style of dress was never conservative
 1. a rational man will not be too sure that he's right
@@ -1162,7 +1266,6 @@
 1. is the key performance metric to something
 1. are there alternatives to something
 1. the key to understanding something
-1. the key ingredents need for getting good at something
 1. hold something away from something
 1. I'm expecting my wife
 1. tease somebody
@@ -1170,7 +1273,6 @@
 1. tie somebody down
 1. give somebody a kiss
 1. sue somebody
-1. point somebody at the right direction
 1. convict somebody of a crime
 1. my mom cooks extremely well
 1. let me explain this, I wanna make sure it's clear for you
@@ -1203,11 +1305,9 @@
 1. It is of advantage to separate the caches used for code and for data
 1. commit a crime
 1. you don’t have to be rich to achieve your potential
-1. in the down below
 1. adjective collocations
 1. doctors usually have to work in shifts
 1. she was on the night shift
-1. see the word in the context
 1. because one word in English language can have several meanings and different uses
 1. the cache size has always been around 1/1000th of the size of the main memory
 1. The size of the SRAM used for caches is many times smaller than the main memory
@@ -1232,7 +1332,6 @@
 1. my friends wanted to meet up for dinner
 1. you first need to start off by answering the five ws, which are who, what, when, where, why
 1. 屏蔽差异
-1. from a perspective of a Chinese person
 1. smurf account
 1. alternative account
 1. older generation
@@ -1373,7 +1472,6 @@
 1. I don’t understand where this is coming from
 1. you need to focus on specifics
 1. that’s no coincidence
-1. one capsule with meal
 1. only as professionally prescribed
 1. heavy snow, heavy rain, thick fog, big waves
 1. you need a break
@@ -1383,7 +1481,6 @@
 1. the path to justice is rarely smooth
 1. you've misunderstood my words
 1. it works on a different principle
-1. high quality man
 1. long time no see
 1. dedicated citizen
 1. how about we wait until next Tuesday
@@ -1496,9 +1593,7 @@
 1. self reliance
 1. people tend to put things off
 1. the flip side of this is
-1. an aggresive lane change
 1. think about the bright side
-1. human right
 1. not exactly what I had in mind
 1. can you live with it
 1. pull over here
@@ -1509,7 +1604,6 @@
 1. what kind of field?
 1. america is a land of opportunity
 1. my treat
-1. passion and commitmemt
 1. not my concern
 1. I was thinking of my wife
 1. you can’t tell one defendant from another?
@@ -1553,7 +1647,6 @@
 1. you set me up
 1. it is an ongoing investigation
 1. thanks though
-1. loading-carry capacity
 1. what's the theory of the algorithm
 1. project justice
 1. I don’t know if I can take it
@@ -1571,7 +1664,6 @@
 1. can we drop by the bank
 1. intransitive phrasal verbs
 1. having been subjected
-1. up and coming athlete
 1. the way you treat other people is horrible
 1. lets put it this way
 1. an electric motor
@@ -1686,7 +1778,6 @@
 1. I am not optimistic about the prospects of this technology
 1. 我不看好这一技术的前景
 1. for-profit company
-1. turning point to the war Ukraine
 1. the fans are asking for a refund after cancellation of the pop start's concert
 1. what have you tried
 1. put the country's economy into crisis
@@ -1755,12 +1846,10 @@
 1. she can count up to 10 in Italian
 1. health and hard work are compatible
 1. restrain/constrain
-1. double-edged swords
 1. she stirred her coffee with a teaspoon
 1. correct/rectify
 1. please rectify the mistake in my bill
 1. world view
-1. redeem his reputation
 1. you can often see lots of dragonflies by the pond before a downpour
 1. disappoint/frustrate/dismay/depress/despondent
 1. he is charging a storage battery
@@ -1821,7 +1910,6 @@
 1. common dishes
 1. Big Ben
 1. 纬度/经度
-1. Celsius degree
 1. don't try to be perfect but try your best
 1. certification/credentials
 1. evaporation is the process of a liquid turning gas
@@ -1853,7 +1941,6 @@
 1. he remained a captive to her beauty
 1. water is usually stored in a reservoir before it is supplied to people's houses
 1. complicated/complex/sophisticated/elaborate
-1. elaborate compute system
 1. get indigestion
 1. domestic products
 1. TV series
@@ -1866,7 +1953,6 @@
 1. it was a wonderful occasion which we will cherish for many years to come
 1. he went bankrupt since he bet all his money on horse races
 1. fishing can be highly addictive
-1. economical price
 1. he has been talking about things that have no relevance to this meeting
 1. self-content/complacence
 1. dispose/depose
@@ -1926,7 +2012,6 @@
 1. sea lane
 1. sea line
 1. intelligence corps
-1. peel banana
 1. earn my degree
 1. live up to/meet
 1. you should work hard so as to live up to my expectations
@@ -2074,7 +2159,6 @@
 1. Will everything be fine
 1. 一切会好起来吗
 1. Law has two important functions
-1. Miscarriages of Justice
 1. the politician was held in contempt
 1. a punctual start at 9 o'clock
 1. the article was intended to provoke discussion
@@ -2168,7 +2252,6 @@
 1. the majority protested against the decision
 1. conversion/transformation
 1. blur/vague/dim
-1. a coherent view of nature world
 1. she was found innocent of any crime
 1. he's systematic in all he does
 1. it is challenging to map design requirements to efficient and compatible hybrid solutions
@@ -2193,7 +2276,6 @@
 1. dogs have a keen sense of smell
 1. it was difficult to find employees with the level of expertise required for this job
 1. she gave a rather vulgar laugh
-1. increase the intake of essential proteins
 1. the company is considering a change in marketing strategies to regain its market share
 1. credit/reputation/prestige/renown
 1. best selling product
@@ -2224,7 +2306,6 @@
 1. conservative
 1. I was elected to deliver for this country
 1. hereditary diseases
-1. water purfier
 1. harsh/sharp/hard/severe
 1. boosting tourism will provide a long-term solution to the city's employment problems
 1. prospect/perspect
@@ -2390,7 +2471,6 @@
 1. statue/stature
 1. the cape extends far into the ocean
 1. clarify my position
-1. mess it up
 1. you want this from a male perspective
 1. end up in prison
 1. the negotiation is still ongoing since no agreement has been reached
@@ -2471,7 +2551,6 @@
 1. atomic power plants operate in many countries
 1. visit historic sites
 1. she has seen through his artifice
-1. take two meals a day
 1. a massive undertaking
 1. the old man wears a hearing aid to amplify sounds
 1. she is deeply attracted by his handsome profile
@@ -2481,7 +2560,6 @@
 1. efficient heating equipment is necessary for the harsh winter
 1. fever is a symptom of many illnesses
 1. drop out
-1. make way to
 1. give way to
 1. fund shortage
 1. 政治斗争
@@ -2514,9 +2592,7 @@
 1. sprain/strain
 1. a judge must remain neutral
 1. his analysis of the problem shows great perception
-1. my stock go up
 1. make sure that we are on the same page
-1. out of blue
 1. don't piss me off
 1. maybe you should take it
 1. would you let it go
@@ -2540,10 +2616,8 @@
 1. butt
 1. chat box
 1. It keeps me focused and relaxed
-1. very good tastes in music
 1. episode
 1. beautiful nature
-1. strength the peace and unity of the nation
 1. to fight against crime
 1. split the class into groups of four
 1. I attach a copy of my notes for your information
@@ -2557,7 +2631,6 @@
 1. Suppose that d and f have ranks r and t
 1. I'll be over on the edge of the seat
 1. tissue
-1. get started to save up
 1. what have you been up to
 1. I don't want to mess it up
 1. 我很满足
@@ -2626,7 +2699,6 @@
 1. it is not up to us
 1. highly volatile stock and bond markets
 1. the government has introduced new policies to
-1. threaten the life of marine creatures
 1. as summer is approaching
 1. bring her back to practical matters
 1. I was talking crazy
@@ -2677,21 +2749,17 @@
 1. the beauty of the plan consists in its simplicity
 1. the curtains had faded in the sun
 1. come to an agreement
-1. on the verge of teers
 1. negative effect on productivity
-1. a cut on her leg
 1. 伤口
 1. 意识到
 1. confederal
 1. criminal plot
 1. nappy-changing
 1. people from diverse cultures
-1. in case of the asthma attack
 1. drink to the point of intoxication
 1. tiled walls and floors
 1. combustible substances
 1. passport application
-1. give command
 1. satiric/ironic/sardonic
 1. congress/parliament/council
 1. little evidence to support these hypotheses
@@ -2765,7 +2833,6 @@
 1. I found the whole play facinating
 1. march off
 1. a flock of
-1. follow a career of engineer
 1. a stream diverges here
 1. take shelter from the storm
 1. book at local travel agency
@@ -2776,7 +2843,6 @@
 1. complacently
 1. precept
 1. bring you down
-1. full of possibility
 1. you have to wait your turn
 1. crop
 1. controversial
@@ -2785,7 +2851,6 @@
 1. gas giants
 1. comet
 1. clip
-1. make it into the cliche
 1. cliche
 1. chant
 1. choir
@@ -2819,10 +2884,8 @@
 1. 耗尽
 1. exhaust
 1. synonym
-1. emission of carbon
 1. reluctant
 1. tongue
-1. pay well
 1. shed
 1. revive/revitalize/regenerate
 1. 纤维含量很高
@@ -2856,7 +2919,6 @@
 1. aquatic animal
 1. aquatic
 1. an application of this principle
-1. woman-only classes
 1. address the problem
 1. acoustical
 1. surface water
@@ -2866,9 +2928,7 @@
 1. vocalization
 1. switch shifts with someone
 1. harp
-1. string instrument
 1. stretch
-1. straightforward and to the points
 1. colossal
 1. commission
 1. temper
@@ -2881,9 +2941,6 @@
 1. 给手机充电
 1. what crime you suspect me of committing
 1. coalition
-1. are available to public
-1. goods of a high quality
-1. still involved in mystery
 1. democratic
 1. half of its former size
 1. still-life
@@ -2897,9 +2954,7 @@
 1. practical matters
 1. resilience towards failures
 1. never-ceasing
-1. sustainable use of nature resources
 1. stick in my mind
-1. an area of outstanding nature beauty
 1. facts and the deeper insights they represent
 1. dietary stress
 1. I meant nothing in particular by this remark
@@ -2912,7 +2967,6 @@
 1. climate shift
 1. semester
 1. all these details are way beyond our scope
-1. texture of canvas was rough
 1. texture
 1. reptile
 1. gene
@@ -2934,7 +2988,6 @@
 1. gleam
 1. sarcasm
 1. cost is a main element in our decision
-1. company that manufacture parts for cars
 1. pension
 1. entitle
 1. distinguish between illusion and reality
@@ -2945,7 +2998,6 @@
 1. moist
 1. fake goods
 1. deceive
-1. high fat food
 1. 台阶
 1. attracted by the idea of working abroad
 1. make a rigorous study of the plant
@@ -2991,7 +3043,6 @@
 1. light emitted from stars
 1. liberalization
 1. the most telling joke is
-1. protect it's interest
 1. a stand period of time
 1. donor's conference
 1. do what's expected
@@ -3015,14 +3066,12 @@
 1. decoration
 1. prey
 1. infuse
-1. culture heritage
 1. heritage
 1. parliament
 1. guarded around the clock
 1. hang on to the wall
 1. yacht
 1. attribute to
-1. little-to-no
 1. embolden
 1. quiz show
 1. oral and written test
@@ -3035,10 +3084,8 @@
 1. he did not known me
 1. gig economy
 1. side hustle
-1. takes on several parttime job
 1. an effective remedy
 1. 推荐信
-1. Reference Letter
 1. lecture
 1. 艺人
 1. cultivate
@@ -3109,7 +3156,6 @@
 1. tuition
 1. look over
 1. draft version
-1. place with fewer distraction
 1. decline in population
 1. bacteria
 1. oil deposits
@@ -3154,7 +3200,6 @@
 1. moisture
 1. bodies of water
 1. that share certain properties
-1. group element into category
 1. predator
 1. irregularity
 1. soil
@@ -3172,7 +3217,6 @@
 1. bark
 1. case study
 1. access
-1. articles and journels
 1. electronic journals
 1. Mars
 1. silt
@@ -3199,15 +3243,12 @@
 1. 吞吐量
 1. thuoughput
 1. 贵8倍
-1. 8 times expensive
-1. trade relation
 1. buck
 1. occasion
 1. 住宿
 1. accommodation
 1. transportation
 1. souvenir
-1. Sounds Fair Enough
 1. 闲逛
 1. one-way ticket
 1. round-trip ticket
@@ -3224,13 +3265,11 @@
 1. 简洁
 1. concise
 1. 不相交的
-1. compose of
 1. backported
 1. excess
 1. going only rightward or downward
 1. as-yet unused elements of the two arrays
 1. There are two main ways of implementing merge sort
-1. dominated by
 1. 由...主导
 1. she is stunning on screen
 1. 注释掉
@@ -3304,7 +3343,6 @@
 1. imperative
 1. 看不起
 1. judiciously
-1. replace by
 1. 经销商
 1. dealer
 1. Business Divisions
@@ -3366,7 +3404,6 @@
 1. the distributed nature of query processing
 1. 耗尽资源
 1. exhaust the available memory
-1. defense my decision to you
 1. be shipped to
 1. slum
 1. appointed lawyer
@@ -3374,7 +3411,6 @@
 1. under great emotional stress
 1. raise arm
 1. 自给自足
-1. self sufficient
 1. 打击
 1. 在我面前
 1. devise
@@ -3388,12 +3424,10 @@
 1. dismiss
 1. 现状
 1. tuples flowing through a pipeline
-1. gear toward
 1. scale with the size of cluster
 1. 抵消
 1. densely ascending from 0 upwards
 1. 双刃剑
-1. two-edged sword
 1. scales linearly with table size
 1. is dominated by
 1. 以...为主
@@ -3409,7 +3443,6 @@
 1. 谨慎的
 1. 观光
 1. sightseeing
-1. formula one
 1. horsemanship
 1. Cantonese
 1. I have no talent for sports
@@ -3419,7 +3452,6 @@
 1. fantastic
 1. adrenaline
 1. 蹦极
-1. Sky Diving
 1. drifting
 1. traditional routine
 1. overwhelm
@@ -3432,7 +3464,6 @@
 1. I presented examples of
 1. shockwave
 1. the stress you've been under
-1. Hall of Fame
 1. what's the takeaway?
 1. barrel roll
 1. sprint
@@ -3457,7 +3488,6 @@
 1. household
 1. laptop
 1. keep fit
-1. aegean sea
 1. sincerely
 1. manipulate
 1. 操作
@@ -3477,10 +3507,7 @@
 1. variety
 1. relatively small fraction
 1. as stated
-1. where A and B respectively are
 1. make ideas go further
-1. make up some ideas
-1. look the world differently
 1. 嵌套
 1. intrinsically
 1. observe that
@@ -3543,9 +3570,7 @@
 1. knucklebone
 1. hide-and-seek
 1. pop out
-1. the surviver wins
 1. chess
-1. Get the same problem
 1. Cartesian
 1. show outstanding performance and scalability
 1. judicious
@@ -3563,7 +3588,6 @@
 1. I'm excited to join the team and make that happen
 1. top-tier
 1. Along the way
-1. complaint
 1. compliant
 1. compliment
 1. consolidated
@@ -3598,7 +3622,6 @@
 1. well-informed
 1. ill-informed
 1. fairy tale
-1. roll-back
 1. mainstream media
 1. impression
 1. stab
@@ -3611,7 +3634,6 @@
 1. enhance one's physical strength
 1. phony
 1. personal hero
-1. get back
 1. stimulate
 1. headquarter
 1. middle class
@@ -3680,7 +3702,6 @@
 1. test positive
 1. viable
 1. what good is this
-1. release one's emotion
 1. physically active
 1. see my friends
 1. regular food
@@ -3689,7 +3710,6 @@
 1. debt
 1. polish off
 1. avalanche
-1. crave for
 1. unplug
 1. upset
 1. emotional eating
@@ -3700,7 +3720,6 @@
 1. hot pot
 1. chips
 1. raw fish
-1. yield oneself up
 1. substantially
 1. mutual
 1. compendium
@@ -3720,7 +3739,6 @@
 1. see each other
 1. debut
 1. succinct
-1. compare against
 1. surrender
 1. magnify
 1. public hospital
@@ -3734,7 +3752,6 @@
 1. exact match
 1. fuzzy matching
 1. ordinary
-1. 22 streak
 1. shred
 1. impose
 1. reinvent
@@ -3748,17 +3765,13 @@
 1. transition
 1. bare metal
 1. sped
-1. fall back to
 1. ubiquitous
 1. circular
 1. infeasible
 1. blend
 1. expertise
 1. virus
-1. nature way
-1. got congested
 1. pill
-1. running nose
 1. contagious
 1. takeaway
 1. empirical
@@ -3859,11 +3872,9 @@
 1. heavy exercise
 1. fatty food
 1. portion
-1. lift weight
 1. litres
 1. dehydration
 1. disease
-1. Flat bench press
 1. dresser
 1. give it to me straight
 1. keep people guessing
@@ -3894,7 +3905,6 @@
 1. RV
 1. free-range chicken
 1. countryside
-1. Standard production process
 1. broccoli
 1. pesticide
 1. equal rights
@@ -3995,16 +4005,12 @@
 1. embedded programming
 1. speculatively
 1. take a boat to tour the whole lake
-1. resource to boast
 1. in my circle
 1. endless
-1. travel around
 1. eternal
 1. heater
-1. let me refresh
 1. stay on the line
 1. hang on
-1. open up topic
 1. I have no interest
 1. I have no idea
 1. endian
