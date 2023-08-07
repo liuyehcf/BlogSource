@@ -151,6 +151,10 @@ categories:
 * `EventLoopGroup`: Manages one or more EventLoops and their associated Channels. EventLoopGroups handle I/O event processing for multiple Channels efficiently.
 * `NIO and Epoll`: Netty provides different transport implementations based on the underlying I/O mechanism. NIO (Non-blocking I/O) and Epoll (Linux-specific event notification) are commonly used for efficient event-driven I/O operations.
 
+## 1.2 Not yet mastered
+
+1. Java I/O interfaces
+
 # 2 Cpp
 
 {% markmap %}
@@ -576,6 +580,7 @@ With a materialized view there is a well-defined translation process that takes 
 
 1. WAL Structure
 1. Consensus Protocol
+1. Bitmap Index & Bitmap Column
 
 # 4 Scheduler
 

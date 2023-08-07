@@ -17,17 +17,15 @@ Once again, I'm delighted to meet you, and I am eager to discuss more during thi
 
 The Tunnel Service is specifically designed to meet the demand for accessing private network devices through SSH and HTTP protocols. At our platform, we have seamlessly integrated these capabilities into our platform console, available at aliyun.com.
 
-### 2.1.2 Basic architecture
-
 The entire service consists of three main components: the tunnel server, user-side agent, and device-side agent. The tunnel server acts as a central hub, facilitating the communication between the user-side agent and the device-side agent. The device-side agent connects to the server and routes messages between the actual local service such as sshd and the server. On the other hand, the user-side agent connects to the server and handles message routing between the user and the server. For SSH protocol, the user-side agent can be a terminal component embedded in our platform, providing the necessary functionality. And for HTTP protocol, any standard web browser can act as the agent, which is truly magical in terms of versatility and convenience. And for other protocol that based on tcp, user must run additional agent at his computer to listen and forward traffic.
 
 For ease of implementation, we have adopted WebSocket as the underlying protocol on both the user-side and device-side. This choice allows for seamless communication and simplifies the integration process.
 
-### 2.1.3 Details of the ssh proxy
+### 2.1.2 Details of the ssh proxy
 
 The platform provides a convenient web terminal component for SSH/SFTP protocol, ensuring ease of use. This component transfers plain text to the server, which then wraps it using the SSH protocol and directs it to the device's 22 port within a private network.
 
-### 2.1.4 Details of the http proxy
+### 2.1.3 Details of the http proxy
 
 This approach relies on a premise that the majority of standard browsers include the original domain name in the HTTP header as `Host`. Whenever the user enables this feature, a temporary domain name is generated, consisting of an UUID as the first segment, which maps to a specific device information. As a result, the server can extract tunnel information from the Host property and precisely direct traffic to the corresponding destinations.
 
@@ -48,6 +46,7 @@ In this project, I have built a pipeline for creating a customized system instal
     * Offer more flexibility in routing message than the message middleware like kafka or rocketmq
 1. Compile-engine
     * Lexical Analyzer
+    * NFA (Non-Deterministic Finite Automaton) and DFA (Deterministic Finite Automaton)
     * Support several types of grammar analysis algorithm, like, LL1, LALR, LR1
 1. What problems does the tool address?
 1. Autoboxing
