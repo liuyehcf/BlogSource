@@ -31,7 +31,11 @@ This approach relies on a premise that the majority of standard browsers include
 
 ## 2.2 Flow Execution Framework
 
-The flow execution framework is an integral part of the device rule center, enabling efficient management of device linkage rules, such as automatically turning on the lights after the door is opened, and facilitating the generation of device warnings as well as message routing. This framework serves two critical functions. Firstly, it incorporates a flow DSL implemented using my owner compiler project, which supports actions, conditions, various types of gateways, and subflows. Secondly, it features an event-driven execution engine, where each task executes its designated functions and generates subsequent tasks to progress the flow. Additionally, I have implemented an expression engine that simplifies calculations, supporting all types of literals, operators, user-defined functions (both fixed-parameter and variable-parameter functions), and operator overloading. This makes expression evaluation effortless.
+The second thing I've done is provide two important frameworks to facilitate the device rule center, which is built to offer efficient management of device linkage rules, such as automatically turning on the lights after the door is opened, and facilitating the generation of device warnings as well as message routing.
+
+The first framework is the flow execution framework, an integral part of the device rule center, providing two critical functions. Firstly, it incorporates a flow DSL implemented using my own compiler project, which supports actions, conditions, various types of gateways, and subflows. Secondly, it features an event-driven execution engine, where each task executes its designated functions and generates subsequent tasks to progress the flow.
+
+The second framework is the expression execution framework, a component of the flow execution framework that simplifies expression evaluation. It is built using my own compiler project, and supports various literals, operators, operator overloading, built-in functions, and user-defined functions, including both fixed and variable parameters.
 
 ## 2.3 Edge Gateway Device
 
