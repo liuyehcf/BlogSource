@@ -5,7 +5,7 @@ Nice to meet you! Thank you for taking the time to interview me. My name is Calv
 
 Throughout my professional journey, I have had the privilege of working for two distinguished companies. The first company is Alibaba Group. During my time there, I was part of the IoT department, where our team focused on developing a platform for managing and facilitating various devices, such as smart home security systems and industrial sensors. Additionally, we aimed to facilitate industrial upgrading for diverse industries.
 
-Following my experience at Alibaba Group, I joined a startup called Starrocks, which is widely recognized for its exceptional OALP (Open Analytics and Log Processing) database product in China. This product stands out for its outstanding performance.
+Following my experience at Alibaba Group, I joined a startup, which is widely recognized for its exceptional OALP (Open Analytics and Log Processing) database product in China, called StarRocks. This product stands out for its outstanding performance.
 
 Once again, I'm delighted to meet you, and I am eager to discuss more during this interview.
 
@@ -39,7 +39,7 @@ The second framework is the expression execution framework, a component of the f
 
 ## 2.3 Edge Gateway Device
 
-In this project, I have built a pipeline for creating a customized system installation image(can be an iso file or just a rootfs). This image includes the original CentOS/Ubuntu system packages as well as all the necessary software and configurations required by our business. Additionally, I have designed and developed a troubleshooting tool, primarily focused on addressing network and Kubernetes (k8s) runtime environment issues.
+The third project I participated in was an intelligent edge integrated machine, designed to support industrial applications and device connections. Its use cases span across residential communities, roadside parking, agriculture, industry and more. My primary responsibility is to build a pipeline for creating various customized operating system installation images(can be an iso file or just a rootfs). This image includes the original CentOS or Ubuntu system packages as well as all the necessary software and configurations required by our business. Additionally, I have designed and developed a troubleshooting tool, primarily focused on addressing network and Kubernetes (k8s) runtime environment issues.
 
 ## 2.4 Questions
 
@@ -53,6 +53,8 @@ In this project, I have built a pipeline for creating a customized system instal
     * NFA (Non-Deterministic Finite Automaton) and DFA (Deterministic Finite Automaton)
     * Support several types of grammar analysis algorithm, like, LL1, LALR, LR1
 1. What problems does the tool address?
+    * CoreNDS
+    * iptables-rules
 1. Autoboxing
 
 ## 2.5 Starrocks

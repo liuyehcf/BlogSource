@@ -165,15 +165,15 @@ categories:
     * 文件相对路径为`dump.bin`
     * `vmid`为1874
 1. `jhat dump.bin`
-1. 在接下来的输出中会指定端口`7000`
-1. 在浏览器中键入`http://localhost:7000/`就可以看到分析结果，拉到最下面，包含如下导航：
-    * All classes including platform
-    * Show all members of the rootset
-    * Show instance counts for all classes (including platform)
-    * Show instance counts for all classes (excluding platform)
-    * Show heap histogram
-    * Show finalizer summary
-    * Execute Object Query Language (OQL) query
+    * 在接下来的输出中会指定端口`7000`
+    * 在浏览器中键入`http://localhost:7000/`就可以看到分析结果，拉到最下面，包含如下导航：
+        * All classes including platform
+        * Show all members of the rootset
+        * Show instance counts for all classes (including platform)
+        * Show instance counts for all classes (excluding platform)
+        * Show heap histogram
+        * Show finalizer summary
+        * Execute Object Query Language (OQL) query
 
 # 7 jstack
 
@@ -227,6 +227,12 @@ Java反编译工具，[下载地址](http://www.javadecompilers.com/jad)
 # 12 VisualVM
 
 [All-in-One Java Troubleshooting Tool](https://visualvm.github.io/)
+
+## 12.1 Shallow Size vs. Retained Size
+
+`Shallow Size`: This is the amount of memory allocated to store the object itself, not including the objects it references. This includes the memory used by the object's fields (for primitive types) and the memory used to store the references to other objects (for reference types). It does not include the memory used by the objects those references point to. Tools like VisualVM generally show the shallow size by default.
+
+`Retained Size`: This is the total amount of memory that would be freed if the object were garbage collected. This includes the shallow size of the object itself plus the shallow size of any objects that are exclusively referenced by this object (i.e., objects that would be garbage collected if this object were). The retained size provides a more complete picture of the "true" memory impact of an object but can be more complex to calculate. Some profiling tools provide this information, but it may require additional analysis or plugins.
 
 # 13 Else
 
