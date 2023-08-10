@@ -583,6 +583,8 @@ With a materialized view there is a well-defined translation process that takes 
 1. WAL Structure
 1. Consensus Protocol
 1. Bitmap Index & Bitmap Column
+1. Subuqery classification
+1. Cost-based state transition machine
 
 # 4 Scheduler
 

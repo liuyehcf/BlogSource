@@ -59,13 +59,13 @@ The third project I participated in was an intelligent edge integrated machine, 
 
 ## 2.5 Starrocks
 
-I have been employed at Starrocks for the past two years. I was luckily involved in the fundamental re-design and re-implementation of the execution engine right after I joined the company. This transformation involved transitioning from a volcano model to a more efficient morsel-driven execution engine, I was responsible for implementing several operators like aggregator, window function and table function. 
+I have been employed at Starrocks for the past two years. I was luckily involved in the fundamental re-design and re-implementation of the execution engine right after I joined the company. This refactor involves transitioning from a volcano execution model to a more efficient and flexible morsel-driven execution engine, where I was responsible for implementing several operators like aggregator, window function and table function.
 
 My contributions at Starrocks have spanned both the execution engine and plan optimization, resulting in significant improvements to the system's performance and observability.
 
-In terms of plan optimization, I enhanced the system's capabilities by incorporating various types of subqueries and efficiently refactored the subquery transformation process. Additionally, I introduced a plan enumeration mechanism that allowed for thorough testing of the efficiency of cost-based calculations, ensuring optimal query execution plans.
+In terms of plan optimization, I enhanced the system's capabilities by incorporating various types of subqueries like join on subquery and scalar non-agg subquery, and efficiently refactored the subquery transformation process to achieve the optimization of constant removal. Additionally, I refactored a plan enumeration mechanism that allows for thorough testing of the efficiency of cost-based algorithm, ensuring optimal query execution plans.
 
-Regarding execution, my focus was on optimizing the ranking window function, leading to an impressive 10x performance improvement. To further enhance efficiency, I successfully eliminated redundant local shuffle operators through innovative driver-level shuffle enhancements. Furthermore, I designed and implemented a parallel merge algorithm(based on Merge Path algorithm) that delivered a remarkable 10x performance boost, effectively overcoming the bottlenecks associated with single-parallel merges.
+Regarding execution, my focus was on optimizing the ranking window function, leading to an impressive 10x performance improvement. To further enhance efficiency, I successfully eliminated redundant local shuffle operators through innovative driver-level shuffle enhancements. Furthermore, I designed and implemented a parallel merge algorithm(based on Merge Path algorithm) that delivered a remarkable 10x performance boost, effectively overcoming the bottlenecks associated with single-parallel merges. Additionally, I have achieved many things, including introducing a sliding window technique to parallelize data transformation in the MergeExchangeNode, and solving performance issues by reducing the code cache miss rates.
 
 For better observability and query analysis, I introduced support for runtime profiling. This feature enables users to easily understand query bottlenecks and identify opportunities for optimization.
 
@@ -87,6 +87,7 @@ Overall, my work at Starrocks has contributed significantly to the system's perf
 ## 2.6 Questions
 
 1. Why are you refactoring the subquery transformation process?
+1. What's the advantages of the morsel-driven execution engine.
 
 # 3 Database
 
