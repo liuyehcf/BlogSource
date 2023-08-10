@@ -2645,7 +2645,15 @@ function! s:build_quickfix_list(lines)
     cc
 endfunction
 let g:fzf_action = { 'ctrl-q': function('s:build_quickfix_list') }
-let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
+" '--preview-window=up:20:wrap' explanation:
+"   'up': This places the preview window above the main fzf selection list.
+"   '20': This sets the height of the preview window to 20 lines.
+"   'wrap': This enables line wrapping in the preview window, so if the content is wider than the window, it will wrap to the next line instead of being truncated.
+" '--bind ctrl-a:select-all' explanation:
+"   '--bind': This is the option used to define key bindings in fzf.
+"   'ctrl-a': This specifies the key combination that will activate the binding. In this case, it's the "Control" key combined with the "a" key.
+"   'select-all': This is the action that will be taken when the key binding is activated. In this case, it selects all items in the list.
+let $FZF_DEFAULT_OPTS = '--preview-window=up:20:wrap --bind ctrl-a:select-all'
 " 排除 :Ag 和 :Rg 搜索结果中仅匹配文件名的条目
 " https://github.com/junegunn/fzf.vim/issues/346
 " --smart-case 表示大小写不敏感，去掉该参数可以实现大小写敏感的匹配
@@ -3168,7 +3176,15 @@ function! s:build_quickfix_list(lines)
     cc
 endfunction
 let g:fzf_action = { 'ctrl-q': function('s:build_quickfix_list') }
-let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
+" '--preview-window=up:20:wrap' explanation:
+"   'up': This places the preview window above the main fzf selection list.
+"   '20': This sets the height of the preview window to 20 lines.
+"   'wrap': This enables line wrapping in the preview window, so if the content is wider than the window, it will wrap to the next line instead of being truncated.
+" '--bind ctrl-a:select-all' explanation:
+"   '--bind': This is the option used to define key bindings in fzf.
+"   'ctrl-a': This specifies the key combination that will activate the binding. In this case, it's the "Control" key combined with the "a" key.
+"   'select-all': This is the action that will be taken when the key binding is activated. In this case, it selects all items in the list.
+let $FZF_DEFAULT_OPTS = '--preview-window=up:20:wrap --bind ctrl-a:select-all'
 " 排除 :Ag 和 :Rg 搜索结果中仅匹配文件名的条目
 " https://github.com/junegunn/fzf.vim/issues/346
 " --smart-case 表示大小写不敏感，去掉该参数可以实现大小写敏感的匹配
