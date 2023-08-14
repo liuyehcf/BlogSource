@@ -721,10 +721,22 @@ printf '%s\n' ${items[@]} | tr '\n' ',' | sed 's/,$//g' | paste -sd ',' -
 ### 3.2.12 Multi-line Content
 
 ```sh
+item="something"
 content=$(cat << EOF
 This is line 1
 This is line 2
 This is line 3
+This is line 4, item=${item}
+EOF
+)
+
+echo "${content}"
+
+content=$(cat << 'EOF'
+This is line 1
+This is line 2
+This is line 3
+This is line 4, item=${item}
 EOF
 )
 
