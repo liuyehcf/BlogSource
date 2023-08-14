@@ -21,11 +21,31 @@ categories:
         - Inheritance
         - Abstraction
     - Platform Independence
+    - Automatic Memory Management
+    - Rich Standard Library
 - Collections
-    - Array
-    - List
-    - Set
-    - Map
+    - Sequence Collections
+        - Array
+        - List
+        - Queue
+    - unordered Associative Collections
+        - Set
+        - Map
+    - Ordered Associative Collections
+        - TreeSet
+        - TreeMap
+- I/O Interface
+    - InputStream/OutputStream
+        - ByteArrayInputStream/ByteArrayOutputStream
+        - StringBufferInputStream/StringBufferOutputStream
+        - ObjectInputStream/ObjectOutputStream
+        - FileInputStream/FileOutputStream
+        - BufferedInputStream/BufferedOutputStream
+    - Reader/Writer
+        - StringReader/StringWriter
+        - FileReader/FileWriter
+        - BufferedReader/BufferedWriter
+        - InputStreamReader/OutputStreamWriter
 - Functional Programming
     - Stream API
         - flatMap
@@ -40,7 +60,11 @@ categories:
 - Reflection
     - Reflection API
     - Dynamic Proxy
+        - Java Proxy
+        - Cglib
 - Serialization
+    - Java Serialization
+    - Hessian Serialization
 - Annotation
     - Source
         - JSR-269
@@ -49,6 +73,8 @@ categories:
 - Concurrent
     - Multithreading
     - Concurrency-Safe Containers
+        - ConcurrentHashMap
+        - CopyOnWriteArrayList
     - Component
         - AbstractQueuedSynchronizer
         - ReentrantLock
@@ -65,7 +91,7 @@ categories:
         - I: Interface Segregation Principle
         - D: Dependency Inversion Principle (DIP)
     - DRY(Don't Repeat Yourself)
-    - KISS
+    - KISS(Keep It Super Simple)
 - Design Pattern
     - Creational Patterns
         - Singleton Pattern
@@ -98,9 +124,8 @@ categories:
         - Object Head
 - JVM(Java Virtual Machine)
     - Garbage Collection Algorithms
-        - Mark-Sweep (Serial GC, Parallel GC)
-        - Mark-Copy (Young Generation in Serial GC, Parallel GC):
-        - Mark-Sweep-Compact (Parallel Old GC)
+        - Mark-Copy (Young Generation in Serial GC, Parallel GC)
+        - Mark-Sweep (Old Generation in Serial GC, Parallel GC)
         - Mark and Concurrent Sweep (CMS GC)
         - Generational Algorithm (Most JVM GCs)
         - Mark-Region (G1 GC)
@@ -108,12 +133,14 @@ categories:
         - Serial GC
         - Parallel GC
         - Concurrent Mark Sweep, CMS
-        - G1 Garbage Collector
+        - Garbage First Garbage Collector, G1
     - Java Memory Management
         - Heap
         - Stack
         - PermGen
         - Metaspace
+        - Program Counter Register
+        - Native Stack
     - JVM Tuning and Performance Optimization
 - JNI(Java Native Interface)
 - JDBC(Java Database Connectivity)
@@ -126,6 +153,7 @@ categories:
     - Performance Tuning
         - VisualVM
         - JProfiler
+        - Arthas
 - Frameworks
     - Sprint
     - Mybatis
@@ -153,7 +181,6 @@ categories:
 
 ## 1.2 Not yet mastered
 
-1. Java I/O interfaces
 1. Netty Channel Status, like isWritable
 
 # 2 Cpp
