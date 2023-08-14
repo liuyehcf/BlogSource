@@ -1,3 +1,24 @@
+1. could you please hand me the book; could you please pass me the book
+1. I didn't picture that; I didn't imagine that
+1. enjoy the rest of your day; I hope the rest of your day goes well; enjoy yourself along the way; have a blessed day
+1. extend the average lifespan of men; increase men's life span
+1. reject the offer; refuse the offer; turn down the offer; decline the offer
+1. sorry, it completely slipped my mind
+1. catastrophic wildfires continue to rage across the island of Maui
+1. work visa
+1. it's so rooted in who you are
+1. you could press charges
+1. citizens and residents
+1. this is a grand welcoming ceremony
+1. intelligent edge integrated machine
+1. the polls are open in Ohio in a special election
+1. we won't use customer data without consent
+1. defame; defamation
+1. integral; integrated; integration
+1. I wanna turn myself in
+1. his arrogant attitude during the meeting was really off-putting
+1. I don't see the value in this product; I don't recognize the value of this product
+1. start a car; start a company
 1. double-edged sword
 1. Baseball Hall of Fame
 1. Formula One
@@ -117,7 +138,6 @@
 1. what do you make of that; what do you think of that; what are your thoughts on that idea; what's your assessment of the rebellion
 1. thank you for your efforts
 1. charge; sue; indict; accuse; prosecute
-1. yuou could press charges
 1. those thunderstorms could lower the temperature
 1. complacence; complaint; compliance
 1. he escaped legal sanctions
@@ -128,7 +148,6 @@
 1. those thunderstorm could lower the temperature
 1. why is it taking so long?
 1. don't be mad at me
-1. could you please hand me the book?
 1. I have not announced my arrival in Hangzhou
 1. food products have to undergo product grading
 1. the government is more effective than we tend to think
@@ -422,7 +441,6 @@
 1. first class; business class; economy class
 1. simple past tense; past perfect tense
 1. head of the family; head of state
-1. reject the offer; refuse the offer; decline the offer
 1. What are the different types of polymorphism in C++?
 1. What is the difference between static binding and dynamic binding in C++?
 1. Explain the concept of operator overloading in C++
@@ -706,7 +724,6 @@
 1. what surprised me was that he was willing to admit to being a failure
 1. It was a failure for a few reasons, I think
 1. success doesn't always come easily
-1. enjoy yourself along the way
 1. Directed Acyclic Graph
 1. he is nowhere to be found
 1. in Mexico, high level government officials rarely face consequences
@@ -721,7 +738,6 @@
 1. I need to fast for 12 hours before my physical
 1. thank you for coming
 1. no further questions, thank you
-1. the trial is over - lies that Fox aired about the 2020 presidential elections
 1. the democrat was hospitalized for six weeks with depression
 1. cycle to the previous suggestion
 1. supersonic missiles
@@ -994,7 +1010,6 @@
 1. most popular anchor
 1. do you have any baggage to check in
 1. does that count as being subliminal
-1. turn down the offer
 1. car trouble
 1. drop the charge
 1. run for re-election
@@ -1086,8 +1101,6 @@
 1. a gunman killed three students and critically injured five others
 1. shelter materials like blankets, carpets, mattresses
 1. the earthquake death toll in Syria and Turkey has now soared above 39,000 people
-1. I hope the rest of your day goes well
-1. enjoy the rest of your day
 1. out of kindness
 1. I personally side with them
 1. the success of the project relies on the premise that there is a market demand for the product
@@ -1207,7 +1220,6 @@
 1. hey, how did it go
 1. in a scenario like this
 1. where were you
-1. I didn’t picture that
 1. exuberant
 1. no matter how it may look, I only had you in my heart
 1. I'm afraid I don't follow
@@ -1510,7 +1522,6 @@
 1. contempt of court
 1. it’s unfeasible
 1. are you working late?
-1. have a blessed day
 1. I’ll deal all of these issues in turn
 1. I’ll stick around for a while
 1. thanks for your hospitality
@@ -2706,7 +2717,6 @@
 1. many people rise up to fight for justice
 1. shareholder
 1. the flowers gave off a fragrant smell
-1. increase man's life span
 1. the car component industry
 1. important for the future prosperity of our country
 1. delicate
