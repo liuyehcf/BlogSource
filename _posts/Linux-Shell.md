@@ -13,9 +13,9 @@ categories:
 
 <!--more-->
 
-# 1 基本概念
+# 1 Basics
 
-## 1.1 I/O重定向
+## 1.1 I/O Redirectio
 
 | 命令（可以加空格地方都加了空格，否则就是不能加空格） | 说明 |
 |:--|:--|
@@ -66,7 +66,7 @@ EOF
 3          # 输出结果为 3 行
 ```
 
-## 1.2 管道
+## 1.2 Pipe
 
 **管道命令使用的是`|`这个界定符号，这个管道命令`|`仅能处理有前面一个命令传来的`正确信息`，也就是`standard output`的信息，对于standard error并没有直接处理的能力**
 
@@ -74,7 +74,7 @@ EOF
 
 **管道是作为子进程的方式来运行的。因此在管道中进行一些变量赋值操作，在管道结束后会丢失**
 
-## 1.3 命令替换
+## 1.3 Command Substitution
 
 **`命令替换（command substitution）`可以让`括号里`或`单引号里`的命令提前于整个命令运行，然后将`执行结果`插入在命令替换符号处。由于命令替换的结果经常交给外部命令，不应该让结果有换行的行为，所以默认将所有的换行符替换为了空格（实际上所有的空白符都被压缩成了单个空格）**
 
@@ -92,7 +92,7 @@ echo "$(ls)"
 echo $(ls)
 ```
 
-## 1.4 进程替换
+## 1.4 Process Substitution
 
 **进程替换（Process Substitution）的作用有点类似管道，但在实现方式上有所区别，管道是作为子进程的方式来运行的，而进程替换会在`/dev/fd/`下面产生类似`/dev/fd/63`,`/dev/fd/62`这类临时文件，用来传递数据。用法如下：**
 
@@ -185,22 +185,22 @@ echo ${count} # 永远是0
     ./main 1> >(sed -n '/output/s/^.*$/Find stdout/p') 2> >(sed -n '/output/s/^.*$/Find stderr/p')
     ```
 
-## 1.5 环境变量
+## 1.5 Env
 
-### 1.5.1 单独给某个程序传递环境变量
+### 1.5.1 Pass to specific program
 
 ```sh
 FOO=bar env | grep FOO
 env | grep FOO
 ```
 
-### 1.5.2 给管道中的所有命令传递环境变量
+### 1.5.2 Pass to all programs of the pipe
 
 ```sh
 FOO=bar bash -c 'somecommand someargs | somecommand2'
 ```
 
-### 1.5.3 给会话中的所有命令传递环境变量
+### 1.5.3 Pass to all programs of the session
 
 ```sh
 export FOO=bar
@@ -209,7 +209,7 @@ unset FOO
 env | grep FOO
 ```
 
-### 1.5.4 常用环境变量
+### 1.5.4 Frequently-used env variables
 
 * `SHELL`：当前使用的shell
 * `TERM`
@@ -223,7 +223,7 @@ env | grep FOO
     * `LC_NUMERIC`: Defines the formatting of numeric values (decimal point, thousands separator, etc.).
     * `LC_TIME`: Specifies the format used for date and time representation.
 
-# 2 特殊符号
+# 2 Special Symbols
 
 shell中的特殊符号包括如下几种
 
@@ -347,9 +347,9 @@ shell中的特殊符号包括如下几种
     * `echo "This is Test" | socat - /tmp/hello.html`：此时，`-`代表标准输出
     * `socat - /tmp/hello.html`：此时，`-`代表标准输入
 
-# 3 数据类型
+# 3 Data Type
 
-## 3.1 数值运算
+## 3.1 Numerical Calculation
 
 ### 3.1.1 `$[]`
 
@@ -440,9 +440,9 @@ if [ $(echo "1.22 >= 1.21" | bc) -eq 1 ]; then
 fi
 ```
 
-## 3.2 字符串
+## 3.2 String
 
-### 3.2.1 拼接字符串
+### 3.2.1 Concat
 
 ```sh
 your_name="qinjx"
@@ -450,14 +450,14 @@ greeting="hello, "${your_name}" \!"
 echo ${greeting}
 ```
 
-### 3.2.2 获取字符串长度
+### 3.2.2 Length
 
 ```sh
 text="abcdefg"
 echo "字符串长度为 ${#text}"
 ```
 
-### 3.2.3 提取子字符串
+### 3.2.3 Substring
 
 下面以字符串`http://www.aaa.com/123.htm`为例，介绍几种不同的截取方式
 
@@ -533,7 +533,7 @@ var='http://www.aaa.com/123.htm'
 echo ${var:0-7}
 ```
 
-### 3.2.4 条件默认值
+### 3.2.4 Conditional Assignment
 
 **变量为空时，返回默认值**
 
@@ -568,7 +568,7 @@ echo ${FOO:+val2} # 输出空白
 echo ${FOO:?error} # 输出error
 ```
 
-### 3.2.5 按行读取
+### 3.2.5 Read by Line
 
 **方式1**
 
@@ -599,7 +599,7 @@ do
 done
 ```
 
-### 3.2.6 判断字符串是否包含
+### 3.2.6 Contains
 
 **方式1：利用运算符`=~`**
 
@@ -640,7 +640,7 @@ fi
 
 ### 3.2.7 trim
 
-#### 3.2.7.1 方法1
+#### 3.2.7.1 Method 1
 
 ```sh
 function trim() {
@@ -667,7 +667,7 @@ test3="$(trim " one leading and one trailing ")"
 echo "'$test1', '$test2', '$test3', '$test4', '$test5', '$test6'"
 ```
 
-#### 3.2.7.2 方法2
+#### 3.2.7.2 Method 2
 
 ```sh
 function trim() {
@@ -685,14 +685,14 @@ test3="$(trim " one leading and one trailing ")"
 echo "'$test1', '$test2', '$test3', '$test4', '$test5', '$test6'"
 ```
 
-### 3.2.8 大小写转换
+### 3.2.8 Case Conversion
 
 ```sh
 echo 'hello' | tr 'a-z' 'A-Z'
 echo 'HELLO' | tr 'A-Z' 'a-z'
 ```
 
-### 3.2.9 提取括号中的内容
+### 3.2.9 Extract
 
 ```sh
 var='[hello]'
@@ -701,7 +701,7 @@ var=${var%\]}
 echo ${var}
 ```
 
-### 3.2.10 输出包含特殊字符的字符串
+### 3.2.10 String with special character
 
 ```sh
 var="SELECT * FROM t0"
@@ -711,14 +711,27 @@ echo ${var}
 echo "${var}"
 ```
 
-### 3.2.11 数组元素拼接成字符串
+### 3.2.11 Array to String
 
 ```sh
 items=( "hello world" "how have you been" )
 printf '%s\n' ${items[@]} | tr '\n' ',' | sed 's/,$//g' | paste -sd ',' -
 ```
 
-## 3.3 数组
+### 3.2.12 Multi-line Content
+
+```sh
+content=$(cat << EOF
+This is line 1
+This is line 2
+This is line 3
+EOF
+)
+
+echo "${content}"
+```
+
+## 3.3 Array
 
 Shell 数组用括号来表示，元素用`空格`符号分割开，语法格式如下：
 
@@ -816,7 +829,7 @@ do
 done
 ```
 
-### 3.3.1 起始下标
+### 3.3.1 Start Index
 
 1. `sh/bash`：数组下标从0开始
 1. `zsh`：数组下标从1开始
@@ -841,7 +854,7 @@ echo ${array[@]:0:3}
 echo ${array[@]:3:3}
 ```
 
-### 3.3.2 集合运算
+### 3.3.2 Collection Calculation
 
 假设`F1`和`F2`是两个数组
 
@@ -869,7 +882,7 @@ F2=( 2 3 4 )
 echo ${F1[@]} ${F2[@]} | tr ' ' '\n' | sort | uniq -u
 ```
 
-### 3.3.3 循环访问数组
+### 3.3.3 Iterate Array
 
 ```sh
 array=(1 2 3 4 5)
@@ -888,7 +901,7 @@ do
 done
 ```
 
-#### 3.3.3.1 修改数组分隔符
+#### 3.3.3.1 Array Delimiter
 
 **如果数组中的内容包含空白，`foreach`默认会以空格作为分隔符，这就有可能破坏数组元素原有的结构，例如**
 
@@ -920,7 +933,7 @@ done
 IFS="${ifs_bak}"
 ```
 
-### 3.3.4 echo输出数组指定分隔符
+### 3.3.4 Echo the array with a specified delimiter
 
 ```sh
 # echo not respect IFS
@@ -932,7 +945,7 @@ IFS=/ output=${array[@]}
 echo ${output}
 ```
 
-## 3.4 字典
+## 3.4 Map
 
 Shell map用括号来表示，元素用`空格`符号分割开，语法格式如下：
 
@@ -990,7 +1003,7 @@ do
 done
 ```
 
-# 4 条件判断
+# 4 Condition
 
 ## 4.1 test
 
@@ -1177,7 +1190,7 @@ if grep -q 'error' <<< ${output} || grep -q 'warning' <<< ${output}; then
 fi
 ```
 
-# 5 控制流
+# 5 Control Flow
 
 ## 5.1 if
 
@@ -1278,7 +1291,7 @@ case 值 in
 esac
 ```
 
-### 5.7.1 判断是否为数字
+### 5.7.1 Determine if numerical number
 
 ```sh
 function isNumber() {
@@ -1302,9 +1315,9 @@ do
 done
 ```
 
-# 6 函数
+# 6 Function
 
-## 6.1 参数传递
+## 6.1 Pass Parameter
 
 **传递数组**
 
@@ -1323,7 +1336,7 @@ array=('a', 'b', 'c', 'd', 'e')
 func "${array[*]}"
 ```
 
-## 6.2 标准输出
+## 6.2 Standard Output
 
 **返回数组**
 
@@ -1339,7 +1352,7 @@ array=( $(func) )
 echo ${array[*]}
 ```
 
-## 6.3 返回值
+## 6.3 Return Value
 
 ```sh
 function func() {
@@ -1447,7 +1460,7 @@ cd ${dir}
 
 * `exec 1>my.log 2>&1`：将标准输出、以及标准异常重定向到my.log文件中，对后续的所有命令都生效
 
-### 7.5.1 使用fifo管道特性控制
+### 7.5.1 Work with pipe
 
 ```sh
 #!/bin/bash
@@ -2083,13 +2096,13 @@ echo "outside function: '${arr[@]}'"
 
 # 8 Tips
 
-## 8.1 选项分隔符
+## 8.1 Option Separator
 
 选项分隔符为`--`，它有什么用呢？
 
 举个简单的例子，如何创建一个名为`-f`的目录？`mkdir -f`肯定是不行的，因为`-f`会被当做mkdir命令的选项，此时我们就需要选项分隔符来终止`mkdir`对于后续字符串的解析，即`mkdir -- -f`
 
-## 8.2 捕获信号
+## 8.2 Trap Signal
 
 `trap`常用来做一些清理工作，比如你在脚本中将一些进程放到后台执行，但如果脚本异常终止（比如用ctrl+c），那么这些后台进程可能得不到及时处理，这个时候就可以用`trap`来捕获信号，从而执行清理动作
 
@@ -2145,7 +2158,7 @@ sleep 2
 # do other things
 ```
 
-## 8.3 颜色
+## 8.3 Color
 
 ### 8.3.1  ANSI escape codes
 
@@ -2236,7 +2249,7 @@ tput bel     # Play a bell
 tput setaf 1; tput setab 2; tput bold; echo "this is text"
 ```
 
-# 9 参考
+# 9 References
 
 * [shell教程](http://www.runoob.com/linux/linux-shell.html)
 * [linux exec与重定向](http://xstarcd.github.io/wiki/shell/exec_redirect.html)

@@ -154,6 +154,7 @@ categories:
 ## 1.2 Not yet mastered
 
 1. Java I/O interfaces
+1. Netty Channel Status, like isWritable
 
 # 2 Cpp
 
@@ -234,8 +235,12 @@ categories:
     - Google Test & Boost.Test
     - TCMalloc & JeMalloc
     - Boost
-- ABI
-    - glibc
+- glibc
+    - Standard C Library Functions
+    - System Call Wrapper Functions
+    - Dynamic Linking
+    - Thread Support
+    - ABI
 - Tools
     - Build Tools
         - Makefile
