@@ -12,7 +12,7 @@ categories:
 
 <!--more-->
 
-# 1 冒泡排序
+# 1 Bubble Sort
 
 冒泡排序，每次从底部(数组末尾)往上(数组有效左边界，该左边界会递增)找到最小值，并置于左边界上，再递增左边界。很简单，直接上代码
 
@@ -42,7 +42,7 @@ public class BubbleSort {
 }
 ```
 
-# 2 插入排序
+# 2 Insertion Sort
 
 ## 2.1 经典版本
 
@@ -103,7 +103,7 @@ public class BinaryInsertSort {
 }
 ```
 
-# 3 归并排序
+# 3 Merge Sort
 
 ```java
 public class MergeSort {
@@ -371,7 +371,7 @@ int main() {
 }
 ```
 
-# 4 堆排序
+# 4 Heap Sort
 
 首先创建一个最大堆，然后将堆顶元素与当前边界元素交换，并将边界减少1，对堆顶元素维护性质
 
@@ -420,9 +420,9 @@ public class HeapSort {
 }
 ```
 
-# 5 快速排序
+# 5 Quick Sort
 
-## 5.1 经典版本
+## 5.1 2-way Quick Sort
 
 下面给出经典快排的源码，包含递归模式和非递归模式
 
@@ -488,7 +488,7 @@ public class QuickSort {
 }
 ```
 
-## 5.2 3-way快排
+## 5.2 3-way Quick Sort
 
 下面直接给出3-way快排的源码，包括递归模式和非递归模式
 
@@ -568,7 +568,7 @@ public class ThreeWayQuickSort {
 
 ```
 
-## 5.3 双轴快排
+## 5.3 Dual-Pivot Quick Sort
 
 下面直接给出双轴快排的源码，包括递归模式和非递归模式
 
@@ -683,7 +683,7 @@ public class DualPivotQuickSort {
 
 关于双轴快排的更多实现可以参考JDK Arrays.sort的源码 {% post_link SourceAnalysis-DualPivotQuickSort %}
 
-# 6 计数排序
+# 6 Counting Sort
 
 计数排序复杂度是O(n)，以牺牲空间复杂度来提高时间效率。适用于可枚举且范围较小的类型的排序，例如short、char、byte等
 
@@ -865,7 +865,7 @@ group 1 │ group 2  │ group 3  │ group 4
 * [Bitonic Merge Sort | Explanation and Code Tutorial | Everything you need to know!](https://www.youtube.com/watch?v=w544Rn4KC8I)
 * [Bitonic Sort](https://wiki.rice.edu/confluence/download/attachments/4435861/comp322-s12-lec28-slides-JMC.pdf?version=1&modificationDate=1333163955158)
 
-# 8 并行归并算法
+# 8 Parallel Merge Sort
 
 思路：假设有`N`路输入，每路有序，先统计这`N`路数据的分布，找到`N-1`个分界点（切`N-1`刀变`N`块），每路输入按照这`N-1`个分界点对数据进行shuffle，分别送入`N`路输入中。这样`N`路输入就不相交了，每路再进行归并，最后直接合并即可
 
@@ -877,7 +877,76 @@ group 1 │ group 2  │ group 3  │ group 4
 
 [Parallel Merge Sort](/resources/paper/Parallel-Merge-Sort.pdf)
 
-# 9 总结
+# 9 Approx Top K
+
+[Efficient Computation of Frequent and Top-k Elements in Data Streams ](/resources/paper/Efficient-Computation-of-Frequent-and-Top-k-Elements-in-Data-Streams.pdf)
+
+```cpp
+#include <iostream>
+#include <unordered_map>
+#include <vector>
+
+struct ItemCounter {
+    int32_t item;
+    size_t counter;
+};
+
+class SpaceSaved {
+private:
+    std::unordered_map<int32_t, ItemCounter*> _table;
+    std::vector<ItemCounter> _counters;
+    size_t empty_idx = 0;
+
+public:
+    SpaceSaved(int32_t k) : _counters(k) {}
+
+    void process(int32_t item) {
+        if (_table.find(item) != _table.end()) {
+            _table[item]->counter++;
+        } else {
+            if (empty_idx < _counters.size()) {
+                ItemCounter* empty_counter = &_counters[empty_idx++];
+                empty_counter->item = item;
+                empty_counter->counter = 1;
+                _table[item] = empty_counter;
+            } else {
+                ItemCounter* minCounter = &_counters[0];
+                for (auto& counter : _counters) {
+                    if (counter.counter < minCounter->counter) {
+                        minCounter = &counter;
+                    }
+                }
+                _table.erase(minCounter->item);
+                minCounter->item = item;
+                minCounter->counter++;
+                _table[item] = minCounter;
+            }
+        }
+    }
+
+    std::vector<ItemCounter> get_frequent_items() { return _counters; }
+};
+
+int main() {
+    SpaceSaved ss(5);
+
+    // A simple test case
+    std::vector<int32_t> stream = {1, 1, 2, 2, 2, 3, 4, 4, 5, 5, 6, 7, 7, 7, 8};
+
+    for (int32_t item : stream) {
+        ss.process(item);
+    }
+
+    auto frequentItems = ss.get_frequent_items();
+    for (const auto& entry : frequentItems) {
+        std::cout << "Item: " << entry.item << ", Count: " << entry.counter << std::endl;
+    }
+
+    return 0;
+}
+```
+
+# 10 总结
 
 | 排序算法 | 是否稳定 | 是否原址 | 复杂度 |
 |:--|:--|:--|:--|
