@@ -181,6 +181,13 @@ Backend-Service
 * `Aggregator`
     * AggData is referenced by a hash map and a vector, the hash map is used to maintain the key-value relationship, while the vector is used for vectorization optimization, and there may be multiply indexes of vector referencing to the same AggData
     * Streaming is designed to reduce the overhead of the exchanging of data
+* `Window Function`
+    * Frame
+        * Unbounded window
+        * Half unbounded window
+            * Materialized processing
+            * Streaming processing
+        * Sliding window
 
 ### 3.3.1 Agg
 
