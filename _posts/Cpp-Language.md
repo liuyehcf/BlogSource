@@ -4042,19 +4042,19 @@ int main() {
 
 | 容器 | 是否`pointer stability` |
 |:--|:--|
-| `std::vector` | ❎ |
+| `std::vector` | ❌ |
 | `std::list` | ✅ |
 | `std::deque` | ✅ |
 | `std::map` | ✅ |
 | `std::unordered_map` | ✅ |
 | `std::set` | ✅ |
 | `std::unordered_set` | ✅ |
-| `absl::flat_hash_map` | ❎ |
-| `absl::flat_hash_set` | ❎ |
+| `absl::flat_hash_map` | ❌ |
+| `absl::flat_hash_set` | ❌ |
 | `absl::node_hash_map` | ✅ |
 | `absl::node_hash_set` | ✅ |
-| `phmap::flat_hash_map` | ❎ |
-| `phmap::flat_hash_set` | ❎ |
+| `phmap::flat_hash_map` | ❌ |
+| `phmap::flat_hash_set` | ❌ |
 | `phmap::node_hash_map` | ✅ |
 | `phmap::node_hash_set` | ✅ |
 

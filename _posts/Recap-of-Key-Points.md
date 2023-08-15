@@ -192,11 +192,23 @@ categories:
         - Polymorphism
         - Inheritance
         - Abstraction
+    - Template Programming
+    - High Performance
+    - String Compatibility
 - Cpp Features
     - C++11
+        - Move Semantics & RValue
+        - Type Deduction
+        - Lambda Expression
     - C++14
+        - Template Extension
+        - constexpr Extension
     - C++17
+        - STL Extension
+        - Template Extension
+        - constexpr Extension
     - C++20
+        - coroutines
 - Preprocessor Directives
     - #include
     - #define & #undef
@@ -206,19 +218,27 @@ categories:
     - Pointer Stability
 - Virtual Functions
     - override & final
+    - Vritual Function Table
 - Overloading
     - Operator Overloading
     - Function Overloading
 - Move Semantics
     - Perfect Forwarding
+    - Transfer of Resources
 - Containers
-    - vector
-    - list
-    - map
-    - array
-    - queue
-    - deque
-    - stack
+    - Sequence Containers
+        - vector
+        - list
+        - array
+        - queue
+        - deque
+    - Ordered Associative Containers
+        - set
+        - map
+    - Unordered Associative Containers
+        - unordered_set
+        - unordered_map
+    - Pointer Stability
 - Templates
     - Standard Template Library (STL)
     - Templates Specialization
