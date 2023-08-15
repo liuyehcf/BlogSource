@@ -1032,9 +1032,7 @@ private:
 
 **下面以一个例子来说明**
 
-```sh
-# 创建源文件
-cat > main.cpp << 'EOF'
+```cpp
 #include <iostream>
 
 struct Align1 {
@@ -1083,13 +1081,6 @@ int main() {
     std::cout << std::endl;
     return 0;
 }
-EOF
-
-# 编译
-gcc -o main main.cpp -lstdc++
-
-# 执行
-./main
 ```
 
 **执行结果如下**
@@ -4094,9 +4085,7 @@ private:
 
 **在类中声明静态成员，在类外定义（赋值）静态成员，示例如下：**
 
-```sh
-# 创建源文件
-cat > main.cpp << 'EOF'
+```cpp
 #include <iostream>
 
 class Demo {
@@ -4109,13 +4098,6 @@ size_t Demo::BUFFER_LEN = 5;
 int main() {
     std::cout << Demo::BUFFER_LEN << std::endl;
 }
-EOF
-
-# 编译
-gcc -o main main.cpp -lstdc++ -Wall
-
-# 执行
-./main
 ```
 
 ### 10.1.2 Non-static members of a class cannot undergo type deduction
