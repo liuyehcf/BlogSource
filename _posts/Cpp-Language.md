@@ -3747,7 +3747,143 @@ type=std::atomic<int32_t>, count=2000000
     * `std::function`本质上是个函数指针的封装，当传递它时，编译器很难进行内联优化
     * `Lambda`本质上是传递某个匿名类的实例，有确定的类型信息，编译器可以很容易地进行内联优化
 
-# 7 Attributes
+# 7 Coroutine
+
+[C++20’s Coroutines for Beginners - Andreas Fertig - CppCon 2022](https://www.youtube.com/watch?v=8sEe-4tig_A)
+
+**Forms:**
+
+* Stackfull
+* Stackless
+
+**Coroutines can be paused and resumed, these are supported operations:**
+
+* `co_yield`: Pause a coroutine
+* `co_await`: Pause a coroutine, and feeds some inputs to coroutine
+* `co_return`: Ends a coroutine
+
+**A coroutine consists of:**
+
+* A wrapper type
+* A type with the exact name `promise_type` inside the return type of coroutine(the wrapper type), this type can be:
+    * Type alias
+    * A `typedef`
+    * Directly declare an inner class
+* An awaitable type that comes into play once we use `co_await`
+* An interator
+
+**Key Observation: A coroutine in C++ is an finite state machine(FSM) that can be controlled and customized by the promise_type**
+
+**Coroutine Classifications:**
+
+* `Task`: A coroutine that does a job without returning a value.
+* `Generator`: A coroutine that does a job and returns a value(either by `co_return` or `co_yield`)
+
+**Helper types for coroutines:**
+
+* `std::experimental::suspend_always`: The method `await_ready` always returns `false`, indicating that an await expression always suspends as it waits for its value
+* `std::experimental::suspend_never`: The method `await_ready` always returns `true`, indicating that an await expression never suspends
+
+**Example:**
+
+```cpp
+#include <coroutine>
+#include <iostream>
+#include <utility>
+#include <vector>
+
+struct Chat {
+    struct promise_type {
+        // A: Storing a value from or for the coroutine
+        std::string _msg_out{};
+        std::string _msg_in{};
+
+        // B: What to do in case of an exception
+        void unhandled_exception() noexcept {}
+
+        // C: Coroutine creation
+        Chat get_return_object() { return Chat(this); };
+
+        // D: Startup
+        std::suspend_always initial_suspend() noexcept { return {}; }
+
+        // F: Value from co_yield
+        std::suspend_always yield_value(std::string msg) noexcept {
+            _msg_out = std::move(msg);
+            return {};
+        }
+
+        // G: Value from co_await
+        auto await_transform(std::string) noexcept {
+            // H: Customized version instead of using suspend_always or suspend_never
+            struct awaiter {
+                promise_type& pt;
+                constexpr bool await_ready() const noexcept { return true; }
+                std::string await_resume() const noexcept { return std::move(pt._msg_in); }
+                void await_suspend(std::coroutine_handle<>) const noexcept {}
+            };
+            return awaiter{*this};
+        }
+
+        // I: Value from co_return
+        void return_value(std::string msg) noexcept { _msg_out = std::move(msg); }
+
+        // E: Ending
+        std::suspend_always final_suspend() noexcept { return {}; }
+    };
+
+    // A: Shortcut for the handle type
+    using Handle = std::coroutine_handle<promise_type>;
+    // B
+    Handle _handle;
+
+    // C: Get the handle from promise
+    explicit Chat(promise_type* p) : _handle(Handle::from_promise(*p)) {}
+
+    // D: Move only
+    Chat(Chat&& rhs) : _handle(std::exchange(rhs._handle, nullptr)) {}
+
+    // E: Care taking, destroying the handle if needed
+    ~Chat() {
+        if (_handle) {
+            _handle.destroy();
+        }
+    }
+
+    // F: Active the coroutine and wait for data
+    std::string listen() {
+        if (!_handle.done()) {
+            _handle.resume();
+        }
+        return std::move(_handle.promise()._msg_out);
+    }
+
+    // G Send data to the coroutine and activate it
+    void answer(std::string msg) {
+        _handle.promise()._msg_in = msg;
+        if (!_handle.done()) {
+            _handle.resume();
+        }
+    }
+};
+
+Chat Fun() {
+    co_yield "Hello!\n";
+
+    std::cout << co_await std::string{};
+
+    co_return "Here!\n";
+}
+
+int main() {
+    Chat chat = Fun();
+    std::cout << chat.listen();
+    chat.answer("Where are you?\n");
+    std::cout << chat.listen();
+}
+```
+
+# 8 Attributes
 
 `__attribute__`是一个`GCC`编译器特有的特性，它允许程序员向编译器提供一些指示信息，以便在编译期间进行优化或者在运行期间提供一些额外的约束条件。这些指示信息被称为属性（`attributes`），可以应用于函数、变量、类型等各种程序元素
 
@@ -3795,7 +3931,7 @@ type=std::atomic<int32_t>, count=2000000
 * `[[likely]]`（C++20）：提示编译器该分支大概率为`true`
 * `[[unlikely]]`（C++20）：提示编译器该分支大概率为`false`
 
-## 7.1 aligned
+## 8.1 aligned
 
 ```cpp
 #include <iostream>
@@ -3831,17 +3967,17 @@ int main() {
 }
 ```
 
-## 7.2 参考
+## 8.2 参考
 
 * [Compiler-specific Features](https://www.keil.com/support/man/docs/armcc/armcc_chr1359124965789.htm)
 
-# 8 ASM
+# 9 ASM
 
 [gcc-online-docs](https://gcc.gnu.org/onlinedocs/gcc/)
 
-## 8.1 Basic Asm
+## 9.1 Basic Asm
 
-## 8.2 [Extended Asm](https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html)
+## 9.2 [Extended Asm](https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html)
 
 GCC设计了一种特有的嵌入方式，它规定了汇编代码嵌入的形式和嵌入汇编代码需要由哪几个部分组成，格式如下：
 
@@ -4021,9 +4157,9 @@ int main() {
 
 **示例3：linux内核大量用到了`asm`，具体可以参考[linux-asm](https://github.com/torvalds/linux/blob/master/arch/x86/include/asm)**
 
-# 9 Policy
+# 10 Policy
 
-## 9.1 Pointer Stability
+## 10.1 Pointer Stability
 
 **`pointer stability`通常用于描述容器。当我们说一个容器是`pointer stability`时，是指，当某个元素添加到容器之后、从容器删除之前，该元素的内存地址不变，也就是说，该元素的内存地址，不会受到容器的添加删除元素、扩缩容、或者其他操作影响**
 
@@ -4049,7 +4185,7 @@ int main() {
 | `phmap::node_hash_map` | ✅ |
 | `phmap::node_hash_set` | ✅ |
 
-## 9.2 Exception Safe
+## 10.2 Exception Safe
 
 [Wiki-Exception safety](https://en.wikipedia.org/wiki/Exception_safety)
 
@@ -4060,7 +4196,7 @@ int main() {
 1. `Basic exception safety`：可能会抛出异常，操作失败的部分可能会导致副作用，但所有不变量都会被保留。任何存储的数据都将包含可能与原始值不同的有效值。资源泄漏（包括内存泄漏）通常通过一个声明所有资源都被考虑和管理的不变量来排除
 1. `No exception safety`：不承诺异常安全
 
-## 9.3 RAII
+## 10.3 RAII
 
 `RAII, Resource Acquisition is initialization`，即资源获取即初始化。典型示例包括：`std::lock_guard`、`defer`。简单来说，就是在对象的构造方法中初始化资源，在析构函数中销毁资源。而构造函数与析构函数的调用是由编译器自动插入的，减轻了开发者的心智负担
 
@@ -4077,11 +4213,11 @@ private:
 };
 ```
 
-# 10 Tips
+# 11 Tips
 
-## 10.1 Class Related
+## 11.1 Class Related
 
-### 10.1.1 How to define static members in a class
+### 11.1.1 How to define static members in a class
 
 **在类中声明静态成员，在类外定义（赋值）静态成员，示例如下：**
 
@@ -4100,7 +4236,7 @@ int main() {
 }
 ```
 
-### 10.1.2 Non-static members of a class cannot undergo type deduction
+### 11.1.2 Non-static members of a class cannot undergo type deduction
 
 类的非静态成员，无法进行类型推导，必须显式指定类型（因为类型信息必须是不可变的）；静态成员可以。例如下面示例就存在语法错误：
 
@@ -4129,9 +4265,9 @@ private:
 };
 ```
 
-## 10.2 Initialization
+## 11.2 Initialization
 
-### 10.2.1 Initializer List
+### 11.2.1 Initializer List
 
 1. 对于内置类型，直接进行值拷贝。使用初始化列表还是在构造函数体中进行初始化没有差别
 1. 对于类类型
@@ -4242,7 +4378,7 @@ A's default constructor
 A's move assign operator
 ```
 
-### 10.2.2 Various Initialization Types
+### 11.2.2 Various Initialization Types
 
 1. 默认初始化：`type variableName;`
 1. 直接初始化/构造初始化（至少有1个参数）：`type variableName(args);`
@@ -4375,7 +4511,7 @@ A's (int, int) constructor
 ============(值初始化 a11)============
 ```
 
-### 10.2.3 Initialization Order of class Members
+### 11.2.3 Initialization Order of class Members
 
 1. 初始化列表
 1. 成员定义处的列表初始化，当且仅当该成员未出现在初始化列表中时才会生效
@@ -4428,7 +4564,7 @@ initialized_at_initialization_list
 initialized_at_construct_block
 ```
 
-### 10.2.4 Initialization of static Local Variables
+### 11.2.4 Initialization of static Local Variables
 
 ```cpp
 void foo() {
@@ -4461,7 +4597,7 @@ void foo() {
 }
 ```
 
-### 10.2.5 Initialization of non-static class Members
+### 11.2.5 Initialization of non-static class Members
 
 非静态成员不允许使用构造初始化，但是允许使用列表初始化（本质上还是调用了对应的构造函数）
 
@@ -4488,9 +4624,9 @@ int main() {
 }
 ```
 
-## 10.3 Pointer
+## 11.3 Pointer
 
-### 10.3.1 Member Function Pointer
+### 11.3.1 Member Function Pointer
 
 成员函数指针需要通过`.*`或者`->*`运算符进行调用
 
@@ -4549,7 +4685,7 @@ int main() {
 }
 ```
 
-### 10.3.2 How to pass multi-dimensional pointer parameters
+### 11.3.2 How to pass multi-dimensional pointer parameters
 
 ```cpp
 #include <iostream>
@@ -4589,9 +4725,9 @@ int main() {
 }
 ```
 
-## 10.4 Reference
+## 11.4 Reference
 
-### 10.4.1 Reference Initialization
+### 11.4.1 Reference Initialization
 
 **引用只能在定义处初始化**
 
@@ -4617,7 +4753,7 @@ b=2
 ref=2
 ```
 
-## 10.5 Mock class
+## 11.5 Mock class
 
 有时在测试的时候，我们需要mock一个类的实现，我们可以在测试的cpp文件中实现这个类的所有方法（**注意，必须是所有方法**），就能够覆盖原有库文件中的实现。下面以一个例子来说明
 
@@ -4794,7 +4930,7 @@ person.cpp:(.text+0x2a): Person::sleep() 的多重定义
 collect2: 错误：ld 返回 1
 ```
 
-## 10.6 Non-template parameter pack
+## 11.6 Non-template parameter pack
 
 **非模板参数包有如下几个特点：**
 
@@ -4823,9 +4959,9 @@ int main() {
 }
 ```
 
-# 11 FAQ
+# 12 FAQ
 
-## 11.1 Why is it unnecessary to specify the size when releasing memory with free and delete
+## 12.1 Why is it unnecessary to specify the size when releasing memory with free and delete
 
 [How does free know how much to free?](https://stackoverflow.com/questions/1518711/how-does-free-know-how-much-to-free)
 
@@ -4847,11 +4983,11 @@ ____ The allocated block ____
           +-- The address you are given
 ```
 
-## 11.2 Do parameter types require lvalue or rvalue references
+## 12.2 Do parameter types require lvalue or rvalue references
 
-## 11.3 Does the return type require lvalue or rvalue references
+## 12.3 Does the return type require lvalue or rvalue references
 
-# 12 参考
+# 13 参考
 
 * [C++11\14\17\20 特性介绍](https://www.jianshu.com/p/8c4952e9edec)
 * [关于C++：静态常量字符串(类成员)](https://www.codenong.com/1563897/)

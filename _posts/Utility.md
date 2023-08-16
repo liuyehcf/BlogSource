@@ -138,7 +138,7 @@ Unicode Box Drawing character set, which includes a variety of horizontal, verti
 | [Flyint](https://www.flyint.win/) | <li>`Shadowsocks`</li> | <li>`Clash`</li> | ★★★★★ | `Flyint`飞数机场是一家运营时间比较长的翻墙机场，采用中转服务器出境，支持游戏加速。新用户可免费试用 |
 | [paofu](https://www.paofu.cloud) | <li>`Shadowsocks`</li><li>`Shadowsocks-R`</li> | <li>`Clash`</li> | ★★★★★ | 泡芙云是一家稳定运营了多年的翻墙机场，由海外团队运作，提供`IEPL`内网专线服务，不过墙敏感时期也可用。新用户可1元试用 |
 | [GLaDOS](https://glados.rocks/) | <li>`Shadowsocks`</li><li>`V2Ray`</li><li>`Xray`</li> | <li>`Clash`</li><li>`V2Ray`客户端</li> | ★★★★★ | `GLaDOS`是一家技术流翻墙机场，网站面板完全自主开发，除了支持常见的`Vmess`、`Trojan`翻墙协议，还支持 `Vless`协议和`Wire Guard VPN`协议。新用户可免费试用 |
-| [fastlink](https://fastlink.pro/) | <li>`Shadowsocks`</li><li>`V2Ray`</li> | <li>`Clash`</li><li>`V2Ray`客户端</li> | ★★★★★ | 便宜稳定 |
+| [fastlink](https://fastlink.pro/) | <li>`Shadowsocks`</li><li>`V2Ray`</li> | <li>`Clash`</li><li>`V2Ray`客户端</li> | ★★★★★ | 便宜稳定。有个问题访问不了ChatGpt |
 
 ### 3.2.3 Client
 

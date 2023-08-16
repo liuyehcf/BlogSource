@@ -155,6 +155,7 @@ categories:
                 <li><code>#Vector Processing</code></li>
             </td>
             <td style="text-align:left">
+                <li><a href="https://github.com/StarRocks/starrocks/pull/27907">[Feature] improve hash join performance by coroutine-based interleaving</a></li>
                 <li>Pointer chasing applications:
                     <ul>
                         <li>traversing skip lists</li>
