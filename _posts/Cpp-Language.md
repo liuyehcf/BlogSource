@@ -3751,16 +3751,11 @@ type=std::atomic<int32_t>, count=2000000
 
 [C++20’s Coroutines for Beginners - Andreas Fertig - CppCon 2022](https://www.youtube.com/watch?v=8sEe-4tig_A)
 
-**Forms:**
+A coroutine is a generalization of a function that can be exited and later resumed at specific points. The key difference from functions is that coroutines can maintain state between suspensions.
 
-* Stackfull
-* Stackless
-
-**Coroutines can be paused and resumed, these are supported operations:**
-
-* `co_yield`: Pause a coroutine
-* `co_await`: Pause a coroutine, and feeds some inputs to coroutine
-* `co_return`: Ends a coroutine
+* `co_yield`: Produces a value and suspends the coroutine. The coroutine can be later resumed from this point.
+* `co_return`: Ends the coroutine, potentially returning a final value.
+* `co_await`: Suspends the coroutine until the awaited expression is ready, at which point the coroutine is resumed.
 
 **A coroutine consists of:**
 
@@ -3784,7 +3779,49 @@ type=std::atomic<int32_t>, count=2000000
 * `std::experimental::suspend_always`: The method `await_ready` always returns `false`, indicating that an await expression always suspends as it waits for its value
 * `std::experimental::suspend_never`: The method `await_ready` always returns `true`, indicating that an await expression never suspends
 
-**Example:**
+## 7.1 Overview of `promise_type`
+
+The `promise_type` for coroutines in C++20 can have several member functions which the coroutine machinery recognizes and calls at specific times or events. Here's a general overview of the structure and potential member functions:
+
+* **Stored Values or State:** These are member variables to hold state, intermediate results, or final values. The nature of these depends on the intended use of your coroutine.
+* **Coroutine Creation:** 
+    * `auto get_return_object() -> CoroutineReturnObject`: Defines how to obtain the return object of the coroutine (what the caller of the coroutine gets when invoking the coroutine).
+* **Coroutine Lifecycle:**
+    * `std::suspend_always/std::suspend_never initial_suspend() noexcept`: Dictates if the coroutine should start executing immediately or be suspended right after its creation.
+    * `std::suspend_always/std::suspend_never final_suspend() noexcept`: Dictates if the coroutine should be suspended after running to completion. If `std::suspend_never` is used, the coroutine ends immediately after execution.
+    * `void return_void()` noexcept: Used for coroutines with a `void` return type. Indicates the end of the coroutine.
+    * `void return_value(ReturnType value)`: For coroutines that produce a result, this function specifies how to handle the value provided with `co_return`.
+    * `void unhandled_exception()`: Invoked if there's an unhandled exception inside the coroutine. Typically, you'd capture or rethrow the exception here.
+* **Yielding Values:**
+    * `std::suspend_always/std::suspend_never yield_value(YieldType value)`: Specifies what to do when the coroutine uses `co_yield`. You dictate here how the value should be handled or stored.
+* **Awaiting Values:**
+    * `auto await_transform(AwaitableType value) -> Awaiter`: Transforms the expression after co_await. This is useful for custom awaitable types. For instance, it's used to make this a valid awaitable in member functions.
+
+## 7.2 Example
+
+The `Chat` struct acts as a wrapper around the coroutine handle. It allows the main code to interact with the coroutine - by resuming it, or by sending/receiving data to/from it.
+
+The `promise_type` nested within `Chat` is what gives behavior to our coroutine. It defines:
+
+* What happens when you start the coroutine (`initial_suspend`).
+* What happens when you `co_yield` a value (`yield_value`).
+* What happens when you `co_await` a value (`await_transform`).
+* What happens when you `co_return` a value (`return_value`).
+* What happens at the end of the coroutine (`final_suspend`).
+
+Functionality:
+
+1. **Creating the Coroutine:**
+    * When `Fun()` is called, a new coroutine is started. Due to `initial_suspend`, it is suspended immediately before executing any code.
+    * The coroutine handle (with the promise) is wrapped inside the Chat object, which is then returned to the caller (main function in this case).
+1. **Interacting with the Coroutine:**
+    * `chat.listen()`: Resumes the coroutine until the next suspension point. If `co_yield` is used inside the coroutine, the yielded value will be returned.
+    * `chat.answer(msg)`: Sends a message to the coroutine. If the coroutine is waiting for input using `co_await`, this will provide the awaited value and resume the coroutine.
+1. **Coroutine Flow:**
+    * The coroutine starts and immediately hits `co_yield "Hello!\n";`. This suspends the coroutine and the string `"Hello!\n"` is made available to the caller.
+    * In `main`, after `chat.listen()`, it prints this message.
+    * Then, `chat.answer("Where are you?\n");` is called. Inside the coroutine, the message `"Where are you?\n"` is captured and printed because of the line `std::cout << co_await std::string{};`.
+    * Finally, `co_return "Here!\n";` ends the coroutine, and the string `"Here!\n"` is made available to the caller. This message is printed after the second chat.`listen()` in `main`.
 
 ```cpp
 #include <coroutine>
