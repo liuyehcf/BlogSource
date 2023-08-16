@@ -3774,11 +3774,6 @@ A coroutine is a generalization of a function that can be exited and later resum
 * `Task`: A coroutine that does a job without returning a value.
 * `Generator`: A coroutine that does a job and returns a value(either by `co_return` or `co_yield`)
 
-**Helper types for coroutines:**
-
-* `std::experimental::suspend_always`: The method `await_ready` always returns `false`, indicating that an await expression always suspends as it waits for its value
-* `std::experimental::suspend_never`: The method `await_ready` always returns `true`, indicating that an await expression never suspends
-
 ## 7.1 Overview of `promise_type`
 
 The `promise_type` for coroutines in C++20 can have several member functions which the coroutine machinery recognizes and calls at specific times or events. Here's a general overview of the structure and potential member functions:
@@ -3796,6 +3791,51 @@ The `promise_type` for coroutines in C++20 can have several member functions whi
     * `std::suspend_always/std::suspend_never yield_value(YieldType value)`: Specifies what to do when the coroutine uses `co_yield`. You dictate here how the value should be handled or stored.
 * **Awaiting Values:**
     * `auto await_transform(AwaitableType value) -> Awaiter`: Transforms the expression after co_await. This is useful for custom awaitable types. For instance, it's used to make this a valid awaitable in member functions.
+
+### 7.1.1 Awaiter
+
+The awaiter in the C++ coroutine framework is a mechanism that allows fine-tuned control over how asynchronous operations are managed and how results are produced once those operations are complete.
+
+Here's an overview of the awaiter:
+
+**Role of the Awaiter:**
+
+* The awaiter is responsible for defining the behavior of a `co_await` expression. It determines if the coroutine should suspend, what should be done upon suspension, and what value (if any) should be produced when the coroutine resumes.
+
+**Required Methods:** The awaiter must provide the following three methods:
+
+* `await_ready`
+    * Purpose: Determines if the coroutine needs to suspend at all.
+    * Signature: `bool await_ready() const noexcept`
+    * Return:
+        * `true`: The awaited operation is already complete, and the coroutine shouldn't suspend.
+        * `false`: The coroutine should suspend.
+* `await_suspend`
+    * Purpose: Dictates the actions that should be taken when the coroutine suspends.
+    * Signature: `void await_suspend(std::coroutine_handle<> handle) noexcept`
+    * Parameters:
+        * `handle`: A handle to the currently executing coroutine. It can be used to later resume the coroutine.
+* `await_resume`
+    * Purpose: Produces a value once the awaited operation completes and the coroutine resumes.
+    * Signature: `ReturnType await_resume() noexcept`
+    * Return: The result of the `co_await` expression. The type can be `void` if no value needs to be produced.
+
+**Workflow of the Awaiter:**
+
+1. **Obtain the Awaiter**: When a coroutine encounters `co_await someExpression`, it first needs to get an awaiter. The awaiter can be:
+    * Directly from `someExpression` if it has an `operator co_await`.
+    * Through an ADL (Argument Dependent Lookup) free function named `operator co_await` that takes `someExpression` as a parameter.
+    * From the coroutine's `promise_type` via `await_transform` if neither of the above methods produce an awaiter.
+1. **Call `await_ready`**: The coroutine calls the awaiter's `await_ready()` method.
+    * If it returns `true`, the coroutine continues without suspending.
+    * If it returns `false`, the coroutine prepares to suspend.
+1. **Call `await_suspend (if needed)`**: If `await_ready` indicated the coroutine should suspend (by returning `false`), the `await_suspend` method is called with a handle to the current coroutine. This method typically arranges for the coroutine to be resumed later, often by setting up callbacks or handlers associated with the asynchronous operation.
+1. **Operation Completion and Coroutine Resumption**: Once the awaited operation is complete and the coroutine is resumed, the awaiter's await_resume method is called. The value it produces becomes the result of the co_await expression.
+
+**Built-in Awaiters:**
+
+* `std::suspend_always`: The method `await_ready` always returns `false`, indicating that an await expression always suspends as it waits for its value
+* `std::suspend_never`: The method `await_ready` always returns `true`, indicating that an await expression never suspends
 
 ## 7.2 Example
 
@@ -3840,45 +3880,53 @@ struct Chat {
 
         // C: Coroutine creation
         Chat get_return_object() {
-            std::cout << " -- Chat::get_return_object" << std::endl;
+            std::cout << " -- Chat::promise_type::get_return_object" << std::endl;
             return Chat(this);
         };
 
         // D: Startup
         std::suspend_always initial_suspend() noexcept {
-            std::cout << " -- Chat::initial_suspend" << std::endl;
+            std::cout << " -- Chat::promise_type::initial_suspend" << std::endl;
             return {};
         }
 
         // F: Value from co_yield
         std::suspend_always yield_value(std::string msg) noexcept {
-            std::cout << " -- Chat::yield_value" << std::endl;
+            std::cout << " -- Chat::promise_type::yield_value" << std::endl;
             _msg_out = std::move(msg);
             return {};
         }
 
         // G: Value from co_await
         auto await_transform(std::string) noexcept {
-            std::cout << " -- Chat::await_transform" << std::endl;
+            std::cout << " -- Chat::promise_type::await_transform" << std::endl;
             // H: Customized version instead of using suspend_always or suspend_never
             struct awaiter {
                 promise_type& pt;
-                constexpr bool await_ready() const noexcept { return true; }
-                std::string await_resume() const noexcept { return std::move(pt._msg_in); }
-                void await_suspend(std::coroutine_handle<>) const noexcept {}
+                bool await_ready() const noexcept {
+                    std::cout << " -- Chat::promise_type::await_transform::await_ready" << std::endl;
+                    return true;
+                }
+                std::string await_resume() const noexcept {
+                    std::cout << " -- Chat::promise_type::await_transform::await_resume" << std::endl;
+                    return std::move(pt._msg_in);
+                }
+                void await_suspend(std::coroutine_handle<>) const noexcept {
+                    std::cout << " -- Chat::promise_type::await_transform::await_suspend" << std::endl;
+                }
             };
             return awaiter{*this};
         }
 
         // I: Value from co_return
         void return_value(std::string msg) noexcept {
-            std::cout << " -- Chat::return_value" << std::endl;
+            std::cout << " -- Chat::promise_type::return_value" << std::endl;
             _msg_out = std::move(msg);
         }
 
         // E: Ending
         std::suspend_always final_suspend() noexcept {
-            std::cout << " -- Chat::final_suspend" << std::endl;
+            std::cout << " -- Chat::promise_type::final_suspend" << std::endl;
             return {};
         }
     };
@@ -3903,6 +3951,7 @@ struct Chat {
 
     // F: Active the coroutine and wait for data
     std::string listen() {
+        std::cout << " -- Chat::listen" << std::endl;
         if (!_handle.done()) {
             _handle.resume();
         }
@@ -3911,6 +3960,7 @@ struct Chat {
 
     // G Send data to the coroutine and activate it
     void answer(std::string msg) {
+        std::cout << " -- Chat::answer" << std::endl;
         _handle.promise()._msg_in = msg;
         if (!_handle.done()) {
             _handle.resume();
@@ -3930,6 +3980,25 @@ int main() {
     chat.answer("Where are you?\n");
     std::cout << chat.listen();
 }
+```
+
+**Output:**
+
+```
+ -- Chat::promise_type::get_return_object
+ -- Chat::promise_type::initial_suspend
+ -- Chat::listen
+ -- Chat::promise_type::yield_value
+Hello!
+ -- Chat::answer
+ -- Chat::promise_type::await_transform
+ -- Chat::promise_type::await_transform::await_ready
+ -- Chat::promise_type::await_transform::await_resume
+Where are you?
+ -- Chat::promise_type::return_value
+ -- Chat::promise_type::final_suspend
+ -- Chat::listen
+Here!
 ```
 
 # 8 Attributes
