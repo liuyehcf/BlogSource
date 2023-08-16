@@ -3836,22 +3836,30 @@ struct Chat {
         std::string _msg_in{};
 
         // B: What to do in case of an exception
-        void unhandled_exception() noexcept {}
+        void unhandled_exception() noexcept { std::cout << "Chat::unhandled_exception" << std::endl; }
 
         // C: Coroutine creation
-        Chat get_return_object() { return Chat(this); };
+        Chat get_return_object() {
+            std::cout << " -- Chat::get_return_object" << std::endl;
+            return Chat(this);
+        };
 
         // D: Startup
-        std::suspend_always initial_suspend() noexcept { return {}; }
+        std::suspend_always initial_suspend() noexcept {
+            std::cout << " -- Chat::initial_suspend" << std::endl;
+            return {};
+        }
 
         // F: Value from co_yield
         std::suspend_always yield_value(std::string msg) noexcept {
+            std::cout << " -- Chat::yield_value" << std::endl;
             _msg_out = std::move(msg);
             return {};
         }
 
         // G: Value from co_await
         auto await_transform(std::string) noexcept {
+            std::cout << " -- Chat::await_transform" << std::endl;
             // H: Customized version instead of using suspend_always or suspend_never
             struct awaiter {
                 promise_type& pt;
@@ -3863,10 +3871,16 @@ struct Chat {
         }
 
         // I: Value from co_return
-        void return_value(std::string msg) noexcept { _msg_out = std::move(msg); }
+        void return_value(std::string msg) noexcept {
+            std::cout << " -- Chat::return_value" << std::endl;
+            _msg_out = std::move(msg);
+        }
 
         // E: Ending
-        std::suspend_always final_suspend() noexcept { return {}; }
+        std::suspend_always final_suspend() noexcept {
+            std::cout << " -- Chat::final_suspend" << std::endl;
+            return {};
+        }
     };
 
     // A: Shortcut for the handle type
@@ -3906,9 +3920,7 @@ struct Chat {
 
 Chat Fun() {
     co_yield "Hello!\n";
-
     std::cout << co_await std::string{};
-
     co_return "Here!\n";
 }
 
