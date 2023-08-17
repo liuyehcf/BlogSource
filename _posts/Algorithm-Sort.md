@@ -946,6 +946,38 @@ int main() {
 }
 ```
 
+## 9.1 Two-stage Aggregation
+
+The Space Saving Algorithm is commonly used for estimating the top-K frequent items in a stream of data with limited memory. To implement this as a two-stage aggregate function for a distributed database management system (DBMS), you'll need to handle the aggregation in two main phases:
+
+1. `Local Aggregation` (First-stage aggregate on each node)
+1. `Global Aggregation` (Second-stage aggregate on a single node)
+
+Here's how you can design and execute the two-stage aggregation:
+
+**Local Aggregation (First-stage):** Each node will maintain a list of counters based on the Space Saving Algorithm:
+
+1. For each incoming item in the stream:
+    1. If the item is already in the list of counters, increment its count.
+    1. If the item is not in the list and there is space available, add it to the list with a count of 1.
+    1. If the item is not in the list and there is no space available, find the item with the smallest count, replace it with the new item and increment the count of the new item.
+1. At the end of this phase, each node will have its local top-K counters.
+
+**Global Aggregation (Second-stage):** After the local aggregation phase, the intermediate counters from all nodes will be sent to a particular aggregation node. On this node:
+
+1. For each counter from the nodes:
+    1. If the item is already in the global list of counters, add the local count to the global count.
+    1. If the item is not in the global list and there is space available, add it to the global list with its local count.
+    1. If the item is not in the global list and there is no space available, determine if its local count is greater than the smallest global counter. If it is, replace the global counter with the new item and its count. Otherwise, discard the counter.
+1. Once all the local counters have been processed, the global list will contain the estimated top-K frequent items across all the nodes.
+
+**Some considerations:**
+
+* Due to the nature of the Space Saving Algorithm, the accuracy of the results will depend on the number of counters you maintain in your list. The more counters you have, the more accurate the result, but at the cost of increased memory usage.
+* In the global aggregation phase, you might be merging a lot of counters, especially if you have many nodes. Ensure your global counter list is sufficiently large to maintain accuracy.
+* Depending on the distribution of your data across nodes, there might be significant overlap between local top-K items. This can make your global results more accurate.
+* Implementing the Space Saving Algorithm for a distributed DBMS can be a challenging task, but with careful design and attention to detail, it's possible to get accurate top-K estimations with limited memory.
+
 # 10 总结
 
 | 排序算法 | 是否稳定 | 是否原址 | 复杂度 |
