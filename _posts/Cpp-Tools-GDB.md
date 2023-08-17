@@ -324,6 +324,12 @@ Breakpoint 1, main () at set_break.cpp:8
         * `elements`：数组的最大长度，超过该长度的元素就不再显示了，0表示无限制
         * `raw-values`：打印原始内容。在`GNU gdb (Ubuntu 12.1-0ubuntu1~22.04) 12.1`上，打印标准库对象时，默认会打印优化后的内容（容器元素详情），而非容器本身的详细字段
         * **`pretty`：是否以优雅的方式显式（分行、缩进等等，便于人阅读），默认关闭**
+    * `std::vector`调试技巧
+        * `print sizeof(*v._M_impl._M_start)`：查看元素大小
+        * `print v._M_impl._M_finish - v._M_impl._M_start`：元素个数
+        * `print v._M_impl._M_start[i]`：第`i`个元素
+        * `print &v._M_impl._M_start[i]`：第`i`个元素的地址
+        * `print v._M_impl._M_start[i]@j`：打印从第`i`个元素开始的`j`个元素
 * `x/<count><format><size> <addr>`：以指定格式打印内存信息
     * `<count>`：正整数，表示需要显示的内存单元的个数，即从当前地址向后显示`<count>`个内存单元的内容，一个内存单元的大小由第三个参数`<size>`定义
     * `<format>`：表示`addr`指向的内存内容的输出格式

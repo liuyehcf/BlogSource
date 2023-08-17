@@ -288,3 +288,6 @@ int main() {
 
 [[Enhancement] Optimize a subtle inline performance problem](https://github.com/StarRocks/starrocks/pull/23300)
 
+# 5 FAQ
+
+1. `as ‘this’ argument discards qualifiers [-fpermissive]`: Maybe try to conver a const value to a non-const value

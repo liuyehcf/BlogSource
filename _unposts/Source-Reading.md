@@ -32,6 +32,7 @@
     * `RelationTransformer`
     * `SubqueryTransformer`
     * `WindowTransformer`
+        * `standardize`：标准化，window子句
     * `SqlToScalarOperatorTranslator`：将`Expr`转换成`ScalarOperator`
 1. `Operator`
     * `LogicalOperator`：逻辑算子
