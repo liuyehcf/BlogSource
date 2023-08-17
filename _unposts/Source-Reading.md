@@ -182,6 +182,11 @@ Backend-Service
 * `Aggregator`
     * AggData is referenced by a hash map and a vector, the hash map is used to maintain the key-value relationship, while the vector is used for vectorization optimization, and there may be multiply indexes of vector referencing to the same AggData
     * Streaming is designed to reduce the overhead of the exchanging of data
+    * `aggregate_factory.h`
+    * `aggregate_resolver.hpp`: Different aggregate functions have different resover logic
+        * `aggregate_resolver_avg.cpp`
+        * `aggregate_resolver_window.cpp`
+        * ...
 * `Window Function`
     * `be/src/exprs/agg/window.h`
     * Frame

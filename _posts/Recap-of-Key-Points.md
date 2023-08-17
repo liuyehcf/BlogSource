@@ -54,6 +54,7 @@ categories:
         - Predicate/BiPredicate
         - UnaryOperator/BinaryOperator
         - Supplier
+        - Function
     - Lambda Expressions
 - Generics
     - Type Erasure
