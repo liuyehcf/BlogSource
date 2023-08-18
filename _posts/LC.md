@@ -121,7 +121,7 @@ table th:nth-of-type(5) {
 | 87 |  |  |  |  |
 | 88 | Merge Sorted Array | ArrayList | ★★ | 由于nums1要放两个数组的所有元素，因此首先要把nums1中原始的元素放到最后面，然后再开始合并，这样不会撞车 |
 | 89 | Gray Code |  |  |  |
-| 90 | Subsets II | Recursion | ★★★ | 同78，去重即可，比如当前递归第i个元素，只要第i个元素不重复即可 |
+| 90 | Subsets II | Recursion | ★★★★ | 同78，去重即可，对于某一次递归而言，不添加相同的元素即可去重。且过程中任何一个状态都在结果集中 |
 | 91 | Decode Ways | Dp | ★★★★ | 若`s[i-1,i]`可以解码，那么`dp[i] += dp[i - 1]`；若`s[i-2,i]`可以解码，那么`dp[i]+=dp[i-2]` |
 | 92 | Reverse Linked List II | LinkList | ★★★ | 找到pseudoHead以及tail，然后再reverse即可 |
 | 93 | Restore IP Addresses | Recursion | ★★★ | 经典递归，分别尝试1位、2位、3位，注意递归结束的条件：总共解析出4个数，且没有剩余字符 |
