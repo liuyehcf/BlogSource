@@ -69,8 +69,6 @@ As for execution, my focus was on optimizing the ranking window function, leadin
 
 For better observability and query analysis, I introduced support for runtime profiling and developed a profile analysis tool. This feature enables users to easily understand query bottlenecks and identify opportunities for optimization.
 
-Overall, my work at Starrocks has contributed significantly to the system's performance, optimization capabilities, and observability, ultimately enhancing the overall user experience and efficiency of the platform.
-
 **Killing Features:**
 
 1. MPP (Massively Parallel Processing) Distributed Execution
@@ -88,6 +86,8 @@ Overall, my work at Starrocks has contributed significantly to the system's perf
 
 1. Why are you refactoring the subquery transformation process?
 1. What's the advantages of the morsel-driven execution engine.
+1. Subquery classification.
+1. Pointer alias.
 
 # 3 Database
 
