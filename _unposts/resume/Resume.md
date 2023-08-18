@@ -60,7 +60,7 @@ StarRocks is a next-gen, high-performance analytical data warehouse that enables
 
 ---
 
-## References
+## Reference
 
 * All pull requests of starrocks, [liuyehcf contributions to starrocks](https://github.com/StarRocks/starrocks/pulls?q=is%3Apr+is%3Aclosed+author%3Aliuyehcf). All the work details of my work experience at Starrocks can be found here.
    * [parallel merge algorithm](https://github.com/StarRocks/starrocks/pulls?q=is%3Apr+is%3Aclosed+author%3Aliuyehcf+parallel+merge)

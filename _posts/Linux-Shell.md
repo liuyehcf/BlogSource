@@ -2261,7 +2261,7 @@ tput bel     # Play a bell
 tput setaf 1; tput setab 2; tput bold; echo "this is text"
 ```
 
-# 9 References
+# 9 Reference
 
 * [shell教程](http://www.runoob.com/linux/linux-shell.html)
 * [linux exec与重定向](http://xstarcd.github.io/wiki/shell/exec_redirect.html)

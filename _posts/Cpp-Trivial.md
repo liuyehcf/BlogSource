@@ -11,7 +11,7 @@ categories:
 
 <!--more-->
 
-# 1 编译过程
+# 1 Compile Process
 
 ```mermaid
 flowchart TD
@@ -43,9 +43,9 @@ flowchart TD
     linker --> result_lib
 ```
 
-# 2 lib
+# 2 Library
 
-## 2.1 静态链接库
+## 2.1 Static Library
 
 **后缀：`*.a`**
 
@@ -60,7 +60,7 @@ flowchart TD
 * `-Xlinker -Map=a.map`：将链接时的信息记录到`a.map`中
 * `nm/objdump/readelf/strings`或许可以找到一些静态库相关的`hint`
 
-### 2.1.1 静态库搜索顺序
+### 2.1.1 Search Order
 
 **搜索顺序如下：详见`ld --verbose | grep SEARCH_DIR`**
 
@@ -70,7 +70,7 @@ flowchart TD
 * 如果在系统默认的库目录中也没有找到匹配的库文件，则按照编译器的默认顺序搜索一些特定的库目录，如`/lib64`、`/usr/lib64`、`/usr/local/lib64`等
 * 如果在所有指定的库目录中都没有找到匹配的库文件，则链接器会报错，指出无法找到指定的库文件
 
-## 2.2 动态链接库
+## 2.2 Dynamic Library
 
 **后缀：`*.so`**
 
@@ -78,7 +78,7 @@ flowchart TD
 
 **查看动态链接库绑定信息：`ldconfig -v`、`ldconfig -p`**
 
-### 2.2.1 动态库搜索顺序
+### 2.2.1 Search Order
 
 **搜索顺序如下：详见`man ld.so`**
 
@@ -87,7 +87,7 @@ flowchart TD
 1. 在`/lib`、`/lib64`中搜索（系统发行版安装的）
 1. 在`/usr/lib`、`/usr/lib64`中搜索（其他软件安装的）
 
-### 2.2.2 Linux下so的版本机制介绍
+### 2.2.2 Linux's so version mechanism
 
 **本小节转载摘录自[一文读懂Linux下动态链接库版本管理及查找加载方式](https://blog.ideawand.com/2020/02/15/how-does-linux-shared-library-versioning-works/)**
 
@@ -101,7 +101,7 @@ libbar.so.x  ->  libbar.so.x.y
 
 这里的`x`、`y`、`z`分别代表的是这个`so`的主版本号（`MAJOR`），次版本号（`MINOR`），以及发行版本号（`RELEASE`），对于这三个数字各自的含义，以及什么时候会进行增长，不同的文献上有不同的解释，不同的组织遵循的规定可能也有细微的差别，但有一个可以肯定的事情是：主版本号（`MAJOR`）不同的两个`so`库，所暴露出的`API`接口是不兼容的。而对于次版本号，和发行版本号，则有着不同定义，其中一种定义是：次要版本号表示`API`接口的定义发生了改变（比如参数的含义发生了变化），但是保持向前兼容；而发行版本号则是函数内部的一些功能调整、优化、BUG修复，不涉及`API`接口定义的修改
 
-#### 2.2.2.1 几个so库有关名字的介绍
+#### 2.2.2.1 so Related Names
 
 **介绍一下在`so`查找过程中的几个名字**
 
@@ -109,7 +109,7 @@ libbar.so.x  ->  libbar.so.x.y
 * **`real name`：是真实具有`so`库可执行代码的那个文件，之所以叫`real`是相对于`SONAME`和`linker name`而言的，因为另外两种名字一般都是一个软连接，这些软连接最终指向的文件都是具有`real name`命名形式的文件。`real name`的命名格式中，可能有`2`个数字尾缀，也可能有`3`个数字尾缀，但这不重要。你只要记住，真实的那个，不是以软连接形式存在的，就是一个`real name`**
 * **`linker name`：这个名字只是给编译工具链中的连接器使用的名字，和程序运行并没有什么关系，仅仅在链接得到可执行文件的过程中才会用到。它的命名特征是以`lib`开头，以`.so`结尾，不带任何数字后缀的格式**
 
-#### 2.2.2.2 SONAME的作用
+#### 2.2.2.2 SONAME
 
 假设在你的Linux系统中有3个不同版本的`bar`共享库，他们在磁盘上保存的文件名如下：
 
@@ -133,7 +133,7 @@ libbar.so.x  ->  libbar.so.x.y
 * 通过修改软连接的指向，可以让应用程序在互相兼容的`so`库中方便切换使用哪一个
 * 通常情况下，大家使用最新版本即可，除非是为了在特定版本下做一些调试、开发工作
 
-#### 2.2.2.3 linker name的作用
+#### 2.2.2.3 linker name
 
 上一节中我们提到，可执行文件里会存储精确到主版本号的`SONAME`，但是在编译生成可执行文件的过程中，编译器怎么知道应该用哪个主版本号呢？为了回答这个问题，我们从编译链接的过程来梳理一下
 
@@ -152,7 +152,7 @@ libbar.so.x  ->  libbar.so.x.y
 * 编译器从软链接指向的文件里找到其`SONAME`，并将`SONAME`写入到生成的可执行文件中
 * 通过改变`linker name`软连接的指向，可以将不同主版本号的`SONAME`写入到生成的可执行文件中
 
-## 2.3 链接顺序
+## 2.3 Link Order
 
 [Why does the order in which libraries are linked sometimes cause errors in GCC?](https://stackoverflow.com/questions/45135/why-does-the-order-in-which-libraries-are-linked-sometimes-cause-errors-in-gcc)
 
@@ -246,7 +246,7 @@ fopen() returned NULL
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-## 2.5 如何制作动态库
+## 2.5 How to make dynamic library
 
 ```sh
 cat > foo.cpp << 'EOF'
@@ -324,7 +324,7 @@ gcc -o main main.cpp -O3 -L . -Wl,-rpath=`pwd` -lfoo -lstdc++
 * [ABI Policy and Guidelines](https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html)
 * [C/C++ ABI兼容那些事儿](https://zhuanlan.zhihu.com/p/556726543)
 
-## 2.7 常用动态库
+## 2.7 Commonly-used Librarys
 
 **`libc/glibc/glib`（`man libc/glibc`）**
 
@@ -352,7 +352,7 @@ gcc -o main main.cpp -O3 -L . -Wl,-rpath=`pwd` -lfoo -lstdc++
 1. `libz`：compression/decompression library
 1. `libpthread`：POSIX threads library
 
-## 2.8 参考
+## 2.8 Reference
 
 * [Program Library HOWTO](https://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html)
 * [Shared Libraries: Understanding Dynamic Loading](https://amir.rachum.com/blog/2016/09/17/shared-libraries/)
@@ -363,7 +363,7 @@ gcc -o main main.cpp -O3 -L . -Wl,-rpath=`pwd` -lfoo -lstdc++
 * [What is libstdc++.so.6 and GLIBCXX_3.4.20?](https://unix.stackexchange.com/questions/557919/what-is-libstdc-so-6-and-glibcxx-3-4-20)
 * [多个gcc/glibc版本的共存及指定gcc版本的编译](https://blog.csdn.net/mo4776/article/details/119837501)
 
-# 3 内存管理
+# 3 Memory Management
 
 [brk和sbrk所指的program break到底是什么？](https://www.zhihu.com/question/21098367/answer/1698482825)
 
@@ -668,11 +668,11 @@ jeprof main localhost:16691/pprof/profile --text --seconds=15
 
 ## 3.3 [mimalloc](https://github.com/microsoft/mimalloc)
 
-## 3.4 对比
+## 3.4 Comparison
 
 [What are the differences between (and reasons to choose) tcmalloc/jemalloc and memory pools?](https://stackoverflow.com/questions/9866145/what-are-the-differences-between-and-reasons-to-choose-tcmalloc-jemalloc-and-m)
 
-## 3.5 参考
+## 3.5 Reference
 
 * [heapprofile.html](https://gperftools.github.io/gperftools/heapprofile.html)
 * [Apache Doris-调试工具](https://doris.apache.org/developer-guide/debug-tool.html)
@@ -728,13 +728,13 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
 ./test_stack_buffer_underflow
 ```
 
-## 4.3 参考
+## 4.3 Reference
 
 * [c++ Asan(address-sanitize)的配置和使用](https://blog.csdn.net/weixin_41644391/article/details/103450401)
 * [HOWTO: Use Address Sanitizer](https://www.osc.edu/resources/getting_started/howto/howto_use_address_sanitizer)
 * [google/sanitizers](https://github.com/google/sanitizers)
 
-# 5 gun工具链
+# 5 GNU Tools
 
 1. `ld`：the GNU linker
 1. `as`：the GNU assembler
@@ -861,9 +861,9 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
     ./proxy_malloc
     ```
 
-## 5.3 参考
+## 5.3 Reference
 
-# 6 llvm工具链
+# 6 LLVM Tools
 
 ## 6.1 clang-format
 
@@ -899,13 +899,13 @@ SpacesBeforeTrailingComments: 1
 
 * 即便`.clang-format`相同，不同版本的`clang-format`格式化的结果也有差异
 
-# 7 其他
+# 7 Uncategorized
 
-## 7.1 动态分析
+## 7.1 Dynamic Analysis
 
 ![analysis-tools](/images/Cpp-Trivial/analysis-tools.png)
 
-## 7.2 头文件搜索路径
+## 7.2 Header File Search Order
 
 **头文件`#include "xxx.h"`的搜索顺序**
 
@@ -926,7 +926,42 @@ SpacesBeforeTrailingComments: 1
     * `/usr/local/include`
     * `/usr/lib/gcc/x86_64-redhat-linux/<gcc version>/include`（C头文件）或者`/usr/include/c++/<gcc version>`（C++头文件）
 
-## 7.3 doc
+## 7.3 How to check the compile error message
+
+Example:
+
+```
+In file included from /starrocks/be/src/exprs/agg/approx_top_k.h:20:
+/starrocks/be/src/column/column_hash.h: In instantiation of ‘std::size_t starrocks::StdHashWithSeed<T, seed>::operator()(T) const [with T = std::vector<unsigned char, std::allocator<unsigned char> >; starrocks::PhmapSeed seed = starrocks::PhmapSeed1; std::size_t = long unsigned int]’:
+/starrocks/be/src/util/phmap/phmap.h:1723:49:   required from ‘size_t phmap::priv::raw_hash_set<Policy, Hash, Eq, Alloc>::HashElement::operator()(const K&, Args&& ...) const [with K = std::vector<unsigned char, std::allocator<unsigned char> >; Args = {}; Policy = phmap::priv::FlatHashMapPolicy<std::vector<unsigned char, std::allocator<unsigned char> >, starrocks::ApproxTopKState<starrocks::TYPE_VARCHAR>::Counter*>; Hash = starrocks::StdHashWithSeed<std::vector<unsigned char, std::allocator<unsigned char> >, starrocks::PhmapSeed1>; Eq = phmap::EqualTo<std::vector<unsigned char, std::allocator<unsigned char> > >; Alloc = std::allocator<std::pair<const std::vector<unsigned char, std::allocator<unsigned char> >, starrocks::ApproxTopKState<starrocks::TYPE_VARCHAR>::Counter*> >; size_t = long unsigned int]’
+/starrocks/be/src/util/phmap/phmap.h:1689:39:   required from ‘size_t phmap::priv::raw_hash_set<Policy, Hash, Eq, Alloc>::hash(const K&) const [with K = std::vector<unsigned char, std::allocator<unsigned char> >; Policy = phmap::priv::FlatHashMapPolicy<std::vector<unsigned char, std::allocator<unsigned char> >, starrocks::ApproxTopKState<starrocks::TYPE_VARCHAR>::Counter*>; Hash = starrocks::StdHashWithSeed<std::vector<unsigned char, std::allocator<unsigned char> >, starrocks::PhmapSeed1>; Eq = phmap::EqualTo<std::vector<unsigned char, std::allocator<unsigned char> > >; Alloc = std::allocator<std::pair<const std::vector<unsigned char, std::allocator<unsigned char> >, starrocks::ApproxTopKState<starrocks::TYPE_VARCHAR>::Counter*> >; size_t = long unsigned int]’
+/starrocks/be/src/util/phmap/phmap.h:1625:36:   required from ‘phmap::priv::raw_hash_set<Policy, Hash, Eq, Alloc>::iterator phmap::priv::raw_hash_set<Policy, Hash, Eq, Alloc>::find(key_arg<K>&) [with K = std::vector<unsigned char, std::allocator<unsigned char> >; Policy = phmap::priv::FlatHashMapPolicy<std::vector<unsigned char, std::allocator<unsigned char> >, starrocks::ApproxTopKState<starrocks::TYPE_VARCHAR>::Counter*>; Hash = starrocks::StdHashWithSeed<std::vector<unsigned char, std::allocator<unsigned char> >, starrocks::PhmapSeed1>; Eq = phmap::EqualTo<std::vector<unsigned char, std::allocator<unsigned char> > >; Alloc = std::allocator<std::pair<const std::vector<unsigned char, std::allocator<unsigned char> >, starrocks::ApproxTopKState<starrocks::TYPE_VARCHAR>::Counter*> >; key_arg<K> = std::vector<unsigned char, std::allocator<unsigned char> >]’
+/starrocks/be/src/exprs/agg/approx_top_k.h:80:23:   required from ‘void starrocks::ApproxTopKState<LT>::process(const CppType&, int64_t, bool) [with starrocks::LogicalType LT = starrocks::TYPE_VARCHAR; CppType = std::vector<unsigned char, std::allocator<unsigned char> >; int64_t = long int]’
+/starrocks/be/src/exprs/agg/approx_top_k.h:75:13:   required from ‘void starrocks::ApproxTopKState<LT>::merge(std::vector<Counter>) [with starrocks::LogicalType LT = starrocks::TYPE_VARCHAR]’
+/starrocks/be/src/exprs/agg/approx_top_k.h:239:32:   required from ‘void starrocks::ApproxTopKAggregateFunction<LT, T>::merge(starrocks::FunctionContext*, const starrocks::Column*, starrocks::AggDataPtr, size_t) const [with starrocks::LogicalType LT = starrocks::TYPE_VARCHAR; T = starrocks::Slice; starrocks::AggDataPtr = unsigned char*; size_t = long unsigned int]’
+/starrocks/be/src/exprs/agg/approx_top_k.h:215:10:   required from here
+/starrocks/be/src/column/column_hash.h:282:101: error: use of deleted function ‘std::hash<std::vector<unsigned char, std::allocator<unsigned char> > >::hash()’
+  282 |     std::size_t operator()(T value) const { return phmap_mix_with_seed<sizeof(size_t), seed>()(std::hash<T>()(value)); }
+```
+
+When interpreting compiler error messages, especially those involving template instantiation (which can be particularly verbose and intricate), there's a general approach that you can take. Here's how to approach such error messages:
+
+1. **Start At The End:**
+    * Often, the actual error (like a type mismatch, use of an undefined variable, etc.) is reported at the end of the message.
+    * In your provided message, the core error was at the end, stating the use of a deleted function.
+1. **Work Your Way Up:**
+    * Once you have the core error in mind, start moving upwards to see where in your code this problem originates. Often, the actual line of your code that triggers the error is one of the last things mentioned before the core error.
+    * In your case, the direct line of code causing the error was provided in `column_hash.h`.
+1. **Template Call Stack:**
+    * Template errors tend to provide a "call stack" of sorts which traces the sequence of template instantiations that led to the error. This can be useful to understand the flow of logic and how you arrived at the error.
+    * In your message, this was the sequence starting from `phmap.h:1723:49` and moving through various template functions/classes.
+1. **Context:**
+    * The initial part of the message usually provides the broader context: where the error started, what file it originated from, and so on.
+    * In your output, the initial message pointed to `column_hash.h` being included from `approx_top_k.h`, providing a starting point for the cascade of template instantiation.
+
+In Summary: While the bottom-up approach is useful for quickly identifying the core error and the immediate lines of code causing it, you sometimes need to go top-down to fully understand the context and sequence of events leading to the error. With experience, you'll develop an intuition for quickly scanning and pinpointing the most relevant parts of such error messages.
+
+## 7.4 Document
 
 1. [cpp reference](https://en.cppreference.com/w/)
 1. [cppman](https://github.com/aitjcize/cppman/)
@@ -934,6 +969,6 @@ SpacesBeforeTrailingComments: 1
     * 示例：`cppman vector::begin`
     * 重建索引：`cppman -r`
 
-## 7.4 参考
+## 7.5 Reference
 
 * [C/C++ 头文件以及库的搜索路径](https://blog.csdn.net/crylearner/article/details/17013187)

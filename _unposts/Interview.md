@@ -622,7 +622,7 @@ For better observability and query analysis, I introduced support for runtime pr
 
 1. serverless
 
-# 8 References
+# 8 Reference
 
 * [cpp-interview](https://github.com/huihut/interview)
 * [interview](https://github.com/Olshansk/interview)
