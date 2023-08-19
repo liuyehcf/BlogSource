@@ -1879,6 +1879,10 @@ call plug#end()
 * 在编辑模式下，输入片段后，按`<c-l>`触发片段扩展
 * `:CocList snippets`：查看所有可用的`snippet`
 
+**问题：**
+
+* 最新版本无法跳转到`fori`的类型占位符，转而使用另一个插件`UltiSnips`
+
 #### 3.10.4.1 vim-snippets
 
 Home: [vim-snippets](https://github.com/honza/vim-snippets)
@@ -2946,7 +2950,37 @@ call plug#end()
     * `vllllSFprint`：类似`vllllSfprint`，`F`表示会在参数列表前后多加额外的空格。形式为`print( <text> )`
     * `vllllS<c-f>print`：类似`vllllSfprint`，`<c-f>`表示环绕符号加到最外侧。形式为`(print <text>)`
 
-## 3.26 My Full Settings
+## 3.26 UltiSnips
+
+Home: [UltiSnips](https://github.com/SirVer/ultisnips)
+
+UltiSnips is the ultimate solution for snippets in Vim.
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....其他插件及配置.....
+" ......................
+
+Plug 'SirVer/ultisnips'
+
+" Snippets are separated from the engine. Add this if you want them:
+Plug 'honza/vim-snippets'
+
+" Trigger configuration.
+let g:UltiSnipsExpandTrigger="<c-l>"
+let g:UltiSnipsJumpForwardTrigger="<c-j>"
+let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+
+call plug#end()
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+## 3.27 My Full Settings
 
 ```vim
 call plug#begin()
@@ -3138,18 +3172,6 @@ nnoremap <silent>  :CocPrev<cr>
 " 将 打开文件管理器 映射到快捷键 [Space] + e
 nmap <space>e <cmd>CocCommand explorer<cr>
 
-" 将 触发代码片段扩展 映射到快捷键 [Ctrl] + l
-imap <c-l> <Plug>(coc-snippets-expand)
-" 在 visual 模式下，将 跳转到下一个占位符 映射到快捷键 [Ctrl] + j
-vmap <c-j> <Plug>(coc-snippets-select)
-" 在编辑模式下，将 跳转到下一个/上一个占位符 分别映射到 [Ctrl] + j 和 [Ctrl] + k
-let g:coc_snippet_next = '<c-j>'
-let g:coc_snippet_prev = '<c-k>'
-
-" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-Plug 'honza/vim-snippets'
-
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 if has('nvim')
@@ -3293,6 +3315,18 @@ nnoremap <c-l> :FormatCode<cr>
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 Plug 'tpope/vim-surround'
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'SirVer/ultisnips'
+
+" Snippets are separated from the engine. Add this if you want them:
+Plug 'honza/vim-snippets'
+
+" Trigger configuration.
+let g:UltiSnipsExpandTrigger="<c-l>"
+let g:UltiSnipsJumpForwardTrigger="<c-j>"
+let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 
 call plug#end()
 
