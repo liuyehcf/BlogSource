@@ -602,7 +602,7 @@ vim会主动将你曾经做过的行为记录下来，好让你下次可以轻�
 
 **`vimtutor`：提供一个简易的教程**
 
-## 2.19 Else
+## 2.19 Assorted
 
 * **`echo`**
     * **`:echo <variable>`：可以查看`<variable>`的值**
@@ -677,11 +677,11 @@ if filereadable("./.workspace.vim")
 endif
 ```
 
-# 3 vim插件管理
+# 3 Plugin
 
 **目前，使用最广泛的插件管理工具是：[vim-plug](https://github.com/junegunn/vim-plug)**
 
-## 3.1 常用插件概览
+## 3.1 Overview
 
 | 插件名称 | 用途 | 官网地址 |
 |:--|:--|:--|
@@ -721,13 +721,13 @@ endif
 | `vim-clang-format` | 代码格式化（仅限clang-format） | https://github.com/rhysd/vim-clang-format |
 | `vim-surround` | 文本环绕 | https://github.com/tpope/vim-surround |
 
-## 3.2 环境准备
+## 3.2 Prepare
 
 **为什么需要准备环境，vim的插件管理不是会为我们安装插件么？因为某些复杂插件，比如`ycm`是需要手动编译的，而编译就会依赖一些编译相关的工具，并且要求的版本比较高**
 
 **由于我用的系统是`CentOS 7.9`，通过`yum install`安装的工具都过于陈旧，包括`gcc`、`g++`、`clang`、`clang++`、`cmake`等等，这些工具都需要通过其他方式重新安装**
 
-### 3.2.1 安装gcc
+### 3.2.1 gcc
 
 **[gcc各版本源码包下载地址](http://ftp.gnu.org/gnu/gcc/)，我选择的版本是`gcc-10.3.0`**
 
@@ -760,14 +760,14 @@ ln -s /usr/bin/g++ /usr/bin/c++
 ln -s /usr/local/lib64/libstdc++.so.6.0.28 /lib64/libstdc++.so.6
 ```
 
-### 3.2.2 安装python3
+### 3.2.2 python3
 
 ```
 yum install -y python3
 yum install -y python3-devel.x86_64
 ```
 
-### 3.2.3 安装cmake
+### 3.2.3 cmake
 
 **[cmake官网](https://cmake.org/download/)有二进制包可以下载，下载安装即可**
 
@@ -780,7 +780,7 @@ tar -zxvf cmake-3.21.2-linux-x86_64.tar.gz -C /usr/local/lib
 ln -s /usr/local/lib/cmake-3.21.2-linux-x86_64/bin/cmake /usr/local/bin/cmake
 ```
 
-### 3.2.4 安装llvm
+### 3.2.4 llvm
 
 **根据[官网安装说明](https://clang.llvm.org/get_started.html)进行安装，其代码托管在[github-llvm-project](https://github.com/llvm/llvm-project)**
 
@@ -814,7 +814,7 @@ cmake --build build -j 4
 sudo cmake --install build
 ```
 
-### 3.2.5 centos安装vim8
+### 3.2.5 vim8
 
 上述很多插件对vim的版本有要求，至少是`vim8`，而一般通过`yum install`安装的vim版本是`7.x`
 
@@ -830,7 +830,7 @@ yum install -y vim
 vim --version | head -1
 ```
 
-### 3.2.6 符号索引-[ctags](https://ctags.io/)
+### 3.2.6 Symbol Index [ctags](https://ctags.io/)
 
 **`ctags`的全称是`universal-ctags`**
 
@@ -920,7 +920,7 @@ set tags+=~/.vim/.cfamily_systags
 set tags+=~/.vim/.python_systags
 ```
 
-### 3.2.7 符号索引-[cscope](http://cscope.sourceforge.net/)
+### 3.2.7 Symbol Index [cscope](http://cscope.sourceforge.net/)
 
 **相比于`ctags`，`cscope`支持更多功能，包括查找定义、查找引用等等。但是该项目最近一次更新是2012年，因此不推荐使用。推荐使用`gtags`**
 
@@ -993,7 +993,7 @@ nnoremap <leader>si :cscope find i <c-r>=expand("<cfile>")<cr><cr>:copen<cr>
 
 * 尽量在源码目录创建数据库，否则cscope默认会扫描所有文件，效率很低
 
-### 3.2.8 符号索引-[gtags](https://www.gnu.org/software/global/global.html)
+### 3.2.8 Symbol Index [gtags](https://www.gnu.org/software/global/global.html)
 
 **`gtags`的全称是`GNU Global source code tagging system`**
 
@@ -1076,7 +1076,7 @@ endif
     1. **final修饰的类，`gtags`找不到其定义，坑爹的bug，害我折腾了很久**
 1. `global -d`无法查找成员变量的定义
 
-### 3.2.9 语义索引-clangd
+### 3.2.9 LSP-clangd
 
 **`clangd`是`LSP, Language Server Protocol`的一种实现，主要用于`C/C++/Objective-C`等语言**
 
@@ -1096,7 +1096,7 @@ endif
 * `--query-driver=`：设置一个或多个`glob`，会从匹配这些`glob`的路径中搜索头文件
     * `--query-driver=/usr/bin/**/clang-*,/path/to/repo/**/g++-*`
 
-### 3.2.10 语义索引-ccls
+### 3.2.10 LSP-ccls
 
 **`ccls`是`LSP, Language Server Protocol`的一种实现，主要用于`C/C++/Objective-C`等语言**
 
@@ -1134,7 +1134,7 @@ cmake --build Release --target install
 1. 配置`LSP-client`插件，我用的是`LanguageClient-neovim`
 1. vim打开工程，便开始自动创建索引
 
-### 3.2.11 语义索引-jdtls
+### 3.2.11 LSP-jdtls
 
 **`jdtls`是`LSP, Language Server Protocol`的一种实现，主要用于`Java`语言**
 
@@ -1152,7 +1152,7 @@ JAVA_HOME=/path/to/java/11 ./mvnw clean verify
 
 * 运行日志默认在config目录中，例如`./org.eclipse.jdt.ls.product/target/repository/config_linux/`目录下
 
-### 3.2.12 安装vim-plug
+### 3.2.12 vim-plug
 
 按照[vim-plug](https://github.com/junegunn/vim-plug)官网文档，通过一个命令直接安装即可
 
@@ -1206,7 +1206,7 @@ let fmt = get(g:, 'plug_url_format', 'https://git::@ghproxy.com/https://github.c
                         \ 'PlugClean required.'], "\n")
     ```
 
-## 3.3 配色方案
+## 3.3 Color Scheme
 
 ### 3.3.1 [gruvbox](https://github.com/morhetz/gruvbox)
 
@@ -1273,7 +1273,7 @@ mkdir ~/.vim/colors
 cp ~/.vim/plugged/vim-colors-solarized/colors/solarized.vim ~/.vim/colors/
 ```
 
-## 3.4 状态栏-[vim-airline](https://github.com/vim-airline/vim-airline)
+## 3.4 [vim-airline](https://github.com/vim-airline/vim-airline)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1291,7 +1291,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 3.5 缩进标线-[indentLine](https://github.com/Yggdroot/indentLine)
+## 3.5 [indentLine](https://github.com/Yggdroot/indentLine)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1313,7 +1313,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 3.6 文件管理器-[nerdtree](https://github.com/preservim/nerdtree)
+## 3.6 [nerdtree](https://github.com/preservim/nerdtree)
 
 **前言：`coc.nvim`插件体系提供了`coc-explore`，如果使用了`coc.nvim`插件，就不需要其他的文件管理器了**
 
@@ -1343,7 +1343,7 @@ call plug#end()
 * `:NERDTreeToggle`：打开文件管理器
 * `:NERDTreeFind`：打开文件管理器，并且定位到当前文件
 
-## 3.7 语法高亮-[vim-cpp-enhanced-highlight](https://github.com/octol/vim-cpp-enhanced-highlight)
+## 3.7 [vim-cpp-enhanced-highlight](https://github.com/octol/vim-cpp-enhanced-highlight)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1367,7 +1367,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 3.8 彩虹括号-[rainbow](https://github.com/luochen1990/rainbow)
+## 3.8 [rainbow](https://github.com/luochen1990/rainbow)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1387,7 +1387,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 3.9 自动索引-[vim-gutentags](https://github.com/ludovicchabant/vim-gutentags)
+## 3.9 [vim-gutentags](https://github.com/ludovicchabant/vim-gutentags)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1479,7 +1479,7 @@ call plug#end()
     * `let g:gutentags_enabled = 0`
     * `let g:gutentags_dont_load = 1`
 
-### 3.9.1 gtags查询快捷键-[gutentags_plus](https://github.com/skywind3000/gutentags_plus)
+### 3.9.1 [gutentags_plus](https://github.com/skywind3000/gutentags_plus)
 
 **没有该插件时，我们一般按照如下方式使用`gtags`**
 
@@ -1532,7 +1532,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-### 3.9.2 quickfix预览-[vim-preview](https://github.com/skywind3000/vim-preview)
+### 3.9.2 [vim-preview](https://github.com/skywind3000/vim-preview)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2213,7 +2213,7 @@ call plug#end()
     }
     ```
 
-## 3.13 智能补全-[Copilot.vim](https://github.com/github/copilot.vim)
+## 3.13 [Copilot.vim](https://github.com/github/copilot.vim)
 
 [Getting started with GitHub Copilot](https://docs.github.com/en/copilot/getting-started-with-github-copilot?tool=neovim)
 
@@ -2260,7 +2260,7 @@ call plug#end()
 
 * `:help copilot`
 
-## 3.14 代码补全
+## 3.14 Code Completion
 
 **前言：`coc.nvim`插件体系提供了大部分语言的代码补全功能，如果使用了`coc.nvim`插件，就不需要使用下面的这些补全插件了**
 
@@ -2399,7 +2399,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 3.15 编译运行-[AsyncRun](https://github.com/skywind3000/asyncrun.vim)
+## 3.15 [AsyncRun](https://github.com/skywind3000/asyncrun.vim)
 
 本质上，`AsyncRun`插件就是提供了异步执行命令的机制，我们可以利用这个机制定义一些动作，比如`编译`、`构建`、`运行`、`测试`等，提供类似于`IDE`的体验
 
@@ -2437,7 +2437,7 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 3.16 动态检查-[ALE](https://github.com/dense-analysis/ale)
+## 3.16 [ALE](https://github.com/dense-analysis/ale)
 
 **前言：`coc.nvim`插件体系提供了大部分语言的错误诊断功能，如果使用了`coc.nvim`插件，就不需要使用其他的错误诊断插件了**
 
@@ -2511,7 +2511,7 @@ call plug#end()
     1. `mv /usr/local/share/locale/zh_CN/LC_MESSAGES/gcc.mo /usr/local/share/locale/zh_CN/LC_MESSAGES/gcc.mo.bak`
     * 如果找不到`gcc.mo`文件的话，可以用`locate`命令搜索一下
 
-## 3.17 修改比较-[vim-signify](https://github.com/mhinz/vim-signify)
+## 3.17 [vim-signify](https://github.com/mhinz/vim-signify)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2534,7 +2534,7 @@ call plug#end()
 * `set signcolumn=yes`，有改动的行会标出
 * `:SignifyDiff`：以左右分屏的方式对比当前文件的差异
 
-## 3.18 文本对象-[textobj-user](https://github.com/kana/vim-textobj-user)
+## 3.18 [textobj-user](https://github.com/kana/vim-textobj-user)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2566,7 +2566,7 @@ call plug#end()
 * **`ii/ai`：缩进对象。可以用`vii/vai`/`dii/dai`/`cii/cai`来选中/删除/改写同一缩进层次的内容**
 * **`if/af`：函数对象。可以用`vif/vaf`/`dif/daf`/`cif/caf`来选中/删除/改写当前函数的内容**
 
-## 3.19 函数列表-[LeaderF](https://github.com/Yggdroot/LeaderF)
+## 3.19 [LeaderF](https://github.com/Yggdroot/LeaderF)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2620,7 +2620,7 @@ call plug#end()
     * `<c-t>`：在新的`tab`中打开选中的文件
     * `<c-p>`：预览
 
-## 3.20 全局模糊搜索-[fzf.vim](https://github.com/junegunn/fzf.vim)
+## 3.20 [fzf.vim](https://github.com/junegunn/fzf.vim)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2682,7 +2682,7 @@ call plug#end()
     * **上述规则均可自由组合**
     * **如何精确匹配一个包含空格的字符串：`'Hello\ world`。由于常规的空格被用作分词符，因此空格前要用`\`进行转义**
 
-## 3.21 全局搜索-[vim-grepper](https://github.com/mhinz/vim-grepper)
+## 3.21 [vim-grepper](https://github.com/mhinz/vim-grepper)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2704,7 +2704,7 @@ call plug#end()
 
 * `:Grepper`：进行全局搜索（依赖grep命令）
 
-## 3.22 git扩展-[vim-fugitive](https://github.com/tpope/vim-fugitive)
+## 3.22 [vim-fugitive](https://github.com/tpope/vim-fugitive)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2726,7 +2726,7 @@ call plug#end()
 
 * `:Git`：作为`git`的替代，后跟`git`命令行工具的正常参数即可
 
-## 3.23 添加注释-[nerdcommenter](https://github.com/preservim/nerdcommenter)
+## 3.23 [nerdcommenter](https://github.com/preservim/nerdcommenter)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2763,7 +2763,7 @@ call plug#end()
 * **`\cu`：取消注释**
 * **`\c<space>`：如果被选区域有部分被注释，则对被选区域执行取消注释操作，其它情况执行反转注释操作**
 
-## 3.24 代码格式化-[vim-codefmt](https://github.com/google/vim-codefmt)
+## 3.24 [vim-codefmt](https://github.com/google/vim-codefmt)
 
 **支持各种格式化工具：**
 
@@ -2822,7 +2822,7 @@ sudo chmod a+x /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.p
 sudo ln /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.py /usr/local/bin/autopep8
 ```
 
-## 3.25 文本环绕-[vim-surround](https://github.com/tpope/vim-surround)
+## 3.25 [vim-surround](https://github.com/tpope/vim-surround)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2874,7 +2874,7 @@ call plug#end()
     * `vllllSFprint`：类似`vllllSfprint`，`F`表示会在参数列表前后多加额外的空格。形式为`print( <text> )`
     * `vllllS<c-f>print`：类似`vllllSfprint`，`<c-f>`表示环绕符号加到最外侧。形式为`(print <text>)`
 
-## 3.26 个人完整配置
+## 3.26 My Full Settings
 
 ```vim
 call plug#begin()
@@ -3427,7 +3427,7 @@ ln -s ~/.vim/plugged ~/.local/share/nvim/plugged
     :redir END
     ```
 
-# 7 参考
+# 7 Reference
 
 * **[《Vim 中文速查表》](https://github.com/skywind3000/awesome-cheatsheets/blob/master/editors/vim.txt)**
 * **[如何在 Linux 下利用 Vim 搭建 C/C++ 开发环境?](https://www.zhihu.com/question/47691414)**
