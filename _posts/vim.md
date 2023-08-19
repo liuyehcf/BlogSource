@@ -830,7 +830,9 @@ yum install -y vim
 vim --version | head -1
 ```
 
-### 3.2.6 Symbol Index [ctags](https://ctags.io/)
+### 3.2.6 Symbol-ctags
+
+Home: [ctags](https://ctags.io/)
 
 **`ctags`的全称是`universal-ctags`**
 
@@ -920,7 +922,9 @@ set tags+=~/.vim/.cfamily_systags
 set tags+=~/.vim/.python_systags
 ```
 
-### 3.2.7 Symbol Index [cscope](http://cscope.sourceforge.net/)
+### 3.2.7 Symbol-cscope
+
+Home: [cscope](http://cscope.sourceforge.net/)
 
 **相比于`ctags`，`cscope`支持更多功能，包括查找定义、查找引用等等。但是该项目最近一次更新是2012年，因此不推荐使用。推荐使用`gtags`**
 
@@ -993,7 +997,9 @@ nnoremap <leader>si :cscope find i <c-r>=expand("<cfile>")<cr><cr>:copen<cr>
 
 * 尽量在源码目录创建数据库，否则cscope默认会扫描所有文件，效率很低
 
-### 3.2.8 Symbol Index [gtags](https://www.gnu.org/software/global/global.html)
+### 3.2.8 Symbol-gtags
+
+Home: [gtags](https://www.gnu.org/software/global/global.html)
 
 **`gtags`的全称是`GNU Global source code tagging system`**
 
@@ -1208,7 +1214,9 @@ let fmt = get(g:, 'plug_url_format', 'https://git::@ghproxy.com/https://github.c
 
 ## 3.3 Color Scheme
 
-### 3.3.1 [gruvbox](https://github.com/morhetz/gruvbox)
+### 3.3.1 gruvbox
+
+Home: [gruvbox](https://github.com/morhetz/gruvbox)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1242,7 +1250,9 @@ mkdir ~/.vim/colors
 cp ~/.vim/plugged/gruvbox/colors/gruvbox.vim ~/.vim/colors/
 ```
 
-### 3.3.2 [solarized](https://github.com/altercation/vim-colors-solarized)
+### 3.3.2 solarized
+
+Home: [solarized](https://github.com/altercation/vim-colors-solarized)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1273,7 +1283,9 @@ mkdir ~/.vim/colors
 cp ~/.vim/plugged/vim-colors-solarized/colors/solarized.vim ~/.vim/colors/
 ```
 
-## 3.4 [vim-airline](https://github.com/vim-airline/vim-airline)
+## 3.4 vim-airline
+
+Home: [vim-airline](https://github.com/vim-airline/vim-airline)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1291,7 +1303,9 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 3.5 [indentLine](https://github.com/Yggdroot/indentLine)
+## 3.5 indentLine
+
+Home: [indentLine](https://github.com/Yggdroot/indentLine)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1313,7 +1327,9 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 3.6 [nerdtree](https://github.com/preservim/nerdtree)
+## 3.6 nerdtree
+
+Home: [nerdtree](https://github.com/preservim/nerdtree)
 
 **前言：`coc.nvim`插件体系提供了`coc-explore`，如果使用了`coc.nvim`插件，就不需要其他的文件管理器了**
 
@@ -1343,7 +1359,9 @@ call plug#end()
 * `:NERDTreeToggle`：打开文件管理器
 * `:NERDTreeFind`：打开文件管理器，并且定位到当前文件
 
-## 3.7 [vim-cpp-enhanced-highlight](https://github.com/octol/vim-cpp-enhanced-highlight)
+## 3.7 vim-cpp-enhanced-highlight
+
+Home: [vim-cpp-enhanced-highlight](https://github.com/octol/vim-cpp-enhanced-highlight)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1367,7 +1385,9 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 3.8 [rainbow](https://github.com/luochen1990/rainbow)
+## 3.8 rainbow
+
+Home: [rainbow](https://github.com/luochen1990/rainbow)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1387,7 +1407,9 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 3.9 [vim-gutentags](https://github.com/ludovicchabant/vim-gutentags)
+## 3.9 vim-gutentags
+
+Home: [vim-gutentags](https://github.com/ludovicchabant/vim-gutentags)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1479,7 +1501,9 @@ call plug#end()
     * `let g:gutentags_enabled = 0`
     * `let g:gutentags_dont_load = 1`
 
-### 3.9.1 [gutentags_plus](https://github.com/skywind3000/gutentags_plus)
+### 3.9.1 gutentags_plus
+
+Home: [gutentags_plus](https://github.com/skywind3000/gutentags_plus)
 
 **没有该插件时，我们一般按照如下方式使用`gtags`**
 
@@ -1532,7 +1556,9 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-### 3.9.2 [vim-preview](https://github.com/skywind3000/vim-preview)
+### 3.9.2 vim-preview
+
+Home: [vim-preview](https://github.com/skywind3000/vim-preview)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -1563,7 +1589,9 @@ call plug#end()
 * **`D`：预览页向下滚动半页**
 * **`U`：预览页向上滚动半页**
 
-## 3.10 [coc.nvim](https://github.com/neoclide/coc.nvim)
+## 3.10 coc.nvim
+
+Home: [coc.nvim](https://github.com/neoclide/coc.nvim)
 
 **该插件是作为`LSP Client`，可以支持多种不同的`LSP Server`**
 
@@ -1685,7 +1713,9 @@ call plug#end()
 * `client coc abnormal exit with: 1`：大概率是`node`有问题
 * `node`版本别太新也别太旧，`v16`比较好
 
-### 3.10.1 [coc-explorer](https://github.com/weirongxu/coc-explorer)
+### 3.10.1 coc-explorer
+
+Home: [coc-explorer](https://github.com/weirongxu/coc-explorer)
 
 **`coc-explorer`提供了类似于`nerdtree`的文件管理器的功能，结构更清晰也更易用**
 
@@ -1739,7 +1769,9 @@ call plug#end()
 
 * 文件前面的数字是错误数量，可以通过`Il`查看查看完整的label
 
-### 3.10.2 [coc-java](https://github.com/search?q=coc-java)
+### 3.10.2 coc-java
+
+Home: [coc-java](https://github.com/search?q=coc-java)
 
 **`Java`语言的`LSP-Server`的实现是[jdt.ls](https://github.com/eclipse/eclipse.jdt.ls)。而`coc-java`是`coc.nvim`的扩展，对`jdt.ls`进行进一步的封装**
 
@@ -1784,7 +1816,9 @@ call plug#end()
         * 假设子模块用到了`thrift`，那么需要在子模块的目录下放置`.classpath`，而不是在工程根目录放置`.classpath`
 * 有插件`org.eclipse.m2e:lifecycle-mapping`的时候，`jdt.ls`没法正常工作，目前暂未解决
 
-### 3.10.3 [coc-pyright](https://github.com/fannheyward/coc-pyright)
+### 3.10.3 coc-pyright
+
+Home: [coc-pyright](https://github.com/fannheyward/coc-pyright)
 
 **安装：进入vim界面后执行`:CocInstall coc-pyright`即可**
 
@@ -1809,7 +1843,9 @@ call plug#end()
     deactivate
     ```
 
-### 3.10.4 [coc-snippets](https://github.com/neoclide/coc-snippets)
+### 3.10.4 coc-snippets
+
+Home: [coc-snippets](https://github.com/neoclide/coc-snippets)
 
 **`coc-snippets`用于提供片段扩展功能（类似于`IDEA`中的`sout`、`psvm`、`.var`等等）**
 
@@ -1843,7 +1879,9 @@ call plug#end()
 * 在编辑模式下，输入片段后，按`<c-l>`触发片段扩展
 * `:CocList snippets`：查看所有可用的`snippet`
 
-#### 3.10.4.1 [vim-snippets](https://github.com/honza/vim-snippets)
+#### 3.10.4.1 vim-snippets
+
+Home: [vim-snippets](https://github.com/honza/vim-snippets)
 
 `vim-snippets`插件提供了一系列`snippet`的定义
 
@@ -1903,7 +1941,9 @@ call plug#end()
 * `explorer.file.reveal.auto`：使用在文件管理器中高亮当前`buffer`的所对应的文件
 * `suggest.noselect`：`true/false`，表示自动补全时，是否自动选中第一个。默认为`false`，即自动选中第一个，如果再按`tab`则会跳转到第二个。[Ability to tab to first option](https://github.com/neoclide/coc.nvim/issues/1339)
 
-## 3.11 [LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim)
+## 3.11 LanguageClient-neovim
+
+Home: [LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim)
 
 **该插件是作为`LSP Client`，可以支持多种不同的`LSP Server`**
 
@@ -2079,7 +2119,9 @@ java \
 * 无法访问JDK以及三方库中的类
 * 对于Maven项目，若在标准的目录结构中有额外的目录，例如`<project-name>/src/main/<extra_dir>/com`，那么`jdt.ls`无法自动扫描整个工程，除非手动打开文件，才会把该文件加入解析列表中
 
-## 3.12 [vimspector](https://github.com/puremourning/vimspector)
+## 3.12 vimspector
+
+Home: [vimspector](https://github.com/puremourning/vimspector)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2161,7 +2203,9 @@ call plug#end()
         }
         ```
 
-### 3.12.1 [coc-java-debug](https://github.com/dansomething/coc-java-debug)
+### 3.12.1 coc-java-debug
+
+Home: [coc-java-debug](https://github.com/dansomething/coc-java-debug)
 
 `coc-java-debug`依赖`coc.nvim`、`coc-java`以及`vimspector`
 
@@ -2213,7 +2257,9 @@ call plug#end()
     }
     ```
 
-## 3.13 [Copilot.vim](https://github.com/github/copilot.vim)
+## 3.13 Copilot.vim
+
+Home: [Copilot.vim](https://github.com/github/copilot.vim)
 
 [Getting started with GitHub Copilot](https://docs.github.com/en/copilot/getting-started-with-github-copilot?tool=neovim)
 
@@ -2264,7 +2310,9 @@ call plug#end()
 
 **前言：`coc.nvim`插件体系提供了大部分语言的代码补全功能，如果使用了`coc.nvim`插件，就不需要使用下面的这些补全插件了**
 
-### 3.14.1 [YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
+### 3.14.1 YouCompleteMe
+
+Home: [YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
 
 **这个插件比较复杂，建议手工安装**
 
@@ -2355,7 +2403,9 @@ def Settings(**kwargs):
 * `[Ctrl] + n`：下一个条目
 * `[Ctrl] + p`：上一个条目
 
-### 3.14.2 [vim-javacomplete2](https://github.com/artur-shaik/vim-javacomplete2)
+### 3.14.2 vim-javacomplete2
+
+Home: [vim-javacomplete2](https://github.com/artur-shaik/vim-javacomplete2)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2399,7 +2449,9 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 3.15 [AsyncRun](https://github.com/skywind3000/asyncrun.vim)
+## 3.15 AsyncRun
+
+Home: [AsyncRun](https://github.com/skywind3000/asyncrun.vim)
 
 本质上，`AsyncRun`插件就是提供了异步执行命令的机制，我们可以利用这个机制定义一些动作，比如`编译`、`构建`、`运行`、`测试`等，提供类似于`IDE`的体验
 
@@ -2437,7 +2489,9 @@ call plug#end()
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
 
-## 3.16 [ALE](https://github.com/dense-analysis/ale)
+## 3.16 ALE
+
+Home: [ALE](https://github.com/dense-analysis/ale)
 
 **前言：`coc.nvim`插件体系提供了大部分语言的错误诊断功能，如果使用了`coc.nvim`插件，就不需要使用其他的错误诊断插件了**
 
@@ -2511,7 +2565,9 @@ call plug#end()
     1. `mv /usr/local/share/locale/zh_CN/LC_MESSAGES/gcc.mo /usr/local/share/locale/zh_CN/LC_MESSAGES/gcc.mo.bak`
     * 如果找不到`gcc.mo`文件的话，可以用`locate`命令搜索一下
 
-## 3.17 [vim-signify](https://github.com/mhinz/vim-signify)
+## 3.17 vim-signify
+
+Home: [vim-signify](https://github.com/mhinz/vim-signify)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2534,7 +2590,9 @@ call plug#end()
 * `set signcolumn=yes`，有改动的行会标出
 * `:SignifyDiff`：以左右分屏的方式对比当前文件的差异
 
-## 3.18 [textobj-user](https://github.com/kana/vim-textobj-user)
+## 3.18 textobj-user
+
+Home: [textobj-user](https://github.com/kana/vim-textobj-user)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2566,7 +2624,9 @@ call plug#end()
 * **`ii/ai`：缩进对象。可以用`vii/vai`/`dii/dai`/`cii/cai`来选中/删除/改写同一缩进层次的内容**
 * **`if/af`：函数对象。可以用`vif/vaf`/`dif/daf`/`cif/caf`来选中/删除/改写当前函数的内容**
 
-## 3.19 [LeaderF](https://github.com/Yggdroot/LeaderF)
+## 3.19 LeaderF
+
+Home: [LeaderF](https://github.com/Yggdroot/LeaderF)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2620,7 +2680,9 @@ call plug#end()
     * `<c-t>`：在新的`tab`中打开选中的文件
     * `<c-p>`：预览
 
-## 3.20 [fzf.vim](https://github.com/junegunn/fzf.vim)
+## 3.20 fzf.vim
+
+Home: [fzf.vim](https://github.com/junegunn/fzf.vim)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2682,7 +2744,9 @@ call plug#end()
     * **上述规则均可自由组合**
     * **如何精确匹配一个包含空格的字符串：`'Hello\ world`。由于常规的空格被用作分词符，因此空格前要用`\`进行转义**
 
-## 3.21 [vim-grepper](https://github.com/mhinz/vim-grepper)
+## 3.21 vim-grepper
+
+Home: [vim-grepper](https://github.com/mhinz/vim-grepper)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2704,7 +2768,9 @@ call plug#end()
 
 * `:Grepper`：进行全局搜索（依赖grep命令）
 
-## 3.22 [vim-fugitive](https://github.com/tpope/vim-fugitive)
+## 3.22 vim-fugitive
+
+Home: [vim-fugitive](https://github.com/tpope/vim-fugitive)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2726,7 +2792,9 @@ call plug#end()
 
 * `:Git`：作为`git`的替代，后跟`git`命令行工具的正常参数即可
 
-## 3.23 [nerdcommenter](https://github.com/preservim/nerdcommenter)
+## 3.23 nerdcommenter
+
+Home: [nerdcommenter](https://github.com/preservim/nerdcommenter)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
@@ -2763,7 +2831,9 @@ call plug#end()
 * **`\cu`：取消注释**
 * **`\c<space>`：如果被选区域有部分被注释，则对被选区域执行取消注释操作，其它情况执行反转注释操作**
 
-## 3.24 [vim-codefmt](https://github.com/google/vim-codefmt)
+## 3.24 vim-codefmt
+
+Home: [vim-codefmt](https://github.com/google/vim-codefmt)
 
 **支持各种格式化工具：**
 
@@ -2822,7 +2892,9 @@ sudo chmod a+x /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.p
 sudo ln /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.py /usr/local/bin/autopep8
 ```
 
-## 3.25 [vim-surround](https://github.com/tpope/vim-surround)
+## 3.25 vim-surround
+
+Home: [vim-surround](https://github.com/tpope/vim-surround)
 
 **编辑`~/.vimrc`，添加Plug相关配置**
 
