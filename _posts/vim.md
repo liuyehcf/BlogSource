@@ -2896,7 +2896,7 @@ sudo chmod a+x /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.p
 sudo ln /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.py /usr/local/bin/autopep8
 ```
 
-**安装`Perl`的格式化工具`perltidy`（`Perltidy`尚未合入，需要自行`cherry-pick`，`https://github.com/google/vim-codefmt/pull/227`）**
+**安装`Perl`的格式化工具`perltidy`（相关`pull request`尚未合入，需要自行`cherry-pick`，[Add perl formatting support using Perltidy](https://github.com/google/vim-codefmt/pull/227)）**
 
 * `cpan install Perl::Tidy`
 * `brew install perltidy`
