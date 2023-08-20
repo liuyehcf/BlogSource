@@ -2896,22 +2896,28 @@ sudo chmod a+x /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.p
 sudo ln /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.py /usr/local/bin/autopep8
 ```
 
-**安装`Perl`的格式化工具`perltidy`（相关`pull request`尚未合入，需要自行`cherry-pick`，[Add perl formatting support using Perltidy](https://github.com/google/vim-codefmt/pull/227)）**
+**安装`Perl`的格式化工具`perltidy`**
 
 * `cpan install Perl::Tidy`
 * `brew install perltidy`
-* 若觉得`cherry-pick`麻烦，可以暂时用如下方式代替一下：
+* `perltidy`相关的`pull request`尚未合入，需要自行合入，[Add perl formatting support using Perltidy](https://github.com/google/vim-codefmt/pull/227)，步骤如下：
+    ```sh
+    git fetch origin pull/227/head:pull_request_227
+    git rebase pull_request_227
     ```
-    " 配置 perl 的格式化，需要用 gg=G 进行格式化
-    " https://superuser.com/questions/805695/autoformat-for-perl-in-vim
-    " 通过 cpan Perl::Tidy 安装 perltidy
-    autocmd FileType perl setlocal equalprg=perltidy\ -st\ -ce
-    if has('nvim')
-        autocmd FileType perl nnoremap <silent><buffer> <c-l> gg=G<c-o>
-    else
-        autocmd FileType perl nnoremap <silent><buffer> <c-l> gg=G<c-o><c-o>
-    endif
-    ```
+
+    * 或者，如果不想这么做，可以用如下方式暂时代替：
+        ```
+        " 配置 perl 的格式化，需要用 gg=G 进行格式化
+        " https://superuser.com/questions/805695/autoformat-for-perl-in-vim
+        " 通过 cpan Perl::Tidy 安装 perltidy
+        autocmd FileType perl setlocal equalprg=perltidy\ -st\ -ce
+        if has('nvim')
+            autocmd FileType perl nnoremap <silent><buffer> <c-l> gg=G<c-o>
+        else
+            autocmd FileType perl nnoremap <silent><buffer> <c-l> gg=G<c-o><c-o>
+        endif
+        ```
 
 ## 3.25 vim-surround
 
