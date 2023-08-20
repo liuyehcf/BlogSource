@@ -2896,6 +2896,23 @@ sudo chmod a+x /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.p
 sudo ln /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.py /usr/local/bin/autopep8
 ```
 
+**安装`Perl`的格式化工具`perltidy`（`Perltidy`尚未合入，需要自行`cherry-pick`，`https://github.com/google/vim-codefmt/pull/227`）**
+
+* `cpan install Perl::Tidy`
+* `brew install perltidy`
+* 若觉得`cherry-pick`麻烦，可以暂时用如下方式代替一下：
+    ```
+    " 配置 perl 的格式化，需要用 gg=G 进行格式化
+    " https://superuser.com/questions/805695/autoformat-for-perl-in-vim
+    " 通过 cpan Perl::Tidy 安装 perltidy
+    autocmd FileType perl setlocal equalprg=perltidy\ -st\ -ce
+    if has('nvim')
+        autocmd FileType perl nnoremap <silent><buffer> <c-l> gg=G<c-o>
+    else
+        autocmd FileType perl nnoremap <silent><buffer> <c-l> gg=G<c-o><c-o>
+    endif
+    ```
+
 ## 3.25 vim-surround
 
 Home: [vim-surround](https://github.com/tpope/vim-surround)
@@ -3359,16 +3376,6 @@ endif
 
 " 将 .tpp 后缀的文件视为 cpp 文件，这样，针对 cpp 的插件就可以对 .tpp 文件生效了
 autocmd BufRead,BufNewFile *.tpp set filetype=cpp
-
-" 配置 perl 的格式化，需要用 gg=G 进行格式化
-" https://superuser.com/questions/805695/autoformat-for-perl-in-vim
-" 通过 cpan Perl::Tidy 安装 perltidy
-autocmd FileType perl setlocal equalprg=perltidy\ -st\ -ce
-if has('nvim')
-    autocmd FileType perl nnoremap <silent><buffer> <c-l> gg=G<c-o>
-else
-    autocmd FileType perl nnoremap <silent><buffer> <c-l> gg=G<c-o><c-o>
-endif
 
 " 特定文件类型的配置
 " json文件不隐藏双引号，等价于 set conceallevel=0
