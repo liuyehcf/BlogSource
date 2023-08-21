@@ -12,7 +12,7 @@ categories:
 
 <!--more-->
 
-# 1 hexo相关的项目
+# 1 Hexo related projects
 
 | 项目 | 描述 |
 |:--|:--|
@@ -96,7 +96,7 @@ em: /^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,
 
 [LaTeX 格式、字母、符号、公式 （总结）](https://blog.csdn.net/CareChere/article/details/115939268)
 
-# 4 来必力评论系统
+# 4 Livere Comment System
 
 [来必力-配置](http://theme-next.iissnan.com/third-party-services.html#livere)
 
@@ -114,7 +114,7 @@ npm install hexo-filter-mermaid-diagrams --save
 
 用法参考{% post_link Markdown %}
 
-# 6 plantuml时序图
+# 6 plantuml
 
 **Doc：[plantuml doc](http://plantuml.com/sequence-diagram)**
 
@@ -124,7 +124,7 @@ npm install hexo-filter-mermaid-diagrams --save
 npm install hexo-filter-plantuml --save
 ```
 
-## 6.1 效果
+## 6.1 Example
 
 **源码：**
 
@@ -232,11 +232,11 @@ A --> User: Done
 deactivate A
 ```
 
-# 7 sequence时序图
+# 7 sequence
 
 [hexo-filter-sequence](https://github.com/bubkoo/hexo-filter-sequence)
 
-# 8 mindmap思维导图
+# 8 mindmap
 
 ## 8.1 simple-mindmap
 
@@ -326,11 +326,11 @@ deactivate A
         - Test 8
 {% endmarkmap %}
 
-# 9 目录功能
+# 9 Directory
 
 [hexo-toc](https://github.com/bubkoo/hexo-toc)
 
-# 10 访问统计
+# 10 Access Statistics
 
 [阅读次数统计-配置](http://theme-next.iissnan.com/third-party-services.html#analytics-tencent-mta)
 
@@ -364,7 +364,7 @@ leancloud_counter_security:
   password: '19990101' # 究极大坑，这里需要用引号
 ```
 
-# 11 本地搜索
+# 11 Local Search
 
 [本地搜索-配置](http://theme-next.iissnan.com/third-party-services.html#local-search)
 
@@ -372,11 +372,37 @@ leancloud_counter_security:
 
 [Mac 上的 VSCode 编写 Markdown 总是出现隐藏字符？](https://www.zhihu.com/question/61638859)
 
-# 12 背景动画
+## 11.1 How to title-only search?
+
+For theme next, we can modify `source/js/local-search.js` like this:
+
+```diff
+@@ -91,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
+   const inputEventFunction = () => {
+     if (!isfetched) return;
+     let searchText = input.value.trim().toLowerCase();
++    let onlyTitle = searchText.startsWith('title:');
+     let keywords = searchText.split(/[-\s]+/);
+     if (keywords.length > 1) {
+       keywords.push(searchText);
+@@ -106,7 +107,9 @@ document.addEventListener('DOMContentLoaded', () => {
+         let searchTextCount = 0;
+         keywords.forEach(keyword => {
+           indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+-          indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
++          if (!onlyTitle) {
++            indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
++          }
+         });
+
+         // Show search results
+```
+
+# 12 Background Animation
 
 [背景动画-配置](http://theme-next.iissnan.com/theme-settings.html#use-bg-animation)
 
-# 13 增加菜单
+# 13 Add Menu Bar
 
 `hexo new page "explore"`
 
@@ -424,7 +450,7 @@ menu:
   commonweal: 公益404
 ```
 
-# 14 取消侧栏编号
+# 14 Disable Sidebar Numbering
 
 主题配置文件修改如下配置，将number改为false即可
 
@@ -439,7 +465,7 @@ toc:
   wrap: false
 ```
 
-# 15 修改行内代码样式
+# 15 Modify Inline Code Style
 
 修改方式（这个方式在最新的next版本中好像失效了）：在`themes/next/source/css/_custom/custom.styl`中增加如下代码
 
@@ -463,7 +489,7 @@ code {
 }
 ```
 
-# 16 修改链接样式
+# 16 Modify Link Style
 
 链接即如下的语法
 
@@ -488,7 +514,7 @@ code {
 }
 ```
 
-# 17 调整next主题的字体大小
+# 17 Adjust Font Size in the NexT Theme
 
 文件相对路径：`themes/next/source/css/_variables/base.styl`
 
@@ -513,7 +539,7 @@ $font-size-headings-large   = $font-size-headings-base + $font-size-headings-ste
 $font-size-headings-larger  = $font-size-headings-large + $font-size-headings-step
 ```
 
-# 18 文章置顶
+# 18 Pin Post
 
 ```sh
 
@@ -535,7 +561,7 @@ top: true
 ---
 ```
 
-# 19 deploy
+# 19 Deploy
 
 ```sh
 npm install hexo-deployer-git --save
@@ -543,7 +569,7 @@ npm install hexo-deployer-git --save
 
 [nodejs更新后hexo没法deploy](https://blog.csdn.net/qq_41535611/article/details/106309335)
 
-# 20 更换电脑后迁移
+# 20 Config Migration
 
 1. 参考[hexo-README](https://github.com/hexojs/hexo)，安装`hexo`
 1. 参考[theme-next-README](https://github.com/theme-next/hexo-theme-next)，安装`hexo`主题`theme-next`
