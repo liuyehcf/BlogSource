@@ -190,6 +190,7 @@ Backend-Service
     * `AggregateFunction`(`be/src/exprs/agg/aggregate.h`): Interface
         * `update`: Consume data to update the aggregation state
         * `serialize_to_column`: When performing two or more stages aggregation, the intermediate results must be transmit over the network. This method is used for serializing the aggregation state into byte stream
+        * `convert_to_serialize_format`: Same as `serialize_to_column`, this method is used to transform the original data as the intermediate formatting, when the aggregation degree is relatively low
         * `merge`: For two stages aggregation, all data will be sent to one particular node, and this node need to merge all the aggregation state into one.
         * `finalize_to_column`: Output the result of aggregation
 * `Window Function`

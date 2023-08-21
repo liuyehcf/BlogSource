@@ -1784,6 +1784,7 @@ Home: [coc-java](https://github.com/search?q=coc-java)
 
 ```json
 {
+    "java.enabled": true,
     "java.format.enable": false,
     "java.maven.downloadSources": true,
     "java.saveActions.organizeImports": false,
