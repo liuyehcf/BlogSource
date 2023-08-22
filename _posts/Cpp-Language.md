@@ -2993,6 +2993,62 @@ int main() {
 }
 ```
 
+## 4.15 PIMPL
+
+In C++, the term `pimpl` is short for `pointer to implementation` or `private implementation`. It's an idiom used to separate the public interface of a class from its implementation details. This helps improve code modularity, encapsulation, and reduces compile-time dependencies.
+
+Here's how the pimpl idiom works:
+
+1. **Public Interface**: You define a class in your header file (`.h` or `.hpp`) that contains only the public interface members (public functions, typedefs, etc.). This header file should include minimal implementation details to keep the interface clean and focused.
+1. **Private Implementation**: In the implementation file (`.cpp`), you declare a private class that holds the actual implementation details of your class. This private class is typically defined within an anonymous namespace or as a private nested class of the original class. The private class contains private data members, private functions, and any other implementation-specific details.
+1. **Pointer to Implementation**: Within the main class, you include a pointer to the private implementation class. The public functions in the main class forward calls to the corresponding functions in the private implementation class.
+
+By using the pimpl idiom, you achieve several benefits:
+
+* Reduces compile-time dependencies: Changes to the private implementation do not require recompilation of the public interface, reducing compilation times.
+* Enhances encapsulation: Clients of the class only need to know about the public interface, shielding them from implementation details.
+* Minimizes header dependencies: Since the private implementation is not exposed in the header, you avoid leaking implementation details to client code.
+* Eases binary compatibility: Changing the private implementation does not require recompiling or re-linking client code, as long as the public interface remains unchanged.
+
+Here's a simplified example of the pimpl idiom:
+
+```cpp
+// Widget.h
+class Widget {
+public:
+    Widget();
+    ~Widget();
+
+    void DoSomething();
+
+private:
+    class Impl; // Forward declaration of the private implementation class
+    Impl* pImpl; // Pointer to the private implementation
+};
+```
+
+```cpp
+// Widget.cpp
+#include "Widget.h"
+
+class Widget::Impl {
+public:
+    void PerformAction() {
+        // Implementation details
+    }
+};
+
+Widget::Widget() : pImpl(new Impl()) {}
+
+Widget::~Widget() {
+    delete pImpl;
+}
+
+void Widget::DoSomething() {
+    pImpl->PerformAction();
+}
+```
+
 # 5 Memory Model
 
 ## 5.1 Concepts
