@@ -45,6 +45,12 @@ The third project I participated in was an intelligent edge integrated machine, 
 
 ## 2.4 Questions
 
+1. How the tunnel service works?
+    * It starts with the user opening the terminal at our console or navigating to another web page with a unique address.
+    * Then the server send a NewSession packet to the corresponding device, if the specific port of the local device is available, then the session established.
+    * Any actions from the user will be route to the device, and any message from the device's service will be route to the user.
+1. How can the web broswer can be the user-side agent.
+    * The web broser will set the originl host as the Host field in the http header. So by leveraging this property, the server can create a unique http address for a specific service of a particular user, the first segment of the address is an UUID, which can be resolved to its corresponding tunnel information, helps the server to direct the traffic to the correct edge device.
 1. Device warnings
     * Device online/offline
     * Cpu/Memory/Disk
@@ -54,10 +60,14 @@ The third project I participated in was an intelligent edge integrated machine, 
     * Lexical Analyzer
     * NFA (Non-Deterministic Finite Automaton) and DFA (Deterministic Finite Automaton)
     * Support several types of grammar analysis algorithm, like, LL1, LALR, LR1
+1. How the operator overloading is achieved?
+    * Each function description can map to a group of implementations, and each implementations has a priority. The implementation with higher proirity matches first.
 1. What problems does the tool address?
     * CoreNDS
     * iptables-rules
 1. Autoboxing
+1. Image Pipeline
+    * CentOS offers a image build tool called anaconda, providing a flexible configuration called kickstart for customized settings, incluing the network, disk config, account, and as well as script for more complex configurations.
 
 ## 2.5 Starrocks
 
@@ -67,7 +77,7 @@ My contributions at Starrocks have spanned both the execution engine and plan op
 
 In terms of plan optimization, I enhanced the system's capabilities by incorporating various types of subqueries like join on subquery and scalar non-agg subquery, and efficiently refactored the subquery transformation process to achieve the optimization of constant removal. Additionally, I refactored a plan enumeration mechanism that allows for thorough testing of the efficiency of cost-based algorithm, ensuring optimal query execution plans.
 
-As for execution, my focus was on optimizing the ranking window function, leading to an impressive 10x performance improvement. And I have designed and implemented a parallel merge operator(based on Merge Path algorithm) that delivered a remarkable 10x performance boost, effectively overcoming the bottlenecks associated with serial merge. Additionally, I have achieved many things, including introducing a sliding window technique to parallelize ordered data transformation, and solving performance issues by reducing the code cache miss.
+As for execution, my focus was on optimizing the ranking window function, leading to an impressive 10x performance improvement. And I have designed and implemented a parallel merge operator(based on Merge Path algorithm) that delivered a remarkable 10x performance boost, effectively overcoming the bottlenecks associated with serial merge. Additionally, I have achieved many things, including introducing a sliding window technique to parallelize ordered data transformation, and addressing numerous performance issues such as reducing code cache misses and eliminating pointer aliases for SIMD optimizations.
 
 For better observability and query analysis, I introduced support for runtime profiling and developed a profile analysis tool. This feature enables users to easily understand query bottlenecks and identify opportunities for optimization.
 
@@ -87,9 +97,11 @@ For better observability and query analysis, I introduced support for runtime pr
 ## 2.6 Questions
 
 1. Why are you refactoring the subquery transformation process?
-1. What's the advantages of the morsel-driven execution engine.
+    * In the previous process, the subquery would be transformed to ApplyOperator first, missing the opportunity to apply optimizations such as constant removal or predicate simplification
+    * After this refactor, the subquery used as an expression will be temporarily held back until the expression optimizations are performed, allowing it to fully benefit from these optimizations
+1. What's optimization can lead to 10 times performance boost of the ranking window function?
+1. What's the advantages of the morsel-driven execution engine?
 1. Subquery classification.
-1. Pointer alias.
 
 # 3 Database
 
