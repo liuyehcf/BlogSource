@@ -186,58 +186,16 @@ Backend-Service
 
 ## 3.3 Execution
 
-* `be/src/exprs/agg/factory/aggregate_resolver.hpp`
-    * `AggregateFuncResolver::get_aggregate_info`
+### 3.3.1 Column
+
+**Traits:**
+
 * `be/src/column/type_traits.h`
     * `RunTimeTypeTraits`
     * `RunTimeCppType`
     * `RunTimeColumnType`
-* `RuntimerFilter`
-    * `RuntimeFilterWorker`
-    * `RuntimeFilterPort`
-    * `RuntimeFilterMerger`
-    * `RuntimeFilterBuildDescriptor`
-    * `RuntimeFilterProbeDescriptor`
-    * `RuntimeFilterHub`
-    * `PartialRuntimeFilterMerger`
-    * `SimdBlockFilter`
-* `Aggregator`
-    * AggData is referenced by a hash map and a vector, the hash map is used to maintain the key-value relationship, while the vector is used for vectorization optimization, and there may be multiply indexes of vector referencing to the same AggData
-    * Streaming is designed to reduce the overhead of the exchanging of data
-    * `aggregate_factory.h`
-    * `aggregate_resolver.hpp`: Different aggregate functions have different resover logic
-        * `aggregate_resolver_avg.cpp`
-        * `aggregate_resolver_window.cpp`
-        * ...
-    * `AggregateFunction`(`be/src/exprs/agg/aggregate.h`): Interface
-        * `update`: Consume data to update the aggregation state, for one row for a specific state
-        * `update_batch_single_state`: Same as update, but update multiply rows for a specific state
-        * `update_batch`: Same as update, but update multiply rows for multiply states
-        * `serialize_to_column`: When performing two or more stages aggregation, the intermediate results(agg state) must be transmit over the network. This method is used for serializing the aggregation state into byte stream
-        * `convert_to_serialize_format`: Same as `serialize_to_column`, this method is used to transform the original data as the intermediate formatting(agg state), when the aggregation degree is relatively low. Because the second stage aggregation only processes the aggregated formatted data.
-        * `merge`: For two stages aggregation, all data will be sent to one particular node, and this node need to merge all the aggregation state into one.
-        * `finalize_to_column`: Output the result of aggregation
-    * `NullableAggregateFunctionUnary`、`NullableAggregateFunctionVariadic`: Contains the common Nullable Column process, unary for single parameter function, variadic for multiply parameter function
-    * AggState memory footprint(For a given chunk)
-        * Each row has a pointer, e.g. `AggDataPtr`
-            * Different rows may store the same `AggDataPtr`, based on the value of group by columns
-            * All rows store the same `AggDataPtr` if there is no group by clause
-            * `AggDataPtr` are shared by hash table 
-        * Each `AggData` contain all the memory areas for all the agg functions, an offset array is required to distinguish between them
-        * ![agg_state_mem_footprint](/images/Source-Reading/agg_state_mem_footprint.jpeg)
-    * Process
-        * Fist go through the hash table, to build the `_tmp_agg_states` for current chunk, new `AggState` will be created if necessary
-        * Then update agg state by iterating the `_tmp_agg_states` for better SIMD optimiazation
-* `Window Function`
-    * `be/src/exprs/agg/window.h`
-    * Frame
-        * Unbounded window
-        * Half unbounded window
-            * Materialized processing
-            * Streaming processing
-        * Sliding window
 
-### 3.3.1 Agg
+### 3.3.2 Agg
 
 In StarRocks, `update`, `merge`, `serialize`, and `finalize` are four steps in the aggregate operation that are used to compute aggregated values.
 
@@ -251,7 +209,41 @@ In StarRocks, `update`, `merge`, `serialize`, and `finalize` are four steps in t
 
 In summary, `update` is used to update intermediate results for an aggregate function for each input row, `merge` is used to combine intermediate results from multiple execution threads or nodes, `serialize` is used to convert intermediate results into a binary format, and `finalize` is used to compute the final result of the aggregate function.
 
-### 3.3.2 Join
+**Register Agg Functions:**
+
+* `aggregate_factory.h`
+    * `AggregateFuncResolver::get_aggregate_info`
+* `aggregate_resolver.hpp`: Different aggregate functions have different resover logic
+    * `aggregate_resolver_avg.cpp`
+    * `aggregate_resolver_window.cpp`
+    * ...
+
+**Interface:**
+
+* `AggregateFunction`(`be/src/exprs/agg/aggregate.h`): Interface
+    * `update`: Consume data to update the aggregation state, for one row for a specific state
+    * `update_batch_single_state`: Same as update, but update multiply rows for a specific state
+    * `update_batch`: Same as update, but update multiply rows for multiply states
+    * `serialize_to_column`: When performing two or more stages aggregation, the intermediate results(agg state) must be transmit over the network. This method is used for serializing the aggregation state into byte stream
+    * `convert_to_serialize_format`: Same as `serialize_to_column`, this method is used to transform the original data as the intermediate formatting(agg state), when the aggregation degree is relatively low. Because the second stage aggregation only processes the aggregated formatted data.
+    * `merge`: For two stages aggregation, all data will be sent to one particular node, and this node need to merge all the aggregation state into one.
+    * `finalize_to_column`: Output the result of aggregation
+* `NullableAggregateFunctionUnary`: Contains the common Nullable Column process for single parameter agg function
+* `NullableAggregateFunctionVariadic`: Same as `NullableAggregateFunctionUnary`, but for variadic parameter agg function
+
+**Process:**
+
+1. Fist go through the hash table, to build the `_tmp_agg_states` for current chunk, new `AggState` will be created if necessary
+1. Then update agg state by iterating the `_tmp_agg_states` for better SIMD optimiazation
+* AggState memory footprint(For a given chunk)
+    * Each row has a pointer, e.g. `AggDataPtr`
+        * Different rows may store the same `AggDataPtr`, based on the value of group by columns
+        * All rows store the same `AggDataPtr` if there is no group by clause
+        * `AggDataPtr` are shared by hash table 
+    * Each `AggData` contain all the memory areas for all the agg functions, an offset array is required to distinguish between them
+    * ![agg_state_mem_footprint](/images/Source-Reading/agg_state_mem_footprint.jpeg)
+
+### 3.3.3 Join
 
 ```
              +-------------------+
@@ -276,6 +268,28 @@ In summary, `update` is used to update intermediate results for an aggregate fun
          |        JoinHashTable      |
          +---------------------------+
 ```
+
+### 3.3.4 WindowFunction
+
+* `Window Function`
+    * `be/src/exprs/agg/window.h`
+    * Frame
+        * Unbounded window
+        * Half unbounded window
+            * Materialized processing
+            * Streaming processing
+        * Sliding window
+
+### 3.3.5 RuntimeFilter
+
+* `RuntimeFilterWorker`
+* `RuntimeFilterPort`
+* `RuntimeFilterMerger`
+* `RuntimeFilterBuildDescriptor`
+* `RuntimeFilterProbeDescriptor`
+* `RuntimeFilterHub`
+* `PartialRuntimeFilterMerger`
+* `SimdBlockFilter`
 
 ## 3.4 Storage
 
