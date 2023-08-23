@@ -210,12 +210,24 @@ Backend-Service
         * `aggregate_resolver_window.cpp`
         * ...
     * `AggregateFunction`(`be/src/exprs/agg/aggregate.h`): Interface
-        * `update`: Consume data to update the aggregation state
+        * `update`: Consume data to update the aggregation state, for one row for a specific state
+        * `update_batch_single_state`: Same as update, but update multiply rows for a specific state
+        * `update_batch`: Same as update, but update multiply rows for multiply states
         * `serialize_to_column`: When performing two or more stages aggregation, the intermediate results(agg state) must be transmit over the network. This method is used for serializing the aggregation state into byte stream
         * `convert_to_serialize_format`: Same as `serialize_to_column`, this method is used to transform the original data as the intermediate formatting(agg state), when the aggregation degree is relatively low. Because the second stage aggregation only processes the aggregated formatted data.
         * `merge`: For two stages aggregation, all data will be sent to one particular node, and this node need to merge all the aggregation state into one.
         * `finalize_to_column`: Output the result of aggregation
     * `NullableAggregateFunctionUnary`、`NullableAggregateFunctionVariadic`: Contains the common Nullable Column process, unary for single parameter function, variadic for multiply parameter function
+    * AggState memory footprint(For a given chunk)
+        * Each row has a pointer, e.g. `AggDataPtr`
+            * Different rows may store the same `AggDataPtr`, based on the value of group by columns
+            * All rows store the same `AggDataPtr` if there is no group by clause
+            * `AggDataPtr` are shared by hash table 
+        * Each `AggData` contain all the memory areas for all the agg functions, an offset array is required to distinguish between them
+        * ![agg_state_mem_footprint](/images/Source-Reading/agg_state_mem_footprint.jpeg)
+    * Process
+        * Fist go through the hash table, to build the `_tmp_agg_states` for current chunk, new `AggState` will be created if necessary
+        * Then update agg state by iterating the `_tmp_agg_states` for better SIMD optimiazation
 * `Window Function`
     * `be/src/exprs/agg/window.h`
     * Frame
