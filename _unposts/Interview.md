@@ -83,19 +83,31 @@ For better observability and query analysis, I introduced support for runtime pr
 
 **Killing Features:**
 
-1. MPP (Massively Parallel Processing) Distributed Execution
-    * Performance & Resource Utilization
-    * Scalability
-1. Pipeline Parallel Execution Framework
-1. Vectorized Execution
-1. CBO (Cost-Based Optimizer) Optimization
-1. Global Runtime Filter
-1. Metadata Cache
-1. Local Data Cache
-1. Materialized View
-
 ## 2.6 Questions
 
+1. Killing Features
+    1. MPP (Massively Parallel Processing) Distributed Execution
+        * Performance & Resource Utilization
+        * Scalability
+    1. Pipeline Parallel Execution Framework
+        * High cpu utilization
+        * Lower the overhead of scheduling
+        * Automatically set the parallelism
+    1. Vectorized Execution
+        * Column-wise storage
+        * Column-wise execution, provide opportunities for SIMD optimizations
+    1. CBO (Cost-Based Optimizer) Optimization
+        * Transformation rules
+        * Implementation rules
+    1. Global Runtime Filter
+        * In filter
+        * Bloom Filter
+        * Max/Min Filter
+    1. Metadata Cache
+    1. Local Data Cache
+        * Improve IO efficiency
+    1. Materialized View
+        * Transparent accelerating
 1. Why are you refactoring the subquery transformation process?
     * In the previous process, the subquery would be transformed to ApplyOperator first, missing the opportunity to apply optimizations such as constant removal or predicate simplification
     * After this refactor, the subquery used as an expression will be temporarily held back until the expression optimizations are performed, allowing it to fully benefit from these optimizations
