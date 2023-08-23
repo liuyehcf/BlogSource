@@ -376,6 +376,12 @@ crash /lib/debug/lib/modules/`uname -r`/vmlinux /var/crash/127.0.0.1-2021-07-24-
 * `/proc/sys/kernel/core_pipe_limit`
 * `/proc/sys/kernel/core_uses_pid`：如果这个文件的内容被配置成`1`，那么即使`core_pattern`中没有设置`%p`，最后生成的`core dump`文件名仍会加上进程id
 
+**`MacOS`平台下，相关的配置项**
+
+* `ulimit -c`：若是0，则不支持，可以通过`ulimit -c unlimited`或者`ulimit -c <size>`来开启
+* `sudo sysctl -w kern.corefile=core.%N.%P`
+    * 默认的配置是`/cores/core.%P`，无法正常工作
+
 **如何分析**
 
 ```sh
