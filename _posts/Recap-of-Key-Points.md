@@ -482,14 +482,20 @@ categories:
             - Multiply Stage Aggregate
                 - 1 Stage Aggregate
                     - Agg + GROUP BY distribution column
+                        - Data is natrually shuffled from storage
                 - 2 Stage Aggregate
                     - AGG
+                        - The second stage is used for gather data
                     - AGG + GROUP BY regular column
+                        - Data needs to be shuffled
                 - 3 Stage Aggregate
-                    - AGG(DISTINCT) + GROUP BY distribution column
+                    - AGG(DISTINCT) + GROUP BY column
+                        - First two stages are used for local and global distinct, grouping by (agg_column, groupby_column)
+                        - Third stage is for global agg, and data is already shuffled
                 - 4 Stage Aggregate
                     - AGG(DISTINCT)
-                    - AGG(DISTINCT) + GROUP BY regular column
+                        - First two stages are used for local and global distinct, grouping by (agg_column)
+                        - Last two stages are used for local and global agg
     - Execution
         - Morsel-Driven Parallelism(Task-Based Parallelism)
             - Morsel
