@@ -313,6 +313,7 @@ categories:
     - Schema
         - Star Schema
         - Snowflake Schema
+        - Constellation Schema
     - Table
         - Fact Table
         - Dimension Table
@@ -329,6 +330,8 @@ categories:
     - Row
     - Key
         - Primary Key
+        - Duplicate Key
+        - Unique Key
         - Foreign Key
     - Constraints
         - Primary Key Constraint
