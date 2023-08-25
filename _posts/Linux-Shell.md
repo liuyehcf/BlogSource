@@ -66,6 +66,25 @@ EOF
 3          # 输出结果为 3 行
 ```
 
+### 1.1.2 Here String
+
+A here string is a feature in Unix-like operating systems that allows you to pass a single string as input to a command, without the need for command substitution or creating a separate file. It's a convenient way to provide input to a command that expects data from standard input.
+
+In Bash and other Unix-like shells, the syntax for a here string is `<<<`. You use it like this:
+
+```sh
+command <<< "your_string_here"
+```
+
+For example, if you have a command `grep 'pattern'` that searches for a specific pattern in text, you can use a here string to provide the text directly as input without the need to create a separate file. Here's how it would look:
+
+```sh
+text="This is some example text containing the pattern"
+grep 'pattern' <<< "$text"
+```
+
+The here string is particularly useful when you want to avoid the overhead of creating temporary files for passing small amounts of input data to a command.
+
 ## 1.2 Pipe
 
 **管道命令使用的是`|`这个界定符号，这个管道命令`|`仅能处理有前面一个命令传来的`正确信息`，也就是`standard output`的信息，对于standard error并没有直接处理的能力**

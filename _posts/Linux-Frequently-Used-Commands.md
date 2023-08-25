@@ -778,6 +778,7 @@ grep分析一行信息，若当前有我们所需要的信息，就将该行拿�
 * `-i`：忽略大小写的不同
 * `-e`：用正则表达式来进行匹配操作
 * `-E`：用扩展的正则表达式来进行匹配操作
+* `-F`：用纯文本匹配，不解释任何特殊字符
 * `-P`：用perl的正则表达式来进行匹配操作
 * `-l`：输出匹配的文件名，而不是匹配的内容
 * `-n`：顺便输出行号
@@ -911,7 +912,31 @@ grep分析一行信息，若当前有我们所需要的信息，就将该行拿�
 * `echo "thissss is      a text linnnnnnne." | tr -s ' sn'`：删除多余的空格、`s`和`n`
 * `head /dev/urandom | tr -dc A-Za-z0-9 | head -c 20`：生成随机串
 
-## 2.11 xargs
+## 2.11 jq
+
+**参数说明：**
+
+* `-c`：压缩成一行输出
+
+**示例：**
+
+* 遍历数组
+    ```sh
+    content='[{"item":"a"},{"item":"b"}]'
+    while IFS= read -r element; do
+        echo "Element: $element"
+    done < <(jq -c '.[]' <<< "$content")
+    ```
+
+* 提取元素
+    ```sh
+    content='{"person":{"name":"Alice","age":28,"address":{"street":"123 Main St","city":"Wonderland","country":"Fantasyland"},"contacts":[{"type":"email","value":"alice@example.com"},{"type":"phone","value":"555-1234"}]}}'
+    jq -c '.person | .address | .city' <<< ${content}
+    jq -c '.person.address.city' <<< ${content}
+    jq -c '.person.contacts[1].value' <<< ${content}
+    ```
+
+## 2.12 xargs
 
 **参数说明：**
 
@@ -925,7 +950,7 @@ grep分析一行信息，若当前有我们所需要的信息，就将该行拿�
 * `echo "   a  b  c  " | xargs`：实现`trim`
 * `ls | xargs -I {} rm -f {}`
 
-## 2.12 tee
+## 2.13 tee
 
 `>`、`>>`等会将数据流传送给文件或设备，因此除非去读取该文件或设备，否则就无法继续利用这个数据流，如果我们想要将这个数据流的处理过程中将某段信息存下来，可以利用`tee`（`tee`本质上，就是将`stdout`复制一份）
 
@@ -943,7 +968,7 @@ grep分析一行信息，若当前有我们所需要的信息，就将该行拿�
 
 * `command | tee <文件名> | command`
 
-## 2.13 cat
+## 2.14 cat
 
 **格式：**
 
@@ -970,14 +995,14 @@ cat /tmp/test
 echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
 ```
 
-## 2.14 tail
+## 2.15 tail
 
 **示例：**
 
 * `tail -f xxx.txt`
 * `tail -n +2 xxx.txt`：输出第二行到最后一行
 
-## 2.15 find
+## 2.16 find
 
 **格式：**
 
@@ -1008,7 +1033,7 @@ echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
     * `find ./ -regex '.*\.cfg\|.*\.conf'`
     * `find ./ -regextype posix-extended -regex '.*\.(cfg|conf)'`
 
-## 2.16 locate
+## 2.17 locate
 
 **`locate`是在已创建的数据库`/var/lib/mlocate`里面的数据所查找到的，所以不用直接在硬盘当中去访问，因此，相比于`find`，速度更快**
 
@@ -1027,7 +1052,7 @@ updatedb
 locate stl_vector.h
 ```
 
-## 2.17 cp
+## 2.18 cp
 
 **示例：**
 
@@ -1035,7 +1060,7 @@ locate stl_vector.h
 * `cp -vrf /a/* /b`：递归拷贝目录`/a`下的所有文件、目录，但不包括隐藏文件和隐藏目录
 * `cp -vrf /a/. /b`：递归拷贝目录`/a`中所有的文件、目录、隐藏文件和隐藏目录到目录`/b`中
 
-## 2.18 rsync
+## 2.19 rsync
 
 [rsync 用法教程](https://www.ruanyifeng.com/blog/2020/08/rsync.html)
 
@@ -1081,7 +1106,7 @@ locate stl_vector.h
 * `rsync -a dir1 user1@192.168.0.1:~`：将整个目录`dir1`拷贝到`192.168.0.1`机器的`user1`的用户目录下的一个名为`~`的目录中，即`~/\~/dir1`（**巨坑的一个问题**）
 * `rsync -a dir1 user1@192.168.0.1:~/`：将整个目录`dir1`拷贝到`192.168.0.1`机器的`user1`的用户目录，即`~/dir1`
 
-## 2.19 rm
+## 2.20 rm
 
 **示例：**
 
@@ -1105,7 +1130,7 @@ locate stl_vector.h
         tree -N rmtest
         ```
 
-## 2.20 tar
+## 2.21 tar
 
 **格式：**
 
@@ -1142,7 +1167,7 @@ locate stl_vector.h
 * `tar -zxvf /test.tar.gz -C /home/liuye`：解压到`/home/liuye`目录中
 * `tar cvf - /home/liuye | sha1sum`：`-`表示标准输入输出，这里表示标准出
 
-## 2.21 curl
+## 2.22 curl
 
 **格式：**
 
@@ -1162,7 +1187,7 @@ locate stl_vector.h
 
 * `curl -L -o <filename> '<url>'`
 
-## 2.22 wget
+## 2.23 wget
 
 **格式：**
 
@@ -1183,7 +1208,7 @@ locate stl_vector.h
 * `wget -r -np -nH -P /root/test -R "index.html*" 'http://192.168.66.1/stuff'`
 * `wget -r -np -nH -P /root/test 'ftp://192.168.66.1/stuff'`
 
-## 2.23 tree
+## 2.24 tree
 
 **格式：**
 
@@ -1193,14 +1218,14 @@ locate stl_vector.h
 
 * `-N`：显示非ASCII字符，可以显示中文
 
-## 2.24 split
+## 2.25 split
 
 **示例：**
 
 * `split -b 2048M bigfile bigfile-slice-`：按大小切分文件，切分后的文件最大为`2048M`，文件的前缀是`bigfile-slice-`
 * `split -l 10000 bigfile bigfile-slice-`：按行切分文件，切分后的文件最大行数为`10000`，文件的前缀是`bigfile-slice-`
 
-## 2.25 base64
+## 2.26 base64
 
 用于对输入进行`base64`编码以及解码
 
@@ -1209,7 +1234,7 @@ locate stl_vector.h
 * `echo "hello" | base64`
 * `echo "hello" | base64 | base64 -d`
 
-## 2.26 md5sum
+## 2.27 md5sum
 
 计算输入或文件的MD5值
 
@@ -1217,7 +1242,7 @@ locate stl_vector.h
 
 * `echo "hello" | md5sum`
 
-## 2.27 openssl
+## 2.28 openssl
 
 openssl可以对文件，以指定算法进行加密或者解密
 
@@ -1227,7 +1252,7 @@ openssl可以对文件，以指定算法进行加密或者解密
 * `openssl aes-256-cbc -a -salt -in blob.txt -out cipher`
 * `openssl aes-256-cbc -a -d -in cipher -out blob-rebuild.txt`
 
-## 2.28 bc
+## 2.29 bc
 
 bc可以用于进制转换
 
@@ -1238,7 +1263,7 @@ bc可以用于进制转换
 * `((num=8#77)); echo ${num}`：8进制转十进制
 * `((num=16#FF)); echo ${num}`：16进制转十进制
 
-## 2.29 dirname
+## 2.30 dirname
 
 `dirname`用于返回文件路径的目录部分，该命令不会检查路径所对应的目录或文件是否真实存在
 
@@ -1256,7 +1281,7 @@ ROOT=$(dirname "$0")
 ROOT=$(cd "$ROOT"; pwd)
 ```
 
-## 2.30 addr2line
+## 2.31 addr2line
 
 该工具用于查看二进制的偏移量与源码的对应关系
 
@@ -1264,7 +1289,7 @@ ROOT=$(cd "$ROOT"; pwd)
 
 * `addr2line 4005f5 -e test`：查看二进制`test`中位置为`4005f5`指令对应的源码
 
-## 2.31 ldd
+## 2.32 ldd
 
 该工具用于查看可执行文件链接了哪些动态库
 
@@ -1272,7 +1297,7 @@ ROOT=$(cd "$ROOT"; pwd)
 
 * `ldd main`
 
-## 2.32 ldconfig
+## 2.33 ldconfig
 
 **生成动态库缓存或从缓存读取动态库信息**
 
@@ -1282,7 +1307,7 @@ ROOT=$(cd "$ROOT"; pwd)
 * `ldconfig -v`：重新生成`/etc/ld.so.cache`，并输出详细信息
 * `ldconfig -p`：从`/etc/ld.so.cache`中读取并展示动态库信息
 
-## 2.33 objdump
+## 2.34 objdump
 
 该工具用于反汇编
 
@@ -1291,7 +1316,7 @@ ROOT=$(cd "$ROOT"; pwd)
 * `objdump -drwCS main.o`
 * `objdump -drwCS -M intel main.o`
 
-## 2.34 objcopy & strip
+## 2.35 objcopy & strip
 
 该工具用于将debug信息从二进制中提取出来，示例：[[Enhancement] strip debug symbol in release mode](https://github.com/StarRocks/starrocks/pull/24442)
 
@@ -1301,7 +1326,7 @@ strip --strip-debug main
 objcopy --add-gnu-debuglink=main_debug main
 ```
 
-## 2.35 nm
+## 2.36 nm
 
 该工具用于查看符号表
 
@@ -1309,7 +1334,7 @@ objcopy --add-gnu-debuglink=main_debug main
 
 * `nm -C main`
 
-## 2.36 strings
+## 2.37 strings
 
 该工具用于查看二进制文件包含的所有字符串信息
 
@@ -1317,7 +1342,7 @@ objcopy --add-gnu-debuglink=main_debug main
 
 * `strings main`
 
-## 2.37 iconf
+## 2.38 iconf
 
 **参数说明：**
 
@@ -1333,7 +1358,7 @@ objcopy --add-gnu-debuglink=main_debug main
 
 * `iconv -f gbk -t utf-8 s.txt > t.txt`
 
-## 2.38 expect
+## 2.39 expect
 
 expect是一个自动交互的工具，通过编写自定义的配置，就可以实现自动填充数据的功能
 
