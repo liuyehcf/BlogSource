@@ -425,6 +425,9 @@ git fetch [remote] [branch]
 # 下载远程仓库的指定pr
 git fetch [remote] pull/29048/head
 
+# 下载远程仓库的指定pr到本地分支
+git fetch [remote] pull/29048/head:pull_request_29048
+
 # 显示所有远程仓库
 git remote -v
 
