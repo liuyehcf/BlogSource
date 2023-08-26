@@ -28,7 +28,7 @@ categories:
         - Array
         - List
         - Queue
-    - unordered Associative Collections
+    - Unordered Associative Collections
         - Set
         - Map
     - Ordered Associative Collections
@@ -48,6 +48,12 @@ categories:
         - InputStreamReader/OutputStreamWriter
 - Functional Programming
     - Stream API
+        - filter
+        - map
+        - distinct
+        - sorted
+        - anyMatch/allMatch/noneMatch
+        - findFirst/findAny
         - flatMap
     - Functional API
         - Consumer/BiConsumer
@@ -170,6 +176,7 @@ categories:
 * `Channel`: Represents a network socket and provides an abstraction for I/O operations. Channels are used for sending and receiving data.
     * `Write`：adds the message to the outbound buffer but does not trigger an immediate flush of the buffer. The data remains in the buffer until a flush operation occurs.
     * `WriteAndFlush`：combines two operations: writing the message to the outbound buffer and immediately triggering a flush operation. The message is added to the buffer and flushed to the network without delay.
+    * `isWritable`: The isWritable method is typically associated with the Channel class in Netty. This method is used to determine if it's currently possible to write data to the channel without causing it to become congested. In other words, it indicates whether you can safely write data to the channel without overflowing its internal buffers and potentially causing memory issues or performance degradation.
 * `EventLoop`: Handles I/O events and executes tasks associated with those events. Each Channel has an associated EventLoop for event processing.
 * `ChannelHandler`: Handles inbound and outbound events related to a Channel. ChannelHandlers are responsible for protocol-specific logic, such as encoding, decoding, and processing incoming and outgoing data.
 * `ChannelPipeline`: Represents a chain of ChannelHandlers for processing inbound and outbound events in a Channel. It provides an organized way to handle data processing and transformation.
@@ -195,7 +202,7 @@ categories:
         - Abstraction
     - Template Programming
     - High Performance
-    - String Compatibility
+    - Strong Compatibility
 - Cpp Features
     - C++11
         - Move Semantics & RValue
@@ -218,13 +225,16 @@ categories:
 - Pointers and References
     - Pointer Stability
 - Virtual Functions
+    - Function Overriding
     - override & final
     - Vritual Function Table
+    - Dynamic Binding & Polymorphic Behaviors
 - Overloading
     - Operator Overloading
     - Function Overloading
 - Move Semantics
-    - Perfect Forwarding
+    - RValue Reference
+        - Perfect Forwarding
     - Transfer of Resources
 - Containers
     - Sequence Containers
@@ -243,12 +253,12 @@ categories:
 - Templates
     - Standard Template Library (STL)
     - Templates Specialization
-    - Variadic templates
+    - Variadic Templates
     - Code Generation
     - Meta Programming
         - Type Traits
         - Type Deduction
-        - Compile-time Programming
+        - Compile-time Evaluation
             - constexpr
         - SFINAE(Substitution Failure Is Not An Error)
 - Functional Programming
