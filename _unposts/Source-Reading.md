@@ -222,12 +222,13 @@ In summary, `update` is used to update intermediate results for an aggregate fun
 
 * `AggregateFunction`(`be/src/exprs/agg/aggregate.h`): Interface
     * `update`: Consume data to update the aggregation state, for one row for a specific state
-    * `update_batch_single_state`: Same as update, but update multiply rows for a specific state
-    * `update_batch`: Same as update, but update multiply rows for multiply states
-    * `serialize_to_column`: When performing two or more stages aggregation, the intermediate results(agg state) must be transmit over the network. This method is used for serializing the aggregation state into byte stream
-    * `convert_to_serialize_format`: Same as `serialize_to_column`, this method is used to transform the original data as the intermediate formatting(agg state), when the aggregation degree is relatively low. Because the second stage aggregation only processes the aggregated formatted data.
     * `merge`: For two stages aggregation, all data will be sent to one particular node, and this node need to merge all the aggregation state into one.
     * `finalize_to_column`: Output the result of aggregation
+    * `serialize_to_column`: When performing two or more stages aggregation, the intermediate results(agg state) must be transmit over the network. This method is used for serializing the aggregation state into byte stream
+    * `convert_to_serialize_format`: Similar to `serialize_to_column`, this method is used to transform the original data as the intermediate formatting(agg state), when the aggregation degree is relatively low. Because the second stage aggregation only processes the aggregated formatted data.
+    * **`batch_xxx`**: These kind of method is used to reduce the overhead of virtual function call
+        * `update_batch_single_state`: Similar to update, but update multiply rows for a specific state
+        * `update_batch`: Similar to update, but update multiply rows for multiply states
 * `NullableAggregateFunctionUnary`: Contains the common Nullable Column process for single parameter agg function
 * `NullableAggregateFunctionVariadic`: Same as `NullableAggregateFunctionUnary`, but for variadic parameter agg function
 
