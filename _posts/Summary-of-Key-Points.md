@@ -499,14 +499,14 @@ categories:
                         - Filter above the join to filter null(not exist) or non-null(exist) join-key
                     - Quantified Correlated Subquery at Where Clause
                         - Left Semi Join for in
-                        - Null-Aware Left Anti Join for not in
+                        - Null-aware Left Anti Join for not in
                     - Quantified Correlated Subquery at Select Clause
                         - Left Outer Join for both in and not in
-                        - Complex Case-When Project for correctness
+                        - Complex Case-when Project for correctness
                         - Not-in with an additional not Compound Predicate
                     - Scalar Correlated Subquery
                         - Left Outer Join
-                        - Assert one row
+                        - One-row Assertion
             - CTE(Common Table Expressions)
                 - CTEProducer & CTEConsumer & CTEAnchor
                 - Plan Enumeration
