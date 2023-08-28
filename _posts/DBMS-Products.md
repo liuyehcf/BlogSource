@@ -1,5 +1,5 @@
 ---
-title: Database-Products
+title: DBMS-Products
 date: 2022-01-14 14:31:10
 tags: 
 - 摘录
@@ -93,7 +93,7 @@ categories:
 **架构：**
 
 * [Design](https://druid.apache.org/docs/latest/design/architecture.html)
-* ![druid_architecture](/images/Database-Products/druid_architecture.png)
+* ![druid_architecture](/images/DBMS-Products/druid_architecture.png)
 
 **主页：**
 
@@ -152,7 +152,7 @@ categories:
 **架构：**
 
 * [About the Greenplum Architecture](https://gpdb.docs.pivotal.io/5280/admin_guide/intro/arch_overview.html)
-* ![greenplum_architecture](/images/Database-Products/greenplum_architecture.jpeg)
+* ![greenplum_architecture](/images/DBMS-Products/greenplum_architecture.jpeg)
 
 **主页：**
 
@@ -200,8 +200,8 @@ categories:
 **架构：**
 
 * [HAWQ Architecture](https://hawq.apache.org/docs/userguide/2.3.0.0-incubating/overview/HAWQArchitecture.html)
-* ![hawq_high_level_architecture](/images/Database-Products/hawq_high_level_architecture.png)
-* ![hawq_architecture_components](/images/Database-Products/hawq_architecture_components.png)
+* ![hawq_high_level_architecture](/images/DBMS-Products/hawq_high_level_architecture.png)
+* ![hawq_architecture_components](/images/DBMS-Products/hawq_architecture_components.png)
 
 **主页：**
 
@@ -224,7 +224,7 @@ categories:
 **架构：**
 
 * [Architecture of HBase](https://www.geeksforgeeks.org/architecture-of-hbase/)
-* ![hbase_architecture](/images/Database-Products/hbase_architecture.png)
+* ![hbase_architecture](/images/DBMS-Products/hbase_architecture.png)
 
 **主页：**
 
@@ -246,7 +246,7 @@ categories:
 **架构：**
 
 * [Design](https://cwiki.apache.org/confluence/display/hive/design)
-* ![hive_architecture](/images/Database-Products/hive_architecture.png)
+* ![hive_architecture](/images/DBMS-Products/hive_architecture.png)
 
 **主页：**
 
@@ -269,7 +269,7 @@ categories:
 **架构：**
 
 * [Design And Architecture](https://cwiki.apache.org/confluence/display/HUDI/Design+And+Architecture)
-* ![hudi_architecture](/images/Database-Products/hudi_architecture.png)
+* ![hudi_architecture](/images/DBMS-Products/hudi_architecture.png)
 
 **主页：**
 
@@ -304,7 +304,7 @@ categories:
 **架构：**
 
 * [Impala-Architecture](https://www.tutorialspoint.com/impala/impala_architecture.htm)
-* ![impala_architecture](/images/Database-Products/impala_architecture.jpeg)
+* ![impala_architecture](/images/DBMS-Products/impala_architecture.jpeg)
 
 **主页：**
 
@@ -329,7 +329,7 @@ categories:
 **架构：**
 
 * [Architectural Overview](https://kudu.apache.org/docs/#_architectural_overview)
-* ![kudu_architecture](/images/Database-Products/kudu_architecture.png)
+* ![kudu_architecture](/images/DBMS-Products/kudu_architecture.png)
 
 **主页：**
 
@@ -349,7 +349,7 @@ categories:
 
 **架构：**
 
-* ![kylin_architecture](/images/Database-Products/kylin_architecture.png)
+* ![kylin_architecture](/images/DBMS-Products/kylin_architecture.png)
 
 **主页：**
 
@@ -373,7 +373,7 @@ categories:
 **架构：**
 
 * [Architecture(https://docs.pinot.apache.org/basics/architecture)
-* ![pinot_architecture](/images/Database-Products/pinot_architecture.svg)
+* ![pinot_architecture](/images/DBMS-Products/pinot_architecture.svg)
 
 **主页：**
 
@@ -410,7 +410,7 @@ categories:
 **架构：**
 
 * [Introduction to Presto](https://prestodb.io/overview.html)
-* ![presto_architecture](/images/Database-Products/presto_architecture.png)
+* ![presto_architecture](/images/DBMS-Products/presto_architecture.png)
 
 **主页：**
 
@@ -434,7 +434,7 @@ categories:
 **架构：**
 
 * [StarRocks的系统架构](https://docs.starrocks.com/zh-cn/main/quick_start/Architecture)
-* ![starrocks_architecture](/images/Database-Products/starrocks_architecture.png)
+* ![starrocks_architecture](/images/DBMS-Products/starrocks_architecture.png)
 
 **主页：**
 
@@ -459,7 +459,7 @@ categories:
 **架构：**
 
 * [Key Concepts & Architecture](https://docs.snowflake.com/en/user-guide/intro-key-concepts.html)
-* ![snowflake_architecture](/images/Database-Products/snowflake_architecture.png)
+* ![snowflake_architecture](/images/DBMS-Products/snowflake_architecture.png)
 
 **主页：**
 
@@ -476,7 +476,7 @@ categories:
 
 **架构：**
 
-* ![spark_ecology](/images/Database-Products/spark_ecology.png)
+* ![spark_ecology](/images/DBMS-Products/spark_ecology.png)
 
 **主页：**
 
@@ -498,7 +498,7 @@ categories:
 **架构：**
 
 * [TiDB 整体架构](https://docs.pingcap.com/zh/tidb/stable/tidb-architecture)
-* ![tidb_architecture](/images/Database-Products/tidb_architecture.png)
+* ![tidb_architecture](/images/DBMS-Products/tidb_architecture.png)
 
 **主页：**
 
@@ -523,8 +523,8 @@ Trino is forked from Presto
 **架构：**
 
 * [Trino Architecture](https://www.oreilly.com/library/view/trino-the-definitive/9781098107703/ch04.html)
-* ![trino_architecture_01](/images/Database-Products/trino_architecture_01.png)
-* ![trino_architecture_02](/images/Database-Products/trino_architecture_02.png)
+* ![trino_architecture_01](/images/DBMS-Products/trino_architecture_01.png)
+* ![trino_architecture_02](/images/DBMS-Products/trino_architecture_02.png)
 
 **主页：**
 

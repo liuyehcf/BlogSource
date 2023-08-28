@@ -22,7 +22,7 @@ categories:
 * `Worker`
     * 从`Connector`中获取数据，并按照执行计划进行计算
 
-![presto_architecture](/images/Database-Products/presto_architecture.png)
+![presto_architecture](/images/DBMS-Products/presto_architecture.png)
 
 # 2 部署
 

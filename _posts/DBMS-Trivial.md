@@ -1,5 +1,5 @@
 ---
-title: Database-Trivial
+title: DBMS-Trivial
 date: 2022-07-10 16:53:22
 tags: 
 - 摘录
