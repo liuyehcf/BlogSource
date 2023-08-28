@@ -41,7 +41,7 @@ The second framework is the expression execution framework, a component of the f
 
 ## 2.3 Edge Gateway Device
 
-The third project I participated in was an intelligent edge integrated machine, designed to support industrial applications and device connections. Its use cases span across residential communities, roadside parking, agriculture, industry and more. My primary responsibility is to build a pipeline for creating various customized operating system installation images(can be an iso file or just a rootfs). This image includes the original CentOS or Ubuntu system packages as well as all the necessary software and configurations required by our business. Additionally, I have designed and developed a troubleshooting tool, primarily focused on addressing network and Kubernetes (k8s) runtime environment issues.
+The third project I participated in was an intelligent edge integrated machine, designed to support industrial applications and device connections. Its use cases span various scenarios, including facial recognition access control systems, parking fee collection systems, automated vlogging systems, and more. My primary responsibility is to build a pipeline for creating various customized operating system installation images(can be an iso file or just a rootfs). This image includes the original CentOS or Ubuntu system packages as well as all the necessary software and configurations required by our business. Additionally, I have designed and developed a troubleshooting tool, primarily focused on addressing network and Kubernetes (k8s) runtime environment issues.
 
 ## 2.4 Questions
 
@@ -63,6 +63,8 @@ The third project I participated in was an intelligent edge integrated machine, 
 1. How the operator overloading is achieved?
     * Each function description can map to a group of implementations, and each implementations has a priority. The implementation with higher proirity matches first.
 1. What problems does the tool address?
+    * Host network
+    * Container network
     * CoreNDS
     * iptables-rules
 1. Autoboxing
@@ -112,8 +114,11 @@ For better observability and query analysis, I introduced support for runtime pr
     * In the previous process, the subquery would be transformed to ApplyOperator first, missing the opportunity to apply optimizations such as constant removal or predicate simplification
     * After this refactor, the subquery used as an expression will be temporarily held back until the expression optimizations are performed, allowing it to fully benefit from these optimizations
 1. What's optimization can lead to 10 times performance boost of the ranking window function?
+    * For ranking window function with a predicate or limit clause, we can add an additional partition-topn node to filter data. Significant improment can be achieved if it can filter out lots of data.
 1. What's the advantages of the morsel-driven execution engine?
 1. Subquery classification.
+1. How does starrocks process subquery?
+    * Subquery are alwasy placed in the expression, after performing constant removal, predicate siplification, subquery can be replaced with an apply operator and attaching it to the logical tree. And finally, using different types of join to transforming the apply operator.
 
 # 3 Database
 

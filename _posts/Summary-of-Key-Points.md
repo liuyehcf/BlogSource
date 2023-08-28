@@ -471,24 +471,42 @@ categories:
                 - Histogram Statistics
         - Heuristic Optimization
             - Subquery
-                - Position
-                    - WHERE Clause
-                    - SELECT Clause
-                    - GRUOP BY Clause
-                    - ORDER BY Clause
-                    - HAVING Clause
-                - Whether Correlated
-                    - Correlated Subquery
-                        - Left Outer Join(SELECT Clause)
-                        - Left Semi Join(WHERE Clause)
-                    - Non-correlated Subquery
-                - Characteristics of Generated Data
-                    - Scalar Subquery
-                    - Existential Test Subquery
-                    - Quantified Comparation Subquery
-                        - ANY
-                        - SOME
-                        - ALL
+                - Classification
+                    - Position
+                        - WHERE Clause
+                        - SELECT Clause
+                        - GRUOP BY Clause
+                        - ORDER BY Clause
+                        - HAVING Clause
+                    - Whether Correlated
+                        - Correlated Subquery
+                            - Left Outer Join(SELECT Clause)
+                            - Left Semi Join(WHERE Clause)
+                        - Non-correlated Subquery
+                    - Characteristics of Generated Data
+                        - Scalar Subquery
+                        - Existential Test Subquery
+                        - Quantified Comparation Subquery
+                            - ANY
+                            - SOME
+                            - ALL
+                - Transformation
+                    - Existential Correlated Subquery at Where Clause
+                        - Left Semi Join for exist
+                        - Left Anti Join for not exist
+                    - Existential Correlated Subquery at Select Clause
+                        - Left Outer Join for both exist and not exist
+                        - Filter above the join to filter null(not exist) or non-null(exist) join-key
+                    - Quantified Correlated Subquery at Where Clause
+                        - Left Semi Join for in
+                        - Null-Aware Left Anti Join for not in
+                    - Quantified Correlated Subquery at Select Clause
+                        - Left Outer Join for both in and not in
+                        - Complex Case-When Project for correctness
+                        - Not-in with an additional not Compound Predicate
+                    - Scalar Correlated Subquery
+                        - Left Outer Join
+                        - Assert one row
             - CTE(Common Table Expressions)
                 - CTEProducer & CTEConsumer & CTEAnchor
                 - Plan Enumeration

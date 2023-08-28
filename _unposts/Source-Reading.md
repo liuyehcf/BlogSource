@@ -155,6 +155,15 @@ OR
 
 * `isSplit`用于标记是否已应用过`SplitTopNRule`
 
+#### 3.1.3.3 Subquery
+
+* `ExistentialApply2JoinRule`
+* `ExistentialApply2OuterJoinRule`
+* `QuantifiedApply2JoinRule`
+* `QuantifiedApply2OuterJoinRule`
+* `ScalarApply2AnalyticRule`
+* `ScalarApply2JoinRule`
+
 ### 3.1.4 Merge Group
 
 位置：`Memo::mergeGroup`
