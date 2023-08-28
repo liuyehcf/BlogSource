@@ -69,54 +69,98 @@ categories:
 ```sql
 DROP TABLE IF EXISTS `S`;
 CREATE TABLE IF NOT EXISTS `S` (
+  `s_id` int(11) NULL,
   `s1` int(11) NULL,
   `s2` int(11) NULL,
   `s3` int(11) NULL
 ) ENGINE=OLAP
-DUPLICATE KEY(`s1`)
-DISTRIBUTED BY HASH(`s1`) BUCKETS 10
+DUPLICATE KEY(`s_id`)
+DISTRIBUTED BY HASH(`s_id`) BUCKETS 10
 PROPERTIES (
  "replication_num" = "1"
 );
 
-INSERT INTO `S` (s1, s2, s3) values
-    (1, 2, 3),
-    (1, 2, 3),
-    (4, 5, 6),
-    (4, 5, 6),
-    (7, 8, 9),
-    (10, NULL, 12),
-    (13, 14, 15),
-    (16, 17, 18);
+INSERT INTO `S` (s_id, s1, s2, s3) values
+    (1, 1, 2, 3),
+    (2, 1, 2, 3),
+    (3, 4, 5, 6),
+    (4, 4, 5, 6),
+    (5, 7, 8, 9),
+    (6, 10, NULL, 12),
+    (7, 13, 14, 15),
+    (8, 16, 17, 18);
 
 DROP TABLE IF EXISTS `R`;
 CREATE TABLE IF NOT EXISTS `R` (
+  `r_id` int(11) NULL,
   `r1` int(11) NULL,
   `r2` int(11) NULL,
   `r3` int(11) NULL
 ) ENGINE=OLAP
-DUPLICATE KEY(`r1`)
-DISTRIBUTED BY HASH(`r1`) BUCKETS 10
+DUPLICATE KEY(`r_id`)
+DISTRIBUTED BY HASH(`r_id`) BUCKETS 10
 PROPERTIES (
  "replication_num" = "1"
 );
 
-INSERT INTO `R` (r1, r2, r3) values
-    (1, 2, 3),
-    (1, 2, NULL),
-    (4, 55, 6),
-    (7, NULL, 9),
-    (7, 8, 9),
-    (10, NULL, 12),
-    (13, 14, NULL),
-    (19, 20, 21);
+INSERT INTO `R` (r_id, r1, r2, r3) values
+    (1, 1, 2, 3),
+    (2, 1, 2, NULL),
+    (3, 4, 55, 6),
+    (4, 7, NULL, 9),
+    (5, 7, 8, 9),
+    (6, 10, NULL, 12),
+    (7, 13, 14, NULL),
+    (8, 19, 20, 21);
 ```
 
 ## 2.1 Scalar Subquery
 
+**对于在`WHERE Clause`中的`Scalar Subquery`，一般用`Outer Join`来进行转换。下面用一个例子来说明，原`SQL`如下，其含义是，针对`S`表中的每一行，在`R`表中找出满足`S.s_id = R.r_id`的那个`R.r_id`（只能有一行，否则会报错），并作为`S`表的谓词**
+
+```sql
+SELECT S.s1, S.s2
+FROM S
+WHERE S.s3 = (
+  SELECT R.r3 FROM R
+  WHERE S.s_id = R.r_id
+)
+```
+
+**重写后的`SQL`如下：**
+
+```sql
+SELECT tmp.s1, tmp.s2 FROM (
+  SELECT * FROM
+  S LEFT OUTER JOIN R
+  ON S.s_id = R.r_id
+) tmp
+WHERE tmp.s3 = tmp.r3
+```
+
+**对于在`SELECT Clause`中的`Scalar Subquery`，同样用`Outer Join`来进行转换。下面用一个例子来说明，原`SQL`如下，其含义是，针对`S`表中的每一行，在`R`表中找出满足`S.s_id = R.r_id`的那个`R.r_id`（只能有一行，否则会报错），并作为`S`表的表达式**
+
+```sql
+SELECT S.s1, S.s2, S.s3 = (
+  SELECT R.r3 FROM R
+  WHERE S.s_id = R.r_id
+)
+FROM S
+```
+
+**重写后的`SQL`如下：**
+
+```sql
+SELECT tmp.s1, tmp.s2, tmp.s3 = tmp.r3 FROM (
+  SELECT * FROM
+  S LEFT OUTER JOIN R
+  ON S.s_id = R.r_id
+) tmp
+```
+
 ## 2.2 Exists Subquery
 
-### 2.2.1 Implement with Semi Join
+### 2.2.1 Implement with Semi Join(Where Clause)
 
 **对于在`WHERE Clause`中的`Exists Subquery`，一般用`Semi Join`来进行转换。下面用一个例子来说明，原`SQL`如下，其含义是，针对`S`表中的每一行，在`R`表中找出满足`S.s3 = R.r3`的所有行，并提取出`R.r2`作为结果集`A`，看结果集`A`是否存在非空元素，并以此作为过滤条件，过滤`S`的数据**
 
@@ -138,7 +182,7 @@ FROM S LEFT SEMI JOIN R
 ON S.s3 = R.r3
 ```
 
-### 2.2.2 Implement with Outer Join
+### 2.2.2 Implement with Outer Join(Select Clause)
 
 **对于在`SELECT Clause`中的`Exists Subquery`，一般用`Outer Join`来进行转换。下面用一个例子来说明，原`SQL`如下，其含义是，针对`S`表中的每一行，在`R`表中找出满足`S.s3 = R.r3`的所有行，并提取出`R.r2`作为结果集`A`，看这个结果集`A`是否存在非空元素**
 
@@ -164,7 +208,7 @@ ON S.s3 = R_GroupBy.r3;
 
 ## 2.3 In Subquery
 
-### 2.3.1 Implement with Semi Join
+### 2.3.1 Implement with Semi Join(Where Clause)
 
 **对于在`WHERE Clause`中的`In Subquery`，一般用`Semi Join`来进行转换。下面用一个例子来说明，原`SQL`如下，其含义是，针对`S`表中的每一行，在`R`表中找出满足`S.s3 = R.r3`的所有行，并提取出`R.r2`作为结果集`A`，看`S.s2`是否在这个结果集`A`中，并以此作为过滤条件，过滤`S`的数据**
 
@@ -187,7 +231,7 @@ FROM S LEFT SEMI JOIN R
 ON S.s2 = R.r2 AND S.s3 = R.r3
 ```
 
-### 2.3.2 Implement with Outer Join
+### 2.3.2 Implement with Outer Join(Select Clause)
 
 **对于在`SELECT Clause`中的`In Subquery`，一般用`Outer Join`来进行转换。下面用一个例子来说明，原`SQL`如下，其含义是，针对`S`表中的每一行，在`R`表中找出满足`S.s3 = R.r3`的所有行，并提取出`R.r2`作为结果集`A`，看`S.s2`是否在这个结果集`A`中**
 
