@@ -657,6 +657,8 @@ With a materialized view there is a well-defined translation process that takes 
 1. Bitmap Index & Bitmap Column
 1. Subuqery classification
 1. Cost-based state transition machine
+    * The process of the cbo optimization
+1. Good cases and bad cases of multiply phase agg
 
 # 4 Scheduler
 

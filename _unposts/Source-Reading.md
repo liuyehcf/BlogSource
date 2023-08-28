@@ -151,6 +151,10 @@ OR
 * `agg(distinct)`：4阶段聚合
 * `agg(distinct) +  group by`（其中`group by`列低基数倾斜）：4阶段聚合
 
+#### 3.1.3.2 SplitTopNRule
+
+* `isSplit`用于标记是否已应用过`SplitTopNRule`
+
 ### 3.1.4 Merge Group
 
 位置：`Memo::mergeGroup`
