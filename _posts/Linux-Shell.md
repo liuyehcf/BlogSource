@@ -204,6 +204,42 @@ echo ${count} # 永远是0
     ./main 1> >(sed -n '/output/s/^.*$/Find stdout/p') 2> >(sed -n '/output/s/^.*$/Find stderr/p')
     ```
 
+1. 管道中对于变量的修改，流程的控制比如`continue`、`break`、`return`对于外部都是不生效的，例如：
+    ```sh
+    function return_inside_pipe() {
+        echo "return_inside_pipe"
+        content="a\nb\nc"
+        for((i=0;i<3;i++))
+        do
+            echo -e "${content}" | while IFS= read -r item
+            do
+                echo "item=${item}"
+                if [ "${item}" == "b" ]; then
+                    return
+                fi 
+            done
+        done
+    }
+
+    function return_inside_substitution() {
+        echo "return_inside_substitution"
+        content="a\nb\nc"
+        for((i=0;i<3;i++))
+        do
+            while IFS= read -r item
+            do
+                echo "item=${item}"
+                if [ "${item}" == "b" ]; then
+                    return
+                fi 
+            done < <(echo -e "${content}")
+        done
+    }
+
+    return_inside_pipe
+    return_inside_substitution
+    ```
+
 ## 1.5 Env
 
 ### 1.5.1 Pass to specific program
