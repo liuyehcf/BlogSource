@@ -11,7 +11,7 @@ categories:
 
 <!--more-->
 
-# 1 GDB能够做什么？
+# 1 What is GDB
 
 1. 一个支持包括`c`以及`c++`等众多语言的`debugger`工具
 1. 它允许您检查程序在执行期间的某个时刻正在做什么
@@ -25,7 +25,7 @@ gcc -g hello.c -o hello
 g++ -g hello.cpp -o hello
 ```
 
-# 2 如何进入GDB shell
+# 2 How to use GDB
 
 `gdb`提供了一个交互式的`shell`，能够通过`↑`查询历史命令，可以通过`tab`进行命令行补全，可以通过`help [command]`查询帮助文档
 
@@ -78,9 +78,9 @@ pid=$(ps -ef | grep main_without_debug | grep -v grep | awk '{print $2}')
 gdb main_with_debug ${pid}
 ```
 
-# 3 command
+# 3 Command
 
-## 3.1 运行程序
+## 3.1 Run Program
 
 当我们通过`gdb <binary>`这种方式进入`gdb shell`后，程序不会立即执行，需要通过`run`或者`start`命令触发程序的执行
 
@@ -119,9 +119,11 @@ Program received signal SIGSEGV, Segmentation fault.
 
 **此外，可以通过`set args`设置参数。例如`set args -l a -C abc`**
 
-## 3.2 GDB与程序关联
+## 3.2 Attach Program
 
-## 3.3 断点设置
+`gdb -p 12345`
+
+## 3.3 Break Point
 
 * `break`：用于设置断点
     * `break <line_num>`
@@ -268,7 +270,7 @@ Breakpoint 1, main () at set_break.cpp:8
 8	    std::cout << "hello world" << std::endl;
 ```
 
-## 3.4 调试
+## 3.4 Debugging
 
 * `continue`：继续运行直至程序结束或者遇到下一个断点
 * `step`：源码级别的单步调试，会进入方法，另一种说法是`step into`
@@ -287,7 +289,7 @@ Breakpoint 1, main () at set_break.cpp:8
 * `frame <n>`：跳转到栈的指定层
 * `attach <pid>`：重新连接到某个进程
 
-## 3.5 查看调试相关信息
+## 3.5 Display Information
 
 * `bt`、`backtrace`、`where`：查看当前调用堆栈
     * `bt 3`：最上面3层
@@ -451,7 +453,11 @@ $4 = 18
 $5 = (Person *) 0x7fffffffe0c0
 ```
 
-## 3.6 `!`执行外部命令
+## 3.6 Load Symbol Table
+
+* `symbol-file /path/to/binary_file.debuginfo`
+
+## 3.7 Execute outside commands
 
 格式：`!<command> [params]`
 
@@ -460,15 +466,15 @@ $5 = (Person *) 0x7fffffffe0c0
 xxx/gdb_tutorial
 ```
 
-# 4 [gdb-dashboard](https://github.com/cyrus-and/gdb-dashboard)
+# 4 gdb-dashboard
 
-`gdb-dashboard`在`gdb`的基础之上，提供了一个更加友好的格式化界面
+[gdb-dashboard](https://github.com/cyrus-and/gdb-dashboard)在`gdb`的基础之上，提供了一个更加友好的格式化界面
 
 * `help dashboard`：查看帮助手册
 * `dashboard thread`：启用/禁用线程信息（大型工程，线程比较多的话，一般会禁用）
 * `dashboard`：刷新，通常在`print`查看一些变量信息后，需要刷新一下重新显示详情
 
-# 5 参考
+# 5 Reference
 
 * [GDB Tutorial - A Walkthrough with Examples](https://www.cs.umd.edu/~srhuang/teaching/cmsc212/gdb-tutorial-handout.pdf)
 * [GDB Command Reference](https://visualgdb.com/gdbreference/commands/)

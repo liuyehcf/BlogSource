@@ -1321,10 +1321,12 @@ ROOT=$(cd "$ROOT"; pwd)
 该工具用于将debug信息从二进制中提取出来，示例：[[Enhancement] strip debug symbol in release mode](https://github.com/StarRocks/starrocks/pull/24442)
 
 ```sh
-objcopy --only-keep-debug main main_debug
+objcopy --only-keep-debug main main.debuginfo
 strip --strip-debug main
-objcopy --add-gnu-debuglink=main_debug main
+objcopy --add-gnu-debuglink=main.debuginfo main
 ```
+
+When you're debugging the binary through `gdb`, it will automatically load the corresponding debug info file, and you can also manually load it using the `symbol-file` command, like `(gdb) symbol-file /path/to/binary_file.debuginfo`.
 
 ## 2.36 nm
 
