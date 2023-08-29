@@ -382,7 +382,12 @@ categories:
         - Window Clause
             - Unbounded Window
             - Half Unbounded Window
-            - Bounded Window
+            - Sliding Window
+        - Calculation
+            - Naive
+            - Cumulative(Unbounded Window)
+            - Removable Cumulative(Sliding Window)
+            - Segment Tree
     - Predicate
     - View
     - Materialized View
@@ -507,6 +512,11 @@ categories:
                     - Scalar Correlated Subquery
                         - Left Outer Join
                         - One-row Assertion
+            - Window Function
+                - Subquery to Window Function
+                - Ranking Window Function Optimizations
+                    - Predicate Like rk < 100
+                    - TopN Like ORDER BY rk LIMIT 100
             - CTE(Common Table Expressions)
                 - CTEProducer & CTEConsumer & CTEAnchor
                 - Plan Enumeration
