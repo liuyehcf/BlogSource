@@ -24,7 +24,7 @@ categories:
 * `Software event`：需要采样的`event`。比如需要通过`perf record -F 99`指定采样频率
 * `Tracepoint event`：不需要采样的`event`，有其固定的埋点，执行到了就会统计。`Tracepoint event`又可细分为许多类别
 
-## 1.2 参考
+## 1.2 Reference
 
 * [perf Examples](https://www.brendangregg.com/perf.html)
 
@@ -93,12 +93,12 @@ ${FlameGraph_path}/flamegraph.pl out.folded > out.svg
 
 [CPI Flame Graphs: Catching Your CPUs Napping](https://www.brendangregg.com/blog/2014-10-31/cpi-flame-graphs.html)
 
-## 2.5 小结
+## 2.5 Summary
 
 * `perf record`默认采集的`event`是`cpu-clock`，因此这种方式做出来的就是`CPU`火焰图
 * `perf record`配合`-e`参数，指定`event`类型，可以做出任意事件的火焰图
 
-## 2.6 参考
+## 2.6 Reference
 
 * [工欲性能调优，必先利其器（2）- 火焰图](https://pingcap.com/zh/blog/flame-graph)
 * [CPU Flame Graphs](https://www.brendangregg.com/FlameGraphs/cpuflamegraphs.html)
@@ -228,7 +228,7 @@ sudo /usr/share/bcc/tools/offcputime -d -t <tid> 30
 1. 将`B`机器上的`r000hs`目录拷贝到`A`机器的`~/intel/vtune/projects`目录下
 1. 打开`A`机器上的`vtune-gui`对项目`r000hs`进行分析
 
-## 4.1 参考
+## 4.1 Reference
 
 * [Intel® VTune™ Profiler User Guide](https://www.intel.com/content/www/us/en/develop/documentation/vtune-help/top.html)
 * [Intel® VTune™ Profiler User Guide - Run Command Line Analysis](https://www.intel.com/content/www/us/en/develop/documentation/vtune-help/top/command-line-interface/running-command-line-analysis.html)
@@ -272,7 +272,7 @@ https://github.com/StarRocks/starrocks/pull/7649
 
 # 8 Tips
 
-## 8.1 性能分析需要重点关注的指标
+## 8.1 The primary metrics that performance analysis should prioritize
 
 * `Cycles`
 * `IPC`
@@ -284,14 +284,14 @@ https://github.com/StarRocks/starrocks/pull/7649
 * `%usr`、`%sys`
 * `bandwidth`、`packet rate`、`irq`
 
-## 8.2 性能瓶颈分析思路
+## 8.2 What is the approach for performance bottleneck analysis?
 
 1. `CPU`无法打满，可能原因包括：
     * 没有充分并行
     * 存在串行点（`std::mutex`）
     * 其他资源是否已经打满，导致CPU无法进一步提高，比如网卡、磁盘等
 
-# 9 参考
+# 9 Reference
 
 * [perf Examples](https://www.brendangregg.com/perf.html)
 * [在Linux下做性能分析1：基本模型](https://zhuanlan.zhihu.com/p/22124514)
