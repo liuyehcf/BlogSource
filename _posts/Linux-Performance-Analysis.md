@@ -61,6 +61,19 @@ ${FlameGraph_path}/flamegraph.pl out.folded > out.svg
 **相关git项目：**
 
 * [perf-map-agent](https://github.com/jvm-profiling-tools/perf-map-agent)
+    ```sh
+    # Install
+    yum install -y centos-release-scl
+    yum install -y devtoolset-9
+    yum install -y cmake
+    scl enable devtoolset-9 bash
+    cd perf-map-agent && cmake . && make
+
+    # This is required by the runtime
+    yum install -y java-1.8.0-openjdk-devel
+    export JAVA_HOME=/usr/lib/jvm/java-1.8.0
+    ```
+
 * [FlameGraph](https://github.com/brendangregg/FlameGraph)
 
 **Java进程相关配置：**
