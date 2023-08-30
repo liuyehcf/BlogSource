@@ -62,11 +62,45 @@ The third project I participated in was an intelligent edge integrated machine, 
     * Support several types of grammar analysis algorithm, like, LL1, LALR, LR1
 1. How the operator overloading is achieved?
     * Each function description can map to a group of implementations, and each implementations has a priority. The implementation with higher proirity matches first.
+1. Details of the OS pipeline
+    * The pipeline supports selecting various customized configurations such as different applications, network settings, partition setups, account configurations, etc.
+    * Different production methods
+        * PXE
+        * Master Disk Duplication
+        * Root Filesystem Flashing
 1. What problems does the tool address?
+    * Display Cluster Information
+        * clusterId
+        * nodeId
+        * namespace
+        * pk\dn
+    * Kernel Parameters Required by K8s Runtime
+        * net.bridge.bridge-nf-call-iptables
+        * net.ipv4.ip_forward
+        * fs.inotify.max_user_watches
+    * Daemon Helth check
+        * kubelet
+        * docker
+        * sshd
+        * graphics card driver like nvidia, vpu
     * Host network
+        * NetworkManager
+        * Default Router
+        * Ip Conflict
+        * DNS Configuration, prefer static configuration
+        * Domain Name Resolution Testing
+        * Network Connectivity Testing, including both local and internet
+        * Mtu Testing
     * Container network
-    * CoreNDS
-    * iptables-rules
+        * Service Ip Connectivity Testing
+        * Pod Ip Connectivity Testing
+        * Pod Status
+        * DNS
+            * Check the DNS config for pods whose nameserver is not coredns
+            * Domain Name Resolution Testing
+            * Unknown search domain
+        * iptables-rules
+            * DNAT IP Connectivity Testing
 1. Autoboxing
 1. Image Pipeline
     * CentOS offers a image build tool called anaconda, providing a flexible configuration called kickstart for customized settings, incluing the network, disk config, account, and as well as script for more complex configurations.

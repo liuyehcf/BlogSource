@@ -678,7 +678,86 @@ With a materialized view there is a well-defined translation process that takes 
 
 ## 3.3 Consensus Protocol
 
-## 3.4 Not yet mastered
+## 3.4 Good Cases and Bad Cases of Distinct Agg
+
+This chapter only for Starrocks
+
+[[Enhancement] optimize distinct agg](https://github.com/StarRocks/starrocks/pull/26023)
+
+For sql like `select count(distinct $1) from lineorder group by $2;`, the `count(distinct)` can be achieved through 2-stage agg, 3-stage agg and 4-stage agg.
+
+**2-stage agg(use `multi_distinct_count`):**
+
+* Local `multi_distinct_count`
+* Exchange shuffled by `group by key`
+* Global `multi_distinct_count`
+
+**3-stage agg:**
+
+* Local Distinct, using both `group by key` and `distinct key` for bucketing
+* Exchange shuffled by `group by key`
+* Global Distinct, using both `group by key` and `distinct key` for bucketing
+* Global Count, use `group by key` for bucketing
+
+**4-stage agg:**
+
+* Local Distinct, using both `group by key` and `distinct key` for bucketing
+* Exchange shuffled by `group by key` and `distinct key`
+* Global Distinct, using both `group by key` and `distinct key` for bucketing
+* Local Count, use `group by key` for bucketing
+* Exchange shuffled by `group by key`
+* Global Count, use `group by key` for bucketing
+
+### 3.4.1 With Limit
+
+This analysis is only for `select count(distinct $1) from lineorder group by $2 limit 10;`
+
+**2-stage agg(use `multi_distinct_count`):**
+
+* Good Case:
+    * The `group by key` has a medium-low cardinality, while `distinct key` has a non-high cardinality
+* Bad Case: 
+    * The `group by key` has a high cardinality
+    * The `group by key` has a low cardinality
+
+**3-stage agg:**
+
+* Good Case:
+    The `group by key` has a high cardinality
+
+* Bad Case:
+    The `group by key` has a medium-low cardinality
+
+**4-stage agg:**
+
+* Good Case:
+    * The `group by key` has a low cardinality, while `distinct key` has a high cardinality
+* Bad Case:
+    * Other cases
+
+### 3.4.2 Without Limit
+
+This analysis is only for `select count(distinct $1) from lineorder group by $2;`
+
+**2-stage agg:**
+
+* All cases are worse than other approaches
+
+**3-stage agg:**
+
+* Good Case:
+    * Almost all the cases
+* Bad Case:
+    * Worse then 4-stage agg when the `group by key` has a low cardinality, while `distinct key` has a high cardinality
+
+**4-stage agg:**
+
+* Good Case:
+    * The `group by key` has a low cardinality, while `distinct key` has a high cardinality
+* Bad Case:
+    * Other cases
+
+## 3.5 Not yet mastered
 
 1. WAL Structure
 1. Consensus Protocol
@@ -686,7 +765,6 @@ With a materialized view there is a well-defined translation process that takes 
 1. Subuqery classification
 1. Cost-based state transition machine
     * The process of the cbo optimization
-1. Good cases and bad cases of multiply phase agg
 
 # 4 Scheduler
 
