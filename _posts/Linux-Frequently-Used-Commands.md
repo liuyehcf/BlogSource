@@ -4069,6 +4069,17 @@ sudo yum install java-1.8.0-openjdk-devel
 
 -->
 
+## 10.4 apt
+
+**示例：**
+
+```sh
+add-apt-repository "deb https://apt.llvm.org/your-ubuntu-version/ llvm-toolchain-your-ubuntu-version main"
+apt update
+apt search clang-format
+apt install clang-format-X.Y
+```
+
 # 11 FAQ
 
 1. 实时监控系统各项指标
