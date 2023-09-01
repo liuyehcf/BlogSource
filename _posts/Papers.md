@@ -1864,6 +1864,8 @@ Data Stream Processing System, DSPS
         * [Efficient Implementation of Sorting on Multi-Core SIMD CPU Architecture](/resources/paper/Efficient-Implementation-of-Sorting-on-Multi-Core-SIMD-CPU-Architecture.pdf)
         * [A Comparative Study of Parallel Sort Algorithms](/resources/paper/A-Comparative-Study-of-Parallel-Sort-Algorithms.pdf)
         * [Fast Segmented Sort on GPUs](https://dl.acm.org/doi/pdf/10.1145/3079079.3079105)
+    * CodeGen
+        * [Exploiting Code Generation for Efficient LIKE Pattern Matching](/resources/paper/Exploiting-Code-Generation-for-Efficient-LIKE-Pattern-Matching.pdf)
 * Memory
     * [Efficient Use of Memory Bandwidth to Improve Network Processor Throughput](http://www.cs.ucr.edu/~bhuyan/cs162/LECTURE12b.pdf)
 * Statistics/Sample
