@@ -1,3 +1,51 @@
+1. blow dryer
+1. I also don't see the problem in my environment
+1. he might decide to skip the conference
+1. I have not promoted this project; I have not advertised this project
+1. resulting in greater overall time consumption
+1. a pinned comment; a featured comment
+1. tense trade relations
+1. devastating wildfires; catastrophic wildfires
+1. get a minor injury; get a major injury
+1. Category 3 Storm
+1. what is the approach for performance bottleneck analysis?
+1. global lock contention
+1. what's your biggest regret in life?
+1. no rush at all
+1. direct, open and practical
+1. it's a cohesive system
+1. do you have any compassion for me?
+1. what's your favorite thing about him?
+1. stop whining
+1. don't talk back to me
+1. the best is yet to come
+1. the devil's in the details
+1. quit while you're ahead
+1. I just want to get a sense of how close we are to the finish line
+1. it is frustrating
+1. travesty of justice
+1. Trump was booked and released from a jail
+1. it's late, I got to go
+1. I want to stay that way until 17
+1. he has high morals
+1. I was just informed of the incident
+1. Liberal party
+1. you raised a good point
+1. the Premier of the Northwest Territories
+1. working 12-hour days and having a long commute is really harming my overall well-being
+1. the building was where the fire was located
+1. so far, we don't have the accurate number
+1. the reform should be comprehensive
+1. maintaining this property is for accelerating the search for the minimum value
+1. incline bench press
+1. I have a meeting until 3:30
+1. I never make the first move in social situations
+1. the search continues for human remains on the island of Maui
+1. democratic country; democratic nation
+1. touch screen
+1. Is this issue consistently reproducible
+1. men need support, not traps
+1. I don't really agree with China's universal values and political system
 1. could you please hand me the book; could you please pass me the book
 1. I didn't picture that; I didn't imagine that
 1. enjoy the rest of your day; I hope the rest of your day goes well; enjoy yourself along the way; have a blessed day
@@ -1934,7 +1982,6 @@
 1. his hourse is of the best breed
 1. he realized his mistakes and wanted to redeem his reputation
 1. the patent runs out in three years time
-1. he always gives disinterested adivce no matter his standpoint
 1. withdraw/retract
 1. desire/eager
 1. this man was accused of withholding crucial information from the police
@@ -2489,7 +2536,6 @@
 1. wheat was in surplus that year
 1. speed is of the essence in dealing with an emergency
 1. highly informative speech
-1. an increasing number of people
 1. a massive collection of
 1. i through j is ascending
 1. transition from a theoretical model to an efficient implementation is not straightforward
@@ -2803,7 +2849,6 @@
 1. custom/customs/customer
 1. pressing claim for compensation
 1. exchange vows
-1. human instanct
 1. get stuck in
 1. 克服
 1. get through obstacles
@@ -3687,7 +3732,6 @@
 1. insane
 1. slogon
 1. blazing
-1. in the dark
 1. make fun of
 1. pedophile
 1. starchaser
@@ -3937,7 +3981,6 @@
 1. past participle
 1. fridge
 1. towel
-1. first fire
 1. roof garden
 1. wetland
 1. luxury
