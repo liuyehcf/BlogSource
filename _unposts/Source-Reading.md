@@ -208,7 +208,14 @@ Backend-Service
     * `RunTimeCppType`
     * `RunTimeColumnType`
 
-### 3.3.2 Agg
+## 3.4 Expr
+
+* `unary_function.h`
+    * `UnpackConstColumnUnaryFunction`
+* `binary_function.h`
+    * `UnpackConstColumnBinaryFunction`
+
+### 3.4.1 Agg
 
 In StarRocks, `update`, `merge`, `serialize`, and `finalize` are four steps in the aggregate operation that are used to compute aggregated values.
 
@@ -257,7 +264,7 @@ In summary, `update` is used to update intermediate results for an aggregate fun
     * Each `AggData` contain all the memory areas for all the agg functions, an offset array is required to distinguish between them
     * ![agg_state_mem_footprint](/images/Source-Reading/agg_state_mem_footprint.jpeg)
 
-### 3.3.3 Join
+### 3.4.2 Join
 
 ```
              +-------------------+
@@ -283,7 +290,7 @@ In summary, `update` is used to update intermediate results for an aggregate fun
          +---------------------------+
 ```
 
-### 3.3.4 WindowFunction
+### 3.4.3 WindowFunction
 
 * `Window Function`
     * `be/src/exprs/agg/window.h`
@@ -294,7 +301,7 @@ In summary, `update` is used to update intermediate results for an aggregate fun
             * Streaming processing
         * Sliding window
 
-### 3.3.5 RuntimeFilter
+### 3.4.4 RuntimeFilter
 
 * `RuntimeFilterWorker`
 * `RuntimeFilterPort`
@@ -305,9 +312,9 @@ In summary, `update` is used to update intermediate results for an aggregate fun
 * `PartialRuntimeFilterMerger`
 * `SimdBlockFilter`
 
-## 3.4 Storage
+## 3.5 Storage
 
-### 3.4.1 partition vs. tablet vs. bucket
+### 3.5.1 partition vs. tablet vs. bucket
 
 In StarRocks, partition, tablet, and bucket are related concepts that are used to manage data storage and processing in a distributed environment.
 
@@ -352,7 +359,7 @@ Here is a diagram that illustrates the relationship between partitions, tablets,
 +-------------------------------+---+----------------------------+
 ```
 
-### 3.4.2 How many tablets that a partition should have
+### 3.5.2 How many tablets that a partition should have
 
 The number of tablets that a partition should have in StarRocks depends on several factors, including the size of the data, the available resources, and the desired query performance. Here are some general guidelines to consider when determining the number of tablets:
 

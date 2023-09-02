@@ -757,12 +757,15 @@ This analysis is only for `select count(distinct $1) from lineorder group by $2;
 * Bad Case:
     * Other cases
 
-## 3.5 Not yet mastered
+## 3.5 Subquery Classification
+
+{% post_link DBMS-Optimizer %}
+
+## 3.6 Not yet mastered
 
 1. WAL Structure
 1. Consensus Protocol
 1. Bitmap Index & Bitmap Column
-1. Subuqery classification
 1. Cost-based state transition machine
     * The process of the cbo optimization
 
@@ -848,6 +851,18 @@ In situations where events are not naturally generated or it is challenging to c
 By regularly polling the status of tasks or operations, applications can adapt dynamically to the changing state, make informed decisions, and trigger subsequent actions or processes accordingly. However, it's important to strike a balance in terms of polling frequency to avoid excessive resource consumption.
 
 Overall, polling can be a practical approach when dealing with complex and asynchronous state changes, allowing systems and applications to proactively monitor and respond to evolving conditions.
+
+## 4.3 Event-driven system
+
+Key characteristics of an event-driven system include:
+
+* **Events**: Events are occurrences that can trigger actions or reactions within the system. These events can be diverse, ranging from user interactions like button clicks, mouse movements, or keyboard input, to system-generated events like data updates, timeouts, or errors.
+* **Event Handlers**: Event handlers are pieces of code responsible for processing specific types of events. When an event occurs, the appropriate event handler is invoked to perform the necessary actions or computations. Event handlers are designed to handle one or more event types and are typically registered with the system in advance.
+* **Asynchronicity**: Event-driven systems are inherently asynchronous, meaning that components do not execute in a predetermined order. Instead, they respond to events as they occur, allowing for greater flexibility and responsiveness in handling dynamic situations.
+* **Loose Coupling**: In event-driven architectures, components are loosely coupled, which means they are not directly dependent on one another. This promotes modularity and reusability, as individual components can be added, removed, or replaced without affecting the entire system's functionality.
+* **Callbacks**: Callbacks are a common mechanism used in event-driven programming. A callback function is provided as an argument to an event handler or registration function. When the associated event occurs, the callback function is invoked, allowing developers to define custom reactions to events.
+* **Publish-Subscribe Model**: A popular approach within event-driven systems is the publish-subscribe model. In this model, components can publish events to a central event bus or dispatcher. Other components, known as subscribers, can then register to listen for specific types of events and react accordingly when those events are published.
+* **Scalability and Responsiveness**: Event-driven architectures are well-suited for building scalable and responsive systems. By distributing the workload across multiple event handlers and components, the system can efficiently handle a large number of concurrent events and maintain responsiveness.
 
 # 5 Network
 
