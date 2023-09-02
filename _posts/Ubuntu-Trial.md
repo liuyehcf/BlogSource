@@ -36,7 +36,7 @@ managed=true
 
 通过`nmtui`添加网卡并启动
 
-## 1.1 参考
+## 1.1 Reference
 
 * [NetworkManager doesn't show ethernet connection](https://askubuntu.com/questions/904545/networkmanager-doesnt-show-ethernet-connection)
 
@@ -152,7 +152,7 @@ update-alternatives --install /usr/bin/make make /usr/bin/make 4
 update-alternatives --install /usr/bin/make make /usr/local/make-3.81/bin 3
 ```
 
-## 2.3 参考
+## 2.3 Reference
 
 * [ubuntu-install-gcc-6](https://gist.github.com/zuyu/7d5682a5c75282c596449758d21db5ed)
 * [Ubuntu 20.04 - gcc version lower than gcc-7](https://askubuntu.com/questions/1235819/ubuntu-20-04-gcc-version-lower-than-gcc-7)
@@ -198,6 +198,6 @@ aptitude search boost
 sudo aptitude install libboost1.74-dev
 ```
 
-## 3.3 参考
+## 3.3 Reference
 
 * [https://www.linuxfordevices.com/tutorials/linux/fix-updating-from-such-a-repository-cant-be-done-securely-error](https://www.linuxfordevices.com/tutorials/linux/fix-updating-from-such-a-repository-cant-be-done-securely-error)
