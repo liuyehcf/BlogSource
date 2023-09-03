@@ -45,29 +45,49 @@ The third project I participated in was an intelligent edge integrated machine, 
 
 ## 2.4 Questions
 
-1. How the tunnel service works?
-    * It starts with the user opening the terminal at our console or navigating to another web page with a unique address.
-    * Then the server send a NewSession packet to the corresponding device, if the specific port of the local device is available, then the session established.
-    * Any actions from the user will be route to the device, and any message from the device's service will be route to the user.
-1. How can the web broswer can be the user-side agent.
-    * The web broser will set the originl host as the Host field in the http header. So by leveraging this property, the server can create a unique http address for a specific service of a particular user, the first segment of the address is an UUID, which can be resolved to its corresponding tunnel information, helps the server to direct the traffic to the correct edge device.
+**Tunnel Service:**
+
+1. How does the tunnel service work?
+    * It begins with the user opening the terminal on our console or navigating to another web page with a unique address. Then, the server sends a 'NewSession' packet to the corresponding device. If the specific port of the local device is available, the session is established. Any actions from the user will be routed to the device, and any messages from the device's service will be routed to the user.
+1. How can the web browser serve as the user-side agent without any configuration?
+    * The web browser will set the original host as the 'Host' field in the HTTP header. By leveraging this property, the server can create a unique HTTP address for a specific service of a particular user. The first segment of the address is a UUID, which can be resolved to its corresponding tunnel information. This helps the server direct the traffic to the correct edge device.
+
+**Device Rule Center:**
+
 1. Device warnings
     * Device online/offline
+    * Battery dead
     * Cpu/Memory/Disk
 1. Message Routing
     * Offer more flexibility in routing message than the message middleware like kafka or rocketmq
-1. Compile-engine
-    * Lexical Analyzer
+
+**Compile-engine:**
+
+1. What components does it have?
+    * A Lexical Analyzer
+    * A Grammar Parser, supports several types of grammar analysis algorithm, like, LL1(Left-to-right, Leftmost derivation), LALR(Look-Ahead, Left-to-right, Rightmost Derivation), LR1(Left-to-Right, Rightmost derivation)
+1. What features does the compile framework have?
     * NFA (Non-Deterministic Finite Automaton) and DFA (Deterministic Finite Automaton)
-    * Support several types of grammar analysis algorithm, like, LL1, LALR, LR1
-1. How the operator overloading is achieved?
+1. What's the most difficult thing you've encountered when implementing it?
+    * The most challenging aspect, in my opinion, is defining an unambiguous grammar for a specific language. I've gained insights from many mature languages, such as Java.
+
+**Expression Framework:**
+
+1. How is operator overloading achieved?
     * Each function description can map to a group of implementations, and each implementations has a priority. The implementation with higher proirity matches first.
+
+**OS Image Pipeline:**
+
 1. Details of the OS pipeline
     * The pipeline supports selecting various customized configurations such as different applications, network settings, partition setups, account configurations, etc.
+    * CentOS offers a image build tool called anaconda, providing a flexible configuration called kickstart for customized settings, incluing the network, disk config, account, and as well as script for more complex configurations.
     * Different production methods
         * PXE
         * Master Disk Duplication
         * Root Filesystem Flashing
+
+**Troubleshooting Tool:**
+
 1. What problems does the tool address?
     * Display Cluster Information
         * clusterId
@@ -99,11 +119,10 @@ The third project I participated in was an intelligent edge integrated machine, 
             * Check the DNS config for pods whose nameserver is not coredns
             * Domain Name Resolution Testing
             * Unknown search domain
-        * iptables-rules
+        * Iptables Rules
             * DNAT IP Connectivity Testing
-1. Autoboxing
-1. Image Pipeline
-    * CentOS offers a image build tool called anaconda, providing a flexible configuration called kickstart for customized settings, incluing the network, disk config, account, and as well as script for more complex configurations.
+
+**Auto Boxing:**
 
 ## 2.5 Starrocks
 
