@@ -170,6 +170,9 @@ For better observability and query analysis, I introduced support for runtime pr
     * For ranking window function with a predicate or limit clause, we can add an additional partition-topn node to filter data. Significant improment can be achieved if it can filter out lots of data.
 1. What's the advantages of the morsel-driven execution engine?
 1. Subquery classification.
+    * [Summary-of-Key-Points](/_posts/Summary-of-Key-Points.md)
+1. Subquery transformation rules.
+    * [DBMS-Optimizer](/_posts/DBMS-Optimizer.md)
 1. How does starrocks process subquery?
     * Subquery are alwasy placed in the expression, after performing constant removal, predicate siplification, subquery can be replaced with an apply operator and attaching it to the logical tree. And finally, using different types of join to transforming the apply operator.
 
