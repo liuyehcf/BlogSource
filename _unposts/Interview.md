@@ -74,13 +74,13 @@ The third project I participated in was an intelligent edge integrated machine, 
 **Expression Framework:**
 
 1. How is operator overloading achieved?
-    * Each function description can map to a group of implementations, and each implementations has a priority. The implementation with higher proirity matches first.
+    * Each function description can be mapped to a group of implementations, each of which has a priority. The implementation with a higher priority matches first.
 
 **OS Image Pipeline:**
 
 1. Details of the OS pipeline
-    * The pipeline supports selecting various customized configurations such as different applications, network settings, partition setups, account configurations, etc.
-    * CentOS offers a image build tool called anaconda, providing a flexible configuration called kickstart for customized settings, incluing the network, disk config, account, and as well as script for more complex configurations.
+    * TThe pipeline supports the selection of various customized configurations, such as different applications, network settings, partition setups, and account configurations.
+    * CentOS offers an image build tool called Anaconda, which provides a flexible configuration known as kickstart for customized settings. This includes network configuration, disk setup, account settings, as well as scripts for more complex configurations.
     * Different production methods
         * PXE
         * Master Disk Duplication
