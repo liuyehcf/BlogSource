@@ -1,17 +1,7 @@
 
-# 1 postgre
+# 1 Optimizer
 
-* 算数相关的函数：src/backend/utils/adt/numeric.c
-
-# 2 clickhouse
-
-* [COW.h](https://github.com/ClickHouse/ClickHouse/blob/master/src/Common/COW.h)
-
-# 3 StarRocks
-
-## 3.1 Optimizer
-
-### 3.1.1 Uncategory
+## 1.1 Uncategory
 
 1. `Scope`：类似于命名空间namespace
 1. `Relation`：关系实体，数据集
@@ -67,7 +57,7 @@
     * `COLOCATE`：互为colocate的表，相同的`key`对应的数据一定在同一个机器上
     * `REPLICATED`
 
-### 3.1.2 OptimizerTask
+## 1.2 OptimizerTask
 
 与论文[Efficiency-In-The-Columbia-Database-Query-Optimizer](/resources/paper/Efficiency-In-The-Columbia-Database-Query-Optimizer.pdf)中`P63-Figure 17`的概念一一对应
 
@@ -135,9 +125,9 @@ OR
     └─────────┘
 ```
 
-### 3.1.3 Transformation Rules
+## 1.3 Transformation Rules
 
-#### 3.1.3.1 SplitAggregateRule
+### 1.3.1 SplitAggregateRule
 
 1. 默认情况下，所有`LogicalAggregationOperator`的聚合类型都是`AggType::GLOBAL`
 1. `LogicalAggregationOperator::isSplit = false`且`AggType::GLOBAL`可以应用`SplitAggregateRule`
@@ -151,11 +141,11 @@ OR
 * `agg(distinct)`：4阶段聚合
 * `agg(distinct) +  group by`（其中`group by`列低基数倾斜）：4阶段聚合
 
-#### 3.1.3.2 SplitTopNRule
+### 1.3.2 SplitTopNRule
 
 * `isSplit`用于标记是否已应用过`SplitTopNRule`
 
-#### 3.1.3.3 Subquery
+### 1.3.3 Subquery
 
 * `ExistentialApply2JoinRule`
 * `ExistentialApply2OuterJoinRule`
@@ -164,7 +154,7 @@ OR
 * `ScalarApply2AnalyticRule`
 * `ScalarApply2JoinRule`
 
-### 3.1.4 Merge Group
+## 1.4 Merge Group
 
 位置：`Memo::mergeGroup`
 
@@ -185,7 +175,7 @@ OR
 1. 合并`srcGroup`以及`destGroup`
 1. 合并`needMergeGroup`中记录的`Group`对
 
-## 3.2 RPC
+# 2 RPC
 
 Frontend-Service
 
@@ -197,9 +187,9 @@ Backend-Service
 * `PInternalServiceImplBase`：server
 * `BackendServiceClient`：client
 
-## 3.3 Execution
+# 3 Execution
 
-### 3.3.1 Column
+## 3.1 Column
 
 **Traits:**
 
@@ -208,14 +198,14 @@ Backend-Service
     * `RunTimeCppType`
     * `RunTimeColumnType`
 
-## 3.4 Expr
+## 3.2 Expr
 
 * `unary_function.h`
     * `UnpackConstColumnUnaryFunction`
 * `binary_function.h`
     * `UnpackConstColumnBinaryFunction`
 
-### 3.4.1 Agg
+## 3.3 Agg
 
 In StarRocks, `update`, `merge`, `serialize`, and `finalize` are four steps in the aggregate operation that are used to compute aggregated values.
 
@@ -263,8 +253,9 @@ In summary, `update` is used to update intermediate results for an aggregate fun
         * `AggDataPtr` are shared by hash table 
     * Each `AggData` contain all the memory areas for all the agg functions, an offset array is required to distinguish between them
     * ![agg_state_mem_footprint](/images/Source-Reading/agg_state_mem_footprint.jpeg)
+* Const column will be unpacked by `Aggregator::evaluate_agg_input_column`
 
-### 3.4.2 Join
+## 3.4 Join
 
 ```
              +-------------------+
@@ -290,7 +281,7 @@ In summary, `update` is used to update intermediate results for an aggregate fun
          +---------------------------+
 ```
 
-### 3.4.3 WindowFunction
+## 3.5 WindowFunction
 
 * `Window Function`
     * `be/src/exprs/agg/window.h`
@@ -301,7 +292,7 @@ In summary, `update` is used to update intermediate results for an aggregate fun
             * Streaming processing
         * Sliding window
 
-### 3.4.4 RuntimeFilter
+## 3.6 RuntimeFilter
 
 * `RuntimeFilterWorker`
 * `RuntimeFilterPort`
@@ -312,9 +303,9 @@ In summary, `update` is used to update intermediate results for an aggregate fun
 * `PartialRuntimeFilterMerger`
 * `SimdBlockFilter`
 
-## 3.5 Storage
+# 4 Storage
 
-### 3.5.1 partition vs. tablet vs. bucket
+## 4.1 partition vs. tablet vs. bucket
 
 In StarRocks, partition, tablet, and bucket are related concepts that are used to manage data storage and processing in a distributed environment.
 
@@ -359,7 +350,7 @@ Here is a diagram that illustrates the relationship between partitions, tablets,
 +-------------------------------+---+----------------------------+
 ```
 
-### 3.5.2 How many tablets that a partition should have
+## 4.2 How many tablets that a partition should have
 
 The number of tablets that a partition should have in StarRocks depends on several factors, including the size of the data, the available resources, and the desired query performance. Here are some general guidelines to consider when determining the number of tablets:
 
