@@ -54,20 +54,19 @@ The third project I participated in was an intelligent edge integrated machine, 
 
 **Device Rule Center:**
 
-1. Device warnings
-    * Device online/offline
-    * Battery dead
-    * Cpu/Memory/Disk
-1. Message Routing
-    * Offer more flexibility in routing message than the message middleware like kafka or rocketmq
+1. How many types of device warnings are there?
+    * Device online/offline, Battery dead, Cpu/Memory/Disk pressure
+1. What's the function of message route?
+    * The function of a message route is to deliver specific messages that are required by a single service from quantities of messages.
+1. Why not just use the message middleware?
+    * Offers more flexibility in routing messages than message middleware platforms like Kafka or RocketMQ, allowing for the provision of more complex rules based on the structural characteristics of the device messages.
 
 **Compile-engine:**
 
-1. What components does it have?
-    * A Lexical Analyzer
-    * A Grammar Parser, supports several types of grammar analysis algorithm, like, LL1(Left-to-right, Leftmost derivation), LALR(Look-Ahead, Left-to-right, Rightmost Derivation), LR1(Left-to-Right, Rightmost derivation)
-1. What features does the compile framework have?
-    * NFA (Non-Deterministic Finite Automaton) and DFA (Deterministic Finite Automaton)
+1. What components does the compiler framework have?
+    * A lexical analyzer, parses the original content into a sequence of tokens.
+    * A Grammar Parser, supports several types of grammar analysis algorithm, like, LL1(Left-to-right, Leftmost derivation), LALR(Look-Ahead, Left-to-right, Rightmost Derivation), LR1(Left-to-Right, Rightmost derivation).
+1. What features does the compiler framework have?
 1. What's the most difficult thing you've encountered when implementing it?
     * The most challenging aspect, in my opinion, is defining an unambiguous grammar for a specific language. I've gained insights from many mature languages, such as Java.
 
@@ -78,51 +77,25 @@ The third project I participated in was an intelligent edge integrated machine, 
 
 **OS Image Pipeline:**
 
-1. Details of the OS pipeline
-    * TThe pipeline supports the selection of various customized configurations, such as different applications, network settings, partition setups, and account configurations.
+1. What's the function of the OS pipeline?
+    * The pipeline supports the selection of various customized configurations, such as different applications, network settings, partition setups, and account configurations.
     * CentOS offers an image build tool called Anaconda, which provides a flexible configuration known as kickstart for customized settings. This includes network configuration, disk setup, account settings, as well as scripts for more complex configurations.
-    * Different production methods
-        * PXE
-        * Master Disk Duplication
-        * Root Filesystem Flashing
+    * Different production methods, including PXE(Preboot Execution Environment), Master Disk Duplication, Root Filesystem Flashing
 
 **Troubleshooting Tool:**
 
 1. What problems does the tool address?
-    * Display Cluster Information
-        * clusterId
-        * nodeId
-        * namespace
-        * pk\dn
-    * Kernel Parameters Required by K8s Runtime
-        * net.bridge.bridge-nf-call-iptables
-        * net.ipv4.ip_forward
-        * fs.inotify.max_user_watches
-    * Daemon Helth check
-        * kubelet
-        * docker
-        * sshd
-        * graphics card driver like nvidia, vpu
-    * Host network
-        * NetworkManager
-        * Default Router
-        * Ip Conflict
-        * DNS Configuration, prefer static configuration
-        * Domain Name Resolution Testing
-        * Network Connectivity Testing, including both local and internet
-        * Mtu Testing
-    * Container network
-        * Service Ip Connectivity Testing
-        * Pod Ip Connectivity Testing
-        * Pod Status
-        * DNS
-            * Check the DNS config for pods whose nameserver is not coredns
-            * Domain Name Resolution Testing
-            * Unknown search domain
-        * Iptables Rules
-            * DNAT IP Connectivity Testing
+    * Display Cluster Information defined by our business, including `clusterId`, `nodeId`, `namespace`, `pk\dn`
+    * Kernel Parameters Required by K8s Runtime, including `net.bridge.bridge-nf-call-iptables`, `net.ipv4.ip_forward`, `fs.inotify.max_user_watches`
+    * Daemon Helth check, including `kubelet`, `docker`, `sshd`, graphics card driver like nvidia, vpu
+    * Host network, including NetworkManager, Default Router, Ip Conflict(arping), DNS Configuration, Domain Name Resolution Testing, Network Connectivity Testing, including both local and internet, Mtu Testing(ping)
+    * Container network,including Service Ip Connectivity Testing, Pod Ip Connectivity Testing, Pod Status, DNS and Iptables Rules
+        * For DNS, including Check the DNS config for pods whose nameserver is not coredns, Domain Name Resolution Testing, Unknown search domain
+        * Iptables Rules, including DNAT IP Connectivity Testing
 
 **Auto Boxing:**
+
+1. What's the function of auto boxing?
 
 ## 2.5 Starrocks
 
@@ -140,7 +113,7 @@ For better observability and query analysis, I introduced support for runtime pr
 
 ## 2.6 Questions
 
-1. Killing Features
+1. What are the killing features of StarRocks?
     1. MPP (Massively Parallel Processing) Distributed Execution
         * Performance & Resource Utilization
         * Scalability
@@ -163,15 +136,15 @@ For better observability and query analysis, I introduced support for runtime pr
         * Improve IO efficiency
     1. Materialized View
         * Transparent accelerating
-1. Why are you refactoring the subquery transformation process?
+1. Why do you refactor the subquery transformation process?
     * In the previous process, the subquery would be transformed to ApplyOperator first, missing the opportunity to apply optimizations such as constant removal or predicate simplification
     * After this refactor, the subquery used as an expression will be temporarily held back until the expression optimizations are performed, allowing it to fully benefit from these optimizations
 1. What's optimization can lead to 10 times performance boost of the ranking window function?
     * For ranking window function with a predicate or limit clause, we can add an additional partition-topn node to filter data. Significant improment can be achieved if it can filter out lots of data.
 1. What's the advantages of the morsel-driven execution engine?
-1. Subquery classification.
+1. Could describe the subquery classifications?
     * [Summary-of-Key-Points](/_posts/Summary-of-Key-Points.md)
-1. Subquery transformation rules.
+1. How many subquery transformation rules in Starrocks?
     * [DBMS-Optimizer](/_posts/DBMS-Optimizer.md)
 1. How does starrocks process subquery?
     * Subquery are alwasy placed in the expression, after performing constant removal, predicate siplification, subquery can be replaced with an apply operator and attaching it to the logical tree. And finally, using different types of join to transforming the apply operator.

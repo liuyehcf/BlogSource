@@ -130,7 +130,7 @@ table th:nth-of-type(5) {
 | 96 | Unique Binary Search Trees | Tree/Dp | ★★★★ | 同95，`dp[i][j]`表示由数字(i, i+1, ..., j)可以构成的所有二叉树的数量 |
 | 97 | Interleaving String | Recursion | ★★★ | 经典dp，第一级循环是总长度；经典递归，若`s1[i1] == s3[i3]`，那么尝试继续匹配；若`s2[i2] == s3[i3]`，那么尝试继续匹配，否则匹配失败 |
 | 98 | Validate Binary Search Tree | Tree/Recursion | ★★ | 递归的时候，传入取值范围，最开始的范围是`[Long.MIN_VALUE, Long.MAX_VALUE]` |
-| 99 | Recover Binary Search Tree | Tree/Stack | ★★★ | 在中序遍历的过程中，找到不满足约束的节点。不满足约束的位置可能有1个（两个异常节点在中序遍历中相邻），也可能有2个（两个异常节点在中序遍历中不相邻） |
+| 99 | Recover Binary Search Tree | Tree/Stack | ★★★★ | 在中序遍历的过程中，找到不满足约束的节点。不满足约束的位置可能有1个（两个异常节点在中序遍历中相邻），也可能有2个（两个异常节点在中序遍历中不相邻） |
 | 100 | Same Tree | Tree/Recursion | ★ | 最简单的递归，不解释了 |
 | 101 | Symmetric Tree | Tree/Recursion | ★★ | 同100 |
 | 102 | Binary Tree Level Order Traversal | Tree/Queue | ★★ | 经典层序遍历，用队列，每次处理一层 |
