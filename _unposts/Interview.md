@@ -140,7 +140,7 @@ For better observability and query analysis, I introduced support for runtime pr
     * In the previous process, the subquery would be transformed to ApplyOperator first, missing the opportunity to apply optimizations such as constant removal or predicate simplification
     * After this refactor, the subquery used as an expression will be temporarily held back until the expression optimizations are performed, allowing it to fully benefit from these optimizations
 1. What's optimization can lead to 10 times performance boost of the ranking window function?
-    * For ranking window function with a predicate or limit clause, we can add an additional partition-topn node to filter data. Significant improment can be achieved if it can filter out lots of data.
+    * When using a ranking window function with a predicate or a limit clause, we have the option to include an additional partition-topn node to filter the data. This can lead to significant improvements, particularly when it comes to filtering out large amounts of data.
 1. What's the advantages of the morsel-driven execution engine?
 1. Could describe the subquery classifications?
     * [Summary-of-Key-Points](/_posts/Summary-of-Key-Points.md)
