@@ -24,7 +24,9 @@ categories:
 * `Software event`：需要采样的`event`。比如需要通过`perf record -F 99`指定采样频率
 * `Tracepoint event`：不需要采样的`event`，有其固定的埋点，执行到了就会统计。`Tracepoint event`又可细分为许多类别
 
-## 1.2 Reference
+## 1.2 libperf
+
+## 1.3 Reference
 
 * [perf Examples](https://www.brendangregg.com/perf.html)
 

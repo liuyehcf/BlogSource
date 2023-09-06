@@ -133,7 +133,7 @@ table th:nth-of-type(5) {
 | 99 | Recover Binary Search Tree | Tree/Stack | ★★★★ | 在中序遍历的过程中，找到不满足约束的节点。不满足约束的位置可能有1个（两个异常节点在中序遍历中相邻），也可能有2个（两个异常节点在中序遍历中不相邻） |
 | 100 | Same Tree | Tree/Recursion | ★ | 最简单的递归，不解释了 |
 | 101 | Symmetric Tree | Tree/Recursion | ★★ | 同100 |
-| 102 | Binary Tree Level Order Traversal | Tree/Queue | ★★ | 经典层序遍历，用队列，每次处理一层 |
+| 102 | Binary Tree Level Order Traversal | Tree/Queue | ★★★ | 经典层序遍历，用队列，每次处理一层 |
 | 103 | Binary Tree Zigzag Level Order Traversal | Tree/Queue | ★★ | 同102，每层数值的收集逻辑反转一下，即加入到尾部还是插入到头部 |
 | 104 | Maximum Depth of Binary Tree | Tree/Recursion | ★★ | 简单递归思路，注意叶节点的判断逻辑 |
 | 105 | Construct Binary Tree from Preorder and Inorder Traversal | Tree/Recursion | ★★★ | 存下每个元素在中序遍历中的位置，这样可以知道左右子树的长度，找到左右子树在前序遍历和中序遍历的边界，并继续递归 |
