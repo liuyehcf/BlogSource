@@ -117,7 +117,10 @@ Program received signal SIGSEGV, Segmentation fault.
 
 ```
 
-**此外，可以通过`set args`设置参数。例如`set args -l a -C abc`**
+**此外，可以通过`set args`设置参数。例如:**
+
+* `set args -l a -C abc`
+* `set args --gtest_filter=TestXxx.caseX`
 
 ## 3.2 Attach Program
 
