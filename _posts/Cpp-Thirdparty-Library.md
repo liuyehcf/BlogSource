@@ -19,7 +19,7 @@ categories:
 yum install -y boost-devel
 ```
 
-## 1.1 打印堆栈
+## 1.1 Print Stack
 
 **源码如下：**
 
@@ -67,7 +67,7 @@ gcc -o main main.cpp -lstdc++ -std=gnu++17 -ldl -g
  8# _start in ./main
 ```
 
-## 1.2 参考
+## 1.2 Reference
 
 * [The Boost C++ Libraries BoostBook Documentation Subset](https://www.boost.org/doc/libs/master/doc/html/)
 * [How to print current call stack](https://www.boost.org/doc/libs/1_66_0/doc/html/stacktrace/getting_started.html)
@@ -112,9 +112,9 @@ int main() {
 
 # 3 Google
 
-## 3.1 [gflag](https://github.com/gflags/gflags)
+## 3.1 gflag
 
-**安装`gflag`：**
+**安装[gflag](https://github.com/gflags/gflags)：**
 
 ```sh
 git clone git@github.com:gflags/gflags.git
@@ -171,9 +171,9 @@ int main(int argc, char* argv[]) {
 * `gcc -o main main.cpp -lstdc++ -std=gnu++17 -lgflags`
 * `./main --test_bool true --test_int32 100 --test_double 6.666 --test_str hello`
 
-## 3.2 [glog](https://github.com/google/glog)
+## 3.2 glog
 
-**安装`glog`：**
+**安装[glog](https://github.com/google/glog)：**
 
 ```sh
 git clone https://github.com/google/glog.git 
@@ -196,7 +196,7 @@ find_package(GLOG)
 target_link_libraries(xxx glog::glog)
 ```
 
-### 3.2.1 打印堆栈
+### 3.2.1 Print Stack
 
 [[Enhancement] wrap libc's __cxa_throw to print stack trace when throw exceptions](https://github.com/StarRocks/starrocks/pull/13410)
 
@@ -254,9 +254,9 @@ int main(int argc, char* argv[]) {
 gcc -o main main.cpp -Wl,-wrap=__cxa_throw -lstdc++ -std=gnu++17 -Wl,-Bstatic -lglog -lgflags -Wl,-Bdynamic -lunwind -lpthread
 ```
 
-## 3.3 [gtest](https://github.com/google/googletest)
+## 3.3 gtest
 
-**安装`googletest`：**
+**安装[gtest](https://github.com/google/googletest)：**
 
 ```sh
 git clone https://github.com/google/googletest.git
@@ -335,13 +335,63 @@ make
 ./gtest_demo
 ```
 
-### 3.3.1 Tips
+### 3.3.1 Macros
+
+1. `TEST(test_case_name, test_name)`: Defines a test case.
+    ```cpp
+    TEST(TestCaseName, TestName) {
+        // Test logic here
+    }
+    ```
+
+1. `TEST_F(test_fixture, test_name)`: Defines a test case using a test fixture.
+    ```cpp
+    class MyTestFixture : public ::testing::Test {
+    protected:
+        void SetUp() override {
+            // Common setup logic for test cases
+        }
+
+        void TearDown() override {
+            // Common cleanup logic for test cases
+        }
+    };
+
+    TEST_F(MyTestFixture, TestName) {
+        // Test logic using the fixture environment
+    }
+    ```
+
+1. `EXPECT_EQ(expected, actual)`: Expects that two values are equal.
+1. `ASSERT_EQ(expected, actual)`: Asserts that two values are equal.
+1. `EXPECT_NE(val1, val2)`: Expects that two values are not equal.
+1. `ASSERT_NE(val1, val2)`: Asserts that two values are not equal.
+1. `EXPECT_LT(val1, val2)`: Expects that val1 is less than val2.
+1. `ASSERT_LT(val1, val2)`: Asserts that val1 is less than val2.
+1. `EXPECT_LE(val1, val2)`: Expects that val1 is less than or equal to val2.
+1. `ASSERT_LE(val1, val2)`: Asserts that val1 is less than or equal to val2.
+1. `EXPECT_GT(val1, val2)`: Expects that val1 is greater than val2.
+1. `ASSERT_GT(val1, val2)`: Asserts that val1 is greater than val2.
+1. `EXPECT_GE(val1, val2)`: Expects that val1 is greater than or equal to val2.
+1. `ASSERT_GE(val1, val2)`: Asserts that val1 is greater than or equal to val2.
+1. `EXPECT_TRUE(condition)`: Expects that a condition is true.
+1. `ASSERT_TRUE(condition)`: Asserts that a condition is true.
+1. `EXPECT_FALSE(condition)`: Expects that a condition is false.
+1. `ASSERT_FALSE(condition)`: Asserts that a condition is false.
+1. `EXPECT_STREQ(expected_str, actual_str)`: Expects that two C-style strings are equal.
+1. `ASSERT_STREQ(expected_str, actual_str)`: Asserts that two C-style strings are equal.
+1. `EXPECT_STRNE(str1, str2)`: Expects that two C-style strings are not equal.
+1. `ASSERT_STRNE(str1, str2)`: Asserts that two C-style strings are not equal.
+1. `EXPECT_THROW(statement, exception_type)`: Expects that a specific statement throws a particular exception.
+1. `ASSERT_THROW(statement, exception_type)`: Asserts that a specific statement throws a particular exception.
+
+### 3.3.2 Tips
 
 1. 假设编译得到的二进制是`test`，通过执行`./test --help`就可以看到所有gtest支持的参数，包括执行特定case等等
 
-## 3.4 [benchmark](https://github.com/google/benchmark)
+## 3.4 benchmark
 
-**安装`benchmark`：**
+**安装[benchmark](https://github.com/google/benchmark)：**
 
 ```sh
 git clone https://github.com/google/benchmark.git --depth 1
@@ -453,18 +503,18 @@ inline BENCHMARK_ALWAYS_INLINE void DoNotOptimize(Tp& value) {
 }
 ```
 
-#### 3.4.2.2 运行指定的case
+#### 3.4.2.2 Run Specific Case
 
 使用参数`--benchmark_filter=<regexp>`，此外可以使用`--help`查看所有参数
 
-### 3.4.3 参考
+### 3.4.3 Reference
 
 * [benchmark/docs/user_guide.md](https://github.com/google/benchmark/blob/main/docs/user_guide.md)
 * [c++性能测试工具：google benchmark入门（一）](https://www.cnblogs.com/apocelipes/p/10348925.html)
 
 ## 3.5 [gperftools/gperftools](https://github.com/gperftools/gperftools)
 
-# 4 Uncategorized
+# 4 Assorted
 
 1. [parallel-hashmap](https://github.com/greg7mdp/parallel-hashmap)：`parallel-hashmap`提供了一组高性能、并发安全的`map`，用于替换`std`以及`boost`中的`map`
     * [phmap_gdb.py](https://github.com/greg7mdp/parallel-hashmap/blob/master/phmap_gdb.py)
