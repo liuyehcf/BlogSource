@@ -144,9 +144,9 @@ For better observability and query analysis, I introduced support for runtime pr
 1. What's optimization can lead to 10 times performance boost of the ranking window function?
     * When using a ranking window function with a predicate or a limit clause, we have the option to include an additional partition-topn node to filter the data. This can lead to significant improvements, particularly when it comes to filtering out large amounts of data.
 1. What's the advantages of the morsel-driven execution engine?
-    * Easy to support fine-grained isolation, resource group.
+    * It is easier to support fine-grained isolation, like resource group.
     * Reduce the scheduling overhead and optimize the utilization of available CPU resources.
-    * Make it easier to set different parallelism for different parts of the query.
+    * It is easier to set different parallelism for different parts of the query.
 1. Could describe the subquery classifications?
     * [Summary-of-Key-Points](/_posts/Summary-of-Key-Points.md)
 1. How many subquery transformation rules in Starrocks?
