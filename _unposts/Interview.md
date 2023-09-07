@@ -57,7 +57,7 @@ The third project I participated in was an intelligent edge integrated machine, 
 1. How many types of device warnings are there?
     * Device online/offline, Battery dead, Cpu/Memory/Disk pressure
 1. What's the function of message route?
-    * The function of a message route is to deliver specific messages that are required by a single service from quantities of messages.
+    * The function of a message route is to deliver specific messages that are required by a single service from quantities of original device messages.
 1. Why not just use the message middleware?
     * Offers more flexibility in routing messages than message middleware platforms like Kafka or RocketMQ, allowing for the provision of more complex rules based on the structural characteristics of the device messages.
 
