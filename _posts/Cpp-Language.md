@@ -2168,6 +2168,69 @@ Class *pc = new (buf) Class();
 
 ## 4.1 template Type
 
+1. `Function Templates`: These are templates that produce templated functions that can operate on a variety of data types.
+    ```cpp
+    template<typename T>
+    T max(T a, T b) {
+        return (a > b) ? a : b;
+    }
+    ```
+
+1. `Class Templates`: These produce templated classes. The Standard Template Library (STL) makes heavy use of this type of template for classes like `std::vector`, `std::map`, etc.
+    ```cpp
+    template<typename T>
+    class Stack {
+        // ... class definition ...
+    };
+    ```
+
+1. `Variable Templates`: Introduced in C++14, these are templates that produce templated variables.
+    ```cpp
+    template<typename T>
+    constexpr T pi = T(3.1415926535897932385);
+    ```
+
+1. `Alias Templates`: These are a way to define templated `typedef`, providing a way to simplify complex type names.
+    ```cpp
+    template<typename T>
+    using Vec = std::vector<T, std::allocator<T>>;
+    ```
+
+1. `Member Function Templates`: These are member functions within classes that are templated. The containing class itself may or may not be templated.
+    ```cpp
+    class MyClass {
+        template<typename T>
+        void myFunction(T t) {
+            // ... function implementation ...
+        }
+    };
+    ```
+
+1. `Template Template Parameters`: This advanced feature allows a template to have another template as a parameter.
+    ```cpp
+    template<template<typename> class ContainerType>
+    class MyClass {
+        // ... class definition ...
+    };
+    ```
+
+1. `Non-type Template Parameters`: These are templates that take values (like integers, pointers, etc.) as parameters rather than types.
+    ```cpp
+    template<int size>
+    class Array {
+        int elems[size];
+        // ... class definition ...
+    };
+    ```
+
+1. `Nested Templates`: This refers to templates defined within another template. It's not a different kind of template per se, but rather a feature where one template can be nested inside another.
+
+**Function and Class Templates**: When you define a function template or a class template in a header, you're not defining an actual function or class. Instead, you're defining a blueprint from which actual functions or classes can be instantiated. Actual instantiations of these templates (the generated functions or classes) may end up in multiple translation units, but they're identical and thus don't violate the ODR. Only when these templates are instantiated do they become tangible entities in the object file. If multiple translation units include the same function or class template and instantiate it in the same way, they all will have the same instantiation, so it doesn't break One Definition Rule (ODR).
+
+**Variable Templates**: A variable template is still a blueprint, like function and class templates. But the key difference lies in how the compiler treats template instantiations for variables versus functions/classes. For variables, the instantiation actually defines a variable. If this template is instantiated in multiple translation units, it results in multiple definitions of the same variable across those translation units, violating the ODR. Thus, for variable templates, the `inline` keyword is used to ensure that all instances of a variable template across multiple translation units are treated as a single entity, avoiding ODR violations.
+
+## 4.2 template Argument Type
+
 1. `template`模板
 1. `typename`模板
 1. `enum`模板
@@ -2201,7 +2264,7 @@ int main() {
 }
 ```
 
-## 4.2 template Parameter Pack
+## 4.3 template Parameter Pack
 
 [C++ 语言构造参考手册-形参包](https://www.bookstack.cn/read/cppreference-language/5c04935094badaf1.md)
 
@@ -2223,7 +2286,7 @@ int main() {
 
 * `模式 ...`
 
-## 4.3 Fold Expressions
+## 4.4 Fold Expressions
 
 [C++ 语言构造参考手册-折叠表达式](https://www.bookstack.cn/read/cppreference-language/62e23cda3198622e.md)
 
@@ -2322,9 +2385,9 @@ int main() {
 }
 ```
 
-## 4.4 Traverse Parameter Pack
+## 4.5 Traverse Parameter Pack
 
-### 4.4.1 Parenthesis Initializer
+### 4.5.1 Parenthesis Initializer
 
 这里用到了一个技巧，[逗号运算符](https://www.bookstack.cn/read/cppreference-language/ae53223225119599.md#9bocdk)：对于逗号表达式`E1, E2`中，对`E1`求值并舍弃其结果（尽管当它具有类类型时，直到包含它的全表达式的结尾之前都不会销毁它），其副作用在表达式`E2`的求值开始前完成
 
@@ -2399,7 +2462,7 @@ int main() {
 }
 ```
 
-### 4.4.2 constexpr for
+### 4.5.2 constexpr for
 
 有时候，无法通过折叠表达式处理一些复杂的场景，我们希望能通过循环来挨个处理形参，示例如下（参考[Approximating 'constexpr for'](https://artificial-mind.net/blog/2020/10/31/constexpr-for)）：
 
@@ -2469,7 +2532,7 @@ int main() {
 }
 ```
 
-## 4.5 Non-Type template Parameter
+## 4.6 Non-Type template Parameter
 
 我们还可以在模板中定义非类型参数，一个非类型参数表示一个值而非一个类型。当一个模板被实例化时，非类型参数被编译器推断出的值所代替，这些值必须是常量表达式，从而允许编译器在编译时实例化模板。一个非类型参数可以是一个整型（枚举可以理解为整型），或是一个指向对象或函数类型的指针或引用
 
@@ -2505,7 +2568,7 @@ int main() {
 }
 ```
 
-## 4.6 When template parameters cannot be inferred
+## 4.7 When template parameters cannot be inferred
 
 **通常，在`::`左边的模板形参是无法进行推断的（这里的`::`特指用于连接两个类型），例如下面这个例子**
 
@@ -2530,7 +2593,7 @@ int main() {
 }
 ```
 
-## 4.7 Using typename to Disambiguate
+## 4.8 Using typename to Disambiguate
 
 **什么情况下会有歧义？。例如`foo* ptr;`**
 
@@ -2572,7 +2635,7 @@ typename T::value_type sum(const T &container) {
 }
 ```
 
-## 4.8 Using template to Disambiguate
+## 4.9 Using template to Disambiguate
 
 **什么情况下会有歧义？。例如`container.emplace<int>(1);`**
 
@@ -2645,7 +2708,7 @@ void bar() {
 }
 ```
 
-## 4.9 Defining a type alias in a template parameter list
+## 4.10 Defining a type alias in a template parameter list
 
 语法上，我们是无法在template的参数列表中定义别名的（无法使用`using`）。但是我们可以通过定义有默认值的类型形参来实现类似类型别名的功能，如下：
 
@@ -2657,7 +2720,7 @@ ValueType& get(HashMap& map, const KeyType& key) {
 }
 ```
 
-## 4.10 Accessing members of a template parent class from a non-template derived class
+## 4.11 Accessing members of a template parent class from a non-template derived class
 
 * 方式1：`MemberName`
 * 方式2：`this->MemberName`
@@ -2681,7 +2744,7 @@ int main() {
 }
 ```
 
-## 4.11 Accessing members of a template parent class from a template derived class
+## 4.12 Accessing members of a template parent class from a template derived class
 
 * 访问方式1：`ParentClass<Template Args...>::MemberName`
 * 访问方式2：`this->MemberName`
@@ -2706,7 +2769,7 @@ int main() {
 }
 ```
 
-## 4.12 template as a template Parameter
+## 4.13 template as a template Parameter
 
 [What are some uses of template template parameters?](https://stackoverflow.com/questions/213761/what-are-some-uses-of-template-template-parameters)
 
@@ -2736,7 +2799,7 @@ int main() {
 }
 ```
 
-## 4.13 Separating the definition and implementation of a template
+## 4.14 Separating the definition and implementation of a template
 
 我们可以将模板的声明和定义分别放在两个文件中，这样可以使得代码结构更加清晰。例如，假设有两个文件`test.h`和`test.tpp`，其内容分别如下：
 
@@ -2804,11 +2867,11 @@ int main() {
 
 `clangd`在没有`compile_commands.json`文件时，处理单独的`tpp`文件会报错，错误信息是：`Unable to handle compilation, expected exactly one compiler job in ''`
 
-## 4.14 [CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern)
+## 4.15 [CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern)
 
 `CRTP`的全称是`Curious Recurring Template Pattern`
 
-### 4.14.1 Static Polymorphism
+### 4.15.1 Static Polymorphism
 
 ```cpp
 #include <iostream>
@@ -2832,7 +2895,7 @@ int main() {
 }
 ```
 
-### 4.14.2 Object Counter
+### 4.15.2 Object Counter
 
 ```cpp
 #include <iostream>
@@ -2877,7 +2940,7 @@ int main() {
 }
 ```
 
-### 4.14.3 Polymorphic Chaining
+### 4.15.3 Polymorphic Chaining
 
 ```cpp
 #include <iostream>
@@ -2954,7 +3017,7 @@ int main() {
 * `PlainCoutPrinter().print("Hello ")`的返回类型是`PlainPrinter`，丢失了具体的`PlainCoutPrinter`类型信息，于是再调用`SetConsoleColor`就报错了
 * 而使用`CRTP`就可以避免这个问题，基类的方法返回类型永远是具体的子类
 
-### 4.14.4 Polymorphic Copy Construction
+### 4.15.4 Polymorphic Copy Construction
 
 ```cpp
 #include <memory>
@@ -2993,7 +3056,7 @@ int main() {
 }
 ```
 
-## 4.15 PIMPL
+## 4.16 PIMPL
 
 In C++, the term `pimpl` is short for `pointer to implementation` or `private implementation`. It's an idiom used to separate the public interface of a class from its implementation details. This helps improve code modularity, encapsulation, and reduces compile-time dependencies.
 
