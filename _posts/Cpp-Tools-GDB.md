@@ -335,6 +335,9 @@ Breakpoint 1, main () at set_break.cpp:8
         * `print v._M_impl._M_start[i]`：第`i`个元素
         * `print &v._M_impl._M_start[i]`：第`i`个元素的地址
         * `print v._M_impl._M_start[i]@j`：打印从第`i`个元素开始的`j`个元素
+    * `std::shared_ptr`调试技巧
+        * `print *p._M_ptr`：查看具体类型，会打印类似于`<vtable for Derive+16>`的信息，这里就可以获取到实际的类型信息
+        * `print *(<type>*)p._M_ptr`：查看对应类型的详情
 * `x/<count><format><size> <addr>`：以指定格式打印内存信息
     * `<count>`：正整数，表示需要显示的内存单元的个数，即从当前地址向后显示`<count>`个内存单元的内容，一个内存单元的大小由第三个参数`<size>`定义
     * `<format>`：表示`addr`指向的内存内容的输出格式
