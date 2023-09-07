@@ -239,6 +239,69 @@ int main() {
 }
 ```
 
+## 1.4 Binary Search Operations (on sorted ranges)
+
+1. `std::lower_bound`
+1. `std::upper_bound`
+1. `std::binary_search`
+1. `std::equal_range`
+
+### 1.4.1 std::lower_bound
+
+```cpp
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
+int main() {
+    std::vector<int> nums{0, 1, 2, 3, 3, 3, 4, 4, 5, 10, 11, 13};
+
+    auto find_lower_bound = [&nums](int target) {
+        std::cout << "the lower_bound of " << target << " is: ";
+        auto it = std::lower_bound(nums.begin(), nums.end(), target);
+        if (it == nums.end()) {
+            std::cout << "nullptr" << std::endl;
+        } else {
+            std::cout << *it << std::endl;
+        }
+    };
+
+    for (int i = -1; i < 15; ++i) {
+        find_lower_bound(i);
+    }
+
+    return 0;
+}
+```
+
+### 1.4.2 std::upper_bound
+
+```cpp
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
+int main() {
+    std::vector<int> nums{0, 1, 2, 3, 3, 3, 4, 4, 5, 10, 11, 13};
+
+    auto find_upper_bound = [&nums](int target) {
+        std::cout << "the upper_bound of " << target << " is: ";
+        auto it = std::upper_bound(nums.begin(), nums.end(), target);
+        if (it == nums.end()) {
+            std::cout << "nullptr" << std::endl;
+        } else {
+            std::cout << *it << std::endl;
+        }
+    };
+
+    for (int i = -1; i < 15; ++i) {
+        find_upper_bound(i);
+    }
+
+    return 0;
+}
+```
+
 # 2 any
 
 **`std::any`用于持有任意类型的对象，类似于Java中的`java.lang.Object`**
@@ -312,7 +375,7 @@ result: 0, flag: 1, expected: 1
 * `memory_order_acq_rel`
 * `memory_order_seq_cst`
 
-### 3.1.1 顺序一致次序（sequential consistency ordering）
+### 3.1.1 Sequential Consistency Ordering
 
 `memory_order_seq_cst`属于这种内存模型
 
@@ -320,7 +383,7 @@ result: 0, flag: 1, expected: 1
 
 **该原子操作前后的读写（包括非原子的读写操作）不能跨过该操作乱序；该原子操作之前的写操作（包括非原子的写操作）都能被所有线程观察到**
 
-### 3.1.2 松弛次序（relaxed ordering）
+### 3.1.2 Relaxed Ordering
 
 `memory_order_relaxed`属于这种内存模型
 
@@ -331,7 +394,7 @@ result: 0, flag: 1, expected: 1
 * 同一个线程内，`normal read`和`atomic read`允许重排（x86不允许这么做）
 * **唯一能保证的是，不同线程看到的该变量的修改顺序是一致的**
 
-### 3.1.3 获取-释放次序（acquire-release ordering）
+### 3.1.3 Acquire-Release Ordering
 
 `memory_order_release`、`memory_order_acquire`、`memory_order_acq_rel`属于这种内存模型
 
@@ -450,7 +513,7 @@ auto now_nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(
     }
     ```
 
-## 7.1 参考
+## 7.1 Reference
 
 * [C++11 中的std::function和std::bind](https://www.jianshu.com/p/f191e88dcc80)
 
@@ -467,14 +530,30 @@ auto now_nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(
 1. `std::boolalpha`
 1. `std::noboolalpha`
 
-# 10 limits
+# 10 iterator
+
+## 10.1 Stream Iterators
+
+1. `std::istream_iterator`
+1. `std::ostream_iterator`
+1. `std::istreambuf_iterator`
+1. `std::ostreambuf_iterator`
+
+## 10.2 Operations
+
+1. `std::advance`
+1. `std::distance`
+1. `std::next`
+1. `std::prev`
+
+# 11 limits
 
 1. `std::numeric_limits`
     * `std::numeric_limits<int32_t>::max()`
 
-# 11 memory
+# 12 memory
 
-## 11.1 std::shared_ptr
+## 12.1 std::shared_ptr
 
 **类型转换**
 
@@ -504,7 +583,7 @@ void func(std::shared_ptr<Widget> ptr);
 
 这样的话，外部传过来值的时候，可以选择`move`或者赋值。函数内部直接把这个对象通过`move`的方式保存起来
 
-## 11.2 std::enable_shared_from_this
+## 12.2 std::enable_shared_from_this
 
 **`std::enable_shared_from_this`能让一个由`std::shared_ptr`管理的对象，安全地生成其他额外的`std::shared_ptr`实例，原实例和新生成的示例共享所有权**
 
@@ -528,7 +607,7 @@ int main() {
 }
 ```
 
-## 11.3 std::unique_ptr
+## 12.3 std::unique_ptr
 
 * `release`是指让出控制权，不再管理生命周期，而不是释放。要释放的话可以用`reset`方法，或者直接赋值成`nullptr`
 
@@ -562,7 +641,7 @@ int main(void) {
 }
 ```
 
-## 11.4 std::weak_ptr
+## 12.4 std::weak_ptr
 
 用于指向由`std::shared_ptr`管理的对象，但不负责管理改对象的生命周期。也就是说，它指向的对象可能已经被析构了
 
@@ -596,11 +675,11 @@ int main() {
 }
 ```
 
-## 11.5 参考
+## 12.5 Reference
 
 * [C++ 智能指针的正确使用方式](https://www.cyhone.com/articles/right-way-to-use-cpp-smart-pointer/)
 
-# 12 mutex
+# 13 mutex
 
 1. `std::mutex`：不可重入的互斥量
 1. `std::recursive_mutex`：可重入的互斥量
@@ -659,11 +738,11 @@ int main() {
     }
     ```
 
-## 12.1 参考
+## 13.1 Reference
 
 * [Do I have to acquire lock before calling condition_variable.notify_one()?](https://stackoverflow.com/questions/17101922/do-i-have-to-acquire-lock-before-calling-condition-variable-notify-one)
 
-# 13 numeric
+# 14 numeric
 
 1. `std::accumulate`
     ```cpp
@@ -700,7 +779,7 @@ int main() {
     }
     ```
 
-# 14 optional
+# 15 optional
 
 1. `std::optional`
 
@@ -734,12 +813,12 @@ int main() {
 }
 ```
 
-# 15 random
+# 16 random
 
 1. `std::default_random_engine`
 1. `std::uniform_int_distribution`：左闭右闭区间
 
-# 16 ranges
+# 17 ranges
 
 `ranges`可以看做是对于`algorithm`中算法的封装，可以省去`begin()`、`end()`等调用，如下
 
@@ -767,7 +846,7 @@ int main() {
 }
 ```
 
-# 17 stdexcept
+# 18 stdexcept
 
 1. `std::logic_error`
 1. `std::invalid_argument`
@@ -779,7 +858,7 @@ int main() {
 1. `std::overflow_error`
 1. `std::underflow_error`
 
-# 18 exception
+# 19 exception
 
 1. `std::uncaught_exceptions`
     ```cpp
@@ -816,18 +895,18 @@ int main() {
     f.~Foo() called normally
     ```
 
-# 19 string
+# 20 string
 
 1. `std::string`
 1. `std::to_string`
 1. `std::string::npos`：作为函数`std::string::find`找不到匹配内容时的返回值
 
-# 20 thread
+# 21 thread
 
 1. `std::thread::hardware_concurrency`
 1. `std::this_thread`
 
-## 20.1 如何设置或修改线程名
+## 21.1 How to set thread name
 
 1. `pthread_setname_np/pthread_getname_np`，需要引入头文件`<pthread.h>`，`np`表示`non-portable`，即平台相关
 1. `prctl(PR_GET_NAME, name)/prctl(PR_SET_NAME, name)`，需要引入头文件`<sys/prctl.h>`
@@ -894,7 +973,7 @@ int main() {
 }
 ```
 
-## 20.2 如何设置线程的亲和性
+## 21.2 How to set thread affinity
 
 下面示例代码用于测试各个CPU的性能
 
@@ -948,7 +1027,7 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-# 21 tuple
+# 22 tuple
 
 1. `std::tuple`
 1. `std::apply`：触发方法调用，其中，参数被分装在一个`tuple`中
@@ -969,18 +1048,18 @@ int main() {
 }
 ```
 
-# 22 type_traits
+# 23 type_traits
 
 [Standard library header <type_traits>](https://en.cppreference.com/w/cpp/header/type_traits)
 
-## 22.1 Helper Class
+## 23.1 Helper Class
 
 1. `std::integral_constant`
 1. `std::bool_constant`
 1. `std::true_type`
 1. `std::false_type`
 
-## 22.2 Primary type categories
+## 23.2 Primary type categories
 
 1. `std::is_void`
 1. `std::is_null_pointer`
@@ -989,7 +1068,7 @@ int main() {
 1. `std::is_pointer`
 1. ...
 
-## 22.3 Composite type categories
+## 23.3 Composite type categories
 
 1. `std::is_fundamental`
 1. `std::is_arithmetic`
@@ -998,7 +1077,7 @@ int main() {
 1. `std::is_member_pointer`
 1. ...
 
-## 22.4 Type properties
+## 23.4 Type properties
 
 1. `std::is_const`
 1. `std::is_volatile`
@@ -1007,7 +1086,7 @@ int main() {
 1. `std::is_abstract`
 1. ...
 
-## 22.5 Supported operations
+## 23.5 Supported operations
 
 1. `std::is_constructible`
 1. `std::is_copy_constructible`
@@ -1016,19 +1095,19 @@ int main() {
 1. `std::is_destructible`
 1. ...
 
-## 22.6 Property queries
+## 23.6 Property queries
 
 1. `std::alignment_of`
 1. `std::rank`
 1. `std::extent`
 
-## 22.7 Type relationships
+## 23.7 Type relationships
 
 1. `std::is_same`
 1. `std::is_base_of`
 1. ...
 
-## 22.8 Const-volatility specifiers
+## 23.8 Const-volatility specifiers
 
 1. `std::remove_cv`
 1. `std::remove_const`
@@ -1037,28 +1116,28 @@ int main() {
 1. `std::add_const`
 1. `std::add_volatile`
 
-## 22.9 References
+## 23.9 References
 
 1. `std::remove_reference`
 1. `std::add_lvalue_reference`
 1. `std::add_rvalue_reference`
   
-## 22.10 Pointers
+## 23.10 Pointers
 
 1. `std::remove_pointer`
 1. `std::add_pointer`
   
-## 22.11 Sign modifiers
+## 23.11 Sign modifiers
 
 1. `std::make_signed`
 1. `std::make_unsigned`
 
-## 22.12 Arrays
+## 23.12 Arrays
 
 1. `std::remove_extent`
 1. `std::remove_all_extents`
 
-## 22.13 Miscellaneous transformations
+## 23.13 Miscellaneous transformations
 
 1. `std::enable_if`
 1. `std::conditional`
@@ -1084,7 +1163,7 @@ int main() {
     }    
     ```
 
-## 22.14 Alias
+## 23.14 Alias
 
 `using template`，用于简化上述模板。例如`std::enable_if_t`等价于`typename enable_if<b,T>::type`
 
@@ -1095,7 +1174,7 @@ int main() {
 1. `std::invoke_result_t`
 1. ...
 
-## 22.15 std::move
+## 23.15 std::move
 
 标准库的实现如下：
 
@@ -1130,7 +1209,7 @@ int main() {
 }
 ```
 
-## 22.16 std::forward
+## 23.16 std::forward
 
 `std::forward`主要用于实现模板的完美转发：因为对于一个变量而言，无论该变量的类型是左值引用还是右值引用，变量本身都是左值，如果直接将变量传递到下一个方法中，那么一定是按照左值来匹配重载函数的，而`std::forward`就是为了解决这个问题。请看下面这个例子：
 
@@ -1249,7 +1328,7 @@ func(std::forward<int&&>(1)) -> right reference version
     }
 ```
 
-### 22.16.1 forwarding reference
+### 23.16.1 forwarding reference
 
 **当且仅当`T`是函数模板的模板类型形参时，`T&&`才能称为`forwarding reference`，而其他任何形式，都不是`forwarding reference`。例如如下示例代码：**
 
@@ -1327,7 +1406,7 @@ struct C {
 };
 ```
 
-# 23 utility
+# 24 utility
 
 1. `std::pair`：本质上，它是`std::tuple`的一个特例
 1. `std::declval`：用来配合`decltype`进行类型推导，其实现原理如下：
@@ -1374,28 +1453,9 @@ struct C {
     }
     ```
 
-## 23.1 如何正确返回包含引用的pair类型
+## 24.1 How to return pair containing reference type
 
 示例如下：
-
-* 首先，我们先看一下`std::make_pair`的源码，如下：
-    * `__decay_and_strip`：对于`std::reference_wrapper`，会除去`std::reference_wrapper`的封装，并返回引用类型；对于其他类型，则返回非引用类型
-    ```cpp
-    template<typename _T1, typename _T2>
-    constexpr pair<typename __decay_and_strip<_T1>::__type,
-                    typename __decay_and_strip<_T2>::__type>
-    make_pair(_T1&& __x, _T2&& __y)
-    {
-        typedef typename __decay_and_strip<_T1>::__type __ds_type1;
-        typedef typename __decay_and_strip<_T2>::__type __ds_type2;
-        typedef pair<__ds_type1, __ds_type2> 	      __pair_type;
-        return __pair_type(std::forward<_T1>(__x), std::forward<_T2>(__y));
-    }
-    ```
-
-* `get_data_1`：错误方式。因为`std::make_pair`会创建类型为`std::pair<std::vector<int>, int>`的对象，然后再转型成`std::pair<const std::vector<int>&, int>`，于是引用会错误初始化（绑定到了临时对象），导致后续错误
-* `get_data_2`：正确方式。由于`std::ref`（返回类型是`std::reference_wrapper`）的存在，`std::make_pair`会创建类型为`std::pair<const std::vector<int>&, int>`的对象，此时引用会正确初始化
-* `get_data_3`：正确方式，不用`std::make_pair`，引用会正确初始化
 
 ```cpp
 #include <algorithm>
@@ -1438,7 +1498,26 @@ int main() {
 }
 ```
 
-# 24 variant
+* 首先，我们先看一下`std::make_pair`的源码，如下：
+    * `__decay_and_strip`：对于`std::reference_wrapper`，会除去`std::reference_wrapper`的封装，并返回引用类型；对于其他类型，则返回非引用类型
+    ```cpp
+    template<typename _T1, typename _T2>
+    constexpr pair<typename __decay_and_strip<_T1>::__type,
+                    typename __decay_and_strip<_T2>::__type>
+    make_pair(_T1&& __x, _T2&& __y)
+    {
+        typedef typename __decay_and_strip<_T1>::__type __ds_type1;
+        typedef typename __decay_and_strip<_T2>::__type __ds_type2;
+        typedef pair<__ds_type1, __ds_type2> 	      __pair_type;
+        return __pair_type(std::forward<_T1>(__x), std::forward<_T2>(__y));
+    }
+    ```
+
+* `get_data_1`：错误方式。因为`std::make_pair`会创建类型为`std::pair<std::vector<int>, int>`的对象，然后再转型成`std::pair<const std::vector<int>&, int>`，于是引用会错误初始化（绑定到了临时对象），导致后续错误
+* `get_data_2`：正确方式。由于`std::ref`（返回类型是`std::reference_wrapper`）的存在，`std::make_pair`会创建类型为`std::pair<const std::vector<int>&, int>`的对象，此时引用会正确初始化
+* `get_data_3`：正确方式，不用`std::make_pair`，引用会正确初始化
+
+# 25 variant
 
 1. `std::visit`
 1. `std::variant`：类型安全的union。只允许以正确的类型进行访问
@@ -1459,7 +1538,7 @@ int main() {
 }
 ```
 
-## 24.1 动态分派原理
+## 25.1 Dynamic Binding
 
 `std::variant`结合`std::visit`可以实现动态分派，示例代码如下：
 
@@ -1496,7 +1575,7 @@ int main() {
 * 每个`Visitor,variant`对会生成一个`vtable`，里面记录了所有的函数指针，并按照`std::variant`各个类型声明的顺序排序
 * 在用`std::visit`进行访问时，会用`std::variant::index`找到`vtable`中的函数指针，并进行调用
 
-# 25 Containers
+# 26 Containers
 
 1. `<vector>`：其内部就是一个数组。当进行扩容缩容时，会进行数据的拷贝或移动，因此要求对应的类型至少拥有拷贝构造函数和移动构造函数中的一个。例如，`std::vector<std::atomic_bool>`是无法调用`push_back`或者`emplace_back`来增加元素的
 1. `<array>`
@@ -1508,14 +1587,14 @@ int main() {
 1. `<set>`
 1. `<unordered_set>`
 
-## 25.1 Tips
+## 26.1 Tips
 
 1. `std::map`或者`std::set`用下标访问后，即便访问前元素不存在，也会插入一个默认值。因此下标访问是非`const`的
 1. 容器在扩容时，调用的是元素的拷贝构造函数
 1. `std::vector<T> v(n)`会生成`n`个对应元素的默认值，而不是起到预留`n`个元素的空间的作用
 1. 不要将`end`方法返回的迭代器传入`erase`方法
 
-# 26 SIMD
+# 27 SIMD
 
 [Header files for x86 SIMD intrinsics](https://stackoverflow.com/questions/11228855/header-files-for-x86-simd-intrinsics)
 
@@ -1555,7 +1634,7 @@ int main() {
 * `-mavx512vbmi`
 * ...
 
-# 27 C标准库
+# 28 C Standard Library
 
 由于`C++`是`C`的超集，`C`的标准库也被添加到`std`命名空间中了，但是头文件有所区别：`xxx.h -> cxxx`。其中，`xxx.h`是原始的`C`标准库头文件，其符号不在任何命名空间中；`cxxx`是对应的`C++`版本的头文件，其符号在`std`命名空间中
 
@@ -1591,7 +1670,7 @@ int main() {
     * `std::isblank`：仅对空格和水平制表符返回 true
     * `std::isspace`：空格、表单换行符、换行符、回车符、水平制表符和垂直制表符都返回true
 
-## 27.1 csignal
+## 28.1 csignal
 
 各种信号都定义在`signum.h`这个头文件中
 
@@ -1644,7 +1723,7 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-## 27.2 执行命令
+## 28.2 Execute Command
 
 ```cpp
 #include <cstdlib>
