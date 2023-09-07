@@ -69,6 +69,8 @@ The third project I participated in was an intelligent edge integrated machine, 
 1. What features does the compiler framework have?
 1. What's the most difficult thing you've encountered when implementing it?
     * The most challenging aspect, in my opinion, is defining an unambiguous grammar for a specific language. I've gained insights from many mature languages, such as Java.
+1. What are the features of event-driven system?
+    * Events and Event Handlers, Asynchronicity, Loose Coupling, Callbacks, Publish-Subscribe Model, Scalability and Responsiveness.
 
 **Expression Framework:**
 
