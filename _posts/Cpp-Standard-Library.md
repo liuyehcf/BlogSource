@@ -546,6 +546,52 @@ auto now_nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(
 1. `std::next`
 1. `std::prev`
 
+```cpp
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <vector>
+
+int main() {
+    std::vector<int> numbers = {1, 2, 3, 4, 5};
+
+    // Using std::distance to find the number of elements between two iterators
+    auto first = numbers.begin();
+    auto last = numbers.end();
+    std::cout << "Number of elements in the vector: " << std::distance(first, last) << std::endl;
+    std::cout << "Number of elements in the vector (reverse): " << std::distance(last, first) << std::endl;
+
+    auto it = std::find(numbers.begin(), numbers.end(), 3);
+    std::cout << "Distance between start and 3 is: " << std::distance(it, numbers.begin()) << std::endl;
+    std::cout << "Distance between start and 3 is (reverse): " << std::distance(numbers.begin(), it) << std::endl;
+
+    // Using std::advance to move an iterator by a specific number of positions
+    it = numbers.begin();
+    std::advance(it, 2); // Advance the iterator by 2 positions
+    std::cout << "Value at position 2: " << *it << std::endl;
+
+    // Using std::next to get an iterator pointing to an element at a specific position
+    auto nextIt = std::next(numbers.begin(), 3); // Get an iterator to the element at position 3
+    std::cout << "Value at position 3: " << *nextIt << std::endl;
+
+    // Using std::prev to get an iterator pointing to an element at a specific position
+    auto prevIt = std::prev(numbers.end(), 2); // Get an iterator to the element at position 3 from the end
+    std::cout << "Value at position 3 from the end: " << *prevIt << std::endl;
+
+    return 0;
+}
+```
+
+```
+Number of elements in the vector: 5
+Number of elements in the vector (reverse): -5
+Distance between start and 3 is: -2
+Distance between start and 3 is (reverse): 2
+Value at position 2: 3
+Value at position 3: 4
+Value at position 3 from the end: 4
+```
+
 # 11 limits
 
 1. `std::numeric_limits`
