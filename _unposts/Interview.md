@@ -134,16 +134,21 @@ For better observability and query analysis, I introduced support for runtime pr
         * Bloom Filter
         * Max/Min Filter
     1. Metadata Cache
+        * Speed up query plan optimization
     1. Local Data Cache
         * Improve IO efficiency
     1. Materialized View
         * Transparent accelerating
+1. What are the advantages of the MPP architecture?
+    1. High Performance
+    1. Better Resource Utilization
+    1. Better Scalability and Flexibility
 1. Why do you refactor the subquery transformation process?
     * In the previous process, the subquery would be transformed to ApplyOperator first, missing the opportunity to apply optimizations such as constant removal or predicate simplification.
     * After this refactor, the subquery used as an expression will be temporarily held back until the expression optimizations are performed, allowing it to fully benefit from these optimizations.
 1. What's optimization can lead to 10 times performance boost of the ranking window function?
     * When using a ranking window function with a predicate or a limit clause, we have the option to include an additional partition-topn node to filter the data. This can lead to significant improvements, particularly when it comes to filtering out large amounts of data.
-1. What's the advantages of the morsel-driven execution engine?
+1. What are the advantages of the morsel-driven execution engine?
     * It is easier to support fine-grained isolation, like resource group.
     * Reduce the scheduling overhead and optimize the utilization of available CPU resources.
     * It is easier to set different parallelism for different parts of the query.
