@@ -1323,7 +1323,7 @@ ROOT=$(cd "$ROOT"; pwd)
 ```sh
 objcopy --only-keep-debug main main.debuginfo
 strip --strip-debug main
-objcopy --add-gnu-debuglink=main.debuginfo main
+objcopy --add-gnu-debuglink=main.debuginfo main main-with-debug
 ```
 
 When you're debugging the binary through `gdb`, it will automatically load the corresponding debug info file, and you can also manually load it using the `symbol-file` command, like `(gdb) symbol-file /path/to/binary_file.debuginfo`.

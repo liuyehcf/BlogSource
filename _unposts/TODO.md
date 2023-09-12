@@ -45,6 +45,13 @@
         * Snowflake、BigQuery、SingleStore、Firebolt、Pinot、Trino、Rockset
         * [chroma](https://www.trychroma.com/)
         * [milvus](https://milvus.io/blog)
+    * profiling
+        * [clickhouse-flamegraph](https://github.com/Slach/clickhouse-flamegraph)
+        * [profile_example.txt](https://gist.github.com/alexey-milovidov/92758583dd41c24c360fdb8d6a4da194)
+        * [libunwind](https://github.com/libunwind/libunwind)
+        * [Boost.Stacktrace](https://www.boost.org/doc/libs/1_76_0/doc/html/stacktrace.html)
+        * [Google's Abseil(absl::debugging_internal::StackTrace)](https://github.com/abseil/abseil-cpp)
+        * [Backtrace Library](https://github.com/ianlancetaylor/libbacktrace)
 1. 体系结构
     * numa
 1. nodejs
