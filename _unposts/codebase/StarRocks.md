@@ -175,17 +175,30 @@ OR
 1. 合并`srcGroup`以及`destGroup`
 1. 合并`needMergeGroup`中记录的`Group`对
 
-# 2 RPC
+# 2 Other
+
+## 2.1 Service
 
 Frontend-Service
 
-* `QeProcessorImpl`：server
+* `FrontendServiceImpl`: server
+    * `QeProcessorImpl`: perform the real work
 * `FrontendServiceConnection`：client
 
 Backend-Service
 
 * `PInternalServiceImplBase`：server
 * `BackendServiceClient`：client
+
+## 2.2 Process
+
+`ConnectProcessor`
+
+* `finalizeCommand`: proxy handling
+
+## 2.3 RBAC
+
+`Authorizer`
 
 # 3 Execution
 
