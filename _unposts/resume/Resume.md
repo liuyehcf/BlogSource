@@ -28,8 +28,13 @@ StarRocks is a next-gen, high-performance analytical data warehouse that enables
    * Design and implement a top-N based optimization approach that significantly improves performance by an order of magnitude.
 * **Sort merge optimization**, aimed to eliminate the bottleneck caused by serial merging and improve the performance of the overall sorting process.
    * Design and implement parallelized merge algorithm, achieving a performance improvement of an order of magnitude.
-* **Support certain types of subquery**, aimed to enhance the functionality of subqueries.
+* **Support certain types of subquery**, aimed to enhance the system's capabilities.
+   * Support join on subqueries and scalar non-agg subqueries.
+   * Refactor the subquery process to achieve optimizations like constants removal and predicate simplification.
 * **Support query profiling**, aimed to enhance intuitive query analysis.
+   * Support text-based profile analysis through mysql protocol.
+   * Support visualized profile analysis for the enterprise edition.
+* **Address performance issues**, like reducing code cache misses, eliminating pointer aliases for SIMD optimizations.
 
 ### Alibaba group | Software engineer | 2018.4 - 2021.8
 
@@ -39,17 +44,17 @@ StarRocks is a next-gen, high-performance analytical data warehouse that enables
    * Implement a user-friendly proxy for SSH/SFTP protocols that allows users to access local devices with an embedded SSH component within our service console.
    * Support all types of protocols that based on tcp with a user-side agent, which is a local proxy process listening at a particular port.
    * Support multiplexing.
-* **Flow execution framework**, an efficient solution for executing interconnectivity rules for IoT devices.
-   * Built upon my compilation framework, I have provided a comprehensive set of DSL descriptions.
-   * Adopted an event-driven programming model and provided flexible secondary development interfaces such as aspects and listeners.
-   * This framework is also my personal project, please refer to [flow-engine-README](https://github.com/liuyehcf/liuyehcf-framework/blob/master/flow-engine/README.md) for details.
-* **Expression execution framework**, a framework that offers rich expression capabilities and efficient execution performance.
-   * Built upon my compilation framework, I have provided interfaces for secondary development, including support for extending custom functions, operator overriding, and more.
-   * This framework is also my personal project, please refer to [expression-engine-README](https://github.com/liuyehcf/liuyehcf-framework/blob/master/expression-engine/README.md) for details.
-* **An all-in-one solution**, that offers out-of-the-box capabilities. Built on top of Kubernetes, it provides a comprehensive set of operational features, including device management, application management, fault diagnosis, and more.
-   * Provided two sets of operating system image pipelines, including CentOS 7.6 and Unbuntu 18.04, facilitating rapid replication of production for device manufacturers.
-   * Provided machine activation functionality for out-of-the-box setup.
-   * Provided a diagnostic tool for troubleshooting various issues related to networking, containers, and other components within Kubernetes (K8s) environment.
+* **Device Rule Center**, aimed to provide efficient management for device linkage rules.
+   * **Flow execution framework**, an efficient solution for executing interconnectivity rules for IoT devices.
+      * Built upon my compilation framework, I have provided a comprehensive set of DSL descriptions.
+      * Adopted an event-driven programming model and provided flexible secondary development interfaces such as aspects and listeners.
+      * This framework is also my personal project, please refer to [flow-engine-README](https://github.com/liuyehcf/liuyehcf-framework/blob/master/flow-engine/README.md) for details.
+   * **Expression execution framework**, a framework that offers rich expression capabilities and efficient execution performance.
+      * Built upon my compilation framework, I have provided interfaces for secondary development, including support for extending custom functions, operator overriding, and more.
+      * This framework is also my personal project, please refer to [expression-engine-README](https://github.com/liuyehcf/liuyehcf-framework/blob/master/expression-engine/README.md) for details.
+* **Intelligent Edge Integrated Machine**, aimed to support support industrial applications and device management.
+   * Build a pipeline for creating various customized operating system installation images.
+   * Develop a troubleshooting tool for addressing network and kubernetes runtime environment issues.
 
 ---
 
