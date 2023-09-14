@@ -158,6 +158,7 @@ For better observability and query analysis, I introduced support for runtime pr
     * [DBMS-Optimizer](/_posts/DBMS-Optimizer.md)
 1. How does starrocks process subquery?
     * Subqueries are always placed within expressions. After constant removal and predicate simplification are performed, a subquery can be replaced with an apply operator and attached to the logical tree. Finally, different types of joins can be utilized to transform the apply operator.
+1. What is the process of window function?
 
 # 3 Database
 

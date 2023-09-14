@@ -125,6 +125,12 @@ categories:
         - Visitor Pattern
 - JMM(Java Memory Model)
     - Happens-before Relationship
+        - Program Order Rule
+        - Monitor Lock Rule
+        - Volatile Variable Rule
+        - Thread Start Rule
+        - Thread Termination Rule
+        - Interruption Rule
     - Volatile Keyword
     - Synchronization
     - Lock Optimization
