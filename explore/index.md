@@ -55,6 +55,7 @@ date: 2018-02-05 09:25:59
 # 5 Performance Analysis
 
 * [Brendan Gregg's Homepage](https://www.brendangregg.com/) - ★★★★★
+    * [Linux Performance](https://www.brendangregg.com/linuxperf.html)
 * [Denis Bakhvalov](https://easyperf.net/)
     * 《Performance Analysis and Tuning on Modern CPUs》
 * [Julia Evans](https://jvns.ca/)

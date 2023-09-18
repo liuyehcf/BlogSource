@@ -159,6 +159,14 @@ For better observability and query analysis, I introduced support for runtime pr
 1. How does starrocks process subquery?
     * Subqueries are always placed within expressions. After constant removal and predicate simplification are performed, a subquery can be replaced with an apply operator and attached to the logical tree. Finally, different types of joins can be utilized to transform the apply operator.
 1. What is the process of window function?
+1. What is hive meta store?
+1. What is the function of cache metadata?
+1. What are the competitors of Starrocks?
+    * ClickHouse, wide table
+    * Druid, wide table
+    * Trino, data lake
+    * Presto, execution
+    * Snowflake, comprehensive
 
 # 3 Database
 
@@ -520,6 +528,10 @@ For better observability and query analysis, I introduced support for runtime pr
 
 1. Explain the concept of the Pimpl idiom in C++.
     > The Pimpl idiom in C++ separates the interface and implementation of a class, enhancing encapsulation and code modularity.
+
+1. Explain the difference between cache coherence and memory consistency.
+    > Cache coherence is primarily concerned with the values of copies of a single memory location that are cached at several caches, and ensures that all processors in the system observe a single, consistent value for the memory location.
+    > Memory consistency is concerned about the ordering of multiply updates to different memory locations(or single memory location) from different processors. It determines when a write by one processor to a shared memory location becomes visible to all other processors.
 
 1. What is the purpose of the "constexpr" keyword in C++11?
 1. Explain the concept of variadic templates in C++.
