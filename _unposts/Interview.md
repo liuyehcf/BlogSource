@@ -370,6 +370,27 @@ For better observability and query analysis, I introduced support for runtime pr
 1. Explain the concept of static initialization blocks in Java.
     > Static initialization blocks in Java are used to initialize static variables or perform one-time setup tasks when a class is loaded into memory.
 
+1. Explain the concept of design patterns.
+    > Creational Patterns, Singleton, Factory, Abstract Factory, Builder, Prototype
+    > Structural Patterns, Adapter, Bridge, Composite, Decorator, Proxy
+    > Behavioral Patterns, Observer, Strategy, Template Method, Iterator, State, Chain of Responsibility, Command, Interpreter, Mediator, Visitor
+
+1. Explain the concept of happens-before relationships.
+    > Program Order Rule, Monitor Lock Rule, Volatile Variable Rule, Thread Start Rule, Thread Termination Rule, Interruption Rule
+
+1. How many Garbage Collection Algorithms and Garbage Collectors are there?
+    > Garbage Collection Algorithms
+    >   * Mark-Copy (Young Generation in Serial GC, Parallel GC)
+    >   * Mark-Sweep (Old Generation in Serial GC, Parallel GC)
+    >   * Mark and Concurrent Sweep (CMS GC)
+    >   * Generational Algorithm (Most JVM GCs)
+    >   * Mark-Region (G1 GC)
+    > Garbage Collectors
+    >   * Serial GC
+    >   * Parallel GC
+    >   * Concurrent Mark Sweep, CMS
+    >   * Garbage First Garbage Collector, G1
+
 1. What is the purpose of the "ThreadLocal" class in Java?
 1. How can you handle concurrent access in Java collections?
 1. Explain the concept of the "compareTo()" method in the Comparable interface.
@@ -711,6 +732,7 @@ For better observability and query analysis, I introduced support for runtime pr
 
 # 8 Reference
 
+* [Summary-of-Key-Points](/_posts/Summary-of-Key-Points.md)
 * [cpp-interview](https://github.com/huihut/interview)
 * [interview](https://github.com/Olshansk/interview)
 * [Interview](https://github.com/apachecn/Interview)

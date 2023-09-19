@@ -290,6 +290,19 @@ int main() {
     ```
 
 * `#pragma GCC diagnostic`：该指令用于控制编译器的警告和错误信息。可以用它来控制特定的警告或错误信息是否应该被忽略或显示
+    ```cpp
+    [[nodiscard]] int something() {
+        return 0;
+    }
+
+    int main() {
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wunused-result"
+        something();
+    #pragma GCC diagnostic pop
+    }
+    ```
+
 * `#pragma omp`：该指令用于`OpenMP`并行编程，用于指定并行执行的方式
 
 ## 2.5 `#error`
