@@ -139,6 +139,9 @@ For better observability and query analysis, I introduced support for runtime pr
         * Improve IO efficiency
     1. Materialized View
         * Transparent accelerating
+1. What are the core values of StarRocks?
+    1. Fast
+    1. Unified, contains almost all the capabilities, like MV, lakehouse, cloud native, stream/batch processing
 1. What are the advantages of the MPP architecture?
     1. High Performance
     1. Better Resource Utilization
@@ -162,11 +165,12 @@ For better observability and query analysis, I introduced support for runtime pr
 1. What is hive meta store?
 1. What is the function of cache metadata?
 1. What are the competitors of Starrocks?
-    * ClickHouse, wide table
+    * Top-tier: Snowflake, Databricks
+    * Second-tier: AWS Redshift/Athena, Google Cloud Bigquery, Azure Synapse
+    * Third-tier: Starburst, Dremio, Singlestore, Clickhouse, Imply, Startree, Ahana
+    * Trino, lake house
     * Druid, wide table
-    * Trino, data lake
     * Presto, execution
-    * Snowflake, comprehensive
 
 # 3 Database
 

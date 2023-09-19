@@ -52,6 +52,15 @@
         * [Boost.Stacktrace](https://www.boost.org/doc/libs/1_76_0/doc/html/stacktrace.html)
         * [Google's Abseil(absl::debugging_internal::StackTrace)](https://github.com/abseil/abseil-cpp)
         * [Backtrace Library](https://github.com/ianlancetaylor/libbacktrace)
+    * VC, Venture Capital
+        * NASDAQ(National Association of Securities Deal Automated Quotations), 中概股
+        * US，美国各种基金（近几年由于中美关系紧张，这部分渠道几乎断了）
+        * EU
+        * 中东
+    * tiredata
+        * 替换方案，目前只有华为在做
+    * 数据底座
+        * abroad: iceberg, hudi
 1. 体系结构
     * numa
 1. nodejs
