@@ -139,6 +139,10 @@ For better observability and query analysis, I introduced support for runtime pr
         * Improve IO efficiency
     1. Materialized View
         * Transparent accelerating
+1. Explain the design of the scheduler of morsel-driven execution engine.
+    1. The minimum execution unit, which is called a pipeline driver, is basically an execution link comprising a sequence of operators.
+    1. The ready driver will be put in the multilevel feedback queue, waiting to be scheduled.
+    1. And all the blocking drivers will be put into a global queue, and there is a separate thread to perform the task readiness analysis for better responsiveness.
 1. What are the core values of StarRocks?
     1. Fast
     1. Unified, contains almost all the capabilities, like MV, lakehouse, cloud native, stream/batch processing
@@ -162,6 +166,9 @@ For better observability and query analysis, I introduced support for runtime pr
 1. How does starrocks process subquery?
     * Subqueries are always placed within expressions. After constant removal and predicate simplification are performed, a subquery can be replaced with an apply operator and attached to the logical tree. Finally, different types of joins can be utilized to transform the apply operator.
 1. What is the process of window function?
+    * The process varies based on the window classification. For unlimited window, the whole process will be performed in blocking mode, and for half-unlimited window, the process will be performed in streaming mode. And for sliding window, things are simpler.
+    * Blocking mode means you must wait until all the data for the current partition has arrived.
+    * Streaming mode means that you can process the current data as more data from this partition is coming.
 1. What is hive meta store?
 1. What is the function of cache metadata?
 1. What are the competitors of Starrocks?

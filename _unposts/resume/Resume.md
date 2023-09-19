@@ -26,6 +26,7 @@ StarRocks is a next-gen, high-performance analytical data warehouse that enables
    * Implement multiply operators, like aggregate/window function/scan/table function/exchange, etc.
 * **Window function optimization**, aimed to improve the performance of window functions and reduced memory usage.
    * Design and implement a top-N based optimization approach that significantly improves performance by an order of magnitude.
+   * Change blocking process mode to streaming process mode for better memory utilization.
 * **Sort merge optimization**, aimed to eliminate the bottleneck caused by serial merging and improve the performance of the overall sorting process.
    * Design and implement parallelized merge algorithm, achieving a performance improvement of an order of magnitude.
 * **Support certain types of subquery**, aimed to enhance the system's capabilities.
