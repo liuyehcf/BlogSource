@@ -63,6 +63,7 @@ StarRocks is a next-gen, high-performance analytical data warehouse that enables
 
 * Cpp, Java, Go
 * Shell, Python, Perl
+* SQL
 
 ---
 
