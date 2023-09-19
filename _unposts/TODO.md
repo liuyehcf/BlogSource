@@ -57,7 +57,7 @@
         * US，美国各种基金（近几年由于中美关系紧张，这部分渠道几乎断了）
         * EU
         * 中东
-    * tiredata
+    * Teradata
         * 替换方案，目前只有华为在做
     * 数据底座
         * abroad: iceberg, hudi
