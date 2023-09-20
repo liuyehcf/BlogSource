@@ -745,8 +745,16 @@ FROM (
 GROUP BY v1
 ```
 
-# 6 Property
+# 6 Range Join
 
-## 6.1 HashProperty
+## 6.1 Reference
+
+* [How to speed up range joins joins in Snowflake by 300x](https://select.dev/posts/snowflake-range-join-optimization)
+* [What Is a Range Join and Why Is It So Fast?](https://www.vertica.com/blog/what-is-a-range-join-and-why-is-it-so-fastba-p223413/)
+* [Range Joins in DuckDB](https://duckdb.org/2022/05/27/iejoin.html)
+
+# 7 Property
+
+## 7.1 HashProperty
 
 `Shuffle by v1`可以满足`Shuffle by v1, v2`，只不过到了每个节点后，还需要再对`v2`进行一次shuffle
