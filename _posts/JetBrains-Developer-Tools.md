@@ -11,21 +11,21 @@ categories:
 
 <!--more-->
 
-# 1 快捷键
+# 1 Shortcuts
 
-## 1.1 重构
+## 1.1 Refactor
 
-**HotKey Name**：`Refactor This`
-**HotKey In Mac**：`⌃T`
-**HotKey In Windows**：`Ctrl+Alt+Shift+T`
+HotKey Name: `Refactor This`
+HotKey In Mac: `⌃T`
+HotKey In Windows: `Ctrl+Alt+Shift+T`
 
-## 1.2 代码生成
+## 1.2 Gode Generator
 
-### 1.2.1 模板
+### 1.2.1 Template
 
-**HotKey Name**：`Insert Live Template...`
-**HotKey In Mac**：`⌘J`
-**HotKey In Windows**：`Ctrl+J`
+HotKey Name: `Insert Live Template...`
+HotKey In Mac: `⌘J`
+HotKey In Windows: `Ctrl+J`
 
 **常用的几个模板**
 
@@ -33,149 +33,155 @@ categories:
 1. 生成for循环模板：`fori+Tab`
 1. 生成System.out.println()语句：`sout+Tab`
 
-### 1.2.2 创建
+### 1.2.2 Generator
 
-**HotKey Name**：`Generate...`
-**HotKey In Mac**：`⌘N`
-**HotKey In Windows**：`Alt+Insert`
+HotKey Name: `Generate...`
+HotKey In Mac: `⌘N`
+HotKey In Windows: `Alt+Insert`
 
-## 1.3 编辑
+## 1.3 Edit
 
-### 1.3.1 按语法选择扩张
+### 1.3.1 Extend Selection
 
-**HotKey Name**：`Extend Selection`
-**HotKey In Mac**：`⌥↑`
-**HotKey In Windows**：`Ctrl+W`
+HotKey Name: `Extend Selection`
+HotKey In Mac: `⌥↑`
+HotKey In Windows: `Ctrl+W`
 
-### 1.3.2 按语法选择收缩
+### 1.3.2 Shrink Selection
 
-**HotKey Name**：`Shrink Selection`
-**HotKey In Mac**：`⌥↓`
-**HotKey In Windows**：`Ctrl+Shitf+W`
+HotKey Name: `Shrink Selection`
+HotKey In Mac: `⌥↓`
+HotKey In Windows: `Ctrl+Shitf+W`
 
-### 1.3.3 光标移动到前一个单词
+### 1.3.3 Move Caret to Previous Word
 
-**HotKey Name**：`Move Caret to Previous Word`
-**HotKey In Mac**：`⌥←`、`⌥⇧←`
-**HotKey In Windows**：`Ctrl+向左箭头`、`Ctrl+Shift+向左箭头`
+HotKey Name: `Move Caret to Previous Word`
+HotKey In Mac: `⌥←`、`⌥⇧←`
+HotKey In Windows: `Ctrl+向左箭头`、`Ctrl+Shift+向左箭头`
 
-### 1.3.4 光标移动到后一个单词
+### 1.3.4 Move Caret to Next Word
 
-**HotKey Name**：`Move Caret to Next Word`
-**HotKey In Mac**：`⌥→`、`⌥⇧→`
-**HotKey In Windows**：`Ctrl+向右箭头`、`Ctrl+Shift+向右箭头`
+HotKey Name: `Move Caret to Next Word`
+HotKey In Mac: `⌥→`、`⌥⇧→`
+HotKey In Windows: `Ctrl+向右箭头`、`Ctrl+Shift+向右箭头`
 
-### 1.3.5 光标移动到代码块开始处
+### 1.3.5 Move Caret to Code Block Start
 
-**HotKey Name**：`Move Caret to Code Block Start`
-**HotKey In Mac**：`⌥⌘[`、`⌥⇧⌘[`
-**HotKey In Windows**：`Ctrl+左方括号`、`Ctrl+Shift+左方括号`
+HotKey Name: `Move Caret to Code Block Start`
+HotKey In Mac: `⌥⌘[`、`⌥⇧⌘[`
+HotKey In Windows: `Ctrl+左方括号`、`Ctrl+Shift+左方括号`
 
-### 1.3.6 光标移动到代码块结束处
+### 1.3.6 Move Caret to Code Block End
 
-**HotKey Name**：`Move Caret to Code Block End`
-**HotKey In Mac**：`⌥⌘]`、`⌥⇧⌘]`
-**HotKey In Windows**：`Ctrl+右方括号`、`Ctrl+Shift+右方括号`
+HotKey Name: `Move Caret to Code Block End`
+HotKey In Mac: `⌥⌘]`、`⌥⇧⌘]`
+HotKey In Windows: `Ctrl+右方括号`、`Ctrl+Shift+右方括号`
 
-## 1.4 导航
+## 1.4 Navigate
 
-### 1.4.1 打开类或资源
+### 1.4.1 Open Class
 
-**HotKey Name**：`Class...`
-**HotKey In Mac**：`⌘O`
-**HotKey In Windows**：`Ctrl+N`
+HotKey Name: `Class...`
+HotKey In Mac: `⌘O`
+HotKey In Windows: `Ctrl+N`
 
-### 1.4.2 查找一切
+### 1.4.2 Search
 
-**HotKey Name**：`Search Everywhere`
-**HotKey In Mac**：`⇧⇧`
-**HotKey In Windows**：`Double Shift`
+HotKey Name: `Search Everywhere`
+HotKey In Mac: `⇧⇧`
+HotKey In Windows: `Double Shift`
 
-### 1.4.3 类层次结构
+### 1.4.3 Hierarchy
 
-**HotKey Name**：`Type Hierarchy`
-**HotKey In Mac**：`⌃H`
-**HotKey In Windows**：`Ctrl+H`
+HotKey Name: `Type Hierarchy`
+HotKey In Mac: `⌃H`
+HotKey In Windows: `Ctrl+H`
 
-### 1.4.4 跳转到方法的定义处
+### 1.4.4 Declaration
 
-**HotKey Name**：`Declaration`
-**HotKey In Mac**：`⌘B`、`⌘Click`
-**HotKey In Windows**：`Ctrl+B`、`Ctrl+Click`
+HotKey Name: `Declaration`
+HotKey In Mac: `⌘B`、`⌘Click`
+HotKey In Windows: `Ctrl+B`、`Ctrl+Click`
 
-### 1.4.5 跳转到方法的实现处
+### 1.4.5 Implementation
 
-**HotKey Name**：`Implementation(s)`
-**HotKey In Mac**：`⌥⌘B`、`⌥⌘Click`
-**HotKey In Windows**：`Ctrl+Alt+B`、`Ctrl+Alt+Click`
+HotKey Name: `Implementation(s)`
+HotKey In Mac: `⌥⌘B`、`⌥⌘Click`
+HotKey In Windows: `Ctrl+Alt+B`、`Ctrl+Alt+Click`
 
-### 1.4.6 查看当前类的所有方法
+### 1.4.6 Structure
 
-**HotKey Name**：`File Structure`
-**HotKey In Mac**：`⌘F12`
-**HotKey In Windows**：`Ctrl+F12`
+HotKey Name: `File Structure`
+HotKey In Mac: `⌘F12`
+HotKey In Windows: `Ctrl+F12`
 
-### 1.4.7 找到方法的所有使用处
+### 1.4.7 Reference
 
-**HotKey Name**：`Find Usages`
-**HotKey In Mac**：`⌥F7`
-**HotKey In Windows**：`Alt+F7`
+HotKey Name: `Find Usages`
+HotKey In Mac: `⌥F7`
+HotKey In Windows: `Alt+F7`
 
-### 1.4.8 查找文本
+### 1.4.8 Content Search
 
-**HotKey Name**：`Find...`、`Find in Path...`
-**HotKey In Mac**：`⌘F`、`⇧⌘F`
-**HotKey In Windows**：`Ctrl+F`、`Ctrl+Shift+F`
+HotKey Name: `Find...`、`Find in Path...`
+HotKey In Mac: `⌘F`、`⇧⌘F`
+HotKey In Windows: `Ctrl+F`、`Ctrl+Shift+F`
 
-### 1.4.9 在查找的结果中前后移动
+### 1.4.9 Move in Results
 
-**HotKey Name**：`Find Previous / Move to Previous Occurrence`
-**HotKey In Mac**：`⌘G`、`⇧⌘G`
-**HotKey In Windows**：`F3`/`Ctrl+L`、`Shift+F3`/`Ctrl+Shift+L`
+HotKey Name: `Find Previous / Move to Previous Occurrence`
+HotKey In Mac: `⌘G`、`⇧⌘G`
+HotKey In Windows: `F3`/`Ctrl+L`、`Shift+F3`/`Ctrl+Shift+L`
 
-### 1.4.10 查找IntelliJ的命令
+### 1.4.10 Find Action
 
-**HotKey Name**：`Find Action...`
-**HotKey In Mac**：`⇧⌘A`
-**HotKey In Windows**：`Ctrl+Shift+A`
+HotKey Name: `Find Action...`
+HotKey In Mac: `⇧⌘A`
+HotKey In Windows: `Ctrl+Shift+A`
 
-### 1.4.11 切换标签页
+### 1.4.11 Switch Tab
 
-**HotKey Name**：`Switcher`
-**HotKey In Mac**：`⌃Tab`
-**HotKey In Windows**：`Ctrl+Tab`
+HotKey Name: `Switcher`
+HotKey In Mac: `⌃Tab`
+HotKey In Windows: `Ctrl+Tab`
 
-### 1.4.12 打开最近打开过的文件
+### 1.4.12 Recent Files
 
-**HotKey Name**：`Recent Files`
-**HotKey In Mac**：`⌘E`
-**HotKey In Windows**：`Ctrl+E`
+HotKey Name: `Recent Files`
+HotKey In Mac: `⌘E`
+HotKey In Windows: `Ctrl+E`
 
-### 1.4.13 打开最近编辑过的文件
+### 1.4.13 Recent Changed Files
 
-**HotKey Name**：`Recent Changed Files`
-**HotKey In Mac**：`⇧⌘E`
-**HotKey In Windows**：`Ctrl+Shift+E`
+HotKey Name: `Recent Changed Files`
+HotKey In Mac: `⇧⌘E`
+HotKey In Windows: `Ctrl+Shift+E`
 
-## 1.5 格式化
+### 1.4.14 Scroll Page
 
-### 1.5.1 格式化代码
+HotKey Name: `Scroll to Top`、`Scroll to Bottom`
+HotKey In Mac: `Undefined`
+HotKey In Windows: `Undefined`
 
-**HotKey Name**：`Reformat Code`
-**HotKey In Mac**：`⌥⌘L`
-**HotKey In Windows**：`Ctrl+Alt+L`
+## 1.5 Format
 
-### 1.5.2 格式化import
+### 1.5.1 Code
 
-**HotKey Name**：`Optimize Imports`
-**HotKey In Mac**：`⌃⌥O`
-**HotKey In Windows**：`Ctrl+Alt+O`
+HotKey Name: `Reformat Code`
+HotKey In Mac: `⌥⌘L`
+HotKey In Windows: `Ctrl+Alt+L`
+
+### 1.5.2 Import
+
+HotKey Name: `Optimize Imports`
+HotKey In Mac: `⌃⌥O`
+HotKey In Windows: `Ctrl+Alt+O`
 
 ### 1.5.3 Google Style
 
 [intellij-java-google-style.xml](https://github.com/google/styleguide/blob/gh-pages/intellij-java-google-style.xml)
 
-### 1.5.4 定义格式化风格
+### 1.5.4 Customized Stype
 
 **如何导入自定义格式化`schema`：`Perference -> Editor -> Code Style`**
 
@@ -231,25 +237,25 @@ categories:
 </code_scheme>
 ```
 
-### 1.5.5 如何用命令行工具格式化
+### 1.5.5 Util
 
 参考[command-line-formatter](https://www.jetbrains.com/help/idea/command-line-formatter.html)
 
 格式化工具的路径：`<安装目录>/bin/format.sh`
 
-## 1.6 参考
+## 1.6 Reference
 
 * [十大Intellij IDEA快捷键](http://blog.csdn.net/dc_726/article/details/42784275)
 
 # 2 Intellij-IDEA
 
-## 2.1 设置选中标识符高亮
+## 2.1 Color
 
 1. 打开Preference
 1. 搜索`Identifier under caret`，如下图所示：
     * ![fig1](/images/JetBrains-Developer-Tools/fig1.jpg)
 
-## 2.2 自动添加序列化字段
+## 2.2 Serialize Field
 
 1. `Preference`
 1. `Editor`
@@ -258,7 +264,7 @@ categories:
 1. `Serialization issues`
 1. `Java | Serialization issues | Serializable class without 'serialVersionUID'`
 
-## 2.3 创建类时自动创建作者日期信息
+## 2.3 Customized Information Of Class Comment
 
 1. `Preference`
 1. `Editor`
@@ -277,11 +283,11 @@ categories:
 
 `alt + enter` -> `add to custom tags`
 
-## 2.5 控制台日志颜色
+## 2.5 Console Color
 
 安装插件`grop console`
 
-## 2.6 高亮选中的变量
+## 2.6 Highlight Selection
 
 1. `Preference`
 1. `Editor`
@@ -295,11 +301,11 @@ categories:
 
 `restore layout`
 
-## 2.8 插件
+## 2.8 Plugin
 
 1. `lombok`
 
-## 2.9 参考
+## 2.9 Reference
 
 * [IntelliJ IDEA 设置选中标识符高亮](http://blog.csdn.net/wskinght/article/details/43052407)
 * [IntelliJ IDEA 总结](https://www.zhihu.com/question/20450079)
@@ -308,7 +314,7 @@ categories:
 
 # 3 CLion
 
-## 3.1 插件
+## 3.1 Plugin
 
 1. `thrift`
 
@@ -436,7 +442,7 @@ set cursorline
 set matchpairs+=<:>
 ```
 
-# 5 其他
+# 5 Assorted
 
 1. 开启长按表示重复
     * `defaults write com.jetbrains.intellij ApplePressAndHoldEnabled -bool false`
