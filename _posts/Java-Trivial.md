@@ -1,5 +1,5 @@
 ---
-title: Java-Tools
+title: Java-Trivial
 date: 2018-01-17 09:30:44
 tags: 
 - 摘录
@@ -15,7 +15,7 @@ categories:
 
 # 1 java
 
-## 1.1 执行代码
+## 1.1 Execute
 
 * `java -cp /path/aaa.jar com.liuyehcf.demo.MyMain arg1 arg2`：将`/path/aaa.jar`添加到`classpath`中
 * `java -cp /path/aaa.jar:/path/bbb.jar com.liuyehcf.demo.MyMain arg1 arg2`：将`/path/aaa.jar`和`/path/bbb.jar`添加到`classpath`中
@@ -23,7 +23,7 @@ categories:
 * `java -cp "/path/*":"/path2/*" com.liuyehcf.demo.MyMain arg1 arg2`：将`/path`以及`/path2`目录下的所谓`class`文件以及`jar`文件都添加到`classpath`中
 * `java -jar /path/aaa.jar arg1 arg2`：运行jar归档文件中指定的`main`函数
 
-## 1.2 开启调试端口
+## 1.2 Enable Debug
 
 **`java -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n [其他参数]`**
 
@@ -234,11 +234,17 @@ Java反编译工具，[下载地址](http://www.javadecompilers.com/jad)
 
 `Retained Size`: This is the total amount of memory that would be freed if the object were garbage collected. This includes the shallow size of the object itself plus the shallow size of any objects that are exclusively referenced by this object (i.e., objects that would be garbage collected if this object were). The retained size provides a more complete picture of the "true" memory impact of an object but can be more complex to calculate. Some profiling tools provide this information, but it may require additional analysis or plugins.
 
-# 13 Else
+# 13 Assorted
 
-## 13.1 JVM Install Path
+## 13.1 Install JDK
 
-可以通过`readlink -f $(which java)`查看绝对路径，一般来说是`/usr/lib/jvm`
+* [Java SE 17 Archive Downloads](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
+
+## 13.2 JDK Install Path
+
+Linux：可以通过`readlink -f $(which java)`查看绝对路径，一般来说是`/usr/lib/jvm`
+
+MacOS：`/Library/Java/JavaVirtualMachines`
 
 # 14 参考
 

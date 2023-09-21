@@ -30,6 +30,7 @@
         * taxi
     * 统计信息
         * mcv, most common value, topn
+        * ndv, number of distinct values
     * Join
         * RuntimeFilter
     * Type
