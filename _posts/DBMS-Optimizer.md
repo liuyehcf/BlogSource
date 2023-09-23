@@ -747,6 +747,9 @@ GROUP BY v1
 
 # 6 Range Join
 
+* [support range optimize in join](https://github.com/StarRocks/starrocks/pull/31601)
+* [Extend non-equi join optimization to support range predicates](https://github.com/trinodb/trino/commit/2790951f161fc694b116d6b637dc657ae9262354)
+
 ## 6.1 Reference
 
 * [How to speed up range joins joins in Snowflake by 300x](https://select.dev/posts/snowflake-range-join-optimization)

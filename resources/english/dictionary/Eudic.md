@@ -1,3 +1,77 @@
+1. they set out at sunset; they set out at sunrise
+1. including; namely
+1. the road ahead will be long, our climb will be steep
+1. may I request a two-day leave?
+1. this conversation is loaded with contempt
+1. If you fall for it, they'll just keep taking advantage of you
+1. I need to go check some information
+1. don't give me the brush off
+1. regime change
+1. the song is really contagious; the song is really catchy
+1. my wage is going backward; my wage is going down
+1. Explain the design of the scheduler of morsel-driven execution engine
+1. How many Garbage Collection Algorithms and Garbage Collectors are there?
+1. Explain the concept of happens-before relationships
+1. Explain the concept of design patterns
+1. What are the competitors of Starrocks?
+1. What is the process of window function?
+1. What are the core values of StarRocks?
+1. Explain the difference between cache coherence and memory consistency
+1. do not toss objects from height
+1. It's a big city that is politically and economically significant
+1. you're so into yourself
+1. this is a long-term project that requires continuous evolution; this is a long-term project that requires ongoing development
+1. heavy rains have caused dams to burst, and the entire neighborhood has been washed away, there was very little help getting to Derna for the first 30 hours
+1. surpass the United States economically
+1. every module has certain constraints, and these constraints form the context of this module
+1. caucus
+1. I've heard grumblings
+1. sorry to bother you; sorry for the inconvenience
+1. you are so full of it
+1. poppycock
+1. call a spade a spade
+1. let's not beat around the bush
+1. biological family; adopted family
+1. power source
+1. I'm glad to be here, and I hope to work with everyone
+1. What are the advantages of the MPP architecture?
+1. charging cable
+1. power bank
+1. take them to the curb
+1. there will be action
+1. What are the features of event-driven system?
+1. counter offensive
+1. sweltering heat
+1. what the hell have you been doing over the past ten years?
+1. what was it like when you first laid eyes on your wife?
+1. codefendant
+1. the president x will not be among the world leaders who are attending the Group of 20 summit
+1. we're going to take action to get it by any means necessary
+1. he is accused of several counts of corruption
+1. impeachment trial
+1. 20000-person venue
+1. I am currently submitting job applications
+1. maintaining in process; currently repairing
+1. super competent colleague
+1. How does starrocks process subquery?
+1. How many subquery transformation rules in Starrocks?
+1. Could describe the subquery classifications?
+1. What's the advantages of the morsel-driven execution engine?
+1. What's optimization can lead to 10 times performance boost of the ranking window function?
+1. Why do you refactor the subquery transformation process?
+1. What are the killing features of StarRocks?
+1. What's the function of auto boxing?
+1. What problems does the tool address?
+1. What's the function of the OS pipeline?
+1. How is operator overloading achieved?
+1. What's the most difficult thing you've encountered when implementing it?
+1. What features does the compiler framework have?
+1. What components does the compiler framework have?
+1. Why not just use the message middleware?
+1. What's the function of message route?
+1. How many types of device warnings are there?
+1. How can the web browser serve as the user-side agent without any configuration?
+1. How does the tunnel service work?
 1. blow dryer
 1. I also don't see the problem in my environment
 1. he might decide to skip the conference
@@ -2414,7 +2488,6 @@
 1. democracy, liberty, opportunity and unyielding hope
 1. Tonight we proved once more that the true strength of our nation comes not from the might of our arms or the scale of our wealth, but from the enduring power of our ideals
 1. the determination to heal the divides that have held back our progress
-1. the road ahead will be long
 1. I'm grateful to them
 1. at this defining moment
 1. he suffered only minor injuries
@@ -2485,7 +2558,6 @@
 1. go into hibernation
 1. amino acids
 1. rebellion/riot
-1. The road ahead will be long. Our climb will be steep
 1. exterior/external
 1. white-collar workers
 1. 命运
@@ -2593,7 +2665,6 @@
 1. fresh water
 1. implement a tight monetary policy
 1. rise up to fight for justice and democracy
-1. they set out at sunset/sunrise
 1. we qualified for the final
 1. make unsubstantiated  claims
 1. marvellous
