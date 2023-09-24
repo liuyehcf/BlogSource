@@ -44,6 +44,7 @@
         * Performance
     * product
         * Snowflake、BigQuery、SingleStore、Firebolt、Pinot、Trino、Rockset
+        * Aliyun E-MapReduce
         * [chroma](https://www.trychroma.com/)
         * [milvus](https://milvus.io/blog)
     * profiling
