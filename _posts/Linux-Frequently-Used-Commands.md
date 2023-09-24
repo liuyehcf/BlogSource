@@ -17,7 +17,7 @@ categories:
 
 ## 1.1 lsb_release
 
-查看发行版信息，其他查看发行版的方式还包括：
+查看发行版信息（lsb, Linux Standard Base），其他查看发行版的方式还包括：
 
 1. `uname -r`：内核版本号
 1. `/etc/*-release`，包括
