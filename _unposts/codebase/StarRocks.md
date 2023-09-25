@@ -24,6 +24,8 @@
     * `WindowTransformer`
         * `standardize`：标准化，window子句
     * `SqlToScalarOperatorTranslator`：将`Expr`转换成`ScalarOperator`
+1. `ScalarOperatorToExpr`
+    * 将`ScalarOperator`转换成`Expr`，用于最终生成执行计划
 1. `Operator`
     * `LogicalOperator`：逻辑算子
     * `PhysicalOperator`：物理算子

@@ -2975,7 +2975,7 @@ ssh-copy-id user@target
 
 ### 6.1.2 禁止密码登录
 
-修改`/etc/ssh/sshd_config`
+Modify `/etc/ssh/sshd_config`
 
 ```
 PasswordAuthentication no
@@ -2983,7 +2983,7 @@ PasswordAuthentication no
 
 ### 6.1.3 避免长时间不操作就断开连接
 
-修改`/etc/ssh/sshd_config`
+Modify `/etc/ssh/sshd_config`, it is worked on SSH-level. And there's another config named `TCPKeepAlive`, which is worked on TCP-level.
 
 ```
 ClientAliveInterval 60
