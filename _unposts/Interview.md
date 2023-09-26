@@ -565,6 +565,9 @@ For better observability and query analysis, I introduced support for runtime pr
     > Cache coherence is primarily concerned with the values of copies of a single memory location that are cached at several caches, and ensures that all processors in the system observe a single, consistent value for the memory location.
     > Memory consistency is concerned about the ordering of multiply updates to different memory locations(or single memory location) from different processors. It determines when a write by one processor to a shared memory location becomes visible to all other processors.
 
+1. Explain the difference between tcmalloc and jemalloc.
+    > jemalloc is well-suited for applications that require efficient memory utilization and involve high levels of concurrent memory allocation and deallocation, especially when these operations are occurring across multiple threads.
+
 1. What is the purpose of the "constexpr" keyword in C++11?
 1. Explain the concept of variadic templates in C++.
 1. What is the difference between lvalue and rvalue in C++?
@@ -733,11 +736,15 @@ For better observability and query analysis, I introduced support for runtime pr
 1. Explain the concept of TCP timestamp option and its role in congestion control.
 1. Explain the concept of network sniffing and its implications on network security.
 
-# 7 Others
+# 7 Operating System
+
+1. Memory Management
+
+# 8 Others
 
 1. serverless
 
-# 8 Reference
+# 9 Reference
 
 * [Summary-of-Key-Points](/_posts/Summary-of-Key-Points.md)
 * [cpp-interview](https://github.com/huihut/interview)

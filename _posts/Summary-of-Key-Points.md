@@ -776,7 +776,92 @@ This analysis is only for `select count(distinct $1) from lineorder group by $2;
 1. Cost-based state transition machine
     * The process of the cbo optimization
 
-# 4 Scheduler
+# 4 Operating System
+
+{% markmap %}
+- Functions
+    - Process Management
+        - Process Creation
+            - Process States (New, Ready, Running, Blocked, Terminated)
+            - Process Control Block (PCB)
+            - Fork and Exec
+        - Process Scheduling
+            - CPU Scheduling Algorithms (Round Robin, Priority, etc.)
+        - Inter-Process Communication (IPC)
+            - Message Passing
+            - Shared Memory
+        - Process Synchronization
+            - Semaphores
+            - Mutexes
+            - Deadlock Handling
+    - Memory Management
+        - Memory Hierarchy
+            - Registers
+            - Cache(L1, L2, L3)
+                - L1 and L2 are dedicated by each core
+                - L3 is shared by all cores
+            - Main Memory (RAM)
+            - Secondary Storage (Disk)
+        - Address Spaces
+            - Physical Addresses
+            - Logical Addresses
+        - Memory Allocation
+            - Contiguous Memory Allocation
+            - Paging Memory Allocation
+                - Better Efficiency & No External Fragmentation
+                - Partly controled by hardware
+                - Linux
+            - Segmentation Memory Allocation
+                - Avoid Memory Space Conflict
+                - Partly controled by hardware
+            - Combination of Paging and Segmentation
+        - Virtual Memory
+            - Demand Paging
+            - Page Tables
+            - Page Replacement Algorithms (LRU, FIFO, etc.)
+        - Memory Protection
+            - Read-Only Memory (ROM)
+            - Memory Segmentation
+            - Memory Segmentation Violations
+        - MemorySwapping
+            - Page-in and Page-out
+        - Memory Fragmentation
+            - External Fragmentation
+            - Internal Fragmentation
+    - File System Management
+    - Device Management
+- Components
+    - Kernel
+    - Shell
+    - File System
+    - User Interface
+    - Hardware
+- Concepts
+    - Multitasking
+    - Multiprocessing
+    - Multithreading
+    - Synchronization
+    - Deadlock
+    - Virtual Memory
+    - Paging
+    - Caching
+- Algorithms
+    - CPU Scheduling
+    - Page Replacement
+    - Disk Scheduling
+- Security
+    - Authentication
+    - Authorization
+    - Encryption
+    - Access Control
+- Types
+    - Batch OS
+    - Interactive OS
+    - Real-Time OS
+    - Distributed OS
+{% endmarkmap %}
+
+# 5 Scheduler
 
 {% markmap %}
 - Key Metrics
@@ -833,7 +918,7 @@ This analysis is only for `select count(distinct $1) from lineorder group by $2;
         - Simulated Annealing
 {% endmarkmap %}
 
-## 4.1 Which scenarios are suitable for an event-driven model
+## 5.1 Which scenarios are suitable for an event-driven model
 
 In both Linux thread scheduling and brpc's bthread coroutine scheduling, the smallest unit of scheduling is respectively a pthread and a bthread.
 
@@ -847,7 +932,7 @@ They share a common characteristic: the state changes of pthread or bthread can 
 
 This ensures that the scheduling of pthreads and bthreads is controlled and managed in a controlled manner, and their state transitions adhere to specific mechanisms and events.
 
-## 4.2 Which scenarios are not suitable for event-driven model
+## 5.2 Which scenarios are not suitable for event-driven model
 
 In a database system, the state changes of tasks (or operations in query execution plans) are typically more intricate, as they need to consider various factors such as dependencies, buffer capacity, and specific behaviors of operators (materialization, asynchronous operations), among others. These state changes often occur asynchronously, making it challenging to capture all the state transitions through synchronous events. Instead, it is usually necessary to actively query or examine the current state of tasks through function calls or methods.
 
@@ -859,7 +944,7 @@ By regularly polling the status of tasks or operations, applications can adapt d
 
 Overall, polling can be a practical approach when dealing with complex and asynchronous state changes, allowing systems and applications to proactively monitor and respond to evolving conditions.
 
-## 4.3 Event-driven system
+## 5.3 Event-driven system
 
 Key characteristics of an event-driven system include:
 
@@ -871,7 +956,7 @@ Key characteristics of an event-driven system include:
 * **Publish-Subscribe Model**: A popular approach within event-driven systems is the publish-subscribe model. In this model, components can publish events to a central event bus or dispatcher. Other components, known as subscribers, can then register to listen for specific types of events and react accordingly when those events are published.
 * **Scalability and Responsiveness**: Event-driven architectures are well-suited for building scalable and responsive systems. By distributing the workload across multiple event handlers and components, the system can efficiently handle a large number of concurrent events and maintain responsiveness.
 
-# 5 Network
+# 6 Network
 
 {% markmap %}
 - Network Concepts
@@ -995,8 +1080,8 @@ Key characteristics of an event-driven system include:
         - Access Point
 {% endmarkmap %}
 
-# 6 Other
+# 7 Other
 
-## 6.1 Unclassified
+## 7.1 Unclassified
 
 1. Reactive Programming
