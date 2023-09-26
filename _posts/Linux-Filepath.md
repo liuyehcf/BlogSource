@@ -177,6 +177,33 @@ categories:
         * `VmHWM`：峰值物理内存
         * `VmRSS`：目前占用的物理内存
         * `Threads`：线程数量
+        ```cpp
+        #include <fstream>
+        #include <iostream>
+        #include <vector>
+
+        void print_rss() {
+            std::ifstream ifs("/proc/self/status");
+            std::string line;
+            std::cout << "Part of /proc/self/status: " << std::endl;
+            while (std::getline(ifs, line)) {
+                if (line.find("Vm") != std::string::npos) {
+                    std::cout << line << std::endl;
+                }
+            }
+            std::cout << std::endl;
+        }
+
+        int main() {
+            std::vector<int> v;
+            print_rss();
+            v.reserve(1000000000);
+            print_rss();
+            v.resize(1000000000);
+            print_rss();
+        }       
+        ```
+
     * `/proc/<pid>/maps`：展示了一个进程的内存消耗
     * `/proc/<pid>/smaps`：展示了一个进程的内存消耗，内容比`/proc/<pid>/maps`更为详细
     * `/proc/<pid>/fd/`：进程打开的所有文件，包括`socket`等
