@@ -12,367 +12,364 @@ categories:
 
 <!--more-->
 
-# 1 虚拟内存
+# 1 Virtual Memory
 
 **摘录自[20 张图揭开「内存管理」的迷雾，瞬间豁然开朗](https://zhuanlan.zhihu.com/p/152119007)**
 
-**单片机的CPU是直接操作内存的「物理地址」**
+**The CPU of a microcontroller directly operates on memory using 'physical addresses'**
 
 ![mcu](/images/Linux-Memory-Management/mcu.png)
 
-在这种情况下，要想在内存中同时运行两个程序是不可能的。如果第一个程序在`2000`的位置写入一个新的值，将会擦掉第二个程序存放在相同位置上的所有内容，所以同时运行两个程序是根本行不通的，这两个程序会立刻崩溃
+In this scenario, it is impossible to run two programs simultaneously in memory. If the first program writes a new value at position `2000`, it will overwrite all the content stored in the same location for the second program. Therefore, running two programs simultaneously is fundamentally impossible, and both programs will crash immediately.
 
-> 操作系统是如何解决这个问题呢？
+> How does the operating system solve this problem?
 
-这里关键的问题是这两个程序都引用了绝对物理地址，而这正是我们最需要避免的
+The key issue here is that both of these programs are referencing absolute physical addresses, which is exactly what we need to avoid.
 
-我们可以把进程所使用的地址「隔离」开来，即让操作系统为每个进程分配独立的一套「虚拟地址」，人人都有，大家自己玩自己的地址就行，互不干涉。但是有个前提每个进程都不能访问物理地址，至于虚拟地址最终怎么落到物理内存里，对进程来说是透明的，操作系统已经把这些都安排的明明白白了
+We can isolate the addresses used by processes, meaning that the operating system allocates a separate set of virtual addresses for each process. Everyone gets their own set of addresses to play with, and they don't interfere with each other. However, there's one condition: no process can directly access physical addresses. As for how virtual addresses ultimately map to physical memory, it's transparent to the processes; the operating system takes care of all these arrangements.
 
 ![virtual](/images/Linux-Memory-Management/virtual.png)
 
-**操作系统会提供一种机制，将不同进程的虚拟地址和不同内存的物理地址映射起来**
+**The operating system provides a mechanism to map the virtual addresses of different processes to different physical memory addresses.**
 
-如果程序要访问虚拟地址的时候，由操作系统转换成不同的物理地址，这样不同的进程运行的时候，写入的是不同的物理地址，这样就不会冲突了
+When a program accesses a virtual address, the operating system translates it into a distinct physical address. This way, when different processes run, they write to different physical addresses, avoiding conflicts.
 
-**于是，这里就引出了两种地址的概念：**
+**So, this introduces two concepts of addresses:**
 
-我们程序所使用的内存地址叫做**虚拟内存地址（Virtual Memory Address）**
-实际存在硬件里面的空间地址叫**物理内存地址（Physical Memory Address）**
-操作系统引入了虚拟内存，进程持有的虚拟地址会通过 CPU 芯片中的内存管理单元（MMU）的映射关系，来转换变成物理地址，然后再通过物理地址访问内存，如下图所示：
+* The memory addresses our programs use are called **Virtual Memory Addresses.**
+* The spatial addresses that actually exist in hardware are called **Physical Memory Addresses.**
+
+The operating system introduces virtual memory, where the virtual addresses held by a process are translated into physical addresses through the mapping relationship of the Memory Management Unit (MMU) within the CPU chip, and then memory is accessed via the physical address, as shown in the diagram below:
 
 ![virtual_mmu](/images/Linux-Memory-Management/virtual_mmu.jpg)
 
-> 操作系统是如何管理虚拟地址与物理地址之间的关系？
+> How does the operating system manage the relationship between virtual addresses and physical addresses?
 
-主要有两种方式，分别是内存分段和内存分页，分段是比较早提出的，我们先来看看内存分段
+There are primarily two methods: memory segmentation and memory paging. Segmentation was proposed earlier, so let's first take a look at memory segmentation.
 
-# 2 内存分段
+# 2 Memory Segmentation
 
 **摘录自[20 张图揭开「内存管理」的迷雾，瞬间豁然开朗](https://zhuanlan.zhihu.com/p/152119007)**
 
-程序是由若干个逻辑分段组成的，如可由代码分段、数据分段、栈段、堆段组成。**不同的段是有不同的属性的，所以就用分段（Segmentation）的形式把这些段分离出来**
+A program is composed of several logical segments, such as code segments, data segments, stack segments, and heap segments. **Different segments have different attributes, so they are separated using segmentation.**
 
-> 分段机制下，虚拟地址和物理地址是如何映射的？
+> In the segmentation mechanism, how are virtual addresses mapped to physical addresses?
 
-分段机制下的虚拟地址由两部分组成，**段选择子**和**段内偏移量**
+In the segmentation mechanism, a virtual address consists of two parts: the **segment selector** and the **offset within the segment.**
 
 ![segment_1](/images/Linux-Memory-Management/segment_1.jpg)
 
-* `段选择子`就保存在段寄存器里面。段选择子里面最重要的是`段号`，用作段表的索引。`段表`里面保存的是这个`段的基地址`、`段的界限`和`特权等级`等
-* 虚拟地址中的`段内偏移量`应该位于0和段界限之间，如果段内偏移量是合法的，就将段基地址加上段内偏移量得到物理内存地址
+* The `segment selector` is stored in a segment register. The most important part of the segment selector is the `segment number`, which is used as an index into the segment table. The `segment table` contains the `base address of the segment`, `segment limit`, and `privilege level`, among other information for that segment.
+* The `segment offset` in the virtual address should be between 0 and the segment limit. If the segment offset is valid, it's added to the segment's base address to obtain the physical memory address.
 
-在上面，知道了虚拟地址是通过段表与物理地址进行映射的，分段机制会把程序的虚拟地址分成4个段，每个段在段表中有一个项，在这一项找到段的基地址，再加上偏移量，于是就能找到物理内存中的地址，如下图：
+In the above explanation, we learned that virtual addresses are mapped to physical addresses through the segment table. The segmentation mechanism divides the program's virtual address into four segments, with each segment having an entry in the segment table. In this entry, you can find the base address of the segment. By adding the offset to this base address, you can locate the address in physical memory, as illustrated in the following diagram:
 
 ![segment_2](/images/Linux-Memory-Management/segment_2.jpg)
 
-如果要访问段`3`中偏移量`500`的虚拟地址，我们可以计算出物理地址为，段`3`基地址`700` + 偏移量`500` = `7500`
+If you want to access the virtual address with offset `500` in segment `3`, you can calculate the physical address as follows: Segment `3` base address `700` + offset `500` = `7500`.
 
-分段的办法很好，解决了程序本身不需要关心具体的物理内存地址的问题，但它也有一些不足之处：
+Segmentation is a good approach as it resolves the issue of programs not needing to be concerned with specific physical memory addresses. However, it has a couple of shortcomings:
 
-1. 第一个就是**内存碎片**的问题
-1. 第二个就是**内存交换的效率低**的问题
+1. The first issue is **memory fragmentation.**
+1. The second issue is **inefficient memory swapping.**
 
-接下来，说说为什么会有这两个问题
+Let's discuss why these two problems occur.
 
-我们来看看这样一个例子。假设有1G的物理内存，用户执行了多个程序，其中：
+Consider this example: Suppose there is 1GB of physical memory, and users are running multiple programs:
 
-* 游戏占用了`512MB`内存
-* 浏览器占用了`128MB`内存
-* 音乐占用了`256MB`内存
+* A game occupies `512MB` of memory.
+* A browser occupies `128MB` of memory.
+* Music occupies `256MB` of memory.
 
-这个时候，如果我们关闭了浏览器，则空闲内存还有`1024 - 512 - 256 = 256MB`
-
-如果这个`256MB`不是连续的，被分成了两段`128MB`内存，这就会导致没有空间再打开一个`200MB`的程序
+Now, if we close the browser, there will be `1024 - 512 - 256 = 256MB` of free memory. If this `256MB` is not contiguous and is split into two segments of `128MB` each, it would lead to a situation where there is no space available to open a `200MB` program.
 
 ![segment_fragment](/images/Linux-Memory-Management/segment_fragment.jpg)
 
-这里的内存碎片的问题共有两处地方：
+The issue of memory fragmentation in this context occurs in two ways:
 
-1. **外部内存碎片**，也就是产生了多个不连续的小物理内存，导致新的程序无法被装载
-1. **内部内存碎片**，程序所有的内存都被装载到了物理内存，但是这个程序有部分的内存可能并不是很常使用，这也会导致内存的浪费
+1. **External memory fragmentation**, which results in multiple non-contiguous small blocks of physical memory, preventing the loading of new programs.
+2. **Internal memory fragmentation**, where all of a program's memory is loaded into physical memory, but some portions of that memory may not be frequently used, leading to memory waste.
 
-针对上面两种内存碎片的问题，解决的方式会有所不同
+The solutions for addressing these two types of memory fragmentation are different.
 
-解决外部内存碎片的问题就是**内存交换**
+To tackle external memory fragmentation, we use **memory swapping**.
 
-可以把音乐程序占用的那`256MB`内存写到硬盘上，然后再从硬盘上读回来到内存里。不过再读回的时候，我们不能装载回原来的位置，而是紧紧跟着那已经被占用了的`512MB`内存后面。这样就能空缺出连续的`256MB`空间，于是新的`200MB`程序就可以装载进来
+In memory swapping, the `256MB` of memory occupied by the music program is written to the hard disk and then read back into memory from the hard disk. However, when reading it back, it cannot be loaded back into its original location; instead, it is placed immediately after the already occupied `512MB` of memory. This frees up a contiguous `256MB` space, allowing a new `200MB` program to be loaded.
 
-这个内存交换空间，在Linux系统里，也就是我们常看到的Swap空间，这块空间是从硬盘划分出来的，用于内存与硬盘的空间交换
+This memory swapping space, often referred to as Swap space, is allocated from the hard disk in Linux systems and is used for the exchange of data between memory and the hard disk.
 
-> 再来看看，分段为什么会导致内存交换效率低的问题？
+> Now, let's take a look at why memory swapping is less efficient with segmentation.
 
-对于多进程的系统来说，用分段的方式，内存碎片是很容易产生的，产生了内存碎片，那不得不重新`Swap`内存区域，这个过程会产生性能瓶颈
+For multi-process systems, using segmentation can easily lead to memory fragmentation. When fragmentation occurs, we have to perform memory swapping (Swap), which can create performance bottlenecks.
 
-因为硬盘的访问速度要比内存慢太多了，每一次内存交换，我们都需要把一大段连续的内存数据写到硬盘上
+This is because accessing the hard disk is much slower compared to memory. During each memory swap, we need to write a large contiguous block of memory data to the hard disk.
 
-所以，如果内存交换的时候，交换的是一个占内存空间很大的程序，这样整个机器都会显得卡顿
+So, if the memory swap involves a program that occupies a large portion of memory, the entire system can become sluggish.
 
-为了解决内存分段的内存碎片和内存交换效率低的问题，就出现了内存分页
+To address the issues of memory fragmentation and low memory swapping efficiency with segmentation, memory paging was introduced.
 
-# 3 内存分页
+# 3 Memory Paging
 
 **摘录自[20 张图揭开「内存管理」的迷雾，瞬间豁然开朗](https://zhuanlan.zhihu.com/p/152119007)**
 
-分段的好处就是能产生连续的内存空间，但是会出现内存碎片和内存交换的空间太大的问题
+Segmentation has the advantage of creating contiguous memory spaces but can lead to memory fragmentation and inefficient memory swapping due to large spaces.
 
-要解决这些问题，那么就要想出能少出现一些内存碎片的办法。另外，当需要进行内存交换的时候，让需要交换写入或者从磁盘装载的数据更少一点，这样就可以解决问题了。这个办法，也就是**内存分页（Paging）**
+To address these issues, we need to find ways to minimize memory fragmentation and reduce the amount of data that needs to be swapped during memory exchange. This solution is known as **Memory Paging**.
 
-**分页是把整个虚拟和物理内存空间切成一段段固定尺寸的大小**。这样一个连续并且尺寸固定的内存空间，我们叫页（Page）。在 Linux 下，每一页的大小为`4KB`
+**Paging involves dividing the entire virtual and physical memory spaces into fixed-size chunks. Each contiguous and fixed-size memory space is called a page. In Linux, the size of each page is typically `4KB`**.
 
-虚拟地址与物理地址之间通过页表来映射，如下图：
+Virtual addresses are mapped to physical addresses using a page table, as shown in the diagram below:
 
 ![paging_1](/images/Linux-Memory-Management/paging_1.jpg)
 
-页表实际上存储在CPU的内存管理单元（MMU）中，于是CPU就可以直接通过MMU，找出要实际要访问的物理内存地址
+The page table is actually stored in the Memory Management Unit (MMU) of the CPU. Therefore, the CPU can directly access the physical memory address to be accessed through the MMU.
 
-而当进程访问的虚拟地址在页表中查不到时，系统会产生一个**缺页异常**，进入系统内核空间分配物理内存、更新进程页表，最后再返回用户空间，恢复进程的运行
+When a process accesses a virtual address that cannot be found in the page table, the system generates a **page fault exception**. It enters the kernel space of the system, allocates physical memory, updates the process's page table, and then returns to the user space to resume the process's execution.
 
-> 分页是怎么解决分段的内存碎片、内存交换效率低的问题？
+> How does paging solve the issues of memory fragmentation and low memory swapping efficiency seen in segmentation?
 
-由于内存空间都是预先划分好的，也就不会像分段会产生间隙非常小的内存，这正是分段会产生内存碎片的原因。**而采用了分页，那么释放的内存都是以页为单位释放的，也就不会产生无法给进程使用的小内存**
+With paging, memory spaces are pre-allocated, and there are no small gaps as seen in segmentation, which is the reason for memory fragmentation in segmentation. **In paging, released memory is released in page-sized units, avoiding the issue of small unusable memory blocks.**
 
-如果内存空间不够，操作系统会把其他正在运行的进程中的「最近没被使用」的内存页面给释放掉，也就是暂时写在硬盘上，称为**换出**（Swap Out）。一旦需要的时候，再加载进来，称为**换入**（Swap In）。所以，一次性写入磁盘的也只有少数的一个页或者几个页，不会花太多时间，**内存交换的效率就相对比较高**
+If there isn't enough memory space, the operating system will release pages of memory from other running processes that have not been recently used. This is known as **swapping out**. When needed again, these pages are loaded back into memory, known as **swapping in**. Therefore, only a few pages or even just one page are written to disk at a time, which doesn't take much time. As a result, **memory swapping is more efficient**.
 
 ![paging_2](/images/Linux-Memory-Management/paging_2.jpg)
 
-更进一步地，分页的方式使得我们在加载程序的时候，不再需要一次性都把程序加载到物理内存中。我们完全可以在进行虚拟内存和物理内存的页之间的映射之后，并不真的把页加载到物理内存里，**而是只有在程序运行中，需要用到对应虚拟内存页里面的指令和数据时，再加载到物理内存里面去**
+Furthermore, the paging approach allows us to load programs into physical memory gradually, rather than all at once when we load a program. We can map virtual memory pages to physical memory pages and do not need to load pages into physical memory until they are actually needed during program execution. 
 
-> 分页机制下，虚拟地址和物理地址是如何映射的？
+> How are virtual addresses and physical addresses mapped under the paging mechanism?
 
-在分页机制下，虚拟地址分为两部分，**页号**和**页内偏移**。页号作为页表的索引，**页表**包含物理页每页所在**物理内存的基地址**，这个基地址与页内偏移的组合就形成了物理内存地址，见下图
+In the paging mechanism, a virtual address is divided into two parts: the **page number** and the **page offset**. The page number serves as an index for the page table, and the **page table** contains the base addresses of each physical page in physical memory. The combination of this base address and the page offset forms the physical memory address, as illustrated in the diagram below:
 
 ![paging_3](/images/Linux-Memory-Management/paging_3.jpg)
 
-总结一下，对于一个内存地址转换，其实就是这样三个步骤：
+To summarize, the process of memory address translation involves three steps:
 
-1. 把虚拟内存地址，切分成页号和偏移量
-1. 根据页号，从页表里面，查询对应的物理页号
-1. 直接拿物理页号，加上前面的偏移量，就得到了物理内存地址
+1. Splitting the virtual memory address into a page number and an offset.
+1. Using the page number to look up the corresponding physical page number in the page table.
+1. Directly adding the physical page number to the offset to obtain the physical memory address.
 
-下面举个例子，虚拟内存中的页通过页表映射为了物理内存中的页，如下图：
+Here's an example: Virtual memory pages are mapped to physical memory pages through the page table, as illustrated in the diagram below:
 
 ![paging_4](/images/Linux-Memory-Management/paging_4.jpg)
 
-这看起来似乎没什么毛病，但是放到实际中操作系统，这种简单的分页是肯定是会有问题的
+This may seem fine at first glance, but when applied to real-world operating systems, this simple paging approach does have limitations.
 
-> 简单的分页有什么缺陷吗？
+> Are there any shortcomings to simple paging?
 
-有空间上的缺陷
+One significant limitation is space-related.
 
-因为操作系统是可以同时运行非常多的进程的，那这不就意味着页表会非常的庞大
+Since operating systems can run many processes simultaneously, this implies that the page table will become very large.
 
-在32位的环境下，虚拟地址空间共有`4GB`，假设一个页的大小是`4KB（2^12）`，那么就需要大约`100 万 （2^20）`个页，每个「页表项」需要`4`个字节大小来存储，那么整个`4GB`空间的映射就需要有`4MB`的内存来存储页表
+In a 32-bit environment, the virtual address space is `4GB`. If we assume a page size of `4KB (2^12)`, we would need around `1 million (2^20)` pages. Each "page table entry" requires `4` bytes to store, so the entire mapping of the `4GB` space would require `4MB` of memory to store the page table.
 
-这`4MB`大小的页表，看起来也不是很大。但是要知道每个进程都是有自己的虚拟地址空间的，也就说都有自己的页表
+This `4MB` page table size may not seem very large on its own. However, it's essential to note that each process has its own virtual address space, meaning each has its own page table.
 
-那么，`100`个进程的话，就需要`400MB`的内存来存储页表，这是非常大的内存了，更别说`64`位的环境了
+So, for `100` processes, you would need `400MB` of memory just to store the page tables, which is a substantial amount of memory. This issue becomes even more significant in a `64`-bit environment.
 
-**要解决上面的问题，就需要采用的是一种叫作多级页表（Multi-Level Page Table）的解决方案**
+**To address the problem mentioned above, a solution called "Multi-Level Page Table" is needed.**
 
-在前面我们知道了，对于单页表的实现方式，在32位和页大小`4KB`的环境下，一个进程的页表需要装下`100`多万个「页表项」，并且每个页表项是占用`4`字节大小的，于是相当于每个页表需占用`4MB`大小的空间。
+As we discussed earlier, with a single-level page table implementation, in a 32-bit environment with a page size of `4KB`, a process's page table needs to accommodate over a million "page table entries," each taking up `4` bytes. This implies that each page table requires `4MB` of space.
 
-我们把这个`100`多万个「页表项」的单级页表再分页，将页表（一级页表）分为`1024`个页表（二级页表），每个表（二级页表）中包含`1024`个「页表项」，**形成二级分页**。如下图所示：
+To overcome this limitation, we can introduce a multi-level page table, where the first-level page table is divided into `1024` second-level page tables, with each second-level table containing `1024` "page table entries." This creates a two-level paging system, as illustrated in the diagram below:
 
 ![paging_5](/images/Linux-Memory-Management/paging_5.jpg)
 
-> 你可能会问，分了二级表，映射`4GB`地址空间就需要`4KB`（一级页表）+ `4MB`（二级页表）的内存，这样占用空间不是更大了吗？
+You might be wondering, by introducing a two-level page table, aren't we consuming more memory? Mapping the entire `4GB` address space would indeed require `4KB` (first-level page table) + `4MB` (second-level page table), which seems larger.
 
-当然如果`4GB`的虚拟地址全部都映射到了物理内存上的话，二级分页占用空间确实是更大了，但是，我们往往不会为一个进程分配那么多内存
+However, we should look at this from a different perspective, and remember the ubiquitous principle of **locality of reference** in computer architecture.
 
-其实我们应该换个角度来看问题，还记得计算机组成原理里面无处不在的**局部性原理**么？
+Each process has a `4GB` virtual address space, but for most programs, they don't utilize the entire `4GB`. Many page table entries may remain empty, unallocated. Furthermore, for allocated page table entries, if there are pages that haven't been accessed recently, the operating system can swap them out to the hard disk, freeing up physical memory. In other words, these pages do not occupy physical memory.
 
-每个进程都有`4GB`的虚拟地址空间，而显然对于大多数程序来说，其使用到的空间远未达到`4GB`，因为会存在部分对应的页表项都是空的，根本没有分配，对于已分配的页表项，如果存在最近一定时间未访问的页表，在物理内存紧张的情况下，操作系统会将页面换出到硬盘，也就是说不会占用物理内存
+With two-level paging, the first-level page table can cover the entire `4GB` virtual address space, but if a page table entry is not used, there's no need to create the corresponding second-level page table until it's needed. Let's do a simple calculation. Suppose only `20%` of the first-level page table entries are used. In that case, the memory occupied by the page tables would be `4KB` (first-level page table) + `20% * 4MB` (second-level page table) = `0.804MB`. This is a significant memory saving compared to the `4MB` used by a single-level page table.
 
-如果使用了二级分页，一级页表就可以覆盖整个`4GB`虚拟地址空间，**但如果某个一级页表的页表项没有被用到，也就不需要创建这个页表项对应的二级页表了，即可以在需要时才创建二级页表**。做个简单的计算，假设只有`20%`的一级页表项被用到了，那么页表占用的内存空间就只有 `4KB`（一级页表） + `20% * 4MB`（二级页表）= `0.804MB`，这对比单级页表的`4MB`是不是一个巨大的节约？
+So, why can't single-level page tables achieve this memory saving? Looking at the nature of page tables, they are responsible for translating virtual addresses into physical addresses and are vital for the computer system to function. If a virtual address cannot be found in the page table, the computer system cannot operate. Therefore, page tables must cover the entire virtual address space. Single-level page tables would require over a million page table entries to map the entire virtual address space, while two-level paging only needs `1024` page table entries (with the first-level page table covering the entire virtual address space and second-level page tables created as needed).
 
-那么为什么不分级的页表就做不到这样节约内存呢？我们从页表的性质来看，保存在内存中的页表承担的职责是将虚拟地址翻译成物理地址。假如虚拟地址在页表中找不到对应的页表项，计算机系统就不能工作了。**所以页表一定要覆盖全部虚拟地址空间，不分级的页表就需要有`100`多万个页表项来映射，而二级分页则只需要`1024`个页表项**（此时一级页表覆盖到了全部虚拟地址空间，二级页表在需要时创建）
+When we extend this concept to multi-level page tables, we realize that even less memory is occupied by page tables. All of this can be attributed to the effective utilization of the principle of locality of reference.
 
-我们把二级分页再推广到多级页表，就会发现页表占用的内存空间更少了，这一切都要归功于对局部性原理的充分应用
+In a 64-bit system, two-level paging is insufficient, so it becomes a four-level hierarchy, including:
 
-对于64位的系统，两级分页肯定不够了，就变成了四级目录，分别是：
-
-* 全局页目录项 PGD（Page Global Directory）；
-* 上层页目录项 PUD（Page Upper Directory）；
-* 中间页目录项 PMD（Page Middle Directory）；
-* 页表项 PTE（Page Table Entry）；
+1. Page Global Directory (PGD)
+1. Page Upper Directory (PUD)
+1. Page Middle Directory (PMD)
+1. Page Table Entry (PTE)
 
 ![paging_6](/images/Linux-Memory-Management/paging_6.jpg)
 
-多级页表虽然解决了空间上的问题，但是虚拟地址到物理地址的转换就多了几道转换的工序，这显然就降低了这俩地址转换的速度，也就是带来了时间上的开销。
+While multi-level page tables solve the space issue, they introduce additional steps in the virtual-to-physical address translation process. This naturally reduces the speed of these address translations, resulting in time overhead.
 
-程序是有局部性的，即在一段时间内，整个程序的执行仅限于程序中的某一部分。相应地，执行所访问的存储空间也局限于某个内存区域
+Programs exhibit locality, meaning that within a certain period, the program's execution is limited to a specific portion of the program. Correspondingly, the memory space accessed during execution is also confined to a certain memory region.
 
 ![paging_tlb_1](/images/Linux-Memory-Management/paging_tlb_1.png)
 
-**我们就可以利用这一特性，把最常访问的几个页表项存储到访问速度更快的硬件，于是计算机科学家们，就在CPU芯片中，加入了一个专门存放程序最常访问的页表项的Cache，这个Cache 就是 TLB（Translation Lookaside Buffer），通常称为页表缓存、转址旁路缓存、快表等**
+**We can leverage this characteristic by storing the most frequently accessed page table entries in faster-access hardware. So, computer scientists introduced a Cache within the CPU chip designed specifically for storing the program's most frequently accessed page table entries. This cache is called the TLB (Translation Lookaside Buffer), commonly referred to as a page table cache, translation buffer, or fast table, among other names.**
 
 ![paging_tlb_2](/images/Linux-Memory-Management/paging_tlb_2.png)
 
-在CPU芯片里面，封装了内存管理单元（Memory Management Unit）芯片，它用来完成地址转换和`TLB`的访问与交互
+Within the CPU chip, there is an encapsulated component called the Memory Management Unit (MMU), which is responsible for performing address translation and interacting with the TLB (Translation Lookaside Buffer).
 
-有了`TLB`后，那么CPU在寻址时，会先查`TLB`，如果没找到，才会继续查常规的页表
+With the TLB in place, when the CPU is addressing memory, it first checks the TLB. If it doesn't find the needed information there, it then proceeds to check the regular page tables.
 
-`TLB`的命中率其实是很高的，因为程序最常访问的页就那么几个
+In practice, the TLB has a high hit rate because programs frequently access only a few pages.
 
-# 4 段页式内存管理
+# 4 Segmented Paging Memory Management
 
 **摘录自[20 张图揭开「内存管理」的迷雾，瞬间豁然开朗](https://zhuanlan.zhihu.com/p/152119007)**
 
-内存分段和内存分页并不是对立的，它们是可以组合起来在同一个系统中使用的，那么组合起来后，通常称为**段页式内存管理**
+Memory segmentation and memory paging are not mutually exclusive; they can be combined and used together in the same system. When combined, this is typically referred to as **segmented paging memory management**.
 
 ![segment_paging_1](/images/Linux-Memory-Management/segment_paging_1.png)
 
-段页式内存管理实现的方式：
+The implementation of segmented paging memory management is as follows:
 
-1. 先将程序划分为多个有逻辑意义的段，也就是前面提到的分段机制
-2. 接着再把每个段划分为多个页，也就是对分段划分出来的连续空间，再划分固定大小的页；
+1. Firstly, divide the program into multiple segments with logical significance, as mentioned earlier in the segmentation mechanism.
+1. Then, further divide each segment into multiple pages, which means dividing the contiguous space obtained through segmentation into fixed-sized pages.
 
-这样，地址结构就由**段号、段内页号和页内位移**三部分组成
+As a result, the address structure consists of **segment number, page number within the segment, and page offset**.
 
-用于段页式地址变换的数据结构是每一个程序一张段表，每个段又建立一张页表，段表中的地址是页表的起始地址，而页表中的地址则为某页的物理页号，如图所示：
+The data structures used for segmented paging address translation include a segment table for each program, and for each segment, a page table is established. The addresses in the segment table point to the starting address of the page table, while the addresses in the page table represent the physical page number of a particular page, as shown in the diagram:
 
 ![segment_paging_2](/images/Linux-Memory-Management/segment_paging_2.jpg)
 
-段页式地址变换中要得到物理地址须经过三次内存访问：
+In paged memory addressing, obtaining a physical address requires three memory accesses:
 
-* 第一次访问段表，得到页表起始地址
-* 第二次访问页表，得到物理页号
-* 第三次将物理页号与页内位移组合，得到物理地址
+* The first access is to the segment table to obtain the starting address of the page table.
+* The second access is to the page table to obtain the physical page number.
+* The third access combines the physical page number with the page offset to obtain the physical address.
 
-可用软、硬件相结合的方法实现段页式地址变换，这样虽然增加了硬件成本和系统开销，但提高了内存的利用率
+Segmented paging address translation can be implemented using a combination of software and hardware methods. While this increases hardware costs and system overhead, it improves memory utilization.
 
 # 5 Linux内存管理
 
 **摘录自[20 张图揭开「内存管理」的迷雾，瞬间豁然开朗](https://zhuanlan.zhihu.com/p/152119007)**
 
-那么，Linux操作系统采用了哪种方式来管理内存呢？
+So, what method does the Linux operating system use to manage memory?
 
-> 在回答这个问题前，我们得先看看Intel处理器的发展历史
+> Before answering this question, let's take a look at the development history of Intel processors.
 
-早期Intel的处理器从`80286`开始使用的是段式内存管理。但是很快发现，光有段式内存管理而没有页式内存管理是不够的，这会使它的x86系列会失去市场的竞争力。因此，在不久以后的`80386`中就实现了对页式内存管理。也就是说，`80386`除了完成并完善从`80286`开始的段式内存管理的同时还实现了页式内存管理
+Early Intel processors, starting from the `80286`, used segmented memory management. However, it was soon realized that having only segmented memory management without paging would not be sufficient, and this would make the x86 series lose its competitiveness in the market. Therefore, paging memory management was implemented shortly after in the `80386`. In other words, the `80386` not only continued and improved upon the segmented memory management introduced by the `80286` but also implemented paging memory management.
 
-但是这个`80386`的页式内存管理设计时，没有绕开段式内存管理，而是建立在段式内存管理的基础上，这就意味着，**页式内存管理的作用是在由段式内存管理所映射而成的地址上再加上一层地址映射**
+However, when designing the paging memory management of the `80386`, it did not bypass segmented memory management. Instead, it was built on top of segmented memory management. This means that the role of paging memory management is to add another layer of address mapping to the addresses mapped by segmented memory management.
 
-由于此时由段式内存管理映射而成的地址不再是「物理地址」了，Intel就称之为「线性地址」（也称虚拟地址）。于是，段式内存管理先将逻辑地址映射成线性地址，然后再由页式内存管理将线性地址映射成物理地址
+Since the addresses mapped by segmented memory management at this point are no longer "physical addresses," Intel referred to them as "linear addresses" (also known as virtual addresses). Therefore, segmented memory management first maps logical addresses to linear addresses, and then paging memory management maps linear addresses to physical addresses.
 
 ![linux_1](/images/Linux-Memory-Management/linux_1.png)
 
-这里说明下逻辑地址和线性地址：
+Here, let's explain logical addresses and linear addresses:
 
-* 程序所使用的地址，通常是没被段式内存管理映射的地址，称为逻辑地址；
-* 通过段式内存管理映射的地址，称为线性地址，也叫虚拟地址；
+* The addresses used by programs, usually those not mapped by segmented memory management, are called logical addresses.
+* Addresses mapped through segmented memory management are called linear addresses, also known as virtual addresses.
 
-逻辑地址是「段式内存管理」转换前的地址，线性地址则是「页式内存管理」转换前的地址。
+Logical addresses are the addresses before the transformation by segmented memory management, while linear addresses are the addresses before the transformation by paging memory management.
 
-> 了解完Intel处理器的发展历史后，我们再来说说Linux采用了什么方式管理内存？
+> After understanding the development history of Intel processors, let's discuss how Linux manages memory.
 
-**Linux内存主要采用的是页式内存管理，但同时也不可避免地涉及了段机制**
+**Linux primarily uses paging memory management, but it unavoidably involves the segment mechanism as well.**
 
-这主要是上面Intel处理器发展历史导致的，因为Intel X86 CPU一律对程序中使用的地址先进行段式映射，然后才能进行页式映射。既然CPU的硬件结构是这样，Linux内核也只好服从Intel的选择
+This is mainly due to the historical development of Intel processors mentioned above because Intel X86 CPUs first perform segmented mapping on the addresses used in programs before they can be subjected to paging mapping. Since the CPU's hardware structure is this way, the Linux kernel has no choice but to adhere to Intel's choice.
 
-但是事实上，Linux内核所采取的办法是使段式映射的过程实际上不起什么作用。也就是说，「上有政策，下有对策」，若惹不起就躲着走。
+However, in practice, the Linux kernel ensures that the segmented mapping process effectively has no impact. In other words, when there are policies from above, there are also countermeasures from below. If you can't confront it, you evade it.
 
-**Linux系统中的每个段都是从0地址开始的整个4GB虚拟空间（32 位环境下），也就是所有的段的起始地址都是一样的。这意味着，Linux系统中的代码，包括操作系统本身的代码和应用程序代码，所面对的地址空间都是线性地址空间（虚拟地址），这种做法相当于屏蔽了处理器中的逻辑地址概念，段只被用于访问控制和内存保护**
+**In the Linux system, each segment starts from address 0 in the entire 4GB virtual space (in a 32-bit environment). This means that all segments have the same starting address. Consequently, the address space faced by code in the Linux system, including the code of the operating system itself and application code, is all linear address space (virtual address). This approach essentially masks the concept of logical addresses in the processor, and segments are only used for access control and memory protection.**
 
-> 我们再来瞧一瞧，Linux的虚拟地址空间是如何分布的？
+> Now, let's take a look at how the virtual address space in Linux is distributed.
 
-在Linux操作系统中，虚拟地址空间的内部又被分为**内核空间和用户空间**两部分，不同位数的系统，地址空间的范围也不同。比如最常见的32位和64位系统，如下所示：
+In the Linux operating system, the virtual address space is internally divided into two parts: **kernel space and user space**, and the range of the address space varies for different bit systems, such as the most common 32-bit and 64-bit systems, as shown below:
 
 ![linux_2](/images/Linux-Memory-Management/linux_2.jpg)
 
-通过这里可以看出：
+From this information, we can observe the following:
 
-* 32位系统的内核空间占用`1G`，位于最高处，剩下的`3G`是用户空间
-* 64位系统的内核空间和用户空间都是`128T`，分别占据整个内存空间的最高和最低处，剩下的中间部分是未定义的
+* In a 32-bit system, the kernel space occupies 1GB at the highest end, leaving 3GB for the user space.
+* In a 64-bit system, both the kernel space and user space are 128TB, occupying the highest and lowest portions of the entire memory space, with the middle portion left undefined.
 
-再来说说，内核空间与用户空间的区别：
+Now, let's talk about the differences between kernel space and user space:
 
-* 进程在用户态时，只能访问用户空间内存
-* 只有进入内核态后，才可以访问内核空间的内存
+* When a process is in user mode, it can only access memory within the user space.
+* Only when a process enters kernel mode can it access memory within the kernel space.
 
-虽然每个进程都各自有独立的虚拟内存，但是**每个虚拟内存中的内核地址**，其实关联的都是相同的物理内存。这样，进程切换到内核态后，就可以很方便地访问内核空间内存
+Although each process has its own independent virtual memory, the **kernel addresses within each virtual memory** are actually associated with the same physical memory. This allows processes to conveniently access kernel space memory when they switch to kernel mode.
 
 ![linux_3](/images/Linux-Memory-Management/linux_3.jpg)
 
-接下来，进一步了解虚拟空间的划分情况，用户空间和内核空间划分的方式是不同的，内核空间的分布情况就不多说了
+Next, let's further explore the partitioning of the virtual space. The division between user space and kernel space is different, so we won't delve into the distribution of kernel space.
 
-我们看看用户空间分布的情况，以32位系统为例，我画了一张图来表示它们的关系：
+Let's take a look at how user space is divided. I've created a diagram to illustrate their relationship, using a 32-bit system as an example:
 
 ![linux_4](/images/Linux-Memory-Management/linux_4.jpg)
 
-通过这张图你可以看到，用户空间内存，从低到高分别是`7`种不同的内存段：
+From this diagram, you can see that user space memory is divided into 7 different memory segments from low to high:
 
-* 程序文件段，包括二进制可执行代码
-* 已初始化数据段，包括静态常量
-* 未初始化数据段，包括未初始化的静态变量
-* 堆段，包括动态分配的内存，从低地址开始向上增长
-* 文件映射段，包括动态库、共享内存等，从低地址开始向上增长（跟硬件和内核版本有关）
-* 栈段，包括局部变量和函数调用的上下文等。栈的大小是固定的，一般是`8`MB。当然系统也提供了参数，以便我们自定义大小
-* 在这`7`个内存段中，堆和文件映射段的内存是动态分配的。比如说，使用`C`标准库的`malloc()`或者`mmap()`，就可以分别在堆和文件映射段动态分配内存
+* Program File Segment, including binary executable code.
+* Initialized Data Segment, including static constants.
+* Uninitialized Data Segment, including uninitialized static variables.
+* Heap Segment, including dynamically allocated memory, which grows upwards from a low address.
+* File Mapping Segment, including dynamic libraries, shared memory, etc., which also grows upwards from a low address (depending on hardware and kernel version).
+* Stack Segment, including local variables and the context of function calls. The stack size is typically fixed, often around 8MB, although the system provides parameters for customizing the size.
+* Among these 7 memory segments, the memory in the Heap and File Mapping segments is dynamically allocated. For instance, you can use the `malloc()` function from the C standard library or `mmap()` to dynamically allocate memory in the Heap and File Mapping segments, respectively.
 
 ## 5.1 逻辑地址如何转换为物理地址
 
 **摘录自[线性地址转换为物理地址是硬件实现还是软件实现？具体过程如何？](https://www.zhihu.com/question/23898566)**
 
-机器语言指令中出现的内存地址，都是逻辑地址，需要转换成线性地址，再经过MMU（CPU中的内存管理单元）转换成物理地址才能够被访问到
+Memory addresses that appear in machine language instructions are logical addresses. They need to be converted into linear addresses and then passed through the Memory Management Unit (MMU), which is a component within the CPU responsible for memory management, in order to access physical memory.
 
-我们写个最简单的hello world程序，用gccs编译，再反编译后会看到以下指令：
+Let's take a look at the simplest "Hello World" program. When we compile it with GCC and then disassemble it, we will see the following instructions:
 
 ```
 mov 0x80495b0, %eax
 ```
 
-这里的内存地址`0x80495b0`就是一个**逻辑地址**，必须加上隐含的**DS数据段的基地址**，才能构成线性地址。**也就是说`0x80495b0`是当前任务的DS数据段内的偏移**
+The memory address `0x80495b0` mentioned here is a **logical address**. To form a linear address, it must be combined with the implicit **base address of the DS data segment**. In other words, `0x80495b0` is an offset within the DS data segment of the current task.
 
-在x86保护模式下，段的信息（段基线性地址、长度、权限等）即**段描述符**占8个字节，段信息无法直接存放在段寄存器中（段寄存器只有2字节）。**Intel的设计是段描述符集中存放在GDT或LDT中，而段寄存器存放的是段描述符在GDT或LDT内的索引值(index)**
+In the x86 protected mode, segment information (segment base linear address, length, permissions, etc.), known as **segment descriptors**, occupies 8 bytes. Segment information cannot be directly stored in segment registers (segment registers are only 2 bytes). Intel's design is to store segment descriptors in a centralized manner in the Global Descriptor Table (GDT) or Local Descriptor Table (LDT), while the segment registers hold the index of the segment descriptor within the GDT or LDT.
 
-**Linux中逻辑地址等于线性地址**。为什么这么说呢？因为Linux所有的段（用户代码段、用户数据段、内核代码段、内核数据段）的线性地址都是从`0x00000000`开始，长度4G，这样`线性地址 = 逻辑地址 + 0x00000000`，也就是说逻辑地址等于线性地址了
+In Linux, **logical addresses are equal to linear addresses**. Why is this the case? Because in Linux, all segments (user code segment, user data segment, kernel code segment, kernel data segment) have linear addresses starting from `0x00000000` with a length of 4GB. So, `linear address = logical address + 0x00000000`, meaning that logical addresses are effectively equal to linear addresses.
 
-从上面可以看到，Linux在x86的分段机制上运行，却通过一个巧妙的方式绕开了分段。Linux主要以分页的方式实现内存管理
+As evident from the above, Linux operates on the x86 segment mechanism but cleverly bypasses it. Linux primarily implements memory management through paging.
 
 ![linux_5](/images/Linux-Memory-Management/linux_5.jpg)
 
-前面说了Linux中逻辑地址等于线性地址，那么线性地址怎么对应到物理地址呢？这个大家都知道，那就是通过分页机制，具体的说，就是通过页表查找来对应物理地址
+As mentioned earlier, in Linux, logical addresses are equivalent to linear addresses. To map linear addresses to physical addresses, the paging mechanism is used. More precisely, it's the CPU that provides the paging mechanism, and Linux uses it to implement memory management.
 
-**准确的说分页是CPU提供的一种机制，Linux只是根据这种机制的规则，利用它实现了内存管理**
+In protected mode, the highest bit of the control register `CR0`, known as the `PG` bit, controls whether the paging mechanism is active. If `PG=1`, the paging mechanism is active, and linear addresses must be translated into physical addresses through page table lookups. If `PG=0`, the paging mechanism is inactive, and linear addresses are used directly as physical addresses.
 
-在保护模式下，控制寄存器`CR0`的最高位`PG`位控制着分页管理机制是否生效，如果`PG=1`，分页机制生效，需通过页表查找才能把线性地址转换物理地址。如果`PG=0`，则分页机制无效，线性地址就直接做为物理地址
+The fundamental principle of paging is to divide memory into fixed-size units called pages, with each page containing 4KB of address space (ignoring extended paging for simplicity). Thus, each page starts at an address that is aligned to a 4KB boundary. To translate linear addresses into physical addresses, a page table (or page directory in the case of two-level paging) is provided for each task. Note that to achieve a flat virtual memory for each task, each task has its own page directory and page table.
 
-分页的基本原理是把内存划分成大小固定的若干单元，每个单元称为一页（page），每页包含4k字节的地址空间（为简化分析，我们不考虑扩展分页的情况）。这样每一页的起始地址都是`4k`字节对齐的。为了能转换成物理地址，我们需要给CPU提供当前任务的线性地址转物理地址的查找表，即页表(page table)。注意，**为了实现每个任务的平坦的虚拟内存，每个任务都有自己的页目录表和页表**
+To save memory space, x86 divides a 32-bit linear address into three parts:
 
-为了节约页表占用的内存空间，x86将线性地址通过页目录表和页表两级查找转换成物理地址
+* The highest 10 bits (`Directory`) represent the page directory offset.
+* The middle 10 bits (`Table`) represent the page table offset.
+* The lowest 12 bits (`Offset`) represent the byte offset within the physical page.
 
-32位的线性地址被分成3个部分
+The page directory table has a size of 4KB (exactly one page), with 1024 entries, each of 4 bytes (32 bits). Each entry stores the physical address of the page table. If the page table for a specific entry has not been allocated, the physical address is set to 0.
 
-* 最高`10`位`Directory`页目录表偏移量，中间`10`位`Table`是页表偏移量，最低`12`位`Offset`是物理页内的字节偏移量
-* 页目录表的大小为`4k`（刚好是一个页的大小），包含`1024`项，每个项`4`字节（32位），项目里存储的内容就是页表的物理地址。如果页目录表中的页表尚未分配，则物理地址填0
-* 页表的大小也是`4k`，同样包含`1024`项，每个项`4`字节，内容为最终物理页的物理内存起始地址
+The page table also has a size of 4KB, containing 1024 entries, each of 4 bytes, with each entry containing the physical memory start address for the final physical page.
 
-**每个活动的任务，必须要先分配给它一个页目录表，并把页目录表的物理地址存入`cr3`寄存器。页表可以提前分配好，也可以在用到的时候再分配**
+**For each active task, a page directory table must be allocated, and its physical address is stored in the `CR3` register. Page tables can be allocated in advance or on-demand as needed.**
 
-还是以`mov 0x80495b0, %eax`中的地址为例分析一下线性地址转物理地址的过程
+Now, let's analyze the process of translating a linear address into a physical address using the example address `mov 0x80495b0, %eax`.
 
-前面说到Linux中逻辑地址等于线性地址，那么我们要转换的线性地址就是`0x80495b0`。转换的过程是由CPU自动完成的，Linux所要做的就是准备好转换所需的页目录表和页表（假设已经准备好，给页目录表和页表分配物理内存的过程很复杂，后面再分析）
+As mentioned earlier, Linux treats logical addresses as linear addresses, so the address we need to convert is `0x80495b0`. The CPU automatically performs this conversion, and Linux's role is to prepare the necessary page directory and page tables (assuming they have been prepared; the process of allocating physical memory for page directory and page tables is complex and will be analyzed later).
 
-内核先将当前任务的页目录表的物理地址填入`cr3`寄存器
+The kernel first places the physical address of the current task's page directory table into the `CR3` register.
 
-线性地址`0x80495b0`转换成二进制后是`0000 1000 0000 0100 1001 0101 1011 0000`，最高`10`位`0000 1000 00`的十进制是`32`，CPU查看页目录表第`32`项，里面存放的是页表的物理地址。线性地址中间`10`位`00 0100 1001`的十进制是`73`，页表的第`73`项存储的是最终物理页的物理起始地址。物理页基地址加上线性地址中最低`12`位的偏移量，CPU就找到了线性地址最终对应的物理内存单元
+The linear address `0x80495b0` in binary is `0000 1000 0000 0100 1001 0101 1011 0000`. The highest 10 bits, `0000 1000 00`, represent decimal `32`. The CPU looks up the 32nd entry in the page directory table, which contains the physical address of the page table. The middle 10 bits, `00 0100 1001`, represent decimal `73`. The 73rd entry in the page table contains the physical start address of the final physical page. By adding the physical page base address to the lowest 12 bits of the linear address, the CPU finds the physical memory unit corresponding to the linear address.
 
-我们知道Linux中用户进程线性地址能寻址的范围是`0~3G`，那么是不是需要提前先把这3G虚拟内存的页表都建立好呢？一般情况下，物理内存是远远小于3G的，加上同时有很多进程都在运行，根本无法给每个进程提前建立3G的线性地址页表。Linux利用CPU的一个机制解决了这个问题。**进程创建后我们可以给页目录表的表项值都填0，CPU在查找页表时，如果表项的内容为0，则会引发一个缺页异常，进程暂停执行，Linux内核这时候可以通过一系列复杂的算法给分配一个物理页，并把物理页的地址填入表项中，进程再恢复执行**。当然进程在这个过程中是被蒙蔽的，它自己的感觉还是正常访问到了物理内存。
+In Linux, user process linear addresses can address a range from `0` to `3GB`. Does this mean we need to pre-allocate page tables for this entire 3GB virtual memory range? In most cases, physical memory is much smaller than 3GB, and multiple processes are running concurrently, making it impractical to pre-allocate 3GB of page tables for each process. Linux addresses this issue using a CPU mechanism. **After a process is created, we can set the values in the page directory table entries to 0. When the CPU looks up a page table and finds a table entry with a content of 0, it triggers a page fault exception. The process is temporarily suspended, and the Linux kernel, through a series of complex algorithms, allocates a physical page and fills the entry with the physical page's address. The process then resumes execution.** During this process, the process is unaware and still believes it is accessing physical memory as usual.
 
 ![linux_6](/images/Linux-Memory-Management/linux_6.gif)
 
 # 6 总结
 
-1. 为了解决物理内存地址易导致程序之间相互冲突而崩溃的问题，引入了「内存分段」，或称「段式内存管理」
-1. 为了解决「内存分段」的「外部碎片」以及「内存交换效率低」这两个问题，引入了「内存分页」，或称「页式内存管理」
-1. 为了解决「内存分页」的「页表空间占用」问题，引入了「多级页表」
-1. 为了实现「程序逻辑划分」，同时保持「内存分页」的优势，引入了「段页式内存管理」
-1. 由于分段、分页是CPU引入的机制，Linux实现了一种「假的」段页式内存管理，本质上是「页式内存管理」，实现方式是：所有程序，所有段的基地址都是0
+1. To address the issue of physical memory addresses causing conflicts between programs and leading to crashes, **"Memory Segmentation"** or **"Segmented Memory Management"** was introduced.
+1. To overcome the problems of "external fragmentation" and "inefficient memory swapping" associated with memory segmentation, **"Memory Paging"** or **"Paged Memory Management"** was introduced.
+1. To tackle the issue of "page table space consumption" inherent in memory paging, **"Multi-Level Page Tables"** were introduced.
+1. To achieve "logical program partitioning" while maintaining the advantages of memory paging, **"Segmented Paging Memory Management"** was introduced.
+1. Since segmentation and paging are mechanisms introduced by the CPU, Linux implemented a form of **"pseudo-segmented paging memory management,"** which is essentially **"Paged Memory Management."** In this implementation, all programs and all segments have a base address of 0.
 
-# 7 知识碎片
+# 7 Knowledge Fragments
 
-## 7.1 相关命令行
+## 7.1 Related Command Line
 
 1. `free`
 1. `vmstat`
@@ -382,33 +379,33 @@ mov 0x80495b0, %eax
 
 ## 7.2 buff/cache
 
-### 7.2.1 什么是buffer/cache？
+### 7.2.1 What is buffer/cache？
 
-**简单来说，buffer是为了解决读写速率不一致的问题，比如从内存往磁盘上写数据，往往需要通过buffer来进行缓冲；cache是为了解决热点问题，比如频繁访问一些热点数据，那么就可以把这些热点数据放到读性能更高的存储介质中**
+**In simple terms, a buffer is used to address the issue of inconsistent read and write speeds. For example, when writing data from memory to a disk, it often needs to be buffered. Cache, on the other hand, is used to address hotspot issues. For instance, when frequently accessing certain hot data, it can be stored in storage media with higher read performance.**
 
-`buffer`和`cache`是两个在计算机技术中被用滥的名词，放在不通语境下会有不同的意义。在Linux的内存管理中，这里的`buffer`指Linux内存的：`buffer cache`。这里的`cache`指Linux内存中的：`page cache`。翻译成中文可以叫做缓冲区缓存和页面缓存。在历史上，它们一个（`buffer`）被用来当成对io设备写的缓存，而另一个（`cache`）被用来当作对io设备的读缓存，这里的io设备，主要指的是块设备文件和文件系统上的普通文件。但是现在，它们的意义已经不一样了。在当前的内核中，`page cache`顾名思义就是针对内存页的缓存，说白了就是，如果有内存是以`page`进行分配管理的，都可以使用`page cache`作为其缓存来管理使用。当然，不是所有的内存都是以页（`page`）进行管理的，也有很多是针对块（`block`）进行管理的，这部分内存使用如果要用到`cache`功能，则都集中到`buffer cache`中来使用。（从这个角度出发，是不是`buffer cache`改名叫做`block cache`更好？）然而，也不是所有块（`block`）都有固定长度，系统上块的长度主要是根据所使用的块设备决定的，而页长度在x86上无论是32位还是64位都是4k
+`Buffer` and `cache` are two widely used terms in computer technology, and they can have different meanings in different contexts. In the context of Linux memory management, "buffer" refers to the `buffer cache` in Linux memory, while "cache" refers to the `page cache` in Linux memory. They can be translated into Chinese as "缓冲区缓存" and "页面缓存," respectively. In the past, "buffer" was used as a write cache for I/O devices, while "cache" was used as a read cache for I/O devices, primarily referring to block device files and regular files in the file system. However, their meanings have evolved over time. In the current kernel, the `page cache` is a cache specifically for memory pages. In simple terms, any memory managed in pages can use the `page cache` to manage its caching. Of course, not all memory is managed in pages; some are managed in blocks. This type of memory, if it requires caching, is managed within the `buffer cache`. (From this perspective, wouldn't it be better to rename the `buffer cache` to "block cache"?) However, not all blocks have fixed sizes; the size of blocks on a system depends mainly on the block devices used, while page sizes on x86, whether 32-bit or 64-bit, are always 4k.
 
-### 7.2.2 什么是page cache？
+### 7.2.2 What is page cache？
 
-`page cache`主要用来作为文件系统上的文件数据的缓存来用，尤其是针对当进程对文件有`read／write`操作的时候。如果你仔细想想的话，作为可以映射文件到内存的系统调用：`mmap`是不是很自然的也应该用到`page cache`？在当前的系统实现里，`page cache`也被作为其它文件类型的缓存设备来用，所以事实上`page cache`也负责了大部分的块设备文件的缓存工作
+The `page cache` is primarily used as a cache for file data on the file system, especially when processes perform `read/write` operations on files. If you think about it carefully, the system call that allows files to be mapped into memory, `mmap`, also naturally uses the `page cache`, doesn't it? In the current system implementation, the `page cache` is also used as a cache device for other file types. Therefore, in practice, the `page cache` also handles most of the caching work for block device files.
 
-### 7.2.3 什么是buffer cache?
+### 7.2.3 What is buffer cache?
 
-`buffer cache`则主要是设计用来在系统对块设备进行读写的时候，对块进行数据缓存的系统来使用。这意味着某些对块的操作会使用`buffer cache`进行缓存，比如我们在格式化文件系统的时候。一般情况下两个缓存系统是一起配合使用的，比如当我们对一个文件进行写操作的时候，`page cache`的内容会被改变，而`buffer cache`则可以用来将page标记为不同的缓冲区，并记录是哪一个缓冲区被修改了。这样，内核在后续执行脏数据的回写（writeback）时，就不用将整个page写回，而只需要写回修改的部分即可
+The `buffer cache` is primarily designed for use in systems that read and write blocks when interacting with block devices. This means that certain operations involving blocks use the `buffer cache` for data caching, such as when formatting a file system. In general, these two caching systems work together. For example, when we perform a write operation on a file, the content of the `page cache` is modified, and the `buffer cache` can be used to mark pages as belonging to different buffers and record which buffer has been modified. This way, when the kernel performs writeback of dirty data in subsequent operations, it doesn't have to write back the entire page; it only needs to write back the modified portions.
 
-### 7.2.4 如何回收
+### 7.2.4 How to Reclaim
 
-Linux内核会在内存将要耗尽的时候，触发内存回收的工作，以便释放出内存给急需内存的进程使用。一般情况下，这个操作中主要的内存释放都来自于对`buffer／cache`的释放。尤其是被使用更多的`cache`空间。既然它主要用来做缓存，只是在内存够用的时候加快进程对文件的读写速度，那么在内存压力较大的情况下，当然有必要清空释放`cache`，作为free空间分给相关进程使用。所以一般情况下，我们认为`buffer/cache`空间可以被释放，这个理解是正确的。
+The Linux kernel triggers memory reclamation when memory is about to run out, in order to free up memory for processes that urgently need it. In most cases, the primary source of memory release in this operation comes from releasing `buffer/cache`, especially the cache space that is used more frequently. Since cache is primarily used for caching and is only intended to speed up file read and write operations when there is enough memory, it is indeed necessary to clear and release the cache when there is significant memory pressure. Therefore, under normal circumstances, we consider that `buffer/cache` space can be released, and this understanding is correct.
 
-但是这种清缓存的工作也并不是没有成本。理解`cache`是干什么的就可以明白清缓存必须保证`cache`中的数据跟对应文件中的数据一致，才能对`cache`进行释放。所以伴随着`cache`清除的行为的，一般都是系统IO飙高。因为内核要对比`cache`中的数据和对应硬盘文件上的数据是否一致，如果不一致需要写回，之后才能回收。
+However, this cache clearing process is not without its costs. Understanding what cache is used for makes it clear that clearing the cache must ensure that the data in the cache is consistent with the data in the corresponding files before the cache can be released. Therefore, along with cache clearance, there is usually a spike in system I/O. This is because the kernel needs to compare the data in the cache with the data in the corresponding disk files to ensure consistency. If they are not consistent, the data needs to be written back before reclamation can occur.
 
-**如何清理**
+**How to Clean**
 
-1. `sync; echo 1 > /proc/sys/vm/drop_caches`：只清理`PageCache`
-1. `sync; echo 2 > /proc/sys/vm/drop_caches`：清理`dentries`以及`inodes`
-1. `sync; echo 3 > /proc/sys/vm/drop_caches`：清理`PageCache`、`dentries`以及`inodes`
+1. `sync; echo 1 > /proc/sys/vm/drop_caches`：Only clean `PageCache`
+1. `sync; echo 2 > /proc/sys/vm/drop_caches`：Clean `dentries` and `inodes`
+1. `sync; echo 3 > /proc/sys/vm/drop_caches`：Clean `PageCache`, `dentries` and `inodes`
 
-# 8 参考
+# 8 Reference
 
 * [20 张图揭开「内存管理」的迷雾，瞬间豁然开朗](https://zhuanlan.zhihu.com/p/152119007)
 * [线性地址转换为物理地址是硬件实现还是软件实现？具体过程如何？](https://www.zhihu.com/question/23898566)
