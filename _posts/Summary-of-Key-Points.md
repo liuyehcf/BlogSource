@@ -819,7 +819,10 @@ This analysis is only for `select count(distinct $1) from lineorder group by $2;
             - Each Virtual Memory Address contains the Page Number and Page Offset
             - Demand Paging
             - Page Tables
+                - cr3
             - Page Replacement Algorithms (LRU, FIFO, etc.)
+            - Page Fault Exception
+                - A process is trying to access a page (or memory location) in virtual memory that is currently not loaded into physical memory
         - Memory Protection
             - Read-Only Memory (ROM)
             - Memory Segmentation
