@@ -816,6 +816,7 @@ This analysis is only for `select count(distinct $1) from lineorder group by $2;
                 - Partly controled by hardware
             - Combination of Paging and Segmentation
         - Virtual Memory
+            - Each Virtual Memory Address contains the Page Number and Page Offset
             - Demand Paging
             - Page Tables
             - Page Replacement Algorithms (LRU, FIFO, etc.)
