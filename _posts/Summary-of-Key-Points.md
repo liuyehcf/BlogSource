@@ -852,7 +852,17 @@ This analysis is only for `select count(distinct $1) from lineorder group by $2;
 - Algorithms
     - CPU Scheduling
     - Page Replacement
+        - FIFO (First-In-First-Out)
+        - LRU (Least Recently Used)
+        - LFU (Least Frequently Used)
     - Disk Scheduling
+        - FCFS (First-Come-First-Served)
+        - SSTF (Shortest Seek Time First)
+        - SCAN (Elevator Algorithm)
+            - C-SCAN (Circular SCAN)
+            - N-Step-SCAN
+        - LOOK
+            - C-LOOK (Circular LOOK)
 - Security
     - Authentication
     - Authorization

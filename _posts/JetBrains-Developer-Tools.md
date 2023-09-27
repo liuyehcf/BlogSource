@@ -77,6 +77,12 @@ HotKey Name: `Move Caret to Code Block End`
 HotKey In Mac: `⌥⌘]`、`⌥⇧⌘]`
 HotKey In Windows: `Ctrl+右方括号`、`Ctrl+Shift+右方括号`
 
+### 1.3.7 Copilot
+
+#### 1.3.7.1 Apply Completions to Editor
+
+HotKey Name: `Apply Completions to Editor`
+
 ## 1.4 Navigate
 
 ### 1.4.1 Open Class
