@@ -12,7 +12,7 @@
 **Beijing University of Posts and Telecommunications**
 
 *  **Master, Telecommunications Engineering** | 2015.9-2018.4
-*  **Bachelor, Telecommunications Engineering** | 2015.9-2018.4
+*  **Bachelor, Telecommunications Engineering** | 2011.9-2015.7
 
 ---
 
