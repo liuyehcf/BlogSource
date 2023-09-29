@@ -27,24 +27,28 @@ StarRocks is a next-gen, high-performance analytical data warehouse that enables
 * **Window function optimization**, aimed to improve the performance of window functions and reduced memory usage.
    * Design and implement a top-N based optimization approach that significantly improves performance by an order of magnitude.
    * Change blocking process mode to streaming process mode for better memory utilization.
+   * Introduce removable cumulative calculation for sliding window process.
 * **Sort merge optimization**, aimed to eliminate the bottleneck caused by serial merging and improve the performance of the overall sorting process.
-   * Design and implement parallelized merge algorithm, achieving a performance improvement of an order of magnitude.
+   * Design and implement parallelized merge operator(based on Merge Path Algorithm), achieving a performance improvement of an order of magnitude.
 * **Support certain types of subquery**, aimed to enhance the system's capabilities.
    * Support join on subqueries and scalar non-agg subqueries.
-   * Refactor the subquery process to achieve optimizations like constants removal and predicate simplification.
+   * Refactor the subquery process to benefit from expression optimizations like constants removal and predicate simplification.
 * **Support query profiling**, aimed to enhance intuitive query analysis.
    * Support text-based profile analysis through mysql protocol.
    * Support visualized profile analysis for the enterprise edition.
-* **Address performance issues**, like reducing code cache misses, eliminating pointer aliases for SIMD optimizations.
+* **Other optimizations**
+   * Reduce code cache misses of template code for better performance.
+   * Eliminate pointer aliases for better SIMD optimizations.
+   * Implement several functions like approx_top_k.
 
 ### Alibaba group | Software engineer | 2018.4 - 2021.8
 
 * **Tunnel service**, aimed to enable users to access their own devices/services installed in a private network.
    * Design and implement this service from scratch. (Based on netty)
-   * Implement a user-friendly proxy for HTTP(S) protocols that allows users to access local HTTP pages using any native browser.
+   * Implement a user-friendly proxy for HTTP(S) protocols that allows users to access local HTTP pages using any native web browser.
    * Implement a user-friendly proxy for SSH/SFTP protocols that allows users to access local devices with an embedded SSH component within our service console.
    * Support all types of protocols that based on tcp with a user-side agent, which is a local proxy process listening at a particular port.
-   * Support multiplexing.
+   * Support multiplexing, there can be multiple sessions connecting to a single device, either for the same or different services.
 * **Device Rule Center**, aimed to provide efficient management for device linkage rules.
    * **Flow execution framework**, an efficient solution for executing interconnectivity rules for IoT devices.
       * Built upon my compilation framework, I have provided a comprehensive set of DSL descriptions.
