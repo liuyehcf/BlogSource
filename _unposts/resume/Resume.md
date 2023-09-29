@@ -2,7 +2,8 @@
 
 * Phone: (86) 173****7611
 * Email: liuyehcf@gmail.com
-* LinkedIn: [Your LinkedIn Profile](https://www.linkedin.com/in/yourprofile/)
+* LinkedIn: [Profile](linkedin.com/in/chenfeng-he-54525224a)
+* Location: Hangzhou, Zhejiang, China
 
 ---
 
