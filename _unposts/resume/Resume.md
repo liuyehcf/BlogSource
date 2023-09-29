@@ -37,6 +37,7 @@ StarRocks is a next-gen, high-performance analytical data warehouse that enables
    * Support text-based profile analysis through mysql protocol.
    * Support visualized profile analysis for the enterprise edition.
 * **Other optimizations**
+   * Introduce sliding window mechanism to parallelize ordered data transformation.
    * Reduce code cache misses of template code for better performance.
    * Eliminate pointer aliases for better SIMD optimizations.
    * Implement several functions like approx_top_k.
