@@ -1,5 +1,6 @@
 ## Contact Information
 
+* Name: Chenfeng He
 * Phone: (86) 173****7611
 * Email: liuyehcf@gmail.com
 * LinkedIn: [Profile](linkedin.com/in/chenfeng-he-54525224a)
