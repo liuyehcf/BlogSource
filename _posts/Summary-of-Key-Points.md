@@ -848,6 +848,10 @@ This analysis is only for `select count(distinct $1) from lineorder group by $2;
             - Internal Fragmentation
     - File System Management
     - Device Management
+- Virtualization
+    - Full Virtualization
+    - Paravirtualization
+    - Hardware-Assisted Virtualization
 - Components
     - Kernel
     - Shell
@@ -892,6 +896,16 @@ This analysis is only for `select count(distinct $1) from lineorder group by $2;
 ## 4.1 Linux Memory Management
 
 {% post_link Linux-Memory-Management %}
+
+## 4.2 Virtualization
+
+{% post_link Linux-Virtualization %}
+
+Classification:
+
+* **Full Virtualization**: Full virtualization is a virtualization technique that allows multiple fully independent virtual machines (VMs), each with its own operating system and applications, to run on physical hardware. In full virtualization, VMs are unaware that they are running in a virtualized environment; they believe they are running on dedicated physical machines. This type of virtualization typically requires a hypervisor to manage the creation and execution of VMs.
+* **Paravirtualization**: Paravirtualization is a virtualization technique in which VMs are aware that they are running in a virtualized environment and cooperate with the virtualization layer. The operating systems within the VMs are modified to communicate with the virtualization layer, which can improve performance and efficiency. Paravirtualization often does not require a hypervisor as heavyweight as in full virtualization because the VMs are more tightly integrated with the virtualization layer.
+* **Hardware-Assisted Virtualization**: Hardware-assisted virtualization is a virtualization technique that relies on virtualization support extensions in the processor (CPU) and other hardware components. These extensions can enhance the performance and efficiency of virtual machines and reduce the reliance on virtualization software. For example, Intel's VT-x and AMD's AMD-V are common hardware virtualization extensions.
 
 # 5 System Architecture
 
