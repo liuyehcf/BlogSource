@@ -875,7 +875,39 @@ This analysis is only for `select count(distinct $1) from lineorder group by $2;
     - Distributed OS
 {% endmarkmap %}
 
-# 5 Scheduler
+# 5 System Architecture
+
+## 5.1 X86
+
+Pros:
+
+* **Wide Compatibility**: x86 processors are widely used in desktops, laptops, and servers, making them compatible with a vast array of software applications and operating systems designed for this architecture.
+* **High Performance**: In many cases, x86 processors offer excellent performance, especially in applications that benefit from a high clock speed and complex instruction set.
+* **Virtualization**: x86 processors have robust virtualization support, which is essential for running multiple virtual machines on a single server.
+* **Optimized for Legacy Software**: Many legacy applications and software packages have been developed specifically for x86 architecture, making it a good choice for running older software.
+
+Cons:
+
+* **Power Consumption**: x86 processors tend to consume more power compared to ARM processors, which can be a disadvantage in mobile and battery-powered devices.
+* **Heat Generation**: High-performance x86 processors generate more heat, requiring more advanced cooling solutions in some cases.
+* **Cost**: x86 processors are often more expensive than ARM processors, which can impact the cost-effectiveness of devices and servers.
+
+## 5.2 Arm
+
+Pros:
+
+* **Power Efficiency**: ARM processors are known for their power efficiency, making them ideal for mobile devices, IoT (Internet of Things) devices, and battery-powered gadgets.
+* **Scalability**: ARM processors come in a wide range of configurations, from low-power microcontrollers to high-performance server-grade chips, allowing for scalability across various applications.
+* **Customization**: ARM architecture allows for more customization, which can be advantageous for companies looking to design their own chips tailored to specific needs.
+* **Reduced Heat Generation**: ARM processors generate less heat compared to high-performance x86 processors, reducing cooling requirements.
+
+Cons:
+
+* **Software Compatibility**: ARM-based devices may have limitations when it comes to running certain legacy x86 software, although this gap is closing with technologies like emulation and virtualization.
+* **Performance**: While ARM processors have made significant performance gains, they may not match the raw performance of high-end x86 processors in some compute-intensive tasks.
+* **Complexity for Desktop and Server Applications**: While ARM is making inroads in these areas, x86 architecture is still dominant for desktops and servers due to software compatibility and performance considerations.
+
+# 6 Scheduler
 
 {% markmap %}
 - Key Metrics
@@ -932,7 +964,7 @@ This analysis is only for `select count(distinct $1) from lineorder group by $2;
         - Simulated Annealing
 {% endmarkmap %}
 
-## 5.1 Which scenarios are suitable for an event-driven model
+## 6.1 Which scenarios are suitable for an event-driven model
 
 In both Linux thread scheduling and brpc's bthread coroutine scheduling, the smallest unit of scheduling is respectively a pthread and a bthread.
 
@@ -946,7 +978,7 @@ They share a common characteristic: the state changes of pthread or bthread can 
 
 This ensures that the scheduling of pthreads and bthreads is controlled and managed in a controlled manner, and their state transitions adhere to specific mechanisms and events.
 
-## 5.2 Which scenarios are not suitable for event-driven model
+## 6.2 Which scenarios are not suitable for event-driven model
 
 In a database system, the state changes of tasks (or operations in query execution plans) are typically more intricate, as they need to consider various factors such as dependencies, buffer capacity, and specific behaviors of operators (materialization, asynchronous operations), among others. These state changes often occur asynchronously, making it challenging to capture all the state transitions through synchronous events. Instead, it is usually necessary to actively query or examine the current state of tasks through function calls or methods.
 
@@ -958,7 +990,7 @@ By regularly polling the status of tasks or operations, applications can adapt d
 
 Overall, polling can be a practical approach when dealing with complex and asynchronous state changes, allowing systems and applications to proactively monitor and respond to evolving conditions.
 
-## 5.3 Event-driven system
+## 6.3 Event-driven system
 
 Key characteristics of an event-driven system include:
 
@@ -970,7 +1002,7 @@ Key characteristics of an event-driven system include:
 * **Publish-Subscribe Model**: A popular approach within event-driven systems is the publish-subscribe model. In this model, components can publish events to a central event bus or dispatcher. Other components, known as subscribers, can then register to listen for specific types of events and react accordingly when those events are published.
 * **Scalability and Responsiveness**: Event-driven architectures are well-suited for building scalable and responsive systems. By distributing the workload across multiple event handlers and components, the system can efficiently handle a large number of concurrent events and maintain responsiveness.
 
-# 6 Network
+# 7 Network
 
 {% markmap %}
 - Network Concepts
@@ -1094,8 +1126,8 @@ Key characteristics of an event-driven system include:
         - Access Point
 {% endmarkmap %}
 
-# 7 Other
+# 8 Other
 
-## 7.1 Unclassified
+## 8.1 Unclassified
 
 1. Reactive Programming

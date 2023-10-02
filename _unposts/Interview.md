@@ -76,6 +76,9 @@ The third project I participated in was an intelligent edge integrated machine, 
 
 1. How is operator overloading achieved?
     * Each function description can be mapped to a group of implementations, each of which has a priority. The implementation with a higher priority matches first.
+1. Are there any competitors?
+    * Aviator, Google
+    * QLExpress, Alibaba
 
 **OS Image Pipeline:**
 
@@ -178,6 +181,11 @@ For better observability and query analysis, I introduced support for runtime pr
     * Trino, lake house
     * Druid, wide table
     * Presto, execution
+1. How do you reduce code cache miss rate?
+1. Explain the details of the parallel merge operator.
+    * Late materialization
+    * Merge tree
+    * Batch processing, for better efficiency and cache locality
 
 # 3 Database
 
