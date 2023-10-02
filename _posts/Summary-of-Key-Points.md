@@ -235,6 +235,8 @@ categories:
     - Function Overriding
     - override & final
     - Vritual Function Table
+        - Each class has a complete table, comprising of the memory address of each virtual functions
+        - One specific version of virtual function may be shared by multiply tables
     - Dynamic Binding & Polymorphic Behaviors
 - Overloading
     - Operator Overloading
@@ -268,6 +270,7 @@ categories:
         - Compile-time Evaluation
             - constexpr
         - SFINAE(Substitution Failure Is Not An Error)
+            - Determine if the class has specific members
 - Functional Programming
     - Type Erasure(std::function <- Lambda)
     - Function Objects
@@ -287,6 +290,8 @@ categories:
     - Cache Coherence
     - Memory Consistency
     - Memory Ordering
+        - Sequential Consistency Ordering
+        - Relaxed Ordering(Hardware related)
 - Performance Optimization
     - Cache
         - Cache Locality
@@ -321,6 +326,15 @@ categories:
         - Bcc
         - Vtune
 {% endmarkmap %}
+
+## 2.1 What is ABI
+
+An Application Binary Interface (ABI) is a set of rules and conventions that dictate how low-level software components, such as libraries and system calls, should interact with each other at the binary level. In other words, it defines the interface between different parts of a computer program, specifying things like:
+
+* **Calling conventions**: How function calls are made and parameters are passed between different parts of a program, including the order in which they are placed in registers or on the stack.
+* **Data representation**: How data types are represented in memory or when passed between different parts of a program. This includes issues like endianness (byte order), data alignment, and data structure layout.
+* **System call interface**: How applications request services from the operating system, such as file I/O or network communication. ABIs define the conventions for making system calls, passing arguments, and receiving results.
+* **Exception handling**: How errors and exceptions are communicated and handled between software components.
 
 # 3 Database
 
@@ -874,6 +888,10 @@ This analysis is only for `select count(distinct $1) from lineorder group by $2;
     - Real-Time OS
     - Distributed OS
 {% endmarkmap %}
+
+## 4.1 Linux Memory Management
+
+{% post_link Linux-Memory-Management %}
 
 # 5 System Architecture
 
