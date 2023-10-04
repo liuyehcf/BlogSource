@@ -514,7 +514,11 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
                 - Memo
             - Statistics
                 - Basic Statistics
+                    - Cardinality
+                    - NDV, Number of Distinct Values
+                    - Min/Max
                 - Histogram Statistics
+                    - Distribution
         - Heuristic Optimization
             - Subquery
                 - Classification
