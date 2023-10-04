@@ -693,6 +693,8 @@ jeprof main localhost:16691/pprof/profile --text --seconds=15
 
 ## 3.5 Hook
 
+### 3.5.1 Override the operator new
+
 ```cpp
 #include <cstddef>
 #include <cstdio>
@@ -728,6 +730,43 @@ int main() {
 
 ```sh
 gcc -o main main.cpp -Wl,-wrap=malloc -lstdc++ -std=gnu++17
+./main
+```
+
+### 3.5.2 Wrap operator new by its mangled name
+
+The mangled name for `operator new` with a `size_t` argument is `_Znwm`.
+
+```cpp
+#include <cstddef>
+#include <cstdio>
+#include <cstdlib>
+
+extern "C" {
+void* __real_malloc(size_t c);
+
+void* __wrap_malloc(size_t c) {
+    printf("malloc called with %zu\n", c);
+    return __real_malloc(c);
+}
+
+void* __real__Znwm(size_t c); // operator new
+
+void* __wrap__Znwm(size_t c) {
+    printf("operator new called with %zu\n", c);
+    return __real__Znwm(c);
+}
+}
+
+int main() {
+    int* num1 = (int*)malloc(sizeof(int));
+    int* num2 = new int;
+    return *num1 * *num2;
+}
+```
+
+```sh
+gcc -o main main.cpp -Wl,-wrap=malloc -Wl,-wrap=_Znwm -lstdc++ -std=gnu++17
 ./main
 ```
 
