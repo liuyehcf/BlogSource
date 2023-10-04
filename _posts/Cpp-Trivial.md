@@ -691,7 +691,47 @@ jeprof main localhost:16691/pprof/profile --text --seconds=15
     * **tcmalloc**: tcmalloc is released under the Apache License, making it open-source and permissively licensed.
     * **jemalloc**: jemalloc is released under the 2-clause BSD license, which is also permissive and allows for both open-source and commercial use.
 
-## 3.5 Reference
+## 3.5 Hook
+
+```cpp
+#include <cstddef>
+#include <cstdio>
+#include <cstdlib>
+#include <iostream>
+#include <new>
+
+void* operator new(std::size_t size) {
+    std::cout << "Custom new called with size: " << size << std::endl;
+    return malloc(size);
+}
+
+void operator delete(void* ptr) noexcept {
+    std::cout << "Custom delete called" << std::endl;
+    free(ptr);
+}
+
+extern "C" {
+void* __real_malloc(size_t c);
+
+void* __wrap_malloc(size_t c) {
+    printf("malloc called with %zu\n", c);
+    return __real_malloc(c);
+}
+}
+
+int main() {
+    int* num1 = (int*)malloc(sizeof(int));
+    int* num2 = new int;
+    return *num1 * *num2;
+}
+```
+
+```sh
+gcc -o main main.cpp -Wl,-wrap=malloc -lstdc++ -std=gnu++17
+./main
+```
+
+## 3.6 Reference
 
 * [heapprofile.html](https://gperftools.github.io/gperftools/heapprofile.html)
 * [Apache Doris-调试工具](https://doris.apache.org/developer-guide/debug-tool.html)
