@@ -576,6 +576,9 @@ For better observability and query analysis, I introduced support for runtime pr
 1. Explain the difference between tcmalloc and jemalloc.
     > jemalloc is well-suited for applications that require efficient memory utilization and involve high levels of concurrent memory allocation and deallocation, especially when these operations are occurring across multiple threads.
 
+1. Why free don't have to specify how large?
+    > Every allocated memory area has a header, recording the memory size and other information.
+
 1. What is the purpose of the "constexpr" keyword in C++11?
 1. Explain the concept of variadic templates in C++.
 1. What is the difference between lvalue and rvalue in C++?
