@@ -382,6 +382,23 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
     - Database Administration
 - SQL Standard
     - Algebraic Identities
+        - σ, Select
+        - π, Projection
+        - ∪, Union
+        - ∩, Intersection
+        - -, Difference
+        - ×, Product
+        - ⋈, Join
+        - ⋉, Left semi join
+        - ⋊, Right semi join
+        - ⟕, Left outer join
+        - ⟖, Right outer join
+        - ρ, Rename
+        - ←, Assignment
+        - δ, Duplicate Elimination
+        - γ, Aggregation
+        - τ, Sorting
+        - ÷, Division
     - Join
         - Inner Join
         - Full Outer Join
@@ -410,7 +427,7 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
             - Naive
             - Cumulative(Unbounded Window)
             - Removable Cumulative(Sliding Window)
-            - Segment Tree
+            - Segment Tree(Sliding Window, Min/Max)
     - Predicate
     - View
     - Materialized View
@@ -418,7 +435,7 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
             - Transparent Acceleration
             - Lake Speed Up
             - Real-time Incremental Aggregation
-            - Delcarative Modeling(without maintain the ETL workflow)
+            - Declarative Modeling(without maintain the ETL workflow)
         - Features
             - Partition
             - Refresh
@@ -446,8 +463,8 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
         - Partitioning
         - Consistency
             - Consensus Protocol
-        - Paxos
-        - Raft
+                - Paxos
+                - Raft
     - Data Protection
         - Backup and Recovery
         - Disaster Recovery
@@ -461,6 +478,7 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
         - Grammar Checking
     - Analyzer
         - Type Processing
+        - Limitation Checking
     - Optimizer
         - RBO Optimizer
             - Transformation Rules
