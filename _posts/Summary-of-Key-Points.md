@@ -296,6 +296,8 @@ categories:
     - Cache
         - Cache Locality
         - Memory Access Pattern
+            - Random Memory Access
+            - Sequential Memory Access
         - Branch
         - Inline & Not-Inline(Code Cache)
     - Vectorization
