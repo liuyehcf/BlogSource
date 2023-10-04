@@ -13,9 +13,9 @@ categories:
 
 **本文转载摘录自[浅谈 C++ 元编程](https://bot-man-jl.github.io/articles/?post=2017/Cpp-Metaprogramming#%E4%BB%80%E4%B9%88%E6%98%AF%E5%85%83%E7%BC%96%E7%A8%8B)**
 
-# 1 引言
+# 1 Introduction
 
-## 1.1 什么是元编程
+## 1.1 What is Metaprogramming
 
 **元编程（`metaprogramming`）通过操作程序实体（`program entity`），在编译时（`compile time`）计算出运行时（`runtime`）需要的常数、类型、代码的方法**
 
@@ -23,7 +23,7 @@ categories:
 
 因此，元编程又被成为两级编程（`two-level programming`），生成式编程（`generative programming`）或模板元编程（`template metaprogramming`）
 
-## 1.2 元编程在C++中的位置
+## 1.2 The Position of Metaprogramming in C++
 
 **`C++`语言 = C语言的超集 + 抽象机制 + 标准库**
 
@@ -43,13 +43,13 @@ categories:
 
 而后者注重于设计模板推导时的选择（`selection`）和迭代（`iteration`），通过模板技巧设计程序
 
-## 1.3 C++元编程的历史
+## 1.3 History of C++ Metaprogramming
 
-## 1.4 元编程的语言支持
+## 1.4 Language Support for Metaprogramming
 
 `C++`的元编程主要依赖于语言提供的模板机制。除了模板，现代`C++`还允许使用`constexpr`函数进行常量计算。由于`constexpr`函数的功能有限，递归调用层数和计算次数还受编译器限制，而且编译性能较差，所以目前的元编程程序主要基于模板。**这一部分主要总结`C++`模板机制相关的语言基础，包括狭义的模板和泛型`lambda`表达式**
 
-### 1.4.1 狭义的模板
+### 1.4.1 Narrow Templates
 
 **目前最新的`C++`将模板分成了4类：**
 
@@ -76,13 +76,13 @@ categories:
 
 特化（`specialization`）类似于函数的重载（`overload`），即给出全部模板参数取值（完全特化）或部分模板参数取值（部分特化）的模板实现。实例化（`instantiation`）类似于函数的绑定（`binding`），是编译器根据参数的个数和类型，判断使用哪个重载的过程。由于函数和模板的重载具有相似性，所以他们的参数重载规则（`overloading rule`）也是相似的
 
-### 1.4.2 泛型 lambda 表达式
+### 1.4.2 Generic Lambda Expressions
 
 由于`C++`不允许在函数内定义模板，有时候为了实现函数内的局部特殊功能，需要在函数外专门定义一个模板。一方面，这导致了代码结构松散，不易于维护；另一方面，使用模板时，需要传递特定的上下文（`context`），不易于复用。（类似于C语言里的回调机制，不能在函数内定义回调函数，需要通过参数传递上下文。）
 
 为此，`C++ 14`引入了泛型`lambda`表达式（`generic lambda expression`）：一方面，能像`C++ 11`引入的`lambda`表达式一样，在函数内构造闭包（`closure`），避免在函数外定义函数内使用的局部功能；另一方面，能实现函数模板的功能，允许传递任意类型的参数
 
-# 2 元编程的基本演算
+# 2 Basic Operations of Metaprogramming
 
 `C++`的模板机制仅仅提供了纯函数（`pure functional`）的方法，即不支持变量，且所有的推导必须在编译时完成。但是`C++`中提供的模板是图灵完备（`turing complete`）的，所以可以使用模板实现完整的元编程
 
@@ -95,13 +95,13 @@ categories:
 
 另外，元编程中还常用模板参数传递不同的策略（`policy`），从而实现依赖注入（`dependency injection`）和控制反转（`Inversion of Control`）。例如，`std::vector<typename T, typename Allocator = std::allocator<T>>`允许传递`Allocator`实现自定义内存分配
 
-## 2.1 编译时测试
+## 2.1 Compile-Time Testing
 
 编译时测试相当于面向过程编程中的选择语句（`selection statement`），可以实现`if-else/switch`的选择逻辑
 
 在`C++ 17`之前，编译时测试是通过模板的实例化和特化实现的，每次找到最特殊的模板进行匹配。而`C++ 17`提出了使用`constexpr-if`的编译时测试方法
 
-### 2.1.1 测试表达式
+### 2.1.1 Testing Expressions
 
 类似于静态断言（`static assert`），编译时测试的对象是常量表达式（`constexpr`），即编译时能得出结果的表达式。以不同的常量表达式作为参数，可以构造各种需要的模板重载。例如，代码1演示了如何构造谓词（`predicate`）`isZero<Val>`，编译时判断`Val`是不是`0`
 
@@ -125,7 +125,7 @@ static_assert(!isZero<1>, "compile error");
 static_assert(isZero<0>, "compile error");
 ```
 
-### 2.1.2 测试类型
+### 2.1.2 Testing Types
 
 **在元编程的很多应用场景中，需要对类型进行测试，即对不同的类型实现不同的功能。而常见的测试类型又分为两种：**
 
@@ -185,7 +185,7 @@ auto d = ToString(std::string {});  // not compile :-(
 
 类似的，可以通过定义一个变量模板`template <typename...> constexpr bool false_v = false`，并使用`false_v<T>`替换`sizeof (T) == 0`
 
-### 2.1.3 使用 if 进行编译时测试
+### 2.1.3 Using if for Compile-Time Testing
 
 对于初次接触元编程的人，往往会使用`if`语句进行编译时测试。代码3是代码2一个错误的写法，很代表性的体现了元编程和普通编程的不同之处
 
@@ -225,7 +225,7 @@ std::string ToString(T val) {
 
 然而，`constexpr-if`背后的思路早在`Visual Studio 2012`已出现了。其引入了`__if_exists`语句，用于编译时测试标识符是否存在
 
-## 2.2 编译时迭代
+## 2.2 Compile-Time Iteration
 
 编译时迭代和面向过程编程中的循环语句（`loop statement`）类似，用于实现与`for/while/do`类似的循环逻辑
 
@@ -233,7 +233,7 @@ std::string ToString(T val) {
 
 而`C++ 17`提出了折叠表达式（`fold expression`）的语法，化简了迭代的写法
 
-### 2.2.1 定长模板的迭代
+### 2.2.1 Iterating over Fixed-Length Templates
 
 代码5展示了如何使用编译时迭代实现编译时计算阶乘（`N!`）。函数`_Factor`有两个重载：一个是对任意非负整数的，一个是对`0`为参数的。前者利用递归产生结果，后者直接返回结果。当调用`_Factor<2>`时，编译器会展开为`2 * _Factor<1>`，然后`_Factor<1>`再展开为`1 * _Factor<0>`，最后`_Factor<0>`直接匹配到参数为`0`的重载
 
@@ -258,7 +258,7 @@ static_assert(Factor<1> == 1, "compile error");
 static_assert(Factor<4> == 24, "compile error");
 ```
 
-### 2.2.2 变长模板的迭代
+### 2.2.2 Iterating over Variable-Length Templates
 
 为了遍历变长模板的每个参数，可以使用编译时迭代实现循环遍历。代码6实现了对所有参数求和的功能。函数`Sum`有两个重载：一个是对没有函数参数的情况，一个是对函数参数个数至少为`1`的情况。和定长模板的迭代类似，这里也是通过递归调用实现参数遍历
 
@@ -279,7 +279,7 @@ static_assert(Sum<int>() == 0, "compile error");
 static_assert(Sum(1, 2.0, 3) == 6, "compile error");
 ```
 
-### 2.2.3 使用折叠表达式化简编译时迭代
+### 2.2.3 Simplifying Compile-Time Iteration with Fold Expressions
 
 在`C++ 11`引入变长模板时，就支持了在模板内直接展开参数包的语法；但该语法仅支持对参数包里的每个参数进行一元操作（`unary operation`）；为了实现参数间的二元操作（`binary operation`），必须借助额外的模板实现（例如，代码6定义了两个`Sum`函数模板，其中一个展开参数包进行递归调用）。
 
@@ -297,13 +297,13 @@ static_assert(Sum() == 0, "compile error");
 static_assert(Sum(1, 2.0, 3) == 6, "compile error");
 ```
 
-# 3 元编程的基本应用
+# 3 Basic Applications of Metaprogramming
 
 利用元编程，可以很方便的设计出类型安全（`type safe`）、运行时高效（`runtime effective`）的程序。到现在，元编程已被广泛的应用于`C++`的编程实践中。例如，`Todd Veldhuizen`提出了使用元编程的方法构造表达式模板（`expression template`），使用表达式优化的方法，提升向量计算的运行速度；`K. Czarnecki`和`U. Eisenecker`利用模板实现`Lisp`解释器
 
 尽管元编程的应用场景各不相同，但都是三类基本应用的组合：数值计算（`numeric computation`）、类型推导（`type deduction`）和代码生成（`code generation`）。例如，在`BOT Man`设计的对象关系映射`ORM, object-relation mapping`中，主要使用了类型推导和代码生成的功能。根据对象（`object`）在`C++`中的类型，推导出对应数据库关系（`relation`）中元组各个字段的类型。将对`C++`对象的操作，映射到对应的数据库语句上，并生成相应的代码
 
-## 3.1 数值计算
+## 3.1 Numerical Computation
 
 作为元编程的最早的应用，数值计算可以用于编译时常数计算和优化运行时表达式计算
 
@@ -311,7 +311,7 @@ static_assert(Sum(1, 2.0, 3) == 6, "compile error");
 
 最早的有关元编程优化表达式计算的思路是`Todd Veldhuizen`提出的。利用表达式模板，可以实现部分求值、惰性求值、表达式化简等特性
 
-## 3.2 类型推导
+## 3.2 Type Deduction
 
 除了基本的数值计算之外，还可以利用元编程进行任意类型之间的相互推导。例如，在领域特定语言（`domain-specific language`）和`C++`语言原生结合时，类型推导可以实现将这些语言中的类型，转化为`C++`的类型，并保证类型安全
 
@@ -345,7 +345,7 @@ static_assert(std::is_same<std::tuple_element_t<0, decltype(t2)>, std::tuple_ele
               "compile error");
 ```
 
-## 3.3 代码生成
+## 3.3 Code Generation
 
 和泛型编程一样，元编程也常常被用于代码的生成。但是和简单的泛型编程不同，元编程生成的代码往往是通过编译时测试和编译时迭代的演算推导出来的。例如，代码2就是一个将C语言基本类型转化为`std::string`的代码的生成代码
 
@@ -353,11 +353,11 @@ static_assert(std::is_same<std::tuple_element_t<0, decltype(t2)>, std::tuple_ele
 
 `BOT Man`提出了一种基于编译时多态（`compile-time polymorphism`）的方法，定义领域模型的模式（`schema`），自动生成领域模型和`C++`对象的序列化/反序列化的代码。这样，业务逻辑的处理者可以更专注于如何处理业务逻辑，而不需要关注如何做底层的数据结构转换
 
-# 4 元编程的主要难点
+# 4 Key Challenges in Metaprogramming
 
 尽管元编程的能力丰富，但学习、使用的难度都很大。一方面，复杂的语法和运算规则，往往让初学者望而却步；另一方面，即使是有经验的`C++`开发者，也可能掉进元编程看不见的坑里
 
-## 4.1 复杂性
+## 4.1 Complexity
 
 由于元编程的语言层面上的限制较大，所以许多的元编程代码使用了很多的编译时测试和编译时迭代技巧，可读性（`readability`）都比较差。另外，由于巧妙的设计出编译时能完成的演算也是很困难的，相较于一般的`C++`程序，元编程的可写性（`writability`）也不是很好
 
@@ -370,7 +370,7 @@ static_assert(std::is_same<std::tuple_element_t<0, decltype(t2)>, std::tuple_ele
 
 基于`C++ 14`的泛型`lambda`表达式，`Louis Dionne`设计的元编程库`Boost.Hana`提出了不用模板就能元编程的理念，宣告从模板元编程（`template metaprogramming`）时代进入现代元编程（`modern metaprogramming`）时代。其核心思想是：只需要使用`C++ 14`的泛型`lambda`表达式和`C++ 11`的`constexpr/decltype`，就可以快速实现元编程的基本演算了
 
-## 4.2 实例化错误
+## 4.2 Instantiation Errors
 
 模板的实例化和函数的绑定不同：在编译前，前者对传入的参数是什么，没有太多的限制；而后者则根据函数的声明，确定了应该传入参数的类型。而对于模板实参内容的检查，则是在实例化的过程中完成的。所以，程序的设计者在编译前，很难发现实例化时可能产生的错误
 
@@ -378,7 +378,7 @@ static_assert(std::is_same<std::tuple_element_t<0, decltype(t2)>, std::tuple_ele
 
 另外，编译时模板的实例化出错位置，在调用层数较深处时，编译器会提示每一层实例化的状态，这使得报错信息包含了很多的无用信息，很难让人较快的发现问题所在。`BOT Man`提出了一种短路编译（`short-circuit compiling`）的方法，能让基于元编程的库（`library`），给用户提供更人性化的编译时报错。具体方法是，在实现（`implementation`）调用需要的操作之前，接口（`interface`）先检查是传入的参数否有对应的操作；如果没有，就通过短路的方法，转到一个用于报错的接口，然后停止编译并使用静态断言提供报错信息。`Paul Fultz II`提出了一种类似于`C++ 20`的概念/限制的接口检查方法，通过定义概念对应的特征（`traits`）模板，然后在使用前检查特征是否满足
 
-## 4.3 代码膨胀
+## 4.3 Code Bloat
 
 由于模板会对所有不同模板实参都进行一次实例化，所以当参数的组合很多的时候，很可能会发生代码膨胀（`code bloat`），即产生体积巨大的代码。这些代码可以分为两种：死代码（`dead code`）和有效代码（`effective code`）
 
@@ -410,7 +410,7 @@ public:
 }
 ```
 
-## 4.4 编译性能
+## 4.4 Compile-Time Performance
 
 元编程尽管不会带来额外的运行时开销（`runtime overhead`），但如果过度使用，可能会大大增加编译时间（尤其是在大型项目中）。为了提高元编程的编译性能，需要使用特殊的技巧进行优化
 
@@ -448,19 +448,35 @@ template <typename T>
 constexpr bool is_same_v<T, T> = true;
 ```
 
-## 4.5 调试模板
+## 4.5 Debugging Templates
 
 元编程在运行时主要的难点在于：对模板代码的调试（`debugging`）。如果需要调试的是一段通过很多次的编译时测试和编译时迭代展开的代码，即这段代码是各个模板的拼接生成的（而且展开的层数很多）；那么，调试时需要不断地在各个模板的实例（`instance`）间来回切换。这种情景下，调试人员很难把具体的问题定位到展开后的代码上
 
 所以，一些大型项目很少使用复杂的代码生成技巧，而是通过传统的代码生成器生成重复的代码，易于调试。例如`Chromium`的通用扩展接口（`common extension api`）通过定义`JSON/IDL`文件，通过代码生成器生成相关的`C++`代码，同时还可以生成接口文档
 
-# 5 总结
+# 5 Summary
 
 `C++`元编程的出现，是一个无心插柳的偶然：人们发现`C++`语言提供的模板抽象机制，能很好的被应用于元编程上。借助元编程，可以写出类型安全、运行时高效的代码。但是，过度的使用元编程，一方面会增加编译时间，另一方面会降低程序的可读性。不过，在`C++`不断地演化中，新的语言特性被不断提出，为元编程提供更多的可能
 
-# 6 元编程的应用
+# 6 Applications of Metaprogramming
 
-## 6.1 rank
+## 6.1 STL
+
+### 6.1.1 is_same
+
+```cpp
+template <typename T, typename U>
+struct is_same {
+    static constexpr bool value = false;
+};
+
+template <typename T>
+struct is_same<T, T> {
+    static constexpr bool value = true;
+};
+```
+
+## 6.2 rank
 
 ```cpp
 #include <iostream>
@@ -502,7 +518,7 @@ int main() {
 }
 ```
 
-## 6.2 one_of/type_in/value_in
+## 6.3 one_of/type_in/value_in
 
 下面是`is_one_of`的实现方式
 
@@ -559,7 +575,7 @@ int main() {
 }
 ```
 
-## 6.3 is_copy_assignable
+## 6.4 is_copy_assignable
 
 我们手动来实现一下`<type_traits>`头文件中的`std::is_copy_assignable`，该模板用于判断一个类是否支持了拷贝赋值运算符
 
@@ -608,7 +624,7 @@ int main() {
 }
 ```
 
-## 6.4 has_type_member
+## 6.5 has_type_member
 
 我们实现一个`has_type_member`，用于判断某个类型是否有类型成员，且其名字为`type`，即对于类型`T`是否存在`typename T::type`
 
@@ -649,7 +665,7 @@ int main() {
 }
 ```
 
-## 6.5 sequence
+## 6.6 sequence
 
 **核心思路如下：**
 
@@ -708,7 +724,7 @@ int main() {
 }
 ```
 
-## 6.6 bind
+## 6.7 bind
 
 **下面的示例用于揭示`std::bind`的实现原理，其中各工具模板的含义如下：**
 
@@ -877,7 +893,7 @@ int main() {
 }
 ```
 
-## 6.7 类型推导
+## 6.8 Type Deduction
 
 **`using template`：当我们使用`Traits`萃取类型时，通常需要加上`typename`来消除歧义。因此，`using`模板可以进一步消除多余的`typename`**
 **`static member template`：静态成员模板**
@@ -938,7 +954,7 @@ int main() {
 }
 ```
 
-## 6.8 遍历tuple
+## 6.9 Iterating Over a Tuple
 
 ```cpp
 #include <stddef.h>
@@ -963,7 +979,7 @@ int main() {
 }
 ```
 
-## 6.9 快速排序
+## 6.10 Quick Sort
 
 **源码出处：[quicksort in C++ template metaprogramming](https://gist.github.com/cleoold/c26d4e2b4ff56985c42f212a1c76deb9)**
 
@@ -1201,7 +1217,7 @@ int main() {
 }
 ```
 
-## 6.10 静态代理
+## 6.11 Static Proxy
 
 不确定这个是否属于元编程的范畴。更多示例可以参考[binary_function.h](https://github.com/liuyehcf/starrocks/blob/main/be/src/exprs/vectorized/binary_function.h)
 
@@ -1274,7 +1290,7 @@ int main() {
 }
 ```
 
-## 6.11 编译期分支
+## 6.12 Compile-Time Branching
 
 有时候，我们想为不同的类型编写不同的分支代码，而这些分支代码在不同类型中是不兼容的，例如，我要实现加法，对于`int`来说，用操作符`+`即可完成加法运算；对于`Foo`类型来说，要调用`add`方法才能实现加法运算。这个时候，普通的分支是无法实现的，实例化的时候会报错。这时候，我们可以使用`if constexpr`来实现编译期的分支
 
@@ -1328,7 +1344,7 @@ int main() {
 }
 ```
 
-## 6.12 条件成员
+## 6.13 Conditional Members
 
 有时候，我们希望模板类某些特化版本包含额外的字段，而默认情况下不包含这些额外字段
 
@@ -1359,7 +1375,7 @@ int main() {
 }
 ```
 
-## 6.13 type guard
+## 6.14 type guard
 
 [StarRocks-guard.h](https://github.com/StarRocks/starrocks/blob/main/be/src/util/guard.h)
 
@@ -1415,7 +1431,7 @@ int main() {
 }
 ```
 
-# 7 参考
+# 7 Reference
 
 * [ClickHouse](https://github.com/ClickHouse/ClickHouse/blob/master/base/base/constexpr_helpers.h)
 * [C++雾中风景16:std::make_index_sequence, 来试一试新的黑魔法吧](https://www.cnblogs.com/happenlee/p/14219925.html)
