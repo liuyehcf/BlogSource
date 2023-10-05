@@ -97,6 +97,7 @@ The third project I participated in was an intelligent edge integrated machine, 
     * Container network,including Service Ip Connectivity Testing, Pod Ip Connectivity Testing, Pod Status, DNS and Iptables Rules
         * For DNS, including Check the DNS config for pods whose nameserver is not coredns, Domain Name Resolution Testing, Unknown search domain
         * Iptables Rules, including DNAT IP Connectivity Testing
+1. How do you test Service Ip Connectivity?
 
 **Auto Boxing:**
 
@@ -186,6 +187,7 @@ For better observability and query analysis, I introduced support for runtime pr
     * Late materialization
     * Merge tree
     * Batch processing, for better efficiency and cache locality
+1. How does the apply operator attach to the tree?
 
 # 3 Database
 
