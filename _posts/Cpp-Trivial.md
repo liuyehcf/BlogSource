@@ -792,21 +792,56 @@ Here are some key points about name mangling:
 
 ## 4.1 Encoding Elements
 
-The specific encoding elements used in C++ name mangling can vary between compilers, and it's essential to be aware of these differences when working with code produced by different compilers or when dealing with platform-specific libraries.
+Name mangling (also known as name decoration) is a compiler-specific technique to encode C++ symbols into unique names. The exact format and rules for name mangling are dependent on the compiler and its version. Therefore, there isn't a single standard for it. However, many C++ compilers follow (at least loosely) the Itanium C++ ABI for mangling names, especially on Unix-like systems.
 
-Here are some of the encoding elements that commonly appear in C++ name mangling and their meanings:
+Below are some common elements of name mangling based on the Itanium C++ ABI:
 
-1. `_Z`: This is often used as a prefix in mangled names and indicates that what follows is the mangled name of a symbol (e.g., function, variable, or class).
-1. `_ZN`: This is often used to indicate a namespace in a mangled name. The number following `N` typically represents the length of the namespace name, and the name itself follows.
-1. `_E`: Typically represents the end of a list or sequence, such as the end of a template argument list or the end of a function parameter list.
-1. `_C`: Represents a constructor for a class. The number following `C` can indicate different types of constructors and their overloads.
-1. `_D`: Represents a destructor for a class. Like constructors, different numbers following `D` can indicate various destructor overloads.
-1. `_S`: Indicates a static member of a class.
-1. `_T`: Indicates a type or type-related information in a mangled name.
-1. `_G`: Represents a global symbol or function.
-1. `_M`: Used to indicate a member of a class or structure.
-1. `_F`: Indicates a function in a mangled name.
-1. `_I`: Indicates the start of a template argument list. Template argument information typically follows, and `E` denotes the end of the list.
+1. **Function Names**:
+    * `_Z`: Prefix for encoded names.
+    * `N`: Begins a nested name.
+    * `E`: Ends a nested name.
+1. **Namespace and Class Names**:
+    * Length of the name followed by the actual name. E.g., `5Outer` for `Outer`.
+1. **Types**:
+    * `i`: int
+    * `l`: long
+    * `s`: short
+    * `d`: double
+    * `f`: float
+    * `c`: char
+    * `b`: bool
+    * `v`: void
+    * `P`: Pointer to a type (e.g., `Pi` is pointer to int)
+    * `R`: Reference
+    * `O`: rvalue reference
+    * `C1`, `C2`: Constructor
+    * `D1`, `D2`: Destructor
+1. **Template Classes**:
+    * `I`: Marks the beginning of template arguments.
+    * `E`: Marks the end of template arguments.
+1. **Const/Volatile qualifiers**:
+    * `K`: const
+    * `V`: volatile
+    * `r`: restrict (from C99)
+1. **Function Arguments**:
+    * Encoded in order, using their type encodings.
+1. **Arrays**:
+    * The size followed by the type, e.g., `A10_i` for `int[10]`.
+1. **Modifiers**:
+    * `U`: Vendor-specific type qualifier.
+1. **Special Names**:
+    * `_vt`: Virtual table
+    * `_qt`: Virtual table for a qualified name
+1. **Operators**:
+    * Most operators get their own special mangled name, e.g., `_pl` for `operator+`.
+1. **CV Qualifiers**:
+    * `K`: `const`
+    * `V`: `volatile`
+1. **Calling Convention**:
+    * (Note: The Itanium ABI doesn't specify mangling for calling conventions as it's designed for architectures with a single calling convention. Some other mangling schemes might have special symbols for this.)
+1. **Other Features**:
+    * `S`: String literal
+    * And various encodings for other built-in types, custom types, etc.
 
 ## 4.2 Example
 
