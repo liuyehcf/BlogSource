@@ -838,7 +838,7 @@ Below are some common elements of name mangling based on the Itanium C++ ABI:
     * `K`: `const`
     * `V`: `volatile`
 1. **Calling Convention**:
-    * (Note: The Itanium ABI doesn't specify mangling for calling conventions as it's designed for architectures with a single calling convention. Some other mangling schemes might have special symbols for this.)
+    * While the Itanium ABI doesn't specify mangling for calling conventions (because it's designed for architectures with a single calling convention), some other mangling schemes might have special symbols for this.
 1. **Other Features**:
     * `S`: String literal
     * And various encodings for other built-in types, custom types, etc.
