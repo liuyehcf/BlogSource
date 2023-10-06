@@ -725,7 +725,34 @@ int main() {
 
 * [C++ 智能指针的正确使用方式](https://www.cyhone.com/articles/right-way-to-use-cpp-smart-pointer/)
 
-# 13 mutex
+# 13 memory_resource
+
+```cpp
+#include <iostream>
+#include <memory_resource>
+
+int main() {
+    // Create a polymorphic allocator using the default memory resource
+    std::pmr::polymorphic_allocator<int> allocator;
+
+    // Allocate memory for an array of integers
+    int* p = allocator.allocate(10);
+
+    // Initialize the allocated memory
+    for (int i = 0; i < 10; ++i) {
+        p[i] = i;
+    }
+
+    // Do something with the allocated memory
+
+    // Deallocate memory when done
+    allocator.deallocate(p, 10);
+
+    return 0;
+}
+```
+
+# 14 mutex
 
 1. `std::mutex`：不可重入的互斥量
 1. `std::recursive_mutex`：可重入的互斥量
@@ -784,11 +811,11 @@ int main() {
     }
     ```
 
-## 13.1 Reference
+## 14.1 Reference
 
 * [Do I have to acquire lock before calling condition_variable.notify_one()?](https://stackoverflow.com/questions/17101922/do-i-have-to-acquire-lock-before-calling-condition-variable-notify-one)
 
-# 14 numeric
+# 15 numeric
 
 1. `std::accumulate`
     ```cpp
@@ -825,7 +852,7 @@ int main() {
     }
     ```
 
-# 15 optional
+# 16 optional
 
 1. `std::optional`
 
@@ -859,12 +886,12 @@ int main() {
 }
 ```
 
-# 16 random
+# 17 random
 
 1. `std::default_random_engine`
 1. `std::uniform_int_distribution`：左闭右闭区间
 
-# 17 ranges
+# 18 ranges
 
 `ranges`可以看做是对于`algorithm`中算法的封装，可以省去`begin()`、`end()`等调用，如下
 
@@ -892,7 +919,7 @@ int main() {
 }
 ```
 
-# 18 stdexcept
+# 19 stdexcept
 
 1. `std::logic_error`
 1. `std::invalid_argument`
@@ -904,7 +931,7 @@ int main() {
 1. `std::overflow_error`
 1. `std::underflow_error`
 
-# 19 exception
+# 20 exception
 
 1. `std::uncaught_exceptions`
     ```cpp
@@ -941,18 +968,18 @@ int main() {
     f.~Foo() called normally
     ```
 
-# 20 string
+# 21 string
 
 1. `std::string`
 1. `std::to_string`
 1. `std::string::npos`：作为函数`std::string::find`找不到匹配内容时的返回值
 
-# 21 thread
+# 22 thread
 
 1. `std::thread::hardware_concurrency`
 1. `std::this_thread`
 
-## 21.1 How to set thread name
+## 22.1 How to set thread name
 
 1. `pthread_setname_np/pthread_getname_np`，需要引入头文件`<pthread.h>`，`np`表示`non-portable`，即平台相关
 1. `prctl(PR_GET_NAME, name)/prctl(PR_SET_NAME, name)`，需要引入头文件`<sys/prctl.h>`
@@ -1019,7 +1046,7 @@ int main() {
 }
 ```
 
-## 21.2 How to set thread affinity
+## 22.2 How to set thread affinity
 
 下面示例代码用于测试各个CPU的性能
 
@@ -1073,7 +1100,7 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-# 22 tuple
+# 23 tuple
 
 1. `std::tuple`
 1. `std::apply`：触发方法调用，其中，参数被分装在一个`tuple`中
@@ -1094,18 +1121,18 @@ int main() {
 }
 ```
 
-# 23 type_traits
+# 24 type_traits
 
 [Standard library header <type_traits>](https://en.cppreference.com/w/cpp/header/type_traits)
 
-## 23.1 Helper Class
+## 24.1 Helper Class
 
 1. `std::integral_constant`
 1. `std::bool_constant`
 1. `std::true_type`
 1. `std::false_type`
 
-## 23.2 Primary type categories
+## 24.2 Primary type categories
 
 1. `std::is_void`
 1. `std::is_null_pointer`
@@ -1114,7 +1141,7 @@ int main() {
 1. `std::is_pointer`
 1. ...
 
-## 23.3 Composite type categories
+## 24.3 Composite type categories
 
 1. `std::is_fundamental`
 1. `std::is_arithmetic`
@@ -1123,7 +1150,7 @@ int main() {
 1. `std::is_member_pointer`
 1. ...
 
-## 23.4 Type properties
+## 24.4 Type properties
 
 1. `std::is_const`
 1. `std::is_volatile`
@@ -1132,7 +1159,7 @@ int main() {
 1. `std::is_abstract`
 1. ...
 
-## 23.5 Supported operations
+## 24.5 Supported operations
 
 1. `std::is_constructible`
 1. `std::is_copy_constructible`
@@ -1141,19 +1168,19 @@ int main() {
 1. `std::is_destructible`
 1. ...
 
-## 23.6 Property queries
+## 24.6 Property queries
 
 1. `std::alignment_of`
 1. `std::rank`
 1. `std::extent`
 
-## 23.7 Type relationships
+## 24.7 Type relationships
 
 1. `std::is_same`
 1. `std::is_base_of`
 1. ...
 
-## 23.8 Const-volatility specifiers
+## 24.8 Const-volatility specifiers
 
 1. `std::remove_cv`
 1. `std::remove_const`
@@ -1162,28 +1189,28 @@ int main() {
 1. `std::add_const`
 1. `std::add_volatile`
 
-## 23.9 References
+## 24.9 References
 
 1. `std::remove_reference`
 1. `std::add_lvalue_reference`
 1. `std::add_rvalue_reference`
   
-## 23.10 Pointers
+## 24.10 Pointers
 
 1. `std::remove_pointer`
 1. `std::add_pointer`
   
-## 23.11 Sign modifiers
+## 24.11 Sign modifiers
 
 1. `std::make_signed`
 1. `std::make_unsigned`
 
-## 23.12 Arrays
+## 24.12 Arrays
 
 1. `std::remove_extent`
 1. `std::remove_all_extents`
 
-## 23.13 Miscellaneous transformations
+## 24.13 Miscellaneous transformations
 
 1. `std::enable_if`
 1. `std::conditional`
@@ -1209,7 +1236,7 @@ int main() {
     }    
     ```
 
-## 23.14 Alias
+## 24.14 Alias
 
 `using template`，用于简化上述模板。例如`std::enable_if_t`等价于`typename enable_if<b,T>::type`
 
@@ -1220,7 +1247,7 @@ int main() {
 1. `std::invoke_result_t`
 1. ...
 
-## 23.15 std::move
+## 24.15 std::move
 
 标准库的实现如下：
 
@@ -1255,7 +1282,7 @@ int main() {
 }
 ```
 
-## 23.16 std::forward
+## 24.16 std::forward
 
 `std::forward`主要用于实现模板的完美转发：因为对于一个变量而言，无论该变量的类型是左值引用还是右值引用，变量本身都是左值，如果直接将变量传递到下一个方法中，那么一定是按照左值来匹配重载函数的，而`std::forward`就是为了解决这个问题。请看下面这个例子：
 
@@ -1374,7 +1401,7 @@ func(std::forward<int&&>(1)) -> right reference version
     }
 ```
 
-### 23.16.1 forwarding reference
+### 24.16.1 forwarding reference
 
 **当且仅当`T`是函数模板的模板类型形参时，`T&&`才能称为`forwarding reference`，而其他任何形式，都不是`forwarding reference`。例如如下示例代码：**
 
@@ -1452,7 +1479,7 @@ struct C {
 };
 ```
 
-# 24 utility
+# 25 utility
 
 1. `std::pair`：本质上，它是`std::tuple`的一个特例
 1. `std::declval`：用来配合`decltype`进行类型推导，其实现原理如下：
@@ -1499,7 +1526,7 @@ struct C {
     }
     ```
 
-## 24.1 How to return pair containing reference type
+## 25.1 How to return pair containing reference type
 
 示例如下：
 
@@ -1563,7 +1590,7 @@ int main() {
 * `get_data_2`：正确方式。由于`std::ref`（返回类型是`std::reference_wrapper`）的存在，`std::make_pair`会创建类型为`std::pair<const std::vector<int>&, int>`的对象，此时引用会正确初始化
 * `get_data_3`：正确方式，不用`std::make_pair`，引用会正确初始化
 
-# 25 variant
+# 26 variant
 
 1. `std::visit`
 1. `std::variant`：类型安全的union。只允许以正确的类型进行访问
@@ -1584,7 +1611,7 @@ int main() {
 }
 ```
 
-## 25.1 Dynamic Binding
+## 26.1 Dynamic Binding
 
 `std::variant`结合`std::visit`可以实现动态分派，示例代码如下：
 
@@ -1621,7 +1648,7 @@ int main() {
 * 每个`Visitor,variant`对会生成一个`vtable`，里面记录了所有的函数指针，并按照`std::variant`各个类型声明的顺序排序
 * 在用`std::visit`进行访问时，会用`std::variant::index`找到`vtable`中的函数指针，并进行调用
 
-# 26 Containers
+# 27 Containers
 
 1. `<vector>`：其内部就是一个数组。当进行扩容缩容时，会进行数据的拷贝或移动，因此要求对应的类型至少拥有拷贝构造函数和移动构造函数中的一个。例如，`std::vector<std::atomic_bool>`是无法调用`push_back`或者`emplace_back`来增加元素的
 1. `<array>`
@@ -1633,14 +1660,14 @@ int main() {
 1. `<set>`
 1. `<unordered_set>`
 
-## 26.1 Tips
+## 27.1 Tips
 
 1. `std::map`或者`std::set`用下标访问后，即便访问前元素不存在，也会插入一个默认值。因此下标访问是非`const`的
 1. 容器在扩容时，调用的是元素的拷贝构造函数
 1. `std::vector<T> v(n)`会生成`n`个对应元素的默认值，而不是起到预留`n`个元素的空间的作用
 1. 不要将`end`方法返回的迭代器传入`erase`方法
 
-# 27 SIMD
+# 28 SIMD
 
 [Header files for x86 SIMD intrinsics](https://stackoverflow.com/questions/11228855/header-files-for-x86-simd-intrinsics)
 
@@ -1680,7 +1707,7 @@ int main() {
 * `-mavx512vbmi`
 * ...
 
-# 28 C Standard Library
+# 29 C Standard Library
 
 由于`C++`是`C`的超集，`C`的标准库也被添加到`std`命名空间中了，但是头文件有所区别：`xxx.h -> cxxx`。其中，`xxx.h`是原始的`C`标准库头文件，其符号不在任何命名空间中；`cxxx`是对应的`C++`版本的头文件，其符号在`std`命名空间中
 
@@ -1716,7 +1743,7 @@ int main() {
     * `std::isblank`：仅对空格和水平制表符返回 true
     * `std::isspace`：空格、表单换行符、换行符、回车符、水平制表符和垂直制表符都返回true
 
-## 28.1 csignal
+## 29.1 csignal
 
 各种信号都定义在`signum.h`这个头文件中
 
@@ -1769,7 +1796,7 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-## 28.2 Execute Command
+## 29.2 Execute Command
 
 ```cpp
 #include <cstdlib>
