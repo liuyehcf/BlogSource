@@ -13,7 +13,7 @@ categories:
 
 <!--more-->
 
-# 1 系统信息
+# 1 System Information
 
 ## 1.1 lsb_release
 
@@ -157,7 +157,7 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 1. 新建用户主文件夹：`cp -a /etc/sekl /home/<name>`
 1. 更改用户文件夹的属性：`chown -R <group>/home/<name>`
 
-### 1.13.1 迁移用户目录
+### 1.13.1 Migrate User Directory
 
 ```sh
 # 拷贝数据
@@ -267,7 +267,7 @@ hostnamectl set-hostname <name>
 * `ntpdate ntp.aliyun.com`
 * `ntpdate ntp.cloud.aliyuncs.com`：阿里云ecs同步时间需要指定内网的ntp服务
 
-# 2 常用处理工具
+# 2 Common Processing Tools
 
 ## 2.1 ls
 
@@ -610,7 +610,7 @@ awk
 END {print "销售金额总计：",total}' sx
 ```
 
-### 2.4.1 使用shell变量
+### 2.4.1 Using Shell Variables
 
 **方式1：**
 
@@ -657,7 +657,7 @@ var="this a test"
 awk -v awkVar="$var" 'BEGIN{print awkVar}'
 ```
 
-### 2.4.2 控制语句
+### 2.4.2 Control Statements
 
 **以下的示例都在`BEGIN`中，只执行一次，不需要指定文件或者输入流**
 
@@ -731,7 +731,7 @@ print total;
 }'
 ```
 
-### 2.4.3 正则表达式
+### 2.4.3 Regular Expressions
 
 ```sh
 echo "123" | awk '{if($0 ~ /^[0-9]+$/) print $0;}'
@@ -1401,7 +1401,7 @@ EOF
 expect /tmp/test_expect.config
 ```
 
-# 3 设备管理
+# 3 Device Management
 
 ## 3.1 mount
 
@@ -1420,7 +1420,7 @@ mount用于挂载一个文件系统
 
 * `mount -o loop /CentOS-7-x86_64-Minimal-1908.iso /mnt/iso`
 
-### 3.1.1 传播级别
+### 3.1.1 Propagation Level
 
 内核引入`mount namespace`之初，各个`namespace`之间的隔离性较差，例如在某个`namespace`下做了`mount`或者`umount`动作，那么这一事件会被传播到其他的`namespace`中，在某些场景下，是不适用的
 
@@ -1606,7 +1606,7 @@ free
 * `numactl --hardware`：
 * `numactl --show`：显示当前的`NUMA`设置
 
-# 4 进程管理
+# 4 Process Management
 
 **后台进程（&）：**
 
@@ -1988,7 +1988,7 @@ test	ALL=(ALL)	ALL
 
 * `reptyr <pid>`
 
-# 5 网络管理
+# 5 Network Management
 
 ## 5.1 netstat
 
@@ -2273,7 +2273,7 @@ ip route add throw 172.16.0.0/12
 
 这被视为对内核的提示（用于回答：如果我要将数据包发往host X，我该用本机的哪个IP作为Source IP），该提示是关于要为该接口上的`传出`数据包上的源地址选择哪个IP地址
 
-#### 5.5.3.6 参数解释
+#### 5.5.3.6 Parameter Explanation
 
 **`ip r show table local`参数解释（示例如下）**
 
@@ -2353,7 +2353,7 @@ ln -sfT /proc/$pid/ns/net /var/run/netns/$container_id
 
 ## 5.6 iptables
 
-### 5.6.1 规则的查看
+### 5.6.1 Viewing Rules
 
 **格式：**
 
@@ -2402,7 +2402,7 @@ ln -sfT /proc/$pid/ns/net /var/run/netns/$container_id
 * 冒号开头的指的是链，3条内建的链，后面跟策略
 * 链后面跟的是`[Packets:Bytes]`，分别表示通过该链的数据包/字节的数量
 
-### 5.6.2 规则的清除
+### 5.6.2 Clearing Rules
 
 **格式：**
 
@@ -2414,7 +2414,7 @@ ln -sfT /proc/$pid/ns/net /var/run/netns/$container_id
 * `-X [chain]`：清除指定`user-defined chain`或所有`user-defined chain`
 * `-Z [chain]`：将指定chain或所有的chain的计数与流量统计都归零
 
-### 5.6.3 定义默认策略
+### 5.6.3 Defining Default Policies
 
 当数据包不在我们设置的规则之内时，该数据包的通过与否都以Policy的设置为准
 
@@ -2434,7 +2434,7 @@ ln -sfT /proc/$pid/ns/net /var/run/netns/$container_id
 * `iptables -P OUTPUT ACCEPT`
 * `iptables -P FORWARD ACCEPT`
 
-### 5.6.4 数据包的基础对比：IP、网络及接口设备
+### 5.6.4 Basic Packet Matching: IP, Network, and Interface Devices
 
 **格式：**
 
@@ -2479,7 +2479,7 @@ ln -sfT /proc/$pid/ns/net /var/run/netns/$container_id
     * `iptables -t nat -I PREROUTING -p icmp -j LOG --log-prefix "liuye-prerouting: "`
     * `iptables -t nat -I POSTROUTING -p icmp -j LOG --log-prefix "liuye-postrouting: "`
 
-### 5.6.5 TCP、UDP的规则：针对端口设置
+### 5.6.5 Rules for TCP and UDP: Port-based Rules
 
 TCP与UDP比较特殊的就是端口(port)，在TCP方面则另外有所谓的连接数据包状态，包括最常见的SYN主动连接的数据包格式
 
@@ -2499,7 +2499,7 @@ TCP与UDP比较特殊的就是端口(port)，在TCP方面则另外有所谓的�
 * `iptables -A INPUT -i eth0 -p tcp --dport 21 -j DROP`：想要进入本机port 21的数据包都阻挡掉
 * `iptables -A INPUT -i eth0 -p tcp --sport 1:1023 --dport 1:1023 --syn -j DROP`：来自任何来源port 1:1023的主动连接到本机端的1:1023连接丢弃
 
-### 5.6.6 iptables匹配扩展
+### 5.6.6 iptables Matching Extensions
 
 `iptables`可以使用扩展的数据包匹配模块。当指定`-p`或`--protocol`时，或者使用`-m`或`--match`选项，后跟匹配的模块名称；之后，取决于特定的模块，可以使用各种其他命令行选项。可以在一行中指定多个扩展匹配模块，并且可以在指定模块后使用`-h`或`--help`选项来接收特定于该模块的帮助文档（`iptables -m comment -h`，输出信息的最下方有`comment`模块的参数说明）
 
@@ -2510,7 +2510,7 @@ TCP与UDP比较特殊的就是端口(port)，在TCP方面则另外有所谓的�
 1. `tcp`
 1. `udp`
 
-### 5.6.7 iptables目标扩展
+### 5.6.7 iptables Target Extensions
 
 iptables可以使用扩展目标模块，并且可以在指定目标后使用`-h`或`--help`选项来接收特定于该目标的帮助文档（`iptables -j DNAT -h`）
 
@@ -2524,7 +2524,7 @@ iptables可以使用扩展目标模块，并且可以在指定目标后使用`-h
 1. `SNAT`
 1. `MASQUERADE`：用于实现自动化SNAT，若出口ip经常变化的话，可以通过该目标来实现SNAT
 
-### 5.6.8 ICMP数据包规则的比对：针对是否响应ping来设计
+### 5.6.8 ICMP Packet Rules Comparison: Designed to Control Ping Responses
 
 **格式：**
 
@@ -2666,7 +2666,7 @@ nsenter用于在某个网络命名空间下执行某个命令。例如某些dock
 * `tcpdump -i any -w output1.cap`
 * `tcpdump -n -i any -e icmp and host www.baidu.com`
 
-### 5.10.1 tcpdump条件表达式
+### 5.10.1 tcpdump Conditional Expressions
 
 该表达式用于决定哪些数据包将被打印。如果不给定条件表达式，网络上所有被捕获的包都会被打印，否则，只有满足条件表达式的数据包被打印
 
@@ -2694,9 +2694,9 @@ nsenter用于在某个网络命名空间下执行某个命令。例如某些dock
 
 1. 任意选中一个`length`不为`0`的数据包，右键选择解码（`decode as`），右边`Current`一栏，选择对应的协议即可
 
-### 5.10.3 如何使用tcpdump抓dockerd的http协议的数据
+### 5.10.3 How to Use tcpdump to Capture HTTP Protocol Data from docker
 
-dockerd使用的是域套接字，对应的套接字文件是`/var/run/docker.sock`，而域套接字是不经过网卡设备的，因此tcpdump无法直接抓取相应的数据
+docker使用的是域套接字，对应的套接字文件是`/var/run/docker.sock`，而域套接字是不经过网卡设备的，因此tcpdump无法直接抓取相应的数据
 
 **方式1：改变client的访问方式**
 
@@ -2715,7 +2715,7 @@ docker -H tcp://localhost:18080 images
 **方式2：不改变client的访问方式**
 
 ```sh
-# 在终端1执行，mv命令修改原始域套接字的文件名，这个操作不会改变文件的fd，因此，在移动后，dockerd监听的套接字是/var/run/docker.sock.original
+# 在终端1执行，mv命令修改原始域套接字的文件名，这个操作不会改变文件的fd，因此，在移动后，docker监听的套接字是/var/run/docker.sock.original
 sudo mv /var/run/docker.sock /var/run/docker.sock.original
 sudo socat TCP-LISTEN:18081,reuseaddr,fork UNIX-CONNECT:/var/run/docker.sock.original
 
@@ -2917,7 +2917,7 @@ yum install -y hping3
 * `iperf -s -p 3389 -i 1`：服务端
 * `iperf -c <server_addr> -p 3389 -i 1`：客户端
 
-# 6 运维监控
+# 6 Monitoring
 
 ## 6.1 ssh
 
@@ -2950,7 +2950,7 @@ yum install -y hping3
         eval "ssh -o StrictHostKeyChecking=no test@1.2.3.4 \"/bin/bash -l -c 'ls -al'\""
         ```
 
-### 6.1.1 免密登录
+### 6.1.1 Passwordless Login
 
 **方法1（手动)：**
 
@@ -2973,7 +2973,7 @@ ssh-keygen -t rsa
 ssh-copy-id user@target
 ```
 
-### 6.1.2 禁止密码登录
+### 6.1.2 Disable Password Login
 
 Modify `/etc/ssh/sshd_config`
 
@@ -2981,7 +2981,7 @@ Modify `/etc/ssh/sshd_config`
 PasswordAuthentication no
 ```
 
-### 6.1.3 避免长时间不操作就断开连接
+### 6.1.3 Prevent Disconnection Due to Inactivity
 
 Modify `/etc/ssh/sshd_config`, it is worked on SSH-level. And there's another config named `TCPKeepAlive`, which is worked on TCP-level.
 
@@ -2990,7 +2990,7 @@ ClientAliveInterval 60
 ClientAliveCountMax 3
 ```
 
-### 6.1.4 隧道
+### 6.1.4 Tunnels
 
 **格式：**
 
@@ -3021,7 +3021,7 @@ ClientAliveCountMax 3
     ssh-keygen -f "/Users/hechenfeng/.ssh/known_hosts" -R "<hostname or IP>"
     ```
 
-### 6.1.6 脚本配置密码
+### 6.1.6 Specify Password
 
 ```sh
 sshpass -p 'xxxxx' ssh -o StrictHostKeyChecking=no test@1.2.3.4
@@ -3611,7 +3611,7 @@ mount      –t debugfs    debugfs /sys/kernel/debug
     btt -i sda.blktrace.bin -l sda.d2c_latency
     ```
 
-# 7 性能分析工具
+# 7 Performance Analysis
 
 ## 7.1 strace
 
@@ -3714,7 +3714,7 @@ mount      –t debugfs    debugfs /sys/kernel/debug
 1. **`perf stat -p <pid> -e branch-instructions,branch-misses,cache-misses,cache-references,cpu-cycles,ref-cycles,instructions,mem_load_retired.l1_hit,mem_load_retired.l1_miss,mem_load_retired.l2_hit,mem_load_retired.l2_miss,cpu-migrations,context-switches,page-faults,major-faults,minor-faults`**
     * 该命令会在右边输出一个百分比，该百分比的含义是：`perf`统计指定`event`所花费的时间与`peft`统计总时间的比例
 
-# 8 远程桌面
+# 8 Remote Desktop
 
 **`X Window System, X11, X`是一个图形显示系统。包含2个组件：`X Server`**
 
@@ -3730,7 +3730,7 @@ mount      –t debugfs    debugfs /sys/kernel/debug
 
 ![X-Window-System](/images/Linux-Frequently-Used-Commands/X-Window-System.awebp)
 
-## 8.1 xquartz（不推荐）
+## 8.1 xquartz (Not Recommended)
 
 **工作原理：纯`X Window System`方案，其中，`xquartz`就是`X Server`的一种实现**
 
@@ -3782,7 +3782,7 @@ X_Quartz -> X_Client: X reply
 
 **缺点：占用大量带宽，且一个`ssh`会话只能运行一个`X Client`程序**
 
-## 8.2 VNC（推荐）
+## 8.2 VNC (Recommended)
 
 **`Virtual Network Computing, VNC`。主要由两个部分组成：`VNC Server`及`VNC Viewer`**
 
@@ -3850,7 +3850,7 @@ X_VNC <--> X_Client: X Protocol
         1. 在`VNC Viewer`中，鼠标选中再按`Ctrl + Shift + C`进行复制
         1. 在`VNC Viewer`中，按`Ctrl + Shift + V`进行粘贴
 
-## 8.3 NX（推荐）
+## 8.3 NX (Recommended)
 
 [No Machine官网](https://www.nomachine.com/)
 
@@ -3875,7 +3875,7 @@ X_VNC <--> X_Client: X Protocol
 
 [红帽企业版 Linux 7安全性指南](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/7/html/security_guide/index)
 
-## 9.1 架构
+## 9.1 Architecture
 
 ![audit_architecture](/images/Linux-Frequently-Used-Commands/audit_architecture.png)
 
@@ -3900,7 +3900,7 @@ CONFIG_KVM_MMU_AUDIT=y
 
 ## 9.2 auditctl
 
-### 9.2.1 控制规则
+### 9.2.1 Control Rules
 
 **参数说明：**
 
@@ -3926,7 +3926,7 @@ CONFIG_KVM_MMU_AUDIT=y
 * `auditctl -s`
 * `auditctl -l`
 
-### 9.2.2 文件系统规则
+### 9.2.2 File System Rules
 
 **格式：**
 
@@ -3946,7 +3946,7 @@ CONFIG_KVM_MMU_AUDIT=y
 
 * `auditctl -w /etc/shadow -p wa -k passwd_changes`：等价于`auditctl -a always,exit -F path=/etc/shadow -F perm=wa -k passwd_changes`
 
-### 9.2.3 系统调用规则
+### 9.2.3 System Call Rules
 
 **格式：**
 
@@ -3988,11 +3988,11 @@ CONFIG_KVM_MMU_AUDIT=y
 * `ausearch --start yesterday --end now -m SYSCALL -sv no -i`：搜寻从昨天至今所有的失败的系统调用相关的事件
 * `ausearch -m SYSCALL -sc open -i`：搜寻系统调用open相关的事件
 
-## 9.4 审核记录类型
+## 9.4 Audit Record Types
 
 [B.2. 审核记录类型](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/7/html/security_guide/sec-Audit_Record_Types)
 
-# 10 包管理工具
+# 10 Package Management Tools
 
 ## 10.1 rpm
 
@@ -4099,7 +4099,7 @@ apt install clang-format-X.Y
     * `lsof -n -i :80`
     * `ss -npl | grep 80`
 
-# 12 参考
+# 12 Reference
 
 * 《鸟哥的Linux私房菜》
 * [Linux Tools Quick Tutorial](https://linuxtools-rst.readthedocs.io/zh_CN/latest/tool/index.html)
