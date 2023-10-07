@@ -17,6 +17,7 @@
 | GPL | GNU General Public License |
 | POSIX | The Portable Operating System Interface |
 | OSI | Open Systems Interconnection |
+| ISO | International Organization for Standardization |
 | PPMC | Podling Project Management Committee |
 | PMC | Project Management Committee |
 | PR | Pull Request |

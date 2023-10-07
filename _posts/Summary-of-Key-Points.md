@@ -809,11 +809,97 @@ This analysis is only for `select count(distinct $1) from lineorder group by $2;
 
 {% post_link DBMS-Optimizer %}
 
-## 3.6 Not yet mastered
+## 3.6 Bitmap Index
+
+### 3.6.1 Bitmap Index
+
+**Function of Bitmap Index**:
+
+* **Efficiency in Low Cardinality**: If a column in a database has only a few unique values (like "Male" or "Female" in a gender column), then a traditional B-tree index isn't very efficient. Bitmap indexes are much more space-efficient and can be faster for this type of data.
+* **Combining Multiple Indexes**: Bitmap indexes can be combined (using Boolean operations) more efficiently than other types of indexes. This makes them useful for queries that have multiple predicates.
+* **Space Efficient**: Bitmaps can be compressed, making them space-efficient compared to some other types of indexing mechanisms.
+
+**Example:**
+
+| Book ID | Title                  | Genre       |
+|---------|------------------------|-------------|
+| 1       | A Journey Within       | Fiction     |
+| 2       | The Life of a Scientist | Biography   |
+| 3       | Universe Explained      | Non-Fiction |
+| 4       | The Mountain's Whisper  | Fiction     |
+| 5       | Leaders of Our Time     | Biography   |
+| 6       | Secrets of the Ocean    | Non-Fiction |
+
+**Bitmap Index for the Genre column(Each distinct value has a bitmap):**
+
+* Fiction -> `1 0 0 1 0 0`
+* Biography -> `0 1 0 0 1 0`
+* Non-Fiction -> `0 0 1 0 0 1`
+
+### 3.6.2 Bitmap Column
+
+Bitmap columns, as used in systems like StarRocks, are a specialized storage format designed for efficiently representing sets of integers, typically IDs. The underlying principle is rooted in bitmap compression methods, especially Roaring Bitmaps, which is a popular technique used in many analytical databases and systems.
+
+Let's dive into the concept:
+
+**Basic Bitmaps:**
+
+At a basic level, a bitmap is a sequence of bits where each bit position corresponds to an integer. If the integer is present in the set, the bit is set to `1`; otherwise, it's `0`.
+
+**Example:**
+
+Imagine you have a set of integers representing user IDs that accessed a website on a particular day: `{2, 4, 5, 6}`, a bitmap would look something like this:
+
+```
+Position: 1 2 3 4 5 6 7 8 9 ...
+Bitmap:   0 1 0 1 1 1 0 0 0 ...
+```
+
+**Compression:**
+
+Storing raw bitmaps for large ID spaces would be inefficient, especially if the IDs are sparse. For instance, if you have an ID of `1,000,000` but only ten IDs in that range, a straightforward bitmap would have a lot of `0`s and be space-inefficient.
+
+This is where bitmap compression techniques, like Roaring Bitmaps, come into play.
+
+**Roaring Bitmaps:**
+
+Roaring Bitmaps are a form of compressed bitmap that divides the range of integers into chunks and represents each chunk in the most space-efficient manner:
+
+* **Array Containers**: If a chunk has a small number of values, it might store them as a simple array of 16-bit integers.
+* **Bitmap Containers**: If a chunk has a moderate number of values, it might represent them with a 64KB bitmap.
+* **Run-Length Encoding (RLE) Containers**: If a chunk has long runs of consecutive values, it will represent them as runs (start, length).
+
+The container type that's the most space-efficient for the chunk's particular set of integers is used.
+
+**Example:**
+
+Now, imagine our user IDs are `{2, 4, 5, 6, 10,000}`.
+
+If you were to use a straightforward bitmap, you'd have a very long string of `0`s between the `1` for the ID `6` and the `1` for the ID `10,000`. This is where the Roaring Bitmap approach becomes efficient.
+
+Roaring Bitmap divides the range of integers into chunks. Let's simplify this by saying each chunk represents a range of 8 numbers. (In real implementations, the chunk size is much larger.)
+
+* `Chunk 1` (1-8): `{2, 4, 5, 6}` would be represented as `01011100`.
+* `Chunk 2` (9-16): No values, so all `0`s: `00000000`.
+* ...
+* `Chunk 1250` (9993-10000): Just the `10,000` ID, so `00000001`.
+
+Now, instead of storing all these chunks as is, Roaring Bitmaps compresses them:
+
+* **Array Containers**: If there's a small number of values in a chunk (like our first chunk), it could store them as a simple array: `[2, 4, 5, 6]`.
+* **Run-Length Encoding (RLE) Containers**: If there's a long sequence of the same value, like our many chunks of all `0`s between ID `6` and ID `10,000`, it would just store the sequence as a start and length: `(9, 9992)` indicating from position `9` there are `9992` zeroes.
+* **Bitmap Containers**: If there's a moderate number of values, it would store them as a mini bitmap. We didn't have such an example in our data, but imagine if in one of the chunks, half the IDs were present; it would use a bitmap for that chunk.
+
+### 3.6.3 Difference
+
+* Bitmap Index needs to get all row information of a particular value. But Bitmap Column only needs to check if a given value exists.
+* For Bitmap Index, each distinct value has a unique bitmap. But For Bitmap Column, each row has a bitmap.
+* For Bitmap Index, each position represents a row. For Bitmap Column, each position represents a existing value.
+
+## 3.7 Not yet mastered
 
 1. WAL Structure
 1. Consensus Protocol
-1. Bitmap Index & Bitmap Column
 1. Cost-based state transition machine
     * The process of the cbo optimization
 
