@@ -12,17 +12,17 @@ categories:
 
 <!--more-->
 
-# 1 基本概念
+# 1 Basic Concepts
 
 ![fig1](/images/git/fig1.png)
 
-## 1.1 工作区(Workspace)
+## 1.1 Workspace
 
 代表你正在工作的那个文件集，也就是git管理的所有文件的集合
 
 **下文用`Workspace`来表示工作区**
 
-## 1.2 版本库(Repository)
+## 1.2 Repository
 
 工作区有一个隐藏目录`.git`，这个不算工作区，而是Git的版本库
 
@@ -30,7 +30,7 @@ Git的版本库里存了很多东西，其中最重要的就是称为`stage`（�
 
 **下文用`Index`来表示暂存区，用`HEAD`表示当前分支的最新提交，用`Repository`表示提交区**
 
-# 2 配置
+# 2 Configuration
 
 ```sh
 # 显示当前的Git配置
@@ -47,7 +47,7 @@ git config [--global] user.email "[email address]"
 git config [--global] --unset http.proxy
 ```
 
-# 3 增加/删除文件
+# 3 Adding/Deleting Files
 
 ```sh
 # 添加指定文件到暂存区
@@ -82,7 +82,7 @@ git ls-files
 git mv [file-original] [file-renamed]
 ```
 
-## 3.1 彻底删除文件
+## 3.1 Permanently Deleting Files
 
 **如何查找仓库记录中的大文件：**
 
@@ -112,7 +112,7 @@ git gc --prune=now
 git gc --aggressive --prune=now
 ```
 
-# 4 提交
+# 4 Submit
 
 ```sh
 # 提交暂存区到仓库区
@@ -135,7 +135,7 @@ git commit --amend -m [message]
 git commit --amend [file1] [file2] ...
 ```
 
-# 5 撤销
+# 5 Undo
 
 ```sh
 # 恢复暂存区的指定文件到工作区，注意'--'表示的是：后面接的是path而非分支名
@@ -203,7 +203,7 @@ git restore [file]
 git restore --staged [file]
 ```
 
-# 6 分支
+# 6 Branch
 
 ```sh
 # 列出所有本地分支
@@ -278,7 +278,7 @@ git branch -m [oldbranch] [newbranch]
 git branch -M [oldbranch] [newbranch]
 ```
 
-# 7 标签
+# 7 Tag
 
 ```sh
 # 列出所有tag
@@ -309,7 +309,7 @@ git push [remote] --tags
 git checkout -b [branch] [tag]
 ```
 
-# 8 查看信息
+# 8 Log
 
 ```sh
 # 显示有变更的文件
@@ -391,7 +391,7 @@ git whatchanged [file]
 git reflog
 ```
 
-# 9 克隆
+# 9 Clone
 
 ```sh
 # https方式下载
@@ -413,7 +413,7 @@ git remote set-branches origin '<需要获取的分支名>'
 git fetch --depth 1 origin '<需要获取的分支名>'
 ```
 
-# 10 远程同步
+# 10 Sync
 
 ```sh
 # 下载远程仓库的所有变动
@@ -450,7 +450,7 @@ git push [remote] --force
 git push [remote] --all
 ```
 
-# 11 插件
+# 11 Plugin
 
 [git-extra](https://github.com/tj/git-extras)
 
@@ -459,7 +459,7 @@ git push [remote] --all
 git summary --line
 ```
 
-# 12 发布
+# 12 Publish
 
 ```sh
 # 生成一个可供发布的压缩包
@@ -498,9 +498,19 @@ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Crese
 
 [git-worktree](https://git-scm.com/docs/git-worktree)
 
-# 17 Tips
+# 17 gist
 
-## 17.1 修改diff工具
+Gists allow developers to share code or text snippets with others, making it easy to collaborate or seek help with specific programming tasks.
+
+[Gist](https://gist.github.com/)
+
+# 18 copilot
+
+[copilot](https://github.com/features/copilot)
+
+# 19 Tips
+
+## 19.1 Modify Diff Tool
 
 **项目地址：[github-icdiff](https://github.com/jeffkaufman/icdiff)**
 
@@ -520,7 +530,7 @@ git config --global icdiff.options '--highlight --line-numbers'
 
 * 用`git icdiff`代替`git diff`即可
 
-## 17.2 中文显示为8进制形式的问题
+## 19.2 Issue with Chinese Displayed in Octal Form
 
 在Windows中，git bash打印的中文可能表示成`\+三个数字`的形式，即八进制表示
 
@@ -530,11 +540,7 @@ git config --global icdiff.options '--highlight --line-numbers'
 git config --global core.quotepath false
 ```
 
-## 17.3 copilot
-
-[copilot](https://github.com/features/copilot)
-
-# 18 参考
+# 20 Reference
 
 * [git官方文档](https://git-scm.com/docs/gitignore)
 * [git教程](https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/)
