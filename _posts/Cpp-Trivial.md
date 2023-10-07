@@ -799,7 +799,7 @@ gcc -o main main.cpp -Wl,-wrap=malloc -Wl,-wrap=_Znwm -lstdc++ -std=gnu++17
 ./main
 ```
 
-### 3.5.3 Hook can't work with dynamic link library
+### 3.5.3 Work With Library
 
 `foo.cpp` is like this:
 
@@ -836,6 +836,33 @@ int main() {
 }
 ```
 
+#### 3.5.3.1 Static Linking Library(Working)
+
+And here are how to build the program.
+
+```sh
+gcc -o foo.o -c foo.cpp -O3 -Wall -fPIC
+ar rcs libfoo.a foo.o
+gcc -o main main.cpp -O3 -L . -Wl,-wrap=malloc -lfoo -lstdc++
+
+./main
+```
+
+And it prints:
+
+```
+hello, this is foo
+malloc called with 100
+```
+
+The reason why static linking works fine with the `-Wl,-wrap=malloc` hook, is because of how static linking works:
+
+* In static linking, the object code (or binary code) for the functions used from the static library is embedded directly into the final executable at link-time.
+* So, when you use the `-Wl,-wrap=malloc` linker option, it can intercept and replace all calls to `malloc` in both the `main` program and any static libraries, as they are all being linked together into a single executable at the same time.
+* Essentially, the linker sees the entire code (from the main program and the static library) as one unit and can replace all calls to `malloc` with calls to `__wrap_malloc`.
+
+#### 3.5.3.2 Dynamic Linking library(Not Working)
+
 And here are how to build the program.
 
 ```sh
@@ -846,19 +873,17 @@ gcc -o main main.cpp -O3 -L . -Wl,-rpath=`pwd` -Wl,-wrap=malloc  -lfoo -lstdc++
 ./main
 ```
 
+And it prints:
+
+```
+hello, this is foo
+```
+
 Here's a step-by-step breakdown:
 
 1. When you compile `foo.cpp` into `foo.o`, there's a call to `malloc` in the machine code, but it's not yet resolved to an actual memory address. It's just a placeholder that says "I want to call `malloc`".
 1. When you link `foo.o` into `libfoo.so`, the call to `malloc` inside `foo` is linked. It's resolved to the `malloc` function provided by the C library.
 1. Later, when you link `main.cpp` into an executable, you're using the `-Wl,-wrap=malloc` option, but that only affects calls to `malloc` that are being linked at that time. The call to `malloc` inside `foo` was already linked in step 2, so it's unaffected.
-
-And this following build approach works fine:
-
-```sh
-gcc -o main foo.cpp main.cpp -O3 -Wl,-rpath=`pwd` -Wl,-wrap=malloc -lstdc++
-
-./main
-```
 
 ## 3.6 Reference
 
