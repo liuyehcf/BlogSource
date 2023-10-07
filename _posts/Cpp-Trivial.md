@@ -246,7 +246,36 @@ fopen() returned NULL
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-## 2.5 How to make dynamic library
+## 2.5 How to make library
+
+### 2.5.1 How to make static library
+
+```sh
+cat > foo.cpp << 'EOF'
+#include <iostream>
+
+void foo() {
+    std::cout << "hello, this is foo" << std::endl;
+}
+EOF
+
+cat > main.cpp << 'EOF'
+void foo();
+
+int main() {
+    foo();
+    return 0;
+}
+EOF
+
+gcc -o foo.o -c foo.cpp -O3 -Wall -fPIC
+ar rcs libfoo.a foo.o
+
+gcc -o main main.cpp -O3 -L . -lfoo -lstdc++
+./main
+```
+
+### 2.5.2 How to make dynamic library
 
 ```sh
 cat > foo.cpp << 'EOF'
@@ -767,6 +796,67 @@ int main() {
 
 ```sh
 gcc -o main main.cpp -Wl,-wrap=malloc -Wl,-wrap=_Znwm -lstdc++ -std=gnu++17
+./main
+```
+
+### 3.5.3 Hook can't work with dynamic link library
+
+`foo.cpp` is like this:
+
+```cpp
+#include <iostream>
+
+int* foo() {
+    std::cout << "hello, this is foo" << std::endl;
+    return (int*)malloc(100);
+}
+```
+
+`main.cpp` is like this:
+
+```cpp
+#include <cstdio>
+#include <cstdlib>
+
+int* foo();
+
+extern "C" {
+void* __real_malloc(size_t c);
+
+void* __wrap_malloc(size_t c) {
+    printf("malloc called with %zu\n", c);
+    return __real_malloc(c);
+}
+}
+
+int main() {
+    auto* res = foo();
+    res[0] = 1;
+    return 0;
+}
+```
+
+And here are how to build the program.
+
+```sh
+gcc -o foo.o -c foo.cpp -O3 -Wall -fPIC
+gcc -shared -o libfoo.so foo.o
+gcc -o main main.cpp -O3 -L . -Wl,-rpath=`pwd` -Wl,-wrap=malloc  -lfoo -lstdc++
+
+./main
+```
+
+Here's a step-by-step breakdown:
+
+1. When you compile `foo.cpp` into `foo.o`, there's a call to `malloc` in the machine code, but it's not yet resolved to an actual memory address. It's just a placeholder that says "I want to call `malloc`".
+1. When you link `foo.o` into `libfoo.so`, the call to `malloc` inside `foo` is linked. It's resolved to the `malloc` function provided by the C library.
+1. Later, when you link `main.cpp` into an executable, you're using the `-Wl,-wrap=malloc` option, but that only affects calls to `malloc` that are being linked at that time. The call to `malloc` inside `foo` was already linked in step 2, so it's unaffected.
+
+And this following build approach works fine:
+
+```sh
+gcc -o main foo.cpp main.cpp -O3 -Wl,-rpath=`pwd` -Wl,-wrap=malloc -lstdc++
+
 ./main
 ```
 
