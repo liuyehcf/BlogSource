@@ -585,9 +585,12 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
     - Execution
         - Morsel-Driven Parallelism(Task-Based Parallelism)
             - Morsel
+                - A small chunk or portion of data
             - Tasks
                 - Independent or Loosely Coupled
             - Worker
+                - The number of workers equals to the number of CPU cores
+                - Core-Binding for better locality
             - Scheduling
                 - Unit: Execution Link
                 - Task Scheduling
@@ -595,7 +598,7 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
                         - Local Queue and Global Queue
                         - Precise Wake-Up to Prevent False Wake-Ups
                     - Work Stealing
-                        - Local Queue
+                        - Only Local Queue
                         - False Wake-Ups(Can't steal a task)
                 - Task Readiness Analysis
                     - Polling

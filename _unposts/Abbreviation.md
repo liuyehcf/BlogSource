@@ -47,3 +47,5 @@
 | EA | Electronic Arts(company name) |
 | MFA/2FA | Multi-Factor Authentication/Two-Factor Authentication |
 | ARR | Annual Recurring Revenue |
+| NFA | Non-Deterministic Finite Automation |
+| DFA | Deterministic Finite Automation |
