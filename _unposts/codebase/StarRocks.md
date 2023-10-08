@@ -324,45 +324,83 @@ In summary, `update` is used to update intermediate results for an aggregate fun
 
 In StarRocks, partition, tablet, and bucket are related concepts that are used to manage data storage and processing in a distributed environment.
 
-A partition refers to a logical division of data based on a partition key. When a table is created in StarRocks, it can be partitioned based on one or more columns. Each partition contains a subset of the data in the table, and partitions can be processed in parallel to improve query performance.
+**Partition:**
 
-A tablet in StarRocks is a unit of data storage and processing that is served by a single replica on a single node in the cluster. A tablet is created for each partition and contains a subset of the data in the partition. Tablets can be split or merged based on data size or resource availability.
+* A partition is a method to divide data into smaller manageable pieces based on certain criteria (usually time-based). Each table can be divided into one or more partitions.
+* Partitions allow data to be managed and queried more efficiently. For instance, if you know that your query only concerns data from a specific time range, StarRocks can directly access the corresponding partition without scanning the entire table.
+* In StarRocks, each partition has a unique partition key, which is typically determined based on the partitioning method (e.g., a date).
 
-A bucket in StarRocks is a physical unit of storage that is used to store data within a tablet. Buckets are created based on the hash value of the data distribution key and are stored on separate disks to allow for parallel I/O operations. Each bucket contains a subset of the rows in the tablet and is processed in parallel with other buckets to improve query performance.
+**Bucket(Logical Unit):**
 
-In summary, partitions are used to logically divide data based on a partition key, tablets are created for each partition to manage data storage and processing, and buckets are used to physically store and process data within each tablet. The use of partitions, tablets, and buckets helps to improve scalability, fault tolerance, and query performance in distributed data processing environments.
+* A bucket is a division of data based on the hash value of the distribution columns. When you create a table, you can specify the number of buckets. StarRocks will then distribute the data among these buckets.
+* The primary purpose of bucketing is to ensure a uniform distribution of data. By distributing data across buckets based on a hash function, it reduces data skew and ensures a balanced distribution of data chunks.
+* When queries are executed, knowing which bucket contains the required data can help StarRocks optimize the query performance.
+
+**Tablet(Physical Storage and Distribution Unit):**
+
+* After the data is divided into buckets, each bucket's data is then stored in what is called a "tablet". So, you can think of a tablet as a physical storage unit or container for the data of a bucket.
+* Each tablet contains a portion of the table's data (from one of the buckets) and is replicated across different nodes in a StarRocks cluster. This replication ensures high availability and fault tolerance.
+* When a query is processed, StarRocks figures out which tablets to access based on the query's criteria and then processes the data in those tablets.
 
 Here is a diagram that illustrates the relationship between partitions, tablets, and buckets in StarRocks:
 
+* Table with 2 partitions and 4 buckets. So we have `2 * 4 = 8` tablets.
+* There are 4 nodes in the cluster.
+* Each Tablet has two replicas sharing the same TabletId but with distinguished BackendId
+* TabletId and BackendId can determine a unique tablet.
+
 ```
-                           +------------+
-                           |    Node    |
-                           | 1.1.1.1    |
-                           +------------+
-                             |     |
-               +-------------+     +--------------+
-               |                                  |
-+--------------v--------------+   +--------------v--------------+
-|           Tablet            |   |           Tablet            |
-| Partition 1, Tablet 1, Buckets |   | Partition 1, Tablet 2, Buckets |
-|   +-------------+            |   |            +-------------+   |
-|   |   Bucket 1  |            |   |            |   Bucket 1  |   |
-|   |   Bucket 2  |            |   |            |   Bucket 2  |   |
-|   |   Bucket 3  |            |   |            |   Bucket 3  |   |
-|   |   Bucket 4  |            |   |            |   Bucket 4  |   |
-|   +-------------+            |   |            +-------------+   |
-+--------------+---------------+---+--------------+-------------+
-               |                                  |
-+--------------v--------------+   +--------------v--------------+
-|           Tablet            |   |           Tablet            |
-| Partition 2, Tablet 3, Buckets |   | Partition 2, Tablet 4, Buckets |
-|            +-------------+   |   |   +-------------+            |
-|            |   Bucket 1  |   |   |   |   Bucket 1  |            |
-|            |   Bucket 2  |   |   |   |   Bucket 2  |            |
-|            |   Bucket 3  |   |   |   |   Bucket 3  |            |
-|            |   Bucket 4  |   |   |   |   Bucket 4  |            |
-|            +-------------+   |   |   +-------------+            |
-+-------------------------------+---+----------------------------+
++--------------------------------+   +--------------------------------+
+|             Node 1             |   |             Node 2             |
+|  +-------------------------+   |   |  +-------------------------+   |
+|  |      Partition 1        |   |   |  |      Partition 1        |   |
+|  | +---------------------+ |   |   |  | +---------------------+ |   |
+|  | | Tablet 1 (Bucket 1) | |   |   |  | | Tablet 5 (Bucket 3) | |   |
+|  | |     BackendId 1     | |   |   |  | |     BackendId 2     | |   |
+|  | +---------------------+ |   |   |  | +---------------------+ |   |
+|  | +---------------------+ |   |   |  | +---------------------+ |   |
+|  | | Tablet 2 (Bucket 2) | |   |   |  | | Tablet 6 (Bucket 4) | |   |
+|  | |     BackendId 1     | |   |   |  | |     BackendId 2     | |   |
+|  | +---------------------+ |   |   |  | +---------------------+ |   |
+|  +-------------------------+   |   |  +-------------------------+   |
+|  +-------------------------+   |   |  +-------------------------+   |
+|  |      Partition 2        |   |   |  |      Partition 2        |   |
+|  | +---------------------+ |   |   |  | +---------------------+ |   |
+|  | | Tablet 3 (Bucket 1) | |   |   |  | | Tablet 7 (Bucket 3) | |   |
+|  | |     BackendId 1     | |   |   |  | |     BackendId 2     | |   |
+|  | +---------------------+ |   |   |  | +---------------------+ |   |
+|  | +---------------------+ |   |   |  | +---------------------+ |   |
+|  | | Tablet 4 (Bucket 2) | |   |   |  | | Tablet 8 (Bucket 4) | |   |
+|  | |     BackendId 1     | |   |   |  | |     BackendId 2     | |   |
+|  | +---------------------+ |   |   |  | +---------------------+ |   |
+|  +-------------------------+   |   |  +-------------------------+   |
++--------------------------------+   +--------------------------------+
+
++--------------------------------+   +--------------------------------+
+|             Node 3             |   |             Node 4             |
+|  +-------------------------+   |   |  +-------------------------+   |
+|  |      Partition 1        |   |   |  |      Partition 1        |   |
+|  | +---------------------+ |   |   |  | +---------------------+ |   |
+|  | | Tablet 1 (Bucket 1) | |   |   |  | | Tablet 5 (Bucket 3) | |   |
+|  | |     BackendId 3     | |   |   |  | |     BackendId 4     | |   |
+|  | +---------------------+ |   |   |  | +---------------------+ |   |
+|  | +---------------------+ |   |   |  | +---------------------+ |   |
+|  | | Tablet 2 (Bucket 2) | |   |   |  | | Tablet 6 (Bucket 4) | |   |
+|  | |     BackendId 3     | |   |   |  | |     BackendId 4     | |   |
+|  | +---------------------+ |   |   |  | +---------------------+ |   |
+|  +-------------------------+   |   |  +-------------------------+   |
+|  +-------------------------+   |   |  +-------------------------+   |
+|  |      Partition 2        |   |   |  |      Partition 2        |   |
+|  | +---------------------+ |   |   |  | +---------------------+ |   |
+|  | | Tablet 3 (Bucket 1) | |   |   |  | | Tablet 7 (Bucket 3) | |   |
+|  | |     BackendId 3     | |   |   |  | |     BackendId 4     | |   |
+|  | +---------------------+ |   |   |  | +---------------------+ |   |
+|  | +---------------------+ |   |   |  | +---------------------+ |   |
+|  | | Tablet 4 (Bucket 2) | |   |   |  | | Tablet 8 (Bucket 4) | |   |
+|  | |     BackendId 3     | |   |   |  | |     BackendId 4     | |   |
+|  | +---------------------+ |   |   |  | +---------------------+ |   |
+|  +-------------------------+   |   |  +-------------------------+   |
++--------------------------------+   +--------------------------------+
 ```
 
 ## 4.2 How many tablets that a partition should have
