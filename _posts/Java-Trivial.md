@@ -29,7 +29,10 @@ categories:
 
 * `-Xrunjdwp`：通知JVM使用`Java debug wire protocol`运行调试环境
 * `transport`：指定了调试数据的传送方式，`dt_socket`是指用`SOCKET`模式
-* `address`：调试服务器的端口号
+* `address`：调试服务器的地址
+    * `8000`
+    * `127.0.0.1:8000`
+    * `0.0.0.0:8000`
 * `server=y/n`：y表示当前是调试服务端，n表示当前是调试客户端
 * `suspend`：表示启动时不中断。一般用于调试启动不了的问题
 
@@ -223,6 +226,8 @@ Java反编译工具，[下载地址](http://www.javadecompilers.com/jad)
 # 11 Arthas
 
 [Arthas](https://github.com/alibaba/arthas)
+
+[commands](https://arthas.aliyun.com/doc/commands.html)
 
 # 12 VisualVM
 
