@@ -405,6 +405,27 @@ However, this cache clearing process is not without its costs. Understanding wha
 1. `sync; echo 2 > /proc/sys/vm/drop_caches`：Clean `dentries` and `inodes`
 1. `sync; echo 3 > /proc/sys/vm/drop_caches`：Clean `PageCache`, `dentries` and `inodes`
 
+## 7.3 brk and mmap
+
+![memory_allocate](/images/Linux-Memory-Management/memory_allocate.jpeg)
+
+The term "program break" refers to a concept related to memory management in Unix-like operating systems. Specifically, it represents the boundary between the data segment and the heap in a process's address space. The data segment contains the initialized and uninitialized data of a program, while the heap is used for dynamic memory allocation during program execution.
+
+`mmap` and `brk` are both system calls in Unix-like operating systems that are used for memory allocation and management, but they serve different purposes and have some key differences:
+
+* `mmap` (Memory Mapping):
+    * Purpose: `mmap` is primarily used for memory mapping, which allows you to map a file, device, or anonymous memory region into the process's address space. It can be used for both memory allocation and memory-mapped file operations.
+    * Flexibility: `mmap` is more flexible than brk because it can allocate memory in various ways, including mapping files, devices, and anonymous memory. It allows you to specify the desired size, protection, and mapping flags.
+    * Use Cases: `mmap` is commonly used for dynamic memory allocation in modern Unix-like systems, as well as for memory-mapped I/O, shared memory, and memory-mapped files.
+* `brk` and `sbrk` (Program Break):
+    * Purpose: `brk` and `sbrk` are used for managing the program's data segment, specifically the end of the data segment (program break). They control the size of the heap, which is used for dynamic memory allocation in older Unix programs.
+    * Simplicity: `brk` and `sbrk` are simpler to use than `mmap` but have limitations. They allow you to adjust the program's heap size by moving the program break, effectively allocating or releasing memory. However, they lack the flexibility of `mmap` in terms of specifying various memory allocation options.
+    * Legacy: `brk` and `sbrk` are considered legacy and are less commonly used in modern programming because they lack the features and robustness of `mmap`. Most modern Unix-like systems use `mmap` or other memory allocation mechanisms for dynamic memory allocation.
+
+In summary, `mmap` is a more versatile and flexible system call that can be used for various memory allocation and mapping purposes, including dynamic memory allocation. `brk` and `sbrk` are older and simpler system calls that control the size of the heap but are less commonly used in modern programming due to their limitations and the availability of more advanced memory management techniques.
+
+And additionally, `brk` and `sbrk` allocate virtual memory space within a process's address space, and the allocation of physical memory pages occurs as data is actually read from or written to the allocated virtual memory.
+
 # 8 Reference
 
 * [20 张图揭开「内存管理」的迷雾，瞬间豁然开朗](https://zhuanlan.zhihu.com/p/152119007)
