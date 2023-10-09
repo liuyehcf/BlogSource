@@ -359,7 +359,7 @@ In Linux, user process linear addresses can address a range from `0` to `3GB`. D
 
 ![linux_6](/images/Linux-Memory-Management/linux_6.gif)
 
-# 6 总结
+# 6 Summary
 
 1. To address the issue of physical memory addresses causing conflicts between programs and leading to crashes, **"Memory Segmentation"** or **"Segmented Memory Management"** was introduced.
 1. To overcome the problems of "external fragmentation" and "inefficient memory swapping" associated with memory segmentation, **"Memory Paging"** or **"Paged Memory Management"** was introduced.
