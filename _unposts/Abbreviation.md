@@ -50,3 +50,5 @@
 | ARR | Annual Recurring Revenue |
 | NFA | Non-Deterministic Finite Automation |
 | DFA | Deterministic Finite Automation |
+| CISC | Complex Instruction Set Computer |
+| RISC | Reduced Instruction Set Computer |

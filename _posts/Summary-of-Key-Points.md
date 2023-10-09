@@ -685,6 +685,8 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
     - Data Migration
     - Data Masking
     - Data Archiving
+    - Retention Analysis
+    - Funnel Analysis
 {% endmarkmap %}
 
 ## 3.1 Task Readiness Analysis
