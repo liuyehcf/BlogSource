@@ -238,7 +238,7 @@ In paged memory addressing, obtaining a physical address requires three memory a
 
 Segmented paging address translation can be implemented using a combination of software and hardware methods. While this increases hardware costs and system overhead, it improves memory utilization.
 
-# 5 Linux内存管理
+# 5 Linux Memory Management
 
 **摘录自[20 张图揭开「内存管理」的迷雾，瞬间豁然开朗](https://zhuanlan.zhihu.com/p/152119007)**
 
@@ -307,7 +307,7 @@ From this diagram, you can see that user space memory is divided into 7 differen
 * Stack Segment, including local variables and the context of function calls. The stack size is typically fixed, often around 8MB, although the system provides parameters for customizing the size.
 * Among these 7 memory segments, the memory in the Heap and File Mapping segments is dynamically allocated. For instance, you can use the `malloc()` function from the C standard library or `mmap()` to dynamically allocate memory in the Heap and File Mapping segments, respectively.
 
-## 5.1 逻辑地址如何转换为物理地址
+## 5.1 How logical addresses are converted to physical addresses
 
 **摘录自[线性地址转换为物理地址是硬件实现还是软件实现？具体过程如何？](https://www.zhihu.com/question/23898566)**
 
