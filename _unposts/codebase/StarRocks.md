@@ -403,7 +403,21 @@ Here is a diagram that illustrates the relationship between partitions, tablets,
 +--------------------------------+   +--------------------------------+
 ```
 
-## 4.2 How many tablets that a partition should have
+## 4.2 Colocate
+
+The primary motivation behind colocate storage is to reduce data movement/shuffling when executing joins. If related tables (which are frequently joined together) are colocated on the same node, then join operations can be done locally without having to move data between nodes, thus increasing performance and reducing network overhead.
+
+To understand how StarRocks achieves colocate storage, consider the following key aspects:
+
+* **Colocate Group**: StarRocks allows users to specify tables that should be colocated together by putting them in the same colocate group. This ensures that related tables are physically stored on the same nodes.
+* **Distribution Key**: The tables within a colocate group are typically distributed based on a common distribution key. This ensures that related rows (rows with the same distribution key value) from different tables are stored together on the same node.
+* **Balancing**: StarRocks continuously monitors the distribution of data and can move data around to maintain colocation as data grows or changes. For instance, if a new node is added to the cluster, StarRocks can rebalance data to ensure the colocate property is maintained.
+* **Bucket Shuffle**: If the distribution keys are properly chosen, StarRocks can perform bucket shuffle joins, which means it can directly merge data from the two tables without having to reshuffle it. This can significantly boost join performance.
+* **Query Optimization**: The query optimizer in StarRocks is aware of the colocation property. When generating execution plans for queries that involve joins between tables in the same colocate group, it can take advantage of the colocation to generate more efficient plans.
+* **Failure Handling**: In case of node failures, StarRocks can still access data from replicas since data in StarRocks is typically replicated across multiple nodes for fault tolerance. However, if a node is down, some of the benefits of colocation might be temporarily lost until recovery.
+* **Constraints**: It's worth noting that while colocate storage offers performance benefits, it also comes with some constraints. For instance, tables in the same colocate group typically need to have the same distribution key and the same number of buckets.
+
+## 4.3 How many tablets that a partition should have
 
 The number of tablets that a partition should have in StarRocks depends on several factors, including the size of the data, the available resources, and the desired query performance. Here are some general guidelines to consider when determining the number of tablets:
 
