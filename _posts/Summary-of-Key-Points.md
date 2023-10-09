@@ -645,6 +645,8 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
                     - MinMax Filter
                 - In-Filter(Rows < 1000)
                     - No False Positive
+        - Tradeoff
+            - Exchange Overhead(Hash, Random read/write) will increase as node number increase
 - Architecture
     - Shared Nothing Architecture
     - Shared Disk Architecture
