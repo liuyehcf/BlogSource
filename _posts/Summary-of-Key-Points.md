@@ -280,6 +280,21 @@ categories:
     - new/delete
     - Smart Pointers
     - Memory Allocators and Custom Memory Management
+    - Memory Allocation Strategy
+        - First Fit, allocates the first block of memory that meets the request
+        - Best Fit, allocates the smallest block of memory that meets the request
+            - Minimize wastage
+            - Fragmentation
+        - Worst Fit, allocates the largest available block of memory that meets the request
+            - Significant Fragmentation
+        - Next Fit, similar to First Fit, but search starts from the last position
+        - Buddy System
+            - Memory is allocated in powers of two
+            - If a request does not match an exact power of two, the next largest size is chosen
+            - This system can coalesce buddy blocks to form larger blocks
+        - Slab Allocation
+            - It divides memory into slabs that are caches of objects of certain types/sizes
+            - This strategy is effective for kernel object allocation where objects are frequently allocated and deallocated
 - RAII(Resource Acquisition Is Initialization)
     - Smart Pointers
     - STL Containers
