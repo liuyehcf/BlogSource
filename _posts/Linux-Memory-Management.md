@@ -456,6 +456,20 @@ Here's a comparison between "Standard File I/O" and `mmap`:
 
 In conclusion, the choice between Standard File I/O and `mmap` depends on the specific needs and access patterns of the application. Each has its strengths and ideal scenarios. For simple file reading/writing tasks, Standard File I/O is often sufficient. For performance-critical applications with specific patterns, `mmap` can offer advantages.
 
+## 7.5 TLB shootdown
+
+A TLB (Translation Lookaside Buffer) shootdown is a mechanism used in multiprocessor computer systems to ensure the consistency of virtual-to-physical address mappings in the TLB cache of each processor.
+
+Let's break this down a bit:
+
+1. **What is a TLB?**: The Translation Lookaside Buffer (TLB) is a hardware cache that stores recent virtual-to-physical address translations. When a processor needs to access data, it does so using a virtual address. The TLB checks to see if it has a recent translation for that virtual address to a physical address in memory. If it does (a TLB hit), the processor can access the data faster. If it doesn't (a TLB miss), the system needs to fetch the translation from the page tables, which is slower.
+1. **Why is consistency needed in a multiprocessor system?**: In multiprocessor systems, each processor typically has its own TLB. If one processor changes a virtual-to-physical mapping (e.g., because of memory management operations like paging or memory unmapping), other processors' TLBs might still have the old, now-stale mapping.
+1. **What is a TLB shootdown?**: A TLB shootdown is a procedure to ensure that when a virtual-to-physical mapping is changed or invalidated on one processor, other processors are informed and can update or invalidate their own TLBs as needed. This process ensures that all processors have a consistent view of memory.
+1. **How does it work?**: When a processor modifies a page table entry that might be cached in other processors' TLBs, it sends an inter-processor interrupt (IPI) to the other processors. This IPI acts as a signal to those processors to check and, if necessary, invalidate their local TLB entries for the given virtual address. The term "shootdown" arises because it's as if the initiating processor is telling the other processors to "shoot down" any potentially stale TLB entries they have.
+1. **Performance Implications**: TLB shootdowns can have a performance impact because they involve synchronization between processors. Each IPI can cause a processor to be interrupted from its current task, handle the invalidation request, and then resume its task. If TLB shootdowns are frequent, they can degrade system performance. Thus, optimizing and reducing the frequency of TLB shootdowns is an area of focus in operating system and hardware design.
+
+In summary, a TLB shootdown is a synchronization mechanism used in multiprocessor systems to ensure that all processors have a consistent and up-to-date view of virtual-to-physical address translations.
+
 # 8 Reference
 
 * [20 张图揭开「内存管理」的迷雾，瞬间豁然开朗](https://zhuanlan.zhihu.com/p/152119007)
@@ -465,3 +479,4 @@ In conclusion, the choice between Standard File I/O and `mmap` depends on the sp
 * [linux内存占用问题调查——slab](https://blog.csdn.net/liuxiao723846/article/details/72625394)
 * [How much RAM does the kernel use?](https://unix.stackexchange.com/questions/97261/how-much-ram-does-the-kernel-use)
 * [Linux系统排查1——内存篇](https://www.cnblogs.com/Security-Darren/p/4685629.html)
+* [深入理解 Linux 内核--jemalloc 引起的 TLB shootdown 及优化](https://mp.weixin.qq.com/s?__biz=MzI1MzYzMjE0MQ==&mid=2247485543&idx=1&sn=caf885f6d76659e7ad8ef5b006ce31f6&chksm=e9d0c385dea74a937e8200e98eecdfab608081e5e5e23232a905383d0d58d19625ae0717e453&scene=21)

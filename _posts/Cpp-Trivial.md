@@ -398,7 +398,9 @@ Virtual memory is allocated through system call `brk` and `mmap`, please refer t
 
 memory management libraries run in user mode and typically use low-level system calls for virtual memory allocation. Different libraries may employ different memory allocation algorithms to effectively manage allocated and deallocated memory blocks in the heap.
 
-## 3.1 [tcmalloc](https://github.com/google/tcmalloc)
+## 3.1 tcmalloc
+
+[tcmalloc](https://github.com/google/tcmalloc)
 
 ![tcmalloc](/images/Cpp-Trivial/tcmalloc.png)
 
@@ -496,7 +498,9 @@ pprof --text ./main /tmp/test-profile.0001.heap | head -30
 pprof --svg ./main /tmp/test-profile.0001.heap > heap.svg 
 ```
 
-## 3.2 [jemalloc](https://github.com/jemalloc/jemalloc)
+## 3.2 jemalloc
+
+[jemalloc](https://github.com/jemalloc/jemalloc)
 
 ![jemalloc](/images/Cpp-Trivial/jemalloc.png)
 
@@ -681,6 +685,10 @@ jeprof main localhost:16691/pprof/heap --svg > main.svg #图形
 
 jeprof main localhost:16691/pprof/profile --text --seconds=15
 ```
+
+### 3.2.4 Reference
+
+* [Jemalloc内存分配与优化实践](https://mp.weixin.qq.com/s?__biz=Mzg3Mjg2NjU4NA==&mid=2247484507&idx=1&sn=0befa2bec46c3fe64807f5b79b2940d5)
 
 ## 3.3 [mimalloc](https://github.com/microsoft/mimalloc)
 
