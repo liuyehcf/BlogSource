@@ -428,6 +428,34 @@ In summary, `mmap` is a more versatile and flexible system call that can be used
 
 And additionally, `brk` and `sbrk` allocate virtual memory space within a process's address space, and the allocation of physical memory pages occurs as data is actually read from or written to the allocated virtual memory.
 
+## 7.4 Standard File I/O and mmap
+
+Here's a comparison between "Standard File I/O" and `mmap`:
+
+1. **Access Mechanism**:
+    * **Standard File I/O**: Operations involve explicit system calls to read from or write to a file, such as read() and write(). Data is transferred between the kernel space and the user space.
+    * **mmap**: A region of a file is mapped to a region of the process's memory. After this mapping, reading from or writing to this memory region allows you to directly read from or write to the file. The file access is essentially treated as memory access.
+1. **Efficiency**:
+    * **Standard File I/O: Each operation**, like reading or writing, requires a system call, which introduces some overhead. Additionally, there might be double buffering: one buffer in the application and another in the kernel.
+    * **mmap**: Once a file is memory-mapped, accessing it can be as efficient as accessing regular memory, especially beneficial for random access patterns. No additional system calls are needed after mapping until the memory is unmapped.
+1. **Use Cases**:
+    * **Standard File I/O**: Generally suitable for sequential file operations or when there's a need for granular control over I/O.
+    * **mmap**: Particularly beneficial for random access patterns, as in some databases or large datasets. It's also commonly used for inter-process communication (IPC) via shared memory.
+1. **Memory Management**:
+    * **Standard File I/O**: Data is read into buffers managed by the application or the standard library.
+    * **mmap**: Uses the operating system's page cache directly, potentially avoiding the double-buffering scenario. The OS manages the memory, and can "page out" sections if needed, making it more dynamic.
+1. **File Size Changes**:
+    * **Standard File I/O**: Changing the file size or position isn't problematic, as you usually check or adjust your position with calls like lseek().
+    * **mmap**: Changing the mapped file's size can lead to segmentation faults or undefined behavior if not handled correctly.
+1. **Consistency & Coherency**:
+    * **Standard File I/O**: To ensure multiple processes can safely read/write, careful synchronization is often required.
+    * **mmap**: Provides a coherent view of a file. If one process changes a memory-mapped file, another process using the same mapping will see the changes almost immediately.
+1. **Flexibility**:
+    * **Standard File I/O**: Offers a broader range of operations, like different ways to seek within a file, read certain lengths of bytes, or handle errors.
+    * **mmap**: More limited but offers direct memory access benefits.
+
+In conclusion, the choice between Standard File I/O and `mmap` depends on the specific needs and access patterns of the application. Each has its strengths and ideal scenarios. For simple file reading/writing tasks, Standard File I/O is often sufficient. For performance-critical applications with specific patterns, `mmap` can offer advantages.
+
 # 8 Reference
 
 * [20 张图揭开「内存管理」的迷雾，瞬间豁然开朗](https://zhuanlan.zhihu.com/p/152119007)
