@@ -104,6 +104,12 @@ update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 11
 update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 11
 ```
 
+**查看所有可用的gcc版本：**
+
+```sh
+update-alternatives --list gcc
+```
+
 **切换不同的gcc版本：**
 
 ```sh

@@ -193,11 +193,13 @@ g++ a.cpp -L. -lb -ld # right order
 
 **因此，假设`libA`依赖`libB`，那么需要将`libA`写前面，`libB`写后面**
 
-## 2.4 LD_PRELOAD
+## 2.4 Environment Variables
 
-**环境变量`LD_PRELOAD`指定的目录拥有最高优先级**
+Please refer to `man ld.so` for details:
 
-### 2.4.1 demo
+### 2.4.1 LD_PRELOAD
+
+Lists shared libraries that are loaded (preloaded) before any other shared libraries. This can be used to override functions in other shared objects.
 
 ```sh
 cat > sample.c << 'EOF'
@@ -245,6 +247,21 @@ This is my fopen!
 fopen() returned NULL
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
+
+### 2.4.2 LD_DEBUG
+
+Usage: `LD_DEBUG=<type> <binary>`, here are all available types.
+
+1. `all`: Print all debugging information (except statistics and unused; see below).
+1. `bindings`: Display information about which definition each symbol is bound to.
+1. `files`: Display progress for input file.
+1. `libs`: Display library search paths.
+1. `reloc`: Display relocation processing.
+1. `scopes`: Display scope information.
+1. `statistics`: Display relocation statistics.
+1. `symbols`: Display search paths for each symbol look-up.
+1. `unused`: Determine unused DSOs.
+1. `versions`: Display version dependencies.
 
 ## 2.5 How to make library
 
@@ -1010,7 +1027,116 @@ $ gcc -o main main.cpp -lstdc++ -std=gnu++17 -g -ggdb -O0 && nm main | grep '_Z'
 
 # 5 Address Sanitizer
 
-## 5.1 memory leak
+Address Sanitizer (ASan) has its origins in Google. The project was started as a way to improve the detection of memory-related bugs, which have historically been some of the most elusive and difficult-to-diagnose issues in software development.
+
+Here's a brief history of Address Sanitizer:
+
+1. **Early 2010s Origin**: Address Sanitizer was developed by Konstantin Serebryany, Dmitry Vyukov, and other contributors at Google. The initial focus was on detecting memory issues in C++ programs, but the tool's capabilities expanded over time.
+1. **Release and Integration with Major Compilers**: After its development, Address Sanitizer was integrated into major compilers. Clang was one of the first compilers to support ASan, and later, it was incorporated into GCC (GNU Compiler Collection). The ease of use—simply adding a compiler flag—made it very attractive for developers to adopt.
+1. **Chromium Adoption**: One of the early and significant adoptions of ASan was in the Chromium project (the open-source foundation of the Chrome browser). Given the scale and complexity of this project, and the potential security implications of memory bugs in a web browser, ASan proved to be an invaluable tool for ensuring the robustness and safety of the code.
+1. **Expanding Beyond Address Sanitizer**: The success of ASan led to the development of other "sanitizers" such as Thread Sanitizer (TSan) for detecting data races, Memory Sanitizer (MSan) for uninitialized memory reads, and Undefined Behavior Sanitizer (UBSan) for undefined behavior checks.
+1. **Integration in Development Ecosystems**: As ASan's popularity grew, it found its way into various development ecosystems. Debugging tools, continuous integration systems, and even some integrated development environments (IDEs) began offering first-class support for ASan and related tools.
+1. **Widening Support**: Beyond just C++ and C, ASan also found applicability in other languages and platforms where the underlying memory model had similarities, further broadening its reach and impact.
+
+It is a tool that can help developers find memory-related issues in their programs, such as:
+
+1. **Use-after-free**: Detects when a program uses memory after it has been freed.
+1. **Heap buffer overflow**: Detects when a program writes past the end of an allocated object on the heap.
+1. **Stack buffer overflow**: Detects when a program writes past the end of an allocated object on the stack.
+1. **Global buffer overflow**: Similar to the above but for global variables.
+1. **Memory leaks**: Identifies instances where memory is allocated but not freed, resulting in memory being lost until the program ends.
+1. **Use-after-scope**: Detects the usage of local variables outside of their scope.
+1. **Initialization errors**: Finds reads from uninitialized memory locations.
+
+Address Sanitizer achieves this by instrumenting the binary code. When compiling code with Address Sanitizer enabled, the compiler (e.g., Clang or GCC) will insert additional checks around memory operations. Additionally, Address Sanitizer uses a shadow memory mechanism to keep track of the status (e.g., allocated, deallocated) of each byte in the application's memory.
+
+Because of this instrumentation, programs compiled with Address Sanitizer tend to run slower and use more memory than their non-instrumented counterparts. However, the benefits in terms of finding and fixing memory-related bugs can be substantial.
+
+To use Address Sanitizer, developers typically pass the `-fsanitize=address` flag (and sometimes additional flags) when compiling and linking their code.
+
+Remember, Address Sanitizer is not a substitute for other types of testing or for manual code review. However, when combined with other testing methodologies, it can be a powerful tool in a developer's arsenal for ensuring software reliability and security.
+
+## 5.1 How it works
+
+Here's an in-depth breakdown of how it works:
+
+1. **Compile-time Instrumentation**:
+    * When a program is compiled with ASan enabled (e.g., using the -fsanitize=address flag), the compiler inserts extra instructions around memory operations. These instructions help in checking for memory-related issues.
+    * This instrumentation helps the runtime component of ASan understand memory accesses and allocations/deallocations.
+1. **Shadow Memory**:
+    * ASan uses a concept called "shadow memory" to keep track of each byte of the application's memory.
+    * For every 8 bytes of application memory, there's a corresponding byte in the shadow memory. This shadow byte holds metadata about the status of those 8 bytes (whether they are allocated, deallocated, part of a redzone, etc.).
+    * Using shadow memory, ASan can quickly check the status of a memory location whenever the program accesses it. For example, if a program accesses memory that corresponds to a shadow byte indicating it's deallocated, ASan can immediately flag a use-after-free error.
+1. **Redzones**:
+    * ASan places "redzones" (extra bytes) around allocated memory. These redzones are used to detect out-of-bounds accesses.
+    * If the program accesses memory inside a redzone, it indicates a buffer overflow or underflow.
+1. **Allocation and Deallocation:
+    * ASan replaces the standard memory allocation and deallocation functions (like malloc and free in C).
+    * When memory is allocated, ASan also sets up the corresponding shadow memory and redzones. When memory is deallocated, it is poisoned (marked in a way that any access will be flagged by ASan), helping detect use-after-free bugs.
+1. **Memory Leak Detection**:
+    * ASan can also track allocations that were never deallocated. At the end of the program's execution, it can report these as memory leaks.
+1. **Reporting**:
+    * When ASan detects an error, it immediately halts the program and provides a detailed report. This report typically includes the type of error (e.g., buffer overflow), the memory address where the error occurred, and a stack trace, helping developers pinpoint and understand the cause.
+1. **Performance Impact**:
+    * ASan's checks and shadow memory mechanism introduce overhead. Programs compiled with ASan typically run slower (often around 2x) and consume more memory than their non-instrumented counterparts.
+    * It's important to understand that while ASan can detect a variety of memory errors, it's not foolproof. For example, it might not detect all memory leaks, especially if they involve complex data structures. However, its ability to catch many common and critical memory errors makes it a valuable tool for developers.
+
+When you compile your program with Address Sanitizer (ASan) enabled, the standard memory allocation and deallocation functions like `malloc`, `free`, `new`, and `delete` get intercepted or "wrapped" by ASan. This means that when your program calls `malloc`, it's actually calling ASan's version of `malloc`.
+
+This interception is crucial for how ASan functions. Here's why:
+
+1. **Setting up Redzones**: When memory is allocated, ASan's version of `malloc` (or `new` for C++) can add "redzones" around the allocated memory. These redzones help in detecting out-of-bounds accesses.
+1. **Shadow Memory Management**: ASan maintains a shadow memory that maps to your program's memory to track the state of each byte (e.g., allocated, deallocated). When memory is allocated or deallocated, ASan's version of the memory functions update the shadow memory accordingly.
+1. **Poisoning Memory**: When memory is deallocated using ASan's `free` or `delete`, the memory isn't immediately returned to the system. Instead, it is "poisoned". This means that any subsequent access to this memory will raise an error, helping in detecting use-after-free bugs.
+1. **Memory Leak Detection**: By intercepting these calls, ASan can also maintain a list of all current allocations. When the program exits, it checks this list to report any memory that hasn't been deallocated, indicating a memory leak.
+
+Here's an example to illustrate the mechanism:
+
+```cpp
+#include <iostream>
+
+int main() {
+    std::cout << "Hello AddressSanitizer!\n";
+    return 0;
+}
+```
+
+```sh
+# dynamic link
+gcc -o main main.cpp -lstdc++ -std=gnu++17 -fsanitize=address
+
+objdump -p main | grep NEEDED
+  NEEDED               libasan.so.8
+  NEEDED               libstdc++.so.6
+  NEEDED               libc.so.6
+
+# It shows that the call malloc was redirect to libasan.so.8
+LD_DEBUG="bindings" ./main 2> bind.txt && cat bind.txt | grep malloc
+Hello AddressSanitizer!
+   2623584:	binding file /lib/x86_64-linux-gnu/libc.so.6 [0] to /lib/x86_64-linux-gnu/libasan.so.8 [0]: normal symbol `malloc' [GLIBC_2.2.5]
+   2623584:	binding file ./main [0] to /lib/x86_64-linux-gnu/libasan.so.8 [0]: normal symbol `malloc' [GLIBC_2.2.5]
+   2623584:	binding file /lib/x86_64-linux-gnu/libstdc++.so.6 [0] to /lib/x86_64-linux-gnu/libasan.so.8 [0]: normal symbol `malloc' [GLIBC_2.2.5]
+```
+
+```sh
+# static link
+gcc -o main main.cpp -lstdc++ -std=gnu++17 -fsanitize=address -static-libasan
+
+objdump -p main | grep NEEDED
+  NEEDED               libstdc++.so.6
+  NEEDED               libm.so.6
+  NEEDED               libgcc_s.so.1
+  NEEDED               libc.so.6
+
+# It shows that the call malloc was redirect to main itself
+LD_DEBUG="bindings" ./main 2> bind.txt && cat bind.txt | grep malloc
+Hello AddressSanitizer!
+   2624551:	binding file /lib/x86_64-linux-gnu/libc.so.6 [0] to ./main [0]: normal symbol `malloc' [GLIBC_2.2.5]
+   2624551:	binding file ./main [0] to ./main [0]: normal symbol `malloc' [GLIBC_2.2.5]
+   2624551:	binding file /lib/x86_64-linux-gnu/libstdc++.so.6 [0] to ./main [0]: normal symbol `malloc' [GLIBC_2.2.5]
+```
+
+## 5.2 memory leak
 
 ```sh
 cat > test_memory_leak.cpp << 'EOF'
@@ -1027,7 +1153,7 @@ gcc test_memory_leak.cpp -o test_memory_leak -g -lstdc++ -fsanitize=address -sta
 ./test_memory_leak
 ```
 
-## 5.2 stack buffer underflow
+## 5.3 stack buffer underflow
 
 ```sh
 cat > test_stack_buffer_underflow.cpp << 'EOF'
@@ -1057,11 +1183,12 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
 ./test_stack_buffer_underflow
 ```
 
-## 5.3 Reference
+## 5.4 Reference
 
 * [c++ Asan(address-sanitize)的配置和使用](https://blog.csdn.net/weixin_41644391/article/details/103450401)
 * [HOWTO: Use Address Sanitizer](https://www.osc.edu/resources/getting_started/howto/howto_use_address_sanitizer)
 * [google/sanitizers](https://github.com/google/sanitizers)
+* [深入浅出 Sanitizer Interceptor 机制](https://mp.weixin.qq.com/s?__biz=Mzg3Mjg2NjU4NA==&mid=2247483868&idx=1&sn=a85112e88cd187e27f418ff044247956&chksm=cee9f7abf99e7ebdac55e36077b4f915bccbe33a8a6ee9920136a1dc9598e2ae62bb95d3a25f&scene=21#wechat_redirect)
 
 # 6 GNU Tools
 
