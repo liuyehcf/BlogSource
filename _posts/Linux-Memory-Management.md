@@ -416,7 +416,7 @@ The term "program break" refers to a concept related to memory management in Uni
 * `mmap` (Memory Mapping):
     * `man brk/sbrk`
     * Purpose: `mmap` is primarily used for memory mapping, which allows you to map a file, device, or anonymous memory region into the process's address space. It can be used for both memory allocation and memory-mapped file operations.
-    * Flexibility: `mmap` is more flexible than brk because it can allocate memory in various ways, including mapping files, devices, and anonymous memory. It allows you to specify the desired size, protection, and mapping flags.
+    * Flexibility: `mmap` is more flexible than brk because it can allocate memory in various ways, including mapping files, devices, and anonymous memory. It allows you to specify the desired size(but the smallest size is a single page, typically 4KB), protection, and mapping flags.
     * Use Cases: `mmap` is commonly used for dynamic memory allocation in modern Unix-like systems, as well as for memory-mapped I/O, shared memory, and memory-mapped files.
 * `brk` and `sbrk` (Program Break):
     * `man mmap/munmap`
@@ -469,6 +469,27 @@ Let's break this down a bit:
 1. **Performance Implications**: TLB shootdowns can have a performance impact because they involve synchronization between processors. Each IPI can cause a processor to be interrupted from its current task, handle the invalidation request, and then resume its task. If TLB shootdowns are frequent, they can degrade system performance. Thus, optimizing and reducing the frequency of TLB shootdowns is an area of focus in operating system and hardware design.
 
 In summary, a TLB shootdown is a synchronization mechanism used in multiprocessor systems to ensure that all processors have a consistent and up-to-date view of virtual-to-physical address translations.
+
+## 7.6 Slab Allocation
+
+The term "slab allocation" refers to a memory management mechanism implemented in certain operating systems, notably the Linux kernel. Its primary goal is to efficiently manage memory allocations by caching objects of frequently used fixed sizes to avoid the overhead of constantly allocating and deallocating **small chunks of memory**.
+
+Here's a breakdown of slab allocation:
+
+1. **Problem with Fragmentation**: When a system frequently allocates and deallocates small chunks of memory, it can lead to fragmentation. This means that while there might be free memory available, it's scattered in small chunks throughout the system, making it unusable for larger allocations.
+1. **The Concept of Caches**: To solve the fragmentation issue and to optimize the allocation and deallocation processes, the slab allocator introduces the concept of caches. Each cache is designed to hold objects of a specific size.
+1. **Slabs**: Within each cache, memory is organized into "slabs." A slab is a contiguous block of memory divided into equally sized parts that fit objects of the cache's designated size. Slabs can be in one of three states:
+    * Empty: All objects are free.
+    * Partial: Some objects are allocated, and some are free.
+    * Full: All objects are allocated.
+1. **Allocation & Deallocation**: When the system requires an object of a particular size, it looks for a suitable cache and then checks for a free object in one of the partial slabs (or an empty slab if no partial slabs have free objects). When objects are deallocated, they are returned to their slab, making them available for future allocations. This mechanism reduces the overhead of frequently carving out and reclaiming small chunks of memory.
+1. **Benefits:**
+    * Reduces fragmentation.
+    * Speeds up memory allocation for commonly sized objects.
+    * Makes the deallocation process efficient.
+1. **Usage in Linux**: The Linux kernel uses the slab allocator for various purposes, including allocating kernel objects like inode and dentry structures, which have fixed sizes and are frequently allocated and deallocated.
+
+The slab allocation strategy is just one approach to kernel memory management. There are other strategies like the slob (simple list of blocks) and slub (the unqueued slab allocator) allocators in the Linux kernel, each with its advantages and trade-offs.
 
 # 8 Reference
 
