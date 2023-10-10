@@ -74,7 +74,7 @@ flowchart TD
 
 **后缀：`*.so`**
 
-**如何查看二进制的动态链接库：`ldd`**
+**如何查看二进制的动态链接库：`ldd` (list dynamic dependencies)**
 
 **查看动态链接库绑定信息：`ldconfig -v`、`ldconfig -p`**
 

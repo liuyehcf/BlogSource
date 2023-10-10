@@ -1315,6 +1315,7 @@ ROOT=$(cd "$ROOT"; pwd)
 
 * `objdump -drwCS main.o`
 * `objdump -drwCS -M intel main.o`
+* `objdump -p main`
 
 ## 2.35 objcopy & strip
 
