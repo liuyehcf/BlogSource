@@ -4029,22 +4029,34 @@ CONFIG_KVM_MMU_AUDIT=y
 * `yum list`：列出所有可安装的软件
     * `yum list docker-ce --showduplicates | sort -r`：查询软件的版本信息
 
-**安装高版本的gcc：**
-
-```sh
-yum install centos-release-scl
-
-yum list devtoolset* --showduplicates | sort -r
-
-yum install devtoolset-9
-
-scl enable devtoolset-9 bash
-```
-
 **安装jdk：**
 
 ```sh
 sudo yum install java-1.8.0-openjdk-devel
+```
+
+### 10.2.1 scl
+
+`SCL` stands for Software Collections. It's a mechanism that allows you to install multiple versions of software on the same system, without them conflicting with each other. This is especially helpful for software like databases, web servers, or development tools where you might need different versions for different projects.
+
+**示例：**
+
+* `scl -l`: Lists all the available software collections on your system.
+* `scl enable <collection> <command>`: This command runs a specified `<command>` within the environment of the given software `<collection>`. This means that when you run a command under a specific software collection, you're using the version of the software provided by that collection.
+
+**安装指定版本的gcc：**
+
+```sh
+yum -y install centos-release-scl
+
+yum list devtoolset* --showduplicates | sort -r
+
+yum -y install devtoolset-7
+yum -y install devtoolset-8
+yum -y install devtoolset-9
+yum -y install devtoolset-10
+
+scl enable devtoolset-10 bash
 ```
 
 ## 10.3 dnf
