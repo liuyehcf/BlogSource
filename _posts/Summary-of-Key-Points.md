@@ -913,11 +913,19 @@ Now, instead of storing all these chunks as is, Roaring Bitmaps compresses them:
 - Functions
     - Process Management
         - Process Creation
-            - Process States (New, Ready, Running, Blocked, Terminated)
+            - Process States
+                - New
+                - Ready
+                - Running
+                - Blocked
+                - Terminated
             - Process Control Block (PCB)
             - Fork and Exec
         - Process Scheduling
-            - CPU Scheduling Algorithms (Round Robin, Priority, etc.)
+            - CPU Scheduling Algorithms
+                - Completely Fair Scheduling (CFS)
+                - Round Robin (RR) Scheduling
+                - FIFO (First In, First Out) Scheduling
         - Inter-Process Communication (IPC)
             - Message Passing
             - Shared Memory
@@ -934,26 +942,33 @@ Now, instead of storing all these chunks as is, Roaring Bitmaps compresses them:
             - Main Memory (RAM)
             - Secondary Storage (Disk)
         - Address Spaces
-            - Physical Addresses
-            - Logical Addresses
+            - Logical Address
+            - Linear Address
+            - Physical Address
+            - Logical Address --segmentation--> Linear Address --paging--> Physical Address
         - Memory Allocation
             - Contiguous Memory Allocation
+            - Segmentation Memory Allocation
+                - Avoid Memory Space Conflict
+                - Partly controled by hardware
+                - 80286
             - Paging Memory Allocation
                 - Better Efficiency & No External Fragmentation
                 - Partly controled by hardware
                 - Linux
-            - Segmentation Memory Allocation
-                - Avoid Memory Space Conflict
-                - Partly controled by hardware
             - Combination of Paging and Segmentation
+                - 80386
         - Virtual Memory
             - Each Virtual Memory Address contains the Page Number and Page Offset
-            - Demand Paging
             - Page Tables
                 - cr3
             - Page Replacement Algorithms (LRU, FIFO, etc.)
+                - FIFO (First-In-First-Out)
+                - LRU (Least Recently Used)
+                - LFU (Least Frequently Used)
             - Page Fault Exception
                 - A process is trying to access a page (or memory location) in virtual memory that is currently not loaded into physical memory
+                - Lazy Allocation (Demand Paging)
         - Memory Protection
             - Read-Only Memory (ROM)
             - Memory Segmentation
@@ -965,6 +980,14 @@ Now, instead of storing all these chunks as is, Roaring Bitmaps compresses them:
             - Internal Fragmentation
     - File System Management
     - Device Management
+        - Disk Scheduling
+            - FCFS (First-Come-First-Served)
+            - SSTF (Shortest Seek Time First)
+            - SCAN (Elevator Algorithm)
+                - C-SCAN (Circular SCAN)
+                - N-Step-SCAN
+            - LOOK
+                - C-LOOK (Circular LOOK)
 - Virtualization
     - Full Virtualization
     - Paravirtualization
@@ -984,20 +1007,6 @@ Now, instead of storing all these chunks as is, Roaring Bitmaps compresses them:
     - Virtual Memory
     - Paging
     - Caching
-- Algorithms
-    - CPU Scheduling
-    - Page Replacement
-        - FIFO (First-In-First-Out)
-        - LRU (Least Recently Used)
-        - LFU (Least Frequently Used)
-    - Disk Scheduling
-        - FCFS (First-Come-First-Served)
-        - SSTF (Shortest Seek Time First)
-        - SCAN (Elevator Algorithm)
-            - C-SCAN (Circular SCAN)
-            - N-Step-SCAN
-        - LOOK
-            - C-LOOK (Circular LOOK)
 - Security
     - Authentication
     - Authorization
