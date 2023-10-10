@@ -292,6 +292,7 @@ categories:
             - Memory is allocated in powers of two
             - If a request does not match an exact power of two, the next largest size is chosen
             - This system can coalesce buddy blocks to form larger blocks
+            - No Fragmentation
         - Slab Allocation
             - It divides memory into slabs that are caches of objects of certain types/sizes
             - This strategy is effective for kernel object allocation where objects are frequently allocated and deallocated
