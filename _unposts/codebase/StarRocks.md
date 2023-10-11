@@ -320,6 +320,8 @@ In summary, `update` is used to update intermediate results for an aggregate fun
 
 # 4 Storage
 
+![storage](/images/StarRocks/storage.jpeg)
+
 ## 4.1 partition vs. tablet vs. bucket
 
 In StarRocks, partition, tablet, and bucket are related concepts that are used to manage data storage and processing in a distributed environment.
@@ -430,3 +432,48 @@ Desired query performance: The number of tablets can impact query performance in
 Based on these factors, a common practice is to use the number of CPU cores on each node as a guideline to determine the number of tablets for a partition. For example, if a node has 8 CPU cores, the partition can be divided into 8 tablets. However, this is just a rough guideline, and the number of tablets should be adjusted based on the actual data size and available resources in the cluster.
 
 In summary, the number of tablets that a partition should have in StarRocks should be determined based on the size of the data, the available resources, and the desired query performance. It is a balancing act between distributing the data across the cluster, ensuring optimal resource utilization, and achieving fast query performance.
+
+## 4.4 Index
+
+### 4.4.1 ShortKey Index
+
+For each segment, a ShortKey Index is generated. The ShortKey Index is an index for quickly querying based on a given prefix column, sorted by the given key. During the data writing process, an index entry is generated every certain number of lines (usually every 1024 lines), pointing to the corresponding data record.
+
+* **Sparse Indexing**: The "ShortKey Index" uses a sparse indexing structure. Unlike dense indexes that create an index entry for every row in the table, a sparse index generates an entry at specified intervals. This can save on storage and improve write performance, but may require more I/O operations for certain query patterns.
+* **Index Granularity**: The granularity of the index determines the frequency at which index entries are generated. By default, StarRocks generates an index entry every 1024 rows, but this value is configurable. Adjusting the index granularity allows for optimization based on specific workloads and query patterns.
+* **Performance Considerations**: A smaller index granularity can increase the size of the index but might enhance query performance since the number of data blocks that need scanning could be reduced. Conversely, a larger index granularity can decrease the size of the index but might increase the I/O operations required in certain query scenarios.
+* **Usage:**
+    * Equality predicate
+    * Range predicate
+    * Is Null predicate
+
+![short_key](/images/StarRocks/short_key.png)
+
+### 4.4.2 Zonemap Index
+
+The ZoneMap index stores statistical information for each Segment and for each column corresponding to each Page. This statistical information can help speed up queries and reduce the amount of data scanned. The statistics include the Min (maximum value), Max (minimum value), whether there are null values (HashNull), and information on whether all values are not null (HasNotNull).
+
+* **Usage:**
+    * Equality predicate
+    * Range predicate
+    * Is Null predicate
+
+![zone_map](/images/StarRocks/zone_map.png)
+
+### 4.4.3 Bitmap Index
+
+The Bitmap Index indexes an entire segment's column, rather than generating one for each page. During writing, a map is maintained to record the row numbers corresponding to each key value, using Roaring bitmap encoding. It is suitable for value columns with limited values, such as country, region, and so on.
+
+* **Usage:**
+    * Equality predicate
+    * Range predicate
+    * Is Null predicate
+
+![bitmap](/images/StarRocks/bitmap.png)
+
+### 4.4.4 Bloomfilter Index
+
+Bloom filter index is suitable for datasets with high cardinality, provided they are appropriately sized and tuned to manage the desired false positive rate.
+
+* **Usage:** Only Equality predicate
+

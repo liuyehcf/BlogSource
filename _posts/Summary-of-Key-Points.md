@@ -489,6 +489,9 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
         - Write-Ahead Logging (WAL)
     - Performance Optimization
         - LSM-Tree (Log-Structured Merge Tree)
+    - Analytic Data Format
+        - Arrow
+        - Parquet
 - Database Framework
     - Parser
         - Grammar Checking
