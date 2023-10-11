@@ -159,7 +159,7 @@ table th:nth-of-type(5) {
 | 125 | Valid Palindrome | String | ★ | 首先将非法字符过滤掉，然后转成小写，再判断是否对称 |
 | 126 | Word Ladder II | BFS/Recursion | ★★★★★ | 首先计算出所有单词的neighbor（仅有一个字符不同），利用单元最短路径的算法依次计算出每个单词与起始单词的距离。然后从目标单词往前，用递归收集所有可能的组合 |
 | 127 | Word Ladder | BFS | ★★★★★ | 同126 |
-| 128 | Longest Consecutive Sequence | Array | ★★★★★ | 首先将所有数字添加到set中，再循环，找到最长的连续片段，找的过程中将数字remove出来，避免重复计算。此外O(N)复杂度的那个算法看不懂 |
+| 128 | Longest Consecutive Sequence | Array | ★★★★★ | 首先将所有数字添加到set中，再循环，找到最长的连续片段，找的过程中将数字remove出来，避免重复计算。或者用start_dp, end_dp，这里用的是map |
 | 129 | Sum Root to Leaf Numbers | Tree/Recursion | ★★★ | 经典递归，抵达叶节点时，计算List中对应的数字 |
 | 130 | Surrounded Regions | Array/Recursion | ★★★★ | 先从边界上，递归将未被包围的`O`改成`1`，然后将剩下的`O`改成`X`，再将`1`改回`O` |
 | 131 | Palindrome Partitioning | String/Recursion | ★★★ | 经典递归，递归时，`end from start to len-1`，若子串是对称的，则继续递归 |

@@ -1,3 +1,35 @@
+1. I'm fed up with doing the same thing in the office; I'm fed up with doing the routine work in the office
+1. I'm hypercritical
+1. liberty of speech; liberty of the press; freedom of speech; freedom of the press
+1. in the context of significant layoffs, finding a job can be quite challenging
+1. what's your prescription? I'm short-sighted; I'm far-sighted
+1. legacy code
+1. it is miserable
+1. I'll give it a try
+1. judiciary committee
+1. ordinary; regular; average; normal
+1. our society seems to be further away from the rule of law
+1. the actively closed side; the passively closed side
+1. sequence; sequential; subsequent; contiguous; consecutive
+1. How does the apply operator attach to the tree?
+1. sensual
+1. Microsoft subsidiary
+1. have you signed a non-compete or non-disclosure agreement
+1. does your company often require overtime
+1. this is very draining; this requires a lot of effort
+1. she barely passed the course
+1. make a fool of myself
+1. today is a gift, so it's called present
+1. the roads are jammed
+1. go to; attend; take part; participate
+1. develop; foster; cultivate
+1. still warter; sparking water; tap water
+1. pro-union president
+1. doping scandal
+1. we're grieving
+1. at least 97 people perished
+1. the building was burned to the ground
+1. Explain the difference between tcmalloc and jemalloc
 1. they set out at sunset; they set out at sunrise
 1. including; namely
 1. the road ahead will be long, our climb will be steep
@@ -394,7 +426,6 @@
 1. I'm in the middle, mom and dad on either side
 1. he simply bears up, does what he has to do
 1. we'd better agree to disagree
-1. What choices are there?
 1. there were four of us
 1. she has an innate ability to dance; she has a natural affinity for music
 1. it's against my principles
@@ -2287,7 +2318,6 @@
 1. it is not well paid
 1. 工会
 1. 游行
-1. liberty of speech
 1. Will everything be fine
 1. 一切会好起来吗
 1. Law has two important functions
@@ -3302,7 +3332,6 @@
 1. alter
 1. proposition
 1. equisized
-1. contiguous
 1. yield
 1. 绳子
 1. profession
@@ -3456,7 +3485,6 @@
 1. alumnus
 1. alumni
 1. 后续的
-1. subsequent
 1. 详尽说明
 1. on-site
 1. bachelor's
@@ -3713,7 +3741,6 @@
 1. admit your situation
 1. I'm excited to join the team and make that happen
 1. top-tier
-1. Along the way
 1. compliant
 1. compliment
 1. consolidated

@@ -145,6 +145,7 @@ For better observability and query analysis, I introduced support for runtime pr
         * Transparent accelerating
 1. Explain the design of the scheduler of morsel-driven execution engine.
     1. The minimum execution unit, which is called a pipeline driver, is basically an execution link comprising a sequence of operators.
+    1. The smallest processing unit is referred to as a morsel or a chunk of data. Its size should be large enough to help amortize scheduling overhead and should fit into the cache for better performance.
     1. The ready driver will be put in the multilevel feedback queue, waiting to be scheduled.
     1. And all the blocking drivers will be put into a global queue, and there is a separate thread to perform the task readiness analysis for better responsiveness.
 1. What are the core values of StarRocks?

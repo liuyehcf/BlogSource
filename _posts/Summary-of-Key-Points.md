@@ -985,6 +985,9 @@ Now, instead of storing all these chunks as is, Roaring Bitmaps compresses them:
             - Page Fault Exception
                 - A process is trying to access a page (or memory location) in virtual memory that is currently not loaded into physical memory
                 - Lazy Allocation (Demand Paging)
+            - brk vs. mmap
+            - Slab Allocation
+            - TLB shootdown
         - Memory Protection
             - Read-Only Memory (ROM)
             - Memory Segmentation
