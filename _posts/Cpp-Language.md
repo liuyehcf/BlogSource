@@ -4417,23 +4417,23 @@ int main() {
 
 **[absl](https://abseil.io/docs/cpp/guides/container)**
 
-| 容器 | 是否`pointer stability` |
-|:--|:--|
-| `std::vector` | ❌ |
-| `std::list` | ✅ |
-| `std::deque` | ✅ |
-| `std::map` | ✅ |
-| `std::unordered_map` | ✅ |
-| `std::set` | ✅ |
-| `std::unordered_set` | ✅ |
-| `absl::flat_hash_map` | ❌ |
-| `absl::flat_hash_set` | ❌ |
-| `absl::node_hash_map` | ✅ |
-| `absl::node_hash_set` | ✅ |
-| `phmap::flat_hash_map` | ❌ |
-| `phmap::flat_hash_set` | ❌ |
-| `phmap::node_hash_map` | ✅ |
-| `phmap::node_hash_set` | ✅ |
+| Container | Is pointer stability or not | Description |
+|:--|:--|:--|
+| `std::vector` | ❌ |  |
+| `std::list` | ✅ |  |
+| `std::deque` | ❌ | Expand may keep pointer stablity, but contract may not |
+| `std::map` | ✅ |  |
+| `std::unordered_map` | ✅ |  |
+| `std::set` | ✅ |  |
+| `std::unordered_set` | ✅ |  |
+| `absl::flat_hash_map` | ❌ |  |
+| `absl::flat_hash_set` | ❌ |  |
+| `absl::node_hash_map` | ✅ |  |
+| `absl::node_hash_set` | ✅ |  |
+| `phmap::flat_hash_map` | ❌ |  |
+| `phmap::flat_hash_set` | ❌ |  |
+| `phmap::node_hash_map` | ✅ |  |
+| `phmap::node_hash_set` | ✅ |  |
 
 ## 10.2 Exception Safe
 

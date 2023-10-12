@@ -233,7 +233,7 @@ categories:
     - Pointer Stability
 - Virtual Functions
     - Function Overriding
-    - override & final
+        - override & final
     - Vritual Function Table
         - Each class has a complete table, comprising of the memory address of each virtual functions
         - One specific version of virtual function may be shared by multiply tables
@@ -277,7 +277,8 @@ categories:
     - Lambda Expression
     - Higher-Order Functions(Treats Functions as First-Class Citizens)
 - Memory Management
-    - new/delete
+    - Manual Memory Management
+        - new/delete
     - Smart Pointers
     - Memory Allocators and Custom Memory Management
     - Memory Allocation Strategy
@@ -294,8 +295,8 @@ categories:
             - This system can coalesce buddy blocks to form larger blocks
             - No Fragmentation
         - Slab Allocation
-            - It divides memory into slabs that are caches of objects of certain types/sizes
-            - This strategy is effective for kernel object allocation where objects are frequently allocated and deallocated
+            - It deals with the frequent allocation and deallocation of small objects of the same size
+            - This strategy is effective for kernel object allocation where objects of the same size are frequently allocated and deallocated
 - RAII(Resource Acquisition Is Initialization)
     - Smart Pointers
     - STL Containers
