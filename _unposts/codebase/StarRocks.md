@@ -318,6 +318,16 @@ In summary, `update` is used to update intermediate results for an aggregate fun
 * `PartialRuntimeFilterMerger`
 * `SimdBlockFilter`
 
+## 3.7 Scheduling
+
+### 3.7.1 Queue
+
+* `WorkGroupDriverQueue`: For resource group
+    * This queue is just a wrapper, each resource group will use a `QuerySharedDriverQueue`
+* `QuerySharedDriverQueue`: Multi-level queue, based on the cumulative execution time.
+    * Long running drivers will be placed at the higher level
+    * Each level is `SubQuerySharedDriverQueue`
+
 # 4 Storage
 
 ![storage](/images/StarRocks/storage.jpeg)
