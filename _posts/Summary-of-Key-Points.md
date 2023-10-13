@@ -362,21 +362,15 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
     - Database
     - Schema
         - Star Schema
+            - One Fact Table & Multiple Dimension Tables
         - Snowflake Schema
+            - One Fact Table & Multiple Related Normalized Dimension Tables
         - Constellation Schema
+            - Multiple Fact Table & Multiple Related Normalized Dimension Tables
     - Table
         - Fact Table
         - Dimension Table
     - Column
-        - Integer
-        - String
-        - Date
-        - Array
-        - Map
-        - Json
-        - Struct
-        - Bitmap
-        - HyperLogLog
     - Row
     - Key
         - Primary Key
@@ -469,7 +463,9 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
     - Clustered Index
     - Non-Clustered Index
     - Full-Text Index
+    - ShortKey Index
     - Zone Map Index
+    - Bitmap Index
     - Bloom Fiter Index
 - Transaction
     - ACID (Atomicity, Consistency, Isolation, Durability)
