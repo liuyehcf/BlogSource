@@ -625,13 +625,16 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
                         - Unrestricted State Changes
                             - Async Operations
                             - Dependency Relations
-                            - Certain Behavior(Materialization)
+                            - Complex Condition Expressions(Rely on multiply components or variables)
                         - Separate Thread
                         - Worker Thread
                     - Event-Driven
                         - Restricted State Changes
-                            - Message
+                            - Time Slice Exhausted
+                            - Hardware Interrupts
                             - Mutex/Futex
+                            - System Calls
+                            - Explicit Yielding
             - Pros:
                 - Fine-Grained Scheduling
                 - Flexible Resource Control
