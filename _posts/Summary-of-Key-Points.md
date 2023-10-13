@@ -459,7 +459,6 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
 - Index
     - B-Tree Index
     - Hash Index
-    - Bitmap Index
     - Clustered Index
     - Non-Clustered Index
     - Full-Text Index
