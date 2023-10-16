@@ -475,9 +475,11 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
         - Sharding
         - Partitioning
         - Consistency
-            - Consensus Protocol
-                - Paxos
-                - Raft
+            - Consensus Protocol Paxos vs. Raft
+                - Understandability
+                - Design Principles
+                - Leader Election
+                - Data Model
     - Data Protection
         - Backup and Recovery
         - Disaster Recovery
@@ -771,7 +773,7 @@ Here are the primary differences between Paxos and Raft:
     * **Raft**: Raft relies on a strong leader approach. The system elects a leader, and all changes to the system state go through this leader. This design simplifies many aspects of the consensus process.
 1. **Data Model:**
     * **Paxos**: Paxos abstractly aims to reach consensus on a single value. For practical systems, enhancements (like Multi-Paxos) are used to agree on sequences of values or operations.
-    * **Raft**: Raft natively works with a log-based model where the consensus is achieved on a sequence of commands. This ties in well with many practical systems that
+    * **Raft**: Raft natively works with a log-based model where the consensus is achieved on a sequence of commands. This ties in well with many practical systems that require a consistent and ordered history of operations.
 
 ## 3.4 Good Cases and Bad Cases of Distinct Agg
 
