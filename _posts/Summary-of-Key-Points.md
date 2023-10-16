@@ -66,6 +66,7 @@ categories:
     - Type Erasure
 - Reflection
     - Reflection API
+        - Class Object
     - Dynamic Proxy
         - Java Proxy
         - Cglib
@@ -241,9 +242,8 @@ categories:
 - Overloading
     - Operator Overloading
     - Function Overloading
-- Move Semantics
-    - RValue Reference
-        - Perfect Forwarding
+- Move Semantics & RValue Reference
+    - Perfect Forwarding in Template
     - Transfer of Resources
 - Containers
     - Sequence Containers
@@ -309,6 +309,11 @@ categories:
     - Memory Ordering
         - Sequential Consistency Ordering
         - Relaxed Ordering(Hardware related)
+            - Relax write-read Program Ordering, Supported by TSO
+            - Relax write-write Program Ordering
+            - Relax read-read and read-write Program Ordering
+            - Allow early read that is written by current processor
+            - Allow early read that is written by other processors
 - Performance Optimization
     - Cache
         - Cache Locality
@@ -415,12 +420,8 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
         - Full Outer Join
         - Left/Right Outer Join
         - Left/Right Semi Join
-            - Correlated Exist Or In Subquery
-            - Existence Predicate
             - Multiply matchs make no differences
         - Left/Right Anti Join
-            - Correlated Not Exist Or Not In Subquery
-            - Not Existence Predicate
             - Multiply mismatchs make no differences
         - Related Concepts
             - Cardinality Preserved Join
@@ -522,6 +523,8 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
                         - Join Reorder
                         - CTE Enumeration
                     - Expression Optimization Task
+                        - Trigger Rule Application Task
+                        - Trigger Group Exploration Task
                     - Rule Application Task
                     - Input Optimization Task
                         - Property Enforcing
@@ -632,8 +635,8 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
                             - Explicit Yielding
             - Pros:
                 - Fine-Grained Scheduling
-                - Flexible Resource Control
-                - Flexible Priority Control
+                - Flexible Resource and Priority Control
+                - Flexible Parallelism Control
         - Volcano Parallelism
             - Kernel Space Scheduling
                 - Unit: Execution Tree
