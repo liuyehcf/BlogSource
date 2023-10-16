@@ -751,6 +751,28 @@ With a materialized view there is a well-defined translation process that takes 
 
 ## 3.3 Consensus Protocol
 
+### 3.3.1 Paxos vs. Raft
+
+Paxos and Raft are both consensus algorithms used to achieve agreement among a group of distributed systems. They are crucial for ensuring data consistency and fault-tolerance in distributed systems. Though they aim to solve the same fundamental problem, they differ in their design principles, ease of understanding, and some implementation details.
+
+Here are the primary differences between Paxos and Raft:
+
+1. **Origins and History:**
+    * **Paxos**: Proposed by Leslie Lamport in the 1980s, Paxos is often considered the foundation for many distributed consensus systems. Its initial description was theoretical and presented in the form of a fictional Greek island, which made it difficult for many to understand.
+    * **Raft**: Introduced by Diego Ongaro and John Ousterhout in 2013, Raft was explicitly designed to be a more understandable alternative to Paxos. The primary motivation was to simplify the design and explanation of consensus to make it easier for system builders.
+1. **Understandability:**
+    * **Paxos**: Paxos has been historically considered hard to understand and implement correctly. Many nuances are required for its correct implementation, and its theoretical basis can be daunting.
+    * **Raft**: Raft's design focuses on understandability. Its creators intentionally aimed for a consensus mechanism where the state and transitions are more directly tied, making it easier to build and reason about.
+1. **Design Principles:**
+    * **Paxos**: Paxos operates in phases like 'prepare' and 'accept'. It provides the foundation for many consensus systems, so variations like Multi-Paxos have been developed to handle continuous operation.
+    * **Raft**: Raft breaks the consensus problem into smaller subproblems and addresses them individually. It employs terms like "leader election" and "log replication" to make the protocol more direct.
+1. **Leader Election:**
+    * **Paxos**: Paxos does not natively emphasize a strong leader principle. Though it can have a leader in practice (like in Multi-Paxos), its base form doesn't mandate one.
+    * **Raft**: Raft relies on a strong leader approach. The system elects a leader, and all changes to the system state go through this leader. This design simplifies many aspects of the consensus process.
+1. **Data Model:**
+    * **Paxos**: Paxos abstractly aims to reach consensus on a single value. For practical systems, enhancements (like Multi-Paxos) are used to agree on sequences of values or operations.
+    * **Raft**: Raft natively works with a log-based model where the consensus is achieved on a sequence of commands. This ties in well with many practical systems that
+
 ## 3.4 Good Cases and Bad Cases of Distinct Agg
 
 This chapter only for Starrocks
@@ -921,12 +943,35 @@ Now, instead of storing all these chunks as is, Roaring Bitmaps compresses them:
 * For Bitmap Index, each distinct value has a unique bitmap. But For Bitmap Column, each row has a bitmap.
 * For Bitmap Index, each position represents a row. For Bitmap Column, each position represents a existing value.
 
-## 3.7 Not yet mastered
+## 3.7 The Process of the CBO Optimization
+
+```
+
+     Optimize()
+         │
+         │
+         ▼
+    ┌─────────┐                  ┌──────────┐
+    │ O_GROUP │ ◄──────────────► │ O_INPUTS │
+    └─────────┘                  └──────────┘
+         │                             ▲
+         │                             │
+         ▼                             │
+    ┌─────────┐                 ┌────────────┐
+    │ O_EXPR  │ ◄─────────────► │ APPLY_RULE │
+    └─────────┘                 └────────────┘
+         ▲
+         │
+         ▼
+    ┌─────────┐
+    │ E_GROUP │
+    └─────────┘
+```
+
+## 3.8 Not yet mastered
 
 1. WAL Structure
-1. Consensus Protocol
-1. Cost-based state transition machine
-    * The process of the cbo optimization
+1. LSM Structure
 
 # 4 Operating System
 
