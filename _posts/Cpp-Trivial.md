@@ -1205,66 +1205,66 @@ intptr_t jump_fcontext(fcontext_t* ofc, fcontext_t nfc, intptr_t vp, bool preser
 fcontext_t make_fcontext(void* sp, size_t size, void (*fn)(intptr_t));
 }
 
-__asm(".text\n"
-      ".globl jump_fcontext\n"
-      ".type jump_fcontext,@function\n"
-      ".align 16\n"
-      "jump_fcontext:\n"
-      "    pushq  %rbp  \n"
-      "    pushq  %rbx  \n"
-      "    pushq  %r15  \n"
-      "    pushq  %r14  \n"
-      "    pushq  %r13  \n"
-      "    pushq  %r12  \n"
-      "    leaq  -0x8(%rsp), %rsp\n"
-      "    cmp  $0, %rcx\n"
-      "    je  1f\n"
-      "    stmxcsr  (%rsp)\n"
-      "    fnstcw   0x4(%rsp)\n"
+__asm(".text\n"                         // Section for code
+      ".globl jump_fcontext\n"          // Globally visible symbol
+      ".type jump_fcontext,@function\n" // Specifies the symbol type
+      ".align 16\n"                     // Aligns the code at 16-byte boundaries
+      "jump_fcontext:\n"                // Start of function named 'jump_fcontext'
+      "    pushq  %rbp  \n"             // Pushes base pointer onto the stack
+      "    pushq  %rbx  \n"             // Pushes bx register onto the stack
+      "    pushq  %r15  \n"             // Pushes r15 register onto the stack
+      "    pushq  %r14  \n"             // Pushes r14 register onto the stack
+      "    pushq  %r13  \n"             // Pushes r13 register onto the stack
+      "    pushq  %r12  \n"             // Pushes r12 register onto the stack
+      "    leaq  -0x8(%rsp), %rsp\n"    // Decrement the stack pointer by 8 bytes
+      "    cmp  $0, %rcx\n"             // Compare rcx register with 0
+      "    je  1f\n"                    // If rcx == 0, jump to label 1
+      "    stmxcsr  (%rsp)\n"           // Store the contents of the MXCSR register onto the stack
+      "    fnstcw   0x4(%rsp)\n"        // Store the control word of FPU onto the stack
       "1:\n"
-      "    movq  %rsp, (%rdi)\n"
-      "    movq  %rsi, %rsp\n"
-      "    cmp  $0, %rcx\n"
-      "    je  2f\n"
-      "    ldmxcsr  (%rsp)\n"
-      "    fldcw  0x4(%rsp)\n"
+      "    movq  %rsp, (%rdi)\n" // Save current stack pointer to location pointed by rdi
+      "    movq  %rsi, %rsp\n"   // Set stack pointer to value in rsi
+      "    cmp  $0, %rcx\n"      // Compare rcx register with 0
+      "    je  2f\n"             // If rcx == 0, jump to label 2
+      "    ldmxcsr  (%rsp)\n"    // Load value from the stack into the MXCSR register
+      "    fldcw  0x4(%rsp)\n"   // Load control word into FPU
       "2:\n"
-      "    leaq  0x8(%rsp), %rsp\n"
-      "    popq  %r12  \n"
-      "    popq  %r13  \n"
-      "    popq  %r14  \n"
-      "    popq  %r15  \n"
-      "    popq  %rbx  \n"
-      "    popq  %rbp  \n"
-      "    popq  %r8\n"
-      "    movq  %rdx, %rax\n"
-      "    movq  %rdx, %rdi\n"
-      "    jmp  *%r8\n"
-      ".size jump_fcontext,.-jump_fcontext\n"
-      ".section .note.GNU-stack,\"\",%progbits\n"
-      ".previous\n");
+      "    leaq  0x8(%rsp), %rsp\n"               // Increment the stack pointer by 8 bytes
+      "    popq  %r12  \n"                        // Restore r12 register from the stack
+      "    popq  %r13  \n"                        // Restore r13 register from the stack
+      "    popq  %r14  \n"                        // Restore r14 register from the stack
+      "    popq  %r15  \n"                        // Restore r15 register from the stack
+      "    popq  %rbx  \n"                        // Restore bx register from the stack
+      "    popq  %rbp  \n"                        // Restore base pointer from the stack
+      "    popq  %r8\n"                           // Restore r8 register from the stack
+      "    movq  %rdx, %rax\n"                    // Copy value from rdx to rax
+      "    movq  %rdx, %rdi\n"                    // Copy value from rdx to rdi
+      "    jmp  *%r8\n"                           // Jump to the address in r8
+      ".size jump_fcontext,.-jump_fcontext\n"     // Specifies the size of jump_fcontext function
+      ".section .note.GNU-stack,\"\",%progbits\n" // Stack properties note for linkers
+      ".previous\n");                             // Return to previous section
 
-__asm(".text\n"
-      ".globl make_fcontext\n"
-      ".type make_fcontext,@function\n"
-      ".align 16\n"
-      "make_fcontext:\n"
-      "    movq  %rdi, %rax\n"
-      "    andq  $-16, %rax\n"
-      "    leaq  -0x48(%rax), %rax\n"
-      "    movq  %rdx, 0x38(%rax)\n"
-      "    stmxcsr  (%rax)\n"
-      "    fnstcw   0x4(%rax)\n"
-      "    leaq  finish(%rip), %rcx\n"
-      "    movq  %rcx, 0x40(%rax)\n"
-      "    ret \n"
-      "finish:\n"
-      "    xorq  %rdi, %rdi\n"
-      "    call  _exit@PLT\n"
-      "    hlt\n"
-      ".size make_fcontext,.-make_fcontext\n"
-      ".section .note.GNU-stack,\"\",%progbits\n"
-      ".previous\n");
+__asm(".text\n"                         // Section for code
+      ".globl make_fcontext\n"          // Globally visible symbol
+      ".type make_fcontext,@function\n" // Specifies the symbol type
+      ".align 16\n"                     // Aligns the code at 16-byte boundaries
+      "make_fcontext:\n"                // Start of function named 'make_fcontext'
+      "    movq  %rdi, %rax\n"          // Copy the value of rdi into rax
+      "    andq  $-16, %rax\n"          // Align rax to the nearest lower 16-byte boundary
+      "    leaq  -0x48(%rax), %rax\n"   // Decrement rax by 72 bytes (0x48)
+      "    movq  %rdx, 0x38(%rax)\n"    // Store the value of rdx at memory address rax + 56 bytes (0x38)
+      "    stmxcsr  (%rax)\n"           // Store the contents of the MXCSR register at the address in rax
+      "    fnstcw   0x4(%rax)\n"        // Store the control word of FPU at memory address rax + 4 bytes
+      "    leaq  finish(%rip), %rcx\n"  // Load the address of the `finish` label into rcx
+      "    movq  %rcx, 0x40(%rax)\n"    // Store the address from rcx at memory address rax + 64 bytes (0x40)
+      "    ret \n"                      // Return from the function
+      "finish:\n"                       // Label 'finish'
+      "    xorq  %rdi, %rdi\n"          // Zero out the rdi register
+      "    call  _exit@PLT\n"           // Call the exit function to terminate
+      "    hlt\n"                       // Halt the processor (This should never be reached due to the above _exit call)
+      ".size make_fcontext,.-make_fcontext\n"     // Specifies the size of make_fcontext function
+      ".section .note.GNU-stack,\"\",%progbits\n" // Stack properties note for linkers
+      ".previous\n");                             // Return to previous section
 
 fcontext_t ctx_main;
 fcontext_t ctx1;

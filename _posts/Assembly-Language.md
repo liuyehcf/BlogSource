@@ -70,7 +70,8 @@ categories:
 | `pushl src` | 压栈</br>`R[%esp] -= 4`</br>`M[R[%esp]] = src` |
 | `popl dst` | 出栈</br>`dst = M[R[%esp]]`</br>`R[%esp] += 4` |
 | `xchg mem/reg mem/reg` | 交换两个寄存器或者交换寄存器和内存之间的内容（至少有一个是寄存器）</br>两个操作数的数据类型要相同，比如一个是字节另一个也得是字节 |
-| `lea src, dst` | `Load Effective Address` |
+| `lea src, dst` | Load Effective Address DoubleWords, the instruction computes the effective address of a memory location and then places this address into a specified general-purpose register.|
+| `leaq src, dst` | Load Effective Address Quadwords, similar to lea. |
 
 **算数和逻辑操作指令：**
 
