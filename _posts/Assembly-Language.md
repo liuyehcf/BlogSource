@@ -13,71 +13,71 @@ categories:
 
 # 1 Intel and AT&T Syntax
 
-**汇编语言有2种不同的语法，分别是`Intel Syntax`以及`AT&T Syntax`。它们在形式上大致相同，但是在细节上存在很大差异。极易混淆**
+**Assembly language has 2 different syntaxes, namely `Intel Syntax` and `AT&T Syntax`. They are roughly similar in form, but there are significant differences in detail. Very easy to confuse.**
 
 |  | Intel | AT&T |
 |:--|:--|:--|
-| 注释 | `;` | `#` |
-| 指令 | 无后缀，例如`add` | 有后缀，会带上操作数的类型大小，例如`addq` |
-| 寄存器 | `eax`、`ebx`等等 | `%eax`、`%ebx`等等 |
-| 立即数 | `0x100` | `$0x100` |
-| 直接寻址 | `[eax]` | `(%eax)` |
-| 间接寻址 | `[base + reg + reg * scale + displacement]` | `displacement(base, reg, scale)` |
+| Comment | `;` | `#` |
+| Instruction | No suffix, e.g., `add` | With suffix, indicating operand size, e.g., `addq` |
+| Register | `eax`, `ebx`, etc. | `%eax`, `%ebx`, etc. |
+| Immediate Value | `0x100` | `$0x100` |
+| Direct Addressing | `[eax]` | `(%eax)` |
+| Indirect Addressing | `[base + reg + reg * scale + displacement]` | `displacement(base, reg, scale)` |
 
-## 1.1 内存引用
+## 1.1 Memory Reference
 
-**`Intel Syntax`的间接内存引用的格式为：`section:[base + index*scale + displacement]`**
-**`AT&T Syntax`的间接内存引用的格式为：section:displacement(base, index, scale)**
+**The format for indirect memory reference in `Intel Syntax` is: `section:[base + index*scale + displacement]`**
+**The format for indirect memory reference in `AT&T Syntax` is: section:displacement(base, index, scale)**
 
-* 其中，`base`和`index`是任意的`32-bit`的`base`和`index`寄存器
-* `scale`可以取值`1`，`2`，`4`，`8`。如果不指定`scale`值，则默认值为`1`
-* `section`可以指定任意的段寄存器作为段前缀，默认的段寄存器在不同的情况下不一样
+* Here, `base` and `index` are any `32-bit` `base` and `index` registers.
+* `scale` can be `1`, `2`, `4`, or `8`. If the `scale` is not specified, the default value is `1`.
+* `section` can specify any segment register as the segment prefix. The default segment register varies depending on the situation.
 
-**一些例子：**
+**Some examples:**
 
 1. `-4(%ebp)`
-    * `base`：`%ebp`
-    * `displacement`：`-4`
-    * `section`：未指定
-    * `index`：未指定，默认为0
-    * `scale`：未指定，默认为1
+    * `base`: `%ebp`
+    * `displacement`: `-4`
+    * `section`: not specified
+    * `index`: not specified, defaults to 0
+    * `scale`: not specified, defaults to 1
 
-# 2 指令
+# 2 Instructions
 
-**`Intel Syntax`语法的特点如下：**
-
-```
-助记符 目的操作数 源操作数
-```
-
-**`AT&T Syntax`语法的特点如下：**
+**The characteristics of the `Intel Syntax` are as follows:**
 
 ```
-助记符 源操作数 目的操作数
+mnemonic DestinationOperand sourceOperand
 ```
 
-**下面以`AT&T Syntax`的形式列出常用的指令**
+**The characteristics of the `AT&T Syntax` are as follows:**
 
-**数据传送指令：**
+```
+mnemonic SourceOperand DestinationOperand
+```
 
-| 指令格式 | 描述 |
+**Below are common instructions in the form of `AT&T Syntax`:**
+
+**Data Transfer Instructions:**
+
+| Instruction Format | Description |
 |:--|:--|
-| `movl src, dst` | 传双字 |
-| `movw src, dst` | 传单字 |
-| `movb src, dst` | 传字节 |
-| `movsbl src, dst` | 对`src`（字节）进行符号位填充，变为`dst`（双字） |
-| `movzbl src, dst` | 对`src`（字节）进行零填充，变为`dst`（双字） |
-| `pushl src` | 压栈</br>`R[%esp] -= 4`</br>`M[R[%esp]] = src` |
-| `popl dst` | 出栈</br>`dst = M[R[%esp]]`</br>`R[%esp] += 4` |
-| `xchg mem/reg mem/reg` | 交换两个寄存器或者交换寄存器和内存之间的内容（至少有一个是寄存器）</br>两个操作数的数据类型要相同，比如一个是字节另一个也得是字节 |
+| `movl src, dst` | Transfer doubleword |
+| `movw src, dst` | Transfer word |
+| `movb src, dst` | Transfer byte |
+| `movsbl src, dst` | Sign-extend `src` (byte) to `dst` (doubleword) |
+| `movzbl src, dst` | Zero-extend `src` (byte) to `dst` (doubleword) |
+| `pushl src` | Push</br>`R[%esp] -= 4`</br>`M[R[%esp]] = src` |
+| `popl dst` | Pop</br>`dst = M[R[%esp]]`</br>`R[%esp] += 4` |
+| `xchg mem/reg mem/reg` | Exchange the contents between two registers or between a register and memory (at least one must be a register)</br>Both operands must be of the same data type, e.g., if one is byte, the other must be byte |
 | `lea src, dst` | Load Effective Address DoubleWords, the instruction computes the effective address of a memory location and then places this address into a specified general-purpose register.|
 | `leaq src, dst` | Load Effective Address Quadwords, similar to lea. |
 
-**算数和逻辑操作指令：**
+**Arithmetic and Logical Operations Instructions:**
 
-| 指令格式 | 描述 |
+| Instruction Format | Description |
 |:--|:--|
-| `leal src, dst` | `dst = &src`，`dst`只能是寄存器 |
+| `leal src, dst` | `dst = &src`, `dst` can only be a register |
 | `incl dst` | `dst += 1` |
 | `decl dst` | `dst -= 1` |
 | `negl dst` | `dst = -dst` |
@@ -89,87 +89,87 @@ categories:
 | `orl src, dst` | `dst |= src` |
 | `andl src, dst` | `dst &= src` |
 | `sall k dst` | `dst << k` |
-| `shll k dst` | `dst << k`（同`sall`） |
+| `shll k dst` | `dst << k` (same as `sall`) |
 | `sarl k dst` | `dst >> k` |
-| `shrl k dst` | `dst >> k`（同`sarl`） |
+| `shrl k dst` | `dst >> k` (same as `sarl`) |
 
-**比较指令：**
+**Comparison Instructions:**
 
-| 指令格式 | 描述 |
+| Instruction Format | Description |
 |:--|:--|
-| `cmpb s1, s2` | `s2 - s1`，比较字节，差关系 |
-| `testb s1, s2` | `s2 & s1`，比较字节，与关系 |
-| `cmpw s1, s2` | `s2 - s1`，比较字，差关系 |
-| `testw s1, s2` | `s2 & s1`，比较字，与关系 |
-| `cmpl s1, s2` | `s2 - s1`，比较双字，差关系 |
-| `testl s1, s2` | `s2 & s1`，比较双字，与关系 |
+| `cmpb s1, s2` | `s2 - s1`, compare byte, difference relationship |
+| `testb s1, s2` | `s2 & s1`, compare byte, and relationship |
+| `cmpw s1, s2` | `s2 - s1`, compare word, difference relationship |
+| `testw s1, s2` | `s2 & s1`, compare word, and relationship |
+| `cmpl s1, s2` | `s2 - s1`, compare doubleword, difference relationship |
+| `testl s1, s2` | `s2 & s1`, compare doubleword, and relationship |
 
-**跳转指令：**
+**Jump Instructions:**
 
-| 指令格式 | 描述 |
+| Instruction Format | Description |
 |:--|:--|
-| `jmp label` | 直接跳转 |
-| `jmp *operand` | 间接跳转 |
-| `je label` | 相等跳转 |
-| `jne label` | 不相等跳转 |
-| `jz label` | 零跳转 |
-| `jnz label` | 非零跳转 |
-| `js label` | 负数跳转 |
-| `jns label` | 非负跳转 |
-| `jg label` | 大于跳转 |
-| `jnle label` | 大于跳转 |
-| `jge label` | 大于等于跳转 |
-| `jnl label` | 大于等于跳转 |
-| `jl label` | 小于跳转 |
-| `jnge label` | 小于跳转 |
-| `jle label` | 小于等于跳转 |
-| `jng label` | 小于等于跳转 |
+| `jmp label` | Direct jump |
+| `jmp *operand` | Indirect jump |
+| `je label` | Jump if equal |
+| `jne label` | Jump if not equal |
+| `jz label` | Jump if zero |
+| `jnz label` | Jump if not zero |
+| `js label` | Jump if negative |
+| `jns label` | Jump if not negative |
+| `jg label` | Jump if greater |
+| `jnle label` | Jump if greater |
+| `jge label` | Jump if greater or equal |
+| `jnl label` | Jump if greater or equal |
+| `jl label` | Jump if less |
+| `jnge label` | Jump if less |
+| `jle label` | Jump if less or equal |
+| `jng label` | Jump if less or equal |
 
-**`SIMD`相关指令集**
+**`SIMD`-related Instruction Set**
 
 * [Advanced Vector Extensions](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions)
 * [一文读懂SIMD指令集 目前最全SSE/AVX介绍](https://blog.csdn.net/qq_32916805/article/details/117637192)
 * ![simd](/images/Assembly-Language/simd.png)
-* 指令级
+* Instruction Sets
 
-| 指令集 | 描述 |
+| Instruction Set | Description |
 |:--|:--|
-| `MMX` | 新增8个64位的向量寄存器`MM0`到`MM7` |
-| `SSE` | 在`MMX`基础上，新增8个128位的向量寄存器`XMM0`到`XMM7`。仅支持128位的浮点 |
-| `SSE2` | 支持128位的整型 |
+| `MMX` | Introduced 8 new 64-bit vector registers `MM0` to `MM7` |
+| `SSE` | Building on `MMX`, introduced 8 new 128-bit vector registers `XMM0` to `XMM7`. Only supports 128-bit floating point |
+| `SSE2` | Supports 128-bit integer |
 | `SSE3` |  |
 | `SSSE3` |  |
 | `SSE4.1` |  |
 | `SSE4.2` |  |
-| `AVX` | 新增了16个256位的向量寄存器`YMM0`到`YMM15`。浮点支持256位，整型只支持128位 |
-| `AVX2` | 整型也支持256位 |
-| `AVX512` | 新增32个512位的向量寄存器`ZMM0`到`ZMM31` |
+| `AVX` | Introduced 16 new 256-bit vector registers `YMM0` to `YMM15`. Floating point supports 256-bit, while integer only supports 128-bit |
+| `AVX2` | Integer now also supports 256-bit |
+| `AVX512` | Introduced 32 new 512-bit vector registers `ZMM0` to `ZMM31` |
 
-* 数据类型
+* Data Types
 
-| 数据类型 | 描述 |
+| Data Type | Description |
 |:--|:--|
-| `__m128` | 包含4个float类型数字的向量 |
-| `__m128d` | 包含2个double类型数字的向量 |
-| `__m128i` | 包含若干个整型数字的向量 |
-| `__m256` | 包含8个float类型数字的向量 |
-| `__m256d` | 包含4个double类型数字的向量 |
-| `__m256i` | 包含若干个整型数字的向量 |
+| `__m128` | Vector containing 4 float numbers |
+| `__m128d` | Vector containing 2 double numbers |
+| `__m128i` | Vector containing several integer numbers |
+| `__m256` | Vector containing 8 float numbers |
+| `__m256d` | Vector containing 4 double numbers |
+| `__m256i` | Vector containing several integer numbers |
 
-**其他：**
+**Others:**
 
-| 指令 | 描述 |
+| Instruction | Description |
 |:--|:--|
-| `enter size, nesting level` | 准备当前栈帧，其中`nesting level`范围是`0-31`，表示了从前一帧复制到新栈帧中的栈帧指针的数量，通常是`0`。`enter $size, $0`等效于`push %rbp` + `mov %rsp, %rbp` + `sub $size, %rsp` |
-| `leave` | 恢复上级栈帧，等效于`mov %rbp, %rsp`、`pop %rbp` |
-| `ret` | 函数调用后返回 |
-| `cli` | 关中断，ring0 |
-| `sti` | 开中断，ring0 |
-| `lgdt src` | 加载全局描述符 |
-| `lidt src` | 加载中断描述符 |
-| `cmov` | Conditional move instructions，用于消除分支 |
+| `enter size, nesting level` | Prepares the current stack frame. Where `nesting level` ranges from `0-31` which indicates the number of stack frame pointers copied from the previous frame to the new frame, typically `0`. `enter $size, $0` is equivalent to `push %rbp` + `mov %rsp, %rbp` + `sub $size, %rsp` |
+| `leave` | Restores the previous stack frame, equivalent to `mov %rbp, %rsp`, `pop %rbp` |
+| `ret` | Returns after a function call |
+| `cli` | Disables interrupts, ring0 |
+| `sti` | Enables interrupts, ring0 |
+| `lgdt src` | Loads the global descriptor |
+| `lidt src` | Loads the interrupt descriptor |
+| `cmov` | Conditional move instructions, used to eliminate branching |
 
-## 2.1 如何查指令
+## 2.1 How to Check Instructions
 
 * [x86 and amd64 instruction reference](https://www.felixcloutier.com/x86/)
 * [汇编语言在线帮助](https://sites.google.com/site/huibianyuyanzaixianbangzhu/)
@@ -193,18 +193,18 @@ categories:
     cgasm -f push
     ```
 
-## 2.2 内存屏障
+## 2.2 Memory Barriers
 
-在`x86`架构中，有几个汇编指令可以用作内存屏障，它们的作用是确保内存访问的顺序不会被重排，从而保证程序的正确性和可靠性。这些指令包括：
+In the `x86` architecture, there are several assembly instructions that can serve as memory barriers. Their role is to ensure that the order of memory accesses is not reordered, thereby ensuring the correctness and reliability of the program. These instructions include:
 
-* `MFENCE`：在执行`MFENCE`指令之前的所有内存访问都必须在执行`MFENCE`指令之前完成，执行`MFENCE`指令之后的所有内存访问都必须在执行`MFENCE`指令之后开始。这个指令是一个全屏障，即它会阻止所有处理器上的内存访问
-* `SFENCE`：`SFENCE`保证在执行`SFENCE`指令之前的所有写操作都已经提交到内存，执行`SFENCE`指令之后的所有写操作都不能被重排到执行`SFENCE`指令之前
-* `LFENCE`：`LFENCE`保证在执行`LFENCE`指令之前的所有读操作都已经完成，执行`LFENCE`指令之后的所有读操作都不能被重排到执行`LFENCE`指令之前
-* `LOCK`指令前缀：`LOCK`前缀可以用于一些特定的指令，例如`LOCK ADD`、`LOCK DEC`、`LOCK XCHG`等，它们保证在执行带有`LOCK`前缀的指令时，对共享内存的访问会被序列化。
+* `MFENCE`: All memory accesses before the execution of the `MFENCE` instruction must complete before the `MFENCE` instruction, and all memory accesses after the `MFENCE` instruction must start after the execution of the `MFENCE` instruction. This instruction acts as a full barrier, meaning it prevents all memory accesses on all processors.
+* `SFENCE`: `SFENCE` ensures that all write operations before its execution have been committed to memory. Any write operations after the `SFENCE` instruction cannot be reordered to occur before the `SFENCE` instruction.
+* `LFENCE`: `LFENCE` ensures that all read operations prior to its execution are complete. Any read operations after the `LFENCE` instruction cannot be reordered to happen before the `LFENCE` instruction.
+* `LOCK` instruction prefix: The `LOCK` prefix can be applied to specific instructions, such as `LOCK ADD`, `LOCK DEC`, `LOCK XCHG`, etc. They guarantee that when executing an instruction with the `LOCK` prefix, access to shared memory is serialized.
 
-# 3 寄存器
+# 3 Register
 
-**更多内容请参考{% post_link System-Architecture-Register %}**
+**For more information, please refer to{% post_link System-Architecture-Register %}**
 
 | 64-bit register | Lower 32 bits | Lower 16 bits | Lower 8 bits |
 |:--|:--|:--|:--|
@@ -226,19 +226,35 @@ categories:
 | r14 | r14d | r14w | r14b |
 | r15 | r15d | r15w | r15b |
 
-**其中，`rbp`是基址指针寄存器，指向栈底；`rsp`是栈指针寄存器，指向栈顶；`rip`是指令指针寄存器，指向下一个待执行的指令**
+**In this context, `rbp` is the base pointer register pointing to the bottom of the stack; `rsp` is the stack pointer register pointing to the top of the stack; `rip` is the instruction pointer register pointing to the next instruction to be executed.**
 
-**向量化相关寄存器（参考[Advanced Vector Extensions](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions)）**
+**Vector-related Registers (Refert to[Advanced Vector Extensions](https://en.wikipedia.org/wiki/Advanced_Vector_Extensions))**
 
-| 寄存器名 | 位数 |
+| Register Name | Bit Size |
 |:--|:--|
 | xmm | 128 |
 | ymm | 256 |
 | zmm | 512 |
 
-# 4 汇编语法
+## 3.1 The registers used for parameters
 
-**参考：**
+The specific register used to store function parameters depends on the architecture and the calling convention being used. I'll provide details for the x86-64 architecture using the System V AMD64 ABI calling convention, which is common for Unix-like systems (including Linux).
+
+For the x86-64 System V AMD64 ABI:
+
+1. First parameter: `%rdi`
+1. Second parameter: `%rsi`
+1. Third parameter: `%rdx`
+1. Fourth parameter: `%rcx`
+1. Fifth parameter: `%r8`
+1. Sixth parameter: `%r9`
+1. Seventh parameter: Placed on the stack.
+1. Eighth parameter: Placed on the stack after the seventh parameter.
+1. ... and so on.
+
+# 4 Assembly Syntax
+
+**Reference:**
 
 * [x86 Assembly](https://en.wikibooks.org/wiki/X86_Assembly)
     * [x86 Assembly/GNU assembly syntax](https://en.wikibooks.org/wiki/X86_Assembly/GNU_assembly_syntax)
@@ -251,7 +267,7 @@ categories:
 
 ## 4.1 Intel Syntax
 
-### 4.1.1 注释
+### 4.1.1 Comment
 
 ```nasm
 ; this is comment
@@ -259,71 +275,71 @@ categories:
 
 ## 4.2 AT&T Syntax
 
-### 4.2.1 汇编器命令
+### 4.2.1 Assembler Commands
 
-**汇编器命令（`Assembler Directives`）由英文句号（'.'）开头，命令名的其余是字母，通常使用小写，下面仅列出一些常见的命令**
+**Assembler directives (`Assembler Directives`) start with an English period ('.') followed by letters for the rest of the command name. Typically, these are in lowercase. Below are some common commands:**
 
-| 命令 | 描述 |
+| Command | Description |
 |:--|:--|
-| `.abort` | 本命令立即终止汇编过程。这是为了兼容其它的汇编器。早期的想法是汇编语言的源码会被输送进汇编器。如果发送源码的程序要退出，它可以使用本命令通知as退出。将来可能不再支持使用`.abort` |
-| `.align abs-expr, abs-expr, abs-expr` | 增加位置计数器（在当前的子段）使它指向规定的存储边界。第一个表达式参数（必须）表示边界基准；第二个表达式参数表示填充字节的值，用这个值填充位置计数器越过的地方；第三个表达式参数（可选）表示本对齐命令允许越过字节数的最大值 |
-| `.ascii "str"...` | `.ascii`可不带参数或者带多个由逗点分开的字符串。它把汇编好的每个字符串（在字符串末不自动追加零字节）存入连续的地址 |
-| `.asciz "str"...` | `.asciz`类似与`.ascii`，但在每个字符串末自动追加一个零字节 |
-| `.byte` | `.byte`可不带参数或者带多个表达式参数，表达式之间由逗点分隔。每个表达式参数都被汇编成下一个字节 |
-| `.data subsection` | `.data`通知as汇编后续语句，将它们追加在编号为`subsection`（`subsection`必须是纯粹的表达式）数据段末。如果参数`subsection`省略，则默认是0 |
-| `.def name` | 开始定义符号`name`的调试信息，定义区延伸至遇到`.endef`命令 |
-| `.end` | `.end`标记着汇编文件的结束。as不处理`.end`命令后的任何语句 |
-| `.err` | 如果as汇编一条`.err`命令，将打印一条错误信息 |
-| `.float flonums` | 汇编0个或多个浮点数，浮点数之间由逗号分隔 |
-| `.global symbol` | `.global`使符号symbol对连接器ld可见 |
-| `.int intnums` | 汇编0个或多个整数，整数数之间由逗号分隔 |
-| `.long` | 同`.int` |
-| `.macro` | `.macro`和`.endm`用于定义宏，宏可以用来生成汇编输出 |
-| `.quad bignums` | 汇编0个或多个长整数，长整数之间由逗号分隔 |
-| `.section name` | 使用`.section`命令将后续的代码汇编进一个定名为name的段 |
-| `.short shortnums` |  汇编0个或多个短整数，短整数之间由逗号分隔 |
-| `.single flonums` | 同`.float` |
-| `.size` | 本命令一般由编译器生成，以在符号表中加入辅助调试信息 |
-| `.string "str"` | 将参数str中的字符复制到目标文件中去。您可以指定多个字符串进行复制，之间使用逗号分隔 |
-| `.text subsection` | 通知as把后续语句汇编到编号为`subsection`的正文子段的末尾，`subsection`是一个纯粹的表达式。如果省略了参数`subsection`，则使用编号为0的子段 |
-| `.title "heading"` | 当生成汇编清单时，把`heading`作为标题使用 |
-| `.word` | 同`.short` |
+| `.abort` | This command immediately terminates the assembly process. This is for compatibility with other assemblers. The initial idea was that the assembly language source would be fed into the assembler. If the program sending the source wanted to exit, it could use this command to notify `as` to exit. Use of `.abort` might not be supported in the future. |
+| `.align abs-expr, abs-expr, abs-expr` | Increase the position counter (in the current subsection) to point to the specified storage boundary. The first expression argument (mandatory) represents the boundary base; the second expression argument represents the value of the filler byte, which is used to fill places passed by the position counter; the third expression argument (optional) indicates the maximum number of bytes this alignment command is allowed to cross. |
+| `.ascii "str"...` | `.ascii` can have no arguments or several strings separated by commas. It saves each assembled string (without automatically appending a null byte at the end) in consecutive addresses. |
+| `.asciz "str"...` | `.asciz` is similar to `.ascii`, but it automatically appends a null byte at the end of each string. |
+| `.byte` | `.byte` can have no arguments or multiple expression arguments separated by commas. Each expression argument is assembled into the next byte. |
+| `.data subsection` | `.data` informs `as` to append subsequent statements to the data section ending in `subsection` (which must be a pure expression). If the `subsection` argument is omitted, the default is 0. |
+| `.def name` | Starts defining debug information for the symbol `name`. The definition area extends to the `.endef` command encountered. |
+| `.end` | `.end` marks the end of the assembly file. `as` doesn't process any statements after the `.end` command. |
+| `.err` | If `as` assembles a `.err` command, it will print an error message. |
+| `.float flonums` | Assemble 0 or more floating point numbers, separated by commas. |
+| `.global symbol` | `.global` makes the symbol `symbol` visible to the linker `ld`. |
+| `.int intnums` | Assemble 0 or more integers, separated by commas. |
+| `.long` | Same as `.int`. |
+| `.macro` | `.macro` and `.endm` are used to define macros. Macros can be used to generate assembly output. |
+| `.quad bignums` | Assemble 0 or more long integers, separated by commas. |
+| `.section name` | The `.section` command assembles subsequent code into a segment named `name`. |
+| `.short shortnums` | Assemble 0 or more short integers, separated by commas. |
+| `.single flonums` | Same as `.float`. |
+| `.size` | This command is usually generated by compilers to add auxiliary debugging information in the symbol table. |
+| `.string "str"` | Copies characters from the argument `str` into the target file. Multiple strings can be specified for copying, separated by commas. |
+| `.text subsection` | Instructs `as` to assemble subsequent statements to the end of the text subsection identified by `subsection`, which is a pure expression. If the `subsection` argument is omitted, the default subsection is 0. |
+| `.title "heading"` | When generating an assembly listing, use `heading` as the title. |
+| `.word` | Same as `.short`. |
 
 ### 4.2.2 Symbol
 
-`Symbol`由字母下划线构成，最后跟一个冒号`:`
+A `Symbol` is composed of letters and underscores, ending with a colon `:`.
 
 ```
 <symbol_name>:
 ```
 
-### 4.2.3 注释
+### 4.2.3 Comment
 
 ```nasm
 /* this is comment */
 ```
 
-# 5 实战
+# 5 Practical Application
 
 **本小节转载摘录自[不吃油条](https://www.zhihu.com/people/hackeris)针对汇编语言的系列文章**
 
-## 5.1 准备环境
+## 5.1 Setting Up the Environment
 
-**汇编工具：**
+**Assembly Tools:**
 
-1. **`nasm`：全称为`Netwide Assembler`，是通用的汇编器，采用`Intel Syntax`**
-    * 无`PTR`关键词，因此`mov DWORD PTR [rbp-0xc], edi`要写成`mov DWORD [rbp-0xc], edi`
-1. `masm`：全称为`Microsoft Macro Assembler`，是微软专门为`windows`下汇编而写的
-1. **`gas`：全称为`GNU Assembler`，采用`AT&T Syntax`**
+1. **`nasm`: Stands for `Netwide Assembler`. It's a generic assembler that uses `Intel Syntax`.**
+    * Lacks the `PTR` keyword, so `mov DWORD PTR [rbp-0xc], edi` should be written as `mov DWORD [rbp-0xc], edi`.
+2. `masm`: Stands for `Microsoft Macro Assembler`. It's specifically written by Microsoft for assembly under `windows`.
+3. **`gas`: Stands for `GNU Assembler` and uses `AT&T Syntax`.**
 
 ```sh
 wget http://mirror.centos.org/centos/7/os/x86_64/Packages/nasm-2.10.07-7.el7.x86_64.rpm
 yum localinstall -y nasm-2.10.07-7.el7.x86_64.rpm
 ```
 
-## 5.2 第一个程序
+## 5.2 First Program
 
-**本小节的任务：编写等效于下面cpp程序的汇编代码**
+**Objective of this section: Write assembly code equivalent to the following C++ program**
 
 ```cpp
 int main() {
@@ -331,9 +347,9 @@ int main() {
 }
 ```
 
-### 5.2.1 Intel版本
+### 5.2.1 Intel Version
 
-`first.asm`如下：
+`first.asm` is as follows:
 
 ```nasm
 global main
@@ -343,7 +359,7 @@ main:
     ret
 ```
 
-编译执行：
+Compile and execute:
 
 ```sh
 nasm -o first.o -f elf64 first.asm
@@ -352,9 +368,9 @@ gcc -o first -m64 first.o
 ./first; echo $?
 ```
 
-### 5.2.2 AT&T版本
+### 5.2.2 AT&T Version
 
-`first.asm`如下：
+`first.asm` is as follows:
 
 ```nasm
     .text
@@ -364,7 +380,7 @@ main:
     ret
 ```
 
-编译执行：
+Compile and execute:
 
 ```sh
 as -o first.o first.asm
@@ -373,13 +389,13 @@ gcc -o first -m64 first.o
 ./first; echo $?
 ```
 
-## 5.3 使用内存
+## 5.3 Use Memory
 
-**本小节的任务：利用内存计算1+2的值**
+**Objective of this section: Calculate the value of 1+2 using memory.**
 
-### 5.3.1 Intel版本
+### 5.3.1 Intel Version
 
-`use_memory.asm`如下：
+`use_memory.asm` is as follows:
 
 ```nasm
 global main
@@ -395,7 +411,7 @@ main:
     ret
 ```
 
-尝试编译执行：
+Compile and execute:
 
 ```sh
 nasm -o use_memory.o -f elf64 use_memory.asm
@@ -404,7 +420,7 @@ gcc -o use_memory -m64 use_memory.o
 ./use_memory; echo $?
 ```
 
-**结果发现`core dump`了，这是因为在Linux操作系统上，内存是受操作系统管控的，不能随便读写，可以改成如下形式：**
+**The result shows a `core dump`. This is because in the Linux operating system, memory is controlled by the operating system and cannot be read or written arbitrarily. You can change it to the following form:**
 
 ```nasm
 global main
@@ -423,7 +439,7 @@ section .data
 sui_bian_xie   dw    0
 ```
 
-再次尝试编译执行：
+Compile and execute:
 
 ```sh
 nasm -o use_memory.o -f elf64 use_memory.asm
@@ -432,17 +448,17 @@ gcc -o use_memory -m64 use_memory.o
 ./use_memory; echo $?
 ```
 
-**这次的代码除了用`[sui_bian_xie]`代替内存地址外，还多出了如下两行**
+**In this version of the code, in addition to using `[sui_bian_xie]` instead of a memory address, there are also two additional lines:**
 
-* 第一行先不管是表示接下来的内容经过编译后，会放到可执行文件的数据区域，同时也会随着程序启动的时候，分配对应的内存
-* 第二行就是描述真实的数据的关键所在里，这一行的意思是开辟一块4字节的空间，并且里面用0填充。这里的`dw（double word）`就表示4个字节，前面那个`sui_bian_xie`的意思就是这里可以随便写，也就是起个名字而已，方便自己写代码的时候区分，这个`sui_bian_xie`会在编译时被编译器处理成一个具体的地址，我们无需理会地址具体时多少，反正知道前后的`sui_bian_xie`指代的是同一个东西就行了
+* The first line indicates that the following content, after compilation, will be placed in the data section of the executable file and will be allocated corresponding memory when the program starts.
+* The second line is crucial as it describes the actual data. This line means that a 4-byte space is allocated and filled with zeros. The `dw` (double word) here represents 4 bytes. The `sui_bian_xie` in front is just a name, which means you can write anything here for ease of distinction when writing code. This `sui_bian_xie` will be processed by the compiler into a specific address during compilation. We don't need to worry about the exact address; we just need to know that the `sui_bian_xie` before and after represents the same thing.
 
 ```asm
 section .data
 sui_bian_xie   dw    0
 ```
 
-再来个例子，`use_memory2.asm`如下：
+Here's another example, `use_memory2.asm`, as follows:
 
 ```nasm
 global main
@@ -459,7 +475,7 @@ number_1      dw        10
 number_2      dw        20
 ```
 
-编译执行：
+Compile and execute:
 
 ```sh
 nasm -o use_memory2.o -f elf64 use_memory2.asm
@@ -468,9 +484,9 @@ gcc -o use_memory2 -m64 use_memory2.o
 ./use_memory2; echo $?
 ```
 
-### 5.3.2 AT&T版本
+### 5.3.2 AT&T Version
 
-`use_memory.asm`如下：
+`use_memory.asm` is as follows:
 
 ```nasm
     .text
@@ -488,7 +504,7 @@ main:
     ret
 ```
 
-编译执行：
+Compile and execute:
 
 ```sh
 as -o use_memory.o use_memory.asm
@@ -497,7 +513,7 @@ gcc -o use_memory -m64 use_memory.o
 ./use_memory; echo $?
 ```
 
-`use_memory2.asm`如下：
+`use_memory2.asm` is as follows:
 
 ```nasm
     .text
@@ -515,7 +531,7 @@ main:
     ret
 ```
 
-编译执行：
+Compile and execute:
 
 ```sh
 as -o use_memory2.o use_memory2.asm
@@ -524,9 +540,9 @@ gcc -o use_memory2 -m64 use_memory2.o
 ./use_memory2; echo $?
 ```
 
-## 5.4 翻译第一个C语言程序
+## 5.4 Translate the first C program:
 
-对于如下`C`程序
+For the following C program:
 
 ```cpp
 int x = 0;
@@ -541,9 +557,9 @@ int main() {
 }
 ```
 
-### 5.4.1 Intel版本
+### 5.4.1 Intel Version
 
-`first_c.asm`如下：
+`first_c.asm` is as follows:
 
 ```nasm
 global main
@@ -566,7 +582,7 @@ y       dw      0
 z       dw      0
 ```
 
-编译执行：
+Compile and execute:
 
 ```sh
 nasm -o first_c.o -f elf64 first_c.asm
@@ -575,9 +591,9 @@ gcc -o first_c -m64 first_c.o
 ./first_c; echo $?
 ```
 
-### 5.4.2 AT&T版本
+### 5.4.2 AT&T Version
 
-`first_c.asm`如下：
+`first_c.asm` is as follows:
 
 ```nasm
     .text
@@ -603,7 +619,7 @@ main:
     ret
 ```
 
-编译执行：
+Compile and execute:
 
 ```sh
 as -o first_c.o first_c.asm
@@ -612,9 +628,9 @@ gcc -o first_c -m64 first_c.o
 ./first_c; echo $?
 ```
 
-## 5.5 翻译C语言if语句
+## 5.5 Translating C Language if Statements
 
-对于如下`C`程序
+For the following C program:
 
 ```cpp
 int main() {
@@ -626,9 +642,9 @@ int main() {
 }
 ```
 
-### 5.5.1 Intel版本
+### 5.5.1 Intel Version
 
-`if_c.asm`如下：
+`if_c.asm` is as follows:
 
 ```nasm
 global main
@@ -642,7 +658,7 @@ xiaoyu_dengyu_shi:
     ret
 ```
 
-编译执行：
+Compile and execute:
 
 ```sh
 nasm -o if_c.o -f elf64 if_c.asm
@@ -651,9 +667,9 @@ gcc -o if_c -m64 if_c.o
 ./if_c; echo $?
 ```
 
-### 5.5.2 AT&T版本
+### 5.5.2 AT&T Version
 
-`if_c.asm`如下：
+`if_c.asm` is as follows:
 
 ```nasm
     .text
@@ -667,7 +683,7 @@ xiaoyu_dengyu_shi:
     ret
 ```
 
-编译执行：
+Compile and execute:
 
 ```sh
 as -o if_c.o if_c.asm
@@ -676,9 +692,9 @@ gcc -o if_c -m64 if_c.o
 ./if_c; echo $?
 ```
 
-## 5.6 翻译C语言循环语句
+## 5.6 Translating C Language Loop Statements
 
-对于如下`C`程序
+For the following C program:
 
 ```cpp
 int main() {
@@ -692,7 +708,7 @@ int main() {
 }
 ```
 
-或者`for`版本，如下
+Or the `for` version as follows:
 
 ```cpp
 int main() {
@@ -704,7 +720,7 @@ int main() {
 }
 ```
 
-上述两种循环的写法，经过简单调整，便可以得到如下等价的程序：
+The above two forms of loops, with slight adjustments, can be simplified to the following equivalent program:
 
 ```cpp
 int main() {
@@ -720,9 +736,9 @@ loop:
 }
 ```
 
-### 5.6.1 Intel版本
+### 5.6.1 Intel Version
 
-`loop_c.asm`如下：
+`loop_c.asm` is as follows:
 
 ```nasm
 global main:
@@ -740,7 +756,7 @@ end:
     ret
 ```
 
-编译执行：
+Compile and execute:
 
 ```sh
 nasm -o loop_c.o -f elf64 loop_c.asm
@@ -749,9 +765,9 @@ gcc -o loop_c -m64 loop_c.o
 ./loop_c; echo $?
 ```
 
-### 5.6.2 AT&T版本
+### 5.6.2 AT&T Version
 
-`loop_c.asm`如下：
+`loop_c.asm` is as follows:
 
 ```nasm
     .text
@@ -769,7 +785,7 @@ end:
     ret
 ```
 
-编译执行：
+Compile and execute:
 
 ```sh
 as -o loop_c.o loop_c.asm
@@ -778,7 +794,7 @@ gcc -o loop_c -m64 loop_c.o
 ./loop_c; echo $?
 ```
 
-## 5.7 翻译C语言函数调用
+## 5.7 Translating C Language Function Calls
 
 ```cpp
 int fibonacci(int num) {
@@ -793,7 +809,7 @@ int main() {
 }
 ```
 
-为了方便转成汇编，将上述程序改写成如下的等价程序：
+To facilitate conversion to assembly, the program above has been rewritten into the following equivalent program:
 
 ```cpp
 int fibonacci(int num) {
@@ -815,18 +831,18 @@ int main() {
 }
 ```
 
-**由于寄存器是个全局资源，为了实现递归调用，在调用前，必须将当前函数使用到的寄存器挨个存入栈中，调用返回后，再将寄存器恢复回来。涉及到的指令包括：**
+**Since registers are global resources, for recursive calls to work, before making a call, it's necessary to push each register used by the current function onto the stack, and after the call returns, restore the registers. The instructions involved include:**
 
-* `call`：触发函数调用
-* `ret`：返回
-* `push`：压栈
-* `pop`：弹栈
-* `rsp`：栈顶指针
-* `rbp`：栈底指针
+* `call`: Initiates a function call.
+* `ret`: Returns from a function.
+* `push`: Pushes onto the stack.
+* `pop`: Pops from the stack.
+* `rsp`: Stack pointer.
+* `rbp`: Base pointer.
 
-### 5.7.1 Intel版本
+### 5.7.1 Intel Version
 
-`fibonacci_c.asm`如下：
+`fibonacci_c.asm` is as follows:
 
 ```nasm
 global main:
@@ -869,7 +885,7 @@ plain_case:
     ret
 ```
 
-编译执行：
+Compile and execute:
 
 ```sh
 nasm -o fibonacci_c.o -f elf64 fibonacci_c.asm
@@ -878,7 +894,7 @@ gcc -o fibonacci_c -m64 fibonacci_c.o
 ./fibonacci_c; echo $?
 ```
 
-其中，准备当前栈帧和恢复上级栈帧可以替换为`enter`以及`leave`
+Among these, preparing the current stack frame and restoring the parent stack frame can be replaced with `enter` and `leave`.
 
 ```nasm
     push rbp                        ; 保存上一级的栈底指针
@@ -889,7 +905,7 @@ gcc -o fibonacci_c -m64 fibonacci_c.o
     pop rbp                         ; 恢复 rbp
 ```
 
-可以替换为
+Can be replaced with
 
 ```nasm
     enter 0xc, 0x0
@@ -897,9 +913,9 @@ gcc -o fibonacci_c -m64 fibonacci_c.o
     leave
 ```
 
-### 5.7.2 AT&T版本
+### 5.7.2 AT&T Version
 
-`fibonacci_c.asm`如下：
+`fibonacci_c.asm` is as follows:
 
 ```nasm
     .text
@@ -942,7 +958,7 @@ plain_case:
     ret
 ```
 
-编译执行：
+Compile and execute:
 
 ```sh
 as -o fibonacci_c.o fibonacci_c.asm
@@ -951,7 +967,7 @@ gcc -o fibonacci_c -m64 fibonacci_c.o
 ./fibonacci_c; echo $?
 ```
 
-其中，准备当前栈帧和恢复上级栈帧可以替换为`enter`以及`leave`
+Among these, preparing the current stack frame and restoring the parent stack frame can be replaced with `enter` and `leave`.
 
 ```nasm
     push %rbp                       # 保存上一级的栈底指针
@@ -962,7 +978,7 @@ gcc -o fibonacci_c -m64 fibonacci_c.o
     pop %rbp                        # 恢复 rbp
 ```
 
-可以替换为
+Can be replaced with
 
 ```nasm
     enter $0xc, $0x0
@@ -972,19 +988,19 @@ gcc -o fibonacci_c -m64 fibonacci_c.o
 
 # 6 Tips
 
-## 6.1 如何生成易读的汇编
+## 6.1 How to generate readable assembly code
 
-**方式1：（并不容易看懂）**
+**Approach 1: (Not easy to understand)**
 
 ```sh
-# 生成汇编
+# Generate
 gcc main.cpp -S -g -fverbose-asm
 
-# 查看汇编
+# View
 cat main.s
 ```
 
-**方式2：**
+**Approach 2：**
 
 ```sh
 # 生成目标文件
