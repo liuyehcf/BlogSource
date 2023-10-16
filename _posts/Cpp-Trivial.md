@@ -1190,7 +1190,146 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
 * [google/sanitizers](https://github.com/google/sanitizers)
 * [深入浅出 Sanitizer Interceptor 机制](https://mp.weixin.qq.com/s?__biz=Mzg3Mjg2NjU4NA==&mid=2247483868&idx=1&sn=a85112e88cd187e27f418ff044247956&chksm=cee9f7abf99e7ebdac55e36077b4f915bccbe33a8a6ee9920136a1dc9598e2ae62bb95d3a25f&scene=21#wechat_redirect)
 
-# 6 GNU Tools
+# 6 User-defined Thread
+
+`jump_fcontext` and `make_fcontext` is copy from [context.h](https://github.com/apache/brpc/blob/master/src/bthread/context.h) and [context.cpp](https://github.com/apache/brpc/blob/master/src/bthread/context.cpp)
+
+```cpp
+#include <cstddef>
+#include <iostream>
+
+typedef void* fcontext_t;
+
+extern "C" {
+intptr_t jump_fcontext(fcontext_t* ofc, fcontext_t nfc, intptr_t vp, bool preserve_fpu = false);
+fcontext_t make_fcontext(void* sp, size_t size, void (*fn)(intptr_t));
+}
+
+__asm(".text\n"
+      ".globl jump_fcontext\n"
+      ".type jump_fcontext,@function\n"
+      ".align 16\n"
+      "jump_fcontext:\n"
+      "    pushq  %rbp  \n"
+      "    pushq  %rbx  \n"
+      "    pushq  %r15  \n"
+      "    pushq  %r14  \n"
+      "    pushq  %r13  \n"
+      "    pushq  %r12  \n"
+      "    leaq  -0x8(%rsp), %rsp\n"
+      "    cmp  $0, %rcx\n"
+      "    je  1f\n"
+      "    stmxcsr  (%rsp)\n"
+      "    fnstcw   0x4(%rsp)\n"
+      "1:\n"
+      "    movq  %rsp, (%rdi)\n"
+      "    movq  %rsi, %rsp\n"
+      "    cmp  $0, %rcx\n"
+      "    je  2f\n"
+      "    ldmxcsr  (%rsp)\n"
+      "    fldcw  0x4(%rsp)\n"
+      "2:\n"
+      "    leaq  0x8(%rsp), %rsp\n"
+      "    popq  %r12  \n"
+      "    popq  %r13  \n"
+      "    popq  %r14  \n"
+      "    popq  %r15  \n"
+      "    popq  %rbx  \n"
+      "    popq  %rbp  \n"
+      "    popq  %r8\n"
+      "    movq  %rdx, %rax\n"
+      "    movq  %rdx, %rdi\n"
+      "    jmp  *%r8\n"
+      ".size jump_fcontext,.-jump_fcontext\n"
+      ".section .note.GNU-stack,\"\",%progbits\n"
+      ".previous\n");
+
+__asm(".text\n"
+      ".globl make_fcontext\n"
+      ".type make_fcontext,@function\n"
+      ".align 16\n"
+      "make_fcontext:\n"
+      "    movq  %rdi, %rax\n"
+      "    andq  $-16, %rax\n"
+      "    leaq  -0x48(%rax), %rax\n"
+      "    movq  %rdx, 0x38(%rax)\n"
+      "    stmxcsr  (%rax)\n"
+      "    fnstcw   0x4(%rax)\n"
+      "    leaq  finish(%rip), %rcx\n"
+      "    movq  %rcx, 0x40(%rax)\n"
+      "    ret \n"
+      "finish:\n"
+      "    xorq  %rdi, %rdi\n"
+      "    call  _exit@PLT\n"
+      "    hlt\n"
+      ".size make_fcontext,.-make_fcontext\n"
+      ".section .note.GNU-stack,\"\",%progbits\n"
+      ".previous\n");
+
+fcontext_t ctx_main;
+fcontext_t ctx1;
+fcontext_t ctx2;
+
+void func1(intptr_t) {
+    std::cout << "func1 step1, jump to func2" << std::endl;
+    jump_fcontext(&ctx1, ctx2, 0, false);
+    std::cout << "func1 step2, jump to func2" << std::endl;
+    jump_fcontext(&ctx1, ctx2, 0, false);
+    std::cout << "func1 step3, jump to func2" << std::endl;
+    jump_fcontext(&ctx1, ctx2, 0, false);
+    std::cout << "func1 step4, jump to func2" << std::endl;
+    jump_fcontext(&ctx1, ctx2, 0, false);
+    std::cout << "func1 step5, jump to func2" << std::endl;
+    jump_fcontext(&ctx1, ctx2, 0, false);
+}
+
+void func2(intptr_t) {
+    std::cout << "func2 step1, jump to func1" << std::endl;
+    jump_fcontext(&ctx2, ctx1, 0, false);
+    std::cout << "func2 step2, jump to func1" << std::endl;
+    jump_fcontext(&ctx2, ctx1, 0, false);
+    std::cout << "func2 step3, jump to func1" << std::endl;
+    jump_fcontext(&ctx2, ctx1, 0, false);
+    std::cout << "func2 step4, jump to func1" << std::endl;
+    jump_fcontext(&ctx2, ctx1, 0, false);
+    std::cout << "func2 step5, jump to main" << std::endl;
+    jump_fcontext(&ctx2, ctx_main, 0, false);
+}
+
+int main() {
+    char sp1[4096];
+    char sp2[4096];
+    std::cout << "create ctx1" << std::endl;
+    ctx1 = make_fcontext(sp1 + sizeof(sp1), sizeof(sp1), &func1);
+    std::cout << "create ctx2" << std::endl;
+    ctx2 = make_fcontext(sp2 + sizeof(sp2), sizeof(sp2), &func2);
+
+    std::cout << "start, jump to func1" << std::endl;
+    jump_fcontext(&ctx_main, ctx1, 0, false);
+    std::cout << "end, back to main" << std::endl;
+
+    return 0;
+}
+```
+
+```
+create ctx1
+create ctx2
+start, jump to func1
+func1 step1, jump to func2
+func2 step1, jump to func1
+func1 step2, jump to func2
+func2 step2, jump to func1
+func1 step3, jump to func2
+func2 step3, jump to func1
+func1 step4, jump to func2
+func2 step4, jump to func1
+func1 step5, jump to func2
+func2 step5, jump to main
+end, back to main
+```
+
+# 7 GNU Tools
 
 1. `ld`：the GNU linker
 1. `as`：the GNU assembler
@@ -1213,7 +1352,7 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
 1. `windmc` - A Windows compatible message compiler.
 1. `windres` - A compiler for Windows resource files.
 
-## 6.1 gcc
+## 7.1 gcc
 
 **常用参数说明：**
 
@@ -1268,7 +1407,7 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
 1. `-faligned-new`
 1. `-fsized-deallocation`：启用接收`size`参数的`delete`运算符。[C++ Sized Deallocation](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3778.html)。现代内存分配器在给对象分配内存时，需要指定大小，出于空间利用率的考虑，不会在对象内存周围存储对象的大小信息。因此在释放对象时，需要查找对象占用的内存大小，查找的开销很大，因为通常不在缓存中。因此，编译器允许提供接受一个`size`参数的`global delete operator`，并用这个版本来对对象进行析构
 
-## 6.2 ld
+## 7.2 ld
 
 **种类**
 
@@ -1317,11 +1456,11 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
     ./proxy_malloc
     ```
 
-## 6.3 Reference
+## 7.3 Reference
 
-# 7 LLVM Tools
+# 8 LLVM Tools
 
-## 7.1 clang-format
+## 8.1 clang-format
 
 **如何安装`clang-format`**
 
@@ -1355,13 +1494,13 @@ SpacesBeforeTrailingComments: 1
 
 * 即便`.clang-format`相同，不同版本的`clang-format`格式化的结果也有差异
 
-# 8 Uncategorized
+# 9 Uncategorized
 
-## 8.1 Dynamic Analysis
+## 9.1 Dynamic Analysis
 
 ![analysis-tools](/images/Cpp-Trivial/analysis-tools.png)
 
-## 8.2 Header File Search Order
+## 9.2 Header File Search Order
 
 **头文件`#include "xxx.h"`的搜索顺序**
 
@@ -1382,7 +1521,7 @@ SpacesBeforeTrailingComments: 1
     * `/usr/local/include`
     * `/usr/lib/gcc/x86_64-redhat-linux/<gcc version>/include`（C头文件）或者`/usr/include/c++/<gcc version>`（C++头文件）
 
-## 8.3 How to check the compile error message
+## 9.3 How to check the compile error message
 
 Example:
 
@@ -1417,7 +1556,7 @@ When interpreting compiler error messages, especially those involving template i
 
 In Summary: While the bottom-up approach is useful for quickly identifying the core error and the immediate lines of code causing it, you sometimes need to go top-down to fully understand the context and sequence of events leading to the error. With experience, you'll develop an intuition for quickly scanning and pinpointing the most relevant parts of such error messages.
 
-## 8.4 Document
+## 9.4 Document
 
 1. [cpp reference](https://en.cppreference.com/w/)
 1. [cppman](https://github.com/aitjcize/cppman/)
@@ -1425,6 +1564,6 @@ In Summary: While the bottom-up approach is useful for quickly identifying the c
     * 示例：`cppman vector::begin`
     * 重建索引：`cppman -r`
 
-## 8.5 Reference
+## 9.5 Reference
 
 * [C/C++ 头文件以及库的搜索路径](https://blog.csdn.net/crylearner/article/details/17013187)

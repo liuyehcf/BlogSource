@@ -1735,13 +1735,13 @@ int main() {
 
 [C++ 关键词：extern](https://zh.cppreference.com/w/cpp/keyword/extern)
 
-* 具有外部链接的静态存储期说明符
-    * 这个符号在别的编译单元里定义，也就是要把这个符号放到未解决符号表里去（外部链接）
-* 语言链接说明
+* Static storage duration specifier with external linkage
+    * This symbol is defined in another compilation unit, which means it needs to be placed in the unresolved symbol table (external linkage)
+* Language linkage specification, to avoid name mangling
     * `extern "C" {}`
-* 显式模板实例化声明
-    * 对于类模板
-    * 对于函数模板
+* Explicit template instantiation declaration
+    * For class templates
+    * For function templates
 
 #### 3.6.2.1 Shared Global Variable
 
