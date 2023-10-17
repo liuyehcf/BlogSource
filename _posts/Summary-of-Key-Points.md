@@ -88,6 +88,7 @@ categories:
         - ReentrantLock
         - BlockingQueue
         - CountDownLatch
+        - Semaphore
     - Concurrency Frameworks
         - Executor Framework
         - Fork/Join Framework
@@ -132,31 +133,33 @@ categories:
         - Thread Start Rule
         - Thread Termination Rule
         - Interruption Rule
-    - Volatile Keyword
-    - Synchronization
-    - Lock Optimization
-        - Object Head
+    - Synchronization Mechanism
+        - volatile
+        - synchronized
+            - Optimizations
+            - Object Head
 - JVM(Java Virtual Machine)
     - Garbage Collection Algorithms
         - Mark-Copy (Young Generation in Serial GC, Parallel GC)
         - Mark-Sweep (Old Generation in Serial GC, Parallel GC)
         - Mark and Concurrent Sweep (CMS GC)
-        - Generational Algorithm (Most JVM GCs)
         - Mark-Region (G1 GC)
+        - Generational Algorithm (Most JVM GCs)
     - Garbage Collectors
         - Serial GC
         - Parallel GC
         - Concurrent Mark Sweep, CMS
         - Garbage First Garbage Collector, G1
-    - Java Memory Management
+    - Java Memory Classification
         - Heap
         - Stack
-        - PermGen
-        - Metaspace
+        - Method Area
         - Program Counter Register
         - Native Stack
     - JVM Tuning and Performance Optimization
 - JNI(Java Native Interface)
+    - Calling Native Code from Java
+    - Calling Java from Native Code
 - JDBC(Java Database Connectivity)
 - JNDI(Java Naming and Directory Interface)
 - Tools
@@ -279,9 +282,9 @@ categories:
 - Memory Management
     - Manual Memory Management
         - new/delete
-    - Smart Pointers
-    - Memory Allocators and Custom Memory Management
-    - Memory Allocation Strategy
+    - Automatic Memory Management
+        - Smart Pointers
+    - Memory Allocation Strategy(malloc, tcmalloc, jemalloc)
         - First Fit, allocates the first block of memory that meets the request
         - Best Fit, allocates the smallest block of memory that meets the request
             - Minimize wastage
@@ -306,14 +309,14 @@ categories:
 - Cpp Memory Model
     - Cache Coherence
     - Memory Consistency
-    - Memory Ordering
-        - Sequential Consistency Ordering
-        - Relaxed Ordering(Hardware related)
-            - Relax write-read Program Ordering, Supported by TSO
-            - Relax write-write Program Ordering
-            - Relax read-read and read-write Program Ordering
-            - Allow early read that is written by current processor
-            - Allow early read that is written by other processors
+        - Memory Ordering
+            - Sequential Consistency Ordering
+            - Relaxed Ordering(Hardware related)
+                - Relax write-read Program Ordering, Supported by TSO
+                - Relax write-write Program Ordering
+                - Relax read-read and read-write Program Ordering
+                - Allow early read that is written by current processor
+                - Allow early read that is written by other processors
 - Performance Optimization
     - Cache
         - Cache Locality
