@@ -52,3 +52,4 @@
 | DFA | Deterministic Finite Automation |
 | CISC | Complex Instruction Set Computer |
 | RISC | Reduced Instruction Set Computer |
+| TLB  | Translation Lookaside Buffer |
