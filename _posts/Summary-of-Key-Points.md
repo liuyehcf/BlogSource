@@ -1039,7 +1039,10 @@ Now, instead of storing all these chunks as is, Roaring Bitmaps compresses them:
                 - Each process typically has its own dedicated page table
                 - cr3
                 - TBL
-                    - A hardware cache that is typically shared among all running programs
+                    - Hardware caches that are typically shared among all running programs
+                    - Each processor typically has its own TLB
+                    - TLB shootdown
+                        - Coherence protocol is required, just like what MESI does
             - Page Replacement Algorithms (LRU, FIFO, etc.)
                 - FIFO (First-In-First-Out)
                 - LRU (Least Recently Used)
@@ -1048,8 +1051,30 @@ Now, instead of storing all these chunks as is, Roaring Bitmaps compresses them:
                 - A process is trying to access a page (or memory location) in virtual memory that is currently not loaded into physical memory
                 - Lazy Allocation (Demand Paging)
             - brk vs. mmap
+                - mmap
+                    - It can be used for both memory allocation and memory-mapped file operations in modern Unix-like systems
+                    - The smallest size is a single page, typically 4KB
+                - brk, Program Break
+                    - It control the size of the heap in older Unix programs.
+            - Standard File I/O vs. mmap
+                - mmap
+                    - The file access is essentially treated as memory access
+                    - Avoid the double-buffering scenario
+                    - Suitable for performance-critical applications with random access patterns
+                - Standard File I/O
+                    - There might be double buffering: one buffer in the application and another in the kernel.
+                    - Generally suitable for sequential file operations or when there's a need for granular control over I/O
             - Slab Allocation
-            - TLB shootdown
+            - Linux Virtual Memory Layout(From Highest to Lowest)
+                - Kernal Space
+                - Stack Bottom
+                - Stack Top
+                - Unallocated Space
+                - Heap Top (Program Break)
+                - Heap Bottom
+                - Uninitialized Data(bss)
+                - Initialized Data
+                - Text(Program Code)
         - Memory Protection
             - Read-Only Memory (ROM)
             - Memory Segmentation
