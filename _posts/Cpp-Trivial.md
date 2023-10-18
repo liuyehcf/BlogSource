@@ -1216,7 +1216,7 @@ __asm(".text\n"                         // Section for code
       "    pushq  %r14  \n"             // Pushes r14 register onto the stack
       "    pushq  %r13  \n"             // Pushes r13 register onto the stack
       "    pushq  %r12  \n"             // Pushes r12 register onto the stack
-      "    leaq  -0x8(%rsp), %rsp\n"    // Decrement the stack pointer by 8 bytes
+      "    leaq  -0x8(%rsp), %rsp\n"    // Decrement the stack pointer by 8 bytes (allocate stack memory)
       "    cmp  $0, %rcx\n"             // Compare rcx register with 0
       "    je  1f\n"                    // If rcx == 0, jump to label 1
       "    stmxcsr  (%rsp)\n"           // Store the contents of the MXCSR register onto the stack
@@ -1229,7 +1229,7 @@ __asm(".text\n"                         // Section for code
       "    ldmxcsr  (%rsp)\n"    // Load value from the stack into the MXCSR register
       "    fldcw  0x4(%rsp)\n"   // Load control word into FPU
       "2:\n"
-      "    leaq  0x8(%rsp), %rsp\n"               // Increment the stack pointer by 8 bytes
+      "    leaq  0x8(%rsp), %rsp\n"               // Increment the stack pointer by 8 bytes (deallocate stack memory)
       "    popq  %r12  \n"                        // Restore r12 register from the stack
       "    popq  %r13  \n"                        // Restore r13 register from the stack
       "    popq  %r14  \n"                        // Restore r14 register from the stack
@@ -1251,7 +1251,7 @@ __asm(".text\n"                         // Section for code
       "make_fcontext:\n"                // Start of function named 'make_fcontext'
       "    movq  %rdi, %rax\n"          // Copy the value of rdi into rax
       "    andq  $-16, %rax\n"          // Align rax to the nearest lower 16-byte boundary
-      "    leaq  -0x48(%rax), %rax\n"   // Decrement rax by 72 bytes (0x48)
+      "    leaq  -0x48(%rax), %rax\n"   // Decrement rax by 72 bytes (0x48) (allocate stack memory)
       "    movq  %rdx, 0x38(%rax)\n"    // Store the value of rdx at memory address rax + 56 bytes (0x38)
       "    stmxcsr  (%rax)\n"           // Store the contents of the MXCSR register at the address in rax
       "    fnstcw   0x4(%rax)\n"        // Store the control word of FPU at memory address rax + 4 bytes
