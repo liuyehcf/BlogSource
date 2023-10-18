@@ -80,7 +80,7 @@ categories:
     - Runtime
 - Concurrent
     - Multithreading
-        - Performance
+        - High Performance
         - Efficient CPU Usage
     - Concurrency-Safe Containers
         - ConcurrentHashMap
@@ -154,8 +154,8 @@ categories:
         - Concurrent Mark Sweep, CMS
         - Garbage First Garbage Collector, G1
     - Java Memory Classification
-        - Heap
         - Stack
+        - Heap
         - Method Area
         - Program Counter Register
         - Native Stack
@@ -304,13 +304,16 @@ categories:
             - It deals with the frequent allocation and deallocation of small objects of the same size
             - This strategy is effective for kernel object allocation where objects of the same size are frequently allocated and deallocated
 - RAII(Resource Acquisition Is Initialization)
-    - Smart Pointers
     - STL Containers
+    - Smart Pointers
     - File Stream Objects
     - Mutex Locks
     - std::thread
 - Cpp Memory Model
     - Cache Coherence
+        - Coherence Protocol
+            - MESI
+            - MOESI
     - Memory Consistency
         - Memory Ordering
             - Sequential Consistency Ordering
@@ -1038,7 +1041,7 @@ Now, instead of storing all these chunks as is, Roaring Bitmaps compresses them:
             - Page Tables
                 - Each process typically has its own dedicated page table
                 - cr3
-                - TBL
+                - TLB
                     - Hardware caches that are typically shared among all running programs
                     - Each processor typically has its own TLB
                     - TLB shootdown
