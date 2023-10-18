@@ -332,7 +332,18 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
 * **`gn`：选中下一个查找的内容**
 * **`gN`：选中上一个查找的内容**
 
-## 2.7 File
+## 2.7 Record
+
+Record refers to a feature that allows you to record a sequence of keystrokes and save it as a macro for later playback. This is a powerful and versatile feature that can help you automate repetitive tasks, make complex edits more efficiently, and improve your overall productivity when working with text.
+
+**How to Use Vim Record:**
+
+1. **Start Recording**: To start recording a macro, press `q` followed by the register(`a` to `z`) where you want to store the macro. For example, press qa to start recording in register `a`
+1. **Perform Actions**: While recording is active, perform the series of commands, edits, or movements you want to include in your macro. Vim will record everything you do.
+1. **Stop Recording**: To stop recording, press `q` again. In our example, press `q` once more to stop recording in register `a`
+1. **Replay the Macro**: To replay the recorded macro, use the `@` symbol followed by the register where you stored the macro. For example, to replay the `a` register macro, type `@a`
+
+## 2.8 File
 
 * **`:w`：保存文件**
 * **`:wa`：保存所有文件**
@@ -352,7 +363,7 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
 * `:files`：列出这个vim打开的所有文件
 * **`:Vex`：打开目录**
 
-## 2.8 Text Object
+## 2.9 Text Object
 
 **文本对象：`c`、`d`、`v`、`y`、`g~`、`gu`、`gU`等命令后接文本对象，一般格式为：`<范围><类型>`**
 
@@ -379,7 +390,7 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
 * `i"`：双引号内
 * `a"`：双引号内（包含双引号本身）
 
-## 2.9 Text Fold
+## 2.10 Text Fold
 
 **按照折叠所依据的规则，可以分为如下4种：**
 
@@ -411,7 +422,7 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
 * **`zj`：移动到下一个折叠**
 * **`zk`：移动到上一个折叠**
 
-## 2.10 Buffer
+## 2.11 Buffer
 
 * **`:buffers`：列出所有buffer**
 * **`:buffer [n]`：显示指定buffer**
@@ -424,7 +435,7 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
 * **`:bufdo <cmd>`：对所有buffer执行操作**
     * **`:bufdo e`：重新载入所有buffer对应的文件**
 
-## 2.11 Window
+## 2.12 Window
 
 * **`[Ctrl] + w + <xxx>`：先`[Ctrl]`再`w`，放掉`[Ctrl]`和`w`再按`<xxx>`，以下操作以此为基准**
 1. `vim -On file1 file2...`：垂直分屏
@@ -455,7 +466,7 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
 1. `[Ctrl] + w + <`：宽度减小1
 1. `[Ctrl] + w + [n] + <`：宽度减小n
 
-## 2.12 Tab
+## 2.13 Tab
 
 * **`:tabnew [filename]`：在一个新的tab中打开文件**
     * **`:tabnew %`：在另一个`tab`中打开当前文件**
@@ -467,7 +478,7 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
 * **`:tabdo <cmd>`：对所有tab执行操作**
     * **`:tabdo e`：重新载入所有tab对应的文件**
 
-## 2.13 Quickfix
+## 2.14 Quickfix
 
 * `:copen`：打开`quickfix`窗口（查看编译，grep等信息）
 * `:copen 10`：打开`quickfix`窗口，并且设置高度为`10`
@@ -479,14 +490,14 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
 * `:cprev`：跳到`quickfix`中上一个错误信息
 * `:set modifiable`，将`quickfix`改成可写，可以用`dd`等删除某个条目
 
-## 2.14 Terminal
+## 2.15 Terminal
 
 **vim中可以内嵌终端**
 
 * `:terminal`：打开终端
 * `[Ctrl] + \ + [Ctrl] + n`：退出终端
 
-## 2.15 Mapping
+## 2.16 Mapping
 
 1. **`map`：递归映射**
 1. **`noremap`：非递归映射**
@@ -529,7 +540,7 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
 * `<expr>`
 * `<unique>`
 
-## 2.16 Key Representation
+## 2.17 Key Representation
 
 * **`<f-num>`：例如`<f1>`、`<f2>`**
 * **`<c-key>`：表示`[Ctrl]`加另一个字母**
@@ -537,12 +548,12 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
 * **对于mac上的`[Option]`，并没有`<p-key>`这样的表示方法。而是用`[Option]`加另一个字母实际输出的结果作为映射键值，例如：**
     * `[Option] + a`：`å`
 
-## 2.17 Config
+## 2.18 Config
 
 * **`:set <config>?`：可以查看`<config>`的值**
     * `:set filetype?`：查看文件类型
 
-### 2.17.1 Frequently-used Configs
+### 2.18.1 Frequently-used Configs
 
 ```vim
 :set nocompatible                   " 设置不兼容原始 vi 模式（必须设置在最开头）
@@ -584,7 +595,7 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
 :syntax off                         " 禁止语法高亮
 ```
 
-### 2.17.2 Config File
+### 2.18.2 Config File
 
 vim会主动将你曾经做过的行为记录下来，好让你下次可以轻松作业，记录操作的文件就是`~/.viminfo`
 
@@ -592,7 +603,7 @@ vim会主动将你曾经做过的行为记录下来，好让你下次可以轻�
 
 **在运行vim的时候，如果修改了`~/.vimrc`文件的内容，可以通过执行`:source ~/.vimrc`来重新加载`~/.vimrc`，立即生效配置**
 
-## 2.18 Help Doc
+## 2.19 Help Doc
 
 1. `:help i_ctrl-v`，其中`i_`表示`insert mode`
 
@@ -602,7 +613,7 @@ vim会主动将你曾经做过的行为记录下来，好让你下次可以轻�
 
 **`vimtutor`：提供一个简易的教程**
 
-## 2.19 Assorted
+## 2.20 Assorted
 
 * **`echo`**
     * **`:echo <variable>`：可以查看`<variable>`的值**
@@ -619,7 +630,7 @@ vim会主动将你曾经做过的行为记录下来，好让你下次可以轻�
 * **`[Ctrl] + g`：统计信息**
 * **`g + [Ctrl] + g`：字节统计信息**
 
-### 2.19.1 Symbol Index
+### 2.20.1 Symbol Index
 
 * **`[Ctrl] + ]`：跳转到光标指向的符号的定义处**
 * **`gf`：跳转光标指向的头文件**
@@ -627,14 +638,14 @@ vim会主动将你曾经做过的行为记录下来，好让你下次可以轻�
     * 通过`set path?`可以查看该变量的内容
 * **`[Ctrl] + ^`：在前后两个文件之间跳转**
 
-### 2.19.2 Insert Form Feed(tab)
+### 2.20.2 Insert Form Feed(tab)
 
 参考[How can I insert a real tab character in Vim?](https://stackoverflow.com/questions/6951672/how-can-i-insert-a-real-tab-character-in-vim)，在我们设置了`tabstop`、`softtabstop`、`expandtab`等参数后，`tab`会被替换成空格，如果要输入原始的`\t`字符，可以在`insert`模式下，按`[Ctrl] + v + i`，其中：
 
 * `[Ctrl] + v`表示输入原始的字面值
 * `i`表示`\t`
 
-### 2.19.3 Multiply-line Editing
+### 2.20.3 Multiply-line Editing
 
 **示例：多行同时插入相同内容**
 
@@ -657,7 +668,7 @@ vim会主动将你曾经做过的行为记录下来，好让你下次可以轻�
 1. 选中需要同时修改的列
 1. 按`d`即可同时删除
 
-### 2.19.4 中文乱码
+### 2.20.4 中文乱码
 
 **编辑`/etc/vimrc`，追加如下内容**
 
@@ -667,7 +678,7 @@ set termencoding=utf-8
 set encoding=utf-8
 ```
 
-### 2.19.5 Project Customized Config
+### 2.20.5 Project Customized Config
 
 同一份`~./vimrc`无法适用于所有的项目，不同的项目可能需要一些特化的配置项，可以采用如下的设置方式
 
