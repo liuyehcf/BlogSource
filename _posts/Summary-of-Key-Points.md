@@ -80,6 +80,8 @@ categories:
     - Runtime
 - Concurrent
     - Multithreading
+        - Performance
+        - Efficient CPU Usage
     - Concurrency-Safe Containers
         - ConcurrentHashMap
         - CopyOnWriteArrayList
@@ -88,6 +90,7 @@ categories:
         - ReentrantLock
         - BlockingQueue
         - CountDownLatch
+        - CyclicBarrier
         - Semaphore
     - Concurrency Frameworks
         - Executor Framework
@@ -450,7 +453,7 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
             - Transparent Acceleration
             - Lake Speed Up
             - Real-time Incremental Aggregation
-            - Declarative Modeling(without maintain the ETL workflow)
+            - Declarative Modeling(without maintaining the ETL workflow)
         - Features
             - Partition
             - Refresh
@@ -521,6 +524,7 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
             - Basic Concept
                 - Expression
                 - ExpressionGroup
+                    - Contains equivalent expressions that produce the same result
                 - Optimization Tasks
                     - Group Optimization Task
                         - Find Cheapest Plan
@@ -635,8 +639,8 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
                         - Restricted State Changes
                             - Time Slice Exhausted
                             - Hardware Interrupts
-                            - Mutex/Futex
                             - System Calls
+                            - Mutex/Futex
                             - Explicit Yielding
             - Pros:
                 - Fine-Grained Scheduling
@@ -1012,7 +1016,7 @@ Now, instead of storing all these chunks as is, Roaring Bitmaps compresses them:
                 - L3 is shared by all cores
             - Main Memory (RAM)
             - Secondary Storage (Disk)
-        - Address Spaces
+        - Memory Address Spaces
             - Logical Address
             - Linear Address
             - Physical Address
@@ -1032,7 +1036,10 @@ Now, instead of storing all these chunks as is, Roaring Bitmaps compresses them:
         - Virtual Memory
             - Each Virtual Memory Address contains the Page Number and Page Offset
             - Page Tables
+                - Each process typically has its own dedicated page table
                 - cr3
+                - TBL
+                    - A hardware cache that is typically shared among all running programs
             - Page Replacement Algorithms (LRU, FIFO, etc.)
                 - FIFO (First-In-First-Out)
                 - LRU (Least Recently Used)
