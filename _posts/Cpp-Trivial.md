@@ -1407,6 +1407,18 @@ end, back to main
 1. `-faligned-new`
 1. `-fsized-deallocation`：启用接收`size`参数的`delete`运算符。[C++ Sized Deallocation](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3778.html)。现代内存分配器在给对象分配内存时，需要指定大小，出于空间利用率的考虑，不会在对象内存周围存储对象的大小信息。因此在释放对象时，需要查找对象占用的内存大小，查找的开销很大，因为通常不在缓存中。因此，编译器允许提供接受一个`size`参数的`global delete operator`，并用这个版本来对对象进行析构
 
+### 7.1.1 How to link libc++ statically
+
+Use `g++`
+```sh
+g++ -o main main.cpp -static-libstdc++
+```
+
+Use `gcc`: 
+```sh
+gcc main.cpp -o main -std=gnu++17 -Wl,-Bstatic -lstdc++ -Wl,-Bdynamic
+```
+
 ## 7.2 ld
 
 **种类**

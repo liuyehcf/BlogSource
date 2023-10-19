@@ -1539,7 +1539,7 @@ BM_sum_with_restrict          2.85 ns         2.85 ns    243455429
 
 # 3 vectorization
 
-## 3.1 简介
+## 3.1 Introduction
 
 **向量化使用的特殊寄存器**
 
@@ -2601,7 +2601,7 @@ BM_foo_with_align_128       23.5 ns         23.5 ns     29785503
 BM_foo_with_align_256       23.5 ns         23.5 ns     29786540
 ```
 
-## 3.7 参考
+## 3.7 Reference
 
 * [Auto-vectorization in GCC](https://gcc.gnu.org/projects/tree-ssa/vectorization.html)
 * [Type-Based Alias Analysis](https://www.drdobbs.com/cpp/type-based-alias-analysis/184404273)
@@ -3358,7 +3358,7 @@ distinct=63, time=277ms
 distinct=64, time=56ms
 ```
 
-## 4.6 参考
+## 4.6 Reference
 
 * [Other Built-in Functions Provided by GCC](https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html)
 * [Branch-aware programming](https://stackoverflow.com/questions/32581644/branch-aware-programming)
