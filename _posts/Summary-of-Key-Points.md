@@ -1395,6 +1395,32 @@ Key characteristics of an event-driven system include:
 
 # 8 Other
 
-## 8.1 Unclassified
+## 8.1 Parsing Algorithms
+
+`LL(1)` and `LR(1)` are both types of parsing algorithms used in the context of compiler construction. They are used to generate a syntax tree or parse tree from the source code of a programming language. These algorithms differ in terms of their parsing techniques and the grammars they can handle.
+
+**`LL(1)` Parsing:**
+
+* `LL(1)` stands for "Left-to-Right, Leftmost derivation, with 1 token lookahead."
+It is a top-down parsing technique, meaning it starts from the root of the parse tree and works its way down to the leaves.
+
+* `LL(1)` parsers use a predictive parsing table to decide which production rule to apply based on the next token in the input stream.
+* `LL(1)` grammars are a subset of context-free grammars (CFGs) that are more restrictive. They must be unambiguous and have no left recursion.
+* The `LL(1)` parser is often easier to implement and more human-readable compared to `LR(1)` parsers.
+* It's commonly used in simpler programming languages or for educational purposes.
+
+**`LR(1)` Parsing:**
+
+* `LR(1)` stands for "Left-to-Right, Rightmost derivation, with 1 token lookahead."
+It is a bottom-up parsing technique, meaning it starts with the individual tokens and builds up the parse tree from the leaves to the root.
+
+* `LR(1)` parsers use a state machine and a lookahead symbol to decide how to reduce or shift in the parsing process. `LR(1)` parsers are more powerful than `LL(1)` parsers.
+* `LR(1)` grammars are a superset of `LL(1)` grammars. They can handle a broader range of context-free grammars, including those with left recursion.
+* `LR(1)` parsers can handle more complex and ambiguous grammars, making them suitable for parsing real-world programming languages like C, C++, and Java.
+* Implementing an `LR(1)` parser can be more challenging and requires tools like parser generators (e.g., Bison, Yacc) to generate the parsing tables automatically.
+
+In summary, `LL(1)` and `LR(1)` are both parsing techniques used in compiler construction, but they differ in terms of their parsing approach and the complexity of grammars they can handle. `LL(1)` is simpler and more limited in the grammars it can handle, while `LR(1)` is more powerful and can handle a wider range of grammars, making it more suitable for parsing complex programming languages.
+
+## 8.2 Unclassified
 
 1. Reactive Programming

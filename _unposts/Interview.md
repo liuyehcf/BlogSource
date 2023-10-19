@@ -65,7 +65,7 @@ The third project I participated in was an intelligent edge integrated machine, 
 
 1. What components does the compiler framework have?
     * A lexical analyzer, parses the original content into a sequence of tokens.
-    * A Grammar Parser, supports several types of grammar analysis algorithm, like, LL1(Left-to-right, Leftmost derivation), LALR(Look-Ahead, Left-to-right, Rightmost Derivation), LR1(Left-to-Right, Rightmost derivation).
+    * A Grammar Parser, supports several types of grammar analysis algorithm, like, LL1(Left-to-right, Leftmost derivation, with 1 token lookahead), LALR(Look-Ahead, Left-to-right, Rightmost Derivation), LR1(Left-to-Right, Rightmost derivation, with 1 token lookahead).
 1. What features does the compiler framework have?
 1. What's the most difficult thing you've encountered when implementing it?
     * The most challenging aspect, in my opinion, is defining an unambiguous grammar for a specific language. I've gained insights from many mature languages, such as Java.
