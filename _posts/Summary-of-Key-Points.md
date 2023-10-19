@@ -593,7 +593,7 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
                     - Predicate Like rk < 100
                     - TopN Like ORDER BY rk LIMIT 100
             - CTE(Common Table Expressions)
-                - CTEProducer & CTEConsumer & CTEAnchor
+                - CTEProducer & CTEConsumer & CTEAnchor & Sequence
                 - Plan Enumeration
             - Multiply Stage Aggregate
                 - 1 Stage Aggregate
@@ -662,6 +662,7 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
             - Vectorization
                 - Column Oriented
                 - Loop
+                - SIMD
             - Runtime Filter
                 - Principle
                     - A JOIN B = (A LEFT SEMI JOIN B) JOIN B
@@ -1043,7 +1044,7 @@ Now, instead of storing all these chunks as is, Roaring Bitmaps compresses them:
                 - cr3
                 - TLB
                     - Hardware caches that are typically shared among all running programs
-                    - Each processor typically has its own TLB
+                    - Each core typically has its own TLB
                     - TLB shootdown
                         - Coherence protocol is required, just like what MESI does
             - Page Replacement Algorithms (LRU, FIFO, etc.)
