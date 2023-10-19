@@ -1766,7 +1766,7 @@ categories:
     * 提高流水线的时钟频率：提高时钟频率，有时导致`CPI`随着增加（`branches, other hazards`）
     * 指令预取和译码：有时在每个时钟周期很难预取和译码多条指令
     * 提高`Cache`命中率：在有些计算量较大的应用中（科学计算）需要大量的数据，其局部性较差，有些程序处理的是连续的媒体流（multimedia），其局部性也较差
-* **`ata-Level Parallelism, DLP`的兴起**
+* **`Data-Level Parallelism, DLP`的兴起**
     * 应用需求和技术发展推动着体系结构的发展
     * 图形、机器视觉、语音识别、机器学习等新的应用均需要大量的数值计算，其算法通常具有数据并行特征
     * `SIMD-based`结构（`vector-SIMD,subword-SIMD, SIMT/GPUs`）是执行这些算法的最有效途径
@@ -2652,64 +2652,7 @@ for i from 1 to n
     * 数据级并行（`DLP`）：`SIMD`
     * 线程级并行（`TLP`）：`SMP`
 
-# 9 缩写表
-
-| 缩写 | 全称 |
-|:--|:--|
-| `ISA` | Instruction-Set Architecture |
-| `VLIW` | Very Long Instruction Word |
-| `EPIC` | Explicitly Parallel Instruction Computing |
-| `CISC` | Complex Instruction Set Computer |
-| `RISC` | Reduced Instruction Set Computer |
-| `CPI` | Cycles per Instruction |
-| `IPC` | Instruction per Cycle |
-| `MIPS` | Millions of Instructions Per Second |
-| `ABI` | Application Binary Interface |
-| `ALU` | Arithmetic Logic Unit |
-| `HL`/`ML` | High Level/Machine Level |
-| `ROM` | Read-only Memory |
-| `PROM` | Programmable Read-only Memory |
-| `EPROM` | Erasable Programmable Read-only Memory |
-| `EEPROM` | Electrically Erasable Programmable Read-only Memory |
-| `FLASH` | FLASH EEPROM |
-| `IF` | Instruction Fetch |
-| `ID` | Instruction Decode |
-| `EX` | Execute Address Calc |
-| `MEM` | Memory Access |
-| `WB` | Write Back |
-| `RAW` | Read After Write |
-| `WAR` | Write After Read |
-| `WAW` | Write After Write |
-| `PF` | Float Point |
-| `DRAM` | Dynamic Random Access Memory |
-| `SRAM` | Static Random Access Memory |    
-| `DDR` | Double Data Rate |
-| `VM` | Virtual Memory |
-| `TLB` | Translation Look-aside Buffer |
-| `SISD` | Single Instruction stream, Single Data stream |
-| `SIMD` | Single Instruction stream, Multiple Data streams |
-| `MISD` | Multiple Instruction streams, Single Data stream |
-| `MIMD` | Multiple Instruction streams, Multiple Data streams |
-| `SPMD` | Single Program Multiple Data |
-| `SIMT` | Single Instruction Multiple Thread |
-| `ILP` | Instruction-Level Parallelism |
-| `TLP` | Thread-Level Parallelism |
-| `DLP` | Data-Level Parallelism |
-| `FU` | Reservation stations |
-| `DPL` | Descriptor Privilege Level |
-| `CPL` | Current Privilege Level |
-| `RPL` | Request Privilege Level |
-| `TSS` | Task Status Segment) |
-| `CPU` | Central Processing Unit |
-| `GPU` | Graphics Processing Unit |
-| `GP-GPUs` | General-Purpose GPUs |
-| `CUDA` | Compute Unified Device Architecture |
-| `C++ AMP` | C++ Accelerated Massive Parallelism |
-| `OpenACC` | Open Accelerator |
-| `UMA` | Uniform Memory Access |
-| `NUMA` | Non-Uniform Memory Access |
-
-# 10 参考
+# 9 参考
 
 * [计算机体系结构(Spring 2021)](http://staff.ustc.edu.cn/~xhzhou/CA-Spring2021/CA.html)
 * 《Computer Architecture: A Quantitative Approach》

@@ -1145,6 +1145,64 @@ Classification:
 
 # 5 System Architecture
 
+{% markmap %}
+- ISA
+    - CISC
+        - x86
+    - RISC
+        - MIPS
+        - SPARC
+        - Alpha（DEC）
+        - ARMv7
+        - ARMv8
+        - OpenRISC
+- Pipeline
+    - Definition
+        - Sequential process breakdown
+        - Overlapping of instruction phases
+    - Types of Pipelining
+        - Linear Pipelining
+            - Regular interval execution
+        - Non-linear Pipelining
+            - Different interval execution
+    - Stages (Classic Five-stage Pipeline for RISC)
+        - IF (Instruction Fetch)
+            - Fetch instruction from memory
+        - ID (Instruction Decode)
+            - Decode fetched instruction
+            - Read registers
+        - EX (Execute)
+            - Arithmetic operations
+            - Data movements
+        - MEM (Memory Access)
+            - Load or store operations
+        - WB (Write Back)
+            - Write the result to the destination register
+    - Hazards
+        - Structural Hazards
+            - Resource conflicts
+        - Data Hazards
+            - Read-after-write (RAW)
+            - Write-after-read (WAR)
+            - Write-after-write (WAW)
+        - Control Hazards
+            - Branch instructions and their outcomes
+    - Solutions to Hazards
+        - Pipeline Stalling
+        - Data Forwarding
+        - Branch Prediction
+    - Advantages
+        - Increased throughput
+        - Efficient resource utilization
+        - Concurrent processing
+- Storage Hierarchy
+    - Cache
+- Parallelism
+    - ILP
+    - TLP
+    - DLP
+{% endmarkmap %}
+
 ## 5.1 X86
 
 Pros:
