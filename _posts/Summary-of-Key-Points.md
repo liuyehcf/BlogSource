@@ -344,6 +344,10 @@ categories:
     - Dynamic Linking
     - Thread Support
     - ABI
+        - Calling conventions
+        - Data representation
+        - System call interface
+        - Exception handling
 - Tools
     - Build Tools
         - Makefile
