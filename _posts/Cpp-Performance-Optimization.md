@@ -1275,6 +1275,8 @@ BM_of_differenct_node/2048 1.1860e+11 ns   1.1849e+11 ns            1
 
 The `_mm_pause` instruction is a hardware-specific instruction that provides a hint to the processor to pause for a brief moment. It's beneficial in spin-wait loops because it can reduce the power consumption and potentially increase the performance of the spinning code. This is particularly used in x86 architectures. On the other hand, `sched_yield()` is a system call that yields the processor so another thread or process can run. The context switch overhead associated with `sched_yield()` can be significant compared to the lightweight `_mm_pause`.
 
+### 1.14.1 Overhead
+
 Below is a simple C++ code example to demonstrate the efficiency of `_mm_pause` over `sched_yield` in a spin-wait scenario. This example uses both methods in a tight loop and measures the elapsed time:
 
 ```cpp
@@ -1315,6 +1317,163 @@ int main() {
 
     return 0;
 }
+```
+
+**Output:**
+
+```
+__mm_pause took: 1308 ms
+sched_yield took: 40691 ms
+```
+
+### 1.14.2 Yield Efficiency
+
+```cpp
+#include <emmintrin.h>
+#include <pthread.h>
+
+#include <atomic>
+#include <iostream>
+#include <thread>
+#include <vector>
+
+struct alignas(64) Counter {
+    int64_t cnt = 0;
+};
+
+int main(int argc, char** argv) {
+    size_t num_threads = std::atoi(argv[1]);
+    if (num_threads < 2) {
+        std::cerr << "Minimum threads number is 2" << std::endl;
+        return 1;
+    }
+
+    size_t start_core_num = std::atoi(argv[2]);
+
+    bool has_interrupt_thread = static_cast<bool>(std::atoi(argv[3]));
+
+#ifdef USE_PAUSE
+    std::cout << "interrupt thread use _mm_pause" << std::endl;
+#elif USE_YIELD
+    std::cout << "interrupt thread use sched_yield" << std::endl;
+#else
+    std::cout << "interrupt use no pause" << std::endl;
+#endif
+
+    std::atomic<bool> is_started = false;
+    std::atomic<bool> is_stoped = false;
+    std::vector<std::thread> threads;
+
+    // Make each Counter use differnt cache line to avoid false sharing
+    std::vector<Counter> counters(num_threads);
+    for (int32_t i = 0; i < num_threads; i++) {
+        Counter& counter = counters[i];
+        threads.emplace_back([start_core_num, i, &is_started, &is_stoped, &counter]() {
+            // Each thread bind to indivial core
+            cpu_set_t cpuset;
+            CPU_ZERO(&cpuset);
+            CPU_SET(start_core_num + i, &cpuset);
+            pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset);
+
+            while (!is_started)
+                ;
+
+            while (!is_stoped) {
+                counter.cnt++;
+            }
+        });
+    }
+
+    if (has_interrupt_thread) {
+        threads.emplace_back([start_core_num, num_threads, &is_started, &is_stoped]() {
+            // Let the thread to interrupt all the above cores
+            cpu_set_t cpuset;
+            CPU_ZERO(&cpuset);
+            for (int32_t i = 0; i < num_threads; i++) {
+                CPU_SET(start_core_num + i, &cpuset);
+            }
+            pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset);
+            while (!is_started)
+                ;
+
+            std::vector<int64_t> waste_cpu(128, 0);
+            int64_t increment = 1;
+            while (!is_stoped) {
+                for (size_t i = 0; i < waste_cpu.size(); i++) {
+                    waste_cpu[i]++;
+                }
+#ifdef USE_PAUSE
+                _mm_pause();
+#elif USE_YIELD
+                sched_yield();
+#else
+#endif
+            }
+
+            int64_t sum = 0;
+            for (size_t i = 0; i < waste_cpu.size(); i++) {
+                sum += waste_cpu[i];
+            }
+            std::cout << "waste_cpu count=" << sum << std::endl;
+        });
+    }
+
+    is_started = true;
+    std::this_thread::sleep_for(std::chrono::seconds(10));
+    is_stoped = true;
+
+    for (size_t i = 0; i < num_threads + (has_interrupt_thread ? 1 : 0); i++) {
+        threads[i].join();
+    }
+
+    for (size_t i = 0; i < num_threads; i++) {
+        std::cout << "core[" << start_core_num + i << "], count[" << i << "] = " << counters[i].cnt << std::endl;
+    }
+}
+```
+
+```sh
+gcc main.cpp -o main -std=gnu++17 -lstdc++ -O3 -lpthread
+gcc main.cpp -o main_pause -std=gnu++17 -lstdc++ -O3 -lpthread -DUSE_PAUSE
+gcc main.cpp -o main_yield -std=gnu++17 -lstdc++ -O3 -lpthread -DUSE_YIELD
+```
+
+**Output:**
+
+* The interrupt thread is expected to interfere all threads, but only the first is affected.
+* `sched_yield` cause less waste cpu, but no workers benefit from this.
+
+```
+./main 4 4 0
+interrupt use no pause
+core[4], count[0] = 6368495550
+core[5], count[1] = 6333007854
+core[6], count[2] = 6371084322
+core[7], count[3] = 6359023912
+
+./main 4 4 1
+interrupt use no pause
+waste_cpu count=24851352576
+core[4], count[0] = 3180423432
+core[5], count[1] = 6369418045
+core[6], count[2] = 6360849361
+core[7], count[3] = 6363051924
+
+./main_pause 4 4 1
+interrupt thread use _mm_pause
+waste_cpu count=12696568448
+core[4], count[0] = 3113864260
+core[5], count[1] = 6201393330
+core[6], count[2] = 6218519003
+core[7], count[3] = 6219291894
+
+./main_yield 4 4 1
+interrupt thread use sched_yield
+waste_cpu count=1394306304
+core[4], count[0] = 3163118852
+core[5], count[1] = 6327199281
+core[6], count[2] = 6360709178
+core[7], count[3] = 6331732824
 ```
 
 # 2 pointer aliasing
