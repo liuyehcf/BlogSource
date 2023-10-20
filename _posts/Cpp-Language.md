@@ -38,9 +38,54 @@ categories:
 * `##`：连接操作符
 * `\`：续行操作符
 
-### 2.2.1 Tips
+### 2.2.1 Work with compiler
 
-#### 2.2.1.1 do while(0) in macros
+macros are preprocessor directives, and they get processed before the actual compilation phase. One of the most common preprocessor directives is `#define` which is used to define macros.
+
+If you want to change a macro definition at compile time, there are several ways to do it:
+
+**Using Compiler Flags**: You can use the `-D` flag (for most compilers like GCC and Clang) to define macros.
+
+* For example, suppose you have the following code:
+    ```cpp
+    #include<iostream>
+
+    #ifndef MY_MACRO
+    #define MY_MACRO "Default Value"
+    #endif
+
+    int main() {
+        std::cout << MY_MACRO << std::endl;
+        return 0;
+    }
+    ```
+
+* You can change `MY_MACRO` at compile time as:
+    ```sh
+    g++ your_file.cpp -o output -DMY_MACRO='"Compile Time Value"'
+    ```
+
+* When you run the output, it will print "Compile Time Value".
+
+**Using Conditional Compilation:** This is where you use `#ifdef`, `#ifndef`, `#else`, and `#endif` directives to conditionally compile parts of your code based on whether a certain macro is defined or not.
+
+* Here's an example:
+    ```cpp
+    #ifdef DEBUG
+    // code for debugging
+    #else
+    // regular code
+    #endif
+    ```
+
+* You can then define or not define DEBUG using the -D flag at compile time:
+    ```sh
+    g++ your_file.cpp -o output -DDEBUG
+    ```
+
+### 2.2.2 Tips
+
+#### 2.2.2.1 do while(0) in macros
 
 考虑下面的宏定义
 
@@ -107,7 +152,7 @@ else
 #define foo(x) do { bar(x); baz(x); } while (0)
 ```
 
-#### 2.2.1.2 Variant
+#### 2.2.2.2 Variant
 
 借助宏的嵌套，以及约定命名规则，我们可以实现自动生成`else if`分支，示例代码如下：
 
@@ -206,7 +251,7 @@ int main() {
 }
 ```
 
-#### 2.2.1.3 Comma Problem
+#### 2.2.2.3 Comma Problem
 
 [pass method with template arguments to a macro](https://stackoverflow.com/questions/4496842/pass-method-with-template-arguments-to-a-macro)
 
