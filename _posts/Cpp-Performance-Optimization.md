@@ -3366,6 +3366,61 @@ distinct=64, time=56ms
 * [程序的分支消除](https://leetcode.cn/circle/article/GSJ5XS/)
 * [只会写 if 的菜炸了，手动分支消除，带你装〇带你飞！](https://www.bilibili.com/video/BV1L7411f7g3?t=2&p=2)
 
-# 5 Others
+# 5 Tools
+
+## 5.1 Test Cache Performance
+
+Please refer to [cache miss](#41-cache-miss)
+
+## 5.2 Test Cpu Performance
+
+```cpp
+#include <pthread.h>
+
+#include <chrono>
+#include <iostream>
+
+int main(int argc, char* argv[]) {
+    pthread_t thread = pthread_self();
+
+    for (int cpu_id = 0; cpu_id < CPU_SETSIZE; cpu_id++) {
+        cpu_set_t cpuset;
+        CPU_ZERO(&cpuset);
+        CPU_SET(cpu_id, &cpuset);
+
+        if (pthread_setaffinity_np(thread, sizeof(cpu_set_t), &cpuset) != 0) {
+            return 1;
+        }
+
+        if (pthread_getaffinity_np(thread, sizeof(cpu_set_t), &cpuset) != 0) {
+            return 1;
+        }
+        for (int i = 0; i < CPU_SETSIZE; i++) {
+            if (CPU_ISSET(i, &cpuset) && cpu_id != i) {
+                return 1;
+            }
+        }
+
+        std::cout << "Testing cpu(" << cpu_id << ")" << std::endl;
+
+        int64_t cnt = 0;
+        auto start = std::chrono::steady_clock::now();
+
+        /*
+         * !!! Please use `-O0` to compile this source file, otherwise the following loop maybe optimized out !!!
+         */
+        while (cnt <= 1000000000L) {
+            cnt++;
+        }
+        auto end = std::chrono::steady_clock::now();
+
+        std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << std::endl;
+    }
+
+    return 0;
+}
+```
+
+# 6 Others
 
 1. [slide window frame, vectorization agg & removable cumulative agg](https://quick-bench.com/q/y7oHsGuG9CTk-Kq5edcWtsLMjpE)
