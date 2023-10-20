@@ -116,7 +116,7 @@ INSERT INTO `R` (r_id, r1, r2, r3) values
 
 ## 2.1 Scalar Subquery
 
-**对于在`WHERE Clause`中的`Scalar Subquery`，一般用`Outer Join`来进行转换。下面用一个例子来说明，原`SQL`如下，其含义是，针对`S`表中的每一行，在`R`表中找出满足`S.s_id = R.r_id`的那个`R.r_id`（只能有一行，否则会报错），并作为`S`表的谓词**
+**对于在`WHERE Clause`中的`Scalar Subquery`，一般用`Outer Join`来进行转换。下面用一个例子来说明，原`SQL`如下，其含义是，针对`S`表中的每一行，在`R`表中找出满足`S.s_id = R.r_id`的那个`R.r3`（只能有一行，否则会报错），并作为`S`表的谓词**
 
 ```sql
 SELECT S.s1, S.s2
@@ -138,7 +138,7 @@ SELECT tmp.s1, tmp.s2 FROM (
 WHERE tmp.s3 = tmp.r3
 ```
 
-**对于在`SELECT Clause`中的`Scalar Subquery`，同样用`Outer Join`来进行转换。下面用一个例子来说明，原`SQL`如下，其含义是，针对`S`表中的每一行，在`R`表中找出满足`S.s_id = R.r_id`的那个`R.r_id`（只能有一行，否则会报错），并作为`S`表的表达式**
+**对于在`SELECT Clause`中的`Scalar Subquery`，同样用`Outer Join`来进行转换。下面用一个例子来说明，原`SQL`如下，其含义是，针对`S`表中的每一行，在`R`表中找出满足`S.s_id = R.r_id`的那个`R.r3`（只能有一行，否则会报错），并作为`S`表的表达式**
 
 ```sql
 SELECT S.s1, S.s2, S.s3 = (
