@@ -1271,6 +1271,52 @@ BM_of_differenct_node/1024 1.0282e+10 ns   1.0273e+10 ns            1
 BM_of_differenct_node/2048 1.1860e+11 ns   1.1849e+11 ns            1
 ```
 
+## 1.14 `_mm_pause` and `sched_yield`
+
+The `_mm_pause` instruction is a hardware-specific instruction that provides a hint to the processor to pause for a brief moment. It's beneficial in spin-wait loops because it can reduce the power consumption and potentially increase the performance of the spinning code. This is particularly used in x86 architectures. On the other hand, `sched_yield()` is a system call that yields the processor so another thread or process can run. The context switch overhead associated with `sched_yield()` can be significant compared to the lightweight `_mm_pause`.
+
+Below is a simple C++ code example to demonstrate the efficiency of `_mm_pause` over `sched_yield` in a spin-wait scenario. This example uses both methods in a tight loop and measures the elapsed time:
+
+```cpp
+#include <emmintrin.h> // for _mm_pause
+#include <sched.h>     // for sched_yield
+
+#include <chrono>
+#include <iostream>
+#include <thread>
+
+constexpr int ITERATIONS = 100000000;
+
+void spin_with_pause() {
+    for (int i = 0; i < ITERATIONS; ++i) {
+        _mm_pause();
+    }
+}
+
+void spin_with_yield() {
+    for (int i = 0; i < ITERATIONS; ++i) {
+        sched_yield();
+    }
+}
+
+int main() {
+    auto start = std::chrono::high_resolution_clock::now();
+    spin_with_pause();
+    auto end = std::chrono::high_resolution_clock::now();
+    auto pause_duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+    start = std::chrono::high_resolution_clock::now();
+    spin_with_yield();
+    end = std::chrono::high_resolution_clock::now();
+    auto yield_duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+
+    std::cout << "__mm_pause took: " << pause_duration << " ms\n";
+    std::cout << "sched_yield took: " << yield_duration << " ms\n";
+
+    return 0;
+}
+```
+
 # 2 pointer aliasing
 
 **`pointer aliasing`指的是两个指针（在作用域内）指向了同一个物理地址，或者说指向的物理地址有重叠。`__restrict`关键词用于给编译器一个提示：确保被标记的指针是独占物理地址的**
