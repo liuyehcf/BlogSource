@@ -23,7 +23,8 @@
 
 StarRocks is a next-gen, high-performance analytical data warehouse that enables real-time, multi-dimensional, and highly concurrent data analysis.
 
-* **Vectorization engine refactoring**, aimed to achieve fine-grained resource control, improve resource utilization, and enhance concurrent performance.
+* **Execution engine refactoring**, aimed to achieve fine-grained resource control, improve resource utilization, and enhance concurrent performance.
+   * From volcano execution model to morsel-driven execution model.
    * Implement user-space scheduler.
    * Implement multiply operators, like aggregate/window function/scan/table function/exchange, etc.
 * **Window function optimization**, aimed to improve the performance of window functions and reduced memory usage.
