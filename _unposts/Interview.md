@@ -190,6 +190,26 @@ For better observability and query analysis, I introduced support for runtime pr
     * Batch processing, for better efficiency and cache locality
 1. How does the apply operator attach to the tree?
 
+**TODO:**
+
+1. Why do you introduce morsel-driven execution model?
+1. What's the design of the morsel-driven execution model?
+    * Morsel
+    * Task
+        * Decompose from a execution tree.
+        * When to split one operator into two pipelines?
+    * Scheduler
+1. What are the advantages and disadvantages of Volcano Execution Model and Morsel-driven execution model?
+1. What the process of executing a query?
+1. What's the process of agg operator?
+1. What's the process of window operator?
+1. What's the process of join operator?
+1. How resource group is achieved?
+    * Global balance vs. work stealing
+    * Each resource group holds a distinct scheduling queue.
+    * How to precisely control the resource utilization?
+1. What's the problem of cache miss rates? How do you address it?
+
 # 3 Database
 
 1. What is OLAP (Online Analytical Processing) and how does it differ from OLTP (Online Transaction Processing)?

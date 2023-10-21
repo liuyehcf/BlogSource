@@ -1205,7 +1205,7 @@ int main() {
 1. `std::conditional`
 1. `std::underlying_type`：提取`enum`所继承的具体的`int`类型
 1. `std::void_t`
-1. `std::decay`：Applies lvalue-to-rvalue, array-to-pointer, and function-to-pointer implicit conversions to the type T
+1. `std::decay`：Applies reference-remove, array-to-pointer, and function-to-pointer implicit conversions to the type T
     * [What is std::decay and when it should be used?](https://stackoverflow.com/questions/25732386/what-is-stddecay-and-when-it-should-be-used)
     * [N2609](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2006/n2069.html)
     ```cpp

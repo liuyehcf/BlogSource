@@ -267,6 +267,12 @@ categories:
     - Pointer Stability
 - Templates
     - Standard Template Library (STL)
+        - std::decay
+            - Remove reference
+            - Array to pointer
+            - Function to pointer
+        - std::declval
+            - Get return type of a function at compile time
     - Templates Specialization
     - Variadic Templates
     - Code Generation
@@ -501,6 +507,10 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
         - Write-Ahead Logging (WAL)
     - Performance Optimization
         - LSM-Tree (Log-Structured Merge Tree)
+        - Buffer Pool
+            - Replacement Policy(Page Evict)
+                - LRU
+                - LFU
     - Analytic Data Format
         - Arrow
         - Parquet
@@ -985,7 +995,17 @@ Now, instead of storing all these chunks as is, Roaring Bitmaps compresses them:
     └─────────┘
 ```
 
-## 3.8 Not yet mastered
+## 3.8 Buffer Pool
+
+### 3.8.1 Replacement Policy
+
+**LRU**:
+    
+**LFU**:
+
+*  Disadvantages: When some page is frequently used for a period of time, and it will stay in the poll for a long while(May be it can be solved with frequency degradation)
+
+## 3.9 Not yet mastered
 
 1. WAL Structure
 1. LSM Structure
