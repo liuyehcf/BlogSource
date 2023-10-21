@@ -3,7 +3,6 @@
 * Name: Chenfeng He
 * Phone: (86) 173****7611
 * Email: liuyehcf@gmail.com
-* LinkedIn: [Profile](linkedin.com/in/chenfeng-he-54525224a)
 * Location: Hangzhou, Zhejiang, China
 
 ---
@@ -81,5 +80,6 @@ StarRocks is a next-gen, high-performance analytical data warehouse that enables
    * [parallel merge algorithm](https://github.com/StarRocks/starrocks/pulls?q=is%3Apr+is%3Aclosed+author%3Aliuyehcf+parallel+merge)
    * [rank window function optimization](https://github.com/StarRocks/starrocks/pulls?q=is%3Apr+is%3Aclosed+author%3Aliuyehcf+rank+window+function)
    * [subquery related](https://github.com/StarRocks/starrocks/pulls?q=is%3Apr+is%3Aclosed+author%3Aliuyehcf+subquery)
+   * [inline performance issue](https://github.com/StarRocks/starrocks/pull/23300)
 * My personal projects, [liuyehcf-framework](https://github.com/liuyehcf/liuyehcf-framework/tree/master), including compilation framework, expression framework, flow framework.
 
