@@ -188,25 +188,33 @@ For better observability and query analysis, I introduced support for runtime pr
     * Late materialization
     * Merge tree
     * Batch processing, for better efficiency and cache locality
-1. How does the apply operator attach to the tree?
-
-**TODO:**
-
 1. Why do you introduce morsel-driven execution model?
+    * Because comparing to the volcano execution model, morsel-driven execution model has better fexibility on resource control, priority control and parallelism control. And we also expect it can have better scheduling efficiency.
 1. What's the design of the morsel-driven execution model?
     * Morsel
-    * Task
-        * Decompose from a execution tree.
-        * When to split one operator into two pipelines?
-    * Scheduler
+        * Morsel is a  small chunk or portion of data, in our system, its value is 4096.
+    * Pipeline and Pipeline Driver
+        * Pipeline is a logical concept that represents an execution link, comprising of a sequence of operators that without blocking operations.
+        * Each compute node will receive an execution tree, the tree will be decomposed to multiply pipelines, for example, the join node will split into two pipelines, one contains join_build, and another contains join_probe. And each pipeline can have several parallelism, called pipeline driver, which is the minimum scheduling unit.
+        * When to split one operator into two pipelines? All the materialized operators will be split into two pipelines, like join, sort, aggregation, window function and more.
+    * User-Space Scheduler
+        * The size of work threads is equal to the size of cpu cores. And core-binding can have better cache locality.
+        * And for scheduling algorithm, generally, there are two different options, one is Global Balance, which contains a local queue and a block queue, providing the precise wake-ups; and another choice is Work-Stealing, comprising of a multi-level feedback queue, and may have false wake-ups. The pipeline driver with longer overall execution time may have lower priority and may stay in the higher level.
+        * And another thing is task readiness analysis for checking if a task is ready or blocked, there are also two choices, polling model and event-driven model, but the state change of the task in database system is more complex comparing to the threads scheduling in kernel which can only come from limited cases like cpu time slice exhausted, hardware interrupt, system call, mutex and explicit yielding, the state change in database system may come from asynchronous operations, task dependency readiness, and more complex condition that may contains several variables and compoments. So polling model is suitable for database system, and simplify the process to a great extend. And in our system, there will be a seperate thread to do the task readiness analysis.
 1. What are the advantages and disadvantages of Volcano Execution Model and Morsel-driven execution model?
+    * Volcano execution model is simple for programming. And the minimum scheduling unit is thread, so scheduling decision is delegated to kernel. But it is hard to have fine-grained resource control, priority control and parallelism control.
+    * For morsel-driven execution model, the programming model is more complex, each operator has to handle state change like if it has output or if it need input, and need to provide two interfaces push_chunk and pull_chunk, and blocking opeartions are not allowed, and for some operators like scan and exchange, extra I/O thread pool is required to handle the I/O operations. But it can have more flexible resource control, priority control, and parallelism control, you can set different parallelism for different parts of a single query.
 1. What the process of executing a query?
+    * Generally, it has two stages. The first stage is plan optimization, it will go through rule-based optimizations and cost-based optimizations to generate an optimal physical plan, the plan will contains several segments, connected by exchagne operator. And in practical system, there will be multiply compute nodes, so each fragment will have multiply parallelism to fully use the machine resource, and each parallelism is called fragment instance. When a compute node received a fragment instance, basically, the fragment instance is a execution tree, it will be decomposed into multiply loose related execution link, which is pipeline, and each pipeline will have multiply parallelism to fully use the multi-cores resources.
 1. What's the process of agg operator?
+    * Generally speaking, for select count without group by, there will be a two-stage process, the first stage is called pre-aggregate, and each node will calculate the intermediate result locally, and then send to one intended node for final aggregation. And for select count with group by, there will be a one-stage process, each node will shuffle the scanned data by the group by expression, and then multi-machine and multi-core parallel aggregation processing is carried out.
 1. What's the process of window operator?
+    * For window function without partition by, the data will be sorted globally and send to one node to further continue the serial window process. And for window function with partition by, the data will shuffled and sorted locally, and then multi-machine and multi-core parallel window processing is carried out.
+    * And for window function that is not relied on the ordering, like min/max, we have hash-based partition to further improve the performance.
 1. What's the process of join operator?
+    * Generally speaking, a join involves a two-stage processing method. The first stage is called "build," where a hash_table is generated based on a smaller table. The second stage, known as "probe," involves going through the hash_table to evaluate matches based on specific predicates.
 1. How resource group is achieved?
-    * Global balance vs. work stealing
-    * Each resource group holds a distinct scheduling queue.
+    * This feature is part of the scheduler. Each resource group has independent queue management. Every query is related to a specific resource group and will be managed by the multi-level feedback queue within that group.
     * How to precisely control the resource utilization?
 1. What's the problem of cache miss rates? How do you address it?
 
