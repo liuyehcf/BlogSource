@@ -192,8 +192,7 @@ For better observability and query analysis, I introduced support for runtime pr
         * Morsel is a  small chunk or portion of data, in our system, its value is 4096.
     * Pipeline and Pipeline Driver
         * Pipeline is a logical concept that represents an execution link, comprising of a sequence of operators that without blocking operations.
-        * Each compute node will receive an execution tree, the tree will be decomposed to multiply pipelines, for example, the join node will split into two pipelines, one contains join_build, and another contains join_probe. And each pipeline can have several parallelism, called pipeline driver, which is the minimum scheduling unit.
-        * When to split one operator into two pipelines? All the materialized operators will be split into two pipelines, like join, sort, aggregation, window function and more.
+        * Each compute node will receive an execution tree, the tree will be decomposed to multiply pipelines, and all the materialized nodes will be split into two pipelines. For example, the join node will split into two pipelines, one contains join_build, and another contains join_probe. And each pipeline can have several parallelism, called pipeline driver, which is the minimum scheduling unit.
     * User-Space Scheduler
         * The size of work threads is equal to the size of cpu cores. And core-binding can have better cache locality.
         * And for scheduling algorithm, generally, there are two different options, one is Global Balance, which contains a local queue and a block queue, providing the precise wake-ups; and another choice is Work-Stealing, comprising of a multi-level feedback queue, and may have false wake-ups. The pipeline driver with longer overall execution time may have lower priority and may stay in the higher level.
