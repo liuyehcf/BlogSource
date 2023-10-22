@@ -183,11 +183,8 @@ For better observability and query analysis, I introduced support for runtime pr
     * Trino, lake house
     * Druid, wide table
     * Presto, execution
-1. How do you reduce code cache miss rate?
 1. Explain the details of the parallel merge operator.
-    * Late materialization
-    * Merge tree
-    * Batch processing, for better efficiency and cache locality
+    * The implementation is based on the MergePath algorithm, the most impressive part of this algorithm is that each parallel process can independently compute the data segment it needs for the current parallel computation. Multiple inputs are organized into a Merge tree. The entire merge process uses the stream model and requires multiple traversals of the merge tree. Each traversal uses a bottom-up approach, with all parallel workers sequentially processing each node at the current level. And additionally, I dopted late materialization to further improve the performance.
 1. Why do you introduce morsel-driven execution model?
     * Because comparing to the volcano execution model, morsel-driven execution model has better fexibility on resource control, priority control and parallelism control. And we also expect it can have better scheduling efficiency.
 1. What's the design of the morsel-driven execution model?
@@ -217,6 +214,7 @@ For better observability and query analysis, I introduced support for runtime pr
     * This feature is part of the scheduler. Each resource group has independent queue management. Every query is related to a specific resource group and will be managed by the multi-level feedback queue within that group.
     * How to precisely control the resource utilization?
 1. What's the problem of cache miss rates? How do you address it?
+    * I found that a refactoring PR caused this decrease in performance, afther this pr, there's a big template function with many branches, and the query with the performance degradation only goes through one of the branch. And I guess that when the intructions are loaded into the code cache, instructions of unused branches are partly loaded, and thereby caused refrequency replacement of code cache line and finally lead the the performance degradation. And we test it only in the virtual machines on Alibaba cloud, and some of the lower-level perf-event like branch-miss, cache-miss are not supported on VM, so this hypothesis is not directly verified. And this problem is addressed by separating different branches into different template functions and marked always not inlined.
 
 # 3 Database
 
