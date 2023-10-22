@@ -184,7 +184,7 @@ For better observability and query analysis, I introduced support for runtime pr
     * Druid, wide table
     * Presto, execution
 1. Explain the details of the parallel merge operator.
-    * The implementation is based on the MergePath algorithm, the most impressive part of this algorithm is that each parallel process can independently compute the data segment it needs for the current parallel computation. Multiple inputs are organized into a Merge tree. The entire merge process uses the stream model and requires multiple traversals of the merge tree. Each traversal uses a bottom-up approach, with all parallel workers sequentially processing each node at the current level. And additionally, I dopted late materialization to further improve the performance.
+    * The implementation is based on the MergePath algorithm, the most impressive part of this algorithm is that each core can independently compute the data segment it needs for the current parallel computation. Multiple inputs are organized into a Merge tree. The entire merge process uses the stream model and requires multiple traversals of the merge tree. Each traversal uses a bottom-up approach, with all cores sequentially processing each node, for example, all cores are working on a merge node's process and then goes to the next merge node. And additionally, I dopted late materialization to further improve the performance.
 1. Why do you introduce morsel-driven execution model?
     * Because comparing to the volcano execution model, morsel-driven execution model has better fexibility on resource control, priority control and parallelism control. And we also expect it can have better scheduling efficiency.
 1. What's the design of the morsel-driven execution model?
