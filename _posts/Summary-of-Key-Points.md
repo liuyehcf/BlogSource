@@ -1221,6 +1221,16 @@ Classification:
         - Concurrent processing
 - Storage Hierarchy
     - Cache
+        - Mapping Rules
+            - Direct Mapping
+            - Fully Associative
+            - Set Associative Mapping
+        - Lookup Method
+        - Replacement Algorithm
+            - Random
+            - FIFO
+            - LRU
+        - Write Policy
 - Parallelism
     - ILP
     - TLP
