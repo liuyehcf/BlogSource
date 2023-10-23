@@ -630,13 +630,14 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
         - Morsel-Driven Parallelism(Task-Based Parallelism)
             - Morsel
                 - A small chunk or portion of data
-            - Tasks
+            - Pipeline & PipelineDriver
                 - Independent or Loosely Coupled
-            - Worker
-                - The number of workers equals to the number of CPU cores
-                - Core-Binding for better locality
+                - Execution Link
+                - Scheduling Unit
             - Scheduling
-                - Unit: Execution Link
+                - Worker
+                    - The number of workers equals to the number of CPU cores
+                    - Core-Binding for better locality
                 - Task Scheduling
                     - Global Balance
                         - Local Queue and Global Queue

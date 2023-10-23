@@ -156,6 +156,18 @@ OR
 * `ScalarApply2AnalyticRule`
 * `ScalarApply2JoinRule`
 
+#### 1.3.3.1 ScalarApply2AnalyticRule
+
+```
+   Filter                  Filter
+   /   \                     |
+ Join  Agg      ==>       Win_agg
+ / \    |                    |
+T1 T2   T2                  Join
+                            /  \
+                           T1  T2
+```
+
 ## 1.4 Merge Group
 
 位置：`Memo::mergeGroup`

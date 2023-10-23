@@ -631,6 +631,7 @@ int main() {
 * `has_type_member`的`primitive`版本包含两个类型参数，其中第二个参数存在默认值，其值为`void`
 * `std::void_t<T>`对任意`T`都会返回`void`。任何存在类型成员`type`的类型，对于该特化版本而言都是`well-formed`，因此会匹配该版本；而对于没有类型成员`type`的类型，第二个模板参数的推导会失败，转而匹配其他版本。这里也用到了`SFINAE`
     * 该示例也是`std::void_t`的应用之一
+    * 如果去掉`std::void_t`，那么`has_type_member<T, typename T::type>`并非`template <typename, typename = void>`的特化版本，这两者其实是等价的，因此，即便`T::type`存在，也会匹配默认版本
 
 ```cpp
 #include <iostream>
