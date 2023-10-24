@@ -1084,7 +1084,7 @@ Now, instead of storing all these chunks as is, Roaring Bitmaps compresses them:
                     - It can be used for both memory allocation and memory-mapped file operations in modern Unix-like systems
                     - The smallest size is a single page, typically 4KB
                 - brk, Program Break
-                    - It control the size of the heap in older Unix programs.
+                    - It control the size of the heap(increase or decrease) in older Unix programs.
             - Standard File I/O vs. mmap
                 - mmap
                     - The file access is essentially treated as memory access
