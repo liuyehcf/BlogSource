@@ -1476,6 +1476,80 @@ core[6], count[2] = 6360709178
 core[7], count[3] = 6331732824
 ```
 
+## 1.15 `|` or `||`
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#include <algorithm>
+#include <random>
+
+static void BM_logical_and(benchmark::State& state) {
+    std::vector<std::pair<int32_t, int32_t>> pairs;
+    std::default_random_engine e;
+    std::uniform_int_distribution<int32_t> u(0, 100);
+    for (size_t i = 0; i < 1000000; i++) {
+        pairs.emplace_back(u(e), u(e));
+    }
+
+    int64_t sum = 0;
+
+    for (auto _ : state) {
+        for (const auto& kv : pairs) {
+            if (kv.first > 50 || kv.second < 50) {
+                sum++;
+            }
+        }
+        benchmark::DoNotOptimize(sum);
+    }
+}
+
+static void BM_bit_and(benchmark::State& state) {
+    std::vector<std::pair<int32_t, int32_t>> pairs;
+    std::default_random_engine e;
+    std::uniform_int_distribution<int32_t> u(0, 100);
+    for (size_t i = 0; i < 1000000; i++) {
+        pairs.emplace_back(u(e), u(e));
+    }
+
+    int64_t sum = 0;
+
+    for (auto _ : state) {
+        for (const auto& kv : pairs) {
+            if (static_cast<int32_t>(kv.first > 50) | static_cast<int32_t>(kv.second < 50)) {
+                sum++;
+            }
+        }
+        benchmark::DoNotOptimize(sum);
+    }
+}
+
+BENCHMARK(BM_logical_and);
+BENCHMARK(BM_bit_and);
+
+BENCHMARK_MAIN();
+```
+
+**Output(`-O0`):**
+
+```
+---------------------------------------------------------
+Benchmark               Time             CPU   Iterations
+---------------------------------------------------------
+BM_logical_and   21531574 ns     21530951 ns           33
+BM_bit_and       15899873 ns     15899244 ns           44
+```
+
+**Output(`-O3`):**
+
+```
+---------------------------------------------------------
+Benchmark               Time             CPU   Iterations
+---------------------------------------------------------
+BM_logical_and    7310336 ns      7281142 ns           91
+BM_bit_and        6431491 ns      6431208 ns          103
+```
+
 # 2 pointer aliasing
 
 **`pointer aliasing`指的是两个指针（在作用域内）指向了同一个物理地址，或者说指向的物理地址有重叠。`__restrict`关键词用于给编译器一个提示：确保被标记的指针是独占物理地址的**
