@@ -5,7 +5,7 @@ Nice to meet you! Thank you for taking the time to interview me. My name is Calv
 
 Throughout my professional journey, I have had the privilege of working for two distinguished companies. The first company is Alibaba Group. During my time there, I was part of the IoT department, where our team focused on developing a platform for managing and facilitating various devices, such as smart home security systems and industrial sensors. Additionally, we aimed to facilitate industrial upgrading for diverse industries.
 
-Following my experience at Alibaba Group, I joined a startup, which is widely recognized for its exceptional OALP (Open Analytics and Log Processing) database product in China, called StarRocks. This product stands out for its outstanding performance.
+Following my experience at Alibaba Group, I joined a startup, which is widely recognized for its exceptional OALP (Open Analytics and Log Processing) database product in China, called StarRocks. This product stands out for its outstanding performance. I have been employed at Starrocks for the past two years. I was luckily involved in the fundamental re-design and re-implementation of the execution engine right after I joined the company. This refactor involves transitioning from a volcano execution model to a more efficient and flexible morsel-driven execution engine, where I was responsible for implementing several operators like aggregator, window function and table function. My contributions at Starrocks have spanned both the execution engine and plan optimization, resulting in significant improvements to the system's capabilities, performance and observability.
 
 Once again, I'm delighted to meet you, and I am eager to discuss more during this interview.
 
@@ -104,10 +104,6 @@ The third project I participated in was an intelligent edge integrated machine, 
 1. What's the function of auto boxing?
 
 ## 2.5 Starrocks
-
-I have been employed at Starrocks for the past two years. I was luckily involved in the fundamental re-design and re-implementation of the execution engine right after I joined the company. This refactor involves transitioning from a volcano execution model to a more efficient and flexible morsel-driven execution engine, where I was responsible for implementing several operators like aggregator, window function and table function.
-
-My contributions at Starrocks have spanned both the execution engine and plan optimization, resulting in significant improvements to the system's performance and observability.
 
 In terms of plan optimization, I enhanced the system's capabilities by incorporating various types of subqueries like join on subquery and scalar non-agg subquery, and efficiently refactored the subquery transformation process to achieve the optimization of constant removal. Additionally, I refactored a plan enumeration mechanism that allows for thorough testing of the efficiency of cost-based algorithm, ensuring optimal query execution plans.
 
