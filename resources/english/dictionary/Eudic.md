@@ -1,3 +1,64 @@
+1. accord with; align with; correspond with; concur with
+1. please wipe your feet on the mat; wipe the mud off her boots
+1. I'm not myself; I'm not feeling myself; he doesn't seem himself
+1. what kind of field; what kind of space are you referring to
+1. you deserve better things; you're meant for better things
+1. it's not working; it's unfeasible
+1. dig into; dive into; drill down into; go into; look into
+1. the present law makes no provision for this; there's no legal basis
+1. intense exercise; vigorous exercise; strenuous exercise
+1. my foundation is quite solid
+1. clear the first round
+1. wage; salary; payment; compensation
+1. the probability of getting selected in the H1B lottery is very low
+1. the flu has been prevalent in China recently
+1. blast; explosion; implosion
+1. his horse is from the best breed; his horse is of a top breed
+1. the decline in profit is causing disquiet among shareholders
+1. cohabitation before marriage is considered acceptable among young people
+1. Federal Aviation Administration
+1. I'll be at the meeting at 11 o'clock
+1. you're hopeless
+1. cohesion; cohesive; coherence; coherent
+1. ruling party
+1. What's the problem of cache miss rates? How do you address it?
+1. What's the process of join operator?
+1. What's the process of window operator?
+1. What's the process of aggregation operator?
+1. 包容的
+1. What the process of executing a query?
+1. What are the advantages and disadvantages of Volcano Execution Model and Morsel-driven execution model?
+1. I need work authorization sponsorship
+1. machines with identical specifications
+1. What's the design of the morsel-driven execution model?
+1. Why do you introduce morsel-driven execution model?
+1. Explain the details of the parallel merge operator
+1. I'm doing hair
+1. hang in there; keep at it; stay strong
+1. 30-day debt grace period
+1. speaker of the house
+1. there's still a great deal of uncertainty surrounding the blast
+1. questions continue to swirl around a deadly explosion at a Gaza hospital this week
+1. on a regular basis; on a daily basis; on a weekly basis; on a monthly basis
+1. throw; toss; hurl
+1. something is taking place; something is happening; something is playing out
+1. this issue has been addressed; this issue has been identified
+1. blindly biased in favor of Israel
+1. being financially independent is a foundation for personal independence
+1. bomb; bump; boob
+1. I dislike being stuck in traffic
+1. the domestic companies excel at exploiting laborers
+1. I do not have legal status
+1. it's ok; not bad; it's alright; sort of; kind of
+1. trace; track
+1. he is cursing at someone
+1. I feel a bit awkward; it's a little bit awkward
+1. for the space-saved algorithm, if the frequencies of different elements are similar, the final error may be significant
+1. deque can be expanded or contracted
+1. western countries generally value humanitarian concerns
+1. power strip; webcam; headphone; mouse
+1. no soliciting
+1. last year, due to financial issues at my company, all members' salaries were reduced by 10%; to compensate, we were offered stock options of equivalent value
 1. I'm fed up with doing the same thing in the office; I'm fed up with doing the routine work in the office
 1. I'm hypercritical
 1. liberty of speech; liberty of the press; freedom of speech; freedom of the press
@@ -11,7 +72,6 @@
 1. our society seems to be further away from the rule of law
 1. the actively closed side; the passively closed side
 1. sequence; sequential; subsequent; contiguous; consecutive
-1. How does the apply operator attach to the tree?
 1. sensual
 1. Microsoft subsidiary
 1. have you signed a non-compete or non-disclosure agreement
@@ -41,7 +101,6 @@
 1. regime change
 1. the song is really contagious; the song is really catchy
 1. my wage is going backward; my wage is going down
-1. Explain the design of the scheduler of morsel-driven execution engine
 1. How many Garbage Collection Algorithms and Garbage Collectors are there?
 1. Explain the concept of happens-before relationships
 1. Explain the concept of design patterns
@@ -88,7 +147,6 @@
 1. How does starrocks process subquery?
 1. How many subquery transformation rules in Starrocks?
 1. Could describe the subquery classifications?
-1. What's the advantages of the morsel-driven execution engine?
 1. What's optimization can lead to 10 times performance boost of the ranking window function?
 1. Why do you refactor the subquery transformation process?
 1. What are the killing features of StarRocks?
@@ -97,11 +155,9 @@
 1. What's the function of the OS pipeline?
 1. How is operator overloading achieved?
 1. What's the most difficult thing you've encountered when implementing it?
-1. What features does the compiler framework have?
 1. What components does the compiler framework have?
 1. Why not just use the message middleware?
 1. What's the function of message route?
-1. How many types of device warnings are there?
 1. How can the web browser serve as the user-side agent without any configuration?
 1. How does the tunnel service work?
 1. blow dryer
@@ -538,7 +594,6 @@
 1. How can you handle concurrent modifications in Java collections?
 1. Explain the concept of the Rule of Three (or Five) in C++
 1. What is the purpose of the "volatile" keyword in C++?
-1. Explain the concept of multithreading in C++
 1. What is the purpose of the "explicit" keyword in C++?
 1. What is the purpose of the "instanceof" operator in Java?
 1. How does serialization work in Java?
@@ -552,7 +607,6 @@
 1. Explain the concept of function objects (functors) in C++
 1. Explain the concept of copy constructors in C++
 1. What is the purpose of the "constexpr" keyword in C++?
-1. Explain the concept of lambda expressions in C++11
 1. Explain the concept of the Java Memory Model
 1. Explain the concept of functional interfaces in Java 8
 1. What is the difference between composition and inheritance in Java?
@@ -579,7 +633,6 @@
 1. What is the difference between vectors and arrays in C++?
 1. What are the different types of STL containers in C++?
 1. Explain the concept of smart pointers in C++
-1. What is the purpose of the "this" pointer in C++?
 1. What is the difference between a static variable and an instance variable in Java?
 1. Explain the concept of anonymous classes in Java
 1. What is the purpose of the "super" keyword in Java?
@@ -611,7 +664,6 @@
 1. What is the difference between an abstract class and an interface in C++?
 1. Explain the concept of namespaces in C++
 1. What is the purpose of the "static" keyword in C++?
-1. Explain the concept of exception handling in C++
 1. What is the difference between pass by value and pass by reference in C++?
 1. What is the purpose of the "const" keyword in C++?
 1. Explain the concept of templates in C++
@@ -619,7 +671,6 @@
 1. What are virtual functions in C++? How are they different from normal functions?
 1. Explain the concept of constructors and destructors in C++
 1. What is the difference between new and malloc in C++?
-1. What are the access specifiers in C++? Explain their visibility levels
 1. What is the difference between function overloading and function overriding in C++
 1. Explain the concept of inheritance in C++
 1. What is the difference between class and struct in C++?
@@ -787,7 +838,6 @@
 1. a plume of smoke; plumes of smoke
 1. I'll see to it
 1. after all these, I realize that you no longer have to prove yourself so much to people
-1. something is taking place; something is happening
 1. stay afloat; keep afloat
 1. make a living; make a fortune
 1. happiness quotient; intelligence quotient; emotional quotient
@@ -1198,7 +1248,6 @@
 1. so many of these things get settled in courts
 1. dominion
 1. I looked it up on the internet
-1. there’s no legal basis
 1. trespass
 1. alpha males
 1. no spoilers
@@ -1658,7 +1707,6 @@
 1. I’m with you
 1. you’re not gona play by rules
 1. face the consequences
-1. it’s not working
 1. I can’t argue with that
 1. you are my inspiration
 1. kick him when he‘s down
@@ -1673,7 +1721,6 @@
 1. that’s how it’s done
 1. the smartest student happens to be the best one
 1. contempt of court
-1. it’s unfeasible
 1. are you working late?
 1. I’ll deal all of these issues in turn
 1. I’ll stick around for a while
@@ -1688,8 +1735,6 @@
 1. it’s a shame
 1. the higher performance is accompanied by a higher level of complexity for programmers
 1. several relaxed memory consistency models have been proposed in both academic and commercial settings
-1. you deserve better things
-1. you’re meant for better things
 1. he’s getting through it
 1. safe travels
 1. I’m sorry for keeping you
@@ -1765,7 +1810,6 @@
 1. assault/attack
 1. that way
 1. I will do the work whatever it takes
-1. what kind of field?
 1. america is a land of opportunity
 1. my treat
 1. not my concern
@@ -1829,7 +1873,6 @@
 1. intransitive phrasal verbs
 1. having been subjected
 1. the way you treat other people is horrible
-1. lets put it this way
 1. an electric motor
 1. parents tend to boast about children's achievements to each other
 1. take attendance
@@ -1885,7 +1928,6 @@
 1. you should bring her back to practical matters
 1. I'm planing to carry out a thorough investigation
 1. the police officer pin the suspect against the ground
-1. cohabitation before marriage is considered acceptable among yong people
 1. the trial was fully reported in the media
 1. please make a tentative arrangement to meet on Friday
 1. it's a subject has the potential to be interesting
@@ -1933,7 +1975,6 @@
 1. I come from a diverse background
 1. I have no comments
 1. put down roots
-1. the decline in profit is causing disquiet aomng shareholders
 1. 外向的/内向的
 1. the plant comes with full instructions on how to care for it
 1. my family has my back
@@ -2084,7 +2125,6 @@
 1. piracy is still flourishing on some of the world's sea lanes
 1. earning money had become the pivot around which his life turned
 1. colonial possessions
-1. his hourse is of the best breed
 1. he realized his mistakes and wanted to redeem his reputation
 1. the patent runs out in three years time
 1. withdraw/retract
@@ -2282,7 +2322,6 @@
 1. the video was duplicated illegally
 1. appalling/crippling/astounding/astonished/shocked/startling
 1. I'm going to transfer some money to your account
-1. life is like an arena
 1. have a miscarriage
 1. when and how did it all go wrong
 1. devote/dedicate
@@ -2600,7 +2639,6 @@
 1. you should stretch before you do vigorous exercise to avoid strain
 1. disclose secrets
 1. irrigate/irritate
-1. wipe the mud off her boots
 1. 正例反例
 1. literally
 1. just in case that you didn't know it
@@ -2732,7 +2770,6 @@
 1. the healthy diet will provide all your essential nutrients
 1. pre-school children are capable of thinking in abstract terms
 1. he is a man of complete integrity
-1. please wipe your feet on the mat
 1. what is the ratio of teachers to students in this school
 1. accelerate the ageing process
 1. I am too stiff to dance
@@ -2745,7 +2782,6 @@
 1. this report provides a framework for further research
 1. the punishment was harsh and unfair
 1. he is trying to trivialize the problem
-1. the present law makes no provision for this
 1. she has the full support of her constituents
 1. sprain/strain
 1. a judge must remain neutral
@@ -2757,7 +2793,6 @@
 1. jury reached a unanimous verdict of not guilty
 1. watch the ripples spread out
 1. please refrain from smoking
-1. I have a family reunion every month
 1. bracelet
 1. fold clothes
 1. check it out
@@ -3192,7 +3227,6 @@
 1. immobile
 1. 不计一切代价
 1. tense
-1. intense
 1. perform orders of magnitude better
 1. As outlined in the introduction
 1. design and implement from scratch
@@ -4018,7 +4052,6 @@
 1. 功劳很大
 1. obesity
 1. clearly defined muscles
-1. intense exercise
 1. chin ups
 1. Press ups
 1. heavy exercise
