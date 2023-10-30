@@ -1,7 +1,8 @@
 # StarRocks
 
 ```
-VECTORIZATION ENGINE REFACTORING, aimed to achieve fine-grained resource control, improve resource utilization, and enhance concurrent performance.
+EXECUTION ENGINE REFACTORING, aimed to achieve fine-grained resource control, improve resource utilization, and enhance concurrent performance.
+• From volcano execution model to morsel-driven execution model.
 • Implement user-space scheduler.
 • Implement multiply operators, like aggregate/window function/scan/table function/exchange, etc.
 
