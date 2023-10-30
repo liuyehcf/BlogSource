@@ -31,3 +31,4 @@ Overall, LLVM JIT is a powerful feature of the LLVM framework that enables dynam
 # 2 Reference
 
 * [StarRocks JIT RFC](https://uestc.feishu.cn/docx/WDJUdVXrRooYG2xjF2YcYVUencc)
+* [StarRocks JIT PR](https://github.com/StarRocks/starrocks/pull/28477)
