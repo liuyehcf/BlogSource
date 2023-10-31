@@ -36,6 +36,7 @@
    * Support join on subqueries and scalar non-agg subqueries.
    * Refactor the subquery process to benefit from expression optimizations like constants removal and predicate simplification.
 * **Support query profiling**, aimed to enhance intuitive query analysis.
+   * Implement a framework to support memory usage statistics collection and analysis.
    * Support text-based profile analysis through mysql protocol.
    * Support visualized profile analysis for the enterprise edition.
 * **Other optimizations**
