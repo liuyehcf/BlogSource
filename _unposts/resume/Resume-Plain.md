@@ -19,11 +19,12 @@ SUPPORT CERTAIN TYPES OF SUBQUERY, aimed to enhance the system's capabilities.
 • Refactor the subquery process to benefit from expression optimizations like constants removal and predicate simplification.
 
 SUPPORT QUERY PROFILING, aimed to enhance intuitive query analysis.
+• Implement a framework to support memory usage statistics collection and analysis.
 • Support text-based profile analysis through mysql protocol.
 • Support visualized profile analysis for the enterprise edition.
 
 OTHER OPTIMIZATIONS
-• Introduce sliding window mechanism to parallelize ordered data transformation
+• Introduce sliding window mechanism to parallelize ordered data transformation.
 • Reduce code cache misses of template code for better performance.
 • Eliminate pointer aliases for better SIMD optimizations.
 • Implement several functions like approx_top_k.
@@ -49,4 +50,6 @@ EXPRESSION EXECUTION FRAMEWORK, a framework that offers rich expression capabili
 • This framework is also my personal project, please refer to (https://github.com/liuyehcf/liuyehcf-framework/blob/master/expression-engine/README.md) for details.
 
 INTELLIGENT EDGE INTEGRATED MACHINE, aimed to support support industrial applications and device management.
+• Build a pipeline for creating various customized operating system installation images.
+• Develop a troubleshooting tool for addressing network and kubernetes runtime environment issues.
 ```
