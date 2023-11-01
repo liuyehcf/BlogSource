@@ -212,10 +212,14 @@ For better observability and query analysis, I introduced support for runtime pr
 1. What's the problem of cache miss rates? How do you address it?
     * I found that a refactoring PR caused this decrease in performance. After this PR, there's a large template function with many branches, but the query with the performance degradation only goes through one of the branches. I suspect that when the instructions are loaded into the code cache, instructions from unused branches are partly loaded, leading to frequent replacements in the code cache line. This might be what's causing the performance degradation. However, we tested this only on virtual machines in Alibaba Cloud. Some lower-level perf-events, such as branch-miss and cache-miss, are not supported on VMs, so we couldn't directly verify this hypothesis. To address the issue, we separated different branches into distinct template functions and marked them as "always not inlined."
 1. Introduction to the Work Mode
-    * we're a big team of around 50 database developers, split into maybe 5 groups, each focusing on stuff like storage, query execution, cloud native, lake house, and SaaS. I'm part of the query group.
-    * In our group, everyone's got their own pieces of query execution. Here's how we roll: First, we identify where the issues are, whether they're related to feature requirements or performance problems from our own tests or feedback from clients. Then, whoever's in charge of that part dives into some research and writes up their findings so we can all chat about it.
-    * After we've tossed around some ideas, we get down to writing a design document. It's like our game plan, detailing how we're going to fix things, and everyone gets to review it.
+    * We're a big team of around 50 database developers, split into maybe 5 groups, each focusing on areas like storage, query execution, cloud native, lake house, and SaaS. I'm part of the query group.
+    * In our group, here's how we roll: We usually iterate on a two-month cycle, and in each cycle, we will have one or two targets, like rolling out a new feature or improving performance or stability. And each member will get their own pieces. And if the topic is big enough, we will do some research and produce a research document for discussion, so we can all chat about it.
+    * After we've tossed around some ideas, we get down to writing a design document. It's like our game plan, detailing how we're getting things done, and everyone gets to review it.
     * Finally, we get to the fun part – coding. And of course, we make sure to review each other's code. It keeps things running smoothly and makes sure we're all on the same page.
+1. How does the runtime filter work?
+    * Filter creation.
+    * Coordination and propagation filter.
+    * Filter push down.
 
 # 3 Database
 
