@@ -496,7 +496,18 @@ $5 = (Person *) 0x7fffffffe0c0
 xxx/gdb_tutorial
 ```
 
-# 4 gdb-dashboard
+# 4 How analyze a core file
+
+Here are some of tips:
+
+1. `info threads`: The default thread may not be where the crash occurred.
+1. `thread <n>`: Switch to the specific thread where there may be something wrong.
+1. `bt <n>`: List the call stack.
+1. `frame <n>`: Go to the specific call frame.
+1. `info locals`、`info args`: See local variables and arguments.
+1. `print`: See details of something.
+
+# 5 gdb-dashboard
 
 [gdb-dashboard](https://github.com/cyrus-and/gdb-dashboard)在`gdb`的基础之上，提供了一个更加友好的格式化界面
 
@@ -504,7 +515,7 @@ xxx/gdb_tutorial
 * `dashboard thread`：启用/禁用线程信息（大型工程，线程比较多的话，一般会禁用）
 * `dashboard`：刷新，通常在`print`查看一些变量信息后，需要刷新一下重新显示详情
 
-# 5 Reference
+# 6 Reference
 
 * [GDB Tutorial - A Walkthrough with Examples](https://www.cs.umd.edu/~srhuang/teaching/cmsc212/gdb-tutorial-handout.pdf)
 * [GDB Command Reference](https://visualgdb.com/gdbreference/commands/)
