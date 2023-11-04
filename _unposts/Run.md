@@ -52,8 +52,8 @@ To choose keywords based on your experience, analyze your skills, roles, and res
 
 If you want to apply for a job in Canada, there are several platforms and resources you can use to search for job opportunities in the country. Here are some of the most popular platforms and resources for job seekers looking to work in Canada:
 
-* Government of Canada Job Bank (jobbank.gc.ca): The official job portal of the Canadian government, where you can search for jobs across various industries and regions in Canada. It also provides information on labor market trends and in-demand occupations.
-* Indeed Canada (ca.indeed.com): Indeed is a widely used job search platform, and their Canadian version allows you to search for jobs by location, industry, and keywords.
+* [Government of Canada Job Bank](https://www.jobbank.gc.ca/home): The official job portal of the Canadian government, where you can search for jobs across various industries and regions in Canada. It also provides information on labor market trends and in-demand occupations.
+* [Indeed Canada](https://ca.indeed.com/): Indeed is a widely used job search platform, and their Canadian version allows you to search for jobs by location, industry, and keywords.
 * LinkedIn (linkedin.com/jobs): LinkedIn is a valuable platform for professional networking and job searching. You can search for jobs in Canada and connect with Canadian employers and recruiters.
 * Monster Canada (monster.ca): Monster is another popular job search website in Canada that offers a wide range of job listings.
 * Workopolis (workopolis.com): Workopolis was once a major Canadian job search website, but it has transitioned to a job search feature integrated with Indeed Canada.
