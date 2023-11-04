@@ -4,7 +4,7 @@
 * Phone: (86) 173****7611
 * Email: liuyehcf@gmail.com
 * Location: Hangzhou, Zhejiang, China
-* **Note: Require work sponsorship to work in Canada**
+* <span style="color: red;"><b>Note: Require work sponsorship to work in Canada</b></span>
 
 ---
 
