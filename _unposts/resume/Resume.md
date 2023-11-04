@@ -72,6 +72,7 @@
 * Cpp, Java, Go
 * Shell, Python, Perl
 * SQL
+* Kubernetes
 
 ---
 
