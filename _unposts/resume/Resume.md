@@ -3,7 +3,7 @@
 * Name: Chenfeng He
 * Phone: (86) 173****7611
 * Email: liuyehcf@gmail.com
-* Location: Hangzhou, Zhejiang, China. <span style="color: red;"><b>(Require work sponsorship to work in Canada)</b></span>
+* Location: Hangzhou, Zhejiang, China. <span style="color: red;"><b>(Require sponsorship for a work visa to work in Canada)</b></span>
 
 ---
 
