@@ -17,7 +17,7 @@
 
 ## Experience
 
-### Starrocks | Database internal developer (Github Repo Committer) | 2021.8 - Now
+### Starrocks | Database internal developer (Committer) | 2021.8 - Now
 
 [StarRocks](https://github.com/StarRocks/starrocks) is a next-gen, high-performance analytical data warehouse that enables real-time, multi-dimensional, and highly concurrent data analysis.
 
