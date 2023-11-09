@@ -1886,6 +1886,7 @@ Data Stream Processing System, DSPS
         * 数据相关信息
         * 值域范围
 * MV
+    * [Implementing Data Cubes Efficiently](/resources/paper/Implementing-Data-Cubes-Efficiently.pdf)
     * [Incremental Processing with Change Queries in Snowflake](/resources/paper/Incremental-Processing-with-Change-Queries-in-Snowflake.pdf)
     * [Automated Generation of Materialized Views in Oracle](/resources/paper/Automated-Generation-of-Materialized-Views-in-Oracle.pdf)
 * Consensus Algorithm

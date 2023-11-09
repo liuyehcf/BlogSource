@@ -75,7 +75,7 @@ Unicode Box Drawing character set, which includes a variety of horizontal, verti
 
 ![fig2](/images/实用工具/chrome_fig2)
 
-# 3 科学上网
+# 3 How to access Internet
 
 下面这段文字引用自[科学上网的主流协议大对比！这里面有你在使用的吗？](https://www.techfens.com/posts/kexueshangwang.html) 
 
@@ -116,18 +116,76 @@ Unicode Box Drawing character set, which includes a variety of horizontal, verti
 
 ### 3.2.1 Protocol
 
-[SS、SSR、V2ray、Trojan、Xray 这五种翻墙协议与 VPN 对比有何不同？](https://topvpn.wiki/vpn-ssr-v2ray-trojan-xray/)
-
 | 项目名称 | 创建时间 | 支持协议 | 速度评分 | 推荐评分 | 推荐理由 |
 |:--|:--|:--|:--|:--|:--|
 | [Shadowsocks](https://github.com/shadowsocks/shadowsocks) | 2015 | <li>`Shadowsocks`</li> | ★★★★★ | ★★★★★ | <li>被广泛使用，一般作为各大机场的默认协议</li><li>最近项目无更新</li> |
 | [Shadowsocks-R](https://github.com/shadowsocksrr/shadowsocksr) | 2016 | <li>`Shadowsocks-R`</li> | ★★★★★ | ★★★ | <li>`Shadowsocks`的升级版，增强了混淆能力</li><li>最近项目无更新</li><li>作为普通用户而言，无需纠结，用常见的`Shadowsocks`即可</li> |
-| [V2Ray](https://github.com/v2fly/v2ray-core) | 2019 | <li>`Shadowsocks`</li><li>`VMess`</li> | ★ | ★★ | <li>较成熟，隐秘性、稳定性好</li><li>有团队长期维护</li> |
 | [Trojan](https://github.com/trojan-gfw/trojan) | 2019 | <li>`Trojan`</li> | ★★ | ★★ | <li>相比`V2Ray`速度更快，更轻量</li><li>相比`Trojan-go`较老</li><li>最近项目无更新</li> |
 | [Trojan-go](https://github.com/p4gefau1t/trojan-go) | 2020.8 | <li>`Trojan`</li> | ★★★ | ★★★ | <li>速度次于`Xray`</li><li>隐秘性更强</li><li>客户端单一</li> |
-| [Xray](https://github.com/XTLS/Xray-core) | 2020.11 | <li>`Shadowsocks`</li><li>`VMess`</li><li>`VLess`</li> | ★★★★ | ★★★ | <li>性能好、速度快，隐秘方面也是很不错</li><li>客户端丰富</li><li>有团队长期维护</li> |
 
-### 3.2.2 Airport
+### 3.2.2 Kernel
+
+#### 3.2.2.1 Clash
+
+**Projects(The repositories of this core and its derivative products have been deleted in 2023.11):**
+
+* [Clash-Core](https://github.com/Dreamacro/clash)
+* [ClashForAndroid](https://github.com/Kr328/ClashForAndroid)
+* [ClassForWindows](https://github.com/Fndroid/clash_for_windows_pkg)
+
+#### 3.2.2.2 Clash.Meta
+
+**Protocol:**
+
+* VMess
+* VLESS
+* Shadowsocks
+* Trojan
+* Snell
+* TUIC
+* Hysteria
+
+**Projects:**
+
+* [Clash.Meta-Core](https://github.com/MetaCubeX/Clash.Meta)
+* [Clash-Verge](https://github.com/zzzgydi/clash-verge)
+* [ClashX.Meta](https://github.com/MetaCubeX/ClashX.Meta)
+* [ClashMetaForAndroid](https://github.com/MetaCubeX/ClashMetaForAndroid)
+
+#### 3.2.2.3 v2ray
+
+**Protocol:**
+
+* Shadowsocks
+* Trojan
+* Vmess
+* VLESS
+
+**Projects:**
+
+* [v2ray-core](https://github.com/v2fly/v2ray-core)
+
+#### 3.2.2.4 Xray
+
+**Protocol:**
+
+* VLESS
+* XTLS
+
+**Projects:**
+
+* [Xray-core](https://github.com/XTLS/Xray-core)
+* [V2rayU](https://github.com/yanue/V2rayU)
+
+#### 3.2.2.5 sing-box
+
+**Protocol:**
+
+**Projects:**
+
+* [sing-box](https://github.com/SagerNet/sing-box)
+
+### 3.2.3 Airport
 
 [机场推荐](https://2022vpn.net/ss-v2ray-trojan-providers/)
 
@@ -139,16 +197,6 @@ Unicode Box Drawing character set, which includes a variety of horizontal, verti
 | [paofu](https://www.paofu.cloud) | <li>`Shadowsocks`</li><li>`Shadowsocks-R`</li> | <li>`Clash`</li> | ★★★★★ | 泡芙云是一家稳定运营了多年的翻墙机场，由海外团队运作，提供`IEPL`内网专线服务，不过墙敏感时期也可用。新用户可1元试用 |
 | [GLaDOS](https://glados.rocks/) | <li>`Shadowsocks`</li><li>`V2Ray`</li><li>`Xray`</li> | <li>`Clash`</li><li>`V2Ray`客户端</li> | ★★★★★ | `GLaDOS`是一家技术流翻墙机场，网站面板完全自主开发，除了支持常见的`Vmess`、`Trojan`翻墙协议，还支持 `Vless`协议和`Wire Guard VPN`协议。新用户可免费试用 |
 | [fastlink](https://fastlink.pro/) | <li>`Shadowsocks`</li><li>`V2Ray`</li> | <li>`Clash`</li><li>`V2Ray`客户端</li> | ★★★★★ | 便宜稳定。有个问题访问不了ChatGpt |
-
-### 3.2.3 Client
-
-[神一样的工具们](https://www.v2ray.com/awesome/tools.html)
-
-| 客户端名称 | 支持协议 | 推荐评分 |
-|:--|:--|:--|
-| [Clash](https://github.com/Dreamacro/clash) | <li>`Shadowsocks`</li><li>`VMess`</li><li>`Trojan`</li> | ★★★★★ |
-| For OSX<li>[V2RayX](https://github.com/Cenmrev/V2RayX)</li><li>[V2RayU](https://github.com/yanue/V2rayU)</li> | <li>`Shadowsocks`</li><li>`Shadowsocks-R`</li><li>`VMess`</li><li>`VLess`</li> | ★★★ |
-| [ShadowsocksX-NG](https://github.com/shadowsocks/ShadowsocksX-NG) | <li>`Shadowsocks`</li><li>`Shadowsocks-R`</li> | ★★ |
 
 ### 3.2.4 Github Proxy
 
