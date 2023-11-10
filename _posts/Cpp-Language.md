@@ -3233,6 +3233,21 @@ If an operation A "happens-before" another operation B, it means that A is guara
 * Allowing early reads of values written by other processors
 * Allowing early reads of values written by the current processor
 
+### 5.2.3 Total Store Order
+
+otal Store Order (TSO) is a type of memory consistency model used in computer architecture to manage how memory operations (reads and writes) are ordered and observed by different parts of the system.
+
+In a Total Store Order model:
+
+* **Writes are not immediately visible to all processors**: When a processor writes to memory, that write is not instantly visible to all other processors. There's a delay because writes are first written to a store buffer unique to each processor.
+* **Writes are seen in order**: Even though there's a delay in visibility, writes to the memory are seen by all processors in the same order. This is the "total order" part of TSO, which means that if Processor A sees Write X followed by Write Y, Processor B will also see Write X before Write Y.
+* **Reads may bypass writes**: If a processor reads a location that it has just written to, it may get the value from its store buffer (the most recent write) rather than the value that is currently in memory. This means a processor can see its writes immediately but may not see writes from other processors that happened after its own write.
+* **Writes from a single processor are seen in the order issued**: Writes by a single processor are observed in the order they were issued by that processor. If Processor A writes to memory location X and then to memory location Y, all processors will see the write to X happen before the write to Y.
+
+This model is a compromise between strict ordering and performance. In a system that enforces strict ordering (like Sequential Consistency), every operation appears to happen in a strict sequence, which can be quite slow. TSO allows some operations to be reordered (like reads happening before a write is visible to all) for better performance while still maintaining a predictable order for writes, which is critical for correctness in many concurrent algorithms.
+
+TSO is commonly used in x86 processors, which strikes a balance between the predictable behavior needed for programming ease and the relaxed rules that allow for high performance in practice.
+
 ## 5.3 std::memory_order
 
 1. `std::memory_order_seq_cst`: **Provide happens-before relationship.**
