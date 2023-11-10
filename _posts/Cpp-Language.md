@@ -3202,45 +3202,46 @@ If an operation A "happens-before" another operation B, it means that A is guara
 
 > the result of any execution is the same as if the operations of all the processors were executed in some sequential order, and the operations of each individual processor appear in this sequence in the order specified by its program
 
-**`Sequential consistency model（SC）`，也称为顺序一致性模型，其实就是规定了两件事情：**
+**`Sequential consistency model (SC)`**, also known as the sequential consistency model, essentially stipulates two things:
 
-1. **每个线程内部的指令都是按照程序规定的顺序（program order）执行的（单个线程的视角）**
-1. **线程执行的交错顺序可以是任意的，但是所有线程所看见的整个程序的总体执行顺序都是一样的（整个程序的视角）**
-    * 即不能存在这样一种情况，对于写操作`W1`和`W2`，处理器1看来，顺序是：`W1 -> W2`；而处理器2看来，顺序是：`W2 -> W1`
+1. **Each thread's instructions are executed in the order specified by the program (from the perspective of a single thread)**
+2. **The interleaving order of thread execution can be arbitrary, but the overall execution order of the entire program, as observed by all threads, must be the same (from the perspective of the entire program)**
+    * That is, there should not be a situation where for write operations `W1` and `W2`, processor 1 sees the order as: `W1 -> W2`; while processor 2 sees the order as: `W2 -> W1`
 
 ### 5.2.2 Relaxed consistency model
 
-**`Relaxed consistency model`也称为宽松内存一致性模型，它的特点是：**
+**`Relaxed consistency model` also known as the loose memory consistency model, is characterized by:**
 
-1. **在同一线程中，对同一原子变量的访问不可以被重排（单个线程的视角）**
-1. **除了保证操作的原子性之外，没有限定前后指令的顺序，其他线程看到数据的变化顺序也可能不一样（整个程序的视角）**
+1. **Within the same thread, access to the same atomic variable cannot be reordered (from the perspective of a single thread)**
+2. **Apart from ensuring the atomicity of operations, there is no stipulation on the order of preceding and subsequent instructions, and the order in which other threads observe data changes may also be different (from the perspective of the entire program)**
+    * That is, different threads may observe the relaxed operations on a single atomic value in different orders.
 
-**宽松可以通过如下两个维度来衡量：**
+**Looseness can be measured along the following two dimensions:**
 
-* 如何放宽程序顺序要求。通常来说，这里指的是不同变量的读写操作，对于同一个变量读写操作是没法重排的。程序顺序要求包括：
+* How to relax the requirements of program order. Typically, this refers to the read and write operations of different variables; for the same variable, read and write operations cannot be reordered. Program order requirements include:
     * `read-read`
     * `read-write`
     * `write-read`
     * `write-write`
-* 他们如何放宽写入原子性要求。根据是否允许读操作在所有缓存副本接收到写入所产生的失效或更新消息之前返回另一个处理器的写入值来区分模型；换句话说，在写入对所有其他处理器可见之前，允许某个处理器读到写入的值
+* How they relax the requirements for write atomicity. Models are differentiated based on whether they allow a read operation to return the written value of another processor before all cache copies have received the invalidation or update message produced by the write; in other words, allowing a processor to read the written value before the write is visible to all other processors.
 
-**通过这两个维度，引入了如下几种宽松策略**
+**Through these two dimensions, the following relaxed strategies have been introduced:**
 
-* 宽松`write-read`程序顺序。`TSO`支持
-* 宽松`write-write`程序顺序
-* 宽松`read-read`以及`read-write`程序顺序
-* 允许提前读到其他处理器写入的值
-* 允许提前读取到当前处理器写入的值
+* Relaxing the `write-read` program order. Supported by `TSO` (Total Store Order)
+* Relaxing the `write-write` program order
+* Relaxing the `read-read` and `read-write` program order
+* Allowing early reads of values written by other processors
+* Allowing early reads of values written by the current processor
 
 ## 5.3 std::memory_order
 
-1. `std::memory_order_seq_cst`：严一致模型
-1. `std::memory_order_relaxed`：宽松模型，具体采取哪些宽松策略，需要根据硬件平台才能确定
+1. `std::memory_order_seq_cst`: **Provide happens-before relationship.**
+1. `std::memory_order_relaxed`: **CAN NOT Provide happens-before relationship.** Which specific relaxation strategies are adopted must be determined based on the hardware platform.
     * When you use `std::memory_order_relaxed`, it guarantees the following:
         1. Sequential consistency for atomic operations on a single variable: If you perform multiple atomic operations on the same atomic variable using `std::memory_order_relaxed`, the result will be as if those operations were executed in some sequential order. This means that the final value observed by any thread will be a valid result based on the ordering of the operations.
         1. Coherence: All threads will eventually observe the most recent value written to an atomic variable. However, the timing of when each thread observes the value may differ due to the relaxed ordering.
         1. Atomicity: Atomic operations performed with `std::memory_order_relaxed` are indivisible. They are guaranteed to be performed without interruption or interference from other threads.
-1. `std::memory_order_acquire` and `std::memory_order_release`：
+1. `std::memory_order_acquire` and `std::memory_order_release`: **Provide happens-before relationship.**
     * When used together, `std::memory_order_acquire` and `std::memory_order_release` can establish a happens-before relationship between threads, allowing for proper synchronization and communication between them
         1. `std::memory_order_acquire` is a memory ordering constraint that provides acquire semantics. It ensures that any memory operations that occur before the acquire operation in the program order will be visible to the thread performing the acquire operation.
         1. `std::memory_order_release` is a memory ordering constraint that provides release semantics. It ensures that any memory operations that occur after the release operation in the program order will be visible to other threads that perform subsequent acquire operations.
