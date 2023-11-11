@@ -471,6 +471,9 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
             - Partition
             - Refresh
             - Rewrite
+        - Concepts
+            - Roll-up
+            - Drill-down
     - Trigger
     - Stored Procedure
     - DML(Data Manipulation Language)
