@@ -1521,3 +1521,5 @@ In summary, `LL(1)` and `LR(1)` are both parsing techniques used in compiler con
 ## 8.2 Unclassified
 
 1. Reactive Programming
+1. Failed retry will loose fairness
+1. Distributed system, CAP problem.

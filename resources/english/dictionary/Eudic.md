@@ -1,3 +1,46 @@
+1. seize the day
+1. this explosion didn't cause major damage
+1. I'm on my own
+1. do you get what I'm saying; do you see what I mean; do you know what I mean
+1. things haven't been going very well recently; life is tough
+1. he is indicted for something crazy
+1. I'm glad to be here, and I hope to work with everyone; I'm excited to join the team and make that happen
+1. this is not up for debate; what is there to discuss
+1. accurate; precise
+1. a one-sided game
+1. do you know what this is in reference to; what's that thing for?
+1. go with the flow
+1. I enjoy every bit of it; I enjoy every second of it
+1. I think, therefor I am
+1. the idea is polling well with the public
+1. off-year election
+1. court order
+1. a well regulated Militia, being necessary to the security of a free State, the right of the people to keep and bear Arms, shall not be infringed
+1. similar state and local laws would also fall
+1. endorse; consent
+1. don't patronize me
+1. customer obsession
+1. I think; I believe; I would say
+1. people tend to put things off; people have a tendency of putting things off
+1. affect your sleep in a negative way
+1. honk the horn
+1. what concerns me is what will happen afterwards
+1. expand; extend; extent
+1. money has been a bit tight lately; I'm a little tight on cash recently
+1. I'm just here for a tour; I'm just browsing
+1. we took preemptive action to avoid the crisis
+1. endeavour; effort
+1. the food and water are running out
+1. How do you usually spend your weekends?
+1. Can you describe the place where you live? What do you like or dislike about it?
+1. Describe a memorable trip you have taken. Including  Where did you go? Why was it memorable? What did you do there?
+1. What do you enjoy most about your job/studies?
+1. let's narrow it down to three options before making a decision
+1. annual performance evaluation
+1. a serene escape from the bustling city life
+1. square meter
+1. it just hit me that; it just struck me that
+1. Authoritarian Regime
 1. accord with; align with; correspond with; concur with
 1. please wipe your feet on the mat; wipe the mud off her boots
 1. I'm not myself; I'm not feeling myself; he doesn't seem himself
@@ -105,7 +148,6 @@
 1. Explain the concept of happens-before relationships
 1. Explain the concept of design patterns
 1. What are the competitors of Starrocks?
-1. What is the process of window function?
 1. What are the core values of StarRocks?
 1. Explain the difference between cache coherence and memory consistency
 1. do not toss objects from height
@@ -124,7 +166,6 @@
 1. let's not beat around the bush
 1. biological family; adopted family
 1. power source
-1. I'm glad to be here, and I hope to work with everyone
 1. What are the advantages of the MPP architecture?
 1. charging cable
 1. power bank
@@ -363,7 +404,6 @@
 1. the government is more effective than we tend to think
 1. the effect of the medicine is noticeable
 1. he has to cater to his boss
-1. what's that thing for?
 1. the powers of a judge are defined by law
 1. you better prioritize your work
 1. sorry, I made a mistake
@@ -622,7 +662,6 @@
 1. What is the purpose of the "throws" keyword in Java?
 1. Explain the concept of generics in Java
 1. What is the difference between equals() and hashCode() methods?
-1. Explain the concept of inheritance in Java
 1. What is the purpose of the "volatile" keyword in Java?
 1. I can't characterize how close, how far
 1. NATO
@@ -671,14 +710,11 @@
 1. What are virtual functions in C++? How are they different from normal functions?
 1. Explain the concept of constructors and destructors in C++
 1. What is the difference between new and malloc in C++?
-1. What is the difference between function overloading and function overriding in C++
 1. Explain the concept of inheritance in C++
 1. What is the difference between class and struct in C++?
-1. Explain the object-oriented programming (OOP) concepts in C++
 1. What are the differences between C and C++?
 1. What is C++? Explain its key features
 1. Explain the concept of polymorphism in Java
-1. What is the difference between a shallow copy and a deep copy in Java?
 1. What is the purpose of the "static" keyword in Java?
 1. How does exception handling work in Java?
 1. What is the difference between the "StringBuilder" and "StringBuffer" classes?
@@ -692,7 +728,6 @@
 1. What are the access modifiers in Java? Explain their visibility levels
 1. What is the difference between checked and unchecked exceptions in Java?
 1. Explain the concept of method overloading and method overriding
-1. What is the difference between an abstract class and an interface in Java?
 1. What are the main principles of object-oriented programming (OOP)?
 1. Explain the different types of memory in Java
 1. What are the differences between JDK, JRE, and JVM?
@@ -786,7 +821,6 @@
 1. prominent; dominant; predominant; prevalent
 1. recurrence relation; state transition equation
 1. data lineage analysis
-1. this is not up for debate
 1. I really enjoy exercising! I usually go to the gym to work out and do some anaerobic weightlifting
 1. this feature will not perform additional state reporting
 1. here's a high-level overview of how the KMP algorithm works
@@ -1282,8 +1316,6 @@
 1. mortgage and pension
 1. I think you’re confusing me for someone else
 1. I’m amazed you’ve got this far
-1. money has been a bit tight lately
-1. I'm a little tight on cash recently
 1. we want to wrap our warm arms around every family that is touched by this tragedy
 1. the wounded are critically injured
 1. secretary
@@ -1351,7 +1383,6 @@
 1. this device is working again
 1. I need to make sense of everything
 1. Yankee
-1. he is indicted for something crazy
 1. jail is not an instant path to greatness
 1. indict
 1. let's get to it
@@ -1408,7 +1439,6 @@
 1. the decision you’ve made is not in your best interest
 1. there’s nothing we cannot work out
 1. I have a solid background in sales
-1. what is there to discuss
 1. reduce appetite
 1. I propose to use the concept 'philosophy' in a very wide sense
 1. it felt like that someone was about to hurt you
@@ -1570,7 +1600,6 @@
 1. he wants to cover it up
 1. our approach can be easily modified to work with other scheduling algorithms
 1. excessive synchronization between threads becomes detrimental with a rising number of CPU cores
-1. I’m just browsing
 1. if I need a hand, I’ll ask for it
 1. how can that be bad?
 1. what’s done can be undone
@@ -1628,7 +1657,6 @@
 1. I'm not used to waking up this early
 1. to be accustomed to something or someone
 1. I think we should explore some solutions
-1. I'm just here for a tour
 1. he wasn't given a choice
 1. we can do it quiet
 1. we are on the verge of chaos
@@ -1660,7 +1688,6 @@
 1. I don‘t think less of you
 1. I don’t think I’m gona make it
 1. there’s no cell reception out there
-1. gut feeling
 1. The number of maximum concurrent queries is based on a heuristic calculation that factors in system hardware attributes such as the number of CPU sockets, CPU cores, and threads per core
 1. open-source and commercial DBMS
 1. how much is my commission
@@ -1800,7 +1827,6 @@
 1. white-collar workers predominate this residential area
 1. we need to sleep on it
 1. self reliance
-1. people tend to put things off
 1. the flip side of this is
 1. think about the bright side
 1. not exactly what I had in mind
@@ -2380,7 +2406,6 @@
 1. given the unbounded nature of streaming data
 1. vocalize the feelings of shame
 1. take on a job
-1. this healthy diet will provide all your essential nutrients
 1. boost/boast/boom/bloom
 1. a fence marked the perimeter of the field
 1. a carton of apple juice
@@ -2454,7 +2479,6 @@
 1. conversion/transformation
 1. blur/vague/dim
 1. she was found innocent of any crime
-1. he's systematic in all he does
 1. it is challenging to map design requirements to efficient and compatible hybrid solutions
 1. fans believe that winning the first match of the season was an auspicious start
 1. cave/craft/carve/crator/curve
@@ -2851,14 +2875,12 @@
 1. my best subject is math
 1. sometimes things don't work out
 1. I do not perfoem these kind of services
-1. do you know what this is in reference to
 1. what are you looking at me for
 1. she has a prejudice against modern music
 1. the theatre has a seating capacity of 2000
 1. great works of literature
 1. people are usually resistant to change
 1. I'll convey it to him
-1. lost my concentration
 1. a child learns to talk by imitation
 1. it is widely believed that
 1. surpass the world record
@@ -3773,7 +3795,6 @@
 1. operating the game
 1. folk art
 1. admit your situation
-1. I'm excited to join the team and make that happen
 1. top-tier
 1. compliant
 1. compliment
@@ -3884,7 +3905,6 @@
 1. money up front
 1. overload
 1. protest
-1. health care
 1. test positive
 1. viable
 1. what good is this
