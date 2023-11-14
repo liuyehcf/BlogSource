@@ -219,6 +219,10 @@ categories:
     - Strong Compatibility
 - Cpp Features
     - C++11
+        - Template Extension
+            - Variadic Templates
+            - Template Aliases
+            - constexpr functions
         - Move Semantics & RValue
         - Type Deduction
         - Lambda Expression
