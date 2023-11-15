@@ -1,6 +1,7 @@
 
 1. Linux-常用命令
     * gprof
+    * bottom, gtop, glances, gping, procs, hyperfine, xh, curlie, dog
 1. 性能分析
     * perf
         * perf lock
