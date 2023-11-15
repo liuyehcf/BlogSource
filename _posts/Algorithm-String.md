@@ -223,20 +223,22 @@ public:
             return 0;
         }
 
-        // pi[i] represents the length of the longest proper suffix, which is also a prefix,
-        // of the pattern's substring ending at position i, [0, i]
+        // pi[i] stores the length of the longest proper prefix which is also a suffix in pattern[0...i]
         std::vector<int> pi(pattern.length(), 0);
 
         // Empty string's longest suffix is empty itself, the lenght is zero
         int j = 0;
 
+        // Building the pi array for the pattern
         for (int i = 1; i < pattern.size(); i++) {
             while (j > 0 && pattern[i] != pattern[j]) {
-                // pi[j - 1] means the legnth of the longest pre-suffix of range [0, i - 1]
-                // so the next position to be checked is at pi[j - 1], we can continue to search at pattern[pi[j - 1]]
+                // If characters don't match, use pi array to skip comparisons
+                // L = pi[j - 1], then pattern[0...(L-1)] = pattern[(i-L+1)...i], so the next search
+                // position is L
                 j = pi[j - 1];
             }
 
+            // If characters match, update the pi array
             if (pattern[i] == pattern[j]) {
                 // j is the index, so (index + 1) means the length
                 pi[i] = ++j;
