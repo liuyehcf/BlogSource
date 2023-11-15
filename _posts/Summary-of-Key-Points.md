@@ -255,6 +255,7 @@ categories:
 - Move Semantics & RValue Reference
     - Perfect Forwarding in Template
     - Transfer of Resources
+        - Memory Ownership
 - Containers
     - Sequence Containers
         - vector
@@ -495,6 +496,19 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
     - Bloom Fiter Index
 - Transaction
     - ACID (Atomicity, Consistency, Isolation, Durability)
+        - Isolation in Mysql
+            - READ UNCOMMITTED
+                - No Read Lock
+                - Write Row-Level Lock, free after transaction
+            - READ COMMITTED
+                - Read Row-Level Lock, free after read
+                - Write Row-Level Lock, free after transaction
+            - REPEATABLE READ
+                - Read Row-Level Lock, free after transaction
+                - Write Row-Level Lock, free after transaction
+            - SERIALIZABLE
+                - Read Table-Level Lock, free after transaction
+                - Write Table-Level Lock, free after transaction
 - Storage
     - High Availability and Scalability
         - Replication
