@@ -1,3 +1,33 @@
+1. 肉类词汇
+1. stay warm
+1. levy; tax; excise
+1. play ground; sports ground; sports field
+1. give it to me straight; call a spade a spade; let's not beat around the bush
+1. let's get to it; let's jump right in
+1. the calm before the storm
+1. that's the spirit
+1. world view; life philosophy; values
+1. knock it off
+1. I'm still giving it some thoughts; I didn't think it through
+1. please stay here, I'll see myself out
+1. it's my day off; it's my time off
+1. 打招呼
+1. the sky is the limit
+1. 电子设备词汇
+1. I will need to request time off
+1. competitive relationship
+1. will you be free 7.30pm onwards tomorrow?
+1. he always gave me hell
+1. two Gaza hospitals have ceased to function
+1. what do you study? I'm doing computer science
+1. carpet; rug
+1. 手部动作词汇
+1. 蔬菜词汇
+1. you're twisting my words
+1. 厨房词汇
+1. 晾衣服词汇
+1. sounds cheesy
+1. 机场词汇
 1. seize the day
 1. this explosion didn't cause major damage
 1. I'm on my own
@@ -99,7 +129,6 @@
 1. for the space-saved algorithm, if the frequencies of different elements are similar, the final error may be significant
 1. deque can be expanded or contracted
 1. western countries generally value humanitarian concerns
-1. power strip; webcam; headphone; mouse
 1. no soliciting
 1. last year, due to financial issues at my company, all members' salaries were reduced by 10%; to compensate, we were offered stock options of equivalent value
 1. I'm fed up with doing the same thing in the office; I'm fed up with doing the routine work in the office
@@ -162,13 +191,9 @@
 1. sorry to bother you; sorry for the inconvenience
 1. you are so full of it
 1. poppycock
-1. call a spade a spade
-1. let's not beat around the bush
 1. biological family; adopted family
 1. power source
 1. What are the advantages of the MPP architecture?
-1. charging cable
-1. power bank
 1. take them to the curb
 1. there will be action
 1. What are the features of event-driven system?
@@ -1031,7 +1056,6 @@
 1. seven day break from fighting would allow humanitarian groups to provide aid to civilians who are trapped by the clashes
 1. respiratory illnesses
 1. air quality alerts were issued in Montana and Colorado
-1. how has it been so far in your new job?
 1. how did you get into this
 1. the judge hoped he would one day feel remorse
 1. loved ones of the deceased
@@ -1385,7 +1409,6 @@
 1. Yankee
 1. jail is not an instant path to greatness
 1. indict
-1. let's get to it
 1. I'm ready for whatever's next
 1. they are agitating for unrest
 1. agitate
@@ -1560,7 +1583,6 @@
 1. please feel free to comment and share
 1. product market fit
 1. why don't things work well
-1. let's jump right in
 1. working set size
 1. the performance of RAM chips did not increase proportionally
 1. CPUs are today much more sophisticated than they were only 25 years ago
@@ -1699,7 +1721,6 @@
 1. mentality
 1. if you want it, go get it
 1. why do you look down on me
-1. I’m still giving it some thoughts
 1. given the circumstances
 1. what have you to do with Tom
 1. we’ve come so far
@@ -2080,7 +2101,6 @@
 1. she stirred her coffee with a teaspoon
 1. correct/rectify
 1. please rectify the mistake in my bill
-1. world view
 1. you can often see lots of dragonflies by the pond before a downpour
 1. disappoint/frustrate/dismay/depress/despondent
 1. he is charging a storage battery
@@ -2848,7 +2868,6 @@
 1. Suppose that d and f have ranks r and t
 1. I'll be over on the edge of the seat
 1. tissue
-1. what have you been up to
 1. I don't want to mess it up
 1. 我很满足
 1. end up alone
@@ -2924,14 +2943,12 @@
 1. the car component industry
 1. important for the future prosperity of our country
 1. delicate
-1. to file an appeal
 1. one may be poor but never ceases to be ambitious
 1. let me put it this way
 1. arouse public indignation
 1. many people living in remote areas are ignorant
 1. ambient/ambivalent
 1. win the world championship
-1. a great magnet for foreign tourists
 1. once favourable conditions are created
 1. we live in an era of global communication
 1. there are no definitive answers for this problem
@@ -2942,7 +2959,6 @@
 1. ancient civilizations
 1. hometown
 1. hope all goes to plan
-1. how have you been
 1. artificial additives
 1. make significant advances
 1. a map and compass
@@ -3073,7 +3089,6 @@
 1. pancake
 1. dean
 1. camouflage
-1. assignment sheet
 1. bulletin board
 1. 负重深蹲
 1. 卧推
@@ -3084,8 +3099,6 @@
 1. socialist revolution
 1. fabric
 1. tube
-1. absorbed in thought
-1. easily absorbed into the skin
 1. this career offers a challenge
 1. textile industry
 1. perceive
@@ -3578,7 +3591,6 @@
 1. aligning child distributions
 1. aligning
 1. entail
-1. scratch
 1. 加满
 1. 时差
 1. jetlag
@@ -3866,8 +3878,6 @@
 1. awesome
 1. dumpling
 1. logistics
-1. lamb chop
-1. natural scenery
 1. working all day
 1. decent
 1. whenever possible
@@ -3925,7 +3935,6 @@
 1. sushi
 1. hot pot
 1. chips
-1. raw fish
 1. substantially
 1. mutual
 1. compendium
@@ -4026,7 +4035,6 @@
 1. small-minded person
 1. sunset
 1. sunrise
-1. doesn't work out
 1. a full figure
 1. draw from
 1. spread out over 10 years
@@ -4081,7 +4089,6 @@
 1. dehydration
 1. disease
 1. dresser
-1. give it to me straight
 1. keep people guessing
 1. scold
 1. rebuke
