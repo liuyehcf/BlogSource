@@ -1,39 +1,39 @@
-1. 肉类词汇
-1. stay warm
-1. levy; tax; excise
+1. 肉类词汇; 生鱼片：raw fish
+1. stay warm; 注意保暖
+1. levy; tax; excise; Levy: This is a general term that refers to the legal process of imposing or collecting a tax, fee, or fine. A levy can be applied to a wide range of financial obligations, such as taxes, fees for services, or fines for legal violations. It\'s more about the action of imposing or collecting these charges.\n\nTax: A tax is a mandatory financial charge or some other type of levy imposed upon a taxpayer (an individual or a legal entity) by a governmental organization. Taxes are used to fund various public expenditures. Taxes can come in many forms, such as income tax, property tax, sales tax, etc. The term \"tax\" is more about the financial charge itself, rather than the act of imposing or collecting it.\n\nExcise: An excise is a specific type of tax that is levied on particular goods, services, or activities. This is often a form of indirect tax, meaning it is collected by an intermediary (like a store) from the person who bears the ultimate economic burden of the tax (such as the consumer). Excise taxes are commonly placed on items such as alcohol, tobacco, and fuel.\n\n
 1. play ground; sports ground; sports field
 1. give it to me straight; call a spade a spade; let's not beat around the bush
 1. let's get to it; let's jump right in
 1. the calm before the storm
-1. that's the spirit
-1. world view; life philosophy; values
-1. knock it off
+1. that's the spirit; 这就对了！
+1. world view; life philosophy; values; Outlook on Life\nValue System
+1. knock it off; 别吵了
 1. I'm still giving it some thoughts; I didn't think it through
 1. please stay here, I'll see myself out
 1. it's my day off; it's my time off
-1. 打招呼
+1. 打招呼; how are you doing today?\nhow have you been?\nwhat have you been up to?\nhow is it going?\nhow has it been so far in your new job?
 1. the sky is the limit
-1. 电子设备词汇
+1. 电子设备词汇; 充电线：charging cable\n移动电源：power bank\n电源：power strip\n摄像头：webcam\n耳机：headphone\n鼠标：mouse\n键盘：keyboard
 1. I will need to request time off
 1. competitive relationship
 1. will you be free 7.30pm onwards tomorrow?
-1. he always gave me hell
+1. he always gave me hell; 他总是骂我
 1. two Gaza hospitals have ceased to function
-1. what do you study? I'm doing computer science
-1. carpet; rug
-1. 手部动作词汇
-1. 蔬菜词汇
+1. what do you study? I'm doing computer science; I was doing Computer Science.\nI was studying Computer Science and have now graduated.\nI completed my studies in Computer Science.\nMy field of study was Computer Science, and I\'ve graduated.\n
+1. carpet; rug; Usually refers to a floor covering that extends over an entire room\nRugs are smaller, movable floor coverings that don\'t extend across the entire floor space
+1. 手部动作词汇; 扇：slap\n拳打：punch\n连续打：beat\n抓取：grab\n握住：hold\n举起：lift\n掉落：drop\n轻弹：flick\n轻拍：pat\n触摸：touch\n敲：knock\n戳：poke\n挠：scratch\n指：point\n推：push\n拉：pull\n轻轻摇晃：rock\n拥抱：cuddle
+1. 蔬菜词汇; 黄瓜：cucumber\n花椰菜：cauliflower\n四季豆：green beans\n洋葱：onion\n卷心菜：cabbage\n胡萝卜：carrot\n生菜：lettuce\n辣椒：pepper\n西兰花：broccoli
 1. you're twisting my words
-1. 厨房词汇
-1. 晾衣服词汇
+1. 厨房词汇; 切片：slice the potato\n切丝：shred the potato\n切丁：dice the potato\n切段：cut the green onion\n剁：chop the green onion\n菜刀：I chop the green onion with my cleaver.\n
+1. 晾衣服词汇; 晾衣服：hang the laundry\n衣架：hanger\n抖一下衬衫：shake out the shirt\n衣服会皱的：the shirt is going to get wrinkled\n晾衣架：just hang it on the laundry rack\n晾衣夹：just clip it on the laundry pin like this\n
 1. sounds cheesy
-1. 机场词汇
+1. 机场词汇; 航站楼：terminal\n值机柜台：check-in counter\n登机牌：boarding pass\n商务舱：business class\n经济舱：economy class\n靠过道的座位：aisle seat\n国内航班：domestic flight\n安检：security check\n免税店：duty-free shop\n登机口：departure gate\n登记通知：boarding call\n延误：delay\n随身携带的行李：carry-on, carry-on luggage\n中转停留：layover\n颠簸：turbulence\n海关：customs\n货币兑换：currency exchange\n行李提取出：baggage claim
 1. seize the day
 1. this explosion didn't cause major damage
 1. I'm on my own
 1. do you get what I'm saying; do you see what I mean; do you know what I mean
 1. things haven't been going very well recently; life is tough
-1. he is indicted for something crazy
+1. he is indicted for something crazy; Use \"charge\" when referring to the official action of accusing someone of a crime.\nUse \"accuse\" for both formal and informal allegations, but without the legal weight of a charge.\nUse \"indict\" specifically when referring to the formal legal process of charging someone with a serious crime, typically following a grand jury’s decision.
 1. I'm glad to be here, and I hope to work with everyone; I'm excited to join the team and make that happen
 1. this is not up for debate; what is there to discuss
 1. accurate; precise
@@ -41,30 +41,30 @@
 1. do you know what this is in reference to; what's that thing for?
 1. go with the flow
 1. I enjoy every bit of it; I enjoy every second of it
-1. I think, therefor I am
+1. I think, therefor I am; 我思故我在
 1. the idea is polling well with the public
 1. off-year election
 1. court order
 1. a well regulated Militia, being necessary to the security of a free State, the right of the people to keep and bear Arms, shall not be infringed
 1. similar state and local laws would also fall
 1. endorse; consent
-1. don't patronize me
+1. don't patronize me; 别对我说教
 1. customer obsession
 1. I think; I believe; I would say
 1. people tend to put things off; people have a tendency of putting things off
 1. affect your sleep in a negative way
 1. honk the horn
-1. what concerns me is what will happen afterwards
+1. what concerns me is what will happen afterwards; What I really care about is what happens next\nI\'m particularly interested in what comes next\nThe thing that matters to me is what happens after this
 1. expand; extend; extent
 1. money has been a bit tight lately; I'm a little tight on cash recently
 1. I'm just here for a tour; I'm just browsing
 1. we took preemptive action to avoid the crisis
 1. endeavour; effort
 1. the food and water are running out
-1. How do you usually spend your weekends?
-1. Can you describe the place where you live? What do you like or dislike about it?
-1. Describe a memorable trip you have taken. Including  Where did you go? Why was it memorable? What did you do there?
-1. What do you enjoy most about your job/studies?
+1. How do you usually spend your weekends?; Over the weekends, I mostly enjoy unwinding at home. My time is often divided between cooking and digital entertainment. I love experimenting with new recipes in the kitchen, which is both relaxing and rewarding. Additionally, I spend a fair amount of time playing smartphone games and watching live streams. These activities are not only enjoyable but also help me stay connected and engaged with my interests.
+1. Can you describe the place where you live? What do you like or dislike about it?; I live in Hangzhou, which is known for its stunning natural beauty and historical significance. One of the things I love most about living here is the breathtaking West Lake. It\'s a perfect spot for relaxation and offers a serene escape from the bustling city life. The lake is surrounded by lush greenery and traditional pagodas, which makes it a picturesque place for walks or boat rides.\n\nIn addition to the natural scenery, Hangzhou is rich in culture and history. There are numerous temples and ancient buildings that provide a glimpse into China\'s past. As someone interested in history, I find this aspect of the city particularly fascinating.\n\nHowever, one downside is that Hangzhou can be quite crowded, especially during tourist seasons. The influx of visitors can make the city feel overwhelming at times, and traffic congestion can be a significant issue. Despite this, I think the city\'s charm and beauty outweigh these minor inconveniences
+1. Describe a memorable trip you have taken. Including  Where did you go? Why was it memorable? What did you do there?; Honestly, I\'m usually the kind of person who likes to chill at home. But there was one trip with my wife to Okinawa in Japan that I can\'t forget. We were there for a few days. We visited the sea museum there, It\'s apparently the biggest in Asia. We saw all sorts of cool sea creatures – dolphins, sharks, whales – and some of them even put on a show! The water there was unreal, so clear and blue, nothing like back home. Oh, and the food? We had some amazing steak and seafood. Tasted great, but it was a little bit expensive. And we also did some shopping. My wife had this friend in China who wanted some makeup from Japan, so we hit up a few pharmacy stores.
+1. What do you enjoy most about your job/studies?; I really like my job, especially since I work as a database internal engineer. My primary responsibility is making our product perform better and tackling tricky issues. Whenever I\'m trying to boost performance, I brainstorm ideas and chat with my colleagues about them. They are super smart and competent and always gives me fresh perspectives and insights that really open my eyes. And another part is Problem-solving. It feels like being a detective – you know, figuring out which clues matter and which don\'t to get to the bottom of things.
 1. let's narrow it down to three options before making a decision
 1. annual performance evaluation
 1. a serene escape from the bustling city life
@@ -90,28 +90,28 @@
 1. the decline in profit is causing disquiet among shareholders
 1. cohabitation before marriage is considered acceptable among young people
 1. Federal Aviation Administration
-1. I'll be at the meeting at 11 o'clock
-1. you're hopeless
-1. cohesion; cohesive; coherence; coherent
+1. I'll be at the meeting at 11 o'clock; at the meeting means the place\nin the meeting means you\'re participating
+1. you're hopeless; 你没救了\n
+1. cohesion; cohesive; coherence; coherent; Cohesion: The team displayed strong cohesion after their weekend retreat.\nCohesive: The report was cohesive, with all the sections flowing smoothly into one another.\nCoherence: The speaker\'s argument lacked coherence, making it hard to follow his main point.\nCoherent: After waking up from the anesthesia, it took her a few minutes to become coherent.
 1. ruling party
-1. What's the problem of cache miss rates? How do you address it?
-1. What's the process of join operator?
-1. What's the process of window operator?
-1. What's the process of aggregation operator?
+1. What's the problem of cache miss rates? How do you address it?; I found that a refactoring PR caused this decrease in performance. After this PR, there\'s a large template function with many branches, but the query with the performance degradation only goes through one of the branches. I suspect that when the instructions are loaded into the code cache, instructions from unused branches are partly loaded, leading to frequent replacements in the code cache line. This might be what\'s causing the performance degradation. However, we tested this only on virtual machines in Alibaba Cloud. Some lower-level perf-events, such as branch-miss and cache-miss, are not supported on VMs, so we couldn\'t directly verify this hypothesis. To address the issue, we separated different branches into distinct template functions and marked them as \"always not inlined.\"
+1. What's the process of join operator?; Generally speaking, a join involves a two-stage processing method. The first stage is called \"build,\" where a hash_table is generated based on a smaller table. The second stage, known as \"probe,\" involves going through the hash_table to evaluate matches based on specific predicates.\n\nLocal and Global runtime filters will be generated at build stage to further improve the performance.
+1. What's the process of window operator?; For window function without partition by, the data will be sorted globally and send to one node to further continue the serial window process. And for window function with partition by, the data will be shuffled and sorted locally, and then multi-machine and multi-core parallel window processing is carried out.\n\nAnd for window function that is not relied on the ordering, like min/max, we have hash-based partition to further improve the performance.
+1. What's the process of aggregation operator?; Generally speaking, for aggregation without group by, there will be a two-stage process, the first stage is called pre-aggregate, where each node perform the aggregation and calculate the intermediate result locally, and then send to one intended node for final aggregation. And for aggregation with group by, there will be a one-stage process, each node will shuffle the scanned data by the group by expression, and then multi-machine and multi-core parallel aggregation processing is carried out.
 1. 包容的
-1. What the process of executing a query?
-1. What are the advantages and disadvantages of Volcano Execution Model and Morsel-driven execution model?
+1. What the process of executing a query?; Generally, it has two stages, plan and execution. Firstly, it will go through rule-based optimizations and cost-based optimizations to generate an optimal physical plan, the plan will contains several segments, connected by exchagne operator. And in practical system, there will be multiply compute nodes, so each fragment will have multiply parallelism to fully use the machine resource, and each parallelism is called fragment instance. When a compute node received a fragment instance, basically, the fragment instance is an execution tree, it will be decomposed into multiply pipelines, and each pipeline will have multiply parallelism to fully use the multi-cores resources.
+1. What are the advantages and disadvantages of Volcano Execution Model and Morsel-driven execution model?; Volcano execution model is simple for programming. And the minimum scheduling unit is thread, so scheduling decision is delegated to kernel. But it is hard to have fine-grained resource control, priority control and parallelism control.\n\nFor morsel-driven execution model, the programming model is more complex, each operator has to handle state change like if it has output or if it need input, and need to provide two interfaces push_chunk and pull_chunk, and blocking opeartions are not allowed, and for some operators like scan and exchange, extra I/O thread pool is required to handle the I/O operations. But it can have more flexible resource control, priority control, and parallelism control, you can set different parallelism for different parts of a single query.
 1. I need work authorization sponsorship
 1. machines with identical specifications
-1. What's the design of the morsel-driven execution model?
-1. Why do you introduce morsel-driven execution model?
-1. Explain the details of the parallel merge operator
+1. What's the design of the morsel-driven execution model?; Morsel\n* Morsel is a small chunk or portion of data, in our system, its value is 4096.\n\nPipeline and Pipeline Driver\n* Pipeline is a logical concept that represents an execution link, comprising of a sequence of operators that without blocking operations.\n* Each compute node will receive an execution tree, the tree will be decomposed to multiply pipelines, and all the materialized nodes will be split into two pipelines. For example, the join node will split into two pipelines, one contains join_build, and another contains join_probe. And each pipeline can have several parallelism, called pipeline driver, which is the minimum scheduling unit.\n\nUser-Space Scheduler\n* The size of work threads is equal to the size of cpu cores. And core-binding can have better cache locality.\n* And for scheduling algorithm, generally, there are two different options, one is Global Balance, where all workers share a global queue, providing precise wake-ups. The other choice is Work-Stealing, where each worker has a local queue and may experience false wake-ups. In our system, for the resource control feature, we have chosen to implement Global Balance along with a global multi-level feedback queue, the pipeline driver with longer overall execution time may have lower priority and may stay in the higher level.\n* And another thing is task readiness analysis for checking if a task is ready or blocked, there are also two choices, polling model and event-driven model, but the state change of the task in database system is more complex comparing to the threads scheduling in kernel which can only come from limited cases like cpu time slice exhausted, hardware interrupt, system call, mutex and explicit yielding, the state change in database system may come from asynchronous operations, task dependency readiness, and more complex condition that may contains several variables and compoments. So polling model is suitable for database system, and simplify the process to a great extend. And in our system, there will be a seperate thread to do the task readiness analysis.
+1. Why do you introduce morsel-driven execution model?; Because comparing to the volcano execution model, morsel-driven execution model has better fexibility on resource control, priority control and parallelism control. And we also expect it can have better scheduling efficiency.
+1. Explain the details of the parallel merge operator; The implementation is based on the MergePath algorithm, the most impressive part of this algorithm is that each core can independently compute the data segment required by current core. Multiple inputs are organized into a Merge tree. The entire merge process uses the stream model and requires multiple traversals of the merge tree. Each traversal uses a bottom-up approach, with all cores sequentially processing each node, for example, all cores are working on a merge node\'s process and then goes to the next merge node. And additionally, I dopted late materialization to further improve the performance.
 1. I'm doing hair
-1. hang in there; keep at it; stay strong
+1. hang in there; keep at it; stay strong; 加油！
 1. 30-day debt grace period
 1. speaker of the house
 1. there's still a great deal of uncertainty surrounding the blast
-1. questions continue to swirl around a deadly explosion at a Gaza hospital this week
+1. questions continue to swirl around a deadly explosion at a Gaza hospital this week; The verb \"swirl\" used in this context is metaphorical and conveys the idea that there are many questions or rumors circulating about the event. This usage is idiomatic and can be found in journalistic contexts.
 1. on a regular basis; on a daily basis; on a weekly basis; on a monthly basis
 1. throw; toss; hurl
 1. something is taking place; something is happening; something is playing out
@@ -122,20 +122,20 @@
 1. I dislike being stuck in traffic
 1. the domestic companies excel at exploiting laborers
 1. I do not have legal status
-1. it's ok; not bad; it's alright; sort of; kind of
-1. trace; track
+1. it's ok; not bad; it's alright; sort of; kind of; 一般般\n
+1. trace; track; In summary, while \"trace\" and \"track\" can sometimes be used interchangeably, \"trace\" often focuses on the <b>history, origins</b>, or faint evidence of something, whereas \"track\" is more about following a path, trail, or monitoring the <b>progress of something in real-time</b>. The choice between the two words depends on the specific context and meaning you want to convey.\n\nShe managed to trace her family lineage back to the 1800s.\nWe used an app to track our hiking route in the mountains.
 1. he is cursing at someone
 1. I feel a bit awkward; it's a little bit awkward
 1. for the space-saved algorithm, if the frequencies of different elements are similar, the final error may be significant
 1. deque can be expanded or contracted
 1. western countries generally value humanitarian concerns
-1. no soliciting
+1. no soliciting; 禁止推销
 1. last year, due to financial issues at my company, all members' salaries were reduced by 10%; to compensate, we were offered stock options of equivalent value
 1. I'm fed up with doing the same thing in the office; I'm fed up with doing the routine work in the office
-1. I'm hypercritical
+1. I'm hypercritical; hypothesis\nhypocritical
 1. liberty of speech; liberty of the press; freedom of speech; freedom of the press
 1. in the context of significant layoffs, finding a job can be quite challenging
-1. what's your prescription? I'm short-sighted; I'm far-sighted
+1. what's your prescription? I'm short-sighted; I'm far-sighted; 你眼睛几度
 1. legacy code
 1. it is miserable
 1. I'll give it a try
@@ -153,15 +153,15 @@
 1. make a fool of myself
 1. today is a gift, so it's called present
 1. the roads are jammed
-1. go to; attend; take part; participate
-1. develop; foster; cultivate
+1. go to; attend; take part; participate; better to use go to a party(for guests), or come to my party(for hosts)\nuse attend a party in a formal way\ndon\'t use take part a party\ndon\'t use participate a party\n
+1. develop; foster; cultivate; don\'t use clutivate, clutivate means to help something grow because it can be useful to you.\nIf you\'re sure about the specific situation, like forster a relationship. Otherwise also don\'t use it.\nplease always use develop first.\n\n
 1. still warter; sparking water; tap water
 1. pro-union president
 1. doping scandal
 1. we're grieving
 1. at least 97 people perished
 1. the building was burned to the ground
-1. Explain the difference between tcmalloc and jemalloc
+1. Explain the difference between tcmalloc and jemalloc; jemalloc is well-suited for applications that require efficient memory utilization and involve high levels of concurrent memory allocation and deallocation, especially when these operations are occurring across multiple threads.
 1. they set out at sunset; they set out at sunrise
 1. including; namely
 1. the road ahead will be long, our climb will be steep
@@ -169,16 +169,16 @@
 1. this conversation is loaded with contempt
 1. If you fall for it, they'll just keep taking advantage of you
 1. I need to go check some information
-1. don't give me the brush off
+1. don't give me the brush off; 别敷衍我
 1. regime change
 1. the song is really contagious; the song is really catchy
 1. my wage is going backward; my wage is going down
-1. How many Garbage Collection Algorithms and Garbage Collectors are there?
-1. Explain the concept of happens-before relationships
-1. Explain the concept of design patterns
-1. What are the competitors of Starrocks?
-1. What are the core values of StarRocks?
-1. Explain the difference between cache coherence and memory consistency
+1. How many Garbage Collection Algorithms and Garbage Collectors are there?; > Garbage Collection Algorithms\n> * Mark-Copy (Young Generation in Serial GC, Parallel GC)\n> * Mark-Sweep (Old Generation in Serial GC, Parallel GC)\n> * Mark and Concurrent Sweep (CMS GC)\n> * Generational Algorithm (Most JVM GCs)\n> * Mark-Region (G1 GC)\n> Garbage Collectors\n> * Serial GC\n> * Parallel GC\n> * Concurrent Mark Sweep, CMS\n> * Garbage First Garbage Collector, G1
+1. Explain the concept of happens-before relationships; Program Order Rule, Monitor Lock Rule, Volatile Variable Rule, Thread Start Rule, Thread Termination Rule, Interruption Rule
+1. Explain the concept of design patterns; > Creational Patterns, Singleton, Factory, Abstract Factory, Builder, Prototype\n> Structural Patterns, Adapter, Bridge, Composite, Decorator, Proxy\n> Behavioral Patterns, Observer, Strategy, Template Method, Iterator, State, Chain of Responsibility, Command, Interpreter, Mediator, Visitor
+1. What are the competitors of Starrocks?; * Top-tier: Snowflake, Databricks\n* Second-tier: AWS Redshift/Athena, Google Cloud Bigquery, Azure Synapse\n* Third-tier: Starburst, Dremio, Singlestore, Clickhouse, Imply, Startree, Ahana\n* Trino, lake house\n* Druid, wide table\n* Presto, execution
+1. What are the core values of StarRocks?; 1. Fast\n1. Unified, contains almost all the capabilities, like MV, lakehouse, cloud native, stream/batch processing
+1. Explain the difference between cache coherence and memory consistency; Cache coherence is primarily concerned with the values of copies of a single memory location that are cached at several caches, and ensures that all processors in the system observe a single, consistent value for the memory location.\n\nMemory consistency is concerned about the ordering of multiply updates to different memory locations(or single memory location) from different processors. It determines when a write by one processor to a shared memory location becomes visible to all other processors.
 1. do not toss objects from height
 1. It's a big city that is politically and economically significant
 1. you're so into yourself
@@ -189,14 +189,14 @@
 1. caucus
 1. I've heard grumblings
 1. sorry to bother you; sorry for the inconvenience
-1. you are so full of it
+1. you are so full of it; 你真是满口胡言
 1. poppycock
 1. biological family; adopted family
 1. power source
-1. What are the advantages of the MPP architecture?
-1. take them to the curb
+1. What are the advantages of the MPP architecture?; 1. High Performance\n1. Better Resource Utilization\n1. Better Scalability and Flexibility
+1. take them to the curb; 把他们甩了
 1. there will be action
-1. What are the features of event-driven system?
+1. What are the features of event-driven system?; Events and Event Handlers, Asynchronicity, Loose Coupling, Callbacks, Publish-Subscribe Model, Scalability and Responsiveness.
 1. counter offensive
 1. sweltering heat
 1. what the hell have you been doing over the past ten years?
@@ -210,40 +210,40 @@
 1. I am currently submitting job applications
 1. maintaining in process; currently repairing
 1. super competent colleague
-1. How does starrocks process subquery?
+1. How does starrocks process subquery?; Subqueries are always placed within expressions. After constant removal and predicate simplification are performed, a subquery can be replaced with an apply operator and attached to the logical tree. Finally, different types of joins can be utilized to transform the apply operator.
 1. How many subquery transformation rules in Starrocks?
 1. Could describe the subquery classifications?
-1. What's optimization can lead to 10 times performance boost of the ranking window function?
-1. Why do you refactor the subquery transformation process?
-1. What are the killing features of StarRocks?
+1. What's optimization can lead to 10 times performance boost of the ranking window function?; When using a ranking window function with a predicate or a limit clause, we have the option to include an additional partition-topn node to filter the data. This can lead to significant improvements, particularly when it comes to filtering out large amounts of data.
+1. Why do you refactor the subquery transformation process?; * In the previous process, the subquery would be transformed to ApplyOperator first, missing the opportunity to apply optimizations such as constant removal or predicate simplification\n* After this refactor, the subquery used as an expression will be temporarily held back until the expression optimizations are performed, allowing it to fully benefit from these optimizations
+1. What are the killing features of StarRocks?; 1. MPP (Massively Parallel Processing) Distributed Execution\n* Performance & Resource Utilization\n* Scalability\n\n2. Pipeline Parallel Execution Framework\n* High cpu utilization\n* Lower the overhead of scheduling\n* Automatically set the parallelism\n\n3. Vectorized Execution\n* Column-wise storage\n* Column-wise execution, provide opportunities for SIMD optimizations\n\n4. CBO (Cost-Based Optimizer) Optimization\n* Transformation rules\n* Implementation rules\n\n5. Global Runtime Filter\n* In filter\n* Bloom Filter\n* Max/Min Filter\n\n6. Metadata Cache\n* Speed up query plan optimization\n\n7. Local Data Cache\n* Improve IO efficiency\n\n8. Materialized View\n* Transparent accelerating
 1. What's the function of auto boxing?
-1. What problems does the tool address?
-1. What's the function of the OS pipeline?
-1. How is operator overloading achieved?
-1. What's the most difficult thing you've encountered when implementing it?
-1. What components does the compiler framework have?
-1. Why not just use the message middleware?
-1. What's the function of message route?
-1. How can the web browser serve as the user-side agent without any configuration?
-1. How does the tunnel service work?
+1. What problems does the tool address?; Display Cluster Information defined by our business, including `clusterId`, `nodeId`, `namespace`, `pk\\dn`\n\nKernel Parameters Required by K8s Runtime, including `net.bridge.bridge-nf-call-iptables`, `net.ipv4.ip_forward`, `fs.inotify.max_user_watches`\n\nDaemon Helth check, including `kubelet`, `docker`, `sshd`, graphics card driver like nvidia, vpu\n\nHost network, including NetworkManager, Default Router, Ip Conflict(arping), DNS Configuration, Domain Name Resolution Testing, Network Connectivity Testing, including both local and internet, Mtu Testing(ping)\n\nContainer network,including Service Ip Connectivity Testing, Pod Ip Connectivity Testing, Pod Status, DNS and Iptables Rules\nFor DNS, including Check the DNS config for pods whose nameserver is not coredns, Domain Name Resolution Testing, Unknown search domain\nFor Iptables Rules, including DNAT IP Connectivity Testing
+1. What's the function of the OS pipeline?; The pipeline supports the selection of various customized configurations, such as different applications, network settings, partition setups, and account configurations.\n\nCentOS offers an image build tool called Anaconda, which provides a flexible configuration known as kickstart for customized settings. This includes network configuration, disk setup, account settings, as well as scripts for more complex configurations.\n\nDifferent production methods, including PXE(Preboot Execution Environment), Master Disk Duplication, Root Filesystem Flashing
+1. How is operator overloading achieved?; Each function description can be mapped to a group of implementations, each of which has a priority. The implementation with a higher priority matches first.
+1. What's the most difficult thing you've encountered when implementing it?; The most challenging aspect, in my opinion, is defining an unambiguous grammar for a specific language. I\'ve gained insights from many mature languages, such as Java.
+1. What components does the compiler framework have?; 1. A lexical analyzer, parses the original content into a sequence of tokens.\n2. A Grammar Parser, supports several types of grammar analysis algorithm, like, LL1(Left-to-right, Leftmost derivation), LALR(Look-Ahead, Left-to-right, Rightmost Derivation), LR1(Left-to-Right, Rightmost derivation)
+1. Why not just use the message middleware?; Offers more flexibility in routing messages than message middleware platforms like Kafka or RocketMQ, allowing for the provision of more complex rules based on the structural characteristics of the device messages.
+1. What's the function of message route?; The function of a message route is to deliver specific messages that are required by a single service from quantities of original device messages.
+1. How can the web browser serve as the user-side agent without any configuration?; The web browser will set the original host as the \'Host\' field in the HTTP header. By leveraging this property, the server can create a unique HTTP address for a specific service of a particular user. The first segment of the address is a UUID, which can be resolved to its corresponding tunnel information. This helps the server direct the traffic to the correct edge device.
+1. How does the tunnel service work?; It begins with the user opening the terminal on our console or navigating to another web page with a unique address. Then, the server sends a \'NewSession\' packet to the corresponding device. If the specific port of the local device is available, the session is established. Any actions from the user will be routed to the device, and any messages from the device\'s service will be routed to the user.
 1. blow dryer
 1. I also don't see the problem in my environment
 1. he might decide to skip the conference
 1. I have not promoted this project; I have not advertised this project
 1. resulting in greater overall time consumption
-1. a pinned comment; a featured comment
+1. a pinned comment; a featured comment; 一条置顶的评论
 1. tense trade relations
 1. devastating wildfires; catastrophic wildfires
 1. get a minor injury; get a major injury
 1. Category 3 Storm
-1. what is the approach for performance bottleneck analysis?
-1. global lock contention
+1. what is the approach for performance bottleneck analysis?; 性能瓶颈的分析思路是什么\n
+1. global lock contention; race
 1. what's your biggest regret in life?
 1. no rush at all
 1. direct, open and practical
-1. it's a cohesive system
+1. it's a cohesive system; 一个自洽的系统\n
 1. do you have any compassion for me?
-1. what's your favorite thing about him?
+1. what's your favorite thing about him?; 你喜欢他哪一点
 1. stop whining
 1. don't talk back to me
 1. the best is yet to come
@@ -260,7 +260,7 @@
 1. Liberal party
 1. you raised a good point
 1. the Premier of the Northwest Territories
-1. working 12-hour days and having a long commute is really harming my overall well-being
+1. working 12-hour days and having a long commute is really harming my overall well-being; health, well-being, fitness\n
 1. the building was where the fire was located
 1. so far, we don't have the accurate number
 1. the reform should be comprehensive
@@ -278,7 +278,7 @@
 1. I didn't picture that; I didn't imagine that
 1. enjoy the rest of your day; I hope the rest of your day goes well; enjoy yourself along the way; have a blessed day
 1. extend the average lifespan of men; increase men's life span
-1. reject the offer; refuse the offer; turn down the offer; decline the offer
+1. reject the offer; refuse the offer; turn down the offer; decline the offer; The degrees of intensity from strong to weak are, respectively, reject, refuse, turn down, decline
 1. sorry, it completely slipped my mind
 1. catastrophic wildfires continue to rage across the island of Maui
 1. work visa
@@ -294,7 +294,7 @@
 1. I wanna turn myself in
 1. his arrogant attitude during the meeting was really off-putting
 1. I don't see the value in this product; I don't recognize the value of this product
-1. start a car; start a company
+1. start a car; start a company; in other situations, begin and start are interchangeable
 1. double-edged sword
 1. Baseball Hall of Fame
 1. Formula One
@@ -361,7 +361,7 @@
 1. watch an English program
 1. practical advice; practical help; practical support
 1. compare with; compare to
-1. fall back on; fall back to a previous state
+1. fall back on; fall back to a previous state; I can always <b>fall back on my savings</b> to support myself until I find something else
 1. threaten the lives of marine creatures
 1. 22-game streak; 22-win streak
 1. runny nose
@@ -413,7 +413,7 @@
 1. southern suburbs
 1. what do you make of that; what do you think of that; what are your thoughts on that idea; what's your assessment of the rebellion
 1. thank you for your efforts
-1. charge; sue; indict; accuse; prosecute
+1. charge; sue; indict; accuse; prosecute; \"Charge\" is a general term for formally accusing someone of a crime, \"sue\" is to initiate a civil legal action for damages or remedy, \"indict\" is to formally accuse someone of a crime through a grand jury or similar body, \"accuse\" is to make an allegation against someone, and \"prosecute\" is to bring legal proceedings against someone in a criminal case.
 1. those thunderstorms could lower the temperature
 1. complacence; complaint; compliance
 1. he escaped legal sanctions
@@ -426,7 +426,7 @@
 1. don't be mad at me
 1. I have not announced my arrival in Hangzhou
 1. food products have to undergo product grading
-1. the government is more effective than we tend to think
+1. the government is more effective than we tend to think; the government is more effective than we incline to think
 1. the effect of the medicine is noticeable
 1. he has to cater to his boss
 1. the powers of a judge are defined by law
@@ -456,10 +456,10 @@
 1. It varies from person to person
 1. I'm not the one in possession of it
 1. I am in possession of some information
-1. he got shot before your arrival
+1. he got shot before your arrival; He got shot previous to your arrival
 1. I never thought that anything like this could happen in America
 1. Here's one thing that comes to my mind
-1. How is the food?
+1. How is the food?; Are you satisfied with the food?\nIs the food to your satisfaction?
 1. I am implementing my ideas
 1. the mild weather makes it a great place to visit
 1. It's gonna be punishment for you
@@ -523,7 +523,7 @@
 1. what do you do for a living?
 1. do me the courtesy of closing the door
 1. your behavior does not accord with your principles; your behavior does not align with your principles
-1. I'm adjusting to the new environment
+1. I'm adjusting to the new environment; I\'m under the adjustment of the new environment
 1. It's worth a shot
 1. Climate change results in a significant reduction in the number of species
 1. I'm looking to build a life in Canada
@@ -531,7 +531,7 @@
 1. I'm kind of hard of hearing
 1. I was gonna to work, but I got a phone call
 1. the first time I came here, there were a lot of possibilities out there
-1. I failed to live up to my parents' expectations
+1. I failed to live up to my parents' expectations; 我辜负了我父母的期望
 1. my friend turned their back on me
 1. this course is beyond the capability of a second-year pupil
 1. you should walk on the stripes of the crosswalk
@@ -554,154 +554,154 @@
 1. what's sad is how old we've become
 1. this animal is hard to tame; this subject is not easy to master
 1. I'm fueled by bitterness; bitterness feeds me
-1. It's pretty much even; It's fairly balanced
+1. It's pretty much even; It's fairly balanced; it\'s kind of even-steven
 1. storms in the U.S. have caused at least $35 billion worth of damage so far this year
 1. hold on to yourself
-1. Can you discuss the role of metadata in an OLAP database system?
-1. What are the differences between a star schema and a constellation schema in an OLAP database?
-1. What are the advantages and disadvantages of using a snowflake schema in an OLAP database?
-1. What are the advantages and disadvantages of using a star schema in an OLAP database?
-1. How many types of schema in an OLAP database?
+1. Can you discuss the role of metadata in an OLAP database system?; Metadata in an OLAP database system serves as essential data about data, facilitating data organization, query optimization, data understanding, security, ETL processes, versioning, and system administration.\n
+1. What are the differences between a star schema and a constellation schema in an OLAP database?; In a star schema, there is a central fact table connected to dimension tables in a single hierarchy, whereas in a constellation schema, multiple fact tables share dimension tables, offering greater flexibility but possibly leading to increased complexity and performance trade-offs.\n
+1. What are the advantages and disadvantages of using a snowflake schema in an OLAP database?; The advantages of using a snowflake schema in an OLAP database include reduced data redundancy, improved data integrity, and better space efficiency, but it may lead to more complex queries and potentially slower performance due to multiple joins.\n
+1. What are the advantages and disadvantages of using a star schema in an OLAP database?; Star schema provides simplified queries and faster performance in OLAP databases, but it may lead to higher storage requirements and data redundancy.\n
+1. How many types of schema in an OLAP database?;     > Star Schema: Consists of a central fact table connected to multiple dimension tables in a single hierarchy, forming a star-like structure.\n    > Snowflake Schema: Similar to the star schema, but dimension tables are normalized into multiple related tables, reducing data redundancy.\n    > Constellation Schema (also known as Galaxy Schema): Contains multiple fact tables sharing dimension tables, offering more flexibility and support for diverse data models.\n
 1. move on strongly and hopefully
-1. underway; undergoing
+1. underway; undergoing; In progress\nOngoing\nAdvancing\nHappening\nDeveloping\nContinuing\nTaking place\nproceeding\nRunning\nUnfolding\n
 1. the abortion ban was on hold now
 1. constitutional amendments require a 60% threshold instead of a simple majority
 1. allow a certain range of deviation
 1. the company has gone bankrupt
-1. What is the purpose of dimension hierarchies in OLAP systems? Provide an example
-1. How do you optimize query performance in an OLAP database?
-1. Describe the process of building an OLAP database model from a relational database
-1. What are the key differences between a relational database and an OLAP database?
-1. What is OLAP (Online Analytical Processing) and how does it differ from OLTP (Online Transaction Processing)?
-1. I was wrong about you
+1. What is the purpose of dimension hierarchies in OLAP systems? Provide an example; The purpose of dimension hierarchies in OLAP systems is to organize data in a structured, hierarchical manner, allowing users to drill-down or roll-up data to various levels of granularity for in-depth analysis.\n
+1. How do you optimize query performance in an OLAP database?; Optimize query performance in an OLAP database by creating appropriate indexes, aggregating data, implementing efficient data storage strategies, partitioning large tables, using data compression, caching query results, and leveraging parallel processing capabilities.\n
+1. Describe the process of building an OLAP database model from a relational database; The process involves identifying requirements, extracting and transforming data, designing a multidimensional schema, building OLAP cubes, optimizing performance, and connecting with frontend tools for analysis.\n
+1. What are the key differences between a relational database and an OLAP database?; Relational databases are designed for transactional processing, while OLAP databases are optimized for complex analytical queries and reporting.\n
+1. What is OLAP (Online Analytical Processing) and how does it differ from OLTP (Online Transaction Processing)?; OLAP is a technology for data analysis, providing multidimensional views and complex queries. OLTP handles real-time transactional data processing for day-to-day operations.\n
+1. I was wrong about you; 我错怪你了
 1. what did I do wrong
-1. Explain the concept of TCP round-trip time (RTT) estimation and its significance in congestion control
-1. What is the Nagle's algorithm in TCP? How does it affect the transmission of small packets?
-1. Explain the concept of selective acknowledgment (SACK) in TCP
-1. What is the maximum segment size (MSS) in TCP?
-1. What is the TCP Maximum Segment Lifetime (MSL)?
+1. Explain the concept of TCP round-trip time (RTT) estimation and its significance in congestion control; TCP Round-Trip Time (RTT) estimation measures packet travel time for acknowledgment, vital for TCP\'s timeout calculation, congestion control, and fast retransmission.\n
+1. What is the Nagle's algorithm in TCP? How does it affect the transmission of small packets?; Nagle\'s algorithm in TCP delays small packet transmission by buffering them, reducing overhead and avoiding \"silly window syndrome,\" but it may cause slight delays in transmitting small packets.\n
+1. Explain the concept of selective acknowledgment (SACK) in TCP; SACK in TCP acknowledges specific out-of-order data, helping sender retransmit only missing segments, enhancing reliability and performance.\n
+1. What is the maximum segment size (MSS) in TCP?; The Maximum Segment Size (MSS) in TCP is the maximum amount of data that can be carried in the payload of a single TCP segment.\n
+1. What is the TCP Maximum Segment Lifetime (MSL)?; The TCP Maximum Segment Lifetime (MSL) is the maximum time a TCP segment can exist in the network without being acknowledged, typically set to 2 minutes.\n
 1. affect; impact; influence
 1. individual freedom is at the core of democracy
 1. I attach great importance to this relationship; I deeply value this relationship
 1. I often have a lovely stroll at night
 1. I got stabbed
-1. How does TCP handle out-of-order packets and packet loss?
-1. What is the purpose of sequence numbers and acknowledgment numbers in TCP?
-1. Explain the concept of sliding window protocol in TCP
-1. What is congestion control in TCP? How does TCP handle network congestion?
-1. What is flow control in TCP? How is it achieved?
-1. How does TCP ensure reliable data delivery?
-1. What are the different TCP header fields? Briefly explain their significance
-1. Explain the three-way handshake process in TCP
+1. How does TCP handle out-of-order packets and packet loss?; TCP handles out-of-order packets by buffering them until missing packets arrive, then delivers them in order; for packet loss, TCP initiates retransmission through timeout mechanisms and selective acknowledgment (SACK) to recover lost data.\n
+1. What is the purpose of sequence numbers and acknowledgment numbers in TCP?; Sequence numbers in TCP ensure the correct ordering of data segments, while acknowledgment numbers acknowledge the successful receipt of these segments, enabling reliable data transmission.\n
+1. Explain the concept of sliding window protocol in TCP; The sliding window protocol in TCP allows the sender to transmit multiple data packets before waiting for acknowledgment from the receiver, optimizing data flow and ensuring reliable transmission.\n
+1. What is congestion control in TCP? How does TCP handle network congestion?; Congestion control in TCP manages data flow to prevent network congestion. It uses techniques like slow start, congestion avoidance, fast retransmit, and recovery to regulate data transmission and ensure fair network resource utilization.\n
+1. What is flow control in TCP? How is it achieved?; Flow control in TCP manages data transmission rates by using the \"Window Size\" field in the header, preventing data overflow in the receiver\'s buffer and ensuring reliable data delivery.\n
+1. How does TCP ensure reliable data delivery?; TCP ensures reliable data delivery through sequence numbers, acknowledgment, checksum, retransmission, sliding window, flow control and congestion control.\n
+1. What are the different TCP header fields? Briefly explain their significance; TCP header fields, such as Source/Destination Port, Sequence/Acknowledgment Number, Control Bits, Window Size, Checksum, Urgent Pointer, and Options, provide essential information for establishing and managing connections, sequencing data, controlling flow, and ensuring data integrity in reliable data transmission.\n
+1. Explain the three-way handshake process in TCP; Three-way handshake in TCP: SYN, SYN-ACK, ACK. Client sends SYN to server, server responds with SYN-ACK, client acknowledges with ACK. Connection established.\n
 1. your behavior is totally against the regulations
 1. I'll pay my share
-1. What is the purpose of an IPsec VPN tunnel and how does it provide secure communication?
-1. Explain the concept of network load balancing and its benefits
-1. Explain the concept of network congestion and its impact on network performance
-1. What is the difference between a public IP address and a private IP address?
-1. Explain the concept of IP routing and how it determines the path of network packets
-1. What is the purpose of a MAC address table in a switch?
-1. What is a DDoS (Distributed Denial of Service) attack? How can it be mitigated?
-1. What is the difference between half-duplex and full-duplex communication?
-1. Explain the concept of IPsec (Internet Protocol Security) and its components
+1. What is the purpose of an IPsec VPN tunnel and how does it provide secure communication?; An IPsec VPN tunnel provides secure communication by encrypting data packets, ensuring confidentiality, integrity, and authentication during transmission over untrusted networks.\n
+1. Explain the concept of network load balancing and its benefits; Network load balancing distributes traffic across multiple servers or resources to optimize performance, improve scalability, and enhance availability.\n
+1. Explain the concept of network congestion and its impact on network performance; Network congestion happens when excessive data overwhelms the network, causing performance issues such as increased latency, packet loss, and reduced throughput.\n
+1. What is the difference between a public IP address and a private IP address?; Public IP addresses are unique and used to identify devices on the internet, while private IP addresses are used within private networks for local communication and require NAT to access the internet.\n
+1. Explain the concept of IP routing and how it determines the path of network packets; IP routing determines the path of network packets by analyzing the destination IP address and using a routing table to select the best path for efficient packet forwarding across interconnected networks.\n
+1. What is the purpose of a MAC address table in a switch?; A MAC address table in a switch tracks MAC addresses to facilitate accurate forwarding of network traffic to the correct destinations.\n
+1. What is a DDoS (Distributed Denial of Service) attack? How can it be mitigated?; A DDoS (Distributed Denial of Service) attack aims to disrupt a network by overwhelming it with illegitimate traffic, and it can be mitigated through traffic filtering, rate limiting, and deploying DDoS protection measures.\n
+1. What is the difference between half-duplex and full-duplex communication?; Half-duplex communication allows data transmission in both directions but not simultaneously, while full-duplex communication enables simultaneous data transmission in both directions.\n
+1. Explain the concept of IPsec (Internet Protocol Security) and its components; IPsec (Internet Protocol Security) is a network protocol suite that ensures secure communication by providing authentication, encryption, and key management for IP packets.\n
 1. an abortion ban
-1. What is the purpose of a VPN (Virtual Private Network)?
-1. Explain the difference between symmetric encryption and asymmetric encryption
-1. Explain the concept of DNS (Domain Name System) caching and its benefits
-1. What is the difference between HTTP and HTTPS?
-1. Explain the concept of network latency and how it affects network performance
-1. Explain the concept of port numbers and their significance in networking
-1. What is the difference between a static IP address and a dynamic IP address?
-1. What is the purpose of a default gateway in a network?
-1. What is the difference between a unicast, multicast, and broadcast address?
-1. Explain the concept of MAC address and how it is used in networking
+1. What is the purpose of a VPN (Virtual Private Network)?; A VPN (Virtual Private Network) provides secure and encrypted remote access to private networks over the internet.\n
+1. Explain the difference between symmetric encryption and asymmetric encryption; Symmetric encryption uses a single key for encryption and decryption, while asymmetric encryption uses a pair of keys (public and private) for enhanced security.\n
+1. Explain the concept of DNS (Domain Name System) caching and its benefits; DNS caching stores recently accessed DNS information locally, improving network performance and website loading times.\n
+1. What is the difference between HTTP and HTTPS?; HTTP is unsecured, while HTTPS is secured with encryption for safer data transmission.\n
+1. Explain the concept of network latency and how it affects network performance; Network latency is the delay in data transmission within a network, impacting performance and responsiveness.\n
+1. Explain the concept of port numbers and their significance in networking; Port numbers are identifiers used in networking to direct data to specific applications or services on a device, allowing multiple services to run concurrently.\n
+1. What is the difference between a static IP address and a dynamic IP address?; Static IP addresses are manually assigned and remain fixed, while dynamic IP addresses are automatically assigned and can change over time.\n
+1. What is the purpose of a default gateway in a network?; The default gateway in a network serves as the access point or router that connects a local network to external networks, enabling devices within the network to communicate with devices outside the local network, such as devices on the internet.\n
+1. What is the difference between a unicast, multicast, and broadcast address?; A unicast address is used to send data from one sender to one specific recipient, a multicast address is used to send data from one sender to a select group of recipients, and a broadcast address is used to send data from one sender to all devices on the network.\n
+1. Explain the concept of MAC address and how it is used in networking; A MAC address is a unique identifier assigned to a network interface card (NIC) and is used for data communication at the link layer of the OSI model, enabling devices to identify and communicate with each other on a local network.\n
 1. two children were swept away by flash flooding
 1. derivative products
-1. What is the purpose of a subnet mask? How is it used in IP addressing?
-1. Explain the concept of Quality of Service (QoS) in networking
-1. What is the purpose of a proxy server?
-1. What is the purpose of ICMP (Internet Control Message Protocol)?
-1. Explain the difference between IPv4 and IPv6
-1. What is a VLAN (Virtual Local Area Network)?
-1. What is the purpose of SSL (Secure Sockets Layer) and TLS (Transport Layer Security)?
-1. What is NAT (Network Address Translation)?
+1. What is the purpose of a subnet mask? How is it used in IP addressing?; A subnet mask is used to determine the network and host portions of an IP address. It helps divide a network into subnets and is used in conjunction with IP addressing for network communication and routing.\n
+1. Explain the concept of Quality of Service (QoS) in networking; QoS (Quality of Service) in networking prioritizes and manages network traffic to meet performance requirements. It involves traffic classification, bandwidth allocation, and congestion management to ensure optimal delivery of important data packets.\n
+1. What is the purpose of a proxy server?; A proxy server acts as an intermediary between clients and the internet, providing benefits such as privacy, caching, filtering, load balancing, monitoring, and bypassing restrictions.\n
+1. What is the purpose of ICMP (Internet Control Message Protocol)?; ICMP (Internet Control Message Protocol) is used for error reporting, diagnostic messages, and network troubleshooting, including tasks like ping requests and detecting network congestion.\n
+1. Explain the difference between IPv4 and IPv6; IPv4 has 32-bit addresses, limited availability, and lacks built-in security. IPv6 has 128-bit addresses, abundant availability, improved security features, and simplified address configuration.\n
+1. What is a VLAN (Virtual Local Area Network)?; A VLAN is a virtual network that enables logical segmentation of a physical network, providing isolation, security, and flexibility by separating network traffic into distinct groups.\n
+1. What is the purpose of SSL (Secure Sockets Layer) and TLS (Transport Layer Security)?; SSL and TLS are used to secure internet communication by encrypting data, ensuring confidentiality, integrity, and authentication, protecting against eavesdropping and unauthorized access.\n
+1. What is NAT (Network Address Translation)?; NAT (Network Address Translation) is a technique that allows multiple devices on a private network to share a single public IP address for internet communication, by translating their private IP addresses to the public IP address.\n
 1. the deal brokered by turkey and US
 1. grain; corn; wheat; rice
 1. 2 children are still missing
 1. there is an urgent need for a tool that can provide a concise and comprehensible analysis of the runtime execution
-1. What is DHCP (Dynamic Host Configuration Protocol)? How does it work?
-1. What is the purpose of DNS (Domain Name System)?
-1. Explain the difference between a hub, switch, and a router
-1. What is the purpose of ARP (Address Resolution Protocol)?
-1. What is a router? How does it work in a network?
-1. Explain the concept of IP addressing and subnetting
-1. What is the difference between TCP and UDP? When would you use each one?
-1. What are the layers of the OSI model? Briefly explain each layer
-1. What is the difference between a LAN and a WAN?
-1. What is a network? Explain the basic components of a network
+1. What is DHCP (Dynamic Host Configuration Protocol)? How does it work?; DHCP assigns IP addresses automatically. Devices request an address, and the DHCP server provides one for configuration.\n
+1. What is the purpose of DNS (Domain Name System)?; DNS translates domain names to IP addresses, enabling users to access websites using human-readable names rather than numerical IP addresses.\n
+1. Explain the difference between a hub, switch, and a router; A hub broadcasts data to all devices, a switch selectively sends data to the intended recipient, and a router connects networks and directs traffic based on IP addresses.\n
+1. What is the purpose of ARP (Address Resolution Protocol)?; ARP maps IP addresses to MAC addresses on a local network, enabling devices to communicate by finding the MAC address associated with a specific IP address.\n
+1. What is a router? How does it work in a network?; A router is a network device that connects multiple devices within a network and forwards data packets between them based on their IP addresses, enabling communication between different networks.\n
+1. Explain the concept of IP addressing and subnetting; IP addressing assigns unique numerical identifiers (IP addresses) to network devices, enabling communication, while subnetting divides a network into smaller subnetworks for better efficiency and IP address management.\n
+1. What is the difference between TCP and UDP? When would you use each one?; TCP is a reliable, connection-oriented protocol used for applications that require data integrity and order, while UDP is a faster, connectionless protocol suitable for real-time applications where speed is prioritized over reliability.\n
+1. What are the layers of the OSI model? Briefly explain each layer; The OSI model consists of the Physical, Data Link, Network, Transport, Session, Presentation, and Application layers, which respectively handle physical transmission, error-free data framing, logical addressing and routing, reliable data delivery, connection management, data translation and formatting, and network service access.\n
+1. What is the difference between a LAN and a WAN?; LANs are smaller networks that cover a limited area, like a building or campus, while WANs are larger networks that connect multiple LANs over larger geographical distances.\n
+1. What is a network? Explain the basic components of a network; A network is a system of interconnected devices that enables communication and sharing of resources, consisting of nodes, links, and protocols.\n
 1. dedicated money
 1. I'm picking up litter at the beach
 1. I didn't do it, no matter how bad things look
 1. segregate; separate
-1. Explain the concept of the Pimpl idiom in C++
-1. Explain the concept of function overloading resolution in C++
-1. What is the purpose of the "decltype" keyword in C++?
-1. Explain the concept of CRTP (Curiously Recurring Template Pattern) in C++
-1. What is the purpose of the "static_assert" keyword in C++11?
-1. What is the purpose of the "typeid" operator in C++?
-1. Explain the concept of function binding in C++
+1. Explain the concept of the Pimpl idiom in C++; The Pimpl idiom in C++ separates the interface and implementation of a class, enhancing encapsulation and code modularity.\n
+1. Explain the concept of function overloading resolution in C++; Function overloading resolution in C++ selects the best-matching function based on argument types, allowing multiple functions with the same name but different parameters.\n
+1. What is the purpose of the "decltype" keyword in C++?; The \"decltype\" keyword in C++ determines the type of an expression at compile time, used for template metaprogramming and type deduction.\n
+1. Explain the concept of CRTP (Curiously Recurring Template Pattern) in C++; CRTP (Curiously Recurring Template Pattern) in C++ is a design pattern where a base class template is derived from by a derived class, enabling the base class to access and manipulate properties and behavior of the derived class.\n
+1. What is the purpose of the "static_assert" keyword in C++11?; \"static_assert\" in C++11 performs compile-time checks, generating errors if conditions are not met.\n
+1. What is the purpose of the "typeid" operator in C++?; The \"typeid\" operator retrieves the runtime type information of an object in C++.\n
+1. Explain the concept of function binding in C++; Function binding in C++ refers to the process of associating a function call with a specific function implementation or object, allowing it to be invoked at a later time.\n
 1. variable
 1. atomicity; consistency; visibility
-1. Explain the concept of static initialization blocks in Java
-1. What are the different types of file I/O operations in Java?
-1. Explain the concept of method chaining in Java
-1. What is the purpose of the "finalize()" method in Java? Is it recommended to use it?
-1. How can you handle concurrent modifications in Java collections?
-1. Explain the concept of the Rule of Three (or Five) in C++
-1. What is the purpose of the "volatile" keyword in C++?
-1. What is the purpose of the "explicit" keyword in C++?
-1. What is the purpose of the "instanceof" operator in Java?
-1. How does serialization work in Java?
-1. Explain the concept of type erasure in Java generics
-1. What is the difference between the "compareTo()" and "equals()" methods?
-1. What are the different types of collections in Java?
+1. Explain the concept of static initialization blocks in Java; Static initialization blocks in Java are used to initialize static variables or perform one-time setup tasks when a class is loaded into memory.\n
+1. What are the different types of file I/O operations in Java?; The different types of file I/O operations in Java include character-based, byte-based, object-based, and random access I/O, catering to various data formats and manipulation requirements.\n
+1. Explain the concept of method chaining in Java; Method chaining in Java allows multiple methods to be invoked on an object in a single line, improving code readability and conciseness.\n
+1. What is the purpose of the "finalize()" method in Java? Is it recommended to use it?; \"finalize()\" is a method in Java used for object cleanup before destruction. It is not recommended for use due to its unreliable execution.\n
+1. How can you handle concurrent modifications in Java collections?; Use synchronized collections or concurrent collections such as ConcurrentHashMap to handle concurrent modifications in Java.\n
+1. Explain the concept of the Rule of Three (or Five) in C++; The Rule of Three (or Five) in C++ suggests that if a class needs to define one of the special member functions (copy constructor, copy assignment operator, or destructor), it often needs to define all three (Rule of Three) or the additional two (move constructor and move assignment operator) for proper resource management and copying semantics.\n
+1. What is the purpose of the "volatile" keyword in C++?; The \"volatile\" keyword in C++ is used to indicate that a variable can be modified by external sources and prevents certain optimizations by the compiler, ensuring direct memory access.\n
+1. What is the purpose of the "explicit" keyword in C++?; The \"explicit\" keyword in C++ is used to prevent implicit type conversions by specifying that a constructor or conversion function should only be used for explicit, direct initialization.\n
+1. What is the purpose of the "instanceof" operator in Java?; The \"instanceof\" operator in Java checks the type of an object, determining if it belongs to a specific class or implements a particular interface.\n
+1. How does serialization work in Java?; Serialization in Java converts objects into a byte stream for storage or transmission, while deserialization reconstructs objects from the byte stream.\n
+1. Explain the concept of type erasure in Java generics; Type erasure in Java generics is the process of removing type parameters and replacing them with their upper bounds or Object during compilation to maintain backward compatibility with pre-generic code.\n
+1. What is the difference between the "compareTo()" and "equals()" methods?; \"compareTo()\" is used for ordering objects based on their natural or customized order, while \"equals()\" is used to check for equality between objects based on their content.\n
+1. What are the different types of collections in Java?; The different types of collections in Java include ArrayList, LinkedList, HashSet, TreeSet, HashMap, TreeMap, and more.\n
 1. ternary operator
 1. honesty is always the best policy
-1. the case is dismissed
-1. Explain the concept of virtual destructors in C++
-1. Explain the concept of function objects (functors) in C++
-1. Explain the concept of copy constructors in C++
-1. What is the purpose of the "constexpr" keyword in C++?
-1. Explain the concept of the Java Memory Model
-1. Explain the concept of functional interfaces in Java 8
-1. What is the difference between composition and inheritance in Java?
-1. Explain the concept of method references in Java 8
-1. What are the different types of inner classes in Java?
+1. the case is dismissed; 案件撤销了
+1. Explain the concept of virtual destructors in C++; A virtual destructor in C++ ensures that the destructor of the most derived class is called first when deleting an object through a base class pointer, allowing proper cleanup and preventing memory leaks.\n
+1. Explain the concept of function objects (functors) in C++; In C++, function objects, also known as functors, are objects that can be invoked as if they were functions, allowing customization for flexible behavior.\n
+1. Explain the concept of copy constructors in C++; A copy constructor in C++ creates a new object by initializing it with the values of an existing object of the same class.\n
+1. What is the purpose of the "constexpr" keyword in C++?; The \"constexpr\" keyword in C++ allows compile-time evaluation, improving performance and enabling the use of compile-time constants.\n
+1. Explain the concept of the Java Memory Model; The Java Memory Model (JMM) defines how threads interact and access shared data, ensuring visibility and consistency through rules and synchronization mechanisms like locks and volatile variables.\n
+1. Explain the concept of functional interfaces in Java 8; Functional interfaces in Java 8 are interfaces with a single abstract method, allowing lambda expressions and method references for concise expression of behavior.\n
+1. What is the difference between composition and inheritance in Java?; Composition emphasizes object collaboration through containment, while inheritance establishes a hierarchical \"is-a\" relationship for code reuse and specialization.\n
+1. Explain the concept of method references in Java 8; Method references in Java 8 provide a shorthand notation to refer to existing methods as lambda expressions, making code more concise and readable.\n
+1. What are the different types of inner classes in Java?; The different types of inner classes in Java are static inner classes, non-static inner classes, local inner classes, and anonymous inner classes.\n
 1. when the data fits into standard disk; when the data doesn't fit into disk
 1. our team has worked hard to meet the client's requirements
 1. they kept changing the date
-1. What is the purpose of the "auto" keyword in C++11?
-1. What is the difference between stack memory and heap memory in C++?
-1. What is the purpose of the "friend" keyword in C++?
-1. What is the difference between const reference and rvalue reference in C++?
-1. What is the purpose of the "throws" keyword in Java?
-1. Explain the concept of generics in Java
-1. What is the difference between equals() and hashCode() methods?
-1. What is the purpose of the "volatile" keyword in Java?
+1. What is the purpose of the "auto" keyword in C++11?; The \"auto\" keyword in C++11 enables automatic type deduction for variables based on their initializer, enhancing code readability and reducing the need for explicit type declarations.\n
+1. What is the difference between stack memory and heap memory in C++?; Stack memory is used for local variables and funciton calls and has automatic management, while heap memory is used for dynamic memory allocation and requires manual management using new and delete.\n
+1. What is the purpose of the "friend" keyword in C++?; The \"friend\" keyword in C++ grants non-member functions or classes privileged access to private and protected members of a class.\n
+1. What is the difference between const reference and rvalue reference in C++?; Const reference is a reference to a constant value used for read-only scenario without copying parameters, while an rvalue reference is used for efficient resource transfer, typically in move semantics.\n
+1. What is the purpose of the "throws" keyword in Java?; The \"throws\" keyword in Java indicates that a method may throw specific exceptions, requiring callers to handle or propagate them.\n
+1. Explain the concept of generics in Java; Generics in Java enable the creation of classes and methods that can operate on different data types while providing type safety and code reusability through type parameters.\n
+1. What is the difference between equals() and hashCode() methods?; equals() compares object contents for equality, while hashCode() returns an unique identifier for efficient hashing and storage in data structures.\n
+1. What is the purpose of the "volatile" keyword in Java?; The \"volatile\" keyword in Java ensures that a variable is always read from and written to the main memory, rather than a thread\'s local cache.\n
 1. I can't characterize how close, how far
 1. NATO
 1. we've never exported starvation, war, or ideology
 1. these countries are the top donors of military aid to Ukraine
 1. when I get home, I like to chill out; when I get home, I like to unwind; when I get home, I like to relax
-1. Explain the concept of move semantics and rvalue references in C++
-1. What is the difference between vectors and arrays in C++?
-1. What are the different types of STL containers in C++?
-1. Explain the concept of smart pointers in C++
-1. What is the difference between a static variable and an instance variable in Java?
-1. Explain the concept of anonymous classes in Java
-1. What is the purpose of the "super" keyword in Java?
-1. What are the SOLID principles in object-oriented programming?
-1. Explain the concept of lambda expressions in Java
+1. Explain the concept of move semantics and rvalue references in C++; Move semantics and rvalue references in C++ allow the efficient transfer of resources (like memory ownership) from one object to another, reducing unnecessary copying and improving performance, through the use of move constructors and move assignment operators.\n
+1. What is the difference between vectors and arrays in C++?; Vectors in C++ provide dynamic size, automatic memory management, while arrays have a fixed size, require manual memory management.\n
+1. What are the different types of STL containers in C++?; The different types of STL containers in C++ include sequence containers (vector, list, deque, array, forward_list), ordered associative containers (set, multiset, map, multimap), and unordered associative containers (unordered_set, unordered_multiset, unordered_map, unordered_multimap).\n
+1. Explain the concept of smart pointers in C++; Smart pointers in C++ are objects that automatically manage memory through reference counters, preventing issues like memory leaks and dangling pointers. They include unique pointers, shared pointers, and weak pointers.\n
+1. What is the difference between a static variable and an instance variable in Java?; Static variables are shared among all instances of a class and belong to the class itself, while instance variables are unique to each object and belong to individual instances.\n
+1. Explain the concept of anonymous classes in Java; Anonymous classes in Java are unnamed local classes that are defined and instantiated simultaneously, often used for one-time implementations of interfaces or abstract classes.\n
+1. What is the purpose of the "super" keyword in Java?; The \"super\" keyword in Java is used to refer to the instance of parent class or superclass, allowing access to its instance members (methods, fields, constructors) and enabling method overriding and constructor chaining.\n
+1. What are the SOLID principles in object-oriented programming?;     > The SOLID principles are a set of five design principles in object-oriented programming:\n    > 1. Single Responsibility Principle (SRP): A class should have only one reason to change.\n    > 1. Open/Closed Principle (OCP): Software entities (classes, modules, functions, etc.) should be open for extension but closed for modification.\n    > 1. Liskov Substitution Principle (LSP): Subtypes must be substitutable for their base types.\n    > 1. Interface Segregation Principle (ISP): Clients should not be forced to depend on interfaces they do not use.\n    > 1. Dependency Inversion Principle (DIP): High-level modules should not depend on low-level modules; both should depend on abstractions.\n    > These principles collectively promote modular, extensible, and maintainable software design.\n
+1. Explain the concept of lambda expressions in Java; Lambda expressions in Java are concise blocks of code that represent a functional interface and enable the use of functional programming paradigms.\n
 1. It's malicious; It's intentional
 1. to cause people to suffer injustice
 1. this automotive company has engaged in shoddy workmanship and cost-cutting measures, compromising the structural integrity of the vehicle and posing a threat to the safety of its users' lives
@@ -709,59 +709,59 @@
 1. although I have been working out for a long time, there are not many visible signs of my fitness efforts
 1. he is highly intelligent and obedient; he is highly commended for his intelligence
 1. first class; business class; economy class
-1. simple past tense; past perfect tense
+1. simple past tense; past perfect tense;   Simple Present\n  Present Continuous\n  Present Perfect\n  Present Perfect Continuous\n  Simple Past\n  Past Continuous\n  Past Perfect\n  Past Perfect Continuous\n  Simple Future\n  Future Continuous\n  Future Perfect\n  Future Perfect Continuous\n
 1. head of the family; head of state
-1. What are the different types of polymorphism in C++?
-1. What is the difference between static binding and dynamic binding in C++?
-1. Explain the concept of operator overloading in C++
-1. What are the different types of inheritance in C++?
-1. Explain the concept of function pointers in C++
-1. What is the purpose of the "transient" keyword in Java?
-1. Explain the concept of autoboxing and unboxing in Java
-1. What is the difference between a HashSet and a TreeSet in Java?
-1. What is the purpose of the "this" keyword in Java?
-1. What is the difference between a static method and an instance method in Java?
+1. What are the different types of polymorphism in C++?; In C++, polymorphism can be achieved through compile-time polymorphism, which includes function overloading and template specialization, as well as runtime polymorphism, achieved through inheritance and virtual functions.\n
+1. What is the difference between static binding and dynamic binding in C++?; Static binding happens at compile-time, resolving function calls based on static types. Dynamic binding occurs at runtime, selecting functions based on dynamic types.\n
+1. Explain the concept of operator overloading in C++; Operator overloading in C++ redefines operators for user-defined types, enabling custom behavior and allowing objects to be used with operators like + or <<.\n
+1. What are the different types of inheritance in C++?; C++ supports single, multiple, multilevel, hierarchical, and hybrid inheritance, allowing classes to inherit from one or more base classes.\n\n
+1. Explain the concept of function pointers in C++; Function pointers in C++ are variables that store the memory address of a function, providing a way to call functions dynamically and enabling callback mechanisms.\n
+1. What is the purpose of the "transient" keyword in Java?; The \"transient\" keyword in Java is used to indicate that a variable should not be serialized when an object is being converted into a stream of bytes, allowing for selective exclusion of variables from the serialization process.\n
+1. Explain the concept of autoboxing and unboxing in Java; Unboxing performs the opposite operation\nAutoboxing is the automatic conversion of primitive types to their corresponding wrapper classes, while unboxing is the automatic conversion of wrapper class objects back to primitive types in Java.\n
+1. What is the difference between a HashSet and a TreeSet in Java?; HashSet is an unordered collection using hashing, while TreeSet is a sorted collection with slower insertion and removal but providing ordered traversal.\n
+1. What is the purpose of the "this" keyword in Java?; The \"this\" keyword in Java refers to the current instance of a class, distinguishing variables and accessing instance members.\n
+1. What is the difference between a static method and an instance method in Java?; Static methods belong to the class itself and can be accessed without creating an instance, while instance methods must be called through an instance.\n
 1. social unity and social stability
 1. exchange rate
-1. What is the difference between reference and pointer in C++?
-1. What are the different types of storage classes in C++?
-1. What is the difference between an abstract class and an interface in C++?
-1. Explain the concept of namespaces in C++
-1. What is the purpose of the "static" keyword in C++?
-1. What is the difference between pass by value and pass by reference in C++?
-1. What is the purpose of the "const" keyword in C++?
-1. Explain the concept of templates in C++
-1. What is the difference between shallow copy and deep copy in C++?
-1. What are virtual functions in C++? How are they different from normal functions?
-1. Explain the concept of constructors and destructors in C++
-1. What is the difference between new and malloc in C++?
-1. Explain the concept of inheritance in C++
-1. What is the difference between class and struct in C++?
-1. What are the differences between C and C++?
-1. What is C++? Explain its key features
-1. Explain the concept of polymorphism in Java
-1. What is the purpose of the "static" keyword in Java?
-1. How does exception handling work in Java?
-1. What is the difference between the "StringBuilder" and "StringBuffer" classes?
-1. What is the purpose of the "synchronized" keyword in Java?
-1. Explain the concept of multithreading in Java
-1. What is the difference between the "==" operator and the "equals()" method?
-1. How does garbage collection work in Java?
-1. What is the purpose of the "final" keyword in Java?
-1. What is the difference between a constructor and a method?
-1. What is the difference between ArrayList and LinkedList?
-1. What are the access modifiers in Java? Explain their visibility levels
-1. What is the difference between checked and unchecked exceptions in Java?
-1. Explain the concept of method overloading and method overriding
-1. What are the main principles of object-oriented programming (OOP)?
-1. Explain the different types of memory in Java
-1. What are the differences between JDK, JRE, and JVM?
-1. What is Java? Explain its key features
+1. What is the difference between reference and pointer in C++?; Pointers offer flexibility and direct memory access, while references provide simplicity and intuitive syntax by acting as aliases. References are implemented as constant pointers, abstracting away pointer operations.\n
+1. What are the different types of storage classes in C++?; The different storage classes in C++ are \"auto\", \"register\", \"static\", \"extern\" and \"thread_local\".\n
+1. What is the difference between an abstract class and an interface in C++?; In C++, an abstract class can have both regular and pure virtual functions with member variables, while an interface contains only pure virtual functions and allows multiple inheritance.\n
+1. Explain the concept of namespaces in C++; Namespaces in C++ organize code elements to prevent naming conflicts by providing named scopes for variables, functions, and classes.\n
+1. What is the purpose of the "static" keyword in C++?; The \"static\" keyword in C++ is used for static storage duration, defining class-level members, and limiting scope for global variables/functions.\n
+1. What is the difference between pass by value and pass by reference in C++?; Pass by value in C++ creates a copy of the parameter, while pass by reference allows direct access to the original parameter, enabling modifications and avoiding unnecessary copies.\n
+1. What is the purpose of the "const" keyword in C++?; The \"const\" keyword in C++ declares read-only variables, parameters, or member functions, preventing modifications and ensuring code clarity and const-correctness.\n
+1. Explain the concept of templates in C++; Templates in C++ allow for generic programming by defining functions or classes with placeholder types that can be instantiated with different actual types at compile time, enabling code reuse and flexibility in handling different data types without sacrificing performance.\n
+1. What is the difference between shallow copy and deep copy in C++?; In C++, a shallow copy creates a new object that references the same memory as the original, while a deep copy creates a new object with its own separate memory, duplicating the content of the original object to avoid shared references.\n
+1. What are virtual functions in C++? How are they different from normal functions?; Virtual functions in C++ allow for dynamic binding and polymorphic behavior, enabling overridden versions in derived classes, while normal functions are resolved based on the static type at compile-time.\n
+1. Explain the concept of constructors and destructors in C++; Constructors initialize objects during creation, while destructors clean up resources before object destruction in C++.\n
+1. What is the difference between new and malloc in C++?; new is an operator in C++ that invokes constructors, performs type checking, and returns a typed pointer, while malloc is a function in C that allocates raw memory and returns a void pointer.\n
+1. Explain the concept of inheritance in C++; In C++, inheritance allows a class to inherit properties and behaviors from another class, promoting code reuse and hierarchy among classes.\n\n
+1. What is the difference between class and struct in C++?; In C++, the main difference between a class and a struct is that members are private by default in a class, while they are public by default in a struct.\n
+1. What are the differences between C and C++?; C is procedural, while C++ supports procedural and object-oriented programming. C++ has features like classes, objects, and inheritance, along with the Standard Template Library. It also allows explicit memory management and has additional language features.\n
+1. What is C++? Explain its key features; C++ is an advanced programming language that combines the features of C with added capabilities for object-oriented programming. It offers high performance, a rich library, and strong compatibility with other languages.\n
+1. Explain the concept of polymorphism in Java; Polymorphism in Java allows objects of different classes to be treated as objects of a common superclass or interface, providing flexibility through method overriding and code reusability.\n
+1. What is the purpose of the "static" keyword in Java?; In Java, the \"static\" keyword is used to create class-level variables and methods that can be accessed without instantiating the class.\n
+1. How does exception handling work in Java?; In Java, exceptions are handled using try-catch-finally blocks. Exceptions are caught and handled in catch blocks, and finally blocks are used for code that should always execute, regardless of whether an exception occurs, providing program stability.\n
+1. What is the difference between the "StringBuilder" and "StringBuffer" classes?; The main difference between the \"StringBuilder\" and \"StringBuffer\" classes is that \"StringBuilder\" is not thread-safe, while \"StringBuffer\" is thread-safe.\n
+1. What is the purpose of the "synchronized" keyword in Java?; The \"synchronized\" keyword in Java is used to ensure that only one thread at a time can access a critical section of code or an object, preventing concurrent access and maintaining thread safety in multi-threaded environments.\n
+1. Explain the concept of multithreading in Java; Multithreading in Java refers to the concurrent execution of multiple threads within a single program, allowing for improved efficiency by executing multiple tasks simultaneously and making effective use of available CPU resources.\n
+1. What is the difference between the "==" operator and the "equals()" method?; The \"==\" operator in Java compares the memory addresses of objects or the values of primitive types, while the \"equals()\" method compares the content or values of objects to determine if they are equivalent.\n
+1. How does garbage collection work in Java?; Garbage collection in Java automatically manages memory by identifying and reclaiming objects that are no longer referenced, freeing up resources and ensuring efficient memory usage without manual memory deallocation.\n
+1. What is the purpose of the "final" keyword in Java?; The \"final\" keyword in Java is used to indicate that a variable, method, or class cannot be modified or overridden, ensuring its immutability or preventing further extension.\n
+1. What is the difference between a constructor and a method?; Constructor initializes objects, called automatically when created, while a method performs actions, called explicitly by name.\n
+1. What is the difference between ArrayList and LinkedList?; ArrayList provides fast random access using a dynamic array, while LinkedList offers efficient insertion and deletion using a doubly-linked list.\n
+1. What are the access modifiers in Java? Explain their visibility levels; Access modifiers in Java control visibility. \"public\" allows access anywhere, \"protected\" within the package and subclasses, \"default\" (no modifier) within the package, and \"private\" within the class.\n
+1. What is the difference between checked and unchecked exceptions in Java?; Checked exceptions must be declared or handled, while unchecked exceptions can occur without explicit handling or declaration.\n
+1. Explain the concept of method overloading and method overriding; Method overloading refers to having multiple methods with the same name but different parameters within a class. Method overriding, on the other hand, occurs when a subclass modifies or extends a method inherited from its superclass.\n
+1. What are the main principles of object-oriented programming (OOP)?; OOP in Java uses classes and objects to encapsulate data and behavior. The main principles of object-oriented programming (OOP) are encapsulation, inheritance, and polymorphism, enabling modular and reusable code.\n
+1. Explain the different types of memory in Java; Java has different memory types: stack memory (for local variables and method calls), heap memory (for objects and dynamically allocated data), method area (for class-level information), program counter register (stores the address of the currently executing instruction), and native method stacks (for executing native code).\n
+1. What are the differences between JDK, JRE, and JVM?; In summary, JDK is a software package that provides tools for developing Java applications, JRE is a software package that provides the necessary runtime environment to execute Java applications, and JVM is a virtual machine that executes Java bytecode, allowing Java programs to run on any platform.\n
+1. What is Java? Explain its key features; Java is a versatile and secure programming language known for its platform independence, object-oriented approach, automatic memory management, and strong typing. It has a rich standard library, supports multithreading, and has robust security features. Java is widely used for diverse applications, including desktop software, web development, mobile apps, and enterprise systems.\n
 1. unilateral edge; directed edge; bilateral edge; undirected edge
 1. this feature is under development
 1. singular form; plural form
 1. issue a statement; issue a warning; release a statement; make an announcement
-1. deceive; deceit; fraud; dupe
+1. deceive; deceit; fraud; dupe; \"Deceive\" means to mislead or trick someone, \"deceit\" refers to the act of deceiving, \"fraud\" is deliberate deception for personal gain or to cause harm, and \"dupe\" is a person who has been deceived or tricked.\n\nShe resorted to deceit to achieve her goals; His deceit was uncovered when the truth came to light.\nShe tried to deceive him by pretending to be someone else online.\nHe was convicted of credit card fraud for using someone else\'s card without permission.\nShe didn\'t realize she had been duped until it was too late.\n
 1. professional terminology; professional vocabulary
 1. scrub my face
 1. sustainable delivery
@@ -809,7 +809,7 @@
 1. this approach can provide good resource utilization
 1. gravely injured; seriously injured; critically injured
 1. I'm out of my money; I'm out of my time; I'm out of my floss picks
-1. repress; oppress; suppress; persecute
+1. repress; oppress; suppress; persecute; She tried to repress her feelings of anger during the meeting.\nThe regime was known to oppress its citizens, denying them basic human rights.\nThe government attempted to suppress the news by censoring the media.\nThroughout history, many groups have been persecuted for their beliefs or ethnicity.
 1. file a lawsuit; file a dismissal; file an appeal
 1. study for a master's
 1. grocery store magnate; media mogul; real estate mogul
@@ -840,11 +840,11 @@
 1. seamless
 1. this program is a bit slow
 1. I’ll give you a lift to the supermarket; I’ll drop you off at the airport
-1. front matter; back matter
+1. front matter; back matter; 扉页，附录
 1. do not approach me
 1. seize the opportunity
-1. prominent; dominant; predominant; prevalent
-1. recurrence relation; state transition equation
+1. prominent; dominant; predominant; prevalent; In summary, while these terms share the common idea of something being prominent or prevailing, \"prominent\" emphasizes visibility or distinction, \"dominant\" implies control or authority, \"predominant\" highlights the majority or most common element, and \"prevalent\" denotes wide existence or acceptance.
+1. recurrence relation; state transition equation; 递推关系，状态转移方程
 1. data lineage analysis
 1. I really enjoy exercising! I usually go to the gym to work out and do some anaerobic weightlifting
 1. this feature will not perform additional state reporting
@@ -880,7 +880,7 @@
 1. this political career ended in ignominy; this political career ended in disgrace; this political career ended in shame; this political career ended in dishonor
 1. secretary general
 1. this approach reduces the complexity to a great extent
-1. get out of the taxi; get off the bus; get off the plane
+1. get out of the taxi; get off the bus; get off the plane; 空间小的用out。空间大的用off
 1. leopard tank
 1. Russian forces
 1. the thick haze that circled and settled on much of the Northeast this week, disrupting life and making breathing a hazard, is dispersing
@@ -894,14 +894,14 @@
 1. strip China of developing status
 1. academic perspective; engineering perspective
 1. the army is probing forward
-1. a plume of smoke; plumes of smoke
+1. a plume of smoke; plumes of smoke; 一缕烟;滚滚浓烟
 1. I'll see to it
 1. after all these, I realize that you no longer have to prove yourself so much to people
 1. stay afloat; keep afloat
 1. make a living; make a fortune
 1. happiness quotient; intelligence quotient; emotional quotient
 1. formal education; self education
-1. LGBTQ
+1. LGBTQ; Lesbian, Gay, Bisexual, Transgender, and Queer
 1. the economy and artificial intelligence will be on the agenda
 1. they're also noting that N95 masks offer protection against this type of air pollution
 1. health officials are urging New Yorkers to limit strenuous outdoor activity in areas under air quality alerts
@@ -927,12 +927,12 @@
 1. Russian shelling continues across southern Ukraine
 1. Grand Old Party
 1. World War Ⅱ veterans
-1. incursion; invasion; intrude
+1. incursion; invasion; intrude; \"Incursion\" is a sudden and brief invasion or raid into a territory, \"invasion\" is a large-scale and forceful entry into another territory, and \"intrude\" is to enter or be present in a place where one is not welcome or allowed.
 1. warplane
 1. neither side provided proof to back their claims
 1. I think he is to blame
-1. he hit me with a rod; he hit me with a stick
-1. you look buff; you’re ripped
+1. he hit me with a rod; he hit me with a stick; rod一般表示一个比较粗的棍子
+1. you look buff; you’re ripped; 你很壮
 1. defenseless child
 1. a signal failure may be to blame for last Friday's horrific train crash
 1. the fighter jet intercepted a private plane flying over Washington, D.C.
@@ -940,7 +940,7 @@
 1. you get what you pay for
 1. what law did I break
 1. just sit tight
-1. that clears things up for me
+1. that clears things up for me; 这让我明白了
 1. I’ll make an offer he can’t refuse
 1. I was in a bar fight
 1. what choices there?
@@ -950,7 +950,7 @@
 1. alarm went off
 1. thanks for taking the time tonight
 1. IELTS
-1. you’re pulling out?
+1. you’re pulling out?; 你要退出？
 1. whichever; I am easy; I’m good with whatever; any of them work for me; whichever you prefer, it’s your call
 1. the attacks came from both the air and the ground
 1. the food is tough; the food is terrible
@@ -1074,10 +1074,10 @@
 1. defense system
 1. primary winner
 1. Ukraine has shot down six of the most advanced missiles from Russia
-1. city's top spot
-1. registered Democrats in Philly outnumber Republicans seven to one
+1. city's top spot; It refers to the most prestigious or prominent position or location within a city
+1. registered Democrats in Philly outnumber Republicans seven to one; 费城的民主党注册人数是共和党的七倍
 1. the government could default on its debt
-1. the obligations to pay down existing debt
+1. the obligations to pay down existing debt; the obligations to pay off existing debt
 1. he will be greatly missed
 1. our thoughts are with you
 1. I hope I passed surrounded by loved ones
@@ -1138,7 +1138,7 @@
 1. members of congress return from two week recess today
 1. pandemic era
 1. the judiciary committee
-1. he has been dogged by revelations
+1. he has been dogged by revelations; 他一直被爆料所困扰
 1. battery is a legal term that refers to the intentional and unlawful physical contact with another person that results in harmful or offensive touching
 1. the House member took advantage of and abused his power over his subordinate teenage staffer
 1. I found him in violation of the House rules
@@ -1148,7 +1148,7 @@
 1. authentic
 1. intimidate
 1. I have directed an urgent cross department effort
-1. I've been convening senior department leaders daily on our response
+1. I've been convening senior department leaders daily on our response; 我每天都召集高级部门领导讨论我们的应对措施
 1. he's taking that leak quite seriously
 1. it is currently unclear how the situation will develop
 1. closing argument
@@ -1208,7 +1208,7 @@
 1. siege of the capitol
 1. seditious conspiracy
 1. I have been bullied
-1. go lighter and do the full range
+1. go lighter and do the full range; 轻重量做全程
 1. coughs and sneezes
 1. how long does coronavirus last in the air
 1. human-to-human transmission
@@ -1219,7 +1219,7 @@
 1. press freedom
 1. he's touting his administration's investments in clean energy and manufacturing
 1. the president's allies are really trying to paint this case as politically motivated and flimsy, which is outside of the norm
-1. lash out at court personnel
+1. lash out at court personnel; 抨击法院工作人员
 1. adult film actress
 1. bolster
 1. you should drop out of the race
@@ -1255,12 +1255,12 @@
 1. interest rate cut
 1. interest rate hike
 1. what it came down to really was money
-1. is that all you got?
+1. is that all you got?; 这就是你的全部能耐吗
 1. in your position, I would’ve done the same
 1. lay the cards on the table
 1. it looks like some nerve function is returning
 1. tinkle
-1. someone told me to expect it
+1. someone told me to expect it; 有人告诉我要小心一点
 1. please buckle up
 1. thank you for the update
 1. courtesy phone
@@ -1272,7 +1272,7 @@
 1. do you have any baggage to check in
 1. does that count as being subliminal
 1. car trouble
-1. drop the charge
+1. drop the charge; 撤销指控
 1. run for re-election
 1. reimbursement
 1. this battle has been dragging on for months
@@ -1285,7 +1285,7 @@
 1. use force
 1. prosecutor
 1. impeachment
-1. it's just a media thing
+1. it's just a media thing; 这只是媒体的宣传\n
 1. it’s only a matter of time before they find you
 1. I was wondering how I ended up here
 1. you would choose your own hours as long as the quota is met
@@ -1319,7 +1319,7 @@
 1. treason
 1. make so many innocent people die for no reason
 1. self acceptance
-1. I’m pulling for you
+1. I’m pulling for you; 我帮你拿
 1. debts and assets
 1. we’re separated
 1. trafficker
@@ -1343,12 +1343,12 @@
 1. we want to wrap our warm arms around every family that is touched by this tragedy
 1. the wounded are critically injured
 1. secretary
-1. are you still with me
+1. are you still with me; 你还在听吗
 1. farewell
 1. roaming drains the battery
 1. we are way ahead of schedule
 1. I didn't study much for the test, so I expect my grade to be bad
-1. this statement holds up under examination
+1. this statement holds up under examination; 这种说法经得起时间的检验
 1. jet ski
 1. vigilant
 1. deceitful
@@ -1377,7 +1377,7 @@
 1. grand jury process
 1. 3 deaths and 5 hospitalized
 1. estimate the death toll from the earthquake
-1. help Turkey to recover and to rebuild for as long as it takes
+1. help Turkey to recover and to rebuild for as long as it takes; 无论多久，都会帮助土耳其恢复和重建
 1. democracy, sovereignty and territorial integrity
 1. he's now receiving hospice care
 1. there's been an outpouring of support for former president
@@ -1389,8 +1389,8 @@
 1. having cancer doesn’t excuse all that
 1. you just have to stick with it
 1. the time for talking has passed
-1. that sounds tight
-1. I’m gonna get going
+1. that sounds tight; 听起来不错
+1. I’m gonna get going; 我要离开了
 1. chief prosecuting officer
 1. Nashville
 1. thank you everyone for having me in the team
@@ -1415,15 +1415,15 @@
 1. avenge
 1. make the agency faster and more service focused
 1. front runner
-1. home turf
+1. home turf; 主场
 1. Trump dismissed the other criminal investigations against him
 1. Trump was charged with 34 felony counts of falsification of business records in the first degree
 1. Palm Beach
 1. deliver a torrent of political and legal grievances
-1. I’m buying
+1. I’m buying; 我请客
 1. he's been with us ever since
 1. he was lashing out in an email
-1. I think they've gotten a bad rap
+1. I think they've gotten a bad rap; 他们名声不好
 1. pundit
 1. mass incarceration
 1. merits reporting is an essential aspect of journalism that aims to provide accurate and objective information to the public about significant events or issues
@@ -1441,20 +1441,20 @@
 1. by the time she’s my age
 1. you cannot take it out on me
 1. he’s supposed to be coming by
-1. well, you got me there
+1. well, you got me there; 你说服我了
 1. it’s important to manage expectations
-1. his color is better
-1. I heard he had a record
+1. his color is better; 他气色变好了
+1. I heard he had a record; 我听说他有前科
 1. is there something you’re holding back from your family
 1. I like being here with you
 1. it’s not what it looks like
 1. a car plowed in to another car
-1. the green trigger makes you think of going forward
+1. the green trigger makes you think of going forward; green light\n
 1. when you are driving, you are presented with various signs, colors, and objects
 1. I hope I can return the favor
 1. I really appreciate everything you've done
 1. no, I wouldn't mind
-1. I wish that I could, but I have other plans
+1. I wish that I could, but I have other plans; I would if I could
 1. I'm afraid I won't be able to. I have to visit my parents
 1. no problem, it would be my pleasure
 1. I was wondering if you could give me a ride to work
@@ -1482,7 +1482,7 @@
 1. it was hurting really bad
 1. I'm a shy person, and public speaking has always been a fear of mine
 1. but you're not putting into practice what you've learned
-1. you keep scrolling on the video
+1. you keep scrolling on the video; 你继续刷视频
 1. this is how your speaking will improve
 1. how can I stop thinking in my mother's tongue
 1. It's kind of like you won't really know it until you use the words you already know
@@ -1503,7 +1503,7 @@
 1. keep it professional
 1. it is really helpful
 1. because that's what you've been told to do
-1. that's my ride or die, he's always there for me
+1. that's my ride or die, he's always there for me; 那是我的挚友
 1. this word can be either compliment or insult, so you must be careful how you use it. It all depends on the way that you actually say it.
 1. she looks like she could conquer the world
 1. I'm a little bit reserved
@@ -1517,14 +1517,14 @@
 1. the bathroom is down the hall from the conference room
 1. consistency means the quality of always behaving or performing in a similar way, or of always happening in a similar way
 1. I usually work out hard at 7 pm three times a week, at a large gym not too far from my office. People always say my consistency is impressive, and I've been trying to stay in both healthy and shape through years of regular exercise
-1. people always say my consistency is impressive
+1. people always say my consistency is impressive; 人们总说我的坚持不懈令人印象深刻\n
 1. a large gym not too far from my office
 1. this man is working out hard
 1. take a motocycle ride
 1. hang out for a little bit
 1. wiggle and beg
 1. there are a few other things you can try to troubleshoot the issue
-1. how are you? I'm doing pretty good, how about you?
+1. how are you? I'm doing pretty good, how about you?; 1. You can also use \'what\'s new with you?\'\n2. I\'ve been in a bit busy, but okay. How have things been with you?\n3. Things have been a bit rough lately, but they\'re getting better. How have you been?\n4. Never been better. What about you?\n\n
 1. death is the destination we all share
 1. I feel very happy to have each other
 1. that's really freaking me out
@@ -1534,7 +1534,7 @@
 1. are there alternatives to something
 1. the key to understanding something
 1. hold something away from something
-1. I'm expecting my wife
+1. I'm expecting my wife; 我在等我妻子
 1. tease somebody
 1. mute somebody
 1. tie somebody down
@@ -1555,7 +1555,7 @@
 1. conspiracy means a secret plan by a group to do something unlawful or harmful
 1. in order for you to sound like a native English speaker, there are certain English words that you must know
 1. I have something to attend to, so I need to leave first
-1. I just took a break
+1. I just took a break; 我刚刚在开小差
 1. have a row with someone
 1. some cache entries are heavily used and therefore repeated evicted while others are hardly used at all or remain empty
 1. the total number of transistors can grow slowly with a growing cache size which makes this solution very attractive
@@ -1574,7 +1574,7 @@
 1. you don’t have to be rich to achieve your potential
 1. adjective collocations
 1. doctors usually have to work in shifts
-1. she was on the night shift
+1. she was on the night shift; early shift\nlate shift\nday shift\nnight shift\nmorning shift\n8-hour shift
 1. because one word in English language can have several meanings and different uses
 1. the cache size has always been around 1/1000th of the size of the main memory
 1. The size of the SRAM used for caches is many times smaller than the main memory
@@ -1598,7 +1598,7 @@
 1. my friends wanted to meet up for dinner
 1. you first need to start off by answering the five ws, which are who, what, when, where, why
 1. 屏蔽差异
-1. smurf account
+1. smurf account; 小号
 1. alternative account
 1. older generation
 1. we will not dig deeper into this technology here
@@ -1628,8 +1628,8 @@
 1. What does 'GPT' refer to in 'chatGPT'
 1. it's remarkable
 1. hi, what can I get you
-1. but for all practical purposes it's over
-1. close the file
+1. but for all practical purposes it's over; 实际上，已经结束了
+1. close the file; 结案\n
 1. the third most incompetent president
 1. I'm gonna get ready
 1. save it
@@ -1648,7 +1648,7 @@
 1. the best solution always means compromise
 1. let me walk you through what's going to happen
 1. tie that off before you bleed to death
-1. you really have an eye
+1. you really have an eye; 你真有眼光
 1. that's what I wanted to talk to you about
 1. I can't believe he's walking away from that
 1. I love being an engineer
@@ -1656,17 +1656,17 @@
 1. tell them I said hello
 1. How many tasks are being performed at the same time
 1. thank you for being understanding
-1. all roads lead back to you
+1. all roads lead back to you; 所有证据都指向你
 1. signing bonus
-1. I have to take a leak
+1. I have to take a leak; 我要尿尿
 1. you've mistaken my kindness for weakness
 1. it's incredible
-1. I have gone a bit too far
+1. I have gone a bit too far; 我有点过分了
 1. no charge for initial consultation
-1. who put you up to this
+1. who put you up to this; 谁让你做的\n谁让你来的
 1. character assassination
 1. money cannot take care of this
-1. it's not gonna go down the way you think it is
+1. it's not gonna go down the way you think it is; 事情不会想你想象的那样进行
 1. I can tell you're upset
 1. we'll be in touch
 1. there is a clear conflict of interest
@@ -1685,7 +1685,7 @@
 1. yeah, that would be great
 1. pick up something or someone
 1. I'm going to fill up the gas tank
-1. that's a good idea, bring it up at the next meeting
+1. that's a good idea, bring it up at the next meeting; bing up means introduce here\n
 1. thanks for freeing up some time to meet with me
 1. the risks are nothing comparing to the benefits
 1. the car is damaged beyond repair
@@ -1694,7 +1694,7 @@
 1. we'are facing a major setback
 1. verification of the feasibility of the project
 1. decomission
-1. what does the action signify
+1. what does the action signify; 这个动作啥意思
 1. what would you suggest
 1. laws are made to be broken
 1. are you being funny
@@ -1704,10 +1704,10 @@
 1. none of these would happen if you weren’t with me
 1. the memory usage of the buffer cache stays within this budget
 1. perform rule-based optimization
-1. walk me through it
+1. walk me through it; 跟我讲一遍
 1. that’s not the end of story
-1. I‘ve never think less of you
-1. I don‘t think less of you
+1. I‘ve never think less of you; 我从没小看过你
+1. I don‘t think less of you; 我没有小看你
 1. I don’t think I’m gona make it
 1. there’s no cell reception out there
 1. The number of maximum concurrent queries is based on a heuristic calculation that factors in system hardware attributes such as the number of CPU sockets, CPU cores, and threads per core
@@ -1717,7 +1717,7 @@
 1. the company's profits are projected to increase by 20% in the next fiscal year
 1. The classification of Syria's government as a dictatorship or otherwise is a subject of debate and interpretation.
 1. how long did it take you to learn english
-1. pretty standard
+1. pretty standard; 很正常
 1. mentality
 1. if you want it, go get it
 1. why do you look down on me
@@ -1726,15 +1726,15 @@
 1. we’ve come so far
 1. that’s not my area of expertise
 1. extend product line
-1. we’ll cross the bridge when we come to it
+1. we’ll cross the bridge when we come to it; 船到桥头自然直
 1. it did have a happy ending
 1. he misappropriated my intellectual property
 1. hit and run
-1. you’ve been nothing but generous to me
-1. I don’t understand where this is coming from
+1. you’ve been nothing but generous to me; 你对我一直很慷慨
+1. I don’t understand where this is coming from; 我不理解这种（说法）是哪来的
 1. you need to focus on specifics
 1. that’s no coincidence
-1. only as professionally prescribed
+1. only as professionally prescribed; 遵医嘱
 1. heavy snow, heavy rain, thick fog, big waves
 1. you need a break
 1. make up all the bad you’ve done
@@ -1752,12 +1752,12 @@
 1. you're going into the question deeper and deeper in various directions
 1. how fresh the ingredients are
 1. I was moved
-1. I’m with you
+1. I’m with you; 我支持你
 1. you’re not gona play by rules
 1. face the consequences
 1. I can’t argue with that
 1. you are my inspiration
-1. kick him when he‘s down
+1. kick him when he‘s down; 落井下石
 1. thanks for your time
 1. legal system
 1. diploma
@@ -1771,9 +1771,9 @@
 1. contempt of court
 1. are you working late?
 1. I’ll deal all of these issues in turn
-1. I’ll stick around for a while
+1. I’ll stick around for a while; 我再呆一会
 1. thanks for your hospitality
-1. my boyfriend and I are getting pretty serious
+1. my boyfriend and I are getting pretty serious; 关系紧张
 1. she‘s very blessed
 1. rest and relaxation
 1. see you around
@@ -1785,9 +1785,9 @@
 1. several relaxed memory consistency models have been proposed in both academic and commercial settings
 1. he’s getting through it
 1. safe travels
-1. I’m sorry for keeping you
-1. false alarm
-1. you’ll be the first person I’ll call
+1. I’m sorry for keeping you; 不好意思耽误你
+1. false alarm; 虚惊一场
+1. you’ll be the first person I’ll call; 你是我第一个想到的人
 1. once this is done, she’ll be discharged
 1. practicing lawyer
 1. Caching of shared data can present similar reordering behavior that would violate sequential consistency
@@ -1796,7 +1796,7 @@
 1. the answer will be a resounding yes
 1. you may proceed
 1. I have nothing further for this witness
-1. don’t stray too far
+1. don’t stray too far; 别跑太偏
 1. I lost my temper
 1. the statement is lack of remorse
 1. law-abiding citizen
@@ -1807,9 +1807,9 @@
 1. what excites me is the speed
 1. a cascade of problems
 1. I don’t know if that answers your question
-1. he likes cutting corners
+1. he likes cutting corners; 他喜欢走捷径
 1. he’s plotting against you
-1. I’m buying a round for the house
+1. I’m buying a round for the house; 这轮酒钱我付
 1. the hearing is more or less a formality
 1. I retained our clients
 1. we can bend the rules a little bit
@@ -1821,24 +1821,24 @@
 1. issue memory operation
 1. P2 returns the value 1 (written by P1) for its read of A
 1. programmers must use it to reason about the correctness of their programs
-1. I volunteered
+1. I volunteered; 我自愿的
 1. don't be far from the side
 1. are you extorting me？
-1. is he solid?
-1. something got added up wrong
+1. is he solid?; is he reliable?\nis he dependable?
+1. something got added up wrong; 一定是哪里出错了
 1. The memory consistency model of a shared-memory multiprocessor provides a formal specification of how the memory system will appear to the programmer
 1. programmers need a precise notion of how memory behaves with respect to read and write operations from multiple processors
 1. technologies, both hardware and software, do not all advance at the same pace
-1. if you keep it up, they will find out
+1. if you keep it up, they will find out; 如果你继续这样做，他们会发现的
 1. fabricating evidence
-1. we‘re just screwing around
-1. the less likely we are of a recovery
+1. we‘re just screwing around; 我们只是在胡闹
+1. the less likely we are of a recovery; 找回遗失的东西的概率更小
 1. you got somewhere to go？
 1. it's gross
 1. dividend/profit
-1. no obligations
+1. no obligations; 免费
 1. all that effort you want to toss it away？
-1. but you‘re walking away from it
+1. but you‘re walking away from it; 但你放弃了它
 1. midlife crisis
 1. I’ll get it done, and done right
 1. do the outreach
@@ -1846,7 +1846,7 @@
 1. we agree upon that？
 1. the hotel restaurant is noted for its excellent cuisine
 1. white-collar workers predominate this residential area
-1. we need to sleep on it
+1. we need to sleep on it; 我们需要一段时间
 1. self reliance
 1. the flip side of this is
 1. think about the bright side
@@ -1864,7 +1864,7 @@
 1. you can’t tell one defendant from another?
 1. what is your kiss count
 1. I don't like the way you looking at me right now
-1. what are you gona do to make things right
+1. what are you gona do to make things right; 你想怎么解决这个事情？
 1. I can’t be like it was before
 1. it was good knowing you
 1. I literally don’t even know what to say to you
@@ -1876,9 +1876,9 @@
 1. dictatorship
 1. reduce product competitiveness
 1. I am the last generation of my family
-1. we’re entitled to a phone call
+1. we’re entitled to a phone call; 我们有权打个电话
 1. time will tell
-1. come to an understanding
+1. come to an understanding; 达成一致
 1. we’re going to part ways
 1. how much further
 1. the most wanted man
@@ -1910,7 +1910,7 @@
 1. I’ll solve this problem on my own
 1. there is never ever an excuse for a guy to put his hands on women
 1. are you having second thoughts
-1. I was set up
+1. I was set up; 我被陷害了
 1. get back to normal
 1. speak up, I can't hear you
 1. could you move over a bit please
@@ -1931,9 +1931,9 @@
 1. space, form feed, line feed, carriage return, horizontal tab, and vertical tab
 1. I have always strictly abided by the policies
 1. don’t chase money
-1. that person is really showing his age
-1. he looks good for his age
-1. he’s aged well
+1. that person is really showing his age; 显老
+1. he looks good for his age; 他看起来年轻
+1. he’s aged well; 他不显老
 1. you can talk about something that started in the past and has continue to the present
 1. how long have you been here
 1. big shots
@@ -1951,7 +1951,7 @@
 1. misguide
 1. the closer you are to the source, the higher your property value
 1. the ball hit me in the head really hard, and now I'm seeing stars
-1. I'm not following
+1. I'm not following; 我没跟上
 1. we should embrace what comes hard
 1. english is a compulsory subject
 1. I've never heard of that
@@ -1971,7 +1971,7 @@
 1. you should master the basic and then learn the advanced skill
 1. I quit as manager of the team
 1. you are absolved of all responsibility for the accident
-1. the old man is engaged in deep thought
+1. the old man is engaged in deep thought; absorbed in thought
 1. you should bring her back to practical matters
 1. I'm planing to carry out a thorough investigation
 1. the police officer pin the suspect against the ground
@@ -1994,15 +1994,15 @@
 1. he always gives disinterested advice no matter his standpoint
 1. I'm waiting for you in the reception area
 1. this building is designed to withstand destructive earthquakes
-1. do not engage
-1. we need to draw him out
-1. I have quotas to meet
+1. do not engage; 别轻举妄动
+1. we need to draw him out; 我么需要引他出来
+1. I have quotas to meet; 我有指标要完成
 1. you brought shame to this family
 1. I need you kids on your best behaviors
 1. patriarch
 1. I lost my concentration during the long and dull lecture
 1. she is devastated by the news of his death
-1. you are explosive
+1. you are explosive; 你很劲爆
 1. 骚扰电话
 1. If system clocks across machines are inconsistent, the time computation hits an exception
 1. duplicate data into many copies
@@ -2019,12 +2019,12 @@
 1. you are young and eager to get started
 1. how do you feel now comparing to when you were here before
 1. family tree
-1. I come from a diverse background
-1. I have no comments
+1. I come from a diverse background; 我的背景比较复杂
+1. I have no comments; 我没有异议
 1. put down roots
 1. 外向的/内向的
 1. the plant comes with full instructions on how to care for it
-1. my family has my back
+1. my family has my back; 我家人支持我
 1. we want to solve this problem without resorting to violence
 1. the diligent president was held in high esteem by the people
 1. I am not optimistic about the prospects of this technology
@@ -2054,11 +2054,11 @@
 1. the size of the country, the size of the people make it a great economy
 1. a blank sheet of paper
 1. vocalize/verbalize
-1. step down
+1. step down; 下台
 1. the most important recent trend has been exposing that computation to the programmer
 1. position GPU as a compelling alternative to traditional microprocessors
 1. they are trying to force you out
-1. I can't agree with what he stands for
+1. I can't agree with what he stands for; 我不同意价值观
 1. because things have been very terrible since Biden got into office
 1. because things have been very terrible since Biden got in office
 1. But I think most of us are not that lucky to have that level of self-confident
@@ -2264,7 +2264,7 @@
 1. earn my degree
 1. live up to/meet
 1. you should work hard so as to live up to my expectations
-1. accuser/defendent
+1. accuser/defendent; 原告/被告
 1. resident population/transient population
 1. shortage/deficiency/dearth/inadequancy/insufficiency
 1. global warming poses a threat to many rare species on earth
@@ -2303,7 +2303,7 @@
 1. preliminary results confirmed the scientist's prediction
 1. novice/adept
 1. rigorous/vigorous
-1. this plastic is easy to work with because it is pliable
+1. this plastic is easy to work with because it is pliable; 易于加工
 1. the case is illustrative of a common mode
 1. the warm temperature is making me feel drowsy
 1. the continent of Africa
@@ -2337,7 +2337,7 @@
 1. she is a sensible sort of person
 1. emotional trauma
 1. emotional trama
-1. he gets on my nerves
+1. he gets on my nerves; 他让我烦死了
 1. he raised the prices to offset the increased cost of materials
 1. you must show your credentials before interviewing
 1. his best-known personality trait is his sense of humor
@@ -2461,7 +2461,7 @@
 1. success in life is not only measured by the criterion of making money
 1. leaders of two countries had a constructive and meaningful dialogue
 1. the democrat lost to republican in the election
-1. no detail was too small to warrant his attention
+1. no detail was too small to warrant his attention; This phrase emphasizes the person\'s meticulousness and dedication to ensuring that nothing is overlooked or neglected.
 1. the character has a really intriguing personality
 1. you will do as I command
 1. her happiness is not my concern
@@ -2570,7 +2570,7 @@
 1. sequela
 1. he is going to stay in power
 1. the Pentagon
-1. without fear of retribution
+1. without fear of retribution; 不怕被清算
 1. our pride is based on a very simple premise summed up in a declaration made over two hundred years ago
 1. abiding faith
 1. march across europe
@@ -2642,7 +2642,7 @@
 1. a bottle of perfume
 1. the job is at last nearing completion
 1. skilled manual workers are high in demand
-1. my presence on this stage is pretty unlikely
+1. my presence on this stage is pretty unlikely; 我能出现在这里意义非凡
 1. let me express the deep gratitude for the privilige of addressing the convention
 1. welcome reception
 1. losing weight is a slow and gradual process
@@ -2695,7 +2695,7 @@
 1. hand sanitizer
 1. autonomous/anonymous
 1. compelled to resign
-1. they confronted the prisoner with his accusers
+1. they confronted the prisoner with his accusers; 他们让原告被告对峙
 1. please reserve a seat for me
 1. put best efforts into everything you do
 1. meet your goals
@@ -2830,7 +2830,7 @@
 1. sprain/strain
 1. a judge must remain neutral
 1. his analysis of the problem shows great perception
-1. make sure that we are on the same page
+1. make sure that we are on the same page; 确保我们想法一致
 1. don't piss me off
 1. maybe you should take it
 1. would you let it go
@@ -2844,12 +2844,12 @@
 1. he has excellent resilience towards failures
 1. soldiers who died in defense of their country
 1. how long have you been waiting to say that
-1. you can tell it
+1. you can tell it; 你就能知道
 1. subtitle
 1. there's gotta be a reason
 1. does it end well
-1. let me get this straight
-1. I am over you
+1. let me get this straight; 让我把事情搞清楚
+1. I am over you; 我不在乎你了
 1. butt
 1. chat box
 1. It keeps me focused and relaxed
@@ -2935,7 +2935,7 @@
 1. the government has introduced new policies to
 1. as summer is approaching
 1. bring her back to practical matters
-1. I was talking crazy
+1. I was talking crazy; 我刚在胡言乱语
 1. I used to wet my bed
 1. many people rise up to fight for justice
 1. shareholder
@@ -2943,7 +2943,7 @@
 1. the car component industry
 1. important for the future prosperity of our country
 1. delicate
-1. one may be poor but never ceases to be ambitious
+1. one may be poor but never ceases to be ambitious; 人穷志不穷
 1. let me put it this way
 1. arouse public indignation
 1. many people living in remote areas are ignorant
@@ -2980,8 +2980,8 @@
 1. the curtains had faded in the sun
 1. come to an agreement
 1. negative effect on productivity
-1. 伤口
-1. 意识到
+1. 伤口; cut
+1. 意识到; discern\nbe conscious of\nperceive
 1. confederal
 1. criminal plot
 1. nappy-changing
@@ -3006,7 +3006,7 @@
 1. glimpse
 1. foreign policy
 1. landlord
-1. sell in lengths
+1. sell in lengths; 按长度卖
 1. be enchanted by
 1. florid
 1. another complication arises from the fact that
@@ -3015,8 +3015,8 @@
 1. we refer the readers to [3]
 1. the human natural instincts
 1. splash/splatter
-1. that's how it works
-1. 气质
+1. that's how it works; it doesn\'t work out.
+1. 气质; quality
 1. get the baby into a routine
 1. not content with
 1. regulations
@@ -3024,7 +3024,7 @@
 1. pressing claim for compensation
 1. exchange vows
 1. get stuck in
-1. 克服
+1. 克服; get through
 1. get through obstacles
 1. how to set about my mission
 1. average annual rainfall
@@ -3121,7 +3121,7 @@
 1. public awareness of
 1. carbon fibre
 1. fertile land
-1. plastic case
+1. plastic case; 塑料盒/箱
 1. in the context of the present economic crisis
 1. custom/costume
 1. contribute to
@@ -3160,7 +3160,7 @@
 1. temper
 1. fund raising
 1. money ceases to be a problem
-1. orientation video
+1. orientation video; 迎新视频\n
 1. reform
 1. diversion
 1. propel
@@ -3233,7 +3233,7 @@
 1. cathedral
 1. the tower overlooks the sea
 1. tug
-1. be mortified to look for help
+1. be mortified to look for help; 羞于寻求帮助
 1. innovative
 1. trade fairs
 1. precious
@@ -3306,13 +3306,13 @@
 1. nerdy
 1. archaeologist
 1. the methods you can use to master it
-1. he did not known me
+1. he did not known me; 他没认出我
 1. gig economy
 1. side hustle
 1. an effective remedy
-1. 推荐信
+1. 推荐信; reference letter
 1. lecture
-1. 艺人
+1. 艺人; performers
 1. cultivate
 1. foster
 1. lavishness
@@ -3471,9 +3471,9 @@
 1. occasion
 1. 住宿
 1. accommodation
-1. transportation
+1. transportation; 交通工具
 1. souvenir
-1. 闲逛
+1. 闲逛; hang out
 1. one-way ticket
 1. round-trip ticket
 1. northernmost
@@ -3503,9 +3503,9 @@
 1. Spam
 1. with this approach
 1. we see significant improvement
-1. last part
+1. last part; 最后一部分/一段（时间，考试等等）
 1. preposition
-1. go to phase
+1. go to phase; 问候语
 1. 你吃饱了吗
 1. you name a price
 1. edge cases
@@ -3522,7 +3522,7 @@
 1. former
 1. converse
 1. 观众
-1. 出发
+1. 出发; set off\nset out
 1. 玻璃箱
 1. 试车
 1. test drive
@@ -3539,7 +3539,7 @@
 1. suspend and resume
 1. data mining
 1. populating warehouses
-1. 推出新功能
+1. 推出新功能; roll out features
 1. roll out feature
 1. retraction
 1. bankruptcy
@@ -3548,13 +3548,13 @@
 1. retrospective
 1. 赛事
 1. sign on
-1. 坚持下去
+1. 坚持下去; stick with it
 1. stick with it
 1. data of varying quality
 1. alumnus
 1. alumni
 1. 后续的
-1. 详尽说明
+1. 详尽说明; elaborate
 1. on-site
 1. bachelor's
 1. Position responsibilities
@@ -3571,13 +3571,13 @@
 1. Business Divisions
 1. decision-support application
 1. formulating query
-1. 广泛地
+1. 广泛地; extensively
 1. extensively
 1. postpone
 1. recession
 1. recruiter
 1. slip down
-1. are you hitting on me
+1. are you hitting on me; are you flirting with me?
 1. prostitude
 1. sadist
 1. 新手
@@ -3602,7 +3602,7 @@
 1. prescription
 1. 体验不一样的生活
 1. layoff
-1. 方法
+1. 方法; approach
 1. source of complexity with this approach comes from
 1. 低门槛
 1. low barriers
@@ -3624,7 +3624,7 @@
 1. corporation
 1. that systems are required to meet
 1. the distributed nature of query processing
-1. 耗尽资源
+1. 耗尽资源; exhaust the resources
 1. exhaust the available memory
 1. be shipped to
 1. slum
@@ -3640,7 +3640,7 @@
 1. pioneer
 1. provision
 1. gap between research and practical implementations
-1. in order to level this
+1. in order to level this; 为了与之抗衡
 1. canyon
 1. 研究现状
 1. dismiss
@@ -3652,7 +3652,7 @@
 1. 双刃剑
 1. scales linearly with table size
 1. is dominated by
-1. 以...为主
+1. 以...为主; is dominated by
 1. amortize over
 1. boldface
 1. expressions of arbitrary complexity
@@ -3689,7 +3689,7 @@
 1. what's the takeaway?
 1. barrel roll
 1. sprint
-1. 弱肉强食
+1. 弱肉强食; you go with the winner
 1. over the next few hours
 1. stunt
 1. 截屏
@@ -3700,7 +3700,7 @@
 1. 杂音
 1. battery is dead
 1. plug socket
-1. 空白
+1. 空白; gap
 1. voltage
 1. copper
 1. 插座
@@ -3751,7 +3751,7 @@
 1. subsume
 1. undergo
 1. reduction in data traffic is achieved
-1. 遇到问题
+1. 遇到问题; come across problems
 1. age well
 1. pedophilia
 1. Your mileage may vary
@@ -3767,7 +3767,7 @@
 1. corollary
 1. cultivate all-round developed talents
 1. 争取利益
-1. 工作轮岗
+1. 工作轮岗; job shift
 1. job transfer
 1. promotion
 1. couple of days
@@ -3777,7 +3777,7 @@
 1. across-the-board
 1. specialization
 1. outline
-1. 出于篇幅考虑
+1. 出于篇幅考虑; Due to space constraints
 1. 正义
 1. disqualify
 1. 处于篇幅考虑
@@ -3806,7 +3806,7 @@
 1. hair tie
 1. operating the game
 1. folk art
-1. admit your situation
+1. admit your situation; 认清现实
 1. top-tier
 1. compliant
 1. compliment
@@ -4035,7 +4035,7 @@
 1. small-minded person
 1. sunset
 1. sunrise
-1. a full figure
+1. a full figure; Depending on context, might be \"a full figure\" (referring to a person\'s body) or \"a full figure\" (referring to a numerical figure)
 1. draw from
 1. spread out over 10 years
 1. both ok
@@ -4051,7 +4051,7 @@
 1. This provides a huge boost in performance.
 1. meme
 1. humilate
-1. carry somebody
+1. carry somebody; 抱起某人
 1. for the sake of simplicity
 1. dashed line
 1. solid line
@@ -4168,7 +4168,7 @@
 1. seldom
 1. corroborate
 1. mitigate
-1. cancel out
+1. cancel out; 封杀
 1. two wrongs that make a right
 1. is far from perfect
 1. syntactic

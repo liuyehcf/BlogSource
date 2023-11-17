@@ -10,6 +10,14 @@ source_csv_file_name_without_suffix = os.path.splitext(source_csv_file_name)[0]
 
 target_csv_file_path = "%s/%s.md" % (directory, source_csv_file_name_without_suffix)
 
+def escape_special_characters(s):
+    special_characters = {'\\': '\\\\', '\'': '\\\'', '\"': '\\\"', '\n': '\\n', '\r': '\\r', '\t': '\\t'}
+
+    for key, value in special_characters.items():
+        s = s.replace(key, value)
+    
+    return s
+
 # Open the CSV file in read mode
 with open(source_csv_file_path, "r") as in_file:
     with open(target_csv_file_path, "w") as out_file:
@@ -22,4 +30,8 @@ with open(source_csv_file_path, "r") as in_file:
         for row in reader:
             # Extract the first two columns
             content = row[1]
-            out_file.write("1. %s\n" % row[1])
+            notes = escape_special_characters(row[4])
+            if notes == "":
+                out_file.write("1. %s\n" % (content))
+            else:
+                out_file.write("1. %s; %s\n" % (content, notes))
