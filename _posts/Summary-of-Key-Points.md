@@ -1053,7 +1053,15 @@ Now, instead of storing all these chunks as is, Roaring Bitmaps compresses them:
                 - FIFO (First In, First Out) Scheduling
         - Inter-Process Communication (IPC)
             - Message Passing
+                - Pipe
+                - Message Queue
+                - Socket
             - Shared Memory
+                - Memory-mapped Files
+            - Synchronization Mechanism
+                - Semaphore
+                - Sinal
+                - File Locking
         - Process Synchronization
             - Semaphores
             - Mutexes
