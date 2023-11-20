@@ -706,6 +706,7 @@ jeprof main localhost:16691/pprof/profile --text --seconds=15
 ### 3.2.4 Reference
 
 * [Jemalloc内存分配与优化实践](https://mp.weixin.qq.com/s?__biz=Mzg3Mjg2NjU4NA==&mid=2247484507&idx=1&sn=0befa2bec46c3fe64807f5b79b2940d5)
+* [[Feature] support heap profile using script](https://github.com/StarRocks/starrocks/pull/35322)
 
 ## 3.3 [mimalloc](https://github.com/microsoft/mimalloc)
 
