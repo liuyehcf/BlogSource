@@ -1407,6 +1407,20 @@ end, back to main
     * `-fno-omit-frame-pointer`：所有函数必须包含栈指针
 1. `-faligned-new`
 1. `-fsized-deallocation`：启用接收`size`参数的`delete`运算符。[C++ Sized Deallocation](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3778.html)。现代内存分配器在给对象分配内存时，需要指定大小，出于空间利用率的考虑，不会在对象内存周围存储对象的大小信息。因此在释放对象时，需要查找对象占用的内存大小，查找的开销很大，因为通常不在缓存中。因此，编译器允许提供接受一个`size`参数的`global delete operator`，并用这个版本来对对象进行析构
+1. `-mcmodel=small/medium/large`: is an option used in compilers like GCC (GNU Compiler Collection) to specify the memory model for code generation. This option is particularly relevant in systems with large address spaces, such as 64-bit architectures, where how the program accesses memory can significantly impact performance and compatibility.
+    * `small`
+        * This is the default memory model.
+        * Assumes that all symbols are within 2GB of each other.
+        * Code and data are assumed to be close, which allows the compiler to use shorter and more efficient instructions for calls and references.
+        * Suitable for most applications where the total memory usage (including code, data, and stack) does not exceed 2GB.
+    * `medium`
+        * Used for applications larger than 2GB but less than a certain threshold (often around tens of GBs).
+        * Code is generated under the assumption that it will be within 2GB, but data may be farther away.
+        * This model uses absolute addresses for data and thus can handle larger data sizes, but still has limitations on the size of the code.
+    * `large`
+        * Designed for applications where both the code and data are larger than the limits of the medium model.
+        * Uses absolute addresses for both data and code, allowing for very large applications.
+        * However, this comes at the cost of efficiency, as the generated code is less optimized compared to the small and medium models.
 
 ### 7.1.1 How to link libc++ statically
 
