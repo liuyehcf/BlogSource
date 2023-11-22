@@ -241,12 +241,14 @@ int main() {
 
 ## 1.4 Binary Search Operations (on sorted ranges)
 
-1. `std::lower_bound`
-1. `std::upper_bound`
+1. `std::lower_bound`: Returns an iterator pointing to the first element in the range `[first, last)` such that `element < value` (or `comp(element, value)`) is `false`, (i.e. that is greater than or equal to `value`), or last if no such element is found.
+1. `std::upper_bound`: Returns an iterator pointing to the first element in the range `[first, last)` such that `value < element` (or `comp(value, element)`) is `true` (i.e. that is strictly greater than `value`), or last if no such element is found.
 1. `std::binary_search`
 1. `std::equal_range`
 
-### 1.4.1 std::lower_bound
+### 1.4.1 std::lower_bound & std::upper_bound
+
+**Case 1:**
 
 ```cpp
 #include <algorithm>
@@ -274,7 +276,7 @@ int main() {
 }
 ```
 
-### 1.4.2 std::upper_bound
+**Case 2:**
 
 ```cpp
 #include <algorithm>
@@ -300,6 +302,74 @@ int main() {
 
     return 0;
 }
+```
+
+**Case 3:**
+
+```cpp
+#include <algorithm>
+#include <iostream>
+#include <list>
+#include <vector>
+
+struct Value {
+    size_t pos;
+    int32_t val;
+    Value(const size_t pos, const int32_t val) : pos(pos), val(val) {}
+
+    static bool comp(const Value& v1, const Value& v2) { return v1.val < v2.val; }
+};
+
+std::ostream& operator<<(std::ostream& os, const Value& value) {
+    os << "(" << value.pos << ", " << value.val << ")";
+    return os;
+}
+
+int main() {
+    auto lower_bound_insert = [](std::list<Value>& l, const Value& value) {
+        l.insert(std::lower_bound(l.begin(), l.end(), value, Value::comp), value);
+    };
+    auto upper_bound_insert = [](std::list<Value>& l, const Value& value) {
+        l.insert(std::upper_bound(l.begin(), l.end(), value, Value::comp), value);
+    };
+
+    {
+        std::list<Value> l;
+        lower_bound_insert(l, {1, 1});
+        lower_bound_insert(l, {2, 1});
+        lower_bound_insert(l, {3, 2});
+        lower_bound_insert(l, {4, 2});
+        lower_bound_insert(l, {5, 2});
+        lower_bound_insert(l, {6, 2});
+        lower_bound_insert(l, {7, 3});
+        lower_bound_insert(l, {8, 4});
+        std::copy(l.begin(), l.end(), std::ostream_iterator<Value>(std::cout, ","));
+        std::cout << std::endl;
+    }
+
+    {
+        std::list<Value> l;
+        upper_bound_insert(l, {1, 1});
+        upper_bound_insert(l, {2, 1});
+        upper_bound_insert(l, {3, 2});
+        upper_bound_insert(l, {4, 2});
+        upper_bound_insert(l, {5, 2});
+        upper_bound_insert(l, {6, 2});
+        upper_bound_insert(l, {7, 3});
+        upper_bound_insert(l, {8, 4});
+        std::copy(l.begin(), l.end(), std::ostream_iterator<Value>(std::cout, ","));
+        std::cout << std::endl;
+    }
+
+    return 0;
+}
+```
+
+**Output:**
+
+```
+(2, 1),(1, 1),(6, 2),(5, 2),(4, 2),(3, 2),(7, 3),(8, 4),
+(1, 1),(2, 1),(3, 2),(4, 2),(5, 2),(6, 2),(7, 3),(8, 4),
 ```
 
 # 2 any
