@@ -3518,8 +3518,11 @@ endif
 ## 5.1 config path
 
 ```vim
+" ~/.config/nvim
 :echo stdpath('config')
+" ~/.local/share/nvim
 :echo stdpath('data')
+" ~/.cache/nvim
 :echo stdpath('cache')
 :echo stdpath('config_dirs')
 :echo stdpath('data_dirs')
@@ -3530,11 +3533,12 @@ endif
 `nvim`和`vim`使用不同的目录来管理配置文件，通过软连接就可以实现共享配置，如下：
 
 ```sh
-ln -s ~/.vimrc ~/.vim/init.vim
-
 # nvim's config file is ~/.config/nvim/init.vim
-mkdir -p ~/.config ~/.local/share/nvim/site/autoload
 ln -s ~/.vim ~/.config/nvim
+ln -s ~/.vimrc ~/.config/nvim/init.vim
+
+# plug manager and plug
+mkdir -p ~/.config ~/.local/share/nvim/site/autoload
 ln -s ~/.vim/autoload/plug.vim ~/.local/share/nvim/site/autoload/plug.vim
 ln -s ~/.vim/plugged ~/.local/share/nvim/plugged
 ```
