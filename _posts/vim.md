@@ -552,6 +552,8 @@ Record refers to a feature that allows you to record a sequence of keystrokes an
 
 * **`:set <config>?`：可以查看`<config>`的值**
     * `:set filetype?`：查看文件类型
+* **`:echo &<config>`：也可以查看`<config>`的值**
+    * `:echo &filetype`：查看文件类型
 
 ### 2.18.1 Frequently-used Configs
 
@@ -595,7 +597,11 @@ Record refers to a feature that allows you to record a sequence of keystrokes an
 :syntax off                         " 禁止语法高亮
 ```
 
-### 2.18.2 Config File
+### 2.18.2 Debugging Configs
+
+1. `:echo &runtimepath`
+
+### 2.18.3 Config File
 
 vim会主动将你曾经做过的行为记录下来，好让你下次可以轻松作业，记录操作的文件就是`~/.viminfo`
 

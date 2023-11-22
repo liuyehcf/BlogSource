@@ -540,6 +540,13 @@ git config --global icdiff.options '--highlight --line-numbers'
 git config --global core.quotepath false
 ```
 
+## 19.3 Modify Default Editor
+
+```sh
+git config --global core.editor "vim"
+git config --global core.editor "nvim"
+```
+
 # 20 Reference
 
 * [git官方文档](https://git-scm.com/docs/gitignore)
