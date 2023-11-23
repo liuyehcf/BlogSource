@@ -554,6 +554,8 @@ Record refers to a feature that allows you to record a sequence of keystrokes an
     * `:set filetype?`：查看文件类型
 * **`:echo &<config>`：也可以查看`<config>`的值**
     * `:echo &filetype`：查看文件类型
+* **`set <config> += <value>`：增加配置，可以一次增加多个项目，以逗号分隔**
+* **`set <config> -= <value>`：删除配置，一次只能删除一个项目**
 
 ### 2.18.1 Frequently-used Configs
 
