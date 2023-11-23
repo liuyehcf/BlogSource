@@ -599,13 +599,25 @@ Record refers to a feature that allows you to record a sequence of keystrokes an
 
 ### 2.18.2 Debugging Configs
 
-1. `:echo &runtimepath`
+1. `runtimepath` (`rtp)`: Specifies the directory paths Vim will use to search for runtime files.
+1. `path`: Sets the list of directories to be searched when using commands like :find.
+1. `packpath`: Determines where Vim looks for packages.
+1. `backupdir` (`bdir)`: Specifies the directory for backup files.
+1. `directory` (`dir)`: Indicates where swap files are stored.
+1. `spellfile`: Defines the file locations for spell checking.
+1. `undodir`: Designates the directory for undo files.
+1. `viewdir`: Specifies the directory for saved views.
+1. `backupskip`: Lists patterns for files that should not have backups.
+1. `wildignore`: Sets the patterns to be ignored during file name completion.
+1. `suffixes`: Defines suffixes that are less important during filename matching.
+1. `helpfile`: Specifies the location of the help file.
+1. `tags`: Lists the tag files used for tag commands.
 
 ### 2.18.3 Config File
 
 vim会主动将你曾经做过的行为记录下来，好让你下次可以轻松作业，记录操作的文件就是`~/.viminfo`
 
-整体vim的设置值一般放置在`/etc/vimrc`这个文件中，不过不建议修改它，但是可以修改`~/.vimrc`这个文件（默认不存在，手动创建）
+vim的全局设置值一般放置在`/etc/vimrc`（or `/etc/vim/vimrc`）这个文件中，不过不建议修改它，但是可以修改`~/.vimrc`这个文件（默认不存在，手动创建）
 
 **在运行vim的时候，如果修改了`~/.vimrc`文件的内容，可以通过执行`:source ~/.vimrc`来重新加载`~/.vimrc`，立即生效配置**
 
@@ -619,7 +631,12 @@ vim会主动将你曾经做过的行为记录下来，好让你下次可以轻�
 
 **`vimtutor`：提供一个简易的教程**
 
-## 2.20 Assorted
+## 2.20 Troubleshooting
+
+1. `vim -V10logfile.txt`
+1. `echo &runtimepath`
+
+## 2.21 Assorted
 
 * **`echo`**
     * **`:echo <variable>`：可以查看`<variable>`的值**
@@ -636,7 +653,7 @@ vim会主动将你曾经做过的行为记录下来，好让你下次可以轻�
 * **`[Ctrl] + g`：统计信息**
 * **`g + [Ctrl] + g`：字节统计信息**
 
-### 2.20.1 Symbol Index
+### 2.21.1 Symbol Index
 
 * **`[Ctrl] + ]`：跳转到光标指向的符号的定义处**
 * **`gf`：跳转光标指向的头文件**
@@ -644,14 +661,14 @@ vim会主动将你曾经做过的行为记录下来，好让你下次可以轻�
     * 通过`set path?`可以查看该变量的内容
 * **`[Ctrl] + ^`：在前后两个文件之间跳转**
 
-### 2.20.2 Insert Form Feed(tab)
+### 2.21.2 Insert Form Feed(tab)
 
 参考[How can I insert a real tab character in Vim?](https://stackoverflow.com/questions/6951672/how-can-i-insert-a-real-tab-character-in-vim)，在我们设置了`tabstop`、`softtabstop`、`expandtab`等参数后，`tab`会被替换成空格，如果要输入原始的`\t`字符，可以在`insert`模式下，按`[Ctrl] + v + i`，其中：
 
 * `[Ctrl] + v`表示输入原始的字面值
 * `i`表示`\t`
 
-### 2.20.3 Multiply-line Editing
+### 2.21.3 Multiply-line Editing
 
 **示例：多行同时插入相同内容**
 
@@ -674,7 +691,7 @@ vim会主动将你曾经做过的行为记录下来，好让你下次可以轻�
 1. 选中需要同时修改的列
 1. 按`d`即可同时删除
 
-### 2.20.4 中文乱码
+### 2.21.4 中文乱码
 
 **编辑`/etc/vimrc`，追加如下内容**
 
@@ -684,7 +701,7 @@ set termencoding=utf-8
 set encoding=utf-8
 ```
 
-### 2.20.5 Project Customized Config
+### 2.21.5 Project Customized Config
 
 同一份`~./vimrc`无法适用于所有的项目，不同的项目可能需要一些特化的配置项，可以采用如下的设置方式
 
