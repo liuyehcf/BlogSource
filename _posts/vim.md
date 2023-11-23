@@ -3041,6 +3041,11 @@ call plug#end()
 ## 3.27 My Full Settings
 
 ```vim
+" 加载额外的配置
+if filereadable(expand("~/.vimrc_extra_before"))
+    source ~/.vimrc_extra_before
+endif
+
 call plug#begin()
 
 Plug 'morhetz/gruvbox'
@@ -3511,8 +3516,8 @@ set guicursor=n-v-c:block-Cursor/lCursor
 set matchpairs+=<:>
 
 " 加载额外的配置
-if filereadable(expand("~/.vimrc_extra"))
-    source ~/.vimrc_extra
+if filereadable(expand("~/.vimrc_extra_after"))
+    source ~/.vimrc_extra_after
 endif
 
 " 加载项目定制化配置
