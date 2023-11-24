@@ -1,8 +1,33 @@
-1. 肉类词汇; 生鱼片：raw fish
+1. 健身词汇; 俯卧撑：push-ups\n引体向上：pull-ups/chin-ups\n平板卧推：flat bench press\n上斜卧推：incline bench press
+1. you've got a point there
+1. 职场词汇; 招聘：recruitment\n简历：resume\n面试：interview\n空缺岗位：vacancy\n职业规划：career plan\n早九晚五：nine-to-five\n薪资：salary\n福利：welfare\n升职：promotion\n裁员：lay off\n加薪：I want a raise
+1. let's split the bill
+1. 排泄物词汇; 眼屎：sleepy dust\n耳屎：earwax\n鼻屎：snot\n痰：phlegm\n汗水：sweat\n头皮屑：dandruff
+1. 汽车词汇; 驾驶座：driver\'s seat\n安全带：seatbelt\n方向盘：steering wheel\n喇叭：horn\n仪表盘：dashboard\n出风口：air vent\n变速杆：gearshift\n挡风玻璃：windscreen/windshield\n挡风玻璃雨刷：windscreen/windshield wipers\n侧视镜：side-view mirror\n后视镜：rearview mirror\n遮阳板：sun visor\n转向灯：indicator/turn signal\n刹车：brake\n油门：accelerator\n门把手：door handle\n轮胎：tire/tyre\n车牌：number plate/license plate
+1. my word is my bond; you have my words.
+1. in what universe are we the same?; 我们哪里一样了？\n
+1. stress; pressure; pressure: For things and outside.\nI\'m under a lot of pressure.\n\nstree: For human beings and inside.\nI feel stressed./I\'m stressed out.\nreduce stree/relieve stress
+1. you look sharp today; you look sharp today
+1. traveling is very therapeutic
+1. the board was dissolved
+1. how large is your company's market share?
+1. still water; sparkling water; tap water
+1. I'm allergic to peanuts; I'm allergic to bullshit
+1. 这是免费的吗; is it complimentary?\ncan I take one?\ndoes it come with the meal?
+1. it may seem too straightforward or too blunt
+1. 原来如此; is that what is\nthere we go\nthat explains it
+1. satiable; insatiable
+1. 有话直说; give it to me straight\ncall a spade a spade\nlet\'s not beat around the bush\nget to the point\n
+1. finders keepers
+1. I hope the weather is good for our picnic tomorrow; I wish I had known about the meeting earlier; \"hope\" is used to express a desire for something that seems possible or likely in the future, while \"wish\" is used to express a desire for something that is not likely to happen or has already passed.
+1. reality is cruel because the advancement of society and ideology often comes at the cost of the older generation being replaced
+1. Introduction to the Work Mode; We\'re a big team of around 50 database developers, split into maybe 5 groups, each focusing on areas like storage, query execution, cloud native, lake house, and SaaS. I\'m part of the query group.\n\nIn our group, here\'s how we roll: We usually iterate on a two-month cycle, and in each cycle, we will have one or two targets, like rolling out a new feature or improving performance or stability. And each member will get their own pieces. And if the topic is big enough, we will do some research and produce a research document for discussion, so we can all chat about it.\n\nAfter we\'ve tossed around some ideas, we get down to writing a design document. It\'s like our game plan, detailing how we\'re getting things done, and everyone gets to review it.\n\nFinally, we get to the fun part – coding. And of course, we make sure to review each other\'s code. It keeps things running smoothly and makes sure we\'re all on the same page.
+1. Introduce a member of your family; I\'d like to tell you about my father. He was born into a humble family as the youngest of five siblings, with four older sisters. Despite their financial struggles, his family was very loving and supportive, which gave him a happy childhood. He was a dedicated student and worked extremely hard to achieve his goals. Remarkably, he earned a bachelor\'s degree in chemical engineering, which was quite an achievement given his background. After graduating, he worked as a workshop manager for a state-owned company. It was a challenging time as corruption was widespread, but my father always maintained his integrity and never got involved in any corrupt practices, something that I deeply admire about him. Later on, the state-owned company went bankrupt, and he ventured into entrepreneurship and started a small business in metal chemical processing with around ten employees. In summary, his journey from a modest upbringing to becoming a successful business owner is truly inspiring. And he is always the one that I look up to.
+1. we are deeply sorry for this last-minute rescheduling
+1. 肉类词汇; 生鱼片：raw fish\n羊排：lamb chop
 1. stay warm; 注意保暖
 1. levy; tax; excise; Levy: This is a general term that refers to the legal process of imposing or collecting a tax, fee, or fine. A levy can be applied to a wide range of financial obligations, such as taxes, fees for services, or fines for legal violations. It\'s more about the action of imposing or collecting these charges.\n\nTax: A tax is a mandatory financial charge or some other type of levy imposed upon a taxpayer (an individual or a legal entity) by a governmental organization. Taxes are used to fund various public expenditures. Taxes can come in many forms, such as income tax, property tax, sales tax, etc. The term \"tax\" is more about the financial charge itself, rather than the act of imposing or collecting it.\n\nExcise: An excise is a specific type of tax that is levied on particular goods, services, or activities. This is often a form of indirect tax, meaning it is collected by an intermediary (like a store) from the person who bears the ultimate economic burden of the tax (such as the consumer). Excise taxes are commonly placed on items such as alcohol, tobacco, and fuel.\n\n
 1. play ground; sports ground; sports field
-1. give it to me straight; call a spade a spade; let's not beat around the bush
 1. let's get to it; let's jump right in
 1. the calm before the storm
 1. that's the spirit; 这就对了！
@@ -11,10 +36,10 @@
 1. I'm still giving it some thoughts; I didn't think it through
 1. please stay here, I'll see myself out
 1. it's my day off; it's my time off
-1. 打招呼; how are you doing today?\nhow have you been?\nwhat have you been up to?\nhow is it going?\nhow has it been so far in your new job?
+1. 打招呼; how are you doing today?\nhow have you been?\nwhat have you been up to?\nhow is it going?\nhow has it been so far in your new job?\nhey, how did it go?
 1. the sky is the limit
-1. 电子设备词汇; 充电线：charging cable\n移动电源：power bank\n电源：power strip\n摄像头：webcam\n耳机：headphone\n鼠标：mouse\n键盘：keyboard
-1. I will need to request time off
+1. 电子设备词汇; 充电线：charging cable\n移动电源：power bank\n电源：power source\n排插：power strip\n摄像头：webcam\n耳机：headphone\n鼠标：mouse\n键盘：keyboard\n充电器：charger\n无线充电器：wireless charger\n插头：plug\n插座：outlet\n开关：switch\n转换器：adapter\n电池：battery\n
+1. I will need to request time off; day off
 1. competitive relationship
 1. will you be free 7.30pm onwards tomorrow?
 1. he always gave me hell; 他总是骂我
@@ -62,8 +87,8 @@
 1. endeavour; effort
 1. the food and water are running out
 1. How do you usually spend your weekends?; Over the weekends, I mostly enjoy unwinding at home. My time is often divided between cooking and digital entertainment. I love experimenting with new recipes in the kitchen, which is both relaxing and rewarding. Additionally, I spend a fair amount of time playing smartphone games and watching live streams. These activities are not only enjoyable but also help me stay connected and engaged with my interests.
-1. Can you describe the place where you live? What do you like or dislike about it?; I live in Hangzhou, which is known for its stunning natural beauty and historical significance. One of the things I love most about living here is the breathtaking West Lake. It\'s a perfect spot for relaxation and offers a serene escape from the bustling city life. The lake is surrounded by lush greenery and traditional pagodas, which makes it a picturesque place for walks or boat rides.\n\nIn addition to the natural scenery, Hangzhou is rich in culture and history. There are numerous temples and ancient buildings that provide a glimpse into China\'s past. As someone interested in history, I find this aspect of the city particularly fascinating.\n\nHowever, one downside is that Hangzhou can be quite crowded, especially during tourist seasons. The influx of visitors can make the city feel overwhelming at times, and traffic congestion can be a significant issue. Despite this, I think the city\'s charm and beauty outweigh these minor inconveniences
-1. Describe a memorable trip you have taken. Including  Where did you go? Why was it memorable? What did you do there?; Honestly, I\'m usually the kind of person who likes to chill at home. But there was one trip with my wife to Okinawa in Japan that I can\'t forget. We were there for a few days. We visited the sea museum there, It\'s apparently the biggest in Asia. We saw all sorts of cool sea creatures – dolphins, sharks, whales – and some of them even put on a show! The water there was unreal, so clear and blue, nothing like back home. Oh, and the food? We had some amazing steak and seafood. Tasted great, but it was a little bit expensive. And we also did some shopping. My wife had this friend in China who wanted some makeup from Japan, so we hit up a few pharmacy stores.
+1. Can you describe the place where you live? What do you like or dislike about it?; I live in Hangzhou, which is known for its stunning natural beauty and historical significance. One of the things I love most about living here is the breathtaking West Lake. It\'s a perfect spot for relaxation and offers a serene escape from the bustling city life. The lake is surrounded by lush greenery and traditional pagodas, which makes it a picturesque place for walks or boat rides.\n\nIn addition to the natural scenery, Hangzhou is rich in culture and history. There are numerous temples and ancient buildings that provide a glimpse into China\'s past. As someone interested in history, I find this aspect of the city particularly fascinating.\n\nHowever, one downside is that Hangzhou can be quite crowded, especially during tourist seasons. The influx of visitors can make the city feel overwhelming at times, and traffic congestion can be a significant issue. Despite this, I think the city\'s charm and beauty outweigh these minor inconveniences.
+1. Describe a memorable trip you have taken. Including  Where did you go? Why was it memorable? What did you do there?; Honestly, I\'m usually the kind of person who likes to chill at home. But there was one trip with my wife to Okinawa in Japan that I can\'t forget. We were there for a few days. We visited the sea museum there, It\'s apparently the biggest in Asia. We saw all sorts of cool sea creatures – dolphins, sharks, whales – and some of them even put on a show! And for me, the best part was the sea water, it was unreal, so clear and blue, nothing like back home. Oh, and the food? We had some amazing steak and seafood. Tasted great, but it was a little bit expensive. And we also did some shopping. My wife had this friend in China who wanted some makeup from Japan, so we hit up a few pharmacy stores.
 1. What do you enjoy most about your job/studies?; I really like my job, especially since I work as a database internal engineer. My primary responsibility is making our product perform better and tackling tricky issues. Whenever I\'m trying to boost performance, I brainstorm ideas and chat with my colleagues about them. They are super smart and competent and always gives me fresh perspectives and insights that really open my eyes. And another part is Problem-solving. It feels like being a detective – you know, figuring out which clues matter and which don\'t to get to the bottom of things.
 1. let's narrow it down to three options before making a decision
 1. annual performance evaluation
@@ -155,7 +180,6 @@
 1. the roads are jammed
 1. go to; attend; take part; participate; better to use go to a party(for guests), or come to my party(for hosts)\nuse attend a party in a formal way\ndon\'t use take part a party\ndon\'t use participate a party\n
 1. develop; foster; cultivate; don\'t use clutivate, clutivate means to help something grow because it can be useful to you.\nIf you\'re sure about the specific situation, like forster a relationship. Otherwise also don\'t use it.\nplease always use develop first.\n\n
-1. still warter; sparking water; tap water
 1. pro-union president
 1. doping scandal
 1. we're grieving
@@ -265,7 +289,6 @@
 1. so far, we don't have the accurate number
 1. the reform should be comprehensive
 1. maintaining this property is for accelerating the search for the minimum value
-1. incline bench press
 1. I have a meeting until 3:30
 1. I never make the first move in social situations
 1. the search continues for human remains on the island of Maui
@@ -335,7 +358,6 @@
 1. travel around the world; travel around the city
 1. resource to boast about
 1. open up the topic
-1. flat bench press
 1. lift weights
 1. get the same problem
 1. place with fewer distractions
@@ -352,7 +374,6 @@
 1. are available to the public
 1. straightforward and to the point
 1. make it into the cliché
-1. full of possibilities
 1. follow a career as an engineer
 1. give a command
 1. human right
@@ -425,7 +446,6 @@
 1. why is it taking so long?
 1. don't be mad at me
 1. I have not announced my arrival in Hangzhou
-1. food products have to undergo product grading
 1. the government is more effective than we tend to think; the government is more effective than we incline to think
 1. the effect of the medicine is noticeable
 1. he has to cater to his boss
@@ -554,7 +574,7 @@
 1. what's sad is how old we've become
 1. this animal is hard to tame; this subject is not easy to master
 1. I'm fueled by bitterness; bitterness feeds me
-1. It's pretty much even; It's fairly balanced; it\'s kind of even-steven
+1. It's pretty much even; It's fairly balanced; 这相当公平\nit\'s kind of even-steven
 1. storms in the U.S. have caused at least $35 billion worth of damage so far this year
 1. hold on to yourself
 1. Can you discuss the role of metadata in an OLAP database system?; Metadata in an OLAP database system serves as essential data about data, facilitating data organization, query optimization, data understanding, security, ETL processes, versioning, and system administration.\n
@@ -937,7 +957,7 @@
 1. a signal failure may be to blame for last Friday's horrific train crash
 1. the fighter jet intercepted a private plane flying over Washington, D.C.
 1. TOEFL
-1. you get what you pay for
+1. you get what you pay for; 一分钱一分货
 1. what law did I break
 1. just sit tight
 1. that clears things up for me; 这让我明白了
@@ -1196,7 +1216,7 @@
 1. rage
 1. coordinate
 1. it hurts
-1. I blocked him
+1. I blocked him; 我把他拉黑了
 1. this field has a relatively high barrier to entry
 1. How can I identify which operator corresponds to which part of the query?
 1. the enterprise version provides a visualized profile feature that allows for more intuitive analysis
@@ -1216,7 +1236,6 @@
 1. for the elderly and those with underlying conditions like heart disease, lung disease, and diabetes, it can be very serious for them with a high degree of mortality
 1. it's a disease that not only is easily spread, but it can be devastating particularly for a certain subset of the population
 1. morbidity and mortality
-1. press freedom
 1. he's touting his administration's investments in clean energy and manufacturing
 1. the president's allies are really trying to paint this case as politically motivated and flimsy, which is outside of the norm
 1. lash out at court personnel; 抨击法院工作人员
@@ -1295,7 +1314,6 @@
 1. facing death changes a person
 1. cloud my mind
 1. the supreme court has delayed a decision on the availability of the abortion drug
-1. car license plate
 1. the stress you’ve been under
 1. great line of work
 1. speaking as your lawyer
@@ -1472,7 +1490,6 @@
 1. extend warranty
 1. after work
 1. who is he to you?
-1. hey, how did it go
 1. in a scenario like this
 1. where were you
 1. exuberant
@@ -2033,7 +2050,6 @@
 1. the fans are asking for a refund after cancellation of the pop start's concert
 1. what have you tried
 1. put the country's economy into crisis
-1. can you pass me the book
 1. they don't think of science the same way I do
 1. he's the one that I look up to
 1. function normally
@@ -3301,7 +3317,7 @@
 1. quiz show
 1. oral and written test
 1. 责任越大能力越大
-1. great power comes with great responsibility
+1. great power comes with great responsibility; 能力越大，责任越大
 1. gradual
 1. nerdy
 1. archaeologist
@@ -3752,7 +3768,6 @@
 1. undergo
 1. reduction in data traffic is achieved
 1. 遇到问题; come across problems
-1. age well
 1. pedophilia
 1. Your mileage may vary
 1. regular customer
@@ -3998,8 +4013,6 @@
 1. put up with
 1. all hands
 1. deep squat
-1. push-up
-1. pull-up
 1. fussing
 1. asterisk
 1. overlaid
@@ -4080,7 +4093,6 @@
 1. 功劳很大
 1. obesity
 1. clearly defined muscles
-1. chin ups
 1. Press ups
 1. heavy exercise
 1. fatty food
