@@ -216,7 +216,6 @@
 1. you are so full of it; 你真是满口胡言
 1. poppycock
 1. biological family; adopted family
-1. power source
 1. What are the advantages of the MPP architecture?; 1. High Performance\n1. Better Resource Utilization\n1. Better Scalability and Flexibility
 1. take them to the curb; 把他们甩了
 1. there will be action
@@ -728,7 +727,6 @@
 1. I do not agree with this quality inspection report
 1. although I have been working out for a long time, there are not many visible signs of my fitness efforts
 1. he is highly intelligent and obedient; he is highly commended for his intelligence
-1. first class; business class; economy class
 1. simple past tense; past perfect tense;   Simple Present\n  Present Continuous\n  Present Perfect\n  Present Perfect Continuous\n  Simple Past\n  Past Continuous\n  Past Perfect\n  Past Perfect Continuous\n  Simple Future\n  Future Continuous\n  Future Perfect\n  Future Perfect Continuous\n
 1. head of the family; head of state
 1. What are the different types of polymorphism in C++?; In C++, polymorphism can be achieved through compile-time polymorphism, which includes function overloading and template specialization, as well as runtime polymorphism, achieved through inheritance and virtual functions.\n
@@ -1790,7 +1788,7 @@
 1. I’ll deal all of these issues in turn
 1. I’ll stick around for a while; 我再呆一会
 1. thanks for your hospitality
-1. my boyfriend and I are getting pretty serious; 关系紧张
+1. my boyfriend and I are getting pretty serious
 1. she‘s very blessed
 1. rest and relaxation
 1. see you around
@@ -3372,7 +3370,6 @@
 1. average person
 1. appliance
 1. allegation
-1. job vacancies
 1. pus
 1. discharge
 1. strain
