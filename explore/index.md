@@ -64,6 +64,7 @@ date: 2018-02-05 09:25:59
 
 * [编程小梦](https://blog.bcmeng.com/) - ★★★★★
     * [数据库学习资料（持续更新中）](https://blog.bcmeng.com/post/database-learning.html)
+    * [OLAP 数据库性能优化指南](https://perf.bcmeng.com/)
 * [satanson](https://www.zhihu.com/people/grakra) - ★★★★★
     * [有什么好的数据库学习路径推荐？](https://www.zhihu.com/question/451898647/answer/1813178673)
 * Celebrity

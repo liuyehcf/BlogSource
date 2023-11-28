@@ -65,3 +65,10 @@ If you want to apply for a job in Canada, there are several platforms and resour
 * Recruitment Agencies: There are many recruitment agencies in Canada that specialize in matching job seekers with employers. They can assist you in finding job opportunities that match your skills and preferences.
 * Networking: Building a professional network in Canada can be very beneficial. Attend industry events, join LinkedIn groups related to your field, and connect with professionals in your area of interest.
 * When using these platforms, be sure to customize your job search based on your skills, location preferences, and industry. Additionally, make sure to research Canadian work permit and immigration requirements if you are not a Canadian citizen or permanent resident, as these factors can affect your eligibility for certain jobs.
+
+## 6.2 Applied Applications
+
+* [Amazon](https://account.amazon.jobs/zh-CN)
+* [Google](https://www.google.com/about/careers/applications/dashboard?src=Online%2FLinkedIn%2Flinkedin_us)
+* [Microsoft](https://jobs.careers.microsoft.com/actioncenter)
+* [Tiktok](https://careers.tiktok.com/position/application)
