@@ -714,24 +714,18 @@ jeprof main localhost:16691/pprof/profile --text --seconds=15
 
 `tcmalloc` and `jemalloc` are both memory allocators, and they are commonly used in software development to manage dynamic memory allocation in programs. However, they have different characteristics and were designed to address different issues. Here's a comparison of the two:
 
-1. **Origin and Purpose**:
-    * **tcmalloc**: tcmalloc (Thread-Caching Malloc) was developed by Google. It was designed to improve memory allocation performance in multithreaded applications, especially in scenarios where many threads are allocating and deallocating memory concurrently.
-    * **jemalloc**: jemalloc was developed by Jason Evans and was originally created to improve memory allocation in the FreeBSD operating system. It later gained popularity in the wider software development community. It aims to provide efficient memory allocation and deallocation, especially for systems with high concurrency.
-1. **Thread Safety**:
-    * **tcmalloc**: tcmalloc focuses heavily on optimizing memory allocation for multithreaded applications. It employs thread-specific memory caches to reduce contention and improve allocation performance in multithreaded environments.
-    * **jemalloc**: jemalloc also provides good multithreaded performance but does so in a slightly different way. It uses an arena-based approach, where each thread has its own memory arena, reducing contention for memory allocation.
-* **Memory Efficiency**:
-    * **tcmalloc**: tcmalloc may have a lower memory overhead compared to some other allocators, but this can vary depending on the specific use case and configuration.
-    * **jemalloc**: jemalloc is known for its excellent memory fragmentation handling, which can lead to efficient memory utilization.
-* **Customization and Tuning**:
-    * **tcmalloc**: tcmalloc provides some tunable parameters for optimization, but it may not offer as many configuration options as jemalloc.
-    * **jemalloc**: jemalloc is highly configurable and allows fine-tuning of memory allocation behavior to suit specific application requirements. This configurability can be a significant advantage for certain use cases.
-* **Portability**:
-    * **tcmalloc**: tcmalloc is primarily associated with Google's software stack, and its usage may require some adaptation when used in other environments.
-    * **jemalloc**: jemalloc is designed to be more portable and is used in a wide range of software projects and operating systems.
-* **Licensing**:
-    * **tcmalloc**: tcmalloc is released under the Apache License, making it open-source and permissively licensed.
-    * **jemalloc**: jemalloc is released under the 2-clause BSD license, which is also permissive and allows for both open-source and commercial use.
+1. **Design Philosophy:**
+    * **jemalloc**: Designed by Jason Evans, originally to enhance the performance of FreeBSD. jemalloc focuses on reducing memory fragmentation and improving memory allocation efficiency, especially in concurrent environments. It employs an advanced memory allocation strategy that reduces lock contention, thus improving performance in multithreaded applications.
+    * **tcmalloc**: Developed by Google, standing for "Thread-Caching Malloc". The key feature of tcmalloc is that it provides individual memory caches for each thread. This design reduces the reliance on a global memory allocation lock, thus offering better performance in multithreaded applications.
+1. **Memory Allocation Strategy**:
+    * **jemalloc**: Uses size classes to manage memory allocations, which helps in reducing memory fragmentation. It also employs a delayed recycling strategy to further optimize memory usage.
+    * **tcmalloc**: Manages memory allocations for each thread through Thread Local Storage (TLS), meaning each thread has its own small memory pool for quick allocation and deallocation.
+1. **Memory Fragmentation Management**:
+    * **jemalloc**: Effectively reduces memory fragmentation through its sophisticated memory allocation strategy.
+    * **tcmalloc**: While its thread caching mechanism can boost performance, it might lead to more memory fragmentation in some scenarios.
+1. **Suitable Use Cases**:
+    * **jemalloc**: Widely used in applications requiring high-performance memory management, such as databases and large multithreaded applications.
+    * **tcmalloc**: Particularly suitable for applications that frequently allocate and deallocate memory due to its high-performance thread caching feature.
 
 ## 3.5 Hook
 
