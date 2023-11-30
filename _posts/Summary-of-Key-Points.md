@@ -533,8 +533,11 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
                 - LRU
                 - LFU
     - Analytic Data Format
-        - Arrow
-        - Parquet
+        - Column-wise
+            - Arrow
+            - Parquet
+            - ORC
+            - Iceberg
 - Database Framework
     - Parser
         - Grammar Checking
