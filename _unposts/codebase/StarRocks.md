@@ -127,9 +127,19 @@ OR
     └─────────┘
 ```
 
-## 1.3 Transformation Rules
+## 1.3 Statistics
 
-### 1.3.1 SplitAggregateRule
+* `Statistics`
+* `StatisticsCalculator`
+
+## 1.4 CostCalculation
+
+* `CostModel`
+* `HashJoinCostModel`
+
+## 1.5 Transformation Rules
+
+### 1.5.1 SplitAggregateRule
 
 1. 默认情况下，所有`LogicalAggregationOperator`的聚合类型都是`AggType::GLOBAL`
 1. `LogicalAggregationOperator::isSplit = false`且`AggType::GLOBAL`可以应用`SplitAggregateRule`
@@ -143,11 +153,11 @@ OR
 * `agg(distinct)`：4阶段聚合
 * `agg(distinct) +  group by`（其中`group by`列低基数倾斜）：4阶段聚合
 
-### 1.3.2 SplitTopNRule
+### 1.5.2 SplitTopNRule
 
 * `isSplit`用于标记是否已应用过`SplitTopNRule`
 
-### 1.3.3 Subquery
+### 1.5.3 Subquery
 
 * `ExistentialApply2JoinRule`
 * `ExistentialApply2OuterJoinRule`
@@ -156,7 +166,7 @@ OR
 * `ScalarApply2AnalyticRule`
 * `ScalarApply2JoinRule`
 
-#### 1.3.3.1 ScalarApply2AnalyticRule
+#### 1.5.3.1 ScalarApply2AnalyticRule
 
 ```
    Filter                  Filter
@@ -168,7 +178,7 @@ T1 T2   T2                  Join
                            T1  T2
 ```
 
-## 1.4 Merge Group
+## 1.6 Merge Group
 
 位置：`Memo::mergeGroup`
 
@@ -189,34 +199,9 @@ T1 T2   T2                  Join
 1. 合并`srcGroup`以及`destGroup`
 1. 合并`needMergeGroup`中记录的`Group`对
 
-# 2 Other
+# 2 Execution
 
-## 2.1 Service
-
-Frontend-Service
-
-* `FrontendServiceImpl`: server
-    * `QeProcessorImpl`: perform the real work
-* `FrontendServiceConnection`：client
-
-Backend-Service
-
-* `PInternalServiceImplBase`：server
-* `BackendServiceClient`：client
-
-## 2.2 Process
-
-`ConnectProcessor`
-
-* `finalizeCommand`: proxy handling
-
-## 2.3 RBAC
-
-`Authorizer`
-
-# 3 Execution
-
-## 3.1 Column
+## 2.1 Column
 
 **Traits:**
 
@@ -225,14 +210,14 @@ Backend-Service
     * `RunTimeCppType`
     * `RunTimeColumnType`
 
-## 3.2 Expr
+## 2.2 Expr
 
 * `unary_function.h`
     * `UnpackConstColumnUnaryFunction`
 * `binary_function.h`
     * `UnpackConstColumnBinaryFunction`
 
-## 3.3 Agg
+## 2.3 Agg
 
 In StarRocks, `update`, `merge`, `serialize`, and `finalize` are four steps in the aggregate operation that are used to compute aggregated values.
 
@@ -282,7 +267,7 @@ In summary, `update` is used to update intermediate results for an aggregate fun
     * ![agg_state_mem_footprint](/images/Source-Reading/agg_state_mem_footprint.jpeg)
 * Const column will be unpacked by `Aggregator::evaluate_agg_input_column`
 
-## 3.4 Join
+## 2.4 Join
 
 ```
              +-------------------+
@@ -308,7 +293,7 @@ In summary, `update` is used to update intermediate results for an aggregate fun
          +---------------------------+
 ```
 
-## 3.5 WindowFunction
+## 2.5 WindowFunction
 
 * `Window Function`
     * `be/src/exprs/agg/window.h`
@@ -319,7 +304,7 @@ In summary, `update` is used to update intermediate results for an aggregate fun
             * Streaming processing
         * Sliding window
 
-## 3.6 RuntimeFilter
+## 2.6 RuntimeFilter
 
 * `RuntimeFilterWorker`
 * `RuntimeFilterPort`
@@ -330,9 +315,9 @@ In summary, `update` is used to update intermediate results for an aggregate fun
 * `PartialRuntimeFilterMerger`
 * `SimdBlockFilter`
 
-## 3.7 Scheduling
+## 2.7 Scheduling
 
-### 3.7.1 Queue
+### 2.7.1 Queue
 
 * `WorkGroupDriverQueue`: For resource group
     * This queue is just a wrapper, each resource group will use a `QuerySharedDriverQueue`
@@ -340,11 +325,11 @@ In summary, `update` is used to update intermediate results for an aggregate fun
     * Long running drivers will be placed at the higher level
     * Each level is `SubQuerySharedDriverQueue`
 
-# 4 Storage
+# 3 Storage
 
 ![storage](/images/StarRocks/storage.jpeg)
 
-## 4.1 partition vs. tablet vs. bucket
+## 3.1 partition vs. tablet vs. bucket
 
 In StarRocks, partition, tablet, and bucket are related concepts that are used to manage data storage and processing in a distributed environment.
 
@@ -427,7 +412,7 @@ Here is a diagram that illustrates the relationship between partitions, tablets,
 +--------------------------------+   +--------------------------------+
 ```
 
-## 4.2 Colocate
+## 3.2 Colocate
 
 The primary motivation behind colocate storage is to reduce data movement/shuffling when executing joins. If related tables (which are frequently joined together) are colocated on the same node, then join operations can be done locally without having to move data between nodes, thus increasing performance and reducing network overhead.
 
@@ -441,7 +426,7 @@ To understand how StarRocks achieves colocate storage, consider the following ke
 * **Failure Handling**: In case of node failures, StarRocks can still access data from replicas since data in StarRocks is typically replicated across multiple nodes for fault tolerance. However, if a node is down, some of the benefits of colocation might be temporarily lost until recovery.
 * **Constraints**: It's worth noting that while colocate storage offers performance benefits, it also comes with some constraints. For instance, tables in the same colocate group typically need to have the same distribution key and the same number of buckets.
 
-## 4.3 How many tablets that a partition should have
+## 3.3 How many tablets that a partition should have
 
 The number of tablets that a partition should have in StarRocks depends on several factors, including the size of the data, the available resources, and the desired query performance. Here are some general guidelines to consider when determining the number of tablets:
 
@@ -455,9 +440,9 @@ Based on these factors, a common practice is to use the number of CPU cores on e
 
 In summary, the number of tablets that a partition should have in StarRocks should be determined based on the size of the data, the available resources, and the desired query performance. It is a balancing act between distributing the data across the cluster, ensuring optimal resource utilization, and achieving fast query performance.
 
-## 4.4 Index
+## 3.4 Index
 
-### 4.4.1 ShortKey Index
+### 3.4.1 ShortKey Index
 
 For each segment, a ShortKey Index is generated. The ShortKey Index is an index for quickly querying based on a given prefix column, sorted by the given key. During the data writing process, an index entry is generated every certain number of lines (usually every 1024 lines), pointing to the corresponding data record.
 
@@ -471,7 +456,7 @@ For each segment, a ShortKey Index is generated. The ShortKey Index is an index 
 
 ![short_key](/images/StarRocks/short_key.png)
 
-### 4.4.2 Zonemap Index
+### 3.4.2 Zonemap Index
 
 The ZoneMap index stores statistical information for each Segment and for each column corresponding to each Page. This statistical information can help speed up queries and reduce the amount of data scanned. The statistics include the Min (maximum value), Max (minimum value), whether there are null values (HashNull), and information on whether all values are not null (HasNotNull).
 
@@ -482,7 +467,7 @@ The ZoneMap index stores statistical information for each Segment and for each c
 
 ![zone_map](/images/StarRocks/zone_map.png)
 
-### 4.4.3 Bitmap Index
+### 3.4.3 Bitmap Index
 
 The Bitmap Index indexes an entire segment's column, rather than generating one for each page. During writing, a map is maintained to record the row numbers corresponding to each key value, using Roaring bitmap encoding. It is suitable for value columns with limited values, such as country, region, and so on.
 
@@ -493,9 +478,33 @@ The Bitmap Index indexes an entire segment's column, rather than generating one 
 
 ![bitmap](/images/StarRocks/bitmap.png)
 
-### 4.4.4 Bloomfilter Index
+### 3.4.4 Bloomfilter Index
 
 Bloom filter index is suitable for datasets with high cardinality, provided they are appropriately sized and tuned to manage the desired false positive rate.
 
 * **Usage:** Only Equality predicate
 
+# 4 Other
+
+## 4.1 Service
+
+Frontend-Service
+
+* `FrontendServiceImpl`: server
+    * `QeProcessorImpl`: perform the real work
+* `FrontendServiceConnection`：client
+
+Backend-Service
+
+* `PInternalServiceImplBase`：server
+* `BackendServiceClient`：client
+
+## 4.2 Process
+
+`ConnectProcessor`
+
+* `finalizeCommand`: proxy handling
+
+## 4.3 RBAC
+
+`Authorizer`
