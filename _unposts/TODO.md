@@ -64,6 +64,9 @@
         * 替换方案，目前只有华为在做
     * 数据底座
         * abroad: iceberg, hudi
+    * retention analysis
+    * funnel analysis
+    * sql skew 优化技巧
 1. 体系结构
     * numa
 1. nodejs

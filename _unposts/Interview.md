@@ -220,6 +220,11 @@ For better observability and query analysis, I introduced support for runtime pr
     * Filter creation.
     * Coordination and propagation filter.
     * Filter push down.
+1. What are the advantages of column-wise storage and execution?
+    * Efficient Data Compression.
+    * Improved Query Performance, including better cache locality and vectorization instructions.
+    * Improved Analytical Performance with Columnar Indexes.
+1. How does the user-space scheduler allocate resources among different resource groups?
 
 # 3 Database
 
