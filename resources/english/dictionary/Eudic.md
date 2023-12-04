@@ -1,6 +1,31 @@
-1. 健身词汇; 俯卧撑：push-ups\n引体向上：pull-ups/chin-ups\n平板卧推：flat bench press\n上斜卧推：incline bench press
+1. don't look at me; stop looking at me; 别看着我\n别看着我了
+1. dismiss; discharge; dissolve; Dismiss: To send away; to give permission or an order to leave; to remove from consideration or service.\n\nDischarge: To release or allow to leave; to fulfill an obligation or perform a duty.\n\nDissolve: To officially end or terminate, especially in the context of formal relationships or legal entities.
+1. How does the user-space scheduler allocate resources among different resource groups?
+1. What are the advantages of column-wise storage and execution?; * Efficient Data Compression.\n* Improved Query Performance, including better cache locality and vectorization instructions.\n* Improved Analytical Performance with Columnar Indexes.
+1. got it; copy that; well noted; 明白了，收到
+1. downwind; against the wind
+1. 人脸部位词汇; 额头：forehead\n眼皮：eyelid\n脸颊：cheek\n人中：philtrum\n嘴唇：lip; my lips are super dry and cracked\n下巴：chin\n耳垂：earlobe
+1. 疾病词汇; 感冒：cold\n发烧：fever\n咽痛：sore throat\n咳嗽：cough\n打喷嚏：sneeze\n头痛：headache\n肺炎：pneumonia\n失眠：insomnia\n腹泻：diarrhea\n恶心：nausea\n呕吐：vomit
+1. I need to know what I stand to win
+1. 房屋词汇; 公寓：apartment/flat\n宿舍：dormitory\n别墅：villa\n官邸/大厦：mansion\n工作室：studio\n地下室：basement\n村舍：cottage\n平房：bungalow\n寺庙：temple\n城堡：castle
+1. I worked my ass off to get here
+1. old habits die hard; 本性难移\n
+1. 911, what's the emergency
+1. where are you hurt; where does it hurt; what did you bump into
+1. why the long face; 为什么闷闷不乐？\n
+1. I appreciate the effort
+1. 器官词汇; 大脑：brain\n肺部：lungs\n气管：trachea\n血管：blood vessel\n心脏：heart\n肝脏：liver\n肾脏：kidney\n胃部：stomach\n脾脏：spleen\n膀胱：bladder\n肠道：intestines
+1. level with me; 实话跟我说吧
+1. rat race
+1. 鸡蛋牛排词汇; 炒蛋：scrambled\n太阳蛋：sunny-side-up\n双面煎半熟：over easy\n双面煎全熟：over hard\n去壳水煮：poached\n水煮半熟：soft boiled\n水煮全熟：hard boiled\n一分熟：rare\n三分熟：medium rare\n五分熟：medium\n七分熟：medium well\n全熟：well done
+1. 线条词汇; 直线：straight line\n水平线：horizontal line\n垂直线：vertical line\n曲线：curved line\n对角线：diagonal line\n波折线：zigzag line\n点虚线：dotted line\n段虚线：dashed line\n波浪线：wavy line\n平行线：parallel lines\n垂直交叉线：perpendicular lines\n螺旋线：spiral line\n
+1. 学历词汇; 幼儿园：kindergarten\n小学：primary school\n初中：junior high school\n高中：senior high school\n本科：undergraduate\n学士学位：Bachelor\'s degree\n研究生：postgraduate\n研究生学位：Master\'s degree\n博士：PhD\n文凭：diploma
+1. 走路词汇; 散步：stroll\n漫无目的地逛：wander\n大步走：stride\n踮着脚走：tiptoe\n拖着脚走：shuffle\n一瘸一拐地走：hobble\n悄悄贴近：sidle\n跑步：run\n徒步：hike\n军队行进：march
+1. their products are streets ahead of their peers
+1. 餐厅词汇; 剩菜：leftovers\n打包盒：to go box\n筷子：chopsticks\n塑料勺：plastic spoon\n餐巾纸：napkins\n塑料袋：plastic bag
+1. 健身词汇; 俯卧撑：push-ups\n引体向上：pull-ups/chin-ups\n平板卧推：flat bench press\n上斜卧推：incline bench press\n深蹲：deep squat
 1. you've got a point there
-1. 职场词汇; 招聘：recruitment\n简历：resume\n面试：interview\n空缺岗位：vacancy\n职业规划：career plan\n早九晚五：nine-to-five\n薪资：salary\n福利：welfare\n升职：promotion\n裁员：lay off\n加薪：I want a raise
+1. 职场词汇; 招聘：recruitment\n简历：resume\n面试：interview\n空缺岗位：vacancy\n职业规划：career plan\n早九晚五：nine-to-five\n薪资：salary\n福利：welfare\n升职：promotion\n裁员：lay off\n跳槽：job hopping\n加薪：I want a raise
 1. let's split the bill
 1. 排泄物词汇; 眼屎：sleepy dust\n耳屎：earwax\n鼻屎：snot\n痰：phlegm\n汗水：sweat\n头皮屑：dandruff
 1. 汽车词汇; 驾驶座：driver\'s seat\n安全带：seatbelt\n方向盘：steering wheel\n喇叭：horn\n仪表盘：dashboard\n出风口：air vent\n变速杆：gearshift\n挡风玻璃：windscreen/windshield\n挡风玻璃雨刷：windscreen/windshield wipers\n侧视镜：side-view mirror\n后视镜：rearview mirror\n遮阳板：sun visor\n转向灯：indicator/turn signal\n刹车：brake\n油门：accelerator\n门把手：door handle\n轮胎：tire/tyre\n车牌：number plate/license plate
@@ -17,14 +42,14 @@
 1. it may seem too straightforward or too blunt
 1. 原来如此; is that what is\nthere we go\nthat explains it
 1. satiable; insatiable
-1. 有话直说; give it to me straight\ncall a spade a spade\nlet\'s not beat around the bush\nget to the point\n
+1. 有话直说; give it to me straight\ncall a spade a spade\nlet\'s not beat around the bush\nget to the point\ncut the crap
 1. finders keepers
 1. I hope the weather is good for our picnic tomorrow; I wish I had known about the meeting earlier; \"hope\" is used to express a desire for something that seems possible or likely in the future, while \"wish\" is used to express a desire for something that is not likely to happen or has already passed.
 1. reality is cruel because the advancement of society and ideology often comes at the cost of the older generation being replaced
 1. Introduction to the Work Mode; We\'re a big team of around 50 database developers, split into maybe 5 groups, each focusing on areas like storage, query execution, cloud native, lake house, and SaaS. I\'m part of the query group.\n\nIn our group, here\'s how we roll: We usually iterate on a two-month cycle, and in each cycle, we will have one or two targets, like rolling out a new feature or improving performance or stability. And each member will get their own pieces. And if the topic is big enough, we will do some research and produce a research document for discussion, so we can all chat about it.\n\nAfter we\'ve tossed around some ideas, we get down to writing a design document. It\'s like our game plan, detailing how we\'re getting things done, and everyone gets to review it.\n\nFinally, we get to the fun part – coding. And of course, we make sure to review each other\'s code. It keeps things running smoothly and makes sure we\'re all on the same page.
 1. Introduce a member of your family; I\'d like to tell you about my father. He was born into a humble family as the youngest of five siblings, with four older sisters. Despite their financial struggles, his family was very loving and supportive, which gave him a happy childhood. He was a dedicated student and worked extremely hard to achieve his goals. Remarkably, he earned a bachelor\'s degree in chemical engineering, which was quite an achievement given his background. After graduating, he worked as a workshop manager for a state-owned company. It was a challenging time as corruption was widespread, but my father always maintained his integrity and never got involved in any corrupt practices, something that I deeply admire about him. Later on, the state-owned company went bankrupt, and he ventured into entrepreneurship and started a small business in metal chemical processing with around ten employees. In summary, his journey from a modest upbringing to becoming a successful business owner is truly inspiring. And he is always the one that I look up to.
 1. we are deeply sorry for this last-minute rescheduling
-1. 肉类词汇; 生鱼片：raw fish\n羊排：lamb chop
+1. 肉类词汇; 生鱼片：raw fish\n羊排：lamb chop\n鲍鱼：abalone\n蛤蜊：clam\n牡蛎（生蚝）：oyster
 1. stay warm; 注意保暖
 1. levy; tax; excise; Levy: This is a general term that refers to the legal process of imposing or collecting a tax, fee, or fine. A levy can be applied to a wide range of financial obligations, such as taxes, fees for services, or fines for legal violations. It\'s more about the action of imposing or collecting these charges.\n\nTax: A tax is a mandatory financial charge or some other type of levy imposed upon a taxpayer (an individual or a legal entity) by a governmental organization. Taxes are used to fund various public expenditures. Taxes can come in many forms, such as income tax, property tax, sales tax, etc. The term \"tax\" is more about the financial charge itself, rather than the act of imposing or collecting it.\n\nExcise: An excise is a specific type of tax that is levied on particular goods, services, or activities. This is often a form of indirect tax, meaning it is collected by an intermediary (like a store) from the person who bears the ultimate economic burden of the tax (such as the consumer). Excise taxes are commonly placed on items such as alcohol, tobacco, and fuel.\n\n
 1. play ground; sports ground; sports field
@@ -38,7 +63,7 @@
 1. it's my day off; it's my time off
 1. 打招呼; how are you doing today?\nhow have you been?\nwhat have you been up to?\nhow is it going?\nhow has it been so far in your new job?\nhey, how did it go?
 1. the sky is the limit
-1. 电子设备词汇; 充电线：charging cable\n移动电源：power bank\n电源：power source\n排插：power strip\n摄像头：webcam\n耳机：headphone\n鼠标：mouse\n键盘：keyboard\n充电器：charger\n无线充电器：wireless charger\n插头：plug\n插座：outlet\n开关：switch\n转换器：adapter\n电池：battery\n
+1. 电子设备词汇; 充电线：charging cable\n移动电源：power bank\n电源：power source\n排插：power strip\n摄像头：webcam\n耳机：headphone\n鼠标：mouse\n键盘：keyboard\n充电器：charger\n无线充电器：wireless charger\n插头：plug\n插座：outlet\n开关：switch\n转换器：adapter\n电池：battery\n充电电池：storage battery
 1. I will need to request time off; day off
 1. competitive relationship
 1. will you be free 7.30pm onwards tomorrow?
@@ -47,7 +72,7 @@
 1. what do you study? I'm doing computer science; I was doing Computer Science.\nI was studying Computer Science and have now graduated.\nI completed my studies in Computer Science.\nMy field of study was Computer Science, and I\'ve graduated.\n
 1. carpet; rug; Usually refers to a floor covering that extends over an entire room\nRugs are smaller, movable floor coverings that don\'t extend across the entire floor space
 1. 手部动作词汇; 扇：slap\n拳打：punch\n连续打：beat\n抓取：grab\n握住：hold\n举起：lift\n掉落：drop\n轻弹：flick\n轻拍：pat\n触摸：touch\n敲：knock\n戳：poke\n挠：scratch\n指：point\n推：push\n拉：pull\n轻轻摇晃：rock\n拥抱：cuddle
-1. 蔬菜词汇; 黄瓜：cucumber\n花椰菜：cauliflower\n四季豆：green beans\n洋葱：onion\n卷心菜：cabbage\n胡萝卜：carrot\n生菜：lettuce\n辣椒：pepper\n西兰花：broccoli
+1. 蔬菜词汇; 黄瓜：cucumber\n花椰菜：cauliflower\n四季豆：green beans\n洋葱：onion\n卷心菜：cabbage\n胡萝卜：carrot\n生菜：lettuce (crisp lettuce)\n辣椒：pepper\n西兰花：broccoli
 1. you're twisting my words
 1. 厨房词汇; 切片：slice the potato\n切丝：shred the potato\n切丁：dice the potato\n切段：cut the green onion\n剁：chop the green onion\n菜刀：I chop the green onion with my cleaver.\n
 1. 晾衣服词汇; 晾衣服：hang the laundry\n衣架：hanger\n抖一下衬衫：shake out the shirt\n衣服会皱的：the shirt is going to get wrinkled\n晾衣架：just hang it on the laundry rack\n晾衣夹：just clip it on the laundry pin like this\n
@@ -123,7 +148,6 @@
 1. What's the process of join operator?; Generally speaking, a join involves a two-stage processing method. The first stage is called \"build,\" where a hash_table is generated based on a smaller table. The second stage, known as \"probe,\" involves going through the hash_table to evaluate matches based on specific predicates.\n\nLocal and Global runtime filters will be generated at build stage to further improve the performance.
 1. What's the process of window operator?; For window function without partition by, the data will be sorted globally and send to one node to further continue the serial window process. And for window function with partition by, the data will be shuffled and sorted locally, and then multi-machine and multi-core parallel window processing is carried out.\n\nAnd for window function that is not relied on the ordering, like min/max, we have hash-based partition to further improve the performance.
 1. What's the process of aggregation operator?; Generally speaking, for aggregation without group by, there will be a two-stage process, the first stage is called pre-aggregate, where each node perform the aggregation and calculate the intermediate result locally, and then send to one intended node for final aggregation. And for aggregation with group by, there will be a one-stage process, each node will shuffle the scanned data by the group by expression, and then multi-machine and multi-core parallel aggregation processing is carried out.
-1. 包容的
 1. What the process of executing a query?; Generally, it has two stages, plan and execution. Firstly, it will go through rule-based optimizations and cost-based optimizations to generate an optimal physical plan, the plan will contains several segments, connected by exchagne operator. And in practical system, there will be multiply compute nodes, so each fragment will have multiply parallelism to fully use the machine resource, and each parallelism is called fragment instance. When a compute node received a fragment instance, basically, the fragment instance is an execution tree, it will be decomposed into multiply pipelines, and each pipeline will have multiply parallelism to fully use the multi-cores resources.
 1. What are the advantages and disadvantages of Volcano Execution Model and Morsel-driven execution model?; Volcano execution model is simple for programming. And the minimum scheduling unit is thread, so scheduling decision is delegated to kernel. But it is hard to have fine-grained resource control, priority control and parallelism control.\n\nFor morsel-driven execution model, the programming model is more complex, each operator has to handle state change like if it has output or if it need input, and need to provide two interfaces push_chunk and pull_chunk, and blocking opeartions are not allowed, and for some operators like scan and exchange, extra I/O thread pool is required to handle the I/O operations. But it can have more flexible resource control, priority control, and parallelism control, you can set different parallelism for different parts of a single query.
 1. I need work authorization sponsorship
@@ -357,7 +381,6 @@
 1. travel around the world; travel around the city
 1. resource to boast about
 1. open up the topic
-1. lift weights
 1. get the same problem
 1. place with fewer distractions
 1. takes on several part-time jobs
@@ -380,7 +403,6 @@
 1. the key ingredients need for getting good at something
 1. watch an English program
 1. practical advice; practical help; practical support
-1. compare with; compare to
 1. fall back on; fall back to a previous state; I can always <b>fall back on my savings</b> to support myself until I find something else
 1. threaten the lives of marine creatures
 1. 22-game streak; 22-win streak
@@ -1554,7 +1576,6 @@
 1. mute somebody
 1. tie somebody down
 1. give somebody a kiss
-1. sue somebody
 1. convict somebody of a crime
 1. my mom cooks extremely well
 1. let me explain this, I wanna make sure it's clear for you
@@ -1612,7 +1633,6 @@
 1. before I go into this a little bit more, I want to explain some of the concepts
 1. my friends wanted to meet up for dinner
 1. you first need to start off by answering the five ws, which are who, what, when, where, why
-1. 屏蔽差异
 1. smurf account; 小号
 1. alternative account
 1. older generation
@@ -1704,7 +1724,6 @@
 1. thanks for freeing up some time to meet with me
 1. the risks are nothing comparing to the benefits
 1. the car is damaged beyond repair
-1. cut the crap
 1. let's cut to the chase
 1. we'are facing a major setback
 1. verification of the feasibility of the project
@@ -1883,7 +1902,6 @@
 1. I can’t be like it was before
 1. it was good knowing you
 1. I literally don’t even know what to say to you
-1. 降薪
 1. are you out of your mind
 1. poorly educated person
 1. the emperor had secret life about which his people knew nothing
@@ -1910,7 +1928,6 @@
 1. who was it you thought you saw
 1. how complex can it be
 1. I’m full
-1. other than food
 1. abide by the law
 1. we’re all set
 1. in case you think of something
@@ -2018,7 +2035,6 @@
 1. I lost my concentration during the long and dull lecture
 1. she is devastated by the news of his death
 1. you are explosive; 你很劲爆
-1. 骚扰电话
 1. If system clocks across machines are inconsistent, the time computation hits an exception
 1. duplicate data into many copies
 1. community edition/enterprise edition
@@ -2037,13 +2053,11 @@
 1. I come from a diverse background; 我的背景比较复杂
 1. I have no comments; 我没有异议
 1. put down roots
-1. 外向的/内向的
 1. the plant comes with full instructions on how to care for it
 1. my family has my back; 我家人支持我
 1. we want to solve this problem without resorting to violence
 1. the diligent president was held in high esteem by the people
 1. I am not optimistic about the prospects of this technology
-1. 我不看好这一技术的前景
 1. for-profit company
 1. the fans are asking for a refund after cancellation of the pop start's concert
 1. what have you tried
@@ -2085,7 +2099,6 @@
 1. It's not my fault, it's somebody else's fault
 1. increased wealth gap
 1. Our aim is to organize and synthesize the latest ideas in state management and layout some promising research directions in this domain
-1. 这不是这门课程的目标吗
 1. the cream is easily absorbed into the skin
 1. you never know when it's going to happen
 1. a relatively high level of crime
@@ -2174,7 +2187,6 @@
 1. he believes in empiricism and always relies on his own experience when making decisions
 1. common dishes
 1. Big Ben
-1. 纬度/经度
 1. don't try to be perfect but try your best
 1. certification/credentials
 1. evaporation is the process of a liquid turning gas
@@ -2237,7 +2249,6 @@
 1. the change happens in a number of discrete steps
 1. husband/husbandry
 1. prey/predation
-1. 打击犯罪
 1. the government has taken drastic measures to combat racism
 1. 9 percent body fat
 1. exhaust/exert/drain/deplete
@@ -2362,10 +2373,8 @@
 1. Hong Kong is given a high degree of autonomy since it is a special administrative region of China
 1. the government must take decisive action on gun control
 1. prime minister/cabinet minister
-1. 被告
 1. the government decided to impose a 3% levy on alcohol
 1. socrates's thought was a precursor of western philosophy
-1. 无法避免的
 1. music is a language that transcends cultural barriers
 1. they are carrying out an experimental study on birds
 1. the cause of gender equality
@@ -2393,7 +2402,6 @@
 1. reaction/reflection
 1. the heart of that mandate is our manifesto
 1. accountability
-1. economic crisis
 1. institute/constitute/constitution
 1. discussion/debate/dispute/controversy
 1. there is a growing trend towards earlier retirement
@@ -2410,15 +2418,12 @@
 1. charming/fascinating/engaging/intriguing/inviting
 1. mistakes are bound to happen when you are dealing with so many issues
 1. I have no prior experience
-1. 判定某人有罪
 1. impose a punishment
 1. forensic
 1. conviction
 1. it is not well paid
 1. 工会
-1. 游行
 1. Will everything be fine
-1. 一切会好起来吗
 1. Law has two important functions
 1. the politician was held in contempt
 1. a punctual start at 9 o'clock
@@ -2447,7 +2452,6 @@
 1. power grid
 1. meeting/conference/convention
 1. the marriage ended in divorce in 1996
-1. storage battery
 1. the bully threatened to beat the boy into submission
 1. you should take it as a compliment
 1. tom looked at her with genuine concern
@@ -2455,7 +2459,6 @@
 1. they share something in common
 1. the attitudes towards this issue vary from person to person in this country
 1. do not listen to the nay sayers
-1. bench press
 1. college tuition
 1. poor/needy/indigent
 1. thorough/sweeping/utter
@@ -2500,7 +2503,6 @@
 1. rough ground
 1. this system can regulate the temperature of the room
 1. clear up
-1. 轻视
 1. the designer makes optimal use of the available space
 1. fold the paper in half
 1. I hate rainy days because it depresses me
@@ -2526,7 +2528,6 @@
 1. withstand/withhold
 1. she couldn't stand any more of their ridicule
 1. a constant stream of visitors all day
-1. 嘲笑
 1. he is now on medication for his liver
 1. the volume of traffic on the road hit the peak at seven o'clock
 1. ridiculous/absurd/bizarre/wierd
@@ -2575,7 +2576,6 @@
 1. due to local objections
 1. environmental destruction has increased on an unprecedented scale
 1. you are stuck with me
-1. 方向盘
 1. the former president was called in to mediate between the two sides
 1. diagnose/diagonal
 1. he led a life of virtue
@@ -2590,7 +2590,6 @@
 1. march across europe
 1. Pearl Harbor
 1. we have a family reunion on a monthly basis
-1. 纪录片
 1. reserve/conserve/preserve
 1. wrinkle/sprinkle
 1. time to contemplate our history
@@ -2667,14 +2666,12 @@
 1. the competition is open to both amateur and professional photographers
 1. he's very systematic in all he does
 1. general-purpose algorithm
-1. 加班
 1. I got my first glimpse of the city on the speeding train
 1. my parents had an important influence on the formation of my personality
 1. if everything goes smoothly
 1. just water these flowers twice a week
 1. do you have any previous experience of this kind of work
 1. astonish/astound/shock
-1. 个人形象
 1. the skyscraper is still under construction
 1. cooking utensil
 1. electrical appliances
@@ -2687,23 +2684,19 @@
 1. rebellion/riot
 1. exterior/external
 1. white-collar workers
-1. 命运
 1. chronic/chronical/chronicle
 1. cable television has been around for some time now
 1. a fundamental change in the organization of health services was required
-1. 好胜心
 1. the graph helped me crystallize my thoughts
 1. his boss has a foul temper
 1. you should stretch before you do vigorous exercise to avoid strain
 1. disclose secrets
 1. irrigate/irritate
-1. 正例反例
 1. literally
 1. just in case that you didn't know it
 1. cloth mask/medical mask/surgical mask/N95 mask
 1. plaque
 1. contaminated
-1. cough
 1. sneeze
 1. booster shot
 1. hand sanitizer
@@ -2718,11 +2711,9 @@
 1. the college is very selective
 1. he has no sense of shame
 1. these two ideas are quite distinct from each other
-1. 阻碍
 1. he is only a vulnerable child in need of protection from the police
 1. the wall had gone from brown to a soft grey through years of weathering
 1. air disaster
-1. 呼吁
 1. beethoven was a musician of world stature
 1. statue/stature
 1. the cape extends far into the ocean
@@ -2753,7 +2744,6 @@
 1. periodic checks are carried out on the equipment
 1. he suffered cranial bleeding in the car crash
 1. provides insights on the design and implementation choices
-1. 即时的
 1. this relationship is going too fast
 1. crack-down
 1. periodic check
@@ -2816,7 +2806,6 @@
 1. drop out
 1. give way to
 1. fund shortage
-1. 政治斗争
 1. vibrate
 1. put high demands on muscles
 1. he mingled in the crowd and was lost in sight
@@ -2883,12 +2872,10 @@
 1. I'll be over on the edge of the seat
 1. tissue
 1. I don't want to mess it up
-1. 我很满足
 1. end up alone
 1. you need to get over this
 1. senate
 1. the market is in a constant state of flux
-1. crisp lettuce
 1. civil war
 1. never interfere in what doesn't concern you
 1. the lease runs out next year
@@ -2994,8 +2981,6 @@
 1. the curtains had faded in the sun
 1. come to an agreement
 1. negative effect on productivity
-1. 伤口; cut
-1. 意识到; discern\nbe conscious of\nperceive
 1. confederal
 1. criminal plot
 1. nappy-changing
@@ -3007,7 +2992,6 @@
 1. satiric/ironic/sardonic
 1. congress/parliament/council
 1. little evidence to support these hypotheses
-1. lay off
 1. I'm totally behind this experiment
 1. look for it
 1. furbish
@@ -3030,7 +3014,6 @@
 1. the human natural instincts
 1. splash/splatter
 1. that's how it works; it doesn\'t work out.
-1. 气质; quality
 1. get the baby into a routine
 1. not content with
 1. regulations
@@ -3038,7 +3021,6 @@
 1. pressing claim for compensation
 1. exchange vows
 1. get stuck in
-1. 克服; get through
 1. get through obstacles
 1. how to set about my mission
 1. average annual rainfall
@@ -3047,7 +3029,6 @@
 1. could you be a little more specific
 1. facial expression
 1. masks will be optional
-1. 发生
 1. benefits exceed the cost
 1. ego
 1. conspicuous red hair
@@ -3072,14 +3053,12 @@
 1. silk
 1. servile
 1. patron
-1. 我喜欢编码
 1. I found the whole play facinating
 1. march off
 1. a flock of
 1. a stream diverges here
 1. take shelter from the storm
 1. book at local travel agency
-1. 全面了解
 1. look for assistance
 1. curtain
 1. bike's inner tube
@@ -3104,11 +3083,8 @@
 1. dean
 1. camouflage
 1. bulletin board
-1. 负重深蹲
-1. 卧推
 1. first-person narrative
 1. mist
-1. 亲戚
 1. frugal
 1. socialist revolution
 1. fabric
@@ -3121,14 +3097,12 @@
 1. tumour
 1. pea
 1. outfit
-1. 耗尽
 1. exhaust
 1. synonym
 1. reluctant
 1. tongue
 1. shed
 1. revive/revitalize/regenerate
-1. 纤维含量很高
 1. stock exchange
 1. broker
 1. a striking amount of
@@ -3178,13 +3152,11 @@
 1. reform
 1. diversion
 1. propel
-1. 给手机充电
 1. what crime you suspect me of committing
 1. coalition
 1. democratic
 1. half of its former size
 1. still-life
-1. 实施
 1. peacekeeping mission
 1. take measures to protect them
 1. bring honours and promotion to many
@@ -3200,7 +3172,6 @@
 1. I meant nothing in particular by this remark
 1. uncuff
 1. detain
-1. 我有权保持沉默
 1. complain
 1. spectroscopy
 1. show somebody some slides
@@ -3238,7 +3209,6 @@
 1. moist
 1. fake goods
 1. deceive
-1. 台阶
 1. attracted by the idea of working abroad
 1. make a rigorous study of the plant
 1. founder of ancient Chinese philosophy
@@ -3269,12 +3239,10 @@
 1. antique
 1. notorious
 1. rigorous
-1. 首相
 1. premier
 1. mural
 1. thorough
 1. immobile
-1. 不计一切代价
 1. tense
 1. perform orders of magnitude better
 1. As outlined in the introduction
@@ -3314,7 +3282,6 @@
 1. embolden
 1. quiz show
 1. oral and written test
-1. 责任越大能力越大
 1. great power comes with great responsibility; 能力越大，责任越大
 1. gradual
 1. nerdy
@@ -3324,9 +3291,7 @@
 1. gig economy
 1. side hustle
 1. an effective remedy
-1. 推荐信; reference letter
 1. lecture
-1. 艺人; performers
 1. cultivate
 1. foster
 1. lavishness
@@ -3415,11 +3380,9 @@
 1. proposition
 1. equisized
 1. yield
-1. 绳子
 1. profession
 1. I have to meet my wife
 1. she is very pretty
-1. 街边小贩
 1. street vendor
 1. reduce
 1. professor
@@ -3448,7 +3411,6 @@
 1. solar year
 1. lunar year
 1. bring insight to the table
-1. 浓度
 1. high concentration
 1. concentration of greenhouse gases
 1. bark
@@ -3463,7 +3425,6 @@
 1. formation
 1. form memory
 1. has been the dominant belief in psychology
-1. 马达
 1. motor
 1. variation
 1. it suggests that
@@ -3472,21 +3433,15 @@
 1. more recent advances
 1. at the site of
 1. faculty
-1. 学院
 1. anthropology
-1. 让某人失望
 1. go to work
 1. for the sake of brevity
-1. 吞吐量
 1. thuoughput
-1. 贵8倍
 1. buck
 1. occasion
-1. 住宿
 1. accommodation
 1. transportation; 交通工具
 1. souvenir
-1. 闲逛; hang out
 1. one-way ticket
 1. round-trip ticket
 1. northernmost
@@ -3494,22 +3449,16 @@
 1. southernmost
 1. fair
 1. air ticket
-1. 标志性建筑
 1. seawater
 1. seaside
-1. 下班
 1. get off work
-1. 简洁
 1. concise
-1. 不相交的
 1. backported
 1. excess
 1. going only rightward or downward
 1. as-yet unused elements of the two arrays
 1. There are two main ways of implementing merge sort
-1. 由...主导
 1. she is stunning on screen
-1. 注释掉
 1. comment out
 1. bonus
 1. occupation
@@ -3519,30 +3468,17 @@
 1. last part; 最后一部分/一段（时间，考试等等）
 1. preposition
 1. go to phase; 问候语
-1. 你吃饱了吗
 1. you name a price
 1. edge cases
-1. 棍子
-1. 吹牛
 1. online gaming
 1. drive
 1. neutral
 1. reverse
 1. parking
-1. 尊严
-1. 易用性
 1. latter
 1. former
 1. converse
-1. 观众
-1. 出发; set off\nset out
-1. 玻璃箱
-1. 试车
 1. test drive
-1. 我不配
-1. 暗的
-1. 吸收
-1. 汗
 1. formal clothing
 1. casual clothing
 1. cost of living
@@ -3552,39 +3488,26 @@
 1. suspend and resume
 1. data mining
 1. populating warehouses
-1. 推出新功能; roll out features
 1. roll out feature
 1. retraction
 1. bankruptcy
 1. acquisition
-1. 回顾
 1. retrospective
-1. 赛事
 1. sign on
-1. 坚持下去; stick with it
 1. stick with it
 1. data of varying quality
 1. alumnus
 1. alumni
-1. 后续的
-1. 详尽说明; elaborate
 1. on-site
 1. bachelor's
 1. Position responsibilities
-1. 投资回报率
-1. 新晋成员
-1. 新晋
 1. year end bonus
-1. 年终奖
 1. imperative
-1. 看不起
 1. judiciously
-1. 经销商
 1. dealer
 1. Business Divisions
 1. decision-support application
 1. formulating query
-1. 广泛地; extensively
 1. extensively
 1. postpone
 1. recession
@@ -3593,9 +3516,7 @@
 1. are you hitting on me; are you flirting with me?
 1. prostitude
 1. sadist
-1. 新手
 1. rookie
-1. 合适
 1. take a fresh look at this
 1. laugh it up
 1. that level of commitment
@@ -3604,22 +3525,15 @@
 1. aligning child distributions
 1. aligning
 1. entail
-1. 加满
-1. 时差
 1. jetlag
 1. stand-up comedy
 1. congressman
-1. 被提名的人
 1. nominee
 1. full of dark secrets
 1. prescription
-1. 体验不一样的生活
 1. layoff
-1. 方法; approach
 1. source of complexity with this approach comes from
-1. 低门槛
 1. low barriers
-1. 片面的
 1. one-sided
 1. Huge gap between urban and rural development
 1. scale in
@@ -3633,11 +3547,9 @@
 1. performance
 1. make a list
 1. really a big thing
-1. 穷举
 1. corporation
 1. that systems are required to meet
 1. the distributed nature of query processing
-1. 耗尽资源; exhaust the resources
 1. exhaust the available memory
 1. be shipped to
 1. slum
@@ -3645,38 +3557,24 @@
 1. even steven
 1. under great emotional stress
 1. raise arm
-1. 自给自足
-1. 打击
-1. 在我面前
 1. devise
-1. 准备工作
 1. pioneer
 1. provision
 1. gap between research and practical implementations
 1. in order to level this; 为了与之抗衡
 1. canyon
-1. 研究现状
 1. dismiss
-1. 现状
 1. tuples flowing through a pipeline
 1. scale with the size of cluster
-1. 抵消
 1. densely ascending from 0 upwards
-1. 双刃剑
 1. scales linearly with table size
 1. is dominated by
-1. 以...为主; is dominated by
 1. amortize over
 1. boldface
 1. expressions of arbitrary complexity
-1. 在公平的竞争环境中
 1. on a level playing field
-1. 受害者
-1. 北极光
 1. northern lights
 1. paddle surfing
-1. 谨慎的
-1. 观光
 1. sightseeing
 1. horsemanship
 1. Cantonese
@@ -3686,7 +3584,6 @@
 1. shore
 1. fantastic
 1. adrenaline
-1. 蹦极
 1. drifting
 1. traditional routine
 1. overwhelm
@@ -3702,30 +3599,20 @@
 1. what's the takeaway?
 1. barrel roll
 1. sprint
-1. 弱肉强食; you go with the winner
 1. over the next few hours
 1. stunt
-1. 截屏
 1. one-way road
-1. 辅音
-1. 元音
 1. consonant
-1. 杂音
 1. battery is dead
 1. plug socket
-1. 空白; gap
 1. voltage
 1. copper
-1. 插座
-1. 充电
 1. charge
-1. 扫地机器人
 1. household
 1. laptop
 1. keep fit
 1. sincerely
 1. manipulate
-1. 操作
 1. interchangeably
 1. there is not a single day that goes by
 1. patent
@@ -3733,24 +3620,17 @@
 1. undertaking
 1. oversight
 1. out-of-stock
-1. 恒等式
-1. 丢弃
 1. discard
 1. refine
-1. 不失一般性
 1. without loss of generality
 1. variety
 1. relatively small fraction
 1. as stated
 1. make ideas go further
-1. 嵌套
 1. intrinsically
 1. observe that
-1. 房东
-1. 房租
 1. tax
 1. dip into
-1. 搬家公司
 1. plumbing
 1. title deed
 1. mortgage
@@ -3764,22 +3644,16 @@
 1. subsume
 1. undergo
 1. reduction in data traffic is achieved
-1. 遇到问题; come across problems
 1. pedophilia
 1. Your mileage may vary
 1. regular customer
 1. overcount
 1. this is readily seen
-1. 归纳假设
 1. inductive hypothesis
 1. stale
 1. out of defensive principle
-1. 如果法律允许的话
-1. 会议室
 1. corollary
 1. cultivate all-round developed talents
-1. 争取利益
-1. 工作轮岗; job shift
 1. job transfer
 1. promotion
 1. couple of days
@@ -3789,11 +3663,7 @@
 1. across-the-board
 1. specialization
 1. outline
-1. 出于篇幅考虑; Due to space constraints
-1. 正义
 1. disqualify
-1. 处于篇幅考虑
-1. 探索
 1. adore
 1. eyesight
 1. persuade
@@ -4009,7 +3879,6 @@
 1. world's leading
 1. put up with
 1. all hands
-1. deep squat
 1. fussing
 1. asterisk
 1. overlaid
@@ -4046,7 +3915,6 @@
 1. sunset
 1. sunrise
 1. a full figure; Depending on context, might be \"a full figure\" (referring to a person\'s body) or \"a full figure\" (referring to a numerical figure)
-1. draw from
 1. spread out over 10 years
 1. both ok
 1. strong desire
@@ -4063,7 +3931,6 @@
 1. humilate
 1. carry somebody; 抱起某人
 1. for the sake of simplicity
-1. dashed line
 1. solid line
 1. help make this distinction
 1. granularity
@@ -4087,7 +3954,6 @@
 1. direct performance tuning
 1. not perfect but acceptable
 1. lovely
-1. 功劳很大
 1. obesity
 1. clearly defined muscles
 1. Press ups
@@ -4109,7 +3975,6 @@
 1. precede
 1. slope
 1. progressive
-1. perpendicular
 1. convey
 1. applicability
 1. advent
@@ -4236,7 +4101,6 @@
 1. endian
 1. general purpose algorithm
 1. lossless
-1. job hopping
 1. pros and cons
 1. I put my idea into implementation
 1. I have a 2 hour commute every day
