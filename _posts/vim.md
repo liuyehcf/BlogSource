@@ -2921,7 +2921,8 @@ Glaive codefmt google_java_executable="java -jar /usr/local/share/google-java-fo
 **用法：**
 
 * `:FormatCode`：格式化
-* `:Glaive codefmt`：查看配置
+* `:Glaive codefmt`：查看配置（也可以通过`:help codefmt`查看所有配置项）
+    * `clang_format_executable`: `clang_format`可执行文件路径，可以通过`Glaive codefmt clang_format_executable="clang-format-10"`进行修改
 
 **安装`Python`的格式化工具`autopep8`**
 
