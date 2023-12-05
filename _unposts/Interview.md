@@ -794,7 +794,13 @@ For better observability and query analysis, I introduced support for runtime pr
 
 1. serverless
 
-# 9 Reference
+# 9 Chinese Presentation
+
+本硕都在北邮读的，专业是通信工程，然后在课余时间自学的计算机。毕业之后，就职于阿里巴巴IOT事业部，IOT事业部整体属性偏业务，涵盖的领域非常多，包括IOT平台，负责设备的连接、管理和赋能、边缘计算、AI、以及各种垂直行业线，包括工业、农业、园区、楼宇等等。我在里面主要负责偏Infra相关的工作，主要包括：隧道服务、规则中心以及边缘一体机系统镜像构建平台。细节不展开了，简历里面都有介绍。
+
+在IOT这边干了3年多，运气比较好，凭借着扎实的基础和热情，0基础跳槽去了一家数据库创业公司，我所在的团队是查询团队，主要负责SQL的执行。主要的贡献包括，计算引擎的重构迁移、各种算子优化包括Sort算子、Window算子、Exchange算子、部分参与优化器的迭代工作，包括支持更多类型的子查询、Plan枚举以及Profile相关的功能。
+
+# 10 Reference
 
 * [Summary-of-Key-Points](/_posts/Summary-of-Key-Points.md)
 * [cpp-interview](https://github.com/huihut/interview)
