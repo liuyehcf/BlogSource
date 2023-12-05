@@ -12,14 +12,7 @@ categories:
 
 <!--more-->
 
-# 1 C相关知识储备
-
-## 1.1 宏
-
-1. `#`：用于把一个宏参数转变为字符串
-1. `##`：用于把两个宏参数贴合在一起
-
-# 2 如何编译内核
+# 1 How to compile kernel
 
 **准备环境：这里我安装的系统是`CentOS-7-x86_64-Minimal-1908.iso`**
 
@@ -66,7 +59,7 @@ rpm2cpio kernel-4.14.134.x86_64.rpm | cpio -div
 rpm -iUv ~/rpmbuild/RPMS/x86_64/*.rpm
 ```
 
-## 2.1 参考
+## 1.1 Reference
 
 * [内核源码下载地址](http://ftp.sjtu.edu.cn/sites/ftp.kernel.org/pub/linux/kernel/)
 * [Compile Linux Kernel on CentOS7](https://linuxhint.com/compile-linux-kernel-centos7/)
@@ -75,9 +68,65 @@ rpm -iUv ~/rpmbuild/RPMS/x86_64/*.rpm
 * [如何解压RPM包](https://www.cnblogs.com/joeblackzqq/archive/2011/03/19/1989137.html)
 * [教你三步在CentOS 7 中安装或升级最新的内核](https://www.linuxprobe.com/update-kernel-centos7.html)
 
+# 2 Dynamic Kernel Module Loading
+
+Dynamic Kernel Module Loading (DKML) is a mechanism in operating systems, particularly in Unix-like systems such as Linux, that allows for the loading and unloading of kernel modules at runtime. Kernel modules are pieces of code that can be loaded into the kernel to extend its functionality without the need to reboot the system. This feature is particularly useful for adding support for new hardware, filesystems, or other features without requiring a full kernel rebuild or system restart.
+
+Here are the key aspects of Dynamic Kernel Module Loading:
+
+* **Modularity**: DKML enhances the modularity of the kernel. Instead of having a monolithic kernel with all functionalities built-in, functionalities can be separated into modules that are loaded as needed.
+* **Flexibility**: It allows for greater flexibility in managing system resources. Modules can be loaded when their functionality is required and unloaded when they're no longer needed, freeing up memory and other resources.
+* **Ease of Updates and Maintenance**: Updating or adding new features to the kernel becomes easier. Instead of recompiling and rebooting the entire kernel, only the relevant modules need to be updated.
+* **On-Demand Loading**: Many modules are loaded automatically by the system in response to detected hardware or filesystems. This on-demand loading simplifies configuration and ensures that only necessary modules are loaded.
+* **Commands for Module Management**: In Linux, commands like insmod, rmmod, modprobe, and lsmod are used to insert, remove, manage, and list kernel modules, respectively.
+* **Dependencies Handling**: The system handles dependencies between modules, loading any required supporting modules automatically.
+* **Security Considerations**: Loading modules into the kernel space can have security implications, as malicious or faulty modules could affect the stability and security of the system.
+* **Performance Impacts**: While dynamic loading offers flexibility, it can have performance impacts due to the overhead of loading and unloading modules.
+* **Usage in Various Systems**: Beyond Linux, other systems like FreeBSD and Solaris also support dynamic kernel module loading, though with different implementations and utilities.
+
+## 2.1 Tools
+
+In Unix-like operating systems, several command-line tools are used to manage dynamic kernel module loading. These tools allow users to insert, remove, and manage kernel modules while the system is running. Here's an introduction to some of the most commonly used tools:
+
+**`insmod`:**
+
+* **Purpose**: This command is used to insert a module into the Linux kernel.
+* **Usage**: `insmod [module_name]`
+* **Details**: When you use `insmod`, you must specify the full path to the module if it is not in the default directory. It does not resolve dependencies, meaning you need to load any dependent modules beforehand.
+
+**`rmmod`:**
+
+* **Purpose**: This command is used to remove a module from the Linux kernel.
+* **Usage**: `rmmod [module_name]`
+* **Details**: It will only remove the module if it is not in use and if no other modules depend on it.
+
+**`modprobe`:**
+
+* **Purpose**: This command adds or removes modules from the Linux kernel.
+* **Usage**: To insert a module, use `modprobe [module_name]`. To remove a module, use `modprobe -r [module_name]`.
+* **Details**: Unlike `insmod`, `modprobe` automatically handles dependencies. It checks the module dependencies listed in `/lib/modules/$(uname -r)/modules.dep` file and loads them as needed.
+
+**`lsmod`:**
+
+* **Purpose**: This command is used to show the status of modules in the Linux kernel.
+* **Usage**: `lsmod`
+* **Details**: It displays a list of all currently loaded modules, along with module size and information about what other modules are using them.
+
+**`depmod`:**
+
+* **Purpose**: This tool creates a dependency file for modules.
+* **Usage**: `depmod`
+* **Details**: Generally run automatically when installing new modules, it analyzes the modules and builds a list of dependencies, which is then used by `modprobe`.
+
+**`modinfo`:**
+
+* **Purpose**: Provides detailed information about a kernel module.
+* **Usage**: `modinfo [module_name]`
+* **Details**: It displays information such as module description, author, license, and parameters that can be set.
+
 # 3 systemtap
 
-## 3.1 如何安装
+## 3.1 How to install
 
 **准备环境：这里我安装的系统是`CentOS-7-x86_64-Minimal-1810.iso`**
 
@@ -159,9 +208,9 @@ Pass 5: run completed in 10usr/50sys/327real ms.
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-## 3.2 语法
+## 3.2 Syntax
 
-### 3.2.1 probe的种类
+### 3.2.1 Probe Types
 
 1. `begin`：探测开始的地方
 1. `end`：探测结束的地方
@@ -172,7 +221,7 @@ Pass 5: run completed in 10usr/50sys/327real ms.
 1. `timer.profile`：每个CPU时钟都会触发
 1. `process("a.out").statement("*@main.c:200")`：二进制程序`a.out`的200行的位置
 
-## 3.3 参考
+## 3.3 Reference
 
 * [SystemTap Wiki](https://sourceware.org/systemtap/wiki)
 * [SystemTap Kprobe原理](http://lzz5235.github.io/2013/12/18/systemtap-kprobe.html)
@@ -190,7 +239,7 @@ Pass 5: run completed in 10usr/50sys/327real ms.
 
 `ftrace`的帮助文档在`Documentation/trace`，`ftrace`代码主要在`kernel/trace`，`ftrace`相关头文件在`include/trace`中
 
-## 4.1 ftrace框架介绍
+## 4.1 ftrace Framework
 
 整个`ftrace`框架可以分为几部分：
 
@@ -206,7 +255,7 @@ Pass 5: run completed in 10usr/50sys/327real ms.
     * `延时类`：`irqsoff`、`preemptoff`、`preemptirqsoff`、`wakeup`、`wakeup_rt`、`waktup_dl`
     * `其他`：`nop`、`mmiotrace`、`blk`
 
-## 4.2 ftrace的配置和使用
+## 4.2 How to use ftrace
 
 `/sys/kernel/debug/tracing`目录下提供了ftrace的设置和属性接口，对`ftrace`的配置可以通过echo。了解每个文件的作用和如何设置对于理解整个`ftrace`框架很有作用
 
@@ -291,7 +340,7 @@ trace-cmd record -e irq
 trace-cmd report
 ```
 
-## 4.4 参考
+## 4.4 Reference
 
 * [Linux ftrace框架介绍及运用](https://www.cnblogs.com/arnoldlu/p/7211249.html)
 * [Ftrace Linux Kernel Tracing（论文）](https://events.static.linuxfound.org/slides/2010/linuxcon_japan/linuxcon_jp2010_rostedt.pdf)
@@ -389,12 +438,12 @@ crash /lib/debug/lib/modules/`uname -r`/vmlinux /var/crash/127.0.0.1-2021-07-24-
 gdb <binary> <core dump file>
 ```
 
-## 5.3 参考
+## 5.3 Reference
 
 * [比较 kdump makedumpfile 中的压缩方法](https://feichashao.com/compare_compression_method_of_makedumpfile/)
 * [使用CRASH分析LINUX内核崩溃转储文件VMCORE](https://www.freesion.com/article/1560535243/)
 
-# 6 内核源码浅析
+# 6 Source Code Analysis
 
 ## 6.1 syscall
 
@@ -402,7 +451,7 @@ gdb <binary> <core dump file>
 
 如何找到系统调用的定义：举个例子，对于系统调用`open`，它有3个参数，那么就全局搜索`SYSCALL_DEFINE3(open`；对于系统调用`openat`，它有4个参数，那么就全局搜索`SYSCALL_DEFINE4(openat`
 
-### 6.1.1 参考
+### 6.1.1 Reference
 
 * [linux 内核源码 系统调用宏定义](https://blog.csdn.net/yueyingshaqiu01/article/details/48786961)
 
@@ -527,7 +576,7 @@ net/ipv4/ip_input.c
     nf_hook_thresh
 ```
 
-### 6.2.3 参考
+### 6.2.3 Reference
 
 * [Linux 网络协议栈开发（五）—— 二层桥转发蓝图（上）](https://blog.csdn.net/zqixiao_09/article/details/79057169)
 * [计算机网络基础 — Linux 内核网络协议栈](https://www.cnblogs.com/jmilkfan-fanguiju/p/12789808.html)
@@ -542,11 +591,11 @@ net/ipv4/ip_input.c
 
 ## 6.3 file
 
-### 6.3.1 参考
+### 6.3.1 Reference
 
 [linux文件系统四 VFS数据读取vfs_read](https://blog.csdn.net/frank_zyp/article/details/88853932)
 
-# 7 杂项
+# 7 Assorted
 
 ## 7.1 哪里下载rpm包
 
