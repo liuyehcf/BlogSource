@@ -2760,8 +2760,10 @@ let $FZF_DEFAULT_OPTS = '--preview-window=up:20:wrap --bind ctrl-a:select-all'
 " 排除 :Ag 和 :Rg 搜索结果中仅匹配文件名的条目
 " https://github.com/junegunn/fzf.vim/issues/346
 " --smart-case 表示大小写不敏感，去掉该参数可以实现大小写敏感的匹配
+" g:rg_customized_options 允许添加一些自定义的参数，比如 --glob '!pattern' 排除某些搜索路径
+let g:rg_customized_options = ""
 command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
-command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
+command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".g:rg_customized_options." ".shellescape(<q-args>), 1, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
 
 call plug#end()
 ```
@@ -3348,8 +3350,10 @@ let $FZF_DEFAULT_OPTS = '--preview-window=up:20:wrap --bind ctrl-a:select-all'
 " 排除 :Ag 和 :Rg 搜索结果中仅匹配文件名的条目
 " https://github.com/junegunn/fzf.vim/issues/346
 " --smart-case 表示大小写不敏感，去掉该参数可以实现大小写敏感的匹配
+" g:rg_customized_options 允许添加一些自定义的参数，比如 --glob '!pattern' 排除某些搜索路径
+let g:rg_customized_options = ""
 command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
-command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
+command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".g:rg_customized_options." ".shellescape(<q-args>), 1, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
