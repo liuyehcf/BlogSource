@@ -1,3 +1,21 @@
+1. 衣服词汇; 马甲/背心：vest\nT恤：T-shirt\n衬衫：shirt\n毛衣：sweater\n夹克：jacket\n西服：suit\n羽绒服：down coat\n牛仔裤：jeans\n休闲裤：pants\n短裤：shorts\n内裤：briefs\n雨衣：raincoat\n浴衣：bathrobe\n睡衣：pajamas/pyjamas\n制服：uniform\n胸罩：bra\n短裙：skirt\n连衣裙：dress\n紧身裤：leggings\n男士内裤：underpants\n女士内裤：panties/knickers\n袜子：socks
+1. 度量衡词汇; 长度：length\n宽度：width\n高度：height\n深度：depth\n厚度：thickness\n海拔高度：altitude\n经度：longitude\n纬度：latitude\n速度：speed\n密度：density
+1. 自然景观词汇; 火山：volcano\n高原：plateau\n平原：plain\n草原：grassland\n沙漠：desert\n峡谷：valley\n极光：aurora\n沼泽/湿地：swamp\n冰川：glacier\n岛屿：island
+1. 受伤词汇; 割伤：cut\n刺伤：stab\n扭伤：sprain\n咬伤：bite\n冻伤：frostbite\n烧伤：burn\n烫伤：scald
+1. 咖啡词汇; 美式：Americano\n摩卡：Mocha\n拿铁：Latte\n意式浓缩：Espresso\n卡布奇诺：Cappuccino\n冷萃：cold brew\n玛奇朵：Macchiato\n大杯：grande
+1. things are looking up
+1. a cat person; 爱猫人士
+1. get over yourself; 别自以为是
+1. I'm a big fan os Chinese dramas
+1. 区域词汇; 国家：country\n州/省：state/province\n城市：city\n市辖区：district\n县/郡：county\n大道：avenue\n街道：street\n郊区：suburb\n镇：town\n乡村：village
+1. my hands are tied; 我无能为力\n
+1. 婚礼词汇; 求婚：proposal\n订婚：engagement\n新娘：bride\n新郎：groom\n伴郎：bestman\n伴娘：bridesmaid\n戒指：ring\n婚宴：wedding reception\n祝酒：toast\n婚纱：wedding dress
+1. 纸类词汇; 报纸：newspaper\n纸巾：tissue\n餐巾纸：napkin\n卫生纸：toilet paper\n湿纸巾：wipes\n纸尿裤：diaper\n草稿纸：scratch paper\n便利贴：post-it note\n图纸：drawings\n厨房卷纸：kitchen roll
+1. 量词词汇; 一片面包：a piece of bread\n一串香蕉/一束玫瑰：a bunch of bananas/a bounch of roses\n一粒米：a grain of rice\n一小撮盐：a pinch of salt\n一罐水果/一听饮料：a can of fruit/a can of cola\n一包河粉：a packet of rice noddles\n一片披萨：a slice of pizza\n\nPiece: This is a general term that can refer to any part or portion of something, regardless of its shape or size.\nSlice: This term specifically refers to a thin, flat piece that has been cut or sliced from something larger, usually with a sharp tool.
+1. 休假词汇; 法定假：statutory holiday\n年假：annual leave\n事假：personal leave\n病假：sick leave\n婚假：marriage leave\n产假：maternity leave\n陪产假：paternity leave\n调休：days off\n间歇：take a break\n丧假：bereavement lave
+1. 家具用品词汇; 被子：quilt\n床垫、褥子：mattress\n窗帘：curtain\n毛毯（盖身上的）：blanket\n枕头：pillow\n吊灯：chandelier\n台灯：table lamp\n手电筒：flashlight\n床头柜：nightstand/bedside table\n梳妆台：dressing table
+1. sorry, I misremembered
+1. I'm very directionally challenged
 1. don't look at me; stop looking at me; 别看着我\n别看着我了
 1. dismiss; discharge; dissolve; Dismiss: To send away; to give permission or an order to leave; to remove from consideration or service.\n\nDischarge: To release or allow to leave; to fulfill an obligation or perform a duty.\n\nDissolve: To officially end or terminate, especially in the context of formal relationships or legal entities.
 1. How does the user-space scheduler allocate resources among different resource groups?
@@ -5,7 +23,7 @@
 1. got it; copy that; well noted; 明白了，收到
 1. downwind; against the wind
 1. 人脸部位词汇; 额头：forehead\n眼皮：eyelid\n脸颊：cheek\n人中：philtrum\n嘴唇：lip; my lips are super dry and cracked\n下巴：chin\n耳垂：earlobe
-1. 疾病词汇; 感冒：cold\n发烧：fever\n咽痛：sore throat\n咳嗽：cough\n打喷嚏：sneeze\n头痛：headache\n肺炎：pneumonia\n失眠：insomnia\n腹泻：diarrhea\n恶心：nausea\n呕吐：vomit
+1. 疾病词汇; 呼吸系统疾病：respiratory illnesses\n感冒：cold\n发烧：fever\n咽痛：sore throat\n咳嗽：cough\n打喷嚏：sneeze\n头痛：headache\n肺炎：pneumonia\n失眠：insomnia\n腹泻：diarrhea\n恶心：nausea\n呕吐：vomit\n眩晕：dizziness\n乏力：fatigue
 1. I need to know what I stand to win
 1. 房屋词汇; 公寓：apartment/flat\n宿舍：dormitory\n别墅：villa\n官邸/大厦：mansion\n工作室：studio\n地下室：basement\n村舍：cottage\n平房：bungalow\n寺庙：temple\n城堡：castle
 1. I worked my ass off to get here
@@ -23,11 +41,11 @@
 1. 走路词汇; 散步：stroll\n漫无目的地逛：wander\n大步走：stride\n踮着脚走：tiptoe\n拖着脚走：shuffle\n一瘸一拐地走：hobble\n悄悄贴近：sidle\n跑步：run\n徒步：hike\n军队行进：march
 1. their products are streets ahead of their peers
 1. 餐厅词汇; 剩菜：leftovers\n打包盒：to go box\n筷子：chopsticks\n塑料勺：plastic spoon\n餐巾纸：napkins\n塑料袋：plastic bag
-1. 健身词汇; 俯卧撑：push-ups\n引体向上：pull-ups/chin-ups\n平板卧推：flat bench press\n上斜卧推：incline bench press\n深蹲：deep squat
+1. 健身词汇; 高强度运动：intense exercise; vigorous exercise; strenuous exercise; heavy exercise\n俯卧撑：push-ups\n引体向上：pull-ups/chin-ups\n平板卧推：flat bench press\n上斜卧推：incline bench press\n深蹲：deep squat\n举重：lift weights
 1. you've got a point there
 1. 职场词汇; 招聘：recruitment\n简历：resume\n面试：interview\n空缺岗位：vacancy\n职业规划：career plan\n早九晚五：nine-to-five\n薪资：salary\n福利：welfare\n升职：promotion\n裁员：lay off\n跳槽：job hopping\n加薪：I want a raise
 1. let's split the bill
-1. 排泄物词汇; 眼屎：sleepy dust\n耳屎：earwax\n鼻屎：snot\n痰：phlegm\n汗水：sweat\n头皮屑：dandruff
+1. 排泄物词汇; 眼屎：sleepy dust\n耳屎：earwax\n鼻涕：snot\n痰：phlegm\n汗水：sweat\n头皮屑：dandruff
 1. 汽车词汇; 驾驶座：driver\'s seat\n安全带：seatbelt\n方向盘：steering wheel\n喇叭：horn\n仪表盘：dashboard\n出风口：air vent\n变速杆：gearshift\n挡风玻璃：windscreen/windshield\n挡风玻璃雨刷：windscreen/windshield wipers\n侧视镜：side-view mirror\n后视镜：rearview mirror\n遮阳板：sun visor\n转向灯：indicator/turn signal\n刹车：brake\n油门：accelerator\n门把手：door handle\n轮胎：tire/tyre\n车牌：number plate/license plate
 1. my word is my bond; you have my words.
 1. in what universe are we the same?; 我们哪里一样了？\n
@@ -49,7 +67,7 @@
 1. Introduction to the Work Mode; We\'re a big team of around 50 database developers, split into maybe 5 groups, each focusing on areas like storage, query execution, cloud native, lake house, and SaaS. I\'m part of the query group.\n\nIn our group, here\'s how we roll: We usually iterate on a two-month cycle, and in each cycle, we will have one or two targets, like rolling out a new feature or improving performance or stability. And each member will get their own pieces. And if the topic is big enough, we will do some research and produce a research document for discussion, so we can all chat about it.\n\nAfter we\'ve tossed around some ideas, we get down to writing a design document. It\'s like our game plan, detailing how we\'re getting things done, and everyone gets to review it.\n\nFinally, we get to the fun part – coding. And of course, we make sure to review each other\'s code. It keeps things running smoothly and makes sure we\'re all on the same page.
 1. Introduce a member of your family; I\'d like to tell you about my father. He was born into a humble family as the youngest of five siblings, with four older sisters. Despite their financial struggles, his family was very loving and supportive, which gave him a happy childhood. He was a dedicated student and worked extremely hard to achieve his goals. Remarkably, he earned a bachelor\'s degree in chemical engineering, which was quite an achievement given his background. After graduating, he worked as a workshop manager for a state-owned company. It was a challenging time as corruption was widespread, but my father always maintained his integrity and never got involved in any corrupt practices, something that I deeply admire about him. Later on, the state-owned company went bankrupt, and he ventured into entrepreneurship and started a small business in metal chemical processing with around ten employees. In summary, his journey from a modest upbringing to becoming a successful business owner is truly inspiring. And he is always the one that I look up to.
 1. we are deeply sorry for this last-minute rescheduling
-1. 肉类词汇; 生鱼片：raw fish\n羊排：lamb chop\n鲍鱼：abalone\n蛤蜊：clam\n牡蛎（生蚝）：oyster
+1. 肉类词汇; 生鱼片：raw fish\n羊排：lamb chop\n鲍鱼：abalone\n蛤蜊：clam\n牡蛎（生蚝）：oyster\n鹅肝：goose liver\n火锅：hot pot
 1. stay warm; 注意保暖
 1. levy; tax; excise; Levy: This is a general term that refers to the legal process of imposing or collecting a tax, fee, or fine. A levy can be applied to a wide range of financial obligations, such as taxes, fees for services, or fines for legal violations. It\'s more about the action of imposing or collecting these charges.\n\nTax: A tax is a mandatory financial charge or some other type of levy imposed upon a taxpayer (an individual or a legal entity) by a governmental organization. Taxes are used to fund various public expenditures. Taxes can come in many forms, such as income tax, property tax, sales tax, etc. The term \"tax\" is more about the financial charge itself, rather than the act of imposing or collecting it.\n\nExcise: An excise is a specific type of tax that is levied on particular goods, services, or activities. This is often a form of indirect tax, meaning it is collected by an intermediary (like a store) from the person who bears the ultimate economic burden of the tax (such as the consumer). Excise taxes are commonly placed on items such as alcohol, tobacco, and fuel.\n\n
 1. play ground; sports ground; sports field
@@ -74,7 +92,7 @@
 1. 手部动作词汇; 扇：slap\n拳打：punch\n连续打：beat\n抓取：grab\n握住：hold\n举起：lift\n掉落：drop\n轻弹：flick\n轻拍：pat\n触摸：touch\n敲：knock\n戳：poke\n挠：scratch\n指：point\n推：push\n拉：pull\n轻轻摇晃：rock\n拥抱：cuddle
 1. 蔬菜词汇; 黄瓜：cucumber\n花椰菜：cauliflower\n四季豆：green beans\n洋葱：onion\n卷心菜：cabbage\n胡萝卜：carrot\n生菜：lettuce (crisp lettuce)\n辣椒：pepper\n西兰花：broccoli
 1. you're twisting my words
-1. 厨房词汇; 切片：slice the potato\n切丝：shred the potato\n切丁：dice the potato\n切段：cut the green onion\n剁：chop the green onion\n菜刀：I chop the green onion with my cleaver.\n
+1. 厨房词汇; 切片：slice the potato\n切丝：shred the potato\n切丁：dice the potato\n切段：cut the green onion\n剁：chop the green onion\n菜刀：kitchen knife. I chop the green onion with my kitchen knife.\n切肉刀：cleaver\n锅：pot\n炒锅：wok\n平底锅：pan\n炉子：stove\n切菜板：cutting board\n锅盖：lid\n汤勺：ladle\n烤箱：oven\n高压锅：pressure cooker\n
 1. 晾衣服词汇; 晾衣服：hang the laundry\n衣架：hanger\n抖一下衬衫：shake out the shirt\n衣服会皱的：the shirt is going to get wrinkled\n晾衣架：just hang it on the laundry rack\n晾衣夹：just clip it on the laundry pin like this\n
 1. sounds cheesy
 1. 机场词汇; 航站楼：terminal\n值机柜台：check-in counter\n登机牌：boarding pass\n商务舱：business class\n经济舱：economy class\n靠过道的座位：aisle seat\n国内航班：domestic flight\n安检：security check\n免税店：duty-free shop\n登机口：departure gate\n登记通知：boarding call\n延误：delay\n随身携带的行李：carry-on, carry-on luggage\n中转停留：layover\n颠簸：turbulence\n海关：customs\n货币兑换：currency exchange\n行李提取出：baggage claim
@@ -129,7 +147,6 @@
 1. it's not working; it's unfeasible
 1. dig into; dive into; drill down into; go into; look into
 1. the present law makes no provision for this; there's no legal basis
-1. intense exercise; vigorous exercise; strenuous exercise
 1. my foundation is quite solid
 1. clear the first round
 1. wage; salary; payment; compensation
@@ -1094,7 +1111,6 @@
 1. off-road vehicle rally
 1. crossfire
 1. seven day break from fighting would allow humanitarian groups to provide aid to civilians who are trapped by the clashes
-1. respiratory illnesses
 1. air quality alerts were issued in Montana and Colorado
 1. how did you get into this
 1. the judge hoped he would one day feel remorse
@@ -1850,7 +1866,6 @@
 1. you got stale
 1. I’ll make it through
 1. onward and upward
-1. I’m stressed out
 1. he had an attack in the morning
 1. issue memory operation
 1. P2 returns the value 1 (written by P1) for its read of A
@@ -2201,7 +2216,6 @@
 1. the patent runs out in three years time
 1. withdraw/retract
 1. desire/eager
-1. this man was accused of withholding crucial information from the police
 1. blur/blunt
 1. penicillin can be used to fight a wide range of infections
 1. I can't go to work today because my muscles are sore from too much exercise yesterday
@@ -2725,7 +2739,6 @@
 1. wheat was in surplus that year
 1. speed is of the essence in dealing with an emergency
 1. highly informative speech
-1. a massive collection of
 1. i through j is ascending
 1. transition from a theoretical model to an efficient implementation is not straightforward
 1. top journals
@@ -2736,7 +2749,6 @@
 1. long exposure to the sun may cause skin cancer
 1. the rebellion was brutally suppressed
 1. it is a great instance of divide and conquer approach to the problem
-1. spaced with the same stride
 1. resilience/reliance
 1. the intrinsic value of education is to maintain a nation's forward momentum
 1. tomb/comb/bomb
@@ -3260,7 +3272,6 @@
 1. ascertain
 1. methane
 1. famine
-1. pot
 1. pottery
 1. prehistoric times
 1. high academic standards
@@ -3351,7 +3362,6 @@
 1. pedestrian
 1. fragmentation
 1. habitat
-1. glacier
 1. feather
 1. coat of fur
 1. foraging behavior
@@ -3670,7 +3680,6 @@
 1. spoil
 1. vanish
 1. diminish
-1. skirt
 1. knucklebone
 1. hide-and-seek
 1. pop out
@@ -3756,7 +3765,6 @@
 1. beef
 1. never heard of it
 1. seasoner
-1. goose liver
 1. awesome
 1. dumpling
 1. logistics
@@ -3801,7 +3809,6 @@
 1. viable
 1. what good is this
 1. physically active
-1. see my friends
 1. regular food
 1. stressed syllable
 1. syllable
@@ -3815,7 +3822,6 @@
 1. boredom
 1. buffet
 1. sushi
-1. hot pot
 1. chips
 1. substantially
 1. mutual
@@ -3907,7 +3913,6 @@
 1. extensive
 1. analogous
 1. preliminary
-1. chandelier
 1. ceiling lamp
 1. synthetic data set
 1. insinuate
@@ -3957,7 +3962,6 @@
 1. obesity
 1. clearly defined muscles
 1. Press ups
-1. heavy exercise
 1. fatty food
 1. portion
 1. litres
