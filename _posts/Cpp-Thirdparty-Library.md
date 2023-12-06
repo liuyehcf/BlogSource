@@ -84,6 +84,7 @@ cd fmt
 mkdir build
 cd build
 
+cmake ..
 make -j 4
 make install
 ```
@@ -123,6 +124,7 @@ cd gflags
 mkdir build
 cd build
 
+cmake ..
 make -j 4
 make install
 ```
