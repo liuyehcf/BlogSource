@@ -200,7 +200,8 @@ Unicode Box Drawing character set, which includes a variety of horizontal, verti
 
 ### 3.2.4 Github Proxy
 
-[ghproxy](https://ghproxy.com/)
+* [GitHub Proxy](https://ghproxy.com/)
+* [GitMirror](https://gitmirror.com/)
 
 ## 3.3 Reference
 

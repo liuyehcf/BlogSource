@@ -84,6 +84,8 @@
     * [llvm-doc](https://llvm.org/docs/)
     * [2008-10-04-ACAT-LLVM-Intro.pdf](https://llvm.org/pubs/2008-10-04-ACAT-LLVM-Intro.pdf)
     * [My First Language Frontend with LLVM Tutorial](https://llvm.org/docs/tutorial/MyFirstLanguageFrontend/index.html)
+1. k8s
+    * kubectl -n byconity port-forward service/byconity-server 9000:9000
 1. 其他
     * [Is Raft more modular than MultiPaxos?](https://maheshba.bitbucket.io/blog/2021/12/14/Modularity.html)
     * 内存分配，伙伴算法
