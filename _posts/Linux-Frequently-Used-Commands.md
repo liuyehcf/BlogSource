@@ -192,6 +192,8 @@ usermod -d <new_dir> <username>
 * `usermod -s /bin/zsh admin`：修改指定账号的默认shell
 * `usermod -d /opt/home/admin admin`：修改指定账号的用户目录
     * 注意，新的路径最后不要加`/`，例如，不要写成`/opt/home/admin/`，这样会导致`zsh`无法将用户目录替换成`~`符号，这样命令行提示符中的路径就会是绝对路径，而不是`~`了
+* `sudo usermod -aG docker username`：给指定用户增加用户组，要重新登录才能生效
+    * `groups username`：查看用户组
 
 ## 1.16 chown
 

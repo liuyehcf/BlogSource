@@ -11,7 +11,16 @@ categories:
 
 <!--more-->
 
-# 1 Settings
+# 1 Development Env
+
+[ByConity development environment](https://byconity.github.io/docs/quick-start/set-up-byconity-dev-env)
+
+# 2 Deployment
+
+* [Deploy ByConity in Kubernetes](https://byconity.github.io/docs/deployment/deploy-k8s)
+* [Package Deployment](https://byconity.github.io/docs/deployment/package-deployment)
+
+# 3 Settings
 
 ```sql
 SELECT * FROM system.settings;
