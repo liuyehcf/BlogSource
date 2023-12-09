@@ -558,6 +558,77 @@ public class Solution {
 }
 ```
 
+## 11.1 Top K Pair Sums from Two Sorted Arrays
+
+Given two sorted arrays, A and B, create a new array C which contains the sum of each possible pair of elements, one from A and one from B. Your task is to find the top K largest sums in the array C.
+
+* Arrays A and B are sorted in ascending order.
+* The size of arrays A and B may differ.
+* Array C should consist of sums of pairs formed by taking one element from A and another from B.
+* You need to find and return the K largest sums in C.
+
+```cpp
+#include <iostream>
+#include <queue>
+#include <unordered_set>
+#include <vector>
+
+std::vector<std::pair<int, int>> k_largest_pairs(std::vector<int>& nums1, std::vector<int>& nums2, int k) {
+    std::vector<std::pair<int, int>> top_k;
+    if (nums1.empty() || nums2.empty() || k <= 0) return top_k;
+
+    auto comp = [&nums1, &nums2](const std::pair<int, int>& p1, const std::pair<int, int>& p2) {
+        return nums1[p1.first] + nums2[p1.second] < nums1[p2.first] + nums2[p2.second];
+    };
+
+    struct hash {
+        inline std::size_t operator()(const std::pair<int, int>& p) const {
+            return std::hash<int>()(p.first) ^ std::hash<int>()(p.second);
+        }
+    };
+
+    std::priority_queue<std::pair<int, int>, std::vector<std::pair<int, int>>, decltype(comp)> max_heap(comp);
+    std::unordered_set<std::pair<int, int>, hash> visited;
+
+    max_heap.push({nums1.size() - 1, nums2.size() - 1});
+    visited.insert({nums1.size() - 1, nums2.size() - 1});
+
+    while (!max_heap.empty() && k-- > 0) {
+        auto [i, j] = max_heap.top();
+        max_heap.pop();
+
+        top_k.emplace_back(nums1[i], nums2[j]);
+
+        if (i > 0 && !visited.count({i - 1, j})) {
+            max_heap.push({i - 1, j});
+            visited.insert({i - 1, j});
+        }
+
+        if (j > 0 && !visited.count({i, j - 1})) {
+            max_heap.push({i, j - 1});
+            visited.insert({i, j - 1});
+        }
+    }
+
+    return top_k;
+}
+
+int main() {
+    std::vector<int> nums1 = {1, 2, 4, 5};
+    std::vector<int> nums2 = {2, 3, 6};
+    int k = 5;
+
+    auto topk = k_largest_pairs(nums1, nums2, k);
+
+    for (auto& p : topk) {
+        std::cout << "(" << p.first << ", " << p.second << ") ";
+    }
+    std::cout << std::endl;
+
+    return 0;
+}
+```
+
 <!--
 
 # 12 Question-000[★]
