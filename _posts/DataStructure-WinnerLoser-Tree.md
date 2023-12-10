@@ -18,8 +18,8 @@ A Winner Loser Tree is a specialized data structure that is typically used in so
 * And we need to record the final "winner" additionally (outside of the tree).
 
 ```cpp
+#include <algorithm>
 #include <iostream>
-#include <iterator>
 #include <limits>
 #include <random>
 #include <vector>
@@ -63,7 +63,7 @@ private:
 
 public:
     WinnerLoserTree(const std::vector<int32_t>& nums)
-            : _size(nums.size()), _lower_tree(_size, _size), _leaves(nums), _winner(_size) {}
+            : _cmp({}), _size(nums.size()), _leaves(nums), _lower_tree(_size, _size), _winner(_size) {}
 
     void build() {
         for (int32_t i = _size - 1; i >= 0; i--) {
