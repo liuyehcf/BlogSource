@@ -547,6 +547,7 @@ auto now_nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(
 
 # 7 functional
 
+1. `std::less`, `std::greater`, `std::less_equal`, `std::greater_equal`: Comparator
 1. `std::function`：其功能类似于函数指针，在需要函数指针的地方，可以传入`std::function`类型的对象（不是指针）
 1. `std::bind`
 1. `std::hash`: Function object, use it like this `std::hash<int>()(5)`
