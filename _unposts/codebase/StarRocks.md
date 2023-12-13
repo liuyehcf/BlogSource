@@ -291,18 +291,37 @@ In summary, `update` is used to update intermediate results for an aggregate fun
          +--------------+------------+
          |        JoinHashTable      |
          +---------------------------+
+           |                       |
+           v                       v
+         +--------------+------------+
+         |         JoinHashMap       |
+         +---------------------------+         
 ```
+
+**Key Observations:**
+
+* The key metric to the performance is the cache miss.
+
+### 2.4.1 Build
+
+* **`push_chunk`**: Save output columns and prepare build key columns.
+* **`set_finishing`**: Build hash table.
+
+### 2.4.2 Probe
+
+* **`push_chunk`**: Prepare probe key columns.
+* **`pull_chunk`**: Probe hash table of the current chunk.
 
 ## 2.5 WindowFunction
 
-* `Window Function`
-    * `be/src/exprs/agg/window.h`
-    * Frame
-        * Unbounded window
-        * Half unbounded window
-            * Materialized processing
-            * Streaming processing
-        * Sliding window
+* `be/src/exprs/agg/window.h`
+* Frame
+    * Unbounded window
+    * Half unbounded window
+    * Sliding window
+* Process
+    * Materialized processing
+    * Streaming processing
 
 ## 2.6 RuntimeFilter
 

@@ -67,6 +67,8 @@
     * retention analysis
     * funnel analysis
     * sql skew 优化技巧
+    * shuffle optimization
+        * [A fast alternative to the modulo reduction](https://lemire.me/blog/2016/06/27/a-fast-alternative-to-the-modulo-reduction/)
 1. 体系结构
     * numa
 1. nodejs
