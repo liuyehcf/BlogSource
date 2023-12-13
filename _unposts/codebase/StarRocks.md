@@ -298,19 +298,45 @@ In summary, `update` is used to update intermediate results for an aggregate fun
          +---------------------------+         
 ```
 
+* `be/src/exec/hash_joiner.{h, cpp}`: HashJoiner
+* `be/src/exec/hash_join_components.{h, cpp}`: HashJoinBuilder, HashJoinProber
+* `be/src/exec/join_hash_map.{h, tpp, cpp}`: JoinHashTable, JoinHashMap, JoinHashTableItems, HashTableProbeState
+
 **Key Observations:**
 
 * The key metric to the performance is the cache miss.
 
-### 2.4.1 Build
+### 2.4.1 Data Structure
+
+The hash table is organized as an array, each element store the first index of the linked list
+
+`JoinHashTableItems`
+
+* `first`: `first[to_bucket(hash_value)]` can get the first row index of the linked list that share the same bucket.
+    * The size of first is the number of buckets, which is the smallest power of 2 that is greater than or equal to the size of the build-side data.
+* `next`: `next[row_index]` can get the next row index of the linked list that share the same bucket. `0` means reaching the end of the list.
+    * The size of `next` equals to the size of the build side data.
+
+`HashTableProbeState`
+
+* `buckets`
+* `build_index`
+* `probe_index`
+* `next`
+* `has_remain`: One probe-side chunk may output multiply chunks (multiply hits for one row), so the flag is used to indicate that the current probe chunk need to be processed again next time.
+
+### 2.4.2 Build
 
 * **`push_chunk`**: Save output columns and prepare build key columns.
 * **`set_finishing`**: Build hash table.
 
-### 2.4.2 Probe
+### 2.4.3 Probe
 
 * **`push_chunk`**: Prepare probe key columns.
 * **`pull_chunk`**: Probe hash table of the current chunk.
+    * `JoinHashTable::probe`
+        * `JoinHashMap::probe`
+            * `JoinHashMap::_search_ht`: Search for hit
 
 ## 2.5 WindowFunction
 

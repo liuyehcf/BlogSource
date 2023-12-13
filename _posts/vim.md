@@ -839,7 +839,6 @@ swapon swapfile
 git clone -b release/13.x https://github.com/llvm/llvm-project.git --depth 1
 cd llvm-project
 mkdir build
-cd build
 # DLLVM_ENABLE_PROJECTS: 选择 clang 以及 clang-tools-extra 这两个子项目
 # DCMAKE_BUILD_TYPE: 构建类型指定为MinSizeRel。可选值有 Debug, Release, RelWithDebInfo, and MinSizeRel。其中 Debug 是默认值
 cmake -B build -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
