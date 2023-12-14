@@ -5270,6 +5270,16 @@ int main() {
 }
 ```
 
+## 11.7 Variable-length Array
+
+Variable-length array (VLA), which is a feature not supported by standard C++. However, some compilers, particularly in C and as extensions in C++, do provide support for VLAs.
+
+```cpp
+void func(size_t size) {
+    int array[size];
+}
+```
+
 # 12 FAQ
 
 ## 12.1 Why is it unnecessary to specify the size when releasing memory with free and delete

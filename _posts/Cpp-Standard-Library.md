@@ -527,21 +527,74 @@ auto now_nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(
 
 # 6 fstream
 
-1. `std::ifstream`
-    ```cpp
-    #include <fstream>
-    #include <iostream>
-    #include <sstream>
+## 6.1 std::ifstream
 
-    int main() {
-        std::ifstream ifs("main.cpp");
-        std::stringstream ss;
-        ss << ifs.rdbuf();
-        std::cout << ss.str() << std::endl;
-        ifs.close();
-        return 0;
+**Case 1: Read entire content at one time.**
+
+```cpp
+#include <fstream>
+#include <iostream>
+#include <sstream>
+
+int main() {
+    std::ifstream ifs("main.cpp");
+    std::stringstream ss;
+    // Read entire content
+    ss << ifs.rdbuf();
+    std::cout << ss.str() << std::endl;
+    ifs.close();
+    return 0;
+}
+```
+
+**Case 2: Read line.**
+
+```cpp
+#include <fstream>
+#include <iostream>
+#include <string>
+
+int main() {
+    std::ifstream file("main.cpp");
+    if (!file.is_open()) {
+        std::cerr << "Error opening file" << std::endl;
+        return 1;
     }
-    ```
+
+    std::string line;
+    while (std::getline(file, line)) {
+        std::cout << line << std::endl;
+    }
+
+    file.close();
+    return 0;
+}
+```
+
+**Case 3: Read content separated by a specific delimiter.**
+
+```cpp
+#include <fstream>
+#include <iostream>
+#include <string>
+
+int main() {
+    std::ifstream file("main.cpp");
+    if (!file.is_open()) {
+        std::cerr << "Error opening file" << std::endl;
+        return 1;
+    }
+
+    std::string line;
+    const char delimiter = ' ';
+    while (std::getline(file, line, delimiter)) {
+        std::cout << line << std::endl;
+    }
+
+    file.close();
+    return 0;
+}
+```
 
 1. `std::ofstream`
 
@@ -1075,11 +1128,18 @@ int main() {
     f.~Foo() called normally
     ```
 
+## 21.1 sstring
+
+1. `std::stringstream`
+1. `std::istringstream`: Use this and `std::getline` to achieve the function of spliting a string
+1. `std::ostringstream`
+
 # 22 string
 
 1. `std::string`
 1. `std::to_string`
-1. `std::string::npos`：作为函数`std::string::find`找不到匹配内容时的返回值
+1. `std::string::npos`: This is a special value equal to the maximum value representable by the type size_type.
+1. `std::getline`: getline reads characters from an input stream and places them into a string.
 
 # 23 thread
 
