@@ -420,6 +420,68 @@ public class HeapSort {
 }
 ```
 
+## 4.1 TopK
+
+```cpp
+#include <algorithm>
+#include <functional>
+#include <iostream>
+#include <list>
+#include <queue>
+#include <random>
+
+std::vector<int32_t> top_k(const std::vector<int32_t>& nums, size_t k) {
+    std::priority_queue<int32_t, std::vector<int32_t>, std::greater<int32_t>> min_queue;
+    for (auto num : nums) {
+        if (min_queue.size() < k) {
+            min_queue.push(num);
+        } else if (num > min_queue.top()) {
+            min_queue.pop();
+            min_queue.push(num);
+        }
+    }
+    std::list<int32_t> res;
+    while (!min_queue.empty()) {
+        res.insert(res.begin(), min_queue.top());
+        min_queue.pop();
+    }
+
+    return {res.begin(), res.end()};
+}
+
+int main() {
+    size_t test_times = 100;
+    std::default_random_engine e;
+    std::uniform_int_distribution<size_t> u_k(1, 20);
+    std::uniform_int_distribution<size_t> u_size(1, 50);
+    std::uniform_int_distribution<int32_t> u_num(1, 10000);
+
+    for (size_t i = 0; i < test_times; ++i) {
+        const size_t k = u_k(e);
+        const size_t size = u_size(e);
+        std::cout << "test_time=" << i << ", k=" << k << ", size=" << size << std::endl;
+        std::vector<int32_t> nums;
+        for (size_t j = 0; j < size; ++j) {
+            nums.push_back(u_num(e));
+        }
+
+        std::vector<int32_t> res = top_k(nums, k);
+        std::sort(nums.begin(), nums.end(), std::greater<int32_t>());
+        if (k < size) {
+            nums = std::vector<int32_t>(nums.begin(), nums.begin() + k);
+        }
+
+        for (size_t j = 0; j < res.size(); ++j) {
+            if (res[j] != nums[j]) {
+                std::cerr << "wrong result" << std::endl;
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+```
+
 # 5 Quick Sort
 
 ## 5.1 2-way Quick Sort
