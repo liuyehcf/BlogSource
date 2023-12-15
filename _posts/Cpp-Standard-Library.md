@@ -1015,6 +1015,15 @@ int main() {
 
 ## 17.1 std::priority_queue
 
+`std::priority_queue` in C++ Standard Template Library (STL) is a container adapter that provides functionality to maintain a collection of elements sorted by priority. It is typically implemented as a max-heap, meaning the largest element is always at the front of the queue. There are three template parameters in `std::priority_queue`, each serving a specific purpose:
+
+* **First Template Parameter - `T`:**
+    * This represents the type of elements stored in the priority queue. For example, if you want a priority queue that stores integers, you would use `std::priority_queue<int>`.
+* **Second Template Parameter - `Container`:**
+    * This specifies the type of the underlying container used to store the elements of the queue. By default, `std::priority_queue` uses `std::vector` as its underlying container, but you can use other container types like `std::deque`. The chosen container must support `front()`, `push_back()`, and `pop_back()` operations.
+* **Third Template Parameter - `Compare`:**
+    * This is a comparison function object that determines the order of priority of the elements. By default, `std::priority_queue` uses `std::less<T>`, meaning that larger elements are considered to have higher priority. If you want a min-heap (where the smallest element is at the front), you can use `std::greater<T>` as this parameter.
+
 ```cpp
 #include <iostream>
 #include <queue>
