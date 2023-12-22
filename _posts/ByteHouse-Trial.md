@@ -44,12 +44,14 @@ For all nodes:
 
 ```sh
 WORKING_DIR="/root"
+IP_ADDRESS="<your ip address>"
+
 mkdir -p ${WORKING_DIR}/fdb_runtime/config
 mkdir -p ${WORKING_DIR}/fdb_runtime/data
 mkdir -p ${WORKING_DIR}/fdb_runtime/logs
 mkdir -p ${WORKING_DIR}/foundationdb/bin
 
-cp fdbcli fdbmonitor fdbserver ${WORKING_DIR}/foundationdb/bin
+\cp -f fdbcli fdbmonitor fdbserver ${WORKING_DIR}/foundationdb/bin
 
 cat > ${WORKING_DIR}/fdb_runtime/config/foundationdb.conf << EOF
 [fdbmonitor]
@@ -62,9 +64,9 @@ restart-delay = 60
 [fdbserver]
 
 command = ${WORKING_DIR}/foundationdb/bin/fdbserver
-datadir = ${WORKING_DIR}/fdb_runtime/data/$ID
+datadir = ${WORKING_DIR}/fdb_runtime/data/\$ID
 logdir = ${WORKING_DIR}/fdb_runtime/logs/
-public-address = auto:$ID
+public-address = auto:\$ID
 listen-address = public
 
 [fdbserver.4500]
@@ -77,7 +79,6 @@ class=storage
 class=stateless
 EOF
 
-IP_ADDRESS="<your ip address>"
 cat > ${WORKING_DIR}/fdb_runtime/config/fdb.cluster << EOF
 clusterdsc:test@${IP_ADDRESS}:4500
 EOF
@@ -96,7 +97,7 @@ ExecStart=${WORKING_DIR}/foundationdb/bin/fdbmonitor --conffile ${WORKING_DIR}/f
 WantedBy=multi-user.target
 EOF
 
-cp ${WORKING_DIR}/fdb_runtime/config/fdb.service /etc/systemd/system/
+\cp -f ${WORKING_DIR}/fdb_runtime/config/fdb.service /etc/systemd/system/
 systemctl daemon-reload
 systemctl enable fdb.service
 systemctl start fdb.service
@@ -109,8 +110,33 @@ For first node:
 ${WORKING_DIR}/foundationdb/bin/fdbcli -C ${WORKING_DIR}/fdb_runtime/config/fdb.cluster
 
 fdb> configure new single ssd
+Database created
 
 fdb> coordinators <node_1_ip_address>:4500 <node_2_ip_address>:4500 <node_3_ip_address>:4500
+Coordination state changed
+```
+
+Then copy file `${WORKING_DIR}/fdb_runtime/config/fdb.cluster` to the other nodes, and then executes `systemctl restart fdb.service` in all nodes
+
+For first node:
+
+```sh
+${WORKING_DIR}/foundationdb/bin/fdbcli -C ${WORKING_DIR}/fdb_runtime/config/fdb.cluster
+
+fdb> configure double
+Configuration changed
+
+fdb> status
+
+Using cluster file `/home/disk1/byconity/fdb_runtime/config/fdb.cluster'.
+
+Unable to retrieve all status information.
+
+Configuration:
+  Redundancy mode        - double
+  Storage engine         - ssd-2
+  Coordinators           - 3
+  Usable Regions         - 1
 ```
 
 # 3 Load
