@@ -17,12 +17,19 @@ categories:
 
 # 2 Deployment
 
-* [Deploy ByConity in Kubernetes](https://byconity.github.io/docs/deployment/deploy-k8s)
-* [Package Deployment](https://byconity.github.io/docs/deployment/package-deployment)
+## 2.1 k8s
+
+[Deploy ByConity in Kubernetes](https://byconity.github.io/docs/deployment/deploy-k8s)
+
+## 2.2 bare metal
+
+[Package Deployment](https://byconity.github.io/docs/deployment/package-deployment)
 
 # 3 Load
 
 ## 3.1 TPC-DS
+
+[byconity-tpcds](https://github.com/ByConity/byconity-tpcds/blob/main/README.md)
 
 ```sql
 CREATE TABLE customer_address
@@ -547,8 +554,18 @@ CREATE TABLE store_sales
 ) ENGINE = CnchMergeTree() ORDER BY (ss_item_sk, ss_ticket_number) SETTINGS enable_nullable_sorting_key=1;
 ```
 
-# 4 Settings
+# 4 System
+
+## 4.1 Settings
 
 ```sql
 SELECT * FROM system.settings;
+```
+
+## 4.2 Work Group
+
+```sql
+SELECT * FROM system.workers;
+SELECT * FROM system.worker_groups;
+SELECT * FROM system.virtual_warehouses;
 ```

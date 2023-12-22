@@ -1,29 +1,40 @@
-1. 衣服词汇; 马甲/背心：vest\nT恤：T-shirt\n衬衫：shirt\n毛衣：sweater\n夹克：jacket\n西服：suit\n羽绒服：down coat\n牛仔裤：jeans\n休闲裤：pants\n短裤：shorts\n内裤：briefs\n雨衣：raincoat\n浴衣：bathrobe\n睡衣：pajamas/pyjamas\n制服：uniform\n胸罩：bra\n短裙：skirt\n连衣裙：dress\n紧身裤：leggings\n男士内裤：underpants\n女士内裤：panties/knickers\n袜子：socks
-1. 度量衡词汇; 长度：length\n宽度：width\n高度：height\n深度：depth\n厚度：thickness\n海拔高度：altitude\n经度：longitude\n纬度：latitude\n速度：speed\n密度：density
+1. 家用工具词汇; 锯子：saw\n斧头：ax/axe\n锤子：hammer\n老虎钳：pliers\n螺丝刀：screwdriver\n螺丝钉：screw\n扳手：wrench\n螺栓：bolt\n螺母/螺帽：nut\n滚筒（刷墙用的）：roller\n大剪子：shears\n剪刀：scissors\n耳勺：ear spoon\n夹子：clip\n指甲钳：nail clippers\n电钻：electric drill\n卷尺：tape measure\n磅秤：scales\n胶布：adhesive tape\n小铲子：trowel\n大铲子/锹：spade\n锄头：hoe\n耙子：rake\n梯子：ladder\n割草机：mower\n
+1. 发型词汇; 平头：crew cut\n中分：centre parting\n边分：side parting\n马尾：pony tail\n辫子：braid/braids\n发髻型：bun\n卷发：curly hair\n长直发：long straight hair\n大波浪：wave\n爆炸头：afro
+1. 罪名词汇; 性骚扰：sexual harassment\n网络犯罪：cyber crime\n
+1. 家务词汇; 扫地：sweep the floor\n擦地：scrub the floor\n拖地：mop the floor\n擦窗：clean the windows\n洗车：wash the car\n洗衣服：do the laundry\n晒衣服：hang clothes\n熨衣服：iron clothes\n叠衣服：fold clothes\n换床单：change the sheet\n给桌子除尘：dust the desk\n吸地面：vacuum the floor
+1. 证件词汇; 身份证：identity card\n驾驶证：driving license\n学会证：student pass\n毕业证：diploma\n工作证：employee\'s card\n健康证：helath certificate\n结婚证：marriage license\n护照：passport\n签证：visa\n绿卡：green card
+1. 家用电器词汇; 洗衣机：washing machine\n空调：air conditioner\n饮水机：water dispenser\n电风扇：fan\n熨斗：iron
+1. 水果词汇; 李子：plum\n柠檬：lemon\n荔枝：litchi\n桂圆：longan\n芒果：mango\n樱桃：cherry\n菠萝：pineapple\n柚子：pomelo\n草莓：strawberry\n黑莓：blackberry\n蓝莓：blueberry\n西瓜：watermelon\n橙子：orange\n桑葚：mulberry\n香蕉：banana\n胡桃：walnut\n榴莲：durian\n枇杷：loquat\n无花果：fig
+1. the cheese is moldy
+1. travel debacle
+1. I stand by my choices
+1. I'm not just saying this; I\'m serious about what I\'m saying
+1. I'm a big fan of Chinese dramas; TV series
+1. 衣服词汇; 马甲/背心：vest\nT恤：T-shirt\n衬衫：shirt\n长袖：long sleeves\n毛衣：sweater\n夹克：jacket\n西服：suit\n羽绒服：down coat\n牛仔裤：jeans\n休闲裤：pants\n短裤：shorts\n内裤：briefs\n雨衣：raincoat\n浴衣：bathrobe\n睡衣：pajamas/pyjamas\n制服：uniform\n胸罩：bra\n短裙：skirt\n连衣裙：dress\n紧身裤：leggings\n男士内裤：underpants\n女士内裤：panties/knickers\n袜子：socks\n尺码：small/medium/large/extra large/extra extra large
+1. 度量衡词汇; 长度：length\n宽度：width\n高度：height\n深度：depth\n厚度：thickness\n海拔高度：altitude\n经度：longitude\n纬度：latitude\n速度：speed\n密度：density\n胸围：bust\n腰围：waist\n臀围：hip\n血型：blood type
 1. 自然景观词汇; 火山：volcano\n高原：plateau\n平原：plain\n草原：grassland\n沙漠：desert\n峡谷：valley\n极光：aurora\n沼泽/湿地：swamp\n冰川：glacier\n岛屿：island
 1. 受伤词汇; 割伤：cut\n刺伤：stab\n扭伤：sprain\n咬伤：bite\n冻伤：frostbite\n烧伤：burn\n烫伤：scald
 1. 咖啡词汇; 美式：Americano\n摩卡：Mocha\n拿铁：Latte\n意式浓缩：Espresso\n卡布奇诺：Cappuccino\n冷萃：cold brew\n玛奇朵：Macchiato\n大杯：grande
 1. things are looking up
 1. a cat person; 爱猫人士
 1. get over yourself; 别自以为是
-1. I'm a big fan os Chinese dramas
 1. 区域词汇; 国家：country\n州/省：state/province\n城市：city\n市辖区：district\n县/郡：county\n大道：avenue\n街道：street\n郊区：suburb\n镇：town\n乡村：village
 1. my hands are tied; 我无能为力\n
-1. 婚礼词汇; 求婚：proposal\n订婚：engagement\n新娘：bride\n新郎：groom\n伴郎：bestman\n伴娘：bridesmaid\n戒指：ring\n婚宴：wedding reception\n祝酒：toast\n婚纱：wedding dress
+1. 婚礼词汇; 求婚：proposal\n订婚：engagement\n新娘：bride\n新郎：groom\n伴郎：bestman\n伴娘：bridesmaid\n戒指：ring\n婚宴：wedding reception/wedding feast\n祝酒：toast\n婚纱：wedding dress
 1. 纸类词汇; 报纸：newspaper\n纸巾：tissue\n餐巾纸：napkin\n卫生纸：toilet paper\n湿纸巾：wipes\n纸尿裤：diaper\n草稿纸：scratch paper\n便利贴：post-it note\n图纸：drawings\n厨房卷纸：kitchen roll
-1. 量词词汇; 一片面包：a piece of bread\n一串香蕉/一束玫瑰：a bunch of bananas/a bounch of roses\n一粒米：a grain of rice\n一小撮盐：a pinch of salt\n一罐水果/一听饮料：a can of fruit/a can of cola\n一包河粉：a packet of rice noddles\n一片披萨：a slice of pizza\n\nPiece: This is a general term that can refer to any part or portion of something, regardless of its shape or size.\nSlice: This term specifically refers to a thin, flat piece that has been cut or sliced from something larger, usually with a sharp tool.
+1. 量词词汇; 一片面包：a piece of bread\n一串香蕉/一束玫瑰：a bunch of bananas/a bounch of roses\n一粒米：a grain of rice\n一小撮盐：a pinch of salt\n一罐水果/一听饮料：a can of fruit/a can of cola\n一包河粉：a packet of rice noddles\n一片披萨：a slice of pizza\n一勺：a spoon of\n一条/块：a loaf of\n一碗：a bowl of\n一瓶：a bottle of\n一双：a pair of shoes\n一堆：a pile of laundary\n一串：a string of\n一群：a group/crowd of\n一张纸：a blank sheet of paper\n一盒苹果汁：a carton of apple juice\n\nPiece: This is a general term that can refer to any part or portion of something, regardless of its shape or size.\nSlice: This term specifically refers to a thin, flat piece that has been cut or sliced from something larger, usually with a sharp tool.
 1. 休假词汇; 法定假：statutory holiday\n年假：annual leave\n事假：personal leave\n病假：sick leave\n婚假：marriage leave\n产假：maternity leave\n陪产假：paternity leave\n调休：days off\n间歇：take a break\n丧假：bereavement lave
-1. 家具用品词汇; 被子：quilt\n床垫、褥子：mattress\n窗帘：curtain\n毛毯（盖身上的）：blanket\n枕头：pillow\n吊灯：chandelier\n台灯：table lamp\n手电筒：flashlight\n床头柜：nightstand/bedside table\n梳妆台：dressing table
+1. 家具用品词汇; 被子：quilt\n床垫、褥子：mattress\n床单：sheet\n窗帘：curtain\n毛毯（盖身上的）：blanket\n坐垫：cushion\n地毯：carpet\n枕头：pillow\n吊灯：chandelier\n台灯：table lamp\n手电筒：flashlight\n床头柜：nightstand/bedside table\n梳妆台：dressing table\n雨伞：umbrella\n浴巾：bath towel\n花洒：shower head\n马桶：closestool
 1. sorry, I misremembered
 1. I'm very directionally challenged
 1. don't look at me; stop looking at me; 别看着我\n别看着我了
-1. dismiss; discharge; dissolve; Dismiss: To send away; to give permission or an order to leave; to remove from consideration or service.\n\nDischarge: To release or allow to leave; to fulfill an obligation or perform a duty.\n\nDissolve: To officially end or terminate, especially in the context of formal relationships or legal entities.
+1. dismiss; discharge; dissolve; Dismiss: To send away; to give permission or an order to leave; to remove from consideration or service.\nThe case is dismissed.\n\nDischarge: To release or allow to leave; to fulfill an obligation or perform a duty.\n\nDissolve: To officially end or terminate, especially in the context of formal relationships or legal entities.
 1. How does the user-space scheduler allocate resources among different resource groups?
 1. What are the advantages of column-wise storage and execution?; * Efficient Data Compression.\n* Improved Query Performance, including better cache locality and vectorization instructions.\n* Improved Analytical Performance with Columnar Indexes.
 1. got it; copy that; well noted; 明白了，收到
 1. downwind; against the wind
 1. 人脸部位词汇; 额头：forehead\n眼皮：eyelid\n脸颊：cheek\n人中：philtrum\n嘴唇：lip; my lips are super dry and cracked\n下巴：chin\n耳垂：earlobe
-1. 疾病词汇; 呼吸系统疾病：respiratory illnesses\n感冒：cold\n发烧：fever\n咽痛：sore throat\n咳嗽：cough\n打喷嚏：sneeze\n头痛：headache\n肺炎：pneumonia\n失眠：insomnia\n腹泻：diarrhea\n恶心：nausea\n呕吐：vomit\n眩晕：dizziness\n乏力：fatigue
+1. 疾病词汇; 呼吸系统疾病：respiratory illnesses\n遗传病：hereditary diseases/inherited genetic diseases\n血管疾病：vascular conditions\n感冒：cold\n发烧：fever\n咽痛：sore throat\n咳嗽：cough\n打喷嚏：sneeze\n头痛：headache\n肺炎：pneumonia\n失眠：insomnia\n腹泻：diarrhea\n恶心：nausea\n呕吐：vomit\n眩晕：dizziness\n乏力：fatigue\n哮喘：asthma attack
 1. I need to know what I stand to win
 1. 房屋词汇; 公寓：apartment/flat\n宿舍：dormitory\n别墅：villa\n官邸/大厦：mansion\n工作室：studio\n地下室：basement\n村舍：cottage\n平房：bungalow\n寺庙：temple\n城堡：castle
 1. I worked my ass off to get here
@@ -32,7 +43,7 @@
 1. where are you hurt; where does it hurt; what did you bump into
 1. why the long face; 为什么闷闷不乐？\n
 1. I appreciate the effort
-1. 器官词汇; 大脑：brain\n肺部：lungs\n气管：trachea\n血管：blood vessel\n心脏：heart\n肝脏：liver\n肾脏：kidney\n胃部：stomach\n脾脏：spleen\n膀胱：bladder\n肠道：intestines
+1. 器官词汇; 大脑：brain\n肺部：lungs\n气管：trachea\n血管：blood vessel\n心脏：heart\n肝脏：liver\n肾脏：kidney\n胃部：stomach\n脾脏：spleen\n胰腺：pancreas\n膀胱：bladder\n肠道：intestines
 1. level with me; 实话跟我说吧
 1. rat race
 1. 鸡蛋牛排词汇; 炒蛋：scrambled\n太阳蛋：sunny-side-up\n双面煎半熟：over easy\n双面煎全熟：over hard\n去壳水煮：poached\n水煮半熟：soft boiled\n水煮全熟：hard boiled\n一分熟：rare\n三分熟：medium rare\n五分熟：medium\n七分熟：medium well\n全熟：well done
@@ -43,7 +54,7 @@
 1. 餐厅词汇; 剩菜：leftovers\n打包盒：to go box\n筷子：chopsticks\n塑料勺：plastic spoon\n餐巾纸：napkins\n塑料袋：plastic bag
 1. 健身词汇; 高强度运动：intense exercise; vigorous exercise; strenuous exercise; heavy exercise\n俯卧撑：push-ups\n引体向上：pull-ups/chin-ups\n平板卧推：flat bench press\n上斜卧推：incline bench press\n深蹲：deep squat\n举重：lift weights
 1. you've got a point there
-1. 职场词汇; 招聘：recruitment\n简历：resume\n面试：interview\n空缺岗位：vacancy\n职业规划：career plan\n早九晚五：nine-to-five\n薪资：salary\n福利：welfare\n升职：promotion\n裁员：lay off\n跳槽：job hopping\n加薪：I want a raise
+1. 职场词汇; 招聘：recruitment\n简历：resume\n面试：interview\n空缺岗位：vacancy\n职业规划：career plan\n早九晚五：nine-to-five\n薪资：salary\n福利：welfare\n升职：promotion\n裁员：lay off\n转岗：job transfer\n跳槽：job hopping\n加薪：I want a raise
 1. let's split the bill
 1. 排泄物词汇; 眼屎：sleepy dust\n耳屎：earwax\n鼻涕：snot\n痰：phlegm\n汗水：sweat\n头皮屑：dandruff
 1. 汽车词汇; 驾驶座：driver\'s seat\n安全带：seatbelt\n方向盘：steering wheel\n喇叭：horn\n仪表盘：dashboard\n出风口：air vent\n变速杆：gearshift\n挡风玻璃：windscreen/windshield\n挡风玻璃雨刷：windscreen/windshield wipers\n侧视镜：side-view mirror\n后视镜：rearview mirror\n遮阳板：sun visor\n转向灯：indicator/turn signal\n刹车：brake\n油门：accelerator\n门把手：door handle\n轮胎：tire/tyre\n车牌：number plate/license plate
@@ -81,18 +92,18 @@
 1. it's my day off; it's my time off
 1. 打招呼; how are you doing today?\nhow have you been?\nwhat have you been up to?\nhow is it going?\nhow has it been so far in your new job?\nhey, how did it go?
 1. the sky is the limit
-1. 电子设备词汇; 充电线：charging cable\n移动电源：power bank\n电源：power source\n排插：power strip\n摄像头：webcam\n耳机：headphone\n鼠标：mouse\n键盘：keyboard\n充电器：charger\n无线充电器：wireless charger\n插头：plug\n插座：outlet\n开关：switch\n转换器：adapter\n电池：battery\n充电电池：storage battery
+1. 电子设备词汇; 充电线：charging cable\n移动电源：power bank\n电源：power source\n排插：power strip\n摄像头：webcam\n耳机：headphone\n鼠标：mouse\n键盘：keyboard\n充电器：charger\n无线充电器：wireless charger\n插头：plug (plug socket)\n插座：socket/outlet\n开关：switch\n转换器：adapter\n电池：battery\n充电电池：storage battery
 1. I will need to request time off; day off
 1. competitive relationship
 1. will you be free 7.30pm onwards tomorrow?
-1. he always gave me hell; 他总是骂我
+1. he always gave me hell; 他总是骂我\nhe\'s insulting me
 1. two Gaza hospitals have ceased to function
 1. what do you study? I'm doing computer science; I was doing Computer Science.\nI was studying Computer Science and have now graduated.\nI completed my studies in Computer Science.\nMy field of study was Computer Science, and I\'ve graduated.\n
 1. carpet; rug; Usually refers to a floor covering that extends over an entire room\nRugs are smaller, movable floor coverings that don\'t extend across the entire floor space
-1. 手部动作词汇; 扇：slap\n拳打：punch\n连续打：beat\n抓取：grab\n握住：hold\n举起：lift\n掉落：drop\n轻弹：flick\n轻拍：pat\n触摸：touch\n敲：knock\n戳：poke\n挠：scratch\n指：point\n推：push\n拉：pull\n轻轻摇晃：rock\n拥抱：cuddle
-1. 蔬菜词汇; 黄瓜：cucumber\n花椰菜：cauliflower\n四季豆：green beans\n洋葱：onion\n卷心菜：cabbage\n胡萝卜：carrot\n生菜：lettuce (crisp lettuce)\n辣椒：pepper\n西兰花：broccoli
+1. 手部动作词汇; 扇：slap (slap on the back)\n拳打：punch\n连续打：beat\n抓取：grab\n握住：hold\n举起：lift\n掉落：drop\n轻弹：flick\n轻拍：pat\n触摸：touch\n擦：scrub(scrub my face)\n敲：knock\n戳：poke\n挠：scratch\n指：point\n推：push\n拉：pull\n轻轻摇晃：rock\n拥抱：cuddle
+1. 蔬菜词汇; 黄瓜：cucumber\n花椰菜：cauliflower\n四季豆：green beans\n洋葱：onion\n卷心菜：cabbage\n胡萝卜：carrot\n生菜：lettuce (crisp lettuce)\n辣椒：(hot/green/sweet)pepper\n西兰花：broccoli\n土豆：potato\n玉米：corn\n芹菜：celery\n菠菜：spinach\n茄子：eggplant\n南瓜：pumpkin\n苦瓜：bitter gourd\n大蒜：garlic\n蘑菇：mushroom\n木耳：agaric\n秋葵：okra
 1. you're twisting my words
-1. 厨房词汇; 切片：slice the potato\n切丝：shred the potato\n切丁：dice the potato\n切段：cut the green onion\n剁：chop the green onion\n菜刀：kitchen knife. I chop the green onion with my kitchen knife.\n切肉刀：cleaver\n锅：pot\n炒锅：wok\n平底锅：pan\n炉子：stove\n切菜板：cutting board\n锅盖：lid\n汤勺：ladle\n烤箱：oven\n高压锅：pressure cooker\n
+1. 厨房词汇; 切片：slice the potato\n切丝：shred the potato\n切丁：dice the potato\n切段：cut the green onion\n剁：chop the green onion\n菜刀：kitchen knife. I chop the green onion with my kitchen knife.\n切肉刀：cleaver\n锅：pot\n炒锅：wok\n平底锅：pan\n炉子：stove\n切菜板：cutting board\n锅盖：lid\n汤勺：ladle\n烤箱：oven\n微波炉：microwave oven\n高压锅：pressure cooker\n电饭煲：rice cooker\n热水器：water heater\n榨汁机：juicer\n冰箱：refrigerator\n\n
 1. 晾衣服词汇; 晾衣服：hang the laundry\n衣架：hanger\n抖一下衬衫：shake out the shirt\n衣服会皱的：the shirt is going to get wrinkled\n晾衣架：just hang it on the laundry rack\n晾衣夹：just clip it on the laundry pin like this\n
 1. sounds cheesy
 1. 机场词汇; 航站楼：terminal\n值机柜台：check-in counter\n登机牌：boarding pass\n商务舱：business class\n经济舱：economy class\n靠过道的座位：aisle seat\n国内航班：domestic flight\n安检：security check\n免税店：duty-free shop\n登机口：departure gate\n登记通知：boarding call\n延误：delay\n随身携带的行李：carry-on, carry-on luggage\n中转停留：layover\n颠簸：turbulence\n海关：customs\n货币兑换：currency exchange\n行李提取出：baggage claim
@@ -381,7 +392,6 @@
 1. one capsule with a meal; one capsule with meals
 1. sounds fair enough
 1. replaced by
-1. trade relations
 1. 8 times more expensive
 1. articles and journals
 1. group elements into categories
@@ -426,7 +436,6 @@
 1. runny nose
 1. got congested in traffic; nose got congested
 1. the natural way
-1. in case of an asthma attack
 1. on the verge of tears
 1. get started saving up
 1. strengthen the peace and unity of the nation
@@ -511,7 +520,6 @@
 1. the powers of the judge are defined by law
 1. what would it be like to kiss you?
 1. I'm not skilled in the language
-1. It varies from person to person
 1. I'm not the one in possession of it
 1. I am in possession of some information
 1. he got shot before your arrival; He got shot previous to your arrival
@@ -820,7 +828,6 @@
 1. issue a statement; issue a warning; release a statement; make an announcement
 1. deceive; deceit; fraud; dupe; \"Deceive\" means to mislead or trick someone, \"deceit\" refers to the act of deceiving, \"fraud\" is deliberate deception for personal gain or to cause harm, and \"dupe\" is a person who has been deceived or tricked.\n\nShe resorted to deceit to achieve her goals; His deceit was uncovered when the truth came to light.\nShe tried to deceive him by pretending to be someone else online.\nHe was convicted of credit card fraud for using someone else\'s card without permission.\nShe didn\'t realize she had been duped until it was too late.\n
 1. professional terminology; professional vocabulary
-1. scrub my face
 1. sustainable delivery
 1. the strike may last for days
 1. far-left political leaders; far-right political leaders
@@ -1065,7 +1072,6 @@
 1. there were reports of a collision
 1. deliberate act or accident
 1. Downing Street
-1. fuzzy orange doughnut
 1. Russia has slapped sanctions against more than 300 Canadian officials and public figures
 1. the area is expected to see a reprieve headed into the weekend before more rain comes to the region early next week
 1. parts of southern Florida, such as Fort Lauderdale, have been hit by torrential rain and flash flooding
@@ -1244,7 +1250,6 @@
 1. he worked in Hollywood where his career spanned from 1992 to 2016
 1. the reservoir is part of the Colorado river system which is strained by decades of drought and steady demand from the 40 million people
 1. bribery
-1. sexual harassment
 1. First Amendment rights
 1. I like things the way they are
 1. everyone deserves a second chance
@@ -1265,7 +1270,6 @@
 1. seditious conspiracy
 1. I have been bullied
 1. go lighter and do the full range; 轻重量做全程
-1. coughs and sneezes
 1. how long does coronavirus last in the air
 1. human-to-human transmission
 1. I know this is very basic for you, but just to help everyone be on the same page
@@ -1387,7 +1391,6 @@
 1. you were never there
 1. use your best judgement
 1. lingering on things doesn’t help
-1. long sleeves
 1. drop the ball
 1. I like to be comfortable
 1. you get handcuffed
@@ -1549,7 +1552,6 @@
 1. hugging is not so common here
 1. most people would consider that rather impolite
 1. it's considered quite rude here for pointing at people
-1. slap on the back
 1. try to avoid physical contact and respect people's personal space
 1. It's not appropriate to talk or joke too loudly
 1. dependable means trustworthy and reliable. capable of being trusted or depended on
@@ -2077,7 +2079,7 @@
 1. the fans are asking for a refund after cancellation of the pop start's concert
 1. what have you tried
 1. put the country's economy into crisis
-1. they don't think of science the same way I do
+1. they don't think of science the same way I do; the way we see science is different
 1. he's the one that I look up to
 1. function normally
 1. I haven't heard those words in a long time, thank you
@@ -2095,7 +2097,6 @@
 1. put on weight
 1. the unjust judgement has generated public outrage in this country
 1. the size of the country, the size of the people make it a great economy
-1. a blank sheet of paper
 1. vocalize/verbalize
 1. step down; 下台
 1. the most important recent trend has been exposing that computation to the programmer
@@ -2122,7 +2123,6 @@
 1. national security has now become a matter of the utmost importance after recent terrorist attacks
 1. transplant organs
 1. everyone's opinion is bound to be subjective
-1. a wedding feast
 1. the village is situated in a valley
 1. we need to reduce paperwork and burearcracy in the company
 1. a murder trial
@@ -2207,7 +2207,7 @@
 1. evaporation is the process of a liquid turning gas
 1. these birds provide a useful function in controlling insect pests
 1. many people have the experience of dreaming a recurring place
-1. top tier
+1. top tier; world class\nworld\'s leading
 1. World Health Organization is abbreviated to WHO
 1. piracy is still flourishing on some of the world's sea lanes
 1. earning money had become the pivot around which his life turned
@@ -2232,7 +2232,6 @@
 1. complicated/complex/sophisticated/elaborate
 1. get indigestion
 1. domestic products
-1. TV series
 1. manufacturing industry
 1. the legislature has pressed a new law requiring people to wear safety belts
 1. a hawk hovers in the sky
@@ -2461,7 +2460,6 @@
 1. take on a job
 1. boost/boast/boom/bloom
 1. a fence marked the perimeter of the field
-1. a carton of apple juice
 1. your account of events does not correspond with hers
 1. power grid
 1. meeting/conference/convention
@@ -2545,7 +2543,6 @@
 1. he is now on medication for his liver
 1. the volume of traffic on the road hit the peak at seven o'clock
 1. ridiculous/absurd/bizarre/wierd
-1. Duty Free Shop
 1. having profound professional knowledge is a prerequisite of passing an interview
 1. dogs have a keen sense of smell
 1. it was difficult to find employees with the level of expertise required for this job
@@ -2579,7 +2576,6 @@
 1. conservative party
 1. conservative
 1. I was elected to deliver for this country
-1. hereditary diseases
 1. harsh/sharp/hard/severe
 1. boosting tourism will provide a long-term solution to the city's employment problems
 1. prospect/perspect
@@ -2643,7 +2639,7 @@
 1. some staff were fired for neglecting their duties
 1. bird flu
 1. romantic TV series
-1. the continuation of the demonstration caused a lot of problem
+1. the continuation of the demonstration caused a lot of problem; 持续的示威活动造成了许多问题\n
 1. conference/convention
 1. Can't we do two out of three
 1. the tavern is off limits to teenagers
@@ -2758,7 +2754,6 @@
 1. provides insights on the design and implementation choices
 1. this relationship is going too fast
 1. crack-down
-1. periodic check
 1. enjoy juridical equality
 1. the implementation of a policy in full
 1. ignore the barbs on the internet
@@ -2770,12 +2765,10 @@
 1. give you specific instructions
 1. relief efforts
 1. the boats were floating gently down the river
-1. inherited genetic disease
 1. generic/genetic
 1. this button is for adjusting the volume
 1. return to this item at our next meeting
 1. bonanza month for real estate sales
-1. walk with a slow stiff gait
 1. the small town is showing signs of revival
 1. his insult was intentional
 1. his prime concern is to protect his daughter
@@ -2874,7 +2867,6 @@
 1. split the class into groups of four
 1. I attach a copy of my notes for your information
 1. I was granted permission to visit the palace
-1. The country has exhausted its food reserves
 1. credit card fraud
 1. average weekly earnings
 1. the roads are congested with cars
@@ -2931,7 +2923,6 @@
 1. she cooked this dish with a variety of seasonings
 1. a jar of coffee
 1. remarkable work
-1. a slice of bread
 1. the coastal regions
 1. has increased dramatically over the past decade
 1. a lack of zinc in the body
@@ -3066,7 +3057,6 @@
 1. servile
 1. patron
 1. I found the whole play facinating
-1. march off
 1. a flock of
 1. a stream diverges here
 1. take shelter from the storm
@@ -3343,7 +3333,6 @@
 1. prize
 1. financial liberalization
 1. bankrupt
-1. average person
 1. appliance
 1. allegation
 1. pus
@@ -3573,7 +3562,6 @@
 1. gap between research and practical implementations
 1. in order to level this; 为了与之抗衡
 1. canyon
-1. dismiss
 1. tuples flowing through a pipeline
 1. scale with the size of cluster
 1. densely ascending from 0 upwards
@@ -3614,7 +3602,6 @@
 1. one-way road
 1. consonant
 1. battery is dead
-1. plug socket
 1. voltage
 1. copper
 1. charge
@@ -3664,7 +3651,6 @@
 1. out of defensive principle
 1. corollary
 1. cultivate all-round developed talents
-1. job transfer
 1. promotion
 1. couple of days
 1. so long as
@@ -3698,7 +3684,6 @@
 1. operating the game
 1. folk art
 1. admit your situation; 认清现实
-1. top-tier
 1. compliant
 1. compliment
 1. consolidated
@@ -3797,7 +3782,6 @@
 1. we note that
 1. intricate
 1. devastating
-1. cyber-crime
 1. a primitive to A and B
 1. one more slide
 1. obstruct
@@ -3882,13 +3866,11 @@
 1. commitment
 1. passionate
 1. struggle
-1. world's leading
 1. put up with
 1. all hands
 1. fussing
 1. asterisk
 1. overlaid
-1. from scratch
 1. anticipated
 1. descendant
 1. antecedent
@@ -4136,7 +4118,6 @@
 1. every feature rolled out
 1. cutting edge
 1. get hands dirty
-1. world-class
 1. pitfalls
 1. fallacy
 1. heterogeneity
