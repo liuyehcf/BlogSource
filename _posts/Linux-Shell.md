@@ -2144,6 +2144,8 @@ echo "outside function: '${arr[@]}'"
 * `alias xxx="${BASE_DIR}/xxx.sh"`，`${BASE_DIR}`的解析发生在配置时，在`zsh`等shell中，`xxx`会高亮
 * `alias xxx='${BASE_DIR}/xxx.sh'`，`${BASE_DIR}`的解析发生在执行时，在`zsh`等shell中，`xxx`不会高亮
 
+**How to disable alias: `\cp` will use the original `cp` command, rather than the alias if there exists.**
+
 ## 7.15 export
 
 **示例：**

@@ -369,6 +369,17 @@ systemctl status byconity-worker
 systemctl status byconity-worker-write
 ```
 
+**Operations:**
+
+```sh
+systemctl restart byconity-tso
+systemctl restart byconity-resource-manager
+systemctl restart byconity-daemon-manager
+systemctl restart byconity-server
+systemctl restart byconity-worker
+systemctl restart byconity-worker-write
+```
+
 # 3 Load
 
 ## 3.1 TPC-DS
