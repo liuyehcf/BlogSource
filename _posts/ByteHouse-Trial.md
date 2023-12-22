@@ -25,9 +25,11 @@ categories:
 
 [Package Deployment](https://byconity.github.io/docs/deployment/package-deployment)
 
-### 2.2.1 Deploy FoundationDB
+### 2.2.1 FoundationDB Installation
 
-For all nodes:
+[FoundationDB Installation](https://byconity.github.io/docs/deployment/foundationdb-installation)
+
+**For all nodes:**
 
 ```sh
 curl -L -o fdbserver.x86_64 https://mirror.ghproxy.com/https://github.com/apple/foundationdb/releases/download/7.1.25/fdbserver.x86_64
@@ -40,11 +42,11 @@ mv fdbserver.x86_64 fdbserver
 chmod ug+x fdbcli fdbmonitor fdbserver
 ```
 
-For all nodes:
+**For all nodes:**
 
 ```sh
-WORKING_DIR="/root"
-IP_ADDRESS="<your ip address>"
+export WORKING_DIR="<your working dir>"
+export IP_ADDRESS="<your ip address>"
 
 mkdir -p ${WORKING_DIR}/fdb_runtime/config
 mkdir -p ${WORKING_DIR}/fdb_runtime/data
@@ -104,7 +106,7 @@ systemctl start fdb.service
 systemctl status fdb.service
 ```
 
-For first node:
+**For first node:**
 
 ```sh
 ${WORKING_DIR}/foundationdb/bin/fdbcli -C ${WORKING_DIR}/fdb_runtime/config/fdb.cluster
@@ -116,9 +118,9 @@ fdb> coordinators <node_1_ip_address>:4500 <node_2_ip_address>:4500 <node_3_ip_a
 Coordination state changed
 ```
 
-Then copy file `${WORKING_DIR}/fdb_runtime/config/fdb.cluster` to the other nodes, and then executes `systemctl restart fdb.service` in all nodes
+**Then copy file `${WORKING_DIR}/fdb_runtime/config/fdb.cluster` in first node to the other nodes, and then executes `systemctl restart fdb.service` in all nodes.**
 
-For first node:
+**For first node:**
 
 ```sh
 ${WORKING_DIR}/foundationdb/bin/fdbcli -C ${WORKING_DIR}/fdb_runtime/config/fdb.cluster
@@ -137,6 +139,167 @@ Configuration:
   Storage engine         - ssd-2
   Coordinators           - 3
   Usable Regions         - 1
+```
+
+### 2.2.2 HDFS Installation
+
+**For all nodes:**
+
+```sh
+wget https://mirrors.tuna.tsinghua.edu.cn/apache/hadoop/core/hadoop-3.3.6/hadoop-3.3.6.tar.gz
+
+yum install -y java-1.8.0-openjdk-devel
+```
+
+```sh
+export WORKING_DIR="<your working dir>"
+export NAME_NODE_ADDRESS="<name node ip address>"
+
+mkdir -p ${WORKING_DIR}/hdfs
+tar -zxf hadoop-3.3.6.tar.gz -C ${WORKING_DIR}/hdfs
+
+export HADOOP_DIR=${WORKING_DIR}/hdfs/hadoop-3.3.6
+
+cat > ${HADOOP_DIR}/etc/hadoop/core-site.xml << EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. See accompanying LICENSE file.
+-->
+
+<!-- Put site-specific property overrides in this file. -->
+
+<configuration>
+        <property>
+                <name>fs.defaultFS</name>
+                <value>hdfs://${NAME_NODE_ADDRESS}:12000</value>
+        </property>
+</configuration>
+EOF
+```
+
+Edit `${HADOOP_DIR}/etc/hadoop/hadoop-env.sh`, modify the following properties:
+
+* `JAVA_HOME` -> `/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.392.b08-2.el7_9.x86_64`
+* `HADOOP_HOME` -> `${WORKING_DIR}/hdfs/hadoop-3.3.6`. Use the abstract path, `WORKING_DIR` is not a valid variable.
+* `HADOOP_LOG_DIR` -> `${HADOOP_HOME}/logs`
+
+**For name node:**
+
+```sh
+export DATA_NODE_IP_ADDRESS="<ip1>,<ip2>"
+
+echo ${DATA_NODE_IP_ADDRESS} | tr ',' '\n' > ${WORKING_DIR}/hdfs/datanodes_list.txt
+
+mkdir -p ${WORKING_DIR}/hdfs/root_data_path_for_namenode
+
+cat > ${HADOOP_DIR}/etc/hadoop/hdfs-site.xml << EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. See accompanying LICENSE file.
+-->
+
+<!-- Put site-specific property overrides in this file. -->
+
+<configuration>
+        <property>
+                <name>dfs.replication</name>
+                <value>1</value>
+        </property>
+        <property>
+                <name>dfs.namenode.name.dir</name>
+                <value>file://${WORKING_DIR}/hdfs/root_data_path_for_namenode</value>
+        </property>
+        <property>
+                <name>dfs.hosts</name>
+                <value>${WORKING_DIR}/hdfs/datanodes_list.txt</value>
+        </property>
+
+</configuration>
+EOF
+```
+
+**For data nodes:**
+
+```sh
+mkdir -p ${WORKING_DIR}/hdfs/root_data_path_for_datanode
+
+cat > ${HADOOP_DIR}/etc/hadoop/hdfs-site.xml << EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. See accompanying LICENSE file.
+-->
+
+<!-- Put site-specific property overrides in this file. -->
+
+<configuration>
+        <property>
+                <name>dfs.data.dir</name>
+                <value>file://${WORKING_DIR}/hdfs/root_data_path_for_datanode</value>
+        </property>
+</configuration>
+EOF
+```
+
+**For name node:**
+
+```sh
+${HADOOP_DIR}/bin/hdfs namenode -format
+${HADOOP_DIR}/bin/hdfs --daemon start namenode
+```
+
+**For data nodes:**
+
+```sh
+${HADOOP_DIR}/bin/hdfs --daemon start datanode
+```
+
+**For name node: Create some directory for next deployment.**
+
+```sh
+${HADOOP_DIR}/bin/hdfs dfs -mkdir -p /user/clickhouse/
+${HADOOP_DIR}/bin/hdfs dfs -chown clickhouse /user/clickhouse
+${HADOOP_DIR}/bin/hdfs dfs -chmod -R 775 /user/clickhouse
+```
+
+**Other operations:**
+
+```sh
+${HADOOP_DIR}/bin/hdfs dfsadmin -report
+${HADOOP_DIR}/bin/hdfs dfs -ls /user
+${HADOOP_DIR}/bin/hdfs dfs -df /user/clickhouse
 ```
 
 # 3 Load
