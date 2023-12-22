@@ -21,9 +21,97 @@ categories:
 
 [Deploy ByConity in Kubernetes](https://byconity.github.io/docs/deployment/deploy-k8s)
 
-## 2.2 bare metal
+## 2.2 Bare Metal
 
 [Package Deployment](https://byconity.github.io/docs/deployment/package-deployment)
+
+### 2.2.1 Deploy FoundationDB
+
+For all nodes:
+
+```sh
+curl -L -o fdbserver.x86_64 https://mirror.ghproxy.com/https://github.com/apple/foundationdb/releases/download/7.1.25/fdbserver.x86_64
+curl -L -o fdbmonitor.x86_64 https://mirror.ghproxy.com/https://github.com/apple/foundationdb/releases/download/7.1.25/fdbmonitor.x86_64
+curl -L -o fdbcli.x86_64 https://mirror.ghproxy.com/https://github.com/apple/foundationdb/releases/download/7.1.25/fdbcli.x86_64
+
+mv fdbcli.x86_64 fdbcli
+mv fdbmonitor.x86_64 fdbmonitor
+mv fdbserver.x86_64 fdbserver
+chmod ug+x fdbcli fdbmonitor fdbserver
+```
+
+For all nodes:
+
+```sh
+WORKING_DIR="/root"
+mkdir -p ${WORKING_DIR}/fdb_runtime/config
+mkdir -p ${WORKING_DIR}/fdb_runtime/data
+mkdir -p ${WORKING_DIR}/fdb_runtime/logs
+mkdir -p ${WORKING_DIR}/foundationdb/bin
+
+cp fdbcli fdbmonitor fdbserver ${WORKING_DIR}/foundationdb/bin
+
+cat > ${WORKING_DIR}/fdb_runtime/config/foundationdb.conf << EOF
+[fdbmonitor]
+user = root
+
+[general]
+cluster-file = ${WORKING_DIR}/fdb_runtime/config/fdb.cluster
+restart-delay = 60
+
+[fdbserver]
+
+command = ${WORKING_DIR}/foundationdb/bin/fdbserver
+datadir = ${WORKING_DIR}/fdb_runtime/data/$ID
+logdir = ${WORKING_DIR}/fdb_runtime/logs/
+public-address = auto:$ID
+listen-address = public
+
+[fdbserver.4500]
+class=stateless
+[fdbserver.4501]
+class=transaction
+[fdbserver.4502]
+class=storage
+[fdbserver.4503]
+class=stateless
+EOF
+
+IP_ADDRESS="<your ip address>"
+cat > ${WORKING_DIR}/fdb_runtime/config/fdb.cluster << EOF
+clusterdsc:test@${IP_ADDRESS}:4500
+EOF
+
+cat > ${WORKING_DIR}/fdb_runtime/config/fdb.service << EOF
+[Unit]
+Description=FoundationDB (KV storage for cnch metastore)
+
+[Service]
+Restart=always
+RestartSec=30
+TimeoutStopSec=600
+ExecStart=${WORKING_DIR}/foundationdb/bin/fdbmonitor --conffile ${WORKING_DIR}/fdb_runtime/config/foundationdb.conf --lockfile ${WORKING_DIR}/fdb_runtime/fdbmonitor.pid
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+cp ${WORKING_DIR}/fdb_runtime/config/fdb.service /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable fdb.service
+systemctl start fdb.service
+systemctl status fdb.service
+```
+
+For first node:
+
+```sh
+${WORKING_DIR}/foundationdb/bin/fdbcli -C ${WORKING_DIR}/fdb_runtime/config/fdb.cluster
+
+fdb> configure new single ssd
+
+fdb> coordinators <node_1_ip_address>:4500 <node_2_ip_address>:4500 <node_3_ip_address>:4500
+```
 
 # 3 Load
 
