@@ -302,6 +302,73 @@ ${HADOOP_DIR}/bin/hdfs dfs -ls /user
 ${HADOOP_DIR}/bin/hdfs dfs -df /user/clickhouse
 ```
 
+### 2.2.3 Install FoundationDB client
+
+The Foundation client package are tight coupled to version of FoundationDB server. So we need to choose the client package with version that match the version of FoundationDB server
+
+```sh
+wget https://mirror.ghproxy.com/https://github.com/apple/foundationdb/releases/download/7.1.25/foundationdb-clients-7.1.25-1.el7.x86_64.rpm
+
+rpm -ivh foundationdb-clients-*.rpm
+```
+
+### 2.2.4 Deploy ByConity Packages
+
+```sh
+wget https://mirror.ghproxy.com/https://github.com/ByConity/ByConity/releases/download/0.3.0/byconity-common-static-0.3.0.x86_64.rpm
+
+rpm -ivh byconity-common-static-*.rpm
+```
+
+**Config files:**
+
+* `/etc/byconity-server/cnch_config.xml`: contains service_discovery config, hdfs config, foundationdb cluster config path.
+* `/etc/byconity-server/fdb.cluster`: the cluster config file of FoundationDB cluster.
+
+**Install tso:**
+
+```sh
+wget https://mirror.ghproxy.com/https://github.com/ByConity/ByConity/releases/download/0.3.0/byconity-tso-0.3.0.x86_64.rpm
+
+ln -s ${WORKING_DIR}/fdb_runtime/config/fdb.cluster /etc/byconity-server/fdb.cluster
+
+rpm -ivh byconity-tso-*.rpm
+
+systemctl start byconity-tso
+systemctl status byconity-tso
+```
+
+**Install other components:**
+
+* The `byconity-resource-manager`, `byconity-daemon-manger` and `byconity-tso` are light weight service so it could be install in shared machine with other package.
+* But for `byconity-server`, `byconity-worker`, `byconity-worker-write` we should install them in separate machines.
+
+```sh
+wget https://mirror.ghproxy.com/https://github.com/ByConity/ByConity/releases/download/0.3.0/byconity-resource-manager-0.3.0.x86_64.rpm
+wget https://mirror.ghproxy.com/https://github.com/ByConity/ByConity/releases/download/0.3.0/byconity-daemon-manager-0.3.0.x86_64.rpm
+wget https://mirror.ghproxy.com/https://github.com/ByConity/ByConity/releases/download/0.3.0/byconity-server-0.3.0.x86_64.rpm
+wget https://mirror.ghproxy.com/https://github.com/ByConity/ByConity/releases/download/0.3.0/byconity-worker-0.3.0.x86_64.rpm
+wget https://mirror.ghproxy.com/https://github.com/ByConity/ByConity/releases/download/0.3.0/byconity-worker-write-0.3.0.x86_64.rpm
+
+rpm -ivh byconity-resource-manager-*.rpm
+rpm -ivh byconity-daemon-manager-*.rpm
+rpm -ivh byconity-server-*.rpm
+rpm -ivh byconity-worker-*.rpm
+rpm -ivh byconity-worker-write-*.rpm
+
+systemctl start byconity-resource-manager
+systemctl start byconity-daemon-manager
+systemctl start byconity-server
+systemctl start byconity-worker
+systemctl start byconity-worker-write
+
+systemctl status byconity-resource-manager
+systemctl status byconity-daemon-manager
+systemctl status byconity-server
+systemctl status byconity-worker
+systemctl status byconity-worker-write
+```
+
 # 3 Load
 
 ## 3.1 TPC-DS
