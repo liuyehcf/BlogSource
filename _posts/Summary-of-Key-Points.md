@@ -1264,10 +1264,25 @@ Classification:
             - FIFO
             - LRU
         - Write Policy
+        - Speed
+            - SRAM-L1：3–5 cycles
+            - SRAM-L2：8–20 cycles
+            - SRAM-L3：30–80 cycles
+            - DRAM-Memory：150-180 cycles
+        - Size
+            - L1：8KB - 64KB
+            - L2：256KB - 8MB
+            - L3：10MB - 64MB
 - Parallelism
     - ILP
     - TLP
     - DLP
+- Hardware Interfaces
+    - PCI Express (PCIe)
+    - SATA
+    - USB Ports
+    - HDMI
+    - M.2 Slot
 {% endmarkmap %}
 
 ## 5.1 X86
@@ -1299,6 +1314,24 @@ Cons:
 * **Software Compatibility**: ARM-based devices may have limitations when it comes to running certain legacy x86 software, although this gap is closing with technologies like emulation and virtualization.
 * **Performance**: While ARM processors have made significant performance gains, they may not match the raw performance of high-end x86 processors in some compute-intensive tasks.
 * **Complexity for Desktop and Server Applications**: While ARM is making inroads in these areas, x86 architecture is still dominant for desktops and servers due to software compatibility and performance considerations.
+
+## 5.3 Hardware
+
+Computer motherboards typically have a variety of interfaces, each designed for different types of devices or functions. Here are some common types of interfaces you'll find:
+
+* `Peripheral Component Interconnect Express (PCIe)`: This is the most common type of expansion slot, used for graphics cards, sound cards, network cards, etc.
+    * `Non-Volatile Memory Express (NVMe, Protocol)`: NVMe is a communication protocol specifically developed for SSDs to take advantage of the high speeds provided by PCIe connections. NVMe drives are much faster than their SATA counterparts due to this protocol's efficiency and the speed of the PCIe bus.
+* `Serial Advanced Technology Attachment (SATA)`: Used for connecting hard disk drives and solid-state drives.
+* `USB Ports`: For connecting various USB devices like keyboards, mice, printers, etc.
+* `HDMI/DisplayPort`: For connecting monitors.
+* `RJ45 (Ethernet Port)`: For network connections.
+* `Audio Interfaces`: Includes ports for headphones, microphones, and speakers.
+* `DIMM Slots`: For installing RAM (memory sticks).
+* `M.2 Slot`: For installing M.2 form factor solid-state drives.
+    * `M.2 (Form Factor)`: `M.2` is a specification for internally mounted computer expansion cards and associated connectors. It's particularly known for its small size, making it ideal for laptops and compact PCs. `M.2` slots can accommodate a variety of devices, including Wi-Fi cards and SSDs. M.2 SSDs can use either the `SATA` interface (slower) or the `PCIe` interface (faster).
+* `PS/2 Ports`: For connecting older keyboards or mice.
+* `BIOS/CMOS Battery`: For storing system time and basic hardware settings.
+* `Power Connectors`: Including the 24-pin main power connector and the CPU power connector.
 
 # 6 Scheduler
 

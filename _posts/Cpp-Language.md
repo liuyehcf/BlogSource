@@ -5280,6 +5280,52 @@ void func(size_t size) {
 }
 ```
 
+```cpp
+#include <iostream>
+#include <iterator>
+#include <limits>
+#include <random>
+#include <vector>
+
+int main(int32_t argc, char* argv[]) {
+    int32_t num1;
+    int32_t num2;
+    int32_t array1[1];
+    int32_t num3;
+    int32_t array2[std::atoi(argv[1])];
+    int32_t num4;
+
+    auto offset = [&num1](void* p) { return reinterpret_cast<int8_t*>(p) - reinterpret_cast<int8_t*>(&num1); };
+
+    std::cout << "num1: " << offset(&num1) << std::endl;
+    std::cout << "num2: " << offset(&num2) << std::endl;
+    std::cout << "array1: " << offset(&array1) << std::endl;
+    std::cout << "num3: " << offset(&num3) << std::endl;
+    std::cout << "array2: " << offset(&array2) << std::endl;
+    std::cout << "num4: " << offset(&num4) << std::endl;
+
+    return 0;
+}
+```
+
+```
+./main 1
+num1: 0
+num2: -4
+array1: -8
+num3: -12
+array2: -148
+num4: -32
+
+./main 100
+num1: 0
+num2: -4
+array1: -8
+num3: -12
+array2: -532
+num4: -32
+```
+
 # 12 FAQ
 
 ## 12.1 Why is it unnecessary to specify the size when releasing memory with free and delete
