@@ -245,11 +245,18 @@ Java反编译工具，[下载地址](http://www.javadecompilers.com/jad)
 
 * [Java SE 17 Archive Downloads](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
 
-## 13.2 JDK Install Path
+## 13.2 Find JDK Install Path
 
-Linux：可以通过`readlink -f $(which java)`查看绝对路径，一般来说是`/usr/lib/jvm`
+### 13.2.1 Linux
 
-MacOS：`/Library/Java/JavaVirtualMachines`
+一般来说是`/usr/lib/jvm`
+
+1. `readlink -f $(which java)`
+1. `update-alternatives --config java`
+
+### 13.2.2 MacOS
+
+`/Library/Java/JavaVirtualMachines`
 
 # 14 参考
 

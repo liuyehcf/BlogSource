@@ -160,6 +160,12 @@ tar -zxf hadoop-3.3.6.tar.gz -C ${WORKING_DIR}/hdfs
 
 export HADOOP_DIR=${WORKING_DIR}/hdfs/hadoop-3.3.6
 
+JAVA_HOME_PATH=$(readlink -f $(which java))
+JAVA_HOME_PATH=${JAVA_HOME_PATH%/jre/bin/java}
+sed -i -E "s|^.*export JAVA_HOME=.*$|export JAVA_HOME=${JAVA_HOME_PATH}|g" ${HADOOP_DIR}/etc/hadoop/hadoop-env.sh
+sed -i -E "s|^.*export HADOOP_HOME=.*$|export HADOOP_HOME=${WORKING_DIR}/hdfs/hadoop-3.3.6|g" ${HADOOP_DIR}/etc/hadoop/hadoop-env.sh
+sed -i -E "s|^.*export HADOOP_LOG_DIR=.*$|export HADOOP_LOG_DIR=\${HADOOP_HOME}/logs|g" ${HADOOP_DIR}/etc/hadoop/hadoop-env.sh
+
 cat > ${HADOOP_DIR}/etc/hadoop/core-site.xml << EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
@@ -187,12 +193,6 @@ cat > ${HADOOP_DIR}/etc/hadoop/core-site.xml << EOF
 </configuration>
 EOF
 ```
-
-Edit `${HADOOP_DIR}/etc/hadoop/hadoop-env.sh`, modify the following properties:
-
-* `JAVA_HOME` -> `/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.392.b08-2.el7_9.x86_64`
-* `HADOOP_HOME` -> `${WORKING_DIR}/hdfs/hadoop-3.3.6`. Use the abstract path, `WORKING_DIR` is not a valid variable.
-* `HADOOP_LOG_DIR` -> `${HADOOP_HOME}/logs`
 
 **For name node:**
 
