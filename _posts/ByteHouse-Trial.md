@@ -143,6 +143,8 @@ Configuration:
 
 ### 2.2.2 HDFS Installation
 
+[HDFS Installation](https://byconity.github.io/docs/deployment/hdfs-installation)
+
 **For all nodes:**
 
 ```sh
