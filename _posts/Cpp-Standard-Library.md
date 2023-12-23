@@ -1143,6 +1143,22 @@ int main() {
 1. `std::istringstream`: Use this and `std::getline` to achieve the function of spliting a string
 1. `std::ostringstream`
 
+```cpp
+#include <iostream>
+#include <sstream>
+#include <string>
+
+int main(int32_t argc, char* argv[]) {
+    std::istringstream str("a,b,c,d,e,f,g");
+    std::string next;
+    while (std::getline(str, next, ',')) {
+        std::cout << next << std::endl;
+    }
+
+    return 0;
+}
+```
+
 # 22 string
 
 1. `std::string`
@@ -2053,3 +2069,28 @@ int main() {
     return 0;
 }
 ```
+
+# 33 Frequently-Used Compoments for Interview
+
+**Data Structure:**
+
+* `std::vector`
+* `std::map`
+* `std::set`
+* `std::stack`
+* `std::queue`
+* `std::priority_queue`
+
+**Algorithm:**
+
+* `std::hash`: function objects.
+* `std::sort`
+* `std::lower_bound`,`std::upper_bound` : binary search.
+* `std::find`
+* `std::remove_if`: return the iterator pointing at the first elements to be removed.
+* `std::erase_if`: remove the specific elements.
+
+**I/O:**
+
+* `std::ifstream`、`std::ofstream`
+* `std::getline`
