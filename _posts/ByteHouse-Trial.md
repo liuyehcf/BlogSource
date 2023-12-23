@@ -199,9 +199,9 @@ EOF
 **For name node:**
 
 ```sh
-export DATA_NODE_IP_ADDRESS="<ip1>,<ip2>"
+export DATA_NODE_ADDRESSES="<ip1>,<ip2>"
 
-echo ${DATA_NODE_IP_ADDRESS} | tr ',' '\n' > ${WORKING_DIR}/hdfs/datanodes_list.txt
+echo ${DATA_NODE_ADDRESSES} | tr ',' '\n' > ${WORKING_DIR}/hdfs/datanodes_list.txt
 
 mkdir -p ${WORKING_DIR}/hdfs/root_data_path_for_namenode
 
