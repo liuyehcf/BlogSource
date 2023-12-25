@@ -445,14 +445,14 @@ From this repo, we can get all the data, ddl sql and test sql:
 
 * `./gen_data.sh 1`: Generate data
 * `byconity-tpcds/ddl/tpcds.sql`: DDL sqls.
-* `/home/disk3/hcf/byconity-tpcds/sql/standard`: DML sqls.
+* `byconity-tpcds/sql/standard`: DML sqls.
 
 ```sh
 tables=( $(echo "call_center catalog_page catalog_returns catalog_sales customer customer_address customer_demographics date_dim household_demographics income_band inventory item promotion reason ship_mode store store_returns store_sales time_dim warehouse web_page web_returns web_sales web_site") )
 
 for table in ${tables[@]}
 do
-    files=( $(find ./ -regex "./${table}[_0-9]*\.dat") )
+    files=( $(ls | grep -E "${table}[_0-9]*\.dat") )
     echo "table: ${table}, file count: ${#files[@]}"
     cat "${files[@]}" > ${table}.csv
 done
