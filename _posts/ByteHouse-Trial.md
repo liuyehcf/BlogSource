@@ -447,7 +447,16 @@ From this repo, we can get all the data, ddl sql and test sql:
 * `byconity-tpcds/ddl/tpcds.sql`: DDL sqls.
 * `/home/disk3/hcf/byconity-tpcds/sql/standard`: DML sqls.
 
-## 3.2 TPC-DS With Foreign Key
+```sh
+tables=( $(echo "call_center catalog_page catalog_returns catalog_sales customer customer_address customer_demographics date_dim household_demographics income_band inventory item promotion reason ship_mode store store_returns store_sales time_dim warehouse web_page web_returns web_sales web_site") )
+
+for table in ${tables[@]}
+do
+    cat ${table}*.dat > ${table}.csv
+done
+```
+
+### 3.1.1 TPC-DS With Foreign Key
 
 * `tests/optimizers/tpcds/sql/create_table.sql`: DDL sqls with foreign key constraints ([ByConity](https://github.com/ByConity/ByConity)-Commit: `a76f48b3d9`)
 
