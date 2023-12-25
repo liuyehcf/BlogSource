@@ -213,7 +213,7 @@ EOF
 **For name node:**
 
 ```sh
-export DATA_NODE_ADDRESSES="<ip1>,<ip2>"
+export DATA_NODE_ADDRESSES="<data node ip address-1>,<data node ip address-2>"
 
 echo ${DATA_NODE_ADDRESSES} | tr ',' '\n' > ${WORKING_DIR}/hdfs/datanodes_list.txt
 
@@ -327,7 +327,9 @@ ${HADOOP_DIR}/bin/hdfs dfs -df /user/clickhouse
 
 ### 2.2.3 Install FoundationDB client
 
-The Foundation client package are tight coupled to version of FoundationDB server. So we need to choose the client package with version that match the version of FoundationDB server
+The Foundation client package are tight coupled to version of FoundationDB server. So we need to choose the client package with version that match the version of FoundationDB server.
+
+For all nodes:
 
 ```sh
 wget https://mirror.ghproxy.com/https://github.com/apple/foundationdb/releases/download/7.1.25/foundationdb-clients-7.1.25-1.el7.x86_64.rpm
@@ -360,13 +362,15 @@ ln -s ${WORKING_DIR}/fdb_runtime/config/fdb.cluster /etc/byconity-server/fdb.clu
 * `/etc/byconity-server/fdb.cluster`: the cluster config file of FoundationDB cluster.
 
 ```sh
+export FIRST_NODE_ADDRESS="<first node ip address>"
+export FIRST_NODE_HOSTNAME="<first node hostname>"
+export DNS_PAIRS=( "<first node ip address>:<first node hostname>" "<second node ip address>:<second node hostname>" "<third node ip address>:<third node hostname>" )
+
 if [ ! -f /etc/byconity-server/cnch_config.xml.bak ]; then
     \cp -vf /etc/byconity-server/cnch_config.xml /etc/byconity-server/cnch_config.xml.bak
 fi
 
 # Set host and hostname of server, tso, daemon_manager, resource_manager to the first node.
-export FIRST_NODE_ADDRESS="<first node ip address>"
-export FIRST_NODE_HOSTNAME="<first node hostname>"
 sed -i -E "s|<host>.*</host>|<host>${FIRST_NODE_ADDRESS}</host>|g" /etc/byconity-server/cnch_config.xml
 sed -i -E "s|<hostname>.*</hostname>|<hostname>${FIRST_NODE_HOSTNAME}</hostname>|g" /etc/byconity-server/cnch_config.xml
 
@@ -374,7 +378,6 @@ sed -i -E "s|<hostname>.*</hostname>|<hostname>${FIRST_NODE_HOSTNAME}</hostname>
 sed -i -E "s|<hdfs_nnproxy>.*</hdfs_nnproxy>|<hdfs_nnproxy>hdfs://${NAME_NODE_ADDRESS}:12000</hdfs_nnproxy>|g" /etc/byconity-server/cnch_config.xml
 
 # Set dns config
-DNS_PAIRS=( "<ip1>:<hostname1>" "<ip2>:<hostname2>" "<ip3>:<hostname3>" )
 for DNS_PAIR in ${DNS_PAIRS[@]}
 do
     IP=${DNS_PAIR%:*}
