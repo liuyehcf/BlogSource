@@ -172,6 +172,10 @@ tar -zxf hadoop-3.3.6.tar.gz -C ${WORKING_DIR}/hdfs
 
 export HADOOP_DIR=${WORKING_DIR}/hdfs/hadoop-3.3.6
 
+if [ ! -f ${HADOOP_DIR}/etc/hadoop/hadoop-env.sh.bak ]; then
+    \cp -vf ${HADOOP_DIR}/etc/hadoop/hadoop-env.sh ${HADOOP_DIR}/etc/hadoop/hadoop-env.sh.bak
+fi
+
 JAVA_HOME_PATH=$(readlink -f $(which java))
 JAVA_HOME_PATH=${JAVA_HOME_PATH%/jre/bin/java}
 sed -i -E "s|^.*export JAVA_HOME=.*$|export JAVA_HOME=${JAVA_HOME_PATH}|g" ${HADOOP_DIR}/etc/hadoop/hadoop-env.sh
@@ -235,19 +239,22 @@ cat > ${HADOOP_DIR}/etc/hadoop/hdfs-site.xml << EOF
 <!-- Put site-specific property overrides in this file. -->
 
 <configuration>
-        <property>
-                <name>dfs.replication</name>
-                <value>1</value>
-        </property>
-        <property>
-                <name>dfs.namenode.name.dir</name>
-                <value>file://${WORKING_DIR}/hdfs/root_data_path_for_namenode</value>
-        </property>
-        <property>
-                <name>dfs.hosts</name>
-                <value>${WORKING_DIR}/hdfs/datanodes_list.txt</value>
-        </property>
-
+    <property>
+        <name>dfs.replication</name>
+        <value>1</value>
+    </property>
+    <property>
+        <name>dfs.namenode.name.dir</name>
+        <value>file://${WORKING_DIR}/hdfs/root_data_path_for_namenode</value>
+    </property>
+    <property>
+        <name>dfs.hosts</name>
+        <value>${WORKING_DIR}/hdfs/datanodes_list.txt</value>
+    </property>
+    <property>
+        <name>dfs.permissions</name>
+        <value>false</value>
+    </property>
 </configuration>
 EOF
 ```
@@ -277,10 +284,14 @@ cat > ${HADOOP_DIR}/etc/hadoop/hdfs-site.xml << EOF
 <!-- Put site-specific property overrides in this file. -->
 
 <configuration>
-        <property>
-                <name>dfs.data.dir</name>
-                <value>file://${WORKING_DIR}/hdfs/root_data_path_for_datanode</value>
-        </property>
+    <property>
+        <name>dfs.data.dir</name>
+        <value>file://${WORKING_DIR}/hdfs/root_data_path_for_datanode</value>
+    </property>
+    <property>
+        <name>dfs.permissions</name>
+        <value>false</value>
+    </property>
 </configuration>
 EOF
 ```
