@@ -326,70 +326,74 @@ rpm -ivh foundationdb-clients-*.rpm
 
 ### 2.2.4 Deploy ByConity Packages
 
+**Components:**
+
+* The `byconity-resource-manager`, `byconity-daemon-manger` and `byconity-tso` are light weight service so it could be install in shared machine with other package.
+* But for `byconity-server`, `byconity-worker`, `byconity-worker-write` we should install them in separate machines.
+
+**For all nodes:**
+
 ```sh
 wget https://mirror.ghproxy.com/https://github.com/ByConity/ByConity/releases/download/0.3.0/byconity-common-static-0.3.0.x86_64.rpm
 
 rpm -ivh byconity-common-static-*.rpm
+
+rm -f /etc/byconity-server/fdb.cluster
+ln -s ${WORKING_DIR}/fdb_runtime/config/fdb.cluster /etc/byconity-server/fdb.cluster
 ```
 
 **Config files:**
 
 * `/etc/byconity-server/cnch_config.xml`: contains service_discovery config, hdfs config, foundationdb cluster config path.
+    * search `your` and change them all(including the `hostname`).
 * `/etc/byconity-server/fdb.cluster`: the cluster config file of FoundationDB cluster.
 
-**Install tso:**
+**For node-1: Install tso, resource-manager, daemon-manager, server.**
 
 ```sh
 wget https://mirror.ghproxy.com/https://github.com/ByConity/ByConity/releases/download/0.3.0/byconity-tso-0.3.0.x86_64.rpm
-
-ln -s ${WORKING_DIR}/fdb_runtime/config/fdb.cluster /etc/byconity-server/fdb.cluster
-
-rpm -ivh byconity-tso-*.rpm
-
-systemctl start byconity-tso
-systemctl status byconity-tso
-```
-
-**Install other components:**
-
-* The `byconity-resource-manager`, `byconity-daemon-manger` and `byconity-tso` are light weight service so it could be install in shared machine with other package.
-* But for `byconity-server`, `byconity-worker`, `byconity-worker-write` we should install them in separate machines.
-
-```sh
 wget https://mirror.ghproxy.com/https://github.com/ByConity/ByConity/releases/download/0.3.0/byconity-resource-manager-0.3.0.x86_64.rpm
 wget https://mirror.ghproxy.com/https://github.com/ByConity/ByConity/releases/download/0.3.0/byconity-daemon-manager-0.3.0.x86_64.rpm
 wget https://mirror.ghproxy.com/https://github.com/ByConity/ByConity/releases/download/0.3.0/byconity-server-0.3.0.x86_64.rpm
-wget https://mirror.ghproxy.com/https://github.com/ByConity/ByConity/releases/download/0.3.0/byconity-worker-0.3.0.x86_64.rpm
-wget https://mirror.ghproxy.com/https://github.com/ByConity/ByConity/releases/download/0.3.0/byconity-worker-write-0.3.0.x86_64.rpm
 
+rpm -ivh byconity-tso-*.rpm
 rpm -ivh byconity-resource-manager-*.rpm
 rpm -ivh byconity-daemon-manager-*.rpm
 rpm -ivh byconity-server-*.rpm
-rpm -ivh byconity-worker-*.rpm
-rpm -ivh byconity-worker-write-*.rpm
 
+systemctl start byconity-tso
 systemctl start byconity-resource-manager
 systemctl start byconity-daemon-manager
 systemctl start byconity-server
-systemctl start byconity-worker
-systemctl start byconity-worker-write
 
+systemctl status byconity-tso
 systemctl status byconity-resource-manager
 systemctl status byconity-daemon-manager
 systemctl status byconity-server
-systemctl status byconity-worker
-systemctl status byconity-worker-write
 ```
 
-**Operations:**
+**For node-2: Install worker.**
 
 ```sh
-systemctl restart byconity-tso
-systemctl restart byconity-resource-manager
-systemctl restart byconity-daemon-manager
-systemctl restart byconity-server
-systemctl restart byconity-worker
-systemctl restart byconity-worker-write
+wget https://mirror.ghproxy.com/https://github.com/ByConity/ByConity/releases/download/0.3.0/byconity-worker-0.3.0.x86_64.rpm
+
+rpm -ivh byconity-worker-*.rpm
+
+systemctl start byconity-worker
+
+systemctl status byconity-worker
+```
+
+**For node-3: Install worker-write.**
+
+```sh
+wget https://mirror.ghproxy.com/https://github.com/ByConity/ByConity/releases/download/0.3.0/byconity-worker-write-0.3.0.x86_64.rpm
+
+rpm -ivh byconity-worker-write-*.rpm
+
+systemctl start byconity-worker-write
+
+systemctl status byconity-worker-write
 ```
 
 # 3 Load
