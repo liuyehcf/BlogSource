@@ -452,7 +452,9 @@ tables=( $(echo "call_center catalog_page catalog_returns catalog_sales customer
 
 for table in ${tables[@]}
 do
-    cat ${table}*.dat > ${table}.csv
+    files=( $(find ./ -regex "./${table}[_0-9]*\.dat") )
+    echo "table: ${table}, file count: ${#files[@]}"
+    cat "${files[@]}" > ${table}.csv
 done
 ```
 
@@ -475,3 +477,10 @@ SELECT * FROM system.workers;
 SELECT * FROM system.worker_groups;
 SELECT * FROM system.virtual_warehouses;
 ```
+
+# 5 Options
+
+1. `--input_format_allow_errors_num`
+1. `--input_format_allow_errors_ratio`
+1. `--format_csv_delimiter`
+1. `--multiquery`
