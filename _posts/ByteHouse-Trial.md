@@ -120,6 +120,16 @@ Coordination state changed
 
 **Then copy file `${WORKING_DIR}/fdb_runtime/config/fdb.cluster` in first node to the other nodes, and then executes `systemctl restart fdb.service` in all nodes.**
 
+```sh
+scp ${WORKING_DIR}/fdb_runtime/config/fdb.cluster root@<other_ip>:${WORKING_DIR}/fdb_runtime/config/fdb.cluster
+```
+
+**For all nodes:**
+
+```sh
+systemctl restart fdb.service
+```
+
 **For first node:**
 
 ```sh
