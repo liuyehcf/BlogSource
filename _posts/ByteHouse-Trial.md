@@ -359,7 +359,32 @@ ln -s ${WORKING_DIR}/fdb_runtime/config/fdb.cluster /etc/byconity-server/fdb.clu
     * search `your` and change them all(including the `hostname`).
 * `/etc/byconity-server/fdb.cluster`: the cluster config file of FoundationDB cluster.
 
-**For node-1: Install tso, resource-manager, daemon-manager, server.**
+```sh
+if [ ! -f /etc/byconity-server/cnch_config.xml.bak ]; then
+    \cp -vf /etc/byconity-server/cnch_config.xml /etc/byconity-server/cnch_config.xml.bak
+fi
+
+# Set host and hostname of server, tso, daemon_manager, resource_manager to the first node.
+export FIRST_NODE_ADDRESS="<first node ip address>"
+export FIRST_NODE_HOSTNAME="<first node hostname>"
+sed -i -E "s|<host>.*</host>|<host>${FIRST_NODE_ADDRESS}</host>|g" /etc/byconity-server/cnch_config.xml
+sed -i -E "s|<hostname>.*</hostname>|<hostname>${FIRST_NODE_HOSTNAME}</hostname>|g" /etc/byconity-server/cnch_config.xml
+
+# Set hdfs
+sed -i -E "s|<hdfs_nnproxy>.*</hdfs_nnproxy>|<hdfs_nnproxy>hdfs://${NAME_NODE_ADDRESS}:12000</hdfs_nnproxy>|g" /etc/byconity-server/cnch_config.xml
+
+# Set dns config
+DNS_PAIRS=( "<ip1>:<hostname1>" "<ip2>:<hostname2>" "<ip3>:<hostname3>" )
+for DNS_PAIR in ${DNS_PAIRS[@]}
+do
+    IP=${DNS_PAIR%:*}
+    HOSTNAME=${DNS_PAIR#*:}
+    sed -i "/${IP} ${HOSTNAME}/d" /etc/hosts
+    echo "${IP} ${HOSTNAME}" >> /etc/hosts
+done
+```
+
+**For first node: Install tso, resource-manager, daemon-manager, server.**
 
 ```sh
 wget https://mirror.ghproxy.com/https://github.com/ByConity/ByConity/releases/download/0.3.0/byconity-tso-0.3.0.x86_64.rpm
@@ -383,7 +408,7 @@ systemctl status byconity-daemon-manager
 systemctl status byconity-server
 ```
 
-**For node-2: Install worker.**
+**For second node: Install worker.**
 
 ```sh
 wget https://mirror.ghproxy.com/https://github.com/ByConity/ByConity/releases/download/0.3.0/byconity-worker-0.3.0.x86_64.rpm
@@ -395,7 +420,7 @@ systemctl start byconity-worker
 systemctl status byconity-worker
 ```
 
-**For node-3: Install worker-write.**
+**For third node: Install worker-write.**
 
 ```sh
 wget https://mirror.ghproxy.com/https://github.com/ByConity/ByConity/releases/download/0.3.0/byconity-worker-write-0.3.0.x86_64.rpm
