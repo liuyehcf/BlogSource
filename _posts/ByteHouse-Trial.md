@@ -312,12 +312,14 @@ EOF
 
 ```sh
 ${HADOOP_DIR}/bin/hdfs namenode -format
+${HADOOP_DIR}/bin/hdfs --daemon stop namenode
 ${HADOOP_DIR}/bin/hdfs --daemon start namenode
 ```
 
 **For data nodes:**
 
 ```sh
+${HADOOP_DIR}/bin/hdfs --daemon stop datanode
 ${HADOOP_DIR}/bin/hdfs --daemon start datanode
 ```
 
