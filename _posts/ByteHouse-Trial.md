@@ -149,6 +149,14 @@ Configuration:
   Storage engine         - ssd-2
   Coordinators           - 3
   Usable Regions         - 1
+
+fdb > status details
+
+...
+Coordination servers:
+  172.26.95.241:4500  (reachable)
+  172.26.95.242:4500  (reachable)
+  172.26.95.243:4500  (reachable)
 ```
 
 ### 2.2.2 HDFS Installation
@@ -213,9 +221,13 @@ EOF
 **For name node:**
 
 ```sh
-export DATA_NODE_ADDRESSES="<data node ip address-1>,<data node ip address-2>"
+export DATA_NODE_ADDRESSES=( "<data node ip address 1>" "<data node ip address 2>" )
 
-echo ${DATA_NODE_ADDRESSES} | tr ',' '\n' > ${WORKING_DIR}/hdfs/datanodes_list.txt
+rm ${WORKING_DIR}/hdfs/datanodes_list.txt
+for DATA_NODE_ADDRESS in ${DATA_NODE_ADDRESSES[@]}
+do
+    echo ${DATA_NODE_ADDRESS} >> ${WORKING_DIR}/hdfs/datanodes_list.txt
+done
 
 mkdir -p ${WORKING_DIR}/hdfs/root_data_path_for_namenode
 
