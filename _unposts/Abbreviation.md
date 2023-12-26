@@ -109,3 +109,4 @@
 | ARR | Annual Recurring Revenue |
 | NFA | Non-Deterministic Finite Automation |
 | DFA | Deterministic Finite Automation |
+| GMV | Gross Merchandise Volume |
