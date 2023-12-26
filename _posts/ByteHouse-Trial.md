@@ -356,7 +356,7 @@ rpm -ivh foundationdb-clients-*.rpm
 **Components:**
 
 * The `byconity-resource-manager`, `byconity-daemon-manger` and `byconity-tso` are light weight service so it could be install in shared machine with other package.
-* But for `byconity-server`, `byconity-worker`, `byconity-worker-write` we should install them in separate machines.
+* But for `byconity-server`, `byconity-worker`, `byconity-worker-write` we should install them in separate machines. These components are incompatible with each other for they all locking the file `/var/lib/byconity-server/status` exclusively.
 
 **For all nodes:**
 
@@ -451,6 +451,12 @@ rpm -ivh byconity-worker-write-*.rpm
 systemctl start byconity-worker-write
 
 systemctl status byconity-worker-write
+```
+
+**Other operations:**
+
+```sh
+systemctl list-units | grep byconity
 ```
 
 # 3 Load
