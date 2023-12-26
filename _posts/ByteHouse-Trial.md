@@ -45,8 +45,8 @@ chmod ug+x fdbcli fdbmonitor fdbserver
 **For all nodes:**
 
 ```sh
-export WORKING_DIR="<your working dir>"
-export IP_ADDRESS="<your ip address>"
+export WORKING_DIR="<working dir>"
+export CUR_IP_ADDRESS="<current node ip address>"
 
 mkdir -p ${WORKING_DIR}/fdb_runtime/config
 mkdir -p ${WORKING_DIR}/fdb_runtime/data
@@ -82,7 +82,7 @@ class=stateless
 EOF
 
 cat > ${WORKING_DIR}/fdb_runtime/config/fdb.cluster << EOF
-clusterdsc:test@${IP_ADDRESS}:4500
+clusterdsc:test@${CUR_IP_ADDRESS}:4500
 EOF
 
 cat > ${WORKING_DIR}/fdb_runtime/config/fdb.service << EOF
@@ -164,7 +164,7 @@ yum install -y java-1.8.0-openjdk-devel
 ```
 
 ```sh
-export WORKING_DIR="<your working dir>"
+export WORKING_DIR="<working dir>"
 export NAME_NODE_ADDRESS="<name node ip address>"
 
 mkdir -p ${WORKING_DIR}/hdfs
@@ -365,6 +365,7 @@ ln -s ${WORKING_DIR}/fdb_runtime/config/fdb.cluster /etc/byconity-server/fdb.clu
 export FIRST_NODE_ADDRESS="<first node ip address>"
 export FIRST_NODE_HOSTNAME="<first node hostname>"
 export DNS_PAIRS=( "<first node ip address>:<first node hostname>" "<second node ip address>:<second node hostname>" "<third node ip address>:<third node hostname>" )
+export CUR_IP_ADDRESS="<current node ip address>"
 
 if [ ! -f /etc/byconity-server/cnch_config.xml.bak ]; then
     \cp -vf /etc/byconity-server/cnch_config.xml /etc/byconity-server/cnch_config.xml.bak
@@ -380,10 +381,13 @@ sed -i -E "s|<hdfs_nnproxy>.*</hdfs_nnproxy>|<hdfs_nnproxy>hdfs://${NAME_NODE_AD
 # Set dns config
 for DNS_PAIR in ${DNS_PAIRS[@]}
 do
-    IP=${DNS_PAIR%:*}
+    IP_ADDRESS=${DNS_PAIR%:*}
     HOSTNAME=${DNS_PAIR#*:}
-    sed -i "/${IP} ${HOSTNAME}/d" /etc/hosts
-    echo "${IP} ${HOSTNAME}" >> /etc/hosts
+    if [ "${IP_ADDRESS}" = "${CUR_IP_ADDRESS}" ]; then
+        continue
+    fi
+    sed -i "/${IP_ADDRESS} ${HOSTNAME}/d" /etc/hosts
+    echo "${IP_ADDRESS} ${HOSTNAME}" >> /etc/hosts
 done
 ```
 
