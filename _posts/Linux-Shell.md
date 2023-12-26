@@ -1481,6 +1481,7 @@ echo $y # 输出10
 * `-x`：将每个命令及其详细参数输出到标准输出中
 * `-o pipefail`：针对管道命令，取从右往左第一个非零返回值作为整个管道命令的返回值
 * `-o vi/emacs`：`vi`模式或`emacs`模式，默认是`emacs`模式
+* `-H`：Enable `!` style history substitution
 
 **示例：**
 

@@ -524,6 +524,24 @@ EOF
 sed '/<tag>/ r file2.txt' file1.txt
 ```
 
+* **`reverse match`：**
+
+```sh
+echo -e "a\nb\nc\nd\ne" | sed '/a/!d'
+
+echo -e "a\nb\nc\nd\ne" | sed '/a/!s/b/B/g'
+
+# "!s" inside " will trigger history expansion
+# turn off history expansion
+set +H
+echo -e "a\nb\nc\nd\ne" | sed "/a/!d"
+
+echo -e "a\nb\nc\nd\ne" | sed "/a/!s/b/B/g"
+# turn on history expansion
+
+set -H
+```
+
 **注意**：在macOS中，`-i`参数后面要跟一个扩展符，用于备份源文件。如果扩展符长度是0，那么不进行备份
 
 * `sed -i ".back" "s/a/b/g" example`：备份文件为`example.back`

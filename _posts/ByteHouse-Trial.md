@@ -393,16 +393,18 @@ sed -i -E "s|<hostname>.*</hostname>|<hostname>${FIRST_NODE_HOSTNAME}</hostname>
 sed -i -E "s|<hdfs_nnproxy>.*</hdfs_nnproxy>|<hdfs_nnproxy>hdfs://${NAME_NODE_ADDRESS}:12000</hdfs_nnproxy>|g" /etc/byconity-server/cnch_config.xml
 
 # Set dns config
+set +H
 for DNS_PAIR in ${DNS_PAIRS[@]}
 do
     IP_ADDRESS=${DNS_PAIR%:*}
     HOSTNAME=${DNS_PAIR#*:}
-    if [ "${IP_ADDRESS}" = "${CUR_IP_ADDRESS}" ]; then
-        continue
+    if grep -q "${IP_ADDRESS}" /etc/hosts; then
+        sed -i -E "/${IP_ADDRESS}.*${HOSTNAME}/!s|${IP_ADDRESS}.*|& ${HOSTNAME}|g" /etc/hosts
+    else
+        echo "${IP_ADDRESS} ${HOSTNAME}" >> /etc/hosts
     fi
-    sed -i "/${IP_ADDRESS} ${HOSTNAME}/d" /etc/hosts
-    echo "${IP_ADDRESS} ${HOSTNAME}" >> /etc/hosts
 done
+set -H
 ```
 
 **For first node: Install tso, resource-manager, daemon-manager, server.**
@@ -508,3 +510,5 @@ SELECT * FROM system.virtual_warehouses;
 1. `--input_format_allow_errors_ratio`
 1. `--format_csv_delimiter`
 1. `--multiquery`
+1. `--query`: Execute a single SQL query from the command line.
+1. `--queries-file`: File path with queries to execute
