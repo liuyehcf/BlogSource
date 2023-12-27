@@ -136,30 +136,16 @@ systemctl restart fdb.service
 **For first node:**
 
 ```sh
-${WORKING_DIR}/foundationdb/bin/fdbcli -C ${WORKING_DIR}/fdb_runtime/config/fdb.cluster
+${WORKING_DIR}/foundationdb/bin/fdbcli -C ${WORKING_DIR}/fdb_runtime/config/fdb.cluster --exec "configure double"
+${WORKING_DIR}/foundationdb/bin/fdbcli -C ${WORKING_DIR}/fdb_runtime/config/fdb.cluster --exec "status"
+${WORKING_DIR}/foundationdb/bin/fdbcli -C ${WORKING_DIR}/fdb_runtime/config/fdb.cluster --exec "status details"
 
-fdb> configure double
-Configuration changed
-
-fdb> status
-
-Using cluster file `/home/disk1/byconity/fdb_runtime/config/fdb.cluster'.
-
-Unable to retrieve all status information.
-
-Configuration:
-  Redundancy mode        - double
-  Storage engine         - ssd-2
-  Coordinators           - 3
-  Usable Regions         - 1
-
-fdb > status details
-
-...
-Coordination servers:
-  172.26.95.241:4500  (reachable)
-  172.26.95.242:4500  (reachable)
-  172.26.95.243:4500  (reachable)
+# Check If all nodes are reachable
+# ...
+# Coordination servers:
+#  172.26.95.241:4500  (reachable)
+#  172.26.95.242:4500  (reachable)
+#  172.26.95.243:4500  (reachable)
 ```
 
 ### 2.2.2 HDFS Installation
