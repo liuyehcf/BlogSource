@@ -2075,6 +2075,7 @@ int main() {
 **Data Structure:**
 
 * `std::vector`
+* `std::list`
 * `std::map`
 * `std::set`
 * `std::stack`
@@ -2083,12 +2084,17 @@ int main() {
 
 **Algorithm:**
 
-* `std::hash`: function objects.
 * `std::sort`
 * `std::lower_bound`,`std::upper_bound` : binary search.
 * `std::find`
 * `std::remove_if`: return the iterator pointing at the first elements to be removed.
 * `std::erase_if`: remove the specific elements.
+
+**Function Objects:**
+
+* `std::hash`
+* `std::less`/`std::less_equals`/`std::greater`/`std::greater_equal`
+* `std::equal_to`
 
 **I/O:**
 
