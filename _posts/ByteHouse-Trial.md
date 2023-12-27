@@ -365,16 +365,16 @@ ln -s ${WORKING_DIR}/fdb_runtime/config/fdb.cluster /etc/byconity-server/fdb.clu
 * `/etc/byconity-server/fdb.cluster`: the cluster config file of FoundationDB cluster.
 
 ```sh
-export BYCONITY_PANEL_NODE_ADDRESS="<first node ip address>"
-export BYCONITY_PANEL_NODE_HOSTNAME="<first node hostname>"
-export DNS_PAIRS=( "<first node ip address>:<first node hostname>" "<second node ip address>:<second node hostname>" "<third node ip address>:<third node hostname>" )
+export BYCONITY_PANEL_NODE_ADDRESS="<panel node ip address>"
+export BYCONITY_PANEL_NODE_HOSTNAME="<panel node hostname>"
+export DNS_PAIRS=( "<panel node ip address>:<panel node hostname>" "<worker node ip address>:<worker node hostname>" "<worker-wirte node ip address>:<worker-wirte node hostname>" )
 export CUR_IP_ADDRESS="<current node ip address>"
 
 if [ ! -f /etc/byconity-server/cnch_config.xml.bak ]; then
     \cp -vf /etc/byconity-server/cnch_config.xml /etc/byconity-server/cnch_config.xml.bak
 fi
 
-# Set host and hostname of server, tso, daemon_manager, resource_manager to the first node.
+# Set host and hostname of server, tso, daemon_manager, resource_manager to the panel node.
 sed -i -E "s|<host>.*</host>|<host>${BYCONITY_PANEL_NODE_ADDRESS}</host>|g" /etc/byconity-server/cnch_config.xml
 sed -i -E "s|<hostname>.*</hostname>|<hostname>${BYCONITY_PANEL_NODE_HOSTNAME}</hostname>|g" /etc/byconity-server/cnch_config.xml
 
@@ -398,7 +398,7 @@ done
 set -H
 ```
 
-**For first node: Install tso, resource-manager, daemon-manager, server.**
+**For panel node: Install tso, resource-manager, daemon-manager, server.**
 
 ```sh
 wget https://mirror.ghproxy.com/https://github.com/ByConity/ByConity/releases/download/0.3.0/byconity-tso-0.3.0.x86_64.rpm
@@ -422,7 +422,7 @@ systemctl status byconity-daemon-manager
 systemctl status byconity-server
 ```
 
-**For second node: Install worker.**
+**For worker node: Install worker.**
 
 ```sh
 wget https://mirror.ghproxy.com/https://github.com/ByConity/ByConity/releases/download/0.3.0/byconity-worker-0.3.0.x86_64.rpm
@@ -434,7 +434,7 @@ systemctl start byconity-worker
 systemctl status byconity-worker
 ```
 
-**For third node: Install worker-write.**
+**For worker-write node: Install worker-write.**
 
 ```sh
 wget https://mirror.ghproxy.com/https://github.com/ByConity/ByConity/releases/download/0.3.0/byconity-worker-write-0.3.0.x86_64.rpm
