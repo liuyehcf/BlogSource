@@ -162,7 +162,7 @@ yum install -y java-1.8.0-openjdk-devel
 
 ```sh
 export WORKING_DIR="<working dir>"
-export NAME_NODE_ADDRESS="<name node ip address>"
+export HDFS_NAME_NODE_ADDRESS="<name node ip address>"
 
 mkdir -p ${WORKING_DIR}/hdfs
 tar -zxf hadoop-3.3.6.tar.gz -C ${WORKING_DIR}/hdfs
@@ -201,7 +201,7 @@ cat > ${HADOOP_DIR}/etc/hadoop/core-site.xml << EOF
 <configuration>
         <property>
                 <name>fs.defaultFS</name>
-                <value>hdfs://${NAME_NODE_ADDRESS}:12000</value>
+                <value>hdfs://${HDFS_NAME_NODE_ADDRESS}:12000</value>
         </property>
 </configuration>
 EOF
@@ -210,12 +210,12 @@ EOF
 **For name node:**
 
 ```sh
-export DATA_NODE_ADDRESSES=( "<data node ip address 1>" "<data node ip address 2>" )
+export HDFS_DATA_NODE_ADDRESSES=( "<data node ip address 1>" "<data node ip address 2>" )
 
 rm ${WORKING_DIR}/hdfs/datanodes_list.txt
-for DATA_NODE_ADDRESS in ${DATA_NODE_ADDRESSES[@]}
+for HDFS_DATA_NODE_ADDRESS in ${HDFS_DATA_NODE_ADDRESSES[@]}
 do
-    echo ${DATA_NODE_ADDRESS} >> ${WORKING_DIR}/hdfs/datanodes_list.txt
+    echo ${HDFS_DATA_NODE_ADDRESS} >> ${WORKING_DIR}/hdfs/datanodes_list.txt
 done
 
 mkdir -p ${WORKING_DIR}/hdfs/root_data_path_for_namenode
@@ -365,8 +365,8 @@ ln -s ${WORKING_DIR}/fdb_runtime/config/fdb.cluster /etc/byconity-server/fdb.clu
 * `/etc/byconity-server/fdb.cluster`: the cluster config file of FoundationDB cluster.
 
 ```sh
-export FIRST_NODE_ADDRESS="<first node ip address>"
-export FIRST_NODE_HOSTNAME="<first node hostname>"
+export BYCONITY_PANEL_NODE_ADDRESS="<first node ip address>"
+export BYCONITY_PANEL_NODE_HOSTNAME="<first node hostname>"
 export DNS_PAIRS=( "<first node ip address>:<first node hostname>" "<second node ip address>:<second node hostname>" "<third node ip address>:<third node hostname>" )
 export CUR_IP_ADDRESS="<current node ip address>"
 
@@ -375,13 +375,13 @@ if [ ! -f /etc/byconity-server/cnch_config.xml.bak ]; then
 fi
 
 # Set host and hostname of server, tso, daemon_manager, resource_manager to the first node.
-sed -i -E "s|<host>.*</host>|<host>${FIRST_NODE_ADDRESS}</host>|g" /etc/byconity-server/cnch_config.xml
-sed -i -E "s|<hostname>.*</hostname>|<hostname>${FIRST_NODE_HOSTNAME}</hostname>|g" /etc/byconity-server/cnch_config.xml
+sed -i -E "s|<host>.*</host>|<host>${BYCONITY_PANEL_NODE_ADDRESS}</host>|g" /etc/byconity-server/cnch_config.xml
+sed -i -E "s|<hostname>.*</hostname>|<hostname>${BYCONITY_PANEL_NODE_HOSTNAME}</hostname>|g" /etc/byconity-server/cnch_config.xml
 
 # Set hdfs
-sed -i -E "s|<hdfs_nnproxy>.*</hdfs_nnproxy>|<hdfs_nnproxy>hdfs://${NAME_NODE_ADDRESS}:12000</hdfs_nnproxy>|g" /etc/byconity-server/cnch_config.xml
+sed -i -E "s|<hdfs_nnproxy>.*</hdfs_nnproxy>|<hdfs_nnproxy>hdfs://${HDFS_NAME_NODE_ADDRESS}:12000</hdfs_nnproxy>|g" /etc/byconity-server/cnch_config.xml
 
-# Set dns config
+# Set dns config. This is optional to make sure that dns works well if you have changed the node name manually.
 set +H
 for DNS_PAIR in ${DNS_PAIRS[@]}
 do
