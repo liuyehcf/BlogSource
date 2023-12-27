@@ -614,6 +614,14 @@ Total: 100.1 MB
 * `path`是固定，即`/pprof/heap`以及`/pprof/profile`
     * `/pprof/profile`的实现估计有问题，拿不到预期的结果
 
+```sh
+sudo apt-get install libgoogle-perftools-dev
+
+# or
+
+sudo yum install gperftools-devel
+```
+
 ```cpp
 #include <gperftools/profiler.h>
 #include <jemalloc/jemalloc.h>
@@ -689,18 +697,29 @@ int main(int argc, char** argv) {
 }
 ```
 
-编译运行：
+**Compile and run:**
 
 ```sh
 gcc -o main main.cpp -O0 -lstdc++ -std=gnu++17 -L`jemalloc-config --libdir` -Wl,-rpath,`jemalloc-config --libdir` -ljemalloc `jemalloc-config --libs` -lprofiler
 MALLOC_CONF=prof_leak:true,lg_prof_sample:0,prof_final:true ./main
 
-# 另一个终端中执行下面命令
-jeprof main localhost:16691/pprof/heap # 交互式
-jeprof main localhost:16691/pprof/heap --text #文本
-jeprof main localhost:16691/pprof/heap --svg > main.svg #图形
+# In another terminal
+jeprof main localhost:16691/pprof/heap # interactive mode
+jeprof main localhost:16691/pprof/heap --text # text
+jeprof main localhost:16691/pprof/heap --svg > main.svg # graph
 
 jeprof main localhost:16691/pprof/profile --text --seconds=15
+```
+
+**How to create a graph:**
+
+```sh
+curl http://127.0.0.1:16691/pprof/heap > begin.heap
+sleep 10
+curl http://127.0.0.1:16691/pprof/heap > end.heap
+jeprof --dot --base=begin.heap ./main end.heap > heap-profile.dot
+dot -Tsvg heap-profile.dot -o heap-profile.svg
+dot -Tpdf heap-profile.dot -o heap-profile.pdf
 ```
 
 ### 3.2.4 Reference
