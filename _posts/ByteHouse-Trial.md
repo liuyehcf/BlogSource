@@ -40,6 +40,8 @@ mv fdbcli.x86_64 fdbcli
 mv fdbmonitor.x86_64 fdbmonitor
 mv fdbserver.x86_64 fdbserver
 chmod ug+x fdbcli fdbmonitor fdbserver
+
+yum install -y sshpass
 ```
 
 **For all nodes:**
@@ -109,19 +111,20 @@ systemctl status fdb.service
 **For first node:**
 
 ```sh
-${WORKING_DIR}/foundationdb/bin/fdbcli -C ${WORKING_DIR}/fdb_runtime/config/fdb.cluster
+export FDB_COORDINATOR_ADDRESSES=( "<coordinator ip address 1>" "<coordinator ip address 2>" "<coordinator ip address 3>" )
+export PASSWD=""
 
-fdb> configure new single ssd
-Database created
+${WORKING_DIR}/foundationdb/bin/fdbcli -C ${WORKING_DIR}/fdb_runtime/config/fdb.cluster --exec "configure new single ssd"
+ADD_COORDINATORS_CMD="coordinators ${FDB_COORDINATOR_ADDRESSES[@]/%/:4500}"
+${WORKING_DIR}/foundationdb/bin/fdbcli -C ${WORKING_DIR}/fdb_runtime/config/fdb.cluster --exec "${ADD_COORDINATORS_CMD}"
 
-fdb> coordinators <node_1_ip_address>:4500 <node_2_ip_address>:4500 <node_3_ip_address>:4500
-Coordination state changed
-```
-
-**Then copy file `${WORKING_DIR}/fdb_runtime/config/fdb.cluster` in first node to the other nodes, and then executes `systemctl restart fdb.service` in all nodes.**
-
-```sh
-scp ${WORKING_DIR}/fdb_runtime/config/fdb.cluster root@<other_ip>:${WORKING_DIR}/fdb_runtime/config/fdb.cluster
+# Then copy file `${WORKING_DIR}/fdb_runtime/config/fdb.cluster` in first node to the other nodes, and then executes `systemctl restart fdb.service` in all nodes.
+for FDB_COORDINATOR_ADDRESS in ${FDB_COORDINATOR_ADDRESSES[@]}
+do
+    if [ "${CUR_IP_ADDRESS}" != "${FDB_COORDINATOR_ADDRESS}" ]; then
+        sshpass -p "${PASSWD}" scp -o StrictHostKeyChecking=no ${WORKING_DIR}/fdb_runtime/config/fdb.cluster root@${FDB_COORDINATOR_ADDRESS}:${WORKING_DIR}/fdb_runtime/config/fdb.cluster
+    fi
+done
 ```
 
 **For all nodes:**
