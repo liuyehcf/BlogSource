@@ -40,6 +40,8 @@ Kafka的服务露出有点问题，如果简单地把`Service`从`ClusterIP`修�
 
 [集群生命周期管理](https://sealos.io/en/docs/lifecycle-management/)
 
+**Deploy:**
+
 ```sh
 wget https://mirror.ghproxy.com/https://github.com/labring/sealos/releases/download/v4.2.0/sealos_4.2.0_linux_amd64.tar.gz
 tar -zxvf sealos_4.2.0_linux_amd64.tar.gz sealos && chmod +x sealos && mv sealos /usr/bin
@@ -47,6 +49,12 @@ tar -zxvf sealos_4.2.0_linux_amd64.tar.gz sealos && chmod +x sealos && mv sealos
 sealos run labring/kubernetes:v1.25.0-4.2.0 labring/helm:v3.8.2 labring/calico:v3.24.1 \
     --masters 172.26.95.56 \
     --nodes 172.26.95.57,172.26.95.59,172.26.95.58 -p xxxxxx
+```
+
+**Reset:**
+
+```sh
+sealos reset
 ```
 
 # 7 kind

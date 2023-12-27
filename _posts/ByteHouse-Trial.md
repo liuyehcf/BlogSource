@@ -399,7 +399,9 @@ do
     IP_ADDRESS=${DNS_PAIR%:*}
     HOSTNAME=${DNS_PAIR#*:}
     if grep -q "${IP_ADDRESS}" /etc/hosts; then
-        sed -i -E "/${IP_ADDRESS}.*${HOSTNAME}/!s|${IP_ADDRESS}.*|& ${HOSTNAME}|g" /etc/hosts
+        if ! grep -q "${IP_ADDRESS}.*${HOSTNAME}" /etc/hosts; then
+          sed -i -E "/${IP_ADDRESS}.*${HOSTNAME}/!{0,/${IP_ADDRESS}/s|${IP_ADDRESS}.*|& ${HOSTNAME}|}" /etc/hosts
+        fi
     else
         echo "${IP_ADDRESS} ${HOSTNAME}" >> /etc/hosts
     fi
