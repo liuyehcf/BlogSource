@@ -1387,6 +1387,7 @@ end, back to main
     * `-g`：生成调试信息
     * `-ggdb`：生成`gdb`专用的调试信息
     * `-gdwarf`/`-gdwarf-version`：生成`DWARF`格式的调试信息，`version`的可选值有`2/3/4/5`，默认是4
+1. **`-print-search-dirs`：打印搜索路径**
 1. **`-I <path>`：增加头文件搜索路径**
     * 可以并列使用多个`-I`参数，例如`-I path1 -I path2`
 1. **`-L <path>`：增加库文件搜索路径**
@@ -1457,11 +1458,12 @@ gcc main.cpp -o main -std=gnu++17 -Wl,-Bstatic -lstdc++ -Wl,-Bdynamic
 
 **`gcc`如何指定`linker`**
 
-* -fuse-ld=gold
-* -B/usr/local/bin/gcc-mold
+* `-fuse-ld=gold`
+* `-B/usr/local/bin/gcc-mold`
 
 **常用参数说明：**
 
+* `--verbose`：打印链接时的详细信息，包括链接了哪些动态库
 * `-l <name>`：增加库文件，查找`lib<name>.a`或者`lib<name>.so`，如果都存在，默认使用`so`版本
 * `-L <dir>`：增加库文件搜索路径，其优先级会高于默认的搜索路径。允许指定多个，搜索顺序与其指定的顺序相同
 * `-rpath=<dir>`：增加运行时库文件搜索路径（务必用绝路径，否则二进制一旦换目录就无法运行了）。`-L`参数只在编译、链接期间生效，运行时仍然会找不到动态库文件，需要通过该参数指定。因此，对于位于非默认搜索路径下的动态库文件，`-L`与`-Wl,-rpath=`这两个参数通常是一起使用的
@@ -1495,6 +1497,20 @@ gcc main.cpp -o main -std=gnu++17 -Wl,-Bstatic -lstdc++ -Wl,-Bdynamic
 
     ./proxy_malloc
     ```
+
+### 7.2.1 How to check default linker
+
+```sh
+ls -l $(which ld)
+
+update-alternatives --display ld
+```
+
+### 7.2.2 How to print dynamic lib path when linking program
+
+```sh
+gcc -o your_program your_program.c -Wl,--verbose
+```
 
 ## 7.3 Reference
 

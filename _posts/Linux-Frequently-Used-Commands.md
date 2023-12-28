@@ -1329,6 +1329,8 @@ ROOT=$(cd "$ROOT"; pwd)
 **Examples:**
 
 * `ldd main`
+    * `readelf -a ./main | grep NEEDED`
+    * `objdump -x ./main | grep NEEDED`
 
 ## 2.33 ldconfig
 
