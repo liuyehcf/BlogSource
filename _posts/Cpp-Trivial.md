@@ -370,6 +370,25 @@ gcc -o main main.cpp -O3 -L . -Wl,-rpath=`pwd` -lfoo -lstdc++
 * [ABI Policy and Guidelines](https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html)
 * [C/C++ ABI兼容那些事儿](https://zhuanlan.zhihu.com/p/556726543)
 
+### 2.6.3 ABI Mismatch Issue
+
+```
+# compile works fine
+gcc -o main main.cpp -O0 -lstdc++
+
+# Errors occur at runtime
+./main
+
+# ./main: /lib64/libstdc++.so.6: version `GLIBCXX_3.4.29' not found (required by ./main)
+# ./main: /lib64/libstdc++.so.6: version `GLIBCXX_3.4.30' not found (required by ./main)
+# ./main: /lib64/libstdc++.so.6: version `CXXABI_1.3.13' not found (required by ./main)
+```
+
+The errors you're encountering at runtime indicate that your application (`main`) is linked against newer versions of the C++ standard library (`libstdc++`) and C++ ABI (`CXXABI`) than are available on your system. This typically happens when your application is compiled with a newer version of GCC than the one installed on the runtime system.
+
+* `gcc -o main main.cpp -O0 -lstdc++ -fuse-ld=gold -Wl,--verbose`: Check the dynamic lib path that used at link time.
+* `ldd main`: Check the dynamic lib path that used at runtime.
+
 ## 2.7 Commonly-used Librarys
 
 **`libc/glibc/glib`（`man libc/glibc`）**
@@ -1452,6 +1471,7 @@ gcc main.cpp -o main -std=gnu++17 -Wl,-Bstatic -lstdc++ -Wl,-Bdynamic
 
 **种类**
 
+* `GNU ld`
 * `GNU gold`
 * `LLVM lld`
 * [mold](https://github.com/rui314/mold)
@@ -1509,7 +1529,14 @@ update-alternatives --display ld
 ### 7.2.2 How to print dynamic lib path when linking program
 
 ```sh
+# default GNU ld
 gcc -o your_program your_program.c -Wl,--verbose
+
+# gold
+gcc -o your_program your_program.c -fuse-ld=gold -Wl,--verbose
+
+# lld
+gcc -o your_program your_program.c -fuse-ld=lld -Wl,--verbose
 ```
 
 ## 7.3 Reference
