@@ -253,6 +253,7 @@ Java反编译工具，[下载地址](http://www.javadecompilers.com/jad)
 
 1. `readlink -f $(which java)`
 1. `update-alternatives --config java`
+1. `update-alternatives --display java`
 
 ### 13.2.2 MacOS
 

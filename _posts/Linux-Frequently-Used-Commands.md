@@ -1642,6 +1642,14 @@ free
 * `numactl --hardware`：
 * `numactl --show`：显示当前的`NUMA`设置
 
+## 3.15 hdparm
+
+`hdparm` is a command-line utility in Linux used primarily for querying and setting hard disk parameters. It's a powerful tool that provides a variety of functions allowing users to manage the performance of their disk drives. The most common use of `hdparm` is to measure the reading speed of a disk drive, but its capabilities extend much further.
+
+**Examples:**
+
+* `hdparm -Tt /dev/sda`
+
 # 4 Process Management
 
 **后台进程（&）：**
