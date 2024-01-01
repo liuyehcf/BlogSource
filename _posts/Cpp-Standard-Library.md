@@ -372,6 +372,45 @@ int main() {
 (1, 1),(2, 1),(3, 2),(4, 2),(5, 2),(6, 2),(7, 3),(8, 4),
 ```
 
+## 1.5 Set Operations
+
+1. `std::set_intersection`
+1. `std::set_union`
+1. `std::set_difference`
+
+```cpp
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <string>
+#include <vector>
+
+int main() {
+    std::vector<int32_t> nums1{1, 2, 3, 4, 5, 6};
+    std::vector<int32_t> nums2{3, 4, 5, 6, 7, 8};
+
+    std::vector<int32_t> intersection_res;
+    std::vector<int32_t> union_res;
+    std::vector<int32_t> difference_res;
+
+    std::set_intersection(nums1.begin(), nums1.end(), nums2.begin(), nums2.end(), std::back_inserter(intersection_res));
+    std::set_union(nums1.begin(), nums1.end(), nums2.begin(), nums2.end(), std::back_inserter(union_res));
+    std::set_difference(nums1.begin(), nums1.end(), nums2.begin(), nums2.end(), std::back_inserter(difference_res));
+
+    auto print = [](const std::string& name, const std::vector<int32_t>& nums) {
+        std::cout << name << ": ";
+        std::copy(nums.begin(), nums.end(), std::ostream_iterator<int32_t>(std::cout, ","));
+        std::cout << std::endl;
+    };
+
+    print("intersection", intersection_res);
+    print("union", union_res);
+    print("difference", difference_res);
+
+    return 0;
+}
+```
+
 # 2 any
 
 **`std::any`用于持有任意类型的对象，类似于Java中的`java.lang.Object`**
