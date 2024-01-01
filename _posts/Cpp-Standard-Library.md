@@ -2128,6 +2128,7 @@ int main() {
 * `std::find`
 * `std::remove_if`: return the iterator pointing at the first elements to be removed.
 * `std::erase_if`: remove the specific elements.
+* `std::set_intersection`、`std::set_union`、`std::set_difference`
 
 **Function Objects:**
 
