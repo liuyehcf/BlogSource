@@ -212,7 +212,7 @@ EOF
 ```sh
 export HDFS_DATA_NODE_ADDRESSES=( "<data node ip address 1>" "<data node ip address 2>" )
 
-rm ${WORKING_DIR}/hdfs/datanodes_list.txt
+rm -f ${WORKING_DIR}/hdfs/datanodes_list.txt
 for HDFS_DATA_NODE_ADDRESS in ${HDFS_DATA_NODE_ADDRESSES[@]}
 do
     echo ${HDFS_DATA_NODE_ADDRESS} >> ${WORKING_DIR}/hdfs/datanodes_list.txt

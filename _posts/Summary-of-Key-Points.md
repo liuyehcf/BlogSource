@@ -694,10 +694,26 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
             - Pros:
                 - Easy of Implementation
         - Optimization
-            - Parallelism
-                - Resource Utilization
-            - Code Generation
-                - Better Inline
+            - Storage
+                - Index
+                - Late Materialization
+                - Cache
+            - Pre-Calculation
+                - Pre Agg
+                - Pre Sort
+                - Query Cache
+                - MV
+            - Data Type Mapping
+                - Low Cardinality String Dictionary
+            - Parallelism(Resource Utilization)
+                - Mixed Workloads
+                - Query Parallelism
+                - IO Parallelism
+                - Calculation Parallelism
+                - MPP
+                - Skew Elimination
+            - Code Generation(Better Inline)
+                - JIT
             - Vectorization
                 - Column Oriented
                 - Loop
@@ -718,6 +734,10 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
                     - MinMax Filter
                 - In-Filter(Rows < 1000)
                     - No False Positive
+            - Cache
+                - Data Cache
+                - Query Cache
+                - Metadata Cache
         - Tradeoff
             - Exchange Overhead(Hash, Random read/write) will increase as node number increase
 - Architecture
