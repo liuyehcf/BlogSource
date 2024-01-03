@@ -479,7 +479,7 @@ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Crese
 git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cs, %cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 
 # <second> Time Format
-git config --global alias.lg "log --color --graph --pretty=format='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd, %cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=format:'%Y-%m-%d %H:%M:%S'"
+git config --global alias.lg "log --color --graph --pretty='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd, %cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=format:'%Y-%m-%d %H:%M:%S'"
 ```
 
 # 14 .gitignore
