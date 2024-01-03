@@ -342,6 +342,9 @@ git log -p [file]
 # 显示过去5次提交
 git log -5 --pretty --oneline
 
+# 显示指定格式的日期
+git log --date=format:"%Y-%m-%d %H:%M:%S"
+
 # 显示所有提交过的用户，按提交次数排序
 git shortlog -sn
 
@@ -469,7 +472,14 @@ git archive
 # 13 Alias
 
 ```sh
+# <xxx ago> Time Format
+git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+
+# <day> Time Format
 git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cs, %cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+
+# <second> Time Format
+git config --global alias.lg "log --color --graph --pretty=format='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd, %cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=format:'%Y-%m-%d %H:%M:%S'"
 ```
 
 # 14 .gitignore
