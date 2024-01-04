@@ -924,6 +924,7 @@ done
 
 * `offset`：起始索引，`sh/bash/zsh`都是从`0`开始
 * `length`：取多少个元素。若`length = 1`，那么只取某个元素；若`length > 1`，那么取的是一个子集
+    * 不写length表示直到最后一个元素
 
 ```sh
 array=(1 2 3 4 5 6 7 8 9 10)
@@ -938,6 +939,9 @@ echo ${array[@]:0:3}
 
 # output 4 5 6
 echo ${array[@]:3:3}
+
+# output 4 5 6 7 8 9 10
+echo ${array[@]:3}
 ```
 
 ### 3.3.2 Collection Calculation
