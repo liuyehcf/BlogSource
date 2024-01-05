@@ -209,3 +209,97 @@ int main() {
     return 0;
 }
 ```
+
+Or another simpler version:
+
+```cpp
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <set>
+#include <vector>
+
+struct DirectedGraphNode {
+    int32_t id;
+    std::vector<DirectedGraphNode*> neighbors;
+    DirectedGraphNode(int32_t x) : id(x){};
+};
+
+void visit(const std::vector<DirectedGraphNode>& graph, std::vector<std::vector<int32_t>>& paths,
+           std::vector<int32_t>& path, std::vector<int32_t>& degree, std::set<int32_t>& candidates) {
+    std::vector<int32_t> candidates_copy(candidates.begin(), candidates.end());
+    for (const auto candidate : candidates_copy) {
+        auto& node = graph[candidate];
+        path.push_back(node.id);
+        candidates.erase(node.id);
+
+        // Check if this is a complete order
+        bool complete = (path.size() == graph.size());
+        if (complete) {
+            paths.push_back(path);
+        } else {
+            // Explore neighbors
+            for (auto* neighbor : node.neighbors) {
+                if (--degree[neighbor->id] == 0) {
+                    candidates.insert(neighbor->id);
+                }
+            }
+
+            visit(graph, paths, path, degree, candidates);
+        }
+
+        // Backtrack
+        path.pop_back();
+        candidates.insert(node.id);
+        if (!complete) {
+            for (auto* neighbor : node.neighbors) {
+                if (++degree[neighbor->id] == 1) {
+                    candidates.erase(neighbor->id);
+                }
+            }
+        }
+    }
+}
+
+void printAll(std::vector<DirectedGraphNode>& graph) {
+    std::set<int32_t> all_ids;
+    std::vector<int32_t> degree(graph.size(), 0);
+    for (auto& node : graph) {
+        all_ids.insert(node.id);
+        for (auto* next : node.neighbors) {
+            degree[next->id]++;
+        }
+    }
+
+    std::vector<std::vector<int32_t>> paths;
+    std::vector<int32_t> path;
+    std::set<int32_t> candidates;
+    for (const auto id : all_ids) {
+        if (degree[id] == 0) {
+            candidates.insert(id);
+        }
+    }
+    visit(graph, paths, path, degree, candidates);
+
+    for (auto& path : paths) {
+        std::copy(path.begin(), path.end(), std::ostream_iterator<int32_t>(std::cout, "->"));
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+}
+
+int main() {
+    std::vector<DirectedGraphNode> graph;
+    graph.emplace_back(0);
+    graph.emplace_back(1);
+    graph.emplace_back(2);
+    graph.emplace_back(3);
+    graph[0].neighbors.push_back(&graph[1]);
+    graph[1].neighbors.push_back(&graph[2]);
+    graph[3].neighbors.push_back(&graph[2]);
+
+    printAll(graph);
+
+    return 0;
+}
+```
