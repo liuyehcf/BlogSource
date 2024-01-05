@@ -109,9 +109,83 @@ public:
 };
 ```
 
-# 3 DAG All Visted Paths
+## 2.1 Find All Orders
 
-Tiktok Interview Problem.
+```cpp
+#include <cstdint>
+#include <set>
+#include <vector>
+
+class Solution {
+public:
+    std::vector<int32_t> findOrder(int num_courses, std::vector<std::vector<int32_t>>& prerequisites) {
+        std::vector<std::set<int32_t>> neighbors(num_courses);
+        std::vector<int32_t> degree(num_courses, 0);
+        for (auto& prerequisite : prerequisites) {
+            int32_t next = prerequisite[0];
+            int32_t prev = prerequisite[1];
+            neighbors[prev].insert(next);
+            degree[next]++;
+        }
+
+        std::set<int32_t> candidates;
+        for (int32_t i = 0; i < num_courses; ++i) {
+            if (degree[i] == 0) {
+                candidates.insert(i);
+            }
+        }
+
+        std::vector<std::vector<int32_t>> orders;
+        std::vector<int32_t> order;
+
+        findAllOrders(orders, order, neighbors, degree, candidates);
+        if (orders.empty()) {
+            return {};
+        } else {
+            return orders[0];
+        }
+    }
+
+private:
+    void findAllOrders(std::vector<std::vector<int32_t>>& orders, std::vector<int32_t>& order,
+                       const std::vector<std::set<int32_t>>& neighbors, std::vector<int32_t>& degree,
+                       std::set<int32_t>& candidates) {
+        std::vector<int32_t> candidates_copy(candidates.begin(), candidates.end());
+        for (const auto candidate : candidates_copy) {
+            order.push_back(candidate);
+            candidates.erase(candidate);
+
+            // Check if this is a complete order
+            bool complete = (order.size() == degree.size());
+            if (complete) {
+                orders.push_back(order);
+            } else {
+                // Explore neighbors
+                for (const auto neighbor : neighbors[candidate]) {
+                    if (--degree[neighbor] == 0) {
+                        candidates.insert(neighbor);
+                    }
+                }
+
+                findAllOrders(orders, order, neighbors, degree, candidates);
+            }
+
+            // Backtrack
+            order.pop_back();
+            candidates.insert(candidate);
+            if (!complete) {
+                for (const auto neighbor : neighbors[candidate]) {
+                    if (++degree[neighbor] == 1) {
+                        candidates.erase(neighbor);
+                    }
+                }
+            }
+        }
+    }
+};
+```
+
+## 2.2 Tiktok Interview Problem
 
 ```cpp
 #include <iostream>
