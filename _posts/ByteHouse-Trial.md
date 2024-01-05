@@ -497,9 +497,25 @@ SELECT * FROM system.virtual_warehouses;
 
 # 5 Options
 
+Use the latest version of `clickhouse-client --help` to check all the options.
+
+1. `--dialect_type`: Dialect type, e.g. CLICKHOUSE, ANSI, MYSQL
 1. `--input_format_allow_errors_num`
 1. `--input_format_allow_errors_ratio`
 1. `--format_csv_delimiter`
 1. `--multiquery`
 1. `--query`: Execute a single SQL query from the command line.
 1. `--queries-file`: File path with queries to execute
+1. `--max_memory_usage`: Maximum memory usage for processing of single query. Zero means unlimited.
+1. `--max_threads`: The maximum number of threads to execute the request. By default, it is determined automatically.
+1. `--time`: Print query execution time to stderr in non-interactive mode (for benchmarks)
+
+**Best Practice:**
+
+```sh
+clickhouse-client -m -h 127.0.0.1 --port 9010 \
+            --dialect_type='ANSI' \
+            --distributed_product_mode=allow --send_timeout=2147483647 --receive_timeout=2147483647 \
+            --max_memory_usage=0 --max_memory_usage_for_user=0 \
+            --enable_optimizer=true
+```

@@ -1423,6 +1423,7 @@ end, back to main
 1. **`-D <macro_name>[=<macro_definition>]`：定义宏**
     * 例如`-D MY_DEMO_MACRO`、`-D MY_DEMO_MACRO=2`、`-D 'MY_DEMO_MACRO="hello"'`、`-D 'ECHO(a)=(a)'`
 1. **`-U <macro_name>`：取消宏定义**
+1. **`--coverage`：覆盖率测试**
 1. **`-fno-access-control`：关闭访问控制，例如在类外可以直接访问某类的私有字段和方法，一般用于单元测试**
 1. **向量化相关参数**
     * `-fopt-info-vec`/`-fopt-info-vec-optimized`：当循环进行向量化优化时，输出详细信息
@@ -1639,7 +1640,52 @@ When interpreting compiler error messages, especially those involving template i
 
 In Summary: While the bottom-up approach is useful for quickly identifying the core error and the immediate lines of code causing it, you sometimes need to go top-down to fully understand the context and sequence of events leading to the error. With experience, you'll develop an intuition for quickly scanning and pinpointing the most relevant parts of such error messages.
 
-## 9.4 Document
+## 9.4 How to get coverage of code
+
+**Here's how it works: `gcov` determines which files to analyze for coverage information based on the profile data files (`*.gcda` and `*.gcno`) that are generated when you compile and run your program with the appropriate GCC flags (`-fprofile-arcs` and `-ftest-coverage`). Here's a breakdown of how `gcov` knows which files to load:**
+
+1. **Compilation and Execution:**
+    * When you compile your C/C++ program with GCC using `-fprofile-arcs` and `-ftest-coverage`, it produces two types of files for each source file:
+    * `*.gcno`: These are generated during the compilation. They contain information about the source code's structure (like basic blocks, branches, etc.).
+    * `*.gcda`: These are generated when the compiled program is run. They contain the actual coverage data, such as how many times each line of code was executed.
+1. **Locating Files:**
+    * When you invoke `gcov`, it looks for `.gcno` and `.gcda` files in the current directory by default. These files are named after the source files but with different extensions.
+    * For example, if your source file is `example.c`, `gcov` will look for `example.gcno` and `example.gcda` in the current directory.
+1. **Matching Source Files:**
+    * `gcov` uses the information in these files to match with the corresponding source file. It relies on the path and filename information stored in the `.gcno` and `.gcda` files to find the correct source file.
+    * If your source files are in a different directory, you may need to specify the path when running `gcov`, or run `gcov` from the directory containing the `.gcda` and `.gcno` files.
+1. **Generating the Report:**
+    * Once `gcov` has matched the `.gcno` and `.gcda` files with their corresponding source files, it processes these files to generate a coverage report. This report shows how many times each line in the source file was executed.
+1. **Manual Specification:**
+    * You can also manually specify which source files to generate reports for by passing their names as arguments to `gcov`.
+
+**Here's an example:**
+
+```cpp
+#include <iostream>
+
+void printMessage() {
+    std::cout << "Hello, World!" << std::endl;
+}
+
+void unusedFunction() {
+    std::cout << "This function is never called." << std::endl;
+}
+
+int main() {
+    printMessage();
+    return 0;
+}
+```
+
+```sh
+g++ --coverage -o example example.cpp
+./example
+gcov example.cpp
+cat example.cpp.gcov
+```
+
+## 9.5 Document
 
 1. [cpp reference](https://en.cppreference.com/w/)
 1. [cppman](https://github.com/aitjcize/cppman/)
@@ -1647,6 +1693,6 @@ In Summary: While the bottom-up approach is useful for quickly identifying the c
     * 示例：`cppman vector::begin`
     * 重建索引：`cppman -r`
 
-## 9.5 Reference
+## 9.6 Reference
 
 * [C/C++ 头文件以及库的搜索路径](https://blog.csdn.net/crylearner/article/details/17013187)
