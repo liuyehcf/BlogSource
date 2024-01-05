@@ -85,6 +85,15 @@ grep 'pattern' <<< "$text"
 
 The here string is particularly useful when you want to avoid the overhead of creating temporary files for passing small amounts of input data to a command.
 
+### 1.1.3 How to capture stderr while discarding stdout
+
+```sh
+error_msg=$(cmd 2>&1 >/dev/null)
+```
+
+* `2>&1`: redirects stderr (file descriptor 2) to where stdout (file descriptor 1) is currently pointing, which means the terminal for this example.
+* `>/dev/null`: redirects stdout (file descriptor 1) to /dev/null.
+
 ## 1.2 Pipe
 
 **管道命令使用的是`|`这个界定符号，这个管道命令`|`仅能处理有前面一个命令传来的`正确信息`，也就是`standard output`的信息，对于standard error并没有直接处理的能力**
