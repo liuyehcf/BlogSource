@@ -203,7 +203,7 @@ table th:nth-of-type(5) {
 | 169 | Majority Element | Array | ★★★ | majority记录当前出现次数最多的值，cnt记录次数。遍历数组，若当前值不等于majority，减小cnt，若cnt减值0，那么更新majority和cnt；若当前值等于majority，递增cnt |
 | 170 |  |  |  |  |
 | 171 | Excel Sheet Column Number | Numerical | ★★★ | 168的反向逻辑。每次追加的时候要加上1 |
-|  |  |  |  |  |
+| 207 | Course Schedule | Graph | ★★★ |  |
 |  |  |  |  |  |
 |  |  |  |  |  |
 |  |  |  |  |  |
