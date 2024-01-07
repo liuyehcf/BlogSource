@@ -1,9 +1,35 @@
+1. it's a precise coordinate
+1. I'm gonna show them who's the boss; I'm gonna put them in their place; 我要给他们点颜色看看
+1. I didn't want to contradict you
+1. he crossed me
+1. whining; complaining; grumbling
+1. it's growing on me; 我越来越喜欢它了
+1. it's off; 取消了
+1. put out the lighter
+1. we had a falling out
+1. tear family apart; 让家庭四分五裂\n
+1. number vested; number unvested
+1. I got a big pimple on my face
+1. 数学词汇; 交集：intersection\n并集：union\n差集：difference\n
+1. same to you; respnse to \'have a nice day\'\nor you too
+1. 金融词汇; 金融：finance\n信用：credit\n贷款：loans\n利息：interests\n货币：currency\n股票：stock\n证券：security\n保险：insurance\n基金：fund\n贸易：trade\n汇率：exchange rate\n抵押贷款：mortgage\n养老金：pension
+1. file a complaint; make a complaint
+1. ego; arrogant; pride
+1. somebody got flipped; it could refer to someone changing their allegiance, opinion, or loyalty
+1. listen and apply yourself; tells someone not only to pay attention but also to actively engage and work hard in whatever task they are doing
+1. you're up; 该你上场了
+1. what's this regarding
+1. just take a moment; 先缓一缓
+1. top-up; recharge
+1. I'm done talking about this
+1. I decided to waive my right to a trial and accepted the plea deal
+1. keep your head down
 1. 家用工具词汇; 锯子：saw\n斧头：ax/axe\n锤子：hammer\n老虎钳：pliers\n螺丝刀：screwdriver\n螺丝钉：screw\n扳手：wrench\n螺栓：bolt\n螺母/螺帽：nut\n滚筒（刷墙用的）：roller\n大剪子：shears\n剪刀：scissors\n耳勺：ear spoon\n夹子：clip\n指甲钳：nail clippers\n电钻：electric drill\n卷尺：tape measure\n磅秤：scales\n胶布：adhesive tape\n小铲子：trowel\n大铲子/锹：spade\n锄头：hoe\n耙子：rake\n梯子：ladder\n割草机：mower\n
 1. 发型词汇; 平头：crew cut\n中分：centre parting\n边分：side parting\n马尾：pony tail\n辫子：braid/braids\n发髻型：bun\n卷发：curly hair\n长直发：long straight hair\n大波浪：wave\n爆炸头：afro
-1. 罪名词汇; 性骚扰：sexual harassment\n网络犯罪：cyber crime\n
+1. 罪名词汇; 性骚扰：sexual harassment\n性虐待：sexual battery\n网络犯罪：cyber crime\n杀人：homicide\n渎职：dereliction of duty\n恐吓：intimidate\n袭击：attack\n信用卡诈骗：credit card fraud
 1. 家务词汇; 扫地：sweep the floor\n擦地：scrub the floor\n拖地：mop the floor\n擦窗：clean the windows\n洗车：wash the car\n洗衣服：do the laundry\n晒衣服：hang clothes\n熨衣服：iron clothes\n叠衣服：fold clothes\n换床单：change the sheet\n给桌子除尘：dust the desk\n吸地面：vacuum the floor
 1. 证件词汇; 身份证：identity card\n驾驶证：driving license\n学会证：student pass\n毕业证：diploma\n工作证：employee\'s card\n健康证：helath certificate\n结婚证：marriage license\n护照：passport\n签证：visa\n绿卡：green card
-1. 家用电器词汇; 洗衣机：washing machine\n空调：air conditioner\n饮水机：water dispenser\n电风扇：fan\n熨斗：iron
+1. 家用电器词汇; 洗衣机：washing machine\n空调：air conditioner\n饮水机：water dispenser\n直饮水：water purifier\n电风扇：fan\n熨斗：iron\n电吹风：blow dryer
 1. 水果词汇; 李子：plum\n柠檬：lemon\n荔枝：litchi\n桂圆：longan\n芒果：mango\n樱桃：cherry\n菠萝：pineapple\n柚子：pomelo\n草莓：strawberry\n黑莓：blackberry\n蓝莓：blueberry\n西瓜：watermelon\n橙子：orange\n桑葚：mulberry\n香蕉：banana\n胡桃：walnut\n榴莲：durian\n枇杷：loquat\n无花果：fig
 1. the cheese is moldy
 1. travel debacle
@@ -22,9 +48,9 @@
 1. my hands are tied; 我无能为力\n
 1. 婚礼词汇; 求婚：proposal\n订婚：engagement\n新娘：bride\n新郎：groom\n伴郎：bestman\n伴娘：bridesmaid\n戒指：ring\n婚宴：wedding reception/wedding feast\n祝酒：toast\n婚纱：wedding dress
 1. 纸类词汇; 报纸：newspaper\n纸巾：tissue\n餐巾纸：napkin\n卫生纸：toilet paper\n湿纸巾：wipes\n纸尿裤：diaper\n草稿纸：scratch paper\n便利贴：post-it note\n图纸：drawings\n厨房卷纸：kitchen roll
-1. 量词词汇; 一片面包：a piece of bread\n一串香蕉/一束玫瑰：a bunch of bananas/a bounch of roses\n一粒米：a grain of rice\n一小撮盐：a pinch of salt\n一罐水果/一听饮料：a can of fruit/a can of cola\n一包河粉：a packet of rice noddles\n一片披萨：a slice of pizza\n一勺：a spoon of\n一条/块：a loaf of\n一碗：a bowl of\n一瓶：a bottle of\n一双：a pair of shoes\n一堆：a pile of laundary\n一串：a string of\n一群：a group/crowd of\n一张纸：a blank sheet of paper\n一盒苹果汁：a carton of apple juice\n\nPiece: This is a general term that can refer to any part or portion of something, regardless of its shape or size.\nSlice: This term specifically refers to a thin, flat piece that has been cut or sliced from something larger, usually with a sharp tool.
+1. 量词词汇; 一片面包：a piece of bread\n一串香蕉/一束玫瑰：a bunch of bananas/a bounch of roses\n一粒米：a grain of rice\n一小撮盐：a pinch of salt\n一罐水果/一听饮料：a can of fruit/a can of cola\n一包河粉：a packet of rice noddles\n一片披萨：a slice of pizza\n一勺糖：a spoon of sugar\n一条/块：a loaf of bread\n一碗水：a bowl of water\n一瓶水：a bottle of perfume\n一双：a pair of shoes\n一堆：a pile of laundary\n一系列的发布：a string of new product\n一群：a group/crowd of children\n一张纸：a blank sheet of paper\n一盒苹果汁：a carton of apple juice\n一群羊：a flock of sheep\n一卷交卷：a roll of film\n\nPiece: This is a general term that can refer to any part or portion of something, regardless of its shape or size.\nSlice: This term specifically refers to a thin, flat piece that has been cut or sliced from something larger, usually with a sharp tool.
 1. 休假词汇; 法定假：statutory holiday\n年假：annual leave\n事假：personal leave\n病假：sick leave\n婚假：marriage leave\n产假：maternity leave\n陪产假：paternity leave\n调休：days off\n间歇：take a break\n丧假：bereavement lave
-1. 家具用品词汇; 被子：quilt\n床垫、褥子：mattress\n床单：sheet\n窗帘：curtain\n毛毯（盖身上的）：blanket\n坐垫：cushion\n地毯：carpet\n枕头：pillow\n吊灯：chandelier\n台灯：table lamp\n手电筒：flashlight\n床头柜：nightstand/bedside table\n梳妆台：dressing table\n雨伞：umbrella\n浴巾：bath towel\n花洒：shower head\n马桶：closestool
+1. 家具用品词汇; 被子：quilt\n床垫、褥子：mattress\n床单：sheet\n窗帘：curtain\n毛毯（盖身上的）：blanket\n坐垫：cushion\n地毯：carpet\n枕头：pillow\n吊灯：chandelier\n台灯：table lamp\n手电筒：flashlight\n床头柜：nightstand/bedside table\n梳妆台：dressing table\n雨伞：umbrella\n浴巾：bath towel\n花洒：shower head\n马桶：closestool\n洗手液：hand sanitizer
 1. sorry, I misremembered
 1. I'm very directionally challenged
 1. don't look at me; stop looking at me; 别看着我\n别看着我了
@@ -34,7 +60,7 @@
 1. got it; copy that; well noted; 明白了，收到
 1. downwind; against the wind
 1. 人脸部位词汇; 额头：forehead\n眼皮：eyelid\n脸颊：cheek\n人中：philtrum\n嘴唇：lip; my lips are super dry and cracked\n下巴：chin\n耳垂：earlobe
-1. 疾病词汇; 呼吸系统疾病：respiratory illnesses\n遗传病：hereditary diseases/inherited genetic diseases\n血管疾病：vascular conditions\n感冒：cold\n发烧：fever\n咽痛：sore throat\n咳嗽：cough\n打喷嚏：sneeze\n头痛：headache\n肺炎：pneumonia\n失眠：insomnia\n腹泻：diarrhea\n恶心：nausea\n呕吐：vomit\n眩晕：dizziness\n乏力：fatigue\n哮喘：asthma attack
+1. 疾病词汇; 呼吸系统疾病：respiratory illnesses\n遗传病：hereditary diseases/inherited genetic diseases\n血管疾病：vascular conditions\n感冒：cold\n发烧：fever\n咽痛：sore throat\n咳嗽：cough\n打喷嚏：sneeze\n头痛：headache\n肺炎：pneumonia\n失眠：insomnia\n腹泻：diarrhea\n恶心：nausea\n呕吐：vomit\n眩晕：dizziness\n晕倒：passed out/faint\n乏力：fatigue/faint\n哮喘：asthma attack
 1. I need to know what I stand to win
 1. 房屋词汇; 公寓：apartment/flat\n宿舍：dormitory\n别墅：villa\n官邸/大厦：mansion\n工作室：studio\n地下室：basement\n村舍：cottage\n平房：bungalow\n寺庙：temple\n城堡：castle
 1. I worked my ass off to get here
@@ -54,14 +80,14 @@
 1. 餐厅词汇; 剩菜：leftovers\n打包盒：to go box\n筷子：chopsticks\n塑料勺：plastic spoon\n餐巾纸：napkins\n塑料袋：plastic bag
 1. 健身词汇; 高强度运动：intense exercise; vigorous exercise; strenuous exercise; heavy exercise\n俯卧撑：push-ups\n引体向上：pull-ups/chin-ups\n平板卧推：flat bench press\n上斜卧推：incline bench press\n深蹲：deep squat\n举重：lift weights
 1. you've got a point there
-1. 职场词汇; 招聘：recruitment\n简历：resume\n面试：interview\n空缺岗位：vacancy\n职业规划：career plan\n早九晚五：nine-to-five\n薪资：salary\n福利：welfare\n升职：promotion\n裁员：lay off\n转岗：job transfer\n跳槽：job hopping\n加薪：I want a raise
+1. 职场词汇; 招聘：recruitment\n简历：resume\n面试：interview\n空缺岗位：vacancy\n职业规划：career plan\n早九晚五：nine-to-five\n薪资：salary\n福利：welfare\n升职：promotion\n裁员：lay off\n转岗：job transfer\n跳槽：job hopping\n加薪：I want a raise\n年终绩效奖金：annual performance bonus
 1. let's split the bill
-1. 排泄物词汇; 眼屎：sleepy dust\n耳屎：earwax\n鼻涕：snot\n痰：phlegm\n汗水：sweat\n头皮屑：dandruff
+1. 排泄物词汇; 眼屎：sleepy dust\n耳屎：earwax\n鼻涕：snot\n鼻屎：booger\n痰：phlegm\n汗水：sweat\n头皮屑：dandruff
 1. 汽车词汇; 驾驶座：driver\'s seat\n安全带：seatbelt\n方向盘：steering wheel\n喇叭：horn\n仪表盘：dashboard\n出风口：air vent\n变速杆：gearshift\n挡风玻璃：windscreen/windshield\n挡风玻璃雨刷：windscreen/windshield wipers\n侧视镜：side-view mirror\n后视镜：rearview mirror\n遮阳板：sun visor\n转向灯：indicator/turn signal\n刹车：brake\n油门：accelerator\n门把手：door handle\n轮胎：tire/tyre\n车牌：number plate/license plate
 1. my word is my bond; you have my words.
 1. in what universe are we the same?; 我们哪里一样了？\n
 1. stress; pressure; pressure: For things and outside.\nI\'m under a lot of pressure.\n\nstree: For human beings and inside.\nI feel stressed./I\'m stressed out.\nreduce stree/relieve stress
-1. you look sharp today; you look sharp today
+1. you look sharp today
 1. traveling is very therapeutic
 1. the board was dissolved
 1. how large is your company's market share?
@@ -78,7 +104,7 @@
 1. Introduction to the Work Mode; We\'re a big team of around 50 database developers, split into maybe 5 groups, each focusing on areas like storage, query execution, cloud native, lake house, and SaaS. I\'m part of the query group.\n\nIn our group, here\'s how we roll: We usually iterate on a two-month cycle, and in each cycle, we will have one or two targets, like rolling out a new feature or improving performance or stability. And each member will get their own pieces. And if the topic is big enough, we will do some research and produce a research document for discussion, so we can all chat about it.\n\nAfter we\'ve tossed around some ideas, we get down to writing a design document. It\'s like our game plan, detailing how we\'re getting things done, and everyone gets to review it.\n\nFinally, we get to the fun part – coding. And of course, we make sure to review each other\'s code. It keeps things running smoothly and makes sure we\'re all on the same page.
 1. Introduce a member of your family; I\'d like to tell you about my father. He was born into a humble family as the youngest of five siblings, with four older sisters. Despite their financial struggles, his family was very loving and supportive, which gave him a happy childhood. He was a dedicated student and worked extremely hard to achieve his goals. Remarkably, he earned a bachelor\'s degree in chemical engineering, which was quite an achievement given his background. After graduating, he worked as a workshop manager for a state-owned company. It was a challenging time as corruption was widespread, but my father always maintained his integrity and never got involved in any corrupt practices, something that I deeply admire about him. Later on, the state-owned company went bankrupt, and he ventured into entrepreneurship and started a small business in metal chemical processing with around ten employees. In summary, his journey from a modest upbringing to becoming a successful business owner is truly inspiring. And he is always the one that I look up to.
 1. we are deeply sorry for this last-minute rescheduling
-1. 肉类词汇; 生鱼片：raw fish\n羊排：lamb chop\n鲍鱼：abalone\n蛤蜊：clam\n牡蛎（生蚝）：oyster\n鹅肝：goose liver\n火锅：hot pot
+1. 肉类词汇; 生鱼片：raw fish\n羊排：lamb chop\n鲍鱼：abalone\n蛤蜊：clam\n牡蛎（生蚝）：oyster\n鹅肝：goose liver\n火锅：hot pot\n帝王蟹：king crab
 1. stay warm; 注意保暖
 1. levy; tax; excise; Levy: This is a general term that refers to the legal process of imposing or collecting a tax, fee, or fine. A levy can be applied to a wide range of financial obligations, such as taxes, fees for services, or fines for legal violations. It\'s more about the action of imposing or collecting these charges.\n\nTax: A tax is a mandatory financial charge or some other type of levy imposed upon a taxpayer (an individual or a legal entity) by a governmental organization. Taxes are used to fund various public expenditures. Taxes can come in many forms, such as income tax, property tax, sales tax, etc. The term \"tax\" is more about the financial charge itself, rather than the act of imposing or collecting it.\n\nExcise: An excise is a specific type of tax that is levied on particular goods, services, or activities. This is often a form of indirect tax, meaning it is collected by an intermediary (like a store) from the person who bears the ultimate economic burden of the tax (such as the consumer). Excise taxes are commonly placed on items such as alcohol, tobacco, and fuel.\n\n
 1. play ground; sports ground; sports field
@@ -92,18 +118,17 @@
 1. it's my day off; it's my time off
 1. 打招呼; how are you doing today?\nhow have you been?\nwhat have you been up to?\nhow is it going?\nhow has it been so far in your new job?\nhey, how did it go?
 1. the sky is the limit
-1. 电子设备词汇; 充电线：charging cable\n移动电源：power bank\n电源：power source\n排插：power strip\n摄像头：webcam\n耳机：headphone\n鼠标：mouse\n键盘：keyboard\n充电器：charger\n无线充电器：wireless charger\n插头：plug (plug socket)\n插座：socket/outlet\n开关：switch\n转换器：adapter\n电池：battery\n充电电池：storage battery
-1. I will need to request time off; day off
+1. I will need to request time off; 我需要请假 \n\nday off
 1. competitive relationship
 1. will you be free 7.30pm onwards tomorrow?
 1. he always gave me hell; 他总是骂我\nhe\'s insulting me
 1. two Gaza hospitals have ceased to function
 1. what do you study? I'm doing computer science; I was doing Computer Science.\nI was studying Computer Science and have now graduated.\nI completed my studies in Computer Science.\nMy field of study was Computer Science, and I\'ve graduated.\n
 1. carpet; rug; Usually refers to a floor covering that extends over an entire room\nRugs are smaller, movable floor coverings that don\'t extend across the entire floor space
-1. 手部动作词汇; 扇：slap (slap on the back)\n拳打：punch\n连续打：beat\n抓取：grab\n握住：hold\n举起：lift\n掉落：drop\n轻弹：flick\n轻拍：pat\n触摸：touch\n擦：scrub(scrub my face)\n敲：knock\n戳：poke\n挠：scratch\n指：point\n推：push\n拉：pull\n轻轻摇晃：rock\n拥抱：cuddle
+1. 手部动作词汇; 扇：slap (slap on the back)\n拳打：punch\n连续打：beat\n抓取：grab\n握住：hold\n举起：lift\n掉落：drop\n轻弹：flick\n轻拍：pat\n触摸：touch\n擦：scrub(scrub my face). This action implies a more vigorous, thorough cleaning process.\n搓：rub(rub hands together). Rubbing is less about deep cleaning and more about gentle or superficial contact.\n敲：knock\n戳：poke\n挠：scratch\n指：point\n推：push\n拉：pull\n轻轻摇晃：rock\n拥抱：cuddle
 1. 蔬菜词汇; 黄瓜：cucumber\n花椰菜：cauliflower\n四季豆：green beans\n洋葱：onion\n卷心菜：cabbage\n胡萝卜：carrot\n生菜：lettuce (crisp lettuce)\n辣椒：(hot/green/sweet)pepper\n西兰花：broccoli\n土豆：potato\n玉米：corn\n芹菜：celery\n菠菜：spinach\n茄子：eggplant\n南瓜：pumpkin\n苦瓜：bitter gourd\n大蒜：garlic\n蘑菇：mushroom\n木耳：agaric\n秋葵：okra
 1. you're twisting my words
-1. 厨房词汇; 切片：slice the potato\n切丝：shred the potato\n切丁：dice the potato\n切段：cut the green onion\n剁：chop the green onion\n菜刀：kitchen knife. I chop the green onion with my kitchen knife.\n切肉刀：cleaver\n锅：pot\n炒锅：wok\n平底锅：pan\n炉子：stove\n切菜板：cutting board\n锅盖：lid\n汤勺：ladle\n烤箱：oven\n微波炉：microwave oven\n高压锅：pressure cooker\n电饭煲：rice cooker\n热水器：water heater\n榨汁机：juicer\n冰箱：refrigerator\n\n
+1. 厨房词汇; 切片：slice the potato\n切丝：shred the potato\n切丁：dice the potato\n切段：cut the green onion\n剁：chop the green onion\n菜刀：kitchen knife. I chop the green onion with my kitchen knife.\n切肉刀：cleaver\n锅：pot\n炒锅：wok\n平底锅：pan\n炉子：stove\n切菜板：cutting board\n锅盖：lid\n汤勺：ladle\n烤箱：oven\n微波炉：microwave oven\n高压锅：pressure cooker\n电饭煲：rice cooker\n热水器：water heater\n榨汁机：juicer\n冰箱：refrigerator\n烹饪用具：cooking utensil\n
 1. 晾衣服词汇; 晾衣服：hang the laundry\n衣架：hanger\n抖一下衬衫：shake out the shirt\n衣服会皱的：the shirt is going to get wrinkled\n晾衣架：just hang it on the laundry rack\n晾衣夹：just clip it on the laundry pin like this\n
 1. sounds cheesy
 1. 机场词汇; 航站楼：terminal\n值机柜台：check-in counter\n登机牌：boarding pass\n商务舱：business class\n经济舱：economy class\n靠过道的座位：aisle seat\n国内航班：domestic flight\n安检：security check\n免税店：duty-free shop\n登机口：departure gate\n登记通知：boarding call\n延误：delay\n随身携带的行李：carry-on, carry-on luggage\n中转停留：layover\n颠簸：turbulence\n海关：customs\n货币兑换：currency exchange\n行李提取出：baggage claim
@@ -114,7 +139,7 @@
 1. things haven't been going very well recently; life is tough
 1. he is indicted for something crazy; Use \"charge\" when referring to the official action of accusing someone of a crime.\nUse \"accuse\" for both formal and informal allegations, but without the legal weight of a charge.\nUse \"indict\" specifically when referring to the formal legal process of charging someone with a serious crime, typically following a grand jury’s decision.
 1. I'm glad to be here, and I hope to work with everyone; I'm excited to join the team and make that happen
-1. this is not up for debate; what is there to discuss
+1. this is not up for debate; what is there to discuss; what is there to say
 1. accurate; precise
 1. a one-sided game
 1. do you know what this is in reference to; what's that thing for?
@@ -301,7 +326,6 @@
 1. What's the function of message route?; The function of a message route is to deliver specific messages that are required by a single service from quantities of original device messages.
 1. How can the web browser serve as the user-side agent without any configuration?; The web browser will set the original host as the \'Host\' field in the HTTP header. By leveraging this property, the server can create a unique HTTP address for a specific service of a particular user. The first segment of the address is a UUID, which can be resolved to its corresponding tunnel information. This helps the server direct the traffic to the correct edge device.
 1. How does the tunnel service work?; It begins with the user opening the terminal on our console or navigating to another web page with a unique address. Then, the server sends a \'NewSession\' packet to the corresponding device. If the specific port of the local device is available, the session is established. Any actions from the user will be routed to the device, and any messages from the device\'s service will be routed to the user.
-1. blow dryer
 1. I also don't see the problem in my environment
 1. he might decide to skip the conference
 1. I have not promoted this project; I have not advertised this project
@@ -391,7 +415,6 @@
 1. the texture of the canvas was rough
 1. one capsule with a meal; one capsule with meals
 1. sounds fair enough
-1. replaced by
 1. 8 times more expensive
 1. articles and journals
 1. group elements into categories
@@ -450,10 +473,8 @@
 1. crave attention
 1. release one's emotions
 1. increase protein intake
-1. equipped with the insights mentioned above
 1. consist of; composed of; comprised of
 1. give oneself up; yield oneself  to
-1. water purifier
 1. a coherent view of the natural world
 1. passion and commitment
 1. formulate a sentence in my mind
@@ -469,7 +490,6 @@
 1. turning point in the war in Ukraine
 1. rules-based order
 1. weak blood vessel; high blood pressure
-1. king crab
 1. the word "alleged" is often used in legal and journalistic contexts to indicate that something is claimed to have happened but has not yet been proven
 1. this command provides deeper insights and facilitates a comprehensive examination of the query's performance characteristics and optimizations
 1. Donald Trump has been indicted over his alleged efforts to overturn the results of the 2020 presidential election
@@ -787,7 +807,6 @@
 1. What is the purpose of the "this" keyword in Java?; The \"this\" keyword in Java refers to the current instance of a class, distinguishing variables and accessing instance members.\n
 1. What is the difference between a static method and an instance method in Java?; Static methods belong to the class itself and can be accessed without creating an instance, while instance methods must be called through an instance.\n
 1. social unity and social stability
-1. exchange rate
 1. What is the difference between reference and pointer in C++?; Pointers offer flexibility and direct memory access, while references provide simplicity and intuitive syntax by acting as aliases. References are implemented as constant pointers, abstracting away pointer operations.\n
 1. What are the different types of storage classes in C++?; The different storage classes in C++ are \"auto\", \"register\", \"static\", \"extern\" and \"thread_local\".\n
 1. What is the difference between an abstract class and an interface in C++?; In C++, an abstract class can have both regular and pure virtual functions with member variables, while an interface contains only pure virtual functions and allows multiple inheritance.\n
@@ -1093,7 +1112,6 @@
 1. air strikes
 1. the building has been undergoing extensive renovations for more than a year
 1. he could face up to five years in prison
-1. intimidate and attack
 1. acting police chief
 1. we're optimistic an agreement will be reached
 1. we need to follow the rules
@@ -1394,7 +1412,6 @@
 1. drop the ball
 1. I like to be comfortable
 1. you get handcuffed
-1. mortgage and pension
 1. I think you’re confusing me for someone else
 1. I’m amazed you’ve got this far
 1. we want to wrap our warm arms around every family that is touched by this tragedy
@@ -1405,7 +1422,7 @@
 1. roaming drains the battery
 1. we are way ahead of schedule
 1. I didn't study much for the test, so I expect my grade to be bad
-1. this statement holds up under examination; 这种说法经得起时间的检验
+1. this statement holds up under examination; 这种说法经得起时间的检验\n\nThis statement stands the test of history
 1. jet ski
 1. vigilant
 1. deceitful
@@ -1439,7 +1456,7 @@
 1. he's now receiving hospice care
 1. there's been an outpouring of support for former president
 1. suggest/advise/propose
-1. the offer still stands
+1. the offer still stands; 报价仍然有效\nthe agreement is still in effect.
 1. it doesn’t concern you
 1. I tossed the rest
 1. China stopped being the low labor cost country many years ago
@@ -1759,7 +1776,6 @@
 1. walk me through it; 跟我讲一遍
 1. that’s not the end of story
 1. I‘ve never think less of you; 我从没小看过你
-1. I don‘t think less of you; 我没有小看你
 1. I don’t think I’m gona make it
 1. there’s no cell reception out there
 1. The number of maximum concurrent queries is based on a heuristic calculation that factors in system hardware attributes such as the number of CPU sockets, CPU cores, and threads per core
@@ -1772,7 +1788,7 @@
 1. pretty standard; 很正常
 1. mentality
 1. if you want it, go get it
-1. why do you look down on me
+1. why do you look down on me; 你为什么看不起我\n\nwhy do you think less of me?
 1. given the circumstances
 1. what have you to do with Tom
 1. we’ve come so far
@@ -2156,7 +2172,6 @@
 1. she lives a lavish lifestyle
 1. plot a graph of height against age
 1. there was a descent of temperature after the rain
-1. cut the meat into strips
 1. she mentioned her ideas to her boss
 1. the flooding triggered a landslide
 1. she embodies her principles in her behaviors
@@ -2632,7 +2647,6 @@
 1. television is now an important forum for political debate
 1. Processes continue the above steps until all blocks are exhausted
 1. aim/goal/destiny
-1. a roll of film
 1. the government had made a policy that later proved destructive to the enconomy
 1. the legislation will be enforced in six months
 1. the rescue mission had to be aborted due to bad weather
@@ -2662,7 +2676,6 @@
 1. the car was so fast that it vanished from my sight within seconds
 1. the earth's path around the sun is elliptical
 1. bill is the chairman of the executive committee
-1. a bottle of perfume
 1. the job is at last nearing completion
 1. skilled manual workers are high in demand
 1. my presence on this stage is pretty unlikely; 我能出现在这里意义非凡
@@ -2683,7 +2696,6 @@
 1. do you have any previous experience of this kind of work
 1. astonish/astound/shock
 1. the skyscraper is still under construction
-1. cooking utensil
 1. electrical appliances
 1. reading good books elevates your mind
 1. a cascade of black hair fell down her shoulder
@@ -2867,7 +2879,6 @@
 1. split the class into groups of four
 1. I attach a copy of my notes for your information
 1. I was granted permission to visit the palace
-1. credit card fraud
 1. average weekly earnings
 1. the roads are congested with cars
 1. his facial expressions are very rich
@@ -3057,7 +3068,6 @@
 1. servile
 1. patron
 1. I found the whole play facinating
-1. a flock of
 1. a stream diverges here
 1. take shelter from the storm
 1. book at local travel agency
@@ -3633,7 +3643,6 @@
 1. mortgage
 1. expense
 1. asset
-1. stock
 1. default
 1. interest rate
 1. continuity
