@@ -1293,6 +1293,12 @@ Classification:
             - L1：8KB - 64KB
             - L2：256KB - 8MB
             - L3：10MB - 64MB
+- Endianness
+    - Big-Endian(High-end IBM)
+    - Little-Endian(x86)
+        - Simplified Arithmetic Operations
+        - Efficient Handling of Sub-Word Data
+        - Compatibility with Growing Word Sizes
 - Parallelism
     - ILP
     - TLP
