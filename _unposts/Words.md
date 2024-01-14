@@ -443,6 +443,8 @@
 1. 经济
     * PPI, Producer Price Index
     * CPI, Consumer Price Index
+    * 做空：借股票，高价卖出，低价买入，归还股票，赚差价
+    * 做多：借资金，低价买入，高价卖出，归还资金，赚差价
 
 # 5 英文表述
 

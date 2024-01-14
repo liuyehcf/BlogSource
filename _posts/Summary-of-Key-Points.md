@@ -762,6 +762,7 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
         - InfluxDB
         - Prometheus
         - TimescaleDB
+        - DolphinDB
     - Graph Database
     - Object-Oriented Database
         - ObjectDB
@@ -1293,6 +1294,10 @@ Classification:
             - L1：8KB - 64KB
             - L2：256KB - 8MB
             - L3：10MB - 64MB
+    - Memory
+        - Random Access Memory
+            - DDR3, Double Data Rate Type 3
+            - DDR4, Double Data Rate Type 4
 - Endianness
     - Big-Endian(High-end IBM)
     - Little-Endian(x86)
