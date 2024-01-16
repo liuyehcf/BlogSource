@@ -557,6 +557,20 @@ git config --global core.editor "vim"
 git config --global core.editor "nvim"
 ```
 
+## 19.4 Proxy
+
+Edit `~/.ssh/config`
+
+```conf
+Host github.com
+   # HostName github.com
+   Hostname ssh.github.com
+   Port 443
+   User git
+   # Go through socks5 proxy, like Shadowsocks
+   ProxyCommand nc -v -x 127.0.0.1:7890 %h %p
+```
+
 # 20 Reference
 
 * [git官方文档](https://git-scm.com/docs/gitignore)
