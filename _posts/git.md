@@ -32,6 +32,11 @@ Git的版本库里存了很多东西，其中最重要的就是称为`stage`（�
 
 # 2 Configuration
 
+**配置文件：**
+
+* `~/.gitconfig`：对应于global
+* `.git/config`：对应于非global
+
 ```sh
 # 显示当前的Git配置
 git config --list
@@ -46,6 +51,46 @@ git config [--global] user.email "[email address]"
 # 删除配置
 git config [--global] --unset http.proxy
 ```
+
+## 2.1 Alias
+
+```sh
+# <xxx ago> Time Format
+git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+
+# <day> Time Format
+git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cs, %cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+
+# <second> Time Format
+git config --global alias.lg "log --color --graph --pretty='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd, %cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=format:'%Y-%m-%d %H:%M:%S'"
+```
+
+## 2.2 Modify Default Editor
+
+```sh
+git config --global core.editor "vim"
+git config --global core.editor "nvim"
+```
+
+## 2.3 Modify Diff Tool
+
+**项目地址：[github-icdiff](https://github.com/jeffkaufman/icdiff)**
+
+**安装：**
+
+```sh
+pip3 install git+https://github.com/jeffkaufman/icdiff.git
+
+# 配置git icdiff
+git difftool --extcmd icdiff
+
+# 配置icdiff参数
+git config --global icdiff.options '--highlight --line-numbers'
+```
+
+**使用：**
+
+* 用`git icdiff`代替`git diff`即可
 
 # 3 Adding/Deleting Files
 
@@ -469,20 +514,7 @@ git summary --line
 git archive
 ```
 
-# 13 Alias
-
-```sh
-# <xxx ago> Time Format
-git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
-
-# <day> Time Format
-git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cs, %cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
-
-# <second> Time Format
-git config --global alias.lg "log --color --graph --pretty='%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cd, %cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=format:'%Y-%m-%d %H:%M:%S'"
-```
-
-# 14 .gitignore
+# 13 .gitignore
 
 **基础规则**
 
@@ -500,47 +532,27 @@ git config --global alias.lg "log --color --graph --pretty='%Cred%h%Creset -%C(y
 1. `/**`开头，表示匹配内部的一切。例如`abc/**`匹配`abc`目录下的所有文件。**`abc/**`与`abc/`的作用是一样的**
 1. `/**/`表示匹配`0`个或`多`个`目录`。例如`a/**/b`匹配`a/b`、`a/x/b`、`a/x/y/b`
 
-# 15 git-lfs
+# 14 git-lfs
 
 [Git Large File Storage](https://git-lfs.github.com/)
 
-# 16 git-worktree
+# 15 git-worktree
 
 [git-worktree](https://git-scm.com/docs/git-worktree)
 
-# 17 gist
+# 16 gist
 
 Gists allow developers to share code or text snippets with others, making it easy to collaborate or seek help with specific programming tasks.
 
 [Gist](https://gist.github.com/)
 
-# 18 copilot
+# 17 copilot
 
 [copilot](https://github.com/features/copilot)
 
-# 19 Tips
+# 18 Tips
 
-## 19.1 Modify Diff Tool
-
-**项目地址：[github-icdiff](https://github.com/jeffkaufman/icdiff)**
-
-**安装：**
-
-```sh
-pip3 install git+https://github.com/jeffkaufman/icdiff.git
-
-# 配置git icdiff
-git difftool --extcmd icdiff
-
-# 配置icdiff参数
-git config --global icdiff.options '--highlight --line-numbers'
-```
-
-**使用：**
-
-* 用`git icdiff`代替`git diff`即可
-
-## 19.2 Issue with Chinese Displayed in Octal Form
+## 18.1 Issue with Chinese Displayed in Octal Form
 
 在Windows中，git bash打印的中文可能表示成`\+三个数字`的形式，即八进制表示
 
@@ -550,14 +562,7 @@ git config --global icdiff.options '--highlight --line-numbers'
 git config --global core.quotepath false
 ```
 
-## 19.3 Modify Default Editor
-
-```sh
-git config --global core.editor "vim"
-git config --global core.editor "nvim"
-```
-
-## 19.4 Proxy
+## 18.2 Proxy
 
 Edit `~/.ssh/config`
 
@@ -571,7 +576,7 @@ Host github.com
    ProxyCommand nc -v -x 127.0.0.1:7890 %h %p
 ```
 
-# 20 Reference
+# 19 Reference
 
 * [git官方文档](https://git-scm.com/docs/gitignore)
 * [git教程](https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/)
