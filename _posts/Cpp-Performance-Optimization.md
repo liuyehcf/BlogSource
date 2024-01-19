@@ -1550,6 +1550,166 @@ BM_logical_and    7310336 ns      7281142 ns           91
 BM_bit_and        6431491 ns      6431208 ns          103
 ```
 
+## 1.16 `if` or `switch`
+
+```cpp
+#include <benchmark/benchmark.h>
+#include <numa.h>
+#include <numaif.h>
+
+void add_by_if(int8_t type, int32_t& num) {
+    if (type == 0) {
+        num += 1;
+    } else if (type == 1) {
+        num += -2;
+    } else if (type == 2) {
+        num += 3;
+    } else if (type == 3) {
+        num += -4;
+    } else if (type == 4) {
+        num += 5;
+    } else if (type == 5) {
+        num += -6;
+    } else if (type == 6) {
+        num += 7;
+    } else if (type == 7) {
+        num += -8;
+    } else if (type == 8) {
+        num += 9;
+    } else if (type == 9) {
+        num += -10;
+    } else if (type == 10) {
+        num += 11;
+    } else if (type == 11) {
+        num += -12;
+    } else if (type == 12) {
+        num += 13;
+    } else if (type == 13) {
+        num += -14;
+    } else if (type == 14) {
+        num += 15;
+    } else if (type == 15) {
+        num += -16;
+    } else if (type == 16) {
+        num += 17;
+    } else if (type == 17) {
+        num += -18;
+    } else if (type == 18) {
+        num += 19;
+    } else if (type == 19) {
+        num += -20;
+    } else if (type == 20) {
+        num += 21;
+    }
+}
+
+void add_by_switch(int8_t type, int32_t& num) {
+    switch (type) {
+    case 0:
+        num += 1;
+        break;
+    case 1:
+        num += -2;
+        break;
+    case 2:
+        num += 3;
+        break;
+    case 3:
+        num += -4;
+        break;
+    case 4:
+        num += 5;
+        break;
+    case 5:
+        num += -6;
+        break;
+    case 6:
+        num += 7;
+        break;
+    case 7:
+        num += -8;
+        break;
+    case 8:
+        num += 9;
+        break;
+    case 9:
+        num += -10;
+        break;
+    case 10:
+        num += 11;
+        break;
+    case 11:
+        num += -12;
+        break;
+    case 12:
+        num += 13;
+        break;
+    case 13:
+        num += -14;
+        break;
+    case 14:
+        num += 15;
+        break;
+    case 15:
+        num += -16;
+        break;
+    case 16:
+        num += 17;
+        break;
+    case 17:
+        num += -18;
+        break;
+    case 18:
+        num += 19;
+        break;
+    case 19:
+        num += -20;
+        break;
+    case 20:
+        num += 21;
+        break;
+    }
+}
+
+inline constexpr int8_t BRANCH_SIZE = 21;
+inline constexpr size_t _1M = 1000000;
+
+static void BM_if(benchmark::State& state) {
+    for (auto _ : state) {
+        int32_t num = 0;
+        for (size_t i = 0; i < _1M; ++i) {
+            add_by_if(i % BRANCH_SIZE, num);
+        }
+        benchmark::DoNotOptimize(num);
+    }
+}
+
+static void BM_switch(benchmark::State& state) {
+    for (auto _ : state) {
+        int32_t num = 0;
+        for (size_t i = 0; i < _1M; ++i) {
+            add_by_if(i % BRANCH_SIZE, num);
+        }
+        benchmark::DoNotOptimize(num);
+    }
+}
+
+BENCHMARK(BM_if);
+BENCHMARK(BM_switch);
+
+BENCHMARK_MAIN();
+```
+
+**Output:**
+
+```
+-----------------------------------------------------
+Benchmark           Time             CPU   Iterations
+-----------------------------------------------------
+BM_if         7792759 ns      7792431 ns           90
+BM_switch     7764055 ns      7763436 ns           90
+```
+
 # 2 pointer aliasing
 
 **`pointer aliasing`指的是两个指针（在作用域内）指向了同一个物理地址，或者说指向的物理地址有重叠。`__restrict`关键词用于给编译器一个提示：确保被标记的指针是独占物理地址的**

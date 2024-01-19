@@ -1544,7 +1544,14 @@ gcc -o your_program your_program.c -fuse-ld=lld -Wl,--verbose
 
 # 8 LLVM Tools
 
-## 8.1 clang-format
+## 8.1 clang
+
+**Doc:**
+
+* [Clang documentation](https://clang.llvm.org/docs/)
+    * [Diagnostic flags in Clang](https://clang.llvm.org/docs/DiagnosticsReference.html)
+
+## 8.2 clang-format
 
 **如何安装`clang-format`**
 

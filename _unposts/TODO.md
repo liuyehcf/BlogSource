@@ -12,6 +12,7 @@
         * [kcachegrind](https://kcachegrind.github.io/html/Usage.html)
         * [Tips for the Profiling/Optimization process](https://kcachegrind.github.io/html/Tips.html)
     * DTrace (Dynamic Tracing)
+    * grafana
 1. 数据库
     * 模型
         * 星星模型
