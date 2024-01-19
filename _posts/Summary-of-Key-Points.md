@@ -451,6 +451,9 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
             - Cardinality Preserved Join
             - Duplication Factor
     - Aggregate
+        - Agg Functions Support Rollup
+            - Sum
+            - Count
     - Window Function
         - Function
         - Partition By Clause

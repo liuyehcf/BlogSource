@@ -24,7 +24,7 @@ categories:
 
 # 2 Runtime Filter
 
-[[Enhancement] Support RuntimeFilter build in TopN Node](https://github.com/StarRocks/starrocks/pull/15949)
+* [[Enhancement] Support RuntimeFilter build in TopN Node](https://github.com/StarRocks/starrocks/pull/15949)
 
 # 3 优化点
 
@@ -32,5 +32,8 @@ categories:
     * [introduce unplug mechanism to improve scalability](https://github.com/StarRocks/starrocks/pull/8979)
 1. 分区倾斜的场景下排序如何优化
     * 「每路同时独立排序」 -> 「依次对每路数据做并行排序」
+    * [[Enhancement] Support skew hint for window partition clause](https://github.com/StarRocks/starrocks/pull/35486)
 1. MemTracker中原子变量更新存在多线程竞争，频繁得更新会导致性能急剧下降。可以通过攒批的方式，将实时写入改成批次写入来降低竞争的概率
 1. SharedScan for data skew scenario
+1. Group Execution
+    * [[Enhancement] support per bucket optimize for colocate aggregate](https://github.com/StarRocks/starrocks/pull/29252)

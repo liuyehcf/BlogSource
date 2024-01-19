@@ -58,6 +58,7 @@
     * `SHUFFLE_HASH_BUCKET`：以Shuffle的`Hash`算法散列后得到的数据分布
     * `COLOCATE`：互为colocate的表，相同的`key`对应的数据一定在同一个机器上
     * `REPLICATED`
+1. `RowOutputInfo`
 
 ## 1.2 OptimizerTask
 
