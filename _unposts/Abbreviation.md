@@ -110,3 +110,4 @@
 | NFA | Non-Deterministic Finite Automation |
 | DFA | Deterministic Finite Automation |
 | GMV | Gross Merchandise Volume |
+| IOPS | Input/Output Operations Per Second |  

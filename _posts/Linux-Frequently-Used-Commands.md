@@ -3372,7 +3372,7 @@ yum install -y sysstat
     * `%steal`：在管理程序为另一个虚拟处理器提供服务时，一个或多个虚拟`CPU`在非自愿等待中花费的时间
     * `%idle`：一个或多个`CPU`空闲且系统没有未完成的磁盘`I/O`请求的时间百分比
 * `device`
-    * `tps`：每秒处理的io请求
+    * `tps`：每秒处理的io请求，IOPS
     * `Blk_read/s (kB_read/s, MB_read/s)`：每秒读取的数据量，单位可以是Block、kB、MB
     * `Blk_wrtn/s (kB_wrtn/s, MB_wrtn/s)`：每秒写入的数据量，单位可以是Block、kB、MB
     * `Blk_read (kB_read, MB_read)`：读取的数据总量，单位可以是Block、kB、MB
