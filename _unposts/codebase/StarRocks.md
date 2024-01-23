@@ -320,11 +320,12 @@ The hash table is organized as an array, each element store the first index of t
 
 `HashTableProbeState`
 
+* `count`: Match count.
 * `buckets`
-* `build_index`
-* `probe_index`
+* `build_index`: Row indexes of the build side chunk, used to construct the output chunk.
+* `probe_index`: Row indexes of the probe side chunk, used to construct the output chunk.
 * `next`
-* `has_remain`: One probe-side chunk may output multiply chunks (multiply hits for one row), so the flag is used to indicate that the current probe chunk need to be processed again next time.
+* `has_remain`: One probe-side chunk may output multiply chunks (multiply hits for one row), so the flag is used to indicate that the current probe chunk need to be processed again next time. And the `count` will be set to the `max_chunk_size`
 
 ### 2.4.2 Build
 
