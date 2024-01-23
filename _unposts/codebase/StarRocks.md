@@ -339,6 +339,8 @@ The hash table is organized as an array, each element store the first index of t
     * `JoinHashTable::probe`
         * `JoinHashMap::probe`
             * `JoinHashMap::_search_ht`: Search for hit
+            * `JoinHashMap::_probe_output`: Copy probe side columns to the output chunk.
+            * `JoinHashMap::_build_output`: Copy build side columns to the output chunk.
 
 ## 2.5 WindowFunction
 
