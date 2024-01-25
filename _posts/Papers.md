@@ -1907,3 +1907,5 @@ Data Stream Processing System, DSPS
     * [GPU Computing](/resources/paper/GPU-Computing.pdf)
 * LLM
     * [Attention Is All You Need](/resources/paper/Attention-Is-All-You-Need.pdf)
+    * [BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding](/resources/paper/BERT-Pre-training-of-Deep-Bidirectional-Transformers-for-Language-Understanding.pdf)
+    * [Language Models are Unsupervised Multitask Learners](/resources/paper/Language-Models-are-Unsupervised-Multitask-Learners.pdf)
