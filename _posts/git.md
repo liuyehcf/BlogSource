@@ -576,6 +576,12 @@ Host github.com
    ProxyCommand nc -v -x 127.0.0.1:7890 %h %p
 ```
 
+## 18.3 DNS
+
+```config
+140.82.114.4 github.com
+```
+
 # 19 Reference
 
 * [git官方文档](https://git-scm.com/docs/gitignore)

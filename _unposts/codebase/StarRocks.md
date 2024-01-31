@@ -299,9 +299,18 @@ In summary, `update` is used to update intermediate results for an aggregate fun
          +---------------------------+         
 ```
 
-* `be/src/exec/hash_joiner.{h, cpp}`: HashJoiner
-* `be/src/exec/hash_join_components.{h, cpp}`: HashJoinBuilder, HashJoinProber
-* `be/src/exec/join_hash_map.{h, tpp, cpp}`: JoinHashTable, JoinHashMap, JoinHashTableItems, HashTableProbeState
+* `be/src/exec/hash_joiner.{h, cpp}`
+    * `HashJoiner`
+    * `HashJoinerParam`
+* `be/src/exec/hash_join_components.{h, cpp}`
+    * `HashJoinBuilder`
+    * `HashJoinProber`
+* `be/src/exec/join_hash_map.{h, tpp, cpp}`
+    * `JoinHashTable`
+    * `JoinHashMap`
+    * `HashTableParam`
+    * `JoinHashTableItems`
+    * `HashTableProbeState`
 
 **Key Observations:**
 
