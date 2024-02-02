@@ -570,6 +570,9 @@ Trino is forked from Presto
 1. Rockset
     * [StarRocks vs Rockset](https://rockset.com/comparison/starrocks-vs-rockset/)
 1. [Databend](https://databend.rs/)
+1. [Umbra](https://dbdb.io/db/umbra)
+    * Thomas Neumann
+    * [Publications](https://db.in.tum.de/research/publications/?lang=en)
 
 # 28 参考
 

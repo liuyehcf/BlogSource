@@ -1437,6 +1437,29 @@ EOF
 expect /tmp/test_expect.config
 ```
 
+## 2.40 parallel
+
+The parallel command is a powerful utility in Unix-like operating systems designed for running multiple shell commands in parallel, rather than sequentially. This can significantly speed up the execution of tasks that can be performed concurrently, especially when processing large amounts of data or performing operations on multiple files or processes at the same time.
+
+**Pattern:**
+
+* `parallel command ::: argument1 argument2 argument3`
+
+**Options:**
+
+* `-j N`: Specifies the number of jobs to run in parallel. If not specified, parallel attempts to run as many jobs in parallel as there are CPU cores.
+* `-k`: Keep sequence of output same as the order of input. Normally the output of a job will be printed as soon as the job completes.
+* `-n max-args`: Use at most max-args arguments per command line.
+    * `-n 0`means read one argument, but insert 0 arguments on the command line.
+* `:::`: Used to specify arguments directly on the command line.
+
+**Examples:**
+
+* `parallel -j1 sleep {}\; echo {} ::: 2 1 4 3`
+* `parallel -j4 sleep {}\; echo {} ::: 2 1 4 3`
+* `parallel -j4 -k sleep {}\; echo {} ::: 2 1 4 3`
+* `seq 10 | parallel -n0 echo "hello world"`: Run the same command 10 times
+
 # 3 Device Management
 
 ## 3.1 mount

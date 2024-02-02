@@ -97,6 +97,7 @@ date: 2018-02-05 09:25:59
 * [数据库内核杂谈](https://www.infoq.cn/theme/46)
 * [Develop your own Database](https://hpi.de/plattner/teaching/archive/winter-term-201819/develop-your-own-database.html)
 * [ClickHouse/ClickBench](https://github.com/ClickHouse/ClickBench)
+    * [ClickBench — a Benchmark For Analytical DBMS](https://benchmark.clickhouse.com/)
 * [AlloyDB for PostgreSQL under the hood: Intelligent, database-aware storage](https://cloud.google.com/blog/products/databases/alloydb-for-postgresql-intelligent-scalable-storage)
 * Segment Tree
     * [Segment Tree | Set 1 (Sum of given range)](https://www.geeksforgeeks.org/segment-tree-set-1-sum-of-given-range/)
