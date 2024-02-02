@@ -332,6 +332,7 @@ Breakpoint 1, main () at set_break.cpp:8
     * `list <function>`：输出指定函数的10行源码
     * `list <filename:linenum>`：输出指定文件指定行号开始的10行源码
     * `list <filename:function>`：输出指定文件指定函数的10行源码
+    * `set substitute-path /root/starrocks /other/path/starrocks`：修改源码索引路径。当二进制在A机器或者docker内编译，但是在机器B上分析core文件，源码路径通常是对不上的，因此需要用这个命令来调整一下
 * `info`用于查看各种调试相关的信息
     * `info break`：查看断点
     * `info reg`：查看寄存器
@@ -495,6 +496,10 @@ $5 = (Person *) 0x7fffffffe0c0
 (gdb) !pwd
 xxx/gdb_tutorial
 ```
+
+## 3.8 Tips
+
+1. Redirect source file path: `set substitute-path`
 
 # 4 How analyze a core file
 

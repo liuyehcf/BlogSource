@@ -1479,8 +1479,10 @@ gcc main.cpp -o main -std=gnu++17 -Wl,-Bstatic -lstdc++ -Wl,-Bdynamic
 
 **`gcc`如何指定`linker`**
 
-* `-fuse-ld=gold`
-* `-B/usr/local/bin/gcc-mold`
+* `-B/usr/bin`: For GNU ld, setup searching directory
+* `-fuse-ld=gold`: For GNU gold
+* `-fuse-ld=lld`: For LLVM lld
+* `-B/usr/local/bin/gcc-mold`: For mold, setup searching directory
 
 **常用参数说明：**
 
@@ -1538,6 +1540,16 @@ gcc -o your_program your_program.c -fuse-ld=gold -Wl,--verbose
 
 # lld
 gcc -o your_program your_program.c -fuse-ld=lld -Wl,--verbose
+```
+
+### 7.2.3 How to determine which linker was used to link a binary file
+
+```sh
+# method 1
+readelf -p .comment <binary_file>
+
+# method 2
+strings <binary_file> | grep <linker_name>
 ```
 
 ## 7.3 Reference
