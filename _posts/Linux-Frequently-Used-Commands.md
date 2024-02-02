@@ -1459,6 +1459,8 @@ The parallel command is a powerful utility in Unix-like operating systems design
 * `parallel -j4 sleep {}\; echo {} ::: 2 1 4 3`
 * `parallel -j4 -k sleep {}\; echo {} ::: 2 1 4 3`
 * `seq 10 | parallel -n0 echo "hello world"`: Run the same command 10 times
+* `seq 2 | parallel -n0 cat test.sql '|' mysql -h 127.0.0.1 -P 3306 -u root -D test`
+* `seq 2 | parallel -n0 mysql -h 127.0.0.1 -P 3306 -u root -D test -e \'source test.sql\'`
 
 # 3 Device Management
 
