@@ -15,9 +15,13 @@ categories:
 
 [Graduated and incubating projects](https://www.cncf.io/projects/)
 
-# 2 grafana & prometheus
+# 2 grafana 
 
-## 2.1 Step1: Install prometheus
+## 2.1 prometheus
+
+![grafana-prometheus-node_exporter-architecture](/images/CNCF-Projects/grafana-prometheus-node_exporter-architecture.webp)
+
+### 2.1.1 Step1: Install prometheus
 
 Download package from [here](https://prometheus.io/download/).
 
@@ -32,7 +36,7 @@ Download package from [here](https://prometheus.io/download/).
 * `up`: Show all up machines.
 * `http://localhost:19090/metrics`: List all metrics in text.
 
-## 2.2 Step2: Install node-exporter
+### 2.1.2 Step2: Install node-exporter
 
 Download package from [here](https://prometheus.io/download/).
 
@@ -53,7 +57,7 @@ Then add the following config to the `scrape_configs` part of `prometheus.yml` a
       - targets: ['localhost:19100'] # Adjust the port if your node_exporter listens on a different one.
 ```
 
-## 2.3 Step3: Install grafana
+### 2.1.3 Step3: Install grafana
 
 Install grafa following the guide [here](https://grafana.com/grafana/download?pg=get&plcmt=selfmanaged-box1-cta1).
 
@@ -63,7 +67,7 @@ Add datasource prometheus, and config the address.
 
 Then search the grafana templates from [here](https://grafana.com/grafana/dashboards) which you can import into your cluster directly.
 
-## 2.4 参考
+## 2.2 参考
 
 * [Getting started with Prometheus Grafana and Node exporter - Part 1](https://www.youtube.com/watch?v=peH95b16hNI&list=PLm6CFQTqBnAkUzE2efK-4R9QiwQ1koTAB&index=3&t=223s)
 * [prometheus download](https://prometheus.io/download/)
