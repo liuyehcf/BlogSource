@@ -67,6 +67,10 @@ Add datasource prometheus, and config the address.
 
 Then search the grafana templates from [here](https://grafana.com/grafana/dashboards) which you can import into your cluster directly.
 
+### 2.1.4 Useful dashboard
+
+1. `1860`: Node Exporter Full
+
 ## 2.2 参考
 
 * [Getting started with Prometheus Grafana and Node exporter - Part 1](https://www.youtube.com/watch?v=peH95b16hNI&list=PLm6CFQTqBnAkUzE2efK-4R9QiwQ1koTAB&index=3&t=223s)

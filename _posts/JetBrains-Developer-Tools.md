@@ -311,7 +311,25 @@ HotKey In Windows: `Ctrl+Alt+O`
 
 1. `lombok`
 
-## 2.9 Reference
+## 2.9 Compile OOM
+
+[How can I give the Intellij compiler more heap space?](https://stackoverflow.com/questions/8581501/how-can-i-give-the-intellij-compiler-more-heap-space)
+
+**For `${InstallPath}/bin/idea.vmoptions`:**
+
+```
+-Xms128m
+-Xmx2048m
+-XX:MaxPermSize=1024m
+-XX:ReservedCodeCacheSize=64m
+-ea
+```
+
+**Preferences -> Build, Execution, Deployment -> Compiler -> Shared build process heap size**
+
+* Compiler runs in a separate JVM by default so IDEA heap settings that you set in idea.vmoptions have no effect on the compiler.
+
+## 2.10 Reference
 
 * [IntelliJ IDEA 设置选中标识符高亮](http://blog.csdn.net/wskinght/article/details/43052407)
 * [IntelliJ IDEA 总结](https://www.zhihu.com/question/20450079)
