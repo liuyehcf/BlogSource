@@ -1,3 +1,45 @@
+1. what are your weekend arrangements?
+1. the quiet person at a party could be an extrovert; 聚会上安静的人可能是个外向的人\n\nthe characteristic of an extrovert is someone who gains energy and feels good in social situations
+1. why didn't you declare these?
+1. the effect of the medicine is noticeable; the effect of the medicine isn't lasting
+1. I appreciate the effort; thank you for your efforts
+1. it's only after you've stepped outside your comfort zone that you begin to change, grow and transform
+1. I love who you are on the inside
+1. go easy on yourself
+1. I have to take a leak; I have to take a dump
+1. mentally sharp; mentally dull
+1. it shouldn't charge you more than 5 dollars
+1. 吃动作词汇; 咬：bite\n嚼：chew\n小口喝：sip\n吞咽：swallow\n舔：lick
+1. all in one machine; 一体机
+1. elect or throw out leaders
+1. seal the deal
+1. he's smashing things around
+1. sets up the test fixture; setup teardown 这类方法
+1. fundamental truth
+1. this expression is something that we use as native English speakers on a regular basis
+1. I tossed around some ideas during the meeting
+1. first deposit; balance payment; 首付；尾款
+1. curriculum vitae
+1. I don't mean to pry; I don't want to pry; 我不是有意想打探
+1. you first need to start off by answering the five ws, which are who, what, where, when, why
+1. I'm looking forward to life-long happiness and fulfillment; I'd like to live my life with happiness and fulfillment
+1. consent form
+1. Taiwan is living proof of this claim
+1. the query got way faster
+1. I've been feeling a bit uneasy recently
+1. please ship the package to our New York office as soon as possible
+1. unjust judgement; miscarriages of justice
+1. top articles and journals
+1. I'll dip into the novel tonight before bed
+1. you've been very helpful
+1. blow it up; knock it down
+1. new products have really come along with the latest technological advancements
+1. aka
+1. this year is hotter than the previous hottest year on record
+1. pull the trigger
+1. I'll keep tabs on you; I'll keep an eye on you
+1. he can spend the money the way he sees fit
+1. the room is oriented to the east; are we looking east?
 1. it's a precise coordinate
 1. I'm gonna show them who's the boss; I'm gonna put them in their place; 我要给他们点颜色看看
 1. I didn't want to contradict you
@@ -12,7 +54,7 @@
 1. I got a big pimple on my face
 1. 数学词汇; 交集：intersection\n并集：union\n差集：difference\n
 1. same to you; respnse to \'have a nice day\'\nor you too
-1. 金融词汇; 金融：finance\n信用：credit\n贷款：loans\n利息：interests\n货币：currency\n股票：stock\n证券：security\n保险：insurance\n基金：fund\n贸易：trade\n汇率：exchange rate\n抵押贷款：mortgage\n养老金：pension
+1. 金融词汇; 金融：finance\n信用：credit\n贷款：loans\n利息：interests\n利率：interest rate\n货币：currency\n股票：stock\n证券：security\n保险：insurance\n基金：fund\n贸易：trade\n汇率：exchange rate\n抵押贷款：mortgage\n养老金：pension\n汇兑：money order\n证券交易所：stock exchange
 1. file a complaint; make a complaint
 1. ego; arrogant; pride
 1. somebody got flipped; it could refer to someone changing their allegiance, opinion, or loyalty
@@ -25,10 +67,10 @@
 1. I decided to waive my right to a trial and accepted the plea deal
 1. keep your head down
 1. 家用工具词汇; 锯子：saw\n斧头：ax/axe\n锤子：hammer\n老虎钳：pliers\n螺丝刀：screwdriver\n螺丝钉：screw\n扳手：wrench\n螺栓：bolt\n螺母/螺帽：nut\n滚筒（刷墙用的）：roller\n大剪子：shears\n剪刀：scissors\n耳勺：ear spoon\n夹子：clip\n指甲钳：nail clippers\n电钻：electric drill\n卷尺：tape measure\n磅秤：scales\n胶布：adhesive tape\n小铲子：trowel\n大铲子/锹：spade\n锄头：hoe\n耙子：rake\n梯子：ladder\n割草机：mower\n
-1. 发型词汇; 平头：crew cut\n中分：centre parting\n边分：side parting\n马尾：pony tail\n辫子：braid/braids\n发髻型：bun\n卷发：curly hair\n长直发：long straight hair\n大波浪：wave\n爆炸头：afro
-1. 罪名词汇; 性骚扰：sexual harassment\n性虐待：sexual battery\n网络犯罪：cyber crime\n杀人：homicide\n渎职：dereliction of duty\n恐吓：intimidate\n袭击：attack\n信用卡诈骗：credit card fraud
+1. 发型词汇; 平头：crew cut\n中分：centre parting\n边分：side parting\n马尾：pony tail\n辫子：braid/braids\n发髻型：bun\n卷发：curly hair\n长直发：long straight hair\n大波浪：wave\n爆炸头：afro\n发带：hair tie
+1. 罪名词汇; 性骚扰：sexual harassment\n性虐待：sexual battery\n网络犯罪：cyber crime\n侵犯知识产权：copyright infringement\n青少年犯罪：juvenile delinquency\n杀人：homicide\n渎职：dereliction of duty\n恐吓：intimidate\n袭击：attack\n信用卡诈骗：credit card fraud\n自杀：suicide\n宗派暴力：sectarian violence\n毒品走私：drug smuggling/drug smuggler
 1. 家务词汇; 扫地：sweep the floor\n擦地：scrub the floor\n拖地：mop the floor\n擦窗：clean the windows\n洗车：wash the car\n洗衣服：do the laundry\n晒衣服：hang clothes\n熨衣服：iron clothes\n叠衣服：fold clothes\n换床单：change the sheet\n给桌子除尘：dust the desk\n吸地面：vacuum the floor
-1. 证件词汇; 身份证：identity card\n驾驶证：driving license\n学会证：student pass\n毕业证：diploma\n工作证：employee\'s card\n健康证：helath certificate\n结婚证：marriage license\n护照：passport\n签证：visa\n绿卡：green card
+1. 证件词汇; 身份证：identity card\n驾驶证：driving license\n学会证：student pass\n毕业证：diploma\n工作证：employee\'s card\n健康证：helath certificate\n结婚证：marriage license\n护照：passport\n签证：visa\n工作签证：work visa\n绿卡：green card
 1. 家用电器词汇; 洗衣机：washing machine\n空调：air conditioner\n饮水机：water dispenser\n直饮水：water purifier\n电风扇：fan\n熨斗：iron\n电吹风：blow dryer
 1. 水果词汇; 李子：plum\n柠檬：lemon\n荔枝：litchi\n桂圆：longan\n芒果：mango\n樱桃：cherry\n菠萝：pineapple\n柚子：pomelo\n草莓：strawberry\n黑莓：blackberry\n蓝莓：blueberry\n西瓜：watermelon\n橙子：orange\n桑葚：mulberry\n香蕉：banana\n胡桃：walnut\n榴莲：durian\n枇杷：loquat\n无花果：fig
 1. the cheese is moldy
@@ -48,9 +90,9 @@
 1. my hands are tied; 我无能为力\n
 1. 婚礼词汇; 求婚：proposal\n订婚：engagement\n新娘：bride\n新郎：groom\n伴郎：bestman\n伴娘：bridesmaid\n戒指：ring\n婚宴：wedding reception/wedding feast\n祝酒：toast\n婚纱：wedding dress
 1. 纸类词汇; 报纸：newspaper\n纸巾：tissue\n餐巾纸：napkin\n卫生纸：toilet paper\n湿纸巾：wipes\n纸尿裤：diaper\n草稿纸：scratch paper\n便利贴：post-it note\n图纸：drawings\n厨房卷纸：kitchen roll
-1. 量词词汇; 一片面包：a piece of bread\n一串香蕉/一束玫瑰：a bunch of bananas/a bounch of roses\n一粒米：a grain of rice\n一小撮盐：a pinch of salt\n一罐水果/一听饮料：a can of fruit/a can of cola\n一包河粉：a packet of rice noddles\n一片披萨：a slice of pizza\n一勺糖：a spoon of sugar\n一条/块：a loaf of bread\n一碗水：a bowl of water\n一瓶水：a bottle of perfume\n一双：a pair of shoes\n一堆：a pile of laundary\n一系列的发布：a string of new product\n一群：a group/crowd of children\n一张纸：a blank sheet of paper\n一盒苹果汁：a carton of apple juice\n一群羊：a flock of sheep\n一卷交卷：a roll of film\n\nPiece: This is a general term that can refer to any part or portion of something, regardless of its shape or size.\nSlice: This term specifically refers to a thin, flat piece that has been cut or sliced from something larger, usually with a sharp tool.
+1. 量词词汇; 一片面包：a piece of bread\n一串香蕉/一束玫瑰：a bunch of bananas/a bounch of roses\n一粒米：a grain of rice\n一小撮盐：a pinch of salt\n一罐水果/一听饮料：a can of fruit/a can of cola\n一罐卡法：a jar of coffee\n一包河粉：a packet of rice noddles\n一片披萨：a slice of pizza\n一勺糖：a spoon of sugar\n一条/块面包：a loaf of bread\n一碗水：a bowl of water\n一瓶香水：a bottle of perfume\n一双鞋：a pair of shoes\n一堆衣服：a pile of laundary\n一系列的发布：a string of new product\n一群小孩：a group/crowd of children\n一张纸：a blank sheet of paper\n一盒苹果汁：a carton of apple juice\n一群羊：a flock of sheep\n一卷交卷：a roll of film\n一缕烟：a puff of smoke\n一连串问题：a cascade of problems\n数量惊人的：a striking amount of\n\nPiece: This is a general term that can refer to any part or portion of something, regardless of its shape or size.\nSlice: This term specifically refers to a thin, flat piece that has been cut or sliced from something larger, usually with a sharp tool.
 1. 休假词汇; 法定假：statutory holiday\n年假：annual leave\n事假：personal leave\n病假：sick leave\n婚假：marriage leave\n产假：maternity leave\n陪产假：paternity leave\n调休：days off\n间歇：take a break\n丧假：bereavement lave
-1. 家具用品词汇; 被子：quilt\n床垫、褥子：mattress\n床单：sheet\n窗帘：curtain\n毛毯（盖身上的）：blanket\n坐垫：cushion\n地毯：carpet\n枕头：pillow\n吊灯：chandelier\n台灯：table lamp\n手电筒：flashlight\n床头柜：nightstand/bedside table\n梳妆台：dressing table\n雨伞：umbrella\n浴巾：bath towel\n花洒：shower head\n马桶：closestool\n洗手液：hand sanitizer
+1. 家具用品词汇; 被子：quilt\n床垫、褥子：mattress\n床单：sheet\n窗帘：curtain\n毛毯（盖身上的）：blanket\n坐垫：cushion\n地毯：carpet\n枕头：pillow\n吊灯：chandelier\n台灯：table lamp\n吸顶灯：ceiling lamp\n手电筒：flashlight\n数字手表：digital watch\n遥控器：remote control\n床头柜：nightstand/bedside table\n梳妆台：dressing table\n雨伞：umbrella\n浴巾：bath towel\n花洒：shower head\n马桶：closestool\n洗手液：hand sanitizer
 1. sorry, I misremembered
 1. I'm very directionally challenged
 1. don't look at me; stop looking at me; 别看着我\n别看着我了
@@ -60,7 +102,7 @@
 1. got it; copy that; well noted; 明白了，收到
 1. downwind; against the wind
 1. 人脸部位词汇; 额头：forehead\n眼皮：eyelid\n脸颊：cheek\n人中：philtrum\n嘴唇：lip; my lips are super dry and cracked\n下巴：chin\n耳垂：earlobe
-1. 疾病词汇; 呼吸系统疾病：respiratory illnesses\n遗传病：hereditary diseases/inherited genetic diseases\n血管疾病：vascular conditions\n感冒：cold\n发烧：fever\n咽痛：sore throat\n咳嗽：cough\n打喷嚏：sneeze\n头痛：headache\n肺炎：pneumonia\n失眠：insomnia\n腹泻：diarrhea\n恶心：nausea\n呕吐：vomit\n眩晕：dizziness\n晕倒：passed out/faint\n乏力：fatigue/faint\n哮喘：asthma attack
+1. 疾病词汇; 呼吸系统疾病：respiratory illnesses\n遗传病：hereditary diseases/inherited genetic diseases\n血管疾病：vascular conditions\n流感：flu\n禽流感：bird flu\n感冒：cold\n发烧：fever\n咽痛：sore throat\n咳嗽：cough\n打喷嚏：sneeze\n头痛：headache\n肺炎：pneumonia\n失眠：insomnia\n腹泻：diarrhea\n恶心：nausea\n呕吐：vomit\n眩晕：dizziness\n晕倒：passed out/faint\n乏力：fatigue/faint\n哮喘：asthma attack
 1. I need to know what I stand to win
 1. 房屋词汇; 公寓：apartment/flat\n宿舍：dormitory\n别墅：villa\n官邸/大厦：mansion\n工作室：studio\n地下室：basement\n村舍：cottage\n平房：bungalow\n寺庙：temple\n城堡：castle
 1. I worked my ass off to get here
@@ -68,7 +110,6 @@
 1. 911, what's the emergency
 1. where are you hurt; where does it hurt; what did you bump into
 1. why the long face; 为什么闷闷不乐？\n
-1. I appreciate the effort
 1. 器官词汇; 大脑：brain\n肺部：lungs\n气管：trachea\n血管：blood vessel\n心脏：heart\n肝脏：liver\n肾脏：kidney\n胃部：stomach\n脾脏：spleen\n胰腺：pancreas\n膀胱：bladder\n肠道：intestines
 1. level with me; 实话跟我说吧
 1. rat race
@@ -80,11 +121,11 @@
 1. 餐厅词汇; 剩菜：leftovers\n打包盒：to go box\n筷子：chopsticks\n塑料勺：plastic spoon\n餐巾纸：napkins\n塑料袋：plastic bag
 1. 健身词汇; 高强度运动：intense exercise; vigorous exercise; strenuous exercise; heavy exercise\n俯卧撑：push-ups\n引体向上：pull-ups/chin-ups\n平板卧推：flat bench press\n上斜卧推：incline bench press\n深蹲：deep squat\n举重：lift weights
 1. you've got a point there
-1. 职场词汇; 招聘：recruitment\n简历：resume\n面试：interview\n空缺岗位：vacancy\n职业规划：career plan\n早九晚五：nine-to-five\n薪资：salary\n福利：welfare\n升职：promotion\n裁员：lay off\n转岗：job transfer\n跳槽：job hopping\n加薪：I want a raise\n年终绩效奖金：annual performance bonus
+1. 职场词汇; 招聘：recruitment\n简历：resume\n面试：interview\n空缺岗位：vacancy\n职业规划：career plan\n早九晚五：nine-to-five\n薪资：salary\n福利：welfare\n升职：promotion\n裁员：lay off\n转岗：job transfer\n跳槽：job hopping\n加薪：I want a raise\n年终绩效奖金：annual performance bonus\n担任职务：position held\n工作签证：work visa
 1. let's split the bill
 1. 排泄物词汇; 眼屎：sleepy dust\n耳屎：earwax\n鼻涕：snot\n鼻屎：booger\n痰：phlegm\n汗水：sweat\n头皮屑：dandruff
-1. 汽车词汇; 驾驶座：driver\'s seat\n安全带：seatbelt\n方向盘：steering wheel\n喇叭：horn\n仪表盘：dashboard\n出风口：air vent\n变速杆：gearshift\n挡风玻璃：windscreen/windshield\n挡风玻璃雨刷：windscreen/windshield wipers\n侧视镜：side-view mirror\n后视镜：rearview mirror\n遮阳板：sun visor\n转向灯：indicator/turn signal\n刹车：brake\n油门：accelerator\n门把手：door handle\n轮胎：tire/tyre\n车牌：number plate/license plate
-1. my word is my bond; you have my words.
+1. 汽车词汇; 驾驶座：driver\'s seat\n安全带：seatbelt\n方向盘：steering wheel\n喇叭：horn\n仪表盘：dashboard\n出风口：air vent\n变速杆：gearshift\n挡风玻璃：windscreen/windshield\n挡风玻璃雨刷：windscreen/windshield wipers\n侧视镜：side-view mirror\n后视镜：rearview mirror\n遮阳板：sun visor\n转向灯：indicator/turn signal\n刹车：brake\n油门：accelerator\n门把手：door handle\n轮胎：tire/tyre\n车牌：number plate/license plate\n后备箱：trunk\n卡车：truck
+1. my word is my bond; 我会遵守诺言\nyou have my words.
 1. in what universe are we the same?; 我们哪里一样了？\n
 1. stress; pressure; pressure: For things and outside.\nI\'m under a lot of pressure.\n\nstree: For human beings and inside.\nI feel stressed./I\'m stressed out.\nreduce stree/relieve stress
 1. you look sharp today
@@ -379,7 +420,6 @@
 1. reject the offer; refuse the offer; turn down the offer; decline the offer; The degrees of intensity from strong to weak are, respectively, reject, refuse, turn down, decline
 1. sorry, it completely slipped my mind
 1. catastrophic wildfires continue to rage across the island of Maui
-1. work visa
 1. it's so rooted in who you are
 1. you could press charges
 1. citizens and residents
@@ -416,7 +456,6 @@
 1. one capsule with a meal; one capsule with meals
 1. sounds fair enough
 1. 8 times more expensive
-1. articles and journals
 1. group elements into categories
 1. a company that manufactures parts for cars
 1. an area of outstanding natural beauty
@@ -482,7 +521,6 @@
 1. watch videos or listen to podcasts
 1. the man has been sentenced to life in prison by a federal court, without the possibility of parole
 1. rollback
-1. miscarriages of justice
 1. peel a banana
 1. economic price; low price
 1. elaborate computing system
@@ -500,7 +538,6 @@
 1. the school opened enrollment in various new directions
 1. southern suburbs
 1. what do you make of that; what do you think of that; what are your thoughts on that idea; what's your assessment of the rebellion
-1. thank you for your efforts
 1. charge; sue; indict; accuse; prosecute; \"Charge\" is a general term for formally accusing someone of a crime, \"sue\" is to initiate a civil legal action for damages or remedy, \"indict\" is to formally accuse someone of a crime through a grand jury or similar body, \"accuse\" is to make an allegation against someone, and \"prosecute\" is to bring legal proceedings against someone in a criminal case.
 1. those thunderstorms could lower the temperature
 1. complacence; complaint; compliance
@@ -514,7 +551,6 @@
 1. don't be mad at me
 1. I have not announced my arrival in Hangzhou
 1. the government is more effective than we tend to think; the government is more effective than we incline to think
-1. the effect of the medicine is noticeable
 1. he has to cater to his boss
 1. the powers of a judge are defined by law
 1. you better prioritize your work
@@ -632,7 +668,7 @@
 1. everyone only has one shot, and you've missed yours
 1. I'm in the middle, mom and dad on either side
 1. he simply bears up, does what he has to do
-1. we'd better agree to disagree
+1. we'd better agree to disagree; 我们最好各自保留意见
 1. there were four of us
 1. she has an innate ability to dance; she has a natural affinity for music
 1. it's against my principles
@@ -1243,7 +1279,6 @@
 1. people demand this drug be taken off the market
 1. justice department is also asking a federal court in Washington state to clarify the meaning of its ruling in a related case
 1. Federal Appeal Court
-1. sectarian violence
 1. commemorate
 1. I will lend you my car on condition that you bring it back by tomorrow
 1. he was in critical condition today
@@ -1400,7 +1435,6 @@
 1. we’re separated
 1. trafficker
 1. fentanyl
-1. drug smuggler
 1. body odor
 1. a full term as president
 1. grand jury
@@ -1443,7 +1477,6 @@
 1. it's just stories to be forgotten in a week or month from now
 1. it's really honored to work with team
 1. lighten up
-1. money order
 1. I’ll take my chances
 1. thank you everybody for having me in the team
 1. I'm going by a general gut feeling
@@ -1614,7 +1647,6 @@
 1. convict somebody of a crime
 1. my mom cooks extremely well
 1. let me explain this, I wanna make sure it's clear for you
-1. this epxression is something that we use as native English speakers on a regular basis
 1. trepidation
 1. epidemic means excessively prevalent or excessively happening often over a large area at a particular time
 1. a great epidemic burst forth in that area
@@ -1667,7 +1699,6 @@
 1. ok, let's move on to the next one
 1. before I go into this a little bit more, I want to explain some of the concepts
 1. my friends wanted to meet up for dinner
-1. you first need to start off by answering the five ws, which are who, what, when, where, why
 1. smurf account; 小号
 1. alternative account
 1. older generation
@@ -1728,7 +1759,6 @@
 1. thank you for being understanding
 1. all roads lead back to you; 所有证据都指向你
 1. signing bonus
-1. I have to take a leak; 我要尿尿
 1. you've mistaken my kindness for weakness
 1. it's incredible
 1. I have gone a bit too far; 我有点过分了
@@ -1873,7 +1903,6 @@
 1. free up your minds
 1. breaking and entering
 1. what excites me is the speed
-1. a cascade of problems
 1. I don’t know if that answers your question
 1. he likes cutting corners; 他喜欢走捷径
 1. he’s plotting against you
@@ -2026,7 +2055,6 @@
 1. what first attracted me to her was her kindness
 1. you should be generous with your time
 1. we need to discuss later since no agreement has been reached
-1. I'm looking forward to life-long happiness and fulfillment
 1. I need to improve the capacity to handle things
 1. I have a strong preference for the original plan
 1. the teacher is good at cultivating student's creative thinking
@@ -2054,7 +2082,6 @@
 1. walking on the stripes of the crosswalk
 1. my family provide, protect and care about me
 1. the experienced captain make an emergency landing
-1. I'd like to live my life with happiness
 1. improvement of the public transportation and public utilities
 1. he always gives disinterested advice no matter his standpoint
 1. I'm waiting for you in the reception area
@@ -2100,7 +2127,6 @@
 1. function normally
 1. I haven't heard those words in a long time, thank you
 1. how much for a magazine
-1. a puff of smoke
 1. under certain circumstances
 1. strong winds accompanied by heavy rain
 1. I'm a beijing man born and bred
@@ -2381,7 +2407,6 @@
 1. she wore a dismal expression at the funeral
 1. the station I was bound for was the terminus of the line
 1. modern music is often considered inferior to that of the past
-1. juvenile delinquency
 1. he's suffering from severe brain injury
 1. I gave you specific instructions
 1. a microprocesser controls the most important functions in a computer
@@ -2632,7 +2657,6 @@
 1. he could remember every trivial incident in great detail
 1. the newly found evidence may justify a retrial
 1. frost/fog/frog
-1. unjust judgement
 1. some people are poor in knowledge but pretentious
 1. cabinet minister
 1. she is always keen to help
@@ -2651,7 +2675,6 @@
 1. the legislation will be enforced in six months
 1. the rescue mission had to be aborted due to bad weather
 1. some staff were fired for neglecting their duties
-1. bird flu
 1. romantic TV series
 1. the continuation of the demonstration caused a lot of problem; 持续的示威活动造成了许多问题\n
 1. conference/convention
@@ -2721,7 +2744,6 @@
 1. contaminated
 1. sneeze
 1. booster shot
-1. hand sanitizer
 1. autonomous/anonymous
 1. compelled to resign
 1. they confronted the prisoner with his accusers; 他们让原告被告对峙
@@ -2749,7 +2771,6 @@
 1. highly informative speech
 1. i through j is ascending
 1. transition from a theoretical model to an efficient implementation is not straightforward
-1. top journals
 1. foot of the mountain
 1. a confused state of mind
 1. corrupt/corrode
@@ -2839,7 +2860,6 @@
 1. I am too stiff to dance
 1. firefighters were on the scene immediately
 1. the crowd panicked at the sound of the explosion
-1. the effect of the medicine isn't lasting
 1. it takes three weeks to
 1. successful leaders dominate events rather than react to them
 1. the sun dissipate the mist
@@ -2855,7 +2875,6 @@
 1. maybe you should take it
 1. would you let it go
 1. jury reached a unanimous verdict of not guilty
-1. watch the ripples spread out
 1. please refrain from smoking
 1. bracelet
 1. fold clothes
@@ -2932,7 +2951,6 @@
 1. the breeze after the rain is very refreshing
 1. The island is noted for its beautiful scenery
 1. she cooked this dish with a variety of seasonings
-1. a jar of coffee
 1. remarkable work
 1. the coastal regions
 1. has increased dramatically over the past decade
@@ -3115,9 +3133,7 @@
 1. tongue
 1. shed
 1. revive/revitalize/regenerate
-1. stock exchange
 1. broker
-1. a striking amount of
 1. public awareness of
 1. carbon fibre
 1. fertile land
@@ -3637,14 +3653,12 @@
 1. intrinsically
 1. observe that
 1. tax
-1. dip into
 1. plumbing
 1. title deed
 1. mortgage
 1. expense
 1. asset
 1. default
-1. interest rate
 1. continuity
 1. grandtotal
 1. subsume
@@ -3689,7 +3703,6 @@
 1. there is no ideal static configuration
 1. make heavy use of
 1. not in the sense that
-1. hair tie
 1. operating the game
 1. folk art
 1. admit your situation; 认清现实
@@ -3699,9 +3712,6 @@
 1. solid
 1. consolidate
 1. comprehend
-1. bedside table
-1. digital watch
-1. remote control
 1. pack the suitcase
 1. empty the trash
 1. integrated
@@ -3779,13 +3789,11 @@
 1. insane
 1. slogon
 1. blazing
-1. make fun of
 1. pedophile
 1. starchaser
 1. prior to
 1. keep my life private
 1. adjective
-1. commit suicide
 1. taxing
 1. cruel
 1. we note that
@@ -3904,7 +3912,6 @@
 1. extensive
 1. analogous
 1. preliminary
-1. ceiling lamp
 1. synthetic data set
 1. insinuate
 1. small-minded person
