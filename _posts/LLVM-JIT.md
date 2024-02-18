@@ -28,7 +28,91 @@ The LLVM JIT approach offers several advantages. It allows for dynamic code gene
 
 Overall, LLVM JIT is a powerful feature of the LLVM framework that enables dynamic compilation and execution, providing flexibility, performance optimizations, and dynamic adaptation for various programming language implementations and runtime environments.
 
-# 2 Reference
+# 2 Demo
+
+```cpp
+#include <iostream>
+
+#include "llvm/ADT/STLExtras.h"
+#include "llvm/ExecutionEngine/Orc/Core.h"
+#include "llvm/ExecutionEngine/Orc/LLJIT.h"
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/LLVMContext.h"
+#include "llvm/IR/Module.h"
+#include "llvm/Support/TargetSelect.h"
+
+using namespace llvm;
+using namespace llvm::orc;
+
+int main() {
+    // Initialize LLVM components.
+    InitializeNativeTarget();
+    InitializeNativeTargetAsmPrinter();
+
+    // Create an LLJIT instance.
+    auto JIT = LLJITBuilder().create();
+    if (!JIT) {
+        std::cerr << "Failed to create LLJIT: " << toString(JIT.takeError()) << "\n";
+        return 1;
+    }
+
+    // Create an LLVM module.
+    LLVMContext Context;
+    auto M = std::make_unique<Module>("add_module", Context);
+    Module* Mod = M.get();
+
+    // Create the add function.
+    FunctionType* FT =
+            FunctionType::get(Type::getInt32Ty(Context), {Type::getInt32Ty(Context), Type::getInt32Ty(Context)}, false);
+    Function* F = Function::Create(FT, Function::ExternalLinkage, "add", Mod);
+
+    // Create a basic block and set the insertion point.
+    BasicBlock* BB = BasicBlock::Create(Context, "Entry", F);
+    IRBuilder<> Builder(BB);
+
+    // Retrieve arguments, add them, and create a return instruction.
+    auto Args = F->args().begin();
+    Value* X = &*Args++;
+    Value* Y = &*Args;
+    Value* Sum = Builder.CreateAdd(X, Y, "sum");
+    Builder.CreateRet(Sum);
+
+    // Add the module to the JIT and get a handle to the added module.
+    if (auto Err = JIT->get()->addIRModule(ThreadSafeModule(std::move(M), std::make_unique<LLVMContext>()))) {
+        std::cerr << "Failed to add module to LLJIT: " << toString(std::move(Err)) << "\n";
+        return 1;
+    }
+
+    // Look up the JIT'd function, cast it to a function pointer, then call it.
+    auto AddFnSym = JIT->get()->lookup("add");
+    if (!AddFnSym) {
+        std::cerr << "Failed to look up function: " << toString(AddFnSym.takeError()) << "\n";
+        return 1;
+    }
+
+    // Cast the symbol's address to a function pointer and call it.
+    int (*AddFn)(int, int) = (int (*)(int, int))(intptr_t)AddFnSym->getAddress();
+    int Result = AddFn(10, 20);
+
+    std::cout << "Result of add(10, 20): " << Result << "\n";
+
+    return 0;
+}
+```
+
+```sh
+# It works fine for version 13.x and 14.x
+# -lpthread: Links against the POSIX threads library.
+# -ldl: Links against the dynamic linking loader.
+# -lz: Links against the zlib compression library.
+# -lncurses: Links against the ncurses library.
+clang++ -std=c++17 add_example.cpp `llvm-config --cxxflags --ldflags --libs core orcjit native` -lpthread -ldl -lz -lncurses -o add_example
+
+# Execute
+./add_example
+```
+
+# 3 Reference
 
 * [StarRocks JIT RFC](https://uestc.feishu.cn/docx/WDJUdVXrRooYG2xjF2YcYVUencc)
 * [StarRocks JIT PR](https://github.com/StarRocks/starrocks/pull/28477)
