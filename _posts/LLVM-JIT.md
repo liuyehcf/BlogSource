@@ -33,8 +33,6 @@ Overall, LLVM JIT is a powerful feature of the LLVM framework that enables dynam
 ```cpp
 #include <iostream>
 
-#include "llvm/ADT/STLExtras.h"
-#include "llvm/ExecutionEngine/Orc/Core.h"
 #include "llvm/ExecutionEngine/Orc/LLJIT.h"
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/LLVMContext.h"
@@ -44,57 +42,57 @@ Overall, LLVM JIT is a powerful feature of the LLVM framework that enables dynam
 using namespace llvm;
 using namespace llvm::orc;
 
+using AddFunctionType = int (*)(int, int);
+
 int main() {
     // Initialize LLVM components.
     InitializeNativeTarget();
     InitializeNativeTargetAsmPrinter();
 
     // Create an LLJIT instance.
-    auto JIT = LLJITBuilder().create();
-    if (!JIT) {
-        std::cerr << "Failed to create LLJIT: " << toString(JIT.takeError()) << "\n";
+    auto jit = LLJITBuilder().create();
+    if (!jit) {
+        std::cerr << "Failed to create LLJIT: " << toString(jit.takeError()) << std::endl;
         return 1;
     }
 
     // Create an LLVM module.
-    LLVMContext Context;
-    auto M = std::make_unique<Module>("add_module", Context);
-    Module* Mod = M.get();
+    LLVMContext ctx;
+    auto module = std::make_unique<Module>("add_module", ctx);
 
     // Create the add function.
-    FunctionType* FT =
-            FunctionType::get(Type::getInt32Ty(Context), {Type::getInt32Ty(Context), Type::getInt32Ty(Context)}, false);
-    Function* F = Function::Create(FT, Function::ExternalLinkage, "add", Mod);
+    FunctionType* fn_type =
+            FunctionType::get(Type::getInt32Ty(ctx), {Type::getInt32Ty(ctx), Type::getInt32Ty(ctx)}, false);
+    Function* fn = Function::Create(fn_type, Function::ExternalLinkage, "add", module.get());
 
     // Create a basic block and set the insertion point.
-    BasicBlock* BB = BasicBlock::Create(Context, "Entry", F);
-    IRBuilder<> Builder(BB);
+    BasicBlock* block = BasicBlock::Create(ctx, "Entry", fn);
+    IRBuilder<> builder(block);
 
     // Retrieve arguments, add them, and create a return instruction.
-    auto Args = F->args().begin();
-    Value* X = &*Args++;
-    Value* Y = &*Args;
-    Value* Sum = Builder.CreateAdd(X, Y, "sum");
-    Builder.CreateRet(Sum);
+    auto args = fn->args().begin();
+    Value* arg1 = &*args++;
+    Value* arg2 = &*args;
+    Value* sum = builder.CreateAdd(arg1, arg2, "sum");
+    builder.CreateRet(sum);
 
     // Add the module to the JIT and get a handle to the added module.
-    if (auto Err = JIT->get()->addIRModule(ThreadSafeModule(std::move(M), std::make_unique<LLVMContext>()))) {
-        std::cerr << "Failed to add module to LLJIT: " << toString(std::move(Err)) << "\n";
+    if (auto err = jit->get()->addIRModule(ThreadSafeModule(std::move(module), std::make_unique<LLVMContext>()))) {
+        std::cerr << "Failed to add module to LLJIT: " << toString(std::move(err)) << std::endl;
         return 1;
     }
 
     // Look up the JIT'd function, cast it to a function pointer, then call it.
-    auto AddFnSym = JIT->get()->lookup("add");
-    if (!AddFnSym) {
-        std::cerr << "Failed to look up function: " << toString(AddFnSym.takeError()) << "\n";
+    auto add_function_symbol = jit->get()->lookup("add");
+    if (!add_function_symbol) {
+        std::cerr << "Failed to look up function: " << toString(add_function_symbol.takeError()) << std::endl;
         return 1;
     }
 
     // Cast the symbol's address to a function pointer and call it.
-    int (*AddFn)(int, int) = (int (*)(int, int))(intptr_t)AddFnSym->getAddress();
-    int Result = AddFn(10, 20);
+    AddFunctionType add_function = (AddFunctionType)add_function_symbol->getAddress();
 
-    std::cout << "Result of add(10, 20): " << Result << "\n";
+    std::cout << "Result of add(10, 20): " << add_function(10, 20) << std::endl;
 
     return 0;
 }
