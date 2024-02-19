@@ -57,3 +57,4 @@ Raft and Paxos are both consensus algorithms designed for achieving agreement am
 # 4 参考
 
 * [Raft Paper: In Search of an Understandable Consensus Algorithm](/resources/paper/In-Search-of-an-Understandable-Consensus-Algorithm.pdf)
+* [Raft算法详解](https://zhuanlan.zhihu.com/p/32052223)
