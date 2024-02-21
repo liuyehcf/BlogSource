@@ -32,6 +32,7 @@ date: 2018-02-05 09:25:59
 * [Online Benchmark](https://quick-bench.com/)
 * [Where do I find the current C or C++ standard documents?](https://stackoverflow.com/questions/81656/where-do-i-find-the-current-c-or-c-standard-documents)
     * **[cplusplus/draft](https://github.com/cplusplus/draft)**：草稿版本，相对于发行版可能会有错误，但是免费
+* [Awesome C++ Projects](https://github.com/fffaraz/awesome-cpp)
 * 《A Tour of C++》
 * Celebrity
     * `Bjarne Stroustrup`：C++之父

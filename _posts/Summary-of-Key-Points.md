@@ -1305,6 +1305,7 @@ Classification:
         - Random Access Memory
             - DDR3, Double Data Rate Type 3
             - DDR4, Double Data Rate Type 4
+            - DDR5, Double Data Rate Type 5
 - Endianness
     - Big-Endian(High-end IBM)
     - Little-Endian(x86)
