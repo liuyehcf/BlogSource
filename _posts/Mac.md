@@ -102,8 +102,17 @@ Page DOWN：`Fn+↓`
 ## 2.1 常用操作
 
 ```sh
+# 安装软件
+brew install <software>
+
+# 卸载软件
+brew uninstall <software>
+
 # 软件安装路径
 brew list <software>
+
+# 查看软件信息
+brew info <software>
 ```
 
 ## 2.2 国内安装Homebrew
