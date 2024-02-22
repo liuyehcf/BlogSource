@@ -321,8 +321,8 @@ cd ohmyzsh/tools
 **步骤3：[安装Powerline](https://powerline.readthedocs.io/en/latest/installation.html)**
 
 ```sh
-sudo brew install pipx
-sudo pipx install powerline-status
+sudo brew install pip
+sudo pip install powerline-status
 ```
 
 **步骤4：[安装Powerline的字体库](https://github.com/powerline/fonts)**
