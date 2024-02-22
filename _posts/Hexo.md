@@ -366,6 +366,10 @@ leancloud_counter_security:
 
 # 11 Local Search
 
+```sh
+npm install hexo-generator-searchdb --save
+```
+
 [本地搜索-配置](http://theme-next.iissnan.com/third-party-services.html#local-search)
 
 [搜索失效](https://www.v2ex.com/amp/t/298727)
