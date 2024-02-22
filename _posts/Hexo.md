@@ -371,7 +371,13 @@ npm install markdown-it-toc --save
 
 [Hexo Next主题 使用LeanCloud统计文章阅读次数、添加热度排行页面](https://blog.qust.cc/archives/48665.html)
 
-编辑`主题`配置文件
+**步骤1：安装插件**
+
+```sh
+npm install hexo-leancloud-counter-security --save
+```
+
+**步骤2：编辑`主题`配置文件**
 
 1. 关闭`leancloud_visitors`配置
     * `enable`置为false
@@ -380,7 +386,7 @@ npm install markdown-it-toc --save
     * 配置`appid`以及`appkey`
     * `visitor`设置为true
 
-编辑`站点`配置文件
+**步骤3：编辑`站点`配置文件**
 
 ```yaml
 deploy:
