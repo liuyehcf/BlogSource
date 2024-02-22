@@ -159,6 +159,14 @@ source ~/.bash_profile
 brew update
 ```
 
+## 2.4 常用软件下载
+
+```sh
+brew install openjdk@11
+brew install maven
+brew install protobuf
+```
+
 # 3 常用功能
 
 ## 3.1 升级bash
