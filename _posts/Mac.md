@@ -310,41 +310,15 @@ defaults delete com.apple.desktopservices DSDontWriteNetworkStores
 
 ```sh
 git clone https://github.com/ohmyzsh/ohmyzsh.git --depth 1
-mv ohmyzsh ~/.oh-my-zsh
-
-cd ~/.oh-my-zsh/tools
-
-./install.sh
-```
-
-```
-The $ZSH folder already exists (/root/.oh-my-zsh).
-You'll need to remove it if you want to reinstall.
-```
-
-**`install.sh`发现目录已存在，就会认为已经安装成功了，此时，我们需要稍微调整下脚本。用任意编辑器编辑`install.sh`，删除`folder already exists`所在位置的那段`if`逻辑。并再次尝试安装**
-
-```sh
-./install.sh
-```
-
-```
-Cloning Oh My Zsh...
-fatal: 目标路径 '/root/.oh-my-zsh' 已经存在，并且不是一个空目录。
-Error: git clone of oh-my-zsh repo failed
-```
-
-**按照上面的思路，继续调整脚本，删除`git clone of oh-my-zsh repo failed`所在位置的`git clone`命令。并再次尝试安装，成功**
-
-```sh
+cd ohmyzsh/tools
 ./install.sh
 ```
 
 **步骤3：[安装Powerline](https://powerline.readthedocs.io/en/latest/installation.html)**
 
 ```sh
-sudo brew install pip
-sudo pip install powerline-status
+sudo brew install pipx
+sudo pipx install powerline-status
 ```
 
 **步骤4：[安装Powerline的字体库](https://github.com/powerline/fonts)**
