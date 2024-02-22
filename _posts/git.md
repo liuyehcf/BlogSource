@@ -564,6 +564,8 @@ git config --global core.quotepath false
 
 ## 18.2 Proxy
 
+### 18.2.1 SSH Protocol
+
 Edit `~/.ssh/config`
 
 ```conf
@@ -574,6 +576,13 @@ Host github.com
    User git
    # Go through socks5 proxy, like Shadowsocks
    ProxyCommand nc -v -x 127.0.0.1:7890 %h %p
+```
+
+### 18.2.2 HTTP Protocol
+
+```sh
+git config --global http.proxy "http://127.0.0.1:7890"
+git config --global https.proxy "https://127.0.0.1:7890"
 ```
 
 ## 18.3 DNS
