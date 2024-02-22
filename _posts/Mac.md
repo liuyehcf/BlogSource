@@ -93,6 +93,10 @@ Page DOWN：`Fn+↓`
     * `Menu Title`：`Zoom`
     * `Keyboard Shortcut`：自定义，我设置的是`⌃ + ⌘ + M`
 
+## 1.14 修改大小写切换方式
+
+1. `System Preferences`->`Keyboard`->`Text Input Edit`->`Press and hold to enable typing in all uppercase`
+
 # 2 Homebrew
 
 ## 2.1 常用操作
