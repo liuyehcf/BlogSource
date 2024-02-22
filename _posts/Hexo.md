@@ -351,14 +351,16 @@ npm install hexo-markmap --save-dev
         - Test 8
 {% endmarkmap %}
 
-# 9 Directory
+# 9 Toc
 
 [hexo-toc](https://github.com/bubkoo/hexo-toc)
 
 **步骤1：安装插件**
 
 ```sh
-npm install hexo-toc --save
+npm uninstall hexo-toc --save
+npm uninstall markdown-toc --save
+npm install markdown-it-toc --save
 ```
 
 # 10 Access Statistics
