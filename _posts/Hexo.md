@@ -66,7 +66,14 @@ $$
 
 [MathJax-配置](http://theme-next.iissnan.com/third-party-services.html#mathjax)
 
-**禁止markdown对`-`、`\\`、`\{`、`\}`等进行转义**：修改配置文件`node_modules/marked/lib/marked.js`
+**步骤1：安装插件**
+
+```sh
+npm uninstall hexo-math --save
+npm install hexo-renderer-mathjax --save
+```
+
+**步骤2：禁止markdown对`-`、`\\`、`\{`、`\}`等进行转义**：修改配置文件`node_modules/marked/lib/marked.js`
 
 将
 
@@ -236,11 +243,23 @@ deactivate A
 
 [hexo-filter-sequence](https://github.com/bubkoo/hexo-filter-sequence)
 
+**步骤1：安装插件**
+
+```sh
+npm install --save hexo-filter-sequence
+```
+
 # 8 mindmap
 
 ## 8.1 simple-mindmap
 
 [hexo-simple-mindmap](https://github.com/HunterXuan/hexo-simple-mindmap)
+
+**步骤1：安装插件**
+
+```sh
+npm install hexo-simple-mindmap
+```
 
 **示例：**
 
@@ -286,6 +305,12 @@ deactivate A
 
 [hexo-markmap](https://github.com/MaxChang3/hexo-markmap)
 
+**步骤1：安装插件**
+
+```sh
+npm install hexo-markmap --save-dev
+```
+
 **示例：**
 
 ```
@@ -330,6 +355,12 @@ deactivate A
 
 [hexo-toc](https://github.com/bubkoo/hexo-toc)
 
+**步骤1：安装插件**
+
+```sh
+npm install hexo-toc --save
+```
+
 # 10 Access Statistics
 
 [阅读次数统计-配置](http://theme-next.iissnan.com/third-party-services.html#analytics-tencent-mta)
@@ -365,6 +396,8 @@ leancloud_counter_security:
 ```
 
 # 11 Local Search
+
+**步骤1：安装插件**
 
 ```sh
 npm install hexo-generator-searchdb --save
@@ -545,8 +578,9 @@ $font-size-headings-larger  = $font-size-headings-large + $font-size-headings-st
 
 # 18 Pin Post
 
-```sh
+**步骤1：安装插件**
 
+```sh
 npm uninstall hexo-generator-index --save
 npm install hexo-generator-index-pin-top --save
 ```
@@ -566,6 +600,8 @@ top: true
 ```
 
 # 19 Deploy
+
+**步骤1：安装插件**
 
 ```sh
 npm install hexo-deployer-git --save
