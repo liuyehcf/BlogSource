@@ -190,9 +190,11 @@ sudo ln -s /usr/local/bin/bash /bin/bash
 
 ## 3.2 开启关闭SIP
 
-1. 进入恢复模式：重启，然后按住`⌘ + R`
-1. 出现界面之后，上面菜单栏->实用工具->终端
-1. 在Terminal中输入`csrutil disable`关闭SIP(csrutil enable打开SIP)
+1. 进入恢复模式：
+    * Intel：重启，然后按住`⌘ + R`，直到看到`logo`后松开
+    * Arm：关机，按住开机键10s以上，直至进入恢复模式
+1. 出现界面之后，上面菜单栏 -> 实用工具 -> 终端
+1. 在Terminal中输入`csrutil disable`关闭`SIP`(`csrutil enable`打开`SIP`)
 1. 重启
 
 ## 3.3 开启关闭任何来源
