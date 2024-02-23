@@ -176,6 +176,16 @@ brew install maven
 brew install protobuf
 ```
 
+### 2.4.1 解压缩
+
+```sh
+file xxx.zip
+
+unzip xxx.zip
+brew install unar
+unar xxx.zip
+```
+
 # 3 常用功能
 
 ## 3.1 升级bash
