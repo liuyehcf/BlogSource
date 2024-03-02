@@ -1,3 +1,17 @@
+1. germ
+1. layman
+1. illegally obtained
+1. I'm flattered
+1. 标点符号词汇; 感叹号：exclamation mark
+1. residential area; gated community; compound; 小区
+1. 机构词汇; 美国海岸警卫队：the U.S. Coast Guard\n美国联邦航空管理局：Federal Aviation Administration\n情报部队：Intelligence corps\n联邦上诉法院：Federal Appeal Court
+1. 地名词汇; 爱琴海：the Aegean Sea
+1. 政治词汇; 专制政体：authoritarian regime\n民主政体：democratic regime\n左翼领导/右翼领导：far-left political leaders; far-right political leaders\n保守党：conservative party\n进步党：progressive party\n工党：labour party
+1. 职位词汇; 副处长：deputy chief\n代理警察局长：acting police chief\n新闻秘书长：press secretary\n秘书长：secretary general
+1. 武器词汇; 超音速导弹：supersonic missiles\n核弹道潜艇：nuclear ballistic submarine\n豹式坦克：leopard tank\n攻击性武器：assault weapons
+1. these percentages corresponded to 2 billion people globally who were current drinkers
+1. go back and forth
+1. inquiry about your availability; 询问你是否有空
 1. what are your weekend arrangements?
 1. the quiet person at a party could be an extrovert; 聚会上安静的人可能是个外向的人\n\nthe characteristic of an extrovert is someone who gains energy and feels good in social situations
 1. why didn't you declare these?
@@ -18,7 +32,6 @@
 1. fundamental truth
 1. this expression is something that we use as native English speakers on a regular basis
 1. I tossed around some ideas during the meeting
-1. first deposit; balance payment; 首付；尾款
 1. curriculum vitae
 1. I don't mean to pry; I don't want to pry; 我不是有意想打探
 1. you first need to start off by answering the five ws, which are who, what, where, when, why
@@ -54,7 +67,7 @@
 1. I got a big pimple on my face
 1. 数学词汇; 交集：intersection\n并集：union\n差集：difference\n
 1. same to you; respnse to \'have a nice day\'\nor you too
-1. 金融词汇; 金融：finance\n信用：credit\n贷款：loans\n利息：interests\n利率：interest rate\n货币：currency\n股票：stock\n证券：security\n保险：insurance\n基金：fund\n贸易：trade\n汇率：exchange rate\n抵押贷款：mortgage\n养老金：pension\n汇兑：money order\n证券交易所：stock exchange
+1. 金融词汇; 金融：finance\n信用：credit\n贷款：loans\n首付款：first deposit\n尾款：balance payment\n充值：top-up; recharge\n30天债务宽限期：30-day debt grace period\n利息：interests\n利率：interest rate\n升息/降息：interest rate hike/interest rate cut\n货币：currency\n股票：stock\n证券：security\n保险：insurance\n基金：fund\n贸易：trade\n汇率：exchange rate\n抵押贷款：mortgage\n养老金：pension\n汇兑：money order\n证券交易所：stock exchange\n分钟股票行情：minute stock quotes
 1. file a complaint; make a complaint
 1. ego; arrogant; pride
 1. somebody got flipped; it could refer to someone changing their allegiance, opinion, or loyalty
@@ -62,13 +75,12 @@
 1. you're up; 该你上场了
 1. what's this regarding
 1. just take a moment; 先缓一缓
-1. top-up; recharge
 1. I'm done talking about this
 1. I decided to waive my right to a trial and accepted the plea deal
 1. keep your head down
 1. 家用工具词汇; 锯子：saw\n斧头：ax/axe\n锤子：hammer\n老虎钳：pliers\n螺丝刀：screwdriver\n螺丝钉：screw\n扳手：wrench\n螺栓：bolt\n螺母/螺帽：nut\n滚筒（刷墙用的）：roller\n大剪子：shears\n剪刀：scissors\n耳勺：ear spoon\n夹子：clip\n指甲钳：nail clippers\n电钻：electric drill\n卷尺：tape measure\n磅秤：scales\n胶布：adhesive tape\n小铲子：trowel\n大铲子/锹：spade\n锄头：hoe\n耙子：rake\n梯子：ladder\n割草机：mower\n
 1. 发型词汇; 平头：crew cut\n中分：centre parting\n边分：side parting\n马尾：pony tail\n辫子：braid/braids\n发髻型：bun\n卷发：curly hair\n长直发：long straight hair\n大波浪：wave\n爆炸头：afro\n发带：hair tie
-1. 罪名词汇; 性骚扰：sexual harassment\n性虐待：sexual battery\n网络犯罪：cyber crime\n侵犯知识产权：copyright infringement\n青少年犯罪：juvenile delinquency\n杀人：homicide\n渎职：dereliction of duty\n恐吓：intimidate\n袭击：attack\n信用卡诈骗：credit card fraud\n自杀：suicide\n宗派暴力：sectarian violence\n毒品走私：drug smuggling/drug smuggler
+1. 罪名词汇; 性骚扰：sexual harassment\n性虐待：sexual battery\n网络犯罪：cyber crime\n侵犯知识产权：copyright infringement\n青少年犯罪：juvenile delinquency\n杀人：homicide\n渎职：dereliction of duty\n恐吓：intimidate\n袭击：attack\n信用卡诈骗：credit card fraud\n自杀：suicide\n宗派暴力：sectarian violence\n毒品走私：drug smuggling/drug smuggler\n兴奋剂丑闻：doping scandal
 1. 家务词汇; 扫地：sweep the floor\n擦地：scrub the floor\n拖地：mop the floor\n擦窗：clean the windows\n洗车：wash the car\n洗衣服：do the laundry\n晒衣服：hang clothes\n熨衣服：iron clothes\n叠衣服：fold clothes\n换床单：change the sheet\n给桌子除尘：dust the desk\n吸地面：vacuum the floor
 1. 证件词汇; 身份证：identity card\n驾驶证：driving license\n学会证：student pass\n毕业证：diploma\n工作证：employee\'s card\n健康证：helath certificate\n结婚证：marriage license\n护照：passport\n签证：visa\n工作签证：work visa\n绿卡：green card
 1. 家用电器词汇; 洗衣机：washing machine\n空调：air conditioner\n饮水机：water dispenser\n直饮水：water purifier\n电风扇：fan\n熨斗：iron\n电吹风：blow dryer
@@ -78,8 +90,8 @@
 1. I stand by my choices
 1. I'm not just saying this; I\'m serious about what I\'m saying
 1. I'm a big fan of Chinese dramas; TV series
-1. 衣服词汇; 马甲/背心：vest\nT恤：T-shirt\n衬衫：shirt\n长袖：long sleeves\n毛衣：sweater\n夹克：jacket\n西服：suit\n羽绒服：down coat\n牛仔裤：jeans\n休闲裤：pants\n短裤：shorts\n内裤：briefs\n雨衣：raincoat\n浴衣：bathrobe\n睡衣：pajamas/pyjamas\n制服：uniform\n胸罩：bra\n短裙：skirt\n连衣裙：dress\n紧身裤：leggings\n男士内裤：underpants\n女士内裤：panties/knickers\n袜子：socks\n尺码：small/medium/large/extra large/extra extra large
-1. 度量衡词汇; 长度：length\n宽度：width\n高度：height\n深度：depth\n厚度：thickness\n海拔高度：altitude\n经度：longitude\n纬度：latitude\n速度：speed\n密度：density\n胸围：bust\n腰围：waist\n臀围：hip\n血型：blood type
+1. 衣服词汇; 马甲/背心：vest\nT恤：T-shirt\n衬衫：shirt\n长袖：long sleeves\n毛衣：sweater\n夹克：jacket\n西服：suit\n轻薄大衣：light overcoat\n羽绒服：down coat\n牛仔裤：jeans\n休闲裤：pants\n短裤：shorts\n内裤：briefs\n雨衣：raincoat\n浴衣：bathrobe\n睡衣：pajamas/pyjamas\n制服：uniform\n胸罩：bra\n短裙：skirt\n连衣裙：dress\n紧身裤：leggings\n男士内裤：underpants\n女士内裤：panties/knickers\n袜子：socks\n尺码：small/medium/large/extra large/extra extra large
+1. 度量衡词汇; 长度：length\n宽度：width\n高度：height\n深度：depth\n厚度：thickness\n海拔高度：altitude\n经度：longitude\n纬度：latitude\n速度：speed\n密度：density\n平方（千）米：square meter/square kilometer\n平方英尺：square feet\n（千）克：gram/kilogram\n摄氏度：degree celsius\n胸围：bust\n腰围：waist\n臀围：hip\n血型：blood type\n
 1. 自然景观词汇; 火山：volcano\n高原：plateau\n平原：plain\n草原：grassland\n沙漠：desert\n峡谷：valley\n极光：aurora\n沼泽/湿地：swamp\n冰川：glacier\n岛屿：island
 1. 受伤词汇; 割伤：cut\n刺伤：stab\n扭伤：sprain\n咬伤：bite\n冻伤：frostbite\n烧伤：burn\n烫伤：scald
 1. 咖啡词汇; 美式：Americano\n摩卡：Mocha\n拿铁：Latte\n意式浓缩：Espresso\n卡布奇诺：Cappuccino\n冷萃：cold brew\n玛奇朵：Macchiato\n大杯：grande
@@ -90,9 +102,9 @@
 1. my hands are tied; 我无能为力\n
 1. 婚礼词汇; 求婚：proposal\n订婚：engagement\n新娘：bride\n新郎：groom\n伴郎：bestman\n伴娘：bridesmaid\n戒指：ring\n婚宴：wedding reception/wedding feast\n祝酒：toast\n婚纱：wedding dress
 1. 纸类词汇; 报纸：newspaper\n纸巾：tissue\n餐巾纸：napkin\n卫生纸：toilet paper\n湿纸巾：wipes\n纸尿裤：diaper\n草稿纸：scratch paper\n便利贴：post-it note\n图纸：drawings\n厨房卷纸：kitchen roll
-1. 量词词汇; 一片面包：a piece of bread\n一串香蕉/一束玫瑰：a bunch of bananas/a bounch of roses\n一粒米：a grain of rice\n一小撮盐：a pinch of salt\n一罐水果/一听饮料：a can of fruit/a can of cola\n一罐卡法：a jar of coffee\n一包河粉：a packet of rice noddles\n一片披萨：a slice of pizza\n一勺糖：a spoon of sugar\n一条/块面包：a loaf of bread\n一碗水：a bowl of water\n一瓶香水：a bottle of perfume\n一双鞋：a pair of shoes\n一堆衣服：a pile of laundary\n一系列的发布：a string of new product\n一群小孩：a group/crowd of children\n一张纸：a blank sheet of paper\n一盒苹果汁：a carton of apple juice\n一群羊：a flock of sheep\n一卷交卷：a roll of film\n一缕烟：a puff of smoke\n一连串问题：a cascade of problems\n数量惊人的：a striking amount of\n\nPiece: This is a general term that can refer to any part or portion of something, regardless of its shape or size.\nSlice: This term specifically refers to a thin, flat piece that has been cut or sliced from something larger, usually with a sharp tool.
+1. 量词词汇; 一片面包：a piece of bread\n一串香蕉/一束玫瑰：a bunch of bananas/a bounch of roses\n一粒米：a grain of rice\n一小撮盐：a pinch of salt\n一罐水果/一听饮料：a can of fruit/a can of cola\n一罐卡法：a jar of coffee\n一包河粉：a packet of rice noddles\n一片披萨：a slice of pizza\n一勺糖：a spoon of sugar\n一条/块面包：a loaf of bread\n一碗水：a bowl of water\n一瓶香水：a bottle of perfume\n一双鞋：a pair of shoes\n一堆衣服：a pile of laundary\n一系列的发布：a string of new product\n一群小孩：a group/crowd of children\n一张纸：a blank sheet of paper\n一盒苹果汁：a carton of apple juice\n一群羊：a flock of sheep\n一卷交卷：a roll of film\n一缕烟：a puff of smoke/plumes of smoke\n一连串问题：a cascade of problems\n数量惊人的：a striking amount of\n\nPiece: This is a general term that can refer to any part or portion of something, regardless of its shape or size.\nSlice: This term specifically refers to a thin, flat piece that has been cut or sliced from something larger, usually with a sharp tool.
 1. 休假词汇; 法定假：statutory holiday\n年假：annual leave\n事假：personal leave\n病假：sick leave\n婚假：marriage leave\n产假：maternity leave\n陪产假：paternity leave\n调休：days off\n间歇：take a break\n丧假：bereavement lave
-1. 家具用品词汇; 被子：quilt\n床垫、褥子：mattress\n床单：sheet\n窗帘：curtain\n毛毯（盖身上的）：blanket\n坐垫：cushion\n地毯：carpet\n枕头：pillow\n吊灯：chandelier\n台灯：table lamp\n吸顶灯：ceiling lamp\n手电筒：flashlight\n数字手表：digital watch\n遥控器：remote control\n床头柜：nightstand/bedside table\n梳妆台：dressing table\n雨伞：umbrella\n浴巾：bath towel\n花洒：shower head\n马桶：closestool\n洗手液：hand sanitizer
+1. 家具用品词汇; 被子：comforter/quilt\n床垫、褥子：mattress\n床单：sheet\n窗帘：curtain\n毛毯（盖身上的）：blanket\n坐垫：cushion\n地毯：carpet\n枕头：pillow\n吊灯：chandelier\n台灯：table lamp\n吸顶灯：ceiling lamp\n手电筒：flashlight\n数字手表：digital watch\n遥控器：remote control\n床头柜：nightstand/bedside table\n梳妆台：dressing table\n雨伞：umbrella\n浴巾：bath towel\n花洒：shower head\n马桶：closestool\n洗手液：hand sanitizer
 1. sorry, I misremembered
 1. I'm very directionally challenged
 1. don't look at me; stop looking at me; 别看着我\n别看着我了
@@ -102,7 +114,7 @@
 1. got it; copy that; well noted; 明白了，收到
 1. downwind; against the wind
 1. 人脸部位词汇; 额头：forehead\n眼皮：eyelid\n脸颊：cheek\n人中：philtrum\n嘴唇：lip; my lips are super dry and cracked\n下巴：chin\n耳垂：earlobe
-1. 疾病词汇; 呼吸系统疾病：respiratory illnesses\n遗传病：hereditary diseases/inherited genetic diseases\n血管疾病：vascular conditions\n流感：flu\n禽流感：bird flu\n感冒：cold\n发烧：fever\n咽痛：sore throat\n咳嗽：cough\n打喷嚏：sneeze\n头痛：headache\n肺炎：pneumonia\n失眠：insomnia\n腹泻：diarrhea\n恶心：nausea\n呕吐：vomit\n眩晕：dizziness\n晕倒：passed out/faint\n乏力：fatigue/faint\n哮喘：asthma attack
+1. 疾病词汇; 呼吸系统疾病：respiratory illnesses\n遗传病：hereditary diseases/inherited genetic diseases\n血管疾病：vascular conditions\n流感：flu\n禽流感：bird flu\n感冒：cold\n发烧：fever\n咽痛：sore throat\n咳嗽：cough\n打喷嚏：sneeze\n头痛：headache\n肺炎：pneumonia\n失眠：insomnia\n腹泻：diarrhea\n恶心：nausea\n呕吐：vomit\n眩晕：dizziness\n晕倒：passed out/faint\n乏力：fatigue/faint\n消化不良：get indigestion\n哮喘：asthma attack\n带状疱疹：shingles
 1. I need to know what I stand to win
 1. 房屋词汇; 公寓：apartment/flat\n宿舍：dormitory\n别墅：villa\n官邸/大厦：mansion\n工作室：studio\n地下室：basement\n村舍：cottage\n平房：bungalow\n寺庙：temple\n城堡：castle
 1. I worked my ass off to get here
@@ -166,7 +178,7 @@
 1. two Gaza hospitals have ceased to function
 1. what do you study? I'm doing computer science; I was doing Computer Science.\nI was studying Computer Science and have now graduated.\nI completed my studies in Computer Science.\nMy field of study was Computer Science, and I\'ve graduated.\n
 1. carpet; rug; Usually refers to a floor covering that extends over an entire room\nRugs are smaller, movable floor coverings that don\'t extend across the entire floor space
-1. 手部动作词汇; 扇：slap (slap on the back)\n拳打：punch\n连续打：beat\n抓取：grab\n握住：hold\n举起：lift\n掉落：drop\n轻弹：flick\n轻拍：pat\n触摸：touch\n擦：scrub(scrub my face). This action implies a more vigorous, thorough cleaning process.\n搓：rub(rub hands together). Rubbing is less about deep cleaning and more about gentle or superficial contact.\n敲：knock\n戳：poke\n挠：scratch\n指：point\n推：push\n拉：pull\n轻轻摇晃：rock\n拥抱：cuddle
+1. 手部动作词汇; 扇：slap (slap on the back)\n拳打：punch\n连续打：beat\n抓取：grab\n握住：hold\n举起：lift\n掉落：drop\n轻弹：flick\n轻拍：pat\n触摸：touch\n擦：scrub(scrub my face). This action implies a more vigorous, thorough cleaning process.\n搓：rub(rub hands together). Rubbing is less about deep cleaning and more about gentle or superficial contact.\n轻抚：stroke\n敲：knock\n戳：poke\n挠：scratch\n指：point\n推：push\n拉：pull\n轻轻摇晃：rock\n拥抱：cuddle
 1. 蔬菜词汇; 黄瓜：cucumber\n花椰菜：cauliflower\n四季豆：green beans\n洋葱：onion\n卷心菜：cabbage\n胡萝卜：carrot\n生菜：lettuce (crisp lettuce)\n辣椒：(hot/green/sweet)pepper\n西兰花：broccoli\n土豆：potato\n玉米：corn\n芹菜：celery\n菠菜：spinach\n茄子：eggplant\n南瓜：pumpkin\n苦瓜：bitter gourd\n大蒜：garlic\n蘑菇：mushroom\n木耳：agaric\n秋葵：okra
 1. you're twisting my words
 1. 厨房词汇; 切片：slice the potato\n切丝：shred the potato\n切丁：dice the potato\n切段：cut the green onion\n剁：chop the green onion\n菜刀：kitchen knife. I chop the green onion with my kitchen knife.\n切肉刀：cleaver\n锅：pot\n炒锅：wok\n平底锅：pan\n炉子：stove\n切菜板：cutting board\n锅盖：lid\n汤勺：ladle\n烤箱：oven\n微波炉：microwave oven\n高压锅：pressure cooker\n电饭煲：rice cooker\n热水器：water heater\n榨汁机：juicer\n冰箱：refrigerator\n烹饪用具：cooking utensil\n
@@ -213,9 +225,7 @@
 1. let's narrow it down to three options before making a decision
 1. annual performance evaluation
 1. a serene escape from the bustling city life
-1. square meter
 1. it just hit me that; it just struck me that
-1. Authoritarian Regime
 1. accord with; align with; correspond with; concur with
 1. please wipe your feet on the mat; wipe the mud off her boots
 1. I'm not myself; I'm not feeling myself; he doesn't seem himself
@@ -233,7 +243,6 @@
 1. his horse is from the best breed; his horse is of a top breed
 1. the decline in profit is causing disquiet among shareholders
 1. cohabitation before marriage is considered acceptable among young people
-1. Federal Aviation Administration
 1. I'll be at the meeting at 11 o'clock; at the meeting means the place\nin the meeting means you\'re participating
 1. you're hopeless; 你没救了\n
 1. cohesion; cohesive; coherence; coherent; Cohesion: The team displayed strong cohesion after their weekend retreat.\nCohesive: The report was cohesive, with all the sections flowing smoothly into one another.\nCoherence: The speaker\'s argument lacked coherence, making it hard to follow his main point.\nCoherent: After waking up from the anesthesia, it took her a few minutes to become coherent.
@@ -251,7 +260,6 @@
 1. Explain the details of the parallel merge operator; The implementation is based on the MergePath algorithm, the most impressive part of this algorithm is that each core can independently compute the data segment required by current core. Multiple inputs are organized into a Merge tree. The entire merge process uses the stream model and requires multiple traversals of the merge tree. Each traversal uses a bottom-up approach, with all cores sequentially processing each node, for example, all cores are working on a merge node\'s process and then goes to the next merge node. And additionally, I dopted late materialization to further improve the performance.
 1. I'm doing hair
 1. hang in there; keep at it; stay strong; 加油！
-1. 30-day debt grace period
 1. speaker of the house
 1. there's still a great deal of uncertainty surrounding the blast
 1. questions continue to swirl around a deadly explosion at a Gaza hospital this week; The verb \"swirl\" used in this context is metaphorical and conveys the idea that there are many questions or rumors circulating about the event. This usage is idiomatic and can be found in journalistic contexts.
@@ -299,7 +307,6 @@
 1. go to; attend; take part; participate; better to use go to a party(for guests), or come to my party(for hosts)\nuse attend a party in a formal way\ndon\'t use take part a party\ndon\'t use participate a party\n
 1. develop; foster; cultivate; don\'t use clutivate, clutivate means to help something grow because it can be useful to you.\nIf you\'re sure about the specific situation, like forster a relationship. Otherwise also don\'t use it.\nplease always use develop first.\n\n
 1. pro-union president
-1. doping scandal
 1. we're grieving
 1. at least 97 people perished
 1. the building was burned to the ground
@@ -390,7 +397,7 @@
 1. the devil's in the details
 1. quit while you're ahead
 1. I just want to get a sense of how close we are to the finish line
-1. it is frustrating
+1. it is frustrating; 这是令人沮丧的\n\nAnnoying\nDisappointing
 1. travesty of justice
 1. Trump was booked and released from a jail
 1. it's late, I got to go
@@ -439,7 +446,6 @@
 1. look at the world differently; see the world differently
 1. from the perspective of a Chinese person
 1. the survivor wins
-1. the Aegean Sea
 1. skydiving
 1. self-sufficient
 1. defend my decision to you
@@ -511,7 +517,6 @@
 1. 4 days straight
 1. crave attention
 1. release one's emotions
-1. increase protein intake
 1. consist of; composed of; comprised of
 1. give oneself up; yield oneself  to
 1. a coherent view of the natural world
@@ -524,7 +529,6 @@
 1. peel a banana
 1. economic price; low price
 1. elaborate computing system
-1. degree celsius
 1. turning point in the war in Ukraine
 1. rules-based order
 1. weak blood vessel; high blood pressure
@@ -885,7 +889,6 @@
 1. professional terminology; professional vocabulary
 1. sustainable delivery
 1. the strike may last for days
-1. far-left political leaders; far-right political leaders
 1. Israel has carried out military raids in the area for more than a year
 1. a counter terrorism effort
 1. the military is currently conducting a large offsensive; the military is currently conducting a large defense
@@ -900,7 +903,6 @@
 1. nothing worthwhile can be achieved easily; everything worthwhile requires a long period of hard work with many failures along the way
 1. the second thing that holds people back is what is called learned helplessness
 1. even if the change can be positive and beneficial
-1. comfort zone
 1. it's a joke, it can't be happening
 1. could you pay me in advance
 1. truth matters
@@ -952,7 +954,6 @@
 1. the ability to withstand the deep-sea ocean pressure
 1. rescue teams continue to map the debris field but have indicated that it may be quite difficult to recover the bodies
 1. a catastrophic implosion of the vessel
-1. the U.S. Coast Guard
 1. they were descending to view the wreckage of the Titanic
 1. stay out of this
 1. a receding hairline
@@ -997,10 +998,8 @@
 1. overpass collapse will seriously affect traffic on the East Coast
 1. unilaterally or bilaterally
 1. this political career ended in ignominy; this political career ended in disgrace; this political career ended in shame; this political career ended in dishonor
-1. secretary general
 1. this approach reduces the complexity to a great extent
 1. get out of the taxi; get off the bus; get off the plane; 空间小的用out。空间大的用off
-1. leopard tank
 1. Russian forces
 1. the thick haze that circled and settled on much of the Northeast this week, disrupting life and making breathing a hazard, is dispersing
 1. some areas are still not out of the woods
@@ -1013,7 +1012,6 @@
 1. strip China of developing status
 1. academic perspective; engineering perspective
 1. the army is probing forward
-1. a plume of smoke; plumes of smoke; 一缕烟;滚滚浓烟
 1. I'll see to it
 1. after all these, I realize that you no longer have to prove yourself so much to people
 1. stay afloat; keep afloat
@@ -1121,7 +1119,6 @@
 1. no further questions, thank you
 1. the democrat was hospitalized for six weeks with depression
 1. cycle to the previous suggestion
-1. supersonic missiles
 1. this sense of superiority is inherent
 1. how should I fill out this form
 1. there were reports of a collision
@@ -1148,7 +1145,6 @@
 1. air strikes
 1. the building has been undergoing extensive renovations for more than a year
 1. he could face up to five years in prison
-1. acting police chief
 1. we're optimistic an agreement will be reached
 1. we need to follow the rules
 1. thank you, but I don't have any further questions at the moment
@@ -1216,7 +1212,6 @@
 1. democrats have flat out rejected that
 1. republicans are refusing to raise the debt ceiling unless democrats agree to big cuts in government spending
 1. the White House and congressional leaders are up against a critical deadline to avert a potential default
-1. Press Secretary
 1. republican leaders sharply disagree over terms of lifting the federal government's borrowing limit
 1. hamster
 1. this whole town is basically shrouded in smoke
@@ -1246,7 +1241,6 @@
 1. deterrence
 1. there's recognition that North Korea's actions and rhetoric have been profoundly destabilizing in recent months
 1. the White House says the visit will commemorate the seventy-year alliance between the United States and South Korea
-1. nuclear ballistic submarine
 1. everything appears to be going smoothly
 1. fox news and its parent company are seeking to settle the case on the cusp of opening arguments
 1. the start of Dominion Voting Systems' blockbuster defamation trial against Fox News has been put on hold for at least another day
@@ -1278,7 +1272,6 @@
 1. common courtesy
 1. people demand this drug be taken off the market
 1. justice department is also asking a federal court in Washington state to clarify the meaning of its ruling in a related case
-1. Federal Appeal Court
 1. commemorate
 1. I will lend you my car on condition that you bring it back by tomorrow
 1. he was in critical condition today
@@ -1364,8 +1357,6 @@
 1. we want to thank the person who had the courage and bravery to call in the suspect's location
 1. under a pile of laundry
 1. officials have arrested a man wanted in connection with the killings of five of his neighbors
-1. interest rate cut
-1. interest rate hike
 1. what it came down to really was money
 1. is that all you got?; 这就是你的全部能耐吗
 1. in your position, I would’ve done the same
@@ -1438,7 +1429,6 @@
 1. body odor
 1. a full term as president
 1. grand jury
-1. assault weapons
 1. first language
 1. you were never there
 1. use your best judgement
@@ -2008,7 +1998,6 @@
 1. get back to normal
 1. speak up, I can't hear you
 1. could you move over a bit please
-1. exclamation mark
 1. thanks for letting me know
 1. can we drop by the bank
 1. intransitive phrasal verbs
@@ -2271,7 +2260,6 @@
 1. he remained a captive to her beauty
 1. water is usually stored in a reservoir before it is supplied to people's houses
 1. complicated/complex/sophisticated/elaborate
-1. get indigestion
 1. domestic products
 1. manufacturing industry
 1. the legislature has pressed a new law requiring people to wear safety belts
@@ -2339,7 +2327,6 @@
 1. memory/recollection
 1. sea lane
 1. sea line
-1. intelligence corps
 1. earn my degree
 1. live up to/meet
 1. you should work hard so as to live up to my expectations
@@ -2613,7 +2600,6 @@
 1. I'm open to discussion
 1. toss aside
 1. burp
-1. conservative party
 1. conservative
 1. I was elected to deliver for this country
 1. harsh/sharp/hard/severe
@@ -3223,7 +3209,6 @@
 1. mythology
 1. bluff
 1. thick
-1. light overcoat
 1. gleam
 1. sarcasm
 1. cost is a main element in our decision
@@ -3508,7 +3493,6 @@
 1. casual clothing
 1. cost of living
 1. fresh bird
-1. minute stock quotes
 1. integrity
 1. suspend and resume
 1. data mining
