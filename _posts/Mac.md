@@ -559,6 +559,12 @@ codesign --remove-signature /Applications/Visual\ Studio\ Code.app/Contents/Fram
 
 `系统偏好设置` -> `通用` -> 选择始终显示滚动条
 
+## 6.6 登录酒店 WIFI 无法弹出登录页面
+
+如果使用了 Proxy SwitchyOmega 配置代理，那么默认新连接的 WIFI 也会带上相关的配置，需要通过如下方式手动删除掉：
+
+`System Settings` -> `Network` -> `Details` -> `Proxies`
+
 # 7 参考
 
 * [Mac 下利用 Launchctl 自启动 mysql](http://squll369.iteye.com/blog/1965185)
