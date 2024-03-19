@@ -96,6 +96,25 @@ Page DOWN：`Fn+↓`
 ## 1.14 修改大小写切换方式
 
 1. `System Preferences`->`Keyboard`->`Text Input Edit`->`Press and hold to enable typing in all uppercase`
+    * 14.x 没有这个配置选项了
+
+## 1.15 如何修改用户名
+
+[Change the name of your macOS user account and home folder](https://support.apple.com/en-in/102547)
+
+```sh
+sudo scutil --set HostName xxx
+```
+
+## 1.16 禁用密码校验规则
+
+```sh
+# back up all account policies
+pwpolicy getaccountpolicies > back_policies.xml
+
+# clean account policies
+pwpolicy -clearaccountpolicies
+```
 
 # 2 Homebrew
 
