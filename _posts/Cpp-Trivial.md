@@ -1597,7 +1597,11 @@ SpacesBeforeTrailingComments: 1
 
 * 即便`.clang-format`相同，不同版本的`clang-format`格式化的结果也有差异
 
-# 9 Uncategorized
+**示例：**
+
+* [StarRocks-format](https://github.com/StarRocks/starrocks/blob/main/.clang-format)
+
+# 9 Assorted
 
 ## 9.1 Dynamic Analysis
 

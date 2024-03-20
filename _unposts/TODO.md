@@ -30,11 +30,13 @@
     * 测试集
         * tsbs
         * taxi
+        * tpc，基于每个列独立平均分布的前提来进行生成的。所以传统的基数估计方法可以达到一个比较好的效果
     * 统计信息
         * mcv, most common value, topn
         * ndv, number of distinct values
     * Join
         * RuntimeFilter
+        * FactorJoin，基数估计
     * Type
         * bitmap
         * hll

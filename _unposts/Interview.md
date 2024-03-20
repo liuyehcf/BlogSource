@@ -260,7 +260,7 @@ For better observability and query analysis, I introduced support for runtime pr
 1. Can you discuss the role of metadata in an OLAP database system?
     > Metadata in an OLAP database system serves as essential data about data, facilitating data organization, query optimization, data understanding, security, ETL processes, versioning, and system administration.
 
-## 3.1 Uncategorized
+## 3.1 Assorted
 
 1. why map fast?
 1. why there are multiply fragments in a query?

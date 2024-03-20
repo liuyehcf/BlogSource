@@ -3710,7 +3710,7 @@ mount      –t debugfs    debugfs /sys/kernel/debug
     * `-e trace=ipc`: Filters the trace to only show system calls related to inter-process communication-related system calls.
 * `-c`: Rather than showing every system call, this option provides a summary upon completion.
 
-**Ex'a'm'p'le's:**
+**Examples:**
 
 1. `strace cat /etc/fstab`
 1. `strace -e trace=read cat /etc/fstab`
@@ -4184,6 +4184,10 @@ apt install clang-format-X.Y
 1. 找出占用指定端口的进程
     * `lsof -n -i :80`
     * `ss -npl | grep 80`
+1. 磁盘类型
+    * `lsblk -d --output NAME,ROTA`
+    * `cat /sys/block/<device_name>/queue/rotational`
+        * `<device_name>` may be sda
 
 # 12 Reference
 

@@ -3577,6 +3577,7 @@ ln -s ~/.vim/plugged ~/.local/share/nvim/plugged
     * `:checkhealth`进行自检，这里会提示安装`pynvim`
     * `let g:python3_host_prog = '/path/to/your/python3'`
 * 在一个新的环境，安装完`nvim`后，最好都用`checkhealth`检查一遍，否则很多插件可能会因为依赖`python`等模块而无法正常工作，例如`LeaderF`
+* `node`用`16.19`版本，可以用`nvm install 16.19.0`进行安装
 
 # 6 Tips
 

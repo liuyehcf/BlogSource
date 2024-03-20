@@ -1,7 +1,7 @@
 
 # 1 Optimizer
 
-## 1.1 Uncategory
+## 1.1 Assorted
 
 1. `Scope`：类似于命名空间namespace
 1. `Relation`：关系实体，数据集

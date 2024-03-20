@@ -102,11 +102,19 @@ Page DOWN：`Fn+↓`
 
 [Change the name of your macOS user account and home folder](https://support.apple.com/en-in/102547)
 
+## 1.16 如何修改HostName/ComputerName
+
 ```sh
+scutil --get HostName
+scutil --get LocalHostName
+scutil --get ComputerName
+
 sudo scutil --set HostName xxx
+sudo scutil --set LocalHostName xxx
+sudo scutil --set ComputerName xxx
 ```
 
-## 1.16 禁用密码校验规则
+## 1.17 禁用密码校验规则
 
 ```sh
 # back up all account policies
