@@ -123,7 +123,7 @@ date: 2018-02-05 09:25:59
 
 * [清华大学开源软件镜像站](https://mirrors.tuna.tsinghua.edu.cn/)
 
-# 9 Uncategorized
+# 9 Assorted
 
 * [How to Read a Paper.pdf](/resources/paper/How-to-Read-a-Paper.pdf) - ★★★★★
 * [陈皓-耗子哥](https://coolshell.cn/articles/author/haoel)
