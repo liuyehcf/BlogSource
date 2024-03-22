@@ -3543,7 +3543,43 @@ endif
 
 # 5 nvim
 
-## 5.1 config path
+## 5.1 Install
+
+```sh
+git clone https://github.com/neovim/neovim.git
+cd neovim
+git checkout v0.9.5
+cmake -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo  && cmake --build build -j 64
+```
+
+Or Install from Nvim development (prerelease) build (Prefer)
+
+```sh
+wget https://github.com/neovim/neovim/releases/download/v0.9.5/nvim-linux64.tar.gz
+tar -zxvf nvim-linux64.tar.gz
+```
+
+### 5.1.1 Node Version Management
+
+```sh
+nvm ls-remote
+nvm install v16.19.0
+nvm install v20.11.1
+nvm list
+nvm use v16.19.0
+```
+
+Or
+
+```sh
+npm install -g n
+n install 16.19.0
+n install 20.11.1
+n list
+n 16.19.0 # use this version
+```
+
+## 5.2 config path
 
 ```vim
 " ~/.config/nvim
@@ -3556,7 +3592,7 @@ endif
 :echo stdpath('data_dirs')
 ```
 
-## 5.2 nvim share configuration of vim
+## 5.3 nvim share configuration of vim
 
 `nvim`和`vim`使用不同的目录来管理配置文件，通过软连接就可以实现共享配置，如下：
 
@@ -3571,13 +3607,13 @@ ln -s ~/.vim/autoload/plug.vim ~/.local/share/nvim/site/autoload/plug.vim
 ln -s ~/.vim/plugged ~/.local/share/nvim/plugged
 ```
 
-## 5.3 Tips
+## 5.4 Tips
 
 * 可能会提示`Vimspector unavailable: Requires Vim compiled with +python3`之类的问题：
     * `:checkhealth`进行自检，这里会提示安装`pynvim`
     * `let g:python3_host_prog = '/path/to/your/python3'`
 * 在一个新的环境，安装完`nvim`后，最好都用`checkhealth`检查一遍，否则很多插件可能会因为依赖`python`等模块而无法正常工作，例如`LeaderF`
-* `node`用`16.19`版本，可以用`nvm install 16.19.0`进行安装
+* `node`用`16.19`版本，可以用`nvm install v16.19.0`进行安装
 
 # 6 Tips
 

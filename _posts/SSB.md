@@ -30,7 +30,7 @@ driver.c:892:35: error: ‘pid_t’ undeclared (first use in this function)
 #-------------------------↑↑↑↑↑↑-------------------------
 
 # 由于 pid_t 定义在头文件 /usr/include/sys/types.h 中，因此修改 driver.c，在最开始的部分引入该头文件即可
-# 即 #include "/usr/include/sys/types.h"
+# 即 #include <sys/types.h>
 
 # 再次尝试编译，成功
 make
@@ -49,7 +49,7 @@ make
 #include "config.h"
 #include <stdlib.h>
 #if (defined(_POSIX_)||!defined(WIN32))		/* Change for Windows NT */
-#include "/usr/include/sys/types.h"
+#include <sys/types.h>
 #ifndef DOS
 #include <unistd.h>
 #include <sys/wait.h>
@@ -76,6 +76,44 @@ make
 
 # 去除末尾的 DELIMITER
 sed -i 's/|$//' $(find *.tbl)
+```
+
+### 1.2.1 Convert to Parquet
+
+```py
+import pandas as pd
+
+def tbl_to_parquet(tbl_file_path, parquet_file_path):
+    """
+    Convert a TBL file to Parquet format, adjusting for pipe-separated values.
+
+    Parameters:
+    - tbl_file_path: Path to the source TBL file.
+    - parquet_file_path: Path for the output Parquet file.
+    """
+    # Adjusting for pipe ('|') separated values and removing custom line terminator
+    df = pd.read_csv(tbl_file_path, sep='|', engine='c')
+
+    # The TBL files might have an extra delimiter at the end of each line, resulting in an additional empty column. Drop it if it exists.
+    if df.columns[-1] == '':
+        df = df.drop(df.columns[-1], axis=1)
+
+    # Convert DataFrame to Parquet
+    df.to_parquet(parquet_file_path, index=False)
+
+# List of your TBL files and their corresponding Parquet file names
+files_to_convert = [
+    ("date.tbl", "date.parquet"),
+    ("customer.tbl", "customer.parquet"),
+    ("lineorder.tbl", "lineorder.parquet"),
+    ("part.tbl", "part.parquet"),
+    ("supplier.tbl", "supplier.parquet"),
+]
+
+# Convert each file
+for tbl_file, parquet_file in files_to_convert:
+    tbl_to_parquet(tbl_file, parquet_file)
+    print(f"Converted {tbl_file} to {parquet_file}")
 ```
 
 ## 1.3 创建宽表

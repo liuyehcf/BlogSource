@@ -278,11 +278,14 @@ hostnamectl set-hostname <name>
 * `-a`：显式所有项目，包括隐藏的文件或者目录
 * `-l`：显式项目详情
 * `-t`：根据项目修改时间排序，最近修改的排在最前面
+* `-r`：反向排序
+* `-h`：以人类可读的方式显示文件大小
 * `-I`：排除指定pattern的项目
 
 **Examples:**
 
-* `ls -alt | head -n 5`
+* `ls -alth | head -n 5`
+* `ls -alrth`
 * `ls *.txt`：查找所有后缀为`.txt`的文件，注意不要用`ls "*.txt"`
 * `ls -I "*.txt" -I "*.cpp"`
 * `ls -d */`：当前目录下的所有子目录
@@ -3735,6 +3738,7 @@ mount      –t debugfs    debugfs /sys/kernel/debug
 * `report`：读取`perf.data`并展示
 * `stat`：仅展示一些统计信息
 * `top`：以交互式的方式进行分析
+    * `?`: help doc
 
 **关键参数：**
 
@@ -4168,6 +4172,7 @@ apt install clang-format-X.Y
 
 # 11 FAQ
 
+1. 判断机器是物理机还是虚拟机：`systemd-detect-virt`
 1. 实时监控系统各项指标
     * `dstat -vnl`
 1. 找出占用`CPU`资源最多的进程
@@ -4186,8 +4191,11 @@ apt install clang-format-X.Y
     * `ss -npl | grep 80`
 1. 磁盘类型
     * `lsblk -d --output NAME,ROTA`
+        * `ROTA: 0`：SSD
+        * `ROTA: 1`：HDD
     * `cat /sys/block/<device_name>/queue/rotational`
         * `<device_name>` may be sda
+1. 允许用户使用`docker`命令：`sudo usermod -aG docker username`
 
 # 12 Reference
 
