@@ -12,9 +12,11 @@ categories:
 
 <!--more-->
 
-# 1 Maven运行Java程序
+# 1 使用技巧
 
-## 1.1 从命令行运行
+## 1.1 运行Java程序
+
+### 1.1.1 从命令行运行
 
 运行前先编译代码，`exec:java`不会自动编译代码，你需要手动执行`mvn compile`来完成编译
 
@@ -26,7 +28,7 @@ mvn exec:java -Dexec.mainClass="com.vineetmanohar.module.Main" -Dexec.args="arg0
 mvn exec:java -Dexec.mainClass="com.vineetmanohar.module.Main" -Dexec.classpathScope=runtime
 ```
 
-## 1.2 在pom.xml中指定某个阶段执行
+### 1.1.2 在pom.xml中指定某个阶段执行
 
 将`CodeGenerator.main()`方法的执行绑定到maven的`test`阶段，通过下面的命令可以执行main方法：
 
@@ -57,7 +59,7 @@ mvn exec:java -Dexec.mainClass="com.vineetmanohar.module.Main" -Dexec.classpathS
  </build>
 ```
 
-## 1.3 在pom.xml中指定某个配置来执行
+### 1.1.3 在pom.xml中指定某个配置来执行
 
 将配置用`<profile>`标签包裹后就能通过指定该配置文件来执行main方法，如下
 ```
@@ -94,6 +96,18 @@ mvn test -Pcode-generator
         </build>  
     </profile>  
 </profiles>
+```
+
+## 1.2 下载指定jar包
+
+```sh
+mvn dependency:get -DgroupId=[groupId] -DartifactId=[artifactId] -Dversion=[version] -DrepoUrl=https://repo.maven.apache.org/maven2/ -Dtransitive=false
+```
+
+**Example:**
+
+```sh
+mvn dependency:get -DgroupId=org.apache.hive -DartifactId=hive-exec -Dversion=3.1.2 -DrepoUrl=https://repo.maven.apache.org/maven2/ -Dtransitive=false
 ```
 
 # 2 依赖冲突时的加载顺序

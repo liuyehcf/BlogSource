@@ -3609,6 +3609,7 @@ ln -s ~/.vim/plugged ~/.local/share/nvim/plugged
 
 ## 5.4 Tips
 
+* `:intro`
 * 可能会提示`Vimspector unavailable: Requires Vim compiled with +python3`之类的问题：
     * `:checkhealth`进行自检，这里会提示安装`pynvim`
     * `let g:python3_host_prog = '/path/to/your/python3'`

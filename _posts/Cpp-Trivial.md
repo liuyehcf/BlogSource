@@ -1552,7 +1552,11 @@ readelf -p .comment <binary_file>
 strings <binary_file> | grep <linker_name>
 ```
 
-## 7.3 Reference
+## 7.3 DWARF Problems
+
+Try use different linker.
+
+## 7.4 Reference
 
 # 8 LLVM Tools
 
