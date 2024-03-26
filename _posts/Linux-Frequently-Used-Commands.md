@@ -1253,6 +1253,7 @@ locate stl_vector.h
 **Options:**
 
 * `-N`：显示非ASCII字符，可以显示中文
+* `-L [num]`：控制显示层级
 
 ## 2.25 split
 

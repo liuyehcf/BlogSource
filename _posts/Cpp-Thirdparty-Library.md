@@ -516,7 +516,152 @@ inline BENCHMARK_ALWAYS_INLINE void DoNotOptimize(Tp& value) {
 
 ## 3.5 [gperftools/gperftools](https://github.com/gperftools/gperftools)
 
-# 4 Assorted
+# 4 ORM
+
+## 4.1 sqlpp11
+
+**How to integrate:**
+
+```sh
+
+target_link_libraries(xxx sqlpp11)
+```
+
+**How to create cpp header files:**
+
+```sh
+cat > /tmp/foo.sql << 'EOF'
+CREATE TABLE foo (
+    id bigint,
+    name varchar(50),
+    hasFun bool
+);
+EOF
+
+scripts/ddl2cpp  /tmp/foo.sql /tmp/foo my_ns
+```
+
+### 4.1.1 Example
+
+```sh
+tree -L 2
+.
+├── CMakeLists.txt
+├── contrib
+│   ├── mariadb-connector-c
+│   └── sqlpp11
+├── main.cpp
+├── users.ddl
+└── users.h
+```
+
+```sh
+mkdir sqlpp11_demo && cd sqlpp11_demo
+
+git init
+
+# Download source code of these two project
+git submodule add https://github.com/mariadb-corporation/mariadb-connector-c.git contrib/mariadb-connector-c
+git submodule add https://github.com/rbock/sqlpp11.git contrib/sqlpp11
+git submodule update --init --recursive
+
+# CMakeLists.txt
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(sqlpp11_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+add_executable(${PROJECT_NAME} main.cpp)
+
+# Include subdirectories
+add_subdirectory(contrib/sqlpp11)
+add_subdirectory(contrib/mariadb-connector-c)
+
+# Include header files
+target_include_directories (${PROJECT_NAME} PUBLIC "${CMAKE_SOURCE_DIR}/contrib/mariadb-connector-c/include")
+target_include_directories (${PROJECT_NAME} PUBLIC "${CMAKE_BINARY_DIR}/contrib/mariadb-connector-c/include")
+
+# Link against libraries
+target_link_libraries(${PROJECT_NAME} sqlpp11 mariadbclient)
+EOF
+
+cat > users.ddl << 'EOF'
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    age INT,
+    sex VARCHAR(10)
+);
+EOF
+
+contrib/sqlpp11/scripts/ddl2cpp users.ddl users Test
+
+cat > main.cpp << 'EOF'
+#include <sqlpp11/all_of.h>
+#include <sqlpp11/mysql/mysql.h>
+#include <sqlpp11/sqlpp11.h>
+
+#include <iostream>
+
+#include "users.h"
+
+int main() {
+    // Configure your MySQL/MariaDB connection details
+    auto config = std::make_shared<sqlpp::mysql::connection_config>();
+    config->user = "root";
+    config->port = 13306;
+    config->password = "Abcd1234";
+    config->database = "test";
+    config->host = "127.0.0.1";
+
+    sqlpp::mysql::connection db(config);
+
+    Test::Users users;
+
+    for (const auto& row : db(select(sqlpp::all_of(users)).from(users).unconditionally())) {
+        std::cout << "ID: " << row.id << ", Name: " << row.name << ", Age: " << row.age << std::endl;
+    }
+
+    return 0;
+}
+EOF
+
+# compile and run
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j 64
+```
+
+You may be presented with the following error messages:
+
+```
+CMake Error at contrib/mariadb-connector-c/cmake/install_plugins.cmake:11 (INSTALL):
+  INSTALL TARGETS given no LIBRARY DESTINATION for module target "remote_io".
+Call Stack (most recent call first):
+  contrib/mariadb-connector-c/cmake/plugins.cmake:83 (INSTALL_PLUGIN)
+```
+
+Just remove the line 83(`contrib/mariadb-connector-c/cmake/plugins.cmake:83`), which is 
+
+```cmake
+INSTALL_PLUGIN(${CC_PLUGIN_TARGET} ${CMAKE_CURRENT_BINARY_DIR})
+```
+
+And then compile again:
+
+```sh
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j 64
+build/sqlpp11_demo
+```
+
+```
+ID: 1, Name: John Doe, Age: 30
+ID: 2, Name: Jane Smith, Age: 25
+ID: 3, Name: Michael Johnson, Age: 35
+```
+
+# 5 Assorted
 
 1. [Awesome C++ Projects](https://github.com/fffaraz/awesome-cpp)
 1. [parallel-hashmap](https://github.com/greg7mdp/parallel-hashmap)：`parallel-hashmap`提供了一组高性能、并发安全的`map`，用于替换`std`以及`boost`中的`map`

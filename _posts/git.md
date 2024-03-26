@@ -417,6 +417,9 @@ git diff --shortstat "@{0 day ago}"
 # 显示某次提交的元数据和内容变化
 git show [commit]
 
+# 显示某次提交的元数据和某个文件的内容变化
+git show [commit] -- [filename]
+
 # 显示某次提交的元数据和内容变化的统计信息
 git show [commit] --stat
 
