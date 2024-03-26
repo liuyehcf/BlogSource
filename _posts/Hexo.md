@@ -631,6 +631,35 @@ npm install hexo-deployer-git --save
     * deploy
     * search
 
+```sh
+npm uninstall hexo-renderer-marked
+npm install hexo-renderer-markdown-it-plus
+
+npm uninstall hexo-math --save
+npm install hexo-renderer-mathjax --save
+
+npm install hexo-filter-mermaid-diagrams --save
+
+npm install hexo-filter-plantuml --save
+
+npm install --save hexo-filter-sequence
+
+npm install hexo-simple-mindmap
+
+npm install hexo-markmap --save-dev
+
+npm uninstall hexo-toc --save
+npm uninstall markdown-toc --save
+npm install markdown-it-toc --save
+
+npm install hexo-leancloud-counter-security --save
+
+npm install hexo-generator-searchdb --save
+
+npm uninstall hexo-generator-index --save
+npm install hexo-generator-index-pin-top --save
+```
+
 # 21 参考
 
 * [next官方文档](http://theme-next.iissnan.com/getting-started.html)

@@ -32,6 +32,7 @@ categories:
 
 1. 禁用行内作者提示链接：`gitlens.codeLens.authors.enabled`
 1. 禁用引用补全：`editor.autoClosingQuotes`
+1. Tab对应的空格数量，是否受到文本中已有的缩进影响：`editor.detectIndentation`
 
 # 3 插件
 

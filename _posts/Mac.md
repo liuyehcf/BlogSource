@@ -592,6 +592,10 @@ codesign --remove-signature /Applications/Visual\ Studio\ Code.app/Contents/Fram
 
 `System Settings` -> `Network` -> `Details` -> `Proxies`
 
+## 6.7 配置开机自启动
+
+* `14.x`及以上版本：搜索`Login Items`
+
 # 7 参考
 
 * [Mac 下利用 Launchctl 自启动 mysql](http://squll369.iteye.com/blog/1965185)
