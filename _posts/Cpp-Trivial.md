@@ -1458,14 +1458,23 @@ end, back to main
 
 ### 7.1.1 How to link libc++ statically
 
-Use `g++`
+**Use `g++`:**
+
 ```sh
 g++ -o main main.cpp -static-libstdc++
 ```
 
-Use `gcc`: 
+**Use `gcc`:**
+
 ```sh
 gcc main.cpp -o main -std=gnu++17 -Wl,-Bstatic -lstdc++ -Wl,-Bdynamic
+```
+
+**Use `cmake`:**
+
+```sh
+target_compile_options(<target> PRIVATE -static-libstdc++)
+target_link_options(<target> PRIVATE -static-libstdc++)
 ```
 
 ## 7.2 ld
@@ -1712,7 +1721,11 @@ gcov example.cpp
 cat example.cpp.gcov
 ```
 
-## 9.5 Document
+## 9.5 How to check standard library search path when compiling
+
+Add `-v` option.
+
+## 9.6 Document
 
 1. [cpp reference](https://en.cppreference.com/w/)
 1. [cppman](https://github.com/aitjcize/cppman/)
@@ -1720,6 +1733,6 @@ cat example.cpp.gcov
     * 示例：`cppman vector::begin`
     * 重建索引：`cppman -r`
 
-## 9.6 Reference
+## 9.7 Reference
 
 * [C/C++ 头文件以及库的搜索路径](https://blog.csdn.net/crylearner/article/details/17013187)

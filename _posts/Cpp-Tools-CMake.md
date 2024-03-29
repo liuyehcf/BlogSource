@@ -938,7 +938,7 @@ build/main
   * `cmake --build <build_path> -j 16`：等效于在`<build_path>`中执行`make -j 16`命令
 * `cmake --install <build_path>`：等效于在`<build_path>`中执行`make install`命令
 
-## 6.2 打印cmake中所有的变量
+## 6.2 Print All Variables
 
 ```cmake
 get_cmake_property(_variableNames VARIABLES)
@@ -947,27 +947,42 @@ foreach (_variableName ${_variableNames})
 endforeach()
 ```
 
-## 6.3 打印cmake中所有环境变量
+## 6.3 Print All Envs
 
 ```cmake
 execute_process(COMMAND "${CMAKE_COMMAND}" "-E" "environment")
 ```
 
-## 6.4 指定编译器
+## 6.4 Specify Compiler
+
+### 6.4.1 Command
 
 ```sh
 cmake -DCMAKE_CXX_COMPILER=/usr/local/bin/g++ -DCMAKE_C_COMPILER=/usr/local/bin/gcc ..
 ```
 
-## 6.5 设置编译器参数
+### 6.4.2 CMakeLists.txt
+
+```cmake
+set(CMAKE_C_COMPILER "/path/to/gcc")
+set(CMAKE_CXX_COMPILER "/path/to/g++")
+```
+
+## 6.5 Add Compile Options
+
+### 6.5.1 Command
+
+```sh
+cmake -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -O3" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -O3" ..
+```
+
+### 6.5.2 CMakeLists.txt
 
 **示例如下：**
 
 ```cmake
-# 设置编译器参数
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -fopt-info-vec")
 
-# 为不同的构建类型设置不同的编译器参数
 set(CMAKE_BUILD_TYPE "Release")
 set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g2 -ggdb")
 set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O1 -Wall")
@@ -980,13 +995,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O1 -Wall")
 1. `RelWithDebInfo`
 1. `MinSizeRel`
 
-## 6.6 传递额外编译参数给cmake
-
-```sh
-cmake -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -O3" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -O3" ..
-```
-
-## 6.7 开启debug模式
+## 6.6 Build Type
 
 ```sh
 # If you want to build for debug (including source information, i.e. -g) when compiling, use
@@ -996,7 +1005,14 @@ cmake -DCMAKE_BUILD_TYPE=Debug <path>
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo <path>
 ```
 
-## 6.8 同一目录，多个源文件
+**`CMAKE_BUILD_TYPE`的所有可选值包括**
+
+1. `Debug`
+1. `Release`
+1. `RelWithDebInfo`
+1. `MinSizeRel`
+
+## 6.7 Include All Source File
 
 如果同一个目录下有多个源文件，那么在使用`add_executable`命令的时候，如果要一个个填写，那么将会非常麻烦，并且后续维护的代价也很大
 
@@ -1015,15 +1031,15 @@ aux_source_directory(. DIR_SRCS)
 add_executable(Demo ${DIR_SRCS})
 ```
 
-## 6.9 打印所有编译指令
+## 6.8 Print All Compile Command
 
 `cmake`指定参数`-DCMAKE_VERBOSE_MAKEFILE=ON`即可
 
-## 6.10 生成`compile_commands.json`文件
+## 6.9 生成`compile_commands.json`文件
 
 `cmake`指定参数`-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`即可。构建完成后，会在构建目录生成`compile_commands.json`，里面包含了每个源文件的编译命令
 
-## 6.11 自动生成`compile_commands.json`文件并拷贝到工程根目录
+## 6.10 Auto generate compile_commands.json and copy to project source root
 
 参考[Copy compile_commands.json to project root folder](https://stackoverflow.com/questions/57464766/copy-compile-commands-json-to-project-root-folder)
 
@@ -1036,7 +1052,7 @@ add_custom_target(
     )
 ```
 
-# 7 参考
+# 7 Reference
 
 * [CMake Tutorial](https://cmake.org/cmake/help/latest/guide/tutorial/index.html)
     * [CMake Tutorial对应的source code](https://github.com/Kitware/CMake/tree/master/Help/guide/tutorial)

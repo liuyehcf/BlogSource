@@ -1729,19 +1729,7 @@ call plug#end()
 * 在`cmake`中设置`set(CMAKE_CXX_STANDARD 17)`，其生成的`compile_commands.json`中包含的编译命令不会包含`-std=gnu++17`参数，于是`clangd`在处理代码中用到的`c++17`新特性时会报`warning`（例如`Decomposition declarations are a C++17 extension (clang -Wc++17-extensions)`）。通过设置`CMAKE_CXX_FLAGS`，加上编译参数`-std=gnu++17`可以解决该问题
     * 仅仅设置`CMAKE_CXX_STANDARD`是不够的，还需要设置`CMAKE_CXX_STANDARD_REQUIRED`，参考[CMake's set(CMAKE_CXX_STANDARD 11) does not work](https://github.com/OSGeo/PROJ/issues/1924)
 * 在`cmake`中设置`set(CMAKE_CXX_COMPILER g++)`也不会对`clangd`起作用，例如`clang`没有`-fopt-info-vec`这个参数，仍然会`warning`
-* 示例如下：
-    ```json
-    {
-        "languageserver": {
-            "clangd": {
-                "command": "clangd",
-                "args": ["--log=verbose"],
-                "rootPatterns": ["compile_flags.txt", "compile_commands.json"],
-                "filetypes": ["c", "cc", "cpp", "c++", "objc", "objcpp"]
-            }
-        }
-    }
-    ```
+* `clangd`使用的标准库搜索路径：由编译器决定，即`compile_commands.json`中编译命令所使用的编译器决定。如果这个编译器是个低版本的，那么就会用低版本对应的头文件路径，高版本则对应高版本头文件路径
 
 **`Tips`：**
 
@@ -3618,22 +3606,39 @@ ln -s ~/.vim/plugged ~/.local/share/nvim/plugged
 
 # 6 Tips
 
-1. 打开大文件非常卡顿
-    * `vim -u NONE <big file>`：禁止加载所有插件
-1. 查看并导出配置到文件中
-    * 示例1
-    ```vim
-    :redir! > vim_keys.txt
-    :silent verbose map
-    :redir END
-    ```
+## 6.1 Large Files Run Slowly
 
-    * 示例2
-    ```vim
-    :redir! > vim_settings.txt
-    :silent set all
-    :redir END
-    ```
+**禁止加载所有插件**
+
+```sh
+vim -u NONE <big file>
+```
+
+## 6.2 Export Settings
+
+**Example 1**
+
+```vim
+:redir! > vim_keys.txt
+:silent verbose map
+:redir END
+```
+
+**Example 2**
+```vim
+:redir! > vim_settings.txt
+:silent set all
+:redir END
+```
+
+## 6.3 Save and Exit Slowly in Large Project
+
+在大型工程中文件保存退出非常慢，发现是`vim-gutentags`插件，及其相关配置导致的。在项目配置文件`.workspace.vim`中添加如下内容进行禁用：
+
+```
+let g:gutentags_enabled = 0
+let g:gutentags_dont_load = 1
+```
 
 # 7 Reference
 

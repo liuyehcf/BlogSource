@@ -78,15 +78,11 @@ gcc -o main main.cpp -lstdc++ -std=gnu++17 -ldl -g
 **安装`fmt`：**
 
 ```sh
-git clone git@github.com:fmtlib/fmt.git
+git clone https://github.com/fmtlib/fmt.git
 cd fmt
 
-mkdir build
-cd build
-
-cmake ..
-make -j 4
-make install
+cmake -B build && cmake --build build -j 4
+sudo cmake --install build
 ```
 
 **在`cmake`中添加`fmt`依赖：**
@@ -118,15 +114,11 @@ int main() {
 **安装[gflag](https://github.com/gflags/gflags)：**
 
 ```sh
-git clone git@github.com:gflags/gflags.git
+git clone https://github.com/gflags/gflags.git
 cd gflags
 
-mkdir build
-cd build
-
-cmake ..
-make -j 4
-make install
+cmake -B build -DBUILD_SHARED_LIBS=OFF && cmake --build build -j 4
+sudo cmake --install build
 ```
 
 **在`cmake`中添加`gflags`依赖：**
@@ -178,16 +170,12 @@ int main(int argc, char* argv[]) {
 **安装[glog](https://github.com/google/glog)：**
 
 ```sh
-git clone https://github.com/google/glog.git 
+git clone https://github.com/google/glog.git
 cd glog
 
-mkdir build
-cd build
-
 # BUILD_SHARED_LIBS用于控制生成动态库还是静态库，默认是动态库，这里我们选择静态库
-cmake -DBUILD_SHARED_LIBS=OFF ..
-make -j 4
-make install
+cmake -B build -DBUILD_SHARED_LIBS=OFF && cmake --build build -j 4
+sudo cmake --install build
 ```
 
 **在`cmake`中添加`glog`依赖：**
@@ -264,13 +252,9 @@ gcc -o main main.cpp -Wl,-wrap=__cxa_throw -lstdc++ -std=gnu++17 -Wl,-Bstatic -l
 git clone https://github.com/google/googletest.git
 cd googletest
 
-mkdir build
-cd build
-
 # BUILD_SHARED_LIBS用于控制生成动态库还是静态库，默认是动态库，这里我们选择静态库
-cmake -DBUILD_SHARED_LIBS=OFF ..
-make -j 4
-make install
+cmake -B build -DBUILD_SHARED_LIBS=OFF && cmake --build build -j 4
+sudo cmake --install build
 ```
 
 **在`cmake`中添加`gtest`依赖：**
@@ -299,7 +283,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(EXEC_FILES ./test_main.cpp)
 
-add_executable(gtest_demo ${EXEC_FILES})
+add_executable(${PROJECT_NAME} ${EXEC_FILES})
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
 
 find_package(GTest REQUIRED)
 message(STATUS "GTEST_INCLUDE_DIRS: ${GTEST_INCLUDE_DIRS}")
@@ -307,7 +294,7 @@ message(STATUS "GTEST_BOTH_LIBRARIES: ${GTEST_BOTH_LIBRARIES}")
 message(STATUS "GTEST_LIBRARIES: ${GTEST_LIBRARIES}")
 message(STATUS "GTEST_MAIN_LIBRARIES: ${GTEST_MAIN_LIBRARIES}")
 
-target_link_libraries(gtest_demo ${GTEST_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${GTEST_LIBRARIES})
 EOF
 
 # 编写test_main.cpp
@@ -328,13 +315,9 @@ int main(int argc, char **argv) {
 }
 EOF
 
-mkdir build
-cd build
+cmake -B build && cmake --build build
 
-cmake ..
-make
-
-./gtest_demo
+build/gtest_demo
 ```
 
 ### 3.3.1 Macros
@@ -399,13 +382,10 @@ make
 git clone https://github.com/google/benchmark.git --depth 1
 cd benchmark
 
-mkdir build
-cd build
-
 # 这里指定googletest的工程路径（不加任何参数会有提示）
-cmake -DGOOGLETEST_PATH=~/googletest/ -DCMAKE_BUILD_TYPE=Release ..
-make
-make install
+cmake -B build -DGOOGLETEST_PATH=~/googletest/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC" 
+cmake --build build -j 4
+sudo cmake --install build
 ```
 
 **在`cmake`中添加`benchmark`依赖：**
@@ -432,11 +412,14 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -fopt-info-vec")
 
 set(EXEC_FILES ./main.cpp)
 
-add_executable(benchmark_demo ${EXEC_FILES})
+add_executable(${PROJECT_NAME} ${EXEC_FILES})
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
 
 find_package(benchmark REQUIRED)
 
-target_link_libraries(benchmark_demo benchmark::benchmark)
+target_link_libraries(${PROJECT_NAME} benchmark::benchmark)
 EOF
 
 # 编写main.cpp
@@ -462,13 +445,9 @@ BENCHMARK(BM_StringCopy);
 BENCHMARK_MAIN();
 EOF
 
-mkdir build
-cd build
+cmake -B build && cmake --build build
 
-cmake ..
-make
-
-./benchmark_demo
+build/benchmark_demo
 ```
 
 **输出如下：**
@@ -576,6 +555,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable(${PROJECT_NAME} main.cpp)
 
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
 # Include subdirectories
 add_subdirectory(contrib/sqlpp11)
 add_subdirectory(contrib/mariadb-connector-c)
@@ -590,10 +572,11 @@ EOF
 
 cat > users.ddl << 'EOF'
 CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255),
-    age INT,
-    sex VARCHAR(10)
+    id BIGINT NOT NULL,
+    first_name VARCHAR(16) NOT NULL,
+    last_name VARCHAR(16) NOT NULL,
+    age SMALLINT NOT NULL,
+    PRIMARY KEY(id)
 );
 EOF
 
@@ -601,15 +584,43 @@ contrib/sqlpp11/scripts/ddl2cpp users.ddl users Test
 
 cat > main.cpp << 'EOF'
 #include <sqlpp11/all_of.h>
+#include <sqlpp11/custom_query.h>
+#include <sqlpp11/insert.h>
 #include <sqlpp11/mysql/mysql.h>
 #include <sqlpp11/sqlpp11.h>
+#include <sqlpp11/verbatim.h>
 
 #include <iostream>
+#include <string>
 
 #include "users.h"
 
+struct on_duplicate_key_update {
+    std::string _serialized;
+
+    template <typename Db, typename Assignment>
+    on_duplicate_key_update(Db& db, Assignment assignment) {
+        typename Db::_serializer_context_t context{db};
+        _serialized = " ON DUPLICATE KEY UPDATE " + serialize(assignment, context).str();
+    }
+
+    template <typename Db, typename Assignment>
+    auto operator()(Db& db, Assignment assignment) -> on_duplicate_key_update& {
+        typename Db::_serializer_context_t context{db};
+        _serialized += ", " + serialize(assignment, context).str();
+        return *this;
+    }
+
+    auto get() const -> sqlpp::verbatim_t<::sqlpp::no_value_t> { return ::sqlpp::verbatim(_serialized); }
+};
+
+template <typename Db, typename Assignment>
+void print(Db& db, Assignment assignment) {
+    typename Db::_serializer_context_t context{db};
+    std::cout << sqlpp::serialize(assignment, context).str() << std::endl;
+}
+
 int main() {
-    // Configure your MySQL/MariaDB connection details
     auto config = std::make_shared<sqlpp::mysql::connection_config>();
     config->user = "root";
     config->port = 13306;
@@ -617,12 +628,54 @@ int main() {
     config->database = "test";
     config->host = "127.0.0.1";
 
-    sqlpp::mysql::connection db(config);
+    auto conn_pool = std::make_shared<sqlpp::mysql::connection_pool>(config, 5);
+
+    auto db = conn_pool->get();
 
     Test::Users users;
 
-    for (const auto& row : db(select(sqlpp::all_of(users)).from(users).unconditionally())) {
-        std::cout << "ID: " << row.id << ", Name: " << row.name << ", Age: " << row.age << std::endl;
+    {
+        auto query = sqlpp::custom_query(
+                sqlpp::insert_into(users).set(users.id = 10000001, users.firstName = "Emma", users.lastName = "Watson",
+                                              users.age = 15),
+                on_duplicate_key_update(db, users.firstName = "Emma")(db, users.lastName = "Watson")(db, users.age = 15)
+                        .get());
+        print(db, query);
+        db(query);
+    }
+
+    {
+        auto query = sqlpp::custom_query(
+                sqlpp::insert_into(users).set(users.id = 10000002, users.firstName = "Leo", users.lastName = "Grant",
+                                              users.age = 18),
+                on_duplicate_key_update(db, users.firstName = "Leo")(db, users.lastName = "Grant")(db, users.age = 18)
+                        .get());
+        print(db, query);
+        db(query);
+    }
+
+    {
+        auto query = select(sqlpp::all_of(users)).from(users).unconditionally();
+        print(db, query);
+        for (const auto& row : db(query)) {
+            std::cout << "    -> id=" << row.id << ", firstName=" << row.firstName << ", lastName=" << row.lastName
+                      << ", age=" << row.age << std::endl;
+        }
+    }
+
+    {
+        auto query = select(sqlpp::all_of(users)).from(users).where(users.age <= 20);
+        print(db, query);
+        for (const auto& row : db(query)) {
+            std::cout << "    -> id=" << row.id << ", firstName=" << row.firstName << ", lastName=" << row.lastName
+                      << ", age=" << row.age << std::endl;
+        }
+    }
+
+    {
+        auto query = sqlpp::remove_from(users).where(users.id == 10000001);
+        print(db, query);
+        db(query);
     }
 
     return 0;
@@ -656,9 +709,15 @@ build/sqlpp11_demo
 ```
 
 ```
-ID: 1, Name: John Doe, Age: 30
-ID: 2, Name: Jane Smith, Age: 25
-ID: 3, Name: Michael Johnson, Age: 35
+INSERT INTO users (id,first_name,last_name,age) VALUES(10000001,'Emma','Watson',15)  ON DUPLICATE KEY UPDATE first_name='Emma', last_name='Watson', age=15
+INSERT INTO users (id,first_name,last_name,age) VALUES(10000002,'Leo','Grant',18)  ON DUPLICATE KEY UPDATE first_name='Leo', last_name='Grant', age=18
+SELECT users.id,users.first_name,users.last_name,users.age FROM users
+    -> id=10000001, firstName=Emma, lastName=Watson, age=15
+    -> id=10000002, firstName=Leo, lastName=Grant, age=18
+SELECT users.id,users.first_name,users.last_name,users.age FROM users WHERE (users.age<=20)
+    -> id=10000001, firstName=Emma, lastName=Watson, age=15
+    -> id=10000002, firstName=Leo, lastName=Grant, age=18
+DELETE FROM users WHERE (users.id=10000001)
 ```
 
 # 5 Assorted

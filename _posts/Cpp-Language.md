@@ -5326,6 +5326,45 @@ array2: -532
 num4: -32
 ```
 
+## 11.8 Container
+
+### 11.8.1 vector::push_back
+
+```cpp
+#include <iostream>
+#include <vector>
+
+class Foo {
+public:
+    Foo() { std::cout << "Default Constructor" << std::endl; }
+    Foo(const Foo& foo) { std::cout << "Copy Constructor" << std::endl; }
+    Foo(Foo&& foo) { std::cout << "Move Constructor" << std::endl; }
+};
+
+Foo getFoo() {
+    return {};
+}
+
+int main() {
+    std::vector<Foo> v;
+    // Avoid scale up
+    v.reserve(3);
+
+    std::cout << "Without std::move" << std::endl;
+    // This move operation is possible because the object returned by getFoo() is an rvalue, which is eligible for move semantics.
+    v.push_back(getFoo());
+
+    std::cout << "With std::move (1)" << std::endl;
+    v.push_back(std::move(getFoo()));
+
+    std::cout << "With std::move (2)" << std::endl;
+    Foo foo = getFoo();
+    v.push_back(std::move(foo));
+
+    return 0;
+}
+```
+
 # 12 FAQ
 
 ## 12.1 Why is it unnecessary to specify the size when releasing memory with free and delete
