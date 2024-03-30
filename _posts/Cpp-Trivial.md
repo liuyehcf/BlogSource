@@ -60,16 +60,6 @@ flowchart TD
 * `-Xlinker -Map=a.map`：将链接时的信息记录到`a.map`中
 * `nm/objdump/readelf/strings`或许可以找到一些静态库相关的`hint`
 
-### 2.1.1 Search Order
-
-**搜索顺序如下：详见`ld --verbose | grep SEARCH_DIR`**
-
-* 首先在链接器命令行中指定的库目录中搜索，如果找到与指定的库名匹配的库文件，则使用该库文件
-* 如果在指定的库目录中没有找到匹配的库文件，则在系统默认的库目录中搜索，如`/lib`、`/usr/lib`、`/usr/local/lib`等
-    * `/usr/lib/x86_64-linux-gnu`
-* 如果在系统默认的库目录中也没有找到匹配的库文件，则按照编译器的默认顺序搜索一些特定的库目录，如`/lib64`、`/usr/lib64`、`/usr/local/lib64`等
-* 如果在所有指定的库目录中都没有找到匹配的库文件，则链接器会报错，指出无法找到指定的库文件
-
 ## 2.2 Dynamic Library
 
 **后缀：`*.so`**
@@ -78,16 +68,7 @@ flowchart TD
 
 **查看动态链接库绑定信息：`ldconfig -v`、`ldconfig -p`**
 
-### 2.2.1 Search Order
-
-**搜索顺序如下：详见`man ld.so`**
-
-1. 在环境变量`LD_LIBRARY_PATH`指定的目录下搜索，以`:`分隔
-1. 在`/etc/ld.so.cache`指定的目录中搜索
-1. 在`/lib`、`/lib64`中搜索（系统发行版安装的）
-1. 在`/usr/lib`、`/usr/lib64`中搜索（其他软件安装的）
-
-### 2.2.2 Linux's so version mechanism
+### 2.2.1 Linux's so version mechanism
 
 **本小节转载摘录自[一文读懂Linux下动态链接库版本管理及查找加载方式](https://blog.ideawand.com/2020/02/15/how-does-linux-shared-library-versioning-works/)**
 
@@ -101,7 +82,7 @@ libbar.so.x  ->  libbar.so.x.y
 
 这里的`x`、`y`、`z`分别代表的是这个`so`的主版本号（`MAJOR`），次版本号（`MINOR`），以及发行版本号（`RELEASE`），对于这三个数字各自的含义，以及什么时候会进行增长，不同的文献上有不同的解释，不同的组织遵循的规定可能也有细微的差别，但有一个可以肯定的事情是：主版本号（`MAJOR`）不同的两个`so`库，所暴露出的`API`接口是不兼容的。而对于次版本号，和发行版本号，则有着不同定义，其中一种定义是：次要版本号表示`API`接口的定义发生了改变（比如参数的含义发生了变化），但是保持向前兼容；而发行版本号则是函数内部的一些功能调整、优化、BUG修复，不涉及`API`接口定义的修改
 
-#### 2.2.2.1 so Related Names
+#### 2.2.1.1 so Related Names
 
 **介绍一下在`so`查找过程中的几个名字**
 
@@ -109,7 +90,7 @@ libbar.so.x  ->  libbar.so.x.y
 * **`real name`：是真实具有`so`库可执行代码的那个文件，之所以叫`real`是相对于`SONAME`和`linker name`而言的，因为另外两种名字一般都是一个软连接，这些软连接最终指向的文件都是具有`real name`命名形式的文件。`real name`的命名格式中，可能有`2`个数字尾缀，也可能有`3`个数字尾缀，但这不重要。你只要记住，真实的那个，不是以软连接形式存在的，就是一个`real name`**
 * **`linker name`：这个名字只是给编译工具链中的连接器使用的名字，和程序运行并没有什么关系，仅仅在链接得到可执行文件的过程中才会用到。它的命名特征是以`lib`开头，以`.so`结尾，不带任何数字后缀的格式**
 
-#### 2.2.2.2 SONAME
+#### 2.2.1.2 SONAME
 
 假设在你的Linux系统中有3个不同版本的`bar`共享库，他们在磁盘上保存的文件名如下：
 
@@ -133,7 +114,7 @@ libbar.so.x  ->  libbar.so.x.y
 * 通过修改软连接的指向，可以让应用程序在互相兼容的`so`库中方便切换使用哪一个
 * 通常情况下，大家使用最新版本即可，除非是为了在特定版本下做一些调试、开发工作
 
-#### 2.2.2.3 linker name
+#### 2.2.1.3 linker name
 
 上一节中我们提到，可执行文件里会存储精确到主版本号的`SONAME`，但是在编译生成可执行文件的过程中，编译器怎么知道应该用哪个主版本号呢？为了回答这个问题，我们从编译链接的过程来梳理一下
 
@@ -152,7 +133,36 @@ libbar.so.x  ->  libbar.so.x.y
 * 编译器从软链接指向的文件里找到其`SONAME`，并将`SONAME`写入到生成的可执行文件中
 * 通过改变`linker name`软连接的指向，可以将不同主版本号的`SONAME`写入到生成的可执行文件中
 
-## 2.3 Link Order
+## 2.3 Search Order
+
+### 2.3.1 Compilation Time
+
+During compilation, the order in which the linker (such as GNU's `ld`) searches for library files follows certain rules, ensuring that the linker can find and link the correct version of the library. The search order typically goes as follows:
+
+* **Library files specified directly in the command line**: If the compilation command directly specifies the full path to the library files, the linker will first use these specified paths. For example, `gcc main.c /path/to/libmylibrary.a` will link directly to the library at the specified path.
+* **Directories specified with the `-L` option**: The compilation command can include the `-L` option to add additional library search directories. The linker searches for library files in these directories in the order that the `-L` options appear. For example, `gcc main.c -L/path/to/libs -lmylibrary` instructs the linker to search for a library named `libmylibrary` in `/path/to/libs`.
+* **The `LIBRARY_PATH` environment variable**: If the `LIBRARY_PATH` environment variable is set, the linker also searches for library files in the directories specified by this variable. This environment variable can contain multiple directories and is commonly used to add search paths for non-standard libraries during compilation.
+* **System default library search paths**: If the linker does not find the library files in the paths specified above, it will turn to the system default library search paths. These default paths typically include standard library directories such as `/lib` and `/usr/lib`, as well as architecture-specific directories (e.g., `/lib/x86_64-linux-gnu` or `/usr/lib/x86_64-linux-gnu`).
+    * **Refer to `ld --verbose | grep SEARCH_DIR` for details**
+
+**The final value of `LIBRARY_PATH`(`gcc -v` can see the actual value) may not necessarily be just the value you set due to several reasons:**
+
+* **Combination with Default and Built-in Paths**: GCC and the linker (`ld`) combine the `LIBRARY_PATH` you set with a set of default and built-in paths. These built-in paths are determined by the GCC's configuration during its installation and are intended to ensure that the compiler and linker can find standard libraries and headers necessary for compilation and linking, even if they are not in standard locations.
+* **Augmentation by GCC**: GCC might automatically augment `LIBRARY_PATH` with additional paths based on its internal logic or other environment variables. For instance, GCC might add paths related to its internal libraries or the target architecture's standard library locations.
+* **Security Restrictions**: In some secure or restricted environments, modifications to environment variables like `LIBRARY_PATH` may be ignored or overridden by security policies. This is often seen in managed or shared computing environments where administrators want to control the software linking process strictly.
+
+### 2.3.2 Runtime
+
+The runtime search order for shared libraries (.so files) on Unix-like systems is determined by several factors and environment settings. Here’s a general overview of how the runtime search order works: (**Refer to `man ld.so` for details**)
+
+* **`RPATH` and `RUNPATH`**: When a binary is compiled, it can be linked with shared libraries using `-rpath` or `-runpath` linker options. These options embed paths directly into the binary where the dynamic linker (`ld.so` or similar) should look for shared libraries. `RPATH` is checked first, but if `RUNPATH` is also specified, it takes precedence over `RPATH` when the dynamic linker is configured to use `DT_RUNPATH` entries (a newer feature).
+* **`LD_LIBRARY_PATH` Environment Variable**: Before falling back to default system paths, the dynamic linker checks the directories listed in the `LD_LIBRARY_PATH` environment variable, if it is set. This allows users to override the system's default library paths or the paths embedded in the binary. However, for security reasons, this variable is ignored for setuid/setgid executables.
+* **Default System Library Paths**: If the library is not found in any of the previously mentioned locations, the linker searches the default library paths. These typically include `/lib`, `/usr/lib`, and their architecture-specific counterparts (e.g., `/lib/x86_64-linux-gnu` on some Linux distributions). The exact default paths can vary between systems and are defined in the dynamic linker's configuration file (usually `/etc/ld.so.conf`), which can include additional directories beyond the standard ones.
+* **DT_RPATH and DT_RUNPATH of Used Libraries (Dependencies)**: If the shared library being loaded has dependencies on other shared libraries, the dynamic linker also searches the `RPATH` and `RUNPATH` of those dependencies. This step ensures that all nested dependencies are resolved correctly.
+* **/etc/ld.so.cache**: This is a compiled list of candidate libraries previously found in the configured system library paths. The dynamic linker uses this cache to speed up the lookup process. The cache can be updated with the `ldconfig` command, which scans the directories in `/etc/ld.so.conf` and the standard directories for libraries, then builds the cache file.
+* **Built-in System Paths**: Finally, if the library still hasn't been found, the linker falls back to built-in system paths hardcoded into the dynamic linker. This usually includes the standard directories like `/lib` and `/usr/lib`.
+
+## 2.4 Link Order
 
 [Why does the order in which libraries are linked sometimes cause errors in GCC?](https://stackoverflow.com/questions/45135/why-does-the-order-in-which-libraries-are-linked-sometimes-cause-errors-in-gcc)
 
@@ -193,11 +203,11 @@ g++ a.cpp -L. -lb -ld # right order
 
 **因此，假设`libA`依赖`libB`，那么需要将`libA`写前面，`libB`写后面**
 
-## 2.4 Environment Variables
+## 2.5 Environment Variables
 
 Please refer to `man ld.so` for details:
 
-### 2.4.1 LD_PRELOAD
+### 2.5.1 LD_PRELOAD
 
 Lists shared libraries that are loaded (preloaded) before any other shared libraries. This can be used to override functions in other shared objects.
 
@@ -248,7 +258,7 @@ fopen() returned NULL
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-### 2.4.2 LD_DEBUG
+### 2.5.2 LD_DEBUG
 
 Usage: `LD_DEBUG=<type> <binary>`, here are all available types.
 
@@ -263,9 +273,9 @@ Usage: `LD_DEBUG=<type> <binary>`, here are all available types.
 1. `unused`: Determine unused DSOs.
 1. `versions`: Display version dependencies.
 
-## 2.5 How to make library
+## 2.6 How to make library
 
-### 2.5.1 How to make static library
+### 2.6.1 How to make static library
 
 ```sh
 cat > foo.cpp << 'EOF'
@@ -292,7 +302,7 @@ gcc -o main main.cpp -O3 -L . -lfoo -lstdc++
 ./main
 ```
 
-### 2.5.2 How to make dynamic library
+### 2.6.2 How to make dynamic library
 
 ```sh
 cat > foo.cpp << 'EOF'
@@ -321,7 +331,7 @@ gcc -o main main.cpp -O3 -L . -Wl,-rpath=`pwd` -lfoo -lstdc++
 ./main
 ```
 
-## 2.6 ABI
+## 2.7 ABI
 
 `ABI`全称是`Application Binary Interface`，它是两个二进制模块间的接口，二进制模块可以是`lib`，可以是操作系统的基础设施，或者一个正在运行的用户程序
 
@@ -341,7 +351,7 @@ gcc -o main main.cpp -O3 -L . -Wl,-rpath=`pwd` -lfoo -lstdc++
 1. 如何发起系统调用
 1. `lib`、`object file`等的文件格式
 
-### 2.6.1 Language-Specific ABI
+### 2.7.1 Language-Specific ABI
 
 摘自[What is C++ ABI?](https://www.quora.com/What-is-C-ABI)
 
@@ -354,7 +364,7 @@ gcc -o main main.cpp -O3 -L . -Wl,-rpath=`pwd` -lfoo -lstdc++
 > * How are overloaded functions and operators “named” in object files? This is where “name mangling” usually comes in: The type of the various functions is encoded in their object file names. That also handles the “overloading” that results from template instantiations.
 > * How are spilled inline functions and template instantiations handled? After all, different object files might use/spill the same instances, which could lead to collisions.
 
-### 2.6.2 Dual ABI
+### 2.7.2 Dual ABI
 
 [Dual ABI](https://gcc.gnu.org/onlinedocs/libstdc++/manual/using_dual_abi.html)
 
@@ -370,7 +380,7 @@ gcc -o main main.cpp -O3 -L . -Wl,-rpath=`pwd` -lfoo -lstdc++
 * [ABI Policy and Guidelines](https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html)
 * [C/C++ ABI兼容那些事儿](https://zhuanlan.zhihu.com/p/556726543)
 
-### 2.6.3 ABI Mismatch Issue
+### 2.7.3 ABI Mismatch Issue
 
 ```
 # compile works fine
@@ -389,7 +399,7 @@ The errors you're encountering at runtime indicate that your application (`main`
 * `gcc -o main main.cpp -O0 -lstdc++ -fuse-ld=gold -Wl,--verbose`: Check the dynamic lib path that used at link time.
 * `ldd main`: Check the dynamic lib path that used at runtime.
 
-## 2.7 Commonly-used Librarys
+## 2.8 Commonly-used Librarys
 
 **`libc/glibc/glib`（`man libc/glibc`）**
 
@@ -417,7 +427,7 @@ The errors you're encountering at runtime indicate that your application (`main`
 1. `libz`：compression/decompression library
 1. `libpthread`：POSIX threads library
 
-## 2.8 Reference
+## 2.9 Reference
 
 * [Program Library HOWTO](https://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html)
 * [Shared Libraries: Understanding Dynamic Loading](https://amir.rachum.com/blog/2016/09/17/shared-libraries/)
@@ -1420,6 +1430,7 @@ end, back to main
     * `-Wno<xxx>`：关闭指定种类的warning提示
     * `-Werror`：所有warning变为error（会导致编译失败）
     * `-Werror=<xxx>`：指定某个warning变为error（会导致编译失败）
+1. **`-static`：所有库都用静态链接，包括`libc`和`libc++`**
 1. **`-D <macro_name>[=<macro_definition>]`：定义宏**
     * 例如`-D MY_DEMO_MACRO`、`-D MY_DEMO_MACRO=2`、`-D 'MY_DEMO_MACRO="hello"'`、`-D 'ECHO(a)=(a)'`
 1. **`-U <macro_name>`：取消宏定义**
@@ -1462,12 +1473,20 @@ end, back to main
 
 ```sh
 g++ -o main main.cpp -static-libstdc++
+
+# Or
+
+g++ -o main main.cpp -static
 ```
 
 **Use `gcc`:**
 
 ```sh
 gcc main.cpp -o main -std=gnu++17 -Wl,-Bstatic -lstdc++ -Wl,-Bdynamic
+
+# Or
+
+gcc main.cpp -o main -std=gnu++17 -static -lstdc++
 ```
 
 **Use `cmake`:**

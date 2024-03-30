@@ -81,7 +81,8 @@ gcc -o main main.cpp -lstdc++ -std=gnu++17 -ldl -g
 git clone https://github.com/fmtlib/fmt.git
 cd fmt
 
-cmake -B build && cmake --build build -j 4
+cmake -B build -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
+cmake --build build -j 4
 sudo cmake --install build
 ```
 
@@ -96,11 +97,13 @@ target_link_libraries(xxx fmt::fmt)
 
 ```cpp
 #include <fmt/core.h>
+#include <fmt/ranges.h>
 
-#include <iostream>
+#include <vector>
 
 int main() {
-    std::cout << fmt::format("hello {}", "Liuye") << std::endl;
+    std::vector<int32_t> nums{1, 2, 3, 4, 5};
+    fmt::print("Joined string: {}\n", fmt::join(nums, ","));
     return 0;
 }
 ```
@@ -117,7 +120,8 @@ int main() {
 git clone https://github.com/gflags/gflags.git
 cd gflags
 
-cmake -B build -DBUILD_SHARED_LIBS=OFF && cmake --build build -j 4
+cmake -B build -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
+cmake --build build -j 4
 sudo cmake --install build
 ```
 
@@ -162,7 +166,7 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-* `gcc -o main main.cpp -lstdc++ -std=gnu++17 -lgflags`
+* `gcc -o main main.cpp -lstdc++ -std=gnu++17 -lgflags -lpthread`
 * `./main --test_bool true --test_int32 100 --test_double 6.666 --test_str hello`
 
 ## 3.2 glog
@@ -174,7 +178,8 @@ git clone https://github.com/google/glog.git
 cd glog
 
 # BUILD_SHARED_LIBS用于控制生成动态库还是静态库，默认是动态库，这里我们选择静态库
-cmake -B build -DBUILD_SHARED_LIBS=OFF && cmake --build build -j 4
+cmake -B build -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
+cmake --build build -j 4
 sudo cmake --install build
 ```
 
@@ -253,7 +258,8 @@ git clone https://github.com/google/googletest.git
 cd googletest
 
 # BUILD_SHARED_LIBS用于控制生成动态库还是静态库，默认是动态库，这里我们选择静态库
-cmake -B build -DBUILD_SHARED_LIBS=OFF && cmake --build build -j 4
+cmake -B build -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
+cmake --build build -j 4
 sudo cmake --install build
 ```
 
@@ -383,7 +389,7 @@ git clone https://github.com/google/benchmark.git --depth 1
 cd benchmark
 
 # 这里指定googletest的工程路径（不加任何参数会有提示）
-cmake -B build -DGOOGLETEST_PATH=~/googletest/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC" 
+cmake -B build -DGOOGLETEST_PATH=~/googletest/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
 cmake --build build -j 4
 sudo cmake --install build
 ```
