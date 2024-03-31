@@ -409,7 +409,7 @@ make
 
 # 3 variables
 
-## 3.1 常用变量
+## 3.1 Frequently-Used Variables
 
 参考（[cmake-variables](https://cmake.org/cmake/help/latest/manual/cmake-variables.7.html)）：
 
@@ -657,7 +657,7 @@ endif(CURL_FOUND)
 
 你可以通过`<LibaryName>_FOUND`来判断模块是否被找到，如果没有找到，按照工程的需要关闭某些特性、给出提醒或者中止编译，上面的例子就是报出致命错误并终止构建。如果`<LibaryName>_FOUND`为真，则将`<LibaryName>_INCLUDE_DIR`加入`INCLUDE_DIRECTORIES`
 
-### 5.14.1 引入非官方的库
+### 5.14.1 Add Non-Official Library
 
 **通过`find_package`引入非官方的库，该方式只对支持cmake编译安装的库有效**
 
@@ -703,7 +703,7 @@ else(GLOG_FOUND)
 endif(GLOG_FOUND)
 ```
 
-### 5.14.2 Module模式与Config模式
+### 5.14.2 Module Mode & Config Mode
 
 通过上文我们了解了通过`cmake`引入依赖库的基本用法。知其然也要知其所以然，`find_package`对我们来说是一个黑盒子，那么它是具体通过什么方式来查找到我们依赖的库文件的路径的呢。到这里我们就不得不聊到`find_package`的两种模式，一种是`Module`模式，也就是我们引入`curl`库的方式。另一种叫做`Config`模式，也就是引入`glog`库的模式。下面我们来详细介绍着两种方式的运行机制
 
@@ -711,11 +711,11 @@ endif(GLOG_FOUND)
 
 如果`Module`模式搜索失败，没有找到对应的`Find<LibraryName>.cmake`文件，则转入`Config`模式进行搜索。它主要通过`<LibraryName>Config.cmake`或`<lower-case-package-name>-config.cmake`这两个文件来引入我们需要的库。以我们刚刚安装的`glog`库为例，在我们安装之后，它在`/usr/local/lib/cmake/glog/`目录下生成了`glog-config.cmake`文件，而`/usr/local/lib/cmake/glog/`正是`find_package`函数的搜索路径之一
 
-### 5.14.3 编写自己的`Find<LibraryName>.cmake`模块
+### 5.14.3 Create Customized `Find<LibraryName>.cmake`
 
 假设我们编写了一个新的函数库，我们希望别的项目可以通过`find_package`对它进行引用我们应该怎么办呢。
 
-我们在当前目录下新建一个`ModuleMode`的文件夹，在里面我们编写一个计算两个整数之和的一个简单的函数库。库函数以手工编写`Makefile`的方式进行安装，库文件安装在`/usr/lib`目录下，头文件放在`/usr/include`目录下。其中的Makefile文件如下：
+我们在当前目录下新建一个`ModuleMode`的文件夹，在里面我们编写一个计算两个整数之和的一个简单的函数库。库函数以手工编写`Makefile`的方式进行安装，库文件安装在`/usr/lib`目录下，头文件放在`/usr/include`目录下。其中的`Makefile`文件如下：
 
 ```makefile
 # 1、准备工作，编译方式、目标文件名、依赖库路径的定义。
@@ -1014,15 +1014,34 @@ cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo <path>
 
 ## 6.7 Include All Source File
 
+### 6.7.1 file
+
+```cmake
+# Search for all .cpp and .h files in the current directory
+file(GLOB MY_PROJECT_SOURCES "*.cpp")
+
+# Add the found files to the executable
+add_executable(MyExecutable ${MY_PROJECT_SOURCES})
+```
+
+If your project has a more complex structure and you wish to recursively search all subdirectories for files, you can replace the `file(GLOB ...) command with `file(GLOB_RECURSE ...)`:
+
+```cmake
+file(GLOB_RECURSE MY_PROJECT_SOURCES "*.cpp")
+add_executable(MyExecutable ${MY_PROJECT_SOURCES})
+```
+
+### 6.7.2 aux_source_directory
+
 如果同一个目录下有多个源文件，那么在使用`add_executable`命令的时候，如果要一个个填写，那么将会非常麻烦，并且后续维护的代价也很大
 
-```
+```cmake
 add_executable(Demo main.cxx opt1.cxx opt2.cxx)
 ```
 
 我们可以使用`aux_source_directory(<dir> <variable>)`）命令，该命令可以扫描一个目录下得所有源文件，并将文件列表赋值给一个变量
 
-```sh
+```cmake
 # 查找当前目录下的所有源文件
 # 并将名称保存到 DIR_SRCS 变量
 aux_source_directory(. DIR_SRCS)

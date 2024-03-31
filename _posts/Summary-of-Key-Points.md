@@ -1619,7 +1619,15 @@ It is a bottom-up parsing technique, meaning it starts with the individual token
 
 In summary, `LL(1)` and `LR(1)` are both parsing techniques used in compiler construction, but they differ in terms of their parsing approach and the complexity of grammars they can handle. `LL(1)` is simpler and more limited in the grammars it can handle, while `LR(1)` is more powerful and can handle a wider range of grammars, making it more suitable for parsing complex programming languages.
 
-## 8.2 Unclassified
+## 8.2 Cache
+
+* **Cache Hit:** A cache hit occurs when a requested data is found in the cache. This leads to reduced data retrieval time and less load on the database, as the information can be served directly from the cache without querying the primary data source.
+* **Cache Miss:** A cache miss happens when the requested data is not found in the cache. This necessitates a query to the underlying database or service to retrieve the data, which is then often stored in the cache for future requests. Cache misses can increase the latency of data retrieval and put more load on the database.
+* **Cache Penetration (缓存穿透):** Cache penetration refers to a situation where queries are made for data that does not exist in the database or the cache, usually through non-existent keys or IDs. This can lead to unnecessary database queries, increasing load and potentially affecting performance. Strategies to mitigate cache penetration include using a null object pattern (caching the null result for a non-existent key) or implementing tighter validation of input queries.
+* **Cache Breakdown (缓存击穿):** Cache breakdown, also known as cache breakdown, occurs when a frequently accessed cache item expires, leading to concurrent requests hitting the database before the cache is refreshed. This can cause sudden spikes in database load, potentially leading to performance issues. Solutions to prevent cache breakdown include setting staggered expiration times, using a lock or semaphore to ensure only one query refreshes the cache, or employing "hot" data handling techniques where critical data is refreshed in the cache proactively.
+* **Cache Avalanche (缓存雪崩):** A cache avalanche is a more severe issue that occurs when many, or even all, cache entries expire simultaneously or the cache fails entirely, leading to a massive surge of database requests that can overwhelm the database and cause widespread system failure. Strategies to avoid cache avalanches include using varied expiration times for cached items to prevent simultaneous expirations, implementing redundant caching systems, and ensuring that the system has fallback mechanisms in place.
+
+## 8.3 Assorted
 
 1. Reactive Programming
 1. Failed retry will loose fairness
