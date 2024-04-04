@@ -4468,9 +4468,88 @@ int main() {
 
 **示例3：linux内核大量用到了`asm`，具体可以参考[linux-asm](https://github.com/torvalds/linux/blob/master/arch/x86/include/asm)**
 
-# 10 Policy
+# 10 Mechanism
 
-## 10.1 Pointer Stability
+## 10.1 Move Semantics
+
+```cpp
+#include <iostream>
+#include <vector>
+
+class Foo {
+public:
+    Foo() { std::cout << "Foo::Foo()" << std::endl; }
+    Foo(const Foo& foo) { std::cout << "Foo::Foo(const Foo&)" << std::endl; }
+    Foo(Foo&& foo) { std::cout << "Foo::Foo(Foo&&)" << std::endl; }
+    Foo& operator=(const Foo&) {
+        std::cout << "Foo::operator=" << std::endl;
+        return *this;
+    }
+    Foo& operator=(Foo&&) {
+        std::cout << "Foo::operator=&&" << std::endl;
+        return *this;
+    }
+};
+
+Foo getFoo() {
+    return {};
+}
+
+int main() {
+    std::vector<Foo> v;
+    // Avoid scale up
+    v.reserve(3);
+
+    std::cout << "\npush_back without std::move" << std::endl;
+    // This move operation is possible because the object returned by getFoo() is an rvalue, which is eligible for move semantics.
+    v.push_back(getFoo());
+
+    std::cout << "\npush_back with std::move (1)" << std::endl;
+    v.push_back(std::move(getFoo()));
+
+    std::cout << "\npush_back with std::move (2)" << std::endl;
+    Foo foo = getFoo();
+    v.push_back(std::move(foo));
+
+    std::cout << "\nassign without std::move" << std::endl;
+    Foo foo_assign;
+    foo_assign = getFoo();
+
+    std::cout << "\nassign with std::move" << std::endl;
+    foo_assign = std::move(getFoo());
+
+    return 0;
+}
+```
+
+**Output:**
+
+```
+push_back without std::move
+Foo::Foo()
+Foo::Foo(Foo&&)
+
+push_back with std::move (1)
+Foo::Foo()
+Foo::Foo(Foo&&)
+
+push_back with std::move (2)
+Foo::Foo()
+Foo::Foo(Foo&&)
+
+assign without std::move
+Foo::Foo()
+Foo::Foo()
+Foo::operator=&&
+
+assign with std::move
+Foo::Foo()
+Foo::operator=&&
+```
+
+# 11 Policy
+
+## 11.1 Pointer Stability
 
 **`pointer stability`通常用于描述容器。当我们说一个容器是`pointer stability`时，是指，当某个元素添加到容器之后、从容器删除之前，该元素的内存地址不变，也就是说，该元素的内存地址，不会受到容器的添加删除元素、扩缩容、或者其他操作影响**
 
@@ -4496,7 +4575,7 @@ int main() {
 | `phmap::node_hash_map` | ✅ |  |
 | `phmap::node_hash_set` | ✅ |  |
 
-## 10.2 Exception Safe
+## 11.2 Exception Safe
 
 [Wiki-Exception safety](https://en.wikipedia.org/wiki/Exception_safety)
 
@@ -4507,7 +4586,7 @@ int main() {
 1. `Basic exception safety`：可能会抛出异常，操作失败的部分可能会导致副作用，但所有不变量都会被保留。任何存储的数据都将包含可能与原始值不同的有效值。资源泄漏（包括内存泄漏）通常通过一个声明所有资源都被考虑和管理的不变量来排除
 1. `No exception safety`：不承诺异常安全
 
-## 10.3 RAII
+## 11.3 RAII
 
 `RAII, Resource Acquisition is initialization`，即资源获取即初始化。典型示例包括：`std::lock_guard`、`defer`。简单来说，就是在对象的构造方法中初始化资源，在析构函数中销毁资源。而构造函数与析构函数的调用是由编译器自动插入的，减轻了开发者的心智负担
 
@@ -4524,11 +4603,11 @@ private:
 };
 ```
 
-# 11 Tips
+# 12 Tips
 
-## 11.1 Class Related
+## 12.1 Class Related
 
-### 11.1.1 How to define static members in a class
+### 12.1.1 How to define static members in a class
 
 **在类中声明静态成员，在类外定义（赋值）静态成员，示例如下：**
 
@@ -4547,7 +4626,7 @@ int main() {
 }
 ```
 
-### 11.1.2 Non-static members of a class cannot undergo type deduction
+### 12.1.2 Non-static members of a class cannot undergo type deduction
 
 类的非静态成员，无法进行类型推导，必须显式指定类型（因为类型信息必须是不可变的）；静态成员可以。例如下面示例就存在语法错误：
 
@@ -4576,9 +4655,9 @@ private:
 };
 ```
 
-## 11.2 Initialization
+## 12.2 Initialization
 
-### 11.2.1 Initializer List
+### 12.2.1 Initializer List
 
 1. 对于内置类型，直接进行值拷贝。使用初始化列表还是在构造函数体中进行初始化没有差别
 1. 对于类类型
@@ -4689,7 +4768,7 @@ A's default constructor
 A's move assign operator
 ```
 
-### 11.2.2 Various Initialization Types
+### 12.2.2 Various Initialization Types
 
 1. 默认初始化：`type variableName;`
 1. 直接初始化/构造初始化（至少有1个参数）：`type variableName(args);`
@@ -4822,7 +4901,7 @@ A's (int, int) constructor
 ============(值初始化 a11)============
 ```
 
-### 11.2.3 Initialization Order of class Members
+### 12.2.3 Initialization Order of class Members
 
 1. 初始化列表
 1. 成员定义处的列表初始化，当且仅当该成员未出现在初始化列表中时才会生效
@@ -4875,7 +4954,7 @@ initialized_at_initialization_list
 initialized_at_construct_block
 ```
 
-### 11.2.4 Initialization of static Local Variables
+### 12.2.4 Initialization of static Local Variables
 
 ```cpp
 void foo() {
@@ -4908,7 +4987,7 @@ void foo() {
 }
 ```
 
-### 11.2.5 Initialization of non-static class Members
+### 12.2.5 Initialization of non-static class Members
 
 非静态成员不允许使用构造初始化，但是允许使用列表初始化（本质上还是调用了对应的构造函数）
 
@@ -4935,9 +5014,9 @@ int main() {
 }
 ```
 
-## 11.3 Pointer
+## 12.3 Pointer
 
-### 11.3.1 Member Function Pointer
+### 12.3.1 Member Function Pointer
 
 成员函数指针需要通过`.*`或者`->*`运算符进行调用
 
@@ -4996,7 +5075,7 @@ int main() {
 }
 ```
 
-### 11.3.2 How to pass multi-dimensional pointer parameters
+### 12.3.2 How to pass multi-dimensional pointer parameters
 
 ```cpp
 #include <iostream>
@@ -5036,9 +5115,9 @@ int main() {
 }
 ```
 
-## 11.4 Reference
+## 12.4 Reference
 
-### 11.4.1 Reference Initialization
+### 12.4.1 Reference Initialization
 
 **引用只能在定义处初始化**
 
@@ -5064,7 +5143,7 @@ b=2
 ref=2
 ```
 
-## 11.5 Mock class
+## 12.5 Mock class
 
 有时在测试的时候，我们需要mock一个类的实现，我们可以在测试的cpp文件中实现这个类的所有方法（**注意，必须是所有方法**），就能够覆盖原有库文件中的实现。下面以一个例子来说明
 
@@ -5241,7 +5320,7 @@ person.cpp:(.text+0x2a): Person::sleep() 的多重定义
 collect2: 错误：ld 返回 1
 ```
 
-## 11.6 Non-template parameter pack
+## 12.6 Non-template parameter pack
 
 **非模板参数包有如下几个特点：**
 
@@ -5270,7 +5349,7 @@ int main() {
 }
 ```
 
-## 11.7 Variable-length Array
+## 12.7 Variable-length Array
 
 Variable-length array (VLA), which is a feature not supported by standard C++. However, some compilers, particularly in C and as extensions in C++, do provide support for VLAs.
 
@@ -5326,48 +5405,9 @@ array2: -532
 num4: -32
 ```
 
-## 11.8 Container
+# 13 FAQ
 
-### 11.8.1 vector::push_back
-
-```cpp
-#include <iostream>
-#include <vector>
-
-class Foo {
-public:
-    Foo() { std::cout << "Default Constructor" << std::endl; }
-    Foo(const Foo& foo) { std::cout << "Copy Constructor" << std::endl; }
-    Foo(Foo&& foo) { std::cout << "Move Constructor" << std::endl; }
-};
-
-Foo getFoo() {
-    return {};
-}
-
-int main() {
-    std::vector<Foo> v;
-    // Avoid scale up
-    v.reserve(3);
-
-    std::cout << "Without std::move" << std::endl;
-    // This move operation is possible because the object returned by getFoo() is an rvalue, which is eligible for move semantics.
-    v.push_back(getFoo());
-
-    std::cout << "With std::move (1)" << std::endl;
-    v.push_back(std::move(getFoo()));
-
-    std::cout << "With std::move (2)" << std::endl;
-    Foo foo = getFoo();
-    v.push_back(std::move(foo));
-
-    return 0;
-}
-```
-
-# 12 FAQ
-
-## 12.1 Why is it unnecessary to specify the size when releasing memory with free and delete
+## 13.1 Why is it unnecessary to specify the size when releasing memory with free and delete
 
 [How does free know how much to free?](https://stackoverflow.com/questions/1518711/how-does-free-know-how-much-to-free)
 
@@ -5389,11 +5429,11 @@ ____ The allocated block ____
           +-- The address you are given
 ```
 
-## 12.2 Do parameter types require lvalue or rvalue references
+## 13.2 Do parameter types require lvalue or rvalue references
 
-## 12.3 Does the return type require lvalue or rvalue references
+## 13.3 Does the return type require lvalue or rvalue references
 
-# 13 参考
+# 14 参考
 
 * [C++11\14\17\20 特性介绍](https://www.jianshu.com/p/8c4952e9edec)
 * [关于C++：静态常量字符串(类成员)](https://www.codenong.com/1563897/)

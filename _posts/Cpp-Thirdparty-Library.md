@@ -726,12 +726,35 @@ SELECT users.id,users.first_name,users.last_name,users.age FROM users WHERE (use
 DELETE FROM users WHERE (users.id=10000001)
 ```
 
-# 5 Assorted
+# 5 apache
+
+## 5.1 arrow
+
+[apache-arrow](https://github.com/apache/arrow)
+
+Requirement:
+
+1. `protobuf`
+
+```sh
+git clone https://github.com/apache/arrow.git
+cd arrow/cpp
+
+cmake --list-presets
+cmake --preset -N ninja-release
+
+cmake -B build --preset ninja-release
+cmake --build build -j 4
+sudo cmake --install build
+```
+
+[Reading and writing Parquet files](https://arrow.apache.org/docs/cpp/parquet.html#)
+
+# 6 Assorted
 
 1. [Awesome C++ Projects](https://github.com/fffaraz/awesome-cpp)
 1. [parallel-hashmap](https://github.com/greg7mdp/parallel-hashmap)：`parallel-hashmap`提供了一组高性能、并发安全的`map`，用于替换`std`以及`boost`中的`map`
     * [phmap_gdb.py](https://github.com/greg7mdp/parallel-hashmap/blob/master/phmap_gdb.py)
 1. [cpp-httplib](https://github.com/yhirose/cpp-httplib)：`cpp-httplib`以头文件的方式提供`http`协议的相关支持
 1. [json](https://github.com/nlohmann/json)：`json`库
-1. [apache-arrow](https://github.com/apache/arrow)
 1. [libfiu(Failure Injection Unit)](https://blitiri.com.ar/p/libfiu/)：错误注入

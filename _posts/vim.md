@@ -1888,7 +1888,7 @@ call plug#begin()
 
 " 省略公共配置
 " 将 触发代码片段扩展 映射到快捷键 [Ctrl] + l
-imap <c-l> <Plug>(coc-snippets-expand)
+imap <c-e> <Plug>(coc-snippets-expand)
 " 在 visual 模式下，将 跳转到下一个占位符 映射到快捷键 [Ctrl] + j
 vmap <c-j> <Plug>(coc-snippets-select)
 " 在编辑模式下，将 跳转到下一个/上一个占位符 分别映射到 [Ctrl] + j 和 [Ctrl] + k
@@ -1900,7 +1900,7 @@ call plug#end()
 
 **使用：**
 
-* 在编辑模式下，输入片段后，按`<c-l>`触发片段扩展
+* 在编辑模式下，输入片段后，按`<c-e>`触发片段扩展
 * `:CocList snippets`：查看所有可用的`snippet`
 
 **问题：**
@@ -2891,6 +2891,7 @@ Plug 'google/vim-glaive'
 
 " 将 :FormatCode 映射到快捷键 [Ctrl] + l
 nnoremap <c-l> :FormatCode<cr>
+xnoremap <c-l> :FormatLines<cr>
 
 call plug#end()
 
@@ -3021,7 +3022,7 @@ Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
 " Trigger configuration.
-let g:UltiSnipsExpandTrigger="<c-l>"
+let g:UltiSnipsExpandTrigger="<c-e>"
 let g:UltiSnipsJumpForwardTrigger="<c-j>"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 
@@ -3368,6 +3369,7 @@ Plug 'google/vim-glaive'
 
 " 将 :FormatCode 映射到快捷键 [Ctrl] + l
 nnoremap <c-l> :FormatCode<cr>
+xnoremap <c-l> :FormatLines<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3381,7 +3383,7 @@ Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
 " Trigger configuration.
-let g:UltiSnipsExpandTrigger="<c-l>"
+let g:UltiSnipsExpandTrigger="<c-e>"
 let g:UltiSnipsJumpForwardTrigger="<c-j>"
 let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 
