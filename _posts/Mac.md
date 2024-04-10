@@ -509,7 +509,7 @@ plugins=(<原有插件> zsh-autosuggestions)
 * `Modifier keys left_command` -> `Modifier keys left_option`
 * `Modifier keys left_option` -> `Modifier keys left_command`
 
-# 6 常见问题
+# 6 FAQ
 
 ## 6.1 VirtualBox(rc=-1908)
 
@@ -595,6 +595,12 @@ codesign --remove-signature /Applications/Visual\ Studio\ Code.app/Contents/Fram
 ## 6.7 配置开机自启动
 
 * `14.x`及以上版本：搜索`Login Items`
+
+## 6.8 快速黑屏
+
+```sh
+pmset displaysleepnow
+```
 
 # 7 参考
 
