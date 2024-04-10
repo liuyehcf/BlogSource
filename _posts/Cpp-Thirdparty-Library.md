@@ -11,17 +11,194 @@ categories:
 
 <!--more-->
 
-# 1 boost
+# 1 GNU
 
-## 1.1 Installation
+## 1.1 libbacktrace
 
-### 1.1.1 Package Manager
+```sh
+git clone https://github.com/ianlancetaylor/libbacktrace.git
+cd libbacktrace
+
+./configure
+make -j 4
+sudo make install
+```
+
+```cpp
+#include <backtrace-supported.h>
+#include <backtrace.h>
+#include <cxxabi.h>
+
+#include <iostream>
+
+// Callback for backtrace_full
+static int callback(void* data, uintptr_t pc, const char* filename, int lineno, const char* function) {
+    char* demangled = nullptr;
+    int status = 0;
+    if (function) {
+        demangled = abi::__cxa_demangle(function, NULL, NULL, &status);
+        if (demangled) {
+            function = demangled;
+        }
+    }
+    std::cout << filename << ":" << lineno << ": 0x" << std::hex << pc << " " << function << std::endl;
+    free(demangled);
+    // Returning 0 continues the backtrace
+    return 0;
+}
+
+// Error callback
+static void error_callback(void* data, const char* msg, int errnum) {
+    std::cerr << "ERROR: " << msg << " (" << errnum << ")" << std::endl;
+}
+
+// Function to print the current stack trace
+void print_stack_trace() {
+    struct backtrace_state* state = backtrace_create_state(NULL, BACKTRACE_SUPPORTS_THREADS, error_callback, NULL);
+    backtrace_full(state, 0, callback, error_callback, NULL);
+}
+
+// Sample function that calls another function to generate a stack trace
+void my_function() {
+    print_stack_trace();
+}
+
+int main() {
+    my_function();
+    return 0;
+}
+```
+
+```sh
+gcc -o main main.cpp -lstdc++ -std=gnu++17 -lbacktrace -g
+./main
+```
+
+```
+/data25/chenfeng.he/cpp/test/main.cpp:31: 0x4014d3 print_stack_trace()
+/data25/chenfeng.he/cpp/test/main.cpp:24: 0x4014df my_function()
+/data25/chenfeng.he/cpp/test/main.cpp:28: 0x4014eb main
+../csu/libc-start.c:123: 0x7fd890a7c2e0 __libc_start_main
+```
+
+## 1.2 libunwind
+
+[The libunwind project](https://www.nongnu.org/libunwind/index.html)
+
+[github-libunwind](https://github.com/libunwind/libunwind)
+
+```sh
+git clone https://github.com/libunwind/libunwind.git
+cd libunwind
+git checkout v1.6.2
+
+autoreconf -i
+./configure
+make -j 4
+sudo make install
+```
+
+```cpp
+#include <cxxabi.h> // Include for __cxa_demangle
+#include <libunwind.h>
+
+#include <cstdlib> // For free
+#include <iostream>
+
+void print_stack_trace() {
+    unw_cursor_t cursor;
+    unw_context_t context;
+
+    // Initialize context to the current machine state.
+    unw_getcontext(&context);
+    unw_init_local(&cursor, &context);
+
+    // Walk the stack up, one frame at a time.
+    while (unw_step(&cursor) > 0) {
+        unw_word_t offset, pc;
+        char sym[256];
+
+        if (unw_get_reg(&cursor, UNW_REG_IP, &pc)) {
+            std::cout << "Error: cannot read program counter" << std::endl;
+            break;
+        }
+
+        if (unw_get_proc_name(&cursor, sym, sizeof(sym), &offset) == 0) {
+            int status;
+            // Attempt to demangle the symbol
+            char* demangled_name = abi::__cxa_demangle(sym, nullptr, nullptr, &status);
+
+            std::cout << "0x" << std::hex << pc << ": ";
+
+            if (status == 0 && demangled_name) {
+                std::cout << demangled_name << " (+0x" << std::hex << offset << ")" << std::endl;
+                free(demangled_name); // Free the demangled name
+            } else {
+                // If demangling failed, print the mangled name
+                std::cout << sym << " (+0x" << std::hex << offset << ")" << std::endl;
+            }
+        } else {
+            std::cout << " -- error: unable to obtain symbol name for this frame" << std::endl;
+        }
+    }
+}
+
+void recursive(uint16_t cnt) {
+    if (cnt == 0) {
+        print_stack_trace();
+        return;
+    }
+    recursive(cnt - 1);
+}
+
+int main(int argc, char** argv) {
+    recursive(10);
+    return 0;
+}
+```
+
+```sh
+# -DUNW_LOCAL_ONLY is mandatory, otherwise some link error may occur, like:
+#    undefined reference to `_Ux86_64_init_local'
+#    undefined reference to `_Ux86_64_get_reg'
+#    undefined reference to `_Ux86_64_get_proc_name'
+#    undefined reference to `_Ux86_64_step'
+gcc -o main main.cpp -lstdc++ -std=gnu++17 -lunwind -DUNW_LOCAL_ONLY
+./main
+```
+
+```
+0x401437: recursive(unsigned short) (+0x1a)
+0x40144a: recursive(unsigned short) (+0x2d)
+0x40144a: recursive(unsigned short) (+0x2d)
+0x40144a: recursive(unsigned short) (+0x2d)
+0x40144a: recursive(unsigned short) (+0x2d)
+0x40144a: recursive(unsigned short) (+0x2d)
+0x40144a: recursive(unsigned short) (+0x2d)
+0x40144a: recursive(unsigned short) (+0x2d)
+0x40144a: recursive(unsigned short) (+0x2d)
+0x40144a: recursive(unsigned short) (+0x2d)
+0x40144a: recursive(unsigned short) (+0x2d)
+0x401465: main (+0x19)
+0x7f19ef09f2e1: __libc_start_main (+0xf1)
+0x40114a: _start (+0x2a)
+```
+
+### 1.2.1 How to automatically generate a stacktrace when my program crashes
+
+[How to automatically generate a stacktrace when my program crashes](https://stackoverflow.com/questions/77005/how-to-automatically-generate-a-stacktrace-when-my-program-crashes)
+
+# 2 boost
+
+## 2.1 Installation
+
+### 2.1.1 Package Manager
 
 ```sh
 yum install -y boost-devel
 ```
 
-### 1.1.2 From Source
+### 2.1.2 From Source
 
 [Boost Downloads](https://www.boost.org/users/download/)
 
@@ -35,7 +212,7 @@ cd boost_1_84_0
 sudo ./b2 install
 ```
 
-## 1.2 Print Stack
+## 2.2 Print Stack
 
 Boost.Stacktrace provides several options for printing stack traces, depending on the underlying technology used to capture the stack information:
 
@@ -65,7 +242,7 @@ int main() {
 }
 ```
 
-### 1.2.1 With addr2line
+### 2.2.1 With addr2line
 
 **Compile:**
 
@@ -91,7 +268,7 @@ Boost version: 1.84.0
  8# _start at :?
 ```
 
-### 1.2.2 With libbacktrace
+### 2.2.2 With libbacktrace
 
 **Compile:**
 
@@ -118,13 +295,13 @@ Boost version: 1.84.0
  8# _start in ./main
 ```
 
-## 1.3 Reference
+## 2.3 Reference
 
 * [The Boost C++ Libraries BoostBook Documentation Subset](https://www.boost.org/doc/libs/master/doc/html/)
 * [How to print current call stack](https://www.boost.org/doc/libs/1_66_0/doc/html/stacktrace/getting_started.html)
 * [print call stack in C or C++](https://stackoverflow.com/Questions/3899870/print-call-stack-in-c-or-c)
 
-# 2 [fmt](https://github.com/fmtlib/fmt)
+# 3 [fmt](https://github.com/fmtlib/fmt)
 
 **安装`fmt`：**
 
@@ -161,9 +338,9 @@ int main() {
 
 * `gcc -o main main.cpp -lstdc++ -std=gnu++17 -lfmt`
 
-# 3 Google
+# 4 Google
 
-## 3.1 gflag
+## 4.1 gflag
 
 **安装[gflag](https://github.com/gflags/gflags)：**
 
@@ -220,7 +397,7 @@ int main(int argc, char* argv[]) {
 * `gcc -o main main.cpp -lstdc++ -std=gnu++17 -lgflags -lpthread`
 * `./main --test_bool true --test_int32 100 --test_double 6.666 --test_str hello`
 
-## 3.2 glog
+## 4.2 glog
 
 **安装[glog](https://github.com/google/glog)：**
 
@@ -242,7 +419,7 @@ find_package(GLOG)
 target_link_libraries(xxx glog::glog)
 ```
 
-### 3.2.1 Print Stack
+### 4.2.1 Print Stack
 
 [[Enhancement] wrap libc's __cxa_throw to print stack trace when throw exceptions](https://github.com/StarRocks/starrocks/pull/13410)
 
@@ -300,7 +477,7 @@ int main(int argc, char* argv[]) {
 gcc -o main main.cpp -Wl,-wrap=__cxa_throw -lstdc++ -std=gnu++17 -Wl,-Bstatic -lglog -lgflags -Wl,-Bdynamic -lunwind -lpthread
 ```
 
-## 3.3 gtest
+## 4.3 gtest
 
 **安装[gtest](https://github.com/google/googletest)：**
 
@@ -378,7 +555,7 @@ cmake -B build && cmake --build build
 build/gtest_demo
 ```
 
-### 3.3.1 Macros
+### 4.3.1 Macros
 
 1. `TEST(test_case_name, test_name)`: Defines a test case.
     ```cpp
@@ -428,11 +605,11 @@ build/gtest_demo
 1. `EXPECT_THROW(statement, exception_type)`: Expects that a specific statement throws a particular exception.
 1. `ASSERT_THROW(statement, exception_type)`: Asserts that a specific statement throws a particular exception.
 
-### 3.3.2 Tips
+### 4.3.2 Tips
 
 1. 假设编译得到的二进制是`test`，通过执行`./test --help`就可以看到所有gtest支持的参数，包括执行特定case等等
 
-## 3.4 benchmark
+## 4.4 benchmark
 
 **安装[benchmark](https://github.com/google/benchmark)：**
 
@@ -522,13 +699,13 @@ BM_StringCreation       5.12 ns         5.12 ns    136772962
 BM_StringCopy           21.0 ns         21.0 ns     33441350
 ```
 
-### 3.4.1 quick-benchmark
+### 4.4.1 quick-benchmark
 
 [quick-bench（在线）](https://quick-bench.com/)
 
-### 3.4.2 Tips
+### 4.4.2 Tips
 
-#### 3.4.2.1 benchmark::DoNotOptimize
+#### 4.4.2.1 benchmark::DoNotOptimize
 
 避免优化本不应该优化的代码，其源码如下：
 
@@ -542,20 +719,20 @@ inline BENCHMARK_ALWAYS_INLINE void DoNotOptimize(Tp& value) {
 }
 ```
 
-#### 3.4.2.2 Run Specific Case
+#### 4.4.2.2 Run Specific Case
 
 使用参数`--benchmark_filter=<regexp>`，此外可以使用`--help`查看所有参数
 
-### 3.4.3 Reference
+### 4.4.3 Reference
 
 * [benchmark/docs/user_guide.md](https://github.com/google/benchmark/blob/main/docs/user_guide.md)
 * [c++性能测试工具：google benchmark入门（一）](https://www.cnblogs.com/apocelipes/p/10348925.html)
 
-## 3.5 [gperftools/gperftools](https://github.com/gperftools/gperftools)
+## 4.5 [gperftools/gperftools](https://github.com/gperftools/gperftools)
 
-# 4 ORM
+# 5 ORM
 
-## 4.1 sqlpp11
+## 5.1 sqlpp11
 
 **How to integrate:**
 
@@ -578,7 +755,7 @@ EOF
 scripts/ddl2cpp  /tmp/foo.sql /tmp/foo my_ns
 ```
 
-### 4.1.1 Example
+### 5.1.1 Example
 
 ```sh
 tree -L 2
@@ -778,9 +955,9 @@ SELECT users.id,users.first_name,users.last_name,users.age FROM users WHERE (use
 DELETE FROM users WHERE (users.id=10000001)
 ```
 
-# 5 Apache
+# 6 Apache
 
-## 5.1 arrow
+## 6.1 arrow
 
 [apache-arrow](https://github.com/apache/arrow)
 
@@ -801,108 +978,6 @@ sudo cmake --install build
 ```
 
 [Reading and writing Parquet files](https://arrow.apache.org/docs/cpp/parquet.html#)
-
-# 6 libxxx
-
-## 6.1 libbacktrace
-
-```sh
-git clone https://github.com/ianlancetaylor/libbacktrace.git
-cd libbacktrace
-
-./configure
-make -j 4
-sudo make install
-```
-
-## 6.2 libunwind
-
-[The libunwind project](https://www.nongnu.org/libunwind/index.html)
-
-[github-libunwind](https://github.com/libunwind/libunwind)
-
-```sh
-git clone https://github.com/libunwind/libunwind.git
-cd libunwind
-git checkout v1.6.2
-
-autoreconf -i
-./configure
-make -j 4
-sudo make install
-```
-
-```cpp
-#include <cxxabi.h> // Include for __cxa_demangle
-#include <libunwind.h>
-
-#include <cstdlib> // For free
-#include <iostream>
-
-void print_stack_trace() {
-    unw_cursor_t cursor;
-    unw_context_t context;
-
-    // Initialize context to the current machine state.
-    unw_getcontext(&context);
-    unw_init_local(&cursor, &context);
-
-    // Walk the stack up, one frame at a time.
-    while (unw_step(&cursor) > 0) {
-        unw_word_t offset, pc;
-        char sym[256];
-
-        if (unw_get_reg(&cursor, UNW_REG_IP, &pc)) {
-            std::cout << "Error: cannot read program counter" << std::endl;
-            break;
-        }
-
-        if (unw_get_proc_name(&cursor, sym, sizeof(sym), &offset) == 0) {
-            int status;
-            // Attempt to demangle the symbol
-            char* demangled_name = abi::__cxa_demangle(sym, nullptr, nullptr, &status);
-
-            std::cout << "0x" << std::hex << pc << ": ";
-
-            if (status == 0 && demangled_name) {
-                std::cout << demangled_name << " (+0x" << std::hex << offset << ")" << std::endl;
-                free(demangled_name); // Free the demangled name
-            } else {
-                // If demangling failed, print the mangled name
-                std::cout << sym << " (+0x" << std::hex << offset << ")" << std::endl;
-            }
-        } else {
-            std::cout << " -- error: unable to obtain symbol name for this frame" << std::endl;
-        }
-    }
-}
-
-void recursive(uint16_t cnt) {
-    if (cnt == 0) {
-        print_stack_trace();
-        return;
-    }
-    recursive(cnt - 1);
-}
-
-int main(int argc, char** argv) {
-    recursive(10);
-    return 0;
-}
-```
-
-```sh
-# -DUNW_LOCAL_ONLY is mandatory, otherwise some link error may occur, like:
-#    undefined reference to `_Ux86_64_init_local'
-#    undefined reference to `_Ux86_64_get_reg'
-#    undefined reference to `_Ux86_64_get_proc_name'
-#    undefined reference to `_Ux86_64_step'
-gcc -o main main.cpp -lstdc++ -std=gnu++17 -lunwind -DUNW_LOCAL_ONLY
-```
-
-## 6.3 How to automatically generate a stacktrace when my program crashes
-
-[How to automatically generate a stacktrace when my program crashes](https://stackoverflow.com/questions/77005/how-to-automatically-generate-a-stacktrace-when-my-program-crashes)
 
 # 7 Assorted
 
