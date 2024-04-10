@@ -8,6 +8,7 @@ date: 2018-02-05 09:25:59
 * [Free the Software](https://sourceware.org/) - ★★★★★
     * [GNU Binutils](https://sourceware.org/binutils/)
         * [Using as](https://sourceware.org/binutils/docs/as/index.html)
+    * [GNU Binutils](https://www.gnu.org/software/binutils/)
 * [GNU Manuals Online](https://www.gnu.org/manual/manual.html)
     * [Using the GNU Compiler Collection (GCC)](https://gcc.gnu.org/onlinedocs/gcc/)
 * [GNU FTP](https://ftp.gnu.org)
