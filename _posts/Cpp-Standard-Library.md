@@ -1176,6 +1176,31 @@ int main() {
     f.~Foo() called normally
     ```
 
+1. `std::current_exception`
+    ```cpp
+    #include <exception>
+    #include <iostream>
+    #include <stdexcept>
+
+    int main() {
+        try {
+            throw std::runtime_error("An error occurred");
+        } catch (...) {
+            std::exception_ptr ptr = std::current_exception();
+            if (ptr) {
+                try {
+                    std::rethrow_exception(ptr);
+                } catch (const std::exception& e) {
+                    std::cout << "Caught exception: " << e.what() << std::endl;
+                }
+            } else {
+                std::cout << "Caught unknown exception" << std::endl;
+            }
+        }
+        return 0;
+    }
+    ```
+
 ## 21.1 sstring
 
 1. `std::stringstream`

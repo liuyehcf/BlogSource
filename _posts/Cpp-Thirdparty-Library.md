@@ -13,20 +13,40 @@ categories:
 
 # 1 boost
 
-**如何安装：**
+## 1.1 Installation
+
+### 1.1.1 Package Manager
 
 ```sh
 yum install -y boost-devel
 ```
 
-## 1.1 Print Stack
+### 1.1.2 From Source
 
-**源码如下：**
+[Boost Downloads](https://www.boost.org/users/download/)
+
+```sh
+wget https://boostorg.jfrog.io/artifactory/main/release/1.84.0/source/boost_1_84_0.tar.gz
+tar -zxf boost_1_84_0.tar.gz
+cd boost_1_84_0
+
+./bootstrap.sh
+./b2
+sudo ./b2 install
+```
+
+## 1.2 Print Stack
+
+Boost.Stacktrace provides several options for printing stack traces, depending on the underlying technology used to capture the stack information:
+
+* `BOOST_STACKTRACE_USE_BACKTRACE`: uses the `backtrace` function from the GNU C Library, which is available on most UNIX-like systems including Linux.
+* `BOOST_STACKTRACE_USE_ADDR2LINE`: uses the `addr2line` utility from GNU binutils to convert addresses into file names and line numbers, providing more detailed information.
+* `BOOST_STACKTRACE_USE_NOOP`: doesn't capture the stack trace at all. This can be used when you want to disable stack tracing completely.
+* `BOOST_STACKTRACE_USE_WINDBG`: utilizes the Windows Debug Help Library when compiling for Windows.
 
 ```cpp
-// BOOST_STACKTRACE_USE_ADDR2LINE 用于获取行号
-#define BOOST_STACKTRACE_USE_ADDR2LINE
 #include <boost/stacktrace.hpp>
+#include <boost/version.hpp>
 #include <iostream>
 
 void foo(int cnt) {
@@ -38,36 +58,67 @@ void foo(int cnt) {
 }
 
 int main() {
+    std::cout << "Boost version: " << BOOST_VERSION / 100000 << "." << BOOST_VERSION / 100 % 1000 << "."
+              << BOOST_VERSION % 100 << std::endl;
     foo(5);
     return 0;
 }
 ```
 
-**编译执行：**
+### 1.2.1 With addr2line
+
+**Compile:**
 
 ```sh
 # -ldl: link libdl
-# -g: 保留行号
-# -DBOOST_STACKTRACE_USE_ADDR2LINE: 源码中宏的等效方式
-gcc -o main main.cpp -lstdc++ -std=gnu++17 -ldl -g
+# -g: generate debug information
+gcc -o main main.cpp -DBOOST_STACKTRACE_USE_ADDR2LINE -lstdc++ -std=gnu++17 -ldl -g
 ./main
 ```
 
-输出如下：
+**Output:**
 
 ```
- 0# boost::stacktrace::basic_stacktrace<std::allocator<boost::stacktrace::frame> >::basic_stacktrace() at xxx/stacktrace.hpp:129
- 1# foo(int) at /root/main.cpp:12
- 2# foo(int) at /root/main.cpp:12
- 3# foo(int) at /root/main.cpp:12
- 4# foo(int) at /root/main.cpp:12
- 5# foo(int) at /root/main.cpp:12
- 6# main at /root/main.cpp:16
+Boost version: 1.84.0
+ 0# _ZN5boost10stacktrace16basic_stacktraceISaINS0_5frameEEEC4Ev at /usr/local/include/boost/stacktrace/stacktrace.hpp:129
+ 1# foo(int) at /root/main.cpp:13
+ 2# foo(int) at /root/main.cpp:13
+ 3# foo(int) at /root/main.cpp:13
+ 4# foo(int) at /root/main.cpp:13
+ 5# foo(int) at /root/main.cpp:13
+ 6# main at /root/main.cpp:19
  7# __libc_start_main in /lib64/libc.so.6
+ 8# _start at :?
+```
+
+### 1.2.2 With libbacktrace
+
+**Compile:**
+
+```sh
+# -ldl: link libdl
+# -g: generate debug information
+# -lbacktrace: link libbacktrace
+gcc -o main main.cpp -DBOOST_STACKTRACE_USE_BACKTRACE -lstdc++ -std=gnu++17 -ldl -lbacktrace -g
+./main
+```
+
+**Output:**
+
+```
+Boost version: 1.84.0
+ 0# foo(int) at /root/main.cpp:7
+ 1# foo(int) at /root/main.cpp:11
+ 2# foo(int) at /root/main.cpp:11
+ 3# foo(int) at /root/main.cpp:11
+ 4# foo(int) at /root/main.cpp:11
+ 5# foo(int) at /root/main.cpp:11
+ 6# main at /root/main.cpp:17
+ 7# __libc_start_main at ../csu/libc-start.c:325
  8# _start in ./main
 ```
 
-## 1.2 Reference
+## 1.3 Reference
 
 * [The Boost C++ Libraries BoostBook Documentation Subset](https://www.boost.org/doc/libs/master/doc/html/)
 * [How to print current call stack](https://www.boost.org/doc/libs/1_66_0/doc/html/stacktrace/getting_started.html)
@@ -273,12 +324,12 @@ message(STATUS "GTEST_LIBRARIES: ${GTEST_LIBRARIES}")
 message(STATUS "GTEST_MAIN_LIBRARIES: ${GTEST_MAIN_LIBRARIES}")
 
 target_link_libraries(xxx ${GTEST_LIBRARIES})
+target_link_libraries(xxx ${GTEST_MAIN_LIBRARIES})
 ```
 
 **完整示例**
 
 ```sh
-# 编写CMakeLists.txt 
 cat > CMakeLists.txt << 'EOF'
 cmake_minimum_required(VERSION 3.20)
 
@@ -301,9 +352,9 @@ message(STATUS "GTEST_LIBRARIES: ${GTEST_LIBRARIES}")
 message(STATUS "GTEST_MAIN_LIBRARIES: ${GTEST_MAIN_LIBRARIES}")
 
 target_link_libraries(${PROJECT_NAME} ${GTEST_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${GTEST_MAIN_LIBRARIES})
 EOF
 
-# 编写test_main.cpp
 cat > test_main.cpp << 'EOF' 
 #include <gtest/gtest.h>
 
@@ -315,10 +366,11 @@ TEST(TestDemo, case_wrong) {
     ASSERT_EQ(1, 0);
 }
 
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
+// ${GTEST_MAIN_LIBRARIES} will provide main method
+// int main(int argc, char **argv) {
+//     ::testing::InitGoogleTest(&argc, argv);
+//     return RUN_ALL_TESTS();
+// }
 EOF
 
 cmake -B build && cmake --build build
@@ -726,7 +778,7 @@ SELECT users.id,users.first_name,users.last_name,users.age FROM users WHERE (use
 DELETE FROM users WHERE (users.id=10000001)
 ```
 
-# 5 apache
+# 5 Apache
 
 ## 5.1 arrow
 
@@ -750,7 +802,109 @@ sudo cmake --install build
 
 [Reading and writing Parquet files](https://arrow.apache.org/docs/cpp/parquet.html#)
 
-# 6 Assorted
+# 6 libxxx
+
+## 6.1 libbacktrace
+
+```sh
+git clone https://github.com/ianlancetaylor/libbacktrace.git
+cd libbacktrace
+
+./configure
+make -j 4
+sudo make install
+```
+
+## 6.2 libunwind
+
+[The libunwind project](https://www.nongnu.org/libunwind/index.html)
+
+[github-libunwind](https://github.com/libunwind/libunwind)
+
+```sh
+git clone https://github.com/libunwind/libunwind.git
+cd libunwind
+git checkout v1.6.2
+
+autoreconf -i
+./configure
+make -j 4
+sudo make install
+```
+
+```cpp
+#include <cxxabi.h> // Include for __cxa_demangle
+#include <libunwind.h>
+
+#include <cstdlib> // For free
+#include <iostream>
+
+void print_stack_trace() {
+    unw_cursor_t cursor;
+    unw_context_t context;
+
+    // Initialize context to the current machine state.
+    unw_getcontext(&context);
+    unw_init_local(&cursor, &context);
+
+    // Walk the stack up, one frame at a time.
+    while (unw_step(&cursor) > 0) {
+        unw_word_t offset, pc;
+        char sym[256];
+
+        if (unw_get_reg(&cursor, UNW_REG_IP, &pc)) {
+            std::cout << "Error: cannot read program counter" << std::endl;
+            break;
+        }
+
+        if (unw_get_proc_name(&cursor, sym, sizeof(sym), &offset) == 0) {
+            int status;
+            // Attempt to demangle the symbol
+            char* demangled_name = abi::__cxa_demangle(sym, nullptr, nullptr, &status);
+
+            std::cout << "0x" << std::hex << pc << ": ";
+
+            if (status == 0 && demangled_name) {
+                std::cout << demangled_name << " (+0x" << std::hex << offset << ")" << std::endl;
+                free(demangled_name); // Free the demangled name
+            } else {
+                // If demangling failed, print the mangled name
+                std::cout << sym << " (+0x" << std::hex << offset << ")" << std::endl;
+            }
+        } else {
+            std::cout << " -- error: unable to obtain symbol name for this frame" << std::endl;
+        }
+    }
+}
+
+void recursive(uint16_t cnt) {
+    if (cnt == 0) {
+        print_stack_trace();
+        return;
+    }
+    recursive(cnt - 1);
+}
+
+int main(int argc, char** argv) {
+    recursive(10);
+    return 0;
+}
+```
+
+```sh
+# -DUNW_LOCAL_ONLY is mandatory, otherwise some link error may occur, like:
+#    undefined reference to `_Ux86_64_init_local'
+#    undefined reference to `_Ux86_64_get_reg'
+#    undefined reference to `_Ux86_64_get_proc_name'
+#    undefined reference to `_Ux86_64_step'
+gcc -o main main.cpp -lstdc++ -std=gnu++17 -lunwind -DUNW_LOCAL_ONLY
+```
+
+## 6.3 How to automatically generate a stacktrace when my program crashes
+
+[How to automatically generate a stacktrace when my program crashes](https://stackoverflow.com/questions/77005/how-to-automatically-generate-a-stacktrace-when-my-program-crashes)
+
+# 7 Assorted
 
 1. [Awesome C++ Projects](https://github.com/fffaraz/awesome-cpp)
 1. [parallel-hashmap](https://github.com/greg7mdp/parallel-hashmap)：`parallel-hashmap`提供了一组高性能、并发安全的`map`，用于替换`std`以及`boost`中的`map`

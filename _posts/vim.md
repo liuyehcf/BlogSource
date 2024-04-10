@@ -3448,7 +3448,7 @@ inoremap ∆ <c-o>j
 inoremap ˚ <c-o>k
 inoremap ¬ <c-o>l
 inoremap <c-w> <c-o>w
-inoremap <c-e> <c-o>e
+" inoremap <c-e> <c-o>e
 inoremap <c-b> <c-o>b
 inoremap <c-x> <c-o>x
 

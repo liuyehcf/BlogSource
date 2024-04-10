@@ -379,11 +379,18 @@ docker-slim build --http-probe=false centos:7.6.1810
 
 一般来说，如果运行环境是容器，那么会存在`/.dockerenv`这个文件
 
-## 7.6 异常排查
+# 8 FAQ
+
+## 8.1 k8s环境docker异常
 
 在k8s环境中，若容器运行时用的是`docker`，那么该`docker`会依赖`containerd`，当`containerd`不正常的时候，`docker`也就不正常了。恢复`containerd`的办法：将`/var/lib/containerd/io.containerd.metadata.v1.bolt`这个文件删掉
 
-# 8 参考
+## 8.2 read unix @->/var/run/docker.sock: read: connection reset by peer
+
+1. 没有权限
+1. 多套`docker`共用了同一个`/var/run/docker.sock`套接字文件，可以用`lsof -U | grep docker.sock`查看。默认情况下只有2个记录，一个是`systemd`的，另一个是`dockerd`的
+
+# 9 参考
 
 * [Docker Hub](https://hub.docker.com/)
 * [Docker历史版本下载](https://docs.docker.com/docker-for-mac/release-notes/#docker-community-edition-17120-ce-mac49-2018-01-19)

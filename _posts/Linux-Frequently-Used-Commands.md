@@ -1237,12 +1237,14 @@ locate stl_vector.h
 * `-np`：不访问上层目录
 * `-P`：指定下载的目录
 * `-R`：指定排除的列表
+* `--proxy`：后接proxy地址
 
 **Examples:**
 
 * `wget -O myfile 'https://www.baidu.com'`
 * `wget -r -np -nH -P /root/test -R "index.html*" 'http://192.168.66.1/stuff'`
 * `wget -r -np -nH -P /root/test 'ftp://192.168.66.1/stuff'`
+* `wget --proxy=http://proxy.example.com:8080 http://example.com/file`
 
 ## 2.24 tree
 
@@ -2117,6 +2119,7 @@ netstat的功能就是查看网络的连接状态，而网络连接状态中，�
 **Examples:**
 
 1. **`netstat -n | awk '/^tcp/ {++y[$NF]} END {for(w in y) print w, y[w]}'`**
+1. **`netstat -nlp | grep <pid>`** 
 
 ## 5.2 tc
 
@@ -2169,6 +2172,7 @@ netstat的功能就是查看网络的连接状态，而网络连接状态中，�
 * `lsof -i tcp@localhost`
 * `lsof -i tcp:22`
 * `lsof -i :22`
+* `lsof -U | grep docker.sock`
 
 **最佳实践：**
 
@@ -2208,7 +2212,7 @@ netstat的功能就是查看网络的连接状态，而网络连接状态中，�
 * `ss -t -a`：显示所有tcp-socket
 * `ss -ti -a`：显示所有tcp-socket以及详情
 * `ss -u –a`：显示所有udp-socket
-* `ss -lp | grep 22`：找出打开套接字/端口应用程序
+* `ss -nlp | grep 22`：找出打开套接字/端口应用程序
 * `ss -o state established`：显示所有状态为established的socket
 * `ss -o state FIN-WAIT-1 dst 192.168.25.100/24`：显示出处于`FIN-WAIT-1`状态的，目标网络为`192.168.25.100/24`所有socket
 * `ss -nap`
