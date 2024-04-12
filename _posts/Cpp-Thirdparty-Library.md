@@ -244,6 +244,8 @@ int main() {
 
 ### 2.2.1 With addr2line
 
+This approach works fine with `gcc-10.3.0`, but can't work with higher versions like `gcc-11.3.0`, `gcc-12.3.0`. Don't know why so far.
+
 **Compile:**
 
 ```sh
@@ -979,7 +981,175 @@ sudo cmake --install build
 
 [Reading and writing Parquet files](https://arrow.apache.org/docs/cpp/parquet.html#)
 
-# 7 Assorted
+# 7 Pocoproject
+
+```sh
+git clone -b master https://github.com/pocoproject/poco.git
+cd poco
+cmake -B cmake-build
+cmake --build cmake-build --config Release -j 64
+sudo cmake --install cmake-build
+```
+
+## 7.1 Logger
+
+```sh
+mkdir poco_logger_demo
+cd poco_logger_demo
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(poco_logger_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
+
+file(GLOB MY_PROJECT_SOURCES "*.cpp")
+add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+find_package(Poco REQUIRED COMPONENTS Foundation Net XML JSON)
+target_link_libraries(${PROJECT_NAME} Poco::Foundation Poco::Net Poco::XML Poco::JSON)
+EOF
+
+cat > poco_logger_demo.cpp << 'EOF'
+#include <Poco/AutoPtr.h>
+#include <Poco/ConsoleChannel.h>
+#include <Poco/FileChannel.h>
+#include <Poco/FormattingChannel.h>
+#include <Poco/Logger.h>
+#include <Poco/PatternFormatter.h>
+
+int main() {
+    {
+        Poco::AutoPtr<Poco::ConsoleChannel> channel(new Poco::ConsoleChannel);
+        Poco::Logger::root().setLevel("trace");
+        Poco::Logger::root().setChannel(channel);
+        Poco::Logger::get("main_1").information("Hello, World!");
+    }
+    {
+        Poco::AutoPtr<Poco::PatternFormatter> formatter(new Poco::PatternFormatter("%Y.%m.%d %H:%M:%S.%F <%p> %s: %t"));
+        Poco::AutoPtr<Poco::ConsoleChannel> console_chanel(new Poco::ConsoleChannel);
+        Poco::AutoPtr<Poco::FormattingChannel> channel(new Poco::FormattingChannel(formatter, console_chanel));
+        Poco::Logger::root().setLevel("trace");
+        Poco::Logger::root().setChannel(channel);
+        Poco::Logger::get("main_1").information("Hello, World!");
+        Poco::Logger::get("main_2").information("Hello, World!");
+    }
+    {
+        Poco::AutoPtr<Poco::FileChannel> fileChannel(new Poco::FileChannel);
+        fileChannel->setProperty("path", "sample.log");
+        fileChannel->setProperty("rotation", "1 M"); // Rotate log file monthly
+
+        Poco::AutoPtr<Poco::PatternFormatter> formatter(new Poco::PatternFormatter);
+        formatter->setProperty("pattern", "%Y-%m-%d %H:%M:%S %s: %t"); // Customize log pattern
+
+        Poco::AutoPtr<Poco::FormattingChannel> formattingChannel(new Poco::FormattingChannel(formatter, fileChannel));
+
+        Poco::Logger& logger = Poco::Logger::create("FileLogger", formattingChannel, Poco::Message::PRIO_INFORMATION);
+
+        logger.information("This is an informational message.");
+        logger.warning("This is a warning message.");
+    }
+    return 0;
+}
+EOF
+
+cmake -B build
+cmake --build build
+build/poco_logger_demo
+```
+
+Output:
+
+```
+Hello, World!
+Hello, World!
+2024.04.12 08:22:40.072214 <Information> main_2: Hello, World!
+```
+
+## 7.2 JSON
+
+```sh
+mkdir poco_json_demo
+cd poco_json_demo
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(poco_json_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
+
+file(GLOB MY_PROJECT_SOURCES "*.cpp")
+add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+find_package(Poco REQUIRED COMPONENTS Foundation Net XML JSON)
+target_link_libraries(${PROJECT_NAME} Poco::Foundation Poco::Net Poco::XML Poco::JSON)
+EOF
+
+cat > poco_json_demo.cpp << 'EOF'
+#include <Poco/Dynamic/Var.h>
+#include <Poco/JSON/Parser.h>
+#include <Poco/JSON/Stringifier.h>
+
+#include <iostream>
+#include <sstream>
+
+int main() {
+    // JSON string to parse
+    std::string jsonString = R"({"name":"John Doe","age":30,"isDeveloper":true})";
+
+    // Parse the JSON string
+    Poco::JSON::Parser parser;
+    Poco::Dynamic::Var result = parser.parse(jsonString);
+    Poco::JSON::Object::Ptr jsonObject = result.extract<Poco::JSON::Object::Ptr>();
+
+    // Extract values
+    std::string name = jsonObject->getValue<std::string>("name");
+    int age = jsonObject->getValue<int>("age");
+    bool isDeveloper = jsonObject->getValue<bool>("isDeveloper");
+
+    std::cout << "Name: " << name << ", Age: " << age << ", Is Developer: " << isDeveloper << std::endl;
+
+    // Create a new JSON object
+    Poco::JSON::Object newObject;
+    newObject.set("newName", "Jane Smith");
+    newObject.set("newAge", 28);
+    newObject.set("isNewDeveloper", false);
+
+    // Convert to JSON string
+    std::stringstream ss;
+    newObject.stringify(ss);
+
+    std::cout << "Generated JSON: " << ss.str() << std::endl;
+
+    return 0;
+}
+EOF
+
+cmake -B build
+cmake --build build
+build/poco_json_demo
+```
+
+Output:
+
+```
+Name: John Doe, Age: 30, Is Developer: 1
+Generated JSON: {"isNewDeveloper":false,"newAge":28,"newName":"Jane Smith"}
+```
+
+# 8 Assorted
 
 1. [Awesome C++ Projects](https://github.com/fffaraz/awesome-cpp)
 1. [parallel-hashmap](https://github.com/greg7mdp/parallel-hashmap)：`parallel-hashmap`提供了一组高性能、并发安全的`map`，用于替换`std`以及`boost`中的`map`

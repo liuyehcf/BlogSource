@@ -68,6 +68,8 @@ flowchart TD
 
 **查看动态链接库绑定信息：`ldconfig -v`、`ldconfig -p`**
 
+* 安装新的库后，需要`sudo ldconfig`更新缓存，否则运行时可能会找不到对应的`so`文件
+
 ### 2.2.1 Linux's so version mechanism
 
 **本小节转载摘录自[一文读懂Linux下动态链接库版本管理及查找加载方式](https://blog.ideawand.com/2020/02/15/how-does-linux-shared-library-versioning-works/)**

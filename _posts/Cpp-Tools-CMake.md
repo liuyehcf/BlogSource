@@ -1050,15 +1050,37 @@ aux_source_directory(. DIR_SRCS)
 add_executable(Demo ${DIR_SRCS})
 ```
 
-## 6.8 Print All Compile Command
+## 6.8 Build Static Library By Default
+
+Add following config to project's root `CMakeLists.txt`, then all sub modules (imported via `add_subdirectory`) will be built in static way.
+
+```cmake
+set(BUILD_SHARED_LIBS FALSE)
+```
+
+## 6.9 find_package vs. find_library
+
+**`find_package`**
+
+* High-level, preferred for packages that provide a CMake configuration or have a Find Module available.
+* Can import targets with comprehensive usage requirements (include paths, compile options, etc.).
+* Supports complex dependencies.
+
+**`find_library`**
+
+* Low-level, used for locating library files directly.
+* Only finds the library file; additional configuration is manual.
+* Useful for simple external library dependencies or as a fallback.
+
+## 6.10 Print All Compile Command
 
 `cmake`指定参数`-DCMAKE_VERBOSE_MAKEFILE=ON`即可
 
-## 6.9 生成`compile_commands.json`文件
+## 6.11 生成`compile_commands.json`文件
 
 `cmake`指定参数`-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`即可。构建完成后，会在构建目录生成`compile_commands.json`，里面包含了每个源文件的编译命令
 
-## 6.10 Auto generate compile_commands.json and copy to project source root
+## 6.12 Auto generate compile_commands.json and copy to project source root
 
 参考[Copy compile_commands.json to project root folder](https://stackoverflow.com/questions/57464766/copy-compile-commands-json-to-project-root-folder)
 

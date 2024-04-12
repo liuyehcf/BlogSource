@@ -941,6 +941,7 @@ int main() {
 
 1. `std::unique_lock`：比`std::lock_guard`提供更多的操作，允许手动加锁解锁
 1. `std::condition_variable`
+    * 需要链接`libpthread`库，否则`wait`方法会立即唤醒，且编译不会报错
     * 调用`wait`方法时，必须获取监视器。而调用`notify`方法时，无需获取监视器
     * `wait`方法被唤醒后，仍然处于获取监视器的状态
     ```cpp

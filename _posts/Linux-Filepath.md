@@ -211,6 +211,8 @@ categories:
             * 如何判断socket建立时间，看`/proc/6497/fd/1018`的创建时间即可
             * 中括号中数字的含义？表示`inode`号，可以通过`ss -nap -e | grep 42446535`查看对应的`socket`的详细信息
     * `/proc/<pid>/limits`：各种资源的限制
+    * `/proc/<pid>/environ`：环境变量
+        * `cat /proc/<pid>/environ | tr '\0' '\n'`
 
 ## 3.1 参考
 
