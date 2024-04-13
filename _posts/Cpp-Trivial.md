@@ -204,7 +204,18 @@ This command scans the directories listed in `/etc/ld.so.conf`, its `*.conf` inc
 
 [Why does the order in which libraries are linked sometimes cause errors in GCC?](https://stackoverflow.com/questions/45135/why-does-the-order-in-which-libraries-are-linked-sometimes-cause-errors-in-gcc)
 
-**示例：**
+### 2.4.1 Static Linking
+
+In static linking, the order in which libraries are linked can be very important. This is because the linker, which resolves symbols and references in your code, processes libraries in the order they are specified. If one library depends on symbols from another, the dependent library must be listed first. This order dependency ensures that all symbols are resolved correctly at the time of linking, and the final executable contains all necessary code.
+
+**Here's the description of the link process:**
+
+* **Scan Object Files and Libraries**: The linker scans the object files and libraries in the order they are specified on the command line from left to right. This order is crucial because it can determine which definitions of symbols are used when multiple definitions are present.
+* **Record Symbols**: As the linker scans, it builds tables of symbols. It distinguishes between undefined symbols (those referenced but not defined in the scanned files) and defined symbols (those that have definitions in the scanned files).
+* **Resolve Symbols**: When the linker encounters an undefined symbol, it looks for a definition of that symbol in the subsequent files and libraries. If a library is found that resolves an undefined symbol, the linker links that library's code to satisfy the symbol reference. Libraries are not fully linked unless they contain symbols that resolve undefined references.
+* **Remove Resolved Symbols from Unresolved Symbols Table**: Once a symbol is resolved, it is removed from the unresolved symbols table. If there are any unresolved symbols after all files and libraries have been processed, the linker typically throws an error indicating unresolved symbols.
+
+**Example:**
 
 ```sh
 cat > a.cpp << 'EOF'
@@ -234,12 +245,9 @@ g++ a.cpp -L. -ld -lb # wrong order
 g++ a.cpp -L. -lb -ld # right order
 ```
 
-**链接器解析过程如下：从左到右扫描目标文件、库文件**
+### 2.4.2 Dynamic Linking
 
-* 记录未解析的符号
-* 若发现某个库文件可以解决「未解析符号表」中的某个符号，则将该符号从「未解析符号表」中删除
-
-**因此，假设`libA`依赖`libB`，那么需要将`libA`写前面，`libB`写后面**
+In dynamic linking, the order of linking libraries is typically less critical. Libraries are not combined into a single executable at compile time; instead, references to these libraries are resolved at runtime. The dynamic linker/loader handles the process of loading the necessary libraries into memory when the program is executed and resolves symbols on the fly. This means that the system can usually manage dependencies more flexibly, and the specific order in which libraries are listed is not as crucial.
 
 ## 2.5 Environment Variables
 

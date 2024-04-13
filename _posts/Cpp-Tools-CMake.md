@@ -559,13 +559,6 @@ add_library(<name> [STATIC | SHARED | MODULE]
 add_library(Exec STATIC ${EXEC_FILES})
 ```
 
-**通过绝对路径引入三方库**
-
-```cmake
-add_library(protobuf STATIC IMPORTED)
-set_target_properties(protobuf PROPERTIES IMPORTED_LOCATION ${THIRDPARTY_DIR}/lib/libprotobuf.a)
-```
-
 ## 5.7 set_target_properties
 
 为指定`target`设置属性
@@ -787,14 +780,21 @@ endif(ADD_FOUND)
 
 `find_library`用于查找库文件，示例如下：
 
+* 所有指定的可能的名字中，只要有一个匹配上了，那么查找过程就终止了
+* `CMAKE_FIND_LIBRARY_SUFFIXES`可用于控制优先查找静态库还是优先查找动态库
+    * `set(CMAKE_FIND_LIBRARY_SUFFIXES ".so;.a")`：动态库优先，默认值
+    * `set(CMAKE_FIND_LIBRARY_SUFFIXES ".a;.so")`：静态库优先
+
 ```cmake
 # NAMES 后可接多个可能的别名，结果保存到变量 THRIFT_LIB 中
-find_library(THRIFT_LIB NAMES thrift)
+find_library(THRIFT_LIB NAMES thrift Thrift THRIFT)
 ```
 
 ## 5.16 find_path
 
 `find_path`用于查找包含给定文件的目录，示例如下：
+
+* 所有指定的可能的名字中，只要有一个匹配上了，那么查找过程就终止了
 
 ```cmake
 # NAMES 后可接多个可能的别名，结果保存到变量 BRPC_INCLUDE_PATH 中
@@ -938,7 +938,9 @@ build/main
   * `cmake --build <build_path> -j 16`：等效于在`<build_path>`中执行`make -j 16`命令
 * `cmake --install <build_path>`：等效于在`<build_path>`中执行`make install`命令
 
-## 6.2 Print All Variables
+## 6.2 Print
+
+### 6.2.1 Print All Variables
 
 ```cmake
 get_cmake_property(_variableNames VARIABLES)
@@ -947,36 +949,44 @@ foreach (_variableName ${_variableNames})
 endforeach()
 ```
 
-## 6.3 Print All Envs
+### 6.2.2 Print All Envs
 
 ```cmake
 execute_process(COMMAND "${CMAKE_COMMAND}" "-E" "environment")
 ```
 
-## 6.4 Specify Compiler
+### 6.2.3 Print All Compile Command
 
-### 6.4.1 Command
+TheseWhen using the default generator `Unix Makefiles`, the following three methods are equivalent:
+
+* `cmake -B <build_path> -DCMAKE_VERBOSE_MAKEFILE=ON`
+* `make VERBOSE=1`
+* `cmake --build <build_path> -- VERBOSE=1`
+
+## 6.3 Specify Compiler
+
+### 6.3.1 Command
 
 ```sh
 cmake -DCMAKE_CXX_COMPILER=/usr/local/bin/g++ -DCMAKE_C_COMPILER=/usr/local/bin/gcc ..
 ```
 
-### 6.4.2 CMakeLists.txt
+### 6.3.2 CMakeLists.txt
 
 ```cmake
 set(CMAKE_C_COMPILER "/path/to/gcc")
 set(CMAKE_CXX_COMPILER "/path/to/g++")
 ```
 
-## 6.5 Add Compile Options
+## 6.4 Add Compile Options
 
-### 6.5.1 Command
+### 6.4.1 Command
 
 ```sh
 cmake -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -O3" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -O3" ..
 ```
 
-### 6.5.2 CMakeLists.txt
+### 6.4.2 CMakeLists.txt
 
 **示例如下：**
 
@@ -995,7 +1005,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O1 -Wall")
 1. `RelWithDebInfo`
 1. `MinSizeRel`
 
-## 6.6 Build Type
+## 6.5 Build Type
 
 ```sh
 # If you want to build for debug (including source information, i.e. -g) when compiling, use
@@ -1012,9 +1022,9 @@ cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo <path>
 1. `RelWithDebInfo`
 1. `MinSizeRel`
 
-## 6.7 Include All Source File
+## 6.6 Include All Source File
 
-### 6.7.1 file
+### 6.6.1 file
 
 ```cmake
 # Search for all .cpp and .h files in the current directory
@@ -1031,7 +1041,7 @@ file(GLOB_RECURSE MY_PROJECT_SOURCES "*.cpp")
 add_executable(MyExecutable ${MY_PROJECT_SOURCES})
 ```
 
-### 6.7.2 aux_source_directory
+### 6.6.2 aux_source_directory
 
 如果同一个目录下有多个源文件，那么在使用`add_executable`命令的时候，如果要一个个填写，那么将会非常麻烦，并且后续维护的代价也很大
 
@@ -1050,7 +1060,9 @@ aux_source_directory(. DIR_SRCS)
 add_executable(Demo ${DIR_SRCS})
 ```
 
-## 6.8 Build Static Library By Default
+## 6.7 Library
+
+### 6.7.1 Build Static Library By Default
 
 Add following config to project's root `CMakeLists.txt`, then all sub modules (imported via `add_subdirectory`) will be built in static way.
 
@@ -1058,29 +1070,38 @@ Add following config to project's root `CMakeLists.txt`, then all sub modules (i
 set(BUILD_SHARED_LIBS FALSE)
 ```
 
-## 6.9 find_package vs. find_library
+### 6.7.2 Import Library From Unified Thirdparty Directory
+
+Suppose you have put all libraries in `${THIRDPARTY_DIR}/lib`, then you can use the following config to import it.
+
+```cmake
+add_library(protobuf STATIC IMPORTED)
+set_target_properties(protobuf PROPERTIES IMPORTED_LOCATION ${THIRDPARTY_DIR}/lib/libprotobuf.a)
+```
+
+### 6.7.3 find_package vs. find_library
 
 **`find_package`**
 
 * High-level, preferred for packages that provide a CMake configuration or have a Find Module available.
 * Can import targets with comprehensive usage requirements (include paths, compile options, etc.).
 * Supports complex dependencies.
+* No variable can control search process, like static library first or dynamic library first.
 
 **`find_library`**
 
 * Low-level, used for locating library files directly.
 * Only finds the library file; additional configuration is manual.
 * Useful for simple external library dependencies or as a fallback.
+* Variable `CMAKE_FIND_LIBRARY_SUFFIXES` specifies what suffixes to add to library names when the `find_library()` command looks for libraries.
 
-## 6.10 Print All Compile Command
+## 6.8 compile_commands.json
 
-`cmake`指定参数`-DCMAKE_VERBOSE_MAKEFILE=ON`即可
-
-## 6.11 生成`compile_commands.json`文件
+### 6.8.1 Manually Generate compile_commands.json
 
 `cmake`指定参数`-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`即可。构建完成后，会在构建目录生成`compile_commands.json`，里面包含了每个源文件的编译命令
 
-## 6.12 Auto generate compile_commands.json and copy to project source root
+### 6.8.2 Auto generate compile_commands.json and copy to project source root
 
 参考[Copy compile_commands.json to project root folder](https://stackoverflow.com/questions/57464766/copy-compile-commands-json-to-project-root-folder)
 
