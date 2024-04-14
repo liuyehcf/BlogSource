@@ -555,7 +555,20 @@ Gists allow developers to share code or text snippets with others, making it eas
 
 # 18 Tips
 
-## 18.1 Issue with Chinese Displayed in Octal Form
+## 18.1 Install Latest Version
+
+### 18.1.1 Centos
+
+```sh
+sudo yum -y remove git
+sudo yum -y remove git-*
+
+sudo yum -y install https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-repo.x86_64.rpm
+
+sudo yum install git
+```
+
+## 18.2 Issue with Chinese Displayed in Octal Form
 
 在Windows中，git bash打印的中文可能表示成`\+三个数字`的形式，即八进制表示
 
@@ -565,9 +578,9 @@ Gists allow developers to share code or text snippets with others, making it eas
 git config --global core.quotepath false
 ```
 
-## 18.2 Proxy
+## 18.3 Proxy
 
-### 18.2.1 SSH Protocol
+### 18.3.1 SSH Protocol
 
 Edit `~/.ssh/config`
 
@@ -581,14 +594,14 @@ Host github.com
    ProxyCommand nc -v -x 127.0.0.1:7890 %h %p
 ```
 
-### 18.2.2 HTTP Protocol
+### 18.3.2 HTTP Protocol
 
 ```sh
 git config --global http.proxy "http://127.0.0.1:7890"
 git config --global https.proxy "https://127.0.0.1:7890"
 ```
 
-## 18.3 DNS
+## 18.4 DNS
 
 ```config
 140.82.114.4 github.com

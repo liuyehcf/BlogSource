@@ -786,8 +786,12 @@ endif(ADD_FOUND)
     * `set(CMAKE_FIND_LIBRARY_SUFFIXES ".a;.so")`：静态库优先
 
 ```cmake
-# NAMES 后可接多个可能的别名，结果保存到变量 THRIFT_LIB 中
-find_library(THRIFT_LIB NAMES thrift Thrift THRIFT)
+set(CMAKE_FIND_LIBRARY_SUFFIXES ".so;.a")
+# set(CMAKE_FIND_LIBRARY_SUFFIXES ".a;.so")
+find_library(BOOST_FILESYSTEM_LIBRARY NAMES boost_filesystem Boost_filesystem)
+find_library(BOOST_SYSTEM_LIBRARY NAMES boost_system Boost_system)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE ${BOOST_FILESYSTEM_LIBRARY} ${BOOST_SYSTEM_LIBRARY})
 ```
 
 ## 5.16 find_path
@@ -1079,21 +1083,40 @@ add_library(protobuf STATIC IMPORTED)
 set_target_properties(protobuf PROPERTIES IMPORTED_LOCATION ${THIRDPARTY_DIR}/lib/libprotobuf.a)
 ```
 
-### 6.7.3 find_package vs. find_library
+### 6.7.3 Priority: Static Libraries vs. Dynamic Libraries
 
-**`find_package`**
+#### 6.7.3.1 find_package
 
-* High-level, preferred for packages that provide a CMake configuration or have a Find Module available.
-* Can import targets with comprehensive usage requirements (include paths, compile options, etc.).
-* Supports complex dependencies.
-* No variable can control search process, like static library first or dynamic library first.
+The factors influencing the choice between static and dynamic libraries by the `find_package` command may include:
 
-**`find_library`**
+* **The provided CMake configuration files by the package**: Some packages offer their own CMake configuration files, such as `<PackageName>Config.cmake` (Located at `/usr/local/lib/cmake`). These configuration files may explicitly specify the use of static or dynamic libraries, or make the selection based on the value of the `BUILD_SHARED_LIBS` variable (maybe).
+    * For boost, it offers a variable named `Boost_USE_STATIC_LIBS` (Defined at `/usr/local/lib/cmake/Boost-1.84.0/BoostConfig.cmake`) to control whether to use static version or dynamic version.
+* **Default behavior**: Certain packages may use specific library types based on conventions or default settings. For instance, if a package typically provides dynamic libraries and does not have explicit configuration options to choose static libraries, the `find_package` command might default to using dynamic libraries.
 
-* Low-level, used for locating library files directly.
-* Only finds the library file; additional configuration is manual.
-* Useful for simple external library dependencies or as a fallback.
-* Variable `CMAKE_FIND_LIBRARY_SUFFIXES` specifies what suffixes to add to library names when the `find_library()` command looks for libraries.
+**Example:**
+
+```cmake
+set(Boost_USE_STATIC_LIBS ON)
+find_package(Boost REQUIRED COMPONENTS filesystem system)
+```
+
+#### 6.7.3.2 find_library
+
+To control whether `find_library` should prefer static libraries or dynamic libraries, you typically set the `CMAKE_FIND_LIBRARY_SUFFIXES` variable. This variable specifies the suffixes that `find_library` searches for when looking for libraries.
+
+Here's how you can control `find_library` to prioritize static libraries or dynamic libraries:
+
+**Prioritize static libraries:**
+
+```cmake
+set(CMAKE_FIND_LIBRARY_SUFFIXES ".a;.so")
+```
+
+**Prioritize dynamic libraries:**
+
+```cmake
+set(CMAKE_FIND_LIBRARY_SUFFIXES ".so;.a")
+```
 
 ## 6.8 compile_commands.json
 

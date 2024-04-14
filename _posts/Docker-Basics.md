@@ -223,6 +223,9 @@ RUN apk add -U tzdata
 1. 打开`D-Bus connection`
     * `docker run -d -e "container=docker" --privileged=true [ID] /usr/sbin/init`
     * 容器启动的`CMD`包含`/usr/sbin/init`即可
+1. 启停容器：
+    * `docker start <container-id>`
+    * `docker stop <container-id>`
 1. 在指定容器中执行命令
     * `docker exec -ti my_container /bin/bash -c "echo a && echo b"`
 1. 查看docker container对应的pid
@@ -378,6 +381,12 @@ docker-slim build --http-probe=false centos:7.6.1810
 ## 7.5 如何感知程序是否运行在容器中
 
 一般来说，如果运行环境是容器，那么会存在`/.dockerenv`这个文件
+
+## 7.6 从容器构建镜像
+
+```sh
+docker commit <container-id> <new_image>
+```
 
 # 8 FAQ
 

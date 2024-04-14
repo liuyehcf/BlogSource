@@ -3551,6 +3551,8 @@ tar -zxvf nvim-linux64.tar.gz
 
 ### 5.1.1 Node Version Management
 
+**[nvm](https://github.com/nvm-sh/nvm):**
+
 ```sh
 nvm ls-remote
 nvm install v16.19.0
@@ -3559,7 +3561,7 @@ nvm list
 nvm use v16.19.0
 ```
 
-Or
+**[n](https://github.com/tj/n)**
 
 ```sh
 npm install -g n
@@ -3588,11 +3590,13 @@ n 16.19.0 # use this version
 
 ```sh
 # nvim's config file is ~/.config/nvim/init.vim
+mkdir -p ~/.vim ~/.vim/plugged
+mkdir -p ~/.config
 ln -s ~/.vim ~/.config/nvim
 ln -s ~/.vimrc ~/.config/nvim/init.vim
 
 # plug manager and plug
-mkdir -p ~/.config ~/.local/share/nvim/site/autoload
+mkdir -p ~/.local/share/nvim/site/autoload
 ln -s ~/.vim/autoload/plug.vim ~/.local/share/nvim/site/autoload/plug.vim
 ln -s ~/.vim/plugged ~/.local/share/nvim/plugged
 ```

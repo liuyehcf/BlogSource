@@ -19,7 +19,7 @@ categories:
 git clone https://github.com/ianlancetaylor/libbacktrace.git
 cd libbacktrace
 
-./configure
+./configure CFLAGS="-fPIC"
 make -j 4
 sudo make install
 ```
@@ -212,7 +212,60 @@ cd boost_1_84_0
 sudo ./b2 install
 ```
 
-## 2.2 Print Stack
+## 2.2 Usage
+
+```sh
+mkdir boost_demo
+cd boost_demo
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(boost_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
+
+file(GLOB MY_PROJECT_SOURCES "*.cpp")
+add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+set(Boost_USE_STATIC_LIBS ON)
+find_package(Boost REQUIRED COMPONENTS filesystem system)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE Boost::filesystem Boost::system)
+EOF
+
+cat > boost_demo.cpp << 'EOF'
+#include <boost/filesystem.hpp>
+#include <iostream>
+
+int main() {
+    std::string directory = "/tmp";
+
+    try {
+        // Iterate through the directory
+        for (const auto& entry : boost::filesystem::directory_iterator(directory)) {
+            // Print the file name
+            std::cout << entry.path().filename() << std::endl;
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
+
+    return 0;
+}
+EOF
+
+cmake -B build
+cmake --build build
+build/boost_demo
+```
+
+## 2.3 Print Stack
 
 Boost.Stacktrace provides several options for printing stack traces, depending on the underlying technology used to capture the stack information:
 
@@ -242,7 +295,7 @@ int main() {
 }
 ```
 
-### 2.2.1 With addr2line
+### 2.3.1 With addr2line
 
 This approach works fine with `gcc-10.3.0`, but can't work with higher versions like `gcc-11.3.0`, `gcc-12.3.0`. Don't know why so far.
 
@@ -270,7 +323,7 @@ Boost version: 1.84.0
  8# _start at :?
 ```
 
-### 2.2.2 With libbacktrace
+### 2.3.2 With libbacktrace
 
 **Compile:**
 
@@ -297,7 +350,7 @@ Boost version: 1.84.0
  8# _start in ./main
 ```
 
-## 2.3 Reference
+## 2.4 Reference
 
 * [The Boost C++ Libraries BoostBook Documentation Subset](https://www.boost.org/doc/libs/master/doc/html/)
 * [How to print current call stack](https://www.boost.org/doc/libs/1_66_0/doc/html/stacktrace/getting_started.html)
