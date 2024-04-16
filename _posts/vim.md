@@ -715,9 +715,63 @@ endif
 
 # 3 Plugin
 
-**目前，使用最广泛的插件管理工具是：[vim-plug](https://github.com/junegunn/vim-plug)**
-
 ## 3.1 Overview
+
+### 3.1.1 Plugin Manager
+
+**目前，使用最广泛的插件管理工具是：[vim-plug](https://github.com/junegunn/vim-plug)，通过一个命令直接安装即可**
+
+```sh
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+```
+
+**基本用法**
+
+1. 以`call plug#begin()`开头
+1. 中间是`Plug`的相关命令
+1. 以`call plug#end()`结尾，默认会开启如下功能，如果不需要的话，可以手动关闭
+    * `filetype plugin indent on`
+    * `syntax enable`
+
+**基本操作**
+
+* `:PlugStatus`：查看插件状态
+* `:PlugInstall`：安装插件
+* `:PlugClean`：清除插件
+
+**修改下载源：默认从`github.com`上下载，稳定性较差，可以按照如下方式修改`~/.vim/autoload/plug.vim`**
+
+```vim
+" 将
+let fmt = get(g:, 'plug_url_format', 'https://git::@github.com/%s.git')
+" 修改为
+let fmt = get(g:, 'plug_url_format', 'https://git::@mirror.ghproxy.com/https://github.com/%s.git')
+
+" 将
+\ '^https://git::@github\.com', 'https://github.com', '')
+" 修改为
+\ '^https://git::@mirror\.ghproxy\.com/https://github\.com', 'https://mirror.ghproxy.com/https://github.com', '')
+```
+
+**如何安装来自不同源的插件：**
+
+* 方案1：指定插件的完整地址，比如`Plug 'morhetz/gruvbox'`需要改成`Plug 'https://github.com/morhetz/gruvbox'`
+* 方案2：禁用`URI`校验。默认情况下，`Plug`不允许插件来自不同源，若要关闭此功能，可以按照如下方式修改`~/.vim/autoload/plug.vim`
+    ```vim
+    " 删掉如下代码片段
+                elsif !compare_git_uri(current_uri, uri)
+                    [false, ["Invalid URI: #{current_uri}",
+                            "Expected:    #{uri}",
+                            "PlugClean required."].join($/)]
+    " 删掉如下代码片段
+        elseif !s:compare_git_uri(remote, a:spec.uri)
+        let err = join(['Invalid URI: '.remote,
+                        \ 'Expected:    '.a:spec.uri,
+                        \ 'PlugClean required.'], "\n")
+    ```
+
+### 3.1.2 Frequently-Used Plugins
 
 | 插件名称 | 用途 | 官网地址 |
 |:--|:--|:--|
@@ -1192,60 +1246,6 @@ JAVA_HOME=/path/to/java/11 ./mvnw clean verify
 **安装后的配置文件以及二进制都在`./org.eclipse.jdt.ls.product/target/repository`目录中**
 
 * 运行日志默认在config目录中，例如`./org.eclipse.jdt.ls.product/target/repository/config_linux/`目录下
-
-### 3.2.12 vim-plug
-
-按照[vim-plug](https://github.com/junegunn/vim-plug)官网文档，通过一个命令直接安装即可
-
-```sh
-curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-```
-
-**基本用法**
-
-1. 以`call plug#begin()`开头
-1. 中间是`Plug`的相关命令
-1. 以`call plug#end()`结尾，默认会开启如下功能，如果不需要的话，可以手动关闭
-    * `filetype plugin indent on`
-    * `syntax enable`
-
-**基本操作**
-
-* `:PlugStatus`：查看插件状态
-* `:PlugInstall`：安装插件
-* `:PlugClean`：清除插件
-
-**修改下载源：默认从`github.com`上下载，稳定性较差，可以按照如下方式修改`~/.vim/autoload/plug.vim`**
-
-```vim
-" 将
-let fmt = get(g:, 'plug_url_format', 'https://git::@github.com/%s.git')
-" 修改为
-let fmt = get(g:, 'plug_url_format', 'https://git::@mirror.ghproxy.com/https://github.com/%s.git')
-
-" 将
-\ '^https://git::@github\.com', 'https://github.com', '')
-" 修改为
-\ '^https://git::@mirror\.ghproxy\.com/https://github\.com', 'https://mirror.ghproxy.com/https://github.com', '')
-```
-
-**如何安装来自不同源的插件：**
-
-* 方案1：指定插件的完整地址，比如`Plug 'morhetz/gruvbox'`需要改成`Plug 'https://github.com/morhetz/gruvbox'`
-* 方案2：禁用`URI`校验。默认情况下，`Plug`不允许插件来自不同源，若要关闭此功能，可以按照如下方式修改`~/.vim/autoload/plug.vim`
-    ```vim
-    " 删掉如下代码片段
-                elsif !compare_git_uri(current_uri, uri)
-                    [false, ["Invalid URI: #{current_uri}",
-                            "Expected:    #{uri}",
-                            "PlugClean required."].join($/)]
-    " 删掉如下代码片段
-        elseif !s:compare_git_uri(remote, a:spec.uri)
-        let err = join(['Invalid URI: '.remote,
-                        \ 'Expected:    '.a:spec.uri,
-                        \ 'PlugClean required.'], "\n")
-    ```
 
 ## 3.3 Color Scheme
 
