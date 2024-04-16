@@ -384,8 +384,17 @@ docker-slim build --http-probe=false centos:7.6.1810
 
 ## 7.6 从容器构建镜像
 
+**保留镜像原本的layer，每次commit都会生成一个layer，这样会导致镜像越来越大：**
+
 ```sh
 docker commit <container-id> <new_image>
+```
+
+**将容器导出成单层的镜像：**
+
+```sh
+docker export <container-id> -o centos7.9.2009-my.tar
+docker import centos7.9.2009-my.tar centos7.9.2009-my:latest
 ```
 
 # 8 FAQ

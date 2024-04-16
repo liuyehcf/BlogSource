@@ -327,7 +327,8 @@ Breakpoint 1, main () at set_break.cpp:8
     * `set disassembly-flavor intel`：汇编风格指定为`Intel Syntax`
     * `set disassembly-flavor att`：汇编风格指定为`AT&T Syntax`，该风格为默认风格
 * `list`：查看源码
-    * `list`：紧接着上一次的输出，继续输出10行源码
+    * `list`：紧接着上一次的输出，继续输出后10行源码
+    * `list -`：紧接着上一次的输出，继续输出前10行源码
     * `list <linenumber>`：输出当前文件指定行号开始的10行源码
     * `list <function>`：输出指定函数的10行源码
     * `list <filename:linenum>`：输出指定文件指定行号开始的10行源码
@@ -501,7 +502,7 @@ xxx/gdb_tutorial
 
 1. Redirect source file path: `set substitute-path`
 
-# 4 How analyze a core file
+# 4 How to Analyze a Core File
 
 Here are some of tips:
 
@@ -520,7 +521,15 @@ Here are some of tips:
 * `dashboard thread`：启用/禁用线程信息（大型工程，线程比较多的话，一般会禁用）
 * `dashboard`：刷新，通常在`print`查看一些变量信息后，需要刷新一下重新显示详情
 
-# 6 Reference
+# 6 LLDB
+
+LLDB is similar to GDB in most operations, but there are some differences (`help` for more details):
+
+1. There is no `start` command
+1. `frame select <id>`: select a frame
+1. `lldb -c <core> <binary>`: Analyze core file
+
+# 7 Reference
 
 * [GDB Tutorial - A Walkthrough with Examples](https://www.cs.umd.edu/~srhuang/teaching/cmsc212/gdb-tutorial-handout.pdf)
 * [GDB Command Reference](https://visualgdb.com/gdbreference/commands/)

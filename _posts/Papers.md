@@ -1909,3 +1909,9 @@ Data Stream Processing System, DSPS
     * [Attention Is All You Need](/resources/paper/Attention-Is-All-You-Need.pdf)
     * [BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding](/resources/paper/BERT-Pre-training-of-Deep-Bidirectional-Transformers-for-Language-Understanding.pdf)
     * [Language Models are Unsupervised Multitask Learners](/resources/paper/Language-Models-are-Unsupervised-Multitask-Learners.pdf)
+* Storage
+    * [What’s the Story in EBS Glory: Evolutions and Lessons in Building Cloud Block Store](/resources/paper/Whats-the-Story-in-EBS-Glory-Evolutions-and-Lessons-in-Building-Cloud-Block-Store.pdf)
+* Parquet
+    * [Lakehouse: A New Generation of Open Platforms that Unify Data Warehousing and Advanced Analytics](/resources/paper/Lakehouse-A-New-Generation-of-Open-Platforms-that-Unify-Data-Warehousing-and-Advanced-Analytics.pdf)
+    * [Dremel: Interactive Analysis of Web-Scale Datasets](/resources/paper/Dremel-Interactive-Analysis-of-Web-Scale-Datasets.pdf)
+    * [Seamless Integration of Parquet Files into Data Processing](/resources/paper/Seamless-Integration-of-Parquet-Files-into-Data-Processing.pdf)

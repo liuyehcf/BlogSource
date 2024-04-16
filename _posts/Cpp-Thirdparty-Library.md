@@ -188,17 +188,44 @@ gcc -o main main.cpp -lstdc++ -std=gnu++17 -lunwind -DUNW_LOCAL_ONLY
 
 [How to automatically generate a stacktrace when my program crashes](https://stackoverflow.com/questions/77005/how-to-automatically-generate-a-stacktrace-when-my-program-crashes)
 
-# 2 boost
+# 2 LLVM
 
-## 2.1 Installation
+```sh
+git clone -b release/16.x https://github.com/llvm/llvm-project.git --depth 1
+cd llvm-project
+cmake -B build -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -G "Ninja" \
+    llvm
+cmake --build build -j 64
+sudo cmake --install build
 
-### 2.1.1 Package Manager
+ninja -C build -t targets | grep -E '^install'
+```
+
+Install specific target:
+
+```sh
+cd build
+ninja -j 64 clang
+ninja -j 64 clang-format
+ninja -j 64 clangd
+sudo ninja install-clang
+sudo ninja install-clang-format
+sudo ninja install-clangd
+```
+
+# 3 boost
+
+## 3.1 Installation
+
+### 3.1.1 Package Manager
 
 ```sh
 yum install -y boost-devel
 ```
 
-### 2.1.2 From Source
+### 3.1.2 From Source
 
 [Boost Downloads](https://www.boost.org/users/download/)
 
@@ -212,7 +239,7 @@ cd boost_1_84_0
 sudo ./b2 install
 ```
 
-## 2.2 Usage
+## 3.2 Usage
 
 ```sh
 mkdir boost_demo
@@ -265,7 +292,7 @@ cmake --build build
 build/boost_demo
 ```
 
-## 2.3 Print Stack
+## 3.3 Print Stack
 
 Boost.Stacktrace provides several options for printing stack traces, depending on the underlying technology used to capture the stack information:
 
@@ -295,7 +322,7 @@ int main() {
 }
 ```
 
-### 2.3.1 With addr2line
+### 3.3.1 With addr2line
 
 This approach works fine with `gcc-10.3.0`, but can't work with higher versions like `gcc-11.3.0`, `gcc-12.3.0`. Don't know why so far.
 
@@ -323,7 +350,7 @@ Boost version: 1.84.0
  8# _start at :?
 ```
 
-### 2.3.2 With libbacktrace
+### 3.3.2 With libbacktrace
 
 **Compile:**
 
@@ -350,13 +377,13 @@ Boost version: 1.84.0
  8# _start in ./main
 ```
 
-## 2.4 Reference
+## 3.4 Reference
 
 * [The Boost C++ Libraries BoostBook Documentation Subset](https://www.boost.org/doc/libs/master/doc/html/)
 * [How to print current call stack](https://www.boost.org/doc/libs/1_66_0/doc/html/stacktrace/getting_started.html)
 * [print call stack in C or C++](https://stackoverflow.com/Questions/3899870/print-call-stack-in-c-or-c)
 
-# 3 [fmt](https://github.com/fmtlib/fmt)
+# 4 [fmt](https://github.com/fmtlib/fmt)
 
 **安装`fmt`：**
 
@@ -393,9 +420,9 @@ int main() {
 
 * `gcc -o main main.cpp -lstdc++ -std=gnu++17 -lfmt`
 
-# 4 Google
+# 5 Google
 
-## 4.1 gflag
+## 5.1 gflag
 
 **安装[gflag](https://github.com/gflags/gflags)：**
 
@@ -452,7 +479,7 @@ int main(int argc, char* argv[]) {
 * `gcc -o main main.cpp -lstdc++ -std=gnu++17 -lgflags -lpthread`
 * `./main --test_bool true --test_int32 100 --test_double 6.666 --test_str hello`
 
-## 4.2 glog
+## 5.2 glog
 
 **安装[glog](https://github.com/google/glog)：**
 
@@ -474,7 +501,7 @@ find_package(GLOG)
 target_link_libraries(xxx glog::glog)
 ```
 
-### 4.2.1 Print Stack
+### 5.2.1 Print Stack
 
 [[Enhancement] wrap libc's __cxa_throw to print stack trace when throw exceptions](https://github.com/StarRocks/starrocks/pull/13410)
 
@@ -532,7 +559,7 @@ int main(int argc, char* argv[]) {
 gcc -o main main.cpp -Wl,-wrap=__cxa_throw -lstdc++ -std=gnu++17 -Wl,-Bstatic -lglog -lgflags -Wl,-Bdynamic -lunwind -lpthread
 ```
 
-## 4.3 gtest
+## 5.3 gtest
 
 **安装[gtest](https://github.com/google/googletest)：**
 
@@ -610,7 +637,7 @@ cmake -B build && cmake --build build
 build/gtest_demo
 ```
 
-### 4.3.1 Macros
+### 5.3.1 Macros
 
 1. `TEST(test_case_name, test_name)`: Defines a test case.
     ```cpp
@@ -660,11 +687,11 @@ build/gtest_demo
 1. `EXPECT_THROW(statement, exception_type)`: Expects that a specific statement throws a particular exception.
 1. `ASSERT_THROW(statement, exception_type)`: Asserts that a specific statement throws a particular exception.
 
-### 4.3.2 Tips
+### 5.3.2 Tips
 
 1. 假设编译得到的二进制是`test`，通过执行`./test --help`就可以看到所有gtest支持的参数，包括执行特定case等等
 
-## 4.4 benchmark
+## 5.4 benchmark
 
 **安装[benchmark](https://github.com/google/benchmark)：**
 
@@ -754,13 +781,13 @@ BM_StringCreation       5.12 ns         5.12 ns    136772962
 BM_StringCopy           21.0 ns         21.0 ns     33441350
 ```
 
-### 4.4.1 quick-benchmark
+### 5.4.1 quick-benchmark
 
 [quick-bench（在线）](https://quick-bench.com/)
 
-### 4.4.2 Tips
+### 5.4.2 Tips
 
-#### 4.4.2.1 benchmark::DoNotOptimize
+#### 5.4.2.1 benchmark::DoNotOptimize
 
 避免优化本不应该优化的代码，其源码如下：
 
@@ -774,20 +801,20 @@ inline BENCHMARK_ALWAYS_INLINE void DoNotOptimize(Tp& value) {
 }
 ```
 
-#### 4.4.2.2 Run Specific Case
+#### 5.4.2.2 Run Specific Case
 
 使用参数`--benchmark_filter=<regexp>`，此外可以使用`--help`查看所有参数
 
-### 4.4.3 Reference
+### 5.4.3 Reference
 
 * [benchmark/docs/user_guide.md](https://github.com/google/benchmark/blob/main/docs/user_guide.md)
 * [c++性能测试工具：google benchmark入门（一）](https://www.cnblogs.com/apocelipes/p/10348925.html)
 
-## 4.5 [gperftools/gperftools](https://github.com/gperftools/gperftools)
+## 5.5 [gperftools/gperftools](https://github.com/gperftools/gperftools)
 
-# 5 ORM
+# 6 ORM
 
-## 5.1 sqlpp11
+## 6.1 sqlpp11
 
 **How to integrate:**
 
@@ -810,7 +837,7 @@ EOF
 scripts/ddl2cpp  /tmp/foo.sql /tmp/foo my_ns
 ```
 
-### 5.1.1 Example
+### 6.1.1 Example
 
 ```sh
 tree -L 2
@@ -1010,9 +1037,9 @@ SELECT users.id,users.first_name,users.last_name,users.age FROM users WHERE (use
 DELETE FROM users WHERE (users.id=10000001)
 ```
 
-# 6 Apache
+# 7 Apache
 
-## 6.1 arrow
+## 7.1 arrow
 
 [apache-arrow](https://github.com/apache/arrow)
 
@@ -1034,7 +1061,7 @@ sudo cmake --install build
 
 [Reading and writing Parquet files](https://arrow.apache.org/docs/cpp/parquet.html#)
 
-# 7 Pocoproject
+# 8 Pocoproject
 
 ```sh
 git clone -b master https://github.com/pocoproject/poco.git
@@ -1044,7 +1071,7 @@ cmake --build cmake-build --config Release -j 64
 sudo cmake --install cmake-build
 ```
 
-## 7.1 Logger
+## 8.1 Logger
 
 ```sh
 mkdir poco_logger_demo
@@ -1125,7 +1152,7 @@ Hello, World!
 2024.04.12 08:22:40.072214 <Information> main_2: Hello, World!
 ```
 
-## 7.2 JSON
+## 8.2 JSON
 
 ```sh
 mkdir poco_json_demo
@@ -1202,7 +1229,7 @@ Name: John Doe, Age: 30, Is Developer: 1
 Generated JSON: {"isNewDeveloper":false,"newAge":28,"newName":"Jane Smith"}
 ```
 
-# 8 Assorted
+# 9 Assorted
 
 1. [Awesome C++ Projects](https://github.com/fffaraz/awesome-cpp)
 1. [parallel-hashmap](https://github.com/greg7mdp/parallel-hashmap)：`parallel-hashmap`提供了一组高性能、并发安全的`map`，用于替换`std`以及`boost`中的`map`

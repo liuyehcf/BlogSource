@@ -1350,22 +1350,46 @@ int main(int argc, char* argv[]) {
 
 1. `std::tuple`
 1. `std::apply`：触发方法调用，其中，参数被分装在一个`tuple`中
+    ```cpp
+    #include <iostream>
+    #include <tuple>
+    #include <utility>
 
-```cpp
-#include <iostream>
-#include <tuple>
-#include <utility>
+    int add(int a, int b) {
+        return a + b;
+    }
 
-int add(int a, int b) {
-    return a + b;
-}
+    int main() {
+        std::cout << std::apply(add, std::make_tuple(1, 2)) << std::endl;
+        std::cout << std::apply(add, std::make_pair(1, 2)) << std::endl;
+        return 0;
+    }
+    ```
 
-int main() {
-    std::cout << std::apply(add, std::make_tuple(1, 2)) << std::endl;
-    std::cout << std::apply(add, std::make_pair(1, 2)) << std::endl;
-    return 0;
-}
-```
+1. `std::tie`
+    ```cpp
+    #include <stdint.h>
+
+    #include <string>
+    #include <tuple>
+
+    std::pair<int32_t, std::string> createPair() {
+        return std::pair<int32_t, std::string>(1, "Hello, World!");
+    }
+
+    std::tuple<int32_t, std::string, float> createTuple() {
+        return std::tuple<int32_t, std::string, float>(2, "Hi, World!", 3.14f);
+    }
+
+    int main() {
+        int32_t num;
+        std::string str;
+
+        std::tie(num, std::ignore) = createPair();
+        std::tie(num, str, std::ignore) = createTuple();
+        return 0;
+    }
+    ```
 
 # 25 type_traits
 

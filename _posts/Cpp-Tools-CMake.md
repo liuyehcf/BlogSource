@@ -1137,6 +1137,14 @@ add_custom_target(
     )
 ```
 
+## 6.9 How to uninstall
+
+After installation, there will be a `install_manifest.txt` recording all the installed files. So we can perform uninstallation by this file.
+
+```sh
+xargs rm < install_manifest.txt
+```
+
 # 7 Reference
 
 * [CMake Tutorial](https://cmake.org/cmake/help/latest/guide/tutorial/index.html)
