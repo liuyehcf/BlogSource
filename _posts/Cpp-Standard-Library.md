@@ -554,6 +554,34 @@ auto now_nanos = std::chrono::duration_cast<std::chrono::nanoseconds>(
         std::chrono::steady_clock::now().time_since_epoch()).count();
 ```
 
+## 4.2 time_point
+
+```cpp
+#include <chrono>
+#include <ctime>
+#include <iostream>
+
+int main() {
+    using Clock = std::chrono::system_clock;
+    // Convert from std::chrono::time_point to time_t
+    Clock::time_point now_tp = Clock::now();
+    time_t now_tt = Clock::to_time_t(now_tp);
+    std::cout << "Current time (time_t): " << now_tt << std::endl;
+
+    // Convert from time_t to std::tm (local time)
+    std::tm now_tm = *std::localtime(&now_tt);
+    std::cout << "Current time (std::tm): " << now_tm.tm_hour << ":" << now_tm.tm_min << ":" << now_tm.tm_sec
+              << std::endl;
+
+    // Convert from std::tm to std::chrono::time_point
+    time_t back_to_tt = std::mktime(&now_tm);
+    Clock::time_point back_to_tp = Clock::from_time_t(back_to_tt);
+    std::cout << "Back to std::chrono::time_point" << std::endl;
+
+    return 0;
+}
+```
+
 # 5 filesystem
 
 1. `std::filesystem::copy`
@@ -686,7 +714,46 @@ int main() {
 1. `std::promise`
 1. `std::future`
 
-# 9 iostream
+# 9 iomanip
+
+iomanip stands for input/output manipulators
+
+1. `std::get_time`: Refer to [std::get_time](https://en.cppreference.com/w/cpp/io/manip/get_time) for all supported time format.
+1. `std::put_time`
+    ```cpp
+    #include <chrono>
+    #include <ctime>
+    #include <iomanip>
+    #include <iostream>
+    #include <sstream>
+
+    int main() {
+        std::string date_str = "2023-09-15 20:30";
+        std::tm tm = {};
+        std::istringstream ss(date_str);
+
+        ss >> std::get_time(&tm, "%Y-%m-%d %H:%M");
+        if (ss.fail()) {
+            std::cout << "Parse error." << std::endl;
+        } else {
+            std::cout << "Successfully parsed: "
+                    << "Year: " << tm.tm_year + 1900 << ", Month: " << tm.tm_mon + 1 << ", Day: " << tm.tm_mday
+                    << ", Hour: " << tm.tm_hour << ", Minute: " << tm.tm_min << std::endl;
+        }
+
+        auto now = std::chrono::system_clock::now();
+        time_t now_c = std::chrono::system_clock::to_time_t(now);
+        std::tm* now_tm = std::localtime(&now_c);
+
+        std::cout << "Current time: " << std::put_time(now_tm, "%Y-%m-%d %H:%M:%S") << std::endl;
+        return 0;
+    }
+    ```
+
+1. `std::get_money`
+1. `std::put_money`
+
+# 10 iostream
 
 1. `std::cout`
 1. `std::cin`
@@ -694,16 +761,16 @@ int main() {
 1. `std::boolalpha`
 1. `std::noboolalpha`
 
-# 10 iterator
+# 11 iterator
 
-## 10.1 Stream Iterators
+## 11.1 Stream Iterators
 
 1. `std::istream_iterator`
 1. `std::ostream_iterator`
 1. `std::istreambuf_iterator`
 1. `std::ostreambuf_iterator`
 
-## 10.2 Operations
+## 11.2 Operations
 
 1. `std::advance`
 1. `std::distance`
@@ -756,14 +823,14 @@ Value at position 3: 4
 Value at position 3 from the end: 4
 ```
 
-# 11 limits
+# 12 limits
 
 1. `std::numeric_limits`
     * `std::numeric_limits<int32_t>::max()`
 
-# 12 memory
+# 13 memory
 
-## 12.1 std::shared_ptr
+## 13.1 std::shared_ptr
 
 **类型转换**
 
@@ -793,7 +860,7 @@ void func(std::shared_ptr<Widget> ptr);
 
 这样的话，外部传过来值的时候，可以选择`move`或者赋值。函数内部直接把这个对象通过`move`的方式保存起来
 
-## 12.2 std::enable_shared_from_this
+## 13.2 std::enable_shared_from_this
 
 **`std::enable_shared_from_this`能让一个由`std::shared_ptr`管理的对象，安全地生成其他额外的`std::shared_ptr`实例，原实例和新生成的示例共享所有权**
 
@@ -817,7 +884,7 @@ int main() {
 }
 ```
 
-## 12.3 std::unique_ptr
+## 13.3 std::unique_ptr
 
 * `release`是指让出控制权，不再管理生命周期，而不是释放。要释放的话可以用`reset`方法，或者直接赋值成`nullptr`
 
@@ -851,7 +918,7 @@ int main(void) {
 }
 ```
 
-## 12.4 std::weak_ptr
+## 13.4 std::weak_ptr
 
 用于指向由`std::shared_ptr`管理的对象，但不负责管理改对象的生命周期。也就是说，它指向的对象可能已经被析构了
 
@@ -885,11 +952,11 @@ int main() {
 }
 ```
 
-## 12.5 Reference
+## 13.5 Reference
 
 * [C++ 智能指针的正确使用方式](https://www.cyhone.com/articles/right-way-to-use-cpp-smart-pointer/)
 
-# 13 memory_resource
+# 14 memory_resource
 
 ```cpp
 #include <iostream>
@@ -916,7 +983,7 @@ int main() {
 }
 ```
 
-# 14 mutex
+# 15 mutex
 
 1. `std::mutex`：不可重入的互斥量
 1. `std::recursive_mutex`：可重入的互斥量
@@ -976,11 +1043,11 @@ int main() {
     }
     ```
 
-## 14.1 Reference
+## 15.1 Reference
 
 * [Do I have to acquire lock before calling condition_variable.notify_one()?](https://stackoverflow.com/questions/17101922/do-i-have-to-acquire-lock-before-calling-condition-variable-notify-one)
 
-# 15 numeric
+# 16 numeric
 
 1. `std::accumulate`
     ```cpp
@@ -1017,7 +1084,7 @@ int main() {
     }
     ```
 
-# 16 optional
+# 17 optional
 
 1. `std::optional`
 
@@ -1051,9 +1118,9 @@ int main() {
 }
 ```
 
-# 17 queue
+# 18 queue
 
-## 17.1 std::priority_queue
+## 18.1 std::priority_queue
 
 `std::priority_queue` in C++ Standard Template Library (STL) is a container adapter that provides functionality to maintain a collection of elements sorted by priority. It is typically implemented as a max-heap, meaning the largest element is always at the front of the queue. There are three template parameters in `std::priority_queue`, each serving a specific purpose:
 
@@ -1095,12 +1162,12 @@ int main() {
 }
 ```
 
-# 18 random
+# 19 random
 
 1. `std::default_random_engine`
 1. `std::uniform_int_distribution`：左闭右闭区间
 
-# 19 ranges
+# 20 ranges
 
 `ranges`可以看做是对于`algorithm`中算法的封装，可以省去`begin()`、`end()`等调用，如下
 
@@ -1128,7 +1195,7 @@ int main() {
 }
 ```
 
-# 20 stdexcept
+# 21 stdexcept
 
 1. `std::logic_error`
 1. `std::invalid_argument`
@@ -1140,7 +1207,7 @@ int main() {
 1. `std::overflow_error`
 1. `std::underflow_error`
 
-# 21 exception
+# 22 exception
 
 1. `std::uncaught_exceptions`
     ```cpp
@@ -1202,7 +1269,7 @@ int main() {
     }
     ```
 
-## 21.1 sstring
+## 22.1 sstring
 
 1. `std::stringstream`
 1. `std::istringstream`: Use this and `std::getline` to achieve the function of spliting a string
@@ -1224,19 +1291,19 @@ int main(int32_t argc, char* argv[]) {
 }
 ```
 
-# 22 string
+# 23 string
 
 1. `std::string`
 1. `std::to_string`
 1. `std::string::npos`: This is a special value equal to the maximum value representable by the type size_type.
 1. `std::getline`: getline reads characters from an input stream and places them into a string.
 
-# 23 thread
+# 24 thread
 
 1. `std::thread::hardware_concurrency`
 1. `std::this_thread`
 
-## 23.1 How to set thread name
+## 24.1 How to set thread name
 
 1. `pthread_setname_np/pthread_getname_np`，需要引入头文件`<pthread.h>`，`np`表示`non-portable`，即平台相关
 1. `prctl(PR_GET_NAME, name)/prctl(PR_SET_NAME, name)`，需要引入头文件`<sys/prctl.h>`
@@ -1303,7 +1370,7 @@ int main() {
 }
 ```
 
-## 23.2 How to set thread affinity
+## 24.2 How to set thread affinity
 
 下面示例代码用于测试各个CPU的性能
 
@@ -1346,7 +1413,7 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-# 24 tuple
+# 25 tuple
 
 1. `std::tuple`
 1. `std::apply`：触发方法调用，其中，参数被分装在一个`tuple`中
@@ -1391,18 +1458,18 @@ int main(int argc, char* argv[]) {
     }
     ```
 
-# 25 type_traits
+# 26 type_traits
 
 [Standard library header <type_traits>](https://en.cppreference.com/w/cpp/header/type_traits)
 
-## 25.1 Helper Class
+## 26.1 Helper Class
 
 1. `std::integral_constant`
 1. `std::bool_constant`
 1. `std::true_type`
 1. `std::false_type`
 
-## 25.2 Primary type categories
+## 26.2 Primary type categories
 
 1. `std::is_void`
 1. `std::is_null_pointer`
@@ -1411,7 +1478,7 @@ int main(int argc, char* argv[]) {
 1. `std::is_pointer`
 1. ...
 
-## 25.3 Composite type categories
+## 26.3 Composite type categories
 
 1. `std::is_fundamental`
 1. `std::is_arithmetic`
@@ -1420,7 +1487,7 @@ int main(int argc, char* argv[]) {
 1. `std::is_member_pointer`
 1. ...
 
-## 25.4 Type properties
+## 26.4 Type properties
 
 1. `std::is_const`
 1. `std::is_volatile`
@@ -1429,7 +1496,7 @@ int main(int argc, char* argv[]) {
 1. `std::is_abstract`
 1. ...
 
-## 25.5 Supported operations
+## 26.5 Supported operations
 
 1. `std::is_constructible`
 1. `std::is_copy_constructible`
@@ -1438,19 +1505,19 @@ int main(int argc, char* argv[]) {
 1. `std::is_destructible`
 1. ...
 
-## 25.6 Property queries
+## 26.6 Property queries
 
 1. `std::alignment_of`
 1. `std::rank`
 1. `std::extent`
 
-## 25.7 Type relationships
+## 26.7 Type relationships
 
 1. `std::is_same`
 1. `std::is_base_of`
 1. ...
 
-## 25.8 Const-volatility specifiers
+## 26.8 Const-volatility specifiers
 
 1. `std::remove_cv`
 1. `std::remove_const`
@@ -1459,28 +1526,28 @@ int main(int argc, char* argv[]) {
 1. `std::add_const`
 1. `std::add_volatile`
 
-## 25.9 References
+## 26.9 References
 
 1. `std::remove_reference`
 1. `std::add_lvalue_reference`
 1. `std::add_rvalue_reference`
   
-## 25.10 Pointers
+## 26.10 Pointers
 
 1. `std::remove_pointer`
 1. `std::add_pointer`
   
-## 25.11 Sign modifiers
+## 26.11 Sign modifiers
 
 1. `std::make_signed`
 1. `std::make_unsigned`
 
-## 25.12 Arrays
+## 26.12 Arrays
 
 1. `std::remove_extent`
 1. `std::remove_all_extents`
 
-## 25.13 Miscellaneous transformations
+## 26.13 Miscellaneous transformations
 
 1. `std::enable_if`
 1. `std::conditional`
@@ -1506,7 +1573,7 @@ int main(int argc, char* argv[]) {
     }    
     ```
 
-## 25.14 Alias
+## 26.14 Alias
 
 `using template`，用于简化上述模板。例如`std::enable_if_t`等价于`typename enable_if<b,T>::type`
 
@@ -1517,7 +1584,7 @@ int main(int argc, char* argv[]) {
 1. `std::invoke_result_t`
 1. ...
 
-## 25.15 std::move
+## 26.15 std::move
 
 标准库的实现如下：
 
@@ -1552,7 +1619,7 @@ int main() {
 }
 ```
 
-## 25.16 std::forward
+## 26.16 std::forward
 
 `std::forward`主要用于实现模板的完美转发：因为对于一个变量而言，无论该变量的类型是左值引用还是右值引用，变量本身都是左值，如果直接将变量传递到下一个方法中，那么一定是按照左值来匹配重载函数的，而`std::forward`就是为了解决这个问题。请看下面这个例子：
 
@@ -1671,7 +1738,7 @@ func(std::forward<int&&>(1)) -> right reference version
     }
 ```
 
-### 25.16.1 forwarding reference
+### 26.16.1 forwarding reference
 
 **当且仅当`T`是函数模板的模板类型形参时，`T&&`才能称为`forwarding reference`，而其他任何形式，都不是`forwarding reference`。例如如下示例代码：**
 
@@ -1749,9 +1816,9 @@ struct C {
 };
 ```
 
-# 26 unordered_map
+# 27 unordered_map
 
-# 27 unordered_set
+# 28 unordered_set
 
 Both `equal` and `hash` functions should be marked with `const`
 
@@ -1825,7 +1892,7 @@ int main() {
 }
 ```
 
-# 28 utility
+# 29 utility
 
 1. `std::pair`：本质上，它是`std::tuple`的一个特例
 1. `std::declval`：用来配合`decltype`进行类型推导，其实现原理如下：
@@ -1872,7 +1939,7 @@ int main() {
     }
     ```
 
-## 28.1 How to return pair containing reference type
+## 29.1 How to return pair containing reference type
 
 示例如下：
 
@@ -1936,7 +2003,7 @@ int main() {
 * `get_data_2`：正确方式。由于`std::ref`（返回类型是`std::reference_wrapper`）的存在，`std::make_pair`会创建类型为`std::pair<const std::vector<int>&, int>`的对象，此时引用会正确初始化
 * `get_data_3`：正确方式，不用`std::make_pair`，引用会正确初始化
 
-# 29 variant
+# 30 variant
 
 1. `std::visit`
 1. `std::variant`：类型安全的union。只允许以正确的类型进行访问
@@ -1957,7 +2024,7 @@ int main() {
 }
 ```
 
-## 29.1 Dynamic Binding
+## 30.1 Dynamic Binding
 
 `std::variant`结合`std::visit`可以实现动态分派，示例代码如下：
 
@@ -1994,7 +2061,7 @@ int main() {
 * 每个`Visitor,variant`对会生成一个`vtable`，里面记录了所有的函数指针，并按照`std::variant`各个类型声明的顺序排序
 * 在用`std::visit`进行访问时，会用`std::variant::index`找到`vtable`中的函数指针，并进行调用
 
-# 30 Containers
+# 31 Containers
 
 1. `<vector>`：其内部就是一个数组。当进行扩容缩容时，会进行数据的拷贝或移动，因此要求对应的类型至少拥有拷贝构造函数和移动构造函数中的一个。例如，`std::vector<std::atomic_bool>`是无法调用`push_back`或者`emplace_back`来增加元素的
 1. `<array>`
@@ -2006,14 +2073,14 @@ int main() {
 1. `<set>`
 1. `<unordered_set>`
 
-## 30.1 Tips
+## 31.1 Tips
 
 1. `std::map`或者`std::set`用下标访问后，即便访问前元素不存在，也会插入一个默认值。因此下标访问是非`const`的
 1. 容器在扩容时，调用的是元素的拷贝构造函数
 1. `std::vector<T> v(n)`会生成`n`个对应元素的默认值，而不是起到预留`n`个元素的空间的作用
 1. 不要将`end`方法返回的迭代器传入`erase`方法
 
-# 31 SIMD
+# 32 SIMD
 
 [Header files for x86 SIMD intrinsics](https://stackoverflow.com/questions/11228855/header-files-for-x86-simd-intrinsics)
 
@@ -2053,7 +2120,7 @@ int main() {
 * `-mavx512vbmi`
 * ...
 
-# 32 C Standard Library
+# 33 C Standard Library
 
 由于`C++`是`C`的超集，`C`的标准库也被添加到`std`命名空间中了，但是头文件有所区别：`xxx.h -> cxxx`。其中，`xxx.h`是原始的`C`标准库头文件，其符号不在任何命名空间中；`cxxx`是对应的`C++`版本的头文件，其符号在`std`命名空间中
 
@@ -2089,7 +2156,7 @@ int main() {
     * `std::isblank`：仅对空格和水平制表符返回 true
     * `std::isspace`：空格、表单换行符、换行符、回车符、水平制表符和垂直制表符都返回true
 
-## 32.1 csignal
+## 33.1 csignal
 
 各种信号都定义在`signum.h`这个头文件中
 
@@ -2142,7 +2209,7 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-## 32.2 Execute Command
+## 33.2 Execute Command
 
 ```cpp
 #include <cstdlib>
@@ -2159,7 +2226,7 @@ int main() {
 }
 ```
 
-# 33 Frequently-Used Compoments for Interview
+# 34 Frequently-Used Compoments for Interview
 
 **Data Structure:**
 
@@ -2190,3 +2257,4 @@ int main() {
 
 * `std::ifstream`、`std::ofstream`
 * `std::getline`
+* `std::get_time`、`std::put_time`

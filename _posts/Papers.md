@@ -1270,7 +1270,7 @@ categories:
     </tbody>
 </table>
 
-# 2 DSPS
+## 1.1 DSPS
 
 Data Stream Processing System, DSPS
 
@@ -1521,7 +1521,38 @@ Data Stream Processing System, DSPS
     </tbody>
 </table>
 
-# 3 Serverless
+## 1.2 LakeHouse
+
+### 1.2.1 Lakehouse: A New Generation of Open Platforms that Unify Data Warehousing and Advanced Analytics
+
+**Warehouse' problems:**
+
+* Reliability: Keeping the data lake and warehouse consistent is difficult and costly
+* Data staleness
+* Limited support for advanced analytics
+
+**Goals of Lakehouse Architecture:**
+
+* Reliable data management on data lakes
+* Support for machine learning and data science
+    * Declarative DataFrame APIs
+* SQL performance
+
+**Lakehouse Architecture: Based on low-cost and directly-accessible storage that also provides traditional analytical DBMS management and performance features such as ACID transactions, data versioning, auditing, indexing, caching, and query optimization**
+
+* Metadata Layers for Data Management
+    * Defines which objects are part of a table version
+    * Provide atomic operation, transaction, zero-copy(provide high-level organization, like table, based on the exsiting storage)
+    * Provide data quality enforcement feature
+    * Provide governance features such as access control and audit logging
+    * Speed up advanced analytics workloads and give them better data management features thanks to the development of declarative DataFrame APIs
+    * Both Delta Lake(Databricks), Apache Iceberg, Apache Hudi have implemented this feature
+* SQL Performance in a Lakehouse
+    * Caching, storing hot data on fast devices such as SSDs
+    * Auxiliary data, like statistics and indexes
+    * Data layout
+
+# 2 Serverless
 
 <table>
     <thead>
@@ -1569,7 +1600,7 @@ Data Stream Processing System, DSPS
     </tbody>
 </table>
 
-# 4 Compile Tech
+# 3 Compile Tech
 
 <table>
     <thead>
@@ -1596,7 +1627,7 @@ Data Stream Processing System, DSPS
     </tbody>
 </table>
 
-# 5 Cpp
+# 4 Cpp
 
 <table>
     <thead>
@@ -1825,7 +1856,7 @@ Data Stream Processing System, DSPS
     </tbody>
 </table>
 
-# 6 TODO
+# 5 TODO
 
 * Survey
     * [Query Evaluation Techniques for Large Databases](https://cgi.cse.unsw.edu.au/~cs9315/20T1/readings/query.pdf)
