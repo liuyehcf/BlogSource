@@ -3489,7 +3489,7 @@ nnoremap <leader>qc :cclose<cr>
 " 一些常规配置
 " 折叠，默认不启用
 set nofoldenable
-set foldmethod=indent
+set foldmethod=manual
 set foldlevel=0
 " 设置文件编码格式
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936

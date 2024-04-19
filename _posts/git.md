@@ -183,16 +183,17 @@ git commit --amend [file1] [file2] ...
 # 5 Undo
 
 ```sh
-# 恢复暂存区的指定文件到工作区，注意'--'表示的是：后面接的是path而非分支名
-git checkout [file]
+# 恢复工作区的所有文件到暂存区
+git checkout -- .
+
+# 恢复工作区的指定文件到暂存区
 git checkout -- [file]
 
-# 恢复某个commit的指定文件到暂存区和工作区
-git checkout [commit] [file]
+# 恢复某个分支的指定文件到暂存区
+git checkout [branch] -- [file]
 
-# 恢复暂存区的所有文件到工作区
-git checkout .
-git checkout -- .
+# 恢复某个commit的指定文件到暂存区
+git checkout [commit] -- [file]
 
 # 重置暂存区的指定文件，与上一次commit保持一致，但工作区不变
 git reset [file]
@@ -244,7 +245,7 @@ git stash clear
 # 丢弃工作区的改动
 git restore [file]
 
-# 丢弃暂存区，但工作区不变
+# 恢复暂存区的指定文件到工作区
 git restore --staged [file]
 ```
 

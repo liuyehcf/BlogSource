@@ -841,28 +841,30 @@ array_name[2]=value2
 array_name[n]=valuen
 ```
 
-**获取数组中的所有元素：**
+### 3.3.1 Operations
+
+#### 3.3.1.1 Get All Elements
  
 ```sh
 ${array[@]}
 ${array[*]}
 ```
 
-**获取数组长度：**
+#### 3.3.1.2 Get Length
 
 ```sh
 ${#array[@]}
 ${#array[*]}
 ```
 
-**获取数组的所有下标：**
+#### 3.3.1.3 Get All Indexes
 
 ```sh
 ${!array[@]}
 ${!array[*]}
 ```
 
-**数组合并：**
+#### 3.3.1.4 Combine Arrays
 
 ```sh
 array1=(1 2 3)
@@ -871,7 +873,7 @@ array3=( ${array1[@]} ${array2[@]} )
 echo "array3='${array3[@]}'"
 ```
 
-**追加元素：**
+#### 3.3.1.5 Append Elements
 
 ```sh
 # 方法1
@@ -924,7 +926,7 @@ do
 done
 ```
 
-### 3.3.1 Start Index
+### 3.3.2 Start Index
 
 1. `sh/bash`：数组下标从0开始
 1. `zsh`：数组下标从1开始
@@ -953,7 +955,7 @@ echo ${array[@]:3:3}
 echo ${array[@]:3}
 ```
 
-### 3.3.2 Collection Calculation
+### 3.3.3 Collection Calculation
 
 假设`F1`和`F2`是两个数组
 
@@ -981,7 +983,7 @@ F2=( 2 3 4 )
 echo ${F1[@]} ${F2[@]} | tr ' ' '\n' | sort | uniq -u
 ```
 
-### 3.3.3 Iterate Array
+### 3.3.4 Iterate Array
 
 ```sh
 array=(1 2 3 4 5)
@@ -1000,7 +1002,7 @@ do
 done
 ```
 
-#### 3.3.3.1 Array Delimiter
+#### 3.3.4.1 Array Delimiter
 
 **如果数组中的内容包含空白，`foreach`默认会以空格作为分隔符，这就有可能破坏数组元素原有的结构，例如**
 
@@ -1032,7 +1034,7 @@ done
 IFS="${ifs_bak}"
 ```
 
-### 3.3.4 Echo the array with a specified delimiter
+### 3.3.5 Echo the array with a specified delimiter
 
 ```sh
 # echo not respect IFS

@@ -1525,6 +1525,8 @@ Data Stream Processing System, DSPS
 
 ### 1.2.1 Lakehouse: A New Generation of Open Platforms that Unify Data Warehousing and Advanced Analytics
 
+[Lakehouse: A New Generation of Open Platforms that Unify Data Warehousing and Advanced Analytics](/resources/paper/Lakehouse-A-New-Generation-of-Open-Platforms-that-Unify-Data-Warehousing-and-Advanced-Analytics.pdf)
+
 **Warehouse' problems:**
 
 * Reliability: Keeping the data lake and warehouse consistent is difficult and costly
@@ -1551,6 +1553,15 @@ Data Stream Processing System, DSPS
     * Caching, storing hot data on fast devices such as SSDs
     * Auxiliary data, like statistics and indexes
     * Data layout
+
+### 1.2.2 Photon: A Fast Query Engine for Lakehouse Systems
+
+[Photon: A Fast Query Engine for Lakehouse Systems](/resources/paper/Photon-A-Fast-Query-Engine-for-Lakehouse-Systems.pdf)
+
+**Challenges of Photon's design:**
+
+* Perform well on raw, uncurated data, which are highly irregular datasets, poor physical layout, and large fields, all with no useful clustering or data statistics
+* Semantically compatible with, the existing Apache Spark DataFrame API
 
 # 2 Serverless
 

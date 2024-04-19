@@ -558,7 +558,24 @@ Trino is forked from Presto
 
 * [home](https://www.vertica.com/)
 
-# 27 TODO
+# 27 VikingDB
+
+**类型：`Graph/Vector`**
+
+**特性：**
+
+**架构：**
+
+**主页：**
+
+* [VikingDB：大规模云原生向量数据库的前沿实践与应用](https://mp.weixin.qq.com/s/n2aCJojSQHLRKLoT7aYl9w)
+
+# 28 Relations
+
+1. Databricks: Spark 团队成员组建的商业化公司
+1. Trino: 基于 Presto
+
+# 29 TODO
 
 1. mysql
     * [Blog](https://blogs.oracle.com/mysql/)
@@ -574,7 +591,7 @@ Trino is forked from Presto
     * Thomas Neumann
     * [Publications](https://db.in.tum.de/research/publications/?lang=en)
 
-# 28 参考
+# 30 参考
 
 * [你需要的不是实时数仓 | 你需要的是一款合适且强大的OLAP数据库(上)](https://segmentfault.com/a/1190000020385432)
 * [你需要的不是实时数仓 | 你需要的是一款强大的OLAP数据库(下)](https://segmentfault.com/a/1190000020385389)

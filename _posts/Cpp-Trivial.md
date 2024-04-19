@@ -200,6 +200,12 @@ sudo ldconfig
 
 This command scans the directories listed in `/etc/ld.so.conf`, its `*.conf` includes in `/etc/ld.so.conf.d/`, and the default directories (`/lib`, `/usr/lib`). It then updates `/etc/ld.so.cache` with the paths to the available libraries.
 
+**Check**
+
+```sh
+ldconfig -p | grep /custom/lib
+```
+
 ## 2.4 Link Order
 
 [Why does the order in which libraries are linked sometimes cause errors in GCC?](https://stackoverflow.com/questions/45135/why-does-the-order-in-which-libraries-are-linked-sometimes-cause-errors-in-gcc)

@@ -1057,9 +1057,105 @@ cmake --preset -N ninja-release
 cmake -B build --preset ninja-release
 cmake --build build -j 4
 sudo cmake --install build
+
+echo '/usr/local/lib64' | sudo tee /etc/ld.so.conf.d/arrow.conf
+sudo ldconfig
 ```
 
 [Reading and writing Parquet files](https://arrow.apache.org/docs/cpp/parquet.html#)
+
+```cpp
+#include <arrow/api.h>
+#include <arrow/io/api.h>
+#include <arrow/pretty_print.h>
+#include <arrow/result.h>
+#include <arrow/status.h>
+#include <parquet/arrow/reader.h>
+#include <parquet/arrow/writer.h>
+#include <parquet/exception.h>
+
+#include <filesystem>
+#include <iostream>
+
+void CheckStatus(const arrow::Status& status) {
+    if (!status.ok()) {
+        std::cerr << "Arrow operation failed: " << status.message() << std::endl;
+        exit(EXIT_FAILURE);
+    }
+}
+
+int main() {
+    // Create a simple table
+    arrow::Int64Builder i64builder;
+    CheckStatus(i64builder.AppendValues({1, 2, 3, 4, 5}));
+
+    std::shared_ptr<arrow::Array> array;
+    CheckStatus(i64builder.Finish(&array));
+
+    std::shared_ptr<arrow::Schema> schema = arrow::schema({arrow::field("int_column", arrow::int64())});
+    auto table = arrow::Table::Make(schema, {array});
+
+    // Write the table to a Parquet file
+    std::string file_path = "data.parquet";
+    std::shared_ptr<arrow::io::FileOutputStream> outfile;
+    CheckStatus(arrow::io::FileOutputStream::Open(file_path).Value(&outfile));
+    CheckStatus(parquet::arrow::WriteTable(*table, arrow::default_memory_pool(), outfile, 3));
+
+    // Read the Parquet file back into a table
+    std::shared_ptr<arrow::io::ReadableFile> infile;
+    CheckStatus(arrow::io::ReadableFile::Open(file_path, arrow::default_memory_pool()).Value(&infile));
+
+    std::unique_ptr<parquet::arrow::FileReader> reader;
+    CheckStatus(parquet::arrow::OpenFile(infile, arrow::default_memory_pool(), &reader));
+
+    std::shared_ptr<arrow::Table> read_table;
+    CheckStatus(reader->ReadTable(&read_table));
+
+    // Print the table to std::cout
+    std::stringstream ss;
+    CheckStatus(arrow::PrettyPrint(*read_table.get(), {}, &ss));
+    std::cout << ss.str() << std::endl;
+
+    return 0;
+}
+```
+
+```sh
+gcc -o main main.cpp -lstdc++ -std=gnu++17 -larrow -lparquet
+./main
+```
+
+## 7.2 thrift
+
+```sh
+git clone https://github.com/apache/thrift.git
+cd thrift
+git checkout v0.15.0
+
+./bootstrap.sh
+# you can build specific lib by using --with-xxx or --without-xxx
+./configure
+make -j 64
+sudo make install
+```
+
+```sh
+cat > example.thrift << 'EOF'
+namespace cpp example
+
+struct Person {
+  1: string name,
+  2: i32 age,
+  3: string email
+}
+
+service PersonService {
+  void addPerson(1: Person person)
+}
+EOF
+
+thrift --gen cpp example.thrift
+```
 
 # 8 Pocoproject
 

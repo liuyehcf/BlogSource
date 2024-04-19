@@ -111,3 +111,4 @@
 | DFA | Deterministic Finite Automation |
 | GMV | Gross Merchandise Volume |
 | IOPS | Input/Output Operations Per Second |  
+| DAU | Daily Active Users |
