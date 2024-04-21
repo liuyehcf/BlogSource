@@ -93,22 +93,24 @@
 
 | Abbreviation | Explanation |
 |:--|:--|
-| POC | Proof of Concept |
-| ROI | Return On Investment |
-| SLA | Service Level Agreement |
-| FWD | Forward Declaration |
-| SMT | Simultaneous Multithreading |
-| OEM | Original Equipment Manufacturer |
-| ODM | Original Design Manufacturer |
-| OBM | Original Brand Manufacturer |
-| ETL | Extract, Transform and Load |
-| RFC | Request for Comments |
-| EMR | Elastic MapReduce |
-| EA | Electronic Arts(company name) |
-| MFA/2FA | Multi-Factor Authentication/Two-Factor Authentication |
 | ARR | Annual Recurring Revenue |
-| NFA | Non-Deterministic Finite Automation |
+| CNN | Convolutional Neural Network |
+| DAU | Daily Active Users |
 | DFA | Deterministic Finite Automation |
+| EA | Electronic Arts(company name) |
+| EMR | Elastic MapReduce |
+| ETL | Extract, Transform and Load |
+| FWD | Forward Declaration |
 | GMV | Gross Merchandise Volume |
 | IOPS | Input/Output Operations Per Second |  
-| DAU | Daily Active Users |
+| MFA/2FA | Multi-Factor Authentication/Two-Factor Authentication |
+| NFA | Non-Deterministic Finite Automation |
+| OBM | Original Brand Manufacturer |
+| ODM | Original Design Manufacturer |
+| OEM | Original Equipment Manufacturer |
+| POC | Proof of Concept |
+| RFC | Request for Comments |
+| RNN | Recurrent Neural Network |
+| ROI | Return On Investment |
+| SLA | Service Level Agreement |
+| SMT | Simultaneous Multithreading |

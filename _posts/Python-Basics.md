@@ -605,15 +605,52 @@ pip install xxx -i https://pypi.tuna.tsinghua.edu.cn/simple
     pip3 install cryptography==3.4.8
     ```
 
-# 9 其他
+# 9 Install From Source
 
-## 9.1 代码格式化
+**Requirement:**
+
+* `openssl`
+    ```sh
+    wget https://www.openssl.org/source/openssl-1.1.1g.tar.gz
+    tar -zxf openssl-1.1.1g.tar.gz
+    cd openssl-1.1.1g
+
+    ./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl no-ssl2
+    make -j 64
+    sudo make install
+
+    export PATH=/usr/local/openssl/bin:${PATH}
+    echo '/usr/local/openssl/lib' | sudo tee /etc/ld.so.conf.d/openssl.conf
+    sudo ldconfig
+    sudo ldconfig -p | grep openssl
+
+    openssl version
+    ```
+
+* `libffi`：Foreign Function Interface
+    `yum -y install libffi-devel`
+
+Donwload latest stable version from [Python Source Releases](https://www.python.org/downloads/source/)
+
+```sh
+wget https://www.python.org/ftp/python/3.12.3/Python-3.12.3.tgz
+tar -xf Python-3.12.3.tgz
+cd Python-3.12.3
+
+./configure --enable-optimizations --with-openssl=/usr/local/openssl
+make -j 64
+sudo make install
+```
+
+# 10 其他
+
+## 10.1 代码格式化
 
 * [autopep8](https://pypi.org/project/autopep8/)
 * [vim-autopep8](https://github.com/tell-k/vim-autopep8)
 * [vim-autoformat](https://github.com/vim-autoformat/vim-autoformat)
 
-## 9.2 Debug
+## 10.2 Debug
 
 `pdb`的用法与`gdb`类似，这里不赘述
 
@@ -621,7 +658,7 @@ pip install xxx -i https://pypi.tuna.tsinghua.edu.cn/simple
 python3 -m pdb xxx.py
 ```
 
-# 10 参考
+# 11 参考
 
 * [廖雪峰-Python教程](https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000)
 * [Python 3 教程](https://www.runoob.com/python3/python3-tutorial.html)

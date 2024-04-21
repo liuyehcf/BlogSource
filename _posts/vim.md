@@ -623,7 +623,41 @@ vim的全局设置值一般放置在`/etc/vimrc`（or `/etc/vim/vimrc`）这个�
 
 **在运行vim的时候，如果修改了`~/.vimrc`文件的内容，可以通过执行`:source ~/.vimrc`来重新加载`~/.vimrc`，立即生效配置**
 
-## 2.19 Help Doc
+## 2.19 Variable
+
+Neovim supports several types of variables:
+
+* **Global Variables `(g:)`**: These are accessible from anywhere in your Neovim configuration and during your Neovim sessions. They are often used to configure plugins and Neovim settings.
+* **Buffer Variables `(b:)`**: These are specific to the current buffer (file) you are working on. Changing the buffer will change the scope and access to these variables.
+* **Window Variables `(w:)`**: These are specific to the current window. Neovim allows multiple windows to be open, each can have its own set of w: variables.
+* **Tab Variables `(t:)`**: These are associated with a specific tab in your Neovim environment.
+* **Vim Variables `(v:)`**: These are built-in variables provided by Neovim that contain information about the environment, such as v:version for the Neovim version or v:count for the last used count for a command.
+
+**Setting Variables:**
+
+```vim
+let g:my_variable = "Hello, Neovim!"
+let b:my_buffer_variable = 42
+let w:my_window_variable = [1, 2, 3]
+let t:my_tab_variable = {'key': 'value'}
+```
+
+**Accessing Variables:**
+
+```vim
+:echo g:my_variable
+:echo b:my_buffer_variable
+:echo w:my_window_variable
+:echo t:my_tab_variable
+```
+
+**Unsetting Variables:**
+
+```vim
+:unlet g:my_variable
+```
+
+## 2.20 Help Doc
 
 1. `:help i_ctrl-v`，其中`i_`表示`insert mode`
 
@@ -633,15 +667,14 @@ vim的全局设置值一般放置在`/etc/vimrc`（or `/etc/vim/vimrc`）这个�
 
 **`vimtutor`：提供一个简易的教程**
 
-## 2.20 Troubleshooting
+## 2.21 Troubleshooting
 
 1. `vim -V10logfile.txt`
 1. `echo &runtimepath`
 
-## 2.21 Assorted
+## 2.22 Assorted
 
 * **`echo`**
-    * **`:echo <variable>`：可以查看`<variable>`的值**
     * **`:echom xxx`：信息会保留在message中，可以通过`:message`查看**
 * **命令历史**
     * **`q:`：进入命令历史编辑**
@@ -651,11 +684,10 @@ vim的全局设置值一般放置在`/etc/vimrc`（or `/etc/vim/vimrc`）这个�
     * 可以用`[Ctrl] + c`退出历史编辑回到编辑缓冲区，但此时历史编辑窗口不关闭，可以参照之前的命令再自己输入
     * **输入`:x`关闭历史编辑并放弃编辑结果回到编辑缓冲区**
     * 可以在空命令上回车相当于退出历史编辑区回到编辑缓冲区
-* **`q`：出现「记录中」或者「recording」字样时，按`q`可以取消**
 * **`[Ctrl] + g`：统计信息**
 * **`g + [Ctrl] + g`：字节统计信息**
 
-### 2.21.1 Symbol Index
+### 2.22.1 Symbol Index
 
 * **`[Ctrl] + ]`：跳转到光标指向的符号的定义处**
 * **`gf`：跳转光标指向的头文件**
@@ -663,14 +695,14 @@ vim的全局设置值一般放置在`/etc/vimrc`（or `/etc/vim/vimrc`）这个�
     * 通过`set path?`可以查看该变量的内容
 * **`[Ctrl] + ^`：在前后两个文件之间跳转**
 
-### 2.21.2 Insert Form Feed(tab)
+### 2.22.2 Insert Form Feed(tab)
 
 参考[How can I insert a real tab character in Vim?](https://stackoverflow.com/questions/6951672/how-can-i-insert-a-real-tab-character-in-vim)，在我们设置了`tabstop`、`softtabstop`、`expandtab`等参数后，`tab`会被替换成空格，如果要输入原始的`\t`字符，可以在`insert`模式下，按`[Ctrl] + v + i`，其中：
 
 * `[Ctrl] + v`表示输入原始的字面值
 * `i`表示`\t`
 
-### 2.21.3 Multiply-line Editing
+### 2.22.3 Multiply-line Editing
 
 **示例：多行同时插入相同内容**
 
@@ -693,7 +725,7 @@ vim的全局设置值一般放置在`/etc/vimrc`（or `/etc/vim/vimrc`）这个�
 1. 选中需要同时修改的列
 1. 按`d`即可同时删除
 
-### 2.21.4 中文乱码
+### 2.22.4 中文乱码
 
 **编辑`/etc/vimrc`，追加如下内容**
 
@@ -703,7 +735,7 @@ set termencoding=utf-8
 set encoding=utf-8
 ```
 
-### 2.21.5 Project Customized Config
+### 2.22.5 Project Customized Config
 
 同一份`~./vimrc`无法适用于所有的项目，不同的项目可能需要一些特化的配置项，可以采用如下的设置方式
 
