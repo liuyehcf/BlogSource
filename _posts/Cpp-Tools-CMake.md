@@ -583,14 +583,27 @@ target_compile_options(xxx PUBLIC "-O3")
 
 ### 5.9.1 link_libraries
 
+[link_libraries](https://cmake.org/cmake/help/latest/command/link_libraries.html)
+
 Link libraries to all targets added later.
+
+```cmake
+link_libraries([item1 [item2 [...]]]
+               [[debug|optimized|general] <item>] ...)
+```
 
 ### 5.9.2 target_link_libraries
 
-`target_link_libraries`指定链接给定目标时要使用的库或标志，格式和示例如下，其中`<item>`可以是：
+[target_link_libraries](https://cmake.org/cmake/help/latest/command/target_link_libraries.html)
 
-1. `library`类型的`target`的名称。例如通过`add_subdirectory`引入的`library`子项目
-1. `library`的完整路径
+Specify libraries or flags to use when linking a given target and/or its dependents. Usage requirements from linked library targets will be propagated. Usage requirements of a target's dependencies affect compilation of its own sources.
+
+Each `<item>` may be:
+
+* A library target name
+* A full path to a library file
+* A plain library name, like `thread`, `dl`
+* A link flag
 
 ```cmake
 target_link_libraries(<target> ... <item>... ...)
@@ -603,9 +616,17 @@ target_link_libraries(echo_client ${BRPC_LIB} ${DYNAMIC_LIB})
 
 ### 5.10.1 link_directories
 
-Adds the paths in which the linker should search for libraries.
+[link_directories](https://cmake.org/cmake/help/latest/command/link_directories.html)
 
-The command will apply only to targets created after it is called. See the below example, only `/pathA/lib` will be added to the library search path.
+Adds the paths in which the linker should search for libraries. Adds the paths in which the linker should search for libraries. Relative paths given to this command are interpreted as relative to the current source directory. **The command will apply only to targets created after it is called**.
+
+By default the directories specified are appended onto the current list of directories. This default behavior can be changed by setting `CMAKE_LINK_DIRECTORIES_BEFORE` to `ON`. By using `AFTER` or `BEFORE` explicitly, you can select between appending and prepending, independent of the default.
+
+```cmake
+link_directories([AFTER|BEFORE] directory1 [directory2 ...])
+```
+
+See the below example, only `/pathA/lib` will be added to the library search path.
 
 ```cmake
 link_directories(/pathA/lib)
@@ -617,17 +638,43 @@ link_directories(/pathB/lib)
 
 ### 5.10.2 target_link_directories
 
-Add link directories to a target.
+[target_link_directories](https://cmake.org/cmake/help/latest/command/target_link_directories.html)
+
+Add link directories to a target. Specifies the paths in which the linker should search for libraries when linking a given target. Each item can be an absolute or relative path, with the latter being interpreted as relative to the current source directory. These items will be added to the link command.
+
+```cmake
+target_link_directories(<target> [BEFORE]
+  <INTERFACE|PUBLIC|PRIVATE> [items1...]
+  [<INTERFACE|PUBLIC|PRIVATE> [items2...] ...])
+```
 
 ## 5.11 Include Directories
 
 ### 5.11.1 include_directories
 
-`include_directories`：该方法会在全局维度添加`include`的搜索路径。这些搜索路径会被添加到所有`target`中去（包括所有`sub target`），会追加到所有`target`的`INCLUDE_DIRECTORIES`属性中去
+[include_directories](https://cmake.org/cmake/help/latest/command/include_directories.html)
+
+Add the given directories to those the compiler uses to search for include files. Relative paths are interpreted as relative to the current source directory.
+
+The include directories are added to the `INCLUDE_DIRECTORIES` directory property for the current `CMakeLists` file. They are also added to the `INCLUDE_DIRECTORIES` target property for each target in the current `CMakeLists` file. The target property values are the ones used by the generators.
+
+By default the directories specified are appended onto the current list of directories. This default behavior can be changed by setting `CMAKE_INCLUDE_DIRECTORIES_BEFORE` to `ON`. By using `AFTER` or `BEFORE` explicitly, you can select between appending and prepending, independent of the default.
+
+```cmake
+include_directories([AFTER|BEFORE] [SYSTEM] dir1 [dir2 ...])
+```
 
 ### 5.11.2 target_include_directories
 
-`target_include_directories`：该方法为指定`target`添加`include`的搜索路径，会追加到该`target`的`INCLUDE_DIRECTORIES`属性中去
+[target_include_directories](https://cmake.org/cmake/help/latest/command/target_include_directories.html)
+
+The `INTERFACE`, `PUBLIC` and `PRIVATE` keywords are required to specify the scope of the following arguments. `PRIVATE` and `PUBLIC` items will populate the `INCLUDE_DIRECTORIES` property of `<target>`. `PUBLIC` and `INTERFACE` items will populate the `INTERFACE_INCLUDE_DIRECTORIES` property of `<target>`. The following arguments specify include directories.
+
+```cmake
+target_include_directories(<target> [SYSTEM] [AFTER|BEFORE]
+  <INTERFACE|PUBLIC|PRIVATE> [items1...]
+  [<INTERFACE|PUBLIC|PRIVATE> [items2...] ...])
+```
 
 ## 5.12 add_subdirectory
 
