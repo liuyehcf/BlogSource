@@ -1867,7 +1867,21 @@ Data Stream Processing System, DSPS
     </tbody>
 </table>
 
-# 5 TODO
+# 5 AI
+
+## 5.1 Understanding Deep Learning (Still) Requires Rethinking Generalization
+
+[Understanding Deep Learning (Still) Requires Rethinking Generalization](/resources/paper/Understanding-Deep-Learning-Requires-Rethinking-Generalization.pdf)
+
+## 5.2 A Closer Look at Memorization in Deep Networks
+
+[A Closer Look at Memorization in Deep Networks](/resources/paper/A-Closer-Look-at-Memorization-in-Deep-Networks.pdf)
+
+## 5.3 The Loss Surfaces of Multilayer Networks
+
+[The Loss Surfaces of Multilayer Networks](/resources/paper/The-Loss-Surfaces-of-Multilayer-Networks.pdf)
+
+# 6 TODO
 
 * Survey
     * [Query Evaluation Techniques for Large Databases](https://cgi.cse.unsw.edu.au/~cs9315/20T1/readings/query.pdf)

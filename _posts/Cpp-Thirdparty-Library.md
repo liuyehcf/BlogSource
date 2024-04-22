@@ -812,9 +812,295 @@ inline BENCHMARK_ALWAYS_INLINE void DoNotOptimize(Tp& value) {
 
 ## 5.5 [gperftools/gperftools](https://github.com/gperftools/gperftools)
 
-# 6 ORM
+# 6 Apache
 
-## 6.1 sqlpp11
+## 6.1 arrow
+
+[apache-arrow](https://github.com/apache/arrow)
+
+Requirement:
+
+1. `protobuf`
+
+```sh
+git clone https://github.com/apache/arrow.git
+cd arrow/cpp
+
+cmake --list-presets
+cmake --preset -N ninja-release
+
+cmake -B build --preset ninja-release
+cmake --build build -j 4
+sudo cmake --install build
+
+echo '/usr/local/lib64' | sudo tee /etc/ld.so.conf.d/arrow.conf
+sudo ldconfig
+```
+
+[Reading and writing Parquet files](https://arrow.apache.org/docs/cpp/parquet.html#)
+
+```cpp
+#include <arrow/api.h>
+#include <arrow/io/api.h>
+#include <arrow/pretty_print.h>
+#include <arrow/result.h>
+#include <arrow/status.h>
+#include <parquet/arrow/reader.h>
+#include <parquet/arrow/writer.h>
+#include <parquet/exception.h>
+
+#include <filesystem>
+#include <iostream>
+
+void CheckStatus(const arrow::Status& status) {
+    if (!status.ok()) {
+        std::cerr << "Arrow operation failed: " << status.message() << std::endl;
+        exit(EXIT_FAILURE);
+    }
+}
+
+int main() {
+    // Create a simple table
+    arrow::Int64Builder i64builder;
+    CheckStatus(i64builder.AppendValues({1, 2, 3, 4, 5}));
+
+    std::shared_ptr<arrow::Array> array;
+    CheckStatus(i64builder.Finish(&array));
+
+    std::shared_ptr<arrow::Schema> schema = arrow::schema({arrow::field("int_column", arrow::int64())});
+    auto table = arrow::Table::Make(schema, {array});
+
+    // Write the table to a Parquet file
+    std::string file_path = "data.parquet";
+    std::shared_ptr<arrow::io::FileOutputStream> outfile;
+    CheckStatus(arrow::io::FileOutputStream::Open(file_path).Value(&outfile));
+    CheckStatus(parquet::arrow::WriteTable(*table, arrow::default_memory_pool(), outfile, 3));
+
+    // Read the Parquet file back into a table
+    std::shared_ptr<arrow::io::ReadableFile> infile;
+    CheckStatus(arrow::io::ReadableFile::Open(file_path, arrow::default_memory_pool()).Value(&infile));
+
+    std::unique_ptr<parquet::arrow::FileReader> reader;
+    CheckStatus(parquet::arrow::OpenFile(infile, arrow::default_memory_pool(), &reader));
+
+    std::shared_ptr<arrow::Table> read_table;
+    CheckStatus(reader->ReadTable(&read_table));
+
+    // Print the table to std::cout
+    std::stringstream ss;
+    CheckStatus(arrow::PrettyPrint(*read_table.get(), {}, &ss));
+    std::cout << ss.str() << std::endl;
+
+    return 0;
+}
+```
+
+```sh
+gcc -o main main.cpp -lstdc++ -std=gnu++17 -larrow -lparquet
+./main
+```
+
+## 6.2 thrift
+
+```sh
+git clone https://github.com/apache/thrift.git
+cd thrift
+git checkout v0.15.0
+
+./bootstrap.sh
+# you can build specific lib by using --with-xxx or --without-xxx
+./configure
+make -j 64
+sudo make install
+```
+
+```sh
+cat > example.thrift << 'EOF'
+namespace cpp example
+
+struct Person {
+  1: string name,
+  2: i32 age,
+  3: string email
+}
+
+service PersonService {
+  void addPerson(1: Person person)
+}
+EOF
+
+thrift --gen cpp example.thrift
+```
+
+# 7 Pocoproject
+
+```sh
+git clone -b master https://github.com/pocoproject/poco.git
+cd poco
+cmake -B cmake-build
+cmake --build cmake-build --config Release -j 64
+sudo cmake --install cmake-build
+```
+
+## 7.1 Logger
+
+```sh
+mkdir poco_logger_demo
+cd poco_logger_demo
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(poco_logger_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
+
+file(GLOB MY_PROJECT_SOURCES "*.cpp")
+add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+find_package(Poco REQUIRED COMPONENTS Foundation Net XML JSON)
+target_link_libraries(${PROJECT_NAME} Poco::Foundation Poco::Net Poco::XML Poco::JSON)
+EOF
+
+cat > poco_logger_demo.cpp << 'EOF'
+#include <Poco/AutoPtr.h>
+#include <Poco/ConsoleChannel.h>
+#include <Poco/FileChannel.h>
+#include <Poco/FormattingChannel.h>
+#include <Poco/Logger.h>
+#include <Poco/PatternFormatter.h>
+
+int main() {
+    {
+        Poco::AutoPtr<Poco::ConsoleChannel> channel(new Poco::ConsoleChannel);
+        Poco::Logger::root().setLevel("trace");
+        Poco::Logger::root().setChannel(channel);
+        Poco::Logger::get("main_1").information("Hello, World!");
+    }
+    {
+        Poco::AutoPtr<Poco::PatternFormatter> formatter(new Poco::PatternFormatter("%Y.%m.%d %H:%M:%S.%F <%p> %s: %t"));
+        Poco::AutoPtr<Poco::ConsoleChannel> console_chanel(new Poco::ConsoleChannel);
+        Poco::AutoPtr<Poco::FormattingChannel> channel(new Poco::FormattingChannel(formatter, console_chanel));
+        Poco::Logger::root().setLevel("trace");
+        Poco::Logger::root().setChannel(channel);
+        Poco::Logger::get("main_1").information("Hello, World!");
+        Poco::Logger::get("main_2").information("Hello, World!");
+    }
+    {
+        Poco::AutoPtr<Poco::FileChannel> fileChannel(new Poco::FileChannel);
+        fileChannel->setProperty("path", "sample.log");
+        fileChannel->setProperty("rotation", "1 M"); // Rotate log file monthly
+
+        Poco::AutoPtr<Poco::PatternFormatter> formatter(new Poco::PatternFormatter);
+        formatter->setProperty("pattern", "%Y-%m-%d %H:%M:%S %s: %t"); // Customize log pattern
+
+        Poco::AutoPtr<Poco::FormattingChannel> formattingChannel(new Poco::FormattingChannel(formatter, fileChannel));
+
+        Poco::Logger& logger = Poco::Logger::create("FileLogger", formattingChannel, Poco::Message::PRIO_INFORMATION);
+
+        logger.information("This is an informational message.");
+        logger.warning("This is a warning message.");
+    }
+    return 0;
+}
+EOF
+
+cmake -B build
+cmake --build build
+build/poco_logger_demo
+```
+
+Output:
+
+```
+Hello, World!
+Hello, World!
+2024.04.12 08:22:40.072214 <Information> main_2: Hello, World!
+```
+
+## 7.2 JSON
+
+```sh
+mkdir poco_json_demo
+cd poco_json_demo
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(poco_json_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
+
+file(GLOB MY_PROJECT_SOURCES "*.cpp")
+add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+find_package(Poco REQUIRED COMPONENTS Foundation Net XML JSON)
+target_link_libraries(${PROJECT_NAME} Poco::Foundation Poco::Net Poco::XML Poco::JSON)
+EOF
+
+cat > poco_json_demo.cpp << 'EOF'
+#include <Poco/Dynamic/Var.h>
+#include <Poco/JSON/Parser.h>
+#include <Poco/JSON/Stringifier.h>
+
+#include <iostream>
+#include <sstream>
+
+int main() {
+    // JSON string to parse
+    std::string jsonString = R"({"name":"John Doe","age":30,"isDeveloper":true})";
+
+    // Parse the JSON string
+    Poco::JSON::Parser parser;
+    Poco::Dynamic::Var result = parser.parse(jsonString);
+    Poco::JSON::Object::Ptr jsonObject = result.extract<Poco::JSON::Object::Ptr>();
+
+    // Extract values
+    std::string name = jsonObject->getValue<std::string>("name");
+    int age = jsonObject->getValue<int>("age");
+    bool isDeveloper = jsonObject->getValue<bool>("isDeveloper");
+
+    std::cout << "Name: " << name << ", Age: " << age << ", Is Developer: " << isDeveloper << std::endl;
+
+    // Create a new JSON object
+    Poco::JSON::Object newObject;
+    newObject.set("newName", "Jane Smith");
+    newObject.set("newAge", 28);
+    newObject.set("isNewDeveloper", false);
+
+    // Convert to JSON string
+    std::stringstream ss;
+    newObject.stringify(ss);
+
+    std::cout << "Generated JSON: " << ss.str() << std::endl;
+
+    return 0;
+}
+EOF
+
+cmake -B build
+cmake --build build
+build/poco_json_demo
+```
+
+Output:
+
+```
+Name: John Doe, Age: 30, Is Developer: 1
+Generated JSON: {"isNewDeveloper":false,"newAge":28,"newName":"Jane Smith"}
+```
+
+# 8 sqlpp11
 
 **How to integrate:**
 
@@ -837,7 +1123,373 @@ EOF
 scripts/ddl2cpp  /tmp/foo.sql /tmp/foo my_ns
 ```
 
-### 6.1.1 Example
+## 8.1 With Sqlite
+
+```
+tree -L 2
+.
+├── CMakeLists.txt
+├── contrib
+│   ├── SQLiteCpp
+│   └── sqlpp11
+├── main.cpp
+├── users.ddl
+└── users.h
+```
+
+```sh
+mkdir sqlpp11_demo && cd sqlpp11_demo
+
+git init
+
+# Download source code of these two project
+git submodule add https://github.com/rbock/sqlpp11.git contrib/sqlpp11
+git submodule add https://github.com/SRombauts/SQLiteCpp.git contrib/SQLiteCpp
+git submodule update --init --recursive
+
+# CMakeLists.txt
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(sqlpp11_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+add_executable(${PROJECT_NAME} main.cpp)
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+# Include subdirectories
+add_subdirectory(contrib/sqlpp11)
+add_subdirectory(contrib/SQLiteCpp)
+
+# Link against libraries
+target_link_libraries(${PROJECT_NAME} sqlpp11)
+target_link_libraries(${PROJECT_NAME} SQLiteCpp sqlite3 pthread dl)
+EOF
+
+# ddl
+cat > users.ddl << 'EOF'
+CREATE TABLE users (
+    id INTEGER NOT NULL,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    age INTEGER NOT NULL,
+    PRIMARY KEY(id)
+);
+EOF
+
+# Create headers  
+contrib/sqlpp11/scripts/ddl2cpp users.ddl users Test
+
+# main.cpp
+cat > main.cpp << 'EOF'
+#include <sqlpp11/all_of.h>
+#include <sqlpp11/custom_query.h>
+#include <sqlpp11/insert.h>
+#include <sqlpp11/sqlite3/sqlite3.h>
+#include <sqlpp11/sqlpp11.h>
+#include <sqlpp11/verbatim.h>
+
+#include <iostream>
+#include <string>
+
+#include "users.h"
+
+template <typename Db, typename Assignment>
+void print(Db& db, Assignment assignment) {
+    typename Db::_serializer_context_t context{db};
+    std::cout << sqlpp::serialize(assignment, context).str() << std::endl;
+}
+
+int main() {
+    auto config = std::make_shared<sqlpp::sqlite3::connection_config>();
+    config->path_to_database = ":memory:";
+    config->flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
+    config->debug = true;
+
+    auto conn_pool = std::make_shared<sqlpp::sqlite3::connection_pool>(config, 5);
+
+    auto db = conn_pool->get();
+
+    db.execute(R"(CREATE TABLE users (
+                id INTEGER NOT NULL,
+                first_name TEXT NOT NULL,
+                last_name TEXT NOT NULL,
+                age INTEGER NOT NULL,
+                PRIMARY KEY(id)))");
+
+    Test::Users users;
+
+    {
+        auto query = sqlpp::insert_into(users).set(users.id = 10000001, users.firstName = "Emma",
+                                                   users.lastName = "Watson", users.age = 15);
+        print(db, query);
+        db(query);
+    }
+
+    {
+        auto query = sqlpp::insert_into(users).set(users.id = 10000002, users.firstName = "Leo",
+                                                   users.lastName = "Grant", users.age = 18);
+        print(db, query);
+        db(query);
+    }
+
+    {
+        auto query = select(sqlpp::all_of(users)).from(users).unconditionally();
+        print(db, query);
+        for (const auto& row : db(query)) {
+            std::cout << "    -> id=" << row.id << ", firstName=" << row.firstName << ", lastName=" << row.lastName
+                      << ", age=" << row.age << std::endl;
+        }
+    }
+
+    {
+        auto query = select(sqlpp::all_of(users)).from(users).where(users.age <= 20);
+        print(db, query);
+        for (const auto& row : db(query)) {
+            std::cout << "    -> id=" << row.id << ", firstName=" << row.firstName << ", lastName=" << row.lastName
+                      << ", age=" << row.age << std::endl;
+        }
+    }
+
+    {
+        auto query = sqlpp::remove_from(users).where(users.id == 10000001);
+        print(db, query);
+        db(query);
+    }
+
+    return 0;
+}
+EOF
+
+# compile and run
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j 64
+build/sqlpp11_demo
+```
+
+```
+Sqlite3 debug: Preparing: 'CREATE TABLE users (
+                id INTEGER NOT NULL,
+                first_name TEXT NOT NULL,
+                last_name TEXT NOT NULL,
+                age INTEGER NOT NULL,
+                PRIMARY KEY(id))'
+INSERT INTO users (id,first_name,last_name,age) VALUES(10000001,'Emma','Watson',15)
+Sqlite3 debug: Preparing: 'INSERT INTO users (id,first_name,last_name,age) VALUES(10000001,'Emma','Watson',15)'
+INSERT INTO users (id,first_name,last_name,age) VALUES(10000002,'Leo','Grant',18)
+Sqlite3 debug: Preparing: 'INSERT INTO users (id,first_name,last_name,age) VALUES(10000002,'Leo','Grant',18)'
+SELECT users.id,users.first_name,users.last_name,users.age FROM users
+Sqlite3 debug: Preparing: 'SELECT users.id,users.first_name,users.last_name,users.age FROM users'
+Sqlite3 debug: Constructing bind result, using handle at 0x1f7de20
+Sqlite3 debug: Accessing next row of handle at 0x1f7de20
+Sqlite3 debug: binding integral result 0 at index: 0
+Sqlite3 debug: binding text result at index: 1
+Sqlite3 debug: binding text result at index: 2
+Sqlite3 debug: binding integral result 0 at index: 3
+    -> id=10000001, firstName=Emma, lastName=Watson, age=15
+Sqlite3 debug: Accessing next row of handle at 0x1f7de20
+Sqlite3 debug: binding integral result 10000001 at index: 0
+Sqlite3 debug: binding text result at index: 1
+Sqlite3 debug: binding text result at index: 2
+Sqlite3 debug: binding integral result 15 at index: 3
+    -> id=10000002, firstName=Leo, lastName=Grant, age=18
+Sqlite3 debug: Accessing next row of handle at 0x1f7de20
+SELECT users.id,users.first_name,users.last_name,users.age FROM users WHERE (users.age<=20)
+Sqlite3 debug: Preparing: 'SELECT users.id,users.first_name,users.last_name,users.age FROM users WHERE (users.age<=20)'
+Sqlite3 debug: Constructing bind result, using handle at 0x1f7de40
+Sqlite3 debug: Accessing next row of handle at 0x1f7de40
+Sqlite3 debug: binding integral result 0 at index: 0
+Sqlite3 debug: binding text result at index: 1
+Sqlite3 debug: binding text result at index: 2
+Sqlite3 debug: binding integral result 0 at index: 3
+    -> id=10000001, firstName=Emma, lastName=Watson, age=15
+Sqlite3 debug: Accessing next row of handle at 0x1f7de40
+Sqlite3 debug: binding integral result 10000001 at index: 0
+Sqlite3 debug: binding text result at index: 1
+Sqlite3 debug: binding text result at index: 2
+Sqlite3 debug: binding integral result 15 at index: 3
+    -> id=10000002, firstName=Leo, lastName=Grant, age=18
+Sqlite3 debug: Accessing next row of handle at 0x1f7de40
+DELETE FROM users WHERE (users.id=10000001)
+Sqlite3 debug: Preparing: 'DELETE FROM users WHERE (users.id=10000001)'
+```
+
+## 8.2 With Mysql
+
+```
+tree -L 2
+.
+├── CMakeLists.txt
+├── contrib
+│   ├── mysql-connector-c-6.1.11-linux-glibc2.12-x86_64
+│   ├── mysql-connector-c-6.1.11-linux-glibc2.12-x86_64.tar.gz
+│   └── sqlpp11
+├── main.cpp
+├── users.ddl
+└── users.h
+```
+
+```sh
+mkdir sqlpp11_demo && cd sqlpp11_demo
+
+git init
+
+# Download source code of these two project
+mkdir -p contrib
+wget -O contrib/mysql-connector-c-6.1.11-linux-glibc2.12-x86_64.tar.gz https://downloads.mysql.com/archives/get/p/19/file/mysql-connector-c-6.1.11-linux-glibc2.12-x86_64.tar.gz
+tar -zxf contrib/mysql-connector-c-6.1.11-linux-glibc2.12-x86_64.tar.gz -C contrib
+git submodule add https://github.com/rbock/sqlpp11.git contrib/sqlpp11
+git submodule update --init --recursive
+
+# CMakeLists.txt
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(sqlpp11_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+# link_directories must be placed before add_executable or add_library
+include_directories(contrib/mysql-connector-c-6.1.11-linux-glibc2.12-x86_64/include)
+link_directories(contrib/mysql-connector-c-6.1.11-linux-glibc2.12-x86_64/lib)
+
+add_executable(${PROJECT_NAME} main.cpp)
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+# Include subdirectories
+add_subdirectory(contrib/sqlpp11)
+
+# Link against libraries
+target_link_libraries(${PROJECT_NAME} sqlpp11 mysqlclient)
+EOF
+
+# ddl
+cat > users.ddl << 'EOF'
+CREATE TABLE users (
+    id BIGINT NOT NULL,
+    first_name VARCHAR(16) NOT NULL,
+    last_name VARCHAR(16) NOT NULL,
+    age SMALLINT NOT NULL,
+    PRIMARY KEY(id)
+);
+EOF
+
+# Create headers  
+contrib/sqlpp11/scripts/ddl2cpp users.ddl users Test
+
+# main.cpp
+cat > main.cpp << 'EOF'
+#include <sqlpp11/all_of.h>
+#include <sqlpp11/custom_query.h>
+#include <sqlpp11/insert.h>
+#include <sqlpp11/mysql/mysql.h>
+#include <sqlpp11/sqlpp11.h>
+#include <sqlpp11/verbatim.h>
+
+#include <iostream>
+#include <string>
+
+#include "users.h"
+
+struct on_duplicate_key_update {
+    std::string _serialized;
+
+    template <typename Db, typename Assignment>
+    on_duplicate_key_update(Db& db, Assignment assignment) {
+        typename Db::_serializer_context_t context{db};
+        _serialized = " ON DUPLICATE KEY UPDATE " + serialize(assignment, context).str();
+    }
+
+    template <typename Db, typename Assignment>
+    auto operator()(Db& db, Assignment assignment) -> on_duplicate_key_update& {
+        typename Db::_serializer_context_t context{db};
+        _serialized += ", " + serialize(assignment, context).str();
+        return *this;
+    }
+
+    auto get() const -> sqlpp::verbatim_t<::sqlpp::no_value_t> { return ::sqlpp::verbatim(_serialized); }
+};
+
+template <typename Db, typename Assignment>
+void print(Db& db, Assignment assignment) {
+    typename Db::_serializer_context_t context{db};
+    std::cout << sqlpp::serialize(assignment, context).str() << std::endl;
+}
+
+int main() {
+    auto config = std::make_shared<sqlpp::mysql::connection_config>();
+    config->user = "root";
+    config->port = 13306;
+    config->password = "Abcd1234";
+    config->database = "test";
+    config->host = "127.0.0.1";
+
+    auto conn_pool = std::make_shared<sqlpp::mysql::connection_pool>(config, 5);
+
+    auto db = conn_pool->get();
+
+    Test::Users users;
+
+    {
+        auto query = sqlpp::custom_query(
+                sqlpp::insert_into(users).set(users.id = 10000001, users.firstName = "Emma", users.lastName = "Watson",
+                                              users.age = 15),
+                on_duplicate_key_update(db, users.firstName = "Emma")(db, users.lastName = "Watson")(db, users.age = 15)
+                        .get());
+        print(db, query);
+        db(query);
+    }
+
+    {
+        auto query = sqlpp::custom_query(
+                sqlpp::insert_into(users).set(users.id = 10000002, users.firstName = "Leo", users.lastName = "Grant",
+                                              users.age = 18),
+                on_duplicate_key_update(db, users.firstName = "Leo")(db, users.lastName = "Grant")(db, users.age = 18)
+                        .get());
+        print(db, query);
+        db(query);
+    }
+
+    {
+        auto query = select(sqlpp::all_of(users)).from(users).unconditionally();
+        print(db, query);
+        for (const auto& row : db(query)) {
+            std::cout << "    -> id=" << row.id << ", firstName=" << row.firstName << ", lastName=" << row.lastName
+                      << ", age=" << row.age << std::endl;
+        }
+    }
+
+    {
+        auto query = select(sqlpp::all_of(users)).from(users).where(users.age <= 20);
+        print(db, query);
+        for (const auto& row : db(query)) {
+            std::cout << "    -> id=" << row.id << ", firstName=" << row.firstName << ", lastName=" << row.lastName
+                      << ", age=" << row.age << std::endl;
+        }
+    }
+
+    {
+        auto query = sqlpp::remove_from(users).where(users.id == 10000001);
+        print(db, query);
+        db(query);
+    }
+
+    return 0;
+}
+EOF
+
+# compile and run
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j 64
+build/sqlpp11_demo
+```
+
+## 8.3 With Mariadb
 
 ```sh
 tree -L 2
@@ -887,6 +1539,7 @@ target_include_directories (${PROJECT_NAME} PUBLIC "${CMAKE_BINARY_DIR}/contrib/
 target_link_libraries(${PROJECT_NAME} sqlpp11 mariadbclient)
 EOF
 
+# ddl
 cat > users.ddl << 'EOF'
 CREATE TABLE users (
     id BIGINT NOT NULL,
@@ -897,8 +1550,10 @@ CREATE TABLE users (
 );
 EOF
 
+# Create headers  
 contrib/sqlpp11/scripts/ddl2cpp users.ddl users Test
 
+# main.cpp
 cat > main.cpp << 'EOF'
 #include <sqlpp11/all_of.h>
 #include <sqlpp11/custom_query.h>
@@ -1035,294 +1690,6 @@ SELECT users.id,users.first_name,users.last_name,users.age FROM users WHERE (use
     -> id=10000001, firstName=Emma, lastName=Watson, age=15
     -> id=10000002, firstName=Leo, lastName=Grant, age=18
 DELETE FROM users WHERE (users.id=10000001)
-```
-
-# 7 Apache
-
-## 7.1 arrow
-
-[apache-arrow](https://github.com/apache/arrow)
-
-Requirement:
-
-1. `protobuf`
-
-```sh
-git clone https://github.com/apache/arrow.git
-cd arrow/cpp
-
-cmake --list-presets
-cmake --preset -N ninja-release
-
-cmake -B build --preset ninja-release
-cmake --build build -j 4
-sudo cmake --install build
-
-echo '/usr/local/lib64' | sudo tee /etc/ld.so.conf.d/arrow.conf
-sudo ldconfig
-```
-
-[Reading and writing Parquet files](https://arrow.apache.org/docs/cpp/parquet.html#)
-
-```cpp
-#include <arrow/api.h>
-#include <arrow/io/api.h>
-#include <arrow/pretty_print.h>
-#include <arrow/result.h>
-#include <arrow/status.h>
-#include <parquet/arrow/reader.h>
-#include <parquet/arrow/writer.h>
-#include <parquet/exception.h>
-
-#include <filesystem>
-#include <iostream>
-
-void CheckStatus(const arrow::Status& status) {
-    if (!status.ok()) {
-        std::cerr << "Arrow operation failed: " << status.message() << std::endl;
-        exit(EXIT_FAILURE);
-    }
-}
-
-int main() {
-    // Create a simple table
-    arrow::Int64Builder i64builder;
-    CheckStatus(i64builder.AppendValues({1, 2, 3, 4, 5}));
-
-    std::shared_ptr<arrow::Array> array;
-    CheckStatus(i64builder.Finish(&array));
-
-    std::shared_ptr<arrow::Schema> schema = arrow::schema({arrow::field("int_column", arrow::int64())});
-    auto table = arrow::Table::Make(schema, {array});
-
-    // Write the table to a Parquet file
-    std::string file_path = "data.parquet";
-    std::shared_ptr<arrow::io::FileOutputStream> outfile;
-    CheckStatus(arrow::io::FileOutputStream::Open(file_path).Value(&outfile));
-    CheckStatus(parquet::arrow::WriteTable(*table, arrow::default_memory_pool(), outfile, 3));
-
-    // Read the Parquet file back into a table
-    std::shared_ptr<arrow::io::ReadableFile> infile;
-    CheckStatus(arrow::io::ReadableFile::Open(file_path, arrow::default_memory_pool()).Value(&infile));
-
-    std::unique_ptr<parquet::arrow::FileReader> reader;
-    CheckStatus(parquet::arrow::OpenFile(infile, arrow::default_memory_pool(), &reader));
-
-    std::shared_ptr<arrow::Table> read_table;
-    CheckStatus(reader->ReadTable(&read_table));
-
-    // Print the table to std::cout
-    std::stringstream ss;
-    CheckStatus(arrow::PrettyPrint(*read_table.get(), {}, &ss));
-    std::cout << ss.str() << std::endl;
-
-    return 0;
-}
-```
-
-```sh
-gcc -o main main.cpp -lstdc++ -std=gnu++17 -larrow -lparquet
-./main
-```
-
-## 7.2 thrift
-
-```sh
-git clone https://github.com/apache/thrift.git
-cd thrift
-git checkout v0.15.0
-
-./bootstrap.sh
-# you can build specific lib by using --with-xxx or --without-xxx
-./configure
-make -j 64
-sudo make install
-```
-
-```sh
-cat > example.thrift << 'EOF'
-namespace cpp example
-
-struct Person {
-  1: string name,
-  2: i32 age,
-  3: string email
-}
-
-service PersonService {
-  void addPerson(1: Person person)
-}
-EOF
-
-thrift --gen cpp example.thrift
-```
-
-# 8 Pocoproject
-
-```sh
-git clone -b master https://github.com/pocoproject/poco.git
-cd poco
-cmake -B cmake-build
-cmake --build cmake-build --config Release -j 64
-sudo cmake --install cmake-build
-```
-
-## 8.1 Logger
-
-```sh
-mkdir poco_logger_demo
-cd poco_logger_demo
-cat > CMakeLists.txt << 'EOF'
-cmake_minimum_required(VERSION 3.20)
-
-project(poco_logger_demo)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
-
-file(GLOB MY_PROJECT_SOURCES "*.cpp")
-add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
-
-target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
-target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
-
-find_package(Poco REQUIRED COMPONENTS Foundation Net XML JSON)
-target_link_libraries(${PROJECT_NAME} Poco::Foundation Poco::Net Poco::XML Poco::JSON)
-EOF
-
-cat > poco_logger_demo.cpp << 'EOF'
-#include <Poco/AutoPtr.h>
-#include <Poco/ConsoleChannel.h>
-#include <Poco/FileChannel.h>
-#include <Poco/FormattingChannel.h>
-#include <Poco/Logger.h>
-#include <Poco/PatternFormatter.h>
-
-int main() {
-    {
-        Poco::AutoPtr<Poco::ConsoleChannel> channel(new Poco::ConsoleChannel);
-        Poco::Logger::root().setLevel("trace");
-        Poco::Logger::root().setChannel(channel);
-        Poco::Logger::get("main_1").information("Hello, World!");
-    }
-    {
-        Poco::AutoPtr<Poco::PatternFormatter> formatter(new Poco::PatternFormatter("%Y.%m.%d %H:%M:%S.%F <%p> %s: %t"));
-        Poco::AutoPtr<Poco::ConsoleChannel> console_chanel(new Poco::ConsoleChannel);
-        Poco::AutoPtr<Poco::FormattingChannel> channel(new Poco::FormattingChannel(formatter, console_chanel));
-        Poco::Logger::root().setLevel("trace");
-        Poco::Logger::root().setChannel(channel);
-        Poco::Logger::get("main_1").information("Hello, World!");
-        Poco::Logger::get("main_2").information("Hello, World!");
-    }
-    {
-        Poco::AutoPtr<Poco::FileChannel> fileChannel(new Poco::FileChannel);
-        fileChannel->setProperty("path", "sample.log");
-        fileChannel->setProperty("rotation", "1 M"); // Rotate log file monthly
-
-        Poco::AutoPtr<Poco::PatternFormatter> formatter(new Poco::PatternFormatter);
-        formatter->setProperty("pattern", "%Y-%m-%d %H:%M:%S %s: %t"); // Customize log pattern
-
-        Poco::AutoPtr<Poco::FormattingChannel> formattingChannel(new Poco::FormattingChannel(formatter, fileChannel));
-
-        Poco::Logger& logger = Poco::Logger::create("FileLogger", formattingChannel, Poco::Message::PRIO_INFORMATION);
-
-        logger.information("This is an informational message.");
-        logger.warning("This is a warning message.");
-    }
-    return 0;
-}
-EOF
-
-cmake -B build
-cmake --build build
-build/poco_logger_demo
-```
-
-Output:
-
-```
-Hello, World!
-Hello, World!
-2024.04.12 08:22:40.072214 <Information> main_2: Hello, World!
-```
-
-## 8.2 JSON
-
-```sh
-mkdir poco_json_demo
-cd poco_json_demo
-cat > CMakeLists.txt << 'EOF'
-cmake_minimum_required(VERSION 3.20)
-
-project(poco_json_demo)
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
-
-file(GLOB MY_PROJECT_SOURCES "*.cpp")
-add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
-
-target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
-target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
-
-find_package(Poco REQUIRED COMPONENTS Foundation Net XML JSON)
-target_link_libraries(${PROJECT_NAME} Poco::Foundation Poco::Net Poco::XML Poco::JSON)
-EOF
-
-cat > poco_json_demo.cpp << 'EOF'
-#include <Poco/Dynamic/Var.h>
-#include <Poco/JSON/Parser.h>
-#include <Poco/JSON/Stringifier.h>
-
-#include <iostream>
-#include <sstream>
-
-int main() {
-    // JSON string to parse
-    std::string jsonString = R"({"name":"John Doe","age":30,"isDeveloper":true})";
-
-    // Parse the JSON string
-    Poco::JSON::Parser parser;
-    Poco::Dynamic::Var result = parser.parse(jsonString);
-    Poco::JSON::Object::Ptr jsonObject = result.extract<Poco::JSON::Object::Ptr>();
-
-    // Extract values
-    std::string name = jsonObject->getValue<std::string>("name");
-    int age = jsonObject->getValue<int>("age");
-    bool isDeveloper = jsonObject->getValue<bool>("isDeveloper");
-
-    std::cout << "Name: " << name << ", Age: " << age << ", Is Developer: " << isDeveloper << std::endl;
-
-    // Create a new JSON object
-    Poco::JSON::Object newObject;
-    newObject.set("newName", "Jane Smith");
-    newObject.set("newAge", 28);
-    newObject.set("isNewDeveloper", false);
-
-    // Convert to JSON string
-    std::stringstream ss;
-    newObject.stringify(ss);
-
-    std::cout << "Generated JSON: " << ss.str() << std::endl;
-
-    return 0;
-}
-EOF
-
-cmake -B build
-cmake --build build
-build/poco_json_demo
-```
-
-Output:
-
-```
-Name: John Doe, Age: 30, Is Developer: 1
-Generated JSON: {"isNewDeveloper":false,"newAge":28,"newName":"Jane Smith"}
 ```
 
 # 9 Assorted

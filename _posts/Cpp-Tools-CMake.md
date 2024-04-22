@@ -579,7 +579,13 @@ set_target_properties(xxx PROPERTIES
 target_compile_options(xxx PUBLIC "-O3")
 ```
 
-## 5.9 target_link_libraries
+## 5.9 Link Libraries
+
+### 5.9.1 link_libraries
+
+Link libraries to all targets added later.
+
+### 5.9.2 target_link_libraries
 
 `target_link_libraries`指定链接给定目标时要使用的库或标志，格式和示例如下，其中`<item>`可以是：
 
@@ -593,13 +599,35 @@ target_link_libraries(<target> ... <item>... ...)
 target_link_libraries(echo_client ${BRPC_LIB} ${DYNAMIC_LIB})
 ```
 
-## 5.10 target_include_directories
+## 5.10 Link Directories
 
-`target_include_directories`：该方法为指定`target`添加`include`的搜索路径，会追加到该`target`的`INCLUDE_DIRECTORIES`属性中去
+### 5.10.1 link_directories
 
-## 5.11 include_directories
+Adds the paths in which the linker should search for libraries.
+
+The command will apply only to targets created after it is called. See the below example, only `/pathA/lib` will be added to the library search path.
+
+```cmake
+link_directories(/pathA/lib)
+
+add_executable(main)
+
+link_directories(/pathB/lib)
+```
+
+### 5.10.2 target_link_directories
+
+Add link directories to a target.
+
+## 5.11 Include Directories
+
+### 5.11.1 include_directories
 
 `include_directories`：该方法会在全局维度添加`include`的搜索路径。这些搜索路径会被添加到所有`target`中去（包括所有`sub target`），会追加到所有`target`的`INCLUDE_DIRECTORIES`属性中去
+
+### 5.11.2 target_include_directories
+
+`target_include_directories`：该方法为指定`target`添加`include`的搜索路径，会追加到该`target`的`INCLUDE_DIRECTORIES`属性中去
 
 ## 5.12 add_subdirectory
 
