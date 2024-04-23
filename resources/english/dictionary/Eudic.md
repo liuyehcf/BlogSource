@@ -1,9 +1,45 @@
+1. the magnitude of each component
+1. 变化词汇; 增加/减少：increase/decrease\n上升/下降：rise/fall; ascend/descend\n微微上升/微微下降：nudge up/nudge down\n调高/调低：turn up/turn down
+1. bumping up the complexity a bit
+1. neutron; neuron; neural
+1. interrogate; investigate
+1. apply to instances we have yet to encounter.
+1. carry the most bang for your buck
+1. curated subset of data; curated refers to the careful selection and organization of data
+1. China is subsidizing the production Fentanyl
+1. something has come up; something unscheduled has come up
+1. hand over leadership
+1. how do you charge for children
+1. they or someone they are closed to
+1. in a round-robin fashion
+1. a set of three nodes backed by Paxos
+1. my skin cracks
+1. please leave it at the door
+1. it's not a normal practice
+1. 副食品词汇; 手工蜂蜜：artisanal honey
+1. this place has always been this dirty
+1. 食物词汇; 食物没熟：the food is undercooked
+1. water valve
+1. wear and tear
+1. misinformation; 谣言
+1. hair needs to grow in an acidic environment
+1. 租房词汇; 户型图：layout plan/floor plan\n租期：lease term\n入住时间：move in date\n租户画像：tenant profile\n预算：budget\n谈价：Is the price negotiable\n游泳池：swimming pool\n无界泳池：infinity Pool\n训练泳池：lap Pool\n嬉水池：wading Pool\n喷水池：jet pool\n小区：residential area; gated community; residential compound; apartment complex\n水电费：utilities
+1. I'm gonna lay you out; 我要收拾你\n\nI’m going to take you down\nI’m going to beat you up
+1. come apart; fall apart
+1. things happened to you
+1. 执行词汇; handle\nprocess\nconduct\nmanage\nexecute\nperform\ncarry out\nimplement\ndeal with\noperate\nundertake
+1. I'm outside, I'll send it to you in a bit
+1. I don't go along with it
+1. 住宿词汇; 入住：check in\n退房：check out\n续住：extend my stay for a few more days/renew my booking for a few more days\n报销：reimbursement\n刷卡：swipe a card\n插卡：insert a card\n把卡靠近设备：tap a card\n水龙头：faucet/tap\n自来水：tap water/running water
+1. coverage status; 承保状态
+1. resilience; adaptability; high rate of learning; creativity
+1. I back you up
+1. how about we take a rain check
 1. germ
 1. layman
 1. illegally obtained
 1. I'm flattered
 1. 标点符号词汇; 感叹号：exclamation mark
-1. residential area; gated community; compound; 小区
 1. 机构词汇; 美国海岸警卫队：the U.S. Coast Guard\n美国联邦航空管理局：Federal Aviation Administration\n情报部队：Intelligence corps\n联邦上诉法院：Federal Appeal Court
 1. 地名词汇; 爱琴海：the Aegean Sea
 1. 政治词汇; 专制政体：authoritarian regime\n民主政体：democratic regime\n左翼领导/右翼领导：far-left political leaders; far-right political leaders\n保守党：conservative party\n进步党：progressive party\n工党：labour party
@@ -65,9 +101,9 @@
 1. tear family apart; 让家庭四分五裂\n
 1. number vested; number unvested
 1. I got a big pimple on my face
-1. 数学词汇; 交集：intersection\n并集：union\n差集：difference\n
+1. 数学词汇; 交集：intersection\n并集：union\n差集：difference\nxy平面：xy-plane\n极值：maxima\n斜率：slope\n梯度下降：gradient descent\n随机梯度下降：stochastic gradient descent
 1. same to you; respnse to \'have a nice day\'\nor you too
-1. 金融词汇; 金融：finance\n信用：credit\n贷款：loans\n首付款：first deposit\n尾款：balance payment\n充值：top-up; recharge\n30天债务宽限期：30-day debt grace period\n利息：interests\n利率：interest rate\n升息/降息：interest rate hike/interest rate cut\n货币：currency\n股票：stock\n证券：security\n保险：insurance\n基金：fund\n贸易：trade\n汇率：exchange rate\n抵押贷款：mortgage\n养老金：pension\n汇兑：money order\n证券交易所：stock exchange\n分钟股票行情：minute stock quotes
+1. 金融词汇; 工资：wage/salary/payment/paycheck/\n补偿：compensation\n资金：capital\n金融：finance\n信用：credit\n贷款：loans\n首付款：first deposit\n尾款：balance payment\n充值：top-up; recharge\n30天债务宽限期：30-day debt grace period\n利息：interests\n利率：interest rate\n升息/降息：interest rate hike/interest rate cut\n货币：currency\n股票：stock\n证券：security\n保险：insurance\n基金：fund\n贸易：trade\n汇率：exchange rate\n抵押贷款：mortgage\n养老金：pension\n汇兑：money order\n证券交易所：stock exchange\n分钟股票行情：minute stock quotes
 1. file a complaint; make a complaint
 1. ego; arrogant; pride
 1. somebody got flipped; it could refer to someone changing their allegiance, opinion, or loyalty
@@ -83,7 +119,7 @@
 1. 罪名词汇; 性骚扰：sexual harassment\n性虐待：sexual battery\n网络犯罪：cyber crime\n侵犯知识产权：copyright infringement\n青少年犯罪：juvenile delinquency\n杀人：homicide\n渎职：dereliction of duty\n恐吓：intimidate\n袭击：attack\n信用卡诈骗：credit card fraud\n自杀：suicide\n宗派暴力：sectarian violence\n毒品走私：drug smuggling/drug smuggler\n兴奋剂丑闻：doping scandal
 1. 家务词汇; 扫地：sweep the floor\n擦地：scrub the floor\n拖地：mop the floor\n擦窗：clean the windows\n洗车：wash the car\n洗衣服：do the laundry\n晒衣服：hang clothes\n熨衣服：iron clothes\n叠衣服：fold clothes\n换床单：change the sheet\n给桌子除尘：dust the desk\n吸地面：vacuum the floor
 1. 证件词汇; 身份证：identity card\n驾驶证：driving license\n学会证：student pass\n毕业证：diploma\n工作证：employee\'s card\n健康证：helath certificate\n结婚证：marriage license\n护照：passport\n签证：visa\n工作签证：work visa\n绿卡：green card
-1. 家用电器词汇; 洗衣机：washing machine\n空调：air conditioner\n饮水机：water dispenser\n直饮水：water purifier\n电风扇：fan\n熨斗：iron\n电吹风：blow dryer
+1. 家用电器词汇; 洗衣机：washing machine\n空调：air conditioner\n饮水机：water dispenser\n直饮水：water purifier\n电风扇：fan\n熨斗：iron\n电吹风：blow dryer\n电饭煲：rice cooker\n干湿一体洗地机：wet dry vacuum cleaner
 1. 水果词汇; 李子：plum\n柠檬：lemon\n荔枝：litchi\n桂圆：longan\n芒果：mango\n樱桃：cherry\n菠萝：pineapple\n柚子：pomelo\n草莓：strawberry\n黑莓：blackberry\n蓝莓：blueberry\n西瓜：watermelon\n橙子：orange\n桑葚：mulberry\n香蕉：banana\n胡桃：walnut\n榴莲：durian\n枇杷：loquat\n无花果：fig
 1. the cheese is moldy
 1. travel debacle
@@ -113,8 +149,8 @@
 1. What are the advantages of column-wise storage and execution?; * Efficient Data Compression.\n* Improved Query Performance, including better cache locality and vectorization instructions.\n* Improved Analytical Performance with Columnar Indexes.
 1. got it; copy that; well noted; 明白了，收到
 1. downwind; against the wind
-1. 人脸部位词汇; 额头：forehead\n眼皮：eyelid\n脸颊：cheek\n人中：philtrum\n嘴唇：lip; my lips are super dry and cracked\n下巴：chin\n耳垂：earlobe
-1. 疾病词汇; 呼吸系统疾病：respiratory illnesses\n遗传病：hereditary diseases/inherited genetic diseases\n血管疾病：vascular conditions\n流感：flu\n禽流感：bird flu\n感冒：cold\n发烧：fever\n咽痛：sore throat\n咳嗽：cough\n打喷嚏：sneeze\n头痛：headache\n肺炎：pneumonia\n失眠：insomnia\n腹泻：diarrhea\n恶心：nausea\n呕吐：vomit\n眩晕：dizziness\n晕倒：passed out/faint\n乏力：fatigue/faint\n消化不良：get indigestion\n哮喘：asthma attack\n带状疱疹：shingles
+1. 人脸部位词汇; 额头：forehead\n眼皮：eyelid\n脸颊：cheek\n人中：philtrum\n嘴唇：lip; my lips are super dry and cracked\n下巴：chin\n耳垂：earlobe\n扭脸：twist the face
+1. 疾病词汇; 呼吸系统疾病：respiratory illnesses\n遗传病：hereditary diseases/inherited genetic diseases\n血管疾病：vascular conditions\n流感：flu\n禽流感：bird flu\n感冒：cold\n发烧：fever\n咽痛：sore throat\n咳嗽：cough\n打喷嚏：sneeze\n头痛：headache\n肺炎：pneumonia\n失眠：insomnia\n腹泻：diarrhea\n恶心：nausea\n呕吐：vomit\n眩晕：dizziness\n晕倒：passed out/faint\n乏力：fatigue/faint\n消化不良：get indigestion\n哮喘：asthma attack\n带状疱疹：shingles\n整形手术：plastic surgery\n偏头痛：migraine\n痤疮粉刺：acne
 1. I need to know what I stand to win
 1. 房屋词汇; 公寓：apartment/flat\n宿舍：dormitory\n别墅：villa\n官邸/大厦：mansion\n工作室：studio\n地下室：basement\n村舍：cottage\n平房：bungalow\n寺庙：temple\n城堡：castle
 1. I worked my ass off to get here
@@ -122,7 +158,7 @@
 1. 911, what's the emergency
 1. where are you hurt; where does it hurt; what did you bump into
 1. why the long face; 为什么闷闷不乐？\n
-1. 器官词汇; 大脑：brain\n肺部：lungs\n气管：trachea\n血管：blood vessel\n心脏：heart\n肝脏：liver\n肾脏：kidney\n胃部：stomach\n脾脏：spleen\n胰腺：pancreas\n膀胱：bladder\n肠道：intestines
+1. 器官词汇; 大脑：brain\n肺部：lungs\n气管：trachea\n血管：blood vessel\n心脏：heart\n肝脏：liver\n肾脏：kidney\n胃部：stomach\n脾脏：spleen\n胰腺：pancreas\n膀胱：bladder\n肠道：intestines\n骨髓：bone marrow
 1. level with me; 实话跟我说吧
 1. rat race
 1. 鸡蛋牛排词汇; 炒蛋：scrambled\n太阳蛋：sunny-side-up\n双面煎半熟：over easy\n双面煎全熟：over hard\n去壳水煮：poached\n水煮半熟：soft boiled\n水煮全熟：hard boiled\n一分熟：rare\n三分熟：medium rare\n五分熟：medium\n七分熟：medium well\n全熟：well done
@@ -131,9 +167,9 @@
 1. 走路词汇; 散步：stroll\n漫无目的地逛：wander\n大步走：stride\n踮着脚走：tiptoe\n拖着脚走：shuffle\n一瘸一拐地走：hobble\n悄悄贴近：sidle\n跑步：run\n徒步：hike\n军队行进：march
 1. their products are streets ahead of their peers
 1. 餐厅词汇; 剩菜：leftovers\n打包盒：to go box\n筷子：chopsticks\n塑料勺：plastic spoon\n餐巾纸：napkins\n塑料袋：plastic bag
-1. 健身词汇; 高强度运动：intense exercise; vigorous exercise; strenuous exercise; heavy exercise\n俯卧撑：push-ups\n引体向上：pull-ups/chin-ups\n平板卧推：flat bench press\n上斜卧推：incline bench press\n深蹲：deep squat\n举重：lift weights
+1. 健身词汇; 高强度运动：intense exercise; vigorous exercise; strenuous exercise; heavy exercise\n俯卧撑：push-ups\n引体向上：pull-ups/chin-ups\n平板卧推：flat bench press\n上斜卧推：incline bench press\n深蹲：deep squat\n举重：lift weights\n哑铃：dumbell
 1. you've got a point there
-1. 职场词汇; 招聘：recruitment\n简历：resume\n面试：interview\n空缺岗位：vacancy\n职业规划：career plan\n早九晚五：nine-to-five\n薪资：salary\n福利：welfare\n升职：promotion\n裁员：lay off\n转岗：job transfer\n跳槽：job hopping\n加薪：I want a raise\n年终绩效奖金：annual performance bonus\n担任职务：position held\n工作签证：work visa
+1. 职场词汇; 招聘：recruitment\n简历：resume\n面试：interview\n空缺岗位：vacancy\n职业规划：career plan\n早九晚五：nine-to-five\n薪资：salary\n福利：welfare\n升职：promotion\n裁员：lay off\n转岗：job transfer\n跳槽：job hopping\n加薪：I want a raise\n年终绩效奖金：annual performance bonus\n担任职务：position held\n工作签证：work visa\n压榨的：toxic\n工会：labor union
 1. let's split the bill
 1. 排泄物词汇; 眼屎：sleepy dust\n耳屎：earwax\n鼻涕：snot\n鼻屎：booger\n痰：phlegm\n汗水：sweat\n头皮屑：dandruff
 1. 汽车词汇; 驾驶座：driver\'s seat\n安全带：seatbelt\n方向盘：steering wheel\n喇叭：horn\n仪表盘：dashboard\n出风口：air vent\n变速杆：gearshift\n挡风玻璃：windscreen/windshield\n挡风玻璃雨刷：windscreen/windshield wipers\n侧视镜：side-view mirror\n后视镜：rearview mirror\n遮阳板：sun visor\n转向灯：indicator/turn signal\n刹车：brake\n油门：accelerator\n门把手：door handle\n轮胎：tire/tyre\n车牌：number plate/license plate\n后备箱：trunk\n卡车：truck
@@ -178,8 +214,8 @@
 1. two Gaza hospitals have ceased to function
 1. what do you study? I'm doing computer science; I was doing Computer Science.\nI was studying Computer Science and have now graduated.\nI completed my studies in Computer Science.\nMy field of study was Computer Science, and I\'ve graduated.\n
 1. carpet; rug; Usually refers to a floor covering that extends over an entire room\nRugs are smaller, movable floor coverings that don\'t extend across the entire floor space
-1. 手部动作词汇; 扇：slap (slap on the back)\n拳打：punch\n连续打：beat\n抓取：grab\n握住：hold\n举起：lift\n掉落：drop\n轻弹：flick\n轻拍：pat\n触摸：touch\n擦：scrub(scrub my face). This action implies a more vigorous, thorough cleaning process.\n搓：rub(rub hands together). Rubbing is less about deep cleaning and more about gentle or superficial contact.\n轻抚：stroke\n敲：knock\n戳：poke\n挠：scratch\n指：point\n推：push\n拉：pull\n轻轻摇晃：rock\n拥抱：cuddle
-1. 蔬菜词汇; 黄瓜：cucumber\n花椰菜：cauliflower\n四季豆：green beans\n洋葱：onion\n卷心菜：cabbage\n胡萝卜：carrot\n生菜：lettuce (crisp lettuce)\n辣椒：(hot/green/sweet)pepper\n西兰花：broccoli\n土豆：potato\n玉米：corn\n芹菜：celery\n菠菜：spinach\n茄子：eggplant\n南瓜：pumpkin\n苦瓜：bitter gourd\n大蒜：garlic\n蘑菇：mushroom\n木耳：agaric\n秋葵：okra
+1. 手部动作词汇; 扇：slap (slap on the back)\n拳打：punch\n连续打：beat\n抓取：grab\n握住：hold\n举起：lift\n掉落：drop\n轻弹：flick\n轻拍：pat\n触摸：touch\n擦：scrub(scrub my face). This action implies a more vigorous, thorough cleaning process.\n搓：rub(rub hands together). Rubbing is less about deep cleaning and more about gentle or superficial contact.\n轻抚：stroke\n抹药：apply medicine\n敲：knock\n戳：poke\n挠：scratch\n指：point\n推：push\n拉：pull\n轻轻摇晃：rock\n拥抱：cuddle\n压碎：crush\n
+1. 蔬菜词汇; 黄瓜：cucumber\n花椰菜：cauliflower\n四季豆：green beans\n洋葱：onion\n卷心菜：cabbage\n胡萝卜：carrot\n生菜：lettuce (crisp lettuce)\n辣椒：(hot/green/sweet)pepper\n西兰花：broccoli\n土豆：potato\n玉米：corn\n芹菜：celery\n菠菜：spinach\n茄子：eggplant\n南瓜：pumpkin\n苦瓜：bitter gourd\n大蒜：garlic\n蘑菇：mushroom\n木耳：agaric\n秋葵：okra\n西葫芦：zucchini
 1. you're twisting my words
 1. 厨房词汇; 切片：slice the potato\n切丝：shred the potato\n切丁：dice the potato\n切段：cut the green onion\n剁：chop the green onion\n菜刀：kitchen knife. I chop the green onion with my kitchen knife.\n切肉刀：cleaver\n锅：pot\n炒锅：wok\n平底锅：pan\n炉子：stove\n切菜板：cutting board\n锅盖：lid\n汤勺：ladle\n烤箱：oven\n微波炉：microwave oven\n高压锅：pressure cooker\n电饭煲：rice cooker\n热水器：water heater\n榨汁机：juicer\n冰箱：refrigerator\n烹饪用具：cooking utensil\n
 1. 晾衣服词汇; 晾衣服：hang the laundry\n衣架：hanger\n抖一下衬衫：shake out the shirt\n衣服会皱的：the shirt is going to get wrinkled\n晾衣架：just hang it on the laundry rack\n晾衣夹：just clip it on the laundry pin like this\n
@@ -236,7 +272,6 @@
 1. the present law makes no provision for this; there's no legal basis
 1. my foundation is quite solid
 1. clear the first round
-1. wage; salary; payment; compensation
 1. the probability of getting selected in the H1B lottery is very low
 1. the flu has been prevalent in China recently
 1. blast; explosion; implosion
@@ -2462,7 +2497,6 @@
 1. forensic
 1. conviction
 1. it is not well paid
-1. 工会
 1. Will everything be fine
 1. Law has two important functions
 1. the politician was held in contempt
@@ -3959,7 +3993,6 @@
 1. fireplace
 1. induced
 1. precede
-1. slope
 1. progressive
 1. convey
 1. applicability
