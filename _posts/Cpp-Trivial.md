@@ -158,6 +158,7 @@ During compilation, the order in which the linker (such as GNU's `ld`) searches 
 The runtime search order for shared libraries (.so files) on Unix-like systems is determined by several factors and environment settings. Here’s a general overview of how the runtime search order works: (**Refer to `man ld.so` for details**)
 
 * **`RPATH` and `RUNPATH`**: When a binary is compiled, it can be linked with shared libraries using `-rpath` or `-runpath` linker options. These options embed paths directly into the binary where the dynamic linker (`ld.so` or similar) should look for shared libraries. `RPATH` is checked first, but if `RUNPATH` is also specified, it takes precedence over `RPATH` when the dynamic linker is configured to use `DT_RUNPATH` entries (a newer feature).
+    * How to check the runpath of a binary: `readelf -d <binary> | grep 'RPATH\|RUNPATH'`
 * **`LD_LIBRARY_PATH` Environment Variable**: Before falling back to default system paths, the dynamic linker checks the directories listed in the `LD_LIBRARY_PATH` environment variable, if it is set. This allows users to override the system's default library paths or the paths embedded in the binary. However, for security reasons, this variable is ignored for setuid/setgid executables.
 * **Default System Library Paths**: If the library is not found in any of the previously mentioned locations, the linker searches the default library paths. These typically include `/lib`, `/usr/lib`, and their architecture-specific counterparts (e.g., `/lib/x86_64-linux-gnu` on some Linux distributions). The exact default paths can vary between systems and are defined in the dynamic linker's configuration file (usually `/etc/ld.so.conf`), which can include additional directories beyond the standard ones.
 * **DT_RPATH and DT_RUNPATH of Used Libraries (Dependencies)**: If the shared library being loaded has dependencies on other shared libraries, the dynamic linker also searches the `RPATH` and `RUNPATH` of those dependencies. This step ensures that all nested dependencies are resolved correctly.
@@ -1644,6 +1645,7 @@ target_link_options(<target> PRIVATE -static-libstdc++)
 * `-L <dir>`：增加库文件搜索路径，其优先级会高于默认的搜索路径。允许指定多个，搜索顺序与其指定的顺序相同
 * `-rpath=<dir>`：增加运行时库文件搜索路径（务必用绝路径，否则二进制一旦换目录就无法运行了）。`-L`参数只在编译、链接期间生效，运行时仍然会找不到动态库文件，需要通过该参数指定。因此，对于位于非默认搜索路径下的动态库文件，`-L`与`-Wl,-rpath=`这两个参数通常是一起使用的
     * [What's the difference between `-rpath-link` and `-L`?](https://stackoverflow.com/questions/49138195/whats-the-difference-between-rpath-link-and-l)
+    * `readelf -d <binary> | grep 'RPATH\|RUNPATH'`
 * `-Bstatic`：修改默认行为，强制使用静态链接库，只对该参数之后出现的库有效。如果找不到对应的静态库会报错（即便有动态库）
 * `-Bdynamic`：修改默认行为，强制使用动态链接库，只对该参数之后出现的库有效。如果找不到对应的动态库会报错（即便有静态库）
 * `--wrap=<symbol>`

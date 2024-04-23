@@ -1084,7 +1084,22 @@ set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O1 -Wall")
 1. `RelWithDebInfo`
 1. `MinSizeRel`
 
-## 6.5 Build Type
+## 6.5 Specify Macro Definition
+
+### 6.5.1 Command
+
+```sh
+cmake -B build -DUSE_XXX
+cmake -B build -DVALUE_YYY=5
+```
+
+### 6.5.2 CMakeLists.txt
+
+```cmake
+add_definitions(-DUSE_XXX -DVALUE_YYY=5)
+```
+
+## 6.6 Build Type
 
 ```sh
 # If you want to build for debug (including source information, i.e. -g) when compiling, use
@@ -1101,9 +1116,9 @@ cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo <path>
 1. `RelWithDebInfo`
 1. `MinSizeRel`
 
-## 6.6 Include All Source File
+## 6.7 Include All Source File
 
-### 6.6.1 file
+### 6.7.1 file
 
 ```cmake
 # Search for all .cpp and .h files in the current directory
@@ -1120,7 +1135,7 @@ file(GLOB_RECURSE MY_PROJECT_SOURCES "*.cpp")
 add_executable(MyExecutable ${MY_PROJECT_SOURCES})
 ```
 
-### 6.6.2 aux_source_directory
+### 6.7.2 aux_source_directory
 
 如果同一个目录下有多个源文件，那么在使用`add_executable`命令的时候，如果要一个个填写，那么将会非常麻烦，并且后续维护的代价也很大
 
@@ -1139,9 +1154,9 @@ aux_source_directory(. DIR_SRCS)
 add_executable(Demo ${DIR_SRCS})
 ```
 
-## 6.7 Library
+## 6.8 Library
 
-### 6.7.1 Build Static Library By Default
+### 6.8.1 Build Static Library By Default
 
 Add following config to project's root `CMakeLists.txt`, then all sub modules (imported via `add_subdirectory`) will be built in static way.
 
@@ -1149,7 +1164,7 @@ Add following config to project's root `CMakeLists.txt`, then all sub modules (i
 set(BUILD_SHARED_LIBS FALSE)
 ```
 
-### 6.7.2 Import Library From Unified Thirdparty Directory
+### 6.8.2 Import Library From Unified Thirdparty Directory
 
 Suppose you have put all libraries in `${THIRDPARTY_DIR}/lib`, then you can use the following config to import it.
 
@@ -1158,9 +1173,9 @@ add_library(protobuf STATIC IMPORTED)
 set_target_properties(protobuf PROPERTIES IMPORTED_LOCATION ${THIRDPARTY_DIR}/lib/libprotobuf.a)
 ```
 
-### 6.7.3 Priority: Static Libraries vs. Dynamic Libraries
+### 6.8.3 Priority: Static Libraries vs. Dynamic Libraries
 
-#### 6.7.3.1 find_package
+#### 6.8.3.1 find_package
 
 The factors influencing the choice between static and dynamic libraries by the `find_package` command may include:
 
@@ -1175,7 +1190,7 @@ set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost REQUIRED COMPONENTS filesystem system)
 ```
 
-#### 6.7.3.2 find_library
+#### 6.8.3.2 find_library
 
 To control whether `find_library` should prefer static libraries or dynamic libraries, you typically set the `CMAKE_FIND_LIBRARY_SUFFIXES` variable. This variable specifies the suffixes that `find_library` searches for when looking for libraries.
 
@@ -1193,13 +1208,13 @@ set(CMAKE_FIND_LIBRARY_SUFFIXES ".a;.so")
 set(CMAKE_FIND_LIBRARY_SUFFIXES ".so;.a")
 ```
 
-## 6.8 compile_commands.json
+## 6.9 compile_commands.json
 
-### 6.8.1 Manually Generate compile_commands.json
+### 6.9.1 Manually Generate compile_commands.json
 
 `cmake`指定参数`-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`即可。构建完成后，会在构建目录生成`compile_commands.json`，里面包含了每个源文件的编译命令
 
-### 6.8.2 Auto generate compile_commands.json and copy to project source root
+### 6.9.2 Auto generate compile_commands.json and copy to project source root
 
 参考[Copy compile_commands.json to project root folder](https://stackoverflow.com/questions/57464766/copy-compile-commands-json-to-project-root-folder)
 
@@ -1212,7 +1227,7 @@ add_custom_target(
     )
 ```
 
-## 6.9 How to uninstall
+## 6.10 How to uninstall
 
 After installation, there will be a `install_manifest.txt` recording all the installed files. So we can perform uninstallation by this file.
 

@@ -112,7 +112,18 @@ date: 2018-02-05 09:25:59
 * [Teradata中QUALIFY函数](https://zhuanlan.zhihu.com/p/53599236)
 * [LSM树详解](https://zhuanlan.zhihu.com/p/181498475)
 
-# 7 ChatGpt
+# 7 AI
+
+## 7.1 Tutorial
+
+* [But what is a neural network? | Chapter 1, Deep learning](https://www.youtube.com/watch?v=aircAruvnKk)
+* [Gradient descent, how neural networks learn | Chapter 2, Deep learning](https://www.youtube.com/watch?v=IHZwWFHWa-w)
+* [What is backpropagation really doing? | Chapter 3, Deep learning](https://www.youtube.com/watch?v=Ilg3gGewQ5U)
+* [Backpropagation calculus | Chapter 4, Deep learning](https://www.youtube.com/watch?v=tIeHLnjs5U8&t=7s)
+* [But what is a GPT? Visual intro to transformers | Chapter 5, Deep Learning](https://www.youtube.com/watch?v=wjZofJX0v4M&t=30s)
+* [Attention in transformers, visually explained | Chapter 6, Deep Learning](https://www.youtube.com/watch?v=eMlx5fFNoYc)
+
+## 7.2 ChatGpt
 
 * [awesome-chatgpt-prompts](https://github.com/f/awesome-chatgpt-prompts)
 * Derivative Products
