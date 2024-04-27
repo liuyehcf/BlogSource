@@ -1900,7 +1900,15 @@ Home: [coc-pyright](https://github.com/fannheyward/coc-pyright)
     deactivate
     ```
 
-### 3.10.4 coc-snippets
+### 3.10.4 coc-rust-analyzer
+
+Home: [coc-rust-analyzer](https://github.com/fannheyward/coc-rust-analyzer)
+
+**安装：进入vim界面后执行`:CocInstall coc-rust-analyzer`即可**
+
+* 确保`rust-analyzer`已经正常安装：`rustup component add rust-analyzer`
+
+### 3.10.5 coc-snippets
 
 Home: [coc-snippets](https://github.com/neoclide/coc-snippets)
 
@@ -1940,7 +1948,7 @@ call plug#end()
 
 * 最新版本无法跳转到`fori`的类型占位符，转而使用另一个插件`UltiSnips`
 
-#### 3.10.4.1 vim-snippets
+#### 3.10.5.1 vim-snippets
 
 Home: [vim-snippets](https://github.com/honza/vim-snippets)
 
@@ -1964,7 +1972,7 @@ call plug#end()
 
 **使用：与`coc-snippets`自带`snippet`的用法一致**
 
-### 3.10.5 coc-settings.json
+### 3.10.6 coc-settings.json
 
 ```json
 {
