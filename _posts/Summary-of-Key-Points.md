@@ -1627,7 +1627,31 @@ In summary, `LL(1)` and `LR(1)` are both parsing techniques used in compiler con
 * **Cache Breakdown (缓存击穿):** Cache breakdown, also known as cache breakdown, occurs when a frequently accessed cache item expires, leading to concurrent requests hitting the database before the cache is refreshed. This can cause sudden spikes in database load, potentially leading to performance issues. Solutions to prevent cache breakdown include setting staggered expiration times, using a lock or semaphore to ensure only one query refreshes the cache, or employing "hot" data handling techniques where critical data is refreshed in the cache proactively.
 * **Cache Avalanche (缓存雪崩):** A cache avalanche is a more severe issue that occurs when many, or even all, cache entries expire simultaneously or the cache fails entirely, leading to a massive surge of database requests that can overwhelm the database and cause widespread system failure. Strategies to avoid cache avalanches include using varied expiration times for cached items to prevent simultaneous expirations, implementing redundant caching systems, and ensuring that the system has fallback mechanisms in place.
 
-## 8.3 Assorted
+## 8.3 IO
+
+* **Caching mechanisms:**
+    * Using memory caches: Store frequently accessed data in memory to reduce the number of accesses to the hard drive.
+    * Read/write caching: Use caching mechanisms provided by the operating system or databases to optimize read and write speeds.
+* **Batch processing and buffering techniques:**
+    * Data buffering: When writing data to disk, first write the data to a buffer and then perform bulk writes to the disk once a certain amount has accumulated.
+    * Batch requests: Combine multiple IO requests into one larger request to reduce the number of IO operations.
+* **Concurrency and parallel processing:**
+    * Multithreading or multiprocessing: Use multithreading or multiprocessing to parallel process data, which can effectively improve the performance of IO-intensive applications.
+    * Asynchronous IO: Use asynchronous IO models to handle input and output operations, enhancing the responsiveness and throughput of applications.
+* **Choosing appropriate hardware:**
+    * SSD (Solid State Drives): Compared to traditional HDDs (Hard Disk Drives), SSDs provide faster read and write speeds.
+    * High-performance IO interfaces: Such as using SAS (Serial Attached SCSI) or NVMe (Non-Volatile Memory Express) for faster data transfer rates.
+* **Optimizing data storage and access patterns:**
+    * Data prefetching: Based on the access patterns of the application, preload data that is likely to be accessed soon.
+    * Data distribution: Properly distribute data to ensure it is evenly spread across different storage devices to avoid bottlenecks.
+* **File system optimizations:**
+    * Choosing the right file system: Different file systems (e.g., EXT4, XFS, Btrfs) perform differently under various scenarios.
+    * Adjusting file system parameters: Adjust configurations like block size and logging level according to specific needs.
+* **Database-level optimizations:**
+    * Index optimization: Proper use of indexes can speed up queries and reduce disk IO.
+    * Partitioning: By partitioning a database, distribute data across different physical drives to improve access efficiency.
+
+## 8.4 Assorted
 
 1. Reactive Programming
 1. Failed retry will loose fairness

@@ -1725,6 +1725,7 @@ nmap <leader>rn <Plug>(coc-rename)
 " [Shift] + [Option] + j，即「Ô」
 " [Shift] + [Option] + k，即「」
 nnoremap <silent> <leader>cr :CocListResume<cr>
+nnoremap <silent> <leader>ck :CocList -I symbols<cr>
 nnoremap <silent> Ô :CocNext<cr>
 nnoremap <silent>  :CocPrev<cr>
 
@@ -2978,6 +2979,9 @@ sudo ln /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.py /usr/
             autocmd FileType perl nnoremap <silent><buffer> <c-l> gg=G<c-o><c-o>
         endif
         ```
+**安装`json`的格式化工具`js-beauty`**
+
+* `npm -g install js-beautify`
 
 ## 3.25 vim-surround
 
@@ -3254,6 +3258,7 @@ nmap <leader>rn <Plug>(coc-rename)
 " [Shift] + [Option] + j，即「Ô」
 " [Shift] + [Option] + k，即「」
 nnoremap <silent> <leader>cr :CocListResume<cr>
+nnoremap <silent> <leader>ck :CocList -I symbols<cr>
 nnoremap <silent> Ô :CocNext<cr>
 nnoremap <silent>  :CocPrev<cr>
 

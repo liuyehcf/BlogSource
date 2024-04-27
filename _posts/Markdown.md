@@ -11,9 +11,9 @@ categories:
 
 <!--more-->
 
-# 1 基础语法
+# 1 Grammar
 
-## 1.1 行内代码
+## 1.1 Inline code
 
 ```
 `代码`
@@ -28,21 +28,21 @@ categories:
 
 效果：`` ` ``、`` `something` ``
 
-## 1.2 代码diff
+## 1.2 Code Diff
 
 ```diff
 - before
 + after
 ```
 
-## 1.3 标题跳转
+## 1.3 Title Jump
 
 **语法**
 
 * `[跳转](#标题名)`
 * 其中，如果标题名中间有空格，那么将空格替换为`-`
 
-## 1.4 表格进阶
+## 1.4 Advanced Table
 
 ```
 <table>
@@ -101,7 +101,7 @@ flowchart TD
     item2("first line<br>second line")
 ```
 
-## 2.2 流程图
+## 2.2 Flow Chart
 
 Possible FlowChart orientations are:
 
@@ -111,7 +111,7 @@ Possible FlowChart orientations are:
 * `RL` - Right to left
 * `LR` - Left to right
 
-### 2.2.1 横向
+### 2.2.1 Horizontal
 
 ```
 flowchart LR
@@ -131,7 +131,7 @@ flowchart LR
     F[横向流程图]
 ```
 
-### 2.2.2 纵向
+### 2.2.2 Vertical
 
 ```
 flowchart TB
@@ -151,7 +151,7 @@ flowchart TB
     F[竖向流程图]
 ```
 
-## 2.3 时序图
+## 2.3 Sequence Diagram
 
 ```
 sequenceDiagram
@@ -181,7 +181,7 @@ sequenceDiagram
     Bob-->>John: Jolly good!
 ```
 
-## 2.4 甘地图
+## 2.4 Gantt Diagram
 
 ```
 gantt
@@ -209,7 +209,18 @@ gantt
     Future task2               :         des4, after des3, 5d
 ```
 
-## 2.5 类图
+## 2.5 Class Diagram
+
+| Type | Description |
+|:--|:--|
+| `<\|--` | Inheritance |
+| `*--` | Composition |
+| `o--` | Aggregation |
+| `-->` | Association |
+| `--` | Link (Solid) |
+| `..>` | Dependency |
+| `..\|>` | Realization |
+| `..` | Link (Dashed) |
 
 ```
 classDiagram
@@ -247,7 +258,7 @@ classDiagram
 
 # 3 plantuml
 
-## 3.1 示例
+## 3.1 Example
 
 **源码：**
 
@@ -355,7 +366,7 @@ A --> User: Done
 deactivate A
 ```
 
-## 3.2 查看所有可用的参数
+## 3.2 Check All Options
 
 **源码：**
 
@@ -369,7 +380,7 @@ help skinparams
 help skinparams
 ```
 
-## 3.3 参考
+## 3.3 Reference
 
 * [Ashley's PlantUML Doc](https://plantuml-documentation.readthedocs.io/en/latest/formatting/all-skin-params.html)
 * [PlantUML Doc](https://plantuml.com/zh/sequence-diagram)

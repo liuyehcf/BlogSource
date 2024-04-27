@@ -1454,6 +1454,7 @@ ln -s '/usr/lib/systemd/system/demo-service.service' '/etc/systemd/system/multi-
 * `systemctl enable xxx.service`：允许xxx服务开机自启动
 * `systemctl disable xxx.service`：进制xxx服务开机自启动
 * `systemctl status xxx.service`：查看xxx服务的状态
+* `systemctl status pid`：查看指定pid所关联服务的状态
 * `systemctl restart xxx.service`：重新启动xxx服务
 * `systemctl reload xxx.service`：让xxx服务重新加载配置文件（如果有的话）
 * `systemctl list-units --type=service`：列出所有的服务
@@ -1472,7 +1473,22 @@ ln -s '/usr/lib/systemd/system/demo-service.service' '/etc/systemd/system/multi-
 
 * `journalctl -u xxx.service`：查看xxx服务的日志
 
-## 3.5 demo
+## 3.5 User Service Manager
+
+**特点：**
+
+* **用户级服务**：针对单个用户的服务，这些服务在用户登录时启动，退出登录时停止
+* **权限**：运行在用户级别的服务通常不需要（也不应该）超级用户权限
+* **作用域**：只影响启动这些服务的特定用户
+* **配置文件位置**：用户级服务的配置文件通常位于用户的`~/.config/systemd/user/`目录
+* **用途**：用户特定的应用程序、开发工具、个人软件实例等
+
+**示例：只要加上`--user`即可，其他用法均类似**
+
+* `systemctl --user status`
+* `systemctl --user start xxx.service`
+
+## 3.6 demo
 
 **下面写了一个非常简单的程序（文件名为`demo-service.c`）：接受并处理`1`、`2`、`15`三种信号**
 
@@ -1593,7 +1609,7 @@ systemctl stop demo-service.service
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-## 3.6 参考
+## 3.7 参考
 
 * [Systemd 入门教程：命令篇](http://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-commands.html)
 * [Systemd 入门教程：实战篇](http://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-part-two.html)

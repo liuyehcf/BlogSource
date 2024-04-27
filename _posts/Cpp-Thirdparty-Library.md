@@ -909,7 +909,7 @@ git checkout v0.15.0
 
 ./bootstrap.sh
 # you can build specific lib by using --with-xxx or --without-xxx
-./configure
+./configure --enable-libs=no --with-cpp
 make -j 64
 sudo make install
 ```

@@ -542,9 +542,53 @@ Bloom filter index is suitable for datasets with high cardinality, provided they
 
 * **Usage:** Only Equality predicate
 
-# 4 Other
+# 4 Lakehouse
 
-## 4.1 Service
+* `ScanOperator`: Execution root of a query plan
+* `ConnectorScanOperator`: Derived from `ScanOperator`, handling external source situations
+* `ChunkSource`: Each parallelism of `ScanOperator` will further submit multiply scan tasks, and each parallelism acts as a ChunkSource
+* `ConnectorChunkSource`: Derived from `ChunkSource`, handling external source situations
+* `DataSource`: Map to different data source, like file, jdbc, lake, mysql, etc.
+* `HiveDataSource`: Derived from `DataSource`, reading data from hive cluster
+* `HdfsScanner`: Used to process different types of formats, like orc, parquet, etc.
+* `HdfsOrcScanner`: Used to read data from hdfs cluster for orc format
+* `HdfsParquetScanner`: Used to read data from hdfs cluster for parquet format
+* `parquet::FileReader`: Parquet reader
+* `THdfsScanRange` (gensrc/thrift/PlanNodes.thrift)
+
+```mermaid
+classDiagram
+    ScanOperator <|-- OlapScanOperator
+    ScanOperator <|-- ConnectorScanOperator
+    ScanOperator *-- ChunkSource
+    ChunkSource <|-- OlapChunkSource
+    ChunkSource <|-- ConnectorChunkSource
+    ConnectorChunkSource *-- DataSource
+    DataSource <|-- MySQLDataSource
+    DataSource <|-- ESDataSource
+    DataSource <|-- JDBCDataSource
+    DataSource <|-- LakeDataSource
+    DataSource <|-- HiveDataSource
+    HiveDataSource *-- HdfsScanner
+    HdfsScanner <|-- HdfsOrcScanner
+    HdfsScanner <|-- HdfsParquetScanner
+    HdfsParquetScanner *-- FileReader
+```
+
+The key component is`FileReader`, let's dive into the class
+
+```mermaid
+classDiagram
+    FileReader *-- listGroupReader
+```
+
+## 4.1 PR
+
+* [[Enhancement] parquet format to support coalesce reads](https://github.com/StarRocks/starrocks/pull/7478)
+
+# 5 Other
+
+## 5.1 Service
 
 Frontend-Service
 
@@ -557,12 +601,12 @@ Backend-Service
 * `PInternalServiceImplBase`：server
 * `BackendServiceClient`：client
 
-## 4.2 Process
+## 5.2 Process
 
 `ConnectProcessor`
 
 * `finalizeCommand`: proxy handling
 
-## 4.3 RBAC
+## 5.3 RBAC
 
 `Authorizer`
