@@ -374,6 +374,13 @@ cd ohmyzsh/tools
 ./install.sh
 ```
 
+修改`~/.zshrc`，在`source $ZSH/oh-my-zsh.sh`上面加上一行。可以调整`.zcompdump`文件的生成路径
+
+```sh
+export ZSH_COMPDUMP=$ZSH/cache/.zcompdump-$HOST
+source $ZSH/oh-my-zsh.sh
+```
+
 **步骤3：[安装Powerline](https://powerline.readthedocs.io/en/latest/installation.html)**
 
 ```sh
@@ -609,6 +616,14 @@ codesign --remove-signature /Applications/Visual\ Studio\ Code.app/Contents/Fram
 ```sh
 pmset displaysleepnow
 ```
+
+## 6.9 右上角菜单栏如何显示蓝牙/音量等等
+
+这些配置都在控制中心里面，即`Control Center`
+
+## 6.10 Finder 默认搜索当前文件夹
+
+`Finder` -> `Settings`-> `Advanced` -> `When performing a search`
 
 # 7 参考
 

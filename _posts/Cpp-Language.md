@@ -4549,6 +4549,53 @@ Foo::Foo()
 Foo::operator=&&
 ```
 
+## 10.2 Structured Bindings
+
+Structured bindings were introduced in C++17 and provide a convenient way to destructure the elements of a tuple-like object or aggregate into individual variables.
+
+Tuple-like objects in C++ include:
+
+* `std::tuple`: The standard tuple class provided by the C++ Standard Library.
+* `std::pair`: A specialized tuple with exactly two elements, also provided by the C++ Standard Library.
+* Custom user-defined types that mimic the behavior of tuples, such as structs with a fixed number of members.
+
+```cpp
+#include <iostream>
+#include <tuple>
+
+struct Person {
+    std::string name;
+    int age;
+    double height;
+
+    // Constructor
+    Person(const std::string& n, int a, double h) : name(n), age(a), height(h) {}
+};
+
+int main() {
+    std::tuple<int, double, std::string> myTuple(42, 3.14, "Hello");
+
+    auto [x, y, z] = myTuple;
+
+    std::cout << "x: " << x << std::endl;
+    std::cout << "y: " << y << std::endl;
+    std::cout << "z: " << z << std::endl;
+
+    // Create an instance of the custom struct
+    Person person("Alice", 30, 1.75);
+
+    // Structured binding to extract elements
+    auto [name, age, height] = person;
+
+    // Print the extracted elements
+    std::cout << "Name: " << name << std::endl;
+    std::cout << "Age: " << age << std::endl;
+    std::cout << "Height: " << height << std::endl;
+
+    return 0;
+}
+```
+
 # 11 Policy
 
 ## 11.1 Pointer Stability

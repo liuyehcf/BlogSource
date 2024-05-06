@@ -866,16 +866,17 @@ grep分析一行信息，若当前有我们所需要的信息，就将该行拿�
 * `-f`：忽略大小写的差异
 * `-b`：忽略最前面的空格符部分
 * `-M`：以月份的名字来排序，例如JAN，DEC等排序方法
-* `-n`：使用"纯数字"进行排序(默认是以文字类型来排序的)
+* `-n`：使用"纯数字"进行排序（默认是以文字类型来排序的）
 * `-r`：反向排序
 * `-u`：就是uniq，相同的数据中，仅出现一行代表
 * `-t`：分隔符，默认使用`Tab`来分隔
-* `-k`：以哪个区间(field)来进行排序的意思
+* `-k`：以哪个区间（field）来进行排序的意思
 
 **Examples:**
 
 * `cat /etc/passwd | sort`
 * `cat /etc/passwd | sort -t ':' -k 3`
+* `echo -e "a\nb\nb\na\nb\na\na\nc\na" | sort | uniq -c | sort -nr`
 
 ## 2.9 uniq
 
@@ -895,6 +896,7 @@ grep分析一行信息，若当前有我们所需要的信息，就将该行拿�
 * `echo -e 'a\na\nb' | uniq -c`
 * `echo -e 'a\na\nb' | uniq -d`
 * `echo -e 'a\na\nb' | uniq -u`
+* `echo -e "a\nb\nb\na\nb\na\na\nc\na" | sort | uniq -c | sort -nr`
 
 ## 2.10 tr
 

@@ -542,7 +542,7 @@ Bloom filter index is suitable for datasets with high cardinality, provided they
 
 * **Usage:** Only Equality predicate
 
-# 4 Lakehouse
+# 4 Data Lake
 
 * `ScanOperator`: Execution root of a query plan
 * `ConnectorScanOperator`: Derived from `ScanOperator`, handling external source situations
@@ -560,7 +560,7 @@ Bloom filter index is suitable for datasets with high cardinality, provided they
 classDiagram
     ScanOperator <|-- OlapScanOperator
     ScanOperator <|-- ConnectorScanOperator
-    ScanOperator *-- ChunkSource
+    ScanOperator *-- ChunkSource: Multi
     ChunkSource <|-- OlapChunkSource
     ChunkSource <|-- ConnectorChunkSource
     ConnectorChunkSource *-- DataSource
@@ -570,21 +570,39 @@ classDiagram
     DataSource <|-- LakeDataSource
     DataSource <|-- HiveDataSource
     HiveDataSource *-- HdfsScanner
+    HdfsScanner *-- RandomAccessFile
+    RandomAccessFile *-- CompressedInputStream
+    CompressedInputStream *-- CacheInputStream: Adapt
+    CacheInputStream *-- SharedBufferedInputStream: Adapt
+    SharedBufferedInputStream *-- SeekableInputStream: Original
     HdfsScanner <|-- HdfsOrcScanner
     HdfsScanner <|-- HdfsParquetScanner
     HdfsParquetScanner *-- FileReader
-```
-
-The key component is`FileReader`, let's dive into the class
-
-```mermaid
-classDiagram
-    FileReader *-- listGroupReader
+    FileReader *-- GroupReader: Multi
+    FileReader *-- SharedBufferedInputStream
+    GroupReader *-- ColumnReader: Multi
+    GroupReader *-- SharedBufferedInputStream
+    ColumnReader <|-- ScalarColumnReader
+    ColumnReader <|-- ListColumnReader
+    ColumnReader <|-- MapColumnReader
+    ColumnReader <|-- StructColumnReader
+    ListColumnReader *-- ColumnReader: Multi
+    MapColumnReader *-- ColumnReader: Multi
+    StructColumnReader *-- ColumnReader: Multi
 ```
 
 ## 4.1 PR
 
 * [[Enhancement] parquet format to support coalesce reads](https://github.com/StarRocks/starrocks/pull/7478)
+* [[Enhancement] add support for late materialization in paquet reader](https://github.com/StarRocks/starrocks/pull/8574)
+* [[Enhancement] support runtime filter in parquet scanner](https://github.com/StarRocks/starrocks/pull/9739)
+* [[Feature] Add a block cache module to improve external table query performance](https://github.com/StarRocks/starrocks/pull/11579)
+* [[Enhancement] Move io coalesce input stream below cache input stream (zero-copy feature)](https://github.com/StarRocks/starrocks/pull/19584)
+* [[Enhancement][Refactor]Refactor Parquet late materialize for round-by-round filter and pageIndex](https://github.com/StarRocks/starrocks/pull/27765)
+* [[Enhancement] Support dict filter for struct type in parquet](https://github.com/StarRocks/starrocks/pull/28843)
+* [[Enhancement] Reduce IOPS in HDFS Text Reader when enable datacache](https://github.com/StarRocks/starrocks/pull/37754)
+* [[Enhancement] Merge multiply blocks into one io request in CacheInputStream](https://github.com/StarRocks/starrocks/pull/38882)
+* [[Feature] support parquet scanner to split task](https://github.com/StarRocks/starrocks/pull/42586)
 
 # 5 Other
 

@@ -500,7 +500,21 @@ xxx/gdb_tutorial
 
 ## 3.8 Tips
 
-1. Redirect source file path: `set substitute-path`
+### 3.8.1 Redirect source file path
+
+```sh
+(gdb) set substitute-path
+```
+
+### 3.8.2 Redirect Thread Info to File
+
+```sh
+(gdb) set pagination off
+(gdb) set logging file /tmp/threads.txt
+(gdb) set logging on
+(gdb) info threads
+(gdb) set logging off
+```
 
 # 4 How to Analyze a Core File
 

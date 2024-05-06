@@ -1881,6 +1881,18 @@ Data Stream Processing System, DSPS
 
 [The Loss Surfaces of Multilayer Networks](/resources/paper/The-Loss-Surfaces-of-Multilayer-Networks.pdf)
 
+## 5.4 Attention Is All You Need
+
+[Attention Is All You Need](/resources/paper/Attention-Is-All-You-Need.pdf)
+
+## 5.5 BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding
+
+[BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding](/resources/paper/BERT-Pre-training-of-Deep-Bidirectional-Transformers-for-Language-Understanding.pdf)
+
+## 5.6 Language Models are Unsupervised Multitask Learners
+
+[Language Models are Unsupervised Multitask Learners](/resources/paper/Language-Models-are-Unsupervised-Multitask-Learners.pdf)
+
 # 6 TODO
 
 * Survey
@@ -1961,10 +1973,6 @@ Data Stream Processing System, DSPS
 * Computer Architecture
     * [Residency-Aware Virtual Machine Communication Optimization: Design Choices and Techniques](/resources/paper/Residency-Aware-Virtual-Machine-Communication-Optimization-Design-Choices-and-Techniques.pdf)
     * [GPU Computing](/resources/paper/GPU-Computing.pdf)
-* LLM
-    * [Attention Is All You Need](/resources/paper/Attention-Is-All-You-Need.pdf)
-    * [BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding](/resources/paper/BERT-Pre-training-of-Deep-Bidirectional-Transformers-for-Language-Understanding.pdf)
-    * [Language Models are Unsupervised Multitask Learners](/resources/paper/Language-Models-are-Unsupervised-Multitask-Learners.pdf)
 * Storage
     * [What’s the Story in EBS Glory: Evolutions and Lessons in Building Cloud Block Store](/resources/paper/Whats-the-Story-in-EBS-Glory-Evolutions-and-Lessons-in-Building-Cloud-Block-Store.pdf)
 * Parquet

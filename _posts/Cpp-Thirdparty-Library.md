@@ -839,12 +839,15 @@ sudo ldconfig
 
 [Reading and writing Parquet files](https://arrow.apache.org/docs/cpp/parquet.html#)
 
+### 6.1.1 Parquet Module
+
 ```cpp
 #include <arrow/api.h>
 #include <arrow/io/api.h>
 #include <arrow/pretty_print.h>
 #include <arrow/result.h>
 #include <arrow/status.h>
+#include <arrow/type_fwd.h>
 #include <parquet/arrow/reader.h>
 #include <parquet/arrow/writer.h>
 #include <parquet/exception.h>
@@ -852,66 +855,83 @@ sudo ldconfig
 #include <filesystem>
 #include <iostream>
 
-void CheckStatus(const arrow::Status& status) {
-    if (!status.ok()) {
-        std::cerr << "Arrow operation failed: " << status.message() << std::endl;
-        exit(EXIT_FAILURE);
-    }
-}
-
-int main() {
+arrow::Status execute() {
     // Create a simple table
-    arrow::Int64Builder i64builder;
-    CheckStatus(i64builder.AppendValues({1, 2, 3, 4, 5}));
+    arrow::Int64Builder col_builder1;
+    ARROW_RETURN_NOT_OK(col_builder1.AppendValues({1, 2, 3, 4, 5}));
+    arrow::DoubleBuilder col_builder2;
+    ARROW_RETURN_NOT_OK(col_builder2.AppendValues({1.1, 2.2, 3.3, 4.4, 5.5}));
+    arrow::StringBuilder col_builder3;
+    ARROW_RETURN_NOT_OK(col_builder3.AppendValues({"Tom", "Jerry", "Alice", "Bob", "Jack"}));
 
-    std::shared_ptr<arrow::Array> array;
-    CheckStatus(i64builder.Finish(&array));
-
-    std::shared_ptr<arrow::Schema> schema = arrow::schema({arrow::field("int_column", arrow::int64())});
-    auto table = arrow::Table::Make(schema, {array});
+    std::shared_ptr<arrow::Array> col_array1;
+    ARROW_RETURN_NOT_OK(col_builder1.Finish(&col_array1));
+    std::shared_ptr<arrow::Array> col_array2;
+    ARROW_RETURN_NOT_OK(col_builder2.Finish(&col_array2));
+    std::shared_ptr<arrow::Array> col_array3;
+    ARROW_RETURN_NOT_OK(col_builder3.Finish(&col_array3));
+    std::shared_ptr<arrow::Schema> schema = arrow::schema({arrow::field("int_column", arrow::int64(), false),
+                                                           arrow::field("double_column", arrow::float64(), false),
+                                                           arrow::field("str_column", arrow::utf8(), false)});
+    auto table = arrow::Table::Make(schema, {col_array1, col_array2, col_array3});
 
     // Write the table to a Parquet file
     std::string file_path = "data.parquet";
     std::shared_ptr<arrow::io::FileOutputStream> outfile;
-    CheckStatus(arrow::io::FileOutputStream::Open(file_path).Value(&outfile));
-    CheckStatus(parquet::arrow::WriteTable(*table, arrow::default_memory_pool(), outfile, 3));
+    ARROW_RETURN_NOT_OK(arrow::io::FileOutputStream::Open(file_path).Value(&outfile));
+    ARROW_RETURN_NOT_OK(parquet::arrow::WriteTable(*table, arrow::default_memory_pool(), outfile, 3));
 
     // Read the Parquet file back into a table
     std::shared_ptr<arrow::io::ReadableFile> infile;
-    CheckStatus(arrow::io::ReadableFile::Open(file_path, arrow::default_memory_pool()).Value(&infile));
+    ARROW_RETURN_NOT_OK(arrow::io::ReadableFile::Open(file_path, arrow::default_memory_pool()).Value(&infile));
 
     std::unique_ptr<parquet::arrow::FileReader> reader;
-    CheckStatus(parquet::arrow::OpenFile(infile, arrow::default_memory_pool(), &reader));
+    ARROW_RETURN_NOT_OK(parquet::arrow::OpenFile(infile, arrow::default_memory_pool(), &reader));
 
     std::shared_ptr<arrow::Table> read_table;
-    CheckStatus(reader->ReadTable(&read_table));
+    ARROW_RETURN_NOT_OK(reader->ReadTable(&read_table));
 
     // Print the table to std::cout
     std::stringstream ss;
-    CheckStatus(arrow::PrettyPrint(*read_table.get(), {}, &ss));
+    ARROW_RETURN_NOT_OK(arrow::PrettyPrint(*read_table.get(), {}, &ss));
     std::cout << ss.str() << std::endl;
 
+    return arrow::Status::OK();
+}
+
+int main() {
+    auto status = execute();
     return 0;
 }
 ```
 
 ```sh
-gcc -o main main.cpp -lstdc++ -std=gnu++17 -larrow -lparquet
-./main
+gcc -o arrow_parquet_demo arrow_parquet_demo.cpp -lstdc++ -std=gnu++17 -larrow -lparquet
+./arrow_parquet_demo
 ```
 
 ## 6.2 thrift
 
+Requirement:
+
+1. `libtool`
+1. `bison`
+1. `flex`
+1. `openssl-devel`
+
 ```sh
 git clone https://github.com/apache/thrift.git
 cd thrift
-git checkout v0.15.0
+git checkout v0.16.0
 
 ./bootstrap.sh
 # you can build specific lib by using --with-xxx or --without-xxx
-./configure --enable-libs=no --with-cpp
+./configure --with-cpp=yes --with-java=no --with-python=no --with-py3=no --with-nodejs=no
 make -j 64
 sudo make install
+
+echo '/usr/local/lib' | sudo tee /etc/ld.so.conf.d/thrift.conf
+sudo ldconfig
 ```
 
 ```sh

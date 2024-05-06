@@ -220,6 +220,8 @@ int main() {
 1. `std::search_n`
 1. `std::max_element`：return iterator of the max element
 1. `std::min_element`：return iterator of the min element
+1. `std::max`
+1. `std::min`
  
 ### 1.3.1 std::for_each
 
@@ -587,6 +589,7 @@ int main() {
 1. `std::filesystem::copy`
 1. `std::filesystem::copy_file`
 1. `std::filesystem::exist`
+1. `std::filesystem::file_size`
 1. `std::filesystem::is_directory`
 1. `std::filesystem::is_regular_file`
 1. `std::filesystem::remove`
