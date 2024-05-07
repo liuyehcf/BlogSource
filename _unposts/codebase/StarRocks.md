@@ -554,7 +554,6 @@ Bloom filter index is suitable for datasets with high cardinality, provided they
 * `HdfsOrcScanner`: Used to read data from hdfs cluster for orc format
 * `HdfsParquetScanner`: Used to read data from hdfs cluster for parquet format
 * `parquet::FileReader`: Parquet reader
-* `THdfsScanRange` (gensrc/thrift/PlanNodes.thrift)
 
 ```mermaid
 classDiagram
@@ -589,6 +588,13 @@ classDiagram
     ListColumnReader *-- ColumnReader: Multi
     MapColumnReader *-- ColumnReader: Multi
     StructColumnReader *-- ColumnReader: Multi
+    ScalarColumnReader *-- StoredColumnReader
+    StoredColumnReader <|-- RequiredStoredColumnReader
+    StoredColumnReader <|-- OptionalStoredColumnReader
+    StoredColumnReader <|-- RepeatedStoredColumnReader
+    StoredColumnReader *-- ColumnChunkReader
+    ColumnChunkReader *-- LevelDecoder
+    ColumnChunkReader *-- PageReader
 ```
 
 ## 4.1 PR
@@ -628,3 +634,9 @@ Backend-Service
 ## 5.3 RBAC
 
 `Authorizer`
+
+# 6 Roadmap
+
+* [StarRocks Roadmap 2022](https://github.com/StarRocks/starrocks/issues/1244)
+* [StarRocks Roadmap 2023](https://github.com/StarRocks/starrocks/issues/16445)
+* [StarRocks Roadmap 2024](https://github.com/StarRocks/starrocks/issues/39686)

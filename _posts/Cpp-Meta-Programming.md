@@ -624,7 +624,9 @@ int main() {
 }
 ```
 
-## 6.5 has_type_member
+## 6.5 Check if has specific symbol
+
+### 6.5.1 has_type_member
 
 我们实现一个`has_type_member`，用于判断某个类型是否有类型成员，且其名字为`type`，即对于类型`T`是否存在`typename T::type`
 
@@ -662,6 +664,42 @@ int main() {
     std::cout << has_type_member<WithVoidMemberType>::value << std::endl;
     std::cout << has_type_member<WithNonTypeMemberType>::value << std::endl;
     std::cout << has_type_member<WithoutMemberType>::value << std::endl;
+    return 0;
+}
+```
+
+### 6.5.2 has_to_string
+
+```cpp
+#include <iostream>
+#include <string>
+#include <type_traits>
+
+template <typename T, typename = void>
+struct has_to_string : std::false_type {};
+
+template <typename T>
+struct has_to_string<T, std::void_t<decltype(to_string(std::declval<T>()))>> : std::true_type {};
+
+struct Foo {
+    int val;
+};
+
+std::string to_string(Foo const& foo) {
+    std::string buffer;
+    buffer += "Foo(";
+    buffer += "val=" + std::to_string(foo.val);
+    buffer += ")";
+    return buffer;
+}
+
+int main() {
+    Foo foo;
+    foo.val = 5;
+    if constexpr (has_to_string<Foo>::value) {
+        std::string str = to_string(foo);
+        std::cout << to_string(foo) << std::endl;
+    }
     return 0;
 }
 ```

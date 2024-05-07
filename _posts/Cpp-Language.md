@@ -356,7 +356,7 @@ int main() {
 
 显示给定的错误消息，并终止编译过程
 
-## 2.6 参考
+## 2.6 Reference
 
 * [C/C++ 宏编程的艺术](https://bot-man-jl.github.io/articles/?post=2020/Macro-Programming-Art)
 
@@ -2224,9 +2224,47 @@ void *buf = // 在这里为buf分配内存
 Class *pc = new (buf) Class();  
 ```
 
-# 4 template
+# 4 Syntax
 
-## 4.1 template Type
+## 4.1 braced-init-list
+
+* [List-initialization (since C++11)](https://en.cppreference.com/w/cpp/language/list_initialization)
+* [Why is a braced-init-list not an expression？](https://stackoverflow.com/questions/18009628/why-is-a-braced-init-list-not-an-expression)
+
+### 4.1.1 std::forward cannot convert brace-enclosed initializer list
+
+```cpp
+#include <memory>
+#include <vector>
+
+struct Foo {
+    Foo(std::vector<int> data_) : data(data_) {}
+    std::vector<int> data;
+};
+
+Foo create() {
+    return {{}};
+}
+
+std::shared_ptr<Foo> create_ptr_1() {
+    return std::shared_ptr<Foo>({});
+}
+std::shared_ptr<Foo> create_ptr_2() {
+    // Compile error
+    return std::make_shared<Foo>({});
+}
+
+int main() {
+    create();
+    create_ptr_1();
+    create_ptr_2();
+    return 0;
+}
+```
+
+# 5 template
+
+## 5.1 template Type
 
 1. `Function Templates`: These are templates that produce templated functions that can operate on a variety of data types.
     ```cpp
@@ -2289,7 +2327,7 @@ Class *pc = new (buf) Class();
 
 **Variable Templates**: A variable template is still a blueprint, like function and class templates. But the key difference lies in how the compiler treats template instantiations for variables versus functions/classes. For variables, the instantiation actually defines a variable. If this template is instantiated in multiple translation units, it results in multiple definitions of the same variable across those translation units, violating the ODR. Thus, for variable templates, the `inline` keyword is used to ensure that all instances of a variable template across multiple translation units are treated as a single entity, avoiding ODR violations.
 
-## 4.2 template Argument Type
+## 5.2 template Argument Type
 
 1. `template`模板
 1. `typename`模板
@@ -2324,7 +2362,7 @@ int main() {
 }
 ```
 
-## 4.3 template Parameter Pack
+## 5.3 template Parameter Pack
 
 [C++ 语言构造参考手册-形参包](https://www.bookstack.cn/read/cppreference-language/5c04935094badaf1.md)
 
@@ -2346,7 +2384,7 @@ int main() {
 
 * `模式 ...`
 
-## 4.4 Fold Expressions
+## 5.4 Fold Expressions
 
 [C++ 语言构造参考手册-折叠表达式](https://www.bookstack.cn/read/cppreference-language/62e23cda3198622e.md)
 
@@ -2445,9 +2483,9 @@ int main() {
 }
 ```
 
-## 4.5 Traverse Parameter Pack
+## 5.5 Traverse Parameter Pack
 
-### 4.5.1 Parenthesis Initializer
+### 5.5.1 Parenthesis Initializer
 
 这里用到了一个技巧，[逗号运算符](https://www.bookstack.cn/read/cppreference-language/ae53223225119599.md#9bocdk)：对于逗号表达式`E1, E2`中，对`E1`求值并舍弃其结果（尽管当它具有类类型时，直到包含它的全表达式的结尾之前都不会销毁它），其副作用在表达式`E2`的求值开始前完成
 
@@ -2522,7 +2560,7 @@ int main() {
 }
 ```
 
-### 4.5.2 constexpr for
+### 5.5.2 constexpr for
 
 有时候，无法通过折叠表达式处理一些复杂的场景，我们希望能通过循环来挨个处理形参，示例如下（参考[Approximating 'constexpr for'](https://artificial-mind.net/blog/2020/10/31/constexpr-for)）：
 
@@ -2592,7 +2630,7 @@ int main() {
 }
 ```
 
-## 4.6 Non-Type template Parameter
+## 5.6 Non-Type template Parameter
 
 我们还可以在模板中定义非类型参数，一个非类型参数表示一个值而非一个类型。当一个模板被实例化时，非类型参数被编译器推断出的值所代替，这些值必须是常量表达式，从而允许编译器在编译时实例化模板。一个非类型参数可以是一个整型（枚举可以理解为整型），或是一个指向对象或函数类型的指针或引用
 
@@ -2628,7 +2666,7 @@ int main() {
 }
 ```
 
-## 4.7 When template parameters cannot be inferred
+## 5.7 When template parameters cannot be inferred
 
 **通常，在`::`左边的模板形参是无法进行推断的（这里的`::`特指用于连接两个类型），例如下面这个例子**
 
@@ -2653,7 +2691,7 @@ int main() {
 }
 ```
 
-## 4.8 Using typename to Disambiguate
+## 5.8 Using typename to Disambiguate
 
 **什么情况下会有歧义？。例如`foo* ptr;`**
 
@@ -2695,7 +2733,7 @@ typename T::value_type sum(const T &container) {
 }
 ```
 
-## 4.9 Using template to Disambiguate
+## 5.9 Using template to Disambiguate
 
 **什么情况下会有歧义？。例如`container.emplace<int>(1);`**
 
@@ -2768,7 +2806,7 @@ void bar() {
 }
 ```
 
-## 4.10 Defining a type alias in a template parameter list
+## 5.10 Defining a type alias in a template parameter list
 
 语法上，我们是无法在template的参数列表中定义别名的（无法使用`using`）。但是我们可以通过定义有默认值的类型形参来实现类似类型别名的功能，如下：
 
@@ -2780,7 +2818,7 @@ ValueType& get(HashMap& map, const KeyType& key) {
 }
 ```
 
-## 4.11 Accessing members of a template parent class from a non-template derived class
+## 5.11 Accessing members of a template parent class from a non-template derived class
 
 * 方式1：`MemberName`
 * 方式2：`this->MemberName`
@@ -2804,7 +2842,7 @@ int main() {
 }
 ```
 
-## 4.12 Accessing members of a template parent class from a template derived class
+## 5.12 Accessing members of a template parent class from a template derived class
 
 * 访问方式1：`ParentClass<Template Args...>::MemberName`
 * 访问方式2：`this->MemberName`
@@ -2829,7 +2867,7 @@ int main() {
 }
 ```
 
-## 4.13 template as a template Parameter
+## 5.13 template as a template Parameter
 
 [What are some uses of template template parameters?](https://stackoverflow.com/questions/213761/what-are-some-uses-of-template-template-parameters)
 
@@ -2859,7 +2897,7 @@ int main() {
 }
 ```
 
-## 4.14 Separating the definition and implementation of a template
+## 5.14 Separating the definition and implementation of a template
 
 我们可以将模板的声明和定义分别放在两个文件中，这样可以使得代码结构更加清晰。例如，假设有两个文件`test.h`和`test.tpp`，其内容分别如下：
 
@@ -2927,11 +2965,11 @@ int main() {
 
 `clangd`在没有`compile_commands.json`文件时，处理单独的`tpp`文件会报错，错误信息是：`Unable to handle compilation, expected exactly one compiler job in ''`
 
-## 4.15 [CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern)
+## 5.15 [CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern)
 
 `CRTP`的全称是`Curious Recurring Template Pattern`
 
-### 4.15.1 Static Polymorphism
+### 5.15.1 Static Polymorphism
 
 ```cpp
 #include <iostream>
@@ -2955,7 +2993,7 @@ int main() {
 }
 ```
 
-### 4.15.2 Object Counter
+### 5.15.2 Object Counter
 
 ```cpp
 #include <iostream>
@@ -3000,7 +3038,7 @@ int main() {
 }
 ```
 
-### 4.15.3 Polymorphic Chaining
+### 5.15.3 Polymorphic Chaining
 
 ```cpp
 #include <iostream>
@@ -3077,7 +3115,7 @@ int main() {
 * `PlainCoutPrinter().print("Hello ")`的返回类型是`PlainPrinter`，丢失了具体的`PlainCoutPrinter`类型信息，于是再调用`SetConsoleColor`就报错了
 * 而使用`CRTP`就可以避免这个问题，基类的方法返回类型永远是具体的子类
 
-### 4.15.4 Polymorphic Copy Construction
+### 5.15.4 Polymorphic Copy Construction
 
 ```cpp
 #include <memory>
@@ -3116,7 +3154,7 @@ int main() {
 }
 ```
 
-## 4.16 PIMPL
+## 5.16 PIMPL
 
 In C++, the term `pimpl` is short for `pointer to implementation` or `private implementation`. It's an idiom used to separate the public interface of a class from its implementation details. This helps improve code modularity, encapsulation, and reduces compile-time dependencies.
 
@@ -3172,11 +3210,11 @@ void Widget::DoSomething() {
 }
 ```
 
-# 5 Memory Model
+# 6 Memory Model
 
-## 5.1 Concepts
+## 6.1 Concepts
 
-### 5.1.1 Cache coherence & Memory consistency
+### 6.1.1 Cache coherence & Memory consistency
 
 Cache coherence and memory consistency are two fundamental concepts in parallel computing systems, but they address different issues:
 
@@ -3192,15 +3230,15 @@ Cache coherence and memory consistency are two fundamental concepts in parallel 
 
 In summary, while both are essential for correctness in multiprocessor systems, cache coherence deals with maintaining a consistent view of a single memory location, while memory consistency is concerned with the order and visibility of updates to different memory locations.
 
-### 5.1.2 Happens-before
+### 6.1.2 Happens-before
 
 If an operation A "happens-before" another operation B, it means that A is guaranteed to be observed by B. In other words, any data or side effects produced by A will be visible to B when it executes.
 
 ![happens-before](/images/Cpp-Language/happens-before.png)
 
-## 5.2 Memory consistency model
+## 6.2 Memory consistency model
 
-### 5.2.1 Sequential consistency model
+### 6.2.1 Sequential consistency model
 
 > the result of any execution is the same as if the operations of all the processors were executed in some sequential order, and the operations of each individual processor appear in this sequence in the order specified by its program
 
@@ -3210,7 +3248,7 @@ If an operation A "happens-before" another operation B, it means that A is guara
 2. **The interleaving order of thread execution can be arbitrary, but the overall execution order of the entire program, as observed by all threads, must be the same (from the perspective of the entire program)**
     * That is, there should not be a situation where for write operations `W1` and `W2`, processor 1 sees the order as: `W1 -> W2`; while processor 2 sees the order as: `W2 -> W1`
 
-### 5.2.2 Relaxed consistency model
+### 6.2.2 Relaxed consistency model
 
 **`Relaxed consistency model` also known as the loose memory consistency model, is characterized by:**
 
@@ -3235,7 +3273,7 @@ If an operation A "happens-before" another operation B, it means that A is guara
 * Allowing early reads of values written by other processors
 * Allowing early reads of values written by the current processor
 
-### 5.2.3 Total Store Order
+### 6.2.3 Total Store Order
 
 otal Store Order (TSO) is a type of memory consistency model used in computer architecture to manage how memory operations (reads and writes) are ordered and observed by different parts of the system.
 
@@ -3250,7 +3288,7 @@ This model is a compromise between strict ordering and performance. In a system 
 
 TSO is commonly used in x86 processors, which strikes a balance between the predictable behavior needed for programming ease and the relaxed rules that allow for high performance in practice.
 
-## 5.3 std::memory_order
+## 6.3 std::memory_order
 
 1. `std::memory_order_seq_cst`: **Provide happens-before relationship.**
 1. `std::memory_order_relaxed`: **CAN NOT Provide happens-before relationship.** Which specific relaxation strategies are adopted must be determined based on the hardware platform.
@@ -3263,9 +3301,9 @@ TSO is commonly used in x86 processors, which strikes a balance between the pred
         1. `std::memory_order_acquire` is a memory ordering constraint that provides acquire semantics. It ensures that any memory operations that occur before the acquire operation in the program order will be visible to the thread performing the acquire operation.
         1. `std::memory_order_release` is a memory ordering constraint that provides release semantics. It ensures that any memory operations that occur after the release operation in the program order will be visible to other threads that perform subsequent acquire operations.
 
-## 5.4 Cases
+## 6.4 Cases
 
-### 5.4.1 Case-1-happens-before
+### 6.4.1 Case-1-happens-before
 
 happens-before在不同`std::memory_order`下的规则
 
@@ -3381,7 +3419,7 @@ int main() {
 }
 ```
 
-### 5.4.2 Case-2-write-read-reorder
+### 6.4.2 Case-2-write-read-reorder
 
 来自[Shared Memory Consistency Models: A Tutorial](/resources/paper/Shared-Memory-Consistency-Models-A-Tutorial.pdf)中的`Figure-5(a)`
 
@@ -3502,7 +3540,7 @@ test std::memory_order_acquire, std::memory_order_release, res=false
 test std::memory_order_relaxed, std::memory_order_relaxed, res=false
 ```
 
-### 5.4.3 Case-3-write-write-read-read-reorder
+### 6.4.3 Case-3-write-write-read-read-reorder
 
 来自[Shared Memory Consistency Models: A Tutorial](/resources/paper/Shared-Memory-Consistency-Models-A-Tutorial.pdf)中的`Figure-5(b)`
 
@@ -3621,7 +3659,7 @@ test std::memory_order_acquire, std::memory_order_release, res=true
 test std::memory_order_relaxed, std::memory_order_relaxed, res=true
 ```
 
-### 5.4.4 Case-4-write-order-consistency
+### 6.4.4 Case-4-write-order-consistency
 
 来自[Shared Memory Consistency Models: A Tutorial](/resources/paper/Shared-Memory-Consistency-Models-A-Tutorial.pdf)中的`Figure-10(b)`
 
@@ -3744,7 +3782,7 @@ test std::memory_order_acquire, std::memory_order_release, res=true
 test std::memory_order_relaxed, std::memory_order_relaxed, res=true
 ```
 
-### 5.4.5 Case-5-visibility
+### 6.4.5 Case-5-visibility
 
 进程调度也能保证可见性，我们可以让读写线程绑定到某个核上，那么读写线程会在调度的作用下交替执行
 
@@ -3813,7 +3851,7 @@ type=volatile int32_t, count=2000000
 type=std::atomic<int32_t>, count=2000000
 ```
 
-### 5.4.6 Case-6-eventual-consistency
+### 6.4.6 Case-6-eventual-consistency
 
 不同的原子操作，虽然无法保证同步语义，但是可以保证变量的最终一致性
 
@@ -3911,13 +3949,13 @@ type=std::atomic<int32_t>, count=2000000
     }
     ```
 
-## 5.5 x86 Memory Model
+## 6.5 x86 Memory Model
 
 对于`std::memory_order_relaxed`，在不同的硬件平台上，其效果是不同的。x86属于`TSO`
 
 [x86-TSO : 适用于x86体系架构并发编程的内存模型](https://www.cnblogs.com/lqlqlq/p/13693876.html)
 
-## 5.6 参考
+## 6.6 Reference
 
 * [C++11 - atomic类型和内存模型](https://zhuanlan.zhihu.com/p/107092432)
 * [cppreference.com-std::memory_order](https://en.cppreference.com/w/cpp/atomic/memory_order)
@@ -3925,7 +3963,7 @@ type=std::atomic<int32_t>, count=2000000
 * [并行编程——内存模型之顺序一致性](https://www.cnblogs.com/jiayy/p/3246157.html)
 * [漫谈内存一致性模型](https://zhuanlan.zhihu.com/p/91406250)
 
-# 6 Lambda
+# 7 Lambda
 
 [Lambda expressions (since C++11)](https://en.cppreference.com/w/cpp/language/lambda)
 
@@ -3933,7 +3971,7 @@ type=std::atomic<int32_t>, count=2000000
 
 * 每个`Lambda`表达式都是独一无二的类型，且无法显式声明
 
-## 6.1 `std::function` and Lambda
+## 7.1 `std::function` and Lambda
 
 在大多数场景下，`Lambda`和`std::function`可以相互替换使用，但它们之间存在一些差异（[What's the difference between a lambda expression and a function pointer (callback) in C++?](https://www.quora.com/Whats-the-difference-between-a-lambda-expression-and-a-function-pointer-callback-in-C++)）：
 
@@ -3942,7 +3980,27 @@ type=std::atomic<int32_t>, count=2000000
     * `std::function`本质上是个函数指针的封装，当传递它时，编译器很难进行内联优化
     * `Lambda`本质上是传递某个匿名类的实例，有确定的类型信息，编译器可以很容易地进行内联优化
 
-# 7 Coroutine
+## 7.2 How lambda capture itself
+
+```cpp
+#include <functional>
+#include <iostream>
+
+int main() {
+    std::function<void(int)> recursiveLambda;
+
+    // Must use reference to capture itself
+    recursiveLambda = [&recursiveLambda](int x) {
+        std::cout << x << std::endl;
+        if (x > 0) recursiveLambda(x - 1);
+    };
+
+    recursiveLambda(5);
+    return 0;
+}
+```
+
+# 8 Coroutine
 
 [C++20’s Coroutines for Beginners - Andreas Fertig - CppCon 2022](https://www.youtube.com/watch?v=8sEe-4tig_A)
 
@@ -3969,7 +4027,7 @@ A coroutine is a generalization of a function that can be exited and later resum
 * `Task`: A coroutine that does a job without returning a value.
 * `Generator`: A coroutine that does a job and returns a value(either by `co_return` or `co_yield`)
 
-## 7.1 Overview of `promise_type`
+## 8.1 Overview of `promise_type`
 
 The `promise_type` for coroutines in C++20 can have several member functions which the coroutine machinery recognizes and calls at specific times or events. Here's a general overview of the structure and potential member functions:
 
@@ -3987,7 +4045,7 @@ The `promise_type` for coroutines in C++20 can have several member functions whi
 * **Awaiting Values:**
     * `auto await_transform(AwaitableType value) -> Awaiter`: Transforms the expression after co_await. This is useful for custom awaitable types. For instance, it's used to make this a valid awaitable in member functions.
 
-### 7.1.1 Awaiter
+### 8.1.1 Awaiter
 
 The awaiter in the C++ coroutine framework is a mechanism that allows fine-tuned control over how asynchronous operations are managed and how results are produced once those operations are complete.
 
@@ -4032,7 +4090,7 @@ Here's an overview of the awaiter:
 * `std::suspend_always`: The method `await_ready` always returns `false`, indicating that an await expression always suspends as it waits for its value
 * `std::suspend_never`: The method `await_ready` always returns `true`, indicating that an await expression never suspends
 
-## 7.2 Example
+## 8.2 Example
 
 The `Chat` struct acts as a wrapper around the coroutine handle. It allows the main code to interact with the coroutine - by resuming it, or by sending/receiving data to/from it.
 
@@ -4196,7 +4254,7 @@ Where are you?
 Here!
 ```
 
-# 8 Attributes
+# 9 Attributes
 
 `__attribute__`是一个`GCC`编译器特有的特性，它允许程序员向编译器提供一些指示信息，以便在编译期间进行优化或者在运行期间提供一些额外的约束条件。这些指示信息被称为属性（`attributes`），可以应用于函数、变量、类型等各种程序元素
 
@@ -4244,7 +4302,7 @@ Here!
 * `[[likely]]`（C++20）：提示编译器该分支大概率为`true`
 * `[[unlikely]]`（C++20）：提示编译器该分支大概率为`false`
 
-## 8.1 aligned
+## 9.1 aligned
 
 ```cpp
 #include <iostream>
@@ -4280,17 +4338,17 @@ int main() {
 }
 ```
 
-## 8.2 参考
+## 9.2 Reference
 
 * [Compiler-specific Features](https://www.keil.com/support/man/docs/armcc/armcc_chr1359124965789.htm)
 
-# 9 ASM
+# 10 ASM
 
 [gcc-online-docs](https://gcc.gnu.org/onlinedocs/gcc/)
 
-## 9.1 Basic Asm
+## 10.1 Basic Asm
 
-## 9.2 [Extended Asm](https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html)
+## 10.2 [Extended Asm](https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html)
 
 GCC设计了一种特有的嵌入方式，它规定了汇编代码嵌入的形式和嵌入汇编代码需要由哪几个部分组成，格式如下：
 
@@ -4470,9 +4528,9 @@ int main() {
 
 **示例3：linux内核大量用到了`asm`，具体可以参考[linux-asm](https://github.com/torvalds/linux/blob/master/arch/x86/include/asm)**
 
-# 10 Mechanism
+# 11 Mechanism
 
-## 10.1 Move Semantics
+## 11.1 Move Semantics
 
 ```cpp
 #include <iostream>
@@ -4549,7 +4607,7 @@ Foo::Foo()
 Foo::operator=&&
 ```
 
-## 10.2 Structured Bindings
+## 11.2 Structured Bindings
 
 Structured bindings were introduced in C++17 and provide a convenient way to destructure the elements of a tuple-like object or aggregate into individual variables.
 
@@ -4596,9 +4654,9 @@ int main() {
 }
 ```
 
-# 11 Policy
+# 12 Policy
 
-## 11.1 Pointer Stability
+## 12.1 Pointer Stability
 
 **`pointer stability`通常用于描述容器。当我们说一个容器是`pointer stability`时，是指，当某个元素添加到容器之后、从容器删除之前，该元素的内存地址不变，也就是说，该元素的内存地址，不会受到容器的添加删除元素、扩缩容、或者其他操作影响**
 
@@ -4624,7 +4682,7 @@ int main() {
 | `phmap::node_hash_map` | ✅ |  |
 | `phmap::node_hash_set` | ✅ |  |
 
-## 11.2 Exception Safe
+## 12.2 Exception Safe
 
 [Wiki-Exception safety](https://en.wikipedia.org/wiki/Exception_safety)
 
@@ -4635,7 +4693,7 @@ int main() {
 1. `Basic exception safety`：可能会抛出异常，操作失败的部分可能会导致副作用，但所有不变量都会被保留。任何存储的数据都将包含可能与原始值不同的有效值。资源泄漏（包括内存泄漏）通常通过一个声明所有资源都被考虑和管理的不变量来排除
 1. `No exception safety`：不承诺异常安全
 
-## 11.3 RAII
+## 12.3 RAII
 
 `RAII, Resource Acquisition is initialization`，即资源获取即初始化。典型示例包括：`std::lock_guard`、`defer`。简单来说，就是在对象的构造方法中初始化资源，在析构函数中销毁资源。而构造函数与析构函数的调用是由编译器自动插入的，减轻了开发者的心智负担
 
@@ -4652,11 +4710,11 @@ private:
 };
 ```
 
-# 12 Tips
+# 13 Tips
 
-## 12.1 Class Related
+## 13.1 Class Related
 
-### 12.1.1 How to define static members in a class
+### 13.1.1 How to define static members in a class
 
 **在类中声明静态成员，在类外定义（赋值）静态成员，示例如下：**
 
@@ -4675,7 +4733,7 @@ int main() {
 }
 ```
 
-### 12.1.2 Non-static members of a class cannot undergo type deduction
+### 13.1.2 Non-static members of a class cannot undergo type deduction
 
 类的非静态成员，无法进行类型推导，必须显式指定类型（因为类型信息必须是不可变的）；静态成员可以。例如下面示例就存在语法错误：
 
@@ -4704,9 +4762,9 @@ private:
 };
 ```
 
-## 12.2 Initialization
+## 13.2 Initialization
 
-### 12.2.1 Initializer List
+### 13.2.1 Initializer List
 
 1. 对于内置类型，直接进行值拷贝。使用初始化列表还是在构造函数体中进行初始化没有差别
 1. 对于类类型
@@ -4817,7 +4875,7 @@ A's default constructor
 A's move assign operator
 ```
 
-### 12.2.2 Various Initialization Types
+### 13.2.2 Various Initialization Types
 
 1. 默认初始化：`type variableName;`
 1. 直接初始化/构造初始化（至少有1个参数）：`type variableName(args);`
@@ -4950,7 +5008,7 @@ A's (int, int) constructor
 ============(值初始化 a11)============
 ```
 
-### 12.2.3 Initialization Order of class Members
+### 13.2.3 Initialization Order of class Members
 
 1. 初始化列表
 1. 成员定义处的列表初始化，当且仅当该成员未出现在初始化列表中时才会生效
@@ -5003,7 +5061,7 @@ initialized_at_initialization_list
 initialized_at_construct_block
 ```
 
-### 12.2.4 Initialization of static Local Variables
+### 13.2.4 Initialization of static Local Variables
 
 ```cpp
 void foo() {
@@ -5036,7 +5094,7 @@ void foo() {
 }
 ```
 
-### 12.2.5 Initialization of non-static class Members
+### 13.2.5 Initialization of non-static class Members
 
 非静态成员不允许使用构造初始化，但是允许使用列表初始化（本质上还是调用了对应的构造函数）
 
@@ -5063,9 +5121,9 @@ int main() {
 }
 ```
 
-## 12.3 Pointer
+## 13.3 Pointer
 
-### 12.3.1 Member Function Pointer
+### 13.3.1 Member Function Pointer
 
 成员函数指针需要通过`.*`或者`->*`运算符进行调用
 
@@ -5124,7 +5182,7 @@ int main() {
 }
 ```
 
-### 12.3.2 How to pass multi-dimensional pointer parameters
+### 13.3.2 How to pass multi-dimensional pointer parameters
 
 ```cpp
 #include <iostream>
@@ -5164,9 +5222,9 @@ int main() {
 }
 ```
 
-## 12.4 Reference
+## 13.4 Reference
 
-### 12.4.1 Reference Initialization
+### 13.4.1 Reference Initialization
 
 **引用只能在定义处初始化**
 
@@ -5192,7 +5250,7 @@ b=2
 ref=2
 ```
 
-## 12.5 Mock class
+## 13.5 Mock class
 
 有时在测试的时候，我们需要mock一个类的实现，我们可以在测试的cpp文件中实现这个类的所有方法（**注意，必须是所有方法**），就能够覆盖原有库文件中的实现。下面以一个例子来说明
 
@@ -5369,7 +5427,7 @@ person.cpp:(.text+0x2a): Person::sleep() 的多重定义
 collect2: 错误：ld 返回 1
 ```
 
-## 12.6 Non-template parameter pack
+## 13.6 Non-template parameter pack
 
 **非模板参数包有如下几个特点：**
 
@@ -5398,7 +5456,7 @@ int main() {
 }
 ```
 
-## 12.7 Variable-length Array
+## 13.7 Variable-length Array
 
 Variable-length array (VLA), which is a feature not supported by standard C++. However, some compilers, particularly in C and as extensions in C++, do provide support for VLAs.
 
@@ -5454,9 +5512,9 @@ array2: -532
 num4: -32
 ```
 
-# 13 FAQ
+# 14 FAQ
 
-## 13.1 Why is it unnecessary to specify the size when releasing memory with free and delete
+## 14.1 Why is it unnecessary to specify the size when releasing memory with free and delete
 
 [How does free know how much to free?](https://stackoverflow.com/questions/1518711/how-does-free-know-how-much-to-free)
 
@@ -5478,11 +5536,11 @@ ____ The allocated block ____
           +-- The address you are given
 ```
 
-## 13.2 Do parameter types require lvalue or rvalue references
+## 14.2 Do parameter types require lvalue or rvalue references
 
-## 13.3 Does the return type require lvalue or rvalue references
+## 14.3 Does the return type require lvalue or rvalue references
 
-# 14 参考
+# 15 Reference
 
 * [C++11\14\17\20 特性介绍](https://www.jianshu.com/p/8c4952e9edec)
 * [关于C++：静态常量字符串(类成员)](https://www.codenong.com/1563897/)

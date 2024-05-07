@@ -2235,6 +2235,7 @@ int main() {
 
 * `std::vector`
 * `std::list`
+    * `splice`
 * `std::map`
 * `std::set`
 * `std::stack`

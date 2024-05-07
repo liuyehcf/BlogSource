@@ -488,7 +488,7 @@ private:
     class StructuredData {
     public:
         static arrow::Result<std::shared_ptr<StructuredData>> build(const std::vector<TreeElement*>& leafs) {
-            auto root = std::make_shared<StructuredData>(true, "", nullptr);
+            auto root = std::make_shared<StructuredData>(true, nullptr);
             for (const auto& leaf : leafs) {
                 ARROW_RETURN_NOT_OK(root->feed_column_data(leaf, leaf->data.get()));
             }
@@ -496,33 +496,43 @@ private:
             return root;
         }
 
-        StructuredData(const bool is_root_, const std::string name_, const TreeElement* element_)
-                : _is_root(is_root_), _name(name_), _element(element_) {}
+        StructuredData(const bool is_root_, const TreeElement* element_) : _is_root(is_root_), _element(element_) {}
 
-        size_t num_rows() { return _rows.size(); }
-        const auto& get_row(const size_t idx) { return _rows[idx]; }
+        size_t repetition_num() const { return _nested_repetitions.size(); }
 
-        arrow::Status insert_value_to_tree(const std::string& value, const size_t idx,
-                                           const std::vector<const TreeElement*>& paths) {
+        const auto& get_repetition(const size_t repetition_idx) const { return _nested_repetitions[repetition_idx]; }
+
+        std::vector<StructuredData*> get_ordered_nested_fields(const size_t repetition_idx) const {
+            std::vector<StructuredData*> ordered_nested_fields;
+            const auto& nested_repetition = _nested_repetitions[repetition_idx];
+
+            for (const auto* child_element : _element->children) {
+                const auto& name = child_element->element.name;
+                if (auto it = nested_repetition.find(name); it != nested_repetition.end()) {
+                    ordered_nested_fields.push_back(it->second.get());
+                }
+            }
+
+            return ordered_nested_fields;
+        }
+
+        arrow::Status insert_value_to_tree(const std::string& value,
+                                           const std::vector<size_t>& layer_idx_2_next_repetition_idx,
+                                           const std::vector<const TreeElement*>& ancestors,
+                                           const size_t start_layer_idx) {
             StructuredData* cur = this;
-            if (idx >= _rows.size()) {
-                cur->_rows.emplace_back();
-            }
-            const auto first_name = paths[0]->element.name;
-            if (cur->_rows[idx].find(first_name) == cur->_rows[idx].end()) {
-                cur->_rows[idx][first_name] = std::make_shared<StructuredData>(false, first_name, paths[0]);
-            }
-            cur = cur->_rows[idx][first_name].get();
-
-            for (size_t i = 1; i < paths.size(); ++i) {
-                const auto name = paths[i]->element.name;
-                if (cur->_rows.empty()) {
-                    cur->_rows.emplace_back();
+            for (size_t layer_idx = start_layer_idx; layer_idx < ancestors.size(); ++layer_idx) {
+                const auto name = ancestors[layer_idx]->element.name;
+                const auto next_repetition_idx = layer_idx_2_next_repetition_idx[layer_idx];
+                if (cur->_nested_repetitions.size() <= next_repetition_idx) {
+                    cur->_nested_repetitions.emplace_back();
                 }
-                if (cur->_rows.back().find(name) == cur->_rows.back().end()) {
-                    cur->_rows.back()[name] = std::make_shared<StructuredData>(false, name, paths[i]);
+                if (cur->_nested_repetitions[next_repetition_idx].find(name) ==
+                    cur->_nested_repetitions[next_repetition_idx].end()) {
+                    cur->_nested_repetitions[next_repetition_idx][name] =
+                            std::make_shared<StructuredData>(false, ancestors[layer_idx]);
                 }
-                cur = cur->_rows.back()[name].get();
+                cur = cur->_nested_repetitions[next_repetition_idx][name].get();
             }
 
             cur->_values.push_back(value);
@@ -533,67 +543,62 @@ private:
             ASSERT_TRUE(_is_root);
             const auto ancestors = element->ancestors();
 
-            // For non-repeated layer the offset is always 0
-            std::vector<int32_t> layer_offsets(ancestors.size(), -1);
-            // repetition level i corresponds to which laryer
-            std::vector<size_t> repeat_level_2_layer_idxs;
-            repeat_level_2_layer_idxs.push_back(0);
+            std::vector<size_t> layer_idx_2_next_repetition_idx(ancestors.size(), 0);
+            std::vector<size_t> repeat_level_2_layer_idx;
+
+            repeat_level_2_layer_idx.push_back(0);
             for (size_t layer = 0; layer < ancestors.size(); ++layer) {
                 const auto ancestor = ancestors[layer];
                 if (ancestor->element.repetition_type == parquet::FieldRepetitionType::REPEATED) {
-                    repeat_level_2_layer_idxs.push_back(layer);
+                    repeat_level_2_layer_idx.push_back(layer);
                 }
             }
 
             for (size_t i = 0; i < data->values.size(); ++i) {
                 const auto repetition_level = data->repetition_levels[i];
-                const auto definition_level = data->definition_levels[i];
+                [[maybe_unused]] const auto definition_level = data->definition_levels[i];
                 const auto& value = data->values[i];
 
-                const auto repeat_level_2_layer_idx = repeat_level_2_layer_idxs[repetition_level];
-                const auto repeated_level_layer_offset = layer_offsets[repeat_level_2_layer_idx];
+                const auto start_layer_idx = repeat_level_2_layer_idx[repetition_level];
 
-                if (repetition_level == 0) {
-                    ARROW_RETURN_NOT_OK(this->insert_value_to_tree(value, repeated_level_layer_offset + 1, ancestors));
-                } else {
-                    StructuredData* cur = this;
+                StructuredData* cur = this;
 
-                    for (size_t i = 0; i < repeat_level_2_layer_idx; ++i) {
-                        ASSERT_TRUE(i < ancestors.size());
-                        const auto& name = ancestors[i]->element.name;
-                        ASSERT_TRUE(cur->_rows[layer_offsets[i]].find(name) != cur->_rows[layer_offsets[i]].end());
-                        cur = cur->_rows[layer_offsets[i]][name].get();
-                    }
-
-                    ARROW_RETURN_NOT_OK(
-                            cur->insert_value_to_tree(value, repeated_level_layer_offset + 1,
-                                                      {ancestors.begin() + repeat_level_2_layer_idx, ancestors.end()}));
+                for (size_t layer_idx = 0; layer_idx < start_layer_idx; ++layer_idx) {
+                    const auto& name = ancestors[layer_idx]->element.name;
+                    ASSERT_TRUE(layer_idx_2_next_repetition_idx[layer_idx] >= 1);
+                    const auto latest_repetition_idx = layer_idx_2_next_repetition_idx[layer_idx] - 1;
+                    ASSERT_TRUE(cur->_nested_repetitions[latest_repetition_idx].find(name) !=
+                                cur->_nested_repetitions[latest_repetition_idx].end());
+                    cur = cur->_nested_repetitions[latest_repetition_idx][name].get();
                 }
 
-                layer_offsets[repeat_level_2_layer_idxs[repetition_level]]++;
-                for (size_t i = repeat_level_2_layer_idxs[repetition_level] + 1; i < layer_offsets.size(); ++i) {
-                    layer_offsets[i] = 0;
+                // Reset layers after repetition layer
+                for (size_t layer_idx = start_layer_idx + 1; layer_idx < layer_idx_2_next_repetition_idx.size();
+                     ++layer_idx) {
+                    layer_idx_2_next_repetition_idx[layer_idx] = 0;
+                }
+
+                ARROW_RETURN_NOT_OK(
+                        cur->insert_value_to_tree(value, layer_idx_2_next_repetition_idx, ancestors, start_layer_idx));
+
+                // Update row idxs of each layer
+                for (size_t layer_idx = start_layer_idx; layer_idx < layer_idx_2_next_repetition_idx.size();
+                     ++layer_idx) {
+                    layer_idx_2_next_repetition_idx[layer_idx]++;
                 }
             }
 
             return arrow::Status::OK();
         }
 
-        arrow::Status to_pretty_string(std::stringstream& buffer, const std::string indent = "") {
-            std::string next_indent = indent;
-            // TODO what if the column name is schema or list or element
-            const bool is_special_layer = (_name == "schema" || _name == "list" || _name == "element");
+        arrow::Status to_pretty_string(std::stringstream& buffer, const std::string indent = "") const {
+            buffer << indent << _element->element.name << ": \n";
 
-            if (!is_special_layer) {
-                buffer << indent << _name << ": \n";
-                next_indent += "    ";
-            }
-
-            if (!_rows.empty()) {
+            if (!_nested_repetitions.empty()) {
                 ASSERT_TRUE(_values.empty());
-                for (const auto& data : _rows) {
-                    for (const auto& [name, nested] : data) {
-                        ARROW_RETURN_NOT_OK(nested->to_pretty_string(buffer, next_indent));
+                for (size_t repetition_idx = 0; repetition_idx < repetition_num(); ++repetition_idx) {
+                    for (const auto* nested_field : get_ordered_nested_fields(repetition_idx)) {
+                        ARROW_RETURN_NOT_OK(nested_field->to_pretty_string(buffer, indent + "    "));
                     }
                 }
             } else {
@@ -607,12 +612,11 @@ private:
 
     private:
         const bool _is_root;
-        const std::string _name;
         const TreeElement* _element;
 
-        using FiledNameToNestedElement = std::unordered_map<std::string, std::shared_ptr<StructuredData>>;
-        // The size of _nested_data can be greater than one only for list layer
-        std::vector<FiledNameToNestedElement> _rows;
+        using FiledNameToNestedStructuredData = std::unordered_map<std::string, std::shared_ptr<StructuredData>>;
+        // The size of _nested_data can be greater than 1 only for list layer
+        std::vector<FiledNameToNestedStructuredData> _nested_repetitions;
 
         // Only leaf has values
         std::vector<std::string> _values;
@@ -673,7 +677,7 @@ private:
                 if (column.__isset.file_path) print("file_path: ", column.file_path);
                 print("file_offset: ", column.file_offset);
                 print("type: ", meta_data.type);
-                print("path_in_schema: ", get_unified_column_name(column));
+                print("path_in_schema: ", vector_to_string(column.meta_data.path_in_schema));
                 print("encodings: ", vector_to_string(meta_data.encodings));
                 print("codec: ", meta_data.codec);
                 print("num_values: ", meta_data.num_values);
@@ -727,44 +731,41 @@ private:
                                                        std::vector<std::string>& paths, uint32_t& max_repetition_level,
                                                        uint32_t& max_definition_level) -> void {
             const auto& element = *it;
-            const bool is_root = (it == _file_metadata.schema.begin());
             const bool is_repeated = (element.repetition_type == parquet::FieldRepetitionType::REPEATED);
             const bool is_optional =
                     (element.repetition_type == parquet::FieldRepetitionType::OPTIONAL ||
                      (element.__isset.converted_type && element.converted_type == parquet::ConvertedType::LIST));
             it++;
 
-            // Skip the first element, which is "schema"
-            if (!is_root) paths.push_back(element.name);
+            paths.push_back(element.name);
             if (is_repeated) max_repetition_level++;
             if (is_optional) max_definition_level++;
 
-            const auto name = vector_to_string(paths, false, ".");
+            const auto unified_column_name = vector_to_string(paths, false, ".");
 
-            auto cur = std::make_shared<TreeElement>(name, element, parent);
+            auto cur = std::make_shared<TreeElement>(unified_column_name, element, parent);
             if (parent) parent->children.push_back(cur.get());
-            _schema[name] = cur;
+            _schema[unified_column_name] = cur;
 
             if (!element.__isset.num_children) {
                 // Leaf
                 _leafs.push_back(cur.get());
                 cur->max_repetition_level = max_repetition_level;
                 cur->max_definition_level = max_definition_level;
-                print("column path: ", name);
+                print("column path: ", unified_column_name);
                 increase_indent();
                 print("max repetition level: ", max_repetition_level);
                 print("max definition level: ", max_definition_level);
                 decrease_indent();
             } else {
-                for (size_t child = 0; child < element.num_children; ++child) {
+                for (int32_t child = 0; child < element.num_children; ++child) {
                     depth_first_visit(cur.get(), it, paths, max_repetition_level, max_definition_level);
                 }
             }
 
             if (is_optional) max_definition_level--;
             if (is_repeated) max_repetition_level--;
-
-            if (!is_root) paths.pop_back();
+            paths.pop_back();
         };
 
         depth_first_visit(nullptr, it, paths, max_repetition_level, max_definition_level);
@@ -784,9 +785,9 @@ private:
             for (size_t j = 0; j < row_group.columns.size(); ++j) {
                 const auto& column = row_group.columns[j];
                 const auto& meta_data = column.meta_data;
-                const auto& name = get_unified_column_name(column);
+                const auto& unified_column_name = get_unified_column_name(column);
 
-                print("column: ", name);
+                print("column: ", unified_column_name);
                 increase_indent();
 
                 if (meta_data.total_compressed_size != meta_data.total_uncompressed_size) {
@@ -818,7 +819,7 @@ private:
                 ARROW_ASSIGN_OR_RAISE(auto data, parse_data_page(meta_data.data_page_offset + page_header_length,
                                                                  page_header, column, dictionary));
 
-                _schema[name]->data = std::move(data);
+                _schema[unified_column_name]->data = std::move(data);
 
                 remain -= page_header_length;
                 remain -= page_header.uncompressed_page_size;
@@ -868,13 +869,13 @@ private:
         if (column.meta_data.type == parquet::Type::INT64) {
             ARROW_ASSIGN_OR_RAISE(buffer, _file->ReadAt(offset, page_header.uncompressed_page_size));
             const uint8_t* data = buffer->data();
-            for (size_t i = 0; i < page_header.dictionary_page_header.num_values; ++i) {
+            for (int32_t i = 0; i < page_header.dictionary_page_header.num_values; ++i) {
                 dictionary.add(reinterpret_cast<const void*>(data + sizeof(int64_t) * i));
             }
         } else if (column.meta_data.type == parquet::Type::DOUBLE) {
             ARROW_ASSIGN_OR_RAISE(buffer, _file->ReadAt(offset, page_header.uncompressed_page_size));
             const uint8_t* data = buffer->data();
-            for (size_t i = 0; i < page_header.dictionary_page_header.num_values; ++i) {
+            for (int32_t i = 0; i < page_header.dictionary_page_header.num_values; ++i) {
                 dictionary.add(reinterpret_cast<const void*>(data + sizeof(double) * i));
             }
         } else if (column.meta_data.type == parquet::Type::BYTE_ARRAY) {
@@ -882,7 +883,7 @@ private:
             ARROW_ASSIGN_OR_RAISE(buffer, _file->ReadAt(offset, page_header.uncompressed_page_size));
             const uint8_t* data = buffer->data();
             size_t offset = 0;
-            for (size_t i = 0; i < page_header.dictionary_page_header.num_values; ++i) {
+            for (int32_t i = 0; i < page_header.dictionary_page_header.num_values; ++i) {
                 const auto length = *reinterpret_cast<const uint32_t*>(data + offset);
                 dictionary.add(reinterpret_cast<const void*>(data + offset));
                 offset += sizeof(uint32_t) + length;
@@ -903,14 +904,14 @@ private:
             return arrow::Status::NotImplemented("Only support uncompressed data page");
         }
 
-        const auto column_name = get_unified_column_name(column);
+        const auto unified_column_name = get_unified_column_name(column);
         const auto num_values = page_header.data_page_header.num_values;
         ARROW_ASSIGN_OR_RAISE(const auto buffer, _file->ReadAt(offset, page_header.uncompressed_page_size));
         const uint8_t* raw_buffer = buffer->data();
 
         uint64_t repetition_length;
         std::vector<uint32_t> repetition_levels;
-        if (_schema[column_name]->max_repetition_level != 0) {
+        if (_schema[unified_column_name]->max_repetition_level != 0) {
             ARROW_RETURN_NOT_OK(
                     parse_repetition_levels(raw_buffer, page_header, column, &repetition_length, &repetition_levels));
         } else {
@@ -919,7 +920,7 @@ private:
         }
         uint64_t definition_length;
         std::vector<uint32_t> definition_levels;
-        if (_schema[column_name]->max_definition_level != 0) {
+        if (_schema[unified_column_name]->max_definition_level != 0) {
             ARROW_RETURN_NOT_OK(parse_definition_levels(raw_buffer + repetition_length, page_header, column,
                                                         &definition_length, &definition_levels));
         } else {
@@ -927,7 +928,7 @@ private:
             definition_levels.resize(num_values, 1);
         }
 
-        const auto* element = _schema[column_name].get();
+        const auto* element = _schema[unified_column_name].get();
         const auto max_definition_level = element->max_definition_level;
 
         // First bits is used to store the bit width
@@ -944,7 +945,7 @@ private:
                 page_header.uncompressed_page_size - repetition_length - definition_length - 1, bit_width);
 
         std::vector<uint32_t> idxs(num_values);
-        const auto values_read = value_decoder.GetBatch(idxs.data(), num_values);
+        value_decoder.GetBatch(idxs.data(), num_values);
 
         auto get_value = [this, &column, &dictionary](const uint32_t idx) -> std::string {
             if (column.meta_data.type == parquet::Type::INT64) {
@@ -990,8 +991,8 @@ private:
     arrow::Status parse_repetition_levels(const uint8_t* buffer, const parquet::PageHeader& page_header,
                                           const parquet::ColumnChunk& column, uint64_t* length,
                                           std::vector<std::uint32_t>* repetition_levels) {
-        const auto column_name = get_unified_column_name(column);
-        const auto max_repetition_level = _schema[column_name]->max_repetition_level;
+        const auto unified_column_name = get_unified_column_name(column);
+        const auto max_repetition_level = _schema[unified_column_name]->max_repetition_level;
         if (max_repetition_level == 0) {
             *length = 0;
             return arrow::Status::OK();
@@ -1014,8 +1015,8 @@ private:
     arrow::Status parse_definition_levels(const uint8_t* buffer, const parquet::PageHeader& page_header,
                                           const parquet::ColumnChunk& column, uint64_t* length,
                                           std::vector<std::uint32_t>* definition_levels) {
-        const auto column_name = get_unified_column_name(column);
-        const auto max_definition_level = _schema[column_name]->max_definition_level;
+        const auto unified_column_name = get_unified_column_name(column);
+        const auto max_definition_level = _schema[unified_column_name]->max_definition_level;
         if (max_definition_level == 0) {
             *length = 0;
             return arrow::Status::OK();
@@ -1041,18 +1042,23 @@ private:
 
         ARROW_ASSIGN_OR_RAISE(auto root, StructuredData::build(_leafs));
 
-        for (size_t row = 0; row < root->num_rows(); ++row) {
-            print("Row: ", row);
+        for (size_t repetition_idx = 0; repetition_idx < root->repetition_num(); ++repetition_idx) {
+            print("Row: ", repetition_idx);
             increase_indent();
-            for (const auto& [_, field] : root->get_row(row)) {
-                std::stringstream buffer;
-                ARROW_RETURN_NOT_OK(field->to_pretty_string(buffer, ""));
 
-                std::string line;
-                while (std::getline(buffer, line)) {
-                    print(line);
-                }
+            const auto& nested_fields = root->get_repetition(repetition_idx);
+
+            ASSERT_TRUE(nested_fields.size() == 1);
+            const auto& it = nested_fields.find("schema");
+            ASSERT_TRUE(it != nested_fields.end());
+            std::stringstream buffer;
+            ARROW_RETURN_NOT_OK(it->second->to_pretty_string(buffer, ""));
+
+            std::string line;
+            while (std::getline(buffer, line)) {
+                print(line);
             }
+
             decrease_indent();
         }
 
@@ -1069,7 +1075,7 @@ private:
     }
 
     std::string get_unified_column_name(const parquet::ColumnChunk& column) {
-        return vector_to_string(column.meta_data.path_in_schema, false, ".");
+        return "schema." + vector_to_string(column.meta_data.path_in_schema, false, ".");
     }
 
     template <typename Item>
@@ -1109,6 +1115,7 @@ private:
     uint64_t _file_size;
     parquet::FileMetaData _file_metadata;
 
+    std::shared_ptr<TreeElement> _root;
     std::unordered_map<std::string, std::shared_ptr<TreeElement>> _schema;
     std::vector<TreeElement*> _leafs;
     std::string _indent;
