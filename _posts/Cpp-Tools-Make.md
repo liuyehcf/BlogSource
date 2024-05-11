@@ -2186,7 +2186,7 @@ rm -f bar.o
 
 ```
 make clean
-make prefix=/usr/local libdir=/usr/local/lib64 bindir=/usr/local/bin -j 4
+make prefix=/usr/local libdir=/usr/local/lib64 bindir=/usr/local/bin -j $(( (cores=$(nproc))>1?cores/2:1 ))
 make prefix=/usr/local libdir=/usr/local/lib64 bindir=/usr/local/bin install
 ```
 

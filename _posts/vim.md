@@ -3516,7 +3516,7 @@ endif
 git clone https://github.com/neovim/neovim.git
 cd neovim
 git checkout v0.9.5
-cmake -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo  && cmake --build build -j 64
+cmake -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo  && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 ```
 
 Or Install from Nvim development (prerelease) build (Prefer)

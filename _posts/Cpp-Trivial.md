@@ -658,7 +658,7 @@ git checkout 5.3.0
 
 ./autogen.sh
 ./configure --prefix=/usr/local --enable-prof
-make -j 16
+make -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo make install
 ```
 
@@ -1481,7 +1481,7 @@ cd gcc-14.1.0
 
 # Compile
 ./configure --disable-multilib --enable-languages=c,c++
-make -j 4
+make -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo make install
 ```
 
@@ -1561,7 +1561,7 @@ tar -xf binutils-2.39.tar.xz
 cd binutils-2.39
 
 ./configure
-make -j 64
+make -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo make install
 ```
 
@@ -1770,6 +1770,18 @@ strings <binary_file> | grep <linker_name>
 
 ## 8.1 Build & Install
 
+[Getting Started: Building and Running Clang](https://clang.llvm.org/get_started.html)
+
+[Extra Clang Tools](https://clang.llvm.org/extra/)
+
+* `clang-tidy`
+* `clang-include-fixer`
+* `clang-rename`
+* `clangd`
+* `clang-doc`
+
+Build with `ninja`
+
 ```sh
 git clone -b release/16.x https://github.com/llvm/llvm-project.git --depth 1
 cd llvm-project
@@ -1777,22 +1789,35 @@ cmake -B build -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
     -DCMAKE_BUILD_TYPE=Release \
     -G "Ninja" \
     llvm
-cmake --build build -j 64
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo cmake --install build
-
-ninja -C build -t targets | grep -E '^install'
 ```
 
 Install specific target:
 
 ```sh
+ninja -C build -t targets | grep -E '^install'
+
 cd build
-ninja -j 64 clang
-ninja -j 64 clang-format
-ninja -j 64 clangd
+ninja -j $(( (cores=$(nproc))>1?cores/2:1 )) clang
+ninja -j $(( (cores=$(nproc))>1?cores/2:1 )) clang-format
+ninja -j $(( (cores=$(nproc))>1?cores/2:1 )) clangd
 sudo ninja install-clang
 sudo ninja install-clang-format
 sudo ninja install-clangd
+```
+
+Or you can build with `makefile`:
+
+```sh
+git clone -b release/16.x https://github.com/llvm/llvm-project.git --depth 1
+cd llvm-project
+cmake -B build -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -G "Unix Makefiles" \
+    llvm
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+sudo cmake --install build
 ```
 
 ## 8.2 clang

@@ -22,7 +22,7 @@ git clone https://github.com/gflags/gflags.git --depth 1
 cd gflags
 cmake -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC" -B build
 cd build
-make -j 6
+make -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo make install
 sudo ldconfig
 ```
@@ -39,7 +39,7 @@ cd protobuf
 git submodule update --init --recursive
 git checkout v3.14.0
 ./configure CXXFLAGS="-fPIC" CFLAGS="-fPIC"
-sudo make prefix=/usr/local libdir=/usr/local/lib64 bindir=/usr/local/bin -j 6
+sudo make prefix=/usr/local libdir=/usr/local/lib64 bindir=/usr/local/bin -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo make prefix=/usr/local libdir=/usr/local/lib64 bindir=/usr/local/bin install
 sudo ldconfig
 ```
@@ -54,7 +54,7 @@ cd leveldb
 git submodule update --init --recursive
 cmake -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC" -B build
 cd build
-make -j 6
+make -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo make install
 sudo ldconfig
 ```
@@ -66,7 +66,7 @@ git clone https://github.com/apache/incubator-brpc.git --depth 1
 cd incubator-brpc
 cmake -B build
 cd build
-make -j 6
+make -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo make install
 sudo ldconfig
 ```

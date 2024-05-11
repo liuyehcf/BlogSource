@@ -616,7 +616,7 @@ pip install xxx -i https://pypi.tuna.tsinghua.edu.cn/simple
     cd openssl-1.1.1g
 
     ./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl no-ssl2
-    make -j 64
+    make -j $(( (cores=$(nproc))>1?cores/2:1 ))
     sudo make install
 
     export PATH=/usr/local/openssl/bin:${PATH}
@@ -638,7 +638,7 @@ tar -xf Python-3.12.3.tgz
 cd Python-3.12.3
 
 ./configure --enable-optimizations --with-openssl=/usr/local/openssl
-make -j 64
+make -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo make install
 ```
 

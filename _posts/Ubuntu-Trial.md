@@ -126,7 +126,7 @@ tar -zxf make-3.81.tar.gz
 cd make-3.81
 
 ./configure --prefix=/usr/local/make-3.81
-make -j 4
+make -j $(( (cores=$(nproc))>1?cores/2:1 ))
 ```
 
 会出现如下错误：
@@ -147,7 +147,7 @@ undefined reference to `__alloca'
 再次编译安装即可：
 
 ```sh
-make -j 4
+make -j $(( (cores=$(nproc))>1?cores/2:1 ))
 
 # make-3.81将会被安装到 /usr/local/make-3.81
 make install

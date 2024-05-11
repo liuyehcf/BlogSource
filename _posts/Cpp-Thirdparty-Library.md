@@ -20,7 +20,7 @@ git clone https://github.com/ianlancetaylor/libbacktrace.git
 cd libbacktrace
 
 ./configure CFLAGS="-fPIC"
-make -j 4
+make -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo make install
 ```
 
@@ -94,7 +94,7 @@ git checkout v1.6.2
 
 autoreconf -i
 ./configure
-make -j 4
+make -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo make install
 ```
 
@@ -365,7 +365,7 @@ git clone https://github.com/fmtlib/fmt.git
 cd fmt
 
 cmake -B build -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
-cmake --build build -j 4
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo cmake --install build
 ```
 
@@ -410,7 +410,7 @@ git clone https://github.com/gflags/gflags.git
 cd gflags
 
 cmake -B build -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
-cmake --build build -j 4
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo cmake --install build
 ```
 
@@ -468,7 +468,7 @@ cd glog
 
 # BUILD_SHARED_LIBS用于控制生成动态库还是静态库，默认是动态库，这里我们选择静态库
 cmake -B build -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
-cmake --build build -j 4
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo cmake --install build
 ```
 
@@ -548,7 +548,7 @@ cd googletest
 
 # BUILD_SHARED_LIBS用于控制生成动态库还是静态库，默认是动态库，这里我们选择静态库
 cmake -B build -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
-cmake --build build -j 4
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo cmake --install build
 ```
 
@@ -680,7 +680,7 @@ cd benchmark
 
 # 这里指定googletest的工程路径（不加任何参数会有提示）
 cmake -B build -DGOOGLETEST_PATH=~/googletest/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
-cmake --build build -j 4
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo cmake --install build
 ```
 
@@ -809,7 +809,7 @@ cmake --list-presets
 cmake --preset -N ninja-release
 
 cmake -B build --preset ninja-release
-cmake --build build -j 4
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo cmake --install build
 
 echo '/usr/local/lib64' | sudo tee /etc/ld.so.conf.d/arrow.conf
@@ -906,7 +906,7 @@ git checkout v0.16.0
 ./bootstrap.sh
 # you can build specific lib by using --with-xxx or --without-xxx
 ./configure --with-cpp=yes --with-java=no --with-python=no --with-py3=no --with-nodejs=no
-make -j 64
+make -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo make install
 
 echo '/usr/local/lib' | sudo tee /etc/ld.so.conf.d/thrift.conf
@@ -937,7 +937,7 @@ thrift --gen cpp example.thrift
 git clone -b master https://github.com/pocoproject/poco.git
 cd poco
 cmake -B cmake-build
-cmake --build cmake-build --config Release -j 64
+cmake --build cmake-build --config Release -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo cmake --install cmake-build
 ```
 
@@ -1265,7 +1265,7 @@ int main() {
 EOF
 
 # compile and run
-cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j 64
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 build/sqlpp11_demo
 ```
 
@@ -1484,7 +1484,7 @@ int main() {
 EOF
 
 # compile and run
-cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j 64
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 build/sqlpp11_demo
 ```
 
@@ -1654,7 +1654,7 @@ int main() {
 EOF
 
 # compile and run
-cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j 64
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 ```
 
 You may be presented with the following error messages:
@@ -1675,7 +1675,7 @@ INSTALL_PLUGIN(${CC_PLUGIN_TARGET} ${CMAKE_CURRENT_BINARY_DIR})
 And then compile again:
 
 ```sh
-cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j 64
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 build/sqlpp11_demo
 ```
 

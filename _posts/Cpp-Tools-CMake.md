@@ -754,7 +754,7 @@ cd build
 
 # BUILD_SHARED_LIBS用于控制生成动态库还是静态库，默认是动态库，这里我们选择静态库
 cmake -DBUILD_SHARED_LIBS=OFF ..
-make -j 4
+make -j $(( (cores=$(nproc))>1?cores/2:1 ))
 make install
 ```
 
@@ -1014,7 +1014,7 @@ build/main
   * `cmake -B <build_path> <path-to-source>`
   * `cmake -B <build_path> -S <path-to-source>`
 * `cmake --build <build_path>`：等效于在`<build_path>`中执行`make`命令
-  * `cmake --build <build_path> -j 16`：等效于在`<build_path>`中执行`make -j 16`命令
+  * `cmake --build <build_path> -j $(( (cores=$(nproc))>1?cores/2:1 ))`：等效于在`<build_path>`中执行`make -j $(( (cores=$(nproc))>1?cores/2:1 ))`命令
 * `cmake --install <build_path>`：等效于在`<build_path>`中执行`make install`命令
 
 ## 6.2 Print
