@@ -2231,7 +2231,38 @@ Class *pc = new (buf) Class();
 * [List-initialization (since C++11)](https://en.cppreference.com/w/cpp/language/list_initialization)
 * [Why is a braced-init-list not an expression？](https://stackoverflow.com/questions/18009628/why-is-a-braced-init-list-not-an-expression)
 
-### 4.1.1 std::forward cannot convert brace-enclosed initializer list
+## 4.2 operator overloading
+
+* [operator overloading](https://en.cppreference.com/w/cpp/language/operators)
+
+Overloaded operators are functions with special function names:
+
+* `operator op`
+* `operator type`
+    ```cpp
+    struct Foo {
+        int val;
+        operator bool() const { return val == 0; }
+    };
+
+    Foo getFoo() {
+        return Foo();
+    }
+    int main() {
+        if (getFoo()) {
+        }
+        return 0;
+    }
+    ```
+
+* `operator new`
+* `operator new []`
+* `operator delete`
+* `operator delete []`
+* `operator "" suffix-identifier`
+* `operator co_await`
+
+### 4.2.1 std::forward cannot convert brace-enclosed initializer list
 
 ```cpp
 #include <memory>

@@ -92,6 +92,7 @@ date: 2018-02-05 09:25:59
 
 * [Alex DeBrie](https://www.alexdebrie.com/)
 * [Ottertune](https://ottertune.com/blog/)
+* [DuckDB News](https://duckdb.org/news/)
 
 ## 6.2 Other
 

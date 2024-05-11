@@ -1,3 +1,19 @@
+1. 语法词汇; 标点符号：\n感叹号：exclamation mark
+1. 旅游词汇; 酒店住宿：\n入住：check in\n退房：check out\n续住：extend my stay for a few more days/renew my booking for a few more days\n报销：reimbursement\n刷卡：swipe a card\n插卡：insert a card\n把卡靠近设备：tap a card\n水龙头：faucet/tap\n自来水：tap water/running water\n\n景点：\n爱琴海：the Aegean Sea\n\n自然景观：\n火山：volcano\n高原：plateau\n平原：plain\n草原：grassland\n沙漠：desert\n峡谷：valley\n极光：aurora\n沼泽/湿地：swamp\n冰川：glacier\n岛屿：island\n\n机场：\n航站楼：terminal\n值机柜台：check-in counter\n登机牌：boarding pass\n商务舱：business class\n经济舱：economy class\n靠过道的座位：aisle seat\n国内航班：domestic flight\n安检：security check\n免税店：duty-free shop\n登机口：departure gate\n登记通知：boarding call\n延误：delay\n随身携带的行李：carry-on, carry-on luggage\n中转停留：layover\n颠簸：turbulence\n海关：customs\n货币兑换：currency exchange\n行李提取出：baggage claim
+1. 家居词汇; 晾衣服：\n晾衣服：hang the laundry\n衣架：hanger\n抖一下衬衫：shake out the shirt\n衣服会皱的：the shirt is going to get wrinkled\n晾衣架：just hang it on the laundry rack\n晾衣夹：just clip it on the laundry pin like this\n\n厨房：\n切片：slice the potato\n切丝：shred the potato\n切丁：dice the potato\n切段：cut the green onion\n剁：chop the green onion\n菜刀：kitchen knife. I chop the green onion with my kitchen knife.\n切肉刀：cleaver\n锅：pot\n炒锅：wok\n平底锅：pan\n炉子：stove\n切菜板：cutting board\n锅盖：lid\n汤勺：ladle\n烤箱：oven\n微波炉：microwave oven\n高压锅：pressure cooker\n电饭煲：rice cooker\n热水器：water heater\n榨汁机：juicer\n冰箱：refrigerator\n洗衣机：washing machine\n空调：air conditioner\n饮水机：water dispenser\n直饮水：water purifier\n电风扇：fan\n熨斗：iron\n电吹风：blow dryer\n电饭煲：rice cooker\n干湿一体洗地机：wet dry vacuum cleaner\n烹饪用具：cooking utensil\n\n家居用品：\n被子：comforter/quilt\n床垫、褥子：mattress\n床单：sheet\n窗帘：curtain\n毛毯（盖身上的）：blanket\n坐垫：cushion\n地毯：carpet\n枕头：pillow\n吊灯：chandelier\n台灯：table lamp\n吸顶灯：ceiling lamp\n手电筒：flashlight\n数字手表：digital watch\n遥控器：remote control\n床头柜：nightstand/bedside table\n梳妆台：dressing table\n雨伞：umbrella\n浴巾：bath towel\n花洒：shower head\n马桶：closestool\n洗手液：hand sanitizer\n\n衣服：\n马甲/背心：vest\nT恤：T-shirt\n衬衫：shirt\n长袖：long sleeves\n毛衣：sweater\n夹克：jacket\n西服：suit\n轻薄大衣：light overcoat\n羽绒服：down coat\n牛仔裤：jeans\n休闲裤：pants\n短裤：shorts\n内裤：briefs\n雨衣：raincoat\n浴衣：bathrobe\n睡衣：pajamas/pyjamas\n制服：uniform\n胸罩：bra\n短裙：skirt\n连衣裙：dress\n紧身裤：leggings\n男士内裤：underpants\n女士内裤：panties/knickers\n袜子：socks\n尺码：small/medium/large/extra large/extra extra large\n\n家用工具：\n锯子：saw\n斧头：ax/axe\n锤子：hammer\n老虎钳：pliers\n螺丝刀：screwdriver\n螺丝钉：screw\n扳手：wrench\n螺栓：bolt\n螺母/螺帽：nut\n滚筒（刷墙用的）：roller\n大剪子：shears\n剪刀：scissors\n耳勺：ear spoon\n夹子：clip\n指甲钳：nail clippers\n电钻：electric drill\n卷尺：tape measure\n磅秤：scales\n胶布：adhesive tape\n小铲子：trowel\n大铲子/锹：spade\n锄头：hoe\n耙子：rake\n梯子：ladder\n割草机：mower\n\n纸：\n报纸：newspaper\n纸巾：tissue\n餐巾纸：napkin\n卫生纸：toilet paper\n湿纸巾：wipes\n纸尿裤：diaper\n草稿纸：scratch paper\n便利贴：post-it note\n图纸：drawings\n厨房卷纸：kitchen roll\n\n家务：\n扫地：sweep the floor\n擦地：scrub the floor\n拖地：mop the floor\n擦窗：clean the windows\n洗车：wash the car\n洗衣服：do the laundry\n晒衣服：hang clothes\n熨衣服：iron clothes\n叠衣服：fold clothes\n换床单：change the sheet\n给桌子除尘：dust the desk\n吸地面：vacuum the floor\n\n装修：\n踢脚线：baseboard
+1. 动作词汇; 手部动作：\n扇：slap (slap on the back)\n（拿刀）劈砍：slash\n拳打：punch\n连续打：beat\n抓取：grab\n握住：hold\n举起：lift\n掉落：drop\n轻弹：flick\n轻拍：pat\n触摸：touch\n擦：scrub(scrub my face). This action implies a more vigorous, thorough cleaning process.\n搓：rub(rub hands together). Rubbing is less about deep cleaning and more about gentle or superficial contact.\n轻抚：stroke\n抹药：apply medicine\n敲：knock\n戳：poke\n挠：scratch\n指：point\n推：push\n拉：pull\n轻轻摇晃：rock\n拥抱：cuddle\n压碎：crush\n\n走路：\n散步：stroll\n漫无目的地逛：wander\n大步走：stride\n踮着脚走：tiptoe\n拖着脚走：shuffle\n一瘸一拐地走：hobble\n悄悄贴近：sidle\n跑步：run\n徒步：hike\n军队行进：march\n\n吃：\n咬：bite\n嚼：chew\n小口喝：sip\n吞咽：swallow\n舔：lick\n\n身体动作：\n磕了一下：I stumbled\n绊了一下：I tripped\n差点跌倒：I almost fell
+1. 人体词汇; 脸部：\n额头：forehead\n眼皮：eyelid\n脸颊：cheek\n人中：philtrum\n嘴唇：lip; my lips are super dry and cracked\n下巴：chin\n耳垂：earlobe\n扭脸：twist the face\n\n人体器官：\n大脑：brain\n肺部：lungs\n气管：trachea\n血管：blood vessel\n心脏：heart\n肝脏：liver\n肾脏：kidney\n胃部：stomach\n脾脏：spleen\n胰腺：pancreas\n膀胱：bladder\n肠道：intestines\n骨髓：bone marrow\n\n排泄物：\n眼屎：sleepy dust\n耳屎：earwax\n鼻涕：snot\n鼻屎：booger\n痰：phlegm\n汗水：sweat\n头皮屑：dandruff\n\n发型：\n平头：crew cut\n中分：centre parting\n边分：side parting\n马尾：pony tail\n辫子：braid/braids\n发髻型：bun\n卷发：curly hair\n长直发：long straight hair\n大波浪：wave\n爆炸头：afro\n发带：hair tie\n\n精神状态：\n精神失常：lose mind; out of mind
+1. 程度词汇; 表示轻微程度：\nSlightly\nBarely\nHardly\nJust\nA bit\nMildly\n\n表示中等程度：\nModerately\nFairly\nReasonably\nSomewhat\n\n表示较高程度：\nVery\nQuite\nConsiderably\nSignificantly\nSubstantially\n\n表示极高程度：\nExtremely\nIncredibly\nExceptionally\nTremendously\nUtterly\nAbsolutely\nDeeply
+1. 法律词汇; 陪审员：juror\n判决：ruling\n法院指令：court order\n言论禁止令：gag order\n\n罪名：\n性骚扰：sexual harassment\n性虐待：sexual battery\n网络犯罪：cyber crime\n侵犯知识产权：copyright infringement\n青少年犯罪：juvenile delinquency\n杀人：homicide\n渎职：dereliction of duty\n恐吓：intimidate\n袭击：attack\n信用卡诈骗：credit card fraud\n自杀：suicide\n宗派暴力：sectarian violence\n毒品走私：drug smuggling/drug smuggler\n兴奋剂丑闻：doping scandal
+1. they got trapped
+1. I'm filming you now
+1. I have a pull of quiting the job
+1. commencement ceremony
+1. It's too sudden
+1. 医院词汇; 血液检查：blood work\n住院病人：inpatient\n门诊病人：outpatient\n\n疾病：\n呼吸系统疾病：respiratory illnesses\n遗传病：hereditary diseases/inherited genetic diseases\n血管疾病：vascular conditions\n流感：flu\n禽流感：bird flu\n感冒：cold\n发烧：fever\n咽痛：sore throat\n咳嗽：cough\n打喷嚏：sneeze\n头痛：headache\n肺炎：pneumonia\n失眠：insomnia\n腹泻：diarrhea\n恶心：nausea\n呕吐：vomit\n眩晕：dizziness\n晕倒：passed out/faint\n乏力：fatigue/faint\n消化不良：get indigestion\n哮喘：asthma attack\n带状疱疹：shingles\n整形手术：plastic surgery\n偏头痛：migraine\n痤疮粉刺：acne\n感染：infection\n炎症：inflammation\n割伤：cut\n刺伤：stab\n扭伤：sprain\n咬伤：bite\n冻伤：frostbite\n烧伤：burn\n烫伤：scald
+1. compete on a level playing field
+1. it never has been, it never will be
+1. help me push the progress forward
 1. the magnitude of each component
 1. 变化词汇; 增加/减少：increase/decrease\n上升/下降：rise/fall; ascend/descend\n微微上升/微微下降：nudge up/nudge down\n调高/调低：turn up/turn down
 1. bumping up the complexity a bit
@@ -16,9 +32,8 @@
 1. my skin cracks
 1. please leave it at the door
 1. it's not a normal practice
-1. 副食品词汇; 手工蜂蜜：artisanal honey
 1. this place has always been this dirty
-1. 食物词汇; 食物没熟：the food is undercooked
+1. 食物词汇; 炒蛋：scrambled\n太阳蛋：sunny-side-up\n双面煎半熟：over easy\n双面煎全熟：over hard\n去壳水煮：poached\n水煮半熟：soft boiled\n水煮全熟：hard boiled\n一分熟：rare\n三分熟：medium rare\n五分熟：medium\n七分熟：medium well\n全熟：well done\n食物没熟：the food is undercooked\n\n蔬菜：\n黄瓜：cucumber\n花椰菜：cauliflower\n四季豆：green beans\n洋葱：onion\n卷心菜：cabbage\n胡萝卜：carrot\n生菜：lettuce (crisp lettuce)\n辣椒：(hot/green/sweet)pepper\n西兰花：broccoli\n土豆：potato\n玉米：corn\n芹菜：celery\n菠菜：spinach\n茄子：eggplant\n南瓜：pumpkin\n苦瓜：bitter gourd\n大蒜：garlic\n蘑菇：mushroom\n木耳：agaric\n秋葵：okra\n西葫芦：zucchini\n\n肉类：\n生鱼片：raw fish\n羊排：lamb chop\n鲍鱼：abalone\n蛤蜊：clam\n牡蛎（生蚝）：oyster\n鹅肝：goose liver\n火锅：hot pot\n帝王蟹：king crab\n\n咖啡：\n美式：Americano\n摩卡：Mocha\n拿铁：Latte\n意式浓缩：Espresso\n卡布奇诺：Cappuccino\n冷萃：cold brew\n玛奇朵：Macchiato\n大杯：grande\n\n水果：\n李子：plum\n柠檬：lemon\n荔枝：litchi\n桂圆：longan\n芒果：mango\n樱桃：cherry\n菠萝：pineapple\n柚子：pomelo\n草莓：strawberry\n黑莓：blackberry\n蓝莓：blueberry\n西瓜：watermelon\n橙子：orange\n桑葚：mulberry\n香蕉：banana\n胡桃：walnut\n榴莲：durian\n枇杷：loquat\n无花果：fig\n\n副食品：\n手工蜂蜜：artisanal honey
 1. water valve
 1. wear and tear
 1. misinformation; 谣言
@@ -27,10 +42,9 @@
 1. I'm gonna lay you out; 我要收拾你\n\nI’m going to take you down\nI’m going to beat you up
 1. come apart; fall apart
 1. things happened to you
-1. 执行词汇; handle\nprocess\nconduct\nmanage\nexecute\nperform\ncarry out\nimplement\ndeal with\noperate\nundertake
+1. 执行词汇; do\nhandle\nprocess\nconduct\nmanage\nexecute\nperform\nlaunch\ncarry out\nimplement\ndeal with\noperate\nundertake\nplay
 1. I'm outside, I'll send it to you in a bit
 1. I don't go along with it
-1. 住宿词汇; 入住：check in\n退房：check out\n续住：extend my stay for a few more days/renew my booking for a few more days\n报销：reimbursement\n刷卡：swipe a card\n插卡：insert a card\n把卡靠近设备：tap a card\n水龙头：faucet/tap\n自来水：tap water/running water
 1. coverage status; 承保状态
 1. resilience; adaptability; high rate of learning; creativity
 1. I back you up
@@ -39,12 +53,9 @@
 1. layman
 1. illegally obtained
 1. I'm flattered
-1. 标点符号词汇; 感叹号：exclamation mark
 1. 机构词汇; 美国海岸警卫队：the U.S. Coast Guard\n美国联邦航空管理局：Federal Aviation Administration\n情报部队：Intelligence corps\n联邦上诉法院：Federal Appeal Court
-1. 地名词汇; 爱琴海：the Aegean Sea
-1. 政治词汇; 专制政体：authoritarian regime\n民主政体：democratic regime\n左翼领导/右翼领导：far-left political leaders; far-right political leaders\n保守党：conservative party\n进步党：progressive party\n工党：labour party
-1. 职位词汇; 副处长：deputy chief\n代理警察局长：acting police chief\n新闻秘书长：press secretary\n秘书长：secretary general
-1. 武器词汇; 超音速导弹：supersonic missiles\n核弹道潜艇：nuclear ballistic submarine\n豹式坦克：leopard tank\n攻击性武器：assault weapons
+1. 政治词汇; 专制政体：authoritarian regime\n民主政体：democratic regime\n左翼领导/右翼领导：far-left political leaders; far-right political leaders\n保守党：conservative party\n进步党：progressive party\n工党：labour party\n资本主义：capitalism\n殖民主义：colonialism\n谴责：condemn\n\n职位：\n副处长：deputy chief\n代理警察局长：acting police chief\n新闻秘书长：press secretary\n秘书长：secretary general
+1. 武器词汇; 超音速导弹：supersonic missiles\n核弹道潜艇：nuclear ballistic submarine\n豹式坦克：leopard tank\n攻击性武器：assault weapons\n未爆炸药：unexploded ordinance
 1. these percentages corresponded to 2 billion people globally who were current drinkers
 1. go back and forth
 1. inquiry about your availability; 询问你是否有空
@@ -59,7 +70,6 @@
 1. I have to take a leak; I have to take a dump
 1. mentally sharp; mentally dull
 1. it shouldn't charge you more than 5 dollars
-1. 吃动作词汇; 咬：bite\n嚼：chew\n小口喝：sip\n吞咽：swallow\n舔：lick
 1. all in one machine; 一体机
 1. elect or throw out leaders
 1. seal the deal
@@ -101,9 +111,9 @@
 1. tear family apart; 让家庭四分五裂\n
 1. number vested; number unvested
 1. I got a big pimple on my face
-1. 数学词汇; 交集：intersection\n并集：union\n差集：difference\nxy平面：xy-plane\n极值：maxima\n斜率：slope\n梯度下降：gradient descent\n随机梯度下降：stochastic gradient descent
+1. 数学词汇; 交集：intersection\n并集：union\n差集：difference\nxy平面：xy-plane\n极值：maxima\n斜率：slope\n梯度下降：gradient descent\n随机梯度下降：stochastic gradient descent\n导数：derivative\ny 对 x 的导数：the derivative of y with respect to x\n指数：exponent\n\n线条：\n直线：straight line\n水平线：horizontal line\n垂直线：vertical line\n曲线：curved line\n对角线：diagonal line\n波折线：zigzag line\n点虚线：dotted line\n段虚线：dashed line\n波浪线：wavy line\n平行线：parallel lines\n垂直交叉线：perpendicular lines\n螺旋线：spiral line\n
 1. same to you; respnse to \'have a nice day\'\nor you too
-1. 金融词汇; 工资：wage/salary/payment/paycheck/\n补偿：compensation\n资金：capital\n金融：finance\n信用：credit\n贷款：loans\n首付款：first deposit\n尾款：balance payment\n充值：top-up; recharge\n30天债务宽限期：30-day debt grace period\n利息：interests\n利率：interest rate\n升息/降息：interest rate hike/interest rate cut\n货币：currency\n股票：stock\n证券：security\n保险：insurance\n基金：fund\n贸易：trade\n汇率：exchange rate\n抵押贷款：mortgage\n养老金：pension\n汇兑：money order\n证券交易所：stock exchange\n分钟股票行情：minute stock quotes
+1. 金融词汇; 工资：wage/salary/payment/paycheck/\n补偿：compensation\n资金：capital\n金融：finance\n信用：credit\n贷款：loans\n首付款：first deposit\n尾款：balance payment\n未付金额：outstanding amount\n充值：top-up; recharge\n存钱/取钱：deposit money/withdraw money\n30天债务宽限期：30-day debt grace period\n利息：interests\n利率：interest rate\n升息/降息：interest rate hike/interest rate cut\n货币：currency\n股票：stock\n证券：security\n保险：insurance\n基金：fund\n贸易：trade\n汇率：exchange rate\n抵押贷款：mortgage\n养老金：pension\n汇兑：money order\n证券交易所：stock exchange\n分钟股票行情：minute stock quotes\n信用卡盗刷：my credit card has been fraudulently charged
 1. file a complaint; make a complaint
 1. ego; arrogant; pride
 1. somebody got flipped; it could refer to someone changing their allegiance, opinion, or loyalty
@@ -114,33 +124,20 @@
 1. I'm done talking about this
 1. I decided to waive my right to a trial and accepted the plea deal
 1. keep your head down
-1. 家用工具词汇; 锯子：saw\n斧头：ax/axe\n锤子：hammer\n老虎钳：pliers\n螺丝刀：screwdriver\n螺丝钉：screw\n扳手：wrench\n螺栓：bolt\n螺母/螺帽：nut\n滚筒（刷墙用的）：roller\n大剪子：shears\n剪刀：scissors\n耳勺：ear spoon\n夹子：clip\n指甲钳：nail clippers\n电钻：electric drill\n卷尺：tape measure\n磅秤：scales\n胶布：adhesive tape\n小铲子：trowel\n大铲子/锹：spade\n锄头：hoe\n耙子：rake\n梯子：ladder\n割草机：mower\n
-1. 发型词汇; 平头：crew cut\n中分：centre parting\n边分：side parting\n马尾：pony tail\n辫子：braid/braids\n发髻型：bun\n卷发：curly hair\n长直发：long straight hair\n大波浪：wave\n爆炸头：afro\n发带：hair tie
-1. 罪名词汇; 性骚扰：sexual harassment\n性虐待：sexual battery\n网络犯罪：cyber crime\n侵犯知识产权：copyright infringement\n青少年犯罪：juvenile delinquency\n杀人：homicide\n渎职：dereliction of duty\n恐吓：intimidate\n袭击：attack\n信用卡诈骗：credit card fraud\n自杀：suicide\n宗派暴力：sectarian violence\n毒品走私：drug smuggling/drug smuggler\n兴奋剂丑闻：doping scandal
-1. 家务词汇; 扫地：sweep the floor\n擦地：scrub the floor\n拖地：mop the floor\n擦窗：clean the windows\n洗车：wash the car\n洗衣服：do the laundry\n晒衣服：hang clothes\n熨衣服：iron clothes\n叠衣服：fold clothes\n换床单：change the sheet\n给桌子除尘：dust the desk\n吸地面：vacuum the floor
 1. 证件词汇; 身份证：identity card\n驾驶证：driving license\n学会证：student pass\n毕业证：diploma\n工作证：employee\'s card\n健康证：helath certificate\n结婚证：marriage license\n护照：passport\n签证：visa\n工作签证：work visa\n绿卡：green card
-1. 家用电器词汇; 洗衣机：washing machine\n空调：air conditioner\n饮水机：water dispenser\n直饮水：water purifier\n电风扇：fan\n熨斗：iron\n电吹风：blow dryer\n电饭煲：rice cooker\n干湿一体洗地机：wet dry vacuum cleaner
-1. 水果词汇; 李子：plum\n柠檬：lemon\n荔枝：litchi\n桂圆：longan\n芒果：mango\n樱桃：cherry\n菠萝：pineapple\n柚子：pomelo\n草莓：strawberry\n黑莓：blackberry\n蓝莓：blueberry\n西瓜：watermelon\n橙子：orange\n桑葚：mulberry\n香蕉：banana\n胡桃：walnut\n榴莲：durian\n枇杷：loquat\n无花果：fig
 1. the cheese is moldy
 1. travel debacle
 1. I stand by my choices
 1. I'm not just saying this; I\'m serious about what I\'m saying
 1. I'm a big fan of Chinese dramas; TV series
-1. 衣服词汇; 马甲/背心：vest\nT恤：T-shirt\n衬衫：shirt\n长袖：long sleeves\n毛衣：sweater\n夹克：jacket\n西服：suit\n轻薄大衣：light overcoat\n羽绒服：down coat\n牛仔裤：jeans\n休闲裤：pants\n短裤：shorts\n内裤：briefs\n雨衣：raincoat\n浴衣：bathrobe\n睡衣：pajamas/pyjamas\n制服：uniform\n胸罩：bra\n短裙：skirt\n连衣裙：dress\n紧身裤：leggings\n男士内裤：underpants\n女士内裤：panties/knickers\n袜子：socks\n尺码：small/medium/large/extra large/extra extra large
 1. 度量衡词汇; 长度：length\n宽度：width\n高度：height\n深度：depth\n厚度：thickness\n海拔高度：altitude\n经度：longitude\n纬度：latitude\n速度：speed\n密度：density\n平方（千）米：square meter/square kilometer\n平方英尺：square feet\n（千）克：gram/kilogram\n摄氏度：degree celsius\n胸围：bust\n腰围：waist\n臀围：hip\n血型：blood type\n
-1. 自然景观词汇; 火山：volcano\n高原：plateau\n平原：plain\n草原：grassland\n沙漠：desert\n峡谷：valley\n极光：aurora\n沼泽/湿地：swamp\n冰川：glacier\n岛屿：island
-1. 受伤词汇; 割伤：cut\n刺伤：stab\n扭伤：sprain\n咬伤：bite\n冻伤：frostbite\n烧伤：burn\n烫伤：scald
-1. 咖啡词汇; 美式：Americano\n摩卡：Mocha\n拿铁：Latte\n意式浓缩：Espresso\n卡布奇诺：Cappuccino\n冷萃：cold brew\n玛奇朵：Macchiato\n大杯：grande
 1. things are looking up
 1. a cat person; 爱猫人士
 1. get over yourself; 别自以为是
 1. 区域词汇; 国家：country\n州/省：state/province\n城市：city\n市辖区：district\n县/郡：county\n大道：avenue\n街道：street\n郊区：suburb\n镇：town\n乡村：village
 1. my hands are tied; 我无能为力\n
 1. 婚礼词汇; 求婚：proposal\n订婚：engagement\n新娘：bride\n新郎：groom\n伴郎：bestman\n伴娘：bridesmaid\n戒指：ring\n婚宴：wedding reception/wedding feast\n祝酒：toast\n婚纱：wedding dress
-1. 纸类词汇; 报纸：newspaper\n纸巾：tissue\n餐巾纸：napkin\n卫生纸：toilet paper\n湿纸巾：wipes\n纸尿裤：diaper\n草稿纸：scratch paper\n便利贴：post-it note\n图纸：drawings\n厨房卷纸：kitchen roll
 1. 量词词汇; 一片面包：a piece of bread\n一串香蕉/一束玫瑰：a bunch of bananas/a bounch of roses\n一粒米：a grain of rice\n一小撮盐：a pinch of salt\n一罐水果/一听饮料：a can of fruit/a can of cola\n一罐卡法：a jar of coffee\n一包河粉：a packet of rice noddles\n一片披萨：a slice of pizza\n一勺糖：a spoon of sugar\n一条/块面包：a loaf of bread\n一碗水：a bowl of water\n一瓶香水：a bottle of perfume\n一双鞋：a pair of shoes\n一堆衣服：a pile of laundary\n一系列的发布：a string of new product\n一群小孩：a group/crowd of children\n一张纸：a blank sheet of paper\n一盒苹果汁：a carton of apple juice\n一群羊：a flock of sheep\n一卷交卷：a roll of film\n一缕烟：a puff of smoke/plumes of smoke\n一连串问题：a cascade of problems\n数量惊人的：a striking amount of\n\nPiece: This is a general term that can refer to any part or portion of something, regardless of its shape or size.\nSlice: This term specifically refers to a thin, flat piece that has been cut or sliced from something larger, usually with a sharp tool.
-1. 休假词汇; 法定假：statutory holiday\n年假：annual leave\n事假：personal leave\n病假：sick leave\n婚假：marriage leave\n产假：maternity leave\n陪产假：paternity leave\n调休：days off\n间歇：take a break\n丧假：bereavement lave
-1. 家具用品词汇; 被子：comforter/quilt\n床垫、褥子：mattress\n床单：sheet\n窗帘：curtain\n毛毯（盖身上的）：blanket\n坐垫：cushion\n地毯：carpet\n枕头：pillow\n吊灯：chandelier\n台灯：table lamp\n吸顶灯：ceiling lamp\n手电筒：flashlight\n数字手表：digital watch\n遥控器：remote control\n床头柜：nightstand/bedside table\n梳妆台：dressing table\n雨伞：umbrella\n浴巾：bath towel\n花洒：shower head\n马桶：closestool\n洗手液：hand sanitizer
 1. sorry, I misremembered
 1. I'm very directionally challenged
 1. don't look at me; stop looking at me; 别看着我\n别看着我了
@@ -149,8 +146,6 @@
 1. What are the advantages of column-wise storage and execution?; * Efficient Data Compression.\n* Improved Query Performance, including better cache locality and vectorization instructions.\n* Improved Analytical Performance with Columnar Indexes.
 1. got it; copy that; well noted; 明白了，收到
 1. downwind; against the wind
-1. 人脸部位词汇; 额头：forehead\n眼皮：eyelid\n脸颊：cheek\n人中：philtrum\n嘴唇：lip; my lips are super dry and cracked\n下巴：chin\n耳垂：earlobe\n扭脸：twist the face
-1. 疾病词汇; 呼吸系统疾病：respiratory illnesses\n遗传病：hereditary diseases/inherited genetic diseases\n血管疾病：vascular conditions\n流感：flu\n禽流感：bird flu\n感冒：cold\n发烧：fever\n咽痛：sore throat\n咳嗽：cough\n打喷嚏：sneeze\n头痛：headache\n肺炎：pneumonia\n失眠：insomnia\n腹泻：diarrhea\n恶心：nausea\n呕吐：vomit\n眩晕：dizziness\n晕倒：passed out/faint\n乏力：fatigue/faint\n消化不良：get indigestion\n哮喘：asthma attack\n带状疱疹：shingles\n整形手术：plastic surgery\n偏头痛：migraine\n痤疮粉刺：acne
 1. I need to know what I stand to win
 1. 房屋词汇; 公寓：apartment/flat\n宿舍：dormitory\n别墅：villa\n官邸/大厦：mansion\n工作室：studio\n地下室：basement\n村舍：cottage\n平房：bungalow\n寺庙：temple\n城堡：castle
 1. I worked my ass off to get here
@@ -158,20 +153,15 @@
 1. 911, what's the emergency
 1. where are you hurt; where does it hurt; what did you bump into
 1. why the long face; 为什么闷闷不乐？\n
-1. 器官词汇; 大脑：brain\n肺部：lungs\n气管：trachea\n血管：blood vessel\n心脏：heart\n肝脏：liver\n肾脏：kidney\n胃部：stomach\n脾脏：spleen\n胰腺：pancreas\n膀胱：bladder\n肠道：intestines\n骨髓：bone marrow
 1. level with me; 实话跟我说吧
 1. rat race
-1. 鸡蛋牛排词汇; 炒蛋：scrambled\n太阳蛋：sunny-side-up\n双面煎半熟：over easy\n双面煎全熟：over hard\n去壳水煮：poached\n水煮半熟：soft boiled\n水煮全熟：hard boiled\n一分熟：rare\n三分熟：medium rare\n五分熟：medium\n七分熟：medium well\n全熟：well done
-1. 线条词汇; 直线：straight line\n水平线：horizontal line\n垂直线：vertical line\n曲线：curved line\n对角线：diagonal line\n波折线：zigzag line\n点虚线：dotted line\n段虚线：dashed line\n波浪线：wavy line\n平行线：parallel lines\n垂直交叉线：perpendicular lines\n螺旋线：spiral line\n
-1. 学历词汇; 幼儿园：kindergarten\n小学：primary school\n初中：junior high school\n高中：senior high school\n本科：undergraduate\n学士学位：Bachelor\'s degree\n研究生：postgraduate\n研究生学位：Master\'s degree\n博士：PhD\n文凭：diploma
-1. 走路词汇; 散步：stroll\n漫无目的地逛：wander\n大步走：stride\n踮着脚走：tiptoe\n拖着脚走：shuffle\n一瘸一拐地走：hobble\n悄悄贴近：sidle\n跑步：run\n徒步：hike\n军队行进：march
+1. 学历词汇; 幼儿园：nursery school/kindergarten\n小学：primary school\n初中：junior high school\n高中：senior high school\n本科：undergraduate\n学士学位：Bachelor\'s degree\n研究生：postgraduate\n研究生学位：Master\'s degree\n博士：PhD\n文凭：diploma
 1. their products are streets ahead of their peers
-1. 餐厅词汇; 剩菜：leftovers\n打包盒：to go box\n筷子：chopsticks\n塑料勺：plastic spoon\n餐巾纸：napkins\n塑料袋：plastic bag
+1. 餐厅词汇; 剩菜：leftovers\n打包盒：to go box\n筷子：chopsticks\n塑料勺：plastic spoon\n餐巾纸：napkins\n塑料袋：plastic bag\n结账：check please; can I have my bill\n这是免费的吗？is it complimentary? can I take one? does it come with the meal?
 1. 健身词汇; 高强度运动：intense exercise; vigorous exercise; strenuous exercise; heavy exercise\n俯卧撑：push-ups\n引体向上：pull-ups/chin-ups\n平板卧推：flat bench press\n上斜卧推：incline bench press\n深蹲：deep squat\n举重：lift weights\n哑铃：dumbell
 1. you've got a point there
-1. 职场词汇; 招聘：recruitment\n简历：resume\n面试：interview\n空缺岗位：vacancy\n职业规划：career plan\n早九晚五：nine-to-five\n薪资：salary\n福利：welfare\n升职：promotion\n裁员：lay off\n转岗：job transfer\n跳槽：job hopping\n加薪：I want a raise\n年终绩效奖金：annual performance bonus\n担任职务：position held\n工作签证：work visa\n压榨的：toxic\n工会：labor union
+1. 职场词汇; 招聘：recruitment\n简历：resume\n面试：interview\n空缺岗位：vacancy\n职业规划：career plan\n早九晚五：nine-to-five\n薪资：salary\n福利：welfare\n升职：promotion\n裁员：lay off\n转岗：job transfer\n跳槽：job hopping\n加薪：I want a raise\n年终绩效奖金：annual performance bonus\n担任职务：position held\n工作签证：work visa\n压榨的：toxic\n工会：labor union\n理赔（福利申报）提交截止：claims submission cut off\n\n休假：\n法定假：statutory holiday\n年假：annual leave\n事假：personal leave\n病假：sick leave\n婚假：marriage leave\n产假：maternity leave\n陪产假：paternity leave\n调休：days off\n间歇：take a break\n丧假：bereavement lave
 1. let's split the bill
-1. 排泄物词汇; 眼屎：sleepy dust\n耳屎：earwax\n鼻涕：snot\n鼻屎：booger\n痰：phlegm\n汗水：sweat\n头皮屑：dandruff
 1. 汽车词汇; 驾驶座：driver\'s seat\n安全带：seatbelt\n方向盘：steering wheel\n喇叭：horn\n仪表盘：dashboard\n出风口：air vent\n变速杆：gearshift\n挡风玻璃：windscreen/windshield\n挡风玻璃雨刷：windscreen/windshield wipers\n侧视镜：side-view mirror\n后视镜：rearview mirror\n遮阳板：sun visor\n转向灯：indicator/turn signal\n刹车：brake\n油门：accelerator\n门把手：door handle\n轮胎：tire/tyre\n车牌：number plate/license plate\n后备箱：trunk\n卡车：truck
 1. my word is my bond; 我会遵守诺言\nyou have my words.
 1. in what universe are we the same?; 我们哪里一样了？\n
@@ -193,7 +183,6 @@
 1. Introduction to the Work Mode; We\'re a big team of around 50 database developers, split into maybe 5 groups, each focusing on areas like storage, query execution, cloud native, lake house, and SaaS. I\'m part of the query group.\n\nIn our group, here\'s how we roll: We usually iterate on a two-month cycle, and in each cycle, we will have one or two targets, like rolling out a new feature or improving performance or stability. And each member will get their own pieces. And if the topic is big enough, we will do some research and produce a research document for discussion, so we can all chat about it.\n\nAfter we\'ve tossed around some ideas, we get down to writing a design document. It\'s like our game plan, detailing how we\'re getting things done, and everyone gets to review it.\n\nFinally, we get to the fun part – coding. And of course, we make sure to review each other\'s code. It keeps things running smoothly and makes sure we\'re all on the same page.
 1. Introduce a member of your family; I\'d like to tell you about my father. He was born into a humble family as the youngest of five siblings, with four older sisters. Despite their financial struggles, his family was very loving and supportive, which gave him a happy childhood. He was a dedicated student and worked extremely hard to achieve his goals. Remarkably, he earned a bachelor\'s degree in chemical engineering, which was quite an achievement given his background. After graduating, he worked as a workshop manager for a state-owned company. It was a challenging time as corruption was widespread, but my father always maintained his integrity and never got involved in any corrupt practices, something that I deeply admire about him. Later on, the state-owned company went bankrupt, and he ventured into entrepreneurship and started a small business in metal chemical processing with around ten employees. In summary, his journey from a modest upbringing to becoming a successful business owner is truly inspiring. And he is always the one that I look up to.
 1. we are deeply sorry for this last-minute rescheduling
-1. 肉类词汇; 生鱼片：raw fish\n羊排：lamb chop\n鲍鱼：abalone\n蛤蜊：clam\n牡蛎（生蚝）：oyster\n鹅肝：goose liver\n火锅：hot pot\n帝王蟹：king crab
 1. stay warm; 注意保暖
 1. levy; tax; excise; Levy: This is a general term that refers to the legal process of imposing or collecting a tax, fee, or fine. A levy can be applied to a wide range of financial obligations, such as taxes, fees for services, or fines for legal violations. It\'s more about the action of imposing or collecting these charges.\n\nTax: A tax is a mandatory financial charge or some other type of levy imposed upon a taxpayer (an individual or a legal entity) by a governmental organization. Taxes are used to fund various public expenditures. Taxes can come in many forms, such as income tax, property tax, sales tax, etc. The term \"tax\" is more about the financial charge itself, rather than the act of imposing or collecting it.\n\nExcise: An excise is a specific type of tax that is levied on particular goods, services, or activities. This is often a form of indirect tax, meaning it is collected by an intermediary (like a store) from the person who bears the ultimate economic burden of the tax (such as the consumer). Excise taxes are commonly placed on items such as alcohol, tobacco, and fuel.\n\n
 1. play ground; sports ground; sports field
@@ -214,13 +203,8 @@
 1. two Gaza hospitals have ceased to function
 1. what do you study? I'm doing computer science; I was doing Computer Science.\nI was studying Computer Science and have now graduated.\nI completed my studies in Computer Science.\nMy field of study was Computer Science, and I\'ve graduated.\n
 1. carpet; rug; Usually refers to a floor covering that extends over an entire room\nRugs are smaller, movable floor coverings that don\'t extend across the entire floor space
-1. 手部动作词汇; 扇：slap (slap on the back)\n拳打：punch\n连续打：beat\n抓取：grab\n握住：hold\n举起：lift\n掉落：drop\n轻弹：flick\n轻拍：pat\n触摸：touch\n擦：scrub(scrub my face). This action implies a more vigorous, thorough cleaning process.\n搓：rub(rub hands together). Rubbing is less about deep cleaning and more about gentle or superficial contact.\n轻抚：stroke\n抹药：apply medicine\n敲：knock\n戳：poke\n挠：scratch\n指：point\n推：push\n拉：pull\n轻轻摇晃：rock\n拥抱：cuddle\n压碎：crush\n
-1. 蔬菜词汇; 黄瓜：cucumber\n花椰菜：cauliflower\n四季豆：green beans\n洋葱：onion\n卷心菜：cabbage\n胡萝卜：carrot\n生菜：lettuce (crisp lettuce)\n辣椒：(hot/green/sweet)pepper\n西兰花：broccoli\n土豆：potato\n玉米：corn\n芹菜：celery\n菠菜：spinach\n茄子：eggplant\n南瓜：pumpkin\n苦瓜：bitter gourd\n大蒜：garlic\n蘑菇：mushroom\n木耳：agaric\n秋葵：okra\n西葫芦：zucchini
 1. you're twisting my words
-1. 厨房词汇; 切片：slice the potato\n切丝：shred the potato\n切丁：dice the potato\n切段：cut the green onion\n剁：chop the green onion\n菜刀：kitchen knife. I chop the green onion with my kitchen knife.\n切肉刀：cleaver\n锅：pot\n炒锅：wok\n平底锅：pan\n炉子：stove\n切菜板：cutting board\n锅盖：lid\n汤勺：ladle\n烤箱：oven\n微波炉：microwave oven\n高压锅：pressure cooker\n电饭煲：rice cooker\n热水器：water heater\n榨汁机：juicer\n冰箱：refrigerator\n烹饪用具：cooking utensil\n
-1. 晾衣服词汇; 晾衣服：hang the laundry\n衣架：hanger\n抖一下衬衫：shake out the shirt\n衣服会皱的：the shirt is going to get wrinkled\n晾衣架：just hang it on the laundry rack\n晾衣夹：just clip it on the laundry pin like this\n
 1. sounds cheesy
-1. 机场词汇; 航站楼：terminal\n值机柜台：check-in counter\n登机牌：boarding pass\n商务舱：business class\n经济舱：economy class\n靠过道的座位：aisle seat\n国内航班：domestic flight\n安检：security check\n免税店：duty-free shop\n登机口：departure gate\n登记通知：boarding call\n延误：delay\n随身携带的行李：carry-on, carry-on luggage\n中转停留：layover\n颠簸：turbulence\n海关：customs\n货币兑换：currency exchange\n行李提取出：baggage claim
 1. seize the day
 1. this explosion didn't cause major damage
 1. I'm on my own
@@ -364,7 +348,7 @@
 1. What are the core values of StarRocks?; 1. Fast\n1. Unified, contains almost all the capabilities, like MV, lakehouse, cloud native, stream/batch processing
 1. Explain the difference between cache coherence and memory consistency; Cache coherence is primarily concerned with the values of copies of a single memory location that are cached at several caches, and ensures that all processors in the system observe a single, consistent value for the memory location.\n\nMemory consistency is concerned about the ordering of multiply updates to different memory locations(or single memory location) from different processors. It determines when a write by one processor to a shared memory location becomes visible to all other processors.
 1. do not toss objects from height
-1. It's a big city that is politically and economically significant
+1. It's a big city that is politically and economically significant; 一线城市
 1. you're so into yourself
 1. this is a long-term project that requires continuous evolution; this is a long-term project that requires ongoing development
 1. heavy rains have caused dams to burst, and the entire neighborhood has been washed away, there was very little help getting to Derna for the first 30 hours

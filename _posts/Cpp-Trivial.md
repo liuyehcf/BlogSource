@@ -207,6 +207,12 @@ This command scans the directories listed in `/etc/ld.so.conf`, its `*.conf` inc
 ldconfig -p | grep /custom/lib
 ```
 
+**All-in-one Command**
+
+```sh
+echo '/custom/lib' | sudo tee /etc/ld.so.conf.d/mylibs.conf && sudo ldconfig
+```
+
 ## 2.4 Link Order
 
 [Why does the order in which libraries are linked sometimes cause errors in GCC?](https://stackoverflow.com/questions/45135/why-does-the-order-in-which-libraries-are-linked-sometimes-cause-errors-in-gcc)
@@ -1458,7 +1464,58 @@ end, back to main
 
 # 7 GNU
 
-## 7.1 GNU Binutils
+## 7.1 Build & Install
+
+**You can download any version from [gcc-ftp](http://ftp.gnu.org/gnu/gcc/), I choose `gcc-14.1.0`**
+
+**For China, refer to [GCC mirror sites](http://gcc.gnu.org/mirrors.html) for suitable mirrors**
+
+```sh
+# Downloads
+wget 'https://ftp.gnu.org/gnu/gcc/gcc-14.1.0/gcc-14.1.0.tar.gz'
+tar -zxf gcc-14.1.0.tar.gz
+cd gcc-14.1.0
+
+# Install prerequisites
+./contrib/download_prerequisites
+
+# Compile
+./configure --disable-multilib --enable-languages=c,c++
+make -j 4
+sudo make install
+```
+
+Post Settings: (Use `sudo ldconfig -p | grep stdc++` to check the default path of `libstdc++.so.6`)
+
+* Centos
+    ```sh
+    # Remove Original Gcc
+    sudo yum remove -y gcc gcc-c++
+
+    # Create soft link
+    sudo rm -f /usr/bin/gcc /usr/bin/g++ /usr/bin/cc /usr/bin/c++ /lib64/libstdc++.so.6
+    sudo ln -s /usr/local/bin/gcc /usr/bin/gcc
+    sudo ln -s /usr/local/bin/g++ /usr/bin/g++
+    sudo ln -s /usr/bin/gcc /usr/bin/cc
+    sudo ln -s /usr/bin/g++ /usr/bin/c++
+    sudo ln -s /usr/local/lib64/libstdc++.so.6.0.33 /lib64/libstdc++.so.6
+    ```
+
+* Ubuntu
+  ```sh
+    # Remove Original Gcc
+    sudo apt remove -y gcc g++
+
+    # Create soft link
+    sudo rm -f /usr/bin/gcc /usr/bin/g++ /usr/bin/cc /usr/bin/c++ /usr/lib/x86_64-linux-gnu/libstdc++.so.6
+    sudo ln -s /usr/local/bin/gcc /usr/bin/gcc
+    sudo ln -s /usr/local/bin/g++ /usr/bin/g++
+    sudo ln -s /usr/bin/gcc /usr/bin/cc
+    sudo ln -s /usr/bin/g++ /usr/bin/c++
+    sudo ln -s /usr/local/lib64/libstdc++.so.6.0.33 /usr/lib/x86_64-linux-gnu/libstdc++.so.6
+  ```
+
+## 7.2 GNU Binutils
 
 The GNU Binutils are a collection of binary tools. The main ones are:
 
@@ -1508,7 +1565,7 @@ make -j 64
 sudo make install
 ```
 
-### 7.1.1 DWARF Error
+### 7.2.1 DWARF Error
 
 ```
 addr2line: Dwarf Error: found dwarf version '5', this reader only handles version 2, 3 and 4 information.
@@ -1518,7 +1575,7 @@ addr2line: Dwarf Error: found dwarf version '5', this reader only handles versio
 1. Try use different linker.
 1. Try use higher version of `binutils`.
 
-## 7.2 gcc
+## 7.3 gcc
 
 **常用参数说明：**
 
@@ -1593,7 +1650,7 @@ addr2line: Dwarf Error: found dwarf version '5', this reader only handles versio
         * Uses absolute addresses for both data and code, allowing for very large applications.
         * However, this comes at the cost of efficiency, as the generated code is less optimized compared to the small and medium models.
 
-### 7.2.1 How to link libc++ statically
+### 7.3.1 How to link libc++ statically
 
 **Use `g++`:**
 
@@ -1622,7 +1679,7 @@ target_compile_options(<target> PRIVATE -static-libstdc++)
 target_link_options(<target> PRIVATE -static-libstdc++)
 ```
 
-## 7.3 ld
+## 7.4 ld
 
 **种类**
 
@@ -1676,7 +1733,7 @@ target_link_options(<target> PRIVATE -static-libstdc++)
     ./proxy_malloc
     ```
 
-### 7.3.1 How to check default linker
+### 7.4.1 How to check default linker
 
 ```sh
 ls -l $(which ld)
@@ -1684,7 +1741,7 @@ ls -l $(which ld)
 update-alternatives --display ld
 ```
 
-### 7.3.2 How to print dynamic lib path when linking program
+### 7.4.2 How to print dynamic lib path when linking program
 
 ```sh
 # default GNU ld
@@ -1697,7 +1754,7 @@ gcc -o your_program your_program.c -fuse-ld=gold -Wl,--verbose
 gcc -o your_program your_program.c -fuse-ld=lld -Wl,--verbose
 ```
 
-### 7.3.3 How to determine which linker was used to link a binary file
+### 7.4.3 How to determine which linker was used to link a binary file
 
 ```sh
 # method 1
@@ -1707,18 +1764,45 @@ readelf -p .comment <binary_file>
 strings <binary_file> | grep <linker_name>
 ```
 
-## 7.4 Reference
+## 7.5 Reference
 
 # 8 LLVM Tools
 
-## 8.1 clang
+## 8.1 Build & Install
+
+```sh
+git clone -b release/16.x https://github.com/llvm/llvm-project.git --depth 1
+cd llvm-project
+cmake -B build -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -G "Ninja" \
+    llvm
+cmake --build build -j 64
+sudo cmake --install build
+
+ninja -C build -t targets | grep -E '^install'
+```
+
+Install specific target:
+
+```sh
+cd build
+ninja -j 64 clang
+ninja -j 64 clang-format
+ninja -j 64 clangd
+sudo ninja install-clang
+sudo ninja install-clang-format
+sudo ninja install-clangd
+```
+
+## 8.2 clang
 
 **Doc:**
 
 * [Clang documentation](https://clang.llvm.org/docs/)
     * [Diagnostic flags in Clang](https://clang.llvm.org/docs/DiagnosticsReference.html)
 
-## 8.2 clang-format
+## 8.3 clang-format
 
 **如何安装`clang-format`**
 

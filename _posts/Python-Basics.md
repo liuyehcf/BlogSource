@@ -642,6 +642,13 @@ make -j 64
 sudo make install
 ```
 
+Install pip
+
+```sh
+wget https://bootstrap.pypa.io/get-pip.py
+sudo python3 get-pip.py
+```
+
 # 10 其他
 
 ## 10.1 代码格式化

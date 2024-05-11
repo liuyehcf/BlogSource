@@ -1235,7 +1235,19 @@ After installation, there will be a `install_manifest.txt` recording all the ins
 xargs rm < install_manifest.txt
 ```
 
-# 7 Reference
+# 7 Install
+
+**We can get binary distributions from [Get the Software](https://cmake.org/download/):**
+
+```sh
+wget https://github.com/Kitware/CMake/releases/download/v3.21.2/cmake-3.21.2-linux-x86_64.tar.gz
+
+tar -zxvf cmake-3.21.2-linux-x86_64.tar.gz -C /usr/local/lib
+
+ln -s /usr/local/lib/cmake-3.21.2-linux-x86_64/bin/cmake /usr/local/bin/cmake
+```
+
+# 8 Reference
 
 * [CMake Tutorial](https://cmake.org/cmake/help/latest/guide/tutorial/index.html)
     * [CMake Tutorial对应的source code](https://github.com/Kitware/CMake/tree/master/Help/guide/tutorial)

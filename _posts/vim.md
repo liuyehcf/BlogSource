@@ -849,93 +849,7 @@ let fmt = get(g:, 'plug_url_format', 'https://git::@mirror.ghproxy.com/https://g
 
 **由于我用的系统是`CentOS 7.9`，通过`yum install`安装的工具都过于陈旧，包括`gcc`、`g++`、`clang`、`clang++`、`cmake`等等，这些工具都需要通过其他方式重新安装**
 
-### 3.2.1 gcc
-
-**[gcc各版本源码包下载地址](http://ftp.gnu.org/gnu/gcc/)，我选择的版本是`gcc-10.3.0`**
-
-**若国内下载太慢，可以到[GCC mirror sites](http://gcc.gnu.org/mirrors.html)就近选择镜像源**
-
-```sh
-# 下载并解压源码包
-wget -O gcc-10.3.0.tar.gz 'http://ftp.gnu.org/gnu/gcc/gcc-10.3.0/gcc-10.3.0.tar.gz'
-tar -zxf gcc-10.3.0.tar.gz
-cd gcc-10.3.0
-
-# 安装依赖项
-yum install -y bzip2 gcc gcc-c++
-./contrib/download_prerequisites
-
-# 编译安装（比较耗时，耐心等待）
-./configure --disable-multilib --enable-languages=c,c++
-make -j 4
-make install
-
-# 删除原来的gcc
-yum remove -y gcc gcc-c++
-
-# 创建软连接
-rm -f /usr/bin/gcc /usr/bin/g++ /usr/bin/cc /usr/bin/c++ /lib64/libstdc++.so.6
-ln -s /usr/local/bin/gcc /usr/bin/gcc
-ln -s /usr/local/bin/g++ /usr/bin/g++
-ln -s /usr/bin/gcc /usr/bin/cc
-ln -s /usr/bin/g++ /usr/bin/c++
-ln -s /usr/local/lib64/libstdc++.so.6.0.28 /lib64/libstdc++.so.6
-```
-
-### 3.2.2 python3
-
-```
-yum install -y python3
-yum install -y python3-devel.x86_64
-```
-
-### 3.2.3 cmake
-
-**[cmake官网](https://cmake.org/download/)有二进制包可以下载，下载安装即可**
-
-```sh
-# 下载二进制包
-wget https://github.com/Kitware/CMake/releases/download/v3.21.2/cmake-3.21.2-linux-x86_64.tar.gz
-# 解压到/usr/local/lib目录下
-tar -zxvf cmake-3.21.2-linux-x86_64.tar.gz -C /usr/local/lib
-# 创建软连接
-ln -s /usr/local/lib/cmake-3.21.2-linux-x86_64/bin/cmake /usr/local/bin/cmake
-```
-
-### 3.2.4 llvm
-
-**根据[官网安装说明](https://clang.llvm.org/get_started.html)进行安装，其代码托管在[github-llvm-project](https://github.com/llvm/llvm-project)**
-
-* [Extra Clang Tools](https://clang.llvm.org/extra/)子项目包括如下工具：
-    * `clang-tidy`
-    * `clang-include-fixer`
-    * `clang-rename`
-    * `clangd`
-    * `clang-doc`
-
-```sh
-# 编译过程会非常耗时，非常占内存，如果内存不足的话请分配足够的swap内存
-# 我的编译环境是虚拟机，4c8G，swap分配了25G。编译时，最多使用了4G（主存） + 25G（swap）的内存
-# 建议准备150G的磁盘空间，以及30G的swap空间
-dd if=/dev/zero of=swapfile bs=1M count=30720 status=progress oflag=sync
-mkswap swapfile
-chmod 600 swapfile
-swapon swapfile
-
-git clone -b release/13.x https://github.com/llvm/llvm-project.git --depth 1
-cd llvm-project
-mkdir build
-# DLLVM_ENABLE_PROJECTS: 选择 clang 以及 clang-tools-extra 这两个子项目
-# DCMAKE_BUILD_TYPE: 构建类型指定为MinSizeRel。可选值有 Debug, Release, RelWithDebInfo, and MinSizeRel。其中 Debug 是默认值
-cmake -B build -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
-    -DCMAKE_BUILD_TYPE=MinSizeRel \
-    -G "Unix Makefiles" \
-    llvm
-cmake --build build -j 4
-sudo cmake --install build
-```
-
-### 3.2.5 vim8
+### 3.2.1 vim8 (Required)
 
 上述很多插件对vim的版本有要求，至少是`vim8`，而一般通过`yum install`安装的vim版本是`7.x`
 
@@ -951,7 +865,7 @@ yum install -y vim
 vim --version | head -1
 ```
 
-### 3.2.6 Symbol-ctags
+### 3.2.2 Symbol-ctags (Optional)
 
 Home: [ctags](https://ctags.io/)
 
@@ -1043,7 +957,7 @@ set tags+=~/.vim/.cfamily_systags
 set tags+=~/.vim/.python_systags
 ```
 
-### 3.2.7 Symbol-cscope
+### 3.2.3 Symbol-cscope (Optional)
 
 Home: [cscope](http://cscope.sourceforge.net/)
 
@@ -1118,7 +1032,7 @@ nnoremap <leader>si :cscope find i <c-r>=expand("<cfile>")<cr><cr>:copen<cr>
 
 * 尽量在源码目录创建数据库，否则cscope默认会扫描所有文件，效率很低
 
-### 3.2.8 Symbol-gtags
+### 3.2.4 Symbol-gtags (Optional)
 
 Home: [gtags](https://www.gnu.org/software/global/global.html)
 
@@ -1203,7 +1117,7 @@ endif
     1. **final修饰的类，`gtags`找不到其定义，坑爹的bug，害我折腾了很久**
 1. `global -d`无法查找成员变量的定义
 
-### 3.2.9 LSP-clangd
+### 3.2.5 LSP-clangd (Recommend)
 
 **`clangd`是`LSP, Language Server Protocol`的一种实现，主要用于`C/C++/Objective-C`等语言**
 
@@ -1222,8 +1136,26 @@ endif
 
 * `--query-driver=`：设置一个或多个`glob`，会从匹配这些`glob`的路径中搜索头文件
     * `--query-driver=/usr/bin/**/clang-*,/path/to/repo/**/g++-*`
+* `--compile-commands-dir=`：指定`compile_commands.json`的查找路径
+    * `--compile-commands-dir=/home/test/code/duckdb/build`
 
-### 3.2.10 LSP-ccls
+#### 3.2.5.1 .clangd Configuration
+
+[Configuration](https://clangd.llvm.org/config)
+
+我们可以在项目的根目录中创建`.clangd`，对`clangd`进行项目唯独的定制化配置
+
+下面是`duckdb`的[duckdb/.clangd](https://github.com/duckdb/duckdb/blob/main/.clangd)配置
+
+* 指定了`compile_commands.json`路径为：`build/clangd`（[Can not find duckdb headers](https://github.com/clangd/clangd/issues/1204)）
+
+```
+CompileFlags:
+  CompilationDatabase: build/clangd
+  Add: -Wno-unqualified-std-cast-call
+```
+
+### 3.2.6 LSP-ccls (Optional)
 
 **`ccls`是`LSP, Language Server Protocol`的一种实现，主要用于`C/C++/Objective-C`等语言**
 
@@ -1261,7 +1193,7 @@ cmake --build Release --target install
 1. 配置`LSP-client`插件，我用的是`LanguageClient-neovim`
 1. vim打开工程，便开始自动创建索引
 
-### 3.2.11 LSP-jdtls
+### 3.2.7 LSP-jdtls (Optional)
 
 **`jdtls`是`LSP, Language Server Protocol`的一种实现，主要用于`Java`语言**
 

@@ -577,6 +577,7 @@ classDiagram
     HdfsScanner <|-- HdfsOrcScanner
     HdfsScanner <|-- HdfsParquetScanner
     HdfsParquetScanner *-- FileReader
+    FileReader *-- RandomAccessFile
     FileReader *-- GroupReader: Multi
     FileReader *-- SharedBufferedInputStream
     GroupReader *-- ColumnReader: Multi
