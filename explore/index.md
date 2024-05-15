@@ -80,19 +80,27 @@ date: 2018-02-05 09:25:59
     * [ACM SIGMOD, Special Interest Group On Management Of Data](https://sigmod.org/)
     * [VLDB, Very Large Data Base](https://vldb.org/)
     * [ICDE, International Conference On Data Engineering](https://www.icde.org/)
-* [Compare Projects](https://ossinsight.io/compare/)
-* [DB Fiddle](https://www.db-fiddle.com/)
-* [Database of Databases](https://dbdb.io/)
-* [Sort Benchmark Home Page](https://sortbenchmark.org/)
-* [DB-Engines Ranking](https://db-engines.com/en/ranking)
-* [database-startups](https://www.crunchbase.com/hub/database-startups)
-* [35 of the Most Successful Database Startups](https://www.failory.com/startups/database)
+* DBMS Blogs
+    * [PrestoDB Blog](https://prestodb.io/blog/)
+    * [Trino Blog](https://trino.io/blog/)
+    * [DuckDB News](https://duckdb.org/news/)
+    * [Clickhouse Blog](https://clickhouse.com/blog)
+* Toos
+    * [Open Source Software Insight](https://ossinsight.io/)
+    * [DB Fiddle](https://www.db-fiddle.com/)
+    * [Sort Benchmark Home Page](https://sortbenchmark.org/)
+* Index
+    * [Database of Databases](https://dbdb.io/)
+    * [DB-Engines Ranking](https://db-engines.com/en/ranking)
+    * [database-startups](https://www.crunchbase.com/hub/database-startups)
+    * [35 of the Most Successful Database Startups](https://www.failory.com/startups/database)
 
 ## 6.1 Blog
 
 * [Alex DeBrie](https://www.alexdebrie.com/)
 * [Ottertune](https://ottertune.com/blog/)
-* [DuckDB News](https://duckdb.org/news/)
+* [Fabrice Bellard](https://bellard.org/)
+    * Author of `QEMU`, `FFmpeg`, etc.
 
 ## 6.2 Other
 

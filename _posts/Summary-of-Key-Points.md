@@ -1665,3 +1665,4 @@ In summary, `LL(1)` and `LR(1)` are both parsing techniques used in compiler con
     * 访问控制
     * 并发控制
     * 流量调度
+1. Undo log vs. redo log

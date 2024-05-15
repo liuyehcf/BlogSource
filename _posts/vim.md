@@ -865,7 +865,7 @@ yum install -y vim
 vim --version | head -1
 ```
 
-### 3.2.2 Symbol-ctags (Optional)
+### 3.2.2 Symbol-ctags (Recommend)
 
 Home: [ctags](https://ctags.io/)
 
@@ -2663,6 +2663,8 @@ call plug#end()
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
+
+* 依赖`ctags`
 
 **用法：**
 

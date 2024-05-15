@@ -2575,7 +2575,8 @@ tty -s && mesg n || true
 1. `uname -r`：内核版本号
 1. `/etc/*-release`，包括
     * `/etc/os-release`
-    * `/etc/centos-release`：发行版
+    * `/etc/centos-release`
+    * `/etc/debian_version`
 1. `/proc/version`
 
 ## 7.2 制作U盘启动盘

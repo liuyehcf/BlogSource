@@ -544,6 +544,45 @@ Bloom filter index is suitable for datasets with high cardinality, provided they
 
 # 4 Data Lake
 
+## 4.1 StarCache
+
+[StarRocks 存算分离 Data Cache 二三事](https://zhuanlan.zhihu.com/p/695673099)
+
+[starcache](https://github.com/StarRocks/starcache)
+
+* `AccessIndex`: Map from CacheKey to CacheItem
+* `BlockItem`: Each CacheItem holds a sequence of BlockItems, and each BlockItem can be a MemBlockItem or DiskBlockItem
+* `AdmissionPolicy`: Only used for memory cache
+* `PromotionPolicy`: Used to determine using memory cache or disk cache
+
+```mermaid
+classDiagram
+    StarCache <|-- StarCacheImpl
+    StarCacheImpl *-- MemCache
+    StarCacheImpl *-- DiskCache
+    MemCache *-- MemSpaceManager
+    MemCache *-- EvictionPolicy
+    DiskCache *-- DiskSpaceManager
+    DiskCache *-- EvictionPolicy
+    EvictionPolicy <|-- LruEvictionPolicy
+    StarCacheImpl *-- AccessIndex
+    StarCacheImpl *-- AdmissionPolicy
+    StarCacheImpl *-- PromotionPolicy
+    AccessIndex .. CacheItem: Mapping
+    CacheItem *-- CacheKey
+    CacheItem *-- BlockItem: Multi
+    BlockItem *-- MemBlockItem
+    BlockItem *-- DiskBlockItem
+    MemBlockItem *-- BlockSegment: Multi
+    BlockSegment: +uint32_t offset
+    BlockSegment: +uint32_t size
+    BlockSegment: +IOBuf buf
+    DiskBlockItem: +uint8_t dir_index
+    DiskBlockItem: +uint32_t block_index
+```
+
+## 4.2 Parquet Reader
+
 * `ScanOperator`: Execution root of a query plan
 * `ConnectorScanOperator`: Derived from `ScanOperator`, handling external source situations
 * `ChunkSource`: Each parallelism of `ScanOperator` will further submit multiply scan tasks, and each parallelism acts as a ChunkSource
@@ -572,6 +611,10 @@ classDiagram
     HdfsScanner *-- RandomAccessFile
     RandomAccessFile *-- CompressedInputStream
     CompressedInputStream *-- CacheInputStream: Adapt
+    CacheInputStream *-- BlockCache
+    BlockCache *-- KvCache
+    KvCache <|-- StarCacheWrapper
+    StarCacheWrapper *-- StarCache
     CacheInputStream *-- SharedBufferedInputStream: Adapt
     SharedBufferedInputStream *-- SeekableInputStream: Original
     HdfsScanner <|-- HdfsOrcScanner
@@ -598,7 +641,7 @@ classDiagram
     ColumnChunkReader *-- PageReader
 ```
 
-## 4.1 PR
+## 4.3 PR
 
 * [[Enhancement] parquet format to support coalesce reads](https://github.com/StarRocks/starrocks/pull/7478)
 * [[Enhancement] add support for late materialization in paquet reader](https://github.com/StarRocks/starrocks/pull/8574)

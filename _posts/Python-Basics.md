@@ -610,25 +610,30 @@ pip install xxx -i https://pypi.tuna.tsinghua.edu.cn/simple
 **Requirement:**
 
 * `openssl`
-    ```sh
-    wget https://www.openssl.org/source/openssl-1.1.1g.tar.gz
-    tar -zxf openssl-1.1.1g.tar.gz
-    cd openssl-1.1.1g
+    * Centos
+        ```sh
+        wget https://www.openssl.org/source/openssl-1.1.1g.tar.gz
+        tar -zxf openssl-1.1.1g.tar.gz
+        cd openssl-1.1.1g
 
-    ./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl no-ssl2
-    make -j $(( (cores=$(nproc))>1?cores/2:1 ))
-    sudo make install
+        ./config --prefix=/usr/local/openssl --openssldir=/usr/local/openssl no-ssl2
+        make -j $(( (cores=$(nproc))>1?cores/2:1 ))
+        sudo make install
 
-    export PATH=/usr/local/openssl/bin:${PATH}
-    echo '/usr/local/openssl/lib' | sudo tee /etc/ld.so.conf.d/openssl.conf
-    sudo ldconfig
-    sudo ldconfig -p | grep openssl
+        export PATH=/usr/local/openssl/bin:${PATH}
+        echo '/usr/local/openssl/lib' | sudo tee /etc/ld.so.conf.d/openssl.conf
+        sudo ldconfig
+        sudo ldconfig -p | grep openssl
 
-    openssl version
-    ```
+        openssl version
+        ```
 
+    * Ubuntu
+        * `apt-get install -y openssl libssl-dev`
 * `libffi`：Foreign Function Interface
-    `yum -y install libffi-devel`
+    * `yum -y install libffi-devel`
+* `zlib`
+    * `apt install -y zlib1g zlib1g-dev`
 
 Donwload latest stable version from [Python Source Releases](https://www.python.org/downloads/source/)
 
@@ -637,6 +642,8 @@ wget https://www.python.org/ftp/python/3.12.3/Python-3.12.3.tgz
 tar -xf Python-3.12.3.tgz
 cd Python-3.12.3
 
+# For ubuntu, you can install openssl through: apt-get install openssl libssl-dev, and this will be installed into /usr,
+# so in this case, you can use ./configure --enable-optimizations --with-openssl=/usr
 ./configure --enable-optimizations --with-openssl=/usr/local/openssl
 make -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo make install

@@ -212,7 +212,16 @@ RUN apk add -U tzdata
             </plugin>
 ```
 
-# 7 Tips
+# 7 Docker Compose
+
+## 7.1 Install
+
+```sh
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+```
+
+# 8 Tips
 
 1. 启动并保持容器运行
     * 可以执行一个不会终止的程序：`docker run -dit xxx:v1`
@@ -257,7 +266,7 @@ RUN apk add -U tzdata
 1. 清理无用镜像：`docker system prune -a`
 1. 让普通用户有权限使用`docker`：`sudo usermod -aG docker username`
 
-## 7.1 修改存储路径
+## 8.1 修改存储路径
 
 默认情况下，docker相关的数据会存储在`/var/lib/docker`。编辑配置文件`/etc/docker/daemon.json`（没有就新建），增加如下配置项：
 
@@ -269,7 +278,7 @@ RUN apk add -U tzdata
 
 然后通过`systemctl restart docker`重启docker即可
 
-## 7.2 修改镜像源
+## 8.2 修改镜像源
 
 编辑配置文件`/etc/docker/daemon.json`（没有就新建），增加如下配置项：
 
@@ -289,7 +298,7 @@ RUN apk add -U tzdata
 
 然后通过`systemctl restart docker`重启docker即可
 
-## 7.3 跨平台运行容器
+## 8.3 跨平台运行容器
 
 默认情况下，docker是不支持`--platform`参数的，可以通过修改`/etc/docker/daemon.json`，添加如下配置项后，重启docker，开启该功能
 
@@ -370,7 +379,7 @@ Linux c3fb58ea543c 4.14.134 #1 SMP Tue Dec 29 21:27:58 EST 2020 aarch64 aarch64 
 
 * `docker run --rm --privileged multiarch/qemu-user-static:register`是向内核注册了各异构平台的`binfmt handler`，包括`aarch64`等等，这些注册信息就包括了`binfmt handler`的路径，比如`/usr/bin/qemu-aarch64-static`等等，注册信息都在`/proc/sys/fs/binfmt_misc`目录下，每个注册项都是该目录下的一个文件。**实际的`qemu-xxx-static`文件还得手动放置到对应目录中才能生效**
 
-## 7.4 镜像裁剪工具-dockerslim
+## 8.4 镜像裁剪工具-dockerslim
 
 ```sh
 docker-slim build --http-probe=false centos:7.6.1810
@@ -378,11 +387,11 @@ docker-slim build --http-probe=false centos:7.6.1810
 
 裁剪之后，镜像的体积从`202MB`变为`3.55MB`。但是裁剪之后，大部分的命令都被裁剪了（包括`ls`这种最基础的命令）
 
-## 7.5 如何感知程序是否运行在容器中
+## 8.5 如何感知程序是否运行在容器中
 
 一般来说，如果运行环境是容器，那么会存在`/.dockerenv`这个文件
 
-## 7.6 从容器构建镜像
+## 8.6 从容器构建镜像
 
 **保留镜像原本的layer，每次commit都会生成一个layer，这样会导致镜像越来越大：**
 
@@ -397,18 +406,18 @@ docker export <container-id> -o centos7.9.2009-my.tar
 docker import centos7.9.2009-my.tar centos7.9.2009-my:latest
 ```
 
-# 8 FAQ
+# 9 FAQ
 
-## 8.1 k8s环境docker异常
+## 9.1 k8s环境docker异常
 
 在k8s环境中，若容器运行时用的是`docker`，那么该`docker`会依赖`containerd`，当`containerd`不正常的时候，`docker`也就不正常了。恢复`containerd`的办法：将`/var/lib/containerd/io.containerd.metadata.v1.bolt`这个文件删掉
 
-## 8.2 read unix @->/var/run/docker.sock: read: connection reset by peer
+## 9.2 read unix @->/var/run/docker.sock: read: connection reset by peer
 
 1. 没有权限
 1. 多套`docker`共用了同一个`/var/run/docker.sock`套接字文件，可以用`lsof -U | grep docker.sock`查看。默认情况下只有2个记录，一个是`systemd`的，另一个是`dockerd`的
 
-# 9 参考
+# 10 参考
 
 * [Docker Hub](https://hub.docker.com/)
 * [Docker历史版本下载](https://docs.docker.com/docker-for-mac/release-notes/#docker-community-edition-17120-ce-mac49-2018-01-19)

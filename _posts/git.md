@@ -474,6 +474,9 @@ git fetch [remote]
 # 下载远程仓库的指定分支
 git fetch [remote] [branch]
 
+# 下载远程仓库的指定提交
+git fetch [remote] [commit]
+
 # 下载远程仓库的指定pr
 git fetch [remote] pull/29048/head
 

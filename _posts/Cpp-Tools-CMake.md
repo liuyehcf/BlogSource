@@ -612,6 +612,20 @@ target_link_libraries(<target> ... <item>... ...)
 target_link_libraries(echo_client ${BRPC_LIB} ${DYNAMIC_LIB})
 ```
 
+#### 5.9.2.1 Automatic Inclusion of Header File Paths in CMake with target_link_libraries
+
+When using the `target_link_libraries` command in CMake to link a target (such as a library), the related header file paths may automatically be included. This is because modern CMake manages projects based on the concept of "targets," which allows targets to own and propagate attributes used for building and usage, such as include directories, definitions, compile options, etc.
+
+This behavior is primarily achieved through "usage requirements." When you set `INTERFACE`, `PUBLIC`, or `PRIVATE` properties for a target, these properties affect both the target itself and any other targets that link to it:
+
+* `PRIVATE`: These properties are only visible to the target that defines them and do not propagate to other targets that depend on this target.
+* `PUBLIC`: These properties apply to both the target that defines them and automatically propagate to any other targets that depend on this target.
+* `INTERFACE`: These properties do not apply to the target that defines them but do propagate to any other targets that depend on this target.
+
+**When a library specifies its header file paths in its CMake configuration file using the `target_include_directories` with the `PUBLIC` or `INTERFACE` keywords, these paths automatically become part of the include paths for targets that depend on this library. Therefore, when you link to such a library using `target_link_libraries`, you also implicitly gain access to these include paths.**
+
+This design greatly simplifies dependency management within projects, allowing maintainers to avoid explicitly specifying include paths, compiler, and linker configurations repeatedly. This is also one of the recommended best practices in modern CMake.
+
 ## 5.10 Link Directories
 
 ### 5.10.1 link_directories
@@ -641,6 +655,8 @@ link_directories(/pathB/lib)
 [target_link_directories](https://cmake.org/cmake/help/latest/command/target_link_directories.html)
 
 Add link directories to a target. Specifies the paths in which the linker should search for libraries when linking a given target. Each item can be an absolute or relative path, with the latter being interpreted as relative to the current source directory. These items will be added to the link command.
+
+By using `AFTER` or `BEFORE` explicitly, you can select between appending and prepending, independent of the default.
 
 ```cmake
 target_link_directories(<target> [BEFORE]

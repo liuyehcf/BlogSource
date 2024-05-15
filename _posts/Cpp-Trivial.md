@@ -652,7 +652,7 @@ pprof --svg ./main /tmp/test-profile.0001.heap > heap.svg
 [jemalloc/INSTALL.md](https://github.com/jemalloc/jemalloc/blob/dev/INSTALL.md)
 
 ```sh
-git clone git@github.com:jemalloc/jemalloc.git
+git clone https://github.com/jemalloc/jemalloc.git
 cd jemalloc
 git checkout 5.3.0
 
@@ -1785,7 +1785,8 @@ Build with `ninja`
 ```sh
 git clone -b release/16.x https://github.com/llvm/llvm-project.git --depth 1
 cd llvm-project
-cmake -B build -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
+# build binary with suffix: -DLLVM_VERSION_SUFFIX=-16
+cmake -B build -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lldb;lld" \
     -DCMAKE_BUILD_TYPE=Release \
     -G "Ninja" \
     llvm
@@ -1812,7 +1813,8 @@ Or you can build with `makefile`:
 ```sh
 git clone -b release/16.x https://github.com/llvm/llvm-project.git --depth 1
 cd llvm-project
-cmake -B build -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
+# build binary with suffix: -DLLVM_VERSION_SUFFIX=-16
+cmake -B build -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lldb;lld" \
     -DCMAKE_BUILD_TYPE=Release \
     -G "Unix Makefiles" \
     llvm

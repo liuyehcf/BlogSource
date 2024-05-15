@@ -245,6 +245,11 @@ Java反编译工具，[下载地址](http://www.javadecompilers.com/jad)
 
 * [Java SE 17 Archive Downloads](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
 
+```sh
+wget https://download.oracle.com/java/17/archive/jdk-17.0.10_linux-x64_bin.tar.gz
+tar -zxvf jdk-17.0.10_linux-x64_bin.tar.gz -C /usr/local
+```
+
 ## 13.2 Find JDK Install Path
 
 ### 13.2.1 Linux

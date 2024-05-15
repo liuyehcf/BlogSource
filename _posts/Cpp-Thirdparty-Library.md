@@ -399,6 +399,21 @@ int main() {
 
 [folly](https://github.com/facebook/folly)
 
+Prerequisites (These dependencies won't be automatically installed by cachelib's script):
+
+* `boost`
+* `jemalloc`
+
+For Ubuntu 18.04, you may need the following dependencies:
+
+```sh
+sudo apt install -y libdouble-conversion-dev libevent-dev liblz4-dev libdwarf-dev libsnappy-dev liblzma-dev libbz2-dev libunwind-dev libsodium-dev libnuma-dev libzstd-dev
+```
+
+## 4.2 CacheLib
+
+[CacheLib](https://github.com/facebook/CacheLib)
+
 # 5 Google
 
 ## 5.1 gflag
@@ -789,7 +804,15 @@ inline BENCHMARK_ALWAYS_INLINE void DoNotOptimize(Tp& value) {
 * [benchmark/docs/user_guide.md](https://github.com/google/benchmark/blob/main/docs/user_guide.md)
 * [c++性能测试工具：google benchmark入门（一）](https://www.cnblogs.com/apocelipes/p/10348925.html)
 
-## 5.5 [gperftools/gperftools](https://github.com/gperftools/gperftools)
+## 5.5 gperftools/gperftools
+
+[gperftools/gperftools](https://github.com/gperftools/gperftools)
+
+## 5.6 snappy
+
+[snappy](https://github.com/google/snappy)
+
+Snappy is a compression/decompression library
 
 # 6 Apache
 
