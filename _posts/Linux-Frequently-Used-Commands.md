@@ -279,14 +279,16 @@ hostnamectl set-hostname <name>
 * `-a`：显式所有项目，包括隐藏的文件或者目录
 * `-l`：显式项目详情
 * `-t`：根据项目修改时间排序，最近修改的排在最前面
+* `-S`：根据项目大小排序，最大的排在最前面
 * `-r`：反向排序
 * `-h`：以人类可读的方式显示文件大小
 * `-I`：排除指定pattern的项目
 
 **Examples:**
 
-* `ls -alth | head -n 5`
-* `ls -alrth`
+* `ls -lht | head -n 5`
+* `ls -lhtr`
+* `ls -lhS`
 * `ls *.txt`：查找所有后缀为`.txt`的文件，注意不要用`ls "*.txt"`
 * `ls -I "*.txt" -I "*.cpp"`
 * `ls -d */`：当前目录下的所有子目录
@@ -2165,6 +2167,7 @@ netstat的功能就是查看网络的连接状态，而网络连接状态中，�
     * `hostaddr`：主机ip
     * `service`：服务
     * `port`端口号
+* `-p`：后接pid
 
 **Examples:**
 
@@ -4141,8 +4144,19 @@ yum -y install devtoolset-7
 yum -y install devtoolset-8
 yum -y install devtoolset-9
 yum -y install devtoolset-10
+yum -y install devtoolset-11
 
-scl enable devtoolset-10 bash
+scl enable devtoolset-11 bash
+```
+
+**删除：**
+
+```sh
+yum -y remove devtoolset-7\*
+yum -y remove devtoolset-8\*
+yum -y remove devtoolset-9\*
+yum -y remove devtoolset-10\*
+yum -y remove devtoolset-11\*
 ```
 
 ## 10.3 dnf
@@ -4204,6 +4218,8 @@ apt install clang-format-X.Y
     * `cat /sys/block/<device_name>/queue/rotational`
         * `<device_name>` may be sda
 1. 允许用户使用`docker`命令：`sudo usermod -aG docker username`
+1. 找到进程启动命令的完整路径：
+    * `lsof -p xxx | grep txt`
 
 # 12 Reference
 

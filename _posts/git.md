@@ -505,7 +505,24 @@ git push [remote] --force
 git push [remote] --all
 ```
 
-# 11 Plugin
+# 11 Submodule
+
+```sh
+# Add submodule to current git project
+git submodule add [repository_url] [path/to/submodule]
+
+# Init and checkout to the specific commit
+git submodule update --init --recursive
+
+# Update repository
+git submodule sync --recursive
+git submodule sync --recursive [path/to/submodule]
+
+# Check Status
+git submodule status
+```
+
+# 12 Plugin
 
 [git-extra](https://github.com/tj/git-extras)
 
@@ -514,14 +531,14 @@ git push [remote] --all
 git summary --line
 ```
 
-# 12 Publish
+# 13 Publish
 
 ```sh
 # 生成一个可供发布的压缩包
 git archive
 ```
 
-# 13 .gitignore
+# 14 .gitignore
 
 **基础规则**
 
@@ -539,29 +556,29 @@ git archive
 1. `/**`开头，表示匹配内部的一切。例如`abc/**`匹配`abc`目录下的所有文件。**`abc/**`与`abc/`的作用是一样的**
 1. `/**/`表示匹配`0`个或`多`个`目录`。例如`a/**/b`匹配`a/b`、`a/x/b`、`a/x/y/b`
 
-# 14 git-lfs
+# 15 git-lfs
 
 [Git Large File Storage](https://git-lfs.github.com/)
 
-# 15 git-worktree
+# 16 git-worktree
 
 [git-worktree](https://git-scm.com/docs/git-worktree)
 
-# 16 gist
+# 17 gist
 
 Gists allow developers to share code or text snippets with others, making it easy to collaborate or seek help with specific programming tasks.
 
 [Gist](https://gist.github.com/)
 
-# 17 copilot
+# 18 copilot
 
 [copilot](https://github.com/features/copilot)
 
-# 18 Tips
+# 19 Tips
 
-## 18.1 Install Latest Version
+## 19.1 Install Latest Version
 
-### 18.1.1 Centos
+### 19.1.1 Centos
 
 ```sh
 sudo yum -y remove git
@@ -572,7 +589,7 @@ sudo yum -y install https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-r
 sudo yum install git
 ```
 
-## 18.2 Issue with Chinese Displayed in Octal Form
+## 19.2 Issue with Chinese Displayed in Octal Form
 
 在Windows中，git bash打印的中文可能表示成`\+三个数字`的形式，即八进制表示
 
@@ -582,9 +599,9 @@ sudo yum install git
 git config --global core.quotepath false
 ```
 
-## 18.3 Proxy
+## 19.3 Proxy
 
-### 18.3.1 SSH Protocol
+### 19.3.1 SSH Protocol
 
 Edit `~/.ssh/config`
 
@@ -598,20 +615,26 @@ Host github.com
    ProxyCommand nc -v -x 127.0.0.1:7890 %h %p
 ```
 
-### 18.3.2 HTTP Protocol
+### 19.3.2 HTTP Protocol
 
 ```sh
 git config --global http.proxy "http://127.0.0.1:7890"
 git config --global https.proxy "https://127.0.0.1:7890"
 ```
 
-## 18.4 DNS
+## 19.4 DNS
 
 ```config
 140.82.114.4 github.com
 ```
 
-# 19 Reference
+## 19.5 Access Tokens
+
+`Settings` -> `Developer Settings` -> `Personal access tokens`
+
+You can use token as your password to push to remote repository
+
+# 20 Reference
 
 * [git官方文档](https://git-scm.com/docs/gitignore)
 * [git教程](https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/)

@@ -221,6 +221,15 @@ sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-
 sudo chmod +x /usr/local/bin/docker-compose
 ```
 
+## 7.2 Usage
+
+* `docker-compose [ -f xxx.yml ] up`
+* `docker-compose [ -f xxx.yml ] up -d`
+* `docker-compose [ -f xxx.yml ] down`
+* `docker-compose [ -f xxx.yml ] rm`
+* `docker-compose [ -f xxx.yml ] ps`
+* `docker-compose [ -f xxx.yml ] ls`
+
 # 8 Tips
 
 1. 启动并保持容器运行
@@ -404,6 +413,25 @@ docker commit <container-id> <new_image>
 ```sh
 docker export <container-id> -o centos7.9.2009-my.tar
 docker import centos7.9.2009-my.tar centos7.9.2009-my:latest
+```
+
+## 8.7 Setup Http Proxy
+
+Add file `/etc/systemd/system/docker.service.d/http-proxy.conf` with following content:
+
+```sh
+[Service]
+Environment="HTTPS_PROXY=xxx"
+Environment="HTTP_PROXY=xxx"
+Environment="NO_PROXY=localhost,127.0.0.1,yyy"
+```
+
+Check and restart
+
+```sh
+systemctl daemon-reload
+systemctl show docker --property Environment
+systemctl restart docker
 ```
 
 # 9 FAQ

@@ -1251,6 +1251,12 @@ After installation, there will be a `install_manifest.txt` recording all the ins
 xargs rm < install_manifest.txt
 ```
 
+## 6.11 Ignore -Werror
+
+```sh
+cmake --compile-no-warning-as-error -DWERROR=0 ...
+```
+
 # 7 Install
 
 **We can get binary distributions from [Get the Software](https://cmake.org/download/):**

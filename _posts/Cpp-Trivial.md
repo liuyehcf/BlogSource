@@ -15,21 +15,21 @@ categories:
 
 ```mermaid
 flowchart TD
-    other_target(["其他目标代码"])
-    linker[["链接器"]]
-    source(["源代码"])
-    compiler[["编译器"]]
-    assembly(["汇编代码"])
-    assembler[["汇编器"]]
-    target(["目标代码"])
-    lib(["库文件"])
-    result_target(["目标代码"])
-    exec(["可执行程序"])
-    result_lib(["库文件"])
+    other_target(["Other Object File"])
+    linker[["Linker"]]
+    source(["Source Code"])
+    compiler[["Compiler"]]
+    assembly(["Assembly Code"])
+    assembler[["Assembler"]]
+    target(["Object File"])
+    lib(["Library File"])
+    result_target(["Object File"])
+    exec(["Executable File"])
+    result_lib(["Library File"])
 
     other_target --> linker
 
-    subgraph 编译过程
+    subgraph Compile Process
         source --> compiler
         compiler --> assembly
         assembly --> assembler
@@ -45,7 +45,32 @@ flowchart TD
 
 # 2 Library
 
-## 2.1 Static Library
+## 2.1 Header File Search Order
+
+**头文件`#include "xxx.h"`的搜索顺序**
+
+1. 先搜索当前目录
+1. 然后搜索`-I`参数指定的目录
+1. 再搜索gcc的环境变量`CPLUS_INCLUDE_PATH`（C程序使用的是`C_INCLUDE_PATH`）
+1. 最后搜索gcc的内定目录，包括：
+    * `/usr/include`
+    * `/usr/local/include`
+    * `/usr/lib/gcc/x86_64-redhat-linux/<gcc version>/include`（C头文件）或者`/usr/include/c++/<gcc version>`（C++头文件）
+
+**头文件`#include <xxx.h>`的搜索顺序**
+
+1. 先搜索`-I`参数指定的目录
+1. 再搜索gcc的环境变量`CPLUS_INCLUDE_PATH`（C程序使用的是`C_INCLUDE_PATH`）
+1. 最后搜索gcc的内定目录，包括：
+    * `/usr/include`
+    * `/usr/local/include`
+    * `/usr/lib/gcc/x86_64-redhat-linux/<gcc version>/include`（C头文件）或者`/usr/include/c++/<gcc version>`（C++头文件）
+
+**可以在编译的时候加上`-v`参数，就可以看到最准确的搜索路径**
+
+* 每个版本的编译器都有自己的头文件，这个路径应该是在构建编译器的时候写到二进制里面去的
+
+## 2.2 Static Library
 
 **后缀：`*.a`**
 
@@ -60,7 +85,7 @@ flowchart TD
 * `-Xlinker -Map=a.map`：将链接时的信息记录到`a.map`中
 * `nm/objdump/readelf/strings`或许可以找到一些静态库相关的`hint`
 
-## 2.2 Dynamic Library
+## 2.3 Dynamic Library
 
 **后缀：`*.so`**
 
@@ -70,7 +95,7 @@ flowchart TD
 
 * 安装新的库后，需要`sudo ldconfig`更新缓存，否则运行时可能会找不到对应的`so`文件
 
-### 2.2.1 Linux's so version mechanism
+### 2.3.1 Linux's so version mechanism
 
 **本小节转载摘录自[一文读懂Linux下动态链接库版本管理及查找加载方式](https://blog.ideawand.com/2020/02/15/how-does-linux-shared-library-versioning-works/)**
 
@@ -84,7 +109,7 @@ libbar.so.x  ->  libbar.so.x.y
 
 这里的`x`、`y`、`z`分别代表的是这个`so`的主版本号（`MAJOR`），次版本号（`MINOR`），以及发行版本号（`RELEASE`），对于这三个数字各自的含义，以及什么时候会进行增长，不同的文献上有不同的解释，不同的组织遵循的规定可能也有细微的差别，但有一个可以肯定的事情是：主版本号（`MAJOR`）不同的两个`so`库，所暴露出的`API`接口是不兼容的。而对于次版本号，和发行版本号，则有着不同定义，其中一种定义是：次要版本号表示`API`接口的定义发生了改变（比如参数的含义发生了变化），但是保持向前兼容；而发行版本号则是函数内部的一些功能调整、优化、BUG修复，不涉及`API`接口定义的修改
 
-#### 2.2.1.1 so Related Names
+#### 2.3.1.1 so Related Names
 
 **介绍一下在`so`查找过程中的几个名字**
 
@@ -92,7 +117,7 @@ libbar.so.x  ->  libbar.so.x.y
 * **`real name`：是真实具有`so`库可执行代码的那个文件，之所以叫`real`是相对于`SONAME`和`linker name`而言的，因为另外两种名字一般都是一个软连接，这些软连接最终指向的文件都是具有`real name`命名形式的文件。`real name`的命名格式中，可能有`2`个数字尾缀，也可能有`3`个数字尾缀，但这不重要。你只要记住，真实的那个，不是以软连接形式存在的，就是一个`real name`**
 * **`linker name`：这个名字只是给编译工具链中的连接器使用的名字，和程序运行并没有什么关系，仅仅在链接得到可执行文件的过程中才会用到。它的命名特征是以`lib`开头，以`.so`结尾，不带任何数字后缀的格式**
 
-#### 2.2.1.2 SONAME
+#### 2.3.1.2 SONAME
 
 假设在你的Linux系统中有3个不同版本的`bar`共享库，他们在磁盘上保存的文件名如下：
 
@@ -116,7 +141,7 @@ libbar.so.x  ->  libbar.so.x.y
 * 通过修改软连接的指向，可以让应用程序在互相兼容的`so`库中方便切换使用哪一个
 * 通常情况下，大家使用最新版本即可，除非是为了在特定版本下做一些调试、开发工作
 
-#### 2.2.1.3 linker name
+#### 2.3.1.3 linker name
 
 上一节中我们提到，可执行文件里会存储精确到主版本号的`SONAME`，但是在编译生成可执行文件的过程中，编译器怎么知道应该用哪个主版本号呢？为了回答这个问题，我们从编译链接的过程来梳理一下
 
@@ -135,9 +160,9 @@ libbar.so.x  ->  libbar.so.x.y
 * 编译器从软链接指向的文件里找到其`SONAME`，并将`SONAME`写入到生成的可执行文件中
 * 通过改变`linker name`软连接的指向，可以将不同主版本号的`SONAME`写入到生成的可执行文件中
 
-## 2.3 Search Order
+## 2.4 Search Order
 
-### 2.3.1 Compilation Time
+### 2.4.1 Compilation Time
 
 During compilation, the order in which the linker (such as GNU's `ld`) searches for library files follows certain rules, ensuring that the linker can find and link the correct version of the library. The search order typically goes as follows:
 
@@ -153,7 +178,7 @@ During compilation, the order in which the linker (such as GNU's `ld`) searches 
 * **Augmentation by GCC**: GCC might automatically augment `LIBRARY_PATH` with additional paths based on its internal logic or other environment variables. For instance, GCC might add paths related to its internal libraries or the target architecture's standard library locations.
 * **Security Restrictions**: In some secure or restricted environments, modifications to environment variables like `LIBRARY_PATH` may be ignored or overridden by security policies. This is often seen in managed or shared computing environments where administrators want to control the software linking process strictly.
 
-### 2.3.2 Runtime
+### 2.4.2 Runtime
 
 The runtime search order for shared libraries (.so files) on Unix-like systems is determined by several factors and environment settings. Here’s a general overview of how the runtime search order works: (**Refer to `man ld.so` for details**)
 
@@ -165,7 +190,7 @@ The runtime search order for shared libraries (.so files) on Unix-like systems i
 * **`/etc/ld.so.cache`**: This is a compiled list of candidate libraries previously found in the configured system library paths. The dynamic linker uses this cache to speed up the lookup process. The cache can be updated with the `ldconfig` command, which scans the directories in `/etc/ld.so.conf` and the standard directories for libraries, then builds the cache file.
 * **Built-in System Paths**: Finally, if the library still hasn't been found, the linker falls back to built-in system paths hardcoded into the dynamic linker. This usually includes the standard directories like `/lib` and `/usr/lib`.
 
-#### 2.3.2.1 How to update `/etc/ld.so.cache`
+#### 2.4.2.1 How to update `/etc/ld.so.cache`
 
 Adding content directly to `/etc/ld.so.cache` is not recommended because it's a binary file generated by the `ldconfig` tool. Modifying it manually can lead to system instability or even make your system unbootable. The correct way to add new libraries to the cache involves placing the library files in a directory that is scanned by `ldconfig` and then running `ldconfig` to update the cache.
 
@@ -213,11 +238,11 @@ ldconfig -p | grep /custom/lib
 echo '/custom/lib' | sudo tee /etc/ld.so.conf.d/mylibs.conf && sudo ldconfig
 ```
 
-## 2.4 Link Order
+## 2.5 Link Order
 
 [Why does the order in which libraries are linked sometimes cause errors in GCC?](https://stackoverflow.com/questions/45135/why-does-the-order-in-which-libraries-are-linked-sometimes-cause-errors-in-gcc)
 
-### 2.4.1 Static Linking
+### 2.5.1 Static Linking
 
 In static linking, the order in which libraries are linked can be very important. This is because the linker, which resolves symbols and references in your code, processes libraries in the order they are specified. If one library depends on symbols from another, the dependent library must be listed first. This order dependency ensures that all symbols are resolved correctly at the time of linking, and the final executable contains all necessary code.
 
@@ -258,15 +283,15 @@ g++ a.cpp -L. -ld -lb # wrong order
 g++ a.cpp -L. -lb -ld # right order
 ```
 
-### 2.4.2 Dynamic Linking
+### 2.5.2 Dynamic Linking
 
 In dynamic linking, the order of linking libraries is typically less critical. Libraries are not combined into a single executable at compile time; instead, references to these libraries are resolved at runtime. The dynamic linker/loader handles the process of loading the necessary libraries into memory when the program is executed and resolves symbols on the fly. This means that the system can usually manage dependencies more flexibly, and the specific order in which libraries are listed is not as crucial.
 
-## 2.5 Environment Variables
+## 2.6 Environment Variables
 
 Please refer to `man ld.so` for details:
 
-### 2.5.1 LD_PRELOAD
+### 2.6.1 LD_PRELOAD
 
 Lists shared libraries that are loaded (preloaded) before any other shared libraries. This can be used to override functions in other shared objects.
 
@@ -317,7 +342,7 @@ fopen() returned NULL
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-### 2.5.2 LD_DEBUG
+### 2.6.2 LD_DEBUG
 
 Usage: `LD_DEBUG=<type> <binary>`, here are all available types.
 
@@ -332,9 +357,9 @@ Usage: `LD_DEBUG=<type> <binary>`, here are all available types.
 1. `unused`: Determine unused DSOs.
 1. `versions`: Display version dependencies.
 
-## 2.6 How to make library
+## 2.7 How to make library
 
-### 2.6.1 How to make static library
+### 2.7.1 How to make static library
 
 ```sh
 cat > foo.cpp << 'EOF'
@@ -361,7 +386,7 @@ gcc -o main main.cpp -O3 -L . -lfoo -lstdc++
 ./main
 ```
 
-### 2.6.2 How to make dynamic library
+### 2.7.2 How to make dynamic library
 
 ```sh
 cat > foo.cpp << 'EOF'
@@ -390,7 +415,7 @@ gcc -o main main.cpp -O3 -L . -Wl,-rpath=`pwd` -lfoo -lstdc++
 ./main
 ```
 
-## 2.7 ABI
+## 2.8 ABI
 
 `ABI`全称是`Application Binary Interface`，它是两个二进制模块间的接口，二进制模块可以是`lib`，可以是操作系统的基础设施，或者一个正在运行的用户程序
 
@@ -410,7 +435,7 @@ gcc -o main main.cpp -O3 -L . -Wl,-rpath=`pwd` -lfoo -lstdc++
 1. 如何发起系统调用
 1. `lib`、`object file`等的文件格式
 
-### 2.7.1 cxxabi.h
+### 2.8.1 cxxabi.h
 
 Some commonly used functions for handling C++ ABI (Application Binary Interface), defined in `<cxxabi.h>`, include(The prefix `__cxa` stands for `C++ eXception ABI`):
 
@@ -420,7 +445,7 @@ Some commonly used functions for handling C++ ABI (Application Binary Interface)
 * `abi::__cxa_current_exception_type`: Used to retrieve type information for the current exception. It returns a pointer to a `std::type_info` object that describes the type of the current thrown exception.
 * `abi::__cxa_bad_cast`: Used to throw a `std::bad_cast` exception when a `dynamic_cast` fails. It's typically called when a runtime type conversion fails.
 
-### 2.7.2 Language-Specific ABI
+### 2.8.2 Language-Specific ABI
 
 摘自[What is C++ ABI?](https://www.quora.com/What-is-C-ABI)
 
@@ -433,7 +458,7 @@ Some commonly used functions for handling C++ ABI (Application Binary Interface)
 > * How are overloaded functions and operators “named” in object files? This is where “name mangling” usually comes in: The type of the various functions is encoded in their object file names. That also handles the “overloading” that results from template instantiations.
 > * How are spilled inline functions and template instantiations handled? After all, different object files might use/spill the same instances, which could lead to collisions.
 
-### 2.7.3 Dual ABI
+### 2.8.3 Dual ABI
 
 [Dual ABI](https://gcc.gnu.org/onlinedocs/libstdc++/manual/using_dual_abi.html)
 
@@ -449,7 +474,7 @@ Some commonly used functions for handling C++ ABI (Application Binary Interface)
 * [ABI Policy and Guidelines](https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html)
 * [C/C++ ABI兼容那些事儿](https://zhuanlan.zhihu.com/p/556726543)
 
-### 2.7.4 ABI Mismatch Issue
+### 2.8.4 ABI Mismatch Issue
 
 ```
 # compile works fine
@@ -468,11 +493,11 @@ The errors you're encountering at runtime indicate that your application (`main`
 * `gcc -o main main.cpp -O0 -lstdc++ -fuse-ld=gold -Wl,--verbose`: Check the dynamic lib path that used at link time.
 * `ldd main`: Check the dynamic lib path that used at runtime.
 
-## 2.8 Commonly-used Librarys
+## 2.9 Commonly-used Librarys
 
 [Library Interfaces and Headers](https://docs.oracle.com/cd/E86824_01/html/E54772/makehtml-id-7.html#scrolltoc)
 
-### 2.8.1 libc/glibc/glib
+### 2.9.1 libc/glibc/glib
 
 **You can refer to `man libc/glibc` for details**
 
@@ -491,7 +516,7 @@ The errors you're encountering at runtime indicate that your application (`main`
 * `gcc -print-file-name=libc.so`
 * `strings /lib64/libc.so.6 | grep GLIBC`：查看`glibc`的API的版本
 
-### 2.8.2 libdl
+### 2.9.2 libdl
 
 The `libdl` library plays a crucial role in the Linux environment as it provides dynamic linking capabilities. Here's a breakdown of its primary functions:
 
@@ -511,13 +536,13 @@ The `libdl` library plays a crucial role in the Linux environment as it provides
 * [dlopen in libc and libdl](https://stackoverflow.com/questions/31155824/dlopen-in-libc-and-libdl): `libdl` is only exposing the **private** dl functions that already exist in libc as well as some wrappers to make the use of the libraries a bit easier. You can see some of this behaviour by looking at the symbol table of `libdl`.
     * Check private methods: `readelf -s /lib64/ld-linux-x86-64.so.2 | grep PRIVATE`
 
-### 2.8.3 Others
+### 2.9.3 Others
 
 1. `libm`：c math library
 1. `libz`：compression/decompression library
 1. `libpthread`：POSIX threads library
 
-## 2.9 Reference
+## 2.10 Reference
 
 * [Program Library HOWTO](https://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html)
 * [Shared Libraries: Understanding Dynamic Loading](https://amir.rachum.com/blog/2016/09/17/shared-libraries/)
@@ -1764,29 +1789,31 @@ readelf -p .comment <binary_file>
 strings <binary_file> | grep <linker_name>
 ```
 
-## 7.5 Reference
+## 7.5 lto-dump
+
+## 7.6 Reference
 
 # 8 LLVM Tools
 
 ## 8.1 Build & Install
 
-[Getting Started: Building and Running Clang](https://clang.llvm.org/get_started.html)
+**Doc:**
 
-[Extra Clang Tools](https://clang.llvm.org/extra/)
+* [Getting Started with the LLVM System](https://llvm.org/docs/GettingStarted.html#getting-the-source-code-and-building-llvm)
+* [Getting Started: Building and Running Clang](https://clang.llvm.org/get_started.html)
+* [Extra Clang Tools](https://clang.llvm.org/extra/)
+    * `clang-tidy`
+    * `clang-include-fixer`
+    * `clang-rename`
+    * `clangd`
+    * `clang-doc`
 
-* `clang-tidy`
-* `clang-include-fixer`
-* `clang-rename`
-* `clangd`
-* `clang-doc`
-
-Build with `ninja`
+**Build with `ninja`:**
 
 ```sh
 git clone -b release/16.x https://github.com/llvm/llvm-project.git --depth 1
 cd llvm-project
-# build binary with suffix: -DLLVM_VERSION_SUFFIX=-16
-cmake -B build -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lldb;lld" \
+cmake -B build -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lldb;lld;compiler-rt" \
     -DCMAKE_BUILD_TYPE=Release \
     -G "Ninja" \
     llvm
@@ -1806,21 +1833,26 @@ ninja -j $(( (cores=$(nproc))>1?cores/2:1 )) clangd
 sudo ninja install-clang
 sudo ninja install-clang-format
 sudo ninja install-clangd
+sudo ninja install-lld
+sudo ninja install-lldb
 ```
 
-Or you can build with `makefile`:
+**Or you can build with `makefile`:**
 
 ```sh
 git clone -b release/16.x https://github.com/llvm/llvm-project.git --depth 1
 cd llvm-project
-# build binary with suffix: -DLLVM_VERSION_SUFFIX=-16
-cmake -B build -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lldb;lld" \
+cmake -B build -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lldb;lld;compiler-rt" \
     -DCMAKE_BUILD_TYPE=Release \
     -G "Unix Makefiles" \
     llvm
 cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo cmake --install build
 ```
+
+### 8.1.1 Tips
+
+1. Build `release/11.x` with high version of gcc or clang, you may need to add additional `-DCMAKE_CXX_STANDARD=17`, otherwise, you may encounter `no member named 'numeric_limits' in namespace 'std'`
 
 ## 8.2 clang
 
@@ -1867,34 +1899,19 @@ SpacesBeforeTrailingComments: 1
 
 * [StarRocks-format](https://github.com/StarRocks/starrocks/blob/main/.clang-format)
 
+## 8.4 clangd
+
+## 8.5 lld
+
+## 8.6 lldb
+
 # 9 Assorted
 
 ## 9.1 Dynamic Analysis
 
 ![analysis-tools](/images/Cpp-Trivial/analysis-tools.png)
 
-## 9.2 Header File Search Order
-
-**头文件`#include "xxx.h"`的搜索顺序**
-
-1. 先搜索当前目录
-1. 然后搜索`-I`参数指定的目录
-1. 再搜索gcc的环境变量`CPLUS_INCLUDE_PATH`（C程序使用的是`C_INCLUDE_PATH`）
-1. 最后搜索gcc的内定目录，包括：
-    * `/usr/include`
-    * `/usr/local/include`
-    * `/usr/lib/gcc/x86_64-redhat-linux/<gcc version>/include`（C头文件）或者`/usr/include/c++/<gcc version>`（C++头文件）
-
-**头文件`#include <xxx.h>`的搜索顺序**
-
-1. 先搜索`-I`参数指定的目录
-1. 再搜索gcc的环境变量`CPLUS_INCLUDE_PATH`（C程序使用的是`C_INCLUDE_PATH`）
-1. 最后搜索gcc的内定目录，包括：
-    * `/usr/include`
-    * `/usr/local/include`
-    * `/usr/lib/gcc/x86_64-redhat-linux/<gcc version>/include`（C头文件）或者`/usr/include/c++/<gcc version>`（C++头文件）
-
-## 9.3 How to check the compile error message
+## 9.2 How to check the compile error message
 
 Example:
 
@@ -1929,7 +1946,7 @@ When interpreting compiler error messages, especially those involving template i
 
 In Summary: While the bottom-up approach is useful for quickly identifying the core error and the immediate lines of code causing it, you sometimes need to go top-down to fully understand the context and sequence of events leading to the error. With experience, you'll develop an intuition for quickly scanning and pinpointing the most relevant parts of such error messages.
 
-## 9.4 How to get coverage of code
+## 9.3 How to get coverage of code
 
 **Here's how it works: `gcov` determines which files to analyze for coverage information based on the profile data files (`*.gcda` and `*.gcno`) that are generated when you compile and run your program with the appropriate GCC flags (`-fprofile-arcs` and `-ftest-coverage`). Here's a breakdown of how `gcov` knows which files to load:**
 
@@ -1974,11 +1991,11 @@ gcov example.cpp
 cat example.cpp.gcov
 ```
 
-## 9.5 How to check standard library search path when compiling
+## 9.4 How to check standard library search path when compiling
 
 Add `-v` option.
 
-## 9.6 Document
+## 9.5 Document
 
 1. [cpp reference](https://en.cppreference.com/w/)
 1. [cppman](https://github.com/aitjcize/cppman/)
@@ -1986,6 +2003,6 @@ Add `-v` option.
     * 示例：`cppman vector::begin`
     * 重建索引：`cppman -r`
 
-## 9.7 Reference
+## 9.6 Reference
 
 * [C/C++ 头文件以及库的搜索路径](https://blog.csdn.net/crylearner/article/details/17013187)
