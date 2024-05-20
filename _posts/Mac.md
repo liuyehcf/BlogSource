@@ -625,6 +625,12 @@ pmset displaysleepnow
 
 `Finder` -> `Settings`-> `Advanced` -> `When performing a search`
 
+## 6.11 阻止进入睡眠状态
+
+```sh
+caffeinate
+```
+
 # 7 参考
 
 * [Mac 下利用 Launchctl 自启动 mysql](http://squll369.iteye.com/blog/1965185)

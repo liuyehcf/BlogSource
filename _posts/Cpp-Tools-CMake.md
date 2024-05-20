@@ -435,6 +435,7 @@ make
 * `UNIX`：在所有的类`UNIX`平台为`TRUE`，包括`OS X`和`cygwin`
 * `WIN32`：在所有的`win32`平台为`TRUE`，包括`cygwin`
 * `ENV{NAME}`：环境变量，通过`set(ENV{NAME} value)`设置，通过`$ENV{NAME}`引用
+* `CMAKE_INSTALL_PREFIX`：安装路径前缀
 
 ## 3.2 BUILD_SHARED_LIBS
 

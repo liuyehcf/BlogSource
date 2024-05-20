@@ -1540,6 +1540,13 @@ Post Settings: (Use `sudo ldconfig -p | grep stdc++` to check the default path o
     sudo ln -s /usr/local/lib64/libstdc++.so.6.0.33 /usr/lib/x86_64-linux-gnu/libstdc++.so.6
   ```
 
+**Issue:**
+
+* `error: ‘fenv_t’ has not been declared in ‘::’`: this error message occur when I'm build gcc-14 inside the docker container of `centos:7.9.2009`
+    * [Bug 80196 - fenv_t not declared](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=80196)
+    * [Bug 100017 - [11 regression] error: 'fenv_t' has not been declared in '::' -- canadian compilation fails](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=100017)
+        * Solution: [Comment 12](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=100017#c12)
+
 ## 7.2 GNU Binutils
 
 The GNU Binutils are a collection of binary tools. The main ones are:

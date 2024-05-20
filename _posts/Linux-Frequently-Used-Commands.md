@@ -1823,11 +1823,13 @@ free
         * `W`：paging (not valid since the 2.6.xx kernel)
         * `X`：dead (should never be seen)
         * `Z`：defunct ("zombie") process, terminated but not reaped by its parent
+* `-w`：Wide output.  Use this option twice for unlimited width.
 
 **Examples:**
 
 * `ps aux`
 * `ps -ef`
+* `ps -efww`
 * `ps -el`
 * `ps -e -o pid,ppid,stat | grep Z`：查找僵尸进程
 * `ps -T -o tid,ucmd -p 212381`：查看指定进程的所有的线程id以及线程名
@@ -2230,6 +2232,12 @@ netstat的功能就是查看网络的连接状态，而网络连接状态中，�
 ### 5.5.1 ip address
 
 具体用法参考`ip address help`
+
+**Example:**
+
+* `ip -4 addr show scope global`
+* `ip -6 addr show scope global`
+* `ip -4 addr show scope host`
 
 ### 5.5.2 ip link
 
@@ -4218,8 +4226,10 @@ apt install clang-format-X.Y
     * `cat /sys/block/<device_name>/queue/rotational`
         * `<device_name>` may be sda
 1. 允许用户使用`docker`命令：`sudo usermod -aG docker username`
-1. 找到进程启动命令的完整路径：
+1. 找到进程启动命令的完整路径
     * `lsof -p xxx | grep txt`
+1. 找到主机的ip
+    * `ip -4 addr show scope global | grep inet | awk '{print $2}' | cut -d/ -f1`
 
 # 12 Reference
 

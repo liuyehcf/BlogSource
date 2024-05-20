@@ -632,7 +632,9 @@ pip install xxx -i https://pypi.tuna.tsinghua.edu.cn/simple
         * `apt-get install -y openssl libssl-dev`
 * `libffi`：Foreign Function Interface
     * `yum -y install libffi-devel`
+    * `apt -y install libffi-dev`
 * `zlib`
+    * `yum install -y zlib zlib-devel`
     * `apt install -y zlib1g zlib1g-dev`
 
 Donwload latest stable version from [Python Source Releases](https://www.python.org/downloads/source/)

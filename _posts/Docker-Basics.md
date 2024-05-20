@@ -226,6 +226,9 @@ sudo chmod +x /usr/local/bin/docker-compose
 * `docker-compose [ -f xxx.yml ] up`
 * `docker-compose [ -f xxx.yml ] up -d`
 * `docker-compose [ -f xxx.yml ] down`
+* `docker-compose [ -f xxx.yml ] start`
+* `docker-compose [ -f xxx.yml ] stop`
+* `docker-compose [ -f xxx.yml ] restart`
 * `docker-compose [ -f xxx.yml ] rm`
 * `docker-compose [ -f xxx.yml ] ps`
 * `docker-compose [ -f xxx.yml ] ls`
