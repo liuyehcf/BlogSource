@@ -1815,20 +1815,46 @@ strings <binary_file> | grep <linker_name>
     * `clangd`
     * `clang-doc`
 
-**Build with `ninja`:**
+**`LLVM_ENABLE_PROJECTS` vs. `LLVM_ENABLE_RUNTIMES`**
+
+* `LLVM_ENABLE_PROJECTS`
+    * Purpose: This option is used to specify which LLVM projects to build. These projects are typically related to the compiler infrastructure and tools.
+    * Examples of projects: `clang`, `lldb`, `lld`, etc.
+    * Usage: When you specify a project with `LLVM_ENABLE_PROJECTS`, the build system includes it in the build process.
+    * How can I know all the possible projects that supported by `LLVM_ENABLE_PROJECTS`?
+        * `cmake -B build -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS="invalid" llvm`
+* `LLVM_ENABLE_RUNTIMES`
+    * Purpose: This option is used to specify which LLVM runtimes to build. These runtimes are libraries and runtime components that are used by programs compiled with LLVM-based compilers.
+    * Examples of runtimes: `compiler-rt`, `libcxx`, `libcxxabi`, `libunwind`, etc.
+    * Usage: When you specify a runtime with `LLVM_ENABLE_RUNTIMES`, the build system includes it in the build process, typically for building and installing the necessary runtime libraries.
+        * If you specify item in `LLVM_ENABLE_RUNTIMES`, then you don't need to include it in the `LLVM_ENABLE_PROJECTS`, otherwise you may get an error.
+    * How can I know all the possible projects that supported by `LLVM_ENABLE_RUNTIMES`?
+        * `cmake -B build -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS="clang" -DLLVM_ENABLE_RUNTIMES="invalid" llvm`
+
+**Build:**
 
 ```sh
-git clone -b release/16.x https://github.com/llvm/llvm-project.git --depth 1
-cd llvm-project
-cmake -B build -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lldb;lld;compiler-rt" \
+LLVM_VERSION=16
+LLVM_INSTALL_PREFIX=/usr/local/llvm-${LLVM_VERSION}
+LLVM_DIR=llvm-project-${LLVM_VERSION}
+LLVM_BUILD_TOOL_TYPE="Ninja"
+# LLVM_BUILD_TOOL_TYPE="Unix Makefiles"
+git clone -b release/${LLVM_VERSION}.x https://github.com/llvm/llvm-project.git ${LLVM_DIR} --depth 1
+cd ${LLVM_DIR}
+cmake -B build -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;libclc;lld;lldb" \
+    -DLLVM_ENABLE_RUNTIMES="libc;libunwind;libcxxabi;pstl;libcxx;compiler-rt" \
     -DCMAKE_BUILD_TYPE=Release \
-    -G "Ninja" \
+    -DCMAKE_INSTALL_PREFIX=${LLVM_INSTALL_PREFIX} \
+    -G ${LLVM_BUILD_TOOL_TYPE} \
     llvm
 cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo cmake --install build
+
+LLVM_ABI_LIB_PATH=$(find ${LLVM_INSTALL_PREFIX} -name 'libc++.so' | head -n 1)
+echo -e "${LLVM_INSTALL_PREFIX}/lib\n${LLVM_ABI_LIB_PATH%/*}" | sudo tee /etc/ld.so.conf.d/llvm-${LLVM_VERSION}.conf && sudo ldconfig
 ```
 
-Install specific target:
+**Install specific target(Only for ninja):**
 
 ```sh
 ninja -C build -t targets | grep -E '^install'
@@ -1844,19 +1870,6 @@ sudo ninja install-lld
 sudo ninja install-lldb
 ```
 
-**Or you can build with `makefile`:**
-
-```sh
-git clone -b release/16.x https://github.com/llvm/llvm-project.git --depth 1
-cd llvm-project
-cmake -B build -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra;lldb;lld;compiler-rt" \
-    -DCMAKE_BUILD_TYPE=Release \
-    -G "Unix Makefiles" \
-    llvm
-cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
-sudo cmake --install build
-```
-
 ### 8.1.1 Tips
 
 1. Build `release/11.x` with high version of gcc or clang, you may need to add additional `-DCMAKE_CXX_STANDARD=17`, otherwise, you may encounter `no member named 'numeric_limits' in namespace 'std'`
@@ -1867,6 +1880,26 @@ sudo cmake --install build
 
 * [Clang documentation](https://clang.llvm.org/docs/)
     * [Diagnostic flags in Clang](https://clang.llvm.org/docs/DiagnosticsReference.html)
+
+**Options:**
+
+* `--gcc-install-dir=<value>`: Use GCC installation in the specified directory, for standard library search path.
+    * `--gcc-install-dir=/usr/local/lib/gcc/x86_64-pc-linux-gnu/14.1.0`
+* `-stdlib=<value>`: C++ standard library to use
+    * `clang -o main main.cpp -stdlib=libc++ -std=c++17 -lc++ -lc++abi`
+    * `clang -o main main.cpp -stdlib=libstdc++ -std=gnu++17 -lstdc++`
+    * `clang -o main main.cpp --gcc-install-dir=/usr/local/lib/gcc/x86_64-pc-linux-gnu/14.1.0 -stdlib=libstdc++ -std=gnu++17 -lstdc++`
+
+**How to build with `libc++`:**
+
+```sh
+cmake -B build \
+      -DCMAKE_C_COMPILER=clang \
+      -DCMAKE_CXX_COMPILER=clang++ \
+      -DCMAKE_CXX_FLAGS="-stdlib=libc++" \
+      -DCMAKE_EXE_LINKER_FLAGS="-stdlib=libc++" \
+      -DCMAKE_SHARED_LINKER_FLAGS="-stdlib=libc++"
+```
 
 ## 8.3 clang-format
 

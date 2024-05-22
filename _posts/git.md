@@ -507,6 +507,8 @@ git push [remote] --all
 
 # 11 Submodule
 
+Commit hash of each submodule is stored as normal git object. You can check it by `git submodule status`
+
 ```sh
 # Add submodule to current git project
 git submodule add [repository_url] [path/to/submodule]

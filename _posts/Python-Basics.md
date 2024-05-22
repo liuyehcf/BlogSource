@@ -621,8 +621,7 @@ pip install xxx -i https://pypi.tuna.tsinghua.edu.cn/simple
         sudo make install
 
         export PATH=/usr/local/openssl/bin:${PATH}
-        echo '/usr/local/openssl/lib' | sudo tee /etc/ld.so.conf.d/openssl.conf
-        sudo ldconfig
+        echo '/usr/local/openssl/lib' | sudo tee /etc/ld.so.conf.d/openssl.conf && sudo ldconfig
         sudo ldconfig -p | grep openssl
 
         openssl version
@@ -630,7 +629,7 @@ pip install xxx -i https://pypi.tuna.tsinghua.edu.cn/simple
 
     * Ubuntu
         * `apt-get install -y openssl libssl-dev`
-* `libffi`：Foreign Function Interface
+* `libffi`：Foreign Function Interface, required by module `_ctypes`
     * `yum -y install libffi-devel`
     * `apt -y install libffi-dev`
 * `zlib`

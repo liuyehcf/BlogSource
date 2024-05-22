@@ -820,28 +820,45 @@ Snappy is a compression/decompression library
 
 [apache-arrow](https://github.com/apache/arrow)
 
+* [Building Arrow C++](https://github.com/apache/arrow/blob/main/docs/source/developers/cpp/building.rst): Find all building Optional Components here
+
 Requirement:
 
 1. `protobuf`
 
 ```sh
-git clone https://github.com/apache/arrow.git
+git clone -b apache-arrow-16.1.0 https://github.com/apache/arrow.git
 cd arrow/cpp
 
 cmake --list-presets
 cmake --preset -N ninja-release
 
-cmake -B build --preset ninja-release
+cmake -B build --preset ninja-release -DPARQUET_REQUIRE_ENCRYPTION=ON
 cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo cmake --install build
 
-echo '/usr/local/lib64' | sudo tee /etc/ld.so.conf.d/arrow.conf
-sudo ldconfig
+echo '/usr/local/lib64' | sudo tee /etc/ld.so.conf.d/arrow.conf && sudo ldconfig
 ```
 
-[Reading and writing Parquet files](https://arrow.apache.org/docs/cpp/parquet.html#)
+Build with llvm's libc++
+
+```sh
+cmake -B build --preset ninja-release -DPARQUET_REQUIRE_ENCRYPTION=ON \
+      -DCMAKE_C_COMPILER=clang \
+      -DCMAKE_CXX_COMPILER=clang++ \
+      -DCMAKE_CXX_FLAGS="-stdlib=libc++" \
+      -DCMAKE_EXE_LINKER_FLAGS="-stdlib=libc++" \
+      -DCMAKE_SHARED_LINKER_FLAGS="-stdlib=libc++"
+```
 
 ### 6.1.1 Parquet Module
+
+**Related Docs:**
+
+* [Reading and writing Parquet files](https://arrow.apache.org/docs/cpp/parquet.html)
+* [Parquet Modular Encryption](https://github.com/apache/parquet-format/blob/master/Encryption.md)
+
+**Parquet demo without encryption:**
 
 ```cpp
 #include <arrow/api.h>
@@ -912,6 +929,144 @@ gcc -o arrow_parquet_demo arrow_parquet_demo.cpp -lstdc++ -std=gnu++17 -larrow -
 ./arrow_parquet_demo
 ```
 
+**Parquet demo with encryption:**
+
+```cpp
+#include <arrow/api.h>
+#include <arrow/io/api.h>
+#include <arrow/pretty_print.h>
+#include <arrow/result.h>
+#include <arrow/status.h>
+#include <arrow/type_fwd.h>
+#include <parquet/arrow/reader.h>
+#include <parquet/arrow/writer.h>
+#include <parquet/exception.h>
+
+#include <filesystem>
+#include <iostream>
+
+arrow::Status execute(bool footer_plaintext, bool column_use_footer_key) {
+    // Create a simple table
+    arrow::Int64Builder int_col_builder;
+    ARROW_RETURN_NOT_OK(int_col_builder.AppendValues({1, 2, 3, 4, 5}));
+    arrow::DoubleBuilder double_col_builder;
+    ARROW_RETURN_NOT_OK(double_col_builder.AppendValues({1.1, 2.2, 3.3, 4.4, 5.5}));
+    arrow::StringBuilder str_col_builder;
+    ARROW_RETURN_NOT_OK(str_col_builder.AppendValues({"Tom", "Jerry", "Alice", "Bob", "Jack"}));
+
+    std::shared_ptr<arrow::Array> int_col_array;
+    ARROW_RETURN_NOT_OK(int_col_builder.Finish(&int_col_array));
+    std::shared_ptr<arrow::Array> double_col_array;
+    ARROW_RETURN_NOT_OK(double_col_builder.Finish(&double_col_array));
+    std::shared_ptr<arrow::Array> str_col_array;
+    ARROW_RETURN_NOT_OK(str_col_builder.Finish(&str_col_array));
+    std::shared_ptr<arrow::Schema> schema = arrow::schema({arrow::field("int_column", arrow::int64(), false),
+                                                           arrow::field("double_column", arrow::float64(), false),
+                                                           arrow::field("str_column", arrow::utf8(), false)});
+    auto table = arrow::Table::Make(schema, {int_col_array, double_col_array, str_col_array});
+
+    // Write the table to a Parquet file
+    const std::string file_path = "data.parquet";
+    std::shared_ptr<arrow::io::FileOutputStream> outfile;
+    ARROW_RETURN_NOT_OK(arrow::io::FileOutputStream::Open(file_path).Value(&outfile));
+
+    // Lenght of key must be 16 or 24 or 32
+    const std::string footer_key = "footer_key______________";
+    const std::string int_column_key = "int_column_key__________";
+    const std::string double_column_key = "double_column_key_______";
+    const std::string str_column_key = "str_column_key__________";
+
+    parquet::FileEncryptionProperties::Builder file_encryption_props_builder(footer_key);
+    file_encryption_props_builder.algorithm(parquet::ParquetCipher::AES_GCM_V1);
+    if (footer_plaintext) {
+        file_encryption_props_builder.set_plaintext_footer();
+    }
+    if (!column_use_footer_key) {
+        parquet::ColumnPathToEncryptionPropertiesMap encrypted_columns;
+        {
+            parquet::ColumnEncryptionProperties::Builder column_encryption_props_builder("int_column");
+            column_encryption_props_builder.key(int_column_key);
+        }
+        {
+            parquet::ColumnEncryptionProperties::Builder column_encryption_props_builder("double_column");
+            column_encryption_props_builder.key(double_column_key);
+        }
+        {
+            parquet::ColumnEncryptionProperties::Builder column_encryption_props_builder("str_column");
+            column_encryption_props_builder.key(str_column_key);
+        }
+        file_encryption_props_builder.encrypted_columns(encrypted_columns);
+    }
+    std::shared_ptr<parquet::FileEncryptionProperties> file_encryption_props = file_encryption_props_builder.build();
+    std::shared_ptr<parquet::WriterProperties> write_props =
+            parquet::WriterProperties::Builder().encryption(file_encryption_props)->build();
+
+    ARROW_RETURN_NOT_OK(parquet::arrow::WriteTable(*table, arrow::default_memory_pool(), outfile, 3, write_props));
+
+    // Read the Parquet file back into a table
+    std::shared_ptr<arrow::io::ReadableFile> infile;
+    ARROW_RETURN_NOT_OK(arrow::io::ReadableFile::Open(file_path, arrow::default_memory_pool()).Value(&infile));
+
+    parquet::FileDecryptionProperties::Builder file_decryption_props_builder;
+    // Why footer key required if set_plaintext_footer is called
+    file_decryption_props_builder.footer_key(footer_key);
+    if (!column_use_footer_key) {
+        parquet::ColumnPathToDecryptionPropertiesMap decrypted_columns;
+        {
+            parquet::ColumnDecryptionProperties::Builder column_decryption_props_builder("int_column");
+            column_decryption_props_builder.key(int_column_key);
+        }
+        {
+            parquet::ColumnDecryptionProperties::Builder column_decryption_props_builder("double_column");
+            column_decryption_props_builder.key(double_column_key);
+        }
+        {
+            parquet::ColumnDecryptionProperties::Builder column_decryption_props_builder("str_column");
+            column_decryption_props_builder.key(str_column_key);
+        }
+        file_decryption_props_builder.column_keys(decrypted_columns);
+    }
+    std::shared_ptr<parquet::FileDecryptionProperties> file_decryption_props = file_decryption_props_builder.build();
+
+    parquet::ReaderProperties read_props;
+    read_props.file_decryption_properties(file_decryption_props);
+    parquet::arrow::FileReaderBuilder file_reader_builder;
+    ARROW_RETURN_NOT_OK(file_reader_builder.Open(infile, read_props));
+    std::unique_ptr<parquet::arrow::FileReader> reader;
+    ARROW_RETURN_NOT_OK(file_reader_builder.Build(&reader));
+
+    std::shared_ptr<arrow::Table> read_table;
+    ARROW_RETURN_NOT_OK(reader->ReadTable(&read_table));
+
+    // Print the table to std::cout
+    std::stringstream ss;
+    ARROW_RETURN_NOT_OK(arrow::PrettyPrint(*read_table.get(), {}, &ss));
+    std::cout << ss.str() << std::endl;
+
+    return arrow::Status::OK();
+}
+
+int main() {
+    auto status = execute(false, false);
+    if (!status.ok()) std::cout << status.message() << std::endl;
+
+    status = execute(false, true);
+    if (!status.ok()) std::cout << status.message() << std::endl;
+
+    status = execute(true, false);
+    if (!status.ok()) std::cout << status.message() << std::endl;
+
+    status = execute(true, true);
+    if (!status.ok()) std::cout << status.message() << std::endl;
+    return 0;
+}
+```
+
+```sh
+gcc -o arrow_parquet_demo arrow_parquet_demo.cpp -lstdc++ -std=gnu++17 -larrow -lparquet
+./arrow_parquet_demo
+```
+
 ## 6.2 thrift
 
 Requirement:
@@ -932,8 +1087,7 @@ git checkout v0.16.0
 make -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo make install
 
-echo '/usr/local/lib' | sudo tee /etc/ld.so.conf.d/thrift.conf
-sudo ldconfig
+echo '/usr/local/lib' | sudo tee /etc/ld.so.conf.d/thrift.conf && sudo ldconfig
 ```
 
 ```sh
