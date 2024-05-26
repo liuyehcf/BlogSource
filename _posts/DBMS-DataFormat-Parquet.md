@@ -1175,8 +1175,8 @@ The same principles apply to querying Parquet files, as we describe below:
 
 **Example:**
 
-* `parquet-tools show date.parquet`: Display data
-* `parquet-tools inspect date.parquet`: Display schema
+* `parquet-tools show data.parquet`: Display data
+* `parquet-tools inspect data.parquet`: Display schema
 
 # 4 Reference
 

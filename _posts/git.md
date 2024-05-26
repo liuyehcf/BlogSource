@@ -139,7 +139,7 @@ git rev-list --objects --all | grep "$(git verify-pack -v .git/objects/pack/*.id
 
 ```sh
 # 该命令会 checkout 到每个提交，然后依次执行 --index-filter 参数指定的bash命令
-git filter-branch -f --prune-empty --index-filter 'git rm -rf --cached --ignore-unmatch <your-file-name>' --tag-name-filter cat -- --all
+git filter-branch -f --prune-empty --index-filter 'git rm -rf --cached --ignore-unmatch [your-file-name]' --tag-name-filter cat -- --all
 ```
 
 **步骤2：将本地的分支全部推送到远程仓库。如果不加all的话，只推送了默认分支或者指定分支，如果远程仓库的其他分支还包含这个大文件的话，那么它仍然存在于仓库中**
@@ -455,14 +455,14 @@ git clone git@github.com:xxx/yyy.git
 # 不下载历史提交，当整个仓库体积非常大的时候，下载全部会比较耗费存储以及时间
 # 我们可以指定下载深度为1，这种情况下下载的版本叫做「shallow」
 git clone https://github.com/xxx/yyy.git --depth 1
-git clone -b <branch_name> https://github.com/xxx/yyy.git --depth 1
+git clone -b [branch_name] https://github.com/xxx/yyy.git --depth 1
 
 # 后续如果又想要下载完整仓库的时候，可以通过如下方式获取完整仓库
 git fetch --unshallow
 
 # 使用<--depth 1>会衍生另一个问题，无法获取其他分支，可以通过如下方式处理
-git remote set-branches origin '<需要获取的分支名>'
-git fetch --depth 1 origin '<需要获取的分支名>'
+git remote set-branches origin '[branch_name]'
+git fetch --depth 1 origin '[branch_name]'
 ```
 
 # 10 Sync
@@ -512,6 +512,7 @@ Commit hash of each submodule is stored as normal git object. You can check it b
 ```sh
 # Add submodule to current git project
 git submodule add [repository_url] [path/to/submodule]
+git submodule add -b [branch_name] [repository_url] [path/to/submodule]
 
 # Init and checkout to the specific commit
 git submodule update --init --recursive

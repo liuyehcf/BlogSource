@@ -72,8 +72,8 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
 * **`s,S`：进入插入模式，s为删除目前光标所在的字符，S为删除目前光标所在的行**
 * **`r,R`：进入替换模式，r只会替换光标所在的那一个字符一次，R会一直替换光标所在行的文字，直到按下Esc**
 * **`Esc`：退回一般模式**
-* **`[Ctrl] + [`：退回一般模式**
-* **`[Ctrl] + w`：向前删除单词**
+* **`[Ctrl] + [`(`:help i_CTRL-[`)：退回一般模式**
+* **`[Ctrl] + w`(`:help i_CTRL-W`)：向前删除单词**
 * **`[Ctrl] + r + [reg]`：插入寄存器中的内容，例如**
     * `[Ctrl] + r + 0`：插入`0`号寄存器的内容
     * `[Ctrl] + r + "`：插入默认寄存器的内容
@@ -86,6 +86,8 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
 * **`[Shift] + [Right]`：向右移动一个单词**
 * **`[Shift] + [Up]`：向上翻页**
 * **`[Shift] + [Down]`：向下翻页**
+* `[Ctrl] + e`(`:help i_CTRL-E`)：Insert the character which is below the cursor
+* `[Ctrl] + y`(`:help i_CTRL-Y`)：Insert the character which is above the cursor
 
 ## 2.2 Moving Cursor
 
@@ -659,7 +661,10 @@ let t:my_tab_variable = {'key': 'value'}
 
 ## 2.20 Help Doc
 
-1. `:help i_ctrl-v`，其中`i_`表示`insert mode`
+1. `:help CTRL-W`：查看普通模式下`ctrl + w`按键的帮助
+1. `:help i_CTRL-V`：查看插入模式下`ctrl + v`按键的帮助，其中`i_`表示`insert mode`
+1. `:help v_CTRL-A`：查看可视模式下`ctrl + a`按键的帮助，，其中`v_`表示`visual mode`
+1. `help :s`：查看`:s`命令的帮助
 
 **文档路径：`/usr/share/vim/vim82/doc`**
 
@@ -1120,40 +1125,6 @@ endif
 ### 3.2.5 LSP-clangd (Recommend)
 
 **`clangd`是`LSP, Language Server Protocol`的一种实现，主要用于`C/C++/Objective-C`等语言**
-
-**安装：前面的[安装llvm](#324-%E5%AE%89%E8%A3%85llvm)小节完成后，`clangd`就已经安装好了**
-
-[JSON Compilation Database Format Specification](https://clang.llvm.org/docs/JSONCompilationDatabase.html)
-
-* 对于复杂工程，可以用`cmake`等工具生成`compile_commands.json`
-    * 首先会在当前目录（或者`--compile-commands-dir`指定的目录）下查找`compile_commands.json`
-    * 若找不到，则递归在上级目录中查找，直至找到`compile_commands.json`或者到根目录
-* 对于简单工程，可以直接配置`compile_flags.txt`
-    * 首先会在当前目录下查找`compile_flags.txt`
-    * 若找不到，则递归在上级目录中查找，直至找到`compile_flags.txt`或者到根目录
-
-`clangd`的一些选项：
-
-* `--query-driver=`：设置一个或多个`glob`，会从匹配这些`glob`的路径中搜索头文件
-    * `--query-driver=/usr/bin/**/clang-*,/path/to/repo/**/g++-*`
-* `--compile-commands-dir=`：指定`compile_commands.json`的查找路径
-    * `--compile-commands-dir=/home/test/code/duckdb/build`
-
-#### 3.2.5.1 .clangd Configuration
-
-[Configuration](https://clangd.llvm.org/config)
-
-我们可以在项目的根目录中创建`.clangd`，对`clangd`进行项目唯独的定制化配置
-
-下面是`duckdb`的[duckdb/.clangd](https://github.com/duckdb/duckdb/blob/main/.clangd)配置
-
-* 指定了`compile_commands.json`路径为：`build/clangd`（[Can not find duckdb headers](https://github.com/clangd/clangd/issues/1204)）
-
-```
-CompileFlags:
-  CompilationDatabase: build/clangd
-  Add: -Wno-unqualified-std-cast-call
-```
 
 ### 3.2.6 LSP-ccls (Optional)
 
@@ -1660,6 +1631,16 @@ nnoremap <silent> <leader>cr :CocListResume<cr>
 nnoremap <silent> <leader>ck :CocList -I symbols<cr>
 nnoremap <silent> Ô :CocNext<cr>
 nnoremap <silent>  :CocPrev<cr>
+
+" Remap <C-f> and <C-b> to scroll float windows/popups
+if has('nvim-0.4.0') || has('patch-8.2.0750')
+  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+  inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+  inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+  vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+endif
 
 call plug#end()
 ```
@@ -3203,6 +3184,16 @@ nnoremap <silent> <leader>cr :CocListResume<cr>
 nnoremap <silent> <leader>ck :CocList -I symbols<cr>
 nnoremap <silent> Ô :CocNext<cr>
 nnoremap <silent>  :CocPrev<cr>
+
+" Remap <C-f> and <C-b> to scroll float windows/popups
+if has('nvim-0.4.0') || has('patch-8.2.0750')
+  nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  nnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+  inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(1)\<cr>" : "\<Right>"
+  inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
+  vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
+  vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+endif
 
 " 将 打开文件管理器 映射到快捷键 [Space] + e
 nmap <space>e <cmd>CocCommand explorer<cr>

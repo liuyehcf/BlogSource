@@ -207,3 +207,14 @@ sudo aptitude install libboost1.74-dev
 ## 3.3 Reference
 
 * [https://www.linuxfordevices.com/tutorials/linux/fix-updating-from-such-a-repository-cant-be-done-securely-error](https://www.linuxfordevices.com/tutorials/linux/fix-updating-from-such-a-repository-cant-be-done-securely-error)
+
+# 4 Tips
+
+## 4.1 Ubuntu Docker Container 中文乱码
+
+```sh
+export LANG=C.UTF-8
+
+# check
+locale
+```

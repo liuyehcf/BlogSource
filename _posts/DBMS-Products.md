@@ -590,6 +590,7 @@ Trino is forked from Presto
 1. [Umbra](https://dbdb.io/db/umbra)
     * Thomas Neumann
     * [Publications](https://db.in.tum.de/research/publications/?lang=en)
+1. [paimon](https://github.com/apache/paimon)
 
 # 30 参考
 

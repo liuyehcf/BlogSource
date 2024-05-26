@@ -69,6 +69,8 @@ flowchart TD
 **可以在编译的时候加上`-v`参数，就可以看到最准确的搜索路径**
 
 * 每个版本的编译器都有自己的头文件，这个路径应该是在构建编译器的时候写到二进制里面去的
+* `gcc -v -c -xc++ /dev/null`
+* `clang -v -c -xc++ /dev/null`
 
 ## 2.2 Static Library
 
@@ -1798,7 +1800,37 @@ strings <binary_file> | grep <linker_name>
 
 ## 7.5 lto-dump
 
-## 7.6 Reference
+## 7.6 ENV
+
+**Common:**
+
+* `CC`
+* `CXX`
+* `CFLAGS`
+* `CXXFLAGS`
+* `LDFLAGS`：Specifies flags to pass to the linker (`ld`) when building programs
+
+**`man gcc`:**
+
+* `CPATH`: Affects both C and C++ compilers
+* `C_INCLUDE_PATH`
+* `CPLUS_INCLUDE_PATH`
+* `OBJC_INCLUDE_PATH`
+* `LIBRARY_PATH`: Specifies the directories to search for library files at compile time
+
+**`man ld`:**
+
+* `LD_LIBRARY_PATH`: Specifies the directories to search for shared libraries (dynamic libraries) at runtime
+* `LD_RUN_PATH`: Provides a way to ensure that your program can locate the shared libraries it depends on, regardless of the runtime environment (like `LD_LIBRARY_PATH`), by embedding the necessary search paths directly into the executable
+
+**`man ld.so`**
+
+* `LD_LIBRARY_PATH`
+* `LD_PRELOAD`
+* `LD_DEBUG`/`LD_DEBUG_OUTPUT`
+* `LD_PROFILE`/`LD_PROFILE_OUTPUT`
+
+## 7.7 Reference
 
 # 8 LLVM Tools
 
@@ -1859,15 +1891,12 @@ echo -e "${LLVM_INSTALL_PREFIX}/lib\n${LLVM_ABI_LIB_PATH%/*}" | sudo tee /etc/ld
 ```sh
 ninja -C build -t targets | grep -E '^install'
 
-cd build
-ninja -j $(( (cores=$(nproc))>1?cores/2:1 )) clang
-ninja -j $(( (cores=$(nproc))>1?cores/2:1 )) clang-format
-ninja -j $(( (cores=$(nproc))>1?cores/2:1 )) clangd
-sudo ninja install-clang
-sudo ninja install-clang-format
-sudo ninja install-clangd
-sudo ninja install-lld
-sudo ninja install-lldb
+ninja -C build -j $(( (cores=$(nproc))>1?cores/2:1 )) clang
+ninja -C build -j $(( (cores=$(nproc))>1?cores/2:1 )) clang-format
+ninja -C build -j $(( (cores=$(nproc))>1?cores/2:1 )) clangd
+sudo ninja -C build install-clang
+sudo ninja -C build install-clang-format
+sudo ninja -C build install-clangd
 ```
 
 ### 8.1.1 Tips
@@ -1940,6 +1969,38 @@ SpacesBeforeTrailingComments: 1
 * [StarRocks-format](https://github.com/StarRocks/starrocks/blob/main/.clang-format)
 
 ## 8.4 clangd
+
+**`compile_commands.json` vs. `compile_flags.txt`([JSON Compilation Database Format Specification](https://clang.llvm.org/docs/JSONCompilationDatabase.html))**
+
+* 对于复杂工程，可以用`cmake`等工具生成`compile_commands.json`
+    * 首先会在当前目录（或者`--compile-commands-dir`指定的目录）下查找`compile_commands.json`
+    * 若找不到，则递归在上级目录中查找，直至找到`compile_commands.json`或者到根目录
+* 对于简单工程，可以直接配置`compile_flags.txt`
+    * 首先会在当前目录下查找`compile_flags.txt`
+    * 若找不到，则递归在上级目录中查找，直至找到`compile_flags.txt`或者到根目录
+
+**Options:**
+
+* `--query-driver=`：设置一个或多个`glob`，会从匹配这些`glob`的路径中搜索头文件
+    * `--query-driver=/usr/bin/**/clang-*,/path/to/repo/**/g++-*`
+* `--compile-commands-dir=`：指定`compile_commands.json`的查找路径
+    * `--compile-commands-dir=/home/test/code/duckdb/build`
+
+### 8.4.1 .clangd Configuration
+
+[Configuration](https://clangd.llvm.org/config)
+
+我们可以在项目的根目录中创建`.clangd`，对`clangd`进行项目唯独的定制化配置
+
+下面是`duckdb`的[duckdb/.clangd](https://github.com/duckdb/duckdb/blob/main/.clangd)配置
+
+* 指定了`compile_commands.json`路径为：`build/clangd`（[Can not find duckdb headers](https://github.com/clangd/clangd/issues/1204)）
+
+```
+CompileFlags:
+  CompilationDatabase: build/clangd
+  Add: -Wno-unqualified-std-cast-call
+```
 
 ## 8.5 lld
 

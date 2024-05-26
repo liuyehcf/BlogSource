@@ -2198,6 +2198,25 @@ echo "outside function: '${arr[@]}'"
 * `ulimit -a`
 * `ulimit -v 1000000`：将进程的最大内存设置为`1000000`字节，仅在当前`shell`以及`shell`的子进程中生效
 
+## 7.17 pushd & popd
+
+`pushd`和`popd`是用于操作目录栈的命令，在切换目录时非常有用。它们可以让你在不同目录之间快速切换，并在需要时返回到先前的目录
+
+**示例：**
+
+```sh
+set -x
+pwd
+pushd /usr
+dirs
+pushd /var
+dirs
+popd
+dirs
+popd
+dirs
+```
+
 # 8 Tips
 
 ## 8.1 Option Separator

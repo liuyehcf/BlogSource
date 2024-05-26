@@ -1077,9 +1077,8 @@ Requirement:
 1. `openssl-devel`
 
 ```sh
-git clone https://github.com/apache/thrift.git
+git clone -b v0.16.0 https://github.com/apache/thrift.git
 cd thrift
-git checkout v0.16.0
 
 ./bootstrap.sh
 # you can build specific lib by using --with-xxx or --without-xxx
