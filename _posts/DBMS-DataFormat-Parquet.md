@@ -119,7 +119,11 @@ categories:
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 ```
 
-## 1.1 Nested Encoding
+## 1.1 Thrift Definition
+
+[parquet thrift definition](https://github.com/apache/parquet-format/blob/master/src/main/thrift/parquet.thrift)
+
+## 1.2 Nested Encoding
 
 **Repetition Levels**: It tells us at what repeated field in the field's path the value has repeated
 
@@ -182,7 +186,7 @@ See the following image from [Dremel: Interactive Analysis of Web-Scale Datasets
     * `gb`: `Name` (ordinal is `1`) is lately repeated, and both undefinable `Name` and `Language` and `Country` are present, so `(1, 3)`
     * `NULL`: Both `Name` and `Language` are not yet repeated, and only undefinable `Name` is present, so `(0, 1)`
 
-### 1.1.1 Arrow Source Code
+### 1.2.1 Arrow Source Code
 
 ```cpp
 #include <arrow/api.h>
@@ -377,7 +381,7 @@ gcc -o build/arrow_parquet_demo arrow_parquet_demo.cpp -lstdc++ -std=gnu++17 -la
 build/arrow_parquet_demo
 ```
 
-### 1.1.2 Native Reader
+### 1.2.2 Native Reader
 
 Get parquet thrift definition from [parquet.thrift](https://github.com/apache/parquet-format/blob/master/src/main/thrift/parquet.thrift) and then generate cpp file:
 
@@ -1142,9 +1146,211 @@ gcc -o build/native_parquet_reader native_parquet_reader.cpp gen-cpp/parquet_typ
 build/native_parquet_reader
 ```
 
-## 1.2 Thrift Definition
+## 1.3 Encryption
 
-[parquet thrift definition](https://github.com/apache/parquet-format/blob/master/src/main/thrift/parquet.thrift)
+[Parquet Modular Encryption](https://github.com/apache/parquet-format/blob/master/Encryption.md)
+
+**Encrypted footer mode**
+
+* ![FileLayoutEncryptionEF](/images/DBMS-Format-Parquet/FileLayoutEncryptionEF.png)
+
+**Plaintext footer mode**
+
+* ![FileLayoutEncryptionPF](/images/DBMS-Format-Parquet/FileLayoutEncryptionPF.png)
+
+### 1.3.1 Arrow Source Code
+
+```cpp
+#include <arrow/api.h>
+#include <arrow/io/api.h>
+#include <arrow/pretty_print.h>
+#include <arrow/result.h>
+#include <arrow/status.h>
+#include <arrow/type_fwd.h>
+#include <parquet/arrow/reader.h>
+#include <parquet/arrow/writer.h>
+#include <parquet/exception.h>
+
+#include <filesystem>
+#include <iostream>
+
+arrow::Status execute(bool footer_plaintext, bool column_use_footer_key) {
+    // Create a simple table
+    arrow::Int64Builder int_col_builder;
+    ARROW_RETURN_NOT_OK(int_col_builder.AppendValues({1, 2, 3, 4, 5}));
+    arrow::DoubleBuilder double_col_builder;
+    ARROW_RETURN_NOT_OK(double_col_builder.AppendValues({1.1, 2.2, 3.3, 4.4, 5.5}));
+    arrow::StringBuilder str_col_builder;
+    ARROW_RETURN_NOT_OK(str_col_builder.AppendValues({"Tom", "Jerry", "Alice", "Bob", "Jack"}));
+
+    std::shared_ptr<arrow::Array> int_col_array;
+    ARROW_RETURN_NOT_OK(int_col_builder.Finish(&int_col_array));
+    std::shared_ptr<arrow::Array> double_col_array;
+    ARROW_RETURN_NOT_OK(double_col_builder.Finish(&double_col_array));
+    std::shared_ptr<arrow::Array> str_col_array;
+    ARROW_RETURN_NOT_OK(str_col_builder.Finish(&str_col_array));
+    std::shared_ptr<arrow::Schema> schema = arrow::schema({arrow::field("int_column", arrow::int64(), false),
+                                                           arrow::field("double_column", arrow::float64(), false),
+                                                           arrow::field("str_column", arrow::utf8(), false)});
+    auto table = arrow::Table::Make(schema, {int_col_array, double_col_array, str_col_array});
+
+    // Write the table to a Parquet file
+    const std::string file_path = "encrypted_data.parquet";
+    std::shared_ptr<arrow::io::FileOutputStream> outfile;
+    ARROW_RETURN_NOT_OK(arrow::io::FileOutputStream::Open(file_path).Value(&outfile));
+
+    // Lenght of key must be 16 or 24 or 32
+    const std::string footer_key = "footer_key______________";
+    const std::string int_column_key = "int_column_key__________";
+    const std::string double_column_key = "double_column_key_______";
+    const std::string str_column_key = "str_column_key__________";
+
+    parquet::FileEncryptionProperties::Builder file_encryption_props_builder(footer_key);
+    file_encryption_props_builder.algorithm(parquet::ParquetCipher::AES_GCM_V1);
+    if (footer_plaintext) {
+        file_encryption_props_builder.set_plaintext_footer();
+    }
+    if (!column_use_footer_key) {
+        parquet::ColumnPathToEncryptionPropertiesMap encrypted_columns;
+        {
+            parquet::ColumnEncryptionProperties::Builder column_encryption_props_builder("int_column");
+            column_encryption_props_builder.key(int_column_key);
+        }
+        {
+            parquet::ColumnEncryptionProperties::Builder column_encryption_props_builder("double_column");
+            column_encryption_props_builder.key(double_column_key);
+        }
+        {
+            parquet::ColumnEncryptionProperties::Builder column_encryption_props_builder("str_column");
+            column_encryption_props_builder.key(str_column_key);
+        }
+        file_encryption_props_builder.encrypted_columns(encrypted_columns);
+    }
+    std::shared_ptr<parquet::FileEncryptionProperties> file_encryption_props = file_encryption_props_builder.build();
+    std::shared_ptr<parquet::WriterProperties> write_props =
+            parquet::WriterProperties::Builder().encryption(file_encryption_props)->build();
+
+    ARROW_RETURN_NOT_OK(parquet::arrow::WriteTable(*table, arrow::default_memory_pool(), outfile, 3, write_props));
+
+    // Read the Parquet file back into a table
+    std::shared_ptr<arrow::io::ReadableFile> infile;
+    ARROW_RETURN_NOT_OK(arrow::io::ReadableFile::Open(file_path, arrow::default_memory_pool()).Value(&infile));
+
+    parquet::FileDecryptionProperties::Builder file_decryption_props_builder;
+    // Why footer key required if set_plaintext_footer is called
+    file_decryption_props_builder.footer_key(footer_key);
+    if (!column_use_footer_key) {
+        parquet::ColumnPathToDecryptionPropertiesMap decrypted_columns;
+        {
+            parquet::ColumnDecryptionProperties::Builder column_decryption_props_builder("int_column");
+            column_decryption_props_builder.key(int_column_key);
+        }
+        {
+            parquet::ColumnDecryptionProperties::Builder column_decryption_props_builder("double_column");
+            column_decryption_props_builder.key(double_column_key);
+        }
+        {
+            parquet::ColumnDecryptionProperties::Builder column_decryption_props_builder("str_column");
+            column_decryption_props_builder.key(str_column_key);
+        }
+        file_decryption_props_builder.column_keys(decrypted_columns);
+    }
+    std::shared_ptr<parquet::FileDecryptionProperties> file_decryption_props = file_decryption_props_builder.build();
+
+    parquet::ReaderProperties read_props;
+    read_props.file_decryption_properties(file_decryption_props);
+    parquet::arrow::FileReaderBuilder file_reader_builder;
+    ARROW_RETURN_NOT_OK(file_reader_builder.Open(infile, read_props));
+    std::unique_ptr<parquet::arrow::FileReader> reader;
+    ARROW_RETURN_NOT_OK(file_reader_builder.Build(&reader));
+
+    std::shared_ptr<arrow::Table> read_table;
+    ARROW_RETURN_NOT_OK(reader->ReadTable(&read_table));
+
+    // Print the table to std::cout
+    std::stringstream ss;
+    ARROW_RETURN_NOT_OK(arrow::PrettyPrint(*read_table.get(), {}, &ss));
+    std::cout << ss.str() << std::endl;
+
+    return arrow::Status::OK();
+}
+
+int main(int argc, char** argv) {
+    bool footer_plaintext = (std::strcmp(argv[1], "true") == 0);
+    bool column_use_footer_key = (std::strcmp(argv[2], "true") == 0);
+    auto status = execute(footer_plaintext, column_use_footer_key);
+    if (!status.ok()) std::cout << status.message() << std::endl;
+    return 0;
+}
+```
+
+```sh
+mkdir -p build
+gcc -o build/arrow_parquet_encryption_demo arrow_parquet_encryption_demo.cpp -lstdc++ -std=gnu++17 -larrow -lparquet
+build/arrow_parquet_encryption_demo false false
+build/arrow_parquet_encryption_demo false true
+build/arrow_parquet_encryption_demo true false
+build/arrow_parquet_encryption_demo true true
+```
+
+### 1.3.2 Arrow Parse Decryption Metadata Source Code
+
+```cpp
+#include <arrow/buffer.h>
+#include <arrow/io/api.h>
+#include <arrow/result.h>
+#include <arrow/status.h>
+#include <arrow/util/key_value_metadata.h>
+#include <parquet/arrow/reader.h>
+#include <parquet/arrow/writer.h>
+#include <parquet/exception.h>
+
+#include <fstream>
+#include <iostream>
+
+arrow::Status exec() {
+    std::shared_ptr<arrow::io::ReadableFile> _file;
+    ARROW_RETURN_NOT_OK(arrow::io::ReadableFile::Open("encrypted_data.parquet", arrow::default_memory_pool()).Value(&_file));
+    ARROW_ASSIGN_OR_RAISE(const auto _file_size, _file->GetSize());
+    // Read Footer
+    // 1. Magic Number
+    uint64_t pos = _file_size;
+    ARROW_ASSIGN_OR_RAISE(auto buffer, _file->ReadAt(pos - 4, 4));
+    std::cout << "magic number: " << buffer->data_as<char>() << std::endl;
+    pos -= 4;
+
+    // 2. File CryptoMD and File Metadata length
+    ARROW_ASSIGN_OR_RAISE(buffer, _file->ReadAt(pos - 4, 4));
+    auto footer_length = *buffer->data_as<uint32_t>();
+    std::cout << "FileCryptoMD and Footer length: " << footer_length << std::endl;
+    pos -= 4;
+
+    // 3. Read the entire File Metadata
+    ARROW_ASSIGN_OR_RAISE(buffer, _file->ReadAt(pos - footer_length, footer_length));
+    pos -= footer_length;
+    auto crypto_metadata = parquet::FileCryptoMetaData::Make(buffer->data(), &footer_length);
+    std::cout << "key_metadata: " << crypto_metadata->key_metadata() << std::endl;
+
+    return arrow::Status::OK();
+}
+
+int main() {
+    auto status = exec();
+    if (!status.ok()) {
+        std::cout << status.message() << std::endl;
+    }
+
+    return 0;
+}
+```
+
+```sh
+# generate encrypted_data.parquet with footer not plaintext
+build/arrow_parquet_encryption_demo false false
+
+mkdir -p build
+gcc -o build/arrow_parquet_encryption_metadata_demo arrow_parquet_encryption_metadata_demo.cpp -lstdc++ -std=gnu++17 -larrow -lparquet && build/arrow_parquet_encryption_metadata_demo
+```
 
 # 2 Optimizing queries
 

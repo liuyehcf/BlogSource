@@ -1944,6 +1944,7 @@ su命令用于切换用户
 * `su`：以`non-login-shell`的方式，切换到root用户
 * `su -`：以`login-shell`的方式（更换目录，环境变量等等），切换到root用户
 * `su test`：以`non-loign-shell`的方式，切换到test用户
+* `su - test`：以`login-shell`的方式（更换目录，环境变量等等），切换到test用户
 
 ## 4.13 sudo
 

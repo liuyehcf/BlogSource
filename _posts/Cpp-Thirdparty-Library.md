@@ -1107,17 +1107,19 @@ EOF
 thrift --gen cpp example.thrift
 ```
 
-# 7 Pocoproject
+# 7 Independent Projects
+
+## 7.1 Pocoproject
 
 ```sh
-git clone -b master https://github.com/pocoproject/poco.git
+git clone -b poco-1.13.3-release https://github.com/pocoproject/poco.git
 cd poco
 cmake -B cmake-build
 cmake --build cmake-build --config Release -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo cmake --install cmake-build
 ```
 
-## 7.1 Logger
+### 7.1.1 Logger
 
 ```sh
 mkdir poco_logger_demo
@@ -1149,35 +1151,46 @@ cat > poco_logger_demo.cpp << 'EOF'
 #include <Poco/FormattingChannel.h>
 #include <Poco/Logger.h>
 #include <Poco/PatternFormatter.h>
+#include <Poco/SplitterChannel.h>
 
 int main() {
     {
-        Poco::AutoPtr<Poco::ConsoleChannel> channel(new Poco::ConsoleChannel);
-        Poco::Logger::root().setLevel("trace");
-        Poco::Logger::root().setChannel(channel);
-        Poco::Logger::get("main_1").information("Hello, World!");
-    }
-    {
+        Poco::AutoPtr<Poco::ConsoleChannel> console_channel(new Poco::ConsoleChannel);
         Poco::AutoPtr<Poco::PatternFormatter> formatter(new Poco::PatternFormatter("%Y.%m.%d %H:%M:%S.%F <%p> %s: %t"));
-        Poco::AutoPtr<Poco::ConsoleChannel> console_chanel(new Poco::ConsoleChannel);
-        Poco::AutoPtr<Poco::FormattingChannel> channel(new Poco::FormattingChannel(formatter, console_chanel));
+        Poco::AutoPtr<Poco::FormattingChannel> formatting_channel(
+                new Poco::FormattingChannel(formatter, console_channel));
         Poco::Logger::root().setLevel("trace");
-        Poco::Logger::root().setChannel(channel);
+        Poco::Logger::root().setChannel(formatting_channel);
         Poco::Logger::get("main_1").information("Hello, World!");
         Poco::Logger::get("main_2").information("Hello, World!");
     }
     {
-        Poco::AutoPtr<Poco::FileChannel> fileChannel(new Poco::FileChannel);
-        fileChannel->setProperty("path", "sample.log");
-        fileChannel->setProperty("rotation", "1 M"); // Rotate log file monthly
+        Poco::AutoPtr<Poco::FileChannel> file_channel(new Poco::FileChannel("sample.log"));
+        file_channel->setProperty("rotation", "1 M");
 
-        Poco::AutoPtr<Poco::PatternFormatter> formatter(new Poco::PatternFormatter);
-        formatter->setProperty("pattern", "%Y-%m-%d %H:%M:%S %s: %t"); // Customize log pattern
+        Poco::AutoPtr<Poco::PatternFormatter> formatter(new Poco::PatternFormatter("%Y-%m-%d %H:%M:%S %s: %t"));
+        Poco::AutoPtr<Poco::FormattingChannel> formatting_channel(new Poco::FormattingChannel(formatter, file_channel));
 
-        Poco::AutoPtr<Poco::FormattingChannel> formattingChannel(new Poco::FormattingChannel(formatter, fileChannel));
+        Poco::Logger& logger = Poco::Logger::create("FileLogger", formatting_channel, Poco::Message::PRIO_INFORMATION);
+        logger.information("This is an informational message.");
+        logger.warning("This is a warning message.");
+    }
+    {
+        Poco::AutoPtr<Poco::ConsoleChannel> console_channel(new Poco::ConsoleChannel);
 
-        Poco::Logger& logger = Poco::Logger::create("FileLogger", formattingChannel, Poco::Message::PRIO_INFORMATION);
+        Poco::AutoPtr<Poco::FileChannel> file_channel(new Poco::FileChannel("sample.log"));
+        file_channel->setProperty("rotation", "1 M");
 
+        Poco::AutoPtr<Poco::SplitterChannel> split_channel(new Poco::SplitterChannel);
+        split_channel->addChannel(console_channel);
+        split_channel->addChannel(file_channel);
+
+        Poco::AutoPtr<Poco::PatternFormatter> formatter(new Poco::PatternFormatter("%Y-%m-%d %H:%M:%S %s: %t"));
+        Poco::AutoPtr<Poco::FormattingChannel> formatting_channel(
+                new Poco::FormattingChannel(formatter, split_channel));
+
+        Poco::Logger& logger =
+                Poco::Logger::create("MultiChannelLogger", formatting_channel, Poco::Message::PRIO_INFORMATION);
         logger.information("This is an informational message.");
         logger.warning("This is a warning message.");
     }
@@ -1193,12 +1206,13 @@ build/poco_logger_demo
 Output:
 
 ```
-Hello, World!
-Hello, World!
-2024.04.12 08:22:40.072214 <Information> main_2: Hello, World!
+2024.05.30 08:23:56.061053 <Information> main_1: Hello, World!
+2024.05.30 08:23:56.061093 <Information> main_2: Hello, World!
+2024-05-30 08:23:56 MultiChannelLogger: This is an informational message.
+2024-05-30 08:23:56 MultiChannelLogger: This is a warning message.
 ```
 
-## 7.2 JSON
+### 7.1.2 JSON
 
 ```sh
 mkdir poco_json_demo
@@ -1275,7 +1289,224 @@ Name: John Doe, Age: 30, Is Developer: 1
 Generated JSON: {"isNewDeveloper":false,"newAge":28,"newName":"Jane Smith"}
 ```
 
-# 8 sqlpp11
+### 7.1.3 Http
+
+```sh
+mkdir poco_http_demo
+cd poco_http_demo
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(poco_http_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
+
+file(GLOB MY_PROJECT_SOURCES "*.cpp")
+add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+find_package(Poco REQUIRED COMPONENTS Foundation Net Util)
+target_link_libraries(${PROJECT_NAME} Poco::Foundation Poco::Net Poco::Util)
+EOF
+
+cat > poco_http_demo.cpp << 'EOF'
+#include <Poco/Net/HTTPClientSession.h>
+#include <Poco/Net/HTTPRequest.h>
+#include <Poco/Net/HTTPRequestHandler.h>
+#include <Poco/Net/HTTPRequestHandlerFactory.h>
+#include <Poco/Net/HTTPResponse.h>
+#include <Poco/Net/HTTPServer.h>
+#include <Poco/Net/HTTPServerParams.h>
+#include <Poco/Net/HTTPServerRequest.h>
+#include <Poco/Net/HTTPServerResponse.h>
+#include <Poco/Net/ServerSocket.h>
+#include <Poco/StreamCopier.h>
+#include <Poco/Util/ServerApplication.h>
+
+#include <iostream>
+#include <sstream>
+
+class HelloRequestHandler : public Poco::Net::HTTPRequestHandler {
+public:
+    void handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) override {
+        response.setContentType("text/html");
+        std::ostream& ostr = response.send();
+        response.setChunkedTransferEncoding(true);
+        ostr << "<html><head><title>Hello</title></head>";
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        ostr << "<body><h1>Hello from Poco HTTP Server</h1></body></html>";
+    }
+};
+
+class HelloRequestHandlerFactory : public Poco::Net::HTTPRequestHandlerFactory {
+public:
+    Poco::Net::HTTPRequestHandler* createRequestHandler(const Poco::Net::HTTPServerRequest& request) override {
+        return new HelloRequestHandler();
+    }
+};
+
+class HTTPServerApp : public Poco::Util::ServerApplication {
+protected:
+    int main(const std::vector<std::string>& args) {
+        Poco::Net::ServerSocket svs(9080); // set the server port here
+        Poco::Net::HTTPServer server(new HelloRequestHandlerFactory, svs, new Poco::Net::HTTPServerParams);
+
+        server.start();
+        std::cout << "HTTP Server started on port 9080." << std::endl;
+
+        // Wait for CTRL-C or kill
+        waitForTerminationRequest();
+
+        server.stop();
+        return Application::EXIT_OK;
+    }
+};
+
+int main(int argc, char** argv) {
+    std::thread server_thread([argc, argv]() {
+        HTTPServerApp app;
+        app.run(argc, argv);
+    });
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    Poco::Net::HTTPClientSession session("localhost", 9080);
+    Poco::Net::HTTPRequest request(Poco::Net::HTTPRequest::HTTP_GET, "/");
+    Poco::Net::HTTPResponse response;
+
+    session.sendRequest(request);
+    std::istream& response_body_is = session.receiveResponse(response);
+
+    std::string response_body;
+    Poco::StreamCopier::copyToString(response_body_is, response_body);
+
+    std::cout << response_body << std::endl;
+
+    server_thread.join();
+    return 0;
+}
+EOF
+
+cmake -B build
+cmake --build build
+build/poco_http_demo
+```
+
+Output:
+
+```
+HTTP Server started on port 9080.
+<html><head><title>Hello</title></head><body><h1>Hello from Poco HTTP Server</h1></body></html>
+^C
+```
+
+### 7.1.4 Application
+
+```sh
+mkdir poco_application_demo
+cd poco_application_demo
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(poco_application_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
+
+file(GLOB MY_PROJECT_SOURCES "*.cpp")
+add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+find_package(Poco REQUIRED COMPONENTS Foundation Util)
+target_link_libraries(${PROJECT_NAME} Poco::Foundation Poco::Util)
+EOF
+
+cat > poco_application_demo.cpp << 'EOF'
+#include <Poco/Util/Application.h>
+#include <Poco/Util/HelpFormatter.h>
+#include <Poco/Util/Option.h>
+#include <Poco/Util/OptionSet.h>
+
+#include <iostream>
+
+class DemoApp : public Poco::Util::Application {
+protected:
+    void initialize(Application& self) {
+        loadConfiguration();
+        Application::initialize(self);
+    }
+
+    void uninitialize() { Application::uninitialize(); }
+
+    void defineOptions(Poco::Util::OptionSet& options) {
+        Application::defineOptions(options);
+
+        options.addOption(Poco::Util::Option("help", "h", "display help information")
+                                  .required(false)
+                                  .repeatable(false)
+                                  .callback(Poco::Util::OptionCallback<DemoApp>(this, &DemoApp::handleHelp)));
+
+        options.addOption(Poco::Util::Option("config-file", "C", "path of configuration file")
+                                  .required(false)
+                                  .repeatable(false)
+                                  .argument("<file>")
+                                  .binding("config-file"));
+    }
+
+    void handleHelp(const std::string& name, const std::string& value) {
+        _is_help = true;
+        Poco::Util::HelpFormatter helpFormatter(options());
+        helpFormatter.setCommand(commandName());
+        helpFormatter.setUsage("OPTIONS");
+        helpFormatter.setHeader("A simple command line application that demonstrates parsing options with POCO.");
+        helpFormatter.format(std::cout);
+        stopOptionsProcessing();
+    }
+
+    int main(const std::vector<std::string>& args) {
+        if (_is_help) {
+            return Application::EXIT_OK;
+        }
+        std::cout << "config-file: " << config().getString("config-file", "unknow") << std::endl;
+        return Application::EXIT_OK;
+    }
+
+private:
+    bool _is_help = false;
+};
+
+POCO_APP_MAIN(DemoApp)
+EOF
+
+cmake -B build
+cmake --build build
+build/poco_application_demo --help
+# --config is not ambiguous, so it can be parsed to --config-file
+build/poco_application_demo --config /etc/config.xml
+build/poco_application_demo --config-file /etc/config.xml
+```
+
+Output:
+
+```
+usage: poco_application_demo OPTIONS
+A simple command line application that demonstrates parsing options with POCO.
+
+-h, --help                      display help information
+-C<file>, --config-file=<file>  path of configuration file
+config-file: /etc/config.xml
+```
+
+## 7.2 sqlpp11
 
 **How to integrate:**
 
@@ -1298,7 +1529,7 @@ EOF
 scripts/ddl2cpp  /tmp/foo.sql /tmp/foo my_ns
 ```
 
-## 8.1 With Sqlite
+### 7.2.1 With Sqlite
 
 ```
 tree -L 2
@@ -1492,7 +1723,7 @@ DELETE FROM users WHERE (users.id=10000001)
 Sqlite3 debug: Preparing: 'DELETE FROM users WHERE (users.id=10000001)'
 ```
 
-## 8.2 With Mysql
+### 7.2.2 With Mysql
 
 ```
 tree -L 2
@@ -1664,7 +1895,7 @@ cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j $(( 
 build/sqlpp11_demo
 ```
 
-## 8.3 With Mariadb
+### 7.2.3 With Mariadb
 
 ```sh
 tree -L 2
@@ -1867,7 +2098,120 @@ SELECT users.id,users.first_name,users.last_name,users.age FROM users WHERE (use
 DELETE FROM users WHERE (users.id=10000001)
 ```
 
-# 9 Assorted
+## 7.3 libcurl
+
+* [command line tool and library for transferring data with URLs (since 1998)](https://curl.se/)
+    * [The libcurl API](https://curl.se/libcurl/c/)
+* [github-curl](https://github.com/curl/curl)
+
+```sh
+tree -L 2
+.
+├── CMakeLists.txt
+├── contrib
+│   ├── curl-8.8.0
+│   └── curl-8.8.0.tar.gz
+└── main.cpp
+```
+
+```sh
+mkdir curl_demo && cd curl_demo
+
+# Download source code of these two project
+mkdir -p contrib
+wget -O contrib/curl-8.8.0.tar.gz https://curl.se/download/curl-8.8.0.tar.gz
+tar -zxf contrib/curl-8.8.0.tar.gz -C contrib
+
+# CMakeLists.txt
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(curl_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+add_executable(${PROJECT_NAME} main.cpp)
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+# Include subdirectories
+add_subdirectory(contrib/curl-8.8.0)
+
+# Link against libraries
+target_link_libraries(${PROJECT_NAME} CURL::libcurl)
+EOF
+
+cat > main.cpp << 'EOF'
+#include <curl/curl.h>
+
+#include <iostream>
+#include <string>
+
+// This callback function gets called by libcurl as soon as there is data received that needs to be saved.
+// The size of the data pointed to by *ptr is size multiplied by nmemb, it will not be zero terminated.
+// Return the number of bytes actually taken care of.
+// If that amount differs from the amount passed to your function, it'll signal an error to the library.
+size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
+    ((std::string*)userp)->append((char*)contents, size * nmemb);
+    return size * nmemb;
+}
+
+int main() {
+    CURL* curl;
+    CURLcode res;
+    std::string readBuffer;
+
+    // Initialize a CURL session
+    curl = curl_easy_init();
+    if (!curl) {
+        std::cerr << "Failed to initialize CURL session" << std::endl;
+        return 1;
+    }
+
+    struct curl_slist* headers = NULL; // Initialize header list
+    headers = curl_slist_append(headers, "Content-Type: application/json");
+    headers = curl_slist_append(headers, "Custom-Header: CustomValue");
+
+    // Set the URL for the request
+    curl_easy_setopt(curl, CURLOPT_URL, "http://jsonplaceholder.typicode.com/posts");
+
+    // Set the custom headers
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+    // Set the callback function to save the data
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+    // Set the data pointer to save the response
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+
+    // Perform the HTTP request
+    res = curl_easy_perform(curl);
+    if (res != CURLE_OK) {
+        std::cerr << "curl_easy_perform() failed: " << curl_easy_strerror(res) << std::endl;
+    } else {
+        std::cout << readBuffer << std::endl;
+    }
+
+    // Cleanup header list
+    curl_slist_free_all(headers);
+    // Cleanup CURL session
+    curl_easy_cleanup(curl);
+
+    return 0;
+}
+EOF
+
+# compile and run
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+build/curl_demo
+```
+
+**Tips:**
+
+* According to [Can I use libcurls CURLOPT_WRITEFUNCTION with a C++11 lambda expression?](https://stackoverflow.com/questions/6624667/can-i-use-libcurls-curlopt-writefunction-with-a-c11-lambda-expression), if you want to use lambda expression as the callback function, then declare the lambda with `+` before empty capture list `[]`, which is `+[]`
+
+# 8 Assorted
 
 1. [Awesome C++ Projects](https://github.com/fffaraz/awesome-cpp)
 1. [parallel-hashmap](https://github.com/greg7mdp/parallel-hashmap)：`parallel-hashmap`提供了一组高性能、并发安全的`map`，用于替换`std`以及`boost`中的`map`
@@ -1875,3 +2219,4 @@ DELETE FROM users WHERE (users.id=10000001)
 1. [cpp-httplib](https://github.com/yhirose/cpp-httplib)：`cpp-httplib`以头文件的方式提供`http`协议的相关支持
 1. [json](https://github.com/nlohmann/json)：`json`库
 1. [libfiu(Failure Injection Unit)](https://blitiri.com.ar/p/libfiu/)：错误注入
+

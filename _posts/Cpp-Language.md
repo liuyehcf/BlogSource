@@ -2293,6 +2293,93 @@ int main() {
 }
 ```
 
+## 4.3 Variadic Arguments
+
+[Variadic arguments](https://en.cppreference.com/w/cpp/language/variadic_arguments)
+
+Allows a function to accept any number of extra arguments. 
+
+Within the body of a function that uses variadic arguments, the values of these arguments may be accessed using the `<cstdarg>` library facilities:
+
+* `va_start`: enables access to variadic function arguments
+* `va_arg`: accesses the next variadic function argument
+* `va_copy`: makes a copy of the variadic function arguments
+* `va_end`: ends traversal of the variadic function arguments
+* `va_list`: holds the information needed by va_start, va_arg, va_end, and va_copy
+
+**Example:**
+
+```cpp
+#include <cstdarg>
+#include <iostream>
+
+int sum(int count, ...) {
+    int result = 0;
+    va_list args;
+    va_start(args, count);
+    for (int i = 0; i < count; i++) {
+        result += va_arg(args, int);
+    }
+    va_end(args);
+    return result;
+}
+
+int main() {
+    std::cout << sum(3, 1, 2, 3) << std::endl;            // Output: 6
+    std::cout << sum(5, 10, 20, 30, 40, 50) << std::endl; // Output: 150
+    return 0;
+}
+```
+
+**How it works?**
+
+* [How are variable arguments implemented in gcc?](https://stackoverflow.com/questions/12371450/how-are-variable-arguments-implemented-in-gcc)
+
+If you look at the way the C language stores the parameters on the stack, the way the macros work should become clear:
+
+```
+Higher memory address    Last parameter
+                         Penultimate parameter
+                         ....
+                         Second parameter
+Lower memory address     First parameter
+       StackPointer  ->  Return address
+```
+
+The arguments are always stored like this, even without the `...` parameter type.
+
+The `va_start` macro just sets up a pointer to the last named parameter:
+
+```cpp
+void func(int a, ...) {
+    // va_start
+    char* p = (char*)&a + sizeof a;
+}
+```
+
+which makes `p` point to the second parameter. The `va_arg` macro does this:
+
+```cpp
+void func(int a, ...) {
+    // va_start
+    char* p = (char*)&a + sizeof a;
+
+    // va_arg
+    int i1 = *((int*)p);
+    p += sizeof(int);
+
+    // va_arg
+    int i2 = *((int*)p);
+    p += sizeof(int);
+
+    // va_arg
+    long i2 = *((long*)p);
+    p += sizeof(long);
+}
+```
+
+The `va_end` macro just sets the `p` value to `NULL`
+
 # 5 template
 
 ## 5.1 template Type
@@ -4031,6 +4118,84 @@ int main() {
 }
 ```
 
+## 7.3 C-Stype function pointer
+
+According to [expr.unary.op](https://eel.is/c++draft/expr.unary.op)/7
+
+> The operand of the unary + operator shall be a prvalue of arithmetic, unscoped enumeration, or pointer type and the result is the value of the argument. Integral promotion is performed on integral or enumeration operands. The type of the result is the type of the promoted operand.
+
+According to [expr.prim.lambda.closure](https://eel.is/c++draft/expr.prim.lambda.closure)/1
+
+> The type of a lambda-expression (which is also the type of the closure object) is a unique, unnamed non-union class type, called the closure type, whose properties are described below.
+
+According to [expr.prim.lambda](https://timsong-cpp.github.io/cppwp/n3337/expr.prim.lambda)/6
+
+> The closure type for a lambda-expression with no lambda-capture has a public non-virtual non-explicit const conversion function to pointer to function having the same parameter and return types as the closure type's function call operator. The value returned by this conversion function shall be the address of a function that, when invoked, has the same effect as invoking the closure type's function call operator.
+
+**Explicit cast to C-style function pointer by using unary operator `+`:**
+
+* This is necessary in some cases like `libcurl` when you setting up the callback.
+* And in most cases, the labmda will automatically cast to C-style function pointer where there needs a C-style function pointer.
+
+```cpp
+#include <cstdarg>
+#include <iostream>
+
+using AddFunType = int (*)(int, int);
+using NegativeFunType = int (*)(int);
+
+enum OperatorType {
+    ADD = 0,
+    NEGATIVE = 1,
+};
+
+int invoke_operator(OperatorType op, ...) {
+    va_list args;
+    va_start(args, op);
+    switch (op) {
+    case ADD: {
+        AddFunType add_func = va_arg(args, AddFunType);
+        int num1 = va_arg(args, int);
+        int num2 = va_arg(args, int);
+        va_end(args);
+        return add_func(num1, num2);
+    }
+    case NEGATIVE: {
+        NegativeFunType negative_func = va_arg(args, NegativeFunType);
+        int num = va_arg(args, int);
+        va_end(args);
+        return negative_func(num);
+    }
+    default:
+        throw std::logic_error("Invalid operator type");
+    }
+}
+
+int main() {
+    {
+        // Must use + to explicitly convert lambda to function pointer, otherwise it may crash
+        auto lambda_add = +[](int num1, int num2) { return num1 + num2; };
+        int num1 = 1;
+        int num2 = 2;
+        auto ret = invoke_operator(OperatorType::ADD, lambda_add, num1, num2);
+        std::cout << num1 << " + " << num2 << " = " << ret << std::endl;
+    }
+    {
+        // Must use + to explicitly convert lambda to function pointer, otherwise it may crash
+        auto lambda_negative = +[](int num) { return -num; };
+        int num = 1;
+        auto ret = invoke_operator(OperatorType::NEGATIVE, lambda_negative, num);
+        std::cout << "-(" << num << ") = " << ret << std::endl;
+    }
+    return 0;
+}
+```
+
+**References:**
+
+* [Resolving ambiguous overload on function pointer and std::function for a lambda using + (unary plus)](https://stackoverflow.com/questions/17822131/resolving-ambiguous-overload-on-function-pointer-and-stdfunction-for-a-lambda)
+* [A positive lambda: '+[]{}' - What sorcery is this? [duplicate]](https://stackoverflow.com/questions/18889028/a-positive-lambda-what-sorcery-is-this)
+
 # 8 Coroutine
 
 [C++20’s Coroutines for Beginners - Andreas Fertig - CppCon 2022](https://www.youtube.com/watch?v=8sEe-4tig_A)
@@ -5458,36 +5623,7 @@ person.cpp:(.text+0x2a): Person::sleep() 的多重定义
 collect2: 错误：ld 返回 1
 ```
 
-## 13.6 Non-template parameter pack
-
-**非模板参数包有如下几个特点：**
-
-* 只能独立出现。`int nums...`也是合法的，但是不是参数包
-* 无法知道其长度，只能显式传递其个数，比如`printf`通过占位符来隐式传递参数个数
-
-```cpp
-#include <cstdarg>
-#include <iostream>
-
-int sum(int count, ...) {
-    int result = 0;
-    va_list args;
-    va_start(args, count);
-    for (int i = 0; i < count; i++) {
-        result += va_arg(args, int);
-    }
-    va_end(args);
-    return result;
-}
-
-int main() {
-    std::cout << sum(3, 1, 2, 3) << std::endl;            // Output: 6
-    std::cout << sum(5, 10, 20, 30, 40, 50) << std::endl; // Output: 150
-    return 0;
-}
-```
-
-## 13.7 Variable-length Array
+## 13.6 Variable-length Array
 
 Variable-length array (VLA), which is a feature not supported by standard C++. However, some compilers, particularly in C and as extensions in C++, do provide support for VLAs.
 

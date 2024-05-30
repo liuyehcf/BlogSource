@@ -26,6 +26,7 @@ date: 2018-02-05 09:25:59
 * [C++ static code analysis rules](https://rules.sonarsource.com/cpp)
 * [C++ reference](https://en.cppreference.com/w/)
     * [C++ Standard Library headers](https://en.cppreference.com/w/cpp/header)
+* [Working Draft Programming Languages — C++](https://eel.is/c++draft)
 * [C++ 语言构造参考手册](https://www.bookstack.cn/books/cppreference-language)
 * [C++ Notes for Professionals book](https://goalkicker.com/CPlusPlusBook/)
 * [Google-Abseil](https://abseil.io/)
