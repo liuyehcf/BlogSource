@@ -2226,10 +2226,56 @@ Class *pc = new (buf) Class();
 
 # 4 Syntax
 
-## 4.1 braced-init-list
+## 4.1 List-initialization
+
+Initializes an object from braced-init-list.
 
 * [List-initialization (since C++11)](https://en.cppreference.com/w/cpp/language/list_initialization)
 * [Why is a braced-init-list not an expression？](https://stackoverflow.com/questions/18009628/why-is-a-braced-init-list-not-an-expression)
+
+**Direct-list-initialization:**
+
+```cpp
+T object { arg1, arg2, ... };
+T object { .des1 = arg1, .des2 { arg2 } ... }; (since C++20)
+
+T { arg1, arg2, ... }
+T { .des1 = arg1, .des2 { arg2 } ... } (since C++20)
+
+new T { arg1, arg2, ... }
+new T { .des1 = arg1, .des2 { arg2 } ... } (since C++20)
+
+Class { T member { arg1, arg2, ... }; };
+Class { T member { .des1 = arg1, .des2 { arg2 } ... }; }; (since C++20)
+
+Class::Class() : member { arg1, arg2, ... } {...
+Class::Class() : member { .des1 = arg1, .des2 { arg2 } ... } {... (since C++20)
+```
+
+**Copy-list-initialization:**
+
+```cpp
+T object = { arg1, arg2, ... };
+T object = { .des1 = arg1, .des2 { arg2 } ... }; (since C++20)
+
+function ({ arg1, arg2, ... })
+function ({ .des1 = arg1, .des2 { arg2 } ... }) (since C++20)
+
+return { arg1, arg2, ... };
+return { .des1 = arg1, .des2 { arg2 } ... }; (since C++20)
+
+object [{ arg1, arg2, ... }]
+object [{ .des1 = arg1, .des2 { arg2 } ... }] (since C++20)
+
+object = { arg1, arg2, ... }
+object = { .des1 = arg1, .des2 { arg2 } ... } (since C++20)
+
+U ({ arg1, arg2, ... })
+U ({ .des1 = arg1, .des2 { arg2 } ... }) (since C++20)
+
+Class { T member = { arg1, arg2, ... }; };
+Class { T member = { .des1 = arg1, .des2 { arg2 } ... }; }; (since C++20)
+```
 
 ## 4.2 operator overloading
 
@@ -4849,6 +4895,55 @@ int main() {
     return 0;
 }
 ```
+
+## 11.3 Copy Elision
+
+* [Copy elision](https://en.cppreference.com/w/cpp/language/copy_elision)
+* [What are copy elision and return value optimization?](https://stackoverflow.com/questions/12953127/what-are-copy-elision-and-return-value-optimization)
+
+Copy elision is an optimization technique used by compilers in C++ to reduce the overhead of copying and moving objects. This optimization can significantly improve performance by eliminating unnecessary copying of objects, especially in return statements or during function calls. Two specific cases of copy elision are Return Value Optimization (RVO) and Named Return Value Optimization (NRVO). Let's explore each of these:
+
+* `Return Value Optimization (RVO)`: RVO is a compiler optimization that eliminates the need for a temporary object when a function returns an object by value. Normally, when a function returns an object, a temporary copy of the object is created (which invokes the copy constructor), and then the temporary object is copied to the destination variable. With RVO, the compiler can directly construct the return value in the memory location of the caller's receiving variable, thereby skipping the creation and copy of the temporary object.
+    ```
+    #include <iostream>
+
+    class Widget {
+    public:
+        Widget() {}
+        Widget(const Widget&) { std::cout << "Copy constructor called!\n"; }
+    };
+
+    Widget createWidget() {
+        return Widget();
+    }
+
+    int main() {
+        Widget w = createWidget(); // With RVO, the copy constructor is not called
+        return 0;
+    }
+    ```
+
+* `Named Return Value Optimization (NRVO)`: Similar to RVO, NRVO allows the compiler to eliminate the temporary object even when the object returned has a name. NRVO is a bit more challenging for the compiler because it involves predicting which named variable will be returned at compile time.
+
+    ```cpp
+    #include <iostream>
+
+    class Widget {
+    public:
+        Widget() {}
+        Widget(const Widget&) { std::cout << "Copy constructor called!\n"; }
+    };
+
+    Widget createWidget() {
+        Widget w;
+        return w; // Normally, this would call the copy constructor
+    }
+
+    int main() {
+        Widget w = createWidget(); // With RVO, the copy constructor is not called
+        return 0;
+    }
+    ```
 
 # 12 Policy
 

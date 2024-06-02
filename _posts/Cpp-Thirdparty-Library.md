@@ -75,9 +75,9 @@ gcc -o main main.cpp -lstdc++ -std=gnu++17 -lbacktrace -g
 ```
 
 ```
-/data25/chenfeng.he/cpp/test/main.cpp:31: 0x4014d3 print_stack_trace()
-/data25/chenfeng.he/cpp/test/main.cpp:24: 0x4014df my_function()
-/data25/chenfeng.he/cpp/test/main.cpp:28: 0x4014eb main
+/root/main.cpp:31: 0x4014d3 print_stack_trace()
+/root/main.cpp:24: 0x4014df my_function()
+/root/main.cpp:28: 0x4014eb main
 ../csu/libc-start.c:123: 0x7fd890a7c2e0 __libc_start_main
 ```
 
@@ -281,16 +281,35 @@ Boost.Stacktrace provides several options for printing stack traces, depending o
 
 void foo(int cnt) {
     if (cnt == 0) {
-        std::cout << boost::stacktrace::stacktrace() << std::endl;
-        return;
+        throw std::logic_error("error");
     }
     foo(cnt - 1);
 }
 
+#if defined(__GNUC__)
+// wrap libc's _cxa_throw to print stack trace of exceptions
+extern "C" {
+void __real___cxa_throw(void* thrown_exception, void* infov, void (*dest)(void*));
+
+void __wrap___cxa_throw(void* thrown_exception, void* infov, void (*dest)(void*));
+}
+// wrap libc's _cxa_throw that must not throw exceptions again, otherwise causing crash.
+void __wrap___cxa_throw(void* thrown_exception, void* info, void (*dest)(void*)) {
+    std::cout << boost::stacktrace::stacktrace() << std::endl;
+
+    // call the real __cxa_throw():
+    __real___cxa_throw(thrown_exception, info, dest);
+}
+#endif
+
 int main() {
     std::cout << "Boost version: " << BOOST_VERSION / 100000 << "." << BOOST_VERSION / 100 % 1000 << "."
               << BOOST_VERSION % 100 << std::endl;
-    foo(5);
+    try {
+        foo(5);
+    } catch (...) {
+        // ignore
+    }
     return 0;
 }
 ```
@@ -304,7 +323,7 @@ This approach works fine with `gcc-10.3.0`, but can't work with higher versions 
 ```sh
 # -ldl: link libdl
 # -g: generate debug information
-gcc -o main main.cpp -DBOOST_STACKTRACE_USE_ADDR2LINE -lstdc++ -std=gnu++17 -ldl -g
+gcc -o main main.cpp -DBOOST_STACKTRACE_USE_ADDR2LINE -lstdc++ -std=gnu++17 -Wl,-wrap=__cxa_throw -ldl -g
 ./main
 ```
 
@@ -312,15 +331,17 @@ gcc -o main main.cpp -DBOOST_STACKTRACE_USE_ADDR2LINE -lstdc++ -std=gnu++17 -ldl
 
 ```
 Boost version: 1.84.0
- 0# _ZN5boost10stacktrace16basic_stacktraceISaINS0_5frameEEEC4Ev at /usr/local/include/boost/stacktrace/stacktrace.hpp:129
- 1# foo(int) at /root/main.cpp:13
- 2# foo(int) at /root/main.cpp:13
- 3# foo(int) at /root/main.cpp:13
- 4# foo(int) at /root/main.cpp:13
- 5# foo(int) at /root/main.cpp:13
- 6# main at /root/main.cpp:19
- 7# __libc_start_main in /lib64/libc.so.6
- 8# _start at :?
+ 0# boost::stacktrace::basic_stacktrace<std::allocator<boost::stacktrace::frame> >::basic_stacktrace() at /usr/local/include/boost/stacktrace/stacktrace.hpp:129
+ 1# foo(int) at /root/main.cpp:9
+ 2# foo(int) at /root/main.cpp:10
+ 3# foo(int) at /root/main.cpp:10
+ 4# foo(int) at /root/main.cpp:10
+ 5# foo(int) at /root/main.cpp:10
+ 6# foo(int) at /root/main.cpp:10
+ 7# main at /root/main.cpp:36
+ 8# 0x00007F14FEF4E24A in /lib/x86_64-linux-gnu/libc.so.6
+ 9# __libc_start_main in /lib/x86_64-linux-gnu/libc.so.6
+10# _start in ./main
 ```
 
 ### 2.3.2 With libbacktrace
@@ -331,7 +352,7 @@ Boost version: 1.84.0
 # -ldl: link libdl
 # -g: generate debug information
 # -lbacktrace: link libbacktrace
-gcc -o main main.cpp -DBOOST_STACKTRACE_USE_BACKTRACE -lstdc++ -std=gnu++17 -ldl -lbacktrace -g
+gcc -o main main.cpp -DBOOST_STACKTRACE_USE_BACKTRACE -lstdc++ -std=gnu++17 -Wl,-wrap=__cxa_throw -ldl -lbacktrace -g
 ./main
 ```
 
@@ -339,15 +360,17 @@ gcc -o main main.cpp -DBOOST_STACKTRACE_USE_BACKTRACE -lstdc++ -std=gnu++17 -ldl
 
 ```
 Boost version: 1.84.0
- 0# foo(int) at /root/main.cpp:7
- 1# foo(int) at /root/main.cpp:11
- 2# foo(int) at /root/main.cpp:11
- 3# foo(int) at /root/main.cpp:11
- 4# foo(int) at /root/main.cpp:11
- 5# foo(int) at /root/main.cpp:11
- 6# main at /root/main.cpp:17
- 7# __libc_start_main at ../csu/libc-start.c:325
- 8# _start in ./main
+ 0# __wrap___cxa_throw at /root/main.cpp:21
+ 1# foo(int) at /root/main.cpp:9
+ 2# foo(int) at /root/main.cpp:10
+ 3# foo(int) at /root/main.cpp:10
+ 4# foo(int) at /root/main.cpp:10
+ 5# foo(int) at /root/main.cpp:10
+ 6# foo(int) at /root/main.cpp:10
+ 7# main at /root/main.cpp:36
+ 8# __libc_start_call_main at ../sysdeps/nptl/libc_start_call_main.h:74
+ 9# __libc_start_main at ../csu/libc-start.c:347
+10# _start in ./main
 ```
 
 ## 2.4 Reference
@@ -478,10 +501,10 @@ int main(int argc, char* argv[]) {
 **安装[glog](https://github.com/google/glog)：**
 
 ```sh
-git clone https://github.com/google/glog.git
+git clone -b v0.6.0 https://github.com/google/glog.git
 cd glog
 
-# BUILD_SHARED_LIBS用于控制生成动态库还是静态库，默认是动态库，这里我们选择静态库
+# BUILD_SHARED_LIBS 用于控制生成动态库还是静态库，默认是动态库，这里我们选择静态库
 cmake -B build -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
 cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo cmake --install build
@@ -495,11 +518,12 @@ find_package(GLOG)
 target_link_libraries(xxx glog::glog)
 ```
 
-### 5.2.1 Print Stack
+### 5.2.1 Print Stack (Not Recommend)
 
 [[Enhancement] wrap libc's __cxa_throw to print stack trace when throw exceptions](https://github.com/StarRocks/starrocks/pull/13410)
 
 ```cpp
+#define GLOG_USE_GLOG_EXPORT
 #include <glog/logging.h>
 
 #include <iostream>
@@ -547,7 +571,7 @@ int main(int argc, char* argv[]) {
 
 **编译：**
 
-* `glog`需要使用静态库版本，因为动态库版本选择隐藏`DumpStackTraceToString`这个符号（`readelf -s --wide /usr/lib64/libglog.so.0.7.0 | rg DumpStackTraceToString`）
+* `glog`需要使用静态库版本，因为动态库版本选择隐藏`DumpStackTraceToString`这个符号（`nm -D /usr/local/lib/libglog.so | grep 'DumpStackTraceToString'`），且该方法在`0.7.0`版本后被删除
 
 ```sh
 gcc -o main main.cpp -Wl,-wrap=__cxa_throw -lstdc++ -std=gnu++17 -Wl,-Bstatic -lglog -lgflags -Wl,-Bdynamic -lunwind -lpthread
@@ -1334,12 +1358,16 @@ cat > poco_http_demo.cpp << 'EOF'
 class HelloRequestHandler : public Poco::Net::HTTPRequestHandler {
 public:
     void handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) override {
-        response.setContentType("text/html");
-        std::ostream& ostr = response.send();
+        std::cout << "Received request from: " << request.clientAddress().toString() << std::endl;
+
+        response.setKeepAlive(request.getKeepAlive());
         response.setChunkedTransferEncoding(true);
+        response.setContentType("text/html");
+
+        std::ostream& ostr = response.send();
         ostr << "<html><head><title>Hello</title></head>";
-        std::this_thread::sleep_for(std::chrono::seconds(1));
         ostr << "<body><h1>Hello from Poco HTTP Server</h1></body></html>";
+        ostr.flush();
     }
 };
 
@@ -1353,8 +1381,13 @@ public:
 class HTTPServerApp : public Poco::Util::ServerApplication {
 protected:
     int main(const std::vector<std::string>& args) {
-        Poco::Net::ServerSocket svs(9080); // set the server port here
-        Poco::Net::HTTPServer server(new HelloRequestHandlerFactory, svs, new Poco::Net::HTTPServerParams);
+        Poco::Net::ServerSocket svs({"0.0.0.0", 9080}); // set the server port here
+        /// Sets the following default values:
+        ///   - timeout:              60 seconds
+        ///   - keepAlive:            true
+        ///   - maxKeepAliveRequests: 0
+        ///   - keepAliveTimeout:     10 seconds
+        Poco::Net::HTTPServer server(new HelloRequestHandlerFactory(), svs, new Poco::Net::HTTPServerParams());
 
         server.start();
         std::cout << "HTTP Server started on port 9080." << std::endl;
@@ -1375,17 +1408,37 @@ int main(int argc, char** argv) {
 
     std::this_thread::sleep_for(std::chrono::seconds(1));
 
-    Poco::Net::HTTPClientSession session("localhost", 9080);
-    Poco::Net::HTTPRequest request(Poco::Net::HTTPRequest::HTTP_GET, "/");
-    Poco::Net::HTTPResponse response;
+    Poco::Net::HTTPClientSession session("127.0.0.1", 9080);
+    session.setKeepAlive(true);
 
-    session.sendRequest(request);
-    std::istream& response_body_is = session.receiveResponse(response);
+    {
+        // First request
+        Poco::Net::HTTPRequest request(Poco::Net::HTTPRequest::HTTP_GET, "/");
+        request.setKeepAlive(true);
+        session.sendRequest(request);
 
-    std::string response_body;
-    Poco::StreamCopier::copyToString(response_body_is, response_body);
+        Poco::Net::HTTPResponse response;
+        std::istream& response_body_is = session.receiveResponse(response);
 
-    std::cout << response_body << std::endl;
+        std::string response_body;
+        Poco::StreamCopier::copyToString(response_body_is, response_body);
+
+        std::cout << response_body << std::endl;
+    }
+
+    {
+        // Second request reuse the same session
+        Poco::Net::HTTPRequest request(Poco::Net::HTTPRequest::HTTP_GET, "/");
+        session.sendRequest(request);
+
+        Poco::Net::HTTPResponse response;
+        std::istream& response_body_is = session.receiveResponse(response);
+
+        std::string response_body;
+        Poco::StreamCopier::copyToString(response_body_is, response_body);
+
+        std::cout << response_body << std::endl;
+    }
 
     server_thread.join();
     return 0;

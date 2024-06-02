@@ -238,6 +238,7 @@ usermod -d <new_dir> <username>
 **Examples:**
 
 * `readelf -d libc.so.6`
+* `readelf -s --wide xxx.so`
 
 ## 1.21 getconf
 
@@ -1382,6 +1383,7 @@ When you're debugging the binary through `gdb`, it will automatically load the c
 **Examples:**
 
 * `nm -C main`
+* `nm -D xxx.so`
 
 ## 2.37 strings
 
@@ -4231,6 +4233,9 @@ apt install clang-format-X.Y
     * `lsof -p xxx | grep txt`
 1. 找到主机的ip
     * `ip -4 addr show scope global | grep inet | awk '{print $2}' | cut -d/ -f1`
+1. 查看so文件的符号
+    * `nm -D xxx.so`
+    * `readelf -s --wide xxx.so`
 
 # 12 Reference
 

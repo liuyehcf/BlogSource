@@ -584,6 +584,8 @@ Record refers to a feature that allows you to record a sequence of keystrokes an
 :set number                         " 设置显示行号，禁止显示行号可以用 :set nonumber
 :set relativenumber                 " 设置显示相对行号（其他行与当前行的距离）
 :set paste                          " 进入粘贴模式（粘贴时禁用缩进等影响格式的东西）
+:set wrap                           " 启用文本折行
+:set nowrap                         " 禁用文本折行
 :set nopaste                        " 结束粘贴模式
 :set spell                          " 允许拼写检查
 :set hlsearch                       " 设置高亮查找
