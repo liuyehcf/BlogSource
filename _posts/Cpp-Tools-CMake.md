@@ -1265,9 +1265,9 @@ cmake --compile-no-warning-as-error -DWERROR=0 ...
 ```sh
 wget https://github.com/Kitware/CMake/releases/download/v3.21.2/cmake-3.21.2-linux-x86_64.tar.gz
 
-tar -zxvf cmake-3.21.2-linux-x86_64.tar.gz -C /usr/local/lib
+sudo tar -zxvf cmake-3.21.2-linux-x86_64.tar.gz -C /usr/local/lib
 
-ln -s /usr/local/lib/cmake-3.21.2-linux-x86_64/bin/cmake /usr/local/bin/cmake
+sudo ln -s /usr/local/lib/cmake-3.21.2-linux-x86_64/bin/cmake /usr/local/bin/cmake
 ```
 
 # 8 Reference

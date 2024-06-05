@@ -232,6 +232,8 @@ sudo chmod +x /usr/local/bin/docker-compose
 * `docker-compose [ -f xxx.yml ] rm`
 * `docker-compose [ -f xxx.yml ] ps`
 * `docker-compose [ -f xxx.yml ] ls`
+* `docker-compose [ -f xxx.yml ] config`
+* `docker-compose [ -f xxx.yml ] config --services`
 
 # 8 Tips
 
@@ -436,6 +438,10 @@ systemctl daemon-reload
 systemctl show docker --property Environment
 systemctl restart docker
 ```
+
+## 8.8 容器内访问宿主机的ip
+
+The host has a changing IP address, or none if you have no network access. We recommend that you connect to the special DNS name host.docker.internal, which resolves to the internal IP address used by the host.
 
 # 9 FAQ
 

@@ -381,6 +381,8 @@ export ZSH_COMPDUMP=$ZSH/cache/.zcompdump-$HOST
 source $ZSH/oh-my-zsh.sh
 ```
 
+修改`~/.zshrc`，添加`export DISABLE_AUTO_UPDATE=true`可以禁止自动更新检查
+
 **步骤3：[安装Powerline](https://powerline.readthedocs.io/en/latest/installation.html)**
 
 ```sh

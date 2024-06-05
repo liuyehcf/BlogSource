@@ -330,6 +330,7 @@ Breakpoint 1, main () at set_break.cpp:8
     * `list`：紧接着上一次的输出，继续输出后10行源码
     * `list -`：紧接着上一次的输出，继续输出前10行源码
     * `list <linenumber>`：输出当前文件指定行号开始的10行源码
+    * `list <linenumber>, <end_linenumber>`：输出指定行号区间的源码
     * `list <function>`：输出指定函数的10行源码
     * `list <filename:linenum>`：输出指定文件指定行号开始的10行源码
     * `list <filename:function>`：输出指定文件指定函数的10行源码
@@ -602,11 +603,14 @@ gdb
 
 # 6 LLDB
 
+[Tutorial](https://lldb.llvm.org/use/tutorial.html)
+
 LLDB is similar to GDB in most operations, but there are some differences (`help` for more details):
 
 1. There is no `start` command
-1. `frame select <id>`: select a frame
+1. `frame select <id>`/`f <id>`: select a frame
 1. `lldb -c <core> <binary>`: Analyze core file
+1. `list -<count>`: Print previous `<count>` lines
 
 # 7 Reference
 

@@ -592,6 +592,23 @@ sudo yum -y install https://packages.endpointdev.com/rhel/7/os/x86_64/endpoint-r
 sudo yum install git
 ```
 
+### 19.1.2 From Source
+
+* [git-tags](https://github.com/git/git/tags)
+
+```sh
+export VERSION=2.45.2
+wget -O git-${VERSION}.tar.gz "https://github.com/git/git/archive/refs/tags/v${VERSION}.tar.gz"
+tar -zxvf git-${VERSION}.tar.gz
+
+cd git-${VERSION}
+export DEFAULT_HELP_FORMAT="man"
+autoconf
+./configure --prefix=/usr/local
+make -j $(( (cores=$(nproc))>1?cores/2:1 ))
+sudo make install
+```
+
 ## 19.2 Issue with Chinese Displayed in Octal Form
 
 在Windows中，git bash打印的中文可能表示成`\+三个数字`的形式，即八进制表示

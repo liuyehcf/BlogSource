@@ -4511,6 +4511,7 @@ Here!
 * `__attribute__((noreturn))`：指示函数不会返回，用于告诉编译器在函数调用之后不需要进行任何清理操作
 * `__attribute__((unused))`：指示编译器不应发出未使用变量的警告。
 * `__attribute__((deprecated))`：指示函数或变量已经过时，编译器会在使用它们时发出警告
+* `__attribute__((visibility("hidden")))`：指示编译器隐藏该符号，即不会出现在当前编译单元的导出的符号表中
 * `__attribute__(alias)`：它允许你将一个函数或变量的名称指定为另一个已存在的函数或变量的别名。可以起到与链接器参数`--wrap=<symbol>`类似的作用
     ```cpp
     #include <stdio.h>
