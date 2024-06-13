@@ -374,14 +374,11 @@ cd ohmyzsh/tools
 ./install.sh
 ```
 
-修改`~/.zshrc`，在`source $ZSH/oh-my-zsh.sh`上面加上一行。可以调整`.zcompdump`文件的生成路径
+**Tips:**
 
-```sh
-export ZSH_COMPDUMP=$ZSH/cache/.zcompdump-$HOST
-source $ZSH/oh-my-zsh.sh
-```
-
-修改`~/.zshrc`，添加`export DISABLE_AUTO_UPDATE=true`可以禁止自动更新检查
+* 修改`~/.zshrc`，在`source $ZSH/oh-my-zsh.sh`上面增加`export ZSH_COMPDUMP=$ZSH/cache/.zcompdump-$HOST`，可以调整`.zcompdump`文件的生成路径
+* 修改`~/.zshrc`，在`source $ZSH/oh-my-zsh.sh`上面增加`export DISABLE_AUTO_UPDATE=true`，可以禁止自动更新检查
+* 修改`~/.zshrc`，在`source $ZSH/oh-my-zsh.sh`上面增加`export DISABLE_MAGIC_FUNCTIONS=true`，可以禁用魔术函数，粘贴长串命令更快
 
 **步骤3：[安装Powerline](https://powerline.readthedocs.io/en/latest/installation.html)**
 

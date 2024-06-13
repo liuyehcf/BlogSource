@@ -239,9 +239,61 @@ Java反编译工具，[下载地址](http://www.javadecompilers.com/jad)
 
 `Retained Size`: This is the total amount of memory that would be freed if the object were garbage collected. This includes the shallow size of the object itself plus the shallow size of any objects that are exclusively referenced by this object (i.e., objects that would be garbage collected if this object were). The retained size provides a more complete picture of the "true" memory impact of an object but can be more complex to calculate. Some profiling tools provide this information, but it may require additional analysis or plugins.
 
-# 13 Assorted
+# 13 jenv
 
-## 13.1 Install JDK
+[jenv](https://github.com/jenv/jenv)
+
+* For mac
+    ```sh
+    brew install jenv
+    echo 'export PATH="$HOME/.jenv/bin:$PATH"' >> ~/.zshrc
+    echo 'eval "$(jenv init -)"' >> ~/.zshrc
+
+    # Export JAVA_HOME path
+    jenv enable-plugin export
+
+    # Diagnosis
+    jenv doctor
+
+    # Add java version
+    jenv add /Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home
+    jenv add /Library/Java/JavaVirtualMachines/jdk-22.jdk/Contents/Home
+
+    # List all available versions
+    jenv versions
+
+    # Switch to specific version
+    jenv global 17
+    jenv local 22
+    ```
+
+* For Linux
+    ```sh
+    git clone https://github.com/jenv/jenv.git ~/.jenv
+    echo 'export PATH="$HOME/.jenv/bin:$PATH"' >> ~/.zshrc
+    echo 'eval "$(jenv init -)"' >> ~/.zshrc
+
+    # Export JAVA_HOME path
+    jenv enable-plugin export
+
+    # Diagnosis
+    jenv doctor
+
+    # Add java version
+    jenv add /usr/lib/jvm/java-8-openjdk-amd64
+    jenv add /usr/lib/jvm/java-17-openjdk-amd64
+
+    # List all available versions
+    jenv versions
+
+    # Switch to specific version
+    jenv global 17
+    jenv local 1.8
+    ```
+
+# 14 Assorted
+
+## 14.1 Install JDK
 
 * [Java SE 17 Archive Downloads](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
 
@@ -250,9 +302,9 @@ wget https://download.oracle.com/java/17/archive/jdk-17.0.10_linux-x64_bin.tar.g
 tar -zxvf jdk-17.0.10_linux-x64_bin.tar.gz -C /usr/local
 ```
 
-## 13.2 Find JDK Install Path
+## 14.2 Find JDK Install Path
 
-### 13.2.1 Linux
+### 14.2.1 Linux
 
 一般来说是`/usr/lib/jvm`
 
@@ -260,11 +312,11 @@ tar -zxvf jdk-17.0.10_linux-x64_bin.tar.gz -C /usr/local
 1. `update-alternatives --config java`
 1. `update-alternatives --display java`
 
-### 13.2.2 MacOS
+### 14.2.2 MacOS
 
 `/Library/Java/JavaVirtualMachines`
 
-# 14 参考
+# 15 参考
 
 * [JVM性能调优监控工具jps、jstack、jmap、jhat、jstat、hprof使用详解](https://my.oschina.net/feichexia/blog/196575)
 * [Java应用打开debug端口](https://www.cnblogs.com/lzmrex/articles/12579862.html)

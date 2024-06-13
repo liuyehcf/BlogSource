@@ -141,10 +141,30 @@ Program received signal SIGSEGV, Segmentation fault.
 
 ```
 
-**此外，可以通过`set args`设置参数。例如:**
+### 3.1.1 set args
+
+The `set args` command in GDB allows you to specify or change the command-line arguments for the program you are debugging during an active GDB session. This can be particularly useful if you want to test your program with different arguments without restarting GDB.
+
+```sh
+set args [arguments]
+```
+
+**Examples:**
 
 * `set args -l a -C abc`
 * `set args --gtest_filter=TestXxx.caseX`
+
+### 3.1.2 --args
+
+**The `--args` option in GDB allows you to specify the program and its arguments directly from the command line when starting GDB. This can be very convenient for debugging programs that require command-line arguments.**
+
+```sh
+gdb --args program [arguments]
+```
+
+**Examples:**
+
+* `gdb --args ls -al`
 
 ## 3.2 Attach Program
 
@@ -499,15 +519,32 @@ $5 = (Person *) 0x7fffffffe0c0
 xxx/gdb_tutorial
 ```
 
-## 3.8 Tips
-
-### 3.8.1 Redirect source file path
+## 3.8 Handle Signal
 
 ```sh
-(gdb) set substitute-path
+(gdb) handle <signal> <action>
 ```
 
-### 3.8.2 Redirect Thread Info to File
+* `<signal>`: The name or number of the signal (e.g., `SIGINT`, `SIGSEGV`)
+* `<action>`: One or more actions to specify how GDB should handle the signal. The actions can include:
+    * `nostop`: GDB should not stop the program when this signal is received.
+    * `stop`: GDB should stop the program when this signal is received.
+    * `noignore`: GDB should not ignore the signal (default action for most signals).
+    * `ignore`: GDB should ignore the signal.
+    * `noprint`: GDB should not print a message when the program receives this signal.
+    * `print`: GDB should print a message when the program receives this signal.
+
+## 3.9 Tips
+
+### 3.9.1 Redirect source file path
+
+The `set substitute-path` command is used in GDB (GNU Debugger) to remap source paths. This is useful when the source code was compiled on one machine with a different directory structure and you need to debug it on another machine where the directory structure is different.
+
+```sh
+(gdb) set substitute-path <original-path> <new-path>
+```
+
+### 3.9.2 Redirect Thread Info to File
 
 ```sh
 (gdb) set pagination off
@@ -611,6 +648,7 @@ LLDB is similar to GDB in most operations, but there are some differences (`help
 1. `frame select <id>`/`f <id>`: select a frame
 1. `lldb -c <core> <binary>`: Analyze core file
 1. `list -<count>`: Print previous `<count>` lines
+1. `lldb <binary> -- <args>`
 
 # 7 Reference
 

@@ -1585,6 +1585,33 @@ int main(int argc, char* argv[]) {
 1. `std::remove_reference_t`
 1. `std::result_of_t`
 1. `std::invoke_result_t`
+    ```cpp
+    #include <type_traits>
+
+    char create_char(char) {
+        return 0;
+    }
+
+    class Foo {
+    public:
+        static int create_int(int) { return 0; }
+        int create_double(int) { return 0; }
+    };
+
+    int main() {
+        std::invoke_result_t<decltype(create_char), char> c1;
+        std::invoke_result_t<decltype(&create_char), char> c2;
+
+        std::invoke_result_t<decltype(Foo::create_int), int> i1;
+        std::invoke_result_t<decltype(&Foo::create_int), int> i2;
+
+        // std::invoke_result_t<decltype(Foo::create_double), Foo, int> d1;
+        std::invoke_result_t<decltype(&Foo::create_double), Foo, int> d2;
+
+        return 0;
+    }    
+    ```
+
 1. ...
 
 ## 26.15 std::move

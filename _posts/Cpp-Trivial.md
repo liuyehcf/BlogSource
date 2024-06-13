@@ -2006,13 +2006,162 @@ CompileFlags:
 
 ## 8.6 lldb
 
-# 9 Assorted
+# 9 JNI
 
-## 9.1 Dynamic Analysis
+```sh
+mkdir jni_demo
+cd jni_demo
+cat > HelloWorld.java << 'EOF'
+public class HelloWorld {
+    public void greet() {
+        System.out.println("Hello from Java!");
+    }
+
+    public static void main(String[] args) {
+        new HelloWorld().greet();
+    }
+}
+EOF
+
+cat > jni_demo.cpp << 'EOF'
+#include <jni.h>
+
+#include <iostream>
+
+int main() {
+    JavaVM* jvm;
+    JNIEnv* env;
+    JavaVMInitArgs vm_args;
+    JavaVMOption options[1];
+    options[0].optionString = (char*)("-Djava.class.path=./");
+    vm_args.version = JNI_VERSION_1_8;
+    vm_args.nOptions = 1;
+    vm_args.options = options;
+    vm_args.ignoreUnrecognized = false;
+
+    // Load and initialize a Java VM, return a JNI interface pointer in env
+    jint res = JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
+    if (res != JNI_OK) {
+        std::cerr << "Failed to create JVM" << std::endl;
+        return 1;
+    }
+
+    // Verify JVM version
+    jint ver = env->GetVersion();
+    std::cout << "JVM version: " << ((ver >> 16) & 0x0f) << "." << (ver & 0x0f) << std::endl;
+
+    // Get Class
+    jclass cls = env->FindClass("HelloWorld");
+    if (cls == nullptr) {
+        std::cerr << "Failed to find class" << std::endl;
+        jvm->DestroyJavaVM();
+        return 1;
+    }
+
+    // Get Method
+    jmethodID mid = env->GetMethodID(cls, "greet", "()V");
+    if (mid == nullptr) {
+        std::cerr << "Failed to find method" << std::endl;
+        // Print the exception stack trace
+        if (env->ExceptionOccurred()) {
+            env->ExceptionDescribe();
+        }
+
+        jvm->DestroyJavaVM();
+        return 1;
+    }
+
+    // Create Instance
+    jobject obj = env->AllocObject(cls);
+    if (obj == nullptr) {
+        std::cerr << "Failed to create object" << std::endl;
+        jvm->DestroyJavaVM();
+        return 1;
+    }
+
+    // Invoke
+    env->CallVoidMethod(obj, mid);
+
+    // Destroy
+    jvm->DestroyJavaVM();
+
+    return 0;
+}
+EOF
+
+javac HelloWorld.java
+
+# Compile way 1 (Please set JAVA_HOME first)
+gcc -o jni_demo jni_demo.cpp -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" -L"$JAVA_HOME/lib/server" -lstdc++ -std=gnu++17 -ljvm && LD_LIBRARY_PATH=$JAVA_HOME/lib/server ./jni_demo
+
+# Compile way 2 (Please set JAVA_HOME first)
+C_INCLUDE_PATH=$JAVA_HOME/include:$JAVA_HOME/include/linux:${C_INCLUDE_PATH} \
+CPLUS_INCLUDE_PATH=$JAVA_HOME/include:$JAVA_HOME/include/linux:${CPLUS_INCLUDE_PATH} \
+LIBRARY_PATH=$JAVA_HOME/lib/server:${LIBRARY_PATH} \
+gcc -o jni_demo jni_demo.cpp -lstdc++ -std=gnu++17 -ljvm && LD_LIBRARY_PATH=$JAVA_HOME/lib/server ./jni_demo
+```
+
+Output:
+
+```
+JVM version: 10.0
+Hello from Java!
+```
+
+**Tips:**
+
+* Cannot find class: Maybe the javac version is greater than the jvm, double check that.
+
+**Cmake Example: (Share the same `main.cpp` as above)**
+
+```sh
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(jni_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
+
+file(GLOB MY_PROJECT_SOURCES "*.cpp")
+add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+set(JAVA_HOME $ENV{JAVA_HOME})
+if("${JAVA_HOME}" STREQUAL "")
+    message(FATAL_ERROR "env 'JAVA_HOME' is required")
+endif()
+# For high jdk version
+file(GLOB LIB_JVM ${JAVA_HOME}/lib/server/libjvm.so)
+if("${LIB_JVM}" STREQUAL "")
+    # For low jdk version
+    file(GLOB_RECURSE LIB_JVM ${JAVA_HOME}/jre/lib/*/server/libjvm.so)
+    if("${LIB_JVM}" STREQUAL "")
+    message(FATAL_ERROR "cannot find libjvm.so in ${JAVA_HOME}")
+    endif()
+endif()
+add_library(jvm SHARED IMPORTED)
+set_target_properties(jvm PROPERTIES IMPORTED_LOCATION ${LIB_JVM})
+target_include_directories(jvm INTERFACE ${JAVA_HOME}/include)
+target_include_directories(jvm INTERFACE ${JAVA_HOME}/include/linux)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE jvm)
+EOF
+
+cmake -B build && cmake --build build && build/jni_demo
+```
+
+# 10 Assorted
+
+## 10.1 Dynamic Analysis
 
 ![analysis-tools](/images/Cpp-Trivial/analysis-tools.png)
 
-## 9.2 How to check the compile error message
+## 10.2 How to check the compile error message
 
 Example:
 
@@ -2047,7 +2196,7 @@ When interpreting compiler error messages, especially those involving template i
 
 In Summary: While the bottom-up approach is useful for quickly identifying the core error and the immediate lines of code causing it, you sometimes need to go top-down to fully understand the context and sequence of events leading to the error. With experience, you'll develop an intuition for quickly scanning and pinpointing the most relevant parts of such error messages.
 
-## 9.3 How to get coverage of code
+## 10.3 How to get coverage of code
 
 **Here's how it works: `gcov` determines which files to analyze for coverage information based on the profile data files (`*.gcda` and `*.gcno`) that are generated when you compile and run your program with the appropriate GCC flags (`-fprofile-arcs` and `-ftest-coverage`). Here's a breakdown of how `gcov` knows which files to load:**
 
@@ -2092,11 +2241,11 @@ gcov example.cpp
 cat example.cpp.gcov
 ```
 
-## 9.4 How to check standard library search path when compiling
+## 10.4 How to check standard library search path when compiling
 
 Add `-v` option.
 
-## 9.5 Document
+## 10.5 Document
 
 1. [cpp reference](https://en.cppreference.com/w/)
 1. [cppman](https://github.com/aitjcize/cppman/)
@@ -2104,6 +2253,6 @@ Add `-v` option.
     * 示例：`cppman vector::begin`
     * 重建索引：`cppman -r`
 
-## 9.6 Reference
+## 10.6 Reference
 
 * [C/C++ 头文件以及库的搜索路径](https://blog.csdn.net/crylearner/article/details/17013187)

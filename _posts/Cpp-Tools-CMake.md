@@ -409,6 +409,38 @@ make
 
 # 3 variables
 
+在 CMake 中，变量本身是无类型的。CMake 变量在定义时是以字符串形式存储的，但可以通过 CMake 的命令和语法将这些字符串解释为不同的类型（如布尔值、整数等）。以下是一些常见的变量类型和如何在 CMake 中使用它们的示例：
+
+1. 字符串
+    ```cmake
+    set(MY_STRING "Hello, World!")
+    message(STATUS "String value: ${MY_STRING}")
+    ```
+
+1. 布尔值
+    ```cmake
+    set(MY_BOOL ON)
+    if(MY_BOOL)
+        message(STATUS "Boolean is ON")
+    endif()
+    ```
+
+1. 整数
+    ```cmake
+    set(MY_INT 10)
+    math(EXPR MY_INT_PLUS_ONE "${MY_INT} + 1")
+    message(STATUS "Integer value: ${MY_INT_PLUS_ONE}")
+    ```
+
+1. 列表
+    ```cmake
+    set(MY_LIST "item1;item2;item3")
+    list(APPEND MY_LIST "item4")
+    foreach(item IN LISTS MY_LIST)
+        message(STATUS "List item: ${item}")
+    endforeach()
+    ```
+
 ## 3.1 Frequently-Used Variables
 
 参考（[cmake-variables](https://cmake.org/cmake/help/latest/manual/cmake-variables.7.html)）：
@@ -426,7 +458,7 @@ make
 * `CMAKE_MODULE_PATH`：`include()`、`find_package()`命令的模块搜索路径
 * `EXECUTABLE_OUTPUT_PATH`、`LIBRARY_OUTPUT_PATH`：定义最终编译结果的二进制执行文件和库文件的存放目录
 * `PROJECT_NAME`：指的是通过`set`设置的`PROJECT`的名称
-* `CMAKE_INCLUDE_PATH`、`CMAKE_LIBRARY_PATH`：这两个是系统变量而不是`cmake`变量，需要在`bash`中用`export`设置
+* `CMAKE_INCLUDE_PATH`、`CMAKE_LIBRARY_PATH`：这两个既可以是系统变量（需要在`bash`中用`export`设置），也可以是`cmake`变量（用`set()`或`-DCMAKE_INCLUDE_PATH=`设置）。用于影响`find_file`以及`find_path`这两个函数的搜索路径
 * `CMAKE_MAJOR_VERSION`、`CMAKE_MINOR_VERSION`、`CMAKE_PATCH_VERSION`：主版本号、次版本号，补丁版本号，`2.4.6`中的`2`、`4`、`6`
 * `CMAKE_SYSTEM`：系统名称，比如`Linux-2.6.22`
 * `CMAKE_SYSTEM_NAME`：不包含版本的系统名，比如`Linux`
@@ -1059,32 +1091,32 @@ TheseWhen using the default generator `Unix Makefiles`, the following three meth
 * `make VERBOSE=1`
 * `cmake --build <build_path> -- VERBOSE=1`
 
-## 6.3 Specify Compiler
+## 6.3 Compile Options
 
-### 6.3.1 Command
+### 6.3.1 Specify Compiler
+
+**Command:**
 
 ```sh
 cmake -DCMAKE_CXX_COMPILER=/usr/local/bin/g++ -DCMAKE_C_COMPILER=/usr/local/bin/gcc ..
 ```
 
-### 6.3.2 CMakeLists.txt
+**CMakeLists.txt:**
 
 ```cmake
 set(CMAKE_C_COMPILER "/path/to/gcc")
 set(CMAKE_CXX_COMPILER "/path/to/g++")
 ```
 
-## 6.4 Add Compile Options
+### 6.3.2 Add Compile Flags
 
-### 6.4.1 Command
+**Command:**
 
 ```sh
 cmake -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -O3" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -O3" ..
 ```
 
-### 6.4.2 CMakeLists.txt
-
-**示例如下：**
+**CMakeLists.txt:**
 
 ```cmake
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -fopt-info-vec")
@@ -1101,22 +1133,30 @@ set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O1 -Wall")
 1. `RelWithDebInfo`
 1. `MinSizeRel`
 
-## 6.5 Specify Macro Definition
+### 6.3.3 Macro Definition
 
-### 6.5.1 Command
+**Command:**
 
 ```sh
 cmake -B build -DUSE_XXX
 cmake -B build -DVALUE_YYY=5
 ```
 
-### 6.5.2 CMakeLists.txt
+**CMakeLists.txt:**
 
 ```cmake
 add_definitions(-DUSE_XXX -DVALUE_YYY=5)
 ```
 
-## 6.6 Build Type
+### 6.3.4 Add Extra Search Path
+
+```sh
+export C_INCLUDE_PATH=
+export CPLUS_INCLUDE_PATH=
+export LIBRARY_PATH=
+```
+
+### 6.3.5 Build Type
 
 ```sh
 # If you want to build for debug (including source information, i.e. -g) when compiling, use
@@ -1133,9 +1173,9 @@ cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo <path>
 1. `RelWithDebInfo`
 1. `MinSizeRel`
 
-## 6.7 Include All Source File
+## 6.4 Include All Source File
 
-### 6.7.1 file
+### 6.4.1 file
 
 ```cmake
 # Search for all .cpp and .h files in the current directory
@@ -1152,7 +1192,7 @@ file(GLOB_RECURSE MY_PROJECT_SOURCES "*.cpp")
 add_executable(MyExecutable ${MY_PROJECT_SOURCES})
 ```
 
-### 6.7.2 aux_source_directory
+### 6.4.2 aux_source_directory
 
 如果同一个目录下有多个源文件，那么在使用`add_executable`命令的时候，如果要一个个填写，那么将会非常麻烦，并且后续维护的代价也很大
 
@@ -1171,9 +1211,9 @@ aux_source_directory(. DIR_SRCS)
 add_executable(Demo ${DIR_SRCS})
 ```
 
-## 6.8 Library
+## 6.5 Library
 
-### 6.8.1 Build Static Library By Default
+### 6.5.1 Build Static Library By Default
 
 Add following config to project's root `CMakeLists.txt`, then all sub modules (imported via `add_subdirectory`) will be built in static way.
 
@@ -1181,7 +1221,7 @@ Add following config to project's root `CMakeLists.txt`, then all sub modules (i
 set(BUILD_SHARED_LIBS FALSE)
 ```
 
-### 6.8.2 Import Library From Unified Thirdparty Directory
+### 6.5.2 Import Library From Unified Thirdparty Directory
 
 Suppose you have put all libraries in `${THIRDPARTY_DIR}/lib`, then you can use the following config to import it.
 
@@ -1190,9 +1230,9 @@ add_library(protobuf STATIC IMPORTED)
 set_target_properties(protobuf PROPERTIES IMPORTED_LOCATION ${THIRDPARTY_DIR}/lib/libprotobuf.a)
 ```
 
-### 6.8.3 Priority: Static Libraries vs. Dynamic Libraries
+### 6.5.3 Priority: Static Libraries vs. Dynamic Libraries
 
-#### 6.8.3.1 find_package
+#### 6.5.3.1 find_package
 
 The factors influencing the choice between static and dynamic libraries by the `find_package` command may include:
 
@@ -1207,7 +1247,7 @@ set(Boost_USE_STATIC_LIBS ON)
 find_package(Boost REQUIRED COMPONENTS filesystem system)
 ```
 
-#### 6.8.3.2 find_library
+#### 6.5.3.2 find_library
 
 To control whether `find_library` should prefer static libraries or dynamic libraries, you typically set the `CMAKE_FIND_LIBRARY_SUFFIXES` variable. This variable specifies the suffixes that `find_library` searches for when looking for libraries.
 
@@ -1225,13 +1265,13 @@ set(CMAKE_FIND_LIBRARY_SUFFIXES ".a;.so")
 set(CMAKE_FIND_LIBRARY_SUFFIXES ".so;.a")
 ```
 
-## 6.9 compile_commands.json
+## 6.6 compile_commands.json
 
-### 6.9.1 Manually Generate compile_commands.json
+### 6.6.1 Manually Generate compile_commands.json
 
 `cmake`指定参数`-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`即可。构建完成后，会在构建目录生成`compile_commands.json`，里面包含了每个源文件的编译命令
 
-### 6.9.2 Auto generate compile_commands.json and copy to project source root
+### 6.6.2 Auto generate compile_commands.json and copy to project source root
 
 参考[Copy compile_commands.json to project root folder](https://stackoverflow.com/questions/57464766/copy-compile-commands-json-to-project-root-folder)
 
@@ -1244,7 +1284,7 @@ add_custom_target(
     )
 ```
 
-## 6.10 How to uninstall
+## 6.7 How to uninstall
 
 After installation, there will be a `install_manifest.txt` recording all the installed files. So we can perform uninstallation by this file.
 
@@ -1252,7 +1292,7 @@ After installation, there will be a `install_manifest.txt` recording all the ins
 xargs rm < install_manifest.txt
 ```
 
-## 6.11 Ignore -Werror
+## 6.8 Ignore -Werror
 
 ```sh
 cmake --compile-no-warning-as-error -DWERROR=0 ...

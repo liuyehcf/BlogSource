@@ -286,6 +286,7 @@ env | grep FOO
     * `LC_MONETARY`: Determines the formatting of monetary values (currency symbols, decimal separators, etc.).
     * `LC_NUMERIC`: Defines the formatting of numeric values (decimal point, thousands separator, etc.).
     * `LC_TIME`: Specifies the format used for date and time representation.
+* `TMPDIR`：自定义tmp目录
 
 # 2 Special Symbols
 
@@ -1516,13 +1517,17 @@ echo $y # 输出10
 * `-o pipefail`：针对管道命令，取从右往左第一个非零返回值作为整个管道命令的返回值
 * `-o vi/emacs`：`vi`模式或`emacs`模式，默认是`emacs`模式
 * `-H`：Enable `!` style history substitution
+* `--`：If no arguments follow this option, then the positional parameters are unset. Otherwise, the positional parameters are set to the args, even if some of them begin with a `-`
 
 **示例：**
 
+* `set`：输出内容会列出所有当前 shell 环境中的变量和值
 * `set -e`
 * `set -x`
 * `set -o pipefail`
-* `eval set -- "some new params"`：设置当前shell的参数
+* `eval set -- "some new params" && echo "\$1='$1', \$2='$2', \$3='$3'"`：以空格为分隔符，设置多个参数
+* `set -- "some" "new" "params" && echo "\$1='$1', \$2='$2', \$3='$3'"`：设置多个参数
+* `set -- "some new params" && echo "\$1='$1', \$2='$2', \$3='$3'"`：设置成一个参数
 
 ## 7.4 source
 

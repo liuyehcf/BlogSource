@@ -83,6 +83,18 @@ HotKey In Windows: `Ctrl+右方括号`、`Ctrl+Shift+右方括号`
 
 HotKey Name: `Apply Completions to Editor`
 
+### 1.3.8 Appearance
+
+#### 1.3.8.1 Inlay Hints
+
+Path: `Settings` -> `Editor` -> `Inlay Hints`
+Items:
+
+* Inheritors
+* Related problems
+* Usages
+* Code author
+
 ## 1.4 Navigate
 
 ### 1.4.1 Open Class

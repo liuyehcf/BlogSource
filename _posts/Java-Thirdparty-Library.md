@@ -16,14 +16,21 @@ categories:
 **`commons`：**
 
 1. `commons-lang:commons-lang`
-1. `commons-io:commons-io`
 1. `commons-collections:commons-collections`
+1. `commons-configuration:commons-configuration`
+1. `commons-io:commons-io`
+1. `commons-codec:commons-codec`
+1. `commons-net:commons-net`
 1. `commons-cli:commons-cli`
+1. `commons-logging:commons-logging`
 
 **`apache`：**
 
 1. `org.apache.commons:commons-lang3`
 1. `org.apache.commons:commons-collections4`
+1. `org.apache.commons:commons-configuration2`
+1. `org.apache.httpcomponents:httpclient`
+1. `org.apache.commons:commons-pool2`
 
 **`google`：**
 
@@ -47,445 +54,107 @@ categories:
 
 **简单地说，`SLF4J`只提供日志框架的接口，而不提供具体的实现。因此`SLF4J`必须配合具体的日志框架才能正常工作**
 
-## 2.1 Maven依赖
+## 2.1 log4j2
+
+[Apache Log4j Doc](https://logging.apache.org/log4j/2.x/index.html)
+
+### 2.1.1 Maven
 
 ```xml
-<dependency>
-    <groupId>org.slf4j</groupId>
-    <artifactId>slf4j-log4j12</artifactId>
-    <version>1.7.25</version>
-</dependency>
+<dependencies>
+    <!-- SLF4J API -->
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+    </dependency>
+    <!-- Log4j2 API -->
+    <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-api</artifactId>
+        <version>${log4j2.version}</version>
+    </dependency>
+    <!-- Log4j2 Core -->
+    <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-core</artifactId>
+        <version>${log4j2.version}</version>
+    </dependency>
+    <!-- Log4j2 SLF4J Binding -->
+    <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-slf4j-impl</artifactId>
+        <version>${log4j2.version}</version>
+    </dependency>
+</dependencies>
 ```
 
-`slf4j-log4j12`模块包含了`slf4j-api`以及`log4j`，因此使用`slf4j+log4j`只需要依赖`slf4j-log4j12`即可
-
-## 2.2 Log4j
-
-`Log4j`由三个重要的组件构成：
-
-1. **日志信息的优先级**：从高到低有`ERROR`、`WARN`、 `INFO`、`DEBUG`，分别用来指定这条日志信息的重要程度
-1. **日志信息的输出目的地**：指定了日志将打印到控制台还是文件中
-1. **日志信息的输出格式**：控制了日志信息的显示内容
-
-### 2.2.1 Log级别
-
-1. `ALL Level`：等级最低，用于打开所有日志记录
-1. `DEBUG Level`：指出细粒度信息事件对调试应用程序是非常有帮助的
-1. `INFO level`：表明消息在粗粒度级别上突出强调应用程序的运行过程
-1. `WARN level`：表明会出现潜在错误的情形
-1. `ERROR level`：指出虽然发生错误事件，但仍然不影响系统的继续运行
-1. `FATAL level`：指出每个严重的错误事件将会导致应用程序的退出
-1. `OFF Level`：等级最高，用于关闭所有日志记录
-* `Log4j`建议只使用四个级别，优先级从高到低分别是`ERROR`、`WARN`、`INFO`、`DEBUG`。通过在这里定义的级别，您可以控制到应用程序中相应级别的日志信息的开关。比如在这里定义了`INFO`级别，则应用程序中所有`DEBUG`级别的日志信息将不被打印出来，也是说大于等于的级别的日志才输出
-
-### 2.2.2 Log4j配置
-
-可以完全不使用配置文件，而是在代码中配置`Log4j`环境。但是，使用配置文件将使应用程序更加灵活。**`Log4j`支持两种配置文件格式**，一种是`XML`格式的文件，一种是属性文件。下面我们介绍属性文件做为配置文件的方法
-
-#### 2.2.2.1 配置根Logger
-
-配置根`Logger`，其语法如下：
-
-```
-log4j.rootLogger = [ level ] , appenderName, appenderName, ...
-```
-
-* `level`是日志记录的优先级，分为`OFF`、`FATAL`、`ERROR`、`WARN`、`INFO`、`DEBUG`、`ALL`或者自定义的级别。`Log4j`建议只使用四个级别，优先级从高到低分别是`ERROR`、`WARN`、`INFO`、`DEBUG`。通过在这里定义的级别，可以控制到应用程序中相应级别的日志信息的开关。比如在这里定义了`INFO`级别，则应用程序中所有`DEBUG`级别的日志信息将不被打印出来
-* `appenderName`就是指日志信息输出到哪个地方。可以同时指定多个输出目的地
-
-#### 2.2.2.2 配置日志信息输出目的地Appender
-
-语法如下：
-```
-log4j.appender.<appenderName> = <fully qualified name of appender class>
-log4j.appender.<appenderName>.<option1> = <value1>
-...
-log4j.appender.<appenderName>.<optionN> = <valueN>
-```
-
-**其中，Log4j提供的appender有以下几种**
-
-1. `org.apache.log4j.ConsoleAppender`：控制台
-1. `org.apache.log4j.FileAppender`：文件
-1. `org.apache.log4j.DailyRollingFileAppender`：每天产生一个日志文件
-1. `org.apache.log4j.RollingFileAppender`：文件大小到达指定尺寸的时候产生一个新的文件
-1. `org.apache.log4j.WriterAppender`：将日志信息以流格式发送到任意指定的地方
-
-#### 2.2.2.3 配置日志信息的格式
-
-语法如下：
-```
-log4j.appender.<appenderName> = <fully qualified name of appender class>
-log4j.appender.<appenderName>.<option1> = <value1>
-...
-log4j.appender.<appenderName>.<optionN> = <valueN>
-```
-
-**其中，Log4j提供的layout有以下几种**
-
-1. `org.apache.log4j.HTMLLayout`：以HTML表格形式布局
-1. `org.apache.log4j.PatternLayout`：可以灵活地指定布局模式
-1. `org.apache.log4j.SimpleLayout`：包含日志信息的级别和信息字符串
-1. `org.apache.log4j.TTCCLayout`：包含日志产生的时间、线程、类别等等信息
-
-**Log4J采用类似C语言中的printf函数的打印格式格式化日志信息**
-
-1. `%%`：输出一个`%`字符
-1. `%c`：输出所属的类目，通常就是所在类的全名
-1. `%d`：输出日志时间点的日期或时间，默认格式为`ISO8601`，也可以在其后指定格式，比如：`%d{yyyy-MM-dd HH:mm:ss}`，输出类似：`2017-03-22 18:14:34`
-1. `%F`：输出日志消息产生时所在的文件名称
-1. `%l`：输出日志事件的发生位置，包括类目名、发生的线程，以及在代码中的行数。举例：`Testlog4.main(TestLog4.java:10)`
-1. `%L`：输出代码中的行号
-1. `%m`：输出代码中指定的消息，产生的日志具体信息
-1. `%n`：输出一个回车换行符，`Windows`平台为`rn`，`Unix`平台为`n`
-1. `%p`：输出优先级，即`DEBUG`，`INFO`，`WARN`，`ERROR`，`FATAL`
-1. `%r`：输出自应用启动到输出该`log`信息耗费的毫秒数
-1. `%t`：输出产生该日志事件的线程名
-1. `%x`：输出和当前线程相关联的`NDC`（嵌套诊断环境），尤其用到像`java servlets`这样的多客户多线程的应用中
-
-### 2.2.3 配置文件示例
-
-```
-### 设置###
-log4j.rootLogger = debug,debug,info,error,stdout
-
-### 输出信息到控制抬 ###
-log4j.appender.stdout = org.apache.log4j.ConsoleAppender
-log4j.appender.stdout.Target = System.out
-log4j.appender.stdout.layout = org.apache.log4j.PatternLayout
-log4j.appender.stdout.layout.ConversionPattern = [%-5p] %d{yyyy-MM-dd HH:mm:ss,SSS} method:%l - %m%n
-
-### DEBUG 级别以上的日志到指定路径 ###
-log4j.appender.debug = org.apache.log4j.DailyRollingFileAppender
-log4j.appender.debug.File = ./aliyun/target/logs/debug.log
-log4j.appender.debug.Append = true
-log4j.appender.debug.Threshold = DEBUG
-log4j.appender.debug.layout = org.apache.log4j.PatternLayout
-log4j.appender.debug.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] - [ %p ]  %m%n
-
-### INFO 级别以上的日志到指定路径 ###
-log4j.appender.info = org.apache.log4j.DailyRollingFileAppender
-log4j.appender.info.File = ./aliyun/target/logs/info.log
-log4j.appender.info.Append = true
-log4j.appender.info.Threshold = INFO
-log4j.appender.info.layout = org.apache.log4j.PatternLayout
-log4j.appender.info.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] - [ %p ]  %m%n
-
-### 输出ERROR 级别以上的日志到指定路径 ###
-log4j.appender.error = org.apache.log4j.DailyRollingFileAppender
-log4j.appender.error.File =./aliyun/target/logs/error.log
-log4j.appender.error.Append = true
-log4j.appender.error.Threshold = ERROR
-log4j.appender.error.layout = org.apache.log4j.PatternLayout
-log4j.appender.error.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] - [ %p ]  %m%n
-
-```
-
-### 2.2.4 参考
-
-* [详细的log4j配置使用流程](http://blog.csdn.net/sunny_na/article/details/55212029)
-
-## 2.3 Logback
-
-### 2.3.1 Logback的结构
-
-**`Logback`被分为3个组件：**
-
-1. `logback-core`：提供了Logback的核心功能，是另外两个组件的基础
-1. `logback-classic`：实现了`SLF4J`的`API`，所以当想配合`SLF4J`使用时，需要引入`logback-classic`
-1. `logback-access`：为了集成`Servlet`环境而准备的，可提供`HTTP-access`的日志接口
-
-### 2.3.2 `<configuration>`
-
-根元素`<configuration>`包含的属性包括：
-
-1. `scan`：当此属性设置为`true`时，配置文件如果发生改变，将会被重新加载，默认值为`true`
-1. `scanPeriod`：设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒。当`scan`为`true`时，此属性生效。默认的时间间隔为`1`分钟
-1. `debug`：当此属性设置为`true`时，将打印出`logback`内部日志信息，实时查看`logback`运行状态。默认值为`false`
-
-**示例**
+### 2.1.2 Demo
 
 ```xml
-<configuration scan="true" scanPeriod="60 second" debug="false">  
-      <!-- 其他配置省略-->  
-</configuration>
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"/>
+        </Console>
+        <RollingRandomAccessFile name="RollingRandomAccessFileAppender" fileName="logs/app.log" filePattern="logs/app-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="7"/>
+        </RollingRandomAccessFile>
+        <Async name="AsyncAppender">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="RollingRandomAccessFileAppender"/>
+        </Async>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="AsyncAppender"/>
+        </Root>
+    </Loggers>
+</Configuration>
+
 ```
 
-#### 2.3.2.1 `<contextName>`
+### 2.1.3 Tips
 
-`<contextName>`用于设置上下文名称
+#### 2.1.3.1 Command-Line Options
 
-每个`logger`都关联到`logger`上下文，默认上下文名称为`default`。但可以使用`<contextName>`设置成其他名字，用于区分不同应用程序的记录。一旦设置，不能修改
+* 指定配置文件路径：`-Dlog4j.configurationFile=path/to/log4j2.xml`
+* 开启debug模式：`-Dlog4j.debug=true`
 
-**示例**
+## 2.2 Logback
+
+### 2.2.1 Maven
 
 ```xml
-<configuration scan="true" scanPeriod="60 second" debug="false">  
-      <contextName>myAppName</contextName>  
-      <!-- 其他配置省略-->  
-</configuration>
+<dependencies>
+    <!-- SLF4J API -->
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+    </dependency>
+    <!-- Logback Classic -->
+    <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback.version}</version>
+    </dependency>
+    <!-- Logback Core -->
+    <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-core</artifactId>
+        <version>${logback.version}</version>
+    </dependency>
+</dependencies>
 ```
 
-#### 2.3.2.2 `<property>`
-
-`<property>`用来定义变量值的元素，其有两个属性，`name`和`value`
-
-1. 其中`name`的值是变量的名称
-1. `value`的值时变量定义的值
-* 通过`<property>`定义的值会被插入到`logger`上下文中。定义变量后，可以使`${}`来使用变量
-
-**示例**
-
-```xml
-<configuration scan="true" scanPeriod="60 second" debug="false">  
-      <property name="APP_Name" value="myAppName" />   
-      <contextName>${APP_Name}</contextName>  
-      <!-- 其他配置省略-->  
-</configuration>
-```
-
-#### 2.3.2.3 `<timestamp>`
-
-`<timestamp>`元素用于获取时间戳字符串，有两个属性
-
-* `key`：标识此`<timestamp>`的名字
-* `datePattern`：设置将当前时间（解析配置文件的时间）转换为字符串的模式，遵循`Java.txt.SimpleDateFormat`的格式
-
-**示例**
-
-```xml
-<configuration scan="true" scanPeriod="60 second" debug="false">  
-      <timestamp key="bySecond" datePattern="yyyyMMdd'T'HHmmss"/>   
-      <contextName>${bySecond}</contextName>  
-      <!-- 其他配置省略-->  
-</configuration>
-```
-
-#### 2.3.2.4 `<logger>`
-
-一个`<logger>`元素对应了一个或者多个`org.slf4j.Logger`实例
-
-* 如果我们在程序中采用`Logger logger = LoggerFactory.getLogger(A.class);`来获取一个`Logger`的实例，那么在`<logger>`元素中用`name`属性来设定**包名**或者**类名**就可以控制该`Logger`实例的行为
-* 如果我们在程序中采用`Logger logger = LoggerFactory.getLogger("MyLogger");`来获取一个`Logger`的实例，那么在`<logger>`元素中用name属性设定**同样的名字**（`MyLogger`）就可以控制该`Logger`实例的行为
-
-`<logger>`元素用来设置**一个或者多个`Logger`实例**的日志打印级别、以及指定`<appender>`
-
-`<logger>`仅有一个`name`属性，一个可选的`level`和一个可选的`additivity`属性
-
-* `name`：用来指定受此`logger`约束的一个或多个`Logger`实例
-    * 可以是包名
-    * 可以是类名
-    * 可以是自定义的名字
-* `level`：用来设置打印级别，大小写无关：**`TRACE`，`DEBUG`，`INFO`，`WARN`，`ERROR`，`ALL`和`OFF`**，还有一个特殊值`INHERITED`或者同义词`NULL`，代表强制执行上级的级别
-    * 如果未设置此属性，那么当前`logger`将会继承上级的级别
-* `additivity`：是否向上级`logger`传递打印信息。默认是`true`
-    * 如果配置了两个`logger`，一个`logger`的`name`属性配置的是包名（记为`logger1`），另一个`logger`的`name`属性配置的是类名（记为`logger2`），那么`logger1`是`logger2`的**上级`logger`**
-    * 其余情况，一个`logger`的**上级`logger`**就是`root`
-
-`<logger>`可以包含零个或多个`<appender-ref>`元素，标识这个`appender`将会添加到这个`logger`
-
-#### 2.3.2.5 `<root>`
-
-`<root>`也是`<logger>`元素，但是它是**根`logger`**。**只有一个`level`属性，应为已经被命名为`root`**
-
-* `level`：用来设置打印级别，大小写无关：**`TRACE`，`DEBUG`，`INFO`，`WARN`，`ERROR`，`ALL`和`OFF`**，不能设置为`INHERITED`或者同义词`NULL`。默认是`DEBUG`
-
-`<root>`可以包含零个或多个`<appender-ref>`元素，标识这个`appender`将会添加到这个`logger`
-
-#### 2.3.2.6 `<appender>`
-
-`<appender>`是`<configuration>`的子元素，是负责写日志的组件。`<appender>`有两个必要属性`name`和`class`。`name`指定`appender`名称，`class`指定`appender`的全限定名
-
-##### 2.3.2.6.1 ConsoleAppender
-
-把日志添加到控制台，有以下子元素：
-
-* `<encoder>`：对日志进行格式化
-* `<target>`：字符串`System.out`或者`System.err`，默认`System.out`
-
-**示例**
-
-```xml
-<configuration>  
-  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">  
-    <encoder>  
-      <pattern>%-4relative [%thread] %-5level %logger{35} - %msg %n</pattern>  
-    </encoder>  
-  </appender>  
- 
-  <root level="DEBUG">  
-    <appender-ref ref="STDOUT" />  
-  </root>  
-</configuration>
-```
-
-##### 2.3.2.6.2 FileAppender
-
-把日志添加到文件，有以下子元素：
-
-* `<file>`：被写入的文件名，可以是相对目录，也可以是绝对目录，如果上级目录不存在会自动创建，没有默认值
-* `<append>`：如果是true，日志被追加到文件结尾，如果是`false`，清空现存文件，默认是`true`
-* `<encoder>`：对记录事件进行格式化
-* `<prudent>`：如果是`true`，日志会被安全的写入文件，即使其他的`FileAppender`也在向此文件做写入操作，效率低，默认是`false`
-
-**示例**
-
-```xml
-<configuration>  
-  <appender name="FILE" class="ch.qos.logback.core.FileAppender">  
-    <file>testFile.log</file>  
-    <append>true</append>  
-    <encoder>  
-      <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>  
-    </encoder>  
-  </appender>  
- 
-  <root level="DEBUG">  
-    <appender-ref ref="FILE" />  
-  </root>  
-</configuration>
-```
-
-##### 2.3.2.6.3 RollingFileAppender
-
-滚动记录文件，先将日志记录到指定文件，当符合某个条件时，将日志记录到其他文件。有以下子元素：
-
-* `<file>`：被写入的文件名，可以是相对目录，也可以是绝对目录，如果上级目录不存在会自动创建，没有默认值
-* `<append>`：如果是`true`，日志被追加到文件结尾，如果是`false`，清空现存文件，默认是`true`
-* `<encoder>`：对记录事件进行格式化。（具体参数稍后讲解）
-* `<rollingPolicy>`:当发生滚动时，决定`RollingFileAppender`的行为，涉及文件移动和重命名
-* `<triggeringPolicy>`: 告知`RollingFileAppender`何时激活滚动
-* `<prudent>`：当为`true`时，不支持`FixedWindowRollingPolicy`。支持`TimeBasedRollingPolicy`，但是有两个限制：
-    1. 不支持也不允许文件压缩
-    1. 不能设置`file`属性，必须留空
-
-###### 2.3.2.6.3.1 `<rollingPolicy>`
-
-**`ch.qos.logback.core.rolling.TimeBasedRollingPolicy`**：最常用的滚动策略，它根据时间来制定滚动策略，既负责滚动也负责触发滚动。有以下子节点：
-
-* `<fileNamePattern>`: 必要节点，包含文件名及`%d`转换符
-    * `%d`可以包含一个`Java.text.SimpleDateFormat`指定的时间格式，如：`%d{yyyy-MM}`
-    * 如果直接使用`%d`，默认格式是`yyyy-MM-dd`
-    * `RollingFileAppender`的`file`子元素可有可无，通过设置`file`，可以为活动文件和归档文件指定不同位置，当前日志总是记录到`file`指定的文件（活动文件），活动文件的名字不会改变；如果没设置`file`，活动文件的名字会根据`fileNamePattern`的值，每隔一段时间改变一次。`/`或者`\`会被当做目录分隔符
-* `<maxHistory>`：可选元素，控制保留的归档文件的最大数量，超出数量就删除旧文件。假设设置每个月滚动，且`<maxHistory>`是`6`，则只保存最近`6`个月的文件，删除之前的旧文件。注意，删除旧文件是，那些为了归档而创建的目录也会被删除
-
-**`ch.qos.logback.core.rolling.FixedWindowRollingPolicy`**：根据固定窗口算法重命名文件的滚动策略。有以下子元素：
-
-* `<minIndex>`：窗口索引最小值
-* `<maxIndex>`：窗口索引最大值，当用户指定的窗口过大时，会自动将窗口设置为12
-* `<fileNamePattern>`：必须包含`%i`
-    * 例如，假设最小值和最大值分别为1和2，命名模式为`mylog%i.log`，会产生归档文件`mylog1.log`和`mylog2.log`
-    * 还可以指定文件压缩选项，例如，`mylog%i.log.gz`或者`log%i.log.zip`
-
-**示例1**：每天生产一个日志文件，保存`30`天的日志文件
-
-```xml
-<configuration>   
-  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">   
- 
-    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">   
-      <fileNamePattern>logFile.%d{yyyy-MM-dd}.log</fileNamePattern>   
-      <maxHistory>30</maxHistory>    
-    </rollingPolicy>   
- 
-    <encoder>   
-      <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>   
-    </encoder>   
-  </appender>    
- 
-  <root level="DEBUG">   
-    <appender-ref ref="FILE" />   
-  </root>   
-</configuration>
-```
-
-**示例2**：按照固定窗口模式生成日志文件，当文件大于`20MB`时，生成新的日志文件。窗口大小是`1`到`3`，当保存了`3`个归档文件后，将覆盖最早的日志
-
-```xml
-<configuration>   
-  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">   
-    <file>test.log</file>   
- 
-    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">   
-      <fileNamePattern>tests.%i.log.zip</fileNamePattern>   
-      <minIndex>1</minIndex>   
-      <maxIndex>3</maxIndex>   
-    </rollingPolicy>   
- 
-    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">   
-      <maxFileSize>5MB</maxFileSize>   
-    </triggeringPolicy>   
-    <encoder>   
-      <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>   
-    </encoder>   
-  </appender>   
- 
-  <root level="DEBUG">   
-    <appender-ref ref="FILE" />   
-  </root>   
-</configuration>
-```
-
-###### 2.3.2.6.3.2 `<triggeringPolicy>`
-
-**`ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy`**：查看当前活动文件的大小，如果超过指定大小会告知`RollingFileAppender`触发当前活动文件滚动。只有一个子元素：
-
-* `<maxFileSize>`:这是活动文件的大小，默认值是`10MB`
-
-**示例**
-
-```xml
-<configuration>   
-  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">   
-    <file>test.log</file>   
- 
-    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">   
-      <fileNamePattern>tests.%i.log.zip</fileNamePattern>   
-      <minIndex>1</minIndex>   
-      <maxIndex>3</maxIndex>   
-    </rollingPolicy>   
- 
-    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">   
-      <maxFileSize>5MB</maxFileSize>   
-    </triggeringPolicy>   
-    <encoder>   
-      <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>   
-    </encoder>   
-  </appender>   
- 
-  <root level="DEBUG">   
-    <appender-ref ref="FILE" />   
-  </root>   
-</configuration>
-```
-
-##### 2.3.2.6.4 `<encoder>`
-
-`<encoder>`元素负责两件事，一是把日志信息转换成字节数组，二是把字节数组写入到输出流
-
-目前`PatternLayoutEncoder`是唯一有用的且默认的`encoder`，有一个`<pattern>`节点，用来设置日志的输入格式。使用`%`加`转换符`方式，如果要输出`%`，则必须用`\`对`%`进行转义
-
-[layout官方文档](http://logback.qos.ch/manual/layouts.html)
-
-**示例**
-
-```xml
-<encoder>   
-   <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>   
-</encoder>
-```
-
-**格式修饰符，与转换符共同使用**：可选的格式修饰符位于`%`和转换符之间
-
-* 第一个可选修饰符是左对齐标志，符号是减号`-`
-* 接着是可选的最小宽度修饰符，用十进制数表示。如果字符小于最小宽度，则左填充或右填充，默认是左填充（即右对齐），填充符为空格。如果字符大于最小宽度，字符永远不会被截断
-* 最大宽度修饰符，符号是点号`.`后面加十进制数。如果字符大于最大宽度，则从前面截断。点符号`.`后面加减号`-`在加数字，表示从尾部截断
-
-### 2.3.3 Test
-
-在`test/resources`目录下添加`logback-test.xml`文件即可生效
-
-### 2.3.4 示例
+### 2.2.2 Demo
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -647,7 +316,29 @@ log4j.appender.error.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%
 </configuration>
 ```
 
-### 2.3.5 Spring集成
+### 2.2.3 Tips
+
+#### 2.2.3.1 [颜色](http://logback.qos.ch/manual/layouts.html#coloring)
+
+```xml
+<configuration debug="true">
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <withJansi>true</withJansi>
+    <encoder>
+      <pattern>[%thread] %highlight(%-5level) %cyan(%logger{15}) - %msg %n</pattern>
+    </encoder>
+  </appender>
+  <root level="DEBUG">
+    <appender-ref ref="STDOUT" />
+  </root>
+</configuration>
+```
+
+#### 2.2.3.2 Work with Unit Test
+
+在`test/resources`目录下添加`logback-test.xml`文件即可生效
+
+#### 2.2.3.3 Spring集成
 
 ```xml
 <configuration>
@@ -675,7 +366,7 @@ log4j.appender.error.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%
 </configuration>
 ```
 
-### 2.3.6 Spring-Boot默认的配置
+#### 2.2.3.4 Spring-Boot默认的配置
 
 **参考`org.springframework.boot.logging.logback.DefaultLogbackConfiguration`**
 
@@ -684,9 +375,7 @@ log4j.appender.error.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%
 * `logging.pattern.console`：默认的`console pattern`配置
 * `logging.config`：用于指定`spring`加载的`logback`配置文件
 
-### 2.3.7 排坑
-
-#### 2.3.7.1 关于AsyncAppender
+#### 2.2.3.5 关于AsyncAppender阻塞的问题
 
 `AsyncAppender`会异步打印日志，从而避免磁盘`IO`阻塞当前线程的业务逻辑，其异步的实现方式也是常规的`ThreadPool`+`BlockingQueue`，那么当线程池与队列都被打满时，其行为是如何的？
 
@@ -847,25 +536,7 @@ log4j.appender.error.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%
 
 **总结：根据上面的分析可以发现，如果打日志的并发度非常高，且打的是`WARN`或`ERROR`日志，仍然会阻塞当前线程**
 
-### 2.3.8 Tips
-
-#### 2.3.8.1 [颜色](http://logback.qos.ch/manual/layouts.html#coloring)
-
-```xml
-<configuration debug="true">
-  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <withJansi>true</withJansi>
-    <encoder>
-      <pattern>[%thread] %highlight(%-5level) %cyan(%logger{15}) - %msg %n</pattern>
-    </encoder>
-  </appender>
-  <root level="DEBUG">
-    <appender-ref ref="STDOUT" />
-  </root>
-</configuration>
-```
-
-### 2.3.9 参考
+### 2.2.4 参考
 
 * [官方文档（很详细）](http://logback.qos.ch/manual/)
 * [从零开始玩转logback](http://www.importnew.com/22290.html)

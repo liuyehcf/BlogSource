@@ -50,7 +50,7 @@ trino> show schemas from tpch;
 trino> select * from tpch.tiny.customer limit 1;
 ```
 
-# 2 Generate TPCDS/TPCH Parquet/Orc into Hive
+# 2 Generate TPCH/TPCDS into Hive
 
 Start a hive cluster via docker compose according to [docker-hive](https://github.com/big-data-europe/docker-hive)
 

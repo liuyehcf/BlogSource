@@ -654,6 +654,12 @@ git config --global https.proxy "https://127.0.0.1:7890"
 
 You can use token as your password to push to remote repository
 
+## 19.6 How to download a single file from github
+
+```sh
+wget https://raw.githubusercontent.com/<user>/<repository>/<branch>/<filepath>
+```
+
 # 20 Reference
 
 * [git官方文档](https://git-scm.com/docs/gitignore)

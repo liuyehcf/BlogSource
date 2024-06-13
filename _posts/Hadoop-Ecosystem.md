@@ -174,6 +174,10 @@ ${HADOOP_HOME}/bin/hadoop jar ${HADOOP_HOME}/share/hadoop/mapreduce/hadoop-mapre
 ${HADOOP_HOME}/bin/hdfs dfs -cat "/wordcount_output/*"
 ```
 
+## 2.2 Tips
+
+1. List files recursively: `hdfs dfs -ls -R <path>`
+
 # 3 Spark
 
 [What Is Apache Spark?](https://www.databricks.com/glossary/what-is-apache-spark)
@@ -467,7 +471,180 @@ The template of `${HIVE_HOME}/conf/hive-site.xml` is called `${HIVE_HOME}/conf/h
     hive> SELECT * FROM employees_parquet;
     ```
 
-# 5 Docker-Compose
+## 4.3 Hive Metastore Demo
+
+[hive_metastore.thrift](https://github.com/apache/hive/blob/master/standalone-metastore/metastore-common/src/main/thrift/hive_metastore.thrift)
+
+```sh
+mkdir hive_metastore_demo
+cd hive_metastore_demo
+
+wget https://raw.githubusercontent.com/apache/hive/master/standalone-metastore/metastore-common/src/main/thrift/hive_metastore.thrift
+```
+
+Modify `hive_metastore.thrift`, remove `fb` parts:
+
+```diff
+25,26d24
+< include "share/fb303/if/fb303.thrift"
+<
+2527c2525
+< service ThriftHiveMetastore extends fb303.FacebookService
+---
+> service ThriftHiveMetastore
+```
+
+```sh
+thrift --gen cpp hive_metastore.thrift
+
+mkdir build
+
+# create libhms.a
+gcc -o build/ThriftHiveMetastore.o -c gen-cpp/ThriftHiveMetastore.cpp -O3 -Wall -fPIC
+gcc -o build/hive_metastore_constants.o -c gen-cpp/hive_metastore_constants.cpp -O3 -Wall -fPIC
+gcc -o build/hive_metastore_types.o -c gen-cpp/hive_metastore_types.cpp -O3 -Wall -fPIC
+ar rcs build/libhms.a build/ThriftHiveMetastore.o build/hive_metastore_constants.o build/hive_metastore_types.o
+
+# main.cpp
+cat > main.cpp << 'EOF'
+#include <thrift/protocol/TBinaryProtocol.h>
+#include <thrift/transport/TSocket.h>
+#include <thrift/transport/TTransportUtils.h>
+
+#include <iostream>
+
+#include "gen-cpp/ThriftHiveMetastore.h"
+
+using namespace apache::thrift;
+using namespace apache::thrift::transport;
+using namespace apache::thrift::protocol;
+
+int main(int argc, char* argv[]) {
+    if (argc < 4) {
+        std::cerr << "requires 4 arguments" << std::endl;
+        return 1;
+    }
+    const std::string hms_ip = argv[1];
+    const int hms_port = std::atoi(argv[2]);
+    const std::string db_name = argv[3];
+    const std::string table_name = argv[4];
+
+    std::cout << "hms_ip: " << hms_ip << ", hms_port: " << hms_port << ", db_name: " << db_name
+              << ", table_name: " << table_name << std::endl;
+
+    std::shared_ptr<TTransport> socket(new TSocket(hms_ip, hms_port));
+    std::shared_ptr<TTransport> transport(new TBufferedTransport(socket));
+    std::shared_ptr<TProtocol> protocol(new TBinaryProtocol(transport));
+    Apache::Hadoop::Hive::ThriftHiveMetastoreClient client(protocol);
+
+    try {
+        transport->open();
+
+        // Fetch and print the list of databases
+        std::vector<std::string> databases;
+        client.get_all_databases(databases);
+        std::cout << "Databases:" << std::endl;
+        for (const auto& db : databases) {
+            std::cout << "    " << db << std::endl;
+        }
+
+        // Fetch and print the list of tables in a specific database
+        std::vector<std::string> tables;
+        client.get_all_tables(tables, db_name);
+        std::cout << "Tables in database '" << db_name << "':" << std::endl;
+        for (const auto& table : tables) {
+            std::cout << "    " << table << std::endl;
+        }
+
+        // Fetch and print the details of a specific table
+        Apache::Hadoop::Hive::Table table;
+        client.get_table(table, db_name, table_name);
+        std::cout << "Table details for '" << table_name << "':" << std::endl;
+        std::cout << "    Table name: " << table.tableName << std::endl;
+        std::cout << "    Database name: " << table.dbName << std::endl;
+        std::cout << "    Owner: " << table.owner << std::endl;
+        std::cout << "    Create time: " << table.createTime << std::endl;
+        std::cout << "    Location: " << table.sd.location << std::endl;
+
+        transport->close();
+    } catch (TException& tx) {
+        std::cerr << "Exception occurred: " << tx.what() << std::endl;
+    }
+
+    return 0;
+}
+EOF
+
+gcc -o build/main main.cpp -O3 -Lbuild -lhms -lstdc++ -std=gnu++17 -lthrift -lm
+build/main <ip> 9083 default hive_test_table
+```
+
+## 4.4 Syntax
+
+### 4.4.1 Partition
+
+```sql
+CREATE TABLE sales (
+  sale_id INT,
+  product STRING,
+  amount DOUBLE
+)
+PARTITIONED BY (year INT, month INT)
+STORED AS PARQUET;
+
+INSERT INTO TABLE sales PARTITION (year=2023, month=6)
+VALUES
+  (1, 'Product A', 100.0),
+  (2, 'Product B', 150.0),
+  (3, 'Product C', 200.0);
+
+INSERT INTO TABLE sales PARTITION (year=2023, month=7)
+VALUES
+  (4, 'Product D', 120.0),
+  (5, 'Product E', 130.0),
+  (6, 'Product F', 140.0);
+
+SELECT * FROM sales;
+```
+
+# 5 Flink
+
+Here's a example of how to use [docker-spark](https://github.com/big-data-europe/docker-spark) to start a flink cluster and do some tests.
+
+```sh
+git clone https://github.com/big-data-europe/docker-flink.git
+cd docker-flink
+docker-compose up -d
+
+cat > person.csv << 'EOF'
+1,"Tom",18
+2,"Jerry",19
+3,"Spike",20
+4,"Tyke",21
+EOF
+
+docker exec flink-master mkdir -p /opt/data
+docker exec flink-worker mkdir -p /opt/data
+docker cp person.csv flink-master:/opt/data/person.csv
+docker cp person.csv flink-worker:/opt/data/person.csv
+
+docker exec -it flink-master bash
+sql-client.sh
+
+CREATE TABLE person (
+    id INT,
+    name STRING,
+    age INT
+) WITH (
+    'connector' = 'filesystem',
+    'path' = 'file:///opt/data/person.csv',
+    'format' = 'csv'
+);
+
+SELECT * FROM person;
+```
+
+# 6 Docker-Compose
 
 * [Big Data Europe](https://github.com/big-data-europe)
     * [docker-hadoop](https://github.com/big-data-europe/docker-hadoop)

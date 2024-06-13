@@ -2831,6 +2831,7 @@ Home: [vim-codefmt](https://github.com/google/vim-codefmt)
 * `HTML`：`js-beautify`
 * `Go`：`gofmt`
 * `Java`：`google-java-format`/`clang-format`
+    * `sudo wget -O /usr/local/share/google-java-format-1.14.0-all-deps.jar 'https://github.com/google/google-java-format/releases/download/v1.14.0/google-java-format-1.14.0-all-deps.jar'`
 * `Python`：`Autopep8`/`Black`/`YAPF`
 * `Shell`：`shfmt`
 
@@ -2862,6 +2863,8 @@ call glaive#Install()
 " /usr/local/share/google-java-format-1.14.0-all-deps.jar 是我的安装路径
 " --aosp 采用aosp风格，缩进为4个空格
 Glaive codefmt google_java_executable="java -jar /usr/local/share/google-java-format-1.14.0-all-deps.jar --aosp"
+" For JDK >= 16.0
+" Glaive codefmt google_java_executable="java --add-exports jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED -jar /usr/local/share/google-java-format-1.14.0-all-deps.jar --aosp"
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
@@ -2935,6 +2938,7 @@ call plug#end()
     * `cs([`
     * `cs[{`
     * `cs{<q>`
+    * `cs{>`
 * `ds`：`ds, delete surroundings`，用于删除当前文本的环绕符号
     * `ds{`
     * `ds<`
@@ -3367,6 +3371,8 @@ call glaive#Install()
 " /usr/local/share/google-java-format-1.14.0-all-deps.jar 是我的安装路径
 " --aosp 采用aosp风格，缩进为4个空格
 Glaive codefmt google_java_executable="java -jar /usr/local/share/google-java-format-1.14.0-all-deps.jar --aosp"
+" For JDK >= 16.0
+" Glaive codefmt google_java_executable="java --add-exports jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED -jar /usr/local/share/google-java-format-1.14.0-all-deps.jar --aosp"
 
 " ctags的配置
 " tags搜索模式
