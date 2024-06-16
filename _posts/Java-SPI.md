@@ -12,7 +12,7 @@ categories:
 
 <!--more-->
 
-# 1 概述
+# 1 Overview
 
 `SPI`全称为`Service Provider Interface`，它本质上就是一个Java接口，其实现类通常由第三方或者扩展包提供。SPI机制常被用来扩展框架以及制作可插拔插件
 
@@ -243,7 +243,7 @@ public class GreetServiceConsumer {
 }
 ```
 
-# 3 参考
+# 3 Reference
 
 * [JavaSPI机制学习笔记](https://www.cnblogs.com/lovesqcc/p/5229353.html)
 * [Java-SPI机制](https://www.jianshu.com/p/e4262536000d)

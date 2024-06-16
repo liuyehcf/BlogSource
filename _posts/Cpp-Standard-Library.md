@@ -2185,6 +2185,7 @@ int main() {
 1. `cstring`
     * `std::memset`：用`<num> * sizeof(<type>)`来获取长度
     * `std::memcpy`：用`<num> * sizeof(<type>)`来获取长度
+    * `std::strcmp`：比较两个`const char *`是否相同
 1. `cstdlib`
     * **内存分配相关**
         * `malloc/free`：`C`语言中的函数，在`C++`中也可以使用。`malloc`函数分配指定大小的内存，`free`函数释放该内存

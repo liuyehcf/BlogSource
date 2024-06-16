@@ -283,6 +283,50 @@ int main() {
 }
 ```
 
+### 2.2.3 Macro Expansion
+
+Look at the example first, we have 3 macros, which all used to define int type variables with line related names.
+
+```cpp
+// Concat x and y
+#define TOKEN_CONCAT(x, y) x##y
+// Make sure x and y are fully expanded
+#define TOKEN_CONCAT_FORWARD(x, y) TOKEN_CONCAT(x, y)
+
+#define DEFINE_INT_1 int prefix_1_##__LINE__
+#define DEFINE_INT_2 int TOKEN_CONCAT(prefix_2_, __LINE__)
+#define DEFINE_INT_3 int TOKEN_CONCAT_FORWARD(prefix_3_, __LINE__)
+
+int main() {
+    DEFINE_INT_1 = 1;
+    DEFINE_INT_2 = 2;
+    DEFINE_INT_3 = 3;
+    return 0;
+}
+```
+
+But only `DEFINE_INT_3` works as we expected.
+
+* when you use `TOKEN_CONCAT` or `#` directly with macro arguments, it won't expand those arguments before concatenation. This means if `x` or `y` are themselves macros, they will not be expanded before concatenation.
+* The `TOKEN_CONCAT_FORWARD` macro is a forward macro that ensures its arguments are fully expanded before passing them to `TOKEN_CONCAT`
+
+```sh
+gcc -E main.cpp
+# 0 "main.cpp"
+# 0 "<built-in>"
+# 0 "<command-line>"
+# 1 "/usr/include/stdc-predef.h" 1 3 4
+# 0 "<command-line>" 2
+# 1 "main.cpp"
+# 10 "main.cpp"
+int main() {
+    int prefix_1___LINE__ = 1;
+    int prefix_2___LINE__ = 2;
+    int prefix_3_13 = 3;
+    return 0;
+}
+```
+
 ## 2.3 Variadic Macros
 
 宏也支持可变参数，通过`__VA_ARGS__`引用这些参数
@@ -2000,13 +2044,15 @@ dtor
 
 ### 3.7.1 Inheritance Modes
 
-| 继承方式\成员的权限 | public | protected | private |
+| Inheritance mode\member permissions | public | protected | private |
 |:--|:--|:--|:--|
 | **public inherit** | public | protected | invisible |
 | **protected inherit** | protected | protected | invisible |
 | **private inherit** | private | private | invisible |
 
-无论哪种继承方式，都可以访问父类的`public`成员以及`protected`成员，但是会根据继承方式修改其访问权限，从而影响到派生类的访问权限
+Regardless of the inheritance method, you can access the `public` and `protected` members of the parent class, but their access rights will be modified according to the inheritance method, thus affecting the access rights of the derived class.
+
+**Most importantly, only public inheritance can achieve polymorphism**
 
 ```cpp
 #include <iostream>

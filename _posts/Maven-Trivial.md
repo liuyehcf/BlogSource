@@ -12,11 +12,11 @@ categories:
 
 <!--more-->
 
-# 1 使用技巧
+# 1 Tips
 
-## 1.1 运行Java程序
+## 1.1 Run Java Program
 
-### 1.1.1 从命令行运行
+### 1.1.1 Run from Command Line
 
 运行前先编译代码，`exec:java`不会自动编译代码，你需要手动执行`mvn compile`来完成编译
 
@@ -28,7 +28,7 @@ mvn exec:java -Dexec.mainClass="com.vineetmanohar.module.Main" -Dexec.args="arg0
 mvn exec:java -Dexec.mainClass="com.vineetmanohar.module.Main" -Dexec.classpathScope=runtime
 ```
 
-### 1.1.2 在pom.xml中指定某个阶段执行
+### 1.1.2 Run at Specific Stage
 
 将`CodeGenerator.main()`方法的执行绑定到maven的`test`阶段，通过下面的命令可以执行main方法：
 
@@ -59,7 +59,7 @@ mvn exec:java -Dexec.mainClass="com.vineetmanohar.module.Main" -Dexec.classpathS
  </build>
 ```
 
-### 1.1.3 在pom.xml中指定某个配置来执行
+### 1.1.3 Run at Specific Profile
 
 将配置用`<profile>`标签包裹后就能通过指定该配置文件来执行main方法，如下
 ```
@@ -98,7 +98,7 @@ mvn test -Pcode-generator
 </profiles>
 ```
 
-## 1.2 下载指定jar包
+## 1.2 Download Specific Jar
 
 ```sh
 mvn dependency:get -DgroupId=[groupId] -DartifactId=[artifactId] -Dversion=[version] -DrepoUrl=https://repo.maven.apache.org/maven2/ -Dtransitive=false
@@ -110,7 +110,16 @@ mvn dependency:get -DgroupId=[groupId] -DartifactId=[artifactId] -Dversion=[vers
 mvn dependency:get -DgroupId=org.apache.hive -DartifactId=hive-exec -Dversion=3.1.2 -DrepoUrl=https://repo.maven.apache.org/maven2/ -Dtransitive=false
 ```
 
-# 2 依赖冲突时的加载顺序
+## 1.3 Build Specific Modules
+
+* `-pl,--projects`: Comma-delimited list of specified reactor projects to build instead of all projects. A project can be specified by `[groupId]:artifactId` or by its relative path
+* `-am,--also-make`: If project list is specified, also build projects required by the list
+
+```sh
+mvn clean package -DskipTests -pl module-a,module-b -am
+```
+
+# 2 Loading Order When Dependencies Conflict
 
 当一个类同时存在于依赖A于依赖B中时，加载的版本依据以下的原则
 
@@ -118,7 +127,7 @@ mvn dependency:get -DgroupId=org.apache.hive -DartifactId=hive-exec -Dversion=3.
 1. 其次，**依赖声明顺序（在同一个pom中）**，先声明的依赖优先加载
 1. 最后，**依赖覆盖**，子POM文件中的依赖优先加载
 
-# 3 国内源
+# 3 Domestic Source
 
 ```xml
 <settings>
@@ -133,6 +142,6 @@ mvn dependency:get -DgroupId=org.apache.hive -DartifactId=hive-exec -Dversion=3.
 </settings>
 ```
 
-# 4 参考
+# 4 Reference
 
 * [使用Maven运行Java main的3种方式](https://www.jianshu.com/p/76abe7d04053)

@@ -458,7 +458,7 @@ make
 * `CMAKE_MODULE_PATH`：`include()`、`find_package()`命令的模块搜索路径
 * `EXECUTABLE_OUTPUT_PATH`、`LIBRARY_OUTPUT_PATH`：定义最终编译结果的二进制执行文件和库文件的存放目录
 * `PROJECT_NAME`：指的是通过`set`设置的`PROJECT`的名称
-* `CMAKE_INCLUDE_PATH`、`CMAKE_LIBRARY_PATH`：这两个既可以是系统变量（需要在`bash`中用`export`设置），也可以是`cmake`变量（用`set()`或`-DCMAKE_INCLUDE_PATH=`设置）。用于影响`find_file`以及`find_path`这两个函数的搜索路径
+* `CMAKE_INCLUDE_PATH`、`CMAKE_LIBRARY_PATH`：这两个既可以是系统变量（需要在`bash`中用`export`设置），也可以是`cmake`变量（用`set()`或`-DCMAKE_INCLUDE_PATH=`设置）。`CMAKE_INCLUDE_PATH`用于影响`find_file`以及`find_path`这两个函数的搜索路径。而`CMAKE_LIBRARY_PATH`用于影响`find_library`这个函数的搜索路径
 * `CMAKE_MAJOR_VERSION`、`CMAKE_MINOR_VERSION`、`CMAKE_PATCH_VERSION`：主版本号、次版本号，补丁版本号，`2.4.6`中的`2`、`4`、`6`
 * `CMAKE_SYSTEM`：系统名称，比如`Linux-2.6.22`
 * `CMAKE_SYSTEM_NAME`：不包含版本的系统名，比如`Linux`
@@ -1150,6 +1150,11 @@ add_definitions(-DUSE_XXX -DVALUE_YYY=5)
 
 ### 6.3.4 Add Extra Search Path
 
+The only way I can find so far to add extra search path out of the `CMakeLists.txt` are using following environments.
+
+* `CMAKE_INCLUDE_PATH` won't work, it only affects the search path of `find_file` and `find_path`
+* `CMAKE_LIBRARY_PATH` won't work, it only affects the search path of `find_library`
+
 ```sh
 export C_INCLUDE_PATH=
 export CPLUS_INCLUDE_PATH=
@@ -1284,7 +1289,11 @@ add_custom_target(
     )
 ```
 
-## 6.7 How to uninstall
+## 6.7 How to work with ccache
+
+[How to Use CCache with CMake?](https://stackoverflow.com/questions/1815688/how-to-use-ccache-with-cmake)
+
+## 6.8 How to uninstall
 
 After installation, there will be a `install_manifest.txt` recording all the installed files. So we can perform uninstallation by this file.
 
@@ -1292,7 +1301,7 @@ After installation, there will be a `install_manifest.txt` recording all the ins
 xargs rm < install_manifest.txt
 ```
 
-## 6.8 Ignore -Werror
+## 6.9 Ignore -Werror
 
 ```sh
 cmake --compile-no-warning-as-error -DWERROR=0 ...

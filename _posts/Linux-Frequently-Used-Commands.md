@@ -226,21 +226,7 @@ usermod -d <new_dir> <username>
 * `id -u`：查看当前用户的uid
 * `id -nu <uid>`：查看指定uid对应的用户名
 
-## 1.20 readelf
-
-用于读取、解析可执行程序
-
-**Options:**
-
-* `-d`：输出动态链接的相关信息（如果有的话）
-* `-s`：输出符号信息
-
-**Examples:**
-
-* `readelf -d libc.so.6`
-* `readelf -s --wide xxx.so`
-
-## 1.21 getconf
+## 1.20 getconf
 
 查看系统相关的信息
 
@@ -248,7 +234,7 @@ usermod -d <new_dir> <username>
 
 * `getconf -a | grep CACHE`：查看CPU cache相关的配置项
 
-## 1.22 hostnamectl
+## 1.21 hostnamectl
 
 **Examples:**
 
@@ -256,7 +242,7 @@ usermod -d <new_dir> <username>
 hostnamectl set-hostname <name>
 ```
 
-## 1.23 date
+## 1.22 date
 
 **Examples:**
 
@@ -264,7 +250,7 @@ hostnamectl set-hostname <name>
 * `date "+%Y-%m-%d %H:%M:%S"`：指定时间格式
 * `date -s '2014-12-25 12:34:56'`：修改系统时间
 
-## 1.24 ntpdate
+## 1.23 ntpdate
 
 **Examples:**
 
@@ -1687,6 +1673,44 @@ free
 **Examples:**
 
 * `hdparm -Tt /dev/sda`
+
+## 3.16 file
+
+determine file type
+
+**Examples:**
+
+* `file xxx`
+
+## 3.17 realpath
+
+print the resolved path
+
+**Examples:**
+
+* `realpath xxx`
+
+## 3.18 readelf
+
+用于读取、解析可执行程序
+
+**Options:**
+
+* `-d`：输出动态链接的相关信息（如果有的话）
+* `-s`：输出符号信息
+
+**Examples:**
+
+* `readelf -d libc.so.6`
+* `readelf -s --wide xxx.so`
+
+## 3.19 readlink
+
+print resolved symbolic links or canonical file names
+
+**Examples:**
+
+* `readlink -f $(which java)`
 
 # 4 Process Management
 

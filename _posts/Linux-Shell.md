@@ -1105,6 +1105,19 @@ do
 done
 ```
 
+## 3.5 Indirect Variable Expansion
+
+```sh
+foo="bar"
+bar="Hello, World"
+
+# Direct expansion
+echo "$foo"
+
+# Indirect expansion
+echo "${!foo}"
+```
+
 # 4 Condition
 
 ## 4.1 test
@@ -2290,6 +2303,8 @@ sleep 2
 
 ### 8.3.1  ANSI escape codes
 
+**Color:**
+
 ```sh
 NOCOLOR='\033[0m'
 
@@ -2326,6 +2341,79 @@ echo -e ${LIGHTBLUE} 浅蓝色 ${NOCOLOR}
 echo -e ${LIGHTPURPLE} 浅紫色 ${NOCOLOR}
 echo -e ${LIGHTCYAN} 浅青色 ${NOCOLOR}
 echo -e ${WHITE} 白色 ${NOCOLOR}
+```
+
+**Cursor Position:**
+
+```sh
+RED="\033[0;31m"
+NOCOLOR="\033[0m"
+
+CURSOR_MOVE_STRAIGHT_UP="\033[A"
+CURSOR_MOVE_STRAIGHT_DOWN="\033[B"
+CURSOR_MOVE_STRAIGHT_RIGHT="\033[C"
+CURSOR_MOVE_STRAIGHT_LEFT="\033[D"
+CURSOR_MOVE_DOWN_HEAD="\033[E"
+CURSOR_MOVE_UP_HEAD="\033[F"
+
+echo -e "Line 1: Initial output"
+echo -e "Line 2: Initial output"
+echo -e "Line 3: Initial output"
+echo -en "Line 4: Initial output"
+
+function fallback_PROMPT() {
+    local prompt=$1
+    local len=${#prompt}
+    for ((i=0;i<len;i++)) do
+        echo -en "${CURSOR_MOVE_STRAIGHT_LEFT}"
+    done
+}
+
+CONTENT="${RED}NEW_CONTENT_HERE!!!${NOCOLOR}"
+
+sleep 2
+PROMPT="Moving up two line";
+echo -n "${PROMPT}"
+sleep 2
+fallback_PROMPT "${PROMPT}"
+echo -en "${CURSOR_MOVE_STRAIGHT_UP}${CURSOR_MOVE_STRAIGHT_UP}${CONTENT}"
+
+sleep 2
+PROMPT="Moving down one line";
+echo -n "${PROMPT}"
+sleep 2
+fallback_PROMPT "${PROMPT}"
+echo -en "${CURSOR_MOVE_STRAIGHT_DOWN}${CONTENT}"
+
+sleep 2
+PROMPT="Moving right one column";
+echo -n "${PROMPT}";
+sleep 2
+fallback_PROMPT "${PROMPT}"
+echo -en "${CURSOR_MOVE_STRAIGHT_RIGHT}${CONTENT}"
+
+sleep 2
+PROMPT="Moving left one column";
+echo -n "${PROMPT}"
+sleep 2
+fallback_PROMPT "${PROMPT}"
+echo -en "${CURSOR_MOVE_STRAIGHT_LEFT}${CONTENT}"
+
+sleep 2
+PROMPT="Moving to the 2 previous line head";
+echo -n "${PROMPT}"
+sleep 2
+fallback_PROMPT "${PROMPT}"
+echo -en "${CURSOR_MOVE_UP_HEAD}${CURSOR_MOVE_UP_HEAD}${CONTENT}"
+
+sleep 2
+PROMPT="Moving to the next line head";
+echo -n "${PROMPT}"
+sleep 2
+fallback_PROMPT "${PROMPT}"
+echo -en "${CURSOR_MOVE_DOWN_HEAD}${CONTENT}"
+
+echo -e "Done"
 ```
 
 ### 8.3.2 tput

@@ -2665,6 +2665,8 @@ call plug#end()
     * `<c-s>`：选中当前文件
     * `<c-t>`：在新的`tab`中打开选中的文件
     * `<c-p>`：预览
+1. 不起作用，可能是`python`的问题
+    * `:checkhealth`
 
 ## 3.20 fzf.vim
 
@@ -2831,7 +2833,6 @@ Home: [vim-codefmt](https://github.com/google/vim-codefmt)
 * `HTML`：`js-beautify`
 * `Go`：`gofmt`
 * `Java`：`google-java-format`/`clang-format`
-    * `sudo wget -O /usr/local/share/google-java-format-1.14.0-all-deps.jar 'https://github.com/google/google-java-format/releases/download/v1.14.0/google-java-format-1.14.0-all-deps.jar'`
 * `Python`：`Autopep8`/`Black`/`YAPF`
 * `Shell`：`shfmt`
 
@@ -2859,12 +2860,11 @@ call plug#end()
 " ......................
 
 call glaive#Install()
-" 设置google-java-format的启动命令，其中
-" /usr/local/share/google-java-format-1.14.0-all-deps.jar 是我的安装路径
+" 设置 google-java-format 的启动命令，其中
+" sudo wget -O /usr/local/share/google-java-format-1.22.0-all-deps.jar 'https://github.com/google/google-java-format/releases/download/v1.22.0/google-java-format-1.22.0-all-deps.jar'
+" sudo ln -s /usr/local/share/google-java-format-1.22.0-all-deps.jar /usr/local/share/google-java-format-all-deps.jar
 " --aosp 采用aosp风格，缩进为4个空格
-Glaive codefmt google_java_executable="java -jar /usr/local/share/google-java-format-1.14.0-all-deps.jar --aosp"
-" For JDK >= 16.0
-" Glaive codefmt google_java_executable="java --add-exports jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED -jar /usr/local/share/google-java-format-1.14.0-all-deps.jar --aosp"
+Glaive codefmt google_java_executable="java -jar /usr/local/share/google-java-format-all-deps.jar --aosp"
 ```
 
 **安装：进入vim界面后执行`:PlugInstall`即可**
@@ -3367,12 +3367,11 @@ call plug#end()
 
 " vim-codefmt的额外配置
 call glaive#Install()
-" 设置google-java-format的启动命令，其中
-" /usr/local/share/google-java-format-1.14.0-all-deps.jar 是我的安装路径
+" 设置 google-java-format 的启动命令，其中
+" sudo wget -O /usr/local/share/google-java-format-1.22.0-all-deps.jar 'https://github.com/google/google-java-format/releases/download/v1.22.0/google-java-format-1.22.0-all-deps.jar'
+" sudo ln -s /usr/local/share/google-java-format-1.22.0-all-deps.jar /usr/local/share/google-java-format-all-deps.jar
 " --aosp 采用aosp风格，缩进为4个空格
-Glaive codefmt google_java_executable="java -jar /usr/local/share/google-java-format-1.14.0-all-deps.jar --aosp"
-" For JDK >= 16.0
-" Glaive codefmt google_java_executable="java --add-exports jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED -jar /usr/local/share/google-java-format-1.14.0-all-deps.jar --aosp"
+Glaive codefmt google_java_executable="java -jar /usr/local/share/google-java-format-all-deps.jar --aosp"
 
 " ctags的配置
 " tags搜索模式

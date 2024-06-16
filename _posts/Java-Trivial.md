@@ -223,6 +223,15 @@ Java反编译工具，[下载地址](http://www.javadecompilers.com/jad)
 
 **查看归档文件：`jar tf xxx.jar`**
 
+## 10.1 JAR File Specification
+
+[JAR File Specification](https://docs.oracle.com/en/java/javase/17/docs/specs/jar/jar.html)
+
+* The META-INF directory
+    * `service`: Service Provider Interface, SPI
+    * `MANIFEST.MF`: Main-Class
+* ...
+
 # 11 Arthas
 
 [Arthas](https://github.com/alibaba/arthas)

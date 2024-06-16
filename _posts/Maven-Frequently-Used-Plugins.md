@@ -12,72 +12,84 @@ categories:
 
 <!--more-->
 
-# 1 shade
+# 1 Package Plugins
 
-以下配置，可以将工程打包成`fat-jar`
+* `maven-assembly-plugin`: This plugin extracts all dependency JARs into raw classes and groups them together. It can also be used to build an executable JAR by specifying the main class. **It works in project with less dependencies only; for large project with many dependencies, it will cause Java class names or resource files to conflict**
+    * **Cannot work well with Service Provider Interface(SPI)**, because multiply service config files across multiply dependencies may overwrite each other, and only one of them will left
+* `maven-shade-plugin`: It packages all dependencies into one uber-JAR. It can also be used to build an executable JAR by specifying the main class. This plugin is particularly useful as it merges content of specific files instead of overwriting them by relocating classes. **This is needed when there are resource files that have the same name across the JARs and the plugin tries to package all the resource files together**
+    * **Work well with Service Provider Interface(SPI)**, because multiply service config files across multiply dependencies will be concated to a final one.
+* `spring-boot-maven-plugin`: Best for packaging Spring Boot applications, simplifies creating executable JARs/WARs with Spring Boot runtime.
+    * **Cannot work well with JNI**, because JNI don't know how to parse the jar file by default
+    * Work well with Service Provider Interface(SPI)
 
-`java -jar xxx.jar arg1 arg2 ...`可以执行该`fat-jar`
+## 1.1 maven-assembly-plugin
 
 ```xml
-<build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <transformers>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>xxx.yyy.zzz</mainClass>
-                                </transformer>
-                            </transformers>
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-                    <filters>
-                        <filter>
-                            <artifact>*:*</artifact>
-                            <excludes>
-                                <exclude>META-INF/*.SF</exclude>
-                                <exclude>META-INF/*.DSA</exclude>
-                                <exclude>META-INF/*.RSA</exclude>
-                            </excludes>
-                        </filter>
-                    </filters>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-assembly-plugin</artifactId>
+    <version>3.1.0</version>
+    <configuration>
+        <!-- set main class -->
+        <archive>
+            <manifest>
+                <mainClass>xxx.yyy.zzz</mainClass>
+            </manifest>
+        </archive>
+
+        <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+        </descriptorRefs>
+    </configuration>
+    <executions>
+        <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+                <goal>single</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
 ```
 
-# 2 assembly
-
-以下配置，可以将工程打包成`fat-jar`
-
-`java -jar xxx.jar arg1 arg2 ...`可以执行该`fat-jar`
+**Here's an example of how it CANNOT works with SPI:**
 
 ```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.byconity</groupId>
+    <artifactId>test-assembly-with-spi</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <hadoop.version>3.4.0</hadoop.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>${hadoop.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-hdfs-client</artifactId>
+            <version>${hadoop.version}</version>
+        </dependency>
+    </dependencies>
+
     <build>
+        <finalName>${artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
-                    <!--设置启动的类-->
-                    <archive>
-                        <manifest>
-                            <mainClass>xxx.yyy.zzz</mainClass>
-                        </manifest>
-                    </archive>
-
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
@@ -94,11 +106,197 @@ categories:
             </plugin>
         </plugins>
     </build>
+</project>
 ```
 
-# 3 spring-boot-maven-plugin
+```sh
+mvn clean package -DskipTests
+unzip -p target/test-assembly-with-spi-jar-with-dependencies.jar META-INF/services/org.apache.hadoop.fs.FileSystem
+```
 
-所有依赖以`嵌套的方式`打包到`Fatjar`内部
+And you can see only one service config file provided by `hadoop-common` is reserved, the same file provided by `hadoop-hdfs-client` is missed.
+
+```
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+org.apache.hadoop.fs.LocalFileSystem
+org.apache.hadoop.fs.viewfs.ViewFileSystem
+org.apache.hadoop.fs.HarFileSystem
+org.apache.hadoop.fs.http.HttpFileSystem
+org.apache.hadoop.fs.http.HttpsFileSystem
+```
+
+## 1.2 maven-shade-plugin
+
+[Apache Maven Shade Plugin](https://maven.apache.org/plugins/maven-shade-plugin/index.html)
+
+* [Resource Transformers](https://maven.apache.org/plugins/maven-shade-plugin/examples/resource-transformers.html)
+    * ResourceBundleAppendingTransformer
+    * ServicesResourceTransformer
+
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-shade-plugin</artifactId>
+    <version>3.2.0</version>
+    <executions>
+        <execution>
+            <phase>package</phase>
+            <goals>
+                <goal>shade</goal>
+            </goals>
+            <configuration>
+                <finalName>${project.build.finalName}-jar-with-dependencies</finalName>
+                <transformers>
+                    <transformer
+                            implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                        <mainClass>xxx.yyy.zzz</mainClass>
+                    </transformer>
+
+                    <!-- Work with SPI -->
+                    <transformer
+                            implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                </transformers>
+                <filters>
+                    <filter>
+                        <artifact>*:*</artifact>
+                        <excludes>
+                            <!-- Avoid following issues: -->
+                            <!-- Exception in thread "main" java.lang.SecurityException: Invalid signature file digest for Manifest main attributes -->
+                            <exclude>META-INF/*.SF</exclude>
+                            <exclude>META-INF/*.DSA</exclude>
+                            <exclude>META-INF/*.RSA</exclude>
+                        </excludes>
+                    </filter>
+                </filters>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+```
+
+**Here's an example of how it works with SPI:**
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.byconity</groupId>
+    <artifactId>test-shade-with-spi</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <hadoop.version>3.4.0</hadoop.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>${hadoop.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-hdfs-client</artifactId>
+            <version>${hadoop.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>${project.build.finalName}-jar-with-dependencies</finalName>
+                            <transformers>
+                                <!-- Work with SPI -->
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+```
+
+```sh
+mvn clean package -DskipTests
+unzip -p target/test-shade-with-spi-jar-with-dependencies.jar META-INF/services/org.apache.hadoop.fs.FileSystem
+```
+
+And you can see the different service config files, provided by `hadoop-common` and `hadoop-hdfs-client`, are combined together.
+
+```
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+org.apache.hadoop.fs.LocalFileSystem
+org.apache.hadoop.fs.viewfs.ViewFileSystem
+org.apache.hadoop.fs.HarFileSystem
+org.apache.hadoop.fs.http.HttpFileSystem
+org.apache.hadoop.fs.http.HttpsFileSystem
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+org.apache.hadoop.hdfs.DistributedFileSystem
+org.apache.hadoop.hdfs.web.WebHdfsFileSystem
+org.apache.hadoop.hdfs.web.SWebHdfsFileSystem
+```
+
+## 1.3 spring-boot-maven-plugin
+
+The actual main class is `JarLauncher` or `WarLauncher`, which will prepare the classloader that can understand these nested fat-jar's structure. And these information is stored in the `META-INF/MANIFEST.MF`
 
 ```xml
 <plugin>
@@ -118,7 +316,7 @@ categories:
 </plugin>
 ```
 
-# 4 autoconfig
+# 2 autoconfig
 
 ```xml
 <plugin>
@@ -149,9 +347,7 @@ categories:
 
 **对于web项目（打包方式为war）**，则会过滤所有依赖中包含占位符的文件
 
-## 4.1 配置文件
-
-示例代码如下：
+## 2.1 Demo
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -182,9 +378,7 @@ categories:
 
 其中`<script>`标签中指定需要进行占位符替换的**模板文件**。`group`标签仅仅做了分组，阅读上更清晰，没有其他作用
 
-# 5 参考
+# 3 Reference
 
-* [maven-shade-plugin 入门指南](https://www.jianshu.com/p/7a0e20b30401)
-* [maven-将依赖的 jar包一起打包到项目 jar 包中](https://www.jianshu.com/p/0c60f6ef3a4c)
-* [Java 打包 FatJar 方法小结](https://www.jianshu.com/p/a7bd1f89f29f)
-* [Spring Boot Maven Plugin](https://docs.spring.io/spring-boot/docs/current/maven-plugin/)
+* [Difference between the maven-assembly-plugin, maven-jar-plugin and maven-shade-plugin?](https://stackoverflow.com/questions/38548271/difference-between-the-maven-assembly-plugin-maven-jar-plugin-and-maven-shade-p)
+* [hadoop No FileSystem for scheme: file](https://stackoverflow.com/questions/17265002/hadoop-no-filesystem-for-scheme-file)
