@@ -2010,6 +2010,10 @@ CompileFlags:
 
 [Chapter 4: JNI Functions](https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/functions.html)
 
+* `PushLocalFrame`/`PopLocalFrame`: Manage local reference automatically
+* `NewGlobalRef`/`DeleteGlobalRef`: Create/Delete global reference manually, this cannot be managed by `PushLocalFrame`/`PopLocalFrame`
+* `DeleteLocalRef`: Delete local reference manually created by java function or jni API
+
 ## 9.1 Example
 
 ### 9.1.1 Hello World
@@ -2168,7 +2172,7 @@ cmake -B build && cmake --build build && build/jni_demo
 
 * The local ref return by java function must be manually released, otherwise OOM may occur
 
-```cpp
+```sh
 mkdir -p jni_memory_leak_demo/build
 cd jni_memory_leak_demo
 
@@ -2188,6 +2192,8 @@ cat > jni_memory_leak_demo.cpp << 'EOF'
 #include <iostream>
 #include <thread>
 
+constexpr const char* CURSOR_UP = "\033[F";
+
 #define ASSERT_TRUE(expr)                                                                      \
     do {                                                                                       \
         if (!(expr)) {                                                                         \
@@ -2202,7 +2208,8 @@ cat > jni_memory_leak_demo.cpp << 'EOF'
     } while (0)
 
 int main(int argc, char* argv[]) {
-    const std::string help = "Usage: " + std::string(argv[0]) + " <alloc_by_cpp|alloc_by_java> <keep|release>";
+    const std::string help =
+            "Usage: " + std::string(argv[0]) + " <alloc_by_cpp|alloc_by_java> <keep|release> [<use_frame>]";
     if (argc < 3) {
         std::cerr << help << std::endl;
         return 1;
@@ -2215,8 +2222,13 @@ int main(int argc, char* argv[]) {
         std::cerr << help << std::endl;
         return 1;
     }
-    const bool alloc_by_cpp = std::string(argv[1]) == "alloc_by_cpp";
-    const bool keep_memory = std::string(argv[2]) == "keep";
+    if (argc == 4 && std::string(argv[3]) != "use_frame") {
+        std::cerr << help << std::endl;
+        return 1;
+    }
+    const bool alloc_by_cpp = (std::string(argv[1]) == "alloc_by_cpp");
+    const bool keep_memory = (std::string(argv[2]) == "keep");
+    const bool use_frame = (argc == 4 && std::string(argv[3]) == "use_frame");
 
     JavaVM* jvm;
     JNIEnv* env;
@@ -2246,11 +2258,20 @@ int main(int argc, char* argv[]) {
 
     auto start = std::chrono::steady_clock::now();
     while (true) {
+        if (!keep_memory && use_frame) {
+            env->PushLocalFrame(1);
+        }
         const size_t _10M = 10 * 1024 * 1024;
         jobject bytes = alloc_by_cpp ? env->NewByteArray(_10M)
                                      : env->CallObjectMethod(obj_memory_allocator, m_allocate_memory, _10M);
         ASSERT_TRUE(bytes != nullptr);
-        if (!keep_memory) env->DeleteLocalRef(bytes);
+        if (!keep_memory) {
+            if (use_frame) {
+                env->PopLocalFrame(nullptr);
+            } else {
+                env->DeleteLocalRef(bytes);
+            }
+        }
 
         std::ifstream iff("/proc/self/status");
         std::string line;
@@ -2274,13 +2295,14 @@ int main(int argc, char* argv[]) {
         std::cout << "    " << vm_rss << std::endl;
         std::cout << "    " << vm_hwm << std::endl;
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-        if (std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - start).count() > 10) {
+        if (std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - start).count() > 5) {
             break;
         }
 
-        std::cout << "\033[F\033[F\033[F\033[F";
+        // Move cursor up
+        std::cout << CURSOR_UP << CURSOR_UP << CURSOR_UP << CURSOR_UP;
     }
 
     jvm->DestroyJavaVM();
@@ -2297,8 +2319,8 @@ LIBRARY_PATH=$JAVA_HOME/lib/server:${LIBRARY_PATH} \
 gcc -o build/jni_memory_leak_demo jni_memory_leak_demo.cpp -lstdc++ -std=gnu++17 -ljvm
 
 LD_LIBRARY_PATH=$JAVA_HOME/lib/server build/jni_memory_leak_demo alloc_by_cpp keep
-LD_LIBRARY_PATH=$JAVA_HOME/lib/server build/jni_memory_leak_demo alloc_by_cpp release
-LD_LIBRARY_PATH=$JAVA_HOME/lib/server build/jni_memory_leak_demo alloc_by_java keep
+LD_LIBRARY_PATH=$JAVA_HOME/lib/server build/jni_memory_leak_demo alloc_by_cpp release use_frame
+LD_LIBRARY_PATH=$JAVA_HOME/lib/server build/jni_memory_leak_demo alloc_by_java keep use_frame
 LD_LIBRARY_PATH=$JAVA_HOME/lib/server build/jni_memory_leak_demo alloc_by_java release
 ```
 
@@ -2317,7 +2339,7 @@ pushd java
 
 mkdir -p src/main/java/org/liuyehcf
 cat > src/main/java/org/liuyehcf/Main.java << 'EOF'
-package org.byconity.paimon.params;
+package org.liuyehcf;
 
 public class Main {
     public static void main(String[] args) {
@@ -2332,7 +2354,7 @@ cat > pom.xml << 'EOF'
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.byconity</groupId>
+    <groupId>org.liuyehcf</groupId>
     <artifactId>test-spring-fatjar</artifactId>
     <version>1.0-SNAPSHOT</version>
 
@@ -2385,6 +2407,7 @@ cat > jni_spring_fat_jar_demo.cpp << 'EOF'
 
 #include <cstring>
 #include <iostream>
+#include <sstream>
 
 #define ASSERT_TRUE(expr)                                                                                    \
     do {                                                                                                     \
@@ -2422,7 +2445,9 @@ public:
 
 class NormalClassLoader : public ClassLoader {
 public:
-    NormalClassLoader(JavaVM* jvm_, JNIEnv* env_) : jvm(jvm_), env(env_) {}
+    NormalClassLoader(JavaVM* jvm_, JNIEnv* env_) : jvm(jvm_), env(env_) {
+        std::cout << "Using NormalClassLoader" << std::endl;
+    }
     ~NormalClassLoader() override {}
 
     jclass load_class(const char* class_name) override {
@@ -2438,7 +2463,10 @@ private:
 
 class SpringClassLoader : public ClassLoader {
 public:
-    SpringClassLoader(JavaVM* jvm_, JNIEnv* env_) : jvm(jvm_), env(env_) { init_fat_jar_class_loader(); }
+    SpringClassLoader(JavaVM* jvm_, JNIEnv* env_) : jvm(jvm_), env(env_) {
+        std::cout << "Using SpringClassLoader" << std::endl;
+        init_fat_jar_class_loader();
+    }
     ~SpringClassLoader() override {
         if (jgspring_class_loader != nullptr) env->DeleteGlobalRef(jgspring_class_loader);
     }
@@ -2454,19 +2482,22 @@ public:
 
 private:
     /*
-     * According https://github.com/joansmith/spring-boot/blob/master/spring-boot-tools/spring-boot-loader/src/main/java/org/springframework/boot/loader/Launcher.java
+     * Spring API may vary from time to time, I'm not sure if this code can work well with other spring versions
      *
-	 * protected void launch(String[] args) {
-	 * 	try {
-	 * 		JarFile.registerUrlProtocolHandler();
-	 * 		ClassLoader classLoader = createClassLoader(getClassPathArchives());
-	 * 		launch(args, getMainClass(), classLoader);
-	 * 	}
-	 * 	catch (Exception ex) {
-	 * 		ex.printStackTrace();
-	 * 		System.exit(1);
-	 * 	}
-	 * }
+     * For 2.1.4.RELEASE
+     * https://github.com/spring-projects/spring-boot/blob/v2.1.4.RELEASE/spring-boot-project/spring-boot-tools/spring-boot-loader/src/main/java/org/springframework/boot/loader/Launcher.java
+     *
+     * protected void launch(String[] args) {
+     *     try {
+     *         JarFile.registerUrlProtocolHandler();
+     *         ClassLoader classLoader = createClassLoader(getClassPathArchives());
+     *         launch(args, getMainClass(), classLoader);
+     *     }
+     *     catch (Exception ex) {
+     *         ex.printStackTrace();
+     *         System.exit(1);
+     *     }
+     * }
      */
     void init_fat_jar_class_loader() {
         jclass cls_jar_launcher = env->FindClass("org/springframework/boot/loader/JarLauncher");
@@ -2523,7 +2554,7 @@ int main(int argc, char* argv[]) {
     }
     const bool normal_mode = std::strcmp(argv[1], "normal") == 0;
     const char* jar_path = argv[2];
-    const char* class_name = argv[3];
+    const std::string class_names = argv[3];
 
     JavaVM* jvm;
     JNIEnv* env;
@@ -2548,10 +2579,14 @@ int main(int argc, char* argv[]) {
     }
     DEFER(delete loader);
 
-    jclass cls = loader->load_class(class_name);
-    ASSERT_TRUE(cls != nullptr);
-    std::cout << "Find class: " << class_name << std::endl;
-    LOCAL_REF_GUARD(cls);
+    std::istringstream class_names_is(class_names);
+    std::string class_name;
+    while (std::getline(class_names_is, class_name, ',')) {
+        jclass cls = loader->load_class(class_name.c_str());
+        ASSERT_TRUE(cls != nullptr);
+        std::cout << "    Find class: " << class_name << std::endl;
+        LOCAL_REF_GUARD(cls);
+    }
 
     return 0;
 }
@@ -2563,7 +2598,7 @@ LIBRARY_PATH=$JAVA_HOME/lib/server:${LIBRARY_PATH} \
 gcc -o build/jni_spring_fat_jar_demo jni_spring_fat_jar_demo.cpp -lstdc++ -std=gnu++17 -ljvm
 
 LD_LIBRARY_PATH=$JAVA_HOME/lib/server build/jni_spring_fat_jar_demo normal java/target/test-spring-fatjar.jar org.apache.hadoop.fs.LocalFileSystem
-LD_LIBRARY_PATH=$JAVA_HOME/lib/server build/jni_spring_fat_jar_demo spring java/target/test-spring-fatjar.jar org.apache.hadoop.fs.LocalFileSystem
+LD_LIBRARY_PATH=$JAVA_HOME/lib/server build/jni_spring_fat_jar_demo spring java/target/test-spring-fatjar.jar org.apache.hadoop.fs.LocalFileSystem,org.liuyehcf.Main
 ```
 
 ## 9.2 libhdfs

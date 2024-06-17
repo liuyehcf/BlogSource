@@ -272,8 +272,10 @@ Java反编译工具，[下载地址](http://www.javadecompilers.com/jad)
     jenv versions
 
     # Switch to specific version
+    # shell has highest priority(`JENV_VERSION`) and global has lowest priority. local refers to current directory(`.java-version`)
     jenv global 17
     jenv local 22
+    jenv shell 22
     ```
 
 * For Linux
@@ -296,8 +298,25 @@ Java反编译工具，[下载地址](http://www.javadecompilers.com/jad)
     jenv versions
 
     # Switch to specific version
+    # shell has highest priority(`JENV_VERSION`) and global has lowest priority. local refers to current directory(`.java-version`)
     jenv global 17
     jenv local 1.8
+    jenv shell 1.8
+    ```
+
+**Tips:**
+
+* `jenv global/local/shell --unset`
+* For x86 container running on `OSX` with M-chips, the default `jenv init -` will encounter strange problem, because the shell command turns out to be `/run/rosetta/rosetta /usr/local/bin/zsh zsh`, rather than `zsh` in most cases. And the shell parse step (list as below) in `~/.jenv/libexec/jenv-init` cannot work correctly. **So the solution is using `jenv init - zsh` instead of `jenv init -` by specifying the shell command to skip the pass step**
+    ```sh
+    shell="$1"
+    if [ -z "$shell" ]; then
+    shell="$(ps -p "$PPID" -o 'args=' 2>/dev/null || true)"
+    shell="${shell%% *}"
+    shell="${shell##-}"
+    shell="${shell:-$SHELL}"
+    shell="${shell##*/}"
+    fi
     ```
 
 # 14 Assorted

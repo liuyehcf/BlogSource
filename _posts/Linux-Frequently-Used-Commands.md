@@ -134,7 +134,37 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 
 * `whereis ls`
 
-## 1.13 useradd
+## 1.13 file
+
+The file command is used to determine the type of a file. It does this by examining the file's content, rather than relying on its file extension. This command is useful for identifying various file types, such as text files, executable files, directories, etc.
+
+**Examples:**
+
+* `file ~/.bashrc`
+* `file $(which ls)`
+
+## 1.14 type
+
+The type command is used to describe how its arguments would be interpreted if used as command names. It indicates if a command is built-in, an alias, a function, or an external executable. This command is helpful for understanding how a particular command is being resolved and executed by the shell.
+
+**Examples:**
+
+* `type ls`
+
+## 1.15 command
+
+The command command is used to execute a command, ignoring shell functions and aliases. It ensures that the original external command is executed, which can be useful if a command name has been redefined as a function or an alias.
+
+* `command -v ls`
+* `command -V ls`
+* Difference between `ls` and `comomand ls`
+    ```sh
+    alias ls='ls --color=auto -l'
+    ls # execute the alias
+    command ls # execute the original command
+    ```
+
+## 1.16 useradd
 
 **Options:**
 
@@ -158,7 +188,7 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 1. 新建用户主文件夹：`cp -a /etc/sekl /home/<name>`
 1. 更改用户文件夹的属性：`chown -R <group>/home/<name>`
 
-### 1.13.1 Migrate User Directory
+### 1.16.1 Migrate User Directory
 
 ```sh
 # 拷贝数据
@@ -171,7 +201,7 @@ sudo su
 usermod -d <new_dir> <username>
 ```
 
-## 1.14 userdel
+## 1.17 userdel
 
 **Options:**
 
@@ -181,7 +211,7 @@ usermod -d <new_dir> <username>
 
 * `userdel -r test`
 
-## 1.15 usermod
+## 1.18 usermod
 
 **Options:**
 
@@ -196,26 +226,26 @@ usermod -d <new_dir> <username>
 * `sudo usermod -aG docker username`：给指定用户增加用户组，要重新登录才能生效
     * `groups username`：查看用户组
 
-## 1.16 chown
+## 1.19 chown
 
 **Examples:**
 
 * `chown [-R] 账号名称 文件或目录`
 * `chown [-R] 账号名称:用户组名称 文件或目录`
 
-## 1.17 passwd
+## 1.20 passwd
 
 **Examples:**
 
 * `echo '123456' | passwd --stdin root`
 
-## 1.18 chpasswd
+## 1.21 chpasswd
 
 **Examples:**
 
 * `echo 'username:password' | sudo chpasswd`
 
-## 1.19 id
+## 1.22 id
 
 用于查看用户信息，包括`uid`，`gid`等
 
@@ -226,7 +256,7 @@ usermod -d <new_dir> <username>
 * `id -u`：查看当前用户的uid
 * `id -nu <uid>`：查看指定uid对应的用户名
 
-## 1.20 getconf
+## 1.23 getconf
 
 查看系统相关的信息
 
@@ -234,7 +264,7 @@ usermod -d <new_dir> <username>
 
 * `getconf -a | grep CACHE`：查看CPU cache相关的配置项
 
-## 1.21 hostnamectl
+## 1.24 hostnamectl
 
 **Examples:**
 
@@ -242,7 +272,7 @@ usermod -d <new_dir> <username>
 hostnamectl set-hostname <name>
 ```
 
-## 1.22 date
+## 1.25 date
 
 **Examples:**
 
@@ -250,7 +280,7 @@ hostnamectl set-hostname <name>
 * `date "+%Y-%m-%d %H:%M:%S"`：指定时间格式
 * `date -s '2014-12-25 12:34:56'`：修改系统时间
 
-## 1.23 ntpdate
+## 1.26 ntpdate
 
 **Examples:**
 
@@ -306,6 +336,7 @@ hostnamectl set-hostname <name>
 
 * `echo ${a}`
 * `echo -e "a\nb"`
+* `echo -e "\u67e5\u8be2\u5f15\u64ce\u5f02\u5e38\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5\u6216\u8054\u7cfb\u7ba1\u7406\u5458\u6392\u67e5\u3002"`：`Unicode`转`UTF-8`
 
 **其他：**
 
@@ -1558,7 +1589,7 @@ free
 **Options:**
 
 * `-h`：以`K`，`M`，`G`为单位，提高信息的可读性
-* `-i`：显示inode信息
+* `-i`：显示`inode`信息
 * `-T`：显式文件系统类型
 
 **Examples:**
@@ -3455,6 +3486,7 @@ yum install -y sysstat
 **Examples:**
 
 * `iostat -d -t -x 1`
+* `iostat -t -x 3`
 
 ## 6.12 dstat
 
@@ -4229,37 +4261,78 @@ apt install clang-format-X.Y
 
 # 11 FAQ
 
-1. 判断机器是物理机还是虚拟机：`systemd-detect-virt`
-1. 实时监控系统各项指标
-    * `dstat -vnl`
-1. 找出占用`CPU`资源最多的进程
-    * `dstat --top-cpu-adv`
-1. 找出占用内存资源最多的进程
-    * `dstat --top-mem`
-1. 找出占用io最多的线程
-    * `dstat --top-io-adv`
-    * `iotop -oP`
-1. 找出占用带宽最多的连接
-    * `iftop`
-1. 找出占用带宽最多的进程
-    * `nethogs`
-1. 找出占用指定端口的进程
-    * `lsof -n -i :80`
-    * `ss -npl | grep 80`
-1. 磁盘类型
-    * `lsblk -d --output NAME,ROTA`
-        * `ROTA: 0`：SSD
-        * `ROTA: 1`：HDD
-    * `cat /sys/block/<device_name>/queue/rotational`
-        * `<device_name>` may be sda
-1. 允许用户使用`docker`命令：`sudo usermod -aG docker username`
-1. 找到进程启动命令的完整路径
-    * `lsof -p xxx | grep txt`
-1. 找到主机的ip
-    * `ip -4 addr show scope global | grep inet | awk '{print $2}' | cut -d/ -f1`
-1. 查看so文件的符号
-    * `nm -D xxx.so`
-    * `readelf -s --wide xxx.so`
+## 11.1 System Information
+
+### 11.1.1 Determine disk type
+
+* `lsblk -d --output NAME,ROTA`
+    * `ROTA: 0`：SSD
+    * `ROTA: 1`：HDD
+* `cat /sys/block/<device_name>/queue/rotational`
+    * `<device_name>` may be sda
+
+### 11.1.2 Determine physical/virtual machine
+
+* `systemd-detect-virt`
+
+### 11.1.3 Get Ip Address
+
+* `ip -4 addr show scope global | grep inet | awk '{print $2}' | cut -d/ -f1`
+
+### 11.1.4 Get inode related information
+
+* `df -i`
+* `ls -i`
+* `stat <file_path>`
+* `find <path> -inum <inode_number>`
+* `tune2fs -l /dev/sda1 | grep -i 'inode'`
+
+## 11.2 System Monitoring
+
+### 11.2.1 Real-time Dashboard
+
+* `dstat -vnl`
+
+### 11.2.2 Find process with most CPU consumption
+
+* `dstat --top-cpu-adv`
+
+### 11.2.3 Find process with most Memory consumption
+
+* `dstat --top-mem`
+
+### 11.2.4 Find process with most I/O consumption
+
+* `dstat --top-io-adv`
+* `iotop -oP`
+
+### 11.2.5 Find connection with most brand consumption
+
+* `iftop`
+
+### 11.2.6 Find process with most brand consumption
+
+* `nethogs`
+
+### 11.2.7 Find process listening on specific port
+
+* `lsof -n -i :80`
+* `ss -npl | grep 80`
+
+### 11.2.8 Get full command of a process
+
+* `lsof -p xxx | grep txt`
+
+## 11.3 Assorted
+
+### 11.3.1 Allow using docker command without sudo
+
+* `sudo usermod -aG docker username`
+
+### 11.3.2 Check symbols of binary
+
+* `nm -D xxx.so`
+* `readelf -s --wide xxx.so`
 
 # 12 Reference
 
