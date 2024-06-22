@@ -25,16 +25,24 @@ categories:
 
 ## 1.2 Enable Debug
 
-**`java -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n [其他参数]`**
+**Java 1.4 及更早版本: `-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=*:8000,suspend=n`**
 
-* `-Xrunjdwp`：通知JVM使用`Java debug wire protocol`运行调试环境
-* `transport`：指定了调试数据的传送方式，`dt_socket`是指用`SOCKET`模式
-* `address`：调试服务器的地址
+* `-Xrunjdwp`：启动`JDWP, Java debug wire protocol`调试器
+* `transport=dt_socket`：使用套接字作为传输方式
+* `server=y`：作为调试服务器运行
+* `address=*:8000`：在所有网络接口上监听`8000`端口。同`0.0.0.0`
     * `8000`
     * `127.0.0.1:8000`
     * `0.0.0.0:8000`
-* `server=y/n`：y表示当前是调试服务端，n表示当前是调试客户端
-* `suspend`：表示启动时不中断。一般用于调试启动不了的问题
+* `suspend=n`：`JVM`启动后不挂起，立即运行
+
+**Java 1.5 (JDK 5): `-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000`**
+
+* `-agentlib:jdwp`：使用`jdwp`库启动`JDWP`调试器，且不需要额外指定`-Xdebug`
+* `transport=dt_socket`：使用套接字作为传输方式
+* `server=y`：作为调试服务器运行
+* `suspend=n`：`JVM`启动后不挂起，立即运行
+* `address=*:8000`：在所有网络接口上监听`8000`端口。同`0.0.0.0`
 
 # 2 jps
 

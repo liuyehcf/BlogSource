@@ -844,6 +844,98 @@ inline BENCHMARK_ALWAYS_INLINE void DoNotOptimize(Tp& value) {
 
 Snappy is a compression/decompression library
 
+## 5.7 breakpad
+
+Breakpad is a library and tool suite that allows you to distribute an application to users with compiler-provided debugging information removed, record crashes in compact "minidump" files, send them back to your server, and produce C and C++ stack traces from these minidumps. Breakpad can also write minidumps on request for programs that have not crashed.
+
+It includes following tools:
+
+* `minidump_stackwalk`: This tool processes minidump files to produce a human-readable stack trace. It uses symbol files to translate memory addresses into function names, file names, and line numbers
+    * `minidump_stackwalk <minidump_file> <symbol_path>`
+* `microdump_stackwalk`: Similar to `minidump_stackwalk`, but specifically designed to process microdump files, which are smaller and contain less information than full minidumps
+    * `microdump_stackwalk <microdump_file> <symbol_path>`
+* `dump_syms`: This tool extracts debugging symbols from a binary and outputs them in a format that can be uploaded to a symbol server
+    * `dump_syms <binary_file> > <output_symbol_file>`
+
+```sh
+mkdir -p breakpad_demo
+cd breakpad_demo
+git clone https://chromium.googlesource.com/breakpad/breakpad.git contrib/breakpad
+git clone https://chromium.googlesource.com/linux-syscall-support.git contrib/breakpad/src/third_party/lss
+
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(breakpad_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+add_executable(${PROJECT_NAME} main.cpp)
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+set(BREAKPAD_SOURCE_DIR ${CMAKE_SOURCE_DIR}/contrib/breakpad)
+set(BREAKPAD_BINARY_DIR ${CMAKE_BINARY_DIR}/breakpad_build)
+
+include(ExternalProject)
+ExternalProject_Add(
+    breakpad
+    SOURCE_DIR ${BREAKPAD_SOURCE_DIR}
+    BINARY_DIR ${BREAKPAD_BINARY_DIR}
+    CONFIGURE_COMMAND ${BREAKPAD_SOURCE_DIR}/configure --prefix=${BREAKPAD_BINARY_DIR}
+    # --unset=MAKEFLAGS is mandatory to avoid nested make issues, error message like: make[3]: warning: jobserver unavailable: using -j1.  Add '+' to parent make rule.
+    BUILD_COMMAND ${CMAKE_COMMAND} -E env --unset=MAKEFLAGS ${CMAKE_MAKE_PROGRAM} -C ${BREAKPAD_BINARY_DIR} -j${CMAKE_BUILD_PARALLEL_LEVEL}
+    INSTALL_COMMAND ""
+    BUILD_BYPRODUCTS ${BREAKPAD_BINARY_DIR}/src/client/linux/libbreakpad_client.a
+)
+add_custom_command(
+    TARGET breakpad
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${BREAKPAD_BINARY_DIR}
+    ${CMAKE_BINARY_DIR}/breakpad_product
+)
+add_dependencies(${PROJECT_NAME} breakpad)
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${BREAKPAD_SOURCE_DIR}/src)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${BREAKPAD_BINARY_DIR}/src/client/linux/libbreakpad_client.a)
+target_link_libraries(${PROJECT_NAME} PRIVATE pthread)
+EOF
+
+cat > main.cpp << 'EOF'
+#include <client/linux/handler/exception_handler.h>
+
+#include <iostream>
+#include <stdexcept>
+
+bool DumpCallback(const google_breakpad::MinidumpDescriptor& descriptor, void* context, bool succeeded) {
+    std::cout << descriptor.path() << std::endl;
+    return succeeded;
+}
+
+int main(int argc, char* argv[]) {
+    google_breakpad::MinidumpDescriptor descriptor("./minidumps");
+    google_breakpad::ExceptionHandler handler(descriptor, nullptr, DumpCallback, nullptr, true, -1);
+
+    throw std::runtime_error("Test exception");
+}
+EOF
+
+cmake -B build && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+
+find build/breakpad_build -type f -executable
+
+mkdir -p minidumps
+# step1: generate symbol file
+build/breakpad_build/src/tools/linux/dump_syms/dump_syms build/breakpad_demo > build/breakpad_demo.sym
+# step2: generate dump file
+dump_path=$(build/breakpad_demo | grep 'minidumps')
+# step3: analyze dump file
+build/breakpad_build/src/processor/minidump_stackwalk ${dump_path} build/breakpad_demo
+```
+
 # 6 Apache
 
 ## 6.1 arrow

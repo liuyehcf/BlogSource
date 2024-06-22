@@ -52,6 +52,8 @@ trino> select * from tpch.tiny.customer limit 1;
 
 # 2 Generate TPCH/TPCDS into Hive
 
+[Hive connector](https://trino.io/docs/current/connector/hive.html)
+
 Start a hive cluster via docker compose according to [docker-hive](https://github.com/big-data-europe/docker-hive)
 
 * `Hive Metastore`:
@@ -62,15 +64,15 @@ Start a hive cluster via docker compose according to [docker-hive](https://githu
 Then, add a hive catalog:
 
 ```sh
-docker run --name trino --network docker-hive_default -d trinodb/trino:449
-docker exec -it trino bash
+docker run --name trino --network docker-hive_default -d -p 5005:5005 trinodb/trino:449
+docker exec -it trino bash -c 'echo -e "connector.name=hive\nhive.metastore.uri=thrift://hive-metastore:9083\nhive.compression-codec=LZ4" > /etc/trino/catalog/hive.properties'
 
-cd /etc/trino/catalog
-echo -e "connector.name=hive\nhive.metastore.uri=thrift://hive-metastore:9083" > hive.properties
-exit
+# Execute this if you want to debug trino
+docker exec -it trino bash -c 'echo "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005" >> /etc/trino/jvm.config'
+# Or
+docker exec -it trino bash -c 'echo -e "-Xdebug\n-Xrunjdwp:server=y,transport=dt_socket,address=*:5005,suspend=n" >> /etc/trino/jvm.config'
 
 docker restart trino
-docker exec -it trino trino
 ```
 
 ```sql
@@ -82,6 +84,8 @@ trino> show schemas
 ## 2.1 TPC-DS
 
 ### 2.1.1 Create Table Statement for Hive
+
+#### 2.1.1.1 Hive Syntax
 
 ```sql
 CREATE TABLE `call_center`(
@@ -654,6 +658,627 @@ TBLPROPERTIES (
 );
 ```
 
+#### 2.1.1.2 Trino Syntax
+
+```sql
+CREATE TABLE call_center(
+  cc_call_center_sk INT,
+  cc_call_center_id VARCHAR(16),
+  cc_rec_start_date DATE,
+  cc_rec_end_date DATE,
+  cc_closed_date_sk INT,
+  cc_open_date_sk INT,
+  cc_name VARCHAR(50),
+  cc_class VARCHAR(50),
+  cc_employees INT,
+  cc_sq_ft INT,
+  cc_hours VARCHAR(20),
+  cc_manager VARCHAR(40),
+  cc_mkt_id INT,
+  cc_mkt_class VARCHAR(50),
+  cc_mkt_desc VARCHAR(100),
+  cc_market_manager VARCHAR(40),
+  cc_division INT,
+  cc_division_name VARCHAR(50),
+  cc_company INT,
+  cc_company_name VARCHAR(50),
+  cc_street_number VARCHAR(10),
+  cc_street_name VARCHAR(60),
+  cc_street_type VARCHAR(15),
+  cc_suite_number VARCHAR(10),
+  cc_city VARCHAR(60),
+  cc_county VARCHAR(30),
+  cc_state VARCHAR(2),
+  cc_zip VARCHAR(10),
+  cc_country VARCHAR(20),
+  cc_gmt_offset DECIMAL(5,2),
+  cc_tax_percentage DECIMAL(5,2)
+) WITH (
+    format = 'PARQUET',
+    bucketed_by = ARRAY['cc_call_center_sk'],
+    bucket_count = 100,
+    sorted_by = ARRAY['cc_call_center_sk']
+);
+
+CREATE TABLE catalog_page(
+  cp_catalog_page_sk INT,
+  cp_catalog_page_id VARCHAR(16),
+  cp_start_date_sk INT,
+  cp_end_date_sk INT,
+  cp_department VARCHAR(50),
+  cp_catalog_number INT,
+  cp_catalog_page_number INT,
+  cp_description VARCHAR(100),
+  cp_type VARCHAR(100)
+) WITH (
+    format = 'PARQUET',
+    bucketed_by = ARRAY['cp_catalog_page_sk'],
+    bucket_count = 100,
+    sorted_by = ARRAY['cp_catalog_page_sk']
+);
+
+CREATE TABLE catalog_returns(
+  cr_returned_date_sk INT,
+  cr_returned_time_sk INT,
+  cr_item_sk INT,
+  cr_refunded_customer_sk INT,
+  cr_refunded_cdemo_sk INT,
+  cr_refunded_hdemo_sk INT,
+  cr_refunded_addr_sk INT,
+  cr_returning_customer_sk INT,
+  cr_returning_cdemo_sk INT,
+  cr_returning_hdemo_sk INT,
+  cr_returning_addr_sk INT,
+  cr_call_center_sk INT,
+  cr_catalog_page_sk INT,
+  cr_ship_mode_sk INT,
+  cr_warehouse_sk INT,
+  cr_reason_sk INT,
+  cr_order_number INT,
+  cr_return_quantity INT,
+  cr_return_amount DECIMAL(7,2),
+  cr_return_tax DECIMAL(7,2),
+  cr_return_amt_inc_tax DECIMAL(7,2),
+  cr_fee DECIMAL(7,2),
+  cr_return_ship_cost DECIMAL(7,2),
+  cr_refunded_cash DECIMAL(7,2),
+  cr_reversed_charge DECIMAL(7,2),
+  cr_store_credit DECIMAL(7,2),
+  cr_net_loss DECIMAL(7,2)
+) WITH (
+    format = 'PARQUET',
+    bucketed_by = ARRAY['cr_returned_date_sk', 'cr_returned_time_sk'],
+    bucket_count = 100,
+    sorted_by = ARRAY['cr_returned_date_sk', 'cr_returned_time_sk']
+);
+
+CREATE TABLE catalog_sales(
+  cs_sold_date_sk INT,
+  cs_sold_time_sk INT,
+  cs_ship_date_sk INT,
+  cs_bill_customer_sk INT,
+  cs_bill_cdemo_sk INT,
+  cs_bill_hdemo_sk INT,
+  cs_bill_addr_sk INT,
+  cs_ship_customer_sk INT,
+  cs_ship_cdemo_sk INT,
+  cs_ship_hdemo_sk INT,
+  cs_ship_addr_sk INT,
+  cs_call_center_sk INT,
+  cs_catalog_page_sk INT,
+  cs_ship_mode_sk INT,
+  cs_warehouse_sk INT,
+  cs_item_sk INT,
+  cs_promo_sk INT,
+  cs_order_number INT,
+  cs_quantity INT,
+  cs_wholesale_cost DECIMAL(7,2),
+  cs_list_price DECIMAL(7,2),
+  cs_sales_price DECIMAL(7,2),
+  cs_ext_discount_amt DECIMAL(7,2),
+  cs_ext_sales_price DECIMAL(7,2),
+  cs_ext_wholesale_cost DECIMAL(7,2),
+  cs_ext_list_price DECIMAL(7,2),
+  cs_ext_tax DECIMAL(7,2),
+  cs_coupon_amt DECIMAL(7,2),
+  cs_ext_ship_cost DECIMAL(7,2),
+  cs_net_paid DECIMAL(7,2),
+  cs_net_paid_inc_tax DECIMAL(7,2),
+  cs_net_paid_inc_ship DECIMAL(7,2),
+  cs_net_paid_inc_ship_tax DECIMAL(7,2),
+  cs_net_profit DECIMAL(7,2)
+) WITH (
+    format = 'PARQUET',
+    bucketed_by = ARRAY['cs_sold_date_sk', 'cs_sold_time_sk'],
+    bucket_count = 100,
+    sorted_by = ARRAY['cs_sold_date_sk', 'cs_sold_time_sk']
+);
+
+CREATE TABLE customer(
+  c_customer_sk INT,
+  c_customer_id VARCHAR(16),
+  c_current_cdemo_sk INT,
+  c_current_hdemo_sk INT,
+  c_current_addr_sk INT,
+  c_first_shipto_date_sk INT,
+  c_first_sales_date_sk INT,
+  c_salutation VARCHAR(10),
+  c_first_name VARCHAR(20),
+  c_last_name VARCHAR(30),
+  c_preferred_cust_flag VARCHAR(1),
+  c_birth_day INT,
+  c_birth_month INT,
+  c_birth_year INT,
+  c_birth_country VARCHAR(20),
+  c_login VARCHAR(13),
+  c_email_address VARCHAR(50),
+  c_last_review_date VARCHAR(10)
+) WITH (
+    format = 'PARQUET',
+    bucketed_by = ARRAY['c_customer_sk'],
+    bucket_count = 100,
+    sorted_by = ARRAY['c_customer_sk']
+);
+
+CREATE TABLE customer_address(
+  ca_address_sk INT,
+  ca_address_id VARCHAR(16),
+  ca_street_number VARCHAR(10),
+  ca_street_name VARCHAR(60),
+  ca_street_type VARCHAR(15),
+  ca_suite_number VARCHAR(10),
+  ca_city VARCHAR(60),
+  ca_county VARCHAR(30),
+  ca_state VARCHAR(2),
+  ca_zip VARCHAR(10),
+  ca_country VARCHAR(20),
+  ca_gmt_offset DECIMAL(5,2),
+  ca_location_type VARCHAR(20)
+) WITH (
+    format = 'PARQUET',
+    bucketed_by = ARRAY['ca_address_sk'],
+    bucket_count = 100,
+    sorted_by = ARRAY['ca_address_sk']
+);
+
+CREATE TABLE customer_demographics(
+  cd_demo_sk INT,
+  cd_gender VARCHAR(1),
+  cd_marital_status VARCHAR(1),
+  cd_education_status VARCHAR(20),
+  cd_purchase_estimate INT,
+  cd_credit_rating VARCHAR(10),
+  cd_dep_count INT,
+  cd_dep_employed_count INT,
+  cd_dep_college_count INT
+) WITH (
+    format = 'PARQUET',
+    bucketed_by = ARRAY['cd_demo_sk'],
+    bucket_count = 100,
+    sorted_by = ARRAY['cd_demo_sk']
+);
+
+CREATE TABLE date_dim(
+  d_date_sk INT,
+  d_date_id VARCHAR(16),
+  d_date DATE,
+  d_month_seq INT,
+  d_week_seq INT,
+  d_quarter_seq INT,
+  d_year INT,
+  d_dow INT,
+  d_moy INT,
+  d_dom INT,
+  d_qoy INT,
+  d_fy_year INT,
+  d_fy_quarter_seq INT,
+  d_fy_week_seq INT,
+  d_day_name VARCHAR(9),
+  d_quarter_name VARCHAR(6),
+  d_holiday VARCHAR(1),
+  d_weekend VARCHAR(1),
+  d_following_holiday VARCHAR(1),
+  d_first_dom INT,
+  d_last_dom INT,
+  d_same_day_ly INT,
+  d_same_day_lq INT,
+  d_current_day VARCHAR(1),
+  d_current_week VARCHAR(1),
+  d_current_month VARCHAR(1),
+  d_current_quarter VARCHAR(1),
+  d_current_year VARCHAR(1)
+) WITH (
+    format = 'PARQUET',
+    bucketed_by = ARRAY['d_date_sk'],
+    bucket_count = 100,
+    sorted_by = ARRAY['d_date_sk']
+);
+
+CREATE TABLE household_demographics(
+  hd_demo_sk INT,
+  hd_income_band_sk INT,
+  hd_buy_potential VARCHAR(15),
+  hd_dep_count INT,
+  hd_vehicle_count INT
+) WITH (
+    format = 'PARQUET',
+    bucketed_by = ARRAY['hd_demo_sk'],
+    bucket_count = 100,
+    sorted_by = ARRAY['hd_demo_sk']
+);
+
+CREATE TABLE income_band(
+  ib_income_band_sk INT,
+  ib_lower_bound INT,
+  ib_upper_bound INT
+) WITH (
+    format = 'PARQUET',
+    bucketed_by = ARRAY['ib_income_band_sk'],
+    bucket_count = 100,
+    sorted_by = ARRAY['ib_income_band_sk']
+);
+
+CREATE TABLE inventory(
+  inv_date_sk INT,
+  inv_item_sk INT,
+  inv_warehouse_sk INT,
+  inv_quantity_on_hand INT
+) WITH (
+    format = 'PARQUET',
+    bucketed_by = ARRAY['inv_date_sk', 'inv_item_sk'],
+    bucket_count = 100,
+    sorted_by = ARRAY['inv_date_sk', 'inv_item_sk']
+);
+
+CREATE TABLE item(
+  i_item_sk INT,
+  i_item_id VARCHAR(16),
+  i_rec_start_date DATE,
+  i_rec_end_date DATE,
+  i_item_desc VARCHAR(200),
+  i_current_price DECIMAL(7,2),
+  i_wholesale_cost DECIMAL(7,2),
+  i_brand_id INT,
+  i_brand VARCHAR(50),
+  i_class_id INT,
+  i_class VARCHAR(50),
+  i_category_id INT,
+  i_category VARCHAR(50),
+  i_manufact_id INT,
+  i_manufact VARCHAR(50),
+  i_size VARCHAR(20),
+  i_formulation VARCHAR(20),
+  i_color VARCHAR(20),
+  i_units VARCHAR(10),
+  i_container VARCHAR(10),
+  i_manager_id INT,
+  i_product_name VARCHAR(50)
+) WITH (
+    format = 'PARQUET',
+    bucketed_by = ARRAY['i_item_sk'],
+    bucket_count = 100,
+    sorted_by = ARRAY['i_item_sk']
+);
+
+CREATE TABLE promotion(
+  p_promo_sk INT,
+  p_promo_id VARCHAR(16),
+  p_start_date_sk INT,
+  p_end_date_sk INT,
+  p_item_sk INT,
+  p_cost DECIMAL(15,2),
+  p_response_target INT,
+  p_promo_name VARCHAR(50),
+  p_channel_dmail VARCHAR(1),
+  p_channel_email VARCHAR(1),
+  p_channel_catalog VARCHAR(1),
+  p_channel_tv VARCHAR(1),
+  p_channel_radio VARCHAR(1),
+  p_channel_press VARCHAR(1),
+  p_channel_event VARCHAR(1),
+  p_channel_demo VARCHAR(1),
+  p_channel_details VARCHAR(100),
+  p_purpose VARCHAR(15),
+  p_discount_active VARCHAR(1)
+) WITH (
+    format = 'PARQUET',
+    bucketed_by = ARRAY['p_promo_sk'],
+    bucket_count = 100,
+    sorted_by = ARRAY['p_promo_sk']
+);
+
+CREATE TABLE reason(
+  r_reason_sk INT,
+  r_reason_id VARCHAR(16),
+  r_reason_desc VARCHAR(100)
+) WITH (
+    format = 'PARQUET',
+    bucketed_by = ARRAY['r_reason_sk'],
+    bucket_count = 100,
+    sorted_by = ARRAY['r_reason_sk']
+);
+
+CREATE TABLE ship_mode(
+  sm_ship_mode_sk INT,
+  sm_ship_mode_id VARCHAR(16),
+  sm_type VARCHAR(30),
+  sm_code VARCHAR(10),
+  sm_carrier VARCHAR(20),
+  sm_contract VARCHAR(20)
+) WITH (
+    format = 'PARQUET',
+    bucketed_by = ARRAY['sm_ship_mode_sk'],
+    bucket_count = 100,
+    sorted_by = ARRAY['sm_ship_mode_sk']
+);
+
+CREATE TABLE store(
+  s_store_sk INT,
+  s_store_id VARCHAR(16),
+  s_rec_start_date DATE,
+  s_rec_end_date DATE,
+  s_closed_date_sk INT,
+  s_store_name VARCHAR(50),
+  s_number_employees INT,
+  s_floor_space INT,
+  s_hours VARCHAR(20),
+  s_manager VARCHAR(40),
+  s_market_id INT,
+  s_geography_class VARCHAR(100),
+  s_market_desc VARCHAR(100),
+  s_market_manager VARCHAR(40),
+  s_division_id INT,
+  s_division_name VARCHAR(50),
+  s_company_id INT,
+  s_company_name VARCHAR(50),
+  s_street_number VARCHAR(10),
+  s_street_name VARCHAR(60),
+  s_street_type VARCHAR(15),
+  s_suite_number VARCHAR(10),
+  s_city VARCHAR(60),
+  s_county VARCHAR(30),
+  s_state VARCHAR(2),
+  s_zip VARCHAR(10),
+  s_country VARCHAR(20),
+  s_gmt_offset DECIMAL(5,2),
+  s_tax_precentage DECIMAL(5,2)
+) WITH (
+    format = 'PARQUET',
+    bucketed_by = ARRAY['s_store_sk'],
+    bucket_count = 100,
+    sorted_by = ARRAY['s_store_sk']
+);
+
+CREATE TABLE store_returns(
+  sr_returned_date_sk INT,
+  sr_return_time_sk INT,
+  sr_item_sk INT,
+  sr_customer_sk INT,
+  sr_cdemo_sk INT,
+  sr_hdemo_sk INT,
+  sr_addr_sk INT,
+  sr_store_sk INT,
+  sr_reason_sk INT,
+  sr_ticket_number INT,
+  sr_return_quantity INT,
+  sr_return_amt DECIMAL(7,2),
+  sr_return_tax DECIMAL(7,2),
+  sr_return_amt_inc_tax DECIMAL(7,2),
+  sr_fee DECIMAL(7,2),
+  sr_return_ship_cost DECIMAL(7,2),
+  sr_refunded_cash DECIMAL(7,2),
+  sr_reversed_charge DECIMAL(7,2),
+  sr_store_credit DECIMAL(7,2),
+  sr_net_loss DECIMAL(7,2)
+) WITH (
+    format = 'PARQUET',
+    bucketed_by = ARRAY['sr_returned_date_sk', 'sr_return_time_sk'],
+    bucket_count = 100,
+    sorted_by = ARRAY['sr_returned_date_sk', 'sr_return_time_sk']
+);
+
+CREATE TABLE store_sales(
+  ss_sold_date_sk INT,
+  ss_sold_time_sk INT,
+  ss_item_sk INT,
+  ss_customer_sk INT,
+  ss_cdemo_sk INT,
+  ss_hdemo_sk INT,
+  ss_addr_sk INT,
+  ss_store_sk INT,
+  ss_promo_sk INT,
+  ss_ticket_number INT,
+  ss_quantity INT,
+  ss_wholesale_cost DECIMAL(7,2),
+  ss_list_price DECIMAL(7,2),
+  ss_sales_price DECIMAL(7,2),
+  ss_ext_discount_amt DECIMAL(7,2),
+  ss_ext_sales_price DECIMAL(7,2),
+  ss_ext_wholesale_cost DECIMAL(7,2),
+  ss_ext_list_price DECIMAL(7,2),
+  ss_ext_tax DECIMAL(7,2),
+  ss_coupon_amt DECIMAL(7,2),
+  ss_net_paid DECIMAL(7,2),
+  ss_net_paid_inc_tax DECIMAL(7,2),
+  ss_net_profit DECIMAL(7,2)
+) WITH (
+    format = 'PARQUET',
+    bucketed_by = ARRAY['ss_sold_date_sk', 'ss_sold_time_sk'],
+    bucket_count = 100,
+    sorted_by = ARRAY['ss_sold_date_sk', 'ss_sold_time_sk']
+);
+
+CREATE TABLE time_dim(
+  t_time_sk INT,
+  t_time_id VARCHAR(16),
+  t_time INT,
+  t_hour INT,
+  t_minute INT,
+  t_second INT,
+  t_am_pm VARCHAR(2),
+  t_shift VARCHAR(20),
+  t_sub_shift VARCHAR(20),
+  t_meal_time VARCHAR(20)
+) WITH (
+    format = 'PARQUET',
+    bucketed_by = ARRAY['t_time_sk'],
+    bucket_count = 100,
+    sorted_by = ARRAY['t_time_sk']
+);
+
+CREATE TABLE warehouse(
+  w_warehouse_sk INT,
+  w_warehouse_id VARCHAR(16),
+  w_warehouse_name VARCHAR(20),
+  w_warehouse_sq_ft INT,
+  w_street_number VARCHAR(10),
+  w_street_name VARCHAR(60),
+  w_street_type VARCHAR(15),
+  w_suite_number VARCHAR(10),
+  w_city VARCHAR(60),
+  w_county VARCHAR(30),
+  w_state VARCHAR(2),
+  w_zip VARCHAR(10),
+  w_country VARCHAR(20),
+  w_gmt_offset DECIMAL(5,2)
+) WITH (
+    format = 'PARQUET',
+    bucketed_by = ARRAY['w_warehouse_sk'],
+    bucket_count = 100,
+    sorted_by = ARRAY['w_warehouse_sk']
+);
+
+CREATE TABLE web_page(
+  wp_web_page_sk INT,
+  wp_web_page_id VARCHAR(16),
+  wp_rec_start_date DATE,
+  wp_rec_end_date DATE,
+  wp_creation_date_sk INT,
+  wp_access_date_sk INT,
+  wp_autogen_flag VARCHAR(1),
+  wp_customer_sk INT,
+  wp_url VARCHAR(100),
+  wp_type VARCHAR(50),
+  wp_char_count INT,
+  wp_link_count INT,
+  wp_image_count INT,
+  wp_max_ad_count INT
+) WITH (
+    format = 'PARQUET',
+    bucketed_by = ARRAY['wp_web_page_sk'],
+    bucket_count = 100,
+    sorted_by = ARRAY['wp_web_page_sk']
+);
+
+CREATE TABLE web_returns(
+  wr_returned_date_sk INT,
+  wr_returned_time_sk INT,
+  wr_item_sk INT,
+  wr_refunded_customer_sk INT,
+  wr_refunded_cdemo_sk INT,
+  wr_refunded_hdemo_sk INT,
+  wr_refunded_addr_sk INT,
+  wr_returning_customer_sk INT,
+  wr_returning_cdemo_sk INT,
+  wr_returning_hdemo_sk INT,
+  wr_returning_addr_sk INT,
+  wr_web_page_sk INT,
+  wr_reason_sk INT,
+  wr_order_number INT,
+  wr_return_quantity INT,
+  wr_return_amt DECIMAL(7,2),
+  wr_return_tax DECIMAL(7,2),
+  wr_return_amt_inc_tax DECIMAL(7,2),
+  wr_fee DECIMAL(7,2),
+  wr_return_ship_cost DECIMAL(7,2),
+  wr_refunded_cash DECIMAL(7,2),
+  wr_reversed_charge DECIMAL(7,2),
+  wr_account_credit DECIMAL(7,2),
+  wr_net_loss DECIMAL(7,2)
+) WITH (
+    format = 'PARQUET',
+    bucketed_by = ARRAY['wr_returned_date_sk', 'wr_returned_time_sk'],
+    bucket_count = 100,
+    sorted_by = ARRAY['wr_returned_date_sk', 'wr_returned_time_sk']
+);
+
+CREATE TABLE web_sales(
+  ws_sold_date_sk INT,
+  ws_sold_time_sk INT,
+  ws_ship_date_sk INT,
+  ws_item_sk INT,
+  ws_bill_customer_sk INT,
+  ws_bill_cdemo_sk INT,
+  ws_bill_hdemo_sk INT,
+  ws_bill_addr_sk INT,
+  ws_ship_customer_sk INT,
+  ws_ship_cdemo_sk INT,
+  ws_ship_hdemo_sk INT,
+  ws_ship_addr_sk INT,
+  ws_web_page_sk INT,
+  ws_web_site_sk INT,
+  ws_ship_mode_sk INT,
+  ws_warehouse_sk INT,
+  ws_promo_sk INT,
+  ws_order_number INT,
+  ws_quantity INT,
+  ws_wholesale_cost DECIMAL(7,2),
+  ws_list_price DECIMAL(7,2),
+  ws_sales_price DECIMAL(7,2),
+  ws_ext_discount_amt DECIMAL(7,2),
+  ws_ext_sales_price DECIMAL(7,2),
+  ws_ext_wholesale_cost DECIMAL(7,2),
+  ws_ext_list_price DECIMAL(7,2),
+  ws_ext_tax DECIMAL(7,2),
+  ws_coupon_amt DECIMAL(7,2),
+  ws_ext_ship_cost DECIMAL(7,2),
+  ws_net_paid DECIMAL(7,2),
+  ws_net_paid_inc_tax DECIMAL(7,2),
+  ws_net_paid_inc_ship DECIMAL(7,2),
+  ws_net_paid_inc_ship_tax DECIMAL(7,2),
+  ws_net_profit DECIMAL(7,2)
+) WITH (
+    format = 'PARQUET',
+    bucketed_by = ARRAY['ws_sold_date_sk', 'ws_sold_time_sk'],
+    bucket_count = 100,
+    sorted_by = ARRAY['ws_sold_date_sk', 'ws_sold_time_sk']
+);
+
+CREATE TABLE web_site(
+  web_site_sk INT,
+  web_site_id VARCHAR(16),
+  web_rec_start_date DATE,
+  web_rec_end_date DATE,
+  web_name VARCHAR(50),
+  web_open_date_sk INT,
+  web_close_date_sk INT,
+  web_class VARCHAR(50),
+  web_manager VARCHAR(40),
+  web_mkt_id INT,
+  web_mkt_class VARCHAR(50),
+  web_mkt_desc VARCHAR(100),
+  web_market_manager VARCHAR(40),
+  web_company_id INT,
+  web_company_name VARCHAR(50),
+  web_street_number VARCHAR(10),
+  web_street_name VARCHAR(60),
+  web_street_type VARCHAR(15),
+  web_suite_number VARCHAR(10),
+  web_city VARCHAR(60),
+  web_county VARCHAR(30),
+  web_state VARCHAR(2),
+  web_zip VARCHAR(10),
+  web_country VARCHAR(20),
+  web_gmt_offset DECIMAL(5,2),
+  web_tax_percentage DECIMAL(5,2)
+) WITH (
+    format = 'PARQUET',
+    bucketed_by = ARRAY['web_site_sk'],
+    bucket_count = 100,
+    sorted_by = ARRAY['web_site_sk']
+);
+```
+
 ### 2.1.2 Insert Statement
 
 Difference between hive schema and trino schema:
@@ -726,7 +1351,8 @@ INSERT INTO call_center (
   cc_country,
   cc_gmt_offset,
   cc_tax_percentage
-FROM tpcds.sf1.call_center;
+FROM tpcds.sf1.call_center
+ORDER BY cc_call_center_sk;
 
 INSERT INTO catalog_page (
   cp_catalog_page_sk,
@@ -748,7 +1374,8 @@ INSERT INTO catalog_page (
   cp_catalog_page_number,
   cp_description,
   cp_type
-FROM tpcds.sf1.catalog_page;
+FROM tpcds.sf1.catalog_page
+ORDER BY cp_catalog_page_sk;
 
 INSERT INTO catalog_returns (
   cr_returned_date_sk,
@@ -806,7 +1433,8 @@ INSERT INTO catalog_returns (
   cr_reversed_charge,
   cr_store_credit,
   cr_net_loss
-FROM tpcds.sf1.catalog_returns;
+FROM tpcds.sf1.catalog_returns
+ORDER BY cr_returned_date_sk, cr_returned_time_sk;
 
 INSERT INTO catalog_sales (
   cs_sold_date_sk,
@@ -878,7 +1506,8 @@ INSERT INTO catalog_sales (
   cs_net_paid_inc_ship,
   cs_net_paid_inc_ship_tax,
   cs_net_profit
-FROM tpcds.sf1.catalog_sales;
+FROM tpcds.sf1.catalog_sales
+ORDER BY cs_sold_date_sk, cs_sold_time_sk;
 
 INSERT INTO customer (
   c_customer_sk,
@@ -918,7 +1547,8 @@ INSERT INTO customer (
   c_login,
   c_email_address,
   CAST(c_last_review_date_sk AS VARCHAR(10))
-FROM tpcds.sf1.customer;
+FROM tpcds.sf1.customer
+ORDER BY c_customer_sk;
 
 INSERT INTO customer_address (
   ca_address_sk,
@@ -948,7 +1578,8 @@ INSERT INTO customer_address (
   ca_country,
   ca_gmt_offset,
   ca_location_type
-FROM tpcds.sf1.customer_address;
+FROM tpcds.sf1.customer_address
+ORDER BY ca_address_sk;
 
 INSERT INTO customer_demographics (
   cd_demo_sk,
@@ -970,7 +1601,8 @@ INSERT INTO customer_demographics (
   cd_dep_count,
   cd_dep_employed_count,
   cd_dep_college_count
-FROM tpcds.sf1.customer_demographics;
+FROM tpcds.sf1.customer_demographics
+ORDER BY cd_demo_sk;
 
 INSERT INTO date_dim (
   d_date_sk,
@@ -1030,7 +1662,8 @@ INSERT INTO date_dim (
   d_current_month,
   d_current_quarter,
   d_current_year
-FROM tpcds.sf1.date_dim;
+FROM tpcds.sf1.date_dim
+ORDER BY d_date_sk;
 
 INSERT INTO household_demographics (
   hd_demo_sk,
@@ -1044,7 +1677,8 @@ INSERT INTO household_demographics (
   hd_buy_potential,
   hd_dep_count,
   hd_vehicle_count
-FROM tpcds.sf1.household_demographics;
+FROM tpcds.sf1.household_demographics
+ORDER BY hd_demo_sk;
 
 INSERT INTO income_band (
   ib_income_band_sk,
@@ -1054,7 +1688,8 @@ INSERT INTO income_band (
   ib_income_band_sk,
   ib_lower_bound,
   ib_upper_bound
-FROM tpcds.sf1.income_band;
+FROM tpcds.sf1.income_band
+ORDER BY ib_income_band_sk;
 
 INSERT INTO inventory (
   inv_date_sk,
@@ -1066,7 +1701,8 @@ INSERT INTO inventory (
   inv_item_sk,
   inv_warehouse_sk,
   inv_quantity_on_hand
-FROM tpcds.sf1.inventory;
+FROM tpcds.sf1.inventory
+ORDER BY inv_date_sk, inv_item_sk;
 
 INSERT INTO item (
   i_item_sk,
@@ -1114,7 +1750,8 @@ INSERT INTO item (
   i_container,
   i_manager_id,
   i_product_name
-FROM tpcds.sf1.item;
+FROM tpcds.sf1.item
+ORDER BY i_item_sk;
 
 INSERT INTO promotion (
   p_promo_sk,
@@ -1156,7 +1793,8 @@ INSERT INTO promotion (
   p_channel_details,
   p_purpose,
   p_discount_active
-FROM tpcds.sf1.promotion;
+FROM tpcds.sf1.promotion
+ORDER BY p_promo_sk;
 
 INSERT INTO reason (
   r_reason_sk,
@@ -1166,7 +1804,8 @@ INSERT INTO reason (
   r_reason_sk,
   r_reason_id,
   r_reason_desc
-FROM tpcds.sf1.reason;
+FROM tpcds.sf1.reason
+ORDER BY r_reason_sk;
 
 INSERT INTO ship_mode (
   sm_ship_mode_sk,
@@ -1182,7 +1821,8 @@ INSERT INTO ship_mode (
   sm_code,
   sm_carrier,
   sm_contract
-FROM tpcds.sf1.ship_mode;
+FROM tpcds.sf1.ship_mode
+ORDER BY sm_ship_mode_sk;
 
 INSERT INTO store (
   s_store_sk,
@@ -1244,7 +1884,8 @@ INSERT INTO store (
   s_country,
   s_gmt_offset,
   s_tax_precentage
-FROM tpcds.sf1.store;
+FROM tpcds.sf1.store
+ORDER BY s_store_sk;
 
 INSERT INTO store_returns (
   sr_returned_date_sk,
@@ -1288,7 +1929,8 @@ INSERT INTO store_returns (
   sr_reversed_charge,
   sr_store_credit,
   sr_net_loss
-FROM tpcds.sf1.store_returns;
+FROM tpcds.sf1.store_returns
+ORDER BY sr_returned_date_sk, sr_return_time_sk;
 
 INSERT INTO store_sales (
   ss_sold_date_sk,
@@ -1338,7 +1980,8 @@ INSERT INTO store_sales (
   ss_net_paid,
   ss_net_paid_inc_tax,
   ss_net_profit
-FROM tpcds.sf1.store_sales;
+FROM tpcds.sf1.store_sales
+ORDER BY ss_sold_date_sk, ss_sold_time_sk;
 
 INSERT INTO time_dim (
   t_time_sk,
@@ -1362,7 +2005,8 @@ INSERT INTO time_dim (
   t_shift,
   t_sub_shift,
   t_meal_time
-FROM tpcds.sf1.time_dim;
+FROM tpcds.sf1.time_dim
+ORDER BY t_time_sk;
 
 INSERT INTO warehouse (
   w_warehouse_sk,
@@ -1394,7 +2038,8 @@ INSERT INTO warehouse (
   w_zip,
   w_country,
   w_gmt_offset
-FROM tpcds.sf1.warehouse;
+FROM tpcds.sf1.warehouse
+ORDER BY w_warehouse_sk;
 
 INSERT INTO web_page (
   wp_web_page_sk,
@@ -1426,7 +2071,8 @@ INSERT INTO web_page (
   wp_link_count,
   wp_image_count,
   wp_max_ad_count
-FROM tpcds.sf1.web_page;
+FROM tpcds.sf1.web_page
+ORDER BY wp_web_page_sk;
 
 INSERT INTO web_returns (
   wr_returned_date_sk,
@@ -1478,7 +2124,8 @@ INSERT INTO web_returns (
   wr_reversed_charge,
   wr_account_credit,
   wr_net_loss
-FROM tpcds.sf1.web_returns;
+FROM tpcds.sf1.web_returns
+ORDER BY wr_returned_date_sk, wr_returned_time_sk;
 
 INSERT INTO web_sales (
   ws_sold_date_sk,
@@ -1550,7 +2197,8 @@ INSERT INTO web_sales (
   ws_net_paid_inc_ship,
   ws_net_paid_inc_ship_tax,
   ws_net_profit
-FROM tpcds.sf1.web_sales;
+FROM tpcds.sf1.web_sales
+ORDER BY ws_sold_date_sk, ws_sold_time_sk;
 
 INSERT INTO web_site (
   web_site_sk,
@@ -1606,7 +2254,8 @@ INSERT INTO web_site (
   web_country,
   web_gmt_offset,
   web_tax_percentage
-FROM tpcds.sf1.web_site;
+FROM tpcds.sf1.web_site
+ORDER BY web_site_sk;
 ```
 
 ### 2.1.3 Drop Table Statement
@@ -1922,4 +2571,19 @@ DROP TABLE part;
 DROP TABLE partsupp;
 DROP TABLE region;
 DROP TABLE supplier;
+```
+
+## 2.3 Parquet/Orc Load Related Settings
+
+```sql
+SHOW SESSION LIKE '%hive.parquet%';
+SHOW SESSION LIKE '%hive.orc%';
+```
+
+# 3 Sql
+
+## 3.1 Drop Schema With Everything Contains
+
+```sql
+DROP SCHEMA xxx CASCADE;
 ```

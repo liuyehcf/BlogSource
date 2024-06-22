@@ -554,6 +554,16 @@ The `set substitute-path` command is used in GDB (GNU Debugger) to remap source 
 (gdb) set logging off
 ```
 
+### 3.9.3 Redirect Thread Stack to File
+
+```sh
+(gdb) set pagination off
+(gdb) set logging file /tmp/threads.txt
+(gdb) set logging on
+(gdb) thread apply all bt
+(gdb) set logging off
+```
+
 # 4 Tips
 
 ## 4.1 How to Analyze a Core File

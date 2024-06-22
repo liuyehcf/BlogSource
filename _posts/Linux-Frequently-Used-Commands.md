@@ -1091,6 +1091,7 @@ echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
     * `find ./ -name '*.cfg' -o -name '*.conf'`
     * `find ./ -regex '.*\.cfg\|.*\.conf'`
     * `find ./ -regextype posix-extended -regex '.*\.(cfg|conf)'`
+* `find . -type f -executable`：查找二进制文件
 
 ## 2.17 locate
 
@@ -3467,26 +3468,16 @@ yum install -y sysstat
 * `interval`: 打印间隔
 * `count`: 打印几次，不填一直打印
 
-**输出信息介绍：**
+**输出信息介绍：(`man iostat`)**
 
-* `cpu`
-    * `%user`：用户`CPU`时间百分比
-    * `%nice`：改变过优先级的进程的占用`CPU`时间百分比
-    * `%system`：系统（内核）`CPU`时间百分比，不包括处理硬中断和软中断的时间
-    * `%iowait`：在系统有未完成的磁盘`I/O`请求期间，一个或多个`CPU`空闲的时间百分比
-    * `%steal`：在管理程序为另一个虚拟处理器提供服务时，一个或多个虚拟`CPU`在非自愿等待中花费的时间
-    * `%idle`：一个或多个`CPU`空闲且系统没有未完成的磁盘`I/O`请求的时间百分比
-* `device`
-    * `tps`：每秒处理的io请求，IOPS
-    * `Blk_read/s (kB_read/s, MB_read/s)`：每秒读取的数据量，单位可以是Block、kB、MB
-    * `Blk_wrtn/s (kB_wrtn/s, MB_wrtn/s)`：每秒写入的数据量，单位可以是Block、kB、MB
-    * `Blk_read (kB_read, MB_read)`：读取的数据总量，单位可以是Block、kB、MB
-    * `Blk_wrtn (kB_wrtn, MB_wrtn)`：写入的数据总量，单位可以是Block、kB、MB
+* `cpu`: Search for `CPU Utilization Report` in man page
+* `device`: Search for `Device Utilization Report` in man page
 
 **Examples:**
 
-* `iostat -d -t -x 1`
-* `iostat -t -x 3`
+* `iostat -dtx 1`
+* `iostat -dtx 1 sda`
+* `iostat -tx 3`
 
 ## 6.12 dstat
 
@@ -3578,7 +3569,14 @@ yum install -y sysstat
 **Examples:**
 
 * `dstat 5 10`：5秒刷新一次，刷新10次
-* `dstat -vln`
+* `dstat -tvln`
+* `dstat -tc`
+* `dstat -tc -C total,1,2,3,4,5,6`
+* `dstat -td`
+* `dstat -td -D total,sda,sdb`
+* `dstat -td --disk-util`
+* `dstat -tn`
+* `dstat -tn -N total,eth0,eth2`
 
 ## 6.13 ifstat
 
@@ -4291,15 +4289,42 @@ apt install clang-format-X.Y
 
 ### 11.2.1 Real-time Dashboard
 
-* `dstat -vnl`
+* `dstat -tvln`
+
+#### 11.2.1.1 CPU
+
+* `dstat -tc`
+* `dstat -tc -C total,1,2,3,4,5,6`
+* `mpstat 1`
+* `mpstat -P ALL 1`
+* `sar -u 1`
+* `sar -P ALL -u 1`
+
+#### 11.2.1.2 I/O
+
+* `dstat -td`
+* `dstat -td -D total,sda,sdb`
+* `iostat -dtx 1`
+* `sar -d 1`
+* `sar -p -d 1`
+
+#### 11.2.1.3 Network
+
+* `dstat -tn`
+* `dstat -tn -N total,eth0,eth2`
+* `sar -n DEV 1`
 
 ### 11.2.2 Find process with most CPU consumption
 
 * `dstat --top-cpu-adv`
+* `ps aux --sort=-%cpu | head -n 10`
+* `ps -eo pid,comm,%cpu --sort=-%cpu | head -n 10`
 
 ### 11.2.3 Find process with most Memory consumption
 
 * `dstat --top-mem`
+* `ps aux --sort=-%mem | head -n 10`
+* `ps -eo pid,comm,%mem --sort=-%mem | head -n 10`
 
 ### 11.2.4 Find process with most I/O consumption
 
@@ -4322,6 +4347,10 @@ apt install clang-format-X.Y
 ### 11.2.8 Get full command of a process
 
 * `lsof -p xxx | grep txt`
+
+### 11.2.9 Get start time of a process
+
+* `ps -p xxx -o lstart`
 
 ## 11.3 Assorted
 

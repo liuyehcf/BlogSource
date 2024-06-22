@@ -694,35 +694,64 @@ sudo make install
 [Getting Started](https://github.com/jemalloc/jemalloc/wiki/Getting-Started)
 
 ```cpp
+#include <jemalloc/jemalloc.h>
+
 #include <cstdint>
+#include <iostream>
+#include <string>
 
 void alloc_1M() {
     new uint8_t[1024 * 1024];
 }
 
+void print_jemalloc_stats(const std::string content) {
+    uint64_t epoch = 1;
+    size_t sz = sizeof(epoch);
+    // Refreshing statistics
+    if (mallctl("epoch", &epoch, &sz, &epoch, sz) != 0) {
+        std::cerr << "mallctl failed" << std::endl;
+        exit(1);
+    }
+
+#define GET_STAT(name)                                                     \
+    do {                                                                   \
+        size_t value_sz = sizeof(size_t);                                  \
+        size_t value = 0;                                                  \
+        if (mallctl("stats." #name, &value, &value_sz, nullptr, 0) == 0) { \
+            std::cout << "\tstats." #name ": " << value << std::endl;      \
+        } else {                                                           \
+            std::cerr << "mallctl failed" << std::endl;                    \
+            exit(1);                                                       \
+        }                                                                  \
+    } while (0)
+
+    std::cout << content << std::endl;
+
+    GET_STAT(allocated);
+    GET_STAT(active);
+    GET_STAT(metadata);
+    GET_STAT(resident);
+    GET_STAT(mapped);
+}
+
 int main() {
+    print_jemalloc_stats("Before:");
     for (int i = 0; i < 100; i++) {
         alloc_1M();
     }
+    print_jemalloc_stats("After:");
     return 0;
 }
 ```
 
 **编译执行：**
 
-* 方式1：隐式链接，用`LD_PRELOAD`
-    ```sh
-    gcc -o main main.cpp -O0 -lstdc++ -std=gnu++17
-    MALLOC_CONF=prof_leak:true,lg_prof_sample:0,prof_final:true LD_PRELOAD=/usr/local/lib/libjemalloc.so.2 ./main
-    ```
+```sh
+gcc -o main main.cpp -O0 -lstdc++ -std=gnu++17 -L`jemalloc-config --libdir` -Wl,-rpath,`jemalloc-config --libdir` -ljemalloc `jemalloc-config --libs`
+MALLOC_CONF=prof_leak:true,lg_prof_sample:0,prof_final:true ./main
+```
 
-* 方式2：显示链接
-    ```
-    gcc -o main main.cpp -O0 -lstdc++ -std=gnu++17 -L`jemalloc-config --libdir` -Wl,-rpath,`jemalloc-config --libdir` -ljemalloc `jemalloc-config --libs`
-    MALLOC_CONF=prof_leak:true,lg_prof_sample:0,prof_final:true ./main
-    ```
-
-**查看：`jeprof --text main jeprof.145931.0.f.heap`**
+**查看：`jeprof --text main <heap_file>`**
 
 * 第一列：函数直接申请的内存大小，单位MB
 * 第二列：第一列占总内存的百分比
@@ -751,6 +780,11 @@ Total: 100.1 MB
     0.0   0.0% 100.0%    100.1 100.0% prof_alloc_prep (inline)
     0.0   0.0% 100.0%    100.0  99.9% void* fallback_impl
 ```
+
+**生成svg：**
+
+* `sudo apt install -y graphviz` or `sudo yum install -y graphviz`
+* `jeprof --show_bytes --svg main <heap_file> > <svg_file>`
 
 ### 3.2.3 Work with http
 

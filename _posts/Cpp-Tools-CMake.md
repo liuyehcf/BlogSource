@@ -468,6 +468,7 @@ make
 * `WIN32`：在所有的`win32`平台为`TRUE`，包括`cygwin`
 * `ENV{NAME}`：环境变量，通过`set(ENV{NAME} value)`设置，通过`$ENV{NAME}`引用
 * `CMAKE_INSTALL_PREFIX`：安装路径前缀
+* `CMAKE_BUILD_PARALLEL_LEVEL`：构建时的并行度
 
 ## 3.2 BUILD_SHARED_LIBS
 
@@ -612,9 +613,17 @@ set_target_properties(xxx PROPERTIES
 target_compile_options(xxx PUBLIC "-O3")
 ```
 
-## 5.9 Link Libraries
+## 5.9 add_dependencies
 
-### 5.9.1 link_libraries
+Add a dependency between top-level targets.
+
+```cmake
+add_dependencies(<target> [<target-dependency>]...)
+```
+
+## 5.10 Link Libraries
+
+### 5.10.1 link_libraries
 
 [link_libraries](https://cmake.org/cmake/help/latest/command/link_libraries.html)
 
@@ -625,7 +634,7 @@ link_libraries([item1 [item2 [...]]]
                [[debug|optimized|general] <item>] ...)
 ```
 
-### 5.9.2 target_link_libraries
+### 5.10.2 target_link_libraries
 
 [target_link_libraries](https://cmake.org/cmake/help/latest/command/target_link_libraries.html)
 
@@ -645,7 +654,7 @@ target_link_libraries(<target> ... <item>... ...)
 target_link_libraries(echo_client ${BRPC_LIB} ${DYNAMIC_LIB})
 ```
 
-#### 5.9.2.1 Automatic Inclusion of Header File Paths in CMake with target_link_libraries
+#### 5.10.2.1 Automatic Inclusion of Header File Paths in CMake with target_link_libraries
 
 When using the `target_link_libraries` command in CMake to link a target (such as a library), the related header file paths may automatically be included. This is because modern CMake manages projects based on the concept of "targets," which allows targets to own and propagate attributes used for building and usage, such as include directories, definitions, compile options, etc.
 
@@ -659,9 +668,9 @@ This behavior is primarily achieved through "usage requirements." When you set `
 
 This design greatly simplifies dependency management within projects, allowing maintainers to avoid explicitly specifying include paths, compiler, and linker configurations repeatedly. This is also one of the recommended best practices in modern CMake.
 
-## 5.10 Link Directories
+## 5.11 Link Directories
 
-### 5.10.1 link_directories
+### 5.11.1 link_directories
 
 [link_directories](https://cmake.org/cmake/help/latest/command/link_directories.html)
 
@@ -683,7 +692,7 @@ add_executable(main)
 link_directories(/pathB/lib)
 ```
 
-### 5.10.2 target_link_directories
+### 5.11.2 target_link_directories
 
 [target_link_directories](https://cmake.org/cmake/help/latest/command/target_link_directories.html)
 
@@ -697,9 +706,9 @@ target_link_directories(<target> [BEFORE]
   [<INTERFACE|PUBLIC|PRIVATE> [items2...] ...])
 ```
 
-## 5.11 Include Directories
+## 5.12 Include Directories
 
-### 5.11.1 include_directories
+### 5.12.1 include_directories
 
 [include_directories](https://cmake.org/cmake/help/latest/command/include_directories.html)
 
@@ -713,7 +722,7 @@ By default the directories specified are appended onto the current list of direc
 include_directories([AFTER|BEFORE] [SYSTEM] dir1 [dir2 ...])
 ```
 
-### 5.11.2 target_include_directories
+### 5.12.2 target_include_directories
 
 [target_include_directories](https://cmake.org/cmake/help/latest/command/target_include_directories.html)
 
@@ -725,7 +734,7 @@ target_include_directories(<target> [SYSTEM] [AFTER|BEFORE]
   [<INTERFACE|PUBLIC|PRIVATE> [items2...] ...])
 ```
 
-## 5.12 add_subdirectory
+## 5.13 add_subdirectory
 
 `add_subdirectory`：用于引入一个`cmake`子项目
 
@@ -737,7 +746,7 @@ target_include_directories(<target> [SYSTEM] [AFTER|BEFORE]
 add_subdirectory(source_dir [binary_dir] [EXCLUDE_FROM_ALL] [SYSTEM])
 ```
 
-## 5.13 include
+## 5.14 include
 
 `include`：用于引入一个`cmake`子项目。例如`include(src/merger/CMakeLists.txt)`
 
@@ -746,7 +755,7 @@ add_subdirectory(source_dir [binary_dir] [EXCLUDE_FROM_ALL] [SYSTEM])
 * `add_subdirectory`：该子项目会作为一个独立的`cmake`项目进行处理。所有`CURRENT`相关的变量都会进行切换。此外，`CMakeLists.txt`文件中涉及的所有相对路径，其`base`路径也会切换成`add_subdirectory`指定的目录
 * `include`：该子项目不会作为一个独立的`cmake`项目进行处理。只有`CMAKE_CURRENT_LIST_DIR`、`CMAKE_CURRENT_LIST_FILE`这两个`CURRENT`变量会进行切换，而`CMAKE_CURRENT_BINARY_DIR`和`CMAKE_CURRENT_SOURCE_DIR`不会进行切换。此外，`CMakeLists.txt`文件中涉及的所有相对路径，其`base`路径保持不变
 
-## 5.14 find_package
+## 5.15 find_package
 
 **本小节转载摘录自[Cmake之深入理解find_package()的用法](https://zhuanlan.zhihu.com/p/97369704)**
 
@@ -774,7 +783,7 @@ endif(CURL_FOUND)
 
 你可以通过`<LibaryName>_FOUND`来判断模块是否被找到，如果没有找到，按照工程的需要关闭某些特性、给出提醒或者中止编译，上面的例子就是报出致命错误并终止构建。如果`<LibaryName>_FOUND`为真，则将`<LibaryName>_INCLUDE_DIR`加入`INCLUDE_DIRECTORIES`
 
-### 5.14.1 Add Non-Official Library
+### 5.15.1 Add Non-Official Library
 
 **通过`find_package`引入非官方的库，该方式只对支持cmake编译安装的库有效**
 
@@ -820,7 +829,7 @@ else(GLOG_FOUND)
 endif(GLOG_FOUND)
 ```
 
-### 5.14.2 Module Mode & Config Mode
+### 5.15.2 Module Mode & Config Mode
 
 通过上文我们了解了通过`cmake`引入依赖库的基本用法。知其然也要知其所以然，`find_package`对我们来说是一个黑盒子，那么它是具体通过什么方式来查找到我们依赖的库文件的路径的呢。到这里我们就不得不聊到`find_package`的两种模式，一种是`Module`模式，也就是我们引入`curl`库的方式。另一种叫做`Config`模式，也就是引入`glog`库的模式。下面我们来详细介绍着两种方式的运行机制
 
@@ -828,7 +837,7 @@ endif(GLOG_FOUND)
 
 如果`Module`模式搜索失败，没有找到对应的`Find<LibraryName>.cmake`文件，则转入`Config`模式进行搜索。它主要通过`<LibraryName>Config.cmake`或`<lower-case-package-name>-config.cmake`这两个文件来引入我们需要的库。以我们刚刚安装的`glog`库为例，在我们安装之后，它在`/usr/local/lib/cmake/glog/`目录下生成了`glog-config.cmake`文件，而`/usr/local/lib/cmake/glog/`正是`find_package`函数的搜索路径之一
 
-### 5.14.3 Create Customized `Find<LibraryName>.cmake`
+### 5.15.3 Create Customized `Find<LibraryName>.cmake`
 
 假设我们编写了一个新的函数库，我们希望别的项目可以通过`find_package`对它进行引用我们应该怎么办呢。
 
@@ -900,7 +909,7 @@ else(ADD_FOUND)
 endif(ADD_FOUND)
 ```
 
-## 5.15 find_library
+## 5.16 find_library
 
 `find_library`用于查找库文件，示例如下：
 
@@ -918,7 +927,7 @@ find_library(BOOST_SYSTEM_LIBRARY NAMES boost_system Boost_system)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${BOOST_FILESYSTEM_LIBRARY} ${BOOST_SYSTEM_LIBRARY})
 ```
 
-## 5.16 find_path
+## 5.17 find_path
 
 `find_path`用于查找包含给定文件的目录，示例如下：
 
@@ -929,11 +938,11 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${BOOST_FILESYSTEM_LIBRARY} ${BOOS
 find_path(BRPC_INCLUDE_PATH NAMES brpc/server.h)
 ```
 
-## 5.17 aux_source_directory
+## 5.18 aux_source_directory
 
 Find all source files in a directory
 
-## 5.18 PUBLIC vs. PRIVATE
+## 5.19 PUBLIC vs. PRIVATE
 
 > In CMake, PUBLIC and PRIVATE are used to specify the visibility of target properties and dependencies. Here's what they mean:
 
@@ -1049,6 +1058,34 @@ build/main
 ```
 
 **如果将`target_link_libraries(libfoo PUBLIC libbar)`中的`PUBLIC`改成`PRIVATE`，那么编译将会无法通过，因为`main`没有显式依赖`libbar`，会找不到头文件`bar.h`**
+
+## 5.20 External Project
+
+### 5.20.1 ExternalProject_Add
+
+[ExternalProject](https://cmake.org/cmake/help/latest/module/ExternalProject.html)
+
+The `ExternalProject_Add()` function creates a custom target to drive download, update/patch, configure, build, install and test steps of an external project.
+
+All the options can be divided into following categories:
+
+* Directory Options
+* Download Step Options
+    * URL
+    * Git
+    * Subversion
+    * Mercurial
+    * CVS
+* Update Step Options
+* Patch Step Options
+* Configure Step Options
+* Build Step Options
+* Install Step Options
+* Test Step Options
+* Output Logging Options
+* Terminal Access Options
+* Target Options
+* Miscellaneous Options
 
 # 6 Tips
 

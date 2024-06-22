@@ -412,102 +412,11 @@ shell中的特殊符号包括如下几种
     * `echo "This is Test" | socat - /tmp/hello.html`：此时，`-`代表标准输出
     * `socat - /tmp/hello.html`：此时，`-`代表标准输入
 
-# 3 Data Type
+# 3 Variable Type
 
-## 3.1 Numerical Calculation
+## 3.1 Default/Normal/String
 
-### 3.1.1 `$[]`
-
-**整数扩展，会返回执行后的结果。如果有`,`分隔，那么只返回最后一个表达式执行的结果**
-
-```sh
-echo $[ 1 + 3 ]
-
-a=10;b=5
-echo $[ $a + $b ]
-echo $[ $a - $b ]
-echo $[ $a * $b ]       #此时不用对*转义
-echo $[ $a / $b ]
-echo $[ $a % $b ]
-
-echo $[ 1 + 3, 5 + 6 ]
-```
-
-### 3.1.2 `$(())`
-
-**`$(())`有如下两个功能**
-
-1. 数值计算
-1. 进制转换
-* **在`$(())`中的变量名称，可于其前面加$符号来替换，也可以不用**
-
-```sh
-# 数值计算
-a=5;b=7;c=2
-echo $((a+b*c))
-echo $(($a+$b*$c))
-
-# 进制转换
-a=06;b=09;c=02;
-echo $(( 10#$a + 10#$b + 10#$c ))
-echo $((16#ff))
-echo $((8#77))
-```
-
-### 3.1.3 `(())`
-
-**整数扩展，只计算，不返回值。通常用于重定义变量值，只有赋值语句才能起到重定义变量的作用**
-
-```sh
-a=1
-((a+10))
-echo $a     # 输出1
-
-((a+=10))
-echo $a     # 输出11
-
-((a++))
-echo $a     # 输出12
-```
-
-### 3.1.4 expr
-
-**`expr`是一个用于数值计算的命令，运算符号两边必须加空格，不加空格会原样输出，不会计算**
-
-```sh
-expr 1 + 3
- 
-a=10;b=5
-expr $a + $b
-expr $a - $b
-expr $a \* $b   #因为乘号*在shell中有特殊的含义，所以要转义
-expr $a / $b    #除法取商
-expr $a % $b    #除法取模
-```
-
-### 3.1.5 bc
-
-**浮点数运算：**
-
-```sh
-echo "scale=2; 1/3" | bc
-```
-
-**浮点数比较：**
-
-```sh
-if [ $(echo "1.2 < 1.212" | bc) -eq 1 ]; then
-    echo "1.2 < 1.212, ok"
-fi
-
-if [ $(echo "1.22 >= 1.21" | bc) -eq 1 ]; then
-    echo "1.22 >= 1.21, ok"
-fi
-```
-
-## 3.2 String
-
-### 3.2.1 Concat
+### 3.1.1 Concat
 
 ```sh
 your_name="qinjx"
@@ -515,14 +424,14 @@ greeting="hello, "${your_name}" \!"
 echo ${greeting}
 ```
 
-### 3.2.2 Length
+### 3.1.2 Length
 
 ```sh
 text="abcdefg"
 echo "字符串长度为 ${#text}"
 ```
 
-### 3.2.3 Substring Removal
+### 3.1.3 Substring Removal
 
 下面以字符串`http://www.aaa.com/123.htm`为例，介绍几种不同的截取方式
 
@@ -598,7 +507,7 @@ var='http://www.aaa.com/123.htm'
 echo ${var:0-7}
 ```
 
-### 3.2.4 Substring Replacement
+### 3.1.4 Substring Replacement
 
 * **`${variable/pattern/string}`**: Replaces the first match of `pattern` with `string`.
 * **`${variable//pattern/string}`**: Replaces all matches of `pattern` with `string`.
@@ -617,7 +526,7 @@ echo ${ips[@]/%/:4500}
 echo ${ips[@]/#/address:}
 ```
 
-### 3.2.5 Conditional Assignment
+### 3.1.5 Conditional Assignment
 
 **变量为空时，返回默认值**
 
@@ -652,7 +561,7 @@ echo ${FOO:+val2} # 输出空白
 echo ${FOO:?error} # 输出error
 ```
 
-### 3.2.6 Read by Line
+### 3.1.6 Read by Line
 
 **方式1**
 
@@ -683,7 +592,7 @@ do
 done
 ```
 
-### 3.2.7 Contains
+### 3.1.7 Contains
 
 **方式1：利用运算符`=~`**
 
@@ -722,9 +631,9 @@ else
 fi
 ```
 
-### 3.2.8 trim
+### 3.1.8 trim
 
-#### 3.2.8.1 Method 1
+#### 3.1.8.1 Method 1
 
 ```sh
 function trim() {
@@ -751,7 +660,7 @@ test3="$(trim " one leading and one trailing ")"
 echo "'$test1', '$test2', '$test3', '$test4', '$test5', '$test6'"
 ```
 
-#### 3.2.8.2 Method 2
+#### 3.1.8.2 Method 2
 
 ```sh
 function trim() {
@@ -769,14 +678,14 @@ test3="$(trim " one leading and one trailing ")"
 echo "'$test1', '$test2', '$test3', '$test4', '$test5', '$test6'"
 ```
 
-### 3.2.9 Case Conversion
+### 3.1.9 Case Conversion
 
 ```sh
 echo 'hello' | tr 'a-z' 'A-Z'
 echo 'HELLO' | tr 'A-Z' 'a-z'
 ```
 
-### 3.2.10 Extract
+### 3.1.10 Extract
 
 ```sh
 var='[hello]'
@@ -785,7 +694,7 @@ var=${var%\]}
 echo ${var}
 ```
 
-### 3.2.11 String with special character
+### 3.1.11 String with special character
 
 ```sh
 var="SELECT * FROM t0"
@@ -795,14 +704,14 @@ echo ${var}
 echo "${var}"
 ```
 
-### 3.2.12 Array to String
+### 3.1.12 Array to String
 
 ```sh
 items=( "hello world" "how have you been" )
 printf '%s\n' ${items[@]} | tr '\n' ',' | sed 's/,$//g' | paste -sd ',' -
 ```
 
-### 3.2.13 Multi-line Content
+### 3.1.13 Multi-line Content
 
 ```sh
 item="something"
@@ -825,6 +734,97 @@ EOF
 )
 
 echo "${content}"
+```
+
+## 3.2 Numerical Calculation
+
+### 3.2.1 `$[]`
+
+**整数扩展，会返回执行后的结果。如果有`,`分隔，那么只返回最后一个表达式执行的结果**
+
+```sh
+echo $[ 1 + 3 ]
+
+a=10;b=5
+echo $[ $a + $b ]
+echo $[ $a - $b ]
+echo $[ $a * $b ]       #此时不用对*转义
+echo $[ $a / $b ]
+echo $[ $a % $b ]
+
+echo $[ 1 + 3, 5 + 6 ]
+```
+
+### 3.2.2 `$(())`
+
+**`$(())`有如下两个功能**
+
+1. 数值计算
+1. 进制转换
+* **在`$(())`中的变量名称，可于其前面加$符号来替换，也可以不用**
+
+```sh
+# 数值计算
+a=5;b=7;c=2
+echo $((a+b*c))
+echo $(($a+$b*$c))
+
+# 进制转换
+a=06;b=09;c=02;
+echo $(( 10#$a + 10#$b + 10#$c ))
+echo $((16#ff))
+echo $((8#77))
+```
+
+### 3.2.3 `(())`
+
+**整数扩展，只计算，不返回值。通常用于重定义变量值，只有赋值语句才能起到重定义变量的作用**
+
+```sh
+a=1
+((a+10))
+echo $a     # 输出1
+
+((a+=10))
+echo $a     # 输出11
+
+((a++))
+echo $a     # 输出12
+```
+
+### 3.2.4 expr
+
+**`expr`是一个用于数值计算的命令，运算符号两边必须加空格，不加空格会原样输出，不会计算**
+
+```sh
+expr 1 + 3
+ 
+a=10;b=5
+expr $a + $b
+expr $a - $b
+expr $a \* $b   #因为乘号*在shell中有特殊的含义，所以要转义
+expr $a / $b    #除法取商
+expr $a % $b    #除法取模
+```
+
+### 3.2.5 bc
+
+**浮点数运算：**
+
+```sh
+echo "scale=2; 1/3" | bc
+```
+
+**浮点数比较：**
+
+```sh
+if [ $(echo "1.2 < 1.212" | bc) -eq 1 ]; then
+    echo "1.2 < 1.212, ok"
+fi
+
+if [ $(echo "1.22 >= 1.21" | bc) -eq 1 ]; then
+    echo "1.22 >= 1.21, ok"
+fi
 ```
 
 ## 3.3 Array

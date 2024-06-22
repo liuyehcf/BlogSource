@@ -12,7 +12,7 @@ categories:
 
 <!--more-->
 
-# 1 安装docker
+# 1 Installation
 
 ## 1.1 centos
 
@@ -32,17 +32,17 @@ systemctl enable docker
 systemctl start docker
 ```
 
-# 2 容器的生命周期
+# 2 Container Lifecycle
 
 ![container_lifecycle](/images/Docker-Basics/container_lifecycle.webp)
 
-# 3 文件系统
+# 3 Filesystem
 
 ## 3.1 overlay2
 
 [Example OverlayFS Usage [duplicate]](https://askubuntu.com/questions/699565/example-overlayfs-usage)
 
-# 4 创建镜像
+# 4 Build Image
 
 **创建一个空的目录**，例如`/tmp/test`
 
@@ -149,7 +149,7 @@ if __name__ == "__main__":
 
 **运行应用：`docker run -p 4000:80 friendlyhello`**
 
-# 5 docker命令行工具
+# 5 Command-Line
 
 学会利用`--help`参数
 
@@ -158,7 +158,7 @@ docker --help # 查询所有顶层的参数
 docker image --help # 参数image参数的子参数
 ```
 
-# 6 基础镜像
+# 6 Frequently-Used Images
 
 ## 6.1 Alpine
 
@@ -235,6 +235,12 @@ sudo chmod +x /usr/local/bin/docker-compose
 * `docker-compose [ -f xxx.yml ] config`
 * `docker-compose [ -f xxx.yml ] config --services`
 
+## 7.3 Tips
+
+### 7.3.1 Find docker-compose information for given docker container
+
+* `docker inspect <container_id> | grep 'com.docker.compose'`
+
 # 8 Tips
 
 1. 启动并保持容器运行
@@ -280,7 +286,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 1. 清理无用镜像：`docker system prune -a`
 1. 让普通用户有权限使用`docker`：`sudo usermod -aG docker username`
 
-## 8.1 修改存储路径
+## 8.1 Modify docker storage path
 
 默认情况下，docker相关的数据会存储在`/var/lib/docker`。编辑配置文件`/etc/docker/daemon.json`（没有就新建），增加如下配置项：
 
@@ -292,7 +298,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 然后通过`systemctl restart docker`重启docker即可
 
-## 8.2 修改镜像源
+## 8.2 Modify Mirror Address
 
 编辑配置文件`/etc/docker/daemon.json`（没有就新建），增加如下配置项：
 
@@ -312,7 +318,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 然后通过`systemctl restart docker`重启docker即可
 
-## 8.3 跨平台运行容器
+## 8.3 Run docker across platform
 
 默认情况下，docker是不支持`--platform`参数的，可以通过修改`/etc/docker/daemon.json`，添加如下配置项后，重启docker，开启该功能
 
@@ -393,7 +399,7 @@ Linux c3fb58ea543c 4.14.134 #1 SMP Tue Dec 29 21:27:58 EST 2020 aarch64 aarch64 
 
 * `docker run --rm --privileged multiarch/qemu-user-static:register`是向内核注册了各异构平台的`binfmt handler`，包括`aarch64`等等，这些注册信息就包括了`binfmt handler`的路径，比如`/usr/bin/qemu-aarch64-static`等等，注册信息都在`/proc/sys/fs/binfmt_misc`目录下，每个注册项都是该目录下的一个文件。**实际的`qemu-xxx-static`文件还得手动放置到对应目录中才能生效**
 
-## 8.4 镜像裁剪工具-dockerslim
+## 8.4 Docker Image Prune Tools - dockerslim
 
 ```sh
 docker-slim build --http-probe=false centos:7.6.1810
@@ -401,11 +407,11 @@ docker-slim build --http-probe=false centos:7.6.1810
 
 裁剪之后，镜像的体积从`202MB`变为`3.55MB`。但是裁剪之后，大部分的命令都被裁剪了（包括`ls`这种最基础的命令）
 
-## 8.5 如何感知程序是否运行在容器中
+## 8.5 Be Aware of Running as a Container
 
 一般来说，如果运行环境是容器，那么会存在`/.dockerenv`这个文件
 
-## 8.6 从容器构建镜像
+## 8.6 Build Image from Container
 
 **保留镜像原本的layer，每次commit都会生成一个layer，这样会导致镜像越来越大：**
 
@@ -439,13 +445,13 @@ systemctl show docker --property Environment
 systemctl restart docker
 ```
 
-## 8.8 容器内访问宿主机的ip
+## 8.8 Access Host Ip from Container
 
-The host has a changing IP address, or none if you have no network access. We recommend that you connect to the special DNS name host.docker.internal, which resolves to the internal IP address used by the host.
+The host has a changing IP address, or none if you have no network access. We recommend that you connect to the special DNS name `host.docker.internal`, which resolves to the internal IP address used by the host.
 
 # 9 FAQ
 
-## 9.1 k8s环境docker异常
+## 9.1 K8S Env docker error
 
 在k8s环境中，若容器运行时用的是`docker`，那么该`docker`会依赖`containerd`，当`containerd`不正常的时候，`docker`也就不正常了。恢复`containerd`的办法：将`/var/lib/containerd/io.containerd.metadata.v1.bolt`这个文件删掉
 
@@ -454,7 +460,7 @@ The host has a changing IP address, or none if you have no network access. We re
 1. 没有权限
 1. 多套`docker`共用了同一个`/var/run/docker.sock`套接字文件，可以用`lsof -U | grep docker.sock`查看。默认情况下只有2个记录，一个是`systemd`的，另一个是`dockerd`的
 
-# 10 参考
+# 10 Reference
 
 * [Docker Hub](https://hub.docker.com/)
 * [Docker历史版本下载](https://docs.docker.com/docker-for-mac/release-notes/#docker-community-edition-17120-ce-mac49-2018-01-19)

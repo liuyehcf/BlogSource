@@ -2,7 +2,7 @@
 title: Linux-File-System
 date: 2017-08-15 20:25:40
 tags: 
-- 摘录
+- 原创
 categories: 
 - Operating System
 - Linux
@@ -12,170 +12,73 @@ categories:
 
 <!--more-->
 
-# 1 硬盘组成与分区的复习
+# 1 Core Concepts
 
-**磁盘的组成**
+* **`Inode`**: Data structures that store metadata about files, such as file size, ownership, permissions, and timestamps, but not the file name or data
+* **`Superblock`**: A metadata structure that contains information about the filesystem as a whole, including its size, the size of the blocks, the number of inodes, and pointers to other metadata structures
+* **`Mounting`**: The process of attaching a filesystem to the directory tree at a specified mount point, allowing access to the files and directories in that filesystem
+* **`Permissions and Ownership`**: Each file and directory has associated permissions (`read`, `write`, `execute`) and ownership (`user`, `group`, `others`), controlling access and modifications
+* **`File Types`**: Regular files, directories, symbolic links, special files (character and block devices), sockets, and named pipes (FIFOs)
+* **`Hard Links`**: Multiple directory entries that reference the same inode
+* **`Symbolic Links (Symlinks)`**: Special files that reference another file or directory by path
+* **`Filesystem Types`**: Various types of filesystems supported by Linux, such as ext4, XFS, Btrfs, and others, each with its own features and use cases
+* **`Virtual File System (VFS)`**: An abstraction layer that provides a common interface for different filesystem types, allowing uniform access to different storage devices and filesystems
+* **`Block Devices and Block Size`**: Storage devices (like hard drives and SSDs) managed in blocks, which are the smallest unit of data transfer
+* **`Journal`**：A feature in journaling filesystems (e.g., `ext3`, `ext4`)
+* **`Filesystem Checks and Repair`**: Utilities like `fsck` to check and repair filesystem integrity
 
-1. 圆形盘片
-1. 机械手臂与机械手臂上的磁头
-1. 主轴马达，可以转动盘片，让机械手臂的磁头在盘片上读写数据
+## 1.1 Ext Filesystem
 
-**盘片物理组成**
+* **`Superblock`**
+    * Stores critical data structures of the file system, including its size, block size, number of free blocks, and inodes
+    * Read into memory when the file system is mounted
+* **`Block Group`**
+    * The file system is divided into several block groups, each containing a fixed number of blocks
+    * Each block group includes data blocks, an inode table, a block bitmap, and an inode bitmap
+* **`Data Block`**
+    * Blocks used to store the actual file data
+    * Block sizes are typically `1KB`, `2KB`, `4KB`, or `8KB`
+* **`Inode (Index Node)`**
+    * Stores metadata about files and directories, including file type, permissions, owner, size, timestamps, and pointers to data blocks
+    * Each file and directory has a unique inode
+* **`Block Bitmap`**
+    * Records which data blocks in a block group are used and which are free
+* **`Inode Bitmap`**
+    * Records which inodes in a block group are used and which are free
+* **`Inode Table`**
+    * An array containing all the inodes in the file system, with each inode representing a file or directory's metadata
+* **`Directory Entry`**
+    * Links file names in a directory to their corresponding inode numbers
+* **`Journal`**
+    * Available in `Ext3` and `Ext4`, it logs metadata operations to enhance file system reliability and recovery
+* **`Extended Attributes`**
+    * Allow users and applications to add extra metadata to files
+* **`Disk Quotas`**
+    * Control the amount of disk space and number of inodes that users and groups can use in the file system
+* **`Reserved Blocks`**
+    * Typically reserve some blocks for the system administrator to prevent the file system from being completely filled by regular users, which could affect system operations
 
-1. 扇区，最小的物理存储单位，每个扇区512byte
-1. 将扇区组成一个圆，那就是柱面，柱面是分区的最小单位
-1. 第一个扇区最重要，里面有硬盘主引导记录(Masterbootrecord,MBR)以及分区表，其中MBR占有446bytes，而partition table则占有64bytes
+# 2 Trouble-shooting
 
-**硬盘在Linux中的文件名**
+## 2.1 inode
 
-1. /dev/sd[a-p][1-15]：SCSI、SATA、USB、Flash等接口的磁盘文件名
-1. /dev/hd[a-d][1-63]：为IDE接口的磁盘文件名
+**Observations:**
 
-磁盘分区是指：告诉操作系统，这块磁盘在此分区可以访问的区域是由A柱面到B柱面之间的块
+* The more the number of `inodes`, the lower the reading performance will be, and read performance can be significantly affected when number of `inode` reaches million level
 
-**指定分区柱面范围的记录在第一个扇区的分区表中，由于分区表只有64byte，因此只能记录四条分区记录，这四条分区记录称为主分区或扩展分区，其中扩展分区还可以再分出逻辑分区，而能被格式化的仅有分区和逻辑分区而已**
+**Tools:**
 
-**总结**
+* `df -ih`
+* `ls -i`
 
-1. 主分区与扩展分区最多可以有4个(硬盘的限制)
-1. 扩展分区最多只能有一个(操作系统的限制)
-1. 逻辑分区是由扩展分区继续分出来的区
-1. 能够被格式化后作为数据访问的分区为主要分区与逻辑分区，扩展分区无法被格式化
-1. 逻辑分区的数量依操作系统而不同，在Linux系统中，IDE硬盘最多有59个逻辑分区(5-63号)，SATA硬盘则有11个分区(5-15号)
+## 2.2 superblock
 
-# 2 文件系统特性
+**Tools:**
 
-因为每种操作系统所设置的文件属性/权限并不相同，为了存放这些文件所需的数据，**因此需要将分区格式化**，来成为操作系统能够利用的文件系统格式
+* `sudo dumpe2fs /dev/sda | grep -i superblock`
 
-以前，一个分区就只能被格式化称为一个文件系统，LVM技术可以将一个分区格式化为多个文件系统，也能将多个分区合成一个文件系统。**因此，通常我们可以称呼一个被挂载的数据为一个文件系统而不是一个分区**
+# 3 Reference
 
-在Linux系统中，**文件权限(rwx)与文件属性(所有者，群组，时间参数等)被存放在inode中，实际的数据放在data block中，另外一个超级块(super block)会记录整个文件系统的整体信息，包括inode与block的总量，使用量，剩余量**
-
-1. **super block**：记录此文件系统的整体信息，包括inode/block的总量，使用量，剩余量，以及文件系统的格式与相关信息等
-1. **inode**：记录文件的属性，一个文件占用一个inode(大量的小文件可能会造成资源的浪费)，同时记录文件的数据所在的block号码
-1. **block**：实际记录文件的内容，若文件太大时，会占用多个block
-
-碎片整理：需要碎片整理的原因就是文件写入的block太过于离散了，此时文件读取的性能将会变得很差
-
-# 3 Linux的Ext2文件系统(inode)
-
-文件系统一开始就将inode与block规划好了，除非重新格式化，否则inode与block固定后就不再变动，如果文件系统高达数百GB，将所有inode与block放在一起是很不明智的
-
-Ext2文件系统在格式化时基本上是区分为多个组块，每个组块都有独立的inode/block/super block系统
-
-在整体规划中，文件系统最前面有一个启动扇区，这个启动扇区可以安装引导装载程序，这是个非常重要的设计，因为这样一来，我们就可以把不同的引导装载程序安装到个别的文件系统最前端，而不用覆盖整块硬盘为一个MBR，才能制作出多重引导的环境
-
-**Ext2文件系统支持的block大小有1KB、2KB、4KB**。原则上，block的大小与数量在格式化完就不能再改变了。每个block最多只能放一个文件的数据，若文件大于block的大小，则一个文件会占据多个block，若文件小于block的大小，则该block剩余的空间将不再被利用。较大的block可能会产生严重的磁盘容量浪费(大量小文件)。较小的block可能导致文件系统的不良读写性能(大文件占用很多block，因此inode也要记录更多的block)
-
-**inode table存放的数据**
-
-1. 该文件的访问模式
-1. 该文件的所有者组
-1. 该文件的大小
-1. 该文件创建或状态改变的时间
-1. 最近一次读取时间
-1. 最近修改时间
-1. 定义文件特性的标志，如SetUID
-1. 该文件真正内容的指向
-
-**inode的特性**
-
-1. 每个inode大小固定为128bytes
-1. 每个文件都仅占用一个inode而已
-1. 文件系统能够创建的文件数量与inode的数量有关
-1. 系统读取文件时先要找到inode，并分析inode所记录的权限与用户是否符合，若符合才能够开始实际读取block的内容
-
-Linux系统将inode记录block号码的区域定义为12个直接、一个间接、一个双间接与一个三间接记录去，间接是指用block来当做记录block号码的记录区。以block=1KB作为例子，记录一条block号码需要4bytes
-
-* 12个直接 V1=12*1K=12K
-* 1个间接 V2=256*1K=256K
-* 1个双间接 V3=256*256*1K=2562K
-* 1个三间接 V4256*256*256*1K=2563K
-* V=V1+V2+V3+V4=16GB
-
-**super block用于记录整个文件系统的相关信息，包括**
-
-1. block与inode的总量
-1. 未使用与已使用的inode/block数量
-1. block与inode的大小(1/2/4K,128bytes)
-1. 文件系统的挂载时间，最近一次写入数据的时间，最近一次检验磁盘(fsck)的时间等文件系统的相关信息
-1. 一个validbit数值，若此文件系统已经被挂载，则valid bit为0，否则为1
-1. 此外每个block group都可能含有super block，但是文件系统应该只有一个super block，因为这些block group的super block是作为备份，在super block出故障时进行救援的作用
-
-File system Description(文件系统描述说明)用于描述每个block group的开始与结束的block号码，以及说明每个区段分别介于哪一个block号码之间，这部分能用dumpe2fs来查看
-
-**block bitmap**用于告知哪些block是空的，因此系统可以很快地找到可以使用的空间来处置文件。同理，若删除文件，要将block bitmap中对应的标志标记为未使用
-
-**inode bitmap**与bolck bitmap类似，用于告知inode的使用状况
-
-# 4 与目录树的关系
-
-每个文件(不管是一般文件还是目录文件)都会占用一个inode，且可依据文件内容的大小来分配多个block给文件使用，而目录的内容用于记录文件名，一般文件才是实际记录数据内容的地方
-
-在Linux下的Ext2文件系统**新建一个目录**，Ext2会分配**一个inode与至少一块block**给该目录
-
-* inode记录该目录的相关权限与属性，并可记录分配到那块block的号码
-* block记录在这个目录下的文件名，与该文件名占用的inode号码数据，即记录`文件名-inode号码对`
-* 如果该目录下的文件数太多，导致一个block无法容纳下所有文件名与inode对照表，此时会基于该目录多一个block来继续记录相关的数据
-
-在Linux下的Ext2新建一个**一般文件时**，Ext2会分配一个inode与相对于该文件大小的block数量给该文件
-
-**inode本身并不记录文件名，文件名的记录在目录的block中**，因此新增/删除/重命名文件名与目录的w权限有关。因为文件名存在block中。**因此，要读取某个文件时，就务必会经过目录的inode与block**，然后才能够找到那个待读取文件的inode号码，最终才能读取到正确的文件的block内的数据
-
-目录树由根目录开始读起，因此系统通过挂载的信息可以找到挂载点的inode号码(通常，一个文件系统最顶层的inode号码会从2开始)，并根据该inode读取根目录的block内的文件名数据，再一层层往下读到正确的文件名
-
-# 5 Ext2/Ext3文件的访问与日志文件系统的功能
-
-新增文件时，文件系统此时的行为如下：
-
-1. 先确定用户对于添加文件的目录是否具有w与x权限，若有的话才能添加
-1. 根据inode bitmap找到没有使用的inode号码，并将新文件的权限/属性写入
-1. 根据block bitmap找到没有使用中的block号码，并将实际的数据写入block中，且更新inode的block指向数据
-1. 将刚才写入的inode与block数据同步更新到inode bitmap与block bitmap，并更新super block的内容
-
-一般来说**inode table与data block称为数据存放区域，super block、block bitmap 与inode bitmap等区段就被称为meta data(中间数据)**，因为这些数据经常变动，每次添加，删除编辑，都可能会影响到这三个数据，因此称为中间数据
-
-当文件写入系统时，发生了中断(停电)，可能会导致metadata的内容与实际数据存放区产生不一致的情况。若此情况发生，系统在重启时会通过super block的valid bit与文件系统的state(clean 与否)等状态来判断是否强制进行数据一致性检查，但是这样的检查是很费时的！
-
-日志文件系统
-
-* 在文件系统中规划处一个块，该块专门记录写入或修订文件时的步骤
-* 预备：当系统要写入一个文件时，会现在日志记录块中记录某个文件准备要写入的信息
-* 实际写入：开始写入文件的权限与数据，开始更新meta data
-* 结束：完成数据与meta data的更新后，在日志记录快中完成该文件的记录
-
-# 6 挂载点(mount point)的意义
-
-每个文件都有独立的inode、block、super block等信息，这个文件系统要能够链接到目录树才能够被使用
-
-将文件系统与目录树结合的操作我们称为挂载。**挂载点一定是目录**，该目录为进入该文件系统的入口
-
-# 7 其他Linux支持的文件系统与VFS
-
-常见的Linux支持的文件系统：
-
-1. 传统文件系统：ext2/minix/MS-DOS/FAT/iso9660(光盘)
-1. 日志文件系统：ext3/ReiserFS/Windows'NTFS/IBM'sJFS/SGI'sXFS
-1. 网络文件系统：NFS/SMBFS
-
-2、Linux VFS：Virtual Filesystem Switch(虚拟文件系统)：整个Linux认识的文件系统其实都是VFS在进行管理，我们用户并不需要知道每个分区上头的文件系统是什么，VFS会主动帮我们做好读取操作
-
-# 8 连接文件：ln
-
-连接文件有两类，hard link与symbolic link。其中symbolic link类似于Windows的快捷方式功能的文件，可以让你快速连接到目标文件(或目录)；hard link通过文件系统的inode连接来产生新文件名而不是产生新文件
-
-每个文件都会占用一个inode，文件内容由inode的记录来指向。想要读取该文件，必须要经过目录记录的文件名来指向到正确的inode号码才能读取，也就是说，文件名只与目录有关，但是文件内容则与inode有关
-
-**简单地说，hard link只是在某个目录下新建一条文件名连接到某inode号码的关联记录而已**。由于目录的block存放的就是文件名与inode的关联记录，hard link在某个目录下，也就是该目录的block中新建一条文件名与inode的关联记录，因此，真实文件的inode的关联记录会增加一条。此时两个文件名都会连接到同一个inode号码，由`ls -l`查看的链接数就是指有多少个文件名连接到这个inode号码的意思。**hard link最大的好处是安全**：如果将任意一个文件名删除，那么inode与bolck还是存在的，不论用哪个文件名来编辑，最终的结果都将写入到相同的inode与block中，因此均能进行数据的修改。一般来说，用hard link设置连接文件，磁盘空间与inode数目都不会变，因为hard link只是在目录的block多写入一个关联数据而已(除非写入该数据后导致当前目录的block已满，必须额外分配一个block)
-
-**hard link的限制**：
-
-1. 不能跨文件系统
-1. 不能连接到目录(会造成环境相当大的复杂度，该目录下的所有目录和文件都得实现硬链接)
-
-**基本上symbolic link就是在创建一个独立的文件，这个文件会让数据的读取指向它连接的那个文件名(与hard link不同，这里是连接到文件名)**。这里新建的文件指向的是真实文件所在的目录的block中的文件名，并通过该文件名关联到真实文件的inode，此过程中，从文件名到inode的关联记录没有增加。因此当源文件被删除后，symbolic link的文件会无法打开，因为找不到源文件的文件名。symbolic link与Windows的快捷方式可以划上等号，由于symbolic link所创建的文件为一个独立的新的文件，所以会占用掉inode与block
-
-# 9 参考
-
-* 《鸟哥的Linux私房菜》
-
+* [Linux 操作系统原理-文件系统(1).md](https://github.com/0voice/linux_kernel_wiki/blob/main/%E6%96%87%E7%AB%A0/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/Linux%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F(1).md)
+* [Linux 操作系统原理-文件系统(2).md](https://github.com/0voice/linux_kernel_wiki/blob/main/%E6%96%87%E7%AB%A0/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/Linux%20%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F(2).md)
+* [Linux内核文件系统挂载.md](https://github.com/0voice/linux_kernel_wiki/blob/main/%E6%96%87%E7%AB%A0/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/Linux%E5%86%85%E6%A0%B8%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%8C%82%E8%BD%BD.md)
