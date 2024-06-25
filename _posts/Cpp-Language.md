@@ -4819,7 +4819,69 @@ int main() {
 
 # 11 Mechanism
 
-## 11.1 Move Semantics
+## 11.1 lvalue & rvalue
+
+[Value categories](https://en.cppreference.com/w/cpp/language/value_category)
+
+```cpp
+#include <iostream>
+
+class Foo {
+public:
+    Foo() = default;
+    Foo(const Foo&) { std::cout << "Foo(const Foo&)" << std::endl; }
+    Foo(Foo&&) { std::cout << "Foo(Foo&&)" << std::endl; }
+};
+
+class HolderWithoutMove {
+public:
+    explicit HolderWithoutMove(Foo&& foo) : _foo(foo) {}
+
+private:
+    const Foo _foo;
+};
+
+class HolderWithMove {
+public:
+    explicit HolderWithMove(Foo&& foo) : _foo(std::move(foo)) {}
+
+private:
+    const Foo _foo;
+};
+
+void receiveFoo(Foo&) {
+    std::cout << "receiveFoo(Foo&)" << std::endl;
+}
+void receiveFoo(Foo&&) {
+    std::cout << "receiveFoo(Foo&&)" << std::endl;
+}
+
+void forwardWithoutMove(Foo&& foo) {
+    receiveFoo(foo);
+}
+void forwardWithMove(Foo&& foo) {
+    receiveFoo(std::move(foo));
+}
+
+int main() {
+    HolderWithoutMove holder1({});
+    HolderWithMove holder2({});
+    forwardWithoutMove({});
+    forwardWithMove({});
+    return 0;
+}
+```
+
+Output:
+
+```
+Foo(const Foo&)
+Foo(Foo&&)
+receiveFoo(Foo&)
+receiveFoo(Foo&&)
+```
+
+## 11.2 Move Semantics
 
 ```cpp
 #include <iostream>
@@ -4896,7 +4958,7 @@ Foo::Foo()
 Foo::operator=&&
 ```
 
-## 11.2 Structured Bindings
+## 11.3 Structured Bindings
 
 Structured bindings were introduced in C++17 and provide a convenient way to destructure the elements of a tuple-like object or aggregate into individual variables.
 
@@ -4943,7 +5005,7 @@ int main() {
 }
 ```
 
-## 11.3 Copy Elision
+## 11.4 Copy Elision
 
 * [Copy elision](https://en.cppreference.com/w/cpp/language/copy_elision)
 * [What are copy elision and return value optimization?](https://stackoverflow.com/questions/12953127/what-are-copy-elision-and-return-value-optimization)

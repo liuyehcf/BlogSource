@@ -674,7 +674,36 @@ pprof --svg ./main /tmp/test-profile.0001.heap > heap.svg
 * 对于大对象分配，所造成的的内存碎片会比`tcmalloc`少一些
 * 内存分类粒度更细，锁比`tcmalloc`更少
 
-### 3.2.1 Install
+### 3.2.1 Memory Stats
+
+**Key Metrics:**
+
+* **`Allocated Memory (allocated)`:**
+    * Meaning: The total amount of memory currently allocated by the application.
+    * Usage: This is the memory actively used by your application. Monitoring this helps you understand how much memory your application is consuming at any given time.
+* **`Active Memory (active)`:**
+    * Meaning: The total amount of memory that is currently in use by the allocator for allocations. This includes both allocated memory and any internal fragmentation.
+    * Usage: Helps gauge the memory overhead introduced by internal fragmentation and allocation strategies.
+* **`Metadata (metadata)`:**
+    * Meaning: The memory used internally by jemalloc for bookkeeping and managing the heap.
+    * Usage: Understanding this helps in recognizing the overhead caused by the allocator itself. This includes data structures jemalloc uses to manage free and allocated memory blocks.
+* **`Resident Memory (resident)`:**
+    * Meaning: The total amount of memory currently mapped into the process’s address space.
+    * Usage: This metric provides insight into the actual physical memory usage of your application, including any memory mapped but not currently in active use.
+* **`Mapped Memory (mapped)`:**
+    * Meaning: The total amount of memory mapped from the operating system.
+    * Usage: This shows the total virtual memory footprint of your application, which includes all allocated, active, and metadata memory.
+* **`Retained Memory (retained)`:**
+    * Meaning: Memory that was allocated and later freed, but is being held by jemalloc for future allocations.
+    * Usage: Helps in understanding how much memory is being kept in reserve by the allocator for potential future use, which can be significant in applications with fluctuating memory requirements.
+
+**Detailed Analysis:**
+
+* `Internal Fragmentation`: The difference between allocated and active memory. High internal fragmentation means that there is significant overhead due to the way memory is being managed and allocated.
+* `Allocator Overhead`: The difference between active and allocated plus metadata. This helps in understanding how much additional memory jemalloc needs to manage your allocations.
+* `Virtual Memory Overhead`: The difference between mapped and resident memory. This shows how much memory is being reserved in the virtual address space but not necessarily backed by physical memory.
+
+### 3.2.2 Install
 
 [jemalloc/INSTALL.md](https://github.com/jemalloc/jemalloc/blob/dev/INSTALL.md)
 
@@ -689,7 +718,7 @@ make -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo make install
 ```
 
-### 3.2.2 Heap-profile
+### 3.2.3 Heap-profile
 
 [Getting Started](https://github.com/jemalloc/jemalloc/wiki/Getting-Started)
 
@@ -786,7 +815,7 @@ Total: 100.1 MB
 * `sudo apt install -y graphviz` or `sudo yum install -y graphviz`
 * `jeprof --show_bytes --svg main <heap_file> > <svg_file>`
 
-### 3.2.3 Work with http
+### 3.2.4 Work with http
 
 源码如下：
 
@@ -902,7 +931,7 @@ dot -Tsvg heap-profile.dot -o heap-profile.svg
 dot -Tpdf heap-profile.dot -o heap-profile.pdf
 ```
 
-### 3.2.4 Reference
+### 3.2.5 Reference
 
 * [Jemalloc内存分配与优化实践](https://mp.weixin.qq.com/s?__biz=Mzg3Mjg2NjU4NA==&mid=2247484507&idx=1&sn=0befa2bec46c3fe64807f5b79b2940d5)
 * [[Feature] support heap profile using script](https://github.com/StarRocks/starrocks/pull/35322)

@@ -331,12 +331,25 @@ Java反编译工具，[下载地址](http://www.javadecompilers.com/jad)
 
 ## 14.1 Install JDK
 
-* [Java SE 17 Archive Downloads](https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html)
+From [Java Downloads](https://www.oracle.com/java/technologies/downloads/), you can find `JDK 22`, `JDK 21`, `JDK 17`, and even `JDK 8`
 
-```sh
-wget https://download.oracle.com/java/17/archive/jdk-17.0.10_linux-x64_bin.tar.gz
-tar -zxvf jdk-17.0.10_linux-x64_bin.tar.gz -C /usr/local
-```
+* For `JDK 8`
+    ```sh
+    # you need to login in first, can you can download, it is stupid
+    tar -zxvf jdk-8u411-linux-x64.tar.gz -C /usr/lib/jvm
+    ```
+
+* For `JDK 17`
+    ```sh
+    wget https://download.oracle.com/java/17/latest/jdk-17_linux-x64_bin.tar.gz
+    tar -zxvf jdk-17_linux-x64_bin.tar.gz -C /usr/lib/jvm
+    ```
+
+* For `JDK 22`
+    ```sh
+    wget https://download.oracle.com/java/22/latest/jdk-22_linux-x64_bin.tar.gz
+    tar -zxvf jdk-22_linux-x64_bin.tar.gz -C /usr/lib/jvm
+    ```
 
 ## 14.2 Find JDK Install Path
 

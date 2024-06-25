@@ -378,7 +378,52 @@ The actual main class is `JarLauncher` or `WarLauncher`, which will prepare the 
 
 其中`<script>`标签中指定需要进行占位符替换的**模板文件**。`group`标签仅仅做了分组，阅读上更清晰，没有其他作用
 
-# 3 Reference
+# 3 Format Plugin
+
+## 3.1 formatter-maven-plugin
+
+[Introduction](https://code.revelc.net/formatter-maven-plugin/)
+
+* [Eclipse Version Compatibility](https://code.revelc.net/formatter-maven-plugin/eclipse-versions.html)
+
+**Goals:**
+
+* `validate`
+    * `mvn formatter:validate`
+* `format`
+    * `mvn formatter:format`
+
+```xml
+<plugin>
+    <groupId>net.revelc.code.formatter</groupId>
+    <artifactId>formatter-maven-plugin</artifactId>
+    <!-- version 2.11.0 is compatable with java 8 -->
+    <version>2.11.0</version>
+    <configuration>
+        <configFile>../eclipse-java-google-style.xml</configFile>
+        <encoding>UTF-8</encoding>
+    </configuration>
+    <executions>
+        <execution>
+            <goals>
+                <goal>validate</goal>
+            </goals>
+            <phase>compile</phase>
+        </execution>
+    </executions>    
+</plugin>
+```
+
+## 3.2 Format Config
+
+* [AOSP external/google-styleguide/eclipse-java-google-style.xml](https://cs.android.com/android/platform/superproject/main/+/main:external/google-styleguide/eclipse-java-google-style.xml?hl=zh-cn)
+    * Search for `java-google-style.xml`
+
+**Eclipse Config Keys:**
+
+* `org.eclipse.jdt.core.formatter.tabulation.size`
+
+# 4 Reference
 
 * [Difference between the maven-assembly-plugin, maven-jar-plugin and maven-shade-plugin?](https://stackoverflow.com/questions/38548271/difference-between-the-maven-assembly-plugin-maven-jar-plugin-and-maven-shade-p)
 * [hadoop No FileSystem for scheme: file](https://stackoverflow.com/questions/17265002/hadoop-no-filesystem-for-scheme-file)

@@ -31,3 +31,5 @@ categories:
 1. `IOCTL (Input/Output Control)`: System calls for device-specific input/output operations and other operations which cannot be expressed by regular system calls.
 1. `Device Drivers`: Kernel modules that manage communication with hardware devices.
 
+## 1.1 mmap vs. sequential I/O
+

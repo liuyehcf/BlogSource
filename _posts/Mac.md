@@ -630,6 +630,10 @@ pmset displaysleepnow
 caffeinate
 ```
 
+## 6.12 外接键盘F1-F12不作为功能键
+
+`Keyboard` -> `Keyboard Shortcuts` -> `Function Keys` -> `Use F1, F12, etc. keys as standard function keys`
+
 # 7 参考
 
 * [Mac 下利用 Launchctl 自启动 mysql](http://squll369.iteye.com/blog/1965185)

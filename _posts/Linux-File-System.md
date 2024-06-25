@@ -29,33 +29,33 @@ categories:
 
 ## 1.1 Ext Filesystem
 
-* **`Superblock`**
+* **`Superblock`:**
     * Stores critical data structures of the file system, including its size, block size, number of free blocks, and inodes
     * Read into memory when the file system is mounted
-* **`Block Group`**
+* **`Block Group`:**
     * The file system is divided into several block groups, each containing a fixed number of blocks
     * Each block group includes data blocks, an inode table, a block bitmap, and an inode bitmap
-* **`Data Block`**
+* **`Data Block`:**
     * Blocks used to store the actual file data
     * Block sizes are typically `1KB`, `2KB`, `4KB`, or `8KB`
-* **`Inode (Index Node)`**
+* **`Inode (Index Node)`:**
     * Stores metadata about files and directories, including file type, permissions, owner, size, timestamps, and pointers to data blocks
     * Each file and directory has a unique inode
-* **`Block Bitmap`**
+* **`Block Bitmap`:**
     * Records which data blocks in a block group are used and which are free
-* **`Inode Bitmap`**
+* **`Inode Bitmap`:**
     * Records which inodes in a block group are used and which are free
-* **`Inode Table`**
+* **`Inode Table`:**
     * An array containing all the inodes in the file system, with each inode representing a file or directory's metadata
-* **`Directory Entry`**
+* **`Directory Entry`:**
     * Links file names in a directory to their corresponding inode numbers
-* **`Journal`**
+* **`Journal`:**
     * Available in `Ext3` and `Ext4`, it logs metadata operations to enhance file system reliability and recovery
-* **`Extended Attributes`**
+* **`Extended Attributes`:**
     * Allow users and applications to add extra metadata to files
-* **`Disk Quotas`**
+* **`Disk Quotas`:**
     * Control the amount of disk space and number of inodes that users and groups can use in the file system
-* **`Reserved Blocks`**
+* **`Reserved Blocks`:**
     * Typically reserve some blocks for the system administrator to prevent the file system from being completely filled by regular users, which could affect system operations
 
 # 2 Trouble-shooting

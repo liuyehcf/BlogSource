@@ -2208,46 +2208,7 @@ netstat的功能就是查看网络的连接状态，而网络连接状态中，�
 * `tc qdisc add dev em1 root netem loss 8% 20%`：设置8%~20%的丢包率 
 * `tc qdisc del dev em1 root `：删除指定设置
 
-## 5.3 lsof
-
-**Pattern:**
-
-* `lsof [-aU] [-u 用户名] [+d] [-i address]`
-
-**Options:**
-
-* `-a`：多项数据需要“同时成立”才显示结果
-* `-U`：仅列出Unix like系统的socket文件类型
-* `-u`：后面接username，列出该用户相关进程所打开的文件
-* `+d`：后面接目录，及找出某个目录下面已经被打开的文件
-* `-i`：后面接网络地址，格式如下
-    * `[46][protocol][@hostname|hostaddr][:service|port]`
-    * `46`：ipv4/ipv6
-    * `protocol`：tcp/udp
-    * `hostname`：主机名
-    * `hostaddr`：主机ip
-    * `service`：服务
-    * `port`端口号
-* `-p`：后接pid
-
-**Examples:**
-
-* `lsof -n|awk '{print $2}' | sort | uniq -c | sort -nr -k 1`：查看进程打开的文件句柄的数量
-* `lsof -i 6tcp@localhost:22`
-* `lsof -i 4tcp@127.0.0.1:22`
-* `lsof -i tcp@127.0.0.1:22`
-* `lsof -i tcp@localhost`
-* `lsof -i tcp:22`
-* `lsof -i :22`
-* `lsof -U | grep docker.sock`
-
-**最佳实践：**
-
-1. 如何查询指定tcp连接的建立时间：
-    * `lsof -i :<端口号>`：首先通过连接的端口号查询出socket信息，包括进程的pid以及fd
-    * `ll /proc/<pid>/fd/<fd>`：查看socket文件的创建时间，这个就是tcp连接的建立时间
-
-## 5.4 ss
+## 5.3 ss
 
 `ss`是`Socket Statistics`的缩写。顾名思义，`ss`命令可以用来获取`socket`统计信息，它可以显示和`netstat`类似的内容。`ss`的优势在于它能够显示更多更详细的有关TCP和连接状态的信息，而且比`netstat`更快速更高效。
 
@@ -2286,9 +2247,9 @@ netstat的功能就是查看网络的连接状态，而网络连接状态中，�
 * `ss -nap -e`
 * `ss -naptu`
 
-## 5.5 ip
+## 5.4 ip
 
-### 5.5.1 ip address
+### 5.4.1 ip address
 
 具体用法参考`ip address help`
 
@@ -2298,7 +2259,7 @@ netstat的功能就是查看网络的连接状态，而网络连接状态中，�
 * `ip -6 addr show scope global`
 * `ip -4 addr show scope host`
 
-### 5.5.2 ip link
+### 5.4.2 ip link
 
 具体用法参考`ip link help`
 
@@ -2313,11 +2274,11 @@ netstat的功能就是查看网络的连接状态，而网络连接状态中，�
 * `ip link delete tunl0`：删除网卡
 * `cat /sys/class/net/xxx/carrier`：查看网卡是否插了网线（对应于`ip link`的`state UP`或`state DOWN`
 
-### 5.5.3 ip route
+### 5.4.3 ip route
 
 具体用法参考`ip route help`
 
-#### 5.5.3.1 route table
+#### 5.4.3.1 route table
 
 **linux最多可以支持255张路由表，每张路由表有一个`table id`和`table name`。其中有4张表是linux系统内置的**
 
@@ -2336,7 +2297,7 @@ netstat的功能就是查看网络的连接状态，而网络连接状态中，�
 * 如果管理员新增了一张路由表，需要在`/etc/iproute2/rt_tables`文件中为新路由表添加`table id`和`table name`的映射
 * 路由表存储于内存中，通过`procfs`文件系统对用户态露出，具体的文件位置是`/proc/net/route`
 
-#### 5.5.3.2 route type
+#### 5.4.3.2 route type
 
 **`unicast`**：单播路由是路由表中最常见的路由。这是到目标网络地址的典型路由，它描述了到目标的路径。即使是复杂的路由（如下一跳路由）也被视为单播路由。如果在命令行上未指定路由类型，则假定该路由为单播路由
 
@@ -2400,7 +2361,7 @@ ip route add throw 10.79.0.0/16
 ip route add throw 172.16.0.0/12
 ```
 
-#### 5.5.3.3 route scope
+#### 5.4.3.3 route scope
 
 **`global`**：全局有效
 
@@ -2410,7 +2371,7 @@ ip route add throw 172.16.0.0/12
 
 **`host`**：仅在当前主机有效
 
-#### 5.5.3.4 route proto
+#### 5.4.3.4 route proto
 
 **`proto`：表示路由的添加时机。可由数字或字符串表示，数字与字符串的对应关系详见`/etc/iproute2/rt_protos`**
 
@@ -2419,11 +2380,11 @@ ip route add throw 172.16.0.0/12
 1. **`boot`**：该路由是在启动过程中安装的。如果路由守护程序启动，它将会清除这些路由规则
 1. **`static`**：该路由由管理员安装，以覆盖动态路由
 
-#### 5.5.3.5 route src
+#### 5.4.3.5 route src
 
 这被视为对内核的提示（用于回答：如果我要将数据包发往host X，我该用本机的哪个IP作为Source IP），该提示是关于要为该接口上的`传出`数据包上的源地址选择哪个IP地址
 
-#### 5.5.3.6 Parameter Explanation
+#### 5.4.3.6 Parameter Explanation
 
 **`ip r show table local`参数解释（示例如下）**
 
@@ -2453,7 +2414,7 @@ local 127.0.0.0/8 dev lo  proto kernel  scope host  src 127.0.0.1
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-### 5.5.4 ip rule
+### 5.4.4 ip rule
 
 基于策略的路由比传统路由在功能上更强大，使用更灵活，它使网络管理员不仅能够根据目的地址而且能够根据报文大小、应用或IP源地址等属性来选择转发路径。简单地来说，linux系统有多张路由表，而路由策略会根据一些条件，将路由请求转向不同的路由表。例如源地址在某些范围走路由表A，另外的数据包走路由表，类似这样的规则是有路由策略rule来控制
 
@@ -2474,7 +2435,7 @@ ip rule add [from 0/0] table 1 pref 32800
 ip rule add from 192.168.3.112/32 [tos 0x10] table 2 pref 1500 prohibit
 ```
 
-### 5.5.5 ip netns
+### 5.4.5 ip netns
 
 ```sh
 Usage: ip netns list
@@ -2501,9 +2462,9 @@ mkdir -p /var/run/netns/
 ln -sfT /proc/$pid/ns/net /var/run/netns/$container_id
 ```
 
-## 5.6 iptables
+## 5.5 iptables
 
-### 5.6.1 Viewing Rules
+### 5.5.1 Viewing Rules
 
 **Pattern:**
 
@@ -2517,7 +2478,7 @@ ln -sfT /proc/$pid/ns/net /var/run/netns/$container_id
 * `-n`：不进行IP与HOSTNAME的反查，显示信息的速度回快很多
 * `-v`：列出更多的信息，包括通过该规则的数据包总数，相关的网络接
 
-**输出信息介绍：**
+**Output Details:**
 
 * 每一个Chain就是每个链，Chain所在的括号里面的是默认的策略(即没有规则匹配时采取的操作(target))
 * `target`：代表进行的操作
@@ -2546,13 +2507,13 @@ ln -sfT /proc/$pid/ns/net /var/run/netns/$container_id
 
 * `-t`：可以针对某些表格来输出，例如仅针对NAT或Filter等
 
-**输出信息介绍：**
+**Output Details:**
 
 * 星号开头的指的是表格，这里为Filter
 * 冒号开头的指的是链，3条内建的链，后面跟策略
 * 链后面跟的是`[Packets:Bytes]`，分别表示通过该链的数据包/字节的数量
 
-### 5.6.2 Clearing Rules
+### 5.5.2 Clearing Rules
 
 **Pattern:**
 
@@ -2564,7 +2525,7 @@ ln -sfT /proc/$pid/ns/net /var/run/netns/$container_id
 * `-X [chain]`：清除指定`user-defined chain`或所有`user-defined chain`
 * `-Z [chain]`：将指定chain或所有的chain的计数与流量统计都归零
 
-### 5.6.3 Defining Default Policies
+### 5.5.3 Defining Default Policies
 
 当数据包不在我们设置的规则之内时，该数据包的通过与否都以Policy的设置为准
 
@@ -2584,7 +2545,7 @@ ln -sfT /proc/$pid/ns/net /var/run/netns/$container_id
 * `iptables -P OUTPUT ACCEPT`
 * `iptables -P FORWARD ACCEPT`
 
-### 5.6.4 Basic Packet Matching: IP, Network, and Interface Devices
+### 5.5.4 Basic Packet Matching: IP, Network, and Interface Devices
 
 **Pattern:**
 
@@ -2629,7 +2590,7 @@ ln -sfT /proc/$pid/ns/net /var/run/netns/$container_id
     * `iptables -t nat -I PREROUTING -p icmp -j LOG --log-prefix "liuye-prerouting: "`
     * `iptables -t nat -I POSTROUTING -p icmp -j LOG --log-prefix "liuye-postrouting: "`
 
-### 5.6.5 Rules for TCP and UDP: Port-based Rules
+### 5.5.5 Rules for TCP and UDP: Port-based Rules
 
 TCP与UDP比较特殊的就是端口(port)，在TCP方面则另外有所谓的连接数据包状态，包括最常见的SYN主动连接的数据包格式
 
@@ -2649,7 +2610,7 @@ TCP与UDP比较特殊的就是端口(port)，在TCP方面则另外有所谓的�
 * `iptables -A INPUT -i eth0 -p tcp --dport 21 -j DROP`：想要进入本机port 21的数据包都阻挡掉
 * `iptables -A INPUT -i eth0 -p tcp --sport 1:1023 --dport 1:1023 --syn -j DROP`：来自任何来源port 1:1023的主动连接到本机端的1:1023连接丢弃
 
-### 5.6.6 iptables Matching Extensions
+### 5.5.6 iptables Matching Extensions
 
 `iptables`可以使用扩展的数据包匹配模块。当指定`-p`或`--protocol`时，或者使用`-m`或`--match`选项，后跟匹配的模块名称；之后，取决于特定的模块，可以使用各种其他命令行选项。可以在一行中指定多个扩展匹配模块，并且可以在指定模块后使用`-h`或`--help`选项来接收特定于该模块的帮助文档（`iptables -m comment -h`，输出信息的最下方有`comment`模块的参数说明）
 
@@ -2660,7 +2621,7 @@ TCP与UDP比较特殊的就是端口(port)，在TCP方面则另外有所谓的�
 1. `tcp`
 1. `udp`
 
-### 5.6.7 iptables Target Extensions
+### 5.5.7 iptables Target Extensions
 
 iptables可以使用扩展目标模块，并且可以在指定目标后使用`-h`或`--help`选项来接收特定于该目标的帮助文档（`iptables -j DNAT -h`）
 
@@ -2674,7 +2635,7 @@ iptables可以使用扩展目标模块，并且可以在指定目标后使用`-h
 1. `SNAT`
 1. `MASQUERADE`：用于实现自动化SNAT，若出口ip经常变化的话，可以通过该目标来实现SNAT
 
-### 5.6.8 ICMP Packet Rules Comparison: Designed to Control Ping Responses
+### 5.5.8 ICMP Packet Rules Comparison: Designed to Control Ping Responses
 
 **Pattern:**
 
@@ -2684,9 +2645,9 @@ iptables可以使用扩展目标模块，并且可以在指定目标后使用`-h
 
 * `--icmp-type`：后面必须要接ICMP的数据包类型，也可以使用代号
 
-## 5.7 bridge
+## 5.6 bridge
 
-### 5.7.1 bridge link
+### 5.6.1 bridge link
 
 Bridge port
 
@@ -2694,7 +2655,7 @@ Bridge port
 
 1. `bridge link show`
 
-### 5.7.2 bridge fdb
+### 5.6.2 bridge fdb
 
 Forwarding Database entry
 
@@ -2702,17 +2663,17 @@ Forwarding Database entry
 
 1. `bridge fdb show`
 
-### 5.7.3 bridge mdb
+### 5.6.3 bridge mdb
 
 Multicast group database entry
 
-### 5.7.4 bridge vlan
+### 5.6.4 bridge vlan
 
 VLAN filter list
 
-### 5.7.5 bridge monitor
+### 5.6.5 bridge monitor
 
-## 5.8 route
+## 5.7 route
 
 **Pattern:**
 
@@ -2750,7 +2711,7 @@ VLAN filter list
 * `route add -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
 * `route del -net 169.254.0.0 netmask 255.255.0.0 dev enp0s8`
 
-## 5.9 nsenter
+## 5.8 nsenter
 
 nsenter用于在某个网络命名空间下执行某个命令。例如某些docker容器是没有curl命令的，但是又想在docker容器的环境下执行，这个时候就可以在宿主机上使用nsenter
 
@@ -2767,7 +2728,7 @@ nsenter用于在某个网络命名空间下执行某个命令。例如某些dock
 
 * `nsenter -t 123 -n curl baidu.com`
 
-## 5.10 tcpdump
+## 5.9 tcpdump
 
 **Pattern:**
 
@@ -2816,7 +2777,7 @@ nsenter用于在某个网络命名空间下执行某个命令。例如某些dock
 * `tcpdump -i any -w output1.cap`
 * `tcpdump -n -i any -e icmp and host www.baidu.com`
 
-### 5.10.1 tcpdump Conditional Expressions
+### 5.9.1 tcpdump Conditional Expressions
 
 该表达式用于决定哪些数据包将被打印。如果不给定条件表达式，网络上所有被捕获的包都会被打印，否则，只有满足条件表达式的数据包被打印
 
@@ -2836,7 +2797,7 @@ nsenter用于在某个网络命名空间下执行某个命令。例如某些dock
 * `tcp src portrange 100-200`
 * `host www.baidu.com and port 443`
 
-### 5.10.2 tips
+### 5.9.2 tips
 
 如何查看具体的协议，例如ssh协议
 
@@ -2844,7 +2805,7 @@ nsenter用于在某个网络命名空间下执行某个命令。例如某些dock
 
 1. 任意选中一个`length`不为`0`的数据包，右键选择解码（`decode as`），右边`Current`一栏，选择对应的协议即可
 
-### 5.10.3 How to Use tcpdump to Capture HTTP Protocol Data from docker
+### 5.9.3 How to Use tcpdump to Capture HTTP Protocol Data from docker
 
 docker使用的是域套接字，对应的套接字文件是`/var/run/docker.sock`，而域套接字是不经过网卡设备的，因此tcpdump无法直接抓取相应的数据
 
@@ -2879,7 +2840,7 @@ tcpdump -i lo -vv port 18081 -w file2.cap
 docker -H tcp://localhost:18081 images
 ```
 
-## 5.11 tcpkill
+## 5.10 tcpkill
 
 `tcpkill`用于杀死tcp连接，语法与`tcpdump`基本类似。其工作原理非常简单，首先会监听相关的数据报文，获取了`sequence number`之后，然后发起`Reset`报文。因此，当且仅当连接有报文交互的时候，`tcpkill`才能起作用
 
@@ -2907,7 +2868,7 @@ yum install -y dsniff
 
 * `tcpkill -9 -i any host 127.0.0.1 and port 22`
 
-## 5.12 socat
+## 5.11 socat
 
 **Pattern:**
 
@@ -2931,7 +2892,7 @@ yum install -y dsniff
 * `socat TCP-LISTEN:80,fork TCP:www.baidu.com:80`：将本地端口转到远端
 * `socat TCP-LISTEN:12345 EXEC:/bin/bash`：在本地开启shell代理
 
-## 5.13 dhclient
+## 5.12 dhclient
 
 **Pattern:**
 
@@ -2948,7 +2909,7 @@ yum install -y dsniff
 * `dhclient`：获取ip
 * `dhclient -r`：释放ip
 
-## 5.14 arp
+## 5.13 arp
 
 **Examples:**
 
@@ -2956,7 +2917,7 @@ yum install -y dsniff
 * `arp -n`：查看arp缓存，显示ip不显示域名
 * `arp 192.168.56.1`：查看`192.168.56.1`这个ip的mac地址
 
-## 5.15 [arp-scan](https://github.com/royhills/arp-scan)
+## 5.14 [arp-scan](https://github.com/royhills/arp-scan)
 
 **如何安装：**
 
@@ -2985,7 +2946,7 @@ make install
 * `arp-scan -I enp0s8 -l`
 * `arp-scan -I enp0s8 192.168.56.1/24`
 
-## 5.16 ping
+## 5.15 ping
 
 **Options:**
 
@@ -2998,7 +2959,7 @@ make install
 * `ping -c 3 www.baidu.com`
 * `ping -s 1460 -M do baidu.com`：发送大小包大小是1460（+28）字节，且禁止分片
 
-## 5.17 arping
+## 5.16 arping
 
 **Pattern:**
 
@@ -3032,7 +2993,7 @@ make install
     * ![arping-3](/images/Linux-Frequently-Used-Commands/arping-4.png)
     * arp-reply直接指定了目标机器的mac地址，因此直接送达机器A
 
-## 5.18 hping3
+## 5.17 hping3
 
 **安装：**
 
@@ -3058,7 +3019,7 @@ yum install -y hping3
 
 * `hping3 -c 10000 -d 120 -S -w 64 -p 21 --flood --rand-source www.baidu.com`
 
-## 5.19 iperf
+## 5.18 iperf
 
 **网络测速工具，一般用于局域网测试。互联网测速：[speedtest](https://github.com/sivel/speedtest-cli)**
 
@@ -3328,7 +3289,8 @@ yum install -y sysstat
 * `-u`：查看cpu使用率
 * `-q`：查看cpu负载
 * `-r`：查看内存使用情况
-* `-b`：I/O 和传输速率信息状况
+* `-b`：查看I/O和传输速率信息状况
+* `-d`：查看各个磁盘的I/O情况
 * `-B`：查看paging使用情况
 * `-f <filename>`：指定sa日志文件
 * `-P <cpu num>|ALL`：查看某个cpu的统计信息，`ALL`表示所有CPU
@@ -3339,13 +3301,18 @@ yum install -y sysstat
     * `IP`：IP流
     * `TCP`：TCP流
     * `UDP`：UDP流
+* `-h`：以人类可读的形式输出
 
 **Examples:**
 
-* `sar -u 1 10`：输出cpu的相关信息（聚合了所有核）
-* `sar -P ALL -u 1 10`：输出每个核的cpu的相关信息
-* `sar -n DEV 1`：查看网卡实时流量
-* `sar -B 1`：每秒输出一次paging信息
+* `sar -u ALL 1`：输出cpu的相关信息（聚合了所有核）
+* `sar -P ALL 1`：输出每个核的cpu的相关信息
+* `sar -r ALL -h 1`：输出内存相关信息
+* `sar -B 1`：输出paging信息
+* `sar -n TCP,UDP -h 1`：查看TCP/UDP的汇总信息
+* `sar -n DEV -h 1`：查看网卡实时流量
+* `sar -b 1`：查看汇总的I/O信息
+* `sar -d -h 1`：查看每个磁盘的I/O信息
 
 ## 6.8 tsar
 
@@ -3383,7 +3350,7 @@ yum install -y sysstat
 * `delay`：采样间隔
 * `count`：采样次数
 
-**输出信息介绍：**
+**Output Details:**
 
 * `process`
     * `r`：运行中的进程数量（`running`或`waiting`状态
@@ -3425,30 +3392,26 @@ yum install -y sysstat
 
 ## 6.10 mpstat
 
-`mpstat`（`multiprocessor statistics`）是实时监控工具，报告与`CPU`的一些统计信息这些信息都存在`/proc/stat`文件中，在多`CPU`系统里，其不但能查看所有的`CPU`的平均状况的信息，而且能够有查看特定的`CPU`信息，`mpstat`最大的特点是可以查看多核心的`CPU`中每个计算核心的统计数据；而且类似工具`vmstat`只能查看系统的整体`CPU`情况
+`mpstat` (multiprocessor statistics) is a real-time monitoring tool that reports various statistics related to the CPU. These statistics are stored in the `/proc/stat` file. On multi-CPU systems, `mpstat` not only provides information about the average status of all CPUs but also allows you to view statistics for specific CPUs. The greatest feature of `mpstat` is its ability to display statistical data for each individual computing core in multi-core CPUs. In contrast, similar tools like `vmstat` can only provide overall CPU statistics for the entire system.
 
-**输出信息介绍：**
+**Output Details:**
 
-* **`%usr`**：用户`CPU`时间百分比
-* `%nice`：改变过优先级的进程的占用`CPU`时间百分比
-    * `PRI`是比较好理解的，即进程的优先级，或者通俗点说就是程序被`CPU`执行的先后顺序，此值越小进程的优先级别越高。那`NI`呢？就是我们所要说的`nice`值了，其表示进程可被执行的优先级的修正数值。如前面所说，`PRI`值越小越快被执行，那么加入`nice`值后，将会使得`PRI`变为：`PRI(new) = PRI(old) + nice`
-    * 在linux系统中，`nice`值的范围从`-20`到`+19`（不同系统的值范围是不一样的），正值表示低优先级，负值表示高优先级，值为零则表示不会调整该进程的优先级。具有最高优先级的程序，其`nice`值最低，所以在linux系统中，值`-20`使得一项任务变得非常重要；**与之相反，如果任务的`nice`为`+19`，则表示它是一个高尚的、无私的任务，允许所有其他任务比自己享有宝贵的`CPU`时间的更大使用份额，这也就是`nice`的名称的来意**
-    * 进程在创建时被赋予不同的优先级值，而如前面所说，`nice`的值是表示进程优先级值可被修正数据值，因此，每个进程都在其计划执行时被赋予一个`nice`值，这样系统就可以根据系统的资源以及具体进程的各类资源消耗情况，主动干预进程的优先级值。在通常情况下，子进程会继承父进程的`nice`值，比如在系统启动的过程中，`init`进程会被赋予`0`，其他所有进程继承了这个`nice`值（因为其他进程都是`init`的子进程）
-    * **对`nice`值一个形象比喻，假设在一个`CPU`轮转中，有2个runnable的进程`A`和`B`，如果他们的`nice`值都为`0`，假设内核会给他们每人分配`1k`个`CPU`时间片。但是假设进程`A`的`nice`值为`0`，但是`B`的`nice`值为`-10`，那么此时`CPU`可能分别给`A`和`B`分配`1k`和`1.5k`的时间片。故可以形象的理解为，`nice`的值影响了内核分配给进程的`CPU`时间片的多少，时间片越多的进程，其优先级越高，其优先级值（PRI）越低。`%nice`：就是改变过优先级的进程的占用`CPU`的百分比，如上例中就是`0.5k / 2.5k = 1/5 = 20%`**
-    * 由此可见，进程`nice`值和进程优先级不是一个概念，但是进程`nice`值会影响到进程的优先级变化
-* **`%sys`**：系统（内核）`CPU`时间百分比，不包括处理硬中断和软中断的时间
-* **`%iowait`**：在系统有未完成的磁盘`I/O`请求期间，一个或多个`CPU`空闲的时间百分比
-* `%irq`：处理硬中断的`CPU`时间百分比
-* `%soft`：处理软中断的`CPU`时间百分比
-* `%steal`：在管理程序为另一个虚拟处理器提供服务时，一个或多个虚拟`CPU`在非自愿等待中花费的时间百分比
-* `%guest`：一个或多个`CPU`运行虚拟处理器所花费的时间百分比
-* `%gnice`：一个或多个`CPU`运行一个`niced guest`所花费的时间百分
-* **`%idle`**：一个或多个`CPU`空闲且系统没有未完成的磁盘`I/O`请求的时间百分比
+* `%usr`: Show the percentage of CPU utilization that occurred while executing at the user level (application).
+* ` %nice`: Show the percentage of CPU utilization that occurred while executing at the user level with nice priority.
+* `%sys`: Show the percentage of CPU utilization that occurred while executing at the system level (kernel). Note that this does not include time spent servicing hardware and software interrupts.
+* `%iowait`: Show the percentage of time that the CPU or CPUs were idle during which the system had an outstanding disk I/O request.
+* `%irq`: Show the percentage of time spent by the CPU or CPUs to service hardware interrupts.
+* `%soft`: Show the percentage of time spent by the CPU or CPUs to service software interrupts.
+* `%steal`: Show the percentage of time spent in involuntary wait by the virtual CPU or CPUs while the hypervisor was servicing another virtual processor.
+* `%guest`: Show the percentage of time spent by the CPU or CPUs to run a virtual processor.
+* `%gnice`: Show the percentage of time spent by the CPU or CPUs to run a niced guest.
+* `%idle`: Show the percentage of time that the CPU or CPUs were idle and the system did not have an outstanding disk I/O request.
 
 **Examples:**
 
-* `mpstat 2 5`：打印整体信息，间隔2s，打印5次
-* `mpstat -P ALL 2 5`：已单核为粒度打印信息，间隔2s，打印5次
+* `mpstat 2 5`
+* `mpstat -P ALL 2 5`
+* `mpstat -P 0,2,4-7 1`
 
 ## 6.11 iostat
 
@@ -3468,7 +3431,7 @@ yum install -y sysstat
 * `interval`: 打印间隔
 * `count`: 打印几次，不填一直打印
 
-**输出信息介绍：(`man iostat`)**
+**Output Details:(`man iostat`)**
 
 * `cpu`: Search for `CPU Utilization Report` in man page
 * `device`: Search for `Device Utilization Report` in man page
@@ -3758,6 +3721,56 @@ mount      –t debugfs    debugfs /sys/kernel/debug
     # 该命令会分析 sda.blktrace.bin 并输出分析结果
     btt -i sda.blktrace.bin -l sda.d2c_latency
     ```
+
+## 6.20 lsof
+
+`lsof` is used to list open files, including socket files.
+
+**Options:**
+
+* `-U`: selects the listing of UNIX domain socket files
+* `-i <address>`: selects the listing of files any of whose Internet address matches the address specified. Address format: `[46][protocol][@hostname|hostaddr][:service|port]`
+    * `46`: ipv4/ipv6
+    * `protocol`: tcp/udp
+    * `hostname`
+    * `hostaddr`
+    * `service`: like `smtp`
+    * `port`
+* `-p <expr>`: excludes or selects the listing of files for the processes whose optional process IDentification (PID) numbers are in the comma-separated set - e.g., `123` or `123,^456`
+* `+|-w`: Enables (+) or disables (-) the suppression of warning messages
+
+**Examples:**
+
+* `lsof -n | awk '{print $2}' | sort | uniq -c | sort -nr -k 1`: View the number of file handles opened by the process
+* `lsof -i 6tcp@localhost:22`
+* `lsof -i 4tcp@127.0.0.1:22`
+* `lsof -i tcp@127.0.0.1:22`
+* `lsof -i tcp@localhost`
+* `lsof -i tcp:22`
+* `lsof -i :22`
+* `lsof -U -w | grep docker.sock`
+
+## 6.21 fuser
+
+`fuser` is used to identify processes using files or sockets.
+
+**Options:**
+
+* `-n <NAMESPACE>`: Select a different name space. The name spaces `file` (**file names, the default**), `udp` (local UDP ports), and `tcp` (local TCP ports) are supported. For ports, either the port number or the symbolic name can be specified. If there is no ambiguity, the shortcut notation `name/space` (e.g., `80/tcp`) can be used
+    * `fuser /tmp/a.txt` equals to `fuser -n file /tmp/a.txt`
+    * `fuser -n tcp 7061` equals to `fuser 7061/tcp`
+* `-m <NAME>`: `NAME` specifies a file on a mounted file system or a block device that is mounted. All processes accessing files on that file system are listed
+* `-k`: Kill processes accessing the file. Unless changed with `-SIGNAL`, `SIGKILL` is sent
+* `-u`: Append the user name of the process owner to each PID
+* `-v`: Verbose mode
+
+**Examples:**
+
+* `fuser -uv /tmp/a.txt`
+* `fuser -m /tmp -uv`
+* `fuser -uv 80/tcp`
+* `fuser -k /tmp/a.txt`
+* `fuser -k 80/tcp`
 
 # 7 Performance Analysis
 
@@ -4297,22 +4310,69 @@ apt install clang-format-X.Y
 * `dstat -tc -C total,1,2,3,4,5,6`
 * `mpstat 1`
 * `mpstat -P ALL 1`
-* `sar -u 1`
-* `sar -P ALL -u 1`
+* `mpstat -P 0,2,4-7 1`
+* `sar -u ALL 1`
+* `sar -P ALL 1`
 
-#### 11.2.1.2 I/O
+#### 11.2.1.2 Memory
+
+* `dstat -tm --vm --page --swap`
+* `sar -r ALL -h 1`
+
+#### 11.2.1.3 I/O
 
 * `dstat -td`
 * `dstat -td -D total,sda,sdb`
 * `iostat -dtx 1`
-* `sar -d 1`
-* `sar -p -d 1`
+* `sar -b 1`
+* `sar -d -h 1`
 
-#### 11.2.1.3 Network
+#### 11.2.1.4 Network
 
 * `dstat -tn`
 * `dstat -tn -N total,eth0,eth2`
-* `sar -n DEV 1`
+* `sar -n TCP,UDP -h 1`
+* `sar -n DEV -h 1`
+
+#### 11.2.1.5 Analysis
+
+**CPU**:
+
+* `large %nice`: In system monitoring, the `%nice` metric indicates the percentage of CPU time spent executing processes that have had their priority adjusted using the nice command. A high `%nice` value generally means that there are many low-priority tasks running. These tasks have been set to a lower priority to minimize their impact on other higher-priority tasks
+* **`large %iowait`**: indicates that a significant amount of CPU time is being spent waiting for I/O (Input/Output) operations to complete. This is a measure of how much time the CPU is idle while waiting for data transfer to and from storage devices such as hard disks, SSDs, or network file systems. High `%iowait` can be a sign of several underlying issues or conditions:
+    * Disk Bottlenecks
+    * High I/O Demand
+    * Insufficient Disk Bandwidth
+    * Disk Fragmentation
+    * Network Storage Latency
+    * Hardware Issues
+* `large %steal`: `%steal` value in system monitoring refers to the percentage of CPU time that the virtual machine (VM) was ready to run but had to wait because the hypervisor was servicing another virtual CPU (vCPU) on the physical host. This is a specific metric in virtualized environments and is typically indicative of resource contention on the physical host. Here are some key points and possible reasons for a high `%steal` value:
+    * Overcommitted Host Resources
+    * High Load on Other VMs
+    * Inadequate Host Capacity
+    * Suboptimal Resource Allocation
+* **`large %irq`**: indicates that a significant portion of the CPU's time is being spent handling hardware interrupts. Interrupts are signals sent to the CPU by hardware devices (like network cards, disk controllers, and other peripherals) to indicate that they need processing. While handling interrupts is a normal part of system operation, an unusually high `%irq` can indicate potential issues or inefficiencies:
+    * High Network Traffic
+    * High Disk I/O
+    * Faulty Hardware
+    * Driver Issues
+    * Interrupt Storms
+* **`large %soft`**: indicates that a significant portion of the CPU's time is being spent handling software interrupts, which are used in many operating systems to handle tasks that require timely processing but can be deferred for a short period. Softirqs are typically used for networking, disk I/O, and other system-level tasks that are not as critical as hardware interrupts but still need prompt attention
+    * High Network Traffic
+    * High Disk I/O
+    * Interrupt Coalescing
+
+**Memory**:
+
+* `large majpf`: indicates that the system is experiencing a lot of disk I/O due to pages being read from disk into memory. This can be a sign of insufficient physical memory (RAM) for the workload being handled, leading to the following scenarios:
+    * Memory Overcommitment
+    * Heavy Memory Usage
+    * Insufficient RAM
+* `large minpf`: indicates that the system is frequently accessing pages that are not in the process's working set but are still in physical memory. While minor page faults are less costly than major page faults because they do not require disk I/O, a large number of them can still have performance implications. Here are some reasons and implications for a high number of minor page faults:
+    * Frequent Context Switching
+    * Large Working Sets
+    * Memory-Mapped Files
+    * Shared Libraries
 
 ### 11.2.2 Find process with most CPU consumption
 
@@ -4342,15 +4402,30 @@ apt install clang-format-X.Y
 ### 11.2.7 Find process listening on specific port
 
 * `lsof -n -i :80`
+* `fuser -uv 80/tcp`
 * `ss -npl | grep 80`
 
-### 11.2.8 Get full command of a process
+### 11.2.8 Find process using specific file
+
+* `lsof /opt/config/xxx`
+* `fuser -uv /opt/config/xxx`
+
+### 11.2.9 Get full command of a process
 
 * `lsof -p xxx | grep txt`
 
-### 11.2.9 Get start time of a process
+### 11.2.10 Get start time of a process
 
 * `ps -p xxx -o lstart`
+
+### 11.2.11 Get start time of a tcp connection
+
+* `lsof -i :<port>`: Get pid and fd
+* `ll /proc/<pid>/fd/<fd>`: The create time of this file is the create time of corresponding connection
+
+### 11.2.12 How to kill a tcp connection
+
+* `tcpkill -9 -i any host 127.0.0.1 and port 22`
 
 ## 11.3 Assorted
 
