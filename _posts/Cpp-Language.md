@@ -2323,6 +2323,54 @@ Class { T member = { arg1, arg2, ... }; };
 Class { T member = { .des1 = arg1, .des2 { arg2 } ... }; }; (since C++20)
 ```
 
+### 4.1.1 Aggregate initialization
+
+[Aggregate initialization](https://en.cppreference.com/w/cpp/language/aggregate_initialization)
+
+Initializes an aggregate from an initializer list. It is a form of list-initialization
+
+An aggregate is one of the following types:
+
+1. array types
+1. class types that has
+    * no user-declared constructors
+    * no private or protected direct non-static data members
+    * no base classes
+    * ...
+
+Each member can choose to use copy constructor or move constructor independently:
+
+```cpp
+#include <iostream>
+
+class Foo {
+public:
+    Foo() = default;
+    Foo(const Foo& foo) { std::cout << "Foo::Foo(const Foo&)" << std::endl; }
+    Foo(Foo&& foo) { std::cout << "Foo::Foo(Foo&&)" << std::endl; }
+};
+
+class Bar {
+public:
+    Bar() = default;
+    Bar(const Bar&) { std::cout << "Bar::Bar(const Bar&)" << std::endl; }
+    Bar(Bar&&) { std::cout << "Bar::Bar(Bar&&)" << std::endl; }
+};
+
+struct Container {
+    Foo foo;
+    Bar bar;
+    int num;
+};
+
+int main() {
+    Foo foo;
+    Bar bar;
+    Container c{.foo = foo, .bar = std::move(bar)};
+    return 0;
+}
+```
+
 ## 4.2 operator overloading
 
 * [operator overloading](https://en.cppreference.com/w/cpp/language/operators)
@@ -4883,6 +4931,10 @@ receiveFoo(Foo&&)
 
 ## 11.2 Move Semantics
 
+**For argument passing:**
+
+* If a function receives an object of type `T`(not reference type), you pass lvalue, then copy constructor is called to create the object; you pass rvalue, then move constructor is called to create the object
+
 ```cpp
 #include <iostream>
 #include <vector>
@@ -4890,20 +4942,31 @@ receiveFoo(Foo&&)
 class Foo {
 public:
     Foo() { std::cout << "Foo::Foo()" << std::endl; }
-    Foo(const Foo& foo) { std::cout << "Foo::Foo(const Foo&)" << std::endl; }
-    Foo(Foo&& foo) { std::cout << "Foo::Foo(Foo&&)" << std::endl; }
+    Foo(const Foo&) { std::cout << "Foo::Foo(const Foo&)" << std::endl; }
+    Foo(Foo&&) { std::cout << "Foo::Foo(Foo&&)" << std::endl; }
     Foo& operator=(const Foo&) {
-        std::cout << "Foo::operator=" << std::endl;
+        std::cout << "Foo::operator=(const Foo&)" << std::endl;
         return *this;
     }
     Foo& operator=(Foo&&) {
-        std::cout << "Foo::operator=&&" << std::endl;
+        std::cout << "Foo::operator=(Foo&&)" << std::endl;
         return *this;
     }
 };
 
 Foo getFoo() {
     return {};
+}
+
+class Bar {
+public:
+    Bar() = default;
+    Bar(const Bar&) { std::cout << "Bar::Bar(const Bar&)" << std::endl; }
+    Bar(Bar&&) { std::cout << "Bar::Bar(Bar&&)" << std::endl; }
+};
+
+void receiveBar(Bar bar) {
+    std::cout << "receiveBar(Bar)" << std::endl;
 }
 
 int main() {
@@ -4929,6 +4992,11 @@ int main() {
     std::cout << "\nassign with std::move" << std::endl;
     foo_assign = std::move(getFoo());
 
+    Bar bar1, bar2;
+    std::cout << "\npass without std::move" << std::endl;
+    receiveBar(bar1);
+    std::cout << "\npass with std::move" << std::endl;
+    receiveBar(std::move(bar2));
     return 0;
 }
 ```
@@ -4951,11 +5019,19 @@ Foo::Foo(Foo&&)
 assign without std::move
 Foo::Foo()
 Foo::Foo()
-Foo::operator=&&
+Foo::operator=(Foo&&)
 
 assign with std::move
 Foo::Foo()
-Foo::operator=&&
+Foo::operator=(Foo&&)
+
+pass without std::move
+Bar::Bar(const Bar&)
+receiveBar(Bar)
+
+pass with std::move
+Bar::Bar(Bar&&)
+receiveBar(Bar)
 ```
 
 ## 11.3 Structured Bindings

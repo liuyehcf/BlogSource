@@ -640,6 +640,12 @@ gdb
 (gdb) continue
 ```
 
+## 4.3 How to ignore interrupt of sepcific signal
+
+```
+(gdb) handle SIGSEGV pass noprint nostop
+```
+
 # 5 gdb-dashboard
 
 [gdb-dashboard](https://github.com/cyrus-and/gdb-dashboard)在`gdb`的基础之上，提供了一个更加友好的格式化界面
@@ -659,6 +665,8 @@ LLDB is similar to GDB in most operations, but there are some differences (`help
 1. `lldb -c <core> <binary>`: Analyze core file
 1. `list -<count>`: Print previous `<count>` lines
 1. `lldb <binary> -- <args>`
+1. `process handle -p true -s false SIGSEGV`
+    * When debugging process with JNI, you may receive many interruptions from `libjvm.so`, like `stop reason = signal SIGSEGV: address access protected`, which is truly annoying, so you can use this to ignore them
 
 # 7 Reference
 

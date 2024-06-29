@@ -826,6 +826,12 @@ Value at position 3: 4
 Value at position 3 from the end: 4
 ```
 
+## 11.3 Adaptors
+
+1. `std::make_reverse_iterator`
+1. `std::make_move_iterator`
+1. `make_const_iterator`
+
 # 12 limits
 
 1. `std::numeric_limits`

@@ -117,3 +117,31 @@ First, start a hive cluster by [docker-flink](https://github.com/big-data-europe
 cd docker-flink
 docker-compose up -d
 ```
+
+# 4 Paimon With Trino
+
+[Doc](https://paimon.apache.org/docs/master/engines/trino/)
+
+Firstly, assuming that you've already started a trino container named `trino`, and can access a hdfs cluster. This can be done according to {% post_link Trino-Trial %}
+
+```sh
+git clone https://github.com/apache/paimon-trino.git
+cd paimon-trino/paimon-trino-427
+mvn clean install -DskipTests
+
+cd target
+mkdir plugin
+tar -zxf paimon-trino-427-*.tar.gz -C plugin
+docker cp plugin/paimon trino:/usr/lib/trino/plugin
+
+docker exec -it trino bash -c 'echo -e "connector.name=paimon\nmetastore=filesystem\nwarehouse=hdfs://namenode:8020/user/paimon" > /etc/trino/catalog/paimon.properties'
+docker restart trino
+docker exec -it trino trino --catalog paimon
+```
+
+How to clean:
+
+```sh
+docker exec -it --user root trino bash -c 'rm -f /etc/trino/catalog/paimon.properties'
+docker exec -it --user root trino bash -c 'rm -rf /usr/lib/trino/plugin/paimon'
+```

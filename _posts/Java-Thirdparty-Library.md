@@ -96,10 +96,10 @@ categories:
 <Configuration status="WARN">
     <Appenders>
         <Console name="ConsoleAppender" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %style{[%thread]}{bright} %highlight{[%-5level] [%logger{36}]}{STYLE=Logback} - %msg%n"/>
         </Console>
-        <RollingRandomAccessFile name="RollingRandomAccessFileAppender" fileName="logs/app.log" filePattern="logs/app-%d{yyyy-MM-dd}-%i.log.gz">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"/>
+        <RollingRandomAccessFile name="RollingRandomAccessFileAppender" fileName="logs/app.log" filePattern="logs/app-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %style{[%thread]}{bright} %highlight{[%-5level] [%logger{36}]}{STYLE=Logback} - %msg%n"/>
             <Policies>
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
                 <SizeBasedTriggeringPolicy size="10MB"/>
@@ -117,15 +117,35 @@ categories:
         </Root>
     </Loggers>
 </Configuration>
-
 ```
 
 ### 2.1.3 Tips
 
 #### 2.1.3.1 Command-Line Options
 
-* 指定配置文件路径：`-Dlog4j.configurationFile=path/to/log4j2.xml`
-* 开启debug模式：`-Dlog4j.debug=true`
+* Specify configuration path: `-Dlog4j.configurationFile=path/to/log4j2.xml`
+* Enable debug mode (refers to debug mode of `log4j2` itself)：`-Dlog4j.debug=true`
+
+#### 2.1.3.2 Logger Name Pattern
+
+Syntanx: `%logger{precision}` or `%c{precision}`
+
+| Pattern | LoggerName | Result |
+|:--|:--|:--|
+| `%c{1}` | `org.apache.commons.Foo` | `Foo` |
+| `%c{2}` | `org.apache.commons.Foo` | `commons.Foo` |
+| `%c{1.}` | `org.apache.commons.Foo` | `o.a.c.Foo` |
+
+#### 2.1.3.3 Color Configuration
+
+[Pattern Layout](https://logging.apache.org/log4j/2.x/manual/layouts.html#pattern-layout)
+
+* {% raw %}%highlight{pattern}{style}{% endraw %}
+    * {% raw %}%highlight{[%thread] [%-5level] [%logger{36}]}{FATAL=red blink, ERROR=red, WARN=yellow, INFO=green, DEBUG=cyan, TRACE=blue}{% endraw %}
+    * {% raw %}%highlight{[%-5level] [%logger{36}]}{STYLE=Logback}{% endraw %}
+* {% raw %}%style{pattern}{ANSI style}{% endraw %}
+    * {% raw %}%style{%logger}{red}{% endraw %}
+    * {% raw %}%style{[%thread]}{bright}{% endraw %}
 
 ## 2.2 Logback
 
@@ -545,6 +565,22 @@ categories:
 * [在logback中使用spring的属性值](https://stackoverflow.com/questions/36743386/accessing-the-application-properties-in-logback-xml)
 * [SLF4J与Logback、Log4j1、Log4j2、JCL、J.U.L是如何关联使用的](https://blog.csdn.net/yangzl2008/article/details/81503579)
 * [layout官方文档](http://logback.qos.ch/manual/layouts.html)
+
+## 2.3 Tips
+
+### 2.3.1 How to make sure there is only one logging implementation
+
+Use `mvn dependency:tree` to check dependencies:
+
+* `log4j`:
+    * `log4j:log4j`
+* `log4j2`:
+    * `org.apache.logging.log4j:*`
+* `logback`:
+    * `ch.qos.logback:*`
+* `reload4j`:
+    * `org.slf4j:slf4j-reload4j`
+    * `ch.qos.reload4j:reload4j`
 
 # 3 Test
 
@@ -2167,4 +2203,222 @@ dom4j几乎所有的数据类型都继承自Node接口，下面介绍几个常�
 * [dom4j通过 xpath 处理xmlns](https://www.cnblogs.com/zxcgy/p/6697557.html)
 
 # 9 Cglib
+
+# 10 JMH
+
+比较的序列化框架如下
+
+1. `fastjson`
+1. `kryo`
+1. `hessian`
+1. `java-builtin`
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <groupId>org.liuyehcf</groupId>
+    <artifactId>jmh</artifactId>
+    <version>1.0.0</version>
+    <modelVersion>4.0.0</modelVersion>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-core</artifactId>
+            <version>1.21</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+            <version>1.21</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.caucho</groupId>
+            <artifactId>hessian</artifactId>
+            <version>4.0.51</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>4.0.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.62</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+```
+
+```java
+package org.liuyehcf.jmh.serialize;
+
+import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.runner.Runner;
+import org.openjdk.jmh.runner.options.Options;
+import org.openjdk.jmh.runner.options.OptionsBuilder;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * @author hechenfeng
+ * @date 2019/10/15
+ */
+@Warmup(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
+@Measurement(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
+@Fork(1)
+@BenchmarkMode(Mode.AverageTime)
+@OutputTimeUnit(TimeUnit.NANOSECONDS)
+public class SerializerCmp {
+
+    private static final Map<String, String> MAP_SIZE_1 = new HashMap<>();
+    private static final Map<String, String> MAP_SIZE_10 = new HashMap<>();
+    private static final Map<String, String> MAP_SIZE_100 = new HashMap<>();
+
+    static {
+        for (int i = 0; i < 1; i++) {
+            MAP_SIZE_1.put(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+        }
+
+        for (int i = 0; i < 10; i++) {
+            MAP_SIZE_10.put(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+        }
+
+        for (int i = 0; i < 100; i++) {
+            MAP_SIZE_100.put(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+        }
+    }
+
+    @Benchmark
+    public void json_size_1() {
+        CloneUtils.jsonClone(MAP_SIZE_1);
+    }
+
+    @Benchmark
+    public void kryo_size_1() {
+        CloneUtils.kryoClone(MAP_SIZE_1);
+    }
+
+    @Benchmark
+    public void hessian_size_1() {
+        CloneUtils.hessianClone(MAP_SIZE_1);
+    }
+
+    @Benchmark
+    public void java_size_1() {
+        CloneUtils.javaClone(MAP_SIZE_1);
+    }
+
+    @Benchmark
+    public void json_size_10() {
+        CloneUtils.jsonClone(MAP_SIZE_10);
+    }
+
+    @Benchmark
+    public void kryo_size_10() {
+        CloneUtils.kryoClone(MAP_SIZE_10);
+    }
+
+    @Benchmark
+    public void hessian_size_10() {
+        CloneUtils.hessianClone(MAP_SIZE_10);
+    }
+
+    @Benchmark
+    public void java_size_10() {
+        CloneUtils.javaClone(MAP_SIZE_10);
+    }
+
+    @Benchmark
+    public void json_size_100() {
+        CloneUtils.jsonClone(MAP_SIZE_100);
+    }
+
+    @Benchmark
+    public void kryo_size_100() {
+        CloneUtils.kryoClone(MAP_SIZE_100);
+    }
+
+    @Benchmark
+    public void hessian_size_100() {
+        CloneUtils.hessianClone(MAP_SIZE_100);
+    }
+
+    @Benchmark
+    public void java_size_100() {
+        CloneUtils.javaClone(MAP_SIZE_100);
+    }
+
+    public static void main(String[] args) throws Exception {
+        Options opt = new OptionsBuilder()
+                .include(SerializerCmp.class.getSimpleName())
+                .build();
+
+        new Runner(opt).run();
+    }
+}
+```
+
+**注解含义解释**
+
+1. `Warmup`：配置预热参数
+    * `iterations`: 预测执行次数
+    * `time`：每次执行的时间
+    * `timeUnit`：每次执行的时间单位
+1. `Measurement`：配置测试参数
+    * `iterations`: 测试执行次数
+    * `time`：每次执行的时间
+    * `timeUnit`：每次执行的时间单位
+1. `Fork`：总共运行几轮
+1. `BenchmarkMode`：衡量的指标，包括平均值，峰值等
+1. `OutputTimeUnit`：输出结果的时间单位
+
+**输出**
+
+```
+...
+
+Benchmark                       Mode  Cnt      Score       Error  Units
+SerializerCmp.hessian_size_1    avgt    5   5307.286 ±   327.709  ns/op
+SerializerCmp.hessian_size_10   avgt    5   8745.407 ±   248.948  ns/op
+SerializerCmp.hessian_size_100  avgt    5  47200.123 ±  2167.454  ns/op
+SerializerCmp.java_size_1       avgt    5   4959.845 ±   300.456  ns/op
+SerializerCmp.java_size_10      avgt    5  12948.638 ±   229.580  ns/op
+SerializerCmp.java_size_100     avgt    5  97033.259 ±  1465.232  ns/op
+SerializerCmp.json_size_1       avgt    5    631.037 ±    39.292  ns/op
+SerializerCmp.json_size_10      avgt    5   4364.215 ±   740.259  ns/op
+SerializerCmp.json_size_100     avgt    5  57205.805 ±  4211.084  ns/op
+SerializerCmp.kryo_size_1       avgt    5   1780.679 ±    84.639  ns/op
+SerializerCmp.kryo_size_10      avgt    5   5426.511 ±   264.606  ns/op
+SerializerCmp.kryo_size_100     avgt    5  48886.075 ± 13722.655  ns/op
+```
+
+## 10.1 参考
+
+* [JMH: 最装逼，最牛逼的基准测试工具套件](https://www.jianshu.com/p/0da2988b9846)
+* [使用JMH做Java微基准测试](https://www.jianshu.com/p/09837e2b4408)
 

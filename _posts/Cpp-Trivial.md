@@ -2164,14 +2164,18 @@ EOF
 
 javac HelloWorld.java
 
+# libjvm.so may be in (${JAVA_HOME}/lib/server, ${JAVA_HOME}/jre/lib/amd64/server)
+JVM_SO_PATH=$(find $(readlink -f ${JAVA_HOME}) -name "libjvm.so")
+JVM_SO_PATH=${JVM_SO_PATH%/*}
+
 # Compile way 1 (Please set JAVA_HOME first)
-gcc -o build/jni_demo jni_demo.cpp -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" -L"$JAVA_HOME/lib/server" -lstdc++ -std=gnu++17 -ljvm && LD_LIBRARY_PATH=$JAVA_HOME/lib/server build/jni_demo
+gcc -o build/jni_demo jni_demo.cpp -I"${JAVA_HOME}/include" -I"${JAVA_HOME}/include/linux" -L"${JVM_SO_PATH}" -lstdc++ -std=gnu++17 -ljvm && LD_LIBRARY_PATH=${JVM_SO_PATH} build/jni_demo
 
 # Compile way 2 (Please set JAVA_HOME first)
-C_INCLUDE_PATH=$JAVA_HOME/include:$JAVA_HOME/include/linux:${C_INCLUDE_PATH} \
-CPLUS_INCLUDE_PATH=$JAVA_HOME/include:$JAVA_HOME/include/linux:${CPLUS_INCLUDE_PATH} \
-LIBRARY_PATH=$JAVA_HOME/lib/server:${LIBRARY_PATH} \
-gcc -o build/jni_demo jni_demo.cpp -lstdc++ -std=gnu++17 -ljvm && LD_LIBRARY_PATH=$JAVA_HOME/lib/server build/jni_demo
+C_INCLUDE_PATH=${JAVA_HOME}/include:${JAVA_HOME}/include/linux:${C_INCLUDE_PATH} \
+CPLUS_INCLUDE_PATH=${JAVA_HOME}/include:${JAVA_HOME}/include/linux:${CPLUS_INCLUDE_PATH} \
+LIBRARY_PATH=${JVM_SO_PATH}:${LIBRARY_PATH} \
+gcc -o build/jni_demo jni_demo.cpp -lstdc++ -std=gnu++17 -ljvm && LD_LIBRARY_PATH=${JVM_SO_PATH} build/jni_demo
 ```
 
 Output:
@@ -2376,15 +2380,19 @@ EOF
 
 javac MemoryAllocator.java
 
-C_INCLUDE_PATH=$JAVA_HOME/include:$JAVA_HOME/include/linux:${C_INCLUDE_PATH} \
-CPLUS_INCLUDE_PATH=$JAVA_HOME/include:$JAVA_HOME/include/linux:${CPLUS_INCLUDE_PATH} \
-LIBRARY_PATH=$JAVA_HOME/lib/server:${LIBRARY_PATH} \
+# libjvm.so may be in (${JAVA_HOME}/lib/server, ${JAVA_HOME}/jre/lib/amd64/server)
+JVM_SO_PATH=$(find $(readlink -f ${JAVA_HOME}) -name "libjvm.so")
+JVM_SO_PATH=${JVM_SO_PATH%/*}
+
+C_INCLUDE_PATH=${JAVA_HOME}/include:${JAVA_HOME}/include/linux:${C_INCLUDE_PATH} \
+CPLUS_INCLUDE_PATH=${JAVA_HOME}/include:${JAVA_HOME}/include/linux:${CPLUS_INCLUDE_PATH} \
+LIBRARY_PATH=${JVM_SO_PATH}:${LIBRARY_PATH} \
 gcc -o build/jni_memory_leak_demo jni_memory_leak_demo.cpp -lstdc++ -std=gnu++17 -ljvm
 
-LD_LIBRARY_PATH=$JAVA_HOME/lib/server build/jni_memory_leak_demo alloc_by_cpp keep
-LD_LIBRARY_PATH=$JAVA_HOME/lib/server build/jni_memory_leak_demo alloc_by_cpp release use_frame
-LD_LIBRARY_PATH=$JAVA_HOME/lib/server build/jni_memory_leak_demo alloc_by_java keep use_frame
-LD_LIBRARY_PATH=$JAVA_HOME/lib/server build/jni_memory_leak_demo alloc_by_java release
+LD_LIBRARY_PATH=${JVM_SO_PATH} build/jni_memory_leak_demo alloc_by_cpp keep
+LD_LIBRARY_PATH=${JVM_SO_PATH} build/jni_memory_leak_demo alloc_by_cpp release use_frame
+LD_LIBRARY_PATH=${JVM_SO_PATH} build/jni_memory_leak_demo alloc_by_java keep use_frame
+LD_LIBRARY_PATH=${JVM_SO_PATH} build/jni_memory_leak_demo alloc_by_java release
 ```
 
 ### 9.1.3 Work With Spring fat-jar
@@ -2655,18 +2663,22 @@ int main(int argc, char* argv[]) {
 }
 EOF
 
-C_INCLUDE_PATH=$JAVA_HOME/include:$JAVA_HOME/include/linux:${C_INCLUDE_PATH} \
-CPLUS_INCLUDE_PATH=$JAVA_HOME/include:$JAVA_HOME/include/linux:${CPLUS_INCLUDE_PATH} \
-LIBRARY_PATH=$JAVA_HOME/lib/server:${LIBRARY_PATH} \
+# libjvm.so may be in (${JAVA_HOME}/lib/server, ${JAVA_HOME}/jre/lib/amd64/server)
+JVM_SO_PATH=$(find $(readlink -f ${JAVA_HOME}) -name "libjvm.so")
+JVM_SO_PATH=${JVM_SO_PATH%/*}
+
+C_INCLUDE_PATH=${JAVA_HOME}/include:${JAVA_HOME}/include/linux:${C_INCLUDE_PATH} \
+CPLUS_INCLUDE_PATH=${JAVA_HOME}/include:${JAVA_HOME}/include/linux:${CPLUS_INCLUDE_PATH} \
+LIBRARY_PATH=${JVM_SO_PATH}:${LIBRARY_PATH} \
 gcc -o build/jni_spring_fat_jar_demo jni_spring_fat_jar_demo.cpp -lstdc++ -std=gnu++17 -ljvm
 
-LD_LIBRARY_PATH=$JAVA_HOME/lib/server build/jni_spring_fat_jar_demo normal java/target/test-spring-fatjar.jar org.apache.hadoop.fs.LocalFileSystem
-LD_LIBRARY_PATH=$JAVA_HOME/lib/server build/jni_spring_fat_jar_demo spring java/target/test-spring-fatjar.jar org.apache.hadoop.fs.LocalFileSystem,org.liuyehcf.Main
+LD_LIBRARY_PATH=${JVM_SO_PATH} build/jni_spring_fat_jar_demo normal java/target/test-spring-fatjar.jar org.apache.hadoop.fs.LocalFileSystem
+LD_LIBRARY_PATH=${JVM_SO_PATH} build/jni_spring_fat_jar_demo spring java/target/test-spring-fatjar.jar org.apache.hadoop.fs.LocalFileSystem,org.liuyehcf.Main
 ```
 
 ## 9.2 libhdfs
 
-[](https://github.com/apache/hadoop/tree/trunk/hadoop-hdfs-project/hadoop-hdfs-native-client/src/main/native/libhdfs)
+[hadoop-libhdfs](https://github.com/apache/hadoop/tree/trunk/hadoop-hdfs-project/hadoop-hdfs-native-client/src/main/native/libhdfs)
 
 **`getJNIEnv`:**
 
@@ -2693,6 +2705,90 @@ LD_LIBRARY_PATH=$JAVA_HOME/lib/server build/jni_spring_fat_jar_demo spring java/
  * @return The JNIEnv* corresponding to the thread.
  */
 JNIEnv* getJNIEnv(void)
+```
+
+**Build libhdfs, this works well with tag `rel/release-3.4.0`**
+
+* You need to download [hadoop](https://github.com/apache/hadoop) somewhere, and set project path to env `export HADOOP_PATH=/path/to/hadoop`
+
+```sh
+mkdir -p libhdfs_jni
+cd libhdfs_jni
+
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.16)
+
+project(libhdfs_jni)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+set(HADOOP_PATH $ENV{HADOOP_PATH})
+if("${HADOOP_PATH}" STREQUAL "")
+    message(FATAL_ERROR "env 'HADOOP_PATH' is required")
+endif()
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
+
+# Add target library
+set(LIBHDFS_PATH ${HADOOP_PATH}/hadoop-hdfs-project/hadoop-hdfs-native-client/src/main/native/libhdfs)
+file(GLOB LIBHDFS_SOURCES "${LIBHDFS_PATH}/*.c" "${LIBHDFS_PATH}/os/posix/*.c")
+message(STATUS "LIBHDFS_SOURCES: ${LIBHDFS_SOURCES}")
+add_library(${PROJECT_NAME} ${LIBHDFS_SOURCES})
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${CMAKE_SOURCE_DIR}/include # for empty config.h
+    ${LIBHDFS_PATH}
+    ${LIBHDFS_PATH}/include
+    ${LIBHDFS_PATH}/os
+    ${LIBHDFS_PATH}/os/posix)
+
+# Add x-platform dependency
+add_definitions(-DUSE_X_PLATFORM_DIRENT)
+set(X_PLATFORM_PATH ${HADOOP_PATH}/hadoop-hdfs-project/hadoop-hdfs-native-client/src/main/native/libhdfspp/lib/x-platform)
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${X_PLATFORM_PATH}/..)
+
+# Dependency jvm
+set(JAVA_HOME $ENV{JAVA_HOME})
+if("${JAVA_HOME}" STREQUAL "")
+    message(FATAL_ERROR "env 'JAVA_HOME' is required")
+endif()
+# For high jdk version
+file(GLOB LIB_JVM ${JAVA_HOME}/lib/server/libjvm.so)
+if("${LIB_JVM}" STREQUAL "")
+    # For low jdk version
+    file(GLOB_RECURSE LIB_JVM ${JAVA_HOME}/jre/lib/*/server/libjvm.so)
+    if("${LIB_JVM}" STREQUAL "")
+    message(FATAL_ERROR "cannot find libjvm.so in ${JAVA_HOME}")
+    endif()
+endif()
+add_library(jvm SHARED IMPORTED)
+set_target_properties(jvm PROPERTIES IMPORTED_LOCATION ${LIB_JVM})
+target_include_directories(jvm INTERFACE ${JAVA_HOME}/include)
+target_include_directories(jvm INTERFACE ${JAVA_HOME}/include/linux)
+target_link_libraries(${PROJECT_NAME} PRIVATE jvm)
+EOF
+
+mkdir include
+touch include/config.h
+
+cmake -B build && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+```
+
+## 9.3 Tips
+
+### 9.3.1 GC vs. signal SIGSEGV
+
+Here is an assumption: Jvm will use signal `SIGSEGV` to indicate that the gc process should run. And you can check it by `gdb` or `lldb` with a jni program, during which you may be interrupted frequently by `SIGSEGV`
+
+```
+Process 2494122 stopped
+* thread #1, name = 'jni_demo', stop reason = signal SIGSEGV: invalid address (fault address: 0x0)
+    frame #0: 0x00007fffe7c842b9
+->  0x7fffe7c842b9: movl   (%rsi), %eax
+    0x7fffe7c842bb: leaq   0xf8(%rbp), %rsi
+    0x7fffe7c842c2: vmovdqu %ymm0, (%rsi)
+    0x7fffe7c842c6: vmovdqu %ymm7, 0x20(%rsi)
 ```
 
 # 10 Assorted

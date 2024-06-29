@@ -13,9 +13,33 @@ categories:
 
 <!--more-->
 
-# 1 java
+# 1 Install JDK
 
-## 1.1 Execute
+From [Java Downloads](https://www.oracle.com/java/technologies/downloads/), you can find `JDK 22`, `JDK 21`, `JDK 17`, and even `JDK 8`
+
+* For `JDK 8`
+    ```sh
+    # you need to login in first, can you can download, it is stupid
+    tar -zxvf jdk-8u411-linux-x64.tar.gz -C /usr/lib/jvm
+    ```
+
+* For `JDK 17`
+    ```sh
+    wget https://download.oracle.com/java/17/latest/jdk-17_linux-x64_bin.tar.gz
+    tar -zxvf jdk-17_linux-x64_bin.tar.gz -C /usr/lib/jvm
+    ```
+
+* For `JDK 22`
+    ```sh
+    wget https://download.oracle.com/java/22/latest/jdk-22_linux-x64_bin.tar.gz
+    tar -zxvf jdk-22_linux-x64_bin.tar.gz -C /usr/lib/jvm
+    ```
+
+# 2 Builtin
+
+## 2.1 java
+
+### 2.1.1 Execute
 
 * `java -cp /path/aaa.jar com.liuyehcf.demo.MyMain arg1 arg2`：将`/path/aaa.jar`添加到`classpath`中
 * `java -cp /path/aaa.jar:/path/bbb.jar com.liuyehcf.demo.MyMain arg1 arg2`：将`/path/aaa.jar`和`/path/bbb.jar`添加到`classpath`中
@@ -23,7 +47,7 @@ categories:
 * `java -cp "/path/*":"/path2/*" com.liuyehcf.demo.MyMain arg1 arg2`：将`/path`以及`/path2`目录下的所谓`class`文件以及`jar`文件都添加到`classpath`中
 * `java -jar /path/aaa.jar arg1 arg2`：运行jar归档文件中指定的`main`函数
 
-## 1.2 Enable Debug
+### 2.1.2 Enable Debug
 
 **Java 1.4 及更早版本: `-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=*:8000,suspend=n`**
 
@@ -44,7 +68,7 @@ categories:
 * `suspend=n`：`JVM`启动后不挂起，立即运行
 * `address=*:8000`：在所有网络接口上监听`8000`端口。同`0.0.0.0`
 
-# 2 jps
+## 2.2 jps
 
 列出正在运行的虚拟机进程，并显示虚拟机执行主类名称以及这些进程的**本地虚拟机唯一`ID(Local Virtual Machine Identifier, LVMID)`**
 
@@ -63,7 +87,7 @@ categories:
 * `-l`：输出主类的全名，如果进程执行的是`Jar`包，输出`Jar`路径
 * `-v`：输出虚拟机进程启动时的`JVM`参数
 
-# 3 jstat
+## 2.3 jstat
 
 `jstat(JVM Statistics Monitoring Tool)`是用于监视虚拟机各种运行状态信息的命令行工具
 
@@ -109,7 +133,7 @@ categories:
 * **`jstat -gc <vmid> 1000 1000`：查看`JVM`内存使用**
 * **`jstat -gcutil <vmid> 1000 1000`：查看`JVM`内存使用（百分比）**
 
-# 4 jinfo
+## 2.4 jinfo
 
 `jinfo(Configuration Info for Java)`的作用是实时地查看和调整虚拟机各项参数
 
@@ -130,7 +154,7 @@ categories:
     * `jinfo -flag CICompilerCount 1874`：显示指定项的默认值
 * `-sysprops`：把虚拟机进程的System.getProperties()的内容打印出来
 
-# 5 jmap
+## 2.5 jmap
 
 `jmap(Memory Map for Java)`命令用于生成堆转储快照(一般称为`heapdump`或`dump`文件)
 
@@ -157,7 +181,7 @@ categories:
 * `jmap -histo <vmid> | sort -k 2 -g -r | less`：统计堆栈中对象的内存信息，按照对象实例个数降序打印
 * `jmap -histo <vmid> | sort -k 3 -g -r | less`：统计堆栈中对象的内存信息，按照对象占用内存大小降序打印
 
-# 6 jhat
+## 2.6 jhat
 
 `jhat`是虚拟机堆转储快照分析工具
 
@@ -186,7 +210,7 @@ categories:
         * Show finalizer summary
         * Execute Object Query Language (OQL) query
 
-# 7 jstack
+## 2.7 jstack
 
 `jstack`是`Java`堆栈跟踪工具
 
@@ -208,15 +232,15 @@ categories:
 
 **在JDK1.5中，java.lang.Thread类新增一个getAllStackTraces()方法用于获取虚拟机中所有线程的StackTraceElement对象，使用这个对象可以通过简单的几行代码就能完成jstack的大部分功能，在实际项目中不妨调用这个方法做个管理员页面，可以随时使用浏览器来查看线程堆栈**
 
-# 8 jad
+## 2.8 jad
 
 Java反编译工具，[下载地址](http://www.javadecompilers.com/jad)
 
-# 9 java_home
+## 2.9 java_home
 
 **`/usr/libexec/java_home -V`：用于查看本机上所有版本java的安装目录**
 
-# 10 jar
+## 2.10 jar
 
 **制作归档文件：：`jar cvf xxx.jar -C ${target_dir1} ${dir_or_file1} -C ${target_dir2} ${dir_or_file2} ...`**
 
@@ -231,7 +255,7 @@ Java反编译工具，[下载地址](http://www.javadecompilers.com/jad)
 
 **查看归档文件：`jar tf xxx.jar`**
 
-## 10.1 JAR File Specification
+### 2.10.1 JAR File Specification
 
 [JAR File Specification](https://docs.oracle.com/en/java/javase/17/docs/specs/jar/jar.html)
 
@@ -240,23 +264,31 @@ Java反编译工具，[下载地址](http://www.javadecompilers.com/jad)
     * `MANIFEST.MF`: Main-Class
 * ...
 
-# 11 Arthas
+## 2.11 jdb
+
+Debug tool like `gdb`
+
+# 3 Monitor
+
+## 3.1 Arthas
 
 [Arthas](https://github.com/alibaba/arthas)
 
 [commands](https://arthas.aliyun.com/doc/commands.html)
 
-# 12 VisualVM
+## 3.2 VisualVM
 
 [All-in-One Java Troubleshooting Tool](https://visualvm.github.io/)
 
-## 12.1 Shallow Size vs. Retained Size
+### 3.2.1 Shallow Size vs. Retained Size
 
 `Shallow Size`: This is the amount of memory allocated to store the object itself, not including the objects it references. This includes the memory used by the object's fields (for primitive types) and the memory used to store the references to other objects (for reference types). It does not include the memory used by the objects those references point to. Tools like VisualVM generally show the shallow size by default.
 
 `Retained Size`: This is the total amount of memory that would be freed if the object were garbage collected. This includes the shallow size of the object itself plus the shallow size of any objects that are exclusively referenced by this object (i.e., objects that would be garbage collected if this object were). The retained size provides a more complete picture of the "true" memory impact of an object but can be more complex to calculate. Some profiling tools provide this information, but it may require additional analysis or plugins.
 
-# 13 jenv
+# 4 Java Environment Manager
+
+## 4.1 jenv
 
 [jenv](https://github.com/jenv/jenv)
 
@@ -327,45 +359,31 @@ Java反编译工具，[下载地址](http://www.javadecompilers.com/jad)
     fi
     ```
 
-# 14 Assorted
+# 5 Tips
 
-## 14.1 Install JDK
+## 5.1 Find JDK Install Path
 
-From [Java Downloads](https://www.oracle.com/java/technologies/downloads/), you can find `JDK 22`, `JDK 21`, `JDK 17`, and even `JDK 8`
-
-* For `JDK 8`
-    ```sh
-    # you need to login in first, can you can download, it is stupid
-    tar -zxvf jdk-8u411-linux-x64.tar.gz -C /usr/lib/jvm
-    ```
-
-* For `JDK 17`
-    ```sh
-    wget https://download.oracle.com/java/17/latest/jdk-17_linux-x64_bin.tar.gz
-    tar -zxvf jdk-17_linux-x64_bin.tar.gz -C /usr/lib/jvm
-    ```
-
-* For `JDK 22`
-    ```sh
-    wget https://download.oracle.com/java/22/latest/jdk-22_linux-x64_bin.tar.gz
-    tar -zxvf jdk-22_linux-x64_bin.tar.gz -C /usr/lib/jvm
-    ```
-
-## 14.2 Find JDK Install Path
-
-### 14.2.1 Linux
-
-一般来说是`/usr/lib/jvm`
+For linux, the directory usually is: `/usr/lib/jvm`
 
 1. `readlink -f $(which java)`
 1. `update-alternatives --config java`
 1. `update-alternatives --display java`
 
-### 14.2.2 MacOS
+For MacOS, the directory usually is: `/Library/Java/JavaVirtualMachines`
 
-`/Library/Java/JavaVirtualMachines`
+1. `readlink -f $(which java)`
 
-# 15 参考
+## 5.2 How to check whether jar file contains specific class file
+
+* `unzip -l <jar> | grep xxx.class`
+* `jar tf <jar> | grep xxx.class`
+
+## 5.3 How to extract jar file to specific directory
+
+* `cd <target_dir>; jar -xf <jar>`
+* `unzip <jar> -d <target_dir>`
+
+# 6 参考
 
 * [JVM性能调优监控工具jps、jstack、jmap、jhat、jstat、hprof使用详解](https://my.oschina.net/feichexia/blog/196575)
 * [Java应用打开debug端口](https://www.cnblogs.com/lzmrex/articles/12579862.html)
