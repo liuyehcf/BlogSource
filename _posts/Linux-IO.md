@@ -8,6 +8,10 @@ categories:
 - Linux
 ---
 
+**阅读更多**
+
+<!--more-->
+
 # 1 Terms
 
 1. `Standard I/O`: Basic read and write operations using standard C library functions.

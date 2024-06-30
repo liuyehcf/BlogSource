@@ -266,9 +266,7 @@ int main() {
 }
 EOF
 
-cmake -B build
-cmake --build build
-build/boost_demo
+cmake -B build && cmake --build build && build/boost_demo
 ```
 
 ## 2.3 Print Stack
@@ -395,7 +393,7 @@ cd fmt
 
 cmake -B build -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
 cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
-sudo cmake --install build
+sudo cmake --install build && sudo ldconfig
 ```
 
 **在`cmake`中添加`fmt`依赖：**
@@ -455,7 +453,7 @@ cd gflags
 
 cmake -B build -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
 cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
-sudo cmake --install build
+sudo cmake --install build && sudo ldconfig
 ```
 
 **在`cmake`中添加`gflags`依赖：**
@@ -513,7 +511,7 @@ cd glog
 # BUILD_SHARED_LIBS 用于控制生成动态库还是静态库，默认是动态库，这里我们选择静态库
 cmake -B build -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
 cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
-sudo cmake --install build
+sudo cmake --install build && sudo ldconfig
 ```
 
 **在`cmake`中添加`glog`依赖：**
@@ -594,7 +592,7 @@ cd googletest
 # BUILD_SHARED_LIBS用于控制生成动态库还是静态库，默认是动态库，这里我们选择静态库
 cmake -B build -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
 cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
-sudo cmake --install build
+sudo cmake --install build && sudo ldconfig
 ```
 
 **在`cmake`中添加`gtest`依赖：**
@@ -726,7 +724,7 @@ cd benchmark
 # 这里指定googletest的工程路径（不加任何参数会有提示）
 cmake -B build -DGOOGLETEST_PATH=~/googletest/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
 cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
-sudo cmake --install build
+sudo cmake --install build && sudo ldconfig
 ```
 
 **在`cmake`中添加`benchmark`依赖：**
@@ -957,7 +955,7 @@ cmake --preset -N ninja-release
 
 cmake -B build --preset ninja-release -DPARQUET_REQUIRE_ENCRYPTION=ON
 cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
-sudo cmake --install build
+sudo cmake --install build && sudo ldconfig
 
 echo '/usr/local/lib64' | sudo tee /etc/ld.so.conf.d/arrow.conf && sudo ldconfig
 ```
@@ -1229,9 +1227,842 @@ EOF
 thrift --gen cpp example.thrift
 ```
 
-# 7 Independent Projects
+# 7 JNI
 
-## 7.1 Pocoproject
+[Chapter 4: JNI Functions](https://docs.oracle.com/javase/8/docs/technotes/guides/jni/spec/functions.html)
+
+* `PushLocalFrame`/`PopLocalFrame`: Manage local reference automatically
+* `NewGlobalRef`/`DeleteGlobalRef`: Create/Delete global reference manually, this cannot be managed by `PushLocalFrame`/`PopLocalFrame`
+* `DeleteLocalRef`: Delete local reference manually created by java function or jni API
+
+## 7.1 Example
+
+### 7.1.1 Hello World
+
+```sh
+mkdir -p jni_demo/build
+cd jni_demo
+cat > HelloWorld.java << 'EOF'
+public class HelloWorld {
+    public void greet() {
+        System.out.println("Hello from Java!");
+    }
+
+    public static void main(String[] args) {
+        new HelloWorld().greet();
+    }
+}
+EOF
+
+cat > jni_demo.cpp << 'EOF'
+#include <jni.h>
+
+#include <iostream>
+
+int main() {
+    JavaVM* jvm;
+    JNIEnv* env;
+    JavaVMInitArgs vm_args;
+    JavaVMOption options[1];
+    options[0].optionString = (char*)("-Djava.class.path=./");
+    vm_args.version = JNI_VERSION_1_8;
+    vm_args.nOptions = 1;
+    vm_args.options = options;
+    vm_args.ignoreUnrecognized = false;
+
+    // Load and initialize a Java VM, return a JNI interface pointer in env
+    jint res = JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
+    if (res != JNI_OK) {
+        std::cerr << "Failed to create JVM" << std::endl;
+        return 1;
+    }
+
+    // Verify JVM version
+    jint ver = env->GetVersion();
+    std::cout << "JVM version: " << ((ver >> 16) & 0x0f) << "." << (ver & 0x0f) << std::endl;
+
+    // Get Class
+    jclass cls = env->FindClass("HelloWorld");
+    if (cls == nullptr) {
+        std::cerr << "Failed to find class" << std::endl;
+        jvm->DestroyJavaVM();
+        return 1;
+    }
+
+    // Get Method
+    jmethodID mid = env->GetMethodID(cls, "greet", "()V");
+    if (mid == nullptr) {
+        std::cerr << "Failed to find method" << std::endl;
+        // Print the exception stack trace
+        if (env->ExceptionOccurred()) {
+            env->ExceptionDescribe();
+        }
+
+        jvm->DestroyJavaVM();
+        return 1;
+    }
+
+    // Create Instance
+    jobject obj = env->AllocObject(cls);
+    if (obj == nullptr) {
+        std::cerr << "Failed to create object" << std::endl;
+        jvm->DestroyJavaVM();
+        return 1;
+    }
+
+    // Invoke
+    env->CallVoidMethod(obj, mid);
+
+    // Destroy
+    jvm->DestroyJavaVM();
+
+    return 0;
+}
+EOF
+
+javac HelloWorld.java
+
+# libjvm.so may be in (${JAVA_HOME}/lib/server, ${JAVA_HOME}/jre/lib/amd64/server)
+JVM_SO_PATH=$(find $(readlink -f ${JAVA_HOME}) -name "libjvm.so")
+JVM_SO_PATH=${JVM_SO_PATH%/*}
+
+# Compile way 1 (Please set JAVA_HOME first)
+gcc -o build/jni_demo jni_demo.cpp -I"${JAVA_HOME}/include" -I"${JAVA_HOME}/include/linux" -L"${JVM_SO_PATH}" -lstdc++ -std=gnu++17 -ljvm && LD_LIBRARY_PATH=${JVM_SO_PATH} build/jni_demo
+
+# Compile way 2 (Please set JAVA_HOME first)
+C_INCLUDE_PATH=${JAVA_HOME}/include:${JAVA_HOME}/include/linux:${C_INCLUDE_PATH} \
+CPLUS_INCLUDE_PATH=${JAVA_HOME}/include:${JAVA_HOME}/include/linux:${CPLUS_INCLUDE_PATH} \
+LIBRARY_PATH=${JVM_SO_PATH}:${LIBRARY_PATH} \
+gcc -o build/jni_demo jni_demo.cpp -lstdc++ -std=gnu++17 -ljvm && LD_LIBRARY_PATH=${JVM_SO_PATH} build/jni_demo
+```
+
+Output:
+
+```
+JVM version: 10.0
+Hello from Java!
+```
+
+**Tips:**
+
+* Cannot find class: Maybe the javac version is greater than the jvm, double check that.
+
+**Cmake Example: (Share the same `main.cpp` as above)**
+
+```sh
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(jni_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
+
+file(GLOB MY_PROJECT_SOURCES "*.cpp")
+add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+set(JAVA_HOME $ENV{JAVA_HOME})
+if("${JAVA_HOME}" STREQUAL "")
+    message(FATAL_ERROR "env 'JAVA_HOME' is required")
+endif()
+# For high jdk version
+file(GLOB LIB_JVM ${JAVA_HOME}/lib/server/libjvm.so)
+if("${LIB_JVM}" STREQUAL "")
+    # For low jdk version
+    file(GLOB_RECURSE LIB_JVM ${JAVA_HOME}/jre/lib/*/server/libjvm.so)
+    if("${LIB_JVM}" STREQUAL "")
+    message(FATAL_ERROR "cannot find libjvm.so in ${JAVA_HOME}")
+    endif()
+endif()
+add_library(jvm SHARED IMPORTED)
+set_target_properties(jvm PROPERTIES IMPORTED_LOCATION ${LIB_JVM})
+target_include_directories(jvm INTERFACE ${JAVA_HOME}/include)
+target_include_directories(jvm INTERFACE ${JAVA_HOME}/include/linux)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE jvm)
+EOF
+
+rm -rf build
+cmake -B build && cmake --build build && build/jni_demo
+```
+
+### 7.1.2 Memory Leak
+
+**Observations:**
+
+* The local ref return by java function must be manually released, otherwise OOM may occur
+
+```sh
+mkdir -p jni_memory_leak_demo/build
+cd jni_memory_leak_demo
+
+cat > MemoryAllocator.java << 'EOF'
+public class MemoryAllocator {
+    public byte[] allocateMemory(int size) {
+        return new byte[size];
+    }
+}
+EOF
+
+cat > jni_memory_leak_demo.cpp << 'EOF'
+#include <jni.h>
+
+#include <chrono>
+#include <fstream>
+#include <iostream>
+#include <thread>
+
+constexpr const char* CURSOR_UP = "\033[F";
+
+#define ASSERT_TRUE(expr)                                                                      \
+    do {                                                                                       \
+        if (!(expr)) {                                                                         \
+            std::cerr << "(LINE:" << __LINE__ << ") Assertion failed: " << #expr << std::endl; \
+            if (env->ExceptionOccurred()) {                                                    \
+                env->ExceptionDescribe();                                                      \
+            }                                                                                  \
+            jvm->DestroyJavaVM();                                                              \
+            exit(1);                                                                           \
+            __builtin_unreachable();                                                           \
+        }                                                                                      \
+    } while (0)
+
+int main(int argc, char* argv[]) {
+    const std::string help =
+            "Usage: " + std::string(argv[0]) + " <alloc_by_cpp|alloc_by_java> <keep|release> [<use_frame>]";
+    if (argc < 3) {
+        std::cerr << help << std::endl;
+        return 1;
+    }
+    if (std::string(argv[1]) != "alloc_by_cpp" && std::string(argv[1]) != "alloc_by_java") {
+        std::cerr << help << std::endl;
+        return 1;
+    }
+    if (std::string(argv[2]) != "keep" && std::string(argv[2]) != "release") {
+        std::cerr << help << std::endl;
+        return 1;
+    }
+    if (argc == 4 && std::string(argv[3]) != "use_frame") {
+        std::cerr << help << std::endl;
+        return 1;
+    }
+    const bool alloc_by_cpp = (std::string(argv[1]) == "alloc_by_cpp");
+    const bool keep_memory = (std::string(argv[2]) == "keep");
+    const bool use_frame = (argc == 4 && std::string(argv[3]) == "use_frame");
+
+    JavaVM* jvm;
+    JNIEnv* env;
+    JavaVMInitArgs vm_args;
+    JavaVMOption options[2];
+    options[0].optionString = (char*)("-Djava.class.path=./");
+    options[1].optionString = (char*)("-Xmx1g");
+    vm_args.version = JNI_VERSION_1_8;
+    vm_args.nOptions = 2;
+    vm_args.options = options;
+    vm_args.ignoreUnrecognized = false;
+
+    jint res = JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
+    ASSERT_TRUE(res == JNI_OK);
+
+    jint version = env->GetVersion();
+    std::cout << "JVM version: " << ((version >> 16) & 0x0f) << "." << (version & 0x0f) << std::endl;
+
+    jclass cls = env->FindClass("MemoryAllocator");
+    ASSERT_TRUE(cls != nullptr);
+
+    jmethodID m_allocate_memory = env->GetMethodID(cls, "allocateMemory", "(I)[B");
+    ASSERT_TRUE(m_allocate_memory != nullptr);
+
+    jobject obj_memory_allocator = env->AllocObject(cls);
+    ASSERT_TRUE(obj_memory_allocator != nullptr);
+
+    auto start = std::chrono::steady_clock::now();
+    while (true) {
+        if (!keep_memory && use_frame) {
+            env->PushLocalFrame(1);
+        }
+        const size_t _10M = 10 * 1024 * 1024;
+        jobject bytes = alloc_by_cpp ? env->NewByteArray(_10M)
+                                     : env->CallObjectMethod(obj_memory_allocator, m_allocate_memory, _10M);
+        ASSERT_TRUE(bytes != nullptr);
+        if (!keep_memory) {
+            if (use_frame) {
+                env->PopLocalFrame(nullptr);
+            } else {
+                env->DeleteLocalRef(bytes);
+            }
+        }
+
+        std::ifstream iff("/proc/self/status");
+        std::string line;
+
+        std::string vm_size;
+        std::string vm_rss;
+        std::string vm_hwm;
+        while (std::getline(iff, line)) {
+            if (line.find("VmSize") != std::string::npos) {
+                vm_size = line;
+            }
+            if (line.find("VmRSS") != std::string::npos) {
+                vm_rss = line;
+            }
+            if (line.find("VmHWM") != std::string::npos) {
+                vm_hwm = line;
+            }
+        }
+        std::cout << "Memory Status:" << std::endl;
+        std::cout << "    " << vm_size << std::endl;
+        std::cout << "    " << vm_rss << std::endl;
+        std::cout << "    " << vm_hwm << std::endl;
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+        if (std::chrono::duration_cast<std::chrono::seconds>(std::chrono::steady_clock::now() - start).count() > 5) {
+            break;
+        }
+
+        // Move cursor up
+        std::cout << CURSOR_UP << CURSOR_UP << CURSOR_UP << CURSOR_UP;
+    }
+
+    jvm->DestroyJavaVM();
+
+    return 0;
+}
+EOF
+
+javac MemoryAllocator.java
+
+# libjvm.so may be in (${JAVA_HOME}/lib/server, ${JAVA_HOME}/jre/lib/amd64/server)
+JVM_SO_PATH=$(find $(readlink -f ${JAVA_HOME}) -name "libjvm.so")
+JVM_SO_PATH=${JVM_SO_PATH%/*}
+
+C_INCLUDE_PATH=${JAVA_HOME}/include:${JAVA_HOME}/include/linux:${C_INCLUDE_PATH} \
+CPLUS_INCLUDE_PATH=${JAVA_HOME}/include:${JAVA_HOME}/include/linux:${CPLUS_INCLUDE_PATH} \
+LIBRARY_PATH=${JVM_SO_PATH}:${LIBRARY_PATH} \
+gcc -o build/jni_memory_leak_demo jni_memory_leak_demo.cpp -lstdc++ -std=gnu++17 -ljvm
+
+LD_LIBRARY_PATH=${JVM_SO_PATH} build/jni_memory_leak_demo alloc_by_cpp keep
+LD_LIBRARY_PATH=${JVM_SO_PATH} build/jni_memory_leak_demo alloc_by_cpp release use_frame
+LD_LIBRARY_PATH=${JVM_SO_PATH} build/jni_memory_leak_demo alloc_by_java keep use_frame
+LD_LIBRARY_PATH=${JVM_SO_PATH} build/jni_memory_leak_demo alloc_by_java release
+```
+
+### 7.1.3 Work With Spring fat-jar
+
+**JNI cannot work smoothly with fat-jar built by plugin `spring-boot-maven-plugin`. Because the class path is started with `BOOT-INF/` or `BOOT-INF/lib/`, the default classloader cannot find it.**
+
+**The following code can work with `org.springframework.boot:spring-boot-maven-plugin:2.1.4.RELEASE`, no guarantee that it can work with other versions because the Java API may vary.**
+
+```sh
+mkdir -p jni_spring_fat_jar_demo/build
+cd jni_spring_fat_jar_demo
+
+mkdir -p java
+pushd java
+
+mkdir -p src/main/java/org/liuyehcf
+cat > src/main/java/org/liuyehcf/Main.java << 'EOF'
+package org.liuyehcf;
+
+public class Main {
+    public static void main(String[] args) {
+
+    }
+}
+EOF
+
+cat > pom.xml << 'EOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.liuyehcf</groupId>
+    <artifactId>test-spring-fatjar</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <hadoop.version>3.4.0</hadoop.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>${hadoop.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-hdfs-client</artifactId>
+            <version>${hadoop.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.1.4.RELEASE</version>
+                <configuration>
+                    <mainClass>org.liuyehcf.Main</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+EOF
+
+mvn clean package -DskipTests
+
+popd
+
+cat > jni_spring_fat_jar_demo.cpp << 'EOF'
+#include <jni.h>
+
+#include <cstring>
+#include <iostream>
+#include <sstream>
+
+#define ASSERT_TRUE(expr)                                                                                    \
+    do {                                                                                                     \
+        if (!(expr)) {                                                                                       \
+            std::cerr << "(" << __FILE__ << ":" << __LINE__ << ") Assertion failed: " << #expr << std::endl; \
+            if (env->ExceptionOccurred()) {                                                                  \
+                env->ExceptionDescribe();                                                                    \
+            }                                                                                                \
+            jvm->DestroyJavaVM();                                                                            \
+            exit(1);                                                                                         \
+            __builtin_unreachable();                                                                         \
+        }                                                                                                    \
+    } while (0)
+
+#define TOKEN_CONCAT(x, y) x##y
+#define TOKEN_CONCAT_FWD(x, y) TOKEN_CONCAT(x, y)
+#define DEFER(expr) [[maybe_unused]] Defer TOKEN_CONCAT_FWD(defer_, __LINE__)([&]() { expr; })
+#define LOCAL_REF_GUARD(obj) DEFER(if (obj != nullptr) { env->DeleteLocalRef(obj); })
+
+template <typename T>
+class Defer {
+public:
+    Defer(T&& t) : t(std::forward<T>(t)) {}
+    ~Defer() { t(); }
+
+private:
+    T t;
+};
+
+class ClassLoader {
+public:
+    virtual jclass load_class(const char* class_name) = 0;
+    virtual ~ClassLoader() {}
+};
+
+class NormalClassLoader : public ClassLoader {
+public:
+    NormalClassLoader(JavaVM* jvm_, JNIEnv* env_) : jvm(jvm_), env(env_) {
+        std::cout << "Using NormalClassLoader" << std::endl;
+    }
+    ~NormalClassLoader() override {}
+
+    jclass load_class(const char* class_name) override {
+        jclass cls = env->FindClass(class_name);
+        ASSERT_TRUE(cls != nullptr);
+        return cls;
+    }
+
+private:
+    JavaVM* jvm;
+    JNIEnv* env;
+};
+
+class SpringClassLoader : public ClassLoader {
+public:
+    SpringClassLoader(JavaVM* jvm_, JNIEnv* env_) : jvm(jvm_), env(env_) {
+        std::cout << "Using SpringClassLoader" << std::endl;
+        init_fat_jar_class_loader();
+    }
+    ~SpringClassLoader() override {
+        if (jgspring_class_loader != nullptr) env->DeleteGlobalRef(jgspring_class_loader);
+    }
+
+    jclass load_class(const char* class_name) override {
+        jstring jclass_name = env->NewStringUTF(class_name);
+        LOCAL_REF_GUARD(jclass_name);
+        jclass cls =
+                static_cast<jclass>(env->CallObjectMethod(jgspring_class_loader, m_spring_load_class, jclass_name));
+        ASSERT_TRUE(cls != nullptr);
+        return cls;
+    }
+
+private:
+    /*
+     * Spring API may vary from time to time, I'm not sure if this code can work well with other spring versions
+     *
+     * For 2.1.4.RELEASE
+     * https://github.com/spring-projects/spring-boot/blob/v2.1.4.RELEASE/spring-boot-project/spring-boot-tools/spring-boot-loader/src/main/java/org/springframework/boot/loader/Launcher.java
+     *
+     * protected void launch(String[] args) {
+     *     try {
+     *         JarFile.registerUrlProtocolHandler();
+     *         ClassLoader classLoader = createClassLoader(getClassPathArchives());
+     *         launch(args, getMainClass(), classLoader);
+     *     }
+     *     catch (Exception ex) {
+     *         ex.printStackTrace();
+     *         System.exit(1);
+     *     }
+     * }
+     */
+    void init_fat_jar_class_loader() {
+        jclass cls_jar_launcher = env->FindClass("org/springframework/boot/loader/JarLauncher");
+        ASSERT_TRUE(cls_jar_launcher != nullptr);
+        LOCAL_REF_GUARD(cls_jar_launcher);
+
+        jmethodID m_jar_launcher_init = env->GetMethodID(cls_jar_launcher, "<init>", "()V");
+        ASSERT_TRUE(m_jar_launcher_init != nullptr);
+        jmethodID m_get_class_path_archives =
+                env->GetMethodID(cls_jar_launcher, "getClassPathArchives", "()Ljava/util/List;");
+        ASSERT_TRUE(m_get_class_path_archives != nullptr);
+        jmethodID m_create_class_loader =
+                env->GetMethodID(cls_jar_launcher, "createClassLoader", "(Ljava/util/List;)Ljava/lang/ClassLoader;");
+        ASSERT_TRUE(m_create_class_loader != nullptr);
+
+        // Create JarLauncher instance
+        jobject jar_launcher = env->NewObject(cls_jar_launcher, m_jar_launcher_init);
+        ASSERT_TRUE(jar_launcher != nullptr);
+        LOCAL_REF_GUARD(jar_launcher);
+
+        // Call JarLauncher.getClassPathArchives()
+        jobject jarchives = env->CallObjectMethod(jar_launcher, m_get_class_path_archives);
+        ASSERT_TRUE(jarchives != nullptr);
+        LOCAL_REF_GUARD(jarchives);
+
+        // Call JarLauncher.createClassLoader(jarchives)
+        jobject jspring_class_loader = env->CallObjectMethod(jar_launcher, m_create_class_loader, jarchives);
+        ASSERT_TRUE(jspring_class_loader != nullptr);
+        LOCAL_REF_GUARD(jspring_class_loader);
+
+        this->jgspring_class_loader = env->NewGlobalRef(jspring_class_loader);
+
+        jclass cls_spring_class_loader = env->GetObjectClass(jgspring_class_loader);
+        ASSERT_TRUE(cls_spring_class_loader != nullptr);
+        LOCAL_REF_GUARD(cls_spring_class_loader);
+
+        this->m_spring_load_class =
+                env->GetMethodID(cls_spring_class_loader, "loadClass", "(Ljava/lang/String;)Ljava/lang/Class;");
+        ASSERT_TRUE(m_spring_load_class != nullptr);
+    }
+
+private:
+    JavaVM* jvm;
+    JNIEnv* env;
+    jobject jgspring_class_loader;
+    jmethodID m_spring_load_class;
+};
+
+int main(int argc, char* argv[]) {
+    const std::string usage = "Usage: " + std::string(argv[0]) + " <normal|spring> <fat_jar_path> <class_name>";
+    if (argc < 4 || (std::strcmp(argv[1], "normal") != 0 && std::strcmp(argv[1], "spring") != 0)) {
+        std::cerr << usage << std::endl;
+        return 1;
+    }
+    const bool normal_mode = std::strcmp(argv[1], "normal") == 0;
+    const char* jar_path = argv[2];
+    const std::string class_names = argv[3];
+
+    JavaVM* jvm;
+    JNIEnv* env;
+    JavaVMInitArgs vm_args;
+    JavaVMOption options[1];
+    std::string class_path = std::string("-Djava.class.path=").append(jar_path);
+    options[0].optionString = const_cast<char*>(class_path.c_str());
+    vm_args.version = JNI_VERSION_1_8;
+    vm_args.nOptions = 1;
+    vm_args.options = options;
+    vm_args.ignoreUnrecognized = false;
+
+    jint res = JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
+    ASSERT_TRUE(res == JNI_OK);
+    DEFER(jvm->DestroyJavaVM());
+
+    ClassLoader* loader;
+    if (normal_mode) {
+        loader = new NormalClassLoader(jvm, env);
+    } else {
+        loader = new SpringClassLoader(jvm, env);
+    }
+    DEFER(delete loader);
+
+    std::istringstream class_names_is(class_names);
+    std::string class_name;
+    while (std::getline(class_names_is, class_name, ',')) {
+        jclass cls = loader->load_class(class_name.c_str());
+        ASSERT_TRUE(cls != nullptr);
+        std::cout << "    Find class: " << class_name << std::endl;
+        LOCAL_REF_GUARD(cls);
+    }
+
+    return 0;
+}
+EOF
+
+# libjvm.so may be in (${JAVA_HOME}/lib/server, ${JAVA_HOME}/jre/lib/amd64/server)
+JVM_SO_PATH=$(find $(readlink -f ${JAVA_HOME}) -name "libjvm.so")
+JVM_SO_PATH=${JVM_SO_PATH%/*}
+
+C_INCLUDE_PATH=${JAVA_HOME}/include:${JAVA_HOME}/include/linux:${C_INCLUDE_PATH} \
+CPLUS_INCLUDE_PATH=${JAVA_HOME}/include:${JAVA_HOME}/include/linux:${CPLUS_INCLUDE_PATH} \
+LIBRARY_PATH=${JVM_SO_PATH}:${LIBRARY_PATH} \
+gcc -o build/jni_spring_fat_jar_demo jni_spring_fat_jar_demo.cpp -lstdc++ -std=gnu++17 -ljvm
+
+LD_LIBRARY_PATH=${JVM_SO_PATH} build/jni_spring_fat_jar_demo normal java/target/test-spring-fatjar.jar org.apache.hadoop.fs.LocalFileSystem
+LD_LIBRARY_PATH=${JVM_SO_PATH} build/jni_spring_fat_jar_demo spring java/target/test-spring-fatjar.jar org.apache.hadoop.fs.LocalFileSystem,org.liuyehcf.Main
+```
+
+## 7.2 libhdfs
+
+[hadoop-libhdfs](https://github.com/apache/hadoop/tree/trunk/hadoop-hdfs-project/hadoop-hdfs-native-client/src/main/native/libhdfs)
+
+**`getJNIEnv`:**
+
+* Each thread must have its own instance. Sharing this between different threads may cause unexpected issues
+
+```cpp
+/**
+ * getJNIEnv: A helper function to get the JNIEnv* for the given thread.
+ * If no JVM exists, then one will be created. JVM command line arguments
+ * are obtained from the LIBHDFS_OPTS environment variable.
+ *
+ * Implementation note: we rely on POSIX thread-local storage (tls).
+ * This allows us to associate a destructor function with each thread, that
+ * will detach the thread from the Java VM when the thread terminates.  If we
+ * failt to do this, it will cause a memory leak.
+ *
+ * However, POSIX TLS is not the most efficient way to do things.  It requires a
+ * key to be initialized before it can be used.  Since we don't know if this key
+ * is initialized at the start of this function, we have to lock a mutex first
+ * and check.  Luckily, most operating systems support the more efficient
+ * __thread construct, which is initialized by the linker.
+ *
+ * @param: None.
+ * @return The JNIEnv* corresponding to the thread.
+ */
+JNIEnv* getJNIEnv(void)
+```
+
+**Build libhdfs:** You need to download [hadoop](https://github.com/apache/hadoop) somewhere(this works well with tag `rel/release-3.4.0`), and set project path to env `export HADOOP_PATH=/path/to/hadoop`. And we need to comment out some of the hdfs classes initialization code if we don't need hdfs:
+
+```diff
+diff --git a/hadoop-hdfs-project/hadoop-hdfs-native-client/src/main/native/libhdfs/jni_helper.c b/hadoop-hdfs-project/hadoop-hdfs-native-client/src/main/native/libhdfs/jni_helper.c
+index 8f00a08b..797b0a82 100644
+--- a/hadoop-hdfs-project/hadoop-hdfs-native-client/src/main/native/libhdfs/jni_helper.c
++++ b/hadoop-hdfs-project/hadoop-hdfs-native-client/src/main/native/libhdfs/jni_helper.c
+@@ -745,16 +745,6 @@ static JNIEnv* getGlobalJNIEnv(void)
+                     "with error: %d\n", rv);
+             return NULL;
+         }
+-
+-        // We use findClassAndInvokeMethod here because the jclasses in
+-        // jclasses.h have not loaded yet
+-        jthr = findClassAndInvokeMethod(env, NULL, STATIC, NULL, HADOOP_FS,
+-                "loadFileSystems", "()V");
+-        if (jthr) {
+-            printExceptionAndFree(env, jthr, PRINT_EXC_ALL,
+-                    "FileSystem: loadFileSystems failed");
+-            return NULL;
+-        }
+     } else {
+         //Attach this thread to the VM
+         vm = vmBuf[0];
+@@ -832,12 +822,6 @@ JNIEnv* getJNIEnv(void)
+     }
+
+     jthrowable jthr = NULL;
+-    jthr = initCachedClasses(state->env);
+-    if (jthr) {
+-      printExceptionAndFree(state->env, jthr, PRINT_EXC_ALL,
+-                            "initCachedClasses failed");
+-      goto fail;
+-    }
+     return state->env;
+
+ fail:
+```
+
+```sh
+mkdir -p libhdfs_jni
+cd libhdfs_jni
+
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.16)
+
+project(hdfs_jni)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+set(HADOOP_PATH $ENV{HADOOP_PATH})
+if("${HADOOP_PATH}" STREQUAL "")
+    message(FATAL_ERROR "env 'HADOOP_PATH' is required")
+endif()
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
+
+# Add target library
+set(LIBHDFS_PATH ${HADOOP_PATH}/hadoop-hdfs-project/hadoop-hdfs-native-client/src/main/native/libhdfs)
+file(GLOB LIBHDFS_SOURCES "${LIBHDFS_PATH}/*.c" "${LIBHDFS_PATH}/os/posix/*.c")
+message(STATUS "LIBHDFS_SOURCES: ${LIBHDFS_SOURCES}")
+add_library(${PROJECT_NAME} ${LIBHDFS_SOURCES})
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${CMAKE_SOURCE_DIR}/include # for empty config.h
+    ${LIBHDFS_PATH}
+    ${LIBHDFS_PATH}/include
+    ${LIBHDFS_PATH}/os
+    ${LIBHDFS_PATH}/os/posix)
+
+# Add x-platform dependency
+add_definitions(-DUSE_X_PLATFORM_DIRENT)
+set(X_PLATFORM_PATH ${HADOOP_PATH}/hadoop-hdfs-project/hadoop-hdfs-native-client/src/main/native/libhdfspp/lib/x-platform)
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${X_PLATFORM_PATH}/..)
+
+# Dependency jvm
+set(JAVA_HOME $ENV{JAVA_HOME})
+if("${JAVA_HOME}" STREQUAL "")
+    message(FATAL_ERROR "env 'JAVA_HOME' is required")
+endif()
+# For high jdk version
+file(GLOB LIB_JVM ${JAVA_HOME}/lib/server/libjvm.so)
+if("${LIB_JVM}" STREQUAL "")
+    # For low jdk version
+    file(GLOB_RECURSE LIB_JVM ${JAVA_HOME}/jre/lib/*/server/libjvm.so)
+    if("${LIB_JVM}" STREQUAL "")
+    message(FATAL_ERROR "cannot find libjvm.so in ${JAVA_HOME}")
+    endif()
+endif()
+add_library(jvm SHARED IMPORTED)
+set_target_properties(jvm PROPERTIES IMPORTED_LOCATION ${LIB_JVM})
+target_include_directories(jvm INTERFACE ${JAVA_HOME}/include)
+target_include_directories(jvm INTERFACE ${JAVA_HOME}/include/linux)
+target_link_libraries(${PROJECT_NAME} PRIVATE jvm)
+EOF
+
+mkdir include
+touch include/config.h
+
+cmake -B build && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+```
+
+And we can use `build/libhdfs_jni.a` as following:
+
+```sh
+cat > libhdfs_jni_demo.cpp << 'EOF'
+#include <jni.h>
+
+#include <iostream>
+#include <thread>
+#include <vector>
+
+extern "C" JNIEnv* getJNIEnv(void);
+
+#define ASSERT(expr)                    \
+    if (!(expr)) {                      \
+        if (env->ExceptionOccurred()) { \
+            env->ExceptionDescribe();   \
+            exit(1);                    \
+        }                               \
+    }
+
+int main() {
+    std::vector<std::thread> threads;
+    for (int i = 0; i < 10; ++i) {
+        threads.emplace_back([i]() {
+            auto* env = getJNIEnv();
+
+            // Get java.lang.System
+            jclass cls_system = env->FindClass("java/lang/System");
+            ASSERT(cls_system != nullptr);
+
+            // Get out field
+            jfieldID f_out = env->GetStaticFieldID(cls_system, "out", "Ljava/io/PrintStream;");
+            jobject obj_out = env->GetStaticObjectField(cls_system, f_out);
+
+            // Get Class
+            jclass cls_stream = env->FindClass("java/io/PrintStream");
+            ASSERT(cls_stream != nullptr);
+
+            // Get Method
+            jmethodID m_println = env->GetMethodID(cls_stream, "println", "(Ljava/lang/String;)V");
+            ASSERT(m_println != nullptr);
+
+            // Invoke
+            std::string content = "Hello world, this is thread: " + std::to_string(i);
+            jstring jcontent = env->NewStringUTF(const_cast<const char*>((content).c_str()));
+            env->CallVoidMethod(obj_out, m_println, jcontent);
+            env->DeleteLocalRef(jcontent);
+        });
+    }
+    for (int i = 0; i < 10; ++i) {
+        threads[i].join();
+    }
+
+    return 0;
+}
+EOF
+
+# libjvm.so may be in (${JAVA_HOME}/lib/server, ${JAVA_HOME}/jre/lib/amd64/server)
+JVM_SO_PATH=$(find $(readlink -f ${JAVA_HOME}) -name "libjvm.so")
+JVM_SO_PATH=${JVM_SO_PATH%/*}
+
+C_INCLUDE_PATH=${JAVA_HOME}/include:${JAVA_HOME}/include/linux:${C_INCLUDE_PATH} \
+CPLUS_INCLUDE_PATH=${JAVA_HOME}/include:${JAVA_HOME}/include/linux:${CPLUS_INCLUDE_PATH} \
+LIBRARY_PATH=${JVM_SO_PATH}:${LIBRARY_PATH} \
+gcc -o build/libhdfs_jni_demo libhdfs_jni_demo.cpp -lstdc++ -std=gnu++17 -Lbuild -lhdfs_jni -ljvm -lpthread && LD_LIBRARY_PATH=${JVM_SO_PATH} CLASSPATH= build/libhdfs_jni_demo
+```
+
+## 7.3 Tips
+
+### 7.3.1 Tricky JVM options
+
+1. `-Djdk.lang.processReaperUseDefaultStackSize=true`
+    * [JDK-8130425 : libjvm crash due to stack overflow in executables with 32k tbss/tdata](https://bugs.java.com/bugdatabase/view_bug?bug_id=8130425)
+    * [JDK-8316968 : Add an option that allows to set the stack size of Process reaper threads](https://bugs.java.com/bugdatabase/view_bug?bug_id=8316968)
+    * [Apache HDFS](https://docs.oracle.com/en/middleware/goldengate/big-data/21.1/gadbd/apache-hdfs-target.html#GUID-4B870E57-3219-4663-9EFD-41133B0EDE06)
+1. `-Xrs`: Reduces the use of operating system signals by the JVM
+    * [Java Platform, Standard Edition Tools Reference](https://docs.oracle.com/javase/8/docs/technotes/tools/windows/java.html)
+
+### 7.3.2 GC vs. signal SIGSEGV
+
+Here is an assumption: Jvm will use signal `SIGSEGV` to indicate that the gc process should run. And you can check it by `gdb` or `lldb` with a jni program, during which you may be interrupted frequently by `SIGSEGV`
+
+```
+Process 2494122 stopped
+* thread #1, name = 'jni_demo', stop reason = signal SIGSEGV: invalid address (fault address: 0x0)
+    frame #0: 0x00007fffe7c842b9
+->  0x7fffe7c842b9: movl   (%rsi), %eax
+    0x7fffe7c842bb: leaq   0xf8(%rbp), %rsi
+    0x7fffe7c842c2: vmovdqu %ymm0, (%rsi)
+    0x7fffe7c842c6: vmovdqu %ymm7, 0x20(%rsi)
+```
+
+# 8 Independent Projects
+
+## 8.1 Pocoproject
 
 ```sh
 git clone -b poco-1.13.3-release https://github.com/pocoproject/poco.git
@@ -1241,7 +2072,7 @@ cmake --build cmake-build --config Release -j $(( (cores=$(nproc))>1?cores/2:1 )
 sudo cmake --install cmake-build
 ```
 
-### 7.1.1 Logger
+### 8.1.1 Logger
 
 ```sh
 mkdir poco_logger_demo
@@ -1320,9 +2151,7 @@ int main() {
 }
 EOF
 
-cmake -B build
-cmake --build build
-build/poco_logger_demo
+cmake -B build && cmake --build build && build/poco_logger_demo
 ```
 
 Output:
@@ -1334,7 +2163,141 @@ Output:
 2024-05-30 08:23:56 MultiChannelLogger: This is a warning message.
 ```
 
-### 7.1.2 JSON
+#### 8.1.1.1 Colorful Output
+
+You can refer to [Clickhouse-base/base/terminalColors.cpp](https://github.com/ClickHouse/ClickHouse/blob/master/base/base/terminalColors.cpp) for colorful output.
+
+```sh
+mkdir poco_logger_color_demo
+cd poco_logger_color_demo
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(poco_logger_color_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
+
+file(GLOB MY_PROJECT_SOURCES "*.cpp")
+add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+find_package(Poco REQUIRED COMPONENTS Foundation Net XML JSON)
+target_link_libraries(${PROJECT_NAME} Poco::Foundation Poco::Net Poco::XML Poco::JSON)
+EOF
+
+cat > poco_logger_color_demo.cpp << 'EOF'
+#include <Poco/AutoPtr.h>
+#include <Poco/ConsoleChannel.h>
+#include <Poco/FormattingChannel.h>
+#include <Poco/Logger.h>
+#include <Poco/PatternFormatter.h>
+
+namespace ck_color {
+using UInt8 = uint8_t;
+using UInt64 = uint64_t;
+std::string setColor(UInt64 hash) {
+    /// Make a random RGB color that has constant brightness.
+    /// https://en.wikipedia.org/wiki/YCbCr
+
+    /// Note that this is darker than the middle relative luminance, see "Gamma_correction" and "Luma_(video)".
+    /// It still looks awesome.
+    UInt8 y = 128;
+
+    UInt8 cb = static_cast<UInt8>(hash % 256);
+    UInt8 cr = static_cast<UInt8>(hash / 256 % 256);
+
+    UInt8 r = static_cast<UInt8>(std::max(0.0, std::min(255.0, y + 1.402 * (cr - 128))));
+    UInt8 g = static_cast<UInt8>(std::max(0.0, std::min(255.0, y - 0.344136 * (cb - 128) - 0.714136 * (cr - 128))));
+    UInt8 b = static_cast<UInt8>(std::max(0.0, std::min(255.0, y + 1.772 * (cb - 128))));
+
+    /// ANSI escape sequence to set 24-bit foreground font color in terminal.
+    return "\033[38;2;" + std::to_string(r) + ";" + std::to_string(g) + ";" + std::to_string(b) + "m";
+}
+
+const char* setColorForLogPriority(int priority) {
+    if (priority < 1 || priority > 8) return "";
+
+    static const char* colors[] = {
+            "",
+            "\033[1;41m", /// Fatal
+            "\033[7;31m", /// Critical
+            "\033[1;31m", /// Error
+            "\033[0;31m", /// Warning
+            "\033[0;33m", /// Notice
+            "\033[1m",    /// Information
+            "",           /// Debug
+            "\033[2m",    /// Trace
+    };
+
+    return colors[priority];
+}
+
+const char* resetColor() {
+    return "\033[0m";
+}
+} // namespace ck_color
+
+class ColorfulPatternFormatter : public Poco::PatternFormatter {
+public:
+    ColorfulPatternFormatter(Poco::AutoPtr<Poco::PatternFormatter> formatter) : _formatter(std::move(formatter)) {}
+
+    void format(const Poco::Message& msg, std::string& text) override {
+        // You can customize here. Here is an example
+        if (msg.getPriority() >= Poco::Message::PRIO_INFORMATION) {
+            text.append(ck_color::setColor(std::hash<std::string>{}(msg.getText())));
+            _formatter->format(msg, text);
+            text.append(ck_color::resetColor());
+        } else {
+            text.append(ck_color::setColorForLogPriority(msg.getPriority()));
+            _formatter->format(msg, text);
+            text.append(ck_color::resetColor());
+        }
+    }
+
+private:
+    Poco::AutoPtr<Poco::PatternFormatter> _formatter;
+};
+
+int main() {
+    {
+        Poco::AutoPtr<Poco::ConsoleChannel> console_channel(new Poco::ConsoleChannel);
+
+        Poco::AutoPtr<Poco::PatternFormatter> formatter(
+                new Poco::PatternFormatter("%Y-%m-%d %H:%M:%S [%P:%I] [%p] %s - %t"));
+        Poco::AutoPtr<Poco::PatternFormatter> colorful_formatter(new ColorfulPatternFormatter(formatter));
+        Poco::AutoPtr<Poco::FormattingChannel> formatting_channel(
+                new Poco::FormattingChannel(colorful_formatter, console_channel));
+
+        Poco::Logger& logger =
+                Poco::Logger::create("MultiChannelLogger", formatting_channel, Poco::Message::PRIO_TRACE);
+        logger.trace("This is a trace message(1).");
+        logger.trace("This is a trace message(2).");
+        logger.debug("This is an debug message(1).");
+        logger.debug("This is an debug message(2).");
+        logger.information("This is an information message(1).");
+        logger.information("This is an information message(2).");
+        logger.warning("This is a warning message(1).");
+        logger.warning("This is a warning message(2).");
+        logger.error("This is an error message(1).");
+        logger.error("This is an error message(2).");
+        logger.critical("This is an critical message(1).");
+        logger.critical("This is an critical message(2).");
+        logger.fatal("This is a fatal message(1).");
+        logger.fatal("This is a fatal message(2).");
+    }
+    return 0;
+}
+EOF
+
+cmake -B build && cmake --build build && build/poco_logger_color_demo
+```
+
+### 8.1.2 JSON
 
 ```sh
 mkdir poco_json_demo
@@ -1399,9 +2362,7 @@ int main() {
 }
 EOF
 
-cmake -B build
-cmake --build build
-build/poco_json_demo
+cmake -B build && cmake --build build && build/poco_json_demo
 ```
 
 Output:
@@ -1411,7 +2372,7 @@ Name: John Doe, Age: 30, Is Developer: 1
 Generated JSON: {"isNewDeveloper":false,"newAge":28,"newName":"Jane Smith"}
 ```
 
-### 7.1.3 Http
+### 8.1.3 Http
 
 ```sh
 mkdir poco_http_demo
@@ -1543,9 +2504,7 @@ int main(int argc, char** argv) {
 }
 EOF
 
-cmake -B build
-cmake --build build
-build/poco_http_demo
+cmake -B build && cmake --build build && build/poco_http_demo
 ```
 
 Output:
@@ -1556,7 +2515,7 @@ HTTP Server started on port 9080.
 ^C
 ```
 
-### 7.1.4 Application
+### 8.1.4 Application
 
 ```sh
 mkdir poco_application_demo
@@ -1638,8 +2597,7 @@ private:
 POCO_APP_MAIN(DemoApp)
 EOF
 
-cmake -B build
-cmake --build build
+cmake -B build && cmake --build build
 build/poco_application_demo --help
 # --config is not ambiguous, so it can be parsed to --config-file
 build/poco_application_demo --config /etc/config.xml
@@ -1657,7 +2615,7 @@ A simple command line application that demonstrates parsing options with POCO.
 config-file: /etc/config.xml
 ```
 
-## 7.2 sqlpp11
+## 8.2 sqlpp11
 
 **How to integrate:**
 
@@ -1680,7 +2638,7 @@ EOF
 scripts/ddl2cpp  /tmp/foo.sql /tmp/foo my_ns
 ```
 
-### 7.2.1 With Sqlite
+### 8.2.1 With Sqlite
 
 ```
 tree -L 2
@@ -1874,7 +2832,7 @@ DELETE FROM users WHERE (users.id=10000001)
 Sqlite3 debug: Preparing: 'DELETE FROM users WHERE (users.id=10000001)'
 ```
 
-### 7.2.2 With Mysql
+### 8.2.2 With Mysql
 
 ```
 tree -L 2
@@ -2046,7 +3004,7 @@ cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j $(( 
 build/sqlpp11_demo
 ```
 
-### 7.2.3 With Mariadb
+### 8.2.3 With Mariadb
 
 ```sh
 tree -L 2
@@ -2249,7 +3207,7 @@ SELECT users.id,users.first_name,users.last_name,users.age FROM users WHERE (use
 DELETE FROM users WHERE (users.id=10000001)
 ```
 
-## 7.3 libcurl
+## 8.3 libcurl
 
 * [command line tool and library for transferring data with URLs (since 1998)](https://curl.se/)
     * [The libcurl API](https://curl.se/libcurl/c/)
@@ -2362,7 +3320,7 @@ build/curl_demo
 
 * According to [Can I use libcurls CURLOPT_WRITEFUNCTION with a C++11 lambda expression?](https://stackoverflow.com/questions/6624667/can-i-use-libcurls-curlopt-writefunction-with-a-c11-lambda-expression), if you want to use lambda expression as the callback function, then declare the lambda with `+` before empty capture list `[]`, which is `+[]`
 
-# 8 Assorted
+# 9 Assorted
 
 1. [Awesome C++ Projects](https://github.com/fffaraz/awesome-cpp)
 1. [parallel-hashmap](https://github.com/greg7mdp/parallel-hashmap)：`parallel-hashmap`提供了一组高性能、并发安全的`map`，用于替换`std`以及`boost`中的`map`

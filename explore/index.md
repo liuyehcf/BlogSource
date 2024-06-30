@@ -13,7 +13,9 @@ date: 2018-02-05 09:25:59
     * [Using the GNU Compiler Collection (GCC)](https://gcc.gnu.org/onlinedocs/gcc/)
 * [GNU FTP](https://ftp.gnu.org)
 
-# 2 Cpp
+# 2 Language
+
+## 2.1 Cpp
 
 * [News, Status & Discussion about Standard C++](https://isocpp.org/) - ★★★★★
     * [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines)
@@ -41,6 +43,10 @@ date: 2018-02-05 09:25:59
     * `Walter E. Brown`：2000年开始参与C++标准制定工作，引入了`cbegin/cend`、`common_type`等特性，以及负责`<random>`、`<ratio>`等头文件的开发
 * Projects
     * [Apache Calcite](https://github.com/apache/calcite)
+
+## 2.2 Java
+
+* [Java Platform, Standard Edition Documentation](https://docs.oracle.com/en/java/javase/index.html): Try to search here
 
 # 3 Kernel
 

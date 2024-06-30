@@ -16,32 +16,20 @@ categories:
 **安装`gflag`**
 
 * 需要额外指定编译参数`-fPIC`，否则`brpc`链接的时候会报错
-
-```sh
-git clone https://github.com/gflags/gflags.git --depth 1
-cd gflags
-cmake -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC" -B build
-cd build
-make -j $(( (cores=$(nproc))>1?cores/2:1 ))
-sudo make install
-sudo ldconfig
-```
+* {% post_link Cpp-Thirdparty-Library %}
 
 **安装`protobuf`**
 
 * 需要额外指定编译参数`-fPIC`，否则`brpc`链接的时候会报错
-* `brpc`对`protobuf`的版本有要求，这里我们选择`v3.14.0`版本，该版本只能用`make`安装
-* 默认情况下，`make install`会安装到`/usr/local/lib`目录。`brpc`会优先从`/usr/local/lib64`目录中搜索（我的环境中，该目录正好有一个其他版本的`protobuf.a`），因此我需要修改一下安装路径，覆盖掉原有的lib文件
+* `brpc`对`protobuf`的版本有要求，这里我们选择`v3.14.0`版本
 
 ```sh
 git clone https://github.com/protocolbuffers/protobuf.git
 cd protobuf
-git submodule update --init --recursive
 git checkout v3.14.0
-./configure CXXFLAGS="-fPIC" CFLAGS="-fPIC"
-sudo make prefix=/usr/local libdir=/usr/local/lib64 bindir=/usr/local/bin -j $(( (cores=$(nproc))>1?cores/2:1 ))
-sudo make prefix=/usr/local libdir=/usr/local/lib64 bindir=/usr/local/bin install
-sudo ldconfig
+git submodule update --init --recursive
+cmake -B build -S cmake -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC" && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+sudo cmake --install build && sudo ldconfig
 ```
 
 **安装`leveldb`**
@@ -52,23 +40,18 @@ sudo ldconfig
 git clone https://github.com/google/leveldb.git
 cd leveldb
 git submodule update --init --recursive
-cmake -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC" -B build
-cd build
-make -j $(( (cores=$(nproc))>1?cores/2:1 ))
-sudo make install
-sudo ldconfig
+cmake -B build -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC" && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+sudo cmake --install build && sudo ldconfig
 ```
 
 # 2 Build
 
 ```sh
-git clone https://github.com/apache/incubator-brpc.git --depth 1
+git clone https://github.com/apache/incubator-brpc.git
 cd incubator-brpc
-cmake -B build
-cd build
-make -j $(( (cores=$(nproc))>1?cores/2:1 ))
-sudo make install
-sudo ldconfig
+git checkout 1.9.0
+cmake -B build && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+sudo cmake --install build && sudo ldconfig
 ```
 
 # 3 FAQ

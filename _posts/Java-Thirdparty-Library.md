@@ -96,10 +96,10 @@ categories:
 <Configuration status="WARN">
     <Appenders>
         <Console name="ConsoleAppender" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %style{[%thread]}{bright} %highlight{[%-5level] [%logger{36}]}{STYLE=Logback} - %msg%n"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %style{[%thread]}{bright} %highlight{[%-5level] %logger{36}}{STYLE=Logback} - %msg%n"/>
         </Console>
         <RollingRandomAccessFile name="RollingRandomAccessFileAppender" fileName="logs/app.log" filePattern="logs/app-%d{yyyy-MM-dd}-%i.log">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %style{[%thread]}{bright} %highlight{[%-5level] [%logger{36}]}{STYLE=Logback} - %msg%n"/>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %style{[%thread]}{bright} %highlight{[%-5level] %logger{36}}{STYLE=Logback} - %msg%n"/>
             <Policies>
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
                 <SizeBasedTriggeringPolicy size="10MB"/>
@@ -142,7 +142,7 @@ Syntanx: `%logger{precision}` or `%c{precision}`
 
 * {% raw %}%highlight{pattern}{style}{% endraw %}
     * {% raw %}%highlight{[%thread] [%-5level] [%logger{36}]}{FATAL=red blink, ERROR=red, WARN=yellow, INFO=green, DEBUG=cyan, TRACE=blue}{% endraw %}
-    * {% raw %}%highlight{[%-5level] [%logger{36}]}{STYLE=Logback}{% endraw %}
+    * {% raw %}%highlight{[%-5level] %logger{36}}{STYLE=Logback}{% endraw %}
 * {% raw %}%style{pattern}{ANSI style}{% endraw %}
     * {% raw %}%style{%logger}{red}{% endraw %}
     * {% raw %}%style{[%thread]}{bright}{% endraw %}

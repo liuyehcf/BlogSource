@@ -124,6 +124,10 @@ mvn clean package -DskipTests -pl module-a,module-b -am
 * When you place the configuration outside the `<execution>` block, it means that the configuration is applied globally to all executions of the plugin within the given phase or goals.
 * When you place the configuration inside an `<execution>` block, it is scoped to that specific execution. This is useful when you need different configurations for different executions of the same plugin. Each `<execution>` block can specify different goals, phases, and configurations. 
 
+## 1.5 Run with JVM Options
+
+use `export MAVEN_OPTS=`
+
 # 2 Loading Order When Dependencies Conflict
 
 当一个类同时存在于依赖A于依赖B中时，加载的版本依据以下的原则
