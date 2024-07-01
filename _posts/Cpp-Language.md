@@ -2520,6 +2520,650 @@ void func(int a, ...) {
 
 The `va_end` macro just sets the `p` value to `NULL`
 
+## 4.4 Attributes
+
+`__attribute__`是一个`GCC`编译器特有的特性，它允许程序员向编译器提供一些指示信息，以便在编译期间进行优化或者在运行期间提供一些额外的约束条件。这些指示信息被称为属性（`attributes`），可以应用于函数、变量、类型等各种程序元素
+
+`C++11`引入了一种新的语言特性，称为属性（`attributes`），它们与`__attribute__`类似，但是是标准`C++`的一部分，因此在编译器支持`C++11`之后，可以在`C++`代码中使用它们。与`__attribute__`不同，`C++11`的`attributes`支持在类和命名空间级别使用，而不仅仅是在函数和变量级别
+
+`C++11`的`attributes`也提供了更多的灵活性和可读性。它们可以用更自然的方式嵌入到代码中，而不像`__attribute__`那样需要使用一些冗长的语法。此外，`C++11`的`attributes`还提供了一些有用的新特性，例如`[[noreturn]]`、`[[carries_dependency]]`、`[[deprecated]]`、`[[fallthrough]]`
+
+常用`__attribute__`清单：
+
+* `__attribute__((packed))`：指示编译器在分配结构体内存时尽量紧凑地排列各个字段，以减小结构体的内存占用
+* `__attribute__((aligned(n)))`: 指示编译器将变量对齐到`n`字节边界
+* `__attribute__((noreturn))`：指示函数不会返回，用于告诉编译器在函数调用之后不需要进行任何清理操作
+* `__attribute__((unused))`：指示编译器不应发出未使用变量的警告。
+* `__attribute__((deprecated))`：指示函数或变量已经过时，编译器会在使用它们时发出警告
+* `__attribute__((visibility("hidden")))`：指示编译器隐藏该符号，即不会出现在当前编译单元的导出的符号表中
+* `__attribute__(alias)`：它允许你将一个函数或变量的名称指定为另一个已存在的函数或变量的别名。可以起到与链接器参数`--wrap=<symbol>`类似的作用
+    ```cpp
+    #include <stdio.h>
+
+    FILE* my_fopen(const char* path, const char* mode) {
+        printf("This is my fopen!\n");
+        return NULL;
+    }
+
+    FILE* fopen(const char* path, const char* mode) __attribute__((alias("my_fopen")));
+
+    int main() {
+        printf("Calling the fopen() function...\n");
+        FILE* fd = fopen("test.txt", "r");
+        if (!fd) {
+            printf("fopen() returned NULL\n");
+            return 1;
+        }
+        printf("fopen() succeeded\n");
+        return 0;
+    }
+    ```
+
+常用`attributes`清单：
+
+* `[[noreturn]]`（C++11）：用于标识函数不会返回。如果一个函数被标记为`[[noreturn]]`，那么编译器会警告或者错误地处理一个函数的任何尝试返回值
+* `[[deprecated]]`（C++14）：用于标识函数或变量已被弃用。编译器会在调用或使用被标记为`[[deprecated]]`的函数或变量时给出警告
+* `[[fallthrough]]`（C++17）：用于标识`switch`语句中的`case`标签，以指示代码故意继续执行下一个`case`标签
+* `[[nodiscard]]`（C++17）：用于标识函数的返回值需要被检查。当一个函数被标记为`[[nodiscard]]`时，如果函数返回值没有被检查，编译器会给出警告
+* `[[maybe_unused]]`（C++17）：用于标识变量或函数可能未被使用。编译器不会给出未使用的变量或函数的警告
+* `[[likely]]`（C++20）：提示编译器该分支大概率为`true`
+* `[[unlikely]]`（C++20）：提示编译器该分支大概率为`false`
+
+### 4.4.1 aligned
+
+```cpp
+#include <iostream>
+
+#define FOO_WITH_ALIGN(SIZE) \
+    struct Foo_##SIZE {      \
+        int v;               \
+    } __attribute__((aligned(SIZE)))
+
+#define PRINT_SIZEOF_FOO(SIZE) std::cout << "Foo_##SIZE's size=" << sizeof(Foo_##SIZE) << std::endl;
+
+FOO_WITH_ALIGN(1);
+FOO_WITH_ALIGN(2);
+FOO_WITH_ALIGN(4);
+FOO_WITH_ALIGN(8);
+FOO_WITH_ALIGN(16);
+FOO_WITH_ALIGN(32);
+FOO_WITH_ALIGN(64);
+FOO_WITH_ALIGN(128);
+FOO_WITH_ALIGN(256);
+
+int main() {
+    PRINT_SIZEOF_FOO(1);
+    PRINT_SIZEOF_FOO(2);
+    PRINT_SIZEOF_FOO(4);
+    PRINT_SIZEOF_FOO(8);
+    PRINT_SIZEOF_FOO(16);
+    PRINT_SIZEOF_FOO(32);
+    PRINT_SIZEOF_FOO(64);
+    PRINT_SIZEOF_FOO(128);
+    PRINT_SIZEOF_FOO(256);
+    return 1;
+}
+```
+
+### 4.4.2 Reference
+
+* [Compiler-specific Features](https://www.keil.com/support/man/docs/armcc/armcc_chr1359124965789.htm)
+
+## 4.5 ASM
+
+[gcc-online-docs](https://gcc.gnu.org/onlinedocs/gcc/)
+
+### 4.5.1 Basic Asm
+
+### 4.5.2 Extended Asm
+
+[Extended Asm](https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html): GCC设计了一种特有的嵌入方式，它规定了汇编代码嵌入的形式和嵌入汇编代码需要由哪几个部分组成，格式如下：
+
+* 汇编语句模板是必须的，其余三部分是可选的
+
+```cpp
+asm asm-qualifiers ( AssemblerTemplate 
+                 : OutputOperands 
+                 [ : InputOperands
+                 [ : Clobbers ] ])
+
+asm asm-qualifiers ( AssemblerTemplate 
+                      : OutputOperands
+                      : InputOperands
+                      : Clobbers
+                      : GotoLabels)
+```
+
+**`Qualifiers`，修饰符：**
+
+* `volatile`：禁止编译器优化
+* `inline`
+* `goto`
+
+**`AssemblerTemplate`，汇编语句模板：**
+
+* 汇编语句模板由汇编语句序列组成，语句之间使用`;`、`\n`、`\n\t`分开
+* 指令中的操作数可以使用占位符，占位符可以指向`OutputOperands`、`InputOperands`、`GotoLabels`
+* 指令中使用占位符表示的操作数，总被视为`long`型（4个字节），但对其施加的操作根据指令可以是字或者字节，当把操作数当作字或者字节使用时，默认为低字或者低字节
+* 对字节操作可以显式的指明是低字节还是次字节。方法是在`%`和序号之间插入一个字母
+    * `b`代表低字节
+    * `h`代表高字节
+    * 例如：`%h1`
+
+**`OutputOperands`，输出操作数：**
+
+* 操作数之间用逗号分隔
+* 每个操作数描述符由限定字符串（`Constraints`）和C语言变量或表达式组成
+
+**`InputOperands`，输入操作数：**
+
+* 操作数之间用逗号分隔
+* 每个操作数描述符由限定字符串（`Constraints`）和C语言变量或表达式组成
+
+**`Clobbers`，描述部分：**
+
+* 用于通知编译器我们使用了哪些寄存器或内存，由逗号格开的字符串组成
+* 每个字符串描述一种情况，一般是寄存器名；除寄存器外还有`memory`。例如：`%eax`，`%ebx`，`memory`等
+
+**`Constraints`，限定字符串（下面仅列出常用的）：**
+
+* `m`：内存
+* `o`：内存，但是其寻址方式是偏移量类型
+* `v`：内存，但寻址方式不是偏移量类型
+* `r`：通用寄存器
+* `i`：整型立即数
+* `g`：任意通用寄存器、内存、立即数
+* `p`：合法指针
+* `=`：write-only
+* `+`：read-write
+* `&`：该输出操作数不能使用过和输入操作数相同的寄存器
+
+**示例1：**
+
+```cpp
+#include <stddef.h>
+#include <stdint.h>
+
+#include <iostream>
+
+struct atomic_t {
+    volatile int32_t a_count;
+};
+
+static inline int32_t atomic_read(const atomic_t* v) {
+    return (*(volatile int32_t*)&(v)->a_count);
+}
+
+static inline void atomic_write(atomic_t* v, int32_t i) {
+    v->a_count = i;
+}
+
+static inline void atomic_add(atomic_t* v, int32_t i) {
+    __asm__ __volatile__(
+            "lock;"
+            "addl %1,%0"
+            : "+m"(v->a_count)
+            : "ir"(i));
+}
+
+static inline void atomic_sub(atomic_t* v, int32_t i) {
+    __asm__ __volatile__(
+            "lock;"
+            "subl %1,%0"
+            : "+m"(v->a_count)
+            : "ir"(i));
+}
+
+static inline void atomic_inc(atomic_t* v) {
+    __asm__ __volatile__(
+            "lock;"
+            "incl %0"
+            : "+m"(v->a_count));
+}
+
+static inline void atomic_dec(atomic_t* v) {
+    __asm__ __volatile__(
+            "lock;"
+            "decl %0"
+            : "+m"(v->a_count));
+}
+
+int main() {
+    atomic_t v;
+    atomic_write(&v, 0);
+    atomic_add(&v, 10);
+    atomic_sub(&v, 5);
+    atomic_inc(&v);
+    atomic_dec(&v);
+    std::cout << atomic_read(&v) << std::endl;
+    return 0;
+}
+```
+
+**示例2：**
+
+* 这个程序是没法跑的，因为`cli`指令必须在内核态执行
+* `hal_save_flags_cli`：将`eflags`寄存器的值保存到内存中，然后关闭中断
+* `hal_restore_flags_sti`：将`hal_save_flags_cli`保存在内存中的值恢复到`eflags`寄存器中
+
+```cpp
+#include <stddef.h>
+#include <stdint.h>
+
+#include <iostream>
+
+typedef uint32_t cpuflg_t;
+
+static inline void hal_save_flags_cli(cpuflg_t* flags) {
+    __asm__ __volatile__(
+            "pushf;" // 把eflags寄存器的值压入当前栈顶
+            "cli;"   // 关闭中断，会改变eflags寄存器的值
+            "pop %0" // 把当前栈顶弹出到eflags为地址的内存中
+            : "=m"(*flags)
+            :
+            : "memory");
+}
+
+static inline void hal_restore_flags_sti(cpuflg_t* flags) {
+    __asm__ __volatile__(
+            "push %0;" // 把flags为地址处的值寄存器压入当前栈顶
+            "popf"     // 把当前栈顶弹出到eflags寄存器中
+            :
+            : "m"(*flags)
+            : "memory");
+}
+
+void foo(cpuflg_t* flags) {
+    hal_save_flags_cli(flags);
+    std::cout << "step1: foo()" << std::endl;
+    hal_restore_flags_sti(flags);
+}
+
+void bar() {
+    cpuflg_t flags;
+    hal_save_flags_cli(&flags);
+    foo(&flags);
+    std::cout << "step2: bar()" << std::endl;
+    hal_restore_flags_sti(&flags);
+}
+
+int main() {
+    bar();
+    return 0;
+}
+```
+
+**示例3：linux内核大量用到了`asm`，具体可以参考[linux-asm](https://github.com/torvalds/linux/blob/master/arch/x86/include/asm)**
+
+## 4.6 Lambda
+
+[Lambda expressions (since C++11)](https://en.cppreference.com/w/cpp/language/lambda)
+
+> The lambda expression is a prvalue expression of unique unnamed non-union non-aggregate class type, known as closure type, which is declared (for the purposes of ADL) in the smallest block scope, class scope, or namespace scope that contains the lambda expression. The closure type has the following members, they cannot be explicitly instantiated, explicitly specialized, or (since C++14) named in a friend declaration
+
+* 每个`Lambda`表达式都是独一无二的类型，且无法显式声明
+
+### 4.6.1 `std::function` and Lambda
+
+在大多数场景下，`Lambda`和`std::function`可以相互替换使用，但它们之间存在一些差异（[What's the difference between a lambda expression and a function pointer (callback) in C++?](https://www.quora.com/Whats-the-difference-between-a-lambda-expression-and-a-function-pointer-callback-in-C++)）：
+
+* `Lambda`无法显式声明类型，而`std::function`可以
+* `Lambda`效率更高，参考{% post_link Cpp-Performance-Optimization %}
+    * `std::function`本质上是个函数指针的封装，当传递它时，编译器很难进行内联优化
+    * `Lambda`本质上是传递某个匿名类的实例，有确定的类型信息，编译器可以很容易地进行内联优化
+
+### 4.6.2 How lambda capture itself
+
+```cpp
+#include <functional>
+#include <iostream>
+
+int main() {
+    std::function<void(int)> recursiveLambda;
+
+    // Must use reference to capture itself
+    recursiveLambda = [&recursiveLambda](int x) {
+        std::cout << x << std::endl;
+        if (x > 0) recursiveLambda(x - 1);
+    };
+
+    recursiveLambda(5);
+    return 0;
+}
+```
+
+### 4.6.3 C-Stype function pointer
+
+According to [expr.unary.op](https://eel.is/c++draft/expr.unary.op)/7
+
+> The operand of the unary + operator shall be a prvalue of arithmetic, unscoped enumeration, or pointer type and the result is the value of the argument. Integral promotion is performed on integral or enumeration operands. The type of the result is the type of the promoted operand.
+
+According to [expr.prim.lambda.closure](https://eel.is/c++draft/expr.prim.lambda.closure)/1
+
+> The type of a lambda-expression (which is also the type of the closure object) is a unique, unnamed non-union class type, called the closure type, whose properties are described below.
+
+According to [expr.prim.lambda](https://timsong-cpp.github.io/cppwp/n3337/expr.prim.lambda)/6
+
+> The closure type for a lambda-expression with no lambda-capture has a public non-virtual non-explicit const conversion function to pointer to function having the same parameter and return types as the closure type's function call operator. The value returned by this conversion function shall be the address of a function that, when invoked, has the same effect as invoking the closure type's function call operator.
+
+**Explicit cast to C-style function pointer by using unary operator `+`:**
+
+* This is necessary in some cases like `libcurl` when you setting up the callback.
+* And in most cases, the labmda will automatically cast to C-style function pointer where there needs a C-style function pointer.
+
+```cpp
+#include <cstdarg>
+#include <iostream>
+
+using AddFunType = int (*)(int, int);
+using NegativeFunType = int (*)(int);
+
+enum OperatorType {
+    ADD = 0,
+    NEGATIVE = 1,
+};
+
+int invoke_operator(OperatorType op, ...) {
+    va_list args;
+    va_start(args, op);
+    switch (op) {
+    case ADD: {
+        AddFunType add_func = va_arg(args, AddFunType);
+        int num1 = va_arg(args, int);
+        int num2 = va_arg(args, int);
+        va_end(args);
+        return add_func(num1, num2);
+    }
+    case NEGATIVE: {
+        NegativeFunType negative_func = va_arg(args, NegativeFunType);
+        int num = va_arg(args, int);
+        va_end(args);
+        return negative_func(num);
+    }
+    default:
+        throw std::logic_error("Invalid operator type");
+    }
+}
+
+int main() {
+    {
+        // Must use + to explicitly convert lambda to function pointer, otherwise it may crash
+        auto lambda_add = +[](int num1, int num2) { return num1 + num2; };
+        int num1 = 1;
+        int num2 = 2;
+        auto ret = invoke_operator(OperatorType::ADD, lambda_add, num1, num2);
+        std::cout << num1 << " + " << num2 << " = " << ret << std::endl;
+    }
+    {
+        // Must use + to explicitly convert lambda to function pointer, otherwise it may crash
+        auto lambda_negative = +[](int num) { return -num; };
+        int num = 1;
+        auto ret = invoke_operator(OperatorType::NEGATIVE, lambda_negative, num);
+        std::cout << "-(" << num << ") = " << ret << std::endl;
+    }
+    return 0;
+}
+```
+
+**References:**
+
+* [Resolving ambiguous overload on function pointer and std::function for a lambda using + (unary plus)](https://stackoverflow.com/questions/17822131/resolving-ambiguous-overload-on-function-pointer-and-stdfunction-for-a-lambda)
+* [A positive lambda: '+[]{}' - What sorcery is this? [duplicate]](https://stackoverflow.com/questions/18889028/a-positive-lambda-what-sorcery-is-this)
+
+## 4.7 Coroutine
+
+[C++20’s Coroutines for Beginners - Andreas Fertig - CppCon 2022](https://www.youtube.com/watch?v=8sEe-4tig_A)
+
+A coroutine is a generalization of a function that can be exited and later resumed at specific points. The key difference from functions is that coroutines can maintain state between suspensions.
+
+* `co_yield`: Produces a value and suspends the coroutine. The coroutine can be later resumed from this point.
+* `co_return`: Ends the coroutine, potentially returning a final value.
+* `co_await`: Suspends the coroutine until the awaited expression is ready, at which point the coroutine is resumed.
+
+**A coroutine consists of:**
+
+* A wrapper type
+* A type with the exact name `promise_type` inside the return type of coroutine(the wrapper type), this type can be:
+    * Type alias
+    * A `typedef`
+    * Directly declare an inner class
+* An awaitable type that comes into play once we use `co_await`
+* An interator
+
+**Key Observation: A coroutine in C++ is an finite state machine(FSM) that can be controlled and customized by the promise_type**
+
+**Coroutine Classifications:**
+
+* `Task`: A coroutine that does a job without returning a value.
+* `Generator`: A coroutine that does a job and returns a value(either by `co_return` or `co_yield`)
+
+### 4.7.1 Overview of `promise_type`
+
+The `promise_type` for coroutines in C++20 can have several member functions which the coroutine machinery recognizes and calls at specific times or events. Here's a general overview of the structure and potential member functions:
+
+* **Stored Values or State:** These are member variables to hold state, intermediate results, or final values. The nature of these depends on the intended use of your coroutine.
+* **Coroutine Creation:** 
+    * `auto get_return_object() -> CoroutineReturnObject`: Defines how to obtain the return object of the coroutine (what the caller of the coroutine gets when invoking the coroutine).
+* **Coroutine Lifecycle:**
+    * `std::suspend_always/std::suspend_never initial_suspend() noexcept`: Dictates if the coroutine should start executing immediately or be suspended right after its creation.
+    * `std::suspend_always/std::suspend_never final_suspend() noexcept`: Dictates if the coroutine should be suspended after running to completion. If `std::suspend_never` is used, the coroutine ends immediately after execution.
+    * `void return_void()` noexcept: Used for coroutines with a `void` return type. Indicates the end of the coroutine.
+    * `void return_value(ReturnType value)`: For coroutines that produce a result, this function specifies how to handle the value provided with `co_return`.
+    * `void unhandled_exception()`: Invoked if there's an unhandled exception inside the coroutine. Typically, you'd capture or rethrow the exception here.
+* **Yielding Values:**
+    * `std::suspend_always/std::suspend_never yield_value(YieldType value)`: Specifies what to do when the coroutine uses `co_yield`. You dictate here how the value should be handled or stored.
+* **Awaiting Values:**
+    * `auto await_transform(AwaitableType value) -> Awaiter`: Transforms the expression after co_await. This is useful for custom awaitable types. For instance, it's used to make this a valid awaitable in member functions.
+
+#### 4.7.1.1 Awaiter
+
+The awaiter in the C++ coroutine framework is a mechanism that allows fine-tuned control over how asynchronous operations are managed and how results are produced once those operations are complete.
+
+Here's an overview of the awaiter:
+
+**Role of the Awaiter:**
+
+* The awaiter is responsible for defining the behavior of a `co_await` expression. It determines if the coroutine should suspend, what should be done upon suspension, and what value (if any) should be produced when the coroutine resumes.
+
+**Required Methods:** The awaiter must provide the following three methods:
+
+* `await_ready`
+    * Purpose: Determines if the coroutine needs to suspend at all.
+    * Signature: `bool await_ready() const noexcept`
+    * Return:
+        * `true`: The awaited operation is already complete, and the coroutine shouldn't suspend.
+        * `false`: The coroutine should suspend.
+* `await_suspend`
+    * Purpose: Dictates the actions that should be taken when the coroutine suspends.
+    * Signature: `void await_suspend(std::coroutine_handle<> handle) noexcept`
+    * Parameters:
+        * `handle`: A handle to the currently executing coroutine. It can be used to later resume the coroutine.
+* `await_resume`
+    * Purpose: Produces a value once the awaited operation completes and the coroutine resumes.
+    * Signature: `ReturnType await_resume() noexcept`
+    * Return: The result of the `co_await` expression. The type can be `void` if no value needs to be produced.
+
+**Workflow of the Awaiter:**
+
+1. **Obtain the Awaiter**: When a coroutine encounters `co_await someExpression`, it first needs to get an awaiter. The awaiter can be:
+    * Directly from `someExpression` if it has an `operator co_await`.
+    * Through an ADL (Argument Dependent Lookup) free function named `operator co_await` that takes `someExpression` as a parameter.
+    * From the coroutine's `promise_type` via `await_transform` if neither of the above methods produce an awaiter.
+1. **Call `await_ready`**: The coroutine calls the awaiter's `await_ready()` method.
+    * If it returns `true`, the coroutine continues without suspending.
+    * If it returns `false`, the coroutine prepares to suspend.
+1. **Call `await_suspend (if needed)`**: If `await_ready` indicated the coroutine should suspend (by returning `false`), the `await_suspend` method is called with a handle to the current coroutine. This method typically arranges for the coroutine to be resumed later, often by setting up callbacks or handlers associated with the asynchronous operation.
+1. **Operation Completion and Coroutine Resumption**: Once the awaited operation is complete and the coroutine is resumed, the awaiter's await_resume method is called. The value it produces becomes the result of the co_await expression.
+
+**Built-in Awaiters:**
+
+* `std::suspend_always`: The method `await_ready` always returns `false`, indicating that an await expression always suspends as it waits for its value
+* `std::suspend_never`: The method `await_ready` always returns `true`, indicating that an await expression never suspends
+
+### 4.7.2 Example
+
+The `Chat` struct acts as a wrapper around the coroutine handle. It allows the main code to interact with the coroutine - by resuming it, or by sending/receiving data to/from it.
+
+The `promise_type` nested within `Chat` is what gives behavior to our coroutine. It defines:
+
+* What happens when you start the coroutine (`initial_suspend`).
+* What happens when you `co_yield` a value (`yield_value`).
+* What happens when you `co_await` a value (`await_transform`).
+* What happens when you `co_return` a value (`return_value`).
+* What happens at the end of the coroutine (`final_suspend`).
+
+Functionality:
+
+1. **Creating the Coroutine:**
+    * When `Fun()` is called, a new coroutine is started. Due to `initial_suspend`, it is suspended immediately before executing any code.
+    * The coroutine handle (with the promise) is wrapped inside the Chat object, which is then returned to the caller (main function in this case).
+1. **Interacting with the Coroutine:**
+    * `chat.listen()`: Resumes the coroutine until the next suspension point. If `co_yield` is used inside the coroutine, the yielded value will be returned.
+    * `chat.answer(msg)`: Sends a message to the coroutine. If the coroutine is waiting for input using `co_await`, this will provide the awaited value and resume the coroutine.
+1. **Coroutine Flow:**
+    * The coroutine starts and immediately hits `co_yield "Hello!\n";`. This suspends the coroutine and the string `"Hello!\n"` is made available to the caller.
+    * In `main`, after `chat.listen()`, it prints this message.
+    * Then, `chat.answer("Where are you?\n");` is called. Inside the coroutine, the message `"Where are you?\n"` is captured and printed because of the line `std::cout << co_await std::string{};`.
+    * Finally, `co_return "Here!\n";` ends the coroutine, and the string `"Here!\n"` is made available to the caller. This message is printed after the second chat.`listen()` in `main`.
+
+```cpp
+#include <coroutine>
+#include <iostream>
+#include <utility>
+#include <vector>
+
+struct Chat {
+    struct promise_type {
+        // A: Storing a value from or for the coroutine
+        std::string _msg_out{};
+        std::string _msg_in{};
+
+        // B: What to do in case of an exception
+        void unhandled_exception() noexcept { std::cout << "Chat::unhandled_exception" << std::endl; }
+
+        // C: Coroutine creation
+        Chat get_return_object() {
+            std::cout << " -- Chat::promise_type::get_return_object" << std::endl;
+            return Chat(this);
+        };
+
+        // D: Startup
+        std::suspend_always initial_suspend() noexcept {
+            std::cout << " -- Chat::promise_type::initial_suspend" << std::endl;
+            return {};
+        }
+
+        // F: Value from co_yield
+        std::suspend_always yield_value(std::string msg) noexcept {
+            std::cout << " -- Chat::promise_type::yield_value" << std::endl;
+            _msg_out = std::move(msg);
+            return {};
+        }
+
+        // G: Value from co_await
+        auto await_transform(std::string) noexcept {
+            std::cout << " -- Chat::promise_type::await_transform" << std::endl;
+            // H: Customized version instead of using suspend_always or suspend_never
+            struct awaiter {
+                promise_type& pt;
+                bool await_ready() const noexcept {
+                    std::cout << " -- Chat::promise_type::await_transform::await_ready" << std::endl;
+                    return true;
+                }
+                std::string await_resume() const noexcept {
+                    std::cout << " -- Chat::promise_type::await_transform::await_resume" << std::endl;
+                    return std::move(pt._msg_in);
+                }
+                void await_suspend(std::coroutine_handle<>) const noexcept {
+                    std::cout << " -- Chat::promise_type::await_transform::await_suspend" << std::endl;
+                }
+            };
+            return awaiter{*this};
+        }
+
+        // I: Value from co_return
+        void return_value(std::string msg) noexcept {
+            std::cout << " -- Chat::promise_type::return_value" << std::endl;
+            _msg_out = std::move(msg);
+        }
+
+        // E: Ending
+        std::suspend_always final_suspend() noexcept {
+            std::cout << " -- Chat::promise_type::final_suspend" << std::endl;
+            return {};
+        }
+    };
+
+    // A: Shortcut for the handle type
+    using Handle = std::coroutine_handle<promise_type>;
+    // B
+    Handle _handle;
+
+    // C: Get the handle from promise
+    explicit Chat(promise_type* p) : _handle(Handle::from_promise(*p)) {}
+
+    // D: Move only
+    Chat(Chat&& rhs) : _handle(std::exchange(rhs._handle, nullptr)) {}
+
+    // E: Care taking, destroying the handle if needed
+    ~Chat() {
+        if (_handle) {
+            _handle.destroy();
+        }
+    }
+
+    // F: Active the coroutine and wait for data
+    std::string listen() {
+        std::cout << " -- Chat::listen" << std::endl;
+        if (!_handle.done()) {
+            _handle.resume();
+        }
+        return std::move(_handle.promise()._msg_out);
+    }
+
+    // G Send data to the coroutine and activate it
+    void answer(std::string msg) {
+        std::cout << " -- Chat::answer" << std::endl;
+        _handle.promise()._msg_in = msg;
+        if (!_handle.done()) {
+            _handle.resume();
+        }
+    }
+};
+
+Chat Fun() {
+    co_yield "Hello!\n";
+    std::cout << co_await std::string{};
+    co_return "Here!\n";
+}
+
+int main() {
+    Chat chat = Fun();
+    std::cout << chat.listen();
+    chat.answer("Where are you?\n");
+    std::cout << chat.listen();
+}
+```
+
+**Output:**
+
+```
+ -- Chat::promise_type::get_return_object
+ -- Chat::promise_type::initial_suspend
+ -- Chat::listen
+ -- Chat::promise_type::yield_value
+Hello!
+ -- Chat::answer
+ -- Chat::promise_type::await_transform
+ -- Chat::promise_type::await_transform::await_ready
+ -- Chat::promise_type::await_transform::await_resume
+Where are you?
+ -- Chat::promise_type::return_value
+ -- Chat::promise_type::final_suspend
+ -- Chat::listen
+Here!
+```
+
 # 5 template
 
 ## 5.1 template Type
@@ -4221,653 +4865,9 @@ type=std::atomic<int32_t>, count=2000000
 * [并行编程——内存模型之顺序一致性](https://www.cnblogs.com/jiayy/p/3246157.html)
 * [漫谈内存一致性模型](https://zhuanlan.zhihu.com/p/91406250)
 
-# 7 Lambda
+# 7 Mechanism
 
-[Lambda expressions (since C++11)](https://en.cppreference.com/w/cpp/language/lambda)
-
-> The lambda expression is a prvalue expression of unique unnamed non-union non-aggregate class type, known as closure type, which is declared (for the purposes of ADL) in the smallest block scope, class scope, or namespace scope that contains the lambda expression. The closure type has the following members, they cannot be explicitly instantiated, explicitly specialized, or (since C++14) named in a friend declaration
-
-* 每个`Lambda`表达式都是独一无二的类型，且无法显式声明
-
-## 7.1 `std::function` and Lambda
-
-在大多数场景下，`Lambda`和`std::function`可以相互替换使用，但它们之间存在一些差异（[What's the difference between a lambda expression and a function pointer (callback) in C++?](https://www.quora.com/Whats-the-difference-between-a-lambda-expression-and-a-function-pointer-callback-in-C++)）：
-
-* `Lambda`无法显式声明类型，而`std::function`可以
-* `Lambda`效率更高，参考{% post_link Cpp-Performance-Optimization %}
-    * `std::function`本质上是个函数指针的封装，当传递它时，编译器很难进行内联优化
-    * `Lambda`本质上是传递某个匿名类的实例，有确定的类型信息，编译器可以很容易地进行内联优化
-
-## 7.2 How lambda capture itself
-
-```cpp
-#include <functional>
-#include <iostream>
-
-int main() {
-    std::function<void(int)> recursiveLambda;
-
-    // Must use reference to capture itself
-    recursiveLambda = [&recursiveLambda](int x) {
-        std::cout << x << std::endl;
-        if (x > 0) recursiveLambda(x - 1);
-    };
-
-    recursiveLambda(5);
-    return 0;
-}
-```
-
-## 7.3 C-Stype function pointer
-
-According to [expr.unary.op](https://eel.is/c++draft/expr.unary.op)/7
-
-> The operand of the unary + operator shall be a prvalue of arithmetic, unscoped enumeration, or pointer type and the result is the value of the argument. Integral promotion is performed on integral or enumeration operands. The type of the result is the type of the promoted operand.
-
-According to [expr.prim.lambda.closure](https://eel.is/c++draft/expr.prim.lambda.closure)/1
-
-> The type of a lambda-expression (which is also the type of the closure object) is a unique, unnamed non-union class type, called the closure type, whose properties are described below.
-
-According to [expr.prim.lambda](https://timsong-cpp.github.io/cppwp/n3337/expr.prim.lambda)/6
-
-> The closure type for a lambda-expression with no lambda-capture has a public non-virtual non-explicit const conversion function to pointer to function having the same parameter and return types as the closure type's function call operator. The value returned by this conversion function shall be the address of a function that, when invoked, has the same effect as invoking the closure type's function call operator.
-
-**Explicit cast to C-style function pointer by using unary operator `+`:**
-
-* This is necessary in some cases like `libcurl` when you setting up the callback.
-* And in most cases, the labmda will automatically cast to C-style function pointer where there needs a C-style function pointer.
-
-```cpp
-#include <cstdarg>
-#include <iostream>
-
-using AddFunType = int (*)(int, int);
-using NegativeFunType = int (*)(int);
-
-enum OperatorType {
-    ADD = 0,
-    NEGATIVE = 1,
-};
-
-int invoke_operator(OperatorType op, ...) {
-    va_list args;
-    va_start(args, op);
-    switch (op) {
-    case ADD: {
-        AddFunType add_func = va_arg(args, AddFunType);
-        int num1 = va_arg(args, int);
-        int num2 = va_arg(args, int);
-        va_end(args);
-        return add_func(num1, num2);
-    }
-    case NEGATIVE: {
-        NegativeFunType negative_func = va_arg(args, NegativeFunType);
-        int num = va_arg(args, int);
-        va_end(args);
-        return negative_func(num);
-    }
-    default:
-        throw std::logic_error("Invalid operator type");
-    }
-}
-
-int main() {
-    {
-        // Must use + to explicitly convert lambda to function pointer, otherwise it may crash
-        auto lambda_add = +[](int num1, int num2) { return num1 + num2; };
-        int num1 = 1;
-        int num2 = 2;
-        auto ret = invoke_operator(OperatorType::ADD, lambda_add, num1, num2);
-        std::cout << num1 << " + " << num2 << " = " << ret << std::endl;
-    }
-    {
-        // Must use + to explicitly convert lambda to function pointer, otherwise it may crash
-        auto lambda_negative = +[](int num) { return -num; };
-        int num = 1;
-        auto ret = invoke_operator(OperatorType::NEGATIVE, lambda_negative, num);
-        std::cout << "-(" << num << ") = " << ret << std::endl;
-    }
-    return 0;
-}
-```
-
-**References:**
-
-* [Resolving ambiguous overload on function pointer and std::function for a lambda using + (unary plus)](https://stackoverflow.com/questions/17822131/resolving-ambiguous-overload-on-function-pointer-and-stdfunction-for-a-lambda)
-* [A positive lambda: '+[]{}' - What sorcery is this? [duplicate]](https://stackoverflow.com/questions/18889028/a-positive-lambda-what-sorcery-is-this)
-
-# 8 Coroutine
-
-[C++20’s Coroutines for Beginners - Andreas Fertig - CppCon 2022](https://www.youtube.com/watch?v=8sEe-4tig_A)
-
-A coroutine is a generalization of a function that can be exited and later resumed at specific points. The key difference from functions is that coroutines can maintain state between suspensions.
-
-* `co_yield`: Produces a value and suspends the coroutine. The coroutine can be later resumed from this point.
-* `co_return`: Ends the coroutine, potentially returning a final value.
-* `co_await`: Suspends the coroutine until the awaited expression is ready, at which point the coroutine is resumed.
-
-**A coroutine consists of:**
-
-* A wrapper type
-* A type with the exact name `promise_type` inside the return type of coroutine(the wrapper type), this type can be:
-    * Type alias
-    * A `typedef`
-    * Directly declare an inner class
-* An awaitable type that comes into play once we use `co_await`
-* An interator
-
-**Key Observation: A coroutine in C++ is an finite state machine(FSM) that can be controlled and customized by the promise_type**
-
-**Coroutine Classifications:**
-
-* `Task`: A coroutine that does a job without returning a value.
-* `Generator`: A coroutine that does a job and returns a value(either by `co_return` or `co_yield`)
-
-## 8.1 Overview of `promise_type`
-
-The `promise_type` for coroutines in C++20 can have several member functions which the coroutine machinery recognizes and calls at specific times or events. Here's a general overview of the structure and potential member functions:
-
-* **Stored Values or State:** These are member variables to hold state, intermediate results, or final values. The nature of these depends on the intended use of your coroutine.
-* **Coroutine Creation:** 
-    * `auto get_return_object() -> CoroutineReturnObject`: Defines how to obtain the return object of the coroutine (what the caller of the coroutine gets when invoking the coroutine).
-* **Coroutine Lifecycle:**
-    * `std::suspend_always/std::suspend_never initial_suspend() noexcept`: Dictates if the coroutine should start executing immediately or be suspended right after its creation.
-    * `std::suspend_always/std::suspend_never final_suspend() noexcept`: Dictates if the coroutine should be suspended after running to completion. If `std::suspend_never` is used, the coroutine ends immediately after execution.
-    * `void return_void()` noexcept: Used for coroutines with a `void` return type. Indicates the end of the coroutine.
-    * `void return_value(ReturnType value)`: For coroutines that produce a result, this function specifies how to handle the value provided with `co_return`.
-    * `void unhandled_exception()`: Invoked if there's an unhandled exception inside the coroutine. Typically, you'd capture or rethrow the exception here.
-* **Yielding Values:**
-    * `std::suspend_always/std::suspend_never yield_value(YieldType value)`: Specifies what to do when the coroutine uses `co_yield`. You dictate here how the value should be handled or stored.
-* **Awaiting Values:**
-    * `auto await_transform(AwaitableType value) -> Awaiter`: Transforms the expression after co_await. This is useful for custom awaitable types. For instance, it's used to make this a valid awaitable in member functions.
-
-### 8.1.1 Awaiter
-
-The awaiter in the C++ coroutine framework is a mechanism that allows fine-tuned control over how asynchronous operations are managed and how results are produced once those operations are complete.
-
-Here's an overview of the awaiter:
-
-**Role of the Awaiter:**
-
-* The awaiter is responsible for defining the behavior of a `co_await` expression. It determines if the coroutine should suspend, what should be done upon suspension, and what value (if any) should be produced when the coroutine resumes.
-
-**Required Methods:** The awaiter must provide the following three methods:
-
-* `await_ready`
-    * Purpose: Determines if the coroutine needs to suspend at all.
-    * Signature: `bool await_ready() const noexcept`
-    * Return:
-        * `true`: The awaited operation is already complete, and the coroutine shouldn't suspend.
-        * `false`: The coroutine should suspend.
-* `await_suspend`
-    * Purpose: Dictates the actions that should be taken when the coroutine suspends.
-    * Signature: `void await_suspend(std::coroutine_handle<> handle) noexcept`
-    * Parameters:
-        * `handle`: A handle to the currently executing coroutine. It can be used to later resume the coroutine.
-* `await_resume`
-    * Purpose: Produces a value once the awaited operation completes and the coroutine resumes.
-    * Signature: `ReturnType await_resume() noexcept`
-    * Return: The result of the `co_await` expression. The type can be `void` if no value needs to be produced.
-
-**Workflow of the Awaiter:**
-
-1. **Obtain the Awaiter**: When a coroutine encounters `co_await someExpression`, it first needs to get an awaiter. The awaiter can be:
-    * Directly from `someExpression` if it has an `operator co_await`.
-    * Through an ADL (Argument Dependent Lookup) free function named `operator co_await` that takes `someExpression` as a parameter.
-    * From the coroutine's `promise_type` via `await_transform` if neither of the above methods produce an awaiter.
-1. **Call `await_ready`**: The coroutine calls the awaiter's `await_ready()` method.
-    * If it returns `true`, the coroutine continues without suspending.
-    * If it returns `false`, the coroutine prepares to suspend.
-1. **Call `await_suspend (if needed)`**: If `await_ready` indicated the coroutine should suspend (by returning `false`), the `await_suspend` method is called with a handle to the current coroutine. This method typically arranges for the coroutine to be resumed later, often by setting up callbacks or handlers associated with the asynchronous operation.
-1. **Operation Completion and Coroutine Resumption**: Once the awaited operation is complete and the coroutine is resumed, the awaiter's await_resume method is called. The value it produces becomes the result of the co_await expression.
-
-**Built-in Awaiters:**
-
-* `std::suspend_always`: The method `await_ready` always returns `false`, indicating that an await expression always suspends as it waits for its value
-* `std::suspend_never`: The method `await_ready` always returns `true`, indicating that an await expression never suspends
-
-## 8.2 Example
-
-The `Chat` struct acts as a wrapper around the coroutine handle. It allows the main code to interact with the coroutine - by resuming it, or by sending/receiving data to/from it.
-
-The `promise_type` nested within `Chat` is what gives behavior to our coroutine. It defines:
-
-* What happens when you start the coroutine (`initial_suspend`).
-* What happens when you `co_yield` a value (`yield_value`).
-* What happens when you `co_await` a value (`await_transform`).
-* What happens when you `co_return` a value (`return_value`).
-* What happens at the end of the coroutine (`final_suspend`).
-
-Functionality:
-
-1. **Creating the Coroutine:**
-    * When `Fun()` is called, a new coroutine is started. Due to `initial_suspend`, it is suspended immediately before executing any code.
-    * The coroutine handle (with the promise) is wrapped inside the Chat object, which is then returned to the caller (main function in this case).
-1. **Interacting with the Coroutine:**
-    * `chat.listen()`: Resumes the coroutine until the next suspension point. If `co_yield` is used inside the coroutine, the yielded value will be returned.
-    * `chat.answer(msg)`: Sends a message to the coroutine. If the coroutine is waiting for input using `co_await`, this will provide the awaited value and resume the coroutine.
-1. **Coroutine Flow:**
-    * The coroutine starts and immediately hits `co_yield "Hello!\n";`. This suspends the coroutine and the string `"Hello!\n"` is made available to the caller.
-    * In `main`, after `chat.listen()`, it prints this message.
-    * Then, `chat.answer("Where are you?\n");` is called. Inside the coroutine, the message `"Where are you?\n"` is captured and printed because of the line `std::cout << co_await std::string{};`.
-    * Finally, `co_return "Here!\n";` ends the coroutine, and the string `"Here!\n"` is made available to the caller. This message is printed after the second chat.`listen()` in `main`.
-
-```cpp
-#include <coroutine>
-#include <iostream>
-#include <utility>
-#include <vector>
-
-struct Chat {
-    struct promise_type {
-        // A: Storing a value from or for the coroutine
-        std::string _msg_out{};
-        std::string _msg_in{};
-
-        // B: What to do in case of an exception
-        void unhandled_exception() noexcept { std::cout << "Chat::unhandled_exception" << std::endl; }
-
-        // C: Coroutine creation
-        Chat get_return_object() {
-            std::cout << " -- Chat::promise_type::get_return_object" << std::endl;
-            return Chat(this);
-        };
-
-        // D: Startup
-        std::suspend_always initial_suspend() noexcept {
-            std::cout << " -- Chat::promise_type::initial_suspend" << std::endl;
-            return {};
-        }
-
-        // F: Value from co_yield
-        std::suspend_always yield_value(std::string msg) noexcept {
-            std::cout << " -- Chat::promise_type::yield_value" << std::endl;
-            _msg_out = std::move(msg);
-            return {};
-        }
-
-        // G: Value from co_await
-        auto await_transform(std::string) noexcept {
-            std::cout << " -- Chat::promise_type::await_transform" << std::endl;
-            // H: Customized version instead of using suspend_always or suspend_never
-            struct awaiter {
-                promise_type& pt;
-                bool await_ready() const noexcept {
-                    std::cout << " -- Chat::promise_type::await_transform::await_ready" << std::endl;
-                    return true;
-                }
-                std::string await_resume() const noexcept {
-                    std::cout << " -- Chat::promise_type::await_transform::await_resume" << std::endl;
-                    return std::move(pt._msg_in);
-                }
-                void await_suspend(std::coroutine_handle<>) const noexcept {
-                    std::cout << " -- Chat::promise_type::await_transform::await_suspend" << std::endl;
-                }
-            };
-            return awaiter{*this};
-        }
-
-        // I: Value from co_return
-        void return_value(std::string msg) noexcept {
-            std::cout << " -- Chat::promise_type::return_value" << std::endl;
-            _msg_out = std::move(msg);
-        }
-
-        // E: Ending
-        std::suspend_always final_suspend() noexcept {
-            std::cout << " -- Chat::promise_type::final_suspend" << std::endl;
-            return {};
-        }
-    };
-
-    // A: Shortcut for the handle type
-    using Handle = std::coroutine_handle<promise_type>;
-    // B
-    Handle _handle;
-
-    // C: Get the handle from promise
-    explicit Chat(promise_type* p) : _handle(Handle::from_promise(*p)) {}
-
-    // D: Move only
-    Chat(Chat&& rhs) : _handle(std::exchange(rhs._handle, nullptr)) {}
-
-    // E: Care taking, destroying the handle if needed
-    ~Chat() {
-        if (_handle) {
-            _handle.destroy();
-        }
-    }
-
-    // F: Active the coroutine and wait for data
-    std::string listen() {
-        std::cout << " -- Chat::listen" << std::endl;
-        if (!_handle.done()) {
-            _handle.resume();
-        }
-        return std::move(_handle.promise()._msg_out);
-    }
-
-    // G Send data to the coroutine and activate it
-    void answer(std::string msg) {
-        std::cout << " -- Chat::answer" << std::endl;
-        _handle.promise()._msg_in = msg;
-        if (!_handle.done()) {
-            _handle.resume();
-        }
-    }
-};
-
-Chat Fun() {
-    co_yield "Hello!\n";
-    std::cout << co_await std::string{};
-    co_return "Here!\n";
-}
-
-int main() {
-    Chat chat = Fun();
-    std::cout << chat.listen();
-    chat.answer("Where are you?\n");
-    std::cout << chat.listen();
-}
-```
-
-**Output:**
-
-```
- -- Chat::promise_type::get_return_object
- -- Chat::promise_type::initial_suspend
- -- Chat::listen
- -- Chat::promise_type::yield_value
-Hello!
- -- Chat::answer
- -- Chat::promise_type::await_transform
- -- Chat::promise_type::await_transform::await_ready
- -- Chat::promise_type::await_transform::await_resume
-Where are you?
- -- Chat::promise_type::return_value
- -- Chat::promise_type::final_suspend
- -- Chat::listen
-Here!
-```
-
-# 9 Attributes
-
-`__attribute__`是一个`GCC`编译器特有的特性，它允许程序员向编译器提供一些指示信息，以便在编译期间进行优化或者在运行期间提供一些额外的约束条件。这些指示信息被称为属性（`attributes`），可以应用于函数、变量、类型等各种程序元素
-
-`C++11`引入了一种新的语言特性，称为属性（`attributes`），它们与`__attribute__`类似，但是是标准`C++`的一部分，因此在编译器支持`C++11`之后，可以在`C++`代码中使用它们。与`__attribute__`不同，`C++11`的`attributes`支持在类和命名空间级别使用，而不仅仅是在函数和变量级别
-
-`C++11`的`attributes`也提供了更多的灵活性和可读性。它们可以用更自然的方式嵌入到代码中，而不像`__attribute__`那样需要使用一些冗长的语法。此外，`C++11`的`attributes`还提供了一些有用的新特性，例如`[[noreturn]]`、`[[carries_dependency]]`、`[[deprecated]]`、`[[fallthrough]]`
-
-常用`__attribute__`清单：
-
-* `__attribute__((packed))`：指示编译器在分配结构体内存时尽量紧凑地排列各个字段，以减小结构体的内存占用
-* `__attribute__((aligned(n)))`: 指示编译器将变量对齐到`n`字节边界
-* `__attribute__((noreturn))`：指示函数不会返回，用于告诉编译器在函数调用之后不需要进行任何清理操作
-* `__attribute__((unused))`：指示编译器不应发出未使用变量的警告。
-* `__attribute__((deprecated))`：指示函数或变量已经过时，编译器会在使用它们时发出警告
-* `__attribute__((visibility("hidden")))`：指示编译器隐藏该符号，即不会出现在当前编译单元的导出的符号表中
-* `__attribute__(alias)`：它允许你将一个函数或变量的名称指定为另一个已存在的函数或变量的别名。可以起到与链接器参数`--wrap=<symbol>`类似的作用
-    ```cpp
-    #include <stdio.h>
-
-    FILE* my_fopen(const char* path, const char* mode) {
-        printf("This is my fopen!\n");
-        return NULL;
-    }
-
-    FILE* fopen(const char* path, const char* mode) __attribute__((alias("my_fopen")));
-
-    int main() {
-        printf("Calling the fopen() function...\n");
-        FILE* fd = fopen("test.txt", "r");
-        if (!fd) {
-            printf("fopen() returned NULL\n");
-            return 1;
-        }
-        printf("fopen() succeeded\n");
-        return 0;
-    }
-    ```
-
-常用`attributes`清单：
-
-* `[[noreturn]]`（C++11）：用于标识函数不会返回。如果一个函数被标记为`[[noreturn]]`，那么编译器会警告或者错误地处理一个函数的任何尝试返回值
-* `[[deprecated]]`（C++14）：用于标识函数或变量已被弃用。编译器会在调用或使用被标记为`[[deprecated]]`的函数或变量时给出警告
-* `[[fallthrough]]`（C++17）：用于标识`switch`语句中的`case`标签，以指示代码故意继续执行下一个`case`标签
-* `[[nodiscard]]`（C++17）：用于标识函数的返回值需要被检查。当一个函数被标记为`[[nodiscard]]`时，如果函数返回值没有被检查，编译器会给出警告
-* `[[maybe_unused]]`（C++17）：用于标识变量或函数可能未被使用。编译器不会给出未使用的变量或函数的警告
-* `[[likely]]`（C++20）：提示编译器该分支大概率为`true`
-* `[[unlikely]]`（C++20）：提示编译器该分支大概率为`false`
-
-## 9.1 aligned
-
-```cpp
-#include <iostream>
-
-#define FOO_WITH_ALIGN(SIZE) \
-    struct Foo_##SIZE {      \
-        int v;               \
-    } __attribute__((aligned(SIZE)))
-
-#define PRINT_SIZEOF_FOO(SIZE) std::cout << "Foo_##SIZE's size=" << sizeof(Foo_##SIZE) << std::endl;
-
-FOO_WITH_ALIGN(1);
-FOO_WITH_ALIGN(2);
-FOO_WITH_ALIGN(4);
-FOO_WITH_ALIGN(8);
-FOO_WITH_ALIGN(16);
-FOO_WITH_ALIGN(32);
-FOO_WITH_ALIGN(64);
-FOO_WITH_ALIGN(128);
-FOO_WITH_ALIGN(256);
-
-int main() {
-    PRINT_SIZEOF_FOO(1);
-    PRINT_SIZEOF_FOO(2);
-    PRINT_SIZEOF_FOO(4);
-    PRINT_SIZEOF_FOO(8);
-    PRINT_SIZEOF_FOO(16);
-    PRINT_SIZEOF_FOO(32);
-    PRINT_SIZEOF_FOO(64);
-    PRINT_SIZEOF_FOO(128);
-    PRINT_SIZEOF_FOO(256);
-    return 1;
-}
-```
-
-## 9.2 Reference
-
-* [Compiler-specific Features](https://www.keil.com/support/man/docs/armcc/armcc_chr1359124965789.htm)
-
-# 10 ASM
-
-[gcc-online-docs](https://gcc.gnu.org/onlinedocs/gcc/)
-
-## 10.1 Basic Asm
-
-## 10.2 [Extended Asm](https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html)
-
-GCC设计了一种特有的嵌入方式，它规定了汇编代码嵌入的形式和嵌入汇编代码需要由哪几个部分组成，格式如下：
-
-* 汇编语句模板是必须的，其余三部分是可选的
-
-```cpp
-asm asm-qualifiers ( AssemblerTemplate 
-                 : OutputOperands 
-                 [ : InputOperands
-                 [ : Clobbers ] ])
-
-asm asm-qualifiers ( AssemblerTemplate 
-                      : OutputOperands
-                      : InputOperands
-                      : Clobbers
-                      : GotoLabels)
-```
-
-**`Qualifiers`，修饰符：**
-
-* `volatile`：禁止编译器优化
-* `inline`
-* `goto`
-
-**`AssemblerTemplate`，汇编语句模板：**
-
-* 汇编语句模板由汇编语句序列组成，语句之间使用`;`、`\n`、`\n\t`分开
-* 指令中的操作数可以使用占位符，占位符可以指向`OutputOperands`、`InputOperands`、`GotoLabels`
-* 指令中使用占位符表示的操作数，总被视为`long`型（4个字节），但对其施加的操作根据指令可以是字或者字节，当把操作数当作字或者字节使用时，默认为低字或者低字节
-* 对字节操作可以显式的指明是低字节还是次字节。方法是在`%`和序号之间插入一个字母
-    * `b`代表低字节
-    * `h`代表高字节
-    * 例如：`%h1`
-
-**`OutputOperands`，输出操作数：**
-
-* 操作数之间用逗号分隔
-* 每个操作数描述符由限定字符串（`Constraints`）和C语言变量或表达式组成
-
-**`InputOperands`，输入操作数：**
-
-* 操作数之间用逗号分隔
-* 每个操作数描述符由限定字符串（`Constraints`）和C语言变量或表达式组成
-
-**`Clobbers`，描述部分：**
-
-* 用于通知编译器我们使用了哪些寄存器或内存，由逗号格开的字符串组成
-* 每个字符串描述一种情况，一般是寄存器名；除寄存器外还有`memory`。例如：`%eax`，`%ebx`，`memory`等
-
-**`Constraints`，限定字符串（下面仅列出常用的）：**
-
-* `m`：内存
-* `o`：内存，但是其寻址方式是偏移量类型
-* `v`：内存，但寻址方式不是偏移量类型
-* `r`：通用寄存器
-* `i`：整型立即数
-* `g`：任意通用寄存器、内存、立即数
-* `p`：合法指针
-* `=`：write-only
-* `+`：read-write
-* `&`：该输出操作数不能使用过和输入操作数相同的寄存器
-
-**示例1：**
-
-```cpp
-#include <stddef.h>
-#include <stdint.h>
-
-#include <iostream>
-
-struct atomic_t {
-    volatile int32_t a_count;
-};
-
-static inline int32_t atomic_read(const atomic_t* v) {
-    return (*(volatile int32_t*)&(v)->a_count);
-}
-
-static inline void atomic_write(atomic_t* v, int32_t i) {
-    v->a_count = i;
-}
-
-static inline void atomic_add(atomic_t* v, int32_t i) {
-    __asm__ __volatile__(
-            "lock;"
-            "addl %1,%0"
-            : "+m"(v->a_count)
-            : "ir"(i));
-}
-
-static inline void atomic_sub(atomic_t* v, int32_t i) {
-    __asm__ __volatile__(
-            "lock;"
-            "subl %1,%0"
-            : "+m"(v->a_count)
-            : "ir"(i));
-}
-
-static inline void atomic_inc(atomic_t* v) {
-    __asm__ __volatile__(
-            "lock;"
-            "incl %0"
-            : "+m"(v->a_count));
-}
-
-static inline void atomic_dec(atomic_t* v) {
-    __asm__ __volatile__(
-            "lock;"
-            "decl %0"
-            : "+m"(v->a_count));
-}
-
-int main() {
-    atomic_t v;
-    atomic_write(&v, 0);
-    atomic_add(&v, 10);
-    atomic_sub(&v, 5);
-    atomic_inc(&v);
-    atomic_dec(&v);
-    std::cout << atomic_read(&v) << std::endl;
-    return 0;
-}
-```
-
-**示例2：**
-
-* 这个程序是没法跑的，因为`cli`指令必须在内核态执行
-* `hal_save_flags_cli`：将`eflags`寄存器的值保存到内存中，然后关闭中断
-* `hal_restore_flags_sti`：将`hal_save_flags_cli`保存在内存中的值恢复到`eflags`寄存器中
-
-```cpp
-#include <stddef.h>
-#include <stdint.h>
-
-#include <iostream>
-
-typedef uint32_t cpuflg_t;
-
-static inline void hal_save_flags_cli(cpuflg_t* flags) {
-    __asm__ __volatile__(
-            "pushf;" // 把eflags寄存器的值压入当前栈顶
-            "cli;"   // 关闭中断，会改变eflags寄存器的值
-            "pop %0" // 把当前栈顶弹出到eflags为地址的内存中
-            : "=m"(*flags)
-            :
-            : "memory");
-}
-
-static inline void hal_restore_flags_sti(cpuflg_t* flags) {
-    __asm__ __volatile__(
-            "push %0;" // 把flags为地址处的值寄存器压入当前栈顶
-            "popf"     // 把当前栈顶弹出到eflags寄存器中
-            :
-            : "m"(*flags)
-            : "memory");
-}
-
-void foo(cpuflg_t* flags) {
-    hal_save_flags_cli(flags);
-    std::cout << "step1: foo()" << std::endl;
-    hal_restore_flags_sti(flags);
-}
-
-void bar() {
-    cpuflg_t flags;
-    hal_save_flags_cli(&flags);
-    foo(&flags);
-    std::cout << "step2: bar()" << std::endl;
-    hal_restore_flags_sti(&flags);
-}
-
-int main() {
-    bar();
-    return 0;
-}
-```
-
-**示例3：linux内核大量用到了`asm`，具体可以参考[linux-asm](https://github.com/torvalds/linux/blob/master/arch/x86/include/asm)**
-
-# 11 Mechanism
-
-## 11.1 lvalue & rvalue
+## 7.1 lvalue & rvalue
 
 [Value categories](https://en.cppreference.com/w/cpp/language/value_category)
 
@@ -4929,7 +4929,7 @@ receiveFoo(Foo&)
 receiveFoo(Foo&&)
 ```
 
-## 11.2 Move Semantics
+## 7.2 Move Semantics
 
 **For argument passing:**
 
@@ -5034,7 +5034,7 @@ Bar::Bar(Bar&&)
 receiveBar(Bar)
 ```
 
-## 11.3 Structured Bindings
+## 7.3 Structured Bindings
 
 Structured bindings were introduced in C++17 and provide a convenient way to destructure the elements of a tuple-like object or aggregate into individual variables.
 
@@ -5081,7 +5081,7 @@ int main() {
 }
 ```
 
-## 11.4 Copy Elision
+## 7.4 Copy Elision
 
 * [Copy elision](https://en.cppreference.com/w/cpp/language/copy_elision)
 * [What are copy elision and return value optimization?](https://stackoverflow.com/questions/12953127/what-are-copy-elision-and-return-value-optimization)
@@ -5130,9 +5130,9 @@ Copy elision is an optimization technique used by compilers in C++ to reduce the
     }
     ```
 
-# 12 Policy
+# 8 Policy
 
-## 12.1 Pointer Stability
+## 8.1 Pointer Stability
 
 **`pointer stability`通常用于描述容器。当我们说一个容器是`pointer stability`时，是指，当某个元素添加到容器之后、从容器删除之前，该元素的内存地址不变，也就是说，该元素的内存地址，不会受到容器的添加删除元素、扩缩容、或者其他操作影响**
 
@@ -5158,7 +5158,7 @@ Copy elision is an optimization technique used by compilers in C++ to reduce the
 | `phmap::node_hash_map` | ✅ |  |
 | `phmap::node_hash_set` | ✅ |  |
 
-## 12.2 Exception Safe
+## 8.2 Exception Safe
 
 [Wiki-Exception safety](https://en.wikipedia.org/wiki/Exception_safety)
 
@@ -5169,7 +5169,7 @@ Copy elision is an optimization technique used by compilers in C++ to reduce the
 1. `Basic exception safety`：可能会抛出异常，操作失败的部分可能会导致副作用，但所有不变量都会被保留。任何存储的数据都将包含可能与原始值不同的有效值。资源泄漏（包括内存泄漏）通常通过一个声明所有资源都被考虑和管理的不变量来排除
 1. `No exception safety`：不承诺异常安全
 
-## 12.3 RAII
+## 8.3 RAII
 
 `RAII, Resource Acquisition is initialization`，即资源获取即初始化。典型示例包括：`std::lock_guard`、`defer`。简单来说，就是在对象的构造方法中初始化资源，在析构函数中销毁资源。而构造函数与析构函数的调用是由编译器自动插入的，减轻了开发者的心智负担
 
@@ -5186,11 +5186,169 @@ private:
 };
 ```
 
-# 13 Tips
+# 9 Best Practice
 
-## 13.1 Class Related
+## 9.1 Visitor
 
-### 13.1.1 How to define static members in a class
+```cpp
+#include <iostream>
+#include <stdexcept>
+#include <string>
+#include <vector>
+
+#define APPLY_AST_TYPES(M) \
+    M(Function)            \
+    M(UnaryExpression)     \
+    M(BinaryExpression)    \
+    M(Literal)
+// More types here
+
+enum ASTType {
+#define ENUM_TYPE(ITEM) ITEM,
+    APPLY_AST_TYPES(ENUM_TYPE) UNDEFINED,
+#undef ENUM_TYPE
+};
+
+inline std::string toString(ASTType type) {
+    switch (type) {
+#define CASE_TYPE(ITEM) \
+    case ASTType::ITEM: \
+        return #ITEM;
+        APPLY_AST_TYPES(CASE_TYPE)
+#undef CASE_TYPE
+    default:
+        __builtin_unreachable();
+    }
+}
+
+struct ASTNode {
+    ASTNode(std::vector<ASTNode*> children_) : children(children_) {}
+    virtual ASTType getType() = 0;
+    std::vector<ASTNode*> children;
+};
+struct ASTFunction : public ASTNode {
+    ASTFunction(std::string name_, std::vector<ASTNode*> args_) : ASTNode(args_), name(std::move(name_)) {}
+    ASTType getType() override { return ASTType::Function; }
+    const std::string name;
+};
+struct ASTUnaryExpression : public ASTNode {
+    ASTUnaryExpression(std::string op_, ASTNode* operand_) : ASTNode({operand_}), op(std::move(op_)) {}
+    ASTType getType() override { return ASTType::UnaryExpression; }
+    const std::string op;
+};
+struct ASTBinaryExpression : public ASTNode {
+    ASTBinaryExpression(std::string op_, ASTNode* lhs_, ASTNode* rhs_) : ASTNode({lhs_, rhs_}), _op(std::move(op_)) {}
+    ASTType getType() override { return ASTType::BinaryExpression; }
+    const std::string _op;
+};
+struct ASTLiteral : public ASTNode {
+    ASTLiteral(std::string value_) : ASTNode({}), value(std::move(value_)) {}
+    ASTType getType() override { return ASTType::Literal; }
+    const std::string value;
+};
+
+template <typename R, typename C>
+class ASTVisitor {
+public:
+    virtual R visit(ASTNode* node, C& ctx) { throw std::runtime_error("unimplemented"); }
+
+#define VISITOR_DEF(TYPE) \
+    virtual R visit##TYPE(ASTNode* node, C& context) { return visit(node, context); }
+    APPLY_AST_TYPES(VISITOR_DEF)
+#undef VISITOR_DEF
+};
+
+class ASTVisitorUtil {
+public:
+    template <typename R, typename C>
+    static R visit(ASTNode* node, ASTVisitor<R, C>& visitor, C& ctx) {
+        switch (node->getType()) {
+#define CASE_TYPE(ITEM) \
+    case ASTType::ITEM: \
+        return visitor.visit##ITEM(node, ctx);
+            APPLY_AST_TYPES(CASE_TYPE)
+#undef CASE_TYPE
+        default:
+            __builtin_unreachable();
+        }
+    }
+};
+
+struct EmptyContext {};
+
+class PrintVisitor : public ASTVisitor<void, EmptyContext> {
+    void visit(ASTNode* node, EmptyContext& context) override {
+        std::cout << "Visiting node: " << toString(node->getType()) << std::endl;
+        for (auto* child : node->children) {
+            ASTVisitorUtil::visit(child, *this, context);
+        }
+    }
+};
+
+class RebuildVisitor : public ASTVisitor<void, std::string> {
+public:
+    void visit(ASTNode* node, std::string& context) override { throw std::runtime_error("unimplemented"); }
+
+    void visitUnaryExpression(ASTNode* node, std::string& context) override {
+        auto* unary = dynamic_cast<ASTUnaryExpression*>(node);
+        context.append(unary->op);
+        ASTVisitorUtil::visit(unary->children[0], *this, context);
+    }
+
+    void visitBinaryExpression(ASTNode* node, std::string& context) override {
+        auto* binary = dynamic_cast<ASTBinaryExpression*>(node);
+        ASTVisitorUtil::visit(binary->children[0], *this, context);
+        context.append(" " + binary->_op + " ");
+        ASTVisitorUtil::visit(binary->children[1], *this, context);
+    }
+
+    void visitFunction(ASTNode* node, std::string& context) override {
+        auto* function = dynamic_cast<ASTFunction*>(node);
+        context.append(function->name);
+        context.append("(");
+        size_t i = 0;
+        for (auto* child : node->children) {
+            ASTVisitorUtil::visit(child, *this, context);
+            if (++i != node->children.size()) {
+                context.append(", ");
+            }
+        }
+        context.append(")");
+    }
+
+    void visitLiteral(ASTNode* node, std::string& context) override {
+        auto* literal = dynamic_cast<ASTLiteral*>(node);
+        context.append(literal->value);
+    }
+};
+
+int main() {
+    // Create an AST: max(1, 2) + min(3, 5) / -3
+    ASTNode* ast = new ASTBinaryExpression(
+            "+", new ASTFunction("max", {new ASTLiteral("1"), new ASTLiteral("2")}),
+            new ASTBinaryExpression("/", new ASTFunction("min", {new ASTLiteral("3"), new ASTLiteral("5")}),
+                                    new ASTUnaryExpression("-", new ASTLiteral("3"))));
+
+    {
+        EmptyContext context;
+        PrintVisitor visitor;
+        ASTVisitorUtil::visit(ast, visitor, context);
+    }
+    {
+        std::string buffer;
+        RebuildVisitor visitor;
+        ASTVisitorUtil::visit(ast, visitor, buffer);
+        std::cout << buffer << std::endl;
+    }
+    return 0;
+}
+```
+
+# 10 Tips
+
+## 10.1 Class Related
+
+### 10.1.1 How to define static members in a class
 
 **在类中声明静态成员，在类外定义（赋值）静态成员，示例如下：**
 
@@ -5209,7 +5367,7 @@ int main() {
 }
 ```
 
-### 13.1.2 Non-static members of a class cannot undergo type deduction
+### 10.1.2 Non-static members of a class cannot undergo type deduction
 
 类的非静态成员，无法进行类型推导，必须显式指定类型（因为类型信息必须是不可变的）；静态成员可以。例如下面示例就存在语法错误：
 
@@ -5238,9 +5396,9 @@ private:
 };
 ```
 
-## 13.2 Initialization
+## 10.2 Initialization
 
-### 13.2.1 Initializer List
+### 10.2.1 Initializer List
 
 1. 对于内置类型，直接进行值拷贝。使用初始化列表还是在构造函数体中进行初始化没有差别
 1. 对于类类型
@@ -5351,7 +5509,7 @@ A's default constructor
 A's move assign operator
 ```
 
-### 13.2.2 Various Initialization Types
+### 10.2.2 Various Initialization Types
 
 1. 默认初始化：`type variableName;`
 1. 直接初始化/构造初始化（至少有1个参数）：`type variableName(args);`
@@ -5484,7 +5642,7 @@ A's (int, int) constructor
 ============(值初始化 a11)============
 ```
 
-### 13.2.3 Initialization Order of class Members
+### 10.2.3 Initialization Order of class Members
 
 1. 初始化列表
 1. 成员定义处的列表初始化，当且仅当该成员未出现在初始化列表中时才会生效
@@ -5537,7 +5695,7 @@ initialized_at_initialization_list
 initialized_at_construct_block
 ```
 
-### 13.2.4 Initialization of static Local Variables
+### 10.2.4 Initialization of static Local Variables
 
 ```cpp
 void foo() {
@@ -5570,7 +5728,7 @@ void foo() {
 }
 ```
 
-### 13.2.5 Initialization of non-static class Members
+### 10.2.5 Initialization of non-static class Members
 
 非静态成员不允许使用构造初始化，但是允许使用列表初始化（本质上还是调用了对应的构造函数）
 
@@ -5597,9 +5755,9 @@ int main() {
 }
 ```
 
-## 13.3 Pointer
+## 10.3 Pointer
 
-### 13.3.1 Member Function Pointer
+### 10.3.1 Member Function Pointer
 
 成员函数指针需要通过`.*`或者`->*`运算符进行调用
 
@@ -5658,7 +5816,7 @@ int main() {
 }
 ```
 
-### 13.3.2 How to pass multi-dimensional pointer parameters
+### 10.3.2 How to pass multi-dimensional pointer parameters
 
 ```cpp
 #include <iostream>
@@ -5698,9 +5856,9 @@ int main() {
 }
 ```
 
-## 13.4 Reference
+## 10.4 Reference
 
-### 13.4.1 Reference Initialization
+### 10.4.1 Reference Initialization
 
 **引用只能在定义处初始化**
 
@@ -5726,7 +5884,7 @@ b=2
 ref=2
 ```
 
-## 13.5 Mock class
+## 10.5 Mock class
 
 有时在测试的时候，我们需要mock一个类的实现，我们可以在测试的cpp文件中实现这个类的所有方法（**注意，必须是所有方法**），就能够覆盖原有库文件中的实现。下面以一个例子来说明
 
@@ -5903,7 +6061,7 @@ person.cpp:(.text+0x2a): Person::sleep() 的多重定义
 collect2: 错误：ld 返回 1
 ```
 
-## 13.6 Variable-length Array
+## 10.6 Variable-length Array
 
 Variable-length array (VLA), which is a feature not supported by standard C++. However, some compilers, particularly in C and as extensions in C++, do provide support for VLAs.
 
@@ -5959,9 +6117,9 @@ array2: -532
 num4: -32
 ```
 
-# 14 FAQ
+# 11 FAQ
 
-## 14.1 Why is it unnecessary to specify the size when releasing memory with free and delete
+## 11.1 Why is it unnecessary to specify the size when releasing memory with free and delete
 
 [How does free know how much to free?](https://stackoverflow.com/questions/1518711/how-does-free-know-how-much-to-free)
 
@@ -5983,11 +6141,11 @@ ____ The allocated block ____
           +-- The address you are given
 ```
 
-## 14.2 Do parameter types require lvalue or rvalue references
+## 11.2 Do parameter types require lvalue or rvalue references
 
-## 14.3 Does the return type require lvalue or rvalue references
+## 11.3 Does the return type require lvalue or rvalue references
 
-# 15 Reference
+# 12 Reference
 
 * [C++11\14\17\20 特性介绍](https://www.jianshu.com/p/8c4952e9edec)
 * [关于C++：静态常量字符串(类成员)](https://www.codenong.com/1563897/)

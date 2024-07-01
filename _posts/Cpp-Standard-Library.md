@@ -2286,7 +2286,14 @@ int main() {
 }
 ```
 
-# 34 Frequently-Used Compoments for Interview
+# 34 Builtin Functions
+
+[6.63 Other Built-in Functions Provided by GCC](https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html)
+
+1. `__builtin_unreachable`
+1. `__builtin_prefetch`
+
+# 35 Frequently-Used Compoments for Interview
 
 **Data Structure:**
 
