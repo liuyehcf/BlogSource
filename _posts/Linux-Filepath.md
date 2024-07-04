@@ -238,4 +238,5 @@ categories:
 1. `/dev/disk/by-id`：以id为名称的软链接文件
 1. `/usr/share/zoneinfo`：时区配置文件
     * `/etc/localtime`：时区配置文件的软连接，实际生效的时区配置
+1. `/dev/tty`: is a special file in Unix-like operating systems that represents the controlling terminal for the current process. In other words, it is a reference to the terminal device (such as a command-line interface) that is currently interacting with the user.
 

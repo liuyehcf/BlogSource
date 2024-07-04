@@ -21,3 +21,9 @@ unzip ninja-linux.zip
 mv ninja /usr/local/bin/ninja
 ```
 
+# 2 Tips
+
+## 2.1 Check Target
+
+* `ninja -C build -t targets`
+* `cat build/build.ninja | grep 'build all:'`

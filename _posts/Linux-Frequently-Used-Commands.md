@@ -821,36 +821,41 @@ echo "123" | awk '{if($0 ~ /^[0-9]+$/) print $0;}'
 
 ## 2.6 grep
 
-grep分析一行信息，若当前有我们所需要的信息，就将该行拿出来
+grep searches for `PATTERNS` in each `FILE`
 
 **Pattern:**
 
-* `grep [-acinvrAB] [--color=auto] '查找的字符串' filename`
+```sh
+       grep [OPTION...] PATTERNS [FILE...]
+       grep [OPTION...] -e PATTERNS ... [FILE...]
+       grep [OPTION...] -f PATTERN_FILE ... [FILE...]
+```
 
 **Options:**
 
-* `-a`：将binary文件以text文件的方式查找数据
-* `-c`：计算找到'查找字符串'的次数
-* `-i`：忽略大小写的不同
-* `-e`：用正则表达式来进行匹配操作
-* `-E`：用扩展的正则表达式来进行匹配操作
-* `-F`：用纯文本匹配，不解释任何特殊字符
-* `-P`：用perl的正则表达式来进行匹配操作
-* `-l`：输出匹配的文件名，而不是匹配的内容
-* `-n`：顺便输出行号
-* `-v`：反向选择，即输出没有'查找字符串'内容的哪一行
-* `-r`：在指定目录中递归查找
-* `--color=auto`：将匹配的关键字部分加上颜色
-* `--color=never`：不给匹配关键字部分加上颜色
-* `-A`：后面可加数字，为after的意思，除了列出该行外，后面的n行也列出来
-* `-B`：后面可加数字，为before的意思，除了列出该行外，前面的n行也列出来
-* `-C`：后面可加数字，除了列出该行外，前后的n行也列出来
+* `-c`: Suppress normal output; instead print a count of matching lines for each input file.
+* `-i`: Ignore case distinctions in patterns and input data, so that characters that differ only in case match each other
+* `-e`: Use `PATTERNS` as the patterns
+* `-E`: Interpret PATTERNS as extended regular expressions
+* `-F`: Interpret PATTERNS as fixed strings, not regular expressions
+* `-P`: Interpret PATTERNS as Perl-compatible regular expressions
+* `-l`: Suppress normal output; instead print the name of each input file from which output would normally have been printed. Scanning each input file stops upon first match.
+* `-n`: Prefix each line of output with the 1-based line number within its input file.
+* `-v`: Invert the sense of matching, to select non-matching lines.
+* `-r`: Read all files under each directory, recursively, following symbolic links only if they are on the command line.
+* `--color=auto|never|always`: Surround the matched (non-empty) strings, matching lines, context lines, file names, line numbers, byte offsets, and separators (for fields and groups of context lines) with escape sequences to display them in color on the terminal. The colors are defined by the environment variable GREP_COLORS. Can be never, always, or auto.
+* `-A <NUM>`：Print `NUM` lines of trailing context after matching lines.
+* `-B <NUM>`: Print `NUM` lines of leading context before matching lines.
+* `-C <NUM>`: Print `NUM` lines of output context
+* `--binary-files=<TYPE>`: If a file's data or metadata indicate that the file contains binary data, assume that the file is of type `TYPE`.
+    * If `TYPE` is `without-match`, when grep discovers null input binary data it assumes that the rest of the file does not match; this is equivalent to the `-I` option.
+    * If `TYPE` is `text`, grep processes a binary file as if it were text; this is equivalent to the `-a` option.
 
 **Examples:**
 
-* `grep -r [--color=auto] '查找的字符串' [目录名]`
-* `grep -P '\t'`：匹配制表符
-* `ls | grep -E "customer[_0-9]*\.dat"`：正则匹配文件名
+* `grep -rn '<content>' <dir>`
+* `grep -P '\t'`
+* `ls | grep -E "customer[_0-9]*\.dat"`
 
 ## 2.7 ag
 

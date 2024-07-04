@@ -147,6 +147,15 @@ Syntanx: `%logger{precision}` or `%c{precision}`
     * {% raw %}%style{%logger}{red}{% endraw %}
     * {% raw %}%style{[%thread]}{bright}{% endraw %}
 
+#### 2.1.3.4 Lookups
+
+Lookups provide a way to add values to the Log4j configuration at arbitrary places. They are a particular type of Plugin that implements the StrLookup interface. Information on how to use Lookups in configuration files can be found in the Property Substitution section of the Configuration page.
+
+* System Properties Lookup: `${sys:xxx}`
+    * `${sys:xxx:-yyy}`: With default
+* Environment Lookup: `${env:xxx}`
+    * `${env:xxx:-yyy}`: With default
+
 ## 2.2 Logback
 
 ### 2.2.1 Maven

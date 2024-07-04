@@ -1096,6 +1096,7 @@ int main() {
 # 17 optional
 
 1. `std::optional`
+    * `std::nullopt`
 
 ```cpp
 #include <iostream>
@@ -2212,6 +2213,8 @@ int main() {
     * `std::atoi`
     * `std::atol`
     * `std::atoll`
+    * `std::getenv`
+    * `setenv`: POSIX api, not included in cpp standard library.
 1. `cctype`
     * `std::isblank`：仅对空格和水平制表符返回 true
     * `std::isspace`：空格、表单换行符、换行符、回车符、水平制表符和垂直制表符都返回true

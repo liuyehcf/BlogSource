@@ -41,11 +41,20 @@ From [Java Downloads](https://www.oracle.com/java/technologies/downloads/), you 
 
 ### 2.1.1 Execute
 
-* `java -cp /path/aaa.jar com.liuyehcf.demo.MyMain arg1 arg2`：将`/path/aaa.jar`添加到`classpath`中
-* `java -cp /path/aaa.jar:/path/bbb.jar com.liuyehcf.demo.MyMain arg1 arg2`：将`/path/aaa.jar`和`/path/bbb.jar`添加到`classpath`中
-* `java -cp "/path/*" com.liuyehcf.demo.MyMain arg1 arg2`：将`/path`目录下的所谓`class`文件以及`jar`文件都添加到`classpath`中。这里要用引号，否则`*`展开后，第二项会被作为`main`函数所在的类
-* `java -cp "/path/*":"/path2/*" com.liuyehcf.demo.MyMain arg1 arg2`：将`/path`以及`/path2`目录下的所谓`class`文件以及`jar`文件都添加到`classpath`中
-* `java -jar /path/aaa.jar arg1 arg2`：运行jar归档文件中指定的`main`函数
+**Use `-classpath` Options:**
+
+* `java -classpath /path/aaa.jar com.liuyehcf.demo.MyMain arg1 arg2`
+* `java -classpath /path/aaa.jar:/path/bbb.jar com.liuyehcf.demo.MyMain arg1 arg2`
+* `java -classpath "/path/*" com.liuyehcf.demo.MyMain arg1 arg2`
+* `java -classpath "/path/*":"/path2/*" com.liuyehcf.demo.MyMain arg1 arg2`
+
+**Use `-jar`: The jar file must has record Main class in `META-INF/MANIFEST.MF`**
+
+* `java -jar /path/aaa.jar arg1 arg2`
+
+**Use `-Djava.ext.dirs=` Options:**
+
+* `java -Djava.ext.dirs=/path/jar_dir/ com.liuyehcf.demo.MyMain arg1 arg2`
 
 ### 2.1.2 Enable Debug
 
@@ -382,6 +391,20 @@ For MacOS, the directory usually is: `/Library/Java/JavaVirtualMachines`
 
 * `cd <target_dir>; jar -xf <jar>`
 * `unzip <jar> -d <target_dir>`
+
+## 5.4 How to breakthrough checked exception limitation
+
+If you want to throw an checked exception, but you don't want to add `throws clause` to the method signature, there are several ways can make it happen:
+
+1. Use Type Erasure
+    ```java
+    @SuppressWarnings("unchecked")
+    private static <T extends Throwable> void throwException(Throwable exception) throws T {
+        throw (T) exception;
+    }
+    ```
+
+1. Use `Unsafe.throwException`
 
 # 6 参考
 

@@ -32,6 +32,8 @@ categories:
 1. `${project.artifactId}`：项目的`artifactId`
 1. `${project.version}`：项目的`version`，与`${version}`等价
 1. `${project.build.finalName}`：项目打包输出文件的名称，默认为`${project.artifactId}-${project.version}`
+1. `${project.basedir}`：当前POM文件所在的路径
+1. `${project.parent.basedir}`：父POM文件所在的路径
 
 这些属性都对应了一个POM元素，它们中一些属性的默认值都是在超级POM中定义的
 

@@ -2060,6 +2060,10 @@ Process 2494122 stopped
     0x7fffe7c842c6: vmovdqu %ymm7, 0x20(%rsi)
 ```
 
+### 7.3.3 How to add jar directory to classpah
+
+JNI doesn't support wildcard `*`, so you need to generate all jar paths and join them with `:`, and then pass to `-Djava.class.path=` option.
+
 # 8 Independent Projects
 
 ## 8.1 Pocoproject

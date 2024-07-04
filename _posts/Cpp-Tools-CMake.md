@@ -405,7 +405,9 @@ make
 
 # 2 target
 
-`cmake`可以使用`add_executable`、`add_library`或`add_custom_target`等命令来定义目标`target`。与变量不同，目标在每个作用域都可见，且可以使用`get_property`和`set_property`获取或设置其属性
+Probably the most important item is targets. Targets represent executables, libraries, and utilities built by CMake. Every `add_library`, `add_executable`, and `add_custom_target` command creates a target.
+
+In addition to storing their type, targets also keep track of general properties. These properties can be set and retrieved using the `set_target_properties` and `get_target_property` commands, or the more general `set_property` and `get_property` commands.
 
 # 3 variables
 
@@ -563,7 +565,20 @@ endforeach()
 * `WRITE`：覆盖写，文件不存在就创建
 * `APPEND`：追加写，文件不存在就创建
 
-## 5.5 add_executable
+## 5.5 list
+
+List support many subcommands:
+
+* `APPEND`
+* `PREPEND`
+* `POP_BACK`
+* `POP_FRONT`
+* `REMOVE_AT`
+* `REMOVE_ITEM`
+* `REMOVE_DUPLICATES`
+* ...
+
+## 5.6 add_executable
 
 `add_executable`用于添加可执行文件，示例如下：
 
@@ -576,7 +591,7 @@ add_executable(<name> [WIN32] [MACOSX_BUNDLE]
 add_executable(echo_client client.cpp ${PROTO_SRC} ${PROTO_HEADER})
 ```
 
-## 5.6 add_library
+## 5.7 add_library
 
 `add_library`用于生成库文件，格式和示例如下：
 
@@ -593,7 +608,62 @@ add_library(<name> [STATIC | SHARED | MODULE]
 add_library(Exec STATIC ${EXEC_FILES})
 ```
 
-## 5.7 set_target_properties
+## 5.8 add_custom_target
+
+Adds a target with the given name that executes the given commands:
+
+* `ALL`: Indicate that this target should be added to the default build target so that it will be run every time.
+    * If `add_subdirectory` is specified with the `EXCLUDE_FROM_ALL` option, then the `ALL` option becomes ineffective.
+* `DEPENDS`: Reference files and outputs of custom commands created with `add_custom_command` command calls in the same directory (`CMakeLists.txt` file). They will be brought up to date when the target is built.
+* `VERBATIM`: All arguments to the commands will be escaped properly for the build tool so that the invoked command receives each argument unchanged.
+
+```cmake
+add_custom_target(Name [ALL] [command1 [args1...]]
+                  [COMMAND command2 [args2...] ...]
+                  [DEPENDS depend depend depend ... ]
+                  [BYPRODUCTS [files...]]
+                  [WORKING_DIRECTORY dir]
+                  [COMMENT comment]
+                  [JOB_POOL job_pool]
+                  [JOB_SERVER_AWARE <bool>]
+                  [VERBATIM] [USES_TERMINAL]
+                  [COMMAND_EXPAND_LISTS]
+                  [SOURCES src1 [src2...]])
+```
+
+### 5.8.1 add_custom_command
+
+This defines a command to generate specified `OUTPUT` file(s). A target created in the same directory (`CMakeLists.txt` file) that specifies any output of the custom command as a source file is given a rule to generate the file using the command at build time
+
+* `WORKING_DIRECTORY`: Execute the command with the given current working directory.
+* `VERBATIM`: All arguments to the commands will be escaped properly for the build tool so that the invoked command receives each argument unchanged.
+* `DEPENDS`: Specify files on which the command depends. If any dependency is an `OUTPUT` of another custom command in the same directory (`CMakeLists.txt` file), CMake automatically brings the other custom command into the target in which this command is built. **If `DEPENDS` is not specified, the command will run whenever the `OUTPUT` is missing; if the command does not actually create the OUTPUT, the rule will always run.** Each argument is converted to a dependency as follows:
+    * If the argument is the name of a target (created by the `add_custom_target()`, `add_executable()`, or `add_library()` command) a target-level dependency is created to make sure the target is built before any target using this custom command. Additionally, if the target is an executable or library, a file-level dependency is created to cause the custom command to re-run whenever the target is recompiled.
+    * If the argument is an absolute path, a file-level dependency is created on that path.
+    * If the argument is the name of a source file that has been added to a target or on which a source file property has been set, a file-level dependency is created on that source file.
+    * If the argument is a relative path and it exists in the current source directory, a file-level dependency is created on that file in the current source directory.
+    * Otherwise, a file-level dependency is created on that path relative to the current binary directory.
+
+```cmake
+add_custom_command(OUTPUT output1 [output2 ...]
+                   COMMAND command1 [ARGS] [args1...]
+                   [COMMAND command2 [ARGS] [args2...] ...]
+                   [MAIN_DEPENDENCY depend]
+                   [DEPENDS [depends...]]
+                   [BYPRODUCTS [files...]]
+                   [IMPLICIT_DEPENDS <lang1> depend1
+                                    [<lang2> depend2] ...]
+                   [WORKING_DIRECTORY dir]
+                   [COMMENT comment]
+                   [DEPFILE depfile]
+                   [JOB_POOL job_pool]
+                   [JOB_SERVER_AWARE <bool>]
+                   [VERBATIM] [APPEND] [USES_TERMINAL]
+                   [COMMAND_EXPAND_LISTS]
+                   [DEPENDS_EXPLICIT_ONLY])
+```
+
+## 5.9 set_target_properties
 
 为指定`target`设置属性
 
@@ -605,7 +675,7 @@ set_target_properties(xxx PROPERTIES
 )
 ```
 
-## 5.8 target_compile_options
+## 5.10 target_compile_options
 
 为指定`target`设置编译参数
 
@@ -613,7 +683,7 @@ set_target_properties(xxx PROPERTIES
 target_compile_options(xxx PUBLIC "-O3")
 ```
 
-## 5.9 add_dependencies
+## 5.11 add_dependencies
 
 Add a dependency between top-level targets.
 
@@ -621,9 +691,9 @@ Add a dependency between top-level targets.
 add_dependencies(<target> [<target-dependency>]...)
 ```
 
-## 5.10 Link Libraries
+## 5.12 Link Libraries
 
-### 5.10.1 link_libraries
+### 5.12.1 link_libraries
 
 [link_libraries](https://cmake.org/cmake/help/latest/command/link_libraries.html)
 
@@ -634,7 +704,7 @@ link_libraries([item1 [item2 [...]]]
                [[debug|optimized|general] <item>] ...)
 ```
 
-### 5.10.2 target_link_libraries
+### 5.12.2 target_link_libraries
 
 [target_link_libraries](https://cmake.org/cmake/help/latest/command/target_link_libraries.html)
 
@@ -654,7 +724,7 @@ target_link_libraries(<target> ... <item>... ...)
 target_link_libraries(echo_client ${BRPC_LIB} ${DYNAMIC_LIB})
 ```
 
-#### 5.10.2.1 Automatic Inclusion of Header File Paths in CMake with target_link_libraries
+#### 5.12.2.1 Automatic Inclusion of Header File Paths in CMake with target_link_libraries
 
 When using the `target_link_libraries` command in CMake to link a target (such as a library), the related header file paths may automatically be included. This is because modern CMake manages projects based on the concept of "targets," which allows targets to own and propagate attributes used for building and usage, such as include directories, definitions, compile options, etc.
 
@@ -668,9 +738,9 @@ This behavior is primarily achieved through "usage requirements." When you set `
 
 This design greatly simplifies dependency management within projects, allowing maintainers to avoid explicitly specifying include paths, compiler, and linker configurations repeatedly. This is also one of the recommended best practices in modern CMake.
 
-## 5.11 Link Directories
+## 5.13 Link Directories
 
-### 5.11.1 link_directories
+### 5.13.1 link_directories
 
 [link_directories](https://cmake.org/cmake/help/latest/command/link_directories.html)
 
@@ -692,7 +762,7 @@ add_executable(main)
 link_directories(/pathB/lib)
 ```
 
-### 5.11.2 target_link_directories
+### 5.13.2 target_link_directories
 
 [target_link_directories](https://cmake.org/cmake/help/latest/command/target_link_directories.html)
 
@@ -706,9 +776,9 @@ target_link_directories(<target> [BEFORE]
   [<INTERFACE|PUBLIC|PRIVATE> [items2...] ...])
 ```
 
-## 5.12 Include Directories
+## 5.14 Include Directories
 
-### 5.12.1 include_directories
+### 5.14.1 include_directories
 
 [include_directories](https://cmake.org/cmake/help/latest/command/include_directories.html)
 
@@ -722,7 +792,7 @@ By default the directories specified are appended onto the current list of direc
 include_directories([AFTER|BEFORE] [SYSTEM] dir1 [dir2 ...])
 ```
 
-### 5.12.2 target_include_directories
+### 5.14.2 target_include_directories
 
 [target_include_directories](https://cmake.org/cmake/help/latest/command/target_include_directories.html)
 
@@ -734,19 +804,17 @@ target_include_directories(<target> [SYSTEM] [AFTER|BEFORE]
   [<INTERFACE|PUBLIC|PRIVATE> [items2...] ...])
 ```
 
-## 5.13 add_subdirectory
+## 5.15 add_subdirectory
 
-`add_subdirectory`：用于引入一个`cmake`子项目
+`add_subdirectory` is used to add a subdirectory to current build target.
 
-* `source_dir`：子项目路径，该路径下必须包含`CMakeLists.txt`文件。且必须是子目录，不能是外层目录
-* `binary_dir`：二进制路径，生成的可执行文件或者库文件的放置路径
-* `EXCLUDE_FROM_ALL`：当指定该参数时，构建父项目时，若无明确依赖子项目（例如通过`target_link_libraries`添加依赖），那么子项目不会被自动构建。若有明确依赖，那么仍然会构建
+* `EXCLUDE_FROM_ALL`：If the `EXCLUDE_FROM_ALL` argument is provided then the `EXCLUDE_FROM_ALL` property will be set on the added directory. This will exclude the directory from a default build. You can use the `add_dependencies` and `target_link_libraries` commands to explicitly add dependencies, thereby incorporating the relevant targets into the default build process.
 
 ```cmake
 add_subdirectory(source_dir [binary_dir] [EXCLUDE_FROM_ALL] [SYSTEM])
 ```
 
-## 5.14 include
+## 5.16 include
 
 `include`：用于引入一个`cmake`子项目。例如`include(src/merger/CMakeLists.txt)`
 
@@ -755,7 +823,7 @@ add_subdirectory(source_dir [binary_dir] [EXCLUDE_FROM_ALL] [SYSTEM])
 * `add_subdirectory`：该子项目会作为一个独立的`cmake`项目进行处理。所有`CURRENT`相关的变量都会进行切换。此外，`CMakeLists.txt`文件中涉及的所有相对路径，其`base`路径也会切换成`add_subdirectory`指定的目录
 * `include`：该子项目不会作为一个独立的`cmake`项目进行处理。只有`CMAKE_CURRENT_LIST_DIR`、`CMAKE_CURRENT_LIST_FILE`这两个`CURRENT`变量会进行切换，而`CMAKE_CURRENT_BINARY_DIR`和`CMAKE_CURRENT_SOURCE_DIR`不会进行切换。此外，`CMakeLists.txt`文件中涉及的所有相对路径，其`base`路径保持不变
 
-## 5.15 find_package
+## 5.17 find_package
 
 **本小节转载摘录自[Cmake之深入理解find_package()的用法](https://zhuanlan.zhihu.com/p/97369704)**
 
@@ -783,7 +851,7 @@ endif(CURL_FOUND)
 
 你可以通过`<LibaryName>_FOUND`来判断模块是否被找到，如果没有找到，按照工程的需要关闭某些特性、给出提醒或者中止编译，上面的例子就是报出致命错误并终止构建。如果`<LibaryName>_FOUND`为真，则将`<LibaryName>_INCLUDE_DIR`加入`INCLUDE_DIRECTORIES`
 
-### 5.15.1 Add Non-Official Library
+### 5.17.1 Add Non-Official Library
 
 **通过`find_package`引入非官方的库，该方式只对支持cmake编译安装的库有效**
 
@@ -829,7 +897,7 @@ else(GLOG_FOUND)
 endif(GLOG_FOUND)
 ```
 
-### 5.15.2 Module Mode & Config Mode
+### 5.17.2 Module Mode & Config Mode
 
 通过上文我们了解了通过`cmake`引入依赖库的基本用法。知其然也要知其所以然，`find_package`对我们来说是一个黑盒子，那么它是具体通过什么方式来查找到我们依赖的库文件的路径的呢。到这里我们就不得不聊到`find_package`的两种模式，一种是`Module`模式，也就是我们引入`curl`库的方式。另一种叫做`Config`模式，也就是引入`glog`库的模式。下面我们来详细介绍着两种方式的运行机制
 
@@ -837,7 +905,7 @@ endif(GLOG_FOUND)
 
 如果`Module`模式搜索失败，没有找到对应的`Find<LibraryName>.cmake`文件，则转入`Config`模式进行搜索。它主要通过`<LibraryName>Config.cmake`或`<lower-case-package-name>-config.cmake`这两个文件来引入我们需要的库。以我们刚刚安装的`glog`库为例，在我们安装之后，它在`/usr/local/lib/cmake/glog/`目录下生成了`glog-config.cmake`文件，而`/usr/local/lib/cmake/glog/`正是`find_package`函数的搜索路径之一
 
-### 5.15.3 Create Customized `Find<LibraryName>.cmake`
+### 5.17.3 Create Customized `Find<LibraryName>.cmake`
 
 假设我们编写了一个新的函数库，我们希望别的项目可以通过`find_package`对它进行引用我们应该怎么办呢。
 
@@ -909,7 +977,7 @@ else(ADD_FOUND)
 endif(ADD_FOUND)
 ```
 
-## 5.16 find_library
+## 5.18 find_library
 
 `find_library`用于查找库文件，示例如下：
 
@@ -927,7 +995,7 @@ find_library(BOOST_SYSTEM_LIBRARY NAMES boost_system Boost_system)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${BOOST_FILESYSTEM_LIBRARY} ${BOOST_SYSTEM_LIBRARY})
 ```
 
-## 5.17 find_path
+## 5.19 find_path
 
 `find_path`用于查找包含给定文件的目录，示例如下：
 
@@ -938,11 +1006,11 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${BOOST_FILESYSTEM_LIBRARY} ${BOOS
 find_path(BRPC_INCLUDE_PATH NAMES brpc/server.h)
 ```
 
-## 5.18 aux_source_directory
+## 5.20 aux_source_directory
 
 Find all source files in a directory
 
-## 5.19 PUBLIC vs. PRIVATE
+## 5.21 PUBLIC vs. PRIVATE
 
 > In CMake, PUBLIC and PRIVATE are used to specify the visibility of target properties and dependencies. Here's what they mean:
 
@@ -1059,9 +1127,9 @@ build/main
 
 **如果将`target_link_libraries(libfoo PUBLIC libbar)`中的`PUBLIC`改成`PRIVATE`，那么编译将会无法通过，因为`main`没有显式依赖`libbar`，会找不到头文件`bar.h`**
 
-## 5.20 External Project
+## 5.22 External Project
 
-### 5.20.1 ExternalProject_Add
+### 5.22.1 ExternalProject_Add
 
 [ExternalProject](https://cmake.org/cmake/help/latest/module/ExternalProject.html)
 
@@ -1338,7 +1406,116 @@ After installation, there will be a `install_manifest.txt` recording all the ins
 xargs rm < install_manifest.txt
 ```
 
-## 6.9 Ignore -Werror
+## 6.9 Integrate with customized targets
+
+For this purpose, you can use `add_custom_command`, `add_custom_target`:
+
+* `add_custom_target`: Adds a target with the given name that executes the given commands. The target has no output file and is always considered out of date even if the commands try to create a file with the name of the target.
+* `add_custom_command`: This defines a command to generate specified `OUTPUT` file(s). A target created in the same directory (`CMakeLists.txt` file) that specifies any output of the custom command as a source file is given a rule to generate the file using the command at build time.
+    * **If you use `Ninja` as build tool, the standand output of the command will be buffered and put to screen once the command is finished. But we can use `2>&1 | tee /dev/tty` to enable real-time output to the screen.**
+
+```sh
+mkdir -p cmake_with_java_demo
+cd cmake_with_java_demo
+
+git clone https://github.com/liuyehcf/liuyehcf-framework.git --depth 1
+
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(cmake_with_java_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
+
+file(GLOB MY_PROJECT_SOURCES "*.cpp")
+add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+# Build java project
+find_program(MAVEN_EXECUTABLE mvn)
+find_program(JAVA_EXECUTABLE java)
+if(NOT MAVEN_EXECUTABLE)
+    message(FATAL_ERROR "Maven not found. Please install Maven.")
+endif()
+if(NOT JAVA_EXECUTABLE)
+    message(FATAL_ERROR "Java not found. Please install Java 8.")
+endif()
+
+# Check Java version
+execute_process(
+    COMMAND ${JAVA_EXECUTABLE} -version
+    OUTPUT_VARIABLE JAVA_VERSION_OUTPUT
+    ERROR_VARIABLE JAVA_VERSION_OUTPUT
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_STRIP_TRAILING_WHITESPACE
+)
+string(REGEX MATCH "version \"([0-9]+)\\.([0-9]+)" JAVA_VERSION_MATCH "${JAVA_VERSION_OUTPUT}")
+if(JAVA_VERSION_MATCH)
+    string(REGEX REPLACE ".*version \"([0-9]+)\\.([0-9]+).*" "\\1" JAVA_VERSION_MAJOR "${JAVA_VERSION_OUTPUT}")
+    string(REGEX REPLACE ".*version \"([0-9]+)\\.([0-9]+).*" "\\2" JAVA_VERSION_MINOR "${JAVA_VERSION_OUTPUT}")
+    if(JAVA_VERSION_MAJOR GREATER_EQUAL 11)
+        message(STATUS "Found Java version: ${JAVA_VERSION_MAJOR}.${JAVA_VERSION_MINOR}")
+    else()
+        message(FATAL_ERROR "Java version 11 or higher is required. Found version: ${JAVA_VERSION_MAJOR}.${JAVA_VERSION_MINOR}")
+    endif()
+else()
+    message(FATAL_ERROR "Failed to determine Java version.")
+endif()
+
+set(JAVA_PROJECT_DIR ${CMAKE_SOURCE_DIR}/liuyehcf-framework/common-tools)
+set(JAVA_OUTPUT_DIR ${CMAKE_BINARY_DIR}/lib/jar)
+
+set(MODULE_1_PATH ${JAVA_PROJECT_DIR}/target/common-tools.jar)
+set(MODULE_2_PATH ${JAVA_PROJECT_DIR}/target/common-tools-javadoc.jar)
+
+set(ALL_JAR_PATHS
+    ${MODULE_1_PATH}
+    ${MODULE_2_PATH}
+)
+
+file(GLOB_RECURSE JAVA_SOURCES ${JAVA_PROJECT_DIR}/src/main/java/*.java)
+
+add_custom_command(
+    OUTPUT ${ALL_JAR_PATHS}
+    COMMAND ${MAVEN_EXECUTABLE} clean package -DskipTests
+    WORKING_DIRECTORY ${JAVA_PROJECT_DIR}
+    # Add dependencies to all java source files, this command will be executed if any source file changed
+    DEPENDS ${JAVA_SOURCES}
+    COMMENT "Building Java project with Maven"
+    VERBATIM
+)
+
+add_custom_target(build_java ALL
+    DEPENDS ${ALL_JAR_PATHS}
+    VERBATIM
+)
+
+add_custom_command(TARGET build_java POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${JAVA_OUTPUT_DIR}
+    COMMAND ${CMAKE_COMMAND} -E copy ${MODULE_1_PATH} ${JAVA_OUTPUT_DIR}
+    COMMAND ${CMAKE_COMMAND} -E copy ${MODULE_2_PATH} ${JAVA_OUTPUT_DIR}
+    COMMENT "Copying build artifacts to output directory"
+    VERBATIM
+)
+EOF
+
+cat > main.cpp << 'EOF'
+#include <iostream>
+
+int main() {
+    return 0;
+}
+EOF
+
+cmake -B build && cmake --build build
+```
+
+## 6.10 Ignore -Werror
 
 ```sh
 cmake --compile-no-warning-as-error -DWERROR=0 ...
