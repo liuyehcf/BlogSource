@@ -241,15 +241,11 @@ From [Java Downloads](https://www.oracle.com/java/technologies/downloads/), you 
 
 **在JDK1.5中，java.lang.Thread类新增一个getAllStackTraces()方法用于获取虚拟机中所有线程的StackTraceElement对象，使用这个对象可以通过简单的几行代码就能完成jstack的大部分功能，在实际项目中不妨调用这个方法做个管理员页面，可以随时使用浏览器来查看线程堆栈**
 
-## 2.8 jad
-
-Java反编译工具，[下载地址](http://www.javadecompilers.com/jad)
-
-## 2.9 java_home
+## 2.8 java_home
 
 **`/usr/libexec/java_home -V`：用于查看本机上所有版本java的安装目录**
 
-## 2.10 jar
+## 2.9 jar
 
 **制作归档文件：：`jar cvf xxx.jar -C ${target_dir1} ${dir_or_file1} -C ${target_dir2} ${dir_or_file2} ...`**
 
@@ -264,7 +260,7 @@ Java反编译工具，[下载地址](http://www.javadecompilers.com/jad)
 
 **查看归档文件：`jar tf xxx.jar`**
 
-### 2.10.1 JAR File Specification
+### 2.9.1 JAR File Specification
 
 [JAR File Specification](https://docs.oracle.com/en/java/javase/17/docs/specs/jar/jar.html)
 
@@ -273,7 +269,7 @@ Java反编译工具，[下载地址](http://www.javadecompilers.com/jad)
     * `MANIFEST.MF`: Main-Class
 * ...
 
-## 2.11 jdb
+## 2.10 jdb
 
 Debug tool like `gdb`
 
@@ -295,9 +291,50 @@ Debug tool like `gdb`
 
 `Retained Size`: This is the total amount of memory that would be freed if the object were garbage collected. This includes the shallow size of the object itself plus the shallow size of any objects that are exclusively referenced by this object (i.e., objects that would be garbage collected if this object were). The retained size provides a more complete picture of the "true" memory impact of an object but can be more complex to calculate. Some profiling tools provide this information, but it may require additional analysis or plugins.
 
-# 4 Java Environment Manager
+# 4 Java Decompiler
 
-## 4.1 jenv
+[Java Decompilers](http://www.javadecompilers.com/)
+
+## 4.1 CFR
+
+[Class File Reader, CFR](https://github.com/leibnitz27/cfr): Another Java Decompiler, it will decompile modern Java features - including much of Java `9`, `12` & `14`, but is written entirely in Java `6`, so will work anywhere!
+
+```sh
+wget https://github.com/leibnitz27/cfr/releases/download/0.152/cfr-0.152.jar
+java -jar cfr-0.152.jar xxx.class
+```
+
+## 4.2 JD
+
+[Java Decompiler project, JD Project](http://java-decompiler.github.io/): Aims to develop tools in order to decompile and analyze Java 5 “byte code” and the later versions.
+
+```sh
+wget https://github.com/java-decompiler/jd-gui/releases/download/v1.6.6/jd-gui-1.6.6.jar
+java -jar jd-gui-1.6.6.jar
+```
+
+## 4.3 JAD
+
+[JAD](http://www.javadecompilers.com/jad): It is dead, and yes, it was not Open Source anyway。
+
+## 4.4 Fernflower
+
+[Fernflower](https://github.com/JetBrains/intellij-community/tree/master/plugins/java-decompiler/engine): The first actually working analytical decompiler for Java and probably for a high-level programming language in general.
+
+* [Unofficial mirror of FernFlower](https://github.com/fesh0r/fernflower)
+* Requires Java version >= 17
+
+```sh
+git clone https://github.com/fesh0r/fernflower.git
+cd fernflower
+gradle build
+
+java -jar build/libs/fernflower.jar -dgs=true /path_source_dir /path_target_dir
+```
+
+# 5 Java Environment Manager
+
+## 5.1 jenv
 
 [jenv](https://github.com/jenv/jenv)
 
@@ -368,9 +405,557 @@ Debug tool like `gdb`
     fi
     ```
 
-# 5 Tips
+* How to list all versions: `jenv versions` can only listed all the valid versions
+    * `ls ~/.jenv/versions`
 
-## 5.1 Find JDK Install Path
+# 6 Class Isolation
+
+Here's an example of how to use module class loader to create a isolated environment.
+
+* `module1` and `module2` both have the log dependencies.
+* Each module will init its own log context in an isolated environment.
+
+The structure of the project:
+
+```
+.
+├── common
+│   ├── pom.xml
+│   └── src
+│       └── main
+│           └── java
+│               └── org
+│                   └── liuyehcf
+│                       └── moduleisolation
+│                           ├── TestMain.java
+│                           └── loader
+│                               ├── ClassFactory.java
+│                               └── ModuleClassLoader.java
+├── module1
+│   ├── pom.xml
+│   └── src
+│       └── main
+│           ├── java
+│           │   └── org
+│           │       └── liuyehcf
+│           │           └── moduleisolation
+│           │               └── module1
+│           │                   ├── Function.java
+│           │                   └── ModuleClassFactory.java
+│           └── resources
+│               └── module1_log4j2.xml
+├── module2
+│   ├── pom.xml
+│   └── src
+│       └── main
+│           ├── java
+│           │   └── org
+│           │       └── liuyehcf
+│           │           └── moduleisolation
+│           │               └── module2
+│           │                   ├── Function.java
+│           │                   └── ModuleClassFactory.java
+│           └── resources
+│               └── module2_log4j2.xml
+└── pom.xml
+```
+
+```sh
+mkdir class_isolation_demo
+cd class_isolation_demo
+
+mkdir -p common/src/main/java/org/liuyehcf/moduleisolation/loader
+mkdir -p module1/src/main/java/org/liuyehcf/moduleisolation/module1
+mkdir -p module1/src/main/resources
+mkdir -p module2/src/main/java/org/liuyehcf/moduleisolation/module2
+mkdir -p module2/src/main/resources
+
+cat > pom.xml << 'EOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.liuyehcf</groupId>
+    <artifactId>ModuleIsolcation</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>common</module>
+        <module>module1</module>
+        <module>module2</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <compiler-plugin.version>3.8.1</compiler-plugin.version>
+        <shade-plugin.version>3.2.4</shade-plugin.version>
+    </properties>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${compiler-plugin.version}</version>
+                    <configuration>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.target}</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>net.revelc.code.formatter</groupId>
+                    <artifactId>formatter-maven-plugin</artifactId>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>${shade-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <configuration>
+                                <filters>
+                                    <filter>
+                                        <artifact>*:*</artifact>
+                                        <excludes>
+                                            <exclude>META-INF/*.SF</exclude>
+                                            <exclude>META-INF/*.DSA</exclude>
+                                            <exclude>META-INF/*.RSA</exclude>
+                                        </excludes>
+                                    </filter>
+                                </filters>
+                                <finalName>${project.build.finalName}-jar-with-dependencies</finalName>
+                            </configuration>
+                            <goals>
+                                <goal>shade</goal>
+                            </goals>
+                            <phase>package</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>
+EOF
+
+cat > common/pom.xml << 'EOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.liuyehcf</groupId>
+        <artifactId>ModuleIsolcation</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>common</artifactId>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <log4j.version>2.17.1</log4j.version>
+        <slf4j.version>1.7.32</slf4j.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+    </dependencies>
+</project>
+EOF
+
+cat > common/src/main/java/org/liuyehcf/moduleisolation/TestMain.java << 'EOF'
+package org.liuyehcf.moduleisolation;
+
+import org.liuyehcf.moduleisolation.loader.ClassFactory;
+
+import java.lang.reflect.Method;
+
+public class TestMain {
+    public static void main(String[] args) throws Exception {
+        runModule("module1");
+        runModule("module2");
+    }
+
+    private static void runModule(String moduleName) throws Exception {
+        Class<?> classFactoryClass = ClassLoader.getSystemClassLoader().loadClass(
+                String.format("org.liuyehcf.moduleisolation.%s.ModuleClassFactory", moduleName));
+        ClassFactory classFactory = (ClassFactory) classFactoryClass.newInstance();
+        classFactory.initModuleContext();
+
+        Class<?> clazz = classFactory.getClass(
+                String.format("org.liuyehcf.moduleisolation.%s.Function", moduleName));
+        Method run = clazz.getMethod("run");
+        Object function = clazz.newInstance();
+        run.invoke(function);
+    }
+}
+EOF
+
+cat > common/src/main/java/org/liuyehcf/moduleisolation/loader/ClassFactory.java << 'EOF'
+package org.liuyehcf.moduleisolation.loader;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.ConfigurationSource;
+import org.apache.logging.log4j.core.config.xml.XmlConfiguration;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
+
+public abstract class ClassFactory {
+
+    protected ModuleClassLoader classLoader;
+
+    protected ClassFactory() {
+        try {
+            classLoader = ModuleClassLoader.create(getModuleName());
+        } catch (Exception e) {
+            rethrow(e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Throwable> void rethrow(Throwable t) throws T {
+        throw (T) t;
+    }
+
+    /**
+     * Name of module
+     */
+    protected abstract String getModuleName();
+
+    /**
+     * Entry to get class of current module
+     */
+    public final Class<?> getClass(String className) throws ClassNotFoundException {
+        return classLoader.loadClass(className);
+    }
+
+    /**
+     * Initialize the isolated context of this module
+     */
+    public final void initModuleContext() throws Exception {
+        initLog4j2();
+    }
+
+    /**
+     * This method is used to initialize the isolated context of log4j2, avoiding conflict between
+     * different modules.
+     */
+    private void initLog4j2() throws Exception {
+        Class<?> clazz = getClass(
+                "org.liuyehcf.moduleisolation.loader.ClassFactory$Log4jContextInitializer");
+        clazz.getMethod("init", String.class).invoke(null, getModuleName());
+    }
+
+    public static class Log4jContextInitializer {
+        public static void init(String moduleName) throws IOException {
+            URL resource = Log4jContextInitializer.class.getClassLoader()
+                    .getResource(String.format("%s_log4j2.xml", moduleName));
+            if (resource == null) {
+                throw new FileNotFoundException(
+                        String.format("Cannot find log4j2.xml in module %s", moduleName));
+            }
+            ConfigurationSource source = new ConfigurationSource(resource.openStream(), resource);
+            LoggerContext context = (LoggerContext) LogManager.getContext(false);
+            Configuration config = new XmlConfiguration(context, source);
+            context.start(config);
+        }
+    }
+}
+EOF
+
+cat > common/src/main/java/org/liuyehcf/moduleisolation/loader/ModuleClassLoader.java << 'EOF'
+package org.liuyehcf.moduleisolation.loader;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class ModuleClassLoader extends URLClassLoader {
+    private static final String MODULE_JAR_FILE_PATTERN = "%s-jar-with-dependencies.jar";
+
+    static {
+        ClassLoader.registerAsParallelCapable();
+    }
+
+    private final File jarFile;
+    private final ClassLoaderWrapper parent;
+
+    private ModuleClassLoader(URL[] urls) {
+        super(urls, null);
+        this.jarFile = new File(urls[0].getPath());
+        this.parent = new ClassLoaderWrapper(ClassLoader.getSystemClassLoader());
+    }
+
+    public static ModuleClassLoader create(String moduleName) throws MalformedURLException {
+        String jarNameSuffix = String.format(MODULE_JAR_FILE_PATTERN, moduleName);
+        String classpath = System.getProperty("java.class.path");
+        String[] moduleJarFiles = classpath.split(":");
+        String targetJarFile = null;
+        for (String jarFile : moduleJarFiles) {
+            if (jarFile.endsWith(jarNameSuffix)) {
+                targetJarFile = jarFile;
+                break;
+            }
+        }
+        if (targetJarFile == null) {
+            throw new RuntimeException(
+                    String.format("Cannot find '%s' in classpath '%s'", jarNameSuffix, classpath));
+        }
+
+        return new ModuleClassLoader(new URL[] {new File(targetJarFile).toURI().toURL()});
+    }
+
+    public File getJarFile() {
+        return jarFile;
+    }
+
+    private boolean isValidParentResource(URL url) {
+        return url != null && !url.getPath().contains("-reader-jar-with-dependencies.jar");
+    }
+
+    @Override
+    protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+        try {
+            return super.loadClass(name, resolve);
+        } catch (ClassNotFoundException cnf) {
+            return parent.loadClass(name, resolve);
+        }
+    }
+
+    @Override
+    public Enumeration<URL> getResources(String name) throws IOException {
+        // Load resource from current module classLoader
+        List<URL> urls = Collections.list(super.getResources(name));
+        // Load resource from parent classLoader but exclude other module resources
+        urls.addAll(Collections.list(parent.getResources(name)).stream()
+                .filter(this::isValidParentResource).collect(Collectors.toList()));
+        return Collections.enumeration(urls);
+    }
+
+    @Override
+    public URL getResource(String name) {
+        // Load resource from current module classLoader
+        URL url = super.getResource(name);
+        if (url == null) {
+            // Load resource from parent classLoader but exclude other module resources
+            url = parent.getResource(name);
+            if (!isValidParentResource(url)) {
+                return null;
+            }
+        }
+        return url;
+    }
+
+    /**
+     * The only function of this wrapper is changing access modifiers of loadClass from protected to
+     * public
+     */
+    private static final class ClassLoaderWrapper extends ClassLoader {
+        static {
+            ClassLoader.registerAsParallelCapable();
+        }
+
+        public ClassLoaderWrapper(ClassLoader parent) {
+            super(parent);
+        }
+
+        @Override
+        public Class<?> findClass(String name) throws ClassNotFoundException {
+            return super.findClass(name);
+        }
+
+        @Override
+        public Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+            return super.loadClass(name, resolve);
+        }
+    }
+}
+EOF
+
+cat > module1/pom.xml << 'EOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.liuyehcf</groupId>
+        <artifactId>ModuleIsolcation</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>module1</artifactId>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <compiler-plugin.version>3.8.1</compiler-plugin.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.liuyehcf</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>module1</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+EOF
+
+cat > module1/src/main/java/org/liuyehcf/moduleisolation/module1/Function.java << 'EOF'
+package org.liuyehcf.moduleisolation.module1;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class Function {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Function.class);
+
+    public void run() {
+        LOGGER.info("This is an info log, classLoader={}, ObjectClass={}, LoggerFactoryClass={}",
+                getClass().getClassLoader(), getClassString(Object.class),
+                getClassString(LoggerFactory.class));
+        LOGGER.error("This is an error log");
+    }
+
+    private String getClassString(Class<?> clazz) {
+        return clazz.getName() + "@" + Integer.toHexString(System.identityHashCode(clazz));
+    }
+}
+EOF
+
+cat > module1/src/main/java/org/liuyehcf/moduleisolation/module1/ModuleClassFactory.java << 'EOF'
+package org.liuyehcf.moduleisolation.module1;
+
+import org.liuyehcf.moduleisolation.loader.ClassFactory;
+
+public class ModuleClassFactory extends ClassFactory {
+    @Override
+    protected String getModuleName() {
+        return "module1";
+    }
+}
+EOF
+
+cat > module1/src/main/resources/module1_log4j2.xml << 'EOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="LOG_DIR">${env:MODULE_LOG_DIR:-/tmp/module_isloation}</Property>
+        <Property name="LOG_LEVEL">${env:MODULE_LOG_LEVEL:-info}</Property>
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} %style{[%thread]}{bright} %highlight{[%-5level] [%X{QueryId}] %logger{36}}{STYLE=Logback} - %msg%n
+        </Property>
+    </Properties>
+    <Appenders>
+        <RollingRandomAccessFile name="DefaultAppender" fileName="${LOG_DIR}/module1/default.log"
+                                 filePattern="${LOG_DIR}/module1/default-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout
+                    pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="1000MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="7"/>
+        </RollingRandomAccessFile>
+        <RollingRandomAccessFile name="ErrorAppender" fileName="${LOG_DIR}/module1/error.log"
+                                 filePattern="${LOG_DIR}/module1/error-%d{yyyy-MM-dd}-%i.log">
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout
+                    pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="1000MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="7"/>
+        </RollingRandomAccessFile>
+        <Async name="AsyncDefaultAppender">
+            <AppenderRef ref="DefaultAppender"/>
+            <AppenderRef ref="ErrorAppender"/>
+        </Async>
+    </Appenders>
+    <Loggers>
+        <Root level="${LOG_LEVEL}">
+            <AppenderRef ref="AsyncDefaultAppender"/>
+        </Root>
+    </Loggers>
+</Configuration>
+EOF
+
+cp -f module1/pom.xml module2/pom.xml
+cp -f module1/src/main/java/org/liuyehcf/moduleisolation/module1/Function.java module2/src/main/java/org/liuyehcf/moduleisolation/module2/Function.java
+cp -f module1/src/main/java/org/liuyehcf/moduleisolation/module1/ModuleClassFactory.java module2/src/main/java/org/liuyehcf/moduleisolation/module2/ModuleClassFactory.java
+cp -f module1/src/main/resources/module1_log4j2.xml module2/src/main/resources/module2_log4j2.xml
+sed -i 's/module1/module2/g' module2/pom.xml
+sed -i 's/module1/module2/g' module2/src/main/java/org/liuyehcf/moduleisolation/module2/Function.java
+sed -i 's/module1/module2/g' module2/src/main/java/org/liuyehcf/moduleisolation/module2/ModuleClassFactory.java
+sed -i 's/module1/module2/g' module2/src/main/resources/module2_log4j2.xml
+
+mvn clean package -DskipTests
+rm -rf /tmp/module_isloation
+java -classpath ./module2/target/module2-jar-with-dependencies.jar:./module1/target/module1-jar-with-dependencies.jar org.liuyehcf.moduleisolation.TestMain
+cat /tmp/module_isloation/module1/default.log
+cat /tmp/module_isloation/module1/error.log
+cat /tmp/module_isloation/module2/default.log
+cat /tmp/module_isloation/module2/error.log
+```
+
+You can find each module share the same `Object.class` instance, but has unique instance of `LoggerFactory.class`
+
+# 7 Tips
+
+## 7.1 Find JDK Install Path
 
 For linux, the directory usually is: `/usr/lib/jvm`
 
@@ -382,17 +967,17 @@ For MacOS, the directory usually is: `/Library/Java/JavaVirtualMachines`
 
 1. `readlink -f $(which java)`
 
-## 5.2 How to check whether jar file contains specific class file
+## 7.2 How to check whether jar file contains specific class file
 
 * `unzip -l <jar> | grep xxx.class`
 * `jar tf <jar> | grep xxx.class`
 
-## 5.3 How to extract jar file to specific directory
+## 7.3 How to extract jar file to specific directory
 
 * `cd <target_dir>; jar -xf <jar>`
 * `unzip <jar> -d <target_dir>`
 
-## 5.4 How to breakthrough checked exception limitation
+## 7.4 How to breakthrough checked exception limitation
 
 If you want to throw an checked exception, but you don't want to add `throws clause` to the method signature, there are several ways can make it happen:
 
@@ -406,7 +991,7 @@ If you want to throw an checked exception, but you don't want to add `throws cla
 
 1. Use `Unsafe.throwException`
 
-# 6 参考
+# 8 参考
 
 * [JVM性能调优监控工具jps、jstack、jmap、jhat、jstat、hprof使用详解](https://my.oschina.net/feichexia/blog/196575)
 * [Java应用打开debug端口](https://www.cnblogs.com/lzmrex/articles/12579862.html)

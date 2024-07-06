@@ -884,7 +884,7 @@ ExternalProject_Add(
     BINARY_DIR ${BREAKPAD_BINARY_DIR}
     CONFIGURE_COMMAND ${BREAKPAD_SOURCE_DIR}/configure --prefix=${BREAKPAD_BINARY_DIR}
     # --unset=MAKEFLAGS is mandatory to avoid nested make issues, error message like: make[3]: warning: jobserver unavailable: using -j1.  Add '+' to parent make rule.
-    BUILD_COMMAND ${CMAKE_COMMAND} -E env --unset=MAKEFLAGS ${CMAKE_MAKE_PROGRAM} -C ${BREAKPAD_BINARY_DIR} -j${CMAKE_BUILD_PARALLEL_LEVEL}
+    BUILD_COMMAND ${CMAKE_COMMAND} -E env --unset=MAKEFLAGS ${CMAKE_MAKE_PROGRAM} -C ${BREAKPAD_BINARY_DIR}
     INSTALL_COMMAND ""
     BUILD_BYPRODUCTS ${BREAKPAD_BINARY_DIR}/src/client/linux/libbreakpad_client.a
 )

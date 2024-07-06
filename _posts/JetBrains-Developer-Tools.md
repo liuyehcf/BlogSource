@@ -321,7 +321,10 @@ HotKey In Windows: `Ctrl+Alt+O`
 
 ## 2.8 Plugin
 
-1. `lombok`
+* `Maven Helper`
+* `Lombok`
+* `IdeaVim`
+* `Github Copilot`
 
 ## 2.9 Compile OOM
 
@@ -337,11 +340,20 @@ HotKey In Windows: `Ctrl+Alt+O`
 -ea
 ```
 
-**Preferences -> Build, Execution, Deployment -> Compiler -> Shared build process heap size**
+**Config path:** `Preferences` -> `Build, Execution, Deployment` -> `Compiler` -> `Shared build process heap size`
 
 * Compiler runs in a separate JVM by default so IDEA heap settings that you set in idea.vmoptions have no effect on the compiler.
 
-## 2.10 Reference
+## 2.10 Download JDK
+
+**Config path:** `Project Structure` -> `Platform Settings` -> `SDKs` -> `+` -> `Download JDK...`
+
+If you want to install jdk into `/Library/Java/JavaVirtualMachines`, you need to start IDEA as root.
+
+* `cd /Applications/IntelliJ\ IDEA\ CE.app/Contents/MacOS`
+* `sudo ./idea`
+
+## 2.11 Reference
 
 * [IntelliJ IDEA 设置选中标识符高亮](http://blog.csdn.net/wskinght/article/details/43052407)
 * [IntelliJ IDEA 总结](https://www.zhihu.com/question/20450079)
@@ -398,6 +410,7 @@ noremap <leader>c<space> :action CommentByLineComment<cr>
 
 " keep keymap with Plug 'google/vim-codefmt'
 nnoremap <c-l> :action ReformatCode<cr>
+xnoremap <c-l> :action ReformatCode<cr>
 
 " 重置寄存器
 function! Clean_up_registers()

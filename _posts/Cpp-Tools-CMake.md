@@ -470,7 +470,6 @@ In addition to storing their type, targets also keep track of general properties
 * `WIN32`：在所有的`win32`平台为`TRUE`，包括`cygwin`
 * `ENV{NAME}`：环境变量，通过`set(ENV{NAME} value)`设置，通过`$ENV{NAME}`引用
 * `CMAKE_INSTALL_PREFIX`：安装路径前缀
-* `CMAKE_BUILD_PARALLEL_LEVEL`：构建时的并行度
 
 ## 3.2 BUILD_SHARED_LIBS
 
