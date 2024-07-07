@@ -1461,6 +1461,7 @@ call plug#end()
 
 1. `let g:gutentags_define_advanced_commands = 1`：允许`gutentags`打开一些高级命令和选项
 1. 运行`:GutentagsToggleTrace`：它会将`ctags/gtags`命令的输出记录在vim的`message`记录里
+    * `let g:gutentags_trace = 1`：类似功能
 1. 保存文件，触发数据库更新
 1. `:message`：可以重新查看message
 
@@ -1469,6 +1470,8 @@ call plug#end()
 * `gutentags: gtags-cscope job failed, returned: 1`
     * **原因1：由于`git`仓库切换分支，可能会导致`gtagsdb`乱掉。而`gutentags`会用`gtags --incremental <gtagsdb-path>`这样的命令来更新`gtagsdb`，这样可能会导致`segment fault`，表象就是`gutentags: gtags-cscope job failed, returned: 1`**
         * **解决方式：修改`gutentags`源码，将`--incremental`参数去掉即可。一键修改命令：`sed -ri "s|'--incremental', *||g" ~/.vim/plugged/vim-gutentags/autoload/gutentags/gtags_cscope.vim`**
+* `gutentags: ctags job failed, returned: 1`
+    * **原因1：ctags版本太老，重装一个**
 * 如何禁用：
     * `let g:gutentags_enabled = 0`
     * `let g:gutentags_dont_load = 1`
