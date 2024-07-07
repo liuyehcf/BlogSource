@@ -2520,6 +2520,90 @@ void func(int a, ...) {
 
 The `va_end` macro just sets the `p` value to `NULL`
 
+### 4.3.1 How to forward variadic arguments
+
+**Conclusion: Variadic arguments cannot be directly forwarded via function call.**
+
+```cpp
+#include <cstdarg>
+#include <cstdio>
+
+void forward_printf(const char* __restrict __format, ...) {
+    va_list args;
+    va_start(args, __format);
+    std::printf(__format, args);
+    va_end(args);
+}
+
+void forward_vprintf(const char* __restrict __format, ...) {
+    va_list args;
+    va_start(args, __format);
+    std::vprintf(__format, args);
+    va_end(args);
+}
+
+#define FORWARD_PRINTF(format, ...) std::printf(format, __VA_ARGS__)
+
+int main() {
+    std::printf("std::printf: %d + %d = %d\n", 1, 2, 1 + 2);
+    forward_printf("forward_printf: %d + %d = %d\n", 1, 2, 1 + 2);
+    forward_vprintf("forward_vprintf: %d + %d = %d\n", 1, 2, 1 + 2);
+    FORWARD_PRINTF("FORWARD_PRINTF: %d + %d = %d\n", 1, 2, 1 + 2);
+    return 0;
+}
+```
+
+### 4.3.2 Implicit Type Conversion
+
+**Conclusion: Variadic arguments do not support implicit type conversion**
+
+```cpp
+#include <cstdarg>
+#include <iostream>
+
+struct IntWrap {
+    operator int() { return *val; }
+    int* val;
+};
+
+int sum(int count, ...) {
+    int result = 0;
+    va_list args;
+    va_start(args, count);
+    for (int i = 0; i < count; i++) {
+        result += va_arg(args, int);
+    }
+    va_end(args);
+    return result;
+}
+
+template <typename... Args>
+int sum_template(Args... args) {
+    return (args + ...);
+}
+
+int main() {
+    int val1 = 1, val2 = 2, val3 = 3;
+    IntWrap wrap1{&val1}, wrap2{&val2}, wrap3{&val3};
+    {
+        // Implicit type conversion not happen
+        int res = sum(3, wrap1, wrap2, wrap3);
+        std::cout << res << std::endl;
+    }
+    {
+        // Explicit type conversion works
+        int res = sum(3, static_cast<int>(wrap1), static_cast<int>(wrap2), static_cast<int>(wrap3));
+        std::cout << res << std::endl;
+    }
+    {
+        // Implicit type conversion works
+        int res = sum_template(wrap1, wrap2, wrap3);
+        std::cout << res << std::endl;
+    }
+    return 0;
+}
+```
+
 ## 4.4 Attributes
 
 `__attribute__`是一个`GCC`编译器特有的特性，它允许程序员向编译器提供一些指示信息，以便在编译期间进行优化或者在运行期间提供一些额外的约束条件。这些指示信息被称为属性（`attributes`），可以应用于函数、变量、类型等各种程序元素
@@ -5129,6 +5213,28 @@ Copy elision is an optimization technique used by compilers in C++ to reduce the
         return 0;
     }
     ```
+
+## 7.5 Implicit Type Conversions
+
+**Implicit conversion sequence consists of the following, in this order:**
+
+1. zero or one standard conversion sequence;
+1. zero or one user-defined conversion;
+1. zero or one standard conversion sequence (only if a user-defined conversion is used).
+
+**A standard conversion sequence consists of the following, in this order:**
+
+1. zero or one conversion from the following set:
+    * lvalue-to-rvalue conversion,
+    * array-to-pointer conversion, and
+    * function-to-pointer conversion;
+1. zero or one numeric promotion or numeric conversion;
+1. zero or one function pointer conversion;
+1. zero or one qualification conversion.
+
+**Assored conversion types:**
+
+1. derived-to-base pointer conversions;
 
 # 8 Policy
 

@@ -1629,6 +1629,9 @@ nmap <leader>ri <Plug>(coc-implementation)
 nmap <leader>rr <Plug>(coc-references)
 nmap <leader>rn <Plug>(coc-rename)
 
+" CodeAction
+nmap <leader>ac <Plug>(coc-codeaction-cursor)
+
 " CocList相关映射
 " [Shift] + [Option] + j，即「Ô」
 " [Shift] + [Option] + k，即「」
@@ -1659,13 +1662,15 @@ call plug#end()
 * **`:CocConfig`：编辑配置文件，其路径为`~/.vim/coc-settings.json`**
 * **`:CocAction`：代码生成**
 * **`:CocList [options] [args]`**
-    * 编辑模式
-        * `[Ctrl] + o`：切换到一般模式
-    * 一般模式
-        * `i/I/o/O/a/A`：进入编辑模式
-        * `p`：开启或关闭预览窗口
-        * `[Ctrl] + e`：向下滚动预览窗口中的内容
-        * `[Ctrl] + y`：向上滚动预览窗口中的内容
+    * `:CocList extensions`
+    * Operation
+        * 编辑模式
+            * `[Ctrl] + o`：切换到一般模式
+        * 一般模式
+            * `i/I/o/O/a/A`：进入编辑模式
+            * `p`：开启或关闭预览窗口
+            * `[Ctrl] + e`：向下滚动预览窗口中的内容
+            * `[Ctrl] + y`：向上滚动预览窗口中的内容
 * **`:CocCommand <插件命令>`**
     * `:CocCommand workspace.showOutput`：查看日志
 
@@ -1686,6 +1691,7 @@ call plug#end()
 
 * `client coc abnormal exit with: 1`：大概率是`node`有问题
 * `node`版本别太新也别太旧，`v16`比较好
+* 查看文档功能（`K`），默认情况下不能递归展开`C`的宏定义，但是在安装`coc-java`之后，可以展开宏定义
 
 ### 3.10.1 coc-explorer
 
@@ -3185,6 +3191,9 @@ nmap <leader>ry <Plug>(coc-type-definition)
 nmap <leader>ri <Plug>(coc-implementation)
 nmap <leader>rr <Plug>(coc-references)
 nmap <leader>rn <Plug>(coc-rename)
+
+" CodeAction
+nmap <leader>ac <Plug>(coc-codeaction-cursor)
 
 " CocList相关映射
 " [Shift] + [Option] + j，即「Ô」
