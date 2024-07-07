@@ -2295,6 +2295,9 @@ int main() {
 
 1. `__builtin_unreachable`
 1. `__builtin_prefetch`
+1. `__builtin_expect`
+    * `#define LIKELY(x) __builtin_expect(!!(x), 1)`
+    * `#define UNLIKELY(x) __builtin_expect(!!(x), 0)`
 
 # 35 Frequently-Used Compoments for Interview
 

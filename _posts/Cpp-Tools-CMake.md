@@ -1294,7 +1294,7 @@ file(GLOB MY_PROJECT_SOURCES "*.cpp")
 add_executable(MyExecutable ${MY_PROJECT_SOURCES})
 ```
 
-If your project has a more complex structure and you wish to recursively search all subdirectories for files, you can replace the `file(GLOB ...) command with `file(GLOB_RECURSE ...)`:
+If your project has a more complex structure and you wish to recursively search all subdirectories for files, you can replace the `file(GLOB ...)` command with `file(GLOB_RECURSE ...)`:
 
 ```cmake
 file(GLOB_RECURSE MY_PROJECT_SOURCES "*.cpp")
