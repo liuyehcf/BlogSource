@@ -423,7 +423,66 @@ The actual main class is `JarLauncher` or `WarLauncher`, which will prepare the 
 
 * `org.eclipse.jdt.core.formatter.tabulation.size`
 
-# 4 Reference
+# 4 Test
+
+## 4.1 maven-surefire-plugin
+
+Maven本身并不是一个单元测试框架，Java世界中主流的单元测试框架为Junit和TestNG。**Maven所做的只是在构建执行到特定生命周期阶段的时候，通过插件来执行Junit或者TestNG的测试用例，这一插件就是`maven-surefire-plugin`**
+
+By default, the `maven-surefire-plugin`'s test goal automatically executes all test classes in the test source directory that match a set of naming patterns
+
+1. `**/Test*.java`
+1. `**/*Test.java`
+1. `**/*TestCase.java`
+
+### 4.1.1 Skip Test
+
+* `mvn package -DskipTests`: Compile test project but don't run tests.
+* `mvn package -Dmaven.test.skip=true`: Skip both compilation and execution.
+
+### 4.1.2 Run Specific Tests
+
+* `mvn test -Dtest=SampleTest`
+* `mvn test -Dtest=SampleTest#case1`
+* `mvn test -Dtest=*Test`
+* `mvn test -Dtest=SampleTest1,SampleTest2`
+* `mvn test -Dtest=*Test,SampleTest1,SampleTest2`
+
+### 4.1.3 Exclude Tests
+
+* When using the `<includes>` element, the default matching rules will be disabled.
+* When using the `<excludes>` element, the default matching rules will not be disabled.
+
+```xml
+<project>
+    ...
+    <build>
+        ...
+        <plugins>
+            ...
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <includes>
+                        <include>**/*Tests.java</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/*ServiceTest.java</exclude>
+                        <exclude>**/TempDaoTest.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            ...
+        </plugins>
+        ...
+    </build>
+    ...
+</project>
+```
+
+# 5 Reference
 
 * [Difference between the maven-assembly-plugin, maven-jar-plugin and maven-shade-plugin?](https://stackoverflow.com/questions/38548271/difference-between-the-maven-assembly-plugin-maven-jar-plugin-and-maven-shade-p)
 * [hadoop No FileSystem for scheme: file](https://stackoverflow.com/questions/17265002/hadoop-no-filesystem-for-scheme-file)

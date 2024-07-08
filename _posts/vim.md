@@ -1691,7 +1691,7 @@ call plug#end()
 
 * `client coc abnormal exit with: 1`：大概率是`node`有问题
 * `node`版本别太新也别太旧，`v16`比较好
-* 查看文档功能（`K`），默认情况下不能递归展开`C`的宏定义，但是在安装`coc-java`之后，可以展开宏定义
+* `clangd`版本16以上，支持展开宏定义（`K`）
 
 ### 3.10.1 coc-explorer
 
