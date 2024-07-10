@@ -1995,12 +1995,6 @@ cmake -B build \
 
 ## 8.3 clang-format
 
-**如何安装`clang-format`**
-
-```sh
-npm install -g clang-format
-```
-
 **如何使用：在`用户目录`或者`项目根目录`中创建`.clang-format`文件用于指定格式化的方式，下面给一个示例**
 
 * **优先使用项目根目录中的`.clang-format`；如果不存在，则使用用户目录中的`~/.clang-format`**
@@ -2065,9 +2059,40 @@ CompileFlags:
   Add: -Wno-unqualified-std-cast-call
 ```
 
-## 8.5 lld
+## 8.5 clang-tidy
 
-## 8.6 lldb
+[Clang-Tidy](https://clang.llvm.org/extra/clang-tidy/)
+
+* [Clang-Tidy Checks](https://clang.llvm.org/extra/clang-tidy/checks/list.html)
+
+clang-tidy is a clang-based C++ linter tool. Its purpose is to provide an extensible framework for diagnosing and fixing typical programming errors, like style violations, interface misuse, or bugs that can be deduced via static analysis. clang-tidy is modular and provides a convenient interface for writing new checks.
+
+**`.clang-tidy` Lookup mechanism:**
+
+* Clang-Tidy looks for a `.clang-tidy` file in the directory of the source file being analyzed. If it finds one, it uses the configuration specified in that file.
+* If no `.clang-tidy` file is found in the source file's directory, Clang-Tidy will search parent directories for a `.clang-tidy` file. This means you can place a `.clang-tidy` file in the root of your project, and it will apply to all files within the project.
+
+**Example:**
+
+```
+Checks: >
+  -*,
+  clang-analyzer-*,
+  cppcoreguidelines-rvalue-reference-param-not-moved,
+  cppcoreguidelines-virtual-class-destructor,
+  google-*,
+  modernize-*,
+  -modernize-use-nodiscard,
+  -modernize-use-trailing-return-type,
+  performance-*,
+  readability-*,
+
+WarningsAsErrors: '*'
+```
+
+## 8.6 lld
+
+## 8.7 lldb
 
 # 9 Assorted
 

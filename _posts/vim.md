@@ -956,11 +956,11 @@ ctags --languages=python --python-kinds=-iv --fields=+ailnSz --extras=+q -R -f ~
 * **`.tags`是指在vim的当前目录（在vim中执行`:pwd`）下查找`.tags`文件**
 
 ```vim
-" tags搜索模式
+" tags search mode
 set tags=./.tags;,.tags
-" c/c++ 标准库的ctags
+" c/c++ standard library ctags
 set tags+=~/.vim/.cfamily_systags
-" python 标准库的ctags
+" python standard library ctags
 set tags+=~/.vim/.python_systags
 ```
 
@@ -1106,7 +1106,7 @@ global -r <symbol>
 1. 第二个环境变量必须设置（在我的环境里，不设置也能work），否则会找不到`native-pygments`和`language map`的定义
 
 ```vim
-" native-pygments 设置后会出现「gutentags: gtags-cscope job failed, returned: 1」，所以我把它换成了 native
+" Setting native-pygments causes "gutentags: gtags-cscope job failed, returned: 1", so I changed it to native
 " let $GTAGSLABEL = 'native-pygments'
 let $GTAGSLABEL = 'native'
 let $GTAGSCONF = '/usr/local/share/gtags/gtags.conf'
@@ -1196,16 +1196,16 @@ Home: [gruvbox](https://github.com/morhetz/gruvbox)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'morhetz/gruvbox'
 
-" 启用gruvbox配色方案（~/.vim/colors目录下需要有gruvbox对应的.vim文件）
+" Enable the gruvbox color scheme (the corresponding .vim file needs to be in the ~/.vim/colors directory)
 colorscheme gruvbox
-" 设置背景，可选值有：dark, light
+" Set background, possible values are: dark, light
 set background=dark
-" 设置软硬度，可选值有soft、medium、hard。针对dark和light主题分别有一个配置项
+" Set contrast, possible values are: soft, medium, hard. There is a configuration item for dark and light themes respectively.
 let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_contrast_light = 'hard'
 
@@ -1232,7 +1232,7 @@ Home: [solarized](https://github.com/altercation/vim-colors-solarized)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'altercation/vim-colors-solarized'
@@ -1265,7 +1265,7 @@ Home: [vim-airline](https://github.com/vim-airline/vim-airline)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'vim-airline/vim-airline'
@@ -1285,7 +1285,7 @@ Home: [indentLine](https://github.com/Yggdroot/indentLine)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'Yggdroot/indentLine'
@@ -1311,7 +1311,7 @@ Home: [nerdtree](https://github.com/preservim/nerdtree)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'scrooloose/nerdtree'
@@ -1341,7 +1341,7 @@ Home: [vim-cpp-enhanced-highlight](https://github.com/octol/vim-cpp-enhanced-hig
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'octol/vim-cpp-enhanced-highlight'
@@ -1367,7 +1367,7 @@ Home: [rainbow](https://github.com/luochen1990/rainbow)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'luochen1990/rainbow'
@@ -1389,18 +1389,18 @@ Home: [vim-gutentags](https://github.com/ludovicchabant/vim-gutentags)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'ludovicchabant/vim-gutentags'
 
-" gutentags 搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归
+" gutentags search project directory markers, stop recursion upwards upon encountering these files/directories
 let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
 
-" 所生成的数据文件的名称
+" Name of the generated data file
 let g:gutentags_ctags_tagfile = '.tags'
 
-" 同时开启 ctags 和 gtags 支持：
+" Enable support for both ctags and gtags:
 let g:gutentags_modules = []
 if executable('ctags')
     let g:gutentags_modules += ['ctags']
@@ -1409,16 +1409,16 @@ if !has('nvim') && executable('gtags-cscope') && executable('gtags')
     let g:gutentags_modules += ['gtags_cscope']
 endif
 
-" 将自动生成的 ctags/gtags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
+" Put all automatically generated ctags/gtags files in the ~/.cache/tags directory to avoid polluting the project directory
 let s:vim_tags = expand('~/.cache/tags')
 let g:gutentags_cache_dir = s:vim_tags
 
-" 按文件类型分别配置 ctags 的参数
+" Configure ctags parameters by file type
 function s:set_cfamily_configs()
     let g:gutentags_ctags_extra_args = ['--fields=+ailnSz']
     let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
     let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
-    " 配置 universal ctags 特有参数
+    " Configure Universal ctags specific parameters
     let g:ctags_version = system('ctags --version')[0:8]
     if g:ctags_version == "Universal"
         let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
@@ -1428,7 +1428,7 @@ function s:set_python_configs()
     let g:gutentags_ctags_extra_args = ['--fields=+ailnSz']
     let g:gutentags_ctags_extra_args += ['--languages=python']
     let g:gutentags_ctags_extra_args += ['--python-kinds=-iv']
-    " 配置 universal ctags 特有参数
+    " Configure Universal ctags specific parameters
     let g:ctags_version = system('ctags --version')[0:8]
     if g:ctags_version == "Universal"
         let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
@@ -1437,13 +1437,13 @@ endfunction
 autocmd FileType c,cpp,objc call s:set_cfamily_configs()
 autocmd FileType python call s:set_python_configs()
 
-" 禁用 gutentags 自动加载 gtags 数据库的行为
+" Disable gutentags auto-loading of gtags database
 let g:gutentags_auto_add_gtags_cscope = 0
 
-" 启用高级命令，比如 :GutentagsToggleTrace 等
+" Enable advanced commands like :GutentagsToggleTrace
 let g:gutentags_define_advanced_commands = 1
 
-" 检测 ~/.cache/tags 不存在就新建
+" Create ~/.cache/tags if it does not exist
 if !isdirectory(s:vim_tags)
    silent! call mkdir(s:vim_tags, 'p')
 endif
@@ -1494,18 +1494,18 @@ Home: [gutentags_plus](https://github.com/skywind3000/gutentags_plus)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'skywind3000/gutentags_plus'
 
-" 在查询后，光标切换到 quickfix 窗口
+" After querying, switch cursor to the quickfix window
 let g:gutentags_plus_switch = 1
 
-" 禁用默认的映射，默认的映射会与 nerdcommenter 插件冲突
+" Disable default mappings, as they conflict with the nerdcommenter plugin
 let g:gutentags_plus_nomap = 1
 
-" 定义新的映射
+" Define new mappings
 nnoremap <leader>gd :GscopeFind g <c-r><c-w><cr>
 nnoremap <leader>gr :GscopeFind s <c-r><c-w><cr>
 nnoremap <leader>ga :GscopeFind a <c-r><c-w><cr>
@@ -1541,14 +1541,14 @@ Home: [vim-preview](https://github.com/skywind3000/vim-preview)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'skywind3000/vim-preview'
 
 autocmd FileType qf nnoremap <buffer> p :PreviewQuickfix<cr>
 autocmd FileType qf nnoremap <buffer> P :PreviewClose<cr>
-" 将 :PreviewScroll +1 和 :PreviewScroll -1 分别映射到 D 和 U
+" Map :PreviewScroll +1 and :PreviewScroll -1 to D and U respectively
 autocmd FileType qf nnoremap <buffer> <c-e> :PreviewScroll +1<cr>
 autocmd FileType qf nnoremap <buffer> <c-y> :PreviewScroll -1<cr>
 
@@ -1576,15 +1576,15 @@ Home: [coc.nvim](https://github.com/neoclide/coc.nvim)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
-" 设置默认开启或者关闭，1表示启动（默认值），0表示不启动
+" Set default to on or off, 1 means on (default), 0 means off
 " let g:coc_start_at_startup=0
 
-" 在编辑模式下，触发自动补全时，将 <tab> 映射成移动到下一个补全选项
+" In insert mode, map <tab> to move to the next completion item when auto-completion is triggered
 inoremap <silent><expr> <tab>
       \ coc#pum#visible() ? coc#pum#next(1) :
       \ CheckBackspace() ? "\<tab>" :
@@ -1595,11 +1595,11 @@ function! CheckBackspace() abort
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
-" 在编辑模式下，将 <cr> 配置成选中当前补全选项
+" In insert mode, map <cr> to select the current completion item
 inoremap <silent><expr> <cr> coc#pum#visible() ? coc#pum#confirm()
                               \: "\<c-g>u\<cr>\<c-r>=coc#on_enter()\<cr>"
 
-" K 查看文档
+" K to view documentation
 nnoremap <silent> K :call <SID>show_documentation()<cr>
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
@@ -1611,18 +1611,18 @@ function! s:show_documentation()
   endif
 endfunction
 
-" 诊断快捷键
+" Diagnostic shortcuts
 nmap <c-k> <Plug>(coc-diagnostic-prev)
 nmap <c-j> <Plug>(coc-diagnostic-next)
 nmap <leader>rf <Plug>(coc-fix-current)
 
-" 自动根据语义进行范围选择
+" Automatically perform semantic range selection
 smap <c-s> <Plug>(coc-range-select)
 xmap <c-s> <Plug>(coc-range-select)
 smap <c-b> <Plug>(coc-range-select-backward)
 xmap <c-b> <Plug>(coc-range-select-backward)
 
-" 代码导航的相关映射
+" Code navigation mappings
 nmap <leader>rd <Plug>(coc-definition)
 nmap <leader>ry <Plug>(coc-type-definition)
 nmap <leader>ri <Plug>(coc-implementation)
@@ -1632,9 +1632,9 @@ nmap <leader>rn <Plug>(coc-rename)
 " CodeAction
 nmap <leader>ac <Plug>(coc-codeaction-cursor)
 
-" CocList相关映射
-" [Shift] + [Option] + j，即「Ô」
-" [Shift] + [Option] + k，即「」
+" CocList related mappings
+" [Shift] + [Option] + j, means 「Ô」
+" [Shift] + [Option] + k, means 「」
 nnoremap <silent> <leader>cr :CocListResume<cr>
 nnoremap <silent> <leader>ck :CocList -I symbols<cr>
 nnoremap <silent> Ô :CocNext<cr>
@@ -1707,11 +1707,11 @@ Home: [coc-explorer](https://github.com/weirongxu/coc-explorer)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
-" 省略公共配置
-" 将 打开文件管理器 映射到快捷键 [Space] + e
+" ... Omit common coc.nvim configs
+" Map opening file explorer to shortcut [Space] + e
 nmap <space>e <cmd>CocCommand explorer<cr>
 
 call plug#end()
@@ -1848,7 +1848,7 @@ Home: [coc-snippets](https://github.com/neoclide/coc-snippets)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 " 省略公共配置
@@ -1884,7 +1884,7 @@ Home: [vim-snippets](https://github.com/honza/vim-snippets)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'honza/vim-snippets'
@@ -1946,7 +1946,7 @@ Home: [LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'autozimu/LanguageClient-neovim', {
@@ -2017,7 +2017,7 @@ sed -i -r 's|([^/]?)https://github.com/|\1https://mirror.ghproxy.com/https://git
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 " 省略公共配置
@@ -2040,7 +2040,7 @@ call plug#end()
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 " 省略公共配置
@@ -2077,7 +2077,7 @@ call plug#end()
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 " 省略公共配置
@@ -2122,7 +2122,7 @@ Home: [vimspector](https://github.com/puremourning/vimspector)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'puremourning/vimspector'
@@ -2269,20 +2269,20 @@ Home: [Copilot.vim](https://github.com/github/copilot.vim)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 if has('nvim')
     Plug 'github/copilot.vim'
 
-    " 将 触发代码片段扩展 映射到快捷键 [Ctrl] + i
-    inoremap <script><expr> <c-i> copilot#Accept("\<cr>")
+    " Map trigger snippet expansion to shortcut [Option] + p, which is 「π」
+    inoremap <script><expr> π copilot#Accept("\<cr>")
     let g:copilot_no_tab_map = v:true
-    " 将 跳转到下一条建议 映射到快捷键 [Option] + ]，即「‘」
+    " Map jump to next suggestion to shortcut [Option] + ], which is 「‘」
     inoremap ‘ <Plug>(copilot-next)
-    " 将 跳转到上一条建议 映射到快捷键 [Option] + [，即「“」
+    " Map jump to previous suggestion to shortcut [Option] + [, which is 「“」
     inoremap “ <Plug>(copilot-previous)
-    " 将 启用代码片段建议 映射到快捷键 [Option] + \，即「«」
+    " Map enable snippet suggestions to shortcut [Option] + \, which is 「«」
     inoremap « <Plug>(copilot-suggest)
 endif
 
@@ -2343,7 +2343,7 @@ python3 install.py --clang-completer
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'ycm-core/YouCompleteMe'
@@ -2406,7 +2406,7 @@ Home: [vim-javacomplete2](https://github.com/artur-shaik/vim-javacomplete2)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'artur-shaik/vim-javacomplete2'
@@ -2454,27 +2454,27 @@ Home: [AsyncRun](https://github.com/skywind3000/asyncrun.vim)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'skywind3000/asyncrun.vim'
 
-" 自动打开 quickfix window ，高度为 6
+" Automatically open quickfix window with a height of 6
 let g:asyncrun_open = 6
 
-" 任务结束时候响铃提醒
+" Ring a bell when the task is finished
 let g:asyncrun_bell = 1
 
-" 设置 F10 打开/关闭 quickfix 窗口
+" Set F10 to open/close quickfix window
 nnoremap <f10> :call asyncrun#quickfix_toggle(6)<cr>
 
-" 设置编译项目的快捷键（这里只是示例，具体命令需要自行调整） 
+" Set shortcut for compiling the project (this is just an example, the specific command needs to be adjusted)
 nnoremap <silent> <f7> :AsyncRun -cwd=<root> make <cr>
 
-" 设置运行项目的快捷键（这里只是示例，具体命令需要自行调整） 
+" Set shortcut for running the project (this is just an example, the specific command needs to be adjusted)
 nnoremap <silent> <f8> :AsyncRun -cwd=<root> -raw make run <cr>
 
-" 设置测试项目的快捷键（这里只是示例，具体命令需要自行调整） 
+" Set shortcut for testing the project (this is just an example, the specific command needs to be adjusted)
 nnoremap <silent> <f6> :AsyncRun -cwd=<root> -raw make test <cr>
 
 call plug#end()
@@ -2494,7 +2494,7 @@ Home: [ALE](https://github.com/dense-analysis/ale)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'dense-analysis/ale'
@@ -2568,7 +2568,7 @@ Home: [vim-signify](https://github.com/mhinz/vim-signify)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'mhinz/vim-signify'
@@ -2593,17 +2593,17 @@ Home: [textobj-user](https://github.com/kana/vim-textobj-user)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
-" 其中 kana/vim-textobj-user 提供了自定义文本对象的基础能力，其他插件是基于该插件的扩展
+" The kana/vim-textobj-user provides the basic ability to customize text objects, other plugins are extensions based on it
 Plug 'kana/vim-textobj-user'
 Plug 'kana/vim-textobj-indent'
 Plug 'kana/vim-textobj-syntax'
 Plug 'kana/vim-textobj-function', { 'for':['c', 'cpp', 'vim', 'java'] }
 Plug 'sgur/vim-textobj-parameter'
 
-" 修改参数文本对象的符号，默认是逗号
+" Change the symbol for the parameter text object, the default is a comma
 let g:vim_textobj_parameter_mapping = 'a'
 
 call plug#end()
@@ -2627,17 +2627,17 @@ Home: [LeaderF](https://github.com/Yggdroot/LeaderF)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
 
-" 将文件模糊搜索映射到快捷键 [Ctrl] + p
+" Map fuzzy file search to shortcut [Ctrl] + p
 let g:Lf_ShortcutF = '<c-p>'
 let g:Lf_ShortcutB = '<m-n>'
-" 将 :LeaderfMru 映射到快捷键 [Ctrl] + n
+" Map :LeaderfMru to shortcut [Ctrl] + n
 nnoremap <c-n> :LeaderfMru<cr>
-" 将 :LeaderfFunction! 映射到快捷键 [Option] + p，即「π」
+" Map :LeaderfFunction! to shortcut [Option] + p, which is 「π」
 nnoremap π :LeaderfFunction!<cr>
 let g:Lf_StlSeparator = { 'left': '', 'right': '', 'font': '' }
 
@@ -2687,16 +2687,16 @@ Home: [fzf.vim](https://github.com/junegunn/fzf.vim)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
-" 将 :Ag 和 :Rg 分别映射到 \ag 和 \rg
+" Map :Ag and :Rg to \ag and \rg respectively
 nnoremap <leader>ag :Ag<cr>
 nnoremap <leader>rg :Rg<cr>
-" 配置快捷键[Ctrl] + a，[Ctrl] + q，将结果导入quickfix
+" Configure shortcuts [Ctrl] + a, [Ctrl] + q, to import results into quickfix
 " https://github.com/junegunn/fzf.vim/issues/185
 function! s:build_quickfix_list(lines)
     call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
@@ -2713,10 +2713,10 @@ let g:fzf_action = { 'ctrl-q': function('s:build_quickfix_list') }
 "   'ctrl-a': This specifies the key combination that will activate the binding. In this case, it's the "Control" key combined with the "a" key.
 "   'select-all': This is the action that will be taken when the key binding is activated. In this case, it selects all items in the list.
 let $FZF_DEFAULT_OPTS = '--preview-window=up:80%:wrap --bind ctrl-a:select-all'
-" 排除 :Ag 和 :Rg 搜索结果中仅匹配文件名的条目
+" Exclude entries that match only filenames in :Ag and :Rg search results
 " https://github.com/junegunn/fzf.vim/issues/346
-" --smart-case 表示大小写不敏感，去掉该参数可以实现大小写敏感的匹配
-" g:rg_customized_options 允许添加一些自定义的参数，比如 --glob '!pattern' 排除某些搜索路径
+" --smart-case means case insensitive, removing this parameter makes it case sensitive
+" g:rg_customized_options allows adding some custom parameters, such as --glob '!pattern' to exclude certain search paths
 let g:rg_customized_options = ""
 command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
 command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".g:rg_customized_options." ".shellescape(<q-args>), 1, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
@@ -2753,7 +2753,7 @@ Home: [vim-grepper](https://github.com/mhinz/vim-grepper)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'mhinz/vim-grepper'
@@ -2777,7 +2777,7 @@ Home: [vim-fugitive](https://github.com/tpope/vim-fugitive)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'tpope/vim-fugitive'
@@ -2801,7 +2801,7 @@ Home: [nerdcommenter](https://github.com/preservim/nerdcommenter)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'preservim/nerdcommenter'
@@ -2851,28 +2851,28 @@ Home: [vim-codefmt](https://github.com/google/vim-codefmt)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'google/vim-maktaba'
 Plug 'google/vim-codefmt'
 Plug 'google/vim-glaive'
 
-" 将 :FormatCode 映射到快捷键 [Ctrl] + l
+" Map :FormatCode to shortcut [Ctrl] + l
 nnoremap <c-l> :FormatCode<cr>
 xnoremap <c-l> :FormatLines<cr>
 
 call plug#end()
 
 " ......................
-" 以下配置放在plug#end()之后
+" .Put after plug#end().
 " ......................
 
 call glaive#Install()
-" 设置 google-java-format 的启动命令，其中
+" Set the startup command for google-java-format, where
 " sudo wget -O /usr/local/share/google-java-format-1.22.0-all-deps.jar 'https://github.com/google/google-java-format/releases/download/v1.22.0/google-java-format-1.22.0-all-deps.jar'
 " sudo ln -s /usr/local/share/google-java-format-1.22.0-all-deps.jar /usr/local/share/google-java-format-all-deps.jar
-" --aosp 采用aosp风格，缩进为4个空格
+" --aosp uses the AOSP style with 4 spaces for indentation
 Glaive codefmt google_java_executable="java -jar /usr/local/share/google-java-format-all-deps.jar --aosp"
 ```
 
@@ -2930,7 +2930,7 @@ Home: [vim-surround](https://github.com/tpope/vim-surround)
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'tpope/vim-surround'
@@ -2987,7 +2987,7 @@ UltiSnips is the ultimate solution for snippets in Vim.
 call plug#begin()
 
 " ......................
-" .....其他插件及配置.....
+" .....Other Plugins....
 " ......................
 
 Plug 'SirVer/ultisnips'
@@ -3008,20 +3008,20 @@ call plug#end()
 ## 3.27 My Full Settings
 
 ```vim
-" 加载额外的配置
-if filereadable(expand("~/.vimrc_extra_before"))
-    source ~/.vimrc_extra_before
+" Load extra config (pre step)
+if filereadable(expand("~/.vimrc_extra_pre"))
+    source ~/.vimrc_extra_pre
 endif
 
 call plug#begin()
 
 Plug 'morhetz/gruvbox'
 
-" 启用gruvbox配色方案（~/.vim/colors目录下需要有gruvbox对应的.vim文件）
+" Enable the gruvbox color scheme (the corresponding .vim file needs to be in the ~/.vim/colors directory)
 colorscheme gruvbox
-" 设置背景，可选值有：dark, light
+" Set background, possible values are: dark, light
 set background=dark
-" 设置软硬度，可选值有soft、medium、hard。针对dark和light主题分别有一个配置项
+" Set contrast, possible values are: soft, medium, hard. There is a configuration item for dark and light themes respectively.
 let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_contrast_light = 'hard'
 
@@ -3057,13 +3057,13 @@ let g:rainbow_active = 1
 
 Plug 'ludovicchabant/vim-gutentags'
 
-" gutentags 搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归
+" gutentags search project directory markers, stop recursion upwards upon encountering these files/directories
 let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
 
-" 所生成的数据文件的名称
+" Name of the generated data file
 let g:gutentags_ctags_tagfile = '.tags'
 
-" 同时开启 ctags 和 gtags 支持：
+" Enable support for both ctags and gtags:
 let g:gutentags_modules = []
 if executable('ctags')
     let g:gutentags_modules += ['ctags']
@@ -3072,16 +3072,16 @@ if !has('nvim') && executable('gtags-cscope') && executable('gtags')
     let g:gutentags_modules += ['gtags_cscope']
 endif
 
-" 将自动生成的 ctags/gtags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
+" Put all automatically generated ctags/gtags files in the ~/.cache/tags directory to avoid polluting the project directory
 let s:vim_tags = expand('~/.cache/tags')
 let g:gutentags_cache_dir = s:vim_tags
 
-" 按文件类型分别配置 ctags 的参数
+" Configure ctags parameters by file type
 function s:set_cfamily_configs()
     let g:gutentags_ctags_extra_args = ['--fields=+ailnSz']
     let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
     let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
-    " 配置 universal ctags 特有参数
+    " Configure Universal ctags specific parameters
     let g:ctags_version = system('ctags --version')[0:8]
     if g:ctags_version == "Universal"
         let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
@@ -3091,7 +3091,7 @@ function s:set_python_configs()
     let g:gutentags_ctags_extra_args = ['--fields=+ailnSz']
     let g:gutentags_ctags_extra_args += ['--languages=python']
     let g:gutentags_ctags_extra_args += ['--python-kinds=-iv']
-    " 配置 universal ctags 特有参数
+    " Configure Universal ctags specific parameters
     let g:ctags_version = system('ctags --version')[0:8]
     if g:ctags_version == "Universal"
         let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
@@ -3100,13 +3100,13 @@ endfunction
 autocmd FileType c,cpp,objc call s:set_cfamily_configs()
 autocmd FileType python call s:set_python_configs()
 
-" 禁用 gutentags 自动加载 gtags 数据库的行为
+" Disable gutentags auto-loading of gtags database
 let g:gutentags_auto_add_gtags_cscope = 0
 
-" 启用高级命令，比如 :GutentagsToggleTrace 等
+" Enable advanced commands like :GutentagsToggleTrace
 let g:gutentags_define_advanced_commands = 1
 
-" 检测 ~/.cache/tags 不存在就新建
+" Create ~/.cache/tags if it does not exist
 if !isdirectory(s:vim_tags)
    silent! call mkdir(s:vim_tags, 'p')
 endif
@@ -3115,13 +3115,13 @@ endif
 
 Plug 'skywind3000/gutentags_plus'
 
-" 在查询后，光标切换到 quickfix 窗口
+" After querying, switch cursor to the quickfix window
 let g:gutentags_plus_switch = 1
 
-" 禁用默认的映射，默认的映射会与 nerdcommenter 插件冲突
+" Disable default mappings, as they conflict with the nerdcommenter plugin
 let g:gutentags_plus_nomap = 1
 
-" 定义新的映射
+" Define new mappings
 nnoremap <leader>gd :GscopeFind g <c-r><c-w><cr>
 nnoremap <leader>gr :GscopeFind s <c-r><c-w><cr>
 nnoremap <leader>ga :GscopeFind a <c-r><c-w><cr>
@@ -3136,7 +3136,7 @@ Plug 'skywind3000/vim-preview'
 
 autocmd FileType qf nnoremap <buffer> p :PreviewQuickfix<cr>
 autocmd FileType qf nnoremap <buffer> P :PreviewClose<cr>
-" 将 :PreviewScroll +1 和 :PreviewScroll -1 分别映射到 D 和 U
+" Map :PreviewScroll +1 and :PreviewScroll -1 to D and U respectively
 autocmd FileType qf nnoremap <buffer> <c-e> :PreviewScroll +1<cr>
 autocmd FileType qf nnoremap <buffer> <c-y> :PreviewScroll -1<cr>
 
@@ -3144,10 +3144,10 @@ autocmd FileType qf nnoremap <buffer> <c-y> :PreviewScroll -1<cr>
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
-" 设置默认开启或者关闭，1表示启动（默认值），0表示不启动
+" Set default to on or off, 1 means on (default), 0 means off
 " let g:coc_start_at_startup=0
 
-" 在编辑模式下，触发自动补全时，将 <tab> 映射成移动到下一个补全选项
+" In insert mode, map <tab> to move to the next completion item when auto-completion is triggered
 inoremap <silent><expr> <tab>
       \ coc#pum#visible() ? coc#pum#next(1) :
       \ CheckBackspace() ? "\<tab>" :
@@ -3158,11 +3158,11 @@ function! CheckBackspace() abort
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
-" 在编辑模式下，将 <cr> 配置成选中当前补全选项
+" In insert mode, map <cr> to select the current completion item
 inoremap <silent><expr> <cr> coc#pum#visible() ? coc#pum#confirm()
                               \: "\<c-g>u\<cr>\<c-r>=coc#on_enter()\<cr>"
 
-" K 查看文档
+" K to view documentation
 nnoremap <silent> K :call <SID>show_documentation()<cr>
 function! s:show_documentation()
   if (index(['vim','help'], &filetype) >= 0)
@@ -3174,18 +3174,18 @@ function! s:show_documentation()
   endif
 endfunction
 
-" 诊断快捷键
+" Diagnostic shortcuts
 nmap <c-k> <Plug>(coc-diagnostic-prev)
 nmap <c-j> <Plug>(coc-diagnostic-next)
 nmap <leader>rf <Plug>(coc-fix-current)
 
-" 自动根据语义进行范围选择
+" Automatically perform semantic range selection
 smap <c-s> <Plug>(coc-range-select)
 xmap <c-s> <Plug>(coc-range-select)
 smap <c-b> <Plug>(coc-range-select-backward)
 xmap <c-b> <Plug>(coc-range-select-backward)
 
-" 代码导航的相关映射
+" Code navigation mappings
 nmap <leader>rd <Plug>(coc-definition)
 nmap <leader>ry <Plug>(coc-type-definition)
 nmap <leader>ri <Plug>(coc-implementation)
@@ -3195,9 +3195,9 @@ nmap <leader>rn <Plug>(coc-rename)
 " CodeAction
 nmap <leader>ac <Plug>(coc-codeaction-cursor)
 
-" CocList相关映射
-" [Shift] + [Option] + j，即「Ô」
-" [Shift] + [Option] + k，即「」
+" CocList related mappings
+" [Shift] + [Option] + j, means 「Ô」
+" [Shift] + [Option] + k, means 「」
 nnoremap <silent> <leader>cr :CocListResume<cr>
 nnoremap <silent> <leader>ck :CocList -I symbols<cr>
 nnoremap <silent> Ô :CocNext<cr>
@@ -3213,7 +3213,7 @@ if has('nvim-0.4.0') || has('patch-8.2.0750')
   vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 endif
 
-" 将 打开文件管理器 映射到快捷键 [Space] + e
+" Map opening file explorer to shortcut [Space] + e
 nmap <space>e <cmd>CocCommand explorer<cr>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3221,14 +3221,14 @@ nmap <space>e <cmd>CocCommand explorer<cr>
 if has('nvim')
     Plug 'github/copilot.vim'
 
-    " 将 触发代码片段扩展 映射到快捷键 [Ctrl] + i
-    inoremap <script><expr> <c-i> copilot#Accept("\<cr>")
+    " Map trigger snippet expansion to shortcut [Option] + p, which is 「π」
+    inoremap <script><expr> π copilot#Accept("\<cr>")
     let g:copilot_no_tab_map = v:true
-    " 将 跳转到下一条建议 映射到快捷键 [Option] + ]，即「‘」
+    " Map jump to next suggestion to shortcut [Option] + ], which is 「‘」
     inoremap ‘ <Plug>(copilot-next)
-    " 将 跳转到上一条建议 映射到快捷键 [Option] + [，即「“」
+    " Map jump to previous suggestion to shortcut [Option] + [, which is 「“」
     inoremap “ <Plug>(copilot-previous)
-    " 将 启用代码片段建议 映射到快捷键 [Option] + \，即「«」
+    " Map enable snippet suggestions to shortcut [Option] + \, which is 「«」
     inoremap « <Plug>(copilot-suggest)
 endif
 
@@ -3257,34 +3257,34 @@ nnoremap <s-f8> :call vimspector#StepOut()<cr>
 
 Plug 'skywind3000/asyncrun.vim'
 
-" 自动打开 quickfix window ，高度为 6
+" Automatically open quickfix window with a height of 6
 let g:asyncrun_open = 6
 
-" 任务结束时候响铃提醒
+" Ring a bell when the task is finished
 let g:asyncrun_bell = 1
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-" 其中 kana/vim-textobj-user 提供了自定义文本对象的基础能力，其他插件是基于该插件的扩展
+" The kana/vim-textobj-user provides the basic ability to customize text objects, other plugins are extensions based on it
 Plug 'kana/vim-textobj-user'
 Plug 'kana/vim-textobj-indent'
 Plug 'kana/vim-textobj-syntax'
 Plug 'kana/vim-textobj-function', { 'for':['c', 'cpp', 'vim', 'java'] }
 Plug 'sgur/vim-textobj-parameter'
 
-" 修改参数文本对象的符号，默认是逗号
+" Change the symbol for the parameter text object, the default is a comma
 let g:vim_textobj_parameter_mapping = 'a'
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 Plug 'Yggdroot/LeaderF', { 'do': ':LeaderfInstallCExtension' }
 
-" 将文件模糊搜索映射到快捷键 [Ctrl] + p
+" Map fuzzy file search to shortcut [Ctrl] + p
 let g:Lf_ShortcutF = '<c-p>'
 let g:Lf_ShortcutB = '<m-n>'
-" 将 :LeaderfMru 映射到快捷键 [Ctrl] + n
+" Map :LeaderfMru to shortcut [Ctrl] + n
 nnoremap <c-n> :LeaderfMru<cr>
-" 将 :LeaderfFunction! 映射到快捷键 [Option] + p，即「π」
+" Map :LeaderfFunction! to shortcut [Option] + p, which is 「π」
 nnoremap π :LeaderfFunction!<cr>
 let g:Lf_StlSeparator = { 'left': '', 'right': '', 'font': '' }
 
@@ -3303,10 +3303,10 @@ let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
-" 将 :Ag 和 :Rg 分别映射到 \ag 和 \rg
+" Map :Ag and :Rg to \ag and \rg respectively
 nnoremap <leader>ag :Ag<cr>
 nnoremap <leader>rg :Rg<cr>
-" 配置快捷键[Ctrl] + a，[Ctrl] + q，将结果导入quickfix
+" Configure shortcuts [Ctrl] + a, [Ctrl] + q, to import results into quickfix
 " https://github.com/junegunn/fzf.vim/issues/185
 function! s:build_quickfix_list(lines)
     call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
@@ -3323,10 +3323,10 @@ let g:fzf_action = { 'ctrl-q': function('s:build_quickfix_list') }
 "   'ctrl-a': This specifies the key combination that will activate the binding. In this case, it's the "Control" key combined with the "a" key.
 "   'select-all': This is the action that will be taken when the key binding is activated. In this case, it selects all items in the list.
 let $FZF_DEFAULT_OPTS = '--preview-window=up:80%:wrap --bind ctrl-a:select-all'
-" 排除 :Ag 和 :Rg 搜索结果中仅匹配文件名的条目
+" Exclude entries that match only filenames in :Ag and :Rg search results
 " https://github.com/junegunn/fzf.vim/issues/346
-" --smart-case 表示大小写不敏感，去掉该参数可以实现大小写敏感的匹配
-" g:rg_customized_options 允许添加一些自定义的参数，比如 --glob '!pattern' 排除某些搜索路径
+" --smart-case means case insensitive, removing this parameter makes it case sensitive
+" g:rg_customized_options allows adding some custom parameters, such as --glob '!pattern' to exclude certain search paths
 let g:rg_customized_options = ""
 command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
 command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".g:rg_customized_options." ".shellescape(<q-args>), 1, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
@@ -3355,7 +3355,7 @@ Plug 'google/vim-maktaba'
 Plug 'google/vim-codefmt'
 Plug 'google/vim-glaive'
 
-" 将 :FormatCode 映射到快捷键 [Ctrl] + l
+" Map :FormatCode to shortcut [Ctrl] + l
 nnoremap <c-l> :FormatCode<cr>
 xnoremap <c-l> :FormatLines<cr>
 
@@ -3377,24 +3377,24 @@ let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 
 call plug#end()
 
-" vim-codefmt的额外配置
+" Extra config for vim-codefmt
 call glaive#Install()
-" 设置 google-java-format 的启动命令，其中
+" Set the startup command for google-java-format, where
 " sudo wget -O /usr/local/share/google-java-format-1.22.0-all-deps.jar 'https://github.com/google/google-java-format/releases/download/v1.22.0/google-java-format-1.22.0-all-deps.jar'
 " sudo ln -s /usr/local/share/google-java-format-1.22.0-all-deps.jar /usr/local/share/google-java-format-all-deps.jar
-" --aosp 采用aosp风格，缩进为4个空格
+" --aosp uses the AOSP style with 4 spaces for indentation
 Glaive codefmt google_java_executable="java -jar /usr/local/share/google-java-format-all-deps.jar --aosp"
 
-" ctags的配置
-" tags搜索模式
+" ctags configuration
+" tags search mode
 set tags=./.tags;,.tags
-" c/c++ 标准库的ctags
+" c/c++ standard library ctags
 set tags+=~/.vim/.cfamily_systags
-" python 标准库的ctags
+" python standard library ctags
 set tags+=~/.vim/.python_systags
 
-" gtags的配置
-" native-pygments 设置后会出现「gutentags: gtags-cscope job failed, returned: 1」，所以我把它换成了 native
+" gtags configuration
+" Setting native-pygments causes "gutentags: gtags-cscope job failed, returned: 1", so I changed it to native
 " let $GTAGSLABEL = 'native-pygments'
 let $GTAGSLABEL = 'native'
 let $GTAGSCONF = '/usr/local/share/gtags/gtags.conf'
@@ -3405,12 +3405,12 @@ if filereadable(expand('~/.vim/gtags-cscope.vim'))
     source ~/.vim/gtags-cscope.vim
 endif
 
-" 将 .tpp 后缀的文件视为 cpp 文件，这样，针对 cpp 的插件就可以对 .tpp 文件生效了
+" Treat files with the .tpp extension as cpp files so that plugins for cpp can take effect on .tpp files
 autocmd BufRead,BufNewFile *.tpp set filetype=cpp
 
-" 特定文件类型的配置
-" json文件不隐藏双引号，等价于 set conceallevel=0
-let g:vim_json_conceal=0
+" Configuration for specific file types
+" Do not hide double quotes in JSON files, equivalent to set conceallevel=0
+let g:vim_json_conceal = 0
 
 " Return to last edit position when opening files (You want this!), https://stackoverflow.com/questions/7894330/preserve-last-editing-position-in-vim
 autocmd BufReadPost *
@@ -3418,7 +3418,7 @@ autocmd BufReadPost *
      \   exe "normal! g`\"" |
      \ endif
 
-" 重置寄存器
+" Reset registers
 function! Clean_up_registers()
     let regs=split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/-"', '\zs')
     for r in regs
@@ -3427,7 +3427,7 @@ function! Clean_up_registers()
 endfunction
 noremap <silent> <leader>rc :call Clean_up_registers()<cr>
 
-" 编辑模式，光标移动快捷键
+" Insert mode, cursor movement shortcuts
 " [Option] + h，即「˙」
 " [Option] + j，即「∆」
 " [Option] + k，即「˚」
@@ -3441,22 +3441,22 @@ inoremap <c-w> <c-o>w
 inoremap <c-b> <c-o>b
 inoremap <c-x> <c-o>x
 
-" 将「替换」映射到 [Option] + r，即「®」
-" 其中，<c-r><c-w> 表示 [Ctrl] + r 以及 [Ctrl] + w，用于将光标所在的单词填入搜索/替换项中
+" Map "replace" to [Option] + r, which is 「®」
+" <c-r><c-w> means [Ctrl] + r and [Ctrl] + w, used to fill the word under the cursor into the search/replace field
 nnoremap ® :%s/<c-r><c-w>
 
-" 在 Visual 模式下进行粘贴时，默认情况下，会将被删除的内容放到默认寄存器中
-" gv 会重新选中被替换的区域
-" y 将选中的内容放到默认寄存器中
+" When pasting in Visual mode, by default, the deleted content is placed in the default register
+" gv reselects the replaced area
+" y places the selected content into the default register
 xnoremap p pgvy
 
-" 选中当前行
+" Select the current line
 nnoremap <leader>sl ^vg_
 
-" 回车时，默认取消搜索高亮
+" Cancel search highlight by default when pressing Enter
 nnoremap <cr> :nohlsearch<cr><cr>
 
-" window 切换
+" Window switching
 " [Option] + h，即「˙」
 " [Option] + j，即「∆」
 " [Option] + k，即「˚」
@@ -3466,28 +3466,28 @@ nnoremap ∆ :wincmd j<cr>
 nnoremap ˚ :wincmd k<cr>
 nnoremap ¬ :wincmd l<cr>
 
-" tab 切换
+" Tab switching
 " [Option] + h，即「Ó」
 " [Option] + l，即「Ò」
 nnoremap Ó :tabprev<cr>
 nnoremap Ò :tabnext<cr>
 
-" \qc 关闭 quickfix
+" \qc to close quickfix
 nnoremap <leader>qc :cclose<cr>
 
-" 一些常规配置
-" 折叠，默认不启用
+" Some general configurations
+" Folding, disabled by default
 set nofoldenable
 set foldmethod=manual
 set foldlevel=0
-" 设置文件编码格式
+" Set file encoding format
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 set termencoding=utf-8
 set encoding=utf-8
-" 设置鼠标选中进入何种模式（normal/visual/...），详情参考 :help mouse
-" 下面的配置表示不进入任何模式
+" Set mouse mode for different modes (normal/visual/...), see :help mouse for details
+" The configuration below means no mode is entered
 set mouse=
-" 其他常用
+" Other commonly used settings
 set backspace=indent,eol,start
 set tabstop=4
 set softtabstop=4
@@ -3500,12 +3500,12 @@ set cursorline
 set guicursor=n-v-c:block-Cursor/lCursor
 set matchpairs+=<:>
 
-" 加载额外的配置
-if filereadable(expand("~/.vimrc_extra_after"))
-    source ~/.vimrc_extra_after
+" Load extra config (post step)
+if filereadable(expand("~/.vimrc_extra_post"))
+    source ~/.vimrc_extra_post
 endif
 
-" 加载项目定制化配置
+" Load project-specific configurations
 if filereadable("./.workspace.vim")
     source ./.workspace.vim
 endif

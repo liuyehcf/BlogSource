@@ -374,6 +374,8 @@ If you want to install jdk into `/Library/Java/JavaVirtualMachines`, you need to
 
 **为了保持{% post_link vim %}中的按键习惯，以下是`~/.ideavimrc`的内容**
 
+* `Copilot`：触发补全的`action`是`copilot.applyInlays`，但是在`~/.ideavimrc`配置映射，却不起作用。只能在IDEA中进行设置
+
 ```vim
 " embedded vim-surround
 set surround
