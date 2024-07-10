@@ -414,7 +414,7 @@ noremap <leader>c<space> :action CommentByLineComment<cr>
 nnoremap <c-l> :action ReformatCode<cr>
 xnoremap <c-l> :action ReformatCode<cr>
 
-" 重置寄存器
+" Reset registers
 function! Clean_up_registers()
     let regs=split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/-"', '\zs')
     for r in regs
@@ -423,7 +423,7 @@ function! Clean_up_registers()
 endfunction
 noremap <silent> <leader>rc :call Clean_up_registers()<cr>
 
-" 编辑模式，光标移动快捷键
+" Insert mode, cursor movement shortcuts
 " [Option] + h，即「˙」
 " [Option] + j，即「∆」
 " [Option] + k，即「˚」
@@ -433,26 +433,26 @@ inoremap ∆ <c-o>j
 inoremap ˚ <c-o>k
 inoremap ¬ <c-o>l
 inoremap <c-w> <c-o>w
-inoremap <c-e> <c-o>e
+" inoremap <c-e> <c-o>e
 inoremap <c-b> <c-o>b
 inoremap <c-x> <c-o>x
 
-" 将「替换」映射到 [Option] + r，即「®」
-" 其中，<c-r><c-w> 表示 [Ctrl] + r 以及 [Ctrl] + w，用于将光标所在的单词填入搜索/替换项中
+" Map "replace" to [Option] + r, which is 「®」
+" <c-r><c-w> means [Ctrl] + r and [Ctrl] + w, used to fill the word under the cursor into the search/replace field
 nnoremap ® :%s/<c-r><c-w>
 
-" 在 Visual 模式下进行粘贴时，默认情况下，会将被删除的内容放到默认寄存器中
-" gv 会重新选中被替换的区域
-" y 将选中的内容放到默认寄存器中
+" When pasting in Visual mode, by default, the deleted content is placed in the default register
+" gv reselects the replaced area
+" y places the selected content into the default register
 xnoremap p pgvy
 
-" 选中当前行
+" Select the current line
 nnoremap <leader>sl ^vg_
 
-" 回车时，默认取消搜索高亮
+" Cancel search highlight by default when pressing Enter
 nnoremap <cr> :nohlsearch<cr><cr>
 
-" window 切换
+" Window switching
 " [Option] + h，即「˙」
 " [Option] + j，即「∆」
 " [Option] + k，即「˚」
@@ -462,25 +462,28 @@ nnoremap ∆ :wincmd j<cr>
 nnoremap ˚ :wincmd k<cr>
 nnoremap ¬ :wincmd l<cr>
 
-" tab 切换
+" Tab switching
 " [Option] + h，即「Ó」
 " [Option] + l，即「Ò」
 nnoremap Ó :action PreviousTab<cr>
 nnoremap Ò :action NextTab<cr>
 
-" \qc 关闭 quickfix
+" \qc to close quickfix
 nnoremap <leader>qc :cclose<cr>
 
-" 一些常规配置
-" 折叠，默认不启用
+" Some general configurations
+" Folding, disabled by default
 set nofoldenable
-set foldmethod=indent
+set foldmethod=manual
 set foldlevel=0
-" 设置文件编码格式
+" Set file encoding format
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
 set termencoding=utf-8
 set encoding=utf-8
-" 其他常用
+" Set mouse mode for different modes (normal/visual/...), see :help mouse for details
+" The configuration below means no mode is entered
+set mouse=
+" Other commonly used settings
 set backspace=indent,eol,start
 set tabstop=4
 set softtabstop=4
