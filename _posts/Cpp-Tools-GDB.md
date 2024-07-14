@@ -647,6 +647,14 @@ gdb
 (gdb) handle SIGSEGV pass noprint nostop
 ```
 
+## 4.4 How to print env
+
+For environment variables set up before starting program, we can check them by `/proc/<pid>/environ`. But for environment variables set up at runtime, we can check them using the following approach:
+
+```
+(gdb) call (char *)getenv("TERM")
+```
+
 # 5 gdb-dashboard
 
 [gdb-dashboard](https://github.com/cyrus-and/gdb-dashboard)在`gdb`的基础之上，提供了一个更加友好的格式化界面

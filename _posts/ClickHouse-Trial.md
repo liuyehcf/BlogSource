@@ -48,3 +48,17 @@ select * from system.settings;
 ```sh
 clickhouse-client -h 172.26.194.221 --password sr -m
 ```
+
+## 1.5 How to output table to csv
+
+```sql
+SELECT * FROM lineitem limit 5 INTO OUTFILE '/path/test.csv' FORMAT CSV;
+```
+
+## 1.6 How to output hdfs file to csv
+
+Follow doc [Install ClickHouse](https://clickhouse.com/docs/en/install), start a clickhouse local, and execute sql like
+
+```sql
+INSERT INTO FUNCTION file('ssb100.csv', CSV) select * from hdfs('hdfs://xxx:12000/user/hive/warehouse/lineorder_flat/*', Parquet);
+```

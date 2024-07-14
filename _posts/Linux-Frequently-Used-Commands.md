@@ -4443,6 +4443,10 @@ apt install clang-format-X.Y
 * `nm -D xxx.so`
 * `readelf -s --wide xxx.so`
 
+### 11.3.3 List all commands start with xxx
+
+* `compgen -c | grep -E '^xxx`
+
 # 12 Reference
 
 * 《鸟哥的Linux私房菜》

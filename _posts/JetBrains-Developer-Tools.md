@@ -374,7 +374,7 @@ If you want to install jdk into `/Library/Java/JavaVirtualMachines`, you need to
 
 **为了保持{% post_link vim %}中的按键习惯，以下是`~/.ideavimrc`的内容**
 
-* `Copilot`：触发补全的`action`是`copilot.applyInlays`，但是在`~/.ideavimrc`配置映射，却不起作用。只能在IDEA中进行设置
+* `Copilot`：触发补全的`action`是`copilot.applyInlays`，这个没法在`~/.ideavimrc`中进行映射的配置，因为在插入模式下，无法调用`action`，且如果使用`<esc>`或者`<c-o>`，那么`Copilot`的提示会消失，再触发`action`也没用
 
 ```vim
 " embedded vim-surround
@@ -501,3 +501,7 @@ set matchpairs+=<:>
 1. 开启长按表示重复
     * `defaults write com.jetbrains.intellij ApplePressAndHoldEnabled -bool false`
 1. [Writing classes when compiling is suddenly very, very slow](https://youtrack.jetbrains.com/issue/IDEA-162091/Writing-classes-when-compiling-is-suddenly-very-very-slow)
+1. Theme
+    * `Atom One Dark`
+    * `Gruvbox`
+    * `Solarized`

@@ -174,7 +174,31 @@ ${HADOOP_HOME}/bin/hadoop jar ${HADOOP_HOME}/share/hadoop/mapreduce/hadoop-mapre
 ${HADOOP_HOME}/bin/hdfs dfs -cat "/wordcount_output/*"
 ```
 
-## 2.2 Tips
+## 2.2 Configuration
+
+1. `core-site.xml`
+    * Path: `$HADOOP_HOME/etc/hadoop/core-site.xml`
+    * Description: Contains configuration settings for Hadoop's core system, including the default filesystem URI.
+1. `hdfs-site.xml`
+    * Path: `$HADOOP_HOME/etc/hadoop/hdfs-site.xml`
+    * Description: Contains configuration settings specific to HDFS.
+1. `yarn-site.xml`
+    * Path: `$HADOOP_HOME/etc/hadoop/yarn-site.xml`
+    * Description: Contains configuration settings for YARN (Yet Another Resource Negotiator).
+1. `mapred-site.xml`
+    * Path: `$HADOOP_HOME/etc/hadoop/mapred-site.xml`
+    * Description: Contains configuration settings specific to MapReduce.
+1. `hadoop-env.sh`
+    * Path: `$HADOOP_HOME/etc/hadoop/hadoop-env.sh`
+    * Description: Sets environment variables for Hadoop processes, such as JAVA_HOME.
+1. `yarn-env.sh`
+    * Path: `$HADOOP_HOME/etc/hadoop/yarn-env.sh`
+    * Description: Sets environment variables for YARN.
+1. `log4j.properties`
+    * Path: `$HADOOP_HOME/etc/hadoop/log4j.properties`
+    * Description: Configures logging for Hadoop.
+
+## 2.3 Tips
 
 1. List files recursively: `hdfs dfs -ls -R <path>`
 

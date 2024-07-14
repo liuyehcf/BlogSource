@@ -2235,6 +2235,21 @@ popd
 dirs
 ```
 
+## 7.18 compgen
+
+The `compgen` command is used to generate possible completions for a given prefix. It can list commands, functions, aliases, and variables that match a given pattern, making it useful for both interactive shell usage and scripting.
+
+**Options:**
+
+* `-c`: List all commands in the PATH.
+* `-a`: List all aliases.
+* `-b`: List all built-ins.
+* `-k`: List all keywords.
+* `-A function`: List all functions.
+* `-v`: List all shell variables.
+* `-e`: List all environment variables.
+* `-u`: List all user names.
+
 # 8 Tips
 
 ## 8.1 Option Separator
