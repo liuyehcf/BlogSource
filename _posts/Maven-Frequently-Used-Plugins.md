@@ -316,6 +316,44 @@ The actual main class is `JarLauncher` or `WarLauncher`, which will prepare the 
 </plugin>
 ```
 
+## 1.4 build-helper-maven-plugin
+
+[Build Helper Maven Plugin](https://www.mojohaus.org/build-helper-maven-plugin/)
+
+* This plugin contains various small independent goals to assist with the Maven build lifecycle.
+* Goals
+    * [build-helper:attach-artifact](https://www.mojohaus.org/build-helper-maven-plugin/attach-artifact-mojo.html): Attach additional artifacts to be installed and deployed.
+    * ...
+
+**Attach Fat-jar when install or deploy:**
+```
+<plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>build-helper-maven-plugin</artifactId>
+    <version>3.2.0</version>
+    <executions>
+        <execution>
+            <id>attach-artifacts</id>
+            <phase>package</phase>
+            <goals>
+                <goal>attach-artifact</goal>
+            </goals>
+            <configuration>
+                <artifacts>
+                    <artifact>
+                        <!-- The fat-jar you want to attach -->
+                        <file>${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar</file>
+                        <type>jar</type>
+                        <!-- File suffix you want -->
+                        <classifier>jar-with-dependencies</classifier>
+                    </artifact>
+                </artifacts>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+```
+
 # 2 autoconfig
 
 ```xml

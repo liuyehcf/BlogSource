@@ -198,6 +198,54 @@ ${HADOOP_HOME}/bin/hdfs dfs -cat "/wordcount_output/*"
     * Path: `$HADOOP_HOME/etc/hadoop/log4j.properties`
     * Description: Configures logging for Hadoop.
 
+### 2.2.1 How to config dfs.nameservices
+
+**`core-site.xml`**
+```xml
+<configuration>
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://mycluster</value>
+    </property>
+</configuration>
+```
+
+**`hdfs-site.xml`**
+```xml
+<configuration>
+    <property>
+        <name>dfs.nameservices</name>
+        <value>mycluster</value>
+    </property>
+
+    <property>
+        <name>dfs.ha.namenodes.mycluster</name>
+        <value>p0,p1,p2</value>
+    </property>
+    <property>
+        <name>dfs.namenode.rpc-address.mycluster.p0</name>
+        <value>192.168.0.1:12000</value>
+    </property>
+    <property>
+        <name>dfs.namenode.rpc-address.mycluster.p1</name>
+        <value>192.168.0.2:12000</value>
+    </property>
+    <property>
+        <name>dfs.namenode.rpc-address.mycluster.p2</name>
+        <value>192.168.0.3:12000</value>
+    </property>
+
+    <property>
+        <name>dfs.client.failover.proxy.provider.mycluster</name>
+        <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+    </property>
+    <property>
+        <name>dfs.ha.automatic-failover.enabled.mycluster</name>
+        <value>true</value>
+    </property>
+</configuration>
+```
+
 ## 2.3 Tips
 
 1. List files recursively: `hdfs dfs -ls -R <path>`

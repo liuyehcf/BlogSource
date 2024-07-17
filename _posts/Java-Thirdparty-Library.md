@@ -87,6 +87,12 @@ categories:
         <artifactId>log4j-slf4j-impl</artifactId>
         <version>${log4j2.version}</version>
     </dependency>
+    <!-- Compatible with Log4j1, only if some dependencies rely on log4j1's api -->
+    <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-1.2-api</artifactId>
+        <version>${log4j2.version}</version>
+    </dependency>
 </dependencies>
 ```
 

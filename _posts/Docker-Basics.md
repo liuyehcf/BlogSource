@@ -149,18 +149,9 @@ if __name__ == "__main__":
 
 **运行应用：`docker run -p 4000:80 friendlyhello`**
 
-# 5 Command-Line
+# 5 Frequently-Used Images
 
-学会利用`--help`参数
-
-```sh
-docker --help # 查询所有顶层的参数
-docker image --help # 参数image参数的子参数
-```
-
-# 6 Frequently-Used Images
-
-## 6.1 Alpine
+## 5.1 Alpine
 
 Alpine Linux是一个轻型Linux发行版，它不同于通常的Linux发行版，Alpine采用了musl libc 和 BusyBox以减少系统的体积和运行时的资源消耗。Alpine Linux提供了自己的包管理工具：apk
 
@@ -185,7 +176,7 @@ RUN apk update \
 RUN apk add -U tzdata
 ```
 
-## 6.2 Jib
+## 5.2 Jib
 
 ```xml
             <plugin>
@@ -212,16 +203,16 @@ RUN apk add -U tzdata
             </plugin>
 ```
 
-# 7 Docker Compose
+# 6 Docker Compose
 
-## 7.1 Install
+## 6.1 Install
 
 ```sh
 sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 ```
 
-## 7.2 Usage
+## 6.2 Usage
 
 * `docker-compose [ -f xxx.yml ] up`
 * `docker-compose [ -f xxx.yml ] up -d`
@@ -235,13 +226,13 @@ sudo chmod +x /usr/local/bin/docker-compose
 * `docker-compose [ -f xxx.yml ] config`
 * `docker-compose [ -f xxx.yml ] config --services`
 
-## 7.3 Tips
+## 6.3 Tips
 
-### 7.3.1 Find docker-compose information for given docker container
+### 6.3.1 Find docker-compose information for given docker container
 
 * `docker inspect <container_id> | grep 'com.docker.compose'`
 
-# 8 Tips
+# 7 Tips
 
 1. 启动并保持容器运行
     * 可以执行一个不会终止的程序：`docker run -dit xxx:v1`
@@ -286,7 +277,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 1. 清理无用镜像：`docker system prune -a`
 1. 让普通用户有权限使用`docker`：`sudo usermod -aG docker username`
 
-## 8.1 Modify docker storage path
+## 7.1 Modify docker storage path
 
 默认情况下，docker相关的数据会存储在`/var/lib/docker`。编辑配置文件`/etc/docker/daemon.json`（没有就新建），增加如下配置项：
 
@@ -298,7 +289,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 然后通过`systemctl restart docker`重启docker即可
 
-## 8.2 Modify Mirror Address
+## 7.2 Modify Mirror Address
 
 编辑配置文件`/etc/docker/daemon.json`（没有就新建），增加如下配置项：
 
@@ -318,7 +309,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 然后通过`systemctl restart docker`重启docker即可
 
-## 8.3 Run docker across platform
+## 7.3 Run docker across platform
 
 默认情况下，docker是不支持`--platform`参数的，可以通过修改`/etc/docker/daemon.json`，添加如下配置项后，重启docker，开启该功能
 
@@ -399,7 +390,7 @@ Linux c3fb58ea543c 4.14.134 #1 SMP Tue Dec 29 21:27:58 EST 2020 aarch64 aarch64 
 
 * `docker run --rm --privileged multiarch/qemu-user-static:register`是向内核注册了各异构平台的`binfmt handler`，包括`aarch64`等等，这些注册信息就包括了`binfmt handler`的路径，比如`/usr/bin/qemu-aarch64-static`等等，注册信息都在`/proc/sys/fs/binfmt_misc`目录下，每个注册项都是该目录下的一个文件。**实际的`qemu-xxx-static`文件还得手动放置到对应目录中才能生效**
 
-## 8.4 Docker Image Prune Tools - dockerslim
+## 7.4 Docker Image Prune Tools - dockerslim
 
 ```sh
 docker-slim build --http-probe=false centos:7.6.1810
@@ -407,11 +398,11 @@ docker-slim build --http-probe=false centos:7.6.1810
 
 裁剪之后，镜像的体积从`202MB`变为`3.55MB`。但是裁剪之后，大部分的命令都被裁剪了（包括`ls`这种最基础的命令）
 
-## 8.5 Be Aware of Running as a Container
+## 7.5 Be Aware of Running as a Container
 
 一般来说，如果运行环境是容器，那么会存在`/.dockerenv`这个文件
 
-## 8.6 Build Image from Container
+## 7.6 Build Image from Container
 
 **保留镜像原本的layer，每次commit都会生成一个layer，这样会导致镜像越来越大：**
 
@@ -426,7 +417,7 @@ docker export <container-id> -o centos7.9.2009-my.tar
 docker import centos7.9.2009-my.tar centos7.9.2009-my:latest
 ```
 
-## 8.7 Setup Http Proxy
+## 7.7 Setup Http Proxy
 
 Add file `/etc/systemd/system/docker.service.d/http-proxy.conf` with following content:
 
@@ -445,22 +436,28 @@ systemctl show docker --property Environment
 systemctl restart docker
 ```
 
-## 8.8 Access Host Ip from Container
+## 7.8 Access Host Ip from Container
 
 The host has a changing IP address, or none if you have no network access. We recommend that you connect to the special DNS name `host.docker.internal`, which resolves to the internal IP address used by the host.
 
-# 9 FAQ
+## 7.9 How to delete exited containers
 
-## 9.1 K8S Env docker error
+```sh
+docker ps -a -f status=exited -q | xargs docker rm -f
+```
+
+# 8 FAQ
+
+## 8.1 K8S Env docker error
 
 在k8s环境中，若容器运行时用的是`docker`，那么该`docker`会依赖`containerd`，当`containerd`不正常的时候，`docker`也就不正常了。恢复`containerd`的办法：将`/var/lib/containerd/io.containerd.metadata.v1.bolt`这个文件删掉
 
-## 9.2 read unix @->/var/run/docker.sock: read: connection reset by peer
+## 8.2 read unix @->/var/run/docker.sock: read: connection reset by peer
 
 1. 没有权限
 1. 多套`docker`共用了同一个`/var/run/docker.sock`套接字文件，可以用`lsof -U | grep docker.sock`查看。默认情况下只有2个记录，一个是`systemd`的，另一个是`dockerd`的
 
-# 10 Reference
+# 9 Reference
 
 * [Docker Hub](https://hub.docker.com/)
 * [Docker历史版本下载](https://docs.docker.com/docker-for-mac/release-notes/#docker-community-edition-17120-ce-mac49-2018-01-19)

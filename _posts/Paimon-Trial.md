@@ -70,7 +70,7 @@ Second, download paimon-spark with corresponding version.
 wget -O paimon-spark-3.3-0.8.0.jar 'https://repo.maven.apache.org/maven2/org/apache/paimon/paimon-spark-3.3/0.8.0/paimon-spark-3.3-0.8.0.jar'
 ```
 
-Then, copy the jar file into hive's container
+Then, copy the jar file into spark's container
 
 ```sh
 docker cp paimon-spark-3.3-0.8.0.jar spark-master:/spark/jars
@@ -111,11 +111,39 @@ SELECT * FROM my_test_paimon.default.my_table;
 
 [Doc](https://paimon.apache.org/docs/master/flink/quick-start/)
 
-First, start a hive cluster by [docker-flink](https://github.com/big-data-europe/docker-flink)
+First, start a flink container
 
 ```sh
-cd docker-flink
-docker-compose up -d
+docker run -dit --name flink apache/flink:1.19-java8 bash
+```
+
+Second, download paimon-flink with corresponding version.
+
+```sh
+wget -O paimon-flink-1.19-0.8.0.jar 'https://repo.maven.apache.org/maven2/org/apache/paimon/paimon-flink-1.19/0.8.0/paimon-flink-1.19-0.8.0.jar'
+wget -O paimon-flink-action-0.8.0.jar 'https://repo.maven.apache.org/maven2/org/apache/paimon/paimon-flink-action/0.8.0/paimon-flink-action-0.8.0.jar'
+wget -O flink-shaded-hadoop-2-uber-2.8.3-10.0.jar 'https://repo.maven.apache.org/maven2/org/apache/flink/flink-shaded-hadoop-2-uber/2.8.3-10.0/flink-shaded-hadoop-2-uber-2.8.3-10.0.jar'
+```
+
+Then, copy the jar file into flink's container
+
+```sh
+docker cp paimon-flink-1.19-0.8.0.jar flink:/opt/flink/lib
+docker cp paimon-flink-action-0.8.0.jar flink:/opt/flink/lib
+docker cp flink-shaded-hadoop-2-uber-2.8.3-10.0.jar flink:/opt/flink/lib
+```
+
+Finally, test it:
+
+```sh
+docker exec -it flink bash
+/opt/flink/bin/sql-client.sh
+
+CREATE CATALOG my_catalog WITH (
+    'type'='paimon',
+    'warehouse'='file:/tmp/paimon'
+);
+USE CATALOG my_catalog;
 ```
 
 # 4 Paimon With Trino

@@ -4432,6 +4432,10 @@ apt install clang-format-X.Y
 
 * `tcpkill -9 -i any host 127.0.0.1 and port 22`
 
+### 11.2.13 How to kill tcp connections with specific state
+
+* `ss --tcp state CLOSE-WAIT --kill`
+
 ## 11.3 Assorted
 
 ### 11.3.1 Allow using docker command without sudo
