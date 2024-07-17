@@ -18,37 +18,31 @@ categories:
 
 ## 1.1 Workspace
 
-代表你正在工作的那个文件集，也就是git管理的所有文件的集合
-
-**下文用`Workspace`来表示工作区**
+The collection of all files you are working on, managed by git.
 
 ## 1.2 Repository
 
-工作区有一个隐藏目录`.git`，这个不算工作区，而是Git的版本库
+The workspace contains a hidden directory `.git`, which is not considered part of the workspace but is the Git repository.
 
-Git的版本库里存了很多东西，其中最重要的就是称为`stage`（或者叫`index`）的**暂存区**，还有Git为我们自动创建的第一个分支`master`，以及指向`master`的一个指针叫`HEAD`
+The Git repository stores many things, with the most important being the **staging area**, also known as the `stage` or `index`, the first branch created automatically by Git called `master`, and a pointer to `master` called `HEAD`.
 
-**下文用`Index`来表示暂存区，用`HEAD`表示当前分支的最新提交，用`Repository`表示提交区**
+**In the following text, `Index` will represent the staging area, `HEAD` will represent the latest commit of the current branch, and `Repository` will represent the commit area.**
 
 # 2 Configuration
 
-**配置文件：**
+**Filepath:**
 
-* `~/.gitconfig`：对应于global
-* `.git/config`：对应于非global
+* `~/.gitconfig`: For global config
+* `.git/config`: For project config
 
 ```sh
-# 显示当前的Git配置
-git config --list
+git config --list [--global]
 
-# 编辑Git配置文件
 git config -e [--global]
 
-# 设置提交代码时的用户信息
 git config [--global] user.name "[name]"
 git config [--global] user.email "[email address]"
 
-# 删除配置
 git config [--global] --unset http.proxy
 ```
 
@@ -74,81 +68,81 @@ git config --global core.editor "nvim"
 
 ## 2.3 Modify Diff Tool
 
-**项目地址：[github-icdiff](https://github.com/jeffkaufman/icdiff)**
+[github-icdiff](https://github.com/jeffkaufman/icdiff)
 
-**安装：**
+**Install:**
 
 ```sh
 pip3 install git+https://github.com/jeffkaufman/icdiff.git
 
-# 配置git icdiff
 git difftool --extcmd icdiff
 
-# 配置icdiff参数
 git config --global icdiff.options '--highlight --line-numbers'
 ```
 
-**使用：**
+**Usage:**
 
-* 用`git icdiff`代替`git diff`即可
+* `git icdiff`
+* `git icdiff HEAD`
+* `git icdiff -- <file>`
 
 # 3 Adding/Deleting Files
 
 ```sh
-# 添加指定文件到暂存区
+# Add specified files to the staging area
 git add [file1] [file2] ...
 
-# 添加指定目录到暂存区，包括子目录
+# Add specified directory to the staging area, including subdirectories
 git add [dir]
 
-# 添加当前目录的所有文件到暂存区
+# Add all files in the current directory to the staging area
 git add .
 
-# 添加已被track的文件到暂存区，即不会提交新文件
+# Add tracked files to the staging area, without adding new files
 git add -u
 
-# 添加每个变化前，都会要求确认
-# 对于同一个文件的多处变化，可以实现分次提交
+# Require confirmation before adding each change
+# Allows multiple commits for different changes in the same file
 git add -p
 
-# 删除工作区文件，并且将这次删除放入暂存区
+# Delete a file from the workspace and add this deletion to the staging area
 git rm [file1] [file2] ...
 
-# 停止追踪指定文件，但该文件会保留在工作区
+# Stop tracking a specified file, but keep it in the workspace
 git rm --cached [file]
 
-# 停止追踪所有文件，但该文件会保留在工作区
+# Stop tracking all files, but keep them in the workspace
 git rm -r --cached .
 
-# 查看git追踪的文件
+# View files tracked by git
 git ls-files
 
-# 改名文件，并且将这个改名放入暂存区
+# Rename a file and add this renaming to the staging area
 git mv [file-original] [file-renamed]
 ```
 
 ## 3.1 Permanently Deleting Files
 
-**如何查找仓库记录中的大文件：**
+**How to find large files in the repository history:**
 
 ```sh
 git rev-list --objects --all | grep "$(git verify-pack -v .git/objects/pack/*.idx | sort -k 3 -n | tail -5 | awk '{print$1}')"
 ```
 
-**步骤1：通过`filter-branch`来重写这些大文件涉及到的所有提交（重写历史记录，非常危险的操作）：**
+**Step 1: Use `filter-branch` to rewrite all commits involving these large files (rewriting history is a very dangerous operation):**
 
 ```sh
-# 该命令会 checkout 到每个提交，然后依次执行 --index-filter 参数指定的bash命令
+# This command will checkout each commit and execute the bash command specified in the --index-filter parameter
 git filter-branch -f --prune-empty --index-filter 'git rm -rf --cached --ignore-unmatch [your-file-name]' --tag-name-filter cat -- --all
 ```
 
-**步骤2：将本地的分支全部推送到远程仓库。如果不加all的话，只推送了默认分支或者指定分支，如果远程仓库的其他分支还包含这个大文件的话，那么它仍然存在于仓库中**
+**Step 2: Push all local branches to the remote repository. Without the `--all` option, only the default or specified branch will be pushed. If other branches in the remote repository still contain the large file, it will remain in the repository.**
 
 ```sh
 git push origin --force --all
 ```
 
-**步骤3：删除本地仓库中的相关记录**
+**Step 3: Delete related records in the local repository**
 
 ```sh
 rm -rf .git/refs/original/
@@ -160,166 +154,166 @@ git gc --aggressive --prune=now
 # 4 Submit
 
 ```sh
-# 提交暂存区到仓库区
+# Commit the staging area to the repository
 git commit -m [message]
 
-# 提交暂存区的指定文件到仓库区
+# Commit specified files from the staging area to the repository
 git commit [file1] [file2] ... -m [message]
 
-# 提交工作区自上次commit之后的变化，直接到仓库区
+# Commit changes in the workspace since the last commit directly to the repository
 git commit -a
 
-# 提交时显示所有diff信息
+# Show all diff information when committing
 git commit -v
 
-# 使用一次新的commit，替代上一次提交
-# 如果代码没有任何新变化，则用来改写上一次commit的提交信息
+# Replace the last commit with a new commit
+# If there are no new changes, use this to rewrite the last commit message
 git commit --amend -m [message]
 
-# 重做上一次commit，并包括指定文件的新变化
+# Redo the last commit and include changes to specified files
 git commit --amend [file1] [file2] ...
 ```
 
 # 5 Undo
 
 ```sh
-# 恢复工作区的所有文件到暂存区
+# Restore all files in the workspace to the staging area
 git checkout -- .
 
-# 恢复工作区的指定文件到暂存区
+# Restore specified files in the workspace to the staging area
 git checkout -- [file]
 
-# 恢复某个分支的指定文件到暂存区
+# Restore specified files from a branch to the staging area
 git checkout [branch] -- [file]
 
-# 恢复某个commit的指定文件到暂存区
+# Restore specified files from a commit to the staging area
 git checkout [commit] -- [file]
 
-# 重置暂存区的指定文件，与上一次commit保持一致，但工作区不变
+# Reset specified files in the staging area to match the last commit, but leave the workspace unchanged
 git reset [file]
 
-# 重置暂存区与工作区，与上一次commit保持一致
+# Reset the staging area and the workspace to match the last commit
 git reset --hard
 
-# 重置当前分支的指针为指定commit，同时重置暂存区，但工作区不变
+# Reset the current branch pointer to a specified commit, reset the staging area, but leave the workspace unchanged
 git reset [commit]
 
-# 重置当前分支的HEAD为指定commit，同时重置暂存区和工作区，与指定commit一致
+# Reset the current branch HEAD to a specified commit, and reset both the staging area and the workspace to match the specified commit
 git reset --hard [commit]
 
-# 重置当前HEAD为指定commit，但保持暂存区和工作区不变
+# Reset the current HEAD to a specified commit, but leave the staging area and the workspace unchanged
 git reset --keep [commit]
 
-# 新建一个commit，用来撤销指定commit
-# 后者的所有变化都将被前者抵消，并且应用到当前分支
+# Create a new commit to revert a specified commit
+# The changes from the specified commit will be negated by the new commit and applied to the current branch
 git revert [commit]
 
-# 将暂未提交的改动保存到缓存中
+# Save uncommitted changes to the stash
 git stash -m [message]
 
-# 将缓存的改动弹出，并恢复到工作区
+# Pop the stash and apply the saved changes to the workspace
 git stash pop
 
-# 查看缓存列表
+# List stashes
 git stash list
 
-# 应用指定缓存
+# Apply a specified stash
 git stash apply [id]
 
-# 删除指定缓存
+# Drop a specified stash
 git stash drop [id]
 
-# 查看指定缓存的改动文件列表
+# Show the list of files changed in a specified stash
 git stash show [id]
 
-# 查看指定缓存的改动内容
+# Show the changes in a specified stash
 git stash show [id] -p
 
-# 查看指定缓存跟当前的差异
-# 例如 git diff stash@{0}
+# Show the difference between a specified stash and the current state
+# For example: git diff stash@{0}
 git diff stash@{[id]}
 
-# 清除缓存
+# Clear all stashes
 git stash clear
 
-# 丢弃工作区的改动
+# Discard changes in the workspace
 git restore [file]
 
-# 恢复暂存区的指定文件到工作区
+# Restore specified files from the staging area to the workspace
 git restore --staged [file]
 ```
 
 # 6 Branch
 
 ```sh
-# 列出所有本地分支
+# List all local branches
 git branch
 
-# 列出所有本地分支以及详情
+# List all local branches with details
 git branch -vv
 
-# 列出所有远程分支
+# List all remote branches
 git branch -r
 
-# 列出所有本地分支和远程分支
+# List all local and remote branches
 git branch -a
 
-# 新建一个分支，但依然停留在当前分支
+# Create a new branch but stay on the current branch
 git branch [branch-name]
 
-# 新建一个分支，并切换到该分支
+# Create a new branch and switch to it
 git checkout -b [branch]
 
-# 从远程仓库拉取指定分支，并在本地新建一个分支，并切换到该分支
+# Fetch a specified branch from the remote repository, create a new local branch, and switch to it
 git checkout -b [branch_local] origin/[branch_remote]
 
-# 新建一个分支，指向指定commit
+# Create a new branch pointing to a specified commit
 git branch [branch] [commit]
 
-# 新建一个分支，与指定的远程分支建立追踪关系
+# Create a new branch and set up a tracking relationship with a specified remote branch
 git branch --track [branch] [remote-branch]
 
-# 切换到指定分支，并更新工作区
+# Switch to a specified branch and update the workspace
 git checkout [branch-name]
 
-# 切换到上一个分支
+# Switch to the previous branch
 git checkout -
 
-# 建立追踪关系，在现有分支与指定的远程分支之间
+# Set up a tracking relationship between the current branch and a specified remote branch
 git branch --set-upstream [branch] [remote-branch]
 
-# 合并指定分支到当前分支
+# Merge a specified branch into the current branch
 git merge [branch]
 
-# rebase指定分支到当前分支
+# Rebase a specified branch onto the current branch
 git rebase [branch]
 
-# rebase过程中可能会有冲突，解决完冲突后继续rebase
+# During a rebase, if there are conflicts, continue the rebase after resolving them
 git rebase --continue
 
-# rebase过程中可能会有冲突，或者错误，可以撤销整个rebase
+# During a rebase, if there are conflicts or errors, abort the entire rebase
 git rebase --abort
 
-# rebase当前分支，(startcommit, endcommit]（左开右闭）区间的提交
+# Rebase the current branch with commits in the (startcommit, endcommit] range (left-open, right-closed)
 git rebase -i [startcommit] [endcommit]
 
-# rebase当前分支，(startcommit, HEAD]（左开右闭）区间的提交
+# Rebase the current branch with commits in the (startcommit, HEAD] range (left-open, right-closed)
 git rebase -i [startcommit]
 
-# rebase当前分支，startcommit指定为root（root指的是第一个提交之前的那个位置）
+# Rebase the current branch, specifying startcommit as root (root refers to the position before the first commit)
 git rebase -i --root
 
-# 选择一个commit，合并进当前分支（从左到右时间线递增，也就是commit1.time 早于 commit2.time）
+# Select a commit and merge it into the current branch (commits are ordered chronologically from left to right)
 git cherry-pick [commit1] [commit2] ...
 
-# 删除分支
+# Delete a branch
 git branch -d [branch-name]
 
-# 删除远程分支
+# Delete a remote branch
 git push origin --delete [branch-name]
 git branch -dr [remote/branch]
 
-# 更改分支名字
+# Rename a branch
 git branch -m [oldbranch] [newbranch]
 git branch -M [oldbranch] [newbranch]
 ```
@@ -327,140 +321,141 @@ git branch -M [oldbranch] [newbranch]
 # 7 Tag
 
 ```sh
-# 列出所有tag
+# List all tags
 git tag
 
-# 新建一个tag在当前commit
+# Create a new tag on the current commit
 git tag [tag]
 
-# 新建一个tag在指定commit
+# Create a new tag on a specified commit
 git tag [tag] [commit]
 
-# 删除本地tag
+# Delete a local tag
 git tag -d [tag]
 
-# 删除远程tag
+# Delete a remote tag
 git push origin :refs/tags/[tagName]
 
-# 查看tag信息
+# View tag information
 git show [tag]
 
-# 提交指定tag
+# Push a specified tag
 git push [remote] [tag]
 
-# 提交所有tag
+# Push all tags
 git push [remote] --tags
 
-# 新建一个分支，指向某个tag
+# Create a new branch pointing to a tag
 git checkout -b [branch] [tag]
 ```
 
 # 8 Log
 
 ```sh
-# 显示有变更的文件
+# Show changed files
 git status
 
-# 显示当前分支的版本历史
+# Show version history of the current branch
 git log
 
-# 显示commit历史，以及每次commit发生变更的文件
+# Show commit history and the files changed in each commit
 git log --stat
 
-# 搜索提交历史，根据关键词
+# Search commit history by keyword
 git log -S [keyword]
 
-# 显示某个commit之后的所有变动，每个commit占据一行
+# Show all changes after a specific commit, with each commit on one line
 git log [tag] HEAD --pretty=format:%s
 
-# 显示某个commit之后的所有变动，其"提交说明"必须符合搜索条件
+# Show all changes after a specific commit, with commit messages matching the search criteria
 git log [tag] HEAD --grep feature
 
-# 显示某个文件的版本历史，包括文件改名
+# Show version history of a specific file, including renames
 git log --follow [file]
 
-# 显示指定文件相关的修改记录
+# Show modification records related to a specific file
 git log [file]
 
-# 显示指定文件相关的每一次diff
+# Show every diff related to a specific file
 git log -p [file]
 
-# 显示过去5次提交
+# Show the last 5 commits in a concise format
 git log -5 --pretty --oneline
 
-# 显示指定格式的日期
+# Show dates in a specified format
 git log --date=format:"%Y-%m-%d %H:%M:%S"
 
-# 显示所有提交过的用户，按提交次数排序
+# Show all committers sorted by number of commits
 git shortlog -sn
 
-# 显示指定文件是什么人在什么时间修改过
+# Show who changed each line of a file and when
 git blame [file]
 
-# 显示暂存区和工作区的差异的概要（文件修改了几行，不会列出具体改动）
+# Show a summary of the differences between the staging area and the workspace (number of lines changed, not specific changes)
 git diff --stat
 
-# 显示暂存区和工作区的差异
+# Show differences between the staging area and the workspace
 git diff
 
-# 显示暂存区和上一个commit的差异
+# Show differences between the staging area and the last commit
 git diff --cached [file]
 
-# 显示工作区与当前分支最新commit之间的差异
+# Show differences between the workspace and the latest commit of the current branch
 git diff HEAD
 
-# 显示两次提交之间的差异
+# Show differences between two commits
 git diff [first-branch]...[second-branch]
 
-# 显示今天你写了多少行代码
+# Show how many lines of code you wrote today
 git diff --shortstat "@{0 day ago}"
 
-# 显示某次提交的元数据和内容变化
+# Show metadata and content changes of a specific commit
 git show [commit]
 
-# 显示某次提交的元数据和某个文件的内容变化
+# Show metadata and content changes of a specific commit for a file
 git show [commit] -- [filename]
 
-# 显示某次提交的元数据和内容变化的统计信息
+# Show metadata and statistics of content changes for a specific commit
 git show [commit] --stat
 
-# 显示某次提交发生变化的文件
+# Show files changed in a specific commit
 git show --name-only [commit]
 
-# 显示某次提交时，某个文件的内容
+# Show content of a file at a specific commit
 git show [commit]:[filename]
 
-# 显示每次修改的文件列表
+# Show a list of files changed in each commit
 git whatchanged
 
-# 显示每次修改的文件列表以及统计信息
-git whatchanged –stat
+# Show a list of files changed in each commit with statistics
+git whatchanged --stat
 
-# 显示某个文件的版本历史，包括文件改名
+# Show version history of a specific file, including renames
 git whatchanged [file]
 
-# 显示当前分支的最近几次提交
+# Show recent commits of the current branch
 git reflog
 ```
 
 # 9 Clone
 
 ```sh
-# https方式下载
+# Download using HTTPS
 git clone https://github.com/xxx/yyy.git
 
-# ssh方式下载
+# Download using SSH
 git clone git@github.com:xxx/yyy.git
 
-# 不下载历史提交，当整个仓库体积非常大的时候，下载全部会比较耗费存储以及时间
-# 我们可以指定下载深度为1，这种情况下下载的版本叫做「shallow」
+# Download without history commits (shallow clone)
+# When the repository is very large, downloading everything can be time-consuming and storage-intensive
+# We can specify a depth of 1 to only download the latest version, called a "shallow" clone
 git clone https://github.com/xxx/yyy.git --depth 1
 git clone -b [branch_name] https://github.com/xxx/yyy.git --depth 1
 
-# 后续如果又想要下载完整仓库的时候，可以通过如下方式获取完整仓库
+# If later you want to download the full repository, you can use the following command to get the complete history
 git fetch --unshallow
 
-# 使用<--depth 1>会衍生另一个问题，无法获取其他分支，可以通过如下方式处理
+# Using <--depth 1> can cause another issue: you won't be able to fetch other branches. You can handle this as follows
 git remote set-branches origin '[branch_name]'
 git fetch --depth 1 origin '[branch_name]'
 ```
@@ -468,40 +463,46 @@ git fetch --depth 1 origin '[branch_name]'
 # 10 Sync
 
 ```sh
-# 下载远程仓库的所有变动
+# Fetch updates from all branches of the specified remote repository, but does not apply them to any local branches. The updates are stored in the remote-tracking branches
 git fetch [remote]
 
-# 下载远程仓库的指定分支
+# Fetch updates from the specified branch on the remote repository, but does not apply them to any local branch. The updates are stored in the remote-tracking branch
 git fetch [remote] [branch]
 
-# 下载远程仓库的指定提交
+# Fetch updates from the specified branch on the remote repository and applies them to the specified local branch, creating the local branch if it does not already exist
+git fetch [remote] [branch]:[local_branch]
+
+# Fetch updates from the specified branch on the remote repository and forces the update to be applied to the specified local branch, creating it if necessary.
+git fetch [remote] -f [branch]:[local_branch]
+
+# Fetch a specific commit from the specified remote repository, but does not apply it to any local branch. The fetched commit is stored in the remote-tracking branch.
 git fetch [remote] [commit]
 
-# 下载远程仓库的指定pr
+# Fetch the changes from pull request number 29048 from the specified remote repository. The changes are stored in the remote-tracking branch but are not applied to any local branch.
 git fetch [remote] pull/29048/head
 
-# 下载远程仓库的指定pr到本地分支
+# Fetch the changes from pull request number 29048 from the specified remote repository and applies them to a new local branch named `pull_request_29048`.
 git fetch [remote] pull/29048/head:pull_request_29048
 
-# 显示所有远程仓库
+# Show all remote repositories
 git remote -v
 
-# 显示某个远程仓库的信息
+# Show information about a specific remote repository
 git remote show [remote]
 
-# 增加一个新的远程仓库，并命名
+# Add a new remote repository and name it
 git remote add [shortname] [url]
 
-# 取回远程仓库的变化，并与本地分支合并
+# Fetch changes from a remote repository and merge them into the local branch
 git pull [remote] [branch]
 
-# 上传本地指定分支到远程仓库
+# Push a specific local branch to the remote repository
 git push [remote] [branch]
 
-# 强行推送当前分支到远程仓库，即使有冲突
+# Force push the current branch to the remote repository, even if there are conflicts
 git push [remote] --force
 
-# 推送所有分支到远程仓库
+# Push all branches to the remote repository
 git push [remote] --all
 ```
 
@@ -530,14 +531,14 @@ git submodule status
 [git-extra](https://github.com/tj/git-extras)
 
 ```sh
-# 统计代码贡献
+# Statistics on code contributions
 git summary --line
 ```
 
 # 13 Publish
 
 ```sh
-# 生成一个可供发布的压缩包
+# Generate a distributable archive
 git archive
 ```
 
@@ -545,19 +546,21 @@ git archive
 
 **基础规则**
 
-1. 空白行，不匹配任何文件，仅增加可读性
-1. 规则以`#`开头，表示`注释`
-1. 规则`行尾的空格`，会被忽略，除非用`\`进行转义
-1. 规则以`!`开头，表示反转该规则（`.gitignore`文件默认的语义是忽略，反转后表示包含）
-1.  规则以`/`结尾，表示匹配`目录`以及该目录下的一切
-1.  规则以不包含`/`，表示匹配`文件`或`目录`
-1. `*`匹配多个字符，不包括`/`
-1. `?`匹配单个字符，不包括`/`
-1. `[]`匹配指定的多个字符
-1.  规则以`/`开头，表示以`根目录`开始，即匹配`绝对路径`。例如`/*.c`匹配`cat-file.c`，但不匹配`mozilla-sha1/sha1.c`
-1. `**/`开头，表示匹配所有`目录`。例如`**/foo`匹配`foo`目录或文件。**`**/foo`与`foo`的作用是一样的**
-1. `/**`开头，表示匹配内部的一切。例如`abc/**`匹配`abc`目录下的所有文件。**`abc/**`与`abc/`的作用是一样的**
-1. `/**/`表示匹配`0`个或`多`个`目录`。例如`a/**/b`匹配`a/b`、`a/x/b`、`a/x/y/b`
+**Basic Rules**
+
+1. Empty lines do not match any files, they are used to enhance readability.
+1. Lines starting with `#` are comments.
+1. Trailing spaces at the end of lines are ignored unless they are escaped with a `\`.
+1. Lines starting with `!` negate the pattern that follows (by default, `.gitignore` rules ignore files; negation includes them).
+1. Lines ending with `/` indicate that the pattern matches a directory and everything within it.
+1. Patterns not containing a `/` match both files and directories.
+1. `*` matches multiple characters, excluding `/`.
+1. `?` matches a single character, excluding `/`.
+1. `[]` matches any one of the enclosed characters.
+1. Patterns starting with `/` indicate an absolute path, beginning at the root directory. For example, `/*.c` matches `cat-file.c` but not `mozilla-sha1/sha1.c`.
+1. `**/` at the start of a pattern matches all directories. For example, `**/foo` matches any directory or file named `foo`. **`**/foo` and `foo` are equivalent.**
+1. `/**` at the start of a pattern matches everything inside. For example, `abc/**` matches all files within the `abc` directory. **`abc/**` and `abc/` are equivalent.**
+1. `/**/` matches zero or more directories. For example, `a/**/b` matches `a/b`, `a/x/b`, and `a/x/y/b`.
 
 # 15 git-lfs
 
@@ -611,9 +614,7 @@ sudo make install
 
 ## 19.2 Issue with Chinese Displayed in Octal Form
 
-在Windows中，git bash打印的中文可能表示成`\+三个数字`的形式，即八进制表示
-
-通过如下命令可以解决该问题
+In Windows, git bash may display Chinese characters as `\+three digits` in octal notation. You can resolve this issue with the following command:
 
 ```sh
 git config --global core.quotepath false
