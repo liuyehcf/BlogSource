@@ -463,16 +463,18 @@ git fetch --depth 1 origin '[branch_name]'
 # 10 Sync
 
 ```sh
-# Fetch updates from all branches of the specified remote repository, but does not apply them to any local branches. The updates are stored in the remote-tracking branches
+# Fetch updates from all branches of the specified remote repository, but does not apply them to any local branches. The updates are stored in the remote-tracking branches.
 git fetch [remote]
 
-# Fetch updates from the specified branch on the remote repository, but does not apply them to any local branch. The updates are stored in the remote-tracking branch
+# Fetch updates from the specified branch on the remote repository, but does not apply them to any local branch. The updates are stored in the remote-tracking branch.
 git fetch [remote] [branch]
 
-# Fetch updates from the specified branch on the remote repository and applies them to the specified local branch, creating the local branch if it does not already exist
+# Fetch updates from the specified branch on the remote repository and applies them to the specified local branch, creating the local branch if it does not already exist.
 git fetch [remote] [branch]:[local_branch]
 
 # Fetch updates from the specified branch on the remote repository and forces the update to be applied to the specified local branch, creating it if necessary.
+# It may be refused when you at [local_branch], because git fetch is designed to be a safe operation that doesn't modify the working directory.
+# It works fine when you are at another branch, like tmp.
 git fetch [remote] -f [branch]:[local_branch]
 
 # Fetch a specific commit from the specified remote repository, but does not apply it to any local branch. The fetched commit is stored in the remote-tracking branch.
@@ -484,26 +486,26 @@ git fetch [remote] pull/29048/head
 # Fetch the changes from pull request number 29048 from the specified remote repository and applies them to a new local branch named `pull_request_29048`.
 git fetch [remote] pull/29048/head:pull_request_29048
 
-# Show all remote repositories
+# Displays the URLs of all remote repositories associated with the local repository, showing both fetch and push URLs.
 git remote -v
 
-# Show information about a specific remote repository
+# Displays detailed information about the specified remote repository, including its branches, tracking information, and recent commits.
 git remote show [remote]
 
-# Add a new remote repository and name it
+# Add a new remote repository with the specified shortname and URL to your local Git repository.
 git remote add [shortname] [url]
 
-# Fetch changes from a remote repository and merge them into the local branch
+# Fetch changes from the specified remote branch and merges them into the current local branch.
 git pull [remote] [branch]
 
-# Push a specific local branch to the remote repository
+# Fetch changes from the specified remote branch and merges them into the specified local branch, forcing the update if necessary.
+git pull [remote] -f [branch]:[local_branch]
+
+# Upload (pushes) the local branch to the specified remote repository branch.
 git push [remote] [branch]
 
-# Force push the current branch to the remote repository, even if there are conflicts
-git push [remote] --force
-
-# Push all branches to the remote repository
-git push [remote] --all
+# Forcefully update the specified remote branch with the local branch, potentially overwriting changes on the remote branch.
+git push [remote] -f [branch]:[remote_branch]
 ```
 
 # 11 Submodule

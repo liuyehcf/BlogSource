@@ -111,10 +111,38 @@ SELECT * FROM my_test_paimon.default.my_table;
 
 [Doc](https://paimon.apache.org/docs/master/flink/quick-start/)
 
-First, start a flink container
+First, start a flink container by [Flink Docker Setup](https://nightlies.apache.org/flink/flink-docs-master/docs/deployment/resource-providers/standalone/docker/)
 
 ```sh
-docker run -dit --name flink apache/flink:1.19-java8 bash
+cat > docker-compose.yml << 'EOF'
+version: "2.2"
+services:
+  jobmanager:
+    image: apache/flink:1.19-java8
+    container_name: jobmanager
+    ports:
+      - "8081:8081"
+    command: jobmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager        
+
+  taskmanager:
+    image: apache/flink:1.19-java8
+    container_name: taskmanager
+    depends_on:
+      - jobmanager
+    command: taskmanager
+    scale: 1
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+        taskmanager.numberOfTaskSlots: 2     
+EOF
+
+docker-compose up -d
 ```
 
 Second, download paimon-flink with corresponding version.
@@ -128,22 +156,62 @@ wget -O flink-shaded-hadoop-2-uber-2.8.3-10.0.jar 'https://repo.maven.apache.org
 Then, copy the jar file into flink's container
 
 ```sh
-docker cp paimon-flink-1.19-0.8.0.jar flink:/opt/flink/lib
-docker cp paimon-flink-action-0.8.0.jar flink:/opt/flink/lib
-docker cp flink-shaded-hadoop-2-uber-2.8.3-10.0.jar flink:/opt/flink/lib
+containers=( "jobmanager" "taskmanager" )
+for container in ${containers[@]}
+do
+    docker cp paimon-flink-1.19-0.8.0.jar ${container}:/opt/flink/lib
+    docker cp paimon-flink-action-0.8.0.jar ${container}:/opt/flink/lib
+    docker cp flink-shaded-hadoop-2-uber-2.8.3-10.0.jar ${container}:/opt/flink/lib
+done
 ```
 
 Finally, test it:
 
 ```sh
-docker exec -it flink bash
-/opt/flink/bin/sql-client.sh
+docker exec -it jobmanager /opt/flink/bin/sql-client.sh
 
 CREATE CATALOG my_catalog WITH (
     'type'='paimon',
     'warehouse'='file:/tmp/paimon'
 );
 USE CATALOG my_catalog;
+
+-- create a word count table
+CREATE TABLE word_count (
+    word STRING PRIMARY KEY NOT ENFORCED,
+    cnt BIGINT
+);
+
+-- create a word data generator table
+CREATE TEMPORARY TABLE word_table (
+    word STRING
+) WITH (
+    'connector' = 'datagen',
+    'fields.word.length' = '1'
+);
+
+-- paimon requires checkpoint interval in streaming mode
+SET 'execution.checkpointing.interval' = '10 s';
+
+-- write streaming data to dynamic table
+INSERT INTO word_count SELECT word, COUNT(*) FROM word_table GROUP BY word;
+
+-- use tableau result mode
+SET 'sql-client.execution.result-mode' = 'tableau';
+
+-- switch to batch mode
+RESET 'execution.checkpointing.interval';
+SET 'execution.runtime-mode' = 'batch';
+
+-- olap query the table
+SELECT * FROM word_count;
+
+-- switch to streaming mode
+SET 'execution.runtime-mode' = 'streaming';
+
+-- track the changes of table and calculate the count interval statistics
+SELECT `interval`, COUNT(*) AS interval_cnt FROM
+    (SELECT cnt / 10000 AS `interval` FROM word_count) GROUP BY `interval`;
 ```
 
 # 4 Paimon With Trino

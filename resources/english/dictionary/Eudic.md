@@ -1,11 +1,705 @@
+1. a piece of bread
+1. hey, how did it go?
+1. how has it been so far in your new job?
+1. how is it going?
+1. what have you been up to?
+1. how have you been?
+1. how are you doing today?
+1. play it up; play it down
+1. turn up; turn down
+1. nudge up; nudge down
+1. ascend; descend
+1. rise; fall
+1. increase; decrease
+1. play
+1. undertake
+1. operate
+1. deal with
+1. implement
+1. carry out
+1. launch
+1. perform
+1. execute
+1. manage
+1. process
+1. handle
+1. do
+1. plumer
+1. facilitation payment
+1. bereavement lave
+1. take a break
+1. days off
+1. paternity leave
+1. maternity leave
+1. marriage leave
+1. sick leave
+1. personal leave
+1. annual leave
+1. statutory holiday
+1. I sometimes substitute for him
+1. pay slip; payroll
+1. claims submission cut off
+1. labor union
+1. toxic
+1. position held
+1. annual performance bonus
+1. I want a raise
+1. job hopping
+1. job transfer
+1. lay off
+1. welfare
+1. salary
+1. nine-to-five
+1. career plan
+1. vacancy
+1. interview
+1. resume
+1. recruitment
+1. green card
+1. work visa
+1. visa
+1. passport
+1. marriage license
+1. helath certificate
+1. employee's card
+1. student pass
+1. driving license
+1. identity card
+1. the food is undercooked
+1. rare; medium rare; medium; medium well; well done
+1. hard boiled
+1. soft boiled
+1. poached
+1. over hard
+1. over easy
+1. sunny-side-up
+1. scramble
+1. unexploded ordinance
+1. assault weapons
+1. leopard tank
+1. nuclear ballistic submarine
+1. supersonic missiles
+1. deeply
+1. absolutely
+1. utterly
+1. tremendously
+1. exceptionally
+1. incredibly
+1. extremely
+1. significantly
+1. considerably
+1. quite
+1. very
+1. somewhat
+1. reasonably
+1. fairly
+1. mildly
+1. a bit
+1. just
+1. hardly
+1. barely
+1. slightly
+1. blood type
+1. hip
+1. waist
+1. bust
+1. degree celsius
+1. gram; kilogram
+1. square feet
+1. square meter; square kilometer
+1. density
+1. speed
+1. latitude
+1. longitude
+1. altitude
+1. thickness
+1. depth
+1. height
+1. width
+1. length
+1. a house; a building
+1. a striking amount of
+1. a cascade of problems
+1. a puff of smoke; plumes of smoke
+1. a roll of film
+1. a flock of sheep
+1. a carton of apple juice
+1. a blank sheet of paper
+1. a group/crowd of children
+1. a string of new product
+1. a pile of laundary
+1. a pair of shoes
+1. a bottle of perfume
+1. a bowl of water
+1. a loaf of bread
+1. a spoon of sugar
+1. a slice of pizza
+1. a packet of rice noddles
+1. a jar of coffee
+1. a can of fruit; a can of cola
+1. a pinch of salt
+1. a grain of rice
+1. a bunch of bananas; a bounch of roses
+1. village
+1. town
+1. suburb
+1. street
+1. avenue
+1. county
+1. district
+1. city
+1. state; province
+1. country
+1. bounced check; 空头支票
+1. check bounced
+1. nickel
+1. my credit card has been fraudulently charged
+1. minute stock quotes
+1. stock exchange
+1. money order
+1. subsidy; allowance
+1. exchange rate
+1. trade
+1. fund
+1. insurance
+1. security
+1. stock
+1. currency
+1. interest rate hike; interest rate cut
+1. interest rate
+1. interest
+1. 30-day debt grace period
+1. deposit money; withdraw money
+1. top-up; recharge
+1. outstanding amount
+1. balance payment
+1. first deposit
+1. loans
+1. credit
+1. finance
+1. capital
+1. compensation
+1. wage; salary; payment; paycheck
+1. spiral line
+1. perpendicular lines
+1. parallel lines
+1. wavy line
+1. dashed line
+1. dotted line
+1. zigzag line
+1. diagonal line
+1. curved line
+1. vertical line
+1. horizontal line
+1. straight line
+1. exponent
+1. the derivative of y with respect to x
+1. derivative
+1. stochastic gradient descent
+1. gradient descent
+1. slope
+1. maxima
+1. xy-plane
+1. difference
+1. union
+1. intersection
+1. Federal Appeal Court
+1. Intelligence Corps
+1. Federal Aviation Administration
+1. the U.S. Coast Guard
+1. secretary general; secretary of state
+1. press secretary
+1. acting police chief
+1. deportation
+1. condemn
+1. colonialism
+1. capitalism
+1. constituency
+1. Labour Party
+1. progressive party
+1. conservative party
+1. far-left political leaders; far-right political leaders
+1. democratic regime
+1. authoritarian regime
+1. horizontal bar
+1. barbell plate; weight plate
+1. barbell bar
+1. barbell
+1. dumbell
+1. lift weights
+1. deep squat
+1. incline bench press
+1. flat bench press; 平板卧推
+1. pull-ups; chin-ups
+1. push-ups
+1. intense exercise; vigorous exercise; strenuous exercise; heavy exercise
+1. PhD
+1. Master's degree
+1. postgraduate
+1. Bachelor's degree
+1. undergraduate
+1. senior high school
+1. junior high school
+1. primary school
+1. nursery school; kindergarten
+1. is it complimentary? can I take one? does it come with the meal?
+1. check please; can I have my bill
+1. plastic bag
+1. plastic spoon
+1. chopsticks
+1. cutlery; tableware
+1. to go box
+1. leftovers
+1. castle
+1. temple
+1. bungalow
+1. cottage
+1. basement
+1. studio
+1. mansion
+1. villa
+1. dormitory
+1. apartment; flat
+1. wedding dress
+1. toast
+1. wedding reception; wedding feast
+1. ring
+1. bridesmaid
+1. bestman
+1. groom
+1. bride
+1. engagement
+1. proposal
+1. utilities
+1. residential area; gated community; residential compound; apartment complex
+1. jet pool
+1. wading pool
+1. lap pool
+1. infinity pool
+1. swimming pool
+1. is the price negotiable
+1. budget
+1. tenant profile
+1. move in date
+1. lease term
+1. layout plan; floor plan
+1. doping scandal
+1. drug smuggling; drug smuggler
+1. sectarian violence
+1. suicide
+1. credit card fraud
+1. attack
+1. dereliction of duty
+1. homicide
+1. juvenile delinquency
+1. copyright infringement
+1. cyber crime
+1. sexual battery
+1. sexual harassment
+1. gag order
+1. ruling
+1. juror
+1. lose mind; out of mind
+1. little trim
+1. hair tie
+1. Afro
+1. wave
+1. long straight hair
+1. curly hair
+1. bun
+1. braid; braids
+1. pony tail
+1. side parting
+1. centre parting
+1. crew cut
+1. dandruff
+1. sweat
+1. phlegm
+1. booger; 鼻屎\n
+1. snot
+1. earwax
+1. sleepy dust
+1. placenta
+1. bone marrow
+1. intestine
+1. bladder
+1. spleen
+1. stomach
+1. kidney
+1. liver
+1. heart
+1. blood vessel
+1. trachea
+1. lungs
+1. brain
+1. thigh
+1. twist the face
+1. earlobe
+1. chin tuck
+1. chin
+1. oral mucosa
+1. my lips are super dry and cracked
+1. philtrum
+1. cheek
+1. eyelid
+1. forehead
+1. slip
+1. I almost fell
+1. I fell down; I had a fall
+1. I tripped
+1. I stumbled
+1. lick
+1. swallow
+1. sip
+1. chew
+1. march
+1. hike
+1. run
+1. sidle
+1. hobble
+1. shuffle
+1. tiptoe
+1. stride
+1. wander
+1. stroll
+1. crush
+1. cuddle
+1. rock
+1. pull
+1. push
+1. point
+1. scratch
+1. poke
+1. knock
+1. apply medicine
+1. stroke
+1. rub hands together; Rubbing is less about deep cleaning and more about gentle or superficial contact.
+1. scrub my face; This action implies a more vigorous, thorough cleaning process.
+1. touch
+1. pat
+1. flick
+1. drop
+1. lift
+1. hold
+1. grab
+1. beat
+1. punch
+1. slash
+1. slap on the back
+1. baseboard
+1. intercom
+1. hand sanitizer
+1. closestool; toilet; flush toilet
+1. shower head
+1. bath towel
+1. remote control
+1. flashlight
+1. carpet
+1. cushion
+1. pillow
+1. blanket
+1. sheet
+1. mattress
+1. comforter; quilt
+1. dressing table
+1. nightstand; bedside table
+1. ceiling lamp
+1. table lamp
+1. chandelier
+1. couch
+1. wet dry vacuum cleaner
+1. blow dryer
+1. iron
+1. fan
+1. cooking utensil
+1. small; medium; large; extra large; extra extra large
+1. socks
+1. panties; knickers
+1. underpants
+1. leggings
+1. dress
+1. skirt
+1. bra
+1. uniform
+1. pajamas; pyjamas
+1. bathrobe
+1. raincoat
+1. briefs
+1. shorts
+1. pants
+1. jeans
+1. down coat
+1. light overcoat
+1. suit
+1. jacket
+1. sweater
+1. long sleeves
+1. shirt
+1. T-shirt
+1. vest
+1. kitchen roll
+1. drawings
+1. post-it note
+1. scratch paper
+1. diaper
+1. wipes
+1. toilet paper
+1. napkin
+1. newspaper
+1. mower
+1. ladder
+1. rake
+1. hoe
+1. spade
+1. trowel
+1. adhesive tape
+1. scales
+1. tape measure
+1. electric drill
+1. nail clippers
+1. ear spoon
+1. scissors
+1. shears
+1. roller
+1. nut
+1. bolt
+1. wrench
+1. screw
+1. screwdriver
+1. pliers
+1. hammer
+1. ax; axe
+1. saw
+1. blade
+1. vacuum the floor
+1. dust the desk
+1. change the sheet
+1. iron clothes
+1. hang clothes
+1. do the laundry
+1. wash the car
+1. clean the windows
+1. mop the floor
+1. scrub the floor
+1. sweep the floor
+1. just clip it on the laundry pin like this
+1. just hang it on the laundry rack
+1. the shirt is going to get wrinkled
+1. shake out the shirt
+1. hanger
+1. hang the laundry
+1. water purifier
+1. water dispenser
+1. air conditioner
+1. washing machine
+1. refrigerator
+1. juicer
+1. water heater
+1. rice cooker
+1. pressure cooker
+1. microwave oven
+1. oven
+1. platter
+1. ladle
+1. lid
+1. cutting board
+1. stove
+1. pan
+1. wok
+1. pot
+1. cleaver
+1. I chop the green onion with my kitchen knife
+1. chop the green onion
+1. cut the green onion
+1. dice the potato
+1. shred the potato
+1. slice the potato
+1. the Aegean Sea
+1. ranger station
+1. island
+1. glacier
+1. swamp
+1. aurora
+1. valley
+1. desert
+1. grassland
+1. plain
+1. plateau
+1. volcano
+1. baggage claim
+1. currencyexchange
+1. customs
+1. turbulence
+1. layover
+1. carry-on; carry-on luggage
+1. delay
+1. boarding call
+1. departure gate
+1. duty-free shop
+1. security check
+1. domestic flight
+1. aisle seat
+1. economy class
+1. business class
+1. boarding pass
+1. check-in counter
+1. terminal
+1. non-potable water
+1. tap water; running water
+1. faucet; tap
+1. tap a card
+1. insert a card
+1. swipe a card
+1. extend my stay for a few more days/renew my booking for a few more days
+1. check out
+1. check in
+1. exclamation mark
+1. skidmark
+1. car troubles
+1. truck
+1. trunk
+1. number plate; license plate
+1. tire; tyre
+1. door handle
+1. accelerator
+1. brake
+1. indicator; turn signal
+1. sun visor
+1. rearview mirror
+1. side-view mirror
+1. windscreen wipers; windshield wipers
+1. gearshift
+1. air vent
+1. dashboard
+1. horn
+1. steering wheel
+1. seatbelt
+1. driver's seat
+1. trail
+1. sludge
+1. concealed exit
+1. speed regulating strips ahead
+1. phone ringing
+1. phone vibrating
+1. alarm clock beeping
+1. woman moaning
+1. phone buzzing
+1. humiliate
+1. pettiness
+1. humility
+1. laundry detergent; washing powder; laundry liquid
+1. bento
+1. paranoid
+1. scald
+1. burn
+1. frostbite
+1. bite
+1. sprain
+1. cut
+1. foreign matter
+1. inflammation
+1. infection
+1. pimple; 青春痘，小红肿
+1. blister; I accidentally bit myself and got a blister in my mouth
+1. pigmentation
+1. acne
+1. migraine
+1. plastic surgery
+1. haemorrhoids
+1. shingles
+1. asthma attack
+1. indigestion
+1. stiff neck
+1. fatigue; faint
+1. cramp
+1. passed out; faint
+1. head rush
+1. dizziness
+1. vomit
+1. nausea
+1. diarrhea
+1. insomnia
+1. pneumonia
+1. headache
+1. pharyngitis
+1. cough
+1. sore throat
+1. fever
+1. cold
+1. bird flu
+1. flu
+1. vascular conditions
+1. hereditary diseases; inherited genetic diseases
+1. respiratory illnesses
+1. intensive care unit
+1. inpatient; outpatient
+1. hernia test
+1. blood work
+1. polyclinic
+1. crunch sugar
+1. you're not neutral, but actually sided
+1. kiwi
+1. blowfish
+1. the milk is sour
+1. artisanal honey
+1. cantaloupe
+1. fig
+1. loquat
+1. durian
+1. walnut
+1. banana
+1. mulberry
+1. orange
+1. watermelon
+1. blueberry
+1. blackberry
+1. strawberry
+1. pomelo
+1. pineapple
+1. cherry
+1. mango
+1. longan
+1. litchi
+1. lemon
+1. plum
+1. shellfish
+1. king crab
+1. hot pot
+1. goose liver
+1. oyster
+1. clam
+1. abalone
+1. lamb chop
+1. raw fish
+1. zucchini
+1. okra
+1. agaric
+1. mushroom
+1. garlic
+1. bitter gourd
+1. eggplant
+1. spinach
+1. celery
+1. corn
+1. potato
+1. pepper; (hot/green/sweet)
+1. crisp lettuce
+1. carrot
+1. cabbage
+1. onion
+1. green beans
+1. cauliflower
+1. cucumber
+1. snitch
+1. pat him down; 搜身
+1. this thing is really hard on me
+1. they are on the run
+1. keep a low profile; stay low-key
 1. on my last resort
 1. my phone froze
-1. 品行词汇; 名词：\n谦卑：humility\n小气：pettiness\n\n\n动词\n羞辱：humiliate
-1. 性格词汇
 1. things get sour
 1. never let your gratitude sour into pride
 1. we've plateaued
-1. 声音词汇; 嗡嗡响：phone buzzing\n呻吟：woman moaning\n哔哔声：alarm clock beeping\n震动：phone vibrating
 1. fire hose
 1. landscape; scenery; landscape：侧重于地貌\nscenery：侧重于景色
 1. it tracks; 很有道理，符合逻辑
@@ -15,25 +709,15 @@
 1. they are scrambling to get out
 1. 追求; look for beauty
 1. lyrics
-1. 交通词汇; 交通标志：\n前方减速带：speed regulating strips ahead\n隐蔽出口：concealed exit\n\n车辆：\n驾驶座：driver\'s seat\n安全带：seatbelt\n方向盘：steering wheel\n喇叭：horn\n仪表盘：dashboard\n出风口：air vent\n变速杆：gearshift\n挡风玻璃：windscreen/windshield\n挡风玻璃雨刷：windscreen/windshield wipers\n侧视镜：side-view mirror\n后视镜：rearview mirror\n遮阳板：sun visor\n转向灯：indicator/turn signal\n刹车：brake\n油门：accelerator\n门把手：door handle\n轮胎：tire/tyre\n车牌：number plate/license plate\n后备箱：trunk\n卡车：truck\n车辆故障：car troubles\n划痕（刹车痕迹）：skidmark\n\n路：\n烂路：sludge
-1. 语法词汇; 标点符号：\n感叹号：exclamation mark
-1. 旅游词汇; 酒店住宿：\n入住：check in\n退房：check out\n续住：extend my stay for a few more days/renew my booking for a few more days\n报销：reimbursement\n刷卡：swipe a card\n插卡：insert a card\n把卡靠近设备：tap a card\n水龙头：faucet/tap\n自来水：tap water/running water\n非饮用水：non-potable water\n\n景点：\n爱琴海：the Aegean Sea\n\n自然景观：\n火山：volcano\n高原：plateau\n平原：plain\n草原：grassland\n沙漠：desert\n峡谷：valley\n极光：aurora\n沼泽/湿地：swamp\n冰川：glacier\n岛屿：island\n\n机场：\n航站楼：terminal\n值机柜台：check-in counter\n登机牌：boarding pass\n商务舱：business class\n经济舱：economy class\n靠过道的座位：aisle seat\n国内航班：domestic flight\n安检：security check\n免税店：duty-free shop\n登机口：departure gate\n登记通知：boarding call\n延误：delay\n随身携带的行李：carry-on, carry-on luggage\n中转停留：layover\n颠簸：turbulence\n海关：customs\n货币兑换：currency exchange\n行李提取出：baggage claim
-1. 家居词汇; 晾衣服：\n晾衣服：hang the laundry\n衣架：hanger\n抖一下衬衫：shake out the shirt\n衣服会皱的：the shirt is going to get wrinkled\n晾衣架：just hang it on the laundry rack\n晾衣夹：just clip it on the laundry pin like this\n\n厨房：\n切片：slice the potato\n切丝：shred the potato\n切丁：dice the potato\n切段：cut the green onion\n剁：chop the green onion\n菜刀：kitchen knife. I chop the green onion with my kitchen knife.\n切肉刀：cleaver\n锅：pot\n炒锅：wok\n平底锅：pan\n炉子：stove\n切菜板：cutting board\n锅盖：lid\n汤勺：ladle\n浅盘：platter\n烤箱：oven\n微波炉：microwave oven\n高压锅：pressure cooker\n电饭煲：rice cooker\n热水器：water heater\n榨汁机：juicer\n冰箱：refrigerator\n洗衣机：washing machine\n空调：air conditioner\n饮水机：water dispenser\n直饮水：water purifier\n电风扇：fan\n熨斗：iron\n电吹风：blow dryer\n电饭煲：rice cooker\n干湿一体洗地机：wet dry vacuum cleaner\n烹饪用具：cooking utensil\n\n家居用品：\n被子：comforter/quilt\n床垫、褥子：mattress\n床单：sheet\n窗帘：curtain\n毛毯（盖身上的）：blanket\n坐垫：cushion\n地毯：carpet\n枕头：pillow\n吊灯：chandelier\n台灯：table lamp\n吸顶灯：ceiling lamp\n手电筒：flashlight\n数字手表：digital watch\n遥控器：remote control\n床头柜：nightstand/bedside table\n梳妆台：dressing table\n雨伞：umbrella\n浴巾：bath towel\n花洒：shower head\n马桶：closestool, toilet, flush toilet\n洗手液：hand sanitizer\n对讲机：intercom\n\n衣服：\n马甲/背心：vest\nT恤：T-shirt\n衬衫：shirt\n长袖：long sleeves\n毛衣：sweater\n夹克：jacket\n西服：suit\n轻薄大衣：light overcoat\n羽绒服：down coat\n牛仔裤：jeans\n休闲裤：pants\n短裤：shorts\n内裤：briefs\n雨衣：raincoat\n浴衣：bathrobe\n睡衣：pajamas/pyjamas\n制服：uniform\n胸罩：bra\n短裙：skirt\n连衣裙：dress\n紧身裤：leggings\n男士内裤：underpants\n女士内裤：panties/knickers\n袜子：socks\n尺码：small/medium/large/extra large/extra extra large\n\n家用工具：\n锯子：saw\n斧头：ax/axe\n锤子：hammer\n老虎钳：pliers\n螺丝刀：screwdriver\n螺丝钉：screw\n扳手：wrench\n螺栓：bolt\n螺母/螺帽：nut\n滚筒（刷墙用的）：roller\n大剪子：shears\n剪刀：scissors\n耳勺：ear spoon\n夹子：clip\n指甲钳：nail clippers\n电钻：electric drill\n卷尺：tape measure\n磅秤：scales\n胶布：adhesive tape\n小铲子：trowel\n大铲子/锹：spade\n锄头：hoe\n耙子：rake\n梯子：ladder\n割草机：mower\n\n纸：\n报纸：newspaper\n纸巾：tissue\n餐巾纸：napkin\n卫生纸：toilet paper\n湿纸巾：wipes\n纸尿裤：diaper\n草稿纸：scratch paper\n便利贴：post-it note\n图纸：drawings\n厨房卷纸：kitchen roll\n\n家务：\n扫地：sweep the floor\n擦地：scrub the floor\n拖地：mop the floor\n擦窗：clean the windows\n洗车：wash the car\n洗衣服：do the laundry\n晒衣服：hang clothes\n熨衣服：iron clothes\n叠衣服：fold clothes\n换床单：change the sheet\n给桌子除尘：dust the desk\n吸地面：vacuum the floor\n\n装修：\n踢脚线：baseboard
-1. 动作词汇; 手部动作：\n扇：slap (slap on the back)\n（拿刀）劈砍：slash\n拳打：punch\n连续打：beat\n抓取：grab\n握住：hold\n举起：lift\n掉落：drop\n轻弹：flick\n轻拍：pat\n触摸：touch\n擦：scrub(scrub my face). This action implies a more vigorous, thorough cleaning process.\n搓：rub(rub hands together). Rubbing is less about deep cleaning and more about gentle or superficial contact.\n轻抚：stroke\n抹药：apply medicine\n敲：knock\n戳：poke\n挠：scratch\n指：point\n推：push\n拉：pull\n轻轻摇晃：rock\n拥抱：cuddle\n压碎：crush\n\n走路：\n散步：stroll\n漫无目的地逛：wander\n大步走：stride\n踮着脚走：tiptoe\n拖着脚走：shuffle\n一瘸一拐地走：hobble\n悄悄贴近：sidle\n跑步：run\n徒步：hike\n军队行进：march\n来回走动：go back and forth\n\n吃：\n咬：bite\n嚼：chew\n小口喝：sip\n吞咽：swallow\n舔：lick\n\n身体动作：\n磕了一下：I stumbled\n绊了一下：I tripped\n我摔了一跤：I fell down; I had a fall\n差点跌倒：I almost fell\n痉挛：cramp
-1. 人体词汇; 身体：\n额头：forehead\n眼皮：eyelid\n脸颊：cheek\n人中：philtrum\n嘴唇：lip; my lips are super dry and cracked\n口腔黏膜：oral mucosa\n下巴：chin\n皱下巴：chin tuck\n耳垂：earlobe\n扭脸：twist the face\n大腿：thigh\n\n人体器官：\n大脑：brain\n肺部：lungs\n气管：trachea\n血管：blood vessel\n心脏：heart\n肝脏：liver\n肾脏：kidney\n胃部：stomach\n脾脏：spleen\n胰腺：pancreas\n膀胱：bladder\n肠道：intestines\n骨髓：bone marrow\n胎盘：placenta\n\n排泄物：\n眼屎：sleepy dust\n耳屎：earwax\n鼻涕：snot\n鼻屎：booger\n痰：phlegm\n汗水：sweat\n头皮屑：dandruff\n\n发型：\n平头：crew cut\n中分：centre parting\n边分：side parting\n马尾：pony tail\n辫子：braid/braids\n发髻型：bun\n卷发：curly hair\n长直发：long straight hair\n大波浪：wave\n爆炸头：afro\n发带：hair tie\n修一下：little trim\n\n精神状态：\n精神失常：lose mind; out of mind
-1. 程度词汇; 表示轻微程度：\nSlightly\nBarely\nHardly\nJust\nA bit\nMildly\n\n表示中等程度：\nModerately\nFairly\nReasonably\nSomewhat\n\n表示较高程度：\nVery\nQuite\nConsiderably\nSignificantly\nSubstantially\n\n表示极高程度：\nExtremely\nIncredibly\nExceptionally\nTremendously\nUtterly\nAbsolutely\nDeeply
-1. 法律词汇; 陪审员：juror\n判决：ruling\n法院指令：court order\n言论禁止令：gag order\n\n罪名：\n性骚扰：sexual harassment\n性虐待：sexual battery\n网络犯罪：cyber crime\n侵犯知识产权：copyright infringement\n青少年犯罪：juvenile delinquency\n杀人：homicide\n渎职：dereliction of duty\n恐吓：intimidate\n袭击：attack\n信用卡诈骗：credit card fraud\n贪污：bribery\n自杀：suicide\n宗派暴力：sectarian violence\n毒品走私：drug smuggling/drug smuggler\n兴奋剂丑闻：doping scandal
 1. they got trapped
 1. I'm filming you now
 1. I have a pull of quiting the job
 1. commencement ceremony
 1. It's too sudden
-1. 医院词汇; 综合医院：polyclinic\n血液检查：blood work\n疝气检查：hernia test\n住院病人：inpatient\n门诊病人：outpatient\n器官捐赠者：organ donor\n重症监护室：ICU, Intensive care unit\n\n疾病：\n呼吸系统疾病：respiratory illnesses\n遗传病：hereditary diseases/inherited genetic diseases\n血管疾病：vascular conditions\n流感：flu\n禽流感：bird flu\n感冒：cold\n发烧：fever\n咽痛：sore throat\n咳嗽：cough\n咽炎：pharyngitis\n打喷嚏：sneeze\n头痛：headache\n肺炎：pneumonia\n失眠：insomnia\n腹泻：diarrhea\n恶心：nausea\n呕吐：vomit\n眩晕：dizziness\n晕倒：passed out/faint\n乏力：fatigue/faint\n消化不良：get indigestion\n哮喘：asthma attack\n带状疱疹：shingles\n痔疮：haemorrhoids\n整形手术：plastic surgery\n偏头痛：migraine\n痤疮粉刺：acne\n色素沉积：pigmentation\n水泡：blister, I accidentally bit myself and got a blister in my mouth\n青春痘，小红肿：pimple\n感染：infection\n炎症：inflammation\n异物：foreign matter\n割伤：cut\n刺伤：stab\n扭伤：sprain\n咬伤：bite\n冻伤：frostbite\n烧伤：burn\n烫伤：scald\n妄想症：paranoid
 1. compete on a level playing field
 1. it never has been, it never will be
 1. help me push the progress forward
 1. the magnitude of each component
-1. 变化词汇; 增加/减少：increase/decrease\n上升/下降：rise/fall; ascend/descend\n微微上升/微微下降：nudge up/nudge down\n调高/调低：turn up/turn down\n夸大/淡化：play it up/play it down
 1. bumping up the complexity a bit
 1. neutron; neuron; neural
 1. interrogate; investigate
@@ -51,16 +735,13 @@
 1. please leave it at the door
 1. it's not a normal practice
 1. this place has always been this dirty
-1. 食物词汇; 食物状态：\n变酸了：the milk is sour\n\n炒蛋：scrambled\n太阳蛋：sunny-side-up\n双面煎半熟：over easy\n双面煎全熟：over hard\n去壳水煮：poached\n水煮半熟：soft boiled\n水煮全熟：hard boiled\n一分熟：rare\n三分熟：medium rare\n五分熟：medium\n七分熟：medium well\n全熟：well done\n食物没熟：the food is undercooked\n\n蔬菜：\n黄瓜：cucumber\n花椰菜：cauliflower\n四季豆：green beans\n洋葱：onion\n卷心菜：cabbage\n胡萝卜：carrot\n生菜：lettuce (crisp lettuce)\n辣椒：(hot/green/sweet)pepper\n西兰花：broccoli\n土豆：potato\n玉米：corn\n芹菜：celery\n菠菜：spinach\n茄子：eggplant\n南瓜：pumpkin\n苦瓜：bitter gourd\n大蒜：garlic\n蘑菇：mushroom\n木耳：agaric\n秋葵：okra\n西葫芦：zucchini\n\n肉类：\n生鱼片：raw fish\n羊排：lamb chop\n鲍鱼：abalone\n蛤蜊：clam\n牡蛎（生蚝）：oyster\n鹅肝：goose liver\n火锅：hot pot\n帝王蟹：king crab\n贝类：shellfish\n\n咖啡：\n美式：Americano\n摩卡：Mocha\n拿铁：Latte\n意式浓缩：Espresso\n卡布奇诺：Cappuccino\n冷萃：cold brew\n玛奇朵：Macchiato\n大杯：grande\n\n水果：\n李子：plum\n柠檬：lemon\n荔枝：litchi\n桂圆：longan\n芒果：mango\n樱桃：cherry\n菠萝：pineapple\n柚子：pomelo\n草莓：strawberry\n黑莓：blackberry\n蓝莓：blueberry\n西瓜：watermelon\n橙子：orange\n桑葚：mulberry\n香蕉：banana\n胡桃：walnut\n榴莲：durian\n枇杷：loquat\n无花果：fig\n哈密瓜：cantaloupe\n\n副食品：\n手工蜂蜜：artisanal honey
 1. water valve
 1. wear and tear
 1. misinformation; 谣言
 1. hair needs to grow in an acidic environment
-1. 租房词汇; 户型图：layout plan/floor plan\n租期：lease term\n入住时间：move in date\n租户画像：tenant profile\n预算：budget\n谈价：Is the price negotiable\n游泳池：swimming pool\n无界泳池：infinity Pool\n训练泳池：lap Pool\n嬉水池：wading Pool\n喷水池：jet pool\n小区：residential area; gated community; residential compound; apartment complex\n水电费：utilities
 1. I'm gonna lay you out; 我要收拾你\n\nI’m going to take you down\nI’m going to beat you up
 1. come apart; fall apart
 1. things happened to you
-1. 执行词汇; do\nhandle\nprocess\nconduct\nmanage\nexecute\nperform\nlaunch\ncarry out\nimplement\ndeal with\noperate\nundertake\nplay
 1. I'm outside, I'll send it to you in a bit
 1. I don't go along with it
 1. coverage status; 承保状态
@@ -71,9 +752,6 @@
 1. layman
 1. illegally obtained
 1. I'm flattered
-1. 机构词汇; 美国海岸警卫队：the U.S. Coast Guard\n美国联邦航空管理局：Federal Aviation Administration\n情报部队：Intelligence corps\n联邦上诉法院：Federal Appeal Court
-1. 政治词汇; 专制政体：authoritarian regime\n民主政体：democratic regime\n左翼领导/右翼领导：far-left political leaders; far-right political leaders\n保守党：conservative party\n进步党：progressive party\n工党：labour party\n选民：constituency\n资本主义：capitalism\n殖民主义：colonialism\n谴责：condemn\n\n职位：\n副处长：deputy chief\n代理警察局长：acting police chief\n新闻秘书长：press secretary\n秘书长：secretary general/secretary of state
-1. 武器词汇; 超音速导弹：supersonic missiles\n核弹道潜艇：nuclear ballistic submarine\n豹式坦克：leopard tank\n攻击性武器：assault weapons\n未爆炸药：unexploded ordinance
 1. these percentages corresponded to 2 billion people globally who were current drinkers
 1. go back and forth
 1. inquiry about your availability; 询问你是否有空
@@ -129,9 +807,7 @@
 1. tear family apart; 让家庭四分五裂\n
 1. number vested; number unvested
 1. I got a big pimple on my face
-1. 数学词汇; 交集：intersection\n并集：union\n差集：difference\nxy平面：xy-plane\n极值：maxima\n斜率：slope\n梯度下降：gradient descent\n随机梯度下降：stochastic gradient descent\n导数：derivative\ny 对 x 的导数：the derivative of y with respect to x\n指数：exponent\n\n线条：\n直线：straight line\n水平线：horizontal line\n垂直线：vertical line\n曲线：curved line\n对角线：diagonal line\n波折线：zigzag line\n点虚线：dotted line\n段虚线：dashed line\n波浪线：wavy line\n平行线：parallel lines\n垂直交叉线：perpendicular lines\n螺旋线：spiral line\n
 1. same to you; respnse to \'have a nice day\'\nor you too
-1. 金融词汇; 工资：wage/salary/payment/paycheck/\n补偿：compensation\n资金：capital\n金融：finance\n信用：credit\n贷款：loans\n首付款：first deposit\n尾款：balance payment\n未付金额：outstanding amount\n充值：top-up; recharge\n存钱/取钱：deposit money/withdraw money\n30天债务宽限期：30-day debt grace period\n利息：interests\n利率：interest rate\n升息/降息：interest rate hike/interest rate cut\n货币：currency\n股票：stock\n证券：security\n保险：insurance\n基金：fund\n贸易：trade\n汇率：exchange rate\n抵押贷款：mortgage\n养老金：pension\n津贴补助：subsidy/allowance\n汇兑：money order\n证券交易所：stock exchange\n分钟股票行情：minute stock quotes\n信用卡盗刷：my credit card has been fraudulently charged\n五分钱：nickel
 1. file a complaint; make a complaint
 1. ego; arrogant; pride
 1. somebody got flipped; it could refer to someone changing their allegiance, opinion, or loyalty
@@ -142,20 +818,15 @@
 1. I'm done talking about this
 1. I decided to waive my right to a trial and accepted the plea deal
 1. keep your head down
-1. 证件词汇; 身份证：identity card\n驾驶证：driving license\n学会证：student pass\n毕业证：diploma\n工作证：employee\'s card\n健康证：helath certificate\n结婚证：marriage license\n护照：passport\n签证：visa\n工作签证：work visa\n绿卡：green card
 1. the cheese is moldy
 1. travel debacle
 1. I stand by my choices
 1. I'm not just saying this; I\'m serious about what I\'m saying
 1. I'm a big fan of Chinese dramas; TV series
-1. 度量衡词汇; 长度：length\n宽度：width\n高度：height\n深度：depth\n厚度：thickness\n海拔高度：altitude\n经度：longitude\n纬度：latitude\n速度：speed\n密度：density\n平方（千）米：square meter/square kilometer\n平方英尺：square feet\n（千）克：gram/kilogram\n摄氏度：degree celsius\n胸围：bust\n腰围：waist\n臀围：hip\n血型：blood type\n
 1. things are looking up
 1. a cat person; 爱猫人士
 1. get over yourself; 别自以为是
-1. 区域词汇; 国家：country\n州/省：state/province\n城市：city\n市辖区：district\n县/郡：county\n大道：avenue\n街道：street\n郊区：suburb\n镇：town\n乡村：village
 1. my hands are tied; 我无能为力\n
-1. 婚礼词汇; 求婚：proposal\n订婚：engagement\n新娘：bride\n新郎：groom\n伴郎：bestman\n伴娘：bridesmaid\n戒指：ring\n婚宴：wedding reception/wedding feast\n祝酒：toast\n婚纱：wedding dress
-1. 量词词汇; 一片面包：a piece of bread\n一串香蕉/一束玫瑰：a bunch of bananas/a bounch of roses\n一粒米：a grain of rice\n一小撮盐：a pinch of salt\n一罐水果/一听饮料：a can of fruit/a can of cola\n一罐卡法：a jar of coffee\n一包河粉：a packet of rice noddles\n一片披萨：a slice of pizza\n一勺糖：a spoon of sugar\n一条/块面包：a loaf of bread\n一碗水：a bowl of water\n一瓶香水：a bottle of perfume\n一双鞋：a pair of shoes\n一堆衣服：a pile of laundary\n一系列的发布：a string of new product\n一群小孩：a group/crowd of children\n一张纸：a blank sheet of paper\n一盒苹果汁：a carton of apple juice\n一群羊：a flock of sheep\n一卷交卷：a roll of film\n一缕烟：a puff of smoke/plumes of smoke\n一连串问题：a cascade of problems\n数量惊人的：a striking amount of\n一幢房子：a house/a building\n\nPiece: This is a general term that can refer to any part or portion of something, regardless of its shape or size.\nSlice: This term specifically refers to a thin, flat piece that has been cut or sliced from something larger, usually with a sharp tool.
 1. sorry, I misremembered
 1. I'm very directionally challenged
 1. don't look at me; stop looking at me; 别看着我\n别看着我了
@@ -165,7 +836,6 @@
 1. got it; copy that; well noted; 明白了，收到
 1. downwind; against the wind
 1. I need to know what I stand to win
-1. 房屋词汇; 公寓：apartment/flat\n宿舍：dormitory\n别墅：villa\n官邸/大厦：mansion\n工作室：studio\n地下室：basement\n村舍：cottage\n平房：bungalow\n寺庙：temple\n城堡：castle
 1. I worked my ass off to get here
 1. old habits die hard; 本性难移\n
 1. 911, what's the emergency
@@ -173,12 +843,8 @@
 1. why the long face; 为什么闷闷不乐？\n
 1. level with me; 实话跟我说吧
 1. rat race
-1. 学历词汇; 幼儿园：nursery school/kindergarten\n小学：primary school\n初中：junior high school\n高中：senior high school\n本科：undergraduate\n学士学位：Bachelor\'s degree\n研究生：postgraduate\n研究生学位：Master\'s degree\n博士：PhD\n文凭：diploma
 1. their products are streets ahead of their peers
-1. 餐厅词汇; 剩菜：leftovers\n打包盒：to go box\n筷子：chopsticks\n塑料勺：plastic spoon\n餐巾纸：napkins\n塑料袋：plastic bag\n结账：check please; can I have my bill\n这是免费的吗？is it complimentary? can I take one? does it come with the meal?
-1. 健身词汇; 高强度运动：intense exercise; vigorous exercise; strenuous exercise; heavy exercise\n俯卧撑：push-ups\n引体向上：pull-ups/chin-ups\n平板卧推：flat bench press\n上斜卧推：incline bench press\n深蹲：deep squat\n举重：lift weights\n哑铃：dumbell\n杠铃（杆+片）：barbell\n杠铃杆：barbell bar\n杠铃片：barbell plate/weight plate\n单杠：horizontal bar
 1. you've got a point there
-1. 职场词汇; 招聘：recruitment\n简历：resume\n面试：interview\n空缺岗位：vacancy\n职业规划：career plan\n早九晚五：nine-to-five\n薪资：salary\n福利：welfare\n升职：promotion\n裁员：lay off\n转岗：job transfer\n跳槽：job hopping\n加薪：I want a raise\n年终绩效奖金：annual performance bonus\n担任职务：position held\n工作签证：work visa\n压榨的：toxic\n工会：labor union\n理赔（福利申报）提交截止：claims submission cut off\n工资单：pay slip/payroll\n我有时给他代班：I sometimes substitute for him\n\n休假：\n法定假：statutory holiday\n年假：annual leave\n事假：personal leave\n病假：sick leave\n婚假：marriage leave\n产假：maternity leave\n陪产假：paternity leave\n调休：days off\n间歇：take a break\n丧假：bereavement lave\n\n违纪行为：\n疏通费：facilitation payment\n\n职位：\n水管工：plumer
 1. let's split the bill
 1. my word is my bond; 我会遵守诺言\nyou have my words.
 1. in what universe are we the same?; 我们哪里一样了？\n

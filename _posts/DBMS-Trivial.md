@@ -19,14 +19,15 @@ categories:
 
 # 2 Client
 
-## 2.1 [mycli](https://github.com/dbcli/mycli)
+## 2.1 mycli
 
-**`Config`：`~/.myclirc`**
+[mycli](https://github.com/dbcli/mycli)
 
-* `enable_pager = False`：默认关闭`pager`，直接输出结果，而不是分页展示
+* [Pager](https://www.mycli.net/pager)
 
 **`Tips`：**
 
-* `PageUp/PageDown`：以命令为单位前进或者后退
-* `Up/Down`：以行为单位前进或者后退
+* `nopager`: Disable pager
+* `PageUp/PageDown`: Forward or backward in unit of command
+* `Up/Down`: Forward or backward in unit of row
 

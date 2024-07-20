@@ -163,6 +163,14 @@ Lookups provide a way to add values to the Log4j configuration at arbitrary plac
 * Environment Lookup: `${env:xxx}`
     * `${env:xxx:-yyy}`: With default
 
+### 2.1.4 Issues
+
+#### 2.1.4.1 No appenders are available for AsyncAppender
+
+Generally, AsyncAppender relies on one or more Appenders, but if the initializations of these dependencies failed, this exception may occur. Possible reasons are:
+
+* `RollingRandomAccessFile` has no permission to perform write operation, like create directory and file.
+
 ## 2.2 Logback
 
 ### 2.2.1 Maven

@@ -2587,3 +2587,28 @@ SHOW SESSION LIKE '%hive.orc%';
 ```sql
 DROP SCHEMA xxx CASCADE;
 ```
+
+## 3.2 How to export table to csv file
+
+```sh
+trino --output-format CSV --execute "SELECT * FROM tpch.sf1.nation" > tpch_sf1_nation.csv
+```
+
+Or
+
+```sh
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.nation" > tpch_sf1_nation.csv
+```
+
+Sample of all tpch tables:
+
+```sh
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.customer limit 16" > tpch_sf1_customer.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.lineitem limit 16" > tpch_sf1_lineitem.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.nation limit 16" > tpch_sf1_nation.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.orders limit 16" > tpch_sf1_orders.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.part limit 16" > tpch_sf1_part.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.partsupp limit 16" > tpch_sf1_partsupp.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.region limit 16" > tpch_sf1_region.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.supplier limit 16" > tpch_sf1_supplier.csv
+```

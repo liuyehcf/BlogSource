@@ -618,6 +618,8 @@ classDiagram
     CacheInputStream *-- SharedBufferedInputStream: Adapt
     SharedBufferedInputStream *-- SeekableInputStream: Original
     HdfsScanner <|-- HdfsOrcScanner
+    HdfsScanner <|-- JniScanner
+    JniScanner <|-- HiveJniScanner
     HdfsScanner <|-- HdfsParquetScanner
     HdfsParquetScanner *-- FileReader
     FileReader *-- RandomAccessFile
