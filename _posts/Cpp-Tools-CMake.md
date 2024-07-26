@@ -1242,8 +1242,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O1 -Wall")
 **Command:**
 
 ```sh
-cmake -B build -DUSE_XXX
-cmake -B build -DVALUE_YYY=5
+cmake -B build -DCMAKE_C_FLAGS="-DUSE_XXX -DVALUE_YYY=5" -DCMAKE_CXX_FLAGS="-DUSE_XXX -DVALUE_YYY=5"
 ```
 
 **CMakeLists.txt:**
@@ -1396,6 +1395,24 @@ add_custom_target(
 ## 6.7 How to work with ccache
 
 [How to Use CCache with CMake?](https://stackoverflow.com/questions/1815688/how-to-use-ccache-with-cmake)
+
+Use cmake variable [CMAKE_<LANG>_COMPILER_LAUNCHER](https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_COMPILER_LAUNCHER.html#variable:CMAKE_%3CLANG%3E_COMPILER_LAUNCHER)
+
+```sh
+cmake -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -B build
+```
+
+Or, you can use env variable of the same name.
+
+```sh
+export CMAKE_C_COMPILER_LAUNCHER=ccache
+export CMAKE_CXX_COMPILER_LAUNCHER=ccache
+```
+
+How to ensure ccache truely works:
+
+* `grep -rni 'ccache' build`: Find ccache related configs
+* `ccache -z && ccache -s && cmake --build build && ccache -s`: Check cache hits
 
 ## 6.8 How to uninstall
 

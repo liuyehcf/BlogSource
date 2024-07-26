@@ -2029,34 +2029,81 @@ SpacesBeforeTrailingComments: 1
 
 **`compile_commands.json` vs. `compile_flags.txt`([JSON Compilation Database Format Specification](https://clang.llvm.org/docs/JSONCompilationDatabase.html))**
 
-* 对于复杂工程，可以用`cmake`等工具生成`compile_commands.json`
-    * 首先会在当前目录（或者`--compile-commands-dir`指定的目录）下查找`compile_commands.json`
-    * 若找不到，则递归在上级目录中查找，直至找到`compile_commands.json`或者到根目录
-* 对于简单工程，可以直接配置`compile_flags.txt`
-    * 首先会在当前目录下查找`compile_flags.txt`
-    * 若找不到，则递归在上级目录中查找，直至找到`compile_flags.txt`或者到根目录
+* For complex projects, tools like `cmake` can generate `compile_commands.json`:
+    * First, it will look for `compile_commands.json` in the current directory (or the directory specified by `--compile-commands-dir`).
+    * If not found, it will recursively search in parent directories until it finds `compile_commands.json` or reaches the root.
+* For simple projects, you can directly configure `compile_flags.txt`:
+    * First, it will look for `compile_flags.txt` in the current directory.
+    * If not found, it will recursively search in parent directories until it finds `compile_flags.txt` or reaches the root.
 
 **Options:**
 
-* `--query-driver=`：设置一个或多个`glob`，会从匹配这些`glob`的路径中搜索头文件
-    * `--query-driver=/usr/bin/**/clang-*,/path/to/repo/**/g++-*`
-* `--compile-commands-dir=`：指定`compile_commands.json`的查找路径
-    * `--compile-commands-dir=/home/test/code/duckdb/build`
+* `--query-driver=`: Sets one or more `glob` patterns to search for header files in matching paths.
+    * Example: `--query-driver=/usr/bin/**/clang-*,/path/to/repo/**/g++-*`
+* `--compile-commands-dir=`: Specifies the path to search for `compile_commands.json`.
+    * Example: `--compile-commands-dir=/home/test/code/duckdb/build`
 
 ### 8.4.1 .clangd Configuration
 
 [Configuration](https://clangd.llvm.org/config)
 
-我们可以在项目的根目录中创建`.clangd`，对`clangd`进行项目唯独的定制化配置
+We can create a `.clangd` file in the root directory of the project to customize the configuration of `clangd` specific to the project.
 
-下面是`duckdb`的[duckdb/.clangd](https://github.com/duckdb/duckdb/blob/main/.clangd)配置
+**Here is the DuckDB [.clangd configuration file](https://github.com/duckdb/duckdb/blob/main/.clangd).**
 
-* 指定了`compile_commands.json`路径为：`build/clangd`（[Can not find duckdb headers](https://github.com/clangd/clangd/issues/1204)）
+* Specifies the `compile_commands.json` path as: `build/clangd`([Can not find duckdb headers](https://github.com/clangd/clangd/issues/1204))
 
 ```
 CompileFlags:
   CompilationDatabase: build/clangd
   Add: -Wno-unqualified-std-cast-call
+```
+
+**Other examples:**
+
+```
+CompileFlags:
+  # Add additional flags used in compilation, such as -I for include paths.
+  Add: [-I/usr/local/include, -I/opt/project/include]
+
+Diagnostics:
+  # Controls the severity of diagnostics reported by Clangd.
+  UnusedIncludes: Warning
+  ClangTidy: 
+    Add: 
+      - "-*,cppcoreguidelines-*"
+
+Index:
+  # Path to the directory where Clangd should store the index files.
+  Background: On
+  External: ["/path/to/external/index"]
+  OnDisk: ["/path/to/on-disk/index"]
+
+Hover:
+  # Customize the information shown in hover popups.
+  ShowAKA: Yes
+  ShowSource: Yes
+
+Completion:
+  # Customize the behavior of code completion.
+  AllScopes: Yes
+  FilterAndSort: Yes
+
+CrossFileRename:
+  # Enable cross-file renaming feature.
+  On: Yes
+
+InlayHints:
+  # Configure inlay hints display.
+  ParameterNames: Yes
+  DeducedTypes: Yes
+
+---
+If: 
+  PathMatch: ".*\\.cpp$"
+  CompileFlags:
+    Remove: [-Wall]
+    Add: [-Wextra]
 ```
 
 ## 8.5 clang-tidy
@@ -2081,13 +2128,69 @@ Checks: >
   cppcoreguidelines-rvalue-reference-param-not-moved,
   cppcoreguidelines-virtual-class-destructor,
   google-*,
+  -google-build-using-namespace,
   modernize-*,
+  -modernize-avoid-c-arrays,
   -modernize-use-nodiscard,
   -modernize-use-trailing-return-type,
   performance-*,
   readability-*,
+  -readability-identifier-length,
+  -readability-else-after-return,
+  -readability-magic-numbers,
 
 WarningsAsErrors: '*'
+```
+
+### 8.5.1 Warning Suppress Syntax
+
+We can use `NOLINT`, `NOLINTNEXTLINE`, and `NOLINTBEGIN ... NOLINTEND` to suppress warnings if we don't want to disable rules by default.
+
+```cpp
+class Foo {
+    // Suppress all the diagnostics for the line
+    Foo(int param); // NOLINT
+
+    // Consider explaining the motivation to suppress the warning
+    Foo(char param); // NOLINT: Allow implicit conversion from `char`, because <some valid reason>
+
+    // Silence only the specified checks for the line
+    Foo(double param); // NOLINT(google-explicit-constructor, google-runtime-int)
+
+    // Silence all checks from the `google` module
+    Foo(bool param); // NOLINT(google*)
+
+    // Silence all checks ending with `-avoid-c-arrays`
+    int array[10]; // NOLINT(*-avoid-c-arrays)
+
+    // Silence only the specified diagnostics for the next line
+    // NOLINTNEXTLINE(google-explicit-constructor, google-runtime-int)
+    Foo(bool param);
+
+    // Silence all checks from the `google` module for the next line
+    // NOLINTNEXTLINE(google*)
+    Foo(bool param);
+
+    // Silence all checks ending with `-avoid-c-arrays` for the next line
+    // NOLINTNEXTLINE(*-avoid-c-arrays)
+    int array[10];
+
+    // Silence only the specified checks for all lines between the BEGIN and END
+    // NOLINTBEGIN(google-explicit-constructor, google-runtime-int)
+    Foo(short param);
+    Foo(long param);
+    // NOLINTEND(google-explicit-constructor, google-runtime-int)
+
+    // Silence all checks from the `google` module for all lines between the BEGIN and END
+    // NOLINTBEGIN(google*)
+    Foo(bool param);
+    // NOLINTEND(google*)
+
+    // Silence all checks ending with `-avoid-c-arrays` for all lines between the BEGIN and END
+    // NOLINTBEGIN(*-avoid-c-arrays)
+    int array[10];
+    // NOLINTEND(*-avoid-c-arrays)
+};
 ```
 
 ## 8.6 lld

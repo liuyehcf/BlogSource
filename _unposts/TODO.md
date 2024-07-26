@@ -74,6 +74,15 @@
         * [A fast alternative to the modulo reduction](https://lemire.me/blog/2016/06/27/a-fast-alternative-to-the-modulo-reduction/)
     * IO
         * IO聚合
+    * Remote File Cache
+        * Based on file:
+            * read small data from a gig file will cause big latency
+            * low space utility
+            * simple
+        * Based on block
+            * cache only needed block of data
+            * high space utility
+            * complex
 1. 体系结构
     * numa
 1. nodejs

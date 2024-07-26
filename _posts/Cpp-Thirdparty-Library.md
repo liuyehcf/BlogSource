@@ -194,7 +194,95 @@ gcc -o main main.cpp -lstdc++ -std=gnu++17 -lunwind -DUNW_LOCAL_ONLY
 
 Bison is a general-purpose parser generator that converts an annotated context-free grammar into a deterministic LR or generalized LR (GLR) parser employing LALR(1) parser tables. As an experimental feature, Bison can also generate IELR(1) or canonical LR(1) parser tables. Once you are proficient with Bison, you can use it to develop a wide range of language parsers, from those used in simple desk calculators to complex programming languages.
 
+**Install:**
+
+* `apt install -y bison flex`
+
+**Example:**
+
+```sh
+cat > calculator.l << 'EOF'
+%{
+#include "calculator.tab.h"
+%}
+
+%%
+
+[0-9]+              { yylval = atoi(yytext); return NUMBER; }
+[\t\n ]+            { /* ignore whitespace */ }
+"+"                 { return PLUS; }
+"-"                 { return MINUS; }
+"*"                 { return MULTIPLY; }
+"/"                 { return DIVIDE; }
+\(                  { return LPAREN; }
+\)                  { return RPAREN; }
+.                   { return yytext[0]; }
+
+%%
+
+int yywrap() {
+    return 1;
+}
+EOF
+
+cat > calculator.y << 'EOF'
+%{
+#include <cstdio>
+#include <cstdlib>
+
+void yyerror(const char *s);
+int yylex();
+%}
+
+%token NUMBER
+%token PLUS MINUS MULTIPLY DIVIDE LPAREN RPAREN
+
+%left PLUS MINUS
+%left MULTIPLY DIVIDE
+%right UMINUS
+
+%%
+calculation:
+    expression
+    ;
+
+expression:
+    expression PLUS expression     { $$ = $1 + $3; }
+    | expression MINUS expression  { $$ = $1 - $3; }
+    | expression MULTIPLY expression { $$ = $1 * $3; }
+    | expression DIVIDE expression { $$ = $1 / $3; }
+    | LPAREN expression RPAREN     { $$ = $2; }
+    | MINUS expression %prec UMINUS { $$ = -$2; }
+    | NUMBER                       { $$ = $1; }
+    ;
+
+%%
+
+void yyerror(const char *s) {
+    fprintf(stderr, "Error: %s\n", s);
+}
+
+int main() {
+    printf("Enter an expression: ");
+    if (yyparse() == 0) {
+        printf("Result: %d\n", yylval);
+    }
+    return 0;
+}
+EOF
+
+flex calculator.l
+bison -d calculator.y
+
+g++ -o calculator lex.yy.c calculator.tab.c -O3
+
+# Press Ctrl + D to finish input
+./calculator
+```
+
 # 2 boost
+
+[Boost Library Documentation](https://www.boost.org/doc/libs/)
 
 ## 2.1 Installation
 
@@ -218,7 +306,7 @@ cd boost_1_84_0
 sudo ./b2 install
 ```
 
-## 2.2 Usage
+### 2.1.3 Demo
 
 ```sh
 mkdir boost_demo
@@ -269,7 +357,86 @@ EOF
 cmake -B build && cmake --build build && build/boost_demo
 ```
 
-## 2.3 Print Stack
+## 2.2 Hana
+
+**[Boost.Hana](https://www.boost.org/doc/libs/release/libs/hana/doc/html/index.html)** is a library for metaprogramming in C++ that provides a modern, powerful, and easy-to-use set of tools for developers. It is part of the Boost libraries, which are known for their high-quality, peer-reviewed, and portable C++ libraries. Here are some key points about Boost.Hana:
+
+1. **Purpose**: Boost.Hana aims to provide a comprehensive metaprogramming framework for C++, allowing developers to perform computations at compile-time with an expressive and efficient interface.
+1. **Features**:
+   * **Compile-time Algorithms**: Includes a wide range of algorithms for manipulating types and values at compile time.
+   * **Heterogeneous Containers**: Supports containers that can hold elements of different types, which is useful for various advanced C++ programming techniques.
+   * **Integrations**: Works seamlessly with other parts of the C++ standard library and other Boost libraries.
+1. **Usage**: It is used for tasks such as type introspection, compile-time computations, and advanced type manipulations, making it a valuable tool for developers dealing with complex C++ codebases.
+1. **Performance**: Boost.Hana is designed with performance in mind, leveraging modern C++ features to minimize compile-time overhead and runtime inefficiencies.
+1. **Modern C++**: Embraces the latest standards of C++ (C++11 and beyond), making use of features such as constexpr, variadic templates, and template metaprogramming to provide a robust and future-proof library.
+
+**Here is an example:**
+
+```cpp
+#include <boost/core/demangle.hpp>
+#include <boost/hana.hpp>
+#include <iostream>
+#include <numeric>
+#include <string>
+#include <vector>
+
+template <typename T>
+std::string const& name_of(boost::hana::basic_type<T>) {
+    static std::string name = boost::core::demangle(typeid(T).name());
+    return name;
+}
+
+enum Color { RED, BLACK, WHITE };
+
+std::ostream& operator<<(std::ostream& os, Color color) {
+    switch (color) {
+    case RED:
+        os << "RED";
+        break;
+    case BLACK:
+        os << "BLACK";
+        break;
+    case WHITE:
+        os << "WHITE";
+        break;
+    }
+    return os;
+}
+
+std::ostream& operator<<(std::ostream& os, std::vector<std::string> const& vec) {
+    os << "[";
+    os << std::accumulate(vec.begin(), vec.end(), std::string(), [](std::string const& acc, std::string const& elem) {
+        return acc.empty() ? elem : acc + "," + elem;
+    });
+    os << "]";
+    return os;
+}
+
+int main() {
+    auto tuple = boost::hana::make_tuple(1, 2.5, "Hello, Hana!", Color::RED, std::vector<std::string>({"a", "b", "c"}));
+
+    auto first = boost::hana::at_c<0>(tuple);
+    auto second = boost::hana::at_c<1>(tuple);
+    auto third = boost::hana::at_c<2>(tuple);
+
+    std::cout << "First element: " << first << std::endl;
+    std::cout << "Second element: " << second << std::endl;
+    std::cout << "Third element: " << third << std::endl;
+
+    auto size = boost::hana::size(tuple);
+    std::cout << "Tuple size: " << size << std::endl;
+
+    boost::hana::for_each(tuple, [](auto const& elem) { std::cout << elem << std::endl; });
+
+    auto transformed_tuple =
+            boost::hana::transform(tuple, [](auto const& elem) { return boost::hana::type_c<decltype(elem)>; });
+    boost::hana::for_each(transformed_tuple, [](auto const& elem) { std::cout << name_of(elem) << std::endl; });
+
+    return 0;
+}
+```
+
+## 2.3 Stacktrace
 
 Boost.Stacktrace provides several options for printing stack traces, depending on the underlying technology used to capture the stack information:
 
@@ -443,7 +610,95 @@ sudo apt install -y libdouble-conversion-dev libevent-dev liblz4-dev libdwarf-de
 
 # 5 Google
 
-## 5.1 gflag
+## 5.1 Abseil
+
+[abseil-cpp](https://github.com/abseil/abseil-cpp)
+
+[abseil C++ Programming Guides](https://abseil.io/docs/cpp/guides/)
+
+**Usage:**
+
+```sh
+add_subdirectory(abseil-cpp)
+target_link_libraries(<target> absl::base absl::synchronization absl::strings)
+```
+
+**All available abseil cMake public targets are listed as follows:**
+
+* `absl::algorithm`
+* `absl::base`
+* `absl::debugging`
+* `absl::flat_hash_map`
+* `absl::flags`
+* `absl::log`
+* `absl::memory`
+* `absl::meta`
+* `absl::numeric`
+* `absl::random_random`
+* `absl::strings`
+* `absl::synchronization`
+* `absl::time`
+* `absl::utility`
+* ...
+
+```sh
+mkdir absl_demo
+cd absl_demo
+mkdir contrib/abseil-cpp
+git clone https://github.com/abseil/abseil-cpp.git contrib/abseil-cpp
+
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(absl_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+add_compile_options(-O3 -Wall)
+
+add_subdirectory(contrib/abseil-cpp)
+
+file(GLOB MY_PROJECT_SOURCES "*.cpp")
+add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
+
+target_link_libraries(${PROJECT_NAME}
+    absl::log
+    absl::flags
+    absl::strings)
+EOF
+
+cat > main.cpp << 'EOF'
+#include <absl/base/log_severity.h>
+#include <absl/flags/flag.h>
+#include <absl/log/globals.h>
+#include <absl/log/log.h>
+#include <absl/strings/str_join.h>
+
+#include <iostream>
+#include <string>
+#include <vector>
+
+int main(int argc, char* argv[]) {
+    std::vector<std::string> v = {"foo", "bar", "baz"};
+    std::string s = absl::StrJoin(v, "-");
+    std::cout << "Joined string: " << s << std::endl;
+
+    absl::SetMinLogLevel(absl::LogSeverityAtLeast::kWarning);
+    LOG(INFO) << "This is a info log";
+    LOG(WARNING) << "This is a warning log";
+    LOG(ERROR) << "This is a error log";
+    LOG(FATAL) << "This is a fatal log";
+    return 0;
+}
+EOF
+
+cmake -B build  -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+build/absl_demo
+```
+
+## 5.2 gflag
 
 **安装[gflag](https://github.com/gflags/gflags)：**
 
@@ -500,7 +755,7 @@ int main(int argc, char* argv[]) {
 * `gcc -o main main.cpp -lstdc++ -std=gnu++17 -lgflags -lpthread`
 * `./main --test_bool true --test_int32 100 --test_double 6.666 --test_str hello`
 
-## 5.2 glog
+## 5.3 glog
 
 **安装[glog](https://github.com/google/glog)：**
 
@@ -522,7 +777,7 @@ find_package(GLOG)
 target_link_libraries(xxx glog::glog)
 ```
 
-### 5.2.1 Print Stack (Not Recommend)
+### 5.3.1 Print Stack (Not Recommend)
 
 [[Enhancement] wrap libc's __cxa_throw to print stack trace when throw exceptions](https://github.com/StarRocks/starrocks/pull/13410)
 
@@ -581,7 +836,7 @@ int main(int argc, char* argv[]) {
 gcc -o main main.cpp -Wl,-wrap=__cxa_throw -lstdc++ -std=gnu++17 -Wl,-Bstatic -lglog -lgflags -Wl,-Bdynamic -lunwind -lpthread
 ```
 
-## 5.3 gtest
+## 5.4 gtest
 
 **安装[gtest](https://github.com/google/googletest)：**
 
@@ -659,7 +914,7 @@ cmake -B build && cmake --build build
 build/gtest_demo
 ```
 
-### 5.3.1 Macros
+### 5.4.1 Macros
 
 1. `TEST(test_case_name, test_name)`: Defines a test case.
     ```cpp
@@ -709,11 +964,11 @@ build/gtest_demo
 1. `EXPECT_THROW(statement, exception_type)`: Expects that a specific statement throws a particular exception.
 1. `ASSERT_THROW(statement, exception_type)`: Asserts that a specific statement throws a particular exception.
 
-### 5.3.2 Tips
+### 5.4.2 Tips
 
 1. 假设编译得到的二进制是`test`，通过执行`./test --help`就可以看到所有gtest支持的参数，包括执行特定case等等
 
-## 5.4 benchmark
+## 5.5 benchmark
 
 **安装[benchmark](https://github.com/google/benchmark)：**
 
@@ -803,13 +1058,13 @@ BM_StringCreation       5.12 ns         5.12 ns    136772962
 BM_StringCopy           21.0 ns         21.0 ns     33441350
 ```
 
-### 5.4.1 quick-benchmark
+### 5.5.1 quick-benchmark
 
 [quick-bench（在线）](https://quick-bench.com/)
 
-### 5.4.2 Tips
+### 5.5.2 Tips
 
-#### 5.4.2.1 benchmark::DoNotOptimize
+#### 5.5.2.1 benchmark::DoNotOptimize
 
 避免优化本不应该优化的代码，其源码如下：
 
@@ -823,26 +1078,26 @@ inline BENCHMARK_ALWAYS_INLINE void DoNotOptimize(Tp& value) {
 }
 ```
 
-#### 5.4.2.2 Run Specific Case
+#### 5.5.2.2 Run Specific Case
 
 使用参数`--benchmark_filter=<regexp>`，此外可以使用`--help`查看所有参数
 
-### 5.4.3 Reference
+### 5.5.3 Reference
 
 * [benchmark/docs/user_guide.md](https://github.com/google/benchmark/blob/main/docs/user_guide.md)
 * [c++性能测试工具：google benchmark入门（一）](https://www.cnblogs.com/apocelipes/p/10348925.html)
 
-## 5.5 gperftools/gperftools
+## 5.6 gperftools/gperftools
 
 [gperftools/gperftools](https://github.com/gperftools/gperftools)
 
-## 5.6 snappy
+## 5.7 snappy
 
 [snappy](https://github.com/google/snappy)
 
 Snappy is a compression/decompression library
 
-## 5.7 breakpad
+## 5.8 breakpad
 
 Breakpad is a library and tool suite that allows you to distribute an application to users with compiler-provided debugging information removed, record crashes in compact "minidump" files, send them back to your server, and produce C and C++ stack traces from these minidumps. Breakpad can also write minidumps on request for programs that have not crashed.
 
@@ -932,6 +1187,40 @@ build/breakpad_build/src/tools/linux/dump_syms/dump_syms build/breakpad_demo > b
 dump_path=$(build/breakpad_demo | grep 'minidumps')
 # step3: analyze dump file
 build/breakpad_build/src/processor/minidump_stackwalk ${dump_path} build/breakpad_demo
+```
+
+## 5.9 protobuf
+
+```sh
+git clone https://github.com/protocolbuffers/protobuf.git
+cd protobuf
+git checkout v3.14.0
+git submodule update --init --recursive
+cmake -B build -S cmake -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC" && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+sudo cmake --install build && sudo ldconfig
+```
+
+**CMakeLists.txt example:**
+```cmake
+find_package(Protobuf REQUIRED)
+include_directories(${Protobuf_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS foo.proto)
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS EXPORT_MACRO DLL_EXPORT foo.proto)
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS DESCRIPTORS PROTO_DESCS foo.proto)
+protobuf_generate_python(PROTO_PY foo.proto)
+add_executable(bar bar.cc ${PROTO_SRCS} ${PROTO_HDRS})
+target_link_libraries(bar ${Protobuf_LIBRARIES})
+```
+
+## 5.10 leveldb
+
+```sh
+git clone https://github.com/google/leveldb.git
+cd leveldb
+git submodule update --init --recursive
+cmake -B build -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC" && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+sudo cmake --install build && sudo ldconfig
 ```
 
 # 6 Apache
@@ -1226,6 +1515,35 @@ EOF
 
 thrift --gen cpp example.thrift
 ```
+
+## 6.3 brpc
+
+Requirement:
+
+* `gflag`: Built with `-fPIC` option
+* `protobuf`: Built with `-fPIC` option, and requires specific version, here I choose `v3.14.0`
+* `leveldb`: Built with `-fPIC` option
+
+```sh
+git clone https://github.com/apache/incubator-brpc.git
+cd incubator-brpc
+git checkout 1.9.0
+cmake -B build && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+sudo cmake --install build && sudo ldconfig
+```
+
+### 6.3.1 FAQ
+
+1. `brpc` uses coroutines, and using `std::mutex` within a coroutine might cause deadlock issues. Therefore, `bthread::Mutex` should be used.
+1. `bthread` cannot work with JNI, it may occur `java.lang.IllegalMonitorStateException`
+
+### 6.3.2 Reference
+
+* [BRPC的精华全在bthread上啦（一）：Work Stealing以及任务的执行与切换](https://zhuanlan.zhihu.com/p/294129746)
+* [BRPC的精华全在bthread上啦（二）：ParkingLot 与Worker同步任务状态](https://zhuanlan.zhihu.com/p/346081659)
+* [BRPC的精华全在bthread上啦（三）：bthread上下文的创建](https://zhuanlan.zhihu.com/p/347499412)
+* [BRPC的精华都在bthread上啦（四）：尾声](https://zhuanlan.zhihu.com/p/350582218)
+* [contention_profiler.md](https://github.com/apache/incubator-brpc/blob/master/docs/cn/contention_profiler.md)
 
 # 7 JNI
 
@@ -1764,7 +2082,7 @@ gcc -o build/libhdfs_jni_demo libhdfs_jni_demo.cpp -lstdc++ -std=gnu++17 -Lbuild
 
 ## 7.3 Best Practice
 
-[jni_best_practice](https://github.com/liuyehcf/cpp-demo-projects/tree/main/jni/jni_best_practice)
+[jni_utils](https://github.com/liuyehcf/cpp-demo-projects/tree/main/jni/jni_utils)
 
 ## 7.4 Tips
 
@@ -1794,6 +2112,20 @@ Process 2494122 stopped
 ### 7.4.3 How to add jar directory to classpah
 
 JNI doesn't support wildcard `*`, so you need to generate all jar paths and join them with `:`, and then pass to `-Djava.class.path=` option.
+
+## 7.5 FAQ
+
+### 7.5.1 java.lang.IllegalMonitorStateException
+
+JNI cannot work well with coroutines like `brpc's bthread` for several reasons ([pthread mode](https://github.com/apache/brpc/blob/a48d4cec87f448f80a93f265106422f1628ebf09/docs/cn/server.md?plain=1#L662)):
+
+* `Threading Model Mismatch`: JNI expects a specific threading model that aligns with Java's managed threads. Coroutines, especially those implemented with bthread, may have different threading and execution models, leading to mismatches and unexpected behavior. JNI methods need to be called from specific threads, and coroutine libraries might not guarantee that.
+* Native Resource Management: Coroutines can suspend and resume execution, which complicates resource management in native code. Native code called via JNI might expect resources to be available for the duration of a method call, but coroutines can pause execution, potentially leading to resource leaks or other issues if the native code does not handle this correctly.
+* Synchronization Issues: Coroutines introduce their own scheduling and synchronization mechanisms, which can interfere with the synchronization primitives used in native code. This can lead to race conditions, deadlocks, or inconsistent state between the Java and native parts of an application.
+* Stack Management: Coroutines often manipulate the call stack in ways that traditional threading models do not. This can create problems for JNI, which relies on the standard call stack for invoking methods and managing local references. If a coroutine library like bthread changes the stack layout, it can disrupt JNI's operation.
+* Callback Handling: JNI often involves callbacks from native code to Java, which can be problematic when using coroutines. The coroutine may not be in a state to handle a callback if it is suspended, leading to missed callbacks or crashes.
+* Context Switching Overhead: Coroutines are designed to minimize context switching overhead, but integrating them with JNI can reintroduce this overhead, negating the benefits of using coroutines in the first place.
+* Complexity in Debugging: The combination of Java, JNI, and coroutine libraries like bthread can make debugging very difficult. The interaction between the different layers can create complex bugs that are hard to reproduce and fix.
 
 # 8 Independent Projects
 

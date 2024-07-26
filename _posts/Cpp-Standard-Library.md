@@ -81,7 +81,30 @@ int main() {
 }
 ```
 
-### 1.1.2 std::remove_if
+### 1.1.2 std::transform
+
+```cpp
+#include <algorithm>
+#include <iostream>
+#include <numeric>
+#include <string>
+#include <vector>
+
+int main() {
+    std::vector<std::string> strs{"hello,", " Jack!", " How are you?"};
+    std::vector<size_t> sizes;
+    std::transform(strs.begin(), strs.end(), std::back_inserter(sizes),
+                   [](const std::string& str) { return str.size(); });
+    std::string size_str =
+            std::accumulate(sizes.begin(), sizes.end(), std::string(), [](const std::string& str, size_t size) {
+                return str.empty() ? std::to_string(size) : str + "," + std::to_string(size);
+            });
+
+    std::cout << size_str << std::endl;
+}
+```
+
+### 1.1.3 std::remove_if
 
 用于将容器中满足条件的元素挪到最后，并返回指向这部分元素的起始迭代器，一般配合`erase`一起用
 
