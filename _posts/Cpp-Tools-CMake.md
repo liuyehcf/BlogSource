@@ -1223,14 +1223,14 @@ cmake -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -O3" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAG
 **CMakeLists.txt:**
 
 ```cmake
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -fopt-info-vec")
+add_compile_options(-O3 -Wall -fopt-info-vec)
 
 set(CMAKE_BUILD_TYPE "Release")
 set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g2 -ggdb")
 set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O1 -Wall")
 ```
 
-**`CMAKE_BUILD_TYPE`的所有可选值包括**
+**`CMAKE_BUILD_TYPE` options values:**
 
 1. `Debug`
 1. `Release`
@@ -1264,7 +1264,19 @@ export CPLUS_INCLUDE_PATH=
 export LIBRARY_PATH=
 ```
 
-### 6.3.5 Build Type
+### 6.3.5 Add Extra Runtime Search Path
+
+```cmake
+set_target_properties(<target> PROPERTIES LINK_FLAGS "-Wl,-rpath,'/usr/lib/jvm/default-java/lib/server'")
+```
+
+You can check if it works by this command: 
+
+```sh
+readelf -d <binary> | grep 'RPATH\|RUNPATH'
+```
+
+### 6.3.6 Build Type
 
 ```sh
 # If you want to build for debug (including source information, i.e. -g) when compiling, use
@@ -1444,7 +1456,7 @@ project(cmake_with_java_demo)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
+add_compile_options(-O3 -Wall)
 
 file(GLOB MY_PROJECT_SOURCES "*.cpp")
 add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})

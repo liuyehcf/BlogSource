@@ -164,7 +164,15 @@ The command command is used to execute a command, ignoring shell functions and a
     command ls # execute the original command
     ```
 
-## 1.16 useradd
+## 1.16 stat
+
+The command stat is used to display file or file system status.
+
+**Examples:**
+
+* `stat <file>`
+
+## 1.17 useradd
 
 **Options:**
 
@@ -188,7 +196,7 @@ The command command is used to execute a command, ignoring shell functions and a
 1. 新建用户主文件夹：`cp -a /etc/sekl /home/<name>`
 1. 更改用户文件夹的属性：`chown -R <group>/home/<name>`
 
-### 1.16.1 Migrate User Directory
+### 1.17.1 Migrate User Directory
 
 ```sh
 # 拷贝数据
@@ -201,7 +209,7 @@ sudo su
 usermod -d <new_dir> <username>
 ```
 
-## 1.17 userdel
+## 1.18 userdel
 
 **Options:**
 
@@ -211,7 +219,7 @@ usermod -d <new_dir> <username>
 
 * `userdel -r test`
 
-## 1.18 usermod
+## 1.19 usermod
 
 **Options:**
 
@@ -226,26 +234,26 @@ usermod -d <new_dir> <username>
 * `sudo usermod -aG docker username`：给指定用户增加用户组，要重新登录才能生效
     * `groups username`：查看用户组
 
-## 1.19 chown
+## 1.20 chown
 
 **Examples:**
 
 * `chown [-R] 账号名称 文件或目录`
 * `chown [-R] 账号名称:用户组名称 文件或目录`
 
-## 1.20 passwd
+## 1.21 passwd
 
 **Examples:**
 
 * `echo '123456' | passwd --stdin root`
 
-## 1.21 chpasswd
+## 1.22 chpasswd
 
 **Examples:**
 
 * `echo 'username:password' | sudo chpasswd`
 
-## 1.22 id
+## 1.23 id
 
 用于查看用户信息，包括`uid`，`gid`等
 
@@ -256,7 +264,7 @@ usermod -d <new_dir> <username>
 * `id -u`：查看当前用户的uid
 * `id -nu <uid>`：查看指定uid对应的用户名
 
-## 1.23 getconf
+## 1.24 getconf
 
 查看系统相关的信息
 
@@ -264,7 +272,7 @@ usermod -d <new_dir> <username>
 
 * `getconf -a | grep CACHE`：查看CPU cache相关的配置项
 
-## 1.24 hostnamectl
+## 1.25 hostnamectl
 
 **Examples:**
 
@@ -272,7 +280,7 @@ usermod -d <new_dir> <username>
 hostnamectl set-hostname <name>
 ```
 
-## 1.25 date
+## 1.26 date
 
 **Examples:**
 
@@ -280,7 +288,7 @@ hostnamectl set-hostname <name>
 * `date "+%Y-%m-%d %H:%M:%S"`：指定时间格式
 * `date -s '2014-12-25 12:34:56'`：修改系统时间
 
-## 1.26 ntpdate
+## 1.27 ntpdate
 
 **Examples:**
 
@@ -293,22 +301,24 @@ hostnamectl set-hostname <name>
 
 **Options:**
 
-* `-a`：显式所有项目，包括隐藏的文件或者目录
-* `-l`：显式项目详情
-* `-t`：根据项目修改时间排序，最近修改的排在最前面
-* `-S`：根据项目大小排序，最大的排在最前面
-* `-r`：反向排序
-* `-h`：以人类可读的方式显示文件大小
-* `-I`：排除指定pattern的项目
+* `-a`: do not ignore entries starting with `.`.
+* `-l`: use a long listing format.
+* `-t`: sort by time, newest first; see `--time`.
+* `-S`: sort by file size, largest first.
+* `-r`: reverse order while sorting.
+* `-h`: with `-l` and `-s`, print sizes like `1K` `234M` `2G` etc.
+* `-I`: do not list implied entries matching shell PATTERN.
+* `-1`: list one file per line.
 
 **Examples:**
 
+* `ls -1`
 * `ls -lht | head -n 5`
 * `ls -lhtr`
 * `ls -lhS`
-* `ls *.txt`：查找所有后缀为`.txt`的文件，注意不要用`ls "*.txt"`
+* `ls *.txt`: Find all files with the `.txt` extension, and note that you should not use `ls "*.txt"`.
 * `ls -I "*.txt" -I "*.cpp"`
-* `ls -d */`：当前目录下的所有子目录
+* `ls -d */`: List all subdirectories in the current directory.
 
 ## 2.2 echo
 
@@ -375,51 +385,51 @@ hostnamectl set-hostname <name>
 
 **Options:**
 
-* **`-n`**：使用安静(silent)模式，在一般sed中，所有来自STDIN的数据一般都会被列到屏幕上，加了参数-n后，只有经过sed特殊处理的那一行才会被列出来
-* **`-e`**：直接在命令行模式上进行sed的动作编辑
-* **`-f`**：直接将sed的动作写在一个文件内，`-f filenmae`则可以执行filename内的sed动作
-* **`-r`**：sed的动作支持的是扩展正则表达式的语法
-    * **不加`-r`参数，连`()`都需要转义，因此最好加上`-r`参数**
-    * `\0`：表示整个匹配串，`\1`表示group1，以此类推
-    * `&`：表示整个匹配串
-* **`-i`**：直接修改读取的文件内容，而不是由屏幕输出
+* **`-n`**: Use silent mode. In standard sed, all data from `STDIN` is usually displayed on the screen. With the `-n` parameter, only lines specially processed by sed will be displayed.
+* **`-e`**: Edit sed actions directly on the command line.
+* **`-f`**: Write sed actions in a file, and `-f filename` can execute the sed actions in the filename.
+* **`-E/-r`**: Sed actions support extended regular expression syntax.
+    * **Without the `-r` parameter, even `()` needs to be escaped, so it's best to add the `-r` parameter.**
+    * `\0`: Represents the entire matching string, `\1` represents group1, and so on.
+    * `&`: Represents the entire matching string.
+* **`-i`**: Modify the file content directly instead of outputting it to the screen.
 
-**动作格式：**
+**Action Format:**
 
-* **`<action>`：表示对所有行均生效**
+* **`<action>`: Applies to all lines.**
     * `echo -e "a1\na2\nb1\nb2\n" | sed 's/[0-9]//g'`
-* **`/<pattern>/<action>`：表示对匹配`<pattern>`的行生效**
+* **`/<pattern>/<action>`: Applies to lines matching `<pattern>`.**
     * `echo -e "a1\na2\nb1\nb2\n" | sed '/a/s/[0-9]//g'`
-* **`<n1>[,<n2>]<action>`：对`<n1>`到`<n2>`的行生效（如果没有`<n2>`，这单指`<n1>`这一行）**
-    * **`$`表示最后一行**
-    * **`/<pattern1>/, /<pattern2>/`：从第一行开始，第一个匹配字符串`<pattern1>`的行号，到，从第一行开始，第一个匹配字符串`<pattern2>`的行号**
-    * **如果要用其他符号作为分隔符，那么第一个符号需要转义。例如`\|<pattern1>|`以及`\|<pattern1>|, \|<pattern2>|`**
+* **`<n1>[,<n2>]<action>`: Applies to lines from `<n1>` to `<n2>` (if `<n2>` is not provided, it applies only to `<n1>`).**
+    * **`$` represents the last line.**
+    * **`/<pattern1>/, /<pattern2>/`: From the first line matching `<pattern1>` to the first line matching `<pattern2>`.**
+    * **To use other symbols as separators, the first symbol needs to be escaped, e.g., `\|<pattern1>|` and `\|<pattern1>|, \|<pattern2>|`.**
     * `echo -e "a1\na2\nb1\nb2\n" | sed '1s/[0-9]//g'`
     * `echo -e "a1\na2\nb1\nb2\n" | sed '1,3s/[0-9]//g'`
     * `echo -e "a1\na2\nb1\nb2\n" | sed '/a/,/b/s/[0-9]//g'`
-* **`/<pattern>/{<n1>[,<n2>]<action>}`：对`<n1>`到`<n2>`且匹配`<pattern>`行生效（如果没有`<n2>`，这单指`<n1>`这一行）**
+* **`/<pattern>/{<n1>[,<n2>]<action>}`: Applies to lines from `<n1>` to `<n2>` that match `<pattern>` (if `<n2>` is not provided, it applies only to `<n1>`).**
     * `echo -e "a1\na2\nb1\nb2\n" | sed '/a/{1,3s/[0-9]//g}'`
-* **`<n1>[,<n2>]{/<pattern>/<action>}`：对`<n1>`到`<n2>`且匹配`<pattern>`行生效（如果没有`<n2>`，这单指`<n1>`这一行）**
+* **`<n1>[,<n2>]{/<pattern>/<action>}`: Applies to lines from `<n1>` to `<n2>` that match `<pattern>` (if `<n2>` is not provided, it applies only to `<n1>`).**
     * `echo -e "a1\na2\nb1\nb2\n" | sed '1,3{/a/s/[0-9]//g}'`
-* **`!`：反向匹配（negates the match）**
+* **`!`: Negates the match.**
     * `echo -e "a1\na2\nb1\nb2\n" | sed '/a/!s/[0-9]//g'`
     * `echo -e "a1\na2\nb1\nb2\n" | sed '/a/!{1,3s/[0-9]//g}'`
     * `echo -e "a1\na2\nb1\nb2\n" | sed '1,3{/a/!s/[0-9]//g}'`
 
-**动作解释：**
+**Action Explanation:**
 
-* **`a`**：新增，`a`的后面可接字符串，而这些字符串会在新的一行出现（目前行的下一行）
-* **`c`**：替换，`c`的后面可接字符串，这些字符串可以替换`n1,n2`之间的行
-* **`d`**：删除，后面通常不接任何参数
-* **`i`**：插入，`i`的后面可接字符串，而这些字符串会在新的一行出现（目前行的上一行）
-* **`p`**：打印，也就是将某个选择的数据打印出来，通常`p`会与参数`sed -n`一起运行
-* **`s`**：替换，可以直接进行替换的工作，通常这个`s`可以搭配正则表达式，例如`1,20s/lod/new/g`
-    * **分隔符可以是`/`也可以是`|`**
-    * **分隔符若为`/`，那么普通的`|`不需要转义，`/`需要转义**
-    * **分隔符若为`|`，那么普通的`/`不需要转义，`|`需要转义**
-    * `g`：表示每行全部替换，否则只替换每行第一个
-    * `I`：大小写不敏感
-* **`r`**：插入另一个文本的所有内容
+* **`a`**: Append. Strings following `a` will appear on a new line (the next line of the current line).
+* **`c`**: Change. Strings following `c` can replace the lines between `n1` and `n2`.
+* **`d`**: Delete. Usually followed by no parameters.
+* **`i`**: Insert. Strings following `i` will appear on a new line (the previous line of the current line).
+* **`p`**: Print. Prints selected data, usually run with the `sed -n` parameter.
+* **`s`**: Substitute. Performs substitution, usually with regular expressions, e.g., `1,20s/lod/new/g`.
+    * **The separator can be `/` or `|`.**
+    * **If the separator is `/`, ordinary `|` does not need to be escaped, but `/` does.**
+    * **If the separator is `|`, ordinary `/` does not need to be escaped, but `|` does.**
+    * `g`: Replaces all occurrences in each line, otherwise only the first occurrence.
+    * `I`: Case-insensitive.
+* **`r`**: Insert the contents of another text.
 
 **Examples:**
 
@@ -4450,6 +4460,12 @@ apt install clang-format-X.Y
 ### 11.3.3 List all commands start with xxx
 
 * `compgen -c | grep -E '^xxx`
+
+### 11.3.4 How to check file's modification time
+
+* `ls --full-time <file>`
+* `stat <file>`
+* `date -r <file>`
 
 # 12 Reference
 

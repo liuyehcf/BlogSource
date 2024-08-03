@@ -308,9 +308,54 @@ sudo ./b2 install
 
 ### 2.1.3 Demo
 
+All possible component names (`ls -1 /usr/local/lib | grep -E 'libboost_.*\.a' | sed -E 's|libboost_(.*)\.a|\1|g'`):
+
+* `atomic`
+* `chrono`
+* `container`
+* `context`
+* `contract`
+* `coroutine`
+* `date_time`
+* `exception`
+* `fiber`
+* `filesystem`
+* `graph`
+* `iostreams`
+* `json`
+* `locale`
+* `log`
+* `log_setup`
+* `math_c99`
+* `math_c99f`
+* `math_c99l`
+* `math_tr1`
+* `math_tr1f`
+* `math_tr1l`
+* `nowide`
+* `prg_exec_monitor`
+* `program_options`
+* `random`
+* `regex`
+* `serialization`
+* `stacktrace_addr2line`
+* `stacktrace_backtrace`
+* `stacktrace_basic`
+* `stacktrace_noop`
+* `system`
+* `test_exec_monitor`
+* `thread`
+* `timer`
+* `type_erasure`
+* `unit_test_framework`
+* `url`
+* `wave`
+* `wserialization`
+
 ```sh
-mkdir boost_demo
+mkdir -p boost_demo
 cd boost_demo
+
 cat > CMakeLists.txt << 'EOF'
 cmake_minimum_required(VERSION 3.20)
 
@@ -319,7 +364,7 @@ project(boost_demo)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
+add_compile_options(-O3 -Wall)
 
 file(GLOB MY_PROJECT_SOURCES "*.cpp")
 add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
@@ -328,7 +373,8 @@ target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
 target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
 
 set(Boost_USE_STATIC_LIBS ON)
-find_package(Boost REQUIRED COMPONENTS filesystem system)
+find_package(Boost REQUIRED COMPONENTS atomic chrono container context contract coroutine date_time exception fiber filesystem graph iostreams json locale log log_setup math_c99 math_c99f math_c99l math_tr1 math_tr1f math_tr1l nowide prg_exec_monitor program_options random regex serialization stacktrace_addr2line stacktrace_backtrace stacktrace_basic stacktrace_noop system test_exec_monitor thread timer type_erasure unit_test_framework url wave wserialization)
+message(STATUS "All boost targets: ${Boost_LIBRARIES}")
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Boost::filesystem Boost::system)
 EOF
@@ -354,7 +400,9 @@ int main() {
 }
 EOF
 
-cmake -B build && cmake --build build && build/boost_demo
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+build/boost_demo
 ```
 
 ## 2.2 Hana
@@ -550,27 +598,28 @@ Boost version: 1.84.0
 * [How to print current call stack](https://www.boost.org/doc/libs/1_66_0/doc/html/stacktrace/getting_started.html)
 * [print call stack in C or C++](https://stackoverflow.com/Questions/3899870/print-call-stack-in-c-or-c)
 
-# 3 [fmt](https://github.com/fmtlib/fmt)
+# 3 fmt
 
-**安装`fmt`：**
+**Install [fmt](https://github.com/fmtlib/fmt):**
 
 ```sh
 git clone https://github.com/fmtlib/fmt.git
 cd fmt
 
-cmake -B build -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
 cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo cmake --install build && sudo ldconfig
 ```
 
-**在`cmake`中添加`fmt`依赖：**
+**Incorporating into a CMake project:**
+
 ```
 find_package(fmt)
 
 target_link_libraries(xxx fmt::fmt)
 ```
 
-**示例：**
+**Example:**
 
 ```cpp
 #include <fmt/core.h>
@@ -610,13 +659,13 @@ sudo apt install -y libdouble-conversion-dev libevent-dev liblz4-dev libdwarf-de
 
 # 5 Google
 
-## 5.1 Abseil
+## 5.1 abseil
 
 [abseil-cpp](https://github.com/abseil/abseil-cpp)
 
 [abseil C++ Programming Guides](https://abseil.io/docs/cpp/guides/)
 
-**Usage:**
+**Incorporating into a CMake project:**
 
 ```sh
 add_subdirectory(abseil-cpp)
@@ -641,10 +690,11 @@ target_link_libraries(<target> absl::base absl::synchronization absl::strings)
 * `absl::utility`
 * ...
 
+**Example:**
+
 ```sh
-mkdir absl_demo
+mkdir -p absl_demo
 cd absl_demo
-mkdir contrib/abseil-cpp
 git clone https://github.com/abseil/abseil-cpp.git contrib/abseil-cpp
 
 cat > CMakeLists.txt << 'EOF'
@@ -693,25 +743,25 @@ int main(int argc, char* argv[]) {
 }
 EOF
 
-cmake -B build  -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 build/absl_demo
 ```
 
 ## 5.2 gflag
 
-**安装[gflag](https://github.com/gflags/gflags)：**
+**Install [gflag](https://github.com/gflags/gflags):**
 
 ```sh
 git clone https://github.com/gflags/gflags.git
 cd gflags
 
-cmake -B build -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
 cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo cmake --install build && sudo ldconfig
 ```
 
-**在`cmake`中添加`gflags`依赖：**
+**Incorporating into a CMake project:**
 
 ```cmake
 find_package(gflags REQUIRED)
@@ -723,7 +773,7 @@ message(STATUS "GFLAGS_MAIN_LIBRARIES: ${GFLAGS_MAIN_LIBRARIES}")
 target_link_libraries(xxx ${GFLAGS_LIBRARIES})
 ```
 
-**示例：**
+**Example:**
 
 ```cpp
 #include <gflags/gflags.h>
@@ -757,24 +807,87 @@ int main(int argc, char* argv[]) {
 
 ## 5.3 glog
 
-**安装[glog](https://github.com/google/glog)：**
+**Install [glog](https://github.com/google/glog):**
 
 ```sh
 git clone -b v0.6.0 https://github.com/google/glog.git
 cd glog
 
-# BUILD_SHARED_LIBS 用于控制生成动态库还是静态库，默认是动态库，这里我们选择静态库
-cmake -B build -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
 cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo cmake --install build && sudo ldconfig
 ```
 
-**在`cmake`中添加`glog`依赖：**
+**Incorporating into a CMake project:**
 
 ```cmake
 find_package(GLOG)
 
 target_link_libraries(xxx glog::glog)
+```
+
+**Example:**
+
+```sh
+mkdir -p glog_demo
+cd glog_demo
+
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(glog_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+add_compile_options(-O3 -Wall)
+
+file(GLOB MY_PROJECT_SOURCES "*.cpp")
+add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+find_package(GLOG)
+target_link_libraries(${PROJECT_NAME} glog::glog)
+EOF
+
+cat > main.cpp << 'EOF'
+#include <glog/logging.h>
+
+int main(int argc, char* argv[]) {
+    google::InitGoogleLogging(argv[0]);
+
+    FLAGS_log_dir = "./logs";
+    google::EnableLogCleaner(7);
+
+    // Enables logs to both console and file
+    FLAGS_alsologtostderr = true;
+    // Set console log level 0 = INFO, 1 = WARNING, 2 = ERROR, 3 = FATAL
+    FLAGS_stderrthreshold = 1;
+
+    LOG(INFO) << "This is an info message.";
+    LOG(WARNING) << "This is a warning message.";
+    LOG(ERROR) << "This is an error message.";
+
+    // Conditional logging
+    int x = 10;
+    LOG_IF(INFO, x > 5) << "x is greater than 5.";
+
+    // Every Nth logging
+    for (int i = 0; i < 10; ++i) {
+        LOG_EVERY_N(INFO, 3) << "This message is logged every 3rd iteration.";
+    }
+
+    google::ShutdownGoogleLogging();
+    return 0;
+}
+EOF
+
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+mkdir -p logs
+build/glog_demo
 ```
 
 ### 5.3.1 Print Stack (Not Recommend)
@@ -838,19 +951,18 @@ gcc -o main main.cpp -Wl,-wrap=__cxa_throw -lstdc++ -std=gnu++17 -Wl,-Bstatic -l
 
 ## 5.4 gtest
 
-**安装[gtest](https://github.com/google/googletest)：**
+**Install [gtest](https://github.com/google/googletest):**
 
 ```sh
 git clone https://github.com/google/googletest.git
 cd googletest
 
-# BUILD_SHARED_LIBS用于控制生成动态库还是静态库，默认是动态库，这里我们选择静态库
-cmake -B build -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
 cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo cmake --install build && sudo ldconfig
 ```
 
-**在`cmake`中添加`gtest`依赖：**
+**Incorporating into a CMake project:**
 
 ```cmake
 find_package(GTest REQUIRED)
@@ -863,9 +975,12 @@ target_link_libraries(xxx ${GTEST_LIBRARIES})
 target_link_libraries(xxx ${GTEST_MAIN_LIBRARIES})
 ```
 
-**完整示例**
+**Example:**
 
 ```sh
+mkdir -p gtest_demo
+cd gtest_demo
+
 cat > CMakeLists.txt << 'EOF'
 cmake_minimum_required(VERSION 3.20)
 
@@ -909,8 +1024,8 @@ TEST(TestDemo, case_wrong) {
 // }
 EOF
 
-cmake -B build && cmake --build build
-
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 build/gtest_demo
 ```
 
@@ -970,19 +1085,19 @@ build/gtest_demo
 
 ## 5.5 benchmark
 
-**安装[benchmark](https://github.com/google/benchmark)：**
+**Install [benchmark](https://github.com/google/benchmark):**
 
 ```sh
-git clone https://github.com/google/benchmark.git --depth 1
+git clone https://github.com/google/benchmark.git
 cd benchmark
+git clone https://github.com/google/googletest.git contrib/googletest
 
-# 这里指定googletest的工程路径（不加任何参数会有提示）
-cmake -B build -DGOOGLETEST_PATH=~/googletest/ -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DGOOGLETEST_PATH=contrib/googletest -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
 cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo cmake --install build && sudo ldconfig
 ```
 
-**在`cmake`中添加`benchmark`依赖：**
+**Incorporating into a CMake project:**
 
 ```cmake
 find_package(benchmark REQUIRED)
@@ -990,10 +1105,12 @@ find_package(benchmark REQUIRED)
 target_link_libraries(xxx benchmark::benchmark)
 ```
 
-**完整示例**
+**Example:**
 
 ```sh
-# 编写CMakeLists.txt 
+mkdir -p benchmark_demo
+cd benchmark_demo
+
 cat > CMakeLists.txt << 'EOF'
 cmake_minimum_required(VERSION 3.20)
 
@@ -1002,7 +1119,7 @@ project(benchmark_demo)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -fopt-info-vec")
+add_compile_options(-O3 -Wall -fopt-info-vec)
 
 set(EXEC_FILES ./main.cpp)
 
@@ -1016,7 +1133,6 @@ find_package(benchmark REQUIRED)
 target_link_libraries(${PROJECT_NAME} benchmark::benchmark)
 EOF
 
-# 编写main.cpp
 cat > main.cpp << 'EOF'
 #include <string>
 #include <benchmark/benchmark.h>
@@ -1039,7 +1155,8 @@ BENCHMARK(BM_StringCopy);
 BENCHMARK_MAIN();
 EOF
 
-cmake -B build && cmake --build build
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 
 build/benchmark_demo
 ```
@@ -1176,7 +1293,8 @@ int main(int argc, char* argv[]) {
 }
 EOF
 
-cmake -B build && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 
 find build/breakpad_build -type f -executable
 
@@ -1196,7 +1314,8 @@ git clone https://github.com/protocolbuffers/protobuf.git
 cd protobuf
 git checkout v3.14.0
 git submodule update --init --recursive
-cmake -B build -S cmake -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC" && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -S cmake -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -fPIC" -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC"
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo cmake --install build && sudo ldconfig
 ```
 
@@ -1219,7 +1338,8 @@ target_link_libraries(bar ${Protobuf_LIBRARIES})
 git clone https://github.com/google/leveldb.git
 cd leveldb
 git submodule update --init --recursive
-cmake -B build -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC" && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS="${CMAKE_CXX_FLAGS} -fPIC" -DLEVELDB_BUILD_TESTS=OFF -DLEVELDB_BUILD_BENCHMARKS=OFF
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo cmake --install build && sudo ldconfig
 ```
 
@@ -1242,7 +1362,7 @@ cd arrow/cpp
 cmake --list-presets
 cmake --preset -N ninja-release
 
-cmake -B build --preset ninja-release -DPARQUET_REQUIRE_ENCRYPTION=ON
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON --preset ninja-release -DPARQUET_REQUIRE_ENCRYPTION=ON
 cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo cmake --install build && sudo ldconfig
 
@@ -1252,7 +1372,7 @@ echo '/usr/local/lib64' | sudo tee /etc/ld.so.conf.d/arrow.conf && sudo ldconfig
 Build with llvm's libc++
 
 ```sh
-cmake -B build --preset ninja-release -DPARQUET_REQUIRE_ENCRYPTION=ON \
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON --preset ninja-release -DPARQUET_REQUIRE_ENCRYPTION=ON \
       -DCMAKE_C_COMPILER=clang \
       -DCMAKE_CXX_COMPILER=clang++ \
       -DCMAKE_CXX_FLAGS="-stdlib=libc++" \
@@ -1528,7 +1648,8 @@ Requirement:
 git clone https://github.com/apache/incubator-brpc.git
 cd incubator-brpc
 git checkout 1.9.0
-cmake -B build && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo cmake --install build && sudo ldconfig
 ```
 
@@ -1676,7 +1797,7 @@ project(jni_demo)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
+add_compile_options(-O3 -Wall)
 
 file(GLOB MY_PROJECT_SOURCES "*.cpp")
 add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
@@ -1706,7 +1827,9 @@ target_link_libraries(${PROJECT_NAME} PRIVATE jvm)
 EOF
 
 rm -rf build
-cmake -B build && cmake --build build && build/jni_demo
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+build/jni_demo
 ```
 
 ### 7.1.2 Memory Leak
@@ -1966,7 +2089,7 @@ if("${HADOOP_PATH}" STREQUAL "")
     message(FATAL_ERROR "env 'HADOOP_PATH' is required")
 endif()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
+add_compile_options(-O3 -Wall)
 
 # Add target library
 set(LIBHDFS_PATH ${HADOOP_PATH}/hadoop-hdfs-project/hadoop-hdfs-native-client/src/main/native/libhdfs)
@@ -2007,10 +2130,11 @@ target_include_directories(jvm INTERFACE ${JAVA_HOME}/include/linux)
 target_link_libraries(${PROJECT_NAME} PRIVATE jvm)
 EOF
 
-mkdir include
+mkdir -p include
 touch include/config.h
 
-cmake -B build && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 ```
 
 And we can use `build/libhdfs_jni.a` as following:
@@ -2134,7 +2258,7 @@ JNI cannot work well with coroutines like `brpc's bthread` for several reasons (
 ```sh
 git clone -b poco-1.13.3-release https://github.com/pocoproject/poco.git
 cd poco
-cmake -B cmake-build
+cmake -B cmake-build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 cmake --build cmake-build --config Release -j $(( (cores=$(nproc))>1?cores/2:1 ))
 sudo cmake --install cmake-build
 ```
@@ -2142,8 +2266,9 @@ sudo cmake --install cmake-build
 ### 8.1.1 Logger
 
 ```sh
-mkdir poco_logger_demo
+mkdir -p poco_logger_demo
 cd poco_logger_demo
+
 cat > CMakeLists.txt << 'EOF'
 cmake_minimum_required(VERSION 3.20)
 
@@ -2152,7 +2277,7 @@ project(poco_logger_demo)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
+add_compile_options(-O3 -Wall)
 
 file(GLOB MY_PROJECT_SOURCES "*.cpp")
 add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
@@ -2218,7 +2343,9 @@ int main() {
 }
 EOF
 
-cmake -B build && cmake --build build && build/poco_logger_demo
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+build/poco_logger_demo
 ```
 
 Output:
@@ -2239,8 +2366,9 @@ You can refer to [Clickhouse-base/base/terminalColors.cpp](https://github.com/Cl
 ### 8.1.2 JSON
 
 ```sh
-mkdir poco_json_demo
+mkdir -p poco_json_demo
 cd poco_json_demo
+
 cat > CMakeLists.txt << 'EOF'
 cmake_minimum_required(VERSION 3.20)
 
@@ -2249,7 +2377,7 @@ project(poco_json_demo)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
+add_compile_options(-O3 -Wall)
 
 file(GLOB MY_PROJECT_SOURCES "*.cpp")
 add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
@@ -2301,7 +2429,9 @@ int main() {
 }
 EOF
 
-cmake -B build && cmake --build build && build/poco_json_demo
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+build/poco_json_demo
 ```
 
 Output:
@@ -2314,8 +2444,9 @@ Generated JSON: {"isNewDeveloper":false,"newAge":28,"newName":"Jane Smith"}
 ### 8.1.3 Http
 
 ```sh
-mkdir poco_http_demo
+mkdir -p poco_http_demo
 cd poco_http_demo
+
 cat > CMakeLists.txt << 'EOF'
 cmake_minimum_required(VERSION 3.20)
 
@@ -2324,7 +2455,7 @@ project(poco_http_demo)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
+add_compile_options(-O3 -Wall)
 
 file(GLOB MY_PROJECT_SOURCES "*.cpp")
 add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
@@ -2443,7 +2574,9 @@ int main(int argc, char** argv) {
 }
 EOF
 
-cmake -B build && cmake --build build && build/poco_http_demo
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+build/poco_http_demo
 ```
 
 Output:
@@ -2457,8 +2590,9 @@ HTTP Server started on port 9080.
 ### 8.1.4 Application
 
 ```sh
-mkdir poco_application_demo
+mkdir -p poco_application_demo
 cd poco_application_demo
+
 cat > CMakeLists.txt << 'EOF'
 cmake_minimum_required(VERSION 3.20)
 
@@ -2467,7 +2601,7 @@ project(poco_application_demo)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
+add_compile_options(-O3 -Wall)
 
 file(GLOB MY_PROJECT_SOURCES "*.cpp")
 add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
@@ -2536,7 +2670,8 @@ private:
 POCO_APP_MAIN(DemoApp)
 EOF
 
-cmake -B build && cmake --build build
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 build/poco_application_demo --help
 # --config is not ambiguous, so it can be parsed to --config-file
 build/poco_application_demo --config /etc/config.xml
@@ -2592,7 +2727,8 @@ tree -L 2
 ```
 
 ```sh
-mkdir sqlpp11_demo && cd sqlpp11_demo
+mkdir -p sqlpp11_demo
+cd sqlpp11_demo
 
 git init
 
@@ -2720,7 +2856,8 @@ int main() {
 EOF
 
 # compile and run
-cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 build/sqlpp11_demo
 ```
 
@@ -2787,7 +2924,8 @@ tree -L 2
 ```
 
 ```sh
-mkdir sqlpp11_demo && cd sqlpp11_demo
+mkdir -p sqlpp11_demo
+cd sqlpp11_demo
 
 git init
 
@@ -2939,7 +3077,8 @@ int main() {
 EOF
 
 # compile and run
-cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 build/sqlpp11_demo
 ```
 
@@ -2958,7 +3097,8 @@ tree -L 2
 ```
 
 ```sh
-mkdir sqlpp11_demo && cd sqlpp11_demo
+mkdir -p sqlpp11_demo
+cd sqlpp11_demo
 
 git init
 
@@ -3109,7 +3249,8 @@ int main() {
 EOF
 
 # compile and run
-cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 ```
 
 You may be presented with the following error messages:
@@ -3130,7 +3271,8 @@ INSTALL_PLUGIN(${CC_PLUGIN_TARGET} ${CMAKE_CURRENT_BINARY_DIR})
 And then compile again:
 
 ```sh
-cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 build/sqlpp11_demo
 ```
 
@@ -3163,7 +3305,8 @@ tree -L 2
 ```
 
 ```sh
-mkdir curl_demo && cd curl_demo
+mkdir -p curl_demo
+cd curl_demo
 
 # Download source code of these two project
 mkdir -p contrib
@@ -3251,7 +3394,8 @@ int main() {
 EOF
 
 # compile and run
-cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 build/curl_demo
 ```
 

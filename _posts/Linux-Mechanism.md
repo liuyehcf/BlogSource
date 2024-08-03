@@ -1485,6 +1485,7 @@ ln -s '/usr/lib/systemd/system/demo-service.service' '/etc/systemd/system/multi-
 
 **示例：只要加上`--user`即可，其他用法均类似**
 
+* `systemctl --user daemon-reload`
 * `systemctl --user status`
 * `systemctl --user start xxx.service`
 

@@ -2287,7 +2287,23 @@ cat example.cpp.gcov
 
 Add `-v` option.
 
-## 9.5 Document
+## 9.5 ccache
+
+CCache stores its compile cache in a directory specified by the `CCACHE_DIR` environment variable. By default, this directory is located at `~/.ccache` in the user's home directory. The cache directory contains various files and subdirectories that ccache uses to manage its cache of compiled objects.
+
+How to work with cmake:
+
+```sh
+export CMAKE_C_COMPILER_LAUNCHER=ccache
+export CMAKE_CXX_COMPILER_LAUNCHER=ccache
+```
+
+**Usage:**
+
+* `ccache -z`: Zero statistics counters
+* `ccache -s -v`: show summary of configuration and statistics counters in human-readable format (use `-v/--verbose` once or twice for more details).
+
+## 9.6 Document
 
 1. [cpp reference](https://en.cppreference.com/w/)
 1. [cppman](https://github.com/aitjcize/cppman/)
@@ -2295,6 +2311,6 @@ Add `-v` option.
     * 示例：`cppman vector::begin`
     * 重建索引：`cppman -r`
 
-## 9.6 Reference
+## 9.7 Reference
 
 * [C/C++ 头文件以及库的搜索路径](https://blog.csdn.net/crylearner/article/details/17013187)

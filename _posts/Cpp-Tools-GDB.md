@@ -376,16 +376,6 @@ Breakpoint 1, main () at set_break.cpp:8
         * `elements`：数组的最大长度，超过该长度的元素就不再显示了，0表示无限制
         * `raw-values`：打印原始内容。在`GNU gdb (Ubuntu 12.1-0ubuntu1~22.04) 12.1`上，打印标准库对象时，默认会打印优化后的内容（容器元素详情），而非容器本身的详细字段
         * **`pretty`：是否以优雅的方式显式（分行、缩进等等，便于人阅读），默认关闭**
-    * `std::vector`调试技巧
-        * `print sizeof(*v._M_impl._M_start)`：查看元素大小
-        * `print v._M_impl._M_finish - v._M_impl._M_start`：元素个数
-        * `print v._M_impl._M_start[i]`：第`i`个元素
-        * `print &v._M_impl._M_start[i]`：第`i`个元素的地址
-        * `print v._M_impl._M_start[i]@j`：打印从第`i`个元素开始的`j`个元素
-    * `std::shared_ptr`调试技巧
-        * `print *p._M_ptr`：查看具体类型，会打印类似于`<vtable for Derive+16>`的信息，这里就可以获取到实际的类型信息
-        * `print *(<type>*)p._M_ptr`：查看对应类型的详情
-        * `x/1a p._M_ptr`
 * `x/<count><format><size> <addr>`：以指定格式打印内存信息
     * `<count>`：正整数，表示需要显示的内存单元的个数，即从当前地址向后显示`<count>`个内存单元的内容，一个内存单元的大小由第三个参数`<size>`定义
     * `<format>`：表示`addr`指向的内存内容的输出格式
@@ -442,7 +432,23 @@ Breakpoint 1, main () at set_break.cpp:8
 <reg name="gs" bitsize="32" type="int32"/>
 ```
 
-### 3.5.1 demo of print
+### 3.5.1 Tips for debugging std::vector
+
+* `print sizeof(*v._M_impl._M_start)`: Check element size.
+* `print v._M_impl._M_finish - v._M_impl._M_start`: Get element number.
+* `print v._M_impl._M_start[i]`: Get the ith element.
+* `print &v._M_impl._M_start[i]`: Get address of the ith element.
+* `print v._M_impl._M_start[i]@j`：Print item with offset from i to j.
+
+### 3.5.2 Tips for debugging std::shared_ptr
+
+* `print *p._M_ptr`: Show details, it may print something like `<vtable for Derive+16>`.
+* `print *(<type>*)p._M_ptr`: Show details of derived type.
+* `x/1a p._M_ptr`: Get first item of vtable.
+* `x/10a *(void**)p._M_ptr`: Get first 10 items of vtable.
+    * `*(void**)` dereferences the `void*` pointer, effectively accessing the first entry in the vtable, which is a pointer to another `void*`.
+
+### 3.5.3 demo of print
 
 ```sh
 # c++源文件
@@ -645,6 +651,7 @@ gdb
 
 ```
 (gdb) handle SIGSEGV pass noprint nostop
+(gdb) handle all pass noprint nostop
 ```
 
 ## 4.4 How to print env

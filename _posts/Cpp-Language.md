@@ -285,10 +285,17 @@ int main() {
 
 ### 2.2.3 Macro Expansion
 
-Look at the example first, we have 3 macros, which all used to define int type variables with line related names.
+**Macro replacement proceeds left-to-right ([The Macro Expansion Process](https://www.boost.org/doc/libs/1_85_0/libs/wave/doc/macro_expansion_process.html)):**
+
+1. If, during scanning (or rescanning) an identifier is found, it is looked up in the symbol table. If the identifier is not found in the symbol table, it is not a macro and scanning continues.
+1. If the identifier is found, the value of a flag associated with the identifier is used to determine if the identifier is available for expansion. If it is not, the specific token (i.e. the specific instance of the identifier) is marked as disabled and is not expanded. If the identifier is available for expansion, the value of a different flag associated with the identifier in the symbol table is used to determine if the identifier is an object-like or function-like macro. If it is an object-like macro, it is expanded. If it is a function-like macro, it is only expanded if the next token is an left parenthesis.
+1. An identifier is available for expansion if it is not marked as disabled and if the the value of the flag associated with the identifier is not set, which is used to determine if the identifier is available for expansion.
+1. If a macro is an object-like macro, skip past the next two paragraphs.
+1. If a macro to be expanded is a function-like macro, it must have the exact number of actual arguments as the number of formal parameters required by the definition of the macro. Each argument is recursively scanned and expanded. Each parameter name found in the replacement list is replaced by the expanded actual argument after leading and trailing whitespace and all placeholder tokens are removed **unless the parameter name immediately follows the stringizing operator (`#`) or is adjacent to the token-pasting operator (`##`)**.
+1. **If the parameter name immediately follows the stringizing operator (`#`), a stringized version of the unexpanded actual argument is inserted**. If the parameter name is adjacent to the token-pasting operator (`##`), the unexpanded actual argument is inserted after all placeholder tokens are removed.
 
 ```cpp
-// Concat x and y
+// Concat x and y, both parameters won't be expanded before concatenation, and the result of concatenation can be expanded if possible
 #define TOKEN_CONCAT(x, y) x##y
 // Make sure x and y are fully expanded
 #define TOKEN_CONCAT_FORWARD(x, y) TOKEN_CONCAT(x, y)
@@ -296,19 +303,21 @@ Look at the example first, we have 3 macros, which all used to define int type v
 #define DEFINE_INT_1 int prefix_1_##__LINE__
 #define DEFINE_INT_2 int TOKEN_CONCAT(prefix_2_, __LINE__)
 #define DEFINE_INT_3 int TOKEN_CONCAT_FORWARD(prefix_3_, __LINE__)
+#define LINE_NUMBER_AS_VALUE TOKEN_CONCAT(__LINE, __)
 
 int main() {
     DEFINE_INT_1 = 1;
     DEFINE_INT_2 = 2;
     DEFINE_INT_3 = 3;
+    int i4 = LINE_NUMBER_AS_VALUE;
     return 0;
 }
 ```
 
-But only `DEFINE_INT_3` works as we expected.
-
-* when you use `TOKEN_CONCAT` or `#` directly with macro arguments, it won't expand those arguments before concatenation. This means if `x` or `y` are themselves macros, they will not be expanded before concatenation.
-* The `TOKEN_CONCAT_FORWARD` macro is a forward macro that ensures its arguments are fully expanded before passing them to `TOKEN_CONCAT`
+* For `DEFINE_INT_1`, `DEFINE_INT_2` and `DEFINE_INT_3`, only `DEFINE_INT_3` works as we expected.
+    * when you use `TOKEN_CONCAT` or `#` directly with macro arguments, it won't expand those arguments before concatenation. This means if `x` or `y` are themselves macros, they will not be expanded before concatenation.
+    * The `TOKEN_CONCAT_FORWARD` macro is a forward macro that ensures its arguments are fully expanded before passing them to `TOKEN_CONCAT`
+* For `LINE_NUMBER_AS_VALUE`, the expansion happens after the concatenation.
 
 ```sh
 gcc -E main.cpp
@@ -318,11 +327,12 @@ gcc -E main.cpp
 # 1 "/usr/include/stdc-predef.h" 1 3 4
 # 0 "<command-line>" 2
 # 1 "main.cpp"
-# 10 "main.cpp"
+# 11 "main.cpp"
 int main() {
     int prefix_1___LINE__ = 1;
     int prefix_2___LINE__ = 2;
-    int prefix_3_13 = 3;
+    int prefix_3_14 = 3;
+    int i4 = 15;
     return 0;
 }
 ```
