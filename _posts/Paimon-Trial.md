@@ -241,3 +241,18 @@ How to clean:
 docker exec -it --user root trino bash -c 'rm -f /etc/trino/catalog/paimon.properties'
 docker exec -it --user root trino bash -c 'rm -rf /usr/lib/trino/plugin/paimon'
 ```
+
+# 5 Options
+
+1. `org.apache.paimon.CoreOptions`
+
+# 6 Issue
+
+## 6.1 Timeout waiting for connection from pool
+
+* [S3A Performance](https://paimon.apache.org/docs/0.8/filesystems/s3/)
+* [Spark on Amazon EMR: "Timeout waiting for connection from pool"](https://stackoverflow.com/questions/39185956/spark-on-amazon-emr-timeout-waiting-for-connection-from-pool)
+
+**Please DO remember to close the reader/writer instance, otherwise, the connections may not be properly released**
+
+* S3 catalog has this issue.

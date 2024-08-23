@@ -2689,6 +2689,47 @@ A simple command line application that demonstrates parsing options with POCO.
 config-file: /etc/config.xml
 ```
 
+### 8.1.5 Foundation
+
+#### 8.1.5.1 MD5
+
+```cpp
+cat > main.cpp << 'EOF'
+#include <Poco/DigestStream.h>
+#include <Poco/HexBinaryEncoder.h>
+#include <Poco/MD5Engine.h>
+
+#include <iostream>
+
+int main() {
+    // Create an MD5 engine
+    Poco::MD5Engine md5;
+
+    // Create a DigestOutputStream that writes to the MD5 engine
+    Poco::DigestOutputStream dos(md5);
+
+    // Input string to hash
+    std::string input = "Hello, World!";
+
+    // Write the input string to the DigestOutputStream
+    dos << input;
+    dos.close();
+
+    // Get the digest as a string of hexadecimal numbers
+    const Poco::DigestEngine::Digest& digest = md5.digest();
+    std::string hash(Poco::DigestEngine::digestToHex(digest));
+
+    // Print the hash
+    std::cout << "MD5 hash of '" << input << "' is: " << hash << std::endl;
+
+    return 0;
+}
+EOF
+
+gcc -o main main.cpp -lstdc++ -std=gnu++17 -lPocoFoundation
+./main
+```
+
 ## 8.2 sqlpp11
 
 **How to integrate:**

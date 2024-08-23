@@ -1436,6 +1436,14 @@ ln -s '/usr/lib/systemd/system/demo-service.service' '/etc/systemd/system/multi-
     * `on-watchdog`
 * `TimeoutSec`：定义`Systemd`停止当前服务之前等待的秒数
 * `Environment`：指定环境变量
+    * `Environment="VAR1=xxx" "VAR2=true" "VAR3=yyy"`：可以同时指定多个
+    * 或者写多个`Environment`配置
+        ```
+        Environment="VAR1=xxx"
+        Environment="VAR2=true"
+        Environment="VAR3=yyy"
+        ```
+
 * `PrivateTmp`：是否拥有私有的`/tmp`目录
 
 **`[Install]`区块，定义如何安装这个配置文件，即怎样做到开机启动**

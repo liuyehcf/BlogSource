@@ -157,7 +157,7 @@ echo < <(date)
 ```sh
 # 正确方式
 count=0
-while read line
+while IFS= read -r line
 do
     ((count++))
 done < <(ls)
@@ -165,7 +165,7 @@ echo ${count}
 
 # 错误方式
 count=0
-ls | while read line
+ls | while IFS= read -r line
 do
     # 由于管道是在子进程中执行的，变量的更新在子进程结束后就丢失了
     ((count++))
@@ -568,14 +568,14 @@ echo ${FOO:?error} # 输出error
 ```sh
 # 文件名不包含空格的话，可以不要引号
 # 文件名若包含空格，且不用引号，则会报错：ambiguous redirect
-while read line
+while IFS= read -r line
 do
     echo $line
 done < "test.txt"
 
 # 或者利用 进程替换
 
-while read line
+while IFS= read -r line
 do
     echo $line
 done < <(cmd) 
@@ -586,7 +586,7 @@ done < <(cmd)
 * **注意，在这种方式下，在while循环内的变量的赋值会丢失，因为管道相当于开启另一个进程**
 
 ```sh
-STDOUT | while read line
+STDOUT | while IFS= read -r line
 do
     echo $line
 done
@@ -906,7 +906,7 @@ array4[${#array4[@]}+1]=3
 echo "array4='${array4[@]}'"
 ```
 
-**示例：**
+**Examples:**
 
 ```sh
 text='my name is liuye'
@@ -1082,7 +1082,7 @@ ${!map[@]}
 ${!map[*]}
 ```
 
-**示例：**
+**Examples:**
 
 ```sh
 declare -A map
@@ -1201,7 +1201,7 @@ echo "${!foo}"
 1. **不可以使用通配符**
 1. **仅支持`=`作为相等比较的运算符，不支持`==`（取决于shell的实现，`bash`就支持这两种，但是`zsh`对语法更严格，仅支持`=`）**
 
-**示例：**
+**Examples:**
 
 ```sh
 # 正确写法
@@ -1246,7 +1246,7 @@ fi
 1. **可以使用通配符**
 1. **支持`=`与`==`作为相等比较的运算符**
 
-**示例：**
+**Examples:**
 
 ```sh
 # 正确写法
@@ -1491,7 +1491,7 @@ echo $?
 
 shift用于移动参数的位置
 
-**格式：**
+**Pattern:**
 
 * `shift [n]`：n是数字，默认是1
 
@@ -1519,39 +1519,42 @@ echo $y # 输出10
 
 ## 7.3 set
 
-**格式：**
+**Pattern:**
 
 * `set [option]`
 
-**参数说明：**
+**Options:**
 
-* `-e`：当任意一个命令的返回值为非0时，立即退出
-* `-x`：将每个命令及其详细参数输出到标准输出中
-* `-o pipefail`：针对管道命令，取从右往左第一个非零返回值作为整个管道命令的返回值
-* `-o vi/emacs`：`vi`模式或`emacs`模式，默认是`emacs`模式
-* `-H`：Enable `!` style history substitution
-* `--`：If no arguments follow this option, then the positional parameters are unset. Otherwise, the positional parameters are set to the args, even if some of them begin with a `-`
+* `-e`: Exit immediately if a pipeline (which may consist of a single simple command), a list, or a compound command (see `SHELL GRAMMAR` in bash(1)), exits with a non-zero status.
+* `-x`: After expanding each simple command, for command, case command, select command, or arithmetic for command, display the expanded value of PS4, followed by the command and its expanded arguments or associated word list.
+* `-o [option]`/`+o [option]`: Enable/Disable options, option can be:
+    * `<none>`: Print all options.
+    * `noglob`: Disable pathname expansion (Same as `-f`).
+    * `pipefail`: If set, the return value of a pipeline is the value of the last (rightmost) command to exit with a non-zero status, or zero if all commands in the pipeline exit successfully. This option is disabled by de‐fault.
+    * `vi/emacs`: vi/emacs mode.
+* `-H`: Enable `!` style history substitution
+* `--`: If no arguments follow this option, then the positional parameters are unset. Otherwise, the positional parameters are set to the args, even if some of them begin with a `-`
 
-**示例：**
+**Examples:**
 
-* `set`：输出内容会列出所有当前 shell 环境中的变量和值
+* `set`: Print all envs and variables.
 * `set -e`
 * `set -x`
 * `set -o pipefail`
-* `eval set -- "some new params" && echo "\$1='$1', \$2='$2', \$3='$3'"`：以空格为分隔符，设置多个参数
-* `set -- "some" "new" "params" && echo "\$1='$1', \$2='$2', \$3='$3'"`：设置多个参数
-* `set -- "some new params" && echo "\$1='$1', \$2='$2', \$3='$3'"`：设置成一个参数
+* `eval set -- "some new params" && echo "\$1='$1', \$2='$2', \$3='$3'"`: Setup multi-args, seperated by space.
+* `set -- "some" "new" "params" && echo "\$1='$1', \$2='$2', \$3='$3'"`: Setup multi-args.
+* `set -- "some new params" && echo "\$1='$1', \$2='$2', \$3='$3'"`: Setup one arg.
 
 ## 7.4 source
 
-**执行`shell`脚本有2种方式：**
+**Two ways of executing `shell script`:**
 
-1. **`./script.sh`或者`sh script.sh`**
-    * 当前`shell`是父进程，生成一个子`shell`进程，在子`shell`中执行脚本。脚本执行完毕，退出子`shell`，回到当前`shell`
-1. **`source script.sh`或者`. script.sh`**
-    * 在当前上下文中执行脚本，不会生成新的进程。脚本执行完毕，回到当前`shell`
+1. **`./script.sh` or `sh script.sh`**
+    * The current `shell` is the parent process, which generates a child `shell` process to execute the script. After the script finishes executing, the child `shell` exits, returning to the current `shell`.
+1. **`source script.sh` or `. script.sh`**
+    * The script is executed in the current context without generating a new process. After the script finishes executing, it returns to the current `shell`.
 
-**示例：**
+**Examples:**
 
 ```sh
 cat > test.sh << 'EOF'
@@ -1563,10 +1566,10 @@ EOF
 dir=$(pwd)
 echo "current dir: '$(pwd)'"
 
-# 当前的工作目录没有切换
+# The current working directory has not been changed
 cd ${dir} && bash test.sh && echo "current dir: '$(pwd)' after execute script"
 
-# 当前的工作目录切换到了 /
+# The current working directory has been changed to /
 cd ${dir} && source test.sh && echo "current dir: '$(pwd)' after execute script using source"
 
 cd ${dir}
@@ -1576,7 +1579,7 @@ cd ${dir}
 
 `exec`用于进程替换（类似系统调用`exec`），或者标准输入输出的重定向
 
-**示例：**
+**Examples:**
 
 * `exec 1>my.log 2>&1`：将标准输出、以及标准异常重定向到my.log文件中，对后续的所有命令都生效
 
@@ -1735,18 +1738,18 @@ echo "done"
 
 用于启用/禁用shell扩展功能
 
-**示例：**
+**Examples:**
 
 * `shopt -s extglob`：启用`extglob`
 * `shopt -u extglob`：禁用`extglob`
 
 ## 7.7 read
 
-**格式：**
+**Pattern:**
 
 * `read [-ers] [-a name] [-d delim] [-i text] [-n nchars] [-N nchars] [-p prompt] [-t timeout] [-u fd] [name ...]`
 
-**参数说明：**
+**Options:**
 
 `-a`：后跟一个变量，该变量会被认为是个数组，然后给其赋值，**默认是以空格为分割符**
 `-d`：后面跟一个标志符，其实只有其后的第一个字符有用，作为结束的标志
@@ -1828,7 +1831,7 @@ exit 0
 #!/bin/bash
   
 count=1    # 赋值语句，不加空格
-cat test.txt | while read line      # cat 命令的输出作为read命令的输入,read读到>的值放在line中
+cat test.txt | while IFS= read -r line      # cat 命令的输出作为read命令的输入,read读到>的值放在line中
 do
    echo "Line $count:$line"
    count=$[ $count + 1 ]          # 注意中括号中的空格。
@@ -1853,7 +1856,7 @@ exit 0
 1. `OPTARG`：选项后面的参数
 1. `OPTIND`：下一个选项的索引（该索引是相对于`$*`的索引，因此如果选项有参数的话，索引是非连续的）
 
-**示例：**：`getopts ":a:bc:" opt`（参数部分：`-a 11 -b -c 5`）
+**Examples:**：`getopts ":a:bc:" opt`（参数部分：`-a 11 -b -c 5`）
 
 * 第一个冒号表示忽略错误
 * 字符后面的冒号表示该选项必须有自己的参数
@@ -1933,7 +1936,7 @@ option '-b', OPTIND: '7'
 
 **格式：`getopt [options] -- parameters`**
 
-**参数说明：**
+**Options:**
 
 * `-o, --options <选项字符串>`：要识别的短选项
     * 单个字符表示选项。例如`-o "abc"`，`a`、`b`、`c`表示3个选项
@@ -2057,7 +2060,7 @@ getopt: option '--along' requires an argument
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-**示例：**
+**Examples:**
 
 ```sh
 cat > test.sh << 'EOF'
@@ -2137,7 +2140,7 @@ world
 
 **格式：`declare [-/+ aAfFgilrtux] [-p] [name[=value] ...]`**
 
-**参数说明：**
+**Options:**
 
 * `-/+`：`-`增加属性，`+`删除属性
     * `a`：数组
@@ -2146,7 +2149,7 @@ world
     * `i`：整数
 * `-p`：查看变量信息，包括类型以及值
 
-**示例：**
+**Examples:**
 
 ```sh
 # 查看函数定义
@@ -2170,7 +2173,7 @@ declare -i <integer>
 
 **格式：`local [option] [name[=value] ...]`，其中`option`部分参考`declare`即可**
 
-**示例：**
+**Examples:**
 
 ```sh
 function test() {
@@ -2191,7 +2194,7 @@ echo "outside function: '${arr[@]}'"
 
 **`alias`用于设置别名**
 
-**示例：**
+**Examples:**
 
 * `alias lh='ls -alt'`
 * `alias xxx="${BASE_DIR}/xxx.sh"`，`${BASE_DIR}`的解析发生在配置时，在`zsh`等shell中，`xxx`会高亮
@@ -2201,7 +2204,7 @@ echo "outside function: '${arr[@]}'"
 
 ## 7.15 export
 
-**示例：**
+**Examples:**
 
 * `export -p`：打印所有导出的符号
 * `export <name>`：导出变量
@@ -2211,7 +2214,7 @@ echo "outside function: '${arr[@]}'"
 
 设置或查看各类限制
 
-**示例：**
+**Examples:**
 
 * `ulimit -a`
 * `ulimit -v 1000000`：将进程的最大内存设置为`1000000`字节，仅在当前`shell`以及`shell`的子进程中生效
@@ -2220,7 +2223,7 @@ echo "outside function: '${arr[@]}'"
 
 `pushd`和`popd`是用于操作目录栈的命令，在切换目录时非常有用。它们可以让你在不同目录之间快速切换，并在需要时返回到先前的目录
 
-**示例：**
+**Examples:**
 
 ```sh
 set -x
@@ -2474,10 +2477,55 @@ tput sgr0    # Reset text format to the terminal's default
 tput bel     # Play a bell
 ```
 
-**示例：**
+**Examples:**
 
 ```sh
 tput setaf 1; tput setab 2; tput bold; echo "this is text"
+```
+
+## 8.4 Assorted
+
+### 8.4.1 What is globbing
+
+`Globbing` is a term used in Unix-like operating systems, including Linux and macOS, to refer to the process of pattern matching or wildcard expansion used by the shell to match filenames and paths.
+
+When you use wildcards in the command line or in a shell script, the shell automatically expands these patterns to match files and directories in the filesystem. This process is called `globbing`.
+
+### 8.4.2 `${var}` vs. `"${var}"`
+
+`${var}`: Word splitting and globbing are performed, so spaces in `var` may cause it to be split into multiple words or match filenames in the current directory.
+`"${var}"`: Treats `var` as a single string, preserving spaces and special characters without splitting or globbing.
+
+```sh
+content="a b c"
+for word in ${content}; do
+    echo $word
+done
+
+content="a b c"
+for word in "${content}"; do
+    echo $word
+done
+```
+
+### 8.4.3 Multi-line String
+
+```sh
+content=$(cat <<EOF
+This is a multi-line
+string in a shell script.
+EOF
+)
+
+echo "${content}"
+```
+
+### 8.4.4 How to disable expansion of `*`/`?`
+
+```sh
+set -o | grep noglob
+set -f # disable
+set +f # enable
 ```
 
 # 9 Reference

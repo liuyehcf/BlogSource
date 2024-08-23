@@ -1324,7 +1324,13 @@ int main(int32_t argc, char* argv[]) {
 }
 ```
 
-# 23 string
+# 23 shared_mutex
+
+1. `std::shared_mutex`
+1. `std::shared_timed_mutex`
+1. `std::shared_lock`
+
+# 24 string
 
 1. `std::string`: char
 1. `std::wstring`: wchar_t
@@ -1335,12 +1341,12 @@ int main(int32_t argc, char* argv[]) {
 1. `std::string::npos`: This is a special value equal to the maximum value representable by the type size_type.
 1. `std::getline`: getline reads characters from an input stream and places them into a string.
 
-# 24 thread
+# 25 thread
 
 1. `std::thread::hardware_concurrency`
 1. `std::this_thread`
 
-## 24.1 How to set thread name
+## 25.1 How to set thread name
 
 1. `pthread_setname_np/pthread_getname_np`，需要引入头文件`<pthread.h>`，`np`表示`non-portable`，即平台相关
 1. `prctl(PR_GET_NAME, name)/prctl(PR_SET_NAME, name)`，需要引入头文件`<sys/prctl.h>`
@@ -1407,7 +1413,7 @@ int main() {
 }
 ```
 
-## 24.2 How to set thread affinity
+## 25.2 How to set thread affinity
 
 下面示例代码用于测试各个CPU的性能
 
@@ -1450,7 +1456,7 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-# 25 tuple
+# 26 tuple
 
 1. `std::tuple`
 1. `std::apply`：触发方法调用，其中，参数被分装在一个`tuple`中
@@ -1495,18 +1501,18 @@ int main(int argc, char* argv[]) {
     }
     ```
 
-# 26 type_traits
+# 27 type_traits
 
 [Standard library header <type_traits>](https://en.cppreference.com/w/cpp/header/type_traits)
 
-## 26.1 Helper Class
+## 27.1 Helper Class
 
 1. `std::integral_constant`
 1. `std::bool_constant`
 1. `std::true_type`
 1. `std::false_type`
 
-## 26.2 Primary type categories
+## 27.2 Primary type categories
 
 1. `std::is_void`
 1. `std::is_null_pointer`
@@ -1515,7 +1521,7 @@ int main(int argc, char* argv[]) {
 1. `std::is_pointer`
 1. ...
 
-## 26.3 Composite type categories
+## 27.3 Composite type categories
 
 1. `std::is_fundamental`
 1. `std::is_arithmetic`
@@ -1524,7 +1530,7 @@ int main(int argc, char* argv[]) {
 1. `std::is_member_pointer`
 1. ...
 
-## 26.4 Type properties
+## 27.4 Type properties
 
 1. `std::is_const`
 1. `std::is_volatile`
@@ -1533,7 +1539,7 @@ int main(int argc, char* argv[]) {
 1. `std::is_abstract`
 1. ...
 
-## 26.5 Supported operations
+## 27.5 Supported operations
 
 1. `std::is_constructible`
 1. `std::is_copy_constructible`
@@ -1542,19 +1548,19 @@ int main(int argc, char* argv[]) {
 1. `std::is_destructible`
 1. ...
 
-## 26.6 Property queries
+## 27.6 Property queries
 
 1. `std::alignment_of`
 1. `std::rank`
 1. `std::extent`
 
-## 26.7 Type relationships
+## 27.7 Type relationships
 
 1. `std::is_same`
 1. `std::is_base_of`
 1. ...
 
-## 26.8 Const-volatility specifiers
+## 27.8 Const-volatility specifiers
 
 1. `std::remove_cv`
 1. `std::remove_const`
@@ -1563,28 +1569,28 @@ int main(int argc, char* argv[]) {
 1. `std::add_const`
 1. `std::add_volatile`
 
-## 26.9 References
+## 27.9 References
 
 1. `std::remove_reference`
 1. `std::add_lvalue_reference`
 1. `std::add_rvalue_reference`
   
-## 26.10 Pointers
+## 27.10 Pointers
 
 1. `std::remove_pointer`
 1. `std::add_pointer`
   
-## 26.11 Sign modifiers
+## 27.11 Sign modifiers
 
 1. `std::make_signed`
 1. `std::make_unsigned`
 
-## 26.12 Arrays
+## 27.12 Arrays
 
 1. `std::remove_extent`
 1. `std::remove_all_extents`
 
-## 26.13 Miscellaneous transformations
+## 27.13 Miscellaneous transformations
 
 1. `std::enable_if`
 1. `std::conditional`
@@ -1610,7 +1616,7 @@ int main(int argc, char* argv[]) {
     }    
     ```
 
-## 26.14 Alias
+## 27.14 Alias
 
 `using template`，用于简化上述模板。例如`std::enable_if_t`等价于`typename enable_if<b,T>::type`
 
@@ -1648,7 +1654,7 @@ int main(int argc, char* argv[]) {
 
 1. ...
 
-## 26.15 std::move
+## 27.15 std::move
 
 标准库的实现如下：
 
@@ -1683,7 +1689,7 @@ int main() {
 }
 ```
 
-## 26.16 std::forward
+## 27.16 std::forward
 
 `std::forward`主要用于实现模板的完美转发：因为对于一个变量而言，无论该变量的类型是左值引用还是右值引用，变量本身都是左值，如果直接将变量传递到下一个方法中，那么一定是按照左值来匹配重载函数的，而`std::forward`就是为了解决这个问题。请看下面这个例子：
 
@@ -1802,7 +1808,7 @@ func(std::forward<int&&>(1)) -> right reference version
     }
 ```
 
-### 26.16.1 forwarding reference
+### 27.16.1 forwarding reference
 
 **当且仅当`T`是函数模板的模板类型形参时，`T&&`才能称为`forwarding reference`，而其他任何形式，都不是`forwarding reference`。例如如下示例代码：**
 
@@ -1880,9 +1886,9 @@ struct C {
 };
 ```
 
-# 27 unordered_map
+# 28 unordered_map
 
-# 28 unordered_set
+# 29 unordered_set
 
 Both `equal` and `hash` functions should be marked with `const`
 
@@ -1956,7 +1962,7 @@ int main() {
 }
 ```
 
-# 29 utility
+# 30 utility
 
 1. `std::exchange`：
     ```cpp
@@ -2022,7 +2028,7 @@ int main() {
     }
     ```
 
-## 29.1 How to return pair containing reference type
+## 30.1 How to return pair containing reference type
 
 示例如下：
 
@@ -2086,7 +2092,7 @@ int main() {
 * `get_data_2`：正确方式。由于`std::ref`（返回类型是`std::reference_wrapper`）的存在，`std::make_pair`会创建类型为`std::pair<const std::vector<int>&, int>`的对象，此时引用会正确初始化
 * `get_data_3`：正确方式，不用`std::make_pair`，引用会正确初始化
 
-# 30 variant
+# 31 variant
 
 1. `std::visit`
 1. `std::variant`：类型安全的union。只允许以正确的类型进行访问
@@ -2107,7 +2113,7 @@ int main() {
 }
 ```
 
-## 30.1 Dynamic Binding
+## 31.1 Dynamic Binding
 
 `std::variant`结合`std::visit`可以实现动态分派，示例代码如下：
 
@@ -2144,7 +2150,7 @@ int main() {
 * 每个`Visitor,variant`对会生成一个`vtable`，里面记录了所有的函数指针，并按照`std::variant`各个类型声明的顺序排序
 * 在用`std::visit`进行访问时，会用`std::variant::index`找到`vtable`中的函数指针，并进行调用
 
-# 31 Containers
+# 32 Containers
 
 1. `<vector>`：其内部就是一个数组。当进行扩容缩容时，会进行数据的拷贝或移动，因此要求对应的类型至少拥有拷贝构造函数和移动构造函数中的一个。例如，`std::vector<std::atomic_bool>`是无法调用`push_back`或者`emplace_back`来增加元素的
 1. `<array>`
@@ -2156,14 +2162,14 @@ int main() {
 1. `<set>`
 1. `<unordered_set>`
 
-## 31.1 Tips
+## 32.1 Tips
 
 1. `std::map`或者`std::set`用下标访问后，即便访问前元素不存在，也会插入一个默认值。因此下标访问是非`const`的
 1. 容器在扩容时，调用的是元素的拷贝构造函数
 1. `std::vector<T> v(n)`会生成`n`个对应元素的默认值，而不是起到预留`n`个元素的空间的作用
 1. 不要将`end`方法返回的迭代器传入`erase`方法
 
-# 32 SIMD
+# 33 SIMD
 
 [Header files for x86 SIMD intrinsics](https://stackoverflow.com/questions/11228855/header-files-for-x86-simd-intrinsics)
 
@@ -2203,7 +2209,7 @@ int main() {
 * `-mavx512vbmi`
 * ...
 
-# 33 C Standard Library
+# 34 C Standard Library
 
 由于`C++`是`C`的超集，`C`的标准库也被添加到`std`命名空间中了，但是头文件有所区别：`xxx.h -> cxxx`。其中，`xxx.h`是原始的`C`标准库头文件，其符号不在任何命名空间中；`cxxx`是对应的`C++`版本的头文件，其符号在`std`命名空间中
 
@@ -2242,7 +2248,7 @@ int main() {
     * `std::isblank`：仅对空格和水平制表符返回 true
     * `std::isspace`：空格、表单换行符、换行符、回车符、水平制表符和垂直制表符都返回true
 
-## 33.1 csignal
+## 34.1 csignal
 
 各种信号都定义在`signum.h`这个头文件中
 
@@ -2295,7 +2301,7 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-## 33.2 Execute Command
+## 34.2 Execute Command
 
 ```cpp
 #include <cstdlib>
@@ -2312,7 +2318,7 @@ int main() {
 }
 ```
 
-# 34 Builtin Functions
+# 35 Builtin Functions
 
 [6.63 Other Built-in Functions Provided by GCC](https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html)
 
@@ -2322,7 +2328,7 @@ int main() {
     * `#define LIKELY(x) __builtin_expect(!!(x), 1)`
     * `#define UNLIKELY(x) __builtin_expect(!!(x), 0)`
 
-# 35 Frequently-Used Compoments for Interview
+# 36 Frequently-Used Compoments for Interview
 
 **Data Structure:**
 

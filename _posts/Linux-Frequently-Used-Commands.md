@@ -1241,6 +1241,7 @@ locate stl_vector.h
 * `tar -czvf /test.tar.gz -C /home/liuye aaa bbb ccc`
 * `tar -zxvf /test.tar.gz -C /home/liuye`：解压到`/home/liuye`目录中
 * `tar cvf - /home/liuye | sha1sum`：`-`表示标准输入输出，这里表示标准出
+* `wget -qO- xxx.tar.gz | tar -xz -C /tmp/target`
 
 ## 2.22 curl
 
