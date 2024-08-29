@@ -55,3 +55,14 @@ String formattedDateTime = localDateTime.format(formatter);
 ```java
 ZoneOffset offset = ZonedDateTime.now(ZoneId.systemDefault()).getOffset();
 ```
+
+## 1.5 Default timezone config load order
+
+The priorities from high to low:
+
+* `-Duser.timezone`: Jvm option
+    * `java -Duser.timezone=America/New_York -jar yourApp.jar`
+* `TZ`: Env
+    * `export TZ=Asia/Tokyo`
+* `/etc/timezone`
+* `/etc/localtime`

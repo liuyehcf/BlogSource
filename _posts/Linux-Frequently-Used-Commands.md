@@ -284,11 +284,18 @@ hostnamectl set-hostname <name>
 
 **Examples:**
 
-* `date`：查看当前时间
-* `date "+%Y-%m-%d %H:%M:%S"`：指定时间格式
-* `date -s '2014-12-25 12:34:56'`：修改系统时间
+* `date`
+* `date "+%Y-%m-%d %H:%M:%S"`
+* `date -s '2014-12-25 12:34:56'`: Change system time.
 
-## 1.27 ntpdate
+## 1.27 timedatectl
+
+**Examples:**
+
+* `timedatectl`: Show time info
+* `timedatectl set-timezone Asia/Shanghai`: Change timezone
+
+## 1.28 ntpdate
 
 **Examples:**
 
@@ -3043,6 +3050,12 @@ yum install -y hping3
 
 * `iperf -s -p 3389 -i 1`：服务端
 * `iperf -c <server_addr> -p 3389 -i 1`：客户端
+
+## 5.19 nc
+
+**Examples:**
+
+* `nc -z 127.0.0.1 22`: Test connectivity.
 
 # 6 Monitoring
 

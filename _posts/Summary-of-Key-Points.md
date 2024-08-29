@@ -1155,7 +1155,7 @@ Now, instead of storing all these chunks as is, Roaring Bitmaps compresses them:
                     - Generally suitable for sequential file operations or when there's a need for granular control over I/O
             - Slab Allocation
             - Linux Virtual Memory Layout(From Highest to Lowest)
-                - Kernal Space
+                - Kernel Space
                 - Stack Bottom
                 - Stack Top
                 - Unallocated Space

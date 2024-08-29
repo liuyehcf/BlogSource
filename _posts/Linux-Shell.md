@@ -288,6 +288,47 @@ env | grep FOO
     * `LC_TIME`: Specifies the format used for date and time representation.
 * `TMPDIR`：自定义tmp目录
 
+## 1.6 Conditional Expressions
+
+**`man bash` for details (Search `CONDITIONAL EXPRESSIONS`):**
+
+Conditional expressions are used by the `[[` compound command and the `test` and `[` builtin commands to test file attributes and perform string and arithmetic comparisons. The test and `[` commands determine their behavior based on the number of arguments
+
+* `-a file`: True if file exists.
+* `-b file`: True if file exists and is a block special file.
+* ` -c file`: True if file exists and is a character special file.
+* `-d file`: True if file exists and is a directory.
+* `-e file`: True if file exists.
+* `-f file`: True if file exists and is a regular file.
+* `-g file`: True if file exists and is set-group-id.
+* `-h file`: True if file exists and is a symbolic link.
+* `-k file`: True if file exists and its ``sticky'' bit is set.
+* `-p file`: True if file exists and is a named pipe (FIFO).
+* `-r file`: True if file exists and is readable.
+* `-s file`: True if file exists and has a size greater than zero.
+* `-t fd`: True if file descriptor fd is open and refers to a terminal.
+* `-u file`: True if file exists and its set-user-id bit is set.
+* `-w file`: True if file exists and is writable.
+* `-x file`: True if file exists and is executable.
+* `-G file`: True if file exists and is owned by the effective group id.
+* `-L file`: True if file exists and is a symbolic link.
+* `-N file`: True if file exists and has been modified since it was last read.
+* `-O file`: True if file exists and is owned by the effective user id.
+* `-S file`: True if file exists and is a socket.
+* `file1 -ef file2`: True if file1 and file2 refer to the same device and inode numbers.
+* `file1 -nt file2`: True if file1 is newer (according to modification date) than file2, or if file1 exists and file2 does not.
+* `file1 -ot file2`: True if file1 is older than file2, or if file2 exists and file1 does not.
+* `-o optname`: True if the shell option optname is enabled. See the list of options under the description of the `-o` option to the set builtin below.
+* `-v varname`: True if the shell variable varname is set (has been assigned a value).
+* `-R varname`: True if the shell variable varname is set and is a name reference.
+* `-z string`: True if the length of string is zero.
+* `-n string`: True if the length of string is non-zero.
+* `string1 == string2`: True if the strings are equal. Only for `[[` command.
+* `string1 = string2`: True if the strings are equal.
+* `string1 != string2`: True if the strings are not equal.
+* `string1 < string2`: True if string1 sorts before string2 lexicographically.
+* `string1 > string2`: True if string1 sorts after string2 lexicographically.
+
 # 2 Special Symbols
 
 shell中的特殊符号包括如下几种
@@ -1507,14 +1548,22 @@ echo $1 # 输出d
 
 ## 7.2 eval
 
-通过连接参数构造命令，如果包含间接引用，也会保持原有语义，下面以一个例子来说明
+The args are read and concatenated together into a single command. This command is then read and executed by the shell, and its exit status is returned as the value of eval. If there are no args, or only null arguments, eval returns 0.
 
 ```sh
-foo=10 x=foo
-y='$'$x
-echo $y # 输出$foo
-eval y='$'$x
-echo $y # 输出10
+# Execute command exactly you wrote
+cmd="date '+%Y-%m-%d %H:%M:%S'"
+${cmd}
+eval ${cmd}
+
+# Variable expansion, one eval can have one more expansion process.
+var0="hello world"
+var1='${var0}'
+var2='${var1}'
+echo ${var1}            # output: ${var0}
+eval echo ${var1}       # output: hello world
+eval echo ${var2}       # output: ${var0}
+eval eval echo ${var2}  # output: hello world
 ```
 
 ## 7.3 set

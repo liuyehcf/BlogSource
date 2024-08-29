@@ -2616,21 +2616,23 @@ int main() {
 
 ## 4.4 Attributes
 
-`__attribute__`是一个`GCC`编译器特有的特性，它允许程序员向编译器提供一些指示信息，以便在编译期间进行优化或者在运行期间提供一些额外的约束条件。这些指示信息被称为属性（`attributes`），可以应用于函数、变量、类型等各种程序元素
+`__attribute__` is a feature specific to the `GCC` compiler that allows programmers to provide the compiler with certain instructions to optimize during compilation or apply additional constraints during runtime. These instructions are called attributes (`attributes`) and can be applied to various program elements such as functions, variables, and types.
 
-`C++11`引入了一种新的语言特性，称为属性（`attributes`），它们与`__attribute__`类似，但是是标准`C++`的一部分，因此在编译器支持`C++11`之后，可以在`C++`代码中使用它们。与`__attribute__`不同，`C++11`的`attributes`支持在类和命名空间级别使用，而不仅仅是在函数和变量级别
+`C++11` introduced a new language feature called attributes (`attributes`), which are similar to `__attribute__` but are part of the standard `C++`, making them usable in `C++` code after the compiler supports `C++11`. Unlike `__attribute__`, `C++11` attributes can be used at the class and namespace levels, not just at the function and variable levels.
 
-`C++11`的`attributes`也提供了更多的灵活性和可读性。它们可以用更自然的方式嵌入到代码中，而不像`__attribute__`那样需要使用一些冗长的语法。此外，`C++11`的`attributes`还提供了一些有用的新特性，例如`[[noreturn]]`、`[[carries_dependency]]`、`[[deprecated]]`、`[[fallthrough]]`
+`C++11` attributes also provide more flexibility and readability. They can be embedded in the code in a more natural way, unlike `__attribute__`, which requires some verbose syntax. Additionally, `C++11` attributes offer some useful new features such as `[[noreturn]]`, `[[carries_dependency]]`, `[[deprecated]]`, `[[fallthrough]]`.
 
-常用`__attribute__`清单：
+Common `__attribute__` list:
 
-* `__attribute__((packed))`：指示编译器在分配结构体内存时尽量紧凑地排列各个字段，以减小结构体的内存占用
-* `__attribute__((aligned(n)))`: 指示编译器将变量对齐到`n`字节边界
-* `__attribute__((noreturn))`：指示函数不会返回，用于告诉编译器在函数调用之后不需要进行任何清理操作
-* `__attribute__((unused))`：指示编译器不应发出未使用变量的警告。
-* `__attribute__((deprecated))`：指示函数或变量已经过时，编译器会在使用它们时发出警告
-* `__attribute__((visibility("hidden")))`：指示编译器隐藏该符号，即不会出现在当前编译单元的导出的符号表中
-* `__attribute__(alias)`：它允许你将一个函数或变量的名称指定为另一个已存在的函数或变量的别名。可以起到与链接器参数`--wrap=<symbol>`类似的作用
+* `__attribute__((packed))`: Instructs the compiler to pack structure members as tightly as possible to reduce the memory footprint of the structure.
+* `__attribute__((aligned(n)))`: Instructs the compiler to align a variable to an `n`-byte boundary.
+* `__attribute__((noreturn))`: Instructs the compiler that the function will not return, which is used to inform the compiler that no cleanup is needed after the function call.
+* `__attribute__((unused))`: Instructs the compiler not to issue a warning for unused variables.
+* `__attribute__((deprecated))`: Instructs the compiler that the function or variable is deprecated, and the compiler will issue a warning when they are used.
+* `__attribute__((visibility("hidden")))`: Instructs the compiler to hide the symbol, meaning it will not appear in the exported symbol table of the current compilation unit.
+* `__attribute__((guarded_by(mutex)))`: is used to annotate a data member (usually a class member variable) to indicate that it is protected by a specific `mutex`. This attribute acts as a directive to the compiler or static analysis tools to help ensure thread safety.
+* `__attribute__(alias)`: Allows you to specify the name of a function or variable as an alias for an existing function or variable. It can serve a similar purpose as the linker parameter `--wrap=<symbol>`.
+
     ```cpp
     #include <stdio.h>
 
@@ -2653,15 +2655,15 @@ int main() {
     }
     ```
 
-常用`attributes`清单：
+Common `attributes` list:
 
-* `[[noreturn]]`（C++11）：用于标识函数不会返回。如果一个函数被标记为`[[noreturn]]`，那么编译器会警告或者错误地处理一个函数的任何尝试返回值
-* `[[deprecated]]`（C++14）：用于标识函数或变量已被弃用。编译器会在调用或使用被标记为`[[deprecated]]`的函数或变量时给出警告
-* `[[fallthrough]]`（C++17）：用于标识`switch`语句中的`case`标签，以指示代码故意继续执行下一个`case`标签
-* `[[nodiscard]]`（C++17）：用于标识函数的返回值需要被检查。当一个函数被标记为`[[nodiscard]]`时，如果函数返回值没有被检查，编译器会给出警告
-* `[[maybe_unused]]`（C++17）：用于标识变量或函数可能未被使用。编译器不会给出未使用的变量或函数的警告
-* `[[likely]]`（C++20）：提示编译器该分支大概率为`true`
-* `[[unlikely]]`（C++20）：提示编译器该分支大概率为`false`
+* `[[noreturn]]` (C++11): Indicates that a function will not return. If a function is marked with `[[noreturn]]`, the compiler will issue a warning or error for any attempt to return a value from that function.
+* `[[deprecated]]` (C++14): Indicates that a function or variable is deprecated. The compiler will issue a warning when a function or variable marked with `[[deprecated]]` is called or used.
+* `[[fallthrough]]` (C++17): Used to indicate a `case` label in a `switch` statement, signaling that the code intentionally falls through to the next `case` label.
+* `[[nodiscard]]` (C++17): Indicates that the return value of a function should be checked. When a function is marked with `[[nodiscard]]`, the compiler will issue a warning if the return value is not checked.
+* `[[maybe_unused]]` (C++17): Indicates that a variable or function may be unused. The compiler will not issue a warning for unused variables or functions.
+* `[[likely]]` (C++20): Hints to the compiler that this branch is likely to be `true`.
+* `[[unlikely]]` (C++20): Hints to the compiler that this branch is likely to be `false`.
 
 ### 4.4.1 aligned
 

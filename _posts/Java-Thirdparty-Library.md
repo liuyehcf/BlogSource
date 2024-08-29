@@ -111,7 +111,12 @@ categories:
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
                 <SizeBasedTriggeringPolicy size="10MB"/>
             </Policies>
-            <DefaultRolloverStrategy max="7"/>
+            <DefaultRolloverStrategy max="7">
+                <Delete basePath="logs" maxDepth="1">
+                    <IfFileName glob="app-*.log"/>
+                    <IfLastModified age="7d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
         </RollingRandomAccessFile>
         <Async name="AsyncAppender">
             <AppenderRef ref="ConsoleAppender"/>
@@ -125,6 +130,8 @@ categories:
     </Loggers>
 </Configuration>
 ```
+
+* Delete Action only works when file rolling triggered.
 
 ### 2.1.3 Tips
 
@@ -170,6 +177,19 @@ Lookups provide a way to add values to the Log4j configuration at arbitrary plac
 Generally, AsyncAppender relies on one or more Appenders, but if the initializations of these dependencies failed, this exception may occur. Possible reasons are:
 
 * `RollingRandomAccessFile` has no permission to perform write operation, like create directory and file.
+
+#### 2.1.4.2 Binding to log4j-1 Unexpectedly
+
+```
+log4j:WARN Please initialize the log4j system properly.
+log4j:WARN See http://logging.apache.org/log4j/1.2/faq.html#noconfig for more info.
+log4j:WARN No appenders could be found for logger (org.apache.hadoop.util.Shell).
+```
+
+Maybe you don't exclude all log4j-1's dependency in your project, like:
+
+* `org.slf4j:slf4j-reload4j`
+* `ch.qos.reload4j:reload4j`
 
 ## 2.2 Logback
 

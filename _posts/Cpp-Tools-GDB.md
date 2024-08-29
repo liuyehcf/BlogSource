@@ -636,7 +636,7 @@ And there's a mechanism called Rosetta:
 According to [Debugging an x86 application in Rosetta for Linux](https://sporks.space/2023/04/12/debugging-an-x86-application-in-rosetta-for-linux/), I can debug the program by:
 
 ```sh
-# this will hang
+# This will hang
 ROSETTA_DEBUGSERVER_PORT=1234 ./main &
 
 # Enter Gdb
@@ -645,6 +645,20 @@ gdb
 (gdb) file main
 (gdb) target remote localhost:1234
 (gdb) continue
+```
+
+Or for lldb
+
+```sh
+# This will hang
+ROSETTA_DEBUGSERVER_PORT=1234 ./main &
+
+# Enter lldb
+lldb
+(lldb) platform select remote-linux
+(lldb) target create ./main
+(lldb) gdb-remote localhost:1234
+(lldb) continue
 ```
 
 ## 4.3 How to ignore interrupt of sepcific signal

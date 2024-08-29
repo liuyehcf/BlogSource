@@ -349,7 +349,7 @@ cat /proc/sys/user/max_net_namespaces
 
 **Network Namespace：用于隔离网络**
 
-### 1.6.1 无网桥
+### 1.6.1 Without Bridge
 
 **编写一个脚本，内容如下，这里我取名为`netns_without_bridge.sh`**
 
@@ -466,7 +466,7 @@ cleanup
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-### 1.6.2 有网桥
+### 1.6.2 With Bridge
 
 **编写一个脚本，内容如下，这里我取名为`netns_with_bridge.sh`**
 
@@ -606,11 +606,11 @@ cleanup
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-## 1.7 实现简易容器
+## 1.7 Implement Docker
 
 该部分转载自[Container Creation Using Namespaces and Bash](https://dev.to/nicolasmesa/)
 
-### 1.7.1 术语解释
+### 1.7.1 Terms
 
 **Container**：容器是一组技术的集合，包括`namespace`、`cgroup`，在本小节，我们关注的重点是`namespace`
 
@@ -618,16 +618,16 @@ cleanup
 
 **Btrfs**：Btrfs是一种采用`Copy On Write`模式的高效、易用的文件系统
 
-### 1.7.2 准备工作
+### 1.7.2 Preparation
 
 1. 我们需要安装docker（安装docker即可）
     * 需要使用docker导出某个镜像
     * 使用docker自带的网桥
 1. 我们需要一个btrfs文件系统，挂载于/btrfs，下面会介绍如何创建（需要安装btrfs命令）
 
-### 1.7.3 详细步骤
+### 1.7.3 Detail Steps
 
-#### 1.7.3.1 创建disk image
+#### 1.7.3.1 Create Disk Image
 
 ```sh
 # 用dd命令创建一个2GB的空image（就是个文件）
@@ -643,7 +643,7 @@ dd if=/dev/zero of=disk.img bs=512 count=4194304
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-#### 1.7.3.2 格式化disk image
+#### 1.7.3.2 Format Disk Image
 
 ```sh
 # 利用 mkfs.btrfs 命令，将一个文件格式化成 btrfs 文件系统
@@ -670,7 +670,7 @@ Devices:
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-#### 1.7.3.3 挂载disk image
+#### 1.7.3.3 Mount Disk Image
 
 ```sh
 # 将disk.img对应的文件系统挂载到/btrfs目录下
@@ -678,7 +678,7 @@ mkdir /btrfs
 mount -t btrfs disk.img /btrfs
 ```
 
-#### 1.7.3.4 让挂载不可见
+#### 1.7.3.4 Invisible Image
 
 ```sh
 # 让接下来的步骤中容器执行的挂载操作对于外界不可见
@@ -686,7 +686,7 @@ mount -t btrfs disk.img /btrfs
 mount --make-rprivate /
 ```
 
-#### 1.7.3.5 创建容器镜像
+#### 1.7.3.5 Create Container Image
 
 ```sh
 # 进入文件系统
@@ -738,7 +738,7 @@ bin  dev  etc  home  lib  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp 
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-#### 1.7.3.6 使用chroot测试
+#### 1.7.3.6 Test with chroot
 
 ```sh
 # 将 containers/tupperware/  作为 /root，并执行/root/bin/sh（这里root就是指change之后的root）
@@ -756,7 +756,7 @@ bin            etc            lib            mnt            proc           run  
 exit
 ```
 
-#### 1.7.3.7 使用命名空间
+#### 1.7.3.7 Use namespace
 
 ```sh
 # 以6种隔离维度执行bash命令
@@ -779,7 +779,7 @@ ps
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-#### 1.7.3.8 挂载proc
+#### 1.7.3.8 Mount proc
 
 ```sh
 # 挂载proc
@@ -797,7 +797,7 @@ ps
 umount /proc
 ```
 
-#### 1.7.3.9 交换根文件系统(pivot root)
+#### 1.7.3.9 Pivot root
 
 ```sh
 # 接下来，利用 mount 命令以及 pivot_root 命令把 /btrfs/containers/tupperware 作为文件系统的根目录
@@ -836,7 +836,7 @@ bin       boot      btrfs     dev       disk.img  etc       home      lib       
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-#### 1.7.3.10 整理挂载点
+#### 1.7.3.10 Mountpoints
 
 ```sh
 
@@ -888,7 +888,7 @@ proc on /proc type proc (rw,relatime)
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-#### 1.7.3.11 网络命名空间
+#### 1.7.3.11 Network Namespace
 
 **以下命令，在容器终端执行（unshare创建的容器终端）**
 
@@ -1016,7 +1016,7 @@ round-trip min/avg/max = 30.111/30.587/31.170 ms
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-### 1.7.4 清理
+### 1.7.4 Clean Up
 
 ```sh
 # 退出容器终端
@@ -1031,7 +1031,7 @@ rm -f disk.img
 rmdir /btrfs/
 ```
 
-## 1.8 参考
+## 1.8 Reference
 
 * [DOCKER基础技术：LINUX NAMESPACE（上）](https://coolshell.cn/articles/17010.html)
 * [DOCKER基础技术：LINUX NAMESPACE（下）](https://coolshell.cn/articles/17029.html)
@@ -1042,11 +1042,11 @@ rmdir /btrfs/
 
 **`cgroup`和`namespace`类似，也是将进程进行分组，但它的目的和`namespace`不一样，`namespace`是为了隔离进程组之间的资源（每个进程都有一个隔离的资源视图），而`cgroup`是为了对一组进程进行统一的资源监控和限制**
 
-## 2.1 层级结构（hierarch）
+## 2.1 hierarchy
 
 **一个`hierarchy`可以理解为一棵`cgroup`树，树的每个`节点`就是一个`进程组`，每棵树都会与零到多个`subsystem`关联**。在一颗树里面，会包含Linux系统中的所有进程，但每个进程只能属于一个节点（进程组）。系统中可以有很多颗`cgroup`树，每棵树都和不同的`subsystem`关联，一个进程可以属于多颗树，即一个进程可以属于多个进程组，只是这些进程组和不同的`subsystem`关联。目前Linux支持12种`subsystem`，如果不考虑不与任何`subsystem`关联的情况（`systemd`就属于这种情况），Linux里面最多可以建12颗`cgroup`树，每棵树关联一个`subsystem`，当然也可以只建一棵树，然后让这棵树关联所有的`subsystem`。当一颗`cgroup`树不和任何`subsystem`关联的时候，意味着这棵树只是将进程进行分组，至于要在分组的基础上做些什么，将由应用程序自己决定，`systemd`就是一个这样的例子
 
-## 2.2 子系统（subsystem）
+## 2.2 Subsystem
 
 **一个`subsystem`就是一个内核模块，他被关联到一颗`cgroup`树之后，就会在树的每个节点（进程组）上做具体的操作。**`subsystem`经常被称作`resource controller`，因为它主要被用来调度或者限制每个进程组的资源，但是这个说法不完全准确，因为有时我们将进程分组只是为了做一些监控，观察一下他们的状态，比如`perf_event subsystem`。到目前为止，Linux支持12种`subsystem`，比如限制CPU的使用时间，限制使用的内存，统计CPU的使用情况，冻结和恢复一组进程等，后续会对它们一一进行介绍
 
@@ -1067,7 +1067,7 @@ rmdir /btrfs/
 
 **可以通过`cat /proc/cgroups`或者`mount -t cgroup`查看系统支持的子系统**
 
-### 2.2.1 cpu子系统
+### 2.2.1 CPU Subsystem
 
 cpu子系统可以调度`cgroup`对cpu的获取量。可用以下两个调度程序来管理对cpu资源的获取
 
@@ -1139,7 +1139,7 @@ cgdelete cpu:test_cpu_subsystem
 
 **当一个进程被添加到某个cgroup中的task中后，由该进程创建的线程都自动属于这个cgroup。换言之，就是在之前创建的那些线程，并不会自动属于这个cgroup！！！**
 
-## 2.3 内核实现
+## 2.3 Kernel Implementation
 
 ![cgroup_struct](/images/Linux-Mechanism/cgroup_struct.png)
 
@@ -1299,24 +1299,24 @@ struct cgroup {
 };
 ```
 
-## 2.4 docker与cgroup
+## 2.4 docker and cgroup
 
 **2种`cgroup`驱动**
 
 1. `system cgroup driver`
 1. `cgroupfs cgroup driver`
 
-## 2.5 kubernetes与cgroup
+## 2.5 kubernetes and cgroup
 
 在k8s中，以pod为单位进行资源限制（充分利用了`cgroup`的`hierarchy`），对应的目录为`/sys/fs/cgroup/<resource type>/kubepods.slice`
 
-## 2.6 cgroup相关命令行工具
+## 2.6 cgroup Command Line
 
 ```sh
 yum install -y libcgroup libcgroup-tools
 ```
 
-## 2.7 参考
+## 2.7 Reference
 
 * [【docker 底层知识】cgroup 原理分析](https://blog.csdn.net/zhonglinzhang/article/details/64905759)
 * [Linux Cgroup 入门教程：基本概念](https://fuckcloudnative.io/posts/understanding-cgroups-part-1-basics/)
@@ -1336,7 +1336,7 @@ yum install -y libcgroup libcgroup-tools
 
 本小节转载自[Systemd 入门教程：命令篇](http://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-commands.html)
 
-## 3.1 概述
+## 3.1 Overview
 
 历史上，Linux的启动一直采用`init`进程，这种方法有两个缺点
 
@@ -1381,7 +1381,7 @@ ln -s '/usr/lib/systemd/system/demo-service.service' '/etc/systemd/system/multi-
 1. `masked`：该配置文件被禁止建立启动链接
 * **注意，从配置文件的状态无法看出，该`Unit`是否正在运行。若要查看`Unit`的运行状态，需要使用`systemctl status`命令**
 
-## 3.3 文件格式
+## 3.3 Config Format
 
 **`systemctl cat`可以查看配置文件的内容，例如`systemctl cat sshd.service`**
 
@@ -1453,33 +1453,37 @@ ln -s '/usr/lib/systemd/system/demo-service.service' '/etc/systemd/system/multi-
 
 完整的配置项清单参考[systemd.unit — Unit configuration](https://www.freedesktop.org/software/systemd/man/systemd.unit.html)
 
-## 3.4 命令行工具
+## 3.4 Command Line
 
-**systemctl命令行工具**
+### 3.4.1 systemctl
 
-* `systemctl start xxx.service`：启动xxx服务
-* `systemctl stop xxx.service`：停止xxx服务
-* `systemctl enable xxx.service`：允许xxx服务开机自启动
-* `systemctl disable xxx.service`：进制xxx服务开机自启动
-* `systemctl status xxx.service`：查看xxx服务的状态
-* `systemctl status pid`：查看指定pid所关联服务的状态
-* `systemctl restart xxx.service`：重新启动xxx服务
-* `systemctl reload xxx.service`：让xxx服务重新加载配置文件（如果有的话）
-* `systemctl list-units --type=service`：列出所有的服务
-* `systemctl daemon-reload`：重新加载`systemd`的配置文件，当我们修改了`/usr/lib/systemd/system/`目录下的文件时，我们需要使用这个命令来使修改生效
+* `systemctl start xxx.service`
+* `systemctl stop xxx.service`
+* `systemctl enable xxx.service`
+* `systemctl disable xxx.service`
+* `systemctl status xxx.service`
+* `systemctl status <pid>`
+* `systemctl restart xxx.service`
+* `systemctl reload xxx.service`
+* `systemctl list-units --type=service`: List all services
+* `systemctl daemon-reload`: Reload unit config
 * `systemctl show xxx.service`
-* `systemctl show xxx.service --property=ActiveState`：查看服务的某个属性
-* **`systemctl set-default xxx.target`：设置系统的启动级别，常用的有`multi-user.target`、`graphical.target`。与`CentOS 6.x`的`run level`类似**
+* `systemctl show xxx.service --property=ActiveState`
+* **`systemctl set-default xxx.target`: Set default run level. Similar to `CentOS 6.x run level`**
     * `poweroff.target`：对应`level-0`
     * `rescue.target`：对应`level-1`
     * `multi-user.target`：对应`level-2/3/4`
     * `graphical.target`：对应`level-5`
     * `reboot.target`：对应`level-6`
-* **`systemctl get-default`：查看系统的启动级别**
+* **`systemctl get-default`**
 
-**journalctl命令行工具**
+### 3.4.2 journalctl
 
-* `journalctl -u xxx.service`：查看xxx服务的日志
+* `journalctl -u xxx.service`
+    * `journalctl -u xxx.service -n 100`
+    * `journalctl -u xxx.service -f`
+* `journalctl --vacuum-time=2d`: Removes archived journal files older than the specified timespan. Accepts the usual `s` (default), `m`, `h`, `days`, `months`, `weeks` and `years` suffixes.
+* `journalctl --vacuum-size=500M`: Removes the oldest archived journal files until the disk space they use falls below the specified size. Accepts the usual `K`, `M`, `G` and `T` suffixes (to the base of `1024`).
 
 ## 3.5 User Service Manager
 
@@ -1618,7 +1622,7 @@ systemctl stop demo-service.service
 #-------------------------↑↑↑↑↑↑-------------------------
 ```
 
-## 3.7 参考
+## 3.7 Reference
 
 * [Systemd 入门教程：命令篇](http://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-commands.html)
 * [Systemd 入门教程：实战篇](http://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-part-two.html)
@@ -1639,7 +1643,7 @@ systemctl stop demo-service.service
 
 委任式存取控制(Mandatory Access Control, MAC)。MAC可以针对特定的程序与特定的文件资源来进行权限的控管。也就是说，即使你是`root`，那么在使用不同的程序时，你所能取得的权限并不一定是`root`，而得要看当时该程序的配置而定。如此一来，我们针对控制的『主体』变成了『程序』而不是用户。此外，这个主体程序也不能任意使用系统文件资源，因为每个文件资源也有针对该主体程序配置可取用的权限。如此一来，控制项目就细的多了。但整个系统程序那么多、文件那么多，一项一项控制可就没完没了。所以`SELinux`也提供一些默认的政策(Policy)，并在该政策内提供多个守则(rule)，让你可以选择是否激活该控制守则
 
-## 4.3 SELinux的运行模式
+## 4.3 SELinux Run Mode
 
 `SELinux`是透过MAC的方式来控管程序，他控制的主体是程序，而目标则是该程序能否读取的『文件资源』
 
@@ -1659,7 +1663,7 @@ systemctl stop demo-service.service
 
 上图的重点在『主体』如何取得『目标』的资源存取权限。由上图我们可以发现，主体程序必须要通过`SELinux`政策内的守则放行后，就可以与目标资源进行安全性本文的比对，若比对失败则无法存取目标，若比对成功则可以开始存取目标。问题是，最终能否存取目标还是与文件系统的`rwx`权限配置有关
 
-## 4.4 安全性文本
+## 4.4 Security Context
 
 **安全性本文存在於`主体程序`中与`目标文件资源`中**
 
@@ -1682,7 +1686,7 @@ systemctl stop demo-service.service
     * `domain`：在主体程序(Subject)则称为领域(domain)了
     * `domain`需要与`type`搭配，则该程序才能够顺利的读取文件资源
 
-## 4.5 参考
+## 4.5 Reference
 
 * [第十七章、程序管理与 SELinux 初探](http://cn.linux.vbird.org/linux_basic/0440processcontrol_5.php)
 * [INTRODUCTION TO SELINUX](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/5/html/deployment_guide/ch-selinux)
@@ -1709,7 +1713,7 @@ systemctl stop demo-service.service
 
 ## 5.2 [bpftrace](https://github.com/iovisor/bpftrace)
 
-## 5.3 参考
+## 5.3 Reference
 
 * [Linux Extended BPF (eBPF) Tracing Tools](https://www.brendangregg.com/ebpf.html)
 * [Learn eBPF Tracing: Tutorial and Examples](https://www.brendangregg.com/blog/2019-01-01/learn-ebpf-tracing.html)
@@ -1717,7 +1721,7 @@ systemctl stop demo-service.service
 
 # 6 Interrupt
 
-## 6.1 参考
+## 6.1 Reference
 
 * [linux异常处理体系结构](https://www.cnblogs.com/gulan-zmc/p/11604437.html)
 * [Linux的中断处理机制 [一] - 数据结构(1)](https://zhuanlan.zhihu.com/p/83709066)
@@ -1736,7 +1740,7 @@ systemctl stop demo-service.service
 
 在`NUMA`架构中，操作系统和编译器需要提供支持，以便程序员可以使用`NUMA`相关的`API`和指令来控制内存分配和访问。例如，`Linux`提供了`libnuma`库和`numactl`工具，可以用于控制进程和内存的亲和性和绑定性，以及使用`NUMA`相关的系统调用和环境变量来进行内存分配和管理。在编译器层面，一些编译器可以通过特定的编译选项来生成`NUMA`意识的代码，以优化内存访问的性能和局部性
 
-## 7.1 参考
+## 7.1 Reference
 
 * [十年后数据库还是不敢拥抱NUMA？](https://zhuanlan.zhihu.com/p/387117470)
 
