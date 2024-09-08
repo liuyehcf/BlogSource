@@ -943,7 +943,7 @@ grep searches for `PATTERNS` in each `FILE`
 
 ## 2.10 tr
 
-`tr`用于字符处理，其处理最小单元是字符
+`tr` is used for character processing, and its smallest processing unit is a character.
 
 **Pattern:**
 
@@ -951,47 +951,48 @@ grep searches for `PATTERNS` in each `FILE`
 
 **Options:**
 
-* `-c, --complement`：反选设定字符。也就是符合`SET1`的部份不做处理，不符合的剩余部份才进行转换
-* `-d, --delete`：删除指令字符
-* `-s, --squeeze-repeats`：缩减连续重复的字符成指定的单个字符
-* `-t, --truncate-set1`：削减`SET1`指定范围，使之与`SET2`设定长度相等
+* `-c, --complement`: Complement the specified characters. This means the part matching `SET1` is not processed, while the remaining unmatched part is transformed.
+* `-d, --delete`: Delete specified characters.
+* `-s, --squeeze-repeats`: Squeeze repeated characters into a single specified character.
+* `-t, --truncate-set1`: Truncate the range of `SET1` to match the length of `SET2`.
 
-**字符集合的范围：**
+**Character set ranges:**
 
-* `\NNN`：八进制值的字符 NNN (1 to 3 为八进制值的字符)
-* `\\`：反斜杠
-* `\a`：Ctrl-G 铃声
-* `\b`：Ctrl-H 退格符
-* `\f`：Ctrl-L 走行换页
-* `\n`：Ctrl-J 新行
-* `\r`：Ctrl-M 回车
-* `\t`：Ctrl-I tab键
-* `\v`：Ctrl-X 水平制表符
-* `CHAR1-CHAR2`：字符范围从 CHAR1 到 CHAR2 的指定，范围的指定以 ASCII 码的次序为基础，只能由小到大，不能由大到小。
-* `[CHAR*]`：这是 SET2 专用的设定，功能是重复指定的字符到与 SET1 相同长度为止
-* `[CHAR*REPEAT]`：这也是 SET2 专用的设定，功能是重复指定的字符到设定的 REPEAT 次数为止(REPEAT 的数字采 8 进位制计算，以 0 为开始)
-* `[:alnum:]`：所有字母字符与数字
-* `[:alpha:]`：所有字母字符
-* `[:blank:]`：所有水平空格
-* `[:cntrl:]`：所有控制字符
-* `[:digit:]`：所有数字
-* `[:graph:]`：所有可打印的字符(不包含空格符)
-* `[:lower:]`：所有小写字母
-* `[:print:]`：所有可打印的字符(包含空格符)
-* `[:punct:]`：所有标点字符
-* `[:space:]`：所有水平与垂直空格符
-* `[:upper:]`：所有大写字母
-* `[:xdigit:]`：所有 16 进位制的数字
-* `[=CHAR=]`：所有符合指定的字符(等号里的`CHAR`，代表你可自订的字符)
+* `\NNN`: Character with octal value NNN (1 to 3 octal digits).
+* `\\`: Backslash.
+* `\a`: Ctrl-G, bell character.
+* `\b`: Ctrl-H, backspace.
+* `\f`: Ctrl-L, form feed.
+* `\n`: Ctrl-J, new line.
+* `\r`: Ctrl-M, carriage return.
+* `\t`: Ctrl-I, tab key.
+* `\v`: Ctrl-X, vertical tab.
+* `CHAR1-CHAR2`: A range of characters from CHAR1 to CHAR2, specified in ASCII order. The range must be from smaller to larger, not the other way around.
+* `[CHAR*]`: This is specific to SET2, used to repeat the specified character until it matches the length of SET1.
+* `[CHAR*REPEAT]`: Also specific to SET2, this repeats the specified character for the given REPEAT times (REPEAT is calculated in octal, starting from 0).
+* `[:alnum:]`: All alphabetic characters and digits.
+* `[:alpha:]`: All alphabetic characters.
+* `[:blank:]`: All horizontal spaces.
+* `[:cntrl:]`: All control characters.
+* `[:digit:]`: All digits.
+* `[:graph:]`: All printable characters (excluding space).
+* `[:lower:]`: All lowercase letters.
+* `[:print:]`: All printable characters (including space).
+* `[:punct:]`: All punctuation characters.
+* `[:space:]`: All horizontal and vertical space characters.
+* `[:upper:]`: All uppercase letters.
+* `[:xdigit:]`: All hexadecimal digits.
+* `[=CHAR=]`: All characters equivalent to the specified character (the `CHAR` inside the equals sign represents a custom-defined character).
 
 **Examples:**
 
-* `echo "abcdefg" | tr "[:lower:]" "[:upper:]"`：将小写替换为大写
-* `echo -e "a\nb\nc" | tr "\n" " "`：将`\n`替换成空格
-* `echo "hello 123 world 456" | tr -d '0-9'`：删除`0-9`
-* `echo -e "aa.,a 1 b#$bb 2 c*/cc 3 \nddd 4" | tr -d -c '0-9 \n'`：删除除了`0-9`、空格、换行符之外的内容
-* `echo "thissss is      a text linnnnnnne." | tr -s ' sn'`：删除多余的空格、`s`和`n`
-* `head /dev/urandom | tr -dc A-Za-z0-9 | head -c 20`：生成随机串
+* `echo "abcdefg" | tr "[:lower:]" "[:upper:]"`: Converts lowercase letters to uppercase.
+* `echo -e "a\nb\nc" | tr "\n" " "`: Replaces `\n` with a space.
+* `echo "hello 123 world 456" | tr -d '0-9'`: Deletes digits from `0-9`.
+* `echo "'hello world'" | tr -d "'"`: Deletes single quotes.
+* `echo -e "aa.,a 1 b#$bb 2 c*/cc 3 \nddd 4" | tr -d -c '0-9 \n'`: Deletes everything except `0-9`, space, and newline characters.
+* `echo "thissss is      a text linnnnnnne." | tr -s ' sn'`: Removes redundant spaces, `s`, and `n`.
+* `head /dev/urandom | tr -dc A-Za-z0-9 | head -c 20`: Generates a random string.
 
 ## 2.11 jq
 
@@ -1119,7 +1120,7 @@ echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
 
 **`locate`是在已创建的数据库`/var/lib/mlocate`里面的数据所查找到的，所以不用直接在硬盘当中去访问，因此，相比于`find`，速度更快**
 
-**如何安装：**
+**Install:**
 
 ```sh
 yum install -y mlocate
@@ -1216,38 +1217,39 @@ locate stl_vector.h
 
 **Pattern:**
 
-* 压缩：
-    * `tar -jcv -f [压缩创建的文件(*.tar.bz2)] [-C 切换工作目录] [被压缩的文件或目录1] [被压缩的文件或目录2]...`
-    * `tar -zcv -f [压缩创建的文件(*.tar.gz)] [-C 切换工作目录] [被压缩的文件或目录1] [被压缩的文件或目录2]...`
-* 查询：
-    * `tar -jtv -f [压缩文件(*.tar.bz2)]`
-    * `tar -ztv -f [压缩文件(*.tar.gz)]`
-* 解压缩：
-    * `tar -jxv -f [压缩文件(*.tar.bz2)] [-C 切换工作目录]`
-    * `tar -zxv -f [压缩文件(*.tar.gz)] [-C 切换工作目录]`
+* Compression:
+    * `tar -jcv [-f ARCHIVE] [-C WORKING_DIR] [FILE...]`
+    * `tar -zcv [-f ARCHIVE] [-C WORKING_DIR] [FILE...]`
+* Query:
+    * `tar -jtv [-f ARCHIVE] [MEMBER...]`
+    * `tar -ztv [-f ARCHIVE] [MEMBER...]`
+* Decompression:
+    * `tar -jxv [-f ARCHIVE] [-C WORKING_DIR] [MEMBER...]`
+    * `tar -zxv [-f ARCHIVE] [-C WORKING_DIR] [MEMBER...]`
 
 **Options:**
 
-* `-c`：新建打包文件，可以搭配-v查看过程中被打包的文件名
-* `-t`：查看打包文件的内容含有那些文件名，终点在查看文件
-* `-x`：解打包或解压缩的功能，可搭配-C在特定目录解开
-* **注意，c t x是互斥的**
-* `-j`：通过bzip2的支持进行压缩/解压，此时文件名最好为*.tar.bz2
-* `-z`：通过gzip的支持进行压缩/解压，此时文件名最好是*.tar.gz
-* `-v`：在压缩/解压缩过程中，将正在处理的文件名显示出来
-* `-f` filename：-f后面接要被处理的文件名，建议-f单独写一个参数
-* `-C`：用户切换工作目录，之后的文件名可以使用相对路径
-    * `tar -czvf test.tar.gz /home/liuye/data/volumn1`：打包后，压缩包内的文件路径是完整路径，即`/home/liuye/data/volumn1/xxx`
-    * `tar -czvf test.tar.gz data/volumn1`：执行该命令，压缩包内的文件路径是相对于当前目录的相对路径，即`data/volumn1/xxx`
-    * `tar -czvf test.tar.gz volumn1 -C /home/liuye/data`：压缩包内的文件路径是相对于`/home/liuye/data`的相对路径，即`volumn1/xxx`
-* `-p`：保留备份数据原本权限与属性，常用语备份(-c)重要的配置文件
-* `-P`：保留绝对路径，即允许备份数据中含有根目录存在之意
+* `-c`: Create a new archive file, can be used with -v to view the filenames being archived during the process
+* `-t`: View the contents of the archive file to see which filenames are included
+* `-x`: Extract or decompress, can be used with -C to extract in a specific directory
+* **Note, c t x are mutually exclusive**
+* `-j`: Compress/decompress with bzip2 support, it's best to use the filename extension *.tar.bz2
+* `-z`: Compress/decompress with gzip support, it's best to use the filename extension *.tar.gz
+* `-v`: Display the filenames being processed during compression/decompression
+* `-f` filename: The filename to be processed follows -f, it's recommended to write -f as a separate parameter
+* `-C`: Change the working directory, subsequent filenames can use relative paths
+    * `tar -czvf test.tar.gz /home/liuye/data/volumn1`: After archiving, the file paths inside the compressed package are full paths, i.e., `/home/liuye/data/volumn1/xxx`
+    * `tar -czvf test.tar.gz data/volumn1`: Executing this command, the file paths inside the compressed package are relative to the current directory, i.e., `data/volumn1/xxx`
+    * `tar -czvf test.tar.gz volumn1 -C /home/liuye/data`: The file paths inside the compressed package are relative to `/home/liuye/data`, i.e., `volumn1/xxx`
+* `-p`: Preserve the original permissions and attributes of the backup data, commonly used for backing up (-c) important configuration files
+* `-P`: Preserve absolute paths, i.e., allow the backup data to include the root directory
 
 **Examples:**
 
 * `tar -czvf /test.tar.gz -C /home/liuye aaa bbb ccc`
-* `tar -zxvf /test.tar.gz -C /home/liuye`：解压到`/home/liuye`目录中
-* `tar cvf - /home/liuye | sha1sum`：`-`表示标准输入输出，这里表示标准出
+* `tar -zxvf /test.tar.gz -C /home/liuye`: Extract to the `/home/liuye` directory
+    * `tar -zxvf /test.tar.gz -C /home/liuye path/a.txt`: Extract only `path/a.txt` to the `/home/liuye` directory`
+* `tar cvf - /home/liuye | sha1sum`: `-` indicates standard input/output, here it represents standard output
 * `wget -qO- xxx.tar.gz | tar -xz -C /tmp/target`
 
 ## 2.22 curl
@@ -1630,18 +1632,20 @@ free
 
 **Options:**
 
-* `-h`：以`K`，`M`，`G`为单位，提高信息的可读性
-* `-s`：仅显示总计
-* `-d <depth>`：指定显示的文件/文件夹的深度
+* `-h`: Use `K`, `M`, `G` units to improve readability
+* `-s`: Show only the total
+* `-d <depth>`: Specify the depth of files/folders to display
 
 **Examples:**
 
-* `du -sh`：当前文件夹的总大小
-* `du -h -d 1`：列出深度为1的所有文件/文件夹大小
+* `du -sh`: Total size of the current folder
+* `du -h -d 1`: List the sizes of all files/folders at depth 1
+    * `du -h -d 1 | sort -h`
+    * `du -h -d 1 | sort -hr`
 
 ## 3.8 ncdu
 
-可视化的空间分析程序
+ncdu (NCurses Disk Usage) is a curses-based version of the well-known `du`, and provides a fast way to see what directories are using your disk space.
 
 **Examples:**
 
@@ -1961,7 +1965,7 @@ print resolved symbolic links or canonical file names
 
 ## 4.9 pstack
 
-**如何安装：**
+**Install:**
 
 ```sh
 yum install -y gdb
@@ -1977,7 +1981,7 @@ pstack 12345
 
 ## 4.10 prlimit
 
-用于获取或者设置资源限制
+`prlimit` is used to get and set process resource limits.
 
 **Examples:**
 
@@ -2020,28 +2024,46 @@ pstack 12345
 
 ## 4.12 su
 
-su命令用于切换用户
+su command is used to switch users
 
-* `su`：以`non-login-shell`的方式，切换到root用户
-* `su -`：以`login-shell`的方式（更换目录，环境变量等等），切换到root用户
-* `su test`：以`non-loign-shell`的方式，切换到test用户
-* `su - test`：以`login-shell`的方式（更换目录，环境变量等等），切换到test用户
+* `su`: Switches to the root user in a `non-login-shell` manner
+* `su -`: Switches to the root user in a `login-shell` manner (changing directories, environment variables, etc.)
+* `su test`: Switches to the test user in a `non-login-shell` manner
+* `su - test`: Switches to the test user in a `login-shell` manner (changing directories, environment variables, etc.)
+
+**Examples:**
+
+* `sudo su -`
+* `sudo su - -c 'ls -al /'`
 
 ## 4.13 sudo
 
-**注意，sudo本身是一个进程。比如用`sudo tail -f xxx`，在另一个会话中`ps aux | grep tail`会发现两个进程**
+`sudo` is used to execute a command as another user.
 
-**配置文件：`/etc/sudoers`**
+**Note, sudo itself is a process. For example, using `sudo tail -f xxx`, in another session `ps aux | grep tail` will find two processes**
 
-**如何给`test`用户添加`sudoer`权限？在`/etc/sudoers`后追加如下内容（任选其一即可）**
+**Configuration file: `/etc/sudoers`**
+
+**How to add `sudoer` privileges to the `test` user? Append the following content to `/etc/sudoers` (choose either one)**
 
 ```conf
-# 不需要密码就可以执行sudo命令
+# Execute sudo commands without a password
 test	ALL=(ALL)	NOPASSWD: ALL
 
-# 需要密码才能执行sudo命令
+# Execute sudo commands with a password
 test	ALL=(ALL)	ALL
 ```
+
+**Options:**
+
+* `-E`: Indicates to the security policy that the user wishes to preserve their existing environment variables.
+* `-i, --login`: Run login shell as the target user.
+
+**Examples:**
+
+* `sudo -u root ls /`
+* `sudo -u root -E ls /`
+* `sudo -i hdfs dfs -ls /`
 
 ## 4.14 pkexec
 
@@ -2863,11 +2885,27 @@ tcpdump -i lo -vv port 18081 -w file2.cap
 docker -H tcp://localhost:18081 images
 ```
 
-## 5.10 tcpkill
+## 5.10 tcpflow
+
+tcpflow is a command-line tool used to capture and analyze network traffic, specifically Transmission Control Protocol (TCP) connections. It is often used by network administrators and developers for debugging and monitoring network communication.
+
+**Key Features of tcpflow:**
+
+* Capture TCP Streams: `tcpflow` captures and records data transmitted in TCP connections. Unlike packet capture tools like `tcpdump`, which show individual packets, `tcpflow` reconstructs and displays the actual data streams as they appear at the application layer.
+* Session Reconstruction: It organizes captured data by connection, storing the data streams in separate files or displaying them on the console. This allows for easy inspection of the content exchanged during a session.
+* Readable Output: The tool provides human-readable output by reconstructing the sequence of bytes sent in each TCP connection, making it easier to analyze protocols and troubleshoot issues.
+* Filtering: Similar to tools like `tcpdump`, `tcpflow` can filter traffic based on criteria like source/destination IP addresses, ports, or other protocol-level details
+
+**Example:**
+
+* `tcpflow -i eth0`
+* `tcpflow -i any host www.google.com`
+
+## 5.11 tcpkill
 
 `tcpkill`用于杀死tcp连接，语法与`tcpdump`基本类似。其工作原理非常简单，首先会监听相关的数据报文，获取了`sequence number`之后，然后发起`Reset`报文。因此，当且仅当连接有报文交互的时候，`tcpkill`才能起作用
 
-**如何安装：**
+**Install:**
 
 ```sh
 # 安装 yum 源
@@ -2891,7 +2929,7 @@ yum install -y dsniff
 
 * `tcpkill -9 -i any host 127.0.0.1 and port 22`
 
-## 5.11 socat
+## 5.12 socat
 
 **Pattern:**
 
@@ -2915,7 +2953,7 @@ yum install -y dsniff
 * `socat TCP-LISTEN:80,fork TCP:www.baidu.com:80`：将本地端口转到远端
 * `socat TCP-LISTEN:12345 EXEC:/bin/bash`：在本地开启shell代理
 
-## 5.12 dhclient
+## 5.13 dhclient
 
 **Pattern:**
 
@@ -2932,7 +2970,7 @@ yum install -y dsniff
 * `dhclient`：获取ip
 * `dhclient -r`：释放ip
 
-## 5.13 arp
+## 5.14 arp
 
 **Examples:**
 
@@ -2940,9 +2978,9 @@ yum install -y dsniff
 * `arp -n`：查看arp缓存，显示ip不显示域名
 * `arp 192.168.56.1`：查看`192.168.56.1`这个ip的mac地址
 
-## 5.14 [arp-scan](https://github.com/royhills/arp-scan)
+## 5.15 [arp-scan](https://github.com/royhills/arp-scan)
 
-**如何安装：**
+**Install:**
 
 ```sh
 yum install -y git
@@ -2969,7 +3007,7 @@ make install
 * `arp-scan -I enp0s8 -l`
 * `arp-scan -I enp0s8 192.168.56.1/24`
 
-## 5.15 ping
+## 5.16 ping
 
 **Options:**
 
@@ -2982,7 +3020,7 @@ make install
 * `ping -c 3 www.baidu.com`
 * `ping -s 1460 -M do baidu.com`：发送大小包大小是1460（+28）字节，且禁止分片
 
-## 5.16 arping
+## 5.17 arping
 
 **Pattern:**
 
@@ -3016,7 +3054,7 @@ make install
     * ![arping-3](/images/Linux-Frequently-Used-Commands/arping-4.png)
     * arp-reply直接指定了目标机器的mac地址，因此直接送达机器A
 
-## 5.17 hping3
+## 5.18 hping3
 
 **安装：**
 
@@ -3042,7 +3080,7 @@ yum install -y hping3
 
 * `hping3 -c 10000 -d 120 -S -w 64 -p 21 --flood --rand-source www.baidu.com`
 
-## 5.18 iperf
+## 5.19 iperf
 
 **网络测速工具，一般用于局域网测试。互联网测速：[speedtest](https://github.com/sivel/speedtest-cli)**
 
@@ -3051,11 +3089,11 @@ yum install -y hping3
 * `iperf -s -p 3389 -i 1`：服务端
 * `iperf -c <server_addr> -p 3389 -i 1`：客户端
 
-## 5.19 nc
+## 5.20 nc
 
 **Examples:**
 
-* `nc -z 127.0.0.1 22`: Test connectivity.
+* `nc -zv 127.0.0.1 22`: Test connectivity.
 
 # 6 Monitoring
 

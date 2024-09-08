@@ -28,6 +28,7 @@ categories:
 **`Tips`：**
 
 * `nopager`: Disable pager
+    * You can add `enable_pager = False` under `[main]` tag to disable pager by default.
 * `PageUp/PageDown`: Forward or backward in unit of command
 * `Up/Down`: Forward or backward in unit of row
 

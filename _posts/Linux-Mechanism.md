@@ -1465,10 +1465,11 @@ ln -s '/usr/lib/systemd/system/demo-service.service' '/etc/systemd/system/multi-
 * `systemctl status <pid>`
 * `systemctl restart xxx.service`
 * `systemctl reload xxx.service`
-* `systemctl list-units --type=service`: List all services
-* `systemctl daemon-reload`: Reload unit config
-* `systemctl show xxx.service`
-* `systemctl show xxx.service --property=ActiveState`
+* `systemctl list-units --type=service`: List all services.
+* `systemctl daemon-reload`: Reload unit config.
+* `systemctl show xxx.service`: Show all properties.
+    * `systemctl show xxx.service --property=ActiveState`
+    * `systemctl show xxx.service --property=MainPID`
 * **`systemctl set-default xxx.target`: Set default run level. Similar to `CentOS 6.x run level`**
     * `poweroff.target`：对应`level-0`
     * `rescue.target`：对应`level-1`

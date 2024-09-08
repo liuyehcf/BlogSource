@@ -3485,17 +3485,15 @@ int main() {
 
 ### 5.5.1 Parenthesis Initializer
 
-这里用到了一个技巧，[逗号运算符](https://www.bookstack.cn/read/cppreference-language/ae53223225119599.md#9bocdk)：对于逗号表达式`E1, E2`中，对`E1`求值并舍弃其结果（尽管当它具有类类型时，直到包含它的全表达式的结尾之前都不会销毁它），其副作用在表达式`E2`的求值开始前完成
-
-示例代码如下：
+[Built-in comma operator](https://en.cppreference.com/w/cpp/language/operator_other#Built-in_comma_operator): In a comma expression `E1, E2`, the expression `E1` is evaluated, its result is discarded (although if it has class type, it won't be destroyed until the end of the containing full expression), and its side effects are completed before evaluation of the expression `E2` begins (note that a user-defined operator, cannot guarantee sequencing)
 
 ```cpp
 #include <iostream>
 
 int main() {
     int n = 1;
-    int m = (++n, std::cout << "n = " << n << '\n', ++n, 2 * n); // 2
-    std::cout << "m = " << (++m, m) << '\n';                     // 7
+    int m = (++n, std::cout << "n = " << n << '\n', ++n, 2 * n); // print 2, n=3, m=6
+    std::cout << "m = " << (++m, m) << '\n';                     // print 7
 }
 ```
 

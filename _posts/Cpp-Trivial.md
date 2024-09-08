@@ -578,7 +578,7 @@ memory management libraries run in user mode and typically use low-level system 
     * 在多线程高并发的场景中，`CentralCache`中的锁竞争很容易成为瓶颈
 * `Recycle`
 
-**如何安装：**
+**Install:**
 
 ```sh
 yum -y install gperftools gperftools-devel

@@ -696,6 +696,8 @@ LLDB is similar to GDB in most operations, but there are some differences (`help
 1. `list -<count>`: Print previous `<count>` lines
 1. `lldb <binary> -- <args>`
 1. `process handle -p true -s false SIGSEGV`
+    * `-p <boolean>`: Whether or not the signal should be passed to the process.
+    * `-s <boolean>`: Whether or not the process should be stopped if the signal is received.
     * When debugging process with JNI, you may receive many interruptions from `libjvm.so`, like `stop reason = signal SIGSEGV: address access protected`, which is truly annoying, so you can use this to ignore them
 
 # 7 Reference

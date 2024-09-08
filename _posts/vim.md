@@ -970,7 +970,7 @@ Home: [cscope](http://cscope.sourceforge.net/)
 
 **相比于`ctags`，`cscope`支持更多功能，包括查找定义、查找引用等等。但是该项目最近一次更新是2012年，因此不推荐使用。推荐使用`gtags`**
 
-**如何安装：**
+**Install:**
 
 ```sh
 wget -O cscope-15.9.tar.gz 'https://sourceforge.net/projects/cscope/files/latest/download' --no-check-certificate
@@ -2139,10 +2139,10 @@ nnoremap <leader>vr :call vimspector#Reset()<cr>
 nnoremap <f4> :call vimspector#Stop()<cr>
 nnoremap <f5> :call vimspector#Restart()<cr>
 nnoremap <f6> :call vimspector#Continue()<cr>
-nnoremap <s-f6> :call vimspector#RunToCursor()<cr>
+nnoremap <f18> :call vimspector#RunToCursor()<cr> " f18 can be achieved through shift + F6
 nnoremap <f7> :call vimspector#StepInto()<cr>
 nnoremap <f8> :call vimspector#StepOver()<cr>
-nnoremap <s-f8> :call vimspector#StepOut()<cr>
+nnoremap <f20> :call vimspector#StepOut()<cr> " f20 can be achieved through shift + F8
 
 call plug#end()
 ```
@@ -2171,9 +2171,9 @@ call plug#end()
                     "filetypes": ["cpp", "c", "objc", "rust"],
                     "configuration": {
                         "request": "launch",
-                        "program": "<path to binary>",
+                        "program": "<absolute path to binary>",
                         "args": [],
-                        "cwd": "<working directory>",
+                        "cwd": "<absolute working directory>",
                         "environment": [],
                         "externalConsole": true,
                         "MIMode": "gdb"
@@ -2188,7 +2188,7 @@ call plug#end()
                     "filetypes": ["cpp", "c", "objc", "rust"],
                     "configuration": {
                         "request": "attach",
-                        "program": "<path to binary>",
+                        "program": "<absolute path to binary>",
                         "MIMode": "gdb"
                     }
                 }
@@ -3248,10 +3248,10 @@ nnoremap <leader>vr :call vimspector#Reset()<cr>
 nnoremap <f4> :call vimspector#Stop()<cr>
 nnoremap <f5> :call vimspector#Restart()<cr>
 nnoremap <f6> :call vimspector#Continue()<cr>
-nnoremap <s-f6> :call vimspector#RunToCursor()<cr>
+nnoremap <f18> :call vimspector#RunToCursor()<cr> " f18 can be achieved through shift + F6
 nnoremap <f7> :call vimspector#StepInto()<cr>
 nnoremap <f8> :call vimspector#StepOver()<cr>
-nnoremap <s-f8> :call vimspector#StepOut()<cr>
+nnoremap <f20> :call vimspector#StepOut()<cr> " f20 can be achieved through shift + F8
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3634,6 +3634,12 @@ vim -u NONE <big file>
 let g:gutentags_enabled = 0
 let g:gutentags_dont_load = 1
 ```
+
+## 6.4 How to show which key I hit
+
+1. Enter normal mode.
+1. Type `:map` then press `<c-v>`.
+1. Type the key you wanted, then it interpreters it into the actual value.
 
 # 7 Reference
 
