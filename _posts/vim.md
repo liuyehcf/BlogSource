@@ -2132,6 +2132,7 @@ let g:vimspector_variables_display_mode = 'full'
 nnoremap <leader>vl :call vimspector#Launch()<cr>
 nnoremap <leader>vb :call vimspector#ToggleBreakpoint()<cr>
 nnoremap <leader>vc :call vimspector#ClearBreakpoints()<cr>
+nnoremap <leader>vt :call vimspector#JumpToProgramCounter()<cr>
 nnoremap <leader>vu :call vimspector#UpFrame()<cr>
 nnoremap <leader>vd :call vimspector#DownFrame()<cr>
 nnoremap <leader>vr :call vimspector#Reset()<cr>
@@ -3241,6 +3242,7 @@ let g:vimspector_variables_display_mode = 'full'
 nnoremap <leader>vl :call vimspector#Launch()<cr>
 nnoremap <leader>vb :call vimspector#ToggleBreakpoint()<cr>
 nnoremap <leader>vc :call vimspector#ClearBreakpoints()<cr>
+nnoremap <leader>vt :call vimspector#JumpToProgramCounter()<cr>
 nnoremap <leader>vu :call vimspector#UpFrame()<cr>
 nnoremap <leader>vd :call vimspector#DownFrame()<cr>
 nnoremap <leader>vr :call vimspector#Reset()<cr>

@@ -248,7 +248,18 @@ ${HADOOP_HOME}/bin/hdfs dfs -cat "/wordcount_output/*"
 
 ## 2.3 Tips
 
-1. List files recursively: `hdfs dfs -ls -R <path>`
+### 2.3.1 List files recursively
+
+```sh
+hdfs dfs -ls -R <path>
+```
+
+### 2.3.2 Check the health of files
+
+```sh
+hdfs fsck <path>
+hdfs fsck <path> -files -blocks -replication
+```
 
 # 3 Spark
 

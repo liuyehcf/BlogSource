@@ -631,7 +631,8 @@ pmset displaysleepnow
 ## 6.11 阻止进入睡眠状态
 
 ```sh
-caffeinate
+caffeinate -d
+caffeinate -d -t 32400
 ```
 
 ## 6.12 外接键盘F1-F12不作为功能键

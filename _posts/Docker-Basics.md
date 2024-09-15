@@ -446,6 +446,12 @@ The host has a changing IP address, or none if you have no network access. We re
 docker ps -a -f status=exited -q | xargs docker rm -f
 ```
 
+## 7.10 How to create container with host user
+
+```sh
+docker run --user $(id -u):$(id -g) -v /etc/passwd:/etc/passwd
+```
+
 # 8 FAQ
 
 ## 8.1 K8S Env docker error

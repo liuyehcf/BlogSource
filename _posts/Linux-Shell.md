@@ -122,40 +122,40 @@ echo $(ls)
 
 ## 1.4 Process Substitution
 
-**进程替换（Process Substitution）的作用有点类似管道，但在实现方式上有所区别，管道是作为子进程的方式来运行的，而进程替换会在`/dev/fd/`下面产生类似`/dev/fd/63`,`/dev/fd/62`这类临时文件，用来传递数据。用法如下：**
+**Process substitution works somewhat like a pipe, but differs in its implementation. Pipes run as subprocesses, whereas process substitution creates temporary files such as `/dev/fd/63`, `/dev/fd/62` under `/dev/fd/` to pass data. Usage is as follows:**
 
-1. **`<(command)`：用来产生标准输出，借助输入重定向，它的结果可以作为另一个命令的输入**
+1. **`<(command)`: Generates standard output. Using input redirection, its result can serve as input for another command.**
     * `cat <(ls)`
-1. **`>(command)`：用来接收标准输入，借助输出重定向，它可以接收另一个命令的输出结果**
+1. **`>(command)`: Receives standard input. Using output redirection, it can accept the output of another command.**
     * `ls > >(cat)`
-* **注意`<`、`>`与`(`之间不能有空格**
+* **Note that there must be no spaces between `<`, `>`, and `(`**
 
 ```sh
-# 将 <(ls) 当做临时文件，文件内容是ls的结果，cat这个临时文件
+# Treat <(ls) as a temporary file, the content of the file is the result of ls, then cat this temporary file
 cat <(ls)
-# 将 >(cat) 当做临时文件，ls的结果重定向到这个文件，最后这个文件被cat
+# Treat >(cat) as a temporary file, redirect the result of ls to this file, which is then read by cat
 ls > >(cat)
 
-# 将 <(date) 作为参数传递给cat，会显式日期
+# Pass <(date) as an argument to cat, which will display the date
 cat <(date)
-# 将 <(date) 作为参数传递给echo，会显式fd
+# Pass <(date) as an argument to echo, which will display the file descriptor
 echo <(date)
 
-# 将多个 <(date) 作为参数传递给cat，会显式日期
+# Pass multiple <(date) as arguments to cat, which will display the date
 cat <(date) <(date) <(date)
-# 将多个 <(date) 作为参数传递给echo，会显式fd
+# Pass multiple <(date) as arguments to echo, which will display the file descriptors
 echo <(date) <(date) <(date)
 
-# 将 <(date) 重定向到cat的标准输入，会显示日期
+# Redirect <(date) to the standard input of cat, which will display the date
 cat < <(date)
-# 将 <(date) 重定向到echo的标准输入，由于echo不从标准输入读取内容，因此输出空白
+# Redirect <(date) to the standard input of echo, but since echo does not read from standard input, the output will be blank
 echo < <(date)
 ```
 
-**典型示例，统计文件个数**
+**Typical example: count the number of files**
 
 ```sh
-# 正确方式
+# Correct way
 count=0
 while IFS= read -r line
 do
@@ -163,25 +163,27 @@ do
 done < <(ls)
 echo ${count}
 
-# 错误方式
+# Incorrect way
 count=0
 ls | while IFS= read -r line
 do
-    # 由于管道是在子进程中执行的，变量的更新在子进程结束后就丢失了
+    # Because the pipeline is executed in a subprocess, the variable update is lost after the subprocess ends
     ((count++))
     echo "count=${count}"
 done
-echo ${count} # 永远是0
+echo ${count} # Always 0
 ```
 
-**进程替换和管道的差异，[Process substitution and pipe](https://unix.stackexchange.com/questions/17107/process-substitution-and-pipe)：**
+**[Process substitution and pipe](https://unix.stackexchange.com/questions/17107/process-substitution-and-pipe)：**
 
-1. `Multiple process inputs`：进程替换可以同时处理多路输入，而管道不行。例如：
+1. `Multiple process inputs`: Process substitution can handle multiple inputs simultaneously, unlike pipes. For example:
+
     ```sh
     diff <(cd /foo/bar/; ls) <(cd /foo/baz; ls)
     ```
 
-1. `Preserving stdin`：进程替换可以保留标准输入，而管道不行。例如：
+1. `Preserving stdin`: Process substitution can preserve standard input, unlike pipes. For example:
+
     ```sh
     cat > script.sh << 'EOF'
     #/bin/bash
@@ -196,7 +198,8 @@ echo ${count} # 永远是0
     bash <(cat script.sh)
     ```
 
-1. `Outbound process substitution`：进程替换可以将标准输出和标准异常导向不同的程序，而管道不行。例如：
+1. `Outbound process substitution`: Process substitution can direct standard output and standard error to different programs, unlike pipes. For example:
+
     ```sh
     cat > main.cp << 'EOF'
     #include <iostream>
@@ -213,7 +216,8 @@ echo ${count} # 永远是0
     ./main 1> >(sed -n '/output/s/^.*$/Find stdout/p') 2> >(sed -n '/output/s/^.*$/Find stderr/p')
     ```
 
-1. 管道中对于变量的修改，流程的控制比如`continue`、`break`、`return`对于外部都是不生效的，例如：
+1. In pipes, modifications to variables and control flow commands like `continue`, `break`, and `return` do not affect the external environment, for example:
+
     ```sh
     function return_inside_pipe() {
         echo "return_inside_pipe"
@@ -247,6 +251,19 @@ echo ${count} # 永远是0
 
     return_inside_pipe
     return_inside_substitution
+    ```
+
+1. Interactive commands can be used in pipes but not in process substitution, for example:
+    ```sh
+    while IFS= read -r line
+    do
+        echo "${line}"
+    done < <(docker exec -it trino trino --output-format CSV --execute "show create table tpcds.sf1.call_center" | sed '1d;$d' | sed 's/\r//')
+
+    docker exec -it trino trino --output-format CSV --execute "show create table tpcds.sf1.call_center" | sed '1d;$d' | sed 's/\r//' | while IFS= read -r line
+    do
+        echo "${line}"
+    done
     ```
 
 ## 1.5 Env
@@ -2575,6 +2592,18 @@ echo "${content}"
 set -o | grep noglob
 set -f # disable
 set +f # enable
+```
+
+### 8.4.5 How to remove both first line and last line
+
+```sh
+cat xxx.txt | sed '1d;$d'
+```
+
+### 8.4.6 How to display invisible characters in file
+
+```sh
+cat -v xxx.txt
 ```
 
 # 9 Reference

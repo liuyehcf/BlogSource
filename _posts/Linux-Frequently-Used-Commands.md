@@ -302,6 +302,14 @@ hostnamectl set-hostname <name>
 * `ntpdate ntp.aliyun.com`
 * `ntpdate ntp.cloud.aliyuncs.com`：阿里云ecs同步时间需要指定内网的ntp服务
 
+## 1.29 hexdump
+
+Display file contents in hexadecimal, decimal, octal, or ascii
+
+**Example:**
+
+* `hexdump -C <filename> | head -n 10`
+
 # 2 Common Processing Tools
 
 ## 2.1 ls
@@ -1076,6 +1084,10 @@ echo "↓↓↓↓↓↓↓↓↓content↓↓↓↓↓↓↓↓↓"
 cat /tmp/test
 echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
 ```
+
+**Examples:**
+
+* `cat -v <file>`: Show all invisible characters.
 
 ## 2.15 tail
 
@@ -2130,39 +2142,45 @@ test	ALL=(ALL)	ALL
 
 ## 4.17 tmux
 
-**`tmux`相当于`screen`的进阶版本，例如可以实现结对编程等功能（允许两个终端进入同一个`tmux`会话中，而`screen`是不允许的）**
+**`tmux` is like an advanced version of `screen`, for example, it allows features such as pair programming (allowing two terminals to enter the same `tmux` session, whereas `screen` does not allow this).**
 
-**用法：**
+**Usage:**
 
-* `tmux`：开启新session，并用递增的数字命名
-* `tmux new -s <name>`：开启新session，并指定命名
-* `tmux ls`：列出所有的session
-* `tmux attach -t <name>`：接入指定名字的session
-* `tmux kill-session -t <name>`
-* `tmux rename-session -t <old-name> <new-name>`：重命名
-* `C-b s`：选择需要跳转的session
-* `C-b $`：重命名当前session
-* `C-b d`：断开当前session
-* `C-b c`：在当前session中多加一个window
-* `C-b w`：在当前session中的多个window中做出选择
-* `C-b x`：关闭当前session中的当前window
-* `C-b !`：关闭一个session中所有window
-* `C-b %`：将当前window分成左右两部分
-* `C-b "`：将当前window分成上下两部分
-* `C-b 方向键`：在不同window中跳转
-* `C-b 方向键（C-b按住不放）`：调整当前window的大小
-* `C-b [`：翻屏模式，实现上下翻页
-    * `q`：退出翻屏模式
+* `tmux`: Start a new session, named with an incrementing number.
+* **`tmux new -s <name>`: Start a new session with a specified name.**
+* **`tmux ls`: List all sessions.**
+* **`tmux attach-session -t <name>`: Attach to a session with a specific name.**
+* **`tmux kill-session -t <name>`: Kill a session with a specific name.**
+* **tmux rename-session -t <old-name> <new-name>`: Rename a session.**
+* **`C-b s`: Select the session to switch to.**
+* `C-b $`: Rename the current session.
+* **`C-b d`: Detach from the current session.**
+* `C-b c`: Create a new window in the current session.
+* `C-b w`: Choose from multiple windows in the current session.
+* `C-b x`: Close the current window in the current session.
+* `C-b !`: Close all windows in a session.
+* `C-b %`: Split the current window vertically.
+* `C-b "`: Split the current window horizontally.
+* `C-b arrow keys`: Switch between different windows.
+* `C-b arrow keys (hold down C-b)`: Adjust the size of the current window.
+* **`C-b [`: Enter scroll mode to scroll up and down.**
+    * `tmux setw -g mode-keys vi`: Use vi mode.
+    * `q`: Exit scroll mode.
+    * `fn + ↑`: Move up half a page.
+    * `fn + ↓`: Move down half a page.
 
-**小技巧：**
+**Tips:**
 
-* 在`tmux`中，vim的color配置可能会失效，因此需要配置环境变量`export TERM="xterm-256color"`
-* 修改快捷键前缀（默认的快捷键前缀是`C-b`）
-    1. 方法1：`tmux set -g prefix C-x`，仅对当前登录有效
-    1. 方法2：在配置文件`~/.tmux.conf`中添加如下配置`set -g prefix C-x`即可
-* 修改默认的shell
-    1. 方法1：`tmux set-option -g default-shell /usr/bin/zsh`，仅对当前登录有效
-    1. 方法2：在配置文件`~/.tmux.conf`中添加如下配置`set -g default-shell /usr/bin/zsh`即可
+* In `tmux`, vim's color configuration may not work, so you need to set the environment variable `export TERM="xterm-256color"`.
+* Change the prefix key (the default prefix key is `C-b`):
+    1. Method 1: `tmux set -g prefix C-x`, only effective for the current session.
+    1. Method 2: Add the following configuration to `~/.tmux.conf`: `set -g prefix C-x`.
+* Change the default shell:
+    1. Method 1: `tmux set-option -g default-shell /usr/bin/zsh`, only effective for the current session.
+    1. Method 2: Add the following configuration to `~/.tmux.conf`: `set -g default-shell /usr/bin/zsh`.
+* Support scroll with mouse: 
+    1. Method 1: `tmux set -g mouse on`, only effective for the current session.
+    1. Method 2: Add the following configuration to `~/.tmux.conf`: `set -g mouse on`.
 
 ## 4.18 reptyr
 
@@ -4341,7 +4359,19 @@ apt install clang-format-X.Y
 
 ## 11.1 System Information
 
-### 11.1.1 Determine disk type
+### 11.1.1 Basic
+
+#### 11.1.1.1 Determine physical/virtual machine
+
+* `systemd-detect-virt`
+
+#### 11.1.1.2 Get Ip Address
+
+* `ip -4 addr show scope global | grep inet | awk '{print $2}' | cut -d/ -f1`
+
+### 11.1.2 Disk & Filesystem
+
+#### 11.1.2.1 Determine disk type
 
 * `lsblk -d --output NAME,ROTA`
     * `ROTA: 0`：SSD
@@ -4349,15 +4379,7 @@ apt install clang-format-X.Y
 * `cat /sys/block/<device_name>/queue/rotational`
     * `<device_name>` may be sda
 
-### 11.1.2 Determine physical/virtual machine
-
-* `systemd-detect-virt`
-
-### 11.1.3 Get Ip Address
-
-* `ip -4 addr show scope global | grep inet | awk '{print $2}' | cut -d/ -f1`
-
-### 11.1.4 Get inode related information
+#### 11.1.2.2 Get inode related information
 
 * `df -i`
 * `ls -i`
@@ -4441,60 +4463,64 @@ apt install clang-format-X.Y
     * Memory-Mapped Files
     * Shared Libraries
 
-### 11.2.2 Find process with most CPU consumption
+### 11.2.2 Process
+
+#### 11.2.2.1 Find process with most CPU consumption
 
 * `dstat --top-cpu-adv`
 * `ps aux --sort=-%cpu | head -n 10`
 * `ps -eo pid,comm,%cpu --sort=-%cpu | head -n 10`
 
-### 11.2.3 Find process with most Memory consumption
+#### 11.2.2.2 Find process with most Memory consumption
 
 * `dstat --top-mem`
 * `ps aux --sort=-%mem | head -n 10`
 * `ps -eo pid,comm,%mem --sort=-%mem | head -n 10`
 
-### 11.2.4 Find process with most I/O consumption
+#### 11.2.2.3 Find process with most I/O consumption
 
 * `dstat --top-io-adv`
 * `iotop -oP`
 
-### 11.2.5 Find connection with most brand consumption
-
-* `iftop`
-
-### 11.2.6 Find process with most brand consumption
+#### 11.2.2.4 Find process with most brand consumption
 
 * `nethogs`
 
-### 11.2.7 Find process listening on specific port
+#### 11.2.2.5 Find process listening on specific port
 
 * `lsof -n -i :80`
 * `fuser -uv 80/tcp`
 * `ss -npl | grep 80`
 
-### 11.2.8 Find process using specific file
+#### 11.2.2.6 Find process using specific file
 
 * `lsof /opt/config/xxx`
 * `fuser -uv /opt/config/xxx`
 
-### 11.2.9 Get full command of a process
+#### 11.2.2.7 Get full command of a process
 
 * `lsof -p xxx | grep txt`
 
-### 11.2.10 Get start time of a process
+#### 11.2.2.8 Get start time of a process
 
 * `ps -p xxx -o lstart`
 
-### 11.2.11 Get start time of a tcp connection
+### 11.2.3 Network
+
+#### 11.2.3.1 Find connection with most brand consumption
+
+* `iftop`
+
+#### 11.2.3.2 Get start time of a tcp connection
 
 * `lsof -i :<port>`: Get pid and fd
 * `ll /proc/<pid>/fd/<fd>`: The create time of this file is the create time of corresponding connection
 
-### 11.2.12 How to kill a tcp connection
+#### 11.2.3.3 How to kill a tcp connection
 
 * `tcpkill -9 -i any host 127.0.0.1 and port 22`
 
-### 11.2.13 How to kill tcp connections with specific state
+#### 11.2.3.4 How to kill tcp connections with specific state
 
 * `ss --tcp state CLOSE-WAIT --kill`
 

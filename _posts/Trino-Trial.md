@@ -2591,24 +2591,53 @@ DROP SCHEMA xxx CASCADE;
 ## 3.2 How to export table to csv file
 
 ```sh
-trino --output-format CSV --execute "SELECT * FROM tpch.sf1.nation" > tpch_sf1_nation.csv
+trino --output-format CSV --execute "SELECT * FROM tpch.sf1.nation" > nation.csv
 ```
 
 Or
 
 ```sh
-docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.nation" > tpch_sf1_nation.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.nation" > nation.csv
 ```
 
-Sample of all tpch tables:
+### 3.2.1 TPCH
 
 ```sh
-docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.customer limit 16" > tpch_sf1_customer.csv
-docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.lineitem limit 16" > tpch_sf1_lineitem.csv
-docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.nation limit 16" > tpch_sf1_nation.csv
-docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.orders limit 16" > tpch_sf1_orders.csv
-docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.part limit 16" > tpch_sf1_part.csv
-docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.partsupp limit 16" > tpch_sf1_partsupp.csv
-docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.region limit 16" > tpch_sf1_region.csv
-docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.supplier limit 16" > tpch_sf1_supplier.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.customer limit 16" > customer.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.lineitem limit 16" > lineitem.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.nation limit 16" > nation.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.orders limit 16" > orders.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.part limit 16" > part.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.partsupp limit 16" > partsupp.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.region limit 16" > region.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpch.sf1.supplier limit 16" > supplier.csv
+```
+
+### 3.2.2 TPCDS
+
+```sh
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpcds.sf1.call_center limit 16" > call_center.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpcds.sf1.catalog_page limit 16" > catalog_page.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpcds.sf1.catalog_returns limit 16" > catalog_returns.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpcds.sf1.catalog_sales limit 16" > catalog_sales.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpcds.sf1.customer limit 16" > customer.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpcds.sf1.customer_address limit 16" > customer_address.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpcds.sf1.customer_demographics limit 16" > customer_demographics.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpcds.sf1.date_dim limit 16" > date_dim.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpcds.sf1.household_demographics limit 16" > household_demographics.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpcds.sf1.income_band limit 16" > income_band.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpcds.sf1.inventory limit 16" > inventory.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpcds.sf1.item limit 16" > item.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpcds.sf1.promotion limit 16" > promotion.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpcds.sf1.reason limit 16" > reason.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpcds.sf1.ship_mode limit 16" > ship_mode.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpcds.sf1.store limit 16" > store.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpcds.sf1.store_returns limit 16" > store_returns.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpcds.sf1.store_sales limit 16" > store_sales.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpcds.sf1.time_dim limit 16" > time_dim.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpcds.sf1.warehouse limit 16" > warehouse.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpcds.sf1.web_page limit 16" > web_page.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpcds.sf1.web_returns limit 16" > web_returns.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpcds.sf1.web_sales limit 16" > web_sales.csv
+docker exec -it trino trino --output-format CSV --execute "SELECT * FROM tpcds.sf1.web_site limit 16" > web_site.csv
 ```

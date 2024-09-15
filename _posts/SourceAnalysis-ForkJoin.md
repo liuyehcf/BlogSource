@@ -361,7 +361,7 @@ WorkQueue(ForkJoinPool的静态内部类)用于支持**任务窃取(work-stealin
         /**
          * Capacity of work-stealing queue array upon initialization.
          * Must be a power of two; at least 4, but should be larger to
-         * reduce or eliminate cacheline sharing among queues.
+         * reduce or eliminate cache line sharing among queues.
          * Currently, it is much larger, as a partial workaround for
          * the fact that JVMs often place arrays in locations that
          * share GC bookkeeping (especially cardmarks) such that

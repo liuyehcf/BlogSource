@@ -247,18 +247,19 @@ From [Java Downloads](https://www.oracle.com/java/technologies/downloads/), you 
 
 ## 2.9 jar
 
-**制作归档文件：：`jar cvf xxx.jar -C ${target_dir1} ${dir_or_file1} -C ${target_dir2} ${dir_or_file2} ...`**
+**Creating an archive file: `jar cvf xxx.jar -C ${target_dir1} ${dir_or_file1} -C ${target_dir2} ${dir_or_file2} ...`**
 
-* **注意`-C`只对后面一个参数有效**
+* **Note that `-C` only applies to the argument immediately following it**
 * `jar cvf xxx.jar .`
 * `jar cvf xxx.jar org com/test/A.class`
 * `jar cvf xxx.jar -C classes org -C classes com`
 
-**解压归档文件：`jar xvf xxx.jar`**
+**Extracting an archive file: `jar xvf xxx.jar`**
 
-* 不支持解压到指定目录
+* `jar xvf /path/xxx.jar`
+* `jar xvf /path/xxx.jar xxx.class`
 
-**查看归档文件：`jar tf xxx.jar`**
+**Viewing an archive file: `jar tf xxx.jar`**
 
 ### 2.9.1 JAR File Specification
 

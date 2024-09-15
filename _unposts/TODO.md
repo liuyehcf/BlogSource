@@ -83,6 +83,23 @@
             * cache only needed block of data
             * high space utility
             * complex
+    * LSM
+        * leveldb
+    * Data Lake
+        * DataBricks
+            * [DataBricks Introduction to Data Lakes](https://www.databricks.com/discover/data-lakes)
+            * [What is a data lakehouse?](https://docs.databricks.com/en/lakehouse/index.html)
+        * SR
+            * [一场 Meetup，把数据湖讲透了！](https://mp.weixin.qq.com/s/A3I501LCkXI23D6KZ1rm_g)
+            * [如何打造一款极速数据湖分析引擎](https://mp.weixin.qq.com/s/I-KJn2fZjb6mRAxYG_e8_w)
+            * [技术内幕 | StarRocks 支持 Apache Hudi 原理解析](https://mp.weixin.qq.com/s/oROdpb4dHjGwTM8xLvKsWw)
+            * [StarRocks 3.0 极速统一的湖仓新范式](https://mp.weixin.qq.com/s/N9zpkQHROG098uHlwTFZfA)
+            * [优化数据查询性能：StarRocks 与 Apache Iceberg 的强强联合](https://mp.weixin.qq.com/s/wP9q7NACYEyY-TdrSceq4A)
+            * [Data Lakehouse：你的下一个数据仓库](https://mp.weixin.qq.com/s/TiHoG5Nve8EQbT8gsn6J9A)
+            * [StarRocks Lakehouse 快速入门——Apache Iceberg](https://mp.weixin.qq.com/s/pIXKXKNBLG5EPkAkiowBLQ)
+            * [StarRocks Lakehouse 快速入门——Apache Paimon](https://mp.weixin.qq.com/s/IWyFkdceXOhuBUDABCSbuA)
+        * AWS
+            * Glue & Athena
 1. 体系结构
     * numa
 1. nodejs

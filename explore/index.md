@@ -88,6 +88,10 @@ date: 2018-02-05 09:25:59
     * [ACM SIGMOD, Special Interest Group On Management Of Data](https://sigmod.org/)
     * [VLDB, Very Large Data Base](https://vldb.org/)
     * [ICDE, International Conference On Data Engineering](https://www.icde.org/)
+    * DB Seminar Series
+        * [Databases! — Fall 2022](https://db.cs.cmu.edu/seminar2022/)
+        * [ML⇄DB Seminar Series — Fall 2023](https://db.cs.cmu.edu/seminar2023/)
+        * [Database Building Blocks Seminar Series – Fall 2024](https://db.cs.cmu.edu/seminar2024/)
 * DBMS Blogs
     * [PrestoDB Blog](https://prestodb.io/blog/)
     * [Trino Blog](https://trino.io/blog/)

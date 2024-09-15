@@ -1591,9 +1591,71 @@ Key characteristics of an event-driven system include:
         - Access Point
 {% endmarkmap %}
 
-# 8 Other
+# 8 IO
 
-## 8.1 Parsing Algorithms
+{% markmap %}
+- Concepts
+    - IO Amplification
+    - IO Alignment
+        - Disk's physical sector
+        - Filesystem block size
+        - Caching mechanisms
+            - cache line
+            - page cache
+        - Database page alignment
+        - Best Practice (iops & latency)
+            - Linux Filesystem: 128K
+    - IO Operator
+        - Sequential IO
+        - Random IO
+        - Synchronous IO
+        - Asynchronous IO
+        - Direct IO
+        - Buffered IO
+        - Block IO
+        - File IO
+        - IO Throttling
+    - Optimization
+        - Zero-Copy IO
+        - IO Coalescing
+        - IO Prefetching
+    - System Call
+        - epoll
+        - aio
+        - select
+        - io_uring
+- Metrics
+    - inode Number
+    - File Handle Number
+    - IOPS
+    - Latency
+{% endmarkmap %}
+
+* **Caching mechanisms:**
+    * Using memory caches: Store frequently accessed data in memory to reduce the number of accesses to the hard drive.
+    * Read/write caching: Use caching mechanisms provided by the operating system or databases to optimize read and write speeds.
+* **Batch processing and buffering techniques:**
+    * Data buffering: When writing data to disk, first write the data to a buffer and then perform bulk writes to the disk once a certain amount has accumulated.
+    * Batch requests: Combine multiple IO requests into one larger request to reduce the number of IO operations.
+* **Concurrency and parallel processing:**
+    * Multithreading or multiprocessing: Use multithreading or multiprocessing to parallel process data, which can effectively improve the performance of IO-intensive applications.
+    * Asynchronous IO: Use asynchronous IO models to handle input and output operations, enhancing the responsiveness and throughput of applications.
+* **Choosing appropriate hardware:**
+    * SSD (Solid State Drives): Compared to traditional HDDs (Hard Disk Drives), SSDs provide faster read and write speeds.
+    * High-performance IO interfaces: Such as using SAS (Serial Attached SCSI) or NVMe (Non-Volatile Memory Express) for faster data transfer rates.
+* **Optimizing data storage and access patterns:**
+    * Data prefetching: Based on the access patterns of the application, preload data that is likely to be accessed soon.
+    * Data distribution: Properly distribute data to ensure it is evenly spread across different storage devices to avoid bottlenecks.
+* **File system optimizations:**
+    * Choosing the right file system: Different file systems (e.g., EXT4, XFS, Btrfs) perform differently under various scenarios.
+    * Adjusting file system parameters: Adjust configurations like block size and logging level according to specific needs.
+* **Database-level optimizations:**
+    * Index optimization: Proper use of indexes can speed up queries and reduce disk IO.
+    * Partitioning: By partitioning a database, distribute data across different physical drives to improve access efficiency.
+
+# 9 Other
+
+## 9.1 Parsing Algorithms
 
 `LL(1)` and `LR(1)` are both types of parsing algorithms used in the context of compiler construction. They are used to generate a syntax tree or parse tree from the source code of a programming language. These algorithms differ in terms of their parsing techniques and the grammars they can handle.
 
@@ -1619,7 +1681,7 @@ It is a bottom-up parsing technique, meaning it starts with the individual token
 
 In summary, `LL(1)` and `LR(1)` are both parsing techniques used in compiler construction, but they differ in terms of their parsing approach and the complexity of grammars they can handle. `LL(1)` is simpler and more limited in the grammars it can handle, while `LR(1)` is more powerful and can handle a wider range of grammars, making it more suitable for parsing complex programming languages.
 
-## 8.2 Cache
+## 9.2 Cache
 
 * **Cache Hit:** A cache hit occurs when a requested data is found in the cache. This leads to reduced data retrieval time and less load on the database, as the information can be served directly from the cache without querying the primary data source.
 * **Cache Miss:** A cache miss happens when the requested data is not found in the cache. This necessitates a query to the underlying database or service to retrieve the data, which is then often stored in the cache for future requests. Cache misses can increase the latency of data retrieval and put more load on the database.
@@ -1627,31 +1689,7 @@ In summary, `LL(1)` and `LR(1)` are both parsing techniques used in compiler con
 * **Cache Breakdown (缓存击穿):** Cache breakdown, also known as cache breakdown, occurs when a frequently accessed cache item expires, leading to concurrent requests hitting the database before the cache is refreshed. This can cause sudden spikes in database load, potentially leading to performance issues. Solutions to prevent cache breakdown include setting staggered expiration times, using a lock or semaphore to ensure only one query refreshes the cache, or employing "hot" data handling techniques where critical data is refreshed in the cache proactively.
 * **Cache Avalanche (缓存雪崩):** A cache avalanche is a more severe issue that occurs when many, or even all, cache entries expire simultaneously or the cache fails entirely, leading to a massive surge of database requests that can overwhelm the database and cause widespread system failure. Strategies to avoid cache avalanches include using varied expiration times for cached items to prevent simultaneous expirations, implementing redundant caching systems, and ensuring that the system has fallback mechanisms in place.
 
-## 8.3 IO
-
-* **Caching mechanisms:**
-    * Using memory caches: Store frequently accessed data in memory to reduce the number of accesses to the hard drive.
-    * Read/write caching: Use caching mechanisms provided by the operating system or databases to optimize read and write speeds.
-* **Batch processing and buffering techniques:**
-    * Data buffering: When writing data to disk, first write the data to a buffer and then perform bulk writes to the disk once a certain amount has accumulated.
-    * Batch requests: Combine multiple IO requests into one larger request to reduce the number of IO operations.
-* **Concurrency and parallel processing:**
-    * Multithreading or multiprocessing: Use multithreading or multiprocessing to parallel process data, which can effectively improve the performance of IO-intensive applications.
-    * Asynchronous IO: Use asynchronous IO models to handle input and output operations, enhancing the responsiveness and throughput of applications.
-* **Choosing appropriate hardware:**
-    * SSD (Solid State Drives): Compared to traditional HDDs (Hard Disk Drives), SSDs provide faster read and write speeds.
-    * High-performance IO interfaces: Such as using SAS (Serial Attached SCSI) or NVMe (Non-Volatile Memory Express) for faster data transfer rates.
-* **Optimizing data storage and access patterns:**
-    * Data prefetching: Based on the access patterns of the application, preload data that is likely to be accessed soon.
-    * Data distribution: Properly distribute data to ensure it is evenly spread across different storage devices to avoid bottlenecks.
-* **File system optimizations:**
-    * Choosing the right file system: Different file systems (e.g., EXT4, XFS, Btrfs) perform differently under various scenarios.
-    * Adjusting file system parameters: Adjust configurations like block size and logging level according to specific needs.
-* **Database-level optimizations:**
-    * Index optimization: Proper use of indexes can speed up queries and reduce disk IO.
-    * Partitioning: By partitioning a database, distribute data across different physical drives to improve access efficiency.
-
-## 8.4 Assorted
+## 9.3 Assorted
 
 1. Reactive Programming
 1. Failed retry will loose fairness
