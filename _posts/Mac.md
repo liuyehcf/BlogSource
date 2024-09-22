@@ -129,17 +129,16 @@ pwpolicy -clearaccountpolicies
 ## 2.1 常用操作
 
 ```sh
-# 安装软件
 brew install <software>
 
-# 卸载软件
 brew uninstall <software>
 
-# 软件安装路径
 brew list <software>
 
-# 查看软件信息
 brew info <software>
+
+# Display Homebrew’s install path
+brew --prefix <software>
 ```
 
 ## 2.2 国内安装Homebrew
@@ -439,7 +438,7 @@ rm -rf oh-my-zsh-agnoster-fcamblor
 1. `~/.zshrc`增加配置项`SOLARIZED_THEME="light"`
 1. `~/.oh-my-zsh/themes/agnoster.zsh-theme`修改背景
     * 找到关键词`build_prompt`，这就是命令提示符的全部构成，每一个配置项的颜色都可以单独调整
-    * 以`prompt_context`和`prompt_status`为例，将`prompt_segment`后面接的`black`改为`white`
+    * 以`prompt_context`和`prompt_status`为例（我只改了这两个的颜色），将`prompt_segment`后面接的`black`改为`white`
     ```
     prompt_context() {
     if [[ "$USERNAME" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
@@ -457,6 +456,10 @@ rm -rf oh-my-zsh-agnoster-fcamblor
     [[ -n "$symbols" ]] && prompt_segment white default "$symbols"
     }
     ```
+
+**`~/.oh-my-zsh/themes/agnoster.zsh-theme`:**
+
+* `prompt_status`：提示信息，包括命令是否执行失败；当前是否为root用户等等
 
 **步骤8：[安装zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting)用于高亮指令**
 
