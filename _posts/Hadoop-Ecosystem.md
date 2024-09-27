@@ -39,139 +39,117 @@ Below are the Hadoop components, that together form a Hadoop ecosystem:
 
 ![hdfsarchitecture](/images/Hadoop-Ecosystem/hdfsarchitecture.gif)
 
-## 2.1 Deployment
+## 2.1 Deployment via Docker
 
-**Prerequisite:**
+**Import paths of docker:**
 
-* `jdk8`, high than 8 may encounter runtime problems
+* `/var/log/hadoop`
+    * `/var/log/hadoop/hadoop-hadoop-namenode-$(hostname).out`
+    * `/var/log/hadoop/hadoop-hadoop-datanode-$(hostname).out`
+    * `/var/log/hadoop/hadoop-hadoop-resourcemanager-$(hostname).out`
+    * `/var/log/hadoop/hadoop-hadoop-nodemanager-$(hostname).out`
+    * `userlogs`: Logs for applications that are submitted to yarn.
 
-Pseudo Distributed Cluster means the cluster has only one machine.
+**Important ports:**
 
-**Run the following script to setup the cluster:**
+* `8042`: NodeManager (Web UI)
+* `8088`: ResourceManager (Web UI)
 
 ```sh
-#!/bin/bash
+SHARED_NS=hadoop-ns
+HADOOP_CONTAINER_NAME=hadoop
 
-ROOT=$(dirname "$0")
-ROOT=$(cd "$ROOT"; pwd)
-
-IPV4_ADDR=$(ip -4 addr show scope global | grep inet | awk '{print $2}' | cut -d/ -f1 | head -n 1)
-
-wget https://mirrors.tuna.tsinghua.edu.cn/apache/hadoop/core/hadoop-3.3.6/hadoop-3.3.6.tar.gz
-tar -zxf hadoop-3.3.6.tar.gz -C ${ROOT}
-
-export HADOOP_HOME=${ROOT}/hadoop-3.3.6
-mkdir ${HADOOP_HOME}/runtime
-
-if [ ! -f ${HADOOP_HOME}/etc/hadoop/hadoop-env.sh.bak ]; then
-    \cp -vf ${HADOOP_HOME}/etc/hadoop/hadoop-env.sh ${HADOOP_HOME}/etc/hadoop/hadoop-env.sh.bak
-fi
-JAVA_HOME_PATH=$(readlink -f $(which java))
-JAVA_HOME_PATH=${JAVA_HOME_PATH%/bin/java}
-sed -i -E "s|^.*export JAVA_HOME=.*$|export JAVA_HOME=${JAVA_HOME_PATH}|g" ${HADOOP_HOME}/etc/hadoop/hadoop-env.sh
-sed -i -E "s|^.*export HADOOP_HOME=.*$|export HADOOP_HOME=${HADOOP_HOME}|g" ${HADOOP_HOME}/etc/hadoop/hadoop-env.sh
-sed -i -E "s|^.*export HADOOP_LOG_DIR=.*$|export HADOOP_LOG_DIR=\${HADOOP_HOME}/logs|g" ${HADOOP_HOME}/etc/hadoop/hadoop-env.sh
-
-if [ ! -f ${HADOOP_HOME}/etc/hadoop/core-site.xml.bak ]; then
-    \cp -vf ${HADOOP_HOME}/etc/hadoop/core-site.xml ${HADOOP_HOME}/etc/hadoop/core-site.xml.bak
-fi
-cat > ${HADOOP_HOME}/etc/hadoop/core-site.xml << EOF
+docker run -dit --name ${HADOOP_CONTAINER_NAME} --network ${SHARED_NS} -p 8042:8042 -p 8088:8088 apache/hadoop:3.3.6 bash
+docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/core-site.xml << EOF
 <configuration>
-    <property>
-        <name>fs.defaultFS</name>
-        <value>hdfs://${IPV4_ADDR}:9000</value>
-    </property>
+  <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://${HADOOP_CONTAINER_NAME}</value>
+  </property>
 </configuration>
-EOF
+EOF"
 
-if [ ! -f ${HADOOP_HOME}/etc/hadoop/hdfs-site.xml.bak ]; then
-    \cp -vf ${HADOOP_HOME}/etc/hadoop/hdfs-site.xml ${HADOOP_HOME}/etc/hadoop/hdfs-site.xml.bak
-fi
-cat > ${HADOOP_HOME}/etc/hadoop/hdfs-site.xml << EOF
+docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/hdfs-site.xml << EOF
 <configuration>
-    <property>
-        <name>dfs.replication</name>
-        <value>1</value>
-    </property>
-    <property>
-        <name>dfs.namenode.name.dir</name>
-        <value>file:${HADOOP_HOME}/runtime/namenode</value>
-    </property>
-    <property>
-        <name>dfs.datanode.data.dir</name>
-        <value>file:${HADOOP_HOME}/runtime/datanode</value>
-    </property>
+  <property>
+    <name>dfs.replication</name>
+    <value>1</value>
+  </property>
 </configuration>
-EOF
+EOF"
 
-if [ ! -f ${HADOOP_HOME}/etc/hadoop/mapred-site.xml.bak ]; then
-    \cp -vf ${HADOOP_HOME}/etc/hadoop/mapred-site.xml ${HADOOP_HOME}/etc/hadoop/mapred-site.xml.bak
-fi
-cat > ${HADOOP_HOME}/etc/hadoop/mapred-site.xml << 'EOF'
+docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/yarn-site.xml << EOF
 <configuration>
-    <property>
-        <name>mapreduce.framework.name</name>
-        <value>yarn</value>
-    </property>
+  <property>
+    <name>yarn.resourcemanager.hostname</name>
+    <value>${HADOOP_CONTAINER_NAME}</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.aux-services</name>
+    <value>mapreduce_shuffle</value>
+  </property>
+  <property>
+  <name>yarn.nodemanager.resource.memory-mb</name>
+    <value>8192</value>
+  </property>
+  <property>
+    <name>yarn.nodemanager.resource.cpu-vcores</name>
+    <value>4</value>
+  </property>
+  <property>
+    <name>yarn.scheduler.minimum-allocation-mb</name>
+    <value>1024</value>
+  </property>
+  <property>
+    <name>yarn.scheduler.maximum-allocation-mb</name>
+    <value>8192</value>
+  </property>
 </configuration>
-EOF
+EOF"
 
-if [ ! -f ${HADOOP_HOME}/etc/hadoop/yarn-site.xml.bak ]; then
-    \cp -vf ${HADOOP_HOME}/etc/hadoop/yarn-site.xml ${HADOOP_HOME}/etc/hadoop/yarn-site.xml.bak
-fi
-cat > ${HADOOP_HOME}/etc/hadoop/yarn-site.xml << 'EOF'
+docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/mapred-site.xml << EOF
 <configuration>
-    <property>
-        <name>yarn.nodemanager.aux-services</name>
-        <value>mapreduce_shuffle</value>
-    </property>
-    <property>
-        <name>yarn.nodemanager.env-whitelist</name>
-        <value>JAVA_HOME,HADOOP_COMMON_HOME,HADOOP_HDFS_HOME,HADOOP_CONF_DIR,CLASSPATH_PREPEND_DISTCACHE,HADOOP_YARN_HOME,HADOOP_MAPRED_HOME</value>
-    </property>
+  <property>
+    <name>mapreduce.framework.name</name>
+    <value>yarn</value>
+  </property>
+  <property>
+    <name>yarn.app.mapreduce.am.env</name>
+    <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+  </property>
+  <property>
+    <name>mapreduce.map.env</name>
+    <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+  </property>
+  <property>
+    <name>mapreduce.reduce.env</name>
+    <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+  </property>
+  <property>
+    <name>mapreduce.application.classpath</name>
+    <value>/opt/hadoop/share/hadoop/mapreduce/*,/opt/hadoop/share/hadoop/mapreduce/lib/*</value>
+  </property>
 </configuration>
-EOF
+EOF"
 
-# namenode format
-${HADOOP_HOME}/bin/hdfs namenode -format
+# Format
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs namenode -format'
 
-# Start all daemons
-${HADOOP_HOME}/bin/hdfs --daemon start namenode
-${HADOOP_HOME}/bin/hdfs --daemon start datanode
+# retart all daemons
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs --daemon stop namenode; hdfs --daemon start namenode'
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs --daemon stop datanode; hdfs --daemon start datanode'
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'yarn --daemon stop resourcemanager; yarn --daemon start resourcemanager'
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'yarn --daemon stop nodemanager; yarn --daemon start nodemanager'
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'mapred --daemon stop historyserver; mapred --daemon start historyserver'
 
-${HADOOP_HOME}/bin/yarn --daemon start resourcemanager
-${HADOOP_HOME}/bin/yarn --daemon start nodemanager
-
-${HADOOP_HOME}/bin/mapred --daemon start historyserver
-
-${HADOOP_HOME}/bin/hdfs dfsadmin -report
-
-jps
+# Report status
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs dfsadmin -report'
 ```
 
-**Stop all:**
+Test:
 
 ```sh
-${HADOOP_HOME}/bin/hdfs --daemon stop namenode
-${HADOOP_HOME}/bin/hdfs --daemon stop datanode
-
-${HADOOP_HOME}/bin/yarn --daemon stop resourcemanager
-${HADOOP_HOME}/bin/yarn --daemon stop nodemanager
-
-${HADOOP_HOME}/bin/mapred --daemon stop historyserver
-```
-
-**Test:**
-
-```sh
-${HADOOP_HOME}/bin/hdfs dfs -ls /
-
-echo "Hello Hadoop Goodbye Hadoop" > /tmp/input.txt
-${HADOOP_HOME}/bin/hdfs dfs -mkdir /wordcount_input
-${HADOOP_HOME}/bin/hdfs dfs -put /tmp/input.txt /wordcount_input
-${HADOOP_HOME}/bin/hadoop jar ${HADOOP_HOME}/share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar wordcount /wordcount_input /wordcount_output
-
-${HADOOP_HOME}/bin/hdfs dfs -cat "/wordcount_output/*"
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar pi 10 100'
 ```
 
 ## 2.2 Configuration
@@ -246,19 +224,57 @@ ${HADOOP_HOME}/bin/hdfs dfs -cat "/wordcount_output/*"
 </configuration>
 ```
 
-## 2.3 Tips
+## 2.3 Command-hdfs
 
-### 2.3.1 List files recursively
+### 2.3.1 File Path
 
 ```sh
 hdfs dfs -ls -R <path>
 ```
 
-### 2.3.2 Check the health of files
+### 2.3.2 File Status
 
 ```sh
 hdfs fsck <path>
 hdfs fsck <path> -files -blocks -replication
+```
+
+### 2.3.3 Show Content
+
+```sh
+# For text file
+hdfs dfs -cat <path>
+
+# For avro file
+hdfs dfs -text <path.avro>
+```
+
+### 2.3.4 Grant Permission
+
+```sh
+hdfs dfs -setfacl -R -m user:hive:rwx /
+hdfs dfs -getfacl /
+```
+
+## 2.4 Command-yarn
+
+### 2.4.1 Node
+
+```sh
+yarn node -list
+yarn node -list -showDetails
+```
+
+### 2.4.2 Application
+
+```sh
+yarn application -list
+yarn application -list -appStates ALL
+
+yarn application -status <appid>
+yarn logs -applicationId <appid>
+
+yarn application -kill <appid>
 ```
 
 # 3 Spark
@@ -306,6 +322,32 @@ scala> :quit
 ${SPARK_HOME}/bin/spark-submit ${SPARK_HOME}/examples/src/main/python/pi.py 10
 ```
 
+## 3.2 Tips
+
+### 3.2.1 Spark-Sql
+
+```sql
+show catalogs;
+set catalog <catalog_name>;
+
+show databases;
+use <database_name>;
+```
+
+### 3.2.2 Spark-Shell
+
+#### 3.2.2.1 Read parquet/orc/avro file
+
+```sh
+# avro is not built-in format
+spark-shell --packages org.apache.spark:spark-avro_2.12:3.5.2
+```
+
+```sh
+spark.read.format("parquet").load("hdfs://192.168.64.2/user/iceberg/demo/db/table/data/00000-0-e424d965-50e8-4f61-abc7-6e6c117876f4-0-00001.parquet").show(truncate=false)
+spark.read.format("avro").load("hdfs://192.168.64.2/user/iceberg/demo/demo_namespace/demo_table/metadata/snap-2052751058123365495-1-7a31848a-3e5f-43c7-886a-0a8d5f6c8ed7.avro").show(truncate=false)
+```
+
 # 4 Hive
 
 [What is Apache Hive?](https://www.databricks.com/glossary/apache-hive)
@@ -323,6 +365,260 @@ HS2 supports multi-client concurrency and authentication. It is designed to prov
 The Hive Metastore (HMS) is a central repository of metadata for Hive tables and partitions in a relational database, and provides clients (including Hive, Impala and Spark) access to this information using the metastore service API. It has become a building block for data lakes that utilize the diverse world of open-source software, such as Apache Spark and Presto. In fact, a whole ecosystem of tools, open-source and otherwise, are built around the Hive Metastore, some of which this diagram illustrates.
 
 ## 4.2 Deployment
+
+Here is a summary of the compatible versions of Apache Hive and Hadoop (refer to [Apache Hive Download](https://hive.apache.org/general/downloads/) for details):
+
+* `Hive 4.0.0`: Works with `Hadoop 3.3.6`, `Tez 0.10.3`
+
+### 4.2.1 Deployment via Docker
+
+#### 4.2.1.1 Use built-in Derby
+
+[Apache Hive - Quickstart](https://hive.apache.org/developement/quickstart/)
+
+Start a hive container joining the shared network.
+
+* **Tez-tips: Don't use `apache-tez-0.10.3-bin.tar.gz` directly but use `share/tez.tar.gz` after uncompressing. ([Error: Could not find or load main class org.apache.tez.dag.app.DAGAppMaster](https://stackoverflow.com/questions/72211046/error-could-not-find-or-load-main-class-org-apache-tez-dag-app-dagappmaster))**
+
+```sh
+SHARED_NS=hadoop-ns
+HADOOP_CONTAINER_NAME=hadoop
+HIVE_SERVER_CONTAINER_NAME=hive-with-derby
+
+# Download tez resources and put to hdfs
+docker exec ${HADOOP_CONTAINER_NAME} bash -c '
+if ! hdfs dfs -ls /opt/tez/tez.tar.gz > /dev/null 2>&1; then
+    mkdir -p /opt/tez
+    wget -qO /opt/tez/apache-tez-0.10.3-bin.tar.gz https://downloads.apache.org/tez/0.10.3/apache-tez-0.10.3-bin.tar.gz
+    tar -zxf /opt/tez/apache-tez-0.10.3-bin.tar.gz -C /opt/tez
+    hdfs dfs -mkdir -p /opt/tez
+    hdfs dfs -put -f /opt/tez/apache-tez-0.10.3-bin/share/tez.tar.gz /opt/tez
+fi
+'
+
+# Grant permission for user hive
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs dfs -setfacl -R -m user:hive:rwx /'
+
+cat > /tmp/hive-site.xml << EOF
+<configuration>
+    <property>
+        <name>hive.server2.enable.doAs</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>hive.tez.exec.inplace.progress</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>hive.exec.scratchdir</name>
+        <value>/opt/hive/scratch_dir</value>
+    </property>
+    <property>
+        <name>hive.user.install.directory</name>
+        <value>/opt/hive/install_dir</value>
+    </property>
+    <property>
+        <name>tez.runtime.optimize.local.fetch</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hive.exec.submit.local.task.via.child</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+    <property>
+        <name>tez.local.mode</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>tez.lib.uris</name>
+        <value>/opt/tez/tez.tar.gz</value>
+    </property>
+    <property>
+        <name>hive.execution.engine</name>
+        <value>tez</value>
+    </property>
+    <property>
+        <name>metastore.warehouse.dir</name>
+        <value>/opt/hive/data/warehouse</value>
+    </property>
+    <property>
+        <name>metastore.metastore.event.db.notification.api.auth</name>
+        <value>false</value>
+    </property>
+</configuration>
+EOF
+
+# Copy hadoop config file from container
+docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml /tmp/core-site.xml
+docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml /tmp/hdfs-site.xml
+docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml /tmp/yarn-site.xml
+docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml /tmp/mapred-site.xml
+
+docker run -d --name ${HIVE_SERVER_CONTAINER_NAME} --network ${SHARED_NS} -e SERVICE_NAME=hiveserver2 \
+  -v /tmp/hive-site.xml:/opt/hive/conf/hive-site.xml \
+  -v /tmp/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml \
+  -v /tmp/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml \
+  -v /tmp/yarn-site.xml:/opt/hadoop/etc/hadoop/yarn-site.xml \
+  -v /tmp/mapred-site.xml:/opt/hadoop/etc/hadoop/mapred-site.xml \
+  apache/hive:4.0.0
+```
+
+Test:
+
+```sh
+docker exec -it ${HIVE_SERVER_CONTAINER_NAME} beeline -u 'jdbc:hive2://localhost:10000/' -e "
+create table hive_example(a string, b int) partitioned by(c int);
+alter table hive_example add partition(c=1);
+insert into hive_example partition(c=1) values('a', 1), ('a', 2),('b',3);
+select * from hive_example;
+drop table hive_example;
+"
+```
+
+#### 4.2.1.2 Use External Postgres
+
+```sh
+SHARED_NS=hadoop-ns
+POSTGRES_CONTAINER_NAME=postgres
+POSTGRES_USER="hive_postgres"
+POSTGRES_PASSWORD="Abcd1234"
+POSTGRES_DB="hive-metastore"
+HADOOP_CONTAINER_NAME=hadoop
+HIVE_SERVER_CONTAINER_NAME=hive-with-postgres
+IS_RESUME="false"
+
+# How to use sql:
+# 1. docker exec -it ${POSTGRES_CONTAINER_NAME} bash
+# 2. psql -U ${POSTGRES_USER} -d ${POSTGRES_DB}
+docker run --name ${POSTGRES_CONTAINER_NAME} --network ${SHARED_NS} \
+    -e POSTGRES_USER="${POSTGRES_USER}" \
+    -e POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
+    -e POSTGRES_DB="${POSTGRES_DB}" \
+    -d postgres:17.0
+
+# Download tez resources and put to hdfs
+docker exec ${HADOOP_CONTAINER_NAME} bash -c '
+if ! hdfs dfs -ls /opt/tez/tez.tar.gz > /dev/null 2>&1; then
+    mkdir -p /opt/tez
+    wget -qO /opt/tez/apache-tez-0.10.3-bin.tar.gz https://downloads.apache.org/tez/0.10.3/apache-tez-0.10.3-bin.tar.gz
+    tar -zxf /opt/tez/apache-tez-0.10.3-bin.tar.gz -C /opt/tez
+    hdfs dfs -mkdir -p /opt/tez
+    hdfs dfs -put -f /opt/tez/apache-tez-0.10.3-bin/share/tez.tar.gz /opt/tez
+fi
+'
+
+# Grant permission for user hive
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs dfs -setfacl -R -m user:hive:rwx /'
+
+cat > /tmp/hive-site.xml << EOF
+<configuration>
+    <property>
+        <name>javax.jdo.option.ConnectionURL</name>
+        <value>jdbc:postgresql://${POSTGRES_CONTAINER_NAME}/${POSTGRES_DB}</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionDriverName</name>
+        <value>org.postgresql.Driver</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionUserName</name>
+        <value>${POSTGRES_USER}</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionPassword</name>
+        <value>${POSTGRES_PASSWORD}</value>
+    </property>
+    <property>
+        <name>hive.server2.enable.doAs</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>hive.tez.exec.inplace.progress</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>hive.exec.scratchdir</name>
+        <value>/opt/hive/scratch_dir</value>
+    </property>
+    <property>
+        <name>hive.user.install.directory</name>
+        <value>/opt/hive/install_dir</value>
+    </property>
+    <property>
+        <name>tez.runtime.optimize.local.fetch</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>hive.exec.submit.local.task.via.child</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+    <property>
+        <name>tez.local.mode</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>tez.lib.uris</name>
+        <value>/opt/tez/tez.tar.gz</value>
+    </property>
+    <property>
+        <name>hive.execution.engine</name>
+        <value>tez</value>
+    </property>
+    <property>
+        <name>metastore.warehouse.dir</name>
+        <value>/opt/hive/data/warehouse</value>
+    </property>
+    <property>
+        <name>metastore.metastore.event.db.notification.api.auth</name>
+        <value>false</value>
+    </property>
+</configuration>
+
+EOF
+
+# Copy hadoop config file from container
+docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml /tmp/core-site.xml
+docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml /tmp/hdfs-site.xml
+docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml /tmp/yarn-site.xml
+docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml /tmp/mapred-site.xml
+
+if [ ! -e /tmp/postgresql-42.7.4.jar ]; then
+    wget -O /tmp/postgresql-42.7.4.jar  https://jdbc.postgresql.org/download/postgresql-42.7.4.jar
+fi
+
+docker run -d --name ${HIVE_SERVER_CONTAINER_NAME} --network ${SHARED_NS} -e SERVICE_NAME=hiveserver2 \
+  -e DB_DRIVER=postgres \
+  -e IS_RESUME=${IS_RESUME} \
+  -v /tmp/hive-site.xml:/opt/hive/conf/hive-site.xml \
+  -v /tmp/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml \
+  -v /tmp/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml \
+  -v /tmp/yarn-site.xml:/opt/hadoop/etc/hadoop/yarn-site.xml \
+  -v /tmp/mapred-site.xml:/opt/hadoop/etc/hadoop/mapred-site.xml \
+  -v /tmp/postgresql-42.7.4.jar:/opt/hive/lib/postgresql-42.7.4.jar \
+  apache/hive:4.0.0
+```
+
+Test:
+
+```sh
+docker exec -it ${HIVE_SERVER_CONTAINER_NAME} beeline -u 'jdbc:hive2://localhost:10000/' -e "
+create table hive_example(a string, b int) partitioned by(c int);
+alter table hive_example add partition(c=1);
+insert into hive_example partition(c=1) values('a', 1), ('a', 2),('b',3);
+select * from hive_example;
+drop table hive_example;
+"
+```
+
+### 4.2.2 Deployment on Physical Machine
 
 **Prerequisite:**
 

@@ -544,7 +544,17 @@ Bloom filter index is suitable for datasets with high cardinality, provided they
 
 # 4 Data Lake
 
-## 4.1 StarCache
+## 4.1 Connector
+
+When executing a SQL query to access data from a data lake, such as Paimon, Hudi, or Iceberg, remote files must be retrieved during the planning stage. The entry point for this process is the `PlanFragmentBuilder`.
+
+* `visitPhysicalHiveScan`
+* `visitPhysicalPaimonScan`
+* `visitPhysicalHudiScan`
+* `visitPhysicalIcebergScan`
+...
+
+## 4.2 StarCache
 
 [StarRocks 存算分离 Data Cache 二三事](https://zhuanlan.zhihu.com/p/695673099)
 
@@ -581,7 +591,7 @@ classDiagram
     DiskBlockItem: +uint32_t block_index
 ```
 
-## 4.2 Parquet Reader
+## 4.3 Parquet Reader
 
 * `ScanOperator`: Execution root of a query plan
 * `ConnectorScanOperator`: Derived from `ScanOperator`, handling external source situations
@@ -643,7 +653,7 @@ classDiagram
     ColumnChunkReader *-- PageReader
 ```
 
-## 4.3 PR
+## 4.4 PR
 
 * [[Enhancement] parquet format to support coalesce reads](https://github.com/StarRocks/starrocks/pull/7478)
 * [[Enhancement] add support for late materialization in paquet reader](https://github.com/StarRocks/starrocks/pull/8574)

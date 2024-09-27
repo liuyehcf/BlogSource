@@ -128,6 +128,10 @@ mvn clean package -DskipTests -pl module-a,module-b -am
 
 use `export MAVEN_OPTS=`
 
+## 1.6 Maven Central Repository FTP Address
+
+[https://repo1.maven.org/maven2/](https://repo1.maven.org/maven2/)
+
 # 2 Loading Order When Dependencies Conflict
 
 当一个类同时存在于依赖A于依赖B中时，加载的版本依据以下的原则

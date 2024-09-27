@@ -89,7 +89,7 @@
         * DataBricks
             * [DataBricks Introduction to Data Lakes](https://www.databricks.com/discover/data-lakes)
             * [What is a data lakehouse?](https://docs.databricks.com/en/lakehouse/index.html)
-        * SR
+        * SR [LakeHouse](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzI1MTYxOTkxNQ==&action=getalbum&album_id=2644153329677254658&scene=173&subscene=&sessionid=svr_67ba9ce1dc0&enterid=1727074152&from_msgid=2247493481&from_itemidx=1&count=3&nolastread=1#wechat_redirect)
             * [一场 Meetup，把数据湖讲透了！](https://mp.weixin.qq.com/s/A3I501LCkXI23D6KZ1rm_g)
             * [如何打造一款极速数据湖分析引擎](https://mp.weixin.qq.com/s/I-KJn2fZjb6mRAxYG_e8_w)
             * [技术内幕 | StarRocks 支持 Apache Hudi 原理解析](https://mp.weixin.qq.com/s/oROdpb4dHjGwTM8xLvKsWw)
