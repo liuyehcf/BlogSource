@@ -48,6 +48,10 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/hdfs-
     <name>dfs.replication</name>
     <value>1</value>
   </property>
+  <property>
+    <name>dfs.permissions.enabled</name>
+    <value>false</value>
+  </property>
 </configuration>
 EOF"
 
@@ -138,26 +142,31 @@ docker run -dit --name ${SPARK_CONTAINER_NAME} --network ${SHARED_NS} -e HADOOP_
 # Setup home directory for user spark, otherwise spark's package installation mechanism won't work, which will store jars in directory: /home/spark/.ivy2/cache
 docker exec -u root ${SPARK_CONTAINER_NAME} bash -c 'mkdir -p /home/spark; chmod 755 /home/spark; chown -R spark:spark /home/spark'
 
-# Create iceberg warehouse
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs dfs -mkdir -p /user/iceberg/demo'
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs dfs -chown spark:supergroup /user/iceberg/demo'
-
 docker exec -it ${SPARK_CONTAINER_NAME} /opt/spark/bin/spark-sql \
     --packages org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.6.1 \
     --conf spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions \
     --conf spark.sql.catalog.spark_catalog=org.apache.iceberg.spark.SparkSessionCatalog \
     --conf spark.sql.catalog.spark_catalog.type=hive \
-    --conf spark.sql.catalog.iceberg_demo=org.apache.iceberg.spark.SparkCatalog \
-    --conf spark.sql.catalog.iceberg_demo.type=hadoop \
-    --conf spark.sql.catalog.iceberg_demo.warehouse=hdfs://${HADOOP_CONTAINER_NAME}/user/iceberg/demo
+    --conf spark.sql.catalog.iceberg_spark_demo=org.apache.iceberg.spark.SparkCatalog \
+    --conf spark.sql.catalog.iceberg_spark_demo.type=hadoop \
+    --conf spark.sql.catalog.iceberg_spark_demo.warehouse=hdfs://${HADOOP_CONTAINER_NAME}/user/spark/warehouse
 ```
 
 Test:
 
 ```sql
-CREATE TABLE iceberg_demo.db.table (id bigint, data string) USING iceberg;
-INSERT INTO iceberg_demo.db.table VALUES (1, 'a'), (2, 'b'), (3, 'c');
-SELECT * FROM iceberg_demo.db.table;
+CREATE TABLE iceberg_spark_demo.db.table (id bigint, data string) USING iceberg;
+INSERT INTO iceberg_spark_demo.db.table VALUES (1, 'a'), (2, 'b'), (3, 'c');
+SELECT * FROM iceberg_spark_demo.db.table;
+ALTER TABLE iceberg_spark_demo.db.table ADD COLUMNS (age INT COMMENT 'Age of the record');
+INSERT INTO iceberg_spark_demo.db.table VALUES (4, 'd', 25), (5, 'e', 30);
+SELECT * FROM iceberg_spark_demo.db.table;
+-- Spark cannot drop a column; it can only redefine all columns. This is equivalent to deleting all columns and then adding two columns with the same names as before. However, they are actually different columns (the IDs are different).
+ALTER TABLE iceberg_spark_demo.db.table REPLACE COLUMNS (id BIGINT, data STRING);
+INSERT INTO iceberg_spark_demo.db.table VALUES (6, 'f'), (7, 'g');
+ALTER TABLE iceberg_spark_demo.db.table RENAME COLUMN data TO description;
+INSERT INTO iceberg_spark_demo.db.table VALUES (8, 'h');
+SELECT * FROM iceberg_spark_demo.db.table;
 ```
 
 # 3 Trino & Iceberg
@@ -178,25 +187,41 @@ Start a hive container joining the shared network.
 
 ```sh
 SHARED_NS=iceberg-ns
+POSTGRES_CONTAINER_NAME=iceberg-postgres
+POSTGRES_USER="hive_postgres"
+POSTGRES_PASSWORD="Abcd1234"
+POSTGRES_DB="hive-metastore"
 HADOOP_CONTAINER_NAME=iceberg-hadoop
-HIVE_SERVER_CONTAINER_NAME=iceberg-hive-server
+HIVE_PREFIX=iceberg-hive-with-postgres
+HIVE_METASTORE_CONTAINER_NAME=${HIVE_PREFIX}-metastore
+HIVE_SERVER_CONTAINER_NAME=${HIVE_PREFIX}-server
+IS_RESUME="false"
+
+# How to use sql:
+# 1. docker exec -it ${POSTGRES_CONTAINER_NAME} bash
+# 2. psql -U ${POSTGRES_USER} -d ${POSTGRES_DB}
+docker run --name ${POSTGRES_CONTAINER_NAME} --network ${SHARED_NS} \
+    -e POSTGRES_USER="${POSTGRES_USER}" \
+    -e POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
+    -e POSTGRES_DB="${POSTGRES_DB}" \
+    -d postgres:17.0
 
 # Download tez resources and put to hdfs
+if [ ! -e /tmp/apache-tez-0.10.3-bin.tar.gz ]; then
+    wget -O /tmp/apache-tez-0.10.3-bin.tar.gz  https://downloads.apache.org/tez/0.10.3/apache-tez-0.10.3-bin.tar.gz
+fi
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'mkdir -p /opt/tez'
+docker cp /tmp/apache-tez-0.10.3-bin.tar.gz ${HADOOP_CONTAINER_NAME}:/opt/tez
 docker exec ${HADOOP_CONTAINER_NAME} bash -c '
 if ! hdfs dfs -ls /opt/tez/tez.tar.gz > /dev/null 2>&1; then
-    mkdir -p /opt/tez
-    wget -qO /opt/tez/apache-tez-0.10.3-bin.tar.gz https://downloads.apache.org/tez/0.10.3/apache-tez-0.10.3-bin.tar.gz
+    rm -rf /opt/tez/apache-tez-0.10.3-bin
     tar -zxf /opt/tez/apache-tez-0.10.3-bin.tar.gz -C /opt/tez
     hdfs dfs -mkdir -p /opt/tez
     hdfs dfs -put -f /opt/tez/apache-tez-0.10.3-bin/share/tez.tar.gz /opt/tez
 fi
 '
 
-# Grant permission for user hive
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs dfs -setfacl -R -m user:hive:rwx /'
-
-cat > /tmp/hive-site.xml << EOF
-<configuration>
+HIVE_SITE_CONFIG_COMMON=$(cat << EOF
     <property>
         <name>hive.server2.enable.doAs</name>
         <value>false</value>
@@ -207,11 +232,11 @@ cat > /tmp/hive-site.xml << EOF
     </property>
     <property>
         <name>hive.exec.scratchdir</name>
-        <value>/opt/hive/scratch_dir</value>
+        <value>/opt/${HIVE_PREFIX}/scratch_dir</value>
     </property>
     <property>
         <name>hive.user.install.directory</name>
-        <value>/opt/hive/install_dir</value>
+        <value>/opt/${HIVE_PREFIX}/install_dir</value>
     </property>
     <property>
         <name>tez.runtime.optimize.local.fetch</name>
@@ -239,28 +264,105 @@ cat > /tmp/hive-site.xml << EOF
     </property>
     <property>
         <name>metastore.warehouse.dir</name>
-        <value>/opt/hive/data/warehouse</value>
+        <value>/opt/${HIVE_PREFIX}/data/warehouse</value>
     </property>
     <property>
         <name>metastore.metastore.event.db.notification.api.auth</name>
         <value>false</value>
     </property>
+EOF
+)
+
+cat > /tmp/hive-site-for-metastore.xml << EOF
+<configuration>
+    <property>
+        <name>javax.jdo.option.ConnectionURL</name>
+        <value>jdbc:postgresql://${POSTGRES_CONTAINER_NAME}/${POSTGRES_DB}</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionDriverName</name>
+        <value>org.postgresql.Driver</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionUserName</name>
+        <value>${POSTGRES_USER}</value>
+    </property>
+    <property>
+        <name>javax.jdo.option.ConnectionPassword</name>
+        <value>${POSTGRES_PASSWORD}</value>
+    </property>
+    ${HIVE_SITE_CONFIG_COMMON}
 </configuration>
 EOF
 
-# Copy hadoop config file from container
+cat > /tmp/hive-site-for-hiveserver2.xml << EOF
+<configuration>
+    <property>
+        <name>hive.metastore.uris</name>
+        <value>thrift://${HIVE_METASTORE_CONTAINER_NAME}:9083</value>
+    </property>
+    ${HIVE_SITE_CONFIG_COMMON}
+</configuration>
+EOF
+
+# Copy hadoop config file to hive container
 docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml /tmp/core-site.xml
 docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml /tmp/hdfs-site.xml
 docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml /tmp/yarn-site.xml
 docker cp ${HADOOP_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml /tmp/mapred-site.xml
 
-docker run -d --name ${HIVE_SERVER_CONTAINER_NAME} --network ${SHARED_NS} -e SERVICE_NAME=hiveserver2 \
-  -v /tmp/hive-site.xml:/opt/hive/conf/hive-site.xml \
-  -v /tmp/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml \
-  -v /tmp/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml \
-  -v /tmp/yarn-site.xml:/opt/hadoop/etc/hadoop/yarn-site.xml \
-  -v /tmp/mapred-site.xml:/opt/hadoop/etc/hadoop/mapred-site.xml \
-  apache/hive:4.0.0
+# Prepare jdbc driver
+if [ ! -e /tmp/postgresql-42.7.4.jar ]; then
+    wget -O /tmp/postgresql-42.7.4.jar  https://jdbc.postgresql.org/download/postgresql-42.7.4.jar
+fi
+
+# Use customized entrypoint
+cat > /tmp/updated_entrypoint.sh << 'EOF'
+#!/bin/bash
+
+echo "IS_RESUME=${IS_RESUME}"
+FLAG_FILE=/opt/hive/already_init_schema
+
+if [ -z "${IS_RESUME}" ] || [ "${IS_RESUME}" = "false" ]; then
+    if [ -f ${FLAG_FILE} ]; then
+        echo "Skip init schema when restart."
+        IS_RESUME=true /entrypoint.sh
+    else
+        echo "Try to init schema for the first time."
+        touch ${FLAG_FILE}
+        IS_RESUME=false /entrypoint.sh
+    fi
+else
+    echo "Skip init schema for every time."
+    IS_RESUME=true /entrypoint.sh
+fi 
+EOF
+chmod a+x /tmp/updated_entrypoint.sh
+
+# Start standalone metastore
+docker create --name ${HIVE_METASTORE_CONTAINER_NAME} --network ${SHARED_NS} -p 9083:9083 -e SERVICE_NAME=metastore -e DB_DRIVER=postgres -e IS_RESUME=${IS_RESUME} --entrypoint /updated_entrypoint.sh apache/hive:4.0.0
+
+docker cp /tmp/hive-site-for-metastore.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
+docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
+docker cp /tmp/hdfs-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
+docker cp /tmp/yarn-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
+docker cp /tmp/mapred-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
+docker cp /tmp/updated_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/updated_entrypoint.sh
+docker cp /tmp/postgresql-42.7.4.jar ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/lib/postgresql-42.7.4.jar
+
+docker start ${HIVE_METASTORE_CONTAINER_NAME}
+
+# Start standalone hiveserver2
+docker create --name ${HIVE_SERVER_CONTAINER_NAME} --network ${SHARED_NS} -p 10000:10000 -e SERVICE_NAME=hiveserver2 -e DB_DRIVER=postgres -e IS_RESUME=true apache/hive:4.0.0
+
+docker cp /tmp/hive-site-for-hiveserver2.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
+docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
+docker cp /tmp/hdfs-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/hdfs-site.xml
+docker cp /tmp/yarn-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/yarn-site.xml
+docker cp /tmp/mapred-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/mapred-site.xml
+docker cp /tmp/postgresql-42.7.4.jar ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/lib/postgresql-42.7.4.jar
+
+docker start ${HIVE_SERVER_CONTAINER_NAME}
 ```
 
 Test:
@@ -272,6 +374,105 @@ alter table hive_example add partition(c=1);
 insert into hive_example partition(c=1) values('a', 1), ('a', 2),('b',3);
 select * from hive_example;
 drop table hive_example;
+"
+```
+
+## 3.3 Step4: Start Trino
+
+```sh
+SHARED_NS=iceberg-ns
+HADOOP_CONTAINER_NAME=iceberg-hadoop
+HIVE_PREFIX=iceberg-hive-with-postgres
+HIVE_METASTORE_CONTAINER_NAME=${HIVE_PREFIX}-metastore
+HIVE_SERVER_CONTAINER_NAME=${HIVE_PREFIX}-server
+TRINO_CONTAINER_NAME=iceberg-trino
+
+cat > /tmp/trino-iceberg.properties << EOF
+connector.name=iceberg
+hive.metastore.uri=thrift://${HIVE_METASTORE_CONTAINER_NAME}:9083
+fs.hadoop.enabled=true
+EOF
+
+docker create --name ${TRINO_CONTAINER_NAME} --network ${SHARED_NS} -p 5005:5005 trinodb/trino:449
+docker cp /tmp/trino-iceberg.properties ${TRINO_CONTAINER_NAME}:/etc/trino/catalog/iceberg.properties
+docker start ${TRINO_CONTAINER_NAME}
+```
+
+Test:
+
+```sh
+docker exec -it ${TRINO_CONTAINER_NAME} trino --catalog iceberg --execute "
+CREATE SCHEMA IF NOT EXISTS iceberg_trino_demo;
+DROP TABLE IF EXISTS iceberg_trino_demo.test_table;
+CREATE TABLE iceberg_trino_demo.test_table (
+    id INTEGER, 
+    data VARCHAR, 
+    date DATE
+) WITH (
+    format = 'PARQUET',
+    partitioning = ARRAY['date']
+);
+
+INSERT INTO iceberg_trino_demo.test_table (id, data, date) VALUES 
+(1, 'sample1', DATE '2024-09-01'),
+(2, 'sample2', DATE '2024-09-02'),
+(3, 'sample3', DATE '2024-09-03');
+SELECT * FROM iceberg_trino_demo.test_table;
+
+-- Delete data where id = 1
+DELETE FROM iceberg_trino_demo.test_table WHERE id = 1;
+SELECT * FROM iceberg_trino_demo.test_table;
+
+-- Insert new data after delete
+INSERT INTO iceberg_trino_demo.test_table (id, data, date) VALUES 
+(4, 'sample4', DATE '2024-09-04'),
+(5, 'sample5', DATE '2024-09-05'),
+(6, 'sample6', DATE '2024-09-06');
+SELECT * FROM iceberg_trino_demo.test_table;
+
+-- Add new column
+ALTER TABLE iceberg_trino_demo.test_table ADD COLUMN new_column VARCHAR;
+SELECT * FROM iceberg_trino_demo.test_table;
+
+-- Insert new data after adding column
+INSERT INTO iceberg_trino_demo.test_table (id, data, date, new_column) VALUES 
+(7, 'sample7', DATE '2024-09-07', 'extra1'),
+(8, 'sample8', DATE '2024-09-08', 'extra2'),
+(9, 'sample9', DATE '2024-09-09', 'extra3');
+SELECT * FROM iceberg_trino_demo.test_table;
+
+-- Drop the column
+ALTER TABLE iceberg_trino_demo.test_table DROP COLUMN new_column;
+SELECT * FROM iceberg_trino_demo.test_table;
+
+-- Insert new data after dropping column
+INSERT INTO iceberg_trino_demo.test_table (id, data, date) VALUES 
+(10, 'sample10', DATE '2024-09-10'),
+(11, 'sample11', DATE '2024-09-11'),
+(12, 'sample12', DATE '2024-09-12');
+SELECT * FROM iceberg_trino_demo.test_table;
+
+-- Rename column
+ALTER TABLE iceberg_trino_demo.test_table RENAME COLUMN data TO info;
+SELECT * FROM iceberg_trino_demo.test_table;
+
+-- Insert new data after renaming column
+INSERT INTO iceberg_trino_demo.test_table (id, info, date) VALUES 
+(13, 'sample13', DATE '2024-09-13'),
+(14, 'sample14', DATE '2024-09-14'),
+(15, 'sample15', DATE '2024-09-15');
+SELECT * FROM iceberg_trino_demo.test_table;
+
+-- Change column type
+ALTER TABLE iceberg_trino_demo.test_table ALTER COLUMN id SET DATA TYPE BIGINT;
+SELECT * FROM iceberg_trino_demo.test_table;
+
+-- Insert new data after changing column type
+INSERT INTO iceberg_trino_demo.test_table (id, info, date) VALUES 
+(16, 'sample16', DATE '2024-09-16'),
+(17, 'sample17', DATE '2024-09-17'),
+(18, 'sample18', DATE '2024-09-18');
+SELECT * FROM iceberg_trino_demo.test_table;
 "
 ```
 
