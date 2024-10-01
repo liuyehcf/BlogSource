@@ -32,12 +32,12 @@ Start a single-node hadoop cluster joining the shared network.
 SHARED_NS=iceberg-ns
 HADOOP_CONTAINER_NAME=iceberg-hadoop
 
-docker run -dit --name ${HADOOP_CONTAINER_NAME} --network ${SHARED_NS} -p 8042:8042 -p 8088:8088 apache/hadoop:3.3.6 bash
+docker run -dit --name ${HADOOP_CONTAINER_NAME} --network ${SHARED_NS} -p 8020:8020 -p 9866:9866 -p 8042:8042 -p 8088:8088 apache/hadoop:3.3.6 bash
 docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/core-site.xml << EOF
 <configuration>
   <property>
     <name>fs.defaultFS</name>
-    <value>hdfs://${HADOOP_CONTAINER_NAME}</value>
+    <value>hdfs://${HADOOP_CONTAINER_NAME}:8020</value>
   </property>
 </configuration>
 EOF"
@@ -51,6 +51,22 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/hdfs-
   <property>
     <name>dfs.permissions.enabled</name>
     <value>false</value>
+  </property>
+  <property>
+    <name>dfs.datanode.address</name>
+    <value>${HADOOP_CONTAINER_NAME}:9866</value>
+  </property>
+  <property>
+    <name>dfs.datanode.http.address</name>
+    <value>${HADOOP_CONTAINER_NAME}:9864</value>
+  </property>
+  <property>
+    <name>dfs.datanode.ipc.address</name>
+    <value>${HADOOP_CONTAINER_NAME}:9867</value>
+  </property>
+  <property>
+    <name>dfs.datanode.hostname</name>
+    <value>${HADOOP_CONTAINER_NAME}</value>
   </property>
 </configuration>
 EOF"

@@ -13,6 +13,8 @@ categories:
 
 # 1 Network
 
+## 1.1 NetworkManager
+
 用`NetworkManager`来配置网络
 
 ```sh
@@ -36,7 +38,47 @@ managed=true
 
 通过`nmtui`添加网卡并启动
 
-## 1.1 Reference
+## 1.2 netplan (Recommend)
+
+In Ubuntu 18.04 and later versions, network configuration is managed by netplan. The configuration files are located in the `/etc/netplan/` directory and have a `.yaml` extension.
+
+In these files, you might find DHCP configurations like the following:
+
+```yml
+network:
+    version: 2
+    ethernets:
+        eth0:
+            dhcp4: true
+            dhcp4-overrides:
+                use-dns: false
+```
+
+How to manage netplan:
+
+* `netplan apply`: This command will reconfigure the network based on the `.yaml` configuration files in the `/etc/netplan/` directory.
+* `netplan try`: This command will temporarily apply the new network configuration. If the configuration has errors, the system will automatically roll back after 120 seconds. If the configuration is correct, you can press "Enter" to permanently apply the changes.
+
+## 1.3 systemd-resolved
+
+`systemd-resolved` is a component of the `systemd` suite responsible for providing network name resolution services on Linux systems. It handles DNS (Domain Name System) queries, LLMNR (Link-Local Multicast Name Resolution), and Multicast DNS (mDNS) to resolve hostnames into IP addresses, making network communication possible.
+
+`systemd-resolved` runs a local DNS stub listener on `127.0.0.53:53` by default, which applications can use to perform DNS queries. The `/etc/resolv.conf` file is typically a symbolic link to `/run/systemd/resolve/stub-resolv.conf`, directing DNS requests to the stub resolver.
+
+The configuration file for `systemd-resolved` is located at `/etc/systemd/resolved.conf`, where you can set options like fallback DNS servers, LLMNR, and mDNS settings.
+
+**Commands**
+
+```sh
+resolvectl status
+
+systemctl status systemd-resolved
+systemctl start systemd-resolved
+systemctl stop systemd-resolved
+systemctl enable systemd-resolved
+```
+
+## 1.4 Reference
 
 * [NetworkManager doesn't show ethernet connection](https://askubuntu.com/questions/904545/networkmanager-doesnt-show-ethernet-connection)
 

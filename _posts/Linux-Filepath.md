@@ -12,37 +12,37 @@ categories:
 
 <!--more-->
 
-# 1 /etc目录
+# 1 /etc Directory
 
-1. `/etc/passwd`：系统用户配置文件，每一行共7个部分
+1. `/etc/passwd`: The file contains essential information about the system's user accounts.
     1. `username`
-    1. `password`
+    1. `password`: An `x` or `*` indicates that the encrypted password is stored in `/etc/shadow` for security reasons.
     1. `UID`
     1. `GID`
     1. `UID Info`
-    1. `Home Directory`，决定了`HOME`环境变量的内容
+    1. `Home Directory`
     1. `Shell`
-1. `/etc/redhat-release`：redhat发行版信息
-1. `/etc/issue`：ubuntu发行版信息
-1. `/etc/motd`：登录成功后显示的欢迎界面
-1. `/etc/update-motd.d`：ubuntu下，与登录成功后显示的欢迎界面相关的一些脚本
-1. `/etc/localtime`：时区配置文件的软连接，实际生效的时区配置，可以通过`timedatectl`或者手动更新
+1. `/etc/redhat-release`: The file contains information about the specific version of Red Hat Enterprise Linux (RHEL) or its derivative that is installed on the system.
+1. `/etc/issue`: The file contains a system identification message, typically displayed before the login prompt on a terminal.
+1. `/etc/motd`: The file (Message of the Day, motd) is a text file that displays a message to users after they successfully log in to the system.
+1. `/etc/update-motd.d`: The directory contains scripts that are used to dynamically generate the message of the day (MOTD) on systems where the MOTD is updated automatically.
+1. `/etc/localtime`: The file is a symlink or a copy of a timezone data file that defines the system's local timezone. It can be updated via `timedatectl` or manually.
     * `/usr/share/zoneinfo/<zone_name>`
-1. `/etc/timezone`：时区
-1. `/etc/ssl/certs`：根证书存放位置
-1. `/etc/security/limits.conf`：`ulimit -a`对应的配置文件
+1. `/etc/timezone`: The file contains the name of the system's time zone in a human-readable format.
+1. `/etc/ssl/certs`: The directory is a common location on Unix-like systems that stores SSL/TLS certificates.
+1. `/etc/security/limits.conf`: The file is used to set resource limits for users and processes on a Unix-like system.
     * `echo "* soft core unlimited" >> /etc/security/limits.conf`
     * `echo "* hard core unlimited" >> /etc/security/limits.conf`
-1. `rc-local`：用于在开机时执行一些初始化脚本，它默认是关闭的，可以通过以下命令开启
+1. `/etc/rc.local`: The file is a script that is traditionally used to execute commands at the end of the system's boot process. It allows administrators to specify custom startup tasks that are not part of the usual system initialization sequence. Although it is not commonly used on modern Linux systems with systemd, it is still present for backward compatibility on some distributions.
     * `chmod +x /etc/rc.d/rc.local`
     * `chmod +x /etc/rc.local`
     * `systemctl enable rc-local.service`
     * `systemctl start rc-local.service`
-    * 将需要开机执行的脚本的绝对路径，追加到`/etc/rc.local`文件尾，`/etc/rc.d/rc.local`文件不需要手动修改，生效后会自动将`/etc/rc.local`的内容同步到`/etc/rc.d/rc.local`中去
+    * Append the absolute path of the script that needs to be executed at startup to the end of the `/etc/rc.local` file. There is no need to manually modify the `/etc/rc.d/rc.local` file, as the content of `/etc/rc.local` will automatically be synchronized to `/etc/rc.d/rc.local` after taking effect.
 
-# 2 /sys目录
+# 2 /sys Directory
 
-首先，先通过`tree -L 1 /sys`看下`/sys`的目录结构，结果如下
+The `/sys` directory, also known as `sysfs`, is a virtual filesystem in Linux that exposes kernel information, hardware devices, and drivers in a structured and organized way. It provides a way for user space to interact with kernel components, device drivers, and system hardware. First, check the directory structure of `/sys` using the command `tree -L 1 /sys`. The result is as follows:
 
 ```
 /sys
@@ -59,19 +59,19 @@ categories:
 └── power
 ```
 
-| 子目录 | 作用 |
+| Subdirectory | Description |
 |:--|:--|
-| /sys/block | 该目录下的所有子目录代表着系统中当前被发现的所有块设备。按照功能来说放置在`/sys/class`下会更合适，但由于历史遗留因素而一直存在于`/sys/block`，但从`linux2.6.22`内核开始这部分就已经标记为过去时，只有打开了`CONFIG_SYSFS_DEPRECATED`配置编译才会有这个目录存在，并且其中的内容在从`linux2.6.26`版本开始已经正式移到了`/sys/class/block`，旧的接口`/sys/block`为了向后兼容而保留存在，但其中的内容已经变为了指向它们在`/sys/devices/`中真实设备的符号链接文件 |
-| **/sys/bus** | 该目录下的每个子目录都是`kernel`支持并且已经注册了的总线类型。这是内核设备按照总线类型分层放置的目录结构，`/sys/devices`中的所有设备都是连接于某种总线之下的，bus子目录下的每种具体总线之下可以找到每个具体设备的符号链接，一般来说每个子目录（总线类型）下包含两个子目录，一个是`devices`，另一个是`drivers`；其中`devices`下是这个总线类型下的所有设备，这些设备都是符号链接，它们分别指向真正的设备`/sys/devices/name/`；而`drivers`下是所有注册在这个总线上的驱动，每个`driver`子目录下是一些可以观察和修改的driver参数。（它也是构成linux统一设备模型的一部分） |
-| **/sys/class** | 该目录下包含所有注册在kernel里面的设备类型，这是按照设备功能分类的设备模型，每个设备类型表达具有一种功能的设备。每个设备类型子目录下都是相应设备类型的各种具体设备的符号链接，这些链接指向`/sys/devices/name`下的具体设备。设备类型和设备并没有一一对应的关系，一个物理设备可能具备多种设备类型；一个设备类型只表达具有一种功能的设备，比如：系统所有输入设备都会出现在`/sys/class/input`之下，而不论它们是以何种总线连接到系统的。（`/sys/class`也是构成linux统一设备模型的一部分） |
-| /sys/dev | 该目录下维护一个按照字符设备和块设备的主次号码`major:minor`链接到真实设备`/sys/devices`的符号链接文件 |
-| **/sys/devices** | 该目录下是全局设备结构体系，包含所有被发现的注册在各种总线上的各种物理设备。一般来说，所有的物理设备都按其在总线上的拓扑结构来显示，但有两个例外，即`platform devices`和`system devices`。`platform devices`一般是挂在芯片内部的高速或者低速总线上的各种控制器和外设，它们能被CPU直接寻址；`system devices`不是外设，而是芯片内部的核心结构，比如CPU，timer等，它们一般没有相关的驱动，但是会有一些体系结构相关的代码来配置它们。（`sys/devices`是内核对系统中所有设备的分层次表达模型，也是`/sys`文件系统管理设备的最重要的目录结构） |
-| /sys/firmware | 该目录下包含对固件对象`firmware object`和属性进行操作和观察的接口，即这里是系统加载固件机制的对用户空间的接口。（关于固件有专用于固件加载的一套API） |
-| /sys/fs | 按照设计，该目录使用来描述系统中所有的文件系统，包括文件系统本身和按照文件系统分类存放的已挂载点 |
-| /sys/hypervisor | 该目录是与虚拟化Xen相关的装置。（Xen是一个开放源代码的虚拟机监视器） |
-| /sys/kernel | 这个目录下存放的是内核中所有可调整的参数 |
-| /sys/module | 该目录下有系统中所有的模块信息，不论这些模块是以内联`inlined`方式编译到内核映像文件中还是编译为外模块`.ko文件`，都可能出现在`/sys/module`中。即module目录下包含了所有的被载入kernel的模块。 |
-| /sys/power | 该目录是系统中的电源选项，对正在使用的power子系统的描述。这个目录下有几个属性文件可以用于控制整个机器的电源状态，如可以向其中写入控制命令让机器关机/重启等等 |
+| `/sys/block` | Contains information about block devices (e.g., disks, partitions). Each block device has its own subdirectory with files representing various attributes like size, device type, and status. |
+| **`/sys/bus`** | Lists all the buses (e.g., PCI, USB) available on the system. It contains subdirectories for each bus type and exposes information about the devices connected to each bus, as well as drivers for these devices. |
+| **`/sys/class`** | Organizes devices into classes based on their type (e.g., `net` for network interfaces, `tty` for terminals). It provides a high-level view of devices regardless of their specific hardware connection, making it easier to interact with them based on their functionality. |
+| `/sys/dev` | Exposes information about the devices available on the system. It contains two subdirectories: 1. `char`, character devices (e.g., `/dev/tty`); 2. `block`, block devices (e.g., `/dev/sda`). |
+| **`/sys/devices`** | Provides a detailed hierarchy of physical devices connected to the system, organized by their topology (e.g., buses, controllers, hardware addresses). This tree view allows users to see how devices are interconnected. |
+| /sys/firmware | Offers information about the firmware on the system (e.g., BIOS, ACPI, EFI). It can also be used to configure certain firmware parameters, depending on hardware support. |
+| /sys/fs | Contains information related to filesystem features and types. For example, the `/sys/fs/cgroup/` directory contains information about control groups (cgroups) used for resource management. |
+| /sys/hypervisor | Provides information about the hypervisor if the system is running in a virtualized environment. This directory is useful for identifying details about the host and guest operating system. |
+| /sys/kernel | Exposes kernel-related parameters and information, such as security settings, module parameters, and control knobs for kernel subsystems (e.g., debugging options). |
+| /sys/module | Contains subdirectories for each kernel module currently loaded, showing information about module parameters and usage statistics. |
+| /sys/power | Used to control power management features, such as suspend, hibernate, and power states. Writing to files in this directory can trigger power state changes (e.g., putting the system into sleep mode). |
 
 可以看到`/sys`下的目录结构是经过精心设计的：在`/sys/devices`下是所有设备的真实对象，包括如视频卡和以太网卡等真实的设备，也包括`ACPI`等不那么显而易见的真实设备、还有`tty`、`bonding`等纯粹虚拟的设备；在其它目录如`class`、`bus`等中则在分类的目录中含有大量对`/sys/devices`中真实对象引用的符号链接文件
 
@@ -83,84 +83,91 @@ categories:
     * `/sys/devices/virtual/net`：虚拟网卡
     * `/sys/devices/system/cpu/cpu0/cache/`：`Cache`相关的信息，`getconf -a | grep -i cache`也可以查看相关信息
 
-## 2.1 参考
+## 2.1 Reference
 
 * [linux 目录/sys 解析](https://blog.csdn.net/zqixiao_09/article/details/50320799)
 * [What's the “/sys” directory for?](https://askubuntu.com/questions/720471/whats-the-sys-directory-for)
 
-# 3 /proc目录
+# 3 /proc Directory
 
-可以通过`man proc`查看说明文档
+You can view the documentation through `man proc`.
 
-1. `/proc/buddyinfo`：内存碎片信息
-    * 示例如下，对于DMA，有90个大小为`2^(0*PAGE_SIZE)`的内存块；6个大小为`2^(1*PAGE_SIZE)`的内存块；2个大小为`2^(2*PAGE_SIZE)`的内存块
+1. `/proc/buddyinfo`: The file provides information about the memory allocator's "buddy system" in the Linux kernel.
+    * Order 0: Represents the smallest possible block (a single memory page, usually 4 KB).
+    * Higher orders represent blocks that are exponentially larger (order 1 is 2 pages, order 2 is 4 pages, and so on).
     ```
     Node 0, zone      DMA     90      6      2      1      1      ...
     Node 0, zone   Normal   1650    310      5      0      0      ...
     Node 0, zone  HighMem      2      0      0      1      1      ...
     ```
 
-    * 整理内存碎片相关的配置有：`/proc/sys/vm/compact_memory`、`/proc/sys/vm/drop_caches`
-1. `/proc/cmdline`：系统启动时输入给内核的命令行参数
-1. `/proc/version`：内核版本
-1. `/proc/cpuinfo`：cpu硬件信息
-    * `physical id`：一个物理CPU一个id
-    * `cpu cores`：一个物理CPU对应几个物理核
-    * `siblings`：一个物理CPU对应几个逻辑核
-1. `/proc/meminfo`：内存信息
-    * `MemTotal`：物理内存的大小
-    * `MemFree`：未使用的内存
-    * **`MemAvailable`：系统可使用内存的估算值。注意`MemTotal - MemFree`并不代表可用内存，因为有部分内存会被用于`cache/buffer/slab`，这部分内存在资源紧张的情况下是可以回收的**
-    * `Buffers`：用于buffer的内存
-    * `Cached`：用于cache的内存
-    * `Slab`：slab内存
-        * `SReclaimable`：slab中可回收的部分，与`MemAvailable`相关
-        * `SUnreclaim`：slab中不可回收的部分
-    * `Hugepage{xxx}`：与`Hugepage`相关的配置
-1. `/proc/zoneinfo`
-    * `Linux 2.6`开始支持`NUMA, Non-Uniform Memory Access`内存管理模式。在多个CPU的系统中，内存按CPU划分为不同的`Node`，每个CPU挂一个`Node`，其访问本地`Node`比访问其他CPU上的`Node`速度要快很多
-    * `numactl -H`可以查看`NUMA`硬件信息
-    * `Node`下面划分为一个或多个`Zone`，为啥要有`Zone`，两个原因：
-        1. `DMA`设备能够访问的内存范围有限（`ISA`设备只能访问`16MB`）
-        1. `x86-32bit`系统地址空间有限（32位最多只能4GB），为了使用更大内存，需要使用`HIGHMEM`机制
+    * Related file: `/proc/sys/vm/compact_memory`、`/proc/sys/vm/drop_caches`
+1. `/proc/cmdline`: The file contains the kernel command line arguments passed to the Linux kernel at the time of boot.
+1. `/proc/version`: The file contains kernel version.
+1. `/proc/cpuinfo`: The file contains detailed information about the CPU(s) in your system.
+    * `processor`: The unique ID of the CPU core (starting from 0).
+    * `physical id`: Represents the unique identifier for a physical CPU socket on the motherboard.
+    * `cpu cores`: Number of physical cores per CPU package.
+    * `siblings`: This value represents the total number of logical processors for a given physical CPU.
+1. `/proc/meminfo`: The file provides a snapshot of the system's memory usage.
+    * `MemTotal`: Total usable RAM (i.e., physical RAM minus some reserved areas used by the kernel).
+    * `MemFree`: Amount of RAM that is currently free and not being used at all by the system.
+    * **`MemAvailable`: An estimate of how much memory is available for starting new applications, without swapping. It considers both free memory and reclaimable page cache.**
+    * `Buffers`: Amount of memory used by the kernel buffers for I/O operations, such as block device caching.
+    * `Cached`: Memory used by the page cache and slabs. This memory can be quickly freed if needed.
+    * `Slab`: Memory used by the kernel for data structures. It consists of `SReclaimable` and `SUnreclaim`.
+        * `SReclaimable`: Part of the slab that can be reclaimed (e.g., inode and dentry caches). Related to `MemAvailable`.
+        * `SUnreclaim`: Part of the slab that cannot be reclaimed.
+    * `Hugepage{xxx}`: `Hugepage` Related configs.
+1. `/proc/zoneinfo`: The file provides detailed information about the memory zones in the Linux kernel's memory management system.
+    * `Linux 2.6` began supporting `NUMA, Non-Uniform Memory Access` memory management mode. In multi-CPU systems, memory is divided into different `Nodes` based on CPUs. Each CPU is attached to a `Node`, and accessing its local `Node` is significantly faster than accessing `Nodes` on other CPUs.
+    * `numactl -H` can be used to view `NUMA` hardware information.
+    * Each `Node` is divided into one or more `Zones`. The reasons for having `Zones` are:
+        1. The memory range accessible by `DMA` devices is limited (`ISA` devices can only access `16MB`).
+        1. The address space of `x86-32bit` systems is limited (32-bit can only handle up to 4GB). To use more memory, the `HIGHMEM` mechanism is needed.
     * `cat /proc/zoneinfo | grep -E "zone|free |managed"`
-1. `/proc/slabinfo`：slab内存的详细分配信息
-1. `/proc/cgroups`：当前内核支持的cgroup子系统
-1. `/proc/filesystems`：当前内核支持的文件系统列表
-1. `/proc/kallsyms`：内核符号表
-1. `/proc/kmsg`：内核消息，对应dmesg命令
-1. `/proc/modules`：已经加载的模块列表，对应lsmod命令
-1. `/proc/mounts`：已经挂载的文件系统，对应mount命令
-1. `/proc/stat`：全面统计状态表
-1. `/proc/softirqs`：软中断统计信息
-1. `/proc/interrupts`：硬件中断统计信息，第一列是中断号
-    * 硬件中断可能存在CPU亲和性，比如某个网卡的中断全部由某个CPU处理
-1. `/proc/irq/<irq>`：某个特定硬件中断的信息
-    * `/proc/irq/<irq>/smp_affinity`：CPU亲和性掩码
-    * `/proc/irq/<irq>/smp_affinity_list`：CPU亲和性列表
-1. `/proc/loadavg`：cpu负载，分别表示1分钟、5分钟、15分钟的平均cpu负载
-    * `cpu load`的含义：正在执行或者等待执行的进程数量。在内核代码中（`3.10.x`），计算`cpu load`的方法是`spu_calc_load`
-    * `cpu_load = α * cpu_load + (1 - α) * active_task_size`。`cpu_load`与原值以及当前活跃进程数量两者均相关，在1分钟、5分钟、15分钟三种情况下`α`的取值不同
-1. `/proc/self`：我们可以通过`/proc/${pid}`目录来获取指定进程的信息。当pid可能发生变化时，我们还可以通过`/proc/self`来访问当前进程的信息，不同的进程访问该目录下的文件得到的结果是不同的
-1. `/proc/sys/net`：网络相关配置
-1. `/proc/sys/kernel`：内核相关的配置
-    * `/proc/sys/kernel/core_pattern`：`core dump`的存储格式，通常其内容是`core`
-    * `/proc/sys/kernel/yama/ptrace_scope`：
-        * `0 - classic ptrace permissions`：任何进程可以`PTRACE_ATTACH`到任意其他相同`uid`的进程
-        * `1 - restricted ptrace`
-        * `2 - admin-only attach`
-        * `3 - no attach`
-1. `/proc/sys/fs`：文件系统相关配置
-    * `/proc/sys/fs/file-nr`：系统文件描述符的使用情况
-        * 第一列：已分配文件句柄的数目（包括socket）
-        * 第二列：已分配未使用文件句柄的数目
-        * 第三列：文件句柄的最大数目（也可以通过`cat /proc/sys/fs/file-max`查看）
-    * `/proc/sys/fs/file-max`：文件句柄的最大数目
-1. `/proc/net`：网络相关的统计信息
-    * `/proc/net/route`：路由表
-    * `/proc/net/arp`：mac地址表
-    * `/proc/net/sockstat`：socket汇总信息
-    * `/proc/net/tcp`：tcp连接信息
+1. `/proc/slabinfo`: The file provides detailed information about the kernel's slab allocator, which is used for efficient memory management of small objects in the kernel space. 
+1. `/proc/cgroups`: The file provides information about control groups (cgroups) available on the system.
+1. `/proc/filesystems`: The file lists all the filesystem types that the kernel currently supports.
+1. `/proc/kallsyms`: The file contains the addresses, symbols (names), and types of all kernel functions and variables that are currently loaded.
+1. `/proc/kmsg`: The file provides access to the kernel's message buffer, containing messages generated by the kernel. Used by logging daemons (e.g., `dmesg`, `syslogd`) to read kernel messages for system diagnostics and debugging.
+1. `/proc/modules`: The file lists all kernel modules that are currently loaded into the kernel. Used by `lsmod`.
+1. `/proc/mounts`: A symlink to `/proc/self/mounts`, display all mounted filesystems.
+1. `/proc/stat`: The file provides various system statistics since the last boot, including CPU usage, I/O, system interrupts, and context switches.
+1. `/proc/softirqs`: The file provides statistics about the number of soft interrupts (softirqs) handled by the kernel.
+1. `/proc/interrupts`: The file provides statistics about the interrupts handled by the system, both hardware and software, on a per-CPU basis.
+    * The first column of the file represents the interrupt vector number or identifier. 
+1. `/proc/irq/<irq>`: The directory contains information and configurations related to a specific interrupt request (IRQ) line in the system.
+    * `/proc/irq/<irq>/smp_affinity`: Controls which CPU cores are allowed to handle this IRQ using a mask format.
+    * `/proc/irq/<irq>/smp_affinity_list`: Similar to smp_affinity, but specifies CPU affinity using a list format.
+1. `/proc/loadavg`: The file provides information about the system's load average, which represents the average system load over different periods of time.
+    * `1-minute`, `5-minute`, and `15-minute` load averages: Three numbers indicating the average system load over the past 1, 5, and 15 minutes.
+    * The meaning of `cpu load`: the number of processes that are either executing or waiting to execute. In the kernel code (`3.10.x`), the method to calculate `cpu load` is `spu_calc_load`.
+    * `cpu_load = α * cpu_load + (1 - α) * active_task_size`. `cpu_load` is related to both its previous value and the current number of active processes. The value of `α` varies in the cases of 1 minute, 5 minutes, and 15 minutes.
+1. `/proc/self`: The directory is a symbolic link that points to the /proc directory of the currently running process that is accessing it.
+1. `/proc/sys/net`: The directory contains files and subdirectories that allow you to view and configure various networking parameters in the Linux kernel. It provides control over network behavior, such as IP configuration, TCP settings, and firewall rules.
+1. `/proc/sys/kernel`: The directory contains files and settings that allow you to view and configure various kernel parameters, affecting the system's behavior and operation.
+    * `/proc/sys/kernel/core_pattern`: The file defines the pattern used to name core dump files created when a process crashes.
+    * `/proc/sys/kernel/yama/ptrace_scope`: The file controls the `ptrace` system call, which is used for debugging processes.
+        * `0 - classic ptrace permissions`: No restrictions; any process can trace any other process (default behavior).
+        * `1 - restricted ptrace`: Only child processes can be traced. This is the default on many modern Linux distributions.
+        * `2 - admin-only attach`: Restricted; only processes with a specific ptrace relationship (using `ptrace_attach`) or capabilities (`CAP_SYS_PTRACE`) can trace.
+        * `3 - no attach`: No process may be traced, even by privileged processes, unless exceptions are explicitly allowed.
+1. `/proc/sys/fs`: The directory contains files and subdirectories related to filesystem settings and limits.
+    * `/proc/sys/fs/file-max`: The maximum number of file handles that the kernel can allocate.
+    * `/proc/sys/fs/inode-max`: The maximum number of inodes (filesystem objects like files and directories) that the kernel can allocate.
+    * `/proc/sys/fs/nr_open`: The maximum number of file descriptors a single process can open.
+    * `/proc/sys/fs/file-nr`: Displays the number of allocated file handles and the maximum limit.
+        * First column (allocated): The number of file handles that the kernel has currently allocated. This value includes both open file handles and reserved but not currently used handles.
+        * Second column (unused): The number of file handles that are currently allocated but are not being used. This can be seen as "spare" file handles that the kernel can reuse for new file operations without needing to allocate more.
+        * Third column (maximum): The maximum number of file handles that the kernel can allocate. This limit is set by the `/proc/sys/fs/file-max` parameter and represents the upper limit on file handles available to the system.
+    * `/proc/sys/fs/aio-max-nr`
+    * `/proc/sys/fs/mount-max`
+1. `/proc/net`: A symlink to `/proc/self/net`.
+    * `/proc/net/route`
+    * `/proc/net/arp`: Mac address.
+    * `/proc/net/sockstat`
+    * `/proc/net/tcp`
         * `1 -> TCP_ESTABLISHED`
         * `2 -> TCP_SYN_SENT`
         * `3 -> TCP_SYN_RECV`
@@ -172,13 +179,13 @@ categories:
         * `9 -> TCP_LAST_ACL`
         * `10 -> TCP_LISTEN`
         * `11 -> TCP_CLOSING`
-1. `/proc/<pid>`：进程相关的信息
-    * `/proc/<pid>/status`：查看进程相关的一些概要信息
-        * `VmPeak`：峰值虚拟内存
-        * `VmSize`：目前占用的虚拟内存
-        * `VmHWM`：峰值物理内存
-        * `VmRSS`：目前占用的物理内存
-        * `Threads`：线程数量
+1. `/proc/<pid>`: The directory contains information about each running process on the system.
+    * `/proc/<pid>/status`: The file contains detailed information about a specific process's status. It provides a snapshot of the process's attributes, including memory usage, CPU utilization, and process state. The data is presented in a human-readable format, making it useful for system monitoring and debugging.
+        * `VmPeak`: Peak Virtual Memory Size.
+        * `VmSize`: Virtual Memory Size.
+        * `VmHWM`: The peak amount of physical memory (RAM) that the process has used at any point.
+        * `VmRSS`: The current amount of physical memory (RAM) the process is using.
+        * `Threads`: The number of threads currently running within the process.
         ```cpp
         #include <fstream>
         #include <iostream>
@@ -206,39 +213,94 @@ categories:
         }       
         ```
 
-    * `/proc/<pid>/maps`：展示了一个进程的内存消耗
-    * `/proc/<pid>/smaps`：展示了一个进程的内存消耗，内容比`/proc/<pid>/maps`更为详细
-    * `/proc/<pid>/fd/`：进程打开的所有文件，包括`socket`等
-        * `socket`类型，例如`/proc/6497/fd/1018 -> socket:[42446535]`
-            * 如何判断socket建立时间，看`/proc/6497/fd/1018`的创建时间即可
-            * 中括号中数字的含义？表示`inode`号，可以通过`ss -nap -e | grep 42446535`查看对应的`socket`的详细信息
-    * `/proc/<pid>/limits`：各种资源的限制
-    * `/proc/<pid>/environ`：环境变量
+    * **`/proc/<pid>/net`: Does not only list network information related to that process, but all the network information in the network namespace which that process belongs to.**
+        * `/proc/pid>/net/tcp`
+            ```
+            pid=${pid:-1}
+            while IFS= read -r inode; do
+            cat /proc/net/tcp | awk -v inode="$inode" '$10 == inode && $4 == "0A" {
+                # Split local address into IP and port
+                split($2, arr, ":");
+                ip_hex = arr[1];
+                port_hex = arr[2];
+
+                # Convert IP from hex to dotted decimal format
+                ipv4 = sprintf("%d.%d.%d.%d",
+                    strtonum("0x" substr(ip_hex, 7, 2)),
+                    strtonum("0x" substr(ip_hex, 5, 2)),
+                    strtonum("0x" substr(ip_hex, 3, 2)),
+                    strtonum("0x" substr(ip_hex, 1, 2)));
+
+                # Convert port from hex to decimal
+                port = strtonum("0x" port_hex);
+
+                # Print IP:port
+                print ipv4 ":" port;
+            }'
+            done < <(ls -l /proc/${pid}/fd | grep 'socket:' | awk -F'[][]' '{print $2}')
+            ```
+
+        * `/proc/pid>/net/tcp6`
+            ```
+            pid=${pid:-1}
+            while IFS= read -r inode; do
+            cat /proc/net/tcp6 | awk -v inode="$inode" '$10 == inode && $4 == "0A" {
+                # Split local address into IP and port
+                split($2, arr, ":");
+                ip_hex = arr[1];
+                port_hex = arr[2];
+
+                # Convert IP from hex to dotted decimal format
+                ipv6 = sprintf("%x:%x:%x:%x:%x:%x:%x:%x",
+                    strtonum("0x" substr(ip_hex, 1, 4)),
+                    strtonum("0x" substr(ip_hex, 5, 4)),
+                    strtonum("0x" substr(ip_hex, 9, 4)),
+                    strtonum("0x" substr(ip_hex, 13, 4)),
+                    strtonum("0x" substr(ip_hex, 17, 4)),
+                    strtonum("0x" substr(ip_hex, 21, 4)),
+                    strtonum("0x" substr(ip_hex, 25, 4)),
+                    strtonum("0x" substr(ip_hex, 29, 4)));
+
+                # Convert port from hex to decimal
+                port = strtonum("0x" port_hex);
+
+                # Print IP:port
+                print ipv6 ":" port;
+            }'
+            done < <(ls -l /proc/${pid}/fd | grep 'socket:' | awk -F'[][]' '{print $2}')
+            ```
+
+    * `/proc/<pid>/maps`: The file provides a detailed view of the memory regions used by a specific process (`<pid>`).
+    * `/proc/<pid>/smaps`: The file provides a more detailed breakdown of the memory usage for each memory region of a specific process (`<pid>`). It extends the information found in `/proc/<pid>/maps` with detailed statistics about the memory consumption and attributes of each region, making it valuable for in-depth memory analysis.
+    * `/proc/<pid>/fd/`: The directory contains symbolic links to the file descriptors opened by the process with the specified process ID (`<pid>`). Each file descriptor (`FD`) is represented by a numbered entry (e.g., `0`, `1`, `2`, etc.) within this directory.
+        * `socket` type, for example, `/proc/6497/fd/1018 -> socket:[42446535]`
+            * To determine the socket creation time, check the creation time of `/proc/6497/fd/1018`.
+            * What does the number inside the brackets mean? It represents the `inode` number, and you can view the detailed information of the corresponding `socket` using `ss -nap -e | grep 42446535`.
+    * `/proc/<pid>/limits`: The file provides information about the resource limits set for the process with the specified process ID (`<pid>`).
+    * `/proc/<pid>/environ`: The file contains the environment variables for the process with the specified process ID (`<pid>`).
         * `cat /proc/<pid>/environ | tr '\0' '\n'`
 
-## 3.1 参考
+## 3.1 Reference
 
 * [How is CPU usage calculated?](https://stackoverflow.com/questions/3748136/how-is-cpu-usage-calculated)
 * [Linux内存管理 -- /proc/{pid}/smaps讲解](https://www.jianshu.com/p/8203457a11cc)
 
-# 4 /var目录
+# 4 /var Directory
 
 1. `/var/crash`：内核crash日志
 1. `/var/log`：日志
     * `/var/log/audit`：审计日志
 
-## 4.1 参考
+## 4.1 Reference
 
 * [Differences in /var/log/{syslog,dmesg,messages} log files](https://superuser.com/questions/565927/differences-in-var-log-syslog-dmesg-messages-log-files)
 
-# 5 其他
+# 5 /dev Directory
 
-1. `/dev/disk/by-path`：以磁盘路径为名称的软链接文件
-1. `/dev/disk/by-partuuid`：以分区uuid为名称的软链接文件
-1. `/dev/disk/by-uuid`：以uuid为名称的软链接文件
-1. `/dev/disk/by-partlabel`：以分区标签为名称的软链接文件
-1. `/dev/disk/by-id`：以id为名称的软链接文件
-1. `/usr/share/zoneinfo`：时区配置文件
-    * `/etc/localtime`：时区配置文件的软连接，实际生效的时区配置
+1. `/dev/disk/by-path`: The directory contains symbolic links to disk devices based on their physical or logical path on the system.
+1. `/dev/disk/by-partuuid`: The directory contains symbolic links to partitions on storage devices based on their Partition UUIDs (PARTUUIDs).
+1. `/dev/disk/by-uuid`: The directory contains symbolic links to storage device partitions, identified by their UUIDs (Universally Unique Identifiers).
+1. `/dev/disk/by-partlabel`: The directory contains symbolic links to partitions on storage devices identified by their partition labels.
+1. `/dev/disk/by-id`: The directory contains symbolic links to storage devices based on their unique hardware identifiers.
 1. `/dev/tty`: is a special file in Unix-like operating systems that represents the controlling terminal for the current process. In other words, it is a reference to the terminal device (such as a command-line interface) that is currently interacting with the user.
 

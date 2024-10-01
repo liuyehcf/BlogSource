@@ -610,103 +610,92 @@ set -H
 
 ## 2.4 awk
 
-相比于sed(管道命令)常常作用于一整行的处理，awk(管道命令)则比较倾向于将一行分成数个"字段"来处理，因此awk相当适合处理小型的数据处理
+Compared to `sed` (a pipeline command) which often acts on an entire line, `awk` (a pipeline command) tends to split a line into several "fields" for processing, making `awk` quite suitable for small-scale data processing.
 
 **Pattern:**
 
-* `awk [-F] '[/regex/] 条件类型1{动作1} 条件类型2{动作2}...' [filename]`
+* `awk [-F] '[/regex/] [condition] {action}' [filename]`
 
 **Options:**
 
-* `-F`：后接分隔符。例如：`-F ':'`、`-F '[,.;]'`
+* `-F`: Specifies the delimiter. For example: `-F ':'`, `-F '[,.;]'`, `-F '[][]'`
 
-注意awk后续的所有动作都是以单引号括住的，而且如果以print打印时，非变量的文字部分，包括格式等(例如制表`\t`、换行`\n`等)都需要以双引号的形式定义出来，因为单引号已经是awk的命令固定用法了。例如`last -n 5 | awk '{print $1 "\t" $3}'`
+Note that all subsequent actions in `awk` are enclosed in single quotes, and when printing with `print`, non-variable text, including formats (like tab `\t`, newline `\n`, etc.), must be defined in double quotes since single quotes are reserved for `awk` commands. For example, `last -n 5 | awk '{print $1 "\t" $3}'`.
 
-**awk处理流程：**
+**`awk` Processing Flow:**
 
-1. 读入第一行
-    * **如果包含正则匹配部分（`[/regex/]`），如果不匹配则跳过该行；如果匹配（任意子串），那么将第一行的数据填入`$0`,`$1`,...等变量中**
-    * 如果不包含正则匹配部分，那么将第一行的数据填入`$0`,`$1`,...等变量中
-1. 依据条件类型的限制，判断是否需要进行后面的动作
-1. 做完所有的动作与条件类型
-1. 若还有后续的'行'，重复上面的步骤，直到所有数据都读取完为止
+1. Reads the first line.
+    * **If it contains a regular expression match (`[/regex/]`), it skips the line if there is no match. If it matches (any substring), the first line's data is assigned to variables like `$0`, `$1`, etc.**
+    * If there is no regex match, the first line's data is assigned to `$0`, `$1`, etc.
+2. Based on the condition type, determines if subsequent actions need to be performed.
+3. Executes all actions and condition types.
+4. If there are more lines, repeats the steps above until all data is processed.
 
-**awk内置变量：**
+**`awk` Built-in Variables:**
 
-* `ARGC`：命令行参数个数
-* `ARGV`：命令行参数排列
-* `ENVIRON`：支持队列中系统环境变量的使用
-* `FILENAME`：awk浏览的文件名
-* `FNR`：浏览文件的记录数
-* **`FS`：设置输入域分隔符，默认是空格键，等价于命令行 -F选项**
-* **`NF`：每一行($0)拥有的字段总数**
-* **`NR`：目前awk所处理的是第几行**
-* `OFS`：输出域分隔符
-* `ORS`：输出记录分隔符
-* `RS`：控制记录分隔符
-* 在动作内部引用这些变量不需要用`$`，例如`last -n 5 | awk '{print $1 "\t  lines: " NR "\t columes: " NF}'`
-* 此外，`$0`变量是指整条记录。`$1`表示当前行的第一个域，`$2`表示当前行的第二个域，以此类推
+* `ARGC`: Number of command-line arguments.
+* `ARGV`: Command-line argument array.
+* `ENVIRON`: Access to system environment variables in a queue.
+* `FILENAME`: Name of the file `awk` is processing.
+* `FNR`: Record number within the current file.
+* **`FS`**: Input field separator, default is a space, equivalent to the command-line `-F` option.
+* **`NF`**: Total number of fields in each line (`$0`).
+* **`NR`**: Line number currently being processed by `awk`.
+* `OFS`: Output field separator.
+* `ORS`: Output record separator.
+* `RS`: Record separator.
+* These variables can be referenced within actions without `$`, for example, `last -n 5 | awk '{print $1 "\t  lines: " NR "\t columns: " NF}'`.
+* Additionally, the `$0` variable refers to the entire record. `$1` represents the first field of the current line, `$2` the second field, and so on.
 
-**awk内置函数**
+**`awk` Built-in Functions**
 
-* `sub(r, s [, t])`：用`s`替换字符串`t`中的第一个正则表达式`r`，`t`默认是`$0`
-* `gsub(r, s [, t])`：用`s`替换字符串`t`中的所有正则表达式`r`，`t`默认是`$0`
-* `gensub(r, s, h [, t])`：用`s`替换字符串`t`中的正则表达式`r`，`t`默认是`$0`
-    * `h`：以`g/G`开头的字符串，则同`gsub`
-    * `h`：数字，替换第几个匹配项
-* `tolower(s)`：将字符串`s`的每个字母替换成小写字母
-* `toupper(s)`：将字符串`s`的每个字母替换成大写字母
-* `length(s)`：返回字符串长度
+* `sub(r, s [, t])`: Replaces the first occurrence of the regular expression `r` in string `t` with `s`. By default, `t` is `$0`.
+* `gsub(r, s [, t])`: Replaces all occurrences of the regular expression `r` in string `t` with `s`. By default, `t` is `$0`.
+* `gensub(r, s, h [, t])`: Replaces the regular expression `r` in string `t` with `s`. By default, `t` is `$0`.
+    * `h`: If it starts with `g/G`, behaves like `gsub`.
+    * `h`: A number, replaces the specified occurrence.
+* `tolower(s)`: Converts every character in string `s` to lowercase.
+* `toupper(s)`: Converts every character in string `s` to uppercase.
+* `length(s)`: Returns the length of the string.
+* `split(s, a [, r [, seps] ])`: Split the string s into the array a and the separators array seps on the regular expression r, and return the number of fields. If r is omitted, `FS` is used instead.
+* `strtonum(s)`: Examine str, and return its numeric value. If str begins with a leading `0x` or `0X`, treat it as a hexadecimal number.
+    * `echo 'FF' | awk '{ print strtonum("0x"$0) }'`
+* `print` vs. `printf`: `print expr-list` prints with a newline character, `printf fmt, expr-list` does not print a newline character.
+    * `cat /etc/passwd | awk '{FS=":"} $3<10 {print $1 "\t" $3}'`: **Note that `{FS=":"}` acts as an action, so the delimiter changes to `:` from the second line onward; for the first line, the delimiter is still a space.**
+    * `cat /etc/passwd | awk 'BEGIN {FS=":"} $3<10 {print $1 "\t" $3}'`: **Here, `{FS=":"}` is effective for the first line.**
+    * `echo -e "abcdefg\nhijklmn\nopqrst\nuvwxyz" | awk '/[au]/ {print $0}'`.
+    * `lvdisplay|awk  '/LV Name/{n=$3} /Block device/{d=$3; sub(".*:","dm-",d); print d,n;}'`:
+        * There are two actions, each with its own condition: one contains `LV Name`, and the other contains `Block device`. Each condition executes its corresponding action if met; if both are satisfied, both actions are executed (in this case, simultaneous satisfaction is impossible).
+        * First, match the first condition; `n` stores the volume group name, assumed to be `swap`.
+        * Next, match the second condition; `d` stores the disk name, assumed to be `253:1`. Using the `sub` function, replace `253:` with `dm-`, resulting in `d` being `dm-1`. Print `d` and `n`.
+        * Then, match the first condition; `n` stores the volume group name, assumed to be `root`. The content of `d` is still `dm-1`.
+        * Finally, match the second condition; `d` stores the disk name, assumed to be `253:0`. Using the `sub` function, replace `253:` with `dm-`, resulting in `d` being `dm-0`. Print `d` and `n`.
 
-**动作说明：**
+**Action Descriptions:**
 
-* 所有awk的动作，即在`{}`内的动作，如果有需要多个命令辅助时，可以用分号`;`间隔，或者直接以`Enter`按键来隔开每个命令
+* In `awk`, any action inside `{}` can be separated by a semicolon `;` if multiple commands are needed, or they can be separated by pressing the `Enter` key.
 
-**BEGIN与END：**
+**`BEGIN` and `END`:**
 
-* 在Unix awk中两个特别的表达式，BEGIN和END，这两者都可用于pattern中（参考前面的awk语法），**提供BEGIN和END的作用是给程序赋予初始状态和在程序结束之后执行一些扫尾的工作。**
-* **任何在BEGIN之后列出的操作（在`{}`内）将在Unix awk开始扫描输入之前执行，而END之后列出的操作将在扫描完全部的输入之后执行**。因此，通常使用BEGIN来显示变量和预置（初始化）变量，使用END来输出最终结果
-
-**print与printf：**
-
-* print会打印换行符
-* printf不会打印换行符
-
-**Examples:**
-
-* `cat /etc/passwd | awk '{FS=":"} $3<10 {print $1 "\t" $3}'`：**注意`{FS=":"}`是作为一个动作存在的，因此从第二行开始分隔符才变为":"，第一行分隔符仍然是空格**
-* `cat /etc/passwd | awk 'BEGIN {FS=":"} $3<10 {print $1 "\t" $3}'`：**这样写`{FS=":"}`在处理第一行时也会生效**
-* `echo -e "abcdefg\nhijklmn\nopqrst\nuvwxyz" | awk '/[au]/ {print $0}'`
-* `lvdisplay|awk  '/LV Name/{n=$3} /Block device/{d=$3; sub(".*:","dm-",d); print d,n;}'`
-    * 这里有两个动作，这两个动作分别有两个条件，一个包含`LV Name`，另一个包含`Block device`，哪个条件满足就执行哪个动作，如果两个条件都满足，那么两个都执行（在这个case下，不可能同时满足）
-    * 首先匹配第一个条件，`n`存储的是卷组名称，假设是`swap`
-    * 然后匹配第二个条件，`d`存储的是磁盘名称，假设是`253:1`，经过`sub`函数，将`253:`替换成`dm-`，因此此时d为`dm-1`，打印`d`和`n`
-    * 接着匹配第一个条件，`n`存储的是卷组名称，假设是`root`，此时`d`的内容还是`dm-1`
-    * 最后匹配第二个条件，`d`存储的是磁盘名称，假设是`253:0`，经过`sub`函数，将`253:`替换成`dm-`，因此此时d为`dm-0`，打印`d`和`n`
-* 
-```sh
-awk 
-'BEGIN {FS=":";print "统计销售金额";total=0} 
-{print $3;total=total+$3;} 
-END {print "销售金额总计：",total}' sx
-```
+* In Unix `awk`, two special expressions are `BEGIN` and `END`. These can be used in patterns (refer to the `awk` syntax mentioned earlier). **`BEGIN` and `END` give the program initial states and allow it to perform final tasks after scanning is complete.**
+* **Any operation listed after `BEGIN` (inside `{}`) is executed before `awk` starts scanning the input, and operations listed after `END` are executed after all input has been scanned.** Therefore, `BEGIN` is usually used to display and initialize variables, and `END` is used to output the final result.
 
 ### 2.4.1 Using Shell Variables
 
-**方式1：**
+**Method 1:**
 
-* 以`'"`和`"'`（即，单引号+双引号+shell变量+双引号+单引号）将shell变量包围起来
-* **这种方式只能引用数值变量**
+* Surround the shell variable with `'"` and `"'` (i.e., single quote + double quote + shell variable + double quote + single quote).
+* **This method can only reference numerical variables.**
 
 ```sh
 var=4
 awk 'BEGIN{print '"$var"'}'
 ```
 
-**方式2：**
+**Method 2:**
 
-* 以`"'`和`'"`（即，双引号+单引号+shell变量+单引号+双引号）将shell变量包围起来
-* **这种方式可以引用字符串型变量，但是字符串不允许包含空格**
+* Surround the shell variable with `"'` and `'"` (i.e., double quote + single quote + shell variable + single quote + double quote).
+* **This method can reference string variables, but the string cannot contain spaces.**
 
 ```sh
 var=4
@@ -715,10 +704,10 @@ var="abc"
 awk 'BEGIN{print "'$var'"}'
 ```
 
-**方式3：**
+**Method 3:**
 
-* 用`"'"`（即，双引号+单引号+双引号+shell变量+双引号+单引号+双引号）将shell变量包裹起来
-* **这种方式允许引用任意类型的变量**
+* Surround the shell variable with `"'"` (i.e., double quote + single quote + double quote + shell variable + double quote + single quote + double quote).
+* **This method allows referencing variables of any type.**
 
 ```sh
 var=4
@@ -729,9 +718,9 @@ var="this a test"
 awk 'BEGIN{print "'"$var"'"}'
 ```
 
-**方式4：**
+**Method 4:**
 
-* 使用`-v`参数，变量不是很多的时候，这种方式也蛮简介清晰的
+* Use the `-v` parameter. This method is quite simple and clear when there are not many variables.
 
 ```sh
 var="this a test"
@@ -740,9 +729,9 @@ awk -v awkVar="$var" 'BEGIN{print awkVar}'
 
 ### 2.4.2 Control Statements
 
-**以下的示例都在`BEGIN`中，只执行一次，不需要指定文件或者输入流**
+All of the following examples are in `BEGIN` and are executed only once, without the need to specify a file or input stream.
 
-**`if`语句：**
+**`if` Statement:**
 
 ```sh
 awk 'BEGIN{ 
@@ -762,7 +751,7 @@ else
 }'
 ```
 
-**`while`语句：**
+**`while` Statement:**
 
 ```sh
 awk 'BEGIN{ 
@@ -777,7 +766,7 @@ print total;
 }'
 ```
 
-**`for`语句：**
+**`for` Statement:**
 
 ```sh
 awk 'BEGIN{ 
@@ -797,7 +786,7 @@ print total;
 }'
 ```
 
-**`do`语句：**
+**`do` Statement:**
 
 ```sh
 awk 'BEGIN{ 

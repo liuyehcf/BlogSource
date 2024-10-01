@@ -554,6 +554,18 @@ When executing a SQL query to access data from a data lake, such as Paimon, Hudi
 * `visitPhysicalIcebergScan`
 ...
 
+### 4.1.1 Delete Files
+
+scanner_params.deletes
+scanner_params.paimon_deletion_file
+
+* `be/src/exec/iceberg/iceberg_delete_builder.h`
+* `be/src/exec/paimon/paimon_delete_file_builder.h`
+
+PR:
+
+* [[Feature] support to read iceberg equality delete file for mor.](https://github.com/StarRocks/starrocks/pull/37419)
+
 ## 4.2 StarCache
 
 [StarRocks 存算分离 Data Cache 二三事](https://zhuanlan.zhihu.com/p/695673099)

@@ -52,19 +52,21 @@ Below are the Hadoop components, that together form a Hadoop ecosystem:
 
 **Important ports:**
 
-* `8042`: NodeManager (Web UI)
-* `8088`: ResourceManager (Web UI)
+* `8020`: The NameNode's default RPC port is 8020.
+* `9866`: The datanode server address and port for data transfer.
+* `8042`: NodeManager (Web UI).
+* `8088`: ResourceManager (Web UI).
 
 ```sh
 SHARED_NS=hadoop-ns
 HADOOP_CONTAINER_NAME=hadoop
 
-docker run -dit --name ${HADOOP_CONTAINER_NAME} --network ${SHARED_NS} -p 8042:8042 -p 8088:8088 apache/hadoop:3.3.6 bash
+docker run -dit --name ${HADOOP_CONTAINER_NAME} --network ${SHARED_NS} -p 8020:8020 -p 9866:9866 -p 8042:8042 -p 8088:8088 apache/hadoop:3.3.6 bash
 docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/core-site.xml << EOF
 <configuration>
   <property>
     <name>fs.defaultFS</name>
-    <value>hdfs://${HADOOP_CONTAINER_NAME}</value>
+    <value>hdfs://${HADOOP_CONTAINER_NAME}:8020</value>
   </property>
 </configuration>
 EOF"
@@ -78,6 +80,22 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/hdfs-
   <property>
     <name>dfs.permissions.enabled</name>
     <value>false</value>
+  </property>
+  <property>
+    <name>dfs.datanode.address</name>
+    <value>${HADOOP_CONTAINER_NAME}:9866</value>
+  </property>
+  <property>
+    <name>dfs.datanode.http.address</name>
+    <value>${HADOOP_CONTAINER_NAME}:9864</value>
+  </property>
+  <property>
+    <name>dfs.datanode.ipc.address</name>
+    <value>${HADOOP_CONTAINER_NAME}:9867</value>
+  </property>
+  <property>
+    <name>dfs.datanode.hostname</name>
+    <value>${HADOOP_CONTAINER_NAME}</value>
   </property>
 </configuration>
 EOF"
@@ -161,15 +179,19 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoo
 1. `core-site.xml`
     * Path: `$HADOOP_HOME/etc/hadoop/core-site.xml`
     * Description: Contains configuration settings for Hadoop's core system, including the default filesystem URI.
+    * [core-default.xml](https://hadoop.apache.org/docs/r3.3.6/hadoop-project-dist/hadoop-common/core-default.xml)
 1. `hdfs-site.xml`
     * Path: `$HADOOP_HOME/etc/hadoop/hdfs-site.xml`
     * Description: Contains configuration settings specific to HDFS.
+    * [hdfs-default.xml](https://hadoop.apache.org/docs/r3.3.6/hadoop-project-dist/hadoop-hdfs/hdfs-default.xml)
 1. `yarn-site.xml`
     * Path: `$HADOOP_HOME/etc/hadoop/yarn-site.xml`
     * Description: Contains configuration settings for YARN (Yet Another Resource Negotiator).
+    * [yarn-default.xml](https://hadoop.apache.org/docs/r3.3.6/hadoop-yarn/hadoop-yarn-common/yarn-default.xml)
 1. `mapred-site.xml`
     * Path: `$HADOOP_HOME/etc/hadoop/mapred-site.xml`
     * Description: Contains configuration settings specific to MapReduce.
+    * [mapred-default.xml](https://hadoop.apache.org/docs/r3.3.6/hadoop-mapreduce-client/hadoop-mapreduce-client-core/mapred-default.xml)
 1. `hadoop-env.sh`
     * Path: `$HADOOP_HOME/etc/hadoop/hadoop-env.sh`
     * Description: Sets environment variables for Hadoop processes, such as JAVA_HOME.
@@ -228,22 +250,40 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoo
 </configuration>
 ```
 
-## 2.3 Command-hdfs
+## 2.3 Command
 
-### 2.3.1 File Path
+### 2.3.1 daemon
+
+```sh
+hdfs --daemon stop namenode
+hdfs --daemon stop datanode
+yarn --daemon stop resourcemanager
+yarn --daemon stop nodemanager
+mapred --daemon stop historyserver
+
+hdfs --daemon start namenode
+hdfs --daemon start datanode
+yarn --daemon start resourcemanager
+yarn --daemon start nodemanager
+mapred --daemon start historyserver
+```
+
+### 2.3.2 hdfs
+
+#### 2.3.2.1 File Path
 
 ```sh
 hdfs dfs -ls -R <path>
 ```
 
-### 2.3.2 File Status
+#### 2.3.2.2 File Status
 
 ```sh
 hdfs fsck <path>
 hdfs fsck <path> -files -blocks -replication
 ```
 
-### 2.3.3 Show Content
+#### 2.3.2.3 Show Content
 
 ```sh
 # For text file
@@ -253,7 +293,7 @@ hdfs dfs -cat <path>
 hdfs dfs -text <path.avro>
 ```
 
-### 2.3.4 Grant Permission
+#### 2.3.2.4 Grant Permission
 
 ```sh
 hdfs dfs -setfacl -R -m user:hive:rwx /
@@ -261,16 +301,16 @@ hdfs dfs -setfacl -R -m default:user:hive:rwx /
 hdfs dfs -getfacl /
 ```
 
-## 2.4 Command-yarn
+### 2.3.3 yarn
 
-### 2.4.1 Node
+#### 2.3.3.1 Node
 
 ```sh
 yarn node -list
 yarn node -list -showDetails
 ```
 
-### 2.4.2 Application
+#### 2.3.3.2 Application
 
 ```sh
 yarn application -list
@@ -281,6 +321,23 @@ yarn logs -applicationId <appid>
 
 yarn application -kill <appid>
 ```
+
+## 2.4 Tips
+
+### 2.4.1 How to access a hadoop cluster started via docker
+
+For linux, there are two ways of approaching this:
+
+1. Access hadoop via container's ip.
+
+For mac with m chip, the above methods cannot work, because there will be an extra virtualization layer between mac and the container. Here are steps of how we can access hadoop in this situation:
+
+* We can use hostname to access both namenode and datanode, the hostname must be resolved in both container and Mac, and the container's name should be the best solution.
+1. Set port mapping for namenode's port (`8020` bydefault) and datanode's port (`9866` by default).
+1. Update `/etc/hosts`, mapping hadoop's container's name to `127.0.0.1`.
+1. Config `dfs.datanode.hostname` at hadoop side (i.e. Container side), set its value to container's name.
+1. Config `dfs.client.use.datanode.hostname` to `true` at the client side (i.e. Mac side), otherwise it will use container's ip address, which is unconnected between mac and container because of the extra virtualization layer.
+1. Access hadoop via container's name.
 
 # 3 Spark
 

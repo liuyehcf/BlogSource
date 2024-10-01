@@ -14,7 +14,7 @@ categories:
 
 # 1 Installation
 
-## 1.1 centos
+## 1.1 CentOS
 
 ```sh
 # docker安装
@@ -31,6 +31,10 @@ yum -y install docker-ce-20.10.5-3.el7
 systemctl enable docker
 systemctl start docker
 ```
+
+## 1.2 Ubuntu
+
+[Install Docker Engine on Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
 
 # 2 Container Lifecycle
 
@@ -338,7 +342,7 @@ standard_init_linux.go:219: exec user process caused: exec format error
 wget 'https://github.com/multiarch/qemu-user-static/releases/download/v5.2.0-2/qemu-aarch64-static.tar.gz'
 tar -zxvf qemu-aarch64-static.tar.gz -C /usr/bin
 
-# 安装qume
+# 安装qemu
 docker run --rm --privileged multiarch/qemu-user-static:register
 
 #-------------------------↓↓↓↓↓↓-------------------------
@@ -389,6 +393,35 @@ Linux c3fb58ea543c 4.14.134 #1 SMP Tue Dec 29 21:27:58 EST 2020 aarch64 aarch64 
 ```
 
 * `docker run --rm --privileged multiarch/qemu-user-static:register`是向内核注册了各异构平台的`binfmt handler`，包括`aarch64`等等，这些注册信息就包括了`binfmt handler`的路径，比如`/usr/bin/qemu-aarch64-static`等等，注册信息都在`/proc/sys/fs/binfmt_misc`目录下，每个注册项都是该目录下的一个文件。**实际的`qemu-xxx-static`文件还得手动放置到对应目录中才能生效**
+
+**Steps for ubuntu:**
+
+```sh
+sudo apt-get update
+
+# Install qemu-user-static to enable emulation for different architectures
+sudo apt-get install qemu-user-static
+
+# Try to enable QEMU binary formats to support aarch64 and x86_64 architectures
+sudo update-binfmts --enable qemu-aarch64
+sudo update-binfmts --enable qemu-x86_64
+
+# Install binfmt-support to provide support for the update-binfmts command
+sudo apt-get install binfmt-support
+
+# Try again to enable QEMU binary formats to support aarch64 and x86_64 architectures
+sudo update-binfmts --enable qemu-aarch64
+sudo update-binfmts --enable qemu-x86_64
+
+# Run the multiarch/qemu-user-static Docker image to register QEMU for all supported architectures
+sudo docker run --rm --privileged --platform linux/arm64 multiarch/qemu-user-static --reset -p yes
+
+# Register all supported binary formats using tonistiigi/binfmt
+docker run --rm --privileged tonistiigi/binfmt --install all
+
+# Test running an amd64 container on the ARM host
+docker run --platform linux/amd64 hello-world
+```
 
 ## 7.4 Docker Image Prune Tools - dockerslim
 
