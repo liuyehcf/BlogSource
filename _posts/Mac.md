@@ -497,6 +497,12 @@ plugins=(<原有插件> zsh-autosuggestions)
 
 1. **登录时，命令行提示符显式的是`~`，但是执行`cd`后，显示的目录是用户目录的绝对路径，比如`/home/test`。这是因为`HOME`变量设置有问题，该变量最后不能有`/`符号，否则在将主目录替换成`~`的时候就会替换失败**
 
+### 4.1.2 Fonts
+
+* [FiraCode](https://github.com/tonsky/FiraCode)
+* [JetBrains Mono. A typeface for developers​_](https://www.jetbrains.com/lp/mono/)
+* [cascadia-code](https://github.com/microsoft/cascadia-code)
+
 ## 4.2 常用配置
 
 1. 光标形状

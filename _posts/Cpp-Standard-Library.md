@@ -86,21 +86,47 @@ int main() {
 ```cpp
 #include <algorithm>
 #include <iostream>
+#include <map>
+#include <memory>
 #include <numeric>
-#include <string>
 #include <vector>
 
 int main() {
-    std::vector<std::string> strs{"hello,", " Jack!", " How are you?"};
-    std::vector<size_t> sizes;
-    std::transform(strs.begin(), strs.end(), std::back_inserter(sizes),
-                   [](const std::string& str) { return str.size(); });
-    std::string size_str =
-            std::accumulate(sizes.begin(), sizes.end(), std::string(), [](const std::string& str, size_t size) {
-                return str.empty() ? std::to_string(size) : str + "," + std::to_string(size);
-            });
+    {
+        std::vector<std::string> strs{"hello,", " Jack!", " How are you?"};
+        std::vector<size_t> sizes;
+        std::transform(strs.begin(), strs.end(), std::back_inserter(sizes),
+                       [](const std::string& str) { return str.size(); });
+        std::string size_str =
+                std::accumulate(sizes.begin(), sizes.end(), std::string(), [](const std::string& str, size_t size) {
+                    return str.empty() ? std::to_string(size) : str + "," + std::to_string(size);
+                });
 
-    std::cout << size_str << std::endl;
+        std::cout << size_str << std::endl;
+    }
+
+    {
+        struct Foo {
+            const std::string name;
+            const int value;
+        };
+        std::vector<Foo> foos;
+        foos.emplace_back(Foo{"foo1", 1});
+        foos.emplace_back(Foo{"foo2", 2});
+        foos.emplace_back(Foo{"foo3", 3});
+        foos.emplace_back(Foo{"foo4", 4});
+        foos.emplace_back(Foo{"foo5", 5});
+
+        std::map<std::string, int> name_to_value;
+        std::transform(foos.begin(), foos.end(), std::inserter(name_to_value, name_to_value.end()),
+                       [](const Foo& foo) { return std::make_pair(foo.name, foo.value); });
+
+        for (const auto& [name, value] : name_to_value) {
+            std::cout << name << " -> " << value << std::endl;
+        }
+    }
+
+    return 0;
 }
 ```
 

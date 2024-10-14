@@ -544,7 +544,32 @@ Bloom filter index is suitable for datasets with high cardinality, provided they
 
 # 4 Data Lake
 
-## 4.1 Connector
+## 4.1 Metadata
+
+```mermaid
+classDiagram
+    Connector <|-- HiveConnector
+    Connector <|-- IcebergConnector
+    Connector <|-- UnifiedConnector
+    Connector *-- ConnectorMetadata
+
+    ConnectorMetadata <|-- HiveMetadata
+    ConnectorMetadata <|-- IcebergMetadata
+
+    CachingMetastore <|-- CachingHiveMetastore
+
+    HiveMetadata *-- HiveMetastoreOperations
+    HiveMetastoreOperations *-- CachingHiveMetastore
+
+    IcebergMetadata *-- IcebergCatalog
+    IcebergCatalog <|-- IcebergHadoopCatalog
+    IcebergCatalog <|-- IcebergHiveCatalog
+    IcebergCatalog <|-- CachingIcebergCatalog
+```
+
+1. `UnifiedMetadata`: Unifed entrance of metadata.
+
+## 4.2 Execution
 
 When executing a SQL query to access data from a data lake, such as Paimon, Hudi, or Iceberg, remote files must be retrieved during the planning stage. The entry point for this process is the `PlanFragmentBuilder`.
 
@@ -554,7 +579,7 @@ When executing a SQL query to access data from a data lake, such as Paimon, Hudi
 * `visitPhysicalIcebergScan`
 ...
 
-### 4.1.1 Delete Files
+### 4.2.1 Delete Files
 
 scanner_params.deletes
 scanner_params.paimon_deletion_file
@@ -566,7 +591,7 @@ PR:
 
 * [[Feature] support to read iceberg equality delete file for mor.](https://github.com/StarRocks/starrocks/pull/37419)
 
-## 4.2 StarCache
+## 4.3 StarCache
 
 [StarRocks 存算分离 Data Cache 二三事](https://zhuanlan.zhihu.com/p/695673099)
 
@@ -603,7 +628,7 @@ classDiagram
     DiskBlockItem: +uint32_t block_index
 ```
 
-## 4.3 Parquet Reader
+## 4.4 Parquet Reader
 
 * `ScanOperator`: Execution root of a query plan
 * `ConnectorScanOperator`: Derived from `ScanOperator`, handling external source situations
@@ -665,7 +690,7 @@ classDiagram
     ColumnChunkReader *-- PageReader
 ```
 
-## 4.4 PR
+## 4.5 PR
 
 * [[Enhancement] parquet format to support coalesce reads](https://github.com/StarRocks/starrocks/pull/7478)
 * [[Enhancement] add support for late materialization in paquet reader](https://github.com/StarRocks/starrocks/pull/8574)

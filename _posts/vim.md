@@ -1217,7 +1217,7 @@ call plug#end()
 **将`gruvbox`中的配色方案（执行完`:PlugInstall`才有这个文件哦）移动到vim指定目录下**
 
 ```sh
-# ~/.vim/colors 目录默认是不存在的
+# ~/.vim/colors not exist by default
 mkdir ~/.vim/colors
 cp ~/.vim/plugged/gruvbox/colors/gruvbox.vim ~/.vim/colors/
 ```
@@ -1237,9 +1237,9 @@ call plug#begin()
 
 Plug 'altercation/vim-colors-solarized'
 
-" 启用solarized配色方案（~/.vim/colors目录下需要有solarized对应的.vim文件）
+" Enable the solarized color scheme (the corresponding .vim file needs to be in the ~/.vim/colors directory)
 colorscheme solarized
-" 设置背景，可选值有：dark, light
+" Set background, possible values are: dark, light
 set background=dark
 
 call plug#end()
@@ -1250,10 +1250,45 @@ call plug#end()
 **将`solarized`中的配色方案（执行完`:PlugInstall`才有这个文件哦）移动到vim指定目录下**
 
 ```sh
-# ~/.vim/colors 目录默认是不存在的
+# ~/.vim/colors not exist by default
 mkdir ~/.vim/colors
 cp ~/.vim/plugged/vim-colors-solarized/colors/solarized.vim ~/.vim/colors/
 ```
+
+### 3.3.3 catppuccin
+
+Home: [catppuccin/nvim](https://github.com/catppuccin/nvim)
+
+**编辑`~/.vimrc`，添加Plug相关配置**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....Other Plugins....
+" ......................
+
+Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
+
+call plug#end()
+
+" Extra config for catppuccin
+colorscheme catppuccin-mocha " catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
+```
+
+**安装：进入vim界面后执行`:PlugInstall`即可**
+
+**将`gruvbox`中的配色方案（执行完`:PlugInstall`才有这个文件哦）移动到vim指定目录下**
+
+```sh
+# ~/.vim/colors not exist by default
+mkdir ~/.vim/colors
+cp ~/.vim/plugged/catppuccin/colors/catppuccin/*.vim ~/.vim/colors/
+```
+
+### 3.3.4 Trending Neovim Colorschemes
+
+[Trending Neovim Colorschemes](https://dotfyle.com/neovim/colorscheme/trending)
 
 ## 3.4 vim-airline
 
@@ -3016,15 +3051,7 @@ endif
 
 call plug#begin()
 
-Plug 'morhetz/gruvbox'
-
-" Enable the gruvbox color scheme (the corresponding .vim file needs to be in the ~/.vim/colors directory)
-colorscheme gruvbox
-" Set background, possible values are: dark, light
-set background=dark
-" Set contrast, possible values are: soft, medium, hard. There is a configuration item for dark and light themes respectively.
-let g:gruvbox_contrast_dark = 'hard'
-let g:gruvbox_contrast_light = 'hard'
+Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3379,6 +3406,9 @@ let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 
 call plug#end()
 
+" Extra config for catppuccin
+colorscheme catppuccin-mocha " catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
+
 " Extra config for vim-codefmt
 call glaive#Install()
 " Set the startup command for google-java-format, where
@@ -3642,6 +3672,16 @@ let g:gutentags_dont_load = 1
 1. Enter normal mode.
 1. Type `:map` then press `<c-v>`.
 1. Type the key you wanted, then it interpreters it into the actual value.
+
+## 6.5 copy text through SSH
+
+[nvim-osc52](https://github.com/ojroques/nvim-osc52)
+
+> Note: As of Neovim 10.0 (specifically since [this PR](https://github.com/neovim/neovim/pull/25872)), native support for OSC52 has been added and therefore this plugin is now obsolete. Check :h clipboard-osc52 for more details.
+
+* `:checkhealth clipboard`: Check if there's clipboard can be used.
+    * `tmux` can provide a default clipboard.
+* `Item2 Config`: General -> Selection -> Applications in terminal may access clipboard.
 
 # 7 Reference
 

@@ -32,3 +32,50 @@ LSM-trees provide several advantages:
 1. Flexibility: LSM-trees can be tuned to balance the trade-offs between write and read performance based on system requirements.
 
 LSM-trees are widely used in various storage and database systems, including Apache Cassandra, LevelDB, RocksDB, and HBase, to name a few.
+
+# 2 Implementation
+
+## 2.1 Core Components
+
+1. `Memtable`: An in-memory key-value store (often implemented as a sorted tree like a Red-Black Tree or SkipList).
+1. `Immutable Memtable`: When a memtable is full, it becomes immutable and awaits flushing to disk.
+1. `SSTables (Sorted String Tables)`: Disk-based, read-only data structures that store sorted key-value pairs.
+1. `Write-Ahead Log (WAL)`: A log to ensure durability by recording operations before writing them to the memtable.
+1. `Compaction`: Merges multiple SSTables to remove duplicates and reclaim space.
+
+## 2.2 Operations in an LSM Tree
+
+**On a Write Operation**
+
+1. Log the operation in the Write-Ahead Log (WAL):
+    * This ensures that the data can be recovered in case of a crash before it's written to the SSTable.
+1. Write the key-value pair to the active memtable:
+    * The memtable is a fast, in-memory data structure (e.g., a Red-Black Tree or SkipList) that holds the latest data.
+
+**When the Memtable is Full**
+
+1. Convert the active memtable into an immutable memtable:
+    * The active memtable is marked as immutable. No further writes are allowed to it, ensuring thread safety during the flush operation.
+1. Flush the immutable memtable to disk as an SSTable:
+    * The immutable memtable is serialized into a new SSTable (Sorted String Table) on disk.
+1. Clear the active memtable:
+    * Once the immutable memtable is flushed, the active memtable is reset, and a new memtable is ready to accept writes.
+
+**Periodic Compaction**
+
+1. Identify SSTables for compaction:
+    * As more SSTables are created, older ones may contain duplicate or obsolete key-value pairs. Compaction ensures that these are merged into a single, optimized SSTable.
+1. Merge SSTables:
+    * Compaction reads multiple SSTables, removes redundant or outdated entries, and creates a new SSTable with the latest values.
+1. Delete the old SSTables:
+    * Once compaction is complete, the old SSTables are removed to save space.
+
+**Read Operation**
+
+1. Search the active memtable:
+    * On a read request, the system first checks the active memtable.
+1. Search the immutable memtable (if any):
+    * If the key is not found in the active memtable, the system checks the immutable memtable (if it exists).
+1. Search SSTables on disk:
+    * If the key is not found in the memtables, the system searches the SSTables on disk using the index block for efficient lookups.
+    * Bloom filters (if used) help determine if the key might exist in an SSTable to avoid unnecessary disk reads.
