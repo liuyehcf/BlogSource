@@ -625,7 +625,7 @@ vim会主动将你曾经做过的行为记录下来，好让你下次可以轻�
 
 vim的全局设置值一般放置在`/etc/vimrc`（or `/etc/vim/vimrc`）这个文件中，不过不建议修改它，但是可以修改`~/.vimrc`这个文件（默认不存在，手动创建）
 
-**在运行vim的时候，如果修改了`~/.vimrc`文件的内容，可以通过执行`:source ~/.vimrc`来重新加载`~/.vimrc`，立即生效配置**
+**在运行vim的时候，如果修改了`~/.vimrc`文件的内容，可以通过执行`:source ~/.vimrc`或者`:so %`来重新加载`~/.vimrc`，立即生效配置**
 
 ## 2.19 Variable
 
@@ -904,7 +904,7 @@ make install # may require extra privileges depending on where to install
     * `S`：标明函数的签名（即函数原型或者参数列表）
     * `z`：标明`kind`
 * `--extras=+q`：强制要求ctags做如下操作，如果某个语法元素是类的一个成员，ctags默认会给其记录一行，以要求ctags对同一个语法元素再记一行，这样可以保证在VIM中多个同名函数可以通过路径不同来区分
-* `-R`：`ctags`递归生成子目录的tags（在项目的根目录下很有意义）  
+* `-R`：`ctags`递归生成子目录的tags（在项目的根目录下很有意义）
 
 **在工程中生成`ctags`：**
 
@@ -940,7 +940,7 @@ ctags --c++-kinds=+px --fields=+ailnSz --extras=+q -R -f ~/.vim/.cfamily_systags
 ctags --languages=python --python-kinds=-iv --fields=+ailnSz --extras=+q -R -f ~/.vim/.python_systags /usr/lib64/python3.6
 ```
 
-**使用：**
+**Usage:**
 
 * `[Ctrl] + ]`：跳转到符号定义处。如果有多条匹配项，则会跳转到第一个匹配项
 * `[Ctrl] + w + ]`：在新的窗口中跳转到符号定义处。如果有多条匹配项，则会跳转到第一个匹配项
@@ -1190,7 +1190,7 @@ JAVA_HOME=/path/to/java/11 ./mvnw clean verify
 
 Home: [gruvbox](https://github.com/morhetz/gruvbox)
 
-**编辑`~/.vimrc`，添加Plug相关配置**
+**Configuration(`~/.vimrc`):**
 
 ```vim
 call plug#begin()
@@ -1212,9 +1212,7 @@ let g:gruvbox_contrast_light = 'hard'
 call plug#end()
 ```
 
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**将`gruvbox`中的配色方案（执行完`:PlugInstall`才有这个文件哦）移动到vim指定目录下**
+**Install:**
 
 ```sh
 # ~/.vim/colors not exist by default
@@ -1226,7 +1224,7 @@ cp ~/.vim/plugged/gruvbox/colors/gruvbox.vim ~/.vim/colors/
 
 Home: [solarized](https://github.com/altercation/vim-colors-solarized)
 
-**编辑`~/.vimrc`，添加Plug相关配置**
+**Configuration(`~/.vimrc`):**
 
 ```vim
 call plug#begin()
@@ -1245,9 +1243,7 @@ set background=dark
 call plug#end()
 ```
 
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**将`solarized`中的配色方案（执行完`:PlugInstall`才有这个文件哦）移动到vim指定目录下**
+**Install:**
 
 ```sh
 # ~/.vim/colors not exist by default
@@ -1259,7 +1255,7 @@ cp ~/.vim/plugged/vim-colors-solarized/colors/solarized.vim ~/.vim/colors/
 
 Home: [catppuccin/nvim](https://github.com/catppuccin/nvim)
 
-**编辑`~/.vimrc`，添加Plug相关配置**
+**Configuration(`~/.vimrc`):**
 
 ```vim
 call plug#begin()
@@ -1273,17 +1269,15 @@ Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
 call plug#end()
 
 " Extra config for catppuccin
-colorscheme catppuccin-mocha " catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
+colorscheme catppuccin-frappe " catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
 ```
 
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**将`gruvbox`中的配色方案（执行完`:PlugInstall`才有这个文件哦）移动到vim指定目录下**
+**Install:**
 
 ```sh
 # ~/.vim/colors not exist by default
 mkdir ~/.vim/colors
-cp ~/.vim/plugged/catppuccin/colors/catppuccin/*.vim ~/.vim/colors/
+cp ~/.vim/plugged/catppuccin/colors/*.vim ~/.vim/colors/
 ```
 
 ### 3.3.4 Trending Neovim Colorschemes
@@ -1294,7 +1288,7 @@ cp ~/.vim/plugged/catppuccin/colors/catppuccin/*.vim ~/.vim/colors/
 
 Home: [vim-airline](https://github.com/vim-airline/vim-airline)
 
-**编辑`~/.vimrc`，添加Plug相关配置**
+**Configuration(`~/.vimrc`):**
 
 ```vim
 call plug#begin()
@@ -1308,13 +1302,11 @@ Plug 'vim-airline/vim-airline'
 call plug#end()
 ```
 
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
 ## 3.5 indentLine
 
 Home: [indentLine](https://github.com/Yggdroot/indentLine)
 
-**编辑`~/.vimrc`，添加Plug相关配置**
+**Configuration(`~/.vimrc`):**
 
 ```vim
 call plug#begin()
@@ -1332,15 +1324,13 @@ let g:indentLine_char = '|'
 call plug#end()
 ```
 
-**安装：进入vim界面后执行`:PlugInstall`即可**
+## 3.6 Highlighting
 
-## 3.6 nerdtree
+### 3.6.1 nvim-treesitter
 
-Home: [nerdtree](https://github.com/preservim/nerdtree)
+Home: [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter)
 
-**前言：`coc.nvim`插件体系提供了`coc-explore`，如果使用了`coc.nvim`插件，就不需要其他的文件管理器了**
-
-**编辑`~/.vimrc`，添加Plug相关配置**
+**Configuration(`~/.vimrc`):**
 
 ```vim
 call plug#begin()
@@ -1349,28 +1339,24 @@ call plug#begin()
 " .....Other Plugins....
 " ......................
 
-Plug 'scrooloose/nerdtree'
-
-" 配置 F2 打开文件管理器 
-nmap <f2> :NERDTreeToggle<cr>
-" 配置 F3 定位当前文件
-nmap <f3> :NERDTreeFind<cr>
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 call plug#end()
+
+" Extra config for nvim-treesitter
+lua require('nvim-treesitter.configs').setup{highlight={enable=true}}
 ```
 
-**安装：进入vim界面后执行`:PlugInstall`即可**
+**Usage:**
 
-**使用：**
+* `:TSInstall <language_to_install>`
+* `:TSInstallInfo`
 
-* `:NERDTreeToggle`：打开文件管理器
-* `:NERDTreeFind`：打开文件管理器，并且定位到当前文件
-
-## 3.7 vim-cpp-enhanced-highlight
+### 3.6.2 vim-cpp-enhanced-highlight
 
 Home: [vim-cpp-enhanced-highlight](https://github.com/octol/vim-cpp-enhanced-highlight)
 
-**编辑`~/.vimrc`，添加Plug相关配置**
+**Configuration(`~/.vimrc`):**
 
 ```vim
 call plug#begin()
@@ -1390,222 +1376,13 @@ let g:cpp_concepts_highlight = 1
 call plug#end()
 ```
 
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-## 3.8 rainbow
-
-Home: [rainbow](https://github.com/luochen1990/rainbow)
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....Other Plugins....
-" ......................
-
-Plug 'luochen1990/rainbow'
-
-let g:rainbow_active = 1
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-## 3.9 vim-gutentags
-
-Home: [vim-gutentags](https://github.com/ludovicchabant/vim-gutentags)
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....Other Plugins....
-" ......................
-
-Plug 'ludovicchabant/vim-gutentags'
-
-" gutentags search project directory markers, stop recursion upwards upon encountering these files/directories
-let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
-
-" Name of the generated data file
-let g:gutentags_ctags_tagfile = '.tags'
-
-" Enable support for both ctags and gtags:
-let g:gutentags_modules = []
-if executable('ctags')
-    let g:gutentags_modules += ['ctags']
-endif
-if !has('nvim') && executable('gtags-cscope') && executable('gtags')
-    let g:gutentags_modules += ['gtags_cscope']
-endif
-
-" Put all automatically generated ctags/gtags files in the ~/.cache/tags directory to avoid polluting the project directory
-let s:vim_tags = expand('~/.cache/tags')
-let g:gutentags_cache_dir = s:vim_tags
-
-" Configure ctags parameters by file type
-function s:set_cfamily_configs()
-    let g:gutentags_ctags_extra_args = ['--fields=+ailnSz']
-    let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
-    let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
-    " Configure Universal ctags specific parameters
-    let g:ctags_version = system('ctags --version')[0:8]
-    if g:ctags_version == "Universal"
-        let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
-    endif
-endfunction
-function s:set_python_configs()
-    let g:gutentags_ctags_extra_args = ['--fields=+ailnSz']
-    let g:gutentags_ctags_extra_args += ['--languages=python']
-    let g:gutentags_ctags_extra_args += ['--python-kinds=-iv']
-    " Configure Universal ctags specific parameters
-    let g:ctags_version = system('ctags --version')[0:8]
-    if g:ctags_version == "Universal"
-        let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
-    endif
-endfunction
-autocmd FileType c,cpp,objc call s:set_cfamily_configs()
-autocmd FileType python call s:set_python_configs()
-
-" Disable gutentags auto-loading of gtags database
-let g:gutentags_auto_add_gtags_cscope = 0
-
-" Enable advanced commands like :GutentagsToggleTrace
-let g:gutentags_define_advanced_commands = 1
-
-" Create ~/.cache/tags if it does not exist
-if !isdirectory(s:vim_tags)
-   silent! call mkdir(s:vim_tags, 'p')
-endif
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**使用：**
-
-* **`:GutentagsUpdate`：手动触发更新tags**
-
-**问题排查步骤：**
-
-1. `let g:gutentags_define_advanced_commands = 1`：允许`gutentags`打开一些高级命令和选项
-1. 运行`:GutentagsToggleTrace`：它会将`ctags/gtags`命令的输出记录在vim的`message`记录里
-    * `let g:gutentags_trace = 1`：类似功能
-1. 保存文件，触发数据库更新
-1. `:message`：可以重新查看message
-
-**常见问题：**
-
-* `gutentags: gtags-cscope job failed, returned: 1`
-    * **原因1：由于`git`仓库切换分支，可能会导致`gtagsdb`乱掉。而`gutentags`会用`gtags --incremental <gtagsdb-path>`这样的命令来更新`gtagsdb`，这样可能会导致`segment fault`，表象就是`gutentags: gtags-cscope job failed, returned: 1`**
-        * **解决方式：修改`gutentags`源码，将`--incremental`参数去掉即可。一键修改命令：`sed -ri "s|'--incremental', *||g" ~/.vim/plugged/vim-gutentags/autoload/gutentags/gtags_cscope.vim`**
-* `gutentags: ctags job failed, returned: 1`
-    * **原因1：ctags版本太老，重装一个**
-* 如何禁用：
-    * `let g:gutentags_enabled = 0`
-    * `let g:gutentags_dont_load = 1`
-
-### 3.9.1 gutentags_plus
-
-Home: [gutentags_plus](https://github.com/skywind3000/gutentags_plus)
-
-**没有该插件时，我们一般按照如下方式使用`gtags`**
-
-1. **`set cscopeprg='gtags-cscope'`：让`cscope`命令指向`gtags-cscope`**
-1. **`cscope add <gtags-path>/GTAGS`：添加`gtagsdb`到`cscope`中**
-1. **`cscope find s <symbol>`：开始符号索引**
-
-该插件提供一个命令`GscopeFind`，用于`gtags`查询
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....Other Plugins....
-" ......................
-
-Plug 'skywind3000/gutentags_plus'
-
-" After querying, switch cursor to the quickfix window
-let g:gutentags_plus_switch = 1
-
-" Disable default mappings, as they conflict with the nerdcommenter plugin
-let g:gutentags_plus_nomap = 1
-
-" Define new mappings
-nnoremap <leader>gd :GscopeFind g <c-r><c-w><cr>
-nnoremap <leader>gr :GscopeFind s <c-r><c-w><cr>
-nnoremap <leader>ga :GscopeFind a <c-r><c-w><cr>
-nnoremap <leader>gt :GscopeFind t <c-r><c-w><cr>
-nnoremap <leader>ge :GscopeFind e <c-r><c-w><cr>
-nnoremap <leader>gf :GscopeFind f <c-r>=expand("<cfile>")<cr><cr>
-nnoremap <leader>gi :GscopeFind i <c-r>=expand("<cfile>")<cr><cr>
-
-call plug#end()
-```
-
-**键位映射说明：**
-
-| keymap | desc |
-|--------|------|
-| **`\gd`** | **查找光标下符号的定义** |
-| **`\gr`** | **查找光标下符号的引用** |
-| **`\ga`** | **查找光标下符号的赋值处** |
-| `\gt` | 查找光标下的字符串 |
-| `\ge` | 以`egrep pattern`查找光标下的字符串 |
-| `\gf` | 查找光标下的文件名 |
-| **`\gi`** | **查找引用光标下头文件的文件** |
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-### 3.9.2 vim-preview
-
-Home: [vim-preview](https://github.com/skywind3000/vim-preview)
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....Other Plugins....
-" ......................
-
-Plug 'skywind3000/vim-preview'
-
-autocmd FileType qf nnoremap <buffer> p :PreviewQuickfix<cr>
-autocmd FileType qf nnoremap <buffer> P :PreviewClose<cr>
-" Map :PreviewScroll +1 and :PreviewScroll -1 to D and U respectively
-autocmd FileType qf nnoremap <buffer> <c-e> :PreviewScroll +1<cr>
-autocmd FileType qf nnoremap <buffer> <c-y> :PreviewScroll -1<cr>
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**用法：**
-
-* **在`quickfix`中，按`p`打开预览**
-* **在`quickfix`中，按`P`关闭预览**
-* **`D`：预览页向下滚动半页**
-* **`U`：预览页向上滚动半页**
-
-## 3.10 coc.nvim
+## 3.7 coc.nvim
 
 Home: [coc.nvim](https://github.com/neoclide/coc.nvim)
 
-**该插件是作为`LSP Client`，可以支持多种不同的`LSP Server`**
+**This plugin serves as an `LSP Client` and can support multiple different `LSP Servers`.**
 
-**编辑`~/.vimrc`，添加Plug相关配置（公共配置）**
+**Configuration(`~/.vimrc`):**
 
 ```vim
 call plug#begin()
@@ -1645,6 +1422,9 @@ function! s:show_documentation()
     execute '!' . &keywordprg . " " . expand('<cword>')
   endif
 endfunction
+
+" Inlay hint, only works for neovim >= 0.10.0
+nmap <leader>rh :CocCommand document.toggleInlayHint<cr>
 
 " Diagnostic shortcuts
 nmap <c-k> <Plug>(coc-diagnostic-prev)
@@ -1688,14 +1468,13 @@ endif
 call plug#end()
 ```
 
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**用法：**
+**Usage:**
 
 * **`:CocStart`：若在配置中取消了自启动，则需要手动开启**
 * **`:CocUpdate`：更新所有插件**
 * **`:CocConfig`：编辑配置文件，其路径为`~/.vim/coc-settings.json`**
 * **`:CocAction`：代码生成**
+* **`:CocInfo`**
 * **`:CocList [options] [args]`**
     * `:CocList extensions`
     * Operation
@@ -1709,12 +1488,19 @@ call plug#end()
 * **`:CocCommand <插件命令>`**
     * `:CocCommand workspace.showOutput`：查看日志
 
-**相关路径：**
+**Paths:**
 
 * `~/.config/coc/extensions`：插件目录
 
-**配置文件`~/.vim/coc-settings.json`的内容如下：**
+**Help Doc(`:help coc-nvim`):**
 
+* `:help coc-inlayHint`
+
+**FAQ:**
+
+* `client coc abnormal exit with: 1`：大概率是`node`有问题
+* `node`版本别太新也别太旧，`v16`比较好
+* `clangd`版本16以上，支持展开宏定义（`K`）
 * 如何修改头文件搜索路径？在`compile_commands.json`或`compile_flags.txt`中通过`-I`参数指定即可
 * 索引文件路径：`<project path>/.cache/clangd`
 * 在`cmake`中设置`set(CMAKE_CXX_STANDARD 17)`，其生成的`compile_commands.json`中包含的编译命令不会包含`-std=gnu++17`参数，于是`clangd`在处理代码中用到的`c++17`新特性时会报`warning`（例如`Decomposition declarations are a C++17 extension (clang -Wc++17-extensions)`）。通过设置`CMAKE_CXX_FLAGS`，加上编译参数`-std=gnu++17`可以解决该问题
@@ -1722,21 +1508,15 @@ call plug#end()
 * 在`cmake`中设置`set(CMAKE_CXX_COMPILER g++)`也不会对`clangd`起作用，例如`clang`没有`-fopt-info-vec`这个参数，仍然会`warning`
 * `clangd`使用的标准库搜索路径：由编译器决定，即`compile_commands.json`中编译命令所使用的编译器决定。如果这个编译器是个低版本的，那么就会用低版本对应的头文件路径，高版本则对应高版本头文件路径
 
-**`Tips`：**
-
-* `client coc abnormal exit with: 1`：大概率是`node`有问题
-* `node`版本别太新也别太旧，`v16`比较好
-* `clangd`版本16以上，支持展开宏定义（`K`）
-
-### 3.10.1 coc-explorer
+### 3.7.1 coc-explorer
 
 Home: [coc-explorer](https://github.com/weirongxu/coc-explorer)
 
-**`coc-explorer`提供了类似于`nerdtree`的文件管理器的功能，结构更清晰也更易用**
+**Install:**
 
-**安装：进入vim界面后执行`:CocInstall coc-explorer`即可**
+* `:CocInstall coc-explorer`
 
-**编辑`~/.vimrc`，添加Plug相关配置**
+**Configuration(`~/.vimrc`):**
 
 ```vim
 call plug#begin()
@@ -1752,7 +1532,7 @@ nmap <space>e <cmd>CocCommand explorer<cr>
 call plug#end()
 ```
 
-**使用：**
+**Usage:**
 
 * `?`：帮助文档
 * `j`：下移光标
@@ -1771,31 +1551,28 @@ call plug#end()
 * `A`：新建目录
 * `r`：重命名
 * `df/dF`：删除文件，`df`放入回收站，`dF`永久删除
+* **Symbols:**
+    * `?`：新文件，尚未纳入`git`
+    * `A`：新文件，已加入暂存区
+    * `M`：文件已修改
+        * `dim`：文件与上一个提交不一致
+        * `bright`：文件与暂存区不一致
+* **Assorted:**
+    * 文件前面的数字是错误数量，可以通过`Il`查看查看完整的label
 
-**符号：**
-
-* `?`：新文件，尚未纳入`git`
-* `A`：新文件，已加入暂存区
-* `M`：文件已修改
-    * `dim`：文件与上一个提交不一致
-    * `bright`：文件与暂存区不一致
-
-**其他：**
-
-* 文件前面的数字是错误数量，可以通过`Il`查看查看完整的label
-
-### 3.10.2 coc-java
+### 3.7.2 coc-java
 
 Home: [coc-java](https://github.com/search?q=coc-java)
 
 **`Java`语言的`LSP-Server`的实现是[jdt.ls](https://github.com/eclipse/eclipse.jdt.ls)。而`coc-java`是`coc.nvim`的扩展，对`jdt.ls`进行进一步的封装**
 
-**安装：进入vim界面后执行`:CocInstall coc-java`即可**
+**Install:**
 
+* `:CocInstall coc-java`
 * 安装路径：`~/.config/coc/extensions/node_modules/coc-java`
 * 数据路径：`~/.config/coc/extensions/coc-java-data`
 
-**配置：`:CocConfig`，增加如下内容**
+**Configuration(`:CocConfig`)**
 
 ```json
 {
@@ -1807,7 +1584,7 @@ Home: [coc-java](https://github.com/search?q=coc-java)
 }
 ```
 
-**使用：**
+**Usage:**
 
 * `:CocCommand workspace.showOutput java`：查看`jdt.ls`日志
     * `"java.trace.server": "verbose"`：更详细的日志
@@ -1832,13 +1609,15 @@ Home: [coc-java](https://github.com/search?q=coc-java)
         * 假设子模块用到了`thrift`，那么需要在子模块的目录下放置`.classpath`，而不是在工程根目录放置`.classpath`
 * 有插件`org.eclipse.m2e:lifecycle-mapping`的时候，`jdt.ls`没法正常工作，目前暂未解决
 
-### 3.10.3 coc-pyright
+### 3.7.3 coc-pyright
 
 Home: [coc-pyright](https://github.com/fannheyward/coc-pyright)
 
-**安装：进入vim界面后执行`:CocInstall coc-pyright`即可**
+**Install:**
 
-**配置：`:CocConfig`，增加如下内容**
+* `:CocInstall coc-pyright`
+
+**Configuration(`:CocConfig`)**
 
 * `python.analysis.typeCheckingMode`：禁用`reportGeneralTypeIssues`等错误信息。python是动态类型的语言，静态类型推导的错误信息可以忽略
 
@@ -1859,25 +1638,27 @@ Home: [coc-pyright](https://github.com/fannheyward/coc-pyright)
     deactivate
     ```
 
-### 3.10.4 coc-rust-analyzer
+### 3.7.4 coc-rust-analyzer
 
 Home: [coc-rust-analyzer](https://github.com/fannheyward/coc-rust-analyzer)
 
-**安装：进入vim界面后执行`:CocInstall coc-rust-analyzer`即可**
+**Install:**
 
+* `:CocInstall coc-rust-analyzer`
 * 确保`rust-analyzer`已经正常安装：`rustup component add rust-analyzer`
 
-### 3.10.5 coc-snippets
+### 3.7.5 coc-snippets
 
 Home: [coc-snippets](https://github.com/neoclide/coc-snippets)
 
 **`coc-snippets`用于提供片段扩展功能（类似于`IDEA`中的`sout`、`psvm`、`.var`等等）**
 
-**安装：进入vim界面后执行`:CocInstall coc-snippets`即可**
+**Install:**
 
+* `:CocInstall coc-snippets`
 * 安装路径：`~/.config/coc/extensions/node_modules/coc-snippets`
 
-**编辑`~/.vimrc`，添加Plug相关配置**
+**Configuration(`~/.vimrc`):**
 
 ```vim
 call plug#begin()
@@ -1898,22 +1679,22 @@ let g:coc_snippet_prev = '<c-k>'
 call plug#end()
 ```
 
-**使用：**
+**Usage:**
 
 * 在编辑模式下，输入片段后，按`<c-e>`触发片段扩展
 * `:CocList snippets`：查看所有可用的`snippet`
 
-**问题：**
+**FAQ:**
 
 * 最新版本无法跳转到`fori`的类型占位符，转而使用另一个插件`UltiSnips`
 
-#### 3.10.5.1 vim-snippets
+#### 3.7.5.1 vim-snippets
 
 Home: [vim-snippets](https://github.com/honza/vim-snippets)
 
 `vim-snippets`插件提供了一系列`snippet`的定义
 
-**编辑`~/.vimrc`，添加Plug相关配置**
+**Configuration(`~/.vimrc`):**
 
 ```vim
 call plug#begin()
@@ -1927,11 +1708,11 @@ Plug 'honza/vim-snippets'
 call plug#end()
 ```
 
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
 **使用：与`coc-snippets`自带`snippet`的用法一致**
 
-### 3.10.6 coc-settings.json
+### 3.7.6 coc-settings.json
+
+[All config keys](https://github.com/neoclide/coc.nvim/blob/master/doc/coc-config.txt)
 
 ```json
 {
@@ -1949,6 +1730,7 @@ call plug#end()
     "diagnostic.virtualTextCurrentLineOnly": false,
     "explorer.file.reveal.auto": true,
     "suggest.noselect": true,
+    "inlayHint.display": false,
     "snippets.ultisnips.pythonPrompt": false,
     "java.format.enable": false,
     "java.maven.downloadSources": true,
@@ -1968,190 +1750,13 @@ call plug#end()
 * `diagnostic.virtualTextCurrentLineOnly`：是否只显示光标所在行的诊断信息
 * `explorer.file.reveal.auto`：使用在文件管理器中高亮当前`buffer`的所对应的文件
 * `suggest.noselect`：`true/false`，表示自动补全时，是否自动选中第一个。默认为`false`，即自动选中第一个，如果再按`tab`则会跳转到第二个。[Ability to tab to first option](https://github.com/neoclide/coc.nvim/issues/1339)
+* `inlayHint.display`：是否默认显示`inlayHint`
 
-## 3.11 LanguageClient-neovim
-
-Home: [LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim)
-
-**该插件是作为`LSP Client`，可以支持多种不同的`LSP Server`**
-
-**编辑`~/.vimrc`，添加Plug相关配置（公共配置）**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....Other Plugins....
-" ......................
-
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
-
-" 默认关闭，对于一些大型项目来说，ccls初始化有点慢，需要用的时候再通过 :LanguageClientStart 启动即可
-let g:LanguageClient_autoStart = 0
-let g:LanguageClient_loadSettings = 1
-let g:LanguageClient_diagnosticsEnable = 0
-let g:LanguageClient_selectionUI = 'quickfix'
-let g:LanguageClient_diagnosticsList = v:null
-let g:LanguageClient_hoverPreview = 'Never'
-let g:LanguageClient_serverCommands = {}
-
-nnoremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
-nnoremap <leader>rr :call LanguageClient#textDocument_references()<cr>
-nnoremap <leader>rv :call LanguageClient#textDocument_hover()<cr>
-nnoremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可。由于安装时，还需执行一个脚本`install.sh`，该脚本要从github下载一个二进制，在国内容易超时失败，可以用如下方式进行手动安装**
-
-```sh
-# 假定通过 :PlugInstall 已经将工程下载到本地了
-cd ~/.vim/plugged/LanguageClient-neovim
-
-# 修改地址
-sed -i -r 's|([^/]?)https://github.com/|\1https://mirror.ghproxy.com/https://github.com/|g' install.sh
-
-# 手动执行安装脚本
-./install.sh
-```
-
-**用法：**
-
-* **`:LanguageClientStart`：由于在上面的配置中取消了自启动，因此需要手动开启**
-* **`:LanguageClientStop`：关闭**
-* **`:call LanguageClient_contextMenu()`：操作菜单**
-
-**键位映射说明：**
-
-| keymap | desc |
-|--------|------|
-| **`\rd`** | **查找光标下符号的定义** |
-| **`\rr`** | **查找光标下符号的引用** |
-| **`\rv`** | **查看光标下符号的说明** |
-| **`\rn`** | **重命名光标下的符号** |
-| **`\hb`** | **查找光标下符号的父类（ccls独有）** |
-| **`\hd`** | **查找光标下符号的子类（ccls独有）** |
-
-### 3.11.1 C-Family
-
-#### 3.11.1.1 clangd
-
-**这里我们选用的`LSP-Server`的实现是`clangd`（推荐）**
-
-**编辑`~/.vimrc`，添加Plug相关配置（`clangd`的特殊配置）**
-
-* **`clangd`。相关配置参考[LanguageClient-neovim/wiki/Clangd](https://github.com/autozimu/LanguageClient-neovim/wiki/Clangd)**
-* `clangd`无法更改缓存的存储路径，默认会使用`${project}/.cache`作为缓存目录
-* **`clangd`会根据`--compile-commands-dir`参数指定的路径查找`compile_commands.json`，若查找不到，则在当前目录，以及每个源文件所在目录递归向上寻找`compile_commands.json`**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....Other Plugins....
-" ......................
-
-" 省略公共配置
-let g:LanguageClient_serverCommands.c = ['clangd']
-let g:LanguageClient_serverCommands.cpp = ['clangd']
-
-call plug#end()
-```
-
-#### 3.11.1.2 ccls
-
-**这里我们选用的`LSP-Server`的实现是`ccls`（不推荐，大型工程资源占用太高，且经常性卡死）**
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-* **`ccls`。相关配置参考[ccls-project-setup](https://github.com/MaskRay/ccls/wiki/Project-Setup)**
-* **`ccls`会在工程的根目录寻找`compile_commands.json`**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....Other Plugins....
-" ......................
-
-" 省略公共配置
-let g:LanguageClient_settingsPath = expand('~/.vim/languageclient.json')
-let g:LanguageClient_serverCommands.c = ['ccls']
-let g:LanguageClient_serverCommands.cpp = ['ccls']
-nnoremap <leader>hb :call LanguageClient#findLocations({'method':'$ccls/inheritance'})<cr>
-nnoremap <leader>hd :call LanguageClient#findLocations({'method':'$ccls/inheritance','derived':v:true})<cr>
-
-call plug#end()
-```
-
-**其中，`~/.vim/languageclient.json`的内容示例如下（必须是决定路径，不能用`~`）**
-
-* `ccls`可以通过如下配置更改缓存的存储路径
-
-```json
-{
-    "ccls": {
-        "cache": {
-            "directory": "/root/.cache/LanguageClient"
-        }
-    }
-}
-```
-
-### 3.11.2 Java
-
-**这里我们选用的`LSP-Server`的实现是`jdtls, Eclipse JDT Language Server`**
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....Other Plugins....
-" ......................
-
-" 省略公共配置
-let g:LanguageClient_serverCommands.java = ['/usr/local/bin/jdtls', '-data', getcwd()]
-
-call plug#end()
-```
-
-**创建完整路径为`/usr/local/bin/jdtls`的脚本，内容如下：**
-
-```sh
-#!/usr/bin/env sh
-
-server={{ your server installation location }}
-
-java \
-    -Declipse.application=org.eclipse.jdt.ls.core.id1 \
-    -Dosgi.bundles.defaultStartLevel=4 \
-    -Declipse.product=org.eclipse.jdt.ls.core.product \
-    -noverify \
-    -Xms1G \
-    -jar $server/eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/plugins/org.eclipse.equinox.launcher_1.*.jar \
-    -configuration $server/eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/config_linux/ \
-    --add-modules=ALL-SYSTEM \
-    --add-opens java.base/java.util=ALL-UNNAMED \
-    --add-opens java.base/java.lang=ALL-UNNAMED \
-    "$@"
-```
-
-**问题：**
-
-* 无法访问JDK以及三方库中的类
-* 对于Maven项目，若在标准的目录结构中有额外的目录，例如`<project-name>/src/main/<extra_dir>/com`，那么`jdt.ls`无法自动扫描整个工程，除非手动打开文件，才会把该文件加入解析列表中
-
-## 3.12 vimspector
+## 3.8 vimspector
 
 Home: [vimspector](https://github.com/puremourning/vimspector)
 
-**编辑`~/.vimrc`，添加Plug相关配置**
+**Configuration(`~/.vimrc`):**
 
 ```vim
 call plug#begin()
@@ -2183,9 +1788,7 @@ nnoremap <f20> :call vimspector#StepOut()<cr> " f20 can be achieved through shif
 call plug#end()
 ```
 
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**使用：**
+**Usage:**
 
 * **页面布局**
     * `Variables and scopes`：左上角。回车用于展开和收起
@@ -2232,7 +1835,7 @@ call plug#end()
         }
         ```
 
-### 3.12.1 coc-java-debug
+### 3.8.1 coc-java-debug
 
 Home: [coc-java-debug](https://github.com/dansomething/coc-java-debug)
 
@@ -2243,7 +1846,7 @@ Home: [coc-java-debug](https://github.com/dansomething/coc-java-debug)
 
 **安装：进入vim界面后执行`:CocInstall coc-java-debug`即可**
 
-**使用：**
+**Usage:**
 
 * **`:CocCommand java.debug.vimspector.start`**
 * **对于每个项目，我们都需要在项目的根目录提供一个`.vimspector.json`，来配置项目相关的`debug`参数**
@@ -2286,7 +1889,7 @@ Home: [coc-java-debug](https://github.com/dansomething/coc-java-debug)
     }
     ```
 
-## 3.13 Copilot.vim
+## 3.9 Copilot.vim
 
 Home: [Copilot.vim](https://github.com/github/copilot.vim)
 
@@ -2325,7 +1928,7 @@ endif
 call plug#end()
 ```
 
-**用法：**
+**Usage:**
 
 * Login & Enable
     ```vim
@@ -2335,270 +1938,11 @@ call plug#end()
 
 * `:help copilot`
 
-## 3.14 Code Completion
-
-**前言：`coc.nvim`插件体系提供了大部分语言的代码补全功能，如果使用了`coc.nvim`插件，就不需要使用下面的这些补全插件了**
-
-### 3.14.1 YouCompleteMe
-
-Home: [YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
-
-**这个插件比较复杂，建议手工安装**
-
-```sh
-# 定义一个函数，用于调整github的地址，加速下载过程，该函数会用到多次
-function setup_github_repo() {
-    gitmodules=( $(find . -name '.gitmodules' -type f) )
-    for gitmodule in ${gitmodules[@]}
-    do
-        echo "setup github repo for '${gitmodule}'"
-        sed -i -r 's|([^/]?)https://github.com/|\1https://mirror.ghproxy.com/https://github.com/|g' ${gitmodule}
-    done
-
-    git submodule sync --recursive
-}
-
-cd ~/.vim/plugged
-git clone https://mirror.ghproxy.com/https://github.com/ycm-core/YouCompleteMe.git --depth 1
-cd YouCompleteMe
-
-# 递归下载ycm的子模块
-git submodule update --init --recursive
-
-# 如果下载超时了，重复执行下面这两个命令，直至完毕
-setup_github_repo
-git submodule update --init --recursive
-
-# 编译
-python3 install.py --clang-completer
-```
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....Other Plugins....
-" ......................
-
-Plug 'ycm-core/YouCompleteMe'
-
-" ycm全局的配置文件，当没有 compile_commands.json 文件时，这个配置会起作用
-let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
-" 禁止ycm在每次打开文件时都询问是否要使用全局的配置
-let g:ycm_confirm_extra_conf = 0
-
-let g:ycm_add_preview_to_completeopt = 0
-let g:ycm_show_diagnostics_ui = 0
-let g:ycm_server_log_level = 'info'
-let g:ycm_min_num_identifier_candidate_chars = 2
-let g:ycm_collect_identifiers_from_comments_and_strings = 1
-let g:ycm_complete_in_strings=1
-let g:ycm_key_invoke_completion = '<c-z>'
-set completeopt=menu,menuone
-
-noremap <c-z> <nop>
-
-let g:ycm_semantic_triggers =  {
-           \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
-           \ 'cs,lua,javascript': ['re!\w{2}'],
-           \ }
-
-call plug#end()
-```
-
-**`ycm`如何解析代码：**
-
-1. **使用`compilation database`：如果当前目录下存在`compile_commands.json`， 则读取该文件，对代码进行编译解析**
-1. **`.ycm_extra_conf.py`：若没有`compilation database`，那么`ycm`会在当前目录递归向上寻找并加载第一个`.ycm_extra_conf.py`文件，如果都找不到，则加载全局配置（如果配置了`g:ycm_global_ycm_extra_conf`参数的话）**
-
-**配置`~/.ycm_extra_conf.py`，内容如下（仅针对c/c++，对大部分简单的工程均适用），仅供参考**
-
-```python
-def Settings(**kwargs):
-    if kwargs['language'] == 'cfamily':
-        return {
-            'flags': ['-x', 'c++', '-Wall', '-Wextra', '-Werror'],
-        }
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**使用：**
-
-* **默认情况下，只能进行通用补全，比如将文件中已经出现的字符加入到字典中，这样如果编写同样的字符串的话，就能够提示补全了**
-* **如果要进行语义补全，可以结合`compile_commands.json`，通过`cmake`等构建工具生成`compile_commands.json`，并将该文件至于工程根目录下。再用vim打开工程便可进行语义补全**
-* `[Ctrl] + n`：下一个条目
-* `[Ctrl] + p`：上一个条目
-
-### 3.14.2 vim-javacomplete2
-
-Home: [vim-javacomplete2](https://github.com/artur-shaik/vim-javacomplete2)
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....Other Plugins....
-" ......................
-
-Plug 'artur-shaik/vim-javacomplete2'
-
-" 关闭默认的配置项
-let g:JavaComplete_EnableDefaultMappings = 0
-" 开启代码补全
-autocmd FileType java setlocal omnifunc=javacomplete#Complete
-" import相关
-autocmd FileType java nmap <leader>jI <Plug>(JavaComplete-Imports-AddMissing)
-autocmd FileType java nmap <leader>jR <Plug>(JavaComplete-Imports-RemoveUnused)
-autocmd FileType java nmap <leader>ji <Plug>(JavaComplete-Imports-AddSmart)
-autocmd FileType java nmap <leader>jii <Plug>(JavaComplete-Imports-Add)
-" 代码生成相关
-autocmd FileType java nmap <leader>jM <Plug>(JavaComplete-Generate-AbstractMethods)
-autocmd FileType java nmap <leader>jA <Plug>(JavaComplete-Generate-Accessors)
-autocmd FileType java nmap <leader>js <Plug>(JavaComplete-Generate-AccessorSetter)
-autocmd FileType java nmap <leader>jg <Plug>(JavaComplete-Generate-AccessorGetter)
-autocmd FileType java nmap <leader>ja <Plug>(JavaComplete-Generate-AccessorSetterGetter)
-autocmd FileType java nmap <leader>jts <Plug>(JavaComplete-Generate-ToString)
-autocmd FileType java nmap <leader>jeq <Plug>(JavaComplete-Generate-EqualsAndHashCode)
-autocmd FileType java nmap <leader>jc <Plug>(JavaComplete-Generate-Constructor)
-autocmd FileType java nmap <leader>jcc <Plug>(JavaComplete-Generate-DefaultConstructor)
-autocmd FileType java vmap <leader>js <Plug>(JavaComplete-Generate-AccessorSetter)
-autocmd FileType java vmap <leader>jg <Plug>(JavaComplete-Generate-AccessorGetter)
-autocmd FileType java vmap <leader>ja <Plug>(JavaComplete-Generate-AccessorSetterGetter)
-" 其他
-autocmd FileType java nmap <silent> <buffer> <leader>jn <Plug>(JavaComplete-Generate-NewClass)
-autocmd FileType java nmap <silent> <buffer> <leader>jN <Plug>(JavaComplete-Generate-ClassInFile)
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-## 3.15 AsyncRun
-
-Home: [AsyncRun](https://github.com/skywind3000/asyncrun.vim)
-
-本质上，`AsyncRun`插件就是提供了异步执行命令的机制，我们可以利用这个机制定义一些动作，比如`编译`、`构建`、`运行`、`测试`等，提供类似于`IDE`的体验
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....Other Plugins....
-" ......................
-
-Plug 'skywind3000/asyncrun.vim'
-
-" Automatically open quickfix window with a height of 6
-let g:asyncrun_open = 6
-
-" Ring a bell when the task is finished
-let g:asyncrun_bell = 1
-
-" Set F10 to open/close quickfix window
-nnoremap <f10> :call asyncrun#quickfix_toggle(6)<cr>
-
-" Set shortcut for compiling the project (this is just an example, the specific command needs to be adjusted)
-nnoremap <silent> <f7> :AsyncRun -cwd=<root> make <cr>
-
-" Set shortcut for running the project (this is just an example, the specific command needs to be adjusted)
-nnoremap <silent> <f8> :AsyncRun -cwd=<root> -raw make run <cr>
-
-" Set shortcut for testing the project (this is just an example, the specific command needs to be adjusted)
-nnoremap <silent> <f6> :AsyncRun -cwd=<root> -raw make test <cr>
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-## 3.16 ALE
-
-Home: [ALE](https://github.com/dense-analysis/ale)
-
-**前言：`coc.nvim`插件体系提供了大部分语言的错误诊断功能，如果使用了`coc.nvim`插件，就不需要使用其他的错误诊断插件了**
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....Other Plugins....
-" ......................
-
-Plug 'dense-analysis/ale'
-
-" 不显示状态栏+不需要高亮行
-let g:ale_sign_column_always = 0
-let g:ale_set_highlights = 0
-
-" 错误和警告标志
-let g:ale_sign_error = '✗'
-let g:ale_sign_warning = '⚡'
-
-" 设置linters，并且仅用指定的linters
-" 由于在我的环境中，Available Linters中并没有gcc和g++，但是有cc（Linter Aliases）。cc包含clang、clang++、gcc、g++
-" 于是，下面两个配置会使得最终ALE生效的Linter是cc
-let g:ale_linters_explicit = 1
-let g:ale_linters = {
-  \   'c': ['gcc'],
-  \   'cpp': ['g++'],
-  \}
-
-" 上面的配置使得linter是cc，cc是个alias，包含了clang、clang++、gcc、g++，且默认会用clang和clang++
-" 这边我改成gcc、g++
-let g:ale_c_cc_executable = 'gcc'
-let g:ale_cpp_cc_executable = 'g++'
-" -std=c17 和 -std=c++17 会有很多奇怪的问题，因此改用 gnu17 和 gnu++17
-let g:ale_c_cc_options = '-std=gnu17 -Wall'
-let g:ale_cpp_cc_options = '-std=gnu++17 -Wall'
-
-let g:ale_completion_delay = 500
-let g:ale_echo_delay = 20
-let g:ale_lint_delay = 500
-let g:ale_echo_msg_format = '[%linter%] %code: %%s'
-let g:ale_lint_on_text_changed = 'normal'
-let g:ale_lint_on_insert_leave = 1
-let g:airline#extensions#ale#enabled = 1
-
-" 配置快捷键用于在warnings/errors之间跳转
-" [Ctrl] + j: 下一个warning/error
-" [Ctrl] + k: 上一个warning/error
-nmap <silent> <c-k> <plug>(ale_previous_wrap)
-nmap <silent> <c-j> <plug>(ale_next_wrap)
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**使用：**
-
-* **`:ALEInfo`：查看配置信息，拉到最后有命令执行结果**
-* **如何配置`C/C++`项目：不同`C/C++`项目的结构千差万别，构建工具也有很多种，因此`ALE`很难得知需要用什么编译参数来编译当前文件。因此`ALE`会尝试读取工程目录下的`compile_commands.json`文件，并以此获取编译参数**
-* **指定三方库的头文件路径。每种类型的编译器对应的环境变量名是不同的，这里仅以`gcc`和g`++`为例**
-    * `export C_INCLUDE_PATH=${C_INCLUDE_PATH}:<third party include path...>`
-    * `export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:<third party include path...>`
-
-**问题：**
-
-1. **若`linter`使用的是`gcc`或者`g++`，即便有语法错误，也不会有提示信息。但是使用`:ALEInfo`查看，是可以看到报错信息的。这是因为ALE识别错误是通过一个关键词`error`，而在我的环境中，gcc编译错误输出的是中文`错误`，因此ALE不认为这是个错误。修改方式如下**
-    1. `mv /usr/share/locale/zh_CN/LC_MESSAGES/gcc.mo /usr/share/locale/zh_CN/LC_MESSAGES/gcc.mo.bak`
-    1. `mv /usr/local/share/locale/zh_CN/LC_MESSAGES/gcc.mo /usr/local/share/locale/zh_CN/LC_MESSAGES/gcc.mo.bak`
-    * 如果找不到`gcc.mo`文件的话，可以用`locate`命令搜索一下
-
-## 3.17 vim-signify
+## 3.10 vim-signify
 
 Home: [vim-signify](https://github.com/mhinz/vim-signify)
 
-**编辑`~/.vimrc`，添加Plug相关配置**
+**Configuration(`~/.vimrc`):**
 
 ```vim
 call plug#begin()
@@ -2612,18 +1956,16 @@ Plug 'mhinz/vim-signify'
 call plug#end()
 ```
 
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**使用：**
+**Usage:**
 
 * `set signcolumn=yes`，有改动的行会标出
 * `:SignifyDiff`：以左右分屏的方式对比当前文件的差异
 
-## 3.18 textobj-user
+## 3.11 textobj-user
 
 Home: [textobj-user](https://github.com/kana/vim-textobj-user)
 
-**编辑`~/.vimrc`，添加Plug相关配置**
+**Configuration(`~/.vimrc`):**
 
 ```vim
 call plug#begin()
@@ -2645,19 +1987,17 @@ let g:vim_textobj_parameter_mapping = 'a'
 call plug#end()
 ```
 
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**使用：**
+**Usage:**
 
 * **`ia/aa`：参数对象。可以用`via/vaa`/`dia/daa`/`cia/caa`来选中/删除/改写当前参数**
 * **`ii/ai`：缩进对象。可以用`vii/vai`/`dii/dai`/`cii/cai`来选中/删除/改写同一缩进层次的内容**
 * **`if/af`：函数对象。可以用`vif/vaf`/`dif/daf`/`cif/caf`来选中/删除/改写当前函数的内容**
 
-## 3.19 LeaderF
+## 3.12 LeaderF
 
 Home: [LeaderF](https://github.com/Yggdroot/LeaderF)
 
-**编辑`~/.vimrc`，添加Plug相关配置**
+**Configuration(`~/.vimrc`):**
 
 ```vim
 call plug#begin()
@@ -2690,11 +2030,9 @@ let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
 call plug#end()
 ```
 
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
 * 依赖`ctags`
 
-**用法：**
+**Usage:**
 
 1. `:LeaderfFunction!`：弹出函数列表
 1. `:LeaderfMru`：查找最近访问的文件，通过上面的配置映射到快捷键`[Ctrl] + n`
@@ -2713,11 +2051,11 @@ call plug#end()
 1. 不起作用，可能是`python`的问题
     * `:checkhealth`
 
-## 3.20 fzf.vim
+## 3.13 fzf.vim
 
 Home: [fzf.vim](https://github.com/junegunn/fzf.vim)
 
-**编辑`~/.vimrc`，添加Plug相关配置**
+**Configuration(`~/.vimrc`):**
 
 ```vim
 call plug#begin()
@@ -2760,8 +2098,6 @@ command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-hea
 call plug#end()
 ```
 
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
 * 安装会额外执行`~/.vim/plugged/fzf/install`这个脚本，来下载`fzf`的二进制，如果长时间下载不下来的话，可以改成代理地址后（在脚本中搜索`github`关键词，加上`https://mirror.ghproxy.com/`前缀），再手动执行脚本进行下载安装
 
 **用法（搜索相关的语法可以参考[junegunn/fzf-search-syntax](https://github.com/junegunn/fzf#search-syntax)）：**
@@ -2779,35 +2115,11 @@ call plug#end()
     * **上述规则均可自由组合**
     * **如何精确匹配一个包含空格的字符串：`'Hello\ world`。由于常规的空格被用作分词符，因此空格前要用`\`进行转义**
 
-## 3.21 vim-grepper
-
-Home: [vim-grepper](https://github.com/mhinz/vim-grepper)
-
-**编辑`~/.vimrc`，添加Plug相关配置**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....Other Plugins....
-" ......................
-
-Plug 'mhinz/vim-grepper'
-
-call plug#end()
-```
-
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**用法：**
-
-* `:Grepper`：进行全局搜索（依赖grep命令）
-
-## 3.22 vim-fugitive
+## 3.14 vim-fugitive
 
 Home: [vim-fugitive](https://github.com/tpope/vim-fugitive)
 
-**编辑`~/.vimrc`，添加Plug相关配置**
+**Configuration(`~/.vimrc`):**
 
 ```vim
 call plug#begin()
@@ -2821,17 +2133,15 @@ Plug 'tpope/vim-fugitive'
 call plug#end()
 ```
 
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**用法：**
+**Usage:**
 
 * `:Git`：作为`git`的替代，后跟`git`命令行工具的正常参数即可
 
-## 3.23 nerdcommenter
+## 3.15 nerdcommenter
 
 Home: [nerdcommenter](https://github.com/preservim/nerdcommenter)
 
-**编辑`~/.vimrc`，添加Plug相关配置**
+**Configuration(`~/.vimrc`):**
 
 ```vim
 call plug#begin()
@@ -2855,9 +2165,7 @@ let g:NERDToggleCheckAllLines = 1
 call plug#end()
 ```
 
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**用法：**
+**Usage:**
 
 * **`\cc`：添加注释，对每一行都会添加注释**
 * **`\cm`：对被选区域用一对注释符进行注释**
@@ -2866,7 +2174,7 @@ call plug#end()
 * **`\cu`：取消注释**
 * **`\c<space>`：如果被选区域有部分被注释，则对被选区域执行取消注释操作，其它情况执行反转注释操作**
 
-## 3.24 vim-codefmt
+## 3.16 vim-codefmt
 
 Home: [vim-codefmt](https://github.com/google/vim-codefmt)
 
@@ -2881,7 +2189,7 @@ Home: [vim-codefmt](https://github.com/google/vim-codefmt)
 * `Python`：`Autopep8`/`Black`/`YAPF`
 * `Shell`：`shfmt`
 
-**编辑`~/.vimrc`，添加Plug相关配置**
+**Configuration(`~/.vimrc`):**
 
 ```vim
 call plug#begin()
@@ -2912,9 +2220,7 @@ call glaive#Install()
 Glaive codefmt google_java_executable="java -jar /usr/local/share/google-java-format-all-deps.jar --aosp"
 ```
 
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**用法：**
+**Usage:**
 
 * `:FormatCode`：格式化
 * `:Glaive codefmt`：查看配置（也可以通过`:help codefmt`查看所有配置项）
@@ -2956,11 +2262,11 @@ sudo ln /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.py /usr/
 
 * `npm -g install js-beautify`
 
-## 3.25 vim-surround
+## 3.17 vim-surround
 
 Home: [vim-surround](https://github.com/tpope/vim-surround)
 
-**编辑`~/.vimrc`，添加Plug相关配置**
+**Configuration(`~/.vimrc`):**
 
 ```vim
 call plug#begin()
@@ -2974,9 +2280,7 @@ Plug 'tpope/vim-surround'
 call plug#end()
 ```
 
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-**用法：**
+**Usage:**
 
 * 完整用法参考`:help surround`
 * `cs`：`cs, change surroundings`，用于替换当前文本的环绕符号
@@ -3011,13 +2315,13 @@ call plug#end()
     * `vllllSFprint`：类似`vllllSfprint`，`F`表示会在参数列表前后多加额外的空格。形式为`print( <text> )`
     * `vllllS<c-f>print`：类似`vllllSfprint`，`<c-f>`表示环绕符号加到最外侧。形式为`(print <text>)`
 
-## 3.26 UltiSnips
+## 3.18 UltiSnips
 
 Home: [UltiSnips](https://github.com/SirVer/ultisnips)
 
 UltiSnips is the ultimate solution for snippets in Vim.
 
-**编辑`~/.vimrc`，添加Plug相关配置**
+**Configuration(`~/.vimrc`):**
 
 ```vim
 call plug#begin()
@@ -3039,9 +2343,7 @@ let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 call plug#end()
 ```
 
-**安装：进入vim界面后执行`:PlugInstall`即可**
-
-## 3.27 My Full Settings
+## 3.19 My Full Settings
 
 ```vim
 " Load extra config (pre step)
@@ -3067,106 +2369,7 @@ let g:indentLine_char = '|'
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-Plug 'octol/vim-cpp-enhanced-highlight'
-
-let g:cpp_class_scope_highlight = 1
-let g:cpp_member_variable_highlight = 1
-let g:cpp_class_decl_highlight = 1
-let g:cpp_experimental_simple_template_highlight = 1
-let g:cpp_concepts_highlight = 1
-
-" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-Plug 'luochen1990/rainbow'
-
-let g:rainbow_active = 1
-
-" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-Plug 'ludovicchabant/vim-gutentags'
-
-" gutentags search project directory markers, stop recursion upwards upon encountering these files/directories
-let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
-
-" Name of the generated data file
-let g:gutentags_ctags_tagfile = '.tags'
-
-" Enable support for both ctags and gtags:
-let g:gutentags_modules = []
-if executable('ctags')
-    let g:gutentags_modules += ['ctags']
-endif
-if !has('nvim') && executable('gtags-cscope') && executable('gtags')
-    let g:gutentags_modules += ['gtags_cscope']
-endif
-
-" Put all automatically generated ctags/gtags files in the ~/.cache/tags directory to avoid polluting the project directory
-let s:vim_tags = expand('~/.cache/tags')
-let g:gutentags_cache_dir = s:vim_tags
-
-" Configure ctags parameters by file type
-function s:set_cfamily_configs()
-    let g:gutentags_ctags_extra_args = ['--fields=+ailnSz']
-    let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
-    let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
-    " Configure Universal ctags specific parameters
-    let g:ctags_version = system('ctags --version')[0:8]
-    if g:ctags_version == "Universal"
-        let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
-    endif
-endfunction
-function s:set_python_configs()
-    let g:gutentags_ctags_extra_args = ['--fields=+ailnSz']
-    let g:gutentags_ctags_extra_args += ['--languages=python']
-    let g:gutentags_ctags_extra_args += ['--python-kinds=-iv']
-    " Configure Universal ctags specific parameters
-    let g:ctags_version = system('ctags --version')[0:8]
-    if g:ctags_version == "Universal"
-        let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
-    endif
-endfunction
-autocmd FileType c,cpp,objc call s:set_cfamily_configs()
-autocmd FileType python call s:set_python_configs()
-
-" Disable gutentags auto-loading of gtags database
-let g:gutentags_auto_add_gtags_cscope = 0
-
-" Enable advanced commands like :GutentagsToggleTrace
-let g:gutentags_define_advanced_commands = 1
-
-" Create ~/.cache/tags if it does not exist
-if !isdirectory(s:vim_tags)
-   silent! call mkdir(s:vim_tags, 'p')
-endif
-
-" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-Plug 'skywind3000/gutentags_plus'
-
-" After querying, switch cursor to the quickfix window
-let g:gutentags_plus_switch = 1
-
-" Disable default mappings, as they conflict with the nerdcommenter plugin
-let g:gutentags_plus_nomap = 1
-
-" Define new mappings
-nnoremap <leader>gd :GscopeFind g <c-r><c-w><cr>
-nnoremap <leader>gr :GscopeFind s <c-r><c-w><cr>
-nnoremap <leader>ga :GscopeFind a <c-r><c-w><cr>
-nnoremap <leader>gt :GscopeFind t <c-r><c-w><cr>
-nnoremap <leader>ge :GscopeFind e <c-r><c-w><cr>
-nnoremap <leader>gf :GscopeFind f <c-r>=expand("<cfile>")<cr><cr>
-nnoremap <leader>gi :GscopeFind i <c-r>=expand("<cfile>")<cr><cr>
-
-" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-Plug 'skywind3000/vim-preview'
-
-autocmd FileType qf nnoremap <buffer> p :PreviewQuickfix<cr>
-autocmd FileType qf nnoremap <buffer> P :PreviewClose<cr>
-" Map :PreviewScroll +1 and :PreviewScroll -1 to D and U respectively
-autocmd FileType qf nnoremap <buffer> <c-e> :PreviewScroll +1<cr>
-autocmd FileType qf nnoremap <buffer> <c-y> :PreviewScroll -1<cr>
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3201,6 +2404,9 @@ function! s:show_documentation()
     execute '!' . &keywordprg . " " . expand('<cword>')
   endif
 endfunction
+
+" Inlay hint, only works for neovim >= 0.10.0
+nmap <leader>rh :CocCommand document.toggleInlayHint<cr>
 
 " Diagnostic shortcuts
 nmap <c-k> <Plug>(coc-diagnostic-prev)
@@ -3281,16 +2487,6 @@ nnoremap <f18> :call vimspector#RunToCursor()<cr> " f18 can be achieved through 
 nnoremap <f7> :call vimspector#StepInto()<cr>
 nnoremap <f8> :call vimspector#StepOver()<cr>
 nnoremap <f20> :call vimspector#StepOut()<cr> " f20 can be achieved through shift + F8
-
-" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-Plug 'skywind3000/asyncrun.vim'
-
-" Automatically open quickfix window with a height of 6
-let g:asyncrun_open = 6
-
-" Ring a bell when the task is finished
-let g:asyncrun_bell = 1
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -3407,7 +2603,10 @@ let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 call plug#end()
 
 " Extra config for catppuccin
-colorscheme catppuccin-mocha " catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
+colorscheme catppuccin-frappe " catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
+
+" Extra config for nvim-treesitter
+lua require('nvim-treesitter.configs').setup{highlight={enable=true}}
 
 " Extra config for vim-codefmt
 call glaive#Install()
@@ -3543,18 +2742,655 @@ if filereadable("./.workspace.vim")
 endif
 ```
 
-# 4 vim-script
+# 4 Legacy Plugins
 
-## 4.1 Tips
+These are the plugins I have eliminated.
+
+## 4.1 nerdtree
+
+Home: [nerdtree](https://github.com/preservim/nerdtree)
+
+**Configuration(`~/.vimrc`):**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....Other Plugins....
+" ......................
+
+Plug 'scrooloose/nerdtree'
+
+" Configure F2 to open the file manager
+nmap <f2> :NERDTreeToggle<cr>
+" Configure F3 to locate the current file
+nmap <f3> :NERDTreeFind<cr>
+
+call plug#end()
+```
+
+**Usage:**
+
+* `:NERDTreeToggle`: Open the file manager.
+* `:NERDTreeFind`: Open the file manager, and locate the current file.
+
+## 4.2 vim-gutentags
+
+Home: [vim-gutentags](https://github.com/ludovicchabant/vim-gutentags)
+
+**Configuration(`~/.vimrc`):**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....Other Plugins....
+" ......................
+
+Plug 'ludovicchabant/vim-gutentags'
+
+" gutentags search project directory markers, stop recursion upwards upon encountering these files/directories
+let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
+
+" Name of the generated data file
+let g:gutentags_ctags_tagfile = '.tags'
+
+" Enable support for both ctags and gtags:
+let g:gutentags_modules = []
+if executable('ctags')
+    let g:gutentags_modules += ['ctags']
+endif
+if !has('nvim') && executable('gtags-cscope') && executable('gtags')
+    let g:gutentags_modules += ['gtags_cscope']
+endif
+
+" Put all automatically generated ctags/gtags files in the ~/.cache/tags directory to avoid polluting the project directory
+let s:vim_tags = expand('~/.cache/tags')
+let g:gutentags_cache_dir = s:vim_tags
+
+" Configure ctags parameters by file type
+function s:set_cfamily_configs()
+    let g:gutentags_ctags_extra_args = ['--fields=+ailnSz']
+    let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+    let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+    " Configure Universal ctags specific parameters
+    let g:ctags_version = system('ctags --version')[0:8]
+    if g:ctags_version == "Universal"
+        let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
+    endif
+endfunction
+function s:set_python_configs()
+    let g:gutentags_ctags_extra_args = ['--fields=+ailnSz']
+    let g:gutentags_ctags_extra_args += ['--languages=python']
+    let g:gutentags_ctags_extra_args += ['--python-kinds=-iv']
+    " Configure Universal ctags specific parameters
+    let g:ctags_version = system('ctags --version')[0:8]
+    if g:ctags_version == "Universal"
+        let g:gutentags_ctags_extra_args += ['--extras=+q', '--output-format=e-ctags']
+    endif
+endfunction
+autocmd FileType c,cpp,objc call s:set_cfamily_configs()
+autocmd FileType python call s:set_python_configs()
+
+" Disable gutentags auto-loading of gtags database
+let g:gutentags_auto_add_gtags_cscope = 0
+
+" Enable advanced commands like :GutentagsToggleTrace
+let g:gutentags_define_advanced_commands = 1
+
+" Create ~/.cache/tags if it does not exist
+if !isdirectory(s:vim_tags)
+   silent! call mkdir(s:vim_tags, 'p')
+endif
+
+call plug#end()
+```
+
+**Usage:**
+
+* **`:GutentagsUpdate`: Manually trigger tag updates.**
+
+**Trouble-shooting:**
+
+1. `let g:gutentags_define_advanced_commands = 1`: Allows `gutentags` to enable some advanced commands and options
+1. Run `:GutentagsToggleTrace`: It will log the output of `ctags/gtags` commands in vim's `message` log
+   * `let g:gutentags_trace = 1`: Provides similar functionality
+1. Save the file to trigger a database update
+1. `:message`: Allows you to review the message log again
+
+**FAQ:**
+
+* `gutentags: gtags-cscope job failed, returned: 1`
+    * **Reason 1: Switching branches in a `git` repository may cause the `gtagsdb` to become corrupted. `gutentags` uses a command like `gtags --incremental <gtagsdb-path>` to update the `gtagsdb`, which can result in a segmentation fault. This issue manifests as `gutentags: gtags-cscope job failed, returned: 1`.**
+        * **Solution: Modify the `gutentags` source code to remove the `--incremental` parameter. Use the following command to modify it in one step: `sed -ri "s|'--incremental', *||g" ~/.vim/plugged/vim-gutentags/autoload/gutentags/gtags_cscope.vim`**
+* `gutentags: ctags job failed, returned: 1`
+    * **Reason 1: The installed version of ctags is too old. Reinstall a newer version.**
+* How to disable:
+    * `let g:gutentags_enabled = 0`
+    * `let g:gutentags_dont_load = 1`
+
+### 4.2.1 gutentags_plus
+
+Home: [gutentags_plus](https://github.com/skywind3000/gutentags_plus)
+
+**Without this plugin, we typically use `gtags` in the following way:**
+
+1. **`set cscopeprg='gtags-cscope'`: Set the `cscope` command to point to `gtags-cscope`**
+1. **`cscope add <gtags-path>/GTAGS`: Add the `gtagsdb` to `cscope`**
+1. **`cscope find s <symbol>`: Start symbol indexing**
+
+The plugin provides a command `GscopeFind` for `gtags` queries.
+
+**Configuration(`~/.vimrc`):**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....Other Plugins....
+" ......................
+
+Plug 'skywind3000/gutentags_plus'
+
+" After querying, switch cursor to the quickfix window
+let g:gutentags_plus_switch = 1
+
+" Disable default mappings, as they conflict with the nerdcommenter plugin
+let g:gutentags_plus_nomap = 1
+
+" Define new mappings
+nnoremap <leader>gd :GscopeFind g <c-r><c-w><cr>
+nnoremap <leader>gr :GscopeFind s <c-r><c-w><cr>
+nnoremap <leader>ga :GscopeFind a <c-r><c-w><cr>
+nnoremap <leader>gt :GscopeFind t <c-r><c-w><cr>
+nnoremap <leader>ge :GscopeFind e <c-r><c-w><cr>
+nnoremap <leader>gf :GscopeFind f <c-r>=expand("<cfile>")<cr><cr>
+nnoremap <leader>gi :GscopeFind i <c-r>=expand("<cfile>")<cr><cr>
+
+call plug#end()
+```
+
+**Keymap Explanation:**
+
+| Keymap   | Description                                |
+|----------|--------------------------------------------|
+| **`\gd`** | **Find the definition of the symbol under the cursor** |
+| **`\gr`** | **Find references to the symbol under the cursor** |
+| **`\ga`** | **Find assignments to the symbol under the cursor** |
+| `\gt`    | Find the string under the cursor           |
+| `\ge`    | Search the string under the cursor using `egrep pattern` |
+| `\gf`    | Find the filename under the cursor         |
+| **`\gi`** | **Find files that include the header under the cursor** |
+
+### 4.2.2 vim-preview
+
+Home: [vim-preview](https://github.com/skywind3000/vim-preview)
+
+**Configuration(`~/.vimrc`):**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....Other Plugins....
+" ......................
+
+Plug 'skywind3000/vim-preview'
+
+autocmd FileType qf nnoremap <buffer> p :PreviewQuickfix<cr>
+autocmd FileType qf nnoremap <buffer> P :PreviewClose<cr>
+" Map :PreviewScroll +1 and :PreviewScroll -1 to D and U respectively
+autocmd FileType qf nnoremap <buffer> <c-e> :PreviewScroll +1<cr>
+autocmd FileType qf nnoremap <buffer> <c-y> :PreviewScroll -1<cr>
+
+call plug#end()
+```
+
+**Usage:**
+
+* **In `quickfix`, press `p` to open the preview**
+* **In `quickfix`, press `P` to close the preview**
+* **`D`: Scroll down half a page in the preview**
+* **`U`: Scroll up half a page in the preview**
+
+### 4.2.3 rainbow
+
+Home: [rainbow](https://github.com/luochen1990/rainbow)
+
+**Configuration(`~/.vimrc`):**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....Other Plugins....
+" ......................
+
+Plug 'luochen1990/rainbow'
+
+let g:rainbow_active = 1
+
+call plug#end()
+```
+
+## 4.3 ALE
+
+Home: [ALE](https://github.com/dense-analysis/ale)
+
+**Configuration(`~/.vimrc`):**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....Other Plugins....
+" ......................
+
+Plug 'dense-analysis/ale'
+
+" Disable status column + disable line highlights
+let g:ale_sign_column_always = 0
+let g:ale_set_highlights = 0
+
+" Error and warning signs
+let g:ale_sign_error = '✗'
+let g:ale_sign_warning = '⚡'
+
+" Set linters and use only specified ones
+" In my environment, gcc and g++ are not available among the Available Linters, but cc (Linter Aliases) is.
+" The cc alias includes clang, clang++, gcc, and g++.
+" The following configuration ensures that the active linter will be cc.
+let g:ale_linters_explicit = 1
+let g:ale_linters = {
+  \   'c': ['gcc'],
+  \   'cpp': ['g++'],
+  \}
+
+" This configuration sets the linter to cc, which is an alias that includes clang, clang++, gcc, and g++.
+" By default, clang and clang++ are used. The following lines change it to gcc and g++.
+let g:ale_c_cc_executable = 'gcc'
+let g:ale_cpp_cc_executable = 'g++'
+" Use gnu17 and gnu++17 to avoid issues with c17 and c++17 standards
+let g:ale_c_cc_options = '-std=gnu17 -Wall'
+let g:ale_cpp_cc_options = '-std=gnu++17 -Wall'
+
+let g:ale_completion_delay = 500
+let g:ale_echo_delay = 20
+let g:ale_lint_delay = 500
+let g:ale_echo_msg_format = '[%linter%] %code: %%s'
+let g:ale_lint_on_text_changed = 'normal'
+let g:ale_lint_on_insert_leave = 1
+let g:airline#extensions#ale#enabled = 1
+
+" Configure shortcuts for navigating warnings/errors
+" [Ctrl] + j: Next warning/error
+" [Ctrl] + k: Previous warning/error
+nmap <silent> <c-k> <plug>(ale_previous_wrap)
+nmap <silent> <c-j> <plug>(ale_next_wrap)
+
+call plug#end()
+```
+
+**Usage:**
+
+* **`:ALEInfo`: View configuration information; scroll to the bottom to see the command execution results**
+* **How to configure `C/C++` projects: Different `C/C++` projects vary greatly in structure, and there are many build tools available. As a result, it's difficult for `ALE` to determine the correct compilation parameters for the current file. Therefore, `ALE` will try to read the `compile_commands.json` file in the project directory to obtain the necessary compilation parameters.**
+* **Specify the header file path for third-party libraries. The environment variable name varies for different types of compilers. Here is an example using `gcc` and `g++`:**
+    * `export C_INCLUDE_PATH=${C_INCLUDE_PATH}:<third party include path...>`
+    * `export CPLUS_INCLUDE_PATH=${CPLUS_INCLUDE_PATH}:<third party include path...>`
+
+**FAQ:**
+
+1. **If the `linter` uses `gcc` or `g++`, even with syntax errors, no warning messages will appear. However, by using `:ALEInfo`, you can see the error messages. This happens because ALE identifies errors by the keyword `error`, but in my environment, `gcc` outputs compilation errors in Chinese as `错误`. As a result, ALE does not recognize these as errors. The solution is as follows:**
+    1. `mv /usr/share/locale/zh_CN/LC_MESSAGES/gcc.mo /usr/share/locale/zh_CN/LC_MESSAGES/gcc.mo.bak`
+    1. `mv /usr/local/share/locale/zh_CN/LC_MESSAGES/gcc.mo /usr/local/share/locale/zh_CN/LC_MESSAGES/gcc.mo.bak`
+    * If you cannot find the `gcc.mo` file, you can use the `locate` command to search for it.
+
+## 4.4 LanguageClient-neovim
+
+Home: [LanguageClient-neovim](https://github.com/autozimu/LanguageClient-neovim)
+
+**Configuration(`~/.vimrc`):**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....Other Plugins....
+" ......................
+
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
+
+" Disabled by default. For some large projects, `ccls` initialization can be slow. Start it manually when needed with :LanguageClientStart.
+let g:LanguageClient_autoStart = 0
+let g:LanguageClient_loadSettings = 1
+let g:LanguageClient_diagnosticsEnable = 0
+let g:LanguageClient_selectionUI = 'quickfix'
+let g:LanguageClient_diagnosticsList = v:null
+let g:LanguageClient_hoverPreview = 'Never'
+let g:LanguageClient_serverCommands = {}
+
+nnoremap <leader>rd :call LanguageClient#textDocument_definition()<cr>
+nnoremap <leader>rr :call LanguageClient#textDocument_references()<cr>
+nnoremap <leader>rv :call LanguageClient#textDocument_hover()<cr>
+nnoremap <leader>rn :call LanguageClient#textDocument_rename()<cr>
+
+call plug#end()
+```
+
+**Install:**
+
+* After entering the Vim interface, execute `:PlugInstall`. During installation, a script `install.sh` needs to be executed, which downloads a binary from GitHub. In mainland China, this download may time out and fail. You can manually install it using the following method:
+
+```sh
+# Assuming the project has already been downloaded locally via :PlugInstall
+cd ~/.vim/plugged/LanguageClient-neovim
+
+# Modify the URL
+sed -i -r 's|([^/]?)https://github.com/|\1https://mirror.ghproxy.com/https://github.com/|g' install.sh
+
+# Manually execute the installation script
+./install.sh
+```
+
+**Usage:**
+
+* **`:LanguageClientStart`: Since auto-start was disabled in the configuration above, you need to start it manually**
+* **`:LanguageClientStop`: Stop the language client**
+* **`:call LanguageClient_contextMenu()`: Open the operations menu**
+
+**Keymap Explanation:**
+
+| Keymap   | Description                                |
+|----------|--------------------------------------------|
+| **`\rd`** | **Find the definition of the symbol under the cursor** |
+| **`\rr`** | **Find references to the symbol under the cursor** |
+| **`\rv`** | **View the description of the symbol under the cursor** |
+| **`\rn`** | **Rename the symbol under the cursor** |
+| **`\hb`** | **Find the parent class of the symbol under the cursor (ccls only)** |
+| **`\hd`** | **Find the subclasses of the symbol under the cursor (ccls only)** |
+
+### 4.4.1 C-Family
+
+#### 4.4.1.1 clangd
+
+**Configuration(`~/.vimrc`):**
+
+* **`clangd`: For related configuration, refer to [LanguageClient-neovim/wiki/Clangd](https://github.com/autozimu/LanguageClient-neovim/wiki/Clangd)**
+* `clangd` cannot change the cache storage path; by default, it uses `${project}/.cache` as the cache directory
+* **`clangd` searches for `compile_commands.json` in the path specified by the `--compile-commands-dir` parameter. If not found, it recursively searches in the current directory and the directories above each source file's location**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....Other Plugins....
+" ......................
+
+" Omit common configs
+let g:LanguageClient_serverCommands.c = ['clangd']
+let g:LanguageClient_serverCommands.cpp = ['clangd']
+
+call plug#end()
+```
+
+#### 4.4.1.2 ccls
+
+It is not recommended, as large projects consume too many resources and often freeze.
+
+**Configuration(`~/.vimrc`):**
+
+* **`ccls`: For related configuration, refer to [ccls-project-setup](https://github.com/MaskRay/ccls/wiki/Project-Setup)**
+* **`ccls` searches for `compile_commands.json` in the root directory of the project**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....Other Plugins....
+" ......................
+
+" Omit common configs
+let g:LanguageClient_settingsPath = expand('~/.vim/languageclient.json')
+let g:LanguageClient_serverCommands.c = ['ccls']
+let g:LanguageClient_serverCommands.cpp = ['ccls']
+nnoremap <leader>hb :call LanguageClient#findLocations({'method':'$ccls/inheritance'})<cr>
+nnoremap <leader>hd :call LanguageClient#findLocations({'method':'$ccls/inheritance','derived':v:true})<cr>
+
+call plug#end()
+```
+
+**`~/.vim/languageclient.json`**
+
+* All paths must be absolute paths; `~` cannot be used
+
+```json
+{
+    "ccls": {
+        "cache": {
+            "directory": "/root/.cache/LanguageClient"
+        }
+    }
+}
+```
+
+### 4.4.2 Java-jdtls
+
+**Configuration(`~/.vimrc`):**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....Other Plugins....
+" ......................
+
+" Omit common configs
+let g:LanguageClient_serverCommands.java = ['/usr/local/bin/jdtls', '-data', getcwd()]
+
+call plug#end()
+```
+
+**Create a script with the full path `/usr/local/bin/jdtls` containing the following content:**
+
+```sh
+#!/usr/bin/env sh
+
+server={{ your server installation location }}
+
+java \
+    -Declipse.application=org.eclipse.jdt.ls.core.id1 \
+    -Dosgi.bundles.defaultStartLevel=4 \
+    -Declipse.product=org.eclipse.jdt.ls.core.product \
+    -noverify \
+    -Xms1G \
+    -jar $server/eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/plugins/org.eclipse.equinox.launcher_1.*.jar \
+    -configuration $server/eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository/config_linux/ \
+    --add-modules=ALL-SYSTEM \
+    --add-opens java.base/java.util=ALL-UNNAMED \
+    --add-opens java.base/java.lang=ALL-UNNAMED \
+    "$@"
+```
+
+**FAQ:**
+
+* Cannot access classes in the JDK and third-party libraries.
+* For Maven projects, if there are additional directories in the standard directory structure, such as `<project-name>/src/main/<extra_dir>/com`, `jdt.ls` cannot automatically scan the entire project. The file will only be added to the parsing list if opened manually.
+
+## 4.5 Code Completion
+
+### 4.5.1 YouCompleteMe
+
+Home: [YouCompleteMe](https://github.com/ycm-core/YouCompleteMe)
+
+**Install:**
+
+```sh
+# Define a function to adjust GitHub URLs to speed up the download process. This function will be used multiple times
+function setup_github_repo() {
+    gitmodules=( $(find . -name '.gitmodules' -type f) )
+    for gitmodule in ${gitmodules[@]}
+    do
+        echo "setup github repo for '${gitmodule}'"
+        sed -i -r 's|([^/]?)https://github.com/|\1https://mirror.ghproxy.com/https://github.com/|g' ${gitmodule}
+    done
+
+    git submodule sync --recursive
+}
+
+cd ~/.vim/plugged
+git clone https://mirror.ghproxy.com/https://github.com/ycm-core/YouCompleteMe.git --depth 1
+cd YouCompleteMe
+
+# Recursively download ycm's submodules
+git submodule update --init --recursive
+
+# If the download times out, repeat the following two commands until it completes
+setup_github_repo
+git submodule update --init --recursive
+
+# Compile
+python3 install.py --clang-completer
+```
+
+**Configuration(`~/.vimrc`):**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....Other Plugins....
+" ......................
+
+Plug 'ycm-core/YouCompleteMe'
+
+" The global configuration file for ycm takes effect when the compile_commands.json file is not present
+let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+" Disable ycm from asking whether to use the global configuration each time a file is opened
+let g:ycm_confirm_extra_conf = 0
+
+let g:ycm_add_preview_to_completeopt = 0
+let g:ycm_show_diagnostics_ui = 0
+let g:ycm_server_log_level = 'info'
+let g:ycm_min_num_identifier_candidate_chars = 2
+let g:ycm_collect_identifiers_from_comments_and_strings = 1
+let g:ycm_complete_in_strings=1
+let g:ycm_key_invoke_completion = '<c-z>'
+set completeopt=menu,menuone
+
+noremap <c-z> <nop>
+
+let g:ycm_semantic_triggers =  {
+           \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
+           \ 'cs,lua,javascript': ['re!\w{2}'],
+           \ }
+
+call plug#end()
+```
+
+**How it worked:**
+
+1. **Using `compilation database`: If there is a `compile_commands.json` in the current directory, it reads this file to compile and parse the code**
+1. **`.ycm_extra_conf.py`: If there is no `compilation database`, `ycm` will recursively search upward in the directory hierarchy for the first `.ycm_extra_conf.py` file. If none is found, it will load the global configuration (if the `g:ycm_global_ycm_extra_conf` parameter is set)**
+
+**Configure `~/.ycm_extra_conf.py`, with the following content (for C/C++, applicable to most simple projects), for reference only**
+
+```python
+def Settings(**kwargs):
+    if kwargs['language'] == 'cfamily':
+        return {
+            'flags': ['-x', 'c++', '-Wall', '-Wextra', '-Werror'],
+        }
+```
+
+**Usage:**
+
+* **By default, only generic completion is available, such as adding already existing characters from the file to the dictionary. This way, if the same string is typed again, it will suggest completion**
+* **For semantic completion, you can generate a `compile_commands.json` using build tools like `cmake` and place it in the root directory of the project. Then, open the project in vim to enable semantic completion**
+* `[Ctrl] + n`: Next entry
+* `[Ctrl] + p`: Previous entry
+
+### 4.5.2 vim-javacomplete2
+
+Home: [vim-javacomplete2](https://github.com/artur-shaik/vim-javacomplete2)
+
+**Configuration(`~/.vimrc`):**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....Other Plugins....
+" ......................
+
+Plug 'artur-shaik/vim-javacomplete2'
+
+" Disable default configuration options
+let g:JavaComplete_EnableDefaultMappings = 0
+" Enable code completion
+autocmd FileType java setlocal omnifunc=javacomplete#Complete
+" Import related
+autocmd FileType java nmap <leader>jI <Plug>(JavaComplete-Imports-AddMissing)
+autocmd FileType java nmap <leader>jR <Plug>(JavaComplete-Imports-RemoveUnused)
+autocmd FileType java nmap <leader>ji <Plug>(JavaComplete-Imports-AddSmart)
+autocmd FileType java nmap <leader>jii <Plug>(JavaComplete-Imports-Add)
+" Code generation related
+autocmd FileType java nmap <leader>jM <Plug>(JavaComplete-Generate-AbstractMethods)
+autocmd FileType java nmap <leader>jA <Plug>(JavaComplete-Generate-Accessors)
+autocmd FileType java nmap <leader>js <Plug>(JavaComplete-Generate-AccessorSetter)
+autocmd FileType java nmap <leader>jg <Plug>(JavaComplete-Generate-AccessorGetter)
+autocmd FileType java nmap <leader>ja <Plug>(JavaComplete-Generate-AccessorSetterGetter)
+autocmd FileType java nmap <leader>jts <Plug>(JavaComplete-Generate-ToString)
+autocmd FileType java nmap <leader>jeq <Plug>(JavaComplete-Generate-EqualsAndHashCode)
+autocmd FileType java nmap <leader>jc <Plug>(JavaComplete-Generate-Constructor)
+autocmd FileType java nmap <leader>jcc <Plug>(JavaComplete-Generate-DefaultConstructor)
+autocmd FileType java vmap <leader>js <Plug>(JavaComplete-Generate-AccessorSetter)
+autocmd FileType java vmap <leader>jg <Plug>(JavaComplete-Generate-AccessorGetter)
+autocmd FileType java vmap <leader>ja <Plug>(JavaComplete-Generate-AccessorSetterGetter)
+" 其他
+autocmd FileType java nmap <silent> <buffer> <leader>jn <Plug>(JavaComplete-Generate-NewClass)
+autocmd FileType java nmap <silent> <buffer> <leader>jN <Plug>(JavaComplete-Generate-ClassInFile)
+
+call plug#end()
+```
+
+## 4.6 vim-grepper
+
+Home: [vim-grepper](https://github.com/mhinz/vim-grepper)
+
+**Configuration(`~/.vimrc`):**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....Other Plugins....
+" ......................
+
+Plug 'mhinz/vim-grepper'
+
+call plug#end()
+```
+
+**Usage:**
+
+* `:Grepper`
+
+# 5 vim-script
+
+## 5.1 Tips
 
 1. `filereadable`无法识别`~`，需要用`expand`，例如`filereadable(expand('~/.vim/gtags.vim'))`
 1. 函数名要用大写字母开头，或者`s:`开头。大写字母开头表示全局可见，`s:`开头表示当前脚本可见
 1. `exists('&cscopequickfix')`：判断是否存在参数`cscopequickfix`
 1. `has('nvim')`：判断是否启用了某功能
 
-# 5 nvim
+# 6 nvim
 
-## 5.1 Install
+## 6.1 Install
 
 ```sh
 git clone https://github.com/neovim/neovim.git
@@ -3570,7 +3406,7 @@ wget https://github.com/neovim/neovim/releases/download/v0.9.5/nvim-linux64.tar.
 tar -zxvf nvim-linux64.tar.gz
 ```
 
-### 5.1.1 Node Version Management
+### 6.1.1 Node Version Management
 
 **[nvm](https://github.com/nvm-sh/nvm):**
 
@@ -3592,7 +3428,7 @@ n list
 n 16.19.0 # use this version
 ```
 
-## 5.2 config path
+## 6.2 config path
 
 ```vim
 " ~/.config/nvim
@@ -3605,7 +3441,7 @@ n 16.19.0 # use this version
 :echo stdpath('data_dirs')
 ```
 
-## 5.3 nvim share configuration of vim
+## 6.3 nvim share configuration of vim
 
 `nvim`和`vim`使用不同的目录来管理配置文件，通过软连接就可以实现共享配置，如下：
 
@@ -3622,7 +3458,7 @@ ln -s ~/.vim/autoload/plug.vim ~/.local/share/nvim/site/autoload/plug.vim
 ln -s ~/.vim/plugged ~/.local/share/nvim/plugged
 ```
 
-## 5.4 Tips
+## 6.4 Tips
 
 * `:intro`
 * 可能会提示`Vimspector unavailable: Requires Vim compiled with +python3`之类的问题：
@@ -3631,9 +3467,9 @@ ln -s ~/.vim/plugged ~/.local/share/nvim/plugged
 * 在一个新的环境，安装完`nvim`后，最好都用`checkhealth`检查一遍，否则很多插件可能会因为依赖`python`等模块而无法正常工作，例如`LeaderF`
 * `node`用`16.19`版本，可以用`nvm install v16.19.0`进行安装
 
-# 6 Tips
+# 7 Tips
 
-## 6.1 Large Files Run Slowly
+## 7.1 Large Files Run Slowly
 
 **禁止加载所有插件**
 
@@ -3641,7 +3477,7 @@ ln -s ~/.vim/plugged ~/.local/share/nvim/plugged
 vim -u NONE <big file>
 ```
 
-## 6.2 Export Settings
+## 7.2 Export Settings
 
 **Example 1**
 
@@ -3658,7 +3494,7 @@ vim -u NONE <big file>
 :redir END
 ```
 
-## 6.3 Save and Exit Slowly in Large Project
+## 7.3 Save and Exit Slowly in Large Project
 
 在大型工程中文件保存退出非常慢，发现是`vim-gutentags`插件，及其相关配置导致的。在项目配置文件`.workspace.vim`中添加如下内容进行禁用：
 
@@ -3667,13 +3503,13 @@ let g:gutentags_enabled = 0
 let g:gutentags_dont_load = 1
 ```
 
-## 6.4 How to show which key I hit
+## 7.4 How to show which key I hit
 
 1. Enter normal mode.
 1. Type `:map` then press `<c-v>`.
 1. Type the key you wanted, then it interpreters it into the actual value.
 
-## 6.5 copy text through SSH
+## 7.5 copy text through SSH
 
 [nvim-osc52](https://github.com/ojroques/nvim-osc52)
 
@@ -3683,7 +3519,7 @@ let g:gutentags_dont_load = 1
     * `tmux` can provide a default clipboard.
 * `Item2 Config`: General -> Selection -> Applications in terminal may access clipboard.
 
-# 7 Reference
+# 8 Reference
 
 * **[《Vim 中文速查表》](https://github.com/skywind3000/awesome-cheatsheets/blob/master/editors/vim.txt)**
 * **[如何在 Linux 下利用 Vim 搭建 C/C++ 开发环境?](https://www.zhihu.com/question/47691414)**
