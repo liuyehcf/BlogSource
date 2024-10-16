@@ -91,61 +91,77 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
 
 ## 2.2 Moving Cursor
 
-* **`j或↓`：光标向下移动一个字符**
-* **`k或↑`：光标向上移动一个字符**
-* **`h或←`：光标向左移动一个字符**
-* **`l或→`：光标向右移动一个字符**
-* 可以配合数字使用，如向右移动30个字符`30l`或`30→`
-* **`[Ctrl] + f`：屏幕向下移动一页，相当于`[Page Down]`按键**
-* **`[Ctrl] + b`：屏幕向上移动一页，相当于`[Page Up]`按键**
-* **`[Ctrl] + d`：屏幕向下移动半页**
-* **`[Ctrl] + u`：屏幕向上移动半页**
-* **`[Ctrl] + e`：屏幕向下移动一行**
-* **`[Ctrl] + y`：屏幕向上移动一行**
-* **`+`：光标移动到非空格符的下一行**
-* **`-`：光标移动到非空格符的上一行**
-* `[n][space]`：n表示数字，再按空格键，光标会向右移动n个字符
-* **`0（数字零）或[home]`：移动到这一行的最前面字符处**
-* **`^`：移动到这一行的最前面的非空白字符处**
-* **`$或功能键end`：移动到这一行最后面的字符处**
-* **`g_`：移动到这一行最后面的字符处。配合`v`时，即`vg_`，不包含换行符，而`v$`会包含换行符**
-* **`H`：光标移动到屏幕最上方那一行的第一个字符**
-* **`M`：光标移动到这个屏幕的中央那一行的第一个字符**
-* **`L`：光标移动到这个屏幕的最下方那一行的第一个字符**
-* **`w`：跳到下一个单词开头（标点或空格分隔的单词）**
-* **`e`：跳到下一个单词尾部（标点或空格分隔的单词）**
-* **`b`：跳到上一个单词开头（标点或空格分隔的单词）**
-* `W`：跳到下一个单词开头（空格分隔的单词）
-* `E`：跳到下一个单词尾部（空格分隔的单词）
-* `B`：跳到上一个单词开头（空格分隔的单词）
-* `)`：向前移动一个句子（句号分隔）
-* `(`：向后移动一个句子（句号分隔）
-* `}`：向前移动一个段落
-* `{`：向后移动一个段落
-* **`[(`：跳转到上一个未匹配的`(`处**
-* **`])`：跳转到下一个未匹配的`)`处**
-* **`[{`：跳转到上一个未匹配的`{`处**
-* **`]}`：跳转到下一个未匹配的`}`处**
-* **`[m`：跳到上一个`method`的起始位置，若没有`method`，则跳转到`class`的起始位置**
-* **`]m`：跳到下一个`method`的起始位置，若没有`method`，则跳转到`class`的结束位置**
-* **`[M`：跳到上一个`method`的结束位置，若没有`method`，则跳转到`class`的起始位置**
-* **`]M`：跳到下一个`method`的结束位置，若没有`method`，则跳转到`class`的结束位置**
-* **`f<x>`/`[n]f<x>`：向后，跳转到第1个/第n个为`x`的字符**
-* **`F<x>`/`[n]F<x>`：向前，跳转到第1个/第n个为`x`的字符**
-* **`t<x>`/`[n]t<x>`：向后，跳转到第1个/第n个为`x`的字符前**
-* **`T<x>`/`[n]T<x>`：向前，跳转到第1个/第n个为`x`的字符前**
-    * **`;`：跳到下一个`f/F/t/T`匹配的位置**
-    * **`,`：跳到上一个`f/F/t/T`匹配的位置**
-* **`G`：移动到这个文件的最后一行**
-* `[n]G`：n为数字，移动到这个文件的第n行
-* **`gg`：移动到这个文件的第一行，相当于1G**
-* **`[n][Enter]`：光标向下移动n行**
-* **`gm`：移动到行中**
-* **`gj`：光标下移一行（忽略自动换行）**
-* **`gk`：光标上移一行（忽略自动换行）**
-* **`%`：跳转到`{} () []`的匹配**
-    * 可以通过`:set matchpairs+=<:>`增加对尖括号`<>`的识别。可能会误识别，因为文本中可能包含单个`>`或`<`
-* **`=`：按照类型自动调整缩进**
+**Character-wise Movement:**
+
+* `j`/`[n]j`: Move down by 1/n line.
+* `k`/`[n]k`: Move up by 1/n line.
+* `h`/`[n]h`: Move left by 1/n character.
+* `l`/`[n]l`: Move right by 1/n character.
+* `f<x>`/`[n]f<x>`: Move to the next 1/n occurrence of `<x>` in the current line.
+* `F<x>`/`[n]F<x>`: Move to the previous 1/n occurrence of `<x>` in the current line.
+* `t<x>`/`[n]t<x>`: Move to just before the next 1/n occurrence of `<x>` in the current line.
+* `T<x>`/`[n]T<x>`: Move to just after the previous next 1/n occurrence of `<x>` in the current line.
+    * `;`: Repeat the last `f/F/t/T` command.
+    * `,`: Repeat the last `f/F/t/T` command in the opposite direction.
+* `[n][space]`: Move right by n character.
+* `0`: Move to the beginning of the line.
+* `^`: Move to the first non-blank character of the line.
+* `$`: Move to the end of the line.
+* `g_`: Move to the last non-blank character of the line.
+* `gm`: Move to the middle character of the line.
+
+**Word-wise Movement:**
+
+* `w`: Move to the start of the next word.
+* `W`: Move to the start of the next word (words are delimited by spaces).
+* `e`: Move to the end of the next word.
+* `E`: Move to the end of the next word (words are delimited by spaces).
+* `b`: Move to the beginning of the previous word.
+* `B`: Move to the beginning of the previous word (words are delimited by spaces).
+* `ge`: Move to the end of the previous word.
+* `gE`: Move to the end of the previous word (words are delimited by spaces).
+
+**Line-wise Movement:**
+
+* `gj`: Move down by one visual line (It works with wrapped lines). 
+* `gk`: Move up by one visual line (It works with wrapped lines). 
+* `+`: Move to the first non-blank character of the next line.
+* `-`: Move to the first non-blank character of the previous line.
+* `G`: Move to the last line of the file.
+* `[n]G`: Move to a specific line `<n>`.
+* `gg`: Move to the first line of the file.
+* `[n][Enter]`: Move to the next n lines.
+* `H`: Move to the top of the screen.
+* `M`: Move to the middle of the screen.
+* `L`: Move to the bottom of the screen.
+
+**Screen-wise Movement:**
+
+* `<c-f>`: Move forward by one full screen.
+* `<c-b>`: Move backward by one full screen.
+* `<c-d>`: Move down by half a screen.
+* `<c-u>`: Move up by half a screen.
+* `<c-e>`: Scroll the screen down by one line.
+* `<c-y>`: Scroll the screen up by one line.
+* `zz`: Center the current line in the middle of the screen.
+
+**Paragraph and Section Movement:**
+
+* `)`: Move to next sentence.
+* `(`: Move to previous sentence.
+* `}`: Move to next paragraph.
+* `{`: Move to previous paragraph.
+* `])`: Move to next unmatched `)`.
+* `[(`: Move to previous unmatched `(`.
+* `]}`: Move to next unmatched `}`.
+* `[{`: Move to previous unmatched `{`.
+* `]m`: Move to next start of a method.
+* `[m`: Move to previous start of a method.
+* `]M`: Move to next end of a method.
+* `[M`: Move to previous end of a method.
+* `%`: Move to matched of `{} () []`.
+    * You can add recognition for angle brackets `<>` by using `:set matchpairs+=<:>`. It may cause misrecognition, as the text may contain single `>` or `<`.
+* `=`: Adjust indent.
     * `gg=G`
 
 ### 2.2.1 Jump List
@@ -174,6 +190,11 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
 * **`g;`：回到`change list`的上一个位置**
 * **`g,`：回到`change list`的下一个位置**
 * **`:changes`：输出`change list`**
+
+### 2.2.3 Mark
+
+* `m<letter>`: Set a mark. Lowercase for local mark, uppercase for global mark.
+* `'<letter>`: Jump to a mark.
 
 ## 2.3 Text Editing
 
@@ -758,97 +779,102 @@ endif
 
 ### 3.1.1 Plugin Manager
 
-**目前，使用最广泛的插件管理工具是：[vim-plug](https://github.com/junegunn/vim-plug)，通过一个命令直接安装即可**
+#### 3.1.1.1 vim-plug
+
+Home: [vim-plug](https://github.com/junegunn/vim-plug)
+
+**Install:**
 
 ```sh
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 ```
 
-**基本用法**
+**Usage:**
 
-1. 以`call plug#begin()`开头
-1. 中间是`Plug`的相关命令
-1. 以`call plug#end()`结尾，默认会开启如下功能，如果不需要的话，可以手动关闭
-    * `filetype plugin indent on`
-    * `syntax enable`
+* Config
+    ```vim
+    call plug#begin()
 
-**基本操作**
+    " List your plugins here
+    Plug 'tpope/vim-sensible'
 
-* `:PlugStatus`：查看插件状态
-* `:PlugInstall`：安装插件
-* `:PlugClean`：清除插件
+    call plug#end()
+    ```
 
-**修改下载源：默认从`github.com`上下载，稳定性较差，可以按照如下方式修改`~/.vim/autoload/plug.vim`**
+* `:PlugStatus`
+* `:PlugInstall`
+* `:PlugClean`
+
+**Update source(`~/.vim/autoload/plug.vim`):**
 
 ```vim
-" 将
+" Change
 let fmt = get(g:, 'plug_url_format', 'https://git::@github.com/%s.git')
-" 修改为
+" To
 let fmt = get(g:, 'plug_url_format', 'https://git::@mirror.ghproxy.com/https://github.com/%s.git')
 
-" 将
+" Change
 \ '^https://git::@github\.com', 'https://github.com', '')
-" 修改为
+" To
 \ '^https://git::@mirror\.ghproxy\.com/https://github\.com', 'https://mirror.ghproxy.com/https://github.com', '')
 ```
 
-**如何安装来自不同源的插件：**
+**How to install plugins from different sources:**
 
-* 方案1：指定插件的完整地址，比如`Plug 'morhetz/gruvbox'`需要改成`Plug 'https://github.com/morhetz/gruvbox'`
-* 方案2：禁用`URI`校验。默认情况下，`Plug`不允许插件来自不同源，若要关闭此功能，可以按照如下方式修改`~/.vim/autoload/plug.vim`
+* Option 1: Specify the full URL of the plugin. For example, change `Plug 'morhetz/gruvbox'` to `Plug 'https://github.com/morhetz/gruvbox'`.
+* Option 2: Disable `URI` validation. By default, `Plug` does not allow plugins from different sources. To disable this feature, modify `~/.vim/autoload/plug.vim` as follows:
     ```vim
-    " 删掉如下代码片段
+    " Delete following code snippet
                 elsif !compare_git_uri(current_uri, uri)
                     [false, ["Invalid URI: #{current_uri}",
                             "Expected:    #{uri}",
                             "PlugClean required."].join($/)]
-    " 删掉如下代码片段
+    " Delete following code snippet
         elseif !s:compare_git_uri(remote, a:spec.uri)
         let err = join(['Invalid URI: '.remote,
                         \ 'Expected:    '.a:spec.uri,
                         \ 'PlugClean required.'], "\n")
     ```
 
-### 3.1.2 Frequently-Used Plugins
+#### 3.1.1.2 packer.nvim
 
-| 插件名称 | 用途 | 官网地址 |
-|:--|:--|:--|
-| `gruvbox` | 配色方案 | https://github.com/morhetz/gruvbox |
-| `vim-airline` | 状态栏 | https://github.com/vim-airline/vim-airline |
-| `indentLine` | 缩进标线 | https://github.com/Yggdroot/indentLine |
-| `nerdtree` | 文件管理器 | https://github.com/preservim/nerdtree |
-| `vim-cpp-enhanced-highlight` | 语法高亮 | https://github.com/octol/vim-cpp-enhanced-highlight |
-| `rainbow_parentheses` | 彩虹括号1 | https://github.com/kien/rainbow_parentheses.vim |
-| `rainbow` | 彩虹括号2 | https://github.com/luochen1990/rainbow |
-| `ctags` | 符号索引 | https://ctags.io/ |
-| `vim-gutentags` | 自动索引 | https://github.com/ludovicchabant/vim-gutentags |
-| `LanguageClient-neovim` | `LSP-Client` | https://github.com/autozimu/LanguageClient-neovim |
-| `coc.nvim` | `LCP-Client` | https://github.com/neoclide/coc.nvim |
-| `coc-explorer` | `coc`插件，文件管理器 | https://github.com/weirongxu/coc-explorer |
-| `coc-java` | `coc`插件，`LSP Client For Java` | https://github.com/neoclide/coc-java |
-| `coc-pyright` | `coc`插件，`LSP Client For Python` | https://github.com/fannheyward/coc-pyright |
-| `coc-snippets` | `coc`插件，代码片段 | https://github.com/neoclide/coc-snippets |
-| `vim-snippets` | 提供了大量`snippet`的定义 | https://github.com/honza/vim-snippets |
-| `vimspector` | `Debug` | https://github.com/puremourning/vimspector |
-| `coc-java-debug` | `Debug` | https://github.com/dansomething/coc-java-debug |
-| `vim-auto-popmenu` | 轻量补全 | https://github.com/skywind3000/vim-auto-popmenu |
-| `YouCompleteMe` | 代码补全 | https://github.com/ycm-core/YouCompleteMe |
-| `vim-javacomplete2` | `Java`代码补全 | https://github.com/artur-shaik/vim-javacomplete2 |
-| `AsyncRun` | 编译运行 | https://github.com/skywind3000/asyncrun.vim |
-| `ALE` | 动态检查 | https://github.com/dense-analysis/ale |
-| `vim-signify` | 修改比较 | https://github.com/mhinz/vim-signify |
-| `textobj-user` | 文本对象 | https://github.com/kana/vim-textobj-user |
-| `LeaderF` | 函数列表 | https://github.com/Yggdroot/LeaderF |
-| `fzf.vim` | 全局模糊搜索 | https://github.com/junegunn/fzf.vim |
-| `mhinz/vim-grepper` | 全局搜索 | https://github.com/mhinz/vim-grepper |
-| `tpope/vim-fugitive` | `git`扩展 | https://github.com/tpope/vim-fugitive |
-| `echodoc` | 参数提示 | https://github.com/Shougo/echodoc.vim |
-| `nerdcommenter` | 添加注释 | https://github.com/preservim/nerdcommenter |
-| `vim-codefmt` | 代码格式化 | https://github.com/google/vim-codefmt |
-| `vim-autoformat` | 代码格式化 | https://github.com/vim-autoformat/vim-autoformat |
-| `vim-clang-format` | 代码格式化（仅限clang-format） | https://github.com/rhysd/vim-clang-format |
-| `vim-surround` | 文本环绕 | https://github.com/tpope/vim-surround |
+Home: [packer.nvim](https://github.com/wbthomason/packer.nvim)
+
+**Install:**
+
+```sh
+git clone --depth 1 https://github.com/wbthomason/packer.nvim\
+ ~/.local/share/nvim/site/pack/packer/start/packer.nvim
+```
+
+**Configuration:**
+
+* `~/.config/nvim/init.vim`
+    ```vim
+    if has('nvim')
+        lua require('packer-plugins')
+    endif
+    ```
+
+* `~/.config/nvim/lua/packer-plugins.lua`
+    ```lua
+    vim.cmd [[packadd packer.nvim]]
+
+    return require('packer').startup(function(use)
+    -- Packer can manage itself
+    use 'wbthomason/packer.nvim'
+
+    -- Your plugins
+    end)
+    ```
+
+**Usage:**
+
+* `PackerCompile`: You must run this or `PackerSync` whenever you make changes to your plugin configuration. Regenerate compiled loader file.
+* `PackerClean`: Remove any disabled or unused plugins.
+* `PackerInstall`: Clean, then install missing plugins.
+* `PackerStatus`: Show list of installed plugins.
 
 ## 3.2 Prepare
 
@@ -949,7 +975,7 @@ ctags --languages=python --python-kinds=-iv --fields=+ailnSz --extras=+q -R -f ~
 * `:tp`：跳转到上一个匹配项
 * `g + ]`：如果有多条匹配项，会直接显式（同`:ts`）
 
-**推荐配置，在`~/.vimrc`中增加如下配置**
+**Configuration(`~/.vimrc`):**
 
 * **注意，这里将tag的文件名从`tags`换成了`.tags`，这样避免污染项目中的其他文件。因此在使用`ctags`命令生成tag文件时，需要通过`-f .tags`参数指定文件名**
 * **`./.tags;`表示在文件所在目录下查找名字为`.tags`的符号文件，`;`表示查找不到的话，向上递归到父目录，直到找到`.tags`或者根目录**
@@ -1019,7 +1045,7 @@ cscope
 :help cscope
 ```
 
-**配置快捷键（`~/.vimrc`）：**
+**Configuration(`~/.vimrc`):**
 
 ```vim
 " 启用 quickfix
@@ -1100,7 +1126,7 @@ global -d <symbol>
 global -r <symbol>
 ```
 
-**在`~/.vimrc`中增加如下配置**
+**Configuration(`~/.vimrc`):**
 
 1. 第一个`GTAGSLABEL`告诉`gtags`默认`C/C++/Java`等六种原生支持的代码直接使用`gtags`本地分析器，而其他语言使用`pygments`模块
 1. 第二个环境变量必须设置（在我的环境里，不设置也能work），否则会找不到`native-pygments`和`language map`的定义
@@ -1255,36 +1281,39 @@ cp ~/.vim/plugged/vim-colors-solarized/colors/solarized.vim ~/.vim/colors/
 
 Home: [catppuccin/nvim](https://github.com/catppuccin/nvim)
 
-**Configuration(`~/.vimrc`):**
+**Configuration(`~/.config/nvim/lua/packer-plugins.lua`):**
 
-```vim
-call plug#begin()
-
-" ......................
-" .....Other Plugins....
-" ......................
-
-Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
-
-call plug#end()
-
-" Extra config for catppuccin
-colorscheme catppuccin-frappe " catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
-```
-
-**Install:**
-
-```sh
-# ~/.vim/colors not exist by default
-mkdir ~/.vim/colors
-cp ~/.vim/plugged/catppuccin/colors/*.vim ~/.vim/colors/
+```lua
+use { "catppuccin/nvim", as = "catppuccin" }
+vim.cmd.colorscheme "catppuccin-frappe" -- catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
 ```
 
 ### 3.3.4 Trending Neovim Colorschemes
 
 [Trending Neovim Colorschemes](https://dotfyle.com/neovim/colorscheme/trending)
 
-## 3.4 vim-airline
+## 3.4 Dashboard
+
+[Suggest me some startup screen plugins](https://www.reddit.com/r/neovim/comments/138t41q/suggest_me_some_startup_screen_plugins/)
+
+### 3.4.1 dashboard-nvim
+
+**Configuration(`~/.config/nvim/lua/packer-plugins.lua`):**
+
+```lua
+use {
+    'nvimdev/dashboard-nvim',
+    event = 'VimEnter',
+    config = function()
+        require('dashboard').setup {
+            -- config
+        }
+    end,
+    requires = {'nvim-tree/nvim-web-devicons'}
+}
+```
+
+## 3.5 vim-airline
 
 Home: [vim-airline](https://github.com/vim-airline/vim-airline)
 
@@ -1302,7 +1331,64 @@ Plug 'vim-airline/vim-airline'
 call plug#end()
 ```
 
-## 3.5 indentLine
+## 3.6 lazy.nvim tools
+
+### 3.6.1 noice.nvim
+
+Home: [noice.nvim](https://github.com/folke/noice.nvim)
+
+**Configuration(`~/.config/nvim/lua/packer-plugins.lua`):**
+
+```lua
+use {
+    'folke/noice.nvim',
+    requires = {
+        'MunifTanjim/nui.nvim',  -- Required dependency for UI components
+        'rcarriga/nvim-notify',  -- Optional for enhanced notifications
+    },
+    config = function()
+        require("noice").setup({
+            cmdline = {
+                enabled = true,
+                view = "cmdline"
+            },
+            presets = {
+                bottom_search = true, -- use a classic bottom cmdline for search
+                command_palette = true, -- position the cmdline and popupmenu together
+                long_message_to_split = true, -- long messages will be sent to a split
+                inc_rename = false, -- enables an input dialog for inc-rename.nvim
+                lsp_doc_border = false, -- add a border to hover docs and signature help
+            },
+        })
+    end
+}
+```
+
+### 3.6.2 which-key
+
+Home: [which-key](https://github.com/folke/which-key.nvim)
+
+**Configuration(`~/.config/nvim/lua/packer-plugins.lua`):**
+
+```lua
+use {
+    'folke/which-key.nvim',
+    event = 'VimEnter',
+    config = function()
+        require("which-key").setup({
+            triggers = {} -- No automatic triggering
+        })
+
+        -- Keymap binding for buffer local keymaps
+        vim.api.nvim_set_keymap('n', '<leader>?',
+            [[<cmd>lua require('which-key').show({ global = false })<CR>]],
+            { noremap = true, silent = true, desc = "Buffer Local Keymaps (which-key)" }
+        )
+    end
+}
+```
+
+## 3.7 indentLine
 
 Home: [indentLine](https://github.com/Yggdroot/indentLine)
 
@@ -1324,27 +1410,24 @@ let g:indentLine_char = '|'
 call plug#end()
 ```
 
-## 3.6 Highlighting
+## 3.8 Highlighting
 
-### 3.6.1 nvim-treesitter
+### 3.8.1 nvim-treesitter
 
 Home: [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter)
 
-**Configuration(`~/.vimrc`):**
+**Configuration(`~/.config/nvim/lua/packer-plugins.lua`):**
 
-```vim
-call plug#begin()
-
-" ......................
-" .....Other Plugins....
-" ......................
-
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-
-call plug#end()
-
-" Extra config for nvim-treesitter
-lua require('nvim-treesitter.configs').setup{highlight={enable=true}}
+```lua
+use {
+    'nvim-treesitter/nvim-treesitter',
+    run = ':TSUpdate'
+}
+require('nvim-treesitter.configs').setup {
+    highlight = {
+        enable = true
+    }
+}
 ```
 
 **Usage:**
@@ -1352,7 +1435,7 @@ lua require('nvim-treesitter.configs').setup{highlight={enable=true}}
 * `:TSInstall <language_to_install>`
 * `:TSInstallInfo`
 
-### 3.6.2 vim-cpp-enhanced-highlight
+### 3.8.2 vim-cpp-enhanced-highlight
 
 Home: [vim-cpp-enhanced-highlight](https://github.com/octol/vim-cpp-enhanced-highlight)
 
@@ -1376,7 +1459,7 @@ let g:cpp_concepts_highlight = 1
 call plug#end()
 ```
 
-## 3.7 coc.nvim
+## 3.9 coc.nvim
 
 Home: [coc.nvim](https://github.com/neoclide/coc.nvim)
 
@@ -1508,7 +1591,7 @@ call plug#end()
 * 在`cmake`中设置`set(CMAKE_CXX_COMPILER g++)`也不会对`clangd`起作用，例如`clang`没有`-fopt-info-vec`这个参数，仍然会`warning`
 * `clangd`使用的标准库搜索路径：由编译器决定，即`compile_commands.json`中编译命令所使用的编译器决定。如果这个编译器是个低版本的，那么就会用低版本对应的头文件路径，高版本则对应高版本头文件路径
 
-### 3.7.1 coc-explorer
+### 3.9.1 coc-explorer
 
 Home: [coc-explorer](https://github.com/weirongxu/coc-explorer)
 
@@ -1560,7 +1643,7 @@ call plug#end()
 * **Assorted:**
     * 文件前面的数字是错误数量，可以通过`Il`查看查看完整的label
 
-### 3.7.2 coc-java
+### 3.9.2 coc-java
 
 Home: [coc-java](https://github.com/search?q=coc-java)
 
@@ -1609,7 +1692,7 @@ Home: [coc-java](https://github.com/search?q=coc-java)
         * 假设子模块用到了`thrift`，那么需要在子模块的目录下放置`.classpath`，而不是在工程根目录放置`.classpath`
 * 有插件`org.eclipse.m2e:lifecycle-mapping`的时候，`jdt.ls`没法正常工作，目前暂未解决
 
-### 3.7.3 coc-pyright
+### 3.9.3 coc-pyright
 
 Home: [coc-pyright](https://github.com/fannheyward/coc-pyright)
 
@@ -1638,7 +1721,7 @@ Home: [coc-pyright](https://github.com/fannheyward/coc-pyright)
     deactivate
     ```
 
-### 3.7.4 coc-rust-analyzer
+### 3.9.4 coc-rust-analyzer
 
 Home: [coc-rust-analyzer](https://github.com/fannheyward/coc-rust-analyzer)
 
@@ -1647,7 +1730,7 @@ Home: [coc-rust-analyzer](https://github.com/fannheyward/coc-rust-analyzer)
 * `:CocInstall coc-rust-analyzer`
 * 确保`rust-analyzer`已经正常安装：`rustup component add rust-analyzer`
 
-### 3.7.5 coc-snippets
+### 3.9.5 coc-snippets
 
 Home: [coc-snippets](https://github.com/neoclide/coc-snippets)
 
@@ -1688,7 +1771,7 @@ call plug#end()
 
 * 最新版本无法跳转到`fori`的类型占位符，转而使用另一个插件`UltiSnips`
 
-#### 3.7.5.1 vim-snippets
+#### 3.9.5.1 vim-snippets
 
 Home: [vim-snippets](https://github.com/honza/vim-snippets)
 
@@ -1710,7 +1793,7 @@ call plug#end()
 
 **使用：与`coc-snippets`自带`snippet`的用法一致**
 
-### 3.7.6 coc-settings.json
+### 3.9.6 coc-settings.json
 
 [All config keys](https://github.com/neoclide/coc.nvim/blob/master/doc/coc-config.txt)
 
@@ -1752,7 +1835,7 @@ call plug#end()
 * `suggest.noselect`：`true/false`，表示自动补全时，是否自动选中第一个。默认为`false`，即自动选中第一个，如果再按`tab`则会跳转到第二个。[Ability to tab to first option](https://github.com/neoclide/coc.nvim/issues/1339)
 * `inlayHint.display`：是否默认显示`inlayHint`
 
-## 3.8 vimspector
+## 3.10 vimspector
 
 Home: [vimspector](https://github.com/puremourning/vimspector)
 
@@ -1835,7 +1918,7 @@ call plug#end()
         }
         ```
 
-### 3.8.1 coc-java-debug
+### 3.10.1 coc-java-debug
 
 Home: [coc-java-debug](https://github.com/dansomething/coc-java-debug)
 
@@ -1889,7 +1972,7 @@ Home: [coc-java-debug](https://github.com/dansomething/coc-java-debug)
     }
     ```
 
-## 3.9 Copilot.vim
+## 3.11 Copilot.vim
 
 Home: [Copilot.vim](https://github.com/github/copilot.vim)
 
@@ -1902,7 +1985,7 @@ Home: [Copilot.vim](https://github.com/github/copilot.vim)
 * `Neovim`
 * `Vim >= 9.0.0185`
 
-**编辑`~/.vimrc`，添加Plug相关配置（公共配置）**
+**Configuration(`~/.vimrc`):**
 
 ```vim
 call plug#begin()
@@ -1938,7 +2021,7 @@ call plug#end()
 
 * `:help copilot`
 
-## 3.10 vim-signify
+## 3.12 vim-signify
 
 Home: [vim-signify](https://github.com/mhinz/vim-signify)
 
@@ -1961,7 +2044,7 @@ call plug#end()
 * `set signcolumn=yes`，有改动的行会标出
 * `:SignifyDiff`：以左右分屏的方式对比当前文件的差异
 
-## 3.11 textobj-user
+## 3.13 textobj-user
 
 Home: [textobj-user](https://github.com/kana/vim-textobj-user)
 
@@ -1993,7 +2076,7 @@ call plug#end()
 * **`ii/ai`：缩进对象。可以用`vii/vai`/`dii/dai`/`cii/cai`来选中/删除/改写同一缩进层次的内容**
 * **`if/af`：函数对象。可以用`vif/vaf`/`dif/daf`/`cif/caf`来选中/删除/改写当前函数的内容**
 
-## 3.12 LeaderF
+## 3.14 LeaderF
 
 Home: [LeaderF](https://github.com/Yggdroot/LeaderF)
 
@@ -2051,7 +2134,7 @@ call plug#end()
 1. 不起作用，可能是`python`的问题
     * `:checkhealth`
 
-## 3.13 fzf.vim
+## 3.15 fzf.vim
 
 Home: [fzf.vim](https://github.com/junegunn/fzf.vim)
 
@@ -2115,7 +2198,9 @@ call plug#end()
     * **上述规则均可自由组合**
     * **如何精确匹配一个包含空格的字符串：`'Hello\ world`。由于常规的空格被用作分词符，因此空格前要用`\`进行转义**
 
-## 3.14 vim-fugitive
+## 3.16 Git Plugins
+
+### 3.16.1 vim-fugitive
 
 Home: [vim-fugitive](https://github.com/tpope/vim-fugitive)
 
@@ -2137,7 +2222,31 @@ call plug#end()
 
 * `:Git`：作为`git`的替代，后跟`git`命令行工具的正常参数即可
 
-## 3.15 nerdcommenter
+### 3.16.2 diffview.nvim
+
+Home: [diffview.nvim](https://github.com/sindrets/diffview.nvim)
+
+**Configuration(`~/.vimrc`):**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....Other Plugins....
+" ......................
+
+Plug 'sindrets/diffview.nvim'
+
+call plug#end()
+```
+
+**Usage:**
+
+* `:DiffviewOpen`
+* `:DiffviewOpen HEAD~2`
+* `:DiffviewOpen <commit>`
+
+## 3.17 nerdcommenter
 
 Home: [nerdcommenter](https://github.com/preservim/nerdcommenter)
 
@@ -2174,7 +2283,7 @@ call plug#end()
 * **`\cu`：取消注释**
 * **`\c<space>`：如果被选区域有部分被注释，则对被选区域执行取消注释操作，其它情况执行反转注释操作**
 
-## 3.16 vim-codefmt
+## 3.18 vim-codefmt
 
 Home: [vim-codefmt](https://github.com/google/vim-codefmt)
 
@@ -2262,7 +2371,7 @@ sudo ln /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.py /usr/
 
 * `npm -g install js-beautify`
 
-## 3.17 vim-surround
+## 3.19 vim-surround
 
 Home: [vim-surround](https://github.com/tpope/vim-surround)
 
@@ -2315,7 +2424,7 @@ call plug#end()
     * `vllllSFprint`：类似`vllllSfprint`，`F`表示会在参数列表前后多加额外的空格。形式为`print( <text> )`
     * `vllllS<c-f>print`：类似`vllllSfprint`，`<c-f>`表示环绕符号加到最外侧。形式为`(print <text>)`
 
-## 3.18 UltiSnips
+## 3.20 UltiSnips
 
 Home: [UltiSnips](https://github.com/SirVer/ultisnips)
 
@@ -2343,7 +2452,9 @@ let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 call plug#end()
 ```
 
-## 3.19 My Full Settings
+## 3.21 Complete Configuration
+
+### 3.21.1 `~/.vimrc` or `~/.config/nvim/init.vim`
 
 ```vim
 " Load extra config (pre step)
@@ -2352,10 +2463,6 @@ if filereadable(expand("~/.vimrc_extra_pre"))
 endif
 
 call plug#begin()
-
-Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
-
-" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 Plug 'vim-airline/vim-airline'
 
@@ -2366,10 +2473,6 @@ Plug 'Yggdroot/indentLine'
 let g:indentLine_noConcealCursor = 1
 let g:indentLine_color_term = 239
 let g:indentLine_char = '|'
-
-" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2562,6 +2665,10 @@ Plug 'tpope/vim-fugitive'
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+Plug 'sindrets/diffview.nvim'
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
 Plug 'preservim/nerdcommenter'
 
 let g:NERDCreateDefaultMappings = 1
@@ -2602,12 +2709,6 @@ let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 
 call plug#end()
 
-" Extra config for catppuccin
-colorscheme catppuccin-frappe " catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
-
-" Extra config for nvim-treesitter
-lua require('nvim-treesitter.configs').setup{highlight={enable=true}}
-
 " Extra config for vim-codefmt
 call glaive#Install()
 " Set the startup command for google-java-format, where
@@ -2615,6 +2716,10 @@ call glaive#Install()
 " sudo ln -s /usr/local/share/google-java-format-1.22.0-all-deps.jar /usr/local/share/google-java-format-all-deps.jar
 " --aosp uses the AOSP style with 4 spaces for indentation
 Glaive codefmt google_java_executable="java -jar /usr/local/share/google-java-format-all-deps.jar --aosp"
+
+if has('nvim')
+    lua require('packer-plugins')
+endif
 
 " ctags configuration
 " tags search mode
@@ -2740,6 +2845,68 @@ endif
 if filereadable("./.workspace.vim")
     source ./.workspace.vim
 endif
+```
+
+### 3.21.2 `~/.config/nvim/lua/packer-plugins.lua`
+
+```lua
+vim.cmd [[packadd packer.nvim]]
+
+return require('packer').startup(function(use)
+-- Packer can manage itself
+use 'wbthomason/packer.nvim'
+
+-- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+use { "catppuccin/nvim", as = "catppuccin" }
+vim.cmd.colorscheme "catppuccin-frappe" -- catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
+
+-- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+use {
+    'nvim-treesitter/nvim-treesitter',
+    run = ':TSUpdate'
+}
+require('nvim-treesitter.configs').setup {
+    highlight = {
+        enable = true
+    }
+}
+
+-- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+use {
+    'nvimdev/dashboard-nvim',
+    event = 'VimEnter',
+    config = function()
+        require('dashboard').setup {
+            -- config
+        }
+    end,
+    requires = {'nvim-tree/nvim-web-devicons'}
+}
+
+-- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+use {
+    'folke/which-key.nvim',
+    event = 'VimEnter',
+    config = function()
+        require("which-key").setup({
+            triggers = {} -- No automatic triggering
+        })
+
+        -- Keymap binding for buffer local keymaps
+        vim.api.nvim_set_keymap('n', '<leader>?',
+            [[<cmd>lua require('which-key').show({ global = false })<CR>]],
+            { noremap = true, silent = true, desc = "Buffer Local Keymaps (which-key)" }
+        )
+    end
+}
+
+-- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+end)
 ```
 
 # 4 Legacy Plugins

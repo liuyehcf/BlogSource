@@ -499,9 +499,7 @@ plugins=(<原有插件> zsh-autosuggestions)
 
 ### 4.1.2 Fonts
 
-* [FiraCode](https://github.com/tonsky/FiraCode)
-* [JetBrains Mono. A typeface for developers​_](https://www.jetbrains.com/lp/mono/)
-* [cascadia-code](https://github.com/microsoft/cascadia-code)
+[Nerd Font](https://www.nerdfonts.com/font-downloads)
 
 ## 4.2 常用配置
 
