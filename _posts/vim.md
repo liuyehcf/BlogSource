@@ -1298,6 +1298,8 @@ vim.cmd.colorscheme "catppuccin-frappe" -- catppuccin-latte, catppuccin-frappe, 
 
 ### 3.4.1 dashboard-nvim
 
+Home: [dashboard-nvim](https://github.com/nvimdev/dashboard-nvim)
+
 **Configuration(`~/.config/nvim/lua/packer-plugins.lua`):**
 
 ```lua
@@ -1310,6 +1312,26 @@ use {
         }
     end,
     requires = {'nvim-tree/nvim-web-devicons'}
+}
+```
+
+**FAQ:**
+
+* It has compatible issue with LeaderF, every time use LeaderF, the bottom line go up by one line.
+
+### 3.4.2 alpha-nvim
+
+Home: [alpha-nvim](https://github.com/goolord/alpha-nvim)
+
+**Configuration(`~/.config/nvim/lua/packer-plugins.lua`):**
+
+```lua
+use {
+    'goolord/alpha-nvim',
+    requires = { 'echasnovski/mini.icons' },
+    config = function ()
+        require'alpha'.setup(require'alpha.themes.startify'.config)
+    end
 }
 ```
 
@@ -1477,7 +1499,7 @@ call plug#begin()
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " Set default to on or off, 1 means on (default), 0 means off
-" let g:coc_start_at_startup=0
+" let g:coc_start_at_startup = 0
 
 " In insert mode, map <tab> to move to the next completion item when auto-completion is triggered
 inoremap <silent><expr> <tab>
@@ -2021,30 +2043,7 @@ call plug#end()
 
 * `:help copilot`
 
-## 3.12 vim-signify
-
-Home: [vim-signify](https://github.com/mhinz/vim-signify)
-
-**Configuration(`~/.vimrc`):**
-
-```vim
-call plug#begin()
-
-" ......................
-" .....Other Plugins....
-" ......................
-
-Plug 'mhinz/vim-signify'
-
-call plug#end()
-```
-
-**Usage:**
-
-* `set signcolumn=yes`，有改动的行会标出
-* `:SignifyDiff`：以左右分屏的方式对比当前文件的差异
-
-## 3.13 textobj-user
+## 3.12 textobj-user
 
 Home: [textobj-user](https://github.com/kana/vim-textobj-user)
 
@@ -2076,7 +2075,7 @@ call plug#end()
 * **`ii/ai`：缩进对象。可以用`vii/vai`/`dii/dai`/`cii/cai`来选中/删除/改写同一缩进层次的内容**
 * **`if/af`：函数对象。可以用`vif/vaf`/`dif/daf`/`cif/caf`来选中/删除/改写当前函数的内容**
 
-## 3.14 LeaderF
+## 3.13 LeaderF
 
 Home: [LeaderF](https://github.com/Yggdroot/LeaderF)
 
@@ -2134,7 +2133,7 @@ call plug#end()
 1. 不起作用，可能是`python`的问题
     * `:checkhealth`
 
-## 3.15 fzf.vim
+## 3.14 fzf.vim
 
 Home: [fzf.vim](https://github.com/junegunn/fzf.vim)
 
@@ -2198,9 +2197,9 @@ call plug#end()
     * **上述规则均可自由组合**
     * **如何精确匹配一个包含空格的字符串：`'Hello\ world`。由于常规的空格被用作分词符，因此空格前要用`\`进行转义**
 
-## 3.16 Git Plugins
+## 3.15 Git Plugins
 
-### 3.16.1 vim-fugitive
+### 3.15.1 vim-fugitive
 
 Home: [vim-fugitive](https://github.com/tpope/vim-fugitive)
 
@@ -2222,7 +2221,7 @@ call plug#end()
 
 * `:Git`：作为`git`的替代，后跟`git`命令行工具的正常参数即可
 
-### 3.16.2 diffview.nvim
+### 3.15.2 diffview.nvim
 
 Home: [diffview.nvim](https://github.com/sindrets/diffview.nvim)
 
@@ -2246,7 +2245,7 @@ call plug#end()
 * `:DiffviewOpen HEAD~2`
 * `:DiffviewOpen <commit>`
 
-## 3.17 nerdcommenter
+## 3.16 nerdcommenter
 
 Home: [nerdcommenter](https://github.com/preservim/nerdcommenter)
 
@@ -2283,7 +2282,7 @@ call plug#end()
 * **`\cu`：取消注释**
 * **`\c<space>`：如果被选区域有部分被注释，则对被选区域执行取消注释操作，其它情况执行反转注释操作**
 
-## 3.18 vim-codefmt
+## 3.17 vim-codefmt
 
 Home: [vim-codefmt](https://github.com/google/vim-codefmt)
 
@@ -2371,7 +2370,7 @@ sudo ln /home/home/liuyehcf/.local/lib/python3.6/site-packages/autopep8.py /usr/
 
 * `npm -g install js-beautify`
 
-## 3.19 vim-surround
+## 3.18 vim-surround
 
 Home: [vim-surround](https://github.com/tpope/vim-surround)
 
@@ -2424,7 +2423,7 @@ call plug#end()
     * `vllllSFprint`：类似`vllllSfprint`，`F`表示会在参数列表前后多加额外的空格。形式为`print( <text> )`
     * `vllllS<c-f>print`：类似`vllllSfprint`，`<c-f>`表示环绕符号加到最外侧。形式为`(print <text>)`
 
-## 3.20 UltiSnips
+## 3.19 UltiSnips
 
 Home: [UltiSnips](https://github.com/SirVer/ultisnips)
 
@@ -2445,9 +2444,30 @@ Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
 " Trigger configuration.
-let g:UltiSnipsExpandTrigger="<c-e>"
-let g:UltiSnipsJumpForwardTrigger="<c-j>"
-let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+let g:UltiSnipsExpandTrigger = "<c-e>"
+let g:UltiSnipsJumpForwardTrigger = "<c-j>"
+let g:UltiSnipsJumpBackwardTrigger = "<c-k>"
+
+call plug#end()
+```
+
+## 3.20 vim-wordmotion
+
+Home: [vim-wordmotion](https://github.com/chaoren/vim-wordmotion)
+
+**Configuration(`~/.vimrc`):**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....Other Plugins....
+" ......................
+
+Plug 'chaoren/vim-wordmotion'
+
+let g:wordmotion_prefix = '<leader>'
+let g:wordmotion_nomap = 0 " Set to 1 to disable the default mappings.
 
 call plug#end()
 ```
@@ -2463,6 +2483,7 @@ if filereadable(expand("~/.vimrc_extra_pre"))
 endif
 
 call plug#begin()
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 Plug 'vim-airline/vim-airline'
 
@@ -2479,7 +2500,7 @@ let g:indentLine_char = '|'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " Set default to on or off, 1 means on (default), 0 means off
-" let g:coc_start_at_startup=0
+" let g:coc_start_at_startup = 0
 
 " In insert mode, map <tab> to move to the next completion item when auto-completion is triggered
 inoremap <silent><expr> <tab>
@@ -2703,10 +2724,18 @@ Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 
 " Trigger configuration.
-let g:UltiSnipsExpandTrigger="<c-e>"
-let g:UltiSnipsJumpForwardTrigger="<c-j>"
-let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+let g:UltiSnipsExpandTrigger = "<c-e>"
+let g:UltiSnipsJumpForwardTrigger = "<c-j>"
+let g:UltiSnipsJumpBackwardTrigger = "<c-k>"
 
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Plug 'chaoren/vim-wordmotion'
+
+let g:wordmotion_prefix = '<leader>'
+let g:wordmotion_nomap = 0 " Set to 1 to disable the default mappings.
+
+" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 call plug#end()
 
 " Extra config for vim-codefmt
@@ -2876,14 +2905,11 @@ require('nvim-treesitter.configs').setup {
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 use {
-    'nvimdev/dashboard-nvim',
-    event = 'VimEnter',
-    config = function()
-        require('dashboard').setup {
-            -- config
-        }
-    end,
-    requires = {'nvim-tree/nvim-web-devicons'}
+    'goolord/alpha-nvim',
+    requires = { 'echasnovski/mini.icons' },
+    config = function ()
+        require'alpha'.setup(require'alpha.themes.startify'.config)
+    end
 }
 
 -- <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -3444,7 +3470,7 @@ let g:ycm_show_diagnostics_ui = 0
 let g:ycm_server_log_level = 'info'
 let g:ycm_min_num_identifier_candidate_chars = 2
 let g:ycm_collect_identifiers_from_comments_and_strings = 1
-let g:ycm_complete_in_strings=1
+let g:ycm_complete_in_strings = 1
 let g:ycm_key_invoke_completion = '<c-z>'
 set completeopt=menu,menuone
 
@@ -3546,6 +3572,29 @@ call plug#end()
 
 * `:Grepper`
 
+## 4.7 vim-signify
+
+Home: [vim-signify](https://github.com/mhinz/vim-signify)
+
+**Configuration(`~/.vimrc`):**
+
+```vim
+call plug#begin()
+
+" ......................
+" .....Other Plugins....
+" ......................
+
+Plug 'mhinz/vim-signify'
+
+call plug#end()
+```
+
+**Usage:**
+
+* `set signcolumn=yes`，有改动的行会标出
+* `:SignifyDiff`：以左右分屏的方式对比当前文件的差异
+
 # 5 vim-script
 
 ## 5.1 Tips
@@ -3562,14 +3611,14 @@ call plug#end()
 ```sh
 git clone https://github.com/neovim/neovim.git
 cd neovim
-git checkout v0.9.5
+git checkout v0.10.2
 cmake -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo  && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 ```
 
 Or Install from Nvim development (prerelease) build (Prefer)
 
 ```sh
-wget https://github.com/neovim/neovim/releases/download/v0.9.5/nvim-linux64.tar.gz
+wget https://github.com/neovim/neovim/releases/download/v0.10.2/nvim-linux64.tar.gz
 tar -zxvf nvim-linux64.tar.gz
 ```
 

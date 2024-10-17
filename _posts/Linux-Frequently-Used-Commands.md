@@ -84,8 +84,12 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 
 **Options:**
 
-* `-l`：列出目前系统上可用的shell，其实就是`/etc/shells`的内容
-* `-s`：设置修改自己的shell
+* `-s`: The name of the user's new login shell.
+
+**Examples:**
+
+* `chsh -s /bin/zsh`: Change login shell for current user.
+* `chsh -s /bin/zsh test`: Change login shell for user test.
 
 ## 1.7 man
 
@@ -185,6 +189,7 @@ The command stat is used to display file or file system status.
 **Examples:**
 
 * `useradd test -g wheel -G wheel -m -s /bin/bash`
+* `useradd test -d /data/test -s /bin/bash`
 
 **`useradd`在创建账号时执行的步骤**
 
@@ -306,7 +311,7 @@ hostnamectl set-hostname <name>
 
 Display file contents in hexadecimal, decimal, octal, or ascii
 
-**Example:**
+**Examples:**
 
 * `hexdump -C <filename> | head -n 10`
 
@@ -2049,10 +2054,10 @@ su command is used to switch users
 
 ```conf
 # Execute sudo commands without a password
-test	ALL=(ALL)	NOPASSWD: ALL
+test ALL=(ALL) NOPASSWD: ALL
 
 # Execute sudo commands with a password
-test	ALL=(ALL)	ALL
+test ALL=(ALL) ALL
 ```
 
 **Options:**
@@ -2141,22 +2146,25 @@ test	ALL=(ALL)	ALL
 * **`tmux attach-session -t <name>`: Attach to a session with a specific name.**
 * **`tmux kill-session -t <name>`: Kill a session with a specific name.**
 * **tmux rename-session -t <old-name> <new-name>`: Rename a session.**
-* **`C-b s`: Select the session to switch to.**
-* `C-b $`: Rename the current session.
-* **`C-b d`: Detach from the current session.**
-* `C-b c`: Create a new window in the current session.
-* `C-b w`: Choose from multiple windows in the current session.
-* `C-b x`: Close the current window in the current session.
-* `C-b !`: Close all windows in a session.
-* `C-b %`: Split the current window vertically.
-* `C-b "`: Split the current window horizontally.
-* `C-b arrow keys`: Switch between different windows.
-* `C-b arrow keys (hold down C-b)`: Adjust the size of the current window.
-* **`C-b [`: Enter scroll mode to scroll up and down.**
-    * `tmux setw -g mode-keys vi`: Use vi mode.
-    * `q`: Exit scroll mode.
-    * `fn + ↑`: Move up half a page.
-    * `fn + ↓`: Move down half a page.
+* **`<prefix> ?`: List key bindings.**
+    * **Changing the active pane:**
+        * `<prefix> Up`
+        * `<prefix> Down`
+        * `<prefix> Left`
+        * `<prefix> Right`
+        * `<prefix> q`: Prints the pane numbers and their sizes on top of the panes for a short time.
+            * `<prefix> q <num>`: Change to pane `<num>`.
+        * `<prefix> o`: Move to the next pane by pane number.
+        * `<prefix> <c-o>`: Swaps that pane with the active pane.
+    * **Changing the current window:**
+        * `<prefix> <num>`: Change to window `<num>`.
+        * `<prefix> '`: Prompt for a window index and changes to that window.
+        * `<prefix> n`: Change to the next window in the window list by number.
+        * `<prefix> p`: Change to the previous window in the window list by number.
+        * `<prefix> l`: Changes to the last window, which is the window that was last the current window before the window that is now.
+    * **Layout:**
+        * `<prefix> Spac`: Select next layout.
+* `tmux setw -g mode-keys vi`: Use vi mode.
 
 **Tips:**
 
@@ -2305,7 +2313,7 @@ netstat的功能就是查看网络的连接状态，而网络连接状态中，�
 
 具体用法参考`ip address help`
 
-**Example:**
+**Examples:**
 
 * `ip -4 addr show scope global`
 * `ip -6 addr show scope global`
@@ -2903,7 +2911,7 @@ tcpflow is a command-line tool used to capture and analyze network traffic, spec
 * Readable Output: The tool provides human-readable output by reconstructing the sequence of bytes sent in each TCP connection, making it easier to analyze protocols and troubleshoot issues.
 * Filtering: Similar to tools like `tcpdump`, `tcpflow` can filter traffic based on criteria like source/destination IP addresses, ports, or other protocol-level details
 
-**Example:**
+**Examples:**
 
 * `tcpflow -i eth0`
 * `tcpflow -i any host www.google.com`
@@ -3980,21 +3988,21 @@ skinparam backgroundColor #EEEBDC
 skinparam handwritten true
 
 skinparam sequence {
-	ArrowColor DeepSkyBlue
-	ActorBorderColor DeepSkyBlue
-	LifeLineBorderColor blue
-	LifeLineBackgroundColor #A9DCDF
-	
-	ParticipantBorderColor DeepSkyBlue
-	ParticipantBackgroundColor DodgerBlue
-	ParticipantFontName Impact
-	ParticipantFontSize 17
-	ParticipantFontColor #A9DCDF
-	
-	ActorBackgroundColor aqua
-	ActorFontColor DeepSkyBlue
-	ActorFontSize 17
-	ActorFontName Aapex
+    ArrowColor DeepSkyBlue
+    ActorBorderColor DeepSkyBlue
+    LifeLineBorderColor blue
+    LifeLineBackgroundColor #A9DCDF
+    
+    ParticipantBorderColor DeepSkyBlue
+    ParticipantBackgroundColor DodgerBlue
+    ParticipantFontName Impact
+    ParticipantFontSize 17
+    ParticipantFontColor #A9DCDF
+    
+    ActorBackgroundColor aqua
+    ActorFontColor DeepSkyBlue
+    ActorFontSize 17
+    ActorFontName Aapex
 }
 
 box "带有显示相关硬件的主机"
@@ -4035,21 +4043,21 @@ skinparam backgroundColor #EEEBDC
 skinparam handwritten true
 
 skinparam sequence {
-	ArrowColor DeepSkyBlue
-	ActorBorderColor DeepSkyBlue
-	LifeLineBorderColor blue
-	LifeLineBackgroundColor #A9DCDF
-	
-	ParticipantBorderColor DeepSkyBlue
-	ParticipantBackgroundColor DodgerBlue
-	ParticipantFontName Impact
-	ParticipantFontSize 17
-	ParticipantFontColor #A9DCDF
-	
-	ActorBackgroundColor aqua
-	ActorFontColor DeepSkyBlue
-	ActorFontSize 17
-	ActorFontName Aapex
+    ArrowColor DeepSkyBlue
+    ActorBorderColor DeepSkyBlue
+    LifeLineBorderColor blue
+    LifeLineBackgroundColor #A9DCDF
+    
+    ParticipantBorderColor DeepSkyBlue
+    ParticipantBackgroundColor DodgerBlue
+    ParticipantFontName Impact
+    ParticipantFontSize 17
+    ParticipantFontColor #A9DCDF
+    
+    ActorBackgroundColor aqua
+    ActorFontColor DeepSkyBlue
+    ActorFontSize 17
+    ActorFontName Aapex
 }
 
 box "带有显示相关硬件的主机"
