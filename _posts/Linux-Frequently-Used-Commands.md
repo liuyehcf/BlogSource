@@ -315,6 +315,14 @@ Display file contents in hexadecimal, decimal, octal, or ascii
 
 * `hexdump -C <filename> | head -n 10`
 
+## 1.30 showkey
+
+Examine the codes sent by the keyboard
+
+**Examples:**
+
+* `showkey -a`
+
 # 2 Common Processing Tools
 
 ## 2.1 ls
@@ -2141,13 +2149,18 @@ test ALL=(ALL) ALL
 **Usage:**
 
 * `tmux`: Start a new session, named with an incrementing number.
-* **`tmux new -s <name>`: Start a new session with a specified name.**
-* **`tmux ls`: List all sessions.**
-* **`tmux attach-session -t <name>`: Attach to a session with a specific name.**
-* **`tmux kill-session -t <name>`: Kill a session with a specific name.**
-* **tmux rename-session -t <old-name> <new-name>`: Rename a session.**
+* `tmux new -s <name>`: Start a new session with a specified name.
+* `tmux ls`: List all sessions.
+* `tmux attach-session -t <name>`: Attach to a session with a specific name.
+* `tmux kill-session -t <name>`: Kill a session with a specific name.
+* `tmux rename-session -t <old-name> <new-name>`: Rename a session.
+* `tmux source-file ~/.tmux.conf`: Reload config.
+* `tmux clear-history`: Clean history.
 * **`<prefix> ?`: List key bindings.**
-    * **Changing the active pane:**
+    * **Pane:**
+        * `<prefix> "`: Split pane vertically.
+        * `<prefix> %`: Split pane horizontally.
+        * `<prefix> !`: Break pane to a new window.
         * `<prefix> Up`
         * `<prefix> Down`
         * `<prefix> Left`
@@ -2156,15 +2169,27 @@ test ALL=(ALL) ALL
             * `<prefix> q <num>`: Change to pane `<num>`.
         * `<prefix> o`: Move to the next pane by pane number.
         * `<prefix> <c-o>`: Swaps that pane with the active pane.
-    * **Changing the current window:**
+        * `<prefix> E`: Spread panes out evenly.
+        * `<prefix> Spac`: Select next layout.
+    * **Window:**
         * `<prefix> <num>`: Change to window `<num>`.
         * `<prefix> '`: Prompt for a window index and changes to that window.
         * `<prefix> n`: Change to the next window in the window list by number.
         * `<prefix> p`: Change to the previous window in the window list by number.
         * `<prefix> l`: Changes to the last window, which is the window that was last the current window before the window that is now.
-    * **Layout:**
-        * `<prefix> Spac`: Select next layout.
-* `tmux setw -g mode-keys vi`: Use vi mode.
+        * `<prefix> w`: Prints the window numbers for choose.
+    * **Session:**
+        * `<prefix> s`: Prints the session numbers for choose.
+        * `<prefix> $`: Rename current session.
+* **Options:**
+    * `Session Options`
+        * `tmux set-option -g <key> <value>`/`tmux set -g <key> <value>`
+        * `tmux show-options -g`/`tmux show-options -g <key>`
+        * `tmux set -g escape-time 50`: Controls how long tmux waits to distinguish between an escape sequence (like a function key or arrow key) and a standalone Escape key press.
+    * `Window Options`
+        * `tmux set-window-option -g <key> <value>`/`tmux setw -g <key> <value>`
+        * `tmux show-window-options -g`/`tmux show-window-options -g <key>`
+        * `tmux setw -g mode-keys vi`: Use vi mode.
 
 **Tips:**
 
@@ -2173,11 +2198,72 @@ test ALL=(ALL) ALL
     1. Method 1: `tmux set -g prefix C-x`, only effective for the current session.
     1. Method 2: Add the following configuration to `~/.tmux.conf`: `set -g prefix C-x`.
 * Change the default shell:
-    1. Method 1: `tmux set-option -g default-shell /usr/bin/zsh`, only effective for the current session.
+    1. Method 1: `tmux set -g default-shell /usr/bin/zsh`, only effective for the current session.
     1. Method 2: Add the following configuration to `~/.tmux.conf`: `set -g default-shell /usr/bin/zsh`.
 * Support scroll with mouse: 
     1. Method 1: `tmux set -g mouse on`, only effective for the current session.
     1. Method 2: Add the following configuration to `~/.tmux.conf`: `set -g mouse on`.
+
+**My `~/.tmux.conf`**
+
+```sh
+set -g prefix C-x
+set -g default-shell /usr/bin/zsh
+set -g escape-time 50
+setw -g mode-keys vi
+set -g display-panes-time 60000 # 60 seconds
+
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+# Pane switch
+# [Option] + h, which is「˙」
+# [Option] + j, which is「∆」
+# [Option] + k, which is「˚」
+# [Option] + l, which is「¬」
+bind -n ˙ select-pane -L
+bind -n ¬ select-pane -R
+bind -n ∆ select-pane -U
+bind -n ˚ select-pane -D
+
+# Window switch
+# [Option] + [shift] + h, which is「Ó」
+# [Option] + [shift] + l, which is「Ò」
+bind -n Ó previous-window
+bind -n Ò next-window
+
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+# Set the status bar at the bottom
+set -g status-position bottom
+
+# Set the status bar refresh interval (in seconds)
+set -g status-interval 5
+
+# Style the status bar
+set -g status-style bg=black,fg=brightcyan
+
+# Left side of the status bar (session and window info)
+set -g status-left-length 100
+set -g status-left '#[bg=green,fg=black,bold] #S #[bg=black,fg=green]'
+
+# Right side of the status bar (battery, time, hostname, etc.)
+set -g status-right-length 150
+set -g status-right '#[bg=black,fg=yellow]#[bg=yellow,fg=black,bold] %Y-%m-%d #[bg=yellow,fg=black] %H:%M #[bg=yellow,fg=black] #(whoami) #[bg=yellow,fg=black]#[bg=cyan,fg=black,bold] #(hostname) #[bg=cyan,fg=black] #(battery-status.sh) #[bg=cyan,fg=black]#[bg=brightblue,fg=black,bold] #(uptime -p) '
+
+# Window status (active/inactive windows)
+setw -g window-status-format ' #[bg=black,fg=cyan] #I:#W '
+setw -g window-status-current-format ' #[bg=yellow,fg=black,bold] #I:#W #[fg=yellow]'
+
+# Pane border styles (active/inactive panes)
+set -g pane-border-style fg=blue
+set -g pane-active-border-style fg=green
+
+# Highlight active window
+setw -g window-status-current-style bg=brightyellow,fg=black,bold
+
+# Show the status bar always
+set -g status on
+```
 
 ## 4.18 reptyr
 

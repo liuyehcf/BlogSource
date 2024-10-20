@@ -424,10 +424,10 @@ endfunction
 noremap <silent> <leader>rc :call Clean_up_registers()<cr>
 
 " Insert mode, cursor movement shortcuts
-" [Option] + h，即「˙」
-" [Option] + j，即「∆」
-" [Option] + k，即「˚」
-" [Option] + l，即「¬」
+" [Option] + h, which is「˙」
+" [Option] + j, which is「∆」
+" [Option] + k, which is「˚」
+" [Option] + l, which is「¬」
 inoremap ˙ <c-o>h
 inoremap ∆ <c-o>j
 inoremap ˚ <c-o>k
@@ -453,18 +453,18 @@ nnoremap <leader>sl ^vg_
 nnoremap <cr> :nohlsearch<cr><cr>
 
 " Window switching
-" [Option] + h，即「˙」
-" [Option] + j，即「∆」
-" [Option] + k，即「˚」
-" [Option] + l，即「¬」
+" [Option] + h, which is「˙」
+" [Option] + j, which is「∆」
+" [Option] + k, which is「˚」
+" [Option] + l, which is「¬」
 nnoremap ˙ :wincmd h<cr>
 nnoremap ∆ :wincmd j<cr>
 nnoremap ˚ :wincmd k<cr>
 nnoremap ¬ :wincmd l<cr>
 
 " Tab switching
-" [Option] + h，即「Ó」
-" [Option] + l，即「Ò」
+" [Option] + [shift] + h, which is「Ó」
+" [Option] + [shift] + l, which is「Ò」
 nnoremap Ó :action PreviousTab<cr>
 nnoremap Ò :action NextTab<cr>
 

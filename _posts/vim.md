@@ -143,7 +143,9 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
 * `<c-u>`: Move up by half a screen.
 * `<c-e>`: Scroll the screen down by one line.
 * `<c-y>`: Scroll the screen up by one line.
-* `zz`: Center the current line in the middle of the screen.
+* `zz`: Put the current line in the middle of the screen.
+* `zt`: Put the current line in the top of the screen.
+* `zb`: Put the current line in the bottom of the screen.
 
 **Paragraph and Section Movement:**
 
@@ -2466,8 +2468,8 @@ call plug#begin()
 
 Plug 'chaoren/vim-wordmotion'
 
-let g:wordmotion_prefix = '<leader>'
-let g:wordmotion_nomap = 0 " Set to 1 to disable the default mappings.
+let g:wordmotion_nomap = 1 " Disable by default
+nnoremap <leader>w :let g:wordmotion_nomap = !g:wordmotion_nomap \| call wordmotion#reload()<CR>
 
 call plug#end()
 ```
@@ -2732,8 +2734,8 @@ let g:UltiSnipsJumpBackwardTrigger = "<c-k>"
 
 Plug 'chaoren/vim-wordmotion'
 
-let g:wordmotion_prefix = '<leader>'
-let g:wordmotion_nomap = 0 " Set to 1 to disable the default mappings.
+let g:wordmotion_nomap = 1 " Disable by default
+nnoremap <leader>w :let g:wordmotion_nomap = !g:wordmotion_nomap \| call wordmotion#reload()<CR>
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 call plug#end()
@@ -2793,10 +2795,10 @@ endfunction
 noremap <silent> <leader>rc :call Clean_up_registers()<cr>
 
 " Insert mode, cursor movement shortcuts
-" [Option] + h，即「˙」
-" [Option] + j，即「∆」
-" [Option] + k，即「˚」
-" [Option] + l，即「¬」
+" [Option] + h, which is「˙」
+" [Option] + j, which is「∆」
+" [Option] + k, which is「˚」
+" [Option] + l, which is「¬」
 inoremap ˙ <c-o>h
 inoremap ∆ <c-o>j
 inoremap ˚ <c-o>k
@@ -2822,18 +2824,18 @@ nnoremap <leader>sl ^vg_
 nnoremap <cr> :nohlsearch<cr><cr>
 
 " Window switching
-" [Option] + h，即「˙」
-" [Option] + j，即「∆」
-" [Option] + k，即「˚」
-" [Option] + l，即「¬」
+" [Option] + h, which is「˙」
+" [Option] + j, which is「∆」
+" [Option] + k, which is「˚」
+" [Option] + l, which is「¬」
 nnoremap ˙ :wincmd h<cr>
 nnoremap ∆ :wincmd j<cr>
 nnoremap ˚ :wincmd k<cr>
 nnoremap ¬ :wincmd l<cr>
 
 " Tab switching
-" [Option] + h，即「Ó」
-" [Option] + l，即「Ò」
+" [Option] + [shift] + h, which is「Ó」
+" [Option] + [shift] + l, which is「Ò」
 nnoremap Ó :tabprev<cr>
 nnoremap Ò :tabnext<cr>
 
