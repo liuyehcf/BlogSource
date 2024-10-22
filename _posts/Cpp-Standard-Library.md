@@ -292,8 +292,8 @@ int main() {
 
 ## 1.4 Binary Search Operations (on sorted ranges)
 
-1. `std::lower_bound`: Returns an iterator pointing to the first element in the range `[first, last)` such that `element < value` (or `comp(element, value)`) is `false`, (i.e. that is greater than or equal to `value`), or last if no such element is found.
-1. `std::upper_bound`: Returns an iterator pointing to the first element in the range `[first, last)` such that `value < element` (or `comp(value, element)`) is `true` (i.e. that is strictly greater than `value`), or last if no such element is found.
+1. `std::lower_bound(first, last, value, comp)`: Searches for the first element in the partitioned range `[first, last)` which is not ordered before value.
+1. `std::upper_bound`: Searches for the first element in the partitioned range `[first, last)` which is ordered after value.
 1. `std::binary_search`
 1. `std::equal_range`
 
@@ -304,10 +304,13 @@ int main() {
 ```cpp
 #include <algorithm>
 #include <iostream>
+#include <iterator>
 #include <vector>
 
 int main() {
     std::vector<int> nums{0, 1, 2, 3, 3, 3, 4, 4, 5, 10, 11, 13};
+    std::copy(nums.begin(), nums.end(), std::ostream_iterator<int>(std::cout, ","));
+    std::cout << std::endl;
 
     auto find_lower_bound = [&nums](int target) {
         std::cout << "the lower_bound of " << target << " is: ";
@@ -327,15 +330,40 @@ int main() {
 }
 ```
 
+Output:
+
+```
+0,1,2,3,3,3,4,4,5,10,11,13,
+the lower_bound of -1 is: 0
+the lower_bound of 0 is: 0
+the lower_bound of 1 is: 1
+the lower_bound of 2 is: 2
+the lower_bound of 3 is: 3
+the lower_bound of 4 is: 4
+the lower_bound of 5 is: 5
+the lower_bound of 6 is: 10
+the lower_bound of 7 is: 10
+the lower_bound of 8 is: 10
+the lower_bound of 9 is: 10
+the lower_bound of 10 is: 10
+the lower_bound of 11 is: 11
+the lower_bound of 12 is: 13
+the lower_bound of 13 is: 13
+the lower_bound of 14 is: nullptr
+```
+
 **Case 2:**
 
 ```cpp
 #include <algorithm>
 #include <iostream>
+#include <iterator>
 #include <vector>
 
 int main() {
     std::vector<int> nums{0, 1, 2, 3, 3, 3, 4, 4, 5, 10, 11, 13};
+    std::copy(nums.begin(), nums.end(), std::ostream_iterator<int>(std::cout, ","));
+    std::cout << std::endl;
 
     auto find_upper_bound = [&nums](int target) {
         std::cout << "the upper_bound of " << target << " is: ";
@@ -353,6 +381,28 @@ int main() {
 
     return 0;
 }
+```
+
+Output:
+
+```
+0,1,2,3,3,3,4,4,5,10,11,13,
+the upper_bound of -1 is: 0
+the upper_bound of 0 is: 1
+the upper_bound of 1 is: 2
+the upper_bound of 2 is: 3
+the upper_bound of 3 is: 4
+the upper_bound of 4 is: 5
+the upper_bound of 5 is: 10
+the upper_bound of 6 is: 10
+the upper_bound of 7 is: 10
+the upper_bound of 8 is: 10
+the upper_bound of 9 is: 10
+the upper_bound of 10 is: 11
+the upper_bound of 11 is: 13
+the upper_bound of 12 is: 13
+the upper_bound of 13 is: nullptr
+the upper_bound of 14 is: nullptr
 ```
 
 **Case 3:**
@@ -416,7 +466,7 @@ int main() {
 }
 ```
 
-**Output:**
+Output:
 
 ```
 (2, 1),(1, 1),(6, 2),(5, 2),(4, 2),(3, 2),(7, 3),(8, 4),

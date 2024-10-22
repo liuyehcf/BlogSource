@@ -2156,6 +2156,7 @@ test ALL=(ALL) ALL
 * `tmux rename-session -t <old-name> <new-name>`: Rename a session.
 * `tmux source-file ~/.tmux.conf`: Reload config.
 * `tmux clear-history`: Clean history.
+* `tmux kill-server`: Kill server.
 * **`<prefix> ?`: List key bindings.**
     * **Pane:**
         * `<prefix> "`: Split pane vertically.
@@ -2208,28 +2209,47 @@ test ALL=(ALL) ALL
 
 ```sh
 set -g prefix C-x
-set -g default-shell /usr/bin/zsh
+set -g default-shell ${SHELL}
 set -g escape-time 50
 setw -g mode-keys vi
 set -g display-panes-time 60000 # 60 seconds
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-# Pane switch
 # [Option] + h, which is「˙」
 # [Option] + j, which is「∆」
 # [Option] + k, which is「˚」
 # [Option] + l, which is「¬」
+# [Option] + [shift] + h, which is「Ó」
+# [Option] + [shift] + l, which is「Ò」
+
+# Pane switch
+# send-keys means passing the key to current command, i.e. vim/nvim.
+# bind -n ˙ if-shell -F "#{||:#{==:#{pane_current_command},vim},#{==:#{pane_current_command},nvim}}" "send-keys ˙" "select-pane -L"
+# bind -n ¬ if-shell -F "#{||:#{==:#{pane_current_command},vim},#{==:#{pane_current_command},nvim}}" "send-keys ¬" "select-pane -R"
+# bind -n ∆ if-shell -F "#{||:#{==:#{pane_current_command},vim},#{==:#{pane_current_command},nvim}}" "send-keys ∆" "select-pane -U"
+# bind -n ˚ if-shell -F "#{||:#{==:#{pane_current_command},vim},#{==:#{pane_current_command},nvim}}" "send-keys ˚" "select-pane -D"
 bind -n ˙ select-pane -L
 bind -n ¬ select-pane -R
 bind -n ∆ select-pane -U
 bind -n ˚ select-pane -D
 
 # Window switch
-# [Option] + [shift] + h, which is「Ó」
-# [Option] + [shift] + l, which is「Ò」
+# bind -n Ó if-shell -F "#{||:#{==:#{pane_current_command},vim},#{==:#{pane_current_command},nvim}}" "send-keys Ó" "previous-window"
+# bind -n Ò if-shell -F "#{||:#{==:#{pane_current_command},vim},#{==:#{pane_current_command},nvim}}" "send-keys Ò" "next-window"
 bind -n Ó previous-window
 bind -n Ò next-window
+
+# Create the 'ktb_vim'(or any identifier you like) key table for Vim mode (pass keys to Vim/Neovim)
+bind -T ktb_vim ˙ send-keys ˙
+bind -T ktb_vim ¬ send-keys ¬
+bind -T ktb_vim ∆ send-keys ∆
+bind -T ktb_vim ˚ send-keys ˚
+bind -T ktb_vim Ó send-keys Ó
+bind -T ktb_vim Ò send-keys Ò
+
+# Toggle between the 'ktb_vim' and default 'root' key tables
+bind v if -F '#{==:#{key-table},ktb_vim}' 'set -w key-table root; switch-client -T root' 'set -w key-table ktb_vim; switch-client -T ktb_vim'
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
