@@ -460,7 +460,7 @@ constexpr bool is_same_v<T, T> = true;
 
 # 6 Applications of Metaprogramming
 
-## 6.1 STL
+## 6.1 Utility
 
 ### 6.1.1 is_same
 
@@ -476,7 +476,7 @@ struct is_same<T, T> {
 };
 ```
 
-## 6.2 rank
+### 6.1.2 rank
 
 ```cpp
 #include <iostream>
@@ -518,7 +518,7 @@ int main() {
 }
 ```
 
-## 6.3 one_of/type_in/value_in
+### 6.1.3 one_of/type_in/value_in
 
 下面是`is_one_of`的实现方式
 
@@ -575,13 +575,13 @@ int main() {
 }
 ```
 
-## 6.4 is_copy_assignable
+### 6.1.4 is_copy_assignable
 
 我们手动来实现一下`<type_traits>`头文件中的`std::is_copy_assignable`，该模板用于判断一个类是否支持了拷贝赋值运算符
 
 示例如下，这个实现比较复杂，我们一一解释
 
-* 其中`std::declval`用于返回指定类型的右值版本
+* 其中`std::declval<T>`用于返回`T&&`类型（参考引用折叠规则）
 * 函数模板`try_assignment(U&&)`包含两个类型参数，其中第二个类型参数并未用到（省略了参数名），且存在一个默认值`typename = decltype(std::declval<U&>() = std::declval<U const&>())`，这一段其实就是用于测试指定类型是否支持拷贝赋值操作。如果不支持，那么`try_assignment(U&&)`模板的实例化将会失败，转而匹配默认版本`try_assignment(...)`。**这就是著名的`SFINAE, Substitution failure is not an error`**
     * 如果要实现`is_copy_constructible`、`is_move_constructible`以及`is_move_assignable`，其实是类似的，替换这一串表达式即可
 * `try_assignment(...)`该重载版本可以匹配任意数量任意类型的参数
@@ -624,9 +624,7 @@ int main() {
 }
 ```
 
-## 6.5 Check if has specific symbol
-
-### 6.5.1 has_type_member
+### 6.1.5 has_type_member
 
 我们实现一个`has_type_member`，用于判断某个类型是否有类型成员，且其名字为`type`，即对于类型`T`是否存在`typename T::type`
 
@@ -668,7 +666,7 @@ int main() {
 }
 ```
 
-### 6.5.2 has_to_string
+### 6.1.6 has_to_string
 
 ```cpp
 #include <iostream>
@@ -704,7 +702,7 @@ int main() {
 }
 ```
 
-## 6.6 sequence
+### 6.1.7 sequence
 
 **核心思路如下：**
 
@@ -763,7 +761,280 @@ int main() {
 }
 ```
 
-## 6.7 bind
+## 6.2 Iterator 
+
+### 6.2.1 Static Loop
+
+Inspired by [base/base/constexpr_helpers.h](https://github.com/ClickHouse/ClickHouse/blob/master/base/base/constexpr_helpers.h)
+
+```cpp
+#include <iostream>
+#include <type_traits>
+
+template <typename Func, typename Arg>
+bool func_wrapper(Func&& func, Arg&& arg) {
+    if constexpr (std::is_void_v<std::invoke_result_t<Func, Arg>>) {
+        func(arg);
+        return false;
+    } else
+        return func(arg);
+}
+
+template <typename T, T Begin, T Inc, typename Func, T... Is>
+constexpr bool static_for_impl(Func&& f, std::integer_sequence<T, Is...>) {
+    return (func_wrapper(f, std::integral_constant<T, Begin + Is * Inc>{}) || ...);
+}
+
+template <auto Begin, decltype(Begin) End, auto Inc, typename Func>
+constexpr bool static_for(Func&& f) {
+    using T = decltype(Begin);
+    constexpr T count = (End - Begin + Inc - 1) / Inc; // Number of steps based on increment
+    return static_for_impl<T, Begin, Inc>(std::forward<Func>(f), std::make_integer_sequence<T, count>{});
+}
+
+int main() {
+    std::cout << "Increment by 1: ";
+    static_for<1, 10, 1>([](auto i) { std::cout << i << ", "; }); // Increment by 1
+    std::cout << std::endl;
+
+    std::cout << "Increment by 2: ";
+    static_for<1, 10, 2>([](auto i) { std::cout << i << ", "; }); // Increment by 2
+    std::cout << std::endl;
+
+    return 0;
+}
+```
+
+### 6.2.2 Iterate over std::integer_sequence
+
+```cpp
+#include <iostream>
+
+template <typename T, T... Is>
+void iterate_integer_sequence(std::integer_sequence<T, Is...> sequence) {
+    ((std::cout << Is << " "), ...);
+}
+
+int main() {
+    iterate_integer_sequence(std::make_integer_sequence<int, 100>());
+    return 0;
+}
+```
+
+### 6.2.3 Iterate over std::tuple
+
+```cpp
+#include <stddef.h>
+#include <stdint.h>
+
+#include <iostream>
+#include <tuple>
+
+template <typename Tuple, typename Func, size_t... N>
+void func_call_tuple(const Tuple& t, Func&& func, std::index_sequence<N...>) {
+    static_cast<void>(std::initializer_list<int>{(func(std::get<N>(t)), 0)...});
+}
+
+template <typename... Args, typename Func>
+void travel_tuple(const std::tuple<Args...>& t, Func&& func) {
+    func_call_tuple(t, std::forward<Func>(func), std::make_index_sequence<sizeof...(Args)>{});
+}
+
+int main() {
+    auto t = std::make_tuple(1, 4.56, "hello");
+    travel_tuple(t, [](auto&& item) { std::cout << item << ","; });
+}
+```
+
+## 6.3 Type Deduction
+
+**`using template`：当我们使用`Traits`萃取类型时，通常需要加上`typename`来消除歧义。因此，`using`模板可以进一步消除多余的`typename`**
+**`static member template`：静态成员模板**
+
+```cpp
+#include <stddef.h>
+#include <stdint.h>
+
+#include <iostream>
+#include <string>
+
+enum Type {
+    INT = 0,
+    LONG,  /* 1 */
+    FLOAT, /* 2 */
+    DOUBLE /* 3 */
+};
+
+template <Type type>
+struct TypeTraits {};
+
+template <>
+struct TypeTraits<Type::INT> {
+    using type = int32_t;
+    static constexpr int32_t default_value = 1;
+};
+
+template <>
+struct TypeTraits<Type::LONG> {
+    using type = int64_t;
+    static constexpr int64_t default_value = 2;
+};
+
+template <>
+struct TypeTraits<Type::FLOAT> {
+    using type = float;
+    static constexpr float default_value = 2.2;
+};
+
+template <>
+struct TypeTraits<Type::DOUBLE> {
+    using type = double;
+    static constexpr double default_value = 3.3;
+};
+
+template <Type type>
+using CppType = typename TypeTraits<type>::type;
+
+int main() {
+    typename TypeTraits<Type::INT>::type value1 = TypeTraits<Type::INT>::default_value;
+    CppType<Type::LONG> value2 = TypeTraits<Type::LONG>::default_value;
+    CppType<Type::FLOAT> value3 = TypeTraits<Type::FLOAT>::default_value;
+    CppType<Type::DOUBLE> value4 = TypeTraits<Type::DOUBLE>::default_value;
+    std::cout << "value1=" << value1 << std::endl;
+    std::cout << "value2=" << value2 << std::endl;
+    std::cout << "value3=" << value3 << std::endl;
+    std::cout << "value4=" << value4 << std::endl;
+}
+```
+
+## 6.4 Static Proxy
+
+不确定这个是否属于元编程的范畴。更多示例可以参考[binary_function.h](https://github.com/liuyehcf/starrocks/blob/main/be/src/exprs/vectorized/binary_function.h)
+
+```cpp
+#include <iostream>
+
+struct OP1 {
+    static double apply(int32_t l, int32_t r) {
+        std::cout << "OP1(l, r)" << std::endl;
+        return l + r;
+    }
+};
+
+struct OP2 {
+    static double apply(int32_t l, int32_t r) {
+        std::cout << "OP2(l, r)" << std::endl;
+        return l - r;
+    }
+};
+
+struct OP3 {
+    static double apply(int32_t l, int32_t r) {
+        std::cout << "OP3(l, r)" << std::endl;
+        return l * r;
+    }
+};
+
+struct OP4 {
+    static double apply(int32_t l, int32_t r) {
+        std::cout << "OP4(l, r)" << std::endl;
+        return r == 0 ? 0 : l / r;
+    }
+};
+
+template <typename OP>
+struct Wrapper1 {
+    static double apply(int32_t l, int32_t r) {
+        std::cout << "Wrapper1 start" << std::endl;
+        double res = OP::apply(l, r);
+        std::cout << "Wrapper1 end" << std::endl;
+        return res;
+    }
+};
+
+template <typename OP>
+struct Wrapper2 {
+    static double apply(int32_t l, int32_t r) {
+        std::cout << "Wrapper2 start" << std::endl;
+        double res = OP::apply(l, r);
+        std::cout << "Wrapper2 end" << std::endl;
+        return res;
+    }
+};
+
+template <typename OP>
+struct Wrapper3 {
+    static double apply(int32_t l, int32_t r) {
+        std::cout << "Wrapper3 start" << std::endl;
+        double res = OP::apply(l, r);
+        std::cout << "Wrapper3 end" << std::endl;
+        return res;
+    }
+};
+
+int main() {
+    Wrapper3<Wrapper2<Wrapper1<OP1>>>::apply(1, 2);
+    std::cout << std::endl;
+    Wrapper1<Wrapper2<Wrapper3<OP2>>>::apply(1, 2);
+    return 0;
+}
+```
+
+## 6.5 Compile-Time Branching
+
+有时候，我们想为不同的类型编写不同的分支代码，而这些分支代码在不同类型中是不兼容的，例如，我要实现加法，对于`int`来说，用操作符`+`即可完成加法运算；对于`Foo`类型来说，要调用`add`方法才能实现加法运算。这个时候，普通的分支是无法实现的，实例化的时候会报错。这时候，我们可以使用`if constexpr`来实现编译期的分支
+
+```cpp
+#include <type_traits>
+
+struct Foo {
+    int val;
+};
+
+Foo add_foo(const Foo& left, const Foo& right) {
+    return Foo{left.val + right.val};
+}
+
+template <typename T>
+T add(const T& left, const T& right) {
+    if constexpr (std::is_same<T, int>::value) {
+        return left + right;
+    } else if constexpr (std::is_same<T, Foo>::value) {
+        return add_foo(left, right);
+    }
+}
+
+int main() {
+    Foo left, right;
+    add(left, right);
+    add(1, 2);
+    return 0;
+}
+```
+
+**类型相关的代码必须包含在`if constexpr/else if constexpr`的代码块中，错误示例如下，其本意是，当不为算数类型时，直接返回，但由于`left + right`不在上述静态分支内，因此实例化`Foo`的时候就会报错**
+
+```cpp
+#include <type_traits>
+
+template <typename T>
+T add(const T& left, const T& right) {
+    if constexpr (!std::is_arithmetic<T>::value) {
+        return {};
+    }
+    return left + right;
+}
+
+struct Foo {};
+
+int main() {
+    Foo left, right;
+    add(left, right);
+    return 0;
+}
+```
+
+## 6.6 Implement std::bind
 
 **下面的示例用于揭示`std::bind`的实现原理，其中各工具模板的含义如下：**
 
@@ -872,8 +1143,8 @@ struct bind_return_type;
 // represent Seq by form seq<S...>, so we can use S... to generate folding expression
 template <typename F, typename TBindArgs, typename TCallArgs, size_t... S>
 struct bind_return_type<F, TBindArgs, TCallArgs, seq<S...>> {
-    using type = decltype(
-            invoke(std::declval<F>(), select(std::get<S>(std::declval<TBindArgs>()), std::declval<TCallArgs>())...));
+    using type = decltype(invoke(std::declval<F>(),
+                                 select(std::get<S>(std::declval<TBindArgs>()), std::declval<TCallArgs>())...));
 };
 
 template <typename F, typename TBindArgs, typename TCallArgs,
@@ -887,7 +1158,7 @@ class bind_t {
     using CallFun = std::decay_t<F>;
 
 public:
-    bind_t(F func, BindArgs... bind_args) : _func(func), _t_bind_args(bind_args...) {}
+    explicit bind_t(F func, BindArgs... bind_args) : _func(func), _t_bind_args(bind_args...) {}
 
     template <typename... CallArgs, typename TCallArgs = std::tuple<CallArgs&&...>>
     bind_return_type_t<CallFun, TBindArgs, TCallArgs> operator()(CallArgs&&... call_args) {
@@ -899,7 +1170,8 @@ public:
 
 private:
     template <typename TCallArgs, size_t... S>
-    bind_return_type_t<CallFun, TBindArgs, std::decay_t<TCallArgs>> _call(TCallArgs&& t_call_args, seq<S...>) {
+    bind_return_type_t<CallFun, TBindArgs, std::decay_t<TCallArgs>> _call(TCallArgs&& t_call_args,
+                                                                          seq<S...> /*unused*/) {
         return invoke(_func, select(std::get<S>(_t_bind_args), std::forward<TCallArgs>(t_call_args))...);
     }
 
@@ -932,93 +1204,109 @@ int main() {
 }
 ```
 
-## 6.8 Type Deduction
-
-**`using template`：当我们使用`Traits`萃取类型时，通常需要加上`typename`来消除歧义。因此，`using`模板可以进一步消除多余的`typename`**
-**`static member template`：静态成员模板**
+Simplified version:
 
 ```cpp
-#include <stddef.h>
-#include <stdint.h>
-
 #include <iostream>
 #include <string>
-
-enum Type {
-    INT = 0,
-    LONG,  /* 1 */
-    FLOAT, /* 2 */
-    DOUBLE /* 3 */
-};
-
-template <Type type>
-struct TypeTraits {};
-
-template <>
-struct TypeTraits<Type::INT> {
-    using type = int32_t;
-    static constexpr int32_t default_value = 1;
-};
-
-template <>
-struct TypeTraits<Type::LONG> {
-    using type = int64_t;
-    static constexpr int64_t default_value = 2;
-};
-
-template <>
-struct TypeTraits<Type::FLOAT> {
-    using type = float;
-    static constexpr float default_value = 2.2;
-};
-
-template <>
-struct TypeTraits<Type::DOUBLE> {
-    using type = double;
-    static constexpr double default_value = 3.3;
-};
-
-template <Type type>
-using CppType = typename TypeTraits<type>::type;
-
-int main() {
-    typename TypeTraits<Type::INT>::type value1 = TypeTraits<Type::INT>::default_value;
-    CppType<Type::LONG> value2 = TypeTraits<Type::LONG>::default_value;
-    CppType<Type::FLOAT> value3 = TypeTraits<Type::FLOAT>::default_value;
-    CppType<Type::DOUBLE> value4 = TypeTraits<Type::DOUBLE>::default_value;
-    std::cout << "value1=" << value1 << std::endl;
-    std::cout << "value2=" << value2 << std::endl;
-    std::cout << "value3=" << value3 << std::endl;
-    std::cout << "value4=" << value4 << std::endl;
-}
-```
-
-## 6.9 Iterating Over a Tuple
-
-```cpp
-#include <stddef.h>
-#include <stdint.h>
-
-#include <iostream>
 #include <tuple>
+#include <type_traits>
 
-template <typename Tuple, typename Func, size_t... N>
-void func_call_tuple(const Tuple& t, Func&& func, std::index_sequence<N...>) {
-    static_cast<void>(std::initializer_list<int>{(func(std::get<N>(t)), 0)...});
+// placeholder
+template <size_t Num>
+struct placeholder {};
+
+static constexpr placeholder<1> _1;
+static constexpr placeholder<2> _2;
+static constexpr placeholder<3> _3;
+static constexpr placeholder<4> _4;
+static constexpr placeholder<5> _5;
+static constexpr placeholder<6> _6;
+
+// Calculate how many placeholders.
+template <typename... BindArgs>
+struct placeholder_num {
+    static constexpr size_t value = 0;
+};
+template <typename... BindArgs>
+constexpr size_t placeholder_num_v = placeholder_num<BindArgs...>::value;
+template <typename NonPlaceHolderBindArg, typename... BindArgs>
+struct placeholder_num<NonPlaceHolderBindArg, BindArgs...> {
+    static constexpr size_t value = placeholder_num_v<BindArgs...>;
+};
+template <size_t Num, typename... BindArgs>
+struct placeholder_num<placeholder<Num>, BindArgs...> {
+    static constexpr size_t value = 1 + placeholder_num_v<BindArgs...>;
+};
+
+// Select non-placeholder element.
+template <typename BindArg, typename TCallArgs>
+auto select(BindArg&& non_place_holder_bind_arg, TCallArgs&& t_call_args) {
+    return std::forward<BindArg>(non_place_holder_bind_arg);
+}
+// Select placeholder element.
+template <size_t N, typename TCallArgs>
+auto select(placeholder<N> place_holder_bind_arg, TCallArgs&& t_call_args) {
+    return std::get<N - 1>(std::forward<TCallArgs>(t_call_args));
 }
 
-template <typename... Args, typename Func>
-void travel_tuple(const std::tuple<Args...>& t, Func&& func) {
-    func_call_tuple(t, std::forward<Func>(func), std::make_index_sequence<sizeof...(Args)>{});
+// The implementation of bind, provide overloaded operator() to call the original function with placeholders and actual args.
+template <typename CallFun, typename... BindArgs>
+class bind_t {
+    using TBindArgs = std::tuple<BindArgs...>;
+    static constexpr size_t TBindArgsSize = std::tuple_size_v<TBindArgs>;
+
+public:
+    explicit bind_t(CallFun func, BindArgs... bind_args) : _func(func), _t_bind_args(bind_args...) {}
+
+    template <typename... CallArgs, typename TCallArgs = std::tuple<CallArgs&&...>>
+    auto operator()(CallArgs&&... call_args) {
+        static_assert(placeholder_num_v<BindArgs...> == sizeof...(CallArgs),
+                      "number of placeholder must be equal with the number of operator()'s parameter");
+        // The reason we use TCallArgs is that the size of CallArgs is different from the size of TBindArgs
+        // so they cannot be unfolded together at `_call`
+        TCallArgs t_call_args(std::forward<CallArgs>(call_args)...);
+        return _call(t_call_args, std::make_index_sequence<TBindArgsSize>());
+    }
+
+private:
+    // represent Seq by form std::index_sequence<S...>, so we can use S... to generate folding expression
+    template <typename TCallArgs, size_t... S>
+    auto _call(TCallArgs&& t_call_args, std::index_sequence<S...> /*unused*/) {
+        return _func(select(std::get<S>(_t_bind_args), std::forward<TCallArgs>(t_call_args))...);
+    }
+
+    // The original function
+    CallFun _func;
+    // Contains all args of original function, including non-placeholder values and placeholders
+    TBindArgs _t_bind_args;
+};
+
+// Entrance
+template <typename F, typename... BindArgs>
+auto bind(F&& func, BindArgs&&... bind_args) {
+    return bind_t(std::forward<F>(func), std::forward<BindArgs>(bind_args)...);
+}
+
+void print(const std::string& s, int i, double d) {
+    std::cout << "str=" << s << ", int=" << i << ", double=" << d << std::endl;
 }
 
 int main() {
-    auto t = std::make_tuple(1, 4.56, "hello");
-    travel_tuple(t, [](auto&& item) { std::cout << item << ","; });
+    auto f1 = bind(print, _1, 1, 1.1);
+    auto f2 = bind(print, "fixed_str_2", _1, 2.2);
+    auto f3 = bind(print, "fixed_str_3", 3, _1);
+    auto f5 = bind(print, _1, _2, _3);
+
+    f1("str_1");
+    f2(2);
+    f3(3.3);
+    f5("str_5", 5, 5.5);
+    return 0;
 }
 ```
 
-## 6.10 Quick Sort
+## 6.7 Quick Sort
 
 **源码出处：[quicksort in C++ template metaprogramming](https://gist.github.com/cleoold/c26d4e2b4ff56985c42f212a1c76deb9)**
 
@@ -1256,134 +1544,7 @@ int main() {
 }
 ```
 
-## 6.11 Static Proxy
-
-不确定这个是否属于元编程的范畴。更多示例可以参考[binary_function.h](https://github.com/liuyehcf/starrocks/blob/main/be/src/exprs/vectorized/binary_function.h)
-
-```cpp
-#include <iostream>
-
-struct OP1 {
-    static double apply(int32_t l, int32_t r) {
-        std::cout << "OP1(l, r)" << std::endl;
-        return l + r;
-    }
-};
-
-struct OP2 {
-    static double apply(int32_t l, int32_t r) {
-        std::cout << "OP2(l, r)" << std::endl;
-        return l - r;
-    }
-};
-
-struct OP3 {
-    static double apply(int32_t l, int32_t r) {
-        std::cout << "OP3(l, r)" << std::endl;
-        return l * r;
-    }
-};
-
-struct OP4 {
-    static double apply(int32_t l, int32_t r) {
-        std::cout << "OP4(l, r)" << std::endl;
-        return r == 0 ? 0 : l / r;
-    }
-};
-
-template <typename OP>
-struct Wrapper1 {
-    static double apply(int32_t l, int32_t r) {
-        std::cout << "Wrapper1 start" << std::endl;
-        double res = OP::apply(l, r);
-        std::cout << "Wrapper1 end" << std::endl;
-        return res;
-    }
-};
-
-template <typename OP>
-struct Wrapper2 {
-    static double apply(int32_t l, int32_t r) {
-        std::cout << "Wrapper2 start" << std::endl;
-        double res = OP::apply(l, r);
-        std::cout << "Wrapper2 end" << std::endl;
-        return res;
-    }
-};
-
-template <typename OP>
-struct Wrapper3 {
-    static double apply(int32_t l, int32_t r) {
-        std::cout << "Wrapper3 start" << std::endl;
-        double res = OP::apply(l, r);
-        std::cout << "Wrapper3 end" << std::endl;
-        return res;
-    }
-};
-
-int main() {
-    Wrapper3<Wrapper2<Wrapper1<OP1>>>::apply(1, 2);
-    std::cout << std::endl;
-    Wrapper1<Wrapper2<Wrapper3<OP2>>>::apply(1, 2);
-    return 0;
-}
-```
-
-## 6.12 Compile-Time Branching
-
-有时候，我们想为不同的类型编写不同的分支代码，而这些分支代码在不同类型中是不兼容的，例如，我要实现加法，对于`int`来说，用操作符`+`即可完成加法运算；对于`Foo`类型来说，要调用`add`方法才能实现加法运算。这个时候，普通的分支是无法实现的，实例化的时候会报错。这时候，我们可以使用`if constexpr`来实现编译期的分支
-
-```cpp
-#include <type_traits>
-
-struct Foo {
-    int val;
-};
-
-Foo add_foo(const Foo& left, const Foo& right) {
-    return Foo{left.val + right.val};
-}
-
-template <typename T>
-T add(const T& left, const T& right) {
-    if constexpr (std::is_same<T, int>::value) {
-        return left + right;
-    } else if constexpr (std::is_same<T, Foo>::value) {
-        return add_foo(left, right);
-    }
-}
-
-int main() {
-    Foo left, right;
-    add(left, right);
-    add(1, 2);
-    return 0;
-}
-```
-
-**类型相关的代码必须包含在`if constexpr/else if constexpr`的代码块中，错误示例如下，其本意是，当不为算数类型时，直接返回，但由于`left + right`不在上述静态分支内，因此实例化`Foo`的时候就会报错**
-
-```cpp
-#include <type_traits>
-
-template <typename T>
-T add(const T& left, const T& right) {
-    if constexpr (!std::is_arithmetic<T>::value) {
-        return {};
-    }
-    return left + right;
-}
-
-struct Foo {};
-
-int main() {
-    Foo left, right;
-    add(left, right);
-    return 0;
-}
-```
-
-## 6.13 Conditional Members
+## 6.8 Conditional Members
 
 有时候，我们希望模板类某些特化版本包含额外的字段，而默认情况下不包含这些额外字段
 
@@ -1414,7 +1575,7 @@ int main() {
 }
 ```
 
-## 6.14 type guard
+## 6.9 Type Guard
 
 [StarRocks-guard.h](https://github.com/StarRocks/starrocks/blob/main/be/src/util/guard.h)
 
@@ -1467,6 +1628,103 @@ int main() {
     check(u);
     // double d;
     // check(d);
+}
+```
+
+## 6.10 enum name
+
+There is an key observation inspired by [nameof](https://github.com/Neargye/nameof.git), the enum name information cannot be generated by template itself but can come from MACRO like `__PRETTY_FUNCTION__`.
+
+Also, we cannot know the right boundary of a enum. So we can predefine a large enough valeu as the common boundary of all enum classes.
+
+```cpp
+#include <iostream>
+#include <type_traits>
+
+#define ENUM_MIN 0
+#define ENUM_MAX 128
+
+template <typename Func, typename Arg>
+constexpr bool func_wrapper(Func&& func, Arg&& arg) {
+    if constexpr (std::is_void_v<std::invoke_result_t<Func, Arg>>) {
+        func(arg);
+        return false;
+    } else {
+        static_assert(std::is_same_v<bool, std::invoke_result_t<Func, Arg>>);
+        return func(arg);
+    }
+}
+
+template <typename T, T Begin, typename Func, T... Is>
+constexpr bool static_for_impl(Func&& f, std::integer_sequence<T, Is...> /*unused*/) {
+    // Support short-circuiting
+    return (func_wrapper(std::forward<Func>(f), std::integral_constant<T, Begin + Is>{}) || ...);
+}
+
+template <auto Begin, decltype(Begin) End, typename Func>
+constexpr bool static_for(Func&& f) {
+    using T = decltype(Begin);
+    return static_for_impl<T, Begin>(std::forward<Func>(f), std::make_integer_sequence<T, End - Begin>{});
+}
+
+template <typename E, E v>
+constexpr auto enum_name() {
+    // __PRETTY_FUNCTION__ is something like: constexpr auto gen_pretry_name() [with E = Color; E v = RED]
+    std::string_view name = std::string_view{__PRETTY_FUNCTION__, sizeof(__PRETTY_FUNCTION__) - 2};
+
+    for (std::size_t i = name.size(); i > 0; --i) {
+        if ((name[i - 1] < '0' || name[i - 1] > '9') && (name[i - 1] < 'a' || name[i - 1] > 'z') &&
+            (name[i - 1] < 'A' || name[i - 1] > 'Z') && (name[i - 1] != '_')) {
+            name.remove_prefix(i);
+            break;
+        }
+    }
+
+    if (name.size() > 0 &&
+        ((name[0] >= 'a' && name[0] <= 'z') || (name[0] >= 'A' && name[0] <= 'Z') || (name[0] == '_'))) {
+        return name;
+    }
+
+    // Invalid name.
+    return std::string_view{};
+}
+
+template <typename E>
+std::string_view enum_name_of(E v) {
+    using U = std::underlying_type_t<E>;
+    std::string_view res;
+    static_for<static_cast<U>(ENUM_MIN), static_cast<U>(ENUM_MAX)>([&](auto i) {
+        if (static_cast<U>(i) == static_cast<U>(v)) {
+            // Key point: v is not an constexpr, so we need to rebuild v of the same value from an constexpr
+            // And here, iterator variable 'i' is the constexpr we needed.
+            //
+            // Using static_cast may has error
+            // https://reviews.llvm.org/D130058, https://reviews.llvm.org/D131307
+            constexpr E c_v = __builtin_bit_cast(E, static_cast<U>(i));
+            res = enum_name<E, c_v>();
+            return true;
+        }
+        return false;
+    });
+
+    return res;
+}
+
+enum Color { RED, GREEN, BLUE };
+
+#define print(x) std::cout << #x << " -> '" << x << "'" << std::endl;
+
+int main() {
+    Color color = Color::RED;
+    print(enum_name_of(color));
+    color = Color::GREEN;
+    print(enum_name_of(color));
+    color = Color::BLUE;
+    print(enum_name_of(color));
+    color = static_cast<Color>(100);
+    print(enum_name_of(color));
+
+    return 0;
 }
 ```
 

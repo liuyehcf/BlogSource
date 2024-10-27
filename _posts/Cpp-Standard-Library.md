@@ -2062,6 +2062,7 @@ int main() {
 1. `std::pair`：本质上，它是`std::tuple`的一个特例
 1. `std::declval`：用来配合`decltype`进行类型推导，其实现原理如下：
     * `__declval`是一个用于返回指定类型的方法（只有定义无实现，因为只用于类型推导）
+    * `_Tp __declval(long);`版本用于`void`这种类型，因为`void`没有引用类型
     ```cpp
     /// @cond undocumented
     template <typename _Tp, typename _Up = _Tp&&>
@@ -2103,6 +2104,11 @@ int main() {
         return 0;
     }
     ```
+
+1. `std::integer_sequence`
+1. `std::make_integer_sequence`
+1. `std::integer_sequence`
+1. `std::make_integer_sequence`
 
 ## 30.1 How to return pair containing reference type
 

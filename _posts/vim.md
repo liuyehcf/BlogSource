@@ -1539,10 +1539,10 @@ nmap <c-j> <Plug>(coc-diagnostic-next)
 nmap <leader>rf <Plug>(coc-fix-current)
 
 " Automatically perform semantic range selection
-smap <c-s> <Plug>(coc-range-select)
-xmap <c-s> <Plug>(coc-range-select)
-smap <c-b> <Plug>(coc-range-select-backward)
-xmap <c-b> <Plug>(coc-range-select-backward)
+" [Option] + s, which is 「ß」
+" [Option] + b, which is 「∫」
+vmap ß <Plug>(coc-range-select)
+vmap ∫ <Plug>(coc-range-select-backward)
 
 " Code navigation mappings
 nmap <leader>rd <Plug>(coc-definition)
@@ -2540,10 +2540,10 @@ nmap <c-j> <Plug>(coc-diagnostic-next)
 nmap <leader>rf <Plug>(coc-fix-current)
 
 " Automatically perform semantic range selection
-smap <c-s> <Plug>(coc-range-select)
-xmap <c-s> <Plug>(coc-range-select)
-smap <c-b> <Plug>(coc-range-select-backward)
-xmap <c-b> <Plug>(coc-range-select-backward)
+" [Option] + s, which is 「ß」
+" [Option] + b, which is 「∫」
+vmap ß <Plug>(coc-range-select)
+vmap ∫ <Plug>(coc-range-select-backward)
 
 " Code navigation mappings
 nmap <leader>rd <Plug>(coc-definition)
