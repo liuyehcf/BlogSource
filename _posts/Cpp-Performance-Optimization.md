@@ -52,7 +52,7 @@ gcc -o main.c main.cpp -c -Wall -O3 -g
 objdump -drwCS main.c
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 void invoke_virtual(Base* base) {
@@ -131,7 +131,7 @@ BENCHMARK(BM_virtual);
 BENCHMARK_MAIN();
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 -----------------------------------------------------
@@ -272,7 +272,7 @@ BENCHMARK(BM_invoke_by_function_final_derive_ref);
 BENCHMARK_MAIN();
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 ---------------------------------------------------------------------------------
@@ -341,7 +341,7 @@ BENCHMARK(BM_add_with_copy);
 BENCHMARK_MAIN();
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 -----------------------------------------------------------
@@ -397,7 +397,7 @@ BENCHMARK(BM_assign_and_increment);
 BENCHMARK_MAIN();
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 ------------------------------------------------------------------
@@ -606,7 +606,7 @@ BENCHMARK(BM_sum_double_with_branch);
 BENCHMARK_MAIN();
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 --------------------------------------------------------------------
@@ -663,7 +663,7 @@ BENCHMARK(BM_mutex);
 BENCHMARK_MAIN();
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 -----------------------------------------------------
@@ -707,7 +707,7 @@ BENCHMARK(write_atomic<std::memory_order_seq_cst>);
 BENCHMARK_MAIN();
 ```
 
-**输出如下：**
+**Output:**
 
 * 下面这个结果是在`x86`平台上运行得到的。不同平台对于`std::memory_order_relaxed`的实现是有差异的，`x86`采用了更为严格的策略，在这种情况下，和非原子变量的写性能一样，基本可以推断，其他平台上原子变量和非原子变量的写性能，在无竞争的情况下，基本接近
 
@@ -767,7 +767,7 @@ BENCHMARK(BM_inline);
 BENCHMARK_MAIN();
 ```
 
-**输出如下：**
+**Output:**
 
 * `std::function`本质上是个函数指针的封装，当传递它时，编译器很难进行内联优化
 * `Lambda`本质上是传递某个匿名类的实例，有确定的类型信息，编译器可以很容易地进行内联优化
@@ -1137,7 +1137,7 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-**输出如下：**
+**Output:**
 
 * 当不启动干扰线程时，各个任务的效率相近
 * 当启动干扰线程时
@@ -1245,7 +1245,7 @@ BENCHMARK(BM_of_differenct_node)->Arg(8)->Arg(16)->Arg(32)->Arg(64)->Arg(128)->A
 BENCHMARK_MAIN();
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 ---------------------------------------------------------------------
@@ -1755,7 +1755,7 @@ gcc -o main.c main.cpp -c -Wall -O3 -g
 objdump -drwCS main.c
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 uint32_t add1(uint32_t* a, uint32_t* b) {
@@ -1854,7 +1854,7 @@ gcc -o main.c main.cpp -c -Wall -O3 -g
 objdump -drwCS main.c
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 uint32_t loop1(uint32_t* num1, uint32_t* num2) {
@@ -1966,7 +1966,7 @@ BENCHMARK(BM_sum_with_restrict);
 BENCHMARK_MAIN();
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 ------------------------------------------------------------------
@@ -2063,7 +2063,7 @@ BENCHMARK(BM_loop_with_restrict);
 BENCHMARK_MAIN();
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 -------------------------------------------------------------------
@@ -2157,7 +2157,7 @@ BENCHMARK(BM_loop_with_restrict);
 BENCHMARK_MAIN();
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 -------------------------------------------------------------------
@@ -2322,7 +2322,7 @@ BENCHMARK(BM_loop_with_restrict);
 BENCHMARK_MAIN();
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 ---------------------------------------------------------------------------------
@@ -2412,7 +2412,7 @@ BENCHMARK(BM_loop_with_restrict);
 BENCHMARK_MAIN();
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 -------------------------------------------------------------------
@@ -2485,7 +2485,7 @@ BENCHMARK(BM_loop_with_restrict);
 BENCHMARK_MAIN();
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 -------------------------------------------------------------------
@@ -2575,7 +2575,7 @@ BENCHMARK(BM_loop_with_restrict);
 BENCHMARK_MAIN();
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 -------------------------------------------------------------------
@@ -2640,7 +2640,7 @@ BENCHMARK(BM_loop_with_restrict);
 BENCHMARK_MAIN();
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 -------------------------------------------------------------------
@@ -2721,7 +2721,7 @@ BENCHMARK(BM_loop_with_float);
 BENCHMARK_MAIN();
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 ---------------------------------------------------------------
@@ -2879,7 +2879,7 @@ BENCHMARK(BM_compose_simd)->Arg(N0)->Arg(N1)->Arg(N2);
 BENCHMARK_MAIN();
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 -----------------------------------------------------------------
@@ -2967,7 +2967,7 @@ BENCHMARK_MAIN();
 
 我们可以看到`size=1/2/4/8`时会进行向量化的优化，而当`size=16/32/64/128/256`时，无法进行向量化的优化。因为测试机器的`CACHE_LINE_SIZE=64Byte`，对于`size=1/2/4/8`时，对应的`Obj`对象的大小是`4/8/16/32`，一次`load`操作可以加载2个以上的对象；而对于`size=16/32/64/128/256`时，对应的`Obj`对象的大小是`64/128/256/512/1024`，一次`load`操作无法加载更多的数据时，向量化就无法获得增益了，因此编译器不再使用向量化
 
-**输出如下：**
+**Output:**
 
 ```
 ------------------------------------------------------
@@ -3023,7 +3023,7 @@ BENCHMARK_WITH_ALIGN(256);
 BENCHMARK_MAIN();
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 ----------------------------------------------------------------
@@ -3132,7 +3132,7 @@ BM_cache(MEMORY);
 BENCHMARK_MAIN();
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 -----------------------------------------------------
@@ -3402,7 +3402,7 @@ BENCHMARK(BM_binary_search_with_prefetch_locality_3);
 BENCHMARK_MAIN();
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 ------------------------------------------------------------------------------------
@@ -3549,7 +3549,7 @@ BENCHMARK(BM_traverse_sorted_array_branchless);
 BENCHMARK_MAIN();
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 --------------------------------------------------------------------------------
@@ -3784,7 +3784,7 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-**输出如下：**
+**Output:**
 
 ```
 distinct=1, time=267ms
@@ -3797,7 +3797,150 @@ distinct=63, time=277ms
 distinct=64, time=56ms
 ```
 
-## 4.6 Reference
+## 4.6 code cache miss vs. large function
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#include <algorithm>
+#include <cmath>
+#include <random>
+#include <vector>
+
+#define BRANCH_1                                             \
+    std::vector<double> data(10000);                         \
+    for (int i = 0; i < data.size(); ++i) {                  \
+        data[i] = std::sin(i * 0.001) + std::cos(i * 0.002); \
+    }                                                        \
+    double sum = 0;                                          \
+    for (auto val : data) {                                  \
+        sum += std::log(std::abs(val) + 1);                  \
+    }                                                        \
+    benchmark::DoNotOptimize(sum);
+
+#define BRANCH_2                                                      \
+    const int N = 100;                                                \
+    std::vector<std::vector<int>> matrix1(N, std::vector<int>(N, 1)); \
+    std::vector<std::vector<int>> matrix2(N, std::vector<int>(N, 2)); \
+    std::vector<std::vector<int>> result(N, std::vector<int>(N, 0));  \
+                                                                      \
+    for (int i = 0; i < N; ++i) {                                     \
+        for (int j = 0; j < N; ++j) {                                 \
+            for (int k = 0; k < N; ++k) {                             \
+                result[i][j] += matrix1[i][k] * matrix2[k][j];        \
+            }                                                         \
+        }                                                             \
+    }                                                                 \
+    benchmark::DoNotOptimize(result);
+
+#define BRANCH_3                                                                    \
+    std::string text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "; \
+    text += "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";   \
+    int count = 0;                                                                  \
+    for (char c : text) {                                                           \
+        if (std::isalpha(c) != 0) {                                                 \
+            count += c;                                                             \
+        }                                                                           \
+    }                                                                               \
+    benchmark::DoNotOptimize(count);
+
+#define BRANCH_4                                                                                                  \
+    std::vector<int> numbers(10000);                                                                              \
+    for (int& number : numbers) {                                                                                 \
+        number = rand() % 10000;                                                                                  \
+    }                                                                                                             \
+    std::sort(numbers.begin(), numbers.end(), std::greater<>());                                                  \
+    numbers.erase(std::remove_if(numbers.begin(), numbers.end(), [](int x) { return x < 5000; }), numbers.end()); \
+                                                                                                                  \
+    int64_t sum = 0;                                                                                              \
+    for (auto num : numbers) {                                                                                    \
+        sum += num;                                                                                               \
+    }                                                                                                             \
+    benchmark::DoNotOptimize(sum);
+
+__attribute__((noinline)) void branch1() {
+    BRANCH_1
+}
+
+__attribute__((noinline)) void branch2() {
+    BRANCH_2
+}
+
+__attribute__((noinline)) void branch3() {
+    BRANCH_3
+}
+
+__attribute__((noinline)) void branch4() {
+    BRANCH_4
+}
+
+template <typename T>
+void small_function(T condition) {
+    if (condition == 1) {
+        branch1();
+    } else if (condition == 2) {
+        branch2();
+    } else if (condition == 3) {
+        branch3();
+    } else if (condition == 4) {
+        branch4();
+    }
+}
+
+template <typename T>
+void large_function(T condition) {
+    if (condition == 1) {
+        BRANCH_1
+    } else if (condition == 2) {
+        BRANCH_2
+    } else if (condition == 3) {
+        BRANCH_3
+    } else if (condition == 4) {
+        BRANCH_4
+    }
+}
+
+static void BM_small_function(benchmark::State& state) {
+    // get random number from 1 to 4
+    std::default_random_engine e;
+    std::uniform_int_distribution<int> u(1, 4);
+
+    for (auto _ : state) {
+        small_function(u(e));
+    }
+}
+
+static void BM_large_function(benchmark::State& state) {
+    // get random number from 1 to 4
+    std::default_random_engine e;
+    std::uniform_int_distribution<int> u(1, 4);
+
+    for (auto _ : state) {
+        large_function(u(e));
+    }
+}
+
+BENCHMARK(BM_small_function);
+BENCHMARK(BM_large_function);
+
+BENCHMARK_MAIN();
+```
+
+```sh
+gcc -o main main.cpp -lstdc++ -std=gnu++17 -O3 -lm -lbenchmark
+```
+
+**Output:**
+
+```
+------------------------------------------------------------
+Benchmark                  Time             CPU   Iterations
+------------------------------------------------------------
+BM_small_function     251161 ns       251152 ns         2875
+BM_large_function     264924 ns       264923 ns         2758
+```
+
+## 4.7 Reference
 
 * [Other Built-in Functions Provided by GCC](https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html)
 * [Branch-aware programming](https://stackoverflow.com/questions/32581644/branch-aware-programming)

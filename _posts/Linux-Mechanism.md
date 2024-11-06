@@ -1040,54 +1040,54 @@ rmdir /btrfs/
 
 # 2 cgroup
 
-**`cgroup`和`namespace`类似，也是将进程进行分组，但它的目的和`namespace`不一样，`namespace`是为了隔离进程组之间的资源（每个进程都有一个隔离的资源视图），而`cgroup`是为了对一组进程进行统一的资源监控和限制**
+**`cgroup`, similar to `namespace`, also groups processes, but its purpose differs from `namespace`. `namespace` is meant to isolate resources between process groups (each process has an isolated resource view), while `cgroup` is for unified resource monitoring and limitation for a group of processes.**
 
 ## 2.1 hierarchy
 
-**一个`hierarchy`可以理解为一棵`cgroup`树，树的每个`节点`就是一个`进程组`，每棵树都会与零到多个`subsystem`关联**。在一颗树里面，会包含Linux系统中的所有进程，但每个进程只能属于一个节点（进程组）。系统中可以有很多颗`cgroup`树，每棵树都和不同的`subsystem`关联，一个进程可以属于多颗树，即一个进程可以属于多个进程组，只是这些进程组和不同的`subsystem`关联。目前Linux支持12种`subsystem`，如果不考虑不与任何`subsystem`关联的情况（`systemd`就属于这种情况），Linux里面最多可以建12颗`cgroup`树，每棵树关联一个`subsystem`，当然也可以只建一棵树，然后让这棵树关联所有的`subsystem`。当一颗`cgroup`树不和任何`subsystem`关联的时候，意味着这棵树只是将进程进行分组，至于要在分组的基础上做些什么，将由应用程序自己决定，`systemd`就是一个这样的例子
+**A `hierarchy` can be understood as a `cgroup` tree, where each `node` in the tree represents a `process group`, and each tree is associated with zero or more `subsystems`.** Within a single tree, all processes in the Linux system are included, but each process can belong to only one node (process group). There can be many `cgroup` trees in the system, each associated with different `subsystems`. A process can belong to multiple trees, meaning a process can belong to multiple process groups, but these process groups are associated with different `subsystems`. Currently, Linux supports 12 types of `subsystems`, and if we exclude cases where no `subsystem` is associated (such as `systemd`), Linux can have a maximum of 12 `cgroup` trees, each associated with one `subsystem`. Of course, it is also possible to create only one tree and associate it with all `subsystems`. When a `cgroup` tree is not associated with any `subsystem`, it means that this tree only groups processes, and what to do with these groups is left up to the application itself. `systemd` is an example of this kind of usage.
 
 ## 2.2 Subsystem
 
-**一个`subsystem`就是一个内核模块，他被关联到一颗`cgroup`树之后，就会在树的每个节点（进程组）上做具体的操作。**`subsystem`经常被称作`resource controller`，因为它主要被用来调度或者限制每个进程组的资源，但是这个说法不完全准确，因为有时我们将进程分组只是为了做一些监控，观察一下他们的状态，比如`perf_event subsystem`。到目前为止，Linux支持12种`subsystem`，比如限制CPU的使用时间，限制使用的内存，统计CPU的使用情况，冻结和恢复一组进程等，后续会对它们一一进行介绍
+**A `subsystem` is a kernel module that, once associated with a `cgroup` tree, performs specific actions on each node (process group) in the tree.** `Subsystems` are often called `resource controllers` because they are mainly used to allocate or limit the resources of each process group. However, this term is not entirely accurate, as sometimes we group processes simply for monitoring purposes, such as the `perf_event subsystem`. So far, Linux supports 12 types of `subsystems`, for example, limiting CPU usage time, limiting memory usage, tracking CPU usage, freezing and resuming a group of processes, and so on. These subsystems will be introduced one by one later.
 
-**以下是12种`cgroup`子系统**
+**The following are the 12 `cgroup` subsystems**
 
-1. `blkio`：限制`cgroup`访问块设备的`IO`速度
-1. **`cpu`：用来限制`cgroup`的`CPU`使用率**
-1. `cpuacct`：统计`cgroup`的`CPU`的使用率
-1. `cpuset`：绑定`cgroup`到指定`CPUs`和`NUMA`节点
-1. `devices`：限制`cgroup`创建（`mknod`）和访问设备的权限
-1. `freezer`：`suspend`和`restore`一个`cgroup`中的所有进程
-1. `hugetlb`：限制`cgroup`的`huge pages`的使用量
-1. **`memory`：统计和限制`cgroup`的内存的使用率，包括`process memory`、`kernel memory`、和`swap`**
-1. `net_cls`：将一个`cgroup`中进程创建的所有网络包加上一个`classid`标记，用于`tc`和`iptables`。只对发出去的网络包生效，对收到的网络包不起作用
-1. `net_prio`：针对每个网络接口设置`cgroup`的访问优先级
-1. `perf_event`：对`cgroup`进行性能监控
-1. **`pids`：限制一个`cgroup`及其子孙`cgroup`中的总进程数**
+1. `blkio`: Limits `cgroup` block device `IO` speeds
+1. **`cpu`: Used to limit `cgroup` CPU usage**
+1. `cpuacct`: Tracks `cgroup` CPU usage
+1. `cpuset`: Binds `cgroup` to specified `CPUs` and `NUMA` nodes
+1. `devices`: Limits `cgroup` permissions for creating (via `mknod`) and accessing devices
+1. `freezer`: `suspend` and `restore` all processes in a `cgroup`
+1. `hugetlb`: Limits `cgroup` use of huge pages
+1. **`memory`: Tracks and limits `cgroup` memory usage, including `process memory`, `kernel memory`, and `swap`**
+1. `net_cls`: Tags all network packets created by processes in a `cgroup` with a `classid` for use with `tc` and `iptables`. Only affects outgoing packets, not incoming ones
+1. `net_prio`: Sets `cgroup` access priority for each network interface
+1. `perf_event`: Monitors the performance of a `cgroup`
+1. **`pids`: Limits the total number of processes within a `cgroup` and its descendant `cgroups`**
 
-**可以通过`cat /proc/cgroups`或者`mount -t cgroup`查看系统支持的子系统**
+**You can check the subsystems supported by the system by running `cat /proc/cgroups` or `mount -t cgroup`.**
 
 ### 2.2.1 CPU Subsystem
 
-cpu子系统可以调度`cgroup`对cpu的获取量。可用以下两个调度程序来管理对cpu资源的获取
+The `cpu` subsystem can control the amount of CPU access for `cgroups`. The following two schedulers can be used to manage access to CPU resources:
 
-* 完全公平调度程序（CFS）：一个比例分配调度程序，可根据任务优先级∕权重或cgroup分得的份额，在cgroups间按比例分配cpu时间（cpu带宽）
-* 实时调度程序（RT）：一个任务调度程序，可对实时任务使用cpu的时间进行限定
+* Completely Fair Scheduler (CFS): A proportional allocation scheduler that distributes CPU time (CPU bandwidth) among `cgroups` proportionally based on task priority/weight or the share assigned to each `cgroup`.
+* Real-Time Scheduler (RT): A task scheduler that limits the CPU usage time for real-time tasks.
 
-**我们可以通过`cpu.cfs_period_us`、`cpu.cfs_quota_us`这两个参数来控制cpu的使用上限**
+**We can control the upper limit of CPU usage through the parameters `cpu.cfs_period_us` and `cpu.cfs_quota_us`.**
 
-1. `cpu.cfs_period_us`：该参数的单位是微秒，用于定义cpu调度周期的带宽（时间长度）
-1. `cpu.cfs_quota_us`：该参数的单位是微秒，用于定义在一个cpu调度周期中，可以使用的cpu的带宽
+1. `cpu.cfs_period_us`: This parameter, in microseconds, defines the bandwidth (duration) of the CPU scheduling period.
+1. `cpu.cfs_quota_us`: This parameter, also in microseconds, defines the CPU bandwidth that can be used within one CPU scheduling period.
 
-**`cpu.cfs_quota_us`与`cpu.cfs_period_us`的比值，就是cpu的占用比。但是，在保证比例不变的情况下，`cpu.cfs_period_us`数值的大小也会影响进程实际的行为**
+**The ratio of `cpu.cfs_quota_us` to `cpu.cfs_period_us` represents the CPU usage ratio (it can be greater than 1, indicating the number of cores used in a multi-core machine). However, while maintaining the same ratio, the actual behavior of processes can also be affected by the value of `cpu.cfs_period_us`.**
 
-* 若`cpu.cfs_period_us`非常大，比如`1s`，然后占用比是20%，进程的行为可能就是，前`0.2s`满负荷运行，后面`0.8s`阻塞，停滞的感觉会比较强
-* 若`cpu.cfs_period_us`非常小，比如`10ms`，然后占用比是20%，进程的行为可能就是，前`2ms`满负荷运行，后面`8ms`阻塞，停滞的感觉会比较弱，相对较平顺
+* If `cpu.cfs_period_us` is very large, for example, `1s`, and the usage ratio is 20%, the process behavior may be full-load operation for the first `0.2s` and blocking for the following `0.8s`, resulting in a stronger sense of stalling.
+* If `cpu.cfs_period_us` is very small, for example, `10ms`, and the usage ratio is 20%, the process behavior might be full-load operation for the first `2ms` and blocking for the next `8ms`, giving a weaker sense of stalling and a relatively smoother experience.
 
-**下面进行验证**
+**Verification:**
 
 ```sh
-# 终端A：编写测试程序
+# Terminal A
 cat > test_cpu_subsystem.c << 'EOF'
 #include <stdio.h>
 void main()
@@ -1102,56 +1102,56 @@ EOF
 
 gcc -o test_cpu_subsystem test_cpu_subsystem.c
 
-# 终端A：运行该程序
+# Terminal A: Run program
 ./test_cpu_subsystem
 
-# 终端B：在cpu子系统所在的层级结构上创建一个新的节点（目录）
+# Terminal B: Create a new node (directory) in the hierarchy structure of the CPU subsystem
 mkdir /sys/fs/cgroup/cpu/test_cpu_subsystem
 
-# cpu.cfs_period_us设置成1s，cpu.cfs_quota_us设置成0.2s，占比是20%
+# Set `cpu.cfs_period_us` to 1s and `cpu.cfs_quota_us` to 0.2s, giving a ratio of 20%
 echo 1000000 > /sys/fs/cgroup/cpu/test_cpu_subsystem/cpu.cfs_period_us
 echo 200000 > /sys/fs/cgroup/cpu/test_cpu_subsystem/cpu.cfs_quota_us
 pgrep -f test_cpu_subsystem > /sys/fs/cgroup/cpu/test_cpu_subsystem/tasks
-# 此时可以发现，在终端A中，输出的速率有明显顿挫，刷屏0.2s后，会停0.8s，然后循环此过程
+# At this point, you can observe in Terminal A that there is a noticeable stuttering in the output rate. It runs for 0.2s, pauses for 0.8s, and then repeats this cycle.
 
-# cpu.cfs_period_us设置成10ms，cpu.cfs_quota_us设置成2ms，占比也是20%
+# Set `cpu.cfs_period_us` to 10ms and `cpu.cfs_quota_us` to 2ms, with the same ratio of 20%
 echo 10000 > /sys/fs/cgroup/cpu/test_cpu_subsystem/cpu.cfs_period_us
 echo 2000 > /sys/fs/cgroup/cpu/test_cpu_subsystem/cpu.cfs_quota_us
-# 此时可以发现，在终端A中，刷屏比较平顺
+# Now, you can observe in Terminal A that the output is much smoother.
 
-# 终端B：停止进程，并删除测试cgroup节点
+# Terminal B: Stop the process and delete the test `cgroup` node
 pkill -f test_cpu_subsystem
 cgdelete cpu:test_cpu_subsystem
 ```
 
-**我们可以通过`cpu.rt_period_us`、`cpu.rt_runtime_us`这两个参数，用来限制某个任务的cpu限制**
+**We can use the parameters `cpu.rt_period_us` and `cpu.rt_runtime_us` to set CPU limits for specific tasks.**
 
-* `cpu.rt_period_us`：该参数的单位是微秒，用于定义在某个时间段中，cgroup对cpu资源访问重新分配的时间周期
-* `cpu.rt_runtime_us`：该参数的单位是微秒，用于定义在某个时间段中，cgroup中的任务对cpu资源的最长连续访问时间（建立这个限制是为了防止一个cgroup中的任务独占cpu时间）
+* `cpu.rt_period_us`: This parameter, in microseconds, defines the period for reallocation of CPU resources within a `cgroup` over a specified time frame.
+* `cpu.rt_runtime_us`: This parameter, in microseconds, defines the maximum continuous CPU access time for tasks within a `cgroup` during a specified period (this limit is established to prevent tasks within one `cgroup` from monopolizing CPU time).
 
-**`cpu.stat`记录了cpu时间统计**
+**`cpu.stat` records CPU time statistics**
 
-* `nr_periods`：经过的cpu调度周期的个数
-* `nr_throttled`：cgrpu中任务被节流的次数（耗尽所有配额时间后，被禁止运行）
-* `throttled_time`：`cgroup`中任务被节流的时间总量
+* `nr_periods`: The number of CPU scheduling periods that have passed.
+* `nr_throttled`: The number of times tasks in the `cgroup` have been throttled (prevented from running after exhausting all quota time).
+* `throttled_time`: The total time tasks in the `cgroup` have been throttled.
 
-**若我们想控制两个`cgroup`的相对比例，可以通过配置`cpu.shares`来实现。例如，第一个`cgroup`设置成200，第二个`cgroup`设置成100，那么前者可使用的cpu时间是后者的两倍**
+**If we want to control the relative CPU time ratio between two `cgroups`, we can use `cpu.shares`. For example, if the first `cgroup` is set to 200 and the second to 100, then the former can access twice the CPU time of the latter.**
 
-**当一个进程被添加到某个cgroup中的task中后，由该进程创建的线程都自动属于这个cgroup。换言之，就是在之前创建的那些线程，并不会自动属于这个cgroup！！！**
+**When a process is added to a `cgroup`'s task list, any threads created by that process will automatically belong to this `cgroup`. In other words, previously created threads do not automatically belong to this `cgroup`!!!**
 
 ## 2.3 Kernel Implementation
 
 ![cgroup_struct](/images/Linux-Mechanism/cgroup_struct.png)
 
-上面这个图从整体结构上描述了进程与`cgroup`之间的关系。最下面的`P`代表一个进程。每一个进程的描述符中有一个指针指向了一个辅助数据结构`css_set`（`cgroups subsystem set`）。指向某一个`css_set`的进程会被加入到当前`css_set`的进程链表中。一个进程只能隶属于一个`css_set`，一个`css_set`可以包含多个进程，隶属于同一`css_set`的进程受到同一个`css_set`所关联的资源限制
+The diagram above describes the relationship between processes and `cgroups` in terms of overall structure. The `P` at the bottom represents a process. In each process descriptor, there is a pointer to an auxiliary data structure called `css_set` (`cgroups subsystem set`). Processes pointing to a specific `css_set` are added to the process list of that `css_set`. A process can only belong to one `css_set`, while a `css_set` can contain multiple processes. Processes within the same `css_set` are subject to the resource limits associated with that `css_set`.
 
-上图中的`M×N Linkage`说明的是`css_set`通过辅助数据结构可以与层级结构的`节点`进行多对多的关联。但是`cgroup`不允许`css_set`同时关联同一个层级结构下的多个`节点`，这是因为`cgroup`对同一组进程的同一种资源不允许有多个限制配置
+The `M×N Linkage` in the diagram illustrates that `css_set` can be associated with nodes in the hierarchy structure through an auxiliary data structure in a many-to-many relationship. However, `cgroup` does not allow a `css_set` to be linked to multiple nodes within the same hierarchy, as `cgroup` does not permit multiple resource limit configurations for the same type of resource on the same group of processes.
 
-一个`css_set`关联多个层级结构的`节点`时，表明需要对当前`css_set`下的进程进行多种资源的控制。而一个层级结构的`节点`关联多个`css_set`时，表明多个`css_set`下的进程列表受到同一份资源的相同限制
+When a `css_set` is associated with nodes across multiple hierarchies, it indicates that the processes in the current `css_set` need to be controlled for multiple resources. Conversely, when a node in a hierarchy is associated with multiple `css_sets`, it means that the process lists under these `css_sets` are subject to the same resource limitations.
 
 ```c
 struct task_struct {
-    /* ... 省略无关定义 */
+    /* ... Omitted */
 
 #ifdef CONFIG_CGROUPS
     /* Control Group info protected by css_set_lock */
@@ -1160,7 +1160,7 @@ struct task_struct {
     struct list_head cg_list;
 #endif
 
-    /* ... 省略无关定义 */
+    /* ... Omitted */
 };
 
 struct css_set {
@@ -1301,14 +1301,14 @@ struct cgroup {
 
 ## 2.4 docker and cgroup
 
-**2种`cgroup`驱动**
+**`cgroup driver`:**
 
 1. `system cgroup driver`
 1. `cgroupfs cgroup driver`
 
 ## 2.5 kubernetes and cgroup
 
-在k8s中，以pod为单位进行资源限制（充分利用了`cgroup`的`hierarchy`），对应的目录为`/sys/fs/cgroup/<resource type>/kubepods.slice`
+In Kubernetes, resources are limited at the pod level (making full use of the `cgroup` `hierarchy`), with the corresponding directory located at `/sys/fs/cgroup/<resource type>/kubepods.slice`.
 
 ## 2.6 cgroup Command Line
 
@@ -1316,7 +1316,68 @@ struct cgroup {
 yum install -y libcgroup libcgroup-tools
 ```
 
-## 2.7 Reference
+**Examples:**
+
+* `sudo cgcreate -g cpu,memory:/my_cgroup`
+    * Then config cgroup in path `/sys/fs/cgroup/my_cgroup`
+* `sudo cgexec -g cpu,memory:/my_cgroup <command>`
+
+## 2.7 Cgroup2
+
+Here are the key differences between `cgroup v1` and `cgroup v2`:
+
+1. **Unified Hierarchy**: 
+   * **cgroup v1** allows multiple hierarchies, with different controllers mounted to separate hierarchies, which can create complexity and inconsistencies in resource limits.
+   * **cgroup v2** uses a single unified hierarchy where all controllers are mounted together, simplifying management and resource allocation.
+1. **Simplified Resource Distribution**: 
+   * In **cgroup v1**, each subsystem could have a different hierarchy, resulting in processes belonging to different cgroups across subsystems, complicating resource distribution.
+   * **cgroup v2** enforces consistent resource distribution by having all controllers in the same hierarchy, ensuring that resources are allocated more predictably and effectively.
+1. **Improved Resource Control**: 
+   * **cgroup v2** offers enhanced features for CPU and I/O management, like the `io.weight` attribute, which replaces the older `blkio` subsystem for I/O control. This allows finer-grained control over resources.
+   * CPU throttling in **cgroup v2** is managed by `cpu.max` instead of `cpu.cfs_period_us` and `cpu.cfs_quota_us` from **cgroup v1**, simplifying CPU limit configuration.
+1. **Better Memory Management**: 
+   * **cgroup v2** provides a single memory controller that combines `memory` and `memsw` (swap) control, which in **cgroup v1** were separate. This unified memory control simplifies memory management.
+1. **Process Management Enhancements**:
+   * **cgroup v2** introduces the `cgroup.procs` file, which lists only the PIDs of the immediate child processes in each cgroup, while **cgroup v1** uses `tasks`, which includes all threads and child processes.
+   * With **cgroup v2**, thread granularity is no longer supported directly, as all threads of a process belong to the same cgroup by default, making process management more straightforward.
+1. **Stricter Rules for Nested Control**:
+   * In **cgroup v2**, child cgroups can inherit resource limits set by parent cgroups, enforcing stricter hierarchical resource control. This is beneficial for containerized environments like Kubernetes where resource limits are defined hierarchically.
+   * **cgroup v1** does not enforce this as strictly, which can lead to misconfigurations and unexpected behavior in nested control.
+1. **Compatibility and Adoption**:
+   * **cgroup v1** is still widely used for legacy applications, but **cgroup v2** has become the default in many modern distributions, especially as container runtimes and orchestrators like Kubernetes adopt it for better resource control.
+
+These enhancements make **cgroup v2** more efficient and easier to use in modern resource-constrained environments, especially with containerized applications.
+
+In `cgroup v2`, the CPU subsystem configuration is streamlined, offering a simplified way to control CPU resource allocation. Here are the main parameters used to configure CPU limits in `cgroup2`:
+
+1. **cpu.max**:
+    * `cpu.max` controls the maximum CPU bandwidth available to the `cgroup`.
+    * It accepts two values: `quota` and `period`, formatted as `quota period`.
+        * `quota`: The maximum amount of time in microseconds that a `cgroup` can use CPU in each period. If set to "max", there is no limit.
+        * `period`: The time window in microseconds for each quota cycle. The default is `100000` (100ms).
+    * Example: `echo "50000 100000" > /sys/fs/cgroup/<path>/cpu.max`
+        * This setting allows the `cgroup` to use up to 50ms of CPU time in every 100ms period, effectively capping it at 50% CPU usage.
+1. **cpu.weight**:
+    * `cpu.weight` specifies the relative weight of CPU time the `cgroup` should receive when compared to other `cgroups`.
+    * It accepts values between `1` and `10000`, with `100` as the default. A higher value gives the `cgroup` more CPU time relative to other `cgroups` with lower weights.
+    * Example: `echo "200" > /sys/fs/cgroup/<path>/cpu.weight`
+        * This sets the `cgroup` to have twice the default CPU share.
+1. **cpu.pressure**:
+    * `cpu.pressure` provides CPU pressure information, indicating how much CPU demand exceeds supply in the `cgroup`. It is a read-only metric that helps monitor how frequently tasks are waiting for CPU time.
+    * It contains three values:
+        * `some`: Percentage of time at least one task is delayed by CPU pressure.
+        * `full`: Percentage of time all tasks are delayed by CPU pressure.
+        * `avg10`, `avg60`, `avg300`: Average CPU pressure over 10, 60, and 300 seconds.
+    * Example: `cat /sys/fs/cgroup/<path>/cpu.pressure`
+        * This gives insight into CPU resource contention within the `cgroup`.
+
+## 2.8 FAT
+
+### 2.8.1 Will cpu subsystem limit cpu load as well?
+
+The load average is calculated based on the number of tasks waiting for CPU time, but with cgroup limitations, the kernel scheduler keeps most of the threads in a throttled state, so they are not actively contending for CPU in a way that contributes significantly to system-wide load.
+
+## 2.9 Reference
 
 * [【docker 底层知识】cgroup 原理分析](https://blog.csdn.net/zhonglinzhang/article/details/64905759)
 * [Linux Cgroup 入门教程：基本概念](https://fuckcloudnative.io/posts/understanding-cgroups-part-1-basics/)

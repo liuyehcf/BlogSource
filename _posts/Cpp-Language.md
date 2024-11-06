@@ -6162,8 +6162,9 @@ For given type T, you can use:
 1. `T&`: The function may modify this parameter.
 1. `T`: A copy of the parameter. (Not recommend)
 1. `T*`: Used when this parameter is treated as output of the function.
+1. `std::shared_ptr<T>`/`std::unique_ptr<T>`: Used when the lifetime of object should be extended or transfered.
 
-### 10.1.1 How to Choose Function Parameter Type
+### 10.1.1 How to Choose Constructor Parameter Type
 
 Things change when it come to constructor:
 

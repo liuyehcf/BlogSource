@@ -17,95 +17,95 @@ categories:
 
 ## 1.1 What is Metaprogramming
 
-**元编程（`metaprogramming`）通过操作程序实体（`program entity`），在编译时（`compile time`）计算出运行时（`runtime`）需要的常数、类型、代码的方法**
+**Metaprogramming calculates the constants, types, and code needed at runtime by manipulating program entities at compile time.**
 
-一般的编程是通过直接编写程序（`program`），通过编译器编译（`compile`），产生目标代码，并用于运行时执行。与普通的编程不同，元编程则是借助语言提供的模板（`template`）机制，通过编译器推导（`deduce`），在编译时生成程序。元编程经过编译器推导得到的程序，再进一步通过编译器编译，产生最终的目标代码
+In general programming, a program is directly written, compiled by a compiler, which produces target code for execution at runtime. Unlike regular programming, metaprogramming uses the template mechanism provided by the language, allowing the compiler to deduce and generate programs at compile time. The program deduced by metaprogramming is then further compiled by the compiler to produce the final target code.
 
-因此，元编程又被成为两级编程（`two-level programming`），生成式编程（`generative programming`）或模板元编程（`template metaprogramming`）
+Thus, metaprogramming is also known as two-level programming, generative programming, or template metaprogramming.
 
 ## 1.2 The Position of Metaprogramming in C++
 
-**`C++`语言 = C语言的超集 + 抽象机制 + 标准库**
+**`C++` Language = Superset of C Language + Abstraction Mechanisms + Standard Library**
 
-**`C++`的抽象机制（`abstraction mechanisms`）主要有两种：**
+**`C++` has two main abstraction mechanisms:**
 
-1. 面向对象编程（`object-oriented programming`）
-1. 模板编程（`template programming`）
+1. Object-Oriented Programming
+1. Template Programming
 
-为了实现面向对象编程，`C++`提供了类（`class`），用`C++`的已有类型（`type`）构造出新的类型。而在模板编程方面，`C++`提供了模板（`template`），以一种直观的方式表示通用概念（`general concept`）
+To support object-oriented programming, `C++` provides classes that allow new types to be constructed from existing types in `C++`. In the area of template programming, `C++` provides templates, which represent general concepts in an intuitive way.
 
-**模板编程的应用主要有两种：**
+**There are two main applications of template programming:**
 
-1. 泛型编程（`generic programming`）
-1. 元编程（`meta-programming`）
+1. Generic Programming
+1. Metaprogramming
 
-前者注重于通用概念的抽象，设计通用的类型或算法（`algorithm`），不需要过于关心编译器如何生成具体的代码
+The former focuses on the abstraction of general concepts, designing generic types or algorithms without needing to be overly concerned about how the compiler generates specific code.
 
-而后者注重于设计模板推导时的选择（`selection`）和迭代（`iteration`），通过模板技巧设计程序
+The latter focuses on selection and iteration during template deduction, designing programs using template techniques.
 
 ## 1.3 History of C++ Metaprogramming
 
 ## 1.4 Language Support for Metaprogramming
 
-`C++`的元编程主要依赖于语言提供的模板机制。除了模板，现代`C++`还允许使用`constexpr`函数进行常量计算。由于`constexpr`函数的功能有限，递归调用层数和计算次数还受编译器限制，而且编译性能较差，所以目前的元编程程序主要基于模板。**这一部分主要总结`C++`模板机制相关的语言基础，包括狭义的模板和泛型`lambda`表达式**
+`C++` metaprogramming primarily relies on the template mechanism provided by the language. In addition to templates, modern `C++` also allows the use of `constexpr` functions for constant calculations. Due to the limited functionality of `constexpr` functions, recursion depth and the number of calculations are still constrained by the compiler, and compile-time performance is relatively poor. Therefore, most current metaprogramming programs are based on templates. **This section mainly summarizes the foundational language features related to the `C++` template mechanism, including narrowly defined templates and generic `lambda` expressions.**
 
 ### 1.4.1 Narrow Templates
 
-**目前最新的`C++`将模板分成了4类：**
+**The latest version of `C++` currently divides templates into four categories:**
 
-1. 类模板（`class template`）
-1. 函数模板（`function template`）
-1. 别名模板（`alias template`）
-1. 变量模板（`variable template`）
+1. Class templates
+1. Function templates
+1. Alias templates
+1. Variable templates
 
-前两者能产生新的类型，属于类型构造器（`type constructor`）；而后两者是`C++`为前两者补充的简化记法，属于语法糖（`syntactic sugar`）
+The first two can generate new types and are considered type constructors, while the latter two are shorthand notations added by `C++` to simplify the former.
 
-类模板和函数模板分别用于定义具有相似功能的类和函数（`function`），是泛型中对类型和算法的抽象。在标准库中，容器（`container`）和函数都是类模板和函数模板的应用
+Class templates and function templates are used to define classes and functions with similar functionalities, abstracting types and algorithms in generic programming. In the standard library, containers and functions are applications of class templates and function templates.
 
-别名模板和变量模板分别在`C++ 11`和`C++ 14`引入，分别提供了具有模板特性的类型别名（`type alias`）和常量（`constant`）的简记方法。前者类模板的嵌套类等方法实现，后者则可以通过constexpr函数、类模板的静态成员、函数模板的返回值等方法实现。例如，`C++ 14`中的别名模板`std::enable_if_t<T>`等价于`typename std::enable_if<T>::type`，`C++ 17`中的变量模板`std::is_same<T, U>`等价于`std::is_same<T, U>::value`。尽管这两类模板不是必须的，但一方面可以增加程序的可读性，另一方面可以提高模板的编译性能
+Alias templates and variable templates were introduced in `C++11` and `C++14`, respectively, providing shorthand notation for type aliases and constants with template features. The former can implement methods such as nested classes in class templates, while the latter can be achieved through `constexpr` functions, static members of class templates, and function template return values. For example, the alias template `std::enable_if_t<T>` in `C++14` is equivalent to `typename std::enable_if<T>::type`, and the variable template `std::is_same<T, U>` in `C++17` is equivalent to `std::is_same<T, U>::value`. Although these two types of templates are not necessary, they can enhance code readability and improve template compilation performance.
 
-**`C++`中的模板参数（`template parameter/argument`）可以分为三种：**
+**There are three types of template parameters in `C++`:**
 
-1. 值参数
-1. 类型参数
-1. 模板参数
+1. Value parameters
+1. Type parameters
+1. Template parameters
 
-从`C++ 11`开始，`C++`支持了变长模板（`variadic template`）：模板参数的个数可以不确定，变长参数折叠为一个参数包（`parameter pack`），使用时通过编译时迭代，遍历各个参数。标准库中的元组（`tuple`），`std::tuple`就是变长模板的一个应用（元组的类型参数是不定长的，可以用`template<typename... Ts>`匹配）
+Since `C++11`, `C++` has supported variadic templates, where the number of template parameters can be indefinite. Variadic parameters are folded into a parameter pack, and during usage, each parameter is iterated at compile time. The standard library's tuple, `std::tuple`, is an application of variadic templates (the tuple's type parameters are variable-length and can be matched using `template<typename... Ts>`).
 
-尽管模板参数也可以当作一般的类型参数进行传递（模板也是一个类型），但之所以单独提出来，是因为它可以实现对传入模板的参数匹配。代码8使用`std::tuple`作为参数，然后通过匹配的方法，提取`std::tuple`内部的变长参数
+Although template parameters can be passed as general type parameters (a template is also a type), they are distinguished separately because they allow parameter matching for the passed-in template. Code 8 uses `std::tuple` as a parameter, and through matching, extracts the variadic parameters inside `std::tuple`.
 
-特化（`specialization`）类似于函数的重载（`overload`），即给出全部模板参数取值（完全特化）或部分模板参数取值（部分特化）的模板实现。实例化（`instantiation`）类似于函数的绑定（`binding`），是编译器根据参数的个数和类型，判断使用哪个重载的过程。由于函数和模板的重载具有相似性，所以他们的参数重载规则（`overloading rule`）也是相似的
+Specialization is similar to function overloading, providing a template implementation for all template parameter values or some template parameter values. Instantiation is akin to function binding, where the compiler determines which overload to use based on the number and type of parameters. Since functions and templates have similarities in overloading, their parameter overloading rules are also similar.
 
 ### 1.4.2 Generic Lambda Expressions
 
-由于`C++`不允许在函数内定义模板，有时候为了实现函数内的局部特殊功能，需要在函数外专门定义一个模板。一方面，这导致了代码结构松散，不易于维护；另一方面，使用模板时，需要传递特定的上下文（`context`），不易于复用。（类似于C语言里的回调机制，不能在函数内定义回调函数，需要通过参数传递上下文。）
+Since `C++` does not allow templates to be defined within functions, sometimes it's necessary to define a template outside a function to achieve specific local functionality within the function. On one hand, this leads to a loose code structure, making maintenance difficult; on the other, using templates requires passing specific context, which reduces reusability (similar to the callback mechanism in C, where a callback function cannot be defined within a function and must pass context through parameters).
 
-为此，`C++ 14`引入了泛型`lambda`表达式（`generic lambda expression`）：一方面，能像`C++ 11`引入的`lambda`表达式一样，在函数内构造闭包（`closure`），避免在函数外定义函数内使用的局部功能；另一方面，能实现函数模板的功能，允许传递任意类型的参数
+To address this, `C++14` introduced generic lambda expressions, which, on one hand, allow constructing closures within functions like the `lambda` expressions introduced in `C++11`, avoiding the need to define local functionality used within the function outside the function. On the other hand, they enable the functionality of function templates, allowing parameters of any type to be passed.
 
 # 2 Basic Operations of Metaprogramming
 
-`C++`的模板机制仅仅提供了纯函数（`pure functional`）的方法，即不支持变量，且所有的推导必须在编译时完成。但是`C++`中提供的模板是图灵完备（`turing complete`）的，所以可以使用模板实现完整的元编程
+The template mechanism in `C++` only provides a pure functional approach, meaning it does not support variables, and all deduction must be completed at compile time. However, the templates provided in `C++` are Turing complete (`turing complete`), so it is possible to use templates to implement full metaprogramming.
 
-元编程的基本演算规则（`calculus rule`）有两种：
+There are two basic calculus rules for metaprogramming:
 
-1. 编译时测试（`compile-time test`）
-1. 编译时迭代（`compile-time iteration`）
+1. Compile-time testing
+1. Compile-time iteration
 
-分别实现了控制结构（`control structure`）中的选择（`selection`）和迭代（`iteration`）。基于这两种基本的演算方法，可以完成更复杂的演算
+These respectively implement selection and iteration in control structures. Based on these two basic calculus methods, more complex calculations can be achieved.
 
-另外，元编程中还常用模板参数传递不同的策略（`policy`），从而实现依赖注入（`dependency injection`）和控制反转（`Inversion of Control`）。例如，`std::vector<typename T, typename Allocator = std::allocator<T>>`允许传递`Allocator`实现自定义内存分配
+Additionally, metaprogramming often uses template parameters to pass different policies, allowing for dependency injection and inversion of control. For example, `std::vector<typename T, typename Allocator = std::allocator<T>>` allows passing an `Allocator` to implement custom memory allocation.
 
 ## 2.1 Compile-Time Testing
 
-编译时测试相当于面向过程编程中的选择语句（`selection statement`），可以实现`if-else/switch`的选择逻辑
+Compile-time testing is equivalent to the selection statement in procedural programming, allowing the implementation of `if-else/switch` selection logic.
 
-在`C++ 17`之前，编译时测试是通过模板的实例化和特化实现的，每次找到最特殊的模板进行匹配。而`C++ 17`提出了使用`constexpr-if`的编译时测试方法
+Before `C++17`, compile-time testing was achieved through template instantiation and specialization, where the most specific template would be matched each time. `C++17` introduced a new method for compile-time testing using `constexpr-if`.
 
 ### 2.1.1 Testing Expressions
 
-类似于静态断言（`static assert`），编译时测试的对象是常量表达式（`constexpr`），即编译时能得出结果的表达式。以不同的常量表达式作为参数，可以构造各种需要的模板重载。例如，代码1演示了如何构造谓词（`predicate`）`isZero<Val>`，编译时判断`Val`是不是`0`
+Similar to static assertions, the object of compile-time testing is a constant expression, an expression whose result can be determined at compile time. By using different constant expressions as parameters, various required template overloads can be constructed. For example, Code 1 demonstrates how to construct a predicate `isZero<Val>` to determine at compile time whether `Val` is `0`.
 
-**代码1：**
+**Code 1:**
 
 ```cpp
 template <unsigned Val>
@@ -127,28 +127,28 @@ static_assert(isZero<0>, "compile error");
 
 ### 2.1.2 Testing Types
 
-**在元编程的很多应用场景中，需要对类型进行测试，即对不同的类型实现不同的功能。而常见的测试类型又分为两种：**
+**In many metaprogramming applications, type testing is required, where different functionality is implemented for different types. Common type tests fall into two categories:**
 
-* **判断一个类型是否为特定的类型：**
-    * 可以通过对模板的特化直接实现
-* **判断一个类型是否满足某些条件：**
-    * 可以通过替换失败不是错误（`SFINAE, Substitution Failure Is Not An Error`）规则进行最优匹配
-    * 还能通过标签派发（`tag dispatch`）匹配可枚举的有限情况（例如，`std::advance<Iter>`根据`std::iterator_traits<Iter>::iterator_category`选择迭代器类型`Iter`支持的实现方式）
+* **Checking if a type is a specific type:**
+    * This can be achieved directly through template specialization.
+* **Checking if a type meets certain conditions:**
+    * This can be done through the "Substitution Failure Is Not An Error" rule (`SFINAE`), which ensures optimal matching.
+    * Tag dispatch can also be used to match enumerable finite cases (for example, `std::advance<Iter>` selects an implementation based on `std::iterator_traits<Iter>::iterator_category` for the iterator type `Iter`).
 
-**为了更好的支持`SFINAE`，`C++ 11`的`<type_traits>`除了提供类型检查的谓词模板`is_*/has_*`，还提供了两个重要的辅助模板：**
+**To better support `SFINAE`, `C++11`'s `<type_traits>` provides predicate templates `is_*/has_*` for type checking and two additional helpful templates:**
 
-1. `std::enable_if`将对条件的判断转化为常量表达式，类似「测试表达式」小节实现重载的选择（但需要添加一个冗余的函数参数/函数返回值/模板参数）
-1. `std::void_t`直接检查依赖的成员/函数是否存在，不存在则无法重载（可以用于构造谓词，再通过`std::enable_if`判断条件）
+1. `std::enable_if` converts condition checks into constant expressions, similar to the "Test Expression" section's overload selection (though it requires an extra function parameter, function return type, or template parameter).
+1. `std::void_t` directly checks for the existence of dependent members/functions; if they do not exist, overload resolution fails (it can be used to construct predicates, then conditions can be checked with `std::enable_if`).
 
-是否为特定的类型的判断，类似于代码1，将`unsigned Val`改为`typename Type`，并把传入的模板参数由值参数改为类型参数，根据最优原则匹配重载
+For type-specific checks, similar to Code 1, change `unsigned Val` to `typename Type` and convert the template parameter from a value parameter to a type parameter, then match the overload according to the optimal match principle.
 
-是否满足某些条件的判断，在代码2中，展示了如何将C语言的基本类型数据，转换为`std::string`的函数`ToString`。代码具体分为三个部分：
+For condition-based type checks, Code 2 demonstrates how to convert basic C language data types to `std::string` in the `ToString` function. The code is divided into three parts:
 
-1. 首先定义三个变量模板`isNum/isStr/isBad`，分别对应了三个类型条件的谓词（使用了`<type_traits>`中的`std::is_arithmetic`和`std::is_same`）
-1. 然后根据`SFINAE`规则，使用`std::enable_if`重载函数`ToString`，分别对应了数值、C风格字符串和非法类型
-1. 在前两个重载中，分别调用`std::to_string`和`std::string`构造函数；在最后一个重载中，静态断言直接报错
+1. First, three variable templates `isNum/isStr/isBad` are defined, each corresponding to a predicate for three type conditions (using `std::is_arithmetic` and `std::is_same` from `<type_traits>`).
+1. Then, based on the `SFINAE` rule, `std::enable_if` is used to overload the function `ToString`, each corresponding to numerical, C-style string, and invalid types.
+1. In the first two overloads, `std::to_string` and `std::string` constructors are called, respectively; in the last overload, a static assertion immediately raises an error.
 
-**代码2：**
+**Code 2:**
 
 ```cpp
 template <typename T>
@@ -181,15 +181,15 @@ auto c = ToString("0x0");  // std::string (str);
 auto d = ToString(std::string {});  // not compile :-(
 ```
 
-根据两阶段名称查找（`two-phase name lookup`）的规定：如果直接使用`static_assert (false)`断言，会在模板还没实例化的第一阶段编译失败；所以需要借助类型依赖（`type-dependent`）的`false`表达式（一般依赖于参数`T`）进行失败的静态断言
+According to the rule of two-phase name lookup, directly using `static_assert(false)` would cause a compilation failure in the first phase, before the template is instantiated. Therefore, a type-dependent `false` expression (typically dependent on the parameter `T`) is required for a failing static assertion.
 
-类似的，可以通过定义一个变量模板`template <typename...> constexpr bool false_v = false`，并使用`false_v<T>`替换`sizeof (T) == 0`
+Similarly, a variable template can be defined as `template <typename...> constexpr bool false_v = false`, and `false_v<T>` can be used in place of `sizeof(T) == 0`.
 
 ### 2.1.3 Using if for Compile-Time Testing
 
-对于初次接触元编程的人，往往会使用`if`语句进行编译时测试。代码3是代码2一个错误的写法，很代表性的体现了元编程和普通编程的不同之处
+For those new to metaprogramming, it's common to try using an `if` statement for compile-time testing. Code 3 is an incorrect version of Code 2, which serves as a representative example of the differences between metaprogramming and regular programming.
 
-**代码3：**
+**Code 3:**
 
 ```cpp
 template <typename T>
@@ -203,13 +203,13 @@ std::string ToString(T val) {
 }
 ```
 
-代码3中的错误在于：编译代码的函数`ToString`时，对于给定的类型`T`，需要进行两次函数绑定，`val`作为参数分别调用`std::to_string(val)`和`std::string (val)`，再进行一次静态断言，判断`!isBad<T>`是否为`true`。这会导致：两次绑定中，有一次会失败。假设调用`ToString("str")`，在编译这段代码时，`std::string(const char *)`可以正确的重载，但是`std::to_string (const char *)`并不能找到正确的重载，导致编译失败
+The error in Code 3 lies in the function `ToString`'s compilation. For a given type `T`, the function needs to perform two function bindings: `val` is passed as an argument to both `std::to_string(val)` and `std::string(val)`, and then a static assertion checks whether `!isBad<T>` is `true`. This causes an issue: one of the two bindings will fail. For instance, if `ToString("str")` is called, during compilation, `std::string(const char *)` can be correctly overloaded, but `std::to_string(const char *)` cannot find a proper overload, leading to a compilation failure.
 
-假设是脚本语言，这段代码是没有问题的：因为脚本语言没有编译的概念，所有函数的绑定都在运行时完成。而静态语言的函数绑定是在编译时完成的。为了使得代码`3`的风格用于元编程，`C++ 17`引入了 `constexpr-if`，只需要把以上代码3中的`if`改为`if constexpr`就可以编译了
+If this were a scripting language, this code would be fine because scripting languages lack the concept of compilation; all function bindings are performed at runtime. However, in a statically-typed language, function binding is completed at compile time. To allow Code 3's style to be used in metaprogramming, `C++17` introduced `constexpr-if`, where simply replacing `if` with `if constexpr` in Code 3 allows it to compile.
 
-`constexpr-if`的引入让模板测试更加直观，提高了模板代码的可读性。代码4展示了如何使用`constexpr-if`解决编译时选择的问题；而且最后的兜底（`catch-all`）语句，不再需要`isBad<T>`谓词模板，可以使用类型依赖的`false`表达式进行静态断言（但也不能直接使用`static_assert(false)`断言）
+The introduction of `constexpr-if` makes template testing more intuitive, improving the readability of template code. Code 4 demonstrates how to use `constexpr-if` to solve the issue of compile-time selection. Additionally, the catch-all statement no longer requires the `isBad<T>` predicate template and can use a type-dependent `false` expression for a static assertion (though a direct `static_assert(false)` cannot be used).
 
-**代码4：**
+**Code 4:**
 
 ```cpp
 template <typename T>
@@ -223,21 +223,21 @@ std::string ToString(T val) {
 }
 ```
 
-然而，`constexpr-if`背后的思路早在`Visual Studio 2012`已出现了。其引入了`__if_exists`语句，用于编译时测试标识符是否存在
+However, the idea behind `constexpr-if` had already appeared as early as `Visual Studio 2012`. It introduced the `__if_exists` statement, which was used for compile-time testing to check whether an identifier exists.
 
 ## 2.2 Compile-Time Iteration
 
-编译时迭代和面向过程编程中的循环语句（`loop statement`）类似，用于实现与`for/while/do`类似的循环逻辑
+Compile-time iteration is similar to loop statements in procedural programming, allowing logic similar to `for/while/do` loops.
 
-在`C++ 17`之前，和普通的编程不同，元编程的演算规则是纯函数的，不能通过变量迭代实现编译时迭代，只能用递归（`recursion`）和特化的组合实现。**一般思路是：提供两类重载，一类接受任意参数，内部递归 调用自己；另一类是前者的模板特化或函数重载，直接返回结果，相当于递归终止条件。它们的重载条件可以是表达式或类型**
+Before `C++17`, unlike in regular programming, metaprogramming calculus rules were purely functional, meaning compile-time iteration could not be achieved through variable iteration and instead had to rely on recursion combined with specialization. **The general approach is to provide two types of overloads: one that accepts arbitrary parameters and recursively calls itself internally, and another that is a template specialization or function overload of the former, directly returning the result, effectively serving as the termination condition for recursion. Their overload conditions can be either expressions or types.**
 
-而`C++ 17`提出了折叠表达式（`fold expression`）的语法，化简了迭代的写法
+`C++17` introduced fold expressions to simplify the syntax for iteration.
 
 ### 2.2.1 Iterating over Fixed-Length Templates
 
-代码5展示了如何使用编译时迭代实现编译时计算阶乘（`N!`）。函数`_Factor`有两个重载：一个是对任意非负整数的，一个是对`0`为参数的。前者利用递归产生结果，后者直接返回结果。当调用`_Factor<2>`时，编译器会展开为`2 * _Factor<1>`，然后`_Factor<1>`再展开为`1 * _Factor<0>`，最后`_Factor<0>`直接匹配到参数为`0`的重载
+Code 5 demonstrates how to use compile-time iteration to compute the factorial (`N!`) at compile time. The function `_Factor` has two overloads: one for any non-negative integer and another for `0` as the parameter. The former uses recursion to produce results, while the latter directly returns the result. When `_Factor<2>` is called, the compiler expands it to `2 * _Factor<1>`, then `_Factor<1>` expands to `1 * _Factor<0>`, and finally `_Factor<0>` directly matches the overload with `0` as the parameter.
 
-**代码5：**
+**Code 5:**
 
 ```cpp
 template <unsigned N>
@@ -260,9 +260,9 @@ static_assert(Factor<4> == 24, "compile error");
 
 ### 2.2.2 Iterating over Variable-Length Templates
 
-为了遍历变长模板的每个参数，可以使用编译时迭代实现循环遍历。代码6实现了对所有参数求和的功能。函数`Sum`有两个重载：一个是对没有函数参数的情况，一个是对函数参数个数至少为`1`的情况。和定长模板的迭代类似，这里也是通过递归调用实现参数遍历
+To iterate through each parameter in a variadic template, compile-time iteration can be used to implement loop traversal. Code 6 implements a function that sums all parameters. The function `Sum` has two overloads: one for when there are no function parameters, and another for when there is at least one function parameter. Similar to iteration with fixed-length templates, this is also achieved through recursive calls to traverse the parameters.
 
-**代码6：**
+**Code 6:**
 
 ```cpp
 template <typename T>
@@ -281,11 +281,11 @@ static_assert(Sum(1, 2.0, 3) == 6, "compile error");
 
 ### 2.2.3 Simplifying Compile-Time Iteration with Fold Expressions
 
-在`C++ 11`引入变长模板时，就支持了在模板内直接展开参数包的语法；但该语法仅支持对参数包里的每个参数进行一元操作（`unary operation`）；为了实现参数间的二元操作（`binary operation`），必须借助额外的模板实现（例如，代码6定义了两个`Sum`函数模板，其中一个展开参数包进行递归调用）。
+When variadic templates were introduced in `C++11`, direct syntax for expanding parameter packs within templates was supported; however, this syntax only allowed unary operations on each parameter within the pack. To perform binary operations between parameters, additional templates were necessary (for example, Code 6 defines two `Sum` function templates, with one expanding the parameter pack to recursively call itself).
 
-而`C++ 17`引入了折叠表达式，允许直接遍历参数包里的各个参数，对其应用二元运算符（`binary operator`）进行左折叠（`left fold`）或右折叠（`right fold`）。代码7使用初始值为`0`的左折叠表达式，对代码6进行改进
+`C++17` introduced fold expressions, enabling direct traversal of each parameter within a parameter pack and applying a binary operator to perform either a left fold or right fold. Code 7 improves upon Code 6 by using a left fold expression with an initial value of `0`.
 
-**代码7：**
+**Code 7:**
 
 ```cpp
 template <typename... Ts>
@@ -297,30 +297,38 @@ static_assert(Sum() == 0, "compile error");
 static_assert(Sum(1, 2.0, 3) == 6, "compile error");
 ```
 
+## 2.3 Metaprogramming vs. Regular programming
+
+| Concept| Regular Programming| Metaprogramming |
+|:--|:--|:--|
+| Sequence | Statements in order | Nested templates, Type deduction |
+| Branching | `if`, `else`, `switch` | `std::conditional`, `constexpr if`, `SFINAE`, template specialization |
+| Looping (Iteration) | `for`, `while`, `do-while` | Recursive templates, template specialization, `std::integer_sequence` |
+
 # 3 Basic Applications of Metaprogramming
 
-利用元编程，可以很方便的设计出类型安全（`type safe`）、运行时高效（`runtime effective`）的程序。到现在，元编程已被广泛的应用于`C++`的编程实践中。例如，`Todd Veldhuizen`提出了使用元编程的方法构造表达式模板（`expression template`），使用表达式优化的方法，提升向量计算的运行速度；`K. Czarnecki`和`U. Eisenecker`利用模板实现`Lisp`解释器
+Metaprogramming enables the design of type-safe and runtime-efficient programs with ease. Today, metaprogramming is widely applied in `C++` programming practices. For example, `Todd Veldhuizen` proposed a metaprogramming approach to construct expression templates, optimizing expressions to improve the runtime speed of vector calculations. Additionally, `K. Czarnecki` and `U. Eisenecker` used templates to implement a `Lisp` interpreter.
 
-尽管元编程的应用场景各不相同，但都是三类基本应用的组合：数值计算（`numeric computation`）、类型推导（`type deduction`）和代码生成（`code generation`）。例如，在`BOT Man`设计的对象关系映射`ORM, object-relation mapping`中，主要使用了类型推导和代码生成的功能。根据对象（`object`）在`C++`中的类型，推导出对应数据库关系（`relation`）中元组各个字段的类型。将对`C++`对象的操作，映射到对应的数据库语句上，并生成相应的代码
+Although metaprogramming applications vary, they are combinations of three fundamental types: numeric computation, type deduction, and code generation. For instance, in the `ORM` (object-relation mapping) designed by `BOT Man`, type deduction and code generation are primarily used. Based on an object's type in `C++`, the types of each field in the corresponding database relation tuple are deduced. Operations on `C++` objects are mapped to corresponding database statements, generating the relevant code.
 
 ## 3.1 Numerical Computation
 
-作为元编程的最早的应用，数值计算可以用于编译时常数计算和优化运行时表达式计算
+As one of the earliest applications of metaprogramming, numeric computation can be used for compile-time constant calculation and optimizing runtime expression evaluation.
 
-编译时常数计算能让程序员使用程序设计语言，写编译时确定的常量；而不是直接写常数（迷之数字（`magic number`））或在运行时计算这些常数。例如，代码5、6、7都是编译时对常数的计算
+Compile-time constant calculation allows programmers to use the programming language to define constants at compile time, rather than directly writing constants (magic numbers) or calculating these constants at runtime. For example, Codes 5, 6, and 7 perform compile-time constant calculations.
 
-最早的有关元编程优化表达式计算的思路是`Todd Veldhuizen`提出的。利用表达式模板，可以实现部分求值、惰性求值、表达式化简等特性
+The earliest concept of using metaprogramming to optimize expression evaluation was proposed by `Todd Veldhuizen`. By utilizing expression templates, it is possible to implement features such as partial evaluation, lazy evaluation, and expression simplification.
 
 ## 3.2 Type Deduction
 
-除了基本的数值计算之外，还可以利用元编程进行任意类型之间的相互推导。例如，在领域特定语言（`domain-specific language`）和`C++`语言原生结合时，类型推导可以实现将这些语言中的类型，转化为`C++`的类型，并保证类型安全
+Beyond basic numeric computation, metaprogramming can also be used to deduce conversions between arbitrary types. For example, when combining a domain-specific language natively with `C++`, type deduction can convert types in these languages into `C++` types while ensuring type safety.
 
-`BOT Man`提出了一种能编译时进行`SQL`语言元组类型推导的方法。`C++`所有的数据类型都不能为`NULL`，而`SQL`的字段是允许为`NULL`的，所以在`C++`中使用`std::optional`容器存储可以为空的字段。通过`SQL`的`outer-join`拼接得到的元组的所有字段都可以为`NULL`，所以`ORM`需要一种方法：把字段可能是`std::optional<T>`或`T`的元组，转化为全部字段都是`std::optional<T>`的新元组。
+`BOT Man` proposed a method for compile-time tuple type deduction in `SQL`. Since all data types in `C++` cannot be `NULL`, whereas `SQL` fields can be `NULL`, fields that may be null are stored in `C++` using the `std::optional` container. For tuples resulting from `SQL` outer joins, where all fields can be `NULL`, `ORM` needs a method to convert tuples with fields that may be either `std::optional<T>` or `T` into a new tuple where all fields are `std::optional<T>`.
 
-**代码8：**
+**Code 8:**
 
-1. 定义`TypeToNullable`，并对`std::optional<T>`进行特化，作用是将`std::optional<T>`和`T`自动转换为`std::optional<T>`
-1. 定义`TupleToNullable`，拆解元组中的所有类型，转化为参数包，再把参数包中所有类型分别传入`TypeToNullable`，最后得到的结果重新组装为新的元组
+1. Define `TypeToNullable`, and specialize it for `std::optional<T>`. Its purpose is to automatically convert both `std::optional<T>` and `T` to `std::optional<T>`.
+2. Define `TupleToNullable`, which decomposes all types in a tuple, converts them into a parameter pack, passes each type in the parameter pack to `TypeToNullable`, and finally reassembles the results into a new tuple.
 
 ```cpp
 template <typename T>
@@ -347,48 +355,48 @@ static_assert(std::is_same<std::tuple_element_t<0, decltype(t2)>, std::tuple_ele
 
 ## 3.3 Code Generation
 
-和泛型编程一样，元编程也常常被用于代码的生成。但是和简单的泛型编程不同，元编程生成的代码往往是通过编译时测试和编译时迭代的演算推导出来的。例如，代码2就是一个将C语言基本类型转化为`std::string`的代码的生成代码
+Like generic programming, metaprogramming is often used for code generation. However, unlike simple generic programming, code generated by metaprogramming is often derived through compile-time testing and compile-time iteration. For example, Code 2 generates code that converts basic C language types to `std::string`.
 
-在实际项目中，我们往往需要将`C++`数据结构，和实际业务逻辑相关的领域模型（`domain model`）相互转化。例如，将承载着领域模型的`JSON`字符串反序列化（`deserialize`）为`C++`对象，再做进一步的业务逻辑处理，然后将处理后的`C++`对象序列化（`serialize`）变为`JSON`字符串。而这些序列化/反序列化的代码，一般不需要手动编写，可以自动生成
+In real projects, we often need to convert between `C++` data structures and domain models related to actual business logic. For example, a `JSON` string representing a domain model might be deserialized into a `C++` object, further processed by business logic, and then serialized back into a `JSON` string. Such serialization/deserialization code generally does not need to be manually written and can be automatically generated.
 
-`BOT Man`提出了一种基于编译时多态（`compile-time polymorphism`）的方法，定义领域模型的模式（`schema`），自动生成领域模型和`C++`对象的序列化/反序列化的代码。这样，业务逻辑的处理者可以更专注于如何处理业务逻辑，而不需要关注如何做底层的数据结构转换
+`BOT Man` proposed a method based on compile-time polymorphism that defines a schema for the domain model, automatically generating code for serialization/deserialization between the domain model and `C++` objects. This allows business logic developers to focus more on handling the business logic without needing to worry about low-level data structure conversions.
 
 # 4 Key Challenges in Metaprogramming
 
-尽管元编程的能力丰富，但学习、使用的难度都很大。一方面，复杂的语法和运算规则，往往让初学者望而却步；另一方面，即使是有经验的`C++`开发者，也可能掉进元编程看不见的坑里
+Despite the rich capabilities of metaprogramming, both learning and using it are quite challenging. On one hand, the complex syntax and calculus rules often deter beginners; on the other, even experienced `C++` developers can fall into the hidden pitfalls of metaprogramming.
 
 ## 4.1 Complexity
 
-由于元编程的语言层面上的限制较大，所以许多的元编程代码使用了很多的编译时测试和编译时迭代技巧，可读性（`readability`）都比较差。另外，由于巧妙的设计出编译时能完成的演算也是很困难的，相较于一般的`C++`程序，元编程的可写性（`writability`）也不是很好
+Due to significant language-level limitations in metaprogramming, much metaprogramming code relies heavily on compile-time testing and iteration techniques, often resulting in poor readability. Additionally, designing compile-time calculus in an elegant manner is challenging, making the writability of metaprogramming less favorable compared to typical `C++` programs.
 
-现代`C++`也不断地增加语言的特性，致力于降低元编程的复杂性：
+Modern `C++` continuously introduces features aimed at reducing the complexity of metaprogramming:
 
-* `C++ 11`的别名模板提供了对模板中的类型的简记方法
-* `C++ 14`的变量模板提供了对模板中常量的简记方法
-* `C++ 17`的`constexpr-if`提供了编译时测试的新写法
-* `C++ 17`的折叠表达式降低了编译时迭代的编写难度
+* Alias templates in `C++11` provide a shorthand for types within templates.
+* Variable templates in `C++14` offer a shorthand for constants within templates.
+* `constexpr-if` in `C++17` introduces a new syntax for compile-time testing.
+* Fold expressions in `C++17` simplify the process of writing compile-time iterations.
 
-基于`C++ 14`的泛型`lambda`表达式，`Louis Dionne`设计的元编程库`Boost.Hana`提出了不用模板就能元编程的理念，宣告从模板元编程（`template metaprogramming`）时代进入现代元编程（`modern metaprogramming`）时代。其核心思想是：只需要使用`C++ 14`的泛型`lambda`表达式和`C++ 11`的`constexpr/decltype`，就可以快速实现元编程的基本演算了
+Based on the generic `lambda` expressions in `C++14`, `Louis Dionne` designed the metaprogramming library `Boost.Hana`, which proposes metaprogramming without templates, marking the transition from template metaprogramming to modern metaprogramming. The core idea is that using only the generic `lambda` expressions in `C++14` and `constexpr/decltype` from `C++11` enables the quick implementation of basic metaprogramming calculus.
 
 ## 4.2 Instantiation Errors
 
-模板的实例化和函数的绑定不同：在编译前，前者对传入的参数是什么，没有太多的限制；而后者则根据函数的声明，确定了应该传入参数的类型。而对于模板实参内容的检查，则是在实例化的过程中完成的。所以，程序的设计者在编译前，很难发现实例化时可能产生的错误
+Template instantiation differs from function binding: before compilation, the former imposes few restrictions on the types of parameters passed in, whereas the latter determines the expected parameter types based on the function declaration. Parameter checks for templates occur during instantiation, making it difficult for the program designer to detect potential errors before compilation.
 
-为了减少可能产生的错误，`Bjarne Stroustrup`等人提出了在语言层面上，给模板上引入概念（`concept`）。利用概念，可以对传入的参数加上限制（`constraint`），即只有满足特定限制的类型才能作为参数传入模板。例如，模板`std::max`限制接受支持运算符`<`的类型传入。但是由于各种原因，这个语言特性一直没有能正式加入`C++`标准（可能在`C++ 20`中加入）。尽管如此，编译时仍可以通过编译时测试和静态断言等方法实现检查
+To reduce potential errors, `Bjarne Stroustrup` and others proposed introducing concepts at the language level for templates. With concepts, restrictions can be placed on parameters, allowing only types that meet specific requirements to be passed into the template. For example, the template `std::max` could be constrained to accept only types that support the `<` operator. However, for various reasons, this language feature was not included in the `C++` standard for a long time (though it may have been added in `C++20`). Despite this, compile-time testing and static assertions can still provide checks.
 
-另外，编译时模板的实例化出错位置，在调用层数较深处时，编译器会提示每一层实例化的状态，这使得报错信息包含了很多的无用信息，很难让人较快的发现问题所在。`BOT Man`提出了一种短路编译（`short-circuit compiling`）的方法，能让基于元编程的库（`library`），给用户提供更人性化的编译时报错。具体方法是，在实现（`implementation`）调用需要的操作之前，接口（`interface`）先检查是传入的参数否有对应的操作；如果没有，就通过短路的方法，转到一个用于报错的接口，然后停止编译并使用静态断言提供报错信息。`Paul Fultz II`提出了一种类似于`C++ 20`的概念/限制的接口检查方法，通过定义概念对应的特征（`traits`）模板，然后在使用前检查特征是否满足
+Additionally, in the case of template instantiation errors at deeper levels, the compiler reports each level of instantiation, leading to verbose error messages that can obscure the source of the issue. `BOT Man` proposed a short-circuit compiling method to offer more user-friendly compile-time error messages in metaprogramming libraries. This approach involves having the interface check whether the passed parameters support the required operations before the implementation performs them. If they do not, the interface uses short-circuiting to redirect to an error-reporting interface, stopping compilation and using static assertions to provide error messages. `Paul Fultz II` proposed a similar approach to concept/constraint interface checks (like those in `C++20`) by defining trait templates corresponding to concepts and checking if these traits are met before usage.
 
 ## 4.3 Code Bloat
 
-由于模板会对所有不同模板实参都进行一次实例化，所以当参数的组合很多的时候，很可能会发生代码膨胀（`code bloat`），即产生体积巨大的代码。这些代码可以分为两种：死代码（`dead code`）和有效代码（`effective code`）
+Since templates instantiate for each unique set of template arguments, a large number of parameter combinations can lead to code bloat, resulting in a massive codebase. This code can be divided into two types: dead code and effective code.
 
-在元编程中，很多时候只关心推导的结果，而不是过程。例如，代码5中，只关心最后的`Factor<4> == 24`，而不需要中间过程中产生的临时模板。但是在`N`很大的时候，编译会产生很多临时模板。这些临时模板是死代码，即不被执行的代码。所以，编译器会自动优化最终的代码生成，在链接时（`link-time`）移除这些无用代码，使得最终的目标代码不会包含它们。尽管如此，如果产生过多的死代码，会浪费宝贵的编译时间
+In metaprogramming, the focus is often on the final result rather than the process. For example, in Code 5, we only care that `Factor<4> == 24` and do not need the temporary templates generated during intermediate steps. However, when `N` is large, compilation produces many temporary templates. These temporary templates are dead code, meaning they are not executed. The compiler automatically optimizes the final code generation by removing these unused codes at link-time, ensuring that the final output does not include them. Nevertheless, generating excessive dead code wastes valuable compilation time.
 
-另一种情况下，展开的代码都是有效代码，即都是被执行的，但是又由于需要的参数的类型繁多，最后的代码体积仍然很大。编译器很难优化这些代码，所以程序员应该在设计时避免代码膨胀。一般用薄模板（`thin template`）减小模板实例体积；具体思路是：将不同参数实例化得到的模板的相同部分抽象为共同的基类或函数，然后将不同参数对应的不同部分继承基类或调用函数，从而实现代码共享
+In other cases, the expanded code is all effective code—meaning it is executed—but the code size remains large due to the wide variety of parameter types needed. The compiler has limited ability to optimize such code, so programmers should design to avoid code bloat. Thin templates are typically used to reduce the size of template instances; the approach is to abstract common parts of templates instantiated with different parameters into shared base classes or functions, with the distinct parts inheriting from the base class or calling the function to enable code sharing.
 
-例如，在`std::vector`的实现中，对`T*`和`void*`进行了特化；然后将所有的`T*`的实现继承到`void*`的实现上，并在公开的函数里通过强制类型转换，进行`void*`和`T*`的相互转换；最后这使得所有的指针的`std::vector`就可以共享同一份实现，从而避免了代码膨胀（代码9）
+For example, in the implementation of `std::vector`, `T*` and `void*` are specialized. Then, the implementation for all `T*` types is inherited from the `void*` implementation, with public functions using casting to convert between `void*` and `T*`. This allows all pointer types in `std::vector` to share a single implementation, avoiding code bloat (Code 9).
 
-**代码9：**
+**Code 9:**
 
 ```cpp
 template <typename T>
@@ -412,25 +420,25 @@ public:
 
 ## 4.4 Compile-Time Performance
 
-元编程尽管不会带来额外的运行时开销（`runtime overhead`），但如果过度使用，可能会大大增加编译时间（尤其是在大型项目中）。为了提高元编程的编译性能，需要使用特殊的技巧进行优化
+Although metaprogramming does not add runtime overhead, excessive use can significantly increase compilation time, especially in large projects. Optimizing metaprogramming compile-time performance requires special techniques.
 
-根据单定义规则（`One Definition Rule, ODR`），允许一个模板在多个翻译单元（`translation unit`）中使用相同的模板参数实例化，并在链接时合并为同一个实例。然而，每个翻译单元上的模板操作是独立的，一方面增加了编译时间，另一方面还会产生过多中间代码。因此，常用显式实例化（`explicit instantiation`）避免进行多次模板实例化操作；具体思路是：在一个翻译单元中显式定义模板实例，在其他翻译单元中只需要通过`extern`声明相同的实例。由于接口与实现分离，该方法还常用于静态库的模板接口
+According to the One Definition Rule, a template can be instantiated with the same parameters across multiple translation units and merged into a single instance at link time. However, template operations in each translation unit are independent, which increases compilation time and produces excessive intermediate code. Explicit instantiation is commonly used to avoid repeated template instantiations. The approach is to explicitly define a template instance in one translation unit and declare the same instance with `extern` in other translation units. This method, which separates interface from implementation, is also commonly used for template interfaces in static libraries.
 
-`Chiel Douwes`对元编程中的常用模板操作进行了深入分析，对比了几种模板操作的代价（`Cost of operations: The Rule of Chiel`）（没有提到`C++ 14`的变量模板；从高到低）：
+`Chiel Douwes` conducted an in-depth analysis of common template operations in metaprogramming, comparing the costs of several template operations (Cost of operations: The Rule of Chiel) from highest to lowest (without considering `C++14` variable templates):
 
-1. 替换失败不是错误`SFINAE`
-1. 实例化函数模板
-1. 实例化类模板
-1. 使用别名模板
-1. 添加参数到类模板
-1. 添加参数到别名模板
-1. 使用缓存的类型
+1. Substitution Failure Is Not An Error (`SFINAE`)
+2. Instantiating function templates
+3. Instantiating class templates
+4. Using alias templates
+5. Adding parameters to class templates
+6. Adding parameters to alias templates
+7. Using cached types
 
-基于以上原则，`Odin Holmes`设计了类型运算库`Kvasir`，相比基于`C++ 98/11`的类型运算库，拥有极高的编译性能。为了衡量编译性能的优化效果，`Louis Dionne`设计了一个基于`CMake`的编译时间基准测试框架
+Following these principles, `Odin Holmes` designed the type manipulation library `Kvasir`, which achieves high compilation performance compared to type manipulation libraries based on `C++98/11`. To measure the effectiveness of compilation performance optimizations, `Louis Dionne` developed a CMake-based compile-time benchmarking framework.
 
-另外，`Mateusz Pusz`总结了一些元编程性能的实践经验。例如，基于`C++ 11`别名模板的`std::conditional_t`和基于`C++ 14`变量模板的`std::is_same_v`都比基于`std::conditional/std::is_same`的传统方案更快。代码10展示了基于`std::is_same`和直接基于变量模板的`std::is_same_v`的实现
+Additionally, `Mateusz Pusz` shared some best practices for metaprogramming performance. For example, `std::conditional_t` based on `C++11` alias templates and `std::is_same_v` based on `C++14` variable templates are faster than the traditional `std::conditional/std::is_same` approach. Code 10 demonstrates implementations using `std::is_same` and the variable template-based `std::is_same_v`.
 
-**代码10：**
+**Code 10:**
 
 ```cpp
 // traditional, slow
@@ -450,13 +458,13 @@ constexpr bool is_same_v<T, T> = true;
 
 ## 4.5 Debugging Templates
 
-元编程在运行时主要的难点在于：对模板代码的调试（`debugging`）。如果需要调试的是一段通过很多次的编译时测试和编译时迭代展开的代码，即这段代码是各个模板的拼接生成的（而且展开的层数很多）；那么，调试时需要不断地在各个模板的实例（`instance`）间来回切换。这种情景下，调试人员很难把具体的问题定位到展开后的代码上
+The primary runtime challenge in metaprogramming is debugging template code. When debugging code that has undergone extensive compile-time testing and compile-time iteration—meaning the code is a concatenation of various templates with many levels of expansion—one must frequently switch back and forth between template instances during debugging. In such cases, it is difficult for the debugger to pinpoint the issue within the expanded code.
 
-所以，一些大型项目很少使用复杂的代码生成技巧，而是通过传统的代码生成器生成重复的代码，易于调试。例如`Chromium`的通用扩展接口（`common extension api`）通过定义`JSON/IDL`文件，通过代码生成器生成相关的`C++`代码，同时还可以生成接口文档
+As a result, some large projects avoid complex code generation techniques and instead use traditional code generators to produce repetitive code that is easier to debug. For example, `Chromium`'s common extension API defines `JSON/IDL` files, which a code generator uses to produce the relevant `C++` code and simultaneously generate interface documentation.
 
 # 5 Summary
 
-`C++`元编程的出现，是一个无心插柳的偶然：人们发现`C++`语言提供的模板抽象机制，能很好的被应用于元编程上。借助元编程，可以写出类型安全、运行时高效的代码。但是，过度的使用元编程，一方面会增加编译时间，另一方面会降低程序的可读性。不过，在`C++`不断地演化中，新的语言特性被不断提出，为元编程提供更多的可能
+The emergence of `C++` metaprogramming was a serendipitous discovery: people realized that the template abstraction mechanism provided by `C++` could be effectively applied to metaprogramming. With metaprogramming, it's possible to write type-safe and runtime-efficient code. However, excessive use of metaprogramming can increase compilation time and reduce code readability. Nevertheless, as `C++` continues to evolve, new language features are consistently introduced, offering more possibilities for metaprogramming.
 
 # 6 Applications of Metaprogramming
 
@@ -498,7 +506,7 @@ int main() {
 }
 ```
 
-我们也可以利用`std::integral_constant`来实现上述功能
+We can also use `std::integral_constant` to achieve the functionality described above.
 
 ```cpp
 #include <iostream>
@@ -520,12 +528,12 @@ int main() {
 
 ### 6.1.3 one_of/type_in/value_in
 
-下面是`is_one_of`的实现方式
+Here is the implementation approach for `is_one_of`:
 
-* 首先，定义模板
-* base1，定义单个参数的实例化版本，即递归的终止状态
-* base2，定义首个元素相同的实例化版本，即递归的终止状态
-* 定义首个元素不同的实例化版本，并通过继承实现递归实例化（递归时，要注意，每次减少一个参数）
+* First, define the template.
+* `base1`: Define the single-parameter instantiation version, which serves as the termination state for recursion.
+* `base2`: Define the instantiation version where the first element matches, also serving as a termination state for recursion.
+* Define the instantiation version where the first element differs, and implement recursive instantiation through inheritance (during recursion, be mindful to reduce one parameter with each step).
 
 ```cpp
 #include <iostream>
@@ -554,7 +562,7 @@ int main() {
 }
 ```
 
-我们也可以利用[折叠表达式](https://www.bookstack.cn/read/cppreference-language/62e23cda3198622e.md)来实现递归展开
+We can also use [fold expressions](https://www.bookstack.cn/read/cppreference-language/62e23cda3198622e.md) to implement recursive expansion.
 
 ```cpp
 #include <iostream>
@@ -577,14 +585,14 @@ int main() {
 
 ### 6.1.4 is_copy_assignable
 
-我们手动来实现一下`<type_traits>`头文件中的`std::is_copy_assignable`，该模板用于判断一个类是否支持了拷贝赋值运算符
+Let's manually implement `std::is_copy_assignable` from the `<type_traits>` header, which is used to check if a class supports the copy assignment operator.
 
-示例如下，这个实现比较复杂，我们一一解释
+Example implementation steps and explanation:
 
-* 其中`std::declval<T>`用于返回`T&&`类型（参考引用折叠规则）
-* 函数模板`try_assignment(U&&)`包含两个类型参数，其中第二个类型参数并未用到（省略了参数名），且存在一个默认值`typename = decltype(std::declval<U&>() = std::declval<U const&>())`，这一段其实就是用于测试指定类型是否支持拷贝赋值操作。如果不支持，那么`try_assignment(U&&)`模板的实例化将会失败，转而匹配默认版本`try_assignment(...)`。**这就是著名的`SFINAE, Substitution failure is not an error`**
-    * 如果要实现`is_copy_constructible`、`is_move_constructible`以及`is_move_assignable`，其实是类似的，替换这一串表达式即可
-* `try_assignment(...)`该重载版本可以匹配任意数量任意类型的参数
+* `std::declval<T>` is used to return a `T&&` type (refer to the reference collapsing rules).
+* The function template `try_assignment(U&&)` has two type parameters, where the second type parameter is unused (its name is omitted) and has a default value of `typename = decltype(std::declval<U&>() = std::declval<U const&>())`. This part tests whether the specified type supports the copy assignment operation. If the type does not support it, the instantiation of the `try_assignment(U&&)` template will fail, and it will fall back to the default version `try_assignment(...)`. **This is the well-known `SFINAE, Substitution Failure Is Not An Error`.**
+    * For implementing `is_copy_constructible`, `is_move_constructible`, or `is_move_assignable`, a similar approach can be used by replacing the expression in this part.
+* `try_assignment(...)` is an overload that can match any number and type of arguments.
 
 ```cpp
 #include <iostream>
@@ -626,12 +634,12 @@ int main() {
 
 ### 6.1.5 has_type_member
 
-我们实现一个`has_type_member`，用于判断某个类型是否有类型成员，且其名字为`type`，即对于类型`T`是否存在`typename T::type`
+Let's implement `has_type_member`, which checks if a given type has a member type named `type`, that is, whether `typename T::type` exists for type `T`.
 
-* `has_type_member`的`primitive`版本包含两个类型参数，其中第二个参数存在默认值，其值为`void`
-* `std::void_t<T>`对任意`T`都会返回`void`。任何存在类型成员`type`的类型，对于该特化版本而言都是`well-formed`，因此会匹配该版本；而对于没有类型成员`type`的类型，第二个模板参数的推导会失败，转而匹配其他版本。这里也用到了`SFINAE`
-    * 该示例也是`std::void_t`的应用之一
-    * 如果去掉`std::void_t`，那么`has_type_member<T, typename T::type>`并非`template <typename, typename = void>`的特化版本，这两者其实是等价的，因此，即便`T::type`存在，也会匹配默认版本
+* The `primitive` version of `has_type_member` has two type parameters, with the second parameter having a default value of `void`.
+* `std::void_t<T>` returns `void` for any `T`. For types that have a member type `type`, this specialized version is `well-formed`, so it matches this version; for types without a `type` member, the deduction of the second template parameter fails, falling back to other versions. This also utilizes `SFINAE`.
+    * This example demonstrates an application of `std::void_t`.
+    * Without `std::void_t`, `has_type_member<T, typename T::type>` would not be a specialization of `template <typename, typename = void>`. These two forms are essentially equivalent, so even if `T::type` exists, it would still match the default version.
 
 ```cpp
 #include <iostream>
@@ -704,10 +712,10 @@ int main() {
 
 ### 6.1.7 sequence
 
-**核心思路如下：**
+**The core idea is as follows:**
 
-* `gen_seq<N>`：期望生成`seq<0, 2, 3, ..., N-1>`
-* 通过递推式`gen_seq<size_t N, size_t... S>`展开，其中`N`表示还需生成`1, 2, 3, ..., N-1`，`S...`表示已经生成的序列。每次递推时，把`N-1`放入右边已生成的序列中。当`N = 0`时，递推结束
+* `gen_seq<N>`: Intended to generate `seq<0, 1, 2, 3, ..., N-1>`.
+* Use the recursive expansion `gen_seq<size_t N, size_t... S>`, where `N` represents the remaining numbers `1, 2, 3, ..., N-1`, and `S...` represents the already generated sequence. In each recursive step, place `N-1` into the sequence on the right. When `N = 0`, recursion ends.
 
 ```cpp
 #include <iostream>
@@ -848,8 +856,8 @@ int main() {
 
 ## 6.3 Type Deduction
 
-**`using template`：当我们使用`Traits`萃取类型时，通常需要加上`typename`来消除歧义。因此，`using`模板可以进一步消除多余的`typename`**
-**`static member template`：静态成员模板**
+**`using template`**: When extracting types with `Traits`, we often need to add `typename` to disambiguate. Therefore, `using` templates can further eliminate the need for redundant `typename`.
+**`static member template`**: Static member templates.
 
 ```cpp
 #include <stddef.h>
@@ -909,7 +917,7 @@ int main() {
 
 ## 6.4 Static Proxy
 
-不确定这个是否属于元编程的范畴。更多示例可以参考[binary_function.h](https://github.com/liuyehcf/starrocks/blob/main/be/src/exprs/vectorized/binary_function.h)
+It's unclear if this falls strictly within the scope of metaprogramming. For more examples, refer to [binary_function.h](https://github.com/liuyehcf/starrocks/blob/main/be/src/exprs/vectorized/binary_function.h).
 
 ```cpp
 #include <iostream>
@@ -982,7 +990,7 @@ int main() {
 
 ## 6.5 Compile-Time Branching
 
-有时候，我们想为不同的类型编写不同的分支代码，而这些分支代码在不同类型中是不兼容的，例如，我要实现加法，对于`int`来说，用操作符`+`即可完成加法运算；对于`Foo`类型来说，要调用`add`方法才能实现加法运算。这个时候，普通的分支是无法实现的，实例化的时候会报错。这时候，我们可以使用`if constexpr`来实现编译期的分支
+Sometimes, we want to write different branches of code for different types, but these branches may be incompatible across types. For example, if we want to implement addition, we can use the `+` operator for `int`, but for the `Foo` type, we need to call the `add` method. In this case, regular branching would fail, resulting in a compilation error during instantiation. We can use `if constexpr` to implement compile-time branching to handle this scenario.
 
 ```cpp
 #include <type_traits>
@@ -1012,7 +1020,7 @@ int main() {
 }
 ```
 
-**类型相关的代码必须包含在`if constexpr/else if constexpr`的代码块中，错误示例如下，其本意是，当不为算数类型时，直接返回，但由于`left + right`不在上述静态分支内，因此实例化`Foo`的时候就会报错**
+**Type-specific code must be contained within `if constexpr/else if constexpr` blocks. Here is an example of incorrect usage: the intention is to return immediately if the type is not arithmetic, but since `left + right` is outside the static branching, an error will occur when instantiating with `Foo`.**
 
 ```cpp
 #include <type_traits>
@@ -1036,24 +1044,24 @@ int main() {
 
 ## 6.6 Implement std::bind
 
-**下面的示例用于揭示`std::bind`的实现原理，其中各工具模板的含义如下：**
+**The following example reveals the underlying principles of `std::bind`. Here's the meaning of each helper template:**
 
-* `invoke`：用于触发方法调用
-* `seq/gen_seq/gen_seq_t`：用于生成整型序列
-* `placeholder`：占位符
-* `placeholder_num`：给定的参数列表中，占位符的个数
-* `bind_return_type`：用于萃取函数的返回类型
-* `select`：用于从`bindArgs`和`callArgs`中提取参数。若是占位符，那么从`callArgs`中提取，否则从`bindArgs`中提取
-* `bind_t`：封装重载了`operator()`运算符的类
-* `bind`：接口
+* `invoke`: Triggers method invocation.
+* `seq/gen_seq/gen_seq_t`: Generates an integer sequence.
+* `placeholder`: Placeholder.
+* `placeholder_num`: Counts the number of placeholders in a given parameter list.
+* `bind_return_type`: Extracts the return type of a function.
+* `select`: Extracts arguments from `bindArgs` and `callArgs`. If it's a placeholder, it extracts from `callArgs`; otherwise, from `bindArgs`.
+* `bind_t`: Encapsulates a class with an overloaded `operator()`.
+* `bind`: The interface.
 
-**核心思路：**
+**Core Idea:**
 
-* 首先，`bind`需要返回一个类型，记为`biner_type`，该类型重载了`operator()`运算符
-* `biner_type`的`operator()`运算符的形参列表是一个形参包，即`Arg...`，这样才能起到动态适配不同绑定对象的作用
-    * 该形参包的长度和占位符的数量是一样的
-    * 需要通过`static_assert`来限制参数数量，要与`bind`指定的占位符数量相等
-* 用`std::tuple`分别存储`bind`时的参数列表，以及`operator()`的形参列表。使用`std::tuple`是为了便于通过参数下标取对应的参数
+* First, `bind` needs to return a type, referred to as `biner_type`, which overloads the `operator()` function.
+* The `operator()` in `biner_type` has a parameter list that is a parameter pack, `Arg...`, enabling dynamic adaptation to different bound objects.
+    * The length of this parameter pack matches the number of placeholders.
+    * Use `static_assert` to constrain the parameter count to match the number of placeholders specified in `bind`.
+* `std::tuple` is used to store the `bind` argument list and the parameter list of `operator()`. Using `std::tuple` allows easy access to the corresponding argument by index.
 
 ```cpp
 #include <iostream>
@@ -1308,219 +1316,126 @@ int main() {
 
 ## 6.7 Quick Sort
 
-**源码出处：[quicksort in C++ template metaprogramming](https://gist.github.com/cleoold/c26d4e2b4ff56985c42f212a1c76deb9)**
+**[quicksort in C++ template metaprogramming](https://gist.github.com/cleoold/c26d4e2b4ff56985c42f212a1c76deb9)**
 
 ```cpp
 #include <iostream>
 
 namespace quicksort {
-/**
- * 1. 通过 ::type 获取自身类型
- * 2. 通过 ::value 获取模板实参
- */
 template <int VALUE>
 struct Value {
-    using type = Value;
     static constexpr int value = VALUE;
 };
 
 /*==============================================================*/
 
-/**
- * 1. 通过 ::type 获取自身类型
- */
 template <int... VALUES>
 struct Array {
-    using type = Array;
+    // Any derived type can be represented as an Array
+    using array_type = Array;
 };
 using EmptyArray = Array<>;
 
 /*==============================================================*/
 
-/**
- * 从 TARGET_ARRAY 的模板参数中，提取第一个模板参数
- */
 template <typename TARGET_ARRAY>
 struct FirstOf;
-/**
- * 定义了如何实现 FirstOf
- */
 template <int FIRST_VALUE, int... VALUES>
 struct FirstOf<Array<FIRST_VALUE, VALUES...>> : Value<FIRST_VALUE> {};
 
 /*==============================================================*/
 
-/**
- * 将 VALUE 添加到 TARGET_ARRAY 的模板参数列表中，并作为第一个模板参数
- */
 template <typename TARGET_ARRAY, int VALUE>
 struct PrependTo;
-/**
- * 定义了如何实现 PrependTo
- */
 template <int FIRST_VALUE, int... VALUES>
 struct PrependTo<Array<VALUES...>, FIRST_VALUE> : Array<FIRST_VALUE, VALUES...> {};
 
 /*==============================================================*/
 
-/**
- * 将 VALUE 添加到 TARGET_ARRAY 的模板参数列表中，并作为最后一个模板参数
- */
 template <typename TARGET_ARRAY, int VALUE>
 struct AppendValueTo;
-/**
- * 定义了如何实现 AppendValueTo
- */
 template <int LAST_VALUE, int... VALUES>
 struct AppendValueTo<Array<VALUES...>, LAST_VALUE> : Array<VALUES..., LAST_VALUE> {};
 
 /*==============================================================*/
 
-/**
- * 将 SOURCE_ARRAY 的模板参数列表依次添加到 TARGET_ARRAY 的模板参数列表中
- */
 template <typename TARGET_ARRAY, typename SOURCE_ARRAY>
 struct AppendArrayTo;
-/**
- * 定义了如何实现 AppendArrayTo
- * 实现方式：模板递归
- */
 template <typename TARGET_ARRAY, int FIRST_VALUE, int... VALUES>
 struct AppendArrayTo<TARGET_ARRAY, Array<FIRST_VALUE, VALUES...>>
-        : AppendArrayTo<typename AppendValueTo<TARGET_ARRAY, FIRST_VALUE>::type, typename Array<VALUES...>::type> {};
-/**
- * 递归终止状态
- */
+        : AppendArrayTo<typename AppendValueTo<TARGET_ARRAY, FIRST_VALUE>::array_type, Array<VALUES...>> {};
 template <typename TARGET_ARRAY>
 struct AppendArrayTo<TARGET_ARRAY, EmptyArray> : TARGET_ARRAY {};
 
 /*==============================================================*/
 
-/**
- * 提取 TARGET_ARRAY 的模板参数中，与 TARGET_VALUE 相比，所有符合 CONDITION
- * 条件的模板参数列表
- */
 template <typename TARGET_ARRAY, int TARGET_VALUE, bool CONDITION>
 struct LessEqualFilterAdviser;
-/**
- * 定义了当 CONDITION = true 时，如何实现 LessEqualFilterAdviser
- * 实现方式：模板递归
- */
 template <int TARGET_VALUE, int FIRST_VALUE, int... VALUES>
 struct LessEqualFilterAdviser<Array<FIRST_VALUE, VALUES...>, TARGET_VALUE, true>
-        : PrependTo<typename LessEqualFilterAdviser<typename Array<VALUES...>::type, TARGET_VALUE,
-                                                    (FirstOf<typename Array<VALUES...>::type>::value <=
-                                                     TARGET_VALUE)>::type,
+        : PrependTo<typename LessEqualFilterAdviser<Array<VALUES...>, TARGET_VALUE,
+                                                    (FirstOf<Array<VALUES...>>::value <= TARGET_VALUE)>::array_type,
                     FIRST_VALUE> {};
-/**
- * 定义了当 CONDITION = false 时，如何实现 LessEqualFilterAdviser
- * 实现方式：模板递归
- */
 template <int TARGET_VALUE, int FIRST_VALUE, int... VALUES>
 struct LessEqualFilterAdviser<Array<FIRST_VALUE, VALUES...>, TARGET_VALUE, false>
-        : LessEqualFilterAdviser<typename Array<VALUES...>::type, TARGET_VALUE,
-                                 (FirstOf<typename Array<VALUES...>::type>::value <= TARGET_VALUE)> {};
-/**
- * 当 CONDITION = true 时的递归终止状态
- */
+        : LessEqualFilterAdviser<Array<VALUES...>, TARGET_VALUE, (FirstOf<Array<VALUES...>>::value <= TARGET_VALUE)> {};
 template <int TARGET_VALUE, int FIRST_VALUE>
 struct LessEqualFilterAdviser<Array<FIRST_VALUE>, TARGET_VALUE, true> : Array<FIRST_VALUE> {};
-/**
- * 当 CONDITION = false 时的递归终止状态
- */
 template <int TARGET_VALUE, int FIRST_VALUE>
 struct LessEqualFilterAdviser<Array<FIRST_VALUE>, TARGET_VALUE, false> : EmptyArray {};
-/**
- * 接口模板，外部不直接使用 LessEqualFilterAdviser，而是使用 LessEqualFilter
- */
+
 template <typename TARGET_ARRAY, int TARGET_VALUE>
 struct LessEqualFilter
         : LessEqualFilterAdviser<TARGET_ARRAY, TARGET_VALUE, (FirstOf<TARGET_ARRAY>::value <= TARGET_VALUE)> {};
-/**
- * 递归终止状态
- */
 template <int TARGET_VALUE>
 struct LessEqualFilter<EmptyArray, TARGET_VALUE> : EmptyArray {};
 
 /*==============================================================*/
 
-/**
- * 提取 TARGET_ARRAY 的模板参数中，与 TARGET_VALUE 相比，所有符合 CONDITION
- * 条件的模板参数列表
- */
 template <typename TARGET_ARRAY, int TARGET_VALUE, bool CONDITION>
 struct GreaterThanAdvisor;
-/**
- * 定义了当 CONDITION = true 时，如何实现 GreaterThanAdvisor
- * 实现方式：模板递归
- */
 template <int TARGET_VALUE, int FIRST_VALUE, int... VALUES>
 struct GreaterThanAdvisor<Array<FIRST_VALUE, VALUES...>, TARGET_VALUE, true>
-        : PrependTo<typename GreaterThanAdvisor<typename Array<VALUES...>::type, TARGET_VALUE,
-                                                (FirstOf<typename Array<VALUES...>::type>::value > TARGET_VALUE)>::type,
+        : PrependTo<typename GreaterThanAdvisor<Array<VALUES...>, TARGET_VALUE,
+                                                (FirstOf<Array<VALUES...>>::value > TARGET_VALUE)>::array_type,
                     FIRST_VALUE> {};
-/**
- * 定义了当 CONDITION = false 时，如何实现 GreaterThanAdvisor
- * 实现方式：模板递归
- */
 template <int TARGET_VALUE, int FIRST_VALUE, int... VALUES>
 struct GreaterThanAdvisor<Array<FIRST_VALUE, VALUES...>, TARGET_VALUE, false>
-        : GreaterThanAdvisor<typename Array<VALUES...>::type, TARGET_VALUE,
-                             (FirstOf<typename Array<VALUES...>::type>::value > TARGET_VALUE)> {};
-/**
- * 当 CONDITION = true 时的递归终止状态
- */
+        : GreaterThanAdvisor<Array<VALUES...>, TARGET_VALUE, (FirstOf<Array<VALUES...>>::value > TARGET_VALUE)> {};
 template <int TARGET_VALUE, int FIRST_VALUE>
 struct GreaterThanAdvisor<Array<FIRST_VALUE>, TARGET_VALUE, true> : Array<FIRST_VALUE> {};
-/**
- * 当 CONDITION = false 时的递归终止状态
- */
 template <int TARGET_VALUE, int FIRST_VALUE>
 struct GreaterThanAdvisor<Array<FIRST_VALUE>, TARGET_VALUE, false> : EmptyArray {};
-/**
- * 接口模板，外部不直接使用 GreaterThanAdvisor，而是使用 GreaterThan
- */
+
 template <typename TARGET_ARRAY, int TARGET_VALUE>
 struct GreaterThan : GreaterThanAdvisor<TARGET_ARRAY, TARGET_VALUE, (FirstOf<TARGET_ARRAY>::value > TARGET_VALUE)> {};
-/**
- * 递归终止状态
- */
 template <int TARGET_VALUE>
 struct GreaterThan<EmptyArray, TARGET_VALUE> : EmptyArray {};
 
 /*==============================================================*/
 
-/**
- * 对 TARGET_ARRAY 进行快速排序
- */
 template <typename TARGET_ARRAY>
 struct QuickSort;
-/**
- * 定义了如何实现 QuickSort
- */
 template <int FIRST_VALUE, int... VALUES>
 struct QuickSort<Array<FIRST_VALUE, VALUES...>>
-        : AppendArrayTo<typename QuickSort<
-                                typename LessEqualFilter<typename Array<VALUES...>::type, FIRST_VALUE>::type>::type,
-                        typename PrependTo<typename QuickSort<typename GreaterThan<typename Array<VALUES...>::type,
-                                                                                   FIRST_VALUE>::type>::type,
-                                           FIRST_VALUE>::type> {};
-/**
- * 递归终止状态
- */
+        : AppendArrayTo<
+                  typename QuickSort<typename LessEqualFilter<Array<VALUES...>, FIRST_VALUE>::array_type>::array_type,
+                  typename PrependTo<typename QuickSort<typename GreaterThan<Array<VALUES...>,
+                                                                             FIRST_VALUE>::array_type>::array_type,
+                                     FIRST_VALUE>::array_type> {};
 template <>
 struct QuickSort<EmptyArray> : EmptyArray {};
 
 } // namespace quicksort
 
 template <int FIRST_VALUE, int... VALUES>
-static void print(quicksort::Array<FIRST_VALUE, VALUES...>) {
+static void print(quicksort::Array<FIRST_VALUE, VALUES...> /*unused*/) {
     std::cout << '(' << FIRST_VALUE;
     [[maybe_unused]] int _[] = {0, ((void)(std::cout << ", " << VALUES), 0)...};
     std::cout << ")\n";
 }
 
-static void print(quicksort::EmptyArray) {
+static void print(quicksort::EmptyArray /*unused*/) {
     std::cout << "()\n";
 }
 
@@ -1546,7 +1461,7 @@ int main() {
 
 ## 6.8 Conditional Members
 
-有时候，我们希望模板类某些特化版本包含额外的字段，而默认情况下不包含这些额外字段
+Sometimes, we want certain specialized versions of a template class to include additional fields, while the default version does not contain these extra fields.
 
 ```cpp
 #include <type_traits>

@@ -663,6 +663,14 @@ You can use token as your password to push to remote repository
 wget https://raw.githubusercontent.com/<user>/<repository>/<branch>/<filepath>
 ```
 
+## 19.7 Format only modified part
+
+```sh
+git diff HEAD -U0 --no-color | clang-format-diff -p1 -i
+
+git diff --name-only HEAD | grep -E '(\.h$)|(\.cpp$)|(\.hpp$)|(\.tpp$)|(\.c$)' | xargs git diff HEAD -U0 --no-color | clang-format-diff -p1 -i
+```
+
 # 20 Reference
 
 * [git官方文档](https://git-scm.com/docs/gitignore)

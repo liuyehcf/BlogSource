@@ -3,19 +3,9 @@
     * gprof
     * bottom, gtop, glances, gping, procs, hyperfine, xh, curlie, dog
 1. 性能分析
-    * perf
-        * perf lock
     * vtune如何在虚拟机上进行user-mode sampling
-    * valgrind (by andy pavlo)
-        * [The Valgrind Quick Start Guide](http://valgrind.org/docs/manual/quick-start.html)
-        * [Callgrind: a call-graph generating cache and branch prediction profiler](https://valgrind.org/docs/manual/cl-manual.html)
-        * [kcachegrind](https://kcachegrind.github.io/html/Usage.html)
-        * [Tips for the Profiling/Optimization process](https://kcachegrind.github.io/html/Tips.html)
     * DTrace (Dynamic Tracing)
 1. 数据库
-    * 模型
-        * 星星模型
-        * 雪花模型
     * 相关概念
         * 确定性事务
         * 2pc
@@ -28,18 +18,9 @@
         * [sqlite-window-function](https://www.sqlite.org/windowfunctions.html)
         * [trino-subquery](https://docs.google.com/document/d/18HN7peS2eR8lZsErqcmnoWyMEPb6p4OQeidH1JP_EkA)
     * 测试集
-        * tsbs
-        * taxi
-        * tpc，基于每个列独立平均分布的前提来进行生成的。所以传统的基数估计方法可以达到一个比较好的效果
-    * 统计信息
-        * mcv, most common value, topn
-        * ndv, number of distinct values
     * Join
         * RuntimeFilter
         * FactorJoin，基数估计
-    * Type
-        * bitmap
-        * hll
     * 其他
         * [Spark性能优化指南——高级篇](https://tech.meituan.com/2016/05/12/spark-tuning-pro.html)
     * 稳定性问题：
@@ -65,15 +46,11 @@
         * 中东
     * Teradata
         * 替换方案，目前只有华为在做
-    * 数据底座
-        * abroad: iceberg, hudi
     * retention analysis
     * funnel analysis
     * sql skew 优化技巧
     * shuffle optimization
         * [A fast alternative to the modulo reduction](https://lemire.me/blog/2016/06/27/a-fast-alternative-to-the-modulo-reduction/)
-    * IO
-        * IO聚合
     * Remote File Cache
         * Based on file:
             * read small data from a gig file will cause big latency
@@ -100,25 +77,14 @@
             * [StarRocks Lakehouse 快速入门——Apache Paimon](https://mp.weixin.qq.com/s/IWyFkdceXOhuBUDABCSbuA)
         * AWS
             * Glue & Athena
-1. 体系结构
-    * numa
-1. nodejs
-    * `npm install -g n`
-    * `n 16`
 1. cpp
     * futex
     * 如何用老的glibc跑二进制
     * fault injection: https://github.com/StarRocks/starrocks/pull/23378/files
-1. java
-    * commons-cli
-1. python
-    * python -m pdb test.py
 1. llvm
     * [llvm-doc](https://llvm.org/docs/)
     * [2008-10-04-ACAT-LLVM-Intro.pdf](https://llvm.org/pubs/2008-10-04-ACAT-LLVM-Intro.pdf)
     * [My First Language Frontend with LLVM Tutorial](https://llvm.org/docs/tutorial/MyFirstLanguageFrontend/index.html)
-1. k8s
-    * kubectl -n byconity port-forward service/byconity-server 9000:9000
 1. 其他
     * [Is Raft more modular than MultiPaxos?](https://maheshba.bitbucket.io/blog/2021/12/14/Modularity.html)
     * 内存分配，伙伴算法
@@ -135,4 +101,3 @@
     * 加盐
     * duckdb parallel merge sort
         * https://github.com/duckdb/duckdb/pull/1666
-    * cgroup_v2

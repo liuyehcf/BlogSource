@@ -273,6 +273,9 @@ echo ${count} # Always 0
 ```sh
 FOO=bar env | grep FOO
 env | grep FOO
+
+FOO=bar echo ${FOO} # Can't work
+FOO=bar bash -c 'echo ${FOO}' # Can work
 ```
 
 ### 1.5.2 Pass to all programs of the pipe

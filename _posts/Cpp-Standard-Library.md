@@ -1670,9 +1670,9 @@ int main(int argc, char* argv[]) {
 
 1. `std::enable_if`
 1. `std::conditional`
-1. `std::underlying_type`：提取`enum`所继承的具体的`int`类型
-1. `std::void_t`
-1. `std::decay`：Applies reference-remove, array-to-pointer, and function-to-pointer implicit conversions to the type T
+1. `std::underlying_type`: Get the underlying numeric type of enum type.
+1. `std::void_t`: Often used in SFINAE.
+1. `std::decay`: Applies reference-remove, cv-qualifiers-remove (const and volatile), array-to-pointer, and function-to-pointer implicit conversions to the type T.
     * [What is std::decay and when it should be used?](https://stackoverflow.com/questions/25732386/what-is-stddecay-and-when-it-should-be-used)
     * [N2609](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2006/n2069.html)
     ```cpp
@@ -1732,7 +1732,7 @@ int main(int argc, char* argv[]) {
 
 ## 27.15 std::move
 
-标准库的实现如下：
+**Implementation:**
 
 ```cpp
   template<typename _Tp>
@@ -1741,9 +1741,9 @@ int main(int argc, char* argv[]) {
     { return static_cast<typename std::remove_reference<_Tp>::type&&>(__t); }
 ```
 
-本质上，就是做了一次类型转换，返回的一定是个右值
+Essentially, it performs a type transformation, and the returned type is guaranteed to be an rvalue.
 
-对于非引用类型的形参，传参时使用`std::move`，会调用移动构造函数来创建实参，示例如下：
+For non-reference type parameters, using std::move during argument passing will invoke the move constructor to create the argument. Here's an example:
 
 ```cpp
 #include <iostream>

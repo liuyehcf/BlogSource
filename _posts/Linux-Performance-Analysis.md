@@ -120,7 +120,9 @@ ${FlameGraph_path}/flamegraph.pl out.folded > out.svg
 * [Java 火焰图](https://www.jianshu.com/p/bea2b6a1eb6e)
 * [Linux 性能诊断 perf使用指南](https://developer.aliyun.com/article/65255#slide-17)
 
-# 3 [Off-CPU Analysis](https://www.brendangregg.com/offcpuanalysis.html)
+# 3 Off-CPU Analysis
+
+[Off-CPU Analysis](https://www.brendangregg.com/offcpuanalysis.html)
 
 **分析工具：**
 
@@ -258,9 +260,9 @@ sudo /usr/share/bcc/tools/offcputime -d -t <tid> 30
 
 https://github.com/StarRocks/starrocks/pull/7649
 
-# 6 [pcm](https://github.com/opcm/pcm)
+# 6 pcm
 
-`Processor Counter Monitor, pmc`包含如下工具：
+[Processor Counter Monitor, pmc](https://github.com/opcm/pcm) 包含如下工具：
 
 * `pcm`：最基础监控工具
 * `pcm-sensor-server`：在本地提供一个`Http`服务，以`JSON`的格式返回`metrics`
@@ -275,7 +277,9 @@ https://github.com/StarRocks/starrocks/pull/7649
 * `pcm-raw`
 * `pcm-bw-histogram`
 
-# 7 [sysbench](https://github.com/akopytov/sysbench)
+# 7 sysbench
+
+[sysbench](https://github.com/akopytov/sysbench)
 
 **示例：**
 
@@ -285,9 +289,80 @@ https://github.com/StarRocks/starrocks/pull/7649
 * `sysbench --test=threads run`
 * `sysbench --test=mutex run`
 
-# 8 Tips
+# 8 valgrind (by andy pavlo)
 
-## 8.1 The primary metrics that performance analysis should prioritize
+[valgrind](https://valgrind.org/)
+
+**Tools:**
+
+* `memcheck`: Detects memory-related errors.
+* `cachegrind`: Cachegrind is a Valgrind tool used for profiling programs to analyze cache performance and identify bottlenecks in code. It simulates how your code uses the CPU’s cache hierarchy and memory, helping you optimize code by identifying areas with inefficient memory usage or poor cache locality.
+* `callgrind`: Profiles function calls and CPU performance.
+* `helgrind`: Detects data races and threading bugs.
+* `drd`: Analyzes threading issues, similar to Helgrind.
+* `massif`: Memory profiler focused on heap and stack usage.
+* `dhat`: A tool for examining how programs use their heap allocations.
+* `lackey`: An experimental tool that performs basic code instrumentation.
+
+**Example:**
+
+```sh
+cat > main.cpp << 'EOF'
+#include <cstdlib>
+#include <iostream>
+#include <vector>
+
+const int SIZE = 1000;
+
+void inefficientFunction() {
+    std::vector<std::vector<int>> matrix(SIZE, std::vector<int>(SIZE));
+
+    // Fill matrix with values, accessing elements in a column-major order
+    // which is inefficient for cache locality.
+    for (int i = 0; i < SIZE; ++i) {
+        for (int j = 0; j < SIZE; ++j) {
+            matrix[j][i] = rand() % 100; // Random values in matrix
+        }
+    }
+
+    // Sum up all elements
+    int total = 0;
+    for (int i = 0; i < SIZE; ++i) {
+        for (int j = 0; j < SIZE; ++j) {
+            total += matrix[i][j];
+        }
+    }
+
+    std::cout << "Total: " << total << std::endl;
+}
+
+int main() {
+    inefficientFunction();
+    return 0;
+}
+EOF
+
+gcc -o main main.cpp -lstdc++ -std=gnu++17 -g
+
+valgrind --tool=massif ./main
+find . -name "massif.out.*" | xargs ms_print
+
+valgrind --tool=cachegrind ./main
+find . -name "cachegrind.out.*" | xargs cg_annotate
+
+valgrind --tool=dhat ./main
+```
+
+**Reference:**
+
+* [The Valgrind Quick Start Guide](http://valgrind.org/docs/manual/quick-start.html)
+* [Callgrind: a call-graph generating cache and branch prediction profiler](https://valgrind.org/docs/manual/cl-manual.html)
+* [kcachegrind](https://kcachegrind.github.io/html/Usage.html)
+* [Tips for the Profiling/Optimization process](https://kcachegrind.github.io/html/Tips.html)
+
+# 9 Tips
+
+## 9.1 The primary metrics that performance analysis should prioritize
 
 * `Cycles`
 * `IPC`
@@ -299,14 +374,14 @@ https://github.com/StarRocks/starrocks/pull/7649
 * `%usr`、`%sys`
 * `bandwidth`、`packet rate`、`irq`
 
-## 8.2 What is the approach for performance bottleneck analysis?
+## 9.2 What is the approach for performance bottleneck analysis?
 
 1. `CPU`无法打满，可能原因包括：
     * 没有充分并行
     * 存在串行点（`std::mutex`）
     * 其他资源是否已经打满，导致CPU无法进一步提高，比如网卡、磁盘等
 
-# 9 Reference
+# 10 Reference
 
 * [perf Examples](https://www.brendangregg.com/perf.html)
 * [在Linux下做性能分析1：基本模型](https://zhuanlan.zhihu.com/p/22124514)

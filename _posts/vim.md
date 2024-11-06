@@ -3634,6 +3634,7 @@ nvm install v16.19.0
 nvm install v20.11.1
 nvm list
 nvm use v16.19.0
+nvm alias default v16.19.0
 ```
 
 **[n](https://github.com/tj/n)**

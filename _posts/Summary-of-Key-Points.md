@@ -400,6 +400,9 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
         - Fact Table
         - Dimension Table
     - Column
+        - Type
+            - Bitmap
+            - Hll
     - Row
     - Key
         - Primary Key
@@ -591,6 +594,7 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
                 - Basic Statistics
                     - Cardinality
                     - NDV, Number of Distinct Values
+                    - MCV, Most Common Value
                     - Min/Max
                 - Histogram Statistics
                     - Distribution
@@ -773,6 +777,12 @@ An Application Binary Interface (ABI) is a set of rules and conventions that dic
     - Graph Database
     - Object-Oriented Database
         - ObjectDB
+- Test Sets
+    - SSB
+    - TPC-H
+    - TPC-DS
+    - TSBS
+    - Taxi
 - Big Data Related Concepts
     - Data Integration
     - Data Extraction, Transformation, and Loading(ETL)
@@ -1619,6 +1629,8 @@ Key characteristics of an event-driven system include:
         - Zero-Copy IO
         - IO Coalescing
         - IO Prefetching
+            - Prefetch buffer size usually equals to data buffer size
+            - Core idea is preventing the CPU from waiting for I/O
     - System Call
         - epoll
         - aio

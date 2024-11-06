@@ -443,6 +443,8 @@ mycompany
 1. `http`
     * `python3 -m http.server 80`：启动一个`http server`，执行命令的目录会作为`http`资源的根目录
 1. `json`
+1. `pdb`: Debug tool for python, like gdb for c.
+    * `python3 -m pdb test.py`
 1. `venv`：用来为一个应用创建一套隔离的Python运行环境
 
 ## 7.3 Matplotlib

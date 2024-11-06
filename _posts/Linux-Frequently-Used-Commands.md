@@ -1429,6 +1429,9 @@ ROOT=$(cd "$ROOT"; pwd)
 objcopy --only-keep-debug main main.debuginfo
 strip --strip-debug main
 objcopy --add-gnu-debuglink=main.debuginfo main main-with-debug
+
+# check the .gnu_debuglink section
+readelf --string-dump=.gnu_debuglink main-with-debug
 ```
 
 When you're debugging the binary through `gdb`, it will automatically load the corresponding debug info file, and you can also manually load it using the `symbol-file` command, like `(gdb) symbol-file /path/to/binary_file.debuginfo`.
@@ -2182,6 +2185,7 @@ test ALL=(ALL) ALL
     * **Session:**
         * `<prefix> s`: Prints the session numbers for choose.
         * `<prefix> $`: Rename current session.
+        * `<prefix> &`: Kill current session.
 * **Options:**
     * `Session Options`
         * `tmux set-option -g <key> <value>`/`tmux set -g <key> <value>`
@@ -2191,6 +2195,7 @@ test ALL=(ALL) ALL
         * `tmux set-window-option -g <key> <value>`/`tmux setw -g <key> <value>`
         * `tmux show-window-options -g`/`tmux show-window-options -g <key>`
         * `tmux setw -g mode-keys vi`: Use vi mode.
+        * `tmux set-hook -g after-rename-window 'set -w allow-rename off'`
 
 **Tips:**
 
@@ -2213,6 +2218,7 @@ set -g default-shell ${SHELL}
 set -g escape-time 50
 setw -g mode-keys vi
 set -g display-panes-time 60000 # 60 seconds
+set-hook -g after-rename-window 'set -w allow-rename off'
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -2220,8 +2226,8 @@ set -g display-panes-time 60000 # 60 seconds
 # [Option] + j, which is「∆」
 # [Option] + k, which is「˚」
 # [Option] + l, which is「¬」
-# [Option] + [shift] + h, which is「Ó」
-# [Option] + [shift] + l, which is「Ò」
+# [Option] + [shift] + p, which is「∏」
+# [Option] + [shift] + n, which is「˜」
 
 # Pane switch
 # send-keys means passing the key to current command, i.e. vim/nvim.
@@ -2235,18 +2241,18 @@ bind -n ∆ select-pane -U
 bind -n ˚ select-pane -D
 
 # Window switch
-# bind -n Ó if-shell -F "#{||:#{==:#{pane_current_command},vim},#{==:#{pane_current_command},nvim}}" "send-keys Ó" "previous-window"
-# bind -n Ò if-shell -F "#{||:#{==:#{pane_current_command},vim},#{==:#{pane_current_command},nvim}}" "send-keys Ò" "next-window"
-bind -n Ó previous-window
-bind -n Ò next-window
+# bind -n ∏ if-shell -F "#{||:#{==:#{pane_current_command},vim},#{==:#{pane_current_command},nvim}}" "send-keys ∏" "previous-window"
+# bind -n ˜ if-shell -F "#{||:#{==:#{pane_current_command},vim},#{==:#{pane_current_command},nvim}}" "send-keys ˜" "next-window"
+bind -n ∏ previous-window
+bind -n ˜ next-window
 
 # Create the 'ktb_vim'(or any identifier you like) key table for Vim mode (pass keys to Vim/Neovim)
 bind -T ktb_vim ˙ send-keys ˙
 bind -T ktb_vim ¬ send-keys ¬
 bind -T ktb_vim ∆ send-keys ∆
 bind -T ktb_vim ˚ send-keys ˚
-bind -T ktb_vim Ó send-keys Ó
-bind -T ktb_vim Ò send-keys Ò
+bind -T ktb_vim ∏ send-keys ∏
+bind -T ktb_vim ˜ send-keys ˜
 
 # Toggle between the 'ktb_vim' and default 'root' key tables
 bind v if -F '#{==:#{key-table},ktb_vim}' 'set -w key-table root; switch-client -T root' 'set -w key-table ktb_vim; switch-client -T ktb_vim'
@@ -4001,38 +4007,39 @@ mount      –t debugfs    debugfs /sys/kernel/debug
 
 ## 7.2 perf
 
-**`perf`的原理是这样的：每隔一个固定的时间，就在`CPU`上（每个核上都有）产生一个中断，在中断上看看，当前是哪个`pid`，哪个函数，然后给对应的`pid`和函数加一个统计值，这样，我们就知道`CPU`有百分几的时间在某个`pid`，或者某个函数上了**
+**The principle of `perf` is as follows: every fixed interval, an interrupt is generated on the `CPU` (on each core). During the interrupt, it checks the current `pid` and function, then adds a count to the corresponding `pid` and function. In this way, we know what percentage of `CPU` time is spent on a certain `pid` or function.**
 
-**常用子命令**
+**Common Subcommands:**
 
-* `archive`：由于`perf.data`的解析需要一些其他信息，比如符号表、`pid`、进程对应关系等，该命令就是将这些相关的文件都打成一个包，这样在别的机器上也能进行分析
-* `diff`：用于展示两个`perf.data`之间的差异
-* `evlist`：列出`perf.data`中包含的额事件
-* `list`：查看支持的所有事件
-* `record`：启动分析，并将记录写入`perf.data`
-    * `perf record`在当前目录产生一个`perf.data`文件（如果这个文件已经存在，旧的文件会被改名为`perf.data.old`）
-    * `perf record`不一定用于跟踪自己启动的进程，通过指定`pid`，可以直接跟踪固定的一组进程。另外，大家应该也注意到了，上面给出的跟踪都仅仅跟踪发生在特定pid的事件。但很多模型，比如一个`WebServer`，你其实关心的是整个系统的性能，网络上会占掉一部分`CPU`，`WebServer`本身占一部分`CPU`，存储子系统也会占据部分的`CPU`，网络和存储不一定就属于你的WebServer这个`pid`。**所以，对于全系统调优，我们常常给`perf record`命令加上`-a`参数，这样可以跟踪整个系统的性能**
-* `report`：读取`perf.data`并展示
-* `stat`：仅展示一些统计信息
-* `top`：以交互式的方式进行分析
+* `archive`: Since parsing `perf.data` requires additional information, such as symbol tables, `pid`, and process relationships, this command packages all relevant files together, enabling analysis on other machines.
+* `diff`: Displays the differences between two `perf.data` files.
+* `evlist`: Lists the events contained in `perf.data`.
+* `list`: Shows all supported events.
+* `record`: Starts analysis and writes records to `perf.data`.
+    * `perf record` generates a `perf.data` file in the current directory (if this file already exists, the old file is renamed to `perf.data.old`).
+    * `perf record` is not necessarily used to track processes it starts itself. By specifying `pid`, it can directly track a fixed group of processes. Also, as you may have noticed, the tracking given above only monitors events occurring in a specific pid. However, in many scenarios, like a `WebServer`, you may be concerned with the entire system's performance, as the network might take up part of the `CPU`, the `WebServer` itself uses some `CPU`, and the storage subsystem also occupies part of the `CPU`. The network and storage don't necessarily belong to your WebServer's `pid`. **Therefore, for full-system tuning, we often add the `-a` parameter to the `perf record` command, allowing us to track the performance of the entire system.**
+* `report`: Reads and displays `perf.data`.
+* `stat`: Only shows some statistical information.
+* `top`: Analyzes in an interactive mode.
     * `?`: help doc
+* `lock`: Used for analyzing and profiling lock contention in multi-threaded applications or the kernel.
 
-**关键参数：**
+**Key Parameters:**
 
-* `-e`：指定跟踪的事件
+* `-e`: Specifies the event to track
     * `perf top -e branch-misses,cycles`
-    * `perf top -e branch-misses:u,cycles`：事件可以指定后缀，只跟踪发生在用户态时产生的分支预测失败
-    * `perf top -e '{branch-misses,cycles}:u'`：全部事件都只关注用户态部分
-* `-s`：指定按什么参数来进行分类
+    * `perf top -e branch-misses:u,cycles`: The event can have a suffix, tracking only branch prediction failures occurring in user mode.
+    * `perf top -e '{branch-misses,cycles}:u'`: All events focus only on the user mode portion.
+* `-s`: Specifies the parameter to categorize by
     * `perf top -e 'cycles' -s comm,pid,dso`
-* `-p`：指定跟踪的`pid`
+* `-p`: Specifies the `pid` to track
 
 **常用事件：**
 
 * `cycles/cpu-cycles & instructions`
 * `branch-instructions & branch-misses`
 * `cache-references & cache-misses`
-    * `cache-misses`表示无法命中任何一级缓存，而需要访问主存的次数。对于`L1-miss, L2-hit`这种情况，不包含在内
+    * `cache-misses` indicates the number of times access to main memory is required due to a miss in all cache levels. Cases like `L1-miss, L2-hit` are not included.
     * [What are perf cache events meaning?](https://stackoverflow.com/questions/12601474/what-are-perf-cache-events-meaning)
     * [How does Linux perf calculate the cache-references and cache-misses events](https://stackoverflow.com/questions/55035313/how-does-linux-perf-calculate-the-cache-references-and-cache-misses-events)
 * `LLC, last level cache`：
@@ -4050,24 +4057,25 @@ mount      –t debugfs    debugfs /sys/kernel/debug
 * `context-switches & sched:sched_switch`
 * `page-faults & major-faults & minor-faults`
 * `block`
-    * `block:block_rq_issue`：发出`device I/O request`触发该事件。`rq`是`request`的缩写
+    * `block:block_rq_issue`: This event is triggered by issuing a `device I/O request`. `rq` is short for `request`.
 * `kmem`
     * `kmem:kmalloc`
     * `kmem:kfree`
 
 **Examples:**
 
-1. `perf list`查看支持的所有事件
-1. `perf stat -e L1-dcache-load-misses,L1-dcache-loads -- cat /etc/passwd`：统计缓存miss率
-1. `timeout 10 perf record -e 'cycles' -a`：统计整个系统，统计10秒
-1. `perf record -e 'cycles' -p xxx`：统计指定的进程
-1. `perf record -e 'cycles' -- myapplication arg1 arg2`：启动程序并进行统计
-1. `perf report`：查看分析报告
-1. **`perf top -p <pid> -g`：以交互式的方式分析一个程序的性能（神器）**
-    * `-g`可以展示某个函数自身的占比以及孩子的占比。每个项目最多可以继续展开成父堆栈和子堆栈，至于是父堆栈还是子堆栈，还是两者都有，要看具体情况
-    * 选中某个条目，然后选择`Anotate xxx`可以查看对应的汇编
+1. `perf list`: View all supported events.
+1. `perf stat -e L1-dcache-load-misses,L1-dcache-loads -- cat /etc/passwd`: Calculate cache miss rate.
+1. `timeout 10 perf record -e 'cycles' -a`: Record statistics for the entire system for 10 seconds.
+1. `perf record -e 'cycles' -p xxx`: Record statistics for a specified process.
+1. `perf record -e 'cycles' -- myapplication arg1 arg2`: Start an application and record statistics.
+1. `perf report`: View the analysis report.
+1. `perf lock record -p <pid>; perf lock report`
+1. **`perf top -p <pid> -g`: Interactively analyze the performance of a program (a powerful tool)**
+    * `-g` shows the percentage of a function itself and its children. Each item can be expanded to show the parent stack, child stack, or both, depending on the specific case.
+    * Selecting an entry and choosing `Annotate xxx` allows viewing the corresponding assembly code.
 1. **`perf stat -p <pid> -e branch-instructions,branch-misses,cache-misses,cache-references,cpu-cycles,ref-cycles,instructions,mem_load_retired.l1_hit,mem_load_retired.l1_miss,mem_load_retired.l2_hit,mem_load_retired.l2_miss,cpu-migrations,context-switches,page-faults,major-faults,minor-faults`**
-    * 该命令会在右边输出一个百分比，该百分比的含义是：`perf`统计指定`event`所花费的时间与`peft`统计总时间的比例
+    * This command outputs a percentage on the right side, representing the ratio of the time `perf` spends on the specified `event` compared to the total time `perf` records.
 
 # 8 Remote Desktop
 
@@ -4582,6 +4590,7 @@ apt install clang-format-X.Y
 
 #### 11.2.2.3 Find process with most I/O consumption
 
+* `dstat --top-bio-adv`
 * `dstat --top-io-adv`
 * `iotop -oP`
 
