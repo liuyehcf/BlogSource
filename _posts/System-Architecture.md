@@ -2634,6 +2634,7 @@ for i from 1 to n
     * `SRAM-L2`：`8–20 cycles`
     * `SRAM-L3`：`30–80 cycles`
     * `DRAM`：`150-180 cycles`
+    * [Numbers Everyone Should Know (Page 84)](/resources/share/Building-Software-Systems-at-Google-and-Lessons-Learned.pdf)
 1. Cache的大小（`getconf -a | grep -i cache`）
     * `L1`：`8KB - 64KB`
     * `L2`：`256KB - 8MB`

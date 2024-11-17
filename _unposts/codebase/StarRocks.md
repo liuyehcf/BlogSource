@@ -702,6 +702,7 @@ classDiagram
 * [[Enhancement] Reduce IOPS in HDFS Text Reader when enable datacache](https://github.com/StarRocks/starrocks/pull/37754)
 * [[Enhancement] Merge multiply blocks into one io request in CacheInputStream](https://github.com/StarRocks/starrocks/pull/38882)
 * [[Feature] support parquet scanner to split task](https://github.com/StarRocks/starrocks/pull/42586)
+* [[Enhancement] Optimize iceberg mor performance of iceberg equality delete](https://github.com/StarRocks/starrocks/pull/51050)
 
 # 5 Other
 

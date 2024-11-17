@@ -405,7 +405,87 @@ cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 build/boost_demo
 ```
 
-## 2.2 Hana
+## 2.2 Algorithm
+
+[The Boost Algorithm Library](https://www.boost.org/doc/libs/1_86_0/libs/algorithm/doc/html/index.html)
+
+### 2.2.1 String
+
+Key Features of Boost.StringAlgo
+
+* `Case Conversion`
+* `Trimming`
+* `Splitting`
+* `Joining`
+* `Searching`
+* `Replacing`
+* `Case-Insensitive Operations`
+
+```cpp
+#include <boost/algorithm/string.hpp>
+#include <iostream>
+#include <string>
+#include <vector>
+
+int main() {
+    // Case Conversion
+    std::string caseStr = "Hello, World!";
+    boost::to_upper(caseStr);
+    std::cout << "Uppercase: " << caseStr << std::endl;
+    boost::to_lower(caseStr);
+    std::cout << "Lowercase: " << caseStr << std::endl;
+
+    // Trimming
+    std::string trimStr;
+    auto reset = [&trimStr]() { trimStr = "   Hello, Boost!   "; };
+    reset();
+    boost::trim(trimStr);
+    std::cout << "Trimmed: '" << trimStr << "'" << std::endl;
+    reset();
+    boost::trim_left(trimStr);
+    std::cout << "Left Trimmed: '" << trimStr << "'" << std::endl;
+    reset();
+    boost::trim_right(trimStr);
+    std::cout << "Right Trimmed: '" << trimStr << "'" << std::endl;
+
+    // Splitting
+    std::string splitStr = "a,b,c";
+    std::vector<std::string> tokens;
+    boost::split(tokens, splitStr, boost::is_any_of(","));
+    std::cout << "Split Tokens: ";
+    for (const auto& token : tokens) {
+        std::cout << "'" << token << "' ";
+    }
+    std::cout << std::endl;
+
+    // Joining
+    std::vector<std::string> joinTokens = {"a", "b", "c"};
+    std::string joined = boost::join(joinTokens, ",");
+    std::cout << "Joined: " << joined << std::endl;
+
+    // Searching
+    std::string searchStr = "Boost is awesome!";
+    bool startsWithBoost = boost::starts_with(searchStr, "Boost");
+    bool endsWithAwesome = boost::ends_with(searchStr, "awesome!");
+    std::cout << "Starts with 'Boost': " << std::boolalpha << startsWithBoost << std::endl;
+    std::cout << "Ends with 'awesome!': " << std::boolalpha << endsWithAwesome << std::endl;
+
+    // Replacing
+    std::string replaceStr = "Boost is great. Boost is powerful.";
+    boost::replace_all(replaceStr, "Boost", "C++");
+    std::cout << "Replaced: " << replaceStr << std::endl;
+
+    // Case-Insensitive Operations
+    std::string str1 = "boost";
+    std::string str2 = "BOOST";
+    bool equalIgnoreCase = boost::iequals(str1, str2);
+    std::cout << "Case-Insensitive Equals: " << std::boolalpha << equalIgnoreCase << std::endl;
+
+    return 0;
+}
+```
+
+## 2.3 Hana
 
 **[Boost.Hana](https://www.boost.org/doc/libs/release/libs/hana/doc/html/index.html)** is a library for metaprogramming in C++ that provides a modern, powerful, and easy-to-use set of tools for developers. It is part of the Boost libraries, which are known for their high-quality, peer-reviewed, and portable C++ libraries. Here are some key points about Boost.Hana:
 
@@ -484,7 +564,7 @@ int main() {
 }
 ```
 
-## 2.3 Stacktrace
+## 2.4 Stacktrace
 
 Boost.Stacktrace provides several options for printing stack traces, depending on the underlying technology used to capture the stack information:
 
@@ -533,7 +613,7 @@ int main() {
 }
 ```
 
-### 2.3.1 With addr2line
+### 2.4.1 With addr2line
 
 This approach works fine with `gcc-10.3.0`, but can't work with higher versions like `gcc-11.3.0`, `gcc-12.3.0`. Don't know why so far.
 
@@ -563,7 +643,7 @@ Boost version: 1.84.0
 10# _start in ./main
 ```
 
-### 2.3.2 With libbacktrace
+### 2.4.2 With libbacktrace
 
 **Compile:**
 
@@ -592,7 +672,7 @@ Boost version: 1.84.0
 10# _start in ./main
 ```
 
-## 2.4 Reference
+## 2.5 Reference
 
 * [The Boost C++ Libraries BoostBook Documentation Subset](https://www.boost.org/doc/libs/master/doc/html/)
 * [How to print current call stack](https://www.boost.org/doc/libs/1_66_0/doc/html/stacktrace/getting_started.html)

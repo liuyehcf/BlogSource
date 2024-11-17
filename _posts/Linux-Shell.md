@@ -653,9 +653,33 @@ do
 done
 ```
 
-### 3.1.7 Contains
+### 3.1.7 Starts With
 
-**方式1：利用运算符`=~`**
+#### 3.1.7.1 Method 1: Use wildcard `*`
+
+```sh
+line="-- SELECT 1"
+if [[ ${line} = "--"* ]]; then
+    echo "starts with '--'"
+else
+    echo "not starts with '--'"
+fi
+```
+
+#### 3.1.7.2 Method 2: Use `grep`
+
+```sh
+line="-- SELECT 1"
+if grep -E '^\s*--' <<< "${line}" > /dev/null 2>&1; then
+    echo "starts with '--'"
+else
+    echo "not starts with '--'"
+fi
+```
+
+### 3.1.8 Contains
+
+#### 3.1.8.1 Method 1: Use `=~`
 
 ```sh
 str1="abcd"
@@ -667,7 +691,7 @@ else
 fi
 ```
 
-**方式2：利用通配符**
+#### 3.1.8.2 Method 2: Use wildcard `*`
 
 ```sh
 str1="abcd"
@@ -679,22 +703,21 @@ else
 fi
 ```
 
-**方式3：利用grep**
+#### 3.1.8.3 Method 3: Use `grep`
 
 ```sh
 str1="abcd"
 str2="bc"
-result=$(echo ${str1} | grep ${str2})
-if [ -n "${result}" ]; then
+if grep "${str2}" <<< "${str1}" > /dev/null 2>&1; then
     echo "contains"
 else
     echo "not contains"
 fi
 ```
 
-### 3.1.8 trim
+### 3.1.9 trim
 
-#### 3.1.8.1 Method 1
+#### 3.1.9.1 Method 1
 
 ```sh
 function trim() {
@@ -721,7 +744,7 @@ test3="$(trim " one leading and one trailing ")"
 echo "'$test1', '$test2', '$test3', '$test4', '$test5', '$test6'"
 ```
 
-#### 3.1.8.2 Method 2
+#### 3.1.9.2 Method 2
 
 ```sh
 function trim() {
@@ -739,14 +762,14 @@ test3="$(trim " one leading and one trailing ")"
 echo "'$test1', '$test2', '$test3', '$test4', '$test5', '$test6'"
 ```
 
-### 3.1.9 Case Conversion
+### 3.1.10 Case Conversion
 
 ```sh
 echo 'hello' | tr 'a-z' 'A-Z'
 echo 'HELLO' | tr 'A-Z' 'a-z'
 ```
 
-### 3.1.10 Extract
+### 3.1.11 Extract
 
 ```sh
 var='[hello]'
@@ -755,7 +778,7 @@ var=${var%\]}
 echo ${var}
 ```
 
-### 3.1.11 String with special character
+### 3.1.12 String with special character
 
 ```sh
 var="SELECT * FROM t0"
@@ -765,14 +788,14 @@ echo ${var}
 echo "${var}"
 ```
 
-### 3.1.12 Array to String
+### 3.1.13 Array to String
 
 ```sh
 items=( "hello world" "how have you been" )
 printf '%s\n' ${items[@]} | tr '\n' ',' | sed 's/,$//g' | paste -sd ',' -
 ```
 
-### 3.1.13 Multi-line Content
+### 3.1.14 Multi-line Content
 
 ```sh
 item="something"

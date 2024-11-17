@@ -2880,6 +2880,8 @@ endif
 
 ### 3.21.2 `~/.config/nvim/lua/packer-plugins.lua`
 
+* `mkdir -p ~/.config/nvim/lua`
+
 ```lua
 vim.cmd [[packadd packer.nvim]]
 

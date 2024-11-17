@@ -2231,26 +2231,16 @@ set-hook -g after-rename-window 'set -w allow-rename off'
 
 # Pane switch
 # send-keys means passing the key to current command, i.e. vim/nvim.
-# bind -n ˙ if-shell -F "#{||:#{==:#{pane_current_command},vim},#{==:#{pane_current_command},nvim}}" "send-keys ˙" "select-pane -L"
-# bind -n ¬ if-shell -F "#{||:#{==:#{pane_current_command},vim},#{==:#{pane_current_command},nvim}}" "send-keys ¬" "select-pane -R"
-# bind -n ∆ if-shell -F "#{||:#{==:#{pane_current_command},vim},#{==:#{pane_current_command},nvim}}" "send-keys ∆" "select-pane -U"
-# bind -n ˚ if-shell -F "#{||:#{==:#{pane_current_command},vim},#{==:#{pane_current_command},nvim}}" "send-keys ˚" "select-pane -D"
-bind -n ˙ select-pane -L
-bind -n ¬ select-pane -R
-bind -n ∆ select-pane -U
-bind -n ˚ select-pane -D
+bind -n ˙ if-shell -F "#{||:#{==:#{pane_current_command},vim},#{==:#{pane_current_command},nvim}}" "send-keys ˙" "select-pane -L"
+bind -n ¬ if-shell -F "#{||:#{==:#{pane_current_command},vim},#{==:#{pane_current_command},nvim}}" "send-keys ¬" "select-pane -R"
+bind -n ∆ if-shell -F "#{||:#{==:#{pane_current_command},vim},#{==:#{pane_current_command},nvim}}" "send-keys ∆" "select-pane -U"
+bind -n ˚ if-shell -F "#{||:#{==:#{pane_current_command},vim},#{==:#{pane_current_command},nvim}}" "send-keys ˚" "select-pane -D"
 
 # Window switch
-# bind -n ∏ if-shell -F "#{||:#{==:#{pane_current_command},vim},#{==:#{pane_current_command},nvim}}" "send-keys ∏" "previous-window"
-# bind -n ˜ if-shell -F "#{||:#{==:#{pane_current_command},vim},#{==:#{pane_current_command},nvim}}" "send-keys ˜" "next-window"
 bind -n ∏ previous-window
 bind -n ˜ next-window
 
 # Create the 'ktb_vim'(or any identifier you like) key table for Vim mode (pass keys to Vim/Neovim)
-bind -T ktb_vim ˙ send-keys ˙
-bind -T ktb_vim ¬ send-keys ¬
-bind -T ktb_vim ∆ send-keys ∆
-bind -T ktb_vim ˚ send-keys ˚
 bind -T ktb_vim ∏ send-keys ∏
 bind -T ktb_vim ˜ send-keys ˜
 

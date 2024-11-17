@@ -3953,7 +3953,7 @@ Here!
 
 # 5 template
 
-## 5.1 template Type
+## 5.1 Template category
 
 1. `Function Templates`: These are templates that produce templated functions that can operate on a variety of data types.
     ```cpp
@@ -4016,12 +4016,9 @@ Here!
 
 **Variable Templates**: A variable template is still a blueprint, like function and class templates. But the key difference lies in how the compiler treats template instantiations for variables versus functions/classes. For variables, the instantiation actually defines a variable. If this template is instantiated in multiple translation units, it results in multiple definitions of the same variable across those translation units, violating the ODR. Thus, for variable templates, the `inline` keyword is used to ensure that all instances of a variable template across multiple translation units are treated as a single entity, avoiding ODR violations.
 
-## 5.2 template Argument Type
+### 5.1.1 Examples
 
-1. `template`模板
-1. `typename`模板
-1. `enum`模板
-1. 非类型模板，通常是整型、布尔等可以枚举的类型
+**Case 1:**
 
 ```cpp
 #include <iostream>
@@ -4051,76 +4048,88 @@ int main() {
 }
 ```
 
-## 5.3 template Parameter Pack
+**Case 2:**
 
-[C++ 语言构造参考手册-形参包](https://www.bookstack.cn/read/cppreference-language/5c04935094badaf1.md)
+```cpp
+#include <iostream>
+#include <random>
+#include <typeinfo>
+#include <vector>
 
-**模板形参包是接受零或更多模板实参（非类型、类型或模板）的模板形参。函数模板形参包是接受零或更多函数实参的函数形参**
+template <template <typename, typename> typename V, typename T, typename A>
+void print_last_value(V<T, A>& v) {
+    const T& value = v.back();
+    std::cout << value << std::endl;
+}
 
-**至少有一个形参包的模板被称作变参模板**
+template <template <typename> typename V, typename T>
+void print_type(const V<T>& value) {
+    std::cout << "V<T>'s type=" << typeid(V<T>).name() << std::endl;
+    std::cout << "T's type=" << typeid(T).name() << std::endl;
+}
 
-**模板形参包（出现于别名模版、类模板、变量模板及函数模板形参列表中）**
+int main() {
+    std::vector<int> v{1, 2, 3};
+    print_last_value(v);
+    print_type(v);
+    return 0;
+}
+```
 
-* `类型 ... Args(可选)`
-* `typename|class ... Args(可选)`
-* `template <形参列表> typename(C++17)|class ... Args(可选)`
+## 5.2 Template parameter
 
-**函数参数包（声明符的一种形式，出现于变参函数模板的函数形参列表中）**
+[Template parameters and template arguments](https://en.cppreference.com/w/cpp/language/template_parameters)
 
-* `Args ... args(可选)`
+Every template is parameterized by one or more template parameters, indicated in the parameter-list of the template declaration syntax:
 
-**形参包展开（出现于变参模板体中），展开成零或更多模式的逗号分隔列表。模式必须包含至少一个形参包**
+```cpp
+template < parameter-list > declaration
+```
 
-* `模式 ...`
+Each parameter in parameter-list may be:
 
-## 5.4 Fold Expressions
+* **a non-type template parameter;**
+* **a type template parameter;**
+* **a template template parameter.**
 
-[C++ 语言构造参考手册-折叠表达式](https://www.bookstack.cn/read/cppreference-language/62e23cda3198622e.md)
+## 5.3 Template argument
 
-**格式如下：**
+[Template parameters and template arguments](https://en.cppreference.com/w/cpp/language/template_parameters)
 
-* 一元右折叠：`( 形参包 op ... )`
-* 一元左折叠：`( ... op 形参包 )`
-* 二元右折叠：`( 形参包 op ... op 初值 )`
-* 二元左折叠：`( 初值 op ... op 形参包 )`
+In order for a template to be instantiated, every template parameter (type, non-type, or template) must be replaced by a corresponding template argument. For class templates, the arguments are either explicitly provided, deduced from the initializer, (since C++17) or defaulted. For function templates, the arguments are explicitly provided, deduced from the context, or defaulted.
 
-**形参包：含未展开的形参包且其顶层不含有优先级低于转型（正式而言，是 转型表达式）的运算符的表达式。说人话，就是表达式**
+Each argument may be:
 
-**31个合法`op`如下（二元折叠的两个`op`必须一样）：**
+* **a template non-type argument;**
+* **a template type argument;**
+* **a template template argument.**
 
-1. `+`
-1. `-`
-1. `/`
-1. `%`
-1. `^`
-1. `&`
-1. `|`
-1. `=`
-1. `<`
-1. `>`
-1. `<<`
-1. `>>`
-1. `+=`
-1. `-=`
-1. `=`
-1. `/=`
-1. `%=`
-1. `^=`
-1. `&=`
-1. `|=`
-1. `<<=`
-1. `>>=`
-1. `==`
-1. `!=`
-1. `<=`
-1. `>=`
-1. `&&`
-1. `||`
-1. `,`
-1. `.`
-1. `->`
+## 5.4 Parameter pack
 
-**形参包折叠的示例1：**
+[Parameter pack](https://en.cppreference.com/w/cpp/language/parameter_pack)
+
+A template parameter pack is a template parameter that accepts zero or more template arguments (non-types, types, or templates). A function parameter pack is a function parameter that accepts zero or more function arguments.
+
+A template with at least one parameter pack is called a variadic template.
+
+### 5.4.1 Fold Expressions
+
+[Fold expressions](https://en.cppreference.com/w/cpp/language/fold)
+
+Reduces (folds) a parameter pack over a binary operator.
+
+**Syntax:**
+
+* Unary right fold: `( pack op ... )`
+* Unary left fold: `( ... op pack )`
+* Binary right fold: `( pack op ... op init )`
+* Binary left fold: `( init op ... op pack )`
+* `op`: any of the following 32 binary operators: `+` `-` `*` `/` `%` `^` `&` `|` `=` `<` `>` `<<` `>>` `+=` `-=` `*=` `/=` `%=` `^=` `&=` `|=` `<<=` `>>=` `==` `!=` `<=` `>=` `&&` `||` `,` `.*` `->*`. In a binary fold, both ops must be the same.
+* `pack`: an expression that contains an unexpanded parameter pack and does not contain an operator with precedence lower than cast at the top level (formally, a cast-expression)
+* `init`: an expression that does not contain an unexpanded parameter pack and does not contain an operator with precedence lower than cast at the top level (formally, a cast-expression)
+Note that the opening and closing parentheses are a required part of the fold expression.
+
+**Case 1:**
 
 ```cpp
 #include <cstdint>
@@ -4138,7 +4147,7 @@ int main() {
 }
 ```
 
-**形参包折叠的示例2：**
+**Case 2:**
 
 ```cpp
 #include <fstream>
@@ -4172,9 +4181,9 @@ int main() {
 }
 ```
 
-## 5.5 Traverse Parameter Pack
+### 5.4.2 Traverse Parameter Pack
 
-### 5.5.1 Parenthesis Initializer
+#### 5.4.2.1 Parenthesis Initializer
 
 [Built-in comma operator](https://en.cppreference.com/w/cpp/language/operator_other#Built-in_comma_operator): In a comma expression `E1, E2`, the expression `E1` is evaluated, its result is discarded (although if it has class type, it won't be destroyed until the end of the containing full expression), and its side effects are completed before evaluation of the expression `E2` begins (note that a user-defined operator, cannot guarantee sequencing)
 
@@ -4247,7 +4256,7 @@ int main() {
 }
 ```
 
-### 5.5.2 constexpr for
+#### 5.4.2.2 constexpr for
 
 有时候，无法通过折叠表达式处理一些复杂的场景，我们希望能通过循环来挨个处理形参，示例如下（参考[Approximating 'constexpr for'](https://artificial-mind.net/blog/2020/10/31/constexpr-for)）：
 
@@ -4317,45 +4326,112 @@ int main() {
 }
 ```
 
-## 5.6 Non-Type template Parameter
+## 5.5 template specialization
 
-我们还可以在模板中定义非类型参数，一个非类型参数表示一个值而非一个类型。当一个模板被实例化时，非类型参数被编译器推断出的值所代替，这些值必须是常量表达式，从而允许编译器在编译时实例化模板。一个非类型参数可以是一个整型（枚举可以理解为整型），或是一个指向对象或函数类型的指针或引用
+### 5.5.1 Explicit (full) template specialization
 
-* 绑定到非类型整型参数的实参必须是一个常量表达式
-* 绑定到指针或引用非类型参数必须具有静态的生命周期
-* 在模板定义内，模板非类型参数是一个常量值，在需要常量表达式的地方，可以使用非类型参数，例如指定数组大小
+[Explicit (full) template specialization](https://en.cppreference.com/w/cpp/language/template_specialization) Allows customizing the template code for a given set of template arguments.
 
-```c++
-enum BasicType {
-    INT,
-    DOUBLE
+### 5.5.2 Partial template specialization
+
+[Partial template specialization](https://en.cppreference.com/w/cpp/language/partial_specialization) Allows customizing class and variable(since C++14) templates for a given category of template arguments.
+
+* template function don't support partial template specialization.
+
+**The requirements of argument list:**
+
+* The argument list cannot be identical to the non-specialized argument list (it must specialize something).
+    ```cpp
+    template<class T1, class T2, int I> class B {};        // primary template
+    template<class X, class Y, int N> class B<X, Y, N> {}; // error
+    ```
+
+* Default arguments cannot appear in the argument list.
+* If any argument is a pack expansion, it must be the last argument in the list.
+* ...
+
+#### 5.5.2.1 Members of partial specializations
+
+The template parameter list and the template argument list of a member of a partial specialization must match the parameter list and the argument list of the partial specialization.
+
+Just like with members of primary templates, they only need to be defined if used in the program.
+
+Members of partial specializations are not related to the members of the primary template.
+
+Explicit (full) specialization of a member of a partial specialization is declared the same way as an explicit specialization of the primary template.
+
+```cpp
+template <class T, int I> // primary template
+struct A {
+    void f(); // member declaration
 };
 
-template<BasicType BT>
-struct RuntimeTypeTraits {
+template <class T, int I>
+void A<T, I>::f() {} // primary template member definition
+
+// partial specialization
+template <class T>
+struct A<T, 2> {
+    void f();
+    void g();
+    void h();
 };
 
-// 特化
-template<>
-struct RuntimeTypeTraits<INT> {
-    using Type = int;
-};
+// member of partial specialization
+template <class T>
+void A<T, 2>::g() {}
 
-// 特化
-template<>
-struct RuntimeTypeTraits<DOUBLE> {
-    using Type = double;
-};
+// explicit (full) specialization
+// of a member of partial specialization
+template <>
+void A<char, 2>::h() {}
 
 int main() {
-    // 编译期类型推断，value的类型是int
-    RuntimeTypeTraits<INT>::Type value = 100;
+    A<char, 0> a0;
+    A<char, 2> a2;
+    a0.f(); // OK, uses primary template’s member definition
+    a2.g(); // OK, uses partial specialization's member definition
+    a2.h(); // OK, uses fully-specialized definition of
+            // the member of a partial specialization
+    a2.f(); // error: no definition of f() in the partial
+            // specialization A<T,2> (the primary template is not used)
 }
 ```
 
-## 5.7 When template parameters cannot be inferred
+#### 5.5.2.2 How to use std::enable_if in partial specialization
 
-**通常，在`::`左边的模板形参是无法进行推断的（这里的`::`特指用于连接两个类型），例如下面这个例子**
+**Wrong way:**
+
+* Default arguments cannot appear in the argument list.
+* Didn't specialize anything.
+
+```cpp
+#include <type_traits>
+
+template <typename T>
+struct Foo {};
+
+template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
+struct Foo<T> {};
+```
+
+**Right way:**
+
+```cpp
+#include <type_traits>
+
+template <typename T, typename E = void>
+struct Bar {};
+
+template <typename T>
+struct Bar<T, std::enable_if_t<std::is_integral_v<T>>> {};
+```
+
+## 5.6 When template parameters cannot be deduced
+
+In C++ template programming, when a template parameter appears on the left side of `::`, it typically cannot be deduced. This is because the left side of `::` often represents a `dependent type`, which the compiler cannot resolve during template argument deduction.
+
+**Case 1:**
 
 ```cpp
 template<typename T>
@@ -4378,20 +4454,54 @@ int main() {
 }
 ```
 
-## 5.8 Using typename to Disambiguate
-
-**什么情况下会有歧义？。例如`foo* ptr;`**
-
-* 若`foo`是个类型，那么该语句就是个声明语句，即定义了一个类型为`foo*`变量
-* 若`foo`是个变量，那么该语句就是个表达式语句，即对`foo`以及`ptr`进行`*`运算
-* 编译器无法分辨出是上述两种情况的哪一种，因此可以显式使用`typename`来告诉编译器`foo`是个类型
-
-**对于模板而言，例如`T::value_type`，编译器同样无法确定`T::value_type`是个类型还是不是类型。因为类作用域运算符`::`可以访问类型成员也可以访问静态成员。而编译器默认会认为`T::value_type`这种形式默认不是类型**
-
-**示例1：**
+**Case 2:**
 
 ```cpp
-// 下面这个会编译失败
+#include <type_traits>
+#include <vector>
+
+template <typename T>
+class Foo {};
+
+template <typename T>
+class Foo<std::vector<T>> {};
+
+// This one cannot be deduced
+template <typename T>
+class Foo<std::vector<T>::value_type> {};
+
+// This one cannot be deduced
+template <typename T>
+class Foo<std::conditional_t<std::is_integral_v<T>, int, double>> {};
+
+template <typename T, typename U>
+class Bar {};
+
+// T can be directly deduced from template parameter `std::vector<T>`
+// so the dependent type `std::vector<T>::value_type` can be also deduced
+template <typename T>
+class Bar<std::vector<T>, typename std::vector<T>::value_type> {};
+
+// T can be directly deduced from template parameter `std::vector<T>`
+// so the dependent type `std::conditional_t` and `std::is_integral_v` can be also deduced
+template <typename T>
+class Bar<std::vector<T>, std::conditional_t<std::is_integral_v<T>, int, double>> {};
+```
+
+## 5.7 Using typename to Disambiguate
+
+**Under what circumstances would ambiguity arise? For example, `foo* ptr;`**
+
+* If `foo` is a type, then this statement is a declaration, i.e., it defines a variable of type `foo*`.
+* If `foo` is a variable, then this statement is an expression, i.e., it performs the `*` operation on `foo` and `ptr`.
+* The compiler cannot distinguish which of the above two cases it is. Therefore, you can explicitly use `typename` to inform the compiler that `foo` is a type.
+
+**For templates, such as `T::value_type`, the compiler similarly cannot determine whether `T::value_type` is a type or not. This is because the class scope resolution operator `::` can access both type members and static members. By default, the compiler assumes that something in the form of `T::value_type` is not a type.**
+
+**Case 1:** 
+
+```cpp
+// The following will fail to compile:
 template<typename T>
 T::value_type sum(const T &container) {
     T::value_type res = {};
@@ -4402,12 +4512,7 @@ T::value_type sum(const T &container) {
 }
 ```
 
-**上面的代码有2处错误：**
-
-1. 需要用`typename`显式指定返回类型`T::value_type`
-1. 需要用`typename`显式指定`res`的声明类型
-
-**修正后：**
+**After refined:**
 
 ```cpp
 template<typename T>
@@ -4420,14 +4525,14 @@ typename T::value_type sum(const T &container) {
 }
 ```
 
-## 5.9 Using template to Disambiguate
+## 5.8 Using template to Disambiguate
 
-**什么情况下会有歧义？。例如`container.emplace<int>(1);`**
+**Under what circumstances would ambiguity arise? For example, `container.emplace<int>(1);`**
 
-* 若`container.emplace`是个成员变量，那么`<`可以理解成小于号
-* 若`container.emplace`是个模板，那么`<`可以理解成模板形参的括号
+* If `container.emplace` is a member variable, then `<` can be interpreted as a less-than symbol.
+* If `container.emplace` is a template, then `<` can be interpreted as the brackets for template parameters.
 
-**示例1：**
+**Case 1:**
 
 ```cpp
 class Container {
@@ -4438,18 +4543,14 @@ public:
     }
 };
 
-// 下面这个会编译失败
+// The following will fail to compile:
 template<typename T>
 void add(T &container) {
     container.emplace<int>(1);
 }
 ```
 
-**上面的代码有1处错误：**
-
-1. 编译器无法确定`container.emplace`是什么含义
-
-**修正后：**
+**After refined:**
 
 ```cpp
 template<typename T>
@@ -4458,7 +4559,7 @@ void add(T &container) {
 }
 ```
 
-**示例2：**
+**Case 2:**
 
 ```cpp
 template<typename T>
@@ -4473,12 +4574,7 @@ void bar() {
 }
 ```
 
-**上面的代码有1处错误：**
-
-1. 编译器无法确定`T::container`是什么含义
-1. 需要用`typename`显式指定`T::container<int>`是个类型
-
-**修正后：**
+**After refined:**
 
 ```cpp
 template<typename T>
@@ -4493,7 +4589,7 @@ void bar() {
 }
 ```
 
-## 5.10 Defining a type alias in a template parameter list
+## 5.9 Defining a type alias in a template parameter list
 
 语法上，我们是无法在template的参数列表中定义别名的（无法使用`using`）。但是我们可以通过定义有默认值的类型形参来实现类似类型别名的功能，如下：
 
@@ -4505,10 +4601,10 @@ ValueType& get(HashMap& map, const KeyType& key) {
 }
 ```
 
-## 5.11 Accessing members of a template parent class from a non-template derived class
+## 5.10 Accessing members of a template parent class from a non-template derived class
 
-* 方式1：`MemberName`
-* 方式2：`this->MemberName`
+* Approach 1: `MemberName`
+* Approach 2: `this->MemberName`
 
 ```cpp
 template <typename T>
@@ -4529,10 +4625,10 @@ int main() {
 }
 ```
 
-## 5.12 Accessing members of a template parent class from a template derived class
+## 5.11 Accessing members of a template parent class from a template derived class
 
-* 访问方式1：`ParentClass<Template Args...>::MemberName`
-* 访问方式2：`this->MemberName`
+* Approach 1: `ParentClass<Template Args...>::MemberName`
+* Approach 2: `this->MemberName`
 
 ```cpp
 template <typename T>
@@ -4554,39 +4650,9 @@ int main() {
 }
 ```
 
-## 5.13 template as a template Parameter
+## 5.12 Separating the definition and implementation of a template
 
-[What are some uses of template template parameters?](https://stackoverflow.com/questions/213761/what-are-some-uses-of-template-template-parameters)
-
-```cpp
-#include <iostream>
-#include <random>
-#include <typeinfo>
-#include <vector>
-
-template <template <typename, typename> typename V, typename T, typename A>
-void print_last_value(V<T, A>& v) {
-    const T& value = v.back();
-    std::cout << value << std::endl;
-}
-
-template <template <typename> typename V, typename T>
-void print_type(const V<T>& value) {
-    std::cout << "V<T>'s type=" << typeid(V<T>).name() << std::endl;
-    std::cout << "T's type=" << typeid(T).name() << std::endl;
-}
-
-int main() {
-    std::vector<int> v{1, 2, 3};
-    print_last_value(v);
-    print_type(v);
-    return 0;
-}
-```
-
-## 5.14 Separating the definition and implementation of a template
-
-我们可以将模板的声明和定义分别放在两个文件中，这样可以使得代码结构更加清晰。例如，假设有两个文件`test.h`和`test.tpp`，其内容分别如下：
+We can place the declaration and definition of a template in two separate files, which makes the code structure clearer. For example, suppose there are two files `test.h` and `test.tpp`, with the following contents:
 
 * `test.h`
     ```cpp
@@ -4609,9 +4675,9 @@ int main() {
     }
     ```
 
-可以看到，`test.h`在追后引用了`test.tpp`，这样其他模块只需要引用`test.h`即可，整个模板的定义也可以通过`test.h`一个文件清晰地看到。但是，这里存在一个问题，如果我们用`vscode`或者`vim`的`lsp`插件来阅读编辑`test.tpp`文件时，会发现存在语法问题，因为`test.tpp`本身并不完整，无法进行编译
+As we can see, `test.h` references `test.tpp` at the end, so other modules only need to include `test.h`. The entire template definition can also be clearly viewed through a single file, `test.h`. However, there is an issue here: if we use `vscode` or the `lsp` plugin in `vim` to read or edit the `test.tpp` file, we may encounter syntax problems because `test.tpp` itself is incomplete and cannot be compiled.
 
-参考[[BugFix] Fix the problem of null aware anti join](https://github.com/StarRocks/starrocks/pull/15330)我们可以通过一个小技巧来解决这个问题，我们将`test.h`和`test.tpp`进行如下修改：
+Referring to [[BugFix] Fix the problem of null aware anti join](https://github.com/StarRocks/starrocks/pull/15330), we can resolve this issue with a small trick by modifying `test.h` and `test.tpp` as follows:
 
 * `test.h`
     ```cpp
@@ -4648,15 +4714,62 @@ int main() {
     #undef TEST_TPP
     ```
 
-这样，在独立编辑这两个文件时，`lsp`都可以正常工作，也不会造成循环引用的问题
+In this way, when editing these two files independently, `lsp` can work normally without causing circular reference issues.
 
-`clangd`在没有`compile_commands.json`文件时，处理单独的`tpp`文件会报错，错误信息是：`Unable to handle compilation, expected exactly one compiler job in ''`
+When there is no `compile_commands.json` file, `clangd` will report an error when processing a standalone `tpp` file. The error message is: `Unable to handle compilation, expected exactly one compiler job in ''`.
 
-## 5.15 [CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern)
+### 5.12.1 Hide template implementation
+
+We can even hide the specific implementation of the template, but in this case, all required types must be explicitly instantiated in the defining `.cpp` file. This is because the implementation of the template is not visible to other `.cpp` files and can only resolve the corresponding symbols during linking.
+
+```sh
+cat > template.h << 'EOF'
+#pragma once
+
+template <typename T>
+class Foo {
+public:
+    void func();
+};
+EOF
+
+cat > template.cpp << 'EOF'
+#include "template.h"
+
+#include <iostream>
+
+template <typename T>
+void Foo<T>::func() {
+    std::cout << "Foo::func's default implementation" << std::endl;
+}
+
+template <>
+void Foo<double>::func() {
+    std::cout << "Foo::func's special implementation for double" << std::endl;
+}
+
+template class Foo<int>;
+template class Foo<double>;
+EOF
+
+cat > main.cpp << 'EOF'
+#include "template.h"
+
+int main() {
+    Foo<int>().func();
+    Foo<double>().func();
+    return 0;
+}
+EOF
+
+gcc -o main main.cpp template.cpp -lstdc++ -std=gnu++17 -O3
+```
+
+## 5.13 [CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern)
 
 `CRTP`的全称是`Curious Recurring Template Pattern`
 
-### 5.15.1 Static Polymorphism
+### 5.13.1 Static Polymorphism
 
 ```cpp
 #include <iostream>
@@ -4680,7 +4793,7 @@ int main() {
 }
 ```
 
-### 5.15.2 Object Counter
+### 5.13.2 Object Counter
 
 ```cpp
 #include <iostream>
@@ -4725,7 +4838,7 @@ int main() {
 }
 ```
 
-### 5.15.3 Polymorphic Chaining
+### 5.13.3 Polymorphic Chaining
 
 ```cpp
 #include <iostream>
@@ -4802,7 +4915,7 @@ int main() {
 * `PlainCoutPrinter().print("Hello ")`的返回类型是`PlainPrinter`，丢失了具体的`PlainCoutPrinter`类型信息，于是再调用`SetConsoleColor`就报错了
 * 而使用`CRTP`就可以避免这个问题，基类的方法返回类型永远是具体的子类
 
-### 5.15.4 Polymorphic Copy Construction
+### 5.13.4 Polymorphic Copy Construction
 
 ```cpp
 #include <memory>
@@ -4841,7 +4954,7 @@ int main() {
 }
 ```
 
-## 5.16 PIMPL
+## 5.14 PIMPL
 
 In C++, the term `pimpl` is short for `pointer to implementation` or `private implementation`. It's an idiom used to separate the public interface of a class from its implementation details. This helps improve code modularity, encapsulation, and reduces compile-time dependencies.
 

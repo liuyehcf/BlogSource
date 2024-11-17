@@ -1554,6 +1554,8 @@ end, back to main
 
 # 7 GNU
 
+[ftp.gnu.org](https://ftp.gnu.org/gnu/)
+
 ## 7.1 Build & Install
 
 **You can download any version from [gcc-ftp](http://ftp.gnu.org/gnu/gcc/), I choose `gcc-14.1.0`**
@@ -2064,7 +2066,7 @@ CompileFlags:
 ```
 CompileFlags:
   # Add additional flags used in compilation, such as -I for include paths.
-  Add: [-I/usr/local/include, -I/opt/project/include]
+  Add: [-I/usr/local/include, -I/opt/project/include, -xc++]
 
 Diagnostics:
   # Controls the severity of diagnostics reported by Clangd.

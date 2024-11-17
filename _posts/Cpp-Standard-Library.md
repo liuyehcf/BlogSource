@@ -1668,7 +1668,7 @@ int main(int argc, char* argv[]) {
 
 ## 27.13 Miscellaneous transformations
 
-1. `std::enable_if`
+1. `std::enable_if_t`: Often used in SFINAE.
 1. `std::conditional`
 1. `std::underlying_type`: Get the underlying numeric type of enum type.
 1. `std::void_t`: Often used in SFINAE.

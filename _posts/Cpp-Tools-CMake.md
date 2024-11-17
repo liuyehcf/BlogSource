@@ -1248,7 +1248,9 @@ cmake -B build -DCMAKE_C_FLAGS="${CMAKE_C_FLAGS} -DUSE_XXX -DVALUE_YYY=5" -DCMAK
 **CMakeLists.txt:**
 
 ```cmake
-add_definitions(-DUSE_XXX -DVALUE_YYY=5)
+add_compile_definitions(FLAG1 FLAG2="Debug")
+
+target_compile_definitions(foo PUBLIC FLAG1 FLAG2="Debug")
 ```
 
 ### 6.3.4 Add Extra Search Path
