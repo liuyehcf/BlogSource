@@ -1090,6 +1090,7 @@ echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
 **Examples:**
 
 * `cat -v <file>`: Show all invisible characters.
+* `cat -A <file>`: equivalent to -vET.
 
 ## 2.15 tail
 
@@ -2246,6 +2247,9 @@ bind -T ktb_vim ˜ send-keys ˜
 
 # Toggle between the 'ktb_vim' and default 'root' key tables
 bind v if -F '#{==:#{key-table},ktb_vim}' 'set -w key-table root; switch-client -T root' 'set -w key-table ktb_vim; switch-client -T ktb_vim'
+
+# Clear history
+bind C-k clear-history \; send-keys C-l \; refresh-client
 
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
@@ -4020,11 +4024,12 @@ mount      –t debugfs    debugfs /sys/kernel/debug
     * `perf top -e branch-misses,cycles`
     * `perf top -e branch-misses:u,cycles`: The event can have a suffix, tracking only branch prediction failures occurring in user mode.
     * `perf top -e '{branch-misses,cycles}:u'`: All events focus only on the user mode portion.
+    * `perf stat -e "syscalls:sys_enter_*" ls`: All system calls.
 * `-s`: Specifies the parameter to categorize by
     * `perf top -e 'cycles' -s comm,pid,dso`
 * `-p`: Specifies the `pid` to track
 
-**常用事件：**
+**Frequently Used Events:**
 
 * `cycles/cpu-cycles & instructions`
 * `branch-instructions & branch-misses`
@@ -4066,6 +4071,7 @@ mount      –t debugfs    debugfs /sys/kernel/debug
     * Selecting an entry and choosing `Annotate xxx` allows viewing the corresponding assembly code.
 1. **`perf stat -p <pid> -e branch-instructions,branch-misses,cache-misses,cache-references,cpu-cycles,ref-cycles,instructions,mem_load_retired.l1_hit,mem_load_retired.l1_miss,mem_load_retired.l2_hit,mem_load_retired.l2_miss,cpu-migrations,context-switches,page-faults,major-faults,minor-faults`**
     * This command outputs a percentage on the right side, representing the ratio of the time `perf` spends on the specified `event` compared to the total time `perf` records.
+1. **`perf stat -p <pid> -e "syscalls:sys_enter_*"`: Focus on system calls.**
 
 # 8 Remote Desktop
 

@@ -1060,7 +1060,14 @@ int main() {
 }
 ```
 
-## 13.5 Reference
+## 13.5 Pointer Cast
+
+1. `std::static_pointer_cast`
+1. `std::dynamic_pointer_cast`
+1. `std::const_pointer_cast`
+1. `std::reinterpret_pointer_cast`
+
+## 13.6 Reference
 
 * [C++ 智能指针的正确使用方式](https://www.cyhone.com/articles/right-way-to-use-cpp-smart-pointer/)
 

@@ -360,7 +360,7 @@ valgrind --tool=dhat ./main
 * [kcachegrind](https://kcachegrind.github.io/html/Usage.html)
 * [Tips for the Profiling/Optimization process](https://kcachegrind.github.io/html/Tips.html)
 
-# 9 Tips
+# 9 Best Practice
 
 ## 9.1 The primary metrics that performance analysis should prioritize
 
@@ -380,6 +380,10 @@ valgrind --tool=dhat ./main
     * 没有充分并行
     * 存在串行点（`std::mutex`）
     * 其他资源是否已经打满，导致CPU无法进一步提高，比如网卡、磁盘等
+
+## 9.3 What is the approach for high system cpu analysis?
+
+1. Check system calls: `sudo perf stat -e "syscalls:sys_enter_*"`
 
 # 10 Reference
 

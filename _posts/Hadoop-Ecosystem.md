@@ -339,6 +339,39 @@ For mac with m chip, the above methods cannot work, because there will be an ext
 1. Config `dfs.client.use.datanode.hostname` to `true` at the client side (i.e. Mac side), otherwise it will use container's ip address, which is unconnected between mac and container because of the extra virtualization layer.
 1. Access hadoop via container's name.
 
+### 2.4.2 SDK don't recognize HADOOP_CONF_DIR automatically
+
+You need to implement the parsing of the path yourself.
+
+```java
+    public static void main(String[] args) {
+        Configuration hadoopConf = new Configuration();
+        String hadoopConfDir = System.getenv(HADOOP_CONF_ENV);
+        if (StringUtils.isNotBlank(hadoopConfDir)) {
+            addHadoopConfIfFound(hadoopConf, hadoopConfDir);
+        }
+        // ...
+    }
+
+    private static void addHadoopConfIfFound(Configuration configuration,
+            String possibleHadoopConfPath) {
+        if (new File(possibleHadoopConfPath).exists()) {
+            if (new File(possibleHadoopConfPath + "/core-site.xml").exists()) {
+                configuration.addResource(
+                        new org.apache.hadoop.fs.Path(possibleHadoopConfPath + "/core-site.xml"));
+                LOGGER.debug("Adding {}/core-site.xml to hadoop configuration",
+                        possibleHadoopConfPath);
+            }
+            if (new File(possibleHadoopConfPath + "/hdfs-site.xml").exists()) {
+                configuration.addResource(
+                        new org.apache.hadoop.fs.Path(possibleHadoopConfPath + "/hdfs-site.xml"));
+                LOGGER.debug("Adding {}/hdfs-site.xml to hadoop configuration",
+                        possibleHadoopConfPath);
+            }
+        }
+    }
+```
+
 # 3 Spark
 
 [What Is Apache Spark?](https://www.databricks.com/glossary/what-is-apache-spark)
