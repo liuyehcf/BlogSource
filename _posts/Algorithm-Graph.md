@@ -185,7 +185,22 @@ private:
 };
 ```
 
-## 2.2 Tiktok Interview Problem
+# 3 Tiktok Interview Problem
+
+The task is to implement an algorithm to generate all possible valid topological orderings of a Directed Acyclic Graph (DAG).
+
+A Directed Acyclic Graph (DAG) consists of nodes connected by directed edges, with no cycles present. Each node has a unique identifier (id) and may have directed edges pointing to other nodes (neighbors).
+
+Input:
+
+* A list of nodes in the graph (graph), where each node contains:
+* An integer id representing the node's unique identifier.
+* A list of neighbors that the current node points to.
+
+Output:
+
+* All valid topological orderings of the graph, where:
+* A topological ordering is a linear ordering of the graph's nodes such that for every directed edge `u -> v`, node `u` appears before node `v` in the ordering.
 
 ```cpp
 #include <iostream>

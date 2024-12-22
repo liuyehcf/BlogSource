@@ -252,8 +252,10 @@ sudo chmod +x /usr/local/bin/docker-compose
     * `docker stop <container-id>`
 1. 在指定容器中执行命令
     * `docker exec -ti my_container /bin/bash -c "echo a && echo b"`
-1. 查看docker container对应的pid
+1. 查看docker container对应的`pid`,`ip`
     * `docker inspect <container-id> | grep Pid`
+    * `docker inspect -f '{{.State.Pid}}' <container-id>`
+    * `docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <container-id>`
 1. 删除某个tag
     * `docker rmi <repository>:<tag>`，不要用镜像id
 1. 列出所有的镜像id

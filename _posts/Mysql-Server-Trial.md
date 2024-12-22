@@ -50,6 +50,27 @@ cd mysql-server/build/runtime_output_directory
 ./mysqld
 ```
 
+**测试：**
+
+```sql
+CREATE DATABASE IF NOT EXISTS test;
+CREATE TABLE test.user (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO test.user (username, password, email) 
+VALUES 
+('alice', 'password123', 'alice@example.com'),
+('bob', 'securepass456', 'bob@example.com'),
+('charlie', 'mypassword789', 'charlie@example.com');
+
+SELECT * FROM test.user;
+```
+
 # 2 Tips
 
 1. `truncate`函数：`sql/my_decimal.h`中的`my_decimal_round`函数

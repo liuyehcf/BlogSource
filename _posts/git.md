@@ -68,6 +68,40 @@ git config --global core.editor "nvim"
 
 ## 2.3 Modify Diff Tool
 
+[Github Topic - diff](https://github.com/topics/diff)
+
+### 2.3.1 delta
+
+[github-delta](https://github.com/dandavison/delta)
+
+**[Install](https://dandavison.github.io/delta/installation.html)**
+
+**Config:**
+
+```sh
+git config --global core.pager delta
+git config --global interactive.diffFilter 'delta --color-only'
+git config --global delta.navigate true
+git config --global delta.dark false
+git config --global delta.syntax-theme GitHub
+git config --global delta.side-by-side true
+git config --global merge.conflictStyle zdiff3
+```
+
+**Usage:**
+
+```sh
+git diff HEAD
+git diff -a HEAD
+git show HEAD
+git show -a HEAD
+
+# comparison for binary files
+delta -@=--text a.binary b.binary
+```
+
+### 2.3.2 icdiff (Deprecated)
+
 [github-icdiff](https://github.com/jeffkaufman/icdiff)
 
 **Install:**

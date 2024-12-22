@@ -861,11 +861,12 @@ grep searches for `PATTERNS` in each `FILE`
 **Options:**
 
 * `-c`: Suppress normal output; instead print a count of matching lines for each input file.
-* `-i`: Ignore case distinctions in patterns and input data, so that characters that differ only in case match each other
-* `-e`: Use `PATTERNS` as the patterns
-* `-E`: Interpret PATTERNS as extended regular expressions
-* `-F`: Interpret PATTERNS as fixed strings, not regular expressions
-* `-P`: Interpret PATTERNS as Perl-compatible regular expressions
+* `-i`: Ignore case distinctions in patterns and input data, so that characters that differ only in case match each other.
+* `-o`: Print only the matched (non-empty) parts of a matching line, with each such part on a separate output line.
+* `-e`: Use `PATTERNS` as the patterns.
+* `-E`: Interpret `PATTERNS` as extended regular expressions.
+* `-F`: Interpret `PATTERNS` as fixed strings, not regular expressions.
+* `-P`: Interpret `PATTERNS` as Perl-compatible regular expressions.
 * `-l`: Suppress normal output; instead print the name of each input file from which output would normally have been printed. Scanning each input file stops upon first match.
 * `-n`: Prefix each line of output with the 1-based line number within its input file.
 * `-v`: Invert the sense of matching, to select non-matching lines.
@@ -1160,49 +1161,48 @@ locate stl_vector.h
 
 ## 2.19 rsync
 
-[rsync 用法教程](https://www.ruanyifeng.com/blog/2020/08/rsync.html)
+`rsync` is used for file synchronization. It can synchronize files between a local computer and a remote computer, or between two local directories. It can also serve as a file copying tool, replacing the `cp` and `mv` commands.
 
-`rsync`用于文件同步。它可以在本地计算机与远程计算机之间，或者两个本地目录之间同步文件。它也可以当作文件复制工具，替代`cp`和`mv`命令
-
-它名称里面的`r`指的是`remote`，`rsync`其实就是远程同步（`remote sync`）的意思。与其他文件传输工具（如`FTP`或`scp`）不同，`rsync`的最大特点是会检查发送方和接收方已有的文件，仅传输有变动的部分（默认规则是文件大小或修改时间有变动
+The `r` in its name stands for `remote`, and `rsync` essentially means remote synchronization (`remote sync`). Unlike other file transfer tools (such as `FTP` or `scp`), the biggest feature of `rsync` is that it checks the existing files on both the sender and the receiver, transmitting only the parts that have changed (the default rule is changes in file size or modification time).
 
 **Pattern:**
 
 * `rsync [options] [src1] [src2] ... [dest]`
 * `rsync [options] [user@host:src1] ... [dest]`
 * `rsync [options] [src1] [src2] ... [user@host:dest]`
-* 关于`/`
+* About `/`
     * `src`
-        * 如果`src1`是文件，那只有一种写法，那就是`src1`
-        * 如果`src1`是目录，那有两种写法
-            * `src1`：拷贝整个目录，包括`src1`本身
-            * `src1/`：拷贝目录中的内容，不包括`src1`本身
+        * If `src1` is a file, there is only one way to write it: `src1`.
+        * If `src1` is a directory, there are two ways to write it:
+            * `src1`: Copies the entire directory, including `src1` itself.
+            * `src1/`: Copies the contents of the directory without including `src1` itself.
     * `dest`
-        * `dest`：如果拷贝的是单个文件，那么`dest`表示的就是目标文件。如果拷贝的不是单个文件，那么`dest`表示目录
-        * `dest/`：只能表示目录
-        * 有一个例外，若要表示远端机器的用户目录，要写成`user@host:~/`，否则`~`会被当成一个普通目录名
+        * `dest`: If copying a single file, `dest` represents the target file. If not copying a single file, `dest` represents a directory.
+        * `dest/`: Always represents a directory.
+        * There is one exception: to represent the user directory on a remote machine, write it as `user@host:~/`, otherwise `~` will be treated as a normal directory name.
 
 **Options:**
 
-* `-r`：递归。该参数是必须的，否则会执行失败
-* `-a`：包含`-r`，还可以同步原信息（比如修改时间、权限等）。`rsync`默认使用文件大小和修改时间决定文件是否需要更新，加了`-a`参数后，权限不同也会触发更新
-* `-n`：模拟命令结果
-* `--delete`：默认情况下，`rsync`只确保源目录的所有内容（明确排除的文件除外）都复制到目标目录。它不会使两个目录保持相同，并且不会删除文件。如果要使得目标目录成为源目录的镜像副本，则必须使用`--delete`参数，这将删除只存在于目标目录、不存在于源目录的文件
-* `--exclude`：指定排除模式，如果要排除多个文件，可以重复指定该参数
-    * `--exclude='.*'`：排除隐藏文件
-    * `--exclude='dir1/'`排除某个目录
-    * `--exclude='dir1/*'`排除某个目录里面的所有文件，但不希望排除目录本身
-* `--include`：指定必须同步的文件模式，往往与`--exclude`结合使用
-* `--progress`：显示进度
+* `-r`: Recursive. This parameter is mandatory; otherwise, the command will fail.
+* `-a`: Includes `-r` and also synchronizes metadata (e.g., modification time, permissions). By default, `rsync` uses file size and modification time to determine if a file needs to be updated. With the `-a` parameter, differences in permissions will also trigger updates.
+* `-n`: Simulate the command results.
+* `--delete`: By default, `rsync` ensures that all contents of the source directory (excluding explicitly excluded files) are copied to the destination directory. It does not make the two directories identical and does not delete files. To make the destination directory a mirror copy of the source directory, use the `--delete` parameter, which will remove files that exist only in the destination directory but not in the source directory.
+* `--exclude`: Specifies exclude patterns. To exclude multiple files, this parameter can be repeated.
+    * `--exclude='.*'`: Exclude hidden files.
+    * `--exclude='dir1/'`: Exclude a specific directory.
+    * `--exclude='dir1/*'`: Exclude all files in a specific directory but not the directory itself.
+* `--include`: Specifies file patterns that must be synchronized, often used together with `--exclude`.
+* `--compress, -z`: Compress file data during the transfer.
+* `--progress, -P`: Show progress.
 
 **Examples:**
 
-* `rsync -av /src/foo /dest`：将整个目录`/src/foo`拷贝到目录`/dest`中
-* `rsync -av /src/foo/ /dest`：将目录`/src/foo`中的内容拷贝到目录`/dest`中
-* `rsync -a --exclude=log/ dir1/ dir2`：将`dir1`中的内容拷贝到目录`dir2`中，且排除所有名字为`log`的子目录
-* `rsync -a --exclude=log/ dir1 dir2`：将整个目录`dir1`拷贝到目录`dir2`中，且排除所有名字为`log`的子目录
-* `rsync -a dir1 user1@192.168.0.1:~`：将整个目录`dir1`拷贝到`192.168.0.1`机器的`user1`的用户目录下的一个名为`~`的目录中，即`~/\~/dir1`（**巨坑的一个问题**）
-* `rsync -a dir1 user1@192.168.0.1:~/`：将整个目录`dir1`拷贝到`192.168.0.1`机器的`user1`的用户目录，即`~/dir1`
+* `rsync -av /src/foo /dest`: Copies the entire directory `/src/foo` into the directory `/dest`.
+* `rsync -av /src/foo/ /dest`: Copies the contents of the directory `/src/foo` into the directory `/dest`.
+* `rsync -a --exclude=log/ dir1/ dir2`: Copies the contents of `dir1` into the directory `dir2`, excluding all subdirectories named `log`.
+* `rsync -a --exclude=log/ dir1 dir2`: Copies the entire `dir1` directory into the `dir2` directory, excluding all subdirectories named `log`.
+* `rsync -a dir1 user1@192.168.0.1:~`: Copies the entire `dir1` directory to a directory named `~` under the user directory of `user1` on the machine `192.168.0.1`, resulting in `~/\~/dir1` (**a very tricky issue**).
+* `rsync -a dir1 user1@192.168.0.1:~/`: Copies the entire `dir1` directory to the user directory of `user1` on the machine `192.168.0.1`, resulting in `~/dir1`.
 
 ## 2.20 rm
 
@@ -2896,31 +2896,29 @@ nsenter用于在某个网络命名空间下执行某个命令。例如某些dock
 
 ## 5.9 tcpdump
 
-**Pattern:**
-
-* `tcpdump [-AennqX] [-i 接口] [port 端口号] [-w 存储文件名] [-c 次数] [-r 文件] [所要摘取数据包的格式]`
-
 **Options:**
 
-* `-A`：数据包的内容以ASCII显示，通常用来抓取WWW的网页数据包数据
-* `-e`：使用数据链路层(OSI第二层)的MAC数据包数据来显示
-* `-n`：直接以IP以及port number显示，而非主机名与服务名称
-* `-q`：仅列出较为简短的数据包信息，每一行的内容比较精简
-* `-X`：可以列出十六进制(hex)以及ASCII的数据包内容，对于监听数据包很有用
-* `-i`：后面接要监听的网络接口，例如eth0等
-* `port`：后接要监听的端口号，例如22等
-* `-w`：将监听得到的数据包存储下来
-* `-r`：从后面接的文件将数据包数据读出来
-* `-c`：监听数据包数，没有这个参数则会一直监听，直到[ctrl]+C
-* `-vv/-vvv`：输出更多的信息，配合`-w`使用时，会显示目前监听的多少数据包
-* 此外，还可以用`and`拼接多个条件
+* `-A`: Print each packet (minus its link level header) in ASCII. Handy for capturing web pages.
+* `-e`: Print the link-level header on each dump line. This can be used, for example, to print MAC layer addresses for protocols such as Ethernet and IEEE 802.11.
+* `-n`: Don't convert addresses (i.e., host addresses, port numbers, etc.) to names.
+* `-q`: Quick (quiet?) output. Print less protocol information so output lines are shorter.
+* `-i <interface>`: Listen, report the list of link-layer types, report the list of time stamp types, or report the results of compiling a filter expression on interface.
+* `-w <file>`: Write the raw packets to file rather than parsing and printing them out.
+* `-r <file>`: Read packets from file (which was created with the -w option or by other tools that write pcap or pcapng files). Standard input is used if file is `-`.
+* `-c <count>`: Exit after receiving count packets.
+* `-vv/-vvv`: Even more verbose output.
+* `-t`: Don't print a timestamp on each dump line.
+    * `-tt`: Print the timestamp, as seconds since January 1, 1970, 00:00:00, UTC, and fractions of a second since that time, on each dump line.
+    * `-ttt`: Print a delta (microsecond or nanosecond resolution depending on the --time-stamp-precision option) between current and previous line on each dump line. The default is microsecond resolution.
+    * `-tttt`: Print a timestamp, as hours, minutes, seconds, and fractions of a second since midnight, preceded by the date, on each dump line.
+    * `-ttttt`: Print a delta (microsecond or nanosecond resolution depending on the --time-stamp-precision option) between current and first line on each dump line. The default is microsecond resolution.
 
-**显示格式说明：**
+**Output columns specification:**
 
-* `src > dst: flags data-seqno ack window urgent options`
-* `src`: 源ip/port（或域名）
-* `dst`: 宿ip/port（或域名）
-* `flags`: TCP标志位的组合
+* `src > dst: Flags data-seqno ack window urgent options`
+* `src`: Source `ip/port` (or domain)
+* `dst`: Dest `ip/port` (or domain)
+* `Flags`
     * `S`: `SYNC`
     * `F`: `FIN`
     * `P`: `PUSH`
@@ -2929,12 +2927,12 @@ nsenter用于在某个网络命名空间下执行某个命令。例如某些dock
     * `W`: `ECN CWR`
     * `E`: `ECN-Echo`
     * `.`: `ACK`
-    * `none`: 无任何标志位
-* `data-seqno`: 数据包的序号，可能是一个或多个（`1:4`）
-* `ack`: 表示期望收到的下一个数据包的序号
-* `window`: 接收缓存的大小
-* `urgent`: 表示当前数据包是否包含紧急数据
-* `option`: 用`<>`包围的部分
+    * `none`
+* `data-seqno`: The sequence number of the data packet, which can be one or more (`1:4`)
+* `ack`: Indicates the sequence number of the next expected data packet
+* `window`: The size of the receive buffer
+* `urgent`: Indicates whether the current data packet contains urgent data
+* `option`: The part enclosed in `[]`
 
 **Examples:**
 
@@ -2945,17 +2943,17 @@ nsenter用于在某个网络命名空间下执行某个命令。例如某些dock
 
 ### 5.9.1 tcpdump Conditional Expressions
 
-该表达式用于决定哪些数据包将被打印。如果不给定条件表达式，网络上所有被捕获的包都会被打印，否则，只有满足条件表达式的数据包被打印
+This expression is used to determine which packets will be printed. If no condition expression is given, all packets captured on the network will be printed; otherwise, only packets that satisfy the condition expression will be printed.
 
-表达式由一个或多个`表达元`组成（表达元, 可理解为组成表达式的基本元素）。一个表达元通常由一个或多个修饰符`qualifiers`后跟一个名字或数字表示的`id`组成（即：`qualifiers id`）。有三种不同类型的修饰符：`type`，`direction`以及`protocol`
+The expression consists of one or more *primitives* (primitives, which can be understood as the basic elements of an expression). A primitive usually consists of one or more modifiers called `qualifiers` followed by an `id`, which is represented by a name or number (i.e., `qualifiers id`). There are three different types of qualifiers: `type`, `direction`, and `protocol`.
 
-**表达元格式：`[protocol] [direction] [type] id`**
+**Primitive Format: `[protocol] [direction] [type] id`**
 
-* **type**：包括`host`、`net`、`port`、`portrange`。默认值为`host`
-* **direction**：包括`src`、`dst`、`src and dst`、`src or dst`4种可能的方向。默认值为`src or dst`
-* **protocol**：包括`ether`、`fddi`、`tr`、`wlan`、`ip`、`ip6`、`arp`、`rarp`、`decnet`、`tcp`、`upd`等等。默认包含所有协议
-    * **其中`protocol`要与`type`相匹配，比如当`protocol`是`tcp`时，那么`type`就不能是`host`或`net`，而应该是`port`或`portrange`**
-* **逻辑运算**：`条件表达式`可由多个`表达元`通过`逻辑运算`组合而成。逻辑运算包括（`!`或`not`）、（`&&`或`and`）、（`||`或`or`）三种逻辑运算
+* **type**: Includes `host`, `net`, `port`, `portrange`. The default value is `host`.
+* **direction**: Includes `src`, `dst`, `src and dst`, `src or dst` as the four possible directions. The default value is `src or dst`.
+* **protocol**: Includes `ether`, `fddi`, `tr`, `wlan`, `ip`, `ip6`, `arp`, `rarp`, `decnet`, `tcp`, `udp`, etc. By default, all protocols are included.
+    * **The `protocol` must match the `type`. For example, when `protocol` is `tcp`, the `type` cannot be `host` or `net`, but should be `port` or `portrange`.**
+* **Logical Operations**: A `condition expression` can be composed of multiple `primitives` combined using `logical operations`. The logical operations include `!` or `not`, `&&` or `and`, and `||` or `or`.
 
 **Examples:**
 

@@ -1133,12 +1133,12 @@ echo ${output}
 
 ## 3.4 Map
 
-Shell map用括号来表示，元素用`空格`符号分割开，语法格式如下：
+Shell maps are represented using parentheses, with elements separated by spaces. The syntax format is as follows:
 
 ```sh
 declare -A map_name=([key1]=value1 ... [keyn]=valuen)
 
-# 或者直接这样定义，注意，不需要${}
+# Or directly define it like this. Note that `${}` is not required.
 declare -A map_name
 map_name[key1]=value1
 map_name[key2]=value2
@@ -1146,25 +1146,25 @@ map_name[key2]=value2
 map_name[keyn]=valuen
 ```
 
-**属性**
+**Attributes**
 
-* `@`或`*`可以获取map中的所有value
-```
-${map[@]}
-${map[*]}
-```
+* `@` or `*` can be used to retrieve all `values` in the map.
+    ```
+    ${map[@]}
+    ${map[*]}
+    ```
 
-* 获取map长度的方法与获取字符串长度的方法相同，即利用`#`
-```
-${#map[@]}
-${#map[*]}
-```
+* The method to get the length of a map is the same as the method to get the length of a string, by using `#`.
+    ```
+    ${#map[@]}
+    ${#map[*]}
+    ```
 
-* `!`可以获取map中关键字集合
-```
-${!map[@]}
-${!map[*]}
-```
+* `!` can be used to retrieve the set of keys in the map.
+    ```
+    ${!map[@]}
+    ${!map[*]}
+    ```
 
 **Examples:**
 
@@ -1183,13 +1183,92 @@ echo ${#map[*]}
 echo ${!map[@]}
 echo ${!map[*]}
 
-for key in ${!map[*]}
+for key in ${!map[@]}
 do
     echo "value=${map[${key}]}"
 done
 ```
 
-## 3.5 Indirect Variable Expansion
+## 3.5 Differences between `[@]` and `[*]` for array and map
+
+For `[@]`, like `${array[@]}`, `${map[@]}` and `${!map[@]}`, each item as a separate word, and often used in a `for` loop. And it cannot be affected by `IFS` when output with quotes.
+
+For `[*]`, like `${array[*]}`, `${map[*]}` and `${!map[*]}`, all items as a single string, and often used for single string output. And it can be affected by `IFS`.
+
+**Examples:**
+
+* For array:
+    ```sh
+    array=( 1 2 3 )
+
+    IFS=
+    echo 'Iterator elements by * without quotes'
+    for item in ${array[*]}
+    do
+        echo -e "\titem: ${item}"
+    done
+    echo 'Iterator elements by @ without quotes'
+    for item in ${array[@]}
+    do
+        echo -e "\titem: ${item}"
+    done
+    echo 'Iterator elements by * with quotes'
+    for item in "${array[*]}"
+    do
+        echo -e "\titem: ${item}"
+    done
+    echo 'Iterator elements by @ with    quotes'
+    for item in "${array[@]}"
+    do
+        echo -e "\titem: ${item}"
+    done
+    
+    IFS=,
+    echo 'Quote ${array[@]} with IFS=",": ' "${array[@]}"
+    echo 'Quote ${array[*]} with IFS=",": ' "${array[*]}"
+    unset IFS
+    ```
+
+* For map:
+    ```sh
+    declare -A map
+    map['a']=1
+    map['b']=2
+    map['c']=3
+
+    # Set IFS to none
+    IFS=
+    echo 'Iterator keys by *'
+    for key in ${!map[*]}
+    do
+        echo -e "\tkey=${key}"
+    done
+    echo 'Iterator values by *'
+    for value in ${map[*]}
+    do
+        echo -e "\tvalue=${value}"
+    done
+
+    echo 'Iterator keys by @'
+    for key in ${!map[@]}
+    do
+        echo -e "\tkey=${key}"
+    done
+    echo 'Iterator values by @'
+    for value in ${map[@]}
+    do
+        echo -e "\tvalue=${value}"
+    done
+
+    IFS=,
+    echo 'Quote ${map[@]} with IFS=",": ' "${map[@]}"
+    echo 'Quote ${map[*]} with IFS=",": ' "${map[*]}"
+    echo 'Quote ${!map[@]} with IFS=",": ' "${!map[@]}"
+    echo 'Quote ${!map[*]} with IFS=",": ' "${!map[*]}"
+    unset IFS
+    ```
+
+## 3.6 Indirect Variable Expansion
 
 ```sh
 foo="bar"
