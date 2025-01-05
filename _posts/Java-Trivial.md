@@ -35,6 +35,8 @@ From [Java Downloads](https://www.oracle.com/java/technologies/downloads/), you 
     tar -zxvf jdk-22_linux-x64_bin.tar.gz -C /usr/lib/jvm
     ```
 
+[Archived OpenJDK General-Availability Releases](https://jdk.java.net/archive/)
+
 # 2 Builtin
 
 ## 2.1 java

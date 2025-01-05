@@ -432,6 +432,7 @@ git diff --stat
 git diff
 
 # Show differences between the staging area and the last commit
+git diff --cached
 git diff --cached [file]
 
 # Show differences between the workspace and the latest commit of the current branch
@@ -519,6 +520,9 @@ git fetch [remote] pull/29048/head
 
 # Fetch the changes from pull request number 29048 from the specified remote repository and applies them to a new local branch named `pull_request_29048`.
 git fetch [remote] pull/29048/head:pull_request_29048
+
+# Removes any remote-tracking references that no longer exist in the remote repository.
+git fetch --prune
 
 # Displays the URLs of all remote repositories associated with the local repository, showing both fetch and push URLs.
 git remote -v

@@ -60,6 +60,6 @@ SELECT * FROM lineitem limit 5 INTO OUTFILE '/path/test.csv' FORMAT CSV;
 Follow doc [Install ClickHouse](https://clickhouse.com/docs/en/install), start a clickhouse local, and execute sql like
 
 ```sql
-INSERT INTO FUNCTION file('ssb100.csv', `CSV`) 
+INSERT INTO FUNCTION file('ssb100.csv', `CSV`)
 SELECT * FROM hdfs('hdfs://xxx:12000/user/hive/warehouse/lineorder_flat/*', 'Parquet');
 ```

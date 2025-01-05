@@ -2300,42 +2300,51 @@ int main() {
 
 # 34 C Standard Library
 
-由于`C++`是`C`的超集，`C`的标准库也被添加到`std`命名空间中了，但是头文件有所区别：`xxx.h -> cxxx`。其中，`xxx.h`是原始的`C`标准库头文件，其符号不在任何命名空间中；`cxxx`是对应的`C++`版本的头文件，其符号在`std`命名空间中
+Since `C++` is a superset of `C`, the standard library of `C` has also been added to the `std` namespace, but the header files differ: `xxx.h -> cxxx`. Among them, `xxx.h` is the original `C` standard library header file, and its symbols are not in any namespace; `cxxx` is the corresponding `C++` version of the header file, and its symbols are in the `std` namespace.
 
 1. `cstddef`
     * `size_t`
 1. `cstdint`
     * `int8_t/int16_t/int32_t/int64_t`
-1. `cerrno`：系统调用以及一些库函数的错误码都会写入到`errno`这个全局变量中
+1. `cerrno`: The error codes for system calls and some library functions are written to the global variable `errno`.
 1. `cstdio`
-    * `std::tmpnam`：慎用，原因如下：
+    * `std::tmpnam`: Use with caution for the following reasons:
         * The tmpnam() function generates a different string each time it is called, up to TMP_MAX times. If it is called more than TMP_MAX times, the behavior is implementation defined.
     * `std::printf`
 1. `cstring`
-    * `std::memset`：用`<num> * sizeof(<type>)`来获取长度
-    * `std::memcpy`：用`<num> * sizeof(<type>)`来获取长度
-    * `std::strcmp`：比较两个`const char *`是否相同
+    * `std::memset`: Use `<num> * sizeof(<type>)` to obtain the length.
+    * `std::memcpy`: Use `<num> * sizeof(<type>)` to obtain the length.
+    * `std::strcmp`: Compare two `const char *` to check if they are identical.
 1. `cstdlib`
-    * **内存分配相关**
-        * `malloc/free`：`C`语言中的函数，在`C++`中也可以使用。`malloc`函数分配指定大小的内存，`free`函数释放该内存
-        * `calloc`：分配指定数量的连续内存空间，并将其初始化为0
-        * `realloc`：重新调整已经分配的内存空间的大小
-        * `aligned_alloc`：分配指定大小的内存，并确保其对齐到特定的字节边界
-        * `posix_memalign`：分配指定大小的内存，并确保其对齐到指定的字节边界
-        * `memalign`：分配指定大小的内存，并确保其对齐到特定的字节边界
-        * `valloc`：分配指定大小的内存，并确保其对齐到页的大小
-        * `pvalloc`：分配指定大小的内存，并确保其对齐到页的大小
-    * `std::atexit`：注册程序退出时的钩子方法
-    * `std::system`：用于执行命令
-    * `std::mkstemp`：创建临时文件，传入一个文件名模板，其最后留个字符为`XXXXXX`，这部分会替换为随机字符
+    * **Memory Allocation Related**
+        * `malloc/free`: Functions from `C` that can also be used in `C++`. `malloc` allocates memory of a specified size, and `free` releases the allocated memory.
+        * `calloc`: Allocates a specified number of contiguous memory spaces and initializes them to 0.
+        * `realloc`: Resizes previously allocated memory.
+        * `aligned_alloc`: Allocates memory of a specified size and ensures it is aligned to a specific byte boundary.
+        * `posix_memalign`: Allocates memory of a specified size and ensures it is aligned to a specified byte boundary.
+        * `memalign`: Allocates memory of a specified size and ensures it is aligned to a specific byte boundary.
+        * `valloc`: Allocates memory of a specified size and ensures it is aligned to the page size.
+        * `pvalloc`: Allocates memory of a specified size and ensures it is aligned to the page size.
+    * `std::atexit`: Registers a hook method to be called upon program exit.
+    * `std::system`: Used to execute commands.
+    * `std::mkstemp`: Creates a temporary file, requiring a filename template where the last six characters are `XXXXXX`, which will be replaced by random characters.
     * `std::atoi`
     * `std::atol`
     * `std::atoll`
     * `std::getenv`
-    * `setenv`: POSIX api, not included in cpp standard library.
+    * `setenv`: A POSIX API, not included in the C++ standard library.
 1. `cctype`
-    * `std::isblank`：仅对空格和水平制表符返回 true
-    * `std::isspace`：空格、表单换行符、换行符、回车符、水平制表符和垂直制表符都返回true
+    * `std::isblank`: Returns true only for spaces and horizontal tabs.
+    * `std::isspace`: Returns true for spaces, form feed, newline, carriage return, horizontal tab, and vertical tab.
+1. POSIX headers
+    1. `fcntl.h`: Provides an interface for controlling file descriptors. It includes constants and function declarations for working with file descriptors, managing file locks, and configuring file options.
+    1. `unistd.h`: (Unix Standard) Provides access to the POSIX (Portable Operating System Interface) operating system API. It is available on Unix-based operating systems (like Linux and macOS) and offers a collection of system calls and library functions for various low-level operations.
+        * General POSIX functions like `fork`, `exec`, `pipe`, `getpid`.
+        * File operations: `read`, `write`, `close`, `lseek`.
+        * Process management: `getuid`, `setuid`.
+    1. `signal.h`: Provides signal handling: `signal`, `sigaction`, `raise`.
+    1. `pthread.h`: Provides thread operations: `pthread_create`, `pthread_join`, `pthread_mutex_lock`.
+    1. `sys/stat.h`: Provides file status functions: `stat`, `fstat`, `lstat`.
 
 ## 34.1 csignal
 
@@ -2416,6 +2425,9 @@ int main() {
 1. `__builtin_expect`
     * `#define LIKELY(x) __builtin_expect(!!(x), 1)`
     * `#define UNLIKELY(x) __builtin_expect(!!(x), 0)`
+1. `__builtin_bswap32`: Perform a byte-swap operation on a 32-bit integer. Byte-swapping reverses the byte order of a value, which is useful for handling data in systems with different endianness (e.g., converting between big-endian and little-endian formats).
+1. `__builtin_offsetof(type, member)`: Calculate member's offset.
+    * One alternative implementation is: `#define my_offsetof(type, member) ((size_t) & (((type*)0)->member))`
 
 # 36 Frequently-Used Compoments for Interview
 

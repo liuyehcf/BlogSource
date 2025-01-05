@@ -476,7 +476,82 @@ Some commonly used functions for handling C++ ABI (Application Binary Interface)
 * [ABI Policy and Guidelines](https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html)
 * [C/C++ ABI兼容那些事儿](https://zhuanlan.zhihu.com/p/556726543)
 
-### 2.8.4 ABI Mismatch Issue
+### 2.8.4 ABI Mismatch Example
+
+Backgrounds: `std::string` underwent significant changes between the old and new ABI versions.
+
+```sh
+cat > library.cpp << 'EOF'
+#include <iostream>
+#include <string>
+
+extern "C" void printString(const std::string& str) {
+    std::cout << "String: " << str << std::endl;
+}
+EOF
+
+cat > main.cpp << 'EOF'
+#include <iostream>
+#include <string>
+
+extern "C" void printString(const std::string& str);
+
+int main() {
+    std::string myString = "Hello, ABI!";
+    printString(myString);
+    return 0;
+}
+EOF
+
+gcc -o library_0.o -D_GLIBCXX_USE_CXX11_ABI=0 -c library.cpp -O3 -lstdc++ -std=gnu++17
+gcc -o library_1.o -D_GLIBCXX_USE_CXX11_ABI=1 -c library.cpp -O3 -lstdc++ -std=gnu++17
+
+gcc -o abi_conflict_main_0_library_0 -D_GLIBCXX_USE_CXX11_ABI=0 main.cpp library_0.o -O3 -lstdc++ -std=gnu++17
+gcc -o abi_conflict_main_0_library_1 -D_GLIBCXX_USE_CXX11_ABI=0 main.cpp library_1.o -O3 -lstdc++ -std=gnu++17
+gcc -o abi_conflict_main_1_library_0 -D_GLIBCXX_USE_CXX11_ABI=1 main.cpp library_0.o -O3 -lstdc++ -std=gnu++17
+gcc -o abi_conflict_main_1_library_1 -D_GLIBCXX_USE_CXX11_ABI=1 main.cpp library_1.o -O3 -lstdc++ -std=gnu++17
+
+./abi_conflict_main_0_library_0
+./abi_conflict_main_0_library_1
+./abi_conflict_main_1_library_0
+./abi_conflict_main_1_library_1
+```
+
+Why need `extern "C"`? You'll get compile error if ABI mismatch when removing this.
+
+```sh
+cat > library.cpp << 'EOF'
+#include <iostream>
+#include <string>
+
+void printString(const std::string& str) {
+    std::cout << "String: " << str << std::endl;
+}
+EOF
+
+cat > main.cpp << 'EOF'
+#include <iostream>
+#include <string>
+
+void printString(const std::string& str);
+
+int main() {
+    std::string myString = "Hello, ABI!";
+    printString(myString);
+    return 0;
+}
+EOF
+
+gcc -o library_0.o -D_GLIBCXX_USE_CXX11_ABI=0 -c library.cpp -O3 -lstdc++ -std=gnu++17
+gcc -o library_1.o -D_GLIBCXX_USE_CXX11_ABI=1 -c library.cpp -O3 -lstdc++ -std=gnu++17
+
+gcc -o abi_conflict_main_0_library_0 -D_GLIBCXX_USE_CXX11_ABI=0 main.cpp library_0.o -O3 -lstdc++ -std=gnu++17
+gcc -o abi_conflict_main_0_library_1 -D_GLIBCXX_USE_CXX11_ABI=0 main.cpp library_1.o -O3 -lstdc++ -std=gnu++17
+gcc -o abi_conflict_main_1_library_0 -D_GLIBCXX_USE_CXX11_ABI=1 main.cpp library_0.o -O3 -lstdc++ -std=gnu++17
+gcc -o abi_conflict_main_1_library_1 -D_GLIBCXX_USE_CXX11_ABI=1 main.cpp library_1.o -O3 -lstdc++ -std=gnu++17
+```
+
+### 2.8.5 ABI Mismatch Issue
 
 ```
 # compile works fine
@@ -2199,13 +2274,28 @@ class Foo {
 
 ## 8.7 lldb
 
-# 9 Assorted
+# 9 Google Tools
 
-## 9.1 Dynamic Analysis
+## 9.1 bloaty
+
+[bloaty](https://github.com/google/bloaty) is a size profiler for binaries.
+
+**Install:**
+
+* For dependencies, it will use the existing ones on system, but they may be conflict with ABI versions. So we can comment out some of the `pkg_search_module` or `find_package` calls in `CMakeLists.txt` to force building dependencies itself.
+
+**Usage:**
+
+* Requirements: `<binary>` is compiled with debug info.
+* `bloaty -d compileunits <binary>`
+
+# 10 Assorted
+
+## 10.1 Dynamic Analysis
 
 ![analysis-tools](/images/Cpp-Trivial/analysis-tools.png)
 
-## 9.2 How to check the compile error message
+## 10.2 How to check the compile error message
 
 Example:
 
@@ -2240,7 +2330,7 @@ When interpreting compiler error messages, especially those involving template i
 
 In Summary: While the bottom-up approach is useful for quickly identifying the core error and the immediate lines of code causing it, you sometimes need to go top-down to fully understand the context and sequence of events leading to the error. With experience, you'll develop an intuition for quickly scanning and pinpointing the most relevant parts of such error messages.
 
-## 9.3 How to get coverage of code
+## 10.3 How to get coverage of code
 
 **Here's how it works: `gcov` determines which files to analyze for coverage information based on the profile data files (`*.gcda` and `*.gcno`) that are generated when you compile and run your program with the appropriate GCC flags (`-fprofile-arcs` and `-ftest-coverage`). Here's a breakdown of how `gcov` knows which files to load:**
 
@@ -2285,11 +2375,11 @@ gcov example.cpp
 cat example.cpp.gcov
 ```
 
-## 9.4 How to check standard library search path when compiling
+## 10.4 How to check standard library search path when compiling
 
 Add `-v` option.
 
-## 9.5 ccache
+## 10.5 ccache
 
 CCache stores its compile cache in a directory specified by the `CCACHE_DIR` environment variable. By default, this directory is located at `~/.ccache` in the user's home directory. The cache directory contains various files and subdirectories that ccache uses to manage its cache of compiled objects.
 
@@ -2304,8 +2394,9 @@ export CMAKE_CXX_COMPILER_LAUNCHER=ccache
 
 * `ccache -z`: Zero statistics counters
 * `ccache -s -v`: show summary of configuration and statistics counters in human-readable format (use `-v/--verbose` once or twice for more details).
+* `ccache --max-size=500G`
 
-## 9.6 Document
+## 10.6 Document
 
 1. [cpp reference](https://en.cppreference.com/w/)
 1. [cppman](https://github.com/aitjcize/cppman/)
@@ -2313,6 +2404,6 @@ export CMAKE_CXX_COMPILER_LAUNCHER=ccache
     * 示例：`cppman vector::begin`
     * 重建索引：`cppman -r`
 
-## 9.7 Reference
+## 10.7 Reference
 
 * [C/C++ 头文件以及库的搜索路径](https://blog.csdn.net/crylearner/article/details/17013187)

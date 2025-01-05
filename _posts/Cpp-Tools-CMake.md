@@ -252,7 +252,7 @@ make
 
 ```cmake
 # add the install targets
-install (TARGETS MathFunctions DESTINATION bin)
+install(TARGETS MathFunctions DESTINATION bin)
 install(FILES MathFunctions.h DESTINATION include)
 ```
 
@@ -1549,6 +1549,18 @@ cmake -B build && cmake --build build
 
 ```sh
 cmake --compile-no-warning-as-error -DWERROR=0 ...
+```
+
+## 6.11 Filename Postfix for Libraries
+
+```sh
+cmake -DCMAKE_DEBUG_POSTFIX="d" ...
+```
+
+Or
+
+```cmake
+set_target_properties(<target> PROPERTIES DEBUG_POSTFIX "d")
 ```
 
 # 7 Install

@@ -279,6 +279,7 @@ You can view the documentation through `man proc`.
     * `/proc/<pid>/limits`: The file provides information about the resource limits set for the process with the specified process ID (`<pid>`).
     * `/proc/<pid>/environ`: The file contains the environment variables for the process with the specified process ID (`<pid>`).
         * `cat /proc/<pid>/environ | tr '\0' '\n'`
+    * `/proc/<pid>/cwd`: The file is a symbolic link that points to the current working directory of the process identified by process ID (`<pid>`).
 
 ## 3.1 Reference
 

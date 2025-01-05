@@ -570,3 +570,92 @@ int main() {
     return 0;
 }
 ```
+
+# 3 Zero-Copy I/O
+
+Zero-copy is a term in computer science that refers to a method of transferring data without requiring the CPU to copy data from one memory area to another explicitly. The primary goal of zero-copy is to improve system performance by reducing CPU overhead and memory bandwidth usage, especially for high-throughput applications like file transfers, networking, or streaming.
+
+```cpp
+#include <fcntl.h>
+#include <sys/sendfile.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+#include <filesystem>
+#include <iostream>
+
+constexpr size_t BUFFER_SIZE = 8192;
+constexpr std::string_view source_file = "source.dat";
+
+#define CHECK_OR_DIE(x)                            \
+    if (!(x)) {                                    \
+        std::cerr << #x << " failed" << std::endl; \
+        exit(1);                                   \
+    }
+
+void zero_copy() {
+    std::cout << "Perform zero_copy:" << std::endl;
+    int source_fd = open(source_file.data(), O_RDONLY);
+    CHECK_OR_DIE(source_fd != -1);
+    int target_fd = open("zero_copy.dat", O_WRONLY | O_CREAT, 0644);
+    CHECK_OR_DIE(target_fd != -1);
+
+    struct stat source_stat;
+    fstat(source_fd, &source_stat);
+
+    off_t offset = 0;
+    ssize_t bytes_sent;
+    bytes_sent = sendfile(target_fd, source_fd, &offset, source_stat.st_size);
+    CHECK_OR_DIE(bytes_sent == source_stat.st_size);
+
+    close(source_fd);
+    close(target_fd);
+}
+
+void non_zero_copy() {
+    std::cout << "Perform non_zero_copy:" << std::endl;
+    int source_fd = open(source_file.data(), O_RDONLY);
+    CHECK_OR_DIE(source_fd != -1);
+    int target_fd = open("non_zero_copy.dat", O_WRONLY | O_CREAT, 0644);
+    CHECK_OR_DIE(target_fd != -1);
+
+    struct stat source_stat;
+    fstat(source_fd, &source_stat);
+
+    char buffer[BUFFER_SIZE];
+    size_t total_written = 0;
+    while (total_written < source_stat.st_size) {
+        size_t expected_read_size = std::min(BUFFER_SIZE, source_stat.st_size - total_written);
+        ssize_t bytes_read = read(source_fd, buffer, expected_read_size);
+        CHECK_OR_DIE(bytes_read == expected_read_size);
+        ssize_t bytes_written = write(target_fd, buffer, bytes_read);
+        CHECK_OR_DIE(bytes_written == expected_read_size);
+        total_written += bytes_written;
+    }
+
+    close(source_fd);
+    close(target_fd);
+}
+
+int main(int argc, char* argv[]) {
+    int type = std::atoi(argv[1]);
+    if (type == 0)
+        zero_copy();
+    else
+        non_zero_copy();
+    return 0;
+}
+```
+
+```sh
+gcc -o main main.cpp -lstdc++ -std=gnu++17 -O3
+
+fallocate -l 1G source.dat
+time ./main 1
+time ./main 0
+
+Perform non_zero_copy:
+./main 1  0.01s user 1.39s system 99% cpu 1.401 total
+Perform zero_copy:
+./main 0  0.00s user 1.03s system 99% cpu 1.028 total
+```
