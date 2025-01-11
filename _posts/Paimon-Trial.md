@@ -250,9 +250,53 @@ docker exec -it --user root trino bash -c 'rm -rf /usr/lib/trino/plugin/paimon'
 
 1. Changelog Producer
 
-# 7 Issue
+# 7 SDK Demos
 
-## 7.1 Timeout waiting for connection from pool
+## 7.1 Kerberos
+
+```java
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.security.UserGroupInformation;
+import org.apache.paimon.catalog.Catalog;
+import org.apache.paimon.catalog.CatalogContext;
+import org.apache.paimon.catalog.CatalogFactory;
+import org.apache.paimon.options.CatalogOptions;
+import org.apache.paimon.options.Options;
+
+public class KerberosDemo {
+    public static void main(String[] args) throws Exception {
+        System.setProperty("sun.security.krb5.debug", "true");
+        String namenode = args[0];
+        String user = args[1];
+        String keytabPath = args[2];
+        String kerberosConfigPath = args[3];
+        System.setProperty("java.security.krb5.conf", kerberosConfigPath);
+
+        // Initialize Hadoop security
+        Configuration hadoopConf = new Configuration();
+        hadoopConf.set("hadoop.security.authentication", "kerberos");
+        hadoopConf.set("hadoop.security.authorization", "true");
+        UserGroupInformation.setConfiguration(hadoopConf);
+        UserGroupInformation.loginUserFromKeytab(user, keytabPath);
+
+        // Set Paimon options
+        Options options = new Options();
+        options.set(CatalogOptions.METASTORE, "filesystem");
+        options.set(CatalogOptions.WAREHOUSE,
+                String.format("hdfs://%s:8020/users/paimon/warehouse", namenode));
+
+        // Create and use the catalog
+        CatalogContext context = CatalogContext.create(options);
+        Catalog catalog = CatalogFactory.createCatalog(context);
+
+        System.out.println("Catalog created successfully: " + catalog);
+    }
+}
+```
+
+# 8 Issue
+
+## 8.1 Timeout waiting for connection from pool
 
 * [S3A Performance](https://paimon.apache.org/docs/0.8/filesystems/s3/)
 * [Spark on Amazon EMR: "Timeout waiting for connection from pool"](https://stackoverflow.com/questions/39185956/spark-on-amazon-emr-timeout-waiting-for-connection-from-pool)

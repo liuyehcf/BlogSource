@@ -61,103 +61,108 @@ Below are the Hadoop components, that together form a Hadoop ecosystem:
 SHARED_NS=hadoop-ns
 HADOOP_CONTAINER_NAME=hadoop
 
-docker run -dit --name ${HADOOP_CONTAINER_NAME} --network ${SHARED_NS} -p 8020:8020 -p 9866:9866 -p 8042:8042 -p 8088:8088 apache/hadoop:3.3.6 bash
+docker run -dit --name ${HADOOP_CONTAINER_NAME} --hostname ${HADOOP_CONTAINER_NAME} --network ${SHARED_NS} --privileged -p 8020:8020 -p 9866:9866 -p 8042:8042 -p 8088:8088 apache/hadoop:3.3.6 bash
 docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/core-site.xml << EOF
 <configuration>
-  <property>
-    <name>fs.defaultFS</name>
-    <value>hdfs://${HADOOP_CONTAINER_NAME}:8020</value>
-  </property>
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://${HADOOP_CONTAINER_NAME}:8020</value>
+    </property>
 </configuration>
 EOF"
 
 docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/hdfs-site.xml << EOF
 <configuration>
-  <property>
-    <name>dfs.replication</name>
-    <value>1</value>
-  </property>
-  <property>
-    <name>dfs.permissions.enabled</name>
-    <value>false</value>
-  </property>
-  <property>
-    <name>dfs.datanode.address</name>
-    <value>${HADOOP_CONTAINER_NAME}:9866</value>
-  </property>
-  <property>
-    <name>dfs.datanode.http.address</name>
-    <value>${HADOOP_CONTAINER_NAME}:9864</value>
-  </property>
-  <property>
-    <name>dfs.datanode.ipc.address</name>
-    <value>${HADOOP_CONTAINER_NAME}:9867</value>
-  </property>
-  <property>
-    <name>dfs.datanode.hostname</name>
-    <value>${HADOOP_CONTAINER_NAME}</value>
-  </property>
+    <property>
+        <name>dfs.replication</name>
+        <value>1</value>
+    </property>
+    <property>
+        <name>dfs.permissions.enabled</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>/opt/hadoop/data</value>
+    </property>
+    <property>
+        <name>dfs.datanode.address</name>
+        <value>${HADOOP_CONTAINER_NAME}:9866</value>
+    </property>
+    <property>
+        <name>dfs.datanode.http.address</name>
+        <value>${HADOOP_CONTAINER_NAME}:9864</value>
+    </property>
+    <property>
+        <name>dfs.datanode.ipc.address</name>
+        <value>${HADOOP_CONTAINER_NAME}:9867</value>
+    </property>
+    <property>
+        <name>dfs.datanode.hostname</name>
+        <value>${HADOOP_CONTAINER_NAME}</value>
+    </property>
 </configuration>
 EOF"
 
 docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/yarn-site.xml << EOF
 <configuration>
-  <property>
-    <name>yarn.resourcemanager.hostname</name>
-    <value>${HADOOP_CONTAINER_NAME}</value>
-  </property>
-  <property>
-    <name>yarn.nodemanager.aux-services</name>
-    <value>mapreduce_shuffle</value>
-  </property>
-  <property>
-  <name>yarn.nodemanager.resource.memory-mb</name>
-    <value>8192</value>
-  </property>
-  <property>
-    <name>yarn.nodemanager.resource.cpu-vcores</name>
-    <value>4</value>
-  </property>
-  <property>
-    <name>yarn.scheduler.minimum-allocation-mb</name>
-    <value>1024</value>
-  </property>
-  <property>
-    <name>yarn.scheduler.maximum-allocation-mb</name>
-    <value>8192</value>
-  </property>
+    <property>
+        <name>yarn.resourcemanager.hostname</name>
+        <value>${HADOOP_CONTAINER_NAME}</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.aux-services</name>
+        <value>mapreduce_shuffle</value>
+    </property>
+    <property>
+    <name>yarn.nodemanager.resource.memory-mb</name>
+        <value>8192</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.resource.cpu-vcores</name>
+        <value>4</value>
+    </property>
+    <property>
+        <name>yarn.scheduler.minimum-allocation-mb</name>
+        <value>1024</value>
+    </property>
+    <property>
+        <name>yarn.scheduler.maximum-allocation-mb</name>
+        <value>8192</value>
+    </property>
 </configuration>
 EOF"
 
 docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/mapred-site.xml << EOF
 <configuration>
-  <property>
-    <name>mapreduce.framework.name</name>
-    <value>yarn</value>
-  </property>
-  <property>
-    <name>yarn.app.mapreduce.am.env</name>
-    <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
-  </property>
-  <property>
-    <name>mapreduce.map.env</name>
-    <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
-  </property>
-  <property>
-    <name>mapreduce.reduce.env</name>
-    <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
-  </property>
-  <property>
-    <name>mapreduce.application.classpath</name>
-    <value>/opt/hadoop/share/hadoop/mapreduce/*,/opt/hadoop/share/hadoop/mapreduce/lib/*</value>
-  </property>
+    <property>
+        <name>mapreduce.framework.name</name>
+        <value>yarn</value>
+    </property>
+    <property>
+        <name>yarn.app.mapreduce.am.env</name>
+        <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+    </property>
+    <property>
+        <name>mapreduce.map.env</name>
+        <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+    </property>
+    <property>
+        <name>mapreduce.reduce.env</name>
+        <value>HADOOP_MAPRED_HOME=/opt/hadoop</value>
+    </property>
+    <property>
+        <name>mapreduce.application.classpath</name>
+        <value>/opt/hadoop/share/hadoop/mapreduce/*,/opt/hadoop/share/hadoop/mapreduce/lib/*</value>
+    </property>
 </configuration>
 EOF"
 
 # Format
 docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs namenode -format'
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'mkdir -p /opt/hadoop/data'
 
-# retart all daemons
+# Retart all daemons
 docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs --daemon stop namenode; hdfs --daemon start namenode'
 docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs --daemon stop datanode; hdfs --daemon start datanode'
 docker exec ${HADOOP_CONTAINER_NAME} bash -c 'yarn --daemon stop resourcemanager; yarn --daemon start resourcemanager'
@@ -174,7 +179,275 @@ Test:
 docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar pi 10 100'
 ```
 
-## 2.2 Configuration
+## 2.2 Deployment via Docker and Kerberos
+
+### 2.2.1 Kerberos Basics
+
+**Kerberos Commands:**
+
+* `kinit <principal>[@<kerberos_realm>]`: Login with password.
+* `kinit -kt <keytabpath> <principal>[@<kerberos_realm>]`: Login with keytab.
+* `kinit -c <cache_path> <principal>[@<kerberos_realm>]`: Specific cache path.
+* `klist`
+* `klist -c <cache_path>`
+* `kdestroy`
+* `kdestroy -c <cache_path>`
+* Environments:
+    * `export KRB5_TRACE=/dev/stdout`
+    * `export KRB5_CONFIG=<path/to/krb5.conf>`
+    * `export KRB5CCNAME=FILE:/tmp/krb5cc_testuser`: Use local file as cache.
+    * `export KRB5CCNAME=MEMORY:`: Use meory as cache.
+
+**`kadmin.local` Commands:**
+
+* `?`: help doc.
+
+### 2.2.2 Kerberos Container
+
+```sh
+SHARED_NS=hadoop-ns
+HADOOP_CONTAINER_NAME=hadoop-with-kerberos
+KERBEROS_CONTAINER_NAME=kerberos
+KERBEROS_DOMAIN=${KERBEROS_CONTAINER_NAME}
+KERBEROS_DOMAIN_UPPER=$(echo ${KERBEROS_DOMAIN} | tr "[:lower:]" "[:upper:]")
+
+docker run -dit --name ${KERBEROS_CONTAINER_NAME} --hostname ${KERBEROS_CONTAINER_NAME} --network ${SHARED_NS} --privileged -p 88:88 -p 464:464 -p 749:749 ubuntu:xenial
+
+# Install kerberos
+docker exec ${KERBEROS_CONTAINER_NAME} bash -c 'apt update'
+docker exec ${KERBEROS_CONTAINER_NAME} bash -c 'DEBIAN_FRONTEND=noninteractive apt install -y ntp python-dev python-pip python-wheel python-setuptools python-pkg-resources krb5-admin-server krb5-kdc'
+docker exec ${KERBEROS_CONTAINER_NAME} bash -c 'apt install -y vim iputils-ping iproute2'
+
+# Setup kerberos config
+docker exec ${KERBEROS_CONTAINER_NAME} bash -c "tee /etc/krb5.conf > /dev/null << EOF
+[libdefaults]
+    default_realm = ${KERBEROS_DOMAIN_UPPER}
+    dns_lookup_realm = false
+    dns_lookup_kdc = false
+    ticket_lifetime = 24h
+    renew_lifetime = 7d
+    forwardable = true
+
+[realms]
+    ${KERBEROS_DOMAIN_UPPER} = {
+        kdc = ${KERBEROS_DOMAIN}
+        admin_server = ${KERBEROS_DOMAIN}
+    }
+
+[domain_realm]
+    ${KERBEROS_DOMAIN} = ${KERBEROS_DOMAIN_UPPER}
+EOF"
+
+docker exec ${KERBEROS_CONTAINER_NAME} bash -c "cat > /etc/krb5kdc/kdc.conf << EOF
+[kdcdefaults]
+    kdc_ports = 88
+    kdc_tcp_ports = 88
+
+[realms]
+    ${KERBEROS_DOMAIN_UPPER} = {
+        database_name = /var/lib/krb5kdc/principal
+        admin_keytab = /etc/krb5kdc/kadm5.keytab
+        acl_file = /etc/krb5kdc/kadm5.acl
+        key_stash_file = /etc/krb5kdc/stash
+        log_file = /var/log/krb5kdc.log
+        kdc_ports = 88
+        max_life = 10h 0m 0s
+        max_renewable_life = 7d 0h 0m 0s
+    }
+EOF"
+
+docker exec ${KERBEROS_CONTAINER_NAME} bash -c "cat > /etc/krb5kdc/kadm5.acl << EOF
+*/admin@${KERBEROS_DOMAIN_UPPER} *
+EOF"
+
+docker exec ${KERBEROS_CONTAINER_NAME} bash -c 'kdb5_util create -s <<EOF
+!Abcd1234
+!Abcd1234
+EOF'
+docker exec ${KERBEROS_CONTAINER_NAME} bash -c '/usr/sbin/krb5kdc'
+docker exec ${KERBEROS_CONTAINER_NAME} bash -c '/usr/sbin/kadmind'
+
+# Create principal for hadoop
+docker exec ${KERBEROS_CONTAINER_NAME} bash -c 'mkdir -p /etc/security/keytabs'
+docker exec ${KERBEROS_CONTAINER_NAME} bash -c "kadmin.local <<EOF
+addprinc -randkey nn/${HADOOP_CONTAINER_NAME}@${KERBEROS_DOMAIN_UPPER}
+addprinc -randkey dn/${HADOOP_CONTAINER_NAME}@${KERBEROS_DOMAIN_UPPER}
+listprincs
+
+ktadd -k /etc/security/keytabs/nn.service.keytab nn/${HADOOP_CONTAINER_NAME}@${KERBEROS_DOMAIN_UPPER}
+ktadd -k /etc/security/keytabs/dn.service.keytab dn/${HADOOP_CONTAINER_NAME}@${KERBEROS_DOMAIN_UPPER}
+
+quit
+EOF"
+
+# Create principal for user
+docker exec ${KERBEROS_CONTAINER_NAME} bash -c "kadmin.local <<EOF
+addprinc -pw 123456 testuser
+listprincs
+
+quit
+EOF"
+```
+
+**Test:**
+
+```sh
+# password: 123456
+kinit testuser
+klist
+```
+
+### 2.2.3 Hadoop Container
+
+```sh
+SHARED_NS=hadoop-ns
+HADOOP_CONTAINER_NAME=hadoop-with-kerberos
+KERBEROS_CONTAINER_NAME=kerberos
+KERBEROS_DOMAIN=${KERBEROS_CONTAINER_NAME}
+KERBEROS_DOMAIN_UPPER=$(echo ${KERBEROS_DOMAIN} | tr "[:lower:]" "[:upper:]")
+
+docker run -dit --name ${HADOOP_CONTAINER_NAME} --hostname ${HADOOP_CONTAINER_NAME} --network ${SHARED_NS} --privileged -p 8020:8020 -p 9866:9866 apache/hadoop:3.3.6 bash
+docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/core-site.xml << EOF
+<configuration>
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://${HADOOP_CONTAINER_NAME}:8020</value>
+    </property>
+    <property>
+      <name>hadoop.security.authentication</name>
+      <value>kerberos</value>
+    </property>
+    <property>
+      <name>hadoop.security.authorization</name>
+      <value>true</value>
+    </property>
+</configuration>
+EOF"
+
+docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/hdfs-site.xml << EOF
+<configuration>
+    <property>
+        <name>dfs.replication</name>
+        <value>1</value>
+    </property>
+    <property>
+        <name>dfs.permissions.enabled</name>
+        <value>false</value>
+    </property>
+    <property>
+        <name>dfs.datanode.data.dir</name>
+        <value>/opt/hadoop/data</value>
+    </property>
+    <property>
+        <name>dfs.datanode.address</name>
+        <value>${HADOOP_CONTAINER_NAME}:9866</value>
+    </property>
+    <property>
+        <name>dfs.datanode.http.address</name>
+        <value>${HADOOP_CONTAINER_NAME}:9864</value>
+    </property>
+    <property>
+        <name>dfs.datanode.ipc.address</name>
+        <value>${HADOOP_CONTAINER_NAME}:9867</value>
+    </property>
+    <property>
+        <name>dfs.datanode.hostname</name>
+        <value>${HADOOP_CONTAINER_NAME}</value>
+    </property>
+
+    <property>
+        <name>dfs.namenode.kerberos.principal</name>
+        <value>nn/_HOST@${KERBEROS_DOMAIN_UPPER}</value>
+    </property>
+    <property>
+        <name>dfs.namenode.keytab.file</name>
+        <value>/etc/security/keytabs/nn.service.keytab</value>
+    </property>
+    <property>
+        <name>dfs.datanode.kerberos.principal</name>
+        <value>dn/_HOST@${KERBEROS_DOMAIN_UPPER}</value>
+    </property>
+    <property>
+        <name>dfs.datanode.keytab.file</name>
+        <value>/etc/security/keytabs/dn.service.keytab</value>
+    </property>
+
+    <property>
+        <name>dfs.block.access.token.enable</name>
+        <value>true</value>
+    </property>
+    <property>
+        <name>dfs.block.access.token.master.key.num</name>
+        <value>2</value>
+    </property>
+    <property>
+        <name>dfs.block.access.token.lifetime</name>
+        <value>600</value>
+    </property>
+    <property>
+        <name>ignore.secure.ports.for.testing</name>
+        <value>true</value>
+    </property>
+</configuration>
+EOF"
+
+# Setup kerberos config
+docker exec ${HADOOP_CONTAINER_NAME} bash -c "sudo tee /etc/krb5.conf > /dev/null << EOF
+[libdefaults]
+    default_realm = ${KERBEROS_DOMAIN_UPPER}
+    dns_lookup_realm = false
+    dns_lookup_kdc = false
+    ticket_lifetime = 24h
+    renew_lifetime = 7d
+    forwardable = true
+
+[realms]
+    ${KERBEROS_DOMAIN_UPPER} = {
+        kdc = ${KERBEROS_DOMAIN}
+        admin_server = ${KERBEROS_DOMAIN}
+    }
+
+[domain_realm]
+    ${KERBEROS_DOMAIN} = ${KERBEROS_DOMAIN_UPPER}
+EOF"
+
+# Copy keytab
+docker cp ${KERBEROS_CONTAINER_NAME}:/etc/security/keytabs/nn.service.keytab /tmp/nn.service.keytab
+docker cp ${KERBEROS_CONTAINER_NAME}:/etc/security/keytabs/dn.service.keytab /tmp/dn.service.keytab
+docker cp /tmp/nn.service.keytab ${HADOOP_CONTAINER_NAME}:/etc/security/keytabs/nn.service.keytab
+docker cp /tmp/dn.service.keytab ${HADOOP_CONTAINER_NAME}:/etc/security/keytabs/dn.service.keytab
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'sudo chmod 644 /etc/security/keytabs/nn.service.keytab'
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'sudo chmod 644 /etc/security/keytabs/dn.service.keytab'
+
+# Install jsvc
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'sudo mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo_bak'
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'sudo wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo'
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'sudo yum install -y jsvc'
+
+# Format
+docker exec ${HADOOP_CONTAINER_NAME} bash -c "kinit -kt /etc/security/keytabs/nn.service.keytab nn/${HADOOP_CONTAINER_NAME}@${KERBEROS_DOMAIN_UPPER}"
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs namenode -format'
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'sudo mkdir -p /opt/hadoop/data'
+
+# Retart all daemons
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs --daemon stop namenode; hdfs --daemon start namenode'
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'HDFS_DATANODE_SECURE_USER=root; \
+        JSVC_HOME=/bin; \
+        JAVA_HOME=/usr/lib/jvm/jre; \
+        sudo -E /opt/hadoop/bin/hdfs --daemon stop datanode; \
+        sudo -E /opt/hadoop/bin/hdfs --daemon start datanode'
+
+# Report status
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs dfsadmin -report'
+```
+
+**Key points:**
+
+* Directory `/opt/hadoop/data` must can be accessed by the user started datanode.
+* Credential file `/etc/security/keytabs/dn.service.keytab` must can be accessed by the user started datanode.
+* If `ignore.secure.ports.for.testing` is set to `false`, then the http port and tcp port must be smaller than 1023, otherwise it cannot pass the check.
+
+## 2.3 Configuration
 
 1. `core-site.xml`
     * Path: `$HADOOP_HOME/etc/hadoop/core-site.xml`
@@ -202,7 +475,7 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoo
     * Path: `$HADOOP_HOME/etc/hadoop/log4j.properties`
     * Description: Configures logging for Hadoop.
 
-### 2.2.1 How to config dfs.nameservices
+### 2.3.1 How to config dfs.nameservices
 
 **`core-site.xml`**
 ```xml
@@ -250,9 +523,9 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoo
 </configuration>
 ```
 
-## 2.3 Command
+## 2.4 Command
 
-### 2.3.1 daemon
+### 2.4.1 daemon
 
 ```sh
 hdfs --daemon stop namenode
@@ -268,22 +541,22 @@ yarn --daemon start nodemanager
 mapred --daemon start historyserver
 ```
 
-### 2.3.2 hdfs
+### 2.4.2 hdfs
 
-#### 2.3.2.1 File Path
+#### 2.4.2.1 File Path
 
 ```sh
 hdfs dfs -ls -R <path>
 ```
 
-#### 2.3.2.2 File Status
+#### 2.4.2.2 File Status
 
 ```sh
 hdfs fsck <path>
 hdfs fsck <path> -files -blocks -replication
 ```
 
-#### 2.3.2.3 Show Content
+#### 2.4.2.3 Show Content
 
 ```sh
 # For text file
@@ -293,7 +566,7 @@ hdfs dfs -cat <path>
 hdfs dfs -text <path.avro>
 ```
 
-#### 2.3.2.4 Grant Permission
+#### 2.4.2.4 Grant Permission
 
 ```sh
 hdfs dfs -setfacl -R -m user:hive:rwx /
@@ -301,16 +574,16 @@ hdfs dfs -setfacl -R -m default:user:hive:rwx /
 hdfs dfs -getfacl /
 ```
 
-### 2.3.3 yarn
+### 2.4.3 yarn
 
-#### 2.3.3.1 Node
+#### 2.4.3.1 Node
 
 ```sh
 yarn node -list
 yarn node -list -showDetails
 ```
 
-#### 2.3.3.2 Application
+#### 2.4.3.2 Application
 
 ```sh
 yarn application -list
@@ -322,9 +595,9 @@ yarn logs -applicationId <appid>
 yarn application -kill <appid>
 ```
 
-## 2.4 Tips
+## 2.5 Tips
 
-### 2.4.1 How to access a hadoop cluster started via docker
+### 2.5.1 How to access a hadoop cluster started via docker
 
 For linux, there are two ways of approaching this:
 
@@ -339,7 +612,7 @@ For mac with m chip, the above methods cannot work, because there will be an ext
 1. Config `dfs.client.use.datanode.hostname` to `true` at the client side (i.e. Mac side), otherwise it will use container's ip address, which is unconnected between mac and container because of the extra virtualization layer.
 1. Access hadoop via container's name.
 
-### 2.4.2 SDK don't recognize HADOOP_CONF_DIR automatically
+### 2.5.2 SDK don't recognize HADOOP_CONF_DIR automatically
 
 You need to implement the parsing of the path yourself.
 

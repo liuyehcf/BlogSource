@@ -487,6 +487,12 @@ docker ps -a -f status=exited -q | xargs docker rm -f
 docker run --user $(id -u):$(id -g) -v /etc/passwd:/etc/passwd
 ```
 
+## 7.11 Find containers using network
+
+```sh
+docker network inspect <ns-name>
+```
+
 # 8 FAQ
 
 ## 8.1 K8S Env docker error
