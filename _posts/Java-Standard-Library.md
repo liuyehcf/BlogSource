@@ -50,13 +50,27 @@ DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 String formattedDateTime = localDateTime.format(formatter);
 ```
 
-## 1.4 Get Time offset
+## 1.4 Transform between UTC and Local DateTime
+
+```java
+public static LocalDateTime normalizeToUTC(LocalDateTime localZonedDateTime) {
+    Instant instant = localZonedDateTime.atZone(ZoneId.systemDefault()).toInstant();
+    return LocalDateTime.ofInstant(instant, ZONE_UTC);
+}
+
+public static LocalDateTime localizeFromUTC(LocalDateTime utcDateTime) {
+    Instant instant = utcDateTime.atZone(ZONE_UTC).toInstant();
+    return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+}
+```
+
+## 1.5 Get Time offset
 
 ```java
 ZoneOffset offset = ZonedDateTime.now(ZoneId.systemDefault()).getOffset();
 ```
 
-## 1.5 Default timezone config load order
+## 1.6 Default timezone config load order
 
 The priorities from high to low:
 

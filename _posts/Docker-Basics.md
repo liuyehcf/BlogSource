@@ -218,17 +218,17 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 ## 6.2 Usage
 
-* `docker-compose [ -f xxx.yml ] up`
-* `docker-compose [ -f xxx.yml ] up -d`
-* `docker-compose [ -f xxx.yml ] down`
-* `docker-compose [ -f xxx.yml ] start`
-* `docker-compose [ -f xxx.yml ] stop`
-* `docker-compose [ -f xxx.yml ] restart`
-* `docker-compose [ -f xxx.yml ] rm`
-* `docker-compose [ -f xxx.yml ] ps`
-* `docker-compose [ -f xxx.yml ] ls`
-* `docker-compose [ -f xxx.yml ] config`
-* `docker-compose [ -f xxx.yml ] config --services`
+* `docker-compose [ -f <compose_file> ] [-p <project_name>] up`
+* `docker-compose [ -f <compose_file> ] [-p <project_name>] up -d`
+* `docker-compose [ -f <compose_file> ] [-p <project_name>] down`
+* `docker-compose [ -f <compose_file> ] [-p <project_name>] start`
+* `docker-compose [ -f <compose_file> ] [-p <project_name>] stop`
+* `docker-compose [ -f <compose_file> ] [-p <project_name>] restart`
+* `docker-compose [ -f <compose_file> ] [-p <project_name>] rm`
+* `docker-compose [ -f <compose_file> ] [-p <project_name>] ps`
+* `docker-compose [ -f <compose_file> ] [-p <project_name>] exec -it <service_name> bash`
+* `docker-compose [ -f <compose_file> ] [-p <project_name>] config`
+* `docker-compose [ -f <compose_file> ] [-p <project_name>] config --services`
 
 ## 6.3 Tips
 

@@ -546,6 +546,9 @@ Record refers to a feature that allows you to record a sequence of keystrokes an
 **查看所有`map`：**
 
 * `:map`
+    * `:map <c-l>`
+    * `:map <f5>`
+    * `:map \rn`
 * `:noremap`
 * `:nnoremap`
 
@@ -3670,13 +3673,13 @@ n 16.19.0 # use this version
 # nvim's config file is ~/.config/nvim/init.vim
 mkdir -p ~/.vim ~/.vim/plugged
 mkdir -p ~/.config
-ln -s ~/.vim ~/.config/nvim
-ln -s ~/.vimrc ~/.config/nvim/init.vim
+ln -sf ~/.vim ~/.config/nvim
+ln -sf ~/.vimrc ~/.config/nvim/init.vim
 
 # plug manager and plug
 mkdir -p ~/.local/share/nvim/site/autoload
-ln -s ~/.vim/autoload/plug.vim ~/.local/share/nvim/site/autoload/plug.vim
-ln -s ~/.vim/plugged ~/.local/share/nvim/plugged
+ln -sf ~/.vim/autoload/plug.vim ~/.local/share/nvim/site/autoload/plug.vim
+ln -sf ~/.vim/plugged ~/.local/share/nvim/plugged
 ```
 
 ## 6.4 Tips

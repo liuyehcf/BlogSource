@@ -183,6 +183,20 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoo
 
 ### 2.2.1 Kerberos Basics
 
+**Concepts:**
+
+* Key Distribution Center, KDC
+    * The central server responsible for managing authentication.
+    * Comprises two sub-components:
+        * Authentication Server (AS): Authenticates the client and issues the Ticket Granting Ticket (TGT).
+        * Ticket Granting Server (TGS): Issues service-specific tickets upon request.
+* Principal: A unique identity (user, service, or host) in the Kerberos system, e.g., `user@REALM` or `service/hostname@REALM`.
+* Realm: A logical network served by a single KDC, identified by an uppercase string, e.g., `EXAMPLE.COM`.
+* Keytab: A file storing pre-shared credentials for a user or service, used for automated authentication.
+* Ticket: A temporary set of credentials that allows a principal to authenticate to services.
+    * Ticket Granting Ticket (TGT): Issued by the AS, used to request service tickets.
+    * Service Ticket: Allows access to a specific service.
+
 **Kerberos Commands:**
 
 * `kinit <principal>[@<kerberos_realm>]`: Login with password.
@@ -202,16 +216,23 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoo
 
 * `?`: help doc.
 
+**Tips:**
+
+* Make sure target user has permission to read related files, including config, TGT, keyTab etc.
+
 ### 2.2.2 Kerberos Container
 
 ```sh
 SHARED_NS=hadoop-ns
 HADOOP_CONTAINER_NAME=hadoop-with-kerberos
 KERBEROS_CONTAINER_NAME=kerberos
-KERBEROS_DOMAIN=${KERBEROS_CONTAINER_NAME}
-KERBEROS_DOMAIN_UPPER=$(echo ${KERBEROS_DOMAIN} | tr "[:lower:]" "[:upper:]")
+REAL_DOMAIN=liuyehcf.org
+HADOOP_HOSTNAME=${HADOOP_CONTAINER_NAME}.${REAL_DOMAIN}
+KERBEROS_HOSTNAME=${KERBEROS_CONTAINER_NAME}.${REAL_DOMAIN}
+KERBEROS_LOGIC_DOMAIN=example.com
+KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:upper:]")
 
-docker run -dit --name ${KERBEROS_CONTAINER_NAME} --hostname ${KERBEROS_CONTAINER_NAME} --network ${SHARED_NS} --privileged -p 88:88 -p 464:464 -p 749:749 ubuntu:xenial
+docker run -dit --name ${KERBEROS_CONTAINER_NAME} --hostname ${KERBEROS_HOSTNAME} --network ${SHARED_NS} --privileged -p 88:88 -p 464:464 -p 749:749 ubuntu:xenial
 
 # Install kerberos
 docker exec ${KERBEROS_CONTAINER_NAME} bash -c 'apt update'
@@ -221,7 +242,7 @@ docker exec ${KERBEROS_CONTAINER_NAME} bash -c 'apt install -y vim iputils-ping 
 # Setup kerberos config
 docker exec ${KERBEROS_CONTAINER_NAME} bash -c "tee /etc/krb5.conf > /dev/null << EOF
 [libdefaults]
-    default_realm = ${KERBEROS_DOMAIN_UPPER}
+    default_realm = ${KERBEROS_LOGIC_DOMAIN_UPPER}
     dns_lookup_realm = false
     dns_lookup_kdc = false
     ticket_lifetime = 24h
@@ -229,13 +250,14 @@ docker exec ${KERBEROS_CONTAINER_NAME} bash -c "tee /etc/krb5.conf > /dev/null <
     forwardable = true
 
 [realms]
-    ${KERBEROS_DOMAIN_UPPER} = {
-        kdc = ${KERBEROS_DOMAIN}
-        admin_server = ${KERBEROS_DOMAIN}
+    ${KERBEROS_LOGIC_DOMAIN_UPPER} = {
+        kdc = ${KERBEROS_HOSTNAME}
+        admin_server = ${KERBEROS_HOSTNAME}
     }
 
 [domain_realm]
-    ${KERBEROS_DOMAIN} = ${KERBEROS_DOMAIN_UPPER}
+    ${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+    .${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
 EOF"
 
 docker exec ${KERBEROS_CONTAINER_NAME} bash -c "cat > /etc/krb5kdc/kdc.conf << EOF
@@ -244,7 +266,7 @@ docker exec ${KERBEROS_CONTAINER_NAME} bash -c "cat > /etc/krb5kdc/kdc.conf << E
     kdc_tcp_ports = 88
 
 [realms]
-    ${KERBEROS_DOMAIN_UPPER} = {
+    ${KERBEROS_LOGIC_DOMAIN_UPPER} = {
         database_name = /var/lib/krb5kdc/principal
         admin_keytab = /etc/krb5kdc/kadm5.keytab
         acl_file = /etc/krb5kdc/kadm5.acl
@@ -257,7 +279,7 @@ docker exec ${KERBEROS_CONTAINER_NAME} bash -c "cat > /etc/krb5kdc/kdc.conf << E
 EOF"
 
 docker exec ${KERBEROS_CONTAINER_NAME} bash -c "cat > /etc/krb5kdc/kadm5.acl << EOF
-*/admin@${KERBEROS_DOMAIN_UPPER} *
+*/admin@${KERBEROS_LOGIC_DOMAIN_UPPER} *
 EOF"
 
 docker exec ${KERBEROS_CONTAINER_NAME} bash -c 'kdb5_util create -s <<EOF
@@ -270,12 +292,12 @@ docker exec ${KERBEROS_CONTAINER_NAME} bash -c '/usr/sbin/kadmind'
 # Create principal for hadoop
 docker exec ${KERBEROS_CONTAINER_NAME} bash -c 'mkdir -p /etc/security/keytabs'
 docker exec ${KERBEROS_CONTAINER_NAME} bash -c "kadmin.local <<EOF
-addprinc -randkey nn/${HADOOP_CONTAINER_NAME}@${KERBEROS_DOMAIN_UPPER}
-addprinc -randkey dn/${HADOOP_CONTAINER_NAME}@${KERBEROS_DOMAIN_UPPER}
+addprinc -randkey nn/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
+addprinc -randkey dn/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
 listprincs
 
-ktadd -k /etc/security/keytabs/nn.service.keytab nn/${HADOOP_CONTAINER_NAME}@${KERBEROS_DOMAIN_UPPER}
-ktadd -k /etc/security/keytabs/dn.service.keytab dn/${HADOOP_CONTAINER_NAME}@${KERBEROS_DOMAIN_UPPER}
+ktadd -k /etc/security/keytabs/nn.service.keytab nn/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
+ktadd -k /etc/security/keytabs/dn.service.keytab dn/${HADOOP_HOSTNAME}@${KERBEROS_LOGIC_DOMAIN_UPPER}
 
 quit
 EOF"
@@ -303,15 +325,18 @@ klist
 SHARED_NS=hadoop-ns
 HADOOP_CONTAINER_NAME=hadoop-with-kerberos
 KERBEROS_CONTAINER_NAME=kerberos
-KERBEROS_DOMAIN=${KERBEROS_CONTAINER_NAME}
-KERBEROS_DOMAIN_UPPER=$(echo ${KERBEROS_DOMAIN} | tr "[:lower:]" "[:upper:]")
+REAL_DOMAIN=liuyehcf.org
+HADOOP_HOSTNAME=${HADOOP_CONTAINER_NAME}.${REAL_DOMAIN}
+KERBEROS_HOSTNAME=${KERBEROS_CONTAINER_NAME}.${REAL_DOMAIN}
+KERBEROS_LOGIC_DOMAIN=example.com
+KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:upper:]")
 
-docker run -dit --name ${HADOOP_CONTAINER_NAME} --hostname ${HADOOP_CONTAINER_NAME} --network ${SHARED_NS} --privileged -p 8020:8020 -p 9866:9866 apache/hadoop:3.3.6 bash
+docker run -dit --name ${HADOOP_CONTAINER_NAME} --hostname ${HADOOP_HOSTNAME} --network ${SHARED_NS} --privileged -p 8020:8020 -p 9866:9866 apache/hadoop:3.3.6 bash
 docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/core-site.xml << EOF
 <configuration>
     <property>
         <name>fs.defaultFS</name>
-        <value>hdfs://${HADOOP_CONTAINER_NAME}:8020</value>
+        <value>hdfs://${HADOOP_HOSTNAME}:8020</value>
     </property>
     <property>
       <name>hadoop.security.authentication</name>
@@ -340,24 +365,24 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/hdfs-
     </property>
     <property>
         <name>dfs.datanode.address</name>
-        <value>${HADOOP_CONTAINER_NAME}:9866</value>
+        <value>${HADOOP_HOSTNAME}:9866</value>
     </property>
     <property>
         <name>dfs.datanode.http.address</name>
-        <value>${HADOOP_CONTAINER_NAME}:9864</value>
+        <value>${HADOOP_HOSTNAME}:9864</value>
     </property>
     <property>
         <name>dfs.datanode.ipc.address</name>
-        <value>${HADOOP_CONTAINER_NAME}:9867</value>
+        <value>${HADOOP_HOSTNAME}:9867</value>
     </property>
     <property>
         <name>dfs.datanode.hostname</name>
-        <value>${HADOOP_CONTAINER_NAME}</value>
+        <value>${HADOOP_HOSTNAME}</value>
     </property>
 
     <property>
         <name>dfs.namenode.kerberos.principal</name>
-        <value>nn/_HOST@${KERBEROS_DOMAIN_UPPER}</value>
+        <value>nn/_HOST@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
     </property>
     <property>
         <name>dfs.namenode.keytab.file</name>
@@ -365,7 +390,7 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/hdfs-
     </property>
     <property>
         <name>dfs.datanode.kerberos.principal</name>
-        <value>dn/_HOST@${KERBEROS_DOMAIN_UPPER}</value>
+        <value>dn/_HOST@${KERBEROS_LOGIC_DOMAIN_UPPER}</value>
     </property>
     <property>
         <name>dfs.datanode.keytab.file</name>
@@ -394,7 +419,7 @@ EOF"
 # Setup kerberos config
 docker exec ${HADOOP_CONTAINER_NAME} bash -c "sudo tee /etc/krb5.conf > /dev/null << EOF
 [libdefaults]
-    default_realm = ${KERBEROS_DOMAIN_UPPER}
+    default_realm = ${KERBEROS_LOGIC_DOMAIN_UPPER}
     dns_lookup_realm = false
     dns_lookup_kdc = false
     ticket_lifetime = 24h
@@ -402,13 +427,14 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c "sudo tee /etc/krb5.conf > /dev/nul
     forwardable = true
 
 [realms]
-    ${KERBEROS_DOMAIN_UPPER} = {
-        kdc = ${KERBEROS_DOMAIN}
-        admin_server = ${KERBEROS_DOMAIN}
+    ${KERBEROS_LOGIC_DOMAIN_UPPER} = {
+        kdc = ${KERBEROS_HOSTNAME}
+        admin_server = ${KERBEROS_HOSTNAME}
     }
 
 [domain_realm]
-    ${KERBEROS_DOMAIN} = ${KERBEROS_DOMAIN_UPPER}
+    ${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
+    .${REAL_DOMAIN} = ${KERBEROS_LOGIC_DOMAIN_UPPER}
 EOF"
 
 # Copy keytab
@@ -425,7 +451,6 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c 'sudo wget -O /etc/yum.repos.d/Cent
 docker exec ${HADOOP_CONTAINER_NAME} bash -c 'sudo yum install -y jsvc'
 
 # Format
-docker exec ${HADOOP_CONTAINER_NAME} bash -c "kinit -kt /etc/security/keytabs/nn.service.keytab nn/${HADOOP_CONTAINER_NAME}@${KERBEROS_DOMAIN_UPPER}"
 docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs namenode -format'
 docker exec ${HADOOP_CONTAINER_NAME} bash -c 'sudo mkdir -p /opt/hadoop/data'
 
@@ -438,6 +463,9 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c 'HDFS_DATANODE_SECURE_USER=root; \
         sudo -E /opt/hadoop/bin/hdfs --daemon start datanode'
 
 # Report status
+docker exec ${HADOOP_CONTAINER_NAME} bash -c "kinit testuser <<EOF
+123456
+EOF"
 docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs dfsadmin -report'
 ```
 
@@ -522,6 +550,19 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs dfsadmin -report'
     </property>
 </configuration>
 ```
+
+### 2.3.2 Support config hot loading
+
+`FileSystem::CACHE` will cache filesystem object, cache key is built from `uri` and `Configuration`, if you only modify `hdfs-site.xml` file itself, the object `Configuration` will be exactly the same, so comes with the cache hit.
+
+How to disable it?, set property `fs.<protocol>.impl.disable.cache` to `true` in `hdfs-site.xml`
+
+* For hdfs, the property name is: `fs.hdfs.impl.disable.cache`
+
+### 2.3.3 Hedge read
+
+* `dfs.client.hedged.read.threadpool.size`
+* `dfs.client.hedged.read.threshold.millis`
 
 ## 2.4 Command
 

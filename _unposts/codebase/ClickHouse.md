@@ -23,6 +23,10 @@ classDiagram
 
 * [Userspace page cache again](https://github.com/ClickHouse/ClickHouse/pull/60552)
 
-# 2 Assorted
+# 2 RoadMap
+
+[Roadmap 2025 (discussion)](https://github.com/ClickHouse/ClickHouse/issues/74046)
+
+# 3 Assorted
 
 1. [COW.h](https://github.com/ClickHouse/ClickHouse/blob/master/src/Common/COW.h)

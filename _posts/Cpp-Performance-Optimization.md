@@ -3940,7 +3940,74 @@ BM_small_function     251161 ns       251152 ns         2875
 BM_large_function     264924 ns       264923 ns         2758
 ```
 
-## 4.7 Reference
+## 4.7 hash map ordered lookup vs. unordered lookup
+
+```cpp
+#include <benchmark/benchmark.h>
+
+#include <mutex>
+#include <random>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+class MapFixture : public benchmark::Fixture {
+public:
+    static inline std::unordered_map<int64_t, int64_t> map;
+    static inline std::vector<int64_t> keys;
+    static inline std::vector<int64_t> ordered_keys;
+    static inline bool is_initialized = false;
+    static inline std::mutex mutex;
+
+    void SetUp(const ::benchmark::State& state) override {
+        std::lock_guard<std::mutex> lock(mutex);
+        if (!is_initialized) {
+            std::default_random_engine e;
+            std::uniform_int_distribution<int64_t> u(0, 65536);
+            for (size_t i = 0; i < 100'000'000; ++i) {
+                int key = u(e);
+                map[key] = i;
+                keys.push_back(key);
+            }
+            ordered_keys = keys;
+            std::sort(ordered_keys.begin(), ordered_keys.end());
+            is_initialized = true;
+        }
+    }
+
+    void TearDown(const ::benchmark::State& state) override {}
+};
+
+BENCHMARK_F(MapFixture, traverseByUnorderedKeys)(benchmark::State& state) {
+    for (auto _ : state) {
+        for (int key : keys) {
+            benchmark::DoNotOptimize(map[key]);
+        }
+    }
+}
+
+BENCHMARK_F(MapFixture, traverseByOrderedKeys)(benchmark::State& state) {
+    for (auto _ : state) {
+        for (int key : ordered_keys) {
+            benchmark::DoNotOptimize(map[key]);
+        }
+    }
+}
+
+BENCHMARK_MAIN();
+```
+
+**Output:**
+
+```
+-----------------------------------------------------------------------------
+Benchmark                                   Time             CPU   Iterations
+-----------------------------------------------------------------------------
+MapFixture/traverseByUnorderedKeys  468522761 ns    468486356 ns            2
+MapFixture/traverseByOrderedKeys    228485643 ns    228458249 ns            3
+```
+
+## 4.8 Reference
 
 * [Other Built-in Functions Provided by GCC](https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html)
 * [Branch-aware programming](https://stackoverflow.com/questions/32581644/branch-aware-programming)

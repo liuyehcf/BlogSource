@@ -307,6 +307,10 @@ git branch [branch] [commit]
 # Create a new branch and set up a tracking relationship with a specified remote branch
 git branch --track [branch] [remote-branch]
 
+# Find out which branchs contains specific commit
+git branch --contains [commit]
+git branch -r --contains [commit]
+
 # Switch to a specified branch and update the workspace
 git checkout [branch-name]
 
@@ -707,6 +711,18 @@ wget https://raw.githubusercontent.com/<user>/<repository>/<branch>/<filepath>
 git diff HEAD -U0 --no-color | clang-format-diff -p1 -i
 
 git diff --name-only HEAD | grep -E '(\.h$)|(\.cpp$)|(\.hpp$)|(\.tpp$)|(\.c$)' | xargs git diff HEAD -U0 --no-color | clang-format-diff -p1 -i
+```
+
+## 19.8 fatal: bad object
+
+```
+fatal: bad object refs/remotes/origin/ivt_i_dont_want_read_any_data
+```
+
+How to fix:
+
+```sh
+git update-ref -d refs/remotes/origin/ivt_i_dont_want_read_any_data
 ```
 
 # 20 Reference

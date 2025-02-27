@@ -1146,6 +1146,21 @@ map_name[key2]=value2
 map_name[keyn]=valuen
 ```
 
+Or you can define a local map variable inside a function using `local A`:
+
+```sh
+function test() {
+    local -A map_name=([key1]=value1 ... [keyn]=valuen)
+
+    # Or directly define it like this. Note that `${}` is not required.
+    local -A map_name
+    map_name[key1]=value1
+    map_name[key2]=value2
+    ...
+    map_name[keyn]=valuen    
+}
+```
+
 **Attributes**
 
 * `@` or `*` can be used to retrieve all `values` in the map.
@@ -2392,7 +2407,7 @@ echo "outside function: '${arr[@]}'"
 
 ## 7.17 pushd & popd
 
-`pushd`和`popd`是用于操作目录栈的命令，在切换目录时非常有用。它们可以让你在不同目录之间快速切换，并在需要时返回到先前的目录
+`pushd`和`popd`是用于操作目录栈的命令，在切换目录时非常有用。它们可以让你在不同目录之间快速切换，并在需要时返回到先前的目录。`dirs -c`可以用于清空stack。
 
 **Examples:**
 
