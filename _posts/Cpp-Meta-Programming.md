@@ -769,6 +769,89 @@ int main() {
 }
 ```
 
+### 6.1.8 shared_ptr
+
+```cpp
+#include <iostream>
+
+namespace v1 {
+template <typename T>
+class shared_ptr {
+    T* _p;
+
+public:
+    template <typename U>
+    shared_ptr(U* p) : _p(p) {}
+    ~shared_ptr() { delete _p; }
+};
+}; // namespace v1
+
+namespace v2 {
+class helper_base {
+public:
+    virtual ~helper_base() = default;
+};
+
+template <typename T>
+class helper : public helper_base {
+    T* _data;
+
+public:
+    helper(T* p) : _data(p) {}
+    virtual ~helper() { delete _data; }
+};
+
+template <typename T>
+class shared_ptr {
+    helper_base* _helper;
+
+public:
+    template <typename U>
+    shared_ptr(U* p) {
+        _helper = new helper(p);
+    }
+    ~shared_ptr() { delete _helper; }
+};
+} // namespace v2
+
+struct Foo {
+    ~Foo() { std::cout << "~Foo()" << std::endl; }
+};
+
+int main() {
+    {
+        std::cout << "Test raw pointer" << std::endl;
+        Foo* f1 = new Foo();
+        void* f2 = new Foo();
+        delete f1;
+        delete f2;
+    }
+    {
+        std::cout << "Test v1" << std::endl;
+        v1::shared_ptr<Foo> f1(new Foo());
+        v1::shared_ptr<void> f2(new Foo());
+    }
+    {
+        std::cout << "Test v2" << std::endl;
+        v2::shared_ptr<Foo> f1(new Foo());
+        v2::shared_ptr<void> f2(new Foo());
+    }
+    return 0;
+}
+```
+
+Output:
+
+```
+Test raw pointer
+~Foo()
+Test v1
+~Foo()
+Test v2
+~Foo()
+~Foo()
+```
+
 ## 6.2 Iterator 
 
 ### 6.2.1 Static Loop

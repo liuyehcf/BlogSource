@@ -441,7 +441,8 @@ mycompany
 **[Python 标准库](https://docs.python.org/zh-cn/3/library)**
 
 1. `http`
-    * `python3 -m http.server 80`：启动一个`http server`，执行命令的目录会作为`http`资源的根目录
+    * `python3 -m http.server 80`: Start a http server using ipv4.
+    * `python3 -m http.server 80 --bind ::`: Using ipv6.
 1. `json`
 1. `pdb`: Debug tool for python, like gdb for c.
     * `python3 -m pdb test.py`

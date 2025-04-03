@@ -433,7 +433,7 @@ rm -rf oh-my-zsh-agnoster-fcamblor
 
 这些主题会被安装到`~/.oh-my-zsh/themes`目录下，然后修改`~/.zshrc`文件，将`ZSH_THEME`配置项的值改成`agnoster`
 
-**如果你选择了白色背景的话，agnoster也需要进行一些调整**
+**如果你选择了白色背景的话，agnoster也需要进行一些调整（2025-02-12之前）**
 
 1. `~/.zshrc`增加配置项`SOLARIZED_THEME="light"`
 1. `~/.oh-my-zsh/themes/agnoster.zsh-theme`修改背景
@@ -456,6 +456,13 @@ rm -rf oh-my-zsh-agnoster-fcamblor
     [[ -n "$symbols" ]] && prompt_segment white default "$symbols"
     }
     ```
+
+**如果你选择了白色背景的话，agnoster也需要进行一些调整（2025-02-12之后）**
+
+1. `~/.zshrc`增加配置项`SOLARIZED_THEME="light"`
+1. `~/.oh-my-zsh/themes/agnoster.zsh-theme`修改背景
+    * `${AGNOSTER_CONTEXT_BG:=black}` -> `${AGNOSTER_CONTEXT_BG:=white}`
+    * `${AGNOSTER_STATUS_BG:=black}` -> `${AGNOSTER_STATUS_BG:=white}`
 
 **`~/.oh-my-zsh/themes/agnoster.zsh-theme`:**
 

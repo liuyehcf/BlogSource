@@ -17,32 +17,39 @@ date: 2018-02-05 09:25:59
 
 ## 2.1 Cpp
 
-* [News, Status & Discussion about Standard C++](https://isocpp.org/) - ★★★★★
-    * [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines)
-    * [C++ FAQ](https://isocpp.org/faq)
-        * [Conferences Worldwide](https://isocpp.org/wiki/faq/conferences-worldwide/)
-* [CppCon](https://cppcon.org/)
-    * [CppCon-Download](https://github.com/CppCon)
-    * [Branchless Programming in C++ - Fedor Pikus - CppCon 2021](https://www.youtube.com/watch?v=g-WPhYREFjk)
-* [Modern C++ Features](https://github.com/AnthonyCalandra/modern-cpp-features)
-* [C++ static code analysis rules](https://rules.sonarsource.com/cpp)
-* [C++ reference](https://en.cppreference.com/w/)
-    * [C++ Standard Library headers](https://en.cppreference.com/w/cpp/header)
-* [Working Draft Programming Languages — C++](https://eel.is/c++draft)
-* [C++ 语言构造参考手册](https://www.bookstack.cn/books/cppreference-language)
-* [C++ Notes for Professionals book](https://goalkicker.com/CPlusPlusBook/)
-* [Google-Abseil](https://abseil.io/)
-* [Online Compiler](https://godbolt.org/)
-* [Online Benchmark](https://quick-bench.com/)
-* [Where do I find the current C or C++ standard documents?](https://stackoverflow.com/questions/81656/where-do-i-find-the-current-c-or-c-standard-documents)
-    * **[cplusplus/draft](https://github.com/cplusplus/draft)**：草稿版本，相对于发行版可能会有错误，但是免费
-* [Awesome C++ Projects](https://github.com/fffaraz/awesome-cpp)
-* 《A Tour of C++》
+* Forums
+    * [News, Status & Discussion about Standard C++](https://isocpp.org/) - ★★★★★
+        * [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines)
+        * [C++ FAQ](https://isocpp.org/faq)
+            * [Conferences Worldwide](https://isocpp.org/wiki/faq/conferences-worldwide/)
+* Academic
+    * [CppCon](https://cppcon.org/)
+        * [CppCon-Download](https://github.com/CppCon)
+        * [Branchless Programming in C++ - Fedor Pikus - CppCon 2021](https://www.youtube.com/watch?v=g-WPhYREFjk)
+* Blogs
+    * [Rainer Grimm](https://www.modernescpp.com/) - ★★★★★
+* References
+    * [Modern C++ Features](https://github.com/AnthonyCalandra/modern-cpp-features)
+    * [C++ static code analysis rules](https://rules.sonarsource.com/cpp)
+    * [C++ reference](https://en.cppreference.com/w/)
+        * [C++ Standard Library headers](https://en.cppreference.com/w/cpp/header)
+    * [Working Draft Programming Languages — C++](https://eel.is/c++draft)
+    * [C++ 语言构造参考手册](https://www.bookstack.cn/books/cppreference-language)
+    * [C++ Notes for Professionals book](https://goalkicker.com/CPlusPlusBook/)
+    * [Where do I find the current C or C++ standard documents?](https://stackoverflow.com/questions/81656/where-do-i-find-the-current-c-or-c-standard-documents)
+        * **[cplusplus/draft](https://github.com/cplusplus/draft)**：草稿版本，相对于发行版可能会有错误，但是免费
+    * 《A Tour of C++》
+* Useful Tools
+    * [Online Compiler](https://godbolt.org/)
+    * [Online Benchmark](https://quick-bench.com/)
+    * [Online Cppinsights](https://cppinsights.io/)
 * Celebrity
     * `Bjarne Stroustrup`：C++之父
     * `Walter E. Brown`：2000年开始参与C++标准制定工作，引入了`cbegin/cend`、`common_type`等特性，以及负责`<random>`、`<ratio>`等头文件的开发
 * Projects
+    * [Awesome C++ Projects](https://github.com/fffaraz/awesome-cpp)
     * [Apache Calcite](https://github.com/apache/calcite)
+    * [Google-Abseil](https://abseil.io/)
 * Github topics
     * [metaprogramming](https://github.com/topics/metaprogramming?l=c%2B%2B)
         * [nameof](https://github.com/Neargye/nameof)
@@ -54,6 +61,7 @@ date: 2018-02-05 09:25:59
 
 # 3 Kernel
 
+* [lkml.org](https://lkml.org/)
 * [Doc](https://www.kernel.org/doc/Documentation/)
     * [cgroup-v2](https://www.kernel.org/doc/Documentation/admin-guide/cgroup-v2.rst)
 * [linux_kernel_wiki](https://github.com/0voice/linux_kernel_wiki)
@@ -118,7 +126,12 @@ date: 2018-02-05 09:25:59
 * [Fabrice Bellard](https://bellard.org/)
     * Author of `QEMU`, `FFmpeg`, etc.
 
-## 6.2 Other
+## 6.2 Books
+
+* [expert_readed_books](https://github.com/0voice/expert_readed_books)
+    * [深入浅出DPDK](https://github.com/0voice/expert_readed_books/blob/master/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BADPDK.pdf)
+
+## 6.3 Other
 
 * [Meaning of ‘i’,‘g’ and ‘c’ in Oracle Database Version](https://www.linkedin.com/pulse/meaning-ig-c-oracle-database-version-piyush-prakash)
 * [数据库内核杂谈](https://www.infoq.cn/theme/46)

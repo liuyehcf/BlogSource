@@ -994,6 +994,18 @@ If you want to throw an checked exception, but you don't want to add `throws cla
 
 1. Use `Unsafe.throwException`
 
+## 7.5 How JVM use classpath
+
+Assume the classpath is: `/path/to/a.jar:/path/to/b.jar`, and `a.jar` exists while `b.jar` doesn't exist.
+
+The following steps can work well:
+
+1. Load some class `A` from `a.jar`
+1. Put `b.jar` to the right place, i.e `/path/to/b.jar`
+1. Load some class `B` from `b.jar`
+
+**And the same process won't work if the classpath is reverted, i.e. `/path/to/b.jar:/path/to/a.jar`, because when JVM load class `A` it already searched `b.jar` and remember it's not existed.**
+
 # 8 参考
 
 * [JVM性能调优监控工具jps、jstack、jmap、jhat、jstat、hprof使用详解](https://my.oschina.net/feichexia/blog/196575)

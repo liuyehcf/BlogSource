@@ -931,6 +931,7 @@ grep searches for `PATTERNS` in each `FILE`
 * `cat /etc/passwd | sort`
 * `cat /etc/passwd | sort -t ':' -k 3`
 * `echo -e "a\nb\nb\na\nb\na\na\nc\na" | sort | uniq -c | sort -nr`
+    * `sort | uniq -c | sort -nr`：统计相同pattern出现次数的常用方式
 
 ## 2.9 uniq
 

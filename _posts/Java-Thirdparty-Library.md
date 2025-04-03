@@ -2472,3 +2472,47 @@ SerializerCmp.kryo_size_100     avgt    5  48886.075 ± 13722.655  ns/op
 
 [Calculator Demo](https://github.com/liuyehcf/JavaLearning/tree/master/antlr4/src/main/java/org/liuyehcf/antlr4)
 
+# 12 httpclient
+
+* RetryConfig: `new DefaultHttpRequestRetryHandler(3, true)`, this can retry for different IP addresses(maybe including both IPv4/IPv6) which DNS server returns
+
+```java
+package org.byconity.common;
+
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
+import org.apache.http.impl.client.HttpClients;
+
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+
+public class HttpClientDemo {
+    public static void download(String url, String localPath) throws Exception {
+        Path path = Paths.get(localPath);
+        RequestConfig requestConfig =
+                RequestConfig.custom().setConnectTimeout(5000).setSocketTimeout(5000).build();
+        try (CloseableHttpClient httpClient = HttpClients.custom()
+                .setDefaultRequestConfig(requestConfig)
+                .setRetryHandler(new DefaultHttpRequestRetryHandler(3, true)).build()) {
+            HttpGet request = new HttpGet(url);
+            try (CloseableHttpResponse response = httpClient.execute(request)) {
+                if (response.getStatusLine().getStatusCode() == 200) {
+                    InputStream inputStream = response.getEntity().getContent();
+                    Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
+                    System.out.println("File downloaded: " + path);
+                } else {
+                    System.out.println(
+                            "Failed to download file. HTTP Status: " + response.getStatusLine()
+                                    .getStatusCode());
+                }
+            }
+        }
+    }
+}
+```

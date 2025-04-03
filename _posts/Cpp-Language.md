@@ -2242,15 +2242,76 @@ int main() {
 
 ## 3.10 noexcept
 
-用于声明函数不会抛异常，声明和实现都必须同时包含
+Specifies whether a function could throw exceptions.
+
+* `noexcept(true)`
+* `noexcept(false)`
+* `noexcept` same as `noexcept(true)`
+
+**Non-throwing functions are permitted to call potentially-throwing functions. Whenever an exception is thrown and the search for a handler encounters the outermost block of a non-throwing function, the function std::terminate is called:**
+
+* An exception throw by a `noexcept` function cannot be normally catched.
 
 ```cpp
-class A {
+#include <functional>
+#include <iostream>
+#include <memory>
+#include <utility>
+
+void funcA() {
+    std::cout << "funcA" << std::endl;
+    throw std::runtime_error("funA");
+}
+
+void funcB() noexcept {
+    std::cout << "funcB" << std::endl;
+    throw std::runtime_error("funcB");
+}
+
+int main() {
+    try {
+        funcA();
+    } catch (...) {
+        std::cerr << "catch funcA's exception" << std::endl;
+    }
+    try {
+        funcB();
+    } catch (...) {
+        std::cerr << "catch funcB's exception" << std::endl;
+    }
+    return 0;
+}
+```
+
+### 3.10.1 destructor
+
+In practice, implicit destructors are `noexcept` unless the class is "poisoned" by a base or member whose destructor is `noexcept(false)`.
+
+```cpp
+#include <iostream>
+
+class Poison {
 public:
-    void func() noexcept;
+    explicit Poison() {}
+    ~Poison() noexcept(false){};
 };
 
-void A::func() noexcept {}
+class Foo {
+public:
+    explicit Foo() = default;
+};
+
+class PoisionedFoo {
+public:
+    explicit PoisionedFoo() = default;
+    Poison p;
+};
+
+int main() {
+    std::cout << noexcept(Foo()) << std::endl;
+    std::cout << noexcept(PoisionedFoo()) << std::endl;
+    return 0;
+}
 ```
 
 ## 3.11 throw and error
@@ -3063,10 +3124,10 @@ int main() {
 ```sh
 g++ -o main main.cpp -std=gnu++11 -L lib -lperson
 
-lib/libperson.a(person.o)：在函数‘Person::work()’中：
+lib/libperson.a(person.o)：在函数'Person::work()'中：
 person.cpp:(.text+0x0): Person::work() 的多重定义
 /tmp/ccfhnlz4.o:main.cpp:(.text+0x0)：第一次在此定义
-lib/libperson.a(person.o)：在函数‘Person::sleep()’中：
+lib/libperson.a(person.o)：在函数'Person::sleep()'中：
 person.cpp:(.text+0x2a): Person::sleep() 的多重定义
 /tmp/ccfhnlz4.o:main.cpp:(.text+0x2a)：第一次在此定义
 collect2: 错误：ld 返回 1
@@ -3699,7 +3760,7 @@ int main() {
 
 ## 4.10 Coroutine
 
-[C++20’s Coroutines for Beginners - Andreas Fertig - CppCon 2022](https://www.youtube.com/watch?v=8sEe-4tig_A)
+[C++20's Coroutines for Beginners - Andreas Fertig - CppCon 2022](https://www.youtube.com/watch?v=8sEe-4tig_A)
 
 A coroutine is a generalization of a function that can be exited and later resumed at specific points. The key difference from functions is that coroutines can maintain state between suspensions.
 
@@ -4389,7 +4450,7 @@ void A<char, 2>::h() {}
 int main() {
     A<char, 0> a0;
     A<char, 2> a2;
-    a0.f(); // OK, uses primary template’s member definition
+    a0.f(); // OK, uses primary template's member definition
     a2.g(); // OK, uses partial specialization's member definition
     a2.h(); // OK, uses fully-specialized definition of
             // the member of a partial specialization
@@ -6104,6 +6165,125 @@ public:
 private:
     DeferFunction _func;
 };
+```
+
+### 8.3.1 Destructor Behavior
+
+**Key Concepts**
+
+* RAII (Resource Acquisition Is Initialization): The DeferOp class is an RAII wrapper that executes a provided function (or lambda) when its destructor is called. This is typically used for cleanup or deferred execution.
+* Destructor Behavior: In C++, destructors are implicitly called when an object goes out of scope. If an exception is thrown elsewhere in the scope, the stack unwinds, and destructors of automatic objects are invoked.
+* Exception Handling: A try-catch block catches exceptions thrown within its scope, but how exceptions interact with destructors is critical here.
+
+```cpp
+#include <functional>
+#include <iostream>
+#include <memory>
+#include <utility>
+
+template <class DeferFunction>
+class DeferOp {
+public:
+    explicit DeferOp(DeferFunction func) : _func(std::move(func)) {}
+
+    ~DeferOp() noexcept(false) { _func(); };
+
+private:
+    DeferFunction _func;
+};
+
+void normal_func() {
+    std::cout << "hello world" << std::endl;
+    throw std::runtime_error("normal_func");
+}
+
+void raii_func() {
+    DeferOp([]() {
+        std::cout << "hello world" << std::endl;
+        throw std::runtime_error("raii_func");
+    });
+}
+
+int main() {
+    try {
+        normal_func();
+    } catch (...) {
+        std::cerr << "normal_func exception caught" << std::endl;
+    }
+    try {
+        raii_func();
+    } catch (...) {
+        std::cerr << "raii_func exception caught" << std::endl;
+    }
+    return 0;
+}
+```
+
+**Code Breakdown**
+
+* `normal_func`
+    * Executes `std::cout << "hello world" << std::endl;`.
+    * Throws a `std::runtime_error`.
+    * This exception is thrown directly in the `try` block in `main`, so it's caught by the corresponding `catch (...)` block, printing `"normal_func exception caught"`.
+* `raii_func`
+    * Creates a `DeferOp` object with a lambda: `[]() { std::cout << "hello world" << std::endl; throw std::runtime_error("raii_func"); }`.
+    * The lambda isn't executed immediately—it's stored in the `DeferOp` object's `_func` member.
+    * When `raii_func` returns, the `DeferOp` object goes out of scope, and its destructor `~DeferOp()` is called.
+    * The destructor invokes `_func()`, which executes the lambda, printing `"hello world"` and throwing `the std::runtime_error`.
+
+**Why the Exception Isn't Caught**: The key issue lies in when and where the exception is thrown in raii_func:
+
+* The `try` block in `main` surrounds the call to `raii_func()`.
+* However, no exception is thrown during the execution of `raii_func()` itself—`raii_func` simply constructs the `DeferOp` object and returns.
+* The exception is thrown later, in the destructor of `DeferOp`, after the `try` block has already completed and the stack is unwinding (or after the function has exited normally).
+* At this point, the `try-catch` block in `main` is no longer active because the scope of the `try` block has ended. Exceptions thrown during stack unwinding or outside the `try` block aren't caught by that block.
+
+**In C++, if an exception is thrown while the stack is already unwinding due to another exception—or outside of an active `try` block—it results in undefined behavior or program termination unless caught by a higher-level `try-catch`. In this case, there's no prior exception causing unwinding, but the exception still occurs outside the `try` block's scope.**
+
+**And there's a solution: add `noexcept(false)` to destructor of `DeferOp`, the exception can be catched as expected.**
+
+```cpp
+#include <functional>
+#include <iostream>
+#include <memory>
+#include <utility>
+
+template <class DeferFunction>
+class DeferOp {
+public:
+    explicit DeferOp(DeferFunction func) : _func(std::move(func)) {}
+
+    ~DeferOp() noexcept(false) { _func(); };
+
+private:
+    DeferFunction _func;
+};
+
+void normal_func() {
+    std::cout << "hello world" << std::endl;
+    throw std::runtime_error("normal_func");
+}
+
+void raii_func() {
+    DeferOp([]() {
+        std::cout << "hello world" << std::endl;
+        throw std::runtime_error("raii_func");
+    });
+}
+
+int main() {
+    try {
+        normal_func();
+    } catch (...) {
+        std::cerr << "normal_func exception caught" << std::endl;
+    }
+    try {
+        raii_func();
+    } catch (...) {
+        std::cerr << "raii_func exception caught" << std::endl;
+    }
+    return 0;
+}
 ```
 
 # 9 Best Practice

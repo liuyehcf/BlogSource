@@ -155,7 +155,7 @@ if __name__ == "__main__":
 
 # 5 Frequently-Used Images
 
-## 5.1 Alpine
+## 5.1 alpine
 
 Alpine Linux是一个轻型Linux发行版，它不同于通常的Linux发行版，Alpine采用了musl libc 和 BusyBox以减少系统的体积和运行时的资源消耗。Alpine Linux提供了自己的包管理工具：apk
 
@@ -180,7 +180,7 @@ RUN apk update \
 RUN apk add -U tzdata
 ```
 
-## 5.2 Jib
+## 5.2 jib
 
 ```xml
             <plugin>
@@ -206,6 +206,24 @@ RUN apk add -U tzdata
                 </configuration>
             </plugin>
 ```
+
+## 5.3 minio
+
+```sh
+docker run -d --name minio \
+  -p 21900:9000 -p 21990:9090 \
+  -e MINIO_ROOT_USER=admin \
+  -e MINIO_ROOT_PASSWORD=password123 \
+  quay.io/minio/minio server /data --console-address ":9090"
+```
+
+```sh
+mc alias set local http://localhost:9000 admin password123
+```
+
+Client tools: `aws`
+
+* `aws s3 --endpoint http://127.0.0.1:21900 ls s3://my_bucket/file.txt`
 
 # 6 Docker Compose
 
