@@ -181,6 +181,13 @@ org.apache.hadoop.fs.http.HttpsFileSystem
                             <exclude>META-INF/*.RSA</exclude>
                         </excludes>
                     </filter>
+                    <filter>
+                        <artifact>org.apache.hive:hive-exec</artifact>
+                        <excludes>
+                            <exclude>**/Log4j2Plugins.dat</exclude>
+                            <exclude>org/slf4j/**</exclude>
+                        </excludes>
+                    </filter>
                 </filters>
             </configuration>
         </execution>

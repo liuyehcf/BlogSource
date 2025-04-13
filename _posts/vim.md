@@ -1748,6 +1748,9 @@ Home: [coc-pyright](https://github.com/fannheyward/coc-pyright)
     deactivate
     ```
 
+* 格式化import
+    * `CocCommand pyright.organizeimports`
+
 ### 3.9.4 coc-rust-analyzer
 
 Home: [coc-rust-analyzer](https://github.com/fannheyward/coc-rust-analyzer)

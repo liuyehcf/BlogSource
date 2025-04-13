@@ -17,17 +17,17 @@ categories:
 ## 1.1 CentOS
 
 ```sh
-# docker安装
-# --step 1: 安装必要的一些系统工具
+# --step 1: install dependent softwares
 yum install -y yum-utils device-mapper-persistent-data lvm2
-# --step 2: 添加软件源信息
+# --step 2: add repo
 yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
 # --step 3
 sed -i 's+download.docker.com+mirrors.aliyun.com/docker-ce+' /etc/yum.repos.d/docker-ce.repo
-# --step 4: 更新并安装docker-ce，可以通过 yum list docker-ce --showduplicates | sort -r 查询可以安装的版本列表
+# --step 4: install docker
+yum list docker-ce --showduplicates | sort -r
 yum makecache fast
 yum -y install docker-ce-20.10.5-3.el7
-# --step 5: 开启docker服务
+# --step 5: enable docker service
 systemctl enable docker
 systemctl start docker
 ```
@@ -48,49 +48,70 @@ systemctl start docker
 
 # 4 Build Image
 
-**创建一个空的目录**，例如`/tmp/test`
+**Write `Dockerfile`**
 
-**创建Dockerfile（核心）**
+1. **`FROM`: Specifies a base image**
+    * In most cases, a valid Dockerfile starts with a `FROM` instruction.
+    * `FROM` must be the first non-comment instruction in a Dockerfile.
+    * `FROM` can appear multiple times in a Dockerfile to create multi-stage builds.
+    * If no tag is specified, `latest` will be used as the default version of the base image.
+1. **`MAINTAINER`: Specifies the author of the image**
+    * (Note: This instruction is deprecated. Use a `LABEL` instead to define metadata such as the maintainer.)
+1. **`RUN`: Executes commands during image build**
+    * `RUN` instructions create intermediate image layers and are persisted in the final image.
+    * Layered `RUN` instructions support Docker's core philosophy of image versioning and reproducibility.
+    * `RUN` command cache is not invalidated automatically in the next instruction. For example, a cached `RUN apt-get dist-upgrade -y` might be reused.
+    * Use the `--no-cache` flag to force disable caching.
+1. **`ENV`: Sets environment variables inside the Docker container**
+    * Environment variables set by `ENV` can be viewed using the `docker inspect` command.
+    * These variables can also be overridden at runtime using `docker run --env <key>=<value>`.
+1. **`ARG`: Defines environment variables that are available only during the image build**
+    * Available only during `docker build`, not persisted in the final image.
+    * Values can be passed with `--build-arg <key>=<value>` when building the image.
+1. **`USER`: Changes the user under which the container runs**
+    * By default, Docker containers run as the `root` user.
+1. **`WORKDIR`: Sets the working directory for instructions that follow**
+    * The default working directory is `/`. While `cd` can be used within `RUN`, it only affects the current `RUN` instruction.
+    * `WORKDIR` changes are persistent and apply to all following instructions, so you don't need to repeat `WORKDIR` for each command.
+1. **`COPY`: Copies files or directories from `<src>` on the host to `<dest>` in the container**
+    * `<src>` must be a path relative to the build context, or a file/dir.
+    * `<dest>` must be an absolute path inside the container.
+    * All copied files/folders are assigned UID and GID. If `<src>` is a remote URL, the destination file permissions default to 600.
+1. **`ADD`: Similar to `COPY`, but with extended features**
+    * `<src>` can be a file, directory, or a remote URL.
+    * `<dest>` is an absolute path inside the container.
+    * Files are assigned UID and GID. If `<src>` is a remote URL, permissions default to 600.
+    * `ADD` can also auto-extract local tar archives, which `COPY` cannot.
+1. **`VOLUME`: Creates a mount point for external storage (host or other containers)**
+    * Commonly used for databases or persistent data.
+1. **`EXPOSE`: Informs Docker that the container listens on the specified port**
+    * Does not publish the port itself; it only serves as documentation or for use with Docker networking.
+1. **`CMD`: Provides default command to run when the container starts**
+    * Only one `CMD` instruction is allowed per Dockerfile; if multiple are specified, only the last one is used.
+    * Can be overridden by passing a command when running the container: `docker run $image $override_command`.
+1. **`ENTRYPOINT`: Configures a container to run as an executable**
+    * The default `ENTRYPOINT` is `/bin/sh -c`, but there is no default `CMD`.
+    * For example, in `docker run -i -t ubuntu bash`, the default `ENTRYPOINT` is `/bin/sh -c` and the `CMD` is `bash`.
+    * **CMD essentially acts as arguments to ENTRYPOINT**.
+1. **`ONBUILD`: Defers the execution of instructions**
+    * These instructions are triggered when the resulting image is used as a base image in another build.
+    * Each ONBUILD instruction is triggered only once.
 
-1. **FROM：用于指定一个基础镜像**
-    * 一般情况下一个可用的Dockerfile一定是FROM作为第一个指令。至于image则可以是任何合理存在的image镜像
-    * `FROM`一定是首个非注释指令Dockerfile
-    * `FROM`可以在一个Dockerfile中出现多次，以便于创建混合images
-    * 如果没有指定tag，latest将会被指定为要使用的基础镜像版本
-1. **MAINTAINER：用于指定镜像制作者的信息**
-1. **RUN：创建镜像时执行的命令（RUN命令产生的作用是会被持久化到创建的镜像中的）**
-    * 层级`RUN`指令和生成提交是符合Docker核心理念的做法。它允许像版本控制那样，在任意一个点，对image镜像进行定制化构建
-    * `RUN`指令缓存不会在下个命令执行时自动失效。比如`RUN apt-get dist-upgrade -y`的缓存就可能被用于下一个指令
-    * `--no-cache`标志可以被用于强制取消缓存使用
-1. **ENV：用于为docker容器设置环境变量**
-    * `ENV`设置的环境变量，可以使用`docker inspect`命令来查看。同时还可以使用`docker run --env <key>=<value>`来修改环境变量
-1. **USER：用来切换运行属主身份**
-    * Docker默认是使用root
-1. **WORKDIR：用于切换工作目录**
-    * Docker默认的工作目录是`/`，只有`RUN`能执行cd命令切换目录，而且还只作用在当下的`RUN`，也就是说每一个`RUN`都是独立进行的
-    * 如果想让其他指令在指定的目录下执行，就得靠`WORKDIR`，`WORKDIR`动作的目录改变是持久的，不用每个指令前都使用一次`WORKDIR`
-1. **COPY：将文件从路径`<src>`复制添加到容器内部路径`<dest>`**
-    * `<src>`必须是想对于源文件夹的一个文件或目录，也可以是一个远程的url
-    * `<dest>`是目标容器中的绝对路径
-    * 所有的新文件和文件夹都会创建UID和GID。事实上如果`<src>`是一个远程文件URL，那么目标文件的权限将会是600
-1. **ADD：将文件从路径`<src>`复制添加到容器内部路径`<dest>`**
-    * `<src>`必须是想对于源文件夹的一个文件或目录，也可以是一个远程的url
-    * `<dest>`是目标容器中的绝对路径
-    * 所有的新文件和文件夹都会创建UID和GID。事实上如果`<src>`是一个远程文件URL，那么目标文件的权限将会是600
-1. **VOLUME：创建一个可以从本地主机或其他容器挂载的挂载点，一般用来存放数据库和需要保持的数据等**
-1. **EXPOSE：指定在docker允许时指定的端口进行转发**
-1. **CMD：启动容器时执行的命令**
-    * Dockerfile中只能有一个CMD指令。如果你指定了多个，那么只有最后个CMD指令是生效的
-    * 可以被`docker run $image $other_command`中的`$other_command`覆盖
-1. **ONBUILD：让指令延迟執行**
-    * 延迟到下一个使用`FROM`的Dockerfile在建立image时执行，只限延迟一次
-1. **ARG：定义仅在建立image时有效的变量**
-1. **ENTRYPOINT：指定Docker image运行成instance(也就是 Docker container)时，要执行的命令或者文件**
-    * 默认的`ENTRYPOINT`是`/bin/sh -c`，但是没有默认的`CMD`
-    * 当执行`docker run -i -t ubuntu bash`，默认的`ENTRYPOINT`就是`/bin/sh -c`，且`CMD`就是`bash`
-    * **`CMD`本质上就是`ENTRYPOINT`的参数**
+## 4.1 Relative Path in a Dockerfile
+
+**In Dockerfiles, relative paths (like `./myfile.txt` or `src/`) are always relative to the build context. The build context is the directory you specify when you run (Here, the `<path-to-context>` is the build context.):**
+
+* `docker build -t <image> <path-to-context>`
+
+**Docker will throw an error if `COPY` or `ADD` refers to something outside the build context, like `../secret.txt`.**
+
+## 4.2 Demo
 
 ```sh
+mkdir -p friendlyhello
+cd friendlyhello
+
+cat > Dockerfile << 'EOF'
 # Use an official Python runtime as a parent image
 FROM python:2.7-slim
 
@@ -111,18 +132,14 @@ ENV NAME World
 
 # Run app.py when the container launches
 CMD ["python", "app.py"]
-```
+EOF
 
-**requirements.txt（上面的Dockerfile中的Run命令用到了这个文件）**
-
-```
+cat > requirements.txt << 'EOF'
 Flask
 Redis
-```
+EOF
 
-**app.py**
-
-```py
+cat > app.py << 'EOF'
 from flask import Flask
 from redis import Redis, RedisError
 import os
@@ -147,25 +164,26 @@ def hello():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=80)
+EOF
+
+docker build -t friendlyhello .
+
+docker run -p 4000:80 friendlyhello
 ```
-
-**创建镜像：`docker build -t friendlyhello .`**
-
-**运行应用：`docker run -p 4000:80 friendlyhello`**
 
 # 5 Frequently-Used Images
 
 ## 5.1 alpine
 
-Alpine Linux是一个轻型Linux发行版，它不同于通常的Linux发行版，Alpine采用了musl libc 和 BusyBox以减少系统的体积和运行时的资源消耗。Alpine Linux提供了自己的包管理工具：apk
+Alpine Linux is a lightweight Linux distribution. Unlike typical Linux distributions, Alpine uses musl libc and BusyBox to reduce system size and runtime resource usage. Alpine Linux provides its own package manager: apk.
 
-构建一个带有bash的docker镜像
+Here's an example of how to build a Docker image with bash.
 
 ```docker
 FROM alpine:3.10.2
 
 MAINTAINER Rethink 
-# 更新Alpine的软件源为国内（清华大学）的站点，因为从默认官源拉取实在太慢了。。。
+# update repo
 RUN echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.4/main/" > /etc/apk/repositories
 
 RUN apk update \
@@ -176,7 +194,7 @@ RUN apk update \
         && rm -rf /var/cache/apk/* \
         && /bin/bash
 
-# 解决时区的问题（对于alpine镜像，仅仅设置环境变量TZ=Asia/Shanghai是不够的）
+# Solving the Timezone Issue (For Alpine images, setting the environment variable TZ=Asia/Shanghai alone is not sufficient)
 RUN apk add -U tzdata
 ```
 
@@ -189,7 +207,7 @@ RUN apk add -U tzdata
                 <version>1.6.1</version>
                 <configuration>
                     <from>
-                        <!-- 不带这个基础镜像的话，构建出来的镜像是不包含bash的 -->
+                        <!-- Without this base image, the built image will not include bash -->
                         <image>openjdk:8u222-jdk</image> 
                     </from>
                     <to>
@@ -200,7 +218,7 @@ RUN apk add -U tzdata
                         </auth>
                     </to>
                     <container>
-                        <!-- 不加这个参数的话，构建出来的镜像时49年前的 -->
+                        <!-- Without this parameter, the built image will be from 49 years ago -->
                         <useCurrentTimestamp>true</useCurrentTimestamp>
                     </container>
                 </configuration>
@@ -256,50 +274,50 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 # 7 Tips
 
-1. 启动并保持容器运行
-    * 可以执行一个不会终止的程序：`docker run -dit xxx:v1`
-    * 启动的同时，开启一个bash：`docker run -it 9a88e0029e3b /bin/bash`
-1. 在主机与Docker容器之间拷贝文件
-    * `docker cp [OPTIONS] CONTAINER:SRC_PATH DEST_PATH|-`
+1. Start and keep a container running  
+    * Run a program that doesn't exit: `docker run -dit xxx:v1`  
+    * Start with an interactive bash shell: `docker run -it 9a88e0029e3b /bin/bash`
+1. Copy files between host and Docker container  
+    * `docker cp [OPTIONS] CONTAINER:SRC_PATH DEST_PATH|-`  
     * `docker cp [OPTIONS] SRC_PATH|- CONTAINER:DEST_PATH`
-1. 打开`D-Bus connection`
-    * `docker run -d -e "container=docker" --privileged=true [ID] /usr/sbin/init`
-    * 容器启动的`CMD`包含`/usr/sbin/init`即可
-1. 启停容器：
-    * `docker start <container-id>`
+1. Open a `D-Bus connection`  
+    * `docker run -d -e "container=docker" --privileged=true [ID] /usr/sbin/init`  
+    * The container's `CMD` should include `/usr/sbin/init`
+1. Start and stop containers:  
+    * `docker start <container-id>`  
     * `docker stop <container-id>`
-1. 在指定容器中执行命令
+1. Execute commands in a specific container  
     * `docker exec -ti my_container /bin/bash -c "echo a && echo b"`
-1. 查看docker container对应的`pid`,`ip`
-    * `docker inspect <container-id> | grep Pid`
-    * `docker inspect -f '{{.State.Pid}}' <container-id>`
+1. View `pid` and `ip` of a docker container  
+    * `docker inspect <container-id> | grep Pid`  
+    * `docker inspect -f '{{.State.Pid}}' <container-id>`  
     * `docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <container-id>`
-1. 删除某个tag
-    * `docker rmi <repository>:<tag>`，不要用镜像id
-1. 列出所有的镜像id
+1. Delete a specific tag  
+    * `docker rmi <repository>:<tag>` — do not use the image ID
+1. List all image IDs  
     * `docker images -q`
-1. 将镜像打包成文件，从文件中导入镜像
-    * `docker save -o alpine.tar alpine:3.10.2`
+1. Save an image to a file and load from a file  
+    * `docker save -o alpine.tar alpine:3.10.2`  
     * `docker load < alpine.tar`
-1. 设置时区
+1. Set timezone  
     * `docker run -e TZ=Asia/Shanghai ...`
-1. 设置内核参数（需要使用特权模式）
-    * 编写DockerFile的时候，把修改的内核参数写到CMD中（不能在制作DockerFile的时候通过RUN进行修改，因为这些内核文件是只读的）
-    * 启动的时候指定特权模式：`docker run --privileged`
-1. 在容器中使用docker命令
-    * `--privileged`：使用特权模式
-    * `-v /var/run/docker.sock:/var/run/docker.sock`：将docker socket文件挂载到容器
-    * `-v $(which docker):/bin/docker `：将docker命令挂载到容器
-1. 启动容器时，加入网络命名空间
-    * `docker run [--pid string] [--userns string] [--uts string] [--network string] <other options>`
-    * `docker run -d --net=container:<已有容器id> <镜像id>`
-1. 删除docker命令后，docker的工作目录仍然是保留的（包含了镜像）若要彻底删除，可以通过如下命令
+1. Set kernel parameters (requires privileged mode)  
+    * When writing the Dockerfile, add the kernel parameter changes to the `CMD` (you can't modify them with `RUN` since kernel files are read-only during build)  
+    * Use privileged mode when starting: `docker run --privileged`
+1. Use docker commands inside a container  
+    * `--privileged`: use privileged mode  
+    * `-v /var/run/docker.sock:/var/run/docker.sock`: mount the Docker socket file  
+    * `-v $(which docker):/bin/docker`: mount the Docker CLI binary
+1. Join the network namespace of another container when starting  
+    * `docker run [--pid string] [--userns string] [--uts string] [--network string] <other options>`  
+    * `docker run -d --net=container:<existing container id> <image id>`
+1. After deleting the Docker CLI, Docker's working directory (including images) still exists. To completely remove it:  
     * `rm -rf /var/lib/docker`
-1. 查看img的构建记录：`docker history <img>`
-1. 查看img的详情：`docker inspect <img>`
-1. 查看容器资源占用情况：`docker stats <container>`
-1. 清理无用镜像：`docker system prune -a`
-1. 让普通用户有权限使用`docker`：`sudo usermod -aG docker username`
+1. View image build history: `docker history <img>`  
+1. View image details: `docker inspect <img>`  
+1. Check container resource usage: `docker stats <container>`  
+1. Clean up unused images: `docker system prune -a`  
+1. Grant a regular user permission to use `docker`: `sudo usermod -aG docker username`
 
 ## 7.1 Modify docker storage path
 

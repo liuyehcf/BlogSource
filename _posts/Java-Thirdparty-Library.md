@@ -1,6 +1,7 @@
 ---
 title: Java-Thirdparty-Library
 date: 2023-03-10 20:13:29
+mathjax: true
 tags: 
 - 原创
 categories: 
@@ -154,12 +155,12 @@ Syntanx: `%logger{precision}` or `%c{precision}`
 
 [Pattern Layout](https://logging.apache.org/log4j/2.x/manual/layouts.html#pattern-layout)
 
-* {% raw %}%highlight{pattern}{style}{% endraw %}
-    * {% raw %}%highlight{[%thread] [%-5level] [%logger{36}]}{FATAL=red blink, ERROR=red, WARN=yellow, INFO=green, DEBUG=cyan, TRACE=blue}{% endraw %}
-    * {% raw %}%highlight{[%-5level] %logger{36}}{STYLE=Logback}{% endraw %}
-* {% raw %}%style{pattern}{ANSI style}{% endraw %}
-    * {% raw %}%style{%logger}{red}{% endraw %}
-    * {% raw %}%style{[%thread]}{bright}{% endraw %}
+* `{% raw %}%highlight{pattern}{style}{% endraw %}`
+    * `{% raw %}%highlight{[%thread] [%-5level] [%logger{36}]}{FATAL=red blink, ERROR=red, WARN=yellow, INFO=green, DEBUG=cyan, TRACE=blue}{% endraw %}`
+    * `{% raw %}%highlight{[%-5level] %logger{36}}{STYLE=Logback}{% endraw %}`
+* `{% raw %}%style{pattern}{ANSI style}{% endraw %}`
+    * `{% raw %}%style{%logger}{red}{% endraw %}`
+    * `{% raw %}%style{[%thread]}{bright}{% endraw %}`
 
 #### 2.1.3.4 Lookups
 
@@ -169,6 +170,10 @@ Lookups provide a way to add values to the Log4j configuration at arbitrary plac
     * `${sys:xxx:-yyy}`: With default
 * Environment Lookup: `${env:xxx}`
     * `${env:xxx:-yyy}`: With default
+
+#### 2.1.3.5 SPI
+
+Path: `META-INF/org/apache/logging/log4j/core/config/plugins/Log4j2Plugins.dat`
 
 ### 2.1.4 Issues
 
