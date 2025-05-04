@@ -674,7 +674,75 @@ int main() {
 }
 ```
 
-### 6.1.6 has_to_string
+### 6.1.6 has_static_field_member
+
+```cpp
+#include <iostream>
+#include <string>
+#include <type_traits>
+
+template <typename T, typename = void>
+struct has_static_field : std::false_type {};
+
+template <typename T>
+struct has_static_field<T, std::void_t<decltype(T::value)>> : std::true_type {};
+
+struct Foo {
+    static constexpr int value = 0;
+};
+
+struct Bar {};
+
+int main() {
+    if (has_static_field<Foo>::value) {
+        std::cout << "Foo has static field 'value'." << std::endl;
+    } else {
+        std::cout << "Foo does not have static field 'value'." << std::endl;
+    }
+    if (has_static_field<Bar>::value) {
+        std::cout << "Bar has static field 'value'." << std::endl;
+    } else {
+        std::cout << "Bar does not have static field 'value'." << std::endl;
+    }
+    return 0;
+}
+```
+
+### 6.1.7 has_object_field_member
+
+```cpp
+#include <iostream>
+#include <string>
+#include <type_traits>
+
+template <typename T, typename = void>
+struct has_object_field : std::false_type {};
+
+template <typename T>
+struct has_object_field<T, std::void_t<decltype(std::declval<T>().value)>> : std::true_type {};
+
+struct Foo {
+    int value = 0;
+};
+
+struct Bar {};
+
+int main() {
+    if (has_object_field<Foo>::value) {
+        std::cout << "Foo has an object field named 'value'." << std::endl;
+    } else {
+        std::cout << "Foo does not have an object field named 'value'." << std::endl;
+    }
+    if (has_object_field<Bar>::value) {
+        std::cout << "Bar has an object field named 'value'." << std::endl;
+    } else {
+        std::cout << "Bar does not have an object field named 'value'." << std::endl;
+    }
+    return 0;
+}
+```
+
+### 6.1.8 has_func_member
 
 ```cpp
 #include <iostream>
@@ -710,7 +778,7 @@ int main() {
 }
 ```
 
-### 6.1.7 sequence
+### 6.1.9 sequence
 
 **The core idea is as follows:**
 
@@ -769,7 +837,7 @@ int main() {
 }
 ```
 
-### 6.1.8 shared_ptr
+### 6.1.10 shared_ptr
 
 ```cpp
 #include <iostream>

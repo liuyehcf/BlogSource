@@ -61,5 +61,13 @@ Follow doc [Install ClickHouse](https://clickhouse.com/docs/en/install), start a
 
 ```sql
 INSERT INTO FUNCTION file('ssb100.csv', `CSV`)
-SELECT * FROM hdfs('hdfs://xxx:12000/user/hive/warehouse/lineorder_flat/*', 'Parquet');
+SELECT * FROM hdfs('hdfs://xxx:8020/user/hive/warehouse/lineorder_flat/*', 'Parquet');
 ```
+
+# 2 Hash Functions
+
+## 2.1 CityHashV2
+
+[google/cityhash](https://github.com/google/cityhash)
+
+* [v1.0.2](https://github.com/google/cityhash/commit/bc38ef45ddbbe640e48db7b8ef65e80ea7f71298)
