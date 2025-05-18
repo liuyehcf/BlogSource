@@ -64,6 +64,13 @@ INSERT INTO FUNCTION file('ssb100.csv', `CSV`)
 SELECT * FROM hdfs('hdfs://xxx:8020/user/hive/warehouse/lineorder_flat/*', 'Parquet');
 ```
 
+## 1.7 Format
+
+1. TSVRaw
+    * Outputs only the raw data, with no column names (unlike TSV, which includes a header row).
+    * Does not escape characters like newlines (`\n`), tabs (`\t`), or backslashes.
+    * Preserves multi-line strings exactly as they are stored, including real line breaks.
+
 # 2 Hash Functions
 
 ## 2.1 CityHashV2

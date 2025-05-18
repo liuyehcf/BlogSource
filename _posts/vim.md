@@ -3746,6 +3746,12 @@ let g:gutentags_dont_load = 1
     * `tmux` can provide a default clipboard.
 * `Item2 Config`: General -> Selection -> Applications in terminal may access clipboard.
 
+## 7.6 Filter through an external shell command
+
+* `:%!xxd`
+* `:%!hexdump -C`
+* `:1,5!sort`
+
 # 8 Reference
 
 * **[《Vim 中文速查表》](https://github.com/skywind3000/awesome-cheatsheets/blob/master/editors/vim.txt)**

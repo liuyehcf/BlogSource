@@ -288,6 +288,25 @@ int main() {
 
 [[Enhancement] Optimize a subtle inline performance problem](https://github.com/StarRocks/starrocks/pull/23300)
 
-# 5 FAQ
+# 5 std::string_view
+
+The constructor of `std::string_view` accepts a reference of `std::string`, binding to local object may produce `use-after-free` problem.
+
+```cpp
+#include <iostream>
+#include <variant>
+
+std::string getName() {
+    return "John Doe";
+}
+
+int main() {
+    auto name = std::string_view(getName()).substr(0, 4);
+    std::cout << name << std::endl;
+    return 0;
+}
+```
+
+# 6 FAQ
 
 1. `as ‘this’ argument discards qualifiers [-fpermissive]`: Maybe try to conver a const value to a non-const value

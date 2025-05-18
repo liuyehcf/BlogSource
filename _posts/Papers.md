@@ -1523,45 +1523,107 @@ Data Stream Processing System, DSPS
 
 ## 1.2 LakeHouse
 
-### 1.2.1 Lakehouse: A New Generation of Open Platforms that Unify Data Warehousing and Advanced Analytics
-
-[Lakehouse: A New Generation of Open Platforms that Unify Data Warehousing and Advanced Analytics](/resources/paper/Lakehouse-A-New-Generation-of-Open-Platforms-that-Unify-Data-Warehousing-and-Advanced-Analytics.pdf)
-
-**Warehouse' problems:**
-
-* Reliability: Keeping the data lake and warehouse consistent is difficult and costly
-* Data staleness
-* Limited support for advanced analytics
-
-**Goals of Lakehouse Architecture:**
-
-* Reliable data management on data lakes
-* Support for machine learning and data science
-    * Declarative DataFrame APIs
-* SQL performance
-
-**Lakehouse Architecture: Based on low-cost and directly-accessible storage that also provides traditional analytical DBMS management and performance features such as ACID transactions, data versioning, auditing, indexing, caching, and query optimization**
-
-* Metadata Layers for Data Management
-    * Defines which objects are part of a table version
-    * Provide atomic operation, transaction, zero-copy(provide high-level organization, like table, based on the exsiting storage)
-    * Provide data quality enforcement feature
-    * Provide governance features such as access control and audit logging
-    * Speed up advanced analytics workloads and give them better data management features thanks to the development of declarative DataFrame APIs
-    * Both Delta Lake(Databricks), Apache Iceberg, Apache Hudi have implemented this feature
-* SQL Performance in a Lakehouse
-    * Caching, storing hot data on fast devices such as SSDs
-    * Auxiliary data, like statistics and indexes
-    * Data layout
-
-### 1.2.2 Photon: A Fast Query Engine for Lakehouse Systems
-
-[Photon: A Fast Query Engine for Lakehouse Systems](/resources/paper/Photon-A-Fast-Query-Engine-for-Lakehouse-Systems.pdf)
-
-**Challenges of Photon's design:**
-
-* Perform well on raw, uncurated data, which are highly irregular datasets, poor physical layout, and large fields, all with no useful clustering or data statistics
-* Semantically compatible with, the existing Apache Spark DataFrame API
+<table>
+    <thead>
+        <tr>
+            <th style="text-align:left">题目</th>
+            <th style="text-align:left">分类</th>
+            <th style="text-align:left">概要</th>
+            <th style="text-align:left">状态</th>
+            <th style="text-align:left">推荐级别</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Lakehouse-A-New-Generation-of-Open-Platforms-that-Unify-Data-Warehousing-and-Advanced-Analytics.pdf">Lakehouse: A New Generation of Open Platforms that Unify Data Warehousing and Advanced Analytics</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Survey</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Warehouse' problems
+                    <ul>
+                        <li>Reliability: Keeping the data lake and warehouse consistent is difficult and costly</li>
+                        <li>Data staleness</li>
+                        <li>Limited support for advanced analytics</li>
+                    </ul>
+                </li>
+                <li>Goals of Lakehouse Architecture
+                    <ul>
+                        <li>Reliable data management on data lakes</li>
+                        <li>Support for machine learning and data science, i.e. Declarative DataFrame APIs</li>
+                        <li>SQL performance</li>
+                    </ul>
+                </li>
+                <li>Lakehouse Architecture: Based on low-cost and directly-accessible storage that also provides traditional analytical DBMS management and performance features such as ACID transactions, data versioning, auditing, indexing, caching, and query optimization
+                    <ul>
+                        <li>Metadata Layers for Data Management
+                            <ul>
+                                <li>Defines which objects are part of a table version</li>
+                                <li>Provide atomic operation, transaction, zero-copy(provide high-level organization, like table, based on the exsiting storage)</li>
+                                <li>Provide data quality enforcement feature</li>
+                                <li>Provide governance features such as access control and audit logging</li>
+                                <li>Speed up advanced analytics workloads and give them better data management features thanks to the development of declarative DataFrame APIs</li>
+                                <li>Both Delta Lake(Databricks), Apache Iceberg, Apache Hudi have implemented this feature</li>
+                            </ul>
+                        </li>
+                        <li>SQL Performance in a Lakehouse
+                            <ul>
+                                <li>Caching, storing hot data on fast devices such as SSDs</li>
+                                <li>Auxiliary data, like statistics and indexes</li>
+                                <li>Data layout</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Photon-A-Fast-Query-Engine-for-Lakehouse-Systems.pdf">Photon: A Fast Query Engine for Lakehouse Systems</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Execution Engine</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Challenges of Photon's design
+                    <ul>
+                        <li>Perform well on raw, uncurated data, which are highly irregular datasets, poor physical layout, and large fields, all with no useful clustering or data statistics</li>
+                        <li>Semantically compatible with, the existing Apache Spark DataFrame API</li>
+                    </ul>
+                </li>
+            </td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★</td>
+        </tr>
+        <tr>
+            <td style="text-align:left">
+                <a href="/resources/paper/Dremel-Interactive-Analysis-of-Web-Scale-Datasets.pdf">Dremel: Interactive Analysis of Web-Scale Datasets</a>
+            </td>
+            <td style="text-align:left">
+                <li><code>#Format</code></li>
+                <li><code>#Parquet</code></li>
+            </td>
+            <td style="text-align:left">
+                <li>Key Points
+                    <ul>
+                        <li>Goal: Enable fast, interactive analysis (e.g., SQL-like queries) on datasets with trillions of records or petabytes of data</li>
+                        <li>Columnar Storage: Dremel uses a column-oriented storage format, which allows it to read only the necessary data for a query, significantly improving performance compared to row-based systems</li>
+                        <li>Tree Architecture: Dremel employs a multi-level serving tree to distribute and aggregate queries efficiently. This structure is inspired by systems like Google’s web search architecture</li>
+                        <li>Nested Data Support: Dremel introduces a method for processing nested, structured data (like Protocol Buffers) efficiently in a columnar format, using a special encoding called record shredding</li>
+                        <li>Scalability: It scales to thousands of nodes and has been used on production datasets at Google containing trillions of records</li>
+                        <li>Performance: Dremel achieves interactive speeds for most queries, making it ideal for data exploration and analysis</li>
+                        <li>Applications: Used internally at Google for analyzing logs, crawling data, and monitoring systems. It also influenced the design of BigQuery, Google's cloud-based data warehouse service</li>
+                    </ul>
+                </li>
+            </td>
+            <td style="text-align:left">✅</td>
+            <td style="text-align:left">★★★★★</td>
+        </tr>
+</table>
 
 # 2 Serverless
 
@@ -1867,33 +1929,7 @@ Data Stream Processing System, DSPS
     </tbody>
 </table>
 
-# 5 AI
-
-## 5.1 Understanding Deep Learning (Still) Requires Rethinking Generalization
-
-[Understanding Deep Learning (Still) Requires Rethinking Generalization](/resources/paper/Understanding-Deep-Learning-Requires-Rethinking-Generalization.pdf)
-
-## 5.2 A Closer Look at Memorization in Deep Networks
-
-[A Closer Look at Memorization in Deep Networks](/resources/paper/A-Closer-Look-at-Memorization-in-Deep-Networks.pdf)
-
-## 5.3 The Loss Surfaces of Multilayer Networks
-
-[The Loss Surfaces of Multilayer Networks](/resources/paper/The-Loss-Surfaces-of-Multilayer-Networks.pdf)
-
-## 5.4 Attention Is All You Need
-
-[Attention Is All You Need](/resources/paper/Attention-Is-All-You-Need.pdf)
-
-## 5.5 BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding
-
-[BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding](/resources/paper/BERT-Pre-training-of-Deep-Bidirectional-Transformers-for-Language-Understanding.pdf)
-
-## 5.6 Language Models are Unsupervised Multitask Learners
-
-[Language Models are Unsupervised Multitask Learners](/resources/paper/Language-Models-are-Unsupervised-Multitask-Learners.pdf)
-
-# 6 TODO
+# 5 TODO
 
 * Survey
     * [Query Evaluation Techniques for Large Databases](https://cgi.cse.unsw.edu.au/~cs9315/20T1/readings/query.pdf)
@@ -1977,5 +2013,11 @@ Data Stream Processing System, DSPS
     * [What’s the Story in EBS Glory: Evolutions and Lessons in Building Cloud Block Store](/resources/paper/Whats-the-Story-in-EBS-Glory-Evolutions-and-Lessons-in-Building-Cloud-Block-Store.pdf)
 * Parquet
     * [Lakehouse: A New Generation of Open Platforms that Unify Data Warehousing and Advanced Analytics](/resources/paper/Lakehouse-A-New-Generation-of-Open-Platforms-that-Unify-Data-Warehousing-and-Advanced-Analytics.pdf)
-    * [Dremel: Interactive Analysis of Web-Scale Datasets](/resources/paper/Dremel-Interactive-Analysis-of-Web-Scale-Datasets.pdf)
     * [Seamless Integration of Parquet Files into Data Processing](/resources/paper/Seamless-Integration-of-Parquet-Files-into-Data-Processing.pdf)
+* AI
+    * [Understanding Deep Learning (Still) Requires Rethinking Generalization](/resources/paper/Understanding-Deep-Learning-Requires-Rethinking-Generalization.pdf)
+    * [A Closer Look at Memorization in Deep Networks](/resources/paper/A-Closer-Look-at-Memorization-in-Deep-Networks.pdf)
+    * [The Loss Surfaces of Multilayer Networks](/resources/paper/The-Loss-Surfaces-of-Multilayer-Networks.pdf)
+    * [Attention Is All You Need](/resources/paper/Attention-Is-All-You-Need.pdf)
+    * [BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding](/resources/paper/BERT-Pre-training-of-Deep-Bidirectional-Transformers-for-Language-Understanding.pdf)
+    * [Language Models are Unsupervised Multitask Learners](/resources/paper/Language-Models-are-Unsupervised-Multitask-Learners.pdf)

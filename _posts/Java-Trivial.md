@@ -259,7 +259,7 @@ From [Java Downloads](https://www.oracle.com/java/technologies/downloads/), you 
 **Extracting an archive file: `jar xvf xxx.jar`**
 
 * `jar xvf /path/xxx.jar`
-* `jar xvf /path/xxx.jar xxx.class`
+* `jar xvf /path/xxx.jar xxx.class`: Extract only one file.
 
 **Viewing an archive file: `jar tf xxx.jar`**
 
@@ -1005,6 +1005,34 @@ The following steps can work well:
 1. Load some class `B` from `b.jar`
 
 **And the same process won't work if the classpath is reverted, i.e. `/path/to/b.jar:/path/to/a.jar`, because when JVM load class `A` it already searched `b.jar` and remember it's not existed.**
+
+## 7.6 How to get the location which class belongs to
+
+```java
+System.out.println(org.apache.orc.TypeDescription.class.getProtectionDomain().getCodeSource().getLocation());
+```
+
+## 7.7 Search which jar file has sepcific .class file
+
+```sh
+function search() {
+    local dir=$1
+    local class_file=$2
+
+    if [ -z "${dir}" ] || [ -z "${class_file}" ]; then
+        echo "missing dir or class_file"
+        return
+    fi
+
+    jar_files=( $(find ${dir} -name "*.jar") )
+    for jar_file in ${jar_files[@]}
+    do
+        if jar tf ${jar_file} | grep "${class_file}"; then
+            echo "${jar_file} contains '${class_file}'"
+        fi
+    done
+}
+```
 
 # 8 参考
 

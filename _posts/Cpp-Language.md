@@ -6048,13 +6048,13 @@ int main() {
 Copy elision is an optimization technique used by compilers in C++ to reduce the overhead of copying and moving objects. This optimization can significantly improve performance by eliminating unnecessary copying of objects, especially in return statements or during function calls. Two specific cases of copy elision are Return Value Optimization (RVO) and Named Return Value Optimization (NRVO). Let's explore each of these:
 
 * `Return Value Optimization (RVO)`: RVO is a compiler optimization that eliminates the need for a temporary object when a function returns an object by value. Normally, when a function returns an object, a temporary copy of the object is created (which invokes the copy constructor), and then the temporary object is copied to the destination variable. With RVO, the compiler can directly construct the return value in the memory location of the caller's receiving variable, thereby skipping the creation and copy of the temporary object.
-    ```
+    ```cpp
     #include <iostream>
 
     class Widget {
     public:
-        Widget() {}
-        Widget(const Widget&) { std::cout << "Copy constructor called!\n"; }
+        Widget() { std::cout << "Default constructor called" << std::endl; }
+        Widget(const Widget&) { std::cout << "Copy constructor called" << std::endl; }
     };
 
     Widget createWidget() {
@@ -6074,17 +6074,17 @@ Copy elision is an optimization technique used by compilers in C++ to reduce the
 
     class Widget {
     public:
-        Widget() {}
-        Widget(const Widget&) { std::cout << "Copy constructor called!\n"; }
+        Widget() { std::cout << "Default constructor called" << std::endl; }
+        Widget(const Widget&) { std::cout << "Copy constructor called" << std::endl; }
     };
 
     Widget createWidget() {
         Widget w;
-        return w; // Normally, this would call the copy constructor
+        return w;
     }
 
     int main() {
-        Widget w = createWidget(); // With RVO, the copy constructor is not called
+        Widget w = createWidget(); // With NRVO, the copy constructor is not called
         return 0;
     }
     ```

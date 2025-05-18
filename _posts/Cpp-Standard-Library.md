@@ -1424,12 +1424,14 @@ int main(int32_t argc, char* argv[]) {
 1. `std::string::npos`: This is a special value equal to the maximum value representable by the type size_type.
 1. `std::getline`: getline reads characters from an input stream and places them into a string.
 
-# 25 thread
+# 25 string_view
+
+# 26 thread
 
 1. `std::thread::hardware_concurrency`
 1. `std::this_thread`
 
-## 25.1 How to set thread name
+## 26.1 How to set thread name
 
 1. `pthread_setname_np/pthread_getname_np`，需要引入头文件`<pthread.h>`，`np`表示`non-portable`，即平台相关
 1. `prctl(PR_GET_NAME, name)/prctl(PR_SET_NAME, name)`，需要引入头文件`<sys/prctl.h>`
@@ -1496,7 +1498,7 @@ int main() {
 }
 ```
 
-## 25.2 How to set thread affinity
+## 26.2 How to set thread affinity
 
 下面示例代码用于测试各个CPU的性能
 
@@ -1539,7 +1541,7 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-# 26 tuple
+# 27 tuple
 
 1. `std::tuple`
 1. `std::apply`：触发方法调用，其中，参数被分装在一个`tuple`中
@@ -1584,18 +1586,18 @@ int main(int argc, char* argv[]) {
     }
     ```
 
-# 27 type_traits
+# 28 type_traits
 
 [Standard library header <type_traits>](https://en.cppreference.com/w/cpp/header/type_traits)
 
-## 27.1 Helper Class
+## 28.1 Helper Class
 
 1. `std::integral_constant`
 1. `std::bool_constant`
 1. `std::true_type`
 1. `std::false_type`
 
-## 27.2 Primary type categories
+## 28.2 Primary type categories
 
 1. `std::is_void`
 1. `std::is_null_pointer`
@@ -1604,7 +1606,7 @@ int main(int argc, char* argv[]) {
 1. `std::is_pointer`
 1. ...
 
-## 27.3 Composite type categories
+## 28.3 Composite type categories
 
 1. `std::is_fundamental`
 1. `std::is_arithmetic`
@@ -1613,7 +1615,7 @@ int main(int argc, char* argv[]) {
 1. `std::is_member_pointer`
 1. ...
 
-## 27.4 Type properties
+## 28.4 Type properties
 
 1. `std::is_const`
 1. `std::is_volatile`
@@ -1622,7 +1624,7 @@ int main(int argc, char* argv[]) {
 1. `std::is_abstract`
 1. ...
 
-## 27.5 Supported operations
+## 28.5 Supported operations
 
 1. `std::is_constructible`
 1. `std::is_copy_constructible`
@@ -1631,19 +1633,19 @@ int main(int argc, char* argv[]) {
 1. `std::is_destructible`
 1. ...
 
-## 27.6 Property queries
+## 28.6 Property queries
 
 1. `std::alignment_of`
 1. `std::rank`
 1. `std::extent`
 
-## 27.7 Type relationships
+## 28.7 Type relationships
 
 1. `std::is_same`
 1. `std::is_base_of`
 1. ...
 
-## 27.8 Const-volatility specifiers
+## 28.8 Const-volatility specifiers
 
 1. `std::remove_cv`
 1. `std::remove_const`
@@ -1652,28 +1654,28 @@ int main(int argc, char* argv[]) {
 1. `std::add_const`
 1. `std::add_volatile`
 
-## 27.9 References
+## 28.9 References
 
 1. `std::remove_reference`
 1. `std::add_lvalue_reference`
 1. `std::add_rvalue_reference`
   
-## 27.10 Pointers
+## 28.10 Pointers
 
 1. `std::remove_pointer`
 1. `std::add_pointer`
   
-## 27.11 Sign modifiers
+## 28.11 Sign modifiers
 
 1. `std::make_signed`
 1. `std::make_unsigned`
 
-## 27.12 Arrays
+## 28.12 Arrays
 
 1. `std::remove_extent`
 1. `std::remove_all_extents`
 
-## 27.13 Miscellaneous transformations
+## 28.13 Miscellaneous transformations
 
 1. `std::enable_if_t`: Often used in SFINAE.
 1. `std::conditional`
@@ -1699,7 +1701,7 @@ int main(int argc, char* argv[]) {
     }    
     ```
 
-## 27.14 Alias
+## 28.14 Alias
 
 `using template`，用于简化上述模板。例如`std::enable_if_t`等价于`typename enable_if<b,T>::type`
 
@@ -1737,7 +1739,7 @@ int main(int argc, char* argv[]) {
 
 1. ...
 
-## 27.15 std::move
+## 28.15 std::move
 
 **Implementation:**
 
@@ -1772,7 +1774,7 @@ int main() {
 }
 ```
 
-## 27.16 std::forward
+## 28.16 std::forward
 
 `std::forward`主要用于实现模板的完美转发：因为对于一个变量而言，无论该变量的类型是左值引用还是右值引用，变量本身都是左值，如果直接将变量传递到下一个方法中，那么一定是按照左值来匹配重载函数的，而`std::forward`就是为了解决这个问题。请看下面这个例子：
 
@@ -1891,7 +1893,7 @@ func(std::forward<int&&>(1)) -> right reference version
     }
 ```
 
-### 27.16.1 forwarding reference
+### 28.16.1 forwarding reference
 
 **当且仅当`T`是函数模板的模板类型形参时，`T&&`才能称为`forwarding reference`，而其他任何形式，都不是`forwarding reference`。例如如下示例代码：**
 
@@ -1969,9 +1971,9 @@ struct C {
 };
 ```
 
-# 28 unordered_map
+# 29 unordered_map
 
-# 29 unordered_set
+# 30 unordered_set
 
 Both `equal` and `hash` functions should be marked with `const`
 
@@ -2045,7 +2047,7 @@ int main() {
 }
 ```
 
-# 30 utility
+# 31 utility
 
 1. `std::exchange`：
     ```cpp
@@ -2117,7 +2119,7 @@ int main() {
 1. `std::integer_sequence`
 1. `std::make_integer_sequence`
 
-## 30.1 How to return pair containing reference type
+## 31.1 How to return pair containing reference type
 
 示例如下：
 
@@ -2181,28 +2183,35 @@ int main() {
 * `get_data_2`：正确方式。由于`std::ref`（返回类型是`std::reference_wrapper`）的存在，`std::make_pair`会创建类型为`std::pair<const std::vector<int>&, int>`的对象，此时引用会正确初始化
 * `get_data_3`：正确方式，不用`std::make_pair`，引用会正确初始化
 
-# 31 variant
+# 32 variant
 
 1. `std::visit`
 1. `std::variant`：类型安全的union。只允许以正确的类型进行访问
     * `std::get<{type}>`：通过指定类型访问
     * `std::get<{index}>`：通过指定序号访问
+    * `std::variant::index()`：记录了当前存类型的下标
 
 ```cpp
 #include <iostream>
 #include <variant>
 
 int main() {
+    std::cout << "sizeof(std::variant<int8_t>): " << sizeof(std::variant<int8_t>) << std::endl;
+    std::cout << "sizeof(std::variant<int16_t>): " << sizeof(std::variant<int16_t>) << std::endl;
+    std::cout << "sizeof(std::variant<int32_t>): " << sizeof(std::variant<int32_t>) << std::endl;
+    std::cout << "sizeof(std::variant<int64_t>): " << sizeof(std::variant<int64_t>) << std::endl;
+    std::cout << "sizeof(std::variant<int8_t, int64_t>): " << sizeof(std::variant<int8_t, int64_t>) << std::endl;
+
     std::variant<int, double> v;
     v = 1;
-    std::cout << std::get<int>(v) << std::endl;
+    std::cout << "index: " << v.index() << ", value: " << std::get<int>(v) << std::endl;
     v = 1.2;
-    std::cout << std::get<1>(v) << std::endl;
+    std::cout << "index: " << v.index() << ", value: " << std::get<1>(v) << std::endl;
     return 0;
 }
 ```
 
-## 31.1 Dynamic Binding
+## 32.1 Dynamic Binding
 
 `std::variant`结合`std::visit`可以实现动态分派，示例代码如下：
 
@@ -2239,7 +2248,7 @@ int main() {
 * 每个`Visitor,variant`对会生成一个`vtable`，里面记录了所有的函数指针，并按照`std::variant`各个类型声明的顺序排序
 * 在用`std::visit`进行访问时，会用`std::variant::index`找到`vtable`中的函数指针，并进行调用
 
-# 32 Containers
+# 33 Containers
 
 1. `<vector>`：其内部就是一个数组。当进行扩容缩容时，会进行数据的拷贝或移动，因此要求对应的类型至少拥有拷贝构造函数和移动构造函数中的一个。例如，`std::vector<std::atomic_bool>`是无法调用`push_back`或者`emplace_back`来增加元素的
 1. `<array>`
@@ -2251,14 +2260,14 @@ int main() {
 1. `<set>`
 1. `<unordered_set>`
 
-## 32.1 Tips
+## 33.1 Tips
 
 1. `std::map`或者`std::set`用下标访问后，即便访问前元素不存在，也会插入一个默认值。因此下标访问是非`const`的
 1. 容器在扩容时，调用的是元素的拷贝构造函数
 1. `std::vector<T> v(n)`会生成`n`个对应元素的默认值，而不是起到预留`n`个元素的空间的作用
 1. 不要将`end`方法返回的迭代器传入`erase`方法
 
-# 33 SIMD
+# 34 SIMD
 
 [Header files for x86 SIMD intrinsics](https://stackoverflow.com/questions/11228855/header-files-for-x86-simd-intrinsics)
 
@@ -2298,7 +2307,7 @@ int main() {
 * `-mavx512vbmi`
 * ...
 
-# 34 C Standard Library
+# 35 C Standard Library
 
 Since `C++` is a superset of `C`, the standard library of `C` has also been added to the `std` namespace, but the header files differ: `xxx.h -> cxxx`. Among them, `xxx.h` is the original `C` standard library header file, and its symbols are not in any namespace; `cxxx` is the corresponding `C++` version of the header file, and its symbols are in the `std` namespace.
 
@@ -2346,7 +2355,7 @@ Since `C++` is a superset of `C`, the standard library of `C` has also been adde
     1. `pthread.h`: Provides thread operations: `pthread_create`, `pthread_join`, `pthread_mutex_lock`.
     1. `sys/stat.h`: Provides file status functions: `stat`, `fstat`, `lstat`.
 
-## 34.1 csignal
+## 35.1 csignal
 
 各种信号都定义在`signum.h`这个头文件中
 
@@ -2399,7 +2408,7 @@ int main(int argc, char* argv[]) {
 }
 ```
 
-## 34.2 Execute Command
+## 35.2 Execute Command
 
 ```cpp
 #include <cstdlib>
@@ -2416,7 +2425,7 @@ int main() {
 }
 ```
 
-# 35 Builtin Functions
+# 36 Builtin Functions
 
 [6.63 Other Built-in Functions Provided by GCC](https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html)
 
@@ -2429,7 +2438,7 @@ int main() {
 1. `__builtin_offsetof(type, member)`: Calculate member's offset.
     * One alternative implementation is: `#define my_offsetof(type, member) ((size_t) & (((type*)0)->member))`
 
-# 36 Frequently-Used Compoments for Interview
+# 37 Frequently-Used Compoments for Interview
 
 **Data Structure:**
 

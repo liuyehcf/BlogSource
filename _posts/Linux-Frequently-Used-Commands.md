@@ -315,7 +315,16 @@ Display file contents in hexadecimal, decimal, octal, or ascii
 
 * `hexdump -C <filename> | head -n 10`
 
-## 1.30 showkey
+## 1.30 xxd
+
+`xxd` is a command-line utility that creates a hex dump of a file or standard input. It can also do the reverse: convert a hex dump back into binary.
+
+**Examples:**
+
+* `xxd file.bin`
+* `xxd -r hex_dump.txt > recovered.bin`
+
+## 1.31 showkey
 
 Examine the codes sent by the keyboard
 
@@ -820,6 +829,12 @@ print total;
 echo "123" | awk '{if($0 ~ /^[0-9]+$/) print $0;}'
 ```
 
+### 2.4.4 Best Practice
+
+```sh
+echo "1 2 3 4 5 3 2 1" | tr ' ' '\n' | awk '{count[$1]++} END {for (num in count) print count[num], num}' | sort -k1,1nr -k2,2n
+```
+
 ## 2.5 cut
 
 **Pattern:**
@@ -932,6 +947,7 @@ grep searches for `PATTERNS` in each `FILE`
 * `cat /etc/passwd | sort -t ':' -k 3`
 * `echo -e "a\nb\nb\na\nb\na\na\nc\na" | sort | uniq -c | sort -nr`
     * `sort | uniq -c | sort -nr`：统计相同pattern出现次数的常用方式
+* `echo "1 2 3 4 5 3 2 1" | tr ' ' '\n' | awk '{count[$1]++} END {for (num in count) print count[num], num}' | sort -k1,1nr -k2,2n`：第一列倒序，第二列正序
 
 ## 2.9 uniq
 

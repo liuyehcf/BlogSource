@@ -805,6 +805,11 @@ public class IceBergDemo {
 }
 ```
 
+## 4.1 Useful Classes
+
+1. TableProperties
+1. org.apache.iceberg.types.Conversions
+
 # 5 Tips
 
 ## 5.1 Reserved Field Ids
