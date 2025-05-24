@@ -307,6 +307,9 @@ int main() {
 }
 ```
 
+* `gcc -o main main.cpp -lstdc++ -std=gnu++17 -O3 -fsanitize=address -static-libasan && ./main`: Crash.
+* `gcc -o main main.cpp -lstdc++ -std=gnu++17 -O3`: Can run, but got unexpected result.
+
 # 6 FAQ
 
 1. `as ‘this’ argument discards qualifiers [-fpermissive]`: Maybe try to conver a const value to a non-const value

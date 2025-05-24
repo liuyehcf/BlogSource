@@ -3222,8 +3222,12 @@ yum install -y hping3
 
 **Examples:**
 
-* `iperf -s -p 3389 -i 1`：服务端
-* `iperf -c <server_addr> -p 3389 -i 1`：客户端
+* IPv4
+    * `iperf -s -p 3389 -i 1`：服务端
+    * `iperf -c <server_addr> -p 3389 -i 1`：客户端
+* IPv6
+    * `iperf3 -s -6 -p 3389 -i 1`：服务端
+    * `iperf3 -c <server_addr> -p 3389 -6 -i 1`：客户端
 
 ## 5.20 nc
 

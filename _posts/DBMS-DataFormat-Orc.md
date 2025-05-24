@@ -84,10 +84,10 @@ public class OrcDemo {
     }
 
     private static void read() throws IOException {
-        try (Reader reader = OrcFile.createReader(new Path("/tmp/user.orc"),
-                OrcFile.readerOptions(conf).filesystem(FileSystem.getLocal(conf)))) {
+        try (Reader reader =
+                OrcFile.createReader(path, OrcFile.readerOptions(conf).filesystem(local));
+                RecordReader rows = reader.rows()) {
 
-            RecordReader rows = reader.rows();
             TypeDescription schema = reader.getSchema();
             VectorizedRowBatch batch = schema.createRowBatch();
 

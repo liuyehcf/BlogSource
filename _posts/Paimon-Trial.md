@@ -249,6 +249,7 @@ docker exec -it --user root trino bash -c 'rm -rf /usr/lib/trino/plugin/paimon'
 # 6 Features
 
 1. Changelog Producer
+1. [Deletion Vectors](https://paimon.apache.org/docs/0.8/primary-key-table/deletion-vectors/)
 
 # 7 SDK Demos
 

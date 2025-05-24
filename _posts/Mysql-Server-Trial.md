@@ -75,3 +75,16 @@ SELECT * FROM test.user;
 
 1. `truncate`函数：`sql/my_decimal.h`中的`my_decimal_round`函数
 1. 如何用docker运行：`sudo docker run -dit -p 3306:3306 -e MYSQL_ROOT_PASSWORD='Abcd1234' -v <local_path>:/var/lib/mysql mysql:5.7.37 mysqld --lower_case_table_names=1`
+
+# 3 Install from Archives
+
+[MySQL Product Archives](https://downloads.mysql.com/archives/community/)
+
+```sh
+wget https://downloads.mysql.com/archives/get/p/23/file/mysql-9.2.0-linux-glibc2.28-x86_64.tar.xz
+
+tar xf mysql-9.2.0-linux-glibc2.28-x86_64.tar.xz -C /usr/local
+
+# Unifiy path, otherwise if may fail on loading /usr/local/mysql/lib/plugin/mysql_native_password.so:
+mv /usr/local/mysql-9.2.0-linux-glibc2.28-x86_64 /usr/local/mysql
+```

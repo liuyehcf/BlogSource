@@ -6048,46 +6048,68 @@ int main() {
 Copy elision is an optimization technique used by compilers in C++ to reduce the overhead of copying and moving objects. This optimization can significantly improve performance by eliminating unnecessary copying of objects, especially in return statements or during function calls. Two specific cases of copy elision are Return Value Optimization (RVO) and Named Return Value Optimization (NRVO). Let's explore each of these:
 
 * `Return Value Optimization (RVO)`: RVO is a compiler optimization that eliminates the need for a temporary object when a function returns an object by value. Normally, when a function returns an object, a temporary copy of the object is created (which invokes the copy constructor), and then the temporary object is copied to the destination variable. With RVO, the compiler can directly construct the return value in the memory location of the caller's receiving variable, thereby skipping the creation and copy of the temporary object.
-    ```cpp
-    #include <iostream>
-
-    class Widget {
-    public:
-        Widget() { std::cout << "Default constructor called" << std::endl; }
-        Widget(const Widget&) { std::cout << "Copy constructor called" << std::endl; }
-    };
-
-    Widget createWidget() {
-        return Widget();
-    }
-
-    int main() {
-        Widget w = createWidget(); // With RVO, the copy constructor is not called
-        return 0;
-    }
-    ```
-
 * `Named Return Value Optimization (NRVO)`: Similar to RVO, NRVO allows the compiler to eliminate the temporary object even when the object returned has a name. NRVO is a bit more challenging for the compiler because it involves predicting which named variable will be returned at compile time.
+* Moving a local object in a return statement prevents copy elision.
 
-    ```cpp
-    #include <iostream>
+```cpp
+#include <iostream>
 
-    class Widget {
-    public:
-        Widget() { std::cout << "Default constructor called" << std::endl; }
-        Widget(const Widget&) { std::cout << "Copy constructor called" << std::endl; }
-    };
-
-    Widget createWidget() {
-        Widget w;
-        return w;
+class Widget {
+public:
+    Widget() { std::cout << "Widget()" << std::endl; }
+    Widget(const Widget&) { std::cout << "Widget(const Widget&)" << std::endl; }
+    Widget(Widget&&) { std::cout << "Widget(Widget&&)" << std::endl; }
+    Widget& operator=(const Widget&) {
+        std::cout << "operator=(const Widget&)" << std::endl;
+        return *this;
     }
-
-    int main() {
-        Widget w = createWidget(); // With NRVO, the copy constructor is not called
-        return 0;
+    Widget& operator=(Widget&&) {
+        std::cout << "operator=(Widget&&)" << std::endl;
+        return *this;
     }
-    ```
+};
+
+Widget createWidgetRVO() {
+    return Widget();
+}
+
+Widget createWidgetNRVO() {
+    return Widget();
+}
+
+Widget createWidgetNonRVO() {
+    auto w = Widget();
+    return std::move(w);
+}
+
+int main() {
+    {
+        std::cout << "Testing RVO:" << std::endl;
+        Widget w = createWidgetRVO(); // With RVO, the copy constructor is not called
+    }
+    {
+        std::cout << "Testing NRVO:" << std::endl;
+        Widget w2 = createWidgetNRVO(); // With NRVO, the copy constructor is not called
+    }
+    {
+        std::cout << "Testing non-RVO:" << std::endl;
+        Widget w3 = createWidgetNonRVO(); // Without RVO, the copy constructor is called
+    }
+    return 0;
+}
+```
+
+Output:
+
+```
+Testing RVO:
+Widget()
+Testing NRVO:
+Widget()
+Testing non-RVO:
+Widget()
+Widget(Widget&&)
+```
 
 ## 7.5 Implicit Type Conversions
 

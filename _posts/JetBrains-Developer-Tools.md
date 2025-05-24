@@ -353,7 +353,15 @@ If you want to install jdk into `/Library/Java/JavaVirtualMachines`, you need to
 * `cd /Applications/IntelliJ\ IDEA\ CE.app/Contents/MacOS`
 * `sudo ./idea`
 
-## 2.11 Reference
+## 2.11 Code Analyze
+
+* `Code` -> `Analyze Code` -> `Run Inspection by Name`
+
+### 2.11.1 How to reset inspections (If press ignore xxx by mistake)
+
+* `Settings` -> `Editor` -> `Inspections` -> ⚙️ -> `Restore Defaults`
+
+## 2.12 Reference
 
 * [IntelliJ IDEA 设置选中标识符高亮](http://blog.csdn.net/wskinght/article/details/43052407)
 * [IntelliJ IDEA 总结](https://www.zhihu.com/question/20450079)

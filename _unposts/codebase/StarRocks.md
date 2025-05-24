@@ -383,6 +383,10 @@ The hash table is organized as an array, each element store the first index of t
     * Long running drivers will be placed at the higher level
     * Each level is `SubQuerySharedDriverQueue`
 
+### 2.7.2 Event Base Scheduling
+
+[Supports pipeline event based scheduling](https://github.com/StarRocks/starrocks/issues/54259)
+
 # 3 Storage
 
 ![storage](/images/StarRocks/storage.jpeg)

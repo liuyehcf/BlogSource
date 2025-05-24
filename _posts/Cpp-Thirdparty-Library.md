@@ -2521,7 +2521,135 @@ Name: John Doe, Age: 30, Is Developer: 1
 Generated JSON: {"isNewDeveloper":false,"newAge":28,"newName":"Jane Smith"}
 ```
 
-### 8.1.3 Http
+### 8.1.3 XML
+
+Read comments of each api, it will tell you if you should release the return object manually (see blow).
+
+* Use raw pointer if `release()` is not required
+* Use `Poco::AutoPtr` is `release()` is required
+
+```
+	NodeList* getElementsByTagName(const XMLString& name) const;
+		/// Returns a NodeList of all Elements with a given tag name in the order
+		/// in which they would be encountered in a preorder traversal of the
+		/// document tree.
+		///
+		/// The returned NodeList must be released with a call to release()
+		/// when no longer needed.
+
+```
+
+```sh
+mkdir -p poco_xml_demo
+cd poco_xml_demo
+
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(poco_xml_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+add_compile_options(-O3 -Wall)
+
+file(GLOB MY_PROJECT_SOURCES "*.cpp")
+add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+find_package(Poco REQUIRED COMPONENTS Foundation XML)
+target_link_libraries(${PROJECT_NAME} Poco::Foundation Poco::XML)
+EOF
+
+cat > poco_xml_demo.cpp << 'EOF'
+#include <Poco/AutoPtr.h>
+#include <Poco/DOM/DOMParser.h>
+#include <Poco/DOM/Document.h>
+#include <Poco/DOM/Node.h>
+#include <Poco/DOM/NodeList.h>
+#include <Poco/Exception.h>
+
+#include <iostream>
+#include <string>
+
+int main() {
+    Poco::XML::DOMParser parser;
+    Poco::AutoPtr<Poco::XML::Document> hdfs_doc = parser.parse("hdfs-site.xml");
+    Poco::AutoPtr<Poco::XML::NodeList> properties = hdfs_doc->getElementsByTagName("property");
+
+    for (size_t i = 0; i < properties->length(); ++i) {
+        // Don't wrap return object of item, it's lifecycle is maintained by the itself
+        Poco::XML::Node* property = properties->item(i);
+        if (property->nodeType() != Poco::XML::Node::ELEMENT_NODE || !property->hasChildNodes() ||
+            property->nodeName() != "property") {
+            continue;
+        }
+
+        Poco::AutoPtr<Poco::XML::NodeList> children = static_cast<Poco::XML::Element*>(property)->childNodes();
+
+        std::string name, value;
+        for (size_t j = 0; j < children->length(); ++j) {
+            // Don't wrap return object of item, it's lifecycle is maintained by the itself
+            Poco::XML::Node* child = children->item(j);
+
+            if (child->nodeType() == Poco::XML::Node::ELEMENT_NODE) {
+                std::string node_name = child->nodeName();
+                if (node_name == "name") {
+                    name = child->innerText();
+                } else if (node_name == "value") {
+                    value = child->innerText();
+                }
+            }
+        }
+        std::cout << "Property Name: " << name << ", Value: " << value << std::endl;
+    }
+    return 0;
+}
+EOF
+
+cat > hdfs-site.xml << 'EOF'
+<configuration>
+    <property>
+        <name>dfs.nameservices</name>
+        <value>mycluster</value>
+    </property>
+
+    <property>
+        <name>dfs.ha.namenodes.mycluster</name>
+        <value>p0,p1,p2</value>
+    </property>
+    <property>
+        <name>dfs.namenode.rpc-address.mycluster.p0</name>
+        <value>192.168.0.1:12000</value>
+    </property>
+    <property>
+        <name>dfs.namenode.rpc-address.mycluster.p1</name>
+        <value>192.168.0.2:12000</value>
+    </property>
+    <property>
+        <name>dfs.namenode.rpc-address.mycluster.p2</name>
+        <value>192.168.0.3:12000</value>
+    </property>
+
+    <property>
+        <name>dfs.client.failover.proxy.provider.mycluster</name>
+        <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+    </property>
+    <property>
+        <name>dfs.ha.automatic-failover.enabled.mycluster</name>
+        <value>true</value>
+    </property>
+</configuration>
+EOF
+
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+build/poco_xml_demo
+```
+
+### 8.1.4 Http
 
 ```sh
 mkdir -p poco_http_demo
@@ -2667,7 +2795,96 @@ HTTP Server started on port 9080.
 ^C
 ```
 
-### 8.1.4 Application
+### 8.1.5 Configuration
+
+```sh
+mkdir -p poco_configuration_demo
+cd poco_configuration_demo
+
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(poco_configuration_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+add_compile_options(-O3 -Wall)
+
+file(GLOB MY_PROJECT_SOURCES "*.cpp")
+add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+find_package(Poco REQUIRED COMPONENTS Foundation Util)
+target_link_libraries(${PROJECT_NAME} Poco::Foundation Poco::Util)
+EOF
+
+cat > poco_configuration_demo.cpp << 'EOF'
+#include <Poco/Util/AbstractConfiguration.h>
+#include <Poco/Util/LayeredConfiguration.h>
+#include <Poco/Util/XMLConfiguration.h>
+
+#include <iostream>
+
+void print_key(Poco::AutoPtr<Poco::Util::AbstractConfiguration> config, const std::string& key) {
+    std::cout << "get string from config key '" << key << "': " << config->getString(key, "not exists") << std::endl;
+}
+
+int main() {
+    Poco::AutoPtr<Poco::Util::AbstractConfiguration> config = new Poco::Util::XMLConfiguration("config.xml");
+
+    // Config must be accessed by full path
+    print_key(config, "hadoop.home");
+    print_key(config, "home");
+
+    std::vector<std::string> hadoop_keys;
+    config->keys("hadoop", hadoop_keys);
+
+    std::cout << "All key-values belongs to 'hadoop':" << std::endl;
+    for (const auto& key : hadoop_keys) {
+        std::cout << key << " = " << config->getString("hadoop." + key, "not exists") << std::endl;
+    }
+
+    std::vector<std::string> hive_keys;
+    config->keys("hive", hive_keys);
+    std::cout << "All key-values belongs to 'hive':" << std::endl;
+    for (const auto& key : hive_keys) {
+        std::cout << key << " = " << config->getString("hive." + key, "not exists") << std::endl;
+    }
+
+    auto hadoop_view = config->createView("hadoop");
+    print_key(hadoop_view, "common_key");
+    return 0;
+}
+EOF
+
+cat > config.xml << 'EOF'
+<root>
+    <configs>
+        <common_key>common_value</common_key>
+    </configs>
+    <hadoop>
+        <home>/home/user/hadoop</home>
+        <hadoop_unique_key1>hadoop_value1</hadoop_unique_key1>
+        <hadoop_unique_key2>hadoop_value2</hadoop_unique_key2>
+        <common_key>hadoop_common_value</common_key>
+    </hadoop>
+    <hive>
+        <hive_unique_key1>hive_value1</hive_unique_key1>
+        <hive_unique_key2>hive_value2</hive_unique_key2>
+        <common_key>hive_common_value</common_key>
+    </hive>
+</root>
+EOF
+
+cmake -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
+build/poco_configuration_demo
+```
+
+### 8.1.6 Application
 
 ```sh
 mkdir -p poco_application_demo
@@ -2769,9 +2986,9 @@ A simple command line application that demonstrates parsing options with POCO.
 config-file: /etc/config.xml
 ```
 
-### 8.1.5 Foundation
+### 8.1.7 Foundation
 
-#### 8.1.5.1 MD5
+#### 8.1.7.1 MD5
 
 ```cpp
 cat > main.cpp << 'EOF'
