@@ -1237,7 +1237,60 @@ set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O1 -Wall")
 1. `RelWithDebInfo`
 1. `MinSizeRel`
 
-### 6.3.3 Macro Definition
+### 6.3.3 Use CMake Options as Macro
+
+```sh
+mkdir -p option_as_macro_demo
+cd option_as_macro_demo
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(option_as_macro_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+option(USE_FOO "Use FOO" ON)
+option(USE_BAR "Use BAR" OFF)
+
+configure_file(${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/config.h)
+
+add_compile_options(-O3 -Wall)
+
+file(GLOB MY_PROJECT_SOURCES "*.cpp")
+add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR})
+EOF
+
+cat > config.h.in << 'EOF'
+#pragma once
+
+#cmakedefine01 USE_FOO
+#cmakedefine01 USE_BAR
+EOF
+
+cat > option_as_macro_demo.cpp << 'EOF'
+#include <iostream>
+
+#include "config.h"
+
+int main() {
+    std::cout << "USE_FOO: " << USE_FOO << std::endl;
+    std::cout << "USE_BAR: " << USE_BAR << std::endl;
+    return 0;
+}
+EOF
+
+cmake -B build -DUSE_FOO=0 -DUSE_BAR=1
+cmake --build build
+build/option_as_macro_demo
+```
+
+### 6.3.4 Macro Definition
 
 **Command:**
 
@@ -1253,7 +1306,7 @@ add_compile_definitions(FLAG1 FLAG2="Debug")
 target_compile_definitions(foo PUBLIC FLAG1 FLAG2="Debug")
 ```
 
-### 6.3.4 Add Extra Search Path
+### 6.3.5 Add Extra Search Path
 
 The only way I can find so far to add extra search path out of the `CMakeLists.txt` are using following environments.
 
@@ -1266,7 +1319,7 @@ export CPLUS_INCLUDE_PATH=
 export LIBRARY_PATH=
 ```
 
-### 6.3.5 Add Extra Runtime Search Path
+### 6.3.6 Add Extra Runtime Search Path
 
 ```cmake
 set_target_properties(<target> PROPERTIES LINK_FLAGS "-Wl,-rpath,'/usr/lib/jvm/default-java/lib/server'")
@@ -1278,7 +1331,7 @@ You can check if it works by this command:
 readelf -d <binary> | grep 'RPATH\|RUNPATH'
 ```
 
-### 6.3.6 Build Type
+### 6.3.7 Build Type
 
 ```sh
 # If you want to build for debug (including source information, i.e. -g) when compiling, use
@@ -1512,7 +1565,7 @@ file(GLOB_RECURSE JAVA_SOURCES ${JAVA_PROJECT_DIR}/src/main/java/*.java)
 
 add_custom_command(
     OUTPUT ${ALL_JAR_PATHS}
-    COMMAND ${MAVEN_EXECUTABLE} clean package -DskipTests
+    COMMAND ${MAVEN_EXECUTABLE} --batch-mode --define style.color=always clean package -DskipTests
     WORKING_DIRECTORY ${JAVA_PROJECT_DIR}
     # Add dependencies to all java source files, this command will be executed if any source file changed
     DEPENDS ${JAVA_SOURCES}

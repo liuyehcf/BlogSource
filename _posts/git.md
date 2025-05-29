@@ -423,6 +423,14 @@ git log -5 --pretty --oneline
 # Show dates in a specified format
 git log --date=format:"%Y-%m-%d %H:%M:%S"
 
+# Searches for changes that add or remove a given string。
+# -S'<content>': search addition/deletion that contains the string
+# --source: pirnt the branch name or tag name
+# --all: search all branches
+# -p: print each matched commit's diff content
+git log -S'<content>' --source --all -p
+git log -S'<content>' -p
+
 # Show all committers sorted by number of commits
 git shortlog -sn
 

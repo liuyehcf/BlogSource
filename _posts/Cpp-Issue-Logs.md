@@ -310,6 +310,31 @@ int main() {
 * `gcc -o main main.cpp -lstdc++ -std=gnu++17 -O3 -fsanitize=address -static-libasan && ./main`: Crash.
 * `gcc -o main main.cpp -lstdc++ -std=gnu++17 -O3`: Can run, but got unexpected result.
 
-# 6 FAQ
+# 6 std::enable_shared_from_this
+
+We cannot calling `shared_from_this()` in the deconstructor.
+
+```cpp
+#include <iostream>
+#include <memory>
+
+struct Foo : public std::enable_shared_from_this<Foo> {
+    ~Foo() { shared_from_this()->printMessage(); }
+    void printMessage() { std::cout << "Hello from Foo!" << std::endl; }
+};
+
+int main() {
+    Foo f;
+    return 0;
+}
+```
+
+```
+terminate called after throwing an instance of 'std::bad_weak_ptr'
+  what():  bad_weak_ptr
+cat[1]    3499967 IOT instruction (core dumped)  ./main
+```
+
+# 7 FAQ
 
 1. `as ‘this’ argument discards qualifiers [-fpermissive]`: Maybe try to conver a const value to a non-const value

@@ -1676,6 +1676,12 @@ gcc -o arrow_parquet_demo arrow_parquet_demo.cpp -lstdc++ -std=gnu++17 -larrow -
 ./arrow_parquet_demo
 ```
 
+### 6.1.2 ABI
+
+[abi.h](https://github.com/apache/arrow/blob/main/cpp/src/arrow/c/abi.h)
+
+[arrow_abi_demo](https://github.com/liuyehcf/cpp-demo-projects/tree/main/arrow/arrow_abi_demo)
+
 ## 6.2 thrift
 
 Requirement:

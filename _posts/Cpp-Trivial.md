@@ -1481,7 +1481,63 @@ gcc test_stack_buffer_underflow.cpp -o test_stack_buffer_underflow -g -lstdc++ -
 ./test_stack_buffer_underflow
 ```
 
-## 5.4 Reference
+## 5.4 How to config in Cmake
+
+```cmake
+option(ENABLE_ASAN "Enable AddressSanitizer" ON)
+
+if(ENABLE_ASAN)
+    add_compile_options(-fsanitize=address -g)
+    add_link_options(-fsanitize=address -static-libasan)
+endif()
+```
+
+## 5.5 Common ASAN_OPTIONS
+
+| Option Name (Common) | Default | Description |
+|:--|:--|:--|
+| detect_stack_use_after_return| 0 | Detect stack-use-after-return bugs (enable with 1). |
+| detect_leaks | 1 | Enable LeakSanitizer (LSan) leak detection. |
+| detect_odr_violation | 0 | Detect One Definition Rule violations. |
+| detect_stack_use_after_scope | 0 | Detect stack-use-after-scope bugs. |
+| detect_invalid_pointer_pairs | 1 | Detect invalid pointer pairs in heap. |
+| abort_on_error | 0 | Abort on first error instead of continuing to report. |
+| exitcode | 1 | Exit code returned when errors are detected. |
+| fast_unwind_on_malloc | 0 | Use fast unwinding on malloc/free to speed up. |
+| malloc_context_size | 30 | Number of stack frames captured on malloc/free. |
+| symbolize | 1 | Enable symbolization of stack traces. |
+| strip_path_prefix | (empty) | Strip prefix from file paths in reports. |
+| log_path | (empty) | Path to output error reports. |
+| suppressions | (empty) | Path to suppression file to ignore errors or leaks. |
+| verbosity | 0 | Increase verbosity level (0=quiet, higher is more verbose). |
+| allocator_may_return_null | 0 | Allocator returns null on OOM instead of aborting if set to 1. |
+| disable_core | 0 | Disable core dumps when ASan errors occur. |
+| handle_segv | 1 | Install SEGV handler to generate reports on segfaults. |
+| detect_invalid_access_pairs | 1 | Detect invalid access pairs in heap. |
+| handle_sigbus | 1 | Enable handling SIGBUS signals. |
+| use_unaligned | 0 | Allow unaligned memory accesses. |
+| max_malloc_fill_size | 0 | Maximum size of allocated memory to fill with junk pattern. |
+| malloc_fill_byte | 0xAB | Byte used to fill newly allocated memory. |
+| free_fill_byte | 0xCD | Byte used to fill freed memory. |
+| detect_container_overflow | 0 | Detect overflow in container data structures (experimental). |
+| quarantine_size_mb | 256 | Size of quarantine area (MB) for freed memory before reuse. |
+| Option Name (Leak) | Default | Description |
+|:--|:--|:--|
+| detect_leaks | 1 | Enable leak detection. |
+| max_leaks | 100 | Maximum number of leaks reported. |
+| max_leaked_bytes | 100MB | Maximum number of bytes leaked before stopping leak reports. |
+| leak_check_at_exit | 1 | Perform leak check at program exit. |
+| leak_suppressions | (empty) | Path to a suppression file for leak sanitizer. |
+| use_stacks | 1 | Capture stack traces for leaked objects. |
+| Option Name (Other) | Default | Description |
+|:--|:--|:--|
+| report_globals | 1 | Report leaks of global/static variables. |
+| detect_stack_hifreq | 0 | Detect high-frequency stack allocation bugs. |
+| detect_tls_access | 0 | Detect invalid Thread Local Storage access. |
+| disable_coredump | 0 | Disable generating coredump files. |
+| malloc_deallocation_mismatch | 1 | Detect mismatched malloc/free or new/delete usage. |
+
+## 5.6 Reference
 
 * [c++ Asan(address-sanitize)的配置和使用](https://blog.csdn.net/weixin_41644391/article/details/103450401)
 * [HOWTO: Use Address Sanitizer](https://www.osc.edu/resources/getting_started/howto/howto_use_address_sanitizer)
@@ -1751,64 +1807,68 @@ addr2line: Dwarf Error: found dwarf version '5', this reader only handles versio
 
 ## 7.3 gcc
 
-**常用参数说明：**
+**Common Parameter Descriptions:**
 
-1. **编译信息**
-    * `-v`：输出编译详情，包括头文件搜索路径、一些环境变量的实际值等等
-    * `-H`：输出编译过程中使用到的头文件
-1. **文件类型**
-    *  `-E`：生成预处理文件（`.i`）
-    *  `-S`：生成汇编文件（`.s`）
-        * `-fverbose-asm`：带上一些注释信息
-    *  `-c`：生成目标文件（`.o`）
-    *  默认生成可执行文件
-1. **优化级别**
-    1. `-O0`（默认）：不做任何优化
-    1. `-O/-O1`：在不影响编译速度的前提下，尽量采用一些优化算法降低代码大小和可执行代码的运行速度
-    1. `-O2`：该优化选项会牺牲部分编译速度，除了执行`-O1`所执行的所有优化之外，还会采用几乎所有的目标配置支持的优化算法，用以提高目标代码的运行速度
-    1. `-O3`：该选项除了执行`-O2`所有的优化选项之外，一般都是采取很多向量化算法，提高代码的并行执行程度，利用现代CPU中的流水线，`Cache`等
-    * 不同优化等级对应开启的优化参数参考`man page`
-1. **调试**
-    * `-gz[=type]`：对于`DWARF`格式的文件中的调试部分按照指定的压缩方式进行压缩
-    * `-g`：生成调试信息
-    * `-ggdb`：生成`gdb`专用的调试信息
-    * `-gdwarf`/`-gdwarf-version`：生成`DWARF`格式的调试信息，`version`的可选值有`2/3/4/5`，默认是4
-1. **`-print-search-dirs`：打印搜索路径**
-1. **`-I <path>`：增加头文件搜索路径**
-    * 可以并列使用多个`-I`参数，例如`-I path1 -I path2`
-1. **`-L <path>`：增加库文件搜索路径**
-1. **`-l<lib_name>`：增加库文件**
-    * 搜索指定名称的静态或者动态库，如果同时存在，默认选择动态库
-    * 例如`-lstdc++`、`-lpthread`
-1. **`-std=<std_version>`：指定标注库类型以及版本信息**
-    * 例如`-std=gnu++17`
-1. **`-W<xxx>`：warning提示**
-    * `-Wall`：启用大部分warning提示（部分warning无法通过该参数默认启用）
-    * `-Wno<xxx>`：关闭指定种类的warning提示
-    * `-Werror`：所有warning变为error（会导致编译失败）
-    * `-Werror=<xxx>`：指定某个warning变为error（会导致编译失败）
-1. **`-static`：所有库都用静态链接，包括`libc`和`libc++`**
-1. **`-D <macro_name>[=<macro_definition>]`：定义宏**
-    * 例如`-D MY_DEMO_MACRO`、`-D MY_DEMO_MACRO=2`、`-D 'MY_DEMO_MACRO="hello"'`、`-D 'ECHO(a)=(a)'`
-1. **`-U <macro_name>`：取消宏定义**
-1. **`--coverage`：覆盖率测试**
-1. **`-fno-access-control`：关闭访问控制，例如在类外可以直接访问某类的私有字段和方法，一般用于单元测试**
-1. **向量化相关参数**
-    * `-fopt-info-vec`/`-fopt-info-vec-optimized`：当循环进行向量化优化时，输出详细信息
-    * `-fopt-info-vec-missed`：当循环无法向量化时，输出详细信息
-    * `-fopt-info-vec-note`：输出循环向量化优化的所有详细信息
-    * `-fopt-info-vec-all`：开启所有输出向量化详细信息的参数
-    * `-fno-tree-vectorize`：关闭向量化
-    * **一般来说，需要指定参数后才能使用更大宽度的向量化寄存器**
+1. **Compilation Information**
+    * `-v`: Outputs compilation details, including header file search paths, actual values of some environment variables, etc.
+    * `-H`: Outputs the header files used during compilation
+1. **File Types**
+    * `-E`: Generate preprocessed file (`.i`)
+    * `-S`: Generate assembly file (`.s`)
+        * `-fverbose-asm`: Includes some annotation comments
+    * `-c`: Generate object file (`.o`)
+    * By default, generates an executable file
+1. **Optimization Levels**
+    1. `-O0` (default): No optimization
+    1. `-O/-O1`: Tries to apply some optimizations to reduce code size and improve executable speed without affecting compilation speed
+    1. `-O2`: This level sacrifices some compilation speed; besides all optimizations of `-O1`, it applies almost all supported optimizations for the target to improve runtime speed
+    1. `-O3`: In addition to all `-O2` optimizations, generally uses many vectorization algorithms to increase code parallelism, utilizing modern CPU pipelines, caches, etc.
+    * The optimization options enabled at different levels can be referenced in the `man page`
+1. **Debugging**
+    * `-gz[=type]`: Compresses the debugging section of `DWARF` format files using the specified compression method
+    * `-g`: Generate debug information
+    * `-ggdb`: Generate debug information specific for `gdb`
+    * `-gdwarf`/`-gdwarf-version`: Generate debug info in `DWARF` format; versions available are `2/3/4/5`, default is 4
+1. **`-print-search-dirs`: Print search paths**
+1. **`-I <path>`: Add header file search path**
+    * Multiple `-I` parameters can be used, e.g. `-I path1 -I path2`
+1. **`-L <path>`: Add library search path**
+1. **`-l<lib_name>`: Add library**
+    * Search for the specified static or dynamic library; if both exist, dynamic library is chosen by default
+    * For example, `-lstdc++`, `-lpthread`
+1. **`-std=<std_version>`: Specify standard library type and version**
+    * For example, `-std=gnu++17`
+1. **`-W<xxx>`: Warning options**
+    * `-Wall`: Enable most warning messages (some warnings cannot be enabled by this flag by default)
+    * `-Wno<xxx>`: Disable specific types of warnings
+    * `-Werror`: Treat all warnings as errors (will cause compilation to fail)
+    * `-Werror=<xxx>`: Treat a specific warning as an error (will cause compilation to fail)
+1. **`-static`: Use static linking for all libraries, including `libc` and `libc++`**
+1. **`-print-file-name=<library>`: Print the full absolute name of the library file library that would be used when linking**
+    * `gcc -print-file-name=libgcov.a`
+    * `gcc -print-file-name=libdl.a`
+    * `gcc -print-file-name=libstdc++.a`
+1. **`-D <macro_name>[=<macro_definition>]`: Define macro**
+    * For example, `-D MY_DEMO_MACRO`, `-D MY_DEMO_MACRO=2`, `-D 'MY_DEMO_MACRO="hello"'`, `-D 'ECHO(a)=(a)'`
+1. **`-U <macro_name>`: Undefine macro**
+1. **`--coverage`: a synonym for `-fprofile-arcs -ftest-coverage` (when compiling) and `-lgcov` (when linking)**
+1. **`-fno-access-control`: Disable access control, for example, allowing direct access to private fields and methods of a class from outside the class, generally used for unit testing**
+1. **Vectorization Related Parameters**
+    * `-fopt-info-vec` / `-fopt-info-vec-optimized`: Output detailed information when loops are vectorized
+    * `-fopt-info-vec-missed`: Output detailed information when loops cannot be vectorized
+    * `-fopt-info-vec-note`: Output all detailed information about loop vectorization optimization
+    * `-fopt-info-vec-all`: Enable all parameters that output detailed vectorization information
+    * `-fno-tree-vectorize`: Disable vectorization
+    * **Generally, larger width vector registers require specifying these parameters:**
         * `-mmmx`
-        * `-msse`、`-msse2`、`-msse3`、`-mssse3`、`-msse4`、`-msse4a`、`-msse4.1`、`-msse4.2`
-        * `-mavx`、`-mavx2`、`-mavx512f`、`-mavx512pf`、`-mavx512er`、`-mavx512cd`、`-mavx512vl`、`-mavx512bw`、`-mavx512dq`、`-mavx512ifma`、`-mavx512vbmi`
+        * `-msse`, `-msse2`, `-msse3`, `-mssse3`, `-msse4`, `-msse4a`, `-msse4.1`, `-msse4.2`
+        * `-mavx`, `-mavx2`, `-mavx512f`, `-mavx512pf`, `-mavx512er`, `-mavx512cd`, `-mavx512vl`, `-mavx512bw`, `-mavx512dq`, `-mavx512ifma`, `-mavx512vbmi`
         * ...
-1. **`-fPIC`：如果目标机器支持，则生成与位置无关的代码，适用于动态链接并避免对全局偏移表大小的任何限制**
-1. **`-fomit-frame-pointer`：必要的话，允许部分函数没有栈指针**
-    * `-fno-omit-frame-pointer`：所有函数必须包含栈指针
+1. **`-fPIC`: If the target machine supports it, generate position-independent code, suitable for dynamic linking and avoids any limitations on the size of the Global Offset Table**
+1. **`-fomit-frame-pointer`: When necessary, allow some functions to omit the frame pointer**
+    * `-fno-omit-frame-pointer`: All functions must include a frame pointer
 1. `-faligned-new`
-1. `-fsized-deallocation`：启用接收`size`参数的`delete`运算符。[C++ Sized Deallocation](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3778.html)。现代内存分配器在给对象分配内存时，需要指定大小，出于空间利用率的考虑，不会在对象内存周围存储对象的大小信息。因此在释放对象时，需要查找对象占用的内存大小，查找的开销很大，因为通常不在缓存中。因此，编译器允许提供接受一个`size`参数的`global delete operator`，并用这个版本来对对象进行析构
+1. `-fsized-deallocation`: Enable the `delete` operator that receives a `size` parameter. [C++ Sized Deallocation](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2013/n3778.html). Modern memory allocators, when allocating memory for objects, need to specify the size and for space efficiency do not store object size information around the object memory. Therefore, when freeing objects, the memory size occupied must be found, which is expensive because it is usually not in cache. The compiler allows providing a `global delete operator` that accepts a `size` parameter and uses this version to destruct the object.
 1. `-mcmodel=small/medium/large`: is an option used in compilers like GCC (GNU Compiler Collection) to specify the memory model for code generation. This option is particularly relevant in systems with large address spaces, such as 64-bit architectures, where how the program accesses memory can significantly impact performance and compatibility.
     * `small`
         * This is the default memory model.
@@ -1851,6 +1911,367 @@ gcc main.cpp -o main -std=gnu++17 -static -lstdc++
 ```sh
 target_compile_options(<target> PRIVATE -static-libstdc++)
 target_link_options(<target> PRIVATE -static-libstdc++)
+```
+
+### 7.3.2 Code Coverage
+
+**Here's how it works: `gcov` determines which files to analyze for coverage information based on the profile data files (`*.gcda` and `*.gcno`) that are generated when you compile and run your program with the appropriate GCC flags (`-fprofile-arcs` and `-ftest-coverage`). Here's a breakdown of how `gcov` knows which files to load:**
+
+1. **Compilation and Execution:**
+    * When you compile your C/C++ program with GCC using `-fprofile-arcs` and `-ftest-coverage`, it produces two types of files for each source file:
+    * `*.gcno`: These are generated during the compilation. They contain information about the source code's structure (like basic blocks, branches, etc.).
+    * `*.gcda`: These are generated when the compiled program is run. They contain the actual coverage data, such as how many times each line of code was executed.
+1. **Locating Files:**
+    * When you invoke `gcov`, it looks for `.gcno` and `.gcda` files in the current directory by default. These files are named after the source files but with different extensions.
+    * For example, if your source file is `example.c`, `gcov` will look for `example.gcno` and `example.gcda` in the current directory.
+1. **Matching Source Files:**
+    * `gcov` uses the information in these files to match with the corresponding source file. It relies on the path and filename information stored in the `.gcno` and `.gcda` files to find the correct source file.
+    * If your source files are in a different directory, you may need to specify the path when running `gcov`, or run `gcov` from the directory containing the `.gcda` and `.gcno` files.
+1. **Generating the Report:**
+    * Once `gcov` has matched the `.gcno` and `.gcda` files with their corresponding source files, it processes these files to generate a coverage report. This report shows how many times each line in the source file was executed.
+1. **Manual Specification:**
+    * You can also manually specify which source files to generate reports for by passing their names as arguments to `gcov`.
+
+**Here's an example of using gcc directly:**
+
+```sh
+cat > example.cpp << 'EOF'
+#include <iostream>
+
+void printMessage() {
+    std::cout << "Hello, World!" << std::endl;
+}
+
+void unusedFunction() {
+    std::cout << "This function is never called." << std::endl;
+}
+
+int main() {
+    printMessage();
+    return 0;
+}
+EOF
+
+gcc -o example example.cpp -lstdc++ -std=gnu++17 -fprofile-arcs -ftest-coverage -lgcov
+./example
+gcov example.cpp
+cat example.cpp.gcov
+
+lcov --capture --directory . --output-file coverage.info
+genhtml coverage.info --output-directory out
+xdg-open out/index.html
+```
+
+#### 7.3.2.1 Disdavantages
+
+1. `.gcda` Files are only written on graceful exit.
+    * If the program crashes or is killed abruptly (e.g., kill -9), the `.gcda` files might be missing or incomplete.
+    * You can use `__gcov_flush()` to manually flush coverage data at key points:
+        ```cpp
+        extern "C" void __gcov_flush(void);
+        __gcov_flush();  // Forces writing current coverage data to .gcda
+        ```
+
+1. Each process/thread writing to the same `.gcda` file can lead to file corruption or data loss.
+    * Use environment variables to separate outputs
+        ```sh
+        export GCOV_PREFIX=/tmp/coverage/$PID
+        export GCOV_PREFIX_STRIP=0
+        ```
+
+1. Don't lose `.gcno` files.
+    * `.gcno` files are generated at compile time and contain structural info.
+    * `.gcda` files are written at runtime with execution data.
+    * If `.gcno` is missing or mismatched with `.gcda`, gcov will fail.
+1. Compiler optimizations may break coverage accuracy.
+    * Always compile with `-O0` to avoid misleading coverage reports.
+1. Use higher-level tools (`gcovr` or `lcov`) for reports.
+1. Clean old data before new runs.
+    * Leftover `.gcda` files from previous runs can mess up your current coverage.
+
+#### 7.3.2.2 Difference between gcc compilation and CMake compilation
+
+When you compile a source file using gcc with coverage flags:
+
+```sh
+gcc -fprofile-arcs -ftest-coverage -O0 main.cpp -o main
+```
+
+It produces:
+
+* The `.gcno` and `.gcda` files are named simply after the basename of the source file (main).
+* There is no `.cpp` extension in the coverage data file names.
+
+```
+main.gcno  # at compile time
+main.gcda  # after running the program
+```
+
+---
+
+When compiling the same file using CMake, it produces coverage files like:
+
+* Note the difference: the filenames now include `.cpp` as part of the name, like `main.cpp.gcda`.
+* This is conflict with the way gcov works.
+
+```
+CMakeFiles/myapp.dir/src/main.cpp.gcno
+CMakeFiles/myapp.dir/src/main.cpp.gcda
+```
+
+**Here's an example of using cmake:**
+
+```sh
+mkdir -p code_coverage_demo
+cd code_coverage_demo
+
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(code_coverage_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_C_COMPILER "gcc")
+set(CMAKE_CXX_COMPILER "g++")
+
+file(GLOB MY_PROJECT_SOURCES "*.cpp")
+add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+message(STATUS "Building with code coverage enabled")
+target_compile_options(${PROJECT_NAME} PRIVATE -fprofile-arcs -ftest-coverage -O0 -g)
+target_link_options(${PROJECT_NAME} PRIVATE -fprofile-arcs -ftest-coverage)
+EOF
+
+cat > code_coverage_demo.cpp << 'EOF'
+#include <iostream>
+
+void printMessage() {
+    std::cout << "Hello, World!" << std::endl;
+}
+
+void unusedFunction() {
+    std::cout << "This function is never called." << std::endl;
+}
+
+int main() {
+    printMessage();
+    return 0;
+}
+EOF
+
+cmake -B build
+cmake --build build
+build/code_coverage_demo
+
+gcda_files=( $(find build -name "*.gcda") )
+gcno_files=( $(find build -name "*.gcno") )
+for gcda_file in ${gcda_files[@]}
+do
+    new_gcda_file=${gcda_file%.*} # remove .gcda
+    new_gcda_file=${new_gcda_file%.*} # remove .cpp
+    new_gcda_file="${new_gcda_file}.gcda" # append .gcda
+    mv ${gcda_file} ${new_gcda_file}
+done
+for gcno_file in ${gcno_files[@]}
+do
+    new_gcno_file=${gcno_file%.*} # remove .gcno
+    new_gcno_file=${new_gcno_file%.*} # remove .cpp
+    new_gcno_file="${new_gcno_file}.gcno" # append .gcno
+    mv ${gcno_file} ${new_gcno_file}
+done
+cd build/CMakeFiles/code_coverage_demo.dir
+gcov code_coverage_demo.cpp
+cat code_coverage_demo.cpp.gcov
+
+cd -
+lcov --capture --directory build/CMakeFiles --output-file coverage.info
+genhtml coverage.info --output-directory out
+xdg-open out/index.html
+```
+
+#### 7.3.2.3 Trigger flush manually
+
+`nm -g $(g++ -print-file-name=libgcov.a)` cannot find symbol `__gcov_flush`, so use `__gcov_dump` instead.
+
+```sh
+mkdir -p code_coverage_manual_flush_demo
+cd code_coverage_manual_flush_demo
+
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(code_coverage_manual_flush_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_C_COMPILER "gcc")
+set(CMAKE_CXX_COMPILER "g++")
+
+file(GLOB MY_PROJECT_SOURCES "*.cpp")
+add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+message(STATUS "Building with code coverage enabled")
+target_compile_options(${PROJECT_NAME} PRIVATE -fprofile-arcs -ftest-coverage -O0 -g)
+target_link_options(${PROJECT_NAME} PRIVATE -fprofile-arcs -ftest-coverage)
+EOF
+
+cat > code_coverage_manual_flush_demo.cpp << 'EOF'
+#include <csignal>
+#include <iostream>
+#include <stdexcept>
+
+extern "C" void __gcov_dump(void);
+
+void signal_handler(int signum) {
+    std::cout << "Invoke __gcov_dump manually." << std::endl;
+    __gcov_dump(); // attempt to write coverage data
+    _exit(signum); // avoid further cleanup that might hang
+}
+
+void setup_signal_handler() {
+    std::signal(SIGTERM, signal_handler);
+}
+
+void printMessage() {
+    std::cout << "Hello, World!" << std::endl;
+}
+
+struct Bar {
+    ~Bar() { throw std::runtime_error("Exception in destructor"); }
+};
+
+int main() {
+    Bar var;
+    setup_signal_handler();
+    printMessage();
+    sleep(3600);
+    return 0;
+}
+EOF
+
+cmake -B build
+cmake --build build
+build/code_coverage_manual_flush_demo &
+
+sleep 1
+kill -15 $!
+
+gcda_files=( $(find build -name "*.gcda") )
+gcno_files=( $(find build -name "*.gcno") )
+for gcda_file in ${gcda_files[@]}
+do
+    new_gcda_file=${gcda_file%.*} # remove .gcda
+    new_gcda_file=${new_gcda_file%.*} # remove .cpp
+    new_gcda_file="${new_gcda_file}.gcda" # append .gcda
+    mv ${gcda_file} ${new_gcda_file}
+done
+for gcno_file in ${gcno_files[@]}
+do
+    new_gcno_file=${gcno_file%.*} # remove .gcno
+    new_gcno_file=${new_gcno_file%.*} # remove .cpp
+    new_gcno_file="${new_gcno_file}.gcno" # append .gcno
+    mv ${gcno_file} ${new_gcno_file}
+done
+cd build/CMakeFiles/code_coverage_manual_flush_demo.dir
+gcov code_coverage_manual_flush_demo.cpp
+cat code_coverage_manual_flush_demo.cpp.gcov
+
+cd -
+lcov --capture --directory build/CMakeFiles --output-file coverage.info
+genhtml coverage.info --output-directory out
+xdg-open out/index.html
+```
+
+If you comment out `setup_signal_handler`, the file `code_coverage_manual_flush_demo.cpp.gcda` won't include any code coverage information.
+
+#### 7.3.2.4 Use Customized Directory
+
+```sh
+mkdir -p code_coverage_customized_directory_demo
+cd code_coverage_customized_directory_demo
+
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(code_coverage_customized_directory_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_C_COMPILER "gcc")
+set(CMAKE_CXX_COMPILER "g++")
+
+file(GLOB MY_PROJECT_SOURCES "*.cpp")
+add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+message(STATUS "Building with code coverage enabled")
+target_compile_options(${PROJECT_NAME} PRIVATE -fprofile-arcs -ftest-coverage -O0 -g)
+target_link_options(${PROJECT_NAME} PRIVATE -fprofile-arcs -ftest-coverage)
+EOF
+
+cat > code_coverage_customized_directory_demo.cpp << 'EOF'
+#include <iostream>
+
+void printMessage() {
+    std::cout << "Hello, World!" << std::endl;
+}
+
+void unusedFunction() {
+    std::cout << "This function is never called." << std::endl;
+}
+
+int main() {
+    printMessage();
+    return 0;
+}
+EOF
+
+cmake -B build
+cmake --build build
+mkdir -p gcov_out
+base_path=$(realpath build/CMakeFiles)
+base_path=${base_path%build/CMakeFiles}
+stip_level=$(echo "${base_path}" | tr -cd '/' | wc -c)
+GCOV_PREFIX=./gcov_out GCOV_PREFIX_STRIP=${stip_level} build/code_coverage_customized_directory_demo
+
+gcda_files=( $(find gcov_out -name "*.gcda") )
+gcno_files=( $(find build -name "*.gcno") )
+for gcda_file in ${gcda_files[@]}
+do
+    new_gcda_file=${gcda_file%.*} # remove .gcda
+    new_gcda_file=${new_gcda_file%.*} # remove .cpp
+    new_gcda_file="${new_gcda_file}.gcda" # append .gcda
+    mv ${gcda_file} ${new_gcda_file}
+done
+for gcno_file in ${gcno_files[@]}
+do
+    new_gcno_file=${gcno_file%.*} # remove .gcno
+    new_gcno_file=${new_gcno_file%.*} # remove .cpp
+    new_gcno_file="${new_gcno_file}.gcno" # append .gcno
+    mv ${gcno_file} ${new_gcno_file}
+
+    # copy to gcov_out directory
+    copy_new_gcno_file=${new_gcno_file#build/}
+    copy_new_gcno_file="gcov_out/${copy_new_gcno_file}"
+    cp -f ${new_gcno_file} ${copy_new_gcno_file}
+done
+cd gcov_out/CMakeFiles/code_coverage_customized_directory_demo.dir
+gcov code_coverage_customized_directory_demo.cpp
+cat code_coverage_customized_directory_demo.cpp.gcov
+
+cd -
+lcov --capture --directory gcov_out/CMakeFiles --output-file coverage.info
+genhtml coverage.info --output-directory out
+xdg-open out/index.html
 ```
 
 ## 7.4 ld
@@ -2069,6 +2490,173 @@ cmake -B build \
       -DCMAKE_EXE_LINKER_FLAGS="-stdlib=libc++" \
       -DCMAKE_SHARED_LINKER_FLAGS="-stdlib=libc++"
 ```
+
+### 8.2.1 Code Coverage
+
+**Here's an example of using clang directly:**
+
+```sh
+cat > main.cpp << 'EOF'
+#include <iostream>
+
+void printMessage() {
+    std::cout << "Hello, World!" << std::endl;
+}
+
+void unusedFunction() {
+    std::cout << "This function is never called." << std::endl;
+}
+
+int main() {
+    printMessage();
+    return 0;
+}
+EOF
+
+clang -o main main.cpp -lstdc++ -std=gnu++17 -fprofile-instr-generate -fcoverage-mapping -O0 -g
+LLVM_PROFILE_FILE="coverage.profraw" ./main
+
+llvm-profdata merge -sparse coverage.profraw -o coverage.profdata
+llvm-cov show ./main \
+  -instr-profile=coverage.profdata \
+  -format=text
+```
+
+**Here's an example of using cmake:**
+
+```sh
+mkdir -p code_coverage_demo
+cd code_coverage_demo
+
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(code_coverage_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_C_COMPILER "clang")
+set(CMAKE_CXX_COMPILER "clang++")
+
+file(GLOB MY_PROJECT_SOURCES "*.cpp")
+add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
+
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+message(STATUS "Building with code coverage enabled")
+target_compile_options(${PROJECT_NAME} PRIVATE -fprofile-instr-generate -fcoverage-mapping -O0 -g)
+target_link_options(${PROJECT_NAME} PRIVATE -fprofile-instr-generate -fcoverage-mapping)
+EOF
+
+cat > code_coverage_demo.cpp << 'EOF'
+#include <iostream>
+
+void printMessage() {
+    std::cout << "Hello, World!" << std::endl;
+}
+
+void unusedFunction() {
+    std::cout << "This function is never called." << std::endl;
+}
+
+int main() {
+    printMessage();
+    return 0;
+}
+EOF
+
+cmake -B build
+cmake --build build
+LLVM_PROFILE_FILE="coverage.profraw" build/code_coverage_demo
+
+llvm-profdata merge -sparse coverage.profraw -o coverage.profdata
+llvm-cov show ./build/code_coverage_demo \
+  -instr-profile=coverage.profdata \
+  -format=text
+```
+
+#### 8.2.1.1 Trigger flush manually
+
+If a large-scale program using LLVM's code coverage tools (like llvm-profraw via instrumentation with `-fprofile-instr-generate`) crashes or cannot shut down gracefully, the `.profraw` data may be incomplete or not written at all. This happens because profile data is typically written on normal process termination.
+
+Solution: register a signal handler and invoke `__llvm_profile_write_file` manually.
+
+```sh
+mkdir -p code_coverage_manual_flush_demo
+cd code_coverage_manual_flush_demo
+
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(code_coverage_manual_flush_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_C_COMPILER "clang")
+set(CMAKE_CXX_COMPILER "clang++")
+
+file(GLOB MY_PROJECT_SOURCES "*.cpp")
+add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
+
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+message(STATUS "Building with code coverage enabled")
+target_compile_options(${PROJECT_NAME} PRIVATE -fprofile-instr-generate -fcoverage-mapping -O0 -g)
+target_link_options(${PROJECT_NAME} PRIVATE -fprofile-instr-generate -fcoverage-mapping)
+EOF
+
+cat > code_coverage_manual_flush_demo.cpp << 'EOF'
+#include <csignal>
+#include <iostream>
+#include <stdexcept>
+
+extern "C" int __llvm_profile_write_file(void);
+
+void signal_handler(int signum) {
+    std::cout << "Invoke __llvm_profile_write_file manually." << std::endl;
+    __llvm_profile_write_file(); // attempt to write coverage data
+    _exit(signum);               // avoid further cleanup that might hang
+}
+
+void setup_signal_handler() {
+    std::signal(SIGTERM, signal_handler);
+}
+
+void printMessage() {
+    std::cout << "Hello, World!" << std::endl;
+}
+
+struct Bar {
+    ~Bar() { throw std::runtime_error("Exception in destructor"); }
+};
+
+int main() {
+    Bar var;
+    setup_signal_handler();
+    printMessage();
+    sleep(3600);
+    return 0;
+}
+EOF
+
+cmake -B build
+cmake --build build
+LLVM_PROFILE_FILE="coverage.profraw" build/code_coverage_manual_flush_demo &
+
+sleep 1
+kill -15 $!
+
+llvm-profdata merge -sparse coverage.profraw -o coverage.profdata
+llvm-cov show ./build/code_coverage_manual_flush_demo \
+  -instr-profile=coverage.profdata \
+  -format=text
+```
+
+If you comment out `setup_signal_handler`, the size of `coverage.profraw` will be zero.
+
+#### 8.2.1.2 Tips
+
+1. How to disable generating `.profraw` file: `LLVM_PROFILE_FILE=/dev/null <binary> <args>`
 
 ## 8.3 clang-format
 
@@ -2330,56 +2918,11 @@ When interpreting compiler error messages, especially those involving template i
 
 In Summary: While the bottom-up approach is useful for quickly identifying the core error and the immediate lines of code causing it, you sometimes need to go top-down to fully understand the context and sequence of events leading to the error. With experience, you'll develop an intuition for quickly scanning and pinpointing the most relevant parts of such error messages.
 
-## 10.3 How to get coverage of code
-
-**Here's how it works: `gcov` determines which files to analyze for coverage information based on the profile data files (`*.gcda` and `*.gcno`) that are generated when you compile and run your program with the appropriate GCC flags (`-fprofile-arcs` and `-ftest-coverage`). Here's a breakdown of how `gcov` knows which files to load:**
-
-1. **Compilation and Execution:**
-    * When you compile your C/C++ program with GCC using `-fprofile-arcs` and `-ftest-coverage`, it produces two types of files for each source file:
-    * `*.gcno`: These are generated during the compilation. They contain information about the source code's structure (like basic blocks, branches, etc.).
-    * `*.gcda`: These are generated when the compiled program is run. They contain the actual coverage data, such as how many times each line of code was executed.
-1. **Locating Files:**
-    * When you invoke `gcov`, it looks for `.gcno` and `.gcda` files in the current directory by default. These files are named after the source files but with different extensions.
-    * For example, if your source file is `example.c`, `gcov` will look for `example.gcno` and `example.gcda` in the current directory.
-1. **Matching Source Files:**
-    * `gcov` uses the information in these files to match with the corresponding source file. It relies on the path and filename information stored in the `.gcno` and `.gcda` files to find the correct source file.
-    * If your source files are in a different directory, you may need to specify the path when running `gcov`, or run `gcov` from the directory containing the `.gcda` and `.gcno` files.
-1. **Generating the Report:**
-    * Once `gcov` has matched the `.gcno` and `.gcda` files with their corresponding source files, it processes these files to generate a coverage report. This report shows how many times each line in the source file was executed.
-1. **Manual Specification:**
-    * You can also manually specify which source files to generate reports for by passing their names as arguments to `gcov`.
-
-**Here's an example:**
-
-```cpp
-#include <iostream>
-
-void printMessage() {
-    std::cout << "Hello, World!" << std::endl;
-}
-
-void unusedFunction() {
-    std::cout << "This function is never called." << std::endl;
-}
-
-int main() {
-    printMessage();
-    return 0;
-}
-```
-
-```sh
-g++ --coverage -o example example.cpp
-./example
-gcov example.cpp
-cat example.cpp.gcov
-```
-
-## 10.4 How to check standard library search path when compiling
+## 10.3 How to check standard library search path when compiling
 
 Add `-v` option.
 
-## 10.5 ccache
+## 10.4 ccache
 
 CCache stores its compile cache in a directory specified by the `CCACHE_DIR` environment variable. By default, this directory is located at `~/.ccache` in the user's home directory. The cache directory contains various files and subdirectories that ccache uses to manage its cache of compiled objects.
 
@@ -2396,13 +2939,22 @@ export CMAKE_CXX_COMPILER_LAUNCHER=ccache
 * `ccache -s -v`: show summary of configuration and statistics counters in human-readable format (use `-v/--verbose` once or twice for more details).
 * `ccache --max-size=500G`
 
-## 10.6 Document
+## 10.5 Document
 
 1. [cpp reference](https://en.cppreference.com/w/)
 1. [cppman](https://github.com/aitjcize/cppman/)
     * 安装：`pip install cppman`
     * 示例：`cppman vector::begin`
     * 重建索引：`cppman -r`
+
+## 10.6 manpage
+
+```sh
+sudo apt install -y gcc-doc
+
+man gcc
+man g++
+```
 
 ## 10.7 Reference
 

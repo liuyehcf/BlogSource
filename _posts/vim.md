@@ -386,6 +386,7 @@ Record refers to a feature that allows you to record a sequence of keystrokes an
 * `:n`：编辑下一个文件
 * `:N`：编辑上一个文件
 * `:files`：列出这个vim打开的所有文件
+* `:file`：显示文件路径
 * **`:Vex`：打开目录**
 
 ## 2.9 Text Object
@@ -1690,7 +1691,10 @@ Home: [coc-java](https://github.com/search?q=coc-java)
     "java.format.enable": false,
     "java.maven.downloadSources": true,
     "java.saveActions.organizeImports": false,
-    "java.trace.server": "verbose"
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.trace.server": "verbose",
+    "java.home": "/usr/lib/jvm/java-17-oracle",
+    "java.debug.vimspector.profile": null
 }
 ```
 
@@ -1845,9 +1849,11 @@ call plug#end()
     "suggest.noselect": true,
     "inlayHint.display": false,
     "snippets.ultisnips.pythonPrompt": false,
+    "java.enabled": true,
     "java.format.enable": false,
     "java.maven.downloadSources": true,
     "java.saveActions.organizeImports": false,
+    "java.compile.nullAnalysis.mode": "automatic",
     "java.trace.server": "verbose",
     "java.home": "/usr/lib/jvm/java-17-oracle",
     "java.debug.vimspector.profile": null,

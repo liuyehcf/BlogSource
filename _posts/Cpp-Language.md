@@ -1120,31 +1120,31 @@ private:
 
 ### 3.2.1 inline
 
-[C++ 关键词：inline](https://zh.cppreference.com/w/cpp/keyword/inline)
+[C++ keyword: inline](https://en.cppreference.com/w/cpp/keyword/inline)
 
-* 在用于函数的声明说明符序列时，将函数声明为一个内联函数
-    * 整个定义都在`class/struct/union`的定义内且被附着到全局模块（C++20 起）的函数是隐式的内联函数，无论它是成员函数还是非成员`friend`函数
-    * `inline`关键词的本意是作为给优化器的指示器，以指示优先采用函数的内联替换而非进行函数调用，即并不执行将控制转移到函数体内的函数调用CPU指令，而是代之以执行函数体的一份副本而无需生成调用。这会避免函数调用的开销（传递实参及返回结果），但它可能导致更大的可执行文件，因为函数体必须被复制多次
-    * 因为关键词`inline`的含义是非强制的，编译器拥有对任何未标记为`inline`的函数使用内联替换的自由，和对任何标记为`inline`的函数生成函数调用的自由。这些优化选择不改变上述关于多个定义和共享静态变量的规则
-    * 声明有`constexpr`的函数是隐式的内联函数
-* 在用于具有静态存储期的变量（静态类成员或命名空间作用域变量）的声明说明符序列时，将变量声明为内联变量
-    * 声明为`constexpr`的静态成员变量（但不是命名空间作用域变量）是隐式的内联变量
+* When used in the declaration specifier sequence for functions, it declares the function as an inline function
+    * A complete definition within a `class/struct/union` that is attached to the global module (since C++20) is implicitly an inline function, whether it is a member function or a non-member `friend` function
+    * The original intent of the `inline` keyword was to serve as a hint to the optimizer to prefer inlining the function rather than invoking it through a function call—that is, instead of executing a CPU instruction that transfers control to the function body, the function body is copied in place without creating a call. This avoids function call overhead (passing arguments and returning results), but may lead to a larger executable since the function body must be duplicated multiple times
+    * Because the `inline` keyword is non-mandatory, the compiler has the freedom to inline any function not marked as `inline`, and to generate a function call for any function marked as `inline`. These optimization decisions do not affect the rules regarding multiple definitions and shared static variables mentioned above
+    * Functions declared with `constexpr` are implicitly inline functions
+* When used in the declaration specifier sequence for variables with static storage duration (static class members or namespace-scope variables), it declares the variable as an inline variable
+    * Static member variables declared as `constexpr` (but not namespace-scope variables) are implicitly inline variables
 
 ## 3.3 Type Length
 
 ### 3.3.1 Memory Alignment
 
-**内存对齐最最底层的原因是内存的IO是以`8`个字节`64bit`为单位进行的**
+**The most fundamental reason for memory alignment is that memory I/O is performed in units of `8` bytes, or `64 bits`.**
 
-假如你指定要获取的是`0x0001-0x0008`，也是8字节，但是不是0开头的，内存需要怎么工作呢？没有好办法，内存只好先工作一次把`0x0000-0x0007`取出来，然后再把`0x0008-0x0015`取出来，把两次的结果都返回给你。CPU和内存IO的硬件限制导致没办法一次跨在两个数据宽度中间进行IO。这样你的应用程序就会变慢，算是计算机因为你不懂内存对齐而给你的一点点惩罚
+Suppose you request to access memory from `0x0001-0x0008`, which is also 8 bytes but does not start at address 0. How does memory handle this? There’s no easy solution. The memory must first fetch `0x0000-0x0007`, then fetch `0x0008-0x0015`, and return the results of both operations to you. Due to hardware limitations of the CPU and memory I/O, it’s not possible to perform an I/O operation that spans across two data width boundaries. As a result, your application slows down — a small penalty imposed by the computer because you didn’t understand memory alignment.
 
-**内存对齐规则**
+**Memory Alignment Rules**
 
-1. **结构体第一个成员的偏移量`offset`为`0`，以后每个成员相对于结构体首地址的`offset`都是该成员大小与`有效对齐值`中较小那个的整数倍，如有需要编译器会在成员之间加上填充字节**
-1. **结构体的总大小为`有效对齐值`的整数倍，如有需要编译器会在最末一个成员之后加上填充字节**
-* **有效对齐值：是给定值`#pragma pack(n)`和结构体中最长数据类型长度中较小的那个。有效对齐值也叫对齐单位。gcc中默认`#pragma pack(4)`，可以通过预编译命令`#pragma pack(n)，n = 1,2,4,8,16`来改变这一系数**
+1. **The offset of the first member of a structure is `0`. For all subsequent members, the offset relative to the start address of the structure must be an integer multiple of the smaller of the member’s size and the `effective alignment value`. If necessary, the compiler will insert padding bytes between members.**
+2. **The total size of the structure must be an integer multiple of the `effective alignment value`. If necessary, the compiler will add padding bytes after the last member.**
+* **Effective alignment value: the smaller of the value specified by `#pragma pack(n)` and the size of the largest data type in the structure. This value is also called the alignment unit. In GCC, the default is `#pragma pack(4)`, and this value can be changed using the preprocessor directive `#pragma pack(n)`, where n can be `1`, `2`, `4`, `8`, or `16`.**
 
-**下面以一个例子来说明**
+**Let’s illustrate this with an example**
 
 ```cpp
 #include <iostream>
@@ -1197,35 +1197,35 @@ int main() {
 }
 ```
 
-**执行结果如下**
+**Execution results are as follows:**
 
-* 由于每个成员的offset必须是该成员与`有效对齐值`中较小的那个值的整数倍，下面称较小的这个值为`成员有效对齐值`
-* `Align1`：最长数据类型的长度是`1`，pack=`4`，因此，`有效对齐值`是`min(1, 4) = 1`
-    * 规则1：
-        * `f1`，第一个成员的`offset = 0`
-    * 规则2：
-        * 类型总长度为`1`，是`有效对齐值（1）`的整数倍
-* `Align2`：最长数据类型的长度是`2`，pack=`4`，因此，`有效对齐值`是`min(2, 4) = 2`
-    * 规则1：
-        * `f1`，第一个成员的`offset = 0`
-        * `f2`，类型长度为`2`，因此，`成员有效对齐值`是`min(2, 2) = 2`。`offset = 2`是`成员有效对齐值（2)`的整数倍
-    * 规则2：
-        * 类型总长度为`4`，是`有效对齐值（2）`的整数倍
-* `Align3`：最长数据类型的长度是`4`，pack=`4`，因此，`有效对齐值`是`min(4, 4) = 4`
-    * 规则1：
-        * `f1`，第一个成员的`offset = 0`
-        * `f2`，类型长度为`2`，因此，`成员有效对齐值`是`min(2, 4) = 2`。`offset = 2`是`成员有效对齐值（2)`的整数倍
-        * `f3`，类型长度为`4`，因此，`成员有效对齐值`是`min(4, 4) = 4`。`offset = 4`是`成员有效对齐值（4)`的整数倍
-    * 规则2：
-        * 类型总长度为`8`，是`有效对齐值（4）`的整数倍
-* `Align4`：最长数据类型的长度是`8`，pack=`4`，因此，`有效对齐值`是`min(8, 4) = 4`
-    * 规则1：
-        * `f1`，第一个成员的`offset = 0`
-        * `f2`，类型长度为`2`，因此，`成员有效对齐值`是`min(2, 4) = 2`。`offset = 2`是`成员有效对齐值（2)`的整数倍
-        * `f3`，类型长度为`4`，因此，`成员有效对齐值`是`min(4, 4) = 4`。`offset = 4`是`成员有效对齐值（4)`的整数倍
-        * `f4`，类型长度为`8`，因此，`成员有效对齐值`是`min(8, 4) = 4`。`offset = 8`是`成员有效对齐值（4)`的整数倍
-    * 规则2：
-        * 类型总长度为`16`，是`有效对齐值（4）`的整数倍
+* Since the offset of each member must be an integer multiple of the smaller of that member’s size and the `effective alignment value`, we’ll refer to this smaller value as the `member effective alignment value` below.
+* `Align1`: The longest data type has a length of `1`, and pack = `4`, so the `effective alignment value` is `min(1, 4) = 1`
+    * Rule 1:
+        * `f1`, the first member, has `offset = 0`
+    * Rule 2:
+        * The total type length is `1`, which is a multiple of the `effective alignment value (1)`
+* `Align2`: The longest data type has a length of `2`, and pack = `4`, so the `effective alignment value` is `min(2, 4) = 2`
+    * Rule 1:
+        * `f1`, the first member, has `offset = 0`
+        * `f2` has a type length of `2`, so its `member effective alignment value` is `min(2, 2) = 2`. `offset = 2` is a multiple of the `member effective alignment value (2)`
+    * Rule 2:
+        * The total type length is `4`, which is a multiple of the `effective alignment value (2)`
+* `Align3`: The longest data type has a length of `4`, and pack = `4`, so the `effective alignment value` is `min(4, 4) = 4`
+    * Rule 1:
+        * `f1`, the first member, has `offset = 0`
+        * `f2` has a type length of `2`, so its `member effective alignment value` is `min(2, 4) = 2`. `offset = 2` is a multiple of the `member effective alignment value (2)`
+        * `f3` has a type length of `4`, so its `member effective alignment value` is `min(4, 4) = 4`. `offset = 4` is a multiple of the `member effective alignment value (4)`
+    * Rule 2:
+        * The total type length is `8`, which is a multiple of the `effective alignment value (4)`
+* `Align4`: The longest data type has a length of `8`, and pack = `4`, so the `effective alignment value` is `min(8, 4) = 4`
+    * Rule 1:
+        * `f1`, the first member, has `offset = 0`
+        * `f2` has a type length of `2`, so its `member effective alignment value` is `min(2, 4) = 2`. `offset = 2` is a multiple of the `member effective alignment value (2)`
+        * `f3` has a type length of `4`, so its `member effective alignment value` is `min(4, 4) = 4`. `offset = 4` is a multiple of the `member effective alignment value (4)`
+        * `f4` has a type length of `8`, so its `member effective alignment value` is `min(8, 4) = 4`. `offset = 8` is a multiple of the `member effective alignment value (4)`
+    * Rule 2:
+        * The total type length is `16`, which is a multiple of the `effective alignment value (4)`
 
 ```
 Align1's size = 1
@@ -1249,14 +1249,14 @@ Align4's size = 16
 
 ### 3.3.2 sizeof
 
-**`sizeof`用于获取对象的内存大小**
+`sizeof` is used to query size of the object or type.
 
 * `sizeof(int32_t)`：4
 * `sizeof(char[2][2][2])`：8
 
 ### 3.3.3 alignof
 
-**`alignof`用于获取对象的有效对齐值。`alignas`用于设置有效对其值（不允许小于默认的有效对齐值）**
+**`alignof` is used to obtain the effective alignment value of an object. `alignas` is used to set the effective alignment value (it cannot be less than the default effective alignment value).**
 
 ```cpp
 #include <iostream>
@@ -1319,11 +1319,11 @@ sizeof(Foo6)=16, alignof(Foo6)=16
 
 ### 3.3.4 alignas
 
-`alignas`类型说明符是一种可移植的`C++`标准方法，用于指定变量和自定义类型的对齐方式，可以在定义 `class`、`struct`、`union`或声明变量时使用。如果遇到多个`alignas`说明符，编译器会选择最严格的那个（最大对齐值）
+The `alignas` type specifier is a portable C++ standard method used to specify the alignment of variables and user-defined types. It can be used when defining a `class`, `struct`, `union`, or when declaring a variable. If multiple `alignas` specifiers are encountered, the compiler will choose the strictest one (i.e., the largest alignment value).
 
-内存对齐可以使处理器更好地利用`cache`，包括减少`cache line`访问，以及避免多核一致性问题引发的 `cache miss`。具体来说，在多线程程序中，一种常用的优化手段是将需要高频并发访问的数据按`cache line`大小（通常为`64`字节）对齐。一方面，对于小于`64`字节的数据可以做到只触及一个`cache line`，减少访存次数；另一方面，相当于独占了整个`cache line`，避免其他数据可能修改同一`cache line`导致其他核`cache miss`的开销
+Memory alignment allows the processor to better utilize the cache, including reducing `cache line` accesses and avoiding `cache miss` penalties caused by multi-core consistency issues. Specifically, in multithreaded programs, a common optimization technique is to align frequently accessed concurrent data according to the `cache line` size (usually `64` bytes). On one hand, for data smaller than `64` bytes, this ensures that only one `cache line` is touched, reducing memory access. On the other hand, it effectively dedicates an entire `cache line` to that data, preventing other data from sharing the same `cache line` and causing `cache miss` in other cores due to potential modifications.
 
-**数组：对数组使用`alignas`，对齐的是数组的首地址，而不是每个数组元素。也就是说，下面这个数组并不是每个`int`都占`64`字节。如果一定要让每个元素都对齐，可以定义一个`struct`，如`int_align_64`**
+**Arrays: When `alignas` is applied to an array, it aligns the starting address of the array, not each individual array element. That means the following array does not allocate `64` bytes for each `int`. To align each element, you can define a `struct`, such as `int_align_64`.**
 
 ```cpp
 #include <iostream>
