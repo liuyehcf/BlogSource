@@ -36,6 +36,18 @@ systemctl start docker
 
 [Install Docker Engine on Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
 
+## 1.3 MacOS (Apple Chip)
+
+Colima runs a minimal Linux VM using Lima under the hood. Docker Engine runs inside that VM. The Docker CLI talks to it through a Unix socket just like Docker Desktop would.
+
+```sh
+brew install docker
+brew install colima
+colima start
+# colima start --memory 4 --cpu 2 --disk 60
+docker version
+```
+
 # 2 Container Lifecycle
 
 ![container_lifecycle](/images/Docker-Basics/container_lifecycle.webp)

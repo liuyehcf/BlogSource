@@ -2520,6 +2520,10 @@ llvm-profdata merge -sparse coverage.profraw -o coverage.profdata
 llvm-cov show ./main \
   -instr-profile=coverage.profdata \
   -format=text
+llvm-cov show ./main \
+  -instr-profile=coverage.profdata \
+  -format=html -output-dir=coverage_html
+xdg-open coverage_html/index.html
 ```
 
 **Here's an example of using cmake:**
@@ -2573,6 +2577,10 @@ llvm-profdata merge -sparse coverage.profraw -o coverage.profdata
 llvm-cov show ./build/code_coverage_demo \
   -instr-profile=coverage.profdata \
   -format=text
+llvm-cov show ./build/code_coverage_demo \
+  -instr-profile=coverage.profdata \
+  -format=html -output-dir=coverage_html
+xdg-open coverage_html/index.html
 ```
 
 #### 8.2.1.1 Trigger flush manually
@@ -2650,11 +2658,87 @@ llvm-profdata merge -sparse coverage.profraw -o coverage.profdata
 llvm-cov show ./build/code_coverage_manual_flush_demo \
   -instr-profile=coverage.profdata \
   -format=text
+llvm-cov show ./build/code_coverage_manual_flush_demo \
+  -instr-profile=coverage.profdata \
+  -format=html -output-dir=coverage_html
+xdg-open coverage_html/index.html
 ```
 
 If you comment out `setup_signal_handler`, the size of `coverage.profraw` will be zero.
 
-#### 8.2.1.2 Tips
+#### 8.2.1.2 Merge Coverage
+
+LLVM code coverage (using tools like `llvm-cov` and `llvm-profdata`) natively supports merging coverage data from multiple runs.
+
+```sh
+mkdir -p code_merge_multi_coverage_demo
+cd code_merge_multi_coverage_demo
+
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(code_merge_multi_coverage_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_C_COMPILER "clang")
+set(CMAKE_CXX_COMPILER "clang++")
+
+file(GLOB MY_PROJECT_SOURCES "*.cpp")
+add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
+
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+message(STATUS "Building with code coverage enabled")
+target_compile_options(${PROJECT_NAME} PRIVATE -fprofile-instr-generate -fcoverage-mapping -O0 -g)
+target_link_options(${PROJECT_NAME} PRIVATE -fprofile-instr-generate -fcoverage-mapping)
+EOF
+
+cat > code_merge_multi_coverage_demo.cpp << 'EOF'
+#include <iostream>
+
+void printMessage1() {
+    std::cout << "Hello, World (1)!" << std::endl;
+}
+
+void printMessage2() {
+    std::cout << "Hello, World (2)!" << std::endl;
+}
+
+int main(int argc, char* argv[]) {
+    if (argc > 1) {
+        if (std::string(argv[1]) == "1") {
+            printMessage1();
+        } else if (std::string(argv[1]) == "2") {
+            printMessage2();
+        } else {
+            std::cout << "Unknown argument: " << argv[1] << std::endl;
+        }
+    } else {
+        std::cout << "No arguments provided." << std::endl;
+    }
+    return 0;
+}
+EOF
+
+cmake -B build
+cmake --build build
+LLVM_PROFILE_FILE="coverage_0.profraw" build/code_merge_multi_coverage_demo
+LLVM_PROFILE_FILE="coverage_1.profraw" build/code_merge_multi_coverage_demo 1
+LLVM_PROFILE_FILE="coverage_2.profraw" build/code_merge_multi_coverage_demo 2
+LLVM_PROFILE_FILE="coverage_3.profraw" build/code_merge_multi_coverage_demo 3
+
+llvm-profdata merge -sparse coverage_0.profraw coverage_1.profraw coverage_2.profraw coverage_3.profraw -o coverage.profdata
+llvm-cov show ./build/code_merge_multi_coverage_demo \
+  -instr-profile=coverage.profdata \
+  -format=text
+llvm-cov show ./build/code_merge_multi_coverage_demo \
+  -instr-profile=coverage.profdata \
+  -format=html -output-dir=coverage_html
+xdg-open coverage_html/index.html
+```
+
+#### 8.2.1.3 Tips
 
 1. How to disable generating `.profraw` file: `LLVM_PROFILE_FILE=/dev/null <binary> <args>`
 
