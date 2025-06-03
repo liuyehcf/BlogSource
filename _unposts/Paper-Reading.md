@@ -267,7 +267,7 @@
         * `client`可以控制`SSTable`中的某个`locality group`是否需要压缩，若需要压缩，可以指定压缩算法
         * 尽管独立压缩会增加复杂度以及降低空间利用率。但是某一部分不压缩的数据，可以提高读取的效率
         * 大部分的`client`会采用`two-pass`的压缩方案
-            * `first pass`：采用`Bentley and McIlroy’s scheme`，对长`string`进行压缩
+            * `first pass`：采用`Bentley and McIlroy's scheme`，对长`string`进行压缩
             * `second pass`：采用快速压缩算法，在数据的`16 KB`小窗口中查找重复项
         * `two-pass`不仅及其高效，而且压缩效率很高，能够达到`10-1`
     * `Caching for read performance`

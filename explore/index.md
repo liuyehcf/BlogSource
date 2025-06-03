@@ -133,7 +133,7 @@ date: 2018-02-05 09:25:59
 
 ## 6.3 Other
 
-* [Meaning of ‘i’,‘g’ and ‘c’ in Oracle Database Version](https://www.linkedin.com/pulse/meaning-ig-c-oracle-database-version-piyush-prakash)
+* [Meaning of 'i','g' and 'c' in Oracle Database Version](https://www.linkedin.com/pulse/meaning-ig-c-oracle-database-version-piyush-prakash)
 * [数据库内核杂谈](https://www.infoq.cn/theme/46)
 * [Develop your own Database](https://hpi.de/plattner/teaching/archive/winter-term-201819/develop-your-own-database.html)
 * [ClickHouse/ClickBench](https://github.com/ClickHouse/ClickBench)

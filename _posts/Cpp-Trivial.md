@@ -182,7 +182,7 @@ During compilation, the order in which the linker (such as GNU's `ld`) searches 
 
 ### 2.4.2 Runtime
 
-The runtime search order for shared libraries (.so files) on Unix-like systems is determined by several factors and environment settings. Here’s a general overview of how the runtime search order works: (**Refer to `man ld.so` for details**)
+The runtime search order for shared libraries (.so files) on Unix-like systems is determined by several factors and environment settings. Here's a general overview of how the runtime search order works: (**Refer to `man ld.so` for details**)
 
 * **`RPATH` and `RUNPATH`**: When a binary is compiled, it can be linked with shared libraries using `-rpath` or `-runpath` linker options. These options embed paths directly into the binary where the dynamic linker (`ld.so` or similar) should look for shared libraries. `RPATH` is checked first, but if `RUNPATH` is also specified, it takes precedence over `RPATH` when the dynamic linker is configured to use `DT_RUNPATH` entries (a newer feature).
     * How to check the runpath of a binary: `readelf -d <binary> | grep 'RPATH\|RUNPATH'`
@@ -451,7 +451,7 @@ Some commonly used functions for handling C++ ABI (Application Binary Interface)
 
 摘自[What is C++ ABI?](https://www.quora.com/What-is-C-ABI)
 
-> Often, a platform will specify a “base ABI” that specifies how to use that platform’s basic services and that is often done in terms of C language capabilities. However, other programming languages like C++ may require support for additional mechanisms. That’s how you get to language-specific ABIs, including a variety of C++ ABIs. Among the concerns of a C++ ABI are the following:
+> Often, a platform will specify a “base ABI” that specifies how to use that platform's basic services and that is often done in terms of C language capabilities. However, other programming languages like C++ may require support for additional mechanisms. That's how you get to language-specific ABIs, including a variety of C++ ABIs. Among the concerns of a C++ ABI are the following:
 > * How are classes with virtual functions represented? A C++ ABI will just about always extend the C layout rules for this, and specify implicit pointers in the objects that point to static tables (“vtables”) that themselves point to virtual functions.
 > * How are base classes (including virtual base classes) laid out in class objects? Again, this usually starts with the C struct layout rules.
 > * How are closure classes (for lambdas) organized?
@@ -763,7 +763,7 @@ pprof --svg ./main /tmp/test-profile.0001.heap > heap.svg
     * Meaning: The memory used internally by jemalloc for bookkeeping and managing the heap.
     * Usage: Understanding this helps in recognizing the overhead caused by the allocator itself. This includes data structures jemalloc uses to manage free and allocated memory blocks.
 * **`Resident Memory (resident)`:**
-    * Meaning: The total amount of memory currently mapped into the process’s address space.
+    * Meaning: The total amount of memory currently mapped into the process's address space.
     * Usage: This metric provides insight into the actual physical memory usage of your application, including any memory mapped but not currently in active use.
 * **`Mapped Memory (mapped)`:**
     * Meaning: The total amount of memory mapped from the operating system.
@@ -1740,7 +1740,7 @@ Post Settings: (Use `sudo ldconfig -p | grep stdc++` to check the default path o
 
 **Issue:**
 
-* `error: ‘fenv_t’ has not been declared in ‘::’`: this error message occur when I'm build gcc-14 inside the docker container of `centos:7.9.2009`
+* `error: 'fenv_t' has not been declared in '::'`: this error message occur when I'm build gcc-14 inside the docker container of `centos:7.9.2009`
     * [Bug 80196 - fenv_t not declared](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=80196)
     * [Bug 100017 - [11 regression] error: 'fenv_t' has not been declared in '::' -- canadian compilation fails](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=100017)
         * Solution: [Comment 12](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=100017#c12)
@@ -1962,7 +1962,7 @@ genhtml coverage.info --output-directory out
 xdg-open out/index.html
 ```
 
-#### 7.3.2.1 Disdavantages
+#### 7.3.2.1 Disadvantages
 
 1. `.gcda` Files are only written on graceful exit.
     * If the program crashes or is killed abruptly (e.g., kill -9), the `.gcda` files might be missing or incomplete.
@@ -1991,7 +1991,7 @@ xdg-open out/index.html
 
 #### 7.3.2.2 Difference between gcc compilation and CMake compilation
 
-When you compile a source file using gcc with coverage flags:
+**When you compile a source file using gcc with coverage flags:**
 
 ```sh
 gcc -fprofile-arcs -ftest-coverage -O0 main.cpp -o main
@@ -2007,9 +2007,7 @@ main.gcno  # at compile time
 main.gcda  # after running the program
 ```
 
----
-
-When compiling the same file using CMake, it produces coverage files like:
+**When compiling the same file using CMake, it produces coverage files like:**
 
 * Note the difference: the filenames now include `.cpp` as part of the name, like `main.cpp.gcda`.
 * This is conflict with the way gcov works.
@@ -2017,6 +2015,12 @@ When compiling the same file using CMake, it produces coverage files like:
 ```
 CMakeFiles/myapp.dir/src/main.cpp.gcno
 CMakeFiles/myapp.dir/src/main.cpp.gcda
+```
+
+**Cmake provides an option `CMAKE_CXX_OUTPUT_EXTENSION_REPLACE` that can eliminate this difference:**
+
+```cmake
+set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE ON)
 ```
 
 **Here's an example of using cmake:**
@@ -2034,6 +2038,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_C_COMPILER "gcc")
 set(CMAKE_CXX_COMPILER "g++")
+set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE ON)
 
 file(GLOB MY_PROJECT_SOURCES "*.cpp")
 add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
@@ -2067,27 +2072,10 @@ cmake -B build
 cmake --build build
 build/code_coverage_demo
 
-gcda_files=( $(find build -name "*.gcda") )
-gcno_files=( $(find build -name "*.gcno") )
-for gcda_file in ${gcda_files[@]}
-do
-    new_gcda_file=${gcda_file%.*} # remove .gcda
-    new_gcda_file=${new_gcda_file%.*} # remove .cpp
-    new_gcda_file="${new_gcda_file}.gcda" # append .gcda
-    mv ${gcda_file} ${new_gcda_file}
-done
-for gcno_file in ${gcno_files[@]}
-do
-    new_gcno_file=${gcno_file%.*} # remove .gcno
-    new_gcno_file=${new_gcno_file%.*} # remove .cpp
-    new_gcno_file="${new_gcno_file}.gcno" # append .gcno
-    mv ${gcno_file} ${new_gcno_file}
-done
-cd build/CMakeFiles/code_coverage_demo.dir
-gcov code_coverage_demo.cpp
-cat code_coverage_demo.cpp.gcov
+# Use low level tools gcov
+gcov -o build/CMakeFiles/code_coverage_demo.dir --stdout code_coverage_demo.cpp
 
-cd -
+# Use high level tools lcov
 lcov --capture --directory build/CMakeFiles --output-file coverage.info
 genhtml coverage.info --output-directory out
 xdg-open out/index.html
@@ -2110,6 +2098,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_C_COMPILER "gcc")
 set(CMAKE_CXX_COMPILER "g++")
+set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE ON)
 
 file(GLOB MY_PROJECT_SOURCES "*.cpp")
 add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
@@ -2163,27 +2152,10 @@ build/code_coverage_manual_flush_demo &
 sleep 1
 kill -15 $!
 
-gcda_files=( $(find build -name "*.gcda") )
-gcno_files=( $(find build -name "*.gcno") )
-for gcda_file in ${gcda_files[@]}
-do
-    new_gcda_file=${gcda_file%.*} # remove .gcda
-    new_gcda_file=${new_gcda_file%.*} # remove .cpp
-    new_gcda_file="${new_gcda_file}.gcda" # append .gcda
-    mv ${gcda_file} ${new_gcda_file}
-done
-for gcno_file in ${gcno_files[@]}
-do
-    new_gcno_file=${gcno_file%.*} # remove .gcno
-    new_gcno_file=${new_gcno_file%.*} # remove .cpp
-    new_gcno_file="${new_gcno_file}.gcno" # append .gcno
-    mv ${gcno_file} ${new_gcno_file}
-done
-cd build/CMakeFiles/code_coverage_manual_flush_demo.dir
-gcov code_coverage_manual_flush_demo.cpp
-cat code_coverage_manual_flush_demo.cpp.gcov
+# Use low level tools gcov
+gcov -o build/CMakeFiles/code_coverage_manual_flush_demo.dir --stdout code_coverage_manual_flush_demo.cpp
 
-cd -
+# Use high level tools lcov
 lcov --capture --directory build/CMakeFiles --output-file coverage.info
 genhtml coverage.info --output-directory out
 xdg-open out/index.html
@@ -2206,6 +2178,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_C_COMPILER "gcc")
 set(CMAKE_CXX_COMPILER "g++")
+set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE ON)
 
 file(GLOB MY_PROJECT_SOURCES "*.cpp")
 add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
@@ -2243,32 +2216,18 @@ base_path=${base_path%build/CMakeFiles}
 stip_level=$(echo "${base_path}" | tr -cd '/' | wc -c)
 GCOV_PREFIX=./gcov_out GCOV_PREFIX_STRIP=${stip_level} build/code_coverage_customized_directory_demo
 
-gcda_files=( $(find gcov_out -name "*.gcda") )
+# copy .gcno files to gcov_out directory
 gcno_files=( $(find build -name "*.gcno") )
-for gcda_file in ${gcda_files[@]}
-do
-    new_gcda_file=${gcda_file%.*} # remove .gcda
-    new_gcda_file=${new_gcda_file%.*} # remove .cpp
-    new_gcda_file="${new_gcda_file}.gcda" # append .gcda
-    mv ${gcda_file} ${new_gcda_file}
-done
 for gcno_file in ${gcno_files[@]}
 do
-    new_gcno_file=${gcno_file%.*} # remove .gcno
-    new_gcno_file=${new_gcno_file%.*} # remove .cpp
-    new_gcno_file="${new_gcno_file}.gcno" # append .gcno
-    mv ${gcno_file} ${new_gcno_file}
-
-    # copy to gcov_out directory
-    copy_new_gcno_file=${new_gcno_file#build/}
-    copy_new_gcno_file="gcov_out/${copy_new_gcno_file}"
-    cp -f ${new_gcno_file} ${copy_new_gcno_file}
+    copy_gcno_file=${gcno_file#build/}
+    copy_gcno_file="gcov_out/${copy_gcno_file}"
+    cp -f ${gcno_file} ${copy_gcno_file}
 done
-cd gcov_out/CMakeFiles/code_coverage_customized_directory_demo.dir
-gcov code_coverage_customized_directory_demo.cpp
-cat code_coverage_customized_directory_demo.cpp.gcov
+# Use low level tools gcov
+gcov -o gcov_out/CMakeFiles/code_coverage_customized_directory_demo.dir --stdout code_coverage_customized_directory_demo.cpp
 
-cd -
+# Use high level tools lcov
 lcov --capture --directory gcov_out/CMakeFiles --output-file coverage.info
 genhtml coverage.info --output-directory out
 xdg-open out/index.html

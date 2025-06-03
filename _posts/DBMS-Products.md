@@ -135,7 +135,7 @@ Forked from ClickHouse
 **博客&文章：**
 
 * [DuckDB News](https://duckdb.org/news/)
-    * [Fastest table sort in the West - Redesigning DuckDB’s sort](https://duckdb.org/2021/08/27/external-sorting.html)
+    * [Fastest table sort in the West - Redesigning DuckDB's sort](https://duckdb.org/2021/08/27/external-sorting.html)
 
 # 7 Gbase
 

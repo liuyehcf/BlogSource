@@ -1136,15 +1136,15 @@ private:
 
 **The most fundamental reason for memory alignment is that memory I/O is performed in units of `8` bytes, or `64 bits`.**
 
-Suppose you request to access memory from `0x0001-0x0008`, which is also 8 bytes but does not start at address 0. How does memory handle this? There’s no easy solution. The memory must first fetch `0x0000-0x0007`, then fetch `0x0008-0x0015`, and return the results of both operations to you. Due to hardware limitations of the CPU and memory I/O, it’s not possible to perform an I/O operation that spans across two data width boundaries. As a result, your application slows down — a small penalty imposed by the computer because you didn’t understand memory alignment.
+Suppose you request to access memory from `0x0001-0x0008`, which is also 8 bytes but does not start at address 0. How does memory handle this? There's no easy solution. The memory must first fetch `0x0000-0x0007`, then fetch `0x0008-0x0015`, and return the results of both operations to you. Due to hardware limitations of the CPU and memory I/O, it's not possible to perform an I/O operation that spans across two data width boundaries. As a result, your application slows down — a small penalty imposed by the computer because you didn't understand memory alignment.
 
 **Memory Alignment Rules**
 
-1. **The offset of the first member of a structure is `0`. For all subsequent members, the offset relative to the start address of the structure must be an integer multiple of the smaller of the member’s size and the `effective alignment value`. If necessary, the compiler will insert padding bytes between members.**
+1. **The offset of the first member of a structure is `0`. For all subsequent members, the offset relative to the start address of the structure must be an integer multiple of the smaller of the member's size and the `effective alignment value`. If necessary, the compiler will insert padding bytes between members.**
 2. **The total size of the structure must be an integer multiple of the `effective alignment value`. If necessary, the compiler will add padding bytes after the last member.**
 * **Effective alignment value: the smaller of the value specified by `#pragma pack(n)` and the size of the largest data type in the structure. This value is also called the alignment unit. In GCC, the default is `#pragma pack(4)`, and this value can be changed using the preprocessor directive `#pragma pack(n)`, where n can be `1`, `2`, `4`, `8`, or `16`.**
 
-**Let’s illustrate this with an example**
+**Let's illustrate this with an example**
 
 ```cpp
 #include <iostream>
@@ -1199,7 +1199,7 @@ int main() {
 
 **Execution results are as follows:**
 
-* Since the offset of each member must be an integer multiple of the smaller of that member’s size and the `effective alignment value`, we’ll refer to this smaller value as the `member effective alignment value` below.
+* Since the offset of each member must be an integer multiple of the smaller of that member's size and the `effective alignment value`, we'll refer to this smaller value as the `member effective alignment value` below.
 * `Align1`: The longest data type has a length of `1`, and pack = `4`, so the `effective alignment value` is `min(1, 4) = 1`
     * Rule 1:
         * `f1`, the first member, has `offset = 0`

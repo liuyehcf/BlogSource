@@ -168,7 +168,7 @@ Spring Cloud为开发人员提供了快速构建分布式系统中一些常见�
 
 # 17 Spring Cloud Vault
 
-> Spring Cloud Vault Config provides client-side support for externalized configuration in a distributed system. With HashiCorp’s Vault you have a central place to manage external secret properties for applications across all environments. Vault can manage static and dynamic secrets such as username/password for remote applications/resources and provide credentials for external services such as MySQL, PostgreSQL, Apache Cassandra, MongoDB, Consul, AWS and more.
+> Spring Cloud Vault Config provides client-side support for externalized configuration in a distributed system. With HashiCorp's Vault you have a central place to manage external secret properties for applications across all environments. Vault can manage static and dynamic secrets such as username/password for remote applications/resources and provide credentials for external services such as MySQL, PostgreSQL, Apache Cassandra, MongoDB, Consul, AWS and more.
 
 # 18 Spring Cloud Gateway
 

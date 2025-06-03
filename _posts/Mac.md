@@ -137,7 +137,7 @@ brew list <software>
 
 brew info <software>
 
-# Display Homebrew’s install path
+# Display Homebrew's install path
 brew --prefix <software>
 ```
 

@@ -1164,7 +1164,7 @@ my $results = {
 ### 3.5.2 显式列表上下文
 
 ```perl
-# It’s semantically equivalent to assigning the first item in 
+# It's semantically equivalent to assigning the first item in 
 # the list to a scalar and assigning the rest of the list to a temporary array, and then throwing away the array
 my ( $single_element ) = find_chores();
 ```
@@ -4102,7 +4102,7 @@ sub erupt_volcano :ScienceProject { ... }
 
 **语言设计哲学：**
 
-1. `TIMTOWTDI`：There’s more than one way to do it!
+1. `TIMTOWTDI`：There's more than one way to do it!
 
 **工具：**
 
@@ -4151,7 +4151,7 @@ sub erupt_volcano :ScienceProject { ... }
 1. `If you must use $_ rather than a named variable, make the topic variable lexical with my $_:` - P29
 1. `Given/When` - P33
 1. `Scalars may be lexical, package, or global (see Global Variables, page 153) variables.` - P35
-1. `Reset a hash’s iterator with the use of keys or values in void context` - P43
+1. `Reset a hash's iterator with the use of keys or values in void context` - P43
 1. `if your cached value evaluates to false in a boolean context, use the defined-or assignment operator (//=) instead` - P46
 1. `Filehandle References` - P54
 1. `Dualvars` - P48

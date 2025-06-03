@@ -1902,7 +1902,7 @@ tcpdump是通过libpcap来抓取报文的，libpcap在不同平台有不同的�
 
 ## 5.4 参考
 
-* [What’s the Difference Between Hubs, Switches & Bridges?](https://www.globalknowledge.com/us-en/resources/resource-library/articles/what-s-the-difference-between-hubs-switches-bridges/)
+* [What's the Difference Between Hubs, Switches & Bridges?](https://www.globalknowledge.com/us-en/resources/resource-library/articles/what-s-the-difference-between-hubs-switches-bridges/)
 * [集线器、交换机、网桥区别](https://blog.csdn.net/dataiyangu/article/details/82496340)
 
 # 6 虚拟机的网络模式

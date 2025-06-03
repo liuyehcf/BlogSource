@@ -495,5 +495,5 @@
 
 1. Data Cache misses per 1000 instructions comparing LRU, Random, FIFO replacement for several sizes and associativities.
 1. In order to accomplish this, a series of trade-offs have to be balanced.
-1. A DBMS’s process model defines how the system is architected to support concurrent requests from a multi-user application
+1. A DBMS's process model defines how the system is architected to support concurrent requests from a multi-user application
 1. credits both accounts with 6% interest

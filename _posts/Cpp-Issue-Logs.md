@@ -337,4 +337,4 @@ cat[1]    3499967 IOT instruction (core dumped)  ./main
 
 # 7 FAQ
 
-1. `as ‘this’ argument discards qualifiers [-fpermissive]`: Maybe try to conver a const value to a non-const value
+1. `as 'this' argument discards qualifiers [-fpermissive]`: Maybe try to conver a const value to a non-const value

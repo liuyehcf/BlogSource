@@ -48,6 +48,21 @@ colima start
 docker version
 ```
 
+### 1.3.1 colima
+
+Colima (short for Container on Lima) is a fast, lightweight Docker and Kubernetes runtime for macOS and Linux that provides a Docker-compatible environment using a virtual machine under the hood — specifically Lima (Linux virtual machines).
+
+It's often used as a drop-in replacement for Docker Desktop — especially after Docker Desktop introduced licensing changes in 2022.
+
+**Commands:**
+
+* `colima status`
+* `colima list`
+* `colima ssh`
+* `colima start --cpu 6 --memory 8 --disk 100`
+* `colima stop`
+* `colima start --edit`
+
 # 2 Container Lifecycle
 
 ![container_lifecycle](/images/Docker-Basics/container_lifecycle.webp)
@@ -540,6 +555,11 @@ docker run --user $(id -u):$(id -g) -v /etc/passwd:/etc/passwd
 ```sh
 docker network inspect <ns-name>
 ```
+
+## 7.12 Config Path
+
+1. Client: `~/.docker/config.json`
+1. Daemon: `/etc/docker/daemon.json`
 
 # 8 FAQ
 

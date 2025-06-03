@@ -296,7 +296,7 @@ https://github.com/StarRocks/starrocks/pull/7649
 **Tools:**
 
 * `memcheck`: Detects memory-related errors.
-* `cachegrind`: Cachegrind is a Valgrind tool used for profiling programs to analyze cache performance and identify bottlenecks in code. It simulates how your code uses the CPU’s cache hierarchy and memory, helping you optimize code by identifying areas with inefficient memory usage or poor cache locality.
+* `cachegrind`: Cachegrind is a Valgrind tool used for profiling programs to analyze cache performance and identify bottlenecks in code. It simulates how your code uses the CPU's cache hierarchy and memory, helping you optimize code by identifying areas with inefficient memory usage or poor cache locality.
 * `callgrind`: Profiles function calls and CPU performance.
 * `helgrind`: Detects data races and threading bugs.
 * `drd`: Analyzes threading issues, similar to Helgrind.
