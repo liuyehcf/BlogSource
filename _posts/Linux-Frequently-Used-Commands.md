@@ -17,10 +17,10 @@ categories:
 
 ## 1.1 lsb_release
 
-查看发行版信息（lsb, Linux Standard Base），其他查看发行版的方式还包括：
+This command is used to view distribution information (lsb, Linux Standard Base). Other ways to check the distribution include:
 
-1. `uname -r`：内核版本号
-1. `/etc/*-release`，包括
+1. `uname -r`: Kernel version number  
+1. `/etc/*-release`, including:
     * `/etc/os-release`
     * `/etc/centos-release`
     * `/etc/debian_version`
@@ -34,15 +34,15 @@ categories:
 
 **Options:**
 
-* `-a, --all`：以如下次序输出所有信息。其中若`-p`和`-i`的探测结果不可知则被省略：
-* `-s, --kernel-name`：输出内核名称
-* `-n, --nodename`：输出网络节点上的主机名
-* `-r, --kernel-release`：输出内核发行号
-* `-v, --kernel-version`：输出内核版本
-* `-m, --machine`：输出主机的硬件架构名称
-* `-p, --processor`：输出处理器类型或"unknown"
-* `-i, --hardware-platform`：输出硬件平台或"unknown"
-* `-o, --operating-system`：输出操作系统名称
+* `-a, --all`
+* `-s, --kernel-name`
+* `-n, --nodename`
+* `-r, --kernel-release`
+* `-v, --kernel-version`
+* `-m, --machine`
+* `-p, --processor`
+* `-i, --hardware-platform`
+* `-o, --operating-system`
 
 **Examples:**
 
@@ -59,17 +59,17 @@ categories:
 
 ## 1.4 systemd-detect-virt
 
-用于判断当前机器是物理机还是虚拟机
+This command is used to determine whether the current machine is a physical machine or a virtual machine
 
 **Examples:**
 
 * `systemd-detect-virt`
-    * `none`：物理机
-    * `qemu/kvm/...`：虚拟机
+    * `none`: Physical machine
+    * `qemu/kvm/...`: Virtual machine
 
 ## 1.5 demsg
 
-kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及查看信息，可利用`dmesg`来查看。开机信息亦保存在`/var/log`目录中，名称为dmesg的文件里
+The kernel stores boot information in the `ring buffer`. If you don't have time to view the information during boot, you can use `dmesg` to check it. Boot information is also saved in the `/var/log` directory, in a file named dmesg.
 
 **Examples:**
 
@@ -93,15 +93,15 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 
 ## 1.7 man
 
-* `man 1`：标准Linux命令
-* `man 2`：系统调用
-* `man 3`：库函数
-* `man 4`：设备说明
-* `man 5`：文件格式
-* `man 6`：游戏娱乐
-* `man 7`：杂项
-* `man 8`：系统管理员命令
-* `man 9`：常规内核文件
+* `man 1`: Standard Linux commands  
+* `man 2`: System calls  
+* `man 3`: Library functions  
+* `man 4`: Device descriptions  
+* `man 5`: File formats  
+* `man 6`: Games and entertainment  
+* `man 7`: Miscellaneous  
+* `man 8`: System administration commands  
+* `man 9`: Kernel routines
 
 ## 1.8 last
 
@@ -111,7 +111,7 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 
 ## 1.9 who
 
-该命令用于查看当前谁登录了系统，并且正在做什么事情
+This command is used to see who is currently logged into the system and what they are doing.
 
 **Examples:**
 
@@ -120,7 +120,7 @@ kernel会将开机信息存储在`ring buffer`中。您若是开机时来不及�
 
 ## 1.10 w
 
-该命令用于查看当前谁登录了系统，并且正在做什么事情，比`who`更强大一点
+This command is used to see who is currently logged into the system and what they are doing. It is slightly more powerful than `who`.
 
 **Examples:**
 
@@ -180,37 +180,37 @@ The command stat is used to display file or file system status.
 
 **Options:**
 
-* `-g`：指定用户组
-* `-G`：附加的用户组
-* `-d`：指定用户目录
-* `-m`：自动创建用户目录
-* `-s`：指定shell
+* `-g`: Specify the user group  
+* `-G`: Additional user groups  
+* `-d`: Specify the user home directory  
+* `-m`: Automatically create the user home directory  
+* `-s`: Specify the shell
 
 **Examples:**
 
 * `useradd test -g wheel -G wheel -m -s /bin/bash`
 * `useradd test -d /data/test -s /bin/bash`
 
-**`useradd`在创建账号时执行的步骤**
+**`useradd` steps when creating an account**
 
-1. 新建所需要的用户组：`/etc/group`
-1. 将`/etc/group`与`/etc/gshadow`同步：`grpconv`
-1. 新建账号的各个属性：`/etc/passwd`
-1. 将`/etc/passwd`与`/etc/shadow`同步：`pwconv`
-1. 新建该账号的密码，`passwd <name>`
-1. 新建用户主文件夹：`cp -a /etc/sekl /home/<name>`
-1. 更改用户文件夹的属性：`chown -R <group>/home/<name>`
+1. Create the required user group: `/etc/group`  
+1. Synchronize `/etc/group` with `/etc/gshadow`: `grpconv`  
+1. Set various properties for the new account: `/etc/passwd`  
+1. Synchronize `/etc/passwd` with `/etc/shadow`: `pwconv`  
+1. Set the password for the account: `passwd <name>`  
+1. Create the user's home directory: `cp -a /etc/skel /home/<name>`  
+1. Change the ownership of the user's home directory: `chown -R <group> /home/<name>`
 
 ### 1.17.1 Migrate User Directory
 
 ```sh
-# 拷贝数据
+# copy
 rsync -avzP <old_dir> <new_dir>
 
-# 切换到root
+# switch to root
 sudo su
 
-# 更新用户目录
+# update user's home directory
 usermod -d <new_dir> <username>
 ```
 
@@ -218,7 +218,7 @@ usermod -d <new_dir> <username>
 
 **Options:**
 
-* `-r`：删除用户主目录
+* `-r`: Delete the user's home directory
 
 **Examples:**
 
@@ -228,23 +228,23 @@ usermod -d <new_dir> <username>
 
 **Options:**
 
-* `-d`：修改用户目录
-* `-s`：修改shell
+* `-d`: Modify the user directory  
+* `-s`: Modify the shell  
 
 **Examples:**
 
-* `usermod -s /bin/zsh admin`：修改指定账号的默认shell
-* `usermod -d /opt/home/admin admin`：修改指定账号的用户目录
-    * 注意，新的路径最后不要加`/`，例如，不要写成`/opt/home/admin/`，这样会导致`zsh`无法将用户目录替换成`~`符号，这样命令行提示符中的路径就会是绝对路径，而不是`~`了
-* `sudo usermod -aG docker username`：给指定用户增加用户组，要重新登录才能生效
-    * `groups username`：查看用户组
+* `usermod -s /bin/zsh admin`: Modify the default shell of the specified account  
+* `usermod -d /opt/home/admin admin`: Modify the user directory of the specified account  
+    * Note: Do not add a trailing `/` to the new path. For example, do not write `/opt/home/admin/`, as this can cause `zsh` to fail to replace the user directory with the `~` symbol. This will make the command prompt display the absolute path instead of `~`.  
+* `sudo usermod -aG docker username`: Add the specified user to a user group; the user must log in again for the change to take effect  
+    * `groups username`: View the user groups  
 
 ## 1.20 chown
 
 **Examples:**
 
-* `chown [-R] 账号名称 文件或目录`
-* `chown [-R] 账号名称:用户组名称 文件或目录`
+* `chown [-R] <user> <file/dir>`
+* `chown [-R] <user>:<group> <file/dir>`
 
 ## 1.21 passwd
 
@@ -260,22 +260,22 @@ usermod -d <new_dir> <username>
 
 ## 1.23 id
 
-用于查看用户信息，包括`uid`，`gid`等
+This command is used to view user information, including `uid`, `gid`, and more.
 
 **Examples:**
 
-* `id`：查看当前用户的信息
-* `id <username>`：查看指定用户的信息
-* `id -u`：查看当前用户的uid
-* `id -nu <uid>`：查看指定uid对应的用户名
+* `id`: View information about the current user  
+* `id <username>`: View information about a specified user  
+* `id -u`: View the current user's uid  
+* `id -nu <uid>`: View the username corresponding to the specified uid  
 
 ## 1.24 getconf
 
-查看系统相关的信息
+This command is used to view system-related information.
 
 **Examples:**
 
-* `getconf -a | grep CACHE`：查看CPU cache相关的配置项
+* `getconf -a | grep CACHE`: View CPU cache-related configuration items
 
 ## 1.25 hostnamectl
 
@@ -305,7 +305,7 @@ hostnamectl set-hostname <name>
 **Examples:**
 
 * `ntpdate ntp.aliyun.com`
-* `ntpdate ntp.cloud.aliyuncs.com`：阿里云ecs同步时间需要指定内网的ntp服务
+* `ntpdate ntp.cloud.aliyuncs.com`: On Alibaba Cloud ECS, time synchronization requires specifying the internal NTP service.
 
 ## 1.29 hexdump
 
