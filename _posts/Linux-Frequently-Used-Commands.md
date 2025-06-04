@@ -1810,21 +1810,20 @@ print resolved symbolic links or canonical file names
 
 # 4 Process Management
 
-**后台进程（&）：**
+**Background Process (&):**
 
-在命令最后加上`&`代表将命令丢到后台执行
+Appending `&` at the end of a command means executing the command in the background.
 
-* 此时bash会给予这个命令一个工作号码(job number)，后接该命令触发的PID
-* 不能被[Ctrl]+C中断
-* 在后台中执行的命令，如果有stdout以及stderr时，它的数据依旧是输出到屏幕上面，所以我们会无法看到提示符，命令结束后，必须按下[Enter]才能看到命令提示符，同时也无法用[Ctrl]+C中断。解决方法就是利用数据流重定向
+* At this point, bash will assign the command a job number, followed by the PID triggered by the command.
+* It cannot be interrupted with `[Ctrl]+C`.
+* For commands executed in the background, if there is stdout or stderr, their output still goes to the screen. As a result, the prompt may not be visible. After the command finishes, you must press `[Enter]` to see the command prompt again. It also cannot be interrupted using `[Ctrl]+C`. The solution is to use stream redirection.
 
 **Examples:**
 
 * `tar -zpcv -f /tmp/etc.tar.gz /etc > /tmp/log.txt 2>&1 &`
-
-**`Ctrl+C`**：终止当前进程
-
-**`Ctrl+Z`**：暂停当前进程
+* `Ctrl+C`: Terminates the current process
+* `Ctrl+Z`: Pauses the current process
+* `$!`: Stores the PID of the most recently started background process
 
 ## 4.1 jobs
 
@@ -1834,13 +1833,13 @@ print resolved symbolic links or canonical file names
 
 **Options:**
 
-* `-l`：除了列出job number与命令串之外，同时列出PID号码
-* `-r`：仅列出正在后台run的工作
-* `-s`：仅列出正在后台中暂停(stop)的工作
-* 输出信息中的'+'与'-'号的意义：
-    * +：最近被放到后台的工作号码，代表默认的取用工作，即仅输入'fg'时，被拿到前台的工作
-    * -：代表最近后第二个被放置到后台的工作号码
-    * 超过最后第三个以后，就不会有'+'与'-'号存在了
+* `-l`: In addition to listing the job number and command string, also displays the PID number  
+* `-r`: Lists only the jobs currently running in the background  
+* `-s`: Lists only the jobs currently stopped in the background  
+* Meaning of the `+` and `-` symbols in the output:  
+    * `+`: The most recently placed job in the background, representing the default job to be brought to the foreground when just 'fg' is entered  
+    * `-`: The second most recently placed job in the background  
+    * For jobs older than the last two, there will be no `+` or `-` symbols
 
 **Examples:**
 
@@ -1849,28 +1848,28 @@ print resolved symbolic links or canonical file names
 
 ## 4.2 fg
 
-将后台工作拿到前台来处理
+Bring background jobs to the foreground for processing
 
 **Examples:**
 
-* `fg %jobnumber`：取出编号为`jobnumber`的工作。jubnumber为工作号码(数字)，%是可有可无的
-* `fg +`：取出标记为+的工作
-* `fg -`：取出标记为-的工作
+* `fg %jobnumber`: Brings the job with the specified `jobnumber` to the foreground. `jobnumber` is the job number (a digit), and the `%` is optional  
+* `fg +`: Brings the job marked with `+` to the foreground  
+* `fg -`: Brings the job marked with `-` to the foreground
 
 ## 4.3 bg
 
-让工作在后台下的状态变为运行中
+Resume a job to running state in the background
 
 **Examples:**
 
-* `bg %jobnumber`：取出编号为`jobnumber`的工作。jubnumber为工作号码(数字)，%是可有可无的
-* `bg +`：取出标记为+的工作
-* `bg -`：取出标记为-的工作
-* 不能让类似vim的工作变为运行中，即便使用该命令会，该工作又立即变为暂停状态
+* `bg %jobnumber`: Resumes the job with the specified `jobnumber`. `jobnumber` is the job number (a digit), and the `%` is optional  
+* `bg +`: Resumes the job marked with `+`
+* `bg -`: Resumes the job marked with `-`
+* Jobs like vim cannot be resumed to running state in the background—even if this command is used, such jobs will immediately return to a stopped state
 
 ## 4.4 kill
 
-管理后台当中的工作
+The command is used to terminate processes.
 
 **Pattern:**
 
@@ -1880,14 +1879,14 @@ print resolved symbolic links or canonical file names
 
 **Options:**
 
-* `-l`：列出目前kill能够使用的signal有哪些
-* `-signal`：
-    * `-1`：重新读取一次参数的配置文件，类似reload
-    * `-2`：代表与由键盘输入[Ctrl]+C同样的操作
-    * `-6`：触发core dump
-    * `-9`：立刻强制删除一个工作，通常在强制删除一个不正常的工作时使用
-    * `-15`：以正常的程序方式终止一项工作，与-9是不同的，-15以正常步骤结束一项工作，这是默认值
-* 与bg、fg不同，若要管理工作，kill中的%不可省略，因为kill默认接PID
+* `-l`: Lists the signals currently available for use with the `kill` command  
+* `-signal`:  
+    * `-1`: Reloads the configuration file, similar to a reload operation  
+    * `-2`: Same as pressing [Ctrl]+C on the keyboard  
+    * `-6`: Triggers a core dump  
+    * `-9`: Immediately and forcibly terminates a job; commonly used for forcefully killing abnormal jobs  
+    * `-15`: Terminates a job gracefully using the normal program procedure. Unlike `-9`, `-15` ends a job through the regular shutdown process and is the default signal  
+* Unlike `bg` and `fg`, when managing jobs with `kill`, the `%` symbol **cannot** be omitted, because `kill` interprets the argument as a PID by default
 
 ## 4.5 pkill
 
@@ -1898,14 +1897,14 @@ print resolved symbolic links or canonical file names
 
 **Options:**
 
-* `-f`：匹配完整的`command line`，默认情况下只能匹配15个字符
-* `-signal`：同`kill`
-* `-P ppid,...`：匹配指定`parent id`
-* `-s sid,...`：匹配指定`session id`
-* `-t term,...`：匹配指定`terminal`
-* `-u euid,...`：匹配指定`effective user id`
-* `-U uid,...`：匹配指定`real user id`
-* **不指定匹配规则时，默认匹配进程名字**
+* `-f`: Matches the full `command line`; by default, only the first 15 characters are matched  
+* `-signal`: Same as in `kill`  
+* `-P ppid,...`: Matches the specified `parent id`  
+* `-s sid,...`: Matches the specified `session id`  
+* `-t term,...`: Matches the specified `terminal`  
+* `-u euid,...`: Matches the specified `effective user id`  
+* `-U uid,...`: Matches the specified `real user id`  
+* **If no matching rule is specified, the default behavior is to match the process name**
 
 **Examples:**
 
@@ -1916,27 +1915,27 @@ print resolved symbolic links or canonical file names
 
 **Options:**
 
-* `a`：不与terminal有关的所有进程
-* `u`：有效用户相关进程
-* `x`：通常与`a`这个参数一起使用，可列出较完整的信息
-* `A/e`：所有的进程均显示出来
-* `-f/-l`：详细信息，内容有所差别
-* `-T/-L`：线程信息，结合`-f/-l`参数时，显式的信息有所不同
-* `-o`：后接以逗号分隔的列名，指定需要输出的信息
-    * `%cpu`
-    * `%mem`
-    * `args`
-    * `uid`
-    * `pid`
-    * `ppid`
-    * `lwp/tid/spid`：线程`TID`，`lwp, light weight process, i.e. thread`
-    * `comm/ucomm/ucmd`：线程名
-    * `time`
-    * `tty`
-    * `flags`：进程标识
-        * `1`：forked but didn't exec
-        * `4`：used super-user privileges
-    * `stat`：进程状态
+* `a`: All processes not associated with a terminal  
+* `u`: Processes related to the effective user  
+* `x`: Usually used together with `a` to display more complete information  
+* `A/e`: Displays all processes  
+* `-f/-l`: Detailed information; the content differs between the two  
+* `-T/-L`: Thread information; when used with `-f/-l`, the displayed details vary  
+* `-o`: Followed by comma-separated column names to specify which information to display  
+    * `%cpu`  
+    * `%mem`  
+    * `args`  
+    * `uid`  
+    * `pid`  
+    * `ppid`  
+    * `lwp/tid/spid`: Thread `TID`, `lwp` stands for "light weight process", i.e., a thread  
+    * `comm/ucomm/ucmd`: Thread name  
+    * `time`  
+    * `tty`  
+    * `flags`: Process flags  
+        * `1`: Forked but didn't exec  
+        * `4`: Used super-user privileges  
+    * `stat`: Process status
         * `D`：uninterruptible sleep (usually IO)
         * `R`：running or runnable (on run queue)
         * `S`：interruptible sleep (waiting for an event to complete)
@@ -1953,8 +1952,8 @@ print resolved symbolic links or canonical file names
 * `ps -ef`
 * `ps -efww`
 * `ps -el`
-* `ps -e -o pid,ppid,stat | grep Z`：查找僵尸进程
-* `ps -T -o tid,ucmd -p 212381`：查看指定进程的所有的线程id以及线程名
+* `ps -e -o pid,ppid,stat | grep Z`: Find zombie processes  
+* `ps -T -o tid,ucmd -p 212381`: View all thread IDs and thread names of the specified process
 
 ## 4.7 pgrep
 
@@ -1964,11 +1963,11 @@ print resolved symbolic links or canonical file names
 
 **Options:**
 
-* `-a`：列出pid以及完整的程序名
-* `-l`：列出pid以及程序名
-* `-f`：匹配完整的进程名
-* `-o`：列出oldest的进程
-* `-n`：列出newest的进程
+* `-a`: Lists the PID and the full program name  
+* `-l`: Lists the PID and the program name  
+* `-f`: Matches the full process name  
+* `-o`: Lists the oldest process  
+* `-n`: Lists the newest process
 
 **Examples:**
 
@@ -1987,28 +1986,28 @@ print resolved symbolic links or canonical file names
 
 **Options:**
 
-* `-a`：显示命令
-* `-l`：不截断
-* `-A`：各进程树之间的连接以`ascii`字符来连接（连接符号是`ascii`字符）
-* `-U`：各进程树之间的连接以`utf8`码的字符来连接，在某些终端接口下可能会有错误（连接符号是`utf8`字符，比较圆滑好看）
-* `-p`：同时列出每个进程的进程号
-* `-u`：同时列出每个进程所属账号名称
-* `-s`：显示指定进程的父进程
+* `-a`: Displays the command  
+* `-l`: Does not truncate output  
+* `-A`: Connects process trees using ASCII characters (connection symbols are ASCII characters)  
+* `-U`: Connects process trees using UTF-8 characters, which may cause errors in some terminal interfaces (connection symbols are UTF-8 characters, smoother and more visually appealing)  
+* `-p`: Also lists the PID of each process  
+* `-u`: Also lists the account name each process belongs to  
+* `-s`: Displays the parent process of the specified process
 
 **Examples:**
 
-* `pstree`：整个进程树
-* `pstree -alps <pid>`：以该进程为根节点的进程树
+* `pstree`: Displays the entire process tree  
+* `pstree -alps <pid>`: Displays the process tree rooted at the specified `<pid>`
 
 ## 4.9 pstack
+
+This command is used to view the stack of a specified process
 
 **Install:**
 
 ```sh
 yum install -y gdb
 ```
-
-查看指定进程的堆栈
 
 **Examples:**
 
@@ -2027,7 +2026,7 @@ pstack 12345
 
 ## 4.11 taskset
 
-查看或者设置进程的cpu亲和性
+This command is used to view or set the CPU affinity of a process
 
 **Pattern:**
 
@@ -2036,27 +2035,27 @@ pstack 12345
 
 **Options:**
 
-* `-c`：以列表格式显示cpu亲和性
-* `-p`：指定进程的pid
+* `-c`: Displays CPU affinity in list format  
+* `-p`: Specifies the PID of the process  
 
 **Examples:**
 
-* `taskset -p 152694`：查看pid为`152694`的进程的cpu亲和性，显示方式为掩码
-* `taskset -c -p 152694`：查看pid为`152694`的进程的cpu亲和性，显示方式为列表
-* `taskset -p f 152694`：设置pid为`152694`的进程的cpu亲和性，设置方式为掩码
-* `taskset -c -p 0,1,2,3,4,5 152694`：设置pid为`152694`的进程的cpu亲和性，设置方式为列表
+* `taskset -p 152694`: View the CPU affinity of the process with PID `152694`, displayed as a mask  
+* `taskset -c -p 152694`: View the CPU affinity of the process with PID `152694`, displayed as a list  
+* `taskset -p f 152694`: Set the CPU affinity of the process with PID `152694` using a mask  
+* `taskset -c -p 0,1,2,3,4,5 152694`: Set the CPU affinity of the process with PID `152694` using a list
 
-**什么是cpu亲和性掩码（16进制）**
+**What is a CPU affinity mask (hexadecimal)**
 
-* `cpu0 = 1`
-* `cpu1 = cpu0 * 2 = 2`
-* `cpu2 = cpu1 * 2 = 4`
-* `cpu(n) = cpu(n-1) * 2`
-* `mask = cpu0 + cpu1 + ... + cpu(n)`
-* 举几个例子
-    * `0 ==> 1 = 0x1`
-    * `0,1,2,3 ==> 1 + 2 + 4 + 8 = 15 = 0xf`
-    * `0,1,2,3,4,5 ==> 1 + 2 + 4 + 8 + 16 + 32 = 0x3f`
+* `cpu0 = 1`  
+* `cpu1 = cpu0 * 2 = 2`  
+* `cpu2 = cpu1 * 2 = 4`  
+* `cpu(n) = cpu(n-1) * 2`  
+* `mask = cpu0 + cpu1 + ... + cpu(n)`  
+* Some examples:  
+    * `0 ==> 1 = 0x1`  
+    * `0,1,2,3 ==> 1 + 2 + 4 + 8 = 15 = 0xf`  
+    * `0,1,2,3,4,5 ==> 1 + 2 + 4 + 8 + 16 + 32 = 0x3f`  
     * `2,3 ==> 4 + 8 = 12 = 0xc`
 
 ## 4.12 su
@@ -2104,7 +2103,7 @@ test ALL=(ALL) ALL
 
 ## 4.14 pkexec
 
-允许授权用户以其他身份执行程序
+This command is used to allow authorized users to execute programs as another user
 
 **Pattern:**
 
@@ -2112,7 +2111,7 @@ test ALL=(ALL) ALL
 
 ## 4.15 nohup
 
-**`nohup`会忽略所有挂断（SIGHUP）信号**。比如通过`ssh`登录到远程服务器上，然后启动一个程序，当`ssh`登出时，这个程序就会随即终止。如果用`nohup`方式启动，那么当`ssh`登出时，这个程序仍然会继续运行
+**`nohup` ignores all hangup (SIGHUP) signals**. For example, when logging into a remote server via `ssh` and starting a program, that program will terminate once the `ssh` session ends. If started with `nohup`, the program will continue running even after logging out of `ssh`.
 
 **Pattern:**
 
@@ -2120,9 +2119,9 @@ test ALL=(ALL) ALL
 
 **Options:**
 
-* `command`：要执行的命令
-* `args`：命令所需的参数
-* `&`：在后台执行
+* `command`: The command to execute  
+* `args`: Arguments required by the command  
+* `&`: Run in the background
 
 **Examples:**
 
@@ -2130,7 +2129,7 @@ test ALL=(ALL) ALL
 
 ## 4.16 screen
 
-**如果想在关闭`ssh`连接后继续运行启动的程序，可以使用`nohup`。如果要求下次`ssh`登录时，还能查看到上一次`ssh`登录时运行的程序的状态，那么就需要使用`screen`**
+**If you want a program to continue running after closing the `ssh` connection, you can use `nohup`. If you want to be able to check the status of the program started in a previous `ssh` session the next time you log in via `ssh`, then you need to use `screen`.**
 
 **Pattern:**
 
@@ -2142,11 +2141,11 @@ test ALL=(ALL) ALL
 
 **Options:**
 
-* `cmd`：执行的命令
-* `args`：执行的命令所需要的参数
-* `-ls`：列出所有`screen`会话的详情
-* `-r`：后接`pid`，进入指定进程号的`screen`会话
-* `-d`：退出当前运行的session
+* `cmd`: The command to execute  
+* `args`: Arguments required by the command  
+* `-ls`: Lists details of all `screen` sessions  
+* `-r`: Followed by a `pid`, attaches to the `screen` session with the specified process ID  
+* `-d`: Detaches from the current running session
 
 **Examples:**
 
@@ -2154,16 +2153,16 @@ test ALL=(ALL) ALL
 * `screen -ls`
 * `screen -r 123`
 
-**会话管理：**
+**Session Management:**
 
-1. `Ctrl a + w`：显示所有窗口列表
-1. `Ctrl a + Ctrl a`：切换到之前显示的窗口
-1. `Ctrl a + c`：创建一个新的运行shell的窗口并切换到该窗口
-1. `Ctrl a + n`：切换到下一个窗口
-1. `Ctrl a + p`：切换到前一个窗口(与`Ctrl a + n`相对)
-1. `Ctrl a + 0-9`：切换到窗口0..9
-1. `Ctrl a + d`：暂时断开screen会话
-1. `Ctrl a + k`：杀掉当前窗口
+1. `Ctrl a + w`: Show the list of all windows  
+2. `Ctrl a + Ctrl a`: Switch to the previously displayed window  
+3. `Ctrl a + c`: Create a new window running a shell and switch to it  
+4. `Ctrl a + n`: Switch to the next window  
+5. `Ctrl a + p`: Switch to the previous window (opposite of `Ctrl a + n`)  
+6. `Ctrl a + 0-9`: Switch to window 0..9  
+7. `Ctrl a + d`: Temporarily detach the screen session  
+8. `Ctrl a + k`: Kill the current window
 
 ## 4.17 tmux
 
@@ -2306,9 +2305,9 @@ set -g status on
 
 ## 4.18 reptyr
 
-[reptyr](https://github.com/nelhage/reptyr)用于将当前终端的`pid`作为指定进程的父进程。有时候，我们会ssh到远程机器执行命令，但是后来发现这个命令会持续执行很长时间，但是又不得不断开ssh，此时我们就可以另开一个`screen`或者`tmux`，将目标进程挂到新开的终端上
+[reptyr](https://github.com/nelhage/reptyr) is used to reparent a specified process to the current terminal's `pid`. Sometimes, when we ssh into a remote machine to run a command and later realize that the command will run for a long time but must disconnect the ssh session, we can open a new `screen` or `tmux` session and attach the target process to the new terminal.
 
-注：`reptyr`依赖`ptrace`这一系统调用，可以通过`echo 0 > /proc/sys/kernel/yama/ptrace_scope`开启
+Note: `reptyr` relies on the `ptrace` system call, which can be enabled by running `echo 0 > /proc/sys/kernel/yama/ptrace_scope`.
 
 **Examples:**
 
