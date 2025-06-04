@@ -2324,47 +2324,47 @@ Note: `reptyr` relies on the `ptrace` system call, which can be enabled by runni
 
 **Options:**
 
-1. **与路由有关的参数**
-    * `-r`：列出路由表(route table)，功能如同route
-    * `-n`：不使用主机名与服务名称，使用IP与port number，如同route -n
-1. **与网络接口有关的参数**
-    * `-a`：列出所有的连接状态，包括tcp/udp/unix socket等
-    * `-t`：仅列出TCP数据包的连接
-    * `-u`：仅列出UDP数据包的连接
-    * `-l`：仅列出已在Listen(监听)的服务的网络状态
-    * `-p`：列出PID与Program的文件名
-    * `-c`：可以设置几秒种后自动更新一次，例如-c 5为每5s更新一次网络状态的显示
+1. **Routing-related parameters**
+    * `-r`: List the routing table, functions like `route`  
+    * `-n`: Do not use hostnames and service names; use IP addresses and port numbers, similar to `route -n`  
+2. **Network interface-related parameters**
+    * `-a`: List all connection states, including tcp/udp/unix sockets, etc.  
+    * `-t`: List only TCP packet connections  
+    * `-u`: List only UDP packet connections  
+    * `-l`: List only network states of services that are in Listen mode  
+    * `-p`: List PID and program filename  
+    * `-c`: Auto-update display every few seconds, e.g., `-c 5` updates every 5 seconds  
 
-**与路由有关的显示参数说明**
+**Explanation of routing-related display fields**
 
-* `Destination`：Network的意思
-* `Gateway`：该接口的Gateway的IP，若为0.0.0.0，表示不需要额外的IP
-* `Genmask`：就是Netmask，与Destination组合成为一台主机或网络
-* `Flags`：共有多个标志来表示该网络或主机代表的意义
-    * `U`：代表该路由可用
-    * `G`：代表该网络需要经由Gateway来帮忙传递
-    * `H`：代表该行路由为一台主机，而非一整个网络
-    * `D`：代表该路由是由重定向报文创建的
-    * `M`：代表该路由已被重定向报文修改
-    * `Iface`：就是Interface(接口)的意思
+* `Destination`: Means network  
+* `Gateway`: The gateway IP of the interface; if 0.0.0.0, no extra IP is needed  
+* `Genmask`: The netmask; combined with Destination to define a host or network  
+* `Flags`: Various flags indicating the meaning of the route or host  
+    * `U`: Route is usable  
+    * `G`: Network requires forwarding via gateway  
+    * `H`: This route is for a host, not a whole network  
+    * `D`: Route created by redirect message  
+    * `M`: Route modified by redirect message  
+    * `Iface`: Interface  
 
-**与网络接口有关的显示参数说明：**
+**Explanation of network interface-related display fields:**
 
-* `Proto`：该连接的数据包协议，主要为TCP/UDP等数据包
-* `Recv-Q`：非用户程序连接所复制而来的总byte数
-* `Send-Q`：由远程主机发送而来，但不具有ACK标志的总byte数，亦指主动连接SYN或其他标志的数据包所占的byte数
-* `Local Address`：本地端的地址，可以使IP，也可以是完整的主机名，使用的格式是"IP:port"
-* `Foreign Address`：远程主机IP与port number
-* `stat`：状态栏
-    * `ESTABLISED`：已建立连接的状态
-    * `SYN_SENT`：发出主动连接(SYN标志)的连接数据包
-    * `SYN_RECV`：接收到一个要求连接的主动连接数据包
-    * `FIN_WAIT1`：该套接字服务已中断，该连接正在断线当中
-    * `FIN_WAIT2`：该连接已挂断，但正在等待对方主机响应断线确认的数据包中
-    * `TIME_WAIT`：该连接已挂断，但socket还在网络上等待结束
-    * `LISTEN`：通常在服务的监听port，可以使用-l参数查阅
+* `Proto`: Packet protocol of the connection, mainly TCP/UDP  
+* `Recv-Q`: Total bytes copied from non-user program connections  
+* `Send-Q`: Bytes sent by remote host without ACK flag; also refers to bytes occupied by active connection SYN or other flag packets  
+* `Local Address`: Local endpoint address, can be IP or full hostname, formatted as "IP:port"  
+* `Foreign Address`: Remote host IP and port number  
+* `stat`: Status bar  
+    * `ESTABLISHED`: Connection established  
+    * `SYN_SENT`: Sent an active connection (SYN flag) packet  
+    * `SYN_RECV`: Received an active connection request packet  
+    * `FIN_WAIT1`: Socket service interrupted, connection is closing  
+    * `FIN_WAIT2`: Connection closed, waiting for remote host to acknowledge close  
+    * `TIME_WAIT`: Connection closed, socket waiting on network to finish  
+    * `LISTEN`: Usually a service listening port; can be viewed with `-l`  
 
-netstat的功能就是查看网络的连接状态，而网络连接状态中，又以**我目前开了多少port在等待客户端的连接**以及**目前我的网络连接状态中，有多少连接已建立或产生问题**最常见
+The function of `netstat` is to check network connection status. The most common aspects are **how many ports I have open waiting for client connections** and **the current state of my network connections, including how many are established or have issues**.
 
 **Examples:**
 
@@ -2373,7 +2373,7 @@ netstat的功能就是查看网络的连接状态，而网络连接状态中，�
 
 ## 5.2 tc
 
-流量的处理由三种对象控制，它们是：`qdisc`（排队规则）、`class`（类别）和`filter`（过滤器）。
+Traffic management is controlled by three types of objects: `qdisc` (queueing discipline), `class`, and `filter`.
 
 **Pattern:**
 
@@ -2388,17 +2388,17 @@ netstat的功能就是查看网络的连接状态，而网络连接状态中，�
 
 **Examples:**
 
-* `tc qdisc add dev em1 root netem delay 300ms`：设置网络延迟300ms
-* `tc qdisc add dev em1 root netem loss 8% 20%`：设置8%~20%的丢包率 
-* `tc qdisc del dev em1 root `：删除指定设置
+* `tc qdisc add dev em1 root netem delay 300ms`: Set network delay to 300ms  
+* `tc qdisc add dev em1 root netem loss 8% 20%`: Set packet loss rate between 8% and 20%  
+* `tc qdisc del dev em1 root`: Delete the specified settings  
 
 ## 5.3 ss
 
-`ss`是`Socket Statistics`的缩写。顾名思义，`ss`命令可以用来获取`socket`统计信息，它可以显示和`netstat`类似的内容。`ss`的优势在于它能够显示更多更详细的有关TCP和连接状态的信息，而且比`netstat`更快速更高效。
+`ss` stands for Socket Statistics. As the name suggests, the `ss` command is used to obtain socket statistics information and can display content similar to `netstat`. The advantage of `ss` is that it can show more detailed information about TCP and connection states, and it is faster and more efficient than `netstat`.
 
-当服务器的socket连接数量变得非常大时，无论是使用`netstat`命令还是直接`cat /proc/net/tcp`，执行速度都会很慢。
+When the number of socket connections on a server becomes very large, both the `netstat` command and directly using `cat /proc/net/tcp` become slow.
 
-`ss`快的秘诀在于，它利用到了TCP协议栈中`tcp_diag`。`tcp_diag`是一个用于分析统计的模块，可以获得Linux内核中第一手的信息，这就确保了`ss`的快捷高效
+The secret to `ss`’s speed lies in its use of the `tcp_diag` module in the TCP protocol stack. `tcp_diag` is a module for analysis and statistics that can get first-hand information from the Linux kernel, ensuring that `ss` is fast and efficient.
 
 **Pattern:**
 
@@ -2406,37 +2406,37 @@ netstat的功能就是查看网络的连接状态，而网络连接状态中，�
 
 **Options:**
 
-* `-t`：列出tcp-socket
-* `-u`：列出udp-socket
-* `-a`：列出所有socket
-* `-l`：列出所有监听的socket
-* `-e`：显式socket的详细信息，包括`indoe`号
-* `-s`：仅显示摘要信息
-* `-p`：显示用了该socket的进程
-* `-n`：不解析服务名称
-* `-r`：解析服务名称
-* `-m`：显示内存占用情况
-* `-h`：查看帮助文档
-* `-i`：显示tcp-socket详情
+* `-t`: List tcp sockets  
+* `-u`: List udp sockets  
+* `-a`: List all sockets  
+* `-l`: List all listening sockets  
+* `-e`: Show detailed socket information, including inode number  
+* `-s`: Show summary information only  
+* `-p`: Show processes using the socket  
+* `-n`: Do not resolve service names  
+* `-r`: Resolve service names  
+* `-m`: Show memory usage  
+* `-h`: Show help documentation  
+* `-i`: Show tcp socket details  
 
 **Examples:**
 
-* `ss -s`
-* `ss -t -a`：显示所有tcp-socket
-* `ss -ti -a`：显示所有tcp-socket以及详情
-* `ss -u –a`：显示所有udp-socket
-* `ss -nlp | grep 22`：找出打开套接字/端口应用程序
-* `ss -o state established`：显示所有状态为established的socket
-* `ss -o state FIN-WAIT-1 dst 192.168.25.100/24`：显示出处于`FIN-WAIT-1`状态的，目标网络为`192.168.25.100/24`所有socket
-* `ss -nap`
-* `ss -nap -e`
+* `ss -s`  
+* `ss -t -a`: Show all tcp sockets  
+* `ss -ti -a`: Show all tcp sockets with details  
+* `ss -u -a`: Show all udp sockets  
+* `ss -nlp | grep 22`: Find the program that opened socket/port 22  
+* `ss -o state established`: Show all sockets in established state  
+* `ss -o state FIN-WAIT-1 dst 192.168.25.100/24`: Show all sockets in `FIN-WAIT-1` state with destination network `192.168.25.100/24`  
+* `ss -nap`  
+* `ss -nap -e`  
 * `ss -naptu`
 
 ## 5.4 ip
 
 ### 5.4.1 ip address
 
-具体用法参考`ip address help`
+For detailed usage, refer to `ip address help`.
 
 **Examples:**
 
@@ -2446,45 +2446,45 @@ netstat的功能就是查看网络的连接状态，而网络连接状态中，�
 
 ### 5.4.2 ip link
 
-具体用法参考`ip link help`
+For detailed usage, refer to `ip link help`
 
 **Examples:**
 
-* `ip link`：查看所有网卡
-* `ip link up`：查看up状态的网卡
-* `ip -d link`：查看详细的信息
-    * `ip -d link show lo`
-* `ip link set eth0 up`：开启网卡
-* `ip link set eth0 down`：关闭网卡
-* `ip link delete tunl0`：删除网卡
-* `cat /sys/class/net/xxx/carrier`：查看网卡是否插了网线（对应于`ip link`的`state UP`或`state DOWN`
+* `ip link`: View all network interfaces  
+* `ip link up`: View interfaces in the up state  
+* `ip -d link`: View detailed information  
+    * `ip -d link show lo`  
+* `ip link set eth0 up`: Enable the network interface  
+* `ip link set eth0 down`: Disable the network interface  
+* `ip link delete tunl0`: Delete the network interface  
+* `cat /sys/class/net/xxx/carrier`: Check if the network cable is plugged in (corresponds to `ip link` showing `state UP` or `state DOWN`)  
 
 ### 5.4.3 ip route
 
-具体用法参考`ip route help`
+For detailed usage, refer to `ip route help`
 
-#### 5.4.3.1 route table
+#### 5.4.3.1 Route Table
 
-**linux最多可以支持255张路由表，每张路由表有一个`table id`和`table name`。其中有4张表是linux系统内置的**
+**Linux supports up to 255 routing tables, each with a `table id` and `table name`. Among them, 4 tables are built into the Linux system:**
 
-* **`table id = 0`：系统保留**
-* **`table id = 255`：本地路由表，表名为`local`**。像本地接口地址，广播地址，以及NAT地址都放在这个表。该路由表由系统自动维护，管理员不能直接修改
+* **`table id = 0`: Reserved by the system**
+* **`table id = 255`: Local routing table, named `local`**. This table contains local interface addresses, broadcast addresses, and NAT addresses. It is automatically maintained by the system and cannot be modified directly by administrators.  
     * `ip r show table local`
-* **`table id = 254`：主路由表，表名为`main`**。如果没有指明路由所属的表，所有的路由都默认都放在这个表里。一般来说，旧的路由工具（如`route`）所添加的路由都会加到这个表。`main`表中路由记录都是普通的路由记录。而且，使用`ip route`配置路由时，如果不明确指定要操作的路由表，默认情况下也是对主路由表进行操作
+* **`table id = 254`: Main routing table, named `main`**. If no routing table is specified, all routes are placed here by default. Routes added by older tools like `route` are usually added here. Routes in the `main` table are normal routing entries. When using `ip route` to configure routes, if no table is specified, operations default to this table.  
     * `ip r show table main`
-* **`table id = 253`：称为默认路由表，表名为`default`**。一般来说默认的路由都放在这张表
+* **`table id = 253`: Default routing table, named `default`**. Default routes usually reside in this table.  
     * `ip r show table default`
 
-**此外：**
+**Additional notes:**
 
-* 系统管理员可以根据需要自己添加路由表，并向路由表中添加路由记录
-* 可以通过`/etc/iproute2/rt_tables`文件查看`table id`和`table name`的映射关系。
-* 如果管理员新增了一张路由表，需要在`/etc/iproute2/rt_tables`文件中为新路由表添加`table id`和`table name`的映射
-* 路由表存储于内存中，通过`procfs`文件系统对用户态露出，具体的文件位置是`/proc/net/route`
+* Administrators can add custom routing tables and routes as needed.
+* The mapping between `table id` and `table name` can be viewed in `/etc/iproute2/rt_tables`.
+* When adding a new routing table, the administrator needs to add its `table id` and `table name` mapping in `/etc/iproute2/rt_tables`.
+* Routing tables are stored in memory and exposed to user space via the procfs filesystem at `/proc/net/route`.
 
 #### 5.4.3.2 route type
 
-**`unicast`**：单播路由是路由表中最常见的路由。这是到目标网络地址的典型路由，它描述了到目标的路径。即使是复杂的路由（如下一跳路由）也被视为单播路由。如果在命令行上未指定路由类型，则假定该路由为单播路由
+**`unicast`**: Unicast routing is the most common type of routing in the routing table. This is a typical route to the destination network address, describing the path to the destination. Even complex routes (such as next-hop routes) are considered unicast routes. If the route type is not specified on the command line, the route is assumed to be a unicast route.
 
 ```sh
 ip route add unicast 192.168.0.0/24 via 192.168.100.5
@@ -2493,28 +2493,28 @@ ip route add unicast default via 206.59.29.193
 ip route add 10.40.0.0/16 via 10.72.75.254
 ```
 
-**`broadcast`**：此路由类型用于支持广播地址概念的链路层设备（例如以太网卡）。此路由类型仅在本地路由表中使用，通常由内核处理
+**`broadcast`**: This route type is used for link-layer devices that support the concept of broadcast addresses (such as Ethernet cards). This route type is only used in the local routing table and is typically handled by the kernel.
 
 ```sh
 ip route add table local broadcast 10.10.20.255 dev eth0 proto kernel scope link src 10.10.20.67
 ip route add table local broadcast 192.168.43.31 dev eth4 proto kernel scope link src 192.168.43.14
 ```
 
-**`local`**：当IP地址添加到接口时，内核会将条目添加到本地路由表中。这意味着IP是本地托管的IP
+**`local`**: When an IP address is added to an interface, the kernel adds an entry to the local routing table. This means the IP is locally hosted.
 
 ```sh
 ip route add table local local 10.10.20.64 dev eth0 proto kernel scope host src 10.10.20.67
 ip route add table local local 192.168.43.12 dev eth4 proto kernel scope host src 192.168.43.14
 ```
 
-**`nat`**：当用户尝试配置无状态NAT时，内核会将此路由条目添加到本地路由表中
+**`nat`**: When a user attempts to configure stateless NAT, the kernel adds this route entry to the local routing table.
 
 ```sh
 ip route add nat 193.7.255.184 via 172.16.82.184
 ip route add nat 10.40.0.0/16 via 172.40.0.0
 ```
 
-**`unreachable`**：当对路由决策的请求返回的路由类型不可达的目的地时，将生成ICMP unreachable并返回到源地址
+**`unreachable`**: When a request for a routing decision returns a route type indicating an unreachable destination, an ICMP unreachable message is generated and returned to the source address.
 
 ```sh
 ip route add unreachable 172.16.82.184
@@ -2522,7 +2522,7 @@ ip route add unreachable 192.168.14.0/26
 ip route add unreachable 209.10.26.51
 ```
 
-**`prohibit`**：当路由选择请求返回具有禁止路由类型的目的地时，内核会生成禁止返回源地址的ICMP
+**`prohibit`**: When a routing request returns a destination with a prohibit route type, the kernel generates an ICMP prohibit message returned to the source address.
 
 ```sh
 ip route add prohibit 10.21.82.157
@@ -2530,7 +2530,7 @@ ip route add prohibit 172.28.113.0/28
 ip route add prohibit 209.10.26.51
 ```
 
-**`blackhole`**：匹配路由类型为黑洞的路由的报文将被丢弃。没有发送ICMP，也没有转发数据包
+**`blackhole`**: Packets matching a route with the blackhole route type will be discarded. No ICMP is sent, and the packets are not forwarded.
 
 ```sh
 ip route add blackhole default
@@ -2538,7 +2538,7 @@ ip route add blackhole 202.143.170.0/24
 ip route add blackhole 64.65.64.0/18
 ```
 
-**`throw`**：引发路由类型是一种便捷的路由类型，它会导致路由表中的路由查找失败，从而将路由选择过程返回到RPDB。当有其他路由表时，这很有用。请注意，如果路由表中没有默认路由，则存在隐式抛出，因此尽管合法，但是示例中第一个命令创建的路由是多余的
+**`throw`**: The throw route type is a convenient route type that causes the route lookup in the routing table to fail, thereby returning the routing process to the RPDB (Routing Policy Database). This is useful when there are other routing tables. Note that if there is no default route in the routing table, an implicit throw exists, so although it is valid, the route created by the first command in the example is redundant.
 
 ```sh
 ip route add throw default
@@ -2548,42 +2548,42 @@ ip route add throw 172.16.0.0/12
 
 #### 5.4.3.3 route scope
 
-**`global`**：全局有效
+**`global`**: Globally valid
 
-**`site`**：仅在当前站点有效（IPV6）
+**`site`**: Valid only within the current site (IPv6)
 
-**`link`**：仅在当前设备有效
+**`link`**: Valid only on the current device
 
-**`host`**：仅在当前主机有效
+**`host`**: Valid only on the current host
 
 #### 5.4.3.4 route proto
 
-**`proto`：表示路由的添加时机。可由数字或字符串表示，数字与字符串的对应关系详见`/etc/iproute2/rt_protos`**
+**`proto`**: Indicates the timing of the route addition. It can be represented by a number or a string. The correspondence between numbers and strings can be found in `/etc/iproute2/rt_protos`.
 
-1. **`redirect`**：表示该路由是因为发生`ICMP`重定向而添加的
-1. **`kernel`**：该路由是内核在安装期间安装的自动配置
-1. **`boot`**：该路由是在启动过程中安装的。如果路由守护程序启动，它将会清除这些路由规则
-1. **`static`**：该路由由管理员安装，以覆盖动态路由
+1. **`redirect`**: Indicates that the route was added due to an `ICMP` redirect.
+2. **`kernel`**: The route is automatically configured by the kernel during installation.
+3. **`boot`**: The route is installed during the boot process. If a routing daemon starts, it will clear these route rules.
+4. **`static`**: The route is installed by the administrator to override dynamic routes.
 
 #### 5.4.3.5 route src
 
-这被视为对内核的提示（用于回答：如果我要将数据包发往host X，我该用本机的哪个IP作为Source IP），该提示是关于要为该接口上的`传出`数据包上的源地址选择哪个IP地址
+This is considered a hint to the kernel (used to answer: if I want to send a packet to host X, which local IP should I use as the Source IP). This hint is about which IP address to select as the source address for `outgoing` packets on that interface.
 
 #### 5.4.3.6 Parameter Explanation
 
-**`ip r show table local`参数解释（示例如下）**
+**Explanation of the `ip r show table local` parameters (example below):**
 
-1. 第一个字段指明该路由是用于`广播地址`、`IP地址`还是`IP范围`，例如
-    * `local 192.168.99.35`表示`IP地址`
-    * `broadcast 127.255.255.255`表示`广播地址`
-    * `local 127.0.0.0/8 dev`表示`IP范围`
-1. 第二个字段指明该路由通过哪个设备到达目标地址，例如
+1. The first field indicates whether the route is for a `broadcast address`, an `IP address`, or an `IP range`, for example:
+    * `local 192.168.99.35` indicates an `IP address`
+    * `broadcast 127.255.255.255` indicates a `broadcast address`
+    * `local 127.0.0.0/8 dev` indicates an `IP range`
+1. The second field indicates through which device the route reaches the destination address, for example:
     * `dev eth0 proto kernel`
     * `dev lo proto kernel`
-1. 第三个字段指明该路由的作用范围，例如
+1. The third field indicates the scope of the route, for example:
     * `scope host`
     * `scope link`
-1. 第四个字段指明传出数据包的源IP地址
+1. The fourth field indicates the source IP address of outgoing packets:
     * `src 127.0.0.1`
 
 ```sh
@@ -2601,22 +2601,23 @@ local 127.0.0.0/8 dev lo  proto kernel  scope host  src 127.0.0.1
 
 ### 5.4.4 ip rule
 
-基于策略的路由比传统路由在功能上更强大，使用更灵活，它使网络管理员不仅能够根据目的地址而且能够根据报文大小、应用或IP源地址等属性来选择转发路径。简单地来说，linux系统有多张路由表，而路由策略会根据一些条件，将路由请求转向不同的路由表。例如源地址在某些范围走路由表A，另外的数据包走路由表，类似这样的规则是有路由策略rule来控制
+Policy-based routing is more powerful and flexible than traditional routing. It allows network administrators to select forwarding paths not only based on the destination address but also based on packet size, application, source IP address, and other attributes. Simply put, Linux systems have multiple routing tables, and routing policies direct routing requests to different tables based on certain conditions. For example, packets with source addresses in a certain range use routing table A, while other packets use another routing table. Such rules are controlled by routing policy `rules`.
 
-在linux系统中，一条路由策略`rule`主要包含三个信息，即`rule`的优先级，条件，路由表。其中rule的优先级数字越小表示优先级越高，然后是满足什么条件下由指定的路由表来进行路由。**在linux系统启动时，内核会为路由策略数据库配置三条缺省的规则，即`rule 0`，`rule 32766`，`rule 32767`（数字是rule的优先级），具体含义如下**：
+In Linux, a routing policy `rule` mainly contains three pieces of information: the priority of the `rule`, the conditions, and the routing table. The lower the priority number, the higher the priority. Then, depending on which conditions are met, the specified routing table is used for routing. **At Linux system startup, the kernel configures three default rules in the routing policy database: `rule 0`, `rule 32766`, and `rule 32767` (the numbers indicate the rule priorities). Their specific meanings are as follows:**
 
-1. **`rule 0`**：匹配任何条件的数据包，查询路由表`local（table id = 255）`。`rule 0`非常特殊，不能被删除或者覆盖。
-1. **`rule 32766`**：匹配任何条件的数据包，查询路由表`main（table id = 254）`。系统管理员可以删除或者使用另外的策略覆盖这条策略
-1. **`rule 32767`**：匹配任何条件的数据包，查询路由表`default（table id = 253）`。对于前面的缺省策略没有匹配到的数据包，系统使用这个策略进行处理。这个规则也可以删除
-* 在linux系统中是按照rule的优先级顺序依次匹配。假设系统中只有优先级为`0`，`32766`及`32767`这三条规则。那么系统首先会根据规则`0`在本地路由表里寻找路由，如果目的地址是本网络，或是广播地址的话，在这里就可以找到匹配的路由；如果没有找到路由，就会匹配下一个不空的规则，在这里只有`32766`规则，那么将会在主路由表里寻找路由；如果没有找到匹配的路由，就会依据`32767`规则，即寻找默认路由表；如果失败，路由将失败
+1. **`rule 0`**: Matches packets under any condition and looks up the `local` routing table (table id = 255). `rule 0` is very special and cannot be deleted or overridden.
+2. **`rule 32766`**: Matches packets under any condition and looks up the `main` routing table (table id = 254). System administrators can delete or override this rule with another policy.
+3. **`rule 32767`**: Matches packets under any condition and looks up the `default` routing table (table id = 253). This rule handles packets not matched by the previous default rules. This rule can also be deleted.
+* In Linux, rules are matched sequentially according to their priority. Suppose the system only has the three rules with priorities `0`, `32766`, and `32767`. The system first tries rule `0` to find routes in the local routing table. If the destination is in the local network or is a broadcast address, a matching route will be found here. If no route is found, it moves to the next non-empty rule — here, rule `32766` — to search the main routing table. If no matching route is found, it falls back to rule `32767` to look up the default routing table. If this also fails, routing fails.
 
 **Examples:**
 
 ```sh
-# 增加一条规则，规则匹配的对象是所有的数据包，动作是选用路由表1的路由，这条规则的优先级是32800
+# Add a rule that matches all packets and uses routing table 1; the rule priority is 32800
 ip rule add [from 0/0] table 1 pref 32800
 
-# 增加一条规则，规则匹配的对象是IP为192.168.3.112, tos等于0x10的包，使用路由表2，这条规则的优先级是1500，动作是丢弃。
+# Add a rule that matches packets from IP 192.168.3.112 with TOS equal to 0x10, uses routing table 2,
+# has priority 1500, and the action is to prohibit (drop) the packets.
 ip rule add from 192.168.3.112/32 [tos 0x10] table 2 pref 1500 prohibit
 ```
 
@@ -2636,10 +2637,10 @@ Usage: ip netns list
 
 **Examples:**
 
-* `ip netns list`：列出网络命名空间（只会从`/var/run/netns`下读取）
-* `ip netns exec test-ns ifconfig`：在网络命名空间`test-ns`中执行`ifconfig`
+* `ip netns list`: Lists network namespaces (only reads from `/var/run/netns`)
+* `ip netns exec test-ns ifconfig`: Executes `ifconfig` inside the network namespace `test-ns`
 
-**与nsenter的区别**：由于`ip netns`只从`/var/run/netns`下读取网络命名空间，而`nsenter`默认会读取`/proc/${pid}/ns/net`。但是`docker`会隐藏容器的网络命名空间，即默认不会在`/var/run/netns`目录下创建命名空间，因此如果要使用`ip netns`进入到容器的命名空间，还需要做个软连接
+**Difference from nsenter**: Since `ip netns` only reads network namespaces from `/var/run/netns`, while `nsenter` by default reads from `/proc/${pid}/ns/net`. However, Docker hides the container's network namespace, meaning it does not create namespaces by default in the `/var/run/netns` directory. Therefore, to use `ip netns` to enter a container's namespace, a symbolic link must be created.
 
 ```sh
 pid=$(docker inspect -f '{{.State.Pid}}' ${container_id})
@@ -2657,32 +2658,32 @@ ln -sfT /proc/$pid/ns/net /var/run/netns/$container_id
 
 **Options:**
 
-* `-S`：输出指定table的规则，若没有指定table，则输出所有的规则，类似`iptables-save`
-* `-t`：后面接table，例如nat或filter，若省略此项目，则使用默认的filter
-* `-L`：列出目前的table的规则
-* `-n`：不进行IP与HOSTNAME的反查，显示信息的速度回快很多
-* `-v`：列出更多的信息，包括通过该规则的数据包总数，相关的网络接
+* `-S`: Outputs the rules of the specified table; if no table is specified, outputs all rules, similar to `iptables-save`.
+* `-t`: Specifies the table, such as `nat` or `filter`. If omitted, the default is `filter`.
+* `-L`: Lists the rules of the current table.
+* `-n`: Disables reverse lookup of IP and HOSTNAME, greatly speeding up the display.
+* `-v`: Lists more information, including the total number of packets matched by the rule and related network interfaces.
 
 **Output Details:**
 
-* 每一个Chain就是每个链，Chain所在的括号里面的是默认的策略(即没有规则匹配时采取的操作(target))
-* `target`：代表进行的操作
-    * **`ACCEPT`**：表示放行
-    * **`DROP`**：表示丢弃
-    * **`QUEUE`**：将数据包传递到用户空间
-    * **`RETURN`**：表示停止遍历当前链，并在上一个链中的下一个规则处恢复（假设在`Chain A`中调用了`Chain B`，`Chain B RETURN`后，继续`Chain A`的下一个规则）
-    * **还可以是一个自定义的Chain**
-* `port`：代表使用的数据包协议，主要有TCP、UDP、ICMP3中数据包
-* `opt`：额外的选项说明
-* `source`：代表此规则是针对哪个来源IP进行限制
-* `destination`：代表此规则是针对哪个目标IP进行限制
+* Each Chain represents a chain; the parentheses next to the Chain show the default policy (i.e., the action taken when no rules match — the target).
+* `target`: Represents the action to take
+    * **`ACCEPT`**: Allow the packet
+    * **`DROP`**: Discard the packet
+    * **`QUEUE`**: Pass the packet to userspace
+    * **`RETURN`**: Stop traversing the current chain and resume at the next rule in the previous chain (e.g., if `Chain A` calls `Chain B`, after `Chain B RETURN` it continues with the next rule in `Chain A`)
+    * It can also be a custom Chain
+* `port`: Indicates the protocol used by the packet, mainly TCP, UDP, or ICMP
+* `opt`: Additional option details
+* `source`: The source IP the rule applies to
+* `destination`: The destination IP the rule applies to
 
 **Examples:**
 
 * `iptables -nL`
 * `iptables -t nat -nL`
 
-由于`iptables`的上述命令的查看只是做格式化的查阅，要详细解释每个规则可能会与原规则有出入，因此，建议使用`iptables-save`这个命令来查看防火墙规则
+Since the above `iptables` commands only show formatted views, which may differ from the original rules in detail, it is recommended to use the command `iptables-save` to view firewall rules in detail.
 
 **Pattern:**
 
@@ -2690,13 +2691,13 @@ ln -sfT /proc/$pid/ns/net /var/run/netns/$container_id
 
 **Options:**
 
-* `-t`：可以针对某些表格来输出，例如仅针对NAT或Filter等
+* `-t`: Outputs rules for a specific table, e.g., only for NAT or Filter
 
 **Output Details:**
 
-* 星号开头的指的是表格，这里为Filter
-* 冒号开头的指的是链，3条内建的链，后面跟策略
-* 链后面跟的是`[Packets:Bytes]`，分别表示通过该链的数据包/字节的数量
+* Lines starting with an asterisk (*) indicate the table, here it is Filter.
+* Lines starting with a colon (:) indicate chains; the 3 built-in chains followed by their policies.
+* After the chain is `[Packets:Bytes]`, indicating the number of packets and bytes passed through that chain.
 
 ### 5.5.2 Clearing Rules
 
@@ -2706,13 +2707,13 @@ ln -sfT /proc/$pid/ns/net /var/run/netns/$container_id
 
 **Options:**
 
-* `-F [chain]`：清除指定chain或者所有chian中的所有的已制定的规则
-* `-X [chain]`：清除指定`user-defined chain`或所有`user-defined chain`
-* `-Z [chain]`：将指定chain或所有的chain的计数与流量统计都归零
+* `-F [chain]`: Flushes all specified rules in the given chain or all chains if none specified.
+* `-X [chain]`: Deletes the specified `user-defined chain` or all `user-defined chains` if none specified.
+* `-Z [chain]`: Zeroes the packet and byte counters for the specified chain or all chains if none specified.
 
 ### 5.5.3 Defining Default Policies
 
-当数据包不在我们设置的规则之内时，该数据包的通过与否都以Policy的设置为准
+When a packet does not match any of the rules we set, whether the packet is accepted or dropped depends on the Policy setting.
 
 **Pattern:**
 
@@ -2720,9 +2721,9 @@ ln -sfT /proc/$pid/ns/net /var/run/netns/$container_id
 
 **Options:**
 
-* `-P`：定义策略(Policy)
-    * `ACCEPT`：该数据包可接受
-    * `DROP`：该数据包直接丢弃，不会让Client知道为何被丢弃
+* `-P`: Defines the policy
+    * `ACCEPT`: The packet is accepted
+    * `DROP`: The packet is dropped immediately, without notifying the client why it was dropped
 
 **Examples:**
 
@@ -2738,37 +2739,37 @@ ln -sfT /proc/$pid/ns/net /var/run/netns/$container_id
 
 **Options:**
 
-* `-t tables`：指定tables，默认的tables是`filter`
-* `-AI chain`：针对某条链进行规则的"插入"或"累加"
-    * `-A chain`：新增加一条规则，该规则增加在原规则后面，例如原来有4条规则，使用-A就可以加上第五条规则
-    * `-I chain [rule num]`：插入一条规则，可以指定插入的位置。如果没有指定此规则的顺序，默认插入变成第一条规则
-    * `链`：可以是内建链（`INPUT`、`OUTPUT`、`FORWARD`、`PREROUTING`、`POSTROUTING`）；也可以是自定义链
-* `-io ifname`：设置数据包进出的接口规范
-    * `-i`：数据包所进入的那个网络接口，例如eth0，lo等，需要与INPUT链配合
-    * `-o`：数据包所传出的网络接口，需要与OUTPUT配合
-* `-p prop`：设置此规则适用于哪种数据包格式
-    * 主要的数据包格式有：tcp、udp、icmp以及all
-* `-s ip/net`：设置此规则之数据包的来源地，可指定单纯的IP或网络
-    * `ip`：例如`192.168.0.100`
-    * `net`：例如`192.168.0.0/24`、`192.168.0.0/255.255.255.0`均可
-    * **若规范为"不许"时，加上`!`即可，例如`! -s 192.168.100.0/24`**
-* `-d ip/net`：同-s，只不过这里是目标的
-* `-j target`：后面接`target`
+* `-t tables`: Specifies the tables, the default table is `filter`.
+* `-AI chain`: Insert or append rules for a specific chain.
+    * `-A chain`: Append a new rule at the end of existing rules. For example, if there are 4 rules, `-A` adds a fifth.
+    * `-I chain [rule num]`: Insert a rule at a specified position. If no position is specified, it inserts as the first rule.
+    * `chain`: Can be a built-in chain (`INPUT`, `OUTPUT`, `FORWARD`, `PREROUTING`, `POSTROUTING`) or a user-defined chain.
+* `-io ifname`: Specify input/output network interfaces for packets.
+    * `-i`: The incoming network interface for the packet, e.g., eth0, lo; used with the INPUT chain.
+    * `-o`: The outgoing network interface for the packet; used with the OUTPUT chain.
+* `-p prop`: Specifies the packet protocol the rule applies to.
+    * Common protocols include: tcp, udp, icmp, and all.
+* `-s ip/net`: Specifies the source IP or network for packets that match this rule.
+    * `ip`: e.g., `192.168.0.100`
+    * `net`: e.g., `192.168.0.0/24` or `192.168.0.0/255.255.255.0`
+    * **To negate, add `!`, e.g., `! -s 192.168.100.0/24`**
+* `-d ip/net`: Same as `-s`, but for destination IP or network.
+* `-j target`: Specifies the target action.
     * `ACCEPT`
     * `DROP`
     * `QUEUE`
     * `RETURN`
-    * **其他Chain**
-    * **规则的匹配过程类似于函数栈，从一个链跳到另一个链相当于函数调用。某些target会停止匹配过程，比如常见的`ACCEPT`、`DROP`、`SNAT`、`MASQUERADE`等等；某些target不会停止匹配过程，比如当target是另一个`Chain`时，或者常见的`LOG`、`ULOG`、`TOS`等**
-* **重要的原则：没有指定的项目，就表示该项目完全接受**
-    * 例如`-s`和`-d`不指定，就表示来源或去向的任意IP/网络都接受
+    * **Other Chains**
+    * **Matching works like a function call stack: jumping between chains is like function calls. Some targets stop matching (e.g., `ACCEPT`, `DROP`, `SNAT`, `MASQUERADE`), others continue (e.g., jumping to another `Chain`, `LOG`, `ULOG`, `TOS`).**
+* **Important principle: If an option is not specified, it means that condition is fully accepted.**
+    * For example, if `-s` and `-d` are not specified, it means any source or destination IP/network is accepted.
 
 **Examples:**
 
-* `iptables -A INPUT -i lo -j ACCEPT`：不论数据包来自何处或去向哪里，只要是lo这个接口，就予以接受，这就是所谓的信任设备
-* `iptables -A INPUT -i eth1 -j ACCEPT`：添加接口为eth1的网卡为信任设备
-* `iptables -A INPUT -s 192.168.2.200 -j LOG`：该网段的数据包，其相关信息就会被写入到内核日志文件中，即`/var/log/messages`，然后，该数据包会继续进行后续的规则比对(这一点与其他规则不同)
-* 配置打印日志的规则（这些规则要放在第一条，否则命中其他规则时，当前规则就不执行了）
+* `iptables -A INPUT -i lo -j ACCEPT`: Accept packets from any source or destination as long as they come through the `lo` interface—this is called a trusted device.
+* `iptables -A INPUT -i eth1 -j ACCEPT`: Adds the interface `eth1` as a trusted device.
+* `iptables -A INPUT -s 192.168.2.200 -j LOG`: Logs packets from this source IP to the kernel log file (e.g., `/var/log/messages`), then continues to match further rules (different from most rules).
+* Logging rules (should be placed first, otherwise if other rules match first, these won’t execute):
     * `iptables -I INPUT -p icmp -j LOG --log-prefix "liuye-input: "`
     * `iptables -I FORWARD -p icmp -j LOG --log-prefix "liuye-forward: "`
     * `iptables -I OUTPUT -p icmp -j LOG --log-prefix "liuye-output: "`
@@ -2777,40 +2778,40 @@ ln -sfT /proc/$pid/ns/net /var/run/netns/$container_id
 
 ### 5.5.5 Rules for TCP and UDP: Port-based Rules
 
-TCP与UDP比较特殊的就是端口(port)，在TCP方面则另外有所谓的连接数据包状态，包括最常见的SYN主动连接的数据包格式
+TCP and UDP are special because of ports, and for TCP there is also the concept of connection packet states, including the common SYN active connection packet format.
 
 **Pattern:**
 
-* `iptables [-AI 链] [-io 网络接口] [-p tcp|udp] [-s 来源IP/网络] [--sport 端口范围] [-d 目标IP/网络] [--dport 端口范围] --syn -j [ACCEPT|DROP|REJECT]`
+* `iptables [-AI chain] [-io network interface] [-p tcp|udp] [-s source IP/network] [--sport source port range] [-d destination IP/network] [--dport destination port range] --syn -j [ACCEPT|DROP|REJECT]`
 
 **Options:**
 
-* `--sport 端口范围`：限制来源的端口号码，端口号码可以是连续的，例如1024:65535
-* `--dport 端口范围`：限制目标的端口号码
-* `--syn`：主动连接的意思
-* **与之前的命令相比，就是多了`--sport`以及`--dport`这两个选项，因此想要使用`--dport`或`--sport`必须加上`-p tcp`或`-p udp`才行**
+* `--sport port range`: Restricts the source port number; port ranges can be continuous, e.g., 1024:65535.
+* `--dport port range`: Restricts the destination port number.
+* `--syn`: Indicates an active connection (SYN flag).
+* **Compared to previous commands, these add the `--sport` and `--dport` options, so you must specify `-p tcp` or `-p udp` to use them.**
 
 **Examples:**
 
-* `iptables -A INPUT -i eth0 -p tcp --dport 21 -j DROP`：想要进入本机port 21的数据包都阻挡掉
-* `iptables -A INPUT -i eth0 -p tcp --sport 1:1023 --dport 1:1023 --syn -j DROP`：来自任何来源port 1:1023的主动连接到本机端的1:1023连接丢弃
+* `iptables -A INPUT -i eth0 -p tcp --dport 21 -j DROP`: Blocks all packets trying to enter the machine on port 21.
+* `iptables -A INPUT -i eth0 -p tcp --sport 1:1023 --dport 1:1023 --syn -j DROP`: Drops active connections from any source port 1-1023 to destination ports 1-1023.
 
 ### 5.5.6 iptables Matching Extensions
 
-`iptables`可以使用扩展的数据包匹配模块。当指定`-p`或`--protocol`时，或者使用`-m`或`--match`选项，后跟匹配的模块名称；之后，取决于特定的模块，可以使用各种其他命令行选项。可以在一行中指定多个扩展匹配模块，并且可以在指定模块后使用`-h`或`--help`选项来接收特定于该模块的帮助文档（`iptables -m comment -h`，输出信息的最下方有`comment`模块的参数说明）
+`iptables` can use extended packet matching modules. When specifying `-p` or `--protocol`, or using the `-m` or `--match` option followed by the name of the matching module, various additional command line options can be used depending on the specific module. Multiple extended match modules can be specified on a single line, and after specifying a module, you can use `-h` or `--help` to get module-specific help documentation (e.g., `iptables -m comment -h` will show parameters for the `comment` module at the bottom of the output).
 
-**常用模块**，详细内容请参考[Match Extensions](https://linux.die.net/man/8/iptables)
+**Common Modules**, for detailed information please refer to [Match Extensions](https://linux.die.net/man/8/iptables):
 
-1. `comment`：增加注释
-1. `conntrack`：与连接跟踪结合使用时，此模块允许访问比“状态”匹配更多的连接跟踪信息。（仅当iptables在支持该功能的内核下编译时，此模块才存在）
+1. `comment`: Adds comments
+1. `conntrack`: When used with connection tracking, this module allows access to more connection tracking information than the "state" match. (This module exists only if iptables is compiled with support for this feature in the kernel.)
 1. `tcp`
 1. `udp`
 
 ### 5.5.7 iptables Target Extensions
 
-iptables可以使用扩展目标模块，并且可以在指定目标后使用`-h`或`--help`选项来接收特定于该目标的帮助文档（`iptables -j DNAT -h`）
+iptables can use extended target modules, and after specifying a target, you can use `-h` or `--help` to get target-specific help documentation (e.g., `iptables -j DNAT -h`).
 
-**常用（可以通过`man iptables`或`man 8 iptables-extensions`，并搜索关键词`target`）：**
+**Common targets (can be found by running `man iptables` or `man 8 iptables-extensions` and searching for the keyword `target`):**
 
 1. `ACCEPT`
 1. `DROP`
@@ -2818,7 +2819,7 @@ iptables可以使用扩展目标模块，并且可以在指定目标后使用`-h
 1. `REJECT`
 1. `DNAT`
 1. `SNAT`
-1. `MASQUERADE`：用于实现自动化SNAT，若出口ip经常变化的话，可以通过该目标来实现SNAT
+1. `MASQUERADE`: Used to implement automatic SNAT. If the outbound IP changes frequently, this target can be used to achieve SNAT.
 
 ### 5.5.8 ICMP Packet Rules Comparison: Designed to Control Ping Responses
 
@@ -2828,7 +2829,7 @@ iptables可以使用扩展目标模块，并且可以在指定目标后使用`-h
 
 **Options:**
 
-* `--icmp-type`：后面必须要接ICMP的数据包类型，也可以使用代号
+* `--icmp-type`: Must be followed by the ICMP packet type, which can also be specified by a code.
 
 ## 5.6 bridge
 
@@ -2868,27 +2869,27 @@ VLAN filter list
 
 **Options:**
 
-* `-n`：不要使用通信协议或主机名，直接使用IP或port number，即在默认情况下，route会解析出该IP的主机名，若解析不到则会有延迟，因此一般加上这个参数
-* `-ee`：显示更详细的信息
-* `-net`：表示后面接的路由为一个网络
-* `-host`：表示后面接的为连接到单个主机的路由
-* `netmask`：与网络有关，可设置netmask决定网络的大小
-* `gw`：gateway的缩写，后接IP数值
-* `dev`：如果只是要制定由哪块网卡连接出去，则使用这个设置，后接网卡名，例如eth0等
+* `-n`: Do not resolve protocol or hostname, use IP or port number directly. By default, `route` tries to resolve the hostname of the IP, which may cause delays if it fails to resolve, so this option is generally added.
+* `-ee`: Display more detailed information.
+* `-net`: Indicates that the following route is for a network.
+* `-host`: Indicates that the following route is for a single host.
+* `netmask`: Related to the network, used to set the netmask to determine the size of the network.
+* `gw`: Abbreviation for gateway, followed by an IP address.
+* `dev`: If you just want to specify which network interface card to use for outgoing connection, use this setting followed by the interface name, e.g., `eth0`.
 
-**打印参数说明：**
+**Explanation of print parameters:**
 
-* **Destination、Genmask**：这两个参数就分别是network与netmask
-* **Gateway**：该网络通过哪个Gateway连接出去，若显示`0.0.0.0(default)`表示该路由直接由本级传送，也就是通过局域网的MAC直接传送，如果显示IP的话，表示该路由需要经过路由器(网关)的帮忙才能发送出去
-* **Flags**：
-    * `U(route is up)`：该路由是启动的
-    * `H(target is a host)`：目标是一台主机而非网络
-    * `G(use gateway)`：需要通过外部的主机来传递数据包
-    * `R(reinstate route for dynamic routing)`：使用动态路由时，恢复路由信息的标志
-    * `D(Dynamically installed by daemon or redirect)`：动态路由
-    * `M(modified from routing daemon or redirect)`：路由已经被修改了
-    * `!(reject route)`：这个路由将不会被接受
-* **Iface**：该路由传递数据包的接口
+* **Destination, Genmask**: These two parameters correspond to the network and netmask respectively.
+* **Gateway**: Indicates through which gateway the network is connected. If it shows `0.0.0.0 (default)`, it means the route sends packets directly on the local network via MAC addresses. If an IP is shown, it means the route requires a router (gateway) to forward packets.
+* **Flags**:
+    * `U (route is up)`: The route is active.
+    * `H (target is a host)`: The destination is a single host, not a network.
+    * `G (use gateway)`: Requires forwarding packets through an external host (gateway).
+    * `R (reinstate route for dynamic routing)`: Flag indicating reinstatement of route during dynamic routing.
+    * `D (Dynamically installed by daemon or redirect)`: Dynamically installed route.
+    * `M (modified from routing daemon or redirect)`: Route has been modified.
+    * `! (reject route)`: This route will not be accepted.
+* **Iface**: The interface used to transmit packets for this route.
 
 **Examples:**
 
@@ -2898,7 +2899,7 @@ VLAN filter list
 
 ## 5.8 nsenter
 
-nsenter用于在某个网络命名空间下执行某个命令。例如某些docker容器是没有curl命令的，但是又想在docker容器的环境下执行，这个时候就可以在宿主机上使用nsenter
+`nsenter` is used to execute a command within a specific network namespace. For example, some Docker containers do not have the `curl` command, but you may want to run it inside the Docker container's environment. In this case, you can use `nsenter` on the host machine.
 
 **Pattern:**
 
@@ -2906,8 +2907,8 @@ nsenter用于在某个网络命名空间下执行某个命令。例如某些dock
 
 **Options:**
 
-* `-t`：后接进程id
-* `-n`：后接需要执行的命令
+* `-t`: followed by the process ID  
+* `-n`: followed by the command to execute
 
 **Examples:**
 
@@ -2982,44 +2983,44 @@ The expression consists of one or more *primitives* (primitives, which can be un
 
 ### 5.9.2 tips
 
-如何查看具体的协议，例如ssh协议
+How to view a specific protocol, for example, the SSH protocol
 
-利用wireshark
+Use Wireshark
 
-1. 任意选中一个`length`不为`0`的数据包，右键选择解码（`decode as`），右边`Current`一栏，选择对应的协议即可
+1. Select any packet with a `length` not equal to `0`, right-click and choose "Decode As", then in the right-side `Current` column, select the corresponding protocol.
 
 ### 5.9.3 How to Use tcpdump to Capture HTTP Protocol Data from docker
 
-docker使用的是域套接字，对应的套接字文件是`/var/run/docker.sock`，而域套接字是不经过网卡设备的，因此tcpdump无法直接抓取相应的数据
+Docker uses a Unix domain socket, corresponding to the socket file `/var/run/docker.sock`. Since domain sockets do not go through the network interface, `tcpdump` cannot directly capture the related data.
 
-**方式1：改变client的访问方式**
+**Method 1: Change the client's access method**
 
 ```sh
-# 在终端1执行，监听本机的18080，然后将流量转到docker的域套接字
-# 两个-d参数会输出fatel、error以及notice级别的信息
+# In terminal 1, listen on local port 18080 and forward the traffic to Docker's domain socket  
+# The two `-d` options output fatal, error, and notice level information  
 socat -d -d TCP-LISTEN:18080,fork,bind=127.0.0.1 UNIX:/var/run/docker.sock
 
-# 在终端2执行tcpdump进行抓包
+# In terminal 2, run tcpdump to capture packets  
 tcpdump -i lo -netvv port 18080 -w file1.cap
 
-# 在终端3执行docker命令
+# In terminal 3, run the Docker command  
 docker -H tcp://localhost:18080 images
 ```
 
-**方式2：不改变client的访问方式**
+**Method 2: Do not change the client's access method**
 
 ```sh
-# 在终端1执行，mv命令修改原始域套接字的文件名，这个操作不会改变文件的fd，因此，在移动后，docker监听的套接字是/var/run/docker.sock.original
+# In terminal 1, run the `mv` command to rename the original domain socket file. This operation does not change the file descriptor, so after moving, Docker listens on the socket `/var/run/docker.sock.original`  
 sudo mv /var/run/docker.sock /var/run/docker.sock.original
 sudo socat TCP-LISTEN:18081,reuseaddr,fork UNIX-CONNECT:/var/run/docker.sock.original
 
-# 在终端2执行
+# In terminal 2, run  
 sudo socat UNIX-LISTEN:/var/run/docker.sock,fork TCP-CONNECT:127.0.0.1:18081
 
-# 在终端3执行tcpdump进行抓包
+# In terminal 3, run tcpdump to capture packets  
 tcpdump -i lo -vv port 18081 -w file2.cap
 
-# 在终端3执行docker命令
+# In terminal 3, run the Docker command  
 docker -H tcp://localhost:18081 images
 ```
 
@@ -3041,15 +3042,15 @@ tcpflow is a command-line tool used to capture and analyze network traffic, spec
 
 ## 5.11 tcpkill
 
-`tcpkill`用于杀死tcp连接，语法与`tcpdump`基本类似。其工作原理非常简单，首先会监听相关的数据报文，获取了`sequence number`之后，然后发起`Reset`报文。因此，当且仅当连接有报文交互的时候，`tcpkill`才能起作用
+`tcpkill` is used to kill TCP connections, and its syntax is basically similar to `tcpdump`. Its working principle is quite simple: it first listens to the relevant packets, obtains the `sequence number`, and then sends a `Reset` packet. Therefore, `tcpkill` only works when there is packet exchange in the connection.
 
 **Install:**
 
 ```sh
-# 安装 yum 源
+# Install yum repo
 yum install -y epel-release
 
-# 安装 dsniff
+# Install dsniff
 yum install -y dsniff
 ```
 
@@ -3059,9 +3060,9 @@ yum install -y dsniff
 
 **Options:**
 
-* `-i`：指定网卡
-* `-1...9`：优先级，优先级越高越容易杀死
-* `expression`：表达元，与tcpdump类似
+* `-i`: specify the network interface  
+* `-1...9`: priority level; the higher the priority, the easier it is to kill the connection  
+* `expression`: filter expression, similar to tcpdump  
 
 **Examples:**
 
@@ -3071,25 +3072,25 @@ yum install -y dsniff
 
 **Pattern:**
 
-* `socat [options] <address> <address>`
-* 其中这2个`address`就是关键了，`address`类似于一个文件描述符，Socat所做的工作就是在2个`address`指定的描述符间建立一个 `pipe`用于发送和接收数据
+* `socat [options] <address> <address>`  
+* The two `address` arguments are the key. An `address` is similar to a file descriptor. Socat works by creating a `pipe` between the two specified `address` descriptors for sending and receiving data.
 
 **Options:**
 
-* `address`：可以是如下几种形式之一
-    * `-`：表示标准输入输出
-    * `/var/log/syslog`：也可以是任意路径，如果是相对路径要使用`./`，打开一个文件作为数据流。
-    * `TCP:127.0.0.1:1080`：建立一个TCP连接作为数据流，TCP也可以替换为UDP
-    * `TCP-LISTEN:12345`：建立TCP监听端口，TCP也可以替换为UDP
-    * `EXEC:/bin/bash`：执行一个程序作为数据流。
+* `address`: can be one of the following forms  
+    * `-`: represents standard input/output  
+    * `/var/log/syslog`: can be any file path; if relative, use `./` to open a file as a data stream  
+    * `TCP:127.0.0.1:1080`: establish a TCP connection as a data stream (TCP can be replaced by UDP)  
+    * `TCP-LISTEN:12345`: create a TCP listening port (TCP can be replaced by UDP)  
+    * `EXEC:/bin/bash`: execute a program as a data stream  
 
 **Examples:**
 
-* `socat - /var/www/html/flag.php`：通过Socat读取文件，绝对路径
-* `socat - ./flag.php`：通过Socat读取文件，相对路径
-* `echo "This is Test" | socat - /tmp/hello.html`：写入文件
-* `socat TCP-LISTEN:80,fork TCP:www.baidu.com:80`：将本地端口转到远端
-* `socat TCP-LISTEN:12345 EXEC:/bin/bash`：在本地开启shell代理
+* `socat - /var/www/html/flag.php`: read a file via Socat, absolute path  
+* `socat - ./flag.php`: read a file via Socat, relative path  
+* `echo "This is Test" | socat - /tmp/hello.html`: write to a file  
+* `socat TCP-LISTEN:80,fork TCP:www.baidu.com:80`: forward local port to remote  
+* `socat TCP-LISTEN:12345 EXEC:/bin/bash`: open a shell proxy locally  
 
 ## 5.13 dhclient
 
@@ -3099,22 +3100,22 @@ yum install -y dsniff
 
 **Options:**
 
-* `-d`：总是以前台方式运行程序
-* `-q`：安静模式，不打印任何错误的提示信息
-* `-r`：释放ip地址
+* `-d`: always run the program in the foreground  
+* `-q`: quiet mode, do not print any error messages  
+* `-r`: release the IP address  
 
 **Examples:**
 
-* `dhclient`：获取ip
-* `dhclient -r`：释放ip
+* `dhclient`: obtain an IP address  
+* `dhclient -r`: release the IP address  
 
 ## 5.14 arp
 
 **Examples:**
 
-* `arp`：查看arp缓存
-* `arp -n`：查看arp缓存，显示ip不显示域名
-* `arp 192.168.56.1`：查看`192.168.56.1`这个ip的mac地址
+* `arp`: view the ARP cache  
+* `arp -n`: view the ARP cache, display IP addresses without domain names  
+* `arp 192.168.56.1`: view the MAC address of the IP `192.168.56.1`  
 
 ## 5.15 [arp-scan](https://github.com/royhills/arp-scan)
 
@@ -3149,14 +3150,17 @@ make install
 
 **Options:**
 
-* `-c`：后接发包次数
-* `-s`：指定数据大小
-* `-M [do|want|dont]`：设置MTU策略，`do`表示不允许分片；`want`表示当数据包比较大时可以分片；`dont`表示不设置`DF`标志位
+* `-c`: followed by the number of packets to send  
+* `-s`: specify the size of the data  
+* `-M [do|want|dont]`: set the MTU strategy, where  
+  * `do` means do not allow fragmentation;  
+  * `want` means allow fragmentation when the packet is large;  
+  * `dont` means do not set the `DF` (Don't Fragment) flag  
 
 **Examples:**
 
-* `ping -c 3 www.baidu.com`
-* `ping -s 1460 -M do baidu.com`：发送大小包大小是1460（+28）字节，且禁止分片
+* `ping -c 3 www.baidu.com`  
+* `ping -s 1460 -M do baidu.com`: send packets with a size of 1460 (+28) bytes and forbid fragmentation  
 
 ## 5.17 arping
 
@@ -3166,53 +3170,53 @@ make install
 
 **Options:**
 
-* `-c`：指定发包次数
-* `-b`：持续用广播的方式发送request
-* `-w`：指定超时时间
-* `-I`：指定使用哪个以太网设备
-* `-D`：开启地址冲突检测模式
+* `-c`: specify the number of packets to send  
+* `-b`: continuously send requests using broadcast  
+* `-w`: specify the timeout duration  
+* `-I`: specify which Ethernet device to use  
+* `-D`: enable address conflict detection mode  
 
 **Examples:**
 
-* `arping -c 1 -w 1 -I eth0 -b -D 192.168.1.1`：该命令可以用于检测局域网是否存在IP冲突
-    * 若该命令行返回0：说明不存在冲突；否则存在冲突
+* `arping -c 1 -w 1 -I eth0 -b -D 192.168.1.1`: this command can be used to detect if there is an IP conflict in the local network  
+  * If this command returns 0: it means no conflict exists; otherwise, a conflict exists  
 
-**-D参数为啥能够检测ip冲突**
+**Why can the `-D` option detect IP conflicts**
 
-* 环境说明
-    * 机器A，ip为：`192.168.2.2/24`，mac地址为`68:ed:a4:39:92:4b`
-    * 机器B，ip为：`192.168.2.2/24`，mac地址为`68:ed:a4:39:91:e6`
-    * 路由器，ip为：`192.168.2.1/24`，mac地址为`c8:94:bb:af:bd:8c`
-* 在机器A执行`arping -c 1 -w 1 -I eno1 -b 192.168.2.2`，分别在机器A、机器B上抓包，抓包结果如下
-    * ![arping-1](/images/Linux-Frequently-Used-Commands/arping-1.png)
-    * ![arping-2](/images/Linux-Frequently-Used-Commands/arping-2.png)
-    * arp-reply发送到路由器后，路由器不知道将数据包转发给谁，就直接丢弃了
-* 在机器A执行`arping -c 1 -w 1 -I eno1 -D -b 192.168.2.2`，分别在机器A、机器B上抓包，抓包结果如下
-    * ![arping-3](/images/Linux-Frequently-Used-Commands/arping-3.png)
-    * ![arping-3](/images/Linux-Frequently-Used-Commands/arping-4.png)
-    * arp-reply直接指定了目标机器的mac地址，因此直接送达机器A
+* Environment description:  
+  * Machine A, IP: `192.168.2.2/24`, MAC address: `68:ed:a4:39:92:4b`  
+  * Machine B, IP: `192.168.2.2/24`, MAC address: `68:ed:a4:39:91:e6`  
+  * Router, IP: `192.168.2.1/24`, MAC address: `c8:94:bb:af:bd:8c`  
+* When running `arping -c 1 -w 1 -I eno1 -b 192.168.2.2` on Machine A, and capturing packets on both Machine A and Machine B, the capture results are as follows:  
+  * ![arping-1](/images/Linux-Frequently-Used-Commands/arping-1.png)  
+  * ![arping-2](/images/Linux-Frequently-Used-Commands/arping-2.png)  
+  * After the ARP reply is sent to the router, the router does not know which device to forward the packet to, so it simply discards it  
+* When running `arping -c 1 -w 1 -I eno1 -D -b 192.168.2.2` on Machine A, and capturing packets on both Machine A and Machine B, the capture results are as follows:  
+  * ![arping-3](/images/Linux-Frequently-Used-Commands/arping-3.png)  
+  * ![arping-4](/images/Linux-Frequently-Used-Commands/arping-4.png)  
+  * The ARP reply directly specifies the target machine's MAC address, so it is delivered directly to Machine A  
 
 ## 5.18 hping3
 
-**安装：**
+**Install:**
 
 ```sh
-# 安装 yum 源
+# Install yum repo
 yum install -y epel-release
 
-# 安装 hping3
+# Install hping3
 yum install -y hping3
 ```
 
 **Options:**
 
-* `-c`：发送、接收数据包的数量（如果只发包不收包是不会停止的）
-* `-d`：指定数据包大小（不包含header）
-* `-S`：只发送syn数据包
-* `-w`：设置tcp窗口大小
-* `-p`：目的端口
-* `--flood`：洪范模式，尽可能快地发送数据包
-* `--rand-source`：使用随机ip作为源IP
+* `-c`: Number of packets to send and receive (if only sending packets without receiving, it will not stop)
+* `-d`: Specify packet size (excluding header)
+* `-S`: Send only SYN packets
+* `-w`: Set TCP window size
+* `-p`: Destination port
+* `--flood`: Flood mode, sending packets as fast as possible
+* `--rand-source`: Use random IP as source IP
 
 **Examples:**
 
@@ -3220,16 +3224,16 @@ yum install -y hping3
 
 ## 5.19 iperf
 
-**网络测速工具，一般用于局域网测试。互联网测速：[speedtest](https://github.com/sivel/speedtest-cli)**
+**Network testing tool, generally used for LAN testing. Internet speed test: [speedtest](https://github.com/sivel/speedtest-cli)**
 
 **Examples:**
 
 * IPv4
-    * `iperf -s -p 3389 -i 1`：服务端
-    * `iperf -c <server_addr> -p 3389 -i 1`：客户端
+    * `iperf -s -p 3389 -i 1`: Server
+    * `iperf -c <server_addr> -p 3389 -i 1`: Client
 * IPv6
-    * `iperf3 -s -6 -p 3389 -i 1`：服务端
-    * `iperf3 -c <server_addr> -p 3389 -6 -i 1`：客户端
+    * `iperf3 -s -6 -p 3389 -i 1`: Server
+    * `iperf3 -c <server_addr> -p 3389 -6 -i 1`: Client
 
 ## 5.20 nc
 
