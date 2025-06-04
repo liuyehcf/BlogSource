@@ -361,64 +361,64 @@ Examine the codes sent by the keyboard
 
 **Pattern:**
 
-* `echo [-ne] [字符串/变量]`
-* `''`中的变量不会被解析，`""`中的变量会被解析
+* `echo [-ne] [string/variable]`  
+* Variables inside `''` are not interpreted, while variables inside `""` are interpreted  
 
 **Options:**
 
-* `-n`：不要在最后自动换行
-* `-e`：打开反斜杠ESC转义。若字符串中出现以下字符，则特别加以处理，而不会将它当成一般文字输出
-    * `\a`：发出警告声
-    * `\b`：删除前一个字符
-    * `\c`：最后不加上换行符号
-    * `\f`：换行但光标仍旧停留在原来的位置
-    * `\n`：换行且光标移至行首
-    * `\r`：光标移至行首，但不换行
-    * `\t`：插入tab
-    * `\v`：与\f相同
-    * `\\`：插入\字符
-    * `\nnn`：插入nnn（八进制）所代表的ASCII字符
+* `-n`: Do not automatically add a newline at the end  
+* `-e`: Enable backslash escape sequences. If the string contains the following characters, they are specially handled rather than output as literal text:  
+    * `\a`: Emit a warning sound  
+    * `\b`: Delete the previous character  
+    * `\c`: Do not add a newline at the end  
+    * `\f`: Newline but cursor stays at the same position  
+    * `\n`: Newline and move cursor to the beginning of the line  
+    * `\r`: Move cursor to the beginning of the line without newline  
+    * `\t`: Insert a tab  
+    * `\v`: Same as `\f`  
+    * `\\`: Insert a `\` character  
+    * `\nnn`: Insert the ASCII character represented by the octal number `nnn`
 
 **Examples:**
 
 * `echo ${a}`
 * `echo -e "a\nb"`
-* `echo -e "\u67e5\u8be2\u5f15\u64ce\u5f02\u5e38\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5\u6216\u8054\u7cfb\u7ba1\u7406\u5458\u6392\u67e5\u3002"`：`Unicode`转`UTF-8`
+* `echo -e "\u67e5\u8be2\u5f15\u64ce\u5f02\u5e38\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5\u6216\u8054\u7cfb\u7ba1\u7406\u5458\u6392\u67e5\u3002"`: Transfer `Unicode` to `UTF-8`
 
-**其他：**
+**Others:**
 
-* **颜色控制，控制选项说明：** 
+* **Color control, explanation of control options:**  
     ```sh
-    echo -e "\033[30m 黑色字 \033[0m"
-    echo -e "\033[31m 红色字 \033[0m"
-    echo -e "\033[32m 绿色字 \033[0m"
-    echo -e "\033[33m 黄色字 \033[0m"
-    echo -e "\033[34m 蓝色字 \033[0m"
-    echo -e "\033[35m 紫色字 \033[0m"
-    echo -e "\033[36m 天蓝字 \033[0m"
-    echo -e "\033[37m 白色字 \033[0m"
+    echo -e "\033[30m Black text \033[0m"
+    echo -e "\033[31m Red text \033[0m"
+    echo -e "\033[32m Green text \033[0m"
+    echo -e "\033[33m Yellow text \033[0m"
+    echo -e "\033[34m Blue text \033[0m"
+    echo -e "\033[35m Purple text \033[0m"
+    echo -e "\033[36m Cyan text \033[0m"
+    echo -e "\033[37m White text \033[0m"
 
-    echo -e "\033[40;37m 黑底白字 \033[0m"
-    echo -e "\033[41;37m 红底白字 \033[0m"
-    echo -e "\033[42;37m 绿底白字 \033[0m"
-    echo -e "\033[43;37m 黄底白字 \033[0m"
-    echo -e "\033[44;37m 蓝底白字 \033[0m"
-    echo -e "\033[45;37m 紫底白字 \033[0m"
-    echo -e "\033[46;37m 天蓝底白字 \033[0m"
-    echo -e "\033[47;30m 白底黑字 \033[0m"
+    echo -e "\033[40;37m Black background white text \033[0m"
+    echo -e "\033[41;37m Red background white text \033[0m"
+    echo -e "\033[42;37m Green background white text \033[0m"
+    echo -e "\033[43;37m Yellow background white text \033[0m"
+    echo -e "\033[44;37m Blue background white text \033[0m"
+    echo -e "\033[45;37m Purple background white text \033[0m"
+    echo -e "\033[46;37m Cyan background white text \033[0m"
+    echo -e "\033[47;30m White background black text \033[0m"
     ```
 
-* 如何输出带有`*`的文本
-    * [Printing asterisk ("*") in bash shell](https://stackoverflow.com/questions/25277037/printing-asterisk-in-bash-shell)
-    * `content="*"; echo ${content}`：`*`会被`sh/bash`（`zsh`不会）替换为当前路径下的所有文件和目录
-    * `content="*"; echo "${content}"`：加引号后，正常输出字符`*`
+* How to output text containing `*`  
+    * [Printing asterisk ("*") in bash shell](https://stackoverflow.com/questions/25277037/printing-asterisk-in-bash-shell)  
+    * `content="*"; echo ${content}`: `*` will be expanded by `sh/bash` (not by `zsh`) to all files and directories in the current path  
+    * `content="*"; echo "${content}"`: With quotes, `*` is output as the literal character  
 
 ## 2.3 sed
 
 **Pattern:**
 
-* `sed [-nefr] [动作] [文件]`
-* `STD IN | sed [-nefr] [动作]`
+* `sed [-nefr] [action] [file]`
+* `STD IN | sed [-nefr] [action]`
 
 **Options:**
 
@@ -475,7 +475,7 @@ Examine the codes sent by the keyboard
 ```sh
 echo -e "a\nb\nc" | sed '1,2anewLine'
 
-# 输出如下
+# Output
 a
 newLine
 b
@@ -486,10 +486,10 @@ c
 * **`c`**：
 
 ```sh
-# /^a$/通过正则表达式匹配第一行，需要配合-r参数
+# /^a$/ matches the first line using a regular expression and requires the -r option
 echo -e "a\nb\nc" | sed -r '/^a$/,2cnewLine'
 
-# 输出如下
+# Output
 newLine
 c
 ```
@@ -497,16 +497,16 @@ c
 * **`d`**：
 
 ```sh
-# 删除第2行，到第一个包含字符'c'的行
+# Delete from line 2 to the first line containing the character 'c'
 echo -e "a\nb\nc" | sed '2,/c/d'
 
-# 删除最后一行
+# Delete the last line
 echo -e "a\nb\nc" | sed '$d'
 
-# 删除第一个包含字符'a1'的行 到 第一个包含字符'a2'的行 之间的内容
+# Delete content from the first line containing 'a1' to the first line containing 'a2'
 echo -e "a0\na1\na1\na1\nb1\nb2\na2\na2\na2\na3" | sed '/a1/, /a2/d'
 
-# 输出如下
+# Output
 a
 ```
 
@@ -515,7 +515,7 @@ a
 ```sh
 echo -e "a\nb\nc" | sed '1,2inewLine'
 
-# 输出如下
+# Output
 newLine
 a
 newLine
@@ -524,7 +524,7 @@ c
 
 echo -e "a\nb\nc" | sed '1inewLine'
 
-# 输出如下
+# Output
 newLine
 a
 b
@@ -534,23 +534,23 @@ c
 * **`p`**：
 
 ```sh
-# $表示最后一行
+# $ represents last line
 echo -e "a\nb\nc" | sed -n '/b/,$p'
 
-# 输出如下
+# Output
 b
 c
 
-# 利用正则表达式输出指定内容
+# Use regex
 echo -e '<a href="https://www.baidu.com">BaiDu</a>' | sed -rn 's/^.*<a href="(.*)">.*$/\1/p'
 
-# 输出如下
+# Output
 https://www.baidu.com
 
-# 输出指定行
+# Output specific lines
 echo -e "a\nb\nc\nd" | sed -n '1,3p'
 
-# 输出如下
+# Output
 a
 b
 c
@@ -559,37 +559,37 @@ c
 * **`s`**：
 
 ```sh
-# 作用于所有行，对于每一行，将第一个a替换为A
+# Apply to all lines, for each line, replace the first 'a' with 'A'
 echo -e "abcabc\nbcabca\ncabcab" | sed 's/a/A/'
 
-# 作用于所有行，对于每一行，将所有a替换为A
+# Apply to all lines, for each line, replace all 'a's with 'A's
 echo -e "abcabc\nbcabca\ncabcab" | sed 's/a/A/g'
 
-# 作用于所有行，对于每一行，将所有a替换为A，并打印出来
+# Apply to all lines, for each line, replace all 'a's with 'A's and print the result
 echo -e "abcabc\nbcabca\ncabcab" | sed -n 's/a/A/gp'
 
-# 作用于第一行到第三行，对于所有第三个字符为a的串，删掉字符a，保留前两个字符
-# /^abc/匹配第一个以abc开头的行，/cab$/匹配第一个以cab结尾的行
-# 以下两个等价，分隔符可以用'/'，可以用'|'
+# Apply from the first to the third line, for all strings where the third character is 'a', delete the 'a' and keep the first two characters
+# /^abc/ matches the first line starting with 'abc', /cab$/ matches the first line ending with 'cab'
+# The following two are equivalent; the delimiter can be '/' or '|'
 echo -e "abcabc\nbcabca\ncabcab" | sed -nr '/^abc/,/cab$/s/(..)a/\1/gp'
 echo -e "abcabc\nbcabca\ncabcab" | sed -nr '/^abc/,/cab$/s|(..)a|\1|gp'
 
-# 作用于最后一行，对于所有串loverable，替换成lovers
+# Apply to the last line, replace all occurrences of 'loverable' with 'lovers'
 echo -e "loverable" | sed -nr '$s/(love)rable/\1rs/gp'
 
-# 将/root/替换为/，下面两个等价
-echo "/root/document/file.txt" | sed -nr 's|/root/|/|p'     # 此时'/'不需要转义，因为分隔符是'|'
-echo "/root/document/file.txt" | sed -nr 's/\/root\//\//p'  # 此时'/'需要转义，因为分隔符也是'/'（看起来就不直观）
+# Replace /root/ with /, the following two are equivalent
+echo "/root/document/file.txt" | sed -nr 's|/root/|/|p'     # '/' does not need escaping here because delimiter is '|'
+echo "/root/document/file.txt" | sed -nr 's/\/root\//\//p'  # '/' needs escaping here because delimiter is '/'
 
-# 将所有a或b替换成A，下面两个等价
-echo "abc" | sed -nr 's/a|b/A/gp'   # 此时'|'不需要转义，因为分隔符是'/'
-echo "abc" | sed -nr 's|a\|b|A|gp'  # 此时'|'需要转义，因为分隔符是'|'
+# Replace all 'a' or 'b' with 'A', the following two are equivalent
+echo "abc" | sed -nr 's/a|b/A/gp'   # '|' does not need escaping here because delimiter is '/'
+echo "abc" | sed -nr 's|a\|b|A|gp'  # '|' needs escaping here because delimiter is '|'
 ```
 
 * **`r`：**
 
 ```sh
-# 准备文件1
+# Prepare file1
 cat > file1.txt << EOF
 <html>
 <body>
@@ -599,7 +599,7 @@ cat > file1.txt << EOF
 </html>
 EOF
 
-# 准备文件2
+# Prepare file2
 cat > file2.txt << EOF
 Hello world!!
 EOF
@@ -625,10 +625,10 @@ echo -e "a\nb\nc\nd\ne" | sed "/a/!s/b/B/g"
 set -H
 ```
 
-**注意**：在macOS中，`-i`参数后面要跟一个扩展符，用于备份源文件。如果扩展符长度是0，那么不进行备份
+**Note**: On macOS, the `-i` option must be followed by an extension suffix to back up the original file. If the extension length is 0, no backup is made.
 
-* `sed -i ".back" "s/a/b/g" example`：备份文件为`example.back`
-* `sed -i "" "s/a/b/g" example`：不备份
+* `sed -i ".back" "s/a/b/g" example`: Backup file will be `example.back`  
+* `sed -i "" "s/a/b/g" example`: No backup is made  
 
 ## 2.4 awk
 
@@ -845,21 +845,21 @@ echo "1 2 3 4 5 3 2 1" | tr ' ' '\n' | awk '{count[$1]++} END {for (num in count
 
 **Options:**
 
-* `list`：范围
-    * `N`：从第1个开始数的第N个字节、字符或域
-    * `N-`：从第N个开始到所在行结束的所有字符、字节或域
-    * `N-M`：从第N个开始到第M个之间(包括第M个)的所有字符、字节或域
-    * `-M`：从第1个开始到第M个之间(包括第M个)的所有字符、字节或域
-* `-b`：以字节为单位进行分割。这些字节位置将忽略多字节字符边界，除非也指定了`-n`标志
-* `-c`：以字符为单位进行分割
-* `-d`：自定义分隔符，默认为制表符
-* `-f`：与`-d`一起使用，指定显示哪个区域
-* `-n`：取消分割多字节字符。仅和`-b`标志一起使用。如果字符的最后一个字节落在由`-b`标志的`List`参数指示的范围之内，该字符将被写出；否则，该字符将被排除
+* `list`: Range  
+    * `N`: The Nth byte, character, or field counting from the first  
+    * `N-`: From the Nth to the end of the line, all characters, bytes, or fields  
+    * `N-M`: From the Nth to the Mth (inclusive), all characters, bytes, or fields  
+    * `-M`: From the first to the Mth (inclusive), all characters, bytes, or fields  
+* `-b`: Split by bytes. These byte positions ignore multibyte character boundaries unless the `-n` flag is also specified  
+* `-c`: Split by characters  
+* `-d`: Custom delimiter, default is tab  
+* `-f`: Used with `-d`, specify which fields to display  
+* `-n`: Disable splitting multibyte characters. Only used with the `-b` flag. If the last byte of a character falls within the range specified by the `List` parameter of the `-b` flag, the character will be output; otherwise, it will be excluded
 
 **Examples:**
 
-* `echo "a:b:c:d:e" | cut -d ":" -f3`：输出c
-* `ll | cut -c 1-10`：显示查询结果的 1-10个字符
+* `echo "a:b:c:d:e" | cut -d ":" -f3`: Outputs `c`  
+* `ll | cut -c 1-10`: Displays characters 1 to 10 of the query result  
 
 ## 2.6 grep
 
@@ -902,7 +902,7 @@ grep searches for `PATTERNS` in each `FILE`
 
 ## 2.7 ag
 
-`ack`是`grep`的升级版，`ag`是`ack`的升级版。`ag`默认使用扩展的正则表达式，并且在当前目录递归搜索
+`ack` is an enhanced version of `grep`, and `ag` (The Silver Searcher) is an enhanced version of `ack`. `ag` uses extended regular expressions by default and recursively searches in the current directory.
 
 **Pattern:**
 
@@ -910,15 +910,15 @@ grep searches for `PATTERNS` in each `FILE`
 
 **Options:**
 
-* `-c`：计算找到'查找字符串'的次数
-* `-i`：忽略大小写的不同
-* `-l`：输出匹配的文件名，而不是匹配的内容
-* `-n`：禁止递归
-* `-v`：反向选择，即输出没有'查找字符串'内容的哪一行
-* `-r`：在指定目录中递归查找，这是默认行为
-* `-A`：后面可加数字，为after的意思，除了列出该行外，后面的n行也列出来
-* `-B`：后面可加数字，为before的意思，除了列出该行外，前面的n行也列出来
-* `-C`：后面可加数字，除了列出该行外，前后的n行也列出来
+* `-c`: Count the number of times the 'search string' is found  
+* `-i`: Ignore case differences  
+* `-l`: Output matching filenames instead of matching content  
+* `-n`: Disable recursion  
+* `-v`: Invert match, i.e., output lines that do NOT contain the 'search string'  
+* `-r`: Recursively search in the specified directory (default behavior)  
+* `-A`: Followed by a number, meaning "after" — output the matched line plus the following n lines  
+* `-B`: Followed by a number, meaning "before" — output the matched line plus the preceding n lines  
+* `-C`: Followed by a number — output the matched line plus n lines before and after  
 
 **Examples:**
 
@@ -932,22 +932,22 @@ grep searches for `PATTERNS` in each `FILE`
 
 **Options:**
 
-* `-f`：忽略大小写的差异
-* `-b`：忽略最前面的空格符部分
-* `-M`：以月份的名字来排序，例如JAN，DEC等排序方法
-* `-n`：使用"纯数字"进行排序（默认是以文字类型来排序的）
-* `-r`：反向排序
-* `-u`：就是uniq，相同的数据中，仅出现一行代表
-* `-t`：分隔符，默认使用`Tab`来分隔
-* `-k`：以哪个区间（field）来进行排序的意思
+* `-f`: Ignore case differences  
+* `-b`: Ignore leading spaces  
+* `-M`: Sort by month name, e.g., JAN, DEC  
+* `-n`: Sort numerically (default is lexicographical sort)  
+* `-r`: Reverse sort order  
+* `-u`: Like `uniq`, output only one line for duplicate data  
+* `-t`: Field delimiter, default is Tab  
+* `-k`: Specify which field(s) to sort by  
 
 **Examples:**
 
-* `cat /etc/passwd | sort`
-* `cat /etc/passwd | sort -t ':' -k 3`
-* `echo -e "a\nb\nb\na\nb\na\na\nc\na" | sort | uniq -c | sort -nr`
-    * `sort | uniq -c | sort -nr`：统计相同pattern出现次数的常用方式
-* `echo "1 2 3 4 5 3 2 1" | tr ' ' '\n' | awk '{count[$1]++} END {for (num in count) print count[num], num}' | sort -k1,1nr -k2,2n`：第一列倒序，第二列正序
+* `cat /etc/passwd | sort`  
+* `cat /etc/passwd | sort -t ':' -k 3`  
+* `echo -e "a\nb\nb\na\nb\na\na\nc\na" | sort | uniq -c | sort -nr`  
+    * `sort | uniq -c | sort -nr`: Common way to count occurrences of identical patterns  
+* `echo "1 2 3 4 5 3 2 1" | tr ' ' '\n' | awk '{count[$1]++} END {for (num in count) print count[num], num}' | sort -k1,1nr -k2,2n`: Sort by first column descending, then second column ascending  
 
 ## 2.9 uniq
 
@@ -957,10 +957,10 @@ grep searches for `PATTERNS` in each `FILE`
 
 **Options:**
 
-* `-c`：统计出现的次数
-* `-d`：仅统计重复出现的内容
-* `-i`：忽略大小写
-* `-u`：仅统计只出现一次的内容
+* `-c`: Count the number of occurrences  
+* `-d`: Only count duplicated entries  
+* `-i`: Ignore case differences  
+* `-u`: Only count entries that appear once  
 
 **Examples:**
 
@@ -1026,11 +1026,11 @@ grep searches for `PATTERNS` in each `FILE`
 
 **Options:**
 
-* `-c`：压缩成一行输出
+* `-c`: Output in compact form (one line)
 
 **Examples:**
 
-* 遍历数组
+* Iterate over an array
     ```sh
     content='[{"item":"a"},{"item":"b"}]'
     while IFS= read -r element; do
@@ -1038,7 +1038,7 @@ grep searches for `PATTERNS` in each `FILE`
     done < <(jq -c '.[]' <<< "$content")
     ```
 
-* 提取元素
+* Extract elements
     ```sh
     content='{"person":{"name":"Alice","age":28,"address":{"street":"123 Main St","city":"Wonderland","country":"Fantasyland"},"contacts":[{"type":"email","value":"alice@example.com"},{"type":"phone","value":"555-1234"}]}}'
     jq -c '.person | .address | .city' <<< ${content}
@@ -1050,21 +1050,21 @@ grep searches for `PATTERNS` in each `FILE`
 
 **Options:**
 
-* `-r, --no-run-if-empty`：输入为空就不执行后续操作了
-* `-I {}`：用标准输入替换后续命令中的占位符`{}`
-* `-t`：输出要执行的命令
+* `-r, --no-run-if-empty`: Do not run the command if input is empty  
+* `-I {}`: Replace the placeholder `{}` in the following command with standard input  
+* `-t`: Print the commands to be executed  
 
 **Examples:**
 
 * `docker ps -aq | xargs docker rm -f`
-* `echo "   a  b  c  " | xargs`：实现`trim`
+* `echo "   a  b  c  " | xargs`: Implementing `trim`
 * `ls | xargs -I {} rm -f {}`
 
 ## 2.13 tee
 
-`>`、`>>`等会将数据流传送给文件或设备，因此除非去读取该文件或设备，否则就无法继续利用这个数据流，如果我们想要将这个数据流的处理过程中将某段信息存下来，可以利用`tee`（`tee`本质上，就是将`stdout`复制一份）
+`>`, `>>`, etc. redirect the data stream to a file or device, so unless you read that file or device, you cannot further use the data stream. If you want to save part of the data stream during processing, you can use `tee` (essentially, `tee` duplicates `stdout`).
 
-`tee`会将数据流送与文件与屏幕(screen)，输出到屏幕的就是`stdout`可以让下个命令继续处理(**`>`,`>>`会截断`stdout`，从而无法以`stdin`传递给下一个命令**)
+`tee` sends the data stream both to a file and to the screen (the output to the screen is `stdout`), allowing the next command to continue processing it (**`>`, `>>` truncate `stdout`, thus cannot pass it as `stdin` to the next command**).
 
 **Pattern:**
 
@@ -1072,21 +1072,21 @@ grep searches for `PATTERNS` in each `FILE`
 
 **Options:**
 
-* `-a`：以累加(append)的方式，将数据加入到file当中
+* `-a`: Append data to the file instead of overwriting  
 
 **Examples:**
 
-* `command | tee <文件名> | command`
+* `command | tee <file> | command`
 
 ## 2.14 cat
 
 **Pattern:**
 
-* `cat > [newfile] <<'结束字符'`
+* `cat > [newfile] <<'END_MARKER'`
 
-**示例：注意`EOF`与`'EOF'`的区别**
+**Example: Note the difference between `EOF` and `'EOF'`**
 
-* `man bash`搜索`Here Documents`查看这两者的区别
+* Search `Here Documents` in `man bash` to see the difference between these two
 
 ```sh
 name="test"
@@ -1114,44 +1114,44 @@ echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
 
 **Examples:**
 
-* `tail -f xxx.txt`
-* `tail -n +2 xxx.txt`：输出第二行到最后一行
+* `tail -f xxx.txt`  
+* `tail -n +2 xxx.txt`: Output from the second line to the last line  
 
 ## 2.16 find
 
 **Pattern:**
 
-* `find [文件路径] [option] [action]`
+* `find [file_path] [option] [action]`
 
 **Options:**
 
-* `-name`：后接文件名，支持通配符。**注意匹配的是相对路径**
-* `-regex`：后接正则表达式，**注意匹配的是完整路径**
-* `-maxdepth`：后接查找深度
-* `-regextype`：正则表达式类型
-    * `emacs`：默认类型
+* `-name`: Followed by a filename, supports wildcards. **Note this matches relative paths**
+* `-regex`: Followed by a regular expression, **Note this matches the full path**
+* `-maxdepth`: Followed by search depth
+* `-regextype`: Type of regular expression
+    * `emacs`: Default type
     * `posix-awk`
     * `posix-basic`
     * `posix-egrep`
     * `posix-extended`
-* `-type`：后接类型
-    * `f`：普通文件，默认的类型
-    * `d`：目录
+* `-type`: Followed by type
+    * `f`: Regular file, default type
+    * `d`: Directory
 
 **Examples:**
 
 * `find . -name "*.c"`
 * `find . -maxdepth 1 -name "*.c"`
 * `find . -regex ".*/.*\.c"`
-* 查找后缀为cfg以及后缀为conf的文件
+* Find files with suffixes `.cfg` and `.conf`
     * `find ./ -name '*.cfg' -o -name '*.conf'`
     * `find ./ -regex '.*\.cfg\|.*\.conf'`
     * `find ./ -regextype posix-extended -regex '.*\.(cfg|conf)'`
-* `find . -type f -executable`：查找二进制文件
+* `find . -type f -executable`: Find executable binary files  
 
 ## 2.17 locate
 
-**`locate`是在已创建的数据库`/var/lib/mlocate`里面的数据所查找到的，所以不用直接在硬盘当中去访问，因此，相比于`find`，速度更快**
+**`locate` searches data inside an existing database `/var/lib/mlocate`, so it does not directly access the hard drive. Therefore, compared to `find`, it is faster.**
 
 **Install:**
 
@@ -1159,10 +1159,10 @@ echo "↑↑↑↑↑↑↑↑↑content↑↑↑↑↑↑↑↑↑"
 yum install -y mlocate
 ```
 
-**如何使用：**
+**Usage:**
 
 ```sh
-# 第一次使用时，需要先更新db
+# When using for the first time, update the database first
 updatedb
 
 locate stl_vector.h
@@ -1172,9 +1172,9 @@ locate stl_vector.h
 
 **Examples:**
 
-* `cp -vrf /a /b`：递归拷贝目录`/a`到目录`/b`中，包含目录`/a`中所有的文件、目录、隐藏文件和隐藏目录
-* `cp -vrf /a/* /b`：递归拷贝目录`/a`下的所有文件、目录，但不包括隐藏文件和隐藏目录
-* `cp -vrf /a/. /b`：递归拷贝目录`/a`中所有的文件、目录、隐藏文件和隐藏目录到目录`/b`中
+* `cp -vrf /a /b`: Recursively copy directory `/a` into directory `/b`, including all files, directories, hidden files, and hidden directories inside `/a`
+* `cp -vrf /a/* /b`: Recursively copy all files and directories under `/a` but excluding hidden files and hidden directories
+* `cp -vrf /a/. /b`: Recursively copy all files, directories, hidden files, and hidden directories inside `/a` into directory `/b`
 
 ## 2.19 rsync
 
@@ -1225,11 +1225,11 @@ The `r` in its name stands for `remote`, and `rsync` essentially means remote sy
 
 **Examples:**
 
-* `rm -rf /a/*`：递归删除目录`/a`下的所有文件、目录，但不包括隐藏文件和隐藏目录
-* `rm -rf /path/{..?*,.[!.]*,*}`：递归删除目录`/path`下的所有文件、目录、隐藏文件和隐藏目录
-* `rm -rf /path/!(a.txt|b.txt)`：递归删除目录`path`下的除了`a.txt`以及`b.txt`之外的所有文件、目录，但不包括隐藏文件和隐藏目录
-    * 需要通过命令`shopt -s extglob`开启`extglob`
-    * 如何在`/bin/bash -c`中使用`extglob`
+* `rm -rf /a/*`: Recursively delete all files and directories under `/a`, but excluding hidden files and hidden directories
+* `rm -rf /path/{..?*,.[!.]*,*}`: Recursively delete all files, directories, hidden files, and hidden directories under `/path`
+* `rm -rf /path/!(a.txt|b.txt)`: Recursively delete all files and directories under `/path` except for `a.txt` and `b.txt`, excluding hidden files and hidden directories
+    * Requires enabling `extglob` with the command `shopt -s extglob`
+    * How to use `extglob` inside `/bin/bash -c`:
         ```sh
         mkdir -p rmtest
         touch rmtest/keep
@@ -1241,7 +1241,7 @@ The `r` in its name stands for `remote`, and `rsync` essentially means remote sy
 
         tree -N rmtest
         /bin/bash -O extglob -c 'rm -rf rmtest/!(keep)'
-        # rmtest/sub/keep cannot be preserve
+        # rmtest/sub/keep cannot be preserved
         tree -N rmtest
         ```
 
@@ -1292,13 +1292,13 @@ The `r` in its name stands for `remote`, and `rsync` essentially means remote sy
 
 **Options:**
 
-* `-s`：Silent mode。只显示内容，一般用于执行脚本，例如`curl -s '<url>' | bash -s`
-* `-L`：如果原链接有重定向，那么会继续从新链接访问
-* `-o`：指定下载文件名
-* `-X`：指定`Http Method`，例如`POST`
-* `-H`：增加`Http Header`
-* `-d`：指定`Http Body`
-* `-u <username>:<password>`：对于需要鉴权的服务，需要指定用户名或密码，`:<password>`可以省略，以交互的方式输入
+* `-s`: Silent mode. Only displays content, generally used for executing scripts, for example `curl -s '<url>' | bash -s`
+* `-L`: If the original link has a redirect, it will continue to access the new link
+* `-o`: Specify the download filename
+* `-X`: Specify the `Http Method`, for example `POST`
+* `-H`: Add `Http Header`
+* `-d`: Specify the `Http Body`
+* `-u <username>:<password>`: For services that require authentication, you need to specify the username or password. `:<password>` can be omitted and entered interactively
 
 **Examples:**
 
@@ -1312,13 +1312,13 @@ The `r` in its name stands for `remote`, and `rsync` essentially means remote sy
 
 **Options:**
 
-* `-O`：后接下载文件的文件名
-* `-r`：递归下载（用于下载文件夹）
-* `-nH`：下载文件夹时，不创建host目录
-* `-np`：不访问上层目录
-* `-P`：指定下载的目录
-* `-R`：指定排除的列表
-* `--proxy`：后接proxy地址
+* `-O`: Followed by the name of the file to be downloaded
+* `-r`: Recursive download (used for downloading folders)
+* `-nH`: When downloading folders, do not create a host directory
+* `-np`: Do not access the parent directory
+* `-P`: Specify the download directory
+* `-R`: Specify the exclusion list
+* `--proxy`: Followed by the proxy address
 
 **Examples:**
 
@@ -1335,19 +1335,19 @@ The `r` in its name stands for `remote`, and `rsync` essentially means remote sy
 
 **Options:**
 
-* `-N`：显示非ASCII字符，可以显示中文
-* `-L [num]`：控制显示层级
+* `-N`: Display non-ASCII characters, can show Chinese
+* `-L [num]`: Control the display depth level
 
 ## 2.25 split
 
 **Examples:**
 
-* `split -b 2048M bigfile bigfile-slice-`：按大小切分文件，切分后的文件最大为`2048M`，文件的前缀是`bigfile-slice-`
-* `split -l 10000 bigfile bigfile-slice-`：按行切分文件，切分后的文件最大行数为`10000`，文件的前缀是`bigfile-slice-`
+* `split -b 2048M bigfile bigfile-slice-`: Split the file by size, each split file is up to `2048M`, with the prefix `bigfile-slice-`
+* `split -l 10000 bigfile bigfile-slice-`: Split the file by lines, each split file contains up to `10000` lines, with the prefix `bigfile-slice-`
 
 ## 2.26 base64
 
-用于对输入进行`base64`编码以及解码
+Used for `base64` encoding and decoding of input
 
 **Examples:**
 
@@ -1356,62 +1356,62 @@ The `r` in its name stands for `remote`, and `rsync` essentially means remote sy
 
 ## 2.27 md5sum
 
-计算输入或文件的MD5值
+Calculate the MD5 checksum of input or file
 
 **Examples:**
 
-* `echo "hello" | md5sum`
+* `echo -n "hello" | md5sum`
 
 ## 2.28 openssl
 
-openssl可以对文件，以指定算法进行加密或者解密
+This command is used to encrypt or decrypt files using a specified algorithm
 
 **Examples:**
 
-* `openssl -h`：查看所有支持的加解密算法
+* `openssl -h`: View all supported encryption and decryption algorithms
 * `openssl aes-256-cbc -a -salt -in blob.txt -out cipher`
 * `openssl aes-256-cbc -a -d -in cipher -out blob-rebuild.txt`
 
 ## 2.29 bc
 
-bc可以用于进制转换
+bc can be used for base conversion
 
 **Examples:**
 
-* `echo "obase=8;255" | bc`：十进制转8进制
-* `echo "obase=16;255" | bc`：十进制转16进制
-* `((num=8#77)); echo ${num}`：8进制转十进制
-* `((num=16#FF)); echo ${num}`：16进制转十进制
+* `echo "obase=8;255" | bc`: Convert decimal to octal
+* `echo "obase=16;255" | bc`: Convert decimal to hexadecimal
+* `((num=8#77)); echo ${num}`: Convert octal to decimal
+* `((num=16#FF)); echo ${num}`: Convert hexadecimal to decimal
 
 ## 2.30 dirname
 
-`dirname`用于返回文件路径的目录部分，该命令不会检查路径所对应的目录或文件是否真实存在
+`dirname` is used to return the directory part of a file path. This command does not check whether the directory or file corresponding to the path actually exists.
 
 **Examples:**
 
-* `dirname /var/log/messages`：返回的是`/var/log`
-* `dirname dirname aaa/bbb/ccc`：返回的是`aaa/bbb`
-* `dirname .././../.././././a`：返回的是`.././../../././.`
+* `dirname /var/log/messages`: returns `/var/log`
+* `dirname dirname aaa/bbb/ccc`: returns `aaa/bbb`
+* `dirname .././../.././././a`: returns `.././../../././.`
 
-通常在脚本中用于获取脚本所在的目录，示例如下：
+Usually used in scripts to get the directory where the script is located, example shown below:
 
 ```sh
-# 其中$0代表脚本的路径（相对或绝对路径）
+# Here $0 represents the script path (relative or absolute)
 ROOT=$(dirname "$0")
 ROOT=$(cd "$ROOT"; pwd)
 ```
 
 ## 2.31 addr2line
 
-该工具用于查看二进制的偏移量与源码的对应关系。如果二进制和产生core文件的机器不是同一台，那么可能会产生符号表不匹配的问题，导致得到的源码位置是有问题的
+This command is used to view the correspondence between binary offsets and source code. If the binary and the machine that produced the core file are not the same, symbol table mismatches may occur, resulting in incorrect source code locations.
 
 **Examples:**
 
-* `addr2line 4005f5 -e test`：查看二进制`test`中位置为`4005f5`指令对应的源码
+* `addr2line 4005f5 -e test`: View the source code corresponding to the instruction at position `4005f5` in the binary `test`
 
 ## 2.32 ldd
 
-该工具用于查看可执行文件链接了哪些动态库
+This command is used to see which dynamic libraries an executable file is linked to
 
 **Examples:**
 
@@ -1421,17 +1421,17 @@ ROOT=$(cd "$ROOT"; pwd)
 
 ## 2.33 ldconfig
 
-**生成动态库缓存或从缓存读取动态库信息**
+**Generate dynamic library cache or read dynamic library information from cache**
 
 **Examples:**
 
-* `ldconfig`：重新生成`/etc/ld.so.cache`
-* `ldconfig -v`：重新生成`/etc/ld.so.cache`，并输出详细信息
-* `ldconfig -p`：从`/etc/ld.so.cache`中读取并展示动态库信息
+* `ldconfig`: Regenerate `/etc/ld.so.cache`
+* `ldconfig -v`: Regenerate `/etc/ld.so.cache` and output detailed information
+* `ldconfig -p`: Read and display dynamic library information from `/etc/ld.so.cache`
 
 ## 2.34 objdump
 
-该工具用于反汇编
+This command is used for disassembly
 
 **Examples:**
 
@@ -1441,7 +1441,9 @@ ROOT=$(cd "$ROOT"; pwd)
 
 ## 2.35 objcopy & strip
 
-该工具用于将debug信息从二进制中提取出来，示例：[[Enhancement] strip debug symbol in release mode](https://github.com/StarRocks/starrocks/pull/24442)
+This command is used to extract debug information from binaries. Example:
+
+[[Enhancement] strip debug symbol in release mode](https://github.com/StarRocks/starrocks/pull/24442)
 
 ```sh
 objcopy --only-keep-debug main main.debuginfo
@@ -1456,7 +1458,7 @@ When you're debugging the binary through `gdb`, it will automatically load the c
 
 ## 2.36 nm
 
-该工具用于查看符号表
+This command is used to view the symbol table
 
 **Examples:**
 
@@ -1465,7 +1467,7 @@ When you're debugging the binary through `gdb`, it will automatically load the c
 
 ## 2.37 strings
 
-该工具用于查看二进制文件包含的所有字符串信息
+This command is used to view all string information contained in a binary file
 
 **Examples:**
 
@@ -1475,13 +1477,13 @@ When you're debugging the binary through `gdb`, it will automatically load the c
 
 **Options:**
 
-* `-l`：列出所有编码
-* `-f`：来源编码
-* `-t`：目标编码
-* `-c`：忽略有问题的编码
-* `-s`：忽略警告
-* `-o`：输出文件
-* `--verbose`：输出处理文件进度
+* `-l`: List all encodings
+* `-f`: Source encoding
+* `-t`: Target encoding
+* `-c`: Ignore problematic encodings
+* `-s`: Suppress warnings
+* `-o`: Output file
+* `--verbose`: Output file processing progress
 
 **Examples:**
 
@@ -1489,7 +1491,7 @@ When you're debugging the binary through `gdb`, it will automatically load the c
 
 ## 2.39 expect
 
-expect是一个自动交互的工具，通过编写自定义的配置，就可以实现自动填充数据的功能
+expect is an automation tool for interactive sessions. By writing custom configurations, it can automatically fill in data.
 
 **Examples:**
 
