@@ -470,7 +470,7 @@ Examine the codes sent by the keyboard
 
 **Examples:**
 
-* **`a`**：
+* **`a`:**
 
 ```sh
 echo -e "a\nb\nc" | sed '1,2anewLine'
@@ -483,7 +483,7 @@ newLine
 c
 ```
 
-* **`c`**：
+* **`c`:**
 
 ```sh
 # /^a$/ matches the first line using a regular expression and requires the -r option
@@ -494,7 +494,7 @@ newLine
 c
 ```
 
-* **`d`**：
+* **`d`:**
 
 ```sh
 # Delete from line 2 to the first line containing the character 'c'
@@ -510,7 +510,7 @@ echo -e "a0\na1\na1\na1\nb1\nb2\na2\na2\na2\na3" | sed '/a1/, /a2/d'
 a
 ```
 
-* **`i`**：
+* **`i`:**
 
 ```sh
 echo -e "a\nb\nc" | sed '1,2inewLine'
@@ -531,7 +531,7 @@ b
 c
 ```
 
-* **`p`**：
+* **`p`:**
 
 ```sh
 # $ represents last line
@@ -556,7 +556,7 @@ b
 c
 ```
 
-* **`s`**：
+* **`s`:**
 
 ```sh
 # Apply to all lines, for each line, replace the first 'a' with 'A'
@@ -586,7 +586,7 @@ echo "abc" | sed -nr 's/a|b/A/gp'   # '|' does not need escaping here because de
 echo "abc" | sed -nr 's|a\|b|A|gp'  # '|' needs escaping here because delimiter is '|'
 ```
 
-* **`r`：**
+* **`r`:**
 
 ```sh
 # Prepare file1
@@ -607,7 +607,7 @@ EOF
 sed '/<tag>/ r file2.txt' file1.txt
 ```
 
-* **`reverse match`：**
+* **`reverse match`:**
 
 ```sh
 echo -e "a\nb\nc\nd\ne" | sed '/a/!d'
@@ -887,7 +887,7 @@ grep searches for `PATTERNS` in each `FILE`
 * `-v`: Invert the sense of matching, to select non-matching lines.
 * `-r`: Read all files under each directory, recursively, following symbolic links only if they are on the command line.
 * `--color=auto|never|always`: Surround the matched (non-empty) strings, matching lines, context lines, file names, line numbers, byte offsets, and separators (for fields and groups of context lines) with escape sequences to display them in color on the terminal. The colors are defined by the environment variable GREP_COLORS. Can be never, always, or auto.
-* `-A <NUM>`：Print `NUM` lines of trailing context after matching lines.
+* `-A <NUM>`: Print `NUM` lines of trailing context after matching lines.
 * `-B <NUM>`: Print `NUM` lines of leading context before matching lines.
 * `-C <NUM>`: Print `NUM` lines of output context
 * `--binary-files=<TYPE>`: If a file's data or metadata indicate that the file contains binary data, assume that the file is of type `TYPE`.
@@ -1638,7 +1638,7 @@ This command is used to view information about mount points
 
 ## 3.5 swap
 
-**Make swap：**
+**Make swap:**
 
 ```sh
 dd if=/dev/zero of=/tmp/swap bs=1M count=128
@@ -1936,15 +1936,15 @@ The command is used to terminate processes.
         * `1`: Forked but didn't exec  
         * `4`: Used super-user privileges  
     * `stat`: Process status
-        * `D`：uninterruptible sleep (usually IO)
-        * `R`：running or runnable (on run queue)
-        * `S`：interruptible sleep (waiting for an event to complete)
-        * `T`：stopped by job control signal
-        * `t`：stopped by debugger during the tracing
-        * `W`：paging (not valid since the 2.6.xx kernel)
-        * `X`：dead (should never be seen)
-        * `Z`：defunct ("zombie") process, terminated but not reaped by its parent
-* `-w`：Wide output.  Use this option twice for unlimited width.
+        * `D`: uninterruptible sleep (usually IO)
+        * `R`: running or runnable (on run queue)
+        * `S`: interruptible sleep (waiting for an event to complete)
+        * `T`: stopped by job control signal
+        * `t`: stopped by debugger during the tracing
+        * `W`: paging (not valid since the 2.6.xx kernel)
+        * `X`: dead (should never be seen)
+        * `Z`: defunct ("zombie") process, terminated but not reaped by its parent
+* `-w`: Wide output.  Use this option twice for unlimited width.
 
 **Examples:**
 
@@ -2881,7 +2881,7 @@ VLAN filter list
 
 * **Destination, Genmask**: These two parameters correspond to the network and netmask respectively.
 * **Gateway**: Indicates through which gateway the network is connected. If it shows `0.0.0.0 (default)`, it means the route sends packets directly on the local network via MAC addresses. If an IP is shown, it means the route requires a router (gateway) to forward packets.
-* **Flags**:
+* **Flags:**
     * `U (route is up)`: The route is active.
     * `H (target is a host)`: The destination is a single host, not a network.
     * `G (use gateway)`: Requires forwarding packets through an external host (gateway).
@@ -3412,7 +3412,7 @@ sshpass -p 'xxxxx' ssh -o StrictHostKeyChecking=no test@1.2.3.4
 
 **Output Description:**
 
-* **First line**:
+* **First line:**
     * Current time  
     * Uptime  
     * Number of logged-in users  
@@ -3431,11 +3431,11 @@ sshpass -p 'xxxxx' ssh -o StrictHostKeyChecking=no test@1.2.3.4
     * `TIME+`: Cumulative CPU time used  
     * `COMMAND`: Command name  
 * **By default, top sorts by CPU usage. Press `h` for help.**
-* **Sorting keys**:
+* **Sorting keys:**
     * `P`: Sort by CPU usage (default descending, press `R` to reverse)  
     * `M`: Sort by memory usage  
     * `T`: Sort by time used  
-* **Other interactive commands**:
+* **Other interactive commands:**
     * `1`: Show each CPU core’s usage separately  
     * `2`: Show only average CPU usage  
     * `x`: Highlight the sorted column  
@@ -3448,7 +3448,7 @@ sshpass -p 'xxxxx' ssh -o StrictHostKeyChecking=no test@1.2.3.4
     * `V`: Show commands in a tree format  
     * `H`: Show threads  
     * `W`: Save current interactive settings to `~/.toprc`, enabling consistent output when using non-interactive mode like `top -b -n 1`  
-* **Memory-related fields**:
+* **Memory-related fields:**
     * `VIRT` (virtual memory size): Total virtual memory used by the process, including code, data, shared libs, swapped pages, and mapped-but-unused pages  
         * `VIRT = SWAP + RES`
     * `SWAP`: Amount of virtual memory swapped out  
@@ -4063,17 +4063,17 @@ mount      –t debugfs    debugfs /sys/kernel/debug
     * `cache-misses` indicates the number of times access to main memory is required due to a miss in all cache levels. Cases like `L1-miss, L2-hit` are not included.
     * [What are perf cache events meaning?](https://stackoverflow.com/questions/12601474/what-are-perf-cache-events-meaning)
     * [How does Linux perf calculate the cache-references and cache-misses events](https://stackoverflow.com/questions/55035313/how-does-linux-perf-calculate-the-cache-references-and-cache-misses-events)
-* `LLC, last level cache`：
+* `LLC, last level cache`:
     * `LLC-loads & LLC-load-misses`
     * `LLC-stores & LLC-store-misses`
-* `L1`：
+* `L1`:
     * `L1-dcache-loads & L1-dcache-load-misses`
     * `L1-dcache-stores`
     * `L1-icache-load-misses`
     * `mem_load_retired.l1_hit & mem_load_retired.l1_miss`
-* `L2`：
+* `L2`:
     * `mem_load_retired.l2_hit & mem_load_retired.l2_miss`
-* `L3`：
+* `L3`:
     * `mem_load_retired.l3_hit & mem_load_retired.l3_miss`
 * `context-switches & sched:sched_switch`
 * `page-faults & major-faults & minor-faults`
@@ -4329,7 +4329,7 @@ CONFIG_KVM_MMU_AUDIT=y
 
 **Examples:**
 
-* `auditctl -w /etc/shadow -p wa -k passwd_changes`：等价于`auditctl -a always,exit -F path=/etc/shadow -F perm=wa -k passwd_changes`
+* `auditctl -w /etc/shadow -p wa -k passwd_changes`: Equals to `auditctl -a always,exit -F path=/etc/shadow -F perm=wa -k passwd_changes`
 
 ### 9.2.3 System Call Rules
 
@@ -4382,37 +4382,37 @@ CONFIG_KVM_MMU_AUDIT=y
 **Examples:**
 
 * `rpm -qa | grep openjdk`
-* `rpm -ql java-11-openjdk-devel-11.0.8.10-1.el7.x86_64`：查看软件安装路径
+* `rpm -ql java-11-openjdk-devel-11.0.8.10-1.el7.x86_64`: View the software installation path
 
 ## 10.2 yum
 
-**源管理（`/etc/yum.repos.d`）：**
+**Source Management (`/etc/yum.repos.d`):**
 
 * `yum repolist`
 * `yum-config-manager --enable <repo>`
 * `yum-config-manager --disable <repo>`
 * `yum-config-manager --add-repo <repo_url>`
 
-**安装、卸载：**
+**Install and Uninstall:**
 
 * `yum install <software>`
 * `yum remove <software>`
 * `yum localinstall <rpms>`
 
-**缓存：**
+**Cache:**
 
 * `yum makecache`
-    * `yum makecache fast`：确保缓存仅包含最新的信息，等效于`yum clean expire-cache`
-* `yum clean`：清除缓存
-    * `yum clean expire-cache`：清除无效的缓存
-    * `yum clean all`：清除所有缓存
+    * `yum makecache fast`: Ensure the cache only contains the latest information, equivalent to `yum clean expire-cache`
+* `yum clean`: Clear the cache
+    * `yum clean expire-cache`: Clear expired cache
+    * `yum clean all`: Clear all caches
 
-**软件列表：**
+**Software List:**
 
-* `yum list`：列出所有可安装的软件
-    * `yum list docker-ce --showduplicates | sort -r`：查询软件的版本信息
+* `yum list`: List all installable software
+    * `yum list docker-ce --showduplicates | sort -r`: Query version information of the software
 
-**安装jdk：**
+**Install jdk:**
 
 ```sh
 sudo yum install java-1.8.0-openjdk-devel
@@ -4427,7 +4427,7 @@ sudo yum install java-1.8.0-openjdk-devel
 * `scl -l`: Lists all the available software collections on your system.
 * `scl enable <collection> <command>`: This command runs a specified `<command>` within the environment of the given software `<collection>`. This means that when you run a command under a specific software collection, you're using the version of the software provided by that collection.
 
-**安装指定版本的gcc：**
+**Install a specific version of gcc:**
 
 ```sh
 yum -y install centos-release-scl
@@ -4443,7 +4443,7 @@ yum -y install devtoolset-11
 scl enable devtoolset-11 bash
 ```
 
-**删除：**
+**Delete:**
 
 ```sh
 yum -y remove devtoolset-7\*
@@ -4458,22 +4458,6 @@ yum -y remove devtoolset-11\*
 **Examples:**
 
 * `dnf provides /usr/lib/grub/x86_64-efi`
-
-<!--
-
-**Pattern:**
-
-* `find [文件路径] [option] [action]`
-
-**Options:**
-
-* `-name`：后接文件名，支持通配符。**注意匹配的是相对路径**
-
-**Examples:**
-
-* `find . -name "*.c"`
-
--->
 
 ## 10.4 apt
 
@@ -4505,8 +4489,8 @@ apt install clang-format-X.Y
 #### 11.1.2.1 Determine disk type
 
 * `lsblk -d --output NAME,ROTA`
-    * `ROTA: 0`：SSD
-    * `ROTA: 1`：HDD
+    * `ROTA: 0`: SSD
+    * `ROTA: 1`: HDD
 * `cat /sys/block/<device_name>/queue/rotational`
     * `<device_name>` may be sda
 
@@ -4556,7 +4540,7 @@ apt install clang-format-X.Y
 
 #### 11.2.1.5 Analysis
 
-**CPU**:
+**CPU:**
 
 * `large %nice`: In system monitoring, the `%nice` metric indicates the percentage of CPU time spent executing processes that have had their priority adjusted using the nice command. A high `%nice` value generally means that there are many low-priority tasks running. These tasks have been set to a lower priority to minimize their impact on other higher-priority tasks
 * **`large %iowait`**: indicates that a significant amount of CPU time is being spent waiting for I/O (Input/Output) operations to complete. This is a measure of how much time the CPU is idle while waiting for data transfer to and from storage devices such as hard disks, SSDs, or network file systems. High `%iowait` can be a sign of several underlying issues or conditions:
@@ -4582,7 +4566,7 @@ apt install clang-format-X.Y
     * High Disk I/O
     * Interrupt Coalescing
 
-**Memory**:
+**Memory:**
 
 * `large majpf`: indicates that the system is experiencing a lot of disk I/O due to pages being read from disk into memory. This can be a sign of insufficient physical memory (RAM) for the workload being handled, leading to the following scenarios:
     * Memory Overcommitment
