@@ -4101,23 +4101,23 @@ mount      –t debugfs    debugfs /sys/kernel/debug
 
 # 8 Remote Desktop
 
-**`X Window System, X11, X`是一个图形显示系统。包含2个组件：`X Server`**
+**`X Window System, X11, X` is a graphical display system. It consists of two components: `X Server`**
 
-* **`X Server`：必须运行在一个有图形显示能力的主机上，管理主机上与显示相关的硬件设置（如显卡、硬盘、鼠标等），它负责屏幕画面的绘制与显示，以及将输入设置（如键盘、鼠标）的动作告知`X Client`**
-    * `X Server`的实现包括
+* **`X Server`: Must run on a host with graphical display capabilities. It manages the display-related hardware settings on the host (such as graphics card, hard drive, mouse, etc.). It is responsible for drawing and displaying the screen content, and notifying the `X Client` of input actions (such as keyboard and mouse).**
+    * Implementations of `X Server` include:
         * `XFree86`
-        * `Xorg`：`XFree86`的衍生版本。这是运行在大多数Linux系统上的`X Server`
-        * `Accelerated X`：由`Accelerated X Product`开发，在图形的加速显示上做了改进
-        * `X Server suSE`：`SuSE Team's`开发
-        * `Xquartz`：运行在`MacOS`系统上的`X Server`
-* **`X Client`：是应用程序的核心部分，它与硬件无关，每个应用程序就是一个`X Client`。`X Client`可以是终端仿真器（`Xterm`）或图形界面程序，它不直接对显示器绘制或者操作图形，而是与`X Server`通信，由`X Server`控制显示**
-* **`X Server`和`X Client`可以在同一台机器上，也可以在不同机器上。两种通过`xlib`进行通信**
+        * `Xorg`: A derivative of `XFree86`. This is the `X Server` running on most Linux systems.
+        * `Accelerated X`: Developed by the `Accelerated X Product`, with improvements in accelerated graphical display.
+        * `X Server suSE`: Developed by the `SuSE Team`.
+        * `Xquartz`: The `X Server` running on `MacOS` systems.
+* **`X Client`: The core part of applications, hardware-independent. Each application is an `X Client`. An `X Client` can be a terminal emulator (`Xterm`) or a graphical interface program. It does not directly draw or manipulate graphics on the display but communicates with the `X Server`, which controls the display.**
+* **`X Server` and `X Client` can be on the same machine or different machines. They communicate via `xlib`.**
 
 ![X-Window-System](/images/Linux-Frequently-Used-Commands/X-Window-System.awebp)
 
 ## 8.1 xquartz (Not Recommended)
 
-**工作原理：纯`X Window System`方案，其中，`xquartz`就是`X Server`的一种实现**
+**Working principle:** A pure `X Window System` solution, where `xquartz` is one implementation of the `X Server`.
 
 ```plantuml
 skinparam backgroundColor #EEEBDC
@@ -4141,38 +4141,38 @@ skinparam sequence {
     ActorFontName Aapex
 }
 
-box "带有显示相关硬件的主机"
+box "Host with display-related hardware"
 participant X_Quartz as "X Quartz"
 end box
 
-box "远程Linux主机"
+box "Remote Linux Host"
 participant X_Client as "X client"
 end box
 
 X_Quartz -> X_Client: ssh -Y user@target
-X_Client -> X_Client: 运行图形化程序，例如xclock
+X_Client -> X_Client: Run graphical program, e.g., xclock
 X_Client -> X_Quartz: X request
 X_Quartz -> X_Client: X reply
 ```
 
-**如何使用：**
+**How to use:**
 
-* 在本地电脑（以`Mac`为例）安装`Xquartz`
-* 远程Linux主机安装`xauth`，并且开启`sshd`的`X11 Forwarding`功能
+* Install `Xquartz` on the local computer (taking `Mac` as an example)
+* Install `xauth` on the remote Linux host and enable `X11 Forwarding` in `sshd`
     * `yum install -y xauth`
-    * `/etc/ssh/sshd_config`设置`X11Forwarding yes`
-* 本地电脑用`ssh`以`X11 Forwarding`方式连接到远程Linux主机
+    * Set `X11Forwarding yes` in `/etc/ssh/sshd_config`
+* Use `ssh` with `X11 Forwarding` from the local computer to connect to the remote Linux host
     * `ssh -Y user@target`
-* 在远程ssh会话中，运行`X Client`程序，例如`xclock`
+* In the remote ssh session, run the `X Client` program, e.g., `xclock`
 
-**缺点：占用大量带宽，且一个`ssh`会话只能运行一个`X Client`程序**
+**Disadvantages:** Consumes a large amount of bandwidth, and only one `X Client` program can run per `ssh` session.
 
 ## 8.2 VNC (Recommended)
 
-**`Virtual Network Computing, VNC`。主要由两个部分组成：`VNC Server`及`VNC Viewer`**
+**`Virtual Network Computing, VNC`. It mainly consists of two parts: `VNC Server` and `VNC Viewer`.**
 
-* **`VNC Server`：运行了`Xvnc`（`X Server`的一种实现），只不过`Xvnc`并不直接控制与显示相关的硬件，而是通过`VNC Protocol`与`VNC Viewer`进行通信，并控制`VNC Viewer`所在的主机上与显示相关的硬件。一个主机可以运行多个`Xvnc`，每个`Xvnc`会在本地监听一个端口（`590x`）**
-* **`VNC Client`：与`VNC Server`暴露的端口连接，获取图形化输出所需的信息（包括传递I/O设备的信号）**
+* **`VNC Server`: Runs `Xvnc` (an implementation of `X Server`), but `Xvnc` does not directly control display-related hardware. Instead, it communicates with the `VNC Viewer` via the `VNC Protocol` and controls the display-related hardware on the host where the `VNC Viewer` is running. A host can run multiple `Xvnc` instances, each listening locally on a port (`590x`).**
+* **`VNC Client`: Connects to the port exposed by the `VNC Server` to obtain the graphical output information (including transmitting I/O device signals).**
 
 ```plantuml
 skinparam backgroundColor #EEEBDC
@@ -4196,11 +4196,11 @@ skinparam sequence {
     ActorFontName Aapex
 }
 
-box "带有显示相关硬件的主机"
+box "Host with display-related hardware"
 participant VNC_Viewer as "VNC Viewer"
 end box
 
-box "远程Linux主机"
+box "Remote Linux Host"
 participant X_VNC as "Xvnc"
 participant X_Client as "X Client"
 end box
@@ -4209,52 +4209,52 @@ VNC_Viewer <--> X_VNC: VNC Protocol
 X_VNC <--> X_Client: X Protocol
 ```
 
-**如何使用：**
+**How to use:**
 
-1. **在Linux上安装`VNC Server`：以CentOS为例**
+1. **Install `VNC Server` on Linux: example with CentOS**
     * `yum install -y tigervnc-server`
-    * `vncserver :x`：在`5900 + x`端口上启动服务
-    * `vncserver -kill :x`：关闭`5900 + x`端口上的服务
-    * `vncserver -list`：显示所有`Xvnc`
-1. **从官网下载`VNC Viewer`**
-    * 默认可以用`Linux`的账号密码登录
+    * `vncserver :x` — start service on port `5900 + x`
+    * `vncserver -kill :x` — stop service on port `5900 + x`
+    * `vncserver -list` — show all running `Xvnc` instances
+2. **Download `VNC Viewer` from official website**
+    * By default, you can log in with your Linux username and password
 
-**Tips：**
+**Tips:**
 
-* `vncserver -SecurityTypes None :x`：允许免密登录
-* 键盘无法输入：按住`ctrl + shift`，再打开终端
-* 在远程桌面的终端中执行`vncconfig -display :x`，会弹出一个小框，可以进行一些选项配置
-* **如何在Mac与远程Linux之间拷贝，参考[copy paste between mac and remote desktop](https://discussions.apple.com/thread/8470438)**
-    * `Remote Linux -> Mac`：
-        1. 在`VNC Viewer`中，鼠标选中再按`Ctrl + Shift + C`（貌似鼠标选中即可）进行复制
-        1. 在Mac上，`Command + V`进行粘贴
-    * `Mac -> Remote Linux`（很大概率失败，不知道为啥）：
-        1. 在Mac上，鼠标选中，再按`Command + C`进行复制
-        1. 在`VNC Viewer`中，按`Ctrl + Shift + V`进行粘贴
-    * `Remote Linux -> Remote Linux`
-        1. 在`VNC Viewer`中，鼠标选中再按`Ctrl + Shift + C`进行复制
-        1. 在`VNC Viewer`中，按`Ctrl + Shift + V`进行粘贴
+* `vncserver -SecurityTypes None :x` — allow passwordless login
+* Keyboard input issues: hold `ctrl + shift`, then open the terminal
+* Running `vncconfig -display :x` in the remote desktop terminal pops up a small window for configuring options
+* **How to copy and paste between Mac and remote Linux, see [copy paste between mac and remote desktop](https://discussions.apple.com/thread/8470438)**
+    * `Remote Linux -> Mac`:
+        1. In `VNC Viewer`, select text and press `Ctrl + Shift + C` (sometimes just selecting the text is enough)
+        2. On Mac, paste with `Command + V`
+    * `Mac -> Remote Linux` (often fails for unknown reasons):
+        1. On Mac, select text and press `Command + C`
+        2. In `VNC Viewer`, paste with `Ctrl + Shift + V`
+    * `Remote Linux -> Remote Linux`:
+        1. In `VNC Viewer`, select text and press `Ctrl + Shift + C`
+        2. In `VNC Viewer`, paste with `Ctrl + Shift + V`
 
 ## 8.3 NX (Recommended)
 
-[No Machine官网](https://www.nomachine.com/)
+[No Machine Official Website](https://www.nomachine.com/)
 
-**工作原理：与`VNC`类似，但是使用了`NX`协议，占用带宽更小**
+**Working principle:** Similar to `VNC`, but uses the `NX` protocol, which consumes less bandwidth.
 
-**如何使用：**
+**How to use:**
 
-1. **在Linux上安装`NX Server`：以CentOS为例，从官网下载rpm包并安装**
+1. **Install `NX Server` on Linux: example with CentOS, download the rpm package and install**
     * `rpm -ivh nomachine_7.7.4_1_x86_64.rpm`
     * `/etc/NX/nxserver --restart`
-1. **从官网下载`NX Client`**
-    * `NX Server`的默认端口号是`4000`
-    * 默认可以用`Linux`的账号密码登录
+2. **Download `NX Client` from the official website**
+    * The default port for `NX Server` is `4000`
+    * You can log in with your Linux username and password by default
 
-**配置文件：`/usr/NX/etc/server.cfg`**
+**Configuration file: `/usr/NX/etc/server.cfg`**
 
-* `NXPort`：修改启动端口号
-* `EnableUserDB/EnablePasswordDB`：是否用额外的账号进行登录（1开启，0关闭，默认关闭）
-    * `/etc/NX/nxserver --useradd admin --system --administrator`：该命令本质上也会创建一个Linux账号，第一个密码是Linux账号的密码，第二个密码是`NX Server`独立的密码（仅用于`NX`登录）
+* `NXPort`: Modify the startup port number
+* `EnableUserDB/EnablePasswordDB`: Whether to use an additional user database for login (1 to enable, 0 to disable, default is disabled)
+    * `/etc/NX/nxserver --useradd admin --system --administrator`: This command essentially creates a Linux account; the first password is for the Linux account, and the second password is an independent password for `NX Server` (used only for `NX` login)
 
 # 9 audit
 
