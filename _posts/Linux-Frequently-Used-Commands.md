@@ -3251,49 +3251,49 @@ yum install -y hping3
 
 **Options:**
 
-* `-f`：需要配合后面的[command]，不登录远程主机直接发送一个命令过去而已
-* `-o`：后接`options`
-    * `ConnectTimeout=<seconds>`：等待连接的秒数，减少等待的事件
-    * `StrictHostKeyChecking=[yes|no|ask]`：默认是ask，若要让public key主动加入known_hosts，则可以设置为no即可
-* `-p`：后接端口号，如果sshd服务启动在非标准的端口，需要使用此项目
+* `-f`: Used with the following [command], it sends a command to the remote host without logging in
+* `-o`: Followed by `options`
+    * `ConnectTimeout=<seconds>`: Number of seconds to wait for a connection, reduces wait time
+    * `StrictHostKeyChecking=[yes|no|ask]`: Default is ask; to automatically add a public key to known_hosts, set it to no
+* `-p`: Followed by a port number; if the sshd service runs on a non-standard port, this option is needed
 
 **Examples:**
 
-* `ssh 127.0.0.1`：由于SSH后面没有加上账号，因此默认采用当前的账号来登录远程服务器
-* `ssh student@127.0.0.1`：账号为该IP的主机上的账号，而非本地账号哦
+* `ssh 127.0.0.1`: Since no username is provided, the current user's account is used to log in to the remote server
+* `ssh student@127.0.0.1`: The account is for the host at this IP, not a local account
 * `ssh student@127.0.0.1 find / &> ~/find1.log`
-* `ssh -f student@127.0.0.1 find / &> ~/find1.log`：会立即注销127.0.0.1，find在远程服务器运行
-* `ssh demo@1.2.3.4 '/bin/bash -l -c "xxx.sh"'`：以`login shell`登录远端，并执行脚本，其中`bash`的参数`-l`就是指定以`login shell`的方式
-    * 整个命令最好用引号包围起来，否则复杂命令的参数可能会解析失败，例如
+* `ssh -f student@127.0.0.1 find / &> ~/find1.log`: Logs out of 127.0.0.1 immediately; `find` runs on the remote server
+* `ssh demo@1.2.3.4 '/bin/bash -l -c "xxx.sh"'`: Logs into the remote using a `login shell` and executes the script; the `-l` argument to `bash` specifies login shell mode
+    * It's best to wrap the whole command in quotes, otherwise arguments in complex commands may fail to parse, for example:
         ```sh
-        # -al 参数会丢失
+        # The -al argument will be lost
         ssh -o StrictHostKeyChecking=no test@1.2.3.4 /bin/bash -l -c 'ls -al'
-        # -al 参数正常传递
+        # The -al argument is passed correctly
         ssh -o StrictHostKeyChecking=no test@1.2.3.4 "/bin/bash -l -c 'ls -al'"
-        # 用 eval 时，也需要加上引号，注意需要转义
+        # When using eval, quotes are also needed, and must be escaped
         eval "ssh -o StrictHostKeyChecking=no test@1.2.3.4 \"/bin/bash -l -c 'ls -al'\""
         ```
 
 ### 6.1.1 Passwordless Login
 
-**方法1（手动)：**
+**Method 1 (Manual):**
 
 ```sh
-# 创建 rsa 密钥对（如果之前没有的话）
+# Create an RSA key pair (if one doesn't already exist)
 ssh-keygen -t rsa
 
-# 将本机的公钥 ~/.ssh/id_rsa.pub 放入目标机器目标用户的 ~/.ssh/authorized_keys 文件中
+# Copy the local public key ~/.ssh/id_rsa.pub to the target user's ~/.ssh/authorized_keys on the target machine
 ssh user@target 'mkdir ~/.ssh; chmod 700 ~/.ssh'
 cat ~/.ssh/id_rsa.pub | ssh user@target 'cat >> ~/.ssh/authorized_keys; chmod 644 ~/.ssh/authorized_keys'
 ```
 
-**方法2（自动，`ssh-copy-id`）**
+**Method 2 (Automatic, `ssh-copy-id`)**
 
 ```sh
-# 创建 rsa 密钥对（如果之前没有的话）
+# Create an RSA key pair (if one doesn't already exist)
 ssh-keygen -t rsa
 
-# 将本机的公钥 ~/.ssh/id_rsa.pub 放入目标机器目标用户的 ~/.ssh/authorized_keys 文件中
+# Copy the local public key ~/.ssh/id_rsa.pub to the target user's ~/.ssh/authorized_keys on the target machine
 ssh-copy-id user@target
 ```
 
@@ -3319,29 +3319,29 @@ ClientAliveCountMax 3
 **Pattern:**
 
 * `ssh -L [local_bind_addr:]local_port:remote_host:remote_port [-fN] middle_host`
-    * `local`与`middle_host`互通
-    * `middle_host`与`remote_host`互通（当然，`remote_host`可以与`middle_host`相同）
-    * **路径：`frontend --tcp--> local_host:local_port --tcp over ssh--> middle_host:22 --tcp--> remote_host:remote_port`**
+    * `local` communicates with `middle_host`
+    * `middle_host` communicates with `remote_host` (of course, `remote_host` can be the same as `middle_host`)
+    * **Path: `frontend --tcp--> local_host:local_port --tcp over ssh--> middle_host:22 --tcp--> remote_host:remote_port`**
 
 **Options:**
 
-* `-f`：在后台运行
-* `-N`：不要执行远程命令
+* `-f`: Run in the background
+* `-N`: Do not execute remote commands
 
 **Examples:**
 
-* `ssh -L 5901:127.0.0.1:5901 -N -f user@remote_host`：仅监听在`127.0.0.1`上
-* `ssh -L "*:5901:127.0.0.1:5901" -N -f user@remote_host`：监听在所有ip上
-    * 同`ssh -g -L 5901:127.0.0.1:5901 -N -f user@remote_host`
+* `ssh -L 5901:127.0.0.1:5901 -N -f user@remote_host`: Listens only on `127.0.0.1`
+* `ssh -L "*:5901:127.0.0.1:5901" -N -f user@remote_host`: Listens on all IPs
+    * Same as `ssh -g -L 5901:127.0.0.1:5901 -N -f user@remote_host`
 
 ### 6.1.5 WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED
 
-远端机器的RSA指纹发生变化后，再次ssh登录就会出现上述错误信息。有两种修复方式：
+When the RSA fingerprint of the remote machine changes, the above error message will appear when trying to ssh again. There are two ways to fix this:
 
-1. 删除`.ssh/known_hosts`中与指定`hostname or IP`相关的记录
-1. 使用`ssh-keygen`删除`.ssh/known_hosts`中与指定`hostname or IP`相关的记录
+1. Delete the entry related to the specified `hostname or IP` from `.ssh/known_hosts`
+2. Use `ssh-keygen` to remove the entry related to the specified `hostname or IP` from `.ssh/known_hosts`
     ```sh
-    # 不加 -f 参数，则会默认修改当前用户对应的 .ssh/known_hosts 文件
+    # If the -f option is not used, it will modify the .ssh/known_hosts file for the current user by default
     ssh-keygen -f "/Users/hechenfeng/.ssh/known_hosts" -R "<hostname or IP>"
     ```
 
@@ -3355,21 +3355,21 @@ sshpass -p 'xxxxx' ssh -o StrictHostKeyChecking=no test@1.2.3.4
 
 **Pattern:**
 
-* `scp [-pPr] [-l 速率] local_file [account@]host:dir`
-* `scp [-pPr] [-l 速率] [account@]host:file local_dir`
+* `scp [-pPr] [-l <rate>] local_file [account@]host:dir`
+* `scp [-pPr] [-l <rate>] [account@]host:file local_dir`
 
 **Options:**
 
-* `-p`：保留源文件的权限信息
-* `-P`：指定端口号
-* `-r`：复制来源为目录时，可以复制整个目录(含子目录)
-* `-l`：可以限制传输速率，单位Kbits/s
+* `-p`: Preserve the source file's permission information  
+* `-P`: Specify the port number  
+* `-r`: When the source is a directory, recursively copy the entire directory (including subdirectories)  
+* `-l`: Limit the transfer rate, unit is Kbits/s  
 
 **Examples:**
 
 * `scp /etc/hosts* student@127.0.0.1:~`
 * `scp /tmp/Ubuntu.txt root@192.168.136.130:~/Desktop`
-* `scp -P 16666 root@192.168.136.130:/tmp/test.log ~/Desktop`：指定主机`192.168.136.130`的端口号为16666
+* `scp -P 16666 root@192.168.136.130:/tmp/test.log ~/Desktop`: Specify port number 16666 for host `192.168.136.130`  
 * `scp -r local_folder remote_username@remote_ip:remote_folder `
 
 ## 6.3 watch
@@ -3380,17 +3380,17 @@ sshpass -p 'xxxxx' ssh -o StrictHostKeyChecking=no test@1.2.3.4
 
 **Options:**
 
-* `-n`：watch缺省该参数时，每2秒运行一下程序，可以用`-n`或`-interval`来指定间隔的时间
-* `-d`：`watch`会高亮显示变化的区域。`-d=cumulative`选项会把变动过的地方(不管最近的那次有没有变动)都高亮显示出来
-* `-t`：关闭watch命令在顶部的时间间隔命令，当前时间的输出
+* `-n`: When `watch` is used without this parameter, it runs the program every 2 seconds by default. Use `-n` or `--interval` to specify a different interval time
+* `-d`: `watch` will highlight areas that have changed. The `-d=cumulative` option highlights all areas that have changed at any time (regardless of whether they changed in the most recent update)
+* `-t`: Disable the header showing interval and current time at the top of the `watch` output
 
 **Examples:**
 
-* `watch -n 1 -d netstat -ant`：每隔一秒高亮显示网络链接数的变化情况
-* `watch -n 1 -d 'pstree | grep http'`：每隔一秒高亮显示http链接数的变化情况
-* `watch 'netstat -an | grep :21 | grep <ip> | wc -l'`：实时查看模拟攻击客户机建立起来的连接数
-* `watch -d 'ls -l | grep scf'`：监测当前目录中 scf' 的文件的变化
-* `watch -n 10 'cat /proc/loadavg'`：10秒一次输出系统的平均负载
+* `watch -n 1 -d netstat -ant`: Every second, highlight changes in network connection counts
+* `watch -n 1 -d 'pstree | grep http'`: Every second, highlight changes in the number of HTTP connections
+* `watch 'netstat -an | grep :21 | grep <ip> | wc -l'`: Monitor in real-time the number of connections established by a simulated attack client
+* `watch -d 'ls -l | grep scf'`: Monitor changes in files containing `scf` in the current directory
+* `watch -n 10 'cat /proc/loadavg'`: Output the system's load average every 10 seconds
 
 ## 6.4 top
 
@@ -3400,74 +3400,75 @@ sshpass -p 'xxxxx' ssh -o StrictHostKeyChecking=no test@1.2.3.4
 
 **Options:**
 
-* `-H`：显示线程
-* `-p`：查看指定进程
-* `-b`：非交互式，通常与`-n`参数一起使用，`-n`用于指定统计的次数
+* `-H`: Show threads  
+* `-p`: View a specified process  
+* `-b`: Non-interactive mode, typically used with `-n` to specify the number of iterations  
 
 **Examples:**
 
-* `top -p 123`：查看进程号为123的进程
-* `top -Hp 123`：查看进程号为123以及该进程的所有线程
-* `top -b -n 3`
+* `top -p 123`: View the process with PID 123  
+* `top -Hp 123`: View the process with PID 123 and all its threads  
+* `top -b -n 3`: Run in batch mode and update 3 times  
 
-**打印参数说明：**
+**Output Description:**
 
-* **第一行**：
-    * 目前的时间
-    * 开机到目前为止所经过的时间
-    * 已经登录的人数
-    * 系统在1，5，15分钟的平均工作负载
-* **第二行**：显示的是目前进程的总量，与各个状态下进程的数量
-* **第三行**：显示的CPU整体负载，特别注意wa，这个代表的是I/Owait，通常系统变慢都是I/O产生的问题比较大
-* **第四五行**：物理内存与虚拟内存的使用情况，注意swap的使用量越少越好，大量swap被使用说明系统物理内存不足
-* **第六行**：top进程中，输入命令时显示的地方
-* **第七行以及以后**：每个进程的资源使用情况
-    * PID：每个进程的ID
-    * USER：进程所属用户名称
-    * PR：Priority，优先顺序，越小优先级越高
-    * NI：Nice，与Priority有关，越小优先级越高
-    * %CPU：CPU使用率
-    * %MEN：内存使用率
-    * TIME+：CPU使用时间累加
-    * COMMAND
-* **top默认使用CPU使用率作为排序的终点，键入`h`显示帮助菜单**
-* **排序顺序**
-    * `P`：按CPU使用量排序，默认从大到小，`R`更改为从小到大
-    * `M`：按内存使用量排序，默认从大到小，`R`更改为从小到大
-    * `T`：按使用时间排序，默认从大到小，`R`更改为从小到大
-* **其他功能按键**
-    * `1`：概览信息中分别展示每个核的使用状态
-    * `2`：概览信息和只展示所有核的平均使用状态
-    * `x`：高亮排序的列
-    * `-R`：反转排序
-    * `n [num]`：只显示前几列，当num=0时，表示无限制
-    * `l`：调整cpu负载信息的展示方式
-    * `t`：调整cpu以及任务详情的展示方式
-    * `m`：调整memory详情的展示方式
-    * `c`：展示完整command
-    * `V`：以树型格式展示command
-    * `H`：展示线程
-    * `W`：将当前交互式的一些配置（比如是否展示每个cpu的状态，是否以cpu使用量排序等等）存储到配置文件`~/.toprc`中，然后我们就可以用`top -b -n 1`这种非交互的方式来获取top的输出了（会读取`~/.toprc`中的内容）
-* `VIRT, virtual memory size`：进程使用的总虚拟内存，包括代码、数据、共享库、被置换的`page`、已映射但未使用的`page`
-    * `VIRT = SWAP + RES`
-* `SWAP, swapped size`：进程被置换的虚拟内存
-* `RES, resident memory size`：进程非被置换的物理内存
-    * `RES = CODE + DATA`
-* `CODE, text resident set size or TRS`：进程代码所占的物理内存
-* `DATA, data resident set size or DRS`：进程非代码所占的物理内存（包括数据以及堆栈）
-* `SHR, shared memory size`：进程使用的共享内存大小
+* **First line**:
+    * Current time  
+    * Uptime  
+    * Number of logged-in users  
+    * System load averages over 1, 5, and 15 minutes  
+* **Second line**: Total number of processes and counts in various states  
+* **Third line**: CPU usage; note that `wa` (I/O wait) is important—high `wa` often indicates I/O bottlenecks  
+* **Fourth and fifth lines**: Physical and virtual memory usage; the less swap used, the better—high swap usage means insufficient physical memory  
+* **Sixth line**: The command input area in `top` interactive mode  
+* **Seventh line and onward**: Per-process resource usage  
+    * `PID`: Process ID  
+    * `USER`: User who owns the process  
+    * `PR`: Priority (lower is higher priority)  
+    * `NI`: Nice value (affects priority; lower is higher priority)  
+    * `%CPU`: CPU usage  
+    * `%MEM`: Memory usage  
+    * `TIME+`: Cumulative CPU time used  
+    * `COMMAND`: Command name  
+* **By default, top sorts by CPU usage. Press `h` for help.**
+* **Sorting keys**:
+    * `P`: Sort by CPU usage (default descending, press `R` to reverse)  
+    * `M`: Sort by memory usage  
+    * `T`: Sort by time used  
+* **Other interactive commands**:
+    * `1`: Show each CPU core’s usage separately  
+    * `2`: Show only average CPU usage  
+    * `x`: Highlight the sorted column  
+    * `-R`: Reverse sort order  
+    * `n [num]`: Show only the top `num` entries (`0` means no limit)  
+    * `l`: Toggle display of CPU load info  
+    * `t`: Toggle task and CPU details  
+    * `m`: Toggle memory details  
+    * `c`: Show full command line  
+    * `V`: Show commands in a tree format  
+    * `H`: Show threads  
+    * `W`: Save current interactive settings to `~/.toprc`, enabling consistent output when using non-interactive mode like `top -b -n 1`  
+* **Memory-related fields**:
+    * `VIRT` (virtual memory size): Total virtual memory used by the process, including code, data, shared libs, swapped pages, and mapped-but-unused pages  
+        * `VIRT = SWAP + RES`
+    * `SWAP`: Amount of virtual memory swapped out  
+    * `RES`: Non-swapped physical memory  
+        * `RES = CODE + DATA`
+    * `CODE` (TRS): Physical memory used by the process code  
+    * `DATA` (DRS): Physical memory used by non-code (data and stack)  
+    * `SHR`: Shared memory used  
 
 ## 6.5 htop
 
-**`htop`在界面上提供了非常详细的操作方式**
+**`htop` provides very detailed interaction options on its interface**
 
-**安装：**
+**Install:**
 
 ```sh
-# 安装 yum 源
+# Install yum repo
 yum install -y epel-release
 
-# 安装 htop
+# Install htop
 yum install -y htop
 ```
 
@@ -3477,7 +3478,7 @@ yum install -y htop
 
 ## 6.6 slabtop
 
-`slabtop`用于展示内核的`slab cache`相关信息
+`slabtop` is used to display information related to the kernel's `slab cache`
 
 **Examples:**
 
@@ -3485,9 +3486,9 @@ yum install -y htop
 
 ## 6.7 sar
 
-sar是由有类似日志切割的功能的，它会依据`/etc/cron.d/sysstat`中的计划任务，将日志放入`/var/log/sa/`中
+`sar` has a log rotation-like feature. It uses scheduled tasks defined in `/etc/cron.d/sysstat` to store logs under `/var/log/sa/`.
 
-**安装：**
+**Install:**
 
 ```sh
 yum install -y sysstat
@@ -3495,37 +3496,37 @@ yum install -y sysstat
 
 **Pattern:**
 
-* `sar [ 选项 ] [ <时间间隔> [ <次数> ] ]`
+* `sar [ options ] [ <interval> [ <count> ] ]`
 
 **Options:**
 
-* `-u`：查看cpu使用率
-* `-q`：查看cpu负载
-* `-r`：查看内存使用情况
-* `-b`：查看I/O和传输速率信息状况
-* `-d`：查看各个磁盘的I/O情况
-* `-B`：查看paging使用情况
-* `-f <filename>`：指定sa日志文件
-* `-P <cpu num>|ALL`：查看某个cpu的统计信息，`ALL`表示所有CPU
-* `-n [关键词]`：查看网络相关的情况，其中关键词可以是
-    * `DEV`：网络接口
-    * `EDEV`：网络接口错误
-    * `SOCK`：套接字
-    * `IP`：IP流
-    * `TCP`：TCP流
-    * `UDP`：UDP流
-* `-h`：以人类可读的形式输出
+* `-u`: View CPU usage  
+* `-q`: View CPU load  
+* `-r`: View memory usage  
+* `-b`: View I/O and transfer rate information  
+* `-d`: View I/O status for each disk  
+* `-B`: View paging activity  
+* `-f <filename>`: Specify sa log file  
+* `-P <cpu num>|ALL`: View stats for a specific CPU, `ALL` means all CPUs  
+* `-n [keyword]`: View network-related info; keywords can be:  
+    * `DEV`: Network interfaces  
+    * `EDEV`: Network interface errors  
+    * `SOCK`: Sockets  
+    * `IP`: IP traffic  
+    * `TCP`: TCP traffic  
+    * `UDP`: UDP traffic  
+* `-h`: Output in human-readable format  
 
 **Examples:**
 
-* `sar -u ALL 1`：输出cpu的相关信息（聚合了所有核）
-* `sar -P ALL 1`：输出每个核的cpu的相关信息
-* `sar -r ALL -h 1`：输出内存相关信息
-* `sar -B 1`：输出paging信息
-* `sar -n TCP,UDP -h 1`：查看TCP/UDP的汇总信息
-* `sar -n DEV -h 1`：查看网卡实时流量
-* `sar -b 1`：查看汇总的I/O信息
-* `sar -d -h 1`：查看每个磁盘的I/O信息
+* `sar -u ALL 1`: Output CPU info aggregated for all cores every second  
+* `sar -P ALL 1`: Output CPU info per core every second  
+* `sar -r ALL -h 1`: Output memory info every second in human-readable form  
+* `sar -B 1`: Output paging info every second  
+* `sar -n TCP,UDP -h 1`: View TCP/UDP summary every second  
+* `sar -n DEV -h 1`: View real-time network interface traffic every second  
+* `sar -b 1`: View summary I/O info every second  
+* `sar -d -h 1`: View per-disk I/O info every second  
 
 ## 6.8 tsar
 
@@ -3535,7 +3536,7 @@ yum install -y sysstat
 
 **Options:**
 
-* `-l`：查看实时数据
+* `-l`: View real-time data
 
 **Examples:**
 
@@ -3549,47 +3550,47 @@ yum install -y sysstat
 
 **Options:**
 
-* `-a, --active`：显示活跃和非活跃内存
-* `-f, --forks`：从系统启动至今的fork数量，linux下创建进程的系统调用是fork
-    * 信息是从`/proc/stat`中的processes字段里取得的
-* `-m, --slabs`：查看系统的slab信息
-* `-s, --stats`：查看内存使用的详细信息
-* `-d, --disk`：查看磁盘使用的详细信息
-* `-D, --disk-sum`         summarize disk statistics
-* `-p, --partition <dev>`：查看指定分区的详细信息
-* `-S, --unit <char>`：指定输出单位，只支持`k/K`以及`m/M`，默认是`K`
-* `-w, --wide`：输出更详细的信息
-* `-t, --timestamp`：输出时间戳
-* `delay`：采样间隔
-* `count`：采样次数
+* `-a, --active`: Show active and inactive memory  
+* `-f, --forks`: Number of forks since system start (in Linux, process creation uses the fork syscall)  
+    * Info is retrieved from the `processes` field in `/proc/stat`  
+* `-m, --slabs`: View system slab info  
+* `-s, --stats`: View detailed memory usage info  
+* `-d, --disk`: View detailed disk usage info  
+* `-D, --disk-sum`: Summarize disk statistics  
+* `-p, --partition <dev>`: View detailed info of specified partition  
+* `-S, --unit <char>`: Specify output unit, supports only `k/K` and `m/M`, default is `K`  
+* `-w, --wide`: Output more detailed info  
+* `-t, --timestamp`: Output timestamps  
+* `delay`: Sampling interval  
+* `count`: Sampling count  
 
 **Output Details:**
 
-* `process`
-    * `r`：运行中的进程数量（`running`或`waiting`状态
-    * `b`：阻塞中的进程数量
-* `memory`
-    * `swpd`：虚拟内存总量
-    * `free`：空闲内存总量
-    * `buff`：被用作`Buffer`的内存总量
-    * `cache`：被用作`Cache`的内存总量
-    * `inact`：无效内存总量（需要加`-a`参数）
-    * `active`：有效内存总量（需要加`-a`参数）
-* `swap`
-    * `si`：每秒从磁盘交换的内存总量
-    * `so`：每秒交换到磁盘的内存总量
-* `io`
-    * `bi`：每秒从块设备接收的`Block`数量
-    * `bo`：每秒写入块设备的`Block`数量
-* `system`
-    * `in`：每秒中断次数，包括时钟中断
-    * `cs`：每秒上下文切换的次数
-* `cpu`
-    * `us`：用户`CPU`时间
-    * `sy`：系统（内核）`CPU`时间
-    * `id`：空闲`CPU`时间
-    * `wa`：等待`IO`的`CPU`时间
-    * `st`：从虚拟机窃取的时间
+* `process`  
+    * `r`: Number of running processes (in `running` or `waiting` state)  
+    * `b`: Number of blocked processes  
+* `memory`  
+    * `swpd`: Total virtual memory  
+    * `free`: Total free memory  
+    * `buff`: Total memory used as Buffer  
+    * `cache`: Total memory used as Cache  
+    * `inact`: Total inactive memory (requires `-a` option)  
+    * `active`: Total active memory (requires `-a` option)  
+* `swap`  
+    * `si`: Amount of memory swapped in from disk per second  
+    * `so`: Amount of memory swapped out to disk per second  
+* `io`  
+    * `bi`: Blocks received from block device per second  
+    * `bo`: Blocks sent to block device per second  
+* `system`  
+    * `in`: Number of interrupts per second, including clock interrupts  
+    * `cs`: Number of context switches per second  
+* `cpu`  
+    * `us`: User CPU time  
+    * `sy`: System (kernel) CPU time  
+    * `id`: Idle CPU time  
+    * `wa`: CPU time waiting for IO  
+    * `st`: Time stolen from a virtual machine  
 
 **Examples:**
 
@@ -3634,15 +3635,15 @@ yum install -y sysstat
 
 **Options:**
 
-* `-c`：与`-d`互斥，只显示`CPU`相关的信息
-* `-d`：与`-c`互斥，只显示磁盘相关的信息
-* `-k`：以`kB`的方式显示io速率（默认是`Blk`，即文件系统中的`block`）
-* `-m`：以`MB`的方式显示io速率（默认是`Blk`，即文件系统中的`block`）
-* `-t`：打印日期信息
-* `-x`：打印扩展信息
-* `-z`：省略在采样期间没有产生任何事件的设备
-* `interval`: 打印间隔
-* `count`: 打印几次，不填一直打印
+* `-c`: Mutually exclusive with `-d`, shows only CPU-related information  
+* `-d`: Mutually exclusive with `-c`, shows only disk-related information  
+* `-k`: Display I/O rate in kB (default is `Blk`, the filesystem block)  
+* `-m`: Display I/O rate in MB (default is `Blk`, the filesystem block)  
+* `-t`: Print date information  
+* `-x`: Print extended information  
+* `-z`: Omit devices with no events during sampling  
+* `interval`: Print interval  
+* `count`: Number of times to print; if omitted, print continuously  
 
 **Output Details:(`man iostat`)**
 
@@ -3657,7 +3658,7 @@ yum install -y sysstat
 
 ## 6.12 dstat
 
-`dstat`是用于生成系统资源统计信息的通用工具
+`dstat` is a versatile tool for generating system resource statistics.
 
 **Pattern:**
 
@@ -3665,86 +3666,86 @@ yum install -y sysstat
 
 **Options:**
 
-* `-c, --cpu`：`CPU`统计信息
-    * `usr`（`user`）
-    * `sys`（`system`）
-    * `idl`（`idle`）
-    * `wai`（`wait`）
-    * `hiq`（`hardware interrupt`）
-    * `siq`（`software interrupt`）
-* `-d, --disk`：磁盘统计信息
+* `-c, --cpu`: `CPU` statistics
+    * `usr` (`user`)
+    * `sys` (`system`)
+    * `idl` (`idle`)
+    * `wai` (`wait`)
+    * `hiq` (`hardware interrupt`)
+    * `siq` (`software interrupt`)
+* `-d, --disk`: Disk statistics
     * `read`
-    * `writ`（`write`）
-* `-i, --int`：中断统计信息
-* `-l, --load`：`CPU`负载统计信息
+    * `writ` (`write`)
+* `-i, --int`: Interrupt statistics
+* `-l, --load`: `CPU` load statistics
     * `1 min`
     * `5 mins`
     * `15mins`
-* `-m, --mem`：内存统计信息
+* `-m, --mem`: Memory statistics
     * `used`
-    * `buff`（`buffers`）
-    * `cach`（`cache`）
+    * `buff` (`buffers`)
+    * `cach` (`cache`)
     * `free`
-* `-n, --net`：网络统计信息
-    * `recv`（`receive`）
+* `-n, --net`: Network statistics
+    * `recv` (`receive`)
     * `send`
-* `-p, --proc`：进程统计信息
-    * `run`（`runnable`）
-    * `blk`（`uninterruptible`）
+* `-p, --proc`: Process statistics
+    * `run` (`runnable`)
+    * `blk` (`uninterruptible`)
     * `new`
-* `-r, --io`：I/O统计信息
-    * `read`（`read requests`）
-    * `writ`（`write requests`）
-* `-s, --swap`：swap统计信息
+* `-r, --io`: I/O statistics
+    * `read` (`read requests`)
+    * `writ` (`write requests`)
+* `-s, --swap`: Swap statistics
     * `used`
     * `free`
-* `-t, --time`：时间信息
-* `-v, --vmstat`：等效于`dstat -pmgdsc -D total`，类似于`vmstat`的输出
-* `--vm`：虚拟内存相关的信息
-    * `majpf`（`hard pagefaults`）
-    * `minpf`（`soft pagefaults`）
+* `-t, --time`: Time information
+* `-v, --vmstat`: Equivalent to `dstat -pmgdsc -D total`, similar to `vmstat` output
+* `--vm`: Virtual memory related information
+    * `majpf` (`hard pagefaults`)
+    * `minpf` (`soft pagefaults`)
     * `alloc`
     * `free`
-* `-y, --sys`：系统统计信息
-    * `int`（`interrupts`）
-    * `csw`（`context switches`）
-* `--fs, --filesystem`：文件系统统计信息
-    * `files`（`open files`）
+* `-y, --sys`: System statistics
+    * `int` (`interrupts`)
+    * `csw` (`context switches`)
+* `--fs, --filesystem`: Filesystem statistics
+    * `files` (`open files`)
     * `inodes`
-* `--ipc`：ipc统计信息
-    * `msg`（`message queue`）
-    * `sem`（`semaphores`）
-    * `shm`（`shared memory`）
-* `--lock`：文件锁统计信息
-    * `pos`（`posix`）
-    * `lck`（`flock`）
-    * `rea`（`read`）
-    * `wri`（`write`）
-* `--socket`：socket统计信息
-    * `tot`（`total`）
+* `--ipc`: IPC statistics
+    * `msg` (`message queue`)
+    * `sem` (`semaphores`)
+    * `shm` (`shared memory`)
+* `--lock`: File lock statistics
+    * `pos` (`posix`)
+    * `lck` (`flock`)
+    * `rea` (`read`)
+    * `wri` (`write`)
+* `--socket`: Socket statistics
+    * `tot` (`total`)
     * `tcp`
     * `udp`
     * `raw`
-    * `frg`（`ip-fragments`）
-* `--tcp`：tcp统计信息，包括
-    * `lis`（`listen`）
-    * `act`（`established`）
+    * `frg` (`ip-fragments`)
+* `--tcp`: TCP statistics, including
+    * `lis` (`listen`)
+    * `act` (`established`)
     * `syn`
-    * `tim`（`time_wait`）
-    * `clo`（`close`）
-* `--udp`：udp统计信息，包括
-    * `lis`（`listen`）
-    * `act`（`active`）
-* **`-f, --full`**：显示详情，例如`CPU`会按每个`CPU`分别展示，network会按网卡分别展示
-* **`--top-cpu`：显示最耗`CPU`资源的进程**
-* **`--top-cpu-adv`：显示最耗`CPU`资源的进程，以及进程的其他信息（`advanced`）**
-* **`--top-io`：显示最耗`IO`资源的进程**
-* **`--top-io-adv`：显示最耗`IO`资源的进程，以及进程的其他信息（`advanced`）**
-* **`--top-mem`：显示最耗mem资源的进程**
+    * `tim` (`time_wait`)
+    * `clo` (`close`)
+* `--udp`: UDP statistics, including
+    * `lis` (`listen`)
+    * `act` (`active`)
+* **`-f, --full`**: Show details, for example `CPU` shown per CPU, network shown per network card
+* **`--top-cpu`**: Show processes consuming the most `CPU` resources
+* **`--top-cpu-adv`**: Show processes consuming the most `CPU` resources, with additional process information (`advanced`)
+* **`--top-io`**: Show processes consuming the most `IO` resources
+* **`--top-io-adv`**: Show processes consuming the most `IO` resources, with additional process information (`advanced`)
+* **`--top-mem`**: Show processes consuming the most memory resources
 
 **Examples:**
 
-* `dstat 5 10`：5秒刷新一次，刷新10次
+* `dstat 5 10`: Refresh every 5 seconds, 10 times
 * `dstat -tvln`
 * `dstat -tc`
 * `dstat -tc -C total,1,2,3,4,5,6`
@@ -3756,11 +3757,11 @@ yum install -y sysstat
 
 ## 6.13 ifstat
 
-该命令用于查看网卡的流量状况，包括成功接收/发送，以及错误接收/发送的数据包，看到的东西基本上和`ifconfig`类似
+This command is used to view the network interface card's traffic status, including successfully received/sent packets as well as error received/sent packets. What you see is basically similar to `ifconfig`.
 
 ## 6.14 pidstat
 
-`pidstat`是`sysstat`工具的一个命令，用于监控全部或指定进程的`CPU`、内存、线程、设备IO等系统资源的占用情况。首次运行`pidstat`时，显示自系统启动开始的各项统计信息；之后运行`pidstat`，将显示自上次运行该命令以后的统计信息。用户可以通过指定统计的次数和时间来获得所需的统计信息
+`pidstat` is a command from the `sysstat` toolset, used to monitor system resource usage of all or specified processes, including `CPU`, memory, threads, device I/O, and more. When run for the first time, `pidstat` displays statistics since the system startup; subsequent runs show statistics since the last time the command was executed. Users can specify the number of samples and the interval to obtain the desired statistics.
 
 **Pattern:**
 
@@ -3768,22 +3769,22 @@ yum install -y sysstat
 
 **Options:**
 
-* `-d`：显示`I/O`使用情况
-    * `kB_rd/s`：磁盘的读速率，单位`KB`
-    * `kB_wr/s`：磁盘的写速率，单位`KB`
-    * `kB_ccwr/s`：本应写入，但是取消的写速率，单位`KB`。任务丢弃`dirty pagecache`时可能会触发`cancel`
-* `-r`：显示内存使用情况
-    * `minflt/s`：`minor faults per second`
-    * `majflt/s`：`major faults per second`
-* `-s`：显示栈使用情况
-    * `StkSize`：系统为该任务保留的栈空间大小，单位`KB`
-    * `StkRef`：该任务当前实际使用的栈空间大小，单位`KB`
-* `-u`：显示`CPU`使用情况，默认
-    * `-I`：在`SMP, Symmetric Multi-Processing`环境下，`CPU`使用率需要考虑处理器的数量，这样得到的`%CPU`指标才是符合实际的
-    * `%usr`、`%system`、`%guest`这三个指标无论加不加`-I`都不会超过100%，[pidstat do not report %usr %system correctly in SMP environment](https://github.com/sysstat/sysstat/issues/344)
-* `-w`：显式上下文切换（不包含线程，通常与`-t`一起用）
-* `-t`：显式所有线程
-* `-p <pid>`：指定进程
+* `-d`: Display `I/O` usage
+    * `kB_rd/s`: Disk read rate in `KB`
+    * `kB_wr/s`: Disk write rate in `KB`
+    * `kB_ccwr/s`: Write rate in `KB` that was supposed to be done but canceled. This may be triggered when tasks discard `dirty pagecache` due to canceling
+* `-r`: Display memory usage
+    * `minflt/s`: `minor faults per second`
+    * `majflt/s`: `major faults per second`
+* `-s`: Display stack usage
+    * `StkSize`: Stack size reserved by the system for the task, in `KB`
+    * `StkRef`: Current actual stack usage by the task, in `KB`
+* `-u`: Display `CPU` usage (default)
+    * `-I`: In `SMP, Symmetric Multi-Processing` environments, the `CPU` usage needs to consider the number of processors for the `%CPU` metric to be accurate
+    * The `%usr`, `%system`, `%guest` metrics will not exceed 100% whether or not `-I` is used, see [pidstat do not report %usr %system correctly in SMP environment](https://github.com/sysstat/sysstat/issues/344)
+* `-w`: Display context switches explicitly (does not include threads, usually used with `-t`)
+* `-t`: Display all threads explicitly
+* `-p <pid>`: Specify process
 
 **Examples:**
 
@@ -3796,15 +3797,15 @@ yum install -y sysstat
 
 ## 6.15 nethogs
 
-nethogs会以进程为单位，列出每个进程占用的网卡以及带宽
+nethogs lists each process with the network interface and bandwidth it occupies, shown on a per-process basis.
 
-**安装：**
+**Install:**
 
 ```sh
-# 安装 yum 源
+# Install yum repo
 yum install -y epel-release
 
-# 安装 nethogs
+# Install nethogs
 yum install -y nethogs
 ```
 
@@ -3816,15 +3817,15 @@ yum install -y nethogs
 
 ## 6.17 iftop
 
-iftop会以连接为单位，列出每个连接的进出流量
+iftop lists the incoming and outgoing traffic for each connection, shown on a per-connection basis.
 
-**安装：**
+**Install:**
 
 ```sh
-# 安装 yum 源
+# Install yum repo
 yum install -y epel-release
 
-# 安装 iftop
+# Install iftop
 yum install -y iftop
 ```
 
@@ -3834,23 +3835,23 @@ yum install -y iftop
 
 ## 6.18 iotop
 
-**安装：**
+**Install:**
 
 ```sh
-# 安装 yum 源
+# Install yum repo
 yum install -y epel-release
 
-# 安装 iotop
+# Install iotop
 yum install -y iotop
 ```
 
 **Options:**
 
-* `-o`：只显示正在执行io操作的进程或者线程
-* `-u`：后接用户名
-* `-P`：只显示进程不显示线程
-* `-b`：批处理，即非交互模式
-* `-n`：后接次数
+* `-o`: Only display processes or threads currently performing I/O operations
+* `-u`: Followed by a username
+* `-P`: Display processes only, not threads
+* `-b`: Batch mode, i.e., non-interactive mode
+* `-n`: Followed by the number of iterations
 
 **Examples:**
 
@@ -3861,77 +3862,77 @@ yum install -y iotop
 
 ## 6.19 blktrace
 
-[IO神器blktrace使用介绍](https://developer.aliyun.com/article/698568)
+[Introduction to the IO tool blktrace](https://developer.aliyun.com/article/698568)
 
-**一个I/O请求的处理过程，可以梳理为这样一张简单的图：**
+**The handling process of an I/O request can be summarized with this simple diagram:**
 
 ![blktrace_1](/images/Linux-Frequently-Used-Commands/blktrace_1.png)
 
-**`blktrace`用于采集`I/O`数据，采集得到的数据一般无法直接分析，通常需要经过一些分析工具进行分析，这些工具包括：**
+**`blktrace` is used to collect `I/O` data. The collected data generally cannot be analyzed directly and usually needs to be processed with some analysis tools, including:**
 
 1. `blkparse`
 1. `btt`
 1. `blkiomon`
 1. `iowatcher`
 
-**使用`blktrace`前提需要挂载`debugfs`：**
+**Before using `blktrace`, it is necessary to mount `debugfs`:**
 
 ```sh
 mount      –t debugfs    debugfs /sys/kernel/debug
 ```
 
-**`blkparse`输出参数说明：**
+**`blkparse` output parameter explanation:**
 
 * `8,0    0    21311     3.618501874  5099  Q WFSM 101872094 + 2 [kworker/0:2]`
-* 第一个参数：`8,0`，表示设备号`major device ID`和`minor device ID`
-* 第二个字段：`0`，表示`CPU`
-* 第三个字段：`21311`，表示序列号
-* 第四个字段：`3.618501874`，表示时间偏移
-* 第五个字段：`5099`，表示本次`I/O`对应的`pid`
-* **第六个字段：`Q`，表示`I/O Event`，这个字段非常重要，反映了`I/O`进行到了哪一步**
+* First parameter: `8,0`, represents the device number `major device ID` and `minor device ID`
+* Second field: `0`, represents the `CPU`
+* Third field: `21311`, represents the sequence number
+* Fourth field: `3.618501874`, represents the time offset
+* Fifth field: `5099`, represents the `pid` of this `I/O` operation
+* **Sixth field: `Q`, represents the `I/O Event`. This field is very important as it reflects the current stage of the `I/O` operation:**
     ```
-    Q – 即将生成IO请求
+    Q – I/O request about to be generated
     |
-    G – IO请求生成
+    G – I/O request generated
     |
-    I – IO请求进入IO Scheduler队列
+    I – I/O request entered IO Scheduler queue
     |
-    D – IO请求进入driver
+    D – I/O request entered driver
     |
-    C – IO请求执行完毕
+    C – I/O request completed
     ```
 
-* 第七个字段：`WFSM`
-* 第八个字段：`101872094 + 2`，表示的是起始`block number`和 `number of blocks`，即我们常说的`Offset`和`Size`
-* 第九个字段：`[kworker/0:2]`，表示进程名
+* Seventh field: `WFSM`
+* Eighth field: `101872094 + 2`, represents the starting `block number` and `number of blocks`, i.e., the commonly referred `Offset` and `Size`
+* Ninth field: `[kworker/0:2]`, represents the process name
 
 **Examples:**
 
-1. 先采集后分析
+1. Collect first, then analyze
     ```sh
-    # 该命令会在当前目录生成 sda.blktrace.<cpu> 文件簇
-    # Ctrl + C 终止采集
+    # This command generates a cluster of sda.blktrace.<cpu> files in the current directory
+    # Press Ctrl + C to stop collection
     blktrace -d /dev/sda
 
-    # 分析 sda.blktrace.<cpu> 文件簇，并输出分析结果
+    # Analyze the sda.blktrace.<cpu> file cluster and output the analysis results
     blkparse sda
     ```
 
-1. 变采集边分析
+1. Collect and analyze simultaneously
     ```sh
-    # blktrace 产生的标准输出直接通过管道送入 blkparse 的标准输入
-    # Ctrl + C 终止采集
+    # The standard output of blktrace is piped directly to the standard input of blkparse
+    # Press Ctrl + C to stop collection
     blktrace -d /dev/sda -o - | blkparse -i -
     ```
 
-1. 使用`btt`进行分析
+1. Analyze using `btt`
     ```sh
     blktrace -d /dev/sda
 
-    # 该命令会将 sda.blktrace.<cpu> 文件簇合并成一个文件 sda.blktrace.bin
+    # This command merges the sda.blktrace.<cpu> file cluster into a single file sda.blktrace.bin
     blkparse -i sda -d sda.blktrace.bin
 
-    # 该命令会分析 sda.blktrace.bin 并输出分析结果
+    # This command analyzes sda.blktrace.bin and outputs the analysis results
     btt -i sda.blktrace.bin -l sda.d2c_latency
     ```
 
