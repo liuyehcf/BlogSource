@@ -4264,11 +4264,11 @@ X_VNC <--> X_Client: X Protocol
 
 ![audit_architecture](/images/Linux-Frequently-Used-Commands/audit_architecture.png)
 
-审核系统包含两个主要部分：用户空间的应用程序、实用程序，以及`kernel-side`系统调用处理。Kernel的组件从用户空间的应用程序接受系统调用，并且通过三个过滤器中的一个过滤器来进行筛选：`user`、`task`或者`exit`。一旦系统调用通过其中的一个过滤器，就将通过`exclude`过滤器进行传送，这是基于审核规则的配置，并把它传送给审核的守护程序做进一步的处理
+The audit system consists of two main parts: user-space applications and utilities, and kernel-side system call handling. The kernel component accepts system calls from user-space applications and filters them through one of three filters: `user`, `task`, or `exit`. Once a system call passes through one of these filters, it is further processed by the `exclude` filter based on audit rule configuration, then passed to the audit daemon for further handling.
 
-处理过程和`iptables`差不多，有规则链，可以在链中增加规则，它发现一个`syscall`或者特殊事件的时候会去遍历这个链，然后按规则处理，吐不同的日志
+The processing is similar to `iptables`, with rule chains where rules can be added. When a `syscall` or special event is detected, the chain is traversed and processed according to the rules, producing different logs.
 
-**与audit相关的内核编译参数**
+**Kernel compile options related to audit**
 
 ```
 CONFIG_AUDIT_ARCH=y
@@ -4281,7 +4281,7 @@ CONFIG_IMA_AUDIT=y
 CONFIG_KVM_MMU_AUDIT=y
 ```
 
-**只要编译内核时，开启了审计的选项，那么内核就会产生审计事件，并将审计事件送往一个socket，然后auditd负责从这个socket读出审计事件并记录**
+**As long as the audit option is enabled during kernel compilation, the kernel will generate audit events and send them to a socket. The audit daemon (`auditd`) is responsible for reading audit events from this socket and recording them.**
 
 ## 9.2 auditctl
 
@@ -4289,19 +4289,19 @@ CONFIG_KVM_MMU_AUDIT=y
 
 **Options:**
 
-* `-b`：设置允许的未完成审核缓冲区的最大数量，默认值是`64`
-* `-e [0..2]`：设置启用标志位
-    * `0`：关闭审计功能
-    * `1`：开启审计功能，且允许修改配置
-    * `2`：开启审计功能，且不允许修改配置
-* `-f [0..2]`：设置异常标志位（告诉内如如何处理这些异常）
-    * `0`：silent，当发现异常时，不处理（静默）
-    * `1`：printk，打日志（这是默认值）
-    * `2`：panic，崩溃
-* `-r`：消息产生的速率，单位秒
-* `-s`：报告审核系统状态
-* `-l`：列出所有当前装载的审核规则
-* `-D`：清空所有规则以及watch
+* `-b`: Set the maximum allowed number of unfinished audit buffers, default is `64`
+* `-e [0..2]`: Set the enable flag
+    * `0`: Disable audit functionality
+    * `1`: Enable audit functionality and allow configuration changes
+    * `2`: Enable audit functionality and disallow configuration changes
+* `-f [0..2]`: Set the failure flag (how to handle exceptions)
+    * `0`: silent, do nothing on exceptions (silent mode)
+    * `1`: printk, log the event (default)
+    * `2`: panic, crash the system
+* `-r`: Message generation rate, in seconds
+* `-s`: Report audit system status
+* `-l`: List all currently loaded audit rules
+* `-D`: Delete all rules and watches
 
 **Examples:**
 
@@ -4319,13 +4319,13 @@ CONFIG_KVM_MMU_AUDIT=y
 
 **Options:**
 
-* `-w`：路径名称
-* `-p`：后接权限，包括
-    * `r`：读取文件或者目录
-    * `w`：写入文件或者目录
-    * `x`：运行文件或者目录
-    * `a`：改变在文件或者目录中的属性
-* `-k`：后接字符串，可以任意指定，用于搜索
+* `-w`: Path name
+* `-p`: Followed by permissions, including
+    * `r`: Read file or directory
+    * `w`: Write file or directory
+    * `x`: Execute file or directory
+    * `a`: Change attributes in file or directory
+* `-k`: Followed by a string, can be arbitrarily specified, used for searching
 
 **Examples:**
 
@@ -4339,18 +4339,18 @@ CONFIG_KVM_MMU_AUDIT=y
 
 **Options:**
 
-* `-a`：后接`action`和`filter`
-    * `action`：决定匹配`filter`的审计事件是否要记录，可选值包括
-        * `always`：记录
-        * `never`：不记录
-    * `filter`：审计事件过滤器，可选值包括
-        * `task`：匹配进程创建时（`fork`或`clone`）产生的审计事件
-        * **`exit`：匹配系统调用结束时产生的审计事件**
-        * `user`：匹配来自用户空间的审计事件
-        * `exclude`：用于屏蔽不想要的审计事件
-* `-S`：后接系统调用名称，系统调用清单可以参考`/usr/include/asm/unistd_64.h`，如果要指定多个系统调用名称，那么需要多个`-S`参数，每个指定一个系统调用
-* `-F`：扩展选项，键值对
-* `-k`：后接字符串，可以任意指定，用于搜索
+* `-a`: Followed by `action` and `filter`
+    * `action`: Determines whether to record audit events matching the `filter`, options include
+        * `always`: record
+        * `never`: do not record
+    * `filter`: audit event filter, options include
+        * `task`: matches audit events generated when processes are created (`fork` or `clone`)
+        * **`exit`: matches audit events generated at the end of system calls**
+        * `user`: matches audit events from user space
+        * `exclude`: used to mask unwanted audit events
+* `-S`: Followed by system call names; the list of system calls can be found in `/usr/include/asm/unistd_64.h`. To specify multiple system calls, use multiple `-S` options, each specifying one system call.
+* `-F`: Extended option, key-value pair
+* `-k`: Followed by a string, can be arbitrarily specified, used for searching
 
 **Examples:**
 
@@ -4360,22 +4360,20 @@ CONFIG_KVM_MMU_AUDIT=y
 
 **Options:**
 
-* `-i`：翻译结果，使其更可读
-* `-m`：指定类型
-* `-sc`：指定系统调用名称
-* `-sv`：系统调用是否成功
+* `-i`: Translate the results to make them more readable
+* `-m`: Specify the type
+* `-sc`: Specify the system call name
+* `-sv`: Whether the system call was successful
 
 **Examples:**
 
-* `ausearch -i`：搜索全量事件
-* `ausearch --message USER_LOGIN --success no --interpret`：搜索登录失败的相关事件
-* `ausearch -m ADD_USER -m DEL_USER -m ADD_GROUP -m USER_CHAUTHTOK -m DEL_GROUP -m CHGRP_ID -m ROLE_ASSIGN -m ROLE_REMOVE -i`：搜索所有的账户，群组，角色变更相关的事件
-* `ausearch --start yesterday --end now -m SYSCALL -sv no -i`：搜寻从昨天至今所有的失败的系统调用相关的事件
-* `ausearch -m SYSCALL -sc open -i`：搜寻系统调用open相关的事件
+* `ausearch -i`: Search all events
+* `ausearch --message USER_LOGIN --success no --interpret`: Search for events related to failed logins
+* `ausearch -m ADD_USER -m DEL_USER -m ADD_GROUP -m USER_CHAUTHTOK -m DEL_GROUP -m CHGRP_ID -m ROLE_ASSIGN -m ROLE_REMOVE -i`: Search for all events related to account, group, and role changes
+* `ausearch --start yesterday --end now -m SYSCALL -sv no -i`: Search for all failed system call events from yesterday until now
+* `ausearch -m SYSCALL -sc open -i`: Search for events related to the system call "open"
 
 ## 9.4 Audit Record Types
-
-[B.2. 审核记录类型](https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/7/html/security_guide/sec-Audit_Record_Types)
 
 # 10 Package Management Tools
 
