@@ -280,6 +280,73 @@ g++ -o calculator lex.yy.c calculator.tab.c -O3
 ./calculator
 ```
 
+## 1.4 libfiu
+
+[libfiu(Failure Injection Unit)](https://blitiri.com.ar/p/libfiu/): libfiu is a C library for fault injection.
+
+**Install:**
+
+```sh
+git clone https://blitiri.com.ar/repos/libfiu
+cd libfiu
+
+make -j $(( (cores=$(nproc))>1?cores/2:1 ))
+sudo make install
+```
+
+**Example:**
+
+```sh
+cat > main.cpp << 'EOF'
+#define FIU_ENABLE 1 // Enable libfiu
+
+#include <fcntl.h>
+#include <fiu-control.h>
+#include <fiu.h>
+
+#include <cerrno>
+#include <cstring>
+#include <iostream>
+
+int do_something_critical() {
+    if (fiu_fail("my/fail/point")) {
+        std::fprintf(stderr, "Failure injected at my/fail/point!\n");
+        return -1;
+    }
+
+    std::printf("Function ran successfully.\n");
+    return 0;
+}
+
+int main() {
+    // Initialize libfiu
+    fiu_init(0);
+
+    // Enable the fail point to simulate failure
+    fiu_enable("my/fail/point", 1, NULL, 0);
+    // Eanble a fail point for libc/open to simulate a failure in file opening
+    fiu_enable("libc/open", 1, NULL, 0);
+
+    if (do_something_critical() < 0) {
+        std::cout << "do_something_critical() failed as expected." << std::endl;
+    }
+
+    if (open("somefile.txt", O_RDONLY) == -1) {
+        std::cout << "open() failed as expected." << std::endl;
+    }
+
+    // Disable the fail points
+    fiu_disable("my/fail/point");
+    fiu_disable("libc/open");
+
+    return 0;
+}
+EOF
+
+gcc -o main main.cpp -lstdc++ -std=gnu++17 -O3 -lfiu
+./main
+```
+
 # 2 boost
 
 [Boost Library Documentation](https://www.boost.org/doc/libs/)
@@ -672,7 +739,44 @@ Boost version: 1.84.0
 10# _start in ./main
 ```
 
-## 2.5 Reference
+## 2.5 Memory Pool Management
+
+```cpp
+#include <boost/pool/object_pool.hpp>
+#include <iostream>
+
+class Reusable {
+public:
+    Reusable(int id) : id_(id) { std::cout << "Creating Reusable #" << id_ << std::endl; }
+    ~Reusable() { std::cout << "Destroying Reusable #" << id_ << std::endl; }
+
+    void doWork() { std::cout << "Reusable #" << id_ << " is working" << std::endl; }
+
+    int getId() const { return id_; }
+
+private:
+    int id_;
+};
+
+int main() {
+    {
+        boost::object_pool<Reusable> pool;
+
+        // Allocate objects from the pool
+        Reusable* r1 = pool.construct(1);
+        Reusable* r2 = pool.construct(2);
+
+        r1->doWork();
+        r2->doWork();
+    }
+
+    std::cout << "All Reusable instances must be released" << std::endl;
+
+    return 0;
+}
+```
+
+## 2.6 Reference
 
 * [The Boost C++ Libraries BoostBook Documentation Subset](https://www.boost.org/doc/libs/master/doc/html/)
 * [How to print current call stack](https://www.boost.org/doc/libs/1_66_0/doc/html/stacktrace/getting_started.html)
@@ -3754,6 +3858,5 @@ build/curl_demo
     * [phmap_gdb.py](https://github.com/greg7mdp/parallel-hashmap/blob/master/phmap_gdb.py)
 1. [cpp-httplib](https://github.com/yhirose/cpp-httplib)：`cpp-httplib`以头文件的方式提供`http`协议的相关支持
 1. [json](https://github.com/nlohmann/json)：`json`库
-1. [libfiu(Failure Injection Unit)](https://blitiri.com.ar/p/libfiu/)：错误注入
 1. bison: Parser
 1. [cpptrace](https://github.com/jeremy-rifkin/cpptrace)

@@ -1237,7 +1237,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O1 -Wall")
 1. `RelWithDebInfo`
 1. `MinSizeRel`
 
-### 6.3.3 Use CMake Options as Macro
+### 6.3.3 Use CMake Options and Variables as Macro
 
 ```sh
 mkdir -p option_as_macro_demo
@@ -1250,8 +1250,14 @@ project(option_as_macro_demo)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-option(USE_FOO "Use FOO" ON)
-option(USE_BAR "Use BAR" OFF)
+option(OPT_1 "Use OPT_1" ON)
+option(OPT_2 "Use OPT_1" ON)
+# Normal variable variable cannot be modified via cmake command
+# Cache variable can be modified via cmake command
+set(BOOL_VAR_1 ON)
+set(BOOL_VAR_2 ON CACHE BOOL "This is a cache variable BOOL_VAR_2")
+set(STR_VAR_1 "Default Value1")
+set(STR_VAR_2 "Default Value2" CACHE STRING "This is a cache variable STR_VAR_2")
 
 configure_file(${CMAKE_SOURCE_DIR}/config.h.in ${CMAKE_BINARY_DIR}/config.h)
 
@@ -1269,8 +1275,14 @@ EOF
 cat > config.h.in << 'EOF'
 #pragma once
 
-#cmakedefine01 USE_FOO
-#cmakedefine01 USE_BAR
+#cmakedefine01 OPT_1
+#cmakedefine01 OPT_2
+
+#cmakedefine01 BOOL_VAR_1
+#cmakedefine01 BOOL_VAR_2
+
+#cmakedefine STR_VAR_1 "@STR_VAR_1@"
+#cmakedefine STR_VAR_2 "@STR_VAR_2@"
 EOF
 
 cat > option_as_macro_demo.cpp << 'EOF'
@@ -1279,15 +1291,30 @@ cat > option_as_macro_demo.cpp << 'EOF'
 #include "config.h"
 
 int main() {
-    std::cout << "USE_FOO: " << USE_FOO << std::endl;
-    std::cout << "USE_BAR: " << USE_BAR << std::endl;
+    std::cout << "OPT_1: " << OPT_1 << std::endl;
+    std::cout << "OPT_2: " << OPT_2 << std::endl;
+    std::cout << "BOOL_VAR_1: " << BOOL_VAR_1 << std::endl;
+    std::cout << "BOOL_VAR_2: " << BOOL_VAR_2 << std::endl;
+    std::cout << "STR_VAR_1: " << STR_VAR_1 << std::endl;
+    std::cout << "STR_VAR_2: " << STR_VAR_2 << std::endl;
     return 0;
 }
 EOF
 
-cmake -B build -DUSE_FOO=0 -DUSE_BAR=1
+cmake -B build -DOPT_2=0 -DBOOL_VAR_1=0 -DBOOL_VAR_2=0 -DSTR_VAR_1="Changed Value1" -DSTR_VAR_2="Changed Value2"
 cmake --build build
 build/option_as_macro_demo
+```
+
+Output:
+
+```
+OPT_1: 1
+OPT_2: 0
+BOOL_VAR_1: 1
+BOOL_VAR_2: 0
+STR_VAR_1: Default Value1
+STR_VAR_2: Changed Value2
 ```
 
 ### 6.3.4 Macro Definition
@@ -1440,58 +1467,186 @@ set(CMAKE_FIND_LIBRARY_SUFFIXES ".a;.so")
 set(CMAKE_FIND_LIBRARY_SUFFIXES ".so;.a")
 ```
 
-## 6.6 compile_commands.json
+## 6.6 Custom Command/Target
 
-### 6.6.1 Manually Generate compile_commands.json
+### 6.6.1 How to make custom command as part of build?
 
-`cmake`指定参数`-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`即可。构建完成后，会在构建目录生成`compile_commands.json`，里面包含了每个源文件的编译命令
+There are three ways:
 
-### 6.6.2 Auto generate compile_commands.json and copy to project source root
+* Use `add_custom_target` with auto build (The keyword `ALL`):
+    ```sh
+    mkdir -p custom_command_demo_1
+    cd custom_command_demo_1
+    cat > CMakeLists.txt << 'EOF'
+    cmake_minimum_required(VERSION 3.20)
 
-参考[Copy compile_commands.json to project root folder](https://stackoverflow.com/questions/57464766/copy-compile-commands-json-to-project-root-folder)
+    project(custom_command_demo_1)
 
-```cmake
-add_custom_target(
-    copy-compile-commands ALL
-    ${CMAKE_COMMAND} -E copy_if_different
-        ${CMAKE_BINARY_DIR}/compile_commands.json
-        ${CMAKE_SOURCE_DIR}
+    add_custom_target(${PROJECT_NAME} ALL
+        COMMAND ${CMAKE_COMMAND} -E echo "This is a custom command demo, first message"
+        COMMAND ${CMAKE_COMMAND} -E echo "This is a custom command demo, second message"
+        COMMAND ${CMAKE_COMMAND} -E echo "This is a custom command demo, third message"
+        VERBATIM
     )
-```
+    EOF
 
-## 6.7 How to work with ccache
+    cmake -B build && cmake --build build
+    ```
 
-[How to Use CCache with CMake?](https://stackoverflow.com/questions/1815688/how-to-use-ccache-with-cmake)
+* Use `add_custom_command` and `add_custom_target` with auto build (The keyword `ALL`):
+    ```sh
+    mkdir -p custom_command_demo_2
+    cd custom_command_demo_2
+    cat > CMakeLists.txt << 'EOF'
+    cmake_minimum_required(VERSION 3.20)
 
-Use cmake variable [CMAKE_<LANG>_COMPILER_LAUNCHER](https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_COMPILER_LAUNCHER.html#variable:CMAKE_%3CLANG%3E_COMPILER_LAUNCHER)
+    project(custom_command_demo_2)
+
+    add_custom_command(
+        OUTPUT say_hello.txt
+        COMMAND ${CMAKE_COMMAND} -E echo "This is a custom command demo, first message"
+        COMMAND ${CMAKE_COMMAND} -E echo "This is a custom command demo, second message"
+        COMMAND ${CMAKE_COMMAND} -E echo "This is a custom command demo, third message"
+        COMMAND ${CMAKE_COMMAND} -E echo "Write this to a file" > say_hello.txt
+        VERBATIM
+    )
+
+    add_custom_target(${PROJECT_NAME} ALL
+        DEPENDS say_hello.txt
+    )
+    EOF
+
+    cmake -B build && cmake --build build
+    ```
+
+* Use `add_custom_target` and `add_dependencies`:
+    ```sh
+    mkdir -p custom_command_demo_3
+    cd custom_command_demo_3
+    cat > CMakeLists.txt << 'EOF'
+    cmake_minimum_required(VERSION 3.20)
+
+    project(custom_command_demo_3)
+
+    file(GLOB MY_PROJECT_SOURCES "*.cpp")
+    add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
+
+    target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+    target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+    # This target won't be executed by default
+    add_custom_target(say_hello_target
+        COMMAND ${CMAKE_COMMAND} -E echo "This is a custom command demo, first message"
+        COMMAND ${CMAKE_COMMAND} -E echo "This is a custom command demo, second message"
+        COMMAND ${CMAKE_COMMAND} -E echo "This is a custom command demo, third message"
+        VERBATIM
+    )
+
+    # Link target say_hello_target to the default build target
+    add_dependencies(${PROJECT_NAME} say_hello_target)
+    EOF
+
+    cat > custom_command_demo_3.cpp << 'EOF'
+    int main() {
+        return 0;
+    }
+    EOF
+
+    cmake -B build && cmake --build build
+    ```
+
+* Use `add_custom_command` and `add_custom_target` and `add_dependencies`:
+    ```sh
+    mkdir -p custom_command_demo_4
+    cd custom_command_demo_4
+    cat > CMakeLists.txt << 'EOF'
+    cmake_minimum_required(VERSION 3.20)
+
+    project(custom_command_demo_4)
+
+    file(GLOB MY_PROJECT_SOURCES "*.cpp")
+    add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
+
+    target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+    target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+    add_custom_command(
+        OUTPUT say_hello.txt
+        COMMAND ${CMAKE_COMMAND} -E echo "This is a custom command demo, first message"
+        COMMAND ${CMAKE_COMMAND} -E echo "This is a custom command demo, second message"
+        COMMAND ${CMAKE_COMMAND} -E echo "This is a custom command demo, third message"
+        COMMAND ${CMAKE_COMMAND} -E echo "Write this to a file" > say_hello.txt
+        VERBATIM
+    )
+
+    # This target won't be executed by default
+    add_custom_target(say_hello_target
+        DEPENDS say_hello.txt
+    )
+
+    # Link target say_hello_target to the default build target
+    add_dependencies(${PROJECT_NAME} say_hello_target)
+    EOF
+
+    cat > custom_command_demo_4.cpp << 'EOF'
+    int main() {
+        return 0;
+    }
+    EOF
+
+    cmake -B build && cmake --build build
+    ```
+
+### 6.6.2 PRE_BUILD/PRE_LINK/POST_BUILD Events
 
 ```sh
-cmake -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -B build
+mkdir -p build_events_demo
+cd build_events_demo
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(build_events_demo)
+
+file(GLOB MY_PROJECT_SOURCES "*.cpp")
+add_executable(${PROJECT_NAME} ${MY_PROJECT_SOURCES})
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+add_custom_command(
+    TARGET ${PROJECT_NAME} 
+    PRE_BUILD
+    COMMAND ${CMAKE_COMMAND} -E echo "Executed before build"
+    VERBATIM
+)
+
+add_custom_command(
+    TARGET ${PROJECT_NAME} 
+    PRE_LINK
+    COMMAND ${CMAKE_COMMAND} -E echo "Executed before link"
+    VERBATIM
+)
+
+add_custom_command(
+    TARGET ${PROJECT_NAME} 
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E echo "Executed after build"
+    VERBATIM
+)
+EOF
+
+cat > build_events_demo.cpp << 'EOF'
+int main() {
+    return 0;
+}
+EOF
+
+cmake -B build && cmake --build build --verbose
 ```
 
-Or, you can use env variable of the same name.
+### 6.6.3 Best Practice
 
-```sh
-export CMAKE_C_COMPILER_LAUNCHER=ccache
-export CMAKE_CXX_COMPILER_LAUNCHER=ccache
-```
-
-How to ensure ccache truely works:
-
-* `grep -rni 'ccache' build`: Find ccache related configs
-* `ccache -z && ccache -s && cmake --build build && ccache -s`: Check cache hits
-
-## 6.8 How to uninstall
-
-After installation, there will be a `install_manifest.txt` recording all the installed files. So we can perform uninstallation by this file.
-
-```sh
-xargs rm < install_manifest.txt
-```
-
-## 6.9 Integrate with customized targets
-
-For this purpose, you can use `add_custom_command`, `add_custom_target`:
+Here we choose `add_custom_command`, `add_custom_target`:
 
 * `add_custom_target`: Adds a target with the given name that executes the given commands. The target has no output file and is always considered out of date even if the commands try to create a file with the name of the target.
 * `add_custom_command`: This defines a command to generate specified `OUTPUT` file(s). A target created in the same directory (`CMakeLists.txt` file) that specifies any output of the custom command as a source file is given a rule to generate the file using the command at build time.
@@ -1575,7 +1730,6 @@ add_custom_command(
 
 add_custom_target(build_java ALL
     DEPENDS ${ALL_JAR_PATHS}
-    VERBATIM
 )
 
 add_custom_command(TARGET build_java POST_BUILD
@@ -1596,6 +1750,55 @@ int main() {
 EOF
 
 cmake -B build && cmake --build build
+```
+
+## 6.7 compile_commands.json
+
+### 6.7.1 Manually Generate compile_commands.json
+
+`cmake`指定参数`-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`即可。构建完成后，会在构建目录生成`compile_commands.json`，里面包含了每个源文件的编译命令
+
+### 6.7.2 Auto generate compile_commands.json and copy to project source root
+
+参考[Copy compile_commands.json to project root folder](https://stackoverflow.com/questions/57464766/copy-compile-commands-json-to-project-root-folder)
+
+```cmake
+add_custom_target(
+    copy-compile-commands ALL
+    ${CMAKE_COMMAND} -E copy_if_different
+        ${CMAKE_BINARY_DIR}/compile_commands.json
+        ${CMAKE_SOURCE_DIR}
+    )
+```
+
+## 6.8 How to work with ccache
+
+[How to Use CCache with CMake?](https://stackoverflow.com/questions/1815688/how-to-use-ccache-with-cmake)
+
+Use cmake variable [CMAKE_<LANG>_COMPILER_LAUNCHER](https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_COMPILER_LAUNCHER.html#variable:CMAKE_%3CLANG%3E_COMPILER_LAUNCHER)
+
+```sh
+cmake -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -B build
+```
+
+Or, you can use env variable of the same name.
+
+```sh
+export CMAKE_C_COMPILER_LAUNCHER=ccache
+export CMAKE_CXX_COMPILER_LAUNCHER=ccache
+```
+
+How to ensure ccache truely works:
+
+* `grep -rni 'ccache' build`: Find ccache related configs
+* `ccache -z && ccache -s && cmake --build build && ccache -s`: Check cache hits
+
+## 6.9 How to uninstall
+
+After installation, there will be a `install_manifest.txt` recording all the installed files. So we can perform uninstallation by this file.
+
+```sh
+xargs rm < install_manifest.txt
 ```
 
 ## 6.10 Ignore -Werror
