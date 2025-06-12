@@ -470,6 +470,7 @@ In addition to storing their type, targets also keep track of general properties
 * `WIN32`：在所有的`win32`平台为`TRUE`，包括`cygwin`
 * `ENV{NAME}`：环境变量，通过`set(ENV{NAME} value)`设置，通过`$ENV{NAME}`引用
 * `CMAKE_INSTALL_PREFIX`：安装路径前缀
+* `CMAKE_PREFIX_PATH`: Semicolon-separated list of directories specifying installation prefixes to be searched by the `find_package()`, `find_program()`, `find_library()`, `find_file()`, and `find_path()` commands. Each command will add appropriate subdirectories (like `bin`, `lib`, or `include`) as specified in its own documentation.
 
 ## 3.2 BUILD_SHARED_LIBS
 
@@ -1195,6 +1196,12 @@ TheseWhen using the default generator `Unix Makefiles`, the following three meth
 * `make VERBOSE=1`
 * `cmake --build <build_path> -- VERBOSE=1`
 
+### 6.2.4 Cmake Debug Options
+
+* `--trace`: Put cmake in trace mode.
+* `--trace-expand`: Put cmake in trace mode with variable.
+* `--debug-find`: Put cmake find in a debug mode.
+
 ## 6.3 Compile Options
 
 ### 6.3.1 Specify Compiler
@@ -1358,7 +1365,15 @@ You can check if it works by this command:
 readelf -d <binary> | grep 'RPATH\|RUNPATH'
 ```
 
-### 6.3.7 Build Type
+### 6.3.7 Set Library Search Path
+
+Sometimes, you may use `find_package` to include libraries, but multiple versions of the same library might exist in different paths on your system. By using the `-DCMAKE_PREFIX_PATH` option, you can specify which paths CMake should search.
+
+```cmake
+cmake -B build -DCMAKE_PREFIX_PATH=/usr/local
+```
+
+### 6.3.8 Build Type
 
 ```sh
 # If you want to build for debug (including source information, i.e. -g) when compiling, use

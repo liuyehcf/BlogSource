@@ -210,6 +210,9 @@ rsync -avzP <old_dir> <new_dir>
 # switch to root
 sudo su
 
+# kill all processes that using old home directory
+fuser -k -9 <old_dir>
+
 # update user's home directory
 usermod -d <new_dir> <username>
 ```
@@ -4660,6 +4663,17 @@ apt install clang-format-X.Y
 * `ls --full-time <file>`
 * `stat <file>`
 * `date -r <file>`
+
+## 11.4 Health Thresholds for Monitoring Metrics
+
+1. `CPU Usage`: Less than `70%`.
+1. `CPU Load`: Less than `<coreNum> * 0.7`.
+1. `Memory Usage`: Less than `50%`.
+1. `Disk Usage`: Less than `70%`.
+1. `iowait`: Less than `50ms`.
+1. `Threads`: Less than `10K`.
+1. `IOPS`: Less than `1K`.
+1. `inode`: Less than `50%`.
 
 # 12 Reference
 

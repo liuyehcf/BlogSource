@@ -653,6 +653,10 @@ caffeinate -d -t 32400
 
 `Keyboard` -> `Keyboard Shortcuts` -> `Function Keys` -> `Use F1, F12, etc. keys as standard function keys`
 
+## 6.13 禁止iCloud设备之间的联动
+
+Search key word `handoff`
+
 # 7 参考
 
 * [Mac 下利用 Launchctl 自启动 mysql](http://squll369.iteye.com/blog/1965185)

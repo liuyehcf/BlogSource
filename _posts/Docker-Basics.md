@@ -556,7 +556,13 @@ docker run --user $(id -u):$(id -g) -v /etc/passwd:/etc/passwd
 docker network inspect <ns-name>
 ```
 
-## 7.12 Config Path
+## 7.12 How to map ports with localhost only
+
+```sh
+docker run -dit -p 127.0.0.1:3306:3306 -e MYSQL_ROOT_PASSWORD='Abcd1234' mysql:5.7.37 mysqld --lower_case_table_names=1
+```
+
+## 7.13 Config Path
 
 1. Client: `~/.docker/config.json`
 1. Daemon: `/etc/docker/daemon.json`

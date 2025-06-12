@@ -73,8 +73,14 @@ SELECT * FROM test.user;
 
 # 2 Tips
 
-1. `truncate`函数：`sql/my_decimal.h`中的`my_decimal_round`函数
-1. 如何用docker运行：`sudo docker run -dit -p 3306:3306 -e MYSQL_ROOT_PASSWORD='Abcd1234' -v <local_path>:/var/lib/mysql mysql:5.7.37 mysqld --lower_case_table_names=1`
+1. `truncate`: `sql/my_decimal.h:my_decimal_round`
+1. How to start via docker:
+    ```sh
+    # with persistent storage
+    docker run -dit -p 3306:3306 -e MYSQL_ROOT_PASSWORD='Abcd1234' -v <local_path>:/var/lib/mysql mysql:5.7.37 mysqld --lower_case_table_names=1
+    # without persistent storage
+    docker run -dit -p 3306:3306 -e MYSQL_ROOT_PASSWORD='Abcd1234' mysql:5.7.37 mysqld --lower_case_table_names=1
+    ```
 
 # 3 Install from Archives
 
