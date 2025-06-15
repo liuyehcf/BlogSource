@@ -2309,6 +2309,8 @@ Home: [vim-codefmt](https://github.com/google/vim-codefmt)
 * `Go`：`gofmt`
 * `Java`：`google-java-format`/`clang-format`
 * `Python`：`Autopep8`/`Black`/`YAPF`
+    * Combine `isort` to reorder imports.
+    * `pip install autopep8 isort`
 * `Shell`：`shfmt`
 
 **Configuration(`~/.vimrc`):**
@@ -2327,6 +2329,12 @@ Plug 'google/vim-glaive'
 " Map :FormatCode to shortcut [Ctrl] + l
 nnoremap <c-l> :FormatCode<cr>
 xnoremap <c-l> :FormatLines<cr>
+
+let g:codefmt_python_formatter = "custom"
+let g:codefmt_custom_python = {
+  \ 'exe': 'bash',
+  \ 'args': ['-c', 'isort --quiet - && autopep8 -'],
+  \ }
 
 call plug#end()
 
@@ -2725,6 +2733,12 @@ Plug 'google/vim-glaive'
 " Map :FormatCode to shortcut [Ctrl] + l
 nnoremap <c-l> :FormatCode<cr>
 xnoremap <c-l> :FormatLines<cr>
+
+let g:codefmt_python_formatter = "custom"
+let g:codefmt_custom_python = {
+  \ 'exe': 'bash',
+  \ 'args': ['-c', 'isort --quiet - && autopep8 -'],
+  \ }
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 

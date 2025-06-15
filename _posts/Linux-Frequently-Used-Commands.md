@@ -1326,8 +1326,9 @@ The `r` in its name stands for `remote`, and `rsync` essentially means remote sy
 **Examples:**
 
 * `wget -O myfile 'https://www.baidu.com'`
-* `wget -r -np -nH -P /root/test -R "index.html*" 'http://192.168.66.1/stuff'`
-* `wget -r -np -nH -P /root/test 'ftp://192.168.66.1/stuff'`
+* `wget -r -np -nH -P /root/test 'http://192.168.66.1/stuff'`: Recursive download.
+* `wget -r -np -nH -P /root/test -R "index.html*" 'http://192.168.66.1/stuff'`: Recursive download but excluding pattern `index.html*`.
+* `wget -r -np -nH -P /root/test 'ftp://192.168.66.1/stuff'`: Recursive download.
 * `wget --proxy=http://proxy.example.com:8080 http://example.com/file`
 
 ## 2.24 tree

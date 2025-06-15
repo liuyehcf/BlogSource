@@ -1834,6 +1834,18 @@ Or
 set_target_properties(<target> PROPERTIES DEBUG_POSTFIX "d")
 ```
 
+## 6.12 How to view dependencies
+
+```sh
+cmake -B build --graphviz=build/graph/graph.dot
+
+# Generate png
+dot -Tpng build/graph/graph.dot -o build/graph/graph.png
+
+# Generate svg(preferred)
+dot -Tsvg build/graph/graph.dot -o build/graph/graph.svg
+```
+
 # 7 Install
 
 **We can get binary distributions from [Get the Software](https://cmake.org/download/):**

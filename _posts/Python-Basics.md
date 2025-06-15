@@ -660,15 +660,69 @@ wget https://bootstrap.pypa.io/get-pip.py
 sudo python3 get-pip.py
 ```
 
-# 10 其他
+# 10 实用工具
 
-## 10.1 代码格式化
+## 10.1 convert parquet to orc
+
+```py
+import pandas as pd
+import pyarrow.parquet as pq
+import pyorc
+
+def auto_dtype_mapping(series):
+    dtype = series.dtype
+    if pd.api.types.is_integer_dtype(series):
+        return "bigint"
+    elif pd.api.types.is_float_dtype(series):
+        return "double"
+    elif pd.api.types.is_bool_dtype(series):
+        return "boolean"
+    elif pd.api.types.is_datetime64_any_dtype(series):
+        return "timestamp"
+    elif pd.api.types.is_string_dtype(series):
+        return "string"
+    elif dtype == object:
+        return "string"
+    else:
+        raise ValueError(f"Unsupported dtype: {dtype}")
+
+def parquet_to_orc_auto(parquet_path, orc_path):
+    table = pq.read_table(parquet_path)
+    df = table.to_pandas()
+
+    schema_parts = [
+        f"{col}:{auto_dtype_mapping(df[col])}" for col in df.columns]
+    orc_schema = "struct<" + ",".join(schema_parts) + ">"
+    print(f"orc schema: {orc_schema}")
+
+    with open(orc_path, "wb") as f:
+        writer = pyorc.Writer(f, orc_schema)
+        for row in df.itertuples(index=False, name=None):
+            writer.write(row)
+        writer.close()
+
+    print(f"✅ Done: {parquet_path} -> {orc_path}")
+
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) != 3:
+        print("Usage: python parquet_to_orc.py <parquet_path> <orc_path>")
+        sys.exit(1)
+
+    parquet_path = sys.argv[1]
+    orc_path = sys.argv[2]
+    parquet_to_orc_auto(parquet_path, orc_path)
+```
+
+# 11 其他
+
+## 11.1 代码格式化
 
 * [autopep8](https://pypi.org/project/autopep8/)
 * [vim-autopep8](https://github.com/tell-k/vim-autopep8)
 * [vim-autoformat](https://github.com/vim-autoformat/vim-autoformat)
 
-## 10.2 Debug
+## 11.2 Debug
 
 `pdb`的用法与`gdb`类似，这里不赘述
 
@@ -676,7 +730,7 @@ sudo python3 get-pip.py
 python3 -m pdb xxx.py
 ```
 
-# 11 参考
+# 12 参考
 
 * [廖雪峰-Python教程](https://www.liaoxuefeng.com/wiki/0014316089557264a6b348958f449949df42a6d3a2e542c000)
 * [Python 3 教程](https://www.runoob.com/python3/python3-tutorial.html)

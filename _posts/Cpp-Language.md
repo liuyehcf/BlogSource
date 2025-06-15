@@ -4488,7 +4488,230 @@ template <typename T>
 struct Bar<T, std::enable_if_t<std::is_integral_v<T>>> {};
 ```
 
-## 5.6 When template parameters cannot be deduced
+## 5.6 Template Instantiation
+
+Template instantiation is the process by which the C++ compiler generates concrete code from a template when you use it with specific types.
+
+### 5.6.1 Implicit Instantiation
+
+Implicit instantiation happens automatically when a template is used. It is useful when you want to pre-compile template code in a `.cpp` file to reduce compile times or binary size.
+
+### 5.6.2 Explicit Instantiation
+
+Explicit Instantiation ask the compiler to generate a specific instantiation.
+
+```sh
+cat > lib.h << 'EOF'
+#pragma once
+
+class Foo {
+public:
+    template <typename T>
+    void m_print(const T& t);
+};
+
+template <typename T>
+class Bar {
+public:
+    void m_print(const T& t);
+};
+
+template <typename T>
+void g_print(const T& t);
+EOF
+
+cat > lib.cpp << 'EOF'
+#include "lib.h"
+
+#include <iostream>
+
+template <typename T>
+void Foo::m_print(const T& t) {
+    std::cout << "Foo::m_print: " << t << std::endl;
+}
+
+template <typename T>
+void Bar<T>::m_print(const T& t) {
+    std::cout << "Bar::m_print: " << t << std::endl;
+}
+
+template <typename T>
+void g_print(const T& t) {
+    std::cout << "g_print: " << t << std::endl;
+}
+
+template void Foo::m_print(const int32_t&);
+template void Foo::m_print(const std::string&);
+
+template class Bar<int32_t>;
+template class Bar<std::string>;
+
+template void g_print(const int32_t&);
+template void g_print(const std::string&);
+EOF
+
+cat > main.cpp << 'EOF'
+#include <stdint.h>
+
+#include <string>
+
+#include "lib.h"
+
+int main() {
+    Foo foo;
+    Bar<int32_t> bar1;
+    Bar<std::string> bar2;
+
+    int32_t val1 = 1;
+    std::string val2 = "this is a string";
+
+    foo.m_print(val1);
+    foo.m_print(val2);
+
+    bar1.m_print(val1);
+    bar2.m_print(val2);
+
+    g_print(val1);
+    g_print(val2);
+    return 0;
+}
+EOF
+
+gcc -o main main.cpp lib.cpp -lstdc++ -std=gnu++17 -O3
+./main
+```
+
+cmake example:
+
+```sh
+mkdir -p explicit_instantiation_demo
+cd explicit_instantiation_demo
+
+cat > CMakeLists.txt << 'EOF'
+cmake_minimum_required(VERSION 3.20)
+
+project(explicit_instantiation_demo)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+add_compile_options(-O3 -Wall)
+
+file(GLOB MAIN_SOURCES "main.cpp")
+add_executable(${PROJECT_NAME} ${MAIN_SOURCES})
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR})
+
+target_compile_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+target_link_options(${PROJECT_NAME} PRIVATE -static-libstdc++)
+
+file(GLOB LIB_A_SOURCES "liba/liba.cpp")
+add_library(my_liba STATIC ${LIB_A_SOURCES})
+target_include_directories(my_liba PUBLIC ${CMAKE_SOURCE_DIR}/liba)
+
+file(GLOB LIB_B_SOURCES "libb/libb.cpp")
+add_library(my_libb STATIC ${LIB_B_SOURCES})
+target_include_directories(my_libb PUBLIC ${CMAKE_SOURCE_DIR}/libb)
+target_link_libraries(my_libb PRIVATE my_liba)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE my_libb)
+EOF
+
+mkdir -p liba
+cat > liba/liba.h << 'EOF'
+#pragma once
+
+class Foo {
+public:
+    template <typename T>
+    void m_print(const T& t);
+};
+
+template <typename T>
+class Bar {
+public:
+    void m_print(const T& t);
+};
+
+template <typename T>
+void g_print(const T& t);
+EOF
+cat > liba/liba.cpp << 'EOF'
+#include "liba.h"
+
+#include <iostream>
+
+template <typename T>
+void Foo::m_print(const T& t) {
+    std::cout << "Foo::m_print: " << t << std::endl;
+}
+
+template <typename T>
+void Bar<T>::m_print(const T& t) {
+    std::cout << "Bar::m_print: " << t << std::endl;
+}
+
+template <typename T>
+void g_print(const T& t) {
+    std::cout << "g_print: " << t << std::endl;
+}
+
+template void Foo::m_print(const int32_t&);
+template void Foo::m_print(const std::string&);
+
+template class Bar<int32_t>;
+template class Bar<std::string>;
+
+template void g_print(const int32_t&);
+template void g_print(const std::string&);
+EOF
+
+mkdir -p libb
+cat > libb/libb.h << 'EOF'
+#pragma once
+
+void greet_via_liba_Foo_m_print();
+void greet_via_liba_Bar_m_print();
+void greet_via_liba_g_print();
+EOF
+cat > libb/libb.cpp << 'EOF'
+#include "libb.h"
+
+#include <liba.h>
+
+#include <string>
+
+static std::string content = "Hello, this is libb";
+
+void greet_via_liba_Foo_m_print() {
+    Foo foo;
+    foo.m_print(content);
+}
+void greet_via_liba_Bar_m_print() {
+    Bar<std::string> bar;
+    bar.m_print(content);
+}
+void greet_via_liba_g_print() {
+    g_print(content);
+}
+EOF
+
+cat > main.cpp << 'EOF'
+#include <libb.h>
+
+int main() {
+    greet_via_liba_Foo_m_print();
+    greet_via_liba_Bar_m_print();
+    greet_via_liba_g_print();
+    return 0;
+}
+EOF
+
+cmake -B build
+cmake --build build
+build/explicit_instantiation_demo
+```
+
+## 5.7 When template parameters cannot be deduced
 
 In C++ template programming, when a template parameter appears on the left side of `::`, it typically cannot be deduced. This is because the left side of `::` often represents a `dependent type`, which the compiler cannot resolve during template argument deduction.
 
@@ -4549,7 +4772,7 @@ template <typename T>
 class Bar<std::vector<T>, std::conditional_t<std::is_integral_v<T>, int, double>> {};
 ```
 
-## 5.7 Using typename to Disambiguate
+## 5.8 Using typename to Disambiguate
 
 **Under what circumstances would ambiguity arise? For example, `foo* ptr;`**
 
@@ -4586,7 +4809,7 @@ typename T::value_type sum(const T &container) {
 }
 ```
 
-## 5.8 Using template to Disambiguate
+## 5.9 Using template to Disambiguate
 
 **Under what circumstances would ambiguity arise? For example, `container.emplace<int>(1);`**
 
@@ -4650,7 +4873,7 @@ void bar() {
 }
 ```
 
-## 5.9 Defining a type alias in a template parameter list
+## 5.10 Defining a type alias in a template parameter list
 
 语法上，我们是无法在template的参数列表中定义别名的（无法使用`using`）。但是我们可以通过定义有默认值的类型形参来实现类似类型别名的功能，如下：
 
@@ -4662,7 +4885,7 @@ ValueType& get(HashMap& map, const KeyType& key) {
 }
 ```
 
-## 5.10 Accessing members of a template parent class from a non-template derived class
+## 5.11 Accessing members of a template parent class from a non-template derived class
 
 * Approach 1: `MemberName`
 * Approach 2: `this->MemberName`
@@ -4686,7 +4909,7 @@ int main() {
 }
 ```
 
-## 5.11 Accessing members of a template parent class from a template derived class
+## 5.12 Accessing members of a template parent class from a template derived class
 
 * Approach 1: `ParentClass<Template Args...>::MemberName`
 * Approach 2: `this->MemberName`
@@ -4711,7 +4934,7 @@ int main() {
 }
 ```
 
-## 5.12 Separating the definition and implementation of a template
+## 5.13 Separating the definition and implementation of a template
 
 We can place the declaration and definition of a template in two separate files, which makes the code structure clearer. For example, suppose there are two files `test.h` and `test.tpp`, with the following contents:
 
@@ -4779,7 +5002,7 @@ In this way, when editing these two files independently, `lsp` can work normally
 
 When there is no `compile_commands.json` file, `clangd` will report an error when processing a standalone `tpp` file. The error message is: `Unable to handle compilation, expected exactly one compiler job in ''`.
 
-### 5.12.1 Hide template implementation
+### 5.13.1 Hide template implementation
 
 We can even hide the specific implementation of the template, but in this case, all required types must be explicitly instantiated in the defining `.cpp` file. This is because the implementation of the template is not visible to other `.cpp` files and can only resolve the corresponding symbols during linking.
 
@@ -4826,11 +5049,11 @@ EOF
 gcc -o main main.cpp template.cpp -lstdc++ -std=gnu++17 -O3
 ```
 
-## 5.13 [CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern)
+## 5.14 [CRTP](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern)
 
 `CRTP`的全称是`Curious Recurring Template Pattern`
 
-### 5.13.1 Static Polymorphism
+### 5.14.1 Static Polymorphism
 
 ```cpp
 #include <iostream>
@@ -4854,7 +5077,7 @@ int main() {
 }
 ```
 
-### 5.13.2 Object Counter
+### 5.14.2 Object Counter
 
 ```cpp
 #include <iostream>
@@ -4899,7 +5122,7 @@ int main() {
 }
 ```
 
-### 5.13.3 Polymorphic Chaining
+### 5.14.3 Polymorphic Chaining
 
 ```cpp
 #include <iostream>
@@ -4976,7 +5199,7 @@ int main() {
 * `PlainCoutPrinter().print("Hello ")`的返回类型是`PlainPrinter`，丢失了具体的`PlainCoutPrinter`类型信息，于是再调用`SetConsoleColor`就报错了
 * 而使用`CRTP`就可以避免这个问题，基类的方法返回类型永远是具体的子类
 
-### 5.13.4 Polymorphic Copy Construction
+### 5.14.4 Polymorphic Copy Construction
 
 ```cpp
 #include <memory>
@@ -5015,7 +5238,7 @@ int main() {
 }
 ```
 
-## 5.14 PIMPL
+## 5.15 PIMPL
 
 In C++, the term `pimpl` is short for `pointer to implementation` or `private implementation`. It's an idiom used to separate the public interface of a class from its implementation details. This helps improve code modularity, encapsulation, and reduces compile-time dependencies.
 
