@@ -2845,6 +2845,8 @@ xnoremap p pgvy
 
 " Select the current line
 nnoremap <leader>sl ^vg_
+" Select the whole buffer
+nnoremap <leader>va ggVG
 
 " Cancel search highlight by default when pressing Enter
 nnoremap <cr> :nohlsearch<cr><cr>
