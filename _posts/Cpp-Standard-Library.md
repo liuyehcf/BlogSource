@@ -1424,6 +1424,19 @@ int main(int32_t argc, char* argv[]) {
 1. `std::string::npos`: This is a special value equal to the maximum value representable by the type size_type.
 1. `std::getline`: getline reads characters from an input stream and places them into a string.
 
+Numeric conversions:
+
+* `std::stoi`
+* `std::stol` 
+* `std::stoll`
+* `std::stoul`
+* `std::stoull`
+* `std::stof`
+* `std::stod`
+* `std::stold`
+* `std::to_string`
+* `std::to_wstring`
+
 # 25 string_view
 
 # 26 thread

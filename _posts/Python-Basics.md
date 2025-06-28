@@ -448,6 +448,25 @@ mycompany
     * `python3 -m pdb test.py`
 1. `venv`：用来为一个应用创建一套隔离的Python运行环境
 
+### 7.2.1 venv
+
+For project:
+
+```sh
+mkdir myproject
+cd myproject
+python3 -m venv my_env
+```
+
+For user:
+
+```sh
+python3 -m venv ~/.venv
+
+# active this env explicitly
+source ~/.venv/bin/activate
+```
+
 ## 7.3 Matplotlib
 
 ```sh

@@ -445,6 +445,7 @@ Breakpoint 1, main () at set_break.cpp:8
 * `print *p._M_ptr`: Show details, it may print something like `<vtable for Derive+16>`.
 * `print *(<type>*)p._M_ptr`: Show details of derived type.
 * `x/1a p._M_ptr`: Get first item of vtable.
+* `x/1a *(void**)p._M_ptr`: Useful when `x/1a p._M_ptr` can't see useful info.
 * `x/10a *(void**)p._M_ptr`: Get first 10 items of vtable.
     * `*(void**)` dereferences the `void**` pointer, effectively accessing the first entry in the vtable, which is a pointer to another `void*`.
 

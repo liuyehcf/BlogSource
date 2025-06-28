@@ -6582,9 +6582,9 @@ struct ASTUnaryExpression : public ASTNode {
     const std::string op;
 };
 struct ASTBinaryExpression : public ASTNode {
-    ASTBinaryExpression(std::string op_, ASTNode* lhs_, ASTNode* rhs_) : ASTNode({lhs_, rhs_}), _op(std::move(op_)) {}
+    ASTBinaryExpression(std::string op_, ASTNode* lhs_, ASTNode* rhs_) : ASTNode({lhs_, rhs_}), op(std::move(op_)) {}
     ASTType getType() override { return ASTType::BinaryExpression; }
-    const std::string _op;
+    const std::string op;
 };
 struct ASTLiteral : public ASTNode {
     ASTLiteral(std::string value_) : ASTNode({}), value(std::move(value_)) {}
@@ -6597,8 +6597,10 @@ class ASTVisitor {
 public:
     virtual R visit(ASTNode* node, C& ctx) { throw std::runtime_error("unimplemented"); }
 
-#define VISITOR_DEF(TYPE) \
-    virtual R visit##TYPE(ASTNode* node, C& context) { return visit(node, context); }
+#define VISITOR_DEF(TYPE)                              \
+    virtual R visit##TYPE(ASTNode* node, C& context) { \
+        return visit(node, context);                   \
+    }
     APPLY_AST_TYPES(VISITOR_DEF)
 #undef VISITOR_DEF
 };
@@ -6643,7 +6645,7 @@ public:
     void visitBinaryExpression(ASTNode* node, std::string& context) override {
         auto* binary = dynamic_cast<ASTBinaryExpression*>(node);
         ASTVisitorUtil::visit(binary->children[0], *this, context);
-        context.append(" " + binary->_op + " ");
+        context.append(" " + binary->op + " ");
         ASTVisitorUtil::visit(binary->children[1], *this, context);
     }
 

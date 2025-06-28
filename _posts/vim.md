@@ -843,6 +843,10 @@ let fmt = get(g:, 'plug_url_format', 'https://git::@mirror.ghproxy.com/https://g
                         \ 'PlugClean required.'], "\n")
     ```
 
+##### 3.1.1.1.1 Tips
+
+1. `echo g:plug_home`: show home dir.
+
 #### 3.1.1.2 packer.nvim
 
 Home: [packer.nvim](https://github.com/wbthomason/packer.nvim)
@@ -1746,8 +1750,8 @@ Home: [coc-pyright](https://github.com/fannheyward/coc-pyright)
 * 用pip安装的三方库，pyright找不到
     * 可以使用[venv](https://www.liaoxuefeng.com/wiki/1016959663602400/1019273143120480)模块来构建隔离的python环境，步骤如下（`coc-pyright`官网）
     ```sh
-    python3 -m venv .venv
-    source .venv/bin/activate
+    python3 -m venv ~/.venv
+    source ~/.venv/bin/activate
     <install modules with pip and work with Pyright>
     deactivate
     ```
@@ -2877,7 +2881,9 @@ set foldmethod=manual
 set foldlevel=0
 " Set file encoding format
 set fileencodings=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
-set termencoding=utf-8
+if !has('nvim')
+    set termencoding=utf-8
+endif
 set encoding=utf-8
 " Set mouse mode for different modes (normal/visual/...), see :help mouse for details
 " The configuration below means no mode is entered
@@ -3643,14 +3649,14 @@ call plug#end()
 ```sh
 git clone https://github.com/neovim/neovim.git
 cd neovim
-git checkout v0.10.2
+git checkout v0.11.2
 cmake -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo  && cmake --build build -j $(( (cores=$(nproc))>1?cores/2:1 ))
 ```
 
 Or Install from Nvim development (prerelease) build (Prefer)
 
 ```sh
-wget https://github.com/neovim/neovim/releases/download/v0.10.2/nvim-linux64.tar.gz
+wget https://github.com/neovim/neovim/releases/download/v0.11.2/nvim-linux-x86_64.tar.gz
 tar -zxvf nvim-linux64.tar.gz
 ```
 
@@ -3698,18 +3704,17 @@ n 16.19.0 # use this version
 # nvim's config file is ~/.config/nvim/init.vim
 mkdir -p ~/.vim ~/.vim/plugged
 mkdir -p ~/.config
-ln -sf ~/.vim ~/.config/nvim
-ln -sf ~/.vimrc ~/.config/nvim/init.vim
+ln -sfn ~/.vim ~/.config/nvim
+ln -sfn ~/.vimrc ~/.config/nvim/init.vim
 
 # plug manager and plug
 mkdir -p ~/.local/share/nvim/site/autoload
-ln -sf ~/.vim/autoload/plug.vim ~/.local/share/nvim/site/autoload/plug.vim
-ln -sf ~/.vim/plugged ~/.local/share/nvim/plugged
+ln -sfn ~/.vim/autoload/plug.vim ~/.local/share/nvim/site/autoload/plug.vim
+ln -sfn ~/.vim/plugged ~/.local/share/nvim/plugged
 ```
 
 ## 6.4 Tips
 
-* `:intro`
 * 可能会提示`Vimspector unavailable: Requires Vim compiled with +python3`之类的问题：
     * `:checkhealth`进行自检，这里会提示安装`pynvim`
     * `let g:python3_host_prog = '/path/to/your/python3'`
@@ -3758,7 +3763,7 @@ let g:gutentags_dont_load = 1
 1. Type `:map` then press `<c-v>`.
 1. Type the key you wanted, then it interpreters it into the actual value.
 
-## 7.5 copy text through SSH
+## 7.5 Copy text through SSH
 
 [nvim-osc52](https://github.com/ojroques/nvim-osc52)
 
@@ -3773,6 +3778,10 @@ let g:gutentags_dont_load = 1
 * `:%!xxd`
 * `:%!hexdump -C`
 * `:1,5!sort`
+
+## 7.7 Display Info Page
+
+* `:intro`
 
 # 8 Reference
 

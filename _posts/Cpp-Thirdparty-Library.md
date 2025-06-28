@@ -3851,6 +3851,64 @@ build/curl_demo
 
 * According to [Can I use libcurls CURLOPT_WRITEFUNCTION with a C++11 lambda expression?](https://stackoverflow.com/questions/6624667/can-i-use-libcurls-curlopt-writefunction-with-a-c11-lambda-expression), if you want to use lambda expression as the callback function, then declare the lambda with `+` before empty capture list `[]`, which is `+[]`
 
+## 8.4 Graphviz
+
+```sh
+git clone https://gitlab.com/graphviz/graphviz.git
+
+cd graphviz
+
+./autogen.sh
+./configure
+make -j $(( (cores=$(nproc))>1?cores/2:1 ))
+sudo make install && sudo ldconfig
+```
+
+```sh
+cat > main.cpp << 'EOF'
+#include <graphviz/cgraph.h>
+#include <graphviz/gvc.h>
+
+#include <cstdio>
+
+int main() {
+    // build the graph
+    GVC_t* gvc = gvContext();
+    Agraph_t* g = agopen(const_cast<char*>("G"), Agdirected, nullptr);
+
+    Agnode_t* A = agnode(g, const_cast<char*>("A"), 1);
+    Agnode_t* B = agnode(g, const_cast<char*>("B"), 1);
+    Agnode_t* C = agnode(g, const_cast<char*>("C"), 1);
+
+    agedge(g, A, B, nullptr, 1);
+    agedge(g, B, C, nullptr, 1);
+    agedge(g, A, C, nullptr, 1);
+
+    // 1. write PLAIN DOT (no layout)
+    FILE* fp = fopen("plain.dot", "w");
+    agwrite(g, fp); // dumps pure DOT — no pos, bb, etc.
+    fclose(fp);
+
+    // 2. run layout & render SVG
+    gvLayout(gvc, g, "dot");
+    gvRenderFilename(gvc, g, "dot", "rendered.dot");
+    gvRenderFilename(gvc, g, "svg", "rendered.svg");
+
+    // cleanup
+    gvFreeLayout(gvc, g);
+    agclose(g);
+    gvFreeContext(gvc);
+    return 0;
+}
+EOF
+
+gcc -o main main.cpp -lstdc++ -std=gnu++17 -lgvc -lcgraph
+./main
+
+dot -Tsvg plain.dot -o cmd_plain.svg
+dot -Tsvg rendered.dot -o cmd_rendered.svg
+```
+
 # 9 Assorted
 
 1. [Awesome C++ Projects](https://github.com/fffaraz/awesome-cpp)
