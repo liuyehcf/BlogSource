@@ -178,7 +178,7 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c 'mapred --daemon stop historyserver
 docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs dfsadmin -report'
 ```
 
-Test:
+**Test:**
 
 ```sh
 docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar pi 10 100'
@@ -529,6 +529,34 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs dfsadmin -report'
 * Directory `/opt/hadoop/data` must can be accessed by the user started datanode.
 * Credential file `/etc/security/keytabs/dn.service.keytab` must can be accessed by the user started datanode.
 * If `ignore.secure.ports.for.testing` is set to `false`, then the http port and tcp port must be smaller than 1023, otherwise it cannot pass the check.
+
+**Test:**
+
+```sh
+# Setup yarn-site.xml, reuse datanode's principal
+docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/yarn-site.xml << EOF
+<configuration>
+    <property>
+        <name>yarn.resourcemanager.principal</name>
+        <value>dn/_HOST@EXAMPLE.COM</value>
+    </property>
+    <property>
+        <name>yarn.resourcemanager.keytab</name>
+        <value>/etc/security/keytabs/dn.service.keytab</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.principal</name>
+        <value>dn/_HOST@EXAMPLE.COM</value>
+    </property>
+    <property>
+        <name>yarn.nodemanager.keytab</name>
+        <value>/etc/security/keytabs/dn.service.keytab</value>
+    </property>
+</configuration>
+EOF"
+
+docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-*.jar pi 10 100'
+```
 
 ## 2.3 Configuration
 
