@@ -308,6 +308,12 @@ defaults delete com.apple.desktopservices DSDontWriteNetworkStores
 
 * [UTM | Virtual machines for Mac](https://mac.getutm.app/)
 
+## 3.10 Docker
+
+### 3.10.1 failed to connect to /var/run/com.docker.vmnetd.sock
+
+* `System Preferences` -> `Privacy & Security` -> `Full Disk Access` -> Add Docker.
+
 # 4 Iterm2
 
 **智能选中**

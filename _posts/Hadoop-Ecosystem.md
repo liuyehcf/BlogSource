@@ -61,7 +61,12 @@ Below are the Hadoop components, that together form a Hadoop ecosystem:
 SHARED_NS=hadoop-ns
 HADOOP_CONTAINER_NAME=hadoop
 
-docker run -dit --name ${HADOOP_CONTAINER_NAME} --hostname ${HADOOP_CONTAINER_NAME} --network ${SHARED_NS} --privileged -p 127.0.0.1:8020:8020 -p 127.0.0.1:9866:9866 -p 127.0.0.1:8042:8042 -p 127.0.0.1:8088:8088 apache/hadoop:3.3.6 bash
+docker run -dit --name ${HADOOP_CONTAINER_NAME} --hostname ${HADOOP_CONTAINER_NAME} --network ${SHARED_NS} --privileged \
+    -p 127.0.0.1:8020:8020 \
+    -p 127.0.0.1:9866:9866 \
+    -p 127.0.0.1:8042:8042 \
+    -p 127.0.0.1:8088:8088 \
+    apache/hadoop:3.3.6 bash
 docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/core-site.xml << EOF
 <configuration>
     <property>
@@ -224,6 +229,21 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoo
 
 ### 2.2.2 Kerberos Container
 
+Prepare ubuntu image with kerberos dependencies
+
+```sh
+mkdir -p /tmp/ubuntu-with-kerberos
+cat > /tmp/ubuntu-with-kerberos/Dockerfile << 'EOF'
+FROM ubuntu:xenial
+
+RUN apt update && \
+    DEBIAN_FRONTEND=noninteractive apt install -y ntp python-dev python-pip python-wheel python-setuptools python-pkg-resources krb5-admin-server krb5-kdc && \
+    apt install -y vim iputils-ping iproute2
+EOF
+
+docker build -t ubuntu:xenial_with_kerberos /tmp/ubuntu-with-kerberos
+```
+
 ```sh
 SHARED_NS=hadoop-ns
 HADOOP_CONTAINER_NAME=hadoop-with-kerberos
@@ -236,15 +256,10 @@ KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:
 
 # Must explicit mapping for udp, otherwise ICMP package from host machine cannot work with kerberos inside container.
 docker run -dit --name ${KERBEROS_CONTAINER_NAME} --hostname ${KERBEROS_HOSTNAME} --network ${SHARED_NS} --privileged \
-    -p 127.0.0.1:88:88/tcp  -p 127.0.0.1:88:88/udp \
+    -p 127.0.0.1:88:88/tcp -p 127.0.0.1:88:88/udp \
     -p 127.0.0.1:464:464/tcp -p 127.0.0.1:464:464/udp \
     -p 127.0.0.1:749:749/tcp -p 127.0.0.1:749:749/udp \
-    ubuntu:xenial
-
-# Install kerberos
-docker exec ${KERBEROS_CONTAINER_NAME} bash -c 'apt update'
-docker exec ${KERBEROS_CONTAINER_NAME} bash -c 'DEBIAN_FRONTEND=noninteractive apt install -y ntp python-dev python-pip python-wheel python-setuptools python-pkg-resources krb5-admin-server krb5-kdc'
-docker exec ${KERBEROS_CONTAINER_NAME} bash -c 'apt install -y vim iputils-ping iproute2'
+    ubuntu:xenial_with_kerberos
 
 # Setup kerberos config
 docker exec ${KERBEROS_CONTAINER_NAME} bash -c "tee /etc/krb5.conf > /dev/null << EOF
@@ -374,7 +389,10 @@ KERBEROS_HOSTNAME=${KERBEROS_CONTAINER_NAME}.${REAL_DOMAIN}
 KERBEROS_LOGIC_DOMAIN=example.com
 KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:upper:]")
 
-docker run -dit --name ${HADOOP_CONTAINER_NAME} --hostname ${HADOOP_HOSTNAME} --network ${SHARED_NS} --privileged -p 127.0.0.1:8020:8020 -p 127.0.0.1:9866:9866 apache/hadoop:3.3.6 bash
+docker run -dit --name ${HADOOP_CONTAINER_NAME} --hostname ${HADOOP_HOSTNAME} --network ${SHARED_NS} --privileged \
+    -p 127.0.0.1:8020:8020 \
+    -p 127.0.0.1:9866:9866 \
+    apache/hadoop:3.3.6 bash
 docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/core-site.xml << EOF
 <configuration>
     <property>
@@ -488,11 +506,6 @@ docker cp /tmp/dn.service.keytab ${HADOOP_CONTAINER_NAME}:/etc/security/keytabs/
 docker exec ${HADOOP_CONTAINER_NAME} bash -c 'sudo chmod 644 /etc/security/keytabs/nn.service.keytab'
 docker exec ${HADOOP_CONTAINER_NAME} bash -c 'sudo chmod 644 /etc/security/keytabs/dn.service.keytab'
 
-# Install jsvc
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'sudo mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo_bak'
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'sudo wget -O /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo'
-docker exec ${HADOOP_CONTAINER_NAME} bash -c 'sudo yum install -y jsvc'
-
 # Format
 docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs namenode -format'
 docker exec ${HADOOP_CONTAINER_NAME} bash -c 'sudo mkdir -p /opt/hadoop/data'
@@ -500,7 +513,6 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c 'sudo mkdir -p /opt/hadoop/data'
 # Retart all daemons
 docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs --daemon stop namenode; hdfs --daemon start namenode'
 docker exec ${HADOOP_CONTAINER_NAME} bash -c 'HDFS_DATANODE_SECURE_USER=root; \
-        JSVC_HOME=/bin; \
         JAVA_HOME=/usr/lib/jvm/jre; \
         sudo -E /opt/hadoop/bin/hdfs --daemon stop datanode; \
         sudo -E /opt/hadoop/bin/hdfs --daemon start datanode'
