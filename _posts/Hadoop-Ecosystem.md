@@ -186,7 +186,77 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoo
 
 ## 2.2 Deployment via Docker and Kerberos
 
-### 2.2.1 Kerberos Basics
+### 2.2.1 Kerberos Component Relationship
+
+```plantuml
+' ============================================
+' Kerberos component diagram (improved version)
+' ============================================
+
+skinparam component {
+  BackgroundColor #F6F6F6
+  BorderColor #333333
+  FontSize 12
+  FontName "Segoe UI"
+}
+skinparam arrow {
+  Color #555555
+  Thickness 1.2
+}
+
+title Kerberos Component Relationship Diagram
+
+' ---- Define components ----
+package "Kerberos KDC" {
+  [Authentication Server\n(AS)] as AS
+  [Ticket‑Granting Server\n(TGS)] as TGS
+  [Kerberos Database] as DB
+}
+
+[Kerberos Admin Server\n(kadmin / kpasswd)] as KADMIN
+[Client\n(kinit / libkrb5)] as CLIENT
+[Application Server\n(Service)] as SERVICE
+
+' ---- Component interactions ----
+DB --> AS : Lookup user secret keys
+DB --> TGS : Lookup service secret keys
+KADMIN --> DB : Register user/service principals\nReset passwords, etc.
+
+CLIENT -up-> AS : ① AS-REQ (username)
+AS -down-> CLIENT : ② AS-REP (TGT encrypted with KDC key\nSession key encrypted with user key)
+
+CLIENT -up-> TGS : ③ TGS-REQ (TGT + service principal\n+ authenticator)
+TGS -down-> CLIENT : ④ TGS-REP (Service Ticket\nencrypted with session key)
+
+CLIENT -up-> SERVICE : ⑤ AP-REQ (Service Ticket\n+ timestamp authenticator)
+SERVICE -down-> CLIENT : ⑥ AP-REP (optional\nmutual authentication)
+
+' ---- Note to clarify service key usage ----
+note right of SERVICE
+  Uses key registered in DB
+  (no direct DB access)
+end note
+
+legend right
+<color:#0000FF>**Kerberos Protocol Flow**</color>
+①-⑥ Standard authentication sequence
+* TGT = Ticket-Granting Ticket (KDC encrypted)
+* Service Ticket = Encrypted with service key
+* Authenticator contains timestamp
+* Session key shared between client and service
+endlegend
+```
+
+| Step | Initiator | Receiver | Description|
+|:--|:--|:--|:--|
+| ① | CLIENT | AS | Requests initial ticket (TGT) |
+| ② | AS | CLIENT | Returns encrypted TGT and session key |
+| ③ | CLIENT | TGS| Requests service ticket using TGT |
+| ④ | TGS| CLIENT | Returns encrypted service ticket and session key |
+| ⑤ | CLIENT | SERVICE| Uses service ticket to request access |
+| ⑥ | SERVICE| CLIENT | Optional mutual authentication response |
+
+### 2.2.2 Kerberos Basics
 
 **Concepts:**
 
@@ -227,7 +297,7 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoo
 
 * Make sure target user has permission to read related files, including config, TGT, keyTab etc.
 
-### 2.2.2 Kerberos Container
+### 2.2.3 Kerberos Container
 
 Prepare ubuntu image with kerberos dependencies
 
@@ -377,7 +447,7 @@ EOF"
     klist
     ```
 
-### 2.2.3 Hadoop Container
+### 2.2.4 Hadoop Container
 
 ```sh
 SHARED_NS=hadoop-ns

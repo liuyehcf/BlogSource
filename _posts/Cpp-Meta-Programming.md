@@ -875,7 +875,7 @@ int main() {
 ### 6.1.11 shared_ptr
 
 | Aspect | `v1::shared_ptr` | `v2::shared_ptr` |
-|------------------------|------------------------------------------------------------|--------------------------------------------------------------------|
+|:--|:--|:--|
 | **What's stored?** | A single raw pointer `T* _p;` | A pointer to `helper_base`, which deletes the real object |
 | **Deletion strategy** | `delete _p;` — destructor only runs if `T` is complete | Virtual destructor on `helper_base` ensures correct `delete` call |
 | **Extra allocation** | None | One extra `new` for the helper object |
