@@ -1544,7 +1544,11 @@ endif()
 * [google/sanitizers](https://github.com/google/sanitizers)
 * [深入浅出 Sanitizer Interceptor 机制](https://mp.weixin.qq.com/s?__biz=Mzg3Mjg2NjU4NA==&mid=2247483868&idx=1&sn=a85112e88cd187e27f418ff044247956&chksm=cee9f7abf99e7ebdac55e36077b4f915bccbe33a8a6ee9920136a1dc9598e2ae62bb95d3a25f&scene=21#wechat_redirect)
 
-# 6 User-defined Thread
+# 6 Coroutines
+
+## 6.1 Stackfull Coroutines
+
+### 6.1.1 Manually Implement Context Switch
 
 `jump_fcontext` and `make_fcontext` is copy from [context.h](https://github.com/apache/brpc/blob/master/src/bthread/context.h) and [context.cpp](https://github.com/apache/brpc/blob/master/src/bthread/context.cpp)
 
@@ -1669,6 +1673,86 @@ int main() {
 ```
 create ctx1
 create ctx2
+start, jump to func1
+func1 step1, jump to func2
+func2 step1, jump to func1
+func1 step2, jump to func2
+func2 step2, jump to func1
+func1 step3, jump to func2
+func2 step3, jump to func1
+func1 step4, jump to func2
+func2 step4, jump to func1
+func1 step5, jump to func2
+func2 step5, jump to main
+end, back to main
+```
+
+### 6.1.2 Using Boost Context
+
+```cpp
+#include <boost/context/fiber.hpp>
+#include <iostream>
+
+namespace ctx = boost::context;
+
+ctx::fiber func1(ctx::fiber&& partner);
+ctx::fiber func2(ctx::fiber&& partner);
+
+ctx::fiber func1(ctx::fiber&& partner) {
+    std::cout << "func1 step1, jump to func2" << std::endl;
+    partner = std::move(partner).resume();
+    std::cout << "func1 step2, jump to func2" << std::endl;
+    partner = std::move(partner).resume();
+    std::cout << "func1 step3, jump to func2" << std::endl;
+    partner = std::move(partner).resume();
+    std::cout << "func1 step4, jump to func2" << std::endl;
+    partner = std::move(partner).resume();
+    std::cout << "func1 step5, jump to func2" << std::endl;
+    partner = std::move(partner).resume();
+
+    return std::move(partner);
+}
+
+ctx::fiber func2(ctx::fiber&& partner) {
+    std::cout << "func2 step1, jump to func1" << std::endl;
+    partner = std::move(partner).resume();
+    std::cout << "func2 step2, jump to func1" << std::endl;
+    partner = std::move(partner).resume();
+    std::cout << "func2 step3, jump to func1" << std::endl;
+    partner = std::move(partner).resume();
+    std::cout << "func2 step4, jump to func1" << std::endl;
+    partner = std::move(partner).resume();
+    std::cout << "func2 step5, jump to main" << std::endl;
+    partner = std::move(partner).resume();
+
+    return std::move(partner);
+}
+
+int main() {
+    // Create a fiber that will eventually return to main
+    ctx::fiber f1([&](ctx::fiber&& f1_main) {
+        // Create f2 inside the f1 context
+        ctx::fiber f2 = ctx::fiber(func2);
+
+        // Start the chain with f1
+        f2 = func1(std::move(f2));
+
+        // When done, return to main
+        return std::move(f1_main);
+    });
+
+    std::cout << "start, jump to func1" << std::endl;
+    f1 = std::move(f1).resume();
+
+    std::cout << "end, back to main" << std::endl;
+    return 0;
+}
+```
+
+```
+gcc -o main main.cpp -lstdc++ -std=gnu++17 -lboost_context
+./main
+
 start, jump to func1
 func1 step1, jump to func2
 func2 step1, jump to func1

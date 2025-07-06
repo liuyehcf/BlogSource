@@ -61,7 +61,7 @@ Below are the Hadoop components, that together form a Hadoop ecosystem:
 SHARED_NS=hadoop-ns
 HADOOP_CONTAINER_NAME=hadoop
 
-docker run -dit --name ${HADOOP_CONTAINER_NAME} --hostname ${HADOOP_CONTAINER_NAME} --network ${SHARED_NS} --privileged -p 8020:8020 -p 9866:9866 -p 8042:8042 -p 8088:8088 apache/hadoop:3.3.6 bash
+docker run -dit --name ${HADOOP_CONTAINER_NAME} --hostname ${HADOOP_CONTAINER_NAME} --network ${SHARED_NS} --privileged -p 127.0.0.1:8020:8020 -p 127.0.0.1:9866:9866 -p 127.0.0.1:8042:8042 -p 127.0.0.1:8088:8088 apache/hadoop:3.3.6 bash
 docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/core-site.xml << EOF
 <configuration>
     <property>
@@ -200,15 +200,17 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hadoop jar /opt/hadoop/share/hadoo
 **Kerberos Commands:**
 
 * `kinit <principal>[@<kerberos_realm>]`: Login with password.
+    * `kinit -c <cache_path> <principal>[@<kerberos_realm>]`: Login with password and specific cache path.
 * `kinit -kt <keytabpath> <principal>[@<kerberos_realm>]`: Login with keytab.
-* `kinit -c <cache_path> <principal>[@<kerberos_realm>]`: Specific cache path.
-* `klist`
-* `klist -c <cache_path>`
-* `kdestroy`
-* `kdestroy -c <cache_path>`
+    * `kinit -kt <keytabpath> -c <cache_path> <principal>[@<kerberos_realm>]`: Login with keytab and specific cache path.
+* `klist`: Display credentials cache.
+* `klist -c <cache_path>`: Display specifies credentials cache.
+* `klist -e -d -k -t -K <keytabpath>`: Display keytab information.
+* `kdestroy`: Destroy credentials cache.
+* `kdestroy -c <cache_path>`: Destroy specifies credentials cache.
 * Environments:
-    * `export KRB5_TRACE=/dev/stdout`
-    * `export KRB5_CONFIG=<path/to/krb5.conf>`
+    * `export KRB5_TRACE=/dev/stdout`: For debug.
+    * `export KRB5_CONFIG=<path/to/krb5.conf>`: Specify the config file, parse logic domain to real domain.
     * `export KRB5CCNAME=FILE:/tmp/krb5cc_testuser`: Use local file as cache.
     * `export KRB5CCNAME=MEMORY:`: Use meory as cache.
 
@@ -232,7 +234,12 @@ KERBEROS_HOSTNAME=${KERBEROS_CONTAINER_NAME}.${REAL_DOMAIN}
 KERBEROS_LOGIC_DOMAIN=example.com
 KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:upper:]")
 
-docker run -dit --name ${KERBEROS_CONTAINER_NAME} --hostname ${KERBEROS_HOSTNAME} --network ${SHARED_NS} --privileged -p 88:88 -p 464:464 -p 749:749 ubuntu:xenial
+# Must explicit mapping for udp, otherwise ICMP package from host machine cannot work with kerberos inside container.
+docker run -dit --name ${KERBEROS_CONTAINER_NAME} --hostname ${KERBEROS_HOSTNAME} --network ${SHARED_NS} --privileged \
+    -p 127.0.0.1:88:88/tcp  -p 127.0.0.1:88:88/udp \
+    -p 127.0.0.1:464:464/tcp -p 127.0.0.1:464:464/udp \
+    -p 127.0.0.1:749:749/tcp -p 127.0.0.1:749:749/udp \
+    ubuntu:xenial
 
 # Install kerberos
 docker exec ${KERBEROS_CONTAINER_NAME} bash -c 'apt update'
@@ -302,9 +309,18 @@ ktadd -k /etc/security/keytabs/dn.service.keytab dn/${HADOOP_HOSTNAME}@${KERBERO
 quit
 EOF"
 
-# Create principal for user
+# Create principal for user_with_password
 docker exec ${KERBEROS_CONTAINER_NAME} bash -c "kadmin.local <<EOF
-addprinc -pw 123456 testuser
+addprinc -pw 123456 user_with_password@${KERBEROS_LOGIC_DOMAIN_UPPER}
+listprincs
+
+quit
+EOF"
+
+# Create principal for user_with_keytab
+docker exec ${KERBEROS_CONTAINER_NAME} bash -c "kadmin.local <<EOF
+addprinc -randkey user_with_keytab@${KERBEROS_LOGIC_DOMAIN_UPPER}
+ktadd -k /etc/security/keytabs/user_with_keytab.service.keytab user_with_keytab@${KERBEROS_LOGIC_DOMAIN_UPPER}
 listprincs
 
 quit
@@ -313,11 +329,38 @@ EOF"
 
 **Test:**
 
-```sh
-# password: 123456
-kinit testuser
-klist
-```
+* Test user_with_password
+
+    ```sh
+    # inside docker(password: 123456)
+    kinit user_with_password
+    klist
+
+    # outside docker(password: 123456)
+    docker cp ${KERBEROS_CONTAINER_NAME}:/etc/krb5.conf ~/.krb5.conf
+    sudo sed -i "/127.0.0.1 ${KERBEROS_HOSTNAME}/d" /etc/hosts
+    echo "127.0.0.1 ${KERBEROS_HOSTNAME}" | sudo tee -a /etc/hosts > /dev/null
+    export KRB5_CONFIG=~/.krb5.conf
+    kinit user_with_password
+    klist
+    ```
+
+* Test user_with_keytab
+
+    ```sh
+    # inside docker
+    kinit -kt /etc/security/keytabs/user_with_keytab.service.keytab user_with_keytab
+    klist
+
+    # outside docker
+    docker cp ${KERBEROS_CONTAINER_NAME}:/etc/krb5.conf ~/.krb5.conf
+    sudo sed -i "/127.0.0.1 ${KERBEROS_HOSTNAME}/d" /etc/hosts
+    echo "127.0.0.1 ${KERBEROS_HOSTNAME}" | sudo tee -a /etc/hosts > /dev/null
+    docker cp ${KERBEROS_CONTAINER_NAME}:/etc/security/keytabs/user_with_keytab.service.keytab ~/.user_with_keytab.service.keytab
+    export KRB5_CONFIG=~/.krb5.conf
+    kinit -kt ~/.user_with_keytab.service.keytab user_with_keytab
+    klist
+    ```
 
 ### 2.2.3 Hadoop Container
 
@@ -331,7 +374,7 @@ KERBEROS_HOSTNAME=${KERBEROS_CONTAINER_NAME}.${REAL_DOMAIN}
 KERBEROS_LOGIC_DOMAIN=example.com
 KERBEROS_LOGIC_DOMAIN_UPPER=$(echo ${KERBEROS_LOGIC_DOMAIN} | tr "[:lower:]" "[:upper:]")
 
-docker run -dit --name ${HADOOP_CONTAINER_NAME} --hostname ${HADOOP_HOSTNAME} --network ${SHARED_NS} --privileged -p 8020:8020 -p 9866:9866 apache/hadoop:3.3.6 bash
+docker run -dit --name ${HADOOP_CONTAINER_NAME} --hostname ${HADOOP_HOSTNAME} --network ${SHARED_NS} --privileged -p 127.0.0.1:8020:8020 -p 127.0.0.1:9866:9866 apache/hadoop:3.3.6 bash
 docker exec ${HADOOP_CONTAINER_NAME} bash -c "cat > /opt/hadoop/etc/hadoop/core-site.xml << EOF
 <configuration>
     <property>
@@ -463,7 +506,7 @@ docker exec ${HADOOP_CONTAINER_NAME} bash -c 'HDFS_DATANODE_SECURE_USER=root; \
         sudo -E /opt/hadoop/bin/hdfs --daemon start datanode'
 
 # Report status
-docker exec ${HADOOP_CONTAINER_NAME} bash -c "kinit testuser <<EOF
+docker exec ${HADOOP_CONTAINER_NAME} bash -c "kinit user_with_password <<EOF
 123456
 EOF"
 docker exec ${HADOOP_CONTAINER_NAME} bash -c 'hdfs dfsadmin -report'
@@ -910,7 +953,7 @@ EOF
 chmod a+x /tmp/updated_entrypoint.sh
 
 # Start standalone metastore
-docker create --name ${HIVE_METASTORE_CONTAINER_NAME} --network ${SHARED_NS} -p 9083:9083 -e SERVICE_NAME=metastore --entrypoint /updated_entrypoint.sh apache/hive:4.0.0
+docker create --name ${HIVE_METASTORE_CONTAINER_NAME} --network ${SHARED_NS} -p 127.0.0.1:9083:9083 -e SERVICE_NAME=metastore --entrypoint /updated_entrypoint.sh apache/hive:4.0.0
 
 docker cp /tmp/hive-site-for-metastore.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
@@ -922,7 +965,7 @@ docker cp /tmp/updated_entrypoint.sh ${HIVE_METASTORE_CONTAINER_NAME}:/updated_e
 docker start ${HIVE_METASTORE_CONTAINER_NAME}
 
 # Start standalone hiveserver2
-docker create --name ${HIVE_SERVER_CONTAINER_NAME} --network ${SHARED_NS} -p 10000:10000 -e SERVICE_NAME=hiveserver2 -e IS_RESUME=true apache/hive:4.0.0
+docker create --name ${HIVE_SERVER_CONTAINER_NAME} --network ${SHARED_NS} -p 127.0.0.1:10000:10000 -e SERVICE_NAME=hiveserver2 -e IS_RESUME=true apache/hive:4.0.0
 
 docker cp /tmp/hive-site-for-hiveserver2.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
@@ -1102,7 +1145,7 @@ EOF
 chmod a+x /tmp/updated_entrypoint.sh
 
 # Start standalone metastore
-docker create --name ${HIVE_METASTORE_CONTAINER_NAME} --network ${SHARED_NS} -p 9083:9083 -e SERVICE_NAME=metastore -e DB_DRIVER=postgres -e IS_RESUME=${IS_RESUME} --entrypoint /updated_entrypoint.sh apache/hive:4.0.0
+docker create --name ${HIVE_METASTORE_CONTAINER_NAME} --network ${SHARED_NS} -p 127.0.0.1:9083:9083 -e SERVICE_NAME=metastore -e DB_DRIVER=postgres -e IS_RESUME=${IS_RESUME} --entrypoint /updated_entrypoint.sh apache/hive:4.0.0
 
 docker cp /tmp/hive-site-for-metastore.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml
@@ -1115,7 +1158,7 @@ docker cp /tmp/postgresql-42.7.4.jar ${HIVE_METASTORE_CONTAINER_NAME}:/opt/hive/
 docker start ${HIVE_METASTORE_CONTAINER_NAME}
 
 # Start standalone hiveserver2
-docker create --name ${HIVE_SERVER_CONTAINER_NAME} --network ${SHARED_NS} -p 10000:10000 -e SERVICE_NAME=hiveserver2 -e DB_DRIVER=postgres -e IS_RESUME=true apache/hive:4.0.0
+docker create --name ${HIVE_SERVER_CONTAINER_NAME} --network ${SHARED_NS} -p 127.0.0.1:10000:10000 -e SERVICE_NAME=hiveserver2 -e DB_DRIVER=postgres -e IS_RESUME=true apache/hive:4.0.0
 
 docker cp /tmp/hive-site-for-hiveserver2.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hive/conf/hive-site.xml
 docker cp /tmp/core-site.xml ${HIVE_SERVER_CONTAINER_NAME}:/opt/hadoop/etc/hadoop/core-site.xml

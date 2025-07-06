@@ -778,7 +778,42 @@ int main() {
 }
 ```
 
-### 6.1.9 sequence
+### 6.1.9 is_base_of
+
+```cpp
+#include <iostream>
+
+template <typename Base, typename Derived>
+struct is_base_of {
+private:
+    // Test if a pointer to Derived can be converted to a pointer to Base.
+    static std::true_type test(const volatile Base*);
+    static std::false_type test(...);
+
+    // Remove cv-qualifiers for comparison, prevents issues with cv-qualified types
+    using DecayedBase = typename std::remove_cv<Base>::type;
+    using DecayedDerived = typename std::remove_cv<Derived>::type;
+
+public:
+    // Only allow this test when Derived is a class or struct type
+    static constexpr bool value = std::is_class_v<DecayedBase> && std::is_class_v<DecayedDerived> &&
+                                  decltype(test(static_cast<DecayedDerived*>(nullptr)))::value;
+};
+
+struct Foo {};
+struct Bar : Foo {};
+struct Baz {};
+
+#define PRINT(x) std::cout << #x << ": " << ((x) ? "true" : "false") << std::endl;
+
+int main() {
+    PRINT((is_base_of<Foo, Bar>::value));
+    PRINT((is_base_of<Foo, Baz>::value));
+    return 0;
+}
+```
+
+### 6.1.10 sequence
 
 **The core idea is as follows:**
 
@@ -837,7 +872,17 @@ int main() {
 }
 ```
 
-### 6.1.10 shared_ptr
+### 6.1.11 shared_ptr
+
+| Aspect | `v1::shared_ptr` | `v2::shared_ptr` |
+|------------------------|------------------------------------------------------------|--------------------------------------------------------------------|
+| **What's stored?** | A single raw pointer `T* _p;` | A pointer to `helper_base`, which deletes the real object |
+| **Deletion strategy** | `delete _p;` — destructor only runs if `T` is complete | Virtual destructor on `helper_base` ensures correct `delete` call |
+| **Extra allocation** | None | One extra `new` for the helper object |
+| **Runtime overhead** | Minimal (just a pointer) | Extra indirection + virtual call in destructor |
+| **Compile-time safety**| Strong — requires `U*` to be convertible to `T*` | Weak — allows any `U*`, type erasure occurs |
+| **Code bloat** | Template instantiated per `T` | Still per `T`, but heavy logic in shared virtual base |
+| **Heterogeneous use** | Hard — not suitable for storing multiple types uniformly | Easy — `shared_ptr<void>` can hold any type safely |
 
 ```cpp
 #include <iostream>

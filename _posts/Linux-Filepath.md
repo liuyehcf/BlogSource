@@ -153,6 +153,7 @@ You can view the documentation through `man proc`.
         * `1 - restricted ptrace`: Only child processes can be traced. This is the default on many modern Linux distributions.
         * `2 - admin-only attach`: Restricted; only processes with a specific ptrace relationship (using `ptrace_attach`) or capabilities (`CAP_SYS_PTRACE`) can trace.
         * `3 - no attach`: No process may be traced, even by privileged processes, unless exceptions are explicitly allowed.
+    * `/proc/sys/kernel/random/uuid`: The file provides a simple interface to generate random UUIDs.
 1. `/proc/sys/fs`: The directory contains files and subdirectories related to filesystem settings and limits.
     * `/proc/sys/fs/file-max`: The maximum number of file handles that the kernel can allocate.
     * `/proc/sys/fs/inode-max`: The maximum number of inodes (filesystem objects like files and directories) that the kernel can allocate.

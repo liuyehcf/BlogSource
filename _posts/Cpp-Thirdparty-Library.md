@@ -552,7 +552,57 @@ int main() {
 }
 ```
 
-## 2.3 Hana
+## 2.3 Context
+
+### 2.3.1 fiber
+
+```cpp
+#include <boost/context/fiber.hpp>
+#include <iostream>
+
+namespace ctx = boost::context;
+
+ctx::fiber func1(ctx::fiber&& partner);
+ctx::fiber func2(ctx::fiber&& partner);
+
+ctx::fiber func1(ctx::fiber&& partner) {
+    for (int i = 1; i <= 5; ++i) {
+        std::cout << "func1 step " << i << ", jump to func2" << std::endl;
+        partner = std::move(partner).resume();
+    }
+    return std::move(partner);
+}
+
+ctx::fiber func2(ctx::fiber&& partner) {
+    for (int i = 1; i <= 5; ++i) {
+        std::cout << "func2 step " << i << ", jump to func1" << std::endl;
+        partner = std::move(partner).resume();
+    }
+    return std::move(partner);
+}
+
+int main() {
+    // Create a fiber that will eventually return to main
+    ctx::fiber f1([&](ctx::fiber&& f1_main) {
+        // Create f2 inside the f1 context
+        ctx::fiber f2 = ctx::fiber(func2);
+
+        // Start the chain with f1
+        f2 = func1(std::move(f2));
+
+        // When done, return to main
+        return std::move(f1_main);
+    });
+
+    std::cout << "start, jump to func1" << std::endl;
+    f1 = std::move(f1).resume();
+
+    std::cout << "end, back to main" << std::endl;
+    return 0;
+}
+```
+
+## 2.4 Hana
 
 **[Boost.Hana](https://www.boost.org/doc/libs/release/libs/hana/doc/html/index.html)** is a library for metaprogramming in C++ that provides a modern, powerful, and easy-to-use set of tools for developers. It is part of the Boost libraries, which are known for their high-quality, peer-reviewed, and portable C++ libraries. Here are some key points about Boost.Hana:
 
@@ -631,7 +681,7 @@ int main() {
 }
 ```
 
-## 2.4 Stacktrace
+## 2.5 Stacktrace
 
 Boost.Stacktrace provides several options for printing stack traces, depending on the underlying technology used to capture the stack information:
 
@@ -680,7 +730,7 @@ int main() {
 }
 ```
 
-### 2.4.1 With addr2line
+### 2.5.1 With addr2line
 
 This approach works fine with `gcc-10.3.0`, but can't work with higher versions like `gcc-11.3.0`, `gcc-12.3.0`. Don't know why so far.
 
@@ -710,7 +760,7 @@ Boost version: 1.84.0
 10# _start in ./main
 ```
 
-### 2.4.2 With libbacktrace
+### 2.5.2 With libbacktrace
 
 **Compile:**
 
@@ -739,7 +789,7 @@ Boost version: 1.84.0
 10# _start in ./main
 ```
 
-## 2.5 Memory Pool Management
+## 2.6 Memory Pool Management
 
 ```cpp
 #include <boost/pool/object_pool.hpp>
@@ -776,7 +826,7 @@ int main() {
 }
 ```
 
-## 2.6 Reference
+## 2.7 Reference
 
 * [The Boost C++ Libraries BoostBook Documentation Subset](https://www.boost.org/doc/libs/master/doc/html/)
 * [How to print current call stack](https://www.boost.org/doc/libs/1_66_0/doc/html/stacktrace/getting_started.html)

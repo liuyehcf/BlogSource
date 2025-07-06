@@ -2442,11 +2442,23 @@ The secret to `ss`’s speed lies in its use of the `tcp_diag` module in the TCP
 
 For detailed usage, refer to `ip address help`.
 
+**Scope:**
+
+* `scope host`: The IP address is only valid within the host itself. Used for loopback addresses (like `127.0.0.1` or `::1`).
+* `scope link`: The address is valid only on the local network link (i.e., same subnet). Common for IPv6 link-local addresses (`fe80::/10`).
+* `scope global`: The address is globally routable, used to communicate over the Internet or across networks.
+
 **Examples:**
 
-* `ip -4 addr show scope global`
-* `ip -6 addr show scope global`
-* `ip -4 addr show scope host`
+* `ip addr show`
+    * `ip -4 addr show`
+    * `ip -6 addr show`
+* `ip addr show dev eth0`
+    * `ip -4 addr show dev eth0`
+    * `ip -6 addr show dev eth0`
+* `ip addr show scope global`
+    * `ip -4 addr show scope link`
+    * `ip -6 addr show scope host`
 
 ### 5.4.2 ip link
 
@@ -4664,6 +4676,10 @@ apt install clang-format-X.Y
 * `ls --full-time <file>`
 * `stat <file>`
 * `date -r <file>`
+
+### 11.3.5 Get Random UUID
+
+* `cat /proc/sys/kernel/random/uuid`
 
 ## 11.4 Health Thresholds for Monitoring Metrics
 
