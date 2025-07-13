@@ -3187,6 +3187,86 @@ gcc -o main main.cpp -lstdc++ -std=gnu++17 -lPocoFoundation
 ./main
 ```
 
+#### 8.1.7.2 URI
+
+* The constructor of `Poco::URI` parses the input `URI` into its components—such as scheme, host, path, query, etc. All components except the scheme and host are automatically decoded before being stored.
+* `Poco::URI::toString` reconstructs the URI from its components. During this process, all components except the scheme and host are encoded.
+* `Poco::URI::encode(const std::string& str, const std::string& reserved, std::string& encodedStr)`: URI-encodes the given string by escaping `reserved` and non-ASCII, characters. The encoded string is appended to `encodedStr`.
+    * `reserved`: Characters in this string will be encoded as `%xx`. The parameter name is somewhat misleading, as it suggests the opposite behavior.
+    * Any non-ASCII, regardless of whether it's in the `reserved` set or not, must be encoded as `%xx`.
+
+```cpp
+cat > main.cpp << 'EOF'
+#include <Poco/URI.h>
+
+#include <iostream>
+
+#define PRINT(x) std::cout << #x << ": '" << x << "'" << std::endl;
+
+int main() {
+    {
+        std::string original = "https://www.google.com/search?q=知乎";
+        std::string reserved = "";
+
+        std::string encoded;
+        Poco::URI::encode(original, reserved, encoded);
+
+        PRINT(original);
+        PRINT(reserved);
+        PRINT(encoded);
+
+        Poco::URI uri(encoded);
+        PRINT(uri.getScheme());
+        PRINT(uri.getHost());
+        PRINT(uri.getPath());
+        PRINT(uri.getPathAndQuery());
+        PRINT(uri.toString());
+    }
+    {
+        std::string original = "https://www.google.com/search?q=知乎";
+        std::string reserved = ":/?#[]@!$&'()*+,;=";
+
+        std::string encoded;
+        Poco::URI::encode(original, reserved, encoded);
+
+        PRINT(original);
+        PRINT(reserved);
+        PRINT(encoded);
+
+        Poco::URI uri(encoded);
+        PRINT(uri.getScheme());
+        PRINT(uri.getHost());
+        PRINT(uri.getPath());
+        PRINT(uri.getPathAndQuery());
+        PRINT(uri.toString());
+    }
+    return 0;
+}
+EOF
+
+gcc -o main main.cpp -lstdc++ -std=gnu++17 -lPocoFoundation
+./main
+```
+
+```
+original: 'https://www.google.com/search?q=知乎'
+reserved: ''
+encoded: 'https://www.google.com/search?q=%E7%9F%A5%E4%B9%8E'
+uri.getScheme(): 'https'
+uri.getHost(): 'www.google.com'
+uri.getPath(): '/search'
+uri.getPathAndQuery(): '/search?q=%E7%9F%A5%E4%B9%8E'
+uri.toString(): 'https://www.google.com/search?q=%E7%9F%A5%E4%B9%8E'
+original: 'https://www.google.com/search?q=知乎'
+reserved: ':/?#[]@!$&'()*+,;='
+encoded: 'https%3A%2F%2Fwww.google.com%2Fsearch%3Fq%3D%E7%9F%A5%E4%B9%8E'
+uri.getScheme(): ''
+uri.getHost(): ''
+uri.getPath(): 'https://www.google.com/search?q=知乎'
+uri.getPathAndQuery(): 'https://www.google.com/search%3Fq=%E7%9F%A5%E4%B9%8E'
+uri.toString(): 'https://www.google.com/search%3Fq=%E7%9F%A5%E4%B9%8E'
+```
+
 ## 8.2 sqlpp11
 
 **How to integrate:**

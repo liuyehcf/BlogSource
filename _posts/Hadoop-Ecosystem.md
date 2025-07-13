@@ -1428,6 +1428,13 @@ VALUES
 SELECT * FROM sales;
 ```
 
+## 4.5 Configuration Properties
+
+* `hive.enforce.bucketing`: Whether bucketing is enforced. If true, while inserting into the table, bucketing is enforced.
+    * Hive 0.x: false
+    * Hive 1.x: false
+    * Hive 2.x: removed, which effectively makes it always true.
+
 # 5 Flink
 
 Here's a example of how to use [docker-spark](https://github.com/big-data-europe/docker-spark) to start a flink cluster and do some tests.

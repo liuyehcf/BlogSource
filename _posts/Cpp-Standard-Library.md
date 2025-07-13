@@ -1437,6 +1437,42 @@ Numeric conversions:
 * `std::to_string`
 * `std::to_wstring`
 
+Matching member functions:
+
+* `find`: Searches for a **substring** in the string.
+* `find_first_of`: Searches for the **first character** that matches any character in a given set.
+* `find_first_not_of`: Searches for the **first character** that is not in the given set.
+* `find_last_of`: Searches from the end for the **last character** that matches any character in a given set.
+* `find_last_not_of`: Searches from the end for the **last character** that is not in the given set.
+    ```cpp
+    #include <iostream>
+
+    int main() {
+        std::string content = "Hello, World!";
+        if (content.find("World") != std::string::npos) {
+            std::cout << "Substring 'World' found!" << std::endl;
+        } else {
+            std::cout << "Substring 'World' not found." << std::endl;
+        }
+        if (content.find("Worla") != std::string::npos) {
+            std::cout << "Substring 'Worla' found!" << std::endl;
+        } else {
+            std::cout << "Substring 'Worla' not found." << std::endl;
+        }
+        if (content.find_first_of("Worla") != std::string::npos) {
+            std::cout << "Any character from 'Worla' found!" << std::endl;
+        } else {
+            std::cout << "No character from 'Worla' found." << std::endl;
+        }
+        if (content.find_last_of("Worla") != std::string::npos) {
+            std::cout << "Any character from 'Worla' found!" << std::endl;
+        } else {
+            std::cout << "No character from 'Worla' found." << std::endl;
+        }
+        return 0;
+    }
+    ```
+
 # 25 string_view
 
 # 26 thread

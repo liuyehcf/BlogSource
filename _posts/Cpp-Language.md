@@ -1781,7 +1781,9 @@ int main() {
 }
 ```
 
-## 3.6 Storage Class Specifiers
+## 3.6 Storage duration and linkage
+
+### 3.6.1 Storage Class Specifiers
 
 [Storage class specifiers](https://en.cppreference.com/w/cpp/language/storage_duration)
 
@@ -1822,19 +1824,23 @@ int main() {
 }
 ```
 
-### 3.6.1 static
+#### 3.6.1.1 static
 
-[C++ 关键词：static](https://zh.cppreference.com/w/cpp/keyword/static)
+[C++ keyword: static](https://zh.cppreference.com/w/cpp/keyword/static)
 
-1. 声明具有静态存储期和内部链接的命名空间成员（全局静态变量/函数，其他编译单元不可见）
-    * 表示该编译单元不导出这个函数/变量的符号，因此无法再别的编译单元里使用
-1. 定义具有静态存储期且仅初始化一次的块作用域变量（函数的静态变量）
-    * 变量的存储方式和全局变量一样，但仍然不导出符号
-1. 声明不绑定到特定实例的类成员（类的静态成员）
+* Declarations of namespace members with static storage duration and internal linkage.
+    * A global static variable/function that is not visible to other translation units.
+    * **internal linkage**
+* Definitions of block scope variables with static storage duration and initialized once.
+    * A static variable inside a function has the same storage as a global variable, but it still does not export a symbol.
+    * **no linkage**
+* Declarations of class members not bound to specific instances
+    * Static member of a class
+    * **external linkage**
 
-### 3.6.2 extern
+#### 3.6.1.2 extern
 
-[C++ 关键词：extern](https://zh.cppreference.com/w/cpp/keyword/extern)
+[C++ keyword: extern](https://zh.cppreference.com/w/cpp/keyword/extern)
 
 * Static storage duration specifier with external linkage
     * This symbol is defined in another compilation unit, which means it needs to be placed in the unresolved symbol table (external linkage)
@@ -1844,32 +1850,29 @@ int main() {
     * For class templates
     * For function templates
 
-#### 3.6.2.1 Shared Global Variable
+##### 3.6.1.2.1 Shared Global Variable
 
-**每个源文件中都得有该变量的声明，但是只有一个源文件中可以包含该变量的定义，通常可以采用如下做法**
+**Each source file must have a declaration of the variable, but only one source file can contain the definition of the variable. A common approach is as follows:**
 
-* 定义一个头文件`xxx.h`，声明该变量（需要用extern关键字）
-* 所有源文件包含该头文件`xxx.h`
-* 在某个源文件中定义该变量
+* Define a header file `xxx.h` that declares the variable (using the `extern` keyword)
+* All source files include the header file `xxx.h`
+* Define the variable in one specific source file
 
-**示例如下：**
+**Example:**
 
 ```sh
-# 创建头文件
 cat > extern.h << 'EOF'
 #pragma once
 
 extern int extern_value;
 EOF
 
-# 创建源文件
 cat > extern.cpp << 'EOF'
 #include "extern.h"
 
 int extern_value = 5;
 EOF
 
-# 创建源文件
 cat > main.cpp << 'EOF'
 #include <iostream>
 
@@ -1880,20 +1883,18 @@ int main() {
 }
 EOF
 
-# 编译
 gcc -o main main.cpp extern.cpp -lstdc++ -Wall
 
-# 执行
 ./main
 ```
 
-### 3.6.3 thread_local
+#### 3.6.1.3 thread_local
 
-[C++ 关键词：thread_local (C++11 起)](https://zh.cppreference.com/w/cpp/keyword/thread_local)
+[C++ keyword: thread_local](https://en.cppreference.com/w/cpp/keyword/thread_local.html)
 
-* 线程局域存储期指定符 
+* Thread local storage duration specifier
 
-实现原理（猜测）：在每个线程的栈空间起始位置（高位，栈是从上往下分配内存的）存储由`thread_local`修饰的变量。下面由一个程序来验证一下这个猜想：
+Implementation principle (speculated): Variables modified with `thread_local` are stored at the beginning of each thread's stack space (high address, since the stack allocates memory from top to bottom). The following program will be used to verify this hypothesis:
 
 ```cpp
 #include <cassert>
@@ -1939,7 +1940,7 @@ int main() {
 }
 ```
 
-在我的环境中，输出如下：
+In my environment, the output is as follows:
 
 ```
 main_thread_local: 0x7f190e1a573c
@@ -1951,9 +1952,9 @@ t2_local: 0x7f190d9a2ddc
 addr distance between t1 and t2 is: 8392704
 ```
 
-可以发现，在不同的线程中，`value`的内存地址是不同的，且处于高位。相邻两个线程，`value`地址的差值差不多就是栈空间的大小（`ulimit -s`）
+It can be observed that in different threads, the memory address of `value` is different and located at a high address. For two adjacent threads, the difference in the address of `value` is approximately equal to the size of the stack space (`ulimit -s`).
 
-#### 3.6.3.1 Initialization
+##### 3.6.1.3.1 Initialization
 
 ```cpp
 #include <iostream>
@@ -1990,9 +1991,9 @@ int main() {
 }
 ```
 
-输出如下：
+Output is as follows:
 
-* 构造方法调用了2次，因为这两个线程都经过了`foo`这个变量的声明，因此都会分配存储空间并进行初始化
+* The constructor is called twice because both threads go through the declaration of the `foo` variable, so each will allocate storage space and perform initialization.
 
 ```
 default ctor
@@ -2003,7 +2004,7 @@ dtor
 dtor
 ```
 
-修改一下，我们将`thread_local`移动到`main`函数内部
+Let's make a modification by moving `thread_local` inside the `main` function.
 
 ```cpp
 #include <iostream>
@@ -2039,9 +2040,9 @@ int main() {
 }
 ```
 
-输出如下：
+Output is as follows:
 
-* 构造方法调用了1次，只有`main`线程经过了`foo`这个变量的声明，因此会分配存储空间并进行初始化。而`t1`线程并未经过`foo`这个变量的声明，因此只分配了存储空间，并未进行初始化
+* The constructor is called once because only the `main` thread goes through the declaration of the `foo` variable, so it allocates storage space and performs initialization. The `t1` thread does not go through the declaration of the `foo` variable, so it only allocates storage space without initialization.
 
 ```
 default ctor
@@ -2049,6 +2050,15 @@ main: foo'address=0x7f2d690e6778, value=1
 t1: foo'address=0x7f2d680166f8, value=0
 dtor
 ```
+
+### 3.6.2 Linkage
+
+A name can have **external linkage**, **module linkage(since C++20)**, **internal linkage**, or **no linkage**:
+
+* An entity whose name has **external linkage** can be redeclared in another translation unit, and the redeclaration can be attached to a different modul(since C++20).
+* An entity whose name has **module linkage** can be redeclared in another translation unit, as long as the redeclaration is attached to the same module(since C++20).
+* An entity whose name has **internal linkage** can be redeclared in another scope in the same translation unit.
+* An entity whose name has **no linkage** can only be redeclared in the same scope.
 
 ## 3.7 Inheritance and Polymorphism
 
@@ -2191,7 +2201,94 @@ int main() {
 
 ## 3.8 constexpr
 
-### 3.8.1 if constexpr
+### 3.8.1 How to define constexpr variables
+
+* Outside class scope: `inline constexpr`
+* Inside class scope: `static inline constexpr`
+
+```sh
+cat > const.h << 'EOF'
+#pragma once
+
+#include <cstdint>
+#include <iostream>
+
+#define PRINT_ADDRESS(x)                                                                 \
+    do {                                                                                 \
+        std::cout << #x << " address: " << reinterpret_cast<uintptr_t>(&x) << std::endl; \
+    } while (0)
+
+class Foo {
+public:
+    static constexpr int s_value1 = 1;
+    static inline constexpr int s_value2 = 2;
+};
+
+static constexpr int g_value1 = 1;
+inline constexpr int g_value2 = 2;
+EOF
+
+cat > lib.cpp << 'EOF'
+#include "const.h"
+
+void print_addresses() {
+    std::cout << "Print address from lib.cpp:" << std::endl;
+    PRINT_ADDRESS(g_value1);
+    PRINT_ADDRESS(g_value2);
+    PRINT_ADDRESS(Foo::s_value1);
+    PRINT_ADDRESS(Foo::s_value2);
+}
+EOF
+
+cat > main.cpp << 'EOF'
+#include "const.h"
+
+extern void print_addresses();
+
+int main() {
+    std::cout << "Print address from main.cpp:" << std::endl;
+    PRINT_ADDRESS(g_value1);
+    PRINT_ADDRESS(g_value2);
+    PRINT_ADDRESS(Foo::s_value1);
+    PRINT_ADDRESS(Foo::s_value2);
+
+    print_addresses();
+    return 0;
+}
+EOF
+
+gcc -o main main.cpp lib.cpp -lstdc++ -std=gnu++17
+
+nm -C main | grep 'g_value1'
+# 000000000000200c r g_value1
+# 000000000000206c r g_value1
+
+nm -C main | grep 'g_value2'
+# 0000000000002068 u g_value2
+
+nm -C main | grep 'Foo::s_value1'
+# 0000000000002004 u Foo::s_value1
+
+nm -C main | grep 'Foo::s_value2'
+# 0000000000002008 u Foo::s_value2
+
+./main
+```
+
+```
+Print address from main.cpp:
+value1 address: 94496100839436
+value2 address: 94496100839520
+Foo::value1 address: 94496100839428
+Foo::value2 address: 94496100839432
+Print address from lib.cpp:
+value1 address: 94496100839524
+value2 address: 94496100839520
+Foo::value1 address: 94496100839428
+Foo::value2 address: 94496100839432
+```
+
+### 3.8.2 if constexpr
 
 编译期分支判断，一般用于泛型。如果在分支中使用的是不同类型的不同特性，那么普通的`if`是没法通过编译的，如下：
 
@@ -6225,6 +6322,7 @@ Tuple-like objects in C++ include:
 * `std::tuple`: The standard tuple class provided by the C++ Standard Library.
 * `std::pair`: A specialized tuple with exactly two elements, also provided by the C++ Standard Library.
 * Custom user-defined types that mimic the behavior of tuples, such as structs with a fixed number of members.
+* `std::tie`: Can work with structured bindings.
 
 ```cpp
 #include <iostream>
@@ -6235,26 +6333,27 @@ struct Person {
     int age;
     double height;
 
-    // Constructor
     Person(const std::string& n, int a, double h) : name(n), age(a), height(h) {}
 };
 
 int main() {
-    std::tuple<int, double, std::string> myTuple(42, 3.14, "Hello");
+    const std::tuple<int, double, std::string> t1(42, 3.14, "Hello");
 
-    auto [x, y, z] = myTuple;
-
+    auto [x, y, z] = t1;
     std::cout << "x: " << x << std::endl;
     std::cout << "y: " << y << std::endl;
     std::cout << "z: " << z << std::endl;
 
-    // Create an instance of the custom struct
-    Person person("Alice", 30, 1.75);
+    const std::tuple<int, double, std::string> t2(100, 2.71, "World");
 
-    // Structured binding to extract elements
-    auto [name, age, height] = person;
+    std::tie(x, y, z) = t2;
+    std::cout << "x: " << x << std::endl;
+    std::cout << "y: " << y << std::endl;
+    std::cout << "z: " << z << std::endl;
 
-    // Print the extracted elements
+    const Person person1("Alice", 30, 1.75);
+
+    auto [name, age, height] = person1;
     std::cout << "Name: " << name << std::endl;
     std::cout << "Age: " << age << std::endl;
     std::cout << "Height: " << height << std::endl;
@@ -6691,9 +6790,13 @@ int main() {
 }
 ```
 
-# 10 Tips
+# 10 Assorted
 
-## 10.1 How to Choose Function Parameter Type
+1. [Definitions and ODR (One Definition Rule)](https://en.cppreference.com/w/cpp/language/definition.html)
+
+# 11 Tips
+
+## 11.1 How to Choose Function Parameter Type
 
 For given type T, you can use:
 
@@ -6704,7 +6807,7 @@ For given type T, you can use:
 1. `T*`: Used when this parameter is treated as output of the function.
 1. `std::shared_ptr<T>`/`std::unique_ptr<T>`: Used when the lifetime of object should be extended or transfered.
 
-### 10.1.1 How to Choose Constructor Parameter Type
+### 11.1.1 How to Choose Constructor Parameter Type
 
 Things change when it come to constructor:
 
@@ -6765,7 +6868,7 @@ Foo1(Foo1&)
 Foo2(Foo2&&)
 ```
 
-## 10.2 Variable-length Array
+## 11.2 Variable-length Array
 
 Variable-length array (VLA), which is a feature not supported by standard C++. However, some compilers, particularly in C and as extensions in C++, do provide support for VLAs.
 
@@ -6821,9 +6924,9 @@ array2: -532
 num4: -32
 ```
 
-# 11 FAQ
+# 12 FAQ
 
-## 11.1 Why is it unnecessary to specify the size when releasing memory with free and delete
+## 12.1 Why is it unnecessary to specify the size when releasing memory with free and delete
 
 [How does free know how much to free?](https://stackoverflow.com/questions/1518711/how-does-free-know-how-much-to-free)
 
@@ -6845,11 +6948,11 @@ ____ The allocated block ____
           +-- The address you are given
 ```
 
-## 11.2 Do parameter types require lvalue or rvalue references
+## 12.2 Do parameter types require lvalue or rvalue references
 
-## 11.3 Does the return type require lvalue or rvalue references
+## 12.3 Does the return type require lvalue or rvalue references
 
-# 12 Reference
+# 13 Reference
 
 * [C++11\14\17\20 特性介绍](https://www.jianshu.com/p/8c4952e9edec)
 * [关于C++：静态常量字符串(类成员)](https://www.codenong.com/1563897/)

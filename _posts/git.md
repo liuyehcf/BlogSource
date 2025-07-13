@@ -124,10 +124,10 @@ git config --global icdiff.options '--highlight --line-numbers'
 
 ```sh
 # Add specified files to the staging area
-git add [file1] [file2] ...
+git add <file1> <file2> ...
 
 # Add specified directory to the staging area, including subdirectories
-git add [dir]
+git add <dir>
 
 # Add all files in the current directory to the staging area
 git add .
@@ -140,10 +140,10 @@ git add -u
 git add -p
 
 # Delete a file from the workspace and add this deletion to the staging area
-git rm [file1] [file2] ...
+git rm <file1> <file2> ...
 
 # Stop tracking a specified file, but keep it in the workspace
-git rm --cached [file]
+git rm --cached <file>
 
 # Stop tracking all files, but keep them in the workspace
 git rm -r --cached .
@@ -152,7 +152,7 @@ git rm -r --cached .
 git ls-files
 
 # Rename a file and add this renaming to the staging area
-git mv [file-original] [file-renamed]
+git mv <file-original> <file-renamed>
 ```
 
 ## 3.1 Permanently Deleting Files
@@ -167,7 +167,7 @@ git rev-list --objects --all | grep "$(git verify-pack -v .git/objects/pack/*.id
 
 ```sh
 # This command will checkout each commit and execute the bash command specified in the --index-filter parameter
-git filter-branch -f --prune-empty --index-filter 'git rm -rf --cached --ignore-unmatch [your-file-name]' --tag-name-filter cat -- --all
+git filter-branch -f --prune-empty --index-filter 'git rm -rf --cached --ignore-unmatch <your-file-name>' --tag-name-filter cat -- --all
 ```
 
 **Step 2: Push all local branches to the remote repository. Without the `--all` option, only the default or specified branch will be pushed. If other branches in the remote repository still contain the large file, it will remain in the repository.**
@@ -189,10 +189,10 @@ git gc --aggressive --prune=now
 
 ```sh
 # Commit the staging area to the repository
-git commit -m [message]
+git commit -m <message>
 
 # Commit specified files from the staging area to the repository
-git commit [file1] [file2] ... -m [message]
+git commit <file1> <file2> ... -m <message>
 
 # Commit changes in the workspace since the last commit directly to the repository
 git commit -a
@@ -202,10 +202,10 @@ git commit -v
 
 # Replace the last commit with a new commit
 # If there are no new changes, use this to rewrite the last commit message
-git commit --amend -m [message]
+git commit --amend -m <message>
 
 # Redo the last commit and include changes to specified files
-git commit --amend [file1] [file2] ...
+git commit --amend <file1> <file2> ...
 ```
 
 # 5 Undo
@@ -215,35 +215,35 @@ git commit --amend [file1] [file2] ...
 git checkout -- .
 
 # Restore specified files in the workspace to the staging area
-git checkout -- [file]
+git checkout -- <file>
 
 # Restore specified files from a branch to the staging area
-git checkout [branch] -- [file]
+git checkout <branch> -- <file>
 
 # Restore specified files from a commit to the staging area
-git checkout [commit] -- [file]
+git checkout <commit> -- <file>
 
 # Reset specified files in the staging area to match the last commit, but leave the workspace unchanged
-git reset [file]
+git reset <file>
 
 # Reset the staging area and the workspace to match the last commit
 git reset --hard
 
 # Reset the current branch pointer to a specified commit, reset the staging area, but leave the workspace unchanged
-git reset [commit]
+git reset <commit>
 
 # Reset the current branch HEAD to a specified commit, and reset both the staging area and the workspace to match the specified commit
-git reset --hard [commit]
+git reset --hard <commit>
 
 # Reset the current HEAD to a specified commit, but leave the staging area and the workspace unchanged
-git reset --keep [commit]
+git reset --keep <commit>
 
 # Create a new commit to revert a specified commit
 # The changes from the specified commit will be negated by the new commit and applied to the current branch
-git revert [commit]
+git revert <commit>
 
 # Save uncommitted changes to the stash
-git stash -m [message]
+git stash -m <message>
 
 # Pop the stash and apply the saved changes to the workspace
 git stash pop
@@ -252,29 +252,29 @@ git stash pop
 git stash list
 
 # Apply a specified stash
-git stash apply [id]
+git stash apply <id>
 
 # Drop a specified stash
-git stash drop [id]
+git stash drop <id>
 
 # Show the list of files changed in a specified stash
-git stash show [id]
+git stash show <id>
 
 # Show the changes in a specified stash
-git stash show [id] -p
+git stash show <id> -p
 
 # Show the difference between a specified stash and the current state
 # For example: git diff stash@{0}
-git diff stash@{[id]}
+git diff stash@{<id>}
 
 # Clear all stashes
 git stash clear
 
 # Discard changes in the workspace
-git restore [file]
+git restore <file>
 
 # Restore specified files from the staging area to the workspace
-git restore --staged [file]
+git restore --staged <file>
 ```
 
 # 6 Branch
@@ -293,38 +293,38 @@ git branch -r
 git branch -a
 
 # Create a new branch but stay on the current branch
-git branch [branch-name]
+git branch <branch-name>
 
 # Create a new branch and switch to it
-git checkout -b [branch]
+git checkout -b <branch>
 
 # Fetch a specified branch from the remote repository, create a new local branch, and switch to it
-git checkout -b [branch_local] origin/[branch_remote]
+git checkout -b <branch_local> origin/<branch_remote>
 
 # Create a new branch pointing to a specified commit
-git branch [branch] [commit]
+git branch <branch> <commit>
 
 # Create a new branch and set up a tracking relationship with a specified remote branch
-git branch --track [branch] [remote-branch]
+git branch --track <branch> <remote-branch>
 
 # Find out which branchs contains specific commit
-git branch --contains [commit]
-git branch -r --contains [commit]
+git branch --contains <commit>
+git branch -r --contains <commit>
 
 # Switch to a specified branch and update the workspace
-git checkout [branch-name]
+git checkout <branch-name>
 
 # Switch to the previous branch
 git checkout -
 
 # Set up a tracking relationship between the current branch and a specified remote branch
-git branch --set-upstream [branch] [remote-branch]
+git branch --set-upstream <branch> <remote-branch>
 
 # Merge a specified branch into the current branch
-git merge [branch]
+git merge <branch>
 
 # Rebase a specified branch onto the current branch
-git rebase [branch]
+git rebase <branch>
 
 # During a rebase, if there are conflicts, continue the rebase after resolving them
 git rebase --continue
@@ -333,27 +333,27 @@ git rebase --continue
 git rebase --abort
 
 # Rebase the current branch with commits in the (startcommit, endcommit] range (left-open, right-closed)
-git rebase -i [startcommit] [endcommit]
+git rebase -i <startcommit> <endcommit>
 
 # Rebase the current branch with commits in the (startcommit, HEAD] range (left-open, right-closed)
-git rebase -i [startcommit]
+git rebase -i <startcommit>
 
 # Rebase the current branch, specifying startcommit as root (root refers to the position before the first commit)
 git rebase -i --root
 
 # Select a commit and merge it into the current branch (commits are ordered chronologically from left to right)
-git cherry-pick [commit1] [commit2] ...
+git cherry-pick <commit1> <commit2> ...
 
 # Delete a branch
-git branch -d [branch-name]
+git branch -d <branch-name>
 
 # Delete a remote branch
-git push origin --delete [branch-name]
-git branch -dr [remote/branch]
+git push origin --delete <branch-name>
+git branch -dr <remote/branch>
 
 # Rename a branch
-git branch -m [oldbranch] [newbranch]
-git branch -M [oldbranch] [newbranch]
+git branch -m <oldbranch> <newbranch>
+git branch -M <oldbranch> <newbranch>
 ```
 
 # 7 Tag
@@ -363,65 +363,42 @@ git branch -M [oldbranch] [newbranch]
 git tag
 
 # Create a new tag on the current commit
-git tag [tag]
+git tag <tag>
 
 # Create a new tag on a specified commit
-git tag [tag] [commit]
+git tag <tag> <commit>
 
 # Delete a local tag
-git tag -d [tag]
+git tag -d <tag>
 
 # Delete a remote tag
-git push origin :refs/tags/[tagName]
+git push origin :refs/tags/<tagName>
 
 # View tag information
-git show [tag]
+git show <tag>
 
 # Push a specified tag
-git push [remote] [tag]
+git push <remote> <tag>
 
 # Push all tags
-git push [remote] --tags
+git push <remote> --tags
 
 # Create a new branch pointing to a tag
-git checkout -b [branch] [tag]
+git checkout -b <branch> <tag>
 ```
 
-# 8 Log
+# 8 Log/Diff/Show
 
 ```sh
 # Show changed files
 git status
 
 # Show version history of the current branch
-git log
+git log [--stat]
 
-# Show commit history and the files changed in each commit
-git log --stat
-
-# Search commit history by keyword
-git log -S [keyword]
-
-# Show all changes after a specific commit, with each commit on one line
-git log [tag] HEAD --pretty=format:%s
-
-# Show all changes after a specific commit, with commit messages matching the search criteria
-git log [tag] HEAD --grep feature
-
-# Show version history of a specific file, including renames
-git log --follow [file]
-
-# Show modification records related to a specific file
-git log [file]
-
-# Show every diff related to a specific file
-git log -p [file]
-
-# Show the last 5 commits in a concise format
-git log -5 --pretty --oneline
-
-# Show dates in a specified format
-git log --date=format:"%Y-%m-%d %H:%M:%S"
+# Show modification records related to a specific path
+# -p: Show details
+git log [--author '<author>' ] [-p] <path>
 
 # Searches for changes that add or remove a given string。
 # -S'<content>': search addition/deletion that contains the string
@@ -435,50 +412,28 @@ git log -S'<content>' -p
 git shortlog -sn
 
 # Show who changed each line of a file and when
-git blame [file]
+git blame <file>
 
-# Show a summary of the differences between the staging area and the workspace (number of lines changed, not specific changes)
-git diff --stat
-
-# Show differences between the staging area and the workspace
-git diff
+# Show differences between the staging area and the workspace 
+git diff [--stat] [<path>]
 
 # Show differences between the staging area and the last commit
-git diff --cached
-git diff --cached [file]
+git diff --cached [--stat] [<path>]
 
 # Show differences between the workspace and the latest commit of the current branch
-git diff HEAD
+git diff HEAD [--stat] [<path>]
 
 # Show differences between two commits
-git diff [first-branch]...[second-branch]
+git diff <first-commit> <second-commit> [--stat] [<path>]
 
 # Show how many lines of code you wrote today
 git diff --shortstat "@{0 day ago}"
 
 # Show metadata and content changes of a specific commit
-git show [commit]
-
-# Show metadata and content changes of a specific commit for a file
-git show [commit] -- [filename]
-
-# Show metadata and statistics of content changes for a specific commit
-git show [commit] --stat
-
-# Show files changed in a specific commit
-git show --name-only [commit]
-
-# Show content of a file at a specific commit
-git show [commit]:[filename]
+git show [<commit>] [--stat] [<path>]
 
 # Show a list of files changed in each commit
-git whatchanged
-
-# Show a list of files changed in each commit with statistics
-git whatchanged --stat
-
-# Show version history of a specific file, including renames
-git whatchanged [file]
+git whatchanged [--stat] [<path>]
 
 # Show recent commits of the current branch
 git reflog
@@ -497,41 +452,41 @@ git clone git@github.com:xxx/yyy.git
 # When the repository is very large, downloading everything can be time-consuming and storage-intensive
 # We can specify a depth of 1 to only download the latest version, called a "shallow" clone
 git clone https://github.com/xxx/yyy.git --depth 1
-git clone -b [branch_name] https://github.com/xxx/yyy.git --depth 1
+git clone -b <branch_name> https://github.com/xxx/yyy.git --depth 1
 
 # If later you want to download the full repository, you can use the following command to get the complete history
 git fetch --unshallow
 
 # Using <--depth 1> can cause another issue: you won't be able to fetch other branches. You can handle this as follows
-git remote set-branches origin '[branch_name]'
-git fetch --depth 1 origin '[branch_name]'
+git remote set-branches origin <branch_name>
+git fetch --depth 1 origin <branch_name>
 ```
 
 # 10 Sync
 
 ```sh
 # Fetch updates from all branches of the specified remote repository, but does not apply them to any local branches. The updates are stored in the remote-tracking branches.
-git fetch [remote]
+git fetch <remote>
 
 # Fetch updates from the specified branch on the remote repository, but does not apply them to any local branch. The updates are stored in the remote-tracking branch.
-git fetch [remote] [branch]
+git fetch <remote> <branch>
 
 # Fetch updates from the specified branch on the remote repository and applies them to the specified local branch, creating the local branch if it does not already exist.
-git fetch [remote] [branch]:[local_branch]
+git fetch <remote> <branch>:<local_branch>
 
 # Fetch updates from the specified branch on the remote repository and forces the update to be applied to the specified local branch, creating it if necessary.
-# It may be refused when you at [local_branch], because git fetch is designed to be a safe operation that doesn't modify the working directory.
+# It may be refused when you at <local_branch>, because git fetch is designed to be a safe operation that doesn't modify the working directory.
 # It works fine when you are at another branch, like tmp.
-git fetch [remote] -f [branch]:[local_branch]
+git fetch <remote> -f <branch>:<local_branch>
 
 # Fetch a specific commit from the specified remote repository, but does not apply it to any local branch. The fetched commit is stored in the remote-tracking branch.
-git fetch [remote] [commit]
+git fetch <remote> <commit>
 
 # Fetch the changes from pull request number 29048 from the specified remote repository. The changes are stored in the remote-tracking branch but are not applied to any local branch.
-git fetch [remote] pull/29048/head
+git fetch <remote> pull/29048/head
 
 # Fetch the changes from pull request number 29048 from the specified remote repository and applies them to a new local branch named `pull_request_29048`.
-git fetch [remote] pull/29048/head:pull_request_29048
+git fetch <remote> pull/29048/head:pull_request_29048
 
 # Removes any remote-tracking references that no longer exist in the remote repository.
 git fetch --prune
@@ -540,22 +495,22 @@ git fetch --prune
 git remote -v
 
 # Displays detailed information about the specified remote repository, including its branches, tracking information, and recent commits.
-git remote show [remote]
+git remote show <remote>
 
 # Add a new remote repository with the specified shortname and URL to your local Git repository.
-git remote add [shortname] [url]
+git remote add <shortname> <url>
 
 # Fetch changes from the specified remote branch and merges them into the current local branch.
-git pull [remote] [branch]
+git pull <remote> <branch>
 
 # Fetch changes from the specified remote branch and merges them into the specified local branch, forcing the update if necessary.
-git pull [remote] -f [branch]:[local_branch]
+git pull <remote> -f <branch>:<local_branch>
 
 # Upload (pushes) the local branch to the specified remote repository branch.
-git push [remote] [branch]
+git push <remote> <branch>
 
 # Forcefully update the specified remote branch with the local branch, potentially overwriting changes on the remote branch.
-git push [remote] -f [branch]:[remote_branch]
+git push <remote> -f <branch>:<remote_branch>
 ```
 
 # 11 Submodule
@@ -564,15 +519,15 @@ Commit hash of each submodule is stored as normal git object. You can check it b
 
 ```sh
 # Add submodule to current git project
-git submodule add [repository_url] [path/to/submodule]
-git submodule add -b [branch_name] [repository_url] [path/to/submodule]
+git submodule add <repository_url> <path/to/submodule>
+git submodule add -b <branch_name> <repository_url> <path/to/submodule>
 
 # Init and checkout to the specific commit
 git submodule update --init --recursive
 
 # Update repository
 git submodule sync --recursive
-git submodule sync --recursive [path/to/submodule]
+git submodule sync --recursive <path/to/submodule>
 
 # Check Status
 git submodule status
