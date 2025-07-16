@@ -88,8 +88,8 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
 * **`[Shift] + [Right]`**: Move cursor right by one word.
 * **`[Shift] + [Up]`**: Page up.
 * **`[Shift] + [Down]`**: Page down.
-* `[Ctrl] + e`(`:help i_CTRL-E`)：Insert the character which is below the cursor.
-* `[Ctrl] + y`(`:help i_CTRL-Y`)：Insert the character which is above the cursor.
+* `[Ctrl] + e`(`:help i_CTRL-E`): Insert the character which is below the cursor.
+* `[Ctrl] + y`(`:help i_CTRL-Y`): Insert the character which is above the cursor.
 
 ## 2.2 Moving Cursor
 
@@ -345,10 +345,10 @@ Ex mode, on the other hand, is a more powerful command-line mode that is entered
     * **`g#`**: Like `#`, but searches for partial matches.
     * **To search the last visually selected text, follow these steps:**
         1. Enter visual mode
-        2. Yank with `y`
-        3. Enter search mode with `/`
-        4. Insert register content with `[Ctrl] + r`
-        5. Enter default register with `"`
+        1. Yank with `y`
+        1. Enter search mode with `/`
+        1. Insert register content with `[Ctrl] + r`
+        1. Enter default register with `"`
 * **Replace**
     * **`:[n1],[n2]s/[word1]/[word2]/g`**: Search for `word1` between lines `n1` and `n2` and replace with `word2`, supports regular expressions.
     * **`:[n1],[n2]s/\<[word1]\>/[word2]/g`**: Same as above but with whole word matching.
@@ -430,12 +430,12 @@ Record refers to a feature that allows you to record a sequence of keystrokes an
         * `zfa{`: Fold the content inside curly braces, including the lines with the braces
     * **`zd`/`zD`**: Delete the current fold
     * **`zE`**: Delete all folds
-2. **`indent` (indentation-based folding)**
+1. **`indent` (indentation-based folding)**
     * **`:set foldmethod=indent`**
     * **`:set foldlevel=[n]`**
-3. **`marker` (marker folding)**
+1. **`marker` (marker folding)**
     * **`:set foldmethod=marker`**
-4. **`syntax` (syntax-based folding)**
+1. **`syntax` (syntax-based folding)**
     * **`:set foldmethod=syntax`**
 
 **Common operations (uppercase commands are recursive):**
@@ -508,15 +508,15 @@ Record refers to a feature that allows you to record a sequence of keystrokes an
 
 ## 2.14 Quickfix
 
-* `:copen`：Open the quickfix window (view compile, grep, etc. information).
-* `:copen 10`：Open the quickfix window with a height of 10.
-* `:cclose`：Close the quickfix window.
-* `:cfirst`：Jump to the first error in quickfix.
-* `:clast`：Jump to the last error in quickfix.
-* `:cc [nr]`：View error number `[nr]`.
-* `:cnext`：Jump to the next error in quickfix.
-* `:cprev`：Jump to the previous error in quickfix.
-* `:set modifiable`：Make quickfix writable, allowing deletion of entries using commands like `dd`.
+* `:copen`: Open the quickfix window (view compile, grep, etc. information).
+* `:copen 10`: Open the quickfix window with a height of 10.
+* `:cclose`: Close the quickfix window.
+* `:cfirst`: Jump to the first error in quickfix.
+* `:clast`: Jump to the last error in quickfix.
+* `:cc [nr]`: View error number `[nr]`.
+* `:cnext`: Jump to the next error in quickfix.
+* `:cprev`: Jump to the previous error in quickfix.
+* `:set modifiable`: Make quickfix writable, allowing deletion of entries using commands like `dd`.
 
 ## 2.15 Terminal
 
@@ -762,7 +762,7 @@ Referring to [How can I insert a real tab character in Vim?](https://stackoverfl
 1. Select the columns to delete simultaneously  
 1. Press `d` to delete simultaneously  
 
-### 2.22.4 中文乱码
+### 2.22.4 Chinese Garbled Text
 
 **Edit `/etc/vimrc` and append the following content**
 
@@ -1097,7 +1097,7 @@ yum install -y devtoolset-7-toolchain
 scl enable devtoolset-7 bash
 ```
 
-**[gtags下载地址](https://ftp.gnu.org/pub/gnu/global/)**
+**[gtags download](https://ftp.gnu.org/pub/gnu/global/)**
 
 ```sh
 # Install dependencies
@@ -1157,7 +1157,7 @@ if filereadable(expand('~/.vim/gtags-cscope.vim'))
 endif
 ```
 
-**`FAQ`：**
+**`FAQ`: **
 
 1. `global -d` cannot find class definitions; possible reasons include:  
     1. **Classes marked with `final` — `gtags` cannot find their definitions, a frustrating bug that caused me a lot of trouble.**  
@@ -1711,7 +1711,7 @@ Home: [coc-java](https://github.com/search?q=coc-java)
     * `"java.trace.server": "verbose"`: More detailed logs  
 * `:CocCommand java.open.serverLog`: View raw `jdt.ls` logs
 
-**Tips：**
+**Tips: **
 
 * If the project uses third-party libraries like `thrift` or `protobuf` that generate source code, you need to package the generated source code and `.class` files into `.jar` files, then inform `jdt.ls` via configuration:  
     * Use the `java.project.referencedLibraries` setting to pass additional jar paths. This setting may not work properly. The issue [Doesn't recognize imports in classpath on a simple project](https://github.com/neoclide/coc-java/issues/93) mentions switching from `vim` to `neovim` can fix this. Other related issues:  
@@ -1748,7 +1748,7 @@ Home: [coc-pyright](https://github.com/fannheyward/coc-pyright)
 }
 ```
 
-**Tips：**
+**Tips: **
 
 * Third-party libraries installed via pip cannot be found by pyright  
     * You can use the [venv](https://www.liaoxuefeng.com/wiki/1016959663602400/1019273143120480) module to create an isolated Python environment. The steps are as follows (from the `coc-pyright` official documentation):
@@ -1769,7 +1769,7 @@ Home: [coc-rust-analyzer](https://github.com/fannheyward/coc-rust-analyzer)
 **Install:**
 
 * `:CocInstall coc-rust-analyzer`
-* Make sure `rust-analyzer` is installed：`rustup component add rust-analyzer`
+* Make sure `rust-analyzer` is installed: `rustup component add rust-analyzer`
 
 ### 3.9.5 coc-snippets
 
@@ -2134,7 +2134,7 @@ let g:Lf_PreviewResult = {'Function':0, 'BufTag':0}
 call plug#end()
 ```
 
-* 依赖`ctags`
+* Depends `ctags`
 
 **Usage:**
 
@@ -2206,8 +2206,8 @@ call plug#end()
 
 **Usage (search syntax reference: [junegunn/fzf-search-syntax](https://github.com/junegunn/fzf#search-syntax)):**
 
-1. `:Ag`: Perform a global search (depends on the command-line tool `ag`. Installation instructions on the plugin’s [GitHub page](https://github.com/ggreer/the_silver_searcher))  
-2. `:Rg`: Perform a global search (depends on the command-line tool `rg`. Installation instructions on the plugin’s [GitHub page](https://github.com/BurntSushi/ripgrep))  
+* `:Ag`: Perform a global search (depends on the command-line tool `ag`. Installation instructions on the plugin’s [GitHub page](https://github.com/ggreer/the_silver_searcher))  
+* `:Rg`: Perform a global search (depends on the command-line tool `rg`. Installation instructions on the plugin’s [GitHub page](https://github.com/BurntSushi/ripgrep))  
 * `[Ctrl] + j/k` / `[Ctrl] + n/p`: Move up/down by line  
 * `PageUp/PageDown`: Move up/down by page  
 * **Matching rules:**  
@@ -2310,16 +2310,16 @@ Home: [vim-codefmt](https://github.com/google/vim-codefmt)
 
 **Supports various formatting tools:**
 
-* `C-Family`：`clang-format`
-* `CSS`/`Sass`/`SCSS`/`Less`：`js-beautify`
-* `JSON`：`js-beautify`
-* `HTML`：`js-beautify`
-* `Go`：`gofmt`
-* `Java`：`google-java-format`/`clang-format`
-* `Python`：`Autopep8`/`Black`/`YAPF`
+* `C-Family`: `clang-format`
+* `CSS`/`Sass`/`SCSS`/`Less`: `js-beautify`
+* `JSON`: `js-beautify`
+* `HTML`: `js-beautify`
+* `Go`: `gofmt`
+* `Java`: `google-java-format`/`clang-format`
+* `Python`: `Autopep8`/`Black`/`YAPF`
     * Combine `isort` to reorder imports.
     * `pip install autopep8 isort`
-* `Shell`：`shfmt`
+* `Shell`: `shfmt`
 
 **Configuration(`~/.vimrc`):**
 
@@ -3586,7 +3586,7 @@ autocmd FileType java nmap <leader>jcc <Plug>(JavaComplete-Generate-DefaultConst
 autocmd FileType java vmap <leader>js <Plug>(JavaComplete-Generate-AccessorSetter)
 autocmd FileType java vmap <leader>jg <Plug>(JavaComplete-Generate-AccessorGetter)
 autocmd FileType java vmap <leader>ja <Plug>(JavaComplete-Generate-AccessorSetterGetter)
-" 其他
+" Else
 autocmd FileType java nmap <silent> <buffer> <leader>jn <Plug>(JavaComplete-Generate-NewClass)
 autocmd FileType java nmap <silent> <buffer> <leader>jN <Plug>(JavaComplete-Generate-ClassInFile)
 
@@ -3635,17 +3635,17 @@ call plug#end()
 
 **Usage:**
 
-* `set signcolumn=yes`，有改动的行会标出
-* `:SignifyDiff`：以左右分屏的方式对比当前文件的差异
+* `set signcolumn=yes`, changed lines will be marked
+* `:SignifyDiff`: compare the current file differences using a left-right split screen
 
 # 5 vim-script
 
 ## 5.1 Tips
 
-1. `filereadable`无法识别`~`，需要用`expand`，例如`filereadable(expand('~/.vim/gtags.vim'))`
-1. 函数名要用大写字母开头，或者`s:`开头。大写字母开头表示全局可见，`s:`开头表示当前脚本可见
-1. `exists('&cscopequickfix')`：判断是否存在参数`cscopequickfix`
-1. `has('nvim')`：判断是否启用了某功能
+1. `filereadable` cannot recognize `~`, you need to use `expand`, for example `filereadable(expand('~/.vim/gtags.vim'))`
+1. Function names should start with an uppercase letter or with `s:`. Starting with an uppercase letter means global visibility, starting with `s:` means script-local visibility
+1. `exists('&cscopequickfix')`: checks if the option `cscopequickfix` exists
+1. `has('nvim')`: checks if a certain feature is enabled
 
 # 6 nvim
 
@@ -3703,7 +3703,7 @@ n 16.19.0 # use this version
 
 ## 6.3 nvim share configuration of vim
 
-`nvim`和`vim`使用不同的目录来管理配置文件，通过软连接就可以实现共享配置，如下：
+`nvim` and `vim` use different directories to manage configuration files. You can share configurations by using symbolic links, as follows:
 
 ```sh
 # nvim's config file is ~/.config/nvim/init.vim
@@ -3720,17 +3720,17 @@ ln -sfn ~/.vim/plugged ~/.local/share/nvim/plugged
 
 ## 6.4 Tips
 
-* 可能会提示`Vimspector unavailable: Requires Vim compiled with +python3`之类的问题：
-    * `:checkhealth`进行自检，这里会提示安装`pynvim`
-    * `let g:python3_host_prog = '/path/to/your/python3'`
-* 在一个新的环境，安装完`nvim`后，最好都用`checkhealth`检查一遍，否则很多插件可能会因为依赖`python`等模块而无法正常工作，例如`LeaderF`
-* `node`用`16.19`版本，可以用`nvm install v16.19.0`进行安装
+* You might see an error like `Vimspector unavailable: Requires Vim compiled with +python3`:
+    * Run `:checkhealth` for a self-check, which will prompt you to install `pynvim`
+    * Set `let g:python3_host_prog = '/path/to/your/python3'`
+* In a new environment, after installing `nvim`, it's best to run `checkhealth` to verify everything, otherwise many plugins may not work properly due to missing dependencies like `python`, for example `LeaderF`
+* Use Node.js version `16.19`, which can be installed with `nvm install v16.19.0`
 
 # 7 Tips
 
 ## 7.1 Large Files Run Slowly
 
-**禁止加载所有插件**
+**Disable loading all plugins**
 
 ```sh
 vim -u NONE <big file>
@@ -3755,7 +3755,7 @@ vim -u NONE <big file>
 
 ## 7.3 Save and Exit Slowly in Large Project
 
-在大型工程中文件保存退出非常慢，发现是`vim-gutentags`插件，及其相关配置导致的。在项目配置文件`.workspace.vim`中添加如下内容进行禁用：
+Saving and exiting files is very slow in large projects. It was found to be caused by the `vim-gutentags` plugin and its related configuration. Add the following to the project configuration file `.workspace.vim` to disable it:
 
 ```
 let g:gutentags_enabled = 0
